@@ -33,7 +33,8 @@ segments:
     align: 4
     subalign: 4
     subsegments:
-      - [0x800, bin]
+      - [0x800, rodata]
+      - [0x2B28, bin]
   - name: main2
     type: code
     start: 0x0000323C
@@ -49,7 +50,8 @@ segments:
     align: 1
     subalign: 1
     subsegments:
-      - [0x000B588C, bin]
+      - [0xB588C, bin]
+      - [0xDEC30, data]
   - [0x120000]
 
       # - [0x800, rodata]
