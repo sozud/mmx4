@@ -1,29 +1,29 @@
 options:
-  platform:     psx
-  basename:     main
-  base_path:    ..
-  build_path:   build/us
-  target_path:  disks/us/SLUS_005.61
-  asm_path:     asm/us/main
-  asset_path:   assets/main
-  src_path:     src/main
-  ld_script_path: main.ld
-  compiler:     GCC
-  symbol_addrs_path:
-    - config/symbols.us.txt
-    - config/symbols.us.main.txt
-  undefined_funcs_auto_path: config/undefined_funcs_auto.us.main.txt
-  undefined_syms_auto_path:  config/undefined_syms_auto.us.main.txt
-  find_file_boundaries: yes
-  use_legacy_include_asm: no
-  migrate_rodata_to_functions: no
   asm_jtbl_label_macro: jlabel
+  asm_path: asm/us/main
+  asset_path: assets/main
+  base_path: ..
+  basename: main
+  build_path: build/us
+  compiler: GCC
   extensions_path: tools/splat_ext
+  find_file_boundaries: true
+  ld_script_path: main.ld
+  migrate_rodata_to_functions: false
+  platform: psx
   section_order:
-    - ".rodata"
-    - ".text"
-    - ".data"
-    - ".bss"
+  - .rodata
+  - .text
+  - .data
+  - .bss
+  src_path: src/main
+  symbol_addrs_path:
+  - config/symbols.us.txt
+  - config/symbols.us.main.txt
+  target_path: disks/us/SLUS_005.61
+  undefined_funcs_auto_path: config/undefined_funcs_auto.us.main.txt
+  undefined_syms_auto_path: config/undefined_syms_auto.us.main.txt
+  use_legacy_include_asm: false
 segments:
   - [0x800, header]
   - name: main
@@ -44,12 +44,12 @@ segments:
       - [0x323C, c]
   - name: main3
     type: code
-    start: 0x0008ECCC
-    vram:  0x8009F4CC
+    start: 0x000AECDC
+    vram:  0x800BF4DC
     align: 1
     subalign: 1
     subsegments:
-      - [0x0008ECCC, bin]
+      - [0x000AECDC, bin]
   - [0x120000]
 
       # - [0x800, rodata]
