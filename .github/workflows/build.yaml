@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-          submodules: false
+          submodules: true
       - name: Get dependencies
         uses: actions/checkout@v4
         with:
