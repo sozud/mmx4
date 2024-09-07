@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Install requirements
         run: sudo apt-get install gcc-mipsel-linux-gnu
+      - name: Install python requirements
+        run: pip3 install splat64==0.24.6
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
