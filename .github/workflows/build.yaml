@@ -36,8 +36,6 @@ jobs:
         with:
           ref: ${{ github.ref }}
           submodules: false
-      - name: Install tools requirements
-        run: make update-dependencies
       - name: Get dependencies
         uses: actions/checkout@v4
         with:
