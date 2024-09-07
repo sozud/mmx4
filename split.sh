@@ -1,0 +1,1 @@
+ rm -rf asm && rm -rf src && rm -rf assets && splat split ./config/SLUS_005.61.splat.yaml 

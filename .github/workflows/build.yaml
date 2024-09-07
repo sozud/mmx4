@@ -1,0 +1,56 @@
+name: Build PSX version
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*.md'
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.job }}-${{ github.event_name }}-${{ github.number }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        version: ["us"]
+        include:
+          - dependency: us
+            version: us
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ matrix.version }}
+    steps:
+      - name: Install requirements
+        run: sudo apt-get install gcc-mipsel-linux-gnu
+      - name: Clone main repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+          submodules: false
+      - name: Install tools requirements
+        run: make update-dependencies
+      - name: Get dependencies
+        uses: actions/checkout@v4
+        with:
+          repository: sozud/mmx4-deps
+          ref: ${{ matrix.dependency }}
+          token: ${{ secrets.MMX4_DEPS_TOKEN }}
+          path: 'disks/dependencies'
+      - name: Setting up dependencies
+        working-directory: disks
+        run: cat dependencies/* | tar -zxf -
+      - name: Extract dependencies
+        run: sh extract.sh
+      - name: Split game data
+        run: sh split.sh
+      - name: Build binaries
+        run: sh build.sh
