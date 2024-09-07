@@ -1,29 +1,29 @@
 options:
-  asm_jtbl_label_macro: jlabel
-  asm_path: asm/us/main
-  asset_path: assets/main
-  base_path: ..
-  basename: main
-  build_path: build/us
-  compiler: GCC
-  extensions_path: tools/splat_ext
-  find_file_boundaries: true
+  platform:     psx
+  basename:     main
+  base_path:    ..
+  build_path:   build/us
+  target_path:  disks/us/SLUS_005.61
+  asm_path:     asm/us/main
+  asset_path:   assets/main
+  src_path:     src/main
   ld_script_path: main.ld
-  migrate_rodata_to_functions: false
-  platform: psx
-  section_order:
-  - .rodata
-  - .text
-  - .data
-  - .bss
-  src_path: src/main
+  compiler:     GCC
   symbol_addrs_path:
-  - config/symbols.us.txt
-  - config/symbols.us.main.txt
-  target_path: disks/us/SLUS_005.61
+    - config/symbols.us.txt
+    - config/symbols.us.main.txt
   undefined_funcs_auto_path: config/undefined_funcs_auto.us.main.txt
-  undefined_syms_auto_path: config/undefined_syms_auto.us.main.txt
-  use_legacy_include_asm: false
+  undefined_syms_auto_path:  config/undefined_syms_auto.us.main.txt
+  find_file_boundaries: yes
+  use_legacy_include_asm: no
+  migrate_rodata_to_functions: no
+  asm_jtbl_label_macro: jlabel
+  extensions_path: tools/splat_ext
+  section_order:
+    - ".rodata"
+    - ".text"
+    - ".data"
+    - ".bss"
 segments:
   - [0x800, header]
   - name: main
@@ -89,4 +89,8 @@ segments:
       # - [0xDE68C, c]
       # - [0xDE69C, c]
       # - [0xDE6AC, c]
+<<<<<<< HEAD
       # - [0xDEC30, data]
+=======
+      # - [0xDEC30, data]
+>>>>>>> ebd560f (fix)
