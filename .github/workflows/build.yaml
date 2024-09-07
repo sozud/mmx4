@@ -50,6 +50,8 @@ jobs:
         run: cat dependencies/* | tar -zxf -
       - name: Extract dependencies
         run: sh extract.sh
+      - name: Get Compiler
+        run: sh compiler.sh
       - name: Split game data
         run: sh split.sh
       - name: Build binaries
