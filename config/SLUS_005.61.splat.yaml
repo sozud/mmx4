@@ -89,8 +89,4 @@ segments:
       # - [0xDE68C, c]
       # - [0xDE69C, c]
       # - [0xDE6AC, c]
-<<<<<<< HEAD
       # - [0xDEC30, data]
-=======
-      # - [0xDEC30, data]
->>>>>>> ebd560f (fix)
