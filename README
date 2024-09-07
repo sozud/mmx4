@@ -1,0 +1,12 @@
+This repository does not contain any of the assets necessary to build a matching ROM. A prior copy of the game is required. Place `SLUS_005.61` in disks/us.
+
+Setup:
+
+```
+sudo apt-get update
+sudo apt-get install binutils-mipsel-linux-gnu
+
+pip install -r requirements.txt
+
+git submodule update --init --recursive
+```
