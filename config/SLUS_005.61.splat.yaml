@@ -44,12 +44,12 @@ segments:
       - [0x323C, c]
   - name: main3
     type: code
-    start: 0x0001EA9C
-    vram:  0x8002F29C
+    start: 0x0002EC8C
+    vram:  0x8003F48C
     align: 1
     subalign: 1
     subsegments:
-      - [0x1EA9C, bin]
+      - [0x2EC8C, bin]
   - [0x120000]
 
       # - [0x800, rodata]
