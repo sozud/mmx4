@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: sozud/mmx4-deps
-          ref: ${{ matrix.dependency }}
+          ref: main
           token: ${{ secrets.MMX4_DEPS_TOKEN }}
           path: 'disks/dependencies'
       - name: Setting up dependencies
