@@ -150,8 +150,8 @@ def build_35():
     add_lib_263(srcs, output_dir, linker_inputs)
 
     asms = ['asm/us/main/header.s']
-    # directory = 'asm/us/main/data'
-    # asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    directory = 'asm/us/main/data'
+    asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
 
     add_asm(asms, output_dir, linker_inputs)
 
