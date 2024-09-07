@@ -1,57 +1,92 @@
 options:
-  asm_jtbl_label_macro: jlabel
-  asm_path: asm/us/main
-  asset_path: assets/main
-  base_path: ..
-  basename: main
-  build_path: build/us
-  compiler: GCC
-  extensions_path: tools/splat_ext
-  find_file_boundaries: true
+  platform:     psx
+  basename:     main
+  base_path:    ..
+  build_path:   build/us
+  target_path:  disks/us/SLUS_005.61
+  asm_path:     asm/us/main
+  asset_path:   assets/main
+  src_path:     src/main
   ld_script_path: main.ld
-  migrate_rodata_to_functions: false
-  platform: psx
-  section_order:
-  - .rodata
-  - .text
-  - .data
-  - .bss
-  src_path: src/main
+  compiler:     GCC
   symbol_addrs_path:
-  - config/symbols.us.txt
-  - config/symbols.us.main.txt
-  target_path: disks/us/SLUS_005.61
+    - config/symbols.us.txt
+    - config/symbols.us.main.txt
   undefined_funcs_auto_path: config/undefined_funcs_auto.us.main.txt
-  undefined_syms_auto_path: config/undefined_syms_auto.us.main.txt
-  use_legacy_include_asm: false
+  undefined_syms_auto_path:  config/undefined_syms_auto.us.main.txt
+  find_file_boundaries: yes
+  use_legacy_include_asm: no
+  migrate_rodata_to_functions: no
+  asm_jtbl_label_macro: jlabel
+  extensions_path: tools/splat_ext
+  section_order:
+    - ".rodata"
+    - ".text"
+    - ".data"
+    - ".bss"
 segments:
-- - 2048
-  - header
-- align: 4
-  name: main
-  start: 2048
-  subalign: 4
-  subsegments:
-  - - 2048
-    - bin
-  type: code
-  vram: 2147549184
-- align: 1
-  name: main2
-  start: 12860
-  subalign: 1
-  subsegments:
-  - - 12860
-    - c
-  type: code
-  vram: 2147559996
-- align: 1
-  name: main3
-  start: 584924
-  subalign: 1
-  subsegments:
-  - - 584924
-    - bin
-  type: code
-  vram: 2148136156
-- - 1179648
+  - [0x800, header]
+  - name: main
+    type: code
+    start: 0x00000800
+    vram:  0x80010000
+    align: 4
+    subalign: 4
+    subsegments:
+      - [0x800, bin]
+  - name: main2
+    type: code
+    start: 0x0000323C
+    vram:  0x80012A3C
+    align: 1
+    subalign: 1
+    subsegments:
+      - [0x323C, c]
+  - name: main3
+    type: code
+    start: 0x0008ECCC
+    vram:  0x8009F4CC
+    align: 1
+    subalign: 1
+    subsegments:
+      - [0x0008ECCC, bin]
+  - [0x120000]
+
+      # - [0x800, rodata]
+      # - [0x1694, rodata]
+      # - [0x1770, rodata]
+      # - [0x19CC, rodata]
+      # - [0x1A08, rodata]
+      # - [0x1A64, rodata]
+      # - [0x1A80, rodata]
+      # - [0x1BA4, rodata]
+      # - [0x1C18, rodata]
+      # - [0x1C9C, rodata]
+      # - [0x1CB0, rodata]
+      # - [0x1CC4, rodata]
+      # - [0x1CF0, rodata]
+      # - [0x2824, c]
+      # - [0x42D8, c]
+      # - [0x91218, c]
+      # - [0xCA8EC, c]
+      # - [0xDE3EC, c]
+      # - [0xDE46C, c]
+      # - [0xDE48C, c]
+      # - [0xDE4AC, c]
+      # - [0xDE4CC, c]
+      # - [0xDE4EC, c]
+      # - [0xDE4FC, c]
+      # - [0xDE52C, c]
+      # - [0xDE53C, c]
+      # - [0xDE54C, c]
+      # - [0xDE56C, c]
+      # - [0xDE57C, c]
+      # - [0xDE58C, c]
+      # - [0xDE5CC, c]
+      # - [0xDE5DC, c]
+      # - [0xDE5EC, c]
+      # - [0xDE5FC, c]
+      # - [0xDE68C, c]
+      # - [0xDE69C, c]
+      # - [0xDE6AC, c]
+      # - [0xDEC30, data]
