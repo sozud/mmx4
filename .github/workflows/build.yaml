@@ -30,7 +30,7 @@ jobs:
       VERSION: ${{ matrix.version }}
     steps:
       - name: Install requirements
-        run: sudo apt-get install gcc-mipsel-linux-gnu
+        run: sudo apt-get install gcc-mipsel-linux-gnu bchunk
       - name: Install python requirements
         run: pip3 install splat64==0.24.6
       - name: Clone main repo
