@@ -115,7 +115,7 @@ ninja.rule('cc1_263',
            description='Running cc1 on $out from $in')
 
 ninja.rule('aspsx_263',
-           command='python3 maspsx/maspsx.py --expand-div --aspsx-version=2.34 $in > $out',
+           command='python3 maspsx/maspsx.py --aspsx-version=2.56 $in > $out',
            description='Running aspsx on $out from $in')
 
 ninja.rule('as',
