@@ -156,6 +156,8 @@ def build_35():
     directory = 'asm/us/main'
     asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
 
+    for root, dirs, files in os.walk('asm/us/main/psxsdk'):
+        asms.extend([os.path.join(root, f) for f in files if os.path.isfile(os.path.join(root, f))])
 
     add_asm(asms, output_dir, linker_inputs)
 
