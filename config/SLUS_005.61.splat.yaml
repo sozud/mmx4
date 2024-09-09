@@ -36,6 +36,14 @@ segments:
       - [0x800, rodata]
       - [0x2824, asm]
       - [0x323C, c]
-      - [0xC594C, asm]
+      - [0xC594C, c]
+      - [0xCB68C, asm] # doesn't seem like a function
+      - [0xCB748, asm] 
+      - [0xD9838, asm] # linker junk?
+      - [0xD9840, asm]
+      - [0xDDD40, asm] # unknown
+      - [0xDDD74, asm]
+      - [0xDE46C, asm] # unknown
+      - [0xDE498, asm]
       - [0xDEC0C, data]
   - [0x120000]
