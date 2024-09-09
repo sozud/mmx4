@@ -1,5 +1,6 @@
 import os
 
+# Function to get the path of the file in the same directory as the script
 def get_file_path(filename):
     script_dir = os.path.dirname(os.path.realpath(__file__))  # Directory of the script
     return os.path.join(script_dir, filename)
@@ -29,15 +30,12 @@ def find_matching_files_sorted_by_size(directory, hex_numbers):
 
 # Main function
 def main():
-    # Read hex numbers from output.txt
+    # Read hex numbers from output.txt in the same folder as this script
     hex_numbers = read_hex_numbers('mednafen_trace.txt')
-    
-    # Define the directory to search
-    search_directory = 'asm/us/main/nonmatchings/323C'
-    
+
     # Find matching files and sort them by size
-    matching_files = find_matching_files_sorted_by_size(search_directory, hex_numbers)
-    
+    matching_files = find_matching_files_sorted_by_size('asm', hex_numbers)
+
     # Print matching files with their sizes
     if matching_files:
         print(f"Matching files found ({len(matching_files)}), sorted by size:")
