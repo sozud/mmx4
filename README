@@ -10,3 +10,5 @@ pip install -r requirements.txt
 
 git submodule update --init --recursive
 ```
+
+See https://github.com/sozud/mmx4/wiki/Getting-Started for more info
