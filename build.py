@@ -160,8 +160,8 @@ def build_35():
     add_asm(asms, output_dir, linker_inputs)
 
     assets = []
-    directory = 'assets/main/'
-    assets.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    # directory = 'assets/main/'
+    # assets.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
 
     for asset in assets:
         # assets
