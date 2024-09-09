@@ -29,3 +29,22 @@ struct Unk
     u32 unk90;
     u32 unk94;
 };
+
+struct Unk2
+{
+    u8 pad0;
+    u8 unk1;
+    u8 pad2[2];
+    s16 unk4;
+};
+
+struct Unk3 {
+    u8 pad[0xc0];
+    s8 unkC0;
+};
+
+extern s8 D_801721CF;
+
+s32 func_80034E2C();
+s32 func_80034F7C();
+void func_800129F0(s32);
