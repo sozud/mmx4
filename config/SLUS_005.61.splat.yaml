@@ -30,65 +30,12 @@ segments:
     type: code
     start: 0x00000800
     vram:  0x80010000
-    align: 4
-    subalign: 4
+    align: 1
+    subalign: 1
     subsegments:
       - [0x800, rodata]
-      - [0x2B28, bin]
-  - name: main2
-    type: code
-    start: 0x0000323C
-    vram:  0x80012A3C
-    align: 1
-    subalign: 1
-    subsegments:
+      - [0x2824, asm]
       - [0x323C, c]
-  - name: main3
-    type: code
-    start: 0x000C594C
-    vram:  0x800D614C
-    align: 1
-    subalign: 1
-    subsegments:
-      - [0xC594C, bin]
-      - [0xDEC30, data]
+      - [0xC594C, asm]
+      - [0xDEC0C, data]
   - [0x120000]
-
-      # - [0x800, rodata]
-      # - [0x1694, rodata]
-      # - [0x1770, rodata]
-      # - [0x19CC, rodata]
-      # - [0x1A08, rodata]
-      # - [0x1A64, rodata]
-      # - [0x1A80, rodata]
-      # - [0x1BA4, rodata]
-      # - [0x1C18, rodata]
-      # - [0x1C9C, rodata]
-      # - [0x1CB0, rodata]
-      # - [0x1CC4, rodata]
-      # - [0x1CF0, rodata]
-      # - [0x2824, c]
-      # - [0x42D8, c]
-      # - [0x91218, c]
-      # - [0xCA8EC, c]
-      # - [0xDE3EC, c]
-      # - [0xDE46C, c]
-      # - [0xDE48C, c]
-      # - [0xDE4AC, c]
-      # - [0xDE4CC, c]
-      # - [0xDE4EC, c]
-      # - [0xDE4FC, c]
-      # - [0xDE52C, c]
-      # - [0xDE53C, c]
-      # - [0xDE54C, c]
-      # - [0xDE56C, c]
-      # - [0xDE57C, c]
-      # - [0xDE58C, c]
-      # - [0xDE5CC, c]
-      # - [0xDE5DC, c]
-      # - [0xDE5EC, c]
-      # - [0xDE5FC, c]
-      # - [0xDE68C, c]
-      # - [0xDE69C, c]
-      # - [0xDE6AC, c]
-      # - [0xDEC30, data]
