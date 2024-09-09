@@ -53,6 +53,6 @@ jobs:
       - name: Get Compiler
         run: sh compiler.sh
       - name: Split game data
-        run: sh split.sh
+        run: splat split ./config/SLUS_005.61.splat.yaml
       - name: Build binaries
         run: sh build.sh
