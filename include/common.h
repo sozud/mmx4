@@ -43,8 +43,34 @@ struct Unk3 {
     s8 unkC0;
 };
 
+struct Unk5 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+};
+
+struct Unk6 {
+    u8 pad0[5];
+    u8 unk5;
+    u8 pad6[0x19];
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    u8 pad2f[0x37];
+    s8 unk67;
+};
+
 extern s8 D_801721CF;
+extern s8 D_80141BDC;
+extern struct Unk5 D_800F0E18[];
+extern s32 D_80137CC0;
 
 s32 func_80034E2C();
 s32 func_80034F7C();
 void func_800129F0(s32);
+void func_800127C8(s32); 
+void func_800129F0(s32);
+void func_80013404(s32); 
+s32 func_8001540C(s32, s32, struct Unk6*);
+s32 func_800350A4(struct Unk6*, s32);
