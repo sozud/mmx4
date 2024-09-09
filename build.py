@@ -119,7 +119,7 @@ ninja.rule('aspsx_263',
            description='Running aspsx on $out from $in')
 
 ninja.rule('as',
-           'mipsel-linux-gnu-as -I./src/main $in -o $out')
+           'mipsel-linux-gnu-as -no-pad-sections -I./src/main $in -o $out')
 
 ninja.rule('link',
            'mipsel-linux-gnu-ld -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt $in -o $out')
@@ -149,15 +149,19 @@ def build_35():
     output_dir = "build/us"
     add_lib_263(srcs, output_dir, linker_inputs)
 
-    asms = ['asm/us/main/header.s']
+    asms = []
     directory = 'asm/us/main/data'
     asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+
+    directory = 'asm/us/main'
+    asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+
 
     add_asm(asms, output_dir, linker_inputs)
 
     assets = []
-    directory = 'assets/main/'
-    assets.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    # directory = 'assets/main/'
+    # assets.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
 
     for asset in assets:
         # assets
