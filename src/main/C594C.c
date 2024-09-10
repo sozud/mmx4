@@ -54,7 +54,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D64D8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D666C);
 
-void func_800D668C(void) {
+void func_800D668C(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6694);
@@ -111,7 +112,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D79F0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7A10);
 
-void func_800D7A4C(void) {
+void func_800D7A4C(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7A54);
@@ -194,7 +196,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D89D4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D8A24);
 
-void func_800D8A64(void) {
+void func_800D8A64(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D8A6C);
@@ -205,7 +208,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D8AFC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D8B5C);
 
-void func_800D8BAC(void) {
+void func_800D8BAC(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D8BB4);
@@ -246,7 +250,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D910C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D9138);
 
-void func_800D91A0(void) {
+void func_800D91A0(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D91A8);
@@ -291,7 +296,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D9910);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D9924);
 
-void func_800D9934(void) {
+void func_800D9934(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D993C);
@@ -328,7 +334,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA204);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA218);
 
-void func_800DA228(void) {
+void func_800DA228(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA230);
@@ -365,7 +372,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA600);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA6A4);
 
-void func_800DA748(void) {
+void func_800DA748(void)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DA750);
@@ -394,5 +402,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DABE4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800DADA0);
 
-void func_800DAE84(void) {
+void func_800DAE84(void)
+{
 }

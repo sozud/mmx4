@@ -1,12 +1,12 @@
-#define INCLUDE_ASM(FOLDER, NAME)                                              \
-    __asm__(".pushsection .text\n"                                             \
-            "\t.align\t2\n"                                                    \
-            "\t.globl\t" #NAME "\n"                                            \
-            "\t.ent\t" #NAME "\n" #NAME ":\n"                                  \
-            ".include \"" FOLDER "/" #NAME ".s\"\n"                            \
-            "\t.set reorder\n"                                                 \
-            "\t.set at\n"                                                      \
-            "\t.end\t" #NAME "\n"                                              \
+#define INCLUDE_ASM(FOLDER, NAME)                   \
+    __asm__(".pushsection .text\n"                  \
+            "\t.align\t2\n"                         \
+            "\t.globl\t" #NAME "\n"                 \
+            "\t.ent\t" #NAME "\n" #NAME ":\n"       \
+            ".include \"" FOLDER "/" #NAME ".s\"\n" \
+            "\t.set reorder\n"                      \
+            "\t.set at\n"                           \
+            "\t.end\t" #NAME "\n"                   \
             ".popsection");
 
 __asm__(".include \"macro.inc\"\n");
@@ -22,8 +22,7 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
-struct Unk
-{
+struct Unk {
     u8 pad[5];
     u8 unk5;
     u8 pad6[0x86];
@@ -32,8 +31,7 @@ struct Unk
     u32 unk94;
 };
 
-struct Unk2
-{
+struct Unk2 {
     u8 pad0;
     u8 unk1;
     u8 pad2[2];
@@ -63,22 +61,21 @@ struct Unk6 {
     s8 unk67;
 };
 
-struct Unk7
-{
+struct Unk7 {
     u8 pad[0x80];
     u16 unk80;
 };
 
 struct Unk9 {
-u8 pad0[7];
-u32 unk8;
-u32 unkC;
-u8 padd[1];
-u32 unk14;
-u32 unk18;
-u8 pad19[0x2c];
-s8 unk48;
-s8 unk49;
+    u8 pad0[7];
+    u32 unk8;
+    u32 unkC;
+    u8 padd[1];
+    u32 unk14;
+    u32 unk18;
+    u8 pad19[0x2c];
+    s8 unk48;
+    s8 unk49;
 };
 
 struct Unk10 {
@@ -119,15 +116,15 @@ extern s32 D_80137CC0;
 s32 func_80034E2C();
 s32 func_80034F7C();
 void func_800129F0(s32);
-void func_800127C8(s32); 
-void func_80013404(s32); 
+void func_800127C8(s32);
+void func_80013404(s32);
 s32 func_8001540C(s32, s32, struct Unk6*);
 s32 func_800350A4(struct Unk6*, s32);
 s32 func_80033694();
 void func_80034538(struct Unk7*);
 void func_80034754(struct Unk7*);
 void func_80027A5C(struct Unk9*, s32);
-void func_80027AAC(struct Unk9*);  
+void func_80027AAC(struct Unk9*);
 void func_80027AFC(struct Unk9*);
 void func_80027B70(struct Unk9*);
 void func_80027BE4(struct Unk9*);
