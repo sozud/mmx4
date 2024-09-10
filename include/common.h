@@ -22,9 +22,9 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
-#include "psy-q-4.0/LIBGPU.H"
-#include "psy-q-4.0/LIBGTE.H"
 #include "psy-q-4.0/SYS/TYPES.H"
+#include "psy-q-4.0/LIBGTE.H"
+#include "psy-q-4.0/LIBGPU.H"
 
 struct Unk {
     u8 pad[5];
