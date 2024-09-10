@@ -32,10 +32,13 @@ struct Unk {
 };
 
 struct Unk2 {
-    u8 pad0;
+    u8 unk0;
     u8 unk1;
     u8 pad2[2];
     s16 unk4;
+    u8 pad5[6];
+    u8 unkC;
+    u8 unkD;
 };
 
 struct Unk3 {
@@ -134,6 +137,10 @@ extern s8 D_801721CF;
 extern s8 D_80141BDC;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
+extern s8 D_801419B3;
+extern s8 D_80141A07;
+extern s8 D_80141A5B;
+extern s8 D_80141BDC;
 
 s32 func_80034E2C();
 s32 func_80034F7C();
@@ -153,3 +160,6 @@ void func_80027BE4(struct Unk9*);
 s32 func_80039C34(struct Unk12*);
 s32 func_80039E5C(struct Unk12*);
 s32 func_80039F28(struct Unk12*);
+void func_80012EB8();
+void func_8001D134();
+void func_8002A7D0();
