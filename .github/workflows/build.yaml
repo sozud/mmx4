@@ -38,6 +38,8 @@ jobs:
         with:
           ref: ${{ github.ref }}
           submodules: true
+      - name: Lint
+        run: sh format.sh && git diff --exit-code
       - name: Get dependencies
         uses: actions/checkout@v4
         with:
