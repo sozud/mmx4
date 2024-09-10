@@ -22,6 +22,10 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
+#include "psy-q-4.0/LIBGPU.H"
+#include "psy-q-4.0/LIBGTE.H"
+#include "psy-q-4.0/SYS/TYPES.H"
+
 struct Unk {
     u8 pad[5];
     u8 unk5;
@@ -145,6 +149,30 @@ struct Unk15 {
     s8 unkC3;
 };
 
+struct Unk16 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    s32 unk14;
+    u8 unk18[0x70 - 0x18];
+    s32 unk70;
+    u8 unk74[0x9C - 0x74];
+    u32 unk9C;
+};
+
+extern struct Unk16 D_80141BD8;
+extern struct Unk16 D_80166C10[];
+
+struct DrawInfo {
+    DISPENV dispenv;
+    DRAWENV drawenv; // 0x14
+    u32 unk70; // 0x70
+    u8 pad[0x28];
+    u32 unk9C; //  0x9c
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -154,6 +182,7 @@ extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern s8 D_80141BDC;
+extern struct DrawInfo* D_80142F80;
 
 s32 func_80034E2C();
 s32 func_80034F7C();

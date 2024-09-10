@@ -1,6 +1,34 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012024);
+// entrypoint
+void func_80012024(void)
+{
+    func_800DAE84();
+    func_8001213C();
+    while (1) {
+        u32 addr = 0x1F800000;
+
+        VSync(0);
+        PutDispEnv(&D_80142F80->dispenv);
+        PutDrawEnv(&D_80142F80->drawenv);
+        DrawOTag(&D_80142F80->unk9C);
+        *(s32*)addr ^= 1;
+        D_80142F80 = &D_80166C10[*(s32*)addr];
+        ClearOTagR(&D_80142F80->unk70, 0xC);
+        func_800168D8();
+        func_800169D8();
+        func_80012328();
+        func_80015E0C();
+        D_80141BD8.unk0++;
+        func_80012600();
+        func_80014780();
+        DrawSync(0);
+        func_80015E54();
+        func_80016004();
+        DrawSync(0);
+        func_80012454();
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_8001213C);
 
