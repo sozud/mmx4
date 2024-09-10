@@ -132,6 +132,19 @@ struct Unk12 {
     s8 unkC3;
 };
 
+struct Unk15 {
+    u8 pad[5];
+    u8 unk5;
+    u8 pad10[0x79];
+    u16 unk80;
+    u16 unk82;
+    u8 pad82[3];
+    u8 unk87;
+    s8 unk88;
+    u8 pad5[0x3a];
+    s8 unkC3;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
