@@ -67,13 +67,28 @@ struct Unk7 {
 };
 
 struct Unk9 {
-    u8 pad0[7];
+    u8 pad0[4];
+    u8 unk4;
+    u8 pad5[3];
     u32 unk8;
     u32 unkC;
     u8 padd[1];
     u32 unk14;
     u32 unk18;
-    u8 pad19[0x2c];
+    u16 unk1C;
+    u16 unk1E;
+    u16 unk20;
+    u16 unk22;
+    u16 unk24;
+    u16 unk26;
+    u16 unk28;
+    u16 unk2A;
+    s16 unk2C;
+    s16 unk2E;
+    s16 unk30;
+    s16 unk32;
+    u8 pad33[19];
+    s8 unk47;
     s8 unk48;
     s8 unk49;
 };
