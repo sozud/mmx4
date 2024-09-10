@@ -32,7 +32,7 @@ jobs:
       - name: Install requirements
         run: sudo apt-get install gcc-mipsel-linux-gnu bchunk ninja-build
       - name: Install python requirements
-        run: pip3 install splat64==0.24.6 spimdisasm>=1.26.0 rabbitizer>=1.11.0 n64img==0.3.3 pygfxd crunch64
+        run: pip3 install splat64==0.24.6 spimdisasm>=1.26.0 rabbitizer>=1.11.0 n64img==0.3.3 pygfxd crunch64 tabulate
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
