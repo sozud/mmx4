@@ -788,7 +788,22 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002771C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027850);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027908);
+void func_80027908(struct Unk9* arg0)
+{
+    arg0->unk47 = 2;
+    arg0->unk48 = 8;
+    arg0->unk2C = 0x60;
+    arg0->unk2E = 0xC0;
+    arg0->unk30 = 0xA0;
+    arg0->unk32 = 0xA0;
+    arg0->unk14 = arg0->unk8;
+    arg0->unk18 = arg0->unkC;
+    arg0->unk24 = arg0->unk1C;
+    arg0->unk26 = arg0->unk1E;
+    arg0->unk28 = arg0->unk20;
+    arg0->unk2A = arg0->unk22;
+    arg0->unk4++;
+}
 
 void func_80027974(struct Unk9* arg0)
 {
