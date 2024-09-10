@@ -122,6 +122,13 @@ struct Unk11 {
     u8 unk89;
 };
 
+struct Unk12 {
+    u8 pad0[2];
+    s8 unk2;
+    u8 pad3[0xc0];
+    s8 unkC3;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -143,3 +150,6 @@ void func_80027AAC(struct Unk9*);
 void func_80027AFC(struct Unk9*);
 void func_80027B70(struct Unk9*);
 void func_80027BE4(struct Unk9*);
+s32 func_80039C34(struct Unk12*);
+s32 func_80039E5C(struct Unk12*);
+s32 func_80039F28(struct Unk12*);

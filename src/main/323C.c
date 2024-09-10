@@ -1784,7 +1784,19 @@ void func_800397E8(struct Unk11* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80039808);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80039880);
+s32 func_80039880(struct Unk12* arg0)
+{
+    if (arg0->unk2 == 0) {
+        return 0;
+    } else if (arg0->unkC3 != 0) {
+        return 0;
+    } else if (func_80039F28(arg0) != 0) {
+        return 1;
+    } else if (func_80039E5C(arg0) == 0) {
+        return func_80039C34(arg0) != 0;
+    }
+    return 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800398F0);
 
