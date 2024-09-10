@@ -11,6 +11,8 @@
 
 __asm__(".include \"macro.inc\"\n");
 
+#define NULL ((void*)0)
+
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
@@ -79,6 +81,36 @@ s8 unk48;
 s8 unk49;
 };
 
+struct Unk10 {
+    u8 pad[0x2A];
+    u8 unk2A;
+    u8 unk2B;
+    u8 unk2C;
+    u8 unk2D;
+    u8 unk2E;
+    u8 unk2F;
+    u8 pad2[8];
+}; /* size 0x35 */
+
+struct Unk11 {
+    u8 unk00;
+    u8 unk01;
+    s8 unk02;
+    u8 padding03[3];
+    u8 unk06;
+    u8 padding07[13];
+    u8 unk14;
+    u8 padding15[11];
+    u32 unk20;
+    s32 unk24;
+    u32 unk28;
+    u8 padding2C[59];
+    s8 unk67;
+    u8 padding68[33];
+    u8 unk89;
+};
+
+extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
 extern struct Unk5 D_800F0E18[];

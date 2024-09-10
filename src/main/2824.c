@@ -4,7 +4,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012024);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_8001213C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800122E0);
+void func_800122E0(struct Unk10* arg0) {
+    func_800EA714(arg0 + 2, 0xC);
+    arg0->unk2A = 0;
+    arg0->unk2C = 1;
+    arg0->unk2D = 0;
+    arg0->unk2E = 0;
+    arg0->unk2F = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012328);
 
