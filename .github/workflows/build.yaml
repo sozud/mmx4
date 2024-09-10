@@ -59,7 +59,7 @@ jobs:
       - name: Build binaries
         run: sh build.sh
       - name: Get dependencies
-        # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/checkout@v4
         with:
           repository: sozud/mmx4-info
@@ -67,10 +67,10 @@ jobs:
           token: ${{ secrets.MMX4_INFO_TOKEN }}
           path: 'info'
       - name: Generate functions list
-        # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: python3 ./tools/funcs_todo.py > info/functions.md
       - name: Commit all reports
-        # if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
             git config --global user.name 'GitHub Action'
             git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
