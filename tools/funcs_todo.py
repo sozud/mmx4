@@ -262,7 +262,7 @@ def get_file_path(filename):
 def read_hex_numbers(filename):
     file_path = get_file_path(filename)  # Get full path to the file
     with open(file_path, 'r') as file:
-        return {line.strip() for line in file}
+        return {int(line.strip(), 16) for line in file}
 
 # Function to find matching files and sort them by size
 def find_matching_files_sorted_by_size(directory, hex_numbers):
@@ -270,7 +270,7 @@ def find_matching_files_sorted_by_size(directory, hex_numbers):
     for root, _, files in os.walk(directory):
         for filename in files:
             if filename.startswith("func_") and filename.endswith(".s"):
-                hex_part = filename[5:13]  # Extract XXXXXXXX part from func_XXXXXXXX.s
+                hex_part = int(filename[5:13], 16)  # Extract XXXXXXXX part from func_XXXXXXXX.s
                 if hex_part in hex_numbers:
                     file_path = os.path.join(root, filename)
                     file_size = os.path.getsize(file_path)
@@ -278,7 +278,7 @@ def find_matching_files_sorted_by_size(directory, hex_numbers):
     
     # Sort files by size (smallest to largest)
     matching_files.sort(key=lambda x: x[1])
-    
+
     return matching_files
 
 # Main function
