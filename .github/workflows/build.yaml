@@ -32,7 +32,7 @@ jobs:
       - name: Install requirements
         run: sudo apt-get install gcc-mipsel-linux-gnu bchunk ninja-build
       - name: Install python requirements
-        run: pip3 install splat64==0.24.6 spimdisasm>=1.26.0 rabbitizer>=1.11.0 n64img==0.3.3 pygfxd crunch64
+        run: pip3 install splat64==0.24.6 spimdisasm>=1.26.0 rabbitizer>=1.11.0 n64img==0.3.3 pygfxd crunch64 tabulate
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
@@ -58,3 +58,23 @@ jobs:
         run: splat split ./config/SLUS_005.61.splat.yaml
       - name: Build binaries
         run: sh build.sh
+      - name: Get dependencies
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/checkout@v4
+        with:
+          repository: sozud/mmx4-info
+          ref: main
+          token: ${{ secrets.MMX4_INFO_TOKEN }}
+          path: 'info'
+      - name: Generate functions list
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: python3 ./tools/funcs_todo.py > info/functions.md
+      - name: Commit all reports
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+            git config --global user.name 'GitHub Action'
+            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'Update reports' || true
+            git push
+        working-directory: info
