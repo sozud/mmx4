@@ -976,7 +976,21 @@ void func_80029928(struct Unk2* arg0)
     arg0->unk4--;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029978);
+void func_80029978(struct Unk2* arg0)
+{
+    if (D_80141BDC == 0) {
+        func_8001D134();
+        D_801419B3 = 0;
+        D_80141A07 = 0;
+        D_80141A5B = 0;
+        func_8002A7D0();
+        func_80012EB8();
+        arg0->unk0 = 3;
+        arg0->unk1 = 0;
+        arg0->unkC = 0;
+        arg0->unkD = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800299EC);
 
