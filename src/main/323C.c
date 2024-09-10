@@ -175,7 +175,7 @@ extern s32 D_800F1860;
 
 void func_800160F4(void)
 {
-    func_800EA4D0(&D_800F1860, &D_800F1660);
+    LoadImage(&D_800F1860, &D_800F1660);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016124);
