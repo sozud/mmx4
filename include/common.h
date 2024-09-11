@@ -173,6 +173,17 @@ struct DrawInfo {
     u32 unk9C; //  0x9c
 };
 
+struct Unk8001FB50 {
+    s8 unk0;
+    u8 pad1[0x1c];
+    s8 unk1D;
+    s8 unk1E;
+    u8 pad[0x25];
+    s8 unk44;
+    u8 pad45;
+    s8 unk46;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -183,6 +194,9 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern s8 D_80141BDC;
 extern struct DrawInfo* D_80142F80;
+extern struct Unk8001FB50 D_801721C0;
+extern void (*D_800F23E8[1])(void*);
+extern s8 D_80171EA8;
 
 s32 func_80034E2C();
 s32 func_80034F7C();
@@ -205,3 +219,17 @@ s32 func_80039F28(struct Unk12*);
 void func_80012EB8();
 void func_8001D134();
 void func_8002A7D0();
+void func_8001FBB8(struct Unk8001FB50* arg0);
+void func_800299EC(struct Unk8001FB50* arg0);
+void func_8001FBD4(struct Unk8001FB50* arg0);
+void func_8002FC38(struct Unk8001FB50* arg0);
+void func_8001FBE0(struct Unk8001FB50* arg0);
+void func_8001FC20(struct Unk8001FB50* arg0);
+void func_8001FF50(struct Unk8001FB50* arg0);
+void func_8001FAFC(struct Unk8001FB50* arg0);
+void func_80020AC8(struct Unk8001FB50* arg0);
+void func_80020D98(struct Unk8001FB50* arg0);
+void func_80020464(struct Unk8001FB50* arg0);
+void func_80023A54(struct Unk8001FB50* arg0);
+void func_800204AC(struct Unk8001FB50* arg0);
+void func_80013014();
