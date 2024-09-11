@@ -122,7 +122,7 @@ ninja.rule('as',
            'mipsel-linux-gnu-as -no-pad-sections -I./src/main $in -o $out')
 
 ninja.rule('link',
-           'mipsel-linux-gnu-ld -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt $in -o $out')
+           'mipsel-linux-gnu-ld -Map=build/us/main.map -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt $in -o $out')
 
 ninja.rule('objcopy',
            'mipsel-linux-gnu-objcopy $in -O binary $out')
