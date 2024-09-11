@@ -175,7 +175,8 @@ struct DrawInfo {
 
 struct Unk8001FB50 {
     s8 unk0;
-    u8 pad1[0x1c];
+    s8 unk1;
+    u8 pad1[0x1b];
     s8 unk1D;
     s8 unk1E;
     u8 pad[0x25];
@@ -197,6 +198,9 @@ extern struct DrawInfo* D_80142F80;
 extern struct Unk8001FB50 D_801721C0;
 extern void (*D_800F23E8[1])(void*);
 extern s8 D_80171EA8;
+extern void (*D_800F44A8[1])();
+extern void (*D_800F48A4[1])(struct Unk8001FB50* arg0);
+extern void (*D_800F241C[1])(void);
 
 s32 func_80034E2C();
 s32 func_80034F7C();
@@ -233,3 +237,13 @@ void func_80020464(struct Unk8001FB50* arg0);
 void func_80023A54(struct Unk8001FB50* arg0);
 void func_800204AC(struct Unk8001FB50* arg0);
 void func_80013014();
+void func_80021858();
+void func_80023D68();
+void func_8002A484();
+void func_8002B460();
+void func_8002166C();
+void func_80021858();
+void func_80021A20();
+void func_80023D68();
+void func_8002A484();
+void func_8002B460();
