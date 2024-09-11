@@ -4,3 +4,4 @@ ninja
 pygfxd
 spimdisasm>=1.28.1,<2.0.0
 splat64
+tabulate
