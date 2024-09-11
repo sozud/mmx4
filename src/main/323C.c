@@ -8223,15 +8223,52 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B18);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6C74);
+void func_800B6C74(s32 arg0) {
+    func_800B6C9C(arg0);
+}
 
 void func_800B6C94(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6C9C);
+void func_800B6C9C(s32 arg0) {
+    func_800B6D1C(arg0, 0, func_800B6FF4(arg0, 0));
+    func_800B6D1C(arg0, 1, func_800B6FF4(arg0, 1));
+    func_800B6D1C(arg0, 2, func_800B6FF4(arg0, 2));
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6D1C);
+void func_800B6D1C(s32 arg0, s8 arg1, s32 arg2) {
+    s8 temp;
+    u16 a1, a3;
+    struct Unk17* temp_s0;
+
+    temp_s0 = &D_801419B0[arg1];
+    if ((arg2 << 0x18) != 0) {
+        if (arg2 & 1) {
+            a1 = temp_s0->unkA;
+            a3 = temp_s0->unkE;
+            func_800B6EB4(a1 + 0x130, a1 + 0x190, a3 - 0x50, a3 + 0x140, arg0);
+        }
+        temp = arg2 & 2;
+        if (temp != 0) {
+            a1 = temp_s0->unkA;
+            a3 = temp_s0->unkE;
+            func_800B6EB4(a1 - 0x50, a1 - 0x10, a3 - 0x50, a3 + 0x140, arg0);
+        }
+        temp = arg2 & 4;
+        if (temp != 0) {
+            a1 = temp_s0->unkA;
+            a3 = temp_s0->unkE;
+            func_800B6EB4(a1 - 0x50, a1 + 0x190, a3 + 0x100, a3 + 0x140, arg0);
+        }
+        temp = arg2 & 8;
+        if (temp != 0) {
+            a1 = temp_s0->unkA;
+            a3 = temp_s0->unkE;
+            func_800B6EB4(a1 - 0x50, a1 + 0x190, a3 - 0x50, a3 - 0x10, arg0);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6EB4);
 
