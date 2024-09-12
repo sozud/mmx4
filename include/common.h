@@ -165,6 +165,16 @@ struct Unk16 {
 extern struct Unk16 D_80141BD8;
 extern struct Unk16 D_80166C10[];
 
+struct Unk17 {
+    u8 pad0[0xA];
+    u16 unkA;
+    u16 : 16;
+    u16 unkE;
+    u8 pad[68];
+}; /* size 0x54 */
+
+extern struct Unk17 D_801419B0[];
+
 struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
@@ -247,3 +257,7 @@ void func_80021A20();
 void func_80023D68();
 void func_8002A484();
 void func_8002B460();
+void func_800B6C9C(s32 arg0);
+void func_800B6D1C(s32, s8, s32);
+void func_800B6EB4(s16, s16, s16, s16, s32);
+s8 func_800B6FF4(s32, s8);
