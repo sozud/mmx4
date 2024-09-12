@@ -52,7 +52,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6494);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D64D8);
 
-void func_800D666C(struct Unk18* arg0)
+void func_800D666C(struct Unk* arg0)
 {
     func_8002B13C(arg0);
 }
@@ -101,7 +101,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7194);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7468);
 
-void func_800D76D8(struct Unk18* arg0)
+void func_800D76D8(struct Unk* arg0)
 {
     func_8002B13C(arg0);
 }
