@@ -231,6 +231,20 @@ struct Unk21 {
     u8 unk16;
 };
 
+struct Unk800F2294 {
+    u8 pad;
+    u8 unk1;
+    u8 pad2[2];
+    s16 unk4;
+    u8 pad3[3];
+    u16 unkA;
+};
+
+struct Unk80139690 {
+    u8 pad;
+    s8 unk1;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -256,6 +270,11 @@ extern s8 D_80173C6C;
 extern s8 D_80173C6D;
 extern s8 D_80173C6E;
 extern s8 D_80173C6F;
+extern s32 D_801395E4;
+extern s32 D_801395E8;
+extern volatile s32 D_80139634;
+extern struct Unk80139690* D_80139690;
+extern u8 D_8013E470;
 
 s32 func_80034E2C();
 s32 func_80034F7C();
@@ -309,3 +328,23 @@ s8 func_800B6FF4(s32, s8);
 void func_8002B13C(struct Unk18* arg0);
 void func_80023DB8();
 void func_80026648();
+
+// D_800F2294 table
+void func_8001DCCC(struct Unk800F2294* arg0);
+void func_8001E690(struct Unk800F2294* arg0);
+void func_8001DDB0(struct Unk800F2294* arg0);
+void func_8001DE20(struct Unk800F2294* arg0);
+void func_8001DE54(struct Unk800F2294* arg0);
+void func_8001DF48(struct Unk800F2294* arg0);
+void func_8001DF7C(struct Unk800F2294* arg0);
+void func_8001E000(struct Unk800F2294* arg0);
+void func_8001E130(struct Unk800F2294* arg0);
+void func_8001E3FC(struct Unk800F2294* arg0);
+void func_8001E458(struct Unk800F2294* arg0);
+void func_8001E4F0(struct Unk800F2294* arg0);
+void func_8001E54C(struct Unk800F2294* arg0);
+void func_8001E638(struct Unk800F2294* arg0);
+void func_8001E6BC(struct Unk800F2294* arg0);
+
+s32 func_800E5FF4(s32, s32, u8*);
+void func_800AE6B4(s32*);
