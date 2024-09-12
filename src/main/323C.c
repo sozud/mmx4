@@ -8223,7 +8223,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B18);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B54);
 
-void func_800B6C74(s32 arg0) {
+void func_800B6C74(s32 arg0)
+{
     func_800B6C9C(arg0);
 }
 
@@ -8231,13 +8232,15 @@ void func_800B6C94(void)
 {
 }
 
-void func_800B6C9C(s32 arg0) {
+void func_800B6C9C(s32 arg0)
+{
     func_800B6D1C(arg0, 0, func_800B6FF4(arg0, 0));
     func_800B6D1C(arg0, 1, func_800B6FF4(arg0, 1));
     func_800B6D1C(arg0, 2, func_800B6FF4(arg0, 2));
 }
 
-void func_800B6D1C(s32 arg0, s8 arg1, s32 arg2) {
+void func_800B6D1C(s32 arg0, s8 arg1, s32 arg2)
+{
     s8 temp;
     u16 a1, a3;
     struct Unk17* temp_s0;
