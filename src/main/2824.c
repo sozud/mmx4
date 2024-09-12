@@ -69,7 +69,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800128EC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012910);
 
-void func_80012934(void)
+void func_80012934(s32 arg0)
 {
 }
 

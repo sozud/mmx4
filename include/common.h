@@ -27,9 +27,11 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBGPU.H"
 
 struct Unk {
-    u8 pad[5];
+    u8 pad[4];
+    u8 unk4;
     u8 unk5;
-    u8 pad6[0x86];
+    u8 unk6;
+    u8 pad6[0x85];
     u16 unk8C;
     u32 unk90;
     u32 unk94;
@@ -275,6 +277,8 @@ extern s32 D_801395E8;
 extern volatile s32 D_80139634;
 extern struct Unk80139690* D_80139690;
 extern u8 D_8013E470;
+
+#include "func_tables.h"
 
 s32 func_80034E2C();
 s32 func_80034F7C();
