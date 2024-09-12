@@ -486,7 +486,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E54C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E638);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E690);
+void func_8001E690(struct Unk20* arg0)
+{
+    if (D_80141BDC == 0) {
+        arg0->unk1++;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E6BC);
 
@@ -737,9 +742,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023CA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023CE0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D30);
+void func_80023D30(void)
+{
+    D_80173C6C = 3;
+    D_80173C6D = 4;
+    D_80173C6E = 5;
+    D_80173C6F = 6;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D68);
+void func_80023D68(void)
+{
+    func_80026648();
+    func_80023DB8();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
@@ -854,7 +869,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027BE4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DC0);
+void func_80027DC0(u8* arg0)
+{
+    // overlap with D_800F32D5
+    arg0[4] = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
 
@@ -8669,7 +8688,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB97C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB9B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB9F4);
+void func_800BB9F4(struct Unk21* arg0)
+{
+    if (D_80141BDC == 0) {
+        arg0->unk14 = 0;
+        arg0->unk15 = 0;
+        arg0->unk16 = 0;
+        arg0->unk4 = 1;
+        arg0->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BBA24);
 

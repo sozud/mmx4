@@ -58,7 +58,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800127FC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012854);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800128B8);
+void func_800128B8(s32 arg0)
+{
+    D_8012F490 = arg0;
+    D_800EE458 = 1;
+    ChangeTh(0xFF000000);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800128EC);
 
