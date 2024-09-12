@@ -216,6 +216,21 @@ struct Unk19 {
     s32 unk24;
 };
 
+struct Unk20 {
+    u8 unk0;
+    u8 unk1;
+};
+
+struct Unk21 {
+    u8 pad[4];
+    u8 unk4;
+    u8 unk5;
+    u8 pad2[0xe];
+    u8 unk14;
+    u8 unk15;
+    u8 unk16;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -232,6 +247,15 @@ extern s8 D_80171EA8;
 extern void (*D_800F44A8[1])();
 extern void (*D_800F48A4[1])(struct Unk8001FB50* arg0);
 extern void (*D_800F241C[1])(void);
+extern u8 D_800F32D4[1][1];
+extern s8 D_801721CC;
+extern s8 D_801721CD;
+extern s32 D_800EE458;
+extern s32 D_8012F490;
+extern s8 D_80173C6C;
+extern s8 D_80173C6D;
+extern s8 D_80173C6E;
+extern s8 D_80173C6F;
 
 s32 func_80034E2C();
 s32 func_80034F7C();
@@ -283,3 +307,5 @@ void func_800B6D1C(s32, s8, s32);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
 void func_8002B13C(struct Unk18* arg0);
+void func_80023DB8();
+void func_80026648();
