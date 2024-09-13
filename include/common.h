@@ -40,7 +40,8 @@ struct Unk {
 struct Unk2 {
     u8 unk0;
     u8 unk1;
-    u8 pad2[2];
+    s8 unk2;
+    u8 pad2[1];
     s16 unk4;
     u8 pad5[6];
     u8 unkC;
@@ -210,12 +211,20 @@ struct Unk18 {
 };
 
 struct Unk19 {
-    u8 pad[8];
+    u8 pad[0x7];
     s32 unk8;
     s32 unkC;
-    u8 pad2[0x10];
+    u8 pad6[0x7];
+    s8 unk17;
+    s8 pad2[0x6];
     s32 unk20;
     s32 unk24;
+    u8 pad345[5];
+    u32* unk30;
+    u32* unk34;
+    s8 pad3[0xc];
+    u32 unk44;
+    u8 unk48;
 };
 
 struct Unk20 {
@@ -277,6 +286,8 @@ extern s32 D_801395E8;
 extern volatile s32 D_80139634;
 extern struct Unk80139690* D_80139690;
 extern u8 D_8013E470;
+extern void (*D_800F43A8[1])(s32);
+extern void (*D_800F4498[1])(void);
 
 #include "func_tables.h"
 
