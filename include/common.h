@@ -256,6 +256,16 @@ struct Unk80139690 {
     s8 unk1;
 };
 
+struct Unk800F24A4 {
+    u8 pad0[4];
+    s8 unk4;
+};
+
+struct Unk800F285C {
+    u8 pad0[4];
+    s8 unk4;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -288,6 +298,9 @@ extern struct Unk80139690* D_80139690;
 extern u8 D_8013E470;
 extern void (*D_800F43A8[1])(s32);
 extern void (*D_800F4498[1])(void);
+extern void (*D_800FB0F4[1])();
+extern void (*D_8010B34C[1])();
+extern void (*D_8010B4C4[1])();
 
 #include "func_tables.h"
 
