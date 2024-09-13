@@ -2700,11 +2700,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800497FC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80049884);
 
-void func_800498C0(void)
+void func_800498C0(struct Unk800F24A4* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800498C8);
+void func_800498C8(struct Unk800F24A4* arg0)
+{
+    D_800FB0F4[arg0->unk4]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80049904);
 
@@ -8259,7 +8262,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5960);
+void func_800B5960(struct Unk800F285C* arg0)
+{
+    D_8010B34C[arg0->unk4]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B599C);
 
@@ -8295,7 +8301,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A48);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B18);
+void func_800B6B18(struct Unk800F285C* arg0)
+{
+    D_8010B4C4[arg0->unk4]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B54);
 
@@ -8417,7 +8426,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B7E88);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B7EE8);
 
-void func_800B8064(void)
+void func_800B8064(struct Unk800F285C* arg0)
 {
 }
 
