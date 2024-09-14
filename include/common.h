@@ -27,11 +27,25 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBGPU.H"
 
 struct Unk {
-    u8 pad[4];
+    u8 pad0[4];
     u8 unk4;
     u8 unk5;
     u8 unk6;
-    u8 pad6[0x85];
+    u8 pad5[3];
+    s16 unkA;
+    s16 padc;
+    s16 unkE;
+    u8 pad6[0x10];
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    u8 pad30[0x10];
+    u16 unk40;
+    u16 unk42;
+    u8 pad2f[0x23];
+    s8 unk67;
+    u8 pad68[0x23];
     u16 unk8C;
     u32 unk90;
     u32 unk94;
@@ -62,15 +76,21 @@ struct Unk5 {
 struct Unk6 {
     u8 pad0[5];
     u8 unk5;
+    u8 pad5[4];
+    s16 unkA;
+    s16 padc;
+    s16 unkE;
     u8 pad6[0x19];
     s32 unk20;
     s32 unk24;
     s32 unk28;
     s32 unk2C;
+    u8 pad30[0x3];
+    u16 unk40;
+    u16 unk42;
     u8 pad2f[0x37];
     s8 unk67;
 };
-
 struct Unk7 {
     u8 pad[0x80];
     u16 unk80;
@@ -301,6 +321,10 @@ extern void (*D_800F4498[1])(void);
 extern void (*D_800FB0F4[1])();
 extern void (*D_8010B34C[1])();
 extern void (*D_8010B4C4[1])();
+extern void (*D_8010BEC8[1])();
+extern s16* D_801F8300;
+extern u16 D_801419BA;
+extern u16 D_801419BE;
 
 #include "func_tables.h"
 
@@ -376,3 +400,4 @@ void func_8001E6BC(struct Unk800F2294* arg0);
 
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
+void func_80027FA8();
