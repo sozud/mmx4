@@ -636,14 +636,14 @@ void func_80028620(struct Unk* arg0);
 void func_80028658(struct Unk* arg0);
 
 // D_800F43A8
-struct Unk11* func_8002AB74(void);
-struct Unk11* func_8002AC0C(void);
-struct Unk11* func_8002AD3C(void);
-struct Unk11* func_8002AD7C(void);
-struct Unk11* func_8002ADBC(void);
-struct Unk11* func_8002AE50(void);
-struct Unk11* func_8002B008(void);
-struct Unk11* func_8002B048(void);
+struct Unk* func_8002AB74(void);
+struct Unk* func_8002AC0C(void);
+struct Unk* func_8002AD3C(void);
+struct Unk* func_8002AD7C(void);
+struct Unk* func_8002ADBC(void);
+struct Unk* func_8002AE50(void);
+struct Unk* func_8002B008(void);
+struct Unk* func_8002B048(void);
 
 // D_800F4498
 void func_80029604(void);

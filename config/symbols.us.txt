@@ -266,3 +266,7 @@ SpuWritePartly = 0x800E4C54;
 _spu_setInTransfer = 0x800E1A60;
 _spu_getInTransfer = 0x800E1A8C;
 SpuSetCommonAttr = 0x800DD170;
+
+game_objects = 0x8013BED0;
+weapon_objects = 0x801406F8;
+shot_objects = 0x8013F328;
