@@ -326,7 +326,6 @@ extern s16* D_801F8300;
 extern u16 D_801419BA;
 extern u16 D_801419BE;
 
-
 #include "func_tables.h"
 
 s32 func_80034E2C();
