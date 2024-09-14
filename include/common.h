@@ -358,6 +358,11 @@ extern void (*D_8010E824[1])();
 extern void (*D_8010EB84[1])();
 extern void (*D_8010EBF4[1])();
 extern struct Unk game_objects[0x30]; // D_8013BED0
+extern void (*D_8010EC10[1])();
+extern void (*D_8010F690[1])();
+extern void (*D_8010FC84[1])();
+extern void (*D_8010FDD0[1])();
+extern u8 D_8013BC34;
 
 #include "func_tables.h"
 
@@ -434,3 +439,4 @@ void func_8001E6BC(struct Unk800F2294* arg0);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
 void func_80027FA8();
+void func_8002F048();
