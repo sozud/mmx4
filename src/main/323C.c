@@ -1127,7 +1127,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A7D0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AB20);
 
-struct Unk* func_8002AB74(void)
+struct Unk* find_free_game_obj(void)
 {
     struct Unk* var_v1;
     for (var_v1 = &game_objects[0]; var_v1 < &game_objects[0x30]; var_v1++) {
