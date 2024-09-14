@@ -27,16 +27,17 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBGPU.H"
 
 struct Unk {
-    u8 pad0[2];
+    s8 active;
+    s8 id; // 0x01
     s8 unk2;
     s8 unk3;
     s8 unk4;
     u8 unk5;
     s8 unk6;
     u8 pad5[3];
-    s16 unkA;
+    s16 x_pos; // 0x0A
     s16 padc;
-    s16 unkE;
+    s16 y_pos; // 0x0E
     u8 pad6[0x10];
     s32 unk20;
     s32 unk24;
@@ -45,13 +46,36 @@ struct Unk {
     u8 pad30[0x10];
     u16 unk40;
     u16 unk42;
-    u8 pad2f[0x23];
+    s8 pad43[9];
+    s32 unk50;
+    s32 unk54;
+    s8 pad55[5];
+    s8 unk5D;
+    u8 pad2f[3];
+    s8 unk61;
+    s8 unk62;
+    s8 unk63;
+    s8 unk64;
+    s8 unk65;
+    s8 unk66;
     s8 unk67;
-    u8 pad68[0x23];
+    s32 unk68;
+    s8 pad69[6];
+    s8 unk72;
+    s8 unk73;
+    s8 unk74;
+    s8 unk75;
+    s8 unk76;
+    s8 unk77;
+    s8 unk78;
+    s8 pad79[1];
+    s8 unk7A;
+    u8 pad68[0x10];
     u16 unk8C;
     u32 unk90;
     u32 unk94;
-};
+    u32 pad98;
+}; // size 0x9c
 
 struct Unk2 {
     u8 unk0;
@@ -333,6 +357,7 @@ extern void (*D_8010E6FC[1])();
 extern void (*D_8010E824[1])();
 extern void (*D_8010EB84[1])();
 extern void (*D_8010EBF4[1])();
+extern struct Unk game_objects[0x30]; // D_8013BED0
 
 #include "func_tables.h"
 

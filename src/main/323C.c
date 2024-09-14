@@ -948,10 +948,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
 void func_80028070(struct Unk* arg0)
 {
-    arg0->unkA = (D_801419BA + arg0->unk40);
+    arg0->x_pos = (D_801419BA + arg0->unk40);
     do {
     } while (0); // hmmmm inlines?
-    arg0->unkE = (D_801419BE + arg0->unk42);
+    arg0->y_pos = (D_801419BE + arg0->unk42);
     func_80027FA8();
 }
 
@@ -1127,7 +1127,35 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A7D0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AB20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AB74);
+struct Unk* find_free_game_obj(void)
+{
+    struct Unk* var_v1;
+    for (var_v1 = &game_objects[0]; var_v1 < &game_objects[0x30]; var_v1++) {
+        if (var_v1->active == 0) {
+            var_v1->unk50 = 0;
+            var_v1->unk54 = 0;
+            var_v1->unk68 = 0;
+            var_v1->unk61 = 0;
+            var_v1->unk64 = 0;
+            var_v1->unk65 = 0;
+            var_v1->unk66 = 0;
+            var_v1->unk72 = 0;
+            var_v1->unk73 = 0;
+            var_v1->unk74 = 0;
+            var_v1->unk76 = 0;
+            var_v1->unk77 = 0;
+            var_v1->unk78 = 0;
+            var_v1->unk62 = 0;
+            var_v1->unk63 = 0;
+            var_v1->unk7A = 0;
+            var_v1->unk5D = 0;
+            var_v1->unk75 = 0;
+            return var_v1;
+        }
+    }
+
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AC0C);
 
