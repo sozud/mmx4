@@ -346,6 +346,13 @@ struct MiscObj {
     u8 pad[0x60 - 1];
 };
 
+struct Unk24 {
+    s8 pad[2];
+    s8 unk2;
+    s8 pad2[0x3d];
+    s8 unk40;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -400,6 +407,8 @@ extern u8 D_8013BC34;
 extern s16 D_80173C7A;
 extern struct EffectObj effect_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
+extern void (*D_800F485C[1])();
+extern s32 D_8013BC28;
 
 #include "func_tables.h"
 
@@ -484,3 +493,5 @@ void func_80023D30();
 void func_8002AB20();
 void func_8001D230();
 void func_8001D284();
+void func_80022730(s32*);
+void func_8002B718();
