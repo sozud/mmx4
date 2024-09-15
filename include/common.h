@@ -337,6 +337,15 @@ struct Unk23 {
     s8 unk1D;
 };
 
+struct EffectObj {
+    s8 active;
+    u8 pad[0x30 - 1];
+};
+struct MiscObj {
+    s8 active;
+    u8 pad[0x60 - 1];
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -389,6 +398,8 @@ extern void (*D_8010FC84[1])();
 extern void (*D_8010FDD0[1])();
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
+extern struct EffectObj effect_objects[0x20];
+extern struct MiscObj misc_objects[0x40];
 
 #include "func_tables.h"
 
@@ -471,3 +482,5 @@ void func_80015930(u8, u8);
 void func_80016F0C();
 void func_80023D30();
 void func_8002AB20();
+void func_8001D230();
+void func_8001D284();
