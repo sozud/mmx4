@@ -1414,7 +1414,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F2A0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F47C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F4C4);
+void func_8002F4C4(struct Unk24* arg0)
+{
+    arg0->unk40 = 0;
+    D_800F485C[arg0->unk2]();
+    func_80022730(&D_8013BC28);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F510);
 
@@ -8373,7 +8378,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5B54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5CC4);
+void func_800B5CC4(struct Unk800F285C* arg0)
+{
+    if (arg0->unk4 == 0) {
+        func_800B5D04();
+        return;
+    }
+    func_800B5E2C();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5D04);
 
@@ -9765,7 +9777,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCCA0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCD48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCD8C);
+void func_800CCD8C(struct Unk* arg0)
+{
+    func_8002B718(arg0);
+    if (arg0->unk3 == 0) {
+        arg0->unk4++;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCDD4);
 
