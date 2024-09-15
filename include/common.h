@@ -254,6 +254,8 @@ struct Unk18 {
     s8 unk6;
     s8 unk7;
     s8 unk8;
+    s8 unk9[4];
+    u8* unk10;
 };
 
 struct Unk19 {
@@ -310,6 +312,19 @@ struct Unk800F24A4 {
 struct Unk800F285C {
     u8 pad0[4];
     s8 unk4;
+};
+
+struct Unk22 {
+    u8 pad0[8];
+    s32 unk8;
+    s32 unkC;
+    u8 pad[0x28];
+    s32 unk38;
+    s32 unk3C;
+    s32 unk40;
+    s32 unk44;
+    s32 unk48;
+    s32 unk4C;
 };
 
 extern u8 D_800F8B30[];
