@@ -25,6 +25,7 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/SYS/TYPES.H"
 #include "psy-q-4.0/LIBGTE.H"
 #include "psy-q-4.0/LIBGPU.H"
+#include "psy-q-4.0/LIBSND.H"
 
 struct Unk {
     s8 active;
@@ -32,7 +33,7 @@ struct Unk {
     s8 unk2;
     s8 unk3;
     s8 unk4;
-    u8 unk5;
+    s8 unk5;
     s8 unk6;
     u8 pad5[3];
     s16 x_pos; // 0x0A
@@ -409,6 +410,7 @@ extern struct EffectObj effect_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
+extern void (*D_8010E710[1])(void);
 
 #include "func_tables.h"
 
@@ -495,3 +497,4 @@ void func_8001D230();
 void func_8001D284();
 void func_80022730(s32*);
 void func_8002B718();
+void func_8002B288(struct Unk*);

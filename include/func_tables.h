@@ -5432,11 +5432,11 @@ void func_800CB1F0(struct Unk* arg0);
 void func_800CB614(struct Unk* arg0);
 
 // D_8010E6FC
-void func_800CB22C(void);
-void func_800CB22C(void);
-void func_800CB554(void);
-void func_800CB590(void);
-void func_800CB590(void);
+void func_800CB22C(struct Unk* arg0);
+void func_800CB22C(struct Unk* arg0);
+void func_800CB554(struct Unk* arg0);
+void func_800CB590(struct Unk* arg0);
+void func_800CB590(struct Unk* arg0);
 
 // D_8010E710
 void func_800CB27C(void);
