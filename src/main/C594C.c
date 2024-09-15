@@ -104,7 +104,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7058);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7100);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7154);
+void func_800D7154(struct Unk* arg0)
+{
+    if (D_80173C7A == 2) {
+        arg0->unk38 = 0x2C;
+        arg0->unk4 = 5;
+    }
+    func_800D46F4();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7194);
 

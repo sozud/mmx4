@@ -434,7 +434,14 @@ void func_8001D10C(void)
     SetDispMask(0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D134);
+void func_8001D134(void)
+{
+    func_80023D30();
+    func_80016F0C();
+    func_80015930(0xFF, 0);
+    func_8002A7D0();
+    func_8002AB20();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D178);
 
@@ -636,7 +643,17 @@ void func_8001FBE0(struct Unk8001FB50* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FC20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FD7C);
+s32 func_8001FD7C(struct Unk23* arg0)
+{
+    if (arg0->unkC != 0xC) {
+        return 0;
+    } else if (arg0->unkD != 0) {
+        return 0;
+    } else if (arg0->unk1D >= 2) {
+        return arg0->unk1D < 0xA;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FDBC);
 
