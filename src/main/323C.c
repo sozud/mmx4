@@ -447,7 +447,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D178);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D1A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D1F0);
+void func_8001D1F0(struct Unk* arg0)
+{
+    if (arg0->id == 0) {
+        func_8001D230();
+        return;
+    }
+    func_8001D284();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D230);
 
@@ -1180,11 +1187,29 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ACA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AD3C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AD7C);
+struct EffectObj* find_free_effect_obj(void)
+{
+    struct EffectObj* var_v0;
+    for (var_v0 = &effect_objects[0]; var_v0 < &effect_objects[0x20]; var_v0++) {
+        if (!var_v0->active) {
+            return var_v0;
+        }
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ADBC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AE50);
+struct MiscObj* find_free_misc_obj(void)
+{
+    struct MiscObj* var_v0;
+    for (var_v0 = &misc_objects[0]; var_v0 < &misc_objects[0x40]; var_v0++) {
+        if (!var_v0->active) {
+            return var_v0;
+        }
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AE90);
 

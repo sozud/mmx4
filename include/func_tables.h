@@ -24,18 +24,18 @@ void func_80016E34(void);
 void func_80016E84(void);
 
 // D_800F1F64
-void func_800194C8(void);
-void func_8001961C(void);
-void func_8001989C(void);
-void func_80019B64(void);
-void func_80019EF0(void);
-void func_8001A178(void);
-void func_8001A308(void);
-void func_8001A498(void);
-void func_8001A710(void);
-void func_8001A7D4(void);
-void func_8001A860(void);
-void func_8001A8E8(void);
+void func_800194C8(struct Unk* arg0);
+void func_8001961C(struct Unk* arg0);
+void func_8001989C(struct Unk* arg0);
+void func_80019B64(struct Unk* arg0);
+void func_80019EF0(struct Unk* arg0);
+void func_8001A178(struct Unk* arg0);
+void func_8001A308(struct Unk* arg0);
+void func_8001A498(struct Unk* arg0);
+void func_8001A710(struct Unk* arg0);
+void func_8001A7D4(struct Unk* arg0);
+void func_8001A860(struct Unk* arg0);
+void func_8001A8E8(struct Unk* arg0);
 
 // D_800F1F94
 void func_80019BA0(void);
@@ -69,17 +69,17 @@ void func_8001D8DC(void);
 void func_8001D9D0(void);
 
 // D_800F21B0
-void func_8001D1F0(void);
-void func_8001E708(void);
-void func_8001D294(void);
-void func_8001D57C(void);
-void func_8001D698(void);
-void func_8001D6DC(void);
-void func_8001D77C(void);
-void func_8001F0BC(void);
-void func_8001EC34(void);
-void func_8001DAD0(void);
-void func_8002A41C(void);
+void func_8001D1F0(struct Unk* arg0);
+void func_8001E708(struct Unk* arg0);
+void func_8001D294(struct Unk* arg0);
+void func_8001D57C(struct Unk* arg0);
+void func_8001D698(struct Unk* arg0);
+void func_8001D6DC(struct Unk* arg0);
+void func_8001D77C(struct Unk* arg0);
+void func_8001F0BC(struct Unk* arg0);
+void func_8001EC34(struct Unk* arg0);
+void func_8001DAD0(struct Unk* arg0);
+void func_8002A41C(struct Unk* arg0);
 
 // D_800F2294
 void func_8001DCCC(struct Unk800F2294* arg0);
