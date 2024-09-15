@@ -43,7 +43,9 @@ struct Unk {
     s32 unk24;
     s32 unk28;
     s32 unk2C;
-    u8 pad30[0x10];
+    u8 pad30[0x8];
+    s16 unk38;
+    u8 pad39[5];
     u16 unk40;
     u16 unk42;
     s8 pad43[9];
@@ -327,6 +329,14 @@ struct Unk22 {
     s32 unk4C;
 };
 
+struct Unk23 {
+    s8 pad[0xc];
+    s8 unkC;
+    s8 unkD;
+    s8 pad2[0xf];
+    s8 unk1D;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -378,6 +388,7 @@ extern void (*D_8010F690[1])();
 extern void (*D_8010FC84[1])();
 extern void (*D_8010FDD0[1])();
 extern u8 D_8013BC34;
+extern s16 D_80173C7A;
 
 #include "func_tables.h"
 
@@ -455,3 +466,8 @@ s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
 void func_80027FA8();
 void func_8002F048();
+void func_800D46F4();
+void func_80015930(u8, u8);
+void func_80016F0C();
+void func_80023D30();
+void func_8002AB20();
