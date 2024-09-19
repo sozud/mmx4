@@ -411,6 +411,24 @@ extern struct MiscObj misc_objects[0x40];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
 extern void (*D_8010E710[1])(void);
+extern s32 D_80137DC4;
+extern s32 D_80137DD0;
+extern s8 D_801406AC;
+extern s32 D_80142F70;
+extern s32 D_8015D9C8;
+extern s8 D_801374B4;
+extern s8 D_801374B8;
+extern s8 D_80137CE4;
+extern s8 D_80137CF0;
+extern s8 D_80137CF4;
+extern u8 D_8013BD40;
+extern s8 D_801406AC;
+extern u32 D_800F1D8C;
+extern s8 D_80139644;
+extern s8 D_80139645;
+extern s8 D_80139646;
+extern s8 D_80139647;
+extern s8 D_80171EA9;
 
 #include "func_tables.h"
 
@@ -498,3 +516,8 @@ void func_8001D284();
 void func_80022730(s32*);
 void func_8002B718();
 void func_8002B288(struct Unk*);
+void func_800E5D78(s32);
+s32 func_800E5D90(s32, s32, s32);
+s32 func_80016334();
+s32 func_800E5ACC(void);
+void func_800E6138(s8*);
