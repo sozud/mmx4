@@ -26,6 +26,9 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBGTE.H"
 #include "psy-q-4.0/LIBGPU.H"
 #include "psy-q-4.0/LIBSND.H"
+#include "psy-q-4.0/LIBETC.H"
+#include "psy-q-4.0/KERNEL.H"
+#include "psy-q-4.0/LIBCD.H"
 
 struct Unk {
     s8 active;
@@ -424,7 +427,7 @@ extern s8 D_80137CF4;
 extern u8 D_8013BD40;
 extern s8 D_801406AC;
 extern u32 D_800F1D8C;
-extern s8 D_80139644;
+extern CdlATV D_80139644;
 extern s8 D_80139645;
 extern s8 D_80139646;
 extern s8 D_80139647;

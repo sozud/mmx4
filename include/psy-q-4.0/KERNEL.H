@@ -7,8 +7,9 @@
 /*
  * $PSLibId: Run-time Library Release 4.0$
  */
-#include <r3000.h>
-#include <asm.h>
+#include "R3000.H"
+#include "ASM.H"
+#define LANGUAGE_C
 
 /* don't change these macros and structures which is refereced in kernel code */ 
 
@@ -39,10 +40,10 @@
 #define SwCARD		(DescSW|0x01)	/* memory card */
 #define SwMATH          (DescSW|0x02)	/* libmath */
 
-#define RCntCNT0     	(DescRC|0x00)  	/* •\¦ƒsƒNƒZƒ‹ */
-#define RCntCNT1  	(DescRC|0x01)  	/* …•½“¯Šú */
-#define RCntCNT2  	(DescRC|0x02)  	/* ƒVƒXƒeƒ€ƒNƒƒbƒN‚W•ªü */
-#define RCntCNT3  	(DescRC|0x03)  	/* ‚’¼“¯Šú ƒ^[ƒQƒbƒg’l‚Í‚P‚ÉŒÅ’è */
+#define RCntCNT0     	(DescRC|0x00)  	/* ï¿½\ï¿½ï¿½ï¿½sï¿½Nï¿½Zï¿½ï¿½ */
+#define RCntCNT1  	(DescRC|0x01)  	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+#define RCntCNT2  	(DescRC|0x02)  	/* ï¿½Vï¿½Xï¿½eï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½bï¿½Nï¿½Wï¿½ï¿½ï¿½ï¿½ */
+#define RCntCNT3  	(DescRC|0x03)  	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½^ï¿½[ï¿½Qï¿½bï¿½gï¿½lï¿½Í‚Pï¿½ÉŒÅ’ï¿½ */
 
 #define RCntMdINTR	0x1000
 #define RCntMdNOINTR	0x2000
