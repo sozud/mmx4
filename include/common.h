@@ -218,7 +218,6 @@ struct Unk16 {
 };
 
 extern struct Unk16 D_80141BD8;
-extern struct Unk16 D_80166C10[];
 
 struct Unk17 {
     u8 pad0[0xA];
@@ -233,10 +232,12 @@ extern struct Unk17 D_801419B0[];
 struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
-    u32 unk70; // 0x70
-    u8 pad[0x28];
-    u32 unk9C; //  0x9c
+    u32 unk70;
+    u8 pad2[0x25];
+    u32 unk9C;
 };
+
+extern struct DrawInfo D_80166C10[2];
 
 struct Unk8001FB50 {
     s8 unk0;
@@ -432,6 +433,13 @@ extern s8 D_80139645;
 extern s8 D_80139646;
 extern s8 D_80139647;
 extern s8 D_80171EA9;
+extern s32 D_80166D68;
+extern s32 D_8012F46C;
+extern RECT D_800EE450;
+extern s16 D_8013E2E8;
+extern s32 D_8013BD44;
+extern s16 D_80141BD2;
+extern void (*func_8001D064)(void);
 
 #include "func_tables.h"
 
@@ -524,3 +532,5 @@ s32 func_800E5D90(s32, s32, s32);
 s32 func_80016334();
 s32 func_800E5ACC(void);
 void func_800E6138(s8*);
+void func_8001213C(void);
+void func_800122E0(struct Unk10* arg0);
