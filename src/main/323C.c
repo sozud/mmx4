@@ -60,10 +60,10 @@ void func_80013588(s32 arg0)
     u8 sp10;
     sp10 = 0xA0;
     do {
-    } while (func_800E5ACC() == 0);
+    } while (CdInit() == 0);
     do {
 
-    } while (func_800E5D90(0xE, &sp10, 0) == 0);
+    } while (CdControl(0xE, &sp10, 0) == 0);
     VSync(3);
     D_80137CE4 = 0;
     D_801406AC = 0;
@@ -90,11 +90,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800136B0);
 
 void func_800137F0(void)
 {
-    func_800E5D78(0);
+    CdReadyCallback(0);
     D_801406AC = 0;
     do {
 
-    } while (func_800E5D90(9, 0, 0) == 0);
+    } while (CdControl(9, 0, 0) == 0);
     D_801406AC = 2;
     D_8015D9C8 = D_80137DC4;
     D_80142F70 = D_80137DD0;
@@ -106,7 +106,7 @@ u8 func_8001385C(void)
 
     do {
 
-    } while (func_800E5FF4(1, 0, &sp10) == 0);
+    } while (CdControlB(1, 0, &sp10) == 0);
     return sp10;
 }
 
@@ -342,18 +342,18 @@ void func_80019058(s8 arg0)
 
     D_80171EA9 = arg0;
     if (arg0 & 0xFF) {
-        D_80139645 = 0;
-        D_80139647 = 0;
-        D_80139644 = D_800F1D8C;
-        D_80139646 = D_800F1D8C;
+        D_80139644.val1 = 0;
+        D_80139644.val3 = 0;
+        D_80139644.val0 = D_800F1D8C;
+        D_80139644.val2 = D_800F1D8C;
     } else {
         temp_v0 = D_800F1D8C >> 1;
-        D_80139644 = temp_v0;
-        D_80139645 = temp_v0;
-        D_80139646 = temp_v0;
-        D_80139647 = temp_v0;
+        D_80139644.val0 = temp_v0; // volume for CD(L) -> SPU (L)
+        D_80139644.val1 = temp_v0; // volume for CD(L) -> SPU (R)
+        D_80139644.val2 = temp_v0; // volume for CD(R) -> SPU (L)
+        D_80139644.val3 = temp_v0; // volume for CD(R) -> SPU (R)
     }
-    func_800E6138(&D_80139644);
+    CdMix(&D_80139644);
 }
 
 extern s32 D_80139614;

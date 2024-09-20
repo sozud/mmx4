@@ -6,7 +6,7 @@
  */
 #ifndef _ASM_H
 #define _ASM_H
-
+#if 0
 #define R0  $0
 #define R1  $1
 #define R2  $2
@@ -75,7 +75,7 @@
 #define fp	$30	/* frame pointer */
 #define ra	$31	/* return address */
 #endif
-
+#endif
 
 /* register offset */
 #define	R_R0		0
