@@ -237,7 +237,7 @@ struct DrawInfo {
     u32 unk9C;
 };
 
-extern struct DrawInfo D_80166C10[2];
+extern struct DrawInfo draw_infos[2];
 
 struct Unk8001FB50 {
     s8 unk0;
@@ -367,7 +367,7 @@ extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern s8 D_80141BDC;
-extern struct DrawInfo* D_80142F80;
+extern struct DrawInfo* cur_draw_info;
 extern struct Unk8001FB50 D_801721C0;
 extern void (*D_800F23E8[1])(void*);
 extern s8 D_80171EA8;
@@ -533,4 +533,4 @@ s32 func_80016334();
 s32 func_800E5ACC(void);
 void func_800E6138(s8*);
 void func_8001213C(void);
-void func_800122E0(struct Unk10* arg0);
+void func_800122E0(struct DrawInfo* arg0);
