@@ -454,3 +454,5 @@ shot_objects = 0x8013F328;
 weapon_objects = 0x801406F8;
 effect_objects = 0x80142F98;
 misc_objects = 0x80173CA0;
+cur_draw_info = 0x80142F80;
+draw_infos = 0x80166C10;

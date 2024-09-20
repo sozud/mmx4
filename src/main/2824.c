@@ -1,20 +1,20 @@
 #include "common.h"
 
+#define SP_DRAW_INFO_POS (*(s32*)0x1F800000)
+
 // entrypoint
 void func_80012024(void)
 {
     func_800DAE84();
     func_8001213C();
     while (1) {
-        u32 addr = 0x1F800000;
-
         VSync(0);
-        PutDispEnv(&D_80142F80->dispenv);
-        PutDrawEnv(&D_80142F80->drawenv);
-        DrawOTag(&D_80142F80->unk9C);
-        *(s32*)addr ^= 1;
-        D_80142F80 = &D_80166C10[*(s32*)addr];
-        ClearOTagR(&D_80142F80->unk70, 0xC);
+        PutDispEnv(&cur_draw_info->dispenv);
+        PutDrawEnv(&cur_draw_info->drawenv);
+        DrawOTag(&cur_draw_info->unk9C);
+        SP_DRAW_INFO_POS ^= 1;
+        cur_draw_info = &draw_infos[SP_DRAW_INFO_POS];
+        ClearOTagR(&cur_draw_info->unk70, 0xC);
         func_800168D8();
         func_800169D8();
         func_80012328();
@@ -49,29 +49,29 @@ void func_8001213C(void)
     ChangeClearPAD(0);
     ClearImage(&D_800EE450, 0U, 0U, 0U);
     DrawSync(0);
-    SetDefDrawEnv(&D_80166C10[0].drawenv, 0, 0, 0x140, 0xF0);
-    SetDefDispEnv(&D_80166C10[0].dispenv, 0, 0xF0, 0x140, 0xF0);
-    SetDefDrawEnv(&D_80166C10[1].drawenv, 0, 0xF0, 0x140, 0xF0);
-    SetDefDispEnv(&D_80166C10[1].dispenv, 0, 0, 0x140, 0xF0);
-    func_800122E0(&D_80166C10[0]);
-    func_800122E0(&D_80166C10[1]);
+    SetDefDrawEnv(&draw_infos[0].drawenv, 0, 0, 0x140, 0xF0);
+    SetDefDispEnv(&draw_infos[0].dispenv, 0, 0xF0, 0x140, 0xF0);
+    SetDefDrawEnv(&draw_infos[1].drawenv, 0, 0xF0, 0x140, 0xF0);
+    SetDefDispEnv(&draw_infos[1].dispenv, 0, 0, 0x140, 0xF0);
+    func_800122E0(&draw_infos[0]);
+    func_800122E0(&draw_infos[1]);
     func_80012560();
     D_8013E2E8 = 0xD37;
-    *(s32*)0x1F800000 = 0;
-    D_80142F80 = &D_80166C10;
+    SP_DRAW_INFO_POS = 0;
+    cur_draw_info = &draw_infos[0];
     D_8013BD44 = 0;
     D_80141BD2 = 0x78;
     func_80012740(0, &func_8001D064);
 }
 
-void func_800122E0(struct Unk10* arg0)
+void func_800122E0(struct DrawInfo* arg0)
 {
-    ClearOTagR(arg0 + 2, 0xC);
-    arg0->unk2A = 0;
-    arg0->unk2C = 1;
-    arg0->unk2D = 0;
-    arg0->unk2E = 0;
-    arg0->unk2F = 0;
+    ClearOTagR(&arg0->unk70, 0xC);
+    arg0->drawenv.dtd = 0;
+    arg0->drawenv.isbg = 1;
+    arg0->drawenv.r0 = 0;
+    arg0->drawenv.g0 = 0;
+    arg0->drawenv.b0 = 0;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012328);
