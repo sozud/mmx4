@@ -29,6 +29,7 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBETC.H"
 #include "psy-q-4.0/KERNEL.H"
 #include "psy-q-4.0/LIBCD.H"
+#include "psy-q-4.0/LIBPRESS.H"
 
 struct Unk {
     s8 active;
@@ -432,7 +433,7 @@ extern CdlATV D_80139644;
 extern s8 D_80139645;
 extern s8 D_80139646;
 extern s8 D_80139647;
-extern s8 D_80171EA9;
+extern u8 D_80171EA9;
 extern s32 D_80166D68;
 extern s32 D_8012F46C;
 extern RECT D_800EE450;
@@ -440,6 +441,14 @@ extern s16 D_8013E2E8;
 extern s32 D_8013BD44;
 extern s16 D_80141BD2;
 extern void (*func_8001D064)(void);
+extern s8 D_80139528;
+extern CdlATV D_80139520;
+extern u8 D_80171EA9;
+extern s32 D_80137CD8;
+extern s8 D_801406AC;
+extern RECT D_800F1658;
+extern u32 D_80141F70;
+extern u8 D_80166BB0;
 
 #include "func_tables.h"
 
@@ -534,3 +543,5 @@ s32 func_800E5ACC(void);
 void func_800E6138(s8*);
 void func_8001213C(void);
 void func_800122E0(struct DrawInfo* arg0);
+extern void func_80013A20(void);
+extern void func_80013E68(void);
