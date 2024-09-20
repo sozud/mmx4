@@ -84,7 +84,18 @@ s32 func_80013614(s32 arg0, s32* arg1)
     return temp_v0->unk0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013650);
+void func_80013650(void)
+{
+
+    if (D_80137CD8 == 0) {
+        CdReadyCallback(&func_80013A20);
+    } else {
+        CdReadyCallback(&func_80013E68);
+    }
+    while (CdControl(6, 0, 0) == 0)
+        ;
+    D_801406AC = 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800136B0);
 
@@ -202,9 +213,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015E54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015ECC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016004);
+void func_80016004(void)
+{
+    if (D_80166BB0 != 0) {
+        if (D_80166BB0 & 1) {
+            LoadImage(&D_800F1658, *(volatile u32**)0x1F800028);
+        } else if (D_80166BB0 & 2) {
+            LoadImage(&D_800F1658, &D_80141F70);
+        }
 
-extern u16 D_80141F70;
+        D_80166BB0 = 0;
+    }
+}
 
 // copy scratchpad to memory location
 void func_80016074(void)
@@ -240,16 +260,33 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800163BC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800163EC);
 
-s32 func_80016448(s32);
+void func_80016448(u8 arg0);
 extern s8 D_80139524;
 
 void func_80016420(s8 arg0)
 {
     D_80139524 = arg0;
-    func_80016448(arg0 & 0xFF);
+    func_80016448(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016448);
+void func_80016448(u8 arg0)
+{
+    s32 temp_v0;
+    D_80139528 = arg0;
+    if (D_80171EA9 == 1) {
+        D_80139520.val0 = arg0;
+        D_80139520.val1 = 0;
+        D_80139520.val2 = arg0;
+        D_80139520.val3 = 0;
+    } else {
+        temp_v0 = arg0 >> 1;
+        D_80139520.val0 = temp_v0; // volume for CD(L) -> SPU (L)
+        D_80139520.val1 = temp_v0; // volume for CD(L) -> SPU (R)
+        D_80139520.val2 = temp_v0; // volume for CD(R) -> SPU (L)
+        D_80139520.val3 = temp_v0; // volume for CD(R) -> SPU (R)
+    }
+    CdMix(&D_80139520);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800164D8);
 

@@ -38,6 +38,7 @@ segments:
       - [0x323C, c]
       - [0xC594C, c]
       - [0xCB68C, asm] # doesn't seem like a function
+      - [0xCB734, asm]
       - [0xCB748, asm, psxsdk/libspu/s_crwa]
       - [0xCC490, asm, psxsdk/libspu/s_ini]
       - [0xCC604, asm, psxsdk/libspu/s_dcb]
