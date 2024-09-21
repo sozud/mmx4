@@ -123,7 +123,27 @@ u8 func_8001385C(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013890);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013968);
+void func_80013968(void)
+{
+    u8 sp10;
+
+    sp10 = 0xA0;
+    D_801406AC = 0;
+    D_80137CEC = 0;
+    CdIntToPos(D_80137CCC, &D_80137CF8);
+    D_80137CCC -= 1;
+    do {
+    loop_1:
+        if (CdReady(1, NULL) != 0) {
+            goto loop_1;
+        }
+        if (CdControl(0xEU, &sp10, NULL) == 0) {
+            goto loop_1;
+        }
+        VSync(3);
+    } while (CdControl(2U, &D_80137CF8.minute, NULL) == 0);
+    func_80013650();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013A20);
 
@@ -254,14 +274,29 @@ void func_800160F4(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016124);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016334);
+void func_80016334(void)
+{
+    func_80016420(0);
+    D_80171EA9 = 1;
+    D_8013956C = 1;
+    D_801419AC = 0;
+    D_801441B8 = 0;
+    D_80141F4A = 0;
+    D_8013952C = 0;
+    D_80141BD4 = 0;
+    D_80139524 = 0x80;
+    D_80139530 = 0;
+    D_80141BD0 = 0;
+    D_80139564 = 0;
+    D_801441B0 = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800163BC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800163EC);
 
 void func_80016448(u8 arg0);
-extern s8 D_80139524;
+extern u8 D_80139524;
 
 void func_80016420(s8 arg0)
 {
@@ -371,7 +406,22 @@ void func_80018EEC(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018F18);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018FD0);
+void func_80018FD0(u32 arg0)
+{
+    D_800F1D8C = arg0;
+    if (D_80171EA9 != 0) {
+        D_80139644.val0 = arg0;
+        D_80139644.val1 = 0;
+        D_80139644.val2 = arg0;
+        D_80139644.val3 = 0;
+    } else {
+        D_80139644.val0 = arg0 >> 1; // volume for CD(L) -> SPU (L)
+        D_80139644.val1 = arg0 >> 1; // volume for CD(L) -> SPU (R)
+        D_80139644.val2 = arg0 >> 1; // volume for CD(R) -> SPU (L)
+        D_80139644.val3 = arg0 >> 1; // volume for CD(R) -> SPU (R)
+    }
+    CdMix(&D_80139644);
+}
 
 void func_80019058(s8 arg0)
 {
