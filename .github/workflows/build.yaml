@@ -38,6 +38,13 @@ jobs:
         with:
           ref: ${{ github.ref }}
           submodules: true
+      - name: Build psximager
+        run: |
+          sudo apt-get install libcdio-dev libvcdinfo-dev
+          cd tools/psximager
+          ./bootstrap
+          ./configure
+          make
       - name: Lint
         run: sh format.sh && git diff --exit-code
       - name: Get dependencies
