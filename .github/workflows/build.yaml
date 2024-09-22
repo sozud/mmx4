@@ -40,7 +40,7 @@ jobs:
           submodules: true
       - name: Build psximager
         run: |
-          sudo apt-get install libcdio-dev libvcdinfo-dev libboost-dev
+          sudo apt-get install libcdio-dev libvcdinfo-dev libboost-all-dev
           cd tools/psximager
           ./bootstrap
           ./configure
