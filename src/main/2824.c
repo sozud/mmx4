@@ -43,7 +43,7 @@ void func_8001213C(void)
     InitCARD(1);
     StartCARD();
     _bu_init();
-    func_8001C6DC();
+    InitMemcards();
     func_80014DC4();
     func_80013588();
     ChangeClearPAD(0);
