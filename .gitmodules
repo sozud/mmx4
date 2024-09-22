@@ -4,4 +4,3 @@
 [submodule "tools/psximager"]
 	path = tools/psximager
 	url = https://github.com/sozud/psximager.git
-    branch = build_fixes
