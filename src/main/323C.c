@@ -88,7 +88,7 @@ void func_80013650(void)
 {
 
     if (D_80137CD8 == 0) {
-        CdReadyCallback(&func_80013A20);
+        CdReadyCallback(&MyCdReadyCallback);
     } else {
         CdReadyCallback(&func_80013E68);
     }
@@ -145,7 +145,26 @@ void func_80013968(void)
     func_80013650();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013A20);
+void MyCdReadyCallback(void)
+{
+    if (D_801406AC != 0) {
+        D_80137CEC += 1;
+        if (CdReady(1, NULL) != 1) {
+        pos:
+            CdReadyCallback(NULL);
+            CdControlB(9U, NULL, NULL);
+            D_801406AC = 0x80;
+        } else {
+            if (func_800136B0() != -1) {
+                if (D_80137CBC == 0) {
+                    func_800137F0();
+                }
+            } else {
+                goto pos;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
 
@@ -386,7 +405,27 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018000);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800182E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800185F8);
+void Set24BitDisp(s32 w, s32 h)
+{
+    RECT rect;
+    old_dispenv[0] = draw_infos[0].dispenv;
+    old_dispenv[1] = draw_infos[1].dispenv;
+    ResetGraph(0);
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 480;
+    rect.h = 480;
+    VSync(0);
+    ClearImage(&rect, 0, 0, 0);
+    DrawSync(0);
+    SetDispMask(1);
+    SetDefDispEnv(&draw_infos[0].dispenv, 0, 0, w, h);
+    SetDefDispEnv(&draw_infos[1].dispenv, 0, 240, w, h);
+    draw_infos[1].dispenv.isrgb24 = 1;
+    draw_infos[0].dispenv.isrgb24 = 1;
+    draw_infos[1].dispenv.isinter = 0;
+    draw_infos[0].dispenv.isinter = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018788);
 
@@ -537,7 +576,25 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001C4B4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001C5A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001C6DC);
+void InitMemcards(void)
+{
+    EnterCriticalSection();
+    D_80139670 = OpenEvent(SwCARD, EvSpIOE, EvMdNOINTR, NULL);
+    D_80139674 = OpenEvent(SwCARD, EvSpTIMOUT, EvMdNOINTR, NULL);
+    D_80139678 = OpenEvent(SwCARD, EvSpNEW, EvMdNOINTR, NULL);
+    D_8013967C = OpenEvent(SwCARD, EvSpERROR, EvMdNOINTR, NULL);
+    D_80139680 = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, NULL);
+    D_80139684 = OpenEvent(HwCARD, EvSpTIMOUT, EvMdNOINTR, NULL);
+    D_80139688 = OpenEvent(HwCARD, EvSpERROR, EvMdNOINTR, NULL);
+    ExitCriticalSection();
+    EnableEvent(D_80139670);
+    EnableEvent(D_80139674);
+    EnableEvent(D_80139678);
+    EnableEvent(D_8013967C);
+    EnableEvent(D_80139680);
+    EnableEvent(D_80139684);
+    EnableEvent(D_80139688);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001C854);
 
@@ -567,9 +624,9 @@ void func_8001D104(void)
 {
 }
 
-void func_8001D10C(void)
+void PlayCapcomLogo(void)
 {
-    func_800182E8();
+    func_800182E8(); // nop out to skip capcom logo
     SetDispMask(0);
 }
 
