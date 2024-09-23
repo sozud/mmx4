@@ -1,5 +1,8 @@
 #include "common.h"
 
+// uncomment to skip movies
+// #define SKIP_MDEC
+
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012A3C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012D28);
@@ -401,9 +404,25 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017E84);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017F2C);
 
+// general movie playing code
+#ifndef SKIP_MDEC
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018000);
+#else
+void func_80018000(s32 temp)
+{
+    asm(".rept 184 ; nop ; .endr");
+}
+#endif
 
+// capcom logo playing code
+#ifndef SKIP_MDEC
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800182E8);
+#else
+void func_800182E8(void)
+{
+    asm(".rept 194 ; nop ; .endr");
+}
+#endif
 
 void Set24BitDisp(s32 w, s32 h)
 {
@@ -652,7 +671,13 @@ void func_8001D1F0(struct Unk* arg0)
     func_8001D284();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D230);
+void func_8001D230(struct GameInfo* arg0)
+{
+    arg0->unkD = 1;
+    D_80173C80 = 0x80178000;
+    func_80018000(1); // nop out to skip opening cinematic
+    arg0->mode++;
+}
 
 void func_8001D284(u8* arg0)
 {
