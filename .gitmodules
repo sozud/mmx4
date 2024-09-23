@@ -1,3 +1,6 @@
 [submodule "maspsx"]
-	path = maspsx
+	path = tools/maspsx
 	url = https://github.com/mkst/maspsx.git
+[submodule "tools/psximager"]
+	path = tools/psximager
+	url = https://github.com/sozud/psximager.git

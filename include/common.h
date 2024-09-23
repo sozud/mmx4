@@ -359,6 +359,13 @@ struct Unk24 {
     s8 unk40;
 };
 
+struct GameInfo {
+    u8 unk0;
+    u8 mode;
+    u8 pad[0xb];
+    u8 unkD;
+};
+
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
@@ -474,6 +481,7 @@ extern s32 D_8013967C;
 extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
+extern s32 D_80173C80;
 
 #include "func_tables.h"
 
@@ -574,3 +582,4 @@ void func_80013650(void);
 s8 func_800136B0();
 void func_800137F0();
 void MyCdReadyCallback(void);
+void func_80018000(s32);

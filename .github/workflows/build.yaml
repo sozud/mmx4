@@ -38,6 +38,13 @@ jobs:
         with:
           ref: ${{ github.ref }}
           submodules: true
+      # - name: Build psximager
+      #   run: |
+      #     sudo apt-get install libcdio-dev libvcdinfo-dev libboost-all-dev
+      #     cd tools/psximager
+      #     ./bootstrap
+      #     ./configure
+      #     make
       - name: Lint
         run: sh format.sh && git diff --exit-code
       - name: Get dependencies
@@ -56,8 +63,12 @@ jobs:
         run: sh compiler.sh
       - name: Split game data
         run: splat split ./config/SLUS_005.61.splat.yaml
-      - name: Build binaries
-        run: sh build.sh
+      # - name: Build binaries
+      #   run: sh build.sh
+      # - name: Build CD Image
+      #   run : |
+      #     sh cd_rip.sh
+      #     sh cd_build.sh
       - name: Get dependencies
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/checkout@v4
