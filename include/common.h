@@ -84,6 +84,35 @@ struct Unk {
     u32 pad98;
 }; // size 0x9c
 
+struct MiscObj {
+    s8 active;
+    s8 id; // 0x01
+    s8 unk2;
+    s8 unk3;
+    s8 unk4;
+    s8 unk5;
+    s8 unk6;
+    u8 pad5[3];
+    s16 x_pos; // 0x0A
+    s16 padc;
+    s16 y_pos; // 0x0E
+    u8 pad6[0x10];
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    u8 pad30[0x8];
+    s16 unk38;
+    u8 pad39[5];
+    u16 unk40;
+    u16 unk42;
+    s8 pad43[9];
+    s32 unk50;
+    s32 unk54;
+    s8 pad55[5];
+    s8 unk5D;
+}; // size 0x60
+
 struct Unk2 {
     u8 unk0;
     u8 unk1;
@@ -240,6 +269,11 @@ struct DrawInfo {
 
 extern struct DrawInfo draw_infos[2];
 
+struct QuadObj {
+    s8 pad[4];
+    s8 unk4;
+};
+
 struct Unk8001FB50 {
     s8 unk0;
     s8 unk1;
@@ -312,14 +346,16 @@ struct Unk80139690 {
     s8 unk1;
 };
 
-struct Unk800F24A4 {
+struct MainObj {
     u8 pad0[4];
     s8 unk4;
 };
 
-struct Unk800F285C {
-    u8 pad0[4];
+struct EffectObj {
+    s8 active;
+    u8 pad0[3];
     s8 unk4;
+    u8 pad[0x30 - 5];
 };
 
 struct Unk22 {
@@ -341,15 +377,6 @@ struct Unk23 {
     s8 unkD;
     s8 pad2[0xf];
     s8 unk1D;
-};
-
-struct EffectObj {
-    s8 active;
-    u8 pad[0x30 - 1];
-};
-struct MiscObj {
-    s8 active;
-    u8 pad[0x60 - 1];
 };
 
 struct Unk24 {

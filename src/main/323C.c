@@ -3032,11 +3032,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800497FC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80049884);
 
-void func_800498C0(struct Unk800F24A4* arg0)
+void func_800498C0(struct MainObj* arg0)
 {
 }
 
-void func_800498C8(struct Unk800F24A4* arg0)
+void func_800498C8(struct MainObj* arg0)
 {
     D_800FB0F4[arg0->unk4]();
 }
@@ -8594,7 +8594,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58F4);
 
-void func_800B5960(struct Unk800F285C* arg0)
+void func_800B5960(struct EffectObj* arg0)
 {
     D_8010B34C[arg0->unk4]();
 }
@@ -8605,7 +8605,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5B54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
 
-void func_800B5CC4(struct Unk800F285C* arg0)
+void func_800B5CC4(struct EffectObj* arg0)
 {
     if (arg0->unk4 == 0) {
         func_800B5D04();
@@ -8640,7 +8640,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A48);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A90);
 
-void func_800B6B18(struct Unk800F285C* arg0)
+void func_800B6B18(struct EffectObj* arg0)
 {
     D_8010B4C4[arg0->unk4]();
 }
@@ -8765,7 +8765,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B7E88);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B7EE8);
 
-void func_800B8064(struct Unk800F285C* arg0)
+void func_800B8064(struct EffectObj* arg0)
 {
 }
 
@@ -9077,7 +9077,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB928);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB97C);
 
-void func_800BB9B8(struct Unk800F285C* arg0)
+void func_800BB9B8(struct EffectObj* arg0)
 {
     D_8010BEC8[arg0->unk4]();
 }
@@ -9825,7 +9825,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9DA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9E34);
 
-void func_800C9EAC(struct Unk* arg0)
+void func_800C9EAC(struct MiscObj* arg0)
 {
     D_8010E578[arg0->unk4]();
 }
@@ -9892,7 +9892,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CAE38);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CAF90);
 
-void func_800CB00C(struct Unk* arg0)
+void func_800CB00C(struct MiscObj* arg0)
 {
     D_8010E6F0[arg0->unk4]();
 }
@@ -9933,7 +9933,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB708);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB828);
 
-void func_800CB848(struct Unk* arg0)
+void func_800CB848(struct MiscObj* arg0)
 {
     D_8010E824[arg0->unk4]();
 }
@@ -10054,7 +10054,7 @@ void func_800CD730(struct Unk18* arg0)
     func_8002B13C(arg0);
 }
 
-void func_800CD750(struct Unk* arg0)
+void func_800CD750(struct MiscObj* arg0)
 {
     D_8010EBF4[arg0->unk4]();
 }
@@ -10075,7 +10075,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB84);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDC34);
 
-void func_800CDC84(struct Unk* arg0)
+void func_800CDC84(struct MiscObj* arg0)
 {
     arg0->unk3 = 0;
     D_8010EC10[arg0->unk4]();
@@ -10447,7 +10447,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D39EC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3A84);
 
-void func_800D3AC0(struct Unk* arg0)
+void func_800D3AC0(struct QuadObj* arg0)
 {
     D_8010F690[arg0->unk4]();
 }
