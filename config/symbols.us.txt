@@ -468,3 +468,6 @@ vis_object_update_funcs = 0x800F27BC;
 effect_object_update_funcs = 0x800F285C;
 misc_object_update_funcs = 0x800F2980;
 quad_obj_update_funcs = 0x800F2A70;
+CollisionRelated = 0x8002C614;
+TeleportRelatedObjectUpdate = 0x800BB9B8;
+MegamanInBriefingRoomUpdate = 0x800C9EAC;
