@@ -1529,7 +1529,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002C2EC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002C36C);
 
-void func_8002C614(struct Unk* arg0)
+// megaman falls through floor in intro stage if nopped out
+// asm(".rept 81 ; nop ; .endr");
+void CollisionRelated(struct Unk* arg0)
 {
     s32 temp_v0;
     s32 temp_v1;
@@ -9220,7 +9222,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB928);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB97C);
 
-void func_800BB9B8(struct EffectObj* arg0)
+// megaman never teleports in if nopped out
+// asm(".rept 13 ; nop ; .endr");
+void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 {
     D_8010BEC8[arg0->unk4]();
 }
@@ -9968,7 +9972,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9DA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9E34);
 
-void func_800C9EAC(struct MiscObj* arg0)
+// megaman standing in the briefing room. doesn't show
+// up if nopped out
+// asm(".rept 13 ; nop ; .endr");
+void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 {
     D_8010E578[arg0->unk4]();
 }
