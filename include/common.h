@@ -103,7 +103,7 @@ struct MiscObj {
     s8 id; // 0x01
     s8 unk2;
     s8 unk3;
-    s8 unk4;
+    s8 state;
     s8 unk5;
     s8 unk6;
     u8 pad5[3];
@@ -285,7 +285,7 @@ extern struct DrawInfo draw_infos[2];
 
 struct QuadObj {
     s8 pad[4];
-    s8 unk4;
+    s8 state;
 };
 
 struct Unk8001FB50 {
@@ -368,7 +368,7 @@ struct MainObj {
 struct EffectObj {
     s8 active;
     u8 pad0[3];
-    s8 unk4;
+    s8 state;
     u8 pad[0x30 - 5];
 };
 
@@ -440,21 +440,21 @@ extern u8 D_8013E470;
 extern void (*D_800F43A8[1])(s32);
 extern void (*D_800F4498[1])(void);
 extern void (*D_800FB0F4[1])();
-extern void (*D_8010B34C[1])();
+extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
 extern s16* D_801F8300;
 extern u16 D_801419BA;
 extern u16 D_801419BE;
-extern void (*D_8010E6F0[1])();
-extern void (*D_8010E578[1])();
+extern void (*g_MegamanRelatedUpdateFuncs[1])();
+extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
 extern void (*D_8010E6FC[1])();
-extern void (*D_8010E824[1])();
+extern void (*g_TitleUpdateFuncs[1])();
 extern void (*D_8010EB84[1])();
-extern void (*D_8010EBF4[1])();
+extern void (*g_SelectACharacterUpdateFuncs[1])();
 extern struct Unk game_objects[0x30]; // D_8013BED0
-extern void (*D_8010EC10[1])();
-extern void (*D_8010F690[1])();
+extern void (*g_TitleLogoUpdateFuncs[1])();
+extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();
 extern void (*D_8010FDD0[1])();
 extern u8 D_8013B7D8;

@@ -8739,9 +8739,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58F4);
 
-void func_800B5960(struct EffectObj* arg0)
+// scaling X animation in logo graphics
+void TitleScalingXUpdate(struct EffectObj* arg0)
 {
-    D_8010B34C[arg0->unk4]();
+    g_TitleScalingXUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B599C);
@@ -8752,7 +8753,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
 
 void func_800B5CC4(struct EffectObj* arg0)
 {
-    if (arg0->unk4 == 0) {
+    if (arg0->state == 0) {
         func_800B5D04();
         return;
     }
@@ -8785,9 +8786,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A48);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A90);
 
+// didn't notice what this is
 void func_800B6B18(struct EffectObj* arg0)
 {
-    D_8010B4C4[arg0->unk4]();
+    D_8010B4C4[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6B54);
@@ -9226,7 +9228,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800BB97C);
 // asm(".rept 13 ; nop ; .endr");
 void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 {
-    D_8010BEC8[arg0->unk4]();
+    D_8010BEC8[arg0->state]();
 }
 
 void func_800BB9F4(struct Unk21* arg0)
@@ -9977,7 +9979,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9E34);
 // asm(".rept 13 ; nop ; .endr");
 void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 {
-    D_8010E578[arg0->unk4]();
+    g_MegamanInBriefingRoomUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9EE8);
@@ -10042,9 +10044,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CAE38);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CAF90);
 
-void func_800CB00C(struct MiscObj* arg0)
+// megaman never appears in stage if nopped out
+void MegamanRelatedUpdate(struct MiscObj* arg0)
 {
-    D_8010E6F0[arg0->unk4]();
+    g_MegamanRelatedUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB048);
@@ -10083,9 +10086,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB708);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB828);
 
-void func_800CB848(struct MiscObj* arg0)
+// title object. Includes the logo and the menu graphics
+void TitleUpdate(struct MiscObj* arg0)
 {
-    D_8010E824[arg0->unk4]();
+    g_TitleUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB884);
@@ -10204,9 +10208,10 @@ void func_800CD730(struct Unk18* arg0)
     func_8002B13C(arg0);
 }
 
-void func_800CD750(struct MiscObj* arg0)
+// select a character menu never appears if nopped out
+void SelectACharacterUpdate(struct MiscObj* arg0)
 {
-    D_8010EBF4[arg0->unk4]();
+    g_SelectACharacterUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD78C);
@@ -10225,10 +10230,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB84);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDC34);
 
-void func_800CDC84(struct MiscObj* arg0)
+// part of the title logo animation
+void TitleLogoUpdate(struct MiscObj* arg0)
 {
     arg0->unk3 = 0;
-    D_8010EC10[arg0->unk4]();
+    g_TitleLogoUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDCC0);
@@ -10597,9 +10603,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D39EC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3A84);
 
-void func_800D3AC0(struct QuadObj* arg0)
+// search lights in background of intro stage
+void SearchLightUpdate(struct QuadObj* arg0)
 {
-    D_8010F690[arg0->unk4]();
+    g_SearchLightUpdateFuncs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3AFC);

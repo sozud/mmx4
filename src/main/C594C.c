@@ -38,7 +38,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C18);
 
 void func_800D5C54(struct QuadObj* arg0)
 {
-    D_8010FC84[arg0->unk4]();
+    D_8010FC84[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C90);
@@ -124,7 +124,7 @@ void func_800D76D8(struct Unk* arg0)
 
 void func_800D76F8(struct QuadObj* arg0)
 {
-    D_8010FDD0[arg0->unk4]();
+    D_8010FDD0[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7734);
