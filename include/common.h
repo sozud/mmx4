@@ -39,11 +39,15 @@ struct Unk {
     s8 unk4;
     s8 unk5;
     s8 unk6;
-    u8 pad5[3];
+    s8 : 8;
+    s16 x_pos_hi; // 0x08
     s16 x_pos; // 0x0A
-    s16 padc;
+    s16 y_pos_hi; // 0x0C
     s16 y_pos; // 0x0E
-    u8 pad6[0x10];
+    u8 pad10[0x5];
+    u8 unk15;
+    s32 unk18;
+    s32 unk1C;
     s32 unk20;
     s32 unk24;
     s32 unk28;
@@ -66,8 +70,10 @@ struct Unk {
     s8 unk65;
     s8 unk66;
     s8 unk67;
-    s32 unk68;
-    s8 pad69[6];
+    struct Unk_unk68* unk68;
+    u8 pad6C[0x70 - 0x6C];
+    u8 unk70;
+    s8 : 8;
     s8 unk72;
     s8 unk73;
     s8 unk74;
@@ -75,7 +81,7 @@ struct Unk {
     s8 unk76;
     s8 unk77;
     s8 unk78;
-    s8 pad79[1];
+    s8 unk79;
     s8 unk7A;
     u8 pad68[0x10];
     u16 unk8C;
@@ -83,6 +89,13 @@ struct Unk {
     u32 unk94;
     u32 pad98;
 }; // size 0x9c
+
+struct Unk_unk68 {
+    s8 unk0;
+    s8 unk1;
+    u8 unk2;
+    u8 unk3;
+};
 
 struct MiscObj {
     s8 active;
@@ -443,6 +456,17 @@ extern void (*D_8010EC10[1])();
 extern void (*D_8010F690[1])();
 extern void (*D_8010FC84[1])();
 extern void (*D_8010FDD0[1])();
+extern u8 D_8013B7D8;
+extern u8 D_8013B7DC;
+extern s16 D_8013B7E0;
+extern s16 D_8013B7E4;
+extern s16 D_8013B7E8;
+extern s16 D_8013B7EC;
+extern s16 D_8013B7F0;
+extern s16 D_8013B7F4;
+extern s16 D_8013B7F8;
+extern s16 D_8013B7FC;
+extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
 extern struct EffectObj effect_objects[0x20];
@@ -596,6 +620,11 @@ void func_8001D284();
 void func_80022730(s32*);
 void func_8002B718();
 void func_8002B288(struct Unk*);
+s32 func_8002CF98(struct Unk*, u8, s16, s16);
+s32 func_8002D1F8(struct Unk*, u8, s16);
+s32 func_8002D32C(struct Unk*, s16, s8);
+s32 func_8002D5E4(struct Unk*, s16);
+s32 func_8002D7E4(struct Unk*, s16, s16);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 void func_80016334(void);
