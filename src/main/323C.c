@@ -1641,43 +1641,42 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002CD70);
 
 void func_8002CDD4(struct Unk* arg0)
 {
-    s16 vOffset;
-    s32 resultLeft, resultRight, primaryResult;
-    u8 checkLeft, checkRight, checkAdditional;
+    u8 temp_s3;
+    u8 temp_s4;
+    u8 temp_s5;
+    u8 temp_v0_4;
+    s32 var_s0;
+    s16 temp_v0 = D_8013B7FC + D_8013B7E4;
 
-    vOffset = D_8013B7FC + D_8013B7E4;
-    resultLeft = func_8002D7E4(arg0, D_8013B7F8 - D_8013B7E0, vOffset);
-    resultRight = func_8002D7E4(arg0, D_8013B7F8 + D_8013B7E0 - 1, vOffset);
+    temp_s3 = func_8002D7E4(arg0, D_8013B7F8 - D_8013B7E0, temp_v0);
+    temp_s4 = func_8002D7E4(arg0, D_8013B7F8 + D_8013B7E0 - 1, temp_v0);
+    temp_s5 = func_8002D7E4(arg0, D_8013B7F8, temp_v0);
 
-    if (func_8002CF98(arg0, func_8002D7E4(arg0, D_8013B7F8, vOffset), D_8013B7F8, vOffset) == 0) {
+    if (func_8002CF98(arg0, temp_s5, D_8013B7F8, temp_v0) == 0) {
         if (arg0->unk67 == 0) {
-            primaryResult = 0;
-
-            checkLeft = resultLeft;
-            if (checkLeft && checkLeft < 0x20) {
-                primaryResult = 1;
+            var_s0 = 0;
+            if ((temp_s3 > 0) && (temp_s3 < 0x20)) {
+                var_s0 = 1;
+            }
+            if ((temp_s4 > 0) && (temp_s4 < 0x20)) {
+                var_s0 = 1;
             }
 
-            checkRight = resultRight;
-            if (checkRight && checkRight < 0x20) {
-                primaryResult = 1;
+            temp_v0_4 = func_8002D7E4(arg0, D_8013B7F8, (temp_v0 + 0x10));
+            if ((temp_v0_4 > 0) && (temp_v0_4 < 0x20)) {
+                var_s0 = 1;
             }
 
-            checkAdditional = func_8002D7E4(arg0, D_8013B7F8, vOffset + 0x10);
-            if (checkAdditional && checkAdditional < 0x20) {
-                primaryResult = 1;
-            }
-
-            if (primaryResult) {
+            if (var_s0 != 0) {
                 arg0->y_pos += 0x10;
-                if (func_8002CF98(arg0, checkAdditional, D_8013B7F8, vOffset + 0x10)) {
+                if (func_8002CF98(arg0, temp_v0_4, D_8013B7F8, (temp_v0 + 0x10)) != 0) {
                     return;
                 }
             }
         }
 
-        if (func_8002D1F8(arg0, resultLeft, vOffset) == 0) {
-            func_8002D1F8(arg0, resultRight, vOffset);
+        if (func_8002D1F8(arg0, temp_s3, temp_v0) == 0) {
+            func_8002D1F8(arg0, temp_s4, temp_v0);
         }
     }
 }
@@ -1686,7 +1685,27 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002CF98);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002D180);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002D1F8);
+s32 func_8002D1F8(struct Unk* arg0, s32 arg1, s32 arg2)
+{
+    s32 temp_a1;
+
+    temp_a1 = arg1 & 0xFF;
+    switch (temp_a1) {
+    case 0x21:
+    case 0x22:
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 8;
+        D_8013B804 = -arg0->unk6E;
+        return -1;
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002D25C);
 

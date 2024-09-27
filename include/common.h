@@ -71,7 +71,8 @@ struct Unk {
     s8 unk66;
     s8 unk67;
     struct Unk_unk68* unk68;
-    u8 pad6C[0x70 - 0x6C];
+    s16 : 16;
+    s16 unk6E;
     u8 unk70;
     s8 : 8;
     s8 unk72;
@@ -621,7 +622,6 @@ void func_80022730(s32*);
 void func_8002B718();
 void func_8002B288(struct Unk*);
 s32 func_8002CF98(struct Unk*, u8, s16, s16);
-s32 func_8002D1F8(struct Unk*, u8, s16);
 s32 func_8002D32C(struct Unk*, s16, s8);
 s32 func_8002D5E4(struct Unk*, s16);
 s32 func_8002D7E4(struct Unk*, s16, s16);
