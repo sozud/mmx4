@@ -1193,8 +1193,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
 void func_80028070(struct Unk* arg0)
 {
-    arg0->x_pos = D_801419BA[0] + arg0->unk40;
-    arg0->y_pos = D_801419BE[0] + arg0->unk42;
+    arg0->x_pos.i.hi = D_801419BA[0] + arg0->unk40;
+    arg0->y_pos.i.hi = D_801419BE[0] + arg0->unk42;
     func_80027FA8(arg0);
 }
 
@@ -1470,20 +1470,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B1E8);
 void func_8002B288(struct Unk* arg0)
 {
     s32 temp_v0;
-    u16 var_v0;
-    s8 temp_v1;
-    u16 var_a0;
+    s16 var_v0;
+    s16 var_a0;
 
     arg0->unk3 = 0;
     if (arg0->unk14 < 0) {
-        var_v0 = arg0->x_pos;
-        var_a0 = arg0->y_pos;
+        var_v0 = arg0->x_pos.i.hi;
+        var_a0 = arg0->y_pos.i.hi;
     } else {
-        temp_v0 = arg0->unk14 * 0x54 / 2;
-        var_v0 = arg0->x_pos - D_801419BA[temp_v0];
-        var_a0 = arg0->y_pos - D_801419BE[temp_v0];
+        temp_v0 = arg0->unk14 * 42;
+        var_v0 = arg0->x_pos.i.hi - D_801419BA[temp_v0];
+        var_a0 = arg0->y_pos.i.hi - D_801419BE[temp_v0];
     }
-    if ((((var_v0 + 0x20) & 0xFFFF) < 0x180U) && (((var_a0 + 0x20) & 0xFFFF) < 0x130U)) {
+    if (var_v0 >= -0x20 && var_v0 < 0x160 && var_a0 >= -0x20 && var_a0 < 0x110) {
         arg0->unk3 = 1;
     }
 }
@@ -1510,8 +1509,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B560);
 
 void func_8002B694(struct Unk* arg0)
 {
-    *(s32*)&arg0->x_pos_hi += arg0->unk20;
-    *(s32*)&arg0->y_pos_hi -= arg0->unk24;
+    arg0->x_pos.val += arg0->unk20;
+    arg0->y_pos.val -= arg0->unk24;
 
     if (arg0->unk15) {
         arg0->unk20 += arg0->unk28;
@@ -1584,7 +1583,7 @@ void CollisionRelated(struct Unk* arg0) // was func_8002C614
 
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
-        temp_v1 = *(s32*)&arg0->x_pos_hi - arg0->unk18;
+        temp_v1 = arg0->x_pos.val - arg0->unk18;
         D_8013B7D8 = 0;
         D_8013B7DC = 0;
 
@@ -1596,7 +1595,7 @@ void CollisionRelated(struct Unk* arg0) // was func_8002C614
             }
         }
 
-        if (*(s32*)&arg0->y_pos_hi - arg0->unk1C >= 0) {
+        if (arg0->y_pos.val - arg0->unk1C >= 0) {
             func_8002CDD4(arg0);
             if (D_8013B7D8 != 0) {
                 return;
@@ -1626,7 +1625,7 @@ void CollisionRelated(struct Unk* arg0) // was func_8002C614
 void func_8002C760(struct Unk* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
-    u16 temp_a1 = arg0->x_pos;
+    u16 temp_a1 = arg0->x_pos.i.hi;
     u16 temp_v0 = temp_v1->unk0;
 
     D_8013B7E8 = temp_v1->unk0;
@@ -1635,7 +1634,7 @@ void func_8002C760(struct Unk* arg0)
     D_8013B7E4 = temp_v1->unk3;
 
     D_8013B7F0 = temp_a1;
-    D_8013B7F4 = arg0->y_pos;
+    D_8013B7F4 = arg0->y_pos.i.hi;
 
     if (arg0->unk15 == 0) {
         D_8013B7F8 = temp_a1 + temp_v0;
@@ -1713,7 +1712,7 @@ void func_8002CDD4(struct Unk* arg0)
             }
 
             if (var_s0) {
-                arg0->y_pos += 0x10;
+                arg0->y_pos.i.hi += 0x10;
                 if (func_8002CF98(arg0, temp_v0_4, D_8013B7F8, temp_v0 + 0x10)) {
                     return;
                 }
@@ -8470,7 +8469,7 @@ void func_800AF808(struct Unk* arg0)
 
 void func_800AF828(struct Unk* arg0, s8 arg1)
 {
-    func_800AFAB4(arg1, arg0->x_pos, arg0->y_pos, (func_8002B73C() & 1) ^ 1);
+    func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (func_8002B73C() & 1) ^ 1);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF878);
@@ -8488,10 +8487,10 @@ struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, s8 arg3)
         temp_v0->unk5 = 0;
         temp_v0->unk6 = 0;
         temp_v0->unk5C = arg3;
-        temp_v0->x_pos = x;
-        temp_v0->x_pos_hi = 0;
-        temp_v0->y_pos = y;
-        temp_v0->y_pos_hi = 0;
+        temp_v0->x_pos.i.hi = x;
+        temp_v0->x_pos.i.lo = 0;
+        temp_v0->y_pos.i.hi = y;
+        temp_v0->y_pos.i.lo = 0;
         temp_v0->unk15 = 0;
         temp_v0->unk14 = 0;
         temp_v0->unk16 = 1;

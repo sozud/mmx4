@@ -32,6 +32,14 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBCD.H"
 #include "psy-q-4.0/LIBPRESS.H"
 
+typedef union {
+    s32 val;
+    struct {
+        s16 lo;
+        s16 hi;
+    } i;
+} f32;
+
 struct Unk {
     s8 active;
     s8 id; // 0x01
@@ -41,10 +49,8 @@ struct Unk {
     s8 unk5;
     s8 unk6;
     s8 : 8;
-    s16 x_pos_hi; // 0x08
-    u16 x_pos; // 0x0A
-    s16 y_pos_hi; // 0x0C
-    u16 y_pos; // 0x0E
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
     u8 pad10[0x4];
     s8 unk14;
     u8 unk15;
