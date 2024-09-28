@@ -4078,7 +4078,7 @@ void func_8009EAA4(struct Unk* arg0);
 
 // D_80109160
 void func_8009EBA8(void);
-void func_8009ED70(void);
+void func_8002C808(struct Unk* arg0);
 void func_8009EE40(void);
 void func_8009EE60(void);
 
