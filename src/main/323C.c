@@ -1193,11 +1193,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
 void func_80028070(struct Unk* arg0)
 {
-    arg0->x_pos = (D_801419BA + arg0->unk40);
-    do {
-    } while (0); // hmmmm inlines?
-    arg0->y_pos = (D_801419BE + arg0->unk42);
-    func_80027FA8();
+    arg0->x_pos.i.hi = D_801419BA[0] + arg0->unk40;
+    arg0->y_pos.i.hi = D_801419BE[0] + arg0->unk42;
+    func_80027FA8(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800280BC);
@@ -1469,7 +1467,25 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B160);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B1E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B288);
+void func_8002B288(struct Unk* arg0)
+{
+    s32 temp_v0;
+    s16 var_v0;
+    s16 var_a0;
+
+    arg0->unk3 = 0;
+    if (arg0->unk14 < 0) {
+        var_v0 = arg0->x_pos.i.hi;
+        var_a0 = arg0->y_pos.i.hi;
+    } else {
+        temp_v0 = arg0->unk14 * 42;
+        var_v0 = arg0->x_pos.i.hi - D_801419BA[temp_v0];
+        var_a0 = arg0->y_pos.i.hi - D_801419BE[temp_v0];
+    }
+    if (var_v0 >= -0x20 && var_v0 < 0x160 && var_a0 >= -0x20 && var_a0 < 0x110) {
+        arg0->unk3 = 1;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B318);
 
@@ -1491,7 +1507,22 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B468);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B560);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B694);
+void func_8002B694(struct Unk* arg0)
+{
+    arg0->x_pos.val += arg0->unk20;
+    arg0->y_pos.val -= arg0->unk24;
+
+    if (arg0->unk15) {
+        arg0->unk20 += arg0->unk28;
+    } else {
+        arg0->unk20 -= arg0->unk28;
+    }
+
+    arg0->unk24 -= arg0->unk2C;
+    if (arg0->unk24 < FIXED(-6.5)) {
+        arg0->unk24 = FIXED(-6.5);
+    }
+}
 
 void func_8002B718(struct Unk19* arg0)
 {
@@ -1499,7 +1530,19 @@ void func_8002B718(struct Unk19* arg0)
     arg0->unkC -= arg0->unk24;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B73C);
+u8 func_8002B73C()
+{
+    u16 temp = D_8013E2E8 * 3;
+    u32 temp_v1;
+    u8 pad[2];
+
+    temp_v1 = temp >> 8;
+    D_8013E2E8 += temp_v1;
+    D_8013E2E8 &= 0xFF;
+    D_8013E2E8 |= temp_v1 << 8;
+
+    return D_8013E2E8;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B780);
 
@@ -1531,9 +1574,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002C36C);
 
 // megaman falls through floor in intro stage if nopped out
 // asm(".rept 81 ; nop ; .endr");
-void CollisionRelated(struct Unk* arg0)
+void CollisionRelated(struct Unk* arg0) // was func_8002C614
 {
-    s32 temp_v0;
     s32 temp_v1;
 
     arg0->unk70 = 0;
@@ -1541,7 +1583,7 @@ void CollisionRelated(struct Unk* arg0)
 
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
-        temp_v1 = *(s32*)&arg0->x_pos_hi - arg0->unk18;
+        temp_v1 = arg0->x_pos.val - arg0->unk18;
         D_8013B7D8 = 0;
         D_8013B7DC = 0;
 
@@ -1553,7 +1595,7 @@ void CollisionRelated(struct Unk* arg0)
             }
         }
 
-        if (*(s32*)&arg0->y_pos_hi - arg0->unk1C >= 0) {
+        if (arg0->y_pos.val - arg0->unk1C >= 0) {
             func_8002CDD4(arg0);
             if (D_8013B7D8 != 0) {
                 return;
@@ -1583,7 +1625,7 @@ void CollisionRelated(struct Unk* arg0)
 void func_8002C760(struct Unk* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
-    u16 temp_a1 = arg0->x_pos;
+    u16 temp_a1 = arg0->x_pos.i.hi;
     u16 temp_v0 = temp_v1->unk0;
 
     D_8013B7E8 = temp_v1->unk0;
@@ -1592,7 +1634,7 @@ void func_8002C760(struct Unk* arg0)
     D_8013B7E4 = temp_v1->unk3;
 
     D_8013B7F0 = temp_a1;
-    D_8013B7F4 = arg0->y_pos;
+    D_8013B7F4 = arg0->y_pos.i.hi;
 
     if (arg0->unk15 == 0) {
         D_8013B7F8 = temp_a1 + temp_v0;
@@ -1670,7 +1712,7 @@ void func_8002CDD4(struct Unk* arg0)
             }
 
             if (var_s0) {
-                arg0->y_pos += 0x10;
+                arg0->y_pos.i.hi += 0x10;
                 if (func_8002CF98(arg0, temp_v0_4, D_8013B7F8, temp_v0 + 0x10)) {
                     return;
                 }
@@ -7551,7 +7593,28 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009EB6C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009EBA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009ED70);
+void func_8009ED70(struct Unk* arg0)
+{
+    func_80015DC8(arg0);
+    func_8002B694(arg0);
+    func_8002D9BC(arg0);
+
+    if (func_8002BB80(arg0, &D_801418C8) != 0) {
+        if (arg0->unk2 & 0x40) {
+        label:
+            func_800AF808(arg0);
+        }
+    } else if (!(arg0->unk2 & 0x40) || (CollisionRelated(arg0), arg0->unk70 == 0)) {
+        if (func_8002B160(arg0) == 0) {
+            func_8002B288(arg0);
+            return;
+        }
+    } else {
+        goto label; // unfortunately seems to be necessary for a match
+    }
+
+    arg0->unk4++;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009EE40);
 
@@ -8399,15 +8462,41 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF658);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF6A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF808);
+void func_800AF808(struct Unk* arg0)
+{
+    func_800AF828(arg0, 0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF828);
+void func_800AF828(struct Unk* arg0, s8 arg1)
+{
+    func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (func_8002B73C() & 1) ^ 1);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF878);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF95C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AFAB4);
+struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, s8 arg3)
+{
+    struct Unk* temp_v0 = func_8002AD3C();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 0x21;
+        temp_v0->id = 4;
+        temp_v0->unk2 = arg0;
+        temp_v0->unk4 = 0;
+        temp_v0->unk5 = 0;
+        temp_v0->unk6 = 0;
+        temp_v0->unk5C = arg3;
+        temp_v0->x_pos.i.hi = x;
+        temp_v0->x_pos.i.lo = 0;
+        temp_v0->y_pos.i.hi = y;
+        temp_v0->y_pos.i.lo = 0;
+        temp_v0->unk15 = 0;
+        temp_v0->unk14 = 0;
+        temp_v0->unk16 = 1;
+    }
+    return temp_v0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AFB50);
 

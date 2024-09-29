@@ -12,6 +12,7 @@
 __asm__(".include \"macro.inc\"\n");
 
 #define NULL ((void*)0)
+#define FIXED(x) ((s32)((x)*0x10000))
 
 typedef signed char s8;
 typedef signed short s16;
@@ -31,6 +32,14 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBCD.H"
 #include "psy-q-4.0/LIBPRESS.H"
 
+typedef union {
+    s32 val;
+    struct {
+        s16 lo;
+        s16 hi;
+    } i;
+} f32;
+
 struct Unk {
     s8 active;
     s8 id; // 0x01
@@ -40,12 +49,12 @@ struct Unk {
     s8 unk5;
     s8 unk6;
     s8 : 8;
-    s16 x_pos_hi; // 0x08
-    s16 x_pos; // 0x0A
-    s16 y_pos_hi; // 0x0C
-    s16 y_pos; // 0x0E
-    u8 pad10[0x5];
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    u8 pad10[0x4];
+    s8 unk14;
     u8 unk15;
+    u8 unk16;
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -60,7 +69,8 @@ struct Unk {
     s8 pad43[9];
     s32 unk50;
     s32 unk54;
-    s8 pad55[5];
+    s8 pad55[4];
+    s8 unk5C;
     s8 unk5D;
     u8 pad2f[3];
     s8 unk61;
@@ -412,6 +422,7 @@ extern s8 D_801721CF;
 extern s8 D_80141BDC;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
+extern s32 D_801418C8;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
@@ -444,8 +455,8 @@ extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
 extern s16* D_801F8300;
-extern u16 D_801419BA;
-extern u16 D_801419BE;
+extern u16 D_801419BA[];
+extern u16 D_801419BE[];
 extern void (*g_MegamanRelatedUpdateFuncs[1])();
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
 extern void (*D_8010E6FC[1])();
@@ -495,7 +506,7 @@ extern u8 D_80171EA9;
 extern s32 D_80166D68;
 extern s32 D_8012F46C;
 extern RECT D_800EE450;
-extern s16 D_8013E2E8;
+extern u16 D_8013E2E8;
 extern s32 D_8013BD44;
 extern s16 D_80141BD2;
 extern void (*func_8001D064)(void);
@@ -609,6 +620,7 @@ void func_8001E6BC(struct Unk800F2294* arg0);
 
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
+struct Unk* func_800AFAB4(s8, s16, s16, s8);
 void func_80027FA8();
 void func_8002F048();
 void func_800D46F4();
