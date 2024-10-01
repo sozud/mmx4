@@ -485,7 +485,7 @@ extern struct EffectObj effect_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
-extern void (*D_8010E710[1])(void);
+extern void (*ReadyTextUpdateFuncs[1])(void);
 extern s32 D_80137DC4;
 extern s32 D_80137DD0;
 extern u8 D_801406AC;

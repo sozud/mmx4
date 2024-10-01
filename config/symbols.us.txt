@@ -488,3 +488,4 @@ TitleSetWhiteQuadSpeed = 0x800D7154;
 TitleUpdate2 = 0x800D76F8;
 g_TitleUpdate2Funcs = 0x8010FDD0;
 ZeroObjectState = 0x8002B13C;
+ReadyTextUpdateFuncs = 0x8010E710;

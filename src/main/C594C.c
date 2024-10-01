@@ -44,6 +44,8 @@ void func_800D5C54(struct QuadObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C90);
 
+// "READY" never appears if noppped out
+//  asm(".rept 20 ; nop ; .endr");
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5CF8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5D50);

@@ -10144,19 +10144,27 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB048);
 
 void func_800CB1F0(struct Unk* arg0)
 {
-    D_8010E6FC[arg0->unk2]();
+    D_8010E6FC[arg0->unk2](); // the animation before ready appears but "READY" doesn't if nopped out
 }
 
+// animation leading up to "READY" shows up but "READY" never apprears
+// if nopped out
+// asm(".rept 18 ; nop ; .endr");
 void func_800CB22C(struct Unk* arg0)
 {
-    D_8010E710[arg0->unk5]();
+    ReadyTextUpdateFuncs[arg0->unk5]();
     func_8002B288(arg0);
 }
 
+// ReadyText State 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB27C);
 
+// ReadyText State 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB394);
 
+// ReadyText State 2
+// "READY" never disappears if nopped out
+// asm(".rept 26 ; nop ; .endr");
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB4E4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB554);
