@@ -1164,7 +1164,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 void func_80027DC0(struct Unk* arg0)
 {
     // overlap with D_800F32D5
-    arg0->unk4 = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
+    arg0->state = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -1220,7 +1220,7 @@ extern s8 D_801721CD;
 
 void func_80028268(struct Unk* arg0)
 {
-    arg0->unk4 = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
+    arg0->state = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);
@@ -1446,12 +1446,12 @@ void func_8002B0C8(struct Unk18* arg0)
     if (arg0->unk10 != NULL) {
         *arg0->unk10 &= 0x70;
     }
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B108);
 
-void func_8002B13C(struct Unk18* arg0)
+void ZeroObjectState(struct Unk18* arg0)
 {
     arg0->unk0 = 0;
     arg0->unk1 = 0;
@@ -3223,6 +3223,7 @@ void func_800498C0(struct MainObj* arg0)
 {
 }
 
+// didn't notice any differences when nopped out
 void func_800498C8(struct MainObj* arg0)
 {
     D_800FB0F4[arg0->unk4]();
@@ -7613,7 +7614,7 @@ void func_8009ED70(struct Unk* arg0)
         goto label; // unfortunately seems to be necessary for a match
     }
 
-    arg0->unk4++;
+    arg0->state++;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009EE40);
@@ -8483,7 +8484,7 @@ struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, s8 arg3)
         temp_v0->active = 0x21;
         temp_v0->id = 4;
         temp_v0->unk2 = arg0;
-        temp_v0->unk4 = 0;
+        temp_v0->state = 0;
         temp_v0->unk5 = 0;
         temp_v0->unk6 = 0;
         temp_v0->unk5C = arg3;
@@ -10143,19 +10144,27 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB048);
 
 void func_800CB1F0(struct Unk* arg0)
 {
-    D_8010E6FC[arg0->unk2]();
+    D_8010E6FC[arg0->unk2](); // the animation before ready appears but "READY" doesn't if nopped out
 }
 
+// animation leading up to "READY" shows up but "READY" never apprears
+// if nopped out
+// asm(".rept 18 ; nop ; .endr");
 void func_800CB22C(struct Unk* arg0)
 {
-    D_8010E710[arg0->unk5]();
+    ReadyTextUpdateFuncs[arg0->unk5]();
     func_8002B288(arg0);
 }
 
+// ReadyText State 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB27C);
 
+// ReadyText State 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB394);
 
+// ReadyText State 2
+// "READY" never disappears if nopped out
+// asm(".rept 26 ; nop ; .endr");
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB4E4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB554);
@@ -10166,7 +10175,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB5B4);
 
 void func_800CB614(struct Unk* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB634);
@@ -10245,6 +10254,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CC944);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA14);
 
+// SelectACharacterUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA34);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCCA0);
@@ -10255,7 +10265,7 @@ void func_800CCD8C(struct Unk* arg0)
 {
     func_8002B718(arg0);
     if (arg0->unk3 == 0) {
-        arg0->unk4++;
+        arg0->state++;
     }
 }
 
@@ -10290,11 +10300,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD498);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD530);
 
+// SelectACharacterUpdate state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD6D8);
 
+// SelectACharacterUpdate state 2
 void func_800CD730(struct Unk18* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 // select a character menu never appears if nopped out
@@ -10303,20 +10315,28 @@ void SelectACharacterUpdate(struct MiscObj* arg0)
     g_SelectACharacterUpdateFuncs[arg0->state]();
 }
 
+// TitleLogoUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD78C);
 
+// TitleLogoUpdate state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD90C);
 
+// TitleLogoUpdate state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD974);
 
+// TitleLogoUpdate state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDA90);
 
+// TitleLogoUpdate state 4
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDAD0);
 
+// TitleLogoUpdate state 5
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB10);
 
+// TitleLogoUpdate state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB84);
 
+// TitleLogoUpdate state 7
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDC34);
 
 // part of the title logo animation
@@ -10698,10 +10718,13 @@ void SearchLightUpdate(struct QuadObj* arg0)
     g_SearchLightUpdateFuncs[arg0->state]();
 }
 
+// SearchLight state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3AFC);
 
+// SearchLight state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3C58);
 
+// SearchLight state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3FBC);
 
 void func_800D3FE0(struct Unk22* arg0)
