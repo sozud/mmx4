@@ -45,7 +45,7 @@ struct Unk {
     s8 id; // 0x01
     s8 unk2;
     s8 unk3;
-    s8 unk4;
+    s8 state;
     s8 unk5;
     s8 unk6;
     s8 : 8;
@@ -62,7 +62,7 @@ struct Unk {
     s32 unk28;
     s32 unk2C;
     u8 pad30[0x8];
-    s16 unk38;
+    s16 animation_speed;
     u8 pad39[5];
     u16 unk40;
     u16 unk42;
@@ -467,7 +467,7 @@ extern struct Unk game_objects[0x30]; // D_8013BED0
 extern void (*g_TitleLogoUpdateFuncs[1])();
 extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();
-extern void (*D_8010FDD0[1])();
+extern void (*g_TitleUpdate2Funcs[1])();
 extern u8 D_8013B7D8;
 extern u8 D_8013B7DC;
 extern s16 D_8013B7E0;
@@ -597,7 +597,7 @@ void func_800B6C9C(s32 arg0);
 void func_800B6D1C(s32, s8, s32);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
-void func_8002B13C(struct Unk18* arg0);
+void ZeroObjectState(struct Unk18* arg0);
 void func_80023DB8();
 void func_80026648();
 

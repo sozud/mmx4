@@ -1164,7 +1164,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 void func_80027DC0(struct Unk* arg0)
 {
     // overlap with D_800F32D5
-    arg0->unk4 = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
+    arg0->state = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -1220,7 +1220,7 @@ extern s8 D_801721CD;
 
 void func_80028268(struct Unk* arg0)
 {
-    arg0->unk4 = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
+    arg0->state = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);
@@ -1446,12 +1446,12 @@ void func_8002B0C8(struct Unk18* arg0)
     if (arg0->unk10 != NULL) {
         *arg0->unk10 &= 0x70;
     }
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B108);
 
-void func_8002B13C(struct Unk18* arg0)
+void ZeroObjectState(struct Unk18* arg0)
 {
     arg0->unk0 = 0;
     arg0->unk1 = 0;
@@ -3223,6 +3223,7 @@ void func_800498C0(struct MainObj* arg0)
 {
 }
 
+// didn't notice any differences when nopped out
 void func_800498C8(struct MainObj* arg0)
 {
     D_800FB0F4[arg0->unk4]();
@@ -7613,7 +7614,7 @@ void func_8009ED70(struct Unk* arg0)
         goto label; // unfortunately seems to be necessary for a match
     }
 
-    arg0->unk4++;
+    arg0->state++;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009EE40);
@@ -8483,7 +8484,7 @@ struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, s8 arg3)
         temp_v0->active = 0x21;
         temp_v0->id = 4;
         temp_v0->unk2 = arg0;
-        temp_v0->unk4 = 0;
+        temp_v0->state = 0;
         temp_v0->unk5 = 0;
         temp_v0->unk6 = 0;
         temp_v0->unk5C = arg3;
@@ -10166,7 +10167,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB5B4);
 
 void func_800CB614(struct Unk* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB634);
@@ -10255,7 +10256,7 @@ void func_800CCD8C(struct Unk* arg0)
 {
     func_8002B718(arg0);
     if (arg0->unk3 == 0) {
-        arg0->unk4++;
+        arg0->state++;
     }
 }
 
@@ -10294,7 +10295,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD6D8);
 
 void func_800CD730(struct Unk18* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 // select a character menu never appears if nopped out

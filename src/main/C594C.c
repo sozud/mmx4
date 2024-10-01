@@ -36,6 +36,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5BF8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C18);
 
+// megaman never appears in intro stage if nopped out
 void func_800D5C54(struct QuadObj* arg0)
 {
     D_8010FC84[arg0->state]();
@@ -63,7 +64,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D64D8);
 
 void func_800D666C(struct Unk* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
 void func_800D668C(void)
@@ -98,33 +99,41 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6D48);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6DC4);
 
+// TitleUpdate2 state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6F94);
 
+// TitleUpdate2 state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7058);
 
+// TitleUpdate2 state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7100);
 
-void func_800D7154(struct Unk* arg0)
+// TitleUpdate2 state 4
+void TitleSetWhiteQuadSpeed(struct Unk* arg0)
 {
     if (D_80173C7A == 2) {
-        arg0->unk38 = 0x2C;
-        arg0->unk4 = 5;
+        arg0->animation_speed = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
+        arg0->state = 5;
     }
     func_800D46F4();
 }
 
+// TitleUpdate2 state 5
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7194);
 
+// TitleUpdate2 state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7468);
 
+// TitleUpdate2 state 2
 void func_800D76D8(struct Unk* arg0)
 {
-    func_8002B13C(arg0);
+    ZeroObjectState(arg0);
 }
 
-void func_800D76F8(struct QuadObj* arg0)
+// title screen doesn't appear if nopped out
+void TitleUpdate2(struct QuadObj* arg0)
 {
-    D_8010FDD0[arg0->state]();
+    g_TitleUpdate2Funcs[arg0->state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7734);
