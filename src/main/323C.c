@@ -10246,6 +10246,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CC944);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA14);
 
+// SelectACharacterUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA34);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCCA0);
@@ -10291,8 +10292,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD498);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD530);
 
+// SelectACharacterUpdate state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD6D8);
 
+// SelectACharacterUpdate state 2
 void func_800CD730(struct Unk18* arg0)
 {
     ZeroObjectState(arg0);
@@ -10304,20 +10307,28 @@ void SelectACharacterUpdate(struct MiscObj* arg0)
     g_SelectACharacterUpdateFuncs[arg0->state]();
 }
 
+// TitleLogoUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD78C);
 
+// TitleLogoUpdate state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD90C);
 
+// TitleLogoUpdate state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD974);
 
+// TitleLogoUpdate state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDA90);
 
+// TitleLogoUpdate state 4
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDAD0);
 
+// TitleLogoUpdate state 5
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB10);
 
+// TitleLogoUpdate state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB84);
 
+// TitleLogoUpdate state 7
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDC34);
 
 // part of the title logo animation
@@ -10699,10 +10710,13 @@ void SearchLightUpdate(struct QuadObj* arg0)
     g_SearchLightUpdateFuncs[arg0->state]();
 }
 
+// SearchLight state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3AFC);
 
+// SearchLight state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3C58);
 
+// SearchLight state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800D3FBC);
 
 void func_800D3FE0(struct Unk22* arg0)
