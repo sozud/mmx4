@@ -417,6 +417,12 @@ struct GameInfo {
     u8 unkD;
 };
 
+typedef struct {
+    s8 first_byte;
+    u8 padding[95];
+} QuadObj;
+
+extern QuadObj g_QuadObjects[];
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;

@@ -1287,9 +1287,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800292D0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002938C);
 
-void func_800293E8(u8 arg0)
+extern void (*g_MakeObjectFuncs[1])(s32 arg0);
+
+void MakeObject(u8 arg0)
 {
-    D_800F43A8[arg0](arg0 << 2);
+    g_MakeObjectFuncs[arg0](arg0 << 2);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029420);
@@ -1434,7 +1436,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AE90);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AF4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B008);
+struct QuadObj* FindFreeQuadObj()
+{
+    QuadObj* current = g_QuadObjects;
+    QuadObj* end = &g_QuadObjects[32];
+
+    while (current < end) {
+        if (current->first_byte == 0) {
+            return current;
+        }
+        current++;
+    }
+
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B048);
 
