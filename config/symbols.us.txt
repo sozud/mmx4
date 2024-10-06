@@ -489,3 +489,7 @@ TitleUpdate2 = 0x800D76F8;
 g_TitleUpdate2Funcs = 0x8010FDD0;
 ZeroObjectState = 0x8002B13C;
 ReadyTextUpdateFuncs = 0x8010E710;
+MakeObject = 0x800293E8;
+g_MakeObjectFuncs = 0x800F43A8;
+FindFreeQuadObj = 0x8002B008;
+g_QuadObjects = 0x801435B0;
