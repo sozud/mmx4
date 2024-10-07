@@ -642,7 +642,7 @@ struct VisualObj* func_8002AD3C(void);
 struct EffectObj* func_8002AD7C(void);
 struct ItemObj* func_8002ADBC(void);
 struct MiscObj* func_8002AE50(void);
-struct QuadObj* FindFreeQuadObj(void);
+struct QuadObj* find_free_quad_obj(void);
 struct LayerObj* func_8002B048(void);
 
 // D_800F4498

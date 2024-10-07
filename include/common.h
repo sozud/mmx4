@@ -394,9 +394,11 @@ struct DrawInfo {
 extern struct DrawInfo draw_infos[2];
 
 struct QuadObj {
-    s8 pad[4];
+    s8 first_byte;
+    s8 pad[3];
     s8 state;
-};
+    u8 padding[91];
+}; // size 0x60
 
 struct Unk8001FB50 {
     s8 unk0;
@@ -517,12 +519,7 @@ struct GameInfo {
     u8 unkD;
 };
 
-typedef struct {
-    s8 first_byte;
-    u8 padding[95];
-} QuadObj;
-
-extern QuadObj g_QuadObjects[];
+extern struct QuadObj g_QuadObjects[];
 extern u8 D_800F8B30[];
 extern s8 D_801721CF;
 extern s8 D_80141BDC;

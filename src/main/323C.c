@@ -1529,10 +1529,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AE90);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AF4C);
 
-struct QuadObj* FindFreeQuadObj()
+struct QuadObj* find_free_quad_obj()
 {
-    QuadObj* current = g_QuadObjects;
-    QuadObj* end = &g_QuadObjects[32];
+    struct QuadObj* current = g_QuadObjects;
+    struct QuadObj* end = &g_QuadObjects[32];
 
     while (current < end) {
         if (current->first_byte == 0) {
