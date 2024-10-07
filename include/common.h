@@ -113,6 +113,35 @@ struct VisualObj {
     u8 pad[0x6F];
 }; // size 0x70
 
+struct ShotObj {
+    s8 active;
+    s8 pad[0x4F];
+    s32 unk50;
+    s32 unk54;
+    s8 pad58[0x61 - 0x58];
+    s8 unk61;
+    s8 unk62;
+    s8 unk63;
+    s8 unk64;
+    s8 unk65;
+    s8 unk66;
+    s8 : 8;
+    s32 unk68;
+    s8 pad6C[0x72 - 0x6C];
+    s8 unk72;
+    s8 unk73;
+    s8 unk74;
+    s8 unk75;
+    s8 unk76;
+    s8 unk77;
+    s8 unk78;
+    s8 : 8;
+    s8 unk7A;
+    s8 pad7B[0x98 - 0x7B];
+    s8 unk98;
+    s8 pad99[0x9C - 0x99];
+}; // size 0x9C
+
 struct WeaponObj {
     s8 active;
     s8 pad[0x4F];
@@ -554,6 +583,7 @@ extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
 extern struct VisualObj visual_objects[0x20];
+extern struct ShotObj shot_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];

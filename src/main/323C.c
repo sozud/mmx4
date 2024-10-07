@@ -1405,7 +1405,7 @@ struct Unk* find_free_game_obj(void)
 struct WeaponObj* func_8002AC0C()
 {
     struct WeaponObj* current;
-    for (current = &weapon_objects[0]; current < &weapon_objects[16]; current++) {
+    for (current = &weapon_objects[0]; current < &weapon_objects[0x10]; current++) {
         if (!current->active) {
             current->unk50 = 0;
             current->unk54 = 0;
@@ -1432,7 +1432,35 @@ struct WeaponObj* func_8002AC0C()
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ACA4);
+struct ShotObj* func_8002ACA4(void)
+{
+    struct ShotObj* current;
+    for (current = &shot_objects[0]; current < &shot_objects[0x20]; current++) {
+        if (!current->active) {
+            current->unk50 = 0;
+            current->unk54 = 0;
+            current->unk68 = 0;
+            current->unk98 = 0;
+            current->unk61 = 0;
+            current->unk64 = 0;
+            current->unk65 = 0;
+            current->unk66 = 0;
+            current->unk72 = 0;
+            current->unk73 = 0;
+            current->unk74 = 0;
+            current->unk76 = 0;
+            current->unk77 = 0;
+            current->unk78 = 0;
+            current->unk62 = 0;
+            current->unk63 = 0;
+            current->unk7A = 0;
+            current->unk75 = 0;
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 struct VisualObj* func_8002AD3C()
 {
