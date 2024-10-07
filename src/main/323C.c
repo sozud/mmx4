@@ -1376,7 +1376,7 @@ struct Unk* find_free_game_obj(void)
 {
     struct Unk* var_v1;
     for (var_v1 = &game_objects[0]; var_v1 < &game_objects[0x30]; var_v1++) {
-        if (var_v1->active == 0) {
+        if (!var_v1->active) {
             var_v1->unk50 = 0;
             var_v1->unk54 = 0;
             var_v1->unk68 = 0;
@@ -1402,7 +1402,35 @@ struct Unk* find_free_game_obj(void)
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AC0C);
+struct WeaponObj* func_8002AC0C()
+{
+    struct WeaponObj* current;
+    for (current = &weapon_objects[0]; current < &weapon_objects[16]; current++) {
+        if (!current->active) {
+            current->unk50 = 0;
+            current->unk54 = 0;
+            current->unk68 = 0;
+            current->unk98 = 0;
+            current->unk61 = 0;
+            current->unk64 = 0;
+            current->unk65 = 0;
+            current->unk66 = 0;
+            current->unk72 = 0;
+            current->unk73 = 0;
+            current->unk74 = 0;
+            current->unk76 = 0;
+            current->unk77 = 0;
+            current->unk78 = 0;
+            current->unk62 = 0;
+            current->unk63 = 0;
+            current->unk7A = 0;
+            current->unk75 = 0;
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ACA4);
 
@@ -1422,7 +1450,6 @@ struct EffectObj* find_free_effect_obj(void)
 struct ItemObj* func_8002ADBC()
 {
     struct ItemObj* current;
-
     for (current = &item_objects[0]; current < &item_objects[0x20]; current++) {
         if (!current->active) {
             current->unk50 = 0;
