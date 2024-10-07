@@ -1548,7 +1548,7 @@ struct LayerObj* func_8002B048()
 {
     struct LayerObj* current;
     for (current = &layer_objects[0]; current < &layer_objects[4]; current++) {
-        if (current->active == NULL) {
+        if (!current->active) {
             return current;
         }
     }

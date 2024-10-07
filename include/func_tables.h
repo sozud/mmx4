@@ -639,9 +639,9 @@ void func_80028658(struct Unk* arg0);
 struct Unk* func_8002AB74(void);
 struct WeaponObj* func_8002AC0C(void);
 struct VisualObj* func_8002AD3C(void);
-struct Unk* func_8002AD7C(void);
+struct EffectObj* func_8002AD7C(void);
 struct ItemObj* func_8002ADBC(void);
-struct Unk* func_8002AE50(void);
+struct MiscObj* func_8002AE50(void);
 struct QuadObj* FindFreeQuadObj(void);
 struct LayerObj* func_8002B048(void);
 

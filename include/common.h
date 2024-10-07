@@ -203,6 +203,11 @@ struct ItemObj {
     s8 pad7B[0x8C - 0x7B];
 }; // size 0x8C
 
+struct LayerObj {
+    s8 active;
+    u8 pad[0x2F];
+}; // size 0x30
+
 struct MiscObj {
     s8 active;
     s8 id; // 0x01
@@ -231,11 +236,6 @@ struct MiscObj {
     s8 pad55[5];
     s8 unk5D;
 }; // size 0x60
-
-struct LayerObj {
-    s8 active;
-    u8 pad[0x2F];
-}; // size 0x30
 
 struct Unk2 {
     u8 unk0;
