@@ -450,6 +450,7 @@ EnablePAD = 0x800EE37C;
 DesablePAD = 0x800EE390;
 _patch_pad = 0x800EE3A4;
 game_objects = 0x8013BED0;
+visual_objects = 0x8013E510;
 shot_objects = 0x8013F328;
 weapon_objects = 0x801406F8;
 effect_objects = 0x80142F98;

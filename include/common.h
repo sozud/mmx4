@@ -108,6 +108,11 @@ struct Unk_unk68 {
     u8 unk3;
 };
 
+struct VisualObj {
+    s8 active;
+    u8 pad[0x6F];
+}; // size 0x70
+
 struct WeaponObj {
     s8 active;
     s8 pad[0x4F];
@@ -543,6 +548,7 @@ extern s16 D_8013B7FC;
 extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
+extern struct VisualObj visual_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];

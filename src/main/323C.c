@@ -1434,7 +1434,17 @@ struct WeaponObj* func_8002AC0C()
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ACA4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AD3C);
+struct VisualObj* func_8002AD3C()
+{
+    struct VisualObj* current;
+    for (current = &visual_objects[0]; current < &visual_objects[0x20]; current++) {
+        if (current->active == NULL) {
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 struct EffectObj* find_free_effect_obj(void)
 {
