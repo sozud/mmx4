@@ -1556,7 +1556,18 @@ struct LayerObj* func_8002B048()
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B088);
+struct UnkObj* func_8002B088()
+{
+    struct UnkObj* current;
+
+    for (current = &unk_objects[0]; current < &unk_objects[20]; current++) {
+        if (!current->active) {
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 void func_8002B0C8(struct Unk18* arg0)
 {

@@ -171,6 +171,11 @@ struct WeaponObj {
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
 
+struct UnkObj {
+    s8 active;
+    u8 pad[0x5F];
+}; // size 0x60
+
 struct ItemObj {
     s8 active;
     s8 pad[0x4F];
@@ -585,6 +590,7 @@ extern s16 D_80173C7A;
 extern struct VisualObj visual_objects[0x20];
 extern struct ShotObj shot_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
+extern struct UnkObj unk_objects[0x14];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
