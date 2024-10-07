@@ -1703,7 +1703,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002C36C);
 
 // megaman falls through floor in intro stage if nopped out
 // asm(".rept 81 ; nop ; .endr");
-void CollisionRelated(struct Unk* arg0) // was func_8002C614
+void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
 {
     s32 temp_v1;
 
@@ -1751,7 +1751,7 @@ void CollisionRelated(struct Unk* arg0) // was func_8002C614
     }
 }
 
-void func_8002C760(struct Unk* arg0)
+void func_8002C760(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
     u16 temp_a1 = arg0->x_pos.i.hi;
@@ -1773,7 +1773,7 @@ void func_8002C760(struct Unk* arg0)
     D_8013B7FC = D_8013B7F4 + D_8013B7EC;
 }
 
-void func_8002C808(struct Unk* arg0)
+void func_8002C808(struct PlayerObj* arg0)
 {
     arg0->unk70 = 0;
     arg0->unk79 = 0;
@@ -1812,7 +1812,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002CC98);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002CD70);
 
-void func_8002CDD4(struct Unk* arg0)
+void func_8002CDD4(struct PlayerObj* arg0)
 {
     u8 temp_s3;
     u8 temp_s4;
@@ -1858,7 +1858,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002CF98);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002D180);
 
-s32 func_8002D1F8(struct Unk* arg0, u8 arg1, s32 arg2)
+s32 func_8002D1F8(struct PlayerObj* arg0, u8 arg1, s32 arg2)
 {
     switch (arg1) {
     case 0x21:
@@ -2143,7 +2143,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80033368);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80033414);
 
-s32 func_80033494(struct Unk7* arg0)
+s32 func_80033494(struct PlayerObj* arg0)
 {
     if (func_80033694() != 0) {
         func_80034754(arg0);
@@ -2164,7 +2164,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800335E4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80033694);
 
-void func_80033750(struct Unk15* arg0)
+void func_80033750(struct PlayerObj* arg0)
 {
     s8 temp_v1;
 
@@ -2213,7 +2213,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80033FF0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800340BC);
 
-s32 func_80034100(struct Unk3* arg0)
+s32 func_80034100(struct PlayerObj* arg0)
 {
     if (D_801721CF != 0) {
         func_80034F7C();
@@ -2336,7 +2336,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800355C0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80035694);
 
-void func_80035848(struct Unk* arg0)
+void func_80035848(struct PlayerObj* arg0)
 {
     func_800350A4(arg0, 1);
     func_8001540C(1, 0xD, arg0);
@@ -2578,7 +2578,7 @@ void func_800397E8(struct Unk11* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80039808);
 
-s32 func_80039880(struct Unk12* arg0)
+s32 func_80039880(struct PlayerObj* arg0)
 {
     if (arg0->unk2 == 0) {
         return 0;
