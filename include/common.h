@@ -108,6 +108,33 @@ struct Unk_unk68 {
     u8 unk3;
 };
 
+struct ItemObj {
+    s8 active;
+    s8 pad[0x4F];
+    s32 unk50;
+    s32 unk54;
+    s8 pad58[0x61 - 0x58];
+    s8 unk61;
+    s8 unk62;
+    s8 unk63;
+    s8 unk64;
+    s8 unk65;
+    s8 unk66;
+    s8 : 8;
+    s32 unk68;
+    s8 pad6C[0x72 - 0x6C];
+    s8 unk72;
+    s8 unk73;
+    s8 unk74;
+    s8 unk75;
+    s8 unk76;
+    s8 unk77;
+    s8 unk78;
+    s8 : 8;
+    s8 unk7A;
+    s8 pad7B[0x8C - 0x7B];
+}; // size 0x8C
+
 struct MiscObj {
     s8 active;
     s8 id; // 0x01
@@ -488,6 +515,7 @@ extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
 extern struct EffectObj effect_objects[0x20];
+extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;

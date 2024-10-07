@@ -1419,7 +1419,35 @@ struct EffectObj* find_free_effect_obj(void)
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002ADBC);
+struct ItemObj* func_8002ADBC()
+{
+    struct ItemObj* current;
+
+    for (current = &item_objects[0]; current < &item_objects[0x20]; current++) {
+        if (!current->active) {
+            current->unk50 = 0;
+            current->unk54 = 0;
+            current->unk68 = 0;
+            current->unk61 = 0;
+            current->unk64 = 0;
+            current->unk65 = 0;
+            current->unk66 = 0;
+            current->unk72 = 0;
+            current->unk73 = 0;
+            current->unk74 = 0;
+            current->unk76 = 0;
+            current->unk77 = 0;
+            current->unk78 = 0;
+            current->unk62 = 0;
+            current->unk63 = 0;
+            current->unk7A = 0;
+            current->unk75 = 0;
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 struct MiscObj* find_free_misc_obj(void)
 {

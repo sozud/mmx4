@@ -640,7 +640,7 @@ struct Unk* func_8002AB74(void);
 struct Unk* func_8002AC0C(void);
 struct Unk* func_8002AD3C(void);
 struct Unk* func_8002AD7C(void);
-struct Unk* func_8002ADBC(void);
+struct ItemObj* func_8002ADBC(void);
 struct Unk* func_8002AE50(void);
 struct QuadObj* FindFreeQuadObj(void);
 struct Unk* func_8002B048(void);
