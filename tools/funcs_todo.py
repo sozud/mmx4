@@ -168,7 +168,7 @@ def get_asm_files(asm_path, og_files):
     return files
 
 def find_wip(o):
-    result = find_scratches(o[1], "ps1", o[7], True)
+    result = find_scratches(o[1], "ps1", o[8], True)
 
     if result:
         return {"link": result[0], "percent": result[1]}
@@ -176,7 +176,7 @@ def find_wip(o):
     return None
 
 
-def do_files(files):
+def do_files(files, objtypes):
     args = parser.parse_args()
     asm_files = get_asm_files("asm/us", files)
 
@@ -217,6 +217,29 @@ def do_files(files):
                 ovl_name = ""
                 func_name = name
 
+        objtypes_str = [
+            'gameobj',
+            '',
+            '',
+            'effect',
+            '',
+            'misc',
+            'QuadObj',
+            '',
+            'player',
+        ]
+        pos = 0
+        objtype = None
+        for objlist in objtypes:
+            for func in objlist:
+                match = re.search(r"(?<=\/func_)([0-9A-Fa-f]+)(?=\.s)", name)
+                if match:
+                    hex_part = int(match.group(1), 16)
+                    if hex_part == func:
+                        objtype = f"{pos} {objtypes_str[pos]}"
+
+            pos += 1
+
         wip = ""
         wip_percentage = ""
         output.append(
@@ -226,6 +249,7 @@ def do_files(files):
                 length,
                 branches,
                 jump_table,
+                objtype,
                 wip,
                 wip_percentage,
                 f["text"] # local asm
@@ -242,14 +266,14 @@ def do_files(files):
         for i, o in enumerate(output):
             # keep the in-source results as definitive
             if results[i] != None:
-                o[5] = results[i]["link"]
-                o[6] = results[i]["percent"]
+                o[6] = results[i]["link"]
+                o[7] = results[i]["percent"]
 
     # delete asm text
     for o in output:
-        del o[7:]
+        del o[8:]
 
-    headers = ["Ovl", "Function", "Length", "Branches", "Jtbl", "WIP", "%"]
+    headers = ["Ovl", "Function", "Length", "Branches", "Jtbl", "Objtype", "WIP", "%"]
     print(tabulate(output, headers=headers, tablefmt="github"))
 
 
@@ -281,22 +305,36 @@ def find_matching_files_sorted_by_size(directory, hex_numbers):
 
     return matching_files
 
+def read_obj_list(filename):
+    objtypes = []
+    cur_objtype = 0
+    file_path = get_file_path(filename)
+    with open(file_path, 'r') as file:
+        cur_list = []
+        for line in file:
+            if 'objType' in line:
+                continue
+            else:
+                try:
+                    cur_list.append(int(line.strip(), 16))
+                except:
+                    objtypes.append(cur_list)
+                    cur_list = []
+                    cur_objtype += 1
+                    pass
+    return objtypes
+
 # Main function
 def main():
     # Read hex numbers from output.txt in the same folder as this script
     hex_numbers = read_hex_numbers('mednafen_trace.txt')
 
+    objtypes = read_obj_list('objtypes.txt')
+
     # Find matching files and sort them by size
     matching_files = find_matching_files_sorted_by_size('asm', hex_numbers)
 
-    do_files(matching_files)
-    # # Print matching files with their sizes
-    # if matching_files:
-    #     print(f"Matching files found ({len(matching_files)}), sorted by size:")
-    #     for file, size in matching_files:
-    #         print(f"{file} - {size} bytes")
-    # else:
-    #     print("No matching files found.")
+    do_files(matching_files, objtypes)
 
 if __name__ == "__main__":
     main()
