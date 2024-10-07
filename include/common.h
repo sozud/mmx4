@@ -198,6 +198,11 @@ struct MiscObj {
     s8 unk5D;
 }; // size 0x60
 
+struct LayerObj {
+    s8 active;
+    u8 pad[0x2F];
+}; // size 0x30
+
 struct Unk2 {
     u8 unk0;
     u8 unk1;
@@ -553,6 +558,7 @@ extern struct WeaponObj weapon_objects[0x10];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
+extern struct LayerObj layer_objects[4];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
 extern void (*ReadyTextUpdateFuncs[1])(void);

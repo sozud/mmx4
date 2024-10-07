@@ -1516,7 +1516,17 @@ struct QuadObj* FindFreeQuadObj()
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B048);
+struct LayerObj* func_8002B048()
+{
+    struct LayerObj* current;
+    for (current = &layer_objects[0]; current < &layer_objects[4]; current++) {
+        if (current->active == NULL) {
+            return current;
+        }
+    }
+
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B088);
 

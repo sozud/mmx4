@@ -456,6 +456,7 @@ weapon_objects = 0x801406F8;
 effect_objects = 0x80142F98;
 item_objects = 0x80165A30;
 misc_objects = 0x80173CA0;
+layer_objects = 0x80169CB8;
 cur_draw_info = 0x80142F80;
 draw_infos = 0x80166C10;
 Set24BitDisp = 0x800185F8;
