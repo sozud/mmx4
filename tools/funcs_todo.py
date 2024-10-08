@@ -119,7 +119,7 @@ def get_asm_files(asm_path, og_files):
         if not found:
             continue
         # ignore data
-        if not "nonmatchings" in str(path):
+        if not "/nonmatchings" in str(path):
             continue
         f = open(f"{path}", "r")
         text = f.read()
@@ -229,16 +229,18 @@ def do_files(files, objtypes):
             'player',
         ]
         pos = 0
-        objtype = None
+        objtype = []
         for objlist in objtypes:
             for func in objlist:
                 match = re.search(r"(?<=\/func_)([0-9A-Fa-f]+)(?=\.s)", name)
                 if match:
                     hex_part = int(match.group(1), 16)
                     if hex_part == func:
-                        objtype = f"{pos} {objtypes_str[pos]}"
+                        objtype.append(f"{pos} {objtypes_str[pos]}")
 
             pos += 1
+
+        objtype = ",".join(objtype)
 
         wip = ""
         wip_percentage = ""
