@@ -101,6 +101,76 @@ struct Unk {
     u32 pad98;
 }; // size 0x9c
 
+// similar to Unk
+struct PlayerObj {
+    s8 active;
+    s8 id; // 0x01
+    s8 unk2;
+    s8 unk3;
+    s8 state;
+    s8 unk5;
+    s8 unk6;
+    s8 : 8;
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    u8 pad10[0x4];
+    s8 unk14;
+    u8 unk15;
+    u8 unk16;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    u8 pad30[0x8];
+    s16 animation_speed;
+    u8 pad39[5];
+    u16 unk40;
+    u16 unk42;
+    s8 pad43[9];
+    s32 unk50;
+    s32 unk54;
+    s8 pad55[4];
+    s8 unk5C;
+    s8 unk5D;
+    u8 pad2f[3];
+    s8 unk61;
+    s8 unk62;
+    s8 unk63;
+    s8 unk64;
+    s8 unk65;
+    s8 unk66;
+    s8 unk67;
+    struct Unk_unk68* unk68;
+    s16 : 16;
+    s16 unk6E;
+    u8 unk70;
+    s8 : 8;
+    s8 unk72;
+    s8 unk73;
+    s8 unk74;
+    s8 unk75;
+    s8 unk76;
+    s8 unk77;
+    s8 unk78;
+    s8 unk79;
+    s8 unk7A;
+    u8 pad68[4];
+    u16 unk80;
+    u16 unk82;
+    u8 pad82[3];
+    u8 unk87;
+    s8 unk88;
+    u16 unk8C;
+    u32 unk90;
+    u32 unk94;
+    u8 pad98[44];
+    s8 unkC0;
+    s8 padC0[2];
+    s8 unkC3;
+}; // size ?
+
 struct Unk_unk68 {
     s8 unk0;
     s8 unk1;
