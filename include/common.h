@@ -243,7 +243,38 @@ struct WeaponObj {
 
 struct UnkObj {
     s8 active;
-    u8 pad[0x5F];
+    s8 id;
+    s8 unk2;
+    s8 unk3;
+    s8 unk4;
+    s8 unk5;
+    s8 unk6;
+    s8 unk7;
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    u8 pad10[0x4];
+    s8 unk14;
+    u8 unk15;
+    u8 unk16;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s8** unk30;
+    s32 : 32;
+    s16 unk38;
+    s16 : 16;
+    s32 unk3C;
+    u16 unk40;
+    u16 unk42;
+    s8 pad44[0x47 - 0x44];
+    s8 unk47;
+    s8 pad48[0x50 - 0x48];
+    s8* unk50;
+    u8 unk54;
+    u8 pad55[0x60 - 0x55];
 }; // size 0x60
 
 struct ItemObj {
@@ -591,8 +622,14 @@ struct GameInfo {
 
 extern struct QuadObj g_QuadObjects[];
 extern u8 D_800F8B30[];
+extern s8* D_8010ECD4[];
+extern void (*D_8010F5E8[4])();
+extern void (*D_8010F5F8[2])();
 extern s8 D_801721CF;
 extern s8 D_80141BDC;
+extern u8 D_80141BDF[];
+extern u8 D_80141BE0;
+extern s8 D_80172203;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
 extern s32 D_801418C8;
