@@ -10859,7 +10859,7 @@ void func_800D35D0(struct UnkObj* arg0)
     arg0->unk15 = 0;
     if (arg0->unk2 == -1) {
         arg0->unk42 = 0x7806;
-        arg0->y_pos.i.hi = *(u8*)(D_80141BDF[0] * 2 + arg0->unk50) + 8;
+        arg0->y_pos.i.hi = arg0->unk50[D_80141BDF[0] * 2] + 8;
         arg0->unk54 = D_80141BDF[0];
         func_80015D60(arg0, 0);
     } else {
@@ -10908,7 +10908,7 @@ void func_800D38A0(struct UnkObj* arg0)
 {
     if (arg0->unk2 == -1) {
         if (arg0->unk54 != D_80141BDF[0]) {
-            arg0->y_pos.i.hi = *(u8*)(D_80141BDF[0] * 2 + arg0->unk50) + 8;
+            arg0->y_pos.i.hi = arg0->unk50[D_80141BDF[0] * 2] + 8;
             arg0->unk54 = D_80141BDF[0];
         }
         func_80015DC8(arg0, D_80141BDF);
