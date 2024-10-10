@@ -199,6 +199,8 @@ struct PlayerObj {
     s8 unkC0;
     s8 padC0[2];
     s8 unkC3;
+    s8 padC3[1];
+    s8 unkC5;
 }; // size ?
 
 struct Unk_unk68 {
@@ -799,6 +801,7 @@ extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
 extern s32 D_80173C80;
+extern s8 D_80172206;
 
 #include "func_tables.h"
 
