@@ -50,11 +50,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013404);
 void func_80013530(void)
 {
     func_800129F0(0x10);
-    if (D_80141BDC != 0) {
+    if (D_80141BDC[0] != 0) {
         do {
             func_80013404(0);
             func_800127C8(1);
-        } while (D_80141BDC != 0);
+        } while (D_80141BDC[0] != 0);
     }
 }
 
@@ -766,7 +766,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E638);
 
 void func_8001E690(struct Unk800F2294* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         arg0->unk1++;
     }
 }
@@ -1323,7 +1323,7 @@ void func_80029928(struct EngineObj* arg0)
 
 void func_80029978(struct EngineObj* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         func_8001D134();
         D_801419B3 = 0;
         D_80141A07 = 0;
@@ -9452,7 +9452,7 @@ void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 
 void func_800BB9F4(struct Unk21* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         arg0->unk14 = 0;
         arg0->unk15 = 0;
         arg0->unk16 = 0;

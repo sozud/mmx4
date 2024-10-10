@@ -116,6 +116,20 @@ void func_8001293C(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012944);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800129A4);
+void func_800129A4(s8 arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        D_80141BDC[0] = 1;
+        D_80141BDC[1] = arg0;
+        func_80012740(2, func_80012A3C);
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800129F0);
+void func_800129F0(s32 arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        D_80141BDC[0] = -1;
+        D_80141BDC[1] = arg0;
+        func_80012740(2, func_80012A3C);
+    }
+}
