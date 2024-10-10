@@ -609,31 +609,31 @@ void func_80023B98(void);
 void func_80023C0C(void);
 
 // D_800F3134
-void func_80027908(struct Unk9* arg0);
-void func_80027974(struct Unk9* arg0);
-void func_800279D8(struct Unk9* arg0);
+void func_80027908(struct BackgroundObj* arg0);
+void func_80027974(struct BackgroundObj* arg0);
+void func_800279D8(struct BackgroundObj* arg0);
 
 // D_800F3140
-void func_80027DC0(struct Unk* arg0);
-void func_80027DF0(struct Unk* arg0);
-void func_80028070(struct Unk* arg0);
-void func_800280BC(struct Unk* arg0);
-void func_800280F4(struct Unk* arg0);
-void func_800285E0(struct Unk* arg0);
-void func_800285E8(struct Unk* arg0);
-void func_80028620(struct Unk* arg0);
-void func_80028658(struct Unk* arg0);
+void func_80027DC0(struct BackgroundObj* arg0);
+void func_80027DF0(struct BackgroundObj* arg0);
+void func_80028070(struct BackgroundObj* arg0);
+void func_800280BC(struct BackgroundObj* arg0);
+void func_800280F4(struct BackgroundObj* arg0);
+void func_800285E0(struct BackgroundObj* arg0);
+void func_800285E8(struct BackgroundObj* arg0);
+void func_80028620(struct BackgroundObj* arg0);
+void func_80028658(struct BackgroundObj* arg0);
 
 // D_800F3164
-void func_80028268(struct Unk* arg0);
-void func_80028298(struct Unk* arg0);
-void func_80028518(struct Unk* arg0);
-void func_80028564(struct Unk* arg0);
-void func_8002859C(struct Unk* arg0);
-void func_800285E0(struct Unk* arg0);
-void func_800285E8(struct Unk* arg0);
-void func_80028620(struct Unk* arg0);
-void func_80028658(struct Unk* arg0);
+void func_80028268(struct BackgroundObj* arg0);
+void func_80028298(struct BackgroundObj* arg0);
+void func_80028518(struct BackgroundObj* arg0);
+void func_80028564(struct BackgroundObj* arg0);
+void func_8002859C(struct BackgroundObj* arg0);
+void func_800285E0(struct BackgroundObj* arg0);
+void func_800285E8(struct BackgroundObj* arg0);
+void func_80028620(struct BackgroundObj* arg0);
+void func_80028658(struct BackgroundObj* arg0);
 
 // D_800F43A8
 struct Unk* func_8002AB74(void);

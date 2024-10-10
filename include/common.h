@@ -101,6 +101,36 @@ struct Unk {
     u32 pad98;
 }; // size 0x9c
 
+struct BackgroundObj {
+    u8 pad[4];
+    s8 unk4;
+    u8 pad4[3];
+    f32 unk8;
+    f32 unkC;
+    u8 padC[2];
+    s32 unk14;
+    s32 unk18;
+    u16 unk1C;
+    u16 unk1E;
+    u16 unk20;
+    u16 unk22;
+    s16 unk24;
+    s16 unk26;
+    s16 unk28;
+    s16 unk2A;
+    s16 unk2C;
+    s16 unk2E;
+    s16 unk30;
+    s16 unk32;
+    u8 pad32[12];
+    u16 unk40;
+    u16 unk42;
+    u8 pad42[3];
+    u8 unk47;
+    u8 unk48;
+    u8 unk49;
+}; // size 0x54
+
 // similar to Unk
 struct PlayerObj {
     s8 active;

@@ -1116,7 +1116,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002771C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027850);
 
-void func_80027908(struct Unk9* arg0)
+void func_80027908(struct BackgroundObj* arg0)
 {
     arg0->unk47 = 2;
     arg0->unk48 = 8;
@@ -1124,8 +1124,8 @@ void func_80027908(struct Unk9* arg0)
     arg0->unk2E = 0xC0;
     arg0->unk30 = 0xA0;
     arg0->unk32 = 0xA0;
-    arg0->unk14 = arg0->unk8;
-    arg0->unk18 = arg0->unkC;
+    arg0->unk14 = arg0->unk8.val;
+    arg0->unk18 = arg0->unkC.val;
     arg0->unk24 = arg0->unk1C;
     arg0->unk26 = arg0->unk1E;
     arg0->unk28 = arg0->unk20;
@@ -1133,11 +1133,11 @@ void func_80027908(struct Unk9* arg0)
     arg0->unk4++;
 }
 
-void func_80027974(struct Unk9* arg0)
+void func_80027974(struct BackgroundObj* arg0)
 {
     s32 temp_a1;
-    arg0->unk14 = arg0->unk8;
-    temp_a1 = arg0->unkC;
+    arg0->unk14 = arg0->unk8.val;
+    temp_a1 = arg0->unkC.val;
     arg0->unk18 = temp_a1;
     arg0->unk49 = -arg0->unk48;
     func_80027A5C(arg0, temp_a1);
@@ -1161,10 +1161,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027BE4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 
-void func_80027DC0(struct Unk* arg0)
+void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
-    arg0->state = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
+    arg0->unk4 = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -1191,10 +1191,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027F7C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
-void func_80028070(struct Unk* arg0)
+void func_80028070(struct BackgroundObj* arg0)
 {
-    arg0->x_pos.i.hi = D_801419BA[0] + arg0->unk40;
-    arg0->y_pos.i.hi = D_801419BE[0] + arg0->unk42;
+    arg0->unk8.i.hi = D_801419BA[0] + arg0->unk40;
+    arg0->unkC.i.hi = D_801419BE[0] + arg0->unk42;
     func_80027FA8(arg0);
 }
 
@@ -1218,9 +1218,9 @@ extern u8 D_800F32D5[1][1];
 extern s8 D_801721CC;
 extern s8 D_801721CD;
 
-void func_80028268(struct Unk* arg0)
+void func_80028268(struct BackgroundObj* arg0)
 {
-    arg0->state = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
+    arg0->unk4 = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);
@@ -1253,7 +1253,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028564);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002859C);
 
-void func_800285E0(struct Unk* arg0)
+void func_800285E0(struct BackgroundObj* arg0)
 {
 }
 
