@@ -50,11 +50,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013404);
 void func_80013530(void)
 {
     func_800129F0(0x10);
-    if (D_80141BDC != 0) {
+    if (D_80141BDC[0] != 0) {
         do {
             func_80013404(0);
             func_800127C8(1);
-        } while (D_80141BDC != 0);
+        } while (D_80141BDC[0] != 0);
     }
 }
 
@@ -766,7 +766,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E638);
 
 void func_8001E690(struct Unk800F2294* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         arg0->unk1++;
     }
 }
@@ -851,7 +851,7 @@ void func_8001FB50(void)
     }
 }
 
-void func_8001FBB8(struct Unk8001FB50* arg0)
+void func_8001FBB8(struct EngineObj* arg0)
 {
     arg0->unk44 = 2;
     arg0->unk46 = 0x20;
@@ -860,7 +860,7 @@ void func_8001FBB8(struct Unk8001FB50* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FBD4);
 
-void func_8001FBE0(struct Unk8001FB50* arg0)
+void func_8001FBE0(struct EngineObj* arg0)
 {
     func_80013014();
     arg0->unk1D = 0;
@@ -871,7 +871,7 @@ void func_8001FBE0(struct Unk8001FB50* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FC20);
 
-s32 func_8001FD7C(struct Unk23* arg0)
+s32 func_8001FD7C(struct EngineObj* arg0)
 {
     if (arg0->unkC != 0xC) {
         return 0;
@@ -887,7 +887,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FDBC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FEC0);
 
-void func_8001FF50(struct Unk8001FB50* arg0)
+void func_8001FF50(struct EngineObj* arg0)
 {
     D_800F241C[arg0->unk1]();
 }
@@ -1302,7 +1302,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029604);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800296A8);
 
-void func_8002979C(struct Unk2* arg0)
+void func_8002979C(struct EngineObj* arg0)
 {
     D_800F4498[arg0->unk2]();
 }
@@ -1311,7 +1311,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800297D8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800298B4);
 
-void func_80029928(struct Unk2* arg0)
+void func_80029928(struct EngineObj* arg0)
 {
     if (arg0->unk4 == 0) {
         arg0->unk1++;
@@ -1321,9 +1321,9 @@ void func_80029928(struct Unk2* arg0)
     arg0->unk4--;
 }
 
-void func_80029978(struct Unk2* arg0)
+void func_80029978(struct EngineObj* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         func_8001D134();
         D_801419B3 = 0;
         D_80141A07 = 0;
@@ -1337,7 +1337,7 @@ void func_80029978(struct Unk2* arg0)
     }
 }
 
-void func_800299EC(struct Unk8001FB50* arg0)
+void func_800299EC(struct EngineObj* arg0)
 {
     D_800F44A8[arg0->unk1]();
     func_8002B460();
@@ -1939,7 +1939,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F048);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F1B4);
 
-void func_8002F264(struct Unk* arg0)
+void func_8002F264(struct EngineObj* arg0)
 {
     if (D_8013BC34 != 0x80) {
         arg0->unk2++;
@@ -1949,7 +1949,7 @@ void func_8002F264(struct Unk* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F2A0);
 
-void func_8002F47C(struct Unk* arg0)
+void func_8002F47C(struct EngineObj* arg0)
 {
     if ((D_8013BC34 == 1) || (D_8013BC34 == 0x80)) {
         arg0->unk2--;
@@ -1957,7 +1957,7 @@ void func_8002F47C(struct Unk* arg0)
     }
 }
 
-void func_8002F4C4(struct Unk24* arg0)
+void func_8002F4C4(struct EngineObj* arg0)
 {
     arg0->unk40 = 0;
     D_800F485C[arg0->unk2]();
@@ -1996,7 +1996,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002FB54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002FBDC);
 
-void func_8002FC38(struct Unk8001FB50* arg0)
+void func_8002FC38(struct EngineObj* arg0)
 {
     func_8002B460();
     D_800F48A4[arg0->unk1](arg0);
@@ -9452,7 +9452,7 @@ void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 
 void func_800BB9F4(struct Unk21* arg0)
 {
-    if (D_80141BDC == 0) {
+    if (D_80141BDC[0] == 0) {
         arg0->unk14 = 0;
         arg0->unk15 = 0;
         arg0->unk16 = 0;

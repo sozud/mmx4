@@ -133,19 +133,19 @@ void func_8001F9A0(void);
 void func_8001FAC0(void);
 
 // D_800F23E8
-void func_8001FBB8(struct Unk8001FB50* arg0);
-void func_800299EC(struct Unk8001FB50* arg0);
-void func_8001FBD4(struct Unk8001FB50* arg0);
-void func_8002FC38(struct Unk8001FB50* arg0);
-void func_8001FBE0(struct Unk8001FB50* arg0);
-void func_8001FC20(struct Unk8001FB50* arg0);
-void func_8001FF50(struct Unk8001FB50* arg0);
-void func_8001FAFC(struct Unk8001FB50* arg0);
-void func_80020AC8(struct Unk8001FB50* arg0);
-void func_80020D98(struct Unk8001FB50* arg0);
-void func_80020464(struct Unk8001FB50* arg0);
-void func_80023A54(struct Unk8001FB50* arg0);
-void func_800204AC(struct Unk8001FB50* arg0);
+void func_8001FBB8(struct EngineObj* arg0);
+void func_800299EC(struct EngineObj* arg0);
+void func_8001FBD4(struct EngineObj* arg0);
+void func_8002FC38(struct EngineObj* arg0);
+void func_8001FBE0(struct EngineObj* arg0);
+void func_8001FC20(struct EngineObj* arg0);
+void func_8001FF50(struct EngineObj* arg0);
+void func_8001FAFC(struct EngineObj* arg0);
+void func_80020AC8(struct EngineObj* arg0);
+void func_80020D98(struct EngineObj* arg0);
+void func_80020464(struct EngineObj* arg0);
+void func_80023A54(struct EngineObj* arg0);
+void func_800204AC(struct EngineObj* arg0);
 
 // D_800F241C
 void func_8001FF8C(void);
@@ -654,13 +654,13 @@ void func_80029A48(void);
 void func_80029BD8(void);
 
 // D_800F44A8
-void func_80029420(struct Unk2* arg0);
-void func_8002951C(struct Unk2* arg0);
-void func_8002979C(struct Unk2* arg0);
-void func_800297D8(struct Unk2* arg0);
-void func_800298B4(struct Unk2* arg0);
-void func_80029928(struct Unk2* arg0);
-void func_80029978(struct Unk2* arg0);
+void func_80029420(struct EngineObj* arg0);
+void func_8002951C(struct EngineObj* arg0);
+void func_8002979C(struct EngineObj* arg0);
+void func_800297D8(struct EngineObj* arg0);
+void func_800298B4(struct EngineObj* arg0);
+void func_80029928(struct EngineObj* arg0);
+void func_80029978(struct EngineObj* arg0);
 
 // D_800F4590
 void func_80029E1C(void);
@@ -668,10 +668,10 @@ void func_8002A098(void);
 void func_8002A394(void);
 
 // D_800F485C
-void func_8002F1B4(struct Unk* arg0);
-void func_8002F264(struct Unk* arg0);
-void func_8002F2A0(struct Unk* arg0);
-void func_8002F47C(struct Unk* arg0);
+void func_8002F1B4(struct EngineObj* arg0);
+void func_8002F264(struct EngineObj* arg0);
+void func_8002F2A0(struct EngineObj* arg0);
+void func_8002F47C(struct EngineObj* arg0);
 
 // D_800F486C
 void func_8002F510(void);
@@ -692,18 +692,18 @@ void func_8002FAE4(void);
 void func_8002FB54(void);
 
 // D_800F48A4
-void func_8002E420(struct Unk24* arg0);
-void func_8002E698(struct Unk24* arg0);
-void func_8002E7BC(struct Unk24* arg0);
-void func_8002E8D4(struct Unk24* arg0);
-void func_8002E994(struct Unk24* arg0);
-void func_8002ED80(struct Unk24* arg0);
-void func_8002ED98(struct Unk24* arg0);
-void func_8002EDD4(struct Unk24* arg0);
-void func_8002EF14(struct Unk24* arg0);
-void func_8002F4C4(struct Unk24* arg0);
-void func_8002F698(struct Unk24* arg0);
-void func_8002FBDC(struct Unk24* arg0);
+void func_8002E420(struct EngineObj* arg0);
+void func_8002E698(struct EngineObj* arg0);
+void func_8002E7BC(struct EngineObj* arg0);
+void func_8002E8D4(struct EngineObj* arg0);
+void func_8002E994(struct EngineObj* arg0);
+void func_8002ED80(struct EngineObj* arg0);
+void func_8002ED98(struct EngineObj* arg0);
+void func_8002EDD4(struct EngineObj* arg0);
+void func_8002EF14(struct EngineObj* arg0);
+void func_8002F4C4(struct EngineObj* arg0);
+void func_8002F698(struct EngineObj* arg0);
+void func_8002FBDC(struct EngineObj* arg0);
 
 // D_800F48D4
 void func_8002FCEC(void);
