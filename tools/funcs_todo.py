@@ -227,6 +227,8 @@ def do_files(files, objtypes):
             'QuadObj',
             '',
             'player',
+            'background',
+            'engine'
         ]
         pos = 0
         objtype = []
