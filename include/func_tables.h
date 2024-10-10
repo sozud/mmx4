@@ -557,8 +557,8 @@ void func_80023CA4(struct MiscObj* arg0);
 void func_800D3510(struct MiscObj* arg0);
 
 // D_800F2A68
-void func_800D3928(void);
-void func_800D3A84(void);
+void func_800D3928(struct UnkObj* arg0);
+void func_800D3A84(struct UnkObj* arg0);
 
 // D_800F2A70 (quad_obj_update_funcs)
 void func_800D3AC0(struct QuadObj* arg0);
@@ -5761,14 +5761,14 @@ void func_800D34AC(void);
 void func_800D34F0(void);
 
 // D_8010F5E8
-void func_800D36AC(void);
-void func_800D3700(void);
-void func_800D3798(void);
-void func_800D38A0(void);
+void func_800D36AC(struct UnkObj*);
+void func_800D3700(struct UnkObj*);
+void func_800D3798(struct UnkObj*);
+void func_800D38A0(struct UnkObj*);
 
 // D_8010F5F8
-void func_800D3964(void);
-void func_800D39EC(void);
+void func_800D3964(struct UnkObj*);
+void func_800D39EC(struct UnkObj*);
 
 // D_8010F690
 void func_800D3AFC(void);
