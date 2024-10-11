@@ -800,6 +800,7 @@ extern s32 D_80139688;
 extern s32 D_80173C80;
 extern s8 D_80172206;
 extern s8 D_801721E7;
+extern void (*D_8010EBB4[1])();
 
 #include "func_tables.h"
 

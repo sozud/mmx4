@@ -5525,9 +5525,9 @@ void func_800CD034(struct Unk* arg0);
 void func_800CD530(struct Unk* arg0);
 
 // D_8010EBF4
-void func_800CCA34(struct Unk18* arg0);
-void func_800CD6D8(struct Unk18* arg0);
-void func_800CD730(struct Unk18* arg0);
+void func_800CCA34(struct MiscObj* arg0);
+void func_800CD6D8(struct MiscObj* arg0);
+void func_800CD730(struct MiscObj* arg0);
 
 // D_8010EC10
 void func_800CD78C(void);

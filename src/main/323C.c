@@ -10476,6 +10476,7 @@ void func_800CCD8C(struct MiscObj* arg0)
 // D_8010EB84 state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCDD4);
 
+// D_8010EBB4 state 0, 1
 void func_800CCEB4(struct MiscObj* arg0)
 {
     D_8010EB84[arg0->unk6]();
@@ -10485,31 +10486,41 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCEF0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCF70);
 
+// D_8010EBB4 state 2,3,4,5,12,13,14
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD034);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD0A4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD110);
 
+// D_8010EBB4 state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD178);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD1E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD2BC);
 
+// D_8010EBB4 state 7,8
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD390);
 
+// D_8010EBB4 state 9
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD408);
 
+// D_8010EBB4 state 10, 11
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD498);
 
+// D_8010EBB4 state 15
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD530);
 
 // SelectACharacterUpdate state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD6D8);
+void func_800CD6D8(struct MiscObj* arg0)
+{
+    D_8010EBB4[arg0->unk5](arg0);
+    func_8002B318(arg0, 0x80, 0x30);
+}
 
 // SelectACharacterUpdate state 2
-void func_800CD730(struct Unk18* arg0)
+void func_800CD730(struct MiscObj* arg0)
 {
     ZeroObjectState(arg0);
 }
