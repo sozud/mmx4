@@ -10424,11 +10424,26 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA14);
 // SelectACharacterUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA34);
 
+// D_8010EB84 state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCCA0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCD48);
+// D_8010EB84 state 1
+void func_800CCD48(struct MiscObj* arg0)
+{
+    if (D_801721E7 & 0x80) {
+        arg0->unk6++;
+        // sets how fast the X and Zero portraits move
+        // to the left and right after selecting a character
+        if (arg0->unk2 != 0) {
+            arg0->unk20 = FIXED(16);
+        } else {
+            arg0->unk20 = FIXED(-16);
+        }
+    }
+}
 
-void func_800CCD8C(struct Unk* arg0)
+// D_8010EB84 state 2
+void func_800CCD8C(struct MiscObj* arg0)
 {
     func_8002B718(arg0);
     if (arg0->unk3 == 0) {
@@ -10436,9 +10451,10 @@ void func_800CCD8C(struct Unk* arg0)
     }
 }
 
+// D_8010EB84 state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCDD4);
 
-void func_800CCEB4(struct Unk* arg0)
+void func_800CCEB4(struct MiscObj* arg0)
 {
     D_8010EB84[arg0->unk6]();
 }
