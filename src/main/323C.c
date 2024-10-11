@@ -10360,7 +10360,23 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB554);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB590);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB5B4);
+// "READY" has wrong palette if nopped out
+// asm(".rept 22 ; nop ; .endr");
+void func_800CB5B4(s32 arg0, s32 arg1)
+{
+    u16* var_a0;
+    u16* var_v1;
+    u32 var_a2;
+
+    var_a2 = 0;
+    var_a0 = *(s32*)0x1F800024 + ((arg1 + 0x39) << 5);
+    var_v1 = *(s32*)0x1F800028 + 0x20;
+    do {
+        *var_v1++ = *var_a0++;
+        var_a2 += 1;
+    } while (var_a2 < 0x10);
+    D_80166BB0 |= 1;
+}
 
 void func_800CB614(struct Unk* arg0)
 {
