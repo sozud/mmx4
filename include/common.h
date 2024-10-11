@@ -107,9 +107,9 @@ struct BackgroundObj {
     u8 pad4[3];
     f32 unk8;
     f32 unkC;
-    u8 padC[2];
-    s32 unk14;
-    s32 unk18;
+    u8 pad10[4];
+    f32 unk14;
+    f32 unk18;
     u16 unk1C;
     u16 unk1E;
     u16 unk20;
@@ -129,6 +129,7 @@ struct BackgroundObj {
     u8 unk47;
     u8 unk48;
     u8 unk49;
+    s8 pad50[0x54 - 0x4A];
 }; // size 0x54
 
 // similar to Unk
@@ -506,15 +507,7 @@ struct Unk16 {
 
 extern struct Unk16 D_80141BD8;
 
-struct Unk17 {
-    u8 pad0[0xA];
-    u16 unkA;
-    u16 : 16;
-    u16 unkE;
-    u8 pad[68];
-}; /* size 0x54 */
-
-extern struct Unk17 D_801419B0[];
+extern struct BackgroundObj D_801419B0[];
 
 struct DrawInfo {
     DISPENV dispenv;
@@ -852,7 +845,7 @@ void func_80023D68();
 void func_8002A484();
 void func_8002B460();
 void func_800B6C9C(s32 arg0);
-void func_800B6D1C(s32, s8, s32);
+void func_800B6D1C(s32, s8, s8);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
 void ZeroObjectState(struct Unk18* arg0);
