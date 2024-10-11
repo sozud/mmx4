@@ -2481,7 +2481,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80037708);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8003795C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80037A24);
+void func_80037A24(struct PlayerObj* arg0)
+{
+    if (arg0->unk96 == -1) {
+        if (arg0->unk80 & 0x20) {
+            arg0->unk96 = arg0->unk95;
+            return;
+        }
+        if ((arg0->unk7C & 0x200020) == 0x200000) {
+            if ((arg0->unk95 != 0) && (arg0->unk95 != 0x13)) {
+                arg0->unk96 = arg0->unk95;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80037A98);
 
