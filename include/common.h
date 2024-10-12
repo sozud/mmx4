@@ -367,10 +367,8 @@ struct MiscObj {
     s8 state;
     s8 unk5;
     s8 unk6;
-    u8 pad5[3];
-    s16 x_pos; // 0x0A
-    s16 padc;
-    s16 y_pos; // 0x0E
+    f32 x_pos; // 0x08,0x0a
+    f32 y_pos; // 0x0c,0x0e
     u8 pad6[0x10];
     s32 unk20;
     s32 unk24;
@@ -381,11 +379,16 @@ struct MiscObj {
     u8 pad39[5];
     u16 unk40;
     u16 unk42;
-    s8 pad43[9];
+    u8 pad42[2];
+    s8 unk46;
+    s8 pad46[6];
     s32 unk50;
-    s32 unk54;
-    s8 pad55[5];
-    s8 unk5D;
+    s8 unk54;
+    s8 unk55;
+    s8 pad55[1];
+    u8 unk57;
+    s32 unk58;
+    s32 unk5C;
 }; // size 0x60
 
 struct Unk2 {
@@ -673,6 +676,10 @@ struct GameInfo {
     u8 unkD;
 };
 
+struct Unk80172203 {
+    s8 unk0;
+};
+
 extern struct QuadObj g_QuadObjects[0x20];
 extern u8 D_800F8B30[];
 extern s8* D_8010ECD4[];
@@ -682,7 +689,6 @@ extern s8 D_801721CF;
 extern s8 D_80141BDC[];
 extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
-extern s8 D_80172203;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
@@ -816,6 +822,11 @@ extern s8 D_80172206;
 extern s8 D_801721E7;
 extern void (*D_8010EBB4[1])();
 extern u8 D_80166BB0;
+extern struct Unk80172203 D_80172203;
+extern (*D_8010EB98[])();
+extern s8 D_801721E7;
+extern (*D_8010EBA0[])();
+extern s8 D_801721E7;
 
 #include "func_tables.h"
 
