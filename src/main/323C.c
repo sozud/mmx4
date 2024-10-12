@@ -1050,25 +1050,23 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-extern void* D_801499C8; // 0x1F800100
-extern void* D_80169D98; // 0x1F800104
-extern void* D_80139830; // 0x1F800108
-extern void* D_80139C30; // 0x1F80010C
-extern void* D_80139E30; // 0x1F800110
-extern struct Unk* D_801418C8; // ???
+extern void* D_801499C8;
+extern void* D_80169D98;
+extern void* D_80139830;
+extern void* D_80139C30;
+extern void* D_80139E30;
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
-
+extern s8 D_801418C8[0x3E];
 extern s8 D_801418CA;
 extern s8 D_801418CB;
 extern struct QuadObj D_80141B70[2];
-
-extern void* D_80173A30;
+extern s8 D_80173A30;
 extern s8 D_80173A33;
-extern void* D_80175D58;
+extern s8 D_80175D58[0x3E];
 extern s8 D_80175D5B;
 
-// some kind of init? see also func_8002A7D0
+// some kind of init?
 void func_80023DB8(void)
 {
     struct QuadObj* var_s0;
@@ -1508,7 +1506,143 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A728);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A74C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A7D0);
+extern s32 D_8013E188;
+extern s32 D_8013E18C;
+extern s32 D_8013E190;
+extern s32 D_8013E194;
+extern s8 D_8013E1BC;
+extern s16 D_8013E1BE;
+extern struct UnkObj D_80141AB0[];
+extern s8 D_80141BE4;
+extern s16 D_80141BE6;
+extern s8 D_801754A0;
+extern s8 D_80175E9C;
+extern s16 D_80175EA0;
+
+// some kind of reset?
+void func_8002A7D0(void)
+{
+    s8 fill = 0;
+    s32 a2;
+    s32 var_v1;
+    s8* var_a0;
+    s8* a0;
+    u32 a1;
+
+    func_8002A728(&D_801418C8);
+    func_8002A728(&D_80175D58);
+
+    for (a1 = 0; a1 < 3; a1++) {
+        a0 = (u8*)&D_80141AB0[a1];
+        var_v1 = 0x60 - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < 2; a1++) {
+        a0 = (u8*)&D_8013E470 + a1 * 0x50;
+        var_v1 = 0x50 - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(weapon_objects); a1++) {
+        a0 = (u8*)&weapon_objects[a1];
+        var_v1 = sizeof(weapon_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    func_8002A74C();
+
+    for (a1 = 0; a1 < COUNT(visual_objects); a1++) {
+        a0 = (u8*)&visual_objects[a1];
+        var_v1 = sizeof(visual_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(effect_objects); a1++) {
+        a0 = (u8*)&effect_objects[a1];
+        var_v1 = sizeof(effect_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(item_objects); a1++) {
+        a0 = (u8*)&item_objects[a1];
+        var_v1 = sizeof(item_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(misc_objects); a1++) {
+        a0 = (u8*)&misc_objects[a1];
+        var_v1 = sizeof(misc_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(unk_objects); a1++) {
+        a0 = (u8*)&unk_objects[a1];
+        var_v1 = sizeof(unk_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(layer_objects); a1++) {
+        a0 = (u8*)&layer_objects[a1];
+        var_v1 = sizeof(layer_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(g_QuadObjects); a1++) {
+        a0 = (u8*)&g_QuadObjects[a1];
+        var_v1 = sizeof(g_QuadObjects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    a0 = &D_80173A30;
+    var_v1 = 0xB0;
+    while (var_v1-- != 0) {
+        *a0++ = fill;
+    }
+
+    a0 = &D_801754A0;
+    var_v1 = 0x34;
+    while (var_v1-- != 0) {
+        *a0++ = fill;
+    }
+
+    D_8013E1BE = 0;
+    D_80141BE6 = 0;
+    D_80175EA0 = 0;
+    D_8013E1BC = 0;
+    D_80141BE4 = 0;
+    D_80175E9C = 0;
+    D_8013E188 = 0;
+    D_8013E18C = 0;
+    D_8013E190 = 0;
+    D_8013E194 = 0;
+
+    a0 = &D_8013BC28;
+    var_v1 = 0x14;
+    while (var_v1-- != 0) {
+        *a0++ = fill;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AB20);
 
