@@ -1050,7 +1050,147 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023DB8);
+extern void* D_801499C8; // 0x1F800100
+extern void* D_80169D98; // 0x1F800104
+extern void* D_80139830; // 0x1F800108
+extern void* D_80139C30; // 0x1F80010C
+extern void* D_80139E30; // 0x1F800110
+extern struct Unk* D_801418C8; // ???
+extern s8 D_8013E473;
+extern s8 D_8013E4C3;
+
+extern s8 D_801418CA;
+extern s8 D_801418CB;
+extern struct QuadObj D_80141B70[2];
+
+extern void* D_80173A30;
+extern s8 D_80173A33;
+extern void* D_80175D58;
+extern s8 D_80175D5B;
+
+// some kind of init? see also func_8002A7D0
+void func_80023DB8(void)
+{
+    struct QuadObj* var_s0;
+    struct Unk* var_s0_2;
+    struct WeaponObj* var_s0_3;
+    struct ShotObj* var_s0_4;
+    struct VisualObj* var_s0_5;
+    struct ItemObj* var_s0_6;
+    struct MiscObj* var_s0_7;
+    struct UnkObj* var_s0_8;
+    struct QuadObj* var_s0_9;
+    s32 temp_a0;
+    void* temp_v1;
+    void* temp_v1_2;
+    void* temp_v1_3;
+    void* temp_v1_4;
+    void* temp_v1_5;
+    void* temp_v1_6;
+    void* temp_v1_7;
+    void* temp_v1_8;
+    void* temp_v1_9;
+    struct Unk* ptr = &D_801418C8;
+    void* ptr2;
+
+    temp_a0 = *(s32*)0x1F800000;
+    *(s32*)0x1F800124 = 0;
+    *(void**)0x1F800100 = (temp_a0 * 0xA000 / 4) + &D_801499C8;
+    *(void**)0x1F800104 = (temp_a0 * 0x2000 / 4) + &D_80169D98;
+    *(void**)0x1F800108 = (temp_a0 * 0x200 / 4) + &D_80139830;
+    *(void**)0x1F80010C = (temp_a0 * 0x100 / 4) + &D_80139C30;
+    *(void**)0x1F800110 = (temp_a0 * 0x78 / 4) + &D_80139E30;
+
+    func_80024E70(); // ???
+    func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
+
+    if (D_801418CB != 0) {
+        func_80024334(ptr);
+        if (D_801418CA == 0) {
+            func_800257BC(ptr);
+        }
+    }
+    if (D_80175D5B != 0) {
+        func_80024334(&D_80175D58);
+    }
+    if (ptr->unk2 == 0) {
+        ptr2 = &D_8013E470;
+        if (D_8013E473 != 0) {
+            func_80024334(ptr2);
+        }
+        ptr2 += 0x50;
+        if (D_8013E4C3 != 0) {
+            func_80024334(ptr2);
+        }
+    }
+
+    // this one loops backwards for some reason, doesn't seem to be a compiler optimization
+    for (var_s0 = &D_80141B70; var_s0 >= &D_80141B70[-COUNT(D_80141B70)]; var_s0--) {
+        if (var_s0->unk3 != 0) {
+            func_80024334(var_s0);
+        }
+    }
+
+    // might be a series of macros or inlines
+
+    for (var_s0_2 = &game_objects[0]; var_s0_2 < &game_objects[COUNT(game_objects)]; var_s0_2++) {
+        if (var_s0_2->unk3 != 0) {
+            func_80024334(var_s0_2);
+        }
+    }
+
+    for (var_s0_3 = &weapon_objects[0]; var_s0_3 < &weapon_objects[COUNT(weapon_objects)]; var_s0_3++) {
+        if (var_s0_3->unk3 != 0) {
+            func_80024334(var_s0_3);
+        }
+    }
+
+    for (var_s0_4 = &shot_objects[0]; var_s0_4 < &shot_objects[COUNT(shot_objects)]; var_s0_4++) {
+        if (var_s0_4->unk3 != 0) {
+            func_80024334(var_s0_4);
+        }
+    }
+
+    for (var_s0_5 = &visual_objects[0]; var_s0_5 < &visual_objects[COUNT(visual_objects)]; var_s0_5++) {
+        if (var_s0_5->unk3 != 0) {
+            func_80024334(var_s0_5);
+        }
+    }
+
+    for (var_s0_6 = &item_objects[0]; var_s0_6 < &item_objects[COUNT(item_objects)]; var_s0_6++) {
+        if (var_s0_6->unk3 != 0) {
+            func_80024334(var_s0_6);
+        }
+    }
+
+    for (var_s0_7 = &misc_objects[0]; var_s0_7 < &misc_objects[COUNT(misc_objects)]; var_s0_7++) {
+        if (var_s0_7->unk3 != 0) {
+            func_80024334(var_s0_7);
+        }
+    }
+
+    for (var_s0_8 = &unk_objects[0]; var_s0_8 < &unk_objects[COUNT(unk_objects)]; var_s0_8++) {
+        if (var_s0_8->unk3 != 0) {
+            func_80024334(var_s0_8);
+        }
+    }
+
+    if (D_80173A33 != 0) {
+        func_80024334(&D_80173A30);
+    }
+
+    for (var_s0_9 = &g_QuadObjects[0]; var_s0_9 < &g_QuadObjects[COUNT(g_QuadObjects)]; var_s0_9++) {
+        if (var_s0_9->unk3 != 0) {
+            if (var_s0_9->unk0 & 2) {
+                func_80024B9C(var_s0_9);
+            } else {
+                func_80024920(var_s0_9);
+            }
+        }
+    }
+
+    func_80024260();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800241E8);
 
@@ -1535,7 +1675,7 @@ struct QuadObj* find_free_quad_obj()
     struct QuadObj* end = &g_QuadObjects[32];
 
     while (current < end) {
-        if (current->first_byte == 0) {
+        if (current->unk0 == 0) {
             return current;
         }
         current++;
