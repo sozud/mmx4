@@ -372,7 +372,7 @@ struct MiscObj {
     f32 x_pos; // 0x08,0x0a
     f32 y_pos; // 0x0c,0x0e
     u8 pad6[0x10];
-    s32 unk20;
+    f32 x_vel; // 0x20
     s32 unk24;
     s32 unk28;
     s32 unk2C;
@@ -381,9 +381,10 @@ struct MiscObj {
     u8 pad39[5];
     u16 unk40;
     u16 unk42;
-    u8 pad42[2];
+    s8 unk44;
+    s8 unk45;
     s8 unk46;
-    s8 pad46[6];
+    s8 pad47[6];
     s32 unk50;
     s8 palette_shift_speed;
     s8 palette_shift_value; // 0x55
