@@ -33,6 +33,8 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBCD.H"
 #include "psy-q-4.0/LIBPRESS.H"
 
+#include "scratchpad.h"
+
 typedef union {
     s32 val;
     struct {
@@ -779,7 +781,7 @@ extern u8 D_80171EA9;
 extern s32 D_80166D68;
 extern s32 D_8012F46C;
 extern RECT D_800EE450;
-extern u16 D_8013E2E8;
+extern u16 cur_random;
 extern s32 D_8013BD44;
 extern s16 D_80141BD2;
 extern void (*func_8001D064)(void);
@@ -827,6 +829,7 @@ extern (*D_8010EB98[])();
 extern s8 D_801721E7;
 extern (*D_8010EBA0[])();
 extern s8 D_801721E7;
+extern u8 need_palette_load;
 
 #include "func_tables.h"
 
