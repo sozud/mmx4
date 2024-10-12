@@ -389,8 +389,8 @@ struct MiscObj {
     s8 palette_shift_value; // 0x55
     s8 unk56;
     u8 unk57;
-    s32 palette1;
-    s32 palette2;
+    s32 palette1; // 0x58
+    s32 palette2; // 0x5C
 }; // size 0x60
 
 struct Unk2 {
