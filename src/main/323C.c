@@ -3,6 +3,13 @@
 // uncomment to skip movies
 // #define SKIP_MDEC
 
+extern s32 D_80139514;
+extern u8 D_80139554;
+extern s8 D_80139568;
+extern s16 D_8013955C;
+extern s8 D_80173C84;
+extern s32 D_80175EE8[];
+
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012A3C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012D28);
@@ -355,10 +362,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800168D8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800169D8);
 
-extern s32 D_80139564;
-extern s8 D_80141BD0;
-extern s32 D_80141BD4;
-
 void func_80016B38(void)
 {
     D_80141BD0 = 0;
@@ -366,21 +369,78 @@ void func_80016B38(void)
     D_80139564 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016B58);
+void func_80016B58(void)
+{
+    s32 temp_v0;
+    u8* ptr = &D_80139554;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016BDC);
+    temp_v0 = CdSync(1, ptr);
+    if ((temp_v0 == 2) && !(*ptr & 0x40) && (CdControl(0x1B, 0, ptr) != 0)) {
+        D_80173C84 = 2;
+        D_80139530 = temp_v0;
+    }
+}
+
+void func_80016BDC(void)
+{
+    if (D_8013955C & D_801441B8) {
+        while (CdControl(9, 0, &D_80139554) == 5)
+            ;
+        D_80139530 = 3;
+        if (D_80139554 & 0x10) {
+            D_8013952C = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016C5C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016D0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016DAC);
+void func_80016DAC()
+{
+    s32 var_v0;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016E34);
+    if (CdSync(1, 0) == 2) {
+        if (D_801441B0 == 0) {
+            var_v0 = CdControl(0x15, &D_80139514, 0);
+        } else {
+            var_v0 = CdControlF(0x15, &D_80139514);
+        }
+        if (var_v0 != 0) {
+            D_80139530 = 1;
+        }
+        D_80139564 = 2;
+    }
+}
+
+void func_80016E34()
+{
+    if (CdSync(1, 0) == 2 && CdControl(0xD, &D_80175EE8, 0) != 0) {
+        D_80139530 = 5;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016E84);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016F0C);
+void func_80016F0C()
+{
+    s32 temp_s0 = D_80141BD4;
+    if (temp_s0 == 2) {
+        func_80016420(0);
+        if (D_80139564 == temp_s0) {
+            if (D_8013955C != 0) {
+                while (CdControlB(9, 0, NULL) == 0)
+                    ;
+            }
+        }
+        SsSetSerialAttr(0, 0, 0);
+        D_80139564 = 0;
+        D_80139568 = 0;
+        D_80173C84 = 0;
+        D_80139530 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016FB4);
 
