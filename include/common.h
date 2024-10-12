@@ -13,6 +13,7 @@ __asm__(".include \"macro.inc\"\n");
 
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
+#define COUNT(x) (sizeof(x) / sizeof(x[0]))
 
 typedef signed char s8;
 typedef signed short s16;
@@ -217,12 +218,18 @@ struct Unk_unk68 {
 
 struct VisualObj {
     s8 active;
-    u8 pad[0x6F];
+    s8 : 8;
+    s8 : 8;
+    s8 unk3;
+    u8 pad4[0x70 - 0x4];
 }; // size 0x70
 
 struct ShotObj {
     s8 active;
-    s8 pad[0x4F];
+    s8 : 8;
+    s8 : 8;
+    s8 unk3;
+    s8 pad4[0x50 - 0x4];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
@@ -251,7 +258,10 @@ struct ShotObj {
 
 struct WeaponObj {
     s8 active;
-    s8 pad[0x4F];
+    s8 : 8;
+    s8 : 8;
+    s8 unk3;
+    s8 pad4[0x50 - 0x4];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
@@ -316,7 +326,10 @@ struct UnkObj {
 
 struct ItemObj {
     s8 active;
-    s8 pad[0x4F];
+    s8 : 8;
+    s8 : 8;
+    s8 unk3;
+    s8 pad4[0x50 - 0x4];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
@@ -524,8 +537,10 @@ struct DrawInfo {
 extern struct DrawInfo draw_infos[2];
 
 struct QuadObj {
-    s8 first_byte;
-    s8 pad[3];
+    s8 unk0;
+    s8 : 8;
+    s8 : 8;
+    s8 unk3;
     s8 state;
     u8 padding[91];
 }; // size 0x60
@@ -658,7 +673,7 @@ struct GameInfo {
     u8 unkD;
 };
 
-extern struct QuadObj g_QuadObjects[];
+extern struct QuadObj g_QuadObjects[0x20];
 extern u8 D_800F8B30[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
@@ -670,7 +685,6 @@ extern u8 D_80141BE0;
 extern s8 D_80172203;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
-extern s32 D_801418C8;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
