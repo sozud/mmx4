@@ -5439,9 +5439,9 @@ void func_800CB590(struct Unk* arg0);
 void func_800CB590(struct Unk* arg0);
 
 // D_8010E710
-void func_800CB27C(void);
-void func_800CB394(void);
-void func_800CB4E4(void);
+void func_800CB27C(struct MiscObj* arg0);
+void func_800CB394(struct MiscObj* arg0);
+void func_800CB4E4(struct MiscObj* arg0);
 
 // D_8010E824
 void func_800CB634(void);
@@ -5530,14 +5530,14 @@ void func_800CD6D8(struct MiscObj* arg0);
 void func_800CD730(struct MiscObj* arg0);
 
 // D_8010EC10
-void func_800CD78C(void);
-void func_800CD90C(void);
-void func_800CD974(void);
-void func_800CDA90(void);
-void func_800CDAD0(void);
-void func_800CDB10(void);
-void func_800CDB84(void);
-void func_800CDC34(void);
+void func_800CD78C(struct MiscObj* arg0);
+void func_800CD90C(struct MiscObj* arg0);
+void func_800CD974(struct MiscObj* arg0);
+void func_800CDA90(struct MiscObj* arg0);
+void func_800CDAD0(struct MiscObj* arg0);
+void func_800CDB10(struct MiscObj* arg0);
+void func_800CDB84(struct MiscObj* arg0);
+void func_800CDC34(struct MiscObj* arg0);
 
 // D_8010EC30
 void func_800CDCFC(void);

@@ -10712,7 +10712,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB394);
 // ReadyText State 2
 // "READY" never disappears if nopped out
 // asm(".rept 26 ; nop ; .endr");
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB4E4);
+void func_800CB4E4(struct MiscObj* arg0)
+{
+    if (arg0->unk3 != 0) {
+        func_8002B694(arg0);
+        return;
+    }
+    arg0->state = 2;
+    arg0->unk5 = 0;
+    if ((D_801721CC == 5) && (D_801721DD == 0)) {
+        D_801721DC = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB554);
 
@@ -10917,7 +10928,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD1E8);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD2BC);
 
 // D_8010EBB4 state 7,8
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD390);
+void func_800CD390(struct MiscObj* arg0)
+{
+    D_8010EBA8[arg0->unk6]();
+    if ((D_80172203.unk0 != (arg0->unk2 - 7)) && (arg0->unk46 == 0)) {
+        arg0->unk6 = 0;
+        arg0->palette_shift_value = 0;
+    }
+}
 
 // D_8010EBB4 state 9
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD408);
@@ -10963,7 +10981,21 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDA90);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDAD0);
 
 // TitleLogoUpdate state 5
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB10);
+void func_800CDB10(struct MiscObj* arg0)
+{
+    func_80015DC8();
+    // transition "MEGAMAN" to white before full logo appears
+    if (arg0->unk46 == 0) {
+        arg0->palette2 = (s32)(*(s32*)SP_PALETTE_ADDR + 0x200);
+        arg0->palette1 = (s32) * (s32*)0x1F800030;
+        // interval to shift on
+        arg0->palette_shift_speed = 2;
+        // how much to shift each step
+        arg0->palette_shift_value = 0xF;
+        arg0->state++;
+    }
+    func_8002B288(arg0);
+}
 
 // TitleLogoUpdate state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CDB84);
