@@ -385,12 +385,12 @@ struct MiscObj {
     s8 unk46;
     s8 pad46[6];
     s32 unk50;
-    s8 unk54;
-    s8 unk55;
-    s8 pad55[1];
+    s8 palette_shift_speed;
+    s8 palette_shift_value; // 0x55
+    s8 unk56;
     u8 unk57;
-    s32 unk58;
-    s32 unk5C;
+    s32 palette1;
+    s32 palette2;
 }; // size 0x60
 
 struct Unk2 {
@@ -830,6 +830,9 @@ extern s8 D_801721E7;
 extern (*D_8010EBA0[])();
 extern s8 D_801721E7;
 extern u8 need_palette_load;
+extern s8 D_801721DC;
+extern s8 D_801721DD;
+extern void (*D_8010EBA8[])();
 
 #include "func_tables.h"
 
