@@ -255,16 +255,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015E54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015ECC);
 
-void func_80016004(void)
+void load_palette(void)
 {
-    if (D_80166BB0 != 0) {
-        if (D_80166BB0 & 1) {
-            LoadImage(&D_800F1658, *(volatile u32**)0x1F800028);
-        } else if (D_80166BB0 & 2) {
+    if (need_palette_load != 0) {
+        if (need_palette_load & 1) {
+            LoadImage(&D_800F1658, SP_PALETTE);
+        } else if (need_palette_load & 2) {
             LoadImage(&D_800F1658, &D_80141F70);
         }
 
-        D_80166BB0 = 0;
+        need_palette_load = 0;
     }
 }
 
@@ -1957,18 +1957,18 @@ void func_8002B718(struct Unk19* arg0)
     arg0->unkC -= arg0->unk24;
 }
 
-u8 func_8002B73C()
+u8 get_random()
 {
-    u16 temp = D_8013E2E8 * 3;
+    u16 temp = cur_random * 3;
     u32 temp_v1;
     u8 pad[2];
 
     temp_v1 = temp >> 8;
-    D_8013E2E8 += temp_v1;
-    D_8013E2E8 &= 0xFF;
-    D_8013E2E8 |= temp_v1 << 8;
+    cur_random += temp_v1;
+    cur_random &= 0xFF;
+    cur_random |= temp_v1 << 8;
 
-    return D_8013E2E8;
+    return cur_random;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B780);
@@ -8935,7 +8935,7 @@ void func_800AF808(struct Unk* arg0)
 
 void func_800AF828(struct Unk* arg0, s8 arg1)
 {
-    func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (func_8002B73C() & 1) ^ 1);
+    func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (get_random() & 1) ^ 1);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF878);
@@ -10673,7 +10673,7 @@ void func_800CB5B4(s32 arg0, s32 arg1)
         *var_v1++ = *var_a0++;
         var_a2 += 1;
     } while (var_a2 < 0x10);
-    D_80166BB0 |= 1;
+    need_palette_load |= 1;
 }
 
 void func_800CB614(struct Unk* arg0)

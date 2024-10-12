@@ -1,7 +1,5 @@
 #include "common.h"
 
-#define SP_DRAW_INFO_POS (*(s32*)0x1F800000)
-
 // entrypoint
 void func_80012024(void)
 {
@@ -24,7 +22,7 @@ void func_80012024(void)
         func_80014780();
         DrawSync(0);
         func_80015E54();
-        func_80016004();
+        load_palette();
         DrawSync(0);
         func_80012454();
     }
@@ -56,7 +54,7 @@ void func_8001213C(void)
     func_800122E0(&draw_infos[0]);
     func_800122E0(&draw_infos[1]);
     func_80012560();
-    D_8013E2E8 = 0xD37;
+    cur_random = 0xD37; // seed RNG
     SP_DRAW_INFO_POS = 0;
     cur_draw_info = &draw_infos[0];
     D_8013BD44 = 0;
