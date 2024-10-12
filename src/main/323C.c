@@ -1504,7 +1504,31 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A6FC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A728);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A74C);
+void func_8002A74C()
+{
+    s8 fill = 0;
+    s32 a2;
+    s32 var_v1;
+    s8* var_a0;
+    s8* a0;
+    u32 a1;
+
+    for (a1 = 0; a1 < COUNT(game_objects); a1++) {
+        a0 = (u8*)&game_objects[a1];
+        var_v1 = sizeof(game_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+
+    for (a1 = 0; a1 < COUNT(shot_objects); a1++) {
+        a0 = (u8*)&shot_objects[a1];
+        var_v1 = sizeof(shot_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+}
 
 extern s32 D_8013E188;
 extern s32 D_8013E18C;
