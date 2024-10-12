@@ -10800,15 +10800,57 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCEF0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCF70);
 
+// scrolling text doesn't appear if nopped out
+// asm(".rept 26 ; nop ; .endr");
 // D_8010EBB4 state 2,3,4,5,12,13,14
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD034);
+void func_800CD034(struct MiscObj* arg0)
+{
+    D_8010EB98[arg0->unk6]();
+    if (D_801721E7 & 0x80) {
+        arg0->state++;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD0A4);
+// D_8010EBA0 state 0
+void func_800CD0A4(struct MiscObj* arg0)
+{
+    s16 x_pos;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD110);
+    if (D_80172203.unk0 != 0) {
+        func_80015D60(arg0, 9);
+        x_pos = 224; // zero is selected, move selector graphic to right
+    } else {
+        func_80015D60(arg0, 8);
+        x_pos = 96; // X is selected, move selector graphic to left
+    }
+    arg0->x_pos.i.hi = x_pos;
+    arg0->y_pos.i.hi = 120; // set y pos of green selector
+    do {
+    } while (0);
+    arg0->unk6++;
+}
+
+// D_8010EBA0 state 1
+void func_800CD110(struct MiscObj* arg0)
+{
+    func_80015DC8();
+    if (D_80172203.unk0 != arg0->unk57) {
+        arg0->unk6 = 0;
+        func_8001540C(5, 0, NULL);
+    }
+    arg0->unk57 = D_80172203.unk0;
+}
 
 // D_8010EBB4 state 6
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD178);
+// green selector graphic around X doesn't animate if nopped out
+// asm(".rept 26 ; nop ; .endr");
+void func_800CD178(struct MiscObj* arg0)
+{
+    D_8010EBA0[arg0->unk6]();
+    if (D_801721E7 & 0x80) {
+        arg0->state++;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CD1E8);
 
@@ -11294,7 +11336,7 @@ void func_800D3700(struct UnkObj* arg0)
             arg0->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (D_80172203 != 0)) {
+    if ((D_80141BE0 == 0) && (D_80172203.unk0 != 0)) {
         temp_v1 = arg0->unk7;
         if ((arg0->unk7 < 7) && (temp_v1 >= 5)) {
             arg0->unk42 = 0x7804;
@@ -11357,7 +11399,7 @@ void func_800D39EC(struct UnkObj* arg0)
             arg0->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (D_80172203 != 0)) {
+    if ((D_80141BE0 == 0) && (D_80172203.unk0 != 0)) {
         temp_v1 = arg0->unk7;
         if ((arg0->unk7 < 7) && (temp_v1 >= 5)) {
             arg0->unk42 = 0x7804;
