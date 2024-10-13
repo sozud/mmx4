@@ -387,7 +387,7 @@ struct MiscObj {
     s8 pad47[6];
     s32 unk50;
     s8 palette_shift_speed;
-    s8 palette_shift_value; // 0x55
+    u8 palette_shift_value; // 0x55
     s8 unk56;
     u8 unk57;
     s32 palette1; // 0x58
@@ -834,6 +834,9 @@ extern u8 need_palette_load;
 extern s8 D_801721DC;
 extern s8 D_801721DD;
 extern void (*D_8010EBA8[])();
+extern s8 D_801721E6;
+extern u8 D_801721E8[];
+extern u8 D_80172200;
 
 #include "func_tables.h"
 

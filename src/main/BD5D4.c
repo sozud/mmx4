@@ -95,8 +95,39 @@ void func_800CD178(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BD5D4", func_800CD1E8);
+// D_8010EBA8 state 0
+void func_800CD1E8(struct MiscObj* arg0)
+{
+    struct MiscObj* obj;
 
+    if (D_801721E6 != 0) {
+        arg0->unk5 = 0xF;
+        arg0->unk6 = 0;
+        return;
+    }
+    if (D_80172203.unk0 == (arg0->unk2 - 7)) {
+        if (arg0->palette_shift_value == 0) {
+            arg0->unk6++;
+            func_80015D60(arg0, 1);
+            if (arg0->unk2 == 7) {
+                obj = find_free_misc_obj();
+                // create "blast" right before charged shot comes out
+                // still id 0x1C but different unk2
+                if (obj != NULL) {
+                    obj->active = 0x41;
+                    obj->id = 0x1C;
+                    obj->unk2 = 0xA;
+                    obj->x_pos.i.hi = arg0->x_pos.i.hi;
+                    obj->y_pos.i.hi = arg0->y_pos.i.hi;
+                }
+            }
+        } else {
+            arg0->palette_shift_value--;
+        }
+    }
+}
+
+// D_8010EBA8 state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/BD5D4", func_800CD2BC);
 
 // D_8010EBB4 state 7,8
