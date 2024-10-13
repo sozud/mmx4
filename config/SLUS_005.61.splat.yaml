@@ -37,11 +37,13 @@ segments:
       - [0x800, rodata]
       - [0xA44, .rodata, 323C]
       - [0xAC0, rodata]
-      - [0x1C30, .rodata, BD5D4] # jtbl_80011430, func_800CCEF0
-      - [0x1C68, rodata]
+      - [0x1C30, .rodata, select_a_character] # jtbl_80011430, func_800CCEF0
+      - [0x1C68, .rodata, select_a_character] # jtbl_80011468, func_800CCF70
+      - [0x1C9C, rodata]
       - [0x2824, c]
       - [0x323C, c]
-      - [0xBD5D4, c]
+      - [0xBD234, c, select_a_character]
+      - [0xBDF8C, c]
       - [0xC594C, c]
       - [0xCB68C, asm] # doesn't seem like a function
       - [0xCB734, asm]
