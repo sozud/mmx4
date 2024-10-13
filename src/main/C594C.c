@@ -131,7 +131,37 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6D48);
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6DC4);
 
 // TitleUpdate2 state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6F94);
+extern s16 D_8010FCCC[1][8];
+extern u16 D_8010FD94[];
+
+void func_800D6F94(struct QuadObj* entity)
+{
+    u16* ptr;
+    u16 temp;
+
+    entity->unk37 = -1;
+    entity->unk42 = 1;
+    entity->x_pos.i.hi = 0;
+    entity->y_pos.i.hi = 0;
+    entity->active |= 0x80;
+
+    ptr = D_8010FCCC[entity->unk2];
+    entity->unk14.i.hi = *ptr++;
+    entity->unk18.i.hi = *ptr++;
+    entity->unk1C.i.hi = *ptr++;
+    entity->unk20.i.hi = *ptr++;
+    entity->unk24.i.hi = *ptr++;
+    entity->unk28.i.hi = *ptr++;
+    entity->unk2C.i.hi = *ptr++;
+    entity->unk30.i.hi = *ptr;
+
+    temp = D_8010FD94[0];
+    entity->unk36 = 0x10;
+    entity->state = 3;
+    entity->unk38 = 0x14;
+    entity->unk43 = 0;
+    entity->unk34 = temp;
+}
 
 // TitleUpdate2 state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7058);
