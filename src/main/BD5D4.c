@@ -12,27 +12,24 @@ void func_800CCEB4(struct MiscObj* arg0)
 // D_8010EB98 state 0
 void func_800CCEF0(struct MiscObj* arg0)
 {
-    s8 temp_v0;
-
-    temp_v0 = arg0->unk2 - 2;
-    switch (temp_v0) {
-    case 0:
+    switch (arg0->unk2) {
+    case 2:
         // set velocity of upper "PLAYER SELECT" text
-        arg0->x_vel = FIXED(-2) | FIXED(.5);
+        arg0->x_vel.val = FIXED(-2) | FIXED(.5);
         break;
-    case 1:
+    case 3:
         // lower player select text
-        arg0->x_vel = FIXED(1) | FIXED(.5);
+        arg0->x_vel.val = FIXED(1) | FIXED(.5);
         break;
-    case 10:
     case 12:
-        arg0->x_vel = FIXED(4);
+    case 14:
+        arg0->x_vel.val = FIXED(4);
         break;
-    case 11:
-        arg0->x_vel = FIXED(-4);
+    case 13:
+        arg0->x_vel.val = FIXED(-4);
         break;
-    default:
-        arg0->x_vel = FIXED(0);
+    default: 
+        arg0->x_vel.val = FIXED(0);
         break;
     }
     arg0->unk6++;
@@ -41,7 +38,41 @@ void func_800CCEF0(struct MiscObj* arg0)
 const u32 padding = 0;
 
 // D_8010EB98 state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/BD5D4", func_800CCF70);
+void func_800CCF70(struct MiscObj* arg0) {
+    func_8002B718(arg0);
+    switch (arg0->unk2) {
+    case 2:
+        // when top "PLAYER SELECT" goes off to the left,
+        // wrap it around
+        if (arg0->x_pos.i.hi < -112) {
+            arg0->x_pos.i.hi = 432;
+        }
+        break;
+    case 3:
+        // when bottom "PLAYER SELECT" goes off to the right,
+        // wrap it around
+        if (arg0->x_pos.i.hi >= 433) {
+            arg0->x_pos.i.hi = -112;
+            return;
+        }
+        break;
+    case 12:
+        if (arg0->x_pos.i.hi == 126) {
+            arg0->x_vel.val = 0;
+        }
+        break;
+    case 13:
+        if (arg0->x_pos.i.hi == 160) {
+            arg0->x_vel.val = 0;
+        }
+        break;
+    case 14:
+        if (arg0->x_pos.i.hi == 278) {
+            arg0->x_vel.val = 0;
+        }
+        break;
+    }
+}
 
 // scrolling text doesn't appear if nopped out
 // asm(".rept 26 ; nop ; .endr");
