@@ -10621,7 +10621,23 @@ void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800C9EE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CA030);
+// X doesn't appear in briefing room if nopped out
+// asm(".rept 36 ; nop ; .endr");
+void func_800CA030(struct MiscObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        if (!(D_80172200 & 0x10)) {
+            func_80015DC8(arg0, D_80172200);
+        } else {
+            func_80015D60(arg0, D_80172200 & 0xF);
+        }
+    } else if (!(D_80172200 & 0x20)) {
+        func_80015DC8(arg0, D_80172200);
+    } else {
+        func_80015D60(arg0, D_80172200 & 0xF);
+    }
+    func_8002B288(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CA0C8);
 
@@ -10832,7 +10848,22 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA14);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCA34);
 
 // D_8010EB84 state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CCCA0);
+void func_800CCCA0(struct MiscObj* arg0)
+{
+    // set speeds of portraits when "select a character"
+    // screen first starts and portraits come in
+    if (arg0->unk2 == 0) {
+        arg0->x_vel.val = FIXED(16); // speed of X portrait
+    } else {
+        arg0->x_vel.val = FIXED(-16); // speed of Zero portrait
+    }
+    if (((arg0->unk2 == 0) && (arg0->x_pos.i.hi == 96)) || ((arg0->unk2 == 1) && (arg0->x_pos.i.hi == 224))) {
+        D_801721E8[0] |= 1 << arg0->unk2;
+        arg0->unk6++;
+        return;
+    }
+    func_8002B718(arg0);
+}
 
 // D_8010EB84 state 1
 void func_800CCD48(struct MiscObj* arg0)

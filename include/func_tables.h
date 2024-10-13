@@ -5393,8 +5393,8 @@ void func_800C9CB0(void);
 void func_800C9D08(void);
 
 // D_8010E578
-void func_800C9EE8(void);
-void func_800CA030(void);
+void func_800C9EE8(struct MiscObj* arg0);
+void func_800CA030(struct MiscObj* arg0);
 
 // D_8010E580
 void func_800CA110(void);
@@ -5503,8 +5503,8 @@ void func_800CD0A4(struct MiscObj* arg0);
 void func_800CD110(struct MiscObj* arg0);
 
 // D_8010EBA8
-void func_800CD1E8(void);
-void func_800CD2BC(void);
+void func_800CD1E8(struct MiscObj* arg0);
+void func_800CD2BC(struct MiscObj* arg0);
 
 // D_8010EBB4
 void func_800CCEB4(struct MiscObj* arg0);
