@@ -27,9 +27,9 @@ void func_800CDB10(struct MiscObj* arg0)
         arg0->palette_shift_speed = 2;
         // how much to shift each step
         arg0->palette_shift_value = 0xF;
-        arg0->state++;
+        arg0->base.state++;
     }
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 // TitleLogoUpdate state 6
@@ -41,8 +41,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/BDF8C", func_800CDC34);
 // part of the title logo animation
 void TitleLogoUpdate(struct MiscObj* arg0)
 {
-    arg0->unk3 = 0;
-    g_TitleLogoUpdateFuncs[arg0->state]();
+    arg0->base.on_screen = 0;
+    g_TitleLogoUpdateFuncs[arg0->base.state]();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BDF8C", func_800CDCC0);
@@ -379,9 +379,9 @@ void func_800D323C(struct Unk* arg0)
 {
     func_8002B694();
     func_80015DC8(arg0);
-    func_8002B288(arg0);
+    is_on_screen(arg0);
     if (func_8002B160(arg0) != 0) {
-        arg0->state = 2;
+        arg0->base.state = 2;
     }
 }
 
@@ -457,7 +457,7 @@ void func_800D36AC(struct UnkObj* arg0)
     } else {
         func_800D354C(arg0);
     }
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 void func_800D3700(struct UnkObj* arg0)
@@ -477,7 +477,7 @@ void func_800D3700(struct UnkObj* arg0)
             arg0->unk42 = 0x7804;
         }
     }
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BDF8C", func_800D3798);
@@ -491,7 +491,7 @@ void func_800D38A0(struct UnkObj* arg0)
         }
         func_80015DC8(arg0, D_80141BDF);
     }
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 void func_800D3928(struct UnkObj* arg0)
@@ -520,7 +520,7 @@ void func_800D3964(struct UnkObj* arg0)
     arg0->unk16 = 0;
     arg0->unk47 = arg0->unk2;
     arg0->unk4++;
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 void func_800D39EC(struct UnkObj* arg0)
@@ -540,7 +540,7 @@ void func_800D39EC(struct UnkObj* arg0)
             arg0->unk42 = 0x7804;
         }
     }
-    func_8002B288(arg0);
+    is_on_screen(arg0);
 }
 
 void func_800D3A84(struct UnkObj* arg0)

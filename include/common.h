@@ -43,11 +43,11 @@ typedef union {
     } i;
 } f32;
 
-struct Unk {
+struct BaseObj {
     s8 active;
     s8 id; // 0x01
     s8 unk2;
-    s8 unk3;
+    s8 on_screen; // 0x03
     s8 state;
     s8 unk5;
     s8 unk6;
@@ -58,6 +58,10 @@ struct Unk {
     s8 unk14;
     u8 unk15;
     u8 unk16;
+};
+
+struct Unk {
+    struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -137,20 +141,7 @@ struct BackgroundObj {
 
 // similar to Unk
 struct PlayerObj {
-    s8 active;
-    s8 id; // 0x01
-    s8 unk2;
-    s8 unk3;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 : 8;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    u8 pad10[0x4];
-    s8 unk14;
-    u8 unk15;
-    u8 unk16;
+    struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -362,16 +353,9 @@ struct LayerObj {
 }; // size 0x30
 
 struct MiscObj {
-    s8 active;
-    s8 id; // 0x01
-    s8 unk2;
-    s8 unk3;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    f32 x_pos; // 0x08,0x0a
-    f32 y_pos; // 0x0c,0x0e
-    u8 pad6[0x10];
+    struct BaseObj base;
+    s32 unk18;
+    s32 unk1C;
     f32 x_vel; // 0x20
     s32 unk24;
     s32 unk28;
@@ -942,7 +926,7 @@ void func_8001D230();
 void func_8001D284();
 void func_80022730(s32*);
 void func_8002B718();
-void func_8002B288(struct Unk*);
+void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct Unk*, u8, s16, s16);
 s32 func_8002D32C(struct Unk*, s16, s8);
 s32 func_8002D5E4(struct Unk*, s16);
