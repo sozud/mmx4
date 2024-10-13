@@ -154,7 +154,7 @@ void TitleSetWhiteQuadSpeed(struct Unk* arg0)
 {
     if (D_80173C7A == 2) {
         arg0->animation_speed = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
-        arg0->state = 5;
+        arg0->base.state = 5;
     }
     func_800D46F4();
 }

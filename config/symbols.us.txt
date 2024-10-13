@@ -501,3 +501,4 @@ cur_random = 0x8013e2e8;
 get_random = 0x8002B73C;
 load_palette = 0x80016004;
 need_palette_load = 0x80166BB0;
+is_on_screen = 0x8002B288;
