@@ -1239,7 +1239,7 @@ void func_80023DB8(void)
 
     for (var_s0_9 = &g_QuadObjects[0]; var_s0_9 < &g_QuadObjects[COUNT(g_QuadObjects)]; var_s0_9++) {
         if (var_s0_9->unk3 != 0) {
-            if (var_s0_9->unk0 & 2) {
+            if (var_s0_9->active & 2) {
                 func_80024B9C(var_s0_9);
             } else {
                 func_80024920(var_s0_9);
@@ -1893,7 +1893,7 @@ struct QuadObj* find_free_quad_obj()
     struct QuadObj* end = &g_QuadObjects[32];
 
     while (current < end) {
-        if (current->unk0 == 0) {
+        if (current->active == 0) {
             return current;
         }
         current++;
