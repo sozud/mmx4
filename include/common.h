@@ -543,12 +543,28 @@ struct DrawInfo {
 extern struct DrawInfo draw_infos[2];
 
 struct QuadObj {
-    s8 unk0;
-    s8 : 8;
-    s8 : 8;
+    s8 active;
+    s8 id; // 0x01
+    s8 unk2;
     s8 unk3;
     s8 state;
-    u8 padding[91];
+    s8 pad5[0x8 - 0x5];
+    f32 x_pos;
+    f32 y_pos;
+    s8 pad10[4];
+    f32 unk14;
+    f32 unk18;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    f32 unk2C;
+    f32 unk30;
+    u16 unk34;
+    s8 unk36;
+    s8 unk37;
+    u16 unk38;
+    s8 pad38[0x60 - 0x3a];
 }; // size 0x60
 
 // D_801721C0
@@ -837,6 +853,7 @@ extern void (*D_8010EBA8[])();
 extern s8 D_801721E6;
 extern u8 D_801721E8[];
 extern u8 D_80172200;
+extern void (*D_8010FC90[])();
 
 #include "func_tables.h"
 

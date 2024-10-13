@@ -42,11 +42,39 @@ void func_800D5C54(struct QuadObj* arg0)
     D_8010FC84[arg0->state]();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C90);
+// D_8010FC84 state 0
+void func_800D5C90(struct QuadObj* arg0)
+{
+    arg0->active |= 0x92;
+    if (arg0->unk2 == 0) {
+        arg0->unk36 = 0x10;
+    } else {
+        arg0->unk36 = 0x13;
+    }
+    arg0->unk34 = 5;
+    arg0->state = 1;
+    arg0->unk37 = -1;
+    arg0->x_pos.val = 0;
+    arg0->y_pos.val = 0;
+    arg0->unk14.val = 0;
+    arg0->unk18.val = 0;
+    arg0->unk1C.val = 0;
+    arg0->unk20.val = 0;
+    arg0->unk24.val = 0;
+    arg0->unk28.val = 0;
+    arg0->unk2C.val = 0;
+    arg0->unk30.val = 0;
+}
 
+// D_8010FC84 state 1
 // "READY" never appears if noppped out
 //  asm(".rept 20 ; nop ; .endr");
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5CF8);
+void func_800D5CF8(struct QuadObj* arg0)
+{
+    D_8010FC90[arg0->unk2](arg0);
+    arg0->unk3 = 1;
+    func_8002B458(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5D50);
 
@@ -64,7 +92,8 @@ void func_800D6494(struct Unk22* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D64D8);
 
-void func_800D666C(struct Unk* arg0)
+// D_8010FC84 state 2
+void func_800D666C(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
@@ -108,7 +137,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6F94);
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7058);
 
 // TitleUpdate2 state 3
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7100);
+void func_800D7100(struct QuadObj* arg0)
+{
+    // seems to be a timer before the white Quad appears
+    if (arg0->unk38 != 0) {
+        arg0->unk38--;
+        return;
+    }
+    arg0->unk38 = 3;
+    func_800D46F4(arg0);
+    arg0->state = 4;
+}
 
 // TitleUpdate2 state 4
 void TitleSetWhiteQuadSpeed(struct Unk* arg0)
@@ -127,7 +166,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7194);
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D7468);
 
 // TitleUpdate2 state 2
-void func_800D76D8(struct Unk* arg0)
+void func_800D76D8(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }

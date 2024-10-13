@@ -5812,9 +5812,9 @@ void func_800D5AB0(void);
 void func_800D5BF8(void);
 
 // D_8010FC84
-void func_800D5C90(struct Unk* arg0);
-void func_800D5CF8(struct Unk* arg0);
-void func_800D666C(struct Unk* arg0);
+void func_800D5C90(struct QuadObj* arg0);
+void func_800D5CF8(struct QuadObj* arg0);
+void func_800D666C(struct QuadObj* arg0);
 
 // D_8010FC90
 void func_800D5D50(void);
@@ -5833,13 +5833,13 @@ void func_800D6CA0(void);
 void func_800D6D48(void);
 
 // D_8010FDD0
-void func_800D6F94(struct Unk* arg0);
-void func_800D7058(struct Unk* arg0);
-void func_800D76D8(struct Unk* arg0);
-void func_800D7100(struct Unk* arg0);
-void func_800D7154(struct Unk* arg0);
-void func_800D7194(struct Unk* arg0);
-void func_800D7468(struct Unk* arg0);
+void func_800D6F94(struct QuadObj* arg0);
+void func_800D7058(struct QuadObj* arg0);
+void func_800D76D8(struct QuadObj* arg0);
+void func_800D7100(struct QuadObj* arg0);
+void func_800D7154(struct QuadObj* arg0);
+void func_800D7194(struct QuadObj* arg0);
+void func_800D7468(struct QuadObj* arg0);
 
 // D_8010FE10
 void func_800D7734(void);
