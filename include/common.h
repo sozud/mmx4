@@ -548,7 +548,10 @@ struct QuadObj {
     s8 unk36;
     s8 unk37;
     u16 unk38;
-    s8 pad38[0x60 - 0x3a];
+    s8 pad38_[8];
+    s8 unk42;
+    s8 unk43;
+    s8 pad43[28];
 }; // size 0x60
 
 // D_801721C0
