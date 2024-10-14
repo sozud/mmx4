@@ -1590,7 +1590,7 @@ void func_8002A74C()
     }
 }
 
-extern s32 D_8013E188;
+extern s32 D_8013E188[4];
 extern s32 D_8013E18C;
 extern s32 D_8013E190;
 extern s32 D_8013E194;
@@ -1716,7 +1716,7 @@ void func_8002A7D0(void)
     D_8013E1BC = 0;
     D_80141BE4 = 0;
     D_80175E9C = 0;
-    D_8013E188 = 0;
+    D_8013E188[0] = 0;
     D_8013E18C = 0;
     D_8013E190 = 0;
     D_8013E194 = 0;
@@ -9397,7 +9397,44 @@ void TitleScalingXUpdate(struct EffectObj* arg0)
 }
 
 // g_TitleScalingXUpdateFuncs state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B599C);
+void func_800B599C(struct EffectObj* arg0)
+{
+    u16 color;
+    u8* temp_v0;
+    struct EffectObj* current;
+    u8 i;
+
+    if (arg0->unk2 != -1) {
+        temp_v0 = D_8010B1F8[arg0->unk2];
+        arg0->unk14 = temp_v0;
+        arg0->unk18 = temp_v0[2];
+        for (i = 0; i < 4; i++) {
+            D_8013E188[i] = D_8010B23C[arg0->unk2][i];
+        }
+        D_80175E9C = arg0->unk14->unk3 & 1;
+        D_80141BE4 = arg0->unk14->unk3 & 2;
+        D_8013E1BC = arg0->unk14->unk3 & 4;
+        color = arg0->unk14->unk0;
+        D_80175EA0 = color & 0x1F;
+        D_80141BE6 = color & 0x3E0;
+        D_8013E1BE = color & 0x7C00;
+        arg0->state++;
+        return;
+    }
+    D_8013E1BE = 0;
+    D_80141BE6 = 0;
+    D_80175EA0 = 0;
+    D_8013E1BC = 0;
+    D_80141BE4 = 0;
+    D_80175E9C = 0;
+
+    for (current = &effect_objects[0]; current < &effect_objects[0x20]; current++) {
+        if (current->unk2 == 2 && current != arg0) {
+            func_8002B0C8(current);
+        }
+    }
+    func_8002B0C8(arg0);
+}
 
 // g_TitleScalingXUpdateFuncs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5B54);
