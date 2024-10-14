@@ -680,11 +680,23 @@ struct MainObj {
     s8 unk4;
 };
 
+struct Unk14 {
+    u16 unk0;
+    s8 unk2;
+    u8 unk3;
+};
+
 struct EffectObj {
     s8 active;
-    u8 pad0[3];
+    s8 unk1;
+    s8 unk2;
+    s8 unk3;
     s8 state;
-    u8 pad[0x30 - 5];
+    u8 pad0[3];
+    s8 pad_[9];
+    struct Unk14* unk14;
+    s8 unk18;
+    u8 pad[23];
 };
 
 struct Unk22 {
@@ -881,6 +893,15 @@ extern s8 D_801721E6;
 extern u8 D_801721E8[];
 extern u8 D_80172200;
 extern void (*D_8010FC90[])();
+extern s32 D_8010B1F8[];
+extern s32 D_8010B23C[][4];
+extern s32 D_8013E188[];
+extern s8 D_8013E1BC;
+extern s16 D_8013E1BE;
+extern s8 D_80141BE4;
+extern s16 D_80141BE6;
+extern s8 D_80175E9C;
+extern s16 D_80175EA0;
 
 #include "func_tables.h"
 

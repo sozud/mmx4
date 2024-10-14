@@ -1590,7 +1590,7 @@ void func_8002A74C()
     }
 }
 
-extern s32 D_8013E188;
+extern s32 D_8013E188[4];
 extern s32 D_8013E18C;
 extern s32 D_8013E190;
 extern s32 D_8013E194;
@@ -1716,7 +1716,7 @@ void func_8002A7D0(void)
     D_8013E1BC = 0;
     D_80141BE4 = 0;
     D_80175E9C = 0;
-    D_8013E188 = 0;
+    D_8013E188[0] = 0;
     D_8013E18C = 0;
     D_8013E190 = 0;
     D_8013E194 = 0;
@@ -7417,7 +7417,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800921E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009227C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800922D8);
+void func_800922D8(struct WeaponObj* arg0)
+{
+    D_80108728[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092314);
 
@@ -7433,7 +7436,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092600);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092614);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092648);
+void func_80092648(struct WeaponObj* arg0)
+{
+    D_80108738[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092684);
 
@@ -7441,13 +7447,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009273C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800927B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800927EC);
+void func_800927EC(struct WeaponObj* arg0)
+{
+    D_80108748[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092828);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092918);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800929A0);
+void func_800929A0(struct WeaponObj* arg0)
+{
+    D_80108758[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800929DC);
 
@@ -7733,7 +7745,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098338);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098474);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800985F4);
+void func_800985F4(struct WeaponObj* arg0)
+{
+    D_80108B88[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098630);
 
@@ -7743,7 +7758,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800987A8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800987DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098838);
+void func_80098838(struct WeaponObj* arg0)
+{
+    D_80108BA8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098874);
 
@@ -7751,7 +7769,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800988C4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098970);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098990);
+void func_80098990(struct WeaponObj* arg0)
+{
+    D_80108BC0[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800989CC);
 
@@ -7759,7 +7780,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098A78);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098A9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098ABC);
+void func_80098ABC(struct WeaponObj* arg0)
+{
+    D_80108BD8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098AF8);
 
@@ -7778,7 +7802,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098DA0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098EA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098F4C);
+void func_80098F4C(struct WeaponObj* arg0)
+{
+    D_80108C00[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098F88);
 
@@ -7786,7 +7813,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80099118);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800992C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800992FC);
+void func_800992FC(struct WeaponObj* arg0)
+{
+    D_80108C38[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80099338);
 
@@ -9598,13 +9628,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B55AC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B56D4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B56F4);
+void func_800B56F4(struct EffectObj* arg0)
+{
+    D_8010A798[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5730);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5798);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58A0);
+void func_800B58A0(struct EffectObj* arg0)
+{
+    D_8010AFAC[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58DC);
 
@@ -9617,20 +9653,79 @@ void TitleScalingXUpdate(struct EffectObj* arg0)
 }
 
 // g_TitleScalingXUpdateFuncs state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B599C);
+void func_800B599C(struct EffectObj* arg0)
+{
+    u16 color;
+    struct Unk14* temp_v0;
+    struct EffectObj* current;
+    u8 i;
+
+    if (arg0->unk2 != -1) {
+        temp_v0 = D_8010B1F8[arg0->unk2];
+        arg0->unk14 = temp_v0;
+        arg0->unk18 = temp_v0->unk2;
+        for (i = 0; i < 4; i++) {
+            D_8013E188[i] = D_8010B23C[arg0->unk2][i];
+        }
+        D_80175E9C = arg0->unk14->unk3 & 1;
+        D_80141BE4 = arg0->unk14->unk3 & 2;
+        D_8013E1BC = arg0->unk14->unk3 & 4;
+        color = arg0->unk14->unk0;
+        D_80175EA0 = color & 0x1F;
+        D_80141BE6 = color & 0x3E0;
+        D_8013E1BE = color & 0x7C00;
+        arg0->state++;
+        return;
+    }
+    D_8013E1BE = 0;
+    D_80141BE6 = 0;
+    D_80175EA0 = 0;
+    D_8013E1BC = 0;
+    D_80141BE4 = 0;
+    D_80175E9C = 0;
+
+    for (current = &effect_objects[0]; current < &effect_objects[0x20]; current++) {
+        if (current->unk2 == 2 && current != arg0) {
+            func_8002B0C8(current);
+        }
+    }
+    func_8002B0C8(arg0);
+}
 
 // g_TitleScalingXUpdateFuncs state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5B54);
+void func_800B5B54(struct EffectObj* arg0)
+{
+    u16 color;
+    if (arg0->unk18-- == 0) {
+        arg0->unk14++;
+        if (arg0->unk14->unk0 == 0x8000) {
+            if (arg0->unk14->unk3 == 1) {
+                func_8002B0C8(arg0);
+                return;
+            }
+            arg0->unk14 = &arg0->unk14[arg0->unk14->unk2];
+        }
+        color = arg0->unk14->unk0;
+        arg0->unk18 = arg0->unk14->unk2;
+        D_80175EA0 = color & 0x1F;
+        D_80141BE6 = color & 0x3E0;
+        D_8013E1BE = color & 0x7C00;
+        D_80175E9C = arg0->unk14->unk3 & 1;
+        D_80141BE4 = arg0->unk14->unk3 & 2;
+        D_8013E1BC = arg0->unk14->unk3 & 4;
+        need_palette_load |= 5;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
 
 void func_800B5CC4(struct EffectObj* arg0)
 {
     if (arg0->state == 0) {
-        func_800B5D04();
+        func_800B5D04(arg0);
         return;
     }
-    func_800B5E2C();
+    func_800B5E2C(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5D04);
@@ -9643,7 +9738,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5EEC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6060);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6080);
+void func_800B6080(struct EffectObj* arg0)
+{
+    D_8010B444[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B60BC);
 
@@ -9653,7 +9751,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B64BC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6660);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A0C);
+void func_800B6A0C(struct EffectObj* arg0)
+{
+    D_8010B45C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A48);
 
