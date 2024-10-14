@@ -7417,7 +7417,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800921E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009227C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800922D8);
+void func_800922D8(struct WeaponObj* arg0)
+{
+    D_80108728[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092314);
 
@@ -7433,7 +7436,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092600);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092614);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092648);
+void func_80092648(struct WeaponObj* arg0)
+{
+    D_80108738[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092684);
 
@@ -7441,13 +7447,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8009273C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800927B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800927EC);
+void func_800927EC(struct WeaponObj* arg0)
+{
+    D_80108748[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092828);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80092918);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800929A0);
+void func_800929A0(struct WeaponObj* arg0)
+{
+    D_80108758[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800929DC);
 
@@ -7733,7 +7745,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098338);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098474);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800985F4);
+void func_800985F4(struct WeaponObj* arg0)
+{
+    D_80108B88[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098630);
 
@@ -7743,7 +7758,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800987A8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800987DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098838);
+void func_80098838(struct WeaponObj* arg0)
+{
+    D_80108BA8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098874);
 
@@ -7751,7 +7769,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800988C4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098970);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098990);
+void func_80098990(struct WeaponObj* arg0)
+{
+    D_80108BC0[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800989CC);
 
@@ -7759,7 +7780,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098A78);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098A9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098ABC);
+void func_80098ABC(struct WeaponObj* arg0)
+{
+    D_80108BD8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098AF8);
 
@@ -7775,7 +7799,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098DA0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098EA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098F4C);
+void func_80098F4C(struct WeaponObj* arg0)
+{
+    D_80108C00[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80098F88);
 
@@ -7783,7 +7810,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80099118);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800992C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800992FC);
+void func_800992FC(struct WeaponObj* arg0)
+{
+    D_80108C38[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80099338);
 

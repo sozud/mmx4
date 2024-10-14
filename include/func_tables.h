@@ -253,69 +253,69 @@ void func_8009197C(struct MainObj* arg0);
 void func_800919C4(struct MainObj* arg0);
 
 // D_800F25D8 (weapon_object_update_funcs)
-void func_800922D8(void);
-void func_80092F08(void);
-void func_80093CBC(void);
-void func_80094A78(void);
-void func_800951C0(void);
-void func_800957B0(void);
-void func_800961B0(void);
-void func_80096E10(void);
-void func_80097860(void);
-void func_80092648(void);
-void func_80093564(void);
-void func_800941D4(void);
-void func_800922D8(void);
-void func_800954BC(void);
-void func_80095DC0(void);
-void func_800969D8(void);
-void func_80097384(void);
-void func_80097B28(void);
-void func_80092648(void);
-void func_800927EC(void);
-void func_800929A0(void);
-void func_800929A0(void);
-void func_80092D64(void);
-void func_800922D8(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_80097EEC(void);
-void func_800981CC(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800922D8(void);
-void func_800985F4(void);
-void func_80098838(void);
-void func_80098990(void);
-void func_80098ABC(void);
-void func_80098F4C(void);
-void func_800992FC(void);
-void func_800992FC(void);
+void func_800922D8(struct WeaponObj*);
+void func_80092F08(struct WeaponObj*);
+void func_80093CBC(struct WeaponObj*);
+void func_80094A78(struct WeaponObj*);
+void func_800951C0(struct WeaponObj*);
+void func_800957B0(struct WeaponObj*);
+void func_800961B0(struct WeaponObj*);
+void func_80096E10(struct WeaponObj*);
+void func_80097860(struct WeaponObj*);
+void func_80092648(struct WeaponObj*);
+void func_80093564(struct WeaponObj*);
+void func_800941D4(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800954BC(struct WeaponObj*);
+void func_80095DC0(struct WeaponObj*);
+void func_800969D8(struct WeaponObj*);
+void func_80097384(struct WeaponObj*);
+void func_80097B28(struct WeaponObj*);
+void func_80092648(struct WeaponObj*);
+void func_800927EC(struct WeaponObj*);
+void func_800929A0(struct WeaponObj*);
+void func_800929A0(struct WeaponObj*);
+void func_80092D64(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_80097EEC(struct WeaponObj*);
+void func_800981CC(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800922D8(struct WeaponObj*);
+void func_800985F4(struct WeaponObj*);
+void func_80098838(struct WeaponObj*);
+void func_80098990(struct WeaponObj*);
+void func_80098ABC(struct WeaponObj*);
+void func_80098F4C(struct WeaponObj*);
+void func_800992FC(struct WeaponObj*);
+void func_800992FC(struct WeaponObj*);
 
 // D_800F26D4 (shot_object_update_funcs)
 void func_800994A0(void);
@@ -3682,211 +3682,247 @@ void func_80091D1C(void);
 void func_80091E18(void);
 
 // D_80108728
-void func_80092314(void);
-void func_80092408(void);
-void func_80092598(void);
-void func_80092614(void);
+extern void (*D_80108728[])(struct WeaponObj*);
+void func_80092314(struct WeaponObj*);
+void func_80092408(struct WeaponObj*);
+void func_80092598(struct WeaponObj*);
+void func_80092614(struct WeaponObj*);
 
 // D_80108738
-void func_80092684(void);
-void func_8009273C(void);
-void func_800927B4(void);
-void func_800927B4(void);
+extern void (*D_80108738[])(struct WeaponObj*);
+void func_80092684(struct WeaponObj*);
+void func_8009273C(struct WeaponObj*);
+void func_800927B4(struct WeaponObj*);
+void func_800927B4(struct WeaponObj*);
 
 // D_80108748
-void func_80092828(void);
-void func_80092918(void);
-void func_80092614(void);
-void func_80092614(void);
+extern void (*D_80108748[])(struct WeaponObj*);
+void func_80092828(struct WeaponObj*);
+void func_80092918(struct WeaponObj*);
+void func_80092614(struct WeaponObj*);
+void func_80092614(struct WeaponObj*);
 
 // D_80108758
-void func_800929DC(void);
-void func_80092AE4(void);
-void func_800927B4(void);
-void func_800927B4(void);
+extern void (*D_80108758[])(struct WeaponObj*);
+void func_800929DC(struct WeaponObj*);
+void func_80092AE4(struct WeaponObj*);
+void func_800927B4(struct WeaponObj*);
+void func_800927B4(struct WeaponObj*);
 
 // D_801087D4
-void func_80093014(void);
-void func_80093130(void);
-void func_800931A8(void);
-void func_8009347C(void);
-void func_800934D8(void);
+extern void (*D_801087D4[])(struct WeaponObj*);
+void func_80093014(struct WeaponObj*);
+void func_80093130(struct WeaponObj*);
+void func_800931A8(struct WeaponObj*);
+void func_8009347C(struct WeaponObj*);
+void func_800934D8(struct WeaponObj*);
 
 // D_801087EC
-void func_800932A0(void);
-void func_80093310(void);
-void func_800933EC(void);
-void func_8009343C(void);
+extern void (*D_801087EC[])(struct WeaponObj*);
+void func_800932A0(struct WeaponObj*);
+void func_80093310(struct WeaponObj*);
+void func_800933EC(struct WeaponObj*);
+void func_8009343C(struct WeaponObj*);
 
 // D_80108804
-void func_80093610(void);
-void func_8009372C(void);
-void func_8009347C(void);
-void func_8009347C(void);
-void func_80093C08(void);
+extern void (*D_80108804[])(struct WeaponObj*);
+void func_80093610(struct WeaponObj*);
+void func_8009372C(struct WeaponObj*);
+void func_8009347C(struct WeaponObj*);
+void func_8009347C(struct WeaponObj*);
+void func_80093C08(struct WeaponObj*);
 
 // D_80108818
-void func_80093930(void);
-void func_800939F4(void);
-void func_80093A5C(void);
-void func_8009347C(void);
-void func_80093C08(void);
+extern void (*D_80108818[])(struct WeaponObj*);
+void func_80093930(struct WeaponObj*);
+void func_800939F4(struct WeaponObj*);
+void func_80093A5C(struct WeaponObj*);
+void func_8009347C(struct WeaponObj*);
+void func_80093C08(struct WeaponObj*);
 
 // D_8010882C
-void func_8009377C(void);
-void func_800937EC(void);
-void func_80093858(void);
-void func_800938C0(void);
+extern void (*D_8010882C[])(struct WeaponObj*);
+void func_8009377C(struct WeaponObj*);
+void func_800937EC(struct WeaponObj*);
+void func_80093858(struct WeaponObj*);
+void func_800938C0(struct WeaponObj*);
 
 // D_8010883C
-void func_80093AAC(void);
-void func_80093B4C(void);
-void func_80093BA8(void);
+extern void (*D_8010883C[])(struct WeaponObj*);
+void func_80093AAC(struct WeaponObj*);
+void func_80093B4C(struct WeaponObj*);
+void func_80093BA8(struct WeaponObj*);
 
 // D_80108854
-void func_80093D78(void);
-void func_80093EB4(void);
-void func_80094104(void);
-void func_80094104(void);
+extern void (*D_80108854[])(struct WeaponObj*);
+void func_80093D78(struct WeaponObj*);
+void func_80093EB4(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
 
 // D_80108864
-void func_80093FC4(void);
-void func_8009403C(void);
-void func_80094078(void);
+extern void (*D_80108864[])(struct WeaponObj*);
+void func_80093FC4(struct WeaponObj*);
+void func_8009403C(struct WeaponObj*);
+void func_80094078(struct WeaponObj*);
 
 // D_80108870
-void func_80094280(void);
-void func_800942E8(void);
-void func_80094104(void);
-void func_80094104(void);
+extern void (*D_80108870[])(struct WeaponObj*);
+void func_80094280(struct WeaponObj*);
+void func_800942E8(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
 
 // D_80108880
-void func_800944B8(void);
-void func_8009462C(void);
-void func_80094104(void);
-void func_80094104(void);
+extern void (*D_80108880[])(struct WeaponObj*);
+void func_800944B8(struct WeaponObj*);
+void func_8009462C(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
+void func_80094104(struct WeaponObj*);
 
 // D_801088E8
-void func_80094B24(void);
-void func_80094C18(void);
-void func_80094EC8(void);
-void func_80094EC8(void);
+extern void (*D_801088E8[])(struct WeaponObj*);
+void func_80094B24(struct WeaponObj*);
+void func_80094C18(struct WeaponObj*);
+void func_80094EC8(struct WeaponObj*);
+void func_80094EC8(struct WeaponObj*);
 
 // D_801088F8
-void func_80094D40(void);
-void func_80094DC0(void);
-void func_80094E50(void);
+extern void (*D_801088F8[])(struct WeaponObj*);
+void func_80094D40(struct WeaponObj*);
+void func_80094DC0(struct WeaponObj*);
+void func_80094E50(struct WeaponObj*);
 
 // D_80108920
-void func_80095254(void);
-void func_800953D0(void);
-void func_80095430(void);
-void func_80095430(void);
+extern void (*D_80108920[])(struct WeaponObj*);
+void func_80095254(struct WeaponObj*);
+void func_800953D0(struct WeaponObj*);
+void func_80095430(struct WeaponObj*);
+void func_80095430(struct WeaponObj*);
 
 // D_80108934
-void func_80095538(void);
-void func_8009564C(void);
-void func_80095430(void);
-void func_80095430(void);
+extern void (*D_80108934[])(struct WeaponObj*);
+void func_80095538(struct WeaponObj*);
+void func_8009564C(struct WeaponObj*);
+void func_80095430(struct WeaponObj*);
+void func_80095430(struct WeaponObj*);
 
 // D_80108958
-void func_80095854(void);
-void func_8009596C(void);
-void func_80095B94(void);
-void func_80095BE8(void);
+extern void (*D_80108958[])(struct WeaponObj*);
+void func_80095854(struct WeaponObj*);
+void func_8009596C(struct WeaponObj*);
+void func_80095B94(struct WeaponObj*);
+void func_80095BE8(struct WeaponObj*);
 
 // D_80108968
-void func_80095A28(void);
-void func_80095AAC(void);
-void func_80095B10(void);
+extern void (*D_80108968[])(struct WeaponObj*);
+void func_80095A28(struct WeaponObj*);
+void func_80095AAC(struct WeaponObj*);
+void func_80095B10(struct WeaponObj*);
 
 // D_80108974
-void func_80095E3C(void);
-void func_80095F9C(void);
-void func_80095B94(void);
-void func_80095BE8(void);
+extern void (*D_80108974[])(struct WeaponObj*);
+void func_80095E3C(struct WeaponObj*);
+void func_80095F9C(struct WeaponObj*);
+void func_80095B94(struct WeaponObj*);
+void func_80095BE8(struct WeaponObj*);
 
 // D_80108984
-void func_80096018(void);
-void func_80096060(void);
-void func_80096170(void);
+extern void (*D_80108984[])(struct WeaponObj*);
+void func_80096018(struct WeaponObj*);
+void func_80096060(struct WeaponObj*);
+void func_80096170(struct WeaponObj*);
 
 // D_8010899C
-void func_80096794(void);
-void func_80096834(void);
-void func_800968F8(void);
-void func_80096994(void);
+extern void (*D_8010899C[])(struct WeaponObj*);
+void func_80096794(struct WeaponObj*);
+void func_80096834(struct WeaponObj*);
+void func_800968F8(struct WeaponObj*);
+void func_80096994(struct WeaponObj*);
 
 // D_801089AC
-void func_80096A84(void);
-void func_80096B54(void);
-void func_80096DC0(void);
-void func_80096DC0(void);
+extern void (*D_801089AC[])(struct WeaponObj*);
+void func_80096A84(struct WeaponObj*);
+void func_80096B54(struct WeaponObj*);
+void func_80096DC0(struct WeaponObj*);
+void func_80096DC0(struct WeaponObj*);
 
 // D_801089C4
-void func_80096EA4(void);
-void func_80097048(void);
-void func_800972DC(void);
-void func_800972DC(void);
+extern void (*D_801089C4[])(struct WeaponObj*);
+void func_80096EA4(struct WeaponObj*);
+void func_80097048(struct WeaponObj*);
+void func_800972DC(struct WeaponObj*);
+void func_800972DC(struct WeaponObj*);
 
 // D_801089D8
-void func_800970EC(void);
-void func_80097144(void);
-void func_800971D4(void);
-void func_80097278(void);
+extern void (*D_801089D8[])(struct WeaponObj*);
+void func_800970EC(struct WeaponObj*);
+void func_80097144(struct WeaponObj*);
+void func_800971D4(struct WeaponObj*);
+void func_80097278(struct WeaponObj*);
 
 // D_801089E8
-void func_80097430(void);
-void func_800975DC(void);
-void func_80097740(void);
-void func_80097804(void);
+extern void (*D_801089E8[])(struct WeaponObj*);
+void func_80097430(struct WeaponObj*);
+void func_800975DC(struct WeaponObj*);
+void func_80097740(struct WeaponObj*);
+void func_80097804(struct WeaponObj*);
 
 // D_80108A24
-void func_800978DC(void);
-void func_80097A24(void);
-void func_80097AC8(void);
-void func_80097AC8(void);
+extern void (*D_80108A24[])(struct WeaponObj*);
+void func_800978DC(struct WeaponObj*);
+void func_80097A24(struct WeaponObj*);
+void func_80097AC8(struct WeaponObj*);
+void func_80097AC8(struct WeaponObj*);
 
 // D_80108A34
-void func_80097BA4(void);
-void func_80097CF4(void);
-void func_80097AC8(void);
-void func_80097AC8(void);
+extern void (*D_80108A34[])(struct WeaponObj*);
+void func_80097BA4(struct WeaponObj*);
+void func_80097CF4(struct WeaponObj*);
+void func_80097AC8(struct WeaponObj*);
+void func_80097AC8(struct WeaponObj*);
 
 // D_80108B88
-void func_80098630(void);
-void func_80098728(void);
-void func_800987A8(void);
+extern void (*D_80108B88[])(struct WeaponObj*);
+void func_80098630(struct WeaponObj*);
+void func_80098728(struct WeaponObj*);
+void func_800987A8(struct WeaponObj*);
 
 // D_80108BA8
-void func_80098874(void);
-void func_800988C4(void);
-void func_80098970(void);
+extern void (*D_80108BA8[])(struct WeaponObj*);
+void func_80098874(struct WeaponObj*);
+void func_800988C4(struct WeaponObj*);
+void func_80098970(struct WeaponObj*);
 
 // D_80108BC0
-void func_800989CC(void);
-void func_80098A78(void);
-void func_80098A9C(void);
+extern void (*D_80108BC0[])(struct WeaponObj*);
+void func_800989CC(struct WeaponObj*);
+void func_80098A78(struct WeaponObj*);
+void func_80098A9C(struct WeaponObj*);
 
 // D_80108BD8
-void func_80098AF8(void);
-void func_80098C08(void);
-void func_80098C84(void);
+extern void (*D_80108BD8[])(struct WeaponObj*);
+void func_80098AF8(struct WeaponObj*);
+void func_80098C08(struct WeaponObj*);
+void func_80098C84(struct WeaponObj*);
 
 // D_80108BE4
-void func_80098AF8(void);
-void func_80098CC0(void);
-void func_80098C84(void);
+extern void (*D_80108BE4[])(struct WeaponObj*);
+void func_80098AF8(struct WeaponObj*);
+void func_80098CC0(struct WeaponObj*);
+void func_80098C84(struct WeaponObj*);
 
 // D_80108C00
-void func_80098F88(void);
-void func_80099118(void);
-void func_800992C4(void);
+extern void (*D_80108C00[])(struct WeaponObj*);
+void func_80098F88(struct WeaponObj*);
+void func_80099118(struct WeaponObj*);
+void func_800992C4(struct WeaponObj*);
 
 // D_80108C38
-void func_80099338(void);
-void func_80099388(void);
-void func_80099480(void);
+extern void (*D_80108C38[])(struct WeaponObj*);
+void func_80099338(struct WeaponObj*);
+void func_80099388(struct WeaponObj*);
+void func_80099480(struct WeaponObj*);
 
 // D_80108C74
 void func_800994DC(void);
