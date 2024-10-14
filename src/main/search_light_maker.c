@@ -5,7 +5,7 @@
 void func_800B6B18(struct EffectObj* arg0)
 {
     // asm(".rept 13 ; nop ; .endr");
-    D_8010B4C4[arg0->state]();
+    D_8010B4C4[arg0->state](arg0);
 }
 
 // D_8010B4C4 state 0
