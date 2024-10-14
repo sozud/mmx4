@@ -9360,8 +9360,10 @@ void TitleScalingXUpdate(struct EffectObj* arg0)
     g_TitleScalingXUpdateFuncs[arg0->state]();
 }
 
+// g_TitleScalingXUpdateFuncs state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B599C);
 
+// g_TitleScalingXUpdateFuncs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5B54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
@@ -10768,10 +10770,13 @@ void func_800CB614(struct Unk* arg0)
     ZeroObjectState(arg0);
 }
 
+// g_TitleUpdateFuncs state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB634);
 
+// g_TitleUpdateFuncs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB708);
 
+// g_TitleUpdateFuncs state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800CB828);
 
 // title object. Includes the logo and the menu graphics

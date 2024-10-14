@@ -47,6 +47,8 @@ segments:
       - [0xC42C0, c, search_light]
       - [0xC49B0, c]
       - [0xC594C, c]
+      - [0xC7794, c, title_quad]
+      - [0xC7F34, c]
       - [0xCB68C, asm] # doesn't seem like a function
       - [0xCB734, asm]
       - [0xCB748, asm, psxsdk/libspu/s_crwa]
