@@ -12,7 +12,7 @@ import rabbitizer
 
 
 def decodeInstruction(bytesDiff: bytes, mapFile: mapfile_parser.MapFile) -> str:
-    word = (bytesDiff[0] << 24) | (bytesDiff[1] << 16) | (bytesDiff[2] << 8) | (bytesDiff[3] << 0)
+    word = (bytesDiff[0] << 0) | (bytesDiff[1] << 8) | (bytesDiff[2] << 16) | (bytesDiff[3] << 24)
     instr = rabbitizer.Instruction(word)
     immOverride = None
 

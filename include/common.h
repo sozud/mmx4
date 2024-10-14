@@ -642,9 +642,9 @@ struct MainObj {
 };
 
 struct Unk14 {
-    s16 unk0;
-    s8 pad;
-    s8 unk3;
+    u16 unk0;
+    s8 unk2;
+    u8 unk3;
 };
 
 struct EffectObj {
@@ -656,7 +656,7 @@ struct EffectObj {
     u8 pad0[3];
     s8 pad_[9];
     struct Unk14* unk14;
-    u8 unk18;
+    s8 unk18;
     u8 pad[23];
 };
 
