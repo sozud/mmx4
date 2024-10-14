@@ -318,64 +318,64 @@ void func_800992FC(void);
 void func_800992FC(void);
 
 // D_800F26D4 (shot_object_update_funcs)
-void func_800994A0(void);
-void func_80099B30(void);
-void func_80099D18(void);
-void func_8009A358(void);
-void func_8009A3B4(void);
-void func_8009A5B8(void);
-void func_8009A984(void);
-void func_8009AD30(void);
-void func_8009B040(void);
-void func_8009B07C(void);
-void func_8009B3E8(void);
-void func_8009B67C(void);
-void func_8009B7F8(void);
-void func_8009BD28(void);
-void func_8009BF14(void);
-void func_8009C0F0(void);
-void func_8009C364(void);
-void func_8009C5F0(void);
-void func_8009CAC0(void);
-void func_8009CC64(void);
-void func_8009CF38(void);
-void func_8009D200(void);
-void func_8009D74C(void);
-void func_8009DD40(void);
-void func_8009E0B8(void);
-void func_8009EB6C(void);
-void func_8009EE68(void);
-void func_8009F240(void);
-void func_8009F46C(void);
-void func_8009F638(void);
-void func_8009FB60(void);
-void func_8009FF10(void);
-void func_800A037C(void);
-void func_800A03B8(void);
-void func_800A2278(void);
-void func_800A22D4(void);
-void func_800A3924(void);
-void func_800A3C78(void);
-void func_800A428C(void);
-void func_800A47C4(void);
-void func_800A5348(void);
-void func_800A62F0(void);
-void func_800A6374(void);
-void func_800A6960(void);
-void func_800A6FCC(void);
-void func_800A7AF0(void);
-void func_800A9928(void);
-void func_80098D64(void);
-void func_800A9DB8(void);
-void func_800AA10C(void);
-void func_800AA5A4(void);
-void func_800AAA98(void);
-void func_800AAC5C(void);
-void func_800ABB70(void);
-void func_800AC7EC(void);
-void func_800ADEF4(void);
-void func_800AE3F4(void);
-void func_800AE65C(void);
+void func_800994A0(struct ShotObj*);
+void func_80099B30(struct ShotObj*);
+void func_80099D18(struct ShotObj*);
+void func_8009A358(struct ShotObj*);
+void func_8009A3B4(struct ShotObj*);
+void func_8009A5B8(struct ShotObj*);
+void func_8009A984(struct ShotObj*);
+void func_8009AD30(struct ShotObj*);
+void func_8009B040(struct ShotObj*);
+void func_8009B07C(struct ShotObj*);
+void func_8009B3E8(struct ShotObj*);
+void func_8009B67C(struct ShotObj*);
+void func_8009B7F8(struct ShotObj*);
+void func_8009BD28(struct ShotObj*);
+void func_8009BF14(struct ShotObj*);
+void func_8009C0F0(struct ShotObj*);
+void func_8009C364(struct ShotObj*);
+void func_8009C5F0(struct ShotObj*);
+void func_8009CAC0(struct ShotObj*);
+void func_8009CC64(struct ShotObj*);
+void func_8009CF38(struct ShotObj*);
+void func_8009D200(struct ShotObj*);
+void func_8009D74C(struct ShotObj*);
+void func_8009DD40(struct ShotObj*);
+void func_8009E0B8(struct ShotObj*);
+void func_8009EB6C(struct ShotObj*);
+void func_8009EE68(struct ShotObj*);
+void func_8009F240(struct ShotObj*);
+void func_8009F46C(struct ShotObj*);
+void func_8009F638(struct ShotObj*);
+void func_8009FB60(struct ShotObj*);
+void func_8009FF10(struct ShotObj*);
+void func_800A037C(struct ShotObj*);
+void func_800A03B8(struct ShotObj*);
+void func_800A2278(struct ShotObj*);
+void func_800A22D4(struct ShotObj*);
+void func_800A3924(struct ShotObj*);
+void func_800A3C78(struct ShotObj*);
+void func_800A428C(struct ShotObj*);
+void func_800A47C4(struct ShotObj*);
+void func_800A5348(struct ShotObj*);
+void func_800A62F0(struct ShotObj*);
+void func_800A6374(struct ShotObj*);
+void func_800A6960(struct ShotObj*);
+void func_800A6FCC(struct ShotObj*);
+void func_800A7AF0(struct ShotObj*);
+void func_800A9928(struct ShotObj*);
+void func_80098D64(struct ShotObj*);
+void func_800A9DB8(struct ShotObj*);
+void func_800AA10C(struct ShotObj*);
+void func_800AA5A4(struct ShotObj*);
+void func_800AAA98(struct ShotObj*);
+void func_800AAC5C(struct ShotObj*);
+void func_800ABB70(struct ShotObj*);
+void func_800AC7EC(struct ShotObj*);
+void func_800ADEF4(struct ShotObj*);
+void func_800AE3F4(struct ShotObj*);
+void func_800AE65C(struct ShotObj*);
 
 // D_800F27BC (vis_object_update_funcs)
 void func_800AEAC0(void);
@@ -3869,199 +3869,233 @@ void func_80098A78(void);
 void func_80098A9C(void);
 
 // D_80108BD8
-void func_80098AF8(void);
-void func_80098C08(void);
-void func_80098C84(void);
+extern void (*D_80108BE4[])(struct ShotObj*);
+void func_80098AF8(struct ShotObj*);
+void func_80098C08(struct ShotObj*);
+void func_80098C84(struct ShotObj*);
 
 // D_80108BE4
-void func_80098AF8(void);
-void func_80098CC0(void);
-void func_80098C84(void);
+extern void (*D_80108BE4[])(struct ShotObj*);
+void func_80098AF8(struct ShotObj*);
+void func_80098CC0(struct ShotObj*);
+void func_80098C84(struct ShotObj*);
 
 // D_80108C00
-void func_80098F88(void);
-void func_80099118(void);
-void func_800992C4(void);
+extern void (*D_80108C00[])(struct ShotObj*);
+void func_80098F88(struct ShotObj*);
+void func_80099118(struct ShotObj*);
+void func_800992C4(struct ShotObj*);
 
 // D_80108C38
-void func_80099338(void);
-void func_80099388(void);
-void func_80099480(void);
+extern void (*D_80108C00[])(struct ShotObj*);
+void func_80099338(struct ShotObj*);
+void func_80099388(struct ShotObj*);
+void func_80099480(struct ShotObj*);
 
 // D_80108C74
-void func_800994DC(void);
-void func_80099784(void);
-void func_8009982C(void);
-void func_80099A28(void);
-void func_80099B0C(void);
-void func_80099A8C(void);
+extern void (*D_80108C74[])(struct ShotObj*);
+void func_800994DC(struct ShotObj*);
+void func_80099784(struct ShotObj*);
+void func_8009982C(struct ShotObj*);
+void func_80099A28(struct ShotObj*);
+void func_80099B0C(struct ShotObj*);
+void func_80099A8C(struct ShotObj*);
 
 // D_80108CAC
-void func_80099B6C(void);
-void func_80099C68(void);
-void func_80099CF0(void);
+extern void (*D_80108CAC[])(struct ShotObj*);
+void func_80099B6C(struct ShotObj*);
+void func_80099C68(struct ShotObj*);
+void func_80099CF0(struct ShotObj*);
 
 // D_80108CB8
-void func_80099D10(void);
+extern void (*D_80108CB8[])(struct ShotObj*);
+void func_80099D10(struct ShotObj*);
 
 // D_80108CC4
-void func_80099D54(void);
-void func_80099E34(void);
-void func_80099F28(void);
+extern void (*D_80108CC4[])(struct ShotObj*);
+void func_80099D54(struct ShotObj*);
+void func_80099E34(struct ShotObj*);
+void func_80099F28(struct ShotObj*);
 
 // D_80108CE4
-void func_80099F48(void);
-void func_8009A10C(void);
-void func_8009A338(void);
-void func_8009A264(void);
+extern void (*D_80108CE4[])(struct ShotObj*);
+void func_80099F48(struct ShotObj*);
+void func_8009A10C(struct ShotObj*);
+void func_8009A338(struct ShotObj*);
+void func_8009A264(struct ShotObj*);
 
 // D_80108CF8
-void func_8009A448(void);
-void func_8009A4F4(void);
-void func_8009A598(void);
+extern void (*D_80108CF8[])(struct ShotObj*);
+void func_8009A448(struct ShotObj*);
+void func_8009A4F4(struct ShotObj*);
+void func_8009A598(struct ShotObj*);
 
 // D_80108D28
-void func_8009A5F4(void);
-void func_8009A6B4(void);
-void func_8009A7D8(void);
-void func_8009A7F8(void);
-void func_8009A87C(void);
-void func_8009A964(void);
+extern void (*D_80108D28[])(struct ShotObj*);
+void func_8009A5F4(struct ShotObj*);
+void func_8009A6B4(struct ShotObj*);
+void func_8009A7D8(struct ShotObj*);
+void func_8009A7F8(struct ShotObj*);
+void func_8009A87C(struct ShotObj*);
+void func_8009A964(struct ShotObj*);
 
 // D_80108D5C
-void func_8009A9E4(void);
-void func_8009AC40(void);
-void func_8009AD08(void);
-void func_8009AD28(void);
+extern void (*D_80108D5C[])(struct ShotObj*);
+void func_8009A9E4(struct ShotObj*);
+void func_8009AC40(struct ShotObj*);
+void func_8009AD08(struct ShotObj*);
+void func_8009AD28(struct ShotObj*);
 
 // D_80108D74
-void func_8009AD6C(void);
-void func_8009ADF8(void);
-void func_8009AEBC(void);
-void func_8009AEDC(void);
+extern void (*D_80108D74[])(struct ShotObj*);
+void func_8009AD6C(struct ShotObj*);
+void func_8009ADF8(struct ShotObj*);
+void func_8009AEBC(struct ShotObj*);
+void func_8009AEDC(struct ShotObj*);
 
 // D_80108D88
-void func_8009AEE4(void);
-void func_8009AF98(void);
-void func_8009B020(void);
+extern void (*D_80108D88[])(struct ShotObj*);
+void func_8009AEE4(struct ShotObj*);
+void func_8009AF98(struct ShotObj*);
+void func_8009B020(struct ShotObj*);
 
 // D_80108DA8
-void func_8009B0B8(void);
-void func_8009B12C(void);
-void func_8009B1C8(void);
-void func_8009B1E8(void);
-void func_8009B2F4(void);
-void func_8009B3C8(void);
+extern void (*D_80108DA8[])(struct ShotObj*);
+void func_8009B0B8(struct ShotObj*);
+void func_8009B12C(struct ShotObj*);
+void func_8009B1C8(struct ShotObj*);
+void func_8009B1E8(struct ShotObj*);
+void func_8009B2F4(struct ShotObj*);
+void func_8009B3C8(struct ShotObj*);
 
 // D_80108E48
-void func_8009B424(void);
-void func_8009B594(void);
-void func_8009B654(void);
-void func_8009B674(void);
+extern void (*D_80108E48[])(struct ShotObj*);
+void func_8009B424(struct ShotObj*);
+void func_8009B594(struct ShotObj*);
+void func_8009B654(struct ShotObj*);
+void func_8009B674(struct ShotObj*);
 
 // D_80108E5C
-void func_8009B6B8(void);
-void func_8009B734(void);
-void func_8009B7D8(void);
+extern void (*D_80108E5C[])(struct ShotObj*);
+void func_8009B6B8(struct ShotObj*);
+void func_8009B734(struct ShotObj*);
+void func_8009B7D8(struct ShotObj*);
 
 // D_80108E9C
-void func_8009B85C(void);
-void func_8009B9B0(void);
-void func_8009BA4C(void);
-void func_8009BA6C(void);
-void func_8009BAE8(void);
-void func_8009BC14(void);
-void func_8009BD08(void);
+extern void (*D_80108E9C[])(struct ShotObj*);
+void func_8009B85C(struct ShotObj*);
+void func_8009B9B0(struct ShotObj*);
+void func_8009BA4C(struct ShotObj*);
+void func_8009BA6C(struct ShotObj*);
+void func_8009BAE8(struct ShotObj*);
+void func_8009BC14(struct ShotObj*);
+void func_8009BD08(struct ShotObj*);
 
 // D_80108EBC
-void func_8009BD64(void);
-void func_8009BE14(void);
-void func_8009BEF4(void);
+extern void (*D_80108EBC[])(struct ShotObj*);
+void func_8009BD64(struct ShotObj*);
+void func_8009BE14(struct ShotObj*);
+void func_8009BEF4(struct ShotObj*);
 
 // D_80108ECC
-void func_8009BF50(void);
-void func_8009BFE0(void);
-void func_8009C0D0(void);
+extern void (*D_80108ECC[])(struct ShotObj*);
+void func_8009BF50(struct ShotObj*);
+void func_8009BFE0(struct ShotObj*);
+void func_8009C0D0(struct ShotObj*);
 
 // D_80108EDC
-void func_8009C12C(void);
-void func_8009C298(void);
-void func_8009C344(void);
+extern void (*D_80108EDC[])(struct ShotObj*);
+void func_8009C12C(struct ShotObj*);
+void func_8009C298(struct ShotObj*);
+void func_8009C344(struct ShotObj*);
 
 // D_80108EE8
-void func_8009C238(void);
-void func_8009C258(void);
-void func_8009C260(void);
+extern void (*D_80108EE8[])(struct ShotObj*);
+void func_8009C238(struct ShotObj*);
+void func_8009C258(struct ShotObj*);
+void func_8009C260(struct ShotObj*);
 
 // D_80108F54
-void func_8009C3A0(void);
-void func_8009C45C(void);
-void func_8009C588(void);
+extern void (*D_80108F54[])(struct ShotObj*);
+void func_8009C3A0(struct ShotObj*);
+void func_8009C45C(struct ShotObj*);
+void func_8009C588(struct ShotObj*);
 
 // D_80108F6C
-void func_8009C638(void);
-void func_8009C9F0(void);
-void func_8009CAA0(void);
+extern void (*D_80108F6C[])(struct ShotObj*);
+void func_8009C638(struct ShotObj*);
+void func_8009C9F0(struct ShotObj*);
+void func_8009CAA0(struct ShotObj*);
 
 // D_80108F78
-void func_8009C9D0(void);
-void func_8009C9C8(void);
-void func_8009C784(void);
-void func_8009C860(void);
-void func_8009C96C(void);
+extern void (*D_80108F78[])(struct ShotObj*);
+void func_8009C9D0(struct ShotObj*);
+void func_8009C9C8(struct ShotObj*);
+void func_8009C784(struct ShotObj*);
+void func_8009C860(struct ShotObj*);
+void func_8009C96C(struct ShotObj*);
 
 // D_80108F90
-void func_8009CAFC(void);
-void func_8009CBA0(void);
-void func_8009CC44(void);
+extern void (*D_80108F90[])(struct ShotObj*);
+void func_8009CAFC(struct ShotObj*);
+void func_8009CBA0(struct ShotObj*);
+void func_8009CC44(struct ShotObj*);
 
 // D_80108FAC
-void func_8009CCB4(void);
-void func_8009CD80(void);
-void func_8009CDE0(void);
-void func_8009CF18(void);
+extern void (*D_80108FAC[])(struct ShotObj*);
+void func_8009CCB4(struct ShotObj*);
+void func_8009CD80(struct ShotObj*);
+void func_8009CDE0(struct ShotObj*);
+void func_8009CF18(struct ShotObj*);
 
 // D_80108FCC
-void func_8009CF74(void);
-void func_8009D048(void);
-void func_8009D1D8(void);
-void func_8009D1F8(void);
+extern void (*D_80108FCC[])(struct ShotObj*);
+void func_8009CF74(struct ShotObj*);
+void func_8009D048(struct ShotObj*);
+void func_8009D1D8(struct ShotObj*);
+void func_8009D1F8(struct ShotObj*);
 
 // D_80108FF4
-void func_8009D23C(void);
-void func_8009D3F4(void);
-void func_8009D560(void);
-void func_8009D580(void);
+extern void (*D_80108FF4[])(struct ShotObj*);
+void func_8009D23C(struct ShotObj*);
+void func_8009D3F4(struct ShotObj*);
+void func_8009D560(struct ShotObj*);
+void func_8009D580(struct ShotObj*);
 
 // D_80109008
-void func_8009D788(void);
-void func_8009DB9C(void);
-void func_8009DCF4(void);
+extern void (*D_80109008[])(struct ShotObj*);
+void func_8009D788(struct ShotObj*);
+void func_8009DB9C(struct ShotObj*);
+void func_8009DCF4(struct ShotObj*);
 
 // D_80109014
-void func_8009D85C(void);
-void func_8009D8F0(void);
-void func_8009DA28(void);
-void func_8009DA7C(void);
-void func_8009DB1C(void);
+extern void (*D_80109014[])(struct ShotObj*);
+void func_8009D85C(struct ShotObj*);
+void func_8009D8F0(struct ShotObj*);
+void func_8009DA28(struct ShotObj*);
+void func_8009DA7C(struct ShotObj*);
+void func_8009DB1C(struct ShotObj*);
 
 // D_801090AC
-void func_8009DD7C(void);
-void func_8009DE04(void);
-void func_8009E098(void);
+extern void (*D_801090AC[])(struct ShotObj*);
+void func_8009DD7C(struct ShotObj*);
+void func_8009DE04(struct ShotObj*);
+void func_8009E098(struct ShotObj*);
 
 // D_801090B8
-void func_8009DF40(void);
-void func_8009DF60(void);
-void func_8009DFA0(void);
+extern void (*D_801090B8[])(struct ShotObj*);
+void func_8009DF40(struct ShotObj*);
+void func_8009DF60(struct ShotObj*);
+void func_8009DFA0(struct ShotObj*);
 
 // D_8010910C
-void func_8009E0F4(void);
-void func_8009E188(void);
-void func_8009E34C(void);
-void func_8009E3A8(void);
-void func_8009E490(void);
-void func_8009EAF0(void);
+extern void (*D_8010910C[])(struct ShotObj*);
+void func_8009E0F4(struct ShotObj*);
+void func_8009E188(struct ShotObj*);
+void func_8009E34C(struct ShotObj*);
+void func_8009E3A8(struct ShotObj*);
+void func_8009E490(struct ShotObj*);
+void func_8009EAF0(struct ShotObj*);
 
 // D_80109124
 void func_8009216C(struct Unk* arg0);
@@ -4077,538 +4111,626 @@ void func_8009E9EC(struct Unk* arg0);
 void func_8009EAA4(struct Unk* arg0);
 
 // D_80109160
+extern void (*D_80109160[])(struct ShotObj*);
 void func_8009EBA8(void);
 void func_8002C808(struct PlayerObj* arg0);
 void func_8009EE40(void);
 void func_8009EE60(void);
 
 // D_8010918C
-void func_8009EEC8(void);
-void func_8009F160(void);
-void func_8009F218(void);
-void func_8009F238(void);
+extern void (*D_8010918C[])(struct ShotObj*);
+void func_8009EEC8(struct ShotObj*);
+void func_8009F160(struct ShotObj*);
+void func_8009F218(struct ShotObj*);
+void func_8009F238(struct ShotObj*);
 
 // D_801091B4
-void func_8009F27C(void);
-void func_8009F3A8(void);
-void func_8009F44C(void);
+extern void (*D_801091B4[])(struct ShotObj*);
+void func_8009F27C(struct ShotObj*);
+void func_8009F3A8(struct ShotObj*);
+void func_8009F44C(struct ShotObj*);
 
 // D_801091C4
-void func_8009F4C0(void);
-void func_8009F594(void);
-void func_8009F618(void);
+extern void (*D_801091C4[])(struct ShotObj*);
+void func_8009F4C0(struct ShotObj*);
+void func_8009F594(struct ShotObj*);
+void func_8009F618(struct ShotObj*);
 
 // D_801091F0
-void func_8009F674(void);
-void func_8009F7C0(void);
-void func_8009FB38(void);
-void func_8009FB58(void);
+extern void (*D_801091F0[])(struct ShotObj*);
+void func_8009F674(struct ShotObj*);
+void func_8009F7C0(struct ShotObj*);
+void func_8009FB38(struct ShotObj*);
+void func_8009FB58(struct ShotObj*);
 
 // D_80109200
-void func_8009F89C(void);
-void func_8009F94C(void);
-void func_8009F9E0(void);
+extern void (*D_80109200[])(struct ShotObj*);
+void func_8009F89C(struct ShotObj*);
+void func_8009F94C(struct ShotObj*);
+void func_8009F9E0(struct ShotObj*);
 
 // D_8010922C
-void func_8009FB9C(void);
-void func_8009FD00(void);
-void func_8009FE38(void);
-void func_8009FE58(void);
+extern void (*D_8010922C[])(struct ShotObj*);
+void func_8009FB9C(struct ShotObj*);
+void func_8009FD00(struct ShotObj*);
+void func_8009FE38(struct ShotObj*);
+void func_8009FE58(struct ShotObj*);
 
 // D_80109248
-void func_8009FF4C(void);
-void func_800A00C4(void);
-void func_800A0150(void);
+extern void (*D_80109248[])(struct ShotObj*);
+void func_8009FF4C(struct ShotObj*);
+void func_800A00C4(struct ShotObj*);
+void func_800A0150(struct ShotObj*);
 
 // D_8010925C
-void func_800A0170(void);
-void func_800A02FC(void);
-void func_800A035C(void);
+extern void (*D_8010925C[])(struct ShotObj*);
+void func_800A0170(struct ShotObj*);
+void func_800A02FC(struct ShotObj*);
+void func_800A035C(struct ShotObj*);
 
 // D_801094EC
-void func_800A03F4(void);
-void func_800A068C(void);
-void func_800A0A18(void);
-void func_800A0A38(void);
-void func_800A0C4C(void);
-void func_800A0FC8(void);
-void func_800A0FE8(void);
-void func_800A12EC(void);
-void func_800A16DC(void);
+extern void (*D_801094EC[])(struct ShotObj*);
+void func_800A03F4(struct ShotObj*);
+void func_800A068C(struct ShotObj*);
+void func_800A0A18(struct ShotObj*);
+void func_800A0A38(struct ShotObj*);
+void func_800A0C4C(struct ShotObj*);
+void func_800A0FC8(struct ShotObj*);
+void func_800A0FE8(struct ShotObj*);
+void func_800A12EC(struct ShotObj*);
+void func_800A16DC(struct ShotObj*);
 
 // D_80109558
-void func_800A19A8(void);
-void func_800A1B1C(void);
-void func_800A1BEC(void);
+extern void (*D_80109558[])(struct ShotObj*);
+void func_800A19A8(struct ShotObj*);
+void func_800A1B1C(struct ShotObj*);
+void func_800A1BEC(struct ShotObj*);
 
 // D_80109574
-void func_800A18F4(void);
-void func_800A1F7C(void);
-void func_800A1CCC(void);
-void func_800A1E3C(void);
-void func_800A1C90(void);
+extern void (*D_80109574[])(struct ShotObj*);
+void func_800A18F4(struct ShotObj*);
+void func_800A1F7C(struct ShotObj*);
+void func_800A1CCC(struct ShotObj*);
+void func_800A1E3C(struct ShotObj*);
+void func_800A1C90(struct ShotObj*);
 
 // D_8010958C
-void func_800A16FC(void);
-void func_800A2098(void);
-void func_800A220C(void);
+extern void (*D_8010958C[])(struct ShotObj*);
+void func_800A16FC(struct ShotObj*);
+void func_800A2098(struct ShotObj*);
+void func_800A220C(struct ShotObj*);
 
 // D_801096F4
-void func_800A2310(void);
-void func_800A23E0(void);
-void func_800A2A58(void);
-void func_800A325C(void);
-void func_800A366C(void);
-void func_800A2E6C(void);
-void func_800A23B4(void);
-void func_800A23C0(void);
+extern void (*D_801096F4[])(struct ShotObj*);
+void func_800A2310(struct ShotObj*);
+void func_800A23E0(struct ShotObj*);
+void func_800A2A58(struct ShotObj*);
+void func_800A325C(struct ShotObj*);
+void func_800A366C(struct ShotObj*);
+void func_800A2E6C(struct ShotObj*);
+void func_800A23B4(struct ShotObj*);
+void func_800A23C0(struct ShotObj*);
 
 // D_80109714
-void func_800A241C(void);
-void func_800A24F0(void);
+extern void (*D_80109714[])(struct ShotObj*);
+void func_800A241C(struct ShotObj*);
+void func_800A24F0(struct ShotObj*);
 
 // D_8010971C
-void func_800A25EC(void);
-void func_800A2748(void);
-void func_800A27F4(void);
-void func_800A2870(void);
-void func_800A2928(void);
-void func_800A29C8(void);
+extern void (*D_8010971C[])(struct ShotObj*);
+void func_800A25EC(struct ShotObj*);
+void func_800A2748(struct ShotObj*);
+void func_800A27F4(struct ShotObj*);
+void func_800A2870(struct ShotObj*);
+void func_800A2928(struct ShotObj*);
+void func_800A29C8(struct ShotObj*);
 
 // D_80109734
-void func_800A2AA0(void);
-void func_800A2B8C(void);
+extern void (*D_80109734[])(struct ShotObj*);
+void func_800A2AA0(struct ShotObj*);
+void func_800A2B8C(struct ShotObj*);
 
 // D_8010973C
-void func_800A2C70(void);
-void func_800A2CEC(void);
-void func_800A2D54(void);
+extern void (*D_8010973C[])(struct ShotObj*);
+void func_800A2C70(struct ShotObj*);
+void func_800A2CEC(struct ShotObj*);
+void func_800A2D54(struct ShotObj*);
 
 // D_80109748
-void func_800A2EB4(void);
-void func_800A2F2C(void);
+extern void (*D_80109748[])(struct ShotObj*);
+void func_800A2EB4(struct ShotObj*);
+void func_800A2F2C(struct ShotObj*);
 
 // D_80109750
-void func_800A3010(void);
-void func_800A3078(void);
-void func_800A3170(void);
-void func_800A31CC(void);
+extern void (*D_80109750[])(struct ShotObj*);
+void func_800A3010(struct ShotObj*);
+void func_800A3078(struct ShotObj*);
+void func_800A3170(struct ShotObj*);
+void func_800A31CC(struct ShotObj*);
 
 // D_80109760
-void func_800A32B8(void);
-void func_800A33A0(void);
+extern void (*D_80109760[])(struct ShotObj*);
+void func_800A32B8(struct ShotObj*);
+void func_800A33A0(struct ShotObj*);
 
 // D_80109768
-void func_800A348C(void);
-void func_800A3520(void);
-void func_800A3658(void);
+extern void (*D_80109768[])(struct ShotObj*);
+void func_800A348C(struct ShotObj*);
+void func_800A3520(struct ShotObj*);
+void func_800A3658(struct ShotObj*);
 
 // D_80109774
-void func_800A3758(void);
-void func_800A382C(void);
+extern void (*D_80109774[])(struct ShotObj*);
+void func_800A3758(struct ShotObj*);
+void func_800A382C(struct ShotObj*);
 
 // D_8010978C
-void func_800A3960(void);
-void func_800A3A4C(void);
-void func_800A3C50(void);
-void func_800A3C70(void);
+extern void (*D_8010978C[])(struct ShotObj*);
+void func_800A3960(struct ShotObj*);
+void func_800A3A4C(struct ShotObj*);
+void func_800A3C50(struct ShotObj*);
+void func_800A3C70(struct ShotObj*);
 
 // D_801097CC
-void func_800A3CB4(void);
-void func_800A3FEC(void);
-void func_800A4230(void);
-void func_800A4284(void);
+extern void (*D_801097CC[])(struct ShotObj*);
+void func_800A3CB4(struct ShotObj*);
+void func_800A3FEC(struct ShotObj*);
+void func_800A4230(struct ShotObj*);
+void func_800A4284(struct ShotObj*);
 
 // D_801097E4
-void func_800A42C8(void);
-void func_800A4518(void);
-void func_800A46D4(void);
-void func_800A46F4(void);
+extern void (*D_801097E4[])(struct ShotObj*);
+void func_800A42C8(struct ShotObj*);
+void func_800A4518(struct ShotObj*);
+void func_800A46D4(struct ShotObj*);
+void func_800A46F4(struct ShotObj*);
 
 // D_8010984C
-void func_800A4800(void);
-void func_800A4968(void);
-void func_800A4A50(void);
-void func_800A4ABC(void);
-void func_800A4ADC(void);
-void func_800A4B6C(void);
-void func_800A4D00(void);
-void func_800A4D20(void);
-void func_800A4E48(void);
-void func_800A4F04(void);
+extern void (*D_8010984C[])(struct ShotObj*);
+void func_800A4800(struct ShotObj*);
+void func_800A4968(struct ShotObj*);
+void func_800A4A50(struct ShotObj*);
+void func_800A4ABC(struct ShotObj*);
+void func_800A4ADC(struct ShotObj*);
+void func_800A4B6C(struct ShotObj*);
+void func_800A4D00(struct ShotObj*);
+void func_800A4D20(struct ShotObj*);
+void func_800A4E48(struct ShotObj*);
+void func_800A4F04(struct ShotObj*);
 
 // D_80109874
-void func_800A4F24(void);
-void func_800A4FEC(void);
-void func_800A5070(void);
-void func_800A50EC(void);
-void func_800A5144(void);
-void func_800A5194(void);
-void func_800A5318(void);
+extern void (*D_80109874[])(struct ShotObj*);
+void func_800A4F24(struct ShotObj*);
+void func_800A4FEC(struct ShotObj*);
+void func_800A5070(struct ShotObj*);
+void func_800A50EC(struct ShotObj*);
+void func_800A5144(struct ShotObj*);
+void func_800A5194(struct ShotObj*);
+void func_800A5318(struct ShotObj*);
 
 // D_801098B8
-void func_800A5384(void);
-void func_800A5540(void);
-void func_800A56C0(void);
+extern void (*D_801098B8[])(struct ShotObj*);
+void func_800A5384(struct ShotObj*);
+void func_800A5540(struct ShotObj*);
+void func_800A56C0(struct ShotObj*);
 
 // D_801098C4
-void func_800A5404(void);
-void func_800A5460(void);
-void func_800A5500(void);
+extern void (*D_801098C4[])(struct ShotObj*);
+void func_800A5404(struct ShotObj*);
+void func_800A5460(struct ShotObj*);
+void func_800A5500(struct ShotObj*);
 
 // D_80109914
-void func_800A5AA4(void);
-void func_800A5BA8(void);
-void func_800A5C90(void);
+extern void (*D_80109914[])(struct ShotObj*);
+void func_800A5AA4(struct ShotObj*);
+void func_800A5BA8(struct ShotObj*);
+void func_800A5C90(struct ShotObj*);
 
 // D_80109920
-void func_800A5D78(void);
-void func_800A5DEC(void);
-void func_800A5E60(void);
-void func_800A5F4C(void);
-void func_800A6028(void);
+extern void (*D_80109920[])(struct ShotObj*);
+void func_800A5D78(struct ShotObj*);
+void func_800A5DEC(struct ShotObj*);
+void func_800A5E60(struct ShotObj*);
+void func_800A5F4C(struct ShotObj*);
+void func_800A6028(struct ShotObj*);
 
 // D_80109934
-void func_800A6238(void);
-void func_800A6258(void);
-void func_800A5A04(void);
-void func_800A5D20(void);
-void func_800A6094(void);
-void func_800A60D0(void);
-void func_800A61CC(void);
+extern void (*D_80109934[])(struct ShotObj*);
+void func_800A6238(struct ShotObj*);
+void func_800A6258(struct ShotObj*);
+void func_800A5A04(struct ShotObj*);
+void func_800A5D20(struct ShotObj*);
+void func_800A6094(struct ShotObj*);
+void func_800A60D0(struct ShotObj*);
+void func_800A61CC(struct ShotObj*);
 
 // D_80109950
-void func_800A56E4(void);
-void func_800A6260(void);
-void func_800A62D0(void);
+extern void (*D_80109950[])(struct ShotObj*);
+void func_800A56E4(struct ShotObj*);
+void func_800A6260(struct ShotObj*);
+void func_800A62D0(struct ShotObj*);
 
 // D_80109998
-void func_800A63B0(void);
-void func_800A6860(void);
-void func_800A6940(void);
+extern void (*D_80109998[])(struct ShotObj*);
+void func_800A63B0(struct ShotObj*);
+void func_800A6860(struct ShotObj*);
+void func_800A6940(struct ShotObj*);
 
 // D_801099A4
-void func_800A6510(void);
-void func_800A6600(void);
-void func_800A6794(void);
+extern void (*D_801099A4[])(struct ShotObj*);
+void func_800A6510(struct ShotObj*);
+void func_800A6600(struct ShotObj*);
+void func_800A6794(struct ShotObj*);
 
 // D_801099C0
-void func_800A699C(void);
-void func_800A6C00(void);
-void func_800A6C7C(void);
-void func_800A6DCC(void);
-void func_800A6DEC(void);
+extern void (*D_801099C0[])(struct ShotObj*);
+void func_800A699C(struct ShotObj*);
+void func_800A6C00(struct ShotObj*);
+void func_800A6C7C(struct ShotObj*);
+void func_800A6DCC(struct ShotObj*);
+void func_800A6DEC(struct ShotObj*);
 
 // D_801099E8
-void func_800A7008(void);
-void func_800A7104(void);
-void func_800A7208(void);
-void func_800A7240(void);
-void func_800A7318(void);
-void func_800A73A4(void);
-void func_800A73C4(void);
-void func_800A7458(void);
-void func_800A74E4(void);
+extern void (*D_801099E8[])(struct ShotObj*);
+void func_800A7008(struct ShotObj*);
+void func_800A7104(struct ShotObj*);
+void func_800A7208(struct ShotObj*);
+void func_800A7240(struct ShotObj*);
+void func_800A7318(struct ShotObj*);
+void func_800A73A4(struct ShotObj*);
+void func_800A73C4(struct ShotObj*);
+void func_800A7458(struct ShotObj*);
+void func_800A74E4(struct ShotObj*);
 
 // D_80109A0C
-void func_800A7504(void);
-void func_800A7570(void);
-void func_800A7600(void);
-void func_800A766C(void);
-void func_800A77D8(void);
-void func_800A7820(void);
+extern void (*D_80109A0C[])(struct ShotObj*);
+void func_800A7504(struct ShotObj*);
+void func_800A7570(struct ShotObj*);
+void func_800A7600(struct ShotObj*);
+void func_800A766C(struct ShotObj*);
+void func_800A77D8(struct ShotObj*);
+void func_800A7820(struct ShotObj*);
 
 // D_80109A24
-void func_800A7878(void);
-void func_800A7928(void);
-void func_800A79A4(void);
+extern void (*D_80109A24[])(struct ShotObj*);
+void func_800A7878(struct ShotObj*);
+void func_800A7928(struct ShotObj*);
+void func_800A79A4(struct ShotObj*);
 
 // D_80109A30
-void func_800A79E0(void);
-void func_800A7A54(void);
+extern void (*D_80109A30[])(struct ShotObj*);
+void func_800A79E0(struct ShotObj*);
+void func_800A7A54(struct ShotObj*);
 
 // D_80109A78
-void func_800A7B2C(void);
-void func_800A7BE8(void);
-void func_800A7BC8(void);
+extern void (*D_80109A78[])(struct ShotObj*);
+void func_800A7B2C(struct ShotObj*);
+void func_800A7BE8(struct ShotObj*);
+void func_800A7BC8(struct ShotObj*);
 
 // D_80109A84
-void func_800A7C50(void);
-void func_800A7E40(void);
-void func_800A7FF8(void);
-void func_800A8164(void);
-void func_800A829C(void);
-void func_800A836C(void);
+extern void (*D_80109A84[])(struct ShotObj*);
+void func_800A7C50(struct ShotObj*);
+void func_800A7E40(struct ShotObj*);
+void func_800A7FF8(struct ShotObj*);
+void func_800A8164(struct ShotObj*);
+void func_800A829C(struct ShotObj*);
+void func_800A836C(struct ShotObj*);
 
 // D_80109A9C
-void func_800A7CE8(void);
-void func_800A7E10(void);
+extern void (*D_80109A9C[])(struct ShotObj*);
+void func_800A7CE8(struct ShotObj*);
+void func_800A7E10(struct ShotObj*);
 
 // D_80109AA4
-void func_800A7E98(void);
-void func_800A7F44(void);
+extern void (*D_80109AA4[])(struct ShotObj*);
+void func_800A7E98(struct ShotObj*);
+void func_800A7F44(struct ShotObj*);
 
 // D_80109AAC
-void func_800A8074(void);
-void func_800A80D4(void);
+extern void (*D_80109AAC[])(struct ShotObj*);
+void func_800A8074(struct ShotObj*);
+void func_800A80D4(struct ShotObj*);
 
 // D_80109AB4
-void func_800A81E0(void);
-void func_800A826C(void);
+extern void (*D_80109AB4[])(struct ShotObj*);
+void func_800A81E0(struct ShotObj*);
+void func_800A826C(struct ShotObj*);
 
 // D_80109ABC
-void func_800A82EC(void);
-void func_800A833C(void);
+extern void (*D_80109ABC[])(struct ShotObj*);
+void func_800A82EC(struct ShotObj*);
+void func_800A833C(struct ShotObj*);
 
 // D_80109AC4
-void func_800A83C4(void);
-void func_800A84D4(void);
+extern void (*D_80109AC4[])(struct ShotObj*);
+void func_800A83C4(struct ShotObj*);
+void func_800A84D4(struct ShotObj*);
 
 // D_80109B14
-void func_800A8B88(void);
-void func_800A8C88(void);
-void func_800A8D1C(void);
-void func_800A8D68(void);
-void func_800A8D1C(void);
-void func_800A8DB8(void);
+extern void (*D_80109B14[])(struct ShotObj*);
+void func_800A8B88(struct ShotObj*);
+void func_800A8C88(struct ShotObj*);
+void func_800A8D1C(struct ShotObj*);
+void func_800A8D68(struct ShotObj*);
+void func_800A8D1C(struct ShotObj*);
+void func_800A8DB8(struct ShotObj*);
 
 // D_80109B2C
-void func_800A8E50(void);
-void func_800A8FBC(void);
-void func_800A9054(void);
-void func_800A90C8(void);
+extern void (*D_80109B2C[])(struct ShotObj*);
+void func_800A8E50(struct ShotObj*);
+void func_800A8FBC(struct ShotObj*);
+void func_800A9054(struct ShotObj*);
+void func_800A90C8(struct ShotObj*);
 
 // D_80109B3C
-void func_800A9210(void);
-void func_800A92C8(void);
-void func_800A9334(void);
-void func_800A93FC(void);
-void func_800A94A4(void);
+extern void (*D_80109B3C[])(struct ShotObj*);
+void func_800A9210(struct ShotObj*);
+void func_800A92C8(struct ShotObj*);
+void func_800A9334(struct ShotObj*);
+void func_800A93FC(struct ShotObj*);
+void func_800A94A4(struct ShotObj*);
 
 // D_80109B50
-void func_800A8AE4(void);
-void func_800A8DC0(void);
-void func_800A8DC0(void);
-void func_800A916C(void);
-void func_800A91D8(void);
-void func_800A91D8(void);
-void func_800A94D4(void);
-void func_800A9544(void);
-void func_800A9654(void);
-void func_800A96F8(void);
-void func_800A97C0(void);
+extern void (*D_80109B50[])(struct ShotObj*);
+void func_800A8AE4(struct ShotObj*);
+void func_800A8DC0(struct ShotObj*);
+void func_800A8DC0(struct ShotObj*);
+void func_800A916C(struct ShotObj*);
+void func_800A91D8(struct ShotObj*);
+void func_800A91D8(struct ShotObj*);
+void func_800A94D4(struct ShotObj*);
+void func_800A9544(struct ShotObj*);
+void func_800A9654(struct ShotObj*);
+void func_800A96F8(struct ShotObj*);
+void func_800A97C0(struct ShotObj*);
 
 // D_80109B7C
-void func_800A8628(void);
-void func_800A9818(void);
-void func_800A98AC(void);
+extern void (*D_80109B7C[])(struct ShotObj*);
+void func_800A8628(struct ShotObj*);
+void func_800A9818(struct ShotObj*);
+void func_800A98AC(struct ShotObj*);
 
 // D_80109BB8
-void func_800A9AEC(void);
-void func_800A9C24(void);
-void func_800A9C7C(void);
+extern void (*D_80109BB8[])(struct ShotObj*);
+void func_800A9AEC(struct ShotObj*);
+void func_800A9C24(struct ShotObj*);
+void func_800A9C7C(struct ShotObj*);
 
 // D_80109BC4
-void func_800A9964(void);
-void func_800A9CBC(void);
-void func_800A9D98(void);
+extern void (*D_80109BC4[])(struct ShotObj*);
+void func_800A9964(struct ShotObj*);
+void func_800A9CBC(struct ShotObj*);
+void func_800A9D98(struct ShotObj*);
 
 // D_80109BD0
-void func_800A9EC0(void);
-void func_800A9F30(void);
-void func_800A9FD0(void);
-void func_800AA000(void);
+extern void (*D_80109BD0[])(struct ShotObj*);
+void func_800A9EC0(struct ShotObj*);
+void func_800A9F30(struct ShotObj*);
+void func_800A9FD0(struct ShotObj*);
+void func_800AA000(struct ShotObj*);
 
 // D_80109BE0
-void func_800A9DF4(void);
-void func_800AA030(void);
-void func_800A9D98(void);
+extern void (*D_80109BE0[])(struct ShotObj*);
+void func_800A9DF4(struct ShotObj*);
+void func_800AA030(struct ShotObj*);
+void func_800A9D98(struct ShotObj*);
 
 // D_80109BEC
-void func_800AA20C(void);
-void func_800AA2FC(void);
-void func_800AA3A0(void);
+extern void (*D_80109BEC[])(struct ShotObj*);
+void func_800AA20C(struct ShotObj*);
+void func_800AA2FC(struct ShotObj*);
+void func_800AA3A0(struct ShotObj*);
 
 // D_80109BF8
-void func_800AA148(void);
-void func_800AA488(void);
-void func_800A9D98(void);
+extern void (*D_80109BF8[])(struct ShotObj*);
+void func_800AA148(struct ShotObj*);
+void func_800AA488(struct ShotObj*);
+void func_800A9D98(struct ShotObj*);
 
 // D_80109C04
-void func_800AA20C(void);
-void func_800AA5E0(void);
-void func_800AA68C(void);
-void func_800AA730(void);
-void func_800AA7B4(void);
-void func_800AA85C(void);
-void func_800AA954(void);
+extern void (*D_80109C04[])(struct ShotObj*);
+void func_800AA20C(struct ShotObj*);
+void func_800AA5E0(struct ShotObj*);
+void func_800AA68C(struct ShotObj*);
+void func_800AA730(struct ShotObj*);
+void func_800AA7B4(struct ShotObj*);
+void func_800AA85C(struct ShotObj*);
+void func_800AA954(struct ShotObj*);
 
 // D_80109C20
-void func_800AA148(void);
-void func_800AA994(void);
-void func_800A9D98(void);
+extern void (*D_80109C20[])(struct ShotObj*);
+void func_800AA148(struct ShotObj*);
+void func_800AA994(struct ShotObj*);
+void func_800A9D98(struct ShotObj*);
 
 // D_80109C2C
-void func_800AAAD4(void);
-void func_800AAB74(void);
-void func_800A9D98(void);
+extern void (*D_80109C2C[])(struct ShotObj*);
+void func_800AAAD4(struct ShotObj*);
+void func_800AAB74(struct ShotObj*);
+void func_800A9D98(struct ShotObj*);
 
 // D_80109D1C
-void func_800AAD6C(void);
-void func_800AAE94(void);
+extern void (*D_80109D1C[])(struct ShotObj*);
+void func_800AAD6C(struct ShotObj*);
+void func_800AAE94(struct ShotObj*);
 
 // D_80109D24
-void func_800AB128(void);
-void func_800AB170(void);
-void func_800AB224(void);
+extern void (*D_80109D24[])(struct ShotObj*);
+void func_800AB128(struct ShotObj*);
+void func_800AB170(struct ShotObj*);
+void func_800AB224(struct ShotObj*);
 
 // D_80109D30
-void func_800AB384(void);
-void func_800AB3A4(void);
+extern void (*D_80109D30[])(struct ShotObj*);
+void func_800AB384(struct ShotObj*);
+void func_800AB3A4(struct ShotObj*);
 
 // D_80109D38
-void func_800AB518(void);
-void func_800AB564(void);
-void func_800AB5A4(void);
+extern void (*D_80109D38[])(struct ShotObj*);
+void func_800AB518(struct ShotObj*);
+void func_800AB564(struct ShotObj*);
+void func_800AB5A4(struct ShotObj*);
 
 // D_80109D44
-void func_800AB6C4(void);
-void func_800AB710(void);
+extern void (*D_80109D44[])(struct ShotObj*);
+void func_800AB6C4(struct ShotObj*);
+void func_800AB710(struct ShotObj*);
 
 // D_80109D4C
-void func_800AB7C0(void);
-void func_800AB814(void);
+extern void (*D_80109D4C[])(struct ShotObj*);
+void func_800AB7C0(struct ShotObj*);
+void func_800AB814(struct ShotObj*);
 
 // D_80109D54
-void func_800AB8C0(void);
-void func_800AB8EC(void);
+extern void (*D_80109D54[])(struct ShotObj*);
+void func_800AB8C0(struct ShotObj*);
+void func_800AB8EC(struct ShotObj*);
 
 // D_80109D5C
-void func_800AAD44(void);
-void func_800AAD64(void);
-void func_800AAFF8(void);
-void func_800AB050(void);
-void func_800AB32C(void);
-void func_800AB4C0(void);
-void func_800AB66C(void);
-void func_800AB98C(void);
-void func_800AB868(void);
-void func_800AB768(void);
+extern void (*D_80109D5C[])(struct ShotObj*);
+void func_800AAD44(struct ShotObj*);
+void func_800AAD64(struct ShotObj*);
+void func_800AAFF8(struct ShotObj*);
+void func_800AB050(struct ShotObj*);
+void func_800AB32C(struct ShotObj*);
+void func_800AB4C0(struct ShotObj*);
+void func_800AB66C(struct ShotObj*);
+void func_800AB98C(struct ShotObj*);
+void func_800AB868(struct ShotObj*);
+void func_800AB768(struct ShotObj*);
 
 // D_80109D84
-void func_800AAC98(void);
-void func_800AB9C8(void);
-void func_800ABB50(void);
+extern void (*D_80109D84[])(struct ShotObj*);
+void func_800AAC98(struct ShotObj*);
+void func_800AB9C8(struct ShotObj*);
+void func_800ABB50(struct ShotObj*);
 
 // D_80109DB8
-void func_800AC180(void);
-void func_800AC204(void);
-void func_800AC31C(void);
+extern void (*D_80109DB8[])(struct ShotObj*);
+void func_800AC180(struct ShotObj*);
+void func_800AC204(struct ShotObj*);
+void func_800AC31C(struct ShotObj*);
 
 // D_80109DC4
-void func_800AC3BC(void);
-void func_800AC440(void);
-void func_800AC4A8(void);
+extern void (*D_80109DC4[])(struct ShotObj*);
+void func_800AC3BC(struct ShotObj*);
+void func_800AC440(struct ShotObj*);
+void func_800AC4A8(struct ShotObj*);
 
 // D_80109DD0
-void func_800AC550(void);
-void func_800AC5BC(void);
-void func_800AC610(void);
+extern void (*D_80109DD0[])(struct ShotObj*);
+void func_800AC550(struct ShotObj*);
+void func_800AC5BC(struct ShotObj*);
+void func_800AC610(struct ShotObj*);
 
 // D_80109DDC
-void func_800AC6E8(void);
-void func_800AC708(void);
-void func_800AC114(void);
-void func_800AC364(void);
-void func_800AC4F8(void);
-void func_800AC66C(void);
-void func_800AC6A8(void);
+extern void (*D_80109DDC[])(struct ShotObj*);
+void func_800AC6E8(struct ShotObj*);
+void func_800AC708(struct ShotObj*);
+void func_800AC114(struct ShotObj*);
+void func_800AC364(struct ShotObj*);
+void func_800AC4F8(struct ShotObj*);
+void func_800AC66C(struct ShotObj*);
+void func_800AC6A8(struct ShotObj*);
 
 // D_80109DF8
-void func_800ABE08(void);
-void func_800AC710(void);
-void func_800AC7CC(void);
+extern void (*D_80109DF8[])(struct ShotObj*);
+void func_800ABE08(struct ShotObj*);
+void func_800AC710(struct ShotObj*);
+void func_800AC7CC(struct ShotObj*);
 
 // D_80109E30
-void func_800ACD84(void);
-void func_800ACDE4(void);
-void func_800ACE90(void);
-void func_800ACF60(void);
-void func_800AD00C(void);
-void func_800AD080(void);
-void func_800AD12C(void);
-void func_800AD1B0(void);
-void func_800AD224(void);
-void func_800AD338(void);
-void func_800AD404(void);
+extern void (*D_80109E30[])(struct ShotObj*);
+void func_800ACD84(struct ShotObj*);
+void func_800ACDE4(struct ShotObj*);
+void func_800ACE90(struct ShotObj*);
+void func_800ACF60(struct ShotObj*);
+void func_800AD00C(struct ShotObj*);
+void func_800AD080(struct ShotObj*);
+void func_800AD12C(struct ShotObj*);
+void func_800AD1B0(struct ShotObj*);
+void func_800AD224(struct ShotObj*);
+void func_800AD338(struct ShotObj*);
+void func_800AD404(struct ShotObj*);
 
 // D_80109E5C
-void func_800AD47C(void);
-void func_800AD4DC(void);
-void func_800AD538(void);
-void func_800ACF60(void);
-void func_800AD00C(void);
-void func_800AD080(void);
-void func_800AD12C(void);
-void func_800AD1B0(void);
-void func_800AD224(void);
+extern void (*D_80109E5C[])(struct ShotObj*);
+void func_800AD47C(struct ShotObj*);
+void func_800AD4DC(struct ShotObj*);
+void func_800AD538(struct ShotObj*);
+void func_800ACF60(struct ShotObj*);
+void func_800AD00C(struct ShotObj*);
+void func_800AD080(struct ShotObj*);
+void func_800AD12C(struct ShotObj*);
+void func_800AD1B0(struct ShotObj*);
+void func_800AD224(struct ShotObj*);
 
 // D_80109E80
-void func_800AD338(void);
-void func_800AD404(void);
-void func_800AD630(void);
-void func_800AD440(void);
+extern void (*D_80109E80[])(struct ShotObj*);
+void func_800AD338(struct ShotObj*);
+void func_800AD404(struct ShotObj*);
+void func_800AD630(struct ShotObj*);
+void func_800AD440(struct ShotObj*);
 
 // D_80109E94
-void func_800AD6DC(void);
-void func_800AD820(void);
+extern void (*D_80109E94[])(struct ShotObj*);
+void func_800AD6DC(struct ShotObj*);
+void func_800AD820(struct ShotObj*);
 
 // D_80109E9C
-void func_800AD8C0(void);
-void func_800AD92C(void);
-void func_800AD9C4(void);
+extern void (*D_80109E9C[])(struct ShotObj*);
+void func_800AD8C0(struct ShotObj*);
+void func_800AD92C(struct ShotObj*);
+void func_800AD9C4(struct ShotObj*);
 
 // D_80109EA8
-void func_800ADBE0(void);
-void func_800ADCE8(void);
-void func_800ADD40(void);
-void func_800ADDB4(void);
+extern void (*D_80109EA8[])(struct ShotObj*);
+void func_800ADBE0(struct ShotObj*);
+void func_800ADCE8(struct ShotObj*);
+void func_800ADD40(struct ShotObj*);
+void func_800ADDB4(struct ShotObj*);
 
 // D_80109EB8
-void func_800ACD04(void);
-void func_800ACCAC(void);
-void func_800AD66C(void);
-void func_800AD66C(void);
-void func_800AD868(void);
-void func_800AD868(void);
-void func_800ADA0C(void);
-void func_800ADA0C(void);
-void func_800ADA64(void);
-void func_800ADAD8(void);
-void func_800ADE04(void);
-void func_800ADE04(void);
+extern void (*D_80109EB8[])(struct ShotObj*);
+void func_800ACD04(struct ShotObj*);
+void func_800ACCAC(struct ShotObj*);
+void func_800AD66C(struct ShotObj*);
+void func_800AD66C(struct ShotObj*);
+void func_800AD868(struct ShotObj*);
+void func_800AD868(struct ShotObj*);
+void func_800ADA0C(struct ShotObj*);
+void func_800ADA0C(struct ShotObj*);
+void func_800ADA64(struct ShotObj*);
+void func_800ADAD8(struct ShotObj*);
+void func_800ADE04(struct ShotObj*);
+void func_800ADE04(struct ShotObj*);
 
 // D_80109EE8
-void func_800AC8C4(void);
-void func_800ADE54(void);
-void func_800ADED4(void);
+extern void (*D_80109EE8[])(struct ShotObj*);
+void func_800AC8C4(struct ShotObj*);
+void func_800ADE54(struct ShotObj*);
+void func_800ADED4(struct ShotObj*);
 
 // D_80109F34
-void func_800AE2FC(void);
-void func_800AE31C(void);
-void func_800AE1BC(void);
-void func_800AE2AC(void);
+extern void (*D_80109F34[])(struct ShotObj*);
+void func_800AE2FC(struct ShotObj*);
+void func_800AE31C(struct ShotObj*);
+void func_800AE1BC(struct ShotObj*);
+void func_800AE2AC(struct ShotObj*);
 
 // D_80109F44
-void func_800ADF30(void);
-void func_800AE324(void);
-void func_800AE3D4(void);
+extern void (*D_80109F44[])(struct ShotObj*);
+void func_800ADF30(struct ShotObj*);
+void func_800AE324(struct ShotObj*);
+void func_800AE3D4(struct ShotObj*);
 
 // D_8010A064
-void func_800AE450(void);
-void func_800AE4F0(void);
-void func_800AE594(void);
-void func_800AE63C(void);
+extern void (*D_8010A064[])(struct ShotObj*);
+void func_800AE450(struct ShotObj*);
+void func_800AE4F0(struct ShotObj*);
+void func_800AE594(struct ShotObj*);
+void func_800AE63C(struct ShotObj*);
 
 // D_8010A194
 void func_800AE8E4(void);
