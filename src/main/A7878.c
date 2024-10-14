@@ -1,6 +1,9 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B7078);
+void func_800B7078(struct EffectObj* arg0)
+{
+    D_8010B4D8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B70B4);
 
@@ -36,13 +39,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B74C0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B74EC);
 
-void func_800B7520(void)
+void func_800B7520(struct EffectObj* arg0)
 {
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B7528);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B75C8);
+void func_800B75C8(struct EffectObj* arg0)
+{
+    D_8010B4F8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B7604);
 
@@ -68,7 +74,10 @@ void func_800B8064(struct EffectObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B806C);
+void func_800B806C(struct EffectObj* arg0)
+{
+    D_8010B62C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B80A8);
 
@@ -78,7 +87,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8470);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8490);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B84DC);
+void func_800B84DC(struct EffectObj* arg0)
+{
+    D_8010B638[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8518);
 
@@ -98,9 +110,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B89CC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8A9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8ABC);
+void func_800B8ABC(struct EffectObj* arg0)
+{
+    D_8010B6B8[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8AF8);
+void func_800B8AF8(struct EffectObj* arg0)
+{
+    D_8010B6D0[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8B34);
 
@@ -142,13 +160,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8E3C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8E5C);
 
-void func_800B8E6C(void)
+void func_800B8E6C(struct EffectObj* arg0)
 {
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8E74);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8F5C);
+void func_800B8F5C(struct EffectObj* arg0)
+{
+    D_8010B6F4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B8F98);
 
@@ -156,7 +177,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B902C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9070);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9100);
+void func_800B9100(struct EffectObj* arg0)
+{
+    D_8010B79C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B913C);
 
@@ -168,7 +192,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9354);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B94B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9690);
+void func_800B9690(struct EffectObj* arg0)
+{
+    D_8010B7A8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B96CC);
 
@@ -178,7 +205,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B97B0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B97D0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9940);
+void func_800B9940(struct EffectObj* arg0)
+{
+    D_8010B7B8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B997C);
 
@@ -202,13 +232,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9B28);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9B48);
 
-void func_800B9B58(void)
+void func_800B9B58(struct EffectObj* arg0)
 {
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9B60);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9BD0);
+void func_800B9BD0(struct EffectObj* arg0)
+{
+    D_8010B7D4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9C0C);
 
@@ -232,7 +265,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9DB8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800B9DCC);
 
-void func_800B9DDC(void)
+void func_800B9DDC(struct EffectObj* arg0)
 {
 }
 
@@ -252,9 +285,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA4E4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA520);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA540);
+void func_800BA540(struct EffectObj* arg0)
+{
+    D_8010BE10[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA57C);
+void func_800BA57C(struct EffectObj* arg0)
+{
+    D_8010BE24[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA5B8);
 
@@ -290,13 +329,16 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA988);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA9A8);
 
-void func_800BA9B8(void)
+void func_800BA9B8(struct EffectObj* arg0)
 {
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BA9C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAA30);
+void func_800BAA30(struct EffectObj* arg0)
+{
+    D_8010BE64[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAA6C);
 
@@ -320,9 +362,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAE94);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAF04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAF24);
+void func_800BAF24(struct EffectObj* arg0)
+{
+    D_8010BE80[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAF60);
+void func_800BAF60(struct EffectObj* arg0)
+{
+    D_8010BE90[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BAF9C);
 
@@ -346,7 +394,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB148);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB168);
 
-void func_800BB178(void)
+void func_800BB178(struct EffectObj* arg0)
 {
 }
 
@@ -374,7 +422,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB888);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB928);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB97C);
+void func_800BB97C(struct EffectObj* arg0)
+{
+    D_8010BEA8[arg0->state](arg0);
+}
 
 // megaman never teleports in if nopped out
 // asm(".rept 13 ; nop ; .endr");
@@ -398,7 +449,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBA24);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBBF4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBC14);
+void func_800BBC14(struct EffectObj* arg0)
+{
+    D_8010BED4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBC50);
 
@@ -414,7 +468,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBF34);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBFCC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC144);
+void func_800BC144(struct EffectObj* arg0)
+{
+    D_8010BF30[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC180);
 
@@ -428,9 +485,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC370);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC3E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC4D8);
+void func_800BC4D8(struct EffectObj* arg0)
+{
+    if (arg0->state == 0) {
+        func_800BC370(arg0);
+    } else {
+        func_800BC3E8(arg0);
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC518);
+void func_800BC518(struct EffectObj* arg0)
+{
+    D_8010BF90[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC554);
 
@@ -442,7 +509,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC63C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC6FC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC748);
+void func_800BC748(struct EffectObj* arg0)
+{
+    D_8010BF98[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC784);
 
@@ -450,17 +520,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BC92C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BCD84);
 
-void func_800BCE40(void)
+void func_800BCE40(struct EffectObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BCE48);
+void func_800BCE48(struct EffectObj* arg0)
+{
+    D_8010BFDC[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BCE84);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BCEE4);
 
-void func_800BD01C(void)
+void func_800BD01C(struct EffectObj* arg0)
 {
 }
 
@@ -468,7 +541,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD024);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD080);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD1A4);
+void func_800BD1A4(struct EffectObj* arg0)
+{
+    if (arg0->state == 0) {
+        func_800BD024(arg0);
+    } else {
+        func_800BD080(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD1E4);
 
@@ -478,9 +558,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD280);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD31C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD348);
+void func_800BD348(struct EffectObj* arg0)
+{
+    D_8010C008[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD384);
+void func_800BD384(struct EffectObj* arg0)
+{
+    D_8010C018[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD3C0);
 
@@ -492,7 +578,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD50C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD5AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD654);
+void func_800BD654(struct EffectObj* arg0)
+{
+    D_8010C048[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BD690);
 
@@ -520,7 +609,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDD08);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDDE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDE68);
+void func_800BDE68(struct EffectObj* arg0)
+{
+    D_8010C08C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDEA4);
 
@@ -530,7 +622,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDF40);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BDFC8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE038);
+void func_800BE038(struct EffectObj* arg0)
+{
+    D_8010C0D4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE074);
 
@@ -538,7 +633,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE0DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE0FC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE184);
+void func_800BE184(struct EffectObj* arg0)
+{
+    D_8010C0F8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE1C0);
 
@@ -562,7 +660,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE4D4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE510);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE540);
+void func_800BE540(struct EffectObj* arg0)
+{
+    D_8010C114[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE57C);
 
@@ -578,9 +679,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE730);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE7C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE800);
+void func_800BE800(struct EffectObj* arg0)
+{
+    D_8010C130[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE83C);
+void func_800BE83C(struct EffectObj* arg0)
+{
+    D_8010C13C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE878);
 

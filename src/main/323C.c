@@ -9342,13 +9342,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B55AC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B56D4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B56F4);
+void func_800B56F4(struct EffectObj* arg0)
+{
+    D_8010A798[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5730);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5798);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58A0);
+void func_800B58A0(struct EffectObj* arg0)
+{
+    D_8010AFAC[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B58DC);
 
@@ -9371,10 +9377,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5C60);
 void func_800B5CC4(struct EffectObj* arg0)
 {
     if (arg0->state == 0) {
-        func_800B5D04();
+        func_800B5D04(arg0);
         return;
     }
-    func_800B5E2C();
+    func_800B5E2C(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5D04);
@@ -9387,7 +9393,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B5EEC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6060);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6080);
+void func_800B6080(struct EffectObj* arg0)
+{
+    D_8010B444[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B60BC);
 
@@ -9397,7 +9406,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B64BC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6660);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A0C);
+void func_800B6A0C(struct EffectObj* arg0)
+{
+    D_8010B45C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800B6A48);
 
