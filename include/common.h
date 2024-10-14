@@ -254,7 +254,8 @@ struct WeaponObj {
     s8 : 8;
     s8 : 8;
     s8 unk3;
-    s8 pad4[0x50 - 0x4];
+    s8 state;
+    s8 pad5[0x50 - 0x5];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
