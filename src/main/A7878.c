@@ -376,9 +376,23 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB928);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB97C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", TeleportRelatedObjectUpdate);
+// megaman never teleports in if nopped out
+// asm(".rept 13 ; nop ; .endr");
+void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
+{
+    D_8010BEC8[arg0->state]();
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BB9F4);
+void func_800BB9F4(struct Unk21* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        arg0->unk14 = 0;
+        arg0->unk15 = 0;
+        arg0->unk16 = 0;
+        arg0->unk4 = 1;
+        arg0->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBA24);
 
@@ -1112,11 +1126,33 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9DA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9E34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", MegamanInBriefingRoomUpdate);
+// megaman standing in the briefing room. doesn't show
+// up if nopped out
+// asm(".rept 13 ; nop ; .endr");
+void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
+{
+    g_MegamanInBriefingRoomUpdateFuncs[arg0->base.state]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9EE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CA030);
+// X doesn't appear in briefing room if nopped out
+// asm(".rept 36 ; nop ; .endr");
+void func_800CA030(struct MiscObj* arg0)
+{
+    if (arg0->base.unk2 == 0) {
+        if (!(D_80172200 & 0x10)) {
+            func_80015DC8(arg0, D_80172200);
+        } else {
+            func_80015D60(arg0, D_80172200 & 0xF);
+        }
+    } else if (!(D_80172200 & 0x20)) {
+        func_80015DC8(arg0, D_80172200);
+    } else {
+        func_80015D60(arg0, D_80172200 & 0xF);
+    }
+    is_on_screen(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CA0C8);
 
@@ -1176,35 +1212,91 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CAE38);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CAF90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", MegamanRelatedUpdate);
+// megaman never appears in stage if nopped out
+void MegamanRelatedUpdate(struct MiscObj* arg0)
+{
+    g_MegamanRelatedUpdateFuncs[arg0->base.state]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB048);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB1F0);
+void func_800CB1F0(struct Unk* arg0)
+{
+    D_8010E6FC[arg0->base.unk2](); // the animation before ready appears but "READY" doesn't if nopped out
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB22C);
+// animation leading up to "READY" shows up but "READY" never apprears
+// if nopped out
+// asm(".rept 18 ; nop ; .endr");
+void func_800CB22C(struct Unk* arg0)
+{
+    ReadyTextUpdateFuncs[arg0->base.unk5]();
+    is_on_screen(arg0);
+}
 
+// ReadyText State 0
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB27C);
 
+// ReadyText State 1
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB394);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB4E4);
+// ReadyText State 2
+// "READY" never disappears if nopped out
+// asm(".rept 26 ; nop ; .endr");
+void func_800CB4E4(struct MiscObj* arg0)
+{
+    if (arg0->base.on_screen != 0) {
+        func_8002B694(arg0);
+        return;
+    }
+    arg0->base.state = 2;
+    arg0->base.unk5 = 0;
+    if ((D_801721CC == 5) && (D_801721DD == 0)) {
+        D_801721DC = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB554);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB590);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB5B4);
+// "READY" has wrong palette if nopped out
+// asm(".rept 22 ; nop ; .endr");
+void func_800CB5B4(s32 arg0, s32 arg1)
+{
+    u16* var_a0;
+    u16* var_v1;
+    u32 var_a2;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB614);
+    var_a2 = 0;
+    var_a0 = *(s32*)0x1F800024 + ((arg1 + 0x39) << 5);
+    var_v1 = *(s32*)0x1F800028 + 0x20;
+    do {
+        *var_v1++ = *var_a0++;
+        var_a2 += 1;
+    } while (var_a2 < 0x10);
+    need_palette_load |= 1;
+}
 
+void func_800CB614(struct Unk* arg0)
+{
+    ZeroObjectState(arg0);
+}
+
+// g_TitleUpdateFuncs state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB634);
 
+// g_TitleUpdateFuncs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB708);
 
+// g_TitleUpdateFuncs state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB828);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", TitleUpdate);
+// title object. Includes the logo and the menu graphics
+void TitleUpdate(struct MiscObj* arg0)
+{
+    g_TitleUpdateFuncs[arg0->base.state]();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB884);
 
