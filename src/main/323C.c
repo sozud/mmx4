@@ -1560,9 +1560,25 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A41C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A484);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A6FC);
+void func_8002A6FC()
+{
+    s8 fill = 0;
+    s8* a0 = (u8*)&D_801721C0;
+    s32 v1 = 0x64 - 1;
+    do {
+        *a0++ = fill;
+    } while (v1-- != 0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A728);
+void func_8002A728(struct PlayerObj* arg0)
+{
+    s8 fill = 0;
+    s32 v1 = sizeof(struct PlayerObj) - 1;
+    s8* a0 = (u8*)arg0;
+    do {
+        *a0++ = fill;
+    } while (v1-- != 0);
+}
 
 void func_8002A74C()
 {

@@ -198,9 +198,16 @@ struct PlayerObj {
     s8 unkC0;
     s8 padC0[2];
     s8 unkC3;
-    s8 padC3[1];
+    s8 unkC4;
     s8 unkC5;
-}; // size ?
+    s8 padC6[0xD7 - 0xC6];
+    s8 unkD7;
+    s8 : 8;
+    s8 unkD9;
+    s8 padDA[0xE0 - 0xDA];
+    s8 unkE0;
+    s8 padE1[0xE4 - 0xE1];
+}; // size 0xE4
 
 struct Unk_unk68 {
     s8 unk0;
