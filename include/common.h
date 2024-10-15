@@ -219,13 +219,29 @@ struct VisualObj {
 
 struct ShotObj {
     s8 active;
-    s8 : 8;
-    s8 : 8;
+    s8 unk1;
+    s8 unk2;
     s8 unk3;
-    s8 pad4[0x50 - 0x4];
+    s8 state;
+    s8 unk5;
+    s8 unk6;
+    s8 unk7;
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    s32 unk10;
+    s8 unk14;
+    u8 unk15;
+    u8 unk16;
+    s32 unk18;
+    s32 unk1C;
+    s8 pad20[0x42 - 0x20];
+    u16 unk42;
+    s8 pad44[0x50 - 0x44];
     s32 unk50;
     s32 unk54;
-    s8 pad58[0x61 - 0x58];
+    s32 : 32;
+    s8 unk5C;
+    s8 pad5D[0x61 - 0x5D];
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -244,7 +260,13 @@ struct ShotObj {
     s8 unk78;
     s8 : 8;
     s8 unk7A;
-    s8 pad7B[0x98 - 0x7B];
+    s8 : 8;
+    struct WeaponObj* unk7C; // might be something else
+    s32 : 32;
+    s32 unk84;
+    s32 : 32;
+    s8 unk8C;
+    s8 pad8D[0x98 - 0x8D];
     s8 unk98;
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
@@ -255,7 +277,20 @@ struct WeaponObj {
     s8 : 8;
     s8 unk3;
     s8 state;
-    s8 pad5[0x50 - 0x5];
+    s8 unk5;
+    s8 unk6;
+    s8 unk7;
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    s32 unk10;
+    s8 unk14;
+    u8 unk15;
+    u8 unk16;
+    s32 unk18;
+    s32 unk1C;
+    s8 pad20[0x42 - 0x20];
+    u16 unk42;
+    s8 pad44[0x50 - 0x44];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
@@ -277,7 +312,11 @@ struct WeaponObj {
     s8 unk78;
     s8 : 8;
     s8 unk7A;
-    s8 pad7B[0x98 - 0x7B];
+    s8 pad7B[0x8C - 0x7B];
+    s8 unk8C;
+    s8 pad8D[0x94 - 0x8D];
+    u8 unk94;
+    s8 pad95[0x98 - 0x95];
     s8 unk98;
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
@@ -939,7 +978,7 @@ void func_8001E6BC(struct Unk800F2294* arg0);
 
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
-struct Unk* func_800AFAB4(s8, s16, s16, s8);
+struct Unk* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
 void func_800D46F4();
