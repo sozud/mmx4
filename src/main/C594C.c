@@ -128,7 +128,7 @@ void func_800D67A0(struct QuadObj* arg0)
 void func_800D67DC(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &D_801418C8;
-    register struct Unk* temp_a2 asm("a2") = arg0->unk5C; // fake
+    struct Unk* temp_a2 = arg0->unk5C;
     s32 var_a3 = 0;
     if (D_8014198B != 0) {
         var_a3 = 1;
@@ -156,13 +156,13 @@ void func_800D67DC(struct QuadObj* arg0)
         return;
     }
     if (arg0->state == 0) {
-        func_800D68D0(arg0, ptr);
+        func_800D68D0(arg0, ptr, temp_a2);
         return;
     }
     func_800D6944(arg0, ptr);
 }
 
-void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1)
+void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg2)
 {
     arg0->active = -0x7D;
     arg0->unk3 = 1;
@@ -170,7 +170,7 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1)
     arg0->unk36 = 1;
     *(s8*)&arg0->unk38 = 0x3C;
     arg0->unk34 = arg0->unk2 + 0xD;
-    func_800D69A8(arg0);
+    func_800D69A8(arg0, arg1, arg2);
     arg0->state++;
 }
 
