@@ -6045,11 +6045,11 @@ void func_800D6700(struct QuadObj*);
 void func_800D6780(struct QuadObj*);
 
 // D_8010FCB8
-extern void (*D_8010FCB8[])(struct QuadObj*);
-void func_800D6B9C(struct QuadObj*);
-void func_800D6C48(struct QuadObj*);
-void func_800D6CA0(struct QuadObj*);
-void func_800D6D48(struct QuadObj*);
+extern void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, void*);
+void func_800D6B9C(struct QuadObj*, struct PlayerObj*, void*);
+void func_800D6C48(struct QuadObj*, struct PlayerObj*, void*);
+void func_800D6CA0(struct QuadObj*, struct PlayerObj*, void*);
+void func_800D6D48(struct QuadObj*, struct PlayerObj*, void*);
 
 // D_8010FDD0
 extern void (*D_8010FDD0[])(struct QuadObj*);

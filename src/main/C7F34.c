@@ -73,7 +73,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8578);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D85C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D85E8);
+void func_800D85E8(struct QuadObj* arg0)
+{
+    struct PlayerObj* temp_v1;
+
+    temp_v1 = arg0->unk5C;
+    if (temp_v1->unk94 != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        temp_v1->unk95 = 0;
+    }
+    D_8010FEF0[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8648);
 

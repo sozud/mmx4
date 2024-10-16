@@ -190,7 +190,7 @@ struct PlayerObj {
     s8 pad88[2];
     u16 unk8C;
     u32 unk90;
-    s8 unk94;
+    u8 unk94;
     s8 unk95;
     s8 unk96;
     s8 unk97;
@@ -559,8 +559,8 @@ struct Unk16 {
     u32 unk9C;
 };
 
+extern struct PlayerObj D_801418C8;
 extern struct Unk16 D_80141BD8;
-
 extern struct BackgroundObj D_801419B0[];
 
 struct DrawInfo {
@@ -579,7 +579,8 @@ struct QuadObj {
     s8 unk2;
     s8 unk3;
     s8 state;
-    s8 pad5[0x8 - 0x5];
+    s8 unk5;
+    s8 pad6[0x8 - 0x6];
     f32 x_pos;
     f32 y_pos;
     s8 pad10[4];
@@ -598,7 +599,8 @@ struct QuadObj {
     s8 pad38_[8];
     s8 unk42;
     s8 unk43;
-    s8 pad43[28];
+    s8 pad44[0x5C - 0x44];
+    struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
 
 // D_801721C0
@@ -756,6 +758,11 @@ extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
+extern s8 D_80141924;
+extern s8 D_8014195B;
+extern s8 D_80141987;
+extern s8 D_8014198B;
+extern s8 D_8014198C;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
