@@ -18,7 +18,7 @@ void func_800D7960(struct QuadObj* arg0)
         }
         arg0->state++;
     }
-    func_800D46F4(arg0);
+    quad_is_on_screen(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D79F0);

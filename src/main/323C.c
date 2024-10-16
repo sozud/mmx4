@@ -1183,7 +1183,7 @@ void func_80023DB8(void)
 
     // this one loops backwards for some reason, doesn't seem to be a compiler optimization
     for (var_s0 = &D_80141B70; var_s0 >= &D_80141B70[-COUNT(D_80141B70)]; var_s0--) {
-        if (var_s0->unk3 != 0) {
+        if (var_s0->on_screen != 0) {
             func_80024334(var_s0);
         }
     }
@@ -1237,7 +1237,7 @@ void func_80023DB8(void)
     }
 
     for (var_s0_9 = &g_QuadObjects[0]; var_s0_9 < &g_QuadObjects[COUNT(g_QuadObjects)]; var_s0_9++) {
-        if (var_s0_9->unk3 != 0) {
+        if (var_s0_9->on_screen != 0) {
             if (var_s0_9->active & 2) {
                 func_80024B9C(var_s0_9);
             } else {
@@ -1390,8 +1390,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
 void func_80028070(struct BackgroundObj* arg0)
 {
-    arg0->unk8.i.hi = D_801419BA[0] + arg0->unk40;
-    arg0->unkC.i.hi = D_801419BE[0] + arg0->unk42;
+    arg0->unk8.i.hi = screen_offsets[0].x_offset + arg0->unk40;
+    arg0->unkC.i.hi = screen_offsets[0].y_offset + arg0->unk42;
     func_80027FA8(arg0);
 }
 
@@ -1970,7 +1970,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B1E8);
 
 void is_on_screen(struct BaseObj* arg0)
 {
-    s32 temp_v0;
     s16 x_pos;
     s16 y_pos;
 
@@ -1979,9 +1978,8 @@ void is_on_screen(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        temp_v0 = arg0->unk14 * 42;
-        x_pos = arg0->x_pos.i.hi - D_801419BA[temp_v0];
-        y_pos = arg0->y_pos.i.hi - D_801419BE[temp_v0];
+        x_pos = arg0->x_pos.i.hi - screen_offsets[arg0->unk14].x_offset;
+        y_pos = arg0->y_pos.i.hi - screen_offsets[arg0->unk14].y_offset;
     }
     // check if the object is within 320x240 viewport += 32
     if (x_pos >= -32 && x_pos < 352 && y_pos >= -32 && y_pos < 272) {
