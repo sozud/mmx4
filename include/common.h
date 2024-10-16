@@ -780,7 +780,7 @@ extern struct Unk game_objects[0x30]; // D_8013BED0
 extern void (*g_TitleLogoUpdateFuncs[1])();
 extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();
-extern void (*g_TitleUpdate2Funcs[1])();
+extern void (*g_TitleUpdate2Funcs[1])(struct QuadObj*);
 extern u8 D_8013B7D8;
 extern u8 D_8013B7DC;
 extern s16 D_8013B7E0;
@@ -969,7 +969,7 @@ void func_800AE6B4(s32*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
-void func_800D46F4();
+void func_800D46F4(struct QuadObj*);
 void func_80015930(u8, u8);
 void func_80016F0C();
 void func_80023D30();
