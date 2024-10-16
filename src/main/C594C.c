@@ -4,7 +4,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D514C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5210);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5230);
+void func_800D5230(struct QuadObj* arg0)
+{
+    D_8010F898[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D526C);
 
@@ -14,9 +17,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D54A0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D54E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5500);
+void func_800D5500(struct QuadObj* arg0)
+{
+    D_8010F9A4[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D553C);
+void func_800D553C(struct QuadObj* arg0)
+{
+    D_8010FAD4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5578);
 
@@ -34,12 +43,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5AB0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5BF8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C18);
+void func_800D5C18(struct QuadObj* arg0)
+{
+    D_8010FAE0[arg0->state](arg0);
+}
 
 // megaman never appears in intro stage if nopped out
 void func_800D5C54(struct QuadObj* arg0)
 {
-    D_8010FC84[arg0->state]();
+    D_8010FC84[arg0->state](arg0);
 }
 
 // D_8010FC84 state 0
@@ -108,7 +120,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6700);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6780);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D67A0);
+void func_800D67A0(struct QuadObj* arg0)
+{
+    D_8010FCAC[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D67DC);
 

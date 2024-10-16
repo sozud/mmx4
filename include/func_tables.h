@@ -5984,63 +5984,75 @@ void func_800D3C58(void);
 void func_800D3FBC(void);
 
 // D_8010F71C
-void func_800D4334(void);
-void func_800D43F4(void);
-void func_800D46D4(void);
+extern void (*D_8010F71C[])(struct QuadObj*);
+void func_800D4334(struct QuadObj*);
+void func_800D43F4(struct QuadObj*);
+void func_800D46D4(struct QuadObj*);
 
 // D_8010F748
-void func_800D4A64(void);
-void func_800D4B30(void);
-void func_800D4C14(void);
+extern void (*D_8010F748[])(struct QuadObj*);
+void func_800D4A64(struct QuadObj*);
+void func_800D4B30(struct QuadObj*);
+void func_800D4C14(struct QuadObj*);
 
 // D_8010F88C
-void func_800D4DE0(void);
-void func_800D4F84(void);
-void func_800D4FA0(void);
+extern void (*D_8010F88C[])(struct QuadObj*);
+void func_800D4DE0(struct QuadObj*);
+void func_800D4F84(struct QuadObj*);
+void func_800D4FA0(struct QuadObj*);
 
 // D_8010F898
-void func_800D4C50(void);
-void func_800D5144(void);
-void func_800D5210(void);
+extern void (*D_8010F898[])(struct QuadObj*);
+void func_800D4C50(struct QuadObj*);
+void func_800D5144(struct QuadObj*);
+void func_800D5210(struct QuadObj*);
 
 // D_8010F9A4
-void func_800D526C(void);
-void func_800D52F4(void);
-void func_800D54A0(void);
-void func_800D54E0(void);
+extern void (*D_8010F9A4[])(struct QuadObj*);
+void func_800D526C(struct QuadObj*);
+void func_800D52F4(struct QuadObj*);
+void func_800D54A0(struct QuadObj*);
+void func_800D54E0(struct QuadObj*);
 
 // D_8010FAD4
-void func_800D5578(void);
-void func_800D55E4(void);
-void func_800D56A8(void);
+extern void (*D_8010FAD4[])(struct QuadObj*);
+void func_800D5578(struct QuadObj*);
+void func_800D55E4(struct QuadObj*);
+void func_800D56A8(struct QuadObj*);
 
 // D_8010FAE0
-void func_800D5934(void);
-void func_800D5AB0(void);
-void func_800D5BF8(void);
+extern void (*D_8010FAE0[])(struct QuadObj*);
+void func_800D5934(struct QuadObj*);
+void func_800D5AB0(struct QuadObj*);
+void func_800D5BF8(struct QuadObj*);
 
 // D_8010FC84
+extern void (*D_8010FC84[])(struct QuadObj*);
 void func_800D5C90(struct QuadObj* arg0);
 void func_800D5CF8(struct QuadObj* arg0);
 void func_800D666C(struct QuadObj* arg0);
 
 // D_8010FC90
-void func_800D5D50(void);
-void func_800D5F1C(void);
-void func_800D6260(void);
+extern void (*D_8010FC90[])(struct QuadObj*);
+void func_800D5D50(struct QuadObj*);
+void func_800D5F1C(struct QuadObj*);
+void func_800D6260(struct QuadObj*);
 
 // D_8010FCAC
-void func_800D6694(void);
-void func_800D6700(void);
-void func_800D6780(void);
+extern void (*D_8010FCAC[])(struct QuadObj*);
+void func_800D6694(struct QuadObj*);
+void func_800D6700(struct QuadObj*);
+void func_800D6780(struct QuadObj*);
 
 // D_8010FCB8
-void func_800D6B9C(void);
-void func_800D6C48(void);
-void func_800D6CA0(void);
-void func_800D6D48(void);
+extern void (*D_8010FCB8[])(struct QuadObj*);
+void func_800D6B9C(struct QuadObj*);
+void func_800D6C48(struct QuadObj*);
+void func_800D6CA0(struct QuadObj*);
+void func_800D6D48(struct QuadObj*);
 
 // D_8010FDD0
+extern void (*D_8010FDD0[])(struct QuadObj*);
 void func_800D6F94(struct QuadObj* arg0);
 void func_800D7058(struct QuadObj* arg0);
 void func_800D76D8(struct QuadObj* arg0);
@@ -6050,45 +6062,53 @@ void func_800D7194(struct QuadObj* arg0);
 void func_800D7468(struct QuadObj* arg0);
 
 // D_8010FE10
-void func_800D7734(void);
-void func_800D784C(void);
-void func_800D7960(void);
-void func_800D79F0(void);
+extern void (*D_8010FE10[])(struct QuadObj*);
+void func_800D7734(struct QuadObj*);
+void func_800D784C(struct QuadObj*);
+void func_800D7960(struct QuadObj*);
+void func_800D79F0(struct QuadObj*);
 
 // D_8010FE20
-void func_800D7A90(void);
-void func_800D7AF8(void);
-void func_800D7B50(void);
+extern void (*D_8010FE20[])(struct QuadObj*);
+void func_800D7A90(struct QuadObj*);
+void func_800D7AF8(struct QuadObj*);
+void func_800D7B50(struct QuadObj*);
 
 // D_8010FE2C
-void func_800D7B70(void);
-void func_800D7BBC(void);
-void func_800D7C3C(void);
+extern void (*D_8010FE2C[])(struct QuadObj*);
+void func_800D7B70(struct QuadObj*);
+void func_800D7BBC(struct QuadObj*);
+void func_800D7C3C(struct QuadObj*);
 
 // D_8010FE3C
-void func_800D7D60(void);
-void func_800D7DA4(void);
-void func_800D7EA8(void);
+extern void (*D_8010FE3C[])(struct QuadObj*);
+void func_800D7D60(struct QuadObj*);
+void func_800D7DA4(struct QuadObj*);
+void func_800D7EA8(struct QuadObj*);
 
 // D_8010FE48
-void func_800D7CEC(void);
-void func_800D7F64(void);
-void func_800D7FD0(void);
+extern void (*D_8010FE48[])(struct QuadObj*);
+void func_800D7CEC(struct QuadObj*);
+void func_800D7F64(struct QuadObj*);
+void func_800D7FD0(struct QuadObj*);
 
 // D_8010FED8
-void func_800D8150(void);
-void func_800D8180(void);
-void func_800D8290(void);
-void func_800D82E8(void);
+extern void (*D_8010FED8[])(struct QuadObj*);
+void func_800D8150(struct QuadObj*);
+void func_800D8180(struct QuadObj*);
+void func_800D8290(struct QuadObj*);
+void func_800D82E8(struct QuadObj*);
 
 // D_8010FEE8
-void func_800D842C(void);
-void func_800D845C(void);
+extern void (*D_8010FEE8[])(struct QuadObj*);
+void func_800D842C(struct QuadObj*);
+void func_800D845C(struct QuadObj*);
 
 // D_8010FEF0
-void func_800D802C(void);
-void func_800D83DC(void);
-void func_800D85C8(void);
+extern void (*D_8010FEF0[])(struct QuadObj*);
+void func_800D802C(struct QuadObj*);
+void func_800D83DC(struct QuadObj*);
+void func_800D85C8(struct QuadObj*);
 
 // D_8010FF08
 void func_800D8684(void);
