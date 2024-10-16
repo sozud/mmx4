@@ -1978,8 +1978,8 @@ void is_on_screen(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        x_pos = arg0->x_pos.i.hi - screen_offsets[arg0->unk14 * 2].x_offset;
-        y_pos = arg0->y_pos.i.hi - screen_offsets[arg0->unk14 * 2].y_offset;
+        x_pos = arg0->x_pos.i.hi - screen_offsets[arg0->unk14].x_offset;
+        y_pos = arg0->y_pos.i.hi - screen_offsets[arg0->unk14].y_offset;
     }
     // check if the object is within 320x240 viewport += 32
     if (x_pos >= -32 && x_pos < 352 && y_pos >= -32 && y_pos < 272) {

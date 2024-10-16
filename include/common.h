@@ -754,7 +754,7 @@ struct OffsetInfo {
     u16 x_offset;
     u8 pad2[2];
     u16 y_offset;
-    u8 pad[36];
+    u8 pad[77];
 };
 
 extern struct QuadObj g_QuadObjects[0x20];
