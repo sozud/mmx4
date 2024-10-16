@@ -51,7 +51,7 @@ struct BaseObj {
     s8 state;
     s8 unk5;
     s8 unk6;
-    s8 : 8;
+    s8 unk7;
     f32 x_pos; // 0x8 and 0xA
     f32 y_pos; // 0xC and 0xE
     u8 pad10[0x4];
@@ -225,20 +225,7 @@ struct VisualObj {
 }; // size 0x70
 
 struct ShotObj {
-    s8 active;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    s32 unk10;
-    s8 unk14;
-    u8 unk15;
-    u8 unk16;
+    struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x42 - 0x20];
@@ -279,20 +266,7 @@ struct ShotObj {
 }; // size 0x9C
 
 struct WeaponObj {
-    s8 active;
-    s8 : 8;
-    s8 : 8;
-    s8 unk3;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    s32 unk10;
-    s8 unk14;
-    u8 unk15;
-    u8 unk16;
+    struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x42 - 0x20];
