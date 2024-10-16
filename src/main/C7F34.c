@@ -8,13 +8,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7960);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D79F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7A10);
+void func_800D7A10(struct QuadObj* arg0)
+{
+    D_8010FE10[arg0->state](arg0);
+}
 
 void func_800D7A4C(struct QuadObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7A54);
+void func_800D7A54(struct QuadObj* arg0)
+{
+    D_8010FE20[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7A90);
 
@@ -42,7 +48,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7F64);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7FD0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7FF0);
+void func_800D7FF0(struct QuadObj* arg0)
+{
+    D_8010FE48[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D802C);
 
@@ -64,7 +73,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8578);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D85C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D85E8);
+void func_800D85E8(struct QuadObj* arg0)
+{
+    struct PlayerObj* temp_v1;
+
+    temp_v1 = arg0->unk5C;
+    if (temp_v1->unk94 != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        temp_v1->unk95 = 0;
+    }
+    D_8010FEF0[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8648);
 

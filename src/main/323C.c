@@ -1117,7 +1117,6 @@ extern void* D_80139C30;
 extern void* D_80139E30;
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
-extern s8 D_801418C8[0x3E];
 extern s8 D_801418CA;
 extern s8 D_801418CB;
 extern struct QuadObj D_80141B70[2];

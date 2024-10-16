@@ -4,7 +4,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D514C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5210);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5230);
+void func_800D5230(struct QuadObj* arg0)
+{
+    D_8010F898[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D526C);
 
@@ -14,9 +17,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D54A0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D54E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5500);
+void func_800D5500(struct QuadObj* arg0)
+{
+    D_8010F9A4[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D553C);
+void func_800D553C(struct QuadObj* arg0)
+{
+    D_8010FAD4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5578);
 
@@ -34,12 +43,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5AB0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5BF8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5C18);
+void func_800D5C18(struct QuadObj* arg0)
+{
+    D_8010FAE0[arg0->state](arg0);
+}
 
 // megaman never appears in intro stage if nopped out
 void func_800D5C54(struct QuadObj* arg0)
 {
-    D_8010FC84[arg0->state]();
+    D_8010FC84[arg0->state](arg0);
 }
 
 // D_8010FC84 state 0
@@ -108,17 +120,100 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6700);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6780);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D67A0);
+void func_800D67A0(struct QuadObj* arg0)
+{
+    D_8010FCAC[arg0->state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D67DC);
+void func_800D67DC(struct QuadObj* arg0)
+{
+    struct PlayerObj* ptr = &D_801418C8;
+    struct Unk* temp_a2 = arg0->unk5C;
+    s32 var_a3 = 0;
+    if (D_8014198B != 0) {
+        var_a3 = 1;
+    }
+    if (D_8014198C != 0) {
+        var_a3 = 1;
+    }
+    if (D_8014195B != 6) {
+        var_a3 = 1;
+    }
+    if (D_80141924 == 0) {
+        var_a3 = 1;
+    }
+    if (D_80141987 != 0) {
+        var_a3 = 1;
+    }
+    if (arg0->unk5C->base.active == 0) {
+        var_a3 = 1;
+    }
+    if (arg0->unk5C->unk5C == 0) {
+        var_a3 = 1;
+    }
+    if (var_a3 != 0) {
+        ZeroObjectState(arg0);
+        return;
+    }
+    if (arg0->state == 0) {
+        func_800D68D0(arg0, ptr, temp_a2);
+        return;
+    }
+    func_800D6944(arg0, ptr);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D68D0);
+void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg2)
+{
+    arg0->active = -0x7D;
+    arg0->unk3 = 1;
+    arg0->unk37 = arg1->base.unk14;
+    arg0->unk36 = 1;
+    *(s8*)&arg0->unk38 = 0x3C;
+    arg0->unk34 = arg0->unk2 + 0xD;
+    func_800D69A8(arg0, arg1, arg2);
+    arg0->state++;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6944);
+void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
+{
+    if (*(u8*)&arg0->unk38 == 0) {
+        ZeroObjectState(arg0);
+        return;
+    }
+    if (*(u8*)&arg0->unk38 & 2) {
+        arg0->unk3 ^= 1;
+    }
+    *(u8*)&arg0->unk38 -= 1;
+    func_800D69A8(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D69A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6AD8);
+void func_800D6AD8(struct QuadObj* arg0)
+{
+    void* temp_a2 = arg0->unk5C;
+    s32 var_a1 = 0;
+    if (D_8014198B != 0) {
+        var_a1 = 1;
+    }
+    if (D_8014198C != 0) {
+        var_a1 = 1;
+    }
+    if (D_8014195B != 6) {
+        var_a1 = 1;
+    }
+    if (D_80141924 == 0) {
+        var_a1 = 1;
+    }
+    if (D_80141987 != 0) {
+        var_a1 = 1;
+    }
+    if (var_a1 != 0) {
+        ZeroObjectState(arg0);
+        return;
+    }
+    D_8010FCB8[arg0->state](arg0, &D_801418C8, temp_a2);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6B9C);
 
