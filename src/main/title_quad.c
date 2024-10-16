@@ -52,13 +52,13 @@ void func_800D7100(struct QuadObj* arg0)
 }
 
 // TitleUpdate2 state 4
-void TitleSetWhiteQuadSpeed(struct Unk* arg0)
+void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 {
     if (D_80173C7A == 2) {
-        arg0->animation_speed = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
-        arg0->base.state = 5;
+        arg0->unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
+        arg0->state = 5;
     }
-    func_800D46F4();
+    func_800D46F4(arg0);
 }
 
 // TitleUpdate2 state 5
@@ -76,5 +76,5 @@ void func_800D76D8(struct QuadObj* arg0)
 // title screen doesn't appear if nopped out
 void TitleUpdate2(struct QuadObj* arg0)
 {
-    g_TitleUpdate2Funcs[arg0->state]();
+    g_TitleUpdate2Funcs[arg0->state](arg0);
 }

@@ -4,7 +4,22 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7734);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D784C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D7960);
+void func_800D7960(struct QuadObj* arg0)
+{
+    struct MiscObj* misc;
+    if (--arg0->unk38 == 0) {
+        if (arg0->unk2 == 0) {
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->base.active = 1;
+                misc->base.id = 0x13;
+                misc->base.unk2 = 0xB;
+            }
+        }
+        arg0->state++;
+    }
+    func_800D46F4(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D79F0);
 

@@ -2,7 +2,10 @@
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D514C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5210);
+void func_800D5210(struct QuadObj* arg0)
+{
+    ZeroObjectState(arg0);
+}
 
 void func_800D5230(struct QuadObj* arg0)
 {
@@ -31,7 +34,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5578);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D55E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D56A8);
+void func_800D56A8(struct QuadObj* arg0)
+{
+    ZeroObjectState(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D56C8);
 
@@ -41,7 +47,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5934);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5AB0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5BF8);
+void func_800D5BF8(struct QuadObj* arg0)
+{
+    ZeroObjectState(arg0);
+}
 
 void func_800D5C18(struct QuadObj* arg0)
 {
@@ -114,11 +123,31 @@ void func_800D668C(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6694);
+void func_800D6694(struct QuadObj* arg0)
+{
+    arg0->unk34 = 3;
+    *(s32*)&arg0->unk38 = FIXED(4);
+    arg0->unk36 = 0;
+    arg0->unk37 = 0;
+    arg0->unk14.val = 0;
+    arg0->unk18.val = 0;
+    arg0->unk1C.val = 0;
+    arg0->unk20.val = 0;
+    arg0->unk24.val = 0;
+    arg0->unk28.val = 0;
+    arg0->unk2C.val = 0;
+    arg0->unk30.val = 0;
+    arg0->active |= 0x82;
+    arg0->state++;
+    func_800D46F4(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6700);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6780);
+void func_800D6780(struct QuadObj* arg0)
+{
+    ZeroObjectState(arg0);
+}
 
 void func_800D67A0(struct QuadObj* arg0)
 {
