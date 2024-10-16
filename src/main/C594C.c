@@ -93,7 +93,7 @@ void func_800D5C90(struct QuadObj* arg0)
 void func_800D5CF8(struct QuadObj* arg0)
 {
     D_8010FC90[arg0->unk2](arg0);
-    arg0->unk3 = 1;
+    arg0->on_screen = 1;
     func_8002B458(arg0);
 }
 
@@ -139,7 +139,7 @@ void func_800D6694(struct QuadObj* arg0)
     arg0->unk30.val = 0;
     arg0->active |= 0x82;
     arg0->state++;
-    func_800D46F4(arg0);
+    quad_is_on_screen(arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6700);
@@ -194,7 +194,7 @@ void func_800D67DC(struct QuadObj* arg0)
 void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg2)
 {
     arg0->active = -0x7D;
-    arg0->unk3 = 1;
+    arg0->on_screen = 1;
     arg0->unk37 = arg1->base.unk14;
     arg0->unk36 = 1;
     *(s8*)&arg0->unk38 = 0x3C;
@@ -210,7 +210,7 @@ void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
         return;
     }
     if (*(u8*)&arg0->unk38 & 2) {
-        arg0->unk3 ^= 1;
+        arg0->on_screen ^= 1;
     }
     *(u8*)&arg0->unk38 -= 1;
     func_800D69A8(arg0);

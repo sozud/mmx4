@@ -580,7 +580,7 @@ struct QuadObj {
     s8 active;
     s8 id; // 0x01
     s8 unk2;
-    s8 unk3;
+    s8 on_screen;
     s8 state;
     s8 unk5;
     s8 pad6[0x8 - 0x6];
@@ -750,6 +750,13 @@ struct Unk80172203 {
     s8 unk0;
 };
 
+struct OffsetInfo {
+    u16 x_offset;
+    u8 pad2[2];
+    u16 y_offset;
+    u8 pad[36];
+};
+
 extern struct QuadObj g_QuadObjects[0x20];
 extern u8 D_800F8B30[];
 extern s8 D_800F8C10[];
@@ -798,7 +805,7 @@ extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
 extern s16* D_801F8300;
-extern u16 D_801419BA[];
+extern struct OffsetInfo screen_offsets[];
 extern u16 D_801419BE[];
 extern void (*g_MegamanRelatedUpdateFuncs[1])();
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
@@ -996,7 +1003,7 @@ void func_800AE6B4(s32*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
-void func_800D46F4(struct QuadObj*);
+void quad_is_on_screen(struct QuadObj*);
 void func_80015930(u8, u8);
 void func_80016F0C();
 void func_80023D30();
