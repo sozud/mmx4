@@ -1414,7 +1414,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027F50);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027F7C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
+#define FUNC_NAME func_80027FA8
+#include "helpers/bg_is_on_screen.h"
+#undef FUNC_NAME
 
 void func_80028070(struct BackgroundObj* arg0)
 {
@@ -1470,7 +1472,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800283F8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028424);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028450);
+#define FUNC_NAME func_80028450
+#include "helpers/bg_is_on_screen.h"
+#undef FUNC_NAME
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028518);
 
