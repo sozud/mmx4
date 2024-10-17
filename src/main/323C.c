@@ -1289,7 +1289,35 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800264D0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800265B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80026648);
+void func_80026648(void)
+{
+    struct BackgroundObj* bg_obj;
+    u32 var_s0;
+    u32 bg_num;
+
+    var_s0 = 0;
+    *(s32*)0x1F80011C = 0;
+    do {
+        if (background_objects[var_s0].unk4C != 0) {
+            func_800262B8(var_s0 & 0xFF);
+        }
+        var_s0 += 1;
+    } while (var_s0 < 3);
+    bg_num = 0;
+    func_8002728C();
+    func_80026720();
+    bg_obj = background_objects;
+    *(void**)0x1F800108 = &D_8015D9D0[SP_DRAW_INFO_POS];
+    do {
+        if (bg_obj->unk3 != 0) {
+            func_800267D4(bg_num);
+            func_80026AA0(bg_num);
+            func_80026894(bg_num);
+        }
+        bg_num += 1;
+        bg_obj += 1;
+    } while (bg_num < 3);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80026720);
 
