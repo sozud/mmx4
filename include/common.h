@@ -55,7 +55,7 @@ struct BaseObj {
     f32 x_pos; // 0x8 and 0xA
     f32 y_pos; // 0xC and 0xE
     u8 pad10[0x4];
-    s8 unk14;
+    s8 bg_offset;
     u8 unk15;
     u8 unk16;
 };
@@ -109,11 +109,12 @@ struct Unk {
 }; // size 0x9c
 
 struct BackgroundObj {
-    u8 pad[4];
+    u8 pad[3];
+    s8 unk3;
     s8 unk4;
     u8 pad4[3];
-    f32 unk8;
-    f32 unkC;
+    f32 x_pos;
+    f32 y_pos;
     u8 pad10[4];
     f32 unk14;
     f32 unk18;
@@ -564,7 +565,7 @@ struct Unk16 {
 
 extern struct PlayerObj D_801418C8;
 extern struct Unk16 D_80141BD8;
-extern struct BackgroundObj D_801419B0[];
+extern struct BackgroundObj background_objects[];
 
 struct DrawInfo {
     DISPENV dispenv;
@@ -597,7 +598,7 @@ struct QuadObj {
     f32 unk30;
     u16 unk34;
     s8 unk36;
-    s8 unk37;
+    s8 bg_offset;
     u16 unk38;
     s8 pad38_[8];
     s8 unk42;
@@ -805,7 +806,6 @@ extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
 extern s16* D_801F8300;
-extern struct OffsetInfo screen_offsets[];
 extern u16 D_801419BE[];
 extern void (*g_MegamanRelatedUpdateFuncs[1])();
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();

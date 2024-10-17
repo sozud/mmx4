@@ -11,7 +11,7 @@ void func_800D6F94(struct QuadObj* entity)
     u16* ptr;
     u16 temp;
 
-    entity->unk37 = -1;
+    entity->bg_offset = -1;
     entity->unk42 = 1;
     entity->x_pos.i.hi = 0;
     entity->y_pos.i.hi = 0;
