@@ -74,7 +74,7 @@ void func_800D5C90(struct QuadObj* arg0)
     }
     arg0->unk34 = 5;
     arg0->state = 1;
-    arg0->unk37 = -1;
+    arg0->bg_offset = -1;
     arg0->x_pos.val = 0;
     arg0->y_pos.val = 0;
     arg0->unk14.val = 0;
@@ -128,7 +128,7 @@ void func_800D6694(struct QuadObj* arg0)
     arg0->unk34 = 3;
     *(s32*)&arg0->unk38 = FIXED(4);
     arg0->unk36 = 0;
-    arg0->unk37 = 0;
+    arg0->bg_offset = 0;
     arg0->unk14.val = 0;
     arg0->unk18.val = 0;
     arg0->unk1C.val = 0;
@@ -195,7 +195,7 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg
 {
     arg0->active = -0x7D;
     arg0->on_screen = 1;
-    arg0->unk37 = arg1->base.unk14;
+    arg0->bg_offset = arg1->base.bg_offset;
     arg0->unk36 = 1;
     *(s8*)&arg0->unk38 = 0x3C;
     arg0->unk34 = arg0->unk2 + 0xD;

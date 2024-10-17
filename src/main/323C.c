@@ -1321,8 +1321,8 @@ void func_80027908(struct BackgroundObj* arg0)
     arg0->unk2E = 0xC0;
     arg0->unk30 = 0xA0;
     arg0->unk32 = 0xA0;
-    arg0->unk14.val = arg0->unk8.val;
-    arg0->unk18.val = arg0->unkC.val;
+    arg0->unk14.val = arg0->x_pos.val;
+    arg0->unk18.val = arg0->y_pos.val;
     arg0->unk24 = arg0->unk1C;
     arg0->unk26 = arg0->unk1E;
     arg0->unk28 = arg0->unk20;
@@ -1333,9 +1333,9 @@ void func_80027908(struct BackgroundObj* arg0)
 void func_80027974(struct BackgroundObj* arg0)
 {
     s32 temp_a1;
-    arg0->unk14 = arg0->unk8.val;
-    temp_a1 = arg0->unkC.val;
-    arg0->unk18 = temp_a1;
+    arg0->unk14.val = arg0->x_pos.val;
+    temp_a1 = arg0->y_pos.val;
+    arg0->unk18.val = temp_a1;
     arg0->unk49 = -arg0->unk48;
     func_80027A5C(arg0, temp_a1);
     func_80027AAC(arg0);
@@ -1390,8 +1390,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027FA8);
 
 void func_80028070(struct BackgroundObj* arg0)
 {
-    arg0->unk8.i.hi = screen_offsets[0].x_offset + arg0->unk40;
-    arg0->unkC.i.hi = screen_offsets[0].y_offset + arg0->unk42;
+    arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi + arg0->unk40;
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + arg0->unk42;
     func_80027FA8(arg0);
 }
 
@@ -1522,7 +1522,7 @@ void func_80029978(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_8001D134();
-        D_801419B3 = 0;
+        background_objects[0].unk3 = 0;
         D_80141A07 = 0;
         D_80141A5B = 0;
         func_8002A7D0();
@@ -1974,12 +1974,12 @@ void is_on_screen(struct BaseObj* arg0)
     s16 y_pos;
 
     arg0->on_screen = 0;
-    if (arg0->unk14 < 0) {
+    if (arg0->bg_offset < 0) {
         x_pos = arg0->x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi;
     } else {
-        x_pos = arg0->x_pos.i.hi - screen_offsets[arg0->unk14].x_offset;
-        y_pos = arg0->y_pos.i.hi - screen_offsets[arg0->unk14].y_offset;
+        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     // check if the object is within 320x240 viewport += 32
     if (x_pos >= -32 && x_pos < 352 && y_pos >= -32 && y_pos < 272) {
@@ -9488,7 +9488,7 @@ struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, u8 arg3)
         temp_v0->base.y_pos.i.hi = y;
         temp_v0->base.y_pos.i.lo = 0;
         temp_v0->base.unk15 = 0;
-        temp_v0->base.unk14 = 0;
+        temp_v0->base.bg_offset = 0;
         temp_v0->base.unk16 = 1;
     }
     return temp_v0;
