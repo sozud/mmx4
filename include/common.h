@@ -138,7 +138,9 @@ struct BackgroundObj {
     u8 unk47;
     u8 unk48;
     u8 unk49;
-    s8 pad50[0x54 - 0x4A];
+    u8 pad49[2];
+    u8 unk4C;
+    s8 pad50[4];
 }; // size 0x54
 
 // similar to Unk
@@ -564,9 +566,14 @@ struct Unk16 {
     u32 unk9C;
 };
 
+struct BgDrawRelated {
+    u8 pad[0x4000];
+};
+
 extern struct PlayerObj D_801418C8;
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[];
+extern struct BgDrawRelated D_8015D9D0[];
 
 struct DrawInfo {
     DISPENV dispenv;

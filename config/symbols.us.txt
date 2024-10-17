@@ -511,3 +511,4 @@ background_objects_08 = 0x801419B8;
 background_objects_0A = 0x801419BA;
 background_objects_0C = 0x801419BC;
 background_objects_0E = 0x801419BE;
+background_objects_4C = 0x801419FC;
