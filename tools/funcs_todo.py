@@ -12,7 +12,7 @@ import zipfile
 from io import BytesIO
 import difflib
 
-def are_strings_similar(str1, str2, threshold=0.6):
+def are_strings_similar(str1, str2, threshold=0.4):
     similarity = difflib.SequenceMatcher(None, str1, str2).ratio()
     return similarity >= threshold
 
