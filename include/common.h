@@ -58,6 +58,7 @@ struct BaseObj {
     s8 bg_offset;
     u8 unk15;
     u8 unk16;
+    u8 unk17;
 };
 
 struct Unk {
@@ -157,7 +158,9 @@ struct PlayerObj {
     u8 pad39[5];
     u16 unk40;
     u16 unk42;
-    s8 pad44[0x4A - 0x44];
+    s8 pad44[0x47 - 0x44];
+    s8 unk47;
+    s8 pad48[0x4A - 0x48];
     s8 unk4A;
     s8 pad4B[0x50 - 0x4B];
     s32 unk50;
@@ -177,7 +180,7 @@ struct PlayerObj {
     s16 : 16;
     s16 unk6E;
     u8 unk70;
-    s8 : 8;
+    s8 unk71;
     s8 unk72;
     s8 unk73;
     s8 unk74;
@@ -190,7 +193,9 @@ struct PlayerObj {
     u32 unk7C;
     u16 unk80;
     u16 unk82;
-    u8 pad82[3];
+    s8 unk84;
+    s8 : 8;
+    s8 unk86;
     u8 unk87;
     s8 unk88;
     s8 unk89;
@@ -211,10 +216,11 @@ struct PlayerObj {
     u8 pad98[0x9B - 0x98];
     s8 unk9B;
     s8 unk9C;
-    s8 : 8;
+    u8 unk9D;
     u8 unk9E;
-    s8 : 8;
-    u8 padA0[0xA2 - 0xA0];
+    s8 unk9F;
+    s8 unkA0;
+    s8 unkA1;
     s8 unkA2;
     s8 : 8;
     s8 unkA4;
@@ -773,7 +779,14 @@ extern s8 D_800F8C10[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
 extern void (*D_8010F5F8[2])();
+extern u8 D_801193F0[];
+extern u32 D_801194F0[];
+extern u8 D_8011A030[];
+extern u8 D_8011A130[];
+extern u32 D_8011A230[];
+extern u8 D_8011AF60[];
 extern s8 D_801721CF;
+extern s8 D_801721D0;
 extern s8 D_80141BDC[];
 extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
