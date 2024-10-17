@@ -109,7 +109,8 @@ struct Unk {
 }; // size 0x9c
 
 struct BackgroundObj {
-    u8 pad[3];
+    u8 pad[2];
+    s8 unk2;
     s8 unk3;
     s8 unk4;
     u8 pad4[3];
@@ -617,7 +618,8 @@ struct EngineObj {
     s8 pad2[6];
     s8 unkC;
     s8 unkD;
-    u8 pad1[0xf];
+    s8 unkE;
+    u8 pad1[0xe];
     s8 unk1D;
     s8 unk1E;
     u8 pad[0x21];
@@ -924,6 +926,11 @@ extern s8 D_80141BE4;
 extern s16 D_80141BE6;
 extern s8 D_80175E9C;
 extern s16 D_80175EA0;
+extern u16 D_80166C0C;
+extern s8 D_801419FC;
+extern s32 D_8013B80C;
+extern s32 D_800F4830[];
+extern u16 D_800F4776[];
 
 #include "func_tables.h"
 

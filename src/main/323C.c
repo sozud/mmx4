@@ -1448,7 +1448,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028518);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028564);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002859C);
+void func_8002859C(struct BackgroundObj* arg0)
+{
+    func_80028390(arg0);
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + arg0->unk42;
+    func_80028450(arg0);
+}
 
 void func_800285E0(struct BackgroundObj* arg0)
 {
@@ -1743,7 +1748,19 @@ void func_8002A7D0(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AB20);
+void func_8002AB20()
+{
+    s8 fill = 0;
+    u32 i;
+    for (i = 0; i < 3; i++) {
+        s8* a0 = (u8*)&background_objects[i];
+        s32 v1 = sizeof(struct BackgroundObj) - 1;
+        do {
+            *a0++ = fill;
+        } while (v1-- != 0);
+        background_objects[i].unk2 = i;
+    }
+}
 
 struct Unk* find_free_game_obj(void)
 {
@@ -2334,7 +2351,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002EF14);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F048);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F1B4);
+void func_8002F1B4(struct EngineObj* arg0)
+{
+    if (D_80166C0C & 0x840) {
+        background_objects[0].y_pos.i.hi = 0x110;
+        D_801419FC = 1;
+    }
+    if (background_objects[0].y_pos.i.hi < 0x110) {
+        background_objects[0].y_pos.i.hi++;
+        return;
+    }
+    arg0->unk2++;
+    D_8013B80C = D_800F4830[arg0->unkE];
+    func_8002217C(D_800F4776[arg0->unkE], 0xFF, 0);
+}
 
 void func_8002F264(struct EngineObj* arg0)
 {
