@@ -1,5 +1,12 @@
 #include "common.h"
 
+struct Unk8010B464 {
+    u8 unk0;
+    u8 pad[7];
+};
+
+extern struct Unk8010B464 D_8010B464[];
+
 // search lights don't appear in level if nopped out
 // effect_obj 0x07
 void func_800B6B18(struct EffectObj* arg0)
@@ -9,20 +16,36 @@ void func_800B6B18(struct EffectObj* arg0)
 }
 
 // D_8010B4C4 state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/search_light_maker", func_800B6B54);
+void func_800B6B54(struct EffectObj* arg0)
+{
+    s32 var_v0;
+    struct Unk8010B464* var_v1;
+
+    arg0->state = 1;
+
+    var_v1 = &D_8010B464;
+    for (var_v0 = 11; var_v0 >= 0; var_v0--) {
+        var_v1->unk0 = 0;
+        var_v1 += 1;
+    }
+
+    func_800B6EB4((background_objects[0].x_pos.i.hi - 48), (background_objects[0].x_pos.i.hi + 368), (background_objects[0].y_pos.i.hi - 48), (background_objects[0].y_pos.i.hi + 288), arg0);
+    func_800B6EB4((background_objects[1].x_pos.i.hi - 48), (background_objects[1].x_pos.i.hi + 368), (background_objects[1].y_pos.i.hi - 48), (background_objects[1].y_pos.i.hi + 288), arg0);
+    func_800B6EB4((background_objects[2].x_pos.i.hi - 48), (background_objects[2].x_pos.i.hi + 368), (background_objects[2].y_pos.i.hi - 48), (background_objects[2].y_pos.i.hi + 288), arg0);
+}
 
 // D_8010B4C4 state 1
-void func_800B6C74(s32 arg0)
+void func_800B6C74(struct EffectObj* arg0)
 {
     func_800B6C9C(arg0);
 }
 
 // D_8010B4C4 state 2
-void func_800B6C94(s32 arg0)
+void func_800B6C94(struct EffectObj* arg0)
 {
 }
 
-void func_800B6C9C(s32 arg0)
+void func_800B6C9C(struct EffectObj* arg0)
 {
     func_800B6D1C(arg0, 0, func_800B6FF4(arg0, 0));
     func_800B6D1C(arg0, 1, func_800B6FF4(arg0, 1));
