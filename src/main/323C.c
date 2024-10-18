@@ -73,7 +73,7 @@ void func_80013588(s32 arg0)
     } while (CdInit() == 0);
     do {
 
-    } while (CdControl(0xE, &sp10, 0) == 0);
+    } while (CdControl(CdlSetmode, &sp10, 0) == 0);
     VSync(3);
     D_80137CE4 = 0;
     D_801406AC = 0;
@@ -102,7 +102,7 @@ void func_80013650(void)
     } else {
         CdReadyCallback(&func_80013E68);
     }
-    while (CdControl(6, 0, 0) == 0)
+    while (CdControl(CdlReadN, 0, 0) == 0)
         ;
     D_801406AC = 1;
 }
@@ -115,7 +115,7 @@ void func_800137F0(void)
     D_801406AC = 0;
     do {
 
-    } while (CdControl(9, 0, 0) == 0);
+    } while (CdControl(CdlPause, 0, 0) == 0);
     D_801406AC = 2;
     D_8015D9C8 = D_80137DC4;
     D_80142F70 = D_80137DD0;
@@ -127,7 +127,7 @@ u8 func_8001385C(void)
 
     do {
 
-    } while (CdControlB(1, 0, &sp10) == 0);
+    } while (CdControlB(CdlNop, 0, &sp10) == 0);
     return sp10;
 }
 
@@ -147,11 +147,11 @@ void func_80013968(void)
         if (CdReady(1, NULL) != 0) {
             goto loop_1;
         }
-        if (CdControl(0xEU, &sp10, NULL) == 0) {
+        if (CdControl(CdlSetmode, &sp10, NULL) == 0) {
             goto loop_1;
         }
         VSync(3);
-    } while (CdControl(2U, &D_80137CF8.minute, NULL) == 0);
+    } while (CdControl(CdlSetloc, &D_80137CF8.minute, NULL) == 0);
     func_80013650();
 }
 
@@ -162,7 +162,7 @@ void MyCdReadyCallback(void)
         if (CdReady(1, NULL) != 1) {
         pos:
             CdReadyCallback(NULL);
-            CdControlB(9U, NULL, NULL);
+            CdControlB(CdlPause, NULL, NULL);
             D_801406AC = 0x80;
         } else {
             if (func_800136B0() != -1) {
@@ -375,7 +375,7 @@ void func_80016B58(void)
     u8* ptr = &D_80139554;
 
     temp_v0 = CdSync(1, ptr);
-    if ((temp_v0 == 2) && !(*ptr & 0x40) && (CdControl(0x1B, 0, ptr) != 0)) {
+    if ((temp_v0 == 2) && !(*ptr & 0x40) && (CdControl(CdlReadS, 0, ptr) != 0)) {
         D_80173C84 = 2;
         D_80139530 = temp_v0;
     }
@@ -384,7 +384,7 @@ void func_80016B58(void)
 void func_80016BDC(void)
 {
     if (D_8013955C & D_801441B8) {
-        while (CdControl(9, 0, &D_80139554) == 5)
+        while (CdControl(CdlPause, 0, &D_80139554) == 5)
             ;
         D_80139530 = 3;
         if (D_80139554 & 0x10) {
@@ -403,9 +403,9 @@ void func_80016DAC()
 
     if (CdSync(1, 0) == 2) {
         if (D_801441B0 == 0) {
-            var_v0 = CdControl(0x15, &D_80139514, 0);
+            var_v0 = CdControl(CdlSeekL, &D_80139514, 0);
         } else {
-            var_v0 = CdControlF(0x15, &D_80139514);
+            var_v0 = CdControlF(CdlSeekL, &D_80139514);
         }
         if (var_v0 != 0) {
             D_80139530 = 1;
@@ -416,7 +416,7 @@ void func_80016DAC()
 
 void func_80016E34()
 {
-    if (CdSync(1, 0) == 2 && CdControl(0xD, &D_80175EE8, 0) != 0) {
+    if (CdSync(1, 0) == 2 && CdControl(CdlSetfilter, &D_80175EE8, 0) != 0) {
         D_80139530 = 5;
     }
 }
@@ -430,7 +430,7 @@ void func_80016F0C()
         func_80016420(0);
         if (D_80139564 == temp_s0) {
             if (D_8013955C != 0) {
-                while (CdControlB(9, 0, NULL) == 0)
+                while (CdControlB(CdlPause, 0, NULL) == 0)
                     ;
             }
         }
@@ -512,7 +512,24 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018AD0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018B88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80018E50);
+void func_80018E50(void)
+{
+    u8 sp10 = 0x80;
+    func_800192F8();
+    while (CdControlB(CdlPause, 0, NULL) == 0)
+        ;
+    VSync(0);
+    CdDataCallback(0);
+    CdReadyCallback(0);
+    DecDCToutCallback(0);
+    StUnSetRing();
+    while (CdReset(0) == 0)
+        ;
+    VSync(3);
+    while (CdControl(CdlSetmode, &sp10, 0) == 0)
+        ;
+    VSync(3);
+}
 
 void func_80018EEC(void)
 {
