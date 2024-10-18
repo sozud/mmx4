@@ -135,7 +135,8 @@ struct BackgroundObj {
     u8 pad32[12];
     u16 unk40;
     u16 unk42;
-    u8 pad42[3];
+    s8 unk44;
+    u8 pad42[2];
     u8 unk47;
     u8 unk48;
     u8 unk49;

@@ -1560,8 +1560,8 @@ void func_80029978(struct EngineObj* arg0)
     if (D_80141BDC[0] == 0) {
         func_8001D134();
         background_objects[0].unk3 = 0;
-        D_80141A07 = 0;
-        D_80141A5B = 0;
+        background_objects[1].unk3 = 0;
+        background_objects[2].unk3 = 0;
         func_8002A7D0();
         func_80012EB8();
         arg0->unk0 = 3;
@@ -2387,7 +2387,7 @@ void func_8002F1B4(struct EngineObj* arg0)
 {
     if (D_80166C0C & 0x840) {
         background_objects[0].y_pos.i.hi = 0x110;
-        D_801419FC = 1;
+        background_objects[0].unk4C = 1;
     }
     if (background_objects[0].y_pos.i.hi < 0x110) {
         background_objects[0].y_pos.i.hi++;
