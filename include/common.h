@@ -132,7 +132,8 @@ struct BackgroundObj {
     s16 unk2E;
     s16 unk30;
     s16 unk32;
-    u8 pad32[12];
+    s16 unk34;
+    u8 pad32[10];
     u16 unk40;
     u16 unk42;
     s8 unk44;
@@ -952,6 +953,8 @@ extern s8 D_801419FC;
 extern s32 D_8013B80C;
 extern s32 D_800F4830[];
 extern u16 D_800F4776[];
+extern void (*D_800F3134[])(struct BackgroundObj* arg0);
+extern s8 D_80141984;
 
 #include "func_tables.h"
 

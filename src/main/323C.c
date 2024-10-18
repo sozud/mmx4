@@ -1356,7 +1356,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800275DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002771C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027850);
+void func_80027850(void)
+{
+    struct BackgroundObj* bg_obj = &background_objects[0];
+    if ((bg_obj->unk44 != 0) && (D_80141984 == 0)) {
+        D_800F3134[bg_obj->unk4](bg_obj);
+        if (bg_obj->unk34 & 0x10) {
+            func_80028A48(bg_obj);
+        }
+        if (bg_obj->unk34 & 1) {
+            func_80028AD8(bg_obj);
+        }
+        func_80028690(bg_obj);
+    }
+}
 
 void func_80027908(struct BackgroundObj* arg0)
 {
