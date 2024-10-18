@@ -5022,9 +5022,9 @@ void func_800B6A90(struct EffectObj*);
 
 // D_8010B4C4
 extern void (*D_8010B4C4[])(struct EffectObj*);
-void func_800B6B54(s32 arg0);
-void func_800B6C74(s32 arg0);
-void func_800B6C94(s32 arg0);
+void func_800B6B54(struct EffectObj*);
+void func_800B6C74(struct EffectObj*);
+void func_800B6C94(struct EffectObj*);
 
 // D_8010B4D8
 extern void (*D_8010B4D8[])(struct EffectObj*);

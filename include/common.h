@@ -1001,7 +1001,6 @@ void func_80021A20();
 void func_80023D68();
 void func_8002A484();
 void func_8002B460();
-void func_800B6C9C(s32 arg0);
 void func_800B6D1C(s32, s8, s8);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
