@@ -1,4 +1,5 @@
-void FUNC_NAME(struct BackgroundObj* arg0) {
+void FUNC_NAME(struct BackgroundObj* arg0)
+{
     s16 delta;
 
     delta = arg0->x_pos.i.hi - arg0->unk14.i.hi;
@@ -18,7 +19,6 @@ void FUNC_NAME(struct BackgroundObj* arg0) {
             } else {
                 arg0->x_pos.i.hi = arg0->unk14.i.hi - 0x10;
             }
-
         }
     }
 
