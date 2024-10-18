@@ -459,7 +459,21 @@ item_objects = 0x80165A30;
 layer_objects = 0x80169CB8;
 misc_objects = 0x80173CA0;
 cur_draw_info = 0x80142F80;
+
+cur_draw_info_dispenv_disp_w = 0x80142f84;
+cur_draw_info_dispenv_screen_x = 0x80142f88;
+cur_draw_info_dispenv_screen_w = 0x80142f8c;
+cur_draw_info_dispenv_isinter = 0x80142f90;
+cur_draw_info_drawenv = 0x80142f94;
+
 draw_infos = 0x80166C10;
+draw_infos_0_dispenv_isinter = 0x80166c20;
+draw_infos_0_dispenv_isrgb24 = 0x80166c21;
+draw_infos_0_drawenv = 0x80166c24;
+draw_infos_1_dispenv = 0x80166cb0;
+draw_infos_1_dispenv_isinter = 0x80166cc0;
+draw_infos_1_dispenv_isrgb24 = 0x80166cc1;
+
 Set24BitDisp = 0x800185F8;
 old_dispenv = 0x801395A8;
 PlayCapcomLogo = 0x8001D10C;
@@ -588,3 +602,4 @@ background_objects_2_4B = 0x80141aa3;
 background_objects_2_4C = 0x80141aa4;
 background_objects_2_4D = 0x80141aa5;
 background_objects_2_4E = 0x80141aa6;
+
