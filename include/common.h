@@ -230,7 +230,10 @@ struct PlayerObj {
     s8 unkA6;
     u8 padA7[0xB8 - 0xA7];
     u8 unkB8;
-    u8 padB9[0xBF - 0xB9];
+    u8 padB9[0xBC - 0xB9];
+    s8 unkBC;
+    s8 : 8;
+    s8 : 8;
     s8 unkBF;
     s8 unkC0;
     s8 padC0[2];
@@ -578,7 +581,7 @@ struct BgDrawRelated {
     u8 pad[0x4000];
 };
 
-extern struct PlayerObj D_801418C8;
+extern struct PlayerObj g_Player;
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[];
 extern struct BgDrawRelated D_8015D9D0[];
@@ -794,11 +797,6 @@ extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
-extern s8 D_80141924;
-extern s8 D_8014195B;
-extern s8 D_80141987;
-extern s8 D_8014198B;
-extern s8 D_8014198C;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
@@ -954,7 +952,6 @@ extern s32 D_8013B80C;
 extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
-extern s8 D_80141984;
 
 #include "func_tables.h"
 

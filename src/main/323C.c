@@ -1134,8 +1134,6 @@ extern void* D_80139C30;
 extern void* D_80139E30;
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
-extern s8 D_801418CA;
-extern s8 D_801418CB;
 extern struct QuadObj D_80141B70[2];
 extern s8 D_80173A30;
 extern s8 D_80173A33;
@@ -1164,7 +1162,7 @@ void func_80023DB8(void)
     void* temp_v1_7;
     void* temp_v1_8;
     void* temp_v1_9;
-    struct Unk* ptr = &D_801418C8;
+    struct Unk* ptr = &g_Player;
     void* ptr2;
 
     temp_a0 = *(s32*)0x1F800000;
@@ -1178,9 +1176,9 @@ void func_80023DB8(void)
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
 
-    if (D_801418CB != 0) {
+    if (g_Player.base.on_screen) {
         func_80024334(ptr);
-        if (D_801418CA == 0) {
+        if (g_Player.base.unk2 == 0) {
             func_800257BC(ptr);
         }
     }
@@ -1359,7 +1357,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002771C);
 void func_80027850(void)
 {
     struct BackgroundObj* bg_obj = &background_objects[0];
-    if ((bg_obj->unk44 != 0) && (D_80141984 == 0)) {
+    if ((bg_obj->unk44 != 0) && (g_Player.unkBC == 0)) {
         D_800F3134[bg_obj->unk4](bg_obj);
         if (bg_obj->unk34 & 0x10) {
             func_80028A48(bg_obj);
@@ -1695,7 +1693,7 @@ void func_8002A7D0(void)
     s8* a0;
     u32 a1;
 
-    func_8002A728(&D_801418C8);
+    func_8002A728(&g_Player);
     func_8002A728(&D_80175D58);
 
     for (a1 = 0; a1 < 3; a1++) {
@@ -8752,7 +8750,7 @@ void func_8009ED70(struct Unk* arg0)
     func_8002B694(arg0);
     func_8002D9BC(arg0);
 
-    if (func_8002BB80(arg0, &D_801418C8) != 0) {
+    if (func_8002BB80(arg0, &g_Player) != 0) {
         if (arg0->base.unk2 & 0x40) {
         label:
             func_800AF808(arg0);
