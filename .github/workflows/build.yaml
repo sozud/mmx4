@@ -80,6 +80,11 @@ jobs:
       - name: Generate functions list
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: python3 ./tools/funcs_todo.py > info/functions.md
+      - name: Generate duplicates report
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+            cd tools/dups
+            cargo run --release -- --threshold .90 --output-file ../../info/duplicates.txt
       - name: Commit all reports
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
