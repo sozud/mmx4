@@ -730,7 +730,7 @@ struct EffectObj {
     struct Unk14* unk14;
     s8 unk18;
     u8 pad[23];
-};
+}; // size 0x60
 
 struct Unk22 {
     u8 pad0[8];

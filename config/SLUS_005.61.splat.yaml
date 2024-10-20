@@ -170,4 +170,5 @@ segments:
       - [0xDEB5C, asm, psxsdk/libapi/l02]
       - [0xDEB6C, asm, psxsdk/libapi/l03]
       - [0xDEC0C, data]
+      - {type: bss, vram: 0x8012F418}
   - [0x120000]
