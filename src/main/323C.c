@@ -3,12 +3,35 @@
 // uncomment to skip movies
 // #define SKIP_MDEC
 
+struct Temp1 {
+    u8 pad[0xA000];
+};
+
+struct Temp2 {
+    u8 pad[0x2000];
+};
+
+struct Temp3 {
+    u8 pad[0x200];
+};
+
+struct Temp4 {
+    u8 pad[0x100];
+};
+
+struct Temp5 {
+    u8 pad[0x78];
+};
+
 extern s32 D_80139514;
 extern u8 D_80139554;
 extern s8 D_80139568;
 extern s16 D_8013955C;
-extern void* D_801499C8;
-extern void* D_80169D98;
+extern struct Temp1 D_801499C8[];
+extern struct Temp2 D_80169D98[];
+extern struct Temp3 D_80139830[];
+extern struct Temp4 D_80139C30[];
+extern struct Temp5 D_80139E30[];
 extern s8 D_80173C84;
 extern s32 D_80175EE8[];
 
@@ -79,10 +102,8 @@ void func_80013404(u8 arg0)
     s8* a0;
     s8* var_v0;
     struct EngineObj* ptr = &D_801721C0;
-
-    temp_v1 = *(s32*)0x1F800000;
-    *(void**)0x1F800100 = (temp_v1 * 0xA000 / 4) + &D_801499C8;
-    *(void**)0x1F800104 = (temp_v1 * 0x2000 / 4) + &D_80169D98;
+    *(void**)0x1F800100 = &D_801499C8[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &D_80169D98[SP_DRAW_INFO_POS];
 
     func_800160F4();
 
@@ -1210,9 +1231,6 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-extern void* D_80139830;
-extern void* D_80139C30;
-extern void* D_80139E30;
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
 extern struct QuadObj D_80141B70[2];
@@ -1248,11 +1266,11 @@ void func_80023DB8(void)
 
     temp_a0 = *(s32*)0x1F800000;
     *(s32*)0x1F800124 = 0;
-    *(void**)0x1F800100 = (temp_a0 * 0xA000 / 4) + &D_801499C8;
-    *(void**)0x1F800104 = (temp_a0 * 0x2000 / 4) + &D_80169D98;
-    *(void**)0x1F800108 = (temp_a0 * 0x200 / 4) + &D_80139830;
-    *(void**)0x1F80010C = (temp_a0 * 0x100 / 4) + &D_80139C30;
-    *(void**)0x1F800110 = (temp_a0 * 0x78 / 4) + &D_80139E30;
+    *(void**)0x1F800100 = &D_801499C8[temp_a0]; // size 0xA000
+    *(void**)0x1F800104 = &D_80169D98[temp_a0]; // size 0x2000
+    *(void**)0x1F800108 = &D_80139830[temp_a0]; // size 0x200
+    *(void**)0x1F80010C = &D_80139C30[temp_a0]; // size 0x100
+    *(void**)0x1F800110 = &D_80139E30[temp_a0]; // size 0x78
 
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
