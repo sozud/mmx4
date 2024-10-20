@@ -3,10 +3,35 @@
 // uncomment to skip movies
 // #define SKIP_MDEC
 
+struct Temp1 {
+    u8 pad[0xA000];
+};
+
+struct Temp2 {
+    u8 pad[0x2000];
+};
+
+struct Temp3 {
+    u8 pad[0x200];
+};
+
+struct Temp4 {
+    u8 pad[0x100];
+};
+
+struct Temp5 {
+    u8 pad[0x78];
+};
+
 extern s32 D_80139514;
 extern u8 D_80139554;
 extern s8 D_80139568;
 extern s16 D_8013955C;
+extern struct Temp1 D_801499C8[];
+extern struct Temp2 D_80169D98[];
+extern struct Temp3 D_80139830[];
+extern struct Temp4 D_80139C30[];
+extern struct Temp5 D_80139E30[];
 extern s8 D_80173C84;
 extern s32 D_80175EE8[];
 
@@ -44,7 +69,25 @@ void func_80012EB0(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012EB8);
+void func_80012EB8(void)
+{
+    s32 var_a0;
+
+    if (D_80172203.unk0 == 0) { // g_GameVars.unk43
+        var_a0 = 0x4E;
+        if (D_801721F7 == 0) { // g_GameVars.unk37
+            var_a0 = 0x4B;
+        }
+    } else {
+        var_a0 = 0x4D;
+    }
+    func_80013AD8(var_a0, 0, 0);
+    func_80014A90(0, 0);
+    func_80013530();
+    D_80173C80 = D_8015D9C8;
+    D_80166BB4 = D_80142F70;
+    func_80015C10();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012F44);
 
@@ -52,7 +95,48 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013014);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001326C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013404);
+void func_80013404(u8 arg0)
+{
+    s32 temp_v1;
+    u8 var_s0;
+    s8* a0;
+    s8* var_v0;
+    struct EngineObj* ptr = &D_801721C0;
+    *(void**)0x1F800100 = &D_801499C8[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &D_80169D98[SP_DRAW_INFO_POS];
+
+    func_800160F4();
+
+    for (var_s0 = 0; var_s0 < 3; var_s0++) {
+        func_8001326C(var_s0);
+    }
+    if (arg0) {
+        if (ptr->unk43 != 0) {
+            func_8001326C(4);
+        } else {
+            func_8001326C(3);
+        }
+        func_8001326C(5);
+
+        a0 = &D_800EE54C;
+        if (ptr->unkC == 0xC) {
+            var_v0 = a0 + 0xB;
+        } else {
+            var_v0 = a0 + ptr->unkC;
+        }
+        D_800EE538 = *var_v0;
+
+        func_8001326C(6);
+
+        if (ptr->unkC < 9) {
+            if (ptr->unkD != 0) {
+                func_8001326C(8);
+            } else {
+                func_8001326C(7);
+            }
+        }
+    }
+}
 
 void func_80013530(void)
 {
@@ -291,7 +375,17 @@ void func_80016074(void)
     } while (var_v1 < 0x800U);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800160AC);
+void func_800160AC(void)
+{
+    u16* src = D_801441B4;
+    u16* dst = *(u16**)0x1F800008;
+    s32 count = (*(u32*)0x1F80000C - (u32)dst) >> 1;
+
+    while (count > 0) {
+        *dst++ = *src++;
+        count--;
+    }
+}
 
 extern s32 D_800F1660;
 extern s32 D_800F1860;
@@ -800,7 +894,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DAF8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DC30);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DC7C);
+struct QuadObj* func_8001DC7C(s8 arg0, s8 arg1)
+{
+    struct QuadObj* quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = 1;
+        quad->id = arg0;
+        quad->unk2 = arg1;
+        return quad;
+    }
+    return NULL;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DCCC);
 
@@ -1127,11 +1231,6 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-extern void* D_801499C8;
-extern void* D_80169D98;
-extern void* D_80139830;
-extern void* D_80139C30;
-extern void* D_80139E30;
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
 extern struct QuadObj D_80141B70[2];
@@ -1167,11 +1266,11 @@ void func_80023DB8(void)
 
     temp_a0 = *(s32*)0x1F800000;
     *(s32*)0x1F800124 = 0;
-    *(void**)0x1F800100 = (temp_a0 * 0xA000 / 4) + &D_801499C8;
-    *(void**)0x1F800104 = (temp_a0 * 0x2000 / 4) + &D_80169D98;
-    *(void**)0x1F800108 = (temp_a0 * 0x200 / 4) + &D_80139830;
-    *(void**)0x1F80010C = (temp_a0 * 0x100 / 4) + &D_80139C30;
-    *(void**)0x1F800110 = (temp_a0 * 0x78 / 4) + &D_80139E30;
+    *(void**)0x1F800100 = &D_801499C8[temp_a0]; // size 0xA000
+    *(void**)0x1F800104 = &D_80169D98[temp_a0]; // size 0x2000
+    *(void**)0x1F800108 = &D_80139830[temp_a0]; // size 0x200
+    *(void**)0x1F80010C = &D_80139C30[temp_a0]; // size 0x100
+    *(void**)0x1F800110 = &D_80139E30[temp_a0]; // size 0x78
 
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
@@ -1576,7 +1675,19 @@ void func_8002979C(struct EngineObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800297D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800298B4);
+void func_800298B4(struct EngineObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        if ((arg0->unk27 >> arg0->unk43) & 1) {
+            arg0->unk2++;
+            arg0->unk27 |= 0x80;
+        }
+    } else if (!(arg0->unk27 & 0x7F)) {
+        arg0->unk2 = 0;
+        arg0->unk4 = 0x14;
+        arg0->unk1++;
+    }
+}
 
 void func_80029928(struct EngineObj* arg0)
 {
