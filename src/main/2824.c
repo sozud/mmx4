@@ -89,10 +89,11 @@ void func_800127C8(s32 arg0)
     ChangeTh(0xFF000000);
 }
 
-void func_800127FC(s32 arg0) {
-    (*(s16** )0x801F8300)[0] = 0;
+void func_800127FC(s32 arg0)
+{
+    (*(s16**)0x801F8300)[0] = 0;
     EnterCriticalSection();
-    CloseTh((*(s32** )0x801F8300)[2]);
+    CloseTh((*(s32**)0x801F8300)[2]);
     ExitCriticalSection();
     ChangeTh(0xFF000000);
 }

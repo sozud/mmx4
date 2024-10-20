@@ -354,7 +354,8 @@ void func_80016074(void)
     } while (var_v1 < 0x800U);
 }
 
-void func_800160AC(void) {
+void func_800160AC(void)
+{
     u16* src = D_801441B4;
     u16* dst = *(u16**)0x1F800008;
     s32 count = (*(u32*)0x1F80000C - (u32)dst) >> 1;
@@ -872,7 +873,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DAF8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DC30);
 
-struct QuadObj* func_8001DC7C(s8 arg0, s8 arg1) {
+struct QuadObj* func_8001DC7C(s8 arg0, s8 arg1)
+{
     struct QuadObj* quad = find_free_quad_obj();
     if (quad != NULL) {
         quad->active = 1;
@@ -1655,7 +1657,8 @@ void func_8002979C(struct EngineObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800297D8);
 
-void func_800298B4(struct EngineObj* arg0) {
+void func_800298B4(struct EngineObj* arg0)
+{
     if (arg0->unk2 == 0) {
         if ((arg0->unk27 >> arg0->unk43) & 1) {
             arg0->unk2++;
