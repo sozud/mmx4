@@ -1569,11 +1569,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028338);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028364);
 
-void func_80028390(struct BackgroundObj* arg0) {
+void func_80028390(struct BackgroundObj* arg0)
+{
     s16 v0 = background_objects[0].x_pos.i.hi;
-    s16 v1 = arg0->unk40;
-    v0 = v0 >> 1;
-    v0 = v1 + v0;
+    v0 = arg0->unk40 + (v0 >> 1);
     arg0->x_pos.i.hi = v0;
 }
 
