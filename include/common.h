@@ -599,7 +599,7 @@ struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
     u32 unk70;
-    u8 pad70[10];
+    u8 pad70[12];
     u32 unk80;
     u8 pad80[24];
     u32 unk9C;
