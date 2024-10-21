@@ -454,6 +454,7 @@ visual_objects = 0x8013E510; // size:0xC00
 shot_objects = 0x8013F328; // size:0x1380
 weapon_objects = 0x801406F8; // size:0x9C0
 unk_objects = 0x801410C0; // size:0x780
+foo_objects = 0x80141AB0; // size:0x120
 effect_objects = 0x80142F98; // size:0xC00
 item_objects = 0x80165A30; // size:0x1180
 layer_objects = 0x80169CB8; // size:0xC0

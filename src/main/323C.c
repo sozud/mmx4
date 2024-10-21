@@ -1157,7 +1157,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021B34);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021C14);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021CC8);
+void func_80021CC8(void)
+{
+    struct UnkObj* var_s0;
+
+    for (var_s0 = &foo_objects; var_s0 < &foo_objects[COUNT(foo_objects)]; var_s0++) {
+        func_800AE7DC(var_s0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021D20);
 
@@ -1233,7 +1240,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
 extern s8 D_8013E473;
 extern s8 D_8013E4C3;
-extern struct QuadObj D_80141B70[2];
 extern s8 D_80173A30;
 extern s8 D_80173A33;
 extern s8 D_80175D58[0x3E];
@@ -1242,7 +1248,7 @@ extern s8 D_80175D5B;
 // some kind of init?
 void func_80023DB8(void)
 {
-    struct QuadObj* var_s0;
+    struct UnkObj* var_s0;
     struct Unk* var_s0_2;
     struct WeaponObj* var_s0_3;
     struct ShotObj* var_s0_4;
@@ -1296,8 +1302,8 @@ void func_80023DB8(void)
     }
 
     // this one loops backwards for some reason, doesn't seem to be a compiler optimization
-    for (var_s0 = &D_80141B70; var_s0 >= &D_80141B70[-COUNT(D_80141B70)]; var_s0--) {
-        if (var_s0->on_screen != 0) {
+    for (var_s0 = &foo_objects[2]; var_s0 >= &foo_objects[0]; var_s0--) {
+        if (var_s0->unk3 != 0) {
             func_80024334(var_s0);
         }
     }
@@ -1792,7 +1798,6 @@ extern s32 D_8013E190;
 extern s32 D_8013E194;
 extern s8 D_8013E1BC;
 extern s16 D_8013E1BE;
-extern struct UnkObj D_80141AB0[];
 extern s8 D_80141BE4;
 extern s16 D_80141BE6;
 extern s8 D_801754A0;
@@ -1812,9 +1817,9 @@ void func_8002A7D0(void)
     func_8002A728(&g_Player);
     func_8002A728(&D_80175D58);
 
-    for (a1 = 0; a1 < 3; a1++) {
-        a0 = (u8*)&D_80141AB0[a1];
-        var_v1 = 0x60 - 1;
+    for (a1 = 0; a1 < COUNT(foo_objects); a1++) {
+        a0 = (u8*)&foo_objects[a1];
+        var_v1 = sizeof(foo_objects[0]) - 1;
         do {
             *a0++ = fill;
         } while (var_v1-- != 0);
@@ -9824,7 +9829,21 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE714);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE790);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE7DC);
+void func_800AE7DC(struct UnkObj* arg0)
+{
+    struct PlayerObj* player = &g_Player;
+
+    arg0->unk47 = player->unk47;
+    arg0->unk15 = player->base.unk15;
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+
+    if (arg0->unk4 == 0) {
+        func_800AE848(arg0, player);
+    } else {
+        func_800AE88C(arg0, player);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE848);
 
