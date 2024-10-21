@@ -93,7 +93,35 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012F44);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013014);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001326C);
+void func_8001326C(u8 arg0)
+{
+    DR_MODE* draw_mode;
+    u8 temp_a0;
+    SPRT* sprt;
+    struct Prim* prim;
+    s32 tpage;
+
+    if ((arg0 != 0) || !(D_80141BD8.unk0 & 0x10)) {
+        sprt = *(SPRT**)0x1F800100;
+        draw_mode = *(DR_MODE**)0x1F800104;
+        prim = &D_800EE504[arg0];
+        tpage = GetTPage(0, 0, 0x380, 0x100);
+        SetDrawMode(draw_mode, 0, 0, tpage, 0);
+        setSprt(sprt);
+        setXY0(sprt, prim->x, prim->y);
+        setUV0(sprt, (prim->uv & 0xF) * 0x10, prim->uv & 0xF0);
+        temp_a0 = prim->clut;
+        setShadeTex(sprt, 1);
+        setSemiTrans(sprt, 0);
+        // this ought to be setClut but can't figure it out
+        sprt->clut = ((temp_a0 & 0xF) | (((temp_a0 >> 4) + 0x1E0) << 6));
+        setWH(sprt, prim->w * 0x10, prim->h * 0x10);
+        catPrim(draw_mode, sprt);
+        addPrims(&cur_draw_info->unk80, draw_mode, sprt);
+        *(SPRT**)0x1F800100 = ++sprt;
+        *(DR_MODE**)0x1F800104 = ++draw_mode;
+    }
+}
 
 void func_80013404(u8 arg0)
 {
