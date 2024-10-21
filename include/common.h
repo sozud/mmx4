@@ -873,6 +873,7 @@ extern struct VisualObj visual_objects[0x20];
 extern struct ShotObj shot_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
 extern struct UnkObj unk_objects[0x14];
+extern struct UnkObj foo_objects[3];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
