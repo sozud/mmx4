@@ -73,9 +73,9 @@ void func_80012EB8(void)
 {
     s32 var_a0;
 
-    if (D_80172203.unk0 == 0) { // g_GameVars.unk43
+    if (engine_obj.unk43 == 0) { // g_GameVars.unk43
         var_a0 = 0x4E;
-        if (D_801721F7 == 0) { // g_GameVars.unk37
+        if (engine_obj.unk37 == 0) { // g_GameVars.unk37
             var_a0 = 0x4B;
         }
     } else {
@@ -129,7 +129,7 @@ void func_80013404(u8 arg0)
     u8 var_s0;
     s8* a0;
     s8* var_v0;
-    struct EngineObj* ptr = &D_801721C0;
+    struct EngineObj* ptr = &engine_obj;
     *(void**)0x1F800100 = &D_801499C8[SP_DRAW_INFO_POS];
     *(void**)0x1F800104 = &D_80169D98[SP_DRAW_INFO_POS];
 
@@ -1055,7 +1055,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FAFC);
 void func_8001FB50(void)
 {
     while (1) {
-        D_800F23E8[D_801721C0.unk0](&D_801721C0);
+        D_800F23E8[engine_obj.unk0](&engine_obj);
         func_800127C8(1);
     }
 }
@@ -1550,7 +1550,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
-    arg0->unk4 = D_800F32D4[D_801721CD << 1][D_801721CC << 2];
+    arg0->unk4 = D_800F32D4[engine_obj.unkD << 1][engine_obj.unkC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -1603,12 +1603,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800281B0);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800281E8);
 
 extern u8 D_800F32D5[1][1];
-extern s8 D_801721CC;
-extern s8 D_801721CD;
 
 void func_80028268(struct BackgroundObj* arg0)
 {
-    arg0->unk4 = D_800F32D5[D_801721CD << 1][D_801721CC << 2];
+    arg0->unk4 = D_800F32D5[engine_obj.unkD << 1][engine_obj.unkC << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);
@@ -1777,7 +1775,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002A484);
 void func_8002A6FC()
 {
     s8 fill = 0;
-    s8* a0 = (u8*)&D_801721C0;
+    s8* a0 = (u8*)&engine_obj;
     s32 v1 = 0x64 - 1;
     do {
         *a0++ = fill;
@@ -2683,14 +2681,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800311EC);
 
 void func_800312B4(struct PlayerObj* arg0)
 {
-    arg0->unkC3 = arg0->unkC0 | D_801721CF;
+    arg0->unkC3 = arg0->unkC0 | engine_obj.unkF;
     arg0->unkC3 |= arg0->unkC4;
     arg0->unk89 = arg0->unk70 | arg0->unk71;
     arg0->unk8F = 0;
     arg0->unk90 = 0;
     arg0->unkBF = 0;
 
-    if (D_801721D0 == 0) {
+    if (engine_obj.unk10 == 0) {
         func_80033BC8(arg0);
         if (arg0->unk5C == 0) {
             return;
@@ -2966,7 +2964,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800340BC);
 
 s32 func_80034100(struct PlayerObj* arg0)
 {
-    if (D_801721CF != 0) {
+    if (engine_obj.unkF != 0) {
         func_80034F7C();
         return 1;
     }
@@ -3205,7 +3203,7 @@ void func_800361F8(struct PlayerObj* arg0)
             need_palette_load |= 1;
         }
     } else {
-        if (D_801721F7) {
+        if (engine_obj.unk37) {
             func_800361B0(arg0, 0xD, 0);
         } else {
             func_800361B0(arg0, 0, 0);
@@ -3247,7 +3245,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80036470);
 
 void func_80036534(struct PlayerObj* arg0)
 {
-    if (arg0->unk5C >= (D_80172206 / 3)) {
+    if (arg0->unk5C >= (engine_obj.unk46 / 3)) {
         func_800350A4(arg0, 5);
     } else {
         func_800350A4(arg0, 6);
