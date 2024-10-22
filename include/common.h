@@ -956,8 +956,8 @@ extern s32 D_80139684;
 extern s32 D_80139688;
 extern s32 D_80173C80;
 extern void (*D_8010EBB4[1])();
-extern (*D_8010EB98[])();
-extern (*D_8010EBA0[])();
+extern void (*D_8010EB98[])();
+extern void (*D_8010EBA0[])();
 extern u8 need_palette_load;
 extern void (*D_8010EBA8[])();
 extern s8 D_801721F7;
@@ -978,6 +978,7 @@ extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
 extern struct Prim D_800EE504[];
+extern void (*D_800F2AD4[1])(struct QuxObj*);
 
 #include "func_tables.h"
 
