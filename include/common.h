@@ -591,6 +591,15 @@ struct BgDrawRelated {
     u8 pad[0x4000];
 };
 
+struct Prim {
+    u16 x;
+    u16 y;
+    s8 uv;
+    u8 w;
+    u8 h;
+    s8 clut;
+}; // size 0x8
+
 extern struct PlayerObj g_Player;
 extern struct PlayerObj g_Entity;
 extern struct Unk16 D_80141BD8;
@@ -601,7 +610,9 @@ struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
     u32 unk70;
-    u8 pad2[0x25];
+    u8 pad70[12];
+    u32 unk80;
+    u8 pad80[24];
     u32 unk9C;
 };
 
@@ -972,6 +983,7 @@ extern s32 D_8013B80C;
 extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
+extern struct Prim D_800EE504[];
 
 #include "func_tables.h"
 
