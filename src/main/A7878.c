@@ -1341,8 +1341,39 @@ void func_800CB22C(struct Unk* arg0)
     is_on_screen(arg0);
 }
 
+extern u8 D_8010E6B0[];
+
 // ReadyText State 0
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB27C);
+void func_800CB27C(struct MiscObj* arg0)
+{
+    if (arg0->ext.ready_text.unk50->unk16 != 0) {
+        func_800CB5B4(arg0, NULL);
+        arg0->base.unk5 = 1;
+        arg0->ext.ready_text.unk54 = 8;
+        if (arg0->base.unk2 != 0) {
+            arg0->unk42 = 0x7840;
+            arg0->x_vel.val = FIXED(.25);
+            arg0->y_vel.val = FIXED(-.5);
+            return;
+        }
+        arg0->x_vel.val = FIXED(-.25);
+        arg0->y_vel.val = FIXED(.5);
+        func_8001540C(0, 0xA, 0);
+        return;
+    }
+    if ((arg0->base.unk2 == 0) && (arg0->ext.ready_text.unk5C == 0)) {
+        if (arg0->ext.ready_text.unk54 != 0) {
+            arg0->ext.ready_text.unk54--;
+            return;
+        }
+        func_800CB5B4(arg0, D_8010E6B0[arg0->ext.ready_text.unk58]);
+        arg0->ext.ready_text.unk58++;
+        if (arg0->ext.ready_text.unk58 >= 14) {
+            arg0->ext.ready_text.unk58 = 0;
+            arg0->ext.ready_text.unk5C = 1;
+        }
+    }
+}
 
 // ReadyText State 1
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CB394);

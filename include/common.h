@@ -417,12 +417,49 @@ struct LayerObj {
     u8 pad[0x2F];
 }; // size 0x30
 
+struct MiscUnk50 {
+    u8 pad[0x16];
+    u8 unk16;
+};
+
+struct ReadyTextExt {
+    struct MiscUnk50* unk50;
+    u16 unk54;
+    s8 pad54[2];
+    u16 unk58;
+    s8 pad58[2];
+    u16 unk5C;
+};
+
+struct TitleLogoExt {
+    s32 unk50;
+    s8 palette_shift_speed;
+    u8 palette_shift_value; // 0x55
+    s8 unk56;
+    u8 unk57;
+    s32 palette1; // 0x58
+    s32 palette2; // 0x5C
+};
+
+struct SelectACharacterExt {
+    s8 pad50[5];
+    u8 blast_timer; // 0x55
+    s8 unk56;
+    u8 unk57;
+};
+
+union MiscExt {
+    struct ReadyTextExt ready_text;
+    struct TitleLogoExt title_logo;
+    struct SelectACharacterExt sel_char;
+};
+
 struct MiscObj {
     struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     f32 x_vel; // 0x20
-    s32 unk24;
+    f32 y_vel;
     s32 unk28;
     s32 unk2C;
     u8 pad30[0x8];
@@ -434,13 +471,7 @@ struct MiscObj {
     s8 unk45;
     s8 unk46;
     s8 pad47[6];
-    s32 unk50;
-    s8 palette_shift_speed;
-    u8 palette_shift_value; // 0x55
-    s8 unk56;
-    u8 unk57;
-    s32 palette1; // 0x58
-    s32 palette2; // 0x5C
+    union MiscExt ext;
 }; // size 0x60
 
 struct BazObj {
