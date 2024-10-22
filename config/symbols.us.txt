@@ -450,6 +450,7 @@ EnablePAD = 0x800EE37C;
 DesablePAD = 0x800EE390;
 _patch_pad = 0x800EE3A4;
 game_objects = 0x8013BED0; // size:0x1D40
+baz_objects = 0x8013E470; // size:0xA0
 visual_objects = 0x8013E510; // size:0xC00
 shot_objects = 0x8013F328; // size:0x1380
 weapon_objects = 0x801406F8; // size:0x9C0
@@ -458,6 +459,7 @@ foo_objects = 0x80141AB0; // size:0x120
 effect_objects = 0x80142F98; // size:0xC00
 item_objects = 0x80165A30; // size:0x1180
 layer_objects = 0x80169CB8; // size:0xC0
+qux_objects = 0x80173A30; // size:0xB0
 misc_objects = 0x80173CA0; // size:0x1800
 cur_draw_info = 0x80142F80;
 
@@ -519,6 +521,7 @@ need_palette_load = 0x80166BB0;
 is_on_screen = 0x8002B288;
 quad_is_on_screen = 0x800D46F4;
 g_Player = 0x801418C8; // type:PlayerObj size:0xE4
+g_Entity = 0x80175D58; // size:0xE4
 
 background_objects = 0x801419B0;
 background_objects_02 = 0x801419B2;
