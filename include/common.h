@@ -645,16 +645,26 @@ struct EngineObj {
     s8 pad3;
     s16 unk4;
     s8 pad2[6];
-    s8 unkC;
-    s8 unkD;
+    s8 stage; // 0xc
+    s8 substage; // 0xd
     s8 unkE;
-    u8 pad1[0xe];
-    s8 unk1D;
+    s8 unkF;
+    s8 unk10;
+    u8 pad1[0xb];
+    s8 unk1C;
+    s8 checkpoint; // 0x1d
     s8 unk1E;
-    u8 pad1F[0x27 - 0x1F];
+    u8 pad1F[1];
+    s32 boss_ptr; // 0x20
+    s8 enable_boss; // 0x24
+    s8 unk25;
+    s8 unk26;
     s8 unk27;
-    s8 pad28[0x40 - 0x28];
-    s8 unk40;
+    s8 unk28;
+    s8 pad28[0xe];
+    s8 unk37;
+    s8 pad37[0x8];
+    u8 unk40;
     s8 pad40[2];
     s8 unk43;
     s8 unk44;
@@ -781,10 +791,6 @@ struct GameInfo {
     u8 unkD;
 };
 
-struct Unk80172203 {
-    s8 unk0;
-};
-
 struct OffsetInfo {
     u16 x_offset;
     u8 pad2[2];
@@ -806,8 +812,6 @@ extern u8 D_8011A030[];
 extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
-extern s8 D_801721CF;
-extern s8 D_801721D0;
 extern s8 D_80141BDC[];
 extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
@@ -817,15 +821,13 @@ extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
-extern struct EngineObj D_801721C0;
+extern struct EngineObj engine_obj;
 extern void (*D_800F23E8[1])(void*);
 extern s8 D_80171EA8;
 extern void (*D_800F44A8[1])();
 extern void (*D_800F48A4[1])(struct EngineObj* arg0);
 extern void (*D_800F241C[1])(void);
 extern u8 D_800F32D4[1][1];
-extern s8 D_801721CC;
-extern s8 D_801721CD;
 extern s32 D_800EE458;
 extern s32 D_8012F490;
 extern s8 D_80173C6C;
@@ -941,20 +943,12 @@ extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
 extern s32 D_80173C80;
-extern s8 D_80172206;
 extern void (*D_8010EBB4[1])();
-extern struct Unk80172203 D_80172203;
 extern (*D_8010EB98[])();
 extern (*D_8010EBA0[])();
 extern u8 need_palette_load;
-extern s8 D_801721DC;
-extern s8 D_801721DD;
 extern void (*D_8010EBA8[])();
-extern s8 D_801721E6;
-extern s8 D_801721E7;
-extern u8 D_801721E8[];
 extern s8 D_801721F7;
-extern u8 D_80172200;
 extern void (*D_8010FC90[])();
 extern s32 D_8010B1F8[];
 extern s32 D_8010B23C[][4];

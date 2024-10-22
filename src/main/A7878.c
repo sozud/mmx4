@@ -1248,15 +1248,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9EE8);
 void func_800CA030(struct MiscObj* arg0)
 {
     if (arg0->base.unk2 == 0) {
-        if (!(D_80172200 & 0x10)) {
-            func_80015DC8(arg0, D_80172200);
+        if (!(engine_obj.unk40 & 0x10)) {
+            func_80015DC8(arg0, engine_obj.unk40);
         } else {
-            func_80015D60(arg0, D_80172200 & 0xF);
+            func_80015D60(arg0, engine_obj.unk40 & 0xF);
         }
-    } else if (!(D_80172200 & 0x20)) {
-        func_80015DC8(arg0, D_80172200);
+    } else if (!(engine_obj.unk40 & 0x20)) {
+        func_80015DC8(arg0, engine_obj.unk40);
     } else {
-        func_80015D60(arg0, D_80172200 & 0xF);
+        func_80015D60(arg0, engine_obj.unk40 & 0xF);
     }
     is_on_screen(arg0);
 }
@@ -1358,8 +1358,8 @@ void func_800CB4E4(struct MiscObj* arg0)
     }
     arg0->base.state = 2;
     arg0->base.unk5 = 0;
-    if ((D_801721CC == 5) && (D_801721DD == 0)) {
-        D_801721DC = 0;
+    if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
+        engine_obj.unk1C = 0;
     }
 }
 

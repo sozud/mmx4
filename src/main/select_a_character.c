@@ -14,7 +14,7 @@ void func_800CCCA0(struct MiscObj* arg0)
         arg0->x_vel.val = FIXED(-16); // speed of Zero portrait
     }
     if (((arg0->base.unk2 == 0) && (arg0->base.x_pos.i.hi == 96)) || ((arg0->base.unk2 == 1) && (arg0->base.x_pos.i.hi == 224))) {
-        D_801721E8[0] |= 1 << arg0->base.unk2;
+        engine_obj.unk28 |= 1 << arg0->base.unk2;
         arg0->base.unk6++;
         return;
     }
@@ -24,7 +24,7 @@ void func_800CCCA0(struct MiscObj* arg0)
 // D_8010EB84 state 1
 void func_800CCD48(struct MiscObj* arg0)
 {
-    if (D_801721E7 & 0x80) {
+    if (engine_obj.unk27 & 0x80) {
         arg0->base.unk6++;
         // sets how fast the X and Zero portraits move
         // to the left and right after selecting a character
@@ -126,7 +126,7 @@ void func_800CCF70(struct MiscObj* arg0)
 void func_800CD034(struct MiscObj* arg0)
 {
     D_8010EB98[arg0->base.unk6]();
-    if (D_801721E7 & 0x80) {
+    if (engine_obj.unk27 & 0x80) {
         arg0->base.state++;
     }
 }
@@ -136,7 +136,7 @@ void func_800CD0A4(struct MiscObj* arg0)
 {
     s16 x_pos;
 
-    if (D_80172203.unk0 != 0) {
+    if (engine_obj.unk43 != 0) {
         func_80015D60(arg0, 9);
         x_pos = 224; // zero is selected, move selector graphic to right
     } else {
@@ -154,11 +154,11 @@ void func_800CD0A4(struct MiscObj* arg0)
 void func_800CD110(struct MiscObj* arg0)
 {
     func_80015DC8();
-    if (D_80172203.unk0 != arg0->unk57) {
+    if (engine_obj.unk43 != arg0->unk57) {
         arg0->base.unk6 = 0;
         func_8001540C(5, 0, NULL);
     }
-    arg0->unk57 = D_80172203.unk0;
+    arg0->unk57 = engine_obj.unk43;
 }
 
 // D_8010EBB4 state 6
@@ -167,7 +167,7 @@ void func_800CD110(struct MiscObj* arg0)
 void func_800CD178(struct MiscObj* arg0)
 {
     D_8010EBA0[arg0->base.unk6]();
-    if (D_801721E7 & 0x80) {
+    if (engine_obj.unk27 & 0x80) {
         arg0->base.state++;
     }
 }
@@ -177,12 +177,12 @@ void func_800CD1E8(struct MiscObj* arg0)
 {
     struct MiscObj* obj;
 
-    if (D_801721E6 != 0) {
+    if (engine_obj.unk26 != 0) {
         arg0->base.unk5 = 0xF;
         arg0->base.unk6 = 0;
         return;
     }
-    if (D_80172203.unk0 == (arg0->base.unk2 - 7)) {
+    if (engine_obj.unk43 == (arg0->base.unk2 - 7)) {
         if (arg0->palette_shift_value == 0) {
             arg0->base.unk6++;
             func_80015D60(arg0, 1);
@@ -211,7 +211,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CD2BC);
 void func_800CD390(struct MiscObj* arg0)
 {
     D_8010EBA8[arg0->base.unk6]();
-    if ((D_80172203.unk0 != (arg0->base.unk2 - 7)) && (arg0->unk46 == 0)) {
+    if ((engine_obj.unk43 != (arg0->base.unk2 - 7)) && (arg0->unk46 == 0)) {
         arg0->base.unk6 = 0;
         arg0->palette_shift_value = 0;
     }
