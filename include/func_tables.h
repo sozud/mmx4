@@ -590,6 +590,7 @@ void func_800DA7C0(void);
 void func_800DA878(void);
 
 // D_800F2AD4
+extern void (*D_800F2AD4[1])(struct QuxObj*);
 void func_8003B3DC(void);
 void func_8003D3F8(void);
 

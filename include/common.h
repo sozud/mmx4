@@ -978,7 +978,6 @@ extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
 extern struct Prim D_800EE504[];
-extern void (*D_800F2AD4[1])(struct QuxObj*);
 
 #include "func_tables.h"
 
