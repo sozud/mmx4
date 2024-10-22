@@ -426,9 +426,9 @@ struct ReadyTextExt {
     struct MiscUnk50* unk50;
     u16 unk54;
     s8 pad54[2];
-    u16 unk58;
+    u16 palette_pos;
     s8 pad58[2];
-    u16 unk5C;
+    u16 palette_cycle_done;
 };
 
 struct TitleLogoExt {

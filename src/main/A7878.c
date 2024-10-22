@@ -1353,24 +1353,25 @@ void func_800CB27C(struct MiscObj* arg0)
         if (arg0->base.unk2 != 0) {
             arg0->unk42 = 0x7840;
             arg0->x_vel.val = FIXED(.25);
-            arg0->y_vel.val = FIXED(-.5);
+            arg0->y_vel.val = FIXED(-.5); // set y velocity of shadow behind "READY"
             return;
         }
         arg0->x_vel.val = FIXED(-.25);
-        arg0->y_vel.val = FIXED(.5);
+        arg0->y_vel.val = FIXED(.5); // set y velocity of blue "READY"
         func_8001540C(0, 0xA, 0);
         return;
     }
-    if ((arg0->base.unk2 == 0) && (arg0->ext.ready_text.unk5C == 0)) {
+    if ((arg0->base.unk2 == 0) && (arg0->ext.ready_text.palette_cycle_done == 0)) {
         if (arg0->ext.ready_text.unk54 != 0) {
             arg0->ext.ready_text.unk54--;
             return;
         }
-        func_800CB5B4(arg0, D_8010E6B0[arg0->ext.ready_text.unk58]);
-        arg0->ext.ready_text.unk58++;
-        if (arg0->ext.ready_text.unk58 >= 14) {
-            arg0->ext.ready_text.unk58 = 0;
-            arg0->ext.ready_text.unk5C = 1;
+        // cycle palette when "READY" first appears
+        func_800CB5B4(arg0, D_8010E6B0[arg0->ext.ready_text.palette_pos]);
+        arg0->ext.ready_text.palette_pos++;
+        if (arg0->ext.ready_text.palette_pos >= 14) {
+            arg0->ext.ready_text.palette_pos = 0;
+            arg0->ext.ready_text.palette_cycle_done = 1;
         }
     }
 }
