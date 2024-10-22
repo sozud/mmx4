@@ -443,6 +443,16 @@ struct MiscObj {
     s32 palette2; // 0x5C
 }; // size 0x60
 
+struct BazObj {
+    struct BaseObj base;
+    s8 pad18[0x50 - 0x18];
+}; // size 0x50
+
+struct QuxObj {
+    struct BaseObj base;
+    s8 pad18[0xB0 - 0x18];
+}; // size 0xB0
+
 struct Unk2 {
     u8 unk0;
     u8 unk1;
@@ -825,7 +835,6 @@ extern s32 D_801395E4;
 extern s32 D_801395E8;
 extern volatile s32 D_80139634;
 extern struct Unk80139690* D_80139690;
-extern u8 D_8013E470;
 extern void (*D_800F43A8[1])(s32);
 extern void (*D_800F4498[1])(void);
 extern void (*D_800FB0F4[1])();
@@ -858,6 +867,7 @@ extern s16 D_8013B7FC;
 extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
+extern struct BazObj baz_objects[2];
 extern struct VisualObj visual_objects[0x20];
 extern struct ShotObj shot_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
@@ -867,6 +877,7 @@ extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern struct LayerObj layer_objects[4];
+extern struct QuxObj qux_objects[1];
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
 extern void (*ReadyTextUpdateFuncs[1])(void);

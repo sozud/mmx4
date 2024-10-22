@@ -1170,8 +1170,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021D20);
 
 void func_80021D84(void)
 {
-    func_800AE6B4(&D_8013E470);
-    func_800AE6B4(&D_8013E470 + 0x50);
+    func_800AE6B4(&baz_objects[0]);
+    func_800AE6B4(&baz_objects[1]);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021DBC);
@@ -1238,8 +1238,6 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-extern s8 D_8013E473;
-extern s8 D_8013E4C3;
 extern s8 D_80173A30;
 extern s8 D_80173A33;
 extern s8 D_80175D58[0x3E];
@@ -1268,7 +1266,7 @@ void func_80023DB8(void)
     void* temp_v1_8;
     void* temp_v1_9;
     struct Unk* ptr = &g_Player;
-    void* ptr2;
+    struct BazObj* ptr2;
 
     temp_a0 = *(s32*)0x1F800000;
     *(s32*)0x1F800124 = 0;
@@ -1291,12 +1289,12 @@ void func_80023DB8(void)
         func_80024334(&D_80175D58);
     }
     if (ptr->base.unk2 == 0) {
-        ptr2 = &D_8013E470;
-        if (D_8013E473 != 0) {
+        ptr2 = &baz_objects;
+        if (ptr2->base.on_screen != 0) {
             func_80024334(ptr2);
         }
-        ptr2 += 0x50;
-        if (D_8013E4C3 != 0) {
+        ptr2 += 1;
+        if (ptr2->base.on_screen != 0) {
             func_80024334(ptr2);
         }
     }
@@ -1352,8 +1350,8 @@ void func_80023DB8(void)
         }
     }
 
-    if (D_80173A33 != 0) {
-        func_80024334(&D_80173A30);
+    if ((&qux_objects[0])->base.on_screen != 0) {
+        func_80024334(&qux_objects[0]);
     }
 
     for (var_s0_9 = &g_QuadObjects[0]; var_s0_9 < &g_QuadObjects[COUNT(g_QuadObjects)]; var_s0_9++) {
@@ -1810,7 +1808,6 @@ void func_8002A7D0(void)
     s8 fill = 0;
     s32 a2;
     s32 var_v1;
-    s8* var_a0;
     s8* a0;
     u32 a1;
 
@@ -1825,9 +1822,9 @@ void func_8002A7D0(void)
         } while (var_v1-- != 0);
     }
 
-    for (a1 = 0; a1 < 2; a1++) {
-        a0 = (u8*)&D_8013E470 + a1 * 0x50;
-        var_v1 = 0x50 - 1;
+    for (a1 = 0; a1 < COUNT(baz_objects); a1++) {
+        a0 = (u8*)&baz_objects[a1];
+        var_v1 = sizeof(baz_objects[0]) - 1;
         do {
             *a0++ = fill;
         } while (var_v1-- != 0);
@@ -1841,7 +1838,7 @@ void func_8002A7D0(void)
         } while (var_v1-- != 0);
     }
 
-    func_8002A74C();
+    func_8002A74C(); // clear game_objects and shot_objects
 
     for (a1 = 0; a1 < COUNT(visual_objects); a1++) {
         a0 = (u8*)&visual_objects[a1];
@@ -1899,8 +1896,8 @@ void func_8002A7D0(void)
         } while (var_v1-- != 0);
     }
 
-    a0 = &D_80173A30;
-    var_v1 = 0xB0;
+    a0 = (u8*)&qux_objects;
+    var_v1 = sizeof(qux_objects);
     while (var_v1-- != 0) {
         *a0++ = fill;
     }
