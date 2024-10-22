@@ -1183,7 +1183,23 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021A20);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021B34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021C14);
+void func_80021C14(void)
+{
+    if (engine_obj.unk10 == 0) {
+        if (qux_objects->base.active != 0) {
+            D_800F2AD4[qux_objects->base.id](qux_objects);
+            return;
+        }
+    } else if (qux_objects->base.active != 0) {
+        if (qux_objects->base.active & 8) {
+            D_800F2AD4[qux_objects->base.id](qux_objects);
+            return;
+        }
+        if (qux_objects->base.on_screen != 0) {
+            func_8002B3C0(qux_objects);
+        }
+    }
+}
 
 void func_80021CC8(void)
 {
