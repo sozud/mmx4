@@ -665,7 +665,7 @@ struct EngineObj {
     s8 unk1C;
     s8 checkpoint; // 0x1d
     s8 unk1E;
-    u8 pad1F[1];
+    s8 unk1F;
     s32 boss_ptr; // 0x20
     s8 enable_boss; // 0x24
     s8 unk25;
@@ -991,6 +991,7 @@ s32 func_800350A4(struct Unk6*, s32);
 s32 func_80033694();
 void func_80034538(struct Unk7*);
 void func_80034754(struct Unk7*);
+void func_80025188(s32, u8);
 void func_80027A5C(struct Unk9*, s32);
 void func_80027AAC(struct Unk9*);
 void func_80027AFC(struct Unk9*);
