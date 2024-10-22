@@ -1238,11 +1238,6 @@ void func_80023D68(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
-extern s8 D_80173A30;
-extern s8 D_80173A33;
-extern s8 D_80175D58[0x3E];
-extern s8 D_80175D5B;
-
 // some kind of init?
 void func_80023DB8(void)
 {
@@ -1265,8 +1260,9 @@ void func_80023DB8(void)
     void* temp_v1_7;
     void* temp_v1_8;
     void* temp_v1_9;
-    struct Unk* ptr = &g_Player;
+    struct PlayerObj* ptr = &g_Player;
     struct BazObj* ptr2;
+    struct PlayerObj* ptr3 = &g_Entity;
 
     temp_a0 = *(s32*)0x1F800000;
     *(s32*)0x1F800124 = 0;
@@ -1285,8 +1281,8 @@ void func_80023DB8(void)
             func_800257BC(ptr);
         }
     }
-    if (D_80175D5B != 0) {
-        func_80024334(&D_80175D58);
+    if (g_Entity.base.on_screen != 0) {
+        func_80024334(ptr3);
     }
     if (ptr->base.unk2 == 0) {
         ptr2 = &baz_objects;
@@ -1812,7 +1808,7 @@ void func_8002A7D0(void)
     u32 a1;
 
     func_8002A728(&g_Player);
-    func_8002A728(&D_80175D58);
+    func_8002A728(&g_Entity);
 
     for (a1 = 0; a1 < COUNT(foo_objects); a1++) {
         a0 = (u8*)&foo_objects[a1];

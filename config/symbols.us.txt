@@ -521,6 +521,7 @@ need_palette_load = 0x80166BB0;
 is_on_screen = 0x8002B288;
 quad_is_on_screen = 0x800D46F4;
 g_Player = 0x801418C8; // type:PlayerObj size:0xE4
+g_Entity = 0x80175D58; // size:0xE4
 
 background_objects = 0x801419B0;
 background_objects_02 = 0x801419B2;

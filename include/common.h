@@ -592,6 +592,7 @@ struct BgDrawRelated {
 };
 
 extern struct PlayerObj g_Player;
+extern struct PlayerObj g_Entity;
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[];
 extern struct BgDrawRelated D_8015D9D0[];
