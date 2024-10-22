@@ -1358,7 +1358,7 @@ void func_800CB4E4(struct MiscObj* arg0)
     }
     arg0->base.state = 2;
     arg0->base.unk5 = 0;
-    if ((engine_obj.unkC == 5) && (engine_obj.unk1D == 0)) {
+    if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
         engine_obj.unk1C = 0;
     }
 }

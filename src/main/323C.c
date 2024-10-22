@@ -147,17 +147,17 @@ void func_80013404(u8 arg0)
         func_8001326C(5);
 
         a0 = &D_800EE54C;
-        if (ptr->unkC == 0xC) {
+        if (ptr->stage == 0xC) {
             var_v0 = a0 + 0xB;
         } else {
-            var_v0 = a0 + ptr->unkC;
+            var_v0 = a0 + ptr->stage;
         }
         D_800EE538 = *var_v0;
 
         func_8001326C(6);
 
-        if (ptr->unkC < 9) {
-            if (ptr->unkD != 0) {
+        if (ptr->stage < 9) {
+            if (ptr->substage != 0) {
                 func_8001326C(8);
             } else {
                 func_8001326C(7);
@@ -1072,7 +1072,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FBD4);
 void func_8001FBE0(struct EngineObj* arg0)
 {
     func_80013014();
-    arg0->unk1D = 0;
+    arg0->checkpoint = 0;
     arg0->unk1E = 0;
     D_80171EA8 = 0;
     arg0->unk0 = 5;
@@ -1082,12 +1082,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FC20);
 
 s32 func_8001FD7C(struct EngineObj* arg0)
 {
-    if (arg0->unkC != 0xC) {
+    if (arg0->stage != 0xC) {
         return 0;
-    } else if (arg0->unkD != 0) {
+    } else if (arg0->substage != 0) {
         return 0;
-    } else if (arg0->unk1D >= 2) {
-        return arg0->unk1D < 0xA;
+    } else if (arg0->checkpoint >= 2) {
+        return arg0->checkpoint < 0xA;
     }
     return 0;
 }
@@ -1550,7 +1550,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027D40);
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
-    arg0->unk4 = D_800F32D4[engine_obj.unkD << 1][engine_obj.unkC << 2];
+    arg0->unk4 = D_800F32D4[engine_obj.substage << 1][engine_obj.stage << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -1606,7 +1606,7 @@ extern u8 D_800F32D5[1][1];
 
 void func_80028268(struct BackgroundObj* arg0)
 {
-    arg0->unk4 = D_800F32D5[engine_obj.unkD << 1][engine_obj.unkC << 2];
+    arg0->unk4 = D_800F32D5[engine_obj.substage << 1][engine_obj.stage << 2];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);
@@ -1742,8 +1742,8 @@ void func_80029978(struct EngineObj* arg0)
         func_80012EB8();
         arg0->unk0 = 3;
         arg0->unk1 = 0;
-        arg0->unkC = 0;
-        arg0->unkD = 0;
+        arg0->stage = 0;
+        arg0->substage = 0;
     }
 }
 

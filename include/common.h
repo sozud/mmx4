@@ -645,16 +645,19 @@ struct EngineObj {
     s8 pad3;
     s16 unk4;
     s8 pad2[6];
-    s8 unkC;
-    s8 unkD;
+    s8 stage; // 0xc
+    s8 substage; // 0xd
     s8 unkE;
     s8 unkF;
     s8 unk10;
     u8 pad1[0xb];
     s8 unk1C;
-    s8 unk1D;
+    s8 checkpoint; // 0x1d
     s8 unk1E;
-    u8 pad1F[0x7];
+    u8 pad1F[1];
+    s32 boss_ptr; // 0x20
+    s8 enable_boss; // 0x24
+    s8 unk25;
     s8 unk26;
     s8 unk27;
     s8 unk28;
