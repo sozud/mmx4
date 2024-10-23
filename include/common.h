@@ -425,7 +425,7 @@ struct MiscUnk50 {
 struct ReadyTextExt {
     struct MiscUnk50* unk50;
     u16 unk54;
-    s8 pad54[2];
+    u16 stay_up_timer;
     u16 palette_pos;
     s8 pad58[2];
     u16 palette_cycle_done;
