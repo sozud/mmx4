@@ -21,12 +21,12 @@ void func_800CDB10(struct MiscObj* arg0)
     func_80015DC8();
     // transition "MEGAMAN" to white before full logo appears
     if (arg0->unk46 == 0) {
-        arg0->palette2 = (s32)(*(s32*)SP_PALETTE_ADDR + 0x200);
-        arg0->palette1 = (s32) * (s32*)0x1F800030;
+        arg0->ext.title_logo.palette2 = (s32)(*(s32*)SP_PALETTE_ADDR + 0x200);
+        arg0->ext.title_logo.palette1 = (s32) * (s32*)0x1F800030;
         // interval to shift on
-        arg0->palette_shift_speed = 2;
+        arg0->ext.title_logo.palette_shift_speed = 2;
         // how much to shift each step
-        arg0->palette_shift_value = 0xF;
+        arg0->ext.title_logo.palette_shift_value = 0xF;
         arg0->base.state++;
     }
     is_on_screen(arg0);

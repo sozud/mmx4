@@ -154,11 +154,11 @@ void func_800CD0A4(struct MiscObj* arg0)
 void func_800CD110(struct MiscObj* arg0)
 {
     func_80015DC8();
-    if (engine_obj.unk43 != arg0->unk57) {
+    if (engine_obj.unk43 != arg0->ext.sel_char.unk57) {
         arg0->base.unk6 = 0;
         func_8001540C(5, 0, NULL);
     }
-    arg0->unk57 = engine_obj.unk43;
+    arg0->ext.sel_char.unk57 = engine_obj.unk43;
 }
 
 // D_8010EBB4 state 6
@@ -183,7 +183,7 @@ void func_800CD1E8(struct MiscObj* arg0)
         return;
     }
     if (engine_obj.unk43 == (arg0->base.unk2 - 7)) {
-        if (arg0->palette_shift_value == 0) {
+        if (arg0->ext.sel_char.blast_timer == 0) {
             arg0->base.unk6++;
             func_80015D60(arg0, 1);
             if (arg0->base.unk2 == 7) {
@@ -199,7 +199,7 @@ void func_800CD1E8(struct MiscObj* arg0)
                 }
             }
         } else {
-            arg0->palette_shift_value--;
+            arg0->ext.sel_char.blast_timer--;
         }
     }
 }
@@ -213,7 +213,7 @@ void func_800CD390(struct MiscObj* arg0)
     D_8010EBA8[arg0->base.unk6]();
     if ((engine_obj.unk43 != (arg0->base.unk2 - 7)) && (arg0->unk46 == 0)) {
         arg0->base.unk6 = 0;
-        arg0->palette_shift_value = 0;
+        arg0->ext.sel_char.blast_timer = 0;
     }
 }
 
