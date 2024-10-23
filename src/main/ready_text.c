@@ -6,8 +6,69 @@ void MegamanRelatedUpdate(struct MiscObj* arg0)
     g_MegamanRelatedUpdateFuncs[arg0->base.state](arg0);
 }
 
+extern void* D_8010E6A0;
+extern u8 D_8010E6C8[];
+extern s16 D_8010E6D0[];
+extern s16 D_8010E6DC[];
+extern u8 D_8010E6E8[];
+extern u16 D_8013B940;
+
 // g_MegamanRelatedUpdateFuncs state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/ready_text", func_800CB048);
+void func_800CB048(struct MiscObj* arg0)
+{
+    u16* pal_dst;
+    u16* color;
+    u32 pal_pos;
+    u8 temp_v1;
+
+    if (engine_obj.unk43 == 0) {
+        arg0->unk3C = &SP_1C->unk0[SP_1C->unk24];
+    } else {
+        arg0->unk3C = &SP_1C->unk0[SP_1C->unk10];
+    }
+
+    arg0->unk40 = 0x1E00;
+    arg0->unk30 = &D_8010E6A0;
+    arg0->base.state = 1;
+    arg0->base.bg_offset = -1;
+    temp_v1 = D_8010E6C8[arg0->base.unk2];
+    arg0->unk42 = (temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6); // see func_800AF28C & func_8003D4C8 for a similar pattern
+    arg0->base.x_pos.i.hi = D_8010E6D0[arg0->base.unk2];
+    arg0->base.y_pos.i.hi = D_8010E6DC[arg0->base.unk2];
+    arg0->base.unk16 = D_8010E6E8[arg0->base.unk2];
+    arg0->base.unk15 = 0;
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->ext.ready_text.unk54 = 0;
+    arg0->ext.ready_text.stay_up_timer = 0;
+    arg0->ext.ready_text.palette_pos = 0;
+    arg0->ext.ready_text.unk58 = 0;
+    arg0->ext.ready_text.palette_cycle_done = 0;
+
+    if (arg0->base.unk2 < 2) {
+        pal_pos = 0;
+        if (arg0->base.unk2 != 0) {
+            pal_dst = &D_8013B940;
+            color = *(s32*)0x1F800028 + 0x200;
+            do {
+                *pal_dst++ = *color;
+                if (pal_pos != 0) {
+                    *color = 0x8000;
+                } else {
+                    *color = 0;
+                }
+                pal_pos += 1;
+                color += 1;
+            } while (pal_pos < 16);
+            need_palette_load |= 1;
+        }
+        func_80015D60(arg0, 0);
+    } else {
+        func_80015D60(arg0, arg0->base.unk2 - 1);
+    }
+}
 
 // g_MegamanRelatedUpdateFuncs state 1
 void func_800CB1F0(struct MiscObj* arg0)
