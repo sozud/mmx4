@@ -647,8 +647,9 @@ struct QuadObj* find_free_quad_obj(void);
 struct LayerObj* func_8002B048(void);
 
 // D_800F4498
-void func_80029604(void);
-void func_800296A8(void);
+extern void (*D_800F4498[])(struct EngineObj*);
+void func_80029604(struct EngineObj*);
+void func_800296A8(struct EngineObj*);
 
 // D_800F44A0
 void func_80029A48(void);
