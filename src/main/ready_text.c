@@ -3,7 +3,7 @@
 // megaman never appears in stage if nopped out
 void MegamanRelatedUpdate(struct MiscObj* arg0)
 {
-    g_MegamanRelatedUpdateFuncs[arg0->base.state]();
+    g_MegamanRelatedUpdateFuncs[arg0->base.state](arg0);
 }
 
 extern void* D_8010E6A0;
@@ -73,14 +73,14 @@ void func_800CB048(struct MiscObj* arg0)
 // g_MegamanRelatedUpdateFuncs state 1
 void func_800CB1F0(struct MiscObj* arg0)
 {
-    D_8010E6FC[arg0->base.unk2](); // the animation before ready appears but "READY" doesn't if nopped out
+    D_8010E6FC[arg0->base.unk2](arg0); // the animation before ready appears but "READY" doesn't if nopped out
 }
 
 // func_800CB22C state 0, 1
 // animation leading up to "READY" shows up but "READY" never apprears
 // if nopped out
 // asm(".rept 18 ; nop ; .endr");
-void func_800CB22C(struct Unk* arg0)
+void func_800CB22C(struct MiscObj* arg0)
 {
     ReadyTextUpdateFuncs[arg0->base.unk5]();
     is_on_screen(arg0);
@@ -191,10 +191,20 @@ void func_800CB4E4(struct MiscObj* arg0)
 }
 
 // D_8010E6FC state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/ready_text", func_800CB554);
+void func_800CB554(struct MiscObj* arg0)
+{
+    arg0->base.on_screen = 0;
+    if (D_80141BD8.unk0 & 0x10) {
+        is_on_screen(arg0);
+    }
+}
 
 // D_8010E6FC state 3, 4
-INCLUDE_ASM("asm/us/main/nonmatchings/ready_text", func_800CB590);
+void func_800CB590(struct MiscObj* arg0)
+{
+    arg0->base.on_screen = 1;
+    is_on_screen(arg0);
+}
 
 // "READY" has wrong palette if nopped out
 // asm(".rept 22 ; nop ; .endr");

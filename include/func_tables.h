@@ -5636,17 +5636,19 @@ void func_800CAC54(void);
 void func_800CACF0(void);
 void func_800CADD8(void);
 
-// D_8010E6F0
-void func_800CB048(struct MiscObj* arg0);
-void func_800CB1F0(struct MiscObj* arg0);
-void func_800CB614(struct MiscObj* arg0);
+// D_8010E6F0 - g_MegamanRelatedUpdateFuncs
+extern void (*g_MegamanRelatedUpdateFuncs[])(struct MiscObj*);
+void func_800CB048(struct MiscObj*);
+void func_800CB1F0(struct MiscObj*);
+void func_800CB614(struct MiscObj*);
 
 // D_8010E6FC
-void func_800CB22C(struct Unk* arg0);
-void func_800CB22C(struct Unk* arg0);
-void func_800CB554(struct Unk* arg0);
-void func_800CB590(struct Unk* arg0);
-void func_800CB590(struct Unk* arg0);
+extern void (*D_8010E6FC[])(struct MiscObj*);
+void func_800CB22C(struct MiscObj*);
+void func_800CB22C(struct MiscObj*);
+void func_800CB554(struct MiscObj*);
+void func_800CB590(struct MiscObj*);
+void func_800CB590(struct MiscObj*);
 
 // D_8010E710
 void func_800CB27C(struct MiscObj* arg0);
