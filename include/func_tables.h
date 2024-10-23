@@ -5637,9 +5637,9 @@ void func_800CACF0(void);
 void func_800CADD8(void);
 
 // D_8010E6F0
-void func_800CB048(struct Unk* arg0);
-void func_800CB1F0(struct Unk* arg0);
-void func_800CB614(struct Unk* arg0);
+void func_800CB048(struct MiscObj* arg0);
+void func_800CB1F0(struct MiscObj* arg0);
+void func_800CB614(struct MiscObj* arg0);
 
 // D_8010E6FC
 void func_800CB22C(struct Unk* arg0);
