@@ -425,10 +425,10 @@ struct MiscUnk50 {
 struct ReadyTextExt {
     struct MiscUnk50* unk50;
     u16 unk54;
-    u16 stay_up_timer;
+    u16 stay_up_timer; // 0x56
     u16 palette_pos;
-    s8 pad58[2];
-    u16 palette_cycle_done;
+    u16 unk58;
+    u16 palette_cycle_done; // 0x5C
 };
 
 struct TitleLogoExt {
@@ -462,9 +462,10 @@ struct MiscObj {
     f32 y_vel;
     s32 unk28;
     s32 unk2C;
-    u8 pad30[0x8];
+    s32 unk30;
+    u8 pad30[0x4];
     s16 unk38;
-    u8 pad39[5];
+    void* unk3C;
     u16 unk40;
     u16 unk42;
     s8 unk44;
