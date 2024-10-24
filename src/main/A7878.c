@@ -1241,8 +1241,10 @@ void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
     g_MegamanInBriefingRoomUpdateFuncs[arg0->base.state]();
 }
 
+// g_MegamanInBriefingRoomUpdateFuncs state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9EE8);
 
+// g_MegamanInBriefingRoomUpdateFuncs state 1
 // X doesn't appear in briefing room if nopped out
 // asm(".rept 36 ; nop ; .endr");
 void func_800CA030(struct MiscObj* arg0)

@@ -471,7 +471,8 @@ struct MiscObj {
     s8 unk44;
     s8 unk45;
     s8 unk46;
-    s8 pad47[6];
+    s8 unk47;
+    s8 pad47[5];
     union MiscExt ext;
 }; // size 0x60
 

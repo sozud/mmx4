@@ -57,6 +57,7 @@ void func_800D5C18(struct QuadObj* arg0)
     D_8010FAE0[arg0->state](arg0);
 }
 
+// QuadObj #7
 // megaman never appears in intro stage if nopped out
 void func_800D5C54(struct QuadObj* arg0)
 {
@@ -97,10 +98,13 @@ void func_800D5CF8(struct QuadObj* arg0)
     func_8002B458(arg0);
 }
 
+// D_8010FC90 state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5D50);
 
+// D_8010FC90 state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5F1C);
 
+// D_8010FC90 state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6260);
 
 void func_800D6494(struct Unk22* arg0)
@@ -149,6 +153,7 @@ void func_800D6780(struct QuadObj* arg0)
     ZeroObjectState(arg0);
 }
 
+// QuadObj #8
 void func_800D67A0(struct QuadObj* arg0)
 {
     D_8010FCAC[arg0->state](arg0);
