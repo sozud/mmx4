@@ -1238,17 +1238,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021B34);
 void func_80021C14(void)
 {
     if (engine_obj.unk10 == 0) {
-        if (qux_objects->base.active != 0) {
-            D_800F2AD4[qux_objects->base.id](qux_objects);
+        if (qux_object.base.active != 0) {
+            D_800F2AD4[qux_object.base.id](&qux_object);
             return;
         }
-    } else if (qux_objects->base.active != 0) {
-        if (qux_objects->base.active & 8) {
-            D_800F2AD4[qux_objects->base.id](qux_objects);
+    } else if (qux_object.base.active != 0) {
+        if (qux_object.base.active & 8) {
+            D_800F2AD4[qux_object.base.id](&qux_object);
             return;
         }
-        if (qux_objects->base.on_screen != 0) {
-            func_8002B3C0(qux_objects);
+        if (qux_object.base.on_screen != 0) {
+            func_8002B3C0(&qux_object);
         }
     }
 }
@@ -1359,6 +1359,7 @@ void init_objects(void)
     struct PlayerObj* ptr = &g_Player;
     struct BazObj* ptr2;
     struct PlayerObj* ptr3 = &g_Entity;
+    struct QuxObj* ptr4;
 
     temp_a0 = *(s32*)0x1F800000;
     *(s32*)0x1F800124 = 0;
@@ -1442,8 +1443,9 @@ void init_objects(void)
         }
     }
 
-    if ((&qux_objects[0])->base.on_screen != 0) {
-        func_80024334(&qux_objects[0]);
+    ptr4 = &qux_object;
+    if (ptr4->base.on_screen != 0) {
+        func_80024334(&qux_object);
     }
 
     for (var_s0_9 = &g_QuadObjects[0]; var_s0_9 < &g_QuadObjects[COUNT(g_QuadObjects)]; var_s0_9++) {
@@ -2075,14 +2077,14 @@ void reset_objects(void)
         } while (var_v1-- != 0);
     }
 
-    a0 = (u8*)&qux_objects;
-    var_v1 = sizeof(qux_objects);
+    a0 = (u8*)&qux_object;
+    var_v1 = sizeof(qux_object);
     while (var_v1-- != 0) {
         *a0++ = fill;
     }
 
-    a0 = &bar_object;
-    var_v1 = 0x34;
+    a0 = (u8*)&bar_object;
+    var_v1 = sizeof(bar_object);
     while (var_v1-- != 0) {
         *a0++ = fill;
     }
@@ -2680,7 +2682,30 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002DE30);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002DF7C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002E184);
+void func_8002E184(struct PlayerObj* arg0)
+{
+    if (arg0->unk68 != NULL) {
+        func_8002E294(arg0, &g_Player);
+        if (arg0->unk76 > 0) {
+            func_8002E380(arg0, &g_Player, arg0->unk72);
+        }
+        func_8002C36C(arg0, &g_Player, 0);
+        if (g_Entity.base.active != 0) {
+            func_8002E294(arg0, &g_Entity);
+            if (arg0->unk77 > 0) {
+                func_8002E380(arg0, &g_Entity, arg0->unk73);
+            }
+            func_8002C36C(arg0, &g_Entity, 1);
+        }
+        if (qux_object.base.active != 0) {
+            func_8002E294(arg0, (struct PlayerObj*)&qux_object);
+            if (arg0->unk78 > 0) {
+                func_8002E380(arg0, (struct PlayerObj*)&qux_object, arg0->unk74);
+            }
+            func_8002C36C(arg0, (struct PlayerObj*)&qux_object, 2);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002E294);
 
@@ -3263,7 +3288,17 @@ void func_80035848(struct PlayerObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800358A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80035A24);
+void func_80035A24(struct PlayerObj* arg0)
+{
+    qux_object.base.active = 1;
+    arg0->unkA7 = engine_obj.unk47;
+    arg0->unkB8 = engine_obj.unk48;
+    arg0->unkC5 = -1;
+    arg0->unkD4 = 0x29;
+    arg0->unk67 = 1;
+    arg0->base.unk5 = 0x12;
+    arg0->base.unk6 = 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80035A6C);
 

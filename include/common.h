@@ -54,7 +54,7 @@ struct BaseObj {
     s8 unk7;
     f32 x_pos; // 0x8 and 0xA
     f32 y_pos; // 0xC and 0xE
-    u8 pad10[0x4];
+    s32 unk10;
     s8 bg_offset;
     u8 unk15;
     u8 unk16;
@@ -183,9 +183,9 @@ struct PlayerObj {
     s16 unk6E;
     u8 unk70;
     s8 unk71;
-    s8 unk72;
-    s8 unk73;
-    s8 unk74;
+    u8 unk72;
+    u8 unk73;
+    u8 unk74;
     s8 unk75;
     s8 unk76;
     s8 unk77;
@@ -228,7 +228,8 @@ struct PlayerObj {
     s8 unkA4;
     s8 : 8;
     s8 unkA6;
-    u8 padA7[0xB8 - 0xA7];
+    s8 unkA7;
+    u8 padA8[0xB8 - 0xA8];
     u8 unkB8;
     u8 padB9[0xBC - 0xB9];
     s8 unkBC;
@@ -244,7 +245,8 @@ struct PlayerObj {
     s32 unkC8;
     s32 unkCC;
     s32 unkD0;
-    s8 padD4[0xD7 - 0xD4];
+    s8 unkD4;
+    s8 padD5[0xD7 - 0xD5];
     s8 unkD7;
     s8 : 8;
     s8 unkD9;
@@ -719,6 +721,8 @@ struct EngineObj {
     s8 unk44;
     u8 pad45;
     s8 unk46;
+    s8 unk47;
+    s8 unk48;
 };
 
 struct Unk18 {
@@ -798,12 +802,16 @@ struct EffectObj {
     s8 unk2;
     s8 unk3;
     s8 state;
-    u8 pad0[3];
-    s8 pad_[9];
+    s8 unk5;
+    s8 unk6;
+    s8 unk7;
+    f32 x_pos; // 0x8 and 0xA
+    f32 y_pos; // 0xC and 0xE
+    s32 unk10;
     struct Unk14* unk14;
     s8 unk18;
     u8 pad[23];
-}; // size 0x60
+}; // size 0x30
 
 struct Unk22 {
     u8 pad0[8];
@@ -927,7 +935,7 @@ extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern struct LayerObj layer_objects[4];
-extern struct QuxObj qux_objects[1];
+extern struct QuxObj qux_object;
 extern void (*D_800F485C[1])();
 extern s32 D_8013BC28;
 extern void (*ReadyTextUpdateFuncs[1])(void);

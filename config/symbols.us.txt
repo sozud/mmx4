@@ -465,7 +465,7 @@ foo_objects = 0x80141AB0; // size:0x120
 effect_objects = 0x80142F98; // size:0xC00
 item_objects = 0x80165A30; // size:0x1180
 layer_objects = 0x80169CB8; // size:0xC0
-qux_objects = 0x80173A30; // size:0xB0
+qux_object = 0x80173A30; // size:0xB0
 // something else starting at 0x80173AE0
 misc_objects = 0x80173CA0; // size:0x1800
 bar_object = 0x801754A0; // size:0x34

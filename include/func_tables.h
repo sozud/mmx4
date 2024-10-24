@@ -831,8 +831,8 @@ void func_80032B50(void);
 
 // D_800F8B44
 void func_80035848(struct PlayerObj* arg0);
-void func_800358A4(struct Unk* arg0);
-void func_80035A24(struct Unk* arg0);
+void func_800358A4(struct PlayerObj* arg0);
+void func_80035A24(struct PlayerObj* arg0);
 
 // D_800F8B94
 void func_80035AA8(void);
