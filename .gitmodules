@@ -4,3 +4,6 @@
 [submodule "tools/psximager"]
 	path = tools/psximager
 	url = https://github.com/sozud/psximager.git
+[submodule "tools/asm-differ"]
+	path = tools/asm-differ
+	url = https://github.com/simonlindholm/asm-differ.git
