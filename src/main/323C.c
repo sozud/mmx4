@@ -2149,7 +2149,7 @@ struct Unk* find_free_game_obj(void)
     return NULL;
 }
 
-struct WeaponObj* func_8002AC0C()
+struct WeaponObj* find_free_weapon_obj()
 {
     struct WeaponObj* current;
     for (current = &weapon_objects[0]; current < &weapon_objects[0x10]; current++) {
@@ -2179,7 +2179,7 @@ struct WeaponObj* func_8002AC0C()
     return NULL;
 }
 
-struct ShotObj* func_8002ACA4(void)
+struct ShotObj* find_free_shot_obj(void)
 {
     struct ShotObj* current;
     for (current = &shot_objects[0]; current < &shot_objects[0x20]; current++) {
@@ -2209,7 +2209,7 @@ struct ShotObj* func_8002ACA4(void)
     return NULL;
 }
 
-struct VisualObj* func_8002AD3C()
+struct VisualObj* find_free_visual_obj()
 {
     struct VisualObj* current;
     for (current = &visual_objects[0]; current < &visual_objects[0x20]; current++) {
@@ -2232,7 +2232,7 @@ struct EffectObj* find_free_effect_obj(void)
     return NULL;
 }
 
-struct ItemObj* func_8002ADBC()
+struct ItemObj* find_free_item_obj()
 {
     struct ItemObj* current;
     for (current = &item_objects[0]; current < &item_objects[0x20]; current++) {
@@ -2291,7 +2291,7 @@ struct QuadObj* find_free_quad_obj()
     return NULL;
 }
 
-struct LayerObj* func_8002B048()
+struct LayerObj* find_free_layer_obj()
 {
     struct LayerObj* current;
     for (current = &layer_objects[0]; current < &layer_objects[4]; current++) {
@@ -2303,7 +2303,7 @@ struct LayerObj* func_8002B048()
     return NULL;
 }
 
-struct UnkObj* func_8002B088()
+struct UnkObj* find_free_unk_obj()
 {
     struct UnkObj* current;
 
@@ -3146,7 +3146,7 @@ s32 func_80034238(struct Unk11* arg0)
         func_800350A4(arg0, D_800F8B30[index]);
 
         if (arg0->unk02 != 0) {
-            struct Unk11* new_obj = func_8002AD3C();
+            struct Unk11* new_obj = find_free_visual_obj();
             if (new_obj != NULL) {
                 new_obj->unk00 = 1;
                 new_obj->unk01 = 0x27;
@@ -10095,7 +10095,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AF95C);
 
 struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, u8 arg3)
 {
-    struct Unk* temp_v0 = func_8002AD3C();
+    struct Unk* temp_v0 = find_free_visual_obj();
     if (temp_v0 != NULL) {
         temp_v0->base.active = 0x21;
         temp_v0->base.id = 4;

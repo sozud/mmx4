@@ -1,6 +1,12 @@
 find_free_game_obj = 0x8002AB74;
 find_free_effect_obj = 0x8002AD7C;
 find_free_misc_obj = 0x8002AE50;
+find_free_weapon_obj = 0x8002AC0C;
+find_free_shot_obj = 0x8002ACA4;
+find_free_visual_obj = 0x8002AD3C;
+find_free_item_obj = 0x8002ADBC;
+find_free_layer_obj = 0x8002B048;
+find_free_unk_obj = 0x8002B088;
 SpuClearReverbWorkArea = 0x800DAF48;
 _spu_init = 0x800DB0E4;
 _spu_writeByIO = 0x800DB378;

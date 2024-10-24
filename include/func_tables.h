@@ -639,12 +639,12 @@ void func_80028658(struct BackgroundObj* arg0);
 // D_800F43A8
 struct Unk* func_8002AB74(void);
 struct WeaponObj* func_8002AC0C(void);
-struct VisualObj* func_8002AD3C(void);
-struct EffectObj* func_8002AD7C(void);
-struct ItemObj* func_8002ADBC(void);
-struct MiscObj* func_8002AE50(void);
+struct VisualObj* find_free_visual_obj(void);
+struct EffectObj* find_free_effect_obj(void);
+struct ItemObj* find_free_item_obj(void);
+struct MiscObj* find_free_misc_obj(void);
 struct QuadObj* find_free_quad_obj(void);
-struct LayerObj* func_8002B048(void);
+struct LayerObj* find_free_layer_obj(void);
 
 // D_800F4498
 extern void (*D_800F4498[])(struct EngineObj*);
