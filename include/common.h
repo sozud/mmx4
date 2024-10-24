@@ -248,7 +248,9 @@ struct PlayerObj {
     s8 unkD7;
     s8 : 8;
     s8 unkD9;
-    s8 padDA[0xE0 - 0xDA];
+    s8 padDA[0xDE - 0xDA];
+    s8 unkDE;
+    s8 : 8;
     s8 unkE0;
     s8 padE1[0xE4 - 0xE1];
 }; // size 0xE4
@@ -261,11 +263,11 @@ struct Unk_unk68 {
 };
 
 struct VisualObj {
-    s8 active;
-    s8 : 8;
-    s8 : 8;
-    s8 unk3;
-    u8 pad4[0x70 - 0x4];
+    struct BaseObj base;
+    s8 pad18[0x50 - 0x18];
+    s32 unk50;
+    s32 unk54;
+    u8 pa5A[0x70 - 0x5A];
 }; // size 0x70
 
 struct ShotObj {
@@ -383,11 +385,8 @@ struct UnkObj {
 }; // size 0x60
 
 struct ItemObj {
-    s8 active;
-    s8 : 8;
-    s8 : 8;
-    s8 unk3;
-    s8 pad4[0x50 - 0x4];
+    struct BaseObj base;
+    s8 pad18[0x50 - 0x18];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
