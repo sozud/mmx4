@@ -460,7 +460,9 @@ effect_objects = 0x80142F98; // size:0xC00
 item_objects = 0x80165A30; // size:0x1180
 layer_objects = 0x80169CB8; // size:0xC0
 qux_objects = 0x80173A30; // size:0xB0
+// something else starting at 0x80173AE0
 misc_objects = 0x80173CA0; // size:0x1800
+bar_object = 0x801754A0; // size:0x34
 cur_draw_info = 0x80142F80;
 
 cur_draw_info_dispenv_disp_w = 0x80142f84;
@@ -482,11 +484,14 @@ old_dispenv = 0x801395A8;
 PlayCapcomLogo = 0x8001D10C;
 MyCdReadyCallback = 0x80013A20;
 InitMemcards = 0x8001C6DC;
+init_objects = 0x80023DB8;
+reset_objects = 0x8002A7D0;
 main_object_update_funcs = 0x800F24A4;
 weapon_object_update_funcs = 0x800F25D8;
 shot_object_update_funcs = 0x800F26D4;
 vis_object_update_funcs = 0x800F27BC;
 effect_object_update_funcs = 0x800F285C;
+item_object_update_funcs = 0x800F2910;
 misc_object_update_funcs = 0x800F2980;
 quad_obj_update_funcs = 0x800F2A70;
 CollisionRelated = 0x8002C614;

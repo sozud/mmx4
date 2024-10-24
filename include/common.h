@@ -476,6 +476,11 @@ struct MiscObj {
     union MiscExt ext;
 }; // size 0x60
 
+struct BarObj {
+    struct BaseObj base;
+    s8 pad18[0x34 - 0x18];
+}; // size 0x43
+
 struct BazObj {
     struct BaseObj base;
     s8 pad18[0x50 - 0x18];
@@ -911,6 +916,7 @@ extern s16 D_8013B7FC;
 extern s16 D_8013B804;
 extern u8 D_8013BC34;
 extern s16 D_80173C7A;
+extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
 extern struct VisualObj visual_objects[0x20];
 extern struct ShotObj shot_objects[0x20];
@@ -1038,7 +1044,7 @@ s32 func_80039E5C(struct Unk12*);
 s32 func_80039F28(struct Unk12*);
 void func_80012EB8();
 void func_8001D134();
-void func_8002A7D0();
+void reset_objects();
 void func_8001FBB8(struct EngineObj* arg0);
 void func_800299EC(struct EngineObj* arg0);
 void func_8001FBD4(struct EngineObj* arg0);
@@ -1067,7 +1073,7 @@ void func_800B6D1C(s32, s8, s8);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
 void ZeroObjectState(struct Unk18* arg0);
-void func_80023DB8();
+void init_objects();
 void func_80026648();
 
 // D_800F2294 table
