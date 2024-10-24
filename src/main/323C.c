@@ -853,7 +853,7 @@ void func_8001D134(void)
     func_80023D30();
     func_80016F0C();
     func_80015930(0xFF, 0);
-    func_8002A7D0();
+    reset_objects();
     func_8002AB20();
 }
 
@@ -1329,13 +1329,13 @@ void func_80023D30(void)
 void func_80023D68(void)
 {
     func_80026648();
-    func_80023DB8();
+    init_objects();
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023D90);
 
 // some kind of init?
-void func_80023DB8(void)
+void init_objects(void)
 {
     struct UnkObj* var_s0;
     struct Unk* var_s0_2;
@@ -1901,7 +1901,7 @@ void func_80029978(struct EngineObj* arg0)
         background_objects[0].unk3 = 0;
         background_objects[1].unk3 = 0;
         background_objects[2].unk3 = 0;
-        func_8002A7D0();
+        reset_objects();
         func_80012EB8();
         arg0->unk0 = 3;
         arg0->unk1 = 0;
@@ -1982,7 +1982,7 @@ void func_8002A74C()
 }
 
 // some kind of reset?
-void func_8002A7D0(void)
+void reset_objects(void)
 {
     s8 fill = 0;
     s32 a2;
@@ -2081,7 +2081,7 @@ void func_8002A7D0(void)
         *a0++ = fill;
     }
 
-    a0 = &D_801754A0;
+    a0 = &bar_object;
     var_v1 = 0x34;
     while (var_v1-- != 0) {
         *a0++ = fill;
