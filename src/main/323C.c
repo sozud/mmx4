@@ -10037,9 +10037,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AEAA0);
 
 void func_800AEAC0(struct VisualObj* arg0)
 {
-    struct PlayerObj* var_a1 = &g_Entity;
+    struct PlayerObj* var_a1;
     if (g_Player.unkDE == 0) {
-        var_a1 = (struct PlayerObj*)(&g_Player.unkDE - 0xDE);
+        var_a1 = &g_Player;
+    } else {
+        var_a1 = &g_Entity;
     }
     D_8010A1A0[arg0->base.state](arg0, var_a1);
 }
