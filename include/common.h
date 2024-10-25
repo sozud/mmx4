@@ -388,7 +388,9 @@ struct UnkObj {
 
 struct ItemObj {
     struct BaseObj base;
-    s8 pad18[0x50 - 0x18];
+    f32 unk18;
+    f32 unk1C;
+    s8 pad20[0x50 - 0x20];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
