@@ -723,7 +723,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE8E4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE960);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE9A0);
+void func_800BE9A0(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010C148[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BE9E8);
 
@@ -731,7 +736,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BEB14);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BEB94);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BEBB4);
+void func_800BEBB4(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010C2F0[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BEBFC);
 
@@ -753,7 +763,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BF60C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BF638);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BF730);
+void func_800BF730(struct ItemObj* arg0)
+{
+    D_8010C730[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BF76C);
 
@@ -773,7 +786,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C00BC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C03BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0404);
+void func_800C0404(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010C8A4[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C044C);
 
@@ -783,7 +801,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C05FC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C07B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C081C);
+void func_800C081C(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010C908[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0864);
 
@@ -795,7 +818,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0D98);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0DFC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0E74);
+void func_800C0E74(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CA9C[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C0EBC);
 
@@ -807,7 +835,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1244);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1318);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1390);
+void func_800C1390(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CAA8[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C13D8);
 
@@ -825,9 +858,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1820);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1938);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1958);
+void func_800C1958(struct ItemObj* arg0)
+{
+    D_8010CB5C[arg0->base.state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1994);
+void func_800C1994(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CC64[arg0->base.state](arg0);
+    is_on_screen(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C19F0);
 
@@ -849,7 +891,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C1FE4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C204C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C20AC);
+void func_800C20AC(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CC94[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C20F4);
 
@@ -857,7 +904,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C229C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C24C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C24E0);
+void func_800C24E0(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CE34[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C2528);
 
@@ -875,7 +927,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C2A04);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C2AF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C2BE0);
+void func_800C2BE0(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010CFAC[arg0->base.state](arg0);
+    func_8002E184(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C2C3C);
 
@@ -915,13 +973,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C34A4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C34D4);
 
-void func_800C34E8(void)
+void func_800C34E8(struct ItemObj* arg0)
 {
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C34F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C351C);
+void func_800C351C(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D030[arg0->base.state](arg0);
+    is_on_screen(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3578);
 
@@ -933,7 +997,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C37C4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3828);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3880);
+void func_800C3880(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D040[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C38C8);
 
@@ -957,7 +1026,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3C9C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3CE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3CF8);
+void func_800C3CF8(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D070[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C3D40);
 
@@ -977,11 +1051,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C41C8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4290);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C42B0);
+void func_800C42B0(struct ItemObj* arg0)
+{
+    D_8010D18C[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C42EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4544);
+void func_800C4544(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D1CC[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C458C);
 
@@ -995,7 +1077,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4778);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C49BC);
 
-void func_800C4BE4(void)
+void func_800C4BE4(struct ItemObj* arg0)
 {
 }
 
@@ -1003,7 +1085,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4BEC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4C64);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4CE4);
+void func_800C4CE4(struct ItemObj* arg0)
+{
+    D_8010D234[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C4D20);
 
@@ -1029,9 +1114,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5444);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C54DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C54FC);
+void func_800C54FC(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D250[arg0->base.state](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5544);
+void func_800C5544(struct ItemObj* arg0)
+{
+    D_8010D318[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5580);
 
@@ -1053,7 +1146,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5B5C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5BCC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5C4C);
+void func_800C5C4C(struct ItemObj* arg0)
+{
+    D_8010D344[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5C88);
 
@@ -1069,7 +1165,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5F70);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C5F90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C6054);
+void func_800C6054(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D3AC[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C609C);
 
@@ -1105,7 +1206,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C6ACC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C6B30);
 
-void func_800C6B7C(void)
+void func_800C6B7C(struct ItemObj* arg0)
 {
 }
 
@@ -1119,7 +1220,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C6DD4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C6EDC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C7164);
+void func_800C7164(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+    D_8010D990[arg0->base.state](arg0);
+    func_8002E184(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C71C0);
 
