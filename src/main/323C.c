@@ -1194,46 +1194,190 @@ void func_80021158(void)
     func_80035EF0();
     func_80021C14();
     func_800311EC();
-    func_80021340();
-    func_80021234();
-    func_8002144C();
-    func_80021558();
-    func_8002166C();
-    func_8002174C();
-    func_80021858();
-    func_80021A20();
+    update_weapon_objects();
+    update_main_objects();
+    update_shot_objects();
+    update_visual_objects();
+    update_effect_objects();
+    update_item_objects();
+    update_misc_objects();
+    update_quad_objects();
     func_80028E24();
     func_80021D20();
     CollisionRelated(&g_Player);
     func_80027850();
     func_80027D40();
     func_800281E8();
-    func_80021B34();
+    update_layer_objects();
     func_8002A484();
     func_80021D84();
     func_80021CC8();
     func_80015ECC(&g_Player, 0x140, 0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021234);
+void update_main_objects(void)
+{
+#define current (*(struct Unk**)0x1F80004C)
+    if (!D_80141984) {
+        for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
+            if (current->base.active) {
+                if (D_80141984 != 0 || (engine_obj.unk12 != 0 && !(current->base.active & 0x8))) {
+                    if (current->base.on_screen != 0) {
+                        func_8002B3C0(current);
+                    }
+                } else {
+                    main_object_update_funcs[current->base.id](current);
+                }
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021340);
+void update_weapon_objects(void)
+{
+#define current (*(struct WeaponObj**)0x1F800050)
+    if (!D_80141984) {
+        for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
+            if (current->base.active) {
+                if (D_80141984 != 0 || (engine_obj.unk11 != 0 && !(current->base.active & 0x8))) {
+                    if (current->base.on_screen != 0) {
+                        func_8002B3C0(current);
+                    }
+                } else {
+                    weapon_object_update_funcs[current->base.id](current);
+                }
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002144C);
+void update_shot_objects(void)
+{
+#define current (*(struct ShotObj**)0x1F800050)
+    if (!D_80141984) {
+        for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
+            if (current->base.active) {
+                if (D_80141984 != 0 || (engine_obj.unk13 != 0 && !(current->base.active & 0x8))) {
+                    if (current->base.on_screen != 0) {
+                        func_8002B3C0(current);
+                    }
+                } else {
+                    shot_object_update_funcs[current->base.id](current);
+                }
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021558);
+void update_visual_objects(void)
+{
+#define current (*(struct VisualObj**)0x1F800054)
+    for (current = visual_objects; current < &visual_objects[COUNT(visual_objects)]; current++) {
+        if (engine_obj.unk14 == 0 && current->base.active != 0) {
+            visual_object_update_funcs[current->base.id](current);
+        } else if (current->base.active != 0) {
+            if (current->base.active & 8) {
+                visual_object_update_funcs[current->base.id](current);
+            } else if (current->base.on_screen != 0) {
+                func_8002B3C0(current);
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002166C);
+void update_effect_objects(void)
+{
+#define current (*(struct EffectObj**)0x1F80005C)
+    for (current = effect_objects; current < &effect_objects[COUNT(effect_objects)]; current++) {
+        if (engine_obj.unk15 == 0 && current->active) {
+            effect_object_update_funcs[current->unk1](current);
+        } else if (engine_obj.unk15 && current->active & 8) {
+            effect_object_update_funcs[current->unk1](current);
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002174C);
+void update_item_objects(void)
+{
+#define current (*(struct ItemObj**)0x1F800060)
+    if (!D_80141984) {
+        for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
+            if (current->base.active) {
+                if (D_80141984 != 0 || (engine_obj.unk16 != 0 && !(current->base.active & 0x8))) {
+                    if (current->base.on_screen != 0) {
+                        func_8002B3C0(current);
+                    }
+                } else {
+                    item_object_update_funcs[current->base.id](current);
+                }
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021858);
+void update_misc_objects(void)
+{
+#define current (*(struct MiscObj**)0x1F800064)
+    for (current = misc_objects; current < &misc_objects[COUNT(misc_objects)]; current++) {
+        if (engine_obj.unk17 == 0 && current->base.active != 0) {
+            misc_object_update_funcs[current->base.id](current);
+        } else if (current->base.active != 0) {
+            if (current->base.active & 8) {
+                misc_object_update_funcs[current->base.id](current);
+            } else if (current->base.on_screen != 0) {
+                func_8002B3C0(current);
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002196C);
+void update_unk_objects(void)
+{
+#define current (*(struct UnkObj**)0x1F800064)
+    for (current = unk_objects; current < &unk_objects[COUNT(unk_objects)]; current++) {
+        if (current->active) {
+            unk_object_update_funcs[current->id](current);
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021A20);
+void update_quad_objects(void)
+{
+#define current (*(struct QuadObj**)0x1F800068)
+    for (current = g_QuadObjects; current < &g_QuadObjects[COUNT(g_QuadObjects)]; current++) {
+        if (engine_obj.unk18 == 0 && current->active != 0) {
+            quad_object_update_funcs[current->id](current);
+        } else if (current->active != 0) {
+            if (current->active & 8) {
+                quad_object_update_funcs[current->id](current);
+            } else if (current->on_screen != 0) {
+                func_8002B458(current); // no-op
+            }
+        }
+    }
+#undef current
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021B34);
+void update_layer_objects(void)
+{
+#define current (*(struct LayerObj**)0x1F80006C)
+    for (current = layer_objects; current < &layer_objects[COUNT(layer_objects)]; current++) {
+        if (engine_obj.unk19 == 0 && current->active) {
+            layer_object_update_funcs[current->unk1](current);
+        } else if (engine_obj.unk19 && current->active & 8) {
+            layer_object_update_funcs[current->unk1](current);
+        }
+    }
+#undef current
+}
 
 void func_80021C14(void)
 {
@@ -1401,7 +1545,7 @@ void init_objects(void)
 
     // might be a series of macros or inlines
 
-    for (var_s0_2 = &game_objects[0]; var_s0_2 < &game_objects[COUNT(game_objects)]; var_s0_2++) {
+    for (var_s0_2 = &main_objects[0]; var_s0_2 < &main_objects[COUNT(main_objects)]; var_s0_2++) {
         if (var_s0_2->base.on_screen != 0) {
             func_80024334(var_s0_2);
         }
@@ -1916,7 +2060,7 @@ void func_800299EC(struct EngineObj* arg0)
 {
     D_800F44A8[arg0->unk1]();
     func_8002B460();
-    func_80021858();
+    update_misc_objects();
     func_8002A484();
     func_80023D68();
 }
@@ -1966,9 +2110,9 @@ void func_8002A74C()
     s8* a0;
     u32 a1;
 
-    for (a1 = 0; a1 < COUNT(game_objects); a1++) {
-        a0 = (u8*)&game_objects[a1];
-        var_v1 = sizeof(game_objects[0]) - 1;
+    for (a1 = 0; a1 < COUNT(main_objects); a1++) {
+        a0 = (u8*)&main_objects[a1];
+        var_v1 = sizeof(main_objects[0]) - 1;
         do {
             *a0++ = fill;
         } while (var_v1-- != 0);
@@ -2019,7 +2163,7 @@ void reset_objects(void)
         } while (var_v1-- != 0);
     }
 
-    func_8002A74C(); // clear game_objects and shot_objects
+    func_8002A74C(); // clear main_objects and shot_objects
 
     for (a1 = 0; a1 < COUNT(visual_objects); a1++) {
         a0 = (u8*)&visual_objects[a1];
@@ -2121,10 +2265,10 @@ void func_8002AB20()
     }
 }
 
-struct Unk* find_free_game_obj(void)
+struct Unk* find_free_main_obj(void)
 {
     struct Unk* var_v1;
-    for (var_v1 = &game_objects[0]; var_v1 < &game_objects[0x30]; var_v1++) {
+    for (var_v1 = &main_objects[0]; var_v1 < &main_objects[0x30]; var_v1++) {
         if (!var_v1->base.active) {
             var_v1->unk50 = 0;
             var_v1->unk54 = 0;
@@ -2371,7 +2515,7 @@ void func_8002B450(void)
 {
 }
 
-void func_8002B458(void)
+void func_8002B458(struct QuadObj* arg0)
 {
 }
 
@@ -2809,9 +2953,9 @@ void func_8002FC38(struct EngineObj* arg0)
 {
     func_8002B460();
     D_800F48A4[arg0->unk1](arg0);
-    func_8002166C();
-    func_80021858();
-    func_80021A20();
+    update_effect_objects();
+    update_misc_objects();
+    update_quad_objects();
     func_8002A484();
     func_80023D68();
 }

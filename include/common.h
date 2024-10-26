@@ -417,7 +417,8 @@ struct ItemObj {
 
 struct LayerObj {
     s8 active;
-    u8 pad[0x2F];
+    s8 unk1;
+    u8 pad[0x2E];
 }; // size 0x30
 
 struct MiscUnk50 {
@@ -702,7 +703,16 @@ struct EngineObj {
     s8 unkE;
     s8 unkF;
     s8 unk10;
-    u8 pad1[0xb];
+    s8 unk11;
+    s8 unk12;
+    s8 unk13;
+    s8 unk14;
+    s8 unk15;
+    s8 unk16;
+    s8 unk17;
+    s8 unk18;
+    s8 unk19;
+    s8 pad1A[0x1C - 0x1A];
     s8 unk1C;
     s8 checkpoint; // 0x1d
     s8 unk1E;
@@ -875,6 +885,7 @@ extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
+extern s8 D_80141984;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
@@ -907,7 +918,7 @@ extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
 extern void (*g_TitleUpdateFuncs[1])();
 extern void (*D_8010EB84[1])();
 extern void (*g_SelectACharacterUpdateFuncs[1])();
-extern struct Unk game_objects[0x30]; // D_8013BED0
+extern struct Unk main_objects[0x30]; // D_8013BED0
 extern void (*g_TitleLogoUpdateFuncs[1])();
 extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();

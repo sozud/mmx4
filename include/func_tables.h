@@ -174,6 +174,7 @@ void func_80020F24(void);
 void func_800210B8(void);
 
 // D_800F24A4 (main_object_update_funcs)
+extern void (*main_object_update_funcs[])(struct MainObj*);
 void func_80040608(struct MainObj* arg0);
 void func_80042120(struct MainObj* arg0);
 void func_80042914(struct MainObj* arg0);
@@ -253,6 +254,7 @@ void func_8009197C(struct MainObj* arg0);
 void func_800919C4(struct MainObj* arg0);
 
 // D_800F25D8 (weapon_object_update_funcs)
+extern void (*weapon_object_update_funcs[])(struct WeaponObj*);
 void func_800922D8(struct WeaponObj*);
 void func_80092F08(struct WeaponObj*);
 void func_80093CBC(struct WeaponObj*);
@@ -318,6 +320,7 @@ void func_800992FC(struct WeaponObj*);
 void func_800992FC(struct WeaponObj*);
 
 // D_800F26D4 (shot_object_update_funcs)
+extern void (*shot_object_update_funcs[])(struct ShotObj*);
 void func_800994A0(struct ShotObj*);
 void func_80099B30(struct ShotObj*);
 void func_80099D18(struct ShotObj*);
@@ -377,7 +380,8 @@ void func_800ADEF4(struct ShotObj*);
 void func_800AE3F4(struct ShotObj*);
 void func_800AE65C(struct ShotObj*);
 
-// D_800F27BC (vis_object_update_funcs)
+// D_800F27BC (visual_object_update_funcs)
+extern void (*visual_object_update_funcs[])(struct VisualObj*);
 void func_800AEAC0(struct VisualObj*);
 void func_800AED18(struct VisualObj*);
 void func_800AEED8(struct VisualObj*);
@@ -420,6 +424,7 @@ void func_800C6EDC(struct VisualObj*);
 void func_80098338(struct VisualObj*);
 
 // D_800F285C (effect_object_update_funcs)
+extern void (*effect_object_update_funcs[])(struct EffectObj*);
 void func_800B56F4(struct EffectObj* arg0);
 void func_800B58A0(struct EffectObj* arg0);
 void func_800B5960(struct EffectObj* arg0);
@@ -467,6 +472,7 @@ void func_800BE800(struct EffectObj* arg0);
 void func_800BE83C(struct EffectObj* arg0);
 
 // D_800F2910 (item_object_update_funcs)
+extern void (*item_object_update_funcs[])(struct ItemObj*);
 void func_800BE9A0(struct ItemObj*);
 void func_800BEBB4(struct ItemObj*);
 void func_800BF730(struct ItemObj*);
@@ -497,6 +503,7 @@ void func_800C62DC(struct ItemObj*);
 void func_800C7164(struct ItemObj*);
 
 // D_800F2980 (misc_object_update_funcs)
+extern void (*misc_object_update_funcs[])(struct MiscObj*);
 void func_800C7A68(struct MiscObj* arg0);
 void func_800C7BF4(struct MiscObj* arg0);
 void func_800C7EDC(struct MiscObj* arg0);
@@ -556,11 +563,13 @@ void func_800D332C(struct MiscObj* arg0);
 void func_80023CA4(struct MiscObj* arg0);
 void func_800D3510(struct MiscObj* arg0);
 
-// D_800F2A68
+// D_800F2A68 (unk_object_update_funcs)
+extern void (*unk_object_update_funcs[])(struct UnkObj*);
 void func_800D3928(struct UnkObj* arg0);
 void func_800D3A84(struct UnkObj* arg0);
 
-// D_800F2A70 (quad_obj_update_funcs)
+// D_800F2A70 (quad_object_update_funcs)
+extern void (*quad_object_update_funcs[])(struct QuadObj*);
 void func_800D3AC0(struct QuadObj* arg0);
 void func_800D41B0(struct QuadObj* arg0);
 void func_800D4948(struct QuadObj* arg0);
@@ -579,15 +588,16 @@ void func_800D7A54(struct QuadObj* arg0);
 void func_800D7FF0(struct QuadObj* arg0);
 void func_800D85E8(struct QuadObj* arg0);
 
-// D_800F2AB4
-void func_800D8648(void);
-void func_800D8ED4(void);
-void func_800D9218(void);
-void func_800D9C84(void);
-void func_800DA05C(void);
-void func_800DA298(void);
-void func_800DA7C0(void);
-void func_800DA878(void);
+// D_800F2AB4 (layer_object_update_funcs)
+extern void (*layer_object_update_funcs[])(struct LayerObj*);
+void func_800D8648(struct LayerObj*);
+void func_800D8ED4(struct LayerObj*);
+void func_800D9218(struct LayerObj*);
+void func_800D9C84(struct LayerObj*);
+void func_800DA05C(struct LayerObj*);
+void func_800DA298(struct LayerObj*);
+void func_800DA7C0(struct LayerObj*);
+void func_800DA878(struct LayerObj*);
 
 // D_800F2AD4
 extern void (*D_800F2AD4[1])(struct QuxObj*);
