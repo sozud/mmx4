@@ -885,7 +885,6 @@ extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
-extern s8 D_80141984;
 extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;

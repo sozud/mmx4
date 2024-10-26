@@ -1218,10 +1218,10 @@ void func_80021158(void)
 void update_main_objects(void)
 {
 #define current (*(struct Unk**)0x1F80004C)
-    if (!D_80141984) {
+    if (!g_Player.unkBC) {
         for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
             if (current->base.active) {
-                if (D_80141984 != 0 || (engine_obj.unk12 != 0 && !(current->base.active & 0x8))) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk12 != 0 && !(current->base.active & 0x8))) {
                     if (current->base.on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -1237,10 +1237,10 @@ void update_main_objects(void)
 void update_weapon_objects(void)
 {
 #define current (*(struct WeaponObj**)0x1F800050)
-    if (!D_80141984) {
+    if (!g_Player.unkBC) {
         for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
             if (current->base.active) {
-                if (D_80141984 != 0 || (engine_obj.unk11 != 0 && !(current->base.active & 0x8))) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk11 != 0 && !(current->base.active & 0x8))) {
                     if (current->base.on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -1256,10 +1256,10 @@ void update_weapon_objects(void)
 void update_shot_objects(void)
 {
 #define current (*(struct ShotObj**)0x1F800050)
-    if (!D_80141984) {
+    if (!g_Player.unkBC) {
         for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
             if (current->base.active) {
-                if (D_80141984 != 0 || (engine_obj.unk13 != 0 && !(current->base.active & 0x8))) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk13 != 0 && !(current->base.active & 0x8))) {
                     if (current->base.on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -1305,10 +1305,10 @@ void update_effect_objects(void)
 void update_item_objects(void)
 {
 #define current (*(struct ItemObj**)0x1F800060)
-    if (!D_80141984) {
+    if (!g_Player.unkBC) {
         for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
             if (current->base.active) {
-                if (D_80141984 != 0 || (engine_obj.unk16 != 0 && !(current->base.active & 0x8))) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk16 != 0 && !(current->base.active & 0x8))) {
                     if (current->base.on_screen != 0) {
                         func_8002B3C0(current);
                     }

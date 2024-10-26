@@ -17,7 +17,6 @@ update_misc_objects = 0x80021858;
 update_unk_objects = 0x8002196C;
 update_quad_objects = 0x80021A20;
 update_layer_objects = 0x80021B34;
-D_80141984 = 0x80141984;
 SpuClearReverbWorkArea = 0x800DAF48;
 _spu_init = 0x800DB0E4;
 _spu_writeByIO = 0x800DB378;
