@@ -797,6 +797,20 @@ struct Unk14 {
     u8 unk3;
 };
 
+typedef union {
+    s32* ptr;
+    struct {
+        s16 lo;
+        s16 hi;
+    } two;
+    struct {
+        s8 a;
+        s8 b;
+        s8 c;
+        s8 d;
+    } one;
+} Multi;
+
 struct EffectObj {
     s8 active;
     s8 unk1;
@@ -810,8 +824,10 @@ struct EffectObj {
     f32 y_pos; // 0xC and 0xE
     s32 unk10;
     struct Unk14* unk14;
-    s8 unk18;
-    u8 pad[23];
+    Multi unk18;
+    u8 pad18[4];
+    s8 unk20;
+    s8 pad20[12];
 }; // size 0x30
 
 struct Unk22 {
