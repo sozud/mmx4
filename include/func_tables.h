@@ -5717,9 +5717,9 @@ void func_800CB394(struct MiscObj* arg0);
 void func_800CB4E4(struct MiscObj* arg0);
 
 // D_8010E824
-void func_800CB634(void);
-void func_800CB708(void);
-void func_800CB828(void);
+void func_800CB634(struct MiscObj* arg0);
+void func_800CB708(struct MiscObj* arg0);
+void func_800CB828(struct MiscObj* arg0);
 
 // D_8010E830
 void func_800CB940(void);
