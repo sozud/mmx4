@@ -29,8 +29,8 @@ void func_800CB634(struct MiscObj* arg0)
     // for unk2 == 0, setting position of "MEGAMAN" text
     // for unk2 == 1, didn't notice a difference
     // for unk2 == 2, setting position of greyed out "GAME START" text
-    arg0->base.x_pos.val = D_8010E71C[temp_a1].x << 0x10;
-    arg0->base.y_pos.val = D_8010E71C[temp_a1].y << 0x10;
+    arg0->base.x_pos.val = FIXED(D_8010E71C[temp_a1].x);
+    arg0->base.y_pos.val = FIXED(D_8010E71C[temp_a1].y);
     arg0->unk47 = D_8010E71C[temp_a1].unk;
     is_on_screen(arg0);
 }
