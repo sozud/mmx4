@@ -7,7 +7,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D784C);
 void func_800D7960(struct QuadObj* arg0)
 {
     struct MiscObj* misc;
-    if (--arg0->unk38 == 0) {
+    if (--(arg0->unk38.utwo.lo) == 0) {
         if (arg0->unk2 == 0) {
             misc = find_free_misc_obj();
             if (misc != NULL) {
