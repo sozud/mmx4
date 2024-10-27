@@ -98,8 +98,71 @@ void func_800D5CF8(struct QuadObj* arg0)
     func_8002B458(arg0);
 }
 
+extern u16 D_8010FAEC;
+
 // D_8010FC90 state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5D50);
+void func_800D5D50(struct QuadObj* arg0)
+{
+    u16* verts;
+    struct BaseObj* temp_s1;
+    struct MiscObj* misc_obj;
+    switch (arg0->unk5) {
+    case 0:
+        arg0->unk5 = 1;
+        // set position of blue line that goes left to right before
+        // ready text appears
+        arg0->x_pos.i.hi = -320;
+        arg0->y_pos.i.hi = 112;
+        verts = &D_8010FAEC;
+        arg0->unk14.i.hi = *verts++;
+        arg0->unk18.i.hi = *verts++;
+        arg0->unk1C.i.hi = *verts++;
+        arg0->unk20.i.hi = *verts++;
+        arg0->unk24.i.hi = *verts++;
+        arg0->unk28.i.hi = *verts++;
+        arg0->unk2C.i.hi = *verts++;
+        arg0->unk30.i.hi = *verts;
+        arg0->unk38.val = 0x200000;
+        arg0->unk3C = 0;
+        arg0->unk40.val = 0;
+        arg0->unk44 = 0;
+        func_800D6494(arg0);
+        return;
+    case 1:
+        temp_s1 = arg0->unk58;
+        // spawn "READY" text and shadow when blue line reaches center of screen
+        if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi < 3) && (temp_s1->unk15 == 0)) {
+            misc_obj = find_free_misc_obj();
+            if (misc_obj != NULL) {
+                misc_obj->base.active = 1;
+                misc_obj->base.id = 0x13;
+                misc_obj->base.unk2 = 0;
+                temp_s1->unk15 = 0;
+                misc_obj->ext.ready_text.unk50 = (void*)arg0->unk58;
+            }
+            misc_obj = find_free_misc_obj();
+            if (misc_obj != NULL) {
+                misc_obj->base.active = 1;
+                misc_obj->base.id = 0x12;
+                misc_obj->base.unk2 = 1;
+                temp_s1->unk15 = 0;
+                misc_obj->ext.ready_text.unk50 = (void*)arg0->unk58;
+            }
+        }
+        if (arg0->x_pos.i.hi >= 320) {
+            arg0->unk5 = 2;
+            return;
+        }
+        func_800D6494(arg0);
+        return;
+    case 2:
+        temp_s1 = arg0->unk58;
+        temp_s1->bg_offset = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        return;
+    }
+}
 
 // D_8010FC90 state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5F1C);

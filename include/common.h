@@ -660,6 +660,25 @@ struct DrawInfo {
 
 extern struct DrawInfo draw_infos[2];
 
+typedef union {
+    s32* ptr;
+    s32 val;
+    struct {
+        s16 lo;
+        s16 hi;
+    } two;
+    struct {
+        u16 lo;
+        u16 hi;
+    } utwo;
+    struct {
+        s8 a;
+        s8 b;
+        s8 c;
+        s8 d;
+    } one;
+} Multi;
+
 struct QuadObj {
     s8 active;
     s8 id; // 0x01
@@ -682,11 +701,12 @@ struct QuadObj {
     u16 unk34;
     s8 unk36;
     s8 bg_offset;
-    u16 unk38;
-    s8 pad38_[8];
-    s8 unk42;
-    s8 unk43;
-    s8 pad44[0x5C - 0x44];
+    Multi unk38;
+    s32 unk3C;
+    Multi unk40;
+    s32 unk44;
+    s8 pad48[0x58 - 0x48];
+    struct BaseObj* unk58; // might be something else
     struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
 
@@ -806,20 +826,6 @@ struct Unk14 {
     s8 unk2;
     u8 unk3;
 };
-
-typedef union {
-    s32* ptr;
-    struct {
-        s16 lo;
-        s16 hi;
-    } two;
-    struct {
-        s8 a;
-        s8 b;
-        s8 c;
-        s8 d;
-    } one;
-} Multi;
 
 struct EffectObj {
     s8 active;
