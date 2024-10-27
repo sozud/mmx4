@@ -135,7 +135,7 @@ void func_800D5D50(struct QuadObj* arg0)
             misc_obj = find_free_misc_obj();
             if (misc_obj != NULL) {
                 misc_obj->base.active = 1;
-                misc_obj->base.id = 0x13;
+                misc_obj->base.id = 0x12;
                 misc_obj->base.unk2 = 0;
                 temp_s1->unk15 = 0;
                 misc_obj->ext.ready_text.unk50 = (void*)arg0->unk58;
