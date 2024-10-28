@@ -3635,7 +3635,11 @@ void func_80035694(struct PlayerObj* arg0)
         case 5:
             var_a0 = 2;
             if (engine->substage != 0) {
-                var_a0 = (engine->checkpoint == 0) * 2;
+                if (engine->checkpoint == 0) {
+                    var_a0 = 2;
+                } else {
+                    var_a0 = 0;
+                }
             }
             break;
         case 6:
