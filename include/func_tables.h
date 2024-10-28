@@ -840,6 +840,7 @@ void func_80032D28(void);
 void func_80032B50(void);
 
 // D_800F8B44
+extern void (*D_800F8B44[])(struct PlayerObj*);
 void func_80035848(struct PlayerObj* arg0);
 void func_800358A4(struct PlayerObj* arg0);
 void func_80035A24(struct PlayerObj* arg0);

@@ -160,7 +160,9 @@ struct PlayerObj {
     u8 pad39[5];
     u16 unk40;
     u16 unk42;
-    s8 pad44[0x47 - 0x44];
+    s8 unk44;
+    s8 unk45;
+    s8 unk46;
     s8 unk47;
     s8 pad48[0x4A - 0x48];
     s8 unk4A;
@@ -200,7 +202,7 @@ struct PlayerObj {
     s8 unk86;
     u8 unk87;
     s8 unk88;
-    s8 unk89;
+    u8 unk89;
     s8 : 8;
     s8 : 8;
     s8 unk8C;
@@ -229,12 +231,15 @@ struct PlayerObj {
     s8 : 8;
     s8 unkA6;
     s8 unkA7;
-    u8 padA8[0xB8 - 0xA8];
+    s8 unkA8;
+    u8 padA9[0xB8 - 0xA9];
     u8 unkB8;
-    u8 padB9[0xBC - 0xB9];
+    s8 unkB9;
+    s8 unkBA;
+    s8 unkBB;
     s8 unkBC;
     s8 : 8;
-    s8 : 8;
+    s8 unkBE;
     s8 unkBF;
     s8 unkC0;
     s8 padC0[2];
@@ -254,7 +259,8 @@ struct PlayerObj {
     s8 unkDE;
     s8 : 8;
     s8 unkE0;
-    s8 padE1[0xE4 - 0xE1];
+    s8 unkE1;
+    s8 padE2[0xE4 - 0xE2];
 }; // size 0xE4
 
 struct Unk_unk68 {
@@ -892,6 +898,9 @@ extern struct QuadObj g_QuadObjects[0x20];
 extern s8 D_800EE538;
 extern s8 D_800EE54C[];
 extern u8 D_800F8B30[];
+extern struct Unk_unk68 D_800F8BC4;
+extern struct Unk_unk68 D_800F8BC8;
+extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
@@ -1075,6 +1084,7 @@ s32 func_80033694();
 void func_80034538(struct Unk7*);
 void func_80034754(struct Unk7*);
 void func_80025188(s32, u8);
+void func_80025588(s16, s16, s16, s16, s32);
 void func_80027A5C(struct Unk9*, s32);
 void func_80027AAC(struct Unk9*);
 void func_80027AFC(struct Unk9*);
@@ -1150,8 +1160,9 @@ void func_80022730(s32*);
 void func_8002B718();
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct Unk*, u8, s16, s16);
-s32 func_8002D32C(struct Unk*, s16, s8);
-s32 func_8002D5E4(struct Unk*, s16);
+s32 func_8002D32C(struct PlayerObj*, s16, s32);
+s32 func_8002D5E4(struct PlayerObj*, s16);
+u8 func_8002D724(struct PlayerObj*, s16, s16);
 s32 func_8002D7E4(struct Unk*, s16, s16);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
