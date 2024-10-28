@@ -422,9 +422,10 @@ struct ItemObj {
 }; // size 0x8C
 
 struct LayerObj {
-    s8 active;
-    s8 unk1;
-    u8 pad[0x2E];
+    struct BaseObj base;
+    f32 unk18;
+    f32 unk1C;
+    s8 pad20[0x30 - 0x20];
 }; // size 0x30
 
 struct MiscUnk50 {
@@ -1170,6 +1171,7 @@ void func_8001E54C(struct Unk800F2294* arg0);
 void func_8001E638(struct Unk800F2294* arg0);
 void func_8001E6BC(struct Unk800F2294* arg0);
 
+u8 func_800D8E94(struct LayerObj*);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);
