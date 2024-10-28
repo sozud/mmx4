@@ -1370,10 +1370,10 @@ void update_layer_objects(void)
 {
 #define current (*(struct LayerObj**)0x1F80006C)
     for (current = layer_objects; current < &layer_objects[COUNT(layer_objects)]; current++) {
-        if (engine_obj.unk19 == 0 && current->active) {
-            layer_object_update_funcs[current->unk1](current);
-        } else if (engine_obj.unk19 && current->active & 8) {
-            layer_object_update_funcs[current->unk1](current);
+        if (engine_obj.unk19 == 0 && current->base.active) {
+            layer_object_update_funcs[current->base.id](current);
+        } else if (engine_obj.unk19 && current->base.active & 8) {
+            layer_object_update_funcs[current->base.id](current);
         }
     }
 #undef current
@@ -2476,7 +2476,7 @@ struct LayerObj* find_free_layer_obj()
 {
     struct LayerObj* current;
     for (current = &layer_objects[0]; current < &layer_objects[4]; current++) {
-        if (!current->active) {
+        if (!current->base.active) {
             return current;
         }
     }

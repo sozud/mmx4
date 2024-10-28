@@ -570,7 +570,7 @@ void func_800D3A84(struct UnkObj* arg0);
 
 // D_800F2A70 (quad_object_update_funcs)
 extern void (*quad_object_update_funcs[])(struct QuadObj*);
-void func_800D3AC0(struct QuadObj* arg0);
+void SearchLightUpdate(struct QuadObj* arg0);
 void func_800D41B0(struct QuadObj* arg0);
 void func_800D4948(struct QuadObj* arg0);
 void func_800D5230(struct QuadObj* arg0);
@@ -6187,79 +6187,93 @@ void func_800D83DC(struct QuadObj*);
 void func_800D85C8(struct QuadObj*);
 
 // D_8010FF08
-void func_800D8684(void);
-void func_800D872C(void);
-void func_800D87C0(void);
+extern void (*D_8010FF08[])(struct LayerObj*);
+void func_800D8684(struct LayerObj*);
+void func_800D872C(struct LayerObj*);
+void func_800D87C0(struct LayerObj*);
 
 // D_8010FF14
-void func_800D87E0(void);
-void func_800D8844(void);
-void func_800D8934(void);
-void func_800D8A24(void);
-void func_800D8ABC(void);
-void func_800D8BAC(void);
+extern void (*D_8010FF14[])(struct LayerObj*);
+void func_800D87E0(struct LayerObj*);
+void func_800D8844(struct LayerObj*);
+void func_800D8934(struct LayerObj*);
+void func_800D8A24(struct LayerObj*);
+void func_800D8ABC(struct LayerObj*);
+void func_800D8BAC(struct LayerObj*);
 
 // D_8010FF2C
-void func_800D8C24(void);
-void func_800D8C84(void);
-void func_800D8CF4(void);
-void func_800D8DE0(void);
+extern void (*D_8010FF2C[])(struct LayerObj*);
+void func_800D8C24(struct LayerObj*);
+void func_800D8C84(struct LayerObj*);
+void func_800D8CF4(struct LayerObj*);
+void func_800D8DE0(struct LayerObj*);
 
 // D_8010FF40
-void func_800D8F10(void);
-void func_800D8F48(void);
+extern void (*D_8010FF40[])(struct LayerObj*);
+void func_800D8F10(struct LayerObj*);
+void func_800D8F48(struct LayerObj*);
 
 // D_8010FF48
-void func_800D8F9C(void);
-void func_800D9050(void);
-void func_800D90CC(void);
+extern void (*D_8010FF48[])(struct LayerObj*);
+void func_800D8F9C(struct LayerObj*);
+void func_800D9050(struct LayerObj*);
+void func_800D90CC(struct LayerObj*);
 
 // D_8010FF60
-void func_800D9268(void);
-void func_800D9330(void);
-void func_800D93FC(void);
+extern void (*D_8010FF60[])(struct LayerObj*);
+void func_800D9268(struct LayerObj*);
+void func_800D9330(struct LayerObj*);
+void func_800D93FC(struct LayerObj*);
 
 // D_8010FF6C
-void func_800D941C(void);
-void func_800D9480(void);
-void func_800D9728(void);
-void func_800D986C(void);
-void func_800D98D0(void);
-void func_800D9934(void);
+extern void (*D_8010FF6C[])(struct LayerObj*);
+void func_800D941C(struct LayerObj*);
+void func_800D9480(struct LayerObj*);
+void func_800D9728(struct LayerObj*);
+void func_800D986C(struct LayerObj*);
+void func_800D98D0(struct LayerObj*);
+void func_800D9934(struct LayerObj*);
 
 // D_8010FF88
-void func_800DA098(void);
-void func_800DA0EC(void);
-void func_800DA140(void);
+extern void (*D_8010FF88[])(struct LayerObj*);
+void func_800DA098(struct LayerObj*);
+void func_800DA0EC(struct LayerObj*);
+void func_800DA140(struct LayerObj*);
 
 // D_8010FF94
-void func_800DA160(void);
-void func_800DA1C4(void);
-void func_800DA228(void);
+extern void (*D_8010FF94[])(struct LayerObj*);
+void func_800DA160(struct LayerObj*);
+void func_800DA1C4(struct LayerObj*);
+void func_800DA228(struct LayerObj*);
 
 // D_8010FFA0
-void func_800DA2D4(void);
-void func_800DA358(void);
-void func_800DA478(void);
+extern void (*D_8010FFA0[])(struct LayerObj*);
+void func_800DA2D4(struct LayerObj*);
+void func_800DA358(struct LayerObj*);
+void func_800DA478(struct LayerObj*);
 
 // D_8010FFB0
-void func_800DA498(void);
-void func_800DA4FC(void);
-void func_800DA560(void);
-void func_800DA748(void);
+extern void (*D_8010FFB0[])(struct LayerObj*);
+void func_800DA498(struct LayerObj*);
+void func_800DA4FC(struct LayerObj*);
+void func_800DA560(struct LayerObj*);
+void func_800DA748(struct LayerObj*);
 
 // D_8010FFC0
-void func_800DA600(void);
-void func_800DA6A4(void);
+extern void (*D_8010FFC0[])(struct LayerObj*);
+void func_800DA600(struct LayerObj*);
+void func_800DA6A4(struct LayerObj*);
 
 // D_8010FFC8
-void func_800DA7FC(void);
-void func_800DA818(void);
+extern void (*D_8010FFC8[])(struct LayerObj*);
+void func_800DA7FC(struct LayerObj*);
+void func_800DA818(struct LayerObj*);
 
 // D_8010FFD0
-void func_800DA8B4(void);
-void func_800DA90C(void);
-void func_800DA964(void);
+extern void (*D_8010FFD0[])(struct LayerObj*);
+void func_800DA8B4(struct LayerObj*);
+void func_800DA90C(struct LayerObj*);
+void func_800DA964(struct LayerObj*);
 
 // D_8011C940
 void func_800DD88C(void);
