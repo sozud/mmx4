@@ -3702,7 +3702,33 @@ void func_80035DDC(struct PlayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80035DE4);
+void func_80035DE4(struct PlayerObj* arg0)
+{
+    u8 var_v0_2;
+    u8 temp_v0;
+
+    if (arg0->base.unk2 == 0) {
+        if (arg0->unkD9 == 0) {
+            temp_v0 = D_801193F0[arg0->unk47];
+            if (D_801193F0[arg0->unk47] != 0) {
+                arg0->unk54 = &D_801194F0[temp_v0];
+                return;
+            }
+        }
+        arg0->unk54 = NULL;
+        return;
+    }
+    if (D_8011AF60[arg0->base.unk17] == 0) {
+        var_v0_2 = D_8011A030[arg0->unk47];
+    } else {
+        var_v0_2 = D_8011A130[arg0->unk47];
+    }
+    if (var_v0_2 == 0) {
+        arg0->unk54 = NULL;
+        return;
+    }
+    arg0->unk54 = &D_8011A230[var_v0_2];
+}
 
 void func_80035EA4(struct PlayerObj* arg0)
 {

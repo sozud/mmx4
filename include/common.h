@@ -163,7 +163,7 @@ struct PlayerObj {
     s8 unk44;
     s8 unk45;
     s8 unk46;
-    s8 unk47;
+    u8 unk47;
     s8 pad48[0x4A - 0x48];
     s8 unk4A;
     s8 pad4B[0x50 - 0x4B];
