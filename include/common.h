@@ -679,6 +679,35 @@ typedef union {
     } one;
 } Multi;
 
+struct ReadyLineExt {
+    f32 x_vel;
+    f32 y_vel;
+    f32 x_accel;
+    f32 y_accel;
+};
+
+struct QuadUnkExt {
+    u16 unk38;
+};
+
+struct QuadUnkExt2 {
+    u16 unk38;
+    u8 pad[8];
+    u8 unk42;
+    u8 unk43;
+};
+
+struct QuadUnkExt3 {
+    u8 unk38;
+};
+
+union QuadExt {
+    struct ReadyLineExt ready_line;
+    struct QuadUnkExt unk_ext;
+    struct QuadUnkExt2 unk_ext2;
+    struct QuadUnkExt3 unk_ext3;
+};
+
 struct QuadObj {
     s8 active;
     s8 id; // 0x01
@@ -701,10 +730,7 @@ struct QuadObj {
     u16 unk34;
     s8 unk36;
     s8 bg_offset;
-    Multi unk38;
-    s32 unk3C;
-    Multi unk40;
-    s32 unk44;
+    union QuadExt ext;
     s8 pad48[0x58 - 0x48];
     struct BaseObj* unk58; // might be something else
     struct PlayerObj* unk5C; // might be something else

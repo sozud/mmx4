@@ -12,7 +12,7 @@ void func_800D6F94(struct QuadObj* entity)
     u16 temp;
 
     entity->bg_offset = -1;
-    entity->unk40.one.c = 1; // 0x42
+    entity->ext.unk_ext2.unk42 = 1; // 0x42
     entity->x_pos.i.hi = 0;
     entity->y_pos.i.hi = 0;
     entity->active |= 0x80;
@@ -30,8 +30,8 @@ void func_800D6F94(struct QuadObj* entity)
     temp = D_8010FD94[0];
     entity->unk36 = 0x10;
     entity->state = 3;
-    entity->unk38.two.lo = 0x14;
-    entity->unk40.one.d = 0; // 0x43
+    entity->ext.unk_ext2.unk38 = 0x14;
+    entity->ext.unk_ext2.unk43 = 0; // 0x43
     entity->unk34 = temp;
 }
 
@@ -42,11 +42,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/title_quad", func_800D7058);
 void func_800D7100(struct QuadObj* arg0)
 {
     // seems to be a timer before the white Quad appears
-    if (arg0->unk38.utwo.lo != 0) {
-        arg0->unk38.utwo.lo--;
+    if (arg0->ext.unk_ext2.unk38 != 0) {
+        arg0->ext.unk_ext2.unk38--;
         return;
     }
-    arg0->unk38.utwo.lo = 3;
+    arg0->ext.unk_ext2.unk38 = 3;
     quad_is_on_screen(arg0);
     arg0->state = 4;
 }
@@ -55,7 +55,7 @@ void func_800D7100(struct QuadObj* arg0)
 void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 {
     if (D_80173C7A == 2) {
-        arg0->unk38.utwo.lo = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
+        arg0->ext.unk_ext2.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
         arg0->state = 5;
     }
     quad_is_on_screen(arg0);

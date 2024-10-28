@@ -122,10 +122,10 @@ void func_800D5D50(struct QuadObj* arg0)
         arg0->unk28.i.hi = *verts++;
         arg0->unk2C.i.hi = *verts++;
         arg0->unk30.i.hi = *verts;
-        arg0->unk38.val = 0x200000;
-        arg0->unk3C = 0;
-        arg0->unk40.val = 0;
-        arg0->unk44 = 0;
+        arg0->ext.ready_line.x_vel.val = FIXED(32);
+        arg0->ext.ready_line.y_vel.val = 0;
+        arg0->ext.ready_line.x_accel.val = 0;
+        arg0->ext.ready_line.y_accel.val = 0;
         func_800D6494(arg0);
         return;
     case 1:
@@ -170,12 +170,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D5F1C);
 // D_8010FC90 state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D6260);
 
-void func_800D6494(struct Unk22* arg0)
+void func_800D6494(struct QuadObj* arg0)
 {
-    arg0->unk8 += arg0->unk38;
-    arg0->unkC += arg0->unk3C;
-    arg0->unk38 += arg0->unk40;
-    arg0->unk3C += arg0->unk44;
+    arg0->x_pos.val += arg0->ext.ready_line.x_vel.val;
+    arg0->y_pos.val += arg0->ext.ready_line.y_vel.val;
+    arg0->ext.ready_line.x_vel.val += arg0->ext.ready_line.x_accel.val;
+    arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C594C", func_800D64D8);
@@ -193,7 +193,7 @@ void func_800D668C(void)
 void func_800D6694(struct QuadObj* arg0)
 {
     arg0->unk34 = 3;
-    *(s32*)&arg0->unk38 = FIXED(4);
+    arg0->ext.ready_line.x_vel.val = FIXED(4);
     arg0->unk36 = 0;
     arg0->bg_offset = 0;
     arg0->unk14.val = 0;
@@ -265,7 +265,7 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg
     arg0->on_screen = 1;
     arg0->bg_offset = arg1->base.bg_offset;
     arg0->unk36 = 1;
-    *(s8*)&arg0->unk38 = 0x3C;
+    arg0->ext.unk_ext3.unk38 = 0x3C;
     arg0->unk34 = arg0->unk2 + 0xD;
     func_800D69A8(arg0, arg1, arg2);
     arg0->state++;
@@ -273,14 +273,14 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg
 
 void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
 {
-    if (*(u8*)&arg0->unk38 == 0) {
+    if (arg0->ext.unk_ext3.unk38 == 0) {
         ZeroObjectState(arg0);
         return;
     }
-    if (*(u8*)&arg0->unk38 & 2) {
+    if (arg0->ext.unk_ext3.unk38 & 2) {
         arg0->on_screen ^= 1;
     }
-    *(u8*)&arg0->unk38 -= 1;
+    arg0->ext.unk_ext3.unk38 -= 1;
     func_800D69A8(arg0);
 }
 
