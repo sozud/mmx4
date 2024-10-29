@@ -6274,6 +6274,3 @@ extern void (*D_8010FFD0[])(struct LayerObj*);
 void func_800DA8B4(struct LayerObj*);
 void func_800DA90C(struct LayerObj*);
 void func_800DA964(struct LayerObj*);
-
-// D_8011C940
-void func_800DD88C(void);
