@@ -53,6 +53,8 @@ segments:
       - [0xC42C0, c, search_light]
       - [0xC49B0, c]
       - [0xC594C, c]
+      - [0xC6454, c, ready_line]
+      - [0xC6FA0, c]
       - [0xC7794, c, title_quad]
       - [0xC7F34, c]
       - [0xCB68C, asm] # doesn't seem like a function

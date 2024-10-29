@@ -722,7 +722,8 @@ struct QuadObj {
     s8 on_screen;
     s8 state;
     s8 unk5;
-    s8 pad6[0x8 - 0x6];
+    s8 unk6;
+    s8 unk7;
     f32 x_pos;
     f32 y_pos;
     s8 pad10[4];
@@ -738,7 +739,15 @@ struct QuadObj {
     s8 unk36;
     s8 bg_offset;
     union QuadExt ext;
-    s8 pad48[0x58 - 0x48];
+    s8 pad_[4];
+    s8 unk4C;
+    s8 unk4D;
+    s8 unk4E;
+    s8 unk4F;
+    u16 unk50;
+    s8 pad50[2];
+    s8 unk54;
+    s8 unk55;
     struct BaseObj* unk58; // might be something else
     struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
