@@ -2453,9 +2453,69 @@ struct MiscObj* find_free_misc_obj(void)
     return NULL;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AE90);
+struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
+{
+    if (arg1 == 0) {
+        if (arg0 == 0) {
+            arg0 = misc_objects;
+        } else {
+            arg0++;
+        }
+        while (arg0 < &misc_objects[COUNT(misc_objects)]) {
+            if (arg0->base.active == 0) {
+                return arg0;
+            }
+            arg0++;
+        }
+    } else {
+        if (arg0 == 0) {
+            arg0 = &misc_objects[COUNT(misc_objects)] - 1;
+        } else if (arg0 != misc_objects) {
+            arg0--;
+        } else {
+            return NULL;
+        }
+        while (arg0 >= misc_objects) {
+            if (arg0->base.active == 0) {
+                return arg0;
+            }
+            arg0--;
+        }
+    }
+    return NULL;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002AF4C);
+struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1)
+{
+    if (arg1 == 0) {
+        if (arg0 == 0) {
+            arg0 = visual_objects;
+        } else {
+            arg0++;
+        }
+        while (arg0 < &visual_objects[COUNT(visual_objects)]) {
+            if (arg0->base.active == 0) {
+                return arg0;
+            }
+            arg0++;
+        }
+    } else {
+        if (arg0 == 0) {
+            arg0 = &visual_objects[COUNT(visual_objects)] - 1;
+        } else if (arg0 != visual_objects) {
+            arg0--;
+        } else {
+            return NULL;
+        }
+        while (arg0 >= visual_objects) {
+            if (arg0->base.active == 0) {
+                return arg0;
+            }
+            arg0--;
+        }
+    }
+    return NULL;
+}
 
 struct QuadObj* find_free_quad_obj()
 {
