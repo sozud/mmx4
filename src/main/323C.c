@@ -2565,7 +2565,13 @@ void func_8002B0C8(struct Unk18* arg0)
     ZeroObjectState(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002B108);
+void func_8002B108(struct Unk18* arg0)
+{
+    if (arg0->unk10 != NULL) {
+        *arg0->unk10 = 0x80;
+    }
+    ZeroObjectState(arg0);
+}
 
 void ZeroObjectState(struct Unk18* arg0)
 {

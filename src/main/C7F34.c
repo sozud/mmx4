@@ -250,11 +250,59 @@ void func_800D8BAC(struct LayerObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8BB4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8C24);
+void func_800D8C24(struct LayerObj* arg0)
+{
+    struct BaseObj* temp_v0;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8C84);
+    temp_v0 = (struct BaseObj*)find_free_main_obj();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0x22;
+        temp_v0->unk2 = arg0->base.bg_offset - 1;
+        temp_v0->unk10 = arg0;
+    }
+    arg0->base.unk7++;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8CF4);
+void func_800D8C84(struct LayerObj* arg0)
+{
+    struct BaseObj* temp_v0;
+
+    if (*(s8*)&arg0->unk1C == 1) {
+        arg0->base.unk7++;
+        temp_v0 = (struct BaseObj*)find_free_item_obj();
+        if (temp_v0 != NULL) {
+            temp_v0->active = 0x41;
+            temp_v0->id = 0xC;
+            temp_v0->unk2 = arg0->base.bg_offset - 1;
+            temp_v0->state = 0;
+        }
+    }
+}
+
+void func_800D8CF4(struct LayerObj* arg0)
+{
+    u8 temp = arg0->base.bg_offset;
+    switch (temp) {
+    case 1:
+        func_800DABE4(0xD, 0x8C0, 0x160);
+        func_800DABE4(0xC, 0x970, 0x190);
+        break;
+    case 2:
+        func_800DABE4(0, 0xD20, 0x160);
+        func_800DABE4(7, 0xE10, 0x170);
+        break;
+    case 3:
+        func_800DABE4(0, 0x13B0, 0x160);
+        func_800DABE4(7, 0x14A0, 0x170);
+        break;
+    case 4:
+        func_800DABE4(0, 0x1A40, 0x160);
+        func_800DABE4(7, 0x1B30, 0x170);
+        break;
+    }
+    arg0->base.unk7++;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8DE0);
 
@@ -273,23 +321,55 @@ void func_800D8ED4(struct LayerObj* arg0)
     D_8010FF40[arg0->base.state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8F10);
+void func_800D8F10(struct LayerObj* arg0)
+{
+    arg0->base.unk5 = 2;
+    arg0->base.bg_offset = 3;
+    arg0->base.state++;
+    func_800D8F48(arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8F48);
+void func_800D8F48(struct LayerObj* arg0)
+{
+    arg0->base.unk15 = arg0->base.bg_offset;
+    func_800D91A8(arg0);
+    D_8010FF48[arg0->base.unk5](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8F9C);
+void func_800D8F9C(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D8FDC(arg0);
+    } else {
+        func_800D9008(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D8FDC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9008);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9050);
+void func_800D9050(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D9090(arg0);
+    } else {
+        func_800D90BC(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9090);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D90BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D90CC);
+void func_800D90CC(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D910C(arg0);
+    } else {
+        func_800D9138(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D910C);
 
@@ -299,7 +379,24 @@ void func_800D91A0(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D91A8);
+void func_800D91A8(struct LayerObj* arg0)
+{
+    u32 var_v1;
+
+    if (g_Player.base.y_pos.i.hi < 0x201) {
+        var_v1 = (u32) ~(g_Player.base.x_pos.i.hi - 0x450) >> 0x1F;
+    } else {
+        var_v1 = 2;
+        if (g_Player.base.x_pos.i.hi - 0xA00 < 0) {
+            var_v1 = 1;
+        }
+    }
+    arg0->base.bg_offset = var_v1;
+    if (var_v1 != arg0->base.unk15) {
+        arg0->base.unk5 = var_v1;
+        arg0->base.unk6 = 0;
+    }
+}
 
 void func_800D9218(struct LayerObj* arg0)
 {
@@ -311,15 +408,38 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9268);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9330);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D93FC);
+void func_800D93FC(struct LayerObj* arg0)
+{
+    func_8002B108(arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D941C);
+void func_800D941C(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D945C(arg0);
+    } else {
+        func_800D9470(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D945C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9470);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9480);
+void func_800D9480(struct LayerObj* arg0)
+{
+    switch (arg0->base.unk6) {
+    case 0:
+        func_800D94FC(arg0);
+        return;
+    case 1:
+        func_800D95F4(arg0);
+        return;
+    case 2:
+        func_800D964C(arg0);
+        return;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D94FC);
 
@@ -327,19 +447,40 @@ INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D95F4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D964C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9728);
+void func_800D9728(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D9768(arg0);
+    } else {
+        func_800D97F4(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9768);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D97F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D986C);
+void func_800D986C(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D98AC(arg0);
+    } else {
+        func_800D98C0(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D98AC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D98C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D98D0);
+void func_800D98D0(struct LayerObj* arg0)
+{
+    if (arg0->base.unk6 == 0) {
+        func_800D9910(arg0);
+    } else {
+        func_800D9924(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/C7F34", func_800D9910);
 
