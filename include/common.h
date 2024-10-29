@@ -717,7 +717,7 @@ union QuadExt {
 
 struct QuadObj {
     s8 active;
-    s8 id;
+    s8 id; // 0x01
     s8 unk2;
     s8 on_screen;
     s8 state;
@@ -748,9 +748,9 @@ struct QuadObj {
     s8 pad50[2];
     s8 unk54;
     s8 unk55;
-    struct BaseObj* unk58;
-    struct PlayerObj* unk5C;
-};
+    struct BaseObj* unk58; // might be something else
+    struct PlayerObj* unk5C; // might be something else
+}; // size 0x60
 
 // D_801721C0
 struct EngineObj {
