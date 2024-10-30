@@ -216,8 +216,79 @@ void func_800D5F1C(struct QuadObj* arg0)
     }
 }
 
+extern s16 D_8010FC50[][4][2];
+extern u8 D_8010FC9C[];
+
 // D_8010FC90 state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/ready_line", func_800D6260);
+void func_800D6260(struct QuadObj* arg0)
+{
+    s32 var_s1;
+    struct BaseObj* temp_v0_9;
+    u16 temp_v0_8;
+    s16* verts;
+
+    switch (arg0->unk5) {
+    case 0:
+        arg0->unk5 = 1;
+        verts = &D_8010FC50[D_8010FC9C[get_random() & 0xF]][0];
+        arg0->unk14.i.hi = *verts++;
+        arg0->unk18.i.hi = *verts++;
+        arg0->unk1C.i.hi = *verts++;
+        arg0->unk20.i.hi = *verts++;
+        arg0->unk24.i.hi = *verts++;
+        arg0->unk28.i.hi = *verts++;
+        arg0->unk2C.i.hi = *verts++;
+        arg0->unk30.i.hi = *verts++;
+        var_s1 = 1;
+        if (get_random() & 1) {
+            var_s1 = 2;
+        }
+        if (get_random() & 1) {
+            arg0->x_pos.i.hi = -176;
+            arg0->ext.ready_line.x_vel.val = var_s1 * FIXED(24);
+            arg0->ext.ready_line.y_vel.val = 0;
+            arg0->ext.ready_line.x_accel.val = 0;
+            arg0->ext.ready_line.y_accel.val = 0;
+            arg0->unk48 = 0;
+        } else {
+            arg0->x_pos.i.hi = 496;
+            arg0->ext.ready_line.x_vel.val = -(var_s1 * FIXED(24));
+            arg0->ext.ready_line.y_vel.val = 0;
+            arg0->ext.ready_line.x_accel.val = 0;
+            arg0->ext.ready_line.y_accel.val = 0;
+            arg0->unk48 = 1;
+        }
+        arg0->y_pos.i.hi = ((get_random() & 7) * 4) + 104;
+        arg0->unk52 = arg0->unk7 << 3;
+        return;
+    case 1:
+        temp_v0_8 = arg0->unk52;
+        if (temp_v0_8 != 0) {
+            arg0->unk52--;
+            return;
+        }
+        if (arg0->unk48 == 0) {
+            if (arg0->x_pos.i.hi < 320) {
+                func_800D6494(arg0);
+                return;
+            }
+            goto block_18;
+        }
+        if (arg0->x_pos.i.hi < -176) {
+        block_18:
+            arg0->unk5 = 2;
+            return;
+        }
+        func_800D6494(arg0);
+        return;
+    case 2:
+        temp_v0_9 = arg0->unk58;
+        temp_v0_9->bg_offset--;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        return;
+    }
+}
 
 void func_800D6494(struct QuadObj* arg0)
 {

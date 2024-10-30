@@ -743,13 +743,14 @@ struct QuadObj {
     s8 unk36;
     s8 bg_offset;
     union QuadExt ext;
-    s8 pad_[4];
+    u8 unk48;
+    s8 pad_[3];
     s8 unk4C;
     s8 unk4D;
     s8 unk4E;
     s8 unk4F;
     u16 unk50;
-    s8 pad50[2];
+    s16 unk52;
     s8 unk54;
     s8 unk55;
     struct BaseObj* unk58; // might be something else
