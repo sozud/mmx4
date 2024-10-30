@@ -143,6 +143,9 @@ struct BackgroundObj {
     u8 unk49;
     u8 pad49[2];
     u8 unk4C;
+    s8 unk4D;
+    s8 unk4E;
+    s8 : 8;
     s8 pad50[4];
 }; // size 0x54
 
@@ -242,7 +245,8 @@ struct PlayerObj {
     s8 unkBE;
     s8 unkBF;
     s8 unkC0;
-    s8 padC0[2];
+    s8 unkC1;
+    s8 unkC2;
     s8 unkC3;
     s8 unkC4;
     s8 unkC5;
@@ -1180,7 +1184,9 @@ void func_8001E54C(struct Unk800F2294* arg0);
 void func_8001E638(struct Unk800F2294* arg0);
 void func_8001E6BC(struct Unk800F2294* arg0);
 
+s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
+u8 func_800D9B08(struct LayerObj*);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(s32*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);

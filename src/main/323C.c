@@ -3967,9 +3967,21 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8003698C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80036A94);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80036AE4);
+void func_80036AE4(s8 arg0, s8 arg1)
+{
+    g_Player.unkC0 = 1;
+    g_Player.unkC1 = arg0;
+    g_Player.unkC2 = arg1;
+    g_Player.unk7A = 1;
+    engine_obj.unk1C = 1;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80036B18);
+void func_80036B18(void)
+{
+    g_Player.unkC0 = 0;
+    g_Player.unk7A = 0;
+    engine_obj.unk1C = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80036B38);
 
