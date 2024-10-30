@@ -703,7 +703,10 @@ struct QuadUnkExt {
 
 struct QuadUnkExt2 {
     u16 unk38;
-    u8 pad[8];
+    s16 : 16;
+    s16 unk3C;
+    s16 : 16;
+    s16 : 16;
     u8 unk42;
     u8 unk43;
 };
@@ -712,11 +715,18 @@ struct QuadUnkExt3 {
     u8 unk38;
 };
 
+struct QuadUnkExt4 {
+    s32 : 32;
+    u16 unk3C;
+};
+
 union QuadExt {
     struct ReadyLineExt ready_line;
     struct QuadUnkExt unk_ext;
     struct QuadUnkExt2 unk_ext2;
     struct QuadUnkExt3 unk_ext3;
+    struct QuadUnkExt4 unk_ext4;
+    u32 unk38;
 };
 
 struct QuadObj {
@@ -946,6 +956,8 @@ extern s8 D_800F8C10[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
 extern void (*D_8010F5F8[2])();
+extern s8 D_8010FE38[];
+extern u8 D_8010FED4[];
 extern u8 D_801193F0[];
 extern u32 D_801194F0[];
 extern u8 D_8011A030[];
