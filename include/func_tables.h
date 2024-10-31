@@ -64,9 +64,10 @@ void func_8001D64C(void);
 void func_8001D1A4(void);
 
 // D_800F2194
-void func_8001D7D0(void);
-void func_8001D8DC(void);
-void func_8001D9D0(void);
+extern void (*D_800F2194[])(struct Unk* arg0);
+void func_8001D7D0(struct Unk* arg0);
+void func_8001D8DC(struct Unk* arg0);
+void func_8001D9D0(struct Unk* arg0);
 
 // D_800F21B0
 void func_8001D1F0(struct Unk* arg0);
