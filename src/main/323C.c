@@ -326,7 +326,71 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80014A90);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80014C70);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80014DC4);
+void func_80014DC4(void)
+{
+    u8 var_v1;
+
+    D_80137DFC = 0;
+
+    for (var_v1 = 0; var_v1 < 6; var_v1++) {
+        D_8013E198[var_v1] = -1;
+    }
+    for (var_v1 = 0; var_v1 < 4; var_v1++) {
+        D_8013E1C8[var_v1] = -1;
+    }
+    for (var_v1 = 0; var_v1 < 4; var_v1++) {
+        D_8013924C[var_v1] = -1;
+    }
+    for (var_v1 = 0; var_v1 < 24; var_v1++) {
+        D_80139234[var_v1] = -1;
+    }
+
+    D_8013DC10 = &_SsNoteOn;
+    D_8013DC14 = &_SsSetProgramChange;
+    D_8013DC1C = &dmy_SsGetMetaEvent;
+    D_8013DC18 = &dmy_SsSetPitchBend;
+    D_8013DC20 = &_SsSetControlChange;
+    D_8013DC24 = &dmy_SsContBankChange;
+    D_8013DC2C = &_SsContMainVol;
+    D_8013DC30 = &dmy_SsContPanpot;
+    D_8013DC34 = &dmy_SsContDamper;
+    D_8013DC38 = &dmy_SsContNrpn1;
+    D_8013DC3C = &dmy_SsContNrpn2;
+    D_8013DC40 = &_SsContRpn1;
+    D_8013DC44 = &dmy_SsContRpn2;
+    D_8013DC48 = &dmy_SsContExternal;
+    D_8013DC4C = &dmy_SsContResetAll;
+    D_8013DC28 = &dmy_SsContDataEntry;
+    D_8013DC54 = &dmy_SsSetNrpnVabAttr0;
+    D_8013DC58 = &dmy_SsSetNrpnVabAttr1;
+    D_8013DC5C = &dmy_SsSetNrpnVabAttr2;
+    D_8013DC60 = &dmy_SsSetNrpnVabAttr3;
+    D_8013DC64 = &dmy_SsSetNrpnVabAttr4;
+    D_8013DC68 = &dmy_SsSetNrpnVabAttr5;
+    D_8013DC6C = &dmy_SsSetNrpnVabAttr6;
+    D_8013DC70 = &dmy_SsSetNrpnVabAttr7;
+    D_8013DC74 = &dmy_SsSetNrpnVabAttr8;
+    D_8013DC78 = &dmy_SsSetNrpnVabAttr9;
+    D_8013DC7C = &dmy_SsSetNrpnVabAttr10;
+    D_8013DC80 = &dmy_SsSetNrpnVabAttr11;
+    D_8013DC84 = &dmy_SsSetNrpnVabAttr12;
+    D_8013DC88 = &dmy_SsSetNrpnVabAttr13;
+    D_8013DC8C = &dmy_SsSetNrpnVabAttr14;
+    D_8013DC90 = &dmy_SsSetNrpnVabAttr15;
+    D_8013DC94 = &dmy_SsSetNrpnVabAttr16;
+    D_8013DC98 = &dmy_SsSetNrpnVabAttr17;
+    D_8013DC9C = &dmy_SsSetNrpnVabAttr18;
+    D_8013DCA0 = &dmy_SsSetNrpnVabAttr19;
+
+    SsInit();
+    SsSetTableSize(&D_80137E0C, 3, 0xA);
+    SsSetTickMode(1);
+    SsUtSetReverbType(2);
+    while (SpuClearReverbWorkArea(2) == -1)
+        ;
+    func_800E0D0C();
+    SsUtSetReverbDepth(8, 8);
+}
 
 void func_8001512C(void)
 {
