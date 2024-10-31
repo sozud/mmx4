@@ -945,6 +945,11 @@ struct OffsetInfo {
     u8 pad[77];
 };
 
+struct RectPtrPair {
+    RECT rect;
+    u_long* ptr;
+};
+
 extern struct QuadObj g_QuadObjects[0x20];
 extern s8 D_800EE538;
 extern s8 D_800EE54C[];
@@ -1165,6 +1170,8 @@ extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
 extern struct Prim D_800EE504[];
+extern struct RectPtrPair vram_rect_ptrs[];
+extern struct RectPtrPair* vram_rect_ptr;
 
 #include "func_tables.h"
 

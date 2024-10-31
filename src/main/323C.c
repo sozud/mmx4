@@ -432,9 +432,34 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015D90);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015DC8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015E0C);
+void clear_vram_rect_ptrs(void)
+{
+    u32 i;
+    struct RectPtrPair* ptr;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015E54);
+    ptr = &vram_rect_ptrs[0];
+    vram_rect_ptr = ptr;
+
+    for (i = 0; i < 8; i++) {
+        ptr->rect.x = 0;
+        ptr->rect.y = 0;
+        ptr->rect.w = 0;
+        ptr->rect.h = 0;
+        ptr->ptr = NULL;
+        ptr++;
+    }
+}
+
+void load_vram_rect_ptrs(void)
+{
+    struct RectPtrPair* cur;
+    for (cur = &vram_rect_ptrs[0]; cur < &vram_rect_ptrs[8]; cur++) {
+        if (cur->ptr != NULL) {
+            LoadImage(&cur->rect, cur->ptr);
+        }
+    }
+    vram_rect_ptr = &vram_rect_ptrs[0];
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015ECC);
 
@@ -444,7 +469,7 @@ void load_palette(void)
         if (need_palette_load & 1) {
             LoadImage(&D_800F1658, SP_PALETTE);
         } else if (need_palette_load & 2) {
-            LoadImage(&D_800F1658, &D_80141F70);
+            LoadImage(&D_800F1658, &D_80141F70); // D_80141F70 is in vram_rect_ptr but can't figure out a match
         }
 
         need_palette_load = 0;

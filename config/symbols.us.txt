@@ -687,3 +687,9 @@ engine_obj_5C = 0x8017221C;
 engine_obj_5D = 0x8017221D;
 engine_obj_5E = 0x8017221E;
 engine_obj_5F = 0x8017221F;
+
+clear_vram_rect_ptrs = 0x80015E0C;
+load_vram_rect_ptrs = 0x80015E54;
+
+vram_rect_ptr = 0x80141F68;
+vram_rect_ptrs = 0x801659D0;

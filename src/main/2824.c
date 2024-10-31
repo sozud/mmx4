@@ -16,12 +16,12 @@ void func_80012024(void)
         func_800168D8();
         func_800169D8();
         func_80012328();
-        func_80015E0C();
+        clear_vram_rect_ptrs();
         D_80141BD8.unk0++;
         func_80012600();
         func_80014780();
         DrawSync(0);
-        func_80015E54();
+        load_vram_rect_ptrs();
         load_palette();
         DrawSync(0);
         func_80012454();
