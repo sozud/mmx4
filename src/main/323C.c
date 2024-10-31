@@ -563,7 +563,17 @@ void func_80016448(u8 arg0)
     CdMix(&D_80139520);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800164D8);
+void func_800164D8(void)
+{
+    s8 pad[2];
+    s32 a = engine_obj.stage * 8;
+    s32 b = engine_obj.substage * 4;
+    s32 c = engine_obj.unk43 * 2;
+    s32 temp_v0;
+
+    temp_v0 = a + b + c;
+    func_8001663C(D_800F1A0C[temp_v0], D_800F1A0C[temp_v0 + 1]);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001653C);
 
@@ -993,7 +1003,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D698);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D6DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D77C);
+void func_8001D77C(struct Unk* arg0)
+{
+    D_800F2194[arg0->base.id](arg0);
+    update_misc_objects();
+    func_8002A484();
+    func_80023D68();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D7D0);
 
@@ -1060,7 +1076,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E4F0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E54C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E638);
+void func_8001E638(struct Unk800F2294* arg0)
+{
+    arg0->unk4--;
+    if (arg0->unk4 == 0) {
+        func_800129F0(8);
+        arg0->unk1 += 1;
+    }
+}
 
 void func_8001E690(struct Unk800F2294* arg0)
 {
@@ -1549,7 +1572,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023C0C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023CA4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023CE0);
+void func_80023CE0()
+{
+    func_80025DA0(0, D_800F30D4[engine_obj.stage * 2][engine_obj.substage]);
+    func_80026118();
+}
 
 void func_80023D30(void)
 {
@@ -10795,7 +10822,17 @@ void func_800AE7DC(struct UnkObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE848);
+void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
+{
+    if (player->unk8C != 0) {
+        if (player->unk8C > 0) {
+            arg0->unk3 = 1;
+            func_800AEA58();
+            return;
+        }
+        player->unk8C = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE88C);
 
