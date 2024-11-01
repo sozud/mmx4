@@ -1064,7 +1064,7 @@ extern s16 D_8013B7F4;
 extern s16 D_8013B7F8;
 extern s16 D_8013B7FC;
 extern s16 D_8013B804;
-extern u8 D_8013BC34;
+extern u8 D_8013BC34[];
 extern s16 D_80173C7A;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
@@ -1174,6 +1174,7 @@ extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[][1]; // unknown size
 extern u8 D_800F1A0C[1];
+extern s16 D_8013BC38;
 
 #include "func_tables.h"
 

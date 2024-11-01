@@ -1518,7 +1518,16 @@ void func_80021CC8(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021D20);
+void func_80021D20(void)
+{
+    if (D_8013BC34[0] != 0) {
+        func_80022730(D_8013BC34 - 0xC);
+        return;
+    }
+    if (D_8013BC38 != 0) {
+        func_8002217C(D_8013BC38 & 0x7FFF, 0xFF, 0);
+    }
+}
 
 void func_80021D84(void)
 {
@@ -3139,7 +3148,7 @@ void func_8002F1B4(struct EngineObj* arg0)
 
 void func_8002F264(struct EngineObj* arg0)
 {
-    if (D_8013BC34 != 0x80) {
+    if (D_8013BC34[0] != 0x80) {
         arg0->unk2++;
         func_8002F048();
     }
@@ -3149,7 +3158,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F2A0);
 
 void func_8002F47C(struct EngineObj* arg0)
 {
-    if ((D_8013BC34 == 1) || (D_8013BC34 == 0x80)) {
+    if ((D_8013BC34[0] == 1) || (D_8013BC34[0] == 0x80)) {
         arg0->unk2--;
         func_8002F048();
     }
