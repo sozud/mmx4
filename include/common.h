@@ -216,13 +216,11 @@ struct PlayerObj {
     u8 unk91;
     u8 unk92;
     s8 unk93;
-    u8 unk94;
-    s8 unk95;
+    s8 unk94[2];
     s8 unk96;
     s8 unk97;
     u8 pad98[0x9B - 0x98];
-    s8 unk9B;
-    s8 unk9C;
+    s8 unk9B[2];
     u8 unk9D;
     u8 unk9E;
     s8 unk9F;
@@ -1088,7 +1086,7 @@ extern s32 D_80137DD0;
 extern u8 D_801406AC;
 extern s32 D_80142F70;
 extern s32 D_8015D9C8;
-extern s8 D_801374B4;
+extern u8 D_801374B4;
 extern s8 D_801374B8;
 extern s8 D_80137CE4;
 extern s8 D_80137CF0;
@@ -1177,6 +1175,9 @@ extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[][1]; // unknown size
 extern u8 D_800F1A0C[1];
 extern s16 D_8013BC38;
+extern s32* D_8012F4B4[];
+extern RECT D_80137CFC;
+extern s32 D_80137D08[];
 
 #include "func_tables.h"
 
