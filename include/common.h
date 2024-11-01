@@ -1252,7 +1252,7 @@ s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
 s32 func_800E5FF4(s32, s32, u8*);
-void func_800AE6B4(s32*);
+void func_800AE6B4(struct BazObj*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();

@@ -10800,7 +10800,19 @@ void func_800AE65C(struct ShotObj* arg0)
     D_8010A064[arg0->base.state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE6B4);
+void func_800AE6B4(struct BazObj* arg0)
+{
+    struct PlayerObj* ptr = &g_Player;
+    arg0->base.x_pos.val = g_Player.base.x_pos.val;
+    arg0->base.y_pos.val = g_Player.base.y_pos.val;
+
+    if (arg0->base.state == 0) {
+        func_800AE714(arg0, ptr);
+
+    } else {
+        func_800AE790(arg0, ptr);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE714);
 
