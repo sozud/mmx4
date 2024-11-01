@@ -32,7 +32,7 @@ extern struct Temp2 D_80169D98[];
 extern struct Temp3 D_80139830[];
 extern struct Temp4 D_80139C30[];
 extern struct Temp5 D_80139E30[];
-extern s8 D_80173C84;
+extern u8 D_80173C84;
 extern s32 D_80175EE8[];
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012A3C);
@@ -1041,7 +1041,18 @@ struct QuadObj* func_8001DC7C(s8 arg0, s8 arg1)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DCCC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DDB0);
+void func_8001DDB0(struct Unk800F2294* arg0)
+{
+    if (arg0->unk4 == 0) {
+        func_8001663C(0x20, 0x7F);
+        arg0->unk4 = 1;
+    }
+    if (D_80173C84 == 2) {
+        arg0->unkD = 1;
+        arg0->unk4 = 0xA;
+        arg0->unk1 += 1;
+    }
+}
 
 void func_8001DE20(struct Unk800F2294* arg0)
 {

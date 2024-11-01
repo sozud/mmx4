@@ -860,12 +860,14 @@ struct Unk21 {
 };
 
 struct Unk800F2294 {
-    u8 pad;
-    u8 unk1;
-    u8 pad2[2];
-    s16 unk4;
-    u8 pad3[3];
-    u16 unkA;
+    /* 0x00 */ u8 pad;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u8 pad2[2];
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ u8 pad3[3];
+    /* 0x0A */ u16 unkA;
+    /* 0x0C */ u8 padD[1];
+    /* 0x0D */ u8 unkD;
 };
 
 struct Unk80139690 {
