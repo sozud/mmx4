@@ -1188,27 +1188,27 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FAFC);
 void func_8001FB50(void)
 {
     while (1) {
-        D_800F23E8[engine_obj.unk0](&engine_obj);
+        engine_update_funcs[engine_obj.state](&engine_obj);
         func_800127C8(1);
     }
 }
 
-void func_8001FBB8(struct EngineObj* arg0)
+void engine_state_0(struct EngineObj* arg0)
 {
     arg0->unk44 = 2;
     arg0->unk46 = 0x20;
-    arg0->unk0 = 1;
+    arg0->state = 1;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FBD4);
 
-void func_8001FBE0(struct EngineObj* arg0)
+void engine_state_4(struct EngineObj* arg0)
 {
     func_80013014();
     arg0->checkpoint = 0;
     arg0->unk1E = 0;
     D_80171EA8 = 0;
-    arg0->unk0 = 5;
+    arg0->state = 5;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FC20);
@@ -1257,7 +1257,7 @@ void func_8001FDBC(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FEC0);
 
-void func_8001FF50(struct EngineObj* arg0)
+void engine_state_6(struct EngineObj* arg0)
 {
     D_800F241C[arg0->unk1]();
 }
@@ -2230,14 +2230,14 @@ void func_80029978(struct EngineObj* arg0)
         background_objects[2].unk3 = 0;
         reset_objects();
         func_80012EB8();
-        arg0->unk0 = 3;
+        arg0->state = 3;
         arg0->unk1 = 0;
         arg0->stage = 0;
         arg0->substage = 0;
     }
 }
 
-void func_800299EC(struct EngineObj* arg0)
+void engine_state_1(struct EngineObj* arg0)
 {
     D_800F44A8[arg0->unk1]();
     func_8002B460();
@@ -3224,7 +3224,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002FB54);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002FBDC);
 
-void func_8002FC38(struct EngineObj* arg0)
+void engine_state_3(struct EngineObj* arg0)
 {
     func_8002B460();
     D_800F48A4[arg0->unk1](arg0);

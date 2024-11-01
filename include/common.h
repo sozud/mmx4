@@ -767,7 +767,7 @@ struct QuadObj {
 
 // D_801721C0
 struct EngineObj {
-    s8 unk0;
+    s8 state;
     s8 unk1;
     s8 unk2;
     s8 pad3;
@@ -979,7 +979,7 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
-extern void (*D_800F23E8[1])(void*);
+extern void (*engine_update_funcs[1])(void*);
 extern s8 D_80171EA8;
 extern void (*D_800F44A8[1])();
 extern void (*D_800F48A4[1])(struct EngineObj* arg0);
@@ -1204,19 +1204,6 @@ s32 func_80039F28(struct Unk12*);
 void func_80012EB8();
 void func_8001D134();
 void reset_objects();
-void func_8001FBB8(struct EngineObj* arg0);
-void func_800299EC(struct EngineObj* arg0);
-void func_8001FBD4(struct EngineObj* arg0);
-void func_8002FC38(struct EngineObj* arg0);
-void func_8001FBE0(struct EngineObj* arg0);
-void func_8001FC20(struct EngineObj* arg0);
-void func_8001FF50(struct EngineObj* arg0);
-void func_8001FAFC(struct EngineObj* arg0);
-void func_80020AC8(struct EngineObj* arg0);
-void func_80020D98(struct EngineObj* arg0);
-void func_80020464(struct EngineObj* arg0);
-void func_80023A54(struct EngineObj* arg0);
-void func_800204AC(struct EngineObj* arg0);
 void func_80013014();
 void func_80021858();
 void func_80023D68();

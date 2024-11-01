@@ -133,14 +133,14 @@ void func_8001F398(void);
 void func_8001F9A0(void);
 void func_8001FAC0(void);
 
-// D_800F23E8
-void func_8001FBB8(struct EngineObj* arg0);
-void func_800299EC(struct EngineObj* arg0);
+// D_800F23E8 engine_update_funcs
+void engine_state_0(struct EngineObj* arg0);
+void engine_state_1(struct EngineObj* arg0);
 void func_8001FBD4(struct EngineObj* arg0);
-void func_8002FC38(struct EngineObj* arg0);
-void func_8001FBE0(struct EngineObj* arg0);
+void engine_state_3(struct EngineObj* arg0);
+void engine_state_4(struct EngineObj* arg0);
 void func_8001FC20(struct EngineObj* arg0);
-void func_8001FF50(struct EngineObj* arg0);
+void engine_state_6(struct EngineObj* arg0);
 void func_8001FAFC(struct EngineObj* arg0);
 void func_80020AC8(struct EngineObj* arg0);
 void func_80020D98(struct EngineObj* arg0);
