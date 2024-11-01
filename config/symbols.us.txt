@@ -693,3 +693,10 @@ load_vram_rect_ptrs = 0x80015E54;
 
 vram_rect_ptr = 0x80141F68;
 vram_rect_ptrs = 0x801659D0;
+
+engine_update_funcs = 0x800F23E8;
+engine_state_0 = 0x8001FBB8;
+engine_state_1 = 0x800299EC;
+engine_state_3 = 0x8002FC38;
+engine_state_4 = 0x8001FBE0;
+engine_state_6 = 0x8001FF50;
