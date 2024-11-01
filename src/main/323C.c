@@ -32,7 +32,7 @@ extern struct Temp2 D_80169D98[];
 extern struct Temp3 D_80139830[];
 extern struct Temp4 D_80139C30[];
 extern struct Temp5 D_80139E30[];
-extern s8 D_80173C84;
+extern u8 D_80173C84;
 extern s32 D_80175EE8[];
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80012A3C);
@@ -1041,7 +1041,18 @@ struct QuadObj* func_8001DC7C(s8 arg0, s8 arg1)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DCCC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001DDB0);
+void func_8001DDB0(struct Unk800F2294* arg0)
+{
+    if (arg0->unk4 == 0) {
+        func_8001663C(0x20, 0x7F);
+        arg0->unk4 = 1;
+    }
+    if (D_80173C84 == 2) {
+        arg0->unkD = 1;
+        arg0->unk4 = 0xA;
+        arg0->unk1 += 1;
+    }
+}
 
 void func_8001DE20(struct Unk800F2294* arg0)
 {
@@ -1518,7 +1529,16 @@ void func_80021CC8(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021D20);
+void func_80021D20(void)
+{
+    if (D_8013BC34[0] != 0) {
+        func_80022730(D_8013BC34 - 0xC);
+        return;
+    }
+    if (D_8013BC38 != 0) {
+        func_8002217C(D_8013BC38 & 0x7FFF, 0xFF, 0);
+    }
+}
 
 void func_80021D84(void)
 {
@@ -3139,7 +3159,7 @@ void func_8002F1B4(struct EngineObj* arg0)
 
 void func_8002F264(struct EngineObj* arg0)
 {
-    if (D_8013BC34 != 0x80) {
+    if (D_8013BC34[0] != 0x80) {
         arg0->unk2++;
         func_8002F048();
     }
@@ -3149,7 +3169,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002F2A0);
 
 void func_8002F47C(struct EngineObj* arg0)
 {
-    if ((D_8013BC34 == 1) || (D_8013BC34 == 0x80)) {
+    if ((D_8013BC34[0] == 1) || (D_8013BC34[0] == 0x80)) {
         arg0->unk2--;
         func_8002F048();
     }
@@ -10800,7 +10820,19 @@ void func_800AE65C(struct ShotObj* arg0)
     D_8010A064[arg0->base.state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE6B4);
+void func_800AE6B4(struct BazObj* arg0)
+{
+    struct PlayerObj* ptr = &g_Player;
+    arg0->base.x_pos.val = g_Player.base.x_pos.val;
+    arg0->base.y_pos.val = g_Player.base.y_pos.val;
+
+    if (arg0->base.state == 0) {
+        func_800AE714(arg0, ptr);
+
+    } else {
+        func_800AE790(arg0, ptr);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800AE714);
 

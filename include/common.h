@@ -860,12 +860,14 @@ struct Unk21 {
 };
 
 struct Unk800F2294 {
-    u8 pad;
-    u8 unk1;
-    u8 pad2[2];
-    s16 unk4;
-    u8 pad3[3];
-    u16 unkA;
+    /* 0x00 */ u8 pad;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u8 pad2[2];
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ u8 pad3[3];
+    /* 0x0A */ u16 unkA;
+    /* 0x0C */ u8 padD[1];
+    /* 0x0D */ u8 unkD;
 };
 
 struct Unk80139690 {
@@ -1064,7 +1066,7 @@ extern s16 D_8013B7F4;
 extern s16 D_8013B7F8;
 extern s16 D_8013B7FC;
 extern s16 D_8013B804;
-extern u8 D_8013BC34;
+extern u8 D_8013BC34[];
 extern s16 D_80173C7A;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
@@ -1174,6 +1176,7 @@ extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[][1]; // unknown size
 extern u8 D_800F1A0C[1];
+extern s16 D_8013BC38;
 
 #include "func_tables.h"
 
@@ -1252,7 +1255,7 @@ s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
 s32 func_800E5FF4(s32, s32, u8*);
-void func_800AE6B4(s32*);
+void func_800AE6B4(struct BazObj*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
