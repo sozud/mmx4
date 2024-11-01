@@ -208,7 +208,7 @@ void func_800D8290(struct QuadObj* arg0)
         arg0->unk34 = 0x12;
         arg0->ext.unk38 = 0x10;
         arg0->unk5 = (u8)arg0->unk5 + 1;
-        obj->unk95 = 0;
+        obj->unk94[1] = 0;
     } else {
         arg0->unk34 = D_8010FED4[arg0->ext.unk38 & 3];
     }
@@ -248,10 +248,10 @@ void func_800D85E8(struct QuadObj* arg0)
     struct PlayerObj* temp_v1;
 
     temp_v1 = arg0->unk5C;
-    if (temp_v1->unk94 != 0) {
+    if ((u8)temp_v1->unk94[0] != 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
-        temp_v1->unk95 = 0;
+        temp_v1->unk94[1] = 0;
     }
     D_8010FEF0[arg0->state](arg0);
 }
