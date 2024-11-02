@@ -695,22 +695,24 @@ void func_8002F2A0(struct EngineObj* arg0);
 void func_8002F47C(struct EngineObj* arg0);
 
 // D_800F486C
-void func_8002F510(void);
-void func_8002F524(void);
-void func_8002F584(void);
-void func_8002F5E8(void);
+extern void (*D_800F486C[])(struct EngineObj*);
+void func_8002F510(struct EngineObj*);
+void func_8002F524(struct EngineObj*);
+void func_8002F584(struct EngineObj*);
+void func_8002F5E8(struct EngineObj*);
 
 // D_800F487C
-void func_8002F6E4(void);
-void func_8002F7A8(void);
-void func_8002F828(void);
-void func_8002F87C(void);
-void func_8002F8F8(void);
-void func_8002F92C(void);
-void func_8002F9EC(void);
-void func_8002FAB0(void);
-void func_8002FAE4(void);
-void func_8002FB54(void);
+extern void (*D_800F487C[])(struct EngineObj*);
+void func_8002F6E4(struct EngineObj*);
+void func_8002F7A8(struct EngineObj*);
+void func_8002F828(struct EngineObj*);
+void func_8002F87C(struct EngineObj*);
+void func_8002F8F8(struct EngineObj*);
+void func_8002F92C(struct EngineObj*);
+void func_8002F9EC(struct EngineObj*);
+void func_8002FAB0(struct EngineObj*);
+void func_8002FAE4(struct EngineObj*);
+void func_8002FB54(struct EngineObj*);
 
 // engine_state_3_update_func
 extern void (*engine_state_3_update_funcs[])(struct EngineObj*);
