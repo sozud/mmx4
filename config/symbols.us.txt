@@ -715,3 +715,6 @@ character_select_state_2_update_funcs = 0x800F4498;
 character_select_state_3_update_funcs = 0x800F44A0;
 
 controller_state = 0x80166C0C;
+
+engine_state_3_update_funcs = 0x800F48A4;
+briefing_room_state_9_update_funcs = 0x800F485C;
