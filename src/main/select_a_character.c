@@ -24,7 +24,7 @@ void func_800CCCA0(struct MiscObj* arg0)
         arg0->x_vel.val = FIXED(-16); // speed of Zero portrait
     }
     if (((arg0->base.unk2 == X_PORTRAIT) && (arg0->base.x_pos.i.hi == 96)) || ((arg0->base.unk2 == ZERO_PORTRAIT) && (arg0->base.x_pos.i.hi == 224))) {
-        engine_obj.unk28 |= 1 << arg0->base.unk2;
+        engine_obj.unk26[2] |= 1 << arg0->base.unk2;
         arg0->base.unk6++;
         return;
     }
@@ -34,7 +34,7 @@ void func_800CCCA0(struct MiscObj* arg0)
 // D_8010EB84 state 1
 void func_800CCD48(struct MiscObj* arg0)
 {
-    if (engine_obj.unk27 & 0x80) {
+    if (engine_obj.unk26[1] & 0x80) {
         arg0->base.unk6++;
         // sets how fast the X and Zero portraits move
         // to the left and right after selecting a character
@@ -136,7 +136,7 @@ void func_800CCF70(struct MiscObj* arg0)
 void func_800CD034(struct MiscObj* arg0)
 {
     D_8010EB98[arg0->base.unk6]();
-    if (engine_obj.unk27 & 0x80) {
+    if (engine_obj.unk26[1] & 0x80) {
         arg0->base.state++;
     }
 }
@@ -177,7 +177,7 @@ void func_800CD110(struct MiscObj* arg0)
 void func_800CD178(struct MiscObj* arg0)
 {
     D_8010EBA0[arg0->base.unk6]();
-    if (engine_obj.unk27 & 0x80) {
+    if (engine_obj.unk26[1] & 0x80) {
         arg0->base.state++;
     }
 }
@@ -187,7 +187,7 @@ void func_800CD1E8(struct MiscObj* arg0)
 {
     struct MiscObj* obj;
 
-    if (engine_obj.unk26 != 0) {
+    if (engine_obj.unk26[0] != 0) {
         arg0->base.unk5 = 0xF;
         arg0->base.unk6 = 0;
         return;

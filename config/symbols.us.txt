@@ -701,9 +701,14 @@ engine_state_3 = 0x8002FC38;
 engine_state_4 = 0x8001FBE0;
 engine_state_6 = 0x8001FF50;
 
+character_select_state_0 = 0x80029420;
 character_select_state_1 = 0x8002951C;
 character_select_state_2 = 0x8002979C;
+character_select_state_3 = 0x800297D8;
 character_select_state_4 = 0x800298B4;
 character_select_state_5 = 0x80029928;
 character_select_state_6 = 0x80029978;
 character_select_spawn_objects = 0x800296A8;
+character_select_state_2_substate_0 = 0x80029604;
+character_select_state_2_update_funcs = 0x800F4498;
+character_select_state_3_update_funcs = 0x800F44A0;

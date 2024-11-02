@@ -2100,7 +2100,36 @@ void MakeObject(u8 arg0)
     g_MakeObjectFuncs[arg0](arg0 << 2);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029420);
+void character_select_state_0(struct EngineObj* arg0)
+{
+    u8 var_v1;
+
+    for (var_v1 = 0; var_v1 < 0x10; var_v1++) {
+        arg0->unk26[var_v1] = 0;
+    }
+    func_8001D134();
+    arg0->stage = 14;
+    arg0->substage = 1;
+    func_80013014();
+    func_800160AC();
+    reset_objects();
+    func_8002AB20();
+    func_80028BF0();
+    func_8002771C();
+    func_80023CE0();
+    background_objects[0].unk3 = 0;
+    background_objects[1].unk3 = 0;
+    background_objects[2].unk3 = 1;
+    need_palette_load |= 1;
+    func_8001663C(0x1C, 0x70);
+    arg0->unk37 = 0;
+    func_800129A4(8);
+    arg0->unk43 = 0;
+    arg0->unk26[3] = 0; // already cleared above?
+    arg0->unk2 = 0;
+    arg0->unkA = 3;
+    arg0->unk1++;
+}
 
 void character_select_state_1(struct EngineObj* arg0)
 {
@@ -2122,7 +2151,7 @@ void character_select_state_1(struct EngineObj* arg0)
                 var_s0 += 1;
             } while (var_s0 < 2U);
         }
-        if (arg0->unk28 != 0) {
+        if (arg0->unk26[2] != 0) {
             arg0->unk2 = 0;
             arg0->unk1 = (u8)(arg0->unk1 + 1);
             D_8013E188[0] = -1;
@@ -2134,7 +2163,7 @@ void character_select_state_1(struct EngineObj* arg0)
     }
 }
 
-void func_80029604(struct EngineObj* arg0)
+void character_select_state_2_substate_0(struct EngineObj* arg0)
 {
     if (arg0->unk4 != 0) {
         D_80175EA0 = 0x1F;
@@ -2154,6 +2183,7 @@ void func_80029604(struct EngineObj* arg0)
     }
 }
 
+// state 2 substate 1
 void character_select_spawn_objects(struct EngineObj* arg0)
 {
     u8 var_s0;
@@ -2198,19 +2228,45 @@ void character_select_spawn_objects(struct EngineObj* arg0)
 
 void character_select_state_2(struct EngineObj* arg0)
 {
-    D_800F4498[arg0->unk2](arg0);
+    character_select_state_2_update_funcs[arg0->unk2](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800297D8);
+extern void (*character_select_state_3_update_funcs[])();
+
+void character_select_state_3(struct EngineObj* arg0)
+{
+    u16* ptr = &D_80166C0C;
+    s8 temp_v1;
+
+    if (*ptr & 0xC000) {
+        arg0->unk43 = 0;
+    }
+    if (*ptr & 0x3000) {
+        arg0->unk43 = 1;
+    }
+    temp_v1 = arg0->unk26[3];
+    if (temp_v1 == arg0->unk43) {
+        character_select_state_3_update_funcs[temp_v1]();
+    } else {
+        engine_obj.unk26[4] = 0;
+        arg0->unk37 = 0;
+    }
+    if (D_80166C0C & 0x840) {
+        arg0->unk26[0] = 1;
+        arg0->unk1++;
+        func_8001540C(5, 1, 0);
+    }
+    arg0->unk26[3] = arg0->unk43;
+}
 
 void character_select_state_4(struct EngineObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        if ((arg0->unk27 >> arg0->unk43) & 1) {
+        if ((arg0->unk26[1] >> arg0->unk43) & 1) {
             arg0->unk2++;
-            arg0->unk27 |= 0x80;
+            arg0->unk26[1] |= 0x80;
         }
-    } else if (!(arg0->unk27 & 0x7F)) {
+    } else if (!(arg0->unk26[1] & 0x7F)) {
         arg0->unk2 = 0;
         arg0->unk4 = 20; // how long to wait on green background before fading out
         arg0->unk1++;
@@ -2252,8 +2308,10 @@ void engine_state_1(struct EngineObj* arg0)
     func_80023D68();
 }
 
+// character_select_state_3_update_funcs state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029A48);
 
+// character_select_state_3_update_funcs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029BD8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029DBC);
