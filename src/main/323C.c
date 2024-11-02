@@ -1282,17 +1282,21 @@ void func_8001FDBC(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FEC0);
 
+// in a stage
 void engine_state_6(struct EngineObj* arg0)
 {
     D_800F241C[arg0->unk1]();
 }
 
+// D_800F241C state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FF8C);
 
+// D_800F241C state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020060);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800200D4);
 
+// D_800F241C state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020368);
 
 void func_80020390(struct EngineObj* arg0)

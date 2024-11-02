@@ -770,7 +770,7 @@ struct EngineObj {
     s8 state;
     s8 unk1;
     s8 unk2;
-    s8 pad3;
+    s8 unk3;
     s16 unk4;
     s8 pad2[4];
     s16 unkA;
@@ -799,7 +799,8 @@ struct EngineObj {
     s8 unk26[0x10];
     s8 pad36;
     s8 unk37;
-    s8 pad37[0x8];
+    s8 pad37[0x4];
+    void* unk3C;
     u8 unk40;
     s8 pad40[2];
     s8 cur_character;
@@ -808,6 +809,8 @@ struct EngineObj {
     s8 unk46;
     s8 unk47;
     s8 unk48;
+    s8 pad49[0x5F - 0x49];
+    u8 unk5F;
 };
 
 struct Unk18 {

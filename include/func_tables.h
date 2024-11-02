@@ -686,7 +686,8 @@ void func_80029E1C(void);
 void func_8002A098(void);
 void func_8002A394(void);
 
-// D_800F485C
+// D_800F485C briefing_room_state_9_update_funcs
+extern void (*briefing_room_state_9_update_funcs[])(struct EngineObj*);
 void func_8002F1B4(struct EngineObj* arg0);
 void func_8002F264(struct EngineObj* arg0);
 void func_8002F2A0(struct EngineObj* arg0);
@@ -710,8 +711,8 @@ void func_8002FAB0(void);
 void func_8002FAE4(void);
 void func_8002FB54(void);
 
-// D_800F48A4
-extern void (*D_800F48A4[])(struct EngineObj*);
+// engine_state_3_update_func
+extern void (*engine_state_3_update_funcs[])(struct EngineObj*);
 void func_8002E420(struct EngineObj* arg0);
 void func_8002E698(struct EngineObj* arg0);
 void func_8002E7BC(struct EngineObj* arg0);
