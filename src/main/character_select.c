@@ -24,7 +24,7 @@ void character_select_state_0(struct EngineObj* arg0)
     func_8001663C(0x1C, 0x70);
     arg0->unk37 = 0;
     func_800129A4(8);
-    arg0->unk43 = 0;
+    arg0->cur_character = CHARACTER_X;
     arg0->unk26[3] = 0; // already cleared above?
     arg0->unk2 = 0;
     arg0->unkA = 3;
@@ -135,34 +135,36 @@ extern void (*character_select_state_3_update_funcs[])();
 
 void character_select_state_3(struct EngineObj* arg0)
 {
-    u16* ptr = &D_80166C0C;
+    u16* ptr = &controller_state;
     s8 temp_v1;
 
-    if (*ptr & 0xC000) {
-        arg0->unk43 = 0;
+    // select X
+    if (*ptr & (PADLdown | PADLleft)) {
+        arg0->cur_character = CHARACTER_X;
     }
-    if (*ptr & 0x3000) {
-        arg0->unk43 = 1;
+    // select Zero
+    if (*ptr & (PADLup | PADLright)) {
+        arg0->cur_character = CHARACTER_ZERO;
     }
     temp_v1 = arg0->unk26[3];
-    if (temp_v1 == arg0->unk43) {
+    if (temp_v1 == arg0->cur_character) {
         character_select_state_3_update_funcs[temp_v1]();
     } else {
         engine_obj.unk26[4] = 0;
         arg0->unk37 = 0;
     }
-    if (D_80166C0C & 0x840) {
+    if (controller_state & (PADRdown | PADstart)) {
         arg0->unk26[0] = 1;
         arg0->unk1++;
         func_8001540C(5, 1, 0);
     }
-    arg0->unk26[3] = arg0->unk43;
+    arg0->unk26[3] = arg0->cur_character;
 }
 
 void character_select_state_4(struct EngineObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        if ((arg0->unk26[1] >> arg0->unk43) & 1) {
+        if ((arg0->unk26[1] >> arg0->cur_character) & 1) {
             arg0->unk2++;
             arg0->unk26[1] |= 0x80;
         }

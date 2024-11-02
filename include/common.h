@@ -458,7 +458,7 @@ struct SelectACharacterExt {
     s8 pad50[5];
     u8 blast_timer; // 0x55
     s8 unk56;
-    u8 unk57;
+    u8 cur_character_selected;
 };
 
 union MiscExt {
@@ -802,7 +802,7 @@ struct EngineObj {
     s8 pad37[0x8];
     u8 unk40;
     s8 pad40[2];
-    s8 unk43;
+    s8 cur_character;
     s8 unk44;
     u8 pad45;
     s8 unk46;
@@ -1162,7 +1162,7 @@ extern s8 D_80175E9C;
 extern s16 D_80175EA0;
 extern s8 D_80175E9C;
 extern s16 D_80175EA0;
-extern u16 D_80166C0C;
+extern u16 controller_state;
 extern s8 D_801419FC;
 extern s32 D_8013B80C;
 extern s32 D_800F4830[];
@@ -1273,3 +1273,8 @@ s8 func_800136B0();
 void func_800137F0();
 void MyCdReadyCallback(void);
 void func_80018000(s32);
+
+enum SelectedPlayer {
+    CHARACTER_X,
+    CHARACTER_ZERO
+};

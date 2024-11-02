@@ -904,7 +904,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F048);
 
 void func_8002F1B4(struct EngineObj* arg0)
 {
-    if (D_80166C0C & 0x840) {
+    if (controller_state & (PADRdown | PADstart)) {
         background_objects[0].y_pos.i.hi = 0x110;
         background_objects[0].unk4C = 1;
     }
