@@ -73,7 +73,7 @@ void func_80012EB8(void)
 {
     s32 var_a0;
 
-    if (engine_obj.unk43 == 0) { // g_GameVars.unk43
+    if (engine_obj.cur_character == CHARACTER_X) { // g_GameVars.unk43
         var_a0 = 0x4E;
         if (engine_obj.unk37 == 0) { // g_GameVars.unk37
             var_a0 = 0x4B;
@@ -139,7 +139,7 @@ void func_80013404(u8 arg0)
         func_8001326C(var_s0);
     }
     if (arg0) {
-        if (ptr->unk43 != 0) {
+        if (ptr->cur_character != CHARACTER_X) {
             func_8001326C(4);
         } else {
             func_8001326C(3);
@@ -578,7 +578,7 @@ void func_800164D8(void)
     s8 pad[2];
     s32 a = engine_obj.stage * 8;
     s32 b = engine_obj.substage * 4;
-    s32 c = engine_obj.unk43 * 2;
+    s32 c = engine_obj.cur_character * 2;
     s32 temp_v0;
 
     temp_v0 = a + b + c;
@@ -1261,7 +1261,7 @@ void func_8001FDBC(void)
     }
     if (ptr->stage == 0xC && ptr->substage != 0 && ptr->checkpoint == 0) {
         ptr->unk1E = -2;
-        if (engine_obj.unk43 != 0) {
+        if (engine_obj.cur_character != CHARACTER_X) {
             obj = (struct BaseObj*)find_free_misc_obj();
             if (obj != NULL) {
                 obj->active = 0x41;
@@ -1299,10 +1299,10 @@ void func_80020390(struct EngineObj* arg0)
 {
     MoveImage(&D_800F2428, 0x240, 0);
     DrawSync(0);
-    if ((arg0->stage == 0xB) && (arg0->unk43 != 0)) {
+    if ((arg0->stage == 0xB) && (arg0->cur_character != CHARACTER_X)) {
         func_80018000(8);
     }
-    if ((arg0->stage == 0xC) && (arg0->unk43 != 0)) {
+    if ((arg0->stage == 0xC) && (arg0->cur_character != CHARACTER_X)) {
         func_80018000(9);
     }
     MoveImage(&D_800F2430, 0x140, 0xB0);
@@ -1648,7 +1648,7 @@ void func_80023624(struct EngineObj* arg0)
     arg0->unk1F = 0;
     arg0->enable_boss = 0;
 
-    if (arg0->unk43 == 0) {
+    if (arg0->cur_character == CHARACTER_X) {
         func_80018000(5);
     } else {
         func_80018000(10);
