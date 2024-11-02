@@ -491,7 +491,9 @@ struct MiscObj {
 
 struct BarObj {
     struct BaseObj base;
-    s8 pad18[0x34 - 0x18];
+    s8 pad18[0x28 - 0x18];
+    s32 unk28;
+    s8 pad2C[0x34 - 0x2C];
 }; // size 0x43
 
 struct BazObj {
@@ -788,7 +790,8 @@ struct EngineObj {
     s8 unk17;
     s8 unk18;
     s8 unk19;
-    s8 pad1A[0x1C - 0x1A];
+    s8 unk1A;
+    s8 unk1B;
     s8 unk1C;
     s8 checkpoint; // 0x1d
     s8 unk1E;
@@ -801,7 +804,8 @@ struct EngineObj {
     s8 unk37;
     s8 pad37[0x8];
     u8 unk40;
-    s8 pad40[2];
+    s8 unk41;
+    u8 unk42;
     s8 unk43;
     s8 unk44;
     u8 pad45;
@@ -979,8 +983,7 @@ extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
 extern void (*engine_update_funcs[1])(void*);
-extern s8 D_80171EA8;
-extern void (*D_800F241C[1])(void);
+extern u8 D_80171EA8;
 extern RECT D_800F2428;
 extern RECT D_800F2430;
 extern u8 D_800F32D4[1][1];
@@ -1098,7 +1101,7 @@ extern s8 D_80139646;
 extern s8 D_80139647;
 extern u8 D_80171EA9;
 extern s32 D_80166BB4;
-extern s32 D_80166D68;
+extern u8 D_80166D68;
 extern s32 D_8012F46C;
 extern RECT D_800EE450;
 extern u16 cur_random;
