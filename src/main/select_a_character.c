@@ -146,7 +146,7 @@ void func_800CD0A4(struct MiscObj* arg0)
 {
     s16 x_pos;
 
-    if (engine_obj.unk43 != 0) {
+    if (engine_obj.cur_character != CHARACTER_X) {
         func_80015D60(arg0, 9);
         x_pos = 224; // zero is selected, move selector graphic to right
     } else {
@@ -164,11 +164,11 @@ void func_800CD0A4(struct MiscObj* arg0)
 void func_800CD110(struct MiscObj* arg0)
 {
     func_80015DC8();
-    if (engine_obj.unk43 != arg0->ext.sel_char.unk57) {
+    if (engine_obj.cur_character != arg0->ext.sel_char.cur_character_selected) {
         arg0->base.unk6 = 0;
         func_8001540C(5, 0, NULL);
     }
-    arg0->ext.sel_char.unk57 = engine_obj.unk43;
+    arg0->ext.sel_char.cur_character_selected = engine_obj.cur_character;
 }
 
 // D_8010EBB4 state 6
@@ -192,7 +192,7 @@ void func_800CD1E8(struct MiscObj* arg0)
         arg0->base.unk6 = 0;
         return;
     }
-    if (engine_obj.unk43 == (arg0->base.unk2 - 7)) {
+    if (engine_obj.cur_character == (arg0->base.unk2 - 7)) {
         if (arg0->ext.sel_char.blast_timer == 0) {
             arg0->base.unk6++;
             func_80015D60(arg0, 1);
@@ -221,7 +221,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CD2BC);
 void func_800CD390(struct MiscObj* arg0)
 {
     D_8010EBA8[arg0->base.unk6]();
-    if ((engine_obj.unk43 != (arg0->base.unk2 - 7)) && (arg0->unk46 == 0)) {
+    if ((engine_obj.cur_character != (arg0->base.unk2 - 7)) && (arg0->unk46 == 0)) {
         arg0->base.unk6 = 0;
         arg0->ext.sel_char.blast_timer = 0;
     }

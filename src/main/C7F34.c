@@ -123,7 +123,7 @@ void func_800D7DA4(struct QuadObj* arg0)
     struct ShotObj* obj;
     if (--arg0->ext.unk_ext4.unk3C == 0) {
         arg0->unk5 = (u8)arg0->unk5 + 1;
-        if (engine_obj.unk43 == 0) {
+        if (engine_obj.cur_character == CHARACTER_X) {
             arg0->ext.unk_ext4.unk3C = 0xD2U;
             return;
         }
