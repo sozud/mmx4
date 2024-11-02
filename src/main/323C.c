@@ -1344,7 +1344,7 @@ void engine_state_6(struct EngineObj* arg0)
 // D_800F241C state 0
 void func_8001FF8C(struct EngineObj* arg0)
 {
-    if (!arg0->unk1C && !D_80141BDC[0] && ((D_80166C0C & 0x800) || D_80166D68 == 0xFF) && !arg0->unk10 && !arg0->unkF) {
+    if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADh) || D_80166D68 == 0xFF) && !arg0->unk10 && !arg0->unkF) {
         arg0->unk1 = 2;
     } else {
         if (g_Player.base.state == 3) {
@@ -1764,7 +1764,7 @@ void func_80023698(struct EngineObj* arg0)
     func_80028BF0();
     func_8002771C();
 
-    if (arg0->unk43 != 0) {
+    if (arg0->cur_character != CHARACTER_X) {
         background_objects[1].y_pos.val = FIXED(768);
     }
 
