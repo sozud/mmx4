@@ -493,8 +493,9 @@ struct BarObj {
     struct BaseObj base;
     s8 pad18[0x28 - 0x18];
     s32 unk28;
-    s8 pad2C[0x34 - 0x2C];
-}; // size 0x43
+    s32 unk2C;
+    s32 unk30;
+}; // size 0x34
 
 struct BazObj {
     struct BaseObj base;
