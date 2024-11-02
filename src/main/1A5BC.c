@@ -1004,17 +1004,57 @@ void engine_state_3(struct EngineObj* arg0)
     func_80023D68();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FCAC);
+void func_8002FCAC(void)
+{
+    struct BarObj* bar = &bar_object;
+    D_800F48D4[bar_object.base.state](bar);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FCEC);
+void func_8002FCEC(struct BarObj* arg0)
+{
+    D_800F48E0[arg0->base.unk5](arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FD28);
+void func_8002FD28(struct BarObj* arg0)
+{
+    func_80015930(0xFF, 0);
+    func_800129F0(8);
+    func_80023D68();
+    arg0->base.unk5 = 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FD70);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_800300AC);
+void func_800300AC(struct BarObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        arg0->base.state = 1;
+        arg0->base.unk5 = 0;
+        if (g_Player.base.unk2 || arg0->base.unk2) {
+            if (arg0->base.bg_offset >= 0xD) {
+                arg0->base.unk5 = 2;
+            } else {
+                arg0->base.unk5 = 1;
+            }
+        }
+    }
+    func_80023D90();
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80030128);
+void func_80030128(struct BarObj* arg0)
+{
+    if (controller_state & PADselect) {
+        if (arg0->base.unk5 < 3) {
+            arg0->unk28 = arg0->base.unk5;
+            arg0->base.unk5 = 6;
+            arg0->base.unk6 = 0;
+        }
+    }
+    D_800F48F4[arg0->base.unk5](arg0);
+    if (arg0->base.unk5 < 5) {
+        func_80023D90();
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_800301BC);
 

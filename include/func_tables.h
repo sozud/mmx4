@@ -151,9 +151,10 @@ void func_80023A54(struct EngineObj* arg0);
 void func_800204AC(struct EngineObj* arg0);
 
 // D_800F241C
-void func_8001FF8C(void);
-void func_80020060(void);
-void func_80020368(void);
+extern void (*D_800F241C[])(struct EngineObj*);
+void func_8001FF8C(struct EngineObj*);
+void func_80020060(struct EngineObj*);
+void func_80020368(struct EngineObj*);
 
 // D_800F2438
 extern void (*D_800F2438[])(struct EngineObj*);
@@ -727,23 +728,26 @@ void func_8002F698(struct EngineObj* arg0);
 void func_8002FBDC(struct EngineObj* arg0);
 
 // D_800F48D4
-void func_8002FCEC(void);
-void func_80030128(void);
-void func_80030F9C(void);
+extern void (*D_800F48D4[])(struct BarObj*);
+void func_8002FCEC(struct BarObj*);
+void func_80030128(struct BarObj*);
+void func_80030F9C(struct BarObj*);
 
 // D_800F48E0
-void func_8002FD28(void);
-void func_8002FD70(void);
-void func_800300AC(void);
+extern void (*D_800F48E0[])(struct BarObj*);
+void func_8002FD28(struct BarObj*);
+void func_8002FD70(struct BarObj*);
+void func_800300AC(struct BarObj*);
 
 // D_800F48F4
-void func_800301BC(void);
-void func_800304E4(void);
-void func_80030728(void);
-void func_80030A2C(void);
-void func_80030C54(void);
-void func_80030DF8(void);
-void func_80030EC8(void);
+extern void (*D_800F48F4[])(struct BarObj*);
+void func_800301BC(struct BarObj*);
+void func_800304E4(struct BarObj*);
+void func_80030728(struct BarObj*);
+void func_80030A2C(struct BarObj*);
+void func_80030C54(struct BarObj*);
+void func_80030DF8(struct BarObj*);
+void func_80030EC8(struct BarObj*);
 
 // D_800F4910
 void func_80030FD8(void);
