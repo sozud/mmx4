@@ -1043,7 +1043,7 @@ void func_800300AC(struct BarObj* arg0)
 
 void func_80030128(struct BarObj* arg0)
 {
-    if (controller_state & PADk) {
+    if (controller_state & PADselect) {
         if (arg0->base.unk5 < 3) {
             arg0->unk28 = arg0->base.unk5;
             arg0->base.unk5 = 6;
