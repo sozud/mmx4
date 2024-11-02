@@ -652,7 +652,7 @@ void func_800D94FC(struct LayerObj* arg0)
 void func_800D95F4(struct LayerObj* arg0)
 {
     arg0->base.unk17 = 2;
-    engine_obj.unk26 = 1;
+    engine_obj.unk26[0] = 1;
     func_8001540C(5, 0xA, NULL);
     arg0->base.unk7 = 0;
     arg0->base.unk6++;
@@ -703,7 +703,7 @@ void func_800D9768(struct LayerObj* arg0)
     }
 
     arg0->base.unk17 = 1;
-    engine_obj.unk26 = 0;
+    engine_obj.unk26[0] = 0;
     arg0->base.unk7 = 0;
     arg0->base.unk6++;
 }

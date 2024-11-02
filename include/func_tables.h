@@ -663,8 +663,8 @@ struct QuadObj* find_free_quad_obj(void);
 struct LayerObj* find_free_layer_obj(void);
 
 // D_800F4498
-extern void (*D_800F4498[])(struct EngineObj*);
-void func_80029604(struct EngineObj*);
+extern void (*character_select_state_2_update_funcs[])(struct EngineObj*);
+void character_select_state_2_substate_0(struct EngineObj*);
 void character_select_spawn_objects(struct EngineObj*);
 
 // D_800F44A0
