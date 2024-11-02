@@ -2102,7 +2102,7 @@ void MakeObject(u8 arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80029420);
 
-void func_8002951C(struct EngineObj* arg0)
+void character_select_state_1(struct EngineObj* arg0)
 {
     s8 var_s0;
     struct MiscObj* misc;
@@ -2111,12 +2111,13 @@ void func_8002951C(struct EngineObj* arg0)
         if (arg0->unk2 == 0) {
             arg0->unk2++;
             var_s0 = 0;
+            // spawn X, Zero character portraits
             do {
                 misc = find_free_misc_obj();
                 if (misc != NULL) {
                     misc->base.active = 0x41;
                     misc->base.id = 0x1C;
-                    misc->base.unk2 = var_s0;
+                    misc->base.unk2 = var_s0; // SelectACharacterUpdate 0, 1
                 }
                 var_s0 += 1;
             } while (var_s0 < 2U);
@@ -2153,33 +2154,38 @@ void func_80029604(struct EngineObj* arg0)
     }
 }
 
-void func_800296A8(struct EngineObj* arg0)
+void character_select_spawn_objects(struct EngineObj* arg0)
 {
     u8 var_s0;
     struct MiscObj* obj;
 
     var_s0 = 0;
+    // spawn SelectACharacterUpdate
     do {
+        // spawn upper/lower "PLAYER SELECT" text
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->base.active = 0x41;
             obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 2;
+            obj->base.unk2 = var_s0 + 2; // subtype 2,3
         }
+        // spawn X, Zero
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->base.active = 0x41;
             obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 7;
+            obj->base.unk2 = var_s0 + 7; // subtype 7,8
         }
+        // Not sure
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->base.active = 0x41;
             obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 4;
+            obj->base.unk2 = var_s0 + 4; // subtype 4,5
         }
         var_s0 += 1;
     } while (var_s0 < 2);
+    // spawn green selector
     obj = find_free_misc_obj();
     if (obj != NULL) {
         obj->base.active = 0x41;
@@ -2190,14 +2196,14 @@ void func_800296A8(struct EngineObj* arg0)
     arg0->unk1++;
 }
 
-void func_8002979C(struct EngineObj* arg0)
+void character_select_state_2(struct EngineObj* arg0)
 {
     D_800F4498[arg0->unk2](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800297D8);
 
-void func_800298B4(struct EngineObj* arg0)
+void character_select_state_4(struct EngineObj* arg0)
 {
     if (arg0->unk2 == 0) {
         if ((arg0->unk27 >> arg0->unk43) & 1) {
@@ -2206,12 +2212,12 @@ void func_800298B4(struct EngineObj* arg0)
         }
     } else if (!(arg0->unk27 & 0x7F)) {
         arg0->unk2 = 0;
-        arg0->unk4 = 0x14;
+        arg0->unk4 = 20; // how long to wait on green background before fading out
         arg0->unk1++;
     }
 }
 
-void func_80029928(struct EngineObj* arg0)
+void character_select_state_5(struct EngineObj* arg0)
 {
     if (arg0->unk4 == 0) {
         arg0->unk1++;
@@ -2221,7 +2227,7 @@ void func_80029928(struct EngineObj* arg0)
     arg0->unk4--;
 }
 
-void func_80029978(struct EngineObj* arg0)
+void character_select_state_6(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_8001D134();

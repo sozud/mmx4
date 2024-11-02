@@ -1,5 +1,15 @@
 #include "common.h"
 
+enum SubTypes {
+    X_PORTRAIT,
+    ZERO_PORTRAIT,
+    PLAYER_SELECT_UPPER,
+    PLAYER_SELECT_LOWER,
+    SELECTOR = 6,
+    X_CHARACTER,
+    ZERO_CHARACTER,
+};
+
 // SelectACharacterUpdate state 0
 INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CCA34);
 
@@ -8,12 +18,12 @@ void func_800CCCA0(struct MiscObj* arg0)
 {
     // set speeds of portraits when "select a character"
     // screen first starts and portraits come in
-    if (arg0->base.unk2 == 0) {
+    if (arg0->base.unk2 == X_PORTRAIT) {
         arg0->x_vel.val = FIXED(16); // speed of X portrait
     } else {
         arg0->x_vel.val = FIXED(-16); // speed of Zero portrait
     }
-    if (((arg0->base.unk2 == 0) && (arg0->base.x_pos.i.hi == 96)) || ((arg0->base.unk2 == 1) && (arg0->base.x_pos.i.hi == 224))) {
+    if (((arg0->base.unk2 == X_PORTRAIT) && (arg0->base.x_pos.i.hi == 96)) || ((arg0->base.unk2 == ZERO_PORTRAIT) && (arg0->base.x_pos.i.hi == 224))) {
         engine_obj.unk28 |= 1 << arg0->base.unk2;
         arg0->base.unk6++;
         return;
@@ -28,7 +38,7 @@ void func_800CCD48(struct MiscObj* arg0)
         arg0->base.unk6++;
         // sets how fast the X and Zero portraits move
         // to the left and right after selecting a character
-        if (arg0->base.unk2 != 0) {
+        if (arg0->base.unk2 != X_PORTRAIT) {
             arg0->x_vel.val = FIXED(16);
         } else {
             arg0->x_vel.val = FIXED(-16);
@@ -58,11 +68,11 @@ void func_800CCEB4(struct MiscObj* arg0)
 void func_800CCEF0(struct MiscObj* arg0)
 {
     switch (arg0->base.unk2) {
-    case 2:
+    case PLAYER_SELECT_UPPER:
         // set velocity of upper "PLAYER SELECT" text
         arg0->x_vel.val = FIXED(-2) | FIXED(.5);
         break;
-    case 3:
+    case PLAYER_SELECT_LOWER:
         // lower player select text
         arg0->x_vel.val = FIXED(1) | FIXED(.5);
         break;
@@ -87,14 +97,14 @@ void func_800CCF70(struct MiscObj* arg0)
 {
     func_8002B718(arg0);
     switch (arg0->base.unk2) {
-    case 2:
+    case PLAYER_SELECT_UPPER:
         // when top "PLAYER SELECT" goes off to the left,
         // wrap it around
         if (arg0->base.x_pos.i.hi < -112) {
             arg0->base.x_pos.i.hi = 432;
         }
         break;
-    case 3:
+    case PLAYER_SELECT_LOWER:
         // when bottom "PLAYER SELECT" goes off to the right,
         // wrap it around
         if (arg0->base.x_pos.i.hi >= 433) {
@@ -186,7 +196,7 @@ void func_800CD1E8(struct MiscObj* arg0)
         if (arg0->ext.sel_char.blast_timer == 0) {
             arg0->base.unk6++;
             func_80015D60(arg0, 1);
-            if (arg0->base.unk2 == 7) {
+            if (arg0->base.unk2 == X_CHARACTER) {
                 obj = find_free_misc_obj();
                 // create "blast" right before charged shot comes out
                 // still id 0x1C but different unk2
