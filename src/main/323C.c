@@ -829,7 +829,24 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80019228);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800192F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800193D8);
+void func_800193D8(struct EngineObj* arg0)
+{
+    u8* ptr = &D_80141BDF;
+    u8 temp_s1 = *ptr;
+    u8 temp_s3 = engine_obj.unk1;
+    u8 temp_s4 = engine_obj.unk2;
+
+    D_800F1F64[arg0->unk1](arg0);
+
+    if (*ptr != temp_s1 && engine_obj.unk1 == temp_s3 && engine_obj.unk2 == temp_s4) {
+        func_8001540C(0, 12, NULL);
+    }
+    if (arg0->unk1 != 10) {
+        func_80016124();
+        update_misc_objects();
+        init_objects();
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800194C8);
 
@@ -1313,7 +1330,10 @@ void func_800204A4(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800204AC);
+void func_800204AC(struct EngineObj* arg0)
+{
+    func_800193D8(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800204CC);
 

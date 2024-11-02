@@ -24,6 +24,7 @@ void func_80016E34(void);
 void func_80016E84(void);
 
 // D_800F1F64
+extern void (*D_800F1F64[])(struct Unk* arg0);
 void func_800194C8(struct Unk* arg0);
 void func_8001961C(struct Unk* arg0);
 void func_8001989C(struct Unk* arg0);
