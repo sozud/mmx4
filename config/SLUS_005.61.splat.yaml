@@ -40,6 +40,8 @@ segments:
       - [0xAC0, rodata]
       - [0xBE0, rodata] # jtbl_800103E0
       - [0xC04, rodata] # jtbl_80010404
+      - [0x1B80, .rodata, BBE34] # jtbl_80011380
+      - [0x1BA4, rodata]
       - [0x1C30, .rodata, select_a_character] # jtbl_80011430, func_800CCEF0
       - [0x1C68, .rodata, select_a_character] # jtbl_80011468, func_800CCF70
       - [0x1C9C, rodata]
