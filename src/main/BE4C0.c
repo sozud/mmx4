@@ -426,7 +426,7 @@ void func_800D3700(struct UnkObj* arg0)
             arg0->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (engine_obj.unk43 != 0)) {
+    if ((D_80141BE0 == 0) && (engine_obj.cur_character != CHARACTER_X)) {
         temp_v1 = arg0->unk7;
         if ((arg0->unk7 < 7) && (temp_v1 >= 5)) {
             arg0->unk42 = 0x7804;
@@ -489,7 +489,7 @@ void func_800D39EC(struct UnkObj* arg0)
             arg0->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (engine_obj.unk43 != 0)) {
+    if ((D_80141BE0 == 0) && (engine_obj.cur_character != CHARACTER_X)) {
         temp_v1 = arg0->unk7;
         if ((arg0->unk7 < 7) && (temp_v1 >= 5)) {
             arg0->unk42 = 0x7804;

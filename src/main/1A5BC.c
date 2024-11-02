@@ -880,35 +880,47 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E294);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E380);
 
+// engine_state_3_update_funcs state 0 (load video)
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E420);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E5E0);
 
+// engine_state_3_update_funcs state 1 (load briefing room)
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E698);
 
+// engine_state_3_update_funcs state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E7BC);
 
+// engine_state_3_update_funcs state 3
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E8D4);
 
+// engine_state_3_update_funcs state 4
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E994);
 
+// engine_state_3_update_funcs state 5
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002ED80);
 
+// engine_state_3_update_funcs state 6
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002ED98);
 
+// engine_state_3_update_funcs state 7
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002EDD4);
 
+// engine_state_3_update_funcs state 8 (play video)
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002EF14);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F048);
 
+// briefing_room_state_9_update_funcs state 0
 void func_8002F1B4(struct EngineObj* arg0)
 {
-    if (D_80166C0C & 0x840) {
-        background_objects[0].y_pos.i.hi = 0x110;
+    // if the player presses a button, skip to the bottom
+    if (controller_state & (PADRdown | PADstart)) {
+        background_objects[0].y_pos.i.hi = 272;
         background_objects[0].unk4C = 1;
     }
-    if (background_objects[0].y_pos.i.hi < 0x110) {
+    // scroll down
+    if (background_objects[0].y_pos.i.hi < 272) {
         background_objects[0].y_pos.i.hi++;
         return;
     }
@@ -917,6 +929,7 @@ void func_8002F1B4(struct EngineObj* arg0)
     func_8002217C(D_800F4776[arg0->unkE], 0xFF, 0);
 }
 
+// briefing_room_state_9_update_funcs state 1
 void func_8002F264(struct EngineObj* arg0)
 {
     if (D_8013BC34[0] != 0x80) {
@@ -925,8 +938,10 @@ void func_8002F264(struct EngineObj* arg0)
     }
 }
 
+// briefing_room_state_9_update_funcs state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F2A0);
 
+// briefing_room_state_9_update_funcs state 3
 void func_8002F47C(struct EngineObj* arg0)
 {
     if ((D_8013BC34[0] == 1) || (D_8013BC34[0] == 0x80)) {
@@ -935,10 +950,11 @@ void func_8002F47C(struct EngineObj* arg0)
     }
 }
 
+// engine_state_3_update_funcs state 9 (briefing room)
 void func_8002F4C4(struct EngineObj* arg0)
 {
     arg0->unk40 = 0;
-    D_800F485C[arg0->unk2]();
+    briefing_room_state_9_update_funcs[arg0->unk2](arg0);
     func_80022730(&D_8013BC28);
 }
 
@@ -950,6 +966,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F584);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F5E8);
 
+// engine_state_3_update_funcs state 10
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F698);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F6E4);
@@ -972,12 +989,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FAE4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FB54);
 
+// engine_state_3_update_funcs state 11
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FBDC);
 
+// videos / loading / briefing room
 void engine_state_3(struct EngineObj* arg0)
 {
     func_8002B460();
-    D_800F48A4[arg0->unk1](arg0);
+    engine_state_3_update_funcs[arg0->unk1](arg0);
     update_effect_objects();
     update_misc_objects();
     update_quad_objects();

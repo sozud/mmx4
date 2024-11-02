@@ -713,3 +713,8 @@ character_select_spawn_objects = 0x800296A8;
 character_select_state_2_substate_0 = 0x80029604;
 character_select_state_2_update_funcs = 0x800F4498;
 character_select_state_3_update_funcs = 0x800F44A0;
+
+controller_state = 0x80166C0C;
+
+engine_state_3_update_funcs = 0x800F48A4;
+briefing_room_state_9_update_funcs = 0x800F485C;

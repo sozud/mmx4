@@ -21,7 +21,7 @@ void func_800CB048(struct MiscObj* arg0)
     u32 pal_pos;
     u8 temp_v1;
 
-    if (engine_obj.unk43 == 0) {
+    if (engine_obj.cur_character == CHARACTER_X) {
         arg0->unk3C = &SP_1C->unk0[SP_1C->unk24];
     } else {
         arg0->unk3C = &SP_1C->unk0[SP_1C->unk10];

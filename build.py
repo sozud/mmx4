@@ -111,7 +111,7 @@ ninja.rule('cpp_263',
            description='Running preprocessor on $out from $in')
 
 ninja.rule('cc1_263',
-           command='./bin/cc1 -msoft-float -O2 -g0 -G0 -funsigned-char $in -o $out',
+           command='./bin/cc1 -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char $in -o $out',
            description='Running cc1 on $out from $in')
 
 ninja.rule('aspsx_263',
