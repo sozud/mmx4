@@ -512,10 +512,18 @@ struct MiscObj {
 
 struct BarObj {
     struct BaseObj base;
-    s8 pad18[0x28 - 0x18];
+    s8 pad18[0x20 - 0x18];
+    u8 unk20;
+    u8 unk21;
+    u8 unk22;
+    s8 : 8;
+    s8 : 8;
+    u8 unk25;
+    s8 pad26[0x28 - 0x26];
     s32 unk28;
-    s8 pad2C[0x34 - 0x2C];
-}; // size 0x43
+    s32 unk2C;
+    s32 unk30;
+}; // size 0x34
 
 struct BazObj {
     struct BaseObj base;
@@ -1122,6 +1130,7 @@ extern s8 D_80137CE4;
 extern s8 D_80137CF0;
 extern s8 D_80137CF4;
 extern u8 D_8013BD40;
+extern u8 D_800F1C0F[];
 extern u32 D_800F1D8C;
 extern CdlATV D_80139644;
 extern s8 D_80139645;
@@ -1294,6 +1303,7 @@ void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 void func_80016334(void);
 void func_8001663C(u8, u8);
+void func_800175AC(u8);
 s32 func_800E5ACC(void);
 void func_800E6138(s8*);
 void func_8001213C(void);
