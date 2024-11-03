@@ -471,7 +471,65 @@ void load_vram_rect_ptrs(void)
     vram_rect_ptr = &vram_rect_ptrs[0];
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015ECC);
+extern s32 D_8016DEA8;
+extern s32 D_8016EEA8;
+
+void decompress_player_gfx(struct PlayerObj* arg0, s16 arg1, s16 arg2)
+{
+    u8* var_s1;
+    s32 temp_v0;
+    s16 var_s2;
+    s32* new_var;
+    u8* temp_a2;
+    s32 temp_v1_3;
+    s32 var_v0;
+    s32 var_v0_2;
+    struct RectPtrPair* var_a1;
+    u32 temp_a1;
+    s16 var_s0;
+    var_s2 = arg2;
+    if (arg0->prev_anim != arg0->cur_anim) {
+        temp_a2 = arg0->unk38;
+        new_var = arg0->unk38;
+        arg0->prev_anim = arg0->cur_anim;
+        temp_a1 = new_var[arg0->cur_anim];
+        var_s0 = temp_a1 >> 0x14;
+        if (arg0->unk49 == 3) {
+            var_s1 = &D_8016DEA8;
+        } else {
+            var_s1 = (arg0->unk49 << 0xa) + (&D_8016EEA8);
+        }
+        decompress_gfx(&temp_a2[temp_a1 & 0xFFFFF], var_s1, temp_a2);
+        var_a1 = vram_rect_ptr;
+        var_v0 = var_s0;
+        do {
+            temp_v1_3 = var_s0;
+            var_a1->rect.x = arg1;
+            var_a1->rect.y = var_s2;
+            var_a1->ptr = var_s1;
+            if (temp_v1_3 < 0x10) {
+                var_s0 = 0;
+                var_a1->rect.w = temp_v1_3 * 4;
+                var_a1->rect.h = 0x10;
+            } else {
+                var_v0_2 = temp_v1_3;
+                var_a1->rect.w = 0x40;
+                if (var_v0_2 < 0) {
+                    var_v0_2 += 0xF;
+                }
+                temp_v0 = (var_v0_2 >> 4) * 0x10;
+                var_a1->rect.h = temp_v0;
+                var_s2 += temp_v0;
+                var_s0 -= temp_v0;
+                var_s1 += 0x800;
+            }
+            var_a1++;
+            var_v0 = var_s0;
+        } while (var_v0 != 0);
+        var_a1->ptr = 0;
+        vram_rect_ptr = var_a1;
+    }
+}
 
 void load_palette(void)
 {
@@ -1545,7 +1603,7 @@ void func_80021158(void)
     func_8002A484();
     func_80021D84();
     func_80021CC8();
-    func_80015ECC(&g_Player, 0x140, 0);
+    decompress_player_gfx(&g_Player, 0x140, 0);
 }
 
 void update_main_objects(void)

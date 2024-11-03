@@ -720,3 +720,4 @@ engine_state_3_update_funcs = 0x800F48A4;
 briefing_room_state_9_update_funcs = 0x800F485C;
 
 decompress_gfx = 0x80016FF4;
+decompress_player_gfx = 0x80015ECC;

@@ -159,15 +159,16 @@ struct PlayerObj {
     s32 unk28;
     s32 unk2C;
     u8 pad30[0x8];
-    s16 animation_speed;
-    u8 pad39[5];
+    s32* unk38;
+    s16 pad38[2];
     u16 unk40;
     u16 unk42;
     s8 unk44;
     s8 unk45;
     s8 unk46;
-    u8 unk47;
-    s8 pad48[0x4A - 0x48];
+    u8 cur_anim; // 0x47
+    u8 prev_anim; // 0x48
+    s8 unk49;
     s8 unk4A;
     s8 pad4B[0x50 - 0x4B];
     s32 unk50;

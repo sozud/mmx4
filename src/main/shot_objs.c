@@ -1409,7 +1409,7 @@ void func_800AE7DC(struct UnkObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
 
-    arg0->unk47 = player->unk47;
+    arg0->unk47 = player->cur_anim;
     arg0->unk15 = player->base.unk15;
     arg0->unk18 = arg0->x_pos.val;
     arg0->unk1C = arg0->y_pos.val;
