@@ -675,7 +675,53 @@ void func_80016F0C()
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016FB4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016FF4);
+void decompress_gfx(u16* src, u16* dest, s32 arg2)
+{
+    s32 var_a3;
+    u32 upper_bits;
+    u16 var_t0;
+    u16 var_t1;
+    u32 var_v1;
+start:
+    var_t1 = *(src++);
+
+    var_t0 = 0x8000;
+    for (var_a3 = 0x10; var_a3 != 0; var_t0 >>= 1, var_a3--) {
+        if (!(var_t1 & var_t0)) {
+            // v1 assignment probably fake, found by permuter
+            *(dest++) = (var_v1 = *(src++));
+            continue;
+        }
+        arg2 = *(src++);
+        upper_bits = arg2 & 0xF800;
+        if (upper_bits != 0) {
+            var_v1 = upper_bits >> 0xB;
+            arg2 &= 0x7FF;
+        } else {
+            var_v1 = *(src++);
+        }
+        if ((var_v1 | arg2) != 0) {
+            if (arg2 == 0) {
+                do {
+                    *(dest++) = 0;
+                    var_v1 -= 1;
+                } while (var_v1 != 0);
+                continue;
+            } else {
+                arg2 = dest - arg2;
+                do {
+                    *(dest++) = *((u16*)arg2);
+                    arg2 += 2;
+                    var_v1 -= 1;
+                } while (var_v1 != 0);
+            }
+        } else {
+            return;
+        }
+    }
+
+    goto start;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800170B0);
 
