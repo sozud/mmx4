@@ -752,10 +752,11 @@ void func_80030DF8(struct BarObj*);
 void func_80030EC8(struct BarObj*);
 
 // D_800F4910
-void func_80030FD8(void);
-void func_80031014(void);
-void func_80031064(void);
-void func_80031130(void);
+extern void (*D_800F4910[])(struct BarObj*);
+void func_80030FD8(struct BarObj*);
+void func_80031014(struct BarObj*);
+void func_80031064(struct BarObj*);
+void func_80031130(struct BarObj*);
 
 // D_800F8980
 void func_80035694(struct PlayerObj*);

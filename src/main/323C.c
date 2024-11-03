@@ -725,7 +725,10 @@ start:
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800170B0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800170E0);
+void func_800170E0(void)
+{
+    need_palette_load |= 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017100);
 
