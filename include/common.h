@@ -430,13 +430,23 @@ struct LayerObj {
     s8 pad20[0x30 - 0x20];
 }; // size 0x30
 
-struct MiscUnk50 {
+struct MiscUnk50_1 {
     u8 pad[0x16];
     u8 unk16;
 };
 
+struct MiscUnk50_2 {
+    s8 unk0;
+    s8 pad_[4];
+    f32 x_pos;
+    f32 y_pos;
+    s32 unk8;
+    s32 unkC;
+    u8 unk16;
+};
+
 struct ReadyTextExt {
-    struct MiscUnk50* unk50;
+    struct MiscUnk50_1* unk50;
     u16 unk54;
     u16 stay_up_timer; // 0x56
     u16 palette_pos;
@@ -461,10 +471,21 @@ struct SelectACharacterExt {
     u8 cur_character_selected;
 };
 
+struct UnkExt {
+    struct MiscUnk50_2* unk50;
+    s8 unk54;
+    s8 unk55;
+    union {
+        s8 byte;
+        u16 sht;
+    } unk56;
+};
+
 union MiscExt {
     struct ReadyTextExt ready_text;
     struct TitleLogoExt title_logo;
     struct SelectACharacterExt sel_char;
+    struct UnkExt unk;
 };
 
 struct MiscObj {
