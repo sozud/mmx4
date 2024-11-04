@@ -511,8 +511,18 @@ struct MiscObj {
 }; // size 0x60
 
 struct BarObj {
-    struct BaseObj base;
-    s8 pad18[0x20 - 0x18];
+    s8 : 8;
+    s8 : 8;
+    s8 unk2;
+    s8 : 8;
+    s8 state;
+    s8 unk5;
+    s8 unk6;
+    s8 pad7[0x14 - 7];
+    s8 unk14;
+    s8 : 8;
+    u8 unk16[8]; // size unconfirmed
+    s16 : 16;
     u8 unk20;
     u8 unk21;
     u8 unk22;

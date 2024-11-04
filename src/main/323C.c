@@ -707,7 +707,7 @@ void func_80017340(void)
         func_800175AC(0x14);
         func_800175AC(0);
         func_800175AC(1);
-        if (bar_object.base.unk17 != 0) {
+        if (bar_object.unk16[1] != 0) {
             func_800175AC(0x15);
             func_800175AC(2);
             func_800175AC(3);
@@ -721,7 +721,7 @@ void func_80017340(void)
     }
 
     while (start < end) {
-        if (((u8*)&bar_object.base.unk16)[start] != 0) {
+        if (bar_object.unk16[start] != 0) {
             func_800175AC(start + 0x14);
             func_800175AC(start * 2);
             func_800175AC(start * 2 + 1);
@@ -744,11 +744,11 @@ void func_80017340(void)
     }
     func_800175AC(0x1E);
     func_800175AC(0x20);
-    if ((u8)engine_obj.stage - 1 < 8U) {
+    if (engine_obj.stage > 0 && engine_obj.stage < 9) {
         if (engine_obj.cur_character == CHARACTER_X) {
-            var_v0 = ((u8*)&bar_object.base.unk17)[engine_obj.stage];
+            var_v0 = bar_object.unk16[engine_obj.stage + 1];
         } else {
-            var_v0 = ((u8*)&bar_object.base.unk16)[D_800F1C0F[engine_obj.stage]];
+            var_v0 = bar_object.unk16[D_800F1C0F[engine_obj.stage]];
         }
         if (var_v0 != 0) {
             func_800175AC(0x21);
