@@ -1265,12 +1265,12 @@ void engine_state_3(struct EngineObj* arg0)
 void func_8002FCAC(void)
 {
     struct BarObj* bar = &bar_object;
-    D_800F48D4[bar_object.base.state](bar);
+    D_800F48D4[bar_object.state](bar);
 }
 
 void func_8002FCEC(struct BarObj* arg0)
 {
-    D_800F48E0[arg0->base.unk5](arg0);
+    D_800F48E0[arg0->unk5](arg0);
 }
 
 void func_8002FD28(struct BarObj* arg0)
@@ -1278,7 +1278,7 @@ void func_8002FD28(struct BarObj* arg0)
     func_80015930(0xFF, 0);
     func_800129F0(8);
     func_80023D68();
-    arg0->base.unk5 = 1;
+    arg0->unk5 = 1;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FD70);
@@ -1286,13 +1286,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002FD70);
 void func_800300AC(struct BarObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
-        arg0->base.state = 1;
-        arg0->base.unk5 = 0;
-        if (g_Player.base.unk2 || arg0->base.unk2) {
-            if (arg0->base.bg_offset >= 0xD) {
-                arg0->base.unk5 = 2;
+        arg0->state = 1;
+        arg0->unk5 = 0;
+        if (g_Player.base.unk2 || arg0->unk2) {
+            if (arg0->unk14 >= 0xD) {
+                arg0->unk5 = 2;
             } else {
-                arg0->base.unk5 = 1;
+                arg0->unk5 = 1;
             }
         }
     }
@@ -1302,14 +1302,14 @@ void func_800300AC(struct BarObj* arg0)
 void func_80030128(struct BarObj* arg0)
 {
     if (controller_state & PADselect) {
-        if (arg0->base.unk5 < 3) {
-            arg0->unk28 = arg0->base.unk5;
-            arg0->base.unk5 = 6;
-            arg0->base.unk6 = 0;
+        if (arg0->unk5 < 3) {
+            arg0->unk28 = arg0->unk5;
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
         }
     }
-    D_800F48F4[arg0->base.unk5](arg0);
-    if (arg0->base.unk5 < 5) {
+    D_800F48F4[arg0->unk5](arg0);
+    if (arg0->unk5 < 5) {
         func_80023D90();
     }
 }
@@ -1330,14 +1330,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80030EC8);
 
 void func_80030F9C(struct BarObj* arg0)
 {
-    D_800F4910[arg0->base.unk5](arg0);
+    D_800F4910[arg0->unk5](arg0);
 }
 
 void func_80030FD8(struct BarObj* arg0)
 {
     func_800129F0(8);
     func_80023D90();
-    arg0->base.unk5 = 1;
+    arg0->unk5 = 1;
 }
 
 void func_80031014(struct BarObj* arg0)
@@ -1346,7 +1346,7 @@ void func_80031014(struct BarObj* arg0)
         func_80023D90();
     } else {
         func_800170E0();
-        arg0->base.unk5 = 2;
+        arg0->unk5 = 2;
     }
 }
 
@@ -1357,7 +1357,7 @@ void func_80031130(struct BarObj* arg0)
     if (D_80141BDC[0] == 0) {
         if (arg0->unk30 == 0) {
             engine_obj.unk1 = 0;
-            arg0->base.state = 0;
+            arg0->state = 0;
         } else {
             engine_obj.state = 9;
             engine_obj.unk1 = 0;
@@ -1370,9 +1370,9 @@ void func_80031130(struct BarObj* arg0)
             engine_obj.unk15 = 0;
             engine_obj.unk16 = 0;
             engine_obj.unk17 = 0;
-            arg0->base.state = 0;
+            arg0->state = 0;
         }
-        arg0->base.unk5 = 0;
+        arg0->unk5 = 0;
     }
     if (arg0->unk30 == 0) {
         func_80023D68();

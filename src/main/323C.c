@@ -734,7 +734,79 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017100);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017268);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80017340);
+void func_80017340(void)
+{
+    u8 start;
+    s8 end;
+    u8 var_v0;
+
+    *(void**)0x1F800100 = &D_801499C8[*(s32*)0x1F800000];
+    *(void**)0x1F800104 = &D_80169D98[*(s32*)0x1F800000];
+    *(void**)0x1F800110 = &D_801499C8[*(s32*)0x1F800000];
+
+    func_80017E84();
+
+    if (engine_obj.cur_character == CHARACTER_X) {
+        end = 10;
+    } else {
+        end = 8;
+    }
+
+    if (engine_obj.cur_character == CHARACTER_X) {
+        func_800175AC(0x14);
+        func_800175AC(0);
+        func_800175AC(1);
+        if (bar_object.unk16[1] != 0) {
+            func_800175AC(0x15);
+            func_800175AC(2);
+            func_800175AC(3);
+        }
+    }
+
+    if (engine_obj.cur_character == CHARACTER_X) {
+        start = 2;
+    } else {
+        start = 0;
+    }
+
+    while (start < end) {
+        if (bar_object.unk16[start] != 0) {
+            func_800175AC(start + 0x14);
+            func_800175AC(start * 2);
+            func_800175AC(start * 2 + 1);
+        }
+        start++;
+    }
+
+    if (bar_object.unk20 != 0) {
+        func_800175AC(0x23);
+    }
+    if (bar_object.unk21 != 0) {
+        func_800175AC(0x24);
+    }
+    if (bar_object.unk22 != 0) {
+        func_800175AC(0x25);
+    }
+    func_800175AC(0x1F);
+    if (bar_object.unk25 != 0) {
+        func_800175AC(0x26);
+    }
+    func_800175AC(0x1E);
+    func_800175AC(0x20);
+    if (engine_obj.stage > 0 && engine_obj.stage < 9) {
+        if (engine_obj.cur_character == CHARACTER_X) {
+            var_v0 = bar_object.unk16[engine_obj.stage + 1];
+        } else {
+            var_v0 = bar_object.unk16[D_800F1C0F[engine_obj.stage]];
+        }
+        if (var_v0 != 0) {
+            func_800175AC(0x21);
+        }
+    }
+    func_800175AC(0x22);
+    func_800179BC();
+    func_80017F2C();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800175AC);
 
