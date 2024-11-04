@@ -721,3 +721,5 @@ briefing_room_state_9_update_funcs = 0x800F485C;
 
 decompress_gfx = 0x80016FF4;
 decompress_player_gfx = 0x80015ECC;
+player_gfx_buf_0 = 0x8016DEA8;
+player_gfx_buf_1 = 0x8016EEA8;
