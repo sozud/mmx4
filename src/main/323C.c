@@ -471,7 +471,56 @@ void load_vram_rect_ptrs(void)
     vram_rect_ptr = &vram_rect_ptrs[0];
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015ECC);
+extern s32 player_gfx_buf_0[];
+extern s32 player_gfx_buf_1[];
+
+void decompress_player_gfx(struct PlayerObj* arg0, s16 x, s16 y)
+{
+    u8* src;
+    u8* dst;
+    s32* new_var;
+    struct RectPtrPair* gfx;
+    u32 temp_a1;
+    s16 size;
+
+    if (arg0->prev_anim == arg0->cur_anim) {
+        return;
+    }
+
+    src = arg0->unk38;
+    new_var = arg0->unk38;
+    arg0->prev_anim = arg0->cur_anim;
+    temp_a1 = new_var[arg0->cur_anim];
+    size = temp_a1 >> 0x14;
+    if (arg0->unk49 == 3) {
+        dst = player_gfx_buf_0;
+    } else {
+        dst = &player_gfx_buf_1[arg0->unk49 * 1024];
+    }
+    decompress_gfx(&src[temp_a1 & 0xFFFFF], dst);
+
+    gfx = vram_rect_ptr;
+    do {
+        gfx->rect.x = x;
+        gfx->rect.y = y;
+        gfx->ptr = dst;
+        if (size < 16) {
+            gfx->rect.w = size * 4;
+            gfx->rect.h = 16;
+            size = 0;
+        } else {
+            gfx->rect.w = 64;
+            gfx->rect.h = size / 16 * 16; // quantize to a multiple of 16
+            y += gfx->rect.h;
+            size -= gfx->rect.h;
+            dst += 2048;
+        }
+        gfx++;
+    } while (size != 0);
+
+    gfx->ptr = NULL;
+    vram_rect_ptr = gfx;
+}
 
 void load_palette(void)
 {
@@ -675,13 +724,14 @@ void func_80016F0C()
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016FB4);
 
-void decompress_gfx(u16* src, u16* dest, s32 arg2)
+void decompress_gfx(u16* src, u16* dest)
 {
     s32 var_a3;
     u32 upper_bits;
     u16 var_t0;
     u16 var_t1;
     u32 var_v1;
+    s32 arg2;
 start:
     var_t1 = *(src++);
 
@@ -1617,7 +1667,7 @@ void func_80021158(void)
     func_8002A484();
     func_80021D84();
     func_80021CC8();
-    func_80015ECC(&g_Player, 0x140, 0);
+    decompress_player_gfx(&g_Player, 0x140, 0);
 }
 
 void update_main_objects(void)

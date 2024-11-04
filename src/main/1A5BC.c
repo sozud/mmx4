@@ -2033,8 +2033,8 @@ void func_80035DE4(struct PlayerObj* arg0)
 
     if (arg0->base.unk2 == 0) {
         if (arg0->unkD9 == 0) {
-            temp_v0 = D_801193F0[arg0->unk47];
-            if (D_801193F0[arg0->unk47] != 0) {
+            temp_v0 = D_801193F0[arg0->cur_anim];
+            if (D_801193F0[arg0->cur_anim] != 0) {
                 arg0->unk54 = &D_801194F0[temp_v0];
                 return;
             }
@@ -2043,9 +2043,9 @@ void func_80035DE4(struct PlayerObj* arg0)
         return;
     }
     if (D_8011AF60[arg0->base.unk17] == 0) {
-        var_v0_2 = D_8011A030[arg0->unk47];
+        var_v0_2 = D_8011A030[arg0->cur_anim];
     } else {
-        var_v0_2 = D_8011A130[arg0->unk47];
+        var_v0_2 = D_8011A130[arg0->cur_anim];
     }
     if (var_v0_2 == 0) {
         arg0->unk54 = NULL;
