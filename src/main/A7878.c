@@ -466,6 +466,7 @@ void func_800BBA24(struct EffectObj* arg0)
         return;
     case 1:
         var_i = 0;
+        // spawn blue quads behind "READY"
         if (arg0->ext.unk_effect.unk14 == 0) {
             arg0->ext.unk_effect.unk14 = 0;
             do {
