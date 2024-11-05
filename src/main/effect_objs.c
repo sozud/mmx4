@@ -34,15 +34,15 @@ void func_800B599C(struct EffectObj* arg0)
 
     if (arg0->unk2 != -1) {
         temp_v0 = D_8010B1F8[arg0->unk2];
-        arg0->unk14 = temp_v0;
-        arg0->unk18.one.a = temp_v0->unk2;
+        arg0->ext.scaling_x.unk14 = temp_v0;
+        arg0->ext.scaling_x.unk18 = temp_v0->unk2;
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = D_8010B23C[arg0->unk2][i];
         }
-        D_80175E9C = arg0->unk14->unk3 & 1;
-        D_80141BE4 = arg0->unk14->unk3 & 2;
-        D_8013E1BC = arg0->unk14->unk3 & 4;
-        color = arg0->unk14->unk0;
+        D_80175E9C = arg0->ext.scaling_x.unk14->unk3 & 1;
+        D_80141BE4 = arg0->ext.scaling_x.unk14->unk3 & 2;
+        D_8013E1BC = arg0->ext.scaling_x.unk14->unk3 & 4;
+        color = arg0->ext.scaling_x.unk14->unk0;
         D_80175EA0 = color & 0x1F;
         D_80141BE6 = color & 0x3E0;
         D_8013E1BE = color & 0x7C00;
@@ -68,23 +68,23 @@ void func_800B599C(struct EffectObj* arg0)
 void func_800B5B54(struct EffectObj* arg0)
 {
     u16 color;
-    if (arg0->unk18.one.a-- == 0) {
-        arg0->unk14++;
-        if (arg0->unk14->unk0 == 0x8000) {
-            if (arg0->unk14->unk3 == 1) {
+    if (arg0->ext.scaling_x.unk18-- == 0) {
+        arg0->ext.scaling_x.unk14++;
+        if (arg0->ext.scaling_x.unk14->unk0 == 0x8000) {
+            if (arg0->ext.scaling_x.unk14->unk3 == 1) {
                 func_8002B0C8(arg0);
                 return;
             }
-            arg0->unk14 = &arg0->unk14[arg0->unk14->unk2];
+            arg0->ext.scaling_x.unk14 = &arg0->ext.scaling_x.unk14[arg0->ext.scaling_x.unk14->unk2];
         }
-        color = arg0->unk14->unk0;
-        arg0->unk18.one.a = arg0->unk14->unk2;
+        color = arg0->ext.scaling_x.unk14->unk0;
+        arg0->ext.scaling_x.unk18 = arg0->ext.scaling_x.unk14->unk2;
         D_80175EA0 = color & 0x1F;
         D_80141BE6 = color & 0x3E0;
         D_8013E1BE = color & 0x7C00;
-        D_80175E9C = arg0->unk14->unk3 & 1;
-        D_80141BE4 = arg0->unk14->unk3 & 2;
-        D_8013E1BC = arg0->unk14->unk3 & 4;
+        D_80175E9C = arg0->ext.scaling_x.unk14->unk3 & 1;
+        D_80141BE4 = arg0->ext.scaling_x.unk14->unk3 & 2;
+        D_8013E1BC = arg0->ext.scaling_x.unk14->unk3 & 4;
         need_palette_load |= 5;
     }
 }
@@ -95,10 +95,10 @@ void func_800B5C60(struct EffectObj* arg0)
     s32* var_a2;
     u32 var_v1;
 
-    var_a2 = arg0->unk14;
-    var_a1 = arg0->unk18.ptr;
+    var_a2 = arg0->ext.unk_effect2.unk14;
+    var_a1 = arg0->ext.unk_effect2.unk18.ptr;
 
-    for (var_v1 = 0; var_v1 < arg0->unk20 * 8; var_v1++) {
+    for (var_v1 = 0; var_v1 < arg0->ext.unk_effect2.unk20 * 8; var_v1++) {
         *var_a1++ = *var_a2++;
     }
 

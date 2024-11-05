@@ -5253,9 +5253,9 @@ void func_800BB888(struct EffectObj*);
 void func_800BB928(struct EffectObj*);
 
 // D_8010BEC8
-void func_800BB9F4(struct Unk21* arg0);
-void func_800BBA24(struct Unk21* arg0);
-void func_800BBBF4(struct Unk21* arg0);
+void func_800BB9F4(struct EffectObj* arg0);
+void func_800BBA24(struct EffectObj* arg0);
+void func_800BBBF4(struct EffectObj* arg0);
 
 // D_8010BED4
 extern void (*D_8010BED4[])(struct EffectObj*);
