@@ -930,6 +930,29 @@ struct Unk14 {
     u8 unk3;
 };
 
+struct UnkEffectExt {
+    u8 unk14;
+    s8 unk15;
+    s8 unk16;
+};
+struct EffectExt2 {
+    struct Unk14* unk14;
+    Multi unk18;
+    u8 pad18[4];
+    s8 unk20;
+    s8 pad20[12];
+};
+
+struct ScalingX {
+    struct Unk14* unk14;
+    s8 unk18;
+};
+
+union EffectExt {
+    struct UnkEffectExt unk_effect;
+    struct EffectExt2 unk_effect2;
+    struct ScalingX scaling_x;
+};
 struct EffectObj {
     s8 active;
     s8 unk1;
@@ -942,11 +965,7 @@ struct EffectObj {
     f32 x_pos; // 0x8 and 0xA
     f32 y_pos; // 0xC and 0xE
     s32 unk10;
-    struct Unk14* unk14;
-    Multi unk18;
-    u8 pad18[4];
-    s8 unk20;
-    s8 pad20[12];
+    union EffectExt ext;
 }; // size 0x30
 
 struct Unk22 {

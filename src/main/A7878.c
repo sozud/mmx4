@@ -434,19 +434,86 @@ void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
     D_8010BEC8[arg0->state]();
 }
 
-void func_800BB9F4(struct Unk21* arg0)
+// D_8010BEC8 state 0
+void func_800BB9F4(struct EffectObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
-        arg0->unk14 = 0;
-        arg0->unk15 = 0;
-        arg0->unk16 = 0;
-        arg0->unk4 = 1;
+        arg0->ext.unk_effect.unk14 = 0;
+        arg0->ext.unk_effect.unk15 = 0;
+        arg0->ext.unk_effect.unk16 = 0;
+        arg0->state = 1;
         arg0->unk5 = 0;
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBA24);
+// D_8010BEC8 state 1
+void func_800BBA24(struct EffectObj* arg0)
+{
+    struct QuadObj* quad;
+    u32 var_i;
 
+    switch (arg0->unk5) {
+    case 0:
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = 0x81;
+            quad->id = 7;
+            quad->unk2 = 0;
+            quad->unk58 = arg0;
+        }
+        arg0->unk5 = 1;
+        arg0->ext.unk_effect.unk14++;
+        return;
+    case 1:
+        var_i = 0;
+        if (arg0->ext.unk_effect.unk14 == 0) {
+            arg0->ext.unk_effect.unk14 = 0;
+            do {
+                quad = find_free_quad_obj();
+                if (quad != NULL) {
+                    quad->active = 0x81;
+                    quad->id = 7;
+                    quad->unk2 = 1;
+                    quad->unk7 = var_i;
+                    quad->unk58 = arg0;
+                    arg0->ext.unk_effect.unk14++;
+                }
+                var_i += 1;
+            } while (var_i < 0xA);
+            arg0->unk5 = 2;
+            return;
+        }
+        return;
+    case 2:
+        var_i = 0;
+        if (arg0->ext.unk_effect.unk14 == 0) {
+            arg0->ext.unk_effect.unk14 = 0;
+            do {
+                quad = find_free_quad_obj();
+                if (quad != NULL) {
+                    quad->active = 0x81;
+                    quad->id = 7;
+                    quad->unk2 = 2;
+                    quad->unk7 = get_random() & 3;
+                    quad->unk58 = arg0;
+                    arg0->ext.unk_effect.unk14++;
+                }
+                var_i += 1;
+            } while (var_i < 8);
+            arg0->unk5 = 3;
+            return;
+        }
+        break;
+    case 3:
+        if (arg0->ext.unk_effect.unk14 == 0) {
+            arg0->ext.unk_effect.unk14 = 0;
+            arg0->ext.unk_effect.unk16 = 1;
+        }
+        break;
+    }
+}
+
+// D_8010BEC8 state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800BBBF4);
 
 void func_800BBC14(struct EffectObj* arg0)
