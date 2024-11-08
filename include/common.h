@@ -844,7 +844,6 @@ struct EngineObj {
     s8 pad36;
     s8 unk37;
     s32 unk38;
-    // s8 pad37[0x4];
     struct BaseObj* unk3C;
     u8 unk40;
     s8 unk41;
