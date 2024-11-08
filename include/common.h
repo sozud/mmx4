@@ -275,10 +275,21 @@ struct Unk_unk68 {
 
 struct VisualObj {
     struct BaseObj base;
-    s8 pad18[0x50 - 0x18];
+    s8 pad18[0x30 - 0x18];
+    void* unk30;
+    s32 : 32;
+    s32 unk38;
+    void* unk3C;
+    u16 unk40;
+    u16 unk42;
+    s16 : 16;
+    s8 unk46;
+    s8 pad47[0x50 - 0x47];
     s32 unk50;
     s32 unk54;
-    u8 pa5A[0x70 - 0x5A];
+    s32 : 32;
+    s8 unk5C;
+    u8 pa58[0x70 - 0x5D];
 }; // size 0x70
 
 struct ShotObj {
@@ -1023,6 +1034,10 @@ extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
+extern s16 D_8010A1AC[];
+extern s16 D_8010A1AE[];
+extern s16 D_8010A1B4[];
+extern s16 D_8010A1B6[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
 extern void (*D_8010F5F8[2])();
@@ -1034,6 +1049,7 @@ extern u8 D_8011A030[];
 extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
+extern void* D_8011BF40;
 extern s8 D_80141BDC[];
 extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
@@ -1151,6 +1167,7 @@ extern s32 D_8013BC28;
 extern void (*ReadyTextUpdateFuncs[1])(void);
 extern s32 D_80137DC4;
 extern s32 D_80137DD0;
+extern u32* D_801406A8;
 extern u8 D_801406AC;
 extern s32 D_80142F70;
 extern s32 D_8015D9C8;
