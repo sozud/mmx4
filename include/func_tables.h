@@ -759,6 +759,7 @@ void func_80031064(struct BarObj*);
 void func_80031130(struct BarObj*);
 
 // D_800F8980
+extern void (*D_800F8980[])(struct PlayerObj*);
 void func_80035694(struct PlayerObj*);
 void func_800312B4(struct PlayerObj*);
 void func_80035A6C(struct PlayerObj*);
