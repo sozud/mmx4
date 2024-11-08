@@ -258,7 +258,8 @@ struct PlayerObj {
     s8 unkD7;
     s8 : 8;
     s8 unkD9;
-    s8 padDA[0xDE - 0xDA];
+    u16 unkDA;
+    s8 padDC[0xDE - 0xDC];
     s8 unkDE;
     s8 : 8;
     s8 unkE0;
@@ -842,7 +843,7 @@ struct EngineObj {
     s8 unk26[0x10];
     s8 pad36;
     s8 unk37;
-    s8 pad37[0x4];
+    s32 unk38;
     struct BaseObj* unk3C;
     u8 unk40;
     s8 unk41;
