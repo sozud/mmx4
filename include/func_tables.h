@@ -5830,7 +5830,8 @@ void func_800CCA34(struct MiscObj* arg0);
 void func_800CD6D8(struct MiscObj* arg0);
 void func_800CD730(struct MiscObj* arg0);
 
-// D_8010EC10
+// D_8010EC10 - g_TitleLogoUpdateFuncs
+extern void (*g_TitleLogoUpdateFuncs[])(struct MiscObj* arg0);
 void func_800CD78C(struct MiscObj* arg0);
 void func_800CD90C(struct MiscObj* arg0);
 void func_800CD974(struct MiscObj* arg0);

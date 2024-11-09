@@ -469,7 +469,7 @@ struct ReadyTextExt {
 
 struct TitleLogoExt {
     s32 unk50;
-    s8 palette_shift_speed;
+    u8 palette_shift_speed; // 0x54
     u8 palette_shift_value; // 0x55
     s8 unk56;
     u8 unk57;
@@ -1130,7 +1130,6 @@ extern void (*g_TitleUpdateFuncs[1])();
 extern void (*D_8010EB84[1])();
 extern void (*g_SelectACharacterUpdateFuncs[1])();
 extern struct Unk main_objects[0x30]; // D_8013BED0
-extern void (*g_TitleLogoUpdateFuncs[1])();
 extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();
 extern void (*g_TitleUpdate2Funcs[1])(struct QuadObj*);
