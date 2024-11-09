@@ -563,7 +563,10 @@ u8 get_random()
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B780);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7B0);
+u8 func_8002B7B0(struct MiscObj* arg0, s32 arg1, s32 arg2)
+{
+    return func_8002B810(arg0->base.x_pos.val - arg1, arg0->base.y_pos.val - arg2);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7DC);
 
