@@ -207,8 +207,7 @@ struct PlayerObj {
     u8 unk87;
     s8 unk88;
     u8 unk89;
-    s8 : 8;
-    s8 : 8;
+    u16 unk8A;
     s8 unk8C;
     s8 : 8;
     s8 unk8E;
@@ -276,21 +275,29 @@ struct Unk_unk68 {
 
 struct VisualObj {
     struct BaseObj base;
-    s8 pad18[0x30 - 0x18];
+    s8 pad18[0x20 - 0x18];
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
     void* unk30;
     s32 : 32;
     s32 unk38;
     void* unk3C;
     u16 unk40;
     u16 unk42;
-    s16 : 16;
+    s8 unk44;
+    s8 unk45;
     s8 unk46;
     s8 pad47[0x50 - 0x47];
-    s32 unk50;
-    s32 unk54;
+    struct PlayerObj* unk50; // 0x50, guessed
+    s16 unk54;
+    s16 : 16;
     s32 : 32;
     s8 unk5C;
-    u8 pa58[0x70 - 0x5D];
+    s8 : 8;
+    s16 unk5E;
+    u8 pa58[0x70 - 0x60];
 }; // size 0x70
 
 struct ShotObj {
@@ -338,7 +345,11 @@ struct WeaponObj {
     struct BaseObj base;
     s32 unk18;
     s32 unk1C;
-    s8 pad20[0x42 - 0x20];
+    s8 pad20[0x30 - 0x20];
+    s32 unk30;
+    s8 pad34[0x3C - 0x34];
+    void* unk3C;
+    u16 unk40;
     u16 unk42;
     s8 pad44[0x50 - 0x44];
     s32 unk50;
@@ -1039,6 +1050,7 @@ extern s16 D_8010A1AC[];
 extern s16 D_8010A1AE[];
 extern s16 D_8010A1B4[];
 extern s16 D_8010A1B6[];
+extern u8 D_8010A5B8[];
 extern s8* D_8010ECD4[];
 extern void (*D_8010F5E8[4])();
 extern void (*D_8010F5F8[2])();
@@ -1347,6 +1359,7 @@ s32 func_8002D32C(struct PlayerObj*, s16, s32);
 s32 func_8002D5E4(struct PlayerObj*, s16);
 u8 func_8002D724(struct PlayerObj*, s16, s16);
 s32 func_8002D7E4(struct Unk*, s16, s16);
+u8 func_8002D900(struct PlayerObj*);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 void func_80016334(void);
