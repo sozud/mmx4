@@ -107,9 +107,17 @@ void func_800128B8(s32 arg0)
     ChangeTh(0xFF000000);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_800128EC);
+void func_800128EC(s32 arg0)
+{
+    u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+    *temp_a0 |= 0x40;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012910);
+void func_80012910(s32 arg0)
+{
+    u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+    *temp_a0 &= ~0x40;
+}
 
 void func_80012934(s32 arg0)
 {
@@ -119,7 +127,18 @@ void func_8001293C(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012944);
+void func_80012944(void)
+{
+    s32 i;
+
+    for (i = 0; i < 8; i++) {
+        (i + *(s16**)0x801F8300)[48] = 0;
+    }
+
+    for (i = 0; i < 16; i++) {
+        (i + *(u8**)0x801F8300)[0x71] = 0;
+    }
+}
 
 void func_800129A4(s8 arg0)
 {
