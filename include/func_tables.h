@@ -632,6 +632,7 @@ void func_80027974(struct BackgroundObj* arg0);
 void func_800279D8(struct BackgroundObj* arg0);
 
 // D_800F3140
+extern void (*D_800F3140[])(struct BackgroundObj*);
 void func_80027DC0(struct BackgroundObj* arg0);
 void func_80027DF0(struct BackgroundObj* arg0);
 void func_80028070(struct BackgroundObj* arg0);
@@ -643,6 +644,7 @@ void func_80028620(struct BackgroundObj* arg0);
 void func_80028658(struct BackgroundObj* arg0);
 
 // D_800F3164
+extern void (*D_800F3164[])(struct BackgroundObj*);
 void func_80028268(struct BackgroundObj* arg0);
 void func_80028298(struct BackgroundObj* arg0);
 void func_80028518(struct BackgroundObj* arg0);

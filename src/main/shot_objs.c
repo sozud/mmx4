@@ -1401,9 +1401,26 @@ void func_800AE6B4(struct BazObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shot_objs", func_800AE714);
+void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1)
+{
+    s32 var_v1 = arg0->base.unk2 == 0 ? 2 : 1;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shot_objs", func_800AE790);
+    if (arg1->unk9B[0] == var_v1 || arg1->unk9B[1] == var_v1) {
+        arg0->base.on_screen = 1;
+        func_80015D60(arg0, arg0->base.unk2 + 8);
+        arg0->base.state++;
+    }
+}
+
+void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1)
+{
+    if ((arg1->unk9B[0] == 0) && (arg1->unk9B[1] == 0)) {
+        arg0->base.on_screen = 0;
+        arg0->base.state = 0;
+    } else {
+        func_80015DC8(arg0);
+    }
+}
 
 void func_800AE7DC(struct UnkObj* arg0)
 {
