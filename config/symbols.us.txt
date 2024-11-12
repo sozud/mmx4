@@ -480,6 +480,8 @@ item_objects = 0x80165A30; // size:0x1180
 layer_objects = 0x80169CB8; // size:0xC0
 qux_object = 0x80173A30; // size:0xB0
 // something else starting at 0x80173AE0
+game_info = 0x80173C70; // size:0x10
+// something else starting at 0x80173C80
 misc_objects = 0x80173CA0; // size:0x1800
 bar_object = 0x801754A0; // size:0x34
 cur_draw_info = 0x80142F80;
