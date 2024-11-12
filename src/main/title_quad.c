@@ -54,7 +54,7 @@ void func_800D7100(struct QuadObj* arg0)
 // TitleUpdate2 state 4
 void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 {
-    if (D_80173C7A == 2) {
+    if (game_info.unkA == 2) {
         arg0->ext.unk_ext2.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
         arg0->state = 5;
     }
