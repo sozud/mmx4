@@ -1072,6 +1072,8 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
+extern u8 layout_width;
+extern u16 layout_size;
 extern void (*engine_update_funcs[1])(void*);
 extern u8 D_80171EA8;
 extern u8 D_800F21A0[];
