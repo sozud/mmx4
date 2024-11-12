@@ -643,7 +643,7 @@ void func_800D94FC(struct LayerObj* arg0)
     case 2:
         if (func_8002BAD0(1, 0x40, 0x40) == 0x18) {
             arg0->base.unk7 = 0;
-            arg0->base.unk6 = (u8)arg0->base.unk6 + 1;
+            arg0->base.unk6++;
         }
         break;
     }

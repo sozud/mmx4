@@ -1316,7 +1316,7 @@ void func_8001D514(struct GameInfo* arg0)
         arg0->unkD = 1;
         D_80141BDE[0] = 0;
         func_8001D134();
-        func_8002A6FC();
+        reset_game_engine();
         arg0->unk0 = 3;
         arg0->mode = 0;
     } else {
@@ -1569,7 +1569,7 @@ void func_8001DCCC(struct GameInfo* arg0)
     arg0->unkD = 2;
     arg0->unkA = 0;
     func_8001D134();
-    func_8002A6FC();
+    reset_game_engine();
     engine_obj.stage = 0xE;
     engine_obj.substage = 0;
     func_80013014();

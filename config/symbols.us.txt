@@ -506,6 +506,9 @@ PlayCapcomLogo = 0x8001D10C;
 MyCdReadyCallback = 0x80013A20;
 InitMemcards = 0x8001C6DC;
 init_objects = 0x80023DB8;
+reset_game_engine = 0x8002A6FC;
+reset_entity = 0x8002A728;
+reset_main_and_shots = 0x8002A74C;
 reset_objects = 0x8002A7D0;
 main_object_update_funcs = 0x800F24A4;
 weapon_object_update_funcs = 0x800F25D8;
@@ -636,8 +639,7 @@ background_objects_2_4C = 0x80141aa4;
 background_objects_2_4D = 0x80141aa5;
 background_objects_2_4E = 0x80141aa6;
 
-
-engine_obj = 0x801721C0;
+engine_obj = 0x801721C0; // size:0x64
 engine_obj_01 = 0x801721C1;
 engine_obj_02 = 0x801721C2;
 engine_obj_03 = 0x801721C3;
@@ -689,6 +691,10 @@ engine_obj_5C = 0x8017221C;
 engine_obj_5D = 0x8017221D;
 engine_obj_5E = 0x8017221E;
 engine_obj_5F = 0x8017221F;
+
+layout_width = 0x80172224;
+layout_height = 0x80173A28;
+layout_size = 0x8013BD48;
 
 clear_vram_rect_ptrs = 0x80015E0C;
 load_vram_rect_ptrs = 0x80015E54;
