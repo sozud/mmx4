@@ -53,10 +53,11 @@ void func_8001B4E4(void);
 void func_8001B558(void);
 
 // D_800F2170
-void func_8001D2D0(void);
-void func_8001D364(void);
-void func_8001D460(void);
-void func_8001D514(void);
+extern void (*D_800F2170[])(struct GameInfo* arg0);
+void func_8001D2D0(struct GameInfo* arg0);
+void func_8001D364(struct GameInfo* arg0);
+void func_8001D460(struct GameInfo* arg0);
+void func_8001D514(struct GameInfo* arg0);
 
 // D_800F2184
 extern void (*D_800F2184[])(struct GameInfo* arg0);
@@ -66,10 +67,10 @@ void func_8001D64C(struct GameInfo* arg0);
 void func_8001D1A4(struct GameInfo* arg0);
 
 // D_800F2194
-extern void (*D_800F2194[])(struct Unk* arg0);
-void func_8001D7D0(struct Unk* arg0);
-void func_8001D8DC(struct Unk* arg0);
-void func_8001D9D0(struct Unk* arg0);
+extern void (*D_800F2194[])(struct GameInfo* arg0);
+void func_8001D7D0(struct GameInfo* arg0);
+void func_8001D8DC(struct GameInfo* arg0);
+void func_8001D9D0(struct GameInfo* arg0);
 
 // D_800F21B0
 extern void (*D_800F21B0[])(struct GameInfo* arg0);

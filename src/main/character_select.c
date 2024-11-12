@@ -76,9 +76,9 @@ void character_select_state_2_substate_0(struct EngineObj* arg0)
         D_80141BE6 = 0;
         D_8013E1BE = 0;
         D_8013E188[0] = 0;
-        D_8013E18C = 0;
-        D_8013E190 = 0;
-        D_8013E194 = 0;
+        D_8013E188[1] = 0;
+        D_8013E188[2] = 0;
+        D_8013E188[3] = 0;
         need_palette_load |= 1;
     }
 }
