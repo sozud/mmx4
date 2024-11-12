@@ -878,7 +878,8 @@ struct EngineObj {
     s8 unk48;
     s8 pad49[0x5F - 0x49];
     u8 unk5F;
-};
+    s32 : 32;
+}; // size 0x64
 
 struct Unk18 {
     s8 unk0;

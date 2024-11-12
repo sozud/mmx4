@@ -12,17 +12,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A41C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A484);
 
-void func_8002A6FC()
+void reset_game_engine()
 {
     s8 fill = 0;
     s8* a0 = (u8*)&engine_obj;
-    s32 v1 = 0x64 - 1;
+    s32 v1 = sizeof(struct EngineObj) - 1;
     do {
         *a0++ = fill;
     } while (v1-- != 0);
 }
 
-void func_8002A728(struct PlayerObj* arg0)
+void reset_entity(struct PlayerObj* arg0)
 {
     s8 fill = 0;
     s32 v1 = sizeof(struct PlayerObj) - 1;
@@ -32,7 +32,7 @@ void func_8002A728(struct PlayerObj* arg0)
     } while (v1-- != 0);
 }
 
-void func_8002A74C()
+void reset_main_and_shots()
 {
     s8 fill = 0;
     s32 a2;
@@ -67,8 +67,8 @@ void reset_objects(void)
     s8* a0;
     u32 a1;
 
-    func_8002A728(&g_Player);
-    func_8002A728(&g_Entity);
+    reset_entity(&g_Player);
+    reset_entity(&g_Entity);
 
     for (a1 = 0; a1 < COUNT(foo_objects); a1++) {
         a0 = (u8*)&foo_objects[a1];
@@ -94,7 +94,7 @@ void reset_objects(void)
         } while (var_v1-- != 0);
     }
 
-    func_8002A74C(); // clear main_objects and shot_objects
+    reset_main_and_shots(); // clear main_objects and shot_objects
 
     for (a1 = 0; a1 < COUNT(visual_objects); a1++) {
         a0 = (u8*)&visual_objects[a1];
