@@ -1445,7 +1445,38 @@ void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 }
 
 // g_MegamanInBriefingRoomUpdateFuncs state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800C9EE8);
+void func_800C9EE8(struct MiscObj* arg0)
+{
+    if (arg0->base.unk2 == 0) {
+        arg0->unk42 = 0x7883;
+        arg0->unk40 = D_801406A8[2] >> 7;
+        arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[2];
+        if (engine_obj.cur_character != CHARACTER_X) {
+            arg0->unk30 = &D_8010E538;
+        } else {
+            arg0->unk30 = &D_8010E514;
+        }
+        arg0->base.x_pos.val = FIXED(42);
+        arg0->base.y_pos.val = FIXED(416);
+    } else {
+        arg0->unk42 = 0x7885;
+        arg0->unk40 = D_801406A8[3] >> 7;
+        arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[3];
+        if (engine_obj.cur_character != CHARACTER_X) {
+            arg0->unk30 = &D_8010E55C;
+        } else {
+            arg0->unk30 = &D_8010E4EC;
+        }
+        arg0->base.x_pos.val = FIXED(282);
+        arg0->base.y_pos.val = FIXED(432);
+    }
+    arg0->base.bg_offset = 0;
+    arg0->base.unk15 = 0;
+    arg0->base.unk16 = 3;
+    arg0->base.state++;
+    func_80015D60(arg0, 0);
+    is_on_screen(arg0);
+}
 
 // g_MegamanInBriefingRoomUpdateFuncs state 1
 // X doesn't appear in briefing room if nopped out
@@ -1466,7 +1497,12 @@ void func_800CA030(struct MiscObj* arg0)
     is_on_screen(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CA0C8);
+void func_800CA0C8(struct MiscObj* arg0)
+{
+    arg0->unk18 = arg0->base.x_pos.val;
+    arg0->unk1C = arg0->base.y_pos.val;
+    D_8010E580[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/A7878", func_800CA110);
 

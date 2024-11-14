@@ -56,7 +56,36 @@ void func_800CCD8C(struct MiscObj* arg0)
 }
 
 // D_8010EB84 state 3
-INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CCDD4);
+void func_800CCDD4(struct MiscObj* arg0)
+{
+    switch (arg0->base.unk7) {
+    case 0:
+        arg0->x_vel.val = FIXED(16);
+        /* fallthrough */
+    case 1:
+        func_8002B718(arg0);
+        if (arg0->base.on_screen == 0) {
+            arg0->ext.sel_char.blast_timer = 20;
+            arg0->base.unk7++;
+            return;
+        }
+        return;
+    case 2:
+        if (--arg0->ext.sel_char.blast_timer == 0) {
+            arg0->x_vel.val = FIXED(-16);
+            arg0->base.unk7++;
+            return;
+        }
+        break;
+    case 3:
+        func_8002B718(arg0);
+        if (arg0->base.x_pos.i.hi == 0xE0) {
+            arg0->base.unk6 = 1;
+            arg0->base.unk7 = 0;
+        }
+        break;
+    }
+}
 
 // D_8010EBB4 state 0, 1
 void func_800CCEB4(struct MiscObj* arg0)
@@ -215,7 +244,33 @@ void func_800CD1E8(struct MiscObj* arg0)
 }
 
 // D_8010EBA8 state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CD2BC);
+void func_800CD2BC(struct MiscObj* arg0)
+{
+    struct BaseObj* obj;
+
+    func_80015DC8();
+    if (arg0->unk45 != 0) {
+        arg0->unk45 = 0;
+        obj = (struct BaseObj*)find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 0x1C;
+            obj->unk2 = 0xB;
+            obj->x_pos.i.hi = arg0->base.x_pos.i.hi;
+            obj->y_pos.i.hi = arg0->base.y_pos.i.hi;
+        }
+    }
+
+    if (arg0->unk46 == 0) {
+        arg0->base.unk6 = 0;
+        arg0->ext.sel_char.blast_timer = (arg0->ext.sel_char.unk54 & 1) ? 0x96 : 0x5A;
+        arg0->ext.sel_char.unk54++;
+        if (engine_obj.unk26[0] != 0) {
+            arg0->base.unk5 = 0xF;
+        }
+        func_80015D60(arg0, 0);
+    }
+}
 
 // D_8010EBB4 state 7,8
 void func_800CD390(struct MiscObj* arg0)

@@ -39,7 +39,10 @@ void func_800CB634(struct MiscObj* arg0)
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB708);
 
 // g_TitleUpdateFuncs state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB828);
+void func_800CB828(struct MiscObj* arg0)
+{
+    ZeroObjectState(arg0);
+}
 
 // title object. Includes the logo and the menu graphics
 void TitleUpdate(struct MiscObj* arg0)
@@ -47,9 +50,31 @@ void TitleUpdate(struct MiscObj* arg0)
     g_TitleUpdateFuncs[arg0->base.state]();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB884);
+void func_800CB884(struct MiscObj* arg0)
+{
+    if (arg0->base.state == 0) {
+        arg0->base.on_screen = 1;
+        arg0->base.bg_offset = -1;
+        arg0->unk47 = 0;
+        arg0->unk3C = *(void**)0x1F80001C;
+        arg0->unk40 = 0x600;
+        arg0->unk42 = 0x7804;
+        arg0->base.x_pos.i.hi = 0xA0;
+        arg0->unk38 = 0;
+        arg0->unk30 = 0;
+        arg0->base.unk15 = 0;
+        arg0->base.unk16 = 0;
+        arg0->base.y_pos.i.hi = 0x78;
+        arg0->base.state++;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB8F8);
+void func_800CB8F8(struct MiscObj* arg0)
+{
+    arg0->unk18 = arg0->base.x_pos.val;
+    arg0->unk1C = arg0->base.y_pos.val;
+    D_8010E830[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB940);
 
@@ -163,31 +188,60 @@ void func_800CBA80(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBD40);
+void func_800CBD40(struct MiscObj* arg0)
+{
+    if (arg0->base.state == 0) {
+        func_800CBD80(arg0);
+    } else {
+        func_800CBE34(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBD80);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBE34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBECC);
+void func_800CBECC(struct MiscObj* arg0)
+{
+    arg0->unk18 = arg0->base.x_pos.val;
+    arg0->unk1C = arg0->base.y_pos.val;
+    D_8010E90C[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBF14);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC040);
+void func_800CC040(struct MiscObj* arg0)
+{
+    D_8010E918[arg0->base.unk5](arg0);
+    if (func_8002B160(arg0) == 0) {
+        is_on_screen(arg0);
+    } else {
+        arg0->base.state = 2;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC0AC);
+void func_800CC0AC(struct MiscObj* arg0)
+{
+    D_8010E924[arg0->base.unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC0E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC114);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC1F8);
+void func_800CC1F8(struct MiscObj* arg0)
+{
+    D_8010E92C[arg0->base.unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC234);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC304);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC350);
+void func_800CC350(struct MiscObj* arg0)
+{
+    D_8010E934[arg0->base.unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC38C);
 
@@ -203,13 +257,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC738);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC79C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC7BC);
+void func_800CC7BC(struct MiscObj* arg0)
+{
+    D_8010E958[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC7F8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC8E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC908);
+void func_800CC908(struct MiscObj* arg0)
+{
+    D_8010E960[arg0->base.state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CC944);
 
