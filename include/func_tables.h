@@ -179,9 +179,10 @@ void func_80020CB8(struct EngineObj*);
 void func_80020D3C(struct EngineObj*);
 
 // D_800F2498
-void func_80020ED4(void);
-void func_80020F24(void);
-void func_800210B8(void);
+extern void (*D_800F2498[])(struct EngineObj*);
+void func_80020ED4(struct EngineObj*);
+void func_80020F24(struct EngineObj*);
+void func_800210B8(struct EngineObj*);
 
 // D_800F24A4 (main_object_update_funcs)
 extern void (*main_object_update_funcs[])(struct MainObj*);
@@ -689,9 +690,10 @@ void func_80029928(struct EngineObj* arg0);
 void func_80029978(struct EngineObj* arg0);
 
 // D_800F4590
-void func_80029E1C(void);
-void func_8002A098(void);
-void func_8002A394(void);
+extern void (*D_800F4590[])(struct GameInfo* arg0);
+void func_80029E1C(struct GameInfo* arg0);
+void func_8002A098(struct GameInfo* arg0);
+void func_8002A394(struct GameInfo* arg0);
 
 // D_800F485C briefing_room_state_9_update_funcs
 extern void (*briefing_room_state_9_update_funcs[])(struct EngineObj*);
