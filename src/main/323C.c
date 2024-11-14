@@ -1258,7 +1258,20 @@ void func_8001D294(struct GameInfo* arg0)
     D_800F2170[arg0->mode](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001D2D0);
+void func_8001D2D0(struct GameInfo* arg0)
+{
+    arg0->unkD = 1;
+    D_80141BDE[0] = 1;
+    func_8001D134();
+    reset_game_engine();
+    func_80013890(D_800F2180[arg0->unkC], 0x801F6000);
+    func_80014C70();
+    func_80021E3C();
+    func_80012EB8();
+    func_80013014();
+    arg0->unk4 = 0x960;
+    arg0->mode++;
+}
 
 void func_8001D364(struct GameInfo* arg0)
 {
@@ -1792,7 +1805,7 @@ void func_8001E708(struct GameInfo* arg0)
     func_80023D68();
 }
 
-u8 func_8001E850(u8* arg0, u8 arg1)
+s32 func_8001E850(u8* arg0, u8 arg1)
 {
     s8 counter = 0;
     struct MiscObj* misc;
@@ -2116,17 +2129,167 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800204CC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020580);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020638);
+void func_80020638(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        func_800204CC(D_80141BDC + 3, arg0->unk8);
+        if (controller_state & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            if (D_80141BDC[3] != 2U) {
+                func_800129F0(8);
+            }
+            arg0->unk1++;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800206D0);
+void func_800206D0(struct EngineObj* arg0)
+{
+    s8 temp_v1;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020808);
+    if (D_80141BDC[0] == 0) {
+        switch (D_80141BDF[0]) {
+        case 0:
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
+            if (engine_obj.unk5A & 0x8000) {
+                arg0->unk44 = 4;
+            } else {
+                arg0->unk44 = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 1:
+            if (engine_obj.unk5A & 0x8000) {
+                arg0->unk44 = 4;
+            } else {
+                arg0->unk44 = 2;
+            }
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 2:
+            temp_v1 = arg0->state;
+            arg0->state = 0xC;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            arg0->unk4 = temp_v1;
+            break;
+        default:
+            func_8001DC30();
+            func_800127FC();
+            break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002088C);
+void func_80020808(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        func_800204CC(D_80141BDC + 3, arg0->unk8);
+        if (controller_state & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020984);
+void func_8002088C(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        switch (D_80141BDF[0]) {
+        case 0:
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020A08);
+            if (engine_obj.unk5A & 0x8000) {
+                arg0->unk44 = 4;
+            } else {
+                arg0->unk44 = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 1:
+            if (engine_obj.unk5A & 0x8000) {
+                arg0->unk44 = 4;
+            } else {
+                arg0->unk44 = 2;
+            }
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 2:
+        default:
+            func_8001DC30();
+            func_800127FC();
+            break;
+        }
+    }
+}
+
+void func_80020984(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        func_800204CC(D_80141BDC + 3, arg0->unk8);
+        if (controller_state & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
+
+void func_80020A08(struct EngineObj* arg0)
+{
+    s8 var_v0;
+
+    if (D_80141BDC[0] == 0) {
+        if (D_80141BDF[0] == 0) {
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
+
+            if (engine_obj.unk5A & 0x8000) {
+                arg0->unk44 = 4;
+            } else {
+                arg0->unk44 = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        } else {
+            func_8001DC30();
+            func_800127FC();
+        }
+    }
+}
 
 void func_80020AC8(struct EngineObj* arg0)
 {
@@ -2136,15 +2299,88 @@ void func_80020AC8(struct EngineObj* arg0)
     init_objects();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020B1C);
+void func_80020B1C(struct EngineObj* arg0)
+{
+    func_8001D134();
+    D_80141BDF[0] = 0;
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    func_8001E980(0);
+    func_8001C3E8();
+    func_800129A4(8);
+    arg0->unk8 = func_8001E850(&D_800F2300, 1);
+    arg0->unk1++;
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020B8C);
+void func_80020B8C(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        func_800204CC(D_80141BDC + 3, arg0->unk8);
+        if (controller_state & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            if ((u8)D_80141BDC[3] != 0) {
+                func_800129F0(8);
+            }
+            arg0->unk1++;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020C24);
+void func_80020C24(struct EngineObj* arg0)
+{
+    s8 temp_v1;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020CB8);
+    if (D_80141BDC[0] == 0) {
+        switch (D_80141BDF[0]) {
+        case 0:
+            temp_v1 = arg0->state;
+            arg0->state = 0xC;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            arg0->unk4 = temp_v1;
+            return;
+        case 1:
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            return;
+        case 2:
+        default:
+            func_8001DC30();
+            func_800127FC();
+            break;
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020D3C);
+void func_80020CB8(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        func_800204CC(D_80141BDC + 3, arg0->unk8); // why not D_80141BDF?
+        if (controller_state & PADRdown) {
+            func_8001540C(0, 0x22, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
+
+void func_80020D3C(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        if (D_80141BDF[0] == 0) {
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        } else {
+            func_8001DC30();
+            func_800127FC();
+        }
+    }
+}
 
 void func_80020D98(struct EngineObj* arg0)
 {
@@ -2154,15 +2390,104 @@ void func_80020D98(struct EngineObj* arg0)
     init_objects();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020DEC);
+void func_80020DEC(u8* arg0, s16 arg1)
+{
+    struct UnkObj* obj;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020ED4);
+    while (arg0[0] != 0xFF) {
+        obj = find_free_unk_obj();
+        if (obj != NULL) {
+            obj->active = 1;
+            obj->id = 1;
+            obj->unk2 = arg0[0];
+            obj->y_pos.i.hi = arg0[1];
+            obj->unk7 = arg0[2];
+        }
+        arg0 += 3;
+    }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80020F24);
+    obj = find_free_unk_obj();
+    if (obj != NULL) {
+        obj->active = 1;
+        obj->unk2 = -1;
+        obj->id = 0;
+        obj->unk50 = &D_800F2490;
+        obj->x_pos.i.hi = arg1;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800210B8);
+void func_80020ED4(struct EngineObj* arg0)
+{
+    arg0->unk7 = 1;
+    arg0->unk2C = 0;
+    func_80029DBC();
+    D_80141BDF[0] = 0;
+    func_80020DEC(&D_800F2468, 0x40);
+    func_8001E980(0);
+    func_800129A4(8);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021104);
+void func_80020F24(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        if (arg0->unk2C == 0) {
+            func_800204CC(D_80141BDC + 3, 1);
+            if (controller_state & PADRdown) {
+                func_8001540C(0, 0x22, 0);
+                if ((u8)D_80141BDC[3] == 0) {
+                    func_800129F0(8);
+                    arg0->unk7 = 2;
+                } else {
+                    arg0->unk2C = 1;
+                    func_80029DBC();
+                    D_80141BDC[3] = 0;
+                    func_80020DEC(&D_800F247C, 0x78);
+                }
+            }
+        } else {
+            func_800204CC(D_80141BDC + 3, 1);
+            if (controller_state & PADRdown) {
+                func_8001540C(0, 0x22, 0);
+                arg0->unk2C = 0;
+                if ((u8)D_80141BDC[3] == 1) {
+                    arg0->unk7 = 0;
+                    if (engine_obj.stage != 0 && engine_obj.unk5F >= 3) {
+                        func_8001C3E8();
+                    }
+                    SetDispMask(0);
+                    func_8001D134();
+                    func_80015284();
+                    reset_game_engine();
+                    func_8001DC30();
+                    func_800127FC();
+                } else {
+                    func_80029DBC();
+                    D_80141BDC[3] = 0;
+                    func_80020DEC(&D_800F2468, 0x40);
+                    arg0->unk7 = 1;
+                }
+            }
+        }
+    }
+}
+
+void func_800210B8(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        arg0->unk6++;
+        func_80029DBC();
+        arg0->unk7 = 0;
+        arg0->unk2C = 0;
+    }
+}
+
+void func_80021104(struct EngineObj* arg0)
+{
+    D_800F2498[arg0->unk7](arg0);
+    update_unk_objects();
+    func_80016124();
+    func_80025CDC();
+}
 
 void func_80021158(void)
 {
@@ -2383,8 +2708,8 @@ void func_80021CC8(void)
 
 void func_80021D20(void)
 {
-    if (D_8013BC34[0] != 0) {
-        func_80022730(D_8013BC34 - 0xC);
+    if (D_8013BC28[12] != 0) {
+        func_80022730(&D_8013BC28);
         return;
     }
     if (D_8013BC38 != 0) {
@@ -2400,7 +2725,12 @@ void func_80021D84(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021DBC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021E3C);
+void func_80021E3C(void)
+{
+    engine_obj.cur_character = D_801F604F;
+    engine_obj.stage = D_801F6018;
+    engine_obj.substage = D_801F6019;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021E74);
 

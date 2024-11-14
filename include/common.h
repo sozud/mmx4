@@ -837,7 +837,9 @@ struct EngineObj {
     s8 unk2;
     s8 unk3;
     s16 unk4;
-    s8 pad2[4];
+    s8 unk6;
+    s8 unk7;
+    s16 unk8;
     s16 unkA;
     s8 stage; // 0xc
     s8 substage; // 0xd
@@ -862,7 +864,9 @@ struct EngineObj {
     s32 boss_ptr; // 0x20
     s8 enable_boss; // 0x24
     s8 unk25;
-    s8 unk26[0x10];
+    s8 unk26[0x2C - 0x26];
+    s32 unk2C;
+    s8 pad30[0x36 - 0x30];
     s8 pad36;
     s8 unk37;
     s32 unk38;
@@ -876,7 +880,9 @@ struct EngineObj {
     s8 unk46;
     s8 unk47;
     s8 unk48;
-    s8 pad49[0x5F - 0x49];
+    s8 pad49[0x5A - 0x49];
+    u16 unk5A;
+    s8 pad5C[0x5F - 0x5C];
     u8 unk5F;
     s32 : 32;
 }; // size 0x64
@@ -1076,13 +1082,18 @@ extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[1])(void*);
 extern u8 D_80171EA8;
+extern u8 D_800F2180[];
 extern u8 D_800F21A0[];
 extern s16 D_800F21DC[];
 extern u8 D_800F21F8[];
 extern u8 D_800F22D0[];
 extern u8 D_800F22E0[];
+extern void* D_800F2300;
 extern RECT D_800F2428;
 extern RECT D_800F2430;
+extern u8 D_800F2468[];
+extern u8 D_800F247C[];
+extern u8 D_800F2490[];
 extern u8 D_800F32D4[1][1];
 extern s32 D_800EE458;
 extern s32 D_8012F490;
@@ -1142,6 +1153,9 @@ extern void (*D_800FB0F4[1])();
 extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
+extern s8 D_801F6018;
+extern s8 D_801F6019;
+extern s8 D_801F604F;
 extern s16* D_801F8300;
 extern u16 D_801419BE[];
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
@@ -1182,7 +1196,7 @@ extern struct LayerObj layer_objects[4];
 extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
-extern s32 D_8013BC28;
+extern u8 D_8013BC28[];
 extern void (*ReadyTextUpdateFuncs[1])(void);
 extern s32 D_80137DC4;
 extern s32 D_80137DD0;
