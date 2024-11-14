@@ -2397,22 +2397,22 @@ void func_80020DEC(u8* arg0, s16 arg1)
     while (arg0[0] != 0xFF) {
         obj = find_free_unk_obj();
         if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 1;
-            obj->unk2 = arg0[0];
-            obj->y_pos.i.hi = arg0[1];
-            obj->unk7 = arg0[2];
+            obj->base.active = 1;
+            obj->base.id = 1;
+            obj->base.unk2 = arg0[0];
+            obj->base.y_pos.i.hi = arg0[1];
+            obj->base.unk7 = arg0[2];
         }
         arg0 += 3;
     }
 
     obj = find_free_unk_obj();
     if (obj != NULL) {
-        obj->active = 1;
-        obj->unk2 = -1;
-        obj->id = 0;
+        obj->base.active = 1;
+        obj->base.unk2 = -1;
+        obj->base.id = 0;
         obj->unk50 = &D_800F2490;
-        obj->x_pos.i.hi = arg1;
+        obj->base.x_pos.i.hi = arg1;
     }
 }
 
@@ -2642,8 +2642,8 @@ void update_unk_objects(void)
 {
 #define current (*(struct UnkObj**)0x1F800064)
     for (current = unk_objects; current < &unk_objects[COUNT(unk_objects)]; current++) {
-        if (current->active) {
-            unk_object_update_funcs[current->id](current);
+        if (current->base.active) {
+            unk_object_update_funcs[current->base.id](current);
         }
     }
 #undef current
@@ -2979,7 +2979,7 @@ void init_objects(void)
 
     // this one loops backwards for some reason, doesn't seem to be a compiler optimization
     for (var_s0 = &foo_objects[2]; var_s0 >= &foo_objects[0]; var_s0--) {
-        if (var_s0->unk3 != 0) {
+        if (var_s0->base.on_screen != 0) {
             func_80024334(var_s0);
         }
     }
@@ -3023,7 +3023,7 @@ void init_objects(void)
     }
 
     for (var_s0_8 = &unk_objects[0]; var_s0_8 < &unk_objects[COUNT(unk_objects)]; var_s0_8++) {
-        if (var_s0_8->unk3 != 0) {
+        if (var_s0_8->base.on_screen != 0) {
             func_80024334(var_s0_8);
         }
     }

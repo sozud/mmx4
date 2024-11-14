@@ -1,14 +1,130 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80029DBC);
+// might also be inlined inside reset_objects
+void func_80029DBC(void)
+{
+    u16 a1;
+    u16 var_v1;
+    u8* a0;
+    u8 fill = 0;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80029E1C);
+    for (a1 = 0; a1 < COUNT(unk_objects); a1++) {
+        a0 = (u8*)&unk_objects[a1];
+        var_v1 = sizeof(unk_objects[0]) - 1;
+        do {
+            *a0++ = fill;
+        } while (var_v1-- != 0);
+    }
+}
+
+void func_80029E1C(struct GameInfo* arg0)
+{
+    struct UnkObj* obj;
+    u8* var_s1;
+
+    obj = find_free_unk_obj();
+    if (obj != NULL) {
+        obj->base.active = 1;
+        obj->base.unk2 = 0x5E;
+        obj->base.id = 0;
+        obj->base.y_pos.i.hi = 0x10;
+    }
+
+    obj = find_free_unk_obj();
+    if (obj != NULL) {
+        obj->base.active = 1;
+        obj->base.id = 0;
+        obj->base.unk2 = -1;
+        if (D_80141BE0 != 0) {
+            obj->unk50 = &D_800F4568;
+        } else {
+            obj->unk50 = &D_800F457C;
+        }
+        obj->base.x_pos.i.hi = 0x38;
+    }
+
+    if (D_80141BE0 != 0) {
+        var_s1 = &D_800F4508;
+    } else {
+        var_s1 = D_800F4560[engine_obj.cur_character];
+    }
+    while (var_s1[0] != 0xFF) {
+        obj = find_free_unk_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0;
+            obj->base.unk2 = var_s1[0];
+            obj->base.y_pos.i.hi = var_s1[1];
+            obj->base.unk7 = var_s1[2];
+        }
+        if (var_s1[2] == 7) {
+            break;
+        }
+        var_s1 += 3;
+    }
+
+    var_s1 = &D_800F457C;
+    if (D_80141BE0 != 0) {
+        var_s1 = &D_800F4568;
+    }
+    if (var_s1[1] != 7) {
+        do {
+            obj = find_free_unk_obj();
+            if (obj != NULL) {
+                obj->base.active = 1;
+                obj->base.id = 0;
+                obj->base.unk2 = var_s1[1];
+                obj->base.y_pos.i.hi = var_s1[0];
+            }
+            var_s1 += 2;
+        } while (var_s1[1] != 7);
+    }
+
+    obj = find_free_unk_obj();
+    if (obj != NULL) {
+        obj->base.active = 1;
+        obj->base.unk2 = -2;
+        obj->base.id = 0;
+        obj->base.x_pos.i.hi = 0x20;
+    }
+
+    if (D_80141BE0 == 0) {
+        func_8001E980(0);
+    }
+    D_80141BDF[0] = 0;
+    func_800129A4(8);
+    D_8013B7D0++;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A098);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A394);
+void func_8002A394(struct GameInfo* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        if (D_80141BE0 != 0) {
+            arg0->unk0 = 8;
+            arg0->mode = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        } else {
+            (*(s8*)&arg0->unk6)++;
+        }
+        func_80029DBC();
+        if (D_80141BE0 != 0) {
+            func_8001E980(1);
+        }
+        D_8013B7D0 = 0;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A41C);
+void func_8002A41C(struct GameInfo* arg0)
+{
+    func_8002B460(); // no-op
+    D_800F4590[D_8013B7D0](arg0);
+    update_unk_objects();
+    func_80016124();
+    func_80025CDC();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002A484);
 
@@ -445,7 +561,7 @@ struct UnkObj* find_free_unk_obj()
     struct UnkObj* current;
 
     for (current = &unk_objects[0]; current < &unk_objects[20]; current++) {
-        if (!current->active) {
+        if (!current->base.active) {
             return current;
         }
     }
