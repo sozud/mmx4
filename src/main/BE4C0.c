@@ -452,7 +452,7 @@ void func_800D38A0(struct UnkObj* arg0)
 void func_800D3928(struct UnkObj* arg0)
 {
     arg0->base.on_screen = 0;
-    D_8010F5E8[arg0->base.state]();
+    D_8010F5E8[arg0->base.state](arg0);
 }
 
 void func_800D3964(struct UnkObj* arg0)
@@ -501,5 +501,5 @@ void func_800D39EC(struct UnkObj* arg0)
 void func_800D3A84(struct UnkObj* arg0)
 {
     arg0->base.on_screen = 0;
-    D_8010F5F8[arg0->base.state]();
+    D_8010F5F8[arg0->base.state](arg0);
 }

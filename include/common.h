@@ -476,7 +476,8 @@ struct TitleLogoExt {
 };
 
 struct SelectACharacterExt {
-    s8 pad50[5];
+    s8 pad50[4];
+    s8 unk54;
     u8 blast_timer; // 0x55
     s8 unk56;
     u8 cur_character_selected;
@@ -509,7 +510,7 @@ struct MiscObj {
     s32 unk2C;
     s32 unk30;
     u8 pad30[0x4];
-    s16 unk38;
+    s32 unk38;
     void* unk3C;
     u16 unk40;
     u16 unk42;
@@ -861,7 +862,7 @@ struct EngineObj {
     u8 unk40;
     s8 unk41;
     u8 unk42;
-    s8 cur_character;
+    s8 cur_character; // 0x43
     s8 unk44;
     u8 pad45;
     s8 unk46;
@@ -1042,9 +1043,11 @@ extern s16 D_8010A1AE[];
 extern s16 D_8010A1B4[];
 extern s16 D_8010A1B6[];
 extern u8 D_8010A5B8[];
+extern s8* D_8010E4EC[];
+extern s8* D_8010E514[];
+extern s8* D_8010E538[];
+extern s8* D_8010E55C[];
 extern s8* D_8010ECD4[];
-extern void (*D_8010F5E8[4])();
-extern void (*D_8010F5F8[2])();
 extern s8 D_8010FE38[];
 extern u8 D_8010FED4[];
 extern u8 D_801193F0[];
