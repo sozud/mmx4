@@ -2155,7 +2155,7 @@ void func_800206D0(struct EngineObj* arg0)
                 func_80013014();
                 D_80171EA8 = 0;
             }
-            if (engine_obj.unk5A & PADLleft) {
+            if (engine_obj.unk5A & 0x8000) {
                 arg0->unk44 = 4;
             } else {
                 arg0->unk44 = 2;
@@ -2168,7 +2168,7 @@ void func_800206D0(struct EngineObj* arg0)
             arg0->unk3 = 0;
             break;
         case 1:
-            if (engine_obj.unk5A & PADLleft) {
+            if (engine_obj.unk5A & 0x8000) {
                 arg0->unk44 = 4;
             } else {
                 arg0->unk44 = 2;
