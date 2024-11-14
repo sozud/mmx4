@@ -383,20 +383,7 @@ struct WeaponObj {
 }; // size 0x9C
 
 struct UnkObj {
-    s8 active;
-    s8 id;
-    s8 unk2;
-    s8 unk3;
-    s8 unk4;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    u8 pad10[0x4];
-    s8 unk14;
-    u8 unk15;
-    u8 unk16;
+    struct BaseObj base;
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -1166,6 +1153,7 @@ extern struct Unk main_objects[0x30]; // D_8013BED0
 extern void (*g_SearchLightUpdateFuncs[1])();
 extern void (*D_8010FC84[1])();
 extern void (*g_TitleUpdate2Funcs[1])(struct QuadObj*);
+extern u8 D_8013B7D0;
 extern u8 D_8013B7D8;
 extern u8 D_8013B7DC;
 extern s16 D_8013B7E0;
@@ -1288,6 +1276,10 @@ extern u16 D_80175EA0;
 extern s8 D_80175E9C;
 extern u16 controller_state;
 extern s8 D_801419FC;
+extern void* D_800F4508;
+extern u8* D_800F4560[];
+extern void* D_800F4568;
+extern void* D_800F457C;
 extern s32 D_800F4830[];
 extern u16 D_800F4776[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);

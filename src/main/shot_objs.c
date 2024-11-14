@@ -1427,11 +1427,11 @@ void func_800AE7DC(struct UnkObj* arg0)
     struct PlayerObj* player = &g_Player;
 
     arg0->unk47 = player->cur_anim;
-    arg0->unk15 = player->base.unk15;
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->base.unk15 = player->base.unk15;
+    arg0->unk18 = arg0->base.x_pos.val;
+    arg0->unk1C = arg0->base.y_pos.val;
 
-    if (arg0->unk4 == 0) {
+    if (arg0->base.state == 0) {
         func_800AE848(arg0, player);
     } else {
         func_800AE88C(arg0, player);
@@ -1442,7 +1442,7 @@ void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
 {
     if (player->unk8C != 0) {
         if (player->unk8C > 0) {
-            arg0->unk3 = 1;
+            arg0->base.on_screen = 1;
             func_800AEA58();
             return;
         }
