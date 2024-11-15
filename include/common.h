@@ -289,10 +289,13 @@ struct VisualObj {
     s8 unk44;
     s8 unk45;
     s8 unk46;
-    s8 pad47[0x50 - 0x47];
+    u8 unk47;
+    u8 unk48;
+    u8 unk49;
+    s8 pad4A[0x50 - 0x4A];
     struct PlayerObj* unk50; // 0x50, guessed
     s16 unk54;
-    s16 : 16;
+    s16 unk56;
     s32 : 32;
     s8 unk5C;
     s8 : 8;
@@ -1083,6 +1086,7 @@ extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern void* D_8011BF40;
+extern void* D_8011C0E4;
 extern s8 D_80141BDC[];
 extern s8 D_80141BDE[];
 extern u8 D_80141BDF[];
