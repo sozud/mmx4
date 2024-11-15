@@ -39,18 +39,20 @@ void func_8001A860(struct EngineObj* arg0);
 void func_8001A8E8(struct EngineObj* arg0);
 
 // D_800F1F94
-void func_80019BA0(void);
-void func_80019BF4(void);
-void func_80019D04(void);
+extern void (*D_800F1F94[])(struct EngineObj* arg0);
+void func_80019BA0(struct EngineObj* arg0);
+void func_80019BF4(struct EngineObj* arg0);
+void func_80019D04(struct EngineObj* arg0);
 
 // D_800F1FA0
-void func_8001AA98(void);
-void func_8001ABDC(void);
-void func_8001AE8C(void);
-void func_8001B10C(void);
-void func_8001B388(void);
-void func_8001B4E4(void);
-void func_8001B558(void);
+extern void (*D_800F1FA0[])(struct EngineObj* arg0);
+void func_8001AA98(struct EngineObj* arg0);
+void func_8001ABDC(struct EngineObj* arg0);
+void func_8001AE8C(struct EngineObj* arg0);
+void func_8001B10C(struct EngineObj* arg0);
+void func_8001B388(struct EngineObj* arg0);
+void func_8001B4E4(struct EngineObj* arg0);
+void func_8001B558(struct EngineObj* arg0);
 
 // D_800F2170
 extern void (*D_800F2170[])(struct GameInfo* arg0);
@@ -105,16 +107,18 @@ void func_8001E638(struct GameInfo* arg0);
 void func_8001E6BC(struct GameInfo* arg0);
 
 // D_800F2390
-void func_8001E9E0(void);
-void func_8001EA90(void);
-void func_8001EBA0(void);
+extern void (*D_800F2390[])(struct GameInfo* arg0);
+void func_8001E9E0(struct GameInfo* arg0);
+void func_8001EA90(struct GameInfo* arg0);
+void func_8001EBA0(struct GameInfo* arg0);
 
 // D_800F239C
-void func_8001EC90(void);
-void func_8001ED44(void);
-void func_8001EE08(void);
-void func_8001EF48(void);
-void func_8001EFF0(void);
+extern void (*D_800F239C[])(struct GameInfo* arg0);
+void func_8001EC90(struct GameInfo* arg0);
+void func_8001ED44(struct GameInfo* arg0);
+void func_8001EE08(struct GameInfo* arg0);
+void func_8001EF48(struct GameInfo* arg0);
+void func_8001EFF0(struct GameInfo* arg0);
 
 // D_800F23B0
 extern void (*D_800F23B0[])(struct EngineObj*);
@@ -614,9 +618,9 @@ void func_800DA7C0(struct LayerObj*);
 void func_800DA878(struct LayerObj*);
 
 // D_800F2AD4
-extern void (*D_800F2AD4[1])(struct QuxObj*);
-void func_8003B3DC(void);
-void func_8003D3F8(void);
+extern void (*D_800F2AD4[])(struct QuxObj*);
+void func_8003B3DC(struct QuxObj*);
+void func_8003D3F8(struct QuxObj*);
 
 // D_800F2FE0
 extern void (*D_800F2FE0[])(struct EngineObj*);
@@ -630,9 +634,10 @@ void func_80023970(struct EngineObj*);
 void func_800239E0(struct EngineObj*);
 
 // D_800F30C8
-void func_80023AA8(void);
-void func_80023B98(void);
-void func_80023C0C(void);
+extern void (*D_800F30C8[])(struct MiscObj*);
+void func_80023AA8(struct MiscObj*);
+void func_80023B98(struct MiscObj*);
+void func_80023C0C(struct MiscObj*);
 
 // D_800F3134
 void func_80027908(struct BackgroundObj* arg0);
@@ -678,7 +683,8 @@ extern void (*character_select_state_2_update_funcs[])(struct EngineObj*);
 void character_select_state_2_substate_0(struct EngineObj*);
 void character_select_spawn_objects(struct EngineObj*);
 
-// D_800F44A0
+// D_800F44A0 character_select_state_3_update_funcs
+extern void (*character_select_state_3_update_funcs[])();
 void func_80029A48(void);
 void func_80029BD8(void);
 
@@ -844,28 +850,32 @@ void func_800315E0(struct PlayerObj*);
 void func_800315E0(struct PlayerObj*);
 
 // D_800F8A90
-void func_80032140(void);
-void func_80032224(void);
-void func_80032300(void);
+extern void (*D_800F8A90[])(struct PlayerObj*);
+void func_80032140(struct PlayerObj*);
+void func_80032224(struct PlayerObj*);
+void func_80032300(struct PlayerObj*);
 
 // D_800F8A9C
-void func_8003253C(void);
-void func_800325EC(void);
-void func_8003267C(void);
+extern void (*D_800F8A9C[])(struct PlayerObj*);
+void func_8003253C(struct PlayerObj*);
+void func_800325EC(struct PlayerObj*);
+void func_8003267C(struct PlayerObj*);
 
 // D_800F8AA8
-void func_8003277C(void);
-void func_800327CC(void);
-void func_80032840(void);
-void func_800328CC(void);
-void func_80032910(void);
+extern void (*D_800F8AA8[])(struct PlayerObj*);
+void func_8003277C(struct PlayerObj*);
+void func_800327CC(struct PlayerObj*);
+void func_80032840(struct PlayerObj*);
+void func_800328CC(struct PlayerObj*);
+void func_80032910(struct PlayerObj*);
 
 // D_800F8ABC
-void func_80032B50(void);
-void func_80032B50(void);
-void func_80032BF4(void);
-void func_80032D28(void);
-void func_80032B50(void);
+extern void (*D_800F8ABC[])(struct PlayerObj*);
+void func_80032B50(struct PlayerObj*);
+void func_80032B50(struct PlayerObj*);
+void func_80032BF4(struct PlayerObj*);
+void func_80032D28(struct PlayerObj*);
+void func_80032B50(struct PlayerObj*);
 
 // D_800F8B44
 extern void (*D_800F8B44[])(struct PlayerObj*);
@@ -874,83 +884,93 @@ void func_800358A4(struct PlayerObj* arg0);
 void func_80035A24(struct PlayerObj* arg0);
 
 // D_800F8B94
-void func_80035AA8(void);
-void func_80035B6C(void);
-void func_80035C20(void);
-void func_80035D00(void);
+extern void (*D_800F8B94[])(struct PlayerObj*);
+void func_80035AA8(struct PlayerObj*);
+void func_80035B6C(struct PlayerObj*);
+void func_80035C20(struct PlayerObj*);
+void func_80035D00(struct PlayerObj*);
 
 // D_800F8C78
-void func_80037B98(void);
-void func_80037B98(void);
-void func_80037B90(void);
-void func_80037B98(void);
-void func_80037B90(void);
-void func_80037B98(void);
-void func_80037B90(void);
-void func_80037B90(void);
-void func_80037C28(void);
-void func_80037BC4(void);
-void func_80037D08(void);
-void func_80037B90(void);
-void func_80037B90(void);
-void func_80037B90(void);
-void func_80037B98(void);
-void func_80037B98(void);
-void func_80037B90(void);
-void func_80037C28(void);
-void func_80037BC4(void);
-void func_80037B98(void);
-void func_80037BC4(void);
+extern void (*D_800F8C78[])(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037C28(struct PlayerObj*);
+void func_80037BC4(struct PlayerObj*);
+void func_80037D08(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037B90(struct PlayerObj*);
+void func_80037C28(struct PlayerObj*);
+void func_80037BC4(struct PlayerObj*);
+void func_80037B98(struct PlayerObj*);
+void func_80037BC4(struct PlayerObj*);
 
 // D_800F8D5C
-void func_80038970(void);
-void func_800389DC(void);
-void func_80038A80(void);
-void func_80038AE8(void);
-void func_80038B80(void);
-void func_80038C10(void);
-void func_80038CA8(void);
+extern void (*D_800F8D5C[])(struct PlayerObj*);
+void func_80038970(struct PlayerObj*);
+void func_800389DC(struct PlayerObj*);
+void func_80038A80(struct PlayerObj*);
+void func_80038AE8(struct PlayerObj*);
+void func_80038B80(struct PlayerObj*);
+void func_80038C10(struct PlayerObj*);
+void func_80038CA8(struct PlayerObj*);
 
 // D_800F8D88
-void func_80038F0C(void);
-void func_80038F64(void);
-void func_8003904C(void);
+extern void (*D_800F8D88[])(struct PlayerObj*);
+void func_80038F0C(struct PlayerObj*);
+void func_80038F64(struct PlayerObj*);
+void func_8003904C(struct PlayerObj*);
 
 // D_800F8D94
-void func_8003974C(struct Unk11* arg0);
-void func_800397B0(struct Unk11* arg0);
-void func_800397E8(struct Unk11* arg0);
-void func_80039808(struct Unk11* arg0);
+extern void (*D_800F8D94[])(struct PlayerObj*);
+void func_8003974C(struct PlayerObj*);
+void func_800397B0(struct PlayerObj*);
+void func_800397E8(struct PlayerObj*);
+void func_80039808(struct PlayerObj*);
 
 // D_800F8DAC
-void func_8003AB34(void);
-void func_8003ABE0(void);
-void func_8003AD74(void);
+extern void (*D_800F8DAC[])(struct PlayerObj*);
+void func_8003AB34(struct PlayerObj*);
+void func_8003ABE0(struct PlayerObj*);
+void func_8003AD74(struct PlayerObj*);
 
 // D_800F8DB8
-void func_8003AE54(void);
-void func_8003AEE0(void);
-void func_8003AF20(void);
-void func_8003AF58(void);
+extern void (*D_800F8DB8[])(struct PlayerObj*);
+void func_8003AE54(struct PlayerObj*);
+void func_8003AEE0(struct PlayerObj*);
+void func_8003AF20(struct PlayerObj*);
+void func_8003AF58(struct PlayerObj*);
 
 // D_800F90D8
-void func_8003B470(void);
-void func_8003B7B4(void);
-void func_8003BA24(void);
-void func_8003BAE8(void);
+extern void (*D_800F90D8[])(struct QuxObj*);
+void func_8003B470(struct QuxObj*);
+void func_8003B7B4(struct QuxObj*);
+void func_8003BA24(struct QuxObj*);
+void func_8003BAE8(struct QuxObj*);
 
 // D_800F90E8
-void func_8003BB20(void);
-void func_8003BDA0(void);
-void func_8003BE28(void);
-void func_8003C584(void);
-void func_8003BF1C(void);
-void func_8003C08C(void);
+extern void (*D_800F90E8[])(struct QuxObj*);
+void func_8003BB20(struct QuxObj*);
+void func_8003BDA0(struct QuxObj*);
+void func_8003BE28(struct QuxObj*);
+void func_8003C584(struct QuxObj*);
+void func_8003BF1C(struct QuxObj*);
+void func_8003C08C(struct QuxObj*);
 
 // D_800F912C
-void func_8003D4C8(void);
-void func_800403DC(void);
-void func_800405D4(void);
+extern void (*D_800F912C[])(struct QuxObj*);
+void func_8003D4C8(struct QuxObj*);
+void func_800403DC(struct QuxObj*);
+void func_800405D4(struct QuxObj*);
 
 // D_800F9138
 void func_8003F570(void);
