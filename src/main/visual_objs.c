@@ -769,7 +769,6 @@ void func_800B2AD0(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s8 var_s1;
-    u8 temp_v1_2;
 
     if (arg0->base.state == 0) {
         arg0->base.on_screen = 1;
@@ -782,19 +781,18 @@ void func_800B2AD0(struct VisualObj* arg0)
         arg0->unk5C = 0;
         arg0->base.state++;
     }
-    temp_v1_2 = player->cur_anim;
-    var_s1 = -((((temp_v1_2 + 0x1B) & 0xFF) < 2U) ^ 1);
-    if (((temp_v1_2 + 0x23) & 0xFF) < 2U) {
+
+    var_s1 = -((player->cur_anim == 0xE5 || player->cur_anim == 0xE6) ^ 1);
+    if (player->cur_anim == 0xDD || player->cur_anim == 0xDE) {
         var_s1 = 1;
     }
-    if (((temp_v1_2 + 0x21) & 0xFF) < 2U) {
+    if (player->cur_anim == 0xDF || player->cur_anim == 0xE0) {
         var_s1 = 2;
     }
-    if (((temp_v1_2 + 0x1F) & 0xFF) < 2U) {
+    if (player->cur_anim == 0xE1 || player->cur_anim == 0xE2) {
         var_s1 = 3;
     }
-
-    if (((temp_v1_2 + 0x1D) & 0xFF) < 2U) {
+    if (player->cur_anim == 0xE3 || player->cur_anim == 0xE4) {
         var_s1 = 4;
     }
 
