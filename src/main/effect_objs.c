@@ -5,7 +5,13 @@ void func_800B56F4(struct EffectObj* arg0)
     D_8010A798[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B5730);
+void func_800B5730(struct EffectObj* arg0)
+{
+    arg0->ext.unk_effect.unk14 = 0;
+    arg0->state++;
+    arg0->ext.unk_effect.unk18 = *(D_8010AE0C[((engine_obj.stage * 2) + engine_obj.substage)] + arg0->unk2);
+    func_800B5798(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B5798);
 
@@ -16,7 +22,16 @@ void func_800B58A0(struct EffectObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B58DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B58F4);
+void func_800B58F4(struct EffectObj* arg0)
+{
+    if (++arg0->unk5 == 3) {
+        arg0->unk5 = 0;
+        if (++arg0->unk6 >= 5) {
+            arg0->unk6 = 0;
+        }
+    }
+    func_800DA984(arg0->unk6);
+}
 
 // scaling X animation in logo graphics
 void TitleScalingXUpdate(struct EffectObj* arg0)
@@ -142,6 +157,30 @@ void func_800B6A0C(struct EffectObj* arg0)
     D_8010B45C[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B6A48);
+void func_800B6A48(struct EffectObj* arg0)
+{
+    arg0->ext.unk_effect.unk14 = 0;
+    arg0->state++;
+    if ((arg0->unk2 & 0xF) == engine_obj.checkpoint) {
+        func_8002B0C8(arg0);
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B6A90);
+void func_800B6A90(struct EffectObj* arg0)
+{
+    if (func_8002B160(arg0) == 0) {
+        if (arg0->unk2 & 0xF0) {
+            if (arg0->y_pos.i.hi <= g_Player.base.y_pos.i.hi) {
+                engine_obj.checkpoint = arg0->unk2 & 0xF;
+                func_8002B0C8(arg0);
+            }
+        } else {
+            if (arg0->x_pos.i.hi <= g_Player.base.x_pos.i.hi) {
+                engine_obj.checkpoint = arg0->unk2 & 0xF;
+                func_8002B0C8(arg0);
+            }
+        }
+    } else {
+        func_8002B0C8(arg0);
+    }
+}

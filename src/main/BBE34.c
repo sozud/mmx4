@@ -82,9 +82,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CB9C4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBA5C);
 
-extern u8 D_8013BC35;
-extern u8 D_8013BC36;
-
 // misc obj update #22
 void func_800CBA80(struct MiscObj* arg0)
 {
@@ -110,8 +107,8 @@ void func_800CBA80(struct MiscObj* arg0)
         ZeroObjectState(arg0);
         return;
     case 2:
-        if (D_8013BC34[0] != 0) {
-            if (D_8013BC35 == 0 || D_8013BC35 == 4) {
+        if (abc_object.unkC != 0) {
+            if (abc_object.unkD == 0 || abc_object.unkD == 4) {
                 func_80015DC8(arg0);
             }
             is_on_screen(arg0);
@@ -120,8 +117,8 @@ void func_800CBA80(struct MiscObj* arg0)
         ZeroObjectState(arg0);
         return;
     case 3:
-        ptr = D_8013BC36 + &arg0->ext.unk.unk50->unk0;
-        if (*ptr != 0 && (D_8013BC34[0] == 1)) {
+        ptr = abc_object.unkE + &arg0->ext.unk.unk50->unk0;
+        if (*ptr != 0 && (abc_object.unkC == 1)) {
             if (arg0->ext.unk.unk55 == 0) {
                 func_80015D60(arg0, 1);
                 arg0->ext.unk.unk55 = 1;
@@ -147,8 +144,8 @@ void func_800CBA80(struct MiscObj* arg0)
         is_on_screen(arg0);
         return;
     case 5:
-        ptr = D_8013BC36 + &arg0->ext.unk.unk50->unk0;
-        if ((*ptr == 0) && (D_8013BC34[0] == 1)) {
+        ptr = abc_object.unkE + &arg0->ext.unk.unk50->unk0;
+        if ((*ptr == 0) && (abc_object.unkC == 1)) {
             if (arg0->ext.unk.unk55 == 0) {
                 func_80015D60(arg0, arg0->ext.unk.unk54 + 1);
                 arg0->ext.unk.unk55 = 1;
@@ -197,9 +194,43 @@ void func_800CBD40(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBD80);
+void func_800CBD80(struct MiscObj* arg0)
+{
+    arg0->base.on_screen = 1;
+    arg0->unk38 = 0;
+    arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[2];
+    arg0->unk30 = &D_8010A4C0;
+    arg0->unk40 = 0;
+    if (arg0->ext.unk.unk54 != 2) {
+        arg0->unk42 = 0x7805;
+    } else {
+        arg0->unk42 = 0x7806;
+    }
+    if (arg0->base.unk7 == 0) {
+        arg0->base.unk16 = 1;
+    }
+    func_80015D60(arg0, arg0->ext.unk.unk54);
+    arg0->base.state++;
+    arg0->base.unk7 = get_random() & 1;
+    is_on_screen(arg0);
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBE34);
+void func_800CBE34(struct MiscObj* arg0)
+{
+    func_8002B718(arg0);
+    func_80015DC8(arg0);
+    if (arg0->unk46 == 0) {
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->ext.unk.unk54 = 0;
+        ZeroObjectState(arg0);
+    } else {
+        arg0->base.on_screen = 0;
+        if (((arg0->ext.unk.unk54 & 3) && !(arg0->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == arg0->base.unk7) {
+            is_on_screen(arg0);
+        }
+    }
+}
 
 void func_800CBECC(struct MiscObj* arg0)
 {

@@ -1058,7 +1058,36 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A7D4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A860);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A8E8);
+void func_8001A8E8(struct EngineObj* arg0)
+{
+    if (controller_state & (PADstart | PADRup | PADRdown | PADRleft | PADRright)) {
+        func_8001540C(0, 0x22, 0);
+        reset_objects();
+        switch (D_801721B8) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            if (arg0->unk4 == 8) {
+                arg0->unk8 = func_8001E850(&D_800F2328, 1);
+                arg0->state = 8;
+                D_80141BDF[0] = 2;
+            } else {
+                arg0->unk8 = func_8001E850(&D_800F2300, 1);
+                arg0->state = 9;
+                D_80141BDF[0] = 0;
+            }
+            arg0->unk1 = 1;
+            break;
+        case 4:
+            reset_objects();
+            D_80141BDF[0] = 0;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A9EC);
 
@@ -1080,21 +1109,19 @@ void func_8001B558(void)
     if (controller_state & (PADstart | PADRup | PADRdown | PADRleft | PADRright)) {
         func_8001540C(0, 0x22, 0);
         reset_objects();
-        temp = D_801721B8;
-        if (temp < 5) {
-            if (temp >= 0) {
-                game_info.unk0 = 7;
-                game_info.unk2 = 0;
-                game_info.unk3 = 0;
-                if (D_800F1D90 != 0xFF) {
-                    game_info.unk8 = func_8001E850(&D_800F22D0, 0);
-                    game_info.mode = 1;
-                    D_80141BDF[0] = 1;
-                } else {
-                    game_info.unk8 = func_8001E850(&D_800F22E0, 0);
-                    game_info.mode = 3;
-                    D_80141BDF[0] = 0;
-                }
+        switch (D_801721B8) {
+        case 0 ... 4:
+            game_info.unk0 = 7;
+            game_info.unk2 = 0;
+            game_info.unk3 = 0;
+            if (D_800F1D90 != 0xFF) {
+                game_info.unk8 = func_8001E850(&D_800F22D0, 0);
+                game_info.mode = 1;
+                D_80141BDF[0] = 1;
+            } else {
+                game_info.unk8 = func_8001E850(&D_800F22E0, 0);
+                game_info.mode = 3;
+                D_80141BDF[0] = 0;
             }
         }
     }
@@ -1864,7 +1891,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EFF0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F0BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F118);
+void func_8001F118(void)
+{
+    update_misc_objects();
+    func_80021D20();
+    func_8002A484();
+    func_80023D68();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F150);
 
@@ -1872,7 +1905,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F198);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F2BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F398);
+void func_8001F398(struct EngineObj* arg0)
+{
+    D_800F23B0[arg0->unk2](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F3D4);
 
@@ -1896,13 +1932,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F93C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F968);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F9A0);
+void func_8001F9A0(struct EngineObj* arg0)
+{
+    D_800F23B8[arg0->unk2](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F9DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FA24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FAC0);
+void func_8001FAC0(struct EngineObj* arg0)
+{
+    D_800F23D4[arg0->unk2](arg0);
+}
 
 void func_8001FAFC(struct EngineObj* arg0)
 {
@@ -1953,8 +1995,8 @@ void func_8001FC20(struct EngineObj* arg0)
         arg0->unk26[var_v1] = 0;
     }
 
-    D_8013BC34[0] = 0;
-    D_8013BC38 = 0;
+    abc_object.unkC = 0;
+    abc_object.unk10 = 0;
 
     reset_objects();
     func_8002AB20();
@@ -2708,12 +2750,10 @@ void func_80021CC8(void)
 
 void func_80021D20(void)
 {
-    if (D_8013BC28[12] != 0) {
-        func_80022730(&D_8013BC28);
-        return;
-    }
-    if (D_8013BC38 != 0) {
-        func_8002217C(D_8013BC38 & 0x7FFF, 0xFF, 0);
+    if (abc_object.unkC != 0) {
+        func_80022730(&abc_object);
+    } else if (abc_object.unk10 != 0) {
+        func_8002217C(abc_object.unk10 & ~0x8000, 0xFF, 0);
     }
 }
 
@@ -2736,7 +2776,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021E74);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021F34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80022074);
+// see also func_800220C4, func_80021E74
+void func_80022074(void)
+{
+    engine_obj = *(struct EngineObj*)0x801F6070;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800220C4);
 
@@ -2923,7 +2967,7 @@ void func_80023D90(void)
 void init_objects(void)
 {
     struct UnkObj* var_s0;
-    struct Unk* var_s0_2;
+    struct MainObj* var_s0_2;
     struct WeaponObj* var_s0_3;
     struct ShotObj* var_s0_4;
     struct VisualObj* var_s0_5;

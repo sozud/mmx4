@@ -291,8 +291,8 @@ void reset_objects(void)
     D_8013E188[2] = 0;
     D_8013E188[3] = 0;
 
-    a0 = &D_8013BC28;
-    var_v1 = 0x14;
+    a0 = (u8*)&abc_object;
+    var_v1 = sizeof(abc_object);
     while (var_v1-- != 0) {
         *a0++ = fill;
     }
@@ -1139,7 +1139,7 @@ void func_8002F1B4(struct EngineObj* arg0)
 // briefing_room_state_9_update_funcs state 1
 void func_8002F264(struct EngineObj* arg0)
 {
-    if (D_8013BC34[0] != 0x80) {
+    if (abc_object.unkC != 0x80) {
         arg0->unk2++;
         func_8002F048();
     }
@@ -1151,7 +1151,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002F2A0);
 // briefing_room_state_9_update_funcs state 3
 void func_8002F47C(struct EngineObj* arg0)
 {
-    if ((D_8013BC34[0] == 1) || (D_8013BC34[0] == 0x80)) {
+    if ((abc_object.unkC == 1) || (abc_object.unkC == 0x80)) {
         arg0->unk2--;
         func_8002F048();
     }
@@ -1162,7 +1162,7 @@ void func_8002F4C4(struct EngineObj* arg0)
 {
     arg0->unk40 = 0;
     briefing_room_state_9_update_funcs[arg0->unk2](arg0);
-    func_80022730(&D_8013BC28);
+    func_80022730(&abc_object);
 }
 
 void func_8002F510(struct EngineObj* arg0)
@@ -1195,7 +1195,7 @@ void func_8002F5E8(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
 
-    if (D_8013BC34[0] == 0) {
+    if (abc_object.unkC == 0) {
         if (++arg0->unk3 < 8) {
             arg0->unk2 = 1;
             return;
@@ -1223,7 +1223,7 @@ void func_8002F5E8(struct EngineObj* arg0)
 void func_8002F698(struct EngineObj* arg0)
 {
     D_800F486C[arg0->unk2](arg0);
-    func_80022730(&D_8013BC28);
+    func_80022730(&abc_object);
 }
 
 void func_8002F6E4(struct EngineObj* arg0)
@@ -3675,7 +3675,7 @@ void func_800498C0(struct MainObj* arg0)
 // didn't notice any differences when nopped out
 void func_800498C8(struct MainObj* arg0)
 {
-    D_800FB0F4[arg0->unk4]();
+    D_800FB0F4[arg0->base.state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80049904);
@@ -5328,7 +5328,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BAA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BAC4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BB00);
+void func_8006BB00(struct MainObj* arg0)
+{
+    D_801005E4[arg0->base.state](arg0);
+    CollisionRelated(arg0);
+    if (!(g_Player.unk5C & 0x7F)) {
+        func_8006E920(arg0, 0x38);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BB70);
 
@@ -5342,7 +5349,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006C07C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006C170);
 
-void func_8006C278(struct Unk* arg0)
+void func_8006C278(struct MainObj* arg0)
 {
     arg0->base.unk5 = 3;
     arg0->base.unk6 = 0;
@@ -5398,7 +5405,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006D888);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DB04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DBE8);
+void func_8006DBE8(struct MainObj* arg0)
+{
+    D_80100674[arg0->base.unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DC24);
 
