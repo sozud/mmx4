@@ -194,7 +194,26 @@ void func_800CBD40(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBD80);
+void func_800CBD80(struct MiscObj* arg0)
+{
+    arg0->base.on_screen = 1;
+    arg0->unk38 = 0;
+    arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[2];
+    arg0->unk30 = &D_8010A4C0;
+    arg0->unk40 = 0;
+    if (arg0->ext.unk.unk54 != 2) {
+        arg0->unk42 = 0x7805;
+    } else {
+        arg0->unk42 = 0x7806;
+    }
+    if (arg0->base.unk7 == 0) {
+        arg0->base.unk16 = 1;
+    }
+    func_80015D60(arg0, arg0->ext.unk.unk54);
+    arg0->base.state++;
+    arg0->base.unk7 = get_random() & 1;
+    is_on_screen(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBE34);
 

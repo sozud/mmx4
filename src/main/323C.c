@@ -1058,7 +1058,36 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A7D4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A860);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A8E8);
+void func_8001A8E8(struct EngineObj* arg0)
+{
+    if (controller_state & 0x8F0) {
+        func_8001540C(0, 0x22, 0);
+        reset_objects();
+        switch (D_801721B8) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            if (arg0->unk4 == 8) {
+                arg0->unk8 = func_8001E850(&D_800F2328, 1);
+                arg0->state = 8;
+                D_80141BDF[0] = 2;
+            } else {
+                arg0->unk8 = func_8001E850(&D_800F2300, 1);
+                arg0->state = 9;
+                D_80141BDF[0] = 0;
+            }
+            arg0->unk1 = 1;
+            break;
+        case 4:
+            reset_objects();
+            D_80141BDF[0] = 0;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            break;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A9EC);
 
@@ -1864,7 +1893,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EFF0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F0BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F118);
+void func_8001F118(void)
+{
+    update_misc_objects();
+    func_80021D20();
+    func_8002A484();
+    func_80023D68();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F150);
 
@@ -1872,7 +1907,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F198);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F2BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F398);
+void func_8001F398(struct EngineObj* arg0)
+{
+    D_800F23B0[arg0->unk2](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F3D4);
 
@@ -1896,13 +1934,19 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F93C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F968);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F9A0);
+void func_8001F9A0(struct EngineObj* arg0)
+{
+    D_800F23B8[arg0->unk2](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F9DC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FA24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001FAC0);
+void func_8001FAC0(struct EngineObj* arg0)
+{
+    D_800F23D4[arg0->unk2](arg0);
+}
 
 void func_8001FAFC(struct EngineObj* arg0)
 {
@@ -2734,7 +2778,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021E74);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021F34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80022074);
+// see also func_800220C4, func_80021E74
+void func_80022074(void)
+{
+    engine_obj = *(struct EngineObj*)0x801F6070;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800220C4);
 
@@ -2921,7 +2969,7 @@ void func_80023D90(void)
 void init_objects(void)
 {
     struct UnkObj* var_s0;
-    struct Unk* var_s0_2;
+    struct MainObj* var_s0_2;
     struct WeaponObj* var_s0_3;
     struct ShotObj* var_s0_4;
     struct VisualObj* var_s0_5;

@@ -953,8 +953,8 @@ struct Unk80139690 {
 };
 
 struct MainObj {
-    u8 pad0[4];
-    s8 unk4;
+    struct BaseObj base;
+    s8 pad18[0x9C - 0x18];
 };
 
 struct Unk14 {
@@ -1053,6 +1053,18 @@ extern s16 D_8010A1AC[];
 extern s16 D_8010A1AE[];
 extern s16 D_8010A1B4[];
 extern s16 D_8010A1B6[];
+extern u8 D_8010A1BC[];
+extern u8 D_8010A1BD[];
+extern u8 D_8010A1BE[];
+extern void* D_8010A4C0;
+extern u8 D_8010A4F8[];
+extern u8 D_8010A504[];
+extern u16 D_8010A588[];
+extern u8 D_8010A590[];
+extern u8 D_8010A594[];
+extern s16 D_8010A598[];
+extern s16 D_8010A5A0[];
+extern s16 D_8010A5A2[];
 extern u8 D_8010A5B8[];
 extern s8* D_8010E4EC[];
 extern s8* D_8010E514[];
@@ -1090,6 +1102,7 @@ extern u8 D_800F21F8[];
 extern u8 D_800F22D0[];
 extern u8 D_800F22E0[];
 extern void* D_800F2300;
+extern void* D_800F2328;
 extern RECT D_800F2428;
 extern RECT D_800F2430;
 extern u8 D_800F2468[];
@@ -1150,7 +1163,6 @@ extern s32 D_801395E8;
 extern volatile s32 D_80139634;
 extern struct EffectObj* D_80139690;
 extern void (*D_800F43A8[1])(s32);
-extern void (*D_800FB0F4[1])();
 extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
 extern void (*D_8010BEC8[1])();
