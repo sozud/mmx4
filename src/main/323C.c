@@ -1953,8 +1953,8 @@ void func_8001FC20(struct EngineObj* arg0)
         arg0->unk26[var_v1] = 0;
     }
 
-    D_8013BC34[0] = 0;
-    D_8013BC38 = 0;
+    abc_object.unkC = 0;
+    abc_object.unk10 = 0;
 
     reset_objects();
     func_8002AB20();
@@ -2708,12 +2708,10 @@ void func_80021CC8(void)
 
 void func_80021D20(void)
 {
-    if (D_8013BC28[12] != 0) {
-        func_80022730(&D_8013BC28);
-        return;
-    }
-    if (D_8013BC38 != 0) {
-        func_8002217C(D_8013BC38 & 0x7FFF, 0xFF, 0);
+    if (abc_object.unkC != 0) {
+        func_80022730(&abc_object);
+    } else if (abc_object.unk10 != 0) {
+        func_8002217C(abc_object.unk10 & ~0x8000, 0xFF, 0);
     }
 }
 

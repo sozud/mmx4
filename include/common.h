@@ -557,6 +557,17 @@ struct QuxObj {
     s8 pad18[0xB0 - 0x18];
 }; // size 0xB0
 
+// D_8013BC28
+struct AbcObj {
+    s8 pad0[0xC];
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    s8 : 8;
+    s16 unk10;
+    s16 : 16;
+}; // size 0x14
+
 struct Unk2 {
     u8 unk0;
     u8 unk1;
@@ -1172,7 +1183,7 @@ extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
 extern s8 D_8013B810;
 extern u8 D_8013B814;
-extern u8 D_8013BC34[];
+extern struct AbcObj abc_object;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
 extern struct VisualObj visual_objects[0x20];
@@ -1187,7 +1198,6 @@ extern struct LayerObj layer_objects[4];
 extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
-extern u8 D_8013BC28[];
 extern void (*ReadyTextUpdateFuncs[1])(void);
 extern s32 D_80137DC4;
 extern s32 D_80137DD0;
@@ -1291,7 +1301,6 @@ extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[][1]; // unknown size
 extern u8 D_800F1A0C[1];
-extern s16 D_8013BC38;
 extern s32* D_8012F4B4[];
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];

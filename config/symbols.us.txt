@@ -465,6 +465,7 @@ SysDeqIntRP = 0x800EE36C;
 EnablePAD = 0x800EE37C;
 DesablePAD = 0x800EE390;
 _patch_pad = 0x800EE3A4;
+abc_object = 0x8013BC28; // size:0x14
 main_objects = 0x8013BED0; // size:0x1D40
 baz_objects = 0x8013E470; // size:0xA0
 visual_objects = 0x8013E510; // size:0xE00
