@@ -3675,7 +3675,7 @@ void func_800498C0(struct MainObj* arg0)
 // didn't notice any differences when nopped out
 void func_800498C8(struct MainObj* arg0)
 {
-    D_800FB0F4[arg0->unk4]();
+    D_800FB0F4[arg0->base.state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_80049904);
@@ -5328,7 +5328,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BAA4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BAC4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BB00);
+void func_8006BB00(struct MainObj* arg0)
+{
+    D_801005E4[arg0->base.state](arg0);
+    CollisionRelated(arg0);
+    if (!(g_Player.unk5C & 0x7F)) {
+        func_8006E920(arg0, 0x38);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006BB70);
 
@@ -5342,7 +5349,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006C07C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006C170);
 
-void func_8006C278(struct Unk* arg0)
+void func_8006C278(struct MainObj* arg0)
 {
     arg0->base.unk5 = 3;
     arg0->base.unk6 = 0;
@@ -5398,7 +5405,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006D888);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DB04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DBE8);
+void func_8006DBE8(struct MainObj* arg0)
+{
+    D_80100674[arg0->base.unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8006DC24);
 
