@@ -215,7 +215,22 @@ void func_800CBD80(struct MiscObj* arg0)
     is_on_screen(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/BBE34", func_800CBE34);
+void func_800CBE34(struct MiscObj* arg0)
+{
+    func_8002B718(arg0);
+    func_80015DC8(arg0);
+    if (arg0->unk46 == 0) {
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = 0;
+        arg0->ext.unk.unk54 = 0;
+        ZeroObjectState(arg0);
+    } else {
+        arg0->base.on_screen = 0;
+        if (((arg0->ext.unk.unk54 & 3) && !(arg0->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == arg0->base.unk7) {
+            is_on_screen(arg0);
+        }
+    }
+}
 
 void func_800CBECC(struct MiscObj* arg0)
 {

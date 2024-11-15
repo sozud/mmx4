@@ -967,6 +967,8 @@ struct UnkEffectExt {
     u8 unk14;
     s8 unk15;
     s8 unk16;
+    s8 : 8;
+    s32 unk18;
 };
 struct EffectExt2 {
     struct Unk14* unk14;
@@ -1066,6 +1068,7 @@ extern s16 D_8010A598[];
 extern s16 D_8010A5A0[];
 extern s16 D_8010A5A2[];
 extern u8 D_8010A5B8[];
+extern s32* D_8010AE0C[];
 extern s8* D_8010E4EC[];
 extern s8* D_8010E514[];
 extern s8* D_8010E538[];
@@ -1357,6 +1360,7 @@ void func_80026648();
 s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
+void func_800DA984(u8);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
 struct Unk* func_800AFAB4(s8, s16, s16, u8);

@@ -1060,7 +1060,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001A860);
 
 void func_8001A8E8(struct EngineObj* arg0)
 {
-    if (controller_state & 0x8F0) {
+    if (controller_state & (PADstart | PADRup | PADRdown | PADRleft | PADRright)) {
         func_8001540C(0, 0x22, 0);
         reset_objects();
         switch (D_801721B8) {
@@ -1109,21 +1109,19 @@ void func_8001B558(void)
     if (controller_state & (PADstart | PADRup | PADRdown | PADRleft | PADRright)) {
         func_8001540C(0, 0x22, 0);
         reset_objects();
-        temp = D_801721B8;
-        if (temp < 5) {
-            if (temp >= 0) {
-                game_info.unk0 = 7;
-                game_info.unk2 = 0;
-                game_info.unk3 = 0;
-                if (D_800F1D90 != 0xFF) {
-                    game_info.unk8 = func_8001E850(&D_800F22D0, 0);
-                    game_info.mode = 1;
-                    D_80141BDF[0] = 1;
-                } else {
-                    game_info.unk8 = func_8001E850(&D_800F22E0, 0);
-                    game_info.mode = 3;
-                    D_80141BDF[0] = 0;
-                }
+        switch (D_801721B8) {
+        case 0 ... 4:
+            game_info.unk0 = 7;
+            game_info.unk2 = 0;
+            game_info.unk3 = 0;
+            if (D_800F1D90 != 0xFF) {
+                game_info.unk8 = func_8001E850(&D_800F22D0, 0);
+                game_info.mode = 1;
+                D_80141BDF[0] = 1;
+            } else {
+                game_info.unk8 = func_8001E850(&D_800F22E0, 0);
+                game_info.mode = 3;
+                D_80141BDF[0] = 0;
             }
         }
     }
