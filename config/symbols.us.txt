@@ -507,6 +507,10 @@ g_FilterAmountR = 0x80175EA0;
 g_FilterAmountG = 0x80141BE6;
 g_FilterAmountB = 0x8013E1BE;
 
+lastFilterAmountR = 0x80141F04;
+lastFilterAmountG = 0x8016DD9C;
+lastFilterAmountB = 0x801441BA;
+
 draw_infos = 0x80166C10;
 draw_infos_0_dispenv_isinter = 0x80166c20;
 draw_infos_0_dispenv_isrgb24 = 0x80166c21;
