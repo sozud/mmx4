@@ -3168,12 +3168,13 @@ void func_800257BC(struct PlayerObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002588C);
 
-void func_80025CDC(void) {
+void func_80025CDC(void)
+{
     struct UnkObj* var_s0;
 
     SP_DRAW_COUNT = 0;
-    *(void** )0x1F800100 = &temp1[SP_DRAW_INFO_POS];
-    *(void** )0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
     func_800241E8();
     for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
         if (var_s0->base.on_screen != 0) {
