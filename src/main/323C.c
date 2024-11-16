@@ -1453,9 +1453,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     D_80141BDE[0] = 0;
     func_80016F0C();
     func_80015930(0xFF, 0);
-    D_8013E1BE = 0;
-    D_80141BE6 = 0;
-    D_80175EA0 = 0;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
     D_8013E188[0] = 0;
     D_8013E188[1] = 0;
     D_8013E188[2] = 0;
@@ -1685,9 +1683,7 @@ void func_8001E000(struct GameInfo* arg0)
         return;
     }
     if (D_80139690->active == 0) {
-        D_8013E1BE = 0;
-        D_80141BE6 = 0;
-        D_80175EA0 = 0;
+        g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
@@ -1809,9 +1805,7 @@ void func_8001E708(struct GameInfo* arg0)
         func_80016F0C();
         func_8001540C(0, 0x22, 0);
         arg0->mode = 0xC;
-        D_8013E1BE = 0;
-        D_80141BE6 = 0;
-        D_80175EA0 = 0;
+        g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;

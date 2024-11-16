@@ -280,12 +280,9 @@ void reset_objects(void)
         *a0++ = fill;
     }
 
-    D_8013E1BE = 0;
-    D_80141BE6 = 0;
-    D_80175EA0 = 0;
-    D_8013E1BC = 0;
-    D_80141BE4 = 0;
-    D_80175E9C = 0;
+    g_FilterAmountB = 0;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
+    g_FilterModeR = g_FilterModeG = g_FilterModeB = 0;
     D_8013E188[0] = 0;
     D_8013E188[1] = 0;
     D_8013E188[2] = 0;
@@ -1320,14 +1317,14 @@ void func_8002F9EC(struct EngineObj* arg0)
     struct BaseObj* obj;
     u32 var_a0;
 
-    if (D_80175EA0 == 0x1F) {
+    if (g_FilterAmountR == 0x1F) {
         func_8002B560(2, 0xC);
         for (var_a0 = 0; var_a0 < 4; var_a0++) {
             D_8013E188[var_a0] = 0;
         }
-        D_80175EA0 = 0;
-        D_80141BE6 = 0;
-        D_8013E1BE = 0;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
         need_palette_load |= 1;
         obj = (struct BaseObj*)find_free_misc_obj();
         if (obj != NULL) {
