@@ -801,9 +801,9 @@ void func_80017340(void)
     s8 end;
     u8 var_v0;
 
-    *(void**)0x1F800100 = &temp1[*(s32*)0x1F800000];
-    *(void**)0x1F800104 = &temp2[*(s32*)0x1F800000];
-    *(void**)0x1F800110 = &temp1[*(s32*)0x1F800000];
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    *(void**)0x1F800110 = &temp1[SP_DRAW_INFO_POS];
 
     func_80017E84();
 
@@ -2975,7 +2975,6 @@ void init_objects(void)
     struct MiscObj* var_s0_7;
     struct UnkObj* var_s0_8;
     struct QuadObj* var_s0_9;
-    s32 temp_a0;
     void* temp_v1;
     void* temp_v1_2;
     void* temp_v1_3;
@@ -2990,13 +2989,12 @@ void init_objects(void)
     struct PlayerObj* ptr3 = &g_Entity;
     struct QuxObj* ptr4;
 
-    temp_a0 = *(s32*)0x1F800000;
-    *(s32*)0x1F800124 = 0;
-    *(void**)0x1F800100 = &temp1[temp_a0]; // size 0xA000
-    *(void**)0x1F800104 = &temp2[temp_a0]; // size 0x2000
-    *(void**)0x1F800108 = &temp3[temp_a0]; // size 0x200
-    *(void**)0x1F80010C = &temp4[temp_a0]; // size 0x100
-    *(void**)0x1F800110 = &temp5[temp_a0]; // size 0x78
+    SP_DRAW_COUNT = 0;
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS]; // size 0xA000
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS]; // size 0x2000
+    *(void**)0x1F800108 = &temp3[SP_DRAW_INFO_POS]; // size 0x200
+    *(void**)0x1F80010C = &temp4[SP_DRAW_INFO_POS]; // size 0x100
+    *(void**)0x1F800110 = &temp5[SP_DRAW_INFO_POS]; // size 0x78
 
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
@@ -3172,12 +3170,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002588C);
 
 void func_80025CDC(void) {
     struct UnkObj* var_s0;
-    s32 temp_v1;
 
-    temp_v1 = *(s32* )0x1F800000;
-    *(s32* )0x1F800124 = 0;
-    *(void** )0x1F800100 = &temp1[temp_v1];
-    *(void** )0x1F800104 = &temp2[temp_v1];
+    SP_DRAW_COUNT = 0;
+    *(void** )0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void** )0x1F800104 = &temp2[SP_DRAW_INFO_POS];
     func_800241E8();
     for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
         if (var_s0->base.on_screen != 0) {

@@ -13,5 +13,6 @@ struct Scratchpad1C {
 #define SP_1C (*(struct Scratchpad1C**)0x1F80001C)
 #define SP_PALETTE_ADDR 0x1F800028
 #define SP_PALETTE (*(volatile u32**)SP_PALETTE_ADDR)
+#define SP_DRAW_COUNT (*(s32*)0x1F800124)
 
 #endif
