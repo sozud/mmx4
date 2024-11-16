@@ -973,73 +973,79 @@ void func_800403DC(struct QuxObj*);
 void func_800405D4(struct QuxObj*);
 
 // D_800F9138
-void func_8003F570(void);
-void func_8003F31C(void);
-void func_8003F244(void);
-void func_8003F204(void);
-void func_8003F44C(void);
-void func_8003F618(void);
+extern void (*D_800F9138[])(struct QuxObj*);
+void func_8003F570(struct QuxObj*);
+void func_8003F31C(struct QuxObj*);
+void func_8003F244(struct QuxObj*);
+void func_8003F204(struct QuxObj*);
+void func_8003F44C(struct QuxObj*);
+void func_8003F618(struct QuxObj*);
 
 // D_800F9150
-void func_8003E0D0(void);
-void func_8003E368(void);
-void func_8003E488(void);
-void func_8003E5F8(void);
-void func_8003E750(void);
-void func_8003E8A0(void);
-void func_8003EA08(void);
-void func_8003EB4C(void);
-void func_8003ED00(void);
-void func_8003EDF0(void);
-void func_8003E274(void);
-void func_8003EEF8(void);
-void func_8003F068(void);
-void func_8003F648(void);
+extern void (*D_800F9150[])(struct QuxObj*);
+void func_8003E0D0(struct QuxObj*);
+void func_8003E368(struct QuxObj*);
+void func_8003E488(struct QuxObj*);
+void func_8003E5F8(struct QuxObj*);
+void func_8003E750(struct QuxObj*);
+void func_8003E8A0(struct QuxObj*);
+void func_8003EA08(struct QuxObj*);
+void func_8003EB4C(struct QuxObj*);
+void func_8003ED00(struct QuxObj*);
+void func_8003EDF0(struct QuxObj*);
+void func_8003E274(struct QuxObj*);
+void func_8003EEF8(struct QuxObj*);
+void func_8003F068(struct QuxObj*);
+void func_8003F648(struct QuxObj*);
 
 // D_800F9188
-void func_8003E0D0(void);
-void func_8003E368(void);
-void func_8003E488(void);
-void func_8003F698(void);
-void func_8003E750(void);
-void func_8003E8A0(void);
-void func_8003F76C(void);
-void func_8003EB4C(void);
-void func_8003ED00(void);
-void func_8003F698(void);
-void func_8003E274(void);
-void func_8003EEF8(void);
-void func_8003F068(void);
-void func_8003F648(void);
-void func_8003FBD8(void);
-void func_8003F908(void);
-void func_8003FA58(void);
-void func_8003FD08(void);
+extern void (*D_800F9188[])(struct QuxObj*);
+void func_8003E0D0(struct QuxObj*);
+void func_8003E368(struct QuxObj*);
+void func_8003E488(struct QuxObj*);
+void func_8003F698(struct QuxObj*);
+void func_8003E750(struct QuxObj*);
+void func_8003E8A0(struct QuxObj*);
+void func_8003F76C(struct QuxObj*);
+void func_8003EB4C(struct QuxObj*);
+void func_8003ED00(struct QuxObj*);
+void func_8003F698(struct QuxObj*);
+void func_8003E274(struct QuxObj*);
+void func_8003EEF8(struct QuxObj*);
+void func_8003F068(struct QuxObj*);
+void func_8003F648(struct QuxObj*);
+void func_8003FBD8(struct QuxObj*);
+void func_8003F908(struct QuxObj*);
+void func_8003FA58(struct QuxObj*);
+void func_8003FD08(struct QuxObj*);
 
 // D_800F9974
-void func_80040644(void);
-void func_80040838(void);
-void func_800420F0(void);
+extern void (*D_800F9974[])(struct MainObj*);
+void func_80040644(struct MainObj*);
+void func_80040838(struct MainObj*);
+void func_800420F0(struct MainObj*);
 
 // D_800F9988
-void func_80040810(void);
-void func_80040DF8(void);
-void func_80041020(void);
-void func_80041384(void);
-void func_80041524(void);
-void func_80041958(void);
-void func_800419B8(void);
-void func_80041C94(void);
-void func_80041DF0(void);
-void func_80041F88(void);
-void func_8004205C(void);
-void func_800420E8(void);
-void func_80040CCC(void);
+extern void (*D_800F9988[])(struct MainObj*);
+void func_80040810(struct MainObj*);
+void func_80040DF8(struct MainObj*);
+void func_80041020(struct MainObj*);
+void func_80041384(struct MainObj*);
+void func_80041524(struct MainObj*);
+void func_80041958(struct MainObj*);
+void func_800419B8(struct MainObj*);
+void func_80041C94(struct MainObj*);
+void func_80041DF0(struct MainObj*);
+void func_80041F88(struct MainObj*);
+void func_8004205C(struct MainObj*);
+void func_800420E8(struct MainObj*);
+void func_80040CCC(struct MainObj*);
 
 // D_800F9AEC
-void func_80042170(void);
-void func_80042248(void);
-void func_8004234C(void);
+extern void (*D_800F9AEC[])(struct MainObj*);
+void func_80042170(struct MainObj*);
+void func_80042248(struct MainObj*);
+void func_8004234C(struct MainObj*);
 
 // D_800F9AF8
 void func_8009216C(struct Unk* arg0);
@@ -3685,14 +3691,15 @@ void func_8008F1A8(void);
 void func_8008F938(void);
 
 // D_80105E98
-void func_8008FB38(void);
-void func_8008FBCC(void);
-void func_8008FD6C(void);
-void func_8008FDF8(void);
-void func_8008FEE0(void);
-void func_8008FF50(void);
-void func_8009002C(void);
-void func_800900E0(void);
+extern void (*D_80105E98[])(struct MainObj*);
+void func_8008FB38(struct MainObj*);
+void func_8008FBCC(struct MainObj*);
+void func_8008FD6C(struct MainObj*);
+void func_8008FDF8(struct MainObj*);
+void func_8008FEE0(struct MainObj*);
+void func_8008FF50(struct MainObj*);
+void func_8009002C(struct MainObj*);
+void func_800900E0(struct MainObj*);
 
 // D_80105EB8
 void func_80090470(void);
@@ -3738,14 +3745,16 @@ void func_80091754(void);
 void func_800917AC(void);
 
 // D_80105F34
-void func_80090148(void);
-void func_80091218(void);
-void func_80091898(void);
+extern void (*D_80105F34[])(struct MainObj*);
+void func_80090148(struct MainObj*);
+void func_80091218(struct MainObj*);
+void func_80091898(struct MainObj*);
 
 // D_80105FB4
-void func_80091A00(void);
-void func_80091D1C(void);
-void func_80091E18(void);
+extern void (*D_80105FB4[])(struct MainObj*);
+void func_80091A00(struct MainObj*);
+void func_80091D1C(struct MainObj*);
+void func_80091E18(struct MainObj*);
 
 // D_80108728
 extern void (*D_80108728[])(struct WeaponObj*);

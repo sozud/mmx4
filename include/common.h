@@ -559,7 +559,16 @@ struct BazObj {
 
 struct QuxObj {
     struct BaseObj base;
-    s8 pad18[0xB0 - 0x18];
+    s32 unk18;
+    s32 unk1C;
+    s8 pad20[0x5C - 0x20];
+    s8 unk5C;
+    s8 pad5D[0x8A - 0x5D];
+    s16 unk8A;
+    s16 unk8C;
+    s8 pad8E[0x97 - 0x8E];
+    s8 unk97;
+    s8 pad98[0xB0 - 0x98];
 }; // size 0xB0
 
 // D_8013BC28
@@ -959,7 +968,9 @@ struct Unk80139690 {
 
 struct MainObj {
     struct BaseObj base;
-    s8 pad18[0x9C - 0x18];
+    f32 unk18;
+    f32 unk1C;
+    s8 pad20[0x9C - 0x20];
 };
 
 struct Unk14 {
