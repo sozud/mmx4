@@ -1298,14 +1298,15 @@ extern s32 D_8013E188[4];
 // extern s32 D_8013E18C;
 // extern s32 D_8013E190;
 // extern s32 D_8013E194;
-extern s8 D_8013E1BC;
-extern s16 D_8013E1BE;
-extern s8 D_80141BE4;
-extern s16 D_80141BE6;
 extern s8 D_801754A0;
-extern s8 D_80175E9C;
-extern u16 D_80175EA0;
-extern s8 D_80175E9C;
+// 0 is color add mode, 1 is color subtract mode
+extern s8 g_FilterModeR;
+extern s8 g_FilterModeG;
+extern s8 g_FilterModeB;
+// how much to add or subtract to each channel
+extern u16 g_FilterAmountR;
+extern s16 g_FilterAmountB;
+extern s16 g_FilterAmountG;
 extern u16 controller_state;
 extern s8 D_801419FC;
 extern void* D_800F4508;

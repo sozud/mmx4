@@ -27,11 +27,11 @@ extern s32 D_80139514;
 extern u8 D_80139554;
 extern s8 D_80139568;
 extern s16 D_8013955C;
-extern struct Temp1 D_801499C8[];
-extern struct Temp2 D_80169D98[];
-extern struct Temp3 D_80139830[];
-extern struct Temp4 D_80139C30[];
-extern struct Temp5 D_80139E30[];
+extern struct Temp1 temp1[];
+extern struct Temp2 temp2[];
+extern struct Temp3 temp3[];
+extern struct Temp4 temp4[];
+extern struct Temp5 temp5[];
 extern u8 D_80173C84;
 extern s32 D_80175EE8[];
 
@@ -130,8 +130,8 @@ void func_80013404(u8 arg0)
     s8* a0;
     s8* var_v0;
     struct EngineObj* ptr = &engine_obj;
-    *(void**)0x1F800100 = &D_801499C8[SP_DRAW_INFO_POS];
-    *(void**)0x1F800104 = &D_80169D98[SP_DRAW_INFO_POS];
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
 
     func_800160F4();
 
@@ -801,9 +801,9 @@ void func_80017340(void)
     s8 end;
     u8 var_v0;
 
-    *(void**)0x1F800100 = &D_801499C8[*(s32*)0x1F800000];
-    *(void**)0x1F800104 = &D_80169D98[*(s32*)0x1F800000];
-    *(void**)0x1F800110 = &D_801499C8[*(s32*)0x1F800000];
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    *(void**)0x1F800110 = &temp1[SP_DRAW_INFO_POS];
 
     func_80017E84();
 
@@ -1453,9 +1453,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     D_80141BDE[0] = 0;
     func_80016F0C();
     func_80015930(0xFF, 0);
-    D_8013E1BE = 0;
-    D_80141BE6 = 0;
-    D_80175EA0 = 0;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
     D_8013E188[0] = 0;
     D_8013E188[1] = 0;
     D_8013E188[2] = 0;
@@ -1685,9 +1683,7 @@ void func_8001E000(struct GameInfo* arg0)
         return;
     }
     if (D_80139690->active == 0) {
-        D_8013E1BE = 0;
-        D_80141BE6 = 0;
-        D_80175EA0 = 0;
+        g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
@@ -1809,9 +1805,7 @@ void func_8001E708(struct GameInfo* arg0)
         func_80016F0C();
         func_8001540C(0, 0x22, 0);
         arg0->mode = 0xC;
-        D_8013E1BE = 0;
-        D_80141BE6 = 0;
-        D_80175EA0 = 0;
+        g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
@@ -2975,7 +2969,6 @@ void init_objects(void)
     struct MiscObj* var_s0_7;
     struct UnkObj* var_s0_8;
     struct QuadObj* var_s0_9;
-    s32 temp_a0;
     void* temp_v1;
     void* temp_v1_2;
     void* temp_v1_3;
@@ -2990,13 +2983,12 @@ void init_objects(void)
     struct PlayerObj* ptr3 = &g_Entity;
     struct QuxObj* ptr4;
 
-    temp_a0 = *(s32*)0x1F800000;
-    *(s32*)0x1F800124 = 0;
-    *(void**)0x1F800100 = &D_801499C8[temp_a0]; // size 0xA000
-    *(void**)0x1F800104 = &D_80169D98[temp_a0]; // size 0x2000
-    *(void**)0x1F800108 = &D_80139830[temp_a0]; // size 0x200
-    *(void**)0x1F80010C = &D_80139C30[temp_a0]; // size 0x100
-    *(void**)0x1F800110 = &D_80139E30[temp_a0]; // size 0x78
+    SP_DRAW_COUNT = 0;
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS]; // size 0xA000
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS]; // size 0x2000
+    *(void**)0x1F800108 = &temp3[SP_DRAW_INFO_POS]; // size 0x200
+    *(void**)0x1F80010C = &temp4[SP_DRAW_INFO_POS]; // size 0x100
+    *(void**)0x1F800110 = &temp5[SP_DRAW_INFO_POS]; // size 0x78
 
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
@@ -3170,7 +3162,21 @@ void func_800257BC(struct PlayerObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002588C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80025CDC);
+void func_80025CDC(void)
+{
+    struct UnkObj* var_s0;
+
+    SP_DRAW_COUNT = 0;
+    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
+    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    func_800241E8();
+    for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
+        if (var_s0->base.on_screen != 0) {
+            func_80024334(var_s0);
+        }
+    }
+    func_80024260();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80025DA0);
 

@@ -54,22 +54,18 @@ void func_800B599C(struct EffectObj* arg0)
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = D_8010B23C[arg0->unk2][i];
         }
-        D_80175E9C = arg0->ext.scaling_x.unk14->unk3 & 1;
-        D_80141BE4 = arg0->ext.scaling_x.unk14->unk3 & 2;
-        D_8013E1BC = arg0->ext.scaling_x.unk14->unk3 & 4;
+        g_FilterModeR = arg0->ext.scaling_x.unk14->unk3 & 1;
+        g_FilterModeG = arg0->ext.scaling_x.unk14->unk3 & 2;
+        g_FilterModeB = arg0->ext.scaling_x.unk14->unk3 & 4;
         color = arg0->ext.scaling_x.unk14->unk0;
-        D_80175EA0 = color & 0x1F;
-        D_80141BE6 = color & 0x3E0;
-        D_8013E1BE = color & 0x7C00;
+        g_FilterAmountR = color & 0x1F;
+        g_FilterAmountG = color & 0x3E0;
+        g_FilterAmountB = color & 0x7C00;
         arg0->state++;
         return;
     }
-    D_8013E1BE = 0;
-    D_80141BE6 = 0;
-    D_80175EA0 = 0;
-    D_8013E1BC = 0;
-    D_80141BE4 = 0;
-    D_80175E9C = 0;
+    g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
+    g_FilterModeR = g_FilterModeG = g_FilterModeB = 0;
 
     for (current = &effect_objects[0]; current < &effect_objects[0x20]; current++) {
         if (current->unk2 == 2 && current != arg0) {
@@ -94,12 +90,12 @@ void func_800B5B54(struct EffectObj* arg0)
         }
         color = arg0->ext.scaling_x.unk14->unk0;
         arg0->ext.scaling_x.unk18 = arg0->ext.scaling_x.unk14->unk2;
-        D_80175EA0 = color & 0x1F;
-        D_80141BE6 = color & 0x3E0;
-        D_8013E1BE = color & 0x7C00;
-        D_80175E9C = arg0->ext.scaling_x.unk14->unk3 & 1;
-        D_80141BE4 = arg0->ext.scaling_x.unk14->unk3 & 2;
-        D_8013E1BC = arg0->ext.scaling_x.unk14->unk3 & 4;
+        g_FilterAmountR = color & 0x1F;
+        g_FilterAmountG = color & 0x3E0;
+        g_FilterAmountB = color & 0x7C00;
+        g_FilterModeR = arg0->ext.scaling_x.unk14->unk3 & 1;
+        g_FilterModeG = arg0->ext.scaling_x.unk14->unk3 & 2;
+        g_FilterModeB = arg0->ext.scaling_x.unk14->unk3 & 4;
         need_palette_load |= 5;
     }
 }

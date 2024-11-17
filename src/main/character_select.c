@@ -66,15 +66,15 @@ void character_select_state_1(struct EngineObj* arg0)
 void character_select_state_2_substate_0(struct EngineObj* arg0)
 {
     if (arg0->unk4 != 0) {
-        D_80175EA0 = 0x1F;
-        D_80141BE6 = 0x3E0;
-        D_8013E1BE = 0x7C00;
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterAmountB = 0x7C00;
         arg0->unk4--;
     } else {
         arg0->unk2++;
-        D_80175EA0 = 0;
-        D_80141BE6 = 0;
-        D_8013E1BE = 0;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
