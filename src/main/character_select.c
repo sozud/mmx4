@@ -131,8 +131,6 @@ void character_select_state_2(struct EngineObj* arg0)
     character_select_state_2_update_funcs[arg0->unk2](arg0);
 }
 
-extern void (*character_select_state_3_update_funcs[])();
-
 void character_select_state_3(struct EngineObj* arg0)
 {
     u16* ptr = &controller_state;

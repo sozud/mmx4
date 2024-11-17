@@ -1036,7 +1036,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001961C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001989C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80019B64);
+void func_80019B64(struct EngineObj* arg0)
+{
+    D_800F1F94[arg0->unk2](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80019BA0);
 
@@ -1103,7 +1106,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001B388);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001B4E4);
 
-void func_8001B558(void)
+void func_8001B558(struct EngineObj* arg0)
 {
     s32 temp;
     if (controller_state & (PADstart | PADRup | PADRdown | PADRleft | PADRright)) {
@@ -1871,7 +1874,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EA90);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EBA0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EC34);
+void func_8001EC34(struct GameInfo* arg0)
+{
+    D_800F2390[arg0->mode](arg0);
+    update_misc_objects();
+    func_8002A484();
+    func_80016124();
+    func_80023D68();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EC90);
 
@@ -1883,7 +1893,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EF48);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001EFF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001F0BC);
+void func_8001F0BC(struct GameInfo* arg0)
+{
+    D_800F239C[arg0->mode](arg0);
+    update_misc_objects();
+    func_8002A484();
+    func_80016124();
+    func_80023D68();
+}
 
 void func_8001F118(void)
 {
@@ -2929,7 +2946,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023B98);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023C0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023CA4);
+void func_80023CA4(struct MiscObj* arg0)
+{
+    D_800F30C8[arg0->base.state](arg0);
+}
 
 void func_80023CE0()
 {
