@@ -219,7 +219,9 @@ struct PlayerObj {
     s8 unk94[2];
     s8 unk96;
     s8 unk97;
-    u8 pad98[0x9B - 0x98];
+    s8 unk98;
+    s8 unk99;
+    s8 unk9A;
     s8 unk9B[2];
     u8 unk9D;
     u8 unk9E;
@@ -557,7 +559,16 @@ struct BazObj {
 
 struct QuxObj {
     struct BaseObj base;
-    s8 pad18[0xB0 - 0x18];
+    s32 unk18;
+    s32 unk1C;
+    s8 pad20[0x5C - 0x20];
+    s8 unk5C;
+    s8 pad5D[0x8A - 0x5D];
+    s16 unk8A;
+    s16 unk8C;
+    s8 pad8E[0x97 - 0x8E];
+    s8 unk97;
+    s8 pad98[0xB0 - 0x98];
 }; // size 0xB0
 
 // D_8013BC28
@@ -957,7 +968,9 @@ struct Unk80139690 {
 
 struct MainObj {
     struct BaseObj base;
-    s8 pad18[0x9C - 0x18];
+    f32 unk18;
+    f32 unk1C;
+    s8 pad20[0x9C - 0x20];
 };
 
 struct Unk14 {
@@ -1054,6 +1067,13 @@ extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
+extern s8 D_800F8C28[];
+extern u8 D_800F8C4C[];
+extern u8 D_800F8C4D[];
+extern s8 D_800F8CCC[];
+extern s8 D_800F8CE4[];
+extern s8 D_800F8CFC[];
+extern s8 D_800F8D14[];
 extern s16 D_8010A1AC[];
 extern s16 D_8010A1AE[];
 extern s16 D_8010A1B4[];
