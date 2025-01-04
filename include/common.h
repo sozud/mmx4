@@ -999,11 +999,21 @@ struct ScalingX {
     s8 unk18;
 };
 
+struct EffectUnk3 {
+    s32* unk14;
+    s32 pad;
+    s8* unk1C;
+    u8 pad20;
+    s8 unk21;
+};
+
 union EffectExt {
     struct UnkEffectExt unk_effect;
     struct EffectExt2 unk_effect2;
     struct ScalingX scaling_x;
+    struct EffectUnk3 unk3;
 };
+
 struct EffectObj {
     s8 active;
     s8 unk1;
