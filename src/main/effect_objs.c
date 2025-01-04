@@ -127,7 +127,18 @@ void func_800B5CC4(struct EffectObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B5D04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B5E2C);
+void func_800B5E2C(struct EffectObj* arg0)
+{
+    if (arg0->ext.unk3.unk21-- == 0) {
+        arg0->ext.unk3.unk1C += 2;
+        if (arg0->ext.unk3.unk1C[1] < 0) {
+            arg0->ext.unk3.unk1C = (arg0->ext.unk3.unk1C + (arg0->ext.unk3.unk1C[1] * 2));
+        }
+        arg0->ext.unk3.unk21 = arg0->ext.unk3.unk1C[1];
+        arg0->ext.unk3.unk14 = (*(s32**)0x1F800030 + ((u8)arg0->ext.unk3.unk1C[0] << 3));
+        func_800B5C60(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/effect_objs", func_800B5EB0);
 
