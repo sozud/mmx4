@@ -24,7 +24,7 @@ struct Temp5 {
 };
 
 extern s32 D_80139514;
-extern u8 D_80139554;
+extern u8 D_80139554[];
 extern s8 D_80139568;
 extern s16 D_8013955C;
 extern struct Temp1 temp1[];
@@ -678,7 +678,7 @@ void func_80016BDC(void)
         while (CdControl(CdlPause, 0, &D_80139554) == 5)
             ;
         D_80139530 = 3;
-        if (D_80139554 & 0x10) {
+        if (D_80139554[0] & 0x10) {
             D_8013952C = 1;
         }
     }
@@ -707,12 +707,30 @@ void func_80016DAC()
 
 void func_80016E34()
 {
-    if (CdSync(1, 0) == 2 && CdControl(CdlSetfilter, &D_80175EE8, 0) != 0) {
+    if (CdSync(1, 0) == CdlComplete && CdControl(CdlSetfilter, &D_80175EE8, 0) != 0) {
         D_80139530 = 5;
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80016E84);
+extern s8 D_8013952C;
+extern s32 D_80139530;
+extern u8 D_80139554[];
+
+void func_80016E84(void)
+{
+    u8 sp10;
+
+    if (CdSync(1, 0) == CdlComplete) {
+        sp10 = CdlModeSpeed | CdlModeRT | CdlModeSF;
+        if (CdControl(CdlSetmode, &sp10, &D_80139554) != 0) {
+            VSync(3);
+            D_80139530 = 6;
+            if (D_80139554[0] & 0x10) {
+                D_8013952C = 1;
+            }
+        }
+    }
+}
 
 void func_80016F0C()
 {
