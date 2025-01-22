@@ -1,1 +1,1 @@
-find . -name "*.c" -o -name "*.h" | xargs clang-format -i
+find . -name "*.c" -o -name "*.h" | xargs clang-format-15 -i
