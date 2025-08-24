@@ -290,7 +290,31 @@ void MyCdReadyCallback(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013DA8);
+extern s32 D_80137CCC;
+extern s32 D_80137CEC;
+extern CdlLOC D_80137CF8;
+
+void func_80013DA8(void)
+{
+    u8 sp10;
+
+    sp10 = 0xA0;
+    D_80137CEC = 0;
+    CdIntToPos(D_80137CCC, &D_80137CF8);
+    do {
+        do {
+            while (func_8001385C() & 0x40) {
+            }
+            while (CdReady(1, NULL) != 0) {
+            }
+        } while (CdControl(CdlSetmode, &sp10, NULL) == 0);
+        VSync(3);
+    } while (CdControl(CdlSetloc, &D_80137CF8, NULL) == 0);
+    do {
+
+    } while (CdControl(CdlReadN, NULL, NULL) == 0);
+    D_801406AC = 1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013E68);
 
