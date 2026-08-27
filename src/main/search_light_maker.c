@@ -86,7 +86,39 @@ void func_800B6D1C(s32 arg0, s8 arg1, s8 arg2)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/search_light_maker", func_800B6EB4);
+struct Initializer {
+    u8 active;
+    u8 type;
+    u8 unk2;
+    u8 unk3;
+    s16 value1;
+    s16 value2;
+};
+
+void func_800B6EB4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
+{
+    struct Initializer* current = (struct Initializer*)D_8010B464;
+    struct QuadObj* result;
+
+    if (D_8010B465 != 0xFF) {
+        do {
+            if (current->active == 0 && arg0 < current->value1 && current->value1 < arg1 && arg2 < current->value2 && current->value2 < arg3) {
+                result = find_free_quad_obj();
+                if (result != NULL) {
+                    result->active = 1;
+                    result->id = 0;
+                    result->unk2 = current->type;
+                    result->bg_offset = current->unk3;
+                    result->x_pos.i.hi = current->value1;
+                    result->y_pos.i.hi = current->value2;
+                    *(struct Initializer**)(result->pad10) = current;
+                    current->active = 1;
+                }
+            }
+            current++;
+        } while (current->type != 0xFF);
+    }
+}
 
 s8 func_800B6FF4(s32 arg0, s8 arg1)
 {

@@ -819,7 +819,30 @@ void func_800B2AD0(struct VisualObj* arg0)
     func_8002B318(arg0, 0x28, 0x28);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visual_objs", func_800B2C8C);
+void func_800B2C8C(struct MiscObj* arg0)
+{
+    u8 playerUnkA6;
+
+    if (arg0->base.state == 0) {
+        arg0->base.bg_offset = -1;
+        arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[0x30 / 4];
+        arg0->unk42 = 0x780A;
+        arg0->base.unk16 = 0x10;
+        arg0->base.x_pos.i.hi = 0x20;
+        arg0->unk40 = 0;
+        arg0->base.y_pos.i.hi = 0x34;
+        arg0->base.state++;
+    } else {
+        arg0->base.on_screen = 0;
+        if (engine_obj.unk1F != 0 && g_Player.unkA6 != 0) {
+            arg0->base.on_screen = 1;
+            playerUnkA6 = *(u8*)0x8014196E;
+            arg0->base.x_pos.i.hi = 0x20;
+            arg0->base.y_pos.i.hi = 0x34;
+            arg0->unk47 = 0x1F - playerUnkA6;
+        }
+    }
+}
 
 void func_800B2D48(struct VisualObj* arg0)
 {
