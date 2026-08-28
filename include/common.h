@@ -110,7 +110,8 @@ struct Unk {
 }; // size 0x9c
 
 struct BackgroundObj {
-    u8 pad[2];
+    u8 unk0;
+    u8 unk1;
     s8 unk2;
     s8 unk3;
     s8 unk4;
@@ -137,16 +138,18 @@ struct BackgroundObj {
     u16 unk40;
     u16 unk42;
     s8 unk44;
-    u8 pad42[2];
+    u8 pad45[2];
     u8 unk47;
     u8 unk48;
     u8 unk49;
-    u8 pad49[2];
+    u8 unk4A;
+    u8 unk4B;
     u8 unk4C;
     s8 unk4D;
     s8 unk4E;
-    s8 : 8;
-    s8 pad50[4];
+    s8 min_y;
+    s8 max_y;
+    s8 pad51[3];
 }; // size 0x54
 
 // similar to Unk
@@ -160,7 +163,7 @@ struct PlayerObj {
     s32 unk2C;
     u8 pad30[0x8];
     s32* unk38;
-    s16 pad38[2];
+    s32 unk3C;
     u16 unk40;
     u16 unk42;
     s8 unk44;
@@ -241,7 +244,7 @@ struct PlayerObj {
     s8 unkBA;
     s8 unkBB;
     s8 unkBC;
-    s8 : 8;
+    s8 unkBD;
     s8 unkBE;
     s8 unkBF;
     s8 unkC0;
@@ -573,14 +576,27 @@ struct QuxObj {
 
 // D_8013BC28
 struct AbcObj {
-    s8 pad0[0xC];
+    s8 pad0[4];
+    u16 unk4;
+    s16 unk6;
+    s16 unk8;
+    u16 unkA;
     u8 unkC;
     u8 unkD;
     u8 unkE;
-    s8 : 8;
+    u8 unkF;
     s16 unk10;
     s16 : 16;
 }; // size 0x14
+
+struct Func80022730Config {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+    u8 unk5;
+};
 
 struct Unk2 {
     u8 unk0;
@@ -720,6 +736,58 @@ struct BgDrawRelated {
     u8 pad[0x4000];
 };
 
+struct MainPrimitiveBuffer {
+    u8 data[0xA000];
+};
+
+struct SecondaryPrimitiveBuffer {
+    u8 data[0x2000];
+};
+
+struct BackgroundPrimitiveBuffer {
+    u8 data[0x200];
+};
+
+struct OrderingTableBuffer {
+    u8 data[0x100];
+};
+
+struct AuxiliaryPrimitiveBuffer {
+    u8 data[0x78];
+};
+
+struct StageSpriteSlot {
+    s32 tag;
+    s8 r;
+    s8 g;
+    s16 b_and_code;
+    s16 x;
+    s16 y;
+    s16 u;
+    s16 v;
+};
+
+struct StageSpritePrimitive {
+    u32 tag;
+    u8 r0, g0, b0, code;
+    s16 x0, y0;
+    u16 u0, v0;
+    u16 clut;
+    s16 w, h;
+};
+
+struct GameThread {
+    u16 state;
+    u16 timer;
+    u32 unk4;
+    u32 handle;
+    u32 unkC;
+    u32 stack;
+    u32 unk14[12];
+    u32 global_pointer;
+    u8 pad48[0x80 - 0x48];
+};
+
 struct Prim {
     u16 x;
     u16 y;
@@ -734,6 +802,15 @@ extern struct PlayerObj g_Entity;
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[];
 extern struct BgDrawRelated D_8015D9D0[];
+extern struct MainPrimitiveBuffer temp1[];
+extern struct SecondaryPrimitiveBuffer temp2[];
+extern struct BackgroundPrimitiveBuffer temp3[];
+extern struct OrderingTableBuffer temp4[];
+extern struct AuxiliaryPrimitiveBuffer temp5[];
+extern struct StageSpriteSlot D_8013B7B0[2];
+extern struct OrderingTableBuffer D_8012F498[];
+extern struct SecondaryPrimitiveBuffer D_80169D78[];
+extern struct BackgroundPrimitiveBuffer D_8016DEA0;
 
 struct DrawInfo {
     DISPENV dispenv;
@@ -882,7 +959,7 @@ struct EngineObj {
     s8 pad30[0x36 - 0x30];
     s8 pad36;
     s8 unk37;
-    s32 unk38;
+    void* unk38;
     struct BaseObj* unk3C;
     u8 unk40;
     s8 unk41;
@@ -899,6 +976,13 @@ struct EngineObj {
     u8 unk5F;
     s32 : 32;
 }; // size 0x64
+
+#define ENGINE_STAGE_ID (*(u16*)&engine_obj.stage)
+#define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
+#define ENGINE_UNK2E (((s8*)&engine_obj.unk2C)[2])
+
+extern u8 engine_obj_27;
+#define engine_flags engine_obj_27
 
 struct Unk18 {
     s8 unk0;
@@ -929,6 +1013,20 @@ struct Unk19 {
     s8 pad3[0xc];
     u32 unk44;
     u8 unk48;
+};
+
+struct Unk66 {
+    u8 pad[0x34];
+    u32* unk34;
+    u8 pad2[12];
+    union {
+        struct {
+            s8 unk44;
+            s8 : 8;
+            s8 unk46;
+        } j;
+        s32 unk44;
+    } i;
 };
 
 struct Unk20 {
@@ -1153,6 +1251,39 @@ extern s8 D_80173C6D;
 extern s8 D_80173C6E;
 extern s8 D_80173C6F;
 extern s8 D_80137DFC;
+extern u8 D_80137DD4;
+extern u8 D_80137DDC;
+extern s32 D_8013BD44;
+extern u8 D_8013BD40;
+extern s16 D_80141BD2;
+extern s8 D_800F3188[];
+extern s32 D_800F4430[];
+extern u8* D_800F43C8[][2];
+extern u8* D_8010FFDC[][2];
+extern u8 layout_height;
+extern u16 D_80166C08;
+extern u16 D_80166C0A;
+extern s8 D_800F8BE9[];
+extern u8* D_800FB0EC;
+extern void (*D_800FB104[])();
+extern u8 D_8010B465;
+extern s32 D_800F2CA4[];
+extern struct MiscUnk50_1** D_800F2DD8[];
+extern s32 D_800F2EE8[];
+extern s32 D_800F2F00;
+extern struct MiscObj* D_801397BC;
+extern struct MiscObj* D_801397C0;
+extern struct MiscObj* D_801397C4;
+extern struct MiscObj* D_801397C8;
+extern struct MiscObj* D_801397CC;
+extern struct MiscObj* D_801397D0;
+extern struct MiscObj* D_801397D4;
+extern u8 D_801397D8;
+extern struct Func80022730Config* D_801397DC;
+extern s16 D_801397E0;
+extern u16 D_801397E4[0x20];
+extern u8 D_80139824;
+extern u8 D_80139828;
 extern void* D_80137E0C;
 extern s8 D_80139234[24];
 extern u8 D_8013924C[4];
@@ -1198,7 +1329,7 @@ extern s8 D_8013E1C8[4];
 extern s32 D_801395E4;
 extern s32 D_801395E8;
 extern volatile s32 D_80139634;
-extern struct EffectObj* D_80139690;
+extern struct BaseObj* D_80139690;
 extern void (*D_800F43A8[1])(s32);
 extern void (*g_TitleScalingXUpdateFuncs[1])();
 extern void (*D_8010B4C4[1])();
@@ -1206,7 +1337,15 @@ extern void (*D_8010BEC8[1])();
 extern s8 D_801F6018;
 extern s8 D_801F6019;
 extern s8 D_801F604F;
-extern s16* D_801F8300;
+extern s32 D_80139514;
+extern u8 D_80139554[];
+extern s8 D_80139568;
+extern s16 D_8013955C;
+extern u8 D_80173C84;
+extern s32 D_80175EE8[];
+extern s16 D_8016DEA2;
+extern s16 D_8016DEA4;
+extern struct GameThread* D_801F8300;
 extern u16 D_801419BE[];
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
 extern void (*g_TitleUpdateFuncs[1])();
@@ -1363,7 +1502,23 @@ void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
 s32 func_8001540C(s32, s32, struct Unk6*);
-s32 func_800350A4(struct Unk6*, s32);
+s32 func_800350A4(struct PlayerObj*, s32);
+void func_8002B318(struct BaseObj*, s32, s32);
+void func_800127C8(s32);
+void func_800127FC(void);
+void func_800129A4(s8);
+void func_80013530(void);
+void func_80013AD8(u8, u8, s32);
+void func_800261B4(s32, u32, u8*);
+void func_80028FEC(s16, s16, s16, s16, u8);
+void func_800292D0(s32);
+void func_80094F74(void);
+void func_80015284(void);
+void func_8001C3E8(void);
+void reset_game_engine(void);
+void func_8001DC30(void);
+s32 func_80015D60(struct Unk19*, s32);
+void func_80015DC8();
 s32 func_80033694();
 void func_80034538(struct Unk7*);
 void func_80034754(struct Unk7*);
@@ -1409,7 +1564,7 @@ void func_8002AB20();
 void func_8001D230();
 void func_8001FB50();
 void func_8002217C(u16, u8, u8);
-void func_80022730(s32*);
+void func_80022730(struct AbcObj*);
 void func_8002B718();
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct Unk*, u8, s16, s16);

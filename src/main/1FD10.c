@@ -344,4 +344,18 @@ void func_80031130(struct BarObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_800311EC);
+void func_800311EC(void)
+{
+    engine_obj.unk38 = &g_Player;
+    if (g_Player.unkBD != 0) {
+        g_Player.unkBC = 5;
+        g_Player.unkBD = 0;
+        return;
+    }
+    if (g_Player.unkBC == 0 || --g_Player.unkBC == 0) {
+        g_Player.unk18 = g_Player.base.x_pos.val;
+        g_Player.unk1C = g_Player.base.y_pos.val;
+        D_800F8980[g_Player.base.state](&g_Player);
+        func_80094F74();
+    }
+}

@@ -52,13 +52,48 @@ void func_800498C8(struct MainObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049904);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049AA0);
+void func_80049AA0(struct MainObj* arg0)
+{
+    s8* temp_s1;
+    s16 temp_v0;
+
+    arg0->unk18 = arg0->base.x_pos.val;
+    arg0->unk1C = arg0->base.y_pos.val;
+    D_800FB104[arg0->base.unk5](arg0);
+    if (*(s32*)((u8*)arg0 + 0x8C) != 0) {
+        if (*(s32*)((u8*)arg0 + 0x90) != 0) {
+            temp_s1 = &g_Player.unkBA;
+            if ((*temp_s1 == 0) && (func_8002D9BC(arg0) != 0) && (*temp_s1 != 0)) {
+                *((u8*)&g_Player + 0xA5) = arg0->base.unk15;
+                *(s32*)((u8*)arg0 + 0x8C) = 3;
+            }
+        }
+        *(s32*)((u8*)arg0 + 0x94) = arg0->base.unk5;
+        if (func_8002DD04(arg0) < 0) {
+            func_800AF808(arg0);
+            func_800C813C(6, &D_800FB0EC, arg0);
+            func_800BF60C(arg0, 0x11);
+            arg0->base.state = 2;
+        } else if (func_8002B1E8(arg0, 0x40, 0x40) == 0) {
+            func_8002B318(arg0, 0x20, 0x20);
+            if (--*(s16*)((u8*)arg0 + 0x7C) == 0) {
+                func_8001540C(2, 0xD, arg0);
+                *(s16*)((u8*)arg0 + 0x7C) = 0x3CU;
+            }
+        } else {
+            arg0->base.state = 2;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049C0C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049C78);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049CBC);
+void func_80049CBC(struct Unk* arg0)
+{
+    arg0->base.unk5 = arg0->unk94;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80049CC8);
 
@@ -170,7 +205,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8004C97C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8004C9E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8004CA14);
+void func_8004CA14(struct Unk* arg0)
+{
+    arg0->base.unk5 = *(s32*)&arg0->unk8C;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8004CA20);
 

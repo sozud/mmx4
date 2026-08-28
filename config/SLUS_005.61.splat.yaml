@@ -36,6 +36,8 @@ segments:
     subalign: 1
     subsegments:
       - [0x800, rodata]
+      - [0x8C8, .rodata, 323C] # jtbl_800100C8
+      - [0x8E4, rodata]
       - [0xA44, .rodata, 1A5BC]
       - [0xAC0, rodata]
       - [0xBE0, rodata] # jtbl_800103E0

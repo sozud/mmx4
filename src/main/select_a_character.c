@@ -323,7 +323,45 @@ void func_800CD498(struct MiscObj* arg0)
 }
 
 // D_8010EBB4 state 15
-INCLUDE_ASM("asm/us/main/nonmatchings/select_a_character", func_800CD530);
+void func_800CD530(struct MiscObj* arg0)
+{
+    switch (arg0->base.unk6) {
+    case 0:
+        arg0->base.unk6++;
+        if (engine_obj.cur_character == (arg0->base.unk2 - 7)) {
+            func_80015D60(arg0, 3);
+        } else {
+            func_80015D60(arg0, 0);
+        }
+        break;
+    case 1:
+        func_80015DC8(arg0);
+        if (arg0->unk46 == 0) {
+            engine_flags |= (1 << (arg0->base.unk2 - 7));
+        }
+        if ((s8)engine_flags & 0x80) {
+            arg0->base.unk6 = (u8)arg0->base.unk6 + 1;
+            func_80015D60(arg0, 4);
+        }
+        break;
+    case 2:
+        func_80015DC8(arg0);
+        if (arg0->unk46 == 0) {
+            arg0->base.unk6 = (u8)arg0->base.unk6 + 1;
+            func_80015D60(arg0, 5);
+            arg0->y_vel.val = 0x80000;
+        }
+        break;
+    case 3:
+        func_80015DC8(arg0);
+        func_8002B718(arg0);
+        if (arg0->base.on_screen == 0) {
+            engine_flags &= ~(1 << (arg0->base.unk2 - 7));
+            arg0->base.state = (u8)arg0->base.state + 1;
+        }
+        break;
+    }
+}
 
 // SelectACharacterUpdate state 1
 void func_800CD6D8(struct MiscObj* arg0)

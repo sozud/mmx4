@@ -617,7 +617,29 @@ void is_on_screen(struct BaseObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B318);
+void func_8002B318(struct BaseObj* arg0, s32 arg1, s32 arg2)
+{
+    u16 x_pos, y_pos, y_pos_2;
+    u16 x_diff, y_diff;
+
+    arg0->on_screen = 0;
+    if (arg0->bg_offset < 0) {
+        x_pos = arg0->x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi;
+    } else {
+        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
+    }
+    x_pos += arg1;
+    x_diff = 0x140 + arg1 + arg1;
+    if (x_pos < x_diff) {
+        y_pos_2 = y_pos + arg2;
+        y_diff = 0xF0 + arg2 + arg2;
+        if (y_pos_2 < y_diff) {
+            arg0->on_screen = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B3C0);
 
@@ -1013,7 +1035,59 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E420);
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E5E0);
 
 // engine_state_3_update_funcs state 1 (load briefing room)
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E698);
+void func_8002E698(struct EngineObj* arg0)
+{
+    s8 var_a0;
+    s8 var_a1;
+    struct MiscObj* temp_v0;
+    struct MiscObj* temp_v0_2;
+
+    func_800129A4(8);
+    var_a0 = 8;
+    if ((u8)arg0->unk5F >= 5) {
+        var_a0 = 0x16;
+        var_a1 = 0x75;
+    } else {
+        var_a1 = 0x72;
+    }
+    func_8001663C(var_a0, var_a1);
+    func_8002E5E0();
+    temp_v0 = find_free_misc_obj();
+    if (temp_v0 != 0) {
+        temp_v0->base.active = 0x41;
+        temp_v0->base.id = 0xA;
+        temp_v0->base.unk2 = 0;
+    }
+    if (arg0->cur_character == 0) {
+        if ((u8)arg0->unk5F < 9) {
+            if (arg0->unkE != 0xA) {
+                temp_v0_2 = find_free_misc_obj();
+                if (temp_v0_2 != 0) {
+                    temp_v0_2->base.active = 0x41;
+                    temp_v0_2->base.id = 0xA;
+                    temp_v0_2->base.unk2 = 1;
+                }
+            }
+        }
+    } else {
+        if ((u8)arg0->unk5F < 7) {
+            if (arg0->unkE != 5) {
+                temp_v0_2 = find_free_misc_obj();
+                if (temp_v0_2 != 0) {
+                    temp_v0_2->base.active = 0x41;
+                    temp_v0_2->base.id = 0xA;
+                    temp_v0_2->base.unk2 = 1;
+                }
+            }
+        }
+    }
+    if (arg0->unkE != 0) {
+        arg0->unk1 = 9;
+    } else {
+        arg0->unk1++;
+    }
+    arg0->unk2 = 0;
+}
 
 // engine_state_3_update_funcs state 2
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E7BC);
@@ -1066,7 +1140,46 @@ void func_8002ED98(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 7
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002EDD4);
+void func_8002EDD4(struct EngineObj* arg0)
+{
+    if (*D_80141BDC == 0) {
+        func_8001D134();
+        reset_objects();
+        if (arg0->cur_character == 0) {
+            if ((arg0->stage == 0xB) && (arg0->unk5F == 8)) {
+                arg0->unkE = 3;
+                arg0->unk1 = 8;
+                goto block_17;
+            }
+        }
+        if (arg0->cur_character != 0) {
+            if ((arg0->unkE == 9) && (arg0->unk5F < 4)) {
+                arg0->unkE = 4;
+                arg0->unk1 = 8;
+            } else if (arg0->cur_character != 0) {
+                if (arg0->stage == 9) {
+                    arg0->state = 9;
+                    arg0->unk1 = 0;
+                } else {
+                    goto block_12;
+                }
+            } else {
+                goto block_12;
+            }
+        } else {
+        block_12:
+            if ((arg0->stage > 8) || (arg0->stage == 0) || ((((u8)arg0->pad49[0x10] >> (arg0->stage - 1)) & 1) != 0)) {
+                arg0->unk1 = 0;
+                arg0->state = (u8)arg0->state + 1;
+            } else {
+                arg0->unk1 = 0xB;
+            }
+        }
+    block_17:
+        arg0->unk2 = 0;
+        arg0->unk3 = 0;
+    }
+}
 
 // engine_state_3_update_funcs state 8 (play video)
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002EF14);
