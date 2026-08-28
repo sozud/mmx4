@@ -8,6 +8,8 @@ import concurrent.futures
 import json
 import requests
 import sys
+import threading
+import time
 import zipfile
 from io import BytesIO
 import difflib
@@ -18,11 +20,25 @@ def are_strings_similar(str1, str2, threshold=0.4):
 
 zip_cache = {}
 
+request_lock = threading.Lock()
+last_request_time = 0.0
+
+def get_decomp_me(url):
+    global last_request_time
+
+    with request_lock:
+        delay = 1.0 - (time.monotonic() - last_request_time)
+        if delay > 0:
+            time.sleep(delay)
+        last_request_time = time.monotonic()
+
+    return requests.get(url=url, headers={"User-Agent": "function-finder"})
+
 def get_asm(slug):
     if slug in zip_cache:
         return zip_cache[slug]
     url = f'https://decomp.me/api/scratch/{slug}/export'
-    response = requests.get(url)
+    response = get_decomp_me(url)
     if response.status_code == 200:
         with zipfile.ZipFile(BytesIO(response.content)) as the_zip:
             zip_contents = the_zip.namelist()
@@ -46,7 +62,8 @@ def fetch_all_results(url):
     results = []
 
     while url:
-        response = requests.get(url)
+        response = get_decomp_me(url)
+        response.raise_for_status()
         data = response.json()
 
         results.extend(data.get('results', []))
