@@ -217,7 +217,7 @@ void func_80013404(u8 arg0)
         } else {
             var_v0 = a0 + ptr->stage;
         }
-        D_800EE538 = *var_v0;
+        ((u8*)D_800EE504)[0x34] = *var_v0;
 
         func_8001326C(6);
 
@@ -1034,7 +1034,8 @@ void func_800164D8(void)
     s32 temp_v0;
 
     temp_v0 = a + b + c;
-    func_8001663C(D_800F1A0C[temp_v0], D_800F1A0C[temp_v0 + 1]);
+    func_8001663C(((u8*)&D_800F1A0C)[temp_v0],
+        ((u8*)&D_800F1A0C)[temp_v0 + 1]);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001653C);
@@ -3584,7 +3585,7 @@ void func_80022730(struct AbcObj* arg0)
                     value = 0x11;
                     obj->base.unk16 = value;
 
-                    obj->unk30 = D_800F2F00;
+                    obj->unk30 = D_800F2F00[0];
 
                     if (CONFIG->unk4 != 0) {
                         obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
@@ -3709,7 +3710,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         *(volatile u8*)&obj->base.unk16 = 0x11;
 
-                        obj->unk30 = D_800F2F00;
+                        obj->unk30 = D_800F2F00[0];
 
                         if (CONFIG->unk4 != 0) {
                             obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
@@ -4071,7 +4072,7 @@ void func_80023CA4(struct MiscObj* arg0)
 
 void func_80023CE0()
 {
-    func_80025DA0(0, D_800F30D4[engine_obj.stage * 2][engine_obj.substage]);
+    func_80025DA0(0, D_800F30D4[engine_obj.stage][engine_obj.substage]);
     func_80026118();
 }
 
@@ -4495,7 +4496,7 @@ void func_8002771C(void)
         obj++;
     }
 
-    ptr = &D_800F3188[(engine_obj.stage * 0x14) + (engine_obj.substage * 0xA)];
+    ptr = (u8*)D_800F3188.records + ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) + (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
     D_80173C6C = *ptr++;
     D_80173C6D = *ptr++;
     D_80173C6E = *ptr++;
@@ -4672,7 +4673,7 @@ void func_80027D40(void)
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
-    arg0->unk4 = D_800F32D4[engine_obj.substage << 1][engine_obj.stage << 2];
+    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027DF0);
@@ -4805,7 +4806,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028BF0);
 
 void func_80028DB4(void)
 {
-    u8* dataPtr = D_800F43C8[engine_obj.stage][engine_obj.substage];
+    u8* dataPtr = (u8*)D_800F43C8[engine_obj.stage][engine_obj.substage];
 
     while (dataPtr[3] != 0xFF) {
         dataPtr[0] &= 0x70;
@@ -4824,7 +4825,7 @@ void func_80028F58(void)
         background_objects[0].y_pos.i.hi - 0x30,
         background_objects[0].y_pos.i.hi + 0x120,
         0);
-    ptr = D_800F4430 + engine_obj.stage * 2;
+    ptr = (s32*)&D_800F4430[engine_obj.stage][0];
     func_800292D0(*(ptr + engine_obj.substage));
 }
 

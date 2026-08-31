@@ -36,15 +36,15 @@ void func_80029E1C(struct GameInfo* arg0)
         obj->base.id = 0;
         obj->base.unk2 = -1;
         if (D_80141BE0 != 0) {
-            obj->unk50 = &D_800F4568;
+            obj->unk50 = D_800F4568;
         } else {
-            obj->unk50 = &D_800F457C;
+            obj->unk50 = D_800F457C;
         }
         obj->base.x_pos.i.hi = 0x38;
     }
 
     if (D_80141BE0 != 0) {
-        var_s1 = &D_800F4508;
+        var_s1 = D_800F4508;
     } else {
         var_s1 = D_800F4560[engine_obj.cur_character];
     }
@@ -63,9 +63,9 @@ void func_80029E1C(struct GameInfo* arg0)
         var_s1 += 3;
     }
 
-    var_s1 = &D_800F457C;
+    var_s1 = D_800F457C;
     if (D_80141BE0 != 0) {
-        var_s1 = &D_800F4568;
+        var_s1 = D_800F4568;
     }
     if (var_s1[1] != 7) {
         do {
@@ -723,7 +723,7 @@ s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)
     var_y = (temp_v1->y_pos.i.hi + arg2) / 256;
     temp = var_x + (arg0 * layout_size + layout_width * var_y);
 
-    return *(*(u8**)0x1F800004 + temp);
+    return SP_LAYOUT_DATA[temp];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002BB80);
@@ -1242,8 +1242,8 @@ void func_8002F1B4(struct EngineObj* arg0)
         return;
     }
     arg0->unk2++;
-    D_8013B80C = D_800F4830[arg0->unkE];
-    func_8002217C(D_800F4776[arg0->unkE], 0xFF, 0);
+    D_8013B80C = D_800F4834[arg0->unkE - 1];
+    func_8002217C(D_800F474C.briefing_sound_ids[arg0->unkE], 0xFF, 0);
 }
 
 // briefing_room_state_9_update_funcs state 1

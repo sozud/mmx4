@@ -1,10 +1,11 @@
 colorama
 crunch64
 levenshtein
-n64img
+n64img==0.3.3
 ninja
 pygfxd
-spimdisasm>=1.28.1,<2.0.0
-splat64
+spimdisasm==1.26.0
+rabbitizer==1.11.0
+splat64==0.24.6
 tabulate
 watchdog

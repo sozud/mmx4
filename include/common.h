@@ -34,6 +34,172 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/LIBPRESS.H"
 
 #include "scratchpad.h"
+#include "archive_memory.h"
+
+union MainPaletteData {
+    u8 raw[0x200];
+    struct {
+        u8 preceding_palettes[0xA0];
+        u16 dialogue_palette[0x20];
+        u8 trailing_palettes[0x120];
+    };
+};
+
+struct DialogueGlyph {
+    u8 frame;
+    u8 character;
+    u8 x;
+    u8 y;
+};
+
+struct DialogueGlyphData {
+    u16 count;
+    u16 active;
+    struct DialogueGlyph glyphs[60];
+};
+
+union PlayerChargeData {
+    struct {
+        s8 animation_indices[6];
+        s8 initial_thresholds[3];
+        s8 linked_thresholds[15];
+    } charge;
+    struct {
+        s8 health_divisors[18];
+        s8 alignment_padding[6];
+    } hud;
+};
+
+struct CdImageOrigin {
+    u16 x, y;
+};
+struct HudSpriteOrigin {
+    s16 x, y;
+    u16 clut;
+};
+struct StageObjectMarginData {
+    u16 margins[5];
+    u16 alignment_padding;
+};
+struct MainFlags {
+    s32 unk0;
+};
+struct MainBssState {
+    struct MainFlags flags;
+    s8 transition[4];
+    u8 character_mode;
+    u8 alignment_padding[3];
+};
+struct FadeState {
+    s16 unk0, unk2;
+    u16 unk4, alignment_padding;
+};
+struct ArchiveSelectionData {
+    u8 prefix[8];
+    u8 archive_ids[124];
+};
+union CdSectorBuffer {
+    u8 sectors[16][0x800];
+    u32 words[0x2000];
+};
+struct MissionSelectData {
+    u8 stage_order[12];
+    u8 route_a[8];
+    u8 route_b[8];
+    u16 route_a_positions[4];
+    u16 route_b_positions[3];
+    u16 briefing_sound_ids[11];
+};
+struct TitleObjectInit {
+    s16 x, y;
+    s8 sprite, flags;
+};
+struct SearchLightInit {
+    s16 vertices[8];
+    u16 extent;
+};
+struct SearchLightColorLookup {
+    u16 values[3];
+    u16 alignment;
+};
+struct SearchLightIntensityLookup {
+    u8 values[3];
+    u8 alignment;
+};
+struct SearchLightSpawner {
+    u8 active, type, reserved, background_index;
+    s16 x, y;
+};
+struct CharacterSelectPosition {
+    s16 x, y;
+};
+struct TileEffectRecord {
+    u8 layer;
+    u8 pad1[3];
+    u8 packed_count;
+    u8 pad5;
+    s16 x, y;
+    u16 padA;
+    u16* tiles;
+    u32 has_next;
+};
+struct ArchivePathData {
+    s8 stage_archive_indices[12];
+    char paths[163][64];
+};
+struct VisualAttachmentOffset {
+    s16 x, y;
+};
+struct VisualAttachmentInit {
+    u8 archive_slot, animation, sound;
+};
+struct VisualSpawnOffset {
+    s8 x, y;
+};
+struct VisualBounds {
+    s16 x, y;
+};
+struct CdCompletionSlot {
+    u8 pending, callback;
+    u16 pad2;
+    u32 callback_arg;
+    u16 transfer_pending, padA;
+};
+typedef char CdCompletionSlot_must_be_12_bytes[sizeof(struct CdCompletionSlot) == 12 ? 1 : -1];
+struct BackgroundCameraModePair {
+    u8 primary, secondary;
+};
+struct PlayerGaugePosition {
+    s16 x;
+    u16 bottom;
+};
+struct BackgroundLayoutConfig {
+    u8 object_ids[4];
+    u8 layer_ids[3][2];
+};
+struct BackgroundLayoutConfigData {
+    struct BackgroundLayoutConfig records[33];
+    u8 alignment_padding[2];
+};
+struct Checkpoint {
+    s16 x, y;
+    s16 bg0_x, bg0_y, bg1_x, bg1_y, bg2_x, bg2_y;
+    s16 bg0_right, bg0_bottom, bg0_left, bg0_top;
+    s16 facing;
+    s16 bg1_off_x, bg1_off_y, bg2_off_x, bg2_off_y;
+    s16 player_unkBE;
+};
+struct StageObjectRecord {
+    u8 flags, id, subtype, object_type;
+    s16 x, y;
+};
+struct BootTransitionDataRegion {
+    u8 preceding_record_tail[3];
+    u8 stage_map[9];
+} __attribute__((packed));
+
+extern struct MissionSelectData D_800F474C;
+extern union PlayerChargeData D_800F8BE0;
 
 typedef union {
     s32 val;
@@ -474,13 +640,13 @@ struct ReadyTextExt {
 };
 
 struct TitleLogoExt {
-    s32 unk50;
+    struct MiscObj* unk50;
     u8 palette_shift_speed; // 0x54
     u8 palette_shift_value; // 0x55
     s8 unk56;
     u8 unk57;
-    s32 palette1; // 0x58
-    s32 palette2; // 0x5C
+    s32* palette1;
+    s32* palette2;
 };
 
 struct SelectACharacterExt {
@@ -1168,8 +1334,7 @@ struct RectPtrPair {
 };
 
 extern struct QuadObj g_QuadObjects[0x20];
-extern s8 D_800EE538;
-extern s8 D_800EE54C[];
+extern struct ArchivePathData D_800EE54C;
 extern u8 D_800F8B30[];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
@@ -1182,28 +1347,23 @@ extern s8 D_800F8CCC[];
 extern s8 D_800F8CE4[];
 extern s8 D_800F8CFC[];
 extern s8 D_800F8D14[];
-extern s16 D_8010A1AC[];
-extern s16 D_8010A1AE[];
-extern s16 D_8010A1B4[];
-extern s16 D_8010A1B6[];
-extern u8 D_8010A1BC[];
-extern u8 D_8010A1BD[];
-extern u8 D_8010A1BE[];
-extern void* D_8010A4C0;
+extern struct VisualAttachmentOffset D_8010A1AC[2];
+extern struct VisualAttachmentOffset D_8010A1B4[2];
+extern struct VisualAttachmentInit D_8010A1BC[4];
+extern const u32* D_8010A4C0[3];
 extern u8 D_8010A4F8[];
 extern u8 D_8010A504[];
 extern u16 D_8010A588[];
-extern u8 D_8010A590[];
-extern u8 D_8010A594[];
-extern s16 D_8010A598[];
-extern s16 D_8010A5A0[];
-extern s16 D_8010A5A2[];
+extern u8 D_8010A590[4];
+extern u8 D_8010A594[4];
+extern s16 D_8010A598[4];
+extern struct VisualBounds D_8010A5A0[4];
 extern u8 D_8010A5B8[];
-extern s32* D_8010AE0C[];
-extern s8* D_8010E4EC[];
-extern s8* D_8010E514[];
-extern s8* D_8010E538[];
-extern s8* D_8010E55C[];
+extern u16** D_8010AE0C[26];
+extern u32* D_8010E4EC[];
+extern u32* D_8010E514[];
+extern u32* D_8010E538[];
+extern u32* D_8010E55C[];
 extern s8* D_8010ECD4[];
 extern s8 D_8010FE38[];
 extern u8 D_8010FED4[];
@@ -1213,8 +1373,8 @@ extern u8 D_8011A030[];
 extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
-extern void* D_8011BF40;
-extern void* D_8011C0E4;
+extern u32* D_8011BF40[54];
+extern u32* D_8011C0E4[3];
 extern s8 D_80141BDC[];
 extern s8 D_80141BDE[];
 extern u8 D_80141BDF[];
@@ -1228,7 +1388,7 @@ extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
 extern u8 layout_width;
 extern u16 layout_size;
-extern void (*engine_update_funcs[1])(void*);
+extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
 extern u8 D_800F2180[];
 extern u8 D_800F21A0[];
@@ -1236,14 +1396,14 @@ extern s16 D_800F21DC[];
 extern u8 D_800F21F8[];
 extern u8 D_800F22D0[];
 extern u8 D_800F22E0[];
-extern void* D_800F2300;
-extern void* D_800F2328;
+extern u8 D_800F2300[16];
+extern u8 D_800F2328[16];
 extern RECT D_800F2428;
 extern RECT D_800F2430;
 extern u8 D_800F2468[];
 extern u8 D_800F247C[];
 extern u8 D_800F2490[];
-extern u8 D_800F32D4[1][1];
+extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern s32 D_800EE458;
 extern s32 D_8012F490;
 extern s8 D_80173C6C;
@@ -1256,21 +1416,22 @@ extern u8 D_80137DDC;
 extern s32 D_8013BD44;
 extern u8 D_8013BD40;
 extern s16 D_80141BD2;
-extern s8 D_800F3188[];
-extern s32 D_800F4430[];
-extern u8* D_800F43C8[][2];
+extern struct BackgroundLayoutConfigData D_800F3188;
+extern struct StageObjectRecord* D_800F4430[13][2];
+extern struct StageObjectRecord* D_800F43C8[13][2];
 extern u8* D_8010FFDC[][2];
 extern u8 layout_height;
 extern u16 D_80166C08;
 extern u16 D_80166C0A;
 extern s8 D_800F8BE9[];
-extern u8* D_800FB0EC;
+extern u8 D_800FB0EC[8];
 extern void (*D_800FB104[])();
 extern u8 D_8010B465;
-extern s32 D_800F2CA4[];
-extern struct MiscUnk50_1** D_800F2DD8[];
-extern s32 D_800F2EE8[];
-extern s32 D_800F2F00;
+extern u8 x_ready_text_flags[];
+#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags + 0x10))
+extern struct MiscUnk50_1* const* D_800F2DD8[];
+extern const u32* const* D_800F2EE8[];
+extern const u32* const* D_800F2F00[];
 extern struct MiscObj* D_801397BC;
 extern struct MiscObj* D_801397C0;
 extern struct MiscObj* D_801397C4;
@@ -1331,9 +1492,9 @@ extern s32 D_801395E8;
 extern volatile s32 D_80139634;
 extern struct BaseObj* D_80139690;
 extern void (*D_800F43A8[1])(s32);
-extern void (*g_TitleScalingXUpdateFuncs[1])();
-extern void (*D_8010B4C4[1])();
-extern void (*D_8010BEC8[1])();
+extern void (*g_TitleScalingXUpdateFuncs[])();
+extern void (*D_8010B4C4[])();
+extern void (*D_8010BEC8[])();
 extern s8 D_801F6018;
 extern s8 D_801F6019;
 extern s8 D_801F604F;
@@ -1347,14 +1508,14 @@ extern s16 D_8016DEA2;
 extern s16 D_8016DEA4;
 extern struct GameThread* D_801F8300;
 extern u16 D_801419BE[];
-extern void (*g_MegamanInBriefingRoomUpdateFuncs[1])();
-extern void (*g_TitleUpdateFuncs[1])();
-extern void (*D_8010EB84[1])();
-extern void (*g_SelectACharacterUpdateFuncs[1])();
+extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
+extern void (*g_TitleUpdateFuncs[])();
+extern void (*D_8010EB84[4])();
+extern void (*g_SelectACharacterUpdateFuncs[3])();
 extern struct Unk main_objects[0x30]; // D_8013BED0
-extern void (*g_SearchLightUpdateFuncs[1])();
-extern void (*D_8010FC84[1])();
-extern void (*g_TitleUpdate2Funcs[1])(struct QuadObj*);
+extern void (*g_SearchLightUpdateFuncs[3])();
+extern void (*D_8010FC84[])();
+extern void (*g_TitleUpdate2Funcs[])();
 extern u8 D_8013B7D0;
 extern u8 D_8013B7D8;
 extern u8 D_8013B7DC;
@@ -1386,7 +1547,7 @@ extern struct LayerObj layer_objects[4];
 extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
-extern void (*ReadyTextUpdateFuncs[1])(void);
+extern void (*ReadyTextUpdateFuncs[3])();
 extern s32 D_80137DC4;
 extern s32 D_80137DD0;
 extern u32* D_801406A8;
@@ -1453,7 +1614,7 @@ extern s32 D_80139684;
 extern s32 D_80139688;
 extern s32 D_80173C80;
 extern u8 D_80173C84;
-extern void (*D_8010EBB4[1])();
+extern void (*D_8010EBB4[16])();
 extern void (*D_8010EB98[])();
 extern void (*D_8010EBA0[])();
 extern u8 need_palette_load;
@@ -1461,7 +1622,7 @@ extern void (*D_8010EBA8[])();
 extern u8 D_801721B8;
 extern s8 D_801721F7;
 extern void (*D_8010FC90[])();
-extern s32 D_8010B1F8[];
+extern struct Unk14* D_8010B1F8[];
 extern s32 D_8010B23C[][4];
 extern s32 D_8013E188[4];
 // extern s32 D_8013E18C;
@@ -1478,18 +1639,31 @@ extern s16 g_FilterAmountB;
 extern s16 g_FilterAmountG;
 extern u16 controller_state;
 extern s8 D_801419FC;
-extern void* D_800F4508;
+extern u8 D_800F4508[0x20];
 extern u8* D_800F4560[];
-extern void* D_800F4568;
-extern void* D_800F457C;
-extern s32 D_800F4830[];
-extern u16 D_800F4776[];
+extern u8 D_800F4568[0x14];
+extern u8 D_800F457C[0x14];
+extern u8* D_800F4834[10];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
 extern struct Prim D_800EE504[];
 extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
-extern u8 D_800F30D4[][1]; // unknown size
-extern u8 D_800F1A0C[1];
+extern u8 D_800F30D4[16][2];
+struct XaSequenceParams {
+    u8 sequence, volume;
+};
+struct XaSequenceData {
+    struct XaSequenceParams stage[16][2][2];
+    struct XaSequenceParams alternate[16];
+};
+extern struct XaSequenceData D_800F1A0C;
+extern u8* D_80141F00;
+extern u8* cur_draw_info_dispenv_screen_w;
+extern u8* cur_draw_info_drawenv;
+
+void func_8001293C(void);
+void TeleportRelatedObjectUpdate(struct EffectObj*);
+void func_8009ED70(struct Unk*);
 extern s32* D_8012F4B4[];
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];

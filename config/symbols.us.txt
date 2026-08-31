@@ -750,3 +750,28 @@ decompress_gfx = 0x80016FF4;
 decompress_player_gfx = 0x80015ECC;
 player_gfx_buf_0 = 0x8016DEA8;
 player_gfx_buf_1 = 0x8016EEA8;
+
+D_800F1A0C = 0x800F1A0C; // size:0xA0 allow_addend:true
+
+D_800F1660 = 0x800F1660; // size:0x200 allow_addend:true
+D_800F3124 = 0x800F3124; // size:0x8 allow_addend:true
+D_800EE480 = 0x800EE480; // size:0x84 allow_addend:true
+x_ready_text_flags = 0x800F2C94; // size:0x5C allow_addend:true
+D_8010E71C = 0x8010E71C; // size:0x84 allow_addend:true
+D_8010F600 = 0x8010F600; // size:0x6C allow_addend:true
+D_8010B464 = 0x8010B464; // size:0x60 allow_addend:true
+D_8010E968 = 0x8010E968; // size:0x160 allow_addend:true
+D_8010EB54 = 0x8010EB54; // size:0x24 allow_addend:true
+D_8010EB78 = 0x8010EB78; // size:0xC allow_addend:true
+D_800F474C = 0x800F474C; // size:0x40 allow_addend:true
+D_800F8BE0 = 0x800F8BE0; // size:0x18 allow_addend:true
+D_800F32D4 = 0x800F32D4; // size:0x40 allow_addend:true
+D_800F30F4 = 0x800F30F4; // size:0x30 allow_addend:true
+
+D_800EE538 = 0x800EE538;
+D_800F2CA4 = 0x800F2CA4;
+D_800F32D5 = 0x800F32D5;
+D_800F4776 = 0x800F4776;
+D_800F4830 = 0x800F4830;
+D_800F8BE9 = 0x800F8BE9;
+D_8010B465 = 0x8010B465;
