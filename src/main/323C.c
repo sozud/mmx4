@@ -1035,7 +1035,7 @@ void func_800164D8(void)
 
     temp_v0 = a + b + c;
     func_8001663C(((u8*)&D_800F1A0C)[temp_v0],
-                 ((u8*)&D_800F1A0C)[temp_v0 + 1]);
+        ((u8*)&D_800F1A0C)[temp_v0 + 1]);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001653C);
@@ -4496,9 +4496,7 @@ void func_8002771C(void)
         obj++;
     }
 
-    ptr = (u8*)D_800F3188.records +
-          ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) +
-           (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
+    ptr = (u8*)D_800F3188.records + ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) + (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
     D_80173C6C = *ptr++;
     D_80173C6D = *ptr++;
     D_80173C6E = *ptr++;

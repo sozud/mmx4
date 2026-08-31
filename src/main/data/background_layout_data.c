@@ -1,7 +1,15 @@
 #include "common.h"
 
 #define BACKGROUND_CONFIG(a, b, c, d, e, f, g, h, i, j) \
-    { { a, b, c, d }, { { e, f }, { g, h }, { i, j } } }
+    {                                                   \
+        { a, b, c, d },                                 \
+        {                                               \
+            { e, f }, { g, h },                         \
+            {                                           \
+                i, j                                    \
+            }                                           \
+        }                                               \
+    }
 
 struct BackgroundLayoutConfigData D_800F3188 = {
     {

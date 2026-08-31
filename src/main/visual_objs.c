@@ -105,8 +105,7 @@ void func_800AEF18(struct VisualObj* arg0)
         var_a1 = 2;
     }
     temp_s0 = var_a1;
-    arg0->unk3C = (u8*)SP_TABLE_1C +
-                  ((u32*)SP_TABLE_1C)[D_8010A1BC[temp_s0].archive_slot];
+    arg0->unk3C = (u8*)SP_TABLE_1C + ((u32*)SP_TABLE_1C)[D_8010A1BC[temp_s0].archive_slot];
     arg0->unk30 = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7802;
@@ -748,7 +747,7 @@ void func_800B28CC(struct VisualObj* arg0)
     }
 
     func_8002B318(arg0, D_8010A5A0[arg0->base.unk2].x,
-                  D_8010A5A0[arg0->base.unk2].y);
+        D_8010A5A0[arg0->base.unk2].y);
 }
 
 void func_800B2A3C(struct VisualObj* arg0)

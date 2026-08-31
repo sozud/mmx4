@@ -70,19 +70,38 @@ union PlayerChargeData {
     } hud;
 };
 
-struct CdImageOrigin { u16 x, y; };
-struct HudSpriteOrigin { s16 x, y; u16 clut; };
-struct StageObjectMarginData { u16 margins[5]; u16 alignment_padding; };
-struct MainFlags { s32 unk0; };
+struct CdImageOrigin {
+    u16 x, y;
+};
+struct HudSpriteOrigin {
+    s16 x, y;
+    u16 clut;
+};
+struct StageObjectMarginData {
+    u16 margins[5];
+    u16 alignment_padding;
+};
+struct MainFlags {
+    s32 unk0;
+};
 struct MainBssState {
     struct MainFlags flags;
     s8 transition[4];
     u8 character_mode;
     u8 alignment_padding[3];
 };
-struct FadeState { s16 unk0, unk2; u16 unk4, alignment_padding; };
-struct ArchiveSelectionData { u8 prefix[8]; u8 archive_ids[124]; };
-union CdSectorBuffer { u8 sectors[16][0x800]; u32 words[0x2000]; };
+struct FadeState {
+    s16 unk0, unk2;
+    u16 unk4, alignment_padding;
+};
+struct ArchiveSelectionData {
+    u8 prefix[8];
+    u8 archive_ids[124];
+};
+union CdSectorBuffer {
+    u8 sectors[16][0x800];
+    u32 words[0x2000];
+};
 struct MissionSelectData {
     u8 stage_order[12];
     u8 route_a[8];
@@ -91,15 +110,29 @@ struct MissionSelectData {
     u16 route_b_positions[3];
     u16 briefing_sound_ids[11];
 };
-struct TitleObjectInit { s16 x, y; s8 sprite, flags; };
-struct SearchLightInit { s16 vertices[8]; u16 extent; };
-struct SearchLightColorLookup { u16 values[3]; u16 alignment; };
-struct SearchLightIntensityLookup { u8 values[3]; u8 alignment; };
+struct TitleObjectInit {
+    s16 x, y;
+    s8 sprite, flags;
+};
+struct SearchLightInit {
+    s16 vertices[8];
+    u16 extent;
+};
+struct SearchLightColorLookup {
+    u16 values[3];
+    u16 alignment;
+};
+struct SearchLightIntensityLookup {
+    u8 values[3];
+    u8 alignment;
+};
 struct SearchLightSpawner {
     u8 active, type, reserved, background_index;
     s16 x, y;
 };
-struct CharacterSelectPosition { s16 x, y; };
+struct CharacterSelectPosition {
+    s16 x, y;
+};
 struct TileEffectRecord {
     u8 layer;
     u8 pad1[3];
@@ -110,22 +143,40 @@ struct TileEffectRecord {
     u16* tiles;
     u32 has_next;
 };
-struct ArchivePathData { s8 stage_archive_indices[12]; char paths[163][64]; };
-struct VisualAttachmentOffset { s16 x, y; };
-struct VisualAttachmentInit { u8 archive_slot, animation, sound; };
-struct VisualSpawnOffset { s8 x, y; };
-struct VisualBounds { s16 x, y; };
+struct ArchivePathData {
+    s8 stage_archive_indices[12];
+    char paths[163][64];
+};
+struct VisualAttachmentOffset {
+    s16 x, y;
+};
+struct VisualAttachmentInit {
+    u8 archive_slot, animation, sound;
+};
+struct VisualSpawnOffset {
+    s8 x, y;
+};
+struct VisualBounds {
+    s16 x, y;
+};
 struct CdCompletionSlot {
     u8 pending, callback;
     u16 pad2;
     u32 callback_arg;
     u16 transfer_pending, padA;
 };
-typedef char CdCompletionSlot_must_be_12_bytes[
-    sizeof(struct CdCompletionSlot) == 12 ? 1 : -1];
-struct BackgroundCameraModePair { u8 primary, secondary; };
-struct PlayerGaugePosition { s16 x; u16 bottom; };
-struct BackgroundLayoutConfig { u8 object_ids[4]; u8 layer_ids[3][2]; };
+typedef char CdCompletionSlot_must_be_12_bytes[sizeof(struct CdCompletionSlot) == 12 ? 1 : -1];
+struct BackgroundCameraModePair {
+    u8 primary, secondary;
+};
+struct PlayerGaugePosition {
+    s16 x;
+    u16 bottom;
+};
+struct BackgroundLayoutConfig {
+    u8 object_ids[4];
+    u8 layer_ids[3][2];
+};
 struct BackgroundLayoutConfigData {
     struct BackgroundLayoutConfig records[33];
     u8 alignment_padding[2];
@@ -1598,7 +1649,9 @@ extern struct Prim D_800EE504[];
 extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[16][2];
-struct XaSequenceParams { u8 sequence, volume; };
+struct XaSequenceParams {
+    u8 sequence, volume;
+};
 struct XaSequenceData {
     struct XaSequenceParams stage[16][2][2];
     struct XaSequenceParams alternate[16];

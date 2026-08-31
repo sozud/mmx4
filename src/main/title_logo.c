@@ -154,8 +154,7 @@ void func_800CDB84(struct MiscObj* arg0)
                 *dst++ = *src++;
             }
             need_palette_load |= 1;
-            arg0->ext.title_logo.palette1 =
-                (s32*)((u8*)arg0->ext.title_logo.palette1 + 0x40);
+            arg0->ext.title_logo.palette1 = (s32*)((u8*)arg0->ext.title_logo.palette1 + 0x40);
         } else {
             arg0->base.id = 0x13;
             arg0->base.unk2 = 0;

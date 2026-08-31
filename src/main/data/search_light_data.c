@@ -13,12 +13,16 @@ s32 D_8010F66C[3] = { 0x28000, 0x20000, 0x10000 };
 s32 D_8010F678[3] = { 0x2000, 0x1000, 0x0400 };
 
 struct SearchLightColorLookup D_8010F684 = {
-    { 0x33ff, 0x179e, 0x0e9c }, 0,
+    { 0x33ff, 0x179e, 0x0e9c },
+    0,
 };
 struct SearchLightIntensityLookup D_8010F68C = {
-    { 0x10, 0x20, 0x30 }, 0,
+    { 0x10, 0x20, 0x30 },
+    0,
 };
 
 void (*g_SearchLightUpdateFuncs[3])(struct QuadObj*) = {
-    func_800D3AFC, func_800D3C58, func_800D3FBC,
+    func_800D3AFC,
+    func_800D3C58,
+    func_800D3FBC,
 };
