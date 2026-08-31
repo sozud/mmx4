@@ -1112,7 +1112,7 @@ void func_800381FC(struct PlayerObj* arg0)
 
     if ((*(u16*)&arg0->unk7C & 0x10)
         && arg0->unk9B[0] != 2
-        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (((struct PlayerObj*)(ptr + arg0->unk93))->unkA8 >= D_800F8BE9[arg0->unk93])))) {
+        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (((struct PlayerObj*)(ptr + arg0->unk93))->unkA8 >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
         arg0->unk9D = (u8)(arg0->unk9D + 1);
         if (arg0->unk93 == 0) {
             if (arg0->unkB8 == 0) {

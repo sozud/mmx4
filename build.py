@@ -2,6 +2,22 @@ import os
 import subprocess
 import ninja_syntax
 
+
+def anchor_noload_bss(linker_script_path):
+    with open(linker_script_path) as linker_script:
+        linker_script_text = linker_script.read()
+
+    generated = ".main_bss (NOLOAD) : SUBALIGN(1)"
+    anchored = ".main_bss main_DATA_END (NOLOAD) : SUBALIGN(1)"
+    if anchored not in linker_script_text:
+        if generated not in linker_script_text:
+            raise RuntimeError("unexpected Splat NOLOAD BSS linker section")
+        linker_script_text = linker_script_text.replace(generated, anchored, 1)
+        with open(linker_script_path, "w") as linker_script:
+            linker_script.write(linker_script_text)
+
+    return linker_script_text
+
 def add_lib(srcs, output_dir, lib_name, flags, folder):
     for src in srcs:
         filename_without_extension = os.path.splitext(os.path.basename(src))[0]
@@ -125,7 +141,7 @@ ninja.rule('link',
            'mipsel-linux-gnu-ld -Map=build/us/main.map -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt $in -o $out')
 
 ninja.rule('objcopy',
-           'mipsel-linux-gnu-objcopy $in -O binary $out')
+           'mipsel-linux-gnu-objcopy --pad-to=0x120000 --gap-fill=0 $in -O binary $out')
 
 ninja.rule('copy',
            'cp $in $out')
@@ -143,7 +159,9 @@ def build_35():
     ]
 
     directory = 'src/main'
-    srcs.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    for root, _, files in os.walk(directory):
+        srcs.extend(os.path.join(root, f) for f in files
+                    if os.path.isfile(os.path.join(root, f)))
 
     linker_inputs = []
     output_dir = "build/us"
@@ -158,6 +176,10 @@ def build_35():
 
     for root, dirs, files in os.walk('asm/us/main/psxsdk'):
         asms.extend([os.path.join(root, f) for f in files if os.path.isfile(os.path.join(root, f))])
+
+    linker_script_text = anchor_noload_bss('main.ld')
+    asms = [src for src in asms
+            if f"{output_dir}/{os.path.splitext(src)[0]}.s.o" in linker_script_text]
 
     add_asm(asms, output_dir, linker_inputs)
 

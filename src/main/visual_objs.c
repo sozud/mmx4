@@ -60,11 +60,11 @@ void func_800AEC9C(struct Unk* arg0, struct Unk* arg1)
 {
     arg0->base.unk15 = arg1->base.unk15;
     if (arg0->base.unk15 == 0) {
-        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi + D_8010A1AC[arg1->base.unk2 * 2];
+        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi + D_8010A1AC[arg1->base.unk2].x;
     } else {
-        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi - D_8010A1AC[arg1->base.unk2 * 2];
+        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi - D_8010A1AC[arg1->base.unk2].x;
     }
-    arg0->base.y_pos.i.hi = arg1->base.y_pos.i.hi + D_8010A1AE[arg1->base.unk2 * 2];
+    arg0->base.y_pos.i.hi = arg1->base.y_pos.i.hi + D_8010A1AC[arg1->base.unk2].y;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/visual_objs", func_800AED18);
@@ -73,11 +73,11 @@ void func_800AEE5C(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     arg0->base.unk15 = arg1->base.unk15;
     if (arg0->base.unk15 == 0) {
-        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi + D_8010A1B4[arg1->base.unk2 * 2];
+        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi + D_8010A1B4[arg1->base.unk2].x;
     } else {
-        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi - D_8010A1B4[arg1->base.unk2 * 2];
+        arg0->base.x_pos.i.hi = arg1->base.x_pos.i.hi - D_8010A1B4[arg1->base.unk2].x;
     }
-    arg0->base.y_pos.i.hi = arg1->base.y_pos.i.hi + D_8010A1B6[arg1->base.unk2 * 2];
+    arg0->base.y_pos.i.hi = arg1->base.y_pos.i.hi + D_8010A1B4[arg1->base.unk2].y;
 }
 
 void func_800AEED8(struct VisualObj* arg0)
@@ -104,8 +104,9 @@ void func_800AEF18(struct VisualObj* arg0)
     if (arg0->base.unk2 == 0x14) {
         var_a1 = 2;
     }
-    temp_s0 = var_a1 * 3;
-    arg0->unk3C = *(u8**)0x1F80001C + *(D_8010A1BC[temp_s0] + *(u32**)0x1F80001C);
+    temp_s0 = var_a1;
+    arg0->unk3C = (u8*)SP_TABLE_1C +
+                  ((u32*)SP_TABLE_1C)[D_8010A1BC[temp_s0].archive_slot];
     arg0->unk30 = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7802;
@@ -115,8 +116,8 @@ void func_800AEF18(struct VisualObj* arg0)
     func_800AF1AC(arg0);
     arg0->base.x_pos.i.lo = 0;
     arg0->base.y_pos.i.lo = 0;
-    func_80015D60(arg0, D_8010A1BD[temp_s0]);
-    func_8001540C(1, D_8010A1BE[temp_s0], arg0);
+    func_80015D60(arg0, D_8010A1BC[temp_s0].animation);
+    func_8001540C(1, D_8010A1BC[temp_s0].sound, arg0);
     arg0->base.state++;
     func_8002B318(arg0, 0x40, 0x20);
 }
@@ -746,7 +747,8 @@ void func_800B28CC(struct VisualObj* arg0)
         decompress_player_gfx(arg0, 0x140, D_8010A598[arg0->base.unk2]);
     }
 
-    func_8002B318(arg0, D_8010A5A0[arg0->base.unk2 * 2], D_8010A5A2[arg0->base.unk2 * 2]);
+    func_8002B318(arg0, D_8010A5A0[arg0->base.unk2].x,
+                  D_8010A5A0[arg0->base.unk2].y);
 }
 
 void func_800B2A3C(struct VisualObj* arg0)
