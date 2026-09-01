@@ -38,6 +38,114 @@ jobs:
       - name: Build
         run: cmake --build build-linux --parallel
 
+  oracle-scene-suite:
+    name: Capture and compare scene oracles
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - name: Clone main repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Clone Mednafen oracle
+        uses: actions/checkout@v4
+        with:
+          repository: sozud/mednafen-git
+          ref: mmx4-oracle
+          path: tools/mednafen
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            build-essential cmake ninja-build pkg-config zlib1g-dev \
+            libasound2-dev libjack-jackd2-dev \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
+            libxfixes-dev libxi-dev libxss-dev libxtst-dev
+      - name: Get game dependencies
+        uses: actions/checkout@v4
+        with:
+          repository: sozud/mmx4-deps
+          ref: main
+          token: ${{ secrets.MMX4_DEPS_TOKEN }}
+          path: disks/dependencies
+      - name: Extract game dependencies
+        working-directory: disks
+        run: cat dependencies/* | tar -zxf -
+      - name: Locate oracle inputs
+        run: |
+          test -f disks/mmx4.us.cue
+          oracle_bios=$(find disks -type f -iname 'SCPH1001.BIN' -print -quit)
+          test -n "$oracle_bios"
+          cp "$oracle_bios" tools/SCPH1001.BIN
+      - name: Configure Linux port
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build Linux port
+        run: cmake --build build-linux --parallel
+      - name: Configure Mednafen oracle
+        working-directory: tools
+        run: |
+          mkdir mednafen-build
+          cd mednafen-build
+          ../mednafen/configure \
+            --enable-libxxx-mode \
+            --disable-nls \
+            --disable-cjk-fonts \
+            --disable-fancy-scalers \
+            --disable-apple2 \
+            --disable-gb \
+            --disable-gba \
+            --disable-lynx \
+            --disable-md \
+            --disable-nes \
+            --disable-ngp \
+            --disable-pce \
+            --disable-pce-fast \
+            --disable-pcfx \
+            --enable-psx \
+            --disable-sasplay \
+            --disable-sms \
+            --disable-snes \
+            --disable-snes-faust \
+            --disable-ss \
+            --disable-ssfplay \
+            --disable-vb \
+            --disable-wswan \
+            --without-libflac
+      - name: Build Mednafen oracle
+        run: make --directory tools/mednafen-build --jobs "$(nproc)"
+      - name: Capture Mednafen scenes
+        run: |
+          python3 tools/oracle/run_mednafen_scene_suite.py \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --disc disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --output mednafen-object-changes
+      - name: Capture Linux port scenes
+        run: |
+          python3 tools/oracle/run_pc_scene_suite.py \
+            --binary build-linux/mmx4_pc \
+            --output pc-object-changes
+      - name: Compare scene captures
+        continue-on-error: true
+        run: |
+          mkdir -p scene-comparison
+          python3 tools/oracle/compare_scene_suite.py \
+            --mednafen mednafen-object-changes \
+            --pc pc-object-changes \
+            --output scene-comparison | tee scene-comparison/summary.txt
+      - name: Upload oracle artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scene-oracle-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            mednafen-object-changes
+            pc-object-changes
+            scene-comparison
+
   build-and-test:
     strategy:
       matrix:
