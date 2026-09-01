@@ -1,6 +1,7 @@
 #include "common.h"
 
-void dmy_nothing1(short arg0, short arg1, unsigned char arg2, unsigned char arg3) {
+void dmy_nothing1(short arg0, short arg1, unsigned char arg2, unsigned char arg3)
+{
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libsnd/dmyprint", dmy_SsNoteOn);

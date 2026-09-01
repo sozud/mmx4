@@ -9,8 +9,8 @@
             "\t.end\t" #NAME "\n"                   \
             ".popsection");
 
-#define INCLUDE_RODATA(FOLDER, NAME)                    \
-    __asm__(".pushsection .rodata\n"                    \
+#define INCLUDE_RODATA(FOLDER, NAME)                \
+    __asm__(".pushsection .rodata\n"                \
             ".include \"" FOLDER "/" #NAME ".s\"\n" \
             ".popsection");
 
