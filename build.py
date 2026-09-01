@@ -131,7 +131,7 @@ ninja.rule('cc1_263',
            description='Running cc1 on $out from $in')
 
 ninja.rule('aspsx_263',
-           command='python3 tools/maspsx/maspsx.py --aspsx-version=2.56 $in > $out',
+           command='python3 tools/maspsx/maspsx.py --aspsx-version=2.56 --expand-div $in > $out',
            description='Running aspsx on $out from $in')
 
 ninja.rule('as',
@@ -161,7 +161,7 @@ def build_35():
     directory = 'src/main'
     for root, _, files in os.walk(directory):
         srcs.extend(os.path.join(root, f) for f in files
-                    if os.path.isfile(os.path.join(root, f)))
+                    if f.endswith('.c'))
 
     linker_inputs = []
     output_dir = "build/us"

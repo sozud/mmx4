@@ -16,7 +16,7 @@ void func_800CB634(struct MiscObj* arg0)
     u8 temp_a1 = arg0->base.unk2;
     u8 temp_v1;
 
-    arg0->unk30 = &D_8010E81C;
+    arg0->animation_table = &D_8010E81C;
     arg0->base.bg_offset = -1;
     arg0->base.unk15 = 0;
     arg0->base.unk16 = 3;
@@ -61,7 +61,7 @@ void func_800CB884(struct MiscObj* arg0)
         arg0->unk42 = 0x7804;
         arg0->base.x_pos.i.hi = 0xA0;
         arg0->unk38 = 0;
-        arg0->unk30 = 0;
+        arg0->animation_table = 0;
         arg0->base.unk15 = 0;
         arg0->base.unk16 = 0;
         arg0->base.y_pos.i.hi = 0x78;
@@ -199,7 +199,7 @@ void func_800CBD80(struct MiscObj* arg0)
     arg0->base.on_screen = 1;
     arg0->unk38 = 0;
     arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[2];
-    arg0->unk30 = &D_8010A4C0;
+    arg0->animation_table = &D_8010A4C0;
     arg0->unk40 = 0;
     if (arg0->ext.unk.unk54 != 2) {
         arg0->unk42 = 0x7805;

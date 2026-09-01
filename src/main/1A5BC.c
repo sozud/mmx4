@@ -1,5 +1,8 @@
 #include "common.h"
 
+u8 func_8002B810(s32 arg0, s32 arg1);
+s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
+
 // might also be inlined inside reset_objects
 void func_80029DBC(void)
 {
@@ -705,7 +708,57 @@ u8 func_8002B7B0(struct MiscObj* arg0, s32 arg1, s32 arg2)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B810);
+u8 func_8002B810(s32 arg0, s32 arg1)
+{
+    extern u32 D_800F45E4;
+    extern u32 D_800F45F4;
+    extern u32 D_800F45F8;
+    s32 temp_lo;
+    s16 var_a3, var_a2;
+    u32* ptr;
+
+    var_a2 = -1;
+    if (arg0 < 0) {
+        var_a2 = 1;
+        arg0 = -arg0;
+    }
+    var_a3 = 1;
+    if (arg1 < 0) {
+        var_a3 = -1;
+        arg1 = -arg1;
+    }
+
+    if (arg1 >> 0x10 != 0) {
+        temp_lo = arg0 / (arg1 >> 0x10);
+        if (temp_lo <= 0xFFFF) {
+            ptr = &D_800F45F4;
+            while (temp_lo < *ptr) {
+                ptr--;
+            }
+            arg0 = (u32)((u32)ptr - (u32)&D_800F45E4) >> 2;
+        } else {
+            ptr = &D_800F45F8;
+            while (*ptr < temp_lo) {
+                ptr++;
+            }
+            arg0 = ptr - &D_800F45E4 - 1;
+        }
+    } else {
+        arg0 = 8;
+    }
+
+    if (var_a3 << 0x10 < 0) {
+        if (var_a2 << 0x10 > 0) {
+            if ((s16)arg0 == 8) {
+                return 0;
+            }
+            return 0x18 + arg0;
+        }
+        return 0x18 - arg0;
+    }
+
+    return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B93C);
 
@@ -891,7 +944,81 @@ void func_8002CDD4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CF98);
+s32 func_8002CF98(struct PlayerObj* entity, u8 arg1, s16 arg2, s16 arg3)
+{
+    s32 flag;
+    s16 var_a0;
+    u32 temp_v1;
+    s16 var_v0;
+
+    flag = 0;
+    if (arg1 == 0x10) {
+        flag = 1;
+        entity->base.y_pos.i.hi -= 0x10;
+        arg1 = func_8002D7E4(entity, arg2, arg3 - 0x10);
+    }
+
+    switch (arg1) {
+    case 0x9 ... 0xC:
+    case 0x19 ... 0x1C:
+        var_a0 = arg2 & 0xF;
+        temp_v1 = arg1 & 0xF;
+        if (temp_v1 == 0xA) {
+            var_a0 |= 0x10;
+        }
+        if (temp_v1 == 0xC) {
+            var_a0 += 0x10;
+        }
+        if (temp_v1 >= 0xB) {
+            var_v0 = var_a0 / 2;
+        } else {
+            var_v0 = 0xF - var_a0 / 2;
+        }
+        return func_8002D180(entity, arg3, var_v0, flag);
+    case 0x1 ... 0x8:
+    case 0x11 ... 0x18:
+        var_a0 = arg2 & 0xF;
+        temp_v1 = arg1 & 0xF;
+        if (temp_v1 == 2) {
+            var_a0 |= 0x10;
+        }
+        if (temp_v1 == 6) {
+            var_a0 += 0x10;
+        }
+        if (temp_v1 == 3) {
+            var_a0 += 0x20;
+        }
+        if (temp_v1 == 7) {
+            var_a0 += 0x20;
+        }
+        if (temp_v1 == 4) {
+            var_a0 += 0x30;
+        }
+        if (temp_v1 == 8) {
+            var_a0 += 0x30;
+        }
+        if (temp_v1 >= 5) {
+            var_v0 = var_a0 / 4;
+        } else {
+            var_v0 = 0xF - var_a0 / 4;
+        }
+        return func_8002D180(entity, arg3, var_v0, flag);
+    case 0x21:
+    case 0x22:
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 8;
+        D_8013B804 = -entity->unk6E;
+        return -1;
+    case 0:
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D180);
 
@@ -948,7 +1075,40 @@ s32 func_8002D32C(struct PlayerObj* arg0, s16 arg1, s32 arg2)
     return -1;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D41C);
+s32 func_8002D41C(struct PlayerObj* arg0, s32 arg1, s32 arg2)
+{
+    if (arg2 == 0) {
+        switch (arg1 & 0xFF) {
+        case 0x3E:
+        case 0x3F:
+            arg0->unk79 = 1;
+            return -1;
+        case 0x38:
+        case 0x39:
+        case 0x3A:
+        case 0x3C:
+            return -1;
+        default:
+            return 0;
+        }
+    } else {
+        switch (arg1 & 0xFF) {
+        case 0x3E:
+        case 0x3F:
+            arg0->unk79 = 1;
+            return -1;
+        case 0x21:
+        case 0x22:
+        case 0x38:
+        case 0x39:
+        case 0x3A:
+        case 0x3C:
+            return -1;
+        default:
+            return 0;
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D490);
 
@@ -964,7 +1124,26 @@ s32 func_8002D5E4(struct PlayerObj* arg0, s16 arg1)
     return -1;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D6BC);
+s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
+{
+    switch (arg1) {
+    case 0x38:
+    case 0x3A:
+    case 0x3C:
+        arg0->unk4A = 1;
+        return -1;
+    case 0x39:
+        arg0->unk4A = 0;
+        return -1;
+    case 0x3E:
+    case 0x3F:
+        arg0->unk4A = 0;
+        arg0->unk79 = 1;
+        return -1;
+    default:
+        return 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D724);
 
@@ -1168,7 +1347,7 @@ void func_8002EDD4(struct EngineObj* arg0)
             }
         } else {
         block_12:
-            if ((arg0->stage > 8) || (arg0->stage == 0) || ((((u8)arg0->pad49[0x10] >> (arg0->stage - 1)) & 1) != 0)) {
+            if ((arg0->stage > 8) || (arg0->stage == 0) || ((((u8)arg0->palette_flags >> (arg0->stage - 1)) & 1) != 0)) {
                 arg0->unk1 = 0;
                 arg0->state = (u8)arg0->state + 1;
             } else {

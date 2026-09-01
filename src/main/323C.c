@@ -2688,7 +2688,7 @@ void func_8001FC20(struct EngineObj* arg0)
     }
 
     for (var_v1 = 0; var_v1 < 8; var_v1++) {
-        arg0->unk26[var_v1] = 0;
+        arg0->character_state.bytes[var_v1] = 0;
     }
 
     abc_object.unkC = 0;
@@ -3163,7 +3163,7 @@ void func_80020DEC(u8* arg0, s16 arg1)
 void func_80020ED4(struct EngineObj* arg0)
 {
     arg0->unk7 = 1;
-    arg0->unk2C = 0;
+    arg0->character_state.fields.menu_state = 0;
     func_80029DBC();
     D_80141BDF[0] = 0;
     func_80020DEC(&D_800F2468, 0x40);
@@ -3174,7 +3174,7 @@ void func_80020ED4(struct EngineObj* arg0)
 void func_80020F24(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
-        if (arg0->unk2C == 0) {
+        if (arg0->character_state.fields.menu_state == 0) {
             func_800204CC(D_80141BDC + 3, 1);
             if (controller_state & PADRdown) {
                 func_8001540C(0, 0x22, 0);
@@ -3182,7 +3182,7 @@ void func_80020F24(struct EngineObj* arg0)
                     func_800129F0(8);
                     arg0->unk7 = 2;
                 } else {
-                    arg0->unk2C = 1;
+                    arg0->character_state.fields.menu_state = 1;
                     func_80029DBC();
                     D_80141BDC[3] = 0;
                     func_80020DEC(&D_800F247C, 0x78);
@@ -3192,7 +3192,7 @@ void func_80020F24(struct EngineObj* arg0)
             func_800204CC(D_80141BDC + 3, 1);
             if (controller_state & PADRdown) {
                 func_8001540C(0, 0x22, 0);
-                arg0->unk2C = 0;
+                arg0->character_state.fields.menu_state = 0;
                 if ((u8)D_80141BDC[3] == 1) {
                     arg0->unk7 = 0;
                     if (engine_obj.stage != 0 && engine_obj.unk5F >= 3) {
@@ -3221,7 +3221,7 @@ void func_800210B8(struct EngineObj* arg0)
         arg0->unk6++;
         func_80029DBC();
         arg0->unk7 = 0;
-        arg0->unk2C = 0;
+        arg0->character_state.fields.menu_state = 0;
     }
 }
 
@@ -3535,7 +3535,7 @@ void func_80022730(struct AbcObj* arg0)
                     obj->base.y_pos.i.hi = 0x48;
                     obj->base.unk16 = 0x10;
 
-                    obj->unk30 = D_800F2EE8[engine_obj.cur_character];
+                    obj->animation_table = D_800F2EE8[engine_obj.cur_character];
 
                     if (CONFIG->unk4 != 0) {
                         obj->unk40 = (D_801406A8[CONFIG->unk0 + engine_obj.cur_character + 2] >> 7) + 0xB0;
@@ -3621,7 +3621,7 @@ void func_80022730(struct AbcObj* arg0)
                     value = 0x11;
                     obj->base.unk16 = value;
 
-                    obj->unk30 = D_800F2F00[0];
+                    obj->animation_table = D_800F2F00[0];
 
                     if (CONFIG->unk4 != 0) {
                         obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
@@ -3679,7 +3679,7 @@ void func_80022730(struct AbcObj* arg0)
                         obj->base.x_pos.i.hi = 0xF0;
                         obj->base.y_pos.i.hi = 0x48;
 
-                        obj->unk30 = D_800F2CA4[CONFIG->unk2];
+                        obj->animation_table = D_800F2CA4[CONFIG->unk2];
 
                         if (CONFIG->unk4 != 0) {
                             obj->unk40 = (D_801406A8[CONFIG->unk1] >> 7) + 0xB0;
@@ -3746,7 +3746,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         *(volatile u8*)&obj->base.unk16 = 0x11;
 
-                        obj->unk30 = D_800F2F00[0];
+                        obj->animation_table = D_800F2F00[0];
 
                         if (CONFIG->unk4 != 0) {
                             obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
@@ -3985,7 +3985,7 @@ void func_80023698(struct EngineObj* arg0)
     u8 var_v1;
 
     for (var_v1 = 0; var_v1 < 16; var_v1++) {
-        arg0->unk26[var_v1] = 0;
+        arg0->character_state.bytes[var_v1] = 0;
     }
     arg0->stage = 0xF;
     arg0->substage = 1;
@@ -4292,7 +4292,29 @@ void func_80024E70(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80024F5C);
+void func_80024F5C(struct PlayerObj* arg0)
+{
+    s8 temp_v0_2;
+    s8 temp_s0;
+    s8 temp;
+
+    if (arg0->unk93 != 0) {
+        temp_s0 = arg0->padA9[arg0->unk93 - 1];
+        func_80025588(0x24, 0x29, 0x4F - temp_s0, 0x4F, 0);
+        temp_v0_2 = D_800F8BE0.hud.health_divisors[arg0->unk94[0]];
+        temp = temp_s0 / temp_v0_2;
+        func_80025188(3, (temp / 10) + 0x3B);
+        func_80025188(4, (temp % 10) + 0x3B);
+
+        if (arg0->unk93 == 3) {
+            func_80025188(6, arg0->unk93 + 0x4E);
+        } else {
+            func_80025188(5, arg0->unk93 + 0x4E);
+        }
+
+        func_80025188(2, 0x4E);
+    }
+}
 
 void func_8002509C(struct PlayerObj* arg0)
 {
@@ -4300,7 +4322,7 @@ void func_8002509C(struct PlayerObj* arg0)
     s8 temp_s1;
 
     if (arg0->unkB9 & 0x20) {
-        temp_s0 = arg0->unkA8;
+        temp_s0 = arg0->charge_level;
         func_80025588(0x24, 0x29, 0x4F - temp_s0, 0x4F, 0);
         temp_s1 = temp_s0 / 12;
         func_80025188(3, (temp_s1 / 10) + 0x3B);
@@ -4637,7 +4659,23 @@ void func_80027AAC(struct BackgroundObj* a0)
     a0->x_pos.i.hi = v0 + a0->x_pos.i.hi;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80027AFC);
+void func_80027AFC(struct BackgroundObj* arg0)
+{
+    s16 delta;
+
+    delta = arg0->x_pos.i.hi - arg0->unk14.i.hi;
+    if (delta >= 0) {
+        if (delta >= arg0->unk48) {
+            delta = arg0->unk48;
+        }
+        arg0->x_pos.i.hi = delta + arg0->unk14.i.hi;
+    } else {
+        if (delta < arg0->unk49) {
+            delta = arg0->unk49;
+        }
+        arg0->x_pos.i.hi = delta + arg0->unk14.i.hi;
+    }
+}
 
 void func_80027B70(struct Unk9* arg0)
 {

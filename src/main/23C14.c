@@ -403,7 +403,32 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003516C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035240);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800355C0);
+void func_800355C0(void)
+{
+    struct PlayerObj* entity = &g_Entity;
+
+    reset_entity(entity);
+    entity->unkD9 = 1;
+    entity->animation_table = D_80119DF0;
+    entity->unk50 = 0;
+    entity->unk54 = 0;
+    entity->unk68 = NULL;
+    entity->unk5C = engine_obj.unk46;
+    entity->unk5D = engine_obj.unk46;
+    entity->unk5E = engine_obj.unk46;
+#ifdef MMX4_PC
+    entity->animation_cursor = entity->animation_table[0];
+    entity->unk38 = (s32*)entity->animation_cursor;
+    entity->unk3C = (u8*)SP_TABLE_14 + SP_TABLE_14[0];
+#else
+    entity->unk38 = (s32*)((u8*)SP_TABLE_14 + SP_TABLE_14[0]);
+    entity->unk3C = (u8*)SP_TABLE_14 + SP_TABLE_14[0];
+#endif
+    entity->unk40 = 0x540;
+    entity->base.unk16 = 2;
+    entity->unk42 = 0x7800;
+    entity->unk49 = 1;
+}
 
 void func_80035694(struct PlayerObj* arg0)
 {
@@ -884,7 +909,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
 {
     s32 var_v1;
 
-    if (arg0->unk92 || !(arg0->unkA7 & 2) || arg0->unkA8 != 0x30 || arg0->unk86) {
+    if (arg0->unk92 || !(arg0->unkA7 & 2) || arg0->charge_level != 0x30 || arg0->unk86) {
         return 0;
     }
 
@@ -906,7 +931,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
     arg0->unkA4 = 0;
     arg0->unk67 = 1;
     if (engine_obj.unk37 == 0) {
-        arg0->unkA8 = 0;
+        arg0->charge_level = 0;
     }
     arg0->unk7A = 1;
     arg0->unkE0 = 1;
@@ -1112,7 +1137,7 @@ void func_800381FC(struct PlayerObj* arg0)
 
     if ((*(u16*)&arg0->unk7C & 0x10)
         && arg0->unk9B[0] != 2
-        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (((struct PlayerObj*)(ptr + arg0->unk93))->unkA8 >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
+        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (arg0->padA9[arg0->unk93 - 1] >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
         arg0->unk9D = (u8)(arg0->unk9D + 1);
         if (arg0->unk93 == 0) {
             if (arg0->unkB8 == 0) {
@@ -1951,7 +1976,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045198);
 
 void func_80045240(struct Unk* arg0)
 {
-    arg0->base.unk5 = arg0->unk8C;
+    arg0->base.unk5 = arg0->state_8c.unk8C_half;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004524C);

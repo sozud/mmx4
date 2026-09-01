@@ -111,7 +111,7 @@ void func_800B6EB4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
                     result->bg_offset = current->unk3;
                     result->x_pos.i.hi = current->value1;
                     result->y_pos.i.hi = current->value2;
-                    *(struct Initializer**)(result->pad10) = current;
+                    result->initializer = (struct SearchLightSpawner*)current;
                     current->active = 1;
                 }
             }
