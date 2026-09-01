@@ -75,7 +75,7 @@ static int parse_args(int argc, char** argv, const char** disc)
             printf("usage: %s [--cue GAME.cue] [--sfx INDEX|GROUP:INDEX] "
                    "[--audio-raw FILE --frames N] "
                    "[--canonical-load|--fast-load]\n",
-                   argv[0]);
+                argv[0]);
             return 1;
         } else {
             fprintf(stderr, "MMX4 PC: unknown or incomplete option: %s\n", argv[i]);
@@ -98,9 +98,7 @@ int main(int argc, char** argv)
     if (oracle_result != MMX4_ORACLE_NOT_REQUESTED)
         return oracle_result;
 
-    mmx4_pc_canonical_load = canonical_load != NULL &&
-                              canonical_load[0] != '\0' &&
-                              canonical_load[0] != '0';
+    mmx4_pc_canonical_load = canonical_load != NULL && canonical_load[0] != '\0' && canonical_load[0] != '0';
     if (disc == NULL)
         disc = "disks/mmx4.us.cue";
     parse_result = parse_args(argc, argv, &disc);

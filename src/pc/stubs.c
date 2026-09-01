@@ -12,8 +12,11 @@ static void mmx4_pc_unimplemented(const char* name)
     abort();
 }
 
-#define PC_GAME_STUB(name) \
-    __attribute__((weak)) void name(void) { mmx4_pc_unimplemented(#name); }
+#define PC_GAME_STUB(name)                \
+    __attribute__((weak)) void name(void) \
+    {                                     \
+        mmx4_pc_unimplemented(#name);     \
+    }
 
 PC_GAME_STUB(func_800142BC)
 PC_GAME_STUB(func_80012F44)

@@ -839,7 +839,7 @@ void func_80015C10(void)
         }
     }
     func_80013890(engine_obj.cur_character == CHARACTER_X ? 0x4A : 0x4C,
-                  D_801459C8);
+        D_801459C8);
     func_80014C70();
     D_8013E1C8[0] = SsSepOpen(
         (u_long*)(D_801459C8 + *(s32*)D_801459C8), D_8013E198[0], 8);
@@ -1147,8 +1147,14 @@ extern void func_80016DAC(void);
 extern void func_80016E34(void);
 extern void func_80016E84(void);
 void (*D_800F1AB0[])(void) = {
-    func_80016B38, func_80016B58, func_80016BDC, func_80016C5C,
-    func_80016D0C, func_80016DAC, func_80016E34, func_80016E84,
+    func_80016B38,
+    func_80016B58,
+    func_80016BDC,
+    func_80016C5C,
+    func_80016D0C,
+    func_80016DAC,
+    func_80016E34,
+    func_80016E84,
 };
 #endif
 extern u32 D_80139510;

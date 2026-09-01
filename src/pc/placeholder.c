@@ -10,7 +10,6 @@ u32 D_800F45E4[4] = { 0, 0x1936, 0x4DA8, 0x88D5 };
 u32 D_800F45F4 = 0xD218;
 u32 D_800F45F8[5] = { 0x137EF, 0x1DEF1, 0x34BEB, 0xA2736, 0xFFFFFFFF };
 
-
 void func_80016124(void)
 {
     SPRT* sprites = D_80139268[SP_DRAW_INFO_POS];
@@ -67,8 +66,7 @@ void func_8001A9EC(struct EngineObj* obj)
         previous_character = D_80141BDF[0];
 
     D_800F1FA0[obj->unk1](obj);
-    if (D_80141BDF[0] != previous_character &&
-        (controller_state & 0x50) == 0) {
+    if (D_80141BDF[0] != previous_character && (controller_state & 0x50) == 0) {
         func_8001540C(0, 0xC, 0);
     }
 
@@ -95,8 +93,7 @@ void func_8002E5E0(void)
             continue;
         for (color = 0; color < 16; color++) {
             u16 value = entry[color];
-            u16 gray = ((value & 0x1f) + ((value >> 5) & 0x1f) +
-                        ((value >> 10) & 0x1f)) / 3;
+            u16 gray = ((value & 0x1f) + ((value >> 5) & 0x1f) + ((value >> 10) & 0x1f)) / 3;
             entry[color] = gray | (gray << 5) | (gray << 10);
         }
     }
@@ -109,8 +106,7 @@ void func_8002E994(struct EngineObj* arg0)
     s8 next = selection;
     int moved = 0;
 
-    if (direction == PADLup || direction == PADLright ||
-        direction == PADLdown || direction == PADLleft) {
+    if (direction == PADLup || direction == PADLright || direction == PADLdown || direction == PADLleft) {
         if ((D_80166C08 ^ controller_state) & direction) {
             if (arg0->unk8 != 0) {
                 arg0->unk8--;
@@ -119,15 +115,19 @@ void func_8002E994(struct EngineObj* arg0)
                 arg0->unk8 = repeats < 3 ? 0x1E : 0xA;
                 if (direction == PADLup) {
                     if ((u8)arg0->unk5F >= 5) {
-                        if (selection == 8) next = 0;
-                        else if (selection >= 4) next = 8;
+                        if (selection == 8)
+                            next = 0;
+                        else if (selection >= 4)
+                            next = 8;
                     } else if (selection >= 4) {
                         next = selection - 4;
                     }
                 } else if (direction == PADLdown) {
                     if ((u8)arg0->unk5F >= 5) {
-                        if (selection == 8) next = 4;
-                        else if (selection < 4) next = 8;
+                        if (selection == 8)
+                            next = 4;
+                        else if (selection < 4)
+                            next = 8;
                     } else if (selection < 4) {
                         next = selection + 4;
                     }
