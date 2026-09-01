@@ -1,3 +1,7 @@
+#ifdef MMX4_PC
+#define INCLUDE_ASM(FOLDER, NAME)
+#define INCLUDE_RODATA(FOLDER, NAME)
+#else
 #define INCLUDE_ASM(FOLDER, NAME)                   \
     __asm__(".pushsection .text\n"                  \
             "\t.align\t2\n"                         \
@@ -15,6 +19,7 @@
             ".popsection");
 
 __asm__(".include \"macro.inc\"\n");
+#endif
 
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
@@ -29,6 +34,18 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
+#ifdef MMX4_PC
+#include <psyz.h>
+#include <libgte.h>
+#include <libgpu.h>
+#define SsVabTransCompleted PsyzSsVabTransCompleted
+#include <libsnd.h>
+#undef SsVabTransCompleted
+#include <libetc.h>
+#include <kernel.h>
+#include <libcd.h>
+#include <libpress.h>
+#else
 #include "psy-q-4.0/SYS/TYPES.H"
 #include "psy-q-4.0/LIBGTE.H"
 #include "psy-q-4.0/LIBGPU.H"
@@ -37,6 +54,7 @@ typedef unsigned long long u64;
 #include "psy-q-4.0/KERNEL.H"
 #include "psy-q-4.0/LIBCD.H"
 #include "psy-q-4.0/LIBPRESS.H"
+#endif
 
 #include "scratchpad.h"
 #include "archive_memory.h"
@@ -978,10 +996,18 @@ extern struct SecondaryPrimitiveBuffer temp2[];
 extern struct BackgroundPrimitiveBuffer temp3[];
 extern struct OrderingTableBuffer temp4[];
 extern struct AuxiliaryPrimitiveBuffer temp5[];
+#ifdef MMX4_PC
+typedef DR_MODE FadeDrawMode;
+extern TILE D_8013B7B0[2];
+extern FadeDrawMode D_8012F498[2];
+extern TILE D_80169D78[2];
+extern struct FadeState D_8016DEA0;
+#else
 extern struct StageSpriteSlot D_8013B7B0[2];
 extern struct OrderingTableBuffer D_8012F498[];
 extern struct SecondaryPrimitiveBuffer D_80169D78[];
 extern struct BackgroundPrimitiveBuffer D_8016DEA0;
+#endif
 
 struct DrawInfo {
     DISPENV dispenv;
@@ -1410,11 +1436,19 @@ extern u8 D_800F247C[];
 extern u8 D_800F2490[];
 extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern s32 D_800EE458;
+#ifdef MMX4_PC
+extern void (*D_8012F490)(void);
+extern s8 D_80173C6C[4];
+#define D_80173C6D D_80173C6C[1]
+#define D_80173C6E D_80173C6C[2]
+#define D_80173C6F D_80173C6C[3]
+#else
 extern s32 D_8012F490;
 extern s8 D_80173C6C;
 extern s8 D_80173C6D;
 extern s8 D_80173C6E;
 extern s8 D_80173C6F;
+#endif
 extern s8 D_80137DFC;
 extern u8 D_80137DD4;
 extern u8 D_80137DDC;
@@ -1450,7 +1484,11 @@ extern s16 D_801397E0;
 extern u16 D_801397E4[0x20];
 extern u8 D_80139824;
 extern u8 D_80139828;
+#ifdef MMX4_PC
+extern char D_80137E0C[0x1428];
+#else
 extern void* D_80137E0C;
+#endif
 extern s8 D_80139234[24];
 extern u8 D_8013924C[4];
 extern void* D_8013DC10;
@@ -1553,12 +1591,20 @@ extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
 extern void (*ReadyTextUpdateFuncs[3])();
+#ifdef MMX4_PC
+extern u8* D_80137DC4;
+#else
 extern s32 D_80137DC4;
+#endif
 extern s32 D_80137DD0;
 extern u32* D_801406A8;
 extern u8 D_801406AC;
 extern s32 D_80142F70;
+#ifdef MMX4_PC
+extern u8* D_8015D9C8;
+#else
 extern s32 D_8015D9C8;
+#endif
 extern u8 D_801374B4;
 extern s8 D_801374B8;
 extern s8 D_80137CE4;
@@ -1574,8 +1620,13 @@ extern s8 D_80139646;
 extern s8 D_80139647;
 extern u8 D_80171EA9;
 extern s32 D_80166BB4;
+#ifdef MMX4_PC
+extern u8 D_80166D68[0x22];
+extern u8 D_8012F46C[0x22];
+#else
 extern u8 D_80166D68;
 extern s32 D_8012F46C;
+#endif
 extern u16 D_800EE430[];
 extern RECT D_800EE450;
 extern u16 cur_random;
@@ -1585,7 +1636,11 @@ extern s8 D_80139528;
 extern CdlATV D_80139520;
 extern s32 D_80137CD8;
 extern RECT D_800F1658;
+#ifdef MMX4_PC
+extern u16 D_80141F70[0x800];
+#else
 extern u32 D_80141F70;
+#endif
 extern u8 D_80139524;
 extern s8 D_8013952C;
 extern s32 D_80139530;
@@ -1598,7 +1653,11 @@ extern s8 D_80141F4A;
 extern u8 D_801441B0;
 extern u16* D_801441B4;
 extern u8 D_801441B8;
+#ifdef MMX4_PC
+extern u8* D_80137CC4;
+#else
 extern s32 D_80137CC4;
+#endif
 extern s32 D_80137CCC;
 extern u8 D_80137CE8;
 extern s32 D_80137CEC;
@@ -1617,7 +1676,11 @@ extern s32 D_8013967C;
 extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
+#ifdef MMX4_PC
+extern u8* D_80173C80;
+#else
 extern s32 D_80173C80;
+#endif
 extern u8 D_80173C84;
 extern void (*D_8010EBB4[16])();
 extern void (*D_8010EB98[])();
@@ -1669,7 +1732,11 @@ extern u8* cur_draw_info_drawenv;
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct Unk*);
+#ifdef MMX4_PC
+extern union CdSectorBuffer D_8012F4B4;
+#else
 extern s32* D_8012F4B4[];
+#endif
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];
 
@@ -1773,3 +1840,7 @@ enum SelectedPlayer {
     CHARACTER_X,
     CHARACTER_ZERO
 };
+
+#ifdef MMX4_PC
+#include "pc_build.h"
+#endif

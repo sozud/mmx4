@@ -346,7 +346,11 @@ u8 func_8001385C(void)
 }
 
 extern s32 D_80137CBC;
+#ifdef MMX4_PC
+extern u8* D_80137CC4;
+#else
 extern s32 D_80137CC4;
+#endif
 extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32 D_80137CD8;
@@ -468,7 +472,11 @@ extern u32 D_80137CD4;
 extern u16 D_80137CD6;
 extern s32 D_80137CDC;
 extern s32 D_80137CEC;
+#ifdef MMX4_PC
+extern u8* D_80137DC4;
+#else
 extern s32 D_80137DC4;
+#endif
 extern s32 D_80137DC8;
 extern s32 D_80137DCC;
 extern CdlLOC D_80137DE8;
@@ -583,7 +591,11 @@ void func_800148EC()
     D_80137CFC.y = temp_a1;
     D_80137CFC.w = 0x40;
     D_80137CFC.h = 0x10;
+#ifdef MMX4_PC
+    LoadImage(&D_80137CFC, D_8012F4B4.sectors[D_801374B4]);
+#else
     LoadImage(&D_80137CFC, &D_8012F4B4[D_801374B4 << 9]);
+#endif
 }
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -612,7 +624,11 @@ void func_80014968(void)
     temp_s1 = D_80137D08[D_801374B4 * 3];
     var_s0 = MIN(0x800, D_80137CE0);
     temp_v0 = SsVabTransBodyPartly(
+#ifdef MMX4_PC
+        D_8012F4B4.sectors[D_801374B4],
+#else
         (u8*)&D_8012F4B4[D_801374B4 << 9],
+#endif
         var_s0,
         D_8013E198[temp_s1]);
     D_80137CE0 -= var_s0;
@@ -1529,7 +1545,11 @@ extern s32 D_80139624;
 extern s32 D_80139628;
 extern u32 D_8013962C;
 extern u32 D_80139630;
+#ifdef MMX4_PC
+extern volatile s32 D_80139634;
+#else
 extern s32 D_80139634;
+#endif
 extern s32 D_801410B8;
 
 void func_80019100(void)
@@ -4094,7 +4114,11 @@ void func_80023CE0()
 
 void func_80023D30(void)
 {
+#ifdef MMX4_PC
+    D_80173C6C[0] = 3;
+#else
     D_80173C6C = 3;
+#endif
     D_80173C6D = 4;
     D_80173C6E = 5;
     D_80173C6F = 6;
@@ -4513,7 +4537,11 @@ void func_8002771C(void)
     }
 
     ptr = (u8*)D_800F3188.records + ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) + (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
+#ifdef MMX4_PC
+    D_80173C6C[0] = *ptr++;
+#else
     D_80173C6C = *ptr++;
+#endif
     D_80173C6D = *ptr++;
     D_80173C6E = *ptr++;
     D_80173C6F = *ptr++;

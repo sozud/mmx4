@@ -57,8 +57,13 @@ void func_80049AA0(struct MainObj* arg0)
     s8* temp_s1;
     s16 temp_v0;
 
+#ifdef MMX4_PC
+    arg0->unk18.val = arg0->base.x_pos.val;
+    arg0->unk1C.val = arg0->base.y_pos.val;
+#else
     arg0->unk18 = arg0->base.x_pos.val;
     arg0->unk1C = arg0->base.y_pos.val;
+#endif
     D_800FB104[arg0->base.unk5](arg0);
     if (*(s32*)((u8*)arg0 + 0x8C) != 0) {
         if (*(s32*)((u8*)arg0 + 0x90) != 0) {
