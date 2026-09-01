@@ -136,8 +136,10 @@ file(GLOB MMX4_PC_FUNCTION_TABLE_SOURCES CONFIGURE_DEPENDS
 list(APPEND MMX4_PC_GAME_SOURCES ${MMX4_PC_FUNCTION_TABLE_SOURCES})
 
 add_executable(mmx4_pc
-    src/pc/build_main.c
+    src/pc/main.c
     src/pc/oracle_capture.c
+    src/pc/placeholder.c
+    src/pc/stubs.c
     ${MMX4_PC_GAME_SOURCES}
 )
 

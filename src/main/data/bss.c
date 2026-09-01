@@ -123,6 +123,7 @@ u16 controller_state;
 struct RectPtrPair vram_rect_ptrs[8];
 struct RectPtrPair* vram_rect_ptr;
 struct MainBssState main_bss_state;
+struct GameThread* D_801F8300;
 struct CdCompletionSlot D_80137D04[16];
 RECT D_80137CFC;
 u32 D_80137CE0;

@@ -63,7 +63,7 @@ void func_80012A3C(void)
 
         ((u32*)temp_s1)[1] = var_v0;
         catPrim(temp_s1, temp_s0);
-        addPrims(((u32*)cur_draw_info) + 0x1E, temp_s1, temp_s0);
+        addPrims(&cur_draw_info->ordering_table.fade, temp_s1, temp_s0);
 
         if (dea0->unk0 == 0) {
             if (d80141BD8->unk4 > 0) {
@@ -182,7 +182,7 @@ void func_8001326C(u8 arg0)
         sprt->clut = ((temp_a0 & 0xF) | (((temp_a0 >> 4) + 0x1E0) << 6));
         setWH(sprt, prim->w * 0x10, prim->h * 0x10);
         catPrim(draw_mode, sprt);
-        addPrims(&cur_draw_info->unk80, draw_mode, sprt);
+        addPrims(&cur_draw_info->ordering_table.mid, draw_mode, sprt);
         *(SPRT**)0x1F800100 = ++sprt;
         *(DR_MODE**)0x1F800104 = ++draw_mode;
     }
@@ -459,6 +459,16 @@ typedef struct {
     void (*unk8)(void);
     void (*unkC)(void);
 } D_80010014_t;
+
+#ifdef MMX4_PC
+extern void func_80014140(void);
+extern void func_800141BC(void);
+extern void func_800142BC(void);
+extern void func_80014514(void);
+D_80010014_t D_80010014 = {
+    func_80014140, func_800142BC, func_80014514, func_800141BC
+};
+#endif
 
 extern void func_800137F0(void);
 extern D_80010014_t D_80010014;
@@ -819,6 +829,28 @@ extern u8 D_801459CC;
 
 void func_80015C10(void)
 {
+#ifdef MMX4_PC
+    u8 var_s1;
+
+    for (var_s1 = 0; var_s1 < 4; var_s1++) {
+        if (D_8013E1C8[var_s1] != -1) {
+            SsSepClose(D_8013E1C8[var_s1]);
+            D_8013E1C8[var_s1] = -1;
+        }
+    }
+    func_80013890(engine_obj.cur_character == CHARACTER_X ? 0x4A : 0x4C,
+                  D_801459C8);
+    func_80014C70();
+    D_8013E1C8[0] = SsSepOpen(
+        (u_long*)(D_801459C8 + *(s32*)D_801459C8), D_8013E198[0], 8);
+    for (var_s1 = 0; var_s1 < 8; var_s1++)
+        SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
+    D_8013E1C8[1] = SsSepOpen(
+        (u_long*)(D_801459C8 + *(s32*)(D_801459C8 + 4)),
+        D_8013E198[1], 2);
+    for (var_s1 = 0; var_s1 < 2; var_s1++)
+        SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
+#else
     u8 var_s1;
     s8 temp_a0;
 
@@ -843,6 +875,7 @@ void func_80015C10(void)
     for (var_s1 = 0; var_s1 < 2; var_s1++) {
         SsSepSetVol(D_8013E1C9, var_s1, 0x7F, 0x7F);
     }
+#endif
 }
 
 s32 func_80015D60(struct Unk19* arg0, s32 arg1)
@@ -1104,6 +1137,20 @@ void func_80016448(u8);
 void func_80016F0C();
 extern s32 D_800F1AAC;
 extern void (*D_800F1AB0[])(void);
+#ifdef MMX4_PC
+extern void func_80016B38(void);
+extern void func_80016B58(void);
+extern void func_80016BDC(void);
+extern void func_80016C5C(void);
+extern void func_80016D0C(void);
+extern void func_80016DAC(void);
+extern void func_80016E34(void);
+extern void func_80016E84(void);
+void (*D_800F1AB0[])(void) = {
+    func_80016B38, func_80016B58, func_80016BDC, func_80016C5C,
+    func_80016D0C, func_80016DAC, func_80016E34, func_80016E84,
+};
+#endif
 extern u32 D_80139510;
 extern s32 D_80139530;
 extern s32 D_80139534;
@@ -1647,7 +1694,11 @@ void func_800192F8(void)
 
 void func_800193D8(struct EngineObj* arg0)
 {
+#ifdef MMX4_PC
+    u8* ptr = D_80141BDF;
+#else
     u8* ptr = &D_80141BDF;
+#endif
     u8 temp_s1 = *ptr;
     u8 temp_s3 = engine_obj.unk1;
     u8 temp_s4 = engine_obj.unk2;
@@ -2296,10 +2347,17 @@ void func_8001DE20(struct GameInfo* arg0)
 
 extern s16 D_800F2204;
 extern s32 D_80169498;
+#ifdef MMX4_PC
+#define D_8016954C (((u8*)D_80169498)[0xB4])
+#define background_objects_03 (background_objects[0].unk3)
+#define background_objects_1_0A (background_objects[1].x_pos.i.hi)
+#define background_objects_1_4C (background_objects[1].unk4C)
+#else
 extern s8 D_8016954C;
 extern s8 background_objects_03;
 extern s16 background_objects_1_0A;
 extern s8 background_objects_1_4C;
+#endif
 
 void func_8001DE54(struct GameInfo* arg0)
 {
@@ -4489,7 +4547,7 @@ void func_80026720(void)
             setRGB0(sprt, 8, 0x18, 0x31);
             setXY0(sprt, 0, 0);
             setUV0(sprt, 0x140, 0x60);
-            addPrim(&cur_draw_info->unk9C, sprt);
+            addPrim(&cur_draw_info->ordering_table.end, sprt);
         }
     }
 }
@@ -4815,11 +4873,14 @@ void func_800281E8(void)
     }
 }
 
-extern u8 D_800F32D5[1][1];
-
 void func_80028268(struct BackgroundObj* arg0)
 {
+#ifdef MMX4_PC
+    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
+#else
+    extern u8 D_800F32D5[1][1];
     arg0->unk4 = D_800F32D5[engine_obj.substage << 1][engine_obj.stage << 2];
+#endif
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);

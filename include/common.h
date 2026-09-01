@@ -1011,7 +1011,7 @@ extern struct PlayerObj g_Player;
 extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
-extern struct BackgroundObj background_objects[];
+extern struct BackgroundObj background_objects[3];
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -1031,14 +1031,25 @@ extern struct SecondaryPrimitiveBuffer D_80169D78[];
 extern struct BackgroundPrimitiveBuffer D_8016DEA0;
 #endif
 
+#ifndef MMX4_PC
+typedef u32 OT_TYPE;
+#endif
+
+struct DrawOrderingTable {
+    OT_TYPE start;
+    OT_TYPE unk1;
+    OT_TYPE fade;
+    OT_TYPE unk3;
+    OT_TYPE mid;
+    OT_TYPE unk5[5];
+    OT_TYPE ui;
+    OT_TYPE end;
+};
+
 struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
-    u32 unk70;
-    u8 pad70[12];
-    u32 unk80;
-    u8 pad80[24];
-    u32 unk9C;
+    struct DrawOrderingTable ordering_table;
 };
 
 extern struct DrawInfo draw_infos[2];
@@ -1253,8 +1264,12 @@ struct EngineObj {
 #define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
 #define ENGINE_UNK2E (engine_obj.character_state.bytes[8])
 
+#ifdef MMX4_PC
+#define engine_flags engine_obj.character_state.fields.flags
+#else
 extern u8 engine_obj_27;
 #define engine_flags engine_obj_27
+#endif
 
 struct Unk18 {
     s8 unk0;
@@ -1448,7 +1463,9 @@ extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
 extern s8 D_800F8C28[];
 extern u8 D_800F8C4C[];
+#ifndef MMX4_PC
 extern u8 D_800F8C4D[];
+#endif
 extern s8 D_800F8CCC[];
 extern s8 D_800F8CE4[];
 extern s8 D_800F8CFC[];
@@ -1481,10 +1498,19 @@ extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern u32* D_8011BF40[54];
 extern u32* D_8011C0E4[3];
+#ifdef MMX4_PC
+extern struct MainBssState main_bss_state;
+#define D_80141BD8 (main_bss_state.flags)
+#define D_80141BDC (main_bss_state.transition)
+#define D_80141BDE (&main_bss_state.transition[2])
+#define D_80141BDF ((u8*)&main_bss_state.transition[3])
+#define D_80141BE0 (main_bss_state.character_mode)
+#else
 extern s8 D_80141BDC[];
 extern s8 D_80141BDE[];
 extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
+#endif
 extern struct Unk5 D_800F0E18[];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
@@ -1540,7 +1566,11 @@ extern u16 D_80166C0A;
 extern s8 D_800F8BE9[];
 extern u8 D_800FB0EC[8];
 extern void (*D_800FB104[])();
+#ifdef MMX4_PC
+#define D_8010B465 (((u8*)D_8010B464)[1])
+#else
 extern u8 D_8010B465;
+#endif
 extern u8 x_ready_text_flags[];
 #define D_800F2CA4 ((const u32* const**)(x_ready_text_flags + 0x10))
 extern struct MiscUnk50_1* const* D_800F2DD8[];
@@ -1622,8 +1652,13 @@ extern s8 D_80139568;
 extern s16 D_8013955C;
 extern u8 D_80173C84;
 extern s32 D_80175EE8[];
+#ifdef MMX4_PC
+#define D_8016DEA2 (D_8016DEA0.unk2)
+#define D_8016DEA4 (D_8016DEA0.unk4)
+#else
 extern s16 D_8016DEA2;
 extern s16 D_8016DEA4;
+#endif
 extern struct GameThread* D_801F8300;
 extern u16 D_801419BE[];
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
@@ -1699,7 +1734,12 @@ extern s8 D_80137CE4;
 extern s8 D_80137CF0;
 extern s8 D_80137CF4;
 extern u8 D_8013BD40;
+#ifdef MMX4_PC
+extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
+#define D_800F1C0F (g_BootTransitionDataRegion.stage_map)
+#else
 extern u8 D_800F1C0F[];
+#endif
 extern u32 D_800F1D8C;
 extern u8 D_800F1D90;
 extern CdlATV D_80139644;
