@@ -29,7 +29,10 @@ jobs:
       - name: Install requirements
         run: |
           sudo apt-get update
-          sudo apt-get install --yes build-essential cmake ninja-build libxtst-dev
+          sudo apt-get install --yes \
+            build-essential cmake ninja-build \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
+            libxfixes-dev libxi-dev libxss-dev libxtst-dev
       - name: Configure
         run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
