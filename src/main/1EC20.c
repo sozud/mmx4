@@ -109,7 +109,7 @@ void func_8002E5E0(void)
     }
 }
 #else
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E5E0);
+INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E5E0);
 #endif
 
 // engine_state_3_update_funcs state 1 (load briefing room)
@@ -168,7 +168,7 @@ void func_8002E698(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E7BC);
+INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E7BC);
 
 // engine_state_3_update_funcs state 3
 void func_8002E8D4(struct EngineObj* arg0)
@@ -273,7 +273,7 @@ void func_8002E994(struct EngineObj* arg0)
     }
 }
 #else
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002E994);
+INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E994);
 #endif
 
 // engine_state_3_update_funcs state 5
