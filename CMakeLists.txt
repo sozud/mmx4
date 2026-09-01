@@ -137,6 +137,7 @@ list(APPEND MMX4_PC_GAME_SOURCES ${MMX4_PC_FUNCTION_TABLE_SOURCES})
 
 add_executable(mmx4_pc
     src/pc/build_main.c
+    src/pc/oracle_capture.c
     ${MMX4_PC_GAME_SOURCES}
 )
 
@@ -151,3 +152,15 @@ target_link_libraries(mmx4_pc PRIVATE psyz)
 target_link_options(mmx4_pc PRIVATE -Wl,--gc-sections)
 
 psyz_title(mmx4_pc "Mega Man X4")
+
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Python3 COMPONENTS Interpreter REQUIRED)
+    add_test(
+        NAME oracle_black_capture
+        COMMAND "${Python3_EXECUTABLE}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/tools/oracle/run_pc_scene_suite.py"
+            --binary "$<TARGET_FILE:mmx4_pc>"
+            --output "${CMAKE_CURRENT_BINARY_DIR}/oracle-black-capture"
+    )
+endif()
