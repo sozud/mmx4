@@ -138,7 +138,7 @@ ninja.rule('as',
            'mipsel-linux-gnu-as -no-pad-sections -I./src/main $in -o $out')
 
 ninja.rule('link',
-           'mipsel-linux-gnu-ld -Map=build/us/main.map -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt $in -o $out')
+           'mipsel-linux-gnu-ld -Map=build/us/main.map -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt config/undefined_syms.us.main.txt $in -o $out')
 
 ninja.rule('objcopy',
            'mipsel-linux-gnu-objcopy --pad-to=0x120000 --gap-fill=0 $in -O binary $out')

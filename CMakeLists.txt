@@ -89,6 +89,7 @@ set(MMX4_PC_GAME_SOURCES
     src/main/data/stage_object_table_data.c
     src/main/data/tile_effect_data.c
     src/main/1A5BC.c
+    src/main/1EC20.c
     src/main/1FD10.c
     src/main/21AB4.c
     src/main/23C14.c
