@@ -1,6 +1,8 @@
 
 #include "common.h"
 
+void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
+
 // QuadObj #7
 // megaman never appears in intro stage if nopped out
 void func_800D5C54(struct QuadObj* arg0)
@@ -73,7 +75,7 @@ void func_800D5D50(struct QuadObj* arg0)
         func_800D6494(arg0);
         return;
     case 1:
-        temp_s1 = arg0->unk58;
+        temp_s1 = arg0->link.owner;
         // spawn "READY" text and shadow when blue line reaches center of screen
         if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi < 3) && (temp_s1->unk15 == 0)) {
             misc_obj = find_free_misc_obj();
@@ -82,7 +84,7 @@ void func_800D5D50(struct QuadObj* arg0)
                 misc_obj->base.id = 0x12;
                 misc_obj->base.unk2 = 0;
                 temp_s1->unk15 = 0;
-                misc_obj->ext.ready_text.unk50 = (void*)arg0->unk58;
+                misc_obj->ext.ready_text.unk50 = (void*)arg0->link.owner;
             }
             misc_obj = find_free_misc_obj();
             if (misc_obj != NULL) {
@@ -90,7 +92,7 @@ void func_800D5D50(struct QuadObj* arg0)
                 misc_obj->base.id = 0x12;
                 misc_obj->base.unk2 = 1;
                 temp_s1->unk15 = 0;
-                misc_obj->ext.ready_text.unk50 = (void*)arg0->unk58;
+                misc_obj->ext.ready_text.unk50 = (void*)arg0->link.owner;
             }
         }
         if (arg0->x_pos.i.hi >= 320) {
@@ -100,7 +102,7 @@ void func_800D5D50(struct QuadObj* arg0)
         func_800D6494(arg0);
         return;
     case 2:
-        temp_s1 = arg0->unk58;
+        temp_s1 = arg0->link.owner;
         temp_s1->bg_offset = 0;
         arg0->state = 2;
         arg0->unk5 = 0;
@@ -143,13 +145,13 @@ void func_800D5F1C(struct QuadObj* arg0)
             arg0->unk28.i.hi = 240;
             arg0->unk30.i.hi = 240;
         }
-        arg0->unk55 = 1;
-        arg0->unk54 = 1;
-        arg0->unk4C = 0;
-        arg0->unk4D = 0;
-        arg0->unk4E = 0;
-        arg0->unk4F = 0;
-        arg0->unk50 = 8;
+        arg0->runtime.legacy.unk55 = 1;
+        arg0->runtime.legacy.unk54 = 1;
+        arg0->runtime.legacy.unk4C = 0;
+        arg0->runtime.legacy.unk4D = 0;
+        arg0->runtime.legacy.unk4E = 0;
+        arg0->runtime.legacy.unk4F = 0;
+        arg0->runtime.legacy.unk50 = 8;
         return;
     case 1:
         var_s1 = 0;
@@ -157,7 +159,7 @@ void func_800D5F1C(struct QuadObj* arg0)
             func_800D64D8(arg0, arg0->unk7 & 0xFF, var_s1 & 0xFF, &D_8010FB10[arg0->unk7][var_s1]);
             var_s1 += 1;
         } while (var_s1 < 4);
-        if (--arg0->unk50 == 0) {
+        if (--arg0->runtime.legacy.unk50 == 0) {
             verts = &D_8010FB10[arg0->unk7][0];
             arg0->unk14.i.hi = *verts++;
             arg0->unk18.i.hi = *verts++;
@@ -168,13 +170,13 @@ void func_800D5F1C(struct QuadObj* arg0)
             arg0->unk2C.i.hi = *verts++;
             arg0->unk30.i.hi = *verts++;
             arg0->unk5 = 2;
-            arg0->unk55 = 1;
-            arg0->unk54 = 1;
-            arg0->unk4C = 0;
-            arg0->unk4D = 0;
-            arg0->unk4E = 0;
-            arg0->unk4F = 0;
-            arg0->unk50 = 8;
+            arg0->runtime.legacy.unk55 = 1;
+            arg0->runtime.legacy.unk54 = 1;
+            arg0->runtime.legacy.unk4C = 0;
+            arg0->runtime.legacy.unk4D = 0;
+            arg0->runtime.legacy.unk4E = 0;
+            arg0->runtime.legacy.unk4F = 0;
+            arg0->runtime.legacy.unk50 = 8;
             return;
         }
         return;
@@ -184,7 +186,7 @@ void func_800D5F1C(struct QuadObj* arg0)
             func_800D64D8(arg0, arg0->unk7 & 0xFF, var_s1_2 & 0xFF, &D_8010FBB0[arg0->unk7][var_s1_2]);
             var_s1_2 += 1;
         } while (var_s1_2 < 4);
-        if (--arg0->unk50 == 0) {
+        if (--arg0->runtime.legacy.unk50 == 0) {
             verts = &D_8010FBB0[arg0->unk7][0];
             arg0->unk14.i.hi = *verts++;
             arg0->unk18.i.hi = *verts++;
@@ -195,13 +197,13 @@ void func_800D5F1C(struct QuadObj* arg0)
             arg0->unk2C.i.hi = *verts++;
             arg0->unk30.i.hi = *verts++;
             arg0->unk5 = 3;
-            arg0->unk55 = 1;
-            arg0->unk54 = 1;
-            arg0->unk4C = 0;
-            arg0->unk4D = 0;
-            arg0->unk4E = 0;
-            arg0->unk4F = 0;
-            arg0->unk50 = 16;
+            arg0->runtime.legacy.unk55 = 1;
+            arg0->runtime.legacy.unk54 = 1;
+            arg0->runtime.legacy.unk4C = 0;
+            arg0->runtime.legacy.unk4D = 0;
+            arg0->runtime.legacy.unk4E = 0;
+            arg0->runtime.legacy.unk4F = 0;
+            arg0->runtime.legacy.unk50 = 16;
             if (D_8010FC80 != 0) {
                 D_8010FC80 -= 1;
                 return;
@@ -209,7 +211,7 @@ void func_800D5F1C(struct QuadObj* arg0)
         }
         break;
     case 3:
-        arg0->unk58->bg_offset = 0;
+        arg0->link.owner->bg_offset = 0;
         arg0->state = 2;
         arg0->unk5 = 0;
         break;
@@ -249,25 +251,25 @@ void func_800D6260(struct QuadObj* arg0)
             arg0->ext.ready_line.y_vel.val = 0;
             arg0->ext.ready_line.x_accel.val = 0;
             arg0->ext.ready_line.y_accel.val = 0;
-            arg0->unk48 = 0;
+            arg0->runtime.legacy.unk48 = 0;
         } else {
             arg0->x_pos.i.hi = 496;
             arg0->ext.ready_line.x_vel.val = -(var_s1 * FIXED(24));
             arg0->ext.ready_line.y_vel.val = 0;
             arg0->ext.ready_line.x_accel.val = 0;
             arg0->ext.ready_line.y_accel.val = 0;
-            arg0->unk48 = 1;
+            arg0->runtime.legacy.unk48 = 1;
         }
         arg0->y_pos.i.hi = ((get_random() & 7) * 4) + 104;
-        arg0->unk52 = arg0->unk7 << 3;
+        arg0->runtime.legacy.unk52 = arg0->unk7 << 3;
         return;
     case 1:
-        temp_v0_8 = arg0->unk52;
+        temp_v0_8 = arg0->runtime.legacy.unk52;
         if (temp_v0_8 != 0) {
-            arg0->unk52--;
+            arg0->runtime.legacy.unk52--;
             return;
         }
-        if (arg0->unk48 == 0) {
+        if (arg0->runtime.legacy.unk48 == 0) {
             if (arg0->x_pos.i.hi < 320) {
                 func_800D6494(arg0);
                 return;
@@ -282,7 +284,7 @@ void func_800D6260(struct QuadObj* arg0)
         func_800D6494(arg0);
         return;
     case 2:
-        temp_v0_9 = arg0->unk58;
+        temp_v0_9 = arg0->link.owner;
         temp_v0_9->bg_offset--;
         arg0->state = 2;
         arg0->unk5 = 0;
@@ -298,7 +300,37 @@ void func_800D6494(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/ready_line", func_800D64D8);
+void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2])
+{
+    f32* vertex;
+    s32 temp_s2;
+    s32 temp_s3;
+    s32 i;
+    s32 vertex_index;
+    s32 quadrant;
+
+    vertex = &arg0->unk14;
+    vertex_index = arg2;
+    for (i = 0; i < (vertex_index & 0xFF); i++) {
+        vertex += 2;
+    }
+    temp_s2 = vertex[0].val - (target[0] << 0x10);
+    temp_s3 = vertex[1].val - (target[1] << 0x10);
+    quadrant = func_8002B810(temp_s2, temp_s3);
+    if (((((arg0->runtime.ready_line.directions[vertex_index & 0xFF] ^ quadrant) & 0x10) != 0) || (arg0->runtime.ready_line.crossed[vertex_index & 0xFF] != 0)) && (arg0->runtime.ready_line.converging == 0)) {
+        arg0->x_pos.i.lo = 0;
+        arg0->y_pos.i.lo = 0;
+        arg0->runtime.ready_line.crossed[vertex_index & 0xFF] = 1;
+    } else {
+        vertex[0].val -= temp_s2 / (s32)arg0->runtime.ready_line.interpolation_frames;
+        vertex[1].val -= temp_s3 / (s32)arg0->runtime.ready_line.interpolation_frames;
+        arg0->runtime.ready_line.crossed[vertex_index & 0xFF] = 0;
+        if ((vertex_index & 0xFF) == 3) {
+            arg0->runtime.ready_line.converging = 0;
+        }
+    }
+    arg0->runtime.ready_line.directions[vertex_index & 0xFF] = quadrant;
+}
 
 // D_8010FC84 state 2
 void func_800D666C(struct QuadObj* arg0)

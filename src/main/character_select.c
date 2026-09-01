@@ -5,7 +5,7 @@ void character_select_state_0(struct EngineObj* arg0)
     u8 var_v1;
 
     for (var_v1 = 0; var_v1 < 0x10; var_v1++) {
-        arg0->unk26[var_v1] = 0;
+        arg0->character_state.bytes[var_v1] = 0;
     }
     func_8001D134();
     arg0->stage = 14;
@@ -25,7 +25,7 @@ void character_select_state_0(struct EngineObj* arg0)
     arg0->unk37 = 0;
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;
-    arg0->unk26[3] = 0; // already cleared above?
+    arg0->character_state.bytes[3] = 0; // already cleared above?
     arg0->unk2 = 0;
     arg0->unkA = 3;
     arg0->unk1++;
@@ -51,7 +51,7 @@ void character_select_state_1(struct EngineObj* arg0)
                 var_s0 += 1;
             } while (var_s0 < 2U);
         }
-        if (arg0->unk26[2] != 0) {
+        if (arg0->character_state.bytes[2] != 0) {
             arg0->unk2 = 0;
             arg0->unk1 = (u8)(arg0->unk1 + 1);
             D_8013E188[0] = -1;
@@ -144,29 +144,29 @@ void character_select_state_3(struct EngineObj* arg0)
     if (*ptr & (PADLup | PADLright)) {
         arg0->cur_character = CHARACTER_ZERO;
     }
-    temp_v1 = arg0->unk26[3];
+    temp_v1 = arg0->character_state.bytes[3];
     if (temp_v1 == arg0->cur_character) {
         character_select_state_3_update_funcs[temp_v1]();
     } else {
-        engine_obj.unk26[4] = 0;
+        engine_obj.character_state.bytes[4] = 0;
         arg0->unk37 = 0;
     }
     if (controller_state & (PADRdown | PADstart)) {
-        arg0->unk26[0] = 1;
+        arg0->character_state.bytes[0] = 1;
         arg0->unk1++;
         func_8001540C(5, 1, 0);
     }
-    arg0->unk26[3] = arg0->cur_character;
+    arg0->character_state.bytes[3] = arg0->cur_character;
 }
 
 void character_select_state_4(struct EngineObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        if ((arg0->unk26[1] >> arg0->cur_character) & 1) {
+        if ((arg0->character_state.bytes[1] >> arg0->cur_character) & 1) {
             arg0->unk2++;
-            arg0->unk26[1] |= 0x80;
+            arg0->character_state.bytes[1] |= 0x80;
         }
-    } else if (!(arg0->unk26[1] & 0x7F)) {
+    } else if (!(arg0->character_state.bytes[1] & 0x7F)) {
         arg0->unk2 = 0;
         arg0->unk4 = 20; // how long to wait on green background before fading out
         arg0->unk1++;

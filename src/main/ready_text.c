@@ -28,7 +28,7 @@ void func_800CB048(struct MiscObj* arg0)
     }
 
     arg0->unk40 = 0x1E00;
-    arg0->unk30 = &D_8010E6A0;
+    arg0->animation_table = &D_8010E6A0;
     arg0->base.state = 1;
     arg0->base.bg_offset = -1;
     temp_v1 = D_8010E6C8[arg0->base.unk2];

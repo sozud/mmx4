@@ -8,7 +8,7 @@ void func_800CD78C(struct MiscObj* arg0)
 {
     arg0->unk3C = *(s32**)0x1F80003C;
     arg0->unk40 = 0x600;
-    arg0->unk30 = &D_8010E81C;
+    arg0->animation_table = &D_8010E81C;
     arg0->base.bg_offset = -1;
     arg0->base.unk15 = 0;
 

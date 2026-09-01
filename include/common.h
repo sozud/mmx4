@@ -258,18 +258,26 @@ struct Unk {
     s32 unk24;
     s32 unk28;
     s32 unk2C;
-    u8 pad30[0x8];
+    const u8* const* animation_table;
+    const u8* animation_cursor;
     s16 animation_speed;
-    u8 pad39[5];
+    u8 pad3A[2];
+    const u8* sprite_frames;
     u16 unk40;
     u16 unk42;
-    s8 pad43[9];
+    s8 unk44;
+    s8 unk45;
+    s8 unk46;
+    u8 animation_index;
+    s8 pad48[8];
     s32 unk50;
     s32 unk54;
-    s8 pad55[4];
+    const u16* collision_data;
     s8 unk5C;
     s8 unk5D;
-    u8 pad2f[3];
+    s8 unk5E;
+    s8 unk5F;
+    s8 unk60;
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -278,7 +286,7 @@ struct Unk {
     s8 unk66;
     s8 unk67;
     struct Unk_unk68* unk68;
-    s16 : 16;
+    s16 unk6C;
     s16 unk6E;
     u8 unk70;
     s8 : 8;
@@ -291,8 +299,15 @@ struct Unk {
     s8 unk78;
     s8 unk79;
     s8 unk7A;
-    u8 pad68[0x10];
-    u16 unk8C;
+    u8 unk7B;
+    s16 unk7C;
+    u8 pad7E[0x84 - 0x7E];
+    s32 unk84;
+    u8 pad88[0x8C - 0x88];
+    union {
+        u16 unk8C_half;
+        u32 unk8C;
+    } state_8c;
     u32 unk90;
     u32 unk94;
     u32 pad98;
@@ -329,8 +344,8 @@ struct BackgroundObj {
     s8 unk44;
     u8 pad45[2];
     u8 unk47;
-    u8 unk48;
-    u8 unk49;
+    s8 unk48;
+    s8 unk49;
     u8 unk4A;
     u8 unk4B;
     u8 unk4C;
@@ -350,9 +365,10 @@ struct PlayerObj {
     s32 unk24;
     s32 unk28;
     s32 unk2C;
-    u8 pad30[0x8];
+    const u32* const* animation_table;
+    const u32* animation_cursor;
     s32* unk38;
-    s32 unk3C;
+    void* unk3C;
     u16 unk40;
     u16 unk42;
     s8 unk44;
@@ -365,10 +381,15 @@ struct PlayerObj {
     s8 pad4B[0x50 - 0x4B];
     s32 unk50;
     s32 unk54;
-    s8 pad55[4];
+    s8 unk58;
+    s8 unk59;
+    s8 unk5A;
+    s8 unk5B;
     s8 unk5C;
     s8 unk5D;
-    u8 pad2f[3];
+    s8 unk5E;
+    s8 unk5F;
+    s8 unk60;
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -423,11 +444,11 @@ struct PlayerObj {
     s8 unkA2;
     s8 : 8;
     s8 unkA4;
-    s8 : 8;
+    s8 unkA5;
     s8 unkA6;
     s8 unkA7;
-    s8 unkA8;
-    u8 padA9[0xB8 - 0xA9];
+    s8 charge_level;
+    s8 padA9[0xB8 - 0xA9];
     u8 unkB8;
     s8 unkB9;
     s8 unkBA;
@@ -705,8 +726,8 @@ struct MiscObj {
     f32 y_vel;
     s32 unk28;
     s32 unk2C;
-    s32 unk30;
-    u8 pad30[0x4];
+    const u32* const* animation_table;
+    const u32* animation_cursor;
     s32 unk38;
     void* unk3C;
     u16 unk40;
@@ -988,6 +1009,7 @@ struct Prim {
 
 extern struct PlayerObj g_Player;
 extern struct PlayerObj g_Entity;
+extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[];
 extern struct BgDrawRelated D_8015D9D0[];
@@ -1047,6 +1069,13 @@ struct ReadyLineExt {
     f32 y_accel;
 };
 
+struct SearchLightMotion {
+    s32 velocity;
+    s32 acceleration;
+    s32 vertical_velocity;
+    s32 vertical_acceleration;
+};
+
 struct QuadUnkExt {
     u16 unk38;
 };
@@ -1072,11 +1101,53 @@ struct QuadUnkExt4 {
 
 union QuadExt {
     struct ReadyLineExt ready_line;
+    struct SearchLightMotion search_light;
     struct QuadUnkExt unk_ext;
     struct QuadUnkExt2 unk_ext2;
     struct QuadUnkExt3 unk_ext3;
     struct QuadUnkExt4 unk_ext4;
     u32 unk38;
+};
+
+struct SearchLightRuntime {
+    s32 x_accumulator;
+    s32 y_accumulator;
+    u16 pause_timer;
+    s16 extent;
+    s32 base_speed;
+};
+
+struct ReadyLineRuntime {
+    u8 directions[4];
+    u8 crossed[4];
+    u16 interpolation_frames;
+    s16 delay;
+    u8 converging;
+    u8 initialized;
+    u8 alignment[2];
+};
+
+union QuadRuntime {
+    struct {
+        u8 unk48;
+        s8 pad_[3];
+        s8 unk4C;
+        s8 unk4D;
+        s8 unk4E;
+        s8 unk4F;
+        u16 unk50;
+        s16 unk52;
+        s8 unk54;
+        s8 unk55;
+        u8 pad56[2];
+    } legacy;
+    struct SearchLightRuntime search_light;
+    struct ReadyLineRuntime ready_line;
+};
+
+union QuadLink {
+    struct BaseObj* owner;
+    u16 direction;
 };
 
 struct QuadObj {
@@ -1090,7 +1161,7 @@ struct QuadObj {
     s8 unk7;
     f32 x_pos;
     f32 y_pos;
-    s8 pad10[4];
+    struct SearchLightSpawner* initializer;
     f32 unk14;
     f32 unk18;
     f32 unk1C;
@@ -1103,19 +1174,24 @@ struct QuadObj {
     s8 unk36;
     s8 bg_offset;
     union QuadExt ext;
-    u8 unk48;
-    s8 pad_[3];
-    s8 unk4C;
-    s8 unk4D;
-    s8 unk4E;
-    s8 unk4F;
-    u16 unk50;
-    s16 unk52;
-    s8 unk54;
-    s8 unk55;
-    struct BaseObj* unk58; // might be something else
+    union QuadRuntime runtime;
+    union QuadLink link;
     struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
+
+union EngineCharacterState {
+    s8 bytes[0x10];
+    struct {
+        s8 active;
+        s8 flags;
+        s8 selected_characters;
+        s8 previous_character;
+        s8 secret_code_phase;
+        s8 secret_code_index;
+        s32 menu_state;
+        u8 reserved[6];
+    } __attribute__((packed)) fields;
+};
 
 // D_801721C0
 struct EngineObj {
@@ -1151,9 +1227,7 @@ struct EngineObj {
     s32 boss_ptr; // 0x20
     s8 enable_boss; // 0x24
     s8 unk25;
-    s8 unk26[0x2C - 0x26];
-    s32 unk2C;
-    s8 pad30[0x36 - 0x30];
+    union EngineCharacterState character_state; // 0x26
     s8 pad36;
     s8 unk37;
     void* unk38;
@@ -1167,7 +1241,8 @@ struct EngineObj {
     s8 unk46;
     s8 unk47;
     s8 unk48;
-    s8 pad49[0x5A - 0x49];
+    s8 player_initial_data[0x10]; // 0x49
+    s8 palette_flags; // 0x59
     u16 unk5A;
     s8 pad5C[0x5F - 0x5C];
     u8 unk5F;
@@ -1176,7 +1251,7 @@ struct EngineObj {
 
 #define ENGINE_STAGE_ID (*(u16*)&engine_obj.stage)
 #define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
-#define ENGINE_UNK2E (((s8*)&engine_obj.unk2C)[2])
+#define ENGINE_UNK2E (engine_obj.character_state.bytes[8])
 
 extern u8 engine_obj_27;
 #define engine_flags engine_obj_27
@@ -1556,7 +1631,7 @@ extern void (*g_TitleUpdateFuncs[])();
 extern void (*D_8010EB84[4])();
 extern void (*g_SelectACharacterUpdateFuncs[3])();
 extern struct Unk main_objects[0x30]; // D_8013BED0
-extern void (*g_SearchLightUpdateFuncs[3])();
+extern void (*g_SearchLightUpdateFuncs[3])(struct QuadObj*);
 extern void (*D_8010FC84[])();
 extern void (*g_TitleUpdate2Funcs[])();
 extern u8 D_8013B7D0;
@@ -1586,6 +1661,7 @@ extern struct UnkObj foo_objects[3];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
+extern const u8* D_800FB0BC[12];
 extern struct LayerObj layer_objects[4];
 extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
@@ -1598,6 +1674,18 @@ extern s32 D_80137DC4;
 #endif
 extern s32 D_80137DD0;
 extern u32* D_801406A8;
+extern struct SearchLightInit D_8010F600[6];
+extern s32 D_8010F66C[3];
+extern struct SearchLightColorLookup D_8010F684;
+extern struct SearchLightIntensityLookup D_8010F68C;
+extern u32* D_8010EAC8[7];
+extern u32* D_8010EAE4[6];
+extern u32* D_8010EAFC[10];
+extern u8 D_8010EB24[16];
+extern u8 D_8010EB34[16];
+extern u8 D_8010EB44[16];
+extern struct CharacterSelectPosition D_8010EB54[9];
+extern struct CharacterSelectPosition D_8010EB78[3];
 extern u8 D_801406AC;
 extern s32 D_80142F70;
 #ifdef MMX4_PC
@@ -1771,7 +1859,7 @@ void func_80034754(struct Unk7*);
 void func_80025188(s32, u8);
 void func_80025588(s16, s16, s16, s16, s32);
 void func_80027AAC(struct BackgroundObj*);
-void func_80027AFC(struct Unk9*);
+void func_80027AFC(struct BackgroundObj*);
 void func_80027B70(struct Unk9*);
 void func_80027BE4(struct BackgroundObj*);
 s32 func_80039C34(struct Unk12*);
@@ -1813,7 +1901,7 @@ void func_8002217C(u16, u8, u8);
 void func_80022730(struct AbcObj*);
 void func_8002B718();
 void is_on_screen(struct BaseObj*);
-s32 func_8002CF98(struct Unk*, u8, s16, s16);
+s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
 s32 func_8002D5E4(struct PlayerObj*, s16);
 u8 func_8002D724(struct PlayerObj*, s16, s16);

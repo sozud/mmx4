@@ -459,7 +459,7 @@ void func_800BBA24(struct EffectObj* arg0)
             quad->active = 0x81;
             quad->id = 7;
             quad->unk2 = 0;
-            quad->unk58 = arg0;
+            quad->link.owner = arg0;
         }
         arg0->unk5 = 1;
         arg0->ext.unk_effect.unk14++;
@@ -476,7 +476,7 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->id = 7;
                     quad->unk2 = 1;
                     quad->unk7 = var_i;
-                    quad->unk58 = arg0;
+                    quad->link.owner = arg0;
                     arg0->ext.unk_effect.unk14++;
                 }
                 var_i += 1;
@@ -496,7 +496,7 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->id = 7;
                     quad->unk2 = 2;
                     quad->unk7 = get_random() & 3;
-                    quad->unk58 = arg0;
+                    quad->link.owner = arg0;
                     arg0->ext.unk_effect.unk14++;
                 }
                 var_i += 1;
@@ -1452,9 +1452,9 @@ void func_800C9EE8(struct MiscObj* arg0)
         arg0->unk40 = D_801406A8[2] >> 7;
         arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[2];
         if (engine_obj.cur_character != CHARACTER_X) {
-            arg0->unk30 = &D_8010E538;
+            arg0->animation_table = &D_8010E538;
         } else {
-            arg0->unk30 = &D_8010E514;
+            arg0->animation_table = &D_8010E514;
         }
         arg0->base.x_pos.val = FIXED(42);
         arg0->base.y_pos.val = FIXED(416);
@@ -1463,9 +1463,9 @@ void func_800C9EE8(struct MiscObj* arg0)
         arg0->unk40 = D_801406A8[3] >> 7;
         arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[3];
         if (engine_obj.cur_character != CHARACTER_X) {
-            arg0->unk30 = &D_8010E55C;
+            arg0->animation_table = &D_8010E55C;
         } else {
-            arg0->unk30 = &D_8010E4EC;
+            arg0->animation_table = &D_8010E4EC;
         }
         arg0->base.x_pos.val = FIXED(282);
         arg0->base.y_pos.val = FIXED(432);
