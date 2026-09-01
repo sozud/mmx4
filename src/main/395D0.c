@@ -3771,6 +3771,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_80091FC8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8009216C);
 
+INCLUDE_RODATA("asm/us/main/nonmatchings/395D0", D_80010D7C);
+
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_800921E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/395D0", func_8009227C);

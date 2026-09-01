@@ -17,7 +17,7 @@ options:
   find_file_boundaries: yes
   use_legacy_include_asm: no
   ld_bss_is_noload: true
-  migrate_rodata_to_functions: no
+  migrate_rodata_to_functions: yes
   asm_jtbl_label_macro: jlabel
   extensions_path: tools/splat_ext
   disassemble_all: true
@@ -37,18 +37,30 @@ segments:
     align: 1
     subalign: 1
     subsegments:
-      - [0x800, rodata]
-      - [0x8C8, .rodata, 323C] # jtbl_800100C8
-      - [0x8E4, rodata]
-      - [0xA44, .rodata, 1A5BC]
-      - [0xAC0, rodata]
-      - [0xBE0, rodata] # jtbl_800103E0
-      - [0xC04, rodata] # jtbl_80010404
-      - [0x1B80, .rodata, BBE34] # jtbl_80011380
-      - [0x1BA4, rodata]
-      - [0x1C30, .rodata, select_a_character] # jtbl_80011430, func_800CCEF0
-      - [0x1C68, .rodata, select_a_character] # jtbl_80011468, func_800CCF70
-      - [0x1C9C, rodata]
+      - [0x800, .rodata, 323C]
+      - [0x8E4, .rodata, 1A5BC]
+      - [0xC04, .rodata, 1FD10]
+      - [0xC30, .rodata, 23C14]
+      - [0xD48, .rodata, 395D0]
+      - [0x1598, .rodata, shot_objs]
+      - [0x17C0, .rodata, visual_objs]
+      - [0x1810, .rodata, effect_objs]
+      - [0x19CC, .rodata, A7878]
+      - [0x1B80, .rodata, BBE34]
+      - [0x1C18, .rodata, select_a_character]
+      - [0x1C9C, .rodata, BE4C0]
+      - [0x1D34, .rodata, psxsdk/libspu/s_crwa]
+      - [0x1D7C, .rodata, psxsdk/libsnd/ssopenpj]
+      - [0x1DB8, .rodata, psxsdk/libspu/s_sca]
+      - [0x1DF8, .rodata, psxsdk/libsnd/sstick]
+      - [0x1E10, .rodata, psxsdk/libsnd/dmyprint]
+      - [0x2100, .rodata, psxsdk/libetc/vsync]
+      - [0x2144, .rodata, psxsdk/libetc/intr]
+      - [0x217C, .rodata, psxsdk/libetc/intr_dma]
+      - [0x21A8, .rodata, psxsdk/libgs/gs_125]
+      - [0x2418, .rodata, psxsdk/libgs/gs_101]
+      - [0x245C, .rodata, psxsdk/libcd/c_011]
+      - [0x2474, .rodata, D9840]
       - [0x2824, c]
       - [0x323C, c]
       - [0x19C20, c, character_select]
@@ -78,7 +90,7 @@ segments:
       - [0xCB68C, c, data/data]
       - [0xCB68C, asm] # doesn't seem like a function
       - [0xCB734, asm]
-      - [0xCB748, asm, psxsdk/libspu/s_crwa]
+      - [0xCB748, c, psxsdk/libspu/s_crwa]
       - [0xCC490, asm, psxsdk/libspu/s_ini]
       - [0xCC604, asm, psxsdk/libspu/s_dcb]
       - [0xCC628, asm, psxsdk/libspu/s_m_util]
@@ -88,18 +100,18 @@ segments:
       - [0xCD02C, asm, psxsdk/libsnd/ssinit]
       - [0xCD114, asm, psxsdk/libsnd/ssinit_c]
       - [0xCD144, asm, psxsdk/libspu/s_i]
-      - [0xCD1F4, asm, psxsdk/libsnd/ssopenpj]
+      - [0xCD1F4, c, psxsdk/libsnd/ssopenpj]
       - [0xCD6D0, asm, psxsdk/libsnd/ssplay]
       - [0xCD760, asm, psxsdk/libspu/s_q]
       - [0xCD8DC, asm, psxsdk/libsnd/sssattr]
-      - [0xCD970, asm, psxsdk/libspu/s_sca]
+      - [0xCD970, c, psxsdk/libspu/s_sca]
       - [0xCDD04, asm, psxsdk/libsnd/sssmv]
       - [0xCDD54, asm, psxsdk/libsnd/ssstart]
       - [0xCDFBC, asm, psxsdk/libsnd/ut_ron]
       - [0xCE924, asm, psxsdk/libsnd/play]
       - [0xCF234, asm, psxsdk/libsnd/sssv]
-      - [0xCF510, asm, psxsdk/libsnd/sstick]
-      - [0xCF928, asm, psxsdk/libsnd/dmyprint]
+      - [0xCF510, c, psxsdk/libsnd/sstick]
+      - [0xCF928, c, psxsdk/libsnd/dmyprint]
       - [0xD02C0, asm, psxsdk/libsnd/ut_gva]
       - [0xD04FC, asm, psxsdk/libsnd/ut_keyv]
       - [0xD0908, asm, psxsdk/libsnd/ut_rdep]
@@ -125,13 +137,13 @@ segments:
       - [0xD53FC, asm, psxsdk/libspu/s_stsa]
       - [0xD5454, asm, psxsdk/libspu/s_wp]
       - [0xD54E0, asm, psxsdk/libsnd/vs_vtc]
-      - [0xD55B0, asm, psxsdk/libetc/vsync]
-      - [0xD5794, asm, psxsdk/libetc/intr]
+      - [0xD55B0, c, psxsdk/libetc/vsync]
+      - [0xD5794, c, psxsdk/libetc/intr]
       - [0xD5EA4, asm, psxsdk/libetc/intr_vb]
-      - [0xD5FCC, asm, psxsdk/libetc/intr_dma]
+      - [0xD5FCC, c, psxsdk/libetc/intr_dma]
       - [0xD6274, asm, psxsdk/libetc/vmode]
-      - [0xD628C, asm, psxsdk/libgs/gs_125]
-      - [0xD8134, asm, psxsdk/libgs/gs_101]
+      - [0xD628C, c, psxsdk/libgs/gs_125]
+      - [0xD8134, c, psxsdk/libgs/gs_101]
       - [0xD881C, asm, psxsdk/libcd/cdread2]
       - [0xD88D0, asm, psxsdk/libcd/c_002]
       - [0xD8A78, asm, psxsdk/libcd/c_005]
@@ -139,9 +151,9 @@ segments:
       - [0xD8BB8, asm, psxsdk/libcd/c_008]
       - [0xD8BF4, asm, psxsdk/libcd/c_009]
       - [0xD8CB8, asm, psxsdk/libcd/c_010]
-      - [0xD8CD8, asm, psxsdk/libcd/c_011]
+      - [0xD8CD8, c, psxsdk/libcd/c_011]
       - [0xD9838, asm] # linker junk?
-      - [0xD9840, asm]
+      - [0xD9840, c]
       - [0xDDD40, asm] # unknown
       - [0xDDD74, asm]
       - [0xDE0D8, asm, psxsdk/libcard/c112]
