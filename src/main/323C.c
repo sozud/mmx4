@@ -421,6 +421,8 @@ void MyCdReadyCallback(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
 
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010014);
+
 extern s32 D_80137CCC;
 extern s32 D_80137CEC;
 extern CdlLOC D_80137CF8;
@@ -1041,6 +1043,12 @@ void func_800164D8(void)
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001653C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001663C);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010050);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010058);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_8001005C);
 
 void func_80016F0C();
 extern s32 D_80139530;
@@ -1743,6 +1751,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001B718);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001B7C0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001B8B0);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010090);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010094);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_800100A8);
+
+INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_800100C0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001BCAC);
 
