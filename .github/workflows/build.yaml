@@ -1,4 +1,4 @@
-name: Build PSX version
+name: Build PSX and Linux versions
 
 on:
   push:
@@ -18,6 +18,26 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  build-linux:
+    name: Build Linux port
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone main repo
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install requirements
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            build-essential cmake ninja-build \
+            libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
+            libxfixes-dev libxi-dev libxss-dev libxtst-dev
+      - name: Configure
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: cmake --build build-linux --parallel
+
   build-and-test:
     strategy:
       matrix:

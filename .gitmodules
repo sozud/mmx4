@@ -7,3 +7,6 @@
 [submodule "tools/asm-differ"]
 	path = tools/asm-differ
 	url = https://github.com/simonlindholm/asm-differ.git
+[submodule "tools/psyz"]
+	path = tools/psyz
+	url = https://github.com/psyqz/psyz
