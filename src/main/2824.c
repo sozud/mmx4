@@ -9,10 +9,10 @@ void func_80012024(void)
         VSync(0);
         PutDispEnv(&cur_draw_info->dispenv);
         PutDrawEnv(&cur_draw_info->drawenv);
-        DrawOTag(&cur_draw_info->unk9C);
+        DrawOTag(&cur_draw_info->ordering_table.end);
         SP_DRAW_INFO_POS ^= 1;
         cur_draw_info = &draw_infos[SP_DRAW_INFO_POS];
-        ClearOTagR(&cur_draw_info->unk70, 0xC);
+        ClearOTagR(&cur_draw_info->ordering_table.start, 0xC);
         func_800168D8();
         func_800169D8();
         func_80012328();
@@ -64,7 +64,7 @@ void func_8001213C(void)
 
 void func_800122E0(struct DrawInfo* arg0)
 {
-    ClearOTagR(&arg0->unk70, 0xC);
+    ClearOTagR(&arg0->ordering_table.start, 0xC);
     arg0->drawenv.dtd = 0;
     arg0->drawenv.isbg = 1;
     arg0->drawenv.r0 = 0;

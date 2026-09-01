@@ -89,28 +89,7 @@ void func_8002E420(struct EngineObj* arg0)
     D_80171EA8 = 0;
 }
 
-#ifdef MMX4_PC
-void func_8002E5E0(void)
-{
-    static const u8 palette_rows[8] = { 0, 7, 5, 3, 4, 1, 2, 6 };
-    u8 enabled = engine_obj.palette_flags;
-    u16* palette = SP_TABLE_28;
-    u32 row, color;
-
-    for (row = 0; row < 8; row++) {
-        u16* entry = palette + palette_rows[row] * 16;
-        if (!((enabled >> row) & 1))
-            continue;
-        for (color = 0; color < 16; color++) {
-            u16 value = entry[color];
-            u16 gray = ((value & 0x1f) + ((value >> 5) & 0x1f) + ((value >> 10) & 0x1f)) / 3;
-            entry[color] = gray | (gray << 5) | (gray << 10);
-        }
-    }
-}
-#else
 INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E5E0);
-#endif
 
 // engine_state_3_update_funcs state 1 (load briefing room)
 void func_8002E698(struct EngineObj* arg0)
@@ -199,82 +178,7 @@ void func_8002E8D4(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 4 (mission selection)
-#ifdef MMX4_PC
-void func_8002E994(struct EngineObj* arg0)
-{
-    u16 direction = D_80166C08 & 0xF000;
-    s8 selection = arg0->unk3;
-    s8 next = selection;
-    int moved = 0;
-
-    if (direction == PADLup || direction == PADLright || direction == PADLdown || direction == PADLleft) {
-        if ((D_80166C08 ^ controller_state) & direction) {
-            if (arg0->unk8 != 0) {
-                arg0->unk8--;
-            } else {
-                s16 repeats = arg0->unkA++;
-                arg0->unk8 = repeats < 3 ? 0x1E : 0xA;
-                if (direction == PADLup) {
-                    if ((u8)arg0->unk5F >= 5) {
-                        if (selection == 8)
-                            next = 0;
-                        else if (selection >= 4)
-                            next = 8;
-                    } else if (selection >= 4) {
-                        next = selection - 4;
-                    }
-                } else if (direction == PADLdown) {
-                    if ((u8)arg0->unk5F >= 5) {
-                        if (selection == 8)
-                            next = 4;
-                        else if (selection < 4)
-                            next = 8;
-                    } else if (selection < 4) {
-                        next = selection + 4;
-                    }
-                } else if (direction == PADLright) {
-                    if (selection != 8 && (selection & 3) != 3)
-                        next = selection + 1;
-                } else {
-                    if (selection != 8 && (selection & 3) != 0)
-                        next = selection - 1;
-                }
-                moved = next != selection;
-            }
-        }
-    } else {
-        arg0->unk8 = 0;
-        arg0->unkA = 0;
-    }
-
-    if (moved) {
-        arg0->unk3 = next;
-        func_8001540C(5, 0, 0);
-    }
-
-    if (controller_state & (PADstart | PADRdown)) {
-        if (arg0->unk3 == 8) {
-            if ((u8)arg0->unk5F < 7) {
-                arg0->stage = 0xA;
-                arg0->unk40 = arg0->cur_character == 0 ? 0x31 : 0x11;
-            } else {
-                arg0->stage = (u8)arg0->unk5F < 0xA ? 0xB : 0xC;
-                arg0->unk40 = 0x11;
-            }
-            D_8013B814 = 0;
-        } else {
-            arg0->unk40 = arg0->cur_character == 0 ? 0x31 : 0x11;
-            arg0->stage = D_800F474C.stage_order[(u8)arg0->unk3];
-            arg0->substage = D_8013B814;
-        }
-        func_8001540C(5, 1, 0);
-        arg0->unk2 = 0;
-        arg0->unk1++;
-    }
-}
-#else
 INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E994);
-#endif
 
 // engine_state_3_update_funcs state 5
 void func_8002ED80(struct EngineObj* arg0)
