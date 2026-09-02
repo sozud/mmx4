@@ -421,7 +421,21 @@ void MyCdReadyCallback(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
 
-INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010014);
+typedef struct {
+    void (*unk0)(void);
+    void (*unk4)(void);
+    void (*unk8)(void);
+    void (*unkC)(void);
+} D_80010014_t;
+
+void func_80014140(void);
+void func_800141BC(void);
+void func_800142BC(void);
+void func_80014514(void);
+
+const D_80010014_t D_80010014 = {
+    func_80014140, func_800142BC, func_80014514, func_800141BC
+};
 
 extern s32 D_80137CCC;
 extern s32 D_80137CEC;
@@ -449,25 +463,8 @@ void func_80013DA8(void)
     D_801406AC = 1;
 }
 
-typedef struct {
-    void (*unk0)(void);
-    void (*unk4)(void);
-    void (*unk8)(void);
-    void (*unkC)(void);
-} D_80010014_t;
-
-#ifdef MMX4_PC
-extern void func_80014140(void);
-extern void func_800141BC(void);
-extern void func_800142BC(void);
-extern void func_80014514(void);
-D_80010014_t D_80010014 = {
-    func_80014140, func_800142BC, func_80014514, func_800141BC
-};
-#endif
-
 extern void func_800137F0(void);
-extern D_80010014_t D_80010014;
+extern const D_80010014_t D_80010014;
 extern u8** D_800F15BC[];
 extern u8 D_801406AC;
 extern s32 D_80137CBC;
