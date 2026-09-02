@@ -601,11 +601,7 @@ void func_800148EC()
     D_80137CFC.y = temp_a1;
     D_80137CFC.w = 0x40;
     D_80137CFC.h = 0x10;
-#ifdef MMX4_PC
-    LoadImage(&D_80137CFC, D_8012F4B4.sectors[D_801374B4]);
-#else
-    LoadImage(&D_80137CFC, &D_8012F4B4[D_801374B4 << 9]);
-#endif
+    LoadImage(&D_80137CFC, (u_long*)D_8012F4B4.sectors[D_801374B4]);
 }
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -634,11 +630,7 @@ void func_80014968(void)
     temp_s1 = D_80137D08[D_801374B4 * 3];
     var_s0 = MIN(0x800, D_80137CE0);
     temp_v0 = SsVabTransBodyPartly(
-#ifdef MMX4_PC
         D_8012F4B4.sectors[D_801374B4],
-#else
-        (u8*)&D_8012F4B4[D_801374B4 << 9],
-#endif
         var_s0,
         D_8013E198[temp_s1]);
     D_80137CE0 -= var_s0;

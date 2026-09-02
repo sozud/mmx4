@@ -1871,11 +1871,7 @@ extern u8* cur_draw_info_drawenv;
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct Unk*);
-#ifdef MMX4_PC
 extern union CdSectorBuffer D_8012F4B4;
-#else
-extern s32* D_8012F4B4[];
-#endif
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];
 
