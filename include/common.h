@@ -1036,17 +1036,14 @@ extern struct BackgroundPrimitiveBuffer temp3[];
 extern struct OrderingTableBuffer temp4[];
 extern struct AuxiliaryPrimitiveBuffer temp5[];
 #ifdef MMX4_PC
-typedef DR_MODE FadeDrawMode;
-extern TILE D_8013B7B0[2];
-extern FadeDrawMode D_8012F498[2];
 extern TILE D_80169D78[2];
 extern struct FadeState D_8016DEA0;
 #else
-extern struct StageSpriteSlot D_8013B7B0[2];
-extern struct OrderingTableBuffer D_8012F498[];
 extern struct SecondaryPrimitiveBuffer D_80169D78[];
 extern struct BackgroundPrimitiveBuffer D_8016DEA0;
 #endif
+extern P_TAG D_8012F498[2];
+extern struct StageSpriteSlot D_8013B7B0[2];
 
 #ifndef MMX4_PC
 typedef u32 OT_TYPE;
@@ -1558,11 +1555,7 @@ extern u16 D_80106770[64];
 extern u8 D_800FAEF0[8];
 extern struct Unk_unk68 D_800FAEFC;
 extern s32 D_800EE458;
-#ifdef MMX4_PC
 extern void (*D_8012F490)(void);
-#else
-extern s32 D_8012F490;
-#endif
 extern s8 D_80173C6C[4];
 extern s8 D_80137DFC;
 extern u8 D_80137DD4;
@@ -1603,11 +1596,7 @@ extern s16 D_801397E0;
 extern u16 D_801397E4[0x20];
 extern u8 D_80139824;
 extern u8 D_80139828;
-#ifdef MMX4_PC
 extern char D_80137E0C[0x1428];
-#else
-extern void* D_80137E0C;
-#endif
 extern s8 D_80139234[24];
 extern u8 D_8013924C[4];
 extern void* D_8013DC10;
@@ -1749,18 +1738,14 @@ extern u8 D_800F1C0F[];
 extern u32 D_800F1D8C;
 extern u8 D_800F1D90;
 extern CdlATV D_80139644;
-extern s8 D_80139645;
-extern s8 D_80139646;
-extern s8 D_80139647;
 extern u8 D_80171EA9;
 extern s32 D_80166BB4;
 #ifdef MMX4_PC
 extern u8 D_80166D68[0x22];
-extern u8 D_8012F46C[0x22];
 #else
 extern u8 D_80166D68;
-extern s32 D_8012F46C;
 #endif
+extern u8 D_8012F46C[0x22];
 extern u16 D_800EE430[];
 extern RECT D_800EE450;
 extern u16 cur_random;

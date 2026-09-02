@@ -711,5 +711,5 @@ segments:
       - [0x10BA30, data]
       - [0x10BC30, .data, data/visual_animation_data_b]
       - [0x10C8F0, data]
-      - {type: bss, vram: 0x8012F418, name: bss}
+      - {type: bss, vram: 0x80141F08, name: bss}
   - [0x11FC18]

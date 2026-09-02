@@ -472,7 +472,7 @@ extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32* D_80137CD0;
 extern u32 D_80137CD4;
-extern u16 D_80137CD6;
+#define D_80137CD6 (((u16*)&D_80137CD4)[1])
 extern s32 D_80137CDC;
 extern s32 D_80137CEC;
 extern u8* D_80137DC4;
