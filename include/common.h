@@ -1540,17 +1540,10 @@ extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern s32 D_800EE458;
 #ifdef MMX4_PC
 extern void (*D_8012F490)(void);
-extern s8 D_80173C6C[4];
-#define D_80173C6D D_80173C6C[1]
-#define D_80173C6E D_80173C6C[2]
-#define D_80173C6F D_80173C6C[3]
 #else
 extern s32 D_8012F490;
-extern s8 D_80173C6C;
-extern s8 D_80173C6D;
-extern s8 D_80173C6E;
-extern s8 D_80173C6F;
 #endif
+extern s8 D_80173C6C[4];
 extern s8 D_80137DFC;
 extern u8 D_80137DD4;
 extern u8 D_80137DDC;

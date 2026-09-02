@@ -4178,14 +4178,10 @@ void func_80023CE0()
 
 void func_80023D30(void)
 {
-#ifdef MMX4_PC
     D_80173C6C[0] = 3;
-#else
-    D_80173C6C = 3;
-#endif
-    D_80173C6D = 4;
-    D_80173C6E = 5;
-    D_80173C6F = 6;
+    D_80173C6C[1] = 4;
+    D_80173C6C[2] = 5;
+    D_80173C6C[3] = 6;
 }
 
 void func_80023D68(void)
@@ -4623,14 +4619,10 @@ void func_8002771C(void)
     }
 
     ptr = (u8*)D_800F3188.records + ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) + (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
-#ifdef MMX4_PC
     D_80173C6C[0] = *ptr++;
-#else
-    D_80173C6C = *ptr++;
-#endif
-    D_80173C6D = *ptr++;
-    D_80173C6E = *ptr++;
-    D_80173C6F = *ptr++;
+    D_80173C6C[1] = *ptr++;
+    D_80173C6C[2] = *ptr++;
+    D_80173C6C[3] = *ptr++;
     background_objects[0].unk4B = *ptr++;
     background_objects[0].unk4A = *ptr++;
     background_objects[1].unk4B = *ptr++;
