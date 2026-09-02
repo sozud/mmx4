@@ -401,14 +401,3 @@ const u32* const* D_800F2EE8[] = {
     animation_96,
 };
 const u32* const* D_800F2F00[] = { animation_97, animation_98 };
-
-#ifdef MMX4_PC
-const u32* const* ready_text_animation(u8 id)
-{
-    if (id < 0x91 || id > 0x98)
-        abort();
-    if (id < 0x97)
-        return D_800F2EE8[id - 0x91];
-    return D_800F2F00[id - 0x97];
-}
-#endif
