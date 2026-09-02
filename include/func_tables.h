@@ -14,6 +14,7 @@ void func_800148EC(void);
 void func_80014968(void);
 
 // D_800F1AB0
+extern void (*D_800F1AB0[])(void);
 void func_80016B38(void);
 void func_80016B58(void);
 void func_80016BDC(void);

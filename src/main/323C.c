@@ -1136,27 +1136,6 @@ void func_800163EC(void);
 void func_80016448(u8);
 void func_80016F0C();
 extern s32 D_800F1AAC;
-extern void (*D_800F1AB0[])(void);
-#ifdef MMX4_PC
-extern void func_80016B38(void);
-extern void func_80016B58(void);
-extern void func_80016BDC(void);
-extern void func_80016C5C(void);
-extern void func_80016D0C(void);
-extern void func_80016DAC(void);
-extern void func_80016E34(void);
-extern void func_80016E84(void);
-void (*D_800F1AB0[])(void) = {
-    func_80016B38,
-    func_80016B58,
-    func_80016BDC,
-    func_80016C5C,
-    func_80016D0C,
-    func_80016DAC,
-    func_80016E34,
-    func_80016E84,
-};
-#endif
 extern u32 D_80139510;
 extern s32 D_80139530;
 extern s32 D_80139534;
@@ -1598,11 +1577,6 @@ extern s32 D_80139624;
 extern s32 D_80139628;
 extern u32 D_8013962C;
 extern u32 D_80139630;
-#ifdef MMX4_PC
-extern volatile s32 D_80139634;
-#else
-extern s32 D_80139634;
-#endif
 extern s32 D_801410B8;
 
 void func_80019100(void)
@@ -1700,11 +1674,7 @@ void func_800192F8(void)
 
 void func_800193D8(struct EngineObj* arg0)
 {
-#ifdef MMX4_PC
     u8* ptr = D_80141BDF;
-#else
-    u8* ptr = &D_80141BDF;
-#endif
     u8 temp_s1 = *ptr;
     u8 temp_s3 = engine_obj.unk1;
     u8 temp_s4 = engine_obj.unk2;
