@@ -52,32 +52,21 @@ void func_800498C8(struct Unk* arg0)
 
 void func_80049904(struct Unk* arg0)
 {
-#ifndef MMX4_PC
-    extern u8 D_800FAEF0;
-    extern u8 D_800FAEFC;
-    extern u8 D_80106770;
-#endif
     arg0->unk5C = 6;
     arg0->unk60 = 3;
     arg0->unk61 = 0;
-#ifndef MMX4_PC
-    arg0->collision_data = (const u16*)&D_80106770;
-#endif
+    arg0->collision_data = D_80106770;
     arg0->base.bg_offset = g_Player.base.bg_offset;
     arg0->base.unk16 = 6;
     arg0->animation_table = D_800FB0BC;
-#ifndef MMX4_PC
-    arg0->unk68 = (struct Unk_unk68*)&D_800FAEFC;
-#endif
+    arg0->unk68 = &D_800FAEFC;
     arg0->unk20 = 0;
     arg0->unk24 = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk67 = 0;
-#ifndef MMX4_PC
-    arg0->unk54 = (s32)&D_800FAEF0;
-    arg0->unk50 = (s32)&D_800FAEF0;
-#endif
+    arg0->unk54 = (s32)D_800FAEF0;
+    arg0->unk50 = (s32)D_800FAEF0;
     arg0->unk62 = 0;
     arg0->unk18 = arg0->base.x_pos.val;
     arg0->unk1C = arg0->base.y_pos.val;

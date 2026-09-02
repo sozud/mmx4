@@ -37,6 +37,8 @@ set(MMX4_PC_GAME_SOURCES
     src/main/data/character_select_init_data.c
     src/main/data/cd_audio_data.c
     src/main/data/collision_descriptor_data.c
+    src/main/data/D_80106770.c
+    src/main/data/D_800FAEF0.c
     src/main/data/briefing_layout_data.c
     src/main/data/data.c
     src/main/data/dialogue_window_data.c

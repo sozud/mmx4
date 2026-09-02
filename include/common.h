@@ -1554,6 +1554,9 @@ extern u8 D_800F2468[];
 extern u8 D_800F247C[];
 extern u8 D_800F2490[];
 extern struct BackgroundCameraModePair D_800F32D4[16][2];
+extern u16 D_80106770[64];
+extern u8 D_800FAEF0[8];
+extern struct Unk_unk68 D_800FAEFC;
 extern s32 D_800EE458;
 #ifdef MMX4_PC
 extern void (*D_8012F490)(void);
