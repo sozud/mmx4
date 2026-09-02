@@ -210,7 +210,7 @@ u16 D_801441C8[0xc00];
 s32* D_8013BD50[16][8];
 s32 D_8013E2F0[16][8];
 
-u8 D_801459C8[0x4000];
+union SepBundle D_801459C8;
 u8 window_archive_data[0x3000];
 u8 replay_data[0x1CF4];
 

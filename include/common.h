@@ -209,6 +209,10 @@ union TitleScratch {
     s32 sector[0x200];
     struct TitlePointState title;
 };
+union SepBundle {
+    s32 offsets[0x1000];
+    u8 raw[0x4000];
+};
 struct BackgroundLayoutConfig {
     u8 object_ids[4];
     u8 layer_ids[3][2];

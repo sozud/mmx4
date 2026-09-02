@@ -822,35 +822,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015A10);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015A50);
 
 extern u8 D_800F1654[];
-extern s8 D_8013E199;
-extern s8 D_8013E1C9;
-extern u8 D_801459C8;
-extern u8 D_801459CC;
+extern union SepBundle D_801459C8;
 
 void func_80015C10(void)
 {
-#ifdef MMX4_PC
-    u8 var_s1;
-
-    for (var_s1 = 0; var_s1 < 4; var_s1++) {
-        if (D_8013E1C8[var_s1] != -1) {
-            SsSepClose(D_8013E1C8[var_s1]);
-            D_8013E1C8[var_s1] = -1;
-        }
-    }
-    func_80013890(engine_obj.cur_character == CHARACTER_X ? 0x4A : 0x4C,
-        D_801459C8);
-    func_80014C70();
-    D_8013E1C8[0] = SsSepOpen(
-        (u_long*)(D_801459C8 + *(s32*)D_801459C8), D_8013E198[0], 8);
-    for (var_s1 = 0; var_s1 < 8; var_s1++)
-        SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
-    D_8013E1C8[1] = SsSepOpen(
-        (u_long*)(D_801459C8 + *(s32*)(D_801459C8 + 4)),
-        D_8013E198[1], 2);
-    for (var_s1 = 0; var_s1 < 2; var_s1++)
-        SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
-#else
     u8 var_s1;
     s8 temp_a0;
 
@@ -862,20 +837,19 @@ void func_80015C10(void)
         }
     }
 
-    func_80013890(D_800F1654[engine_obj.cur_character], &D_801459C8);
+    func_80013890(D_800F1654[engine_obj.cur_character], (s32)D_801459C8.raw);
     func_80014C70();
-    D_8013E1C8[0] = SsSepOpenJ(*(s32*)&D_801459C8 + &D_801459C8, D_8013E198[0], 8);
+    D_8013E1C8[0] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[0]], D_8013E198[0], 8);
 
     for (var_s1 = 0; var_s1 < 8; var_s1++) {
         SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
     }
 
-    D_8013E1C9 = SsSepOpenJ(*(s32*)&D_801459CC + &D_801459CC - 4, D_8013E199, 2);
+    D_8013E1C8[1] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[1]], D_8013E198[1], 2);
 
     for (var_s1 = 0; var_s1 < 2; var_s1++) {
-        SsSepSetVol(D_8013E1C9, var_s1, 0x7F, 0x7F);
+        SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
     }
-#endif
 }
 
 s32 func_80015D60(struct Unk19* arg0, s32 arg1)
