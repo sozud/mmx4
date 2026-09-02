@@ -346,11 +346,7 @@ u8 func_8001385C(void)
 }
 
 extern s32 D_80137CBC;
-#ifdef MMX4_PC
 extern u8* D_80137CC4;
-#else
-extern s32 D_80137CC4;
-#endif
 extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32 D_80137CD8;
@@ -375,7 +371,7 @@ void func_80013890(u32 arg0, s32 arg1)
     } while (func_8001385C() & 0x40);
     D_80137CD8 = 0;
     D_80137CCC = func_80013614(arg0, &D_80137CC8);
-    D_80137CC4 = arg1;
+    D_80137CC4 = (u8*)arg1;
     D_80137CBC = D_80137CC8;
     func_80013968();
 }
@@ -425,7 +421,21 @@ void MyCdReadyCallback(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
 
-INCLUDE_RODATA("asm/us/main/nonmatchings/323C", D_80010014);
+typedef struct {
+    void (*unk0)(void);
+    void (*unk4)(void);
+    void (*unk8)(void);
+    void (*unkC)(void);
+} D_80010014_t;
+
+void func_80014140(void);
+void func_800141BC(void);
+void func_800142BC(void);
+void func_80014514(void);
+
+const D_80010014_t D_80010014 = {
+    func_80014140, func_800142BC, func_80014514, func_800141BC
+};
 
 extern s32 D_80137CCC;
 extern s32 D_80137CEC;
@@ -453,44 +463,23 @@ void func_80013DA8(void)
     D_801406AC = 1;
 }
 
-typedef struct {
-    void (*unk0)(void);
-    void (*unk4)(void);
-    void (*unk8)(void);
-    void (*unkC)(void);
-} D_80010014_t;
-
-#ifdef MMX4_PC
-extern void func_80014140(void);
-extern void func_800141BC(void);
-extern void func_800142BC(void);
-extern void func_80014514(void);
-D_80010014_t D_80010014 = {
-    func_80014140, func_800142BC, func_80014514, func_800141BC
-};
-#endif
-
 extern void func_800137F0(void);
-extern D_80010014_t D_80010014;
-extern s32* D_800F15BC[];
+extern const D_80010014_t D_80010014;
+extern u8** D_800F15BC[];
 extern u8 D_801406AC;
 extern s32 D_80137CBC;
 extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32* D_80137CD0;
 extern u32 D_80137CD4;
-extern u16 D_80137CD6;
+#define D_80137CD6 (((u16*)&D_80137CD4)[1])
 extern s32 D_80137CDC;
 extern s32 D_80137CEC;
-#ifdef MMX4_PC
 extern u8* D_80137DC4;
-#else
-extern s32 D_80137DC4;
-#endif
 extern s32 D_80137DC8;
-extern s32 D_80137DCC;
+extern u8* D_80137DCC;
 extern CdlLOC D_80137DE8;
-extern s32 D_80169498;
+extern union TitleScratch D_80169498;
 
 void func_80013E68(void)
 {
@@ -506,7 +495,7 @@ void func_80013E68(void)
             goto block_4;
         }
         if (D_80137CEC == 0) {
-            D_80137CD0 = &D_80169498;
+            D_80137CD0 = D_80169498.sector;
             CdGetSector(&D_80137DE8, 3);
             if (CdPosToInt(&D_80137DE8) == D_80137CCC) {
                 goto block_5;
@@ -601,11 +590,7 @@ void func_800148EC()
     D_80137CFC.y = temp_a1;
     D_80137CFC.w = 0x40;
     D_80137CFC.h = 0x10;
-#ifdef MMX4_PC
-    LoadImage(&D_80137CFC, D_8012F4B4.sectors[D_801374B4]);
-#else
-    LoadImage(&D_80137CFC, &D_8012F4B4[D_801374B4 << 9]);
-#endif
+    LoadImage(&D_80137CFC, (u_long*)D_8012F4B4.sectors[D_801374B4]);
 }
 
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
@@ -634,11 +619,7 @@ void func_80014968(void)
     temp_s1 = D_80137D08[D_801374B4 * 3];
     var_s0 = MIN(0x800, D_80137CE0);
     temp_v0 = SsVabTransBodyPartly(
-#ifdef MMX4_PC
         D_8012F4B4.sectors[D_801374B4],
-#else
-        (u8*)&D_8012F4B4[D_801374B4 << 9],
-#endif
         var_s0,
         D_8013E198[temp_s1]);
     D_80137CE0 -= var_s0;
@@ -822,35 +803,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015A10);
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015A50);
 
 extern u8 D_800F1654[];
-extern s8 D_8013E199;
-extern s8 D_8013E1C9;
-extern u8 D_801459C8;
-extern u8 D_801459CC;
+extern union SepBundle D_801459C8;
 
 void func_80015C10(void)
 {
-#ifdef MMX4_PC
-    u8 var_s1;
-
-    for (var_s1 = 0; var_s1 < 4; var_s1++) {
-        if (D_8013E1C8[var_s1] != -1) {
-            SsSepClose(D_8013E1C8[var_s1]);
-            D_8013E1C8[var_s1] = -1;
-        }
-    }
-    func_80013890(engine_obj.cur_character == CHARACTER_X ? 0x4A : 0x4C,
-        D_801459C8);
-    func_80014C70();
-    D_8013E1C8[0] = SsSepOpen(
-        (u_long*)(D_801459C8 + *(s32*)D_801459C8), D_8013E198[0], 8);
-    for (var_s1 = 0; var_s1 < 8; var_s1++)
-        SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
-    D_8013E1C8[1] = SsSepOpen(
-        (u_long*)(D_801459C8 + *(s32*)(D_801459C8 + 4)),
-        D_8013E198[1], 2);
-    for (var_s1 = 0; var_s1 < 2; var_s1++)
-        SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
-#else
     u8 var_s1;
     s8 temp_a0;
 
@@ -862,20 +818,19 @@ void func_80015C10(void)
         }
     }
 
-    func_80013890(D_800F1654[engine_obj.cur_character], &D_801459C8);
+    func_80013890(D_800F1654[engine_obj.cur_character], (s32)D_801459C8.raw);
     func_80014C70();
-    D_8013E1C8[0] = SsSepOpenJ(*(s32*)&D_801459C8 + &D_801459C8, D_8013E198[0], 8);
+    D_8013E1C8[0] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[0]], D_8013E198[0], 8);
 
     for (var_s1 = 0; var_s1 < 8; var_s1++) {
         SsSepSetVol(D_8013E1C8[0], var_s1, 0x7F, 0x7F);
     }
 
-    D_8013E1C9 = SsSepOpenJ(*(s32*)&D_801459CC + &D_801459CC - 4, D_8013E199, 2);
+    D_8013E1C8[1] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[1]], D_8013E198[1], 2);
 
     for (var_s1 = 0; var_s1 < 2; var_s1++) {
-        SsSepSetVol(D_8013E1C9, var_s1, 0x7F, 0x7F);
+        SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
     }
-#endif
 }
 
 s32 func_80015D60(struct Unk19* arg0, s32 arg1)
@@ -1136,27 +1091,6 @@ void func_800163EC(void);
 void func_80016448(u8);
 void func_80016F0C();
 extern s32 D_800F1AAC;
-extern void (*D_800F1AB0[])(void);
-#ifdef MMX4_PC
-extern void func_80016B38(void);
-extern void func_80016B58(void);
-extern void func_80016BDC(void);
-extern void func_80016C5C(void);
-extern void func_80016D0C(void);
-extern void func_80016DAC(void);
-extern void func_80016E34(void);
-extern void func_80016E84(void);
-void (*D_800F1AB0[])(void) = {
-    func_80016B38,
-    func_80016B58,
-    func_80016BDC,
-    func_80016C5C,
-    func_80016D0C,
-    func_80016DAC,
-    func_80016E34,
-    func_80016E84,
-};
-#endif
 extern u32 D_80139510;
 extern s32 D_80139530;
 extern s32 D_80139534;
@@ -1598,11 +1532,6 @@ extern s32 D_80139624;
 extern s32 D_80139628;
 extern u32 D_8013962C;
 extern u32 D_80139630;
-#ifdef MMX4_PC
-extern volatile s32 D_80139634;
-#else
-extern s32 D_80139634;
-#endif
 extern s32 D_801410B8;
 
 void func_80019100(void)
@@ -1700,11 +1629,7 @@ void func_800192F8(void)
 
 void func_800193D8(struct EngineObj* arg0)
 {
-#ifdef MMX4_PC
     u8* ptr = D_80141BDF;
-#else
-    u8* ptr = &D_80141BDF;
-#endif
     u8 temp_s1 = *ptr;
     u8 temp_s3 = engine_obj.unk1;
     u8 temp_s4 = engine_obj.unk2;
@@ -1971,7 +1896,7 @@ void func_8001D1F0(struct GameInfo* arg0)
 void func_8001D230(struct GameInfo* arg0)
 {
     arg0->unkD = 1;
-    D_80173C80 = 0x80178000;
+    D_80173C80 = (u8*)0x80178000;
     func_80018000(1); // nop out to skip opening cinematic
     arg0->mode++;
 }
@@ -2352,19 +2277,6 @@ void func_8001DE20(struct GameInfo* arg0)
 }
 
 extern s16 D_800F2204;
-extern s32 D_80169498;
-#ifdef MMX4_PC
-#define D_8016954C (((u8*)D_80169498)[0xB4])
-#define background_objects_03 (background_objects[0].unk3)
-#define background_objects_1_0A (background_objects[1].x_pos.i.hi)
-#define background_objects_1_4C (background_objects[1].unk4C)
-#else
-extern s8 D_8016954C;
-extern s8 background_objects_03;
-extern s16 background_objects_1_0A;
-extern s8 background_objects_1_4C;
-#endif
-
 void func_8001DE54(struct GameInfo* arg0)
 {
     s16 temp_v0_2;
@@ -2375,8 +2287,8 @@ void func_8001DE54(struct GameInfo* arg0)
     s32 saved_reg_s2;
     struct MiscObj* temp_v0;
 
-    background_objects_1_0A = 0x400;
-    background_objects_1_4C = 1;
+    background_objects[1].x_pos.i.hi = 0x400;
+    background_objects[1].unk4C = 1;
     if (D_80139690->state == 2) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != 0) {
@@ -2387,7 +2299,7 @@ void func_8001DE54(struct GameInfo* arg0)
             D_80139690 = &temp_v0->base;
         }
         var_a1 = &D_800F2204;
-        var_a0 = &D_80169498;
+        var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
             temp_v1 = *var_a1;
@@ -2397,8 +2309,8 @@ void func_8001DE54(struct GameInfo* arg0)
             *var_a0 = temp_v1 << 0x10;
             var_a0++;
         } while (temp_v0_2 < 0x24);
-        D_8016954C = 1;
-        background_objects_03 = 1;
+        D_80169498.title.settled = 1;
+        background_objects[0].unk3 = 1;
         arg0->mode++;
     }
 }
@@ -4178,14 +4090,10 @@ void func_80023CE0()
 
 void func_80023D30(void)
 {
-#ifdef MMX4_PC
     D_80173C6C[0] = 3;
-#else
-    D_80173C6C = 3;
-#endif
-    D_80173C6D = 4;
-    D_80173C6E = 5;
-    D_80173C6F = 6;
+    D_80173C6C[1] = 4;
+    D_80173C6C[2] = 5;
+    D_80173C6C[3] = 6;
 }
 
 void func_80023D68(void)
@@ -4623,14 +4531,10 @@ void func_8002771C(void)
     }
 
     ptr = (u8*)D_800F3188.records + ((engine_obj.stage * sizeof(struct BackgroundLayoutConfig) * 2) + (engine_obj.substage * sizeof(struct BackgroundLayoutConfig)));
-#ifdef MMX4_PC
     D_80173C6C[0] = *ptr++;
-#else
-    D_80173C6C = *ptr++;
-#endif
-    D_80173C6D = *ptr++;
-    D_80173C6E = *ptr++;
-    D_80173C6F = *ptr++;
+    D_80173C6C[1] = *ptr++;
+    D_80173C6C[2] = *ptr++;
+    D_80173C6C[3] = *ptr++;
     background_objects[0].unk4B = *ptr++;
     background_objects[0].unk4A = *ptr++;
     background_objects[1].unk4B = *ptr++;
@@ -4881,12 +4785,7 @@ void func_800281E8(void)
 
 void func_80028268(struct BackgroundObj* arg0)
 {
-#ifdef MMX4_PC
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
-#else
-    extern u8 D_800F32D5[1][1];
-    arg0->unk4 = D_800F32D5[engine_obj.substage << 1][engine_obj.stage << 2];
-#endif
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);

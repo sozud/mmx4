@@ -216,7 +216,8 @@ segments:
       - [0xE1E58, .data, data/palette_data]
       - [0xE2068, .data, data/xa_archive_data]
       - [0xE220C, .data, data/xa_sequence_data]
-      - [0xE22B0, data]
+      - [0xE22B0, .data, function_tables/D_800F1AB0]
+      - [0xE22D0, data]
       - [0xE240C, .data, data/boot_transition_data]
       - [0xE2418, data]
       - [0xE2590, .data, data/menu_character_data]
@@ -315,6 +316,7 @@ segments:
       - [0xEA188, data]
       - [0xEA2EC, .data, function_tables/D_800F9AEC]
       - [0xEA2F8, data]
+      - [0xEB6F0, .data, data/D_800FAEF0]
       - [0xEB700, .data, data/main_id10_animation_data]
       - [0xEB8EC, .data, data/main_object_data]
       - [0xEB8F4, .data, function_tables/D_800FB0F4]
@@ -331,6 +333,8 @@ segments:
       - [0xF67C8, data]
       - [0xF6870, .data, data/collision_descriptor_data]
       - [0xF68F0, data]
+      - [0xF6F70, .data, data/D_80106770]
+      - [0xF6FF0, data]
       - [0xF8F28, .data, function_tables/D_80108728]
       - [0xF8F38, .data, function_tables/D_80108738]
       - [0xF8F48, .data, function_tables/D_80108748]
@@ -707,5 +711,5 @@ segments:
       - [0x10BA30, data]
       - [0x10BC30, .data, data/visual_animation_data_b]
       - [0x10C8F0, data]
-      - {type: bss, vram: 0x8012F418, name: bss}
+      - {type: bss, vram: 0x80141F08, name: bss}
   - [0x11FC18]
