@@ -776,7 +776,7 @@ s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)
     var_y = (temp_v1->y_pos.i.hi + arg2) / 256;
     temp = var_x + (arg0 * layout_size + layout_width * var_y);
 
-    return SP_LAYOUT_DATA[temp];
+    return SP_BG_TILEMAP[temp];
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002BB80);

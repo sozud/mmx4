@@ -1450,7 +1450,7 @@ void func_800C9EE8(struct MiscObj* arg0)
     if (arg0->base.unk2 == 0) {
         arg0->unk42 = 0x7883;
         arg0->unk40 = D_801406A8[2] >> 7;
-        arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[2];
+        arg0->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
         if (engine_obj.cur_character != CHARACTER_X) {
             arg0->animation_table = &D_8010E538;
         } else {
@@ -1461,7 +1461,7 @@ void func_800C9EE8(struct MiscObj* arg0)
     } else {
         arg0->unk42 = 0x7885;
         arg0->unk40 = D_801406A8[3] >> 7;
-        arg0->unk3C = *(s8**)0x1F800020 + (*(s32**)0x1F800020)[3];
+        arg0->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[3];
         if (engine_obj.cur_character != CHARACTER_X) {
             arg0->animation_table = &D_8010E55C;
         } else {

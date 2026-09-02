@@ -23,7 +23,7 @@ void func_800CCA34(struct MiscObj* arg0)
     case 2:
     case 3:
         arg0->unk40 = D_801406A8[2] >> 7;
-        arg0->unk3C = (u8*)SP_TABLE_20 + SP_TABLE_20[2];
+        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
         arg0->unk42 = 0x7840;
         arg0->animation_table = (const u32* const*)D_8010EAC8;
         arg0->base.unk15 = 0x40;
@@ -31,14 +31,14 @@ void func_800CCA34(struct MiscObj* arg0)
     case 1:
     case 4:
         arg0->unk40 = D_801406A8[0] >> 7;
-        arg0->unk3C = (u8*)SP_TABLE_20 + SP_TABLE_20[0];
+        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
         arg0->unk42 = 0x7800;
         arg0->animation_table = (const u32* const*)D_8010EAE4;
         arg0->base.unk15 = 0;
         break;
     default:
         arg0->unk40 = D_801406A8[1] >> 7;
-        arg0->unk3C = (u8*)SP_TABLE_20 + SP_TABLE_20[1];
+        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
         temp_a1 = D_8010EB34[arg0->base.unk2];
         arg0->unk42 = (((temp_a1 * 4) + 4) % 16) | ((((temp_a1 + 1) / 4) + 0x1E0) << 6);
         arg0->animation_table = (const u32* const*)D_8010EAFC;

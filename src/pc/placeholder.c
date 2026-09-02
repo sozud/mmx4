@@ -12,8 +12,8 @@ u32 D_800F45F8[5] = { 0x137EF, 0x1DEF1, 0x34BEB, 0xA2736, 0xFFFFFFFF };
 
 void func_80016124(void)
 {
-    SPRT* sprites = D_80139268[SP_DRAW_INFO_POS];
-    DR_MODE* draw_mode = &D_80139250[SP_DRAW_INFO_POS];
+    SPRT* sprites = D_80139268[SP_DRAW_BUFFER];
+    DR_MODE* draw_mode = &D_80139250[SP_DRAW_BUFFER];
     s16 x = 0;
     s16 y = 0;
     s32 i;
@@ -84,7 +84,7 @@ void func_8002E5E0(void)
 {
     static const u8 palette_rows[8] = { 0, 7, 5, 3, 4, 1, 2, 6 };
     u8 enabled = engine_obj.palette_flags;
-    u16* palette = SP_TABLE_28;
+    u16* palette = SP_PALETTE;
     u32 row, color;
 
     for (row = 0; row < 8; row++) {

@@ -22,9 +22,9 @@ void func_800CB048(struct MiscObj* arg0)
     u8 temp_v1;
 
     if (engine_obj.cur_character == CHARACTER_X) {
-        arg0->unk3C = &SP_1C->unk0[SP_1C->unk24];
+        arg0->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk24];
     } else {
-        arg0->unk3C = &SP_1C->unk0[SP_1C->unk10];
+        arg0->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk10];
     }
 
     arg0->unk40 = 0x1E00;
@@ -51,7 +51,7 @@ void func_800CB048(struct MiscObj* arg0)
         pal_pos = 0;
         if (arg0->base.unk2 != 0) {
             pal_dst = &D_8013B940;
-            color = *(s32*)0x1F800028 + 0x200;
+            color = SP_PALETTE + 0x100;
             do {
                 *pal_dst++ = *color;
                 if (pal_pos != 0) {
@@ -156,7 +156,7 @@ void func_800CB394(struct MiscObj* arg0)
             pal_src = &D_8013B940;
             pal_pos = 0;
             arg0->x_vel.val = FIXED(-16);
-            pal_dst = *(s32*)0x1F800028 + 0x200;
+            pal_dst = SP_PALETTE + 0x100;
             do {
                 *pal_dst++ = *pal_src++;
                 pal_pos += 1;
@@ -215,8 +215,8 @@ void func_800CB5B4(s32 arg0, s32 arg1)
     u32 var_a2;
 
     var_a2 = 0;
-    var_a0 = *(s32*)0x1F800024 + ((arg1 + 0x39) << 5);
-    var_v1 = *(s32*)0x1F800028 + 0x20;
+    var_a0 = SP_PALETTE_BANK + ((arg1 + 0x39) << 4);
+    var_v1 = SP_PALETTE + 0x10;
     do {
         *var_v1++ = *var_a0++;
         var_a2 += 1;
