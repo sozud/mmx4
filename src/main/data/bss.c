@@ -150,7 +150,7 @@ u8* D_8015D9C8;
 u8* D_80173C80;
 s32 D_80142F70, D_80166BB4;
 u8 pc_archive_arena[0x88000];
-s32 D_80169498[0x200];
+union TitleScratch D_80169498;
 u8 need_palette_load;
 struct GameInfo game_info;
 s8 D_80173C6C[4];

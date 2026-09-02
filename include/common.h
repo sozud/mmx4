@@ -196,6 +196,19 @@ struct PlayerGaugePosition {
     s16 x;
     u16 bottom;
 };
+struct TitlePoint {
+    s32 x, y;
+};
+struct TitlePointState {
+    struct TitlePoint points[18]; /* 0x00 */
+    u8 unk90[18];                 /* 0x90 */
+    u8 unkA2[18];                 /* 0xA2 */
+    u8 settled;                   /* 0xB4 */
+};
+union TitleScratch {
+    s32 sector[0x200];
+    struct TitlePointState title;
+};
 struct BackgroundLayoutConfig {
     u8 object_ids[4];
     u8 layer_ids[3][2];

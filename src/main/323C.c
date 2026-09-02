@@ -490,7 +490,7 @@ extern s32 D_80137DC4;
 extern s32 D_80137DC8;
 extern s32 D_80137DCC;
 extern CdlLOC D_80137DE8;
-extern s32 D_80169498;
+extern union TitleScratch D_80169498;
 
 void func_80013E68(void)
 {
@@ -506,7 +506,7 @@ void func_80013E68(void)
             goto block_4;
         }
         if (D_80137CEC == 0) {
-            D_80137CD0 = &D_80169498;
+            D_80137CD0 = D_80169498.sector;
             CdGetSector(&D_80137DE8, 3);
             if (CdPosToInt(&D_80137DE8) == D_80137CCC) {
                 goto block_5;
@@ -2352,19 +2352,6 @@ void func_8001DE20(struct GameInfo* arg0)
 }
 
 extern s16 D_800F2204;
-extern s32 D_80169498;
-#ifdef MMX4_PC
-#define D_8016954C (((u8*)D_80169498)[0xB4])
-#define background_objects_03 (background_objects[0].unk3)
-#define background_objects_1_0A (background_objects[1].x_pos.i.hi)
-#define background_objects_1_4C (background_objects[1].unk4C)
-#else
-extern s8 D_8016954C;
-extern s8 background_objects_03;
-extern s16 background_objects_1_0A;
-extern s8 background_objects_1_4C;
-#endif
-
 void func_8001DE54(struct GameInfo* arg0)
 {
     s16 temp_v0_2;
@@ -2375,8 +2362,8 @@ void func_8001DE54(struct GameInfo* arg0)
     s32 saved_reg_s2;
     struct MiscObj* temp_v0;
 
-    background_objects_1_0A = 0x400;
-    background_objects_1_4C = 1;
+    background_objects[1].x_pos.i.hi = 0x400;
+    background_objects[1].unk4C = 1;
     if (D_80139690->state == 2) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != 0) {
@@ -2387,7 +2374,7 @@ void func_8001DE54(struct GameInfo* arg0)
             D_80139690 = &temp_v0->base;
         }
         var_a1 = &D_800F2204;
-        var_a0 = &D_80169498;
+        var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
             temp_v1 = *var_a1;
@@ -2397,8 +2384,8 @@ void func_8001DE54(struct GameInfo* arg0)
             *var_a0 = temp_v1 << 0x10;
             var_a0++;
         } while (temp_v0_2 < 0x24);
-        D_8016954C = 1;
-        background_objects_03 = 1;
+        D_80169498.title.settled = 1;
+        background_objects[0].unk3 = 1;
         arg0->mode++;
     }
 }
