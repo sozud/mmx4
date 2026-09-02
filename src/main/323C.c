@@ -4881,12 +4881,7 @@ void func_800281E8(void)
 
 void func_80028268(struct BackgroundObj* arg0)
 {
-#ifdef MMX4_PC
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
-#else
-    extern u8 D_800F32D5[1][1];
-    arg0->unk4 = D_800F32D5[engine_obj.substage << 1][engine_obj.stage << 2];
-#endif
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028298);

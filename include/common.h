@@ -1462,10 +1462,11 @@ extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
 extern s8 D_800F8C28[];
-extern u8 D_800F8C4C[];
-#ifndef MMX4_PC
-extern u8 D_800F8C4D[];
-#endif
+struct PlayerModeTiming {
+    u8 first;
+    u8 second;
+};
+extern struct PlayerModeTiming D_800F8C4C[];
 extern s8 D_800F8CCC[];
 extern s8 D_800F8CE4[];
 extern s8 D_800F8CFC[];

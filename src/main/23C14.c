@@ -969,12 +969,8 @@ void func_80037708(struct PlayerObj* arg0)
                     arg0->unk8E = 1;
                     arg0->unk8F = 1;
                     arg0->unk90 = 0;
-                    arg0->unk91 = D_800F8C4C[temp_s1 * 2];
-#ifdef MMX4_PC
-                    arg0->unk92 = D_800F8C4C[temp_s1 * 2 + 1];
-#else
-                    arg0->unk92 = D_800F8C4D[temp_s1 * 2];
-#endif
+                    arg0->unk91 = D_800F8C4C[temp_s1].first;
+                    arg0->unk92 = D_800F8C4C[temp_s1].second;
                     if (D_800F8CFC[temp_s1] != 0) {
                         arg0->unk98++;
                     }
