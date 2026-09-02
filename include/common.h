@@ -1713,11 +1713,7 @@ extern struct QuxObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
 extern void (*ReadyTextUpdateFuncs[3])();
-#ifdef MMX4_PC
 extern u8* D_80137DC4;
-#else
-extern s32 D_80137DC4;
-#endif
 extern s32 D_80137DD0;
 extern u32* D_801406A8;
 extern struct SearchLightInit D_8010F600[6];
@@ -1734,11 +1730,7 @@ extern struct CharacterSelectPosition D_8010EB54[9];
 extern struct CharacterSelectPosition D_8010EB78[3];
 extern u8 D_801406AC;
 extern s32 D_80142F70;
-#ifdef MMX4_PC
 extern u8* D_8015D9C8;
-#else
-extern s32 D_8015D9C8;
-#endif
 extern u8 D_801374B4;
 extern s8 D_801374B8;
 extern s8 D_80137CE4;
@@ -1792,11 +1784,7 @@ extern s8 D_80141F4A;
 extern u8 D_801441B0;
 extern u16* D_801441B4;
 extern u8 D_801441B8;
-#ifdef MMX4_PC
 extern u8* D_80137CC4;
-#else
-extern s32 D_80137CC4;
-#endif
 extern s32 D_80137CCC;
 extern u8 D_80137CE8;
 extern s32 D_80137CEC;
@@ -1815,11 +1803,7 @@ extern s32 D_8013967C;
 extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
-#ifdef MMX4_PC
 extern u8* D_80173C80;
-#else
-extern s32 D_80173C80;
-#endif
 extern u8 D_80173C84;
 extern void (*D_8010EBB4[16])();
 extern void (*D_8010EB98[])();

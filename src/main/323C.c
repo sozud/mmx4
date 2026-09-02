@@ -346,11 +346,7 @@ u8 func_8001385C(void)
 }
 
 extern s32 D_80137CBC;
-#ifdef MMX4_PC
 extern u8* D_80137CC4;
-#else
-extern s32 D_80137CC4;
-#endif
 extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32 D_80137CD8;
@@ -375,7 +371,7 @@ void func_80013890(u32 arg0, s32 arg1)
     } while (func_8001385C() & 0x40);
     D_80137CD8 = 0;
     D_80137CCC = func_80013614(arg0, &D_80137CC8);
-    D_80137CC4 = arg1;
+    D_80137CC4 = (u8*)arg1;
     D_80137CBC = D_80137CC8;
     func_80013968();
 }
@@ -472,7 +468,7 @@ D_80010014_t D_80010014 = {
 
 extern void func_800137F0(void);
 extern D_80010014_t D_80010014;
-extern s32* D_800F15BC[];
+extern u8** D_800F15BC[];
 extern u8 D_801406AC;
 extern s32 D_80137CBC;
 extern s32 D_80137CC8;
@@ -482,13 +478,9 @@ extern u32 D_80137CD4;
 extern u16 D_80137CD6;
 extern s32 D_80137CDC;
 extern s32 D_80137CEC;
-#ifdef MMX4_PC
 extern u8* D_80137DC4;
-#else
-extern s32 D_80137DC4;
-#endif
 extern s32 D_80137DC8;
-extern s32 D_80137DCC;
+extern u8* D_80137DCC;
 extern CdlLOC D_80137DE8;
 extern union TitleScratch D_80169498;
 
@@ -1907,7 +1899,7 @@ void func_8001D1F0(struct GameInfo* arg0)
 void func_8001D230(struct GameInfo* arg0)
 {
     arg0->unkD = 1;
-    D_80173C80 = 0x80178000;
+    D_80173C80 = (u8*)0x80178000;
     func_80018000(1); // nop out to skip opening cinematic
     arg0->mode++;
 }
