@@ -15,7 +15,7 @@ void func_800AEB1C(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     arg0->base.on_screen = 1;
     arg0->unk38 = 0;
-    arg0->unk3C = (void*)(*(s8**)0x1F80001C + (*(s32**)0x1F80001C)[1]);
+    arg0->unk3C = (void*)((s8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[1]);
     arg0->unk30 = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7804;
@@ -105,7 +105,7 @@ void func_800AEF18(struct VisualObj* arg0)
         var_a1 = 2;
     }
     temp_s0 = var_a1;
-    arg0->unk3C = (u8*)SP_TABLE_1C + ((u32*)SP_TABLE_1C)[D_8010A1BC[temp_s0].archive_slot];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + ((u32*)SP_SPRITE_FRAMES)[D_8010A1BC[temp_s0].archive_slot];
     arg0->unk30 = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7802;
@@ -200,7 +200,7 @@ void func_800AF28C(struct VisualObj* arg0, struct VisualObj* arg1)
     arg0->base.bg_offset = arg1->base.bg_offset;
     arg0->base.unk16 = 1;
     arg0->unk30 = &D_8011BF40;
-    arg0->unk3C = *((u8)func_8002938C(0x84) + *(s32**)0x1F800020) + *(s8**)0x1F800020;
+    arg0->unk3C = *((u8)func_8002938C(0x84) + SP_MENU_FRAMES) + (s8*)SP_MENU_FRAMES;
     arg0->unk40 = D_801406A8[(u8)func_8002938C(0x84)] >> 7;
     arg0->unk42 = (((u8)func_8002938C(0x84) * 4) + 24) % 16 | ((((u8)func_8002938C(0x84) + 6) / 4) + 480) * 64;
     arg0->base.state++;
@@ -684,8 +684,8 @@ void func_800B2544(struct VisualObj* arg0)
     if (arg0->base.state == 0) {
         arg0->base.on_screen = 1;
         arg0->base.bg_offset = player->base.bg_offset;
-        arg0->unk38 = *(u8**)0x1F800014 + (*(u32**)0x1F800014)[0x1C / 4];
-        arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[0x3C / 4];
+        arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0x1C / 4];
+        arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x3C / 4];
         arg0->unk30 = &D_8011C0E4;
         arg0->unk40 = 0x520;
         arg0->unk42 = 0x7801;
@@ -753,9 +753,9 @@ void func_800B28CC(struct VisualObj* arg0)
 void func_800B2A3C(struct VisualObj* arg0)
 {
     if (arg0->base.unk2 == 0) {
-        arg0->unk38 = *(u8**)0x1F800014 + (*(u32**)0x1F800014)[0x18 / 4];
+        arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0x18 / 4];
     } else {
-        arg0->unk38 = *(u8**)0x1F800014 + (*(u32**)0x1F800014)[0x24 / 4];
+        arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0x24 / 4];
     }
 
     arg0->unk40 = 0x520;
@@ -774,7 +774,7 @@ void func_800B2AD0(struct VisualObj* arg0)
     if (arg0->base.state == 0) {
         arg0->base.on_screen = 1;
         arg0->base.unk2 = -1;
-        arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[0x30 / 4];
+        arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->unk30 = &D_8011BF40;
         arg0->unk42 = 0x7802;
         arg0->unk40 = 0;
@@ -826,7 +826,7 @@ void func_800B2C8C(struct MiscObj* arg0)
 
     if (arg0->base.state == 0) {
         arg0->base.bg_offset = -1;
-        arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[0x30 / 4];
+        arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->unk42 = 0x780A;
         arg0->base.unk16 = 0x10;
         arg0->base.x_pos.i.hi = 0x20;

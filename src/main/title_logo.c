@@ -6,7 +6,7 @@ extern s32* D_8010E81C[];
 // TitleLogoUpdate state 0
 void func_800CD78C(struct MiscObj* arg0)
 {
-    arg0->unk3C = *(s32**)0x1F80003C;
+    arg0->unk3C = SP_TITLE_FRAMES;
     arg0->unk40 = 0x600;
     arg0->animation_table = &D_8010E81C;
     arg0->base.bg_offset = -1;
@@ -127,8 +127,8 @@ void func_800CDB10(struct MiscObj* arg0)
     func_80015DC8();
     // transition "MEGAMAN" to white before full logo appears
     if (arg0->unk46 == 0) {
-        arg0->ext.title_logo.palette2 = (s32*)(SP_TABLE_28 + 0x100);
-        arg0->ext.title_logo.palette1 = SP_TABLE_30;
+        arg0->ext.title_logo.palette2 = (s32*)(SP_PALETTE + 0x100);
+        arg0->ext.title_logo.palette1 = SP_ARC_30;
         // interval to shift on
         arg0->ext.title_logo.palette_shift_speed = 2;
         // how much to shift each step

@@ -387,13 +387,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035048);
 s32 func_800350A4(struct PlayerObj* arg0, s32 arg1)
 {
     if (arg0->base.unk2 == 0) {
-        arg0->unk3C = (s32)SP_TABLE_1C + SP_TABLE_1C[0];
+        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
     } else if (D_8011AF60[arg1] == 0) {
-        arg0->unk38 = (s32*)((s32)SP_TABLE_14 + SP_TABLE_14[0]);
-        arg0->unk3C = (s32)SP_TABLE_1C + SP_TABLE_1C[0];
+        arg0->unk38 = (s32*)((s32)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
+        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
     } else {
-        arg0->unk38 = (s32*)((s32)SP_TABLE_14 + SP_TABLE_14[1]);
-        arg0->unk3C = (s32)SP_TABLE_1C + SP_TABLE_1C[5];
+        arg0->unk38 = (s32*)((s32)SP_PLAYER_GFX + SP_PLAYER_GFX[1]);
+        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[5];
     }
 
     return func_80015D60(arg0, arg1);
@@ -419,10 +419,10 @@ void func_800355C0(void)
 #ifdef MMX4_PC
     entity->animation_cursor = entity->animation_table[0];
     entity->unk38 = (s32*)entity->animation_cursor;
-    entity->unk3C = (u8*)SP_TABLE_14 + SP_TABLE_14[0];
+    entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
 #else
-    entity->unk38 = (s32*)((u8*)SP_TABLE_14 + SP_TABLE_14[0]);
-    entity->unk3C = (u8*)SP_TABLE_14 + SP_TABLE_14[0];
+    entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
+    entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
 #endif
     entity->unk40 = 0x540;
     entity->base.unk16 = 2;
@@ -665,8 +665,8 @@ void func_800361B0(struct PlayerObj* arg0, s32 arg1, s32 arg2)
     u16* var_v1;
     u32 var_a3;
 
-    var_a0 = *(u16**)0x1F800024 + (arg1 << 4);
-    var_v1 = *(u16**)0x1F800028 + (arg2 << 4);
+    var_a0 = SP_PALETTE_BANK + (arg1 << 4);
+    var_v1 = SP_PALETTE + (arg2 << 4);
 
     for (var_a3 = 0; var_a3 < 16; var_a3++) {
         *var_v1++ = *var_a0++;
@@ -686,12 +686,12 @@ void func_800361F8(struct PlayerObj* arg0)
                 func_800362F8(arg0, 0);
             } else {
                 temp = ((arg0->unk93 - 1) << 6);
-                var_a0 = *(u16**)0x1F800028;
-                var_v1 = *(u16**)0x1F800024 + 0x30 + temp;
+                var_a0 = SP_PALETTE;
+                var_v1 = SP_PALETTE_BANK + 0x30 + temp;
                 for (a2 = 0; a2 < 0x20; a2++) {
                     *var_a0++ = *var_v1++;
                 }
-                var_a0 = *(u16**)0x1F800028 + 0x130;
+                var_a0 = SP_PALETTE + 0x130;
                 for (a2 = 0; a2 < 0x20; a2++) {
                     *var_a0++ = *var_v1++;
                 }
@@ -716,12 +716,12 @@ void func_800362F8(struct PlayerObj* arg0, s32 arg1)
 
     if (arg0->base.unk2 == 0) {
         if (arg0->unkD9 == 0) {
-            var_a0 = *(u16**)0x1F800028;
-            var_v1 = *(u16**)0x1F800024 + (arg1 << 4);
+            var_a0 = SP_PALETTE;
+            var_v1 = SP_PALETTE_BANK + (arg1 << 4);
             for (var_a2 = 0; var_a2 < 0x10; var_a2++) {
                 *var_a0++ = *var_v1++;
             }
-            var_a0 = *(u16**)0x1F800028 + 0x130;
+            var_a0 = SP_PALETTE + 0x130;
             for (var_a2 = 0; var_a2 < 0x20; var_a2++) {
                 *var_a0++ = *var_v1++;
             }

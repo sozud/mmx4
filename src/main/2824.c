@@ -10,8 +10,8 @@ void func_80012024(void)
         PutDispEnv(&cur_draw_info->dispenv);
         PutDrawEnv(&cur_draw_info->drawenv);
         DrawOTag(&cur_draw_info->ordering_table.end);
-        SP_DRAW_INFO_POS ^= 1;
-        cur_draw_info = &draw_infos[SP_DRAW_INFO_POS];
+        SP_DRAW_BUFFER ^= 1;
+        cur_draw_info = &draw_infos[SP_DRAW_BUFFER];
         ClearOTagR(&cur_draw_info->ordering_table.start, 0xC);
         func_800168D8();
         func_800169D8();
@@ -55,7 +55,7 @@ void func_8001213C(void)
     func_800122E0(&draw_infos[1]);
     func_80012560();
     cur_random = 0xD37; // seed RNG
-    SP_DRAW_INFO_POS = 0;
+    SP_DRAW_BUFFER = 0;
     cur_draw_info = &draw_infos[0];
     D_8013BD44 = 0;
     D_80141BD2 = 0x78;

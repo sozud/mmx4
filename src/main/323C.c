@@ -36,7 +36,7 @@ void func_80012A3C(void)
 
     for (;;) {
         func_800127C8(1);
-        temp_a0 = *(s32*)0x1F800000;
+        temp_a0 = SP_DRAW_BUFFER;
         temp_s0 = (TILE*)D_80169D78 + temp_a0;
         color = D_8016DEA4;
 
@@ -167,8 +167,8 @@ void func_8001326C(u8 arg0)
     s32 tpage;
 
     if ((arg0 != 0) || !(D_80141BD8.unk0 & 0x10)) {
-        sprt = *(SPRT**)0x1F800100;
-        draw_mode = *(DR_MODE**)0x1F800104;
+        sprt = SP_PRIM_CURSOR;
+        draw_mode = SP_DRAW_MODE_CURSOR;
         prim = &D_800EE504[arg0];
         tpage = GetTPage(0, 0, 0x380, 0x100);
         SetDrawMode(draw_mode, 0, 0, tpage, 0);
@@ -183,8 +183,8 @@ void func_8001326C(u8 arg0)
         setWH(sprt, prim->w * 0x10, prim->h * 0x10);
         catPrim(draw_mode, sprt);
         addPrims(&cur_draw_info->ordering_table.mid, draw_mode, sprt);
-        *(SPRT**)0x1F800100 = ++sprt;
-        *(DR_MODE**)0x1F800104 = ++draw_mode;
+        SP_PRIM_CURSOR = ++sprt;
+        SP_DRAW_MODE_CURSOR = ++draw_mode;
     }
 }
 
@@ -195,8 +195,8 @@ void func_80013404(u8 arg0)
     s8* a0;
     s8* var_v0;
     struct EngineObj* ptr = &engine_obj;
-    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
-    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
+    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
 
     func_800160F4();
 
@@ -980,7 +980,7 @@ void load_palette(void)
 {
     if (need_palette_load != 0) {
         if (need_palette_load & 1) {
-            LoadImage(&D_800F1658, SP_PALETTE);
+            LoadImage(&D_800F1658, (u_long*)SP_PALETTE);
         } else if (need_palette_load & 2) {
             LoadImage(&D_800F1658, &D_80141F70); // D_80141F70 is in vram_rect_ptr but can't figure out a match
         }
@@ -997,7 +997,7 @@ void func_80016074(void)
     u32 var_v1;
 
     var_a1 = &D_80141F70;
-    var_a0 = *(u16**)0x1F800028;
+    var_a0 = SP_PALETTE;
     var_v1 = 0;
     do {
         *var_a1++ = *var_a0++;
@@ -1008,8 +1008,8 @@ void func_80016074(void)
 void func_800160AC(void)
 {
     u16* src = D_801441B4;
-    u16* dst = *(u16**)0x1F800008;
-    s32 count = (*(u32*)0x1F80000C - (u32)dst) >> 1;
+    u16* dst = SP_BG_TILE_PIXELS;
+    s32 count = (u32)((u8*)SP_BG_TILE_ATTRS - (u8*)dst) >> 1;
 
     while (count > 0) {
         *dst++ = *src++;
@@ -1365,9 +1365,9 @@ void func_80017340(void)
     s8 end;
     u8 var_v0;
 
-    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
-    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
-    *(void**)0x1F800110 = &temp1[SP_DRAW_INFO_POS];
+    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
+    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
+    SP_AUX_CURSOR = &temp1[SP_DRAW_BUFFER];
 
     func_80017E84();
 
@@ -2465,7 +2465,7 @@ void func_8001E3FC(struct GameInfo* arg0)
         arg0->unk4 = 0x10;
         arg0->unk6 = 0;
         arg0->mode++;
-        (*(u16**)0x1F800028)[0x306 / 2] = 0x8000;
+        SP_PALETTE[0x306 / 2] = 0x8000;
         need_palette_load |= 1;
     }
 }
@@ -2478,7 +2478,7 @@ void func_8001E458(struct GameInfo* arg0)
         temp_a1 = arg0->unk6;
         if (temp_a1 != 0xE) {
             arg0->unk6++;
-            (*(u16**)0x1F800028)[0x106 / 2] = D_800F21DC[temp_a1];
+            SP_PALETTE[0x106 / 2] = D_800F21DC[temp_a1];
             arg0->unk4 = 6;
             need_palette_load |= 1;
             return;
@@ -3325,7 +3325,7 @@ void func_80021158(void)
 
 void update_main_objects(void)
 {
-#define current (*(struct Unk**)0x1F80004C)
+#define current SP_CUR_MAIN_OBJ
     if (!g_Player.unkBC) {
         for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
             if (current->base.active) {
@@ -3344,7 +3344,7 @@ void update_main_objects(void)
 
 void update_weapon_objects(void)
 {
-#define current (*(struct WeaponObj**)0x1F800050)
+#define current SP_CUR_WEAPON_OBJ
     if (!g_Player.unkBC) {
         for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
             if (current->base.active) {
@@ -3363,7 +3363,7 @@ void update_weapon_objects(void)
 
 void update_shot_objects(void)
 {
-#define current (*(struct ShotObj**)0x1F800050)
+#define current SP_CUR_SHOT_OBJ
     if (!g_Player.unkBC) {
         for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
             if (current->base.active) {
@@ -3382,7 +3382,7 @@ void update_shot_objects(void)
 
 void update_visual_objects(void)
 {
-#define current (*(struct VisualObj**)0x1F800054)
+#define current SP_CUR_VISUAL_OBJ
     for (current = visual_objects; current < &visual_objects[COUNT(visual_objects)]; current++) {
         if (engine_obj.unk14 == 0 && current->base.active != 0) {
             visual_object_update_funcs[current->base.id](current);
@@ -3399,7 +3399,7 @@ void update_visual_objects(void)
 
 void update_effect_objects(void)
 {
-#define current (*(struct EffectObj**)0x1F80005C)
+#define current SP_CUR_EFFECT_OBJ
     for (current = effect_objects; current < &effect_objects[COUNT(effect_objects)]; current++) {
         if (engine_obj.unk15 == 0 && current->active) {
             effect_object_update_funcs[current->unk1](current);
@@ -3412,7 +3412,7 @@ void update_effect_objects(void)
 
 void update_item_objects(void)
 {
-#define current (*(struct ItemObj**)0x1F800060)
+#define current SP_CUR_ITEM_OBJ
     if (!g_Player.unkBC) {
         for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
             if (current->base.active) {
@@ -3431,7 +3431,7 @@ void update_item_objects(void)
 
 void update_misc_objects(void)
 {
-#define current (*(struct MiscObj**)0x1F800064)
+#define current SP_CUR_MISC_OBJ
     for (current = misc_objects; current < &misc_objects[COUNT(misc_objects)]; current++) {
         if (engine_obj.unk17 == 0 && current->base.active != 0) {
             misc_object_update_funcs[current->base.id](current);
@@ -3448,7 +3448,7 @@ void update_misc_objects(void)
 
 void update_unk_objects(void)
 {
-#define current (*(struct UnkObj**)0x1F800064)
+#define current SP_CUR_UNK_OBJ
     for (current = unk_objects; current < &unk_objects[COUNT(unk_objects)]; current++) {
         if (current->base.active) {
             unk_object_update_funcs[current->base.id](current);
@@ -3459,7 +3459,7 @@ void update_unk_objects(void)
 
 void update_quad_objects(void)
 {
-#define current (*(struct QuadObj**)0x1F800068)
+#define current SP_CUR_QUAD_OBJ
     for (current = g_QuadObjects; current < &g_QuadObjects[COUNT(g_QuadObjects)]; current++) {
         if (engine_obj.unk18 == 0 && current->active != 0) {
             quad_object_update_funcs[current->id](current);
@@ -3476,7 +3476,7 @@ void update_quad_objects(void)
 
 void update_layer_objects(void)
 {
-#define current (*(struct LayerObj**)0x1F80006C)
+#define current SP_CUR_LAYER_OBJ
     for (current = layer_objects; current < &layer_objects[COUNT(layer_objects)]; current++) {
         if (engine_obj.unk19 == 0 && current->base.active) {
             layer_object_update_funcs[current->base.id](current);
@@ -3627,7 +3627,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_a1,
                         &engine_obj.cur_character);
 
-                    temp_v1 = *(s32*)0x1F800020;
+                    temp_v1 = (s32)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->ext.ready_text.unk50 = readyText;
@@ -3717,7 +3717,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_a1,
                         (s8*)temp_a2);
 
-                    temp_v1 = *(s32*)0x1F800020;
+                    temp_v1 = (s32)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->base.state = 0;
@@ -3776,7 +3776,7 @@ void func_80022730(struct AbcObj* arg0)
                             (s8*)temp_a2,
                             D_801397DC);
 
-                        temp_v1 = *(s32*)0x1F800020;
+                        temp_v1 = (s32)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->base.state = 0;
@@ -3842,7 +3842,7 @@ void func_80022730(struct AbcObj* arg0)
                             temp_a1,
                             (s8*)temp_a2);
 
-                        temp_v1 = *(s32*)0x1F800020;
+                        temp_v1 = (s32)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->base.state = 0;
@@ -3941,9 +3941,9 @@ void func_80022730(struct AbcObj* arg0)
 
         if ((value << 0x10) == 0) {
             if (engine_obj.stage != 0xD) {
-                dst = (u16*)(*(s32*)0x1F800028 + 0x2A0);
+                dst = SP_PALETTE + 0x150;
             } else {
-                dst = (u16*)(*(s32*)0x1F800028 + 0x7C0);
+                dst = SP_PALETTE + 0x3E0;
             }
 
             src = D_801397E4;
@@ -4226,12 +4226,12 @@ void init_objects(void)
     struct PlayerObj* ptr3 = &g_Entity;
     struct QuxObj* ptr4;
 
-    SP_DRAW_COUNT = 0;
-    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS]; // size 0xA000
-    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS]; // size 0x2000
-    *(void**)0x1F800108 = &temp3[SP_DRAW_INFO_POS]; // size 0x200
-    *(void**)0x1F80010C = &temp4[SP_DRAW_INFO_POS]; // size 0x100
-    *(void**)0x1F800110 = &temp5[SP_DRAW_INFO_POS]; // size 0x78
+    SP_SPRITE_COUNT = 0;
+    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER]; // size 0xA000
+    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER]; // size 0x2000
+    SP_BG_PRIM_CURSOR = &temp3[SP_DRAW_BUFFER]; // size 0x200
+    SP_OT_CURSOR = &temp4[SP_DRAW_BUFFER]; // size 0x100
+    SP_AUX_CURSOR = &temp5[SP_DRAW_BUFFER]; // size 0x78
 
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
@@ -4431,9 +4431,9 @@ void func_80025CDC(void)
 {
     struct UnkObj* var_s0;
 
-    SP_DRAW_COUNT = 0;
-    *(void**)0x1F800100 = &temp1[SP_DRAW_INFO_POS];
-    *(void**)0x1F800104 = &temp2[SP_DRAW_INFO_POS];
+    SP_SPRITE_COUNT = 0;
+    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
+    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
     func_800241E8();
     for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
         if (var_s0->base.on_screen != 0) {
@@ -4454,7 +4454,7 @@ void func_80026118(void)
     u32 var_s0;
 
     (void)&var_s0;
-    var_a2 = *(u8**)0x1F800004;
+    var_a2 = SP_BG_TILEMAP;
     var_a0 = D_8010FFDC[engine_obj.stage][engine_obj.substage];
     var_a1 = 0;
     if ((layout_size * 3) != 0) {
@@ -4520,7 +4520,7 @@ void func_80026648(void)
     u32 bg_num;
 
     var_s0 = 0;
-    *(s32*)0x1F80011C = 0;
+    SP_BG_SPRITE_COUNT = 0;
     do {
         if (background_objects[var_s0].unk4C != 0) {
             func_800262B8(var_s0 & 0xFF);
@@ -4531,7 +4531,7 @@ void func_80026648(void)
     func_8002728C();
     func_80026720();
     bg_obj = background_objects;
-    *(void**)0x1F800108 = &D_8015D9D0[SP_DRAW_INFO_POS];
+    SP_BG_PRIM_CURSOR = &D_8015D9D0[SP_DRAW_BUFFER];
     do {
         if (bg_obj->unk3 != 0) {
             func_800267D4(bg_num);
@@ -4549,7 +4549,7 @@ void func_80026720(void)
 
     if (engine_obj.stage == 0) {
         if (engine_obj.substage == 0) {
-            sprt = &D_8013B7B0[SP_DRAW_INFO_POS];
+            sprt = &D_8013B7B0[SP_DRAW_BUFFER];
             setRGB0(sprt, 8, 0x18, 0x31);
             setXY0(sprt, 0, 0);
             setUV0(sprt, 0x140, 0x60);

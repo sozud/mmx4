@@ -23,7 +23,7 @@ void func_800CB634(struct MiscObj* arg0)
     arg0->base.state++;
 
     arg0->unk40 = 0x600;
-    arg0->unk3C = *(s32*)0x1F80003C;
+    arg0->unk3C = SP_TITLE_FRAMES;
     temp_v1 = D_8010E71C[temp_a1].unk2;
     arg0->unk42 = ((temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6));
     // for unk2 == 0, setting position of "MEGAMAN" text
@@ -56,7 +56,7 @@ void func_800CB884(struct MiscObj* arg0)
         arg0->base.on_screen = 1;
         arg0->base.bg_offset = -1;
         arg0->unk47 = 0;
-        arg0->unk3C = *(void**)0x1F80001C;
+        arg0->unk3C = SP_SPRITE_FRAMES;
         arg0->unk40 = 0x600;
         arg0->unk42 = 0x7804;
         arg0->base.x_pos.i.hi = 0xA0;
@@ -198,7 +198,7 @@ void func_800CBD80(struct MiscObj* arg0)
 {
     arg0->base.on_screen = 1;
     arg0->unk38 = 0;
-    arg0->unk3C = *(u8**)0x1F80001C + (*(u32**)0x1F80001C)[2];
+    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
     arg0->animation_table = &D_8010A4C0;
     arg0->unk40 = 0;
     if (arg0->ext.unk.unk54 != 2) {

@@ -135,7 +135,7 @@ void func_800B5E2C(struct EffectObj* arg0)
             arg0->ext.unk3.unk1C = (arg0->ext.unk3.unk1C + (arg0->ext.unk3.unk1C[1] * 2));
         }
         arg0->ext.unk3.unk21 = arg0->ext.unk3.unk1C[1];
-        arg0->ext.unk3.unk14 = (*(s32**)0x1F800030 + ((u8)arg0->ext.unk3.unk1C[0] << 3));
+        arg0->ext.unk3.unk14 = (SP_ARC_30 + ((u8)arg0->ext.unk3.unk1C[0] << 3));
         func_800B5C60(arg0);
     }
 }
