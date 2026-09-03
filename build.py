@@ -2,6 +2,8 @@ import os
 import subprocess
 import ninja_syntax
 
+EXTRA_CPP_DEFS = " -DSKIP_ASM=1" if os.environ.get("MMX4_PROGRESS_REPORT") == "1" else ""
+
 
 def anchor_noload_bss(linker_script_path):
     with open(linker_script_path) as linker_script:
@@ -23,8 +25,8 @@ def add_lib(srcs, output_dir, lib_name, flags, folder):
         filename_without_extension = os.path.splitext(os.path.basename(src))[0]
         obj_name = f"{output_dir}/{filename_without_extension}.obj"
         ninja.build(
-            obj_name, 
-            'compile', 
+            obj_name,
+            'compile',
             inputs=[src],
             variables={'FLAGS': flags, 'FOLDER': folder})
 
@@ -43,7 +45,7 @@ def add_lib_263(srcs, output_dir, linker_inputs):
         filename_without_extension = os.path.splitext(src)[0]
         obj_name = f"{output_dir}/{filename_without_extension}.obj"
 
-        cpp_flags = f"-undef -D__GNUC__=2 {flags} -v -D__OPTIMIZE__ -I./src/snd -I./include -lang-c -Dmips -D__mips__ -D__mips -Dpsx -D__psx__ -D__psx -D__EXTENSIONS__ -D_MIPSEL -D__CHAR_UNSIGNED__ -D_LANGUAGE_C -DLANGUAGE_C"
+        cpp_flags = f"-undef -D__GNUC__=2{EXTRA_CPP_DEFS} {flags} -v -D__OPTIMIZE__ -I./src/snd -I./include -lang-c -Dmips -D__mips__ -D__mips -Dpsx -D__psx__ -D__psx -D__EXTENSIONS__ -D_MIPSEL -D__CHAR_UNSIGNED__ -D_LANGUAGE_C -DLANGUAGE_C"
 
         # run c preprocessor
         ninja.build(
@@ -51,30 +53,30 @@ def add_lib_263(srcs, output_dir, linker_inputs):
             'cpp_263',
             inputs=[src],
             variables={'FLAGS': flags, 'FOLDER': folder, 'CPP_FLAGS': cpp_flags})
-        
+
         # run cc1
         ninja.build(
             f"{output_dir}/{filename_without_extension}.s",
             'cc1_263',
             inputs=[f"{output_dir}/{filename_without_extension}.cpp"],
             variables={'FLAGS': flags, 'FOLDER': folder})
-        
+
         # run aspsx
         ninja.build(
             f"{output_dir}/{filename_without_extension}.s_",
             'aspsx_263',
             inputs=[f"{output_dir}/{filename_without_extension}.s"],
             variables={'FLAGS': flags, 'FOLDER': folder})
-        
+
         # run as
         ninja.build(
             f"{output_dir}/{filename_without_extension}.c.o",
             'as',
             inputs=[f"{output_dir}/{filename_without_extension}.s_"],
             variables={'FLAGS': flags, 'FOLDER': folder})
-        
+
         linker_inputs.append(f"{output_dir}/{filename_without_extension}.c.o")
-    
+
         # # # check it
         # # # this doesn't generate a file output but ninja apparently needs an output name
         # ninja.build(
@@ -195,20 +197,22 @@ def build_35():
             inputs=[asset],
             variables={'FLAGS': "", 'FOLDER': ""})
 
+    ninja.build("objects", 'phony', inputs=linker_inputs)
+
     # link
     ninja.build(
         f"{output_dir}/main.o",
         'link',
         inputs=linker_inputs,
         variables={'FLAGS': "", 'FOLDER': ""})
-    
+
     # strip
     ninja.build(
         f"{output_dir}/main.bin",
         'objcopy',
         inputs=[f"{output_dir}/main.o"],
         variables={'FLAGS': "", 'FOLDER': ""})
-    
+
     # check
     # ninja.build(
     #     f"{output_dir}/check.txt",

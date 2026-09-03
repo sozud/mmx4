@@ -6,3 +6,5 @@ build.ninja
 disks
 config/undefined_funcs_auto.us.main.txt
 config/undefined_syms_auto.us.main.txt
+expected
+objdiff.json
