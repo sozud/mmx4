@@ -1,4 +1,4 @@
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(SKIP_ASM)
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
 #else

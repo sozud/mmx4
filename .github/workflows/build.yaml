@@ -197,6 +197,15 @@ jobs:
       #   run : |
       #     sh cd_rip.sh
       #     sh cd_build.sh
+      - name: Generate progress report
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: sh progress_report.sh
+      - name: Upload progress report
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.version }}_report
+          path: build/${{ matrix.version }}/report.json
       - name: Get dependencies
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: actions/checkout@v4
