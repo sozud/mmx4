@@ -27,7 +27,7 @@ void func_800D7D60(struct QuadObj* arg0)
     arg0->unk28.i.hi += 4;
     arg0->unk30.i.hi += 4;
     if (arg0->unk28.i.hi >= 0x41) {
-        arg0->ext.unk_ext2.unk3C = 0x2D;
+        arg0->ext.unk_ext4.unk3C = 0x2D;
         arg0->unk5++;
     }
 }
