@@ -213,3 +213,31 @@ INCLUDE_ASM("asm/us/main/nonmatchings/character_select", func_80029A48);
 
 // character_select_state_3_update_funcs state 1
 INCLUDE_ASM("asm/us/main/nonmatchings/character_select", func_80029BD8);
+
+void (*character_select_state_2_update_funcs[])(struct EngineObj*) = {
+    character_select_state_2_substate_0,
+    character_select_spawn_objects,
+};
+
+void (*character_select_state_3_update_funcs[])() = {
+    func_80029A48,
+    func_80029BD8,
+};
+
+void character_select_state_0(struct EngineObj*);
+void character_select_state_1(struct EngineObj*);
+void character_select_state_2(struct EngineObj*);
+void character_select_state_3(struct EngineObj*);
+void character_select_state_4(struct EngineObj*);
+void character_select_state_5(struct EngineObj*);
+void character_select_state_6(struct EngineObj*);
+
+void (*D_800F44A8[])(struct EngineObj*) = {
+    character_select_state_0,
+    character_select_state_1,
+    character_select_state_2,
+    character_select_state_3,
+    character_select_state_4,
+    character_select_state_5,
+    character_select_state_6,
+};

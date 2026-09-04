@@ -359,3 +359,50 @@ void func_800311EC(void)
         func_80094F74();
     }
 }
+
+void (*D_800F486C[])(struct EngineObj*) = {
+    func_8002F510,
+    func_8002F524,
+    func_8002F584,
+    func_8002F5E8,
+};
+
+void (*D_800F487C[])(struct EngineObj*) = {
+    func_8002F6E4,
+    func_8002F7A8,
+    func_8002F828,
+    func_8002F87C,
+    func_8002F8F8,
+    func_8002F92C,
+    func_8002F9EC,
+    func_8002FAB0,
+    func_8002FAE4,
+    func_8002FB54,
+};
+
+void (*engine_state_3_update_funcs[])(struct EngineObj*) = {
+    func_8002E420,
+    func_8002E698,
+    func_8002E7BC,
+    func_8002E8D4,
+    func_8002E994,
+    func_8002ED80,
+    func_8002ED98,
+    func_8002EDD4,
+    func_8002EF14,
+    func_8002F4C4,
+    func_8002F698,
+    func_8002FBDC,
+};
+
+void (*D_800F48D4[3])(struct BarObj*) = {
+    func_8002FCEC,
+    func_80030128,
+    func_80030F9C,
+};
+
+void (*D_800F48E0[3])(struct BarObj*) = {
+    func_8002FD28,
+    func_8002FD70,
+    func_800300AC,
+};
