@@ -18,7 +18,7 @@ def are_strings_similar(str1, str2, threshold=0.4):
     similarity = difflib.SequenceMatcher(None, str1, str2).ratio()
     return similarity >= threshold
 
-zip_cache = {}
+export_cache = {}
 
 request_lock = threading.Lock()
 last_request_time = 0.0
@@ -34,24 +34,37 @@ def get_decomp_me(url):
 
     return requests.get(url=url, headers={"User-Agent": "function-finder"})
 
-def get_asm(slug):
-    if slug in zip_cache:
-        return zip_cache[slug]
+def get_export(slug):
+    if slug in export_cache:
+        return export_cache[slug]
+
     url = f'https://decomp.me/api/scratch/{slug}/export'
     response = get_decomp_me(url)
     if response.status_code == 200:
         with zipfile.ZipFile(BytesIO(response.content)) as the_zip:
-            zip_contents = the_zip.namelist()
-            if 'target.s' in zip_contents:
-                with the_zip.open('target.s') as file:
-                    target_content = file.read().decode('utf-8')
-                zip_cache[slug] = target_content
-                return target_content
-            else:
-                print("target.s not found in the zip file")
+            contents = {}
+            for filename in ('target.s', 'code.c'):
+                if filename in the_zip.namelist():
+                    with the_zip.open(filename) as file:
+                        contents[filename] = file.read().decode('utf-8')
+            export_cache[slug] = contents
+            return contents
     else:
         print(f"Failed to download the zip file: Status code {response.status_code}")
-    return None
+
+    return {}
+
+def get_asm(slug):
+    return get_export(slug).get('target.s')
+
+def uses_asm_extensions(source):
+    if not source:
+        return False
+
+    # Do not count examples or disabled code in comments as cheating.
+    source_without_comments = re.sub(r'/\*.*?\*/|//[^\r\n]*', '', source,
+                                     flags=re.DOTALL)
+    return re.search(r'\b(?:asm|__asm__)\s*\(', source_without_comments) is not None
 
 result_cache = {}
 
@@ -88,8 +101,13 @@ def find_scratches(name, platform, local_asm=None, use_local=False):
             continue
 
         if use_local:
-            remote_asm = get_asm(result['slug'])
+            scratch = get_export(result['slug'])
+            if uses_asm_extensions(scratch.get('code.c')):
+                continue
 
+            remote_asm = scratch.get('target.s')
+            if remote_asm is None:
+                continue
             if not are_strings_similar(local_asm, remote_asm):
                 continue
 
@@ -214,25 +232,22 @@ def do_files(files, objtypes):
 
     for f in asm_files:
         name = str(f["name"])
+        func_name = Path(name).stem
         length = len(f["text"].split("\n"))
         branches = f["branches"]
         jump_table = f["jump_table"]
 
         if "/psxsdk/" in name:
             ovl_name = name.split("/")[5]  # grab library name
-            func_name = os.path.splitext(os.path.basename(name))[0]
         elif "/weapon/" in name:
             # use the weapon name
             ovl_name = name.split("/")[4]  # grab library name
-            func_name = os.path.splitext(os.path.basename(name))[0]
         else:
-            matches = re.search(r"\/(\w+)\/nonmatchings\/\w+\/(\w+)\.s", name)
+            matches = re.search(r"/([^/]+)/nonmatchings/", name)
             if matches:
                 ovl_name = matches.group(1)
-                func_name = matches.group(2)
             else:
                 ovl_name = ""
-                func_name = name
 
         objtypes_str = [
             'gameobj',
@@ -320,7 +335,7 @@ def find_matching_files_sorted_by_size(directory, hex_numbers):
                     file_path = os.path.join(root, filename)
                     file_size = os.path.getsize(file_path)
                     matching_files.append((file_path, file_size))
-    
+
     # Sort files by size (smallest to largest)
     matching_files.sort(key=lambda x: x[1])
 
