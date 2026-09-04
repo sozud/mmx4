@@ -1,3 +1,0 @@
-#include "common.h"
-
-u8 D_8010FED4[4] = { 0x12, 0x13, 0x14, 0x13 };
