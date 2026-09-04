@@ -80,25 +80,6 @@ void func_8002B3C0(struct BaseObj* obj)
     func_8002B318(obj, 0x60, 0x50);
 }
 
-void func_8002E5E0(void)
-{
-    static const u8 palette_rows[8] = { 0, 7, 5, 3, 4, 1, 2, 6 };
-    u8 enabled = engine_obj.palette_flags;
-    u16* palette = SP_PALETTE;
-    u32 row, color;
-
-    for (row = 0; row < 8; row++) {
-        u16* entry = palette + palette_rows[row] * 16;
-        if (!((enabled >> row) & 1))
-            continue;
-        for (color = 0; color < 16; color++) {
-            u16 value = entry[color];
-            u16 gray = ((value & 0x1f) + ((value >> 5) & 0x1f) + ((value >> 10) & 0x1f)) / 3;
-            entry[color] = gray | (gray << 5) | (gray << 10);
-        }
-    }
-}
-
 void func_8002E994(struct EngineObj* arg0)
 {
     u16 direction = D_80166C08 & 0xF000;

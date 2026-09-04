@@ -89,7 +89,29 @@ void func_8002E420(struct EngineObj* arg0)
     D_80171EA8 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E5E0);
+void func_8002E5E0(void)
+{
+    u8 r, g, b;
+    u16* palette_ptr;
+    u16 t;
+    u32 var_j;
+    u32 var_i;
+    u8 var_d = engine_obj.palette_flags;
+
+    for (var_i = 0; var_i < 8; var_i++) {
+        palette_ptr = SP_PALETTES[D_800F474C.route_a[var_i]];
+        if ((var_d >> var_i) & 1) {
+            for (var_j = 0; var_j < 0x10; var_j++) {
+                r = *palette_ptr & 0x1F;
+                g = (*palette_ptr & 0x3E0) >> 5;
+                b = (*palette_ptr & 0x7C00) >> 10;
+                t = (r + g + b) / 3;
+                *palette_ptr = t + (t << 5) + (t << 10);
+                palette_ptr++;
+            }
+        }
+    }
+}
 
 // engine_state_3_update_funcs state 1 (load briefing room)
 void func_8002E698(struct EngineObj* arg0)

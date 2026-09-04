@@ -796,7 +796,30 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800154E8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800157AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015930);
+void func_80015930(u8 arg0, u8 arg1)
+{
+    u8* entry;
+    u8 var_s1;
+    s8 var_s2;
+    s8 temp_v0;
+
+    if (arg0 == 0xFF) {
+        for (var_s1 = 0; var_s1 < 0x18; var_s1++) {
+            SsUtSetVVol(var_s1, 0, 0);
+            SsUtKeyOffV(var_s1);
+        }
+        return;
+    }
+
+    entry = D_80141F50[arg0] + arg1 * 4;
+    temp_v0 = entry[3];
+    var_s1 = temp_v0 & 0x1F;
+    for (var_s2 = (temp_v0 & 0x60) >> 5; var_s2 >= 0; var_s2--) {
+        SsUtSetVVol(var_s1, 0, 0);
+        SsUtKeyOffV(var_s1);
+        var_s1++;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015A10);
 
@@ -4233,7 +4256,23 @@ void init_objects(void)
     func_80024260();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800241E8);
+extern u32 D_8013BC40[2][4][8];
+extern u32 D_8013E1E8[2][4][8];
+
+void func_800241E8(void)
+{
+    u32 buffer;
+    u32 i;
+    u32 j;
+
+    buffer = SP_DRAW_BUFFER;
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 8; j++) {
+            D_8013E1E8[buffer][i][j] = 0;
+            D_8013BC40[buffer][i][j] = (u32)&D_8013E1E8[buffer][i][j];
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80024260);
 
@@ -4307,7 +4346,84 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80025188);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800253F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80025588);
+void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
+{
+    u32 color;
+    u32 temp_r;
+    u32 temp_g;
+    u32 temp_b;
+    u32 temp_v1;
+    u32 var_r;
+    u32 var_g;
+    u32 var_b;
+    POLY_F4* prim;
+
+    prim = SP_AUX_POLY_F4_CURSOR;
+    setPolyF4(prim);
+    prim->x0 = prim->x2 = arg0;
+    prim->x1 = prim->x3 = arg1;
+    color = arg2;
+    prim->y0 = prim->y1 = color;
+    prim->y2 = prim->y3 = arg3;
+    color = D_800F312C[arg4];
+
+    if (((u16)g_FilterAmountB | (g_FilterAmountR | (u16)g_FilterAmountG)) != 0) {
+        if (ENGINE_STAGE_ID != 2 && g_FilterAmountR == ((u16)g_FilterAmountG >> 5) && g_FilterAmountR == ((u16)g_FilterAmountB >> 10)) {
+            if (*(u8*)&g_FilterModeR != 0) {
+                var_r = 0;
+                if ((color & 0x1F) >= g_FilterAmountR) {
+                    var_r = (color & 0x1F) - g_FilterAmountR;
+                }
+            } else {
+                temp_v1 = (color & 0x1F) + g_FilterAmountR;
+                var_r = 0x1F;
+                if (temp_v1 < 0x20U) {
+                    var_r = temp_v1;
+                }
+            }
+
+            temp_v1 = color & 0x3E0;
+            if (*(u8*)&g_FilterModeG != 0) {
+                var_g = 0;
+                if (temp_v1 >= (u16)g_FilterAmountG) {
+                    var_g = temp_v1 - (u16)g_FilterAmountG;
+                }
+            } else {
+                temp_v1 += (u16)g_FilterAmountG;
+                var_g = 0x3E0;
+                if (temp_v1 < 0x3E1U) {
+                    var_g = temp_v1;
+                }
+            }
+
+            temp_v1 = color & 0x7C00;
+            if (*(u8*)&g_FilterModeB != 0) {
+                var_b = 0;
+                if (temp_v1 >= (u16)g_FilterAmountB) {
+                    var_b = temp_v1 - (u16)g_FilterAmountB;
+                }
+            } else {
+                temp_v1 += (u16)g_FilterAmountB;
+                var_b = 0x7C00;
+                if (temp_v1 < 0x7C01U) {
+                    var_b = temp_v1;
+                }
+            }
+
+            color = var_r | var_g | var_b | (color & 0x8000);
+        }
+    }
+
+    temp_r = color & 0x1F;
+    temp_g = (color >> 5) & 0x1F;
+    temp_b = color >> 10;
+    prim->r0 = temp_r * 8 + ((temp_r & 0xFF) >> 2);
+    prim->g0 = temp_g * 8 + ((temp_g & 0xFF) >> 2);
+    prim->b0 = temp_b * 8 + ((temp_b & 0xFF) >> 2);
+
+    addPrim(&cur_draw_info->ordering_table.unk3, prim);
+    SP_AUX_CURSOR = SP_AUX_POLY_F4_CURSOR + 1;
+}
 
 void func_800257BC(struct PlayerObj* arg0)
 {
@@ -4866,28 +4982,42 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028E24);
 
 void func_80028F58(void)
 {
-    s32* ptr;
-
     func_80028FEC(background_objects[0].x_pos.i.hi - 0x30,
         background_objects[0].x_pos.i.hi + 0x170,
         background_objects[0].y_pos.i.hi - 0x30,
         background_objects[0].y_pos.i.hi + 0x120,
         0);
-    ptr = (s32*)&D_800F4430[engine_obj.stage][0];
-    func_800292D0(*(ptr + engine_obj.substage));
+    func_800292D0(D_800F4430[engine_obj.stage][engine_obj.substage]);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028FEC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800292D0);
+void func_800292D0(struct StageObjectRecord* arg0)
+{
+    struct StageObjectRecord* var_s1 = arg0;
+    struct BaseObj* obj;
+
+    while (var_s1->object_type != 0xFF && var_s1->flags <= engine_obj.checkpoint) {
+        obj = MakeObject(var_s1->object_type);
+        if (obj != NULL) {
+            obj->active = 1;
+            obj->id = var_s1->id;
+            obj->unk2 = var_s1->subtype;
+            obj->x_pos.i.hi = var_s1->x;
+            obj->y_pos.i.hi = var_s1->y;
+            obj->unk10 = var_s1;
+        }
+        var_s1++;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002938C);
 
-extern void (*g_MakeObjectFuncs[1])(s32 arg0);
+extern struct BaseObj* (*g_MakeObjectFuncs[8])();
 
-void MakeObject(u8 arg0)
+struct BaseObj* MakeObject(u8 arg0)
 {
-    g_MakeObjectFuncs[arg0](arg0 << 2);
+    return g_MakeObjectFuncs[arg0](arg0 << 2);
 }
 
 void (*D_800F2170[4])(struct GameInfo*) = {

@@ -34,6 +34,8 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
+typedef u16 Palette[16];
+
 #ifdef MMX4_PC
 #include <psyz.h>
 #include <libgte.h>
@@ -1107,10 +1109,8 @@ struct QuadUnkExt {
 
 struct QuadUnkExt2 {
     u16 unk38;
-    s16 : 16;
-    s16 unk3C;
-    s16 : 16;
-    s16 : 16;
+    u8 unk3A[4];
+    u8 unk3E[4];
     u8 unk42;
     u8 unk43;
 };
@@ -1823,6 +1823,7 @@ extern u8* D_800F4560[];
 extern u8 D_800F4568[0x14];
 extern u8 D_800F457C[0x14];
 extern u8* D_800F4834[10];
+extern u16 D_800F312C[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
 extern struct Prim D_800EE504[];
 extern struct RectPtrPair vram_rect_ptrs[];
@@ -1837,6 +1838,7 @@ struct XaSequenceData {
 };
 extern struct XaSequenceData D_800F1A0C;
 extern u8* D_80141F00;
+extern u8* D_80141F50[8];
 extern u8* cur_draw_info_dispenv_screen_w;
 extern u8* cur_draw_info_drawenv;
 
@@ -1864,7 +1866,8 @@ void func_80013530(void);
 void func_80013AD8(u8, u8, s32);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
-void func_800292D0(s32);
+void func_800292D0(struct StageObjectRecord*);
+struct BaseObj* MakeObject(u8);
 void func_80094F74(void);
 void func_80015284(void);
 void func_8001C3E8(void);

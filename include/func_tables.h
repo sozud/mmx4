@@ -670,8 +670,8 @@ void func_80028620(struct BackgroundObj* arg0);
 void func_80028658(struct BackgroundObj* arg0);
 
 // D_800F43A8
-struct Unk* func_8002AB74(void);
-struct WeaponObj* func_8002AC0C(void);
+struct Unk* find_free_main_obj(void);
+struct WeaponObj* find_free_weapon_obj(void);
 struct VisualObj* find_free_visual_obj(void);
 struct EffectObj* find_free_effect_obj(void);
 struct ItemObj* find_free_item_obj(void);

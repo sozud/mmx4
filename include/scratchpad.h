@@ -29,6 +29,7 @@ extern u8* pc_archive_slots[22];
 #define SP_MENU_FRAMES ((s32*)pc_archive_slots[10])
 #define SP_PALETTE_BANK ((u16*)pc_archive_slots[9])
 #define SP_PALETTE ((u16*)pc_archive_slots[5])
+#define SP_PALETTES ((Palette*)pc_archive_slots[5])
 #define SP_ARC_2C ((void*)pc_archive_slots[11])
 #define SP_ARC_30 ((s32*)pc_archive_slots[13])
 #define SP_ARC_34 ((void*)pc_archive_slots[16])
@@ -52,6 +53,7 @@ extern u8* pc_archive_slots[22];
 #define SP_BG_PRIM_CURSOR mmx4_sp_background_primitive_cursor
 #define SP_OT_CURSOR mmx4_sp_ordering_cursor
 #define SP_AUX_CURSOR mmx4_sp_auxiliary_cursor
+#define SP_AUX_POLY_F4_CURSOR ((POLY_F4*)mmx4_sp_auxiliary_cursor)
 #define SP_BG_SPRITE_COUNT (*MMX4_SP_PTR(0x11C, s32))
 #define SP_SPRITE_COUNT (*MMX4_SP_PTR(0x124, s32))
 #else
@@ -65,6 +67,7 @@ extern u8* pc_archive_slots[22];
 #define SP_MENU_FRAMES (*(s32**)0x1F800020)
 #define SP_PALETTE_BANK (*(u16**)0x1F800024)
 #define SP_PALETTE (*(u16**)0x1F800028)
+#define SP_PALETTES (*(Palette**)0x1F800028)
 #define SP_ARC_2C (*(void**)0x1F80002C)
 #define SP_ARC_30 (*(s32**)0x1F800030)
 #define SP_ARC_34 (*(void**)0x1F800034)
@@ -88,6 +91,7 @@ extern u8* pc_archive_slots[22];
 #define SP_BG_PRIM_CURSOR (*(void**)0x1F800108)
 #define SP_OT_CURSOR (*(void**)0x1F80010C)
 #define SP_AUX_CURSOR (*(void**)0x1F800110)
+#define SP_AUX_POLY_F4_CURSOR (*(POLY_F4**)0x1F800110)
 #define SP_BG_SPRITE_COUNT (*(s32*)0x1F80011C)
 #define SP_SPRITE_COUNT (*(s32*)0x1F800124)
 #endif
