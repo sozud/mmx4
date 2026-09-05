@@ -793,9 +793,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7DC);
 
 u8 func_8002B810(s32 arg0, s32 arg1)
 {
-    extern u32 D_800F45E4;
-    extern u32 D_800F45F4;
-    extern u32 D_800F45F8;
+    extern u32 D_800F45E4[];
     s32 temp_lo;
     s16 var_a3, var_a2;
     u32* ptr;
@@ -814,17 +812,21 @@ u8 func_8002B810(s32 arg0, s32 arg1)
     if (arg1 >> 0x10 != 0) {
         temp_lo = arg0 / (arg1 >> 0x10);
         if (temp_lo <= 0xFFFF) {
-            ptr = &D_800F45F4;
+            ptr = &D_800F45E4[4];
             while (temp_lo < *ptr) {
                 ptr--;
             }
-            arg0 = (u32)((u32)ptr - (u32)&D_800F45E4) >> 2;
+#ifdef MMX4_PC
+            arg0 = ptr - D_800F45E4;
+#else
+            arg0 = ((u32)ptr - (u32)D_800F45E4) >> 2;
+#endif
         } else {
-            ptr = &D_800F45F8;
+            ptr = &D_800F45E4[5];
             while (*ptr < temp_lo) {
                 ptr++;
             }
-            arg0 = ptr - &D_800F45E4 - 1;
+            arg0 = ptr - D_800F45E4 - 1;
         }
     } else {
         arg0 = 8;

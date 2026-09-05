@@ -14,6 +14,8 @@ endif()
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
+option(MMX4_PC_ASAN "Trap accesses to placeholder game data" ON)
+
 add_subdirectory(tools/psyz/psyz tools/psyz-build)
 
 file(GLOB MMX4_PC_GAME_SOURCES CONFIGURE_DEPENDS
@@ -90,6 +92,13 @@ endif()
 target_include_directories(mmx4_pc PRIVATE include tools/psyz/psyz/include)
 target_link_libraries(mmx4_pc PRIVATE psyz)
 target_link_options(mmx4_pc PRIVATE -Wl,--gc-sections)
+if(MMX4_PC_ASAN AND CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_definitions(mmx4_pc PRIVATE MMX4_PC_ASAN=1)
+    target_compile_options(mmx4_pc PRIVATE
+        -fsanitize=address
+        -fno-omit-frame-pointer)
+    target_link_options(mmx4_pc PRIVATE -fsanitize=address)
+endif()
 
 psyz_title(mmx4_pc "Mega Man X4")
 

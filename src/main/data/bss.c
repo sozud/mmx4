@@ -477,7 +477,7 @@ u16 D_801441C8[3][32][32];
 
 union SepBundle D_801459C8;
 u8 window_archive_data[0x3000];
-u8 replay_data[0x1CF4];
+u8 replay_data[0x2000];
 
 struct FadeState D_8016DEA0;
 TILE D_80169D78[2];

@@ -1101,7 +1101,7 @@ void func_80015C10(void)
         }
     }
 
-    func_80013890(D_800F1654[engine_obj.cur_character], (s32)D_801459C8.raw);
+    func_80013890(D_800F1654[engine_obj.cur_character], D_801459C8.raw);
     func_80014C70();
     D_8013E1C8[0] = SsSepOpenJ((u_long*)&D_801459C8.raw[D_801459C8.offsets[0]], D_8013E198[0], 8);
 
@@ -1116,6 +1116,7 @@ void func_80015C10(void)
     }
 }
 
+#ifndef MMX4_PC
 s32 func_80015D60(struct Unk19* arg0, s32 arg1)
 {
     arg0->unk34 = arg0->unk30[arg1];
@@ -1123,6 +1124,7 @@ s32 func_80015D60(struct Unk19* arg0, s32 arg1)
     arg0->unk48 = 0xFF;
     arg0->unk44 = *arg0->unk34;
 }
+#endif
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015D90);
 
@@ -2652,7 +2654,89 @@ void func_8001E000(struct GameInfo* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E130);
+extern s16 D_800F224C[];
+
+void func_8001E130(struct GameInfo* arg0)
+{
+    s16* target;
+    s32* x;
+    s32* y;
+    u8* flags;
+    s32 x_diff;
+    s32 y_diff;
+    s32 i;
+    struct MiscObj* obj;
+    u8 direction;
+
+    x = &D_80169498.sector[0];
+    i = 0;
+    flags = (u8*)&D_80169498;
+    y = &D_80169498.sector[1];
+    do {
+        target = &D_800F224C[i * 2];
+        x_diff = *x - (target[0] << 16);
+        y_diff = *y - (target[1] << 16);
+        direction = func_8002B810(x_diff, y_diff);
+        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) &&
+            (D_80169498.title.settled == 0)) {
+            *x = target[0] << 16;
+            *y = target[1] << 16;
+            flags[0x90] = 1;
+        } else {
+            *x -= x_diff / arg0->unk6;
+            *y -= y_diff / arg0->unk6;
+            flags[0x90] = 0;
+            if (i == 0x11) {
+                D_80169498.title.settled = 0;
+            }
+        }
+        y += 2;
+        x += 2;
+        flags[0xA2] = direction;
+        i++;
+        flags++;
+    } while (i < 0x12);
+
+    arg0->unk6--;
+    if (arg0->unk6 == 0) {
+        target = D_800F224C;
+        x = D_80169498.sector;
+        i = 0;
+        do {
+            *x = *target << 16;
+            target++;
+            x++;
+            i++;
+        } while (i < 0x24);
+        arg0->mode++;
+
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0xC;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0x14;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0x15;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x1D;
+            obj->base.unk2 = 0x21;
+        }
+        D_80139690 = &obj->base;
+    }
+}
 
 void func_8001E3FC(struct GameInfo* arg0)
 {
@@ -3733,14 +3817,148 @@ void func_80021E3C(void)
     engine_obj.substage = D_801F6019;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021E74);
+#ifdef MMX4_PC
+struct SerializedEngineObj {
+    s8 state, unk1, unk2, unk3;
+    s16 unk4;
+    s8 unk6, unk7;
+    s16 unk8, unkA;
+    s8 stage, substage, unkE, unkF;
+    s8 unk10, unk11, unk12, unk13;
+    s8 unk14, unk15, unk16, unk17;
+    s8 unk18, unk19, unk1A, unk1B;
+    s8 unk1C, checkpoint, unk1E, unk1F;
+    s32 boss_ptr;
+    s8 enable_boss, unk25;
+    union EngineCharacterState character_state;
+    s8 pad36, unk37;
+    u32 unk38, unk3C;
+    u8 unk40;
+    s8 unk41;
+    u8 unk42;
+    s8 cur_character, unk44;
+    u8 unk45;
+    s8 unk46, unk47, unk48;
+    s8 player_initial_data[0x10];
+    s8 palette_flags;
+    u16 unk5A;
+    s8 pad5C[3];
+    u8 unk5F, unk60;
+    u8 pad61[3];
+};
+
+_Static_assert(sizeof(struct SerializedEngineObj) == 0x64,
+               "replay engine state must use the PSX layout");
+
+struct ReplayData {
+    u32 frame;
+    s32 flags;
+    u16 random;
+    u16 padA;
+    struct SerializedEngineObj initial_engine;
+    struct SerializedEngineObj saved_engine;
+};
+
+static struct EngineObj replay_saved_engine;
+#define REPLAY_SAVED_ENGINE replay_saved_engine
+
+static void restore_replay_engine(const struct SerializedEngineObj* source)
+{
+    struct EngineObj restored = {0};
+    s32 i;
+
+    restored.state = source->state;
+    restored.unk1 = source->unk1;
+    restored.unk2 = source->unk2;
+    restored.unk3 = source->unk3;
+    restored.unk4 = source->unk4;
+    restored.unk6 = source->unk6;
+    restored.unk7 = source->unk7;
+    restored.unk8 = source->unk8;
+    restored.unkA = source->unkA;
+    restored.stage = source->stage;
+    restored.substage = source->substage;
+    restored.unkE = source->unkE;
+    restored.unkF = source->unkF;
+    restored.unk10 = source->unk10;
+    restored.unk11 = source->unk11;
+    restored.unk12 = source->unk12;
+    restored.unk13 = source->unk13;
+    restored.unk14 = source->unk14;
+    restored.unk15 = source->unk15;
+    restored.unk16 = source->unk16;
+    restored.unk17 = source->unk17;
+    restored.unk18 = source->unk18;
+    restored.unk19 = source->unk19;
+    restored.unk1A = source->unk1A;
+    restored.unk1B = source->unk1B;
+    restored.unk1C = source->unk1C;
+    restored.checkpoint = source->checkpoint;
+    restored.unk1E = source->unk1E;
+    restored.unk1F = source->unk1F;
+    restored.boss_ptr = source->boss_ptr;
+    restored.enable_boss = source->enable_boss;
+    restored.unk25 = source->unk25;
+    restored.character_state = source->character_state;
+    restored.pad36 = source->pad36;
+    restored.unk37 = source->unk37;
+    restored.unk40 = source->unk40;
+    restored.unk41 = source->unk41;
+    restored.unk42 = source->unk42;
+    restored.cur_character = source->cur_character;
+    restored.unk44 = source->unk44;
+    restored.unk45 = source->unk45;
+    restored.unk46 = source->unk46;
+    restored.unk47 = source->unk47;
+    restored.unk48 = source->unk48;
+    for (i = 0; i < COUNT(restored.player_initial_data); i++) {
+        restored.player_initial_data[i] = source->player_initial_data[i];
+    }
+    restored.palette_flags = source->palette_flags;
+    restored.unk5A = source->unk5A;
+    restored.pad5C[0] = source->pad5C[0];
+    restored.pad5C[1] = source->pad5C[1];
+    restored.pad5C[2] = source->pad5C[2];
+    restored.unk5F = source->unk5F;
+    restored.unk60 = source->unk60;
+    restored.pad61[0] = source->pad61[0];
+    restored.pad61[1] = source->pad61[1];
+    restored.pad61[2] = source->pad61[2];
+    engine_obj = restored;
+}
+#else
+struct ReplayData {
+    u32 frame;
+    s32 flags;
+    u16 random;
+    u16 padA;
+    struct EngineObj initial_engine;
+    struct EngineObj saved_engine;
+};
+#define REPLAY_SAVED_ENGINE (((struct ReplayData*)REPLAY_DATA)->saved_engine)
+#endif
+
+void func_80021E74(void)
+{
+    struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
+
+    replay->frame = 0;
+    D_80141BD8.unk0 = replay->flags;
+    cur_random = replay->random;
+    REPLAY_SAVED_ENGINE = engine_obj;
+#ifdef MMX4_PC
+    restore_replay_engine(&replay->initial_engine);
+#else
+    engine_obj = replay->initial_engine;
+#endif
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80021F34);
 
 // see also func_800220C4, func_80021E74
 void func_80022074(void)
 {
-    engine_obj = *(struct EngineObj*)0x801F6070;
+    engine_obj = REPLAY_SAVED_ENGINE;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800220C4);
