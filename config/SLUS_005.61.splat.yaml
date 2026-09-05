@@ -633,7 +633,6 @@ segments:
       - [0xE9190, .data, 21AB4]
       - [0xE92D0, data]
       - [0xE9330, .data, data/player_effect_id_data]
-      - [0xE9334, data]
       - [0xE9344, .data, function_tables/D_800F8B44]
       - [0xE9350, data]
       - [0xE9394, .data, function_tables/D_800F8B94]
