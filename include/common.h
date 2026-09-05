@@ -466,8 +466,7 @@ struct PlayerObj {
     s8 unkA5;
     s8 unkA6;
     s8 unkA7;
-    s8 charge_level;
-    s8 padA9[0xB8 - 0xA9];
+    s8 charge_levels[0x10];
     u8 unkB8;
     s8 unkB9;
     s8 unkBA;
@@ -629,9 +628,8 @@ struct UnkObj {
     s32 unk2C;
     s8** unk30;
     s32 : 32;
-    s16 unk38;
-    s16 : 16;
-    s32 unk3C;
+    s32* unk38;
+    void* unk3C;
     u16 unk40;
     u16 unk42;
     s8 pad44[0x47 - 0x44];
@@ -786,7 +784,14 @@ struct BarObj {
 
 struct BazObj {
     struct BaseObj base;
-    s8 pad18[0x50 - 0x18];
+    s8 pad18[0x30 - 0x18];
+    const u32* const* animation_table;
+    s32 pad34;
+    s32 unk38;
+    void* unk3C;
+    u16 unk40;
+    u16 unk42;
+    s8 pad44[0x50 - 0x44];
 }; // size 0x50
 
 struct QuxObj {
@@ -1262,7 +1267,7 @@ struct EngineObj {
     u8 unk42;
     s8 cur_character; // 0x43
     s8 unk44;
-    u8 pad45;
+    u8 unk45;
     s8 unk46;
     s8 unk47;
     s8 unk48;
@@ -1271,7 +1276,8 @@ struct EngineObj {
     u16 unk5A;
     s8 pad5C[0x5F - 0x5C];
     u8 unk5F;
-    s32 : 32;
+    u8 unk60;
+    u8 pad61[3];
 }; // size 0x64
 
 #define ENGINE_STAGE_ID (*(u16*)&engine_obj.stage)

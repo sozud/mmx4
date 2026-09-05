@@ -401,7 +401,143 @@ s32 func_800350A4(struct PlayerObj* arg0, s32 arg1)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003516C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035240);
+extern s16 D_800F8B3C[];
+extern const u32* D_8011AFF0[];
+
+void func_80035240(void)
+{
+    struct PlayerObj* player = &g_Player;
+    struct EngineObj* engine = &engine_obj;
+    struct UnkObj* object;
+    struct UnkObj* active_object;
+    struct UnkObj* previous;
+    struct BazObj* baz;
+    struct VisualObj* visual;
+    struct MiscObj* misc;
+    s32* sprite_frames;
+    s8* initial_data;
+    s8* player_data;
+    s32 frame_offset;
+    u32 i;
+
+    player->base.active = 1;
+    player->base.unk2 = engine->cur_character;
+    player->base.on_screen = 0;
+    player->base.bg_offset = 0;
+    player->unkD9 = 0;
+    player->unkB9 = engine->palette_flags;
+
+    switch (engine->unk1E) {
+    case 0:
+        i = 0;
+    case -2:
+        i = 0;
+        player->unk5C = engine->unk46;
+        player->unk5D = engine->unk46;
+        player->unk5E = engine->unk46;
+        do {
+            player->charge_levels[i++] = 0x30;
+        } while (i < 0x10);
+        break;
+
+    case -1:
+        player_data = player->charge_levels;
+        initial_data = engine->player_initial_data;
+        i = 0;
+        player->unk5C = engine->unk45;
+        player->unk5D = engine->unk45;
+        player->unk5E = engine->unk45;
+        do {
+            *player_data++ = *initial_data++;
+            i++;
+        } while (i < 0x10);
+        player->unk93 = engine->unk60;
+        func_800371E4(player);
+        func_80037104(player);
+        break;
+    }
+
+    if (player->base.unk2 == 0) {
+        player->animation_table = D_80119DF0;
+    } else {
+        player->animation_table = D_8011AFF0;
+    }
+
+    player->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
+    player->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
+    player->unk40 = 0x500;
+    player->base.unk16 = 2;
+    player->unk42 = 0x7800;
+    player->unk49 = 3;
+    func_800361F8(player);
+    func_800355C0();
+
+    i = 0;
+    active_object = foo_objects;
+    object = foo_objects;
+    do {
+        active_object->base.active = 0x11;
+        object->base.unk2 = i;
+        object->base.bg_offset = player->base.bg_offset;
+        object->unk38 = player->unk38;
+        object->unk3C = player->unk3C;
+        object->unk40 = player->unk40;
+        object->unk42 = D_800F8B3C[object->base.unk2];
+        object->base.unk16 = 4;
+        if (i != 0) {
+            object->unk50 = previous;
+        } else {
+            object->unk50 = &g_Player;
+        }
+        previous = object;
+        object++;
+        i++;
+        active_object++;
+    } while (i < 3);
+
+    baz = baz_objects;
+    i = 0;
+    do {
+        baz->base.active = 0x21;
+        baz->base.unk2 = i;
+        baz->base.bg_offset = player->base.bg_offset;
+        baz->unk38 = 0;
+        sprite_frames = *(s32**)0x1F80001C;
+        frame_offset = sprite_frames[1];
+        baz->unk3C = (u8*)sprite_frames + frame_offset;
+        baz->animation_table = D_8011BF40;
+        baz->unk40 = 0;
+        baz->unk42 = 0x7800;
+        baz->base.unk16 = 2;
+        baz->base.unk15 = 0;
+        baz++;
+    } while (++i < 2);
+
+    if (engine->stage == 1) {
+        i = 0;
+        do {
+            visual = find_free_visual_obj();
+            if (visual != 0) {
+                visual->base.active = 0x41;
+                visual->base.id = 7;
+                visual->base.unk2 = i;
+            }
+            i++;
+        } while (i < 4);
+    }
+
+    if (player->base.unk2 == 0) {
+        misc = find_free_misc_obj();
+        if (misc != 0) {
+            misc->base.active = 0x21;
+            misc->base.id = 0x36;
+        }
+    }
+
+    background_objects[0].unk44 = 0;
+    background_objects[1].unk44 = 0;
+    background_objects[2].unk44 = 0;
+}
 
 void func_800355C0(void)
 {
@@ -909,7 +1045,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
 {
     s32 var_v1;
 
-    if (arg0->unk92 || !(arg0->unkA7 & 2) || arg0->charge_level != 0x30 || arg0->unk86) {
+    if (arg0->unk92 || !(arg0->unkA7 & 2) || arg0->charge_levels[0] != 0x30 || arg0->unk86) {
         return 0;
     }
 
@@ -931,7 +1067,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
     arg0->unkA4 = 0;
     arg0->unk67 = 1;
     if (engine_obj.unk37 == 0) {
-        arg0->charge_level = 0;
+        arg0->charge_levels[0] = 0;
     }
     arg0->unk7A = 1;
     arg0->unkE0 = 1;
@@ -1137,7 +1273,7 @@ void func_800381FC(struct PlayerObj* arg0)
 
     if ((*(u16*)&arg0->unk7C & 0x10)
         && arg0->unk9B[0] != 2
-        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (arg0->padA9[arg0->unk93 - 1] >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
+        && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (arg0->charge_levels[arg0->unk93] >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
         arg0->unk9D = (u8)(arg0->unk9D + 1);
         if (arg0->unk93 == 0) {
             if (arg0->unkB8 == 0) {
