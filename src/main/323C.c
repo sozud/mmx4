@@ -120,7 +120,7 @@ void func_80012E38(void)
 {
     func_80013AD8(0x40, 0, 0);
     func_80014C70();
-    func_80013890(0x41, 0x801F3000);
+    func_80013890(0x41, WINDOW_ARCHIVE_DATA);
     func_80014C70();
 }
 
@@ -231,6 +231,7 @@ void func_80013404(u8 arg0)
     }
 }
 
+#ifndef MMX4_PC
 void func_80013530(void)
 {
     func_800129F0(0x10);
@@ -241,16 +242,22 @@ void func_80013530(void)
         } while (D_80141BDC[0] != 0);
     }
 }
+#endif
 
 void func_80013588(s32 arg0)
 {
     u8 sp10;
     sp10 = 0xA0;
+#ifdef MMX4_PC
+    CdInit();
+    CdControl(CdlSetmode, &sp10, 0);
+#else
     do {
     } while (CdInit() == 0);
     do {
 
     } while (CdControl(CdlSetmode, &sp10, 0) == 0);
+#endif
     VSync(3);
     D_80137CE4 = 0;
     D_801406AC = 0;
@@ -275,16 +282,16 @@ void func_80013650(void)
 {
 
     if (D_80137CD8 == 0) {
-        CdReadyCallback(&MyCdReadyCallback);
+        CdReadyCallback(MyCdReadyCallback);
     } else {
-        CdReadyCallback(&func_80013E68);
+        CdReadyCallback(func_80013E68);
     }
     while (CdControl(CdlReadN, 0, 0) == 0)
         ;
     D_801406AC = 1;
 }
 
-extern s32 D_801374BC;
+extern u8 D_801374BC[0x800];
 extern s32 D_80137CCC;
 extern CdlLOC D_80137DE8;
 
@@ -321,6 +328,9 @@ s8 func_800136B0(void)
         }
         D_80137CBC = 0;
     }
+#ifdef MMX4_PC
+    return 0;
+#endif
 }
 
 void func_800137F0(void)
@@ -337,12 +347,19 @@ void func_800137F0(void)
 
 u8 func_8001385C(void)
 {
+#ifdef MMX4_PC
+    u8 result[4] = { 0 };
+    do {
+    } while (CdControlB(CdlNop, 0, result) == 0);
+    return result[0];
+#else
     u8 sp10;
 
     do {
 
     } while (CdControlB(CdlNop, 0, &sp10) == 0);
     return sp10;
+#endif
 }
 
 extern s32 D_80137CBC;
@@ -351,11 +368,11 @@ extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32 D_80137CD8;
 extern u8 D_80137DD8;
-extern s32 D_80137DE0;
+extern u8* D_80137DE0;
 extern s32 D_80137DE4;
 extern u8 D_801406AC;
 
-void func_80013890(u32 arg0, s32 arg1)
+void func_80013890(u32 arg0, u8* arg1)
 {
     if (CdReady(1, NULL) != 0) {
         CdControlB(9U, NULL, NULL);
@@ -398,8 +415,11 @@ void func_80013968(void)
     func_80013650();
 }
 
-void MyCdReadyCallback(void)
+void MyCdReadyCallback(u8 status, u8* result)
 {
+    (void)status;
+    (void)result;
+
     if (D_801406AC != 0) {
         D_80137CEC += 1;
         if (CdReady(1, NULL) != 1) {
@@ -423,7 +443,7 @@ extern struct CdCompletionSlot D_80137D04[16];
 extern u8* D_80137DC4;
 extern u8* D_80137DCC;
 
-void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
+void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
 {
     u8 i;
     s8 temp_a0;
@@ -438,7 +458,7 @@ void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
     D_801406AC = 0;
     D_80137DD8 = arg0;
     D_80137DDC = arg1;
-    D_80137DE0 = arg2;
+    D_80137DE0 = (u8*)arg2;
     D_8013BD40 = 0;
     D_801374B8 = 0;
     D_801374B4 = 0;
@@ -450,7 +470,7 @@ void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
     } while (i < 0x10U);
     switch (D_80137DDC) {
     case 0:
-        D_80137DCC = (u8*)0x80178000;
+        D_80137DCC = MAIN_ARCHIVE_ARENA;
         i = 0;
         D_80137DD0 = 0x1010;
         do {
@@ -490,7 +510,7 @@ void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
         break;
 
     case 4:
-        D_80137DD0 = arg2;
+        D_80137DD0 = (s32)arg2;
         D_80137DCC = D_8015D9C8;
         if (D_8013E198[2] != (-1)) {
             SsVabClose((s16)D_8013E198[2]);
@@ -501,7 +521,7 @@ void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
 
     D_80137CD8 = 1;
     D_80137CCC = func_80013614((s32)arg0, &D_80137CBC);
-    CdReadyCallback((void (*)(u8, u8*))func_80013E68);
+    CdReadyCallback(func_80013E68);
     func_80013DA8();
 }
 
@@ -565,13 +585,15 @@ extern u8* D_80137DCC;
 extern CdlLOC D_80137DE8;
 extern union TitleScratch D_80169498;
 
-void func_80013E68(void)
+void func_80013E68(u8 status, u8* result)
 {
     D_80010014_t sp10;
     s32 temp_a1;
     s32 temp_v0;
     u32 temp_v1_2;
 
+    (void)status;
+    (void)result;
     sp10 = D_80010014;
 
     if (D_801406AC != 0x80) {
@@ -863,6 +885,7 @@ void func_80014968(void)
     }
 }
 
+#ifndef MMX4_PC
 void func_80014A90(s32 arg0, s32 arg1)
 {
     u8 sp10;
@@ -907,7 +930,9 @@ void func_80014A90(s32 arg0, s32 arg1)
         func_80013530();
     }
 }
+#endif
 
+#ifndef MMX4_PC
 void func_80014C70(void)
 {
     u8 sp10;
@@ -943,6 +968,7 @@ void func_80014C70(void)
     D_8013BD44 = 1;
     D_80141BD2 = 0x78;
 }
+#endif
 
 void func_80014DC4(void)
 {
@@ -2175,7 +2201,7 @@ void func_8001D2D0(struct GameInfo* arg0)
     D_80141BDE[0] = 1;
     func_8001D134();
     reset_game_engine();
-    func_80013890(D_800F2180[arg0->unkC], 0x801F6000);
+    func_80013890(D_800F2180[arg0->unkC], REPLAY_DATA);
     func_80014C70();
     func_80021E3C();
     func_80012EB8();

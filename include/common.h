@@ -1610,7 +1610,11 @@ extern s16 D_801397E0;
 extern u16 D_801397E4[0x20];
 extern u8 D_80139824;
 extern u8 D_80139828;
+#ifdef MMX4_PC
+extern char D_80137E0C[SS_SEQ_TABSIZ * 3 * 10];
+#else
 extern char D_80137E0C[0x1428];
+#endif
 extern s8 D_80139234[24];
 extern u8 D_8013924C[4];
 extern void* D_8013DC10;
@@ -1877,7 +1881,9 @@ void func_800127C8(s32);
 void func_800127FC(void);
 void func_800129A4(s8);
 void func_80013530(void);
-void func_80013AD8(s32, u8, s32);
+typedef unsigned long CdLoadAddress;
+void func_80013AD8(s32, u8, CdLoadAddress);
+void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
 void func_800292D0(struct StageObjectRecord*);
@@ -1953,11 +1959,11 @@ void func_800E6138(s8*);
 void func_8001213C(void);
 void func_800122E0(struct DrawInfo* arg0);
 extern void func_80013A20(void);
-extern void func_80013E68(void);
+extern void func_80013E68(u8 status, u8* result);
 void func_80013650(void);
 s8 func_800136B0();
 void func_800137F0();
-void MyCdReadyCallback(void);
+void MyCdReadyCallback(u8 status, u8* result);
 void func_80018000(s32);
 
 enum SelectedPlayer {
