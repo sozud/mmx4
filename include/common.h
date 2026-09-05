@@ -95,6 +95,14 @@ union PlayerChargeData {
     } hud;
 };
 
+struct SoundArchive {
+    u32 vab_offset : 24;
+    u32 vab_id : 8;
+    u32 unk4;
+    u8 sound_entries[0];
+};
+typedef char SoundArchive_header_must_be_8_bytes[sizeof(struct SoundArchive) == 8 ? 1 : -1];
+
 struct CdImageOrigin {
     u16 x, y;
 };
@@ -1730,10 +1738,10 @@ extern u8 D_801406AC;
 extern s32 D_80142F70;
 extern u8* D_8015D9C8;
 extern u8 D_801374B4;
-extern s8 D_801374B8;
+extern u8 D_801374B8;
 extern s8 D_80137CE4;
-extern s8 D_80137CF0;
-extern s8 D_80137CF4;
+extern u8 D_80137CF0;
+extern u8 D_80137CF4;
 extern u8 D_8013BD40;
 #ifdef MMX4_PC
 extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
@@ -1869,7 +1877,7 @@ void func_800127C8(s32);
 void func_800127FC(void);
 void func_800129A4(s8);
 void func_80013530(void);
-void func_80013AD8(u8, u8, s32);
+void func_80013AD8(s32, u8, s32);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
 void func_800292D0(struct StageObjectRecord*);

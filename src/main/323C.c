@@ -419,7 +419,91 @@ void MyCdReadyCallback(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80013AD8);
+extern struct CdCompletionSlot D_80137D04[16];
+extern u8* D_80137DC4;
+extern u8* D_80137DCC;
+
+void func_80013AD8(s32 arg0, u8 arg1, s32 arg2)
+{
+    u8 i;
+    s8 temp_a0;
+    s8 temp_a0_2;
+    if (CdReady(1, 0) != 0) {
+        CdControlB(9U, 0, 0);
+    }
+    i = 0;
+    if (D_801406AC != 0x80) {
+        D_80137DE4 = 0;
+    }
+    D_801406AC = 0;
+    D_80137DD8 = arg0;
+    D_80137DDC = arg1;
+    D_80137DE0 = arg2;
+    D_8013BD40 = 0;
+    D_801374B8 = 0;
+    D_801374B4 = 0;
+    D_80137CF0 = 0;
+    D_80137CF4 = 0;
+    do {
+        D_80137D04[i].pending = 0;
+        i += 1;
+    } while (i < 0x10U);
+    switch (D_80137DDC) {
+    case 0:
+        D_80137DCC = (u8*)0x80178000;
+        i = 0;
+        D_80137DD0 = 0x1010;
+        do {
+            if (i != 2) {
+                temp_a0 = D_8013E198[i];
+                if (temp_a0 != (-1)) {
+                    SsVabClose((s16)temp_a0);
+                    D_8013E198[i] = -1;
+                }
+            }
+            i += 1;
+        } while (i < 6U);
+        break;
+
+    case 1:
+        D_80137DCC = D_80137DC4;
+        break;
+
+    case 2:
+        D_80137DCC = (u8*)arg2;
+        break;
+
+    case 3:
+        i = 2;
+        D_80137DCC = D_80173C80;
+        D_80137DD0 = D_80166BB4;
+        do {
+            if (i != 3) {
+                temp_a0_2 = D_8013E198[i];
+                if (temp_a0_2 != (-1)) {
+                    SsVabClose((s16)temp_a0_2);
+                    D_8013E198[i] = -1;
+                }
+            }
+            i += 1;
+        } while (i < 6U);
+        break;
+
+    case 4:
+        D_80137DD0 = arg2;
+        D_80137DCC = D_8015D9C8;
+        if (D_8013E198[2] != (-1)) {
+            SsVabClose((s16)D_8013E198[2]);
+            D_8013E198[2] = -1;
+        }
+        break;
+    }
+
+    D_80137CD8 = 1;
+    D_80137CCC = func_80013614((s32)arg0, &D_80137CBC);
+    CdReadyCallback((void (*)(u8, u8*))func_80013E68);
+    func_80013DA8();
+}
 
 typedef struct {
     void (*unk0)(void);
@@ -561,11 +645,149 @@ void func_80014140(void)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800141BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800142BC);
+extern struct CdImageOrigin D_800F1614[];
+extern u16 D_8012F4A8;
+extern u16 D_8012F4AC;
+extern u16 D_8012F4B0;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80014514);
+void func_800142BC(void)
+{
+    s32 temp_a1;
+    struct CdCompletionSlot* slot;
+    u8 temp_a0;
+    u8 temp_v0;
+    u16 temp_v0_3;
+    u16* temp_v0_2;
+    temp_v0 = D_80137CF4 + 1;
+    D_80137CF4 = temp_v0;
+    if (temp_v0 - D_80137CF0 < 7) {
+        if (D_80137CE8 != 0) {
+            temp_v0_2 = &D_800F1614[(u8)D_80137CD4].x;
+            D_8012F4A8 = *temp_v0_2++;
+            temp_v0_3 = *temp_v0_2;
+            D_80137CE8 = 0;
+            D_8012F4AC = temp_v0_3;
+            D_8012F4B0 = temp_v0_3 & 0x100;
+        }
+        D_80137CC4 = D_8012F4B4.sectors[D_801374B8];
+    } else
+        goto fail;
+    if (func_800136B0() == -1) {
+    fail:
+        CdReadyCallback(0);
+        CdControlB(9U, 0, 0);
+        D_801406AC = 0x80;
+    } else {
+        D_8013BD40 = 1;
+        D_80137D04[D_801374B8].pending = 1;
+        D_80137D04[D_801374B8].callback = 1;
+        temp_a0 = D_801374B8 + 1;
+        slot = &D_80137D04[D_801374B8];
+        temp_a1 = (D_8012F4A8 << 16) | D_8012F4AC;
+        D_801374B8 = temp_a0;
+        slot->callback_arg = temp_a1;
+        if (temp_a0 == 0x10) {
+            D_801374B8 = 0;
+        }
+        switch ((D_80137CD4 >> 8) & 0xFF) {
+        case 0:
+            if (D_8012F4AC == D_8012F4B0 + 0xF0) {
+                D_8012F4A8 += 0x40;
+                D_8012F4AC = D_8012F4B0;
+            } else {
+                D_8012F4AC += 0x10;
+            }
+            return;
+        case 1:
+            if (D_8012F4AC == D_8012F4B0 + 0xA0) {
+                D_8012F4A8 += 0x40;
+                D_8012F4AC = D_8012F4B0;
+            } else {
+                D_8012F4AC += 0x10;
+            }
+            return;
+        case 2:
+            if (D_8012F4AC == 0xF0) {
+                D_8012F4A8 += 0x40;
+                D_8012F4AC = 0xB0;
+            } else {
+                D_8012F4AC += 0x10;
+            }
+            return;
+        }
+    }
+}
 
-s32 func_800147AC();
+extern u32 D_80137CE0;
+extern u32 D_80141F30[];
+extern u8* D_80141EE8[];
+
+void func_80014514(void)
+{
+    s32 temp_s0;
+    s32 slot;
+    s32 var_a0;
+    s32 var_a1;
+    s8 temp_v0_2;
+    u8 temp_s1;
+    u8 temp_a0_2;
+    u8 temp_v0;
+    void* temp_a0;
+    struct SoundArchive* archive;
+    temp_v0 = D_80137CF4 + 1;
+    D_80137CF4 = temp_v0;
+    if (temp_v0 - D_80137CF0 >= 7) {
+        CdReadyCallback(0);
+        CdControlB(9, 0, 0);
+        D_801406AC = 0x80;
+        return;
+    }
+    temp_s1 = D_80137CD4 >> 8;
+    D_80137D04[D_801374B8].transfer_pending = 0;
+    if (D_80137CE8 != 0) {
+        archive = (struct SoundArchive*)D_80141F00;
+        temp_s0 = temp_s1 & 0xFF;
+        D_80141F30[temp_s0] = D_80137DD0;
+        D_80141F50[temp_s0] = archive->sound_entries;
+        temp_a0 = (u8*)archive + archive->vab_offset;
+        D_80141EE8[temp_s0] = temp_a0;
+        temp_v0_2 = SsVabOpenHeadSticky(temp_a0, archive->vab_id, D_80137DD0);
+        D_8013E198[temp_s0] = temp_v0_2;
+        if (temp_v0_2 == -1) {
+            CdReadyCallback(0);
+            CdControlB(9, 0, 0);
+            D_801406AC = 0x80;
+            return;
+        }
+        SpuSetTransferMode(0);
+        var_a1 = D_80137CBC;
+        D_80137CE8 = 0;
+        var_a0 = D_80137DD0 + var_a1;
+        D_80137D04[D_801374B8].transfer_pending = 0xFFFF;
+        D_80137CE0 = var_a1;
+        D_80137DD0 = var_a0;
+    }
+    D_80137CC4 = D_8012F4B4.sectors[D_801374B8];
+
+    if (func_800136B0() == -1) {
+        CdReadyCallback(0);
+        CdControlB(9, 0, 0);
+        D_801406AC = 0x80;
+        return;
+    }
+    D_8013BD40 = 1;
+    D_80137D04[D_801374B8].pending = 1;
+    D_80137D04[D_801374B8].callback = 2;
+    temp_a0_2 = D_801374B8 + 1;
+    slot = D_801374B8;
+    D_801374B8 = temp_a0_2;
+    D_80137D04[slot].callback_arg = temp_s1 & 0xFF;
+    if (temp_a0_2 == 0x10) {
+        D_801374B8 = 0;
+    }
+}
+
+void func_800147AC(void);
 extern u8 D_8013BD40;
 
 void func_80014780(void)
@@ -575,7 +797,22 @@ void func_80014780(void)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800147AC);
+extern void (*D_800F1640[3])(void);
+
+void func_800147AC(void)
+{
+    while (D_80137D04[D_801374B4].pending != 0) {
+        D_800F1640[D_80137D04[D_801374B4].callback]();
+        D_80137D04[D_801374B4].pending = 0;
+        if (++D_801374B4 == 0x10) {
+            D_801374B4 = 0;
+        }
+        D_80137CF0++;
+    }
+    if (D_80137CF4 == D_80137CF0) {
+        D_8013BD40 = 0;
+    }
+}
 
 void func_800148E4(void)
 {
@@ -585,7 +822,7 @@ void func_800148EC()
 {
     u32 temp_a1;
 
-    temp_a1 = D_80137D08[D_801374B4 * 3];
+    temp_a1 = D_80137D04[D_801374B4].callback_arg;
     D_80137CFC.x = temp_a1 >> 0x10;
     D_80137CFC.y = temp_a1;
     D_80137CFC.w = 0x40;
@@ -598,25 +835,22 @@ void func_800148EC()
 s16 SsVabTransCompleted();
 extern u8 D_801374B4;
 extern u32 D_80137CE0;
-extern u16 D_80137D0C;
 extern s8 D_8013E198[];
 
 void func_80014968(void)
 {
     s16 temp_v0;
-    s16 temp_a0;
     u8 temp_s1;
     u32 var_s0;
 
-    temp_a0 = D_801374B4 * 0xC;
-    if (*(u16*)((u8*)&D_80137D0C + temp_a0) != 0xFFFF) {
+    if (D_80137D04[D_801374B4].transfer_pending != 0xFFFF) {
         while (!SsVabTransCompleted(0))
             ;
     } else {
-        *(u16*)((u8*)&D_80137D0C + temp_a0) = 0;
+        D_80137D04[D_801374B4].transfer_pending = 0;
     }
 
-    temp_s1 = D_80137D08[D_801374B4 * 3];
+    temp_s1 = D_80137D04[D_801374B4].callback_arg;
     var_s0 = MIN(0x800, D_80137CE0);
     temp_v0 = SsVabTransBodyPartly(
         D_8012F4B4.sectors[D_801374B4],
