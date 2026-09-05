@@ -19,16 +19,26 @@ static int initialized;
 
 static u16 button_mask(const char* name)
 {
-    if (!strcmp(name, "start")) return PADstart;
-    if (!strcmp(name, "select")) return PADselect;
-    if (!strcmp(name, "up")) return PADLup;
-    if (!strcmp(name, "down")) return PADLdown;
-    if (!strcmp(name, "left")) return PADLleft;
-    if (!strcmp(name, "right")) return PADLright;
-    if (!strcmp(name, "cross")) return PADRdown;
-    if (!strcmp(name, "circle")) return PADRright;
-    if (!strcmp(name, "square")) return PADRleft;
-    if (!strcmp(name, "triangle")) return PADRup;
+    if (!strcmp(name, "start"))
+        return PADstart;
+    if (!strcmp(name, "select"))
+        return PADselect;
+    if (!strcmp(name, "up"))
+        return PADLup;
+    if (!strcmp(name, "down"))
+        return PADLdown;
+    if (!strcmp(name, "left"))
+        return PADLleft;
+    if (!strcmp(name, "right"))
+        return PADLright;
+    if (!strcmp(name, "cross"))
+        return PADRdown;
+    if (!strcmp(name, "circle"))
+        return PADRright;
+    if (!strcmp(name, "square"))
+        return PADRleft;
+    if (!strcmp(name, "triangle"))
+        return PADRup;
     return 0;
 }
 
@@ -90,16 +100,26 @@ static u16 keyboard_input(void)
 
     if (keys == NULL)
         return 0;
-    if (keys[SDL_SCANCODE_RETURN]) buttons |= PADstart;
-    if (keys[SDL_SCANCODE_BACKSPACE]) buttons |= PADselect;
-    if (keys[SDL_SCANCODE_UP]) buttons |= PADLup;
-    if (keys[SDL_SCANCODE_DOWN]) buttons |= PADLdown;
-    if (keys[SDL_SCANCODE_LEFT]) buttons |= PADLleft;
-    if (keys[SDL_SCANCODE_RIGHT]) buttons |= PADLright;
-    if (keys[SDL_SCANCODE_X]) buttons |= PADRdown;
-    if (keys[SDL_SCANCODE_C]) buttons |= PADRright;
-    if (keys[SDL_SCANCODE_Z]) buttons |= PADRleft;
-    if (keys[SDL_SCANCODE_V]) buttons |= PADRup;
+    if (keys[SDL_SCANCODE_RETURN])
+        buttons |= PADstart;
+    if (keys[SDL_SCANCODE_BACKSPACE])
+        buttons |= PADselect;
+    if (keys[SDL_SCANCODE_UP])
+        buttons |= PADLup;
+    if (keys[SDL_SCANCODE_DOWN])
+        buttons |= PADLdown;
+    if (keys[SDL_SCANCODE_LEFT])
+        buttons |= PADLleft;
+    if (keys[SDL_SCANCODE_RIGHT])
+        buttons |= PADLright;
+    if (keys[SDL_SCANCODE_X])
+        buttons |= PADRdown;
+    if (keys[SDL_SCANCODE_C])
+        buttons |= PADRright;
+    if (keys[SDL_SCANCODE_Z])
+        buttons |= PADRleft;
+    if (keys[SDL_SCANCODE_V])
+        buttons |= PADRup;
     return buttons;
 }
 

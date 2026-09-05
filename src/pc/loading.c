@@ -132,8 +132,7 @@ void func_80013014(void)
         first_asset = archive_ids[table_index];
     func_80013AD8(first_asset, engine_obj.stage == 0x0e ? 0 : 3, 0);
     func_80014A90(engine_obj.stage < 0x0d, 0);
-    second_asset = archive_ids[
-        (engine_obj.cur_character == CHARACTER_X ? 0x34 : 0x54) + table_index];
+    second_asset = archive_ids[(engine_obj.cur_character == CHARACTER_X ? 0x34 : 0x54) + table_index];
     func_80013AD8(second_asset, 1, 0);
     func_80014A90(engine_obj.stage < 0x0d, 1);
     source = (u16*)pc_archive_slots[0];
