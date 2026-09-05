@@ -1299,7 +1299,12 @@ struct EngineObj {
 #define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
 #define ENGINE_UNK2E (engine_obj.character_state.bytes[8])
 
+#ifdef MMX4_PC
 #define engine_flags engine_obj.character_state.fields.flags
+#else
+extern u8 engine_obj_27;
+#define engine_flags engine_obj_27
+#endif
 
 struct Unk18 {
     s8 unk0;
