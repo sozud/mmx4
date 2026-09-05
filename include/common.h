@@ -376,8 +376,8 @@ struct BackgroundObj {
     u8 unk4A;
     u8 unk4B;
     u8 unk4C;
-    s8 unk4D;
-    s8 unk4E;
+    u8 unk4D;
+    u8 unk4E;
     s8 min_y;
     s8 max_y;
     s8 pad51[3];
@@ -975,7 +975,7 @@ struct Unk16 {
 };
 
 struct BgDrawRelated {
-    u8 pad[0x4000];
+    SPRT_16 sprites[0x400];
 };
 
 struct MainPrimitiveBuffer {
@@ -1058,7 +1058,14 @@ extern struct SecondaryPrimitiveBuffer D_80169D78[];
 extern struct BackgroundPrimitiveBuffer D_8016DEA0;
 #endif
 extern P_TAG D_8012F498[2];
-extern struct StageSpriteSlot D_8013B7B0[2];
+extern TILE D_8013B7B0[2];
+extern POLY_FT4 D_80139F20[2];
+extern POLY_F4 D_80139F70[2];
+extern DR_TPAGE D_80139FA0[2];
+extern POLY_F4 D_80139FB0[2][128];
+extern DR_TPAGE D_80171EB0[2][6][8];
+extern u8 D_80141BE8[0x300];
+extern u16 D_801441C8[3][32][32];
 
 #ifndef MMX4_PC
 typedef u32 OT_TYPE;
@@ -1773,11 +1780,8 @@ extern s8 D_80139528;
 extern CdlATV D_80139520;
 extern s32 D_80137CD8;
 extern RECT D_800F1658;
-#ifdef MMX4_PC
 extern u16 D_80141F70[0x800];
-#else
-extern u32 D_80141F70;
-#endif
+extern u16 lastFilterAmountR, lastFilterAmountG, lastFilterAmountB;
 extern u8 D_80139524;
 extern s8 D_8013952C;
 extern s32 D_80139530;
@@ -1827,13 +1831,13 @@ extern s32 D_8013E188[4];
 // extern s32 D_8013E194;
 extern s8 D_801754A0;
 // 0 is color add mode, 1 is color subtract mode
-extern s8 g_FilterModeR;
-extern s8 g_FilterModeG;
-extern s8 g_FilterModeB;
+extern u8 g_FilterModeR;
+extern u8 g_FilterModeG;
+extern u8 g_FilterModeB;
 // how much to add or subtract to each channel
 extern u16 g_FilterAmountR;
-extern s16 g_FilterAmountB;
-extern s16 g_FilterAmountG;
+extern u16 g_FilterAmountB;
+extern u16 g_FilterAmountG;
 extern u16 controller_state;
 extern s8 D_801419FC;
 extern u8 D_800F4508[0x20];
