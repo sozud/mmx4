@@ -1,0 +1,5 @@
+compiler_type = "gcc"
+compiler_command = "tools/compile_psx_permuter.sh -I./src/snd -I./include"
+assembler_command = "mipsel-linux-gnu-as -no-pad-sections -I./src/main"
+asm_prelude_file = "tools/permuter_prelude.inc"
+objdump_command = "mipsel-linux-gnu-objdump -drz -m mips:3000"
