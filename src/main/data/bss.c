@@ -179,16 +179,11 @@ u8 pad_80139829[7];
 struct BackgroundPrimitiveBuffer temp3[2];
 struct OrderingTableBuffer temp4[2];
 struct AuxiliaryPrimitiveBuffer temp5[2];
-u8 D_80139F20;
-u8 pad_80139F21[79];
-u8 D_80139F70;
-u8 pad_80139F71[50];
-u8 D_80139FA3;
-u8 D_80139FA4;
-u8 pad_80139FA5[11];
-u8 D_80139FB0;
-u8 pad_80139FB1[6143];
-struct StageSpriteSlot D_8013B7B0[2];
+POLY_FT4 D_80139F20[2];
+POLY_F4 D_80139F70[2];
+DR_TPAGE D_80139FA0[2];
+POLY_F4 D_80139FB0[2][128];
+TILE D_8013B7B0[2];
 u8 D_8013B7D0;
 u8 pad_8013B7D1[7];
 u8 D_8013B7D8;
@@ -367,9 +362,9 @@ u8 D_8013E1A8[0x2];
 u8 D_8013E1AA[0xA];
 u8 D_8013E1B4[0x4];
 u8 D_8013E1B8[0x4];
-s8 g_FilterModeB;
+u8 g_FilterModeB;
 u8 pad_8013E1BD[1];
-s16 g_FilterAmountB;
+u16 g_FilterAmountB;
 u8 D_8013E1C0[0x4];
 s8 D_8013E1C4;
 u8 pad_8013E1C5[3];
@@ -409,12 +404,14 @@ u8 pad_80141BD8[0x1A8]; // D_80141BD8/BDC/BDE/BDF, g_FilterModeG, g_FilterAmount
 u8 D_80141D80[0x168];
 u8* D_80141EE8[6];
 u8* D_80141F00;
-u8 pad_80141F04[4]; // lastFilterAmountR
+u16 lastFilterAmountR;
+u8 pad_80141F06[2];
 
 #ifdef MMX4_PC
 
-s8 g_FilterModeG;
-s16 g_FilterAmountG;
+u16 lastFilterAmountG, lastFilterAmountB;
+u8 g_FilterModeG;
+u16 g_FilterAmountG;
 
 u8 D_801721B8;
 
@@ -464,7 +461,7 @@ struct QuadObj g_QuadObjects[0x20];
 s32 player_gfx_buf_0[0x400];
 s32 player_gfx_buf_1[0x4000];
 u16 g_FilterAmountR;
-s8 g_FilterModeR;
+u8 g_FilterModeR;
 u32 D_80141F30[8];
 u16 D_80141F70[0x800];
 u8* pc_archive_slots[22];
@@ -474,8 +471,9 @@ u16* D_801441B4;
 struct MainPrimitiveBuffer temp1[2];
 struct SecondaryPrimitiveBuffer temp2[2];
 struct BgDrawRelated D_8015D9D0[2];
-u8 D_80171EB0;
-u16 D_801441C8[0xc00];
+DR_TPAGE D_80171EB0[2][6][8];
+u8 D_80141BE8[0x300];
+u16 D_801441C8[3][32][32];
 
 union SepBundle D_801459C8;
 u8 window_archive_data[0x3000];

@@ -191,6 +191,100 @@ void func_8002E994(struct EngineObj* arg0)
     }
 }
 
+void func_80027344(s32 layer, s32 x, s32 y)
+{
+    struct BackgroundObj* bg = &background_objects[layer];
+    s32 tile_count = 18;
+    s32 block_x, block_y;
+    s32 tile_x, tile_y;
+    s32 inner_x, inner_y;
+    s32 min_block_x, max_block_x;
+    s32 layer_offset, row_offset;
+    s32 width;
+    s32 i;
+    u8 block;
+
+    if (x < 0)
+        return;
+    if (y < 0) {
+        y = 0;
+        tile_count = 17;
+    }
+
+    block_x = x / 256;
+    block_y = y / 256;
+    tile_x = (x % 512) / 16;
+    tile_y = (y % 512) / 16;
+    inner_x = tile_x & 15;
+    inner_y = tile_y & 15;
+    min_block_x = bg->unk4D;
+    max_block_x = bg->unk4E;
+
+    if ((u32)block_x < min_block_x) {
+        block_x += max_block_x - min_block_x + 1;
+        if (bg->x_pos.i.hi <= (min_block_x - 1) * 256) {
+            bg->x_pos.i.hi = max_block_x * 256;
+            return;
+        }
+    }
+    if ((u32)block_x > max_block_x) {
+        block_x -= max_block_x - min_block_x + 1;
+        if (bg->x_pos.i.hi >= (max_block_x + 1) * 256) {
+            bg->x_pos.i.hi = min_block_x * 256;
+            return;
+        }
+    }
+
+    layer_offset = layer * layout_size;
+    width = layout_width;
+    row_offset = width * block_y;
+    block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
+    for (i = 0; i < tile_count; i++) {
+        D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
+        tile_y = (tile_y + 1) & 31;
+        inner_y++;
+        if (inner_y == 16) {
+            inner_y = 0;
+            row_offset += width;
+            block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
+        }
+    }
+}
+
+void func_800275DC(s32 layer, s32 x, s32 y)
+{
+    s32 block_x, block_y;
+    s32 tile_x, tile_y;
+    s32 inner_x, inner_y;
+    s32 layer_offset, row_offset;
+    s32 i;
+    u8 block;
+
+    if (y < 0)
+        return;
+
+    block_x = x / 256;
+    block_y = y / 256;
+    tile_x = (x % 512) / 16;
+    tile_y = (y % 512) / 16;
+    inner_x = tile_x & 15;
+    inner_y = tile_y & 15;
+    layer_offset = layer * layout_size;
+    row_offset = layout_width * block_y;
+    block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
+
+    for (i = 0; i < 21; i++) {
+        D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
+        tile_x = (tile_x + 1) & 31;
+        inner_x++;
+        if (inner_x == 16) {
+            inner_x = 0;
+            block_x++;
+            block = SP_BG_TILEMAP[layer_offset + row_offset + block_x];
+        }
+    }
+}
+
 void func_800E0D0C(void)
 {
     SpuSetReverb(1);

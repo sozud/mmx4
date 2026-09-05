@@ -10,7 +10,7 @@
 _Alignas(16) u8 mmx4_scratchpad[0x400];
 void* mmx4_sp_primitive_cursor;
 void* mmx4_sp_draw_mode_cursor;
-void* mmx4_sp_background_cursor;
+u8* mmx4_sp_background_cursor;
 void* mmx4_sp_background_primitive_cursor;
 void* mmx4_sp_ordering_cursor;
 void* mmx4_sp_auxiliary_cursor;

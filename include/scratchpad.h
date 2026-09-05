@@ -13,14 +13,14 @@ struct Scratchpad1C {
 extern u8 mmx4_scratchpad[0x400];
 extern void* mmx4_sp_primitive_cursor;
 extern void* mmx4_sp_draw_mode_cursor;
-extern void* mmx4_sp_background_cursor;
+extern u8* mmx4_sp_background_cursor;
 extern void* mmx4_sp_background_primitive_cursor;
 extern void* mmx4_sp_ordering_cursor;
 extern void* mmx4_sp_auxiliary_cursor;
 extern u8* pc_archive_slots[22];
 #define MMX4_SP_PTR(offset, type) ((type*)(void*)&mmx4_scratchpad[(offset)])
 #define SP_DRAW_BUFFER (*MMX4_SP_PTR(0x000, s32))
-#define SP_BG_TILEMAP ((u8*)mmx4_sp_background_cursor)
+#define SP_BG_TILEMAP mmx4_sp_background_cursor
 #define SP_BG_TILE_PIXELS ((u16*)pc_archive_slots[0])
 #define SP_BG_TILE_ATTRS ((u32*)pc_archive_slots[1])
 #define SP_PLAYER_GFX ((s32*)pc_archive_slots[2])

@@ -1220,7 +1220,7 @@ void load_palette(void)
         if (need_palette_load & 1) {
             LoadImage(&D_800F1658, (u_long*)SP_PALETTE);
         } else if (need_palette_load & 2) {
-            LoadImage(&D_800F1658, &D_80141F70); // D_80141F70 is in vram_rect_ptr but can't figure out a match
+            LoadImage(&D_800F1658, (u_long*)D_80141F70); // D_80141F70 is in vram_rect_ptr but can't figure out a match
         }
 
         need_palette_load = 0;
@@ -1234,7 +1234,7 @@ void func_80016074(void)
     u16* var_a1;
     u32 var_v1;
 
-    var_a1 = &D_80141F70;
+    var_a1 = D_80141F70;
     var_a0 = SP_PALETTE;
     var_v1 = 0;
     do {
@@ -4856,7 +4856,48 @@ void func_80025CDC(void)
     func_80024260();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80025DA0);
+#define BG_TPAGE(tp, abr, x, y)                                                            \
+    ((GetGraphType() == 1 || GetGraphType() == 2)                                          \
+            ? (((tp)&3) << 9) | (((abr)&3) << 7) | (((y)&0x300) >> 3) | (((x)&0x3FF) >> 6) \
+            : getTPage(tp, abr, x, y))
+
+#define BG_DRAW_TPAGE(p, tpage) \
+    (setlen(p, 1), ((u_long*)(p))[sizeof(OT_TYPE) / sizeof(u_long)] = 0xE1000000 | ((GetGraphType() == 1 || GetGraphType() == 2) ? (tpage) : ((tpage)&0x9FF)))
+
+void func_80025DA0(s32 texture_depth, s32 blend_mode)
+{
+    u32 buffer, i, j;
+    s16 x;
+    DR_TPAGE* page;
+    for (buffer = 0; buffer < 2; buffer++) {
+        setTile(&D_8013B7B0[buffer]);
+        for (i = 0; i < 0x400; i++) {
+            setSprt16(&D_8015D9D0[buffer].sprites[i]);
+            setShadeTex(&D_8015D9D0[buffer].sprites[i], 1);
+        }
+        for (i = 0; i < 6; i++) {
+            x = 320;
+            j = 0;
+            page = D_80171EB0[buffer][i];
+            for (; j < 8; j++, x += 64) {
+                BG_DRAW_TPAGE(page, BG_TPAGE(texture_depth, blend_mode, x, 256));
+                page++;
+            }
+        }
+        setPolyFT4(&D_80139F20[buffer]);
+        setShadeTex(&D_80139F20[buffer], 1);
+        setPolyF4(&D_80139F70[buffer]);
+        setSemiTrans(&D_80139F70[buffer], 1);
+        BG_DRAW_TPAGE(&D_80139FA0[buffer], BG_TPAGE(0, 0, 960, 256));
+        for (i = 0; i < 128; i++) {
+            setPolyF4(&D_80139FB0[buffer][i]);
+            setSemiTrans(&D_80139FB0[buffer][i], 1);
+        }
+    }
+    SP_BG_TILEMAP = D_80141BE8;
+}
+#undef BG_TPAGE
+#undef BG_DRAW_TPAGE
 
 void func_80026118(void)
 {
@@ -4922,7 +4963,19 @@ void func_800261B4(s32 arg0, u32 arg1, u8* arg2)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800262B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800264D0);
+void func_800264D0(s32 layer, s32 x, s32 y)
+{
+    s32 block_x = x / 16;
+    s32 block_y = y / 16;
+    s32 tile_x = x % 32;
+    s32 tile_y = y % 32;
+
+    s32 inner_x = tile_x & 15;
+    s32 inner_y = tile_y & 15;
+    u8 block = (SP_BG_TILEMAP + layer * layout_size + layout_width * block_y)[block_x];
+
+    D_801441C8[layer][tile_y][tile_x] = (inner_y * 16 + (SP_BG_TILE_PIXELS + block * 256))[inner_x];
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_800265B4);
 
@@ -4958,14 +5011,14 @@ void func_80026648(void)
 
 void func_80026720(void)
 {
-    struct StageSpritePrimitive* sprt;
+    TILE* sprt;
 
     if (engine_obj.stage == 0) {
         if (engine_obj.substage == 0) {
             sprt = &D_8013B7B0[SP_DRAW_BUFFER];
             setRGB0(sprt, 8, 0x18, 0x31);
             setXY0(sprt, 0, 0);
-            setUV0(sprt, 0x140, 0x60);
+            setWH(sprt, 0x140, 0x60);
             addPrim(&cur_draw_info->ordering_table.end, sprt);
         }
     }
@@ -5355,7 +5408,66 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028B68);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028BAC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028BF0);
+extern struct Checkpoint** D_800F42B4[32];
+
+void func_80028BF0(void)
+{
+    s16 bg1_x;
+    s16 bg1_y;
+    s16 bg2_x;
+    s16 bg2_y;
+    s32 x;
+    s32 y;
+    struct Checkpoint* checkpoint;
+    u16 bg1_offset_y;
+    u16 bg2_offset_y;
+    u16 bg1_offset_x;
+    u16 bg2_offset_x;
+
+    checkpoint = D_800F42B4[engine_obj.stage * 2 + engine_obj.substage][engine_obj.checkpoint];
+
+    x = FIXED(checkpoint->x);
+    g_Player.base.x_pos.val = x;
+    y = FIXED(checkpoint->y);
+    g_Player.unk18 = x;
+    g_Player.base.y_pos.val = y;
+    g_Player.unk1C = y;
+
+    g_Player.base.unk15 = checkpoint->facing;
+    background_objects[0].x_pos.i.hi = checkpoint->bg0_x;
+    background_objects[0].unk14.i.hi = checkpoint->bg0_x;
+    background_objects[0].y_pos.i.hi = checkpoint->bg0_y;
+    background_objects[0].unk18.i.hi = checkpoint->bg0_y;
+    background_objects[0].unk1E = checkpoint->bg0_right;
+    background_objects[0].unk26 = checkpoint->bg0_right;
+    background_objects[0].unk1C = checkpoint->bg0_bottom;
+    background_objects[0].unk24 = checkpoint->bg0_bottom;
+    background_objects[0].unk22 = checkpoint->bg0_left;
+    background_objects[0].unk2A = checkpoint->bg0_left;
+    background_objects[0].unk20 = checkpoint->bg0_top;
+    background_objects[0].unk28 = checkpoint->bg0_top;
+    bg1_offset_x = checkpoint->bg1_off_x;
+    background_objects[1].unk40 = bg1_offset_x;
+    bg1_offset_y = checkpoint->bg1_off_y;
+    background_objects[1].unk42 = bg1_offset_y;
+    bg1_x = checkpoint->bg1_x + bg1_offset_x;
+    background_objects[1].x_pos.i.hi = bg1_x;
+    background_objects[1].unk14.i.hi = bg1_x;
+    bg1_y = checkpoint->bg1_y + bg1_offset_y;
+    background_objects[1].y_pos.i.hi = bg1_y;
+    background_objects[1].unk18.i.hi = bg1_y;
+    bg2_offset_x = checkpoint->bg2_off_x;
+    background_objects[2].unk40 = bg2_offset_x;
+    bg2_offset_y = checkpoint->bg2_off_y;
+    background_objects[2].unk42 = bg2_offset_y;
+    bg2_x = checkpoint->bg2_x + bg2_offset_x;
+    background_objects[2].x_pos.i.hi = bg2_x;
+    background_objects[2].unk14.i.hi = bg2_x;
+    bg2_y = checkpoint->bg2_y + bg2_offset_y;
+    background_objects[2].y_pos.i.hi = bg2_y;
+    background_objects[2].unk18.i.hi = bg2_y;
+    g_Player.unkBE = checkpoint->player_unkBE;
+}
 
 void func_80028DB4(void)
 {
