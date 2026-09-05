@@ -915,3 +915,128 @@ void func_800E9040(void)
     Psyz_GteCtrlWrite(24, 0);
     Psyz_GteCtrlWrite(25, 0);
 }
+
+extern s16 D_800F224C[];
+extern union TitleScratch D_80169498;
+u8 func_8002B810(s32 arg0, s32 arg1);
+
+void func_8001E130(struct GameInfo* arg0)
+{
+    s16* target;
+    s32* x;
+    s32* y;
+    u8* flags;
+    s32 x_diff;
+    s32 y_diff;
+    s32 i;
+    struct MiscObj* obj;
+    u8 direction;
+
+    x = &D_80169498.sector[0];
+    i = 0;
+    flags = (u8*)&D_80169498;
+    y = &D_80169498.sector[1];
+    do {
+        target = &D_800F224C[i * 2];
+        x_diff = *x - (target[0] << 16);
+        y_diff = *y - (target[1] << 16);
+        direction = func_8002B810(x_diff, y_diff);
+        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) && (D_80169498.title.settled == 0)) {
+            *x = target[0] << 16;
+            *y = target[1] << 16;
+            flags[0x90] = 1;
+        } else {
+            *x -= x_diff / arg0->unk6;
+            *y -= y_diff / arg0->unk6;
+            flags[0x90] = 0;
+            if (i == 0x11) {
+                D_80169498.title.settled = 0;
+            }
+        }
+        y += 2;
+        x += 2;
+        flags[0xA2] = direction;
+        i++;
+        flags++;
+    } while (i < 0x12);
+
+    arg0->unk6--;
+    if (arg0->unk6 == 0) {
+        target = D_800F224C;
+        x = D_80169498.sector;
+        i = 0;
+        do {
+            *x = *target << 16;
+            target++;
+            x++;
+            i++;
+        } while (i < 0x24);
+        arg0->mode++;
+
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0xC;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0x14;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x13;
+            obj->base.unk2 = 0x15;
+        }
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->base.active = 1;
+            obj->base.id = 0x1D;
+            obj->base.unk2 = 0x21;
+        }
+        D_80139690 = &obj->base;
+    }
+}
+
+void func_800CD530(struct MiscObj* arg0)
+{
+    switch (arg0->base.unk6) {
+    case 0:
+        arg0->base.unk6++;
+        if (engine_obj.cur_character == (arg0->base.unk2 - 7)) {
+            func_80015D60(arg0, 3);
+        } else {
+            func_80015D60(arg0, 0);
+        }
+        break;
+    case 1:
+        func_80015DC8(arg0);
+        if (arg0->unk46 == 0) {
+            engine_flags |= (1 << (arg0->base.unk2 - 7));
+        }
+        if ((s8)engine_flags & 0x80) {
+            arg0->base.unk6 = (u8)arg0->base.unk6 + 1;
+            func_80015D60(arg0, 4);
+        }
+        break;
+    case 2:
+        func_80015DC8(arg0);
+        if (arg0->unk46 == 0) {
+            arg0->base.unk6 = (u8)arg0->base.unk6 + 1;
+            func_80015D60(arg0, 5);
+            arg0->y_vel.val = 0x80000;
+        }
+        break;
+    case 3:
+        func_80015DC8(arg0);
+        func_8002B718(arg0);
+        if (arg0->base.on_screen == 0) {
+            engine_flags &= ~(1 << (arg0->base.unk2 - 7));
+            arg0->base.state = (u8)arg0->base.state + 1;
+        }
+        break;
+    }
+}

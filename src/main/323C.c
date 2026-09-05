@@ -2654,88 +2654,7 @@ void func_8001E000(struct GameInfo* arg0)
     }
 }
 
-extern s16 D_800F224C[];
-
-void func_8001E130(struct GameInfo* arg0)
-{
-    s16* target;
-    s32* x;
-    s32* y;
-    u8* flags;
-    s32 x_diff;
-    s32 y_diff;
-    s32 i;
-    struct MiscObj* obj;
-    u8 direction;
-
-    x = &D_80169498.sector[0];
-    i = 0;
-    flags = (u8*)&D_80169498;
-    y = &D_80169498.sector[1];
-    do {
-        target = &D_800F224C[i * 2];
-        x_diff = *x - (target[0] << 16);
-        y_diff = *y - (target[1] << 16);
-        direction = func_8002B810(x_diff, y_diff);
-        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) && (D_80169498.title.settled == 0)) {
-            *x = target[0] << 16;
-            *y = target[1] << 16;
-            flags[0x90] = 1;
-        } else {
-            *x -= x_diff / arg0->unk6;
-            *y -= y_diff / arg0->unk6;
-            flags[0x90] = 0;
-            if (i == 0x11) {
-                D_80169498.title.settled = 0;
-            }
-        }
-        y += 2;
-        x += 2;
-        flags[0xA2] = direction;
-        i++;
-        flags++;
-    } while (i < 0x12);
-
-    arg0->unk6--;
-    if (arg0->unk6 == 0) {
-        target = D_800F224C;
-        x = D_80169498.sector;
-        i = 0;
-        do {
-            *x = *target << 16;
-            target++;
-            x++;
-            i++;
-        } while (i < 0x24);
-        arg0->mode++;
-
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0xC;
-        }
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0x14;
-        }
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0x15;
-        }
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x1D;
-            obj->base.unk2 = 0x21;
-        }
-        D_80139690 = &obj->base;
-    }
-}
+INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8001E130);
 
 void func_8001E3FC(struct GameInfo* arg0)
 {
@@ -3901,6 +3820,8 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.character_state = source->character_state;
     restored.pad36 = source->pad36;
     restored.unk37 = source->unk37;
+    // unk38 and 38 are baked psx pointers. these are left uninitialized.
+    // they get set in engine stage 5
     restored.unk40 = source->unk40;
     restored.unk41 = source->unk41;
     restored.unk42 = source->unk42;
