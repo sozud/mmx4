@@ -3963,7 +3963,8 @@ extern struct MiscObj* D_801397C4;
 extern u8 D_801397D8;
 extern s16 D_801397E0;
 
-void func_8002328C(struct AbcObj* arg0) {
+void func_8002328C(struct AbcObj* arg0)
+{
     s16 temp_v0_2;
     struct MiscObj* temp_v0;
     struct MiscObj* temp_v0_4;
@@ -4016,19 +4017,19 @@ void func_8002328C(struct AbcObj* arg0) {
             D_801396C8.glyphs[D_801397E0].character = (u8)arg0->unk4;
             D_801396C8.glyphs[D_801397E0].x = (u8)arg0->unk6;
             D_801396C8.glyphs[D_801397E0].y = (u8)arg0->unk8;
-            temp_v0_2 = (u16) D_801397E0 + 1;
+            temp_v0_2 = (u16)D_801397E0 + 1;
             D_801397E0 = temp_v0_2;
             D_801396C8.count = temp_v0_2;
         }
         arg0->unk0++;
         if (arg0->unk4 & 0x4000) {
             arg0->unk6 = -0x78U;
-            arg0->unk8 = (u16) (arg0->unk8 + 0x12);
+            arg0->unk8 = (u16)(arg0->unk8 + 0x12);
         } else {
-            arg0->unk6 = (u16) (arg0->unk6 + 0xC);
+            arg0->unk6 = (u16)(arg0->unk6 + 0xC);
         }
         if (arg0->unkF == 0) {
-            arg0->unk4 = (u16) (arg0->unk4 & 0xEFFF);
+            arg0->unk4 = (u16)(arg0->unk4 & 0xEFFF);
         }
     } while (!(arg0->unk4 & 0xB000));
     func_8001540C(0, 0xE, 0);
@@ -4036,7 +4037,7 @@ void func_8002328C(struct AbcObj* arg0) {
         if (*(u8*)&controller_state != 0) {
             temp_v0_3 = arg0->unkF;
             if (temp_v0_3 != 0) {
-                arg0->unkF = (u8) (temp_v0_3 - 1);
+                arg0->unkF = (u8)(temp_v0_3 - 1);
             }
         }
         arg0->unkA = 4;
