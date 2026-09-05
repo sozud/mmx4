@@ -4310,7 +4310,7 @@ void func_80024F5C(struct PlayerObj* arg0)
     s8 temp;
 
     if (arg0->unk93 != 0) {
-        temp_s0 = arg0->padA9[arg0->unk93 - 1];
+        temp_s0 = arg0->charge_levels[arg0->unk93];
         func_80025588(0x24, 0x29, 0x4F - temp_s0, 0x4F, 0);
         temp_v0_2 = D_800F8BE0.hud.health_divisors[arg0->unk94[0]];
         temp = temp_s0 / temp_v0_2;
@@ -4333,7 +4333,7 @@ void func_8002509C(struct PlayerObj* arg0)
     s8 temp_s1;
 
     if (arg0->unkB9 & 0x20) {
-        temp_s0 = arg0->charge_level;
+        temp_s0 = arg0->charge_levels[0];
         func_80025588(0x24, 0x29, 0x4F - temp_s0, 0x4F, 0);
         temp_s1 = temp_s0 / 12;
         func_80025188(3, (temp_s1 / 10) + 0x3B);
