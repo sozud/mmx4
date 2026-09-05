@@ -105,7 +105,7 @@ void mmx4_pc_thread_create(s32 slot, void (*entry)(void))
 {
     if (thread_debug_enabled())
         fprintf(stderr, "MMX4 PC: thread %d create entry=%p\n", slot,
-                (void*)entry);
+            (void*)entry);
     pc_threads[slot].entry = entry;
     game_threads[slot].state = 2;
     prepare_thread(slot);
@@ -120,7 +120,7 @@ void mmx4_pc_thread_run(s32 slot)
         prepare_thread(slot);
     if (thread_debug_enabled())
         fprintf(stderr, "MMX4 PC: thread %d run state=%u entry=%p\n", slot,
-                game_threads[slot].state, (void*)thread->entry);
+            game_threads[slot].state, (void*)thread->entry);
     current_thread = slot;
     D_801F8300 = &game_threads[slot];
 #ifdef MMX4_PC_ASAN
@@ -142,7 +142,7 @@ void mmx4_pc_thread_yield(void)
         abort();
     if (thread_debug_enabled())
         fprintf(stderr, "MMX4 PC: thread %d yield state=%u timer=%u\n", slot,
-                game_threads[slot].state, game_threads[slot].timer);
+            game_threads[slot].state, game_threads[slot].timer);
 #ifdef MMX4_PC_ASAN
     __sanitizer_start_switch_fiber(
         &pc_threads[slot].asan_fake_stack,
@@ -175,7 +175,7 @@ void mmx4_pc_thread_replace(void (*entry)(void))
         abort();
     if (thread_debug_enabled())
         fprintf(stderr, "MMX4 PC: thread %d replace entry=%p\n", slot,
-                (void*)entry);
+            (void*)entry);
     pc_threads[slot].entry = entry;
     pc_threads[slot].restart = 1;
     game_threads[slot].state = 2;
