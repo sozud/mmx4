@@ -75,6 +75,7 @@ add_executable(mmx4_pc
     src/pc/oracle_capture.c
     src/pc/placeholder.c
     src/pc/stubs.c
+    src/pc/threads.c
     ${MMX4_PC_GAME_SOURCES}
 )
 

@@ -435,7 +435,9 @@ u16 controller_state;
 struct RectPtrPair vram_rect_ptrs[8];
 struct RectPtrPair* vram_rect_ptr;
 struct MainBssState main_bss_state;
+#ifndef MMX4_PC
 struct GameThread* D_801F8300;
+#endif
 u8* D_8015D9C8;
 u8* D_80173C80;
 s32 D_80142F70, D_80166BB4;
