@@ -103,10 +103,13 @@ void func_80012454(void)
     }
 }
 
-extern void (*D_800EE45C[8])();
+extern void (*D_800EE45C[9])();
 
 void func_80012560(void)
 {
+#ifdef MMX4_PC
+    mmx4_pc_threads_init();
+#else
     s32* ptr = (s32*)0x100;
     s16* var_a0;
     s32 temp_v0;
@@ -144,10 +147,23 @@ void func_80012560(void)
     for (; var_a1 < 9; var_a1++) {
         *dst++ = *src++;
     }
+#endif
 }
 
 void func_80012600(void)
 {
+#ifdef MMX4_PC
+    s32 slot;
+
+    for (slot = 0; slot < 4; slot++) {
+        struct GameThread* thread = mmx4_pc_thread_slot(slot);
+        D_801F8300 = thread;
+        if (thread->state == 1 && --thread->timer == 0)
+            thread->state = 2;
+        if (thread->state == 2 || thread->state == 4 || thread->state == 0x7f)
+            mmx4_pc_thread_run(slot);
+    }
+#else
     u16 temp_v0_2;
     u16 temp_v1;
     void* temp_v0;
@@ -184,10 +200,14 @@ void func_80012600(void)
         temp_v0 = *(void**)0x801F8300 + 0x80;
         *(void**)0x801F8300 = temp_v0;
     } while ((u32)temp_v0 <= 0x801F82FFU);
+#endif
 }
 
 void func_80012740(s32 arg0, void* arg1)
 {
+#ifdef MMX4_PC
+    mmx4_pc_thread_create(arg0, (void (*)(void))arg1);
+#else
     s32 temp_s0;
     u16* ptr;
 
@@ -198,26 +218,39 @@ void func_80012740(s32 arg0, void* arg1)
         *(s32*)(0x801f8144 + temp_s0));
     ExitCriticalSection();
     *ptr = 2;
+#endif
 }
 
 void func_800127C8(s32 arg0)
 {
     D_801F8300->timer = arg0;
     D_801F8300->state = 1;
+#ifdef MMX4_PC
+    mmx4_pc_thread_yield();
+#else
     ChangeTh(0xFF000000);
+#endif
 }
 
 void func_800127FC()
 {
+#ifdef MMX4_PC
+    D_801F8300->state = 0;
+    mmx4_pc_thread_close();
+#else
     (*(s16**)0x801F8300)[0] = 0;
     EnterCriticalSection();
     CloseTh((*(s32**)0x801F8300)[2]);
     ExitCriticalSection();
     ChangeTh(0xFF000000);
+#endif
 }
 
 void func_80012854(s32 arg0)
 {
+#ifdef MMX4_PC
+    mmx4_pc_thread_slot(arg0)->state = 0;
+#else
     s32 temp_s0;
     u16* temp_v1;
 
@@ -229,24 +262,37 @@ void func_80012854(s32 arg0)
         CloseTh(*(u32*)(temp_s0 + 0x801F8108));
         ExitCriticalSection();
     }
+#endif
 }
 
-void func_800128B8(s32 arg0)
+void func_800128B8(void (*arg0)(void))
 {
+#ifdef MMX4_PC
+    mmx4_pc_thread_replace(arg0);
+#else
     D_8012F490 = arg0;
     D_800EE458 = 1;
     ChangeTh(0xFF000000);
+#endif
 }
 
 void func_800128EC(s32 arg0)
 {
+#ifdef MMX4_PC
+    u16* temp_a0 = &mmx4_pc_thread_slot(arg0)->state;
+#else
     u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+#endif
     *temp_a0 |= 0x40;
 }
 
 void func_80012910(s32 arg0)
 {
+#ifdef MMX4_PC
+    u16* temp_a0 = &mmx4_pc_thread_slot(arg0)->state;
+#else
     u16* temp_a0 = (arg0 << 7) + 0x801F8100;
+#endif
     *temp_a0 &= ~0x40;
 }
 
