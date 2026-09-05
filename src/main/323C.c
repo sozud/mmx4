@@ -3489,7 +3489,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80022138);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002217C);
 
-s32 func_8002328C(struct AbcObj*);
+void func_8002328C(struct AbcObj*);
 s32 func_8002938C();
 
 #define CONFIG D_801397DC
@@ -3955,7 +3955,136 @@ void func_80022730(struct AbcObj* arg0)
 
 #undef CONFIG
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002328C);
+extern u32 D_800F2F38[];
+extern struct DialogueGlyphData D_801396C8;
+
+extern struct MiscObj* D_801397C0;
+extern struct MiscObj* D_801397C4;
+extern u8 D_801397D8;
+extern s16 D_801397E0;
+
+void func_8002328C(struct AbcObj* arg0)
+{
+    s16 temp_v0_2;
+    struct MiscObj* temp_v0;
+    struct MiscObj* temp_v0_4;
+    u16 temp_v1;
+    u8 temp_v0_3;
+    u8 var_v0_4;
+
+    do {
+        temp_v1 = *arg0->unk0;
+        arg0->unk4 = temp_v1;
+        if ((temp_v1 & 0x1FF) != 0x1FF) {
+            if (D_801397E0 == 0) {
+                if (D_801397C0 == NULL) {
+                    temp_v0 = find_free_misc_obj();
+                    if (temp_v0 != NULL) {
+                        D_801397C0 = temp_v0;
+                        temp_v0->base.active = 1;
+                        temp_v0->base.id = 0x16;
+                        temp_v0->base.unk16 = 0x10;
+                        temp_v0->unk40 = 0x1F00;
+                        temp_v0->base.unk2 = 0;
+                        temp_v0->unk3C = &D_801396C8.count;
+                        if (engine_obj.stage == 0xD) {
+                            temp_v0->unk42 = 0x78CE;
+                        } else {
+                            temp_v0->unk42 = 0x7845;
+                        }
+                        temp_v0->base.bg_offset = -1;
+                        temp_v0->base.x_pos.val = 0xA00000;
+                        if (!(arg0->unk4 & 0x800)) {
+                            if (D_801397D8 != 0x80) {
+                                temp_v0->base.y_pos.val = 0;
+                            } else {
+                                temp_v0->base.y_pos.val = 0x380000;
+                            }
+                        } else {
+                            if (D_801397D8 == 0xFF) {
+                                temp_v0->base.y_pos.val = 0x780000;
+                            } else {
+                                temp_v0->base.y_pos.val = 0x700000;
+                            }
+                        }
+                        temp_v0->unk47 = 0;
+                        temp_v0->base.unk15 = 0;
+                    }
+                    D_801396C8.active = 1;
+                }
+            }
+            D_801396C8.glyphs[D_801397E0].frame = 0;
+            D_801396C8.glyphs[D_801397E0].character = (u8)arg0->unk4;
+            D_801396C8.glyphs[D_801397E0].x = (u8)arg0->unk6;
+            D_801396C8.glyphs[D_801397E0].y = (u8)arg0->unk8;
+            temp_v0_2 = (u16)D_801397E0 + 1;
+            D_801397E0 = temp_v0_2;
+            D_801396C8.count = temp_v0_2;
+        }
+        arg0->unk0++;
+        if (arg0->unk4 & 0x4000) {
+            arg0->unk6 = -0x78U;
+            arg0->unk8 = (u16)(arg0->unk8 + 0x12);
+        } else {
+            arg0->unk6 = (u16)(arg0->unk6 + 0xC);
+        }
+        if (arg0->unkF == 0) {
+            arg0->unk4 = (u16)(arg0->unk4 & 0xEFFF);
+        }
+    } while (!(arg0->unk4 & 0xB000));
+    func_8001540C(0, 0xE, 0);
+    if ((arg0->unk4 & 0xB000) == 0x1000) {
+        if (*(u8*)&controller_state != 0) {
+            temp_v0_3 = arg0->unkF;
+            if (temp_v0_3 != 0) {
+                arg0->unkF = (u8)(temp_v0_3 - 1);
+            }
+        }
+        arg0->unkA = 4;
+        var_v0_4 = 2;
+    } else {
+        arg0->unkF = 2U;
+        if (arg0->unk4 & 0x2000) {
+            temp_v0_4 = find_free_misc_obj();
+            if (temp_v0_4 != NULL) {
+                D_801397C4 = temp_v0_4;
+                temp_v0_4->base.active = 1;
+                temp_v0_4->base.id = 0x16;
+                temp_v0_4->base.unk16 = 0x10;
+                temp_v0_4->unk40 = 0x1FFF;
+                temp_v0_4->base.unk2 = 1;
+                temp_v0_4->unk3C = D_800F2F38;
+                if (engine_obj.stage == 0xD) {
+                    temp_v0_4->unk42 = 0x78CE;
+                } else {
+                    temp_v0_4->unk42 = 0x7845;
+                }
+                temp_v0_4->base.bg_offset = -1;
+                temp_v0_4->base.x_pos.i.hi = 0x98;
+                if (!(arg0->unk4 & 0x800)) {
+                    if (D_801397D8 == 0x80) {
+                        temp_v0_4->base.y_pos.i.hi = 0x85;
+                    } else {
+                        temp_v0_4->base.y_pos.i.hi = 0x4D;
+                    }
+                } else {
+                    if (D_801397D8 == 0xFF) {
+                        temp_v0_4->base.y_pos.i.hi = 0xC5;
+                    } else {
+                        temp_v0_4->base.y_pos.i.hi = 0xBD;
+                    }
+                }
+                temp_v0_4->unk47 = 0;
+                temp_v0_4->base.unk15 = 0;
+                temp_v0_4->ext.title_logo.palette_shift_speed = 0;
+                temp_v0_4->ext.ready_text.stay_up_timer = 0x20;
+            }
+        }
+        arg0->unkC = 0xFF;
+        var_v0_4 = 3;
+    }
+    arg0->unkD = var_v0_4;
+}
 
 void func_80023624(struct EngineObj* arg0)
 {

@@ -1,4 +1,4 @@
-#if defined(MMX4_PC) || defined(SKIP_ASM)
+#if defined(MMX4_PC) || defined(SKIP_ASM) || defined(PERMUTER)
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
 #else
@@ -810,7 +810,7 @@ struct QuxObj {
 
 // D_8013BC28
 struct AbcObj {
-    s8 pad0[4];
+    u16* unk0;
     u16 unk4;
     s16 unk6;
     s16 unk8;
