@@ -10,6 +10,44 @@ u32 D_800F45E4[4] = { 0, 0x1936, 0x4DA8, 0x88D5 };
 u32 D_800F45F4 = 0xD218;
 u32 D_800F45F8[5] = { 0x137EF, 0x1DEF1, 0x34BEB, 0xA2736, 0xFFFFFFFF };
 
+struct ControllerButtons {
+    u16 current;
+    u16 previous;
+    u16 pressed;
+};
+
+struct ControllerButtons D_80166D50;
+
+static u16 decode_pad_buttons(const u8* pad)
+{
+    u16 buttons;
+
+    if (pad[0] == 0xFF || pad[1] != 0x41)
+        return 0;
+    buttons = ~((pad[2] << 8) | pad[3]);
+    if ((buttons & 0xA000) == 0xA000)
+        buttons &= 0x5FFF;
+    if ((buttons & 0x5000) == 0x5000)
+        buttons &= 0xAFFF;
+    return buttons;
+}
+
+void func_80012328(void)
+{
+    u16 buttons;
+
+    mmx4_pc_input_update(D_80166D68);
+    buttons = decode_pad_buttons(D_80166D68);
+    D_80166C0A = D_80166C08;
+    D_80166C08 = buttons;
+    controller_state = buttons & (buttons ^ D_80166C0A);
+
+    buttons = decode_pad_buttons(D_8012F46C);
+    D_80166D50.previous = D_80166D50.current;
+    D_80166D50.current = buttons;
+    D_80166D50.pressed = buttons & (buttons ^ D_80166D50.previous);
+}
+
 void func_80016124(void)
 {
     SPRT* sprites = D_80139268[SP_DRAW_BUFFER];

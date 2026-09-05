@@ -14,6 +14,8 @@ void _SsSetControlChange(s16, s16, u8);
 void _SsContMainVol(s16, s16, u8);
 void _SsContRpn1(s16, s16, u8);
 
+void mmx4_pc_input_update(u8* pad_buffer);
+unsigned long mmx4_pc_frame_number(void);
 void mmx4_pc_threads_init(void);
 struct GameThread* mmx4_pc_thread_slot(s32 slot);
 void mmx4_pc_thread_create(s32 slot, void (*entry)(void));

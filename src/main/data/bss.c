@@ -68,7 +68,11 @@ u8 pad_80137DFD[3];
 u8 D_80137E00[0x4];
 u8 D_80137E04[0x4];
 u32* D_80137E08;
+#ifdef MMX4_PC
+_Alignas(void*) char D_80137E0C[SS_SEQ_TABSIZ * 3 * 10];
+#else
 char D_80137E0C[0x1428]; // D_80138012
+#endif
 s8 D_80139234[24];
 u8 D_8013924C[4];
 DR_MODE D_80139250[2];
