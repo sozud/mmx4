@@ -3,3 +3,9 @@ compiler_command = "tools/compile_psx_permuter.sh -I./src/snd -I./include"
 assembler_command = "mipsel-linux-gnu-as -no-pad-sections -I./src/main"
 asm_prelude_file = "tools/permuter_prelude.inc"
 objdump_command = "mipsel-linux-gnu-objdump -drz -m mips:3000"
+
+[decompme]
+flags = "-O2 -G0 -funsigned-char -msoft-float -gcoff -Wa,--aspsx-version=2.56,--expand-div"
+
+[decompme.compilers]
+"tools/compile_psx_permuter.sh" = "gcc2.7.2-psx"

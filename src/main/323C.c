@@ -2677,8 +2677,7 @@ void func_8001E130(struct GameInfo* arg0)
         x_diff = *x - (target[0] << 16);
         y_diff = *y - (target[1] << 16);
         direction = func_8002B810(x_diff, y_diff);
-        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) &&
-            (D_80169498.title.settled == 0)) {
+        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) && (D_80169498.title.settled == 0)) {
             *x = target[0] << 16;
             *y = target[1] << 16;
             flags[0x90] = 1;
@@ -3848,7 +3847,7 @@ struct SerializedEngineObj {
 };
 
 _Static_assert(sizeof(struct SerializedEngineObj) == 0x64,
-               "replay engine state must use the PSX layout");
+    "replay engine state must use the PSX layout");
 
 struct ReplayData {
     u32 frame;
@@ -3864,7 +3863,7 @@ static struct EngineObj replay_saved_engine;
 
 static void restore_replay_engine(const struct SerializedEngineObj* source)
 {
-    struct EngineObj restored = {0};
+    struct EngineObj restored = { 0 };
     s32 i;
 
     restored.state = source->state;

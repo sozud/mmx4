@@ -54,10 +54,9 @@ void func_800CB708(struct MiscObj* arg0)
             arg0->unk47 = D_8010E71C[13].unk;
         }
         goto frame_selected;
-use_default_frame:
+    use_default_frame:
         arg0->unk47 = D_8010E71C[14].unk;
-frame_selected:
-        ;
+    frame_selected:;
     }
 
     temp_v1 = arg0->base.unk2;

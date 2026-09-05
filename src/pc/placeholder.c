@@ -341,14 +341,12 @@ struct PcSpriteFrame {
 };
 
 #define PC_OBJECT_IN_ARRAY(object, array) \
-    ((uintptr_t)(object) >= (uintptr_t)&(array)[0] && \
-        (uintptr_t)(object) < (uintptr_t)&(array)[COUNT(array)])
+    ((uintptr_t)(object) >= (uintptr_t) & (array)[0] && (uintptr_t)(object) < (uintptr_t) & (array)[COUNT(array)])
 
 static s32 get_pc_sprite_frame(struct VisualObj* object,
     struct PcSpriteFrame* frame)
 {
-    if (object == (struct VisualObj*)&g_Player ||
-        object == (struct VisualObj*)&g_Entity) {
+    if (object == (struct VisualObj*)&g_Player || object == (struct VisualObj*)&g_Entity) {
         struct PlayerObj* player = (struct PlayerObj*)object;
 
         frame->data = player->unk3C;
@@ -362,8 +360,7 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->texture = baz->unk40;
         frame->clut = baz->unk42;
         frame->index = ((u8*)baz)[0x4B];
-    } else if (PC_OBJECT_IN_ARRAY(object, foo_objects) ||
-        PC_OBJECT_IN_ARRAY(object, unk_objects)) {
+    } else if (PC_OBJECT_IN_ARRAY(object, foo_objects) || PC_OBJECT_IN_ARRAY(object, unk_objects)) {
         struct UnkObj* unknown = (struct UnkObj*)object;
 
         frame->data = unknown->unk3C;
@@ -402,12 +399,8 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         return 0;
     }
 
-    if (frame->data != NULL && pc_archive_slots[0] != NULL &&
-        ((uintptr_t)frame->data >> 32) !=
-            ((uintptr_t)pc_archive_slots[0] >> 32)) {
-        frame->data = (void*)(((uintptr_t)pc_archive_slots[0] &
-            ~(uintptr_t)UINT32_MAX) |
-            ((uintptr_t)frame->data & UINT32_MAX));
+    if (frame->data != NULL && pc_archive_slots[0] != NULL && ((uintptr_t)frame->data >> 32) != ((uintptr_t)pc_archive_slots[0] >> 32)) {
+        frame->data = (void*)(((uintptr_t)pc_archive_slots[0] & ~(uintptr_t)UINT32_MAX) | ((uintptr_t)frame->data & UINT32_MAX));
     }
 
     return frame->data != NULL;
@@ -421,8 +414,7 @@ void func_80024260(void)
     u32 i;
 
     for (i = 0; i < 4; i++) {
-        OT_TYPE* ordering_tag = &cur_draw_info->ordering_table.start +
-            D_80173C6C[i];
+        OT_TYPE* ordering_tag = &cur_draw_info->ordering_table.start + D_80173C6C[i];
         u32 j;
 
         for (j = 0; j < 8; j++) {
@@ -463,8 +455,7 @@ void func_80024334(struct VisualObj* object)
         origin_x = object->base.x_pos.i.hi;
         origin_y = object->base.y_pos.i.hi;
     } else {
-        struct BackgroundObj* background =
-            &background_objects[object->base.bg_offset];
+        struct BackgroundObj* background = &background_objects[object->base.bg_offset];
 
         origin_x = object->base.x_pos.i.hi - background->x_pos.i.hi;
         origin_y = object->base.y_pos.i.hi - background->y_pos.i.hi;
@@ -510,8 +501,7 @@ void func_80024334(struct VisualObj* object)
         y0 = origin_y + (s8)frame_data[3];
         y1 = y0 + 16;
 
-        texture_index = texture +
-            (frame_data[1] | ((flags & 3) << 8));
+        texture_index = texture + (frame_data[1] | ((flags & 3) << 8));
         if (object->base.active & 0x40) {
             u32 index = texture_index & 0xFFFF;
 
@@ -591,8 +581,7 @@ void func_80024334(struct VisualObj* object)
         }
 
         setlen(draw_mode, 1);
-        draw_mode->code[0] = !(flags & 0x80) &&
-                ((flags & 0x40) ^ flipped) == 0
+        draw_mode->code[0] = !(flags & 0x80) && ((flags & 0x40) ^ flipped) == 0
             ? (texture_index >> 8) | 0xE1000020
             : 0xE1000020;
         setaddr(draw_mode, primitive);
@@ -642,8 +631,7 @@ void func_80024920(struct QuadObj* arg0)
         x = arg0->x_pos.i.hi;
         y = arg0->y_pos.i.hi;
     } else {
-        struct BackgroundObj* background =
-            &background_objects[arg0->bg_offset];
+        struct BackgroundObj* background = &background_objects[arg0->bg_offset];
 
         x = arg0->x_pos.i.hi - background->x_pos.i.hi;
         y = arg0->y_pos.i.hi - background->y_pos.i.hi;
@@ -702,20 +690,17 @@ void func_800262B8(u8 layer)
         s32 current_block_x = block_x;
         s32 tile_x = source_tile_x & 31;
         s32 inner_x = source_tile_x & 15;
-        u8 block = SP_BG_TILEMAP[layer_offset + row_offset +
-            current_block_x];
+        u8 block = SP_BG_TILEMAP[layer_offset + row_offset + current_block_x];
         s32 column;
 
         for (column = 0; column < 22; column++) {
-            D_801441C8[layer][tile_y][tile_x] =
-                SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
+            D_801441C8[layer][tile_y][tile_x] = SP_BG_TILE_PIXELS[block * 256 + inner_y * 16 + inner_x];
             tile_x = (tile_x + 1) & 31;
             inner_x++;
             if (inner_x == 16) {
                 inner_x = 0;
                 current_block_x++;
-                block = SP_BG_TILEMAP[layer_offset + row_offset +
-                    current_block_x];
+                block = SP_BG_TILEMAP[layer_offset + row_offset + current_block_x];
             }
         }
 
@@ -743,8 +728,7 @@ void func_80026894(s32 layer)
             DR_TPAGE* page = &D_80171EB0[buffer][layer][i];
 
             setaddr(page, head);
-            addPrims(&cur_draw_info->ordering_table.start +
-                    *(s8*)&background_objects[layer].unk4A,
+            addPrims(&cur_draw_info->ordering_table.start + *(s8*)&background_objects[layer].unk4A,
                 page,
                 background_tails[buffer][layer][i]);
             background_heads[buffer][layer][i] = NULL;
@@ -756,8 +740,7 @@ void func_80026894(s32 layer)
             DR_TPAGE* page = &D_80171EB0[buffer][back_layer][i];
 
             setaddr(page, head);
-            addPrims(&cur_draw_info->ordering_table.start +
-                    *(s8*)&background_objects[layer].unk4B,
+            addPrims(&cur_draw_info->ordering_table.start + *(s8*)&background_objects[layer].unk4B,
                 page,
                 background_tails[buffer][back_layer][i]);
             background_heads[buffer][back_layer][i] = NULL;
@@ -794,8 +777,7 @@ void func_80026AA0(s32 layer)
                 SP_BG_SPRITE_COUNT++;
 
                 attributes = SP_BG_TILE_ATTRS[tile & 0x3FFF];
-                sprite->clut = 0x7900 | ((attributes & 0xF000) >> 6) |
-                    ((attributes & 0xF00) >> 8);
+                sprite->clut = 0x7900 | ((attributes & 0xF000) >> 6) | ((attributes & 0xF00) >> 8);
                 setSemiTrans(sprite, (tile & 0x4000) != 0);
                 setUV0(sprite, (attributes >> 12) & 0xF0,
                     (attributes >> 16) & 0xF0);
@@ -805,13 +787,11 @@ void func_80026AA0(s32 layer)
                 priority = attributes >> 24;
                 tail = background_tails[SP_DRAW_BUFFER][ordering_layer][priority];
                 if (tail == NULL) {
-                    background_heads[SP_DRAW_BUFFER][ordering_layer][priority] =
-                        (P_TAG*)sprite;
+                    background_heads[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
                 } else {
                     setaddr(tail, sprite);
                 }
-                background_tails[SP_DRAW_BUFFER][ordering_layer][priority] =
-                    (P_TAG*)sprite;
+                background_tails[SP_DRAW_BUFFER][ordering_layer][priority] = (P_TAG*)sprite;
                 sprite++;
             }
 
