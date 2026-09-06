@@ -4,6 +4,6 @@
 
 void func_800D3928(struct UnkObj* arg0)
 {
-    arg0->base.on_screen = 0;
-    D_8010F5E8[arg0->base.state](arg0);
+    arg0->on_screen = 0;
+    D_8010F5E8[arg0->state](arg0);
 }

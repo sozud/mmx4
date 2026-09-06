@@ -4,9 +4,9 @@
 
 void func_800C7164(struct ItemObj* arg0)
 {
-    arg0->unk18.val = arg0->base.x_pos.val;
-    arg0->unk1C.val = arg0->base.y_pos.val;
-    D_8010D990[arg0->base.state](arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_8010D990[arg0->state](arg0);
     func_8002E184(arg0);
 }
 

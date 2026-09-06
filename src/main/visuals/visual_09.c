@@ -4,7 +4,7 @@
 
 void func_800B1354(struct VisualObj* arg0)
 {
-    if (arg0->base.state == 0) {
+    if (arg0->state == 0) {
         func_800B1394(arg0);
     } else {
         func_800B1450(arg0);

@@ -4,8 +4,8 @@
 
 void func_8009B7F8(struct ShotObj* arg0)
 {
-    D_80108E9C[arg0->base.state](arg0);
-    if (arg0->base.state >= 3) {
+    D_80108E9C[arg0->state](arg0);
+    if (arg0->state >= 3) {
         CollisionRelated(arg0);
     }
 }

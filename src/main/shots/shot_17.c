@@ -4,9 +4,9 @@
 
 void func_8009C5F0(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->base.x_pos.val;
-    arg0->unk1C = arg0->base.y_pos.val;
-    D_80108F6C[arg0->base.state](arg0);
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+    D_80108F6C[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_17", func_8009C638);

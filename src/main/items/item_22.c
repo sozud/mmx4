@@ -4,7 +4,7 @@
 
 void func_800C5544(struct ItemObj* arg0)
 {
-    D_8010D318[arg0->base.state](arg0);
+    D_8010D318[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/items/item_22", func_800C5580);

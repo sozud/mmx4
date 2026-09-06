@@ -12,7 +12,7 @@ void func_800D323C(struct Unk* arg0)
     func_80015DC8(arg0);
     is_on_screen(arg0);
     if (func_8002B160(arg0) != 0) {
-        arg0->base.state = 2;
+        arg0->state = 2;
     }
 }
 

@@ -4,7 +4,7 @@
 
 void func_800919C4(struct MainObj* arg0)
 {
-    D_80105FB4[arg0->base.state](arg0);
+    D_80105FB4[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_76", func_80091A00);

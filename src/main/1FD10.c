@@ -253,7 +253,7 @@ void func_800300AC(struct BarObj* arg0)
     if (D_80141BDC[0] == 0) {
         arg0->state = 1;
         arg0->unk5 = 0;
-        if (g_Player.base.unk2 || arg0->unk2) {
+        if (g_Player.unk2 || arg0->unk2) {
             if (arg0->unk14 >= 0xD) {
                 arg0->unk5 = 2;
             } else {
@@ -353,9 +353,9 @@ void func_800311EC(void)
         return;
     }
     if (g_Player.unkBC == 0 || --g_Player.unkBC == 0) {
-        g_Player.unk18 = g_Player.base.x_pos.val;
-        g_Player.unk1C = g_Player.base.y_pos.val;
-        D_800F8980[g_Player.base.state](&g_Player);
+        g_Player.unk18 = g_Player.x_pos.val;
+        g_Player.unk1C = g_Player.y_pos.val;
+        D_800F8980[g_Player.state](&g_Player);
         func_80094F74();
     }
 }

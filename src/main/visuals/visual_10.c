@@ -4,18 +4,18 @@
 
 void func_800B14E8(struct VisualObj* arg0)
 {
-    D_8010A4CC[arg0->base.state](arg0);
+    D_8010A4CC[arg0->state](arg0);
 }
 
 void func_800B1524(struct VisualObj* arg0)
 {
-    if (arg0->base.unk2 == 0) {
-        arg0->base.unk15 = 0;
+    if (arg0->unk2 == 0) {
+        arg0->unk15 = 0;
     } else {
-        arg0->base.unk15 = 0x40;
+        arg0->unk15 = 0x40;
     }
     func_80015D60(arg0, 5);
-    arg0->base.state++;
+    arg0->state++;
     func_8002B318(arg0, 0xA0, 0xA0);
 }
 
@@ -27,7 +27,7 @@ void func_800B1758(struct VisualObj* arg0)
 {
     func_80015DC8(arg0);
     if (arg0->unk46 < 0) {
-        arg0->base.state++;
+        arg0->state++;
     }
     func_8002B318(arg0, 0x20, 0x20);
 }

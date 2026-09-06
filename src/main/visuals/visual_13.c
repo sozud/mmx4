@@ -4,16 +4,16 @@
 
 void func_800B1AF8(struct VisualObj* arg0)
 {
-    D_8010A520[arg0->base.state](arg0);
+    D_8010A520[arg0->state](arg0);
 }
 
 void func_800B1B34(struct VisualObj* arg0)
 {
-    arg0->base.state = 1;
-    arg0->base.on_screen = 1;
+    arg0->state = 1;
+    arg0->on_screen = 1;
     arg0->unk54 = 0xFF;
     arg0->unk56 = 0xFF;
-    arg0->base.unk16 = 6;
+    arg0->unk16 = 6;
     func_80015D60(arg0, 0x15);
 }
 

@@ -152,7 +152,7 @@ s32 D_80139680;
 s32 D_80139684;
 s32 D_80139688;
 u8 pad_8013968C[4];
-struct BaseObj* D_80139690;
+struct ObjectHeader* D_80139690;
 u8 pad_80139694[36];
 u8 D_801396B8[0x4];
 u8 D_801396BC[0x4];

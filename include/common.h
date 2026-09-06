@@ -24,6 +24,12 @@ __asm__(".include \"macro.inc\"\n");
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
+#define MMX4_STATIC_ASSERT(name, condition) typedef char static_assert_##name[(condition) ? 1 : -1]
+#ifdef MMX4_PC
+#define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
+#else
+#define MMX4_OFFSET_OF(type, member) ((u32)&(((type*)0)->member))
+#endif
 
 typedef signed char s8;
 typedef signed short s16;
@@ -259,26 +265,49 @@ typedef union {
     } i;
 } f32;
 
-struct BaseObj {
-    s8 active;
-    s8 id; // 0x01
-    s8 unk2;
-    s8 on_screen; // 0x03
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    s32 unk10;
-    s8 bg_offset;
-    u8 unk15;
-    u8 unk16;
+#define OBJECT_HEADER_FIELDS \
+    s8 active;                \
+    s8 id;                    \
+    s8 unk2;                  \
+    s8 on_screen;             \
+    s8 state;                 \
+    s8 unk5;                  \
+    s8 unk6;                  \
+    s8 unk7;                  \
+    f32 x_pos;                \
+    f32 y_pos;                \
+    void* backref;
+
+#define BASE_OBJ_TAIL_FIELDS \
+    s8 bg_offset;             \
+    u8 unk15;                 \
+    u8 unk16;                 \
     u8 unk17;
+
+#define BASE_OBJ_FIELDS \
+    OBJECT_HEADER_FIELDS \
+    BASE_OBJ_TAIL_FIELDS
+
+struct ObjectHeader {
+    OBJECT_HEADER_FIELDS
 };
 
+struct BaseObj {
+    BASE_OBJ_FIELDS
+};
+
+#ifdef MMX4_PC
+MMX4_STATIC_ASSERT(pc_object_header_size, sizeof(struct ObjectHeader) == 0x18);
+MMX4_STATIC_ASSERT(pc_base_object_size, sizeof(struct BaseObj) == 0x20);
+#else
+MMX4_STATIC_ASSERT(psx_object_header_size, sizeof(struct ObjectHeader) == 0x14);
+MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
+#endif
+
+#define OBJECT_HEADER(object) ((struct ObjectHeader*)(object))
+
 struct Unk {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -385,7 +414,7 @@ struct BackgroundObj {
 
 // similar to Unk
 struct PlayerObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -515,7 +544,7 @@ struct Unk_unk68 {
 };
 
 struct VisualObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s8 pad18[0x20 - 0x18];
     s32 unk20;
     s32 unk24;
@@ -545,7 +574,7 @@ struct VisualObj {
 }; // size 0x70
 
 struct ShotObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x42 - 0x20];
@@ -586,7 +615,7 @@ struct ShotObj {
 }; // size 0x9C
 
 struct WeaponObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x30 - 0x20];
@@ -627,7 +656,7 @@ struct WeaponObj {
 }; // size 0x9C
 
 struct UnkObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s32 unk20;
@@ -649,7 +678,7 @@ struct UnkObj {
 }; // size 0x60
 
 struct ItemObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     f32 unk18;
     f32 unk1C;
     s8 pad20[0x50 - 0x20];
@@ -678,7 +707,7 @@ struct ItemObj {
 }; // size 0x8C
 
 struct LayerObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     f32 unk18;
     f32 unk1C;
     s8 pad20[0x30 - 0x20];
@@ -744,7 +773,7 @@ union MiscExt {
 };
 
 struct MiscObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     f32 x_vel; // 0x20
@@ -791,7 +820,7 @@ struct BarObj {
 }; // size 0x34
 
 struct BazObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s8 pad18[0x30 - 0x18];
     const u32* const* animation_table;
     s32 pad34;
@@ -803,7 +832,7 @@ struct BazObj {
 }; // size 0x50
 
 struct QuxObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x5C - 0x20];
@@ -1196,17 +1225,7 @@ union QuadLink {
 };
 
 struct QuadObj {
-    s8 active;
-    s8 id; // 0x01
-    s8 unk2;
-    s8 on_screen;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos;
-    f32 y_pos;
-    struct SearchLightSpawner* initializer;
+    OBJECT_HEADER_FIELDS
     f32 unk14;
     f32 unk18;
     f32 unk1C;
@@ -1306,20 +1325,6 @@ extern u8 engine_obj_27;
 #define engine_flags engine_obj_27
 #endif
 
-struct Unk18 {
-    s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s8 unk4;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    s8 unk8;
-    s8 unk9[4];
-    u8* unk10;
-};
-
 struct Unk19 {
     u8 pad[0x7];
     s32 unk8;
@@ -1387,7 +1392,7 @@ struct Unk80139690 {
 };
 
 struct MainObj {
-    struct BaseObj base;
+    BASE_OBJ_FIELDS
     f32 unk18;
     f32 unk1C;
     s8 pad20[0x9C - 0x20];
@@ -1435,19 +1440,33 @@ union EffectExt {
 };
 
 struct EffectObj {
-    s8 active;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s8 state;
-    s8 unk5;
-    s8 unk6;
-    s8 unk7;
-    f32 x_pos; // 0x8 and 0xA
-    f32 y_pos; // 0xC and 0xE
-    s32 unk10;
+    OBJECT_HEADER_FIELDS
     union EffectExt ext;
 }; // size 0x30
+
+#define ASSERT_OBJECT_HEADER(type, first_tail_member)                                        \
+    MMX4_STATIC_ASSERT(type##_backref_offset,                                                 \
+        MMX4_OFFSET_OF(struct type, backref) == MMX4_OFFSET_OF(struct ObjectHeader, backref)); \
+    MMX4_STATIC_ASSERT(type##_header_size,                                                    \
+        MMX4_OFFSET_OF(struct type, first_tail_member) == sizeof(struct ObjectHeader))
+
+ASSERT_OBJECT_HEADER(BaseObj, bg_offset);
+ASSERT_OBJECT_HEADER(Unk, bg_offset);
+ASSERT_OBJECT_HEADER(PlayerObj, bg_offset);
+ASSERT_OBJECT_HEADER(VisualObj, bg_offset);
+ASSERT_OBJECT_HEADER(ShotObj, bg_offset);
+ASSERT_OBJECT_HEADER(WeaponObj, bg_offset);
+ASSERT_OBJECT_HEADER(UnkObj, bg_offset);
+ASSERT_OBJECT_HEADER(ItemObj, bg_offset);
+ASSERT_OBJECT_HEADER(LayerObj, bg_offset);
+ASSERT_OBJECT_HEADER(MiscObj, bg_offset);
+ASSERT_OBJECT_HEADER(BazObj, bg_offset);
+ASSERT_OBJECT_HEADER(QuxObj, bg_offset);
+ASSERT_OBJECT_HEADER(MainObj, bg_offset);
+ASSERT_OBJECT_HEADER(QuadObj, unk14);
+ASSERT_OBJECT_HEADER(EffectObj, ext);
+
+#undef ASSERT_OBJECT_HEADER
 
 struct Unk22 {
     u8 pad0[8];
@@ -1666,7 +1685,7 @@ extern s8 D_8013E1C8[4];
 extern s32 D_801395E4;
 extern s32 D_801395E8;
 extern volatile s32 D_80139634;
-extern struct BaseObj* D_80139690;
+extern struct ObjectHeader* D_80139690;
 extern void (*D_800F43A8[1])(s32);
 extern void (*g_TitleScalingXUpdateFuncs[])();
 extern void (*D_8010B4C4[])();
@@ -1891,7 +1910,7 @@ void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
 void func_800292D0(struct StageObjectRecord*);
-struct BaseObj* MakeObject(u8);
+struct ObjectHeader* MakeObject(u8);
 void func_80094F74(void);
 void func_80015284(void);
 void func_8001C3E8(void);
@@ -1924,7 +1943,7 @@ void func_8002A484();
 void func_800B6D1C(s32, s8, s8);
 void func_800B6EB4(s16, s16, s16, s16, s32);
 s8 func_800B6FF4(s32, s8);
-void ZeroObjectState(struct Unk18* arg0);
+void ZeroObjectState(struct ObjectHeader* arg0);
 void init_objects();
 void func_80026648();
 s16 func_8002BAD0(s16, s16, s16);

@@ -4,31 +4,31 @@
 
 void func_800B19BC(struct VisualObj* arg0)
 {
-    D_8010A4EC[arg0->base.state](arg0);
+    D_8010A4EC[arg0->state](arg0);
 }
 
 void func_800B19F8(struct VisualObj* arg0)
 {
-    arg0->base.state = 1;
-    arg0->base.on_screen = 1;
-    arg0->base.unk16 = D_8010A504[arg0->base.unk2];
-    func_80015D60(arg0, D_8010A4F8[arg0->base.unk2]);
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = D_8010A504[arg0->unk2];
+    func_80015D60(arg0, D_8010A4F8[arg0->unk2]);
 }
 
 void func_800B1A48(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0 = arg0->unk50;
-    if (temp_a0->base.state != 2) {
+    if (temp_a0->state != 2) {
         if (arg0->unk46 >= 0) {
-            arg0->base.x_pos.i.hi = temp_a0->base.x_pos.i.hi;
-            arg0->base.y_pos.i.hi = temp_a0->base.y_pos.i.hi;
+            arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
+            arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;
             func_80015DC8(arg0);
         } else {
-            arg0->base.state = 2;
+            arg0->state = 2;
         }
         func_8002B318(arg0, 0x10, 0x10);
     } else {
-        arg0->base.state = 2;
+        arg0->state = 2;
     }
 }
 

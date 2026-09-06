@@ -45,11 +45,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_54", func_800AC7CC);
 void func_800AC7EC(struct ShotObj* arg0)
 {
     if (arg0->unk7C->unk94 != 0) {
-        arg0->base.state = 2;
-        arg0->base.unk5 = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
     }
-    arg0->base.on_screen = 0;
-    D_80109DF8[arg0->base.state](arg0);
+    arg0->on_screen = 0;
+    D_80109DF8[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_54", func_800AC848);

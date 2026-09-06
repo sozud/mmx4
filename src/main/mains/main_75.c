@@ -20,8 +20,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_75", func_800900E0);
 
 void func_80090148(struct MainObj* arg0)
 {
-    D_80105E98[arg0->base.unk5](arg0);
-    if (arg0->base.unk5 >= 2) {
+    D_80105E98[arg0->unk5](arg0);
+    if (arg0->unk5 >= 2) {
         func_8002B318(arg0, 0xA0, 0xA0);
     }
 }
@@ -94,9 +94,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_75", func_80091898);
 
 void func_8009197C(struct MainObj* arg0)
 {
-    arg0->unk18.val = arg0->base.x_pos.val;
-    arg0->unk1C.val = arg0->base.y_pos.val;
-    D_80105F34[arg0->base.state](arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80105F34[arg0->state](arg0);
 }
 
 void (*D_80105F34[])(struct MainObj*) = {

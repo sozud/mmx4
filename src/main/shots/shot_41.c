@@ -43,15 +43,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A62D0);
 void func_800A62F0(struct ShotObj* arg0)
 {
     struct WeaponObj* temp_s0 = arg0->unk7C;
-    arg0->unk18 = arg0->base.x_pos.val;
-    arg0->unk1C = arg0->base.y_pos.val;
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
     CollisionRelated(arg0);
-    if (temp_s0->base.state == 2) {
-        arg0->base.state = 2;
-        arg0->base.unk5 = 0;
-        arg0->base.unk6 = 0;
+    if (temp_s0->state == 2) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
     }
-    D_80109950[arg0->base.state](arg0);
+    D_80109950[arg0->state](arg0);
 }
 
 void (*D_80109950[])(struct ShotObj*) = {

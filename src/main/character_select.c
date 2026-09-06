@@ -44,9 +44,9 @@ void character_select_state_1(struct EngineObj* arg0)
             do {
                 misc = find_free_misc_obj();
                 if (misc != NULL) {
-                    misc->base.active = 0x41;
-                    misc->base.id = 0x1C;
-                    misc->base.unk2 = var_s0; // SelectACharacterUpdate 0, 1
+                    misc->active = 0x41;
+                    misc->id = 0x1C;
+                    misc->unk2 = var_s0; // SelectACharacterUpdate 0, 1
                 }
                 var_s0 += 1;
             } while (var_s0 < 2U);
@@ -95,32 +95,32 @@ void character_select_spawn_objects(struct EngineObj* arg0)
         // spawn upper/lower "PLAYER SELECT" text
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 2; // subtype 2,3
+            obj->active = 0x41;
+            obj->id = 0x1C;
+            obj->unk2 = var_s0 + 2; // subtype 2,3
         }
         // spawn X, Zero
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 7; // subtype 7,8
+            obj->active = 0x41;
+            obj->id = 0x1C;
+            obj->unk2 = var_s0 + 7; // subtype 7,8
         }
         // Not sure
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x1C;
-            obj->base.unk2 = var_s0 + 4; // subtype 4,5
+            obj->active = 0x41;
+            obj->id = 0x1C;
+            obj->unk2 = var_s0 + 4; // subtype 4,5
         }
         var_s0 += 1;
     } while (var_s0 < 2);
     // spawn green selector
     obj = find_free_misc_obj();
     if (obj != NULL) {
-        obj->base.active = 0x41;
-        obj->base.id = 0x1C;
-        obj->base.unk2 = 6;
+        obj->active = 0x41;
+        obj->id = 0x1C;
+        obj->unk2 = 6;
     }
     arg0->unk2 = 0;
     arg0->unk1++;

@@ -7,7 +7,7 @@ void func_8009EE68(struct ShotObj* arg0)
     if (arg0->unk84 == 0) {
         CollisionRelated(arg0);
     }
-    D_8010918C[arg0->base.state](arg0);
+    D_8010918C[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_26", func_8009EEC8);

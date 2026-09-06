@@ -2234,9 +2234,9 @@ void func_8001D364(struct GameInfo* arg0)
     for (var_s0 = 2; var_s0 < 5; var_s0++) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != NULL) {
-            temp_v0->base.active = 1;
-            temp_v0->base.id = 0x12;
-            temp_v0->base.unk2 = var_s0;
+            temp_v0->active = 1;
+            temp_v0->id = 0x12;
+            temp_v0->unk2 = var_s0;
         }
     }
     func_8001FEC0();
@@ -2251,7 +2251,7 @@ void func_8001D460(struct GameInfo* arg0)
     if (D_80141BDC[0] == 0) {
         arg0->unkD = 0;
     }
-    if (--arg0->unk4 == 0 || g_Player.base.active == 0 || g_Player.base.state == 3) {
+    if (--arg0->unk4 == 0 || g_Player.active == 0 || g_Player.state == 3) {
         func_800129F0(8);
         func_80022074();
         arg0->mode++;
@@ -2293,8 +2293,8 @@ void func_8001D5C8(struct GameInfo* arg0)
     func_800160F4();
     temp_v0 = find_free_misc_obj();
     if (temp_v0 != NULL) {
-        temp_v0->base.active = 1;
-        temp_v0->base.id = 0x15;
+        temp_v0->active = 1;
+        temp_v0->id = 0x15;
     }
     arg0->unk4 = 0x12C;
     func_800129A4(8);
@@ -2375,9 +2375,9 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     for (var_s0 = 0; var_s0 < 14; var_s0++) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != NULL) {
-            temp_v0->base.active = 1;
-            temp_v0->base.id = 0x13;
-            temp_v0->base.unk2 = D_800F21A0[var_s0];
+            temp_v0->active = 1;
+            temp_v0->id = 0x13;
+            temp_v0->unk2 = D_800F21A0[var_s0];
         }
     }
     func_800129A4(8);
@@ -2533,7 +2533,7 @@ void func_8001DCCC(struct GameInfo* arg0)
     background_objects[1].unk3 = 1;
     background_objects[2].unk3 = 0;
     need_palette_load |= 1;
-    D_80139690 = func_8001DC7C(0xB, 0xA);
+    D_80139690 = OBJECT_HEADER(func_8001DC7C(0xB, 0xA));
     func_800129A4(8);
     arg0->unk4 = 0;
     arg0->mode++;
@@ -2577,11 +2577,11 @@ void func_8001DE54(struct GameInfo* arg0)
     if (D_80139690->state == 2) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != 0) {
-            temp_v0->base.id = 0x1D;
-            temp_v0->base.active = 1;
-            temp_v0->base.unk2 = 0x20;
+            temp_v0->id = 0x1D;
+            temp_v0->active = 1;
+            temp_v0->unk2 = 0x20;
             temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)saved_reg_s2;
-            D_80139690 = &temp_v0->base;
+            D_80139690 = OBJECT_HEADER(temp_v0);
         }
         var_a1 = D_800F2204;
         var_a0 = D_80169498.sector;
@@ -2616,9 +2616,9 @@ void func_8001DF7C(struct GameInfo* arg0)
         obj = find_free_effect_obj();
         if (obj != NULL) {
             obj->active = 1;
-            obj->unk1 = 2;
+            obj->id = 2;
             obj->unk2 = 0xC;
-            D_80139690 = obj;
+            D_80139690 = OBJECT_HEADER(obj);
         }
         arg0->unk4 = 0xA;
         arg0->mode++;
@@ -2783,10 +2783,10 @@ s32 func_8001E850(u8* arg0, u8 arg1)
     if (arg0[0] != 0) {
         misc = find_free_misc_obj();
         if (misc != NULL) {
-            misc->base.active = 1;
-            misc->base.id = 0x20;
+            misc->active = 1;
+            misc->id = 0x20;
             misc->ext.ready_text.unk50 = arg0;
-            misc->base.x_pos.i.hi = arg0[0];
+            misc->x_pos.i.hi = arg0[0];
             misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
         }
@@ -2797,12 +2797,12 @@ s32 func_8001E850(u8* arg0, u8 arg1)
     while (arg0[0] != 0xFF) {
         misc = find_free_misc_obj();
         if (misc != NULL) {
-            misc->base.active = 1;
-            misc->base.id = 0x1F;
-            misc->base.unk2 = arg0[0];
+            misc->active = 1;
+            misc->id = 0x1F;
+            misc->unk2 = arg0[0];
             arg0++;
-            misc->base.unk7 = counter++;
-            misc->base.y_pos.i.hi = arg0[0] & 0xF0;
+            misc->unk7 = counter++;
+            misc->y_pos.i.hi = arg0[0] & 0xF0;
             misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
         }
@@ -3056,7 +3056,7 @@ void func_8001FF8C(struct EngineObj* arg0)
     if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADstart) || D_80166D68 == 0xFF) && !arg0->unk10 && !arg0->unkF) {
         arg0->unk1 = 2;
     } else {
-        if (g_Player.base.state == 3) {
+        if (g_Player.state == 3) {
             arg0->unk1++;
             func_800129F0(8);
         }
@@ -3402,22 +3402,22 @@ void func_80020DEC(u8* arg0, s16 arg1)
     while (arg0[0] != 0xFF) {
         obj = find_free_unk_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 1;
-            obj->base.unk2 = arg0[0];
-            obj->base.y_pos.i.hi = arg0[1];
-            obj->base.unk7 = arg0[2];
+            obj->active = 1;
+            obj->id = 1;
+            obj->unk2 = arg0[0];
+            obj->y_pos.i.hi = arg0[1];
+            obj->unk7 = arg0[2];
         }
         arg0 += 3;
     }
 
     obj = find_free_unk_obj();
     if (obj != NULL) {
-        obj->base.active = 1;
-        obj->base.unk2 = -1;
-        obj->base.id = 0;
+        obj->active = 1;
+        obj->unk2 = -1;
+        obj->id = 0;
         obj->unk50 = &D_800F2490;
-        obj->base.x_pos.i.hi = arg1;
+        obj->x_pos.i.hi = arg1;
     }
 }
 
@@ -3525,13 +3525,13 @@ void update_main_objects(void)
 #define current SP_CUR_MAIN_OBJ
     if (!g_Player.unkBC) {
         for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
-            if (current->base.active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk12 != 0 && !(current->base.active & 0x8))) {
-                    if (current->base.on_screen != 0) {
+            if (current->active) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk12 != 0 && !(current->active & 0x8))) {
+                    if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
                 } else {
-                    main_object_update_funcs[current->base.id](current);
+                    main_object_update_funcs[current->id](current);
                 }
             }
         }
@@ -3544,13 +3544,13 @@ void update_weapon_objects(void)
 #define current SP_CUR_WEAPON_OBJ
     if (!g_Player.unkBC) {
         for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
-            if (current->base.active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk11 != 0 && !(current->base.active & 0x8))) {
-                    if (current->base.on_screen != 0) {
+            if (current->active) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk11 != 0 && !(current->active & 0x8))) {
+                    if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
                 } else {
-                    weapon_object_update_funcs[current->base.id](current);
+                    weapon_object_update_funcs[current->id](current);
                 }
             }
         }
@@ -3563,13 +3563,13 @@ void update_shot_objects(void)
 #define current SP_CUR_SHOT_OBJ
     if (!g_Player.unkBC) {
         for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
-            if (current->base.active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk13 != 0 && !(current->base.active & 0x8))) {
-                    if (current->base.on_screen != 0) {
+            if (current->active) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk13 != 0 && !(current->active & 0x8))) {
+                    if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
                 } else {
-                    shot_object_update_funcs[current->base.id](current);
+                    shot_object_update_funcs[current->id](current);
                 }
             }
         }
@@ -3581,12 +3581,12 @@ void update_visual_objects(void)
 {
 #define current SP_CUR_VISUAL_OBJ
     for (current = visual_objects; current < &visual_objects[COUNT(visual_objects)]; current++) {
-        if (engine_obj.unk14 == 0 && current->base.active != 0) {
-            visual_object_update_funcs[current->base.id](current);
-        } else if (current->base.active != 0) {
-            if (current->base.active & 8) {
-                visual_object_update_funcs[current->base.id](current);
-            } else if (current->base.on_screen != 0) {
+        if (engine_obj.unk14 == 0 && current->active != 0) {
+            visual_object_update_funcs[current->id](current);
+        } else if (current->active != 0) {
+            if (current->active & 8) {
+                visual_object_update_funcs[current->id](current);
+            } else if (current->on_screen != 0) {
                 func_8002B3C0(current);
             }
         }
@@ -3599,9 +3599,9 @@ void update_effect_objects(void)
 #define current SP_CUR_EFFECT_OBJ
     for (current = effect_objects; current < &effect_objects[COUNT(effect_objects)]; current++) {
         if (engine_obj.unk15 == 0 && current->active) {
-            effect_object_update_funcs[current->unk1](current);
+            effect_object_update_funcs[current->id](current);
         } else if (engine_obj.unk15 && current->active & 8) {
-            effect_object_update_funcs[current->unk1](current);
+            effect_object_update_funcs[current->id](current);
         }
     }
 #undef current
@@ -3612,13 +3612,13 @@ void update_item_objects(void)
 #define current SP_CUR_ITEM_OBJ
     if (!g_Player.unkBC) {
         for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
-            if (current->base.active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk16 != 0 && !(current->base.active & 0x8))) {
-                    if (current->base.on_screen != 0) {
+            if (current->active) {
+                if (g_Player.unkBC != 0 || (engine_obj.unk16 != 0 && !(current->active & 0x8))) {
+                    if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
                 } else {
-                    item_object_update_funcs[current->base.id](current);
+                    item_object_update_funcs[current->id](current);
                 }
             }
         }
@@ -3630,12 +3630,12 @@ void update_misc_objects(void)
 {
 #define current SP_CUR_MISC_OBJ
     for (current = misc_objects; current < &misc_objects[COUNT(misc_objects)]; current++) {
-        if (engine_obj.unk17 == 0 && current->base.active != 0) {
-            misc_object_update_funcs[current->base.id](current);
-        } else if (current->base.active != 0) {
-            if (current->base.active & 8) {
-                misc_object_update_funcs[current->base.id](current);
-            } else if (current->base.on_screen != 0) {
+        if (engine_obj.unk17 == 0 && current->active != 0) {
+            misc_object_update_funcs[current->id](current);
+        } else if (current->active != 0) {
+            if (current->active & 8) {
+                misc_object_update_funcs[current->id](current);
+            } else if (current->on_screen != 0) {
                 func_8002B3C0(current);
             }
         }
@@ -3647,8 +3647,8 @@ void update_unk_objects(void)
 {
 #define current SP_CUR_UNK_OBJ
     for (current = unk_objects; current < &unk_objects[COUNT(unk_objects)]; current++) {
-        if (current->base.active) {
-            unk_object_update_funcs[current->base.id](current);
+        if (current->active) {
+            unk_object_update_funcs[current->id](current);
         }
     }
 #undef current
@@ -3675,10 +3675,10 @@ void update_layer_objects(void)
 {
 #define current SP_CUR_LAYER_OBJ
     for (current = layer_objects; current < &layer_objects[COUNT(layer_objects)]; current++) {
-        if (engine_obj.unk19 == 0 && current->base.active) {
-            layer_object_update_funcs[current->base.id](current);
-        } else if (engine_obj.unk19 && current->base.active & 8) {
-            layer_object_update_funcs[current->base.id](current);
+        if (engine_obj.unk19 == 0 && current->active) {
+            layer_object_update_funcs[current->id](current);
+        } else if (engine_obj.unk19 && current->active & 8) {
+            layer_object_update_funcs[current->id](current);
         }
     }
 #undef current
@@ -3687,16 +3687,16 @@ void update_layer_objects(void)
 void func_80021C14(void)
 {
     if (engine_obj.unk10 == 0) {
-        if (qux_object.base.active != 0) {
-            D_800F2AD4[qux_object.base.id](&qux_object);
+        if (qux_object.active != 0) {
+            D_800F2AD4[qux_object.id](&qux_object);
             return;
         }
-    } else if (qux_object.base.active != 0) {
-        if (qux_object.base.active & 8) {
-            D_800F2AD4[qux_object.base.id](&qux_object);
+    } else if (qux_object.active != 0) {
+        if (qux_object.active & 8) {
+            D_800F2AD4[qux_object.id](&qux_object);
             return;
         }
-        if (qux_object.base.on_screen != 0) {
+        if (qux_object.on_screen != 0) {
             func_8002B3C0(&qux_object);
         }
     }
@@ -3917,20 +3917,20 @@ void func_80022730(struct AbcObj* arg0)
 
                 obj = find_free_misc_obj();
                 if (obj != NULL) {
-                    obj->base.active = 0x41;
-                    obj->base.id = 0x16;
-                    obj->base.unk2 = 5;
-                    obj->base.unk15 = 0;
-                    obj->base.bg_offset = -1;
+                    obj->active = 0x41;
+                    obj->id = 0x16;
+                    obj->unk2 = 5;
+                    obj->unk15 = 0;
+                    obj->bg_offset = -1;
 
                     if (CONFIG->unk5 != 0) {
-                        obj->base.x_pos.i.hi = 0xA0;
+                        obj->x_pos.i.hi = 0xA0;
                     } else {
-                        obj->base.x_pos.i.hi = 0x50;
+                        obj->x_pos.i.hi = 0x50;
                     }
 
-                    obj->base.y_pos.i.hi = 0x48;
-                    obj->base.unk16 = 0x10;
+                    obj->y_pos.i.hi = 0x48;
+                    obj->unk16 = 0x10;
 
                     obj->animation_table = D_800F2EE8[engine_obj.cur_character];
 
@@ -3964,7 +3964,7 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->ext.ready_text.unk50 = readyText;
-                    obj->base.state = 0;
+                    obj->state = 0;
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
 
@@ -4000,23 +4000,23 @@ void func_80022730(struct AbcObj* arg0)
 
                 obj = find_free_misc_obj();
                 if (obj != NULL) {
-                    obj->base.active = 0x41;
-                    obj->base.id = 0x16;
-                    obj->base.unk2 = 4;
-                    obj->base.unk15 = 0;
-                    obj->base.bg_offset = -1;
+                    obj->active = 0x41;
+                    obj->id = 0x16;
+                    obj->unk2 = 4;
+                    obj->unk15 = 0;
+                    obj->bg_offset = -1;
 
                     if (CONFIG->unk5 != 0) {
-                        obj->base.x_pos.i.hi = 0xA0;
+                        obj->x_pos.i.hi = 0xA0;
                     } else {
-                        obj->base.x_pos.i.hi = 0x50;
+                        obj->x_pos.i.hi = 0x50;
                     }
 
                     value = 0x48;
-                    obj->base.y_pos.i.hi = value;
+                    obj->y_pos.i.hi = value;
 
                     value = 0x11;
-                    obj->base.unk16 = value;
+                    obj->unk16 = value;
 
                     obj->animation_table = D_800F2F00[0];
 
@@ -4053,7 +4053,7 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 = (s32)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
-                    obj->base.state = 0;
+                    obj->state = 0;
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
 
@@ -4067,14 +4067,14 @@ void func_80022730(struct AbcObj* arg0)
                     obj = find_free_misc_obj();
 
                     if (obj != NULL) {
-                        obj->base.active = 0x41;
-                        obj->base.id = 0x16;
-                        obj->base.unk2 = 3;
-                        obj->base.bg_offset = -1;
-                        obj->base.unk15 = 0;
-                        obj->base.unk16 = 0x10;
-                        obj->base.x_pos.i.hi = 0xF0;
-                        obj->base.y_pos.i.hi = 0x48;
+                        obj->active = 0x41;
+                        obj->id = 0x16;
+                        obj->unk2 = 3;
+                        obj->bg_offset = -1;
+                        obj->unk15 = 0;
+                        obj->unk16 = 0x10;
+                        obj->x_pos.i.hi = 0xF0;
+                        obj->y_pos.i.hi = 0x48;
 
                         obj->animation_table = D_800F2CA4[CONFIG->unk2];
 
@@ -4112,7 +4112,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 = (s32)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
-                        obj->base.state = 0;
+                        obj->state = 0;
                         obj->ext.ready_text.unk50 = readyText;
 
                         obj->ext.title_logo
@@ -4131,17 +4131,17 @@ void func_80022730(struct AbcObj* arg0)
                     obj = find_free_misc_obj();
 
                     if (obj != NULL) {
-                        obj->base.active = 0x41;
-                        obj->base.id = 0x16;
-                        obj->base.unk2 = 4;
-                        obj->base.unk15 = 0x40;
-                        obj->base.bg_offset = -1;
+                        obj->active = 0x41;
+                        obj->id = 0x16;
+                        obj->unk2 = 4;
+                        obj->unk15 = 0x40;
+                        obj->bg_offset = -1;
 
-                        *(volatile s16*)&obj->base.x_pos.i.hi = 0xF0;
+                        *(volatile s16*)&obj->x_pos.i.hi = 0xF0;
 
-                        *(volatile s16*)&obj->base.y_pos.i.hi = 0x48;
+                        *(volatile s16*)&obj->y_pos.i.hi = 0x48;
 
-                        *(volatile u8*)&obj->base.unk16 = 0x11;
+                        *(volatile u8*)&obj->unk16 = 0x11;
 
                         obj->animation_table = D_800F2F00[0];
 
@@ -4178,7 +4178,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 = (s32)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
-                        obj->base.state = 0;
+                        obj->state = 0;
                         temp_v1 += temp_v0;
                         obj->unk3C = (void*)temp_v1;
 
@@ -4218,36 +4218,36 @@ void func_80022730(struct AbcObj* arg0)
 
     case 3:
         if (*(u8*)&controller_state != 0) {
-            if ((D_801397C4 != NULL) && (D_801397C4->base.id == 0x16)) {
-                D_801397C4->base.active = 0;
-                D_801397C4->base.on_screen = 0;
+            if ((D_801397C4 != NULL) && (D_801397C4->id == 0x16)) {
+                D_801397C4->active = 0;
+                D_801397C4->on_screen = 0;
             }
 
             if (arg0->unk4 & 0x8000) {
-                if ((D_801397C0 != NULL) && (D_801397C0->base.id == 0x16)) {
-                    D_801397C0->base.active = 0;
-                    D_801397C0->base.on_screen = 0;
+                if ((D_801397C0 != NULL) && (D_801397C0->id == 0x16)) {
+                    D_801397C0->active = 0;
+                    D_801397C0->on_screen = 0;
                 }
 
-                if ((D_801397CC != NULL) && (D_801397CC->base.id == 0x16)) {
-                    D_801397CC->base.active = 0;
-                    D_801397CC->base.on_screen = 0;
+                if ((D_801397CC != NULL) && (D_801397CC->id == 0x16)) {
+                    D_801397CC->active = 0;
+                    D_801397CC->on_screen = 0;
                 }
 
-                if ((D_801397D4 != NULL) && (D_801397D4->base.id == 0x16)) {
-                    D_801397D4->base.active = 0;
-                    D_801397D4->base.on_screen = 0;
+                if ((D_801397D4 != NULL) && (D_801397D4->id == 0x16)) {
+                    D_801397D4->active = 0;
+                    D_801397D4->on_screen = 0;
                 }
 
-                if ((D_801397C8 != NULL) && (D_801397C8->base.id == 0x16)) {
-                    D_801397C8->base.active = 0;
-                    D_801397C8->base.on_screen = 0;
+                if ((D_801397C8 != NULL) && (D_801397C8->id == 0x16)) {
+                    D_801397C8->active = 0;
+                    D_801397C8->on_screen = 0;
                 }
 
                 if (D_801397D0 != NULL) {
-                    if (D_801397D0->base.id == 0x16) {
-                        D_801397D0->base.active = 0;
-                        D_801397D0->base.on_screen = 0;
+                    if (D_801397D0->id == 0x16) {
+                        D_801397D0->active = 0;
+                        D_801397D0->on_screen = 0;
                     }
                 }
 
@@ -4294,40 +4294,40 @@ void func_80022730(struct AbcObj* arg0)
             engine_obj.enable_boss = D_80139828;
             engine_obj.unk1F = D_80139824;
 
-            if ((D_801397BC != NULL) && (D_801397BC->base.id == 0x16)) {
-                D_801397BC->base.active = 0;
-                D_801397BC->base.on_screen = 0;
+            if ((D_801397BC != NULL) && (D_801397BC->id == 0x16)) {
+                D_801397BC->active = 0;
+                D_801397BC->on_screen = 0;
             }
 
-            if ((D_801397C0 != NULL) && (D_801397C0->base.id == 0x16)) {
-                D_801397C0->base.active = 0;
-                D_801397C0->base.on_screen = 0;
+            if ((D_801397C0 != NULL) && (D_801397C0->id == 0x16)) {
+                D_801397C0->active = 0;
+                D_801397C0->on_screen = 0;
             }
 
-            if ((D_801397C4 != NULL) && (D_801397C4->base.id == 0x16)) {
-                D_801397C4->base.active = 0;
-                D_801397C4->base.on_screen = 0;
+            if ((D_801397C4 != NULL) && (D_801397C4->id == 0x16)) {
+                D_801397C4->active = 0;
+                D_801397C4->on_screen = 0;
             }
 
-            if ((D_801397CC != NULL) && (D_801397CC->base.id == 0x16)) {
-                D_801397CC->base.active = 0;
-                D_801397CC->base.on_screen = 0;
+            if ((D_801397CC != NULL) && (D_801397CC->id == 0x16)) {
+                D_801397CC->active = 0;
+                D_801397CC->on_screen = 0;
             }
 
-            if ((D_801397C8 != NULL) && (D_801397C8->base.id == 0x16)) {
-                D_801397C8->base.active = 0;
-                D_801397C8->base.on_screen = 0;
+            if ((D_801397C8 != NULL) && (D_801397C8->id == 0x16)) {
+                D_801397C8->active = 0;
+                D_801397C8->on_screen = 0;
             }
 
-            if ((D_801397D4 != NULL) && (D_801397D4->base.id == 0x16)) {
-                D_801397D4->base.active = 0;
-                D_801397D4->base.on_screen = 0;
+            if ((D_801397D4 != NULL) && (D_801397D4->id == 0x16)) {
+                D_801397D4->active = 0;
+                D_801397D4->on_screen = 0;
             }
 
             if (D_801397D0 != NULL) {
-                if (D_801397D0->base.id == 0x16) {
-                    D_801397D0->base.active = 0;
-                    D_801397D0->base.on_screen = 0;
+                if (D_801397D0->id == 0x16) {
+                    D_801397D0->active = 0;
+                    D_801397D0->on_screen = 0;
                 }
             }
 
@@ -4379,34 +4379,34 @@ void func_8002328C(struct AbcObj* arg0)
                     temp_v0 = find_free_misc_obj();
                     if (temp_v0 != NULL) {
                         D_801397C0 = temp_v0;
-                        temp_v0->base.active = 1;
-                        temp_v0->base.id = 0x16;
-                        temp_v0->base.unk16 = 0x10;
+                        temp_v0->active = 1;
+                        temp_v0->id = 0x16;
+                        temp_v0->unk16 = 0x10;
                         temp_v0->unk40 = 0x1F00;
-                        temp_v0->base.unk2 = 0;
+                        temp_v0->unk2 = 0;
                         temp_v0->unk3C = &D_801396C8.count;
                         if (engine_obj.stage == 0xD) {
                             temp_v0->unk42 = 0x78CE;
                         } else {
                             temp_v0->unk42 = 0x7845;
                         }
-                        temp_v0->base.bg_offset = -1;
-                        temp_v0->base.x_pos.val = 0xA00000;
+                        temp_v0->bg_offset = -1;
+                        temp_v0->x_pos.val = 0xA00000;
                         if (!(arg0->unk4 & 0x800)) {
                             if (D_801397D8 != 0x80) {
-                                temp_v0->base.y_pos.val = 0;
+                                temp_v0->y_pos.val = 0;
                             } else {
-                                temp_v0->base.y_pos.val = 0x380000;
+                                temp_v0->y_pos.val = 0x380000;
                             }
                         } else {
                             if (D_801397D8 == 0xFF) {
-                                temp_v0->base.y_pos.val = 0x780000;
+                                temp_v0->y_pos.val = 0x780000;
                             } else {
-                                temp_v0->base.y_pos.val = 0x700000;
+                                temp_v0->y_pos.val = 0x700000;
                             }
                         }
                         temp_v0->unk47 = 0;
-                        temp_v0->base.unk15 = 0;
+                        temp_v0->unk15 = 0;
                     }
                     D_801396C8.active = 1;
                 }
@@ -4446,34 +4446,34 @@ void func_8002328C(struct AbcObj* arg0)
             temp_v0_4 = find_free_misc_obj();
             if (temp_v0_4 != NULL) {
                 D_801397C4 = temp_v0_4;
-                temp_v0_4->base.active = 1;
-                temp_v0_4->base.id = 0x16;
-                temp_v0_4->base.unk16 = 0x10;
+                temp_v0_4->active = 1;
+                temp_v0_4->id = 0x16;
+                temp_v0_4->unk16 = 0x10;
                 temp_v0_4->unk40 = 0x1FFF;
-                temp_v0_4->base.unk2 = 1;
+                temp_v0_4->unk2 = 1;
                 temp_v0_4->unk3C = D_800F2F38;
                 if (engine_obj.stage == 0xD) {
                     temp_v0_4->unk42 = 0x78CE;
                 } else {
                     temp_v0_4->unk42 = 0x7845;
                 }
-                temp_v0_4->base.bg_offset = -1;
-                temp_v0_4->base.x_pos.i.hi = 0x98;
+                temp_v0_4->bg_offset = -1;
+                temp_v0_4->x_pos.i.hi = 0x98;
                 if (!(arg0->unk4 & 0x800)) {
                     if (D_801397D8 == 0x80) {
-                        temp_v0_4->base.y_pos.i.hi = 0x85;
+                        temp_v0_4->y_pos.i.hi = 0x85;
                     } else {
-                        temp_v0_4->base.y_pos.i.hi = 0x4D;
+                        temp_v0_4->y_pos.i.hi = 0x4D;
                     }
                 } else {
                     if (D_801397D8 == 0xFF) {
-                        temp_v0_4->base.y_pos.i.hi = 0xC5;
+                        temp_v0_4->y_pos.i.hi = 0xC5;
                     } else {
-                        temp_v0_4->base.y_pos.i.hi = 0xBD;
+                        temp_v0_4->y_pos.i.hi = 0xBD;
                     }
                 }
                 temp_v0_4->unk47 = 0;
-                temp_v0_4->base.unk15 = 0;
+                temp_v0_4->unk15 = 0;
                 temp_v0_4->ext.title_logo.palette_shift_speed = 0;
                 temp_v0_4->ext.ready_text.stay_up_timer = 0x20;
             }
@@ -4534,9 +4534,9 @@ void func_80023698(struct EngineObj* arg0)
     for (var_v1 = 0; var_v1 < 5; var_v1++) {
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x38;
-            obj->base.unk2 = get_random() & 1;
+            obj->active = 0x41;
+            obj->id = 0x38;
+            obj->unk2 = get_random() & 1;
             obj->ext.title_logo.palette_shift_speed = get_random();
         }
     }
@@ -4574,9 +4574,9 @@ void func_80023870(struct EngineObj* arg0)
         arg0->unk1++;
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x38;
-            obj->base.unk2 = 2;
+            obj->active = 0x41;
+            obj->id = 0x38;
+            obj->unk2 = 2;
             obj->ext.title_logo.palette_shift_speed = 0;
         }
         arg0->unk4 = 0xB4;
@@ -4629,7 +4629,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80023C0C);
 
 void func_80023CA4(struct MiscObj* arg0)
 {
-    D_800F30C8[arg0->base.state](arg0);
+    D_800F30C8[arg0->state](arg0);
 }
 
 void func_80023CE0()
@@ -4694,29 +4694,29 @@ void init_objects(void)
     func_80024E70(); // ???
     func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
 
-    if (g_Player.base.on_screen) {
+    if (g_Player.on_screen) {
         func_80024334(ptr);
-        if (g_Player.base.unk2 == 0) {
+        if (g_Player.unk2 == 0) {
             func_800257BC(ptr);
         }
     }
-    if (g_Entity.base.on_screen != 0) {
+    if (g_Entity.on_screen != 0) {
         func_80024334(ptr3);
     }
-    if (ptr->base.unk2 == 0) {
+    if (ptr->unk2 == 0) {
         ptr2 = &baz_objects;
-        if (ptr2->base.on_screen != 0) {
+        if (ptr2->on_screen != 0) {
             func_80024334(ptr2);
         }
         ptr2 += 1;
-        if (ptr2->base.on_screen != 0) {
+        if (ptr2->on_screen != 0) {
             func_80024334(ptr2);
         }
     }
 
     // this one loops backwards for some reason, doesn't seem to be a compiler optimization
     for (var_s0 = &foo_objects[2]; var_s0 >= &foo_objects[0]; var_s0--) {
-        if (var_s0->base.on_screen != 0) {
+        if (var_s0->on_screen != 0) {
             func_80024334(var_s0);
         }
     }
@@ -4724,49 +4724,49 @@ void init_objects(void)
     // might be a series of macros or inlines
 
     for (var_s0_2 = &main_objects[0]; var_s0_2 < &main_objects[COUNT(main_objects)]; var_s0_2++) {
-        if (var_s0_2->base.on_screen != 0) {
+        if (var_s0_2->on_screen != 0) {
             func_80024334(var_s0_2);
         }
     }
 
     for (var_s0_3 = &weapon_objects[0]; var_s0_3 < &weapon_objects[COUNT(weapon_objects)]; var_s0_3++) {
-        if (var_s0_3->base.on_screen != 0) {
+        if (var_s0_3->on_screen != 0) {
             func_80024334(var_s0_3);
         }
     }
 
     for (var_s0_4 = &shot_objects[0]; var_s0_4 < &shot_objects[COUNT(shot_objects)]; var_s0_4++) {
-        if (var_s0_4->base.on_screen != 0) {
+        if (var_s0_4->on_screen != 0) {
             func_80024334(var_s0_4);
         }
     }
 
     for (var_s0_5 = &visual_objects[0]; var_s0_5 < &visual_objects[COUNT(visual_objects)]; var_s0_5++) {
-        if (var_s0_5->base.on_screen != 0) {
+        if (var_s0_5->on_screen != 0) {
             func_80024334(var_s0_5);
         }
     }
 
     for (var_s0_6 = &item_objects[0]; var_s0_6 < &item_objects[COUNT(item_objects)]; var_s0_6++) {
-        if (var_s0_6->base.on_screen != 0) {
+        if (var_s0_6->on_screen != 0) {
             func_80024334(var_s0_6);
         }
     }
 
     for (var_s0_7 = &misc_objects[0]; var_s0_7 < &misc_objects[COUNT(misc_objects)]; var_s0_7++) {
-        if (var_s0_7->base.on_screen != 0) {
+        if (var_s0_7->on_screen != 0) {
             func_80024334(var_s0_7);
         }
     }
 
     for (var_s0_8 = &unk_objects[0]; var_s0_8 < &unk_objects[COUNT(unk_objects)]; var_s0_8++) {
-        if (var_s0_8->base.on_screen != 0) {
+        if (var_s0_8->on_screen != 0) {
             func_80024334(var_s0_8);
         }
     }
 
     ptr4 = &qux_object;
-    if (ptr4->base.on_screen != 0) {
+    if (ptr4->on_screen != 0) {
         func_80024334(&qux_object);
     }
 
@@ -4818,7 +4818,7 @@ void func_80024E70(void)
         func_800253F0(player, 0);
         func_80025188(1, engine_obj.unk44 + 0x3B);
         func_80025188(0, (engine_obj.unk46 - 0x20) / 2 + 0x45);
-        if (player->base.unk2 == 0) {
+        if (player->unk2 == 0) {
             func_80024F5C(player);
         } else {
             func_8002509C(player);
@@ -4987,7 +4987,7 @@ void func_80025CDC(void)
     SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
     func_800241E8();
     for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
-        if (var_s0->base.on_screen != 0) {
+        if (var_s0->on_screen != 0) {
             func_80024334(var_s0);
         }
     }
@@ -5291,7 +5291,7 @@ void func_80027A5C(struct BackgroundObj* a0)
 {
     s16 v0, v1;
 
-    v1 = g_Player.base.y_pos.i.hi - a0->y_pos.i.hi;
+    v1 = g_Player.y_pos.i.hi - a0->y_pos.i.hi;
     v0 = v1 - a0->unk2C;
 
     if (v0 >= 0) {
@@ -5309,7 +5309,7 @@ void func_80027AAC(struct BackgroundObj* a0)
 {
     s16 v0, v1;
 
-    v1 = g_Player.base.x_pos.i.hi - a0->x_pos.i.hi;
+    v1 = g_Player.x_pos.i.hi - a0->x_pos.i.hi;
     v0 = v1 - a0->unk30;
 
     if (v0 >= 0) {
@@ -5375,8 +5375,8 @@ void func_80027BE4(struct BackgroundObj* arg0)
         arg0->x_pos.i.hi = arg0->unk1C;
         if (engine_obj.stage != 5 || g_Player.unkC5 == 0) {
             temp_v1 = arg0->unk1C + 0x140;
-            if (g_Player.base.x_pos.i.hi + 8 >= temp_v1) {
-                g_Player.base.x_pos.i.hi = arg0->unk1C + 0x138;
+            if (g_Player.x_pos.i.hi + 8 >= temp_v1) {
+                g_Player.x_pos.i.hi = arg0->unk1C + 0x138;
             }
             goto label;
         }
@@ -5386,8 +5386,8 @@ void func_80027BE4(struct BackgroundObj* arg0)
             arg0->x_pos.i.hi = arg0->unk1E;
             if (engine_obj.stage != 5 || g_Player.unkC5 == 0) {
                 temp_v1 = arg0->unk1E;
-                if (g_Player.base.x_pos.i.hi - 8 < temp_v1) {
-                    g_Player.base.x_pos.i.hi = temp_v1 + 8;
+                if (g_Player.x_pos.i.hi - 8 < temp_v1) {
+                    g_Player.x_pos.i.hi = temp_v1 + 8;
                 }
             }
         }
@@ -5396,7 +5396,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
     if (arg0->unk20 < arg0->y_pos.i.hi) {
         arg0->y_pos.i.hi = arg0->unk20;
         temp_v1 = arg0->unk20 + 0x100;
-        if (g_Player.base.y_pos.i.hi - 8 >= temp_v1) {
+        if (g_Player.y_pos.i.hi - 8 >= temp_v1) {
             g_Player.unk5C = -0x80;
         }
     } else {
@@ -5565,13 +5565,13 @@ void func_80028BF0(void)
     checkpoint = D_800F42B4[engine_obj.stage * 2 + engine_obj.substage][engine_obj.checkpoint];
 
     x = FIXED(checkpoint->x);
-    g_Player.base.x_pos.val = x;
+    g_Player.x_pos.val = x;
     y = FIXED(checkpoint->y);
     g_Player.unk18 = x;
-    g_Player.base.y_pos.val = y;
+    g_Player.y_pos.val = y;
     g_Player.unk1C = y;
 
-    g_Player.base.unk15 = checkpoint->facing;
+    g_Player.unk15 = checkpoint->facing;
     background_objects[0].x_pos.i.hi = checkpoint->bg0_x;
     background_objects[0].unk14.i.hi = checkpoint->bg0_x;
     background_objects[0].y_pos.i.hi = checkpoint->bg0_y;
@@ -5634,7 +5634,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028FEC);
 void func_800292D0(struct StageObjectRecord* arg0)
 {
     struct StageObjectRecord* var_s1 = arg0;
-    struct BaseObj* obj;
+    struct ObjectHeader* obj;
 
     while (var_s1->object_type != 0xFF && var_s1->flags <= engine_obj.checkpoint) {
         obj = MakeObject(var_s1->object_type);
@@ -5644,7 +5644,7 @@ void func_800292D0(struct StageObjectRecord* arg0)
             obj->unk2 = var_s1->subtype;
             obj->x_pos.i.hi = var_s1->x;
             obj->y_pos.i.hi = var_s1->y;
-            obj->unk10 = var_s1;
+            obj->backref = var_s1;
         }
         var_s1++;
     }
@@ -5652,9 +5652,9 @@ void func_800292D0(struct StageObjectRecord* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_8002938C);
 
-extern struct BaseObj* (*g_MakeObjectFuncs[8])();
+extern struct ObjectHeader* (*g_MakeObjectFuncs[8])();
 
-struct BaseObj* MakeObject(u8 arg0)
+struct ObjectHeader* MakeObject(u8 arg0)
 {
     return g_MakeObjectFuncs[arg0](arg0 << 2);
 }

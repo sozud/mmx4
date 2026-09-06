@@ -69,9 +69,9 @@ void func_800D7960(struct QuadObj* arg0)
         if (arg0->unk2 == 0) {
             misc = find_free_misc_obj();
             if (misc != NULL) {
-                misc->base.active = 1;
-                misc->base.id = 0x13;
-                misc->base.unk2 = 0xB;
+                misc->active = 1;
+                misc->id = 0x13;
+                misc->unk2 = 0xB;
             }
         }
         arg0->state++;

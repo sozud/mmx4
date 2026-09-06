@@ -4,18 +4,18 @@
 
 void func_800DA878(struct LayerObj* arg0)
 {
-    D_8010FFD0[arg0->base.state](arg0);
+    D_8010FFD0[arg0->state](arg0);
 }
 
 void func_800DA8B4(struct LayerObj* arg0)
 {
-    arg0->base.state++;
+    arg0->state++;
     background_objects[1].unk4D = 1;
     background_objects[1].unk4E = 6;
-    *(s32*)&arg0->base.bg_offset = 0x8000;
-    arg0->base.unk5 = 0;
-    arg0->base.unk6 = 0;
-    arg0->base.unk7 = 0;
+    *(s32*)&arg0->bg_offset = 0x8000;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
     func_800DA90C(arg0);
 }
 

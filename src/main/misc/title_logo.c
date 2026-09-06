@@ -11,46 +11,46 @@ void func_800CD78C(struct MiscObj* arg0)
     arg0->unk3C = SP_TITLE_FRAMES;
     arg0->unk40 = 0x600;
     arg0->animation_table = &D_8010E81C;
-    arg0->base.bg_offset = -1;
-    arg0->base.unk15 = 0;
+    arg0->bg_offset = -1;
+    arg0->unk15 = 0;
 
-    if (arg0->base.unk2 < 0x20) {
+    if (arg0->unk2 < 0x20) {
         arg0->unk42 = 0x7804;
         arg0->unk47 = 0x1C;
-        if (!(arg0->base.unk2 & 0x10)) {
-            arg0->base.y_pos.val = FIXED(240);
+        if (!(arg0->unk2 & 0x10)) {
+            arg0->y_pos.val = FIXED(240);
             arg0->x_vel.val = FIXED(8);
             arg0->y_vel.val = FIXED(6);
-            arg0->base.x_pos.val = 0;
-            arg0->ext.title_logo.palette_shift_speed = D_8010EC00[arg0->base.unk2];
-            arg0->base.unk16 = 0;
-            arg0->base.state++;
+            arg0->x_pos.val = 0;
+            arg0->ext.title_logo.palette_shift_speed = D_8010EC00[arg0->unk2];
+            arg0->unk16 = 0;
+            arg0->state++;
         } else {
-            arg0->base.unk16 = 1;
-            arg0->base.state = 4;
+            arg0->unk16 = 1;
+            arg0->state = 4;
             arg0->ext.title_logo.palette_shift_speed = 6;
         }
         return;
     }
     arg0->unk42 = 0x7840;
-    if (arg0->base.unk2 == 0x20) {
+    if (arg0->unk2 == 0x20) {
         func_80015D60(arg0, 0);
-        arg0->base.x_pos.i.hi = 144; // set x pos of "MEGAMAN" while it's fading from white
-        arg0->base.y_pos.i.hi = 72;
-        arg0->base.state = 5;
-    } else if (arg0->base.unk2 == 0x21) {
+        arg0->x_pos.i.hi = 144; // set x pos of "MEGAMAN" while it's fading from white
+        arg0->y_pos.i.hi = 72;
+        arg0->state = 5;
+    } else if (arg0->unk2 == 0x21) {
         func_80015D60(arg0, 1);
-        arg0->base.x_pos.i.hi = 208; // set x pos of "sparkle" effect
-        arg0->base.y_pos.i.hi = 72;
-        arg0->base.state = 7;
+        arg0->x_pos.i.hi = 208; // set x pos of "sparkle" effect
+        arg0->y_pos.i.hi = 72;
+        arg0->state = 7;
     } else {
         arg0->unk42 = 0x7804;
-        arg0->base.x_pos.i.hi = 216;
-        arg0->base.y_pos.i.hi = 72;
-        arg0->base.state = 3;
-        arg0->base.unk16 = 0;
+        arg0->x_pos.i.hi = 216;
+        arg0->y_pos.i.hi = 72;
+        arg0->state = 3;
+        arg0->unk16 = 0;
         arg0->unk47 = 0x1C;
-        arg0->base.unk2 = 0;
+        arg0->unk2 = 0;
     }
     is_on_screen(arg0);
 }
@@ -64,7 +64,7 @@ void func_800CD90C(struct MiscObj* arg0)
         arg0->ext.title_logo.palette_shift_value = func_8002B7B0(arg0, FIXED(216), FIXED(72));
         arg0->ext.title_logo.palette_shift_speed = 3;
         arg0->ext.title_logo.unk50 = NULL;
-        arg0->base.state++;
+        arg0->state++;
     }
 }
 
@@ -74,20 +74,20 @@ void func_800CD974(struct MiscObj* arg0)
     struct MiscObj* obj;
     u8 temp_v0 = func_8002B7B0(arg0, FIXED(216), FIXED(72));
     if ((arg0->ext.title_logo.palette_shift_value ^ temp_v0) & 0x10) {
-        arg0->base.x_pos.i.hi = 0xD8;
-        arg0->base.y_pos.i.hi = 0x48;
+        arg0->x_pos.i.hi = 0xD8;
+        arg0->y_pos.i.hi = 0x48;
         is_on_screen(arg0);
-        arg0->base.unk16 = 2;
-        arg0->base.state++;
+        arg0->unk16 = 2;
+        arg0->state++;
     } else {
         if (arg0->ext.title_logo.palette_shift_speed == 0) {
             obj = func_8002AE90(arg0->ext.title_logo.unk50, 0);
             if (obj != NULL) {
-                obj->base.active = 1;
-                obj->base.id = 0x1D;
-                obj->base.unk2 = 0x10;
-                obj->base.x_pos.val = arg0->base.x_pos.val;
-                obj->base.y_pos.val = arg0->base.y_pos.val;
+                obj->active = 1;
+                obj->id = 0x1D;
+                obj->unk2 = 0x10;
+                obj->x_pos.val = arg0->x_pos.val;
+                obj->y_pos.val = arg0->y_pos.val;
                 arg0->ext.title_logo.unk50 = obj;
             }
             arg0->ext.title_logo.palette_shift_speed = 3;
@@ -105,7 +105,7 @@ void func_800CD974(struct MiscObj* arg0)
 // TitleLogoUpdate state 3
 void func_800CDA90(struct MiscObj* arg0)
 {
-    if (arg0->base.unk2 == 0) {
+    if (arg0->unk2 == 0) {
         is_on_screen(arg0);
     } else {
         ZeroObjectState(arg0);
@@ -135,7 +135,7 @@ void func_800CDB10(struct MiscObj* arg0)
         arg0->ext.title_logo.palette_shift_speed = 2;
         // how much to shift each step
         arg0->ext.title_logo.palette_shift_value = 0xF;
-        arg0->base.state++;
+        arg0->state++;
     }
     is_on_screen(arg0);
 }
@@ -158,9 +158,9 @@ void func_800CDB84(struct MiscObj* arg0)
             need_palette_load |= 1;
             arg0->ext.title_logo.palette1 = (s32*)((u8*)arg0->ext.title_logo.palette1 + 0x40);
         } else {
-            arg0->base.id = 0x13;
-            arg0->base.unk2 = 0;
-            arg0->base.state = 0;
+            arg0->id = 0x13;
+            arg0->unk2 = 0;
+            arg0->state = 0;
         }
     }
     is_on_screen(arg0);
@@ -180,8 +180,8 @@ void func_800CDC34(struct MiscObj* arg0)
 // part of the title logo animation
 void TitleLogoUpdate(struct MiscObj* arg0)
 {
-    arg0->base.on_screen = 0;
-    g_TitleLogoUpdateFuncs[arg0->base.state](arg0);
+    arg0->on_screen = 0;
+    g_TitleLogoUpdateFuncs[arg0->state](arg0);
 }
 
 s32 D_8010EC00[4] = { 0x1E, 0x3C, 0x5A, 0x78 };

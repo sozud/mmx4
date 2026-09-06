@@ -4,7 +4,7 @@
 
 void func_8009CC64(struct ShotObj* arg0)
 {
-    D_80108FAC[arg0->base.state](arg0);
+    D_80108FAC[arg0->state](arg0);
     CollisionRelated(arg0);
 }
 

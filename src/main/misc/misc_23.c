@@ -4,7 +4,7 @@
 
 void func_800CBD40(struct MiscObj* arg0)
 {
-    if (arg0->base.state == 0) {
+    if (arg0->state == 0) {
         func_800CBD80(arg0);
     } else {
         func_800CBE34(arg0);
@@ -13,7 +13,7 @@ void func_800CBD40(struct MiscObj* arg0)
 
 void func_800CBD80(struct MiscObj* arg0)
 {
-    arg0->base.on_screen = 1;
+    arg0->on_screen = 1;
     arg0->unk38 = 0;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
     arg0->animation_table = &D_8010A4C0;
@@ -23,12 +23,12 @@ void func_800CBD80(struct MiscObj* arg0)
     } else {
         arg0->unk42 = 0x7806;
     }
-    if (arg0->base.unk7 == 0) {
-        arg0->base.unk16 = 1;
+    if (arg0->unk7 == 0) {
+        arg0->unk16 = 1;
     }
     func_80015D60(arg0, arg0->ext.unk.unk54);
-    arg0->base.state++;
-    arg0->base.unk7 = get_random() & 1;
+    arg0->state++;
+    arg0->unk7 = get_random() & 1;
     is_on_screen(arg0);
 }
 
@@ -42,8 +42,8 @@ void func_800CBE34(struct MiscObj* arg0)
         arg0->ext.unk.unk54 = 0;
         ZeroObjectState(arg0);
     } else {
-        arg0->base.on_screen = 0;
-        if (((arg0->ext.unk.unk54 & 3) && !(arg0->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == arg0->base.unk7) {
+        arg0->on_screen = 0;
+        if (((arg0->ext.unk.unk54 & 3) && !(arg0->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == arg0->unk7) {
             is_on_screen(arg0);
         }
     }

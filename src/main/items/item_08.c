@@ -4,9 +4,9 @@
 
 void func_800C1994(struct ItemObj* arg0)
 {
-    arg0->unk18.val = arg0->base.x_pos.val;
-    arg0->unk1C.val = arg0->base.y_pos.val;
-    D_8010CC64[arg0->base.state](arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_8010CC64[arg0->state](arg0);
     is_on_screen(arg0);
 }
 

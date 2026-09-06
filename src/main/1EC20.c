@@ -133,18 +133,18 @@ void func_8002E698(struct EngineObj* arg0)
     func_8002E5E0();
     temp_v0 = find_free_misc_obj();
     if (temp_v0 != 0) {
-        temp_v0->base.active = 0x41;
-        temp_v0->base.id = 0xA;
-        temp_v0->base.unk2 = 0;
+        temp_v0->active = 0x41;
+        temp_v0->id = 0xA;
+        temp_v0->unk2 = 0;
     }
     if (arg0->cur_character == 0) {
         if ((u8)arg0->unk5F < 9) {
             if (arg0->unkE != 0xA) {
                 temp_v0_2 = find_free_misc_obj();
                 if (temp_v0_2 != 0) {
-                    temp_v0_2->base.active = 0x41;
-                    temp_v0_2->base.id = 0xA;
-                    temp_v0_2->base.unk2 = 1;
+                    temp_v0_2->active = 0x41;
+                    temp_v0_2->id = 0xA;
+                    temp_v0_2->unk2 = 1;
                 }
             }
         }
@@ -153,9 +153,9 @@ void func_8002E698(struct EngineObj* arg0)
             if (arg0->unkE != 5) {
                 temp_v0_2 = find_free_misc_obj();
                 if (temp_v0_2 != 0) {
-                    temp_v0_2->base.active = 0x41;
-                    temp_v0_2->base.id = 0xA;
-                    temp_v0_2->base.unk2 = 1;
+                    temp_v0_2->active = 0x41;
+                    temp_v0_2->id = 0xA;
+                    temp_v0_2->unk2 = 1;
                 }
             }
         }
@@ -179,21 +179,21 @@ void func_8002E8D4(struct EngineObj* arg0)
     if (arg0->unk3C->state == 2) {
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0xF;
-            obj->base.unk2 = 0;
+            obj->active = 0x41;
+            obj->id = 0xF;
+            obj->unk2 = 0;
         }
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0xF;
-            obj->base.unk2 = 1;
+            obj->active = 0x41;
+            obj->id = 0xF;
+            obj->unk2 = 1;
         }
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0xC;
-            obj->base.unk2 = 9;
+            obj->active = 0x41;
+            obj->id = 0xC;
+            obj->unk2 = 9;
         }
         arg0->unk1++;
     }
@@ -337,21 +337,21 @@ void func_8002F048(void)
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
-            effect->unk1 = 3;
+            effect->id = 3;
             effect->unk2 = 0;
         }
         misc = find_free_misc_obj();
         D_8013B808 = misc;
         if (misc != NULL) {
-            misc->base.active = 0x41;
-            D_8013B808->base.id = 0xD;
-            D_8013B808->base.unk2 = 1;
+            misc->active = 0x41;
+            D_8013B808->id = 0xD;
+            D_8013B808->unk2 = 1;
         }
         misc = find_free_misc_obj();
         if (misc != NULL) {
-            misc->base.active = 0x41;
-            misc->base.id = 0xC;
-            misc->base.unk2 = 8;
+            misc->active = 0x41;
+            misc->id = 0xC;
+            misc->unk2 = 8;
             misc->ext.ready_text.unk50 = D_8013B808;
             return;
         }

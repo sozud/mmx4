@@ -322,7 +322,7 @@ s32 func_80015D60(struct Unk19* arg0, s32 animation)
     struct MiscObj* object = (struct MiscObj*)arg0;
 
     object->animation_cursor = object->animation_table[animation];
-    object->base.unk17 = animation;
+    object->unk17 = animation;
     object->pad47[0] = 0xFF;
     object->unk44 = *object->animation_cursor;
     return 0;
@@ -451,14 +451,14 @@ void func_80024334(struct VisualObj* object)
     if (!get_pc_sprite_frame(object, &frame))
         return;
 
-    if (object->base.bg_offset < 0) {
-        origin_x = object->base.x_pos.i.hi;
-        origin_y = object->base.y_pos.i.hi;
+    if (object->bg_offset < 0) {
+        origin_x = object->x_pos.i.hi;
+        origin_y = object->y_pos.i.hi;
     } else {
-        struct BackgroundObj* background = &background_objects[object->base.bg_offset];
+        struct BackgroundObj* background = &background_objects[object->bg_offset];
 
-        origin_x = object->base.x_pos.i.hi - background->x_pos.i.hi;
-        origin_y = object->base.y_pos.i.hi - background->y_pos.i.hi;
+        origin_x = object->x_pos.i.hi - background->x_pos.i.hi;
+        origin_y = object->y_pos.i.hi - background->y_pos.i.hi;
     }
 
     primitive = SP_PRIM_CURSOR;
@@ -467,7 +467,7 @@ void func_80024334(struct VisualObj* object)
     frame_header = (u16*)((u8*)frame.data + frame.index * 4);
     frame_count = frame_header[0];
     frame_data = (u8*)frame.data + frame_header[1] * 4;
-    flipped = object->base.unk15;
+    flipped = object->unk15;
     texture = frame.texture;
     clut = frame.clut;
 
@@ -502,12 +502,12 @@ void func_80024334(struct VisualObj* object)
         y1 = y0 + 16;
 
         texture_index = texture + (frame_data[1] | ((flags & 3) << 8));
-        if (object->base.active & 0x40) {
+        if (object->active & 0x40) {
             u32 index = texture_index & 0xFFFF;
 
             texture_index = ((index / 176) << 8) + index % 176 + 0x600;
         }
-        if (object->base.active & 0x20) {
+        if (object->active & 0x20) {
             u32 index = texture_index & 0xFFFF;
 
             texture_index = ((index / 80) << 8) + index % 80 + 0x5B0;
@@ -525,7 +525,7 @@ void func_80024334(struct VisualObj* object)
         if (!(flags & 0x80) && ((flags & 0x40) ^ flipped) == 0) {
             setSprt16(primitive);
             setShadeTex(primitive, 1);
-            setSemiTrans(primitive, object->base.active & 0x10);
+            setSemiTrans(primitive, object->active & 0x10);
             primitive->clut = primitive_clut;
             primitive->x0 = x0;
             primitive->y0 = y0;
@@ -535,7 +535,7 @@ void func_80024334(struct VisualObj* object)
             if (!(flags & 0x80)) {
                 setPolyFT4(primitive);
                 setShadeTex(primitive, 1);
-                setSemiTrans(primitive, object->base.active & 0x10);
+                setSemiTrans(primitive, object->active & 0x10);
                 u0 = texture_index * 16 - 1;
                 u1 = texture_index * 16 | 0xF;
                 if ((u8)u0 == 0xFF) {
@@ -550,7 +550,7 @@ void func_80024334(struct VisualObj* object)
             } else {
                 setlen(primitive, 9);
                 setcode(primitive,
-                    object->base.active & 0x10 ? 0x2F : 0x2D);
+                    object->active & 0x10 ? 0x2F : 0x2D);
                 v1 = (texture_index & 0xF0) - 1;
                 v0 = (texture_index & 0xF0) | 0xF;
                 if ((u8)v1 == 0xFF) {
@@ -593,8 +593,8 @@ void func_80024334(struct VisualObj* object)
 
     if (primitive != SP_PRIM_CURSOR) {
         u32 buffer = SP_DRAW_BUFFER;
-        u32 group = object->base.unk16 >> 4;
-        u32 priority = object->base.unk16 & 0xF;
+        u32 group = object->unk16 >> 4;
+        u32 priority = object->unk16 & 0xF;
         P_TAG* tail = quad_tails[buffer][group][priority];
 
         if (tail == NULL) {
@@ -975,28 +975,28 @@ void func_8001E130(struct GameInfo* arg0)
 
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0xC;
+            obj->active = 1;
+            obj->id = 0x13;
+            obj->unk2 = 0xC;
         }
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0x14;
+            obj->active = 1;
+            obj->id = 0x13;
+            obj->unk2 = 0x14;
         }
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x13;
-            obj->base.unk2 = 0x15;
+            obj->active = 1;
+            obj->id = 0x13;
+            obj->unk2 = 0x15;
         }
         obj = find_free_misc_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0x1D;
-            obj->base.unk2 = 0x21;
+            obj->active = 1;
+            obj->id = 0x1D;
+            obj->unk2 = 0x21;
         }
-        D_80139690 = &obj->base;
+        D_80139690 = OBJECT_HEADER(obj);
     }
 }

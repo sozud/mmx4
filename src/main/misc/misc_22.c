@@ -7,7 +7,7 @@ void func_800CBA80(struct MiscObj* arg0)
 {
     u8* ptr;
 
-    switch (arg0->base.unk2) {
+    switch (arg0->unk2) {
     case 0:
         is_on_screen(arg0);
         return;
@@ -18,7 +18,7 @@ void func_800CBA80(struct MiscObj* arg0)
                 arg0->ext.unk.unk54 ^= 1;
             }
             if (arg0->ext.unk.unk54) {
-                arg0->base.on_screen = 0;
+                arg0->on_screen = 0;
                 return;
             }
             is_on_screen(arg0);
@@ -87,19 +87,19 @@ void func_800CBA80(struct MiscObj* arg0)
         is_on_screen(arg0);
         return;
     case 8:
-        if (arg0->base.unk5 == 0) {
+        if (arg0->unk5 == 0) {
             func_80015DC8(arg0);
             if (--arg0->ext.unk.unk56.byte == 0) {
-                arg0->base.unk5 = 1;
+                arg0->unk5 = 1;
             }
-            if (arg0->base.unk6) {
-                arg0->base.x_pos.val = arg0->ext.unk.unk50->x_pos.val;
-                arg0->base.y_pos.val = arg0->ext.unk.unk50->y_pos.val;
+            if (arg0->unk6) {
+                arg0->x_pos.val = arg0->ext.unk.unk50->x_pos.val;
+                arg0->y_pos.val = arg0->ext.unk.unk50->y_pos.val;
             }
             is_on_screen(arg0);
             return;
         }
-        arg0->base.on_screen = 0;
+        arg0->on_screen = 0;
         ZeroObjectState(arg0);
         return;
     }
