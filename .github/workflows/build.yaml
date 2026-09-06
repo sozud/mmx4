@@ -61,7 +61,7 @@ jobs:
             libasound2-dev libjack-jackd2-dev \
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxtst-dev \
-            libgl1-mesa-dri libglx-mesa0 xvfb
+            libgl-dev libgles-dev libgl1-mesa-dri libglx-mesa0 xvfb
       - name: Get game dependencies
         uses: actions/checkout@v4
         with:
