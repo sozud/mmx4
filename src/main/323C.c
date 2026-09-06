@@ -1,6 +1,9 @@
 #include "common.h"
 
 #ifdef MMX4_PC
+#include <psyz/audio.h>
+#include <psyz/spu.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #endif
@@ -25,7 +28,7 @@ void func_80012A3C(void)
     u16 temp_v0;
     u16 temp_v1;
     TILE* temp_s0;
-    P_TAG* temp_s1;
+    DR_TPAGE* temp_s1;
     u8 color;
 
     *(s16*)&D_8016DEA0 = 0;
@@ -49,10 +52,10 @@ void func_80012A3C(void)
         setcode((TILE*)temp_s0, 0x62);
         setWH((TILE*)temp_s0, 320, 240);
 
-        temp_s1 = (P_TAG*)D_8012F498 + temp_a0;
+        temp_s1 = D_8012F498 + temp_a0;
         setXY0((TILE*)temp_s0, 0, 0);
         setRGB0((TILE*)temp_s0, color, color, color);
-        setlen((P_TAG*)temp_s1, 1);
+        setlen(temp_s1, 1);
 
         if (GetGraphType() == 1 || GetGraphType() == 2) {
             if (GetGraphType() == 1 || GetGraphType() == 2) {
@@ -66,7 +69,7 @@ void func_80012A3C(void)
             var_v0 = 0xE1000045;
         }
 
-        ((u32*)temp_s1)[1] = var_v0;
+        temp_s1->code[0] = var_v0;
         catPrim(temp_s1, temp_s0);
         addPrims(&cur_draw_info->ordering_table.fade, temp_s1, temp_s0);
 
@@ -1039,6 +1042,13 @@ void func_80014DC4(void)
         ;
     func_800E0D0C();
     SsUtSetReverbDepth(8, 8);
+#ifdef MMX4_PC
+    {
+        extern const char* mmx4_pc_sfx_raw;
+        if (mmx4_pc_sfx_raw == NULL && Psyz_AudioInit() != 0)
+            fprintf(stderr, "MMX4 PC: unable to initialize audio output\n");
+    }
+#endif
 }
 
 void func_8001512C(void)
@@ -2124,6 +2134,67 @@ void func_8001D064(void)
     func_8001D104();
     func_80012E38();
     func_8001512C();
+#ifdef MMX4_PC
+    {
+        extern s32 mmx4_pc_sfx_group;
+        extern u32 mmx4_pc_sfx_index;
+        extern const char* mmx4_pc_sfx_raw;
+        extern u32 mmx4_pc_sfx_frames;
+        if (mmx4_pc_sfx_group >= 0) {
+            FILE* output;
+            s16* samples;
+            s32 result;
+            u32 frame;
+
+            D_80173C80 = MAIN_ARCHIVE_ARENA;
+            reset_game_engine();
+            engine_obj.stage = 0xE;
+            engine_obj.substage = 0;
+            engine_obj.cur_character = CHARACTER_X;
+            func_80013014();
+            func_800160AC();
+            engine_obj.substage = 1;
+            func_80013014();
+            func_800160AC();
+            if (mmx4_pc_sfx_group != 5)
+                func_80012EB8();
+            result = func_8001540C(
+                mmx4_pc_sfx_group, mmx4_pc_sfx_index, NULL);
+            fprintf(stderr,
+                "MMX4 SFX fixture: group=%d index=%u result=%d\n",
+                mmx4_pc_sfx_group, mmx4_pc_sfx_index, result);
+            if (mmx4_pc_sfx_raw == NULL)
+                return;
+
+            output = fopen(mmx4_pc_sfx_raw, "wb");
+            samples = malloc(735 * 2 * sizeof(*samples));
+            if (output == NULL || samples == NULL) {
+                free(samples);
+                if (output != NULL)
+                    fclose(output);
+                fprintf(stderr, "MMX4 SFX fixture: cannot open %s\n",
+                    mmx4_pc_sfx_raw);
+                exit(EXIT_FAILURE);
+            }
+            for (frame = 0; frame < mmx4_pc_sfx_frames; frame++) {
+                VSync(0);
+                Psyz_SpuPullSamples(samples, 735);
+                if (fwrite(samples, 735 * 2 * sizeof(*samples), 1, output) != 1) {
+                    fprintf(stderr, "MMX4 SFX fixture: write failed for %s\n",
+                        mmx4_pc_sfx_raw);
+                    free(samples);
+                    fclose(output);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            free(samples);
+            fclose(output);
+            fprintf(stderr, "MMX4 SFX fixture: rendered %u frames to %s\n",
+                mmx4_pc_sfx_frames, mmx4_pc_sfx_raw);
+            exit(EXIT_SUCCESS);
+        }
+    }
+#endif
     PlayCapcomLogo();
     fill = 0;
     var_a0 = (s8*)&game_info;

@@ -169,8 +169,6 @@ struct ControllerButtons {
 };
 
 struct ControllerButtons D_80166D50;
-u16 D_8016949A[23][4];
-
 static u16 decode_pad_buttons(const u8* pad)
 {
     u16 buttons;
@@ -401,12 +399,12 @@ static u8 get_stage_tile_attribute(s8 layer, s16 x, s16 y)
     u8 block;
     u16 tile;
 
-    if (block_x < 0 || block_y < 0)
+    if (layer < 0 || layer >= 3 || block_x < 0 || block_y < 0 || block_x >= layout_width || block_y >= layout_height)
         return 0;
     block = SP_BG_TILEMAP[layer * layout_size + block_y * layout_width + block_x];
     if (block == 0)
         return 0;
-    tile = SP_BG_TILE_PIXELS[block * 0x100 + (y & 0xF) * 0x10 + (x & 0xF)];
+    tile = SP_BG_TILE_PIXELS[block * 0x100 + ((y & 0xF0) >> 4) * 0x10 + ((x & 0xF0) >> 4)];
     return SP_BG_TILE_ATTRS[tile & 0x3FFF] & 0xFF;
 }
 
@@ -669,12 +667,12 @@ void func_8001663C(u8 selection, u8 volume)
         return;
     }
 
-    for (i = 1; i < index; i++) {
+    for (i = 0; i < index; i++) {
         if (*entry & 0x8000) {
             channel++;
-            entry += 2;
+            entry++;
         }
-        entry += 2;
+        entry++;
     }
 
     ((u8*)D_80175EE8)[0] = 1;
@@ -1428,8 +1426,8 @@ void func_80025188(s32 slot, u8 index)
     count = *(const u16*)(table + (u32)index * 4);
     pieces = table + *(const u16*)(table + (u32)index * 4 + 2) * 4;
     while (count-- != 0 && SP_SPRITE_COUNT < 1000) {
-        SPRT_16* sprite = SP_PRIM_CURSOR;
-        DR_MODE* mode = SP_DRAW_MODE_CURSOR;
+        SPRT_16* sprite = SP_BG_PRIM_CURSOR;
+        DR_MODE* mode = SP_OT_CURSOR;
         u8 flags = pieces[0];
         u16 texture = pieces[1] | ((flags & 3) << 8);
         s32 texture_index = texture % 80 + ((texture / 80) << 8);
@@ -1444,10 +1442,10 @@ void func_80025188(s32 slot, u8 index)
         sprite->clut = clut;
         setlen(mode, 1);
         mode->code[0] = 0xE1000000 | ((texture_index + 0x5B0) >> 8);
-        addPrim(&cur_draw_info->ordering_table.ui, sprite);
-        addPrim(&cur_draw_info->ordering_table.ui, mode);
-        SP_PRIM_CURSOR = sprite + 1;
-        SP_DRAW_MODE_CURSOR = mode + 1;
+        addPrim(&cur_draw_info->ordering_table.unk3, sprite);
+        addPrim(&cur_draw_info->ordering_table.unk3, mode);
+        SP_BG_PRIM_CURSOR = sprite + 1;
+        SP_OT_CURSOR = mode + 1;
         SP_SPRITE_COUNT++;
         pieces += 4;
     }

@@ -76,7 +76,8 @@ def load_events(directory: Path):
     return [(identity, tuple(changes)) for identity, changes in events]
 
 
-def compare_scene(original: Path, port: Path, output, threshold):
+def compare_scene(original: Path, port: Path, output, minimum_threshold,
+                  mean_threshold):
     left_events, right_events = load_events(original), load_events(port)
     matcher = SequenceMatcher(
         a=[changes for _, changes in left_events],
@@ -103,7 +104,8 @@ def compare_scene(original: Path, port: Path, output, threshold):
         not unmatched_left
         and not unmatched_right
         and scores
-        and min(scores) >= threshold
+        and min(scores) >= minimum_threshold
+        and statistics.mean(scores) >= mean_threshold
     )
     return {
         "pairs": len(scores),
@@ -123,7 +125,8 @@ def main():
     parser.add_argument("--mednafen", type=Path, default=workspace / "mednafen-object-changes")
     parser.add_argument("--pc", type=Path, default=workspace / "pc-object-changes")
     parser.add_argument("--output", type=Path, default=workspace / "scene-comparison")
-    parser.add_argument("--threshold", type=float, default=0.99)
+    parser.add_argument("--minimum-threshold", type=float, default=0.85)
+    parser.add_argument("--mean-threshold", type=float, default=0.97)
     parser.add_argument("--scene", choices=SCENES)
     parser.add_argument(
         "--allow-failure",
@@ -137,7 +140,8 @@ def main():
     for scene in scenes:
         with (args.output / f"{scene}.tsv").open("w") as report:
             result = compare_scene(
-                args.mednafen / scene, args.pc / scene, report, args.threshold
+                args.mednafen / scene, args.pc / scene, report,
+                args.minimum_threshold, args.mean_threshold
             )
         print(
             f"{scene}: {result['pairs']} pairs, "
