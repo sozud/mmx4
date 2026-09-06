@@ -22,26 +22,26 @@ void func_800B2D84(struct VisualObj* arg0)
 
 void func_800B2DD0(struct VisualObj* arg0)
 {
-    struct PlayerObj* temp_v1;
-    struct BaseObj* temp_a0;
+    struct ShotObj* temp_v1;
+    struct WeaponObj* temp_a0;
 
     func_80015DC8(arg0);
     if (arg0->unk2 == 0) {
-        temp_v1 = arg0->unk50;
+        temp_v1 = (struct ShotObj*)arg0->unk50;
         temp_a0 = temp_v1->unk7C;
         arg0->x_pos.val = temp_a0->x_pos.val;
         arg0->y_pos.val = temp_a0->y_pos.val;
         if (temp_v1->unk2 != 0) {
             is_on_screen(arg0);
         } else {
-            ZeroObjectState(arg0);
+            ZeroObjectState(OBJECT_HEADER(arg0));
         }
     } else {
-        temp_a0 = arg0->unk50;
+        temp_a0 = (struct WeaponObj*)arg0->unk50;
         if (arg0->animation_step.fields.relative_step >= 0 && temp_a0->state == 1 && (temp_a0->unk5 == 3 || temp_a0->unk5 == 5)) {
             is_on_screen(arg0);
         } else {
-            ZeroObjectState(arg0);
+            ZeroObjectState(OBJECT_HEADER(arg0));
         }
     }
 }

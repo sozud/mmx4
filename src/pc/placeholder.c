@@ -264,11 +264,6 @@ void func_8001A9EC(struct EngineObj* obj)
     init_objects();
 }
 
-void func_8002B3C0(struct BaseObj* obj)
-{
-    func_8002B318(obj, 0x60, 0x50);
-}
-
 s32 func_8002B1E8(struct BaseObj* object, s32 x_margin, s32 y_margin)
 {
     s32 x = (u16)object->x_pos.i.hi;
@@ -282,13 +277,6 @@ s32 func_8002B1E8(struct BaseObj* object, s32 x_margin, s32 y_margin)
     if ((u16)(x + x_margin) >= (u16)(0x140 + 2 * x_margin))
         return 1;
     return (u16)(y + y_margin) >= (u16)(0xF0 + 2 * y_margin);
-}
-
-s32 func_8002B780(void)
-{
-    s32 value = get_random();
-
-    return value != 0 ? value : 1;
 }
 
 void func_80029A48(void)
@@ -384,12 +372,6 @@ void func_80029BD8(void)
         *phase = 0;
         break;
     }
-}
-
-void func_8004A6E8(struct Unk* object)
-{
-    func_8002B694(object);
-    func_80015DC8(object);
 }
 
 static u8 get_stage_tile_attribute(s8 layer, s16 x, s16 y)

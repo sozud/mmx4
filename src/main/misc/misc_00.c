@@ -8,11 +8,9 @@ INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7AB0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B0C);
 
-extern void func_8002B0C8(void);
-
-void func_800C7B60(void)
+void func_800C7B60(struct MiscObj* arg0)
 {
-    func_8002B0C8();
+    func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B80);

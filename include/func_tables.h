@@ -5699,7 +5699,7 @@ void func_800C7830(void);
 // D_8010D9EC
 void func_800C7AB0(void);
 void func_800C7B0C(void);
-void func_800C7B60(void);
+void func_800C7B60(struct MiscObj* arg0);
 
 // D_8010DABC
 void func_800C7C30(void);
