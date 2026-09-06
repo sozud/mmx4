@@ -60,7 +60,8 @@ jobs:
             build-essential cmake ninja-build pkg-config zlib1g-dev \
             libasound2-dev libjack-jackd2-dev \
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
-            libxfixes-dev libxi-dev libxss-dev libxtst-dev xvfb
+            libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+            libgl1-mesa-dri libglx-mesa0 xvfb
       - name: Get game dependencies
         uses: actions/checkout@v4
         with:
@@ -78,7 +79,7 @@ jobs:
           test -n "$oracle_bios"
           cp "$oracle_bios" tools/SCPH1001.BIN
       - name: Configure Linux port
-        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSYZ_RENDERER=sdl3_gl
       - name: Build Linux port
         run: cmake --build build-linux --parallel
       - name: Configure Mednafen oracle
@@ -121,6 +122,9 @@ jobs:
             --bios tools/SCPH1001.BIN \
             --output mednafen-object-changes
       - name: Capture Linux port scenes
+        env:
+          GALLIUM_DRIVER: llvmpipe
+          LIBGL_ALWAYS_SOFTWARE: "true"
         run: |
           python3 tools/oracle/run_pc_scene_suite.py \
             --binary build-linux/mmx4_pc \

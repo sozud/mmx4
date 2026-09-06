@@ -59,7 +59,8 @@ def main():
         command = [str(args.binary)]
         if not args.no_xvfb and shutil.which("xvfb-run") is not None:
             command = ["xvfb-run", "-a", *command]
-        with (destination / "run.log").open("w") as log:
+        log_path = destination / "run.log"
+        with log_path.open("w") as log:
             subprocess.run(
                 command,
                 cwd=workspace,
@@ -68,6 +69,16 @@ def main():
                 stderr=subprocess.STDOUT,
                 check=True,
             )
+        log_text = log_path.read_text(errors="replace")
+        renderer_errors = (
+            "SDL_CreateGPUDevice:",
+            "Invalid GPU device",
+            "opengl init failed:",
+            "failed to compile shaders:",
+            "VRAM FBO creation failed",
+        )
+        if any(error in log_text for error in renderer_errors):
+            raise RuntimeError(f"{scene}: PC renderer initialization failed; see {log_path}")
         images, triggers = validate_scene(scene, destination)
         print(f"{scene}: {images} images, {triggers} triggers")
 
