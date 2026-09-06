@@ -57,7 +57,7 @@ void func_800AE7DC(struct UnkObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
 
-    arg0->unk47 = player->cur_anim;
+    arg0->animation_step.fields.frame_index = player->animation_step.fields.frame_index;
     arg0->unk15 = player->unk15;
     arg0->unk18 = arg0->x_pos.val;
     arg0->unk1C = arg0->y_pos.val;

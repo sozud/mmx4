@@ -75,10 +75,9 @@ void func_800B5C60(struct EffectObj* arg0)
     s32* var_a2;
     u32 var_v1;
 
-    var_a2 = arg0->ext.unk_effect2.unk14;
-    var_a1 = arg0->ext.unk_effect2.unk18.ptr;
-
-    for (var_v1 = 0; var_v1 < arg0->ext.unk_effect2.unk20 * 8; var_v1++) {
+    var_a2 = arg0->ext.palette_animation.source;
+    var_a1 = arg0->ext.palette_animation.destination;
+    for (var_v1 = 0; var_v1 < arg0->ext.palette_animation.palette_count * 8; var_v1++) {
         *var_a1++ = *var_a2++;
     }
 

@@ -265,6 +265,18 @@ typedef union {
     } i;
 } f32;
 
+union AnimationStep {
+    u32 packed;
+    struct {
+        s8 duration;
+        s8 event;
+        s8 relative_step;
+        u8 frame_index;
+    } fields;
+};
+
+MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u32));
+
 #define OBJECT_HEADER_FIELDS \
     s8 active;                \
     s8 id;                    \
@@ -288,12 +300,40 @@ typedef union {
     OBJECT_HEADER_FIELDS \
     BASE_OBJ_TAIL_FIELDS
 
+#define MOVING_OBJ_FIELDS \
+    BASE_OBJ_FIELDS        \
+    s32 unk18;             \
+    s32 unk1C;             \
+    f32 x_vel;             \
+    f32 y_vel;
+
+#define ANIMATED_OBJ_FIELDS                   \
+    MOVING_OBJ_FIELDS                         \
+    s32 unk28;                                \
+    s32 unk2C;                                \
+    const u32* const* animation_table;        \
+    const u32* animation_cursor;              \
+    void* unk38;                              \
+    void* unk3C;                              \
+    u16 unk40;                                \
+    u16 unk42;                                \
+    union AnimationStep animation_step;       \
+    u8 previous_animation_index;
+
 struct ObjectHeader {
     OBJECT_HEADER_FIELDS
 };
 
 struct BaseObj {
     BASE_OBJ_FIELDS
+};
+
+struct MovingObj {
+    MOVING_OBJ_FIELDS
+};
+
+struct AnimatedObj {
+    ANIMATED_OBJ_FIELDS
 };
 
 #ifdef MMX4_PC
@@ -321,13 +361,11 @@ struct Unk {
     const u8* sprite_frames;
     u16 unk40;
     u16 unk42;
-    s8 unk44;
-    s8 unk45;
-    s8 unk46;
-    u8 animation_index;
-    s8 pad48[8];
-    s32 unk50;
-    s32 unk54;
+    union AnimationStep animation_step;
+    u8 previous_animation_index;
+    s8 pad49[7];
+    const u8* unk50;
+    const u8* unk54;
     const u16* collision_data;
     s8 unk5C;
     s8 unk5D;
@@ -414,24 +452,7 @@ struct BackgroundObj {
 
 // similar to Unk
 struct PlayerObj {
-    BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
-    s32 unk20;
-    s32 unk24;
-    s32 unk28;
-    s32 unk2C;
-    const u32* const* animation_table;
-    const u32* animation_cursor;
-    s32* unk38;
-    void* unk3C;
-    u16 unk40;
-    u16 unk42;
-    s8 unk44;
-    s8 unk45;
-    s8 unk46;
-    u8 cur_anim; // 0x47
-    u8 prev_anim; // 0x48
+    ANIMATED_OBJ_FIELDS
     s8 unk49;
     s8 unk4A;
     s8 pad4B[0x50 - 0x4B];
@@ -544,23 +565,7 @@ struct Unk_unk68 {
 };
 
 struct VisualObj {
-    BASE_OBJ_FIELDS
-    s8 pad18[0x20 - 0x18];
-    s32 unk20;
-    s32 unk24;
-    s32 unk28;
-    s32 unk2C;
-    void* unk30;
-    s32 : 32;
-    s32 unk38;
-    void* unk3C;
-    u16 unk40;
-    u16 unk42;
-    s8 unk44;
-    s8 unk45;
-    s8 unk46;
-    u8 unk47;
-    u8 unk48;
+    ANIMATED_OBJ_FIELDS
     u8 unk49;
     s8 pad4A[0x50 - 0x4A];
     struct PlayerObj* unk50; // 0x50, guessed
@@ -574,12 +579,8 @@ struct VisualObj {
 }; // size 0x70
 
 struct ShotObj {
-    BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
-    s8 pad20[0x42 - 0x20];
-    u16 unk42;
-    s8 pad44[0x50 - 0x44];
+    ANIMATED_OBJ_FIELDS
+    s8 pad49[0x50 - 0x49];
     s32 unk50;
     s32 unk54;
     s32 : 32;
@@ -656,22 +657,8 @@ struct WeaponObj {
 }; // size 0x9C
 
 struct UnkObj {
-    BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
-    s32 unk20;
-    s32 unk24;
-    s32 unk28;
-    s32 unk2C;
-    s8** unk30;
-    s32 : 32;
-    s32* unk38;
-    void* unk3C;
-    u16 unk40;
-    u16 unk42;
-    s8 pad44[0x47 - 0x44];
-    s8 unk47;
-    s8 pad48[0x50 - 0x48];
+    ANIMATED_OBJ_FIELDS
+    s8 pad49[0x50 - 0x49];
     u8* unk50;
     u8 unk54;
     u8 pad55[0x60 - 0x55];
@@ -729,12 +716,16 @@ struct MiscUnk50_2 {
 };
 
 struct ReadyTextExt {
-    struct MiscUnk50_1* unk50;
+    struct EffectObj* owner;
     u16 unk54;
     u16 stay_up_timer; // 0x56
     u16 palette_pos;
     u16 unk58;
     u16 palette_cycle_done; // 0x5C
+};
+
+struct MiscPointerExt {
+    void* unk50;
 };
 
 struct TitleLogoExt {
@@ -767,30 +758,15 @@ struct UnkExt {
 
 union MiscExt {
     struct ReadyTextExt ready_text;
+    struct MiscPointerExt pointer;
     struct TitleLogoExt title_logo;
     struct SelectACharacterExt sel_char;
     struct UnkExt unk;
 };
 
 struct MiscObj {
-    BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
-    f32 x_vel; // 0x20
-    f32 y_vel;
-    s32 unk28;
-    s32 unk2C;
-    const u32* const* animation_table;
-    const u32* animation_cursor;
-    s32 unk38;
-    void* unk3C;
-    u16 unk40;
-    u16 unk42;
-    s8 unk44;
-    s8 unk45;
-    s8 unk46;
-    s8 unk47;
-    s8 pad47[5];
+    ANIMATED_OBJ_FIELDS
+    s8 pad49[4];
     union MiscExt ext;
 }; // size 0x60
 
@@ -1008,11 +984,11 @@ struct BgDrawRelated {
 };
 
 struct MainPrimitiveBuffer {
-    u8 data[0xA000];
+    POLY_FT4 data[0x400];
 };
 
 struct SecondaryPrimitiveBuffer {
-    u8 data[0x2000];
+    P_TAG data[0x400];
 };
 
 struct BackgroundPrimitiveBuffer {
@@ -1024,7 +1000,7 @@ struct OrderingTableBuffer {
 };
 
 struct AuxiliaryPrimitiveBuffer {
-    u8 data[0x78];
+    POLY_F4 data[5];
 };
 
 struct StageSpriteSlot {
@@ -1100,6 +1076,9 @@ extern u16 D_801441C8[3][32][32];
 typedef u32 OT_TYPE;
 #endif
 
+extern P_TAG* D_8013BC40[2][4][8];
+extern P_TAG* D_8013E1E8[2][4][8];
+
 struct DrawOrderingTable {
     OT_TYPE start;
     OT_TYPE unk1;
@@ -1115,6 +1094,9 @@ struct DrawInfo {
     DISPENV dispenv;
     DRAWENV drawenv; // 0x14
     struct DrawOrderingTable ordering_table;
+#ifdef MMX4_PC
+    P_CODE ordering_table_tail;
+#endif
 };
 
 extern struct DrawInfo draw_infos[2];
@@ -1220,7 +1202,7 @@ union QuadRuntime {
 };
 
 union QuadLink {
-    struct BaseObj* owner;
+    struct EffectObj* owner;
     u16 direction;
 };
 
@@ -1325,23 +1307,6 @@ extern u8 engine_obj_27;
 #define engine_flags engine_obj_27
 #endif
 
-struct Unk19 {
-    u8 pad[0x7];
-    s32 unk8;
-    s32 unkC;
-    u8 pad6[0x7];
-    s8 unk17;
-    s8 pad2[0x6];
-    s32 unk20;
-    s32 unk24;
-    u8 pad345[5];
-    u32* unk30;
-    u32* unk34;
-    s8 pad3[0xc];
-    u32 unk44;
-    u8 unk48;
-};
-
 struct Unk66 {
     u8 pad[0x34];
     u32* unk34;
@@ -1406,43 +1371,41 @@ struct Unk14 {
 
 struct UnkEffectExt {
     u8 unk14;
-    s8 unk15;
-    s8 unk16;
+    u8 unk15;
+    u8 unk16;
     s8 : 8;
     s32 unk18;
 };
-struct EffectExt2 {
-    struct Unk14* unk14;
-    Multi unk18;
-    u8 pad18[4];
-    s8 unk20;
-    s8 pad20[12];
-};
-
 struct ScalingX {
     struct Unk14* unk14;
     s8 unk18;
 };
 
-struct EffectUnk3 {
-    s32* unk14;
-    s32 pad;
-    s8* unk1C;
-    u8 pad20;
-    s8 unk21;
+struct PaletteAnimationExt {
+    s32* source;
+    s32* destination;
+    s8* cursor;
+    s8 palette_count;
+    s8 timer;
+    u8 padding[14];
 };
 
 union EffectExt {
     struct UnkEffectExt unk_effect;
-    struct EffectExt2 unk_effect2;
     struct ScalingX scaling_x;
-    struct EffectUnk3 unk3;
+    struct PaletteAnimationExt palette_animation;
 };
 
 struct EffectObj {
     OBJECT_HEADER_FIELDS
     union EffectExt ext;
 }; // size 0x30
+
+#ifdef MMX4_PC
+MMX4_STATIC_ASSERT(pc_effect_object_size, sizeof(struct EffectObj) == 0x40);
+#else
+MMX4_STATIC_ASSERT(psx_effect_object_size, sizeof(struct EffectObj) == 0x30);
+#endif
 
 #define ASSERT_OBJECT_HEADER(type, first_tail_member)                                        \
     MMX4_STATIC_ASSERT(type##_backref_offset,                                                 \
@@ -1467,6 +1430,41 @@ ASSERT_OBJECT_HEADER(QuadObj, unk14);
 ASSERT_OBJECT_HEADER(EffectObj, ext);
 
 #undef ASSERT_OBJECT_HEADER
+
+#define ASSERT_MOVING_OBJECT(type)                                                   \
+    MMX4_STATIC_ASSERT(type##_x_vel_offset,                                          \
+        MMX4_OFFSET_OF(struct type, x_vel) == MMX4_OFFSET_OF(struct MovingObj, x_vel)); \
+    MMX4_STATIC_ASSERT(type##_y_vel_offset,                                          \
+        MMX4_OFFSET_OF(struct type, y_vel) == MMX4_OFFSET_OF(struct MovingObj, y_vel))
+
+ASSERT_MOVING_OBJECT(PlayerObj);
+ASSERT_MOVING_OBJECT(VisualObj);
+ASSERT_MOVING_OBJECT(MiscObj);
+
+#undef ASSERT_MOVING_OBJECT
+
+#define ASSERT_ANIMATED_OBJECT(type)                                                   \
+    MMX4_STATIC_ASSERT(type##_animation_table_offset,                                  \
+        MMX4_OFFSET_OF(struct type, animation_table) ==                                \
+            MMX4_OFFSET_OF(struct AnimatedObj, animation_table));                      \
+    MMX4_STATIC_ASSERT(type##_animation_cursor_offset,                                 \
+        MMX4_OFFSET_OF(struct type, animation_cursor) ==                               \
+            MMX4_OFFSET_OF(struct AnimatedObj, animation_cursor));                     \
+    MMX4_STATIC_ASSERT(type##_animation_step_offset,                                   \
+        MMX4_OFFSET_OF(struct type, animation_step) ==                                 \
+            MMX4_OFFSET_OF(struct AnimatedObj, animation_step));                       \
+    MMX4_STATIC_ASSERT(type##_previous_animation_index_offset,                         \
+        MMX4_OFFSET_OF(struct type, previous_animation_index) ==                       \
+            MMX4_OFFSET_OF(struct AnimatedObj, previous_animation_index))
+
+ASSERT_ANIMATED_OBJECT(PlayerObj);
+ASSERT_ANIMATED_OBJECT(Unk);
+ASSERT_ANIMATED_OBJECT(VisualObj);
+ASSERT_ANIMATED_OBJECT(ShotObj);
+ASSERT_ANIMATED_OBJECT(UnkObj);
+ASSERT_ANIMATED_OBJECT(MiscObj);
+
+#undef ASSERT_ANIMATED_OBJECT
 
 struct Unk22 {
     u8 pad0[8];
@@ -1604,6 +1602,7 @@ extern s32 D_8013BD44;
 extern u8 D_8013BD40;
 extern s16 D_80141BD2;
 extern struct BackgroundLayoutConfigData D_800F3188;
+extern const u8* s_StageMainIds[13][2];
 extern struct StageObjectRecord* D_800F4430[13][2];
 extern struct StageObjectRecord* D_800F43C8[13][2];
 extern u8* D_8010FFDC[][2];
@@ -1916,7 +1915,7 @@ void func_80015284(void);
 void func_8001C3E8(void);
 void reset_game_engine(void);
 void func_8001DC30(void);
-s32 func_80015D60(struct Unk19*, s32);
+s32 func_80015D60(void*, s32);
 void func_80015DC8();
 s32 func_80033694();
 void func_80034538(struct Unk7*);
@@ -1964,7 +1963,7 @@ void func_8001D230();
 void func_8001FB50();
 void func_8002217C(u16, u8, u8);
 void func_80022730(struct AbcObj*);
-void func_8002B718();
+void func_8002B718(struct MovingObj*);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);

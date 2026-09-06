@@ -7,6 +7,7 @@ find_free_visual_obj = 0x8002AD3C;
 find_free_item_obj = 0x8002ADBC;
 find_free_layer_obj = 0x8002B048;
 find_free_unk_obj = 0x8002B088;
+s_StageMainIds = 0x800F4340;
 update_main_objects = 0x80021234;
 update_weapon_objects = 0x80021340;
 update_shot_objects = 0x8002144C;

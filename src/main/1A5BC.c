@@ -762,10 +762,10 @@ void func_8002B694(struct Unk* arg0)
     }
 }
 
-void func_8002B718(struct Unk19* arg0)
+void func_8002B718(struct MovingObj* arg0)
 {
-    arg0->unk8 += arg0->unk20;
-    arg0->unkC -= arg0->unk24;
+    arg0->x_pos.val += arg0->x_vel.val;
+    arg0->y_pos.val -= arg0->y_vel.val;
 }
 
 u8 get_random()

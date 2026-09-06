@@ -23,7 +23,7 @@ void func_800B2544(struct VisualObj* arg0)
         arg0->bg_offset = player->bg_offset;
         arg0->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0x1C / 4];
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x3C / 4];
-        arg0->unk30 = &D_8011C0E4;
+        arg0->animation_table = &D_8011C0E4;
         arg0->unk40 = 0x520;
         arg0->unk42 = 0x7801;
         arg0->unk16 = 0x12;

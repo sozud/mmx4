@@ -22,7 +22,7 @@ void func_800B1DE4(struct VisualObj* arg0)
 
     arg0->x_pos.i.hi = temp_s1->x_pos.i.hi;
     arg0->y_pos.i.hi = temp_s1->y_pos.i.hi;
-    if (arg0->unk46 < 0) {
+    if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk54--;
     }
     func_80015DC8(arg0);

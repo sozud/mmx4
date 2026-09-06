@@ -7,7 +7,7 @@ void func_800CB884(struct MiscObj* arg0)
     if (arg0->state == 0) {
         arg0->on_screen = 1;
         arg0->bg_offset = -1;
-        arg0->unk47 = 0;
+        arg0->animation_step.fields.frame_index = 0;
         arg0->unk3C = SP_SPRITE_FRAMES;
         arg0->unk40 = 0x600;
         arg0->unk42 = 0x7804;

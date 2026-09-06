@@ -18,7 +18,7 @@ void func_800AEB1C(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->on_screen = 1;
     arg0->unk38 = 0;
     arg0->unk3C = (void*)((s8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[1]);
-    arg0->unk30 = &D_8011BF40;
+    arg0->animation_table = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7804;
     arg0->unk16 = 1;
@@ -51,7 +51,7 @@ void func_800AEBA8(struct VisualObj* arg0, struct PlayerObj* arg1)
 void func_800AEC48(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 < 0) {
+    if (arg0->animation_step.fields.relative_step < 0) {
         ZeroObjectState(arg0);
         return;
     }

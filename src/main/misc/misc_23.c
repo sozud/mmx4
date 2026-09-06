@@ -34,9 +34,9 @@ void func_800CBD80(struct MiscObj* arg0)
 
 void func_800CBE34(struct MiscObj* arg0)
 {
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
     func_80015DC8(arg0);
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->x_vel.val = 0;
         arg0->y_vel.val = 0;
         arg0->ext.unk.unk54 = 0;

@@ -26,7 +26,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_10", func_800B16B0);
 void func_800B1758(struct VisualObj* arg0)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 < 0) {
+    if (arg0->animation_step.fields.relative_step < 0) {
         arg0->state++;
     }
     func_8002B318(arg0, 0x20, 0x20);

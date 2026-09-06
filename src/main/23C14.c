@@ -28,7 +28,7 @@ s32 func_800334F4(struct PlayerObj* arg0)
     if (*(s16*)&arg0->unk7C & 1) {
         arg0->unk15 = 0x40;
         if (!(arg0->unk89 & 1)) {
-            arg0->unk20 = FIXED(0.5);
+            arg0->x_vel.val = FIXED(0.5);
             return 1;
         } else {
             return 0;
@@ -37,7 +37,7 @@ s32 func_800334F4(struct PlayerObj* arg0)
 
     arg0->unk15 = 0;
     if (!(arg0->unk89 & 2)) {
-        arg0->unk20 = FIXED(-0.5);
+        arg0->x_vel.val = FIXED(-0.5);
         return 1;
     } else {
         return 0;
@@ -75,11 +75,11 @@ s32 func_80033694(struct PlayerObj* arg0)
         if ((arg0->unk89 & 1)) {
             return 0;
         } else {
-            arg0->unk20 = FIXED(6.5);
+            arg0->x_vel.val = FIXED(6.5);
             return 1;
         }
     } else if (!(arg0->unk89 & 2)) {
-        arg0->unk20 = FIXED(-6.5);
+        arg0->x_vel.val = FIXED(-6.5);
         return 1;
     } else {
         return 0;
@@ -312,7 +312,7 @@ void func_800343A4(struct PlayerObj* arg0)
             }
             func_8003516C(arg0, 0x5E, var_a2);
             if (arg0->unk91 >= 9) {
-                arg0->unk44 = arg0->unk91 - 8;
+                arg0->animation_step.fields.duration = arg0->unk91 - 8;
             }
         } else {
             func_80036534(arg0);
@@ -332,9 +332,9 @@ void func_80034604(struct PlayerObj* arg0)
 {
     func_80038524(arg0, 0xB);
     arg0->unk2C = 0x4200;
-    arg0->unk20 = 0;
+    arg0->x_vel.val = 0;
     arg0->unk28 = 0;
-    arg0->unk24 = 0;
+    arg0->y_vel.val = 0;
     arg0->unk67 = -1;
     if (arg0->unk84 != 0) {
         arg0->unk84 = 0;
@@ -502,7 +502,7 @@ void func_80035240(void)
         baz->unk2 = i;
         baz->bg_offset = player->bg_offset;
         baz->unk38 = 0;
-        sprite_frames = *(s32**)0x1F80001C;
+        sprite_frames = SP_SPRITE_FRAMES;
         frame_offset = sprite_frames[1];
         baz->unk3C = (u8*)sprite_frames + frame_offset;
         baz->animation_table = D_8011BF40;
@@ -622,8 +622,8 @@ void func_80035848(struct PlayerObj* arg0)
 {
     func_800350A4(arg0, 1);
     func_8001540C(1, 0xD, arg0);
-    arg0->unk24 = 0xFFF80000;
-    arg0->unk20 = 0;
+    arg0->y_vel.val = FIXED(-8);
+    arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk67 = -1;
@@ -672,8 +672,8 @@ void func_80035DE4(struct PlayerObj* arg0)
 
     if (arg0->unk2 == 0) {
         if (arg0->unkD9 == 0) {
-            temp_v0 = D_801193F0[arg0->cur_anim];
-            if (D_801193F0[arg0->cur_anim] != 0) {
+            temp_v0 = D_801193F0[arg0->animation_step.fields.frame_index];
+            if (D_801193F0[arg0->animation_step.fields.frame_index] != 0) {
                 arg0->unk54 = &D_801194F0[temp_v0];
                 return;
             }
@@ -682,9 +682,9 @@ void func_80035DE4(struct PlayerObj* arg0)
         return;
     }
     if (D_8011AF60[arg0->unk17] == 0) {
-        var_v0_2 = D_8011A030[arg0->cur_anim];
+        var_v0_2 = D_8011A030[arg0->animation_step.fields.frame_index];
     } else {
-        var_v0_2 = D_8011A130[arg0->cur_anim];
+        var_v0_2 = D_8011A130[arg0->animation_step.fields.frame_index];
     }
     if (var_v0_2 == 0) {
         arg0->unk54 = NULL;
@@ -1075,11 +1075,11 @@ s32 func_800375B4(struct PlayerObj* arg0)
     engine_obj.unk1C = 1;
 
     if (arg0->unk15) {
-        arg0->unk20 = FIXED(2.5);
+        arg0->x_vel.val = FIXED(2.5);
     } else {
-        arg0->unk20 = FIXED(-2.5);
+        arg0->x_vel.val = FIXED(-2.5);
     }
-    arg0->unk24 = 0x38000;
+    arg0->y_vel.val = FIXED(3.5);
     arg0->unk2C = 0x4200;
     arg0->unk28 = 0;
     arg0->unk5 = 0x22;

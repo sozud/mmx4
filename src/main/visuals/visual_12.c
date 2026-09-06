@@ -19,7 +19,7 @@ void func_800B1A48(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0 = arg0->unk50;
     if (temp_a0->state != 2) {
-        if (arg0->unk46 >= 0) {
+        if (arg0->animation_step.fields.relative_step >= 0) {
             arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
             arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;
             func_80015DC8(arg0);

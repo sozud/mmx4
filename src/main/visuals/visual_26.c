@@ -16,7 +16,7 @@ void func_800B28CC(struct VisualObj* arg0)
         arg0->on_screen = 1;
         arg0->unk38 = temp_s1->unk38;
         arg0->unk3C = temp_s1->unk3C;
-        arg0->unk30 = temp_s1->unk30;
+        arg0->animation_table = temp_s1->animation_table;
         arg0->unk40 = D_8010A588[arg0->unk2];
         arg0->unk42 = temp_s1->unk42;
         arg0->unk16 = D_8010A590[arg0->unk2];

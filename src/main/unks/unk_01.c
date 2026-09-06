@@ -20,7 +20,7 @@ void func_800D3964(struct UnkObj* arg0)
     }
     arg0->x_pos.i.hi = 0xA0;
     arg0->unk16 = 0;
-    arg0->unk47 = arg0->unk2;
+    arg0->animation_step.fields.frame_index = arg0->unk2;
     arg0->state++;
     is_on_screen(arg0);
 }

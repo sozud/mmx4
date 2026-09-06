@@ -5,6 +5,149 @@
 void SelectACharacterUpdate(struct MiscObj*);
 
 extern u16 D_800F1868[18];
+extern u8 D_800F164C[4];
+extern s16 D_800F1650[2];
+extern union MainPaletteData D_800F1660;
+extern const u32* D_800F2FD4[];
+extern const u32* D_8011AFF0[];
+extern struct StageObjectMarginData D_800F4334;
+extern s8* D_800F49DC[10];
+extern u16 D_800F4A04[10];
+extern u8 D_800F2B5C[21][12];
+extern struct HudSpriteOrigin D_800F30F4[8];
+extern struct PlayerGaugePosition D_800F3124[2];
+extern u16 D_800F312C[4];
+extern s32 D_8010F678[3];
+extern u16 D_80106070[64];
+extern u8* D_80141EE8[];
+extern u32* D_80137E08;
+extern u8 D_8013B800[4];
+
+s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan);
+s32 func_800157AC(u8 type, s32 unused, struct Unk6* source);
+
+s32 func_8002938C(s32 id)
+{
+    const u8* ids = s_StageMainIds[(u8)engine_obj.stage][(u8)engine_obj.substage];
+    s32 index = 0;
+
+    while (ids[index] != 0xFF && ids[index] != (u8)id)
+        index++;
+    return index;
+}
+
+s32 func_8001540C(s32 arg0, s32 arg1, struct Unk6* arg2)
+{
+    u32 bank = arg0 & 0x7F;
+    u32 group = arg0 & 0xF;
+    u32 index = arg1 & 0xFF;
+    u32* command;
+    u32 count;
+
+    if (bank >= COUNT(D_8013E198) || D_8013E198[bank] == -1)
+        return -1;
+    if (D_80141F50[group] == NULL || D_80141EE8[group] == NULL)
+        return -2;
+    count = (u32*)D_80141EE8[group] - (u32*)D_80141F50[group];
+    if (index >= count)
+        return -2;
+    command = &((u32*)D_80141F50[group])[index];
+    D_80137E08 = command;
+    if (*command == 0)
+        return -5;
+    if (D_800F164C[*(u8*)command >> 6] != 0)
+        return func_800157AC(D_800F164C[*(u8*)command >> 6], index, arg2);
+    return func_800154E8(arg0 & 0xFF, *(u8*)command & 0x3F, arg2, arg0 & 0xFF);
+}
+
+s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan)
+{
+    VagAtr tone;
+    const u8* object = (const u8*)source;
+    u8 packed1 = ((u8*)D_80137E08)[1];
+    u8 packed2 = ((u8*)D_80137E08)[2];
+    u8 packed3 = ((u8*)D_80137E08)[3];
+    u8 fixed_pan = packed1 >> 7;
+    u8 priority = packed2 & 0xF;
+    s16 program = packed2 >> 4;
+    s16 vag = packed1 & 0x7F;
+    s16 voice = packed3 & 0x1F;
+    s8 remaining = (packed3 & 0x60) >> 5;
+
+    if (source != NULL) {
+        if (arg0 & 0x80) {
+            pan = object[2];
+        } else {
+            s16 x = *(const s16*)(object + 0xA);
+            s8 background = *(const s8*)(object + 0x14);
+
+            if (background >= 0 && background < COUNT(background_objects))
+                x -= background_objects[background].x_pos.i.hi;
+            pan = x / 10;
+            if ((s8)pan < 5)
+                pan = 5;
+            if ((s8)pan >= 0x1C)
+                pan = 0x1B;
+        }
+    }
+
+    while (remaining-- >= 0) {
+        s32 left;
+        s32 right;
+        u8 voice_index = voice & 0xFF;
+
+        SsUtGetVagAtr(arg1 & 0xFF, vag, program, &tone);
+        left = right = tone.vol;
+        if (!fixed_pan && source != NULL) {
+            if ((s8)pan < 0x10)
+                left = (s8)pan * ((u32)left >> 4);
+            else if ((s8)pan >= 0x11)
+                right = (left >> 4) * (0x20 - (s8)pan);
+        }
+        if (SpuGetKeyStatus(1u << voice_index) != 0 && priority < D_80139234[voice_index])
+            return -4;
+        SsUtKeyOnV(voice_index, arg1 & 0xFF, vag, program, tone.min, tone.shift, right, left);
+        D_80139234[voice_index] = priority;
+        if (++program >= 0x10) {
+            vag++;
+            program = 0;
+        }
+        voice++;
+    }
+    return 0;
+}
+
+s32 func_800157AC(u8 type, s32 unused, struct Unk6* source)
+{
+    u8 packed1 = ((u8*)D_80137E08)[1];
+    u8 packed2 = ((u8*)D_80137E08)[2];
+    u8 packed3 = ((u8*)D_80137E08)[3];
+    u8 fixed_pan = packed1 >> 7;
+    u8 access = packed1 & 0x7F;
+    u8 priority = packed2 & 0xF;
+    u8 slot = packed2 >> 4;
+    u8 current = D_8013924C[slot];
+    u8 sequence = packed3 & 0x1F;
+
+    (void)unused;
+    (void)source;
+    if (current != 0xFF && SsIsEos(access, current & 0x1F)) {
+        if (priority < (current >> 5))
+            return -1;
+        if ((current & 0x1F) == 0x1F)
+            SsSeqStop(access);
+        else
+            SsSepStop(access, current & 0xF);
+    }
+    if (type == 2) {
+        SsSepPlay(access, sequence, SSPLAY_PLAY, D_800F1650[fixed_pan]);
+        D_8013924C[slot] = sequence | (priority << 5);
+    } else {
+        SsSeqPlay(access, SSPLAY_PLAY, D_800F1650[fixed_pan]);
+        D_8013924C[slot] = 0x1F | (priority << 5);
+    }
+    return 0;
+}
 
 u32 D_800F45E4[10] = {
     0,
@@ -126,6 +269,236 @@ void func_8001A9EC(struct EngineObj* obj)
 void func_8002B3C0(struct BaseObj* obj)
 {
     func_8002B318(obj, 0x60, 0x50);
+}
+
+s32 func_8002B1E8(struct BaseObj* object, s32 x_margin, s32 y_margin)
+{
+    s32 x = (u16)object->x_pos.i.hi;
+    s32 y = (u16)object->y_pos.i.hi;
+
+    if (object->bg_offset >= 0) {
+        x -= (u16)background_objects[object->bg_offset].x_pos.i.hi;
+        y -= (u16)background_objects[object->bg_offset].y_pos.i.hi;
+    }
+
+    if ((u16)(x + x_margin) >= (u16)(0x140 + 2 * x_margin))
+        return 1;
+    return (u16)(y + y_margin) >= (u16)(0xF0 + 2 * y_margin);
+}
+
+s32 func_8002B780(void)
+{
+    s32 value = get_random();
+
+    return value != 0 ? value : 1;
+}
+
+void func_80029A48(void)
+{
+    static const u16 sequence[] = { 0x20, 0x20, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
+    s8* phase = &engine_obj.character_state.fields.secret_code_phase;
+    s8* index = &engine_obj.character_state.fields.secret_code_index;
+    u16 input = controller_state;
+    u16 held = D_80166C08;
+
+    switch (*phase) {
+    case 0:
+        *index = 0;
+        if (input != 0 && input == sequence[0] && held == input) {
+            *index = 1;
+            *phase = 1;
+        }
+        break;
+    case 1:
+        if (input == 0)
+            break;
+        if (input != sequence[(u8)*index] || held != input) {
+            *phase = 0;
+            break;
+        }
+        if (*index == 7)
+            (*phase)++;
+        (*index)++;
+        break;
+    case 2:
+        if (input == 0)
+            break;
+        if (input & 0x840) {
+            u16 expected = sequence[(u8)*index];
+
+            if ((held & expected) == expected)
+                engine_obj.unk37 = 1;
+        } else if (input & sequence[(u8)*index]) {
+            break;
+        }
+        *phase = 0;
+        break;
+    }
+}
+
+void func_80029BD8(void)
+{
+    static const u16 sequence[] = { 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x20 };
+    s8* phase = &engine_obj.character_state.fields.secret_code_phase;
+    s8* index = &engine_obj.character_state.fields.secret_code_index;
+    u16 input = controller_state;
+    u16 held = D_80166C08;
+
+    switch (*phase) {
+    case 0:
+        *index = 0;
+        if (input != 0 && input == sequence[0] && held == (input | 8)) {
+            *index = 1;
+            *phase = 1;
+        } else if (input != 0) {
+            *phase = 0;
+        }
+        break;
+    case 1:
+        if (input == 0)
+            break;
+        if (input != sequence[(u8)*index] || held != (input | 8)) {
+            *phase = 0;
+            break;
+        }
+        if (*index == 5)
+            (*phase)++;
+        (*index)++;
+        break;
+    case 2:
+        if (held == 0) {
+            (*phase)++;
+        } else if (input == 0 || !(held & (sequence[(u8)*index - 1] | 8))) {
+            *phase = 0;
+        }
+        break;
+    case 3:
+        if (input == 0)
+            break;
+        if (input & 0x840) {
+            u16 expected = sequence[(u8)*index];
+
+            if ((held & expected) == expected)
+                engine_obj.unk37 = 1;
+        } else if (input & sequence[(u8)*index]) {
+            break;
+        }
+        *phase = 0;
+        break;
+    }
+}
+
+void func_8004A6E8(struct Unk* object)
+{
+    func_8002B694(object);
+    func_80015DC8(object);
+}
+
+static u8 get_stage_tile_attribute(s8 layer, s16 x, s16 y)
+{
+    s32 block_x = x >> 8;
+    s32 block_y = y >> 8;
+    u8 block;
+    u16 tile;
+
+    if (block_x < 0 || block_y < 0)
+        return 0;
+    block = SP_BG_TILEMAP[layer * layout_size + block_y * layout_width + block_x];
+    if (block == 0)
+        return 0;
+    tile = SP_BG_TILE_PIXELS[block * 0x100 + (y & 0xF) * 0x10 + (x & 0xF)];
+    return SP_BG_TILE_ATTRS[tile & 0x3FFF] & 0xFF;
+}
+
+u8 func_8002D724(struct PlayerObj* object, s16 x, s16 y)
+{
+    return get_stage_tile_attribute(object->bg_offset, x, y);
+}
+
+s32 func_8002D7E4(struct Unk* object, s16 x, s16 y)
+{
+    u8 attribute = get_stage_tile_attribute(object->bg_offset, x, y);
+
+    if (attribute == 0)
+        return 0;
+    object->unk6C = x & 0xF;
+    object->unk6E = y & 0xF;
+    return attribute;
+}
+
+s32 func_8002CC34(struct Unk* object, u8 attribute)
+{
+    switch (attribute) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 1;
+        *(s16*)D_8013B800 = ~object->unk6C;
+        return -1;
+    default:
+        return 0;
+    }
+}
+
+void func_8002CB58(struct Unk* object)
+{
+    s16 x = D_8013B7F8 + D_8013B7E0 - 1;
+    u8 attribute;
+
+    attribute = func_8002D7E4(object, x, D_8013B7FC);
+    if (func_8002CC34(object, attribute))
+        return;
+    attribute = func_8002D7E4(object, x, D_8013B7FC - D_8013B7E4);
+    if (func_8002CC34(object, attribute))
+        return;
+    attribute = func_8002D7E4(object, x, D_8013B7FC + D_8013B7E4 - 1);
+    func_8002CC34(object, attribute);
+}
+
+s32 func_8002D490(struct PlayerObj* object)
+{
+    s16 offset = *(s16*)D_8013B800;
+    s16 x;
+
+    if (D_8013B7DC & 1) {
+        if (object->unk15)
+            x = D_8013B7F0 + offset + D_8013B7E8 + D_8013B7E0 - 1;
+        else
+            x = D_8013B7F0 + offset - D_8013B7E8 + D_8013B7E0 - 1;
+    } else {
+        if (object->unk15)
+            x = D_8013B7F0 + offset + D_8013B7E8 - D_8013B7E0;
+        else
+            x = D_8013B7F0 + offset - D_8013B7E8 - D_8013B7E0;
+    }
+    if (func_8002D5E4(object, x))
+        return -1;
+    object->x_pos.i.lo = 0;
+    object->x_pos.i.hi += offset;
+    return 0;
+}
+
+void func_8002C9E4(struct PlayerObj* object)
+{
+    object->x_pos.i.lo = 0;
+    object->y_pos.i.lo = 0;
+    object->x_pos.i.hi += *(s16*)D_8013B800;
+    object->y_pos.i.hi += D_8013B804;
+}
+
+void func_8002C954(struct PlayerObj* object)
+{
+    if (func_8002D25C(object) && func_8002D490(object))
+        func_8002C9E4(object);
+}
+
+void func_8002C99C(struct PlayerObj* object)
+{
+    if (func_8002D490(object) && func_8002D25C(object))
+        func_8002C9E4(object);
 }
 
 void func_8002E994(struct EngineObj* arg0)
@@ -317,19 +690,349 @@ void func_8001663C(u8 selection, u8 volume)
     D_80139530 = 7;
 }
 
-s32 func_80015D60(struct Unk19* arg0, s32 animation)
+void func_8002217C(u16 message, u8 portrait, u8 delay_only)
 {
-    struct MiscObj* object = (struct MiscObj*)arg0;
+    struct MiscObj* window;
+    u8* window_archive;
+    u32 window_frame_offset;
+    u16* dialogue_palette;
+    u16* messages;
 
-    object->animation_cursor = object->animation_table[animation];
-    object->unk17 = animation;
-    object->pad47[0] = 0xFF;
-    object->unk44 = *object->animation_cursor;
-    return 0;
+    if (abc_object.unkC != 0) {
+        abc_object.unk10 = message | 0x8000;
+        if (abc_object.unkC != 0x80) {
+            abc_object.unkC = 0x80;
+            abc_object.unkA = 0x27;
+            abc_object.unkD = 4;
+        }
+        return;
+    }
+    abc_object.unkC = 0x80;
+    abc_object.unk10 = 0;
+    abc_object.unkE = 0;
+    D_801397D8 = portrait;
+    D_801397BC = D_801397C0 = D_801397C4 = D_801397C8 = NULL;
+    D_801397CC = D_801397D0 = D_801397D4 = NULL;
+    if (delay_only) {
+        abc_object.unkA = 0x3C;
+        abc_object.unkD = 6;
+        return;
+    }
+    dialogue_palette = SP_PALETTE + (engine_obj.stage == 0xD ? 0x7C0 / 2 : 0x2A0 / 2);
+    memcpy(D_801397E4, dialogue_palette, sizeof(D_801397E4));
+    memcpy(dialogue_palette, D_800F1660.dialogue_palette, sizeof(D_800F1660.dialogue_palette));
+    messages = (u16*)pc_archive_slots[21];
+    abc_object.unk0 = (u16*)((u8*)messages + messages[message]);
+    abc_object.unk4 = *abc_object.unk0;
+    abc_object.unk6 = -0x78;
+    abc_object.unk8 = 0x1D;
+    abc_object.unkF = 1;
+    abc_object.unkA = 0x27;
+    abc_object.unkD = 0;
+    D_801397E0 = 0;
+    need_palette_load |= 1;
+    window = find_free_misc_obj();
+    D_801397BC = window;
+    if (window != NULL) {
+        window_archive = WINDOW_ARCHIVE_DATA;
+        memcpy(&window_frame_offset, window_archive + 8, sizeof(window_frame_offset));
+        window->active = 1;
+        window->id = 0x16;
+        window->unk2 = 2;
+        window->unk16 = 0x11;
+        window->animation_table = D_800F2FD4;
+        window->unk40 = 0x1E00;
+        window->unk42 = engine_obj.stage == 0xD ? 0x78CF : 0x7846;
+        window->bg_offset = -1;
+        window->x_pos.i.hi = 0xA0;
+        window->y_pos.i.hi = (abc_object.unk4 & 0x800)
+            ? (portrait == 0xFF ? 0xB4 : 0xAC)
+            : (portrait == 0x80 ? 0x74 : 0x3C);
+        window->unk3C = window_archive + window_frame_offset;
+        window->unk15 = 0;
+        func_80015D60(window, 0);
+    }
 }
 
-static P_TAG* quad_heads[2][4][8];
-static P_TAG* quad_tails[2][4][8];
+void func_80028690(struct BackgroundObj* bg)
+{
+    s16 step = (s8)bg->unk47;
+    s16 player_x = g_Player.x_pos.i.hi;
+    s16 player_y = g_Player.y_pos.i.hi;
+
+    if (bg->unk1E != bg->unk26) {
+        s16 next = bg->unk1E;
+        if (bg->unk26 >= bg->x_pos.i.hi)
+            next = bg->x_pos.i.hi + step;
+        else if (player_x - bg->x_pos.i.hi - bg->unk30 >= 5)
+            next = bg->x_pos.i.hi - step;
+        if ((step >= 0 && next < bg->unk26) || (step < 0 && next > bg->unk26))
+            bg->unk1E = next;
+        else
+            bg->unk1E = bg->unk26;
+    }
+    if (bg->unk1C != bg->unk24) {
+        s16 next = bg->unk1C;
+        if (bg->unk24 < bg->x_pos.i.hi)
+            next = bg->x_pos.i.hi - step;
+        else if (player_x - bg->x_pos.i.hi - bg->unk32 < 4)
+            next = bg->x_pos.i.hi + step;
+        if ((step >= 0 && next > bg->unk24) || (step < 0 && next < bg->unk24))
+            bg->unk1C = next;
+        else
+            bg->unk1C = bg->unk24;
+    }
+    if (bg->unk22 != bg->unk2A) {
+        s16 next = bg->unk22;
+        if (bg->unk2A >= bg->y_pos.i.hi)
+            next = bg->y_pos.i.hi + step;
+        else if (player_y - bg->y_pos.i.hi - bg->unk2C < 4)
+            next = bg->y_pos.i.hi - step;
+        if ((step >= 0 && next < bg->unk2A) || (step < 0 && next > bg->unk2A))
+            bg->unk22 = next;
+        else
+            bg->unk22 = bg->unk2A;
+    }
+    if (bg->unk20 != bg->unk28) {
+        s16 next = bg->unk20;
+        if (bg->unk28 < bg->y_pos.i.hi)
+            next = bg->y_pos.i.hi - step;
+        else if (player_y - bg->y_pos.i.hi - bg->unk2E < 4)
+            next = bg->y_pos.i.hi + step;
+        if ((step >= 0 && next > bg->unk28) || (step < 0 && next < bg->unk28))
+            bg->unk20 = next;
+        else
+            bg->unk20 = bg->unk28;
+    }
+}
+
+void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
+{
+    struct StageObjectRecord* start;
+    struct StageObjectRecord* record;
+
+    if ((u8)engine_obj.stage >= 13 || (u8)engine_obj.substage >= 2)
+        abort();
+    start = D_800F43C8[engine_obj.stage][engine_obj.substage];
+    record = start;
+    while (record->object_type != 0xFF) {
+        u8 flags = record->flags;
+        s16 scan_left = left;
+        s16 scan_right = right;
+        s16 scan_top = top;
+        s16 scan_bottom = bottom;
+        s16 x = record->x;
+        s16 y = record->y;
+
+        if (!(flags & 0x81)) {
+            if (flags & 0x70) {
+                u16 margin = D_800F4334.margins[(flags >> 4) - 1];
+
+                if (direction == 1) {
+                    scan_left += margin;
+                    scan_right += margin;
+                }
+                if (direction == 2) {
+                    scan_left -= margin;
+                    scan_right -= margin;
+                }
+                if (direction == 3) {
+                    scan_top += margin;
+                    scan_bottom += margin;
+                }
+                if (direction == 4) {
+                    scan_top -= margin;
+                    scan_bottom -= margin;
+                }
+            }
+            if (scan_left < x && x < scan_right && scan_top < y && y < scan_bottom) {
+                struct ObjectHeader* object = MakeObject(record->object_type);
+
+                if (object != NULL) {
+                    u8 index;
+
+                    object->active = 0x41;
+                    object->id = record->id;
+                    object->unk2 = record->subtype;
+                    object->x_pos.i.hi = x;
+                    object->y_pos.i.hi = y;
+                    object->backref = record;
+                    if (record->object_type == 0) {
+                        struct Unk* main = (struct Unk*)object;
+
+                        index = (u8)func_8002938C(record->id);
+                        main->unk40 = D_801406A8[index] >> 7;
+                        main->unk42 = ((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6);
+                        main->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[index];
+                    }
+                    record->flags |= 1;
+                }
+            }
+        }
+        record++;
+    }
+}
+
+void func_80028E24(void)
+{
+    struct BackgroundObj* bg = &background_objects[0];
+    s16 old_x = bg->unk14.i.hi;
+    s16 x = bg->x_pos.i.hi;
+    s16 old_y = bg->unk18.i.hi;
+    s16 y = bg->y_pos.i.hi;
+
+    if (old_x != x) {
+        if (old_x < x)
+            func_80028FEC(x + 0x150, x + 0x170, y - 0x30, y + 0x120, 1);
+        else
+            func_80028FEC(x - 0x30, x - 0x10, y - 0x30, y + 0x120, 2);
+    }
+    if (old_y != y) {
+        if (old_y < y)
+            func_80028FEC(x - 0x30, x + 0x170, y + 0x100, y + 0x120, 3);
+        else
+            func_80028FEC(x - 0x30, x + 0x170, y - 0x30, y - 0x10, 4);
+    }
+}
+
+void func_800B5D04(struct EffectObj* arg0)
+{
+    const s8* animation;
+    u16 destination;
+
+    arg0->active = 1;
+    if (engine_obj.stage != 0 || engine_obj.substage != 0)
+        abort();
+    animation = D_800F49DC[(u8)arg0->unk2];
+    arg0->ext.palette_animation.cursor = (s8*)animation;
+    if (animation == NULL) {
+        func_8002B108(OBJECT_HEADER(arg0));
+        return;
+    }
+    destination = D_800F4A04[(u8)arg0->unk2];
+    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + (destination & 0xFF) * 8;
+    arg0->ext.palette_animation.source = SP_ARC_30 + (u8)animation[0] * 8;
+    arg0->ext.palette_animation.timer = animation[1];
+    arg0->ext.palette_animation.palette_count = destination >> 8;
+    func_800B5C60(arg0);
+    arg0->state++;
+}
+
+s32 func_800D4024(struct QuadObj* arg0)
+{
+    struct BackgroundObj* bg = &background_objects[arg0->bg_offset];
+    s32 x = (u16)arg0->x_pos.i.hi - (u16)bg->x_pos.i.hi;
+    s32 y = (u16)arg0->y_pos.i.hi - (u16)bg->y_pos.i.hi;
+    u32 half_width = abs((s16)(arg0->unk1C.i.hi - arg0->unk14.i.hi));
+    u32 half_height = abs((s16)(arg0->unk30.i.hi - arg0->unk18.i.hi));
+    s32 visible = 0;
+
+    if ((u16)(x + half_width) < (u16)(0x140 + half_width * 2) && (u16)(y + half_height) < (u16)(0xF0 + half_height * 2))
+        visible = 1;
+    x += arg0->unk14.i.hi + (half_width >> 1);
+    y += arg0->unk18.i.hi + (half_height >> 1);
+    if ((u16)(x + half_width) < (u16)(0x140 + half_width * 2) && (u16)(y + half_height) < (u16)(0xF0 + half_height * 2))
+        visible = 1;
+    return visible;
+}
+
+void func_800D3C58(struct QuadObj* arg0)
+{
+    const struct SearchLightInit* init = &D_8010F600[(u8)arg0->unk2];
+    s16 origin = init->vertices[0];
+    s16 span = (s16)(init->vertices[2] - origin);
+    s32 x_accum = arg0->runtime.search_light.x_accumulator;
+    s32 y_accum = arg0->runtime.search_light.y_accumulator;
+    u16 direction = arg0->link.direction;
+
+    if (arg0->runtime.search_light.pause_timer != 0) {
+        arg0->runtime.search_light.pause_timer--;
+    } else {
+        x_accum += arg0->ext.search_light.velocity;
+        y_accum += arg0->ext.search_light.vertical_velocity;
+        arg0->ext.search_light.velocity += arg0->ext.search_light.acceleration;
+        arg0->ext.search_light.vertical_velocity += arg0->ext.search_light.vertical_acceleration;
+        arg0->unk14.val += arg0->ext.search_light.velocity;
+        arg0->unk1C.val += arg0->ext.search_light.velocity;
+        switch (arg0->unk5) {
+        case 0:
+            if ((!direction && arg0->unk14.i.hi >= (s16)(arg0->runtime.search_light.extent + origin - 0x20)) || (direction && arg0->unk14.i.hi <= (s16)(origin + 0x20 - arg0->runtime.search_light.extent))) {
+                arg0->unk5 = 1;
+                arg0->ext.search_light.acceleration = direction
+                    ? D_8010F678[(u8)arg0->unk2 >> 1]
+                    : -D_8010F678[(u8)arg0->unk2 >> 1];
+            }
+            break;
+        case 1:
+            if (!direction) {
+                if (arg0->ext.search_light.velocity <= 0x7FFF) {
+                    arg0->ext.search_light.velocity = 0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (arg0->unk14.i.hi >= (s16)(origin + arg0->runtime.search_light.extent)) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->unk14.val = 0;
+                    arg0->unk1C.val = 0;
+                    arg0->unk14.i.hi = origin + arg0->runtime.search_light.extent;
+                    arg0->unk1C.i.hi = span + origin + arg0->runtime.search_light.extent;
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    direction ^= 1;
+                }
+            } else {
+                if (arg0->ext.search_light.velocity >= -0x7FFF) {
+                    arg0->ext.search_light.velocity = -0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (arg0->unk14.i.hi <= (s16)(origin - arg0->runtime.search_light.extent)) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->unk14.val = 0;
+                    arg0->unk1C.val = 0;
+                    arg0->unk14.i.hi = origin - arg0->runtime.search_light.extent;
+                    arg0->unk1C.i.hi = span + origin - arg0->runtime.search_light.extent;
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    direction ^= 1;
+                }
+            }
+            break;
+        case 2:
+            arg0->ext.search_light.acceleration = direction
+                ? -D_8010F678[(u8)arg0->unk2 >> 1]
+                : D_8010F678[(u8)arg0->unk2 >> 1];
+            arg0->unk5 = 3;
+            arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
+            break;
+        case 3:
+            if ((!direction && arg0->unk14.i.hi >= (s16)(origin + 0x20 - arg0->runtime.search_light.extent)) || (direction && arg0->unk14.i.hi <= (s16)(arg0->runtime.search_light.extent + origin - 0x20))) {
+                arg0->ext.search_light.acceleration = 0;
+                arg0->unk5 = 0;
+                arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+            }
+            break;
+        }
+        arg0->runtime.search_light.x_accumulator = x_accum;
+        arg0->runtime.search_light.y_accumulator = y_accum;
+        arg0->link.direction = direction;
+    }
+    if (func_800D4024(arg0)) {
+        arg0->on_screen = 1;
+    } else {
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
+
+void func_800D3FBC(struct QuadObj* arg0)
+{
+    if (arg0->backref != NULL)
+        *(u8*)arg0->backref = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
+
 static P_TAG* background_heads[2][6][8];
 static P_TAG* background_tails[2][6][8];
 
@@ -352,7 +1055,7 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->data = player->unk3C;
         frame->texture = player->unk40;
         frame->clut = player->unk42;
-        frame->index = player->cur_anim;
+        frame->index = player->animation_step.fields.frame_index;
     } else if (PC_OBJECT_IN_ARRAY(object, baz_objects)) {
         struct BazObj* baz = (struct BazObj*)object;
 
@@ -366,14 +1069,14 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->data = unknown->unk3C;
         frame->texture = unknown->unk40;
         frame->clut = unknown->unk42;
-        frame->index = unknown->unk47;
+        frame->index = unknown->animation_step.fields.frame_index;
     } else if (PC_OBJECT_IN_ARRAY(object, main_objects)) {
         struct Unk* main = (struct Unk*)object;
 
         frame->data = (void*)main->sprite_frames;
         frame->texture = main->unk40;
         frame->clut = main->unk42;
-        frame->index = main->animation_index;
+        frame->index = main->animation_step.fields.frame_index;
     } else if (PC_OBJECT_IN_ARRAY(object, weapon_objects)) {
         struct WeaponObj* weapon = (struct WeaponObj*)object;
 
@@ -387,14 +1090,14 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->data = visual->unk3C;
         frame->texture = visual->unk40;
         frame->clut = visual->unk42;
-        frame->index = visual->unk47;
+        frame->index = visual->animation_step.fields.frame_index;
     } else if (PC_OBJECT_IN_ARRAY(object, misc_objects)) {
         struct MiscObj* misc = (struct MiscObj*)object;
 
         frame->data = misc->unk3C;
         frame->texture = misc->unk40;
         frame->clut = misc->unk42;
-        frame->index = misc->unk47;
+        frame->index = misc->animation_step.fields.frame_index;
     } else {
         return 0;
     }
@@ -418,13 +1121,11 @@ void func_80024260(void)
         u32 j;
 
         for (j = 0; j < 8; j++) {
-            P_TAG* head = quad_heads[buffer][i][j];
+            P_TAG* head = D_8013E1E8[buffer][i][j];
 
             if (head != NULL) {
-                setaddr(quad_tails[buffer][i][j], getaddr(ordering_tag));
+                setaddr(D_8013BC40[buffer][i][j], getaddr(ordering_tag));
                 setaddr(ordering_tag, head);
-                quad_heads[buffer][i][j] = NULL;
-                quad_tails[buffer][i][j] = NULL;
             }
         }
     }
@@ -593,16 +1294,11 @@ void func_80024334(struct VisualObj* object)
 
     if (primitive != SP_PRIM_CURSOR) {
         u32 buffer = SP_DRAW_BUFFER;
-        u32 group = object->unk16 >> 4;
-        u32 priority = object->unk16 & 0xF;
-        P_TAG* tail = quad_tails[buffer][group][priority];
+        u32 group = (object->unk16 >> 4) & 3;
+        u32 priority = object->unk16 & 7;
 
-        if (tail == NULL) {
-            quad_heads[buffer][group][priority] = first_draw_mode;
-        } else {
-            setaddr(tail, first_draw_mode);
-        }
-        quad_tails[buffer][group][priority] = (P_TAG*)(primitive - 1);
+        setaddr(D_8013BC40[buffer][group][priority], first_draw_mode);
+        D_8013BC40[buffer][group][priority] = (P_TAG*)(primitive - 1);
     }
 
     SP_PRIM_CURSOR = primitive;
@@ -658,19 +1354,201 @@ void func_80024920(struct QuadObj* arg0)
     draw_mode->code[0] = 0xE1000000;
 
     ordering = arg0->unk36;
-    group = ordering >> 4;
+    group = (ordering >> 4) & 3;
     priority = ordering & 0xF;
     buffer = SP_DRAW_BUFFER;
-    if (quad_heads[buffer][group][priority] == NULL) {
-        quad_heads[buffer][group][priority] = (P_TAG*)draw_mode;
-    } else {
-        setaddr(quad_tails[buffer][group][priority], draw_mode);
-    }
+    setaddr(D_8013BC40[buffer][group][priority], draw_mode);
     setaddr(draw_mode, primitive);
-    quad_tails[buffer][group][priority] = (P_TAG*)primitive;
+    D_8013BC40[buffer][group][priority] = (P_TAG*)primitive;
 
     SP_PRIM_CURSOR = primitive + 1;
     SP_DRAW_MODE_CURSOR = draw_mode + 1;
+}
+
+void func_80024B9C(struct QuadObj* arg0)
+{
+    POLY_G4* primitive;
+    DR_MODE* draw_mode;
+    const u8* color;
+    s32 x;
+    s32 y;
+    u32 group;
+    u32 priority;
+    u32 buffer;
+
+    if (SP_SPRITE_COUNT >= 1000 || arg0->unk34 >= COUNT(D_800F2B5C))
+        return;
+    if (arg0->bg_offset < 0) {
+        x = arg0->x_pos.i.hi;
+        y = arg0->y_pos.i.hi;
+    } else {
+        struct BackgroundObj* background = &background_objects[arg0->bg_offset];
+
+        x = arg0->x_pos.i.hi - background->x_pos.i.hi;
+        y = arg0->y_pos.i.hi - background->y_pos.i.hi;
+    }
+    primitive = SP_PRIM_CURSOR;
+    draw_mode = SP_DRAW_MODE_CURSOR;
+    color = D_800F2B5C[arg0->unk34];
+    setPolyG4(primitive);
+    setSemiTrans(primitive, (arg0->active & 0x10) != 0);
+    setXY4(primitive,
+        x + arg0->unk14.i.hi, y + arg0->unk18.i.hi,
+        x + arg0->unk1C.i.hi, y + arg0->unk20.i.hi,
+        x + arg0->unk2C.i.hi, y + arg0->unk30.i.hi,
+        x + arg0->unk24.i.hi, y + arg0->unk28.i.hi);
+    setRGB0(primitive, color[0], color[1], color[2]);
+    setRGB1(primitive, color[3], color[4], color[5]);
+    setRGB2(primitive, color[6], color[7], color[8]);
+    setRGB3(primitive, color[9], color[10], color[11]);
+    SetDrawMode(draw_mode, 0, 0, 0, NULL);
+    group = ((u8)arg0->unk36 >> 4) & 3;
+    priority = (u8)arg0->unk36 & 0xF;
+    if (priority >= 8)
+        return;
+    buffer = SP_DRAW_BUFFER;
+    setaddr(D_8013BC40[buffer][group][priority], draw_mode);
+    setaddr(draw_mode, primitive);
+    D_8013BC40[buffer][group][priority] = (P_TAG*)primitive;
+    SP_PRIM_CURSOR = primitive + 1;
+    SP_DRAW_MODE_CURSOR = draw_mode + 1;
+    SP_SPRITE_COUNT++;
+}
+
+void func_80025188(s32 slot, u8 index)
+{
+    const u8* archive = (const u8*)SP_SPRITE_FRAMES;
+    const u8* table;
+    const u8* pieces;
+    u16 count;
+
+    if ((u32)slot >= COUNT(D_800F30F4) || archive == NULL)
+        return;
+    table = archive + *(const s32*)(archive + 4);
+    count = *(const u16*)(table + (u32)index * 4);
+    pieces = table + *(const u16*)(table + (u32)index * 4 + 2) * 4;
+    while (count-- != 0 && SP_SPRITE_COUNT < 1000) {
+        SPRT_16* sprite = SP_PRIM_CURSOR;
+        DR_MODE* mode = SP_DRAW_MODE_CURSOR;
+        u8 flags = pieces[0];
+        u16 texture = pieces[1] | ((flags & 3) << 8);
+        s32 texture_index = texture % 80 + ((texture / 80) << 8);
+        u16 clut = D_800F30F4[slot].clut + ((flags & 0xC) >> 2);
+
+        setSprt16(sprite);
+        sprite->code |= 1;
+        setXY0(sprite, D_800F30F4[slot].x + (s8)pieces[2],
+            D_800F30F4[slot].y + (s8)pieces[3]);
+        setUV0(sprite, (u8)((texture_index + 0x5B0) << 4),
+            (u8)((texture_index + 0x5B0) & 0xF0));
+        sprite->clut = clut;
+        setlen(mode, 1);
+        mode->code[0] = 0xE1000000 | ((texture_index + 0x5B0) >> 8);
+        addPrim(&cur_draw_info->ordering_table.ui, sprite);
+        addPrim(&cur_draw_info->ordering_table.ui, mode);
+        SP_PRIM_CURSOR = sprite + 1;
+        SP_DRAW_MODE_CURSOR = mode + 1;
+        SP_SPRITE_COUNT++;
+        pieces += 4;
+    }
+}
+
+void func_800253F0(struct PlayerObj* player, s32 gauge)
+{
+    s8 value = player->unk5C & 0x7F;
+    s8 target = gauge == 0 ? engine_obj.unk46 : 0x30;
+    s16 x = D_800F3124[gauge].x;
+    u16 bottom = D_800F3124[gauge].bottom;
+
+    func_80025588(x, x + 5, bottom - value, bottom, value < target / 3);
+    if (value == player->unk5D)
+        return;
+    if (player->unk5D < value) {
+        player->unk5D = value;
+        return;
+    }
+    if (player->unk5C & 0x80)
+        player->unk5F = 0x10;
+    func_80025588(x, x + 5, bottom - (s8)player->unk5D, bottom - value, 2);
+    if (player->unk5F != 0) {
+        player->unk5F--;
+        return;
+    }
+    if (!(D_80141BD8.unk0 & 3))
+        player->unk5D--;
+}
+
+void func_80036F50(struct PlayerObj* player)
+{
+    static const u8 weapon_masks[] = { 0, 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
+    u16 input;
+    s8 weapon;
+
+    if (player->unkC3 != 0 || player->unkD9 != 0 || player->unk99 != 0 || player->unkC5 != 0 || player->unkE0 != 0 || engine_obj.unk1C != 0)
+        return;
+    input = player->unk80;
+    if ((((u16)player->unk7C & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
+        if (player->unk93 != 0) {
+            player->unk93 = 0;
+            func_800384DC(player);
+            func_8001540C(0, 0xC, 0);
+        }
+        return;
+    }
+    if (!(input & 0x600))
+        return;
+    weapon = player->unk93;
+    if (input & 0x200) {
+        do {
+            if (++weapon == 9) {
+                weapon = 0;
+                break;
+            }
+        } while (!(weapon_masks[(u8)weapon] & player->unkB9));
+    } else {
+        do {
+            if (--weapon < 0)
+                weapon = 8;
+            if (weapon == 0)
+                break;
+        } while (!(weapon_masks[(u8)weapon] & player->unkB9));
+    }
+    if (player->unk93 != weapon) {
+        player->unk93 = weapon;
+        func_800384DC(player);
+        func_8001540C(0, 0xC, 0);
+        player->unkA6 = 0;
+    }
+}
+
+s32 func_8002DD04(struct Unk* object)
+{
+    struct WeaponObj* weapon;
+
+    if (object->unk7A != 0) {
+        object->unk65 = 0;
+        return 0;
+    }
+    if (object->collision_data == D_80106070 && (g_Player.unk2 == 0 || !(g_Player.unkB9 & 0x40)))
+        return 0;
+    if (object->unk5 != 0)
+        object->unk42 &= 0x7FFF;
+    for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
+        s32 result;
+
+        if (!weapon->active)
+            continue;
+        if (!func_8002BD58(weapon, object, (s16*)((u8*)weapon + 0x80),
+                (s16*)((u8*)weapon + 0x82)))
+            continue;
+        result = (s8)func_8002DE30(object, weapon);
+        if (result == 0x7E)
+            return 0;
+        if (result != 0)
+            return result;
+    }
+    object->unk65 = 0;
+    return 0;
 }
 
 void func_800262B8(u8 layer)

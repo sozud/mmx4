@@ -46,9 +46,9 @@ void func_800B2444(struct VisualObj* arg0)
 {
     switch (arg0->unk5) {
     case 0:
-        arg0->unk24 = -0x8000;
+        arg0->y_vel.val = -0x8000;
         arg0->unk54 = 0x78;
-        arg0->unk20 = 0;
+        arg0->x_vel.val = 0;
         arg0->unk28 = 0;
         arg0->unk2C = 0;
         arg0->unk5 = 1;

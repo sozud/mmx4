@@ -34,7 +34,7 @@ void func_800CB634(struct MiscObj* arg0)
     // for unk2 == 2, setting position of greyed out "GAME START" text
     arg0->x_pos.val = FIXED(D_8010E71C[temp_a1].x);
     arg0->y_pos.val = FIXED(D_8010E71C[temp_a1].y);
-    arg0->unk47 = D_8010E71C[temp_a1].unk;
+    arg0->animation_step.fields.frame_index = D_8010E71C[temp_a1].unk;
     is_on_screen(arg0);
 }
 
@@ -49,13 +49,13 @@ void func_800CB708(struct MiscObj* arg0)
         if (game_info.unk2 != 1) {
             if (!((game_info.unk2 < 2) && (game_info.unk2 == 0)))
                 goto use_default_frame;
-            arg0->unk47 = D_8010E71C[2].unk;
+            arg0->animation_step.fields.frame_index = D_8010E71C[2].unk;
         } else {
-            arg0->unk47 = D_8010E71C[13].unk;
+            arg0->animation_step.fields.frame_index = D_8010E71C[13].unk;
         }
         goto frame_selected;
     use_default_frame:
-        arg0->unk47 = D_8010E71C[14].unk;
+        arg0->animation_step.fields.frame_index = D_8010E71C[14].unk;
     frame_selected:;
     }
 

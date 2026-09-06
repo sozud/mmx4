@@ -38,7 +38,7 @@ void func_800B2DD0(struct VisualObj* arg0)
         }
     } else {
         temp_a0 = arg0->unk50;
-        if (arg0->unk46 >= 0 && temp_a0->state == 1 && (temp_a0->unk5 == 3 || temp_a0->unk5 == 5)) {
+        if (arg0->animation_step.fields.relative_step >= 0 && temp_a0->state == 1 && (temp_a0->unk5 == 3 || temp_a0->unk5 == 5)) {
             is_on_screen(arg0);
         } else {
             ZeroObjectState(arg0);
