@@ -16,7 +16,7 @@ void func_800CD78C(struct MiscObj* arg0)
 
     if (arg0->unk2 < 0x20) {
         arg0->unk42 = 0x7804;
-        arg0->unk47 = 0x1C;
+        arg0->animation_step.fields.frame_index = 0x1C;
         if (!(arg0->unk2 & 0x10)) {
             arg0->y_pos.val = FIXED(240);
             arg0->x_vel.val = FIXED(8);
@@ -49,7 +49,7 @@ void func_800CD78C(struct MiscObj* arg0)
         arg0->y_pos.i.hi = 72;
         arg0->state = 3;
         arg0->unk16 = 0;
-        arg0->unk47 = 0x1C;
+        arg0->animation_step.fields.frame_index = 0x1C;
         arg0->unk2 = 0;
     }
     is_on_screen(arg0);
@@ -97,7 +97,7 @@ void func_800CD974(struct MiscObj* arg0)
         func_8002B93C(arg0, temp_v0);
         arg0->x_vel.val *= 10;
         arg0->y_vel.val *= 8;
-        func_8002B718(arg0);
+        func_8002B718((struct MovingObj*)arg0);
         is_on_screen(arg0);
     }
 }
@@ -128,7 +128,7 @@ void func_800CDB10(struct MiscObj* arg0)
 {
     func_80015DC8();
     // transition "MEGAMAN" to white before full logo appears
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->ext.title_logo.palette2 = (s32*)(SP_PALETTE + 0x100);
         arg0->ext.title_logo.palette1 = SP_ARC_30;
         // interval to shift on
@@ -170,7 +170,7 @@ void func_800CDB84(struct MiscObj* arg0)
 void func_800CDC34(struct MiscObj* arg0)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         ZeroObjectState(arg0);
     } else {
         is_on_screen(arg0);

@@ -44,13 +44,13 @@ void func_800CBA80(struct MiscObj* arg0)
                 arg0->ext.unk.unk55 = 1;
             } else {
                 func_80015DC8(arg0);
-                if (arg0->unk45 != 0) {
+                if (arg0->animation_step.fields.event != 0) {
                     arg0->ext.unk.unk55 = 0;
                 }
             }
         } else if (arg0->ext.unk.unk55 != 0) {
             func_80015DC8(arg0);
-            if (arg0->unk45 != 0) {
+            if (arg0->animation_step.fields.event != 0) {
                 arg0->ext.unk.unk55 = 0;
                 func_80015D60(arg0, 0);
             }
@@ -71,13 +71,13 @@ void func_800CBA80(struct MiscObj* arg0)
                 arg0->ext.unk.unk55 = 1;
             } else {
                 func_80015DC8(arg0);
-                if (arg0->unk45 != 0) {
+                if (arg0->animation_step.fields.event != 0) {
                     arg0->ext.unk.unk55 = 0;
                 }
             }
         } else if (arg0->ext.unk.unk55) {
             func_80015DC8(arg0);
-            if (arg0->unk45 != 0) {
+            if (arg0->animation_step.fields.event != 0) {
                 arg0->ext.unk.unk55 = 0;
                 func_80015D60(arg0, arg0->ext.unk.unk54);
             }

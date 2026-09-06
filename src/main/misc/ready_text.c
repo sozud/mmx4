@@ -93,7 +93,7 @@ extern u8 D_8010E6B0[];
 // ReadyText State 0
 void func_800CB27C(struct MiscObj* arg0)
 {
-    if (arg0->ext.ready_text.unk50->unk16 != 0) {
+    if (arg0->ext.ready_text.owner->ext.unk_effect.unk16 != 0) {
         func_800CB5B4(arg0, NULL);
         arg0->unk5 = 1;
         arg0->ext.ready_text.unk54 = 8;

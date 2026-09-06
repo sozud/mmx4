@@ -23,8 +23,8 @@ void func_80049904(struct Unk* arg0)
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk67 = 0;
-    arg0->unk54 = (s32)D_800FAEF0;
-    arg0->unk50 = (s32)D_800FAEF0;
+    arg0->unk54 = D_800FAEF0;
+    arg0->unk50 = D_800FAEF0;
     arg0->unk62 = 0;
     arg0->unk18 = arg0->x_pos.val;
     arg0->unk1C = arg0->y_pos.val;

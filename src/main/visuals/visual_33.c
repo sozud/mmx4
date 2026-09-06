@@ -11,7 +11,7 @@ void func_800B2AD0(struct VisualObj* arg0)
         arg0->on_screen = 1;
         arg0->unk2 = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
-        arg0->unk30 = &D_8011BF40;
+        arg0->animation_table = &D_8011BF40;
         arg0->unk42 = 0x7802;
         arg0->unk40 = 0;
         arg0->unk16 = 3;
@@ -19,17 +19,17 @@ void func_800B2AD0(struct VisualObj* arg0)
         arg0->state++;
     }
 
-    var_s1 = -((player->cur_anim == 0xE5 || player->cur_anim == 0xE6) ^ 1);
-    if (player->cur_anim == 0xDD || player->cur_anim == 0xDE) {
+    var_s1 = -((player->animation_step.fields.frame_index == 0xE5 || player->animation_step.fields.frame_index == 0xE6) ^ 1);
+    if (player->animation_step.fields.frame_index == 0xDD || player->animation_step.fields.frame_index == 0xDE) {
         var_s1 = 1;
     }
-    if (player->cur_anim == 0xDF || player->cur_anim == 0xE0) {
+    if (player->animation_step.fields.frame_index == 0xDF || player->animation_step.fields.frame_index == 0xE0) {
         var_s1 = 2;
     }
-    if (player->cur_anim == 0xE1 || player->cur_anim == 0xE2) {
+    if (player->animation_step.fields.frame_index == 0xE1 || player->animation_step.fields.frame_index == 0xE2) {
         var_s1 = 3;
     }
-    if (player->cur_anim == 0xE3 || player->cur_anim == 0xE4) {
+    if (player->animation_step.fields.frame_index == 0xE3 || player->animation_step.fields.frame_index == 0xE4) {
         var_s1 = 4;
     }
 
@@ -76,7 +76,7 @@ void func_800B2C8C(struct MiscObj* arg0)
             playerUnkA6 = *(u8*)0x8014196E;
             arg0->x_pos.i.hi = 0x20;
             arg0->y_pos.i.hi = 0x34;
-            arg0->unk47 = 0x1F - playerUnkA6;
+            arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
         }
     }
 }

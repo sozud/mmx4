@@ -37,7 +37,7 @@ void func_800B5280(struct VisualObj* arg0)
 {
     D_8010A760[arg0->unk5](arg0);
     func_80015DC8(arg0);
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_32", func_800B52D8);

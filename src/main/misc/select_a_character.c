@@ -84,7 +84,7 @@ void func_800CCCA0(struct MiscObj* arg0)
         arg0->unk6++;
         return;
     }
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
 }
 
 // D_8010EB84 state 1
@@ -105,7 +105,7 @@ void func_800CCD48(struct MiscObj* arg0)
 // D_8010EB84 state 2
 void func_800CCD8C(struct MiscObj* arg0)
 {
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
     if (arg0->on_screen == 0) {
         arg0->state++;
     }
@@ -119,7 +119,7 @@ void func_800CCDD4(struct MiscObj* arg0)
         arg0->x_vel.val = FIXED(16);
         /* fallthrough */
     case 1:
-        func_8002B718(arg0);
+        func_8002B718((struct MovingObj*)arg0);
         if (arg0->on_screen == 0) {
             arg0->ext.sel_char.blast_timer = 20;
             arg0->unk7++;
@@ -134,7 +134,7 @@ void func_800CCDD4(struct MiscObj* arg0)
         }
         break;
     case 3:
-        func_8002B718(arg0);
+        func_8002B718((struct MovingObj*)arg0);
         if (arg0->x_pos.i.hi == 0xE0) {
             arg0->unk6 = 1;
             arg0->unk7 = 0;
@@ -180,7 +180,7 @@ const u32 padding = 0;
 // D_8010EB98 state 1
 void func_800CCF70(struct MiscObj* arg0)
 {
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
     switch (arg0->unk2) {
     case PLAYER_SELECT_UPPER:
         // when top "PLAYER SELECT" goes off to the left,
@@ -305,8 +305,8 @@ void func_800CD2BC(struct MiscObj* arg0)
     struct BaseObj* obj;
 
     func_80015DC8();
-    if (arg0->unk45 != 0) {
-        arg0->unk45 = 0;
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
         obj = (struct BaseObj*)find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 0x41;
@@ -317,7 +317,7 @@ void func_800CD2BC(struct MiscObj* arg0)
         }
     }
 
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->unk6 = 0;
         arg0->ext.sel_char.blast_timer = (arg0->ext.sel_char.unk54 & 1) ? 0x96 : 0x5A;
         arg0->ext.sel_char.unk54++;
@@ -332,7 +332,7 @@ void func_800CD2BC(struct MiscObj* arg0)
 void func_800CD390(struct MiscObj* arg0)
 {
     D_8010EBA8[arg0->unk6](arg0);
-    if ((engine_obj.cur_character != (arg0->unk2 - 7)) && (arg0->unk46 == 0)) {
+    if ((engine_obj.cur_character != (arg0->unk2 - 7)) && (arg0->animation_step.fields.relative_step == 0)) {
         arg0->unk6 = 0;
         arg0->ext.sel_char.blast_timer = 0;
     }
@@ -349,7 +349,7 @@ void func_800CD408(struct MiscObj* arg0)
         arg0->y_pos.i.hi -= 7;
     }
     func_80015DC8(arg0);
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
     if (arg0->x_pos.i.hi >= 161) {
         arg0->state++;
     }
@@ -361,8 +361,8 @@ void func_800CD498(struct MiscObj* arg0)
     struct MiscObj* temp_v0;
 
     func_80015DC8();
-    if (arg0->unk45 != 0) {
-        arg0->unk45 = 0;
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
         temp_v0 = find_free_misc_obj();
         // create X charged shot object
         if (temp_v0 != NULL) {
@@ -373,7 +373,7 @@ void func_800CD498(struct MiscObj* arg0)
             temp_v0->y_pos.i.hi = arg0->y_pos.i.hi;
         }
     }
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state++;
     }
 }
@@ -392,7 +392,7 @@ void func_800CD530(struct MiscObj* arg0)
         break;
     case 1:
         func_80015DC8(arg0);
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             engine_flags |= (1 << (arg0->unk2 - 7));
         }
         if ((s8)engine_flags & 0x80) {
@@ -402,7 +402,7 @@ void func_800CD530(struct MiscObj* arg0)
         break;
     case 2:
         func_80015DC8(arg0);
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             arg0->unk6 = (u8)arg0->unk6 + 1;
             func_80015D60(arg0, 5);
             arg0->y_vel.val = 0x80000;
@@ -410,7 +410,7 @@ void func_800CD530(struct MiscObj* arg0)
         break;
     case 3:
         func_80015DC8(arg0);
-        func_8002B718(arg0);
+        func_8002B718((struct MovingObj*)arg0);
         if (arg0->on_screen == 0) {
             engine_flags &= ~(1 << (arg0->unk2 - 7));
             arg0->state = (u8)arg0->state + 1;

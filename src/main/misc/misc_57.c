@@ -27,7 +27,7 @@ void func_800D354C(struct UnkObj* arg0)
     }
     arg0->x_pos.i.hi = 0xA0;
     arg0->unk16 = 0;
-    arg0->unk47 = arg0->unk2;
+    arg0->animation_step.fields.frame_index = arg0->unk2;
     arg0->state++;
     if (arg0->unk2 < 9) {
         arg0->state++;
@@ -41,7 +41,7 @@ void func_800D35D0(struct UnkObj* arg0)
     u32 temp_v1;
 
     arg0->unk40 = 0x1E00;
-    arg0->unk30 = D_8010ECD4;
+    arg0->animation_table = (const u32* const*)D_8010ECD4;
     temp_v1 = *addr_801F3008;
     arg0->bg_offset = -1;
     arg0->unk3C = temp_v1 + (s32)addr_801F3000;
@@ -55,7 +55,7 @@ void func_800D35D0(struct UnkObj* arg0)
         arg0->unk42 = 0x784B;
         arg0->x_pos.i.hi = 0x60;
         arg0->y_pos.i.hi = 0xD0;
-        arg0->unk47 = 0x29;
+        arg0->animation_step.fields.frame_index = 0x29;
     }
     arg0->unk16 = 0;
     arg0->state = 3;

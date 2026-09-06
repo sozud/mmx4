@@ -19,7 +19,7 @@ void func_800AF28C(struct VisualObj* arg0, struct VisualObj* arg1)
 {
     arg0->bg_offset = arg1->bg_offset;
     arg0->unk16 = 1;
-    arg0->unk30 = &D_8011BF40;
+    arg0->animation_table = &D_8011BF40;
     arg0->unk3C = *((u8)func_8002938C(0x84) + SP_MENU_FRAMES) + (s8*)SP_MENU_FRAMES;
     arg0->unk40 = D_801406A8[(u8)func_8002938C(0x84)] >> 7;
     arg0->unk42 = (((u8)func_8002938C(0x84) * 4) + 24) % 16 | ((((u8)func_8002938C(0x84) + 6) / 4) + 480) * 64;

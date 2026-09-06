@@ -263,7 +263,7 @@ void func_800D5CF8(struct QuadObj* arg0)
 void func_800D5D50(struct QuadObj* arg0)
 {
     u16* verts;
-    struct BaseObj* temp_s1;
+    struct EffectObj* temp_s1;
     struct MiscObj* misc_obj;
     switch (arg0->unk5) {
     case 0:
@@ -290,22 +290,22 @@ void func_800D5D50(struct QuadObj* arg0)
     case 1:
         temp_s1 = arg0->link.owner;
         // spawn "READY" text and shadow when blue line reaches center of screen
-        if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi < 3) && (temp_s1->unk15 == 0)) {
+        if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi < 3) && (temp_s1->ext.unk_effect.unk15 == 0)) {
             misc_obj = find_free_misc_obj();
             if (misc_obj != NULL) {
                 misc_obj->active = 1;
                 misc_obj->id = 0x12;
                 misc_obj->unk2 = 0;
-                temp_s1->unk15 = 0;
-                misc_obj->ext.ready_text.unk50 = (void*)arg0->link.owner;
+                temp_s1->ext.unk_effect.unk15 = 0;
+                misc_obj->ext.ready_text.owner = arg0->link.owner;
             }
             misc_obj = find_free_misc_obj();
             if (misc_obj != NULL) {
                 misc_obj->active = 1;
                 misc_obj->id = 0x12;
                 misc_obj->unk2 = 1;
-                temp_s1->unk15 = 0;
-                misc_obj->ext.ready_text.unk50 = (void*)arg0->link.owner;
+                temp_s1->ext.unk_effect.unk15 = 0;
+                misc_obj->ext.ready_text.owner = arg0->link.owner;
             }
         }
         if (arg0->x_pos.i.hi >= 320) {
@@ -316,7 +316,7 @@ void func_800D5D50(struct QuadObj* arg0)
         return;
     case 2:
         temp_s1 = arg0->link.owner;
-        temp_s1->bg_offset = 0;
+        temp_s1->ext.unk_effect.unk14 = 0;
         arg0->state = 2;
         arg0->unk5 = 0;
         return;
@@ -419,7 +419,7 @@ void func_800D5F1C(struct QuadObj* arg0)
         }
         break;
     case 3:
-        arg0->link.owner->bg_offset = 0;
+        arg0->link.owner->ext.unk_effect.unk14 = 0;
         arg0->state = 2;
         arg0->unk5 = 0;
         break;
@@ -432,7 +432,7 @@ extern u8 D_8010FC9C[];
 void func_800D6260(struct QuadObj* arg0)
 {
     s32 var_s1;
-    struct BaseObj* temp_v0_9;
+    struct EffectObj* temp_v0_9;
     u16 temp_v0_8;
     s16* verts;
 
@@ -492,7 +492,7 @@ void func_800D6260(struct QuadObj* arg0)
         return;
     case 2:
         temp_v0_9 = arg0->link.owner;
-        temp_v0_9->bg_offset--;
+        temp_v0_9->ext.unk_effect.unk14--;
         arg0->state = 2;
         arg0->unk5 = 0;
         return;

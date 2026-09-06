@@ -352,7 +352,7 @@ void func_8002F048(void)
             misc->active = 0x41;
             misc->id = 0xC;
             misc->unk2 = 8;
-            misc->ext.ready_text.unk50 = D_8013B808;
+            misc->ext.pointer.unk50 = D_8013B808;
             return;
         }
     case 0xFF:

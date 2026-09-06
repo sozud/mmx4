@@ -30,7 +30,7 @@ void func_800B3358(struct VisualObj* arg0)
 
     switch (arg0->unk5) {
     case 0:
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             arg0->unk5++;
             func_80015D60(arg0, 0x14);
         }
@@ -42,7 +42,7 @@ void func_800B3358(struct VisualObj* arg0)
         }
         break;
     case 2:
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             arg0->state = 2;
         }
         break;
@@ -58,13 +58,13 @@ void func_800B3444(struct VisualObj* arg0)
 
     switch (arg0->unk5) {
     case 0:
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             arg0->unk5++;
             func_80015D60(arg0, 0x20);
         }
         break;
     case 1:
-        if (arg0->unk46 == 0) {
+        if (arg0->animation_step.fields.relative_step == 0) {
             arg0->state = 2;
         }
         break;
@@ -73,12 +73,12 @@ void func_800B3444(struct VisualObj* arg0)
     if (entity->state == 2) {
         arg0->state = 2;
     }
-    func_8002B718(arg0);
+    func_8002B718((struct MovingObj*)arg0);
 }
 
 void func_800B34EC(struct VisualObj* arg0)
 {
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state = 2;
     }
 }

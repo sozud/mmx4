@@ -28,7 +28,7 @@ void func_800AEF18(struct VisualObj* arg0)
     }
     temp_s0 = var_a1;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + ((u32*)SP_SPRITE_FRAMES)[D_8010A1BC[temp_s0].archive_slot];
-    arg0->unk30 = &D_8011BF40;
+    arg0->animation_table = &D_8011BF40;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7802;
     arg0->unk16 = 0;
@@ -58,7 +58,7 @@ void func_800AF084(struct VisualObj* arg0)
 {
     struct WeaponObj* temp_v0;
 
-    if (arg0->unk45 != 0) {
+    if (arg0->animation_step.fields.event != 0) {
         temp_v0 = find_free_weapon_obj();
         if (temp_v0 != NULL) {
             temp_v0->active = 0x21;
@@ -68,7 +68,7 @@ void func_800AF084(struct VisualObj* arg0)
             temp_v0->y_pos.val = arg0->y_pos.val;
             temp_v0->unk15 = arg0->unk15;
             temp_v0->unk3C = arg0->unk3C;
-            temp_v0->unk30 = arg0->unk30;
+            temp_v0->unk30 = arg0->animation_table;
             temp_v0->unk40 = arg0->unk40;
             temp_v0->unk42 = arg0->unk42;
             temp_v0->unk16 = arg0->unk16;
@@ -80,7 +80,7 @@ void func_800AF084(struct VisualObj* arg0)
 
 void func_800AF15C(struct VisualObj* arg0)
 {
-    if (arg0->unk46 == 0 || arg0->unk5C != 0) {
+    if (arg0->animation_step.fields.relative_step == 0 || arg0->unk5C != 0) {
         ZeroObjectState(arg0);
     } else {
         func_8002B318(arg0, 0x40, 0x20);

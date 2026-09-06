@@ -16,7 +16,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_04", func_800AFB90);
 void func_800AFC4C(struct VisualObj* arg0)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 < 0) {
+    if (arg0->animation_step.fields.relative_step < 0) {
         ZeroObjectState(arg0);
     } else {
         is_on_screen(arg0);

@@ -57,7 +57,7 @@ void func_80031410(struct PlayerObj* arg0)
             if (--arg0->unkBE == 0) {
                 func_80035EA4(arg0);
             }
-            func_8002B718(arg0);
+            func_8002B718((struct MovingObj*)arg0);
             return;
         }
         if (arg0->unk89 & 8) {
@@ -69,16 +69,16 @@ void func_80031410(struct PlayerObj* arg0)
             arg0->unk6++;
             return;
         }
-        func_8002B718(arg0);
+        func_8002B718((struct MovingObj*)arg0);
         func_80036B88(arg0);
         return;
     }
-    if (arg0->unk45 != 0) {
-        arg0->unk45 = 0;
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
         arg0->unkA7 = engine_obj.unk47;
         arg0->unkB8 = engine_obj.unk48;
     }
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         engine_obj.unk1C = 0;
         func_800343A4(arg0);
     }

@@ -7,14 +7,14 @@ void func_800B2E98(struct VisualObj* arg0)
     struct VisualObj* temp_v1 = arg0->unk50;
     arg0->unk40 = temp_v1->unk40;
     arg0->unk42 = temp_v1->unk42 & ~0x8000;
-    arg0->unk30 = temp_v1->unk30;
+    arg0->animation_table = temp_v1->animation_table;
     arg0->unk3C = temp_v1->unk3C;
     arg0->unk15 = temp_v1->unk15;
     arg0->bg_offset = temp_v1->bg_offset;
     arg0->x_pos.val = temp_v1->x_pos.val;
     arg0->y_pos.val = temp_v1->y_pos.val;
     arg0->unk16 = 6;
-    arg0->unk2 = D_8010A5B8[temp_v1->unk47];
+    arg0->unk2 = D_8010A5B8[temp_v1->animation_step.fields.frame_index];
     func_80015D60(arg0, arg0->unk2);
     arg0->state++;
 }
@@ -27,8 +27,8 @@ void func_800B2F60(struct VisualObj* arg0)
     if (temp_a0->state == 0 || temp_a0->state == 2) {
         arg0->state = 2;
     } else {
-        if (arg0->unk2 != D_8010A5B8[temp_a0->cur_anim]) {
-            arg0->unk2 = D_8010A5B8[temp_a0->cur_anim];
+        if (arg0->unk2 != D_8010A5B8[temp_a0->animation_step.fields.frame_index]) {
+            arg0->unk2 = D_8010A5B8[temp_a0->animation_step.fields.frame_index];
             func_80015D60(arg0, arg0->unk2);
         } else {
             func_80015DC8(arg0);

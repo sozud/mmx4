@@ -1,5 +1,10 @@
 #include "common.h"
 
+#ifdef MMX4_PC
+#include <stdlib.h>
+#include <string.h>
+#endif
+
 // uncomment to skip movies
 // #define SKIP_MDEC
 
@@ -195,8 +200,8 @@ void func_80013404(u8 arg0)
     s8* a0;
     s8* var_v0;
     struct EngineObj* ptr = &engine_obj;
-    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
-    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
+    SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
+    SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
 
     func_800160F4();
 
@@ -1116,23 +1121,25 @@ void func_80015C10(void)
     }
 }
 
-#ifndef MMX4_PC
-s32 func_80015D60(struct Unk19* arg0, s32 arg1)
+s32 func_80015D60(void* object, s32 animation)
 {
-    arg0->unk34 = arg0->unk30[arg1];
-    arg0->unk17 = arg1;
-    arg0->unk48 = 0xFF;
-    arg0->unk44 = *arg0->unk34;
+    struct AnimatedObj* arg0 = object;
+
+    arg0->animation_cursor = arg0->animation_table[animation];
+    arg0->unk17 = animation;
+    arg0->previous_animation_index = 0xFF;
+    __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
 }
-#endif
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015D90);
 
-void func_80015DC8(struct Unk66* arg0)
+void func_80015DC8(void* object)
 {
-    if (--arg0->i.j.unk44 == 0) {
-        arg0->unk34 = &arg0->unk34[arg0->i.j.unk46];
-        arg0->i.unk44 = *arg0->unk34;
+    struct AnimatedObj* arg0 = object;
+
+    if (--arg0->animation_step.fields.duration == 0) {
+        arg0->animation_cursor = &arg0->animation_cursor[arg0->animation_step.fields.relative_step];
+        __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
     }
 }
 
@@ -1177,14 +1184,14 @@ void decompress_player_gfx(struct PlayerObj* arg0, s16 x, s16 y)
     u32 temp_a1;
     s16 size;
 
-    if (arg0->prev_anim == arg0->cur_anim) {
+    if (arg0->previous_animation_index == arg0->animation_step.fields.frame_index) {
         return;
     }
 
     src = arg0->unk38;
     new_var = arg0->unk38;
-    arg0->prev_anim = arg0->cur_anim;
-    temp_a1 = new_var[arg0->cur_anim];
+    arg0->previous_animation_index = arg0->animation_step.fields.frame_index;
+    temp_a1 = new_var[arg0->animation_step.fields.frame_index];
     size = temp_a1 >> 0x14;
     if (arg0->unk49 == 3) {
         dst = player_gfx_buf_0;
@@ -1257,7 +1264,7 @@ void func_800160AC(void)
     }
 }
 
-extern s32 D_800F1660;
+extern union MainPaletteData D_800F1660;
 extern s32 D_800F1860;
 
 void func_800160F4(void)
@@ -1584,8 +1591,8 @@ void func_80017340(void)
     s8 end;
     u8 var_v0;
 
-    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
-    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
+    SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
+    SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
     SP_AUX_CURSOR = &temp1[SP_DRAW_BUFFER];
 
     func_80017E84();
@@ -2129,6 +2136,84 @@ void func_8001D064(void)
     game_info.mode = 0;
     game_info.unk2 = 0;
     game_info.unk3 = 0;
+#ifdef MMX4_PC
+    {
+        const char* scene = getenv("MMX4_ORACLE_SCENE");
+        int character_select = scene != NULL && strcmp(scene, "character-select") == 0;
+        int mission_briefing = scene != NULL && strcmp(scene, "mission-briefing") == 0;
+        int initial_stage = scene != NULL && strcmp(scene, "initial-stage") == 0;
+
+        if (character_select) {
+            D_80173C80 = MAIN_ARCHIVE_ARENA;
+            reset_game_engine();
+            engine_obj.state = 1;
+            engine_update_funcs[engine_obj.state](&engine_obj);
+            func_800128B8(func_8001FB50);
+            return;
+        }
+        if (mission_briefing) {
+            D_80173C80 = MAIN_ARCHIVE_ARENA;
+            reset_game_engine();
+            engine_obj.stage = 0xE;
+            engine_obj.substage = 0;
+            engine_obj.cur_character = CHARACTER_X;
+            func_80013014();
+            func_800160AC();
+            engine_obj.substage = 1;
+            func_80013014();
+            func_800160AC();
+            func_80012EB8();
+            reset_game_engine();
+            engine_obj.state = 3;
+            engine_obj.stage = 0;
+            engine_obj.substage = 0;
+            engine_obj.cur_character = CHARACTER_X;
+            engine_update_funcs[engine_obj.state](&engine_obj);
+            func_800128B8(func_8001FB50);
+            return;
+        }
+        if (initial_stage) {
+            u8 stage = 0;
+            u8 substage = 0;
+            u8 checkpoint = 0;
+            u8 character = 0;
+            const char* value;
+
+            value = getenv("MMX4_DIRECT_STAGE");
+            if (value != NULL)
+                stage = (u8)strtoul(value, NULL, 0);
+            value = getenv("MMX4_DIRECT_SUBSTAGE");
+            if (value != NULL)
+                substage = (u8)strtoul(value, NULL, 0);
+            value = getenv("MMX4_DIRECT_CHECKPOINT");
+            if (value != NULL)
+                checkpoint = (u8)strtoul(value, NULL, 0);
+            value = getenv("MMX4_DIRECT_CHARACTER");
+            if (value != NULL)
+                character = (u8)strtoul(value, NULL, 0);
+            D_80173C80 = MAIN_ARCHIVE_ARENA;
+            reset_game_engine();
+            engine_obj.stage = 0xE;
+            engine_obj.substage = 0;
+            engine_obj.cur_character = character;
+            func_80013014();
+            func_800160AC();
+            engine_obj.substage = 1;
+            func_80013014();
+            func_800160AC();
+            func_80012EB8();
+            reset_game_engine();
+            engine_state_0(&engine_obj);
+            engine_obj.stage = stage;
+            engine_obj.substage = substage;
+            engine_obj.checkpoint = checkpoint;
+            engine_obj.cur_character = character;
+            engine_obj.state = 4;
+            func_800128B8(func_8001FB50);
+            return;
+        }
+    }
+#endif
     func_800128B8(&func_8001DAF8);
 }
 
@@ -2785,7 +2870,7 @@ s32 func_8001E850(u8* arg0, u8 arg1)
         if (misc != NULL) {
             misc->active = 1;
             misc->id = 0x20;
-            misc->ext.ready_text.unk50 = arg0;
+            misc->ext.pointer.unk50 = arg0;
             misc->x_pos.i.hi = arg0[0];
             misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
@@ -3963,7 +4048,7 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 = (s32)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
-                    obj->ext.ready_text.unk50 = readyText;
+                    obj->ext.pointer.unk50 = readyText;
                     obj->state = 0;
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
@@ -3991,7 +4076,7 @@ void func_80022730(struct AbcObj* arg0)
                         = 0;
 
                     func_80015D60(
-                        (struct Unk19*)obj,
+                        obj,
                         (s32)(s8)obj->ext.title_logo
                             .palette_shift_speed);
                 }
@@ -4057,8 +4142,7 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
 
-                    func_80015D60(
-                        (struct Unk19*)obj, 0);
+                    func_80015D60(obj, 0);
                 }
 
                 D_801397D0 = obj;
@@ -4113,7 +4197,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->state = 0;
-                        obj->ext.ready_text.unk50 = readyText;
+                        obj->ext.pointer.unk50 = readyText;
 
                         obj->ext.title_logo
                             .palette_shift_value
@@ -4122,8 +4206,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 += temp_v0;
                         obj->unk3C = (void*)temp_v1;
 
-                        func_80015D60(
-                            (struct Unk19*)obj, 0);
+                        func_80015D60(obj, 0);
                     }
 
                     D_801397CC = obj;
@@ -4182,8 +4265,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 += temp_v0;
                         obj->unk3C = (void*)temp_v1;
 
-                        func_80015D60(
-                            (struct Unk19*)obj, 0);
+                        func_80015D60(obj, 0);
                     }
 
                     D_801397D4 = obj;
@@ -4405,7 +4487,7 @@ void func_8002328C(struct AbcObj* arg0)
                                 temp_v0->y_pos.val = 0x700000;
                             }
                         }
-                        temp_v0->unk47 = 0;
+                        temp_v0->animation_step.fields.frame_index = 0;
                         temp_v0->unk15 = 0;
                     }
                     D_801396C8.active = 1;
@@ -4472,7 +4554,7 @@ void func_8002328C(struct AbcObj* arg0)
                         temp_v0_4->y_pos.i.hi = 0xBD;
                     }
                 }
-                temp_v0_4->unk47 = 0;
+                temp_v0_4->animation_step.fields.frame_index = 0;
                 temp_v0_4->unk15 = 0;
                 temp_v0_4->ext.title_logo.palette_shift_speed = 0;
                 temp_v0_4->ext.ready_text.stay_up_timer = 0x20;
@@ -4662,7 +4744,7 @@ void func_80023D90(void)
 void init_objects(void)
 {
     struct UnkObj* var_s0;
-    struct MainObj* var_s0_2;
+    struct Unk* var_s0_2;
     struct WeaponObj* var_s0_3;
     struct ShotObj* var_s0_4;
     struct VisualObj* var_s0_5;
@@ -4685,14 +4767,14 @@ void init_objects(void)
     struct QuxObj* ptr4;
 
     SP_SPRITE_COUNT = 0;
-    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER]; // size 0xA000
-    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER]; // size 0x2000
-    SP_BG_PRIM_CURSOR = &temp3[SP_DRAW_BUFFER]; // size 0x200
-    SP_OT_CURSOR = &temp4[SP_DRAW_BUFFER]; // size 0x100
-    SP_AUX_CURSOR = &temp5[SP_DRAW_BUFFER]; // size 0x78
+    SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
+    SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
+    SP_BG_PRIM_CURSOR = &temp3[SP_DRAW_BUFFER];
+    SP_OT_CURSOR = &temp4[SP_DRAW_BUFFER];
+    SP_AUX_CURSOR = temp5[SP_DRAW_BUFFER].data;
 
-    func_80024E70(); // ???
-    func_800241E8(); // initialize some memory around D_8013BC40 and D_8013E1E8
+    func_80024E70();
+    func_800241E8();
 
     if (g_Player.on_screen) {
         func_80024334(ptr);
@@ -4783,9 +4865,6 @@ void init_objects(void)
     func_80024260();
 }
 
-extern u32 D_8013BC40[2][4][8];
-extern u32 D_8013E1E8[2][4][8];
-
 void func_800241E8(void)
 {
     u32 buffer;
@@ -4795,8 +4874,8 @@ void func_800241E8(void)
     buffer = SP_DRAW_BUFFER;
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 8; j++) {
-            D_8013E1E8[buffer][i][j] = 0;
-            D_8013BC40[buffer][i][j] = (u32)&D_8013E1E8[buffer][i][j];
+            D_8013E1E8[buffer][i][j] = NULL;
+            D_8013BC40[buffer][i][j] = (P_TAG*)&D_8013E1E8[buffer][i][j];
         }
     }
 }
@@ -4983,8 +5062,8 @@ void func_80025CDC(void)
     struct UnkObj* var_s0;
 
     SP_SPRITE_COUNT = 0;
-    SP_PRIM_CURSOR = &temp1[SP_DRAW_BUFFER];
-    SP_DRAW_MODE_CURSOR = &temp2[SP_DRAW_BUFFER];
+    SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
+    SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
     func_800241E8();
     for (var_s0 = &unk_objects[0]; var_s0 < &unk_objects[COUNT(unk_objects)]; var_s0++) {
         if (var_s0->on_screen != 0) {

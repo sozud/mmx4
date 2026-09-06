@@ -15,13 +15,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_03", func_800B5D04);
 
 void func_800B5E2C(struct EffectObj* arg0)
 {
-    if (arg0->ext.unk3.unk21-- == 0) {
-        arg0->ext.unk3.unk1C += 2;
-        if (arg0->ext.unk3.unk1C[1] < 0) {
-            arg0->ext.unk3.unk1C = (arg0->ext.unk3.unk1C + (arg0->ext.unk3.unk1C[1] * 2));
+    if (arg0->ext.palette_animation.timer-- == 0) {
+        arg0->ext.palette_animation.cursor += 2;
+        if (arg0->ext.palette_animation.cursor[1] < 0) {
+            arg0->ext.palette_animation.cursor += arg0->ext.palette_animation.cursor[1] * 2;
         }
-        arg0->ext.unk3.unk21 = arg0->ext.unk3.unk1C[1];
-        arg0->ext.unk3.unk14 = (SP_ARC_30 + ((u8)arg0->ext.unk3.unk1C[0] << 3));
+        arg0->ext.palette_animation.timer = arg0->ext.palette_animation.cursor[1];
+        arg0->ext.palette_animation.source = SP_ARC_30 + ((u8)arg0->ext.palette_animation.cursor[0] << 3);
         func_800B5C60(arg0);
     }
 }
