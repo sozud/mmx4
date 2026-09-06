@@ -520,7 +520,7 @@ struct PlayerObj {
     s8 unk94[2];
     s8 unk96;
     s8 unk97;
-    u8 unk98;
+    s8 unk98;
     s8 unk99;
     s8 unk9A;
     s8 unk9B[2];
