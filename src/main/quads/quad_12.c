@@ -3,10 +3,11 @@
 #include "common.h"
 
 extern u8 D_8010FDEC[][4];
-extern u16 D_8016949A[][4];
+extern union TitleScratch D_80169498;
 
 void func_800D7734(struct QuadObj* arg0)
 {
+    u16* points;
     u16* vertex;
     u16 x;
     u16 y;
@@ -16,16 +17,17 @@ void func_800D7734(struct QuadObj* arg0)
     arg0->x_pos.i.hi = 0;
     arg0->y_pos.i.hi = 0;
     arg0->active |= 0x80;
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][0]];
+    points = &D_80169498.title.coordinates[0].u.hi;
+    vertex = &points[D_8010FDEC[arg0->unk2][0] * 4];
     arg0->unk14.i.hi = vertex[0];
     arg0->unk18.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][1]];
+    vertex = &points[D_8010FDEC[arg0->unk2][1] * 4];
     arg0->unk1C.i.hi = vertex[0];
     arg0->unk20.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][2]];
+    vertex = &points[D_8010FDEC[arg0->unk2][2] * 4];
     arg0->unk24.i.hi = vertex[0];
     arg0->unk28.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][3]];
+    vertex = &points[D_8010FDEC[arg0->unk2][3] * 4];
     state = arg0->state;
     x = vertex[0];
     state++;
@@ -41,18 +43,20 @@ void func_800D7734(struct QuadObj* arg0)
 
 void func_800D784C(struct QuadObj* arg0)
 {
+    u16* points;
     u16* vertex;
 
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][0]];
+    points = &D_80169498.title.coordinates[0].u.hi;
+    vertex = &points[D_8010FDEC[arg0->unk2][0] * 4];
     arg0->unk14.i.hi = vertex[0];
     arg0->unk18.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][1]];
+    vertex = &points[D_8010FDEC[arg0->unk2][1] * 4];
     arg0->unk1C.i.hi = vertex[0];
     arg0->unk20.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][2]];
+    vertex = &points[D_8010FDEC[arg0->unk2][2] * 4];
     arg0->unk24.i.hi = vertex[0];
     arg0->unk28.i.hi = vertex[2];
-    vertex = D_8016949A[D_8010FDEC[arg0->unk2][3]];
+    vertex = &points[D_8010FDEC[arg0->unk2][3] * 4];
     arg0->unk2C.i.hi = vertex[0];
     arg0->unk30.i.hi = vertex[2];
     if (game_info.unk6 == 0) {

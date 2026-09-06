@@ -212,11 +212,19 @@ struct PlayerGaugePosition {
     s16 x;
     u16 bottom;
 };
-struct TitlePoint {
-    s32 x, y;
-};
+typedef union {
+    s32 val;
+    struct {
+        s16 lo;
+        s16 hi;
+    } i;
+    struct {
+        u16 lo;
+        u16 hi;
+    } u;
+} f32;
 struct TitlePointState {
-    struct TitlePoint points[18]; /* 0x00 */
+    f32 coordinates[36];
     u8 unk90[18];                 /* 0x90 */
     u8 unkA2[18];                 /* 0xA2 */
     u8 settled;                   /* 0xB4 */
@@ -256,14 +264,6 @@ struct BootTransitionDataRegion {
 
 extern struct MissionSelectData D_800F474C;
 extern union PlayerChargeData D_800F8BE0;
-
-typedef union {
-    s32 val;
-    struct {
-        s16 lo;
-        s16 hi;
-    } i;
-} f32;
 
 union AnimationStep {
     u32 packed;
@@ -456,12 +456,9 @@ struct PlayerObj {
     s8 unk49;
     s8 unk4A;
     s8 pad4B[0x50 - 0x4B];
-    s32 unk50;
-    s32 unk54;
-    s8 unk58;
-    s8 unk59;
-    s8 unk5A;
-    s8 unk5B;
+    void* unk50;
+    const u32* unk54;
+    void* unk58;
     s8 unk5C;
     s8 unk5D;
     s8 unk5E;
@@ -539,7 +536,8 @@ struct PlayerObj {
     s8 unkC3;
     s8 unkC4;
     s8 unkC5;
-    s8 padC6[0xC8 - 0xC6];
+    s8 unkC6;
+    s8 unkC7;
     s32 unkC8;
     s32 unkCC;
     s32 unkD0;
@@ -556,6 +554,13 @@ struct PlayerObj {
     s8 unkE1;
     s8 padE2[0xE4 - 0xE2];
 }; // size 0xE4
+
+MMX4_STATIC_ASSERT(player_unk68_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct Unk, unk68));
+MMX4_STATIC_ASSERT(player_unk6E_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct Unk, unk6E));
+MMX4_STATIC_ASSERT(player_unk70_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct Unk, unk70));
 
 struct Unk_unk68 {
     s8 unk0;
@@ -1062,7 +1067,7 @@ extern struct FadeState D_8016DEA0;
 extern struct SecondaryPrimitiveBuffer D_80169D78[];
 extern struct BackgroundPrimitiveBuffer D_8016DEA0;
 #endif
-extern P_TAG D_8012F498[2];
+extern DR_TPAGE D_8012F498[2];
 extern TILE D_8013B7B0[2];
 extern POLY_FT4 D_80139F20[2];
 extern POLY_F4 D_80139F70[2];
@@ -1917,7 +1922,7 @@ void reset_game_engine(void);
 void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
 void func_80015DC8();
-s32 func_80033694();
+s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct Unk7*);
 void func_80034754(struct Unk7*);
 void func_80025188(s32, u8);

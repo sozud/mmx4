@@ -41,7 +41,6 @@ jobs:
   oracle-scene-suite:
     name: Capture and compare scene oracles
     runs-on: ubuntu-latest
-    continue-on-error: true
     timeout-minutes: 30
     steps:
       - name: Clone main repo
@@ -61,7 +60,7 @@ jobs:
             build-essential cmake ninja-build pkg-config zlib1g-dev \
             libasound2-dev libjack-jackd2-dev \
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
-            libxfixes-dev libxi-dev libxss-dev libxtst-dev
+            libxfixes-dev libxi-dev libxss-dev libxtst-dev xvfb
       - name: Get game dependencies
         uses: actions/checkout@v4
         with:
@@ -127,13 +126,23 @@ jobs:
             --binary build-linux/mmx4_pc \
             --output pc-object-changes
       - name: Compare scene captures
-        continue-on-error: true
         run: |
+          set -o pipefail
           mkdir -p scene-comparison
           python3 tools/oracle/compare_scene_suite.py \
             --mednafen mednafen-object-changes \
             --pc pc-object-changes \
             --output scene-comparison | tee scene-comparison/summary.txt
+      - name: Compare sound captures
+        run: |
+          python3 tools/audio_fixture.py \
+            --suite frontend \
+            --pc build-linux/mmx4_pc \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --disc disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --output sound-comparison \
+            --no-build
       - name: Upload oracle artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -145,6 +154,7 @@ jobs:
             mednafen-object-changes
             pc-object-changes
             scene-comparison
+            sound-comparison
 
   build-and-test:
     strategy:
