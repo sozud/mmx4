@@ -51,8 +51,7 @@ static int scene_enabled(u32 game, u32 engine)
     if (!strcmp(scene, "mission-briefing"))
         return (engine & 0xff) == 3;
     if (!strcmp(scene, "initial-stage"))
-        return (engine & 0xff) == 6 && (u8)engine_obj.stage == 0 &&
-               (u8)engine_obj.substage == 0;
+        return (engine & 0xff) == 6 && (u8)engine_obj.stage == 0 && (u8)engine_obj.substage == 0;
     return 0;
 }
 
@@ -171,11 +170,13 @@ void mmx4_oracle_capture_object_changes(unsigned long frame)
         return;
     for (table = 0; table < COUNT(tables); table++) {
         for (slot = 0; slot < tables[table].count; slot++, index++) {
-            const struct BaseObj* object = (const struct BaseObj*)(
-                (const u8*)tables[table].data + slot * tables[table].stride);
+            const struct BaseObj* object = (const struct BaseObj*)((const u8*)tables[table].data + slot * tables[table].stride);
             struct ObjectStep value = {
-                (u8)object->active, (u8)object->id, (u8)object->state,
-                (u8)object->unk5, (u8)object->unk6,
+                (u8)object->active,
+                (u8)object->id,
+                (u8)object->state,
+                (u8)object->unk5,
+                (u8)object->unk6,
             };
             struct ObjectStep old = previous[index];
 
@@ -185,19 +186,21 @@ void mmx4_oracle_capture_object_changes(unsigned long frame)
             if (!have_previous)
                 continue;
             if (!old.active && value.active) {
-                changes[change_count++] = (struct ObjectChange){
-                    "created", tables[table].name, slot, old, value, 0, 0 };
+                changes[change_count++] = (struct ObjectChange) {
+                    "created", tables[table].name, slot, old, value, 0, 0
+                };
             } else if (old.active && !value.active) {
-                changes[change_count++] = (struct ObjectChange){
-                    "destroyed", tables[table].name, slot, old, value, 0, 0 };
+                changes[change_count++] = (struct ObjectChange) {
+                    "destroyed", tables[table].name, slot, old, value, 0, 0
+                };
             } else if (old.active && value.active && old.id != value.id) {
-                changes[change_count++] = (struct ObjectChange){
-                    "replaced", tables[table].name, slot, old, value, 0, 0 };
-            } else if (value.active &&
-                (old.state != value.state || old.step != value.step ||
-                 old.substep != value.substep)) {
-                changes[change_count++] = (struct ObjectChange){
-                    "control", tables[table].name, slot, old, value, 0, 0 };
+                changes[change_count++] = (struct ObjectChange) {
+                    "replaced", tables[table].name, slot, old, value, 0, 0
+                };
+            } else if (value.active && (old.state != value.state || old.step != value.step || old.substep != value.substep)) {
+                changes[change_count++] = (struct ObjectChange) {
+                    "control", tables[table].name, slot, old, value, 0, 0
+                };
             }
         }
     }
@@ -209,26 +212,29 @@ void mmx4_oracle_capture_object_changes(unsigned long frame)
             (u8)(previous_game >> 8), (u8)(previous_game >> 16) };
         struct ObjectStep value = { 1, 0, (u8)game,
             (u8)(game >> 8), (u8)(game >> 16) };
-        changes[change_count++] = (struct ObjectChange){
+        changes[change_count++] = (struct ObjectChange) {
             "game_info", "game_info", 0, old, value,
-            (u8)(previous_game >> 24), (u8)(game >> 24) };
+            (u8)(previous_game >> 24), (u8)(game >> 24)
+        };
     }
     if (have_previous && engine != previous_engine) {
         struct ObjectStep old = { 1, 0, (u8)previous_engine,
             (u8)(previous_engine >> 8), (u8)(previous_engine >> 16) };
         struct ObjectStep value = { 1, 0, (u8)engine,
             (u8)(engine >> 8), (u8)(engine >> 16) };
-        changes[change_count++] = (struct ObjectChange){
+        changes[change_count++] = (struct ObjectChange) {
             "engine_info", "engine_info", 0, old, value,
-            (u8)(previous_engine >> 24), (u8)(engine >> 24) };
+            (u8)(previous_engine >> 24), (u8)(engine >> 24)
+        };
     }
     if (have_previous && scene != previous_scene) {
         struct ObjectStep old = { 1, 0, (u8)previous_scene,
             (u8)(previous_scene >> 8), 0 };
         struct ObjectStep value = { 1, 0, (u8)scene,
             (u8)(scene >> 8), 0 };
-        changes[change_count++] = (struct ObjectChange){
-            "engine_scene", "engine_scene", 0, old, value, 0, 0 };
+        changes[change_count++] = (struct ObjectChange) {
+            "engine_scene", "engine_scene", 0, old, value, 0, 0
+        };
     }
     memcpy(previous, current, index * sizeof(current[0]));
     previous_game = game;
