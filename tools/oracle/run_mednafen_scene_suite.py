@@ -14,6 +14,7 @@ def main():
     parser.add_argument(
         "--output", type=Path, default=workspace / "mednafen-object-changes"
     )
+    parser.add_argument("--state-output", type=Path)
     parser.add_argument(
         "--mednafen",
         type=Path,
@@ -31,6 +32,8 @@ def main():
             parser.error(f"required file does not exist: {required}")
 
     args.output.mkdir(parents=True, exist_ok=True)
+    if args.state_output is not None:
+        args.state_output.mkdir(parents=True, exist_ok=True)
     scenes = MEDNAFEN_SCENES if args.scene is None else tuple(
         item for item in MEDNAFEN_SCENES if item[0] == args.scene
     )
@@ -39,6 +42,12 @@ def main():
         if destination.exists():
             shutil.rmtree(destination)
         destination.mkdir()
+        state_destination = None
+        if args.state_output is not None:
+            state_destination = args.state_output / scene
+            if state_destination.exists():
+                shutil.rmtree(state_destination)
+            state_destination.mkdir()
         environment = os.environ.copy()
         environment.update(
             MMX4_ORACLE_SCENE=scene,
@@ -50,6 +59,10 @@ def main():
             MMX4_DIRECT_CHECKPOINT="0",
             MMX4_DIRECT_CHARACTER="0",
         )
+        if state_destination is not None:
+            environment["MMX4_ORACLE_SCREENSHOT_DIR"] = str(
+                state_destination.resolve()
+            )
         if scene == "mission-briefing":
             environment["MMX4_ORACLE_AUTOPLAY"] = "1"
         with (destination / "run.log").open("w") as log:
