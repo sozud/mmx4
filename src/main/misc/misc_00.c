@@ -8,6 +8,11 @@ INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7AB0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B60);
+extern void func_8002B0C8(void);
+
+void func_800C7B60(void)
+{
+    func_8002B0C8();
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B80);

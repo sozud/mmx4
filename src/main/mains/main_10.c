@@ -216,7 +216,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A644);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A690);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A6E8);
+void func_8002B694(void);
+
+void func_8004A6E8(struct Unk* arg0)
+{
+    func_8002B694();
+    func_80015DC8(arg0);
+}
 
 u8 D_800FAEF0[8] = { 0xEE, 0xEC, 0x2A, 0x24, 0xD7, 0xEA, 0x3F, 0x35 };
 

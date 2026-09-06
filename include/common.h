@@ -311,8 +311,8 @@ MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u3
     MOVING_OBJ_FIELDS                         \
     s32 unk28;                                \
     s32 unk2C;                                \
-    const u32* const* animation_table;        \
-    const u32* animation_cursor;              \
+    u32** animation_table;                    \
+    u32* animation_cursor;                    \
     void* unk38;                              \
     void* unk3C;                              \
     u16 unk40;                                \
@@ -432,11 +432,19 @@ struct BackgroundObj {
     s16 unk30;
     s16 unk32;
     s16 unk34;
-    u8 pad32[10];
+    u8 pad36;
+    s8 unk37;
+    u8 pad38[3];
+    s8 unk3B;
+    u8 pad3C;
+    s8 unk3D;
+    u8 pad3E;
+    s8 unk3F;
     u16 unk40;
     u16 unk42;
     s8 unk44;
-    u8 pad45[2];
+    u8 pad45;
+    s8 unk46;
     u8 unk47;
     s8 unk48;
     s8 unk49;
@@ -485,8 +493,14 @@ struct PlayerObj {
     s8 unk78;
     s8 unk79;
     s8 unk7A;
-    u32 unk7C;
-    u16 unk80;
+    union {
+        u32 history;
+        struct {
+            u16 held;
+            u16 previous;
+        } buttons;
+    } input;
+    u16 pressed_input;
     u16 unk82;
     s8 unk84;
     s8 : 8;
@@ -506,7 +520,7 @@ struct PlayerObj {
     s8 unk94[2];
     s8 unk96;
     s8 unk97;
-    s8 unk98;
+    u8 unk98;
     s8 unk99;
     s8 unk9A;
     s8 unk9B[2];
@@ -561,6 +575,16 @@ MMX4_STATIC_ASSERT(player_unk6E_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct Unk, unk6E));
 MMX4_STATIC_ASSERT(player_unk70_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct Unk, unk70));
+MMX4_STATIC_ASSERT(player_held_input_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, input.buttons.held) == MMX4_OFFSET_OF(struct PlayerObj, input));
+MMX4_STATIC_ASSERT(player_previous_input_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, input.buttons.previous) == MMX4_OFFSET_OF(struct PlayerObj, input) + sizeof(u16));
+MMX4_STATIC_ASSERT(player_pressed_input_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, pressed_input) == MMX4_OFFSET_OF(struct PlayerObj, input) + sizeof(((struct PlayerObj*)0)->input));
+#ifndef MMX4_PC
+MMX4_STATIC_ASSERT(psx_player_input_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, input) == 0x7C);
+#endif
 
 struct Unk_unk68 {
     s8 unk0;
@@ -652,7 +676,9 @@ struct WeaponObj {
     s8 unk78;
     s8 : 8;
     s8 unk7A;
-    s8 pad7B[0x8C - 0x7B];
+    s8 pad7B;
+    struct PlayerObj* owner;
+    s8 pad80[0x8C - 0x80];
     s8 unk8C;
     s8 pad8D[0x94 - 0x8D];
     u8 unk94;
@@ -660,6 +686,11 @@ struct WeaponObj {
     s8 unk98;
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
+
+#ifndef MMX4_PC
+MMX4_STATIC_ASSERT(psx_weapon_owner_offset,
+    MMX4_OFFSET_OF(struct WeaponObj, owner) == 0x7C);
+#endif
 
 struct UnkObj {
     ANIMATED_OBJ_FIELDS
@@ -803,7 +834,7 @@ struct BarObj {
 struct BazObj {
     BASE_OBJ_FIELDS
     s8 pad18[0x30 - 0x18];
-    const u32* const* animation_table;
+    u32** animation_table;
     s32 pad34;
     s32 unk38;
     void* unk3C;
@@ -1545,7 +1576,7 @@ extern u32* D_8010E4EC[];
 extern u32* D_8010E514[];
 extern u32* D_8010E538[];
 extern u32* D_8010E55C[];
-extern s8* D_8010ECD4[];
+extern u32* D_8010ECD4[];
 extern s8 D_8010FE38[];
 extern u8 D_8010FED4[];
 extern u8 D_801193F0[];

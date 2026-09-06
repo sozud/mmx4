@@ -487,12 +487,6 @@ void func_8002C9E4(struct PlayerObj* object)
     object->y_pos.i.hi += D_8013B804;
 }
 
-void func_8002C954(struct PlayerObj* object)
-{
-    if (func_8002D25C(object) && func_8002D490(object))
-        func_8002C9E4(object);
-}
-
 void func_8002C99C(struct PlayerObj* object)
 {
     if (func_8002D490(object) && func_8002D25C(object))
@@ -1484,8 +1478,8 @@ void func_80036F50(struct PlayerObj* player)
 
     if (player->unkC3 != 0 || player->unkD9 != 0 || player->unk99 != 0 || player->unkC5 != 0 || player->unkE0 != 0 || engine_obj.unk1C != 0)
         return;
-    input = player->unk80;
-    if ((((u16)player->unk7C & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
+    input = player->pressed_input;
+    if (((player->input.buttons.held & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
         if (player->unk93 != 0) {
             player->unk93 = 0;
             func_800384DC(player);

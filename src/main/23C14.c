@@ -8,7 +8,7 @@ s32 func_80033494(struct PlayerObj* arg0)
         func_80034754(arg0);
         return 1;
     }
-    if (arg0->unk80 & 0x80) {
+    if (arg0->pressed_input & 0x80) {
         func_80034538(arg0);
         return 1;
     }
@@ -21,11 +21,11 @@ s32 func_800334F4(struct PlayerObj* arg0)
         return 0;
     }
 
-    if (!(*(s16*)&arg0->unk7C & 3)) {
+    if (!(arg0->input.buttons.held & 3)) {
         return 0;
     }
 
-    if (*(s16*)&arg0->unk7C & 1) {
+    if (arg0->input.buttons.held & 1) {
         arg0->unk15 = 0x40;
         if (!(arg0->unk89 & 1)) {
             arg0->x_vel.val = FIXED(0.5);
@@ -61,14 +61,14 @@ void func_800335E4(struct PlayerObj* arg0)
 
 s32 func_80033694(struct PlayerObj* arg0)
 {
-    if (arg0->unkC3 || (!arg0->unk87 && !(arg0->unk80 & 0x100))) {
+    if (arg0->unkC3 || (!arg0->unk87 && !(arg0->pressed_input & 0x100))) {
         return 0;
     }
 
-    if (*(u16*)&arg0->unk7C & 1) {
+    if (arg0->input.buttons.held & 1) {
         arg0->unk15 = 0x40;
     }
-    if (*(u16*)&arg0->unk7C & 2) {
+    if (arg0->input.buttons.held & 2) {
         arg0->unk15 = 0;
     }
     if (arg0->unk15 != 0) {
@@ -93,13 +93,13 @@ void func_80033750(struct PlayerObj* arg0)
     arg0->unk87 = 0;
     if ((arg0->unkC3 == 0) && (temp_v1 = arg0->unk5, (temp_v1 != 0)) && (temp_v1 != 1)) {
         if (arg0->unk88 == 0) {
-            arg0->unk82 = arg0->unk80 & 3;
+            arg0->unk82 = arg0->pressed_input & 3;
             if (arg0->unk82 != 0) {
                 arg0->unk88 = 0xC;
             }
         } else {
             arg0->unk88--;
-            if (arg0->unk80 & arg0->unk82) {
+            if (arg0->pressed_input & arg0->unk82) {
                 arg0->unk87 = 1;
                 arg0->unk88 = 0;
             }
@@ -157,9 +157,28 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800339E0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033AC0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033B34);
+extern void func_800349F4(void);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033B8C);
+s32 func_80033B34(struct PlayerObj* arg0)
+{
+    if (arg0->unkC3 == 0) {
+        if (arg0->pressed_input & 0x80) {
+            if (arg0->unk4A > 0) {
+                func_800349F4();
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+s32 func_80033B8C(struct PlayerObj* arg0)
+{
+    if ((arg0->unkC3 != 0) || (arg0->unk4A == 0)) {
+        return 0;
+    }
+    return (arg0->input.buttons.held & 3 & arg0->unk89) != 0;
+}
 
 void func_80033BC8(struct PlayerObj* arg0)
 {
@@ -220,11 +239,11 @@ s32 func_80033EA4(struct PlayerObj* arg0)
     if (arg0->unkC3 || arg0->unk92) {
         return 0;
     }
-    if (*(u16*)&arg0->unk7C & 4 && func_8002D8B8(arg0) == 0x20) {
+    if (arg0->input.buttons.held & 4 && func_8002D8B8(arg0) == 0x20) {
         func_80034BDC(arg0);
         return 1;
     }
-    if (*(u16*)&arg0->unk7C & 8 && func_8002D94C(arg0) == 0x21) {
+    if (arg0->input.buttons.held & 8 && func_8002D94C(arg0) == 0x21) {
         func_80034CB0(arg0);
         return 1;
     }
@@ -346,7 +365,16 @@ void func_80034604(struct PlayerObj* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034668);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003470C);
+void func_8003470C(struct PlayerObj* arg0)
+{
+    if (arg0->unk89 & 8) {
+        arg0->unk67 = 0;
+        arg0->unk86 = 0;
+        func_800343A4(arg0);
+    } else {
+        func_80034604(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034754);
 
@@ -749,17 +777,17 @@ void func_80035EA4(struct PlayerObj* arg0)
 void func_80035EF0(void)
 {
     if (g_Player.unkDE == 0) {
-        ((s16*)&g_Player.unk7C)[0] = func_80035FC4(D_80166C08);
-        ((s16*)&g_Player.unk7C)[1] = func_80035FC4(D_80166C0A);
-        g_Player.unk80 = func_80035FC4(controller_state);
+        g_Player.input.buttons.held = func_80035FC4(D_80166C08);
+        g_Player.input.buttons.previous = func_80035FC4(D_80166C0A);
+        g_Player.pressed_input = func_80035FC4(controller_state);
         return;
     }
-    ((s16*)&g_Player.unk7C)[0] = 0;
-    ((s16*)&g_Player.unk7C)[1] = 0;
-    g_Player.unk80 = 0;
-    ((s16*)&g_Entity.unk7C)[0] = func_80035FC4(D_80166C08);
-    ((s16*)&g_Entity.unk7C)[1] = func_80035FC4(D_80166C0A);
-    g_Entity.unk80 = func_80035FC4(controller_state);
+    g_Player.input.buttons.held = 0;
+    g_Player.input.buttons.previous = 0;
+    g_Player.pressed_input = 0;
+    g_Entity.input.buttons.held = func_80035FC4(D_80166C08);
+    g_Entity.input.buttons.previous = func_80035FC4(D_80166C0A);
+    g_Entity.pressed_input = func_80035FC4(controller_state);
 }
 
 s32 func_80035FC4(s32 arg0)
@@ -786,7 +814,14 @@ s32 func_80035FC4(s32 arg0)
     return result;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036034);
+void func_80036034(struct PlayerObj* arg0)
+{
+    arg0->unk84 = 0;
+    arg0->unk86 = 0;
+    if (arg0->unk8C > 0) {
+        arg0->unk8C = -1;
+    }
+}
 
 void func_80036054(struct PlayerObj* arg0)
 {
@@ -909,7 +944,12 @@ void func_800362F8(struct PlayerObj* arg0, s32 arg1)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800363B8);
+void func_800363B8(struct PlayerObj* arg0, u8 arg1)
+{
+    if (arg0->unkD7 <= 0) {
+        func_8001540C(3, arg1, arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800363EC);
 
@@ -1093,7 +1133,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
     if (arg0->unk15) {
         var_v1 = 1;
     }
-    if ((var_v1 & arg0->unk89) || !(arg0->unk80 & 0x40)) {
+    if ((var_v1 & arg0->unk89) || !(arg0->pressed_input & 0x40)) {
         return 0;
     }
 
@@ -1179,7 +1219,7 @@ void func_80037708(struct PlayerObj* arg0)
 
 void func_8003795C(struct PlayerObj* arg0)
 {
-    if (arg0->unk80 & 0x10) {
+    if (arg0->pressed_input & 0x10) {
         if (arg0->unk93 != 0) {
             arg0->unkA6 = 0;
             if (func_80037A98(arg0) == 0) {
@@ -1187,7 +1227,7 @@ void func_8003795C(struct PlayerObj* arg0)
             }
         }
         arg0->unk96 = arg0->unk94[0];
-    } else if ((arg0->unk7C & 0x100010) == 0x100000) { // flags?
+    } else if ((arg0->input.history & 0x100010) == 0x100000) { // flags?
         s8 temp = arg0->unk94[0];
         if ((temp != 0) && (D_800F8C10[temp] == 0) && (temp != 0x13)) {
             if (arg0->unk93 != 0) {
@@ -1204,11 +1244,11 @@ void func_8003795C(struct PlayerObj* arg0)
 void func_80037A24(struct PlayerObj* arg0)
 {
     if (arg0->unk96 == -1) {
-        if (arg0->unk80 & 0x20) {
+        if (arg0->pressed_input & 0x20) {
             arg0->unk96 = arg0->unk94[1];
             return;
         }
-        if ((arg0->unk7C & 0x200020) == 0x200000) {
+        if ((arg0->input.history & 0x200020) == 0x200000) {
             if ((arg0->unk94[1] != 0) && (arg0->unk94[1] != 0x13)) {
                 arg0->unk96 = arg0->unk94[1];
             }
@@ -1224,9 +1264,20 @@ void func_80037B90(struct PlayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037B98);
+extern void func_80036DA0(s32, s8, s32, struct PlayerObj*);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037BC4);
+void func_80037B98(struct PlayerObj* arg0)
+{
+    func_80036DA0(1, arg0->unk96, 0, arg0);
+}
+
+void func_80037BC4(struct PlayerObj* arg0)
+{
+    func_80036E1C(0x21, 2, arg0->unk96, 0);
+    if ((arg0->unk96 == 0x12) && (get_random() & 1)) {
+        func_800363B8(arg0, 8);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037C28);
 
@@ -1285,22 +1336,22 @@ s32 func_800380F0(struct PlayerObj* arg0, s8 arg1)
 
 s32 func_80038158(struct PlayerObj* arg0)
 {
-    if (arg0->unk80 & 0x10) {
+    if (arg0->pressed_input & 0x10) {
         return 1;
     }
-    if (arg0->unk80 & 0x20) {
+    if (arg0->pressed_input & 0x20) {
         return 1;
     }
-    if ((arg0->unk7C & 0x100010) == 0x100000) {
+    if ((arg0->input.history & 0x100010) == 0x100000) {
         return 1;
     }
-    if ((arg0->unk7C & 0x200020) == 0x200000) {
+    if ((arg0->input.history & 0x200020) == 0x200000) {
         return 1;
     }
-    if (arg0->unk9D && (*(u16*)&arg0->unk7C & 0x10) == 0) {
+    if (arg0->unk9D && (arg0->input.buttons.held & 0x10) == 0) {
         return 1;
     }
-    if (arg0->unk9E && !(*(u16*)&arg0->unk7C & 0x20)) {
+    if (arg0->unk9E && !(arg0->input.buttons.held & 0x20)) {
         return 1;
     }
     return 0;
@@ -1311,7 +1362,7 @@ void func_800381FC(struct PlayerObj* arg0)
     u8 var_a1;
     u8* ptr = (u8*)arg0;
 
-    if ((*(u16*)&arg0->unk7C & 0x10)
+    if ((arg0->input.buttons.held & 0x10)
         && arg0->unk9B[0] != 2
         && ((arg0->unk93 == 0) || ((arg0->unkA7 & 4) && (arg0->charge_levels[arg0->unk93] >= D_800F8BE0.charge.linked_thresholds[arg0->unk93])))) {
         arg0->unk9D = (u8)(arg0->unk9D + 1);
@@ -1358,7 +1409,7 @@ void func_80038378(struct PlayerObj* arg0)
 {
     u8 var_a1;
 
-    if ((*(u16*)&arg0->unk7C & 0x20) && (arg0->unk9B[1] != 2)) {
+    if ((arg0->input.buttons.held & 0x20) && (arg0->unk9B[1] != 2)) {
         arg0->unk9E++;
         if (arg0->unkB8 == 0) {
             var_a1 = 0x5A;
@@ -1582,7 +1633,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039B44);
 
 s32 func_80039BB8(struct PlayerObj* arg0)
 {
-    if (arg0->unk2 != 0 && arg0->unkC3 == 0 && (arg0->unk80 & 0x10) && arg0->unk8E == 0) {
+    if (arg0->unk2 != 0 && arg0->unkC3 == 0 && (arg0->pressed_input & 0x10) && arg0->unk8E == 0) {
         func_80039C20(arg0);
         return 1;
     }
@@ -1666,8 +1717,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B340);
 
 void func_8003B3DC(struct QuxObj* arg0)
 {
-    arg0->unk8A = *(u16*)&g_Player.unk7C;
-    arg0->unk8C = g_Player.unk80;
+    arg0->unk8A = g_Player.input.buttons.held;
+    arg0->unk8C = g_Player.pressed_input;
     arg0->unk18 = arg0->x_pos.val;
     arg0->unk1C = arg0->y_pos.val;
 
@@ -1893,7 +1944,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800411D4);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041384);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800413C4);
+void func_800413C4(struct BaseObj* arg0)
+{
+    arg0->unk6++;
+    func_80015D60(arg0, 7);
+    func_8002B318(arg0, 0x90, 0x90);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004140C);
 
@@ -1921,7 +1977,12 @@ void func_800420E8(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800420F0);
+void func_800420F0(struct MainObj* arg0)
+{
+    engine_obj.enable_boss = 0;
+    engine_obj.boss_ptr = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_80042120(struct MainObj* arg0)
 {
@@ -1987,7 +2048,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042EB8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042F18);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042F80);
+extern void (*D_800F9CA4[])(struct MainObj*);
+
+void func_80042F80(struct MainObj* arg0)
+{
+    D_800F9CA4[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042FBC);
 
@@ -1995,7 +2061,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043064);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800430C0);
 
-void func_80043128(void)
+void func_80043128(struct MainObj* arg0)
 {
 }
 

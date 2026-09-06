@@ -727,7 +727,23 @@ void func_8002B318(struct BaseObj* arg0, s32 arg1, s32 arg2)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B3C0);
+void func_8002B3C0(struct BaseObj* arg0)
+{
+    s16 x_pos;
+    s16 y_pos;
+
+    arg0->on_screen = 0;
+    if (arg0->bg_offset < 0) {
+        x_pos = arg0->x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi;
+    } else {
+        x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
+        y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
+    }
+    if (x_pos >= -0x60 && x_pos < 0x1A0 && y_pos >= -0x50 && y_pos < 0x140) {
+        arg0->on_screen = 1;
+    }
+}
 
 void func_8002B450(void)
 {
@@ -782,14 +798,30 @@ u8 get_random()
     return cur_random;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B780);
+s32 func_8002B780(void)
+{
+    s32 random_value;
+    s32 result;
+
+    random_value = get_random() & 0xFF;
+    result = 1;
+    if (random_value != 0) {
+        result = random_value;
+    }
+    return result;
+}
 
 u8 func_8002B7B0(struct MiscObj* arg0, s32 arg1, s32 arg2)
 {
     return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7DC);
+u8 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
+{
+    return func_8002B810(arg0->x_pos.val - arg1->x_pos.val,
+               arg0->y_pos.val - arg1->y_pos.val)
+        & 0xFF;
+}
 
 u8 func_8002B810(s32 arg0, s32 arg1)
 {
@@ -969,7 +1001,12 @@ void func_8002C808(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002C954);
+void func_8002C954(struct PlayerObj* arg0)
+{
+    if ((func_8002D25C(arg0) != 0) && (func_8002D490(arg0) != 0)) {
+        func_8002C9E4(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002C99C);
 

@@ -108,7 +108,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetGraphDebug);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetGraphQueue);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", GetGraphType);
+extern u8 D_8011E188;
+
+u8 GetGraphType(void)
+{
+    return D_8011E188;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", GetGraphDebug);
 
@@ -166,13 +171,33 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDrawEnv);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDrawEnv2);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_mode);
+extern u8 D_8011E188;
+
+s32 get_mode(s32 dfe, s32 dtd, s32 tpage)
+{
+    u8 version;
+
+    version = D_8011E188;
+    if (version == 1 || version == 2) {
+        return 0xE1000000 | (dtd ? 0x800 : 0) | (dfe ? 0x1000 : 0) | (tpage & 0x27FF);
+    } else {
+        return 0xE1000000 | (dtd ? 0x200 : 0) | (dfe ? 0x400 : 0) | (tpage & 0x9FF);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_cs);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_ce);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_ofs);
+extern u8 D_8011E188;
+
+u32 get_ofs(s32 arg0, u16 arg1)
+{
+    if ((u32)(D_8011E188 - 1) < 2U) {
+        return 0xe5000000 | ((arg1 & 0xfff) << 0xC) | (arg0 & 0xfff);
+    }
+    return 0xe5000000 | ((arg1 & 0x7ff) << 0xB) | (arg0 & 0x7ff);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_tw);
 
@@ -188,7 +213,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _dws);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _drs);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _ctl);
+extern u32* D_8011E25C;
+extern s8 D_8013BAF4[];
+
+void _ctl(u32 arg0)
+{
+    *D_8011E25C = arg0;
+    D_8013BAF4[arg0 >> 0x18] = (s8)arg0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _getctl);
 
@@ -208,7 +240,14 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _reset);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _sync);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", set_alarm);
+extern s32 D_8011E2A0;
+extern s32 D_8011E2A4;
+
+void set_alarm(void)
+{
+    D_8011E2A0 = VSync(-1) + 0xF0;
+    D_8011E2A4 = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_alarm);
 

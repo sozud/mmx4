@@ -32,9 +32,12 @@ void func_8009ED70(struct Unk* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_25", func_8009EE40);
+void func_8009EE40(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
-void func_8009EE60(void)
+void func_8009EE60(struct ShotObj* arg0)
 {
 }
 

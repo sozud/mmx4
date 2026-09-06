@@ -1,6 +1,11 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", GetVideoMode);
+long GetVideoMode(void)
+{
+    extern s32 D_8011DC80;
+
+    return D_8011DC80;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", StSetRing);
 
@@ -16,7 +21,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdStatus);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdMode);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdLastCom);
+extern u8 D_8011DD3D;
+
+int CdLastCom(void)
+{
+    return D_8011DD3D;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdLastPos);
 
@@ -30,7 +40,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdComstr);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdIntstr);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdSync);
+int CD_sync(int mode, u_char* result);
+
+int CdSync(int mode, u_char* result)
+{
+    return CD_sync(mode, result);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libgs/gs_125", CdReady);
 
