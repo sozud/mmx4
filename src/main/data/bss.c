@@ -290,7 +290,7 @@ s32 D_8013BD44;
 u16 layout_size;
 u8 pad_8013BD4A[6];
 s32* D_8013BD50[12][8];
-struct Unk main_objects[0x30];
+struct MainObj main_objects[0x30];
 void* D_8013DC10;
 void* D_8013DC14;
 void* D_8013DC18;

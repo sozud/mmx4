@@ -17,7 +17,12 @@ INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_800924F8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092598);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092600);
+void func_80092600(struct WeaponObj* arg0)
+{
+    arg0->on_screen = 0;
+    arg0->state = 3;
+    arg0->unk50 = 0;
+}
 
 void func_80092614(struct WeaponObj* arg0)
 {

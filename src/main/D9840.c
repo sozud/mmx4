@@ -213,7 +213,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _dws);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _drs);
 
-extern u32* D_8011E25C;
+extern volatile u32* D_8011E25C;
 extern s8 D_8013BAF4[];
 
 void _ctl(u32 arg0)
@@ -226,7 +226,17 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _getctl);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _cwb);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _cwc);
+extern volatile u32* D_8011E260;
+extern volatile u32* D_8011E264;
+extern volatile u32* D_8011E268;
+
+void _cwc(s32 arg0)
+{
+    *D_8011E25C = 0x04000002;
+    *D_8011E260 = arg0;
+    *D_8011E264 = 0;
+    *D_8011E268 = 0x01000401;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _param);
 

@@ -3,12 +3,12 @@
 #include "common.h"
 
 // didn't notice any differences when nopped out
-void func_800498C8(struct Unk* arg0)
+void func_800498C8(struct MainObj* arg0)
 {
     D_800FB0F4[arg0->state](arg0);
 }
 
-void func_80049904(struct Unk* arg0)
+void func_80049904(struct MainObj* arg0)
 {
     arg0->unk5C = 6;
     arg0->unk60 = 3;
@@ -26,8 +26,8 @@ void func_80049904(struct Unk* arg0)
     arg0->unk54 = D_800FAEF0;
     arg0->unk50 = D_800FAEF0;
     arg0->unk62 = 0;
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     func_80015D60(arg0, 0);
 
     switch (arg0->unk2) {
@@ -86,13 +86,13 @@ void func_80049904(struct Unk* arg0)
     arg0->unk6 = 0;
 }
 
-void func_80049AA0(struct Unk* arg0)
+void func_80049AA0(struct MainObj* arg0)
 {
     s8* temp_s1;
     s16 temp_v0;
 
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_800FB104[arg0->unk5](arg0);
     if (arg0->state_8c.unk8C != 0) {
         if (arg0->unk90 != 0) {
@@ -122,14 +122,21 @@ void func_80049AA0(struct Unk* arg0)
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049C0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049C78);
+void func_80049C78(struct MainObj* arg0)
+{
+    if (arg0->unk2 < 3) {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+        return;
+    }
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
-void func_80049CBC(struct Unk* arg0)
+void func_80049CBC(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->unk94;
 }
 
-void func_80049CC8(struct Unk* arg0)
+void func_80049CC8(struct MainObj* arg0)
 {
     switch (arg0->unk2) {
     case 0:
@@ -186,7 +193,12 @@ void func_80049CC8(struct Unk* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049DE8);
+extern void (*D_800FB120[])(struct MainObj*);
+
+void func_80049DE8(struct MainObj* arg0)
+{
+    D_800FB120[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049E24);
 
@@ -196,7 +208,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049F20);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049FE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A0AC);
+extern void (*D_800FB130[])(struct MainObj*);
+
+void func_8004A0AC(struct MainObj* arg0)
+{
+    D_800FB130[arg0->unk6](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A0FC);
 
@@ -208,17 +226,29 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A378);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A468);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A5B0);
+void func_8004A5B0(struct MainObj* arg0)
+{
+    func_8002B718((struct MovingObj*)arg0);
+    func_80015DC8(arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A5E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A644);
+void func_8004A644(struct MainObj* arg0)
+{
+    g_Player.y_pos.i.hi = arg0->y_pos.i.hi + 0x18;
+    if (arg0->unk15 == 0) {
+        g_Player.x_pos.i.hi = arg0->x_pos.i.hi - 0x18;
+    } else {
+        g_Player.x_pos.i.hi = arg0->x_pos.i.hi + 0x18;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A690);
 
 void func_8002B694(void);
 
-void func_8004A6E8(struct Unk* arg0)
+void func_8004A6E8(struct MainObj* arg0)
 {
     func_8002B694();
     func_80015DC8(arg0);
@@ -692,14 +722,14 @@ const u8* D_800FB0BC[12] = {
 
 u8 D_800FB0EC[8] = { 6, 7, 8, 9, 10, 11, 0, 0 };
 
-void (*D_800FB0F4[])(struct Unk*) = {
+void (*D_800FB0F4[])(struct MainObj*) = {
     func_80049904,
     func_80049AA0,
     func_80049C0C,
     func_80049C78,
 };
 
-void (*D_800FB104[])(struct Unk*) = {
+void (*D_800FB104[])(struct MainObj*) = {
     func_8009216C,
     func_80049CBC,
     func_80049CC8,

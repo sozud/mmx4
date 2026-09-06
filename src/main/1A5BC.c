@@ -395,9 +395,9 @@ void func_8002AB20()
     }
 }
 
-struct Unk* find_free_main_obj(void)
+struct MainObj* find_free_main_obj(void)
 {
-    struct Unk* var_v1;
+    struct MainObj* var_v1;
     for (var_v1 = &main_objects[0]; var_v1 < &main_objects[0x30]; var_v1++) {
         if (!var_v1->active) {
             var_v1->unk50 = 0;

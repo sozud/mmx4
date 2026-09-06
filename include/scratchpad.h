@@ -17,7 +17,7 @@ extern u8* mmx4_sp_background_cursor;
 extern void* mmx4_sp_background_primitive_cursor;
 extern void* mmx4_sp_ordering_cursor;
 extern void* mmx4_sp_auxiliary_cursor;
-extern struct Unk* mmx4_sp_current_main;
+extern struct MainObj* mmx4_sp_current_main;
 extern struct WeaponObj* mmx4_sp_current_weapon;
 extern struct ShotObj* mmx4_sp_current_shot;
 extern struct VisualObj* mmx4_sp_current_visual;
@@ -86,7 +86,7 @@ extern u8* pc_archive_slots[22];
 #define SP_ARC_40 (*(void**)0x1F800040)
 #define SP_ARC_44 (*(void**)0x1F800044)
 #define SP_ARC_48 (*(void**)0x1F800048)
-#define SP_CUR_MAIN_OBJ (*(struct Unk**)0x1F80004C)
+#define SP_CUR_MAIN_OBJ (*(struct MainObj**)0x1F80004C)
 #define SP_CUR_WEAPON_OBJ (*(struct WeaponObj**)0x1F800050)
 #define SP_CUR_SHOT_OBJ (*(struct ShotObj**)0x1F800050)
 #define SP_CUR_VISUAL_OBJ (*(struct VisualObj**)0x1F800054)
