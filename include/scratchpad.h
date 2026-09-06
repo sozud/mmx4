@@ -17,6 +17,16 @@ extern u8* mmx4_sp_background_cursor;
 extern void* mmx4_sp_background_primitive_cursor;
 extern void* mmx4_sp_ordering_cursor;
 extern void* mmx4_sp_auxiliary_cursor;
+extern struct Unk* mmx4_sp_current_main;
+extern struct WeaponObj* mmx4_sp_current_weapon;
+extern struct ShotObj* mmx4_sp_current_shot;
+extern struct VisualObj* mmx4_sp_current_visual;
+extern struct EffectObj* mmx4_sp_current_effect;
+extern struct ItemObj* mmx4_sp_current_item;
+extern struct MiscObj* mmx4_sp_current_misc;
+extern struct UnkObj* mmx4_sp_current_unk;
+extern struct QuadObj* mmx4_sp_current_quad;
+extern struct LayerObj* mmx4_sp_current_layer;
 extern u8* pc_archive_slots[22];
 #define MMX4_SP_PTR(offset, type) ((type*)(void*)&mmx4_scratchpad[(offset)])
 #define SP_DRAW_BUFFER (*MMX4_SP_PTR(0x000, s32))
@@ -38,16 +48,16 @@ extern u8* pc_archive_slots[22];
 #define SP_ARC_40 ((void*)pc_archive_slots[19])
 #define SP_ARC_44 ((void*)pc_archive_slots[20])
 #define SP_ARC_48 ((void*)pc_archive_slots[21])
-#define SP_CUR_MAIN_OBJ (*MMX4_SP_PTR(0x04C, struct Unk*))
-#define SP_CUR_WEAPON_OBJ (*MMX4_SP_PTR(0x050, struct WeaponObj*))
-#define SP_CUR_SHOT_OBJ (*MMX4_SP_PTR(0x050, struct ShotObj*))
-#define SP_CUR_VISUAL_OBJ (*MMX4_SP_PTR(0x054, struct VisualObj*))
-#define SP_CUR_EFFECT_OBJ (*MMX4_SP_PTR(0x05C, struct EffectObj*))
-#define SP_CUR_ITEM_OBJ (*MMX4_SP_PTR(0x060, struct ItemObj*))
-#define SP_CUR_MISC_OBJ (*MMX4_SP_PTR(0x064, struct MiscObj*))
-#define SP_CUR_UNK_OBJ (*MMX4_SP_PTR(0x064, struct UnkObj*))
-#define SP_CUR_QUAD_OBJ (*MMX4_SP_PTR(0x068, struct QuadObj*))
-#define SP_CUR_LAYER_OBJ (*MMX4_SP_PTR(0x06C, struct LayerObj*))
+#define SP_CUR_MAIN_OBJ mmx4_sp_current_main
+#define SP_CUR_WEAPON_OBJ mmx4_sp_current_weapon
+#define SP_CUR_SHOT_OBJ mmx4_sp_current_shot
+#define SP_CUR_VISUAL_OBJ mmx4_sp_current_visual
+#define SP_CUR_EFFECT_OBJ mmx4_sp_current_effect
+#define SP_CUR_ITEM_OBJ mmx4_sp_current_item
+#define SP_CUR_MISC_OBJ mmx4_sp_current_misc
+#define SP_CUR_UNK_OBJ mmx4_sp_current_unk
+#define SP_CUR_QUAD_OBJ mmx4_sp_current_quad
+#define SP_CUR_LAYER_OBJ mmx4_sp_current_layer
 #define SP_PRIM_CURSOR mmx4_sp_primitive_cursor
 #define SP_DRAW_MODE_CURSOR mmx4_sp_draw_mode_cursor
 #define SP_BG_PRIM_CURSOR mmx4_sp_background_primitive_cursor

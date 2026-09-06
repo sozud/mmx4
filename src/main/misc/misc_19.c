@@ -80,5 +80,5 @@ void func_800CB828(struct MiscObj* arg0)
 // title object. Includes the logo and the menu graphics
 void TitleUpdate(struct MiscObj* arg0)
 {
-    g_TitleUpdateFuncs[arg0->state]();
+    g_TitleUpdateFuncs[arg0->state](arg0);
 }

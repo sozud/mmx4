@@ -15,6 +15,21 @@ static struct InputEvent events[256];
 static size_t event_count;
 static unsigned long frame_number;
 static unsigned long max_frames;
+static u32 previous_game_state;
+static u32 previous_engine_state;
+static unsigned long stable_state_frames;
+static unsigned long capture_transition;
+static u32 capture_previous_game_state;
+static u32 capture_previous_engine_state;
+static unsigned long capture_stable_state_frames;
+static int have_capture_previous_state;
+struct PendingCapture {
+    unsigned long transition;
+    u32 game_state;
+    u32 engine_state;
+};
+static struct PendingCapture pending_capture;
+static int have_pending_capture;
 static int initialized;
 
 static u16 button_mask(const char* name)
@@ -93,6 +108,30 @@ static u16 scripted_input(void)
     return buttons;
 }
 
+static u16 oracle_input(void)
+{
+    const char* scene = getenv("MMX4_ORACLE_SCENE");
+    u32 game_state;
+    u32 engine_state;
+
+    if (scene == NULL || strcmp(scene, "mission-briefing") != 0)
+        return 0;
+    memcpy(&game_state, &game_info, sizeof(game_state));
+    memcpy(&engine_state, &engine_obj, sizeof(engine_state));
+    if (game_state != previous_game_state || engine_state != previous_engine_state) {
+        previous_game_state = game_state;
+        previous_engine_state = engine_state;
+        stable_state_frames = 0;
+    } else {
+        stable_state_frames++;
+    }
+    if (((game_state & 0xffff) == 0x0d01 || (game_state & 0xffff) == 0x0501 || (game_state & 0xffff) == 0x0106) && stable_state_frames % 30 < 2)
+        return PADstart | PADRdown;
+    if (((engine_state & 0xffff) == 0x0301 || (engine_state & 0xffff) == 0x0903 || (engine_state & 0xffff) == 0x0403) && stable_state_frames % 20 < 2)
+        return PADRdown;
+    return 0;
+}
+
 static u16 keyboard_input(void)
 {
     const bool* keys = SDL_GetKeyboardState(NULL);
@@ -126,6 +165,8 @@ static u16 keyboard_input(void)
 void mmx4_pc_input_update(u8* pad_buffer)
 {
     u16 buttons;
+    u32 game_state;
+    u32 engine_state;
 
     if (!initialized) {
         const char* value = getenv("MMX4_MAX_FRAMES");
@@ -136,12 +177,30 @@ void mmx4_pc_input_update(u8* pad_buffer)
     }
     if (max_frames != 0 && frame_number >= max_frames)
         exit(EXIT_SUCCESS);
-    buttons = scripted_input() | keyboard_input();
+    buttons = scripted_input() | oracle_input() | keyboard_input();
     pad_buffer[0] = 0;
     pad_buffer[1] = 0x41;
     pad_buffer[2] = (u8)(~buttons >> 8);
     pad_buffer[3] = (u8)~buttons;
     frame_number++;
+    memcpy(&game_state, &game_info, sizeof(game_state));
+    memcpy(&engine_state, &engine_obj, sizeof(engine_state));
+    if (!have_capture_previous_state || game_state != capture_previous_game_state || engine_state != capture_previous_engine_state) {
+        pending_capture.transition = capture_transition++;
+        pending_capture.game_state = game_state;
+        pending_capture.engine_state = engine_state;
+        have_pending_capture = 1;
+        capture_previous_game_state = game_state;
+        capture_previous_engine_state = engine_state;
+        capture_stable_state_frames = 0;
+        have_capture_previous_state = 1;
+    } else if (++capture_stable_state_frames == 30 && D_8016DEA4 == 0) {
+        mmx4_pc_write_state_screenshot(capture_transition++, frame_number,
+            game_state, engine_state);
+    }
+    if (have_pending_capture && D_8016DEA4 == 0 && mmx4_pc_write_state_screenshot(pending_capture.transition, frame_number, pending_capture.game_state, pending_capture.engine_state)) {
+        have_pending_capture = 0;
+    }
 }
 
 unsigned long mmx4_pc_frame_number(void)

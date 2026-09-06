@@ -1995,5 +1995,9 @@ enum SelectedPlayer {
 };
 
 #ifdef MMX4_PC
+#include "game_prototypes.h"
+#endif
+
+#ifdef MMX4_PC
 #include "pc_build.h"
 #endif

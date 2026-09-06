@@ -5,7 +5,7 @@
 // scaling X animation in logo graphics
 void TitleScalingXUpdate(struct EffectObj* arg0)
 {
-    g_TitleScalingXUpdateFuncs[arg0->state]();
+    g_TitleScalingXUpdateFuncs[arg0->state](arg0);
 }
 
 // g_TitleScalingXUpdateFuncs state 0

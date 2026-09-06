@@ -1,5 +1,4 @@
 #include "common.h"
-#include "oracle_capture.h"
 #include <psyz/cd.h>
 #include <psyz/spu.h>
 #include <psyz/video.h>
@@ -14,6 +13,16 @@ u8* mmx4_sp_background_cursor;
 void* mmx4_sp_background_primitive_cursor;
 void* mmx4_sp_ordering_cursor;
 void* mmx4_sp_auxiliary_cursor;
+struct Unk* mmx4_sp_current_main;
+struct WeaponObj* mmx4_sp_current_weapon;
+struct ShotObj* mmx4_sp_current_shot;
+struct VisualObj* mmx4_sp_current_visual;
+struct EffectObj* mmx4_sp_current_effect;
+struct ItemObj* mmx4_sp_current_item;
+struct MiscObj* mmx4_sp_current_misc;
+struct UnkObj* mmx4_sp_current_unk;
+struct QuadObj* mmx4_sp_current_quad;
+struct LayerObj* mmx4_sp_current_layer;
 
 struct ObjectHeader* (*g_MakeObjectFuncs[8])() = {
     (struct ObjectHeader * (*)()) find_free_main_obj,
@@ -102,13 +111,9 @@ static int parse_args(int argc, char** argv, const char** disc)
 
 int main(int argc, char** argv)
 {
-    int oracle_result = mmx4_oracle_capture_placeholder();
     const char* disc = getenv("MMX4_CUE");
     const char* canonical_load = getenv("MMX4_CANONICAL_LOAD");
     int parse_result;
-    if (oracle_result != MMX4_ORACLE_NOT_REQUESTED)
-        return oracle_result;
-
     mmx4_pc_canonical_load = canonical_load != NULL && canonical_load[0] != '\0' && canonical_load[0] != '0';
     if (disc == NULL)
         disc = "disks/mmx4.us.cue";
