@@ -19,7 +19,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092598);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092600);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092614);
+void func_80092614(struct WeaponObj* arg0)
+{
+    struct PlayerObj* owner;
+
+    owner = arg0->owner;
+    arg0->unk50 = 0;
+    owner->unk98--;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_80108728[])(struct WeaponObj*) = {
     func_80092314,

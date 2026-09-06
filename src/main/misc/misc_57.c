@@ -41,7 +41,7 @@ void func_800D35D0(struct UnkObj* arg0)
     u32 temp_v1;
 
     arg0->unk40 = 0x1E00;
-    arg0->animation_table = (const u32* const*)D_8010ECD4;
+    arg0->animation_table = D_8010ECD4;
     temp_v1 = *addr_801F3008;
     arg0->bg_offset = -1;
     arg0->unk3C = temp_v1 + (s32)addr_801F3000;

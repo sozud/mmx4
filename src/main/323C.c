@@ -1141,7 +1141,13 @@ s32 func_80015D60(void* object, s32 animation)
     __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80015D90);
+void func_80015D90(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
+{
+    arg0->animation_cursor = arg0->animation_table[arg1] + arg2;
+    arg0->unk17 = arg1;
+    arg0->previous_animation_index = 0xFF;
+    arg0->animation_step.packed = *arg0->animation_cursor;
+}
 
 void func_80015DC8(void* object)
 {
@@ -5694,7 +5700,15 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028AD8);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028B68);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028BAC);
+void func_80028BAC(s8 arg0, s8 arg1, s8 arg2)
+{
+    background_objects[0].unk37 = arg0;
+    background_objects[0].unk46 = arg1;
+    background_objects[0].unk3F = arg1;
+    background_objects[0].unk3D = arg2;
+    background_objects[0].unk3B = arg2;
+    background_objects[0].unk34 |= 1;
+}
 
 extern struct Checkpoint** D_800F42B4[32];
 

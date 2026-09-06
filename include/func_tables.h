@@ -1072,7 +1072,7 @@ void func_80042CC4(void);
 // D_800F9C7C
 void func_80042CE4(void);
 void func_80042E18(void);
-void func_80042F80(void);
+void func_80042F80(struct MainObj* arg0);
 void func_80043130(void);
 
 // D_800F9C8C
@@ -1086,10 +1086,10 @@ void func_80042EB8(void);
 void func_80042F18(void);
 
 // D_800F9CA4
-void func_80042FBC(void);
-void func_80043064(void);
-void func_800430C0(void);
-void func_80043128(void);
+void func_80042FBC(struct MainObj* arg0);
+void func_80043064(struct MainObj* arg0);
+void func_800430C0(struct MainObj* arg0);
+void func_80043128(struct MainObj* arg0);
 
 // D_800F9CB4
 void func_8004316C(void);
@@ -4222,8 +4222,8 @@ void func_8009EAA4(struct Unk* arg0);
 extern void (*D_80109160[])(struct ShotObj*);
 void func_8009EBA8(void);
 void func_8002C808(struct PlayerObj* arg0);
-void func_8009EE40(void);
-void func_8009EE60(void);
+void func_8009EE40(struct ShotObj* arg0);
+void func_8009EE60(struct ShotObj* arg0);
 
 // D_8010918C
 extern void (*D_8010918C[])(struct ShotObj*);
@@ -5699,7 +5699,7 @@ void func_800C7830(void);
 // D_8010D9EC
 void func_800C7AB0(void);
 void func_800C7B0C(void);
-void func_800C7B60(void);
+void func_800C7B60(struct MiscObj* arg0);
 
 // D_8010DABC
 void func_800C7C30(void);
