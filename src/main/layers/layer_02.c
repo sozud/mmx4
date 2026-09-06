@@ -4,7 +4,7 @@
 
 void func_800D9218(struct LayerObj* arg0)
 {
-    D_8010FF60[arg0->base.state](arg0);
+    D_8010FF60[arg0->state](arg0);
     func_800D9B48(arg0);
 }
 
@@ -19,7 +19,7 @@ void func_800D93FC(struct LayerObj* arg0)
 
 void func_800D941C(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800D945C(arg0);
     } else {
         func_800D9470(arg0);
@@ -28,18 +28,18 @@ void func_800D941C(struct LayerObj* arg0)
 
 void func_800D945C(struct LayerObj* arg0)
 {
-    arg0->base.unk6++;
+    arg0->unk6++;
 }
 
 void func_800D9470(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 5;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 5;
+    arg0->unk6 = 0;
 }
 
 void func_800D9480(struct LayerObj* arg0)
 {
-    switch (arg0->base.unk6) {
+    switch (arg0->unk6) {
     case 0:
         func_800D94FC(arg0);
         return;
@@ -54,26 +54,26 @@ void func_800D9480(struct LayerObj* arg0)
 
 void func_800D94FC(struct LayerObj* arg0)
 {
-    switch (arg0->base.unk7) {
+    switch (arg0->unk7) {
     case 0:
         if (func_800D9B08(arg0)) {
             background_objects[0].unk24 = 0x16B0;
             background_objects[0].unk26 = 0x16B0;
             func_80036AE4(0x14, 0x40);
-            arg0->base.unk7 = 1;
+            arg0->unk7 = 1;
             return;
         }
         return;
     case 1:
         if (func_8002BAD0(1, 0x40, 0x40) == 0x1E) {
-            arg0->base.unk7 = 2;
+            arg0->unk7 = 2;
             return;
         }
         break;
     case 2:
         if (func_8002BAD0(1, 0x40, 0x40) == 0x18) {
-            arg0->base.unk7 = 0;
-            arg0->base.unk6++;
+            arg0->unk7 = 0;
+            arg0->unk6++;
         }
         break;
     }
@@ -81,18 +81,18 @@ void func_800D94FC(struct LayerObj* arg0)
 
 void func_800D95F4(struct LayerObj* arg0)
 {
-    arg0->base.unk17 = 2;
+    arg0->unk17 = 2;
     engine_obj.character_state.bytes[0] = 1;
     func_8001540C(5, 0xA, NULL);
-    arg0->base.unk7 = 0;
-    arg0->base.unk6++;
+    arg0->unk7 = 0;
+    arg0->unk6++;
 }
 
 void func_800D964C(struct LayerObj* arg0)
 {
     s32 temp_v1;
 
-    if (arg0->base.unk7 == 0) {
+    if (arg0->unk7 == 0) {
         if (arg0->unk18.val != 0) {
             arg0->unk18.val -= 0x800;
             return;
@@ -101,8 +101,8 @@ void func_800D964C(struct LayerObj* arg0)
         background_objects[0].unk24 = 0x24E0;
         func_80036B18();
         func_8001540C(5, 0xB, NULL);
-        arg0->base.unk7 = 1;
-        arg0->base.unk17 = 0;
+        arg0->unk7 = 1;
+        arg0->unk17 = 0;
         return;
     }
     if (g_Player.unkBC == 0) {
@@ -114,7 +114,7 @@ void func_800D964C(struct LayerObj* arg0)
 
 void func_800D9728(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800D9768(arg0);
     } else {
         func_800D97F4(arg0);
@@ -132,10 +132,10 @@ void func_800D9768(struct LayerObj* arg0)
         arg0->unk18.val = FIXED(8);
     }
 
-    arg0->base.unk17 = 1;
+    arg0->unk17 = 1;
     engine_obj.character_state.bytes[0] = 0;
-    arg0->base.unk7 = 0;
-    arg0->base.unk6++;
+    arg0->unk7 = 0;
+    arg0->unk6++;
 }
 
 void func_800D97F4(struct LayerObj* arg0)
@@ -146,14 +146,14 @@ void func_800D97F4(struct LayerObj* arg0)
     if (arg0->unk18.val != 0x80000) {
         arg0->unk18.val += 0x400;
     } else {
-        arg0->base.unk5 = 5;
-        arg0->base.unk6 = 0;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
     }
 }
 
 void func_800D986C(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800D98AC(arg0);
     } else {
         func_800D98C0(arg0);
@@ -162,19 +162,19 @@ void func_800D986C(struct LayerObj* arg0)
 
 void func_800D98AC(struct LayerObj* arg0)
 {
-    arg0->base.unk7 = 0;
-    arg0->base.unk6++;
+    arg0->unk7 = 0;
+    arg0->unk6++;
 }
 
 void func_800D98C0(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 5;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 5;
+    arg0->unk6 = 0;
 }
 
 void func_800D98D0(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800D9910(arg0);
     } else {
         func_800D9924(arg0);
@@ -183,14 +183,14 @@ void func_800D98D0(struct LayerObj* arg0)
 
 void func_800D9910(struct LayerObj* arg0)
 {
-    arg0->base.unk7 = 0;
-    arg0->base.unk6++;
+    arg0->unk7 = 0;
+    arg0->unk6++;
 }
 
 void func_800D9924(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 5;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 5;
+    arg0->unk6 = 0;
 }
 
 void func_800D9934(struct LayerObj* arg0)

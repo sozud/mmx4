@@ -5,7 +5,7 @@
 // megaman never appears in stage if nopped out
 void MegamanRelatedUpdate(struct MiscObj* arg0)
 {
-    g_MegamanRelatedUpdateFuncs[arg0->base.state](arg0);
+    g_MegamanRelatedUpdateFuncs[arg0->state](arg0);
 }
 
 extern void* D_8010E6A0;
@@ -31,14 +31,14 @@ void func_800CB048(struct MiscObj* arg0)
 
     arg0->unk40 = 0x1E00;
     arg0->animation_table = &D_8010E6A0;
-    arg0->base.state = 1;
-    arg0->base.bg_offset = -1;
-    temp_v1 = D_8010E6C8[arg0->base.unk2];
+    arg0->state = 1;
+    arg0->bg_offset = -1;
+    temp_v1 = D_8010E6C8[arg0->unk2];
     arg0->unk42 = (temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6); // see func_800AF28C & func_8003D4C8 for a similar pattern
-    arg0->base.x_pos.i.hi = D_8010E6D0[arg0->base.unk2];
-    arg0->base.y_pos.i.hi = D_8010E6DC[arg0->base.unk2];
-    arg0->base.unk16 = D_8010E6E8[arg0->base.unk2];
-    arg0->base.unk15 = 0;
+    arg0->x_pos.i.hi = D_8010E6D0[arg0->unk2];
+    arg0->y_pos.i.hi = D_8010E6DC[arg0->unk2];
+    arg0->unk16 = D_8010E6E8[arg0->unk2];
+    arg0->unk15 = 0;
     arg0->x_vel.val = 0;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
@@ -49,9 +49,9 @@ void func_800CB048(struct MiscObj* arg0)
     arg0->ext.ready_text.unk58 = 0;
     arg0->ext.ready_text.palette_cycle_done = 0;
 
-    if (arg0->base.unk2 < 2) {
+    if (arg0->unk2 < 2) {
         pal_pos = 0;
-        if (arg0->base.unk2 != 0) {
+        if (arg0->unk2 != 0) {
             pal_dst = &D_8013B940;
             color = SP_PALETTE + 0x100;
             do {
@@ -68,14 +68,14 @@ void func_800CB048(struct MiscObj* arg0)
         }
         func_80015D60(arg0, 0);
     } else {
-        func_80015D60(arg0, arg0->base.unk2 - 1);
+        func_80015D60(arg0, arg0->unk2 - 1);
     }
 }
 
 // g_MegamanRelatedUpdateFuncs state 1
 void func_800CB1F0(struct MiscObj* arg0)
 {
-    D_8010E6FC[arg0->base.unk2](arg0); // the animation before ready appears but "READY" doesn't if nopped out
+    D_8010E6FC[arg0->unk2](arg0); // the animation before ready appears but "READY" doesn't if nopped out
 }
 
 // func_800CB22C state 0, 1
@@ -84,7 +84,7 @@ void func_800CB1F0(struct MiscObj* arg0)
 // asm(".rept 18 ; nop ; .endr");
 void func_800CB22C(struct MiscObj* arg0)
 {
-    ReadyTextUpdateFuncs[arg0->base.unk5]();
+    ReadyTextUpdateFuncs[arg0->unk5]();
     is_on_screen(arg0);
 }
 
@@ -95,9 +95,9 @@ void func_800CB27C(struct MiscObj* arg0)
 {
     if (arg0->ext.ready_text.unk50->unk16 != 0) {
         func_800CB5B4(arg0, NULL);
-        arg0->base.unk5 = 1;
+        arg0->unk5 = 1;
         arg0->ext.ready_text.unk54 = 8;
-        if (arg0->base.unk2 != 0) {
+        if (arg0->unk2 != 0) {
             arg0->unk42 = 0x7840;
             arg0->x_vel.val = FIXED(.25);
             arg0->y_vel.val = FIXED(-.5); // set y velocity of shadow behind "READY"
@@ -108,7 +108,7 @@ void func_800CB27C(struct MiscObj* arg0)
         func_8001540C(0, 0xA, 0);
         return;
     }
-    if ((arg0->base.unk2 == 0) && (arg0->ext.ready_text.palette_cycle_done == 0)) {
+    if ((arg0->unk2 == 0) && (arg0->ext.ready_text.palette_cycle_done == 0)) {
         if (arg0->ext.ready_text.unk54 != 0) {
             arg0->ext.ready_text.unk54--;
             return;
@@ -138,23 +138,23 @@ void func_800CB394(struct MiscObj* arg0)
     }
     arg0->ext.ready_text.unk54--;
     if (arg0->ext.ready_text.unk54 == 0) {
-        if (arg0->base.unk6 == 0) {
-            if (arg0->base.unk2 != 0) {
+        if (arg0->unk6 == 0) {
+            if (arg0->unk2 != 0) {
                 arg0->x_vel.val = FIXED(-.25);
                 arg0->y_vel.val = FIXED(.5);
             } else {
                 arg0->x_vel.val = FIXED(.25);
                 arg0->y_vel.val = FIXED(-.50);
             }
-            arg0->base.unk6 = 1;
+            arg0->unk6 = 1;
             arg0->ext.ready_text.unk54 = 8;
             arg0->ext.ready_text.stay_up_timer = 30; // how long the "READY" text should be in the "up" position
             return;
         }
-        arg0->base.unk5 = 2;
-        arg0->base.unk6 = 0;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
         arg0->unk42 = 0x7801;
-        if (arg0->base.unk2 != 0) {
+        if (arg0->unk2 != 0) {
             pal_src = &D_8013B940;
             pal_pos = 0;
             arg0->x_vel.val = FIXED(-16);
@@ -167,8 +167,8 @@ void func_800CB394(struct MiscObj* arg0)
         } else {
             arg0->x_vel.val = FIXED(16);
         }
-        arg0->base.x_pos.i.hi = 160;
-        arg0->base.y_pos.i.hi = 120;
+        arg0->x_pos.i.hi = 160;
+        arg0->y_pos.i.hi = 120;
         arg0->y_vel.val = 0;
         engine_obj.unk1E = 1;
         return;
@@ -181,12 +181,12 @@ void func_800CB394(struct MiscObj* arg0)
 // asm(".rept 26 ; nop ; .endr");
 void func_800CB4E4(struct MiscObj* arg0)
 {
-    if (arg0->base.on_screen != 0) {
+    if (arg0->on_screen != 0) {
         func_8002B694(arg0);
         return;
     }
-    arg0->base.state = 2;
-    arg0->base.unk5 = 0;
+    arg0->state = 2;
+    arg0->unk5 = 0;
     if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
         engine_obj.unk1C = 0;
     }
@@ -195,7 +195,7 @@ void func_800CB4E4(struct MiscObj* arg0)
 // D_8010E6FC state 2
 void func_800CB554(struct MiscObj* arg0)
 {
-    arg0->base.on_screen = 0;
+    arg0->on_screen = 0;
     if (D_80141BD8.unk0 & 0x10) {
         is_on_screen(arg0);
     }
@@ -204,7 +204,7 @@ void func_800CB554(struct MiscObj* arg0)
 // D_8010E6FC state 3, 4
 void func_800CB590(struct MiscObj* arg0)
 {
-    arg0->base.on_screen = 1;
+    arg0->on_screen = 1;
     is_on_screen(arg0);
 }
 

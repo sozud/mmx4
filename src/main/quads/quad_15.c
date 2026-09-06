@@ -7,7 +7,7 @@ void func_800D7CEC(struct QuadObj* arg0)
     struct BaseObj* obj = arg0->unk5C;
     arg0->state++;
     arg0->active = -0x7D;
-    arg0->bg_offset = g_Player.base.bg_offset;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk36 = 6;
     arg0->unk34 = 0x10;
     arg0->x_pos.i.hi = obj->x_pos.i.hi;
@@ -47,9 +47,9 @@ void func_800D7DA4(struct QuadObj* arg0)
     if (!(D_80141BD8.unk0 & 3)) {
         obj = find_free_shot_obj();
         if (obj != NULL) {
-            obj->base.active = 0x41;
-            obj->base.id = 0x2E;
-            obj->base.unk2 = 8;
+            obj->active = 0x41;
+            obj->id = 0x2E;
+            obj->unk2 = 8;
             obj->unk7C = arg0;
         }
     }
@@ -64,9 +64,9 @@ void func_800D7EA8(struct QuadObj* arg0)
     if (!(D_80141BD8.unk0 & 3)) {
         temp_v0 = find_free_shot_obj();
         if (temp_v0 != NULL) {
-            temp_v0->base.active = 0x41;
-            temp_v0->base.id = 0x2E;
-            temp_v0->base.unk2 = 8;
+            temp_v0->active = 0x41;
+            temp_v0->id = 0x2E;
+            temp_v0->unk2 = 8;
             temp_v0->unk7C = arg0;
         }
     }
@@ -87,7 +87,7 @@ void func_800D7F64(struct QuadObj* arg0)
 {
     D_8010FE3C[arg0->unk5](arg0);
     quad_is_on_screen(arg0);
-    if (arg0->unk5C->base.state == 2) {
+    if (arg0->unk5C->state == 2) {
         arg0->state = 2;
     }
 }

@@ -14,7 +14,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_13", func_8004C9E8);
 
 void func_8004CA14(struct Unk* arg0)
 {
-    arg0->base.unk5 = arg0->state_8c.unk8C;
+    arg0->unk5 = arg0->state_8c.unk8C;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_13", func_8004CA20);

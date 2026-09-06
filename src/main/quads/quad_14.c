@@ -34,7 +34,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_14", func_800D7BBC);
 
 void func_800D7C3C(struct QuadObj* arg0)
 {
-    if (arg0->unk5C->base.unk7 >= 8) {
+    if (arg0->unk5C->unk7 >= 8) {
         arg0->state++;
     }
 }
@@ -42,9 +42,9 @@ void func_800D7C3C(struct QuadObj* arg0)
 void func_800D7C70(struct QuadObj* arg0, u8 arg1)
 {
     if (arg1) {
-        arg0->unk14.val = arg0->unk5C->base.x_pos.val + FIXED(-1);
+        arg0->unk14.val = arg0->unk5C->x_pos.val + FIXED(-1);
     } else {
-        arg0->unk14.val = g_Player.base.x_pos.val + FIXED(-1);
+        arg0->unk14.val = g_Player.x_pos.val + FIXED(-1);
     }
     arg0->unk18.val = 0;
     arg0->unk1C.val = arg0->unk14.val + FIXED(2);

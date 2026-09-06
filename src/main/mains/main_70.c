@@ -32,7 +32,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_70", func_80089314);
 
 void func_80089334(struct Unk* arg0)
 {
-    arg0->base.unk5 = arg0->unk94;
+    arg0->unk5 = arg0->unk94;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_70", func_80089340);

@@ -10,7 +10,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/items/item_17", func_800C4290);
 
 void func_800C42B0(struct ItemObj* arg0)
 {
-    D_8010D18C[arg0->base.state](arg0);
+    D_8010D18C[arg0->state](arg0);
 }
 
 void (*D_8010D18C[])(struct ItemObj*) = {

@@ -4,7 +4,7 @@
 
 void func_800B41CC(struct VisualObj* arg0)
 {
-    D_8010A6AC[arg0->base.state](arg0);
+    D_8010A6AC[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4208);
@@ -21,10 +21,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4578);
 
 void func_800B4598(struct VisualObj* arg0)
 {
-    if (arg0->unk50->base.state != 1) {
+    if (arg0->unk50->state != 1) {
         ZeroObjectState(arg0);
     } else {
-        D_8010A6B8[arg0->base.unk5](arg0);
+        D_8010A6B8[arg0->unk5](arg0);
         is_on_screen(arg0);
     }
 }

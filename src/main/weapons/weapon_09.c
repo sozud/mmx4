@@ -4,7 +4,7 @@
 
 void func_80092648(struct WeaponObj* arg0)
 {
-    D_80108738[arg0->base.state](arg0);
+    D_80108738[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_09", func_80092684);

@@ -4,7 +4,7 @@
 
 void func_8006BB00(struct MainObj* arg0)
 {
-    D_801005E4[arg0->base.state](arg0);
+    D_801005E4[arg0->state](arg0);
     CollisionRelated(arg0);
     if (!(g_Player.unk5C & 0x7F)) {
         func_8006E920(arg0, 0x38);
@@ -25,8 +25,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_54", func_8006C170);
 
 void func_8006C278(struct MainObj* arg0)
 {
-    arg0->base.unk5 = 3;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_54", func_8006C288);
@@ -81,7 +81,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_54", func_8006DB04);
 
 void func_8006DBE8(struct MainObj* arg0)
 {
-    D_80100674[arg0->base.unk6](arg0);
+    D_80100674[arg0->unk6](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_54", func_8006DC24);

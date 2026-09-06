@@ -4,7 +4,7 @@
 
 void func_800A6FCC(struct ShotObj* arg0)
 {
-    D_801099E8[arg0->base.state](arg0);
+    D_801099E8[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_44", func_800A7008);

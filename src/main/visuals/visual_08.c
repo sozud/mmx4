@@ -4,7 +4,7 @@
 
 void func_800B0890(struct VisualObj* arg0)
 {
-    D_8010A430[arg0->base.state](arg0);
+    D_8010A430[arg0->state](arg0);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_08", func_800B08CC);

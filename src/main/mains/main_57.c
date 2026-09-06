@@ -14,8 +14,8 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_57", func_80072418);
 
 void func_800725DC(struct Unk* arg0)
 {
-    arg0->base.unk5 = 3;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_57", func_800725EC);

@@ -10,7 +10,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_25", func_800B3E20);
 
 void func_800B3E40(struct VisualObj* arg0)
 {
-    D_8010A694[arg0->base.state](arg0);
+    D_8010A694[arg0->state](arg0);
 }
 
 void (*D_8010A694[])(struct VisualObj*) = {

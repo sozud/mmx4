@@ -16,14 +16,14 @@ extern s32* D_8010E81C[];
 // g_TitleUpdateFuncs state 0
 void func_800CB634(struct MiscObj* arg0)
 {
-    u8 temp_a1 = arg0->base.unk2;
+    u8 temp_a1 = arg0->unk2;
     u8 temp_v1;
 
     arg0->animation_table = &D_8010E81C;
-    arg0->base.bg_offset = -1;
-    arg0->base.unk15 = 0;
-    arg0->base.unk16 = 3;
-    arg0->base.state++;
+    arg0->bg_offset = -1;
+    arg0->unk15 = 0;
+    arg0->unk16 = 3;
+    arg0->state++;
 
     arg0->unk40 = 0x600;
     arg0->unk3C = SP_TITLE_FRAMES;
@@ -32,8 +32,8 @@ void func_800CB634(struct MiscObj* arg0)
     // for unk2 == 0, setting position of "MEGAMAN" text
     // for unk2 == 1, didn't notice a difference
     // for unk2 == 2, setting position of greyed out "GAME START" text
-    arg0->base.x_pos.val = FIXED(D_8010E71C[temp_a1].x);
-    arg0->base.y_pos.val = FIXED(D_8010E71C[temp_a1].y);
+    arg0->x_pos.val = FIXED(D_8010E71C[temp_a1].x);
+    arg0->y_pos.val = FIXED(D_8010E71C[temp_a1].y);
     arg0->unk47 = D_8010E71C[temp_a1].unk;
     is_on_screen(arg0);
 }
@@ -43,9 +43,9 @@ void func_800CB708(struct MiscObj* arg0)
 {
     u8 temp_v1;
 
-    if (arg0->base.unk2 == 0xF) {
-        arg0->base.unk16 = 2;
-        arg0->base.y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
+    if (arg0->unk2 == 0xF) {
+        arg0->unk16 = 2;
+        arg0->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
         if (game_info.unk2 != 1) {
             if (!((game_info.unk2 < 2) && (game_info.unk2 == 0)))
                 goto use_default_frame;
@@ -59,16 +59,16 @@ void func_800CB708(struct MiscObj* arg0)
     frame_selected:;
     }
 
-    temp_v1 = arg0->base.unk2;
+    temp_v1 = arg0->unk2;
     if (((temp_v1 >= 4) && (temp_v1 < 6)) || ((s8)temp_v1 == 6)) {
-        arg0->base.on_screen = 0;
+        arg0->on_screen = 0;
         if ((D_80141BD8.unk0 & 0x10) == 0) {
             return;
         }
     } else {
-        arg0->base.on_screen = 1;
+        arg0->on_screen = 1;
     }
-    is_on_screen(&arg0->base);
+    is_on_screen(arg0);
 }
 
 // g_TitleUpdateFuncs state 2
@@ -80,5 +80,5 @@ void func_800CB828(struct MiscObj* arg0)
 // title object. Includes the logo and the menu graphics
 void TitleUpdate(struct MiscObj* arg0)
 {
-    g_TitleUpdateFuncs[arg0->base.state]();
+    g_TitleUpdateFuncs[arg0->state]();
 }

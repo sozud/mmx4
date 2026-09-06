@@ -4,15 +4,15 @@
 
 void func_800DA7C0(struct LayerObj* arg0)
 {
-    D_8010FFC8[arg0->base.state](arg0);
+    D_8010FFC8[arg0->state](arg0);
 }
 
 void func_800DA7FC(struct LayerObj* arg0)
 {
-    arg0->base.bg_offset = 0;
-    arg0->base.unk15 = 0;
-    arg0->base.unk16 = 0;
-    arg0->base.state++;
+    arg0->bg_offset = 0;
+    arg0->unk15 = 0;
+    arg0->unk16 = 0;
+    arg0->state++;
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_06", func_800DA818);

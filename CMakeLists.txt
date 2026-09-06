@@ -87,6 +87,7 @@ target_compile_definitions(mmx4_pc PRIVATE MMX4_PC=1 __psyz=1 SKIP_MDEC=1)
 target_compile_options(mmx4_pc PRIVATE -ffunction-sections -fdata-sections)
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     target_compile_options(mmx4_pc PRIVATE
+        -fno-strict-aliasing
         -Wno-error=implicit-function-declaration)
 endif()
 target_include_directories(mmx4_pc PRIVATE include tools/psyz/psyz/include)

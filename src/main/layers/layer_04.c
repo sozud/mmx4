@@ -4,14 +4,14 @@
 
 void func_800DA05C(struct LayerObj* arg0)
 {
-    D_8010FF88[arg0->base.state](arg0);
+    D_8010FF88[arg0->state](arg0);
 }
 
 void func_800DA098(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 1;
-    arg0->base.bg_offset = 2;
-    arg0->base.state++;
+    arg0->unk5 = 1;
+    arg0->bg_offset = 2;
+    arg0->state++;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x50;
     func_800DA0EC(arg0);
@@ -19,9 +19,9 @@ void func_800DA098(struct LayerObj* arg0)
 
 void func_800DA0EC(struct LayerObj* arg0)
 {
-    arg0->base.unk15 = arg0->base.bg_offset;
+    arg0->unk15 = arg0->bg_offset;
     func_800DA230(arg0);
-    D_8010FF94[arg0->base.unk5](arg0);
+    D_8010FF94[arg0->unk5](arg0);
 }
 
 void func_800DA140(struct LayerObj* arg0)
@@ -31,7 +31,7 @@ void func_800DA140(struct LayerObj* arg0)
 
 void func_800DA160(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800DA1A0(arg0);
     } else {
         func_800DA1B4(arg0);
@@ -40,18 +40,18 @@ void func_800DA160(struct LayerObj* arg0)
 
 void func_800DA1A0(struct LayerObj* arg0)
 {
-    arg0->base.unk6++;
+    arg0->unk6++;
 }
 
 void func_800DA1B4(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 2;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
 }
 
 void func_800DA1C4(struct LayerObj* arg0)
 {
-    if (arg0->base.unk6 == 0) {
+    if (arg0->unk6 == 0) {
         func_800DA204(arg0);
     } else {
         func_800DA218(arg0);
@@ -60,13 +60,13 @@ void func_800DA1C4(struct LayerObj* arg0)
 
 void func_800DA204(struct LayerObj* arg0)
 {
-    arg0->base.unk6++;
+    arg0->unk6++;
 }
 
 void func_800DA218(struct LayerObj* arg0)
 {
-    arg0->base.unk5 = 2;
-    arg0->base.unk6 = 0;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
 }
 
 void func_800DA228(struct LayerObj* arg0)

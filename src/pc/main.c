@@ -15,15 +15,15 @@ void* mmx4_sp_background_primitive_cursor;
 void* mmx4_sp_ordering_cursor;
 void* mmx4_sp_auxiliary_cursor;
 
-struct BaseObj* (*g_MakeObjectFuncs[8])() = {
-    (struct BaseObj * (*)()) find_free_main_obj,
-    (struct BaseObj * (*)()) find_free_weapon_obj,
-    (struct BaseObj * (*)()) find_free_visual_obj,
-    (struct BaseObj * (*)()) find_free_effect_obj,
-    (struct BaseObj * (*)()) find_free_item_obj,
-    (struct BaseObj * (*)()) find_free_misc_obj,
-    (struct BaseObj * (*)()) find_free_quad_obj,
-    (struct BaseObj * (*)()) find_free_layer_obj,
+struct ObjectHeader* (*g_MakeObjectFuncs[8])() = {
+    (struct ObjectHeader * (*)()) find_free_main_obj,
+    (struct ObjectHeader * (*)()) find_free_weapon_obj,
+    (struct ObjectHeader * (*)()) find_free_visual_obj,
+    (struct ObjectHeader * (*)()) find_free_effect_obj,
+    (struct ObjectHeader * (*)()) find_free_item_obj,
+    (struct ObjectHeader * (*)()) find_free_misc_obj,
+    (struct ObjectHeader * (*)()) find_free_quad_obj,
+    (struct ObjectHeader * (*)()) find_free_layer_obj,
 };
 
 s32 mmx4_pc_sfx_group = -1;

@@ -27,23 +27,23 @@ void func_80029E1C(struct GameInfo* arg0)
 
     obj = find_free_unk_obj();
     if (obj != NULL) {
-        obj->base.active = 1;
-        obj->base.unk2 = 0x5E;
-        obj->base.id = 0;
-        obj->base.y_pos.i.hi = 0x10;
+        obj->active = 1;
+        obj->unk2 = 0x5E;
+        obj->id = 0;
+        obj->y_pos.i.hi = 0x10;
     }
 
     obj = find_free_unk_obj();
     if (obj != NULL) {
-        obj->base.active = 1;
-        obj->base.id = 0;
-        obj->base.unk2 = -1;
+        obj->active = 1;
+        obj->id = 0;
+        obj->unk2 = -1;
         if (D_80141BE0 != 0) {
             obj->unk50 = D_800F4568;
         } else {
             obj->unk50 = D_800F457C;
         }
-        obj->base.x_pos.i.hi = 0x38;
+        obj->x_pos.i.hi = 0x38;
     }
 
     if (D_80141BE0 != 0) {
@@ -54,11 +54,11 @@ void func_80029E1C(struct GameInfo* arg0)
     while (var_s1[0] != 0xFF) {
         obj = find_free_unk_obj();
         if (obj != NULL) {
-            obj->base.active = 1;
-            obj->base.id = 0;
-            obj->base.unk2 = var_s1[0];
-            obj->base.y_pos.i.hi = var_s1[1];
-            obj->base.unk7 = var_s1[2];
+            obj->active = 1;
+            obj->id = 0;
+            obj->unk2 = var_s1[0];
+            obj->y_pos.i.hi = var_s1[1];
+            obj->unk7 = var_s1[2];
         }
         if (var_s1[2] == 7) {
             break;
@@ -74,10 +74,10 @@ void func_80029E1C(struct GameInfo* arg0)
         do {
             obj = find_free_unk_obj();
             if (obj != NULL) {
-                obj->base.active = 1;
-                obj->base.id = 0;
-                obj->base.unk2 = var_s1[1];
-                obj->base.y_pos.i.hi = var_s1[0];
+                obj->active = 1;
+                obj->id = 0;
+                obj->unk2 = var_s1[1];
+                obj->y_pos.i.hi = var_s1[0];
             }
             var_s1 += 2;
         } while (var_s1[1] != 7);
@@ -85,10 +85,10 @@ void func_80029E1C(struct GameInfo* arg0)
 
     obj = find_free_unk_obj();
     if (obj != NULL) {
-        obj->base.active = 1;
-        obj->base.unk2 = -2;
-        obj->base.id = 0;
-        obj->base.x_pos.i.hi = 0x20;
+        obj->active = 1;
+        obj->unk2 = -2;
+        obj->id = 0;
+        obj->x_pos.i.hi = 0x20;
     }
 
     if (D_80141BE0 == 0) {
@@ -399,7 +399,7 @@ struct Unk* find_free_main_obj(void)
 {
     struct Unk* var_v1;
     for (var_v1 = &main_objects[0]; var_v1 < &main_objects[0x30]; var_v1++) {
-        if (!var_v1->base.active) {
+        if (!var_v1->active) {
             var_v1->unk50 = 0;
             var_v1->unk54 = 0;
             var_v1->unk68 = 0;
@@ -429,7 +429,7 @@ struct WeaponObj* find_free_weapon_obj()
 {
     struct WeaponObj* current;
     for (current = &weapon_objects[0]; current < &weapon_objects[0x10]; current++) {
-        if (!current->base.active) {
+        if (!current->active) {
             current->unk50 = 0;
             current->unk54 = 0;
             current->unk68 = 0;
@@ -459,7 +459,7 @@ struct ShotObj* find_free_shot_obj(void)
 {
     struct ShotObj* current;
     for (current = &shot_objects[0]; current < &shot_objects[0x20]; current++) {
-        if (!current->base.active) {
+        if (!current->active) {
             current->unk50 = 0;
             current->unk54 = 0;
             current->unk68 = 0;
@@ -489,7 +489,7 @@ struct VisualObj* find_free_visual_obj()
 {
     struct VisualObj* current;
     for (current = &visual_objects[0]; current < &visual_objects[0x20]; current++) {
-        if (current->base.active == NULL) {
+        if (current->active == NULL) {
             return current;
         }
     }
@@ -512,7 +512,7 @@ struct ItemObj* find_free_item_obj()
 {
     struct ItemObj* current;
     for (current = &item_objects[0]; current < &item_objects[0x20]; current++) {
-        if (!current->base.active) {
+        if (!current->active) {
             current->unk50 = 0;
             current->unk54 = 0;
             current->unk68 = 0;
@@ -541,7 +541,7 @@ struct MiscObj* find_free_misc_obj(void)
 {
     struct MiscObj* var_v0;
     for (var_v0 = &misc_objects[0]; var_v0 < &misc_objects[0x40]; var_v0++) {
-        if (!var_v0->base.active) {
+        if (!var_v0->active) {
             return var_v0;
         }
     }
@@ -557,7 +557,7 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
             arg0++;
         }
         while (arg0 < &misc_objects[COUNT(misc_objects)]) {
-            if (arg0->base.active == 0) {
+            if (arg0->active == 0) {
                 return arg0;
             }
             arg0++;
@@ -571,7 +571,7 @@ struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1)
             return NULL;
         }
         while (arg0 >= misc_objects) {
-            if (arg0->base.active == 0) {
+            if (arg0->active == 0) {
                 return arg0;
             }
             arg0--;
@@ -589,7 +589,7 @@ struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1)
             arg0++;
         }
         while (arg0 < &visual_objects[COUNT(visual_objects)]) {
-            if (arg0->base.active == 0) {
+            if (arg0->active == 0) {
                 return arg0;
             }
             arg0++;
@@ -603,7 +603,7 @@ struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1)
             return NULL;
         }
         while (arg0 >= visual_objects) {
-            if (arg0->base.active == 0) {
+            if (arg0->active == 0) {
                 return arg0;
             }
             arg0--;
@@ -631,7 +631,7 @@ struct LayerObj* find_free_layer_obj()
 {
     struct LayerObj* current;
     for (current = &layer_objects[0]; current < &layer_objects[4]; current++) {
-        if (!current->base.active) {
+        if (!current->active) {
             return current;
         }
     }
@@ -644,7 +644,7 @@ struct UnkObj* find_free_unk_obj()
     struct UnkObj* current;
 
     for (current = &unk_objects[0]; current < &unk_objects[20]; current++) {
-        if (!current->base.active) {
+        if (!current->active) {
             return current;
         }
     }
@@ -652,29 +652,29 @@ struct UnkObj* find_free_unk_obj()
     return NULL;
 }
 
-void func_8002B0C8(struct Unk18* arg0)
+void func_8002B0C8(struct ObjectHeader* arg0)
 {
-    if (arg0->unk10 != NULL) {
-        *arg0->unk10 &= 0x70;
+    if (arg0->backref != NULL) {
+        *(u8*)arg0->backref &= 0x70;
     }
     ZeroObjectState(arg0);
 }
 
-void func_8002B108(struct Unk18* arg0)
+void func_8002B108(struct ObjectHeader* arg0)
 {
-    if (arg0->unk10 != NULL) {
-        *arg0->unk10 = 0x80;
+    if (arg0->backref != NULL) {
+        *(u8*)arg0->backref = 0x80;
     }
     ZeroObjectState(arg0);
 }
 
-void ZeroObjectState(struct Unk18* arg0)
+void ZeroObjectState(struct ObjectHeader* arg0)
 {
-    arg0->unk0 = 0;
-    arg0->unk1 = 0;
+    arg0->active = 0;
+    arg0->id = 0;
     arg0->unk2 = 0;
-    arg0->unk3 = 0;
-    arg0->unk4 = 0;
+    arg0->on_screen = 0;
+    arg0->state = 0;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
@@ -747,10 +747,10 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B560);
 
 void func_8002B694(struct Unk* arg0)
 {
-    arg0->base.x_pos.val += arg0->unk20;
-    arg0->base.y_pos.val -= arg0->unk24;
+    arg0->x_pos.val += arg0->unk20;
+    arg0->y_pos.val -= arg0->unk24;
 
-    if (arg0->base.unk15) {
+    if (arg0->unk15) {
         arg0->unk20 += arg0->unk28;
     } else {
         arg0->unk20 -= arg0->unk28;
@@ -786,7 +786,7 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B780);
 
 u8 func_8002B7B0(struct MiscObj* arg0, s32 arg1, s32 arg2)
 {
-    return func_8002B810(arg0->base.x_pos.val - arg1, arg0->base.y_pos.val - arg2);
+    return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B7DC);
@@ -887,7 +887,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
 
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
-        temp_v1 = arg0->base.x_pos.val - arg0->unk18;
+        temp_v1 = arg0->x_pos.val - arg0->unk18;
         D_8013B7D8 = 0;
         D_8013B7DC = 0;
 
@@ -899,7 +899,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
             }
         }
 
-        if (arg0->base.y_pos.val - arg0->unk1C >= 0) {
+        if (arg0->y_pos.val - arg0->unk1C >= 0) {
             func_8002CDD4(arg0);
             if (D_8013B7D8 != 0) {
                 return;
@@ -929,7 +929,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
 void func_8002C760(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
-    u16 temp_a1 = arg0->base.x_pos.i.hi;
+    u16 temp_a1 = arg0->x_pos.i.hi;
     u16 temp_v0 = temp_v1->unk0;
 
     D_8013B7E8 = temp_v1->unk0;
@@ -938,9 +938,9 @@ void func_8002C760(struct PlayerObj* arg0)
     D_8013B7E4 = temp_v1->unk3;
 
     D_8013B7F0 = temp_a1;
-    D_8013B7F4 = arg0->base.y_pos.i.hi;
+    D_8013B7F4 = arg0->y_pos.i.hi;
 
-    if (arg0->base.unk15 == 0) {
+    if (arg0->unk15 == 0) {
         D_8013B7F8 = temp_a1 + temp_v0;
     } else {
         D_8013B7F8 = temp_a1 - temp_v0;
@@ -1016,7 +1016,7 @@ void func_8002CDD4(struct PlayerObj* arg0)
             }
 
             if (var_s0) {
-                arg0->base.y_pos.i.hi += 0x10;
+                arg0->y_pos.i.hi += 0x10;
                 if (func_8002CF98(arg0, temp_v0_4, D_8013B7F8, temp_v0 + 0x10)) {
                     return;
                 }
@@ -1039,7 +1039,7 @@ s32 func_8002CF98(struct PlayerObj* entity, u8 arg1, s16 arg2, s16 arg3)
     flag = 0;
     if (arg1 == 0x10) {
         flag = 1;
-        entity->base.y_pos.i.hi -= 0x10;
+        entity->y_pos.i.hi -= 0x10;
         arg1 = func_8002D7E4(entity, arg2, arg3 - 0x10);
     }
 
@@ -1140,8 +1140,8 @@ s32 func_8002D25C(struct PlayerObj* arg0)
     }
 
     if (func_8002D32C(arg0, arg1, arg2) == 0) {
-        arg0->base.y_pos.i.lo = 0;
-        arg0->base.y_pos.i.hi += D_8013B804;
+        arg0->y_pos.i.lo = 0;
+        arg0->y_pos.i.hi += D_8013B804;
         return 0;
     } else {
         return -1;
@@ -1237,13 +1237,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D7E4);
 u8 func_8002D8B8(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
-    return func_8002D724(arg0, arg0->base.x_pos.i.hi, arg0->base.y_pos.i.hi + temp_v1->unk1 - temp_v1->unk3);
+    return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi + temp_v1->unk1 - temp_v1->unk3);
 }
 
 u8 func_8002D900(struct PlayerObj* arg0)
 {
-    s16 x = arg0->base.x_pos.i.hi;
-    s16 y = arg0->base.y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 - 1;
+    s16 x = arg0->x_pos.i.hi;
+    s16 y = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 - 1;
 
     return func_8002D724(arg0, x, y);
 }
@@ -1251,7 +1251,7 @@ u8 func_8002D900(struct PlayerObj* arg0)
 u8 func_8002D94C(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
-    return func_8002D724(arg0, arg0->base.x_pos.i.hi, arg0->base.y_pos.i.hi + temp_v1->unk1 + temp_v1->unk3);
+    return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi + temp_v1->unk1 + temp_v1->unk3);
 }
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D994);
@@ -1272,14 +1272,14 @@ void func_8002E184(struct PlayerObj* arg0)
             func_8002E380(arg0, &g_Player, arg0->unk72);
         }
         func_8002C36C(arg0, &g_Player, 0);
-        if (g_Entity.base.active != 0) {
+        if (g_Entity.active != 0) {
             func_8002E294(arg0, &g_Entity);
             if (arg0->unk77 > 0) {
                 func_8002E380(arg0, &g_Entity, arg0->unk73);
             }
             func_8002C36C(arg0, &g_Entity, 1);
         }
-        if (qux_object.base.active != 0) {
+        if (qux_object.active != 0) {
             func_8002E294(arg0, (struct PlayerObj*)&qux_object);
             if (arg0->unk78 > 0) {
                 func_8002E380(arg0, (struct PlayerObj*)&qux_object, arg0->unk74);

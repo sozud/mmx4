@@ -20,12 +20,12 @@ void func_800B6A90(struct EffectObj* arg0)
 {
     if (func_8002B160(arg0) == 0) {
         if (arg0->unk2 & 0xF0) {
-            if (arg0->y_pos.i.hi <= g_Player.base.y_pos.i.hi) {
+            if (arg0->y_pos.i.hi <= g_Player.y_pos.i.hi) {
                 engine_obj.checkpoint = arg0->unk2 & 0xF;
                 func_8002B0C8(arg0);
             }
         } else {
-            if (arg0->x_pos.i.hi <= g_Player.base.x_pos.i.hi) {
+            if (arg0->x_pos.i.hi <= g_Player.x_pos.i.hi) {
                 engine_obj.checkpoint = arg0->unk2 & 0xF;
                 func_8002B0C8(arg0);
             }

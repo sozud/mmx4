@@ -7,13 +7,13 @@
 // asm(".rept 13 ; nop ; .endr");
 void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 {
-    g_MegamanInBriefingRoomUpdateFuncs[arg0->base.state]();
+    g_MegamanInBriefingRoomUpdateFuncs[arg0->state]();
 }
 
 // g_MegamanInBriefingRoomUpdateFuncs state 0
 void func_800C9EE8(struct MiscObj* arg0)
 {
-    if (arg0->base.unk2 == 0) {
+    if (arg0->unk2 == 0) {
         arg0->unk42 = 0x7883;
         arg0->unk40 = D_801406A8[2] >> 7;
         arg0->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
@@ -22,8 +22,8 @@ void func_800C9EE8(struct MiscObj* arg0)
         } else {
             arg0->animation_table = &D_8010E514;
         }
-        arg0->base.x_pos.val = FIXED(42);
-        arg0->base.y_pos.val = FIXED(416);
+        arg0->x_pos.val = FIXED(42);
+        arg0->y_pos.val = FIXED(416);
     } else {
         arg0->unk42 = 0x7885;
         arg0->unk40 = D_801406A8[3] >> 7;
@@ -33,13 +33,13 @@ void func_800C9EE8(struct MiscObj* arg0)
         } else {
             arg0->animation_table = &D_8010E4EC;
         }
-        arg0->base.x_pos.val = FIXED(282);
-        arg0->base.y_pos.val = FIXED(432);
+        arg0->x_pos.val = FIXED(282);
+        arg0->y_pos.val = FIXED(432);
     }
-    arg0->base.bg_offset = 0;
-    arg0->base.unk15 = 0;
-    arg0->base.unk16 = 3;
-    arg0->base.state++;
+    arg0->bg_offset = 0;
+    arg0->unk15 = 0;
+    arg0->unk16 = 3;
+    arg0->state++;
     func_80015D60(arg0, 0);
     is_on_screen(arg0);
 }
@@ -49,7 +49,7 @@ void func_800C9EE8(struct MiscObj* arg0)
 // asm(".rept 36 ; nop ; .endr");
 void func_800CA030(struct MiscObj* arg0)
 {
-    if (arg0->base.unk2 == 0) {
+    if (arg0->unk2 == 0) {
         if (!(engine_obj.unk40 & 0x10)) {
             func_80015DC8(arg0, engine_obj.unk40);
         } else {

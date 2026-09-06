@@ -170,7 +170,7 @@ void mmx4_oracle_capture_object_changes(unsigned long frame)
         return;
     for (table = 0; table < COUNT(tables); table++) {
         for (slot = 0; slot < tables[table].count; slot++, index++) {
-            const struct BaseObj* object = (const struct BaseObj*)((const u8*)tables[table].data + slot * tables[table].stride);
+            const struct ObjectHeader* object = (const struct ObjectHeader*)((const u8*)tables[table].data + slot * tables[table].stride);
             struct ObjectStep value = {
                 (u8)object->active,
                 (u8)object->id,

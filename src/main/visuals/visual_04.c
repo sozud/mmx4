@@ -4,7 +4,7 @@
 
 void func_800AFB50(struct VisualObj* arg0)
 {
-    if (arg0->base.state == 0) {
+    if (arg0->state == 0) {
         func_800AFB90(arg0);
     } else {
         func_800AFC4C(arg0);

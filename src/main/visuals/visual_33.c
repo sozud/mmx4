@@ -7,16 +7,16 @@ void func_800B2AD0(struct VisualObj* arg0)
     struct PlayerObj* player = &g_Player;
     s8 var_s1;
 
-    if (arg0->base.state == 0) {
-        arg0->base.on_screen = 1;
-        arg0->base.unk2 = -1;
+    if (arg0->state == 0) {
+        arg0->on_screen = 1;
+        arg0->unk2 = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->unk30 = &D_8011BF40;
         arg0->unk42 = 0x7802;
         arg0->unk40 = 0;
-        arg0->base.unk16 = 3;
+        arg0->unk16 = 3;
         arg0->unk5C = 0;
-        arg0->base.state++;
+        arg0->state++;
     }
 
     var_s1 = -((player->cur_anim == 0xE5 || player->cur_anim == 0xE6) ^ 1);
@@ -37,16 +37,16 @@ void func_800B2AD0(struct VisualObj* arg0)
         ZeroObjectState(arg0);
         return;
     }
-    if (var_s1 != arg0->base.unk2) {
+    if (var_s1 != arg0->unk2) {
         func_80015D60(arg0, var_s1 + 0x20);
-        arg0->base.unk2 = var_s1;
+        arg0->unk2 = var_s1;
     } else {
         func_80015DC8(arg0, var_s1);
     }
 
-    arg0->base.unk15 = player->base.unk15;
-    arg0->base.x_pos.val = player->base.x_pos.val;
-    arg0->base.y_pos.val = player->base.y_pos.val;
+    arg0->unk15 = player->unk15;
+    arg0->x_pos.val = player->x_pos.val;
+    arg0->y_pos.val = player->y_pos.val;
     if (arg0->unk5C == 0) {
         arg0->unk5C = 8;
         func_8001540C(0, 0x1F, arg0);
@@ -60,22 +60,22 @@ void func_800B2C8C(struct MiscObj* arg0)
 {
     u8 playerUnkA6;
 
-    if (arg0->base.state == 0) {
-        arg0->base.bg_offset = -1;
+    if (arg0->state == 0) {
+        arg0->bg_offset = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->unk42 = 0x780A;
-        arg0->base.unk16 = 0x10;
-        arg0->base.x_pos.i.hi = 0x20;
+        arg0->unk16 = 0x10;
+        arg0->x_pos.i.hi = 0x20;
         arg0->unk40 = 0;
-        arg0->base.y_pos.i.hi = 0x34;
-        arg0->base.state++;
+        arg0->y_pos.i.hi = 0x34;
+        arg0->state++;
     } else {
-        arg0->base.on_screen = 0;
+        arg0->on_screen = 0;
         if (engine_obj.unk1F != 0 && g_Player.unkA6 != 0) {
-            arg0->base.on_screen = 1;
+            arg0->on_screen = 1;
             playerUnkA6 = *(u8*)0x8014196E;
-            arg0->base.x_pos.i.hi = 0x20;
-            arg0->base.y_pos.i.hi = 0x34;
+            arg0->x_pos.i.hi = 0x20;
+            arg0->y_pos.i.hi = 0x34;
             arg0->unk47 = 0x1F - playerUnkA6;
         }
     }
