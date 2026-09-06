@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(mmx4_pc C)
 
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    message(FATAL_ERROR "The MMX4 PC build currently supports Linux only")
+if(NOT CMAKE_SYSTEM_NAME MATCHES "Linux|Darwin")
+    message(FATAL_ERROR "The MMX4 PC build currently supports Linux and macOS only")
 endif()
 
 if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tools/psyz/psyz/CMakeLists.txt")
@@ -76,8 +76,9 @@ add_executable(mmx4_pc
     src/pc/input.c
     src/pc/loading.c
     src/pc/main.c
-    src/pc/oracle_capture.c
+    src/pc/oracle.c
     src/pc/placeholder.c
+    src/pc/screenshot.c
     src/pc/stubs.c
     src/pc/threads.c
     ${MMX4_PC_GAME_SOURCES}
@@ -85,14 +86,23 @@ add_executable(mmx4_pc
 
 target_compile_definitions(mmx4_pc PRIVATE MMX4_PC=1 __psyz=1 SKIP_MDEC=1)
 target_compile_options(mmx4_pc PRIVATE -ffunction-sections -fdata-sections)
-if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(mmx4_pc PRIVATE
         -fno-strict-aliasing
         -Wno-error=implicit-function-declaration)
 endif()
+if(CMAKE_C_COMPILER_ID MATCHES "Clang")
+    target_compile_options(mmx4_pc PRIVATE
+        -Wno-error=int-conversion
+        -Wno-error=incompatible-function-pointer-types)
+endif()
 target_include_directories(mmx4_pc PRIVATE include tools/psyz/psyz/include)
 target_link_libraries(mmx4_pc PRIVATE psyz)
-target_link_options(mmx4_pc PRIVATE -Wl,--gc-sections)
+if(APPLE)
+    target_link_options(mmx4_pc PRIVATE -Wl,-dead_strip)
+else()
+    target_link_options(mmx4_pc PRIVATE -Wl,--gc-sections)
+endif()
 if(MMX4_PC_ASAN AND CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_definitions(mmx4_pc PRIVATE MMX4_PC_ASAN=1)
     target_compile_options(mmx4_pc PRIVATE
@@ -107,10 +117,10 @@ include(CTest)
 if(BUILD_TESTING)
     find_package(Python3 COMPONENTS Interpreter REQUIRED)
     add_test(
-        NAME oracle_black_capture
+        NAME pc_scene_suite
         COMMAND "${Python3_EXECUTABLE}"
             "${CMAKE_CURRENT_SOURCE_DIR}/tools/oracle/run_pc_scene_suite.py"
             --binary "$<TARGET_FILE:mmx4_pc>"
-            --output "${CMAKE_CURRENT_BINARY_DIR}/oracle-black-capture"
+            --output "${CMAKE_CURRENT_BINARY_DIR}/pc-object-changes"
     )
 endif()

@@ -2,7 +2,7 @@
 
 u8 D_800F8B30[2] = { 0x67, 0x66 };
 
-static u16 s_PlayerEffectIdPad __attribute__((section(".data"))) = 0;
+static u16 s_PlayerEffectIdPad = 0;
 
 u8 D_800F8B34[8] = { 2, 3, 6, 6, 2, 4, 7, 7 };
 

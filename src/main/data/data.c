@@ -20,7 +20,7 @@ u16 D_800EE430[16] = {
 };
 RECT D_800EE450 = { 0, 0, 1024, 512 };
 
-s32 D_800EE458 __attribute__((section(".data"))) = 0;
+s32 D_800EE458 = 0;
 void (*D_800EE45C[9])() = {
     func_80012740,
     func_800127C8,

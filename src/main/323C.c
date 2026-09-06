@@ -1526,6 +1526,7 @@ void decompress_gfx(u16* src, u16* dest)
     u16 var_t1;
     u32 var_v1;
     s32 arg2;
+    u16* copy_src;
 start:
     var_t1 = *(src++);
 
@@ -1552,10 +1553,9 @@ start:
                 } while (var_v1 != 0);
                 continue;
             } else {
-                arg2 = dest - arg2;
+                copy_src = dest - arg2;
                 do {
-                    *(dest++) = *((u16*)arg2);
-                    arg2 += 2;
+                    *(dest++) = *(copy_src++);
                     var_v1 -= 1;
                 } while (var_v1 != 0);
             }

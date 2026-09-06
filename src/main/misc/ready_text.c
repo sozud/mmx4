@@ -84,7 +84,7 @@ void func_800CB1F0(struct MiscObj* arg0)
 // asm(".rept 18 ; nop ; .endr");
 void func_800CB22C(struct MiscObj* arg0)
 {
-    ReadyTextUpdateFuncs[arg0->unk5]();
+    ReadyTextUpdateFuncs[arg0->unk5](arg0);
     is_on_screen(arg0);
 }
 

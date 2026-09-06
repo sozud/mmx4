@@ -146,7 +146,7 @@ void func_800CCDD4(struct MiscObj* arg0)
 // D_8010EBB4 state 0, 1
 void func_800CCEB4(struct MiscObj* arg0)
 {
-    D_8010EB84[arg0->unk6]();
+    D_8010EB84[arg0->unk6](arg0);
 }
 
 // D_8010EB98 state 0
@@ -220,7 +220,7 @@ void func_800CCF70(struct MiscObj* arg0)
 // D_8010EBB4 state 2,3,4,5,12,13,14
 void func_800CD034(struct MiscObj* arg0)
 {
-    D_8010EB98[arg0->unk6]();
+    D_8010EB98[arg0->unk6](arg0);
     if (engine_obj.character_state.bytes[1] & 0x80) {
         arg0->state++;
     }
@@ -261,7 +261,7 @@ void func_800CD110(struct MiscObj* arg0)
 // asm(".rept 26 ; nop ; .endr");
 void func_800CD178(struct MiscObj* arg0)
 {
-    D_8010EBA0[arg0->unk6]();
+    D_8010EBA0[arg0->unk6](arg0);
     if (engine_obj.character_state.bytes[1] & 0x80) {
         arg0->state++;
     }
@@ -331,7 +331,7 @@ void func_800CD2BC(struct MiscObj* arg0)
 // D_8010EBB4 state 7,8
 void func_800CD390(struct MiscObj* arg0)
 {
-    D_8010EBA8[arg0->unk6]();
+    D_8010EBA8[arg0->unk6](arg0);
     if ((engine_obj.cur_character != (arg0->unk2 - 7)) && (arg0->unk46 == 0)) {
         arg0->unk6 = 0;
         arg0->ext.sel_char.blast_timer = 0;
@@ -435,7 +435,7 @@ void func_800CD730(struct MiscObj* arg0)
 // select a character menu never appears if nopped out
 void SelectACharacterUpdate(struct MiscObj* arg0)
 {
-    g_SelectACharacterUpdateFuncs[arg0->state]();
+    g_SelectACharacterUpdateFuncs[arg0->state](arg0);
 }
 
 u32 D_8010E968[88] = {

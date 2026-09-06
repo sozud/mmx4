@@ -1,4 +1,7 @@
 #include "common.h"
+#ifdef MMX4_PC
+#include "../pc/oracle.h"
+#endif
 
 // entrypoint
 void func_80012024(void)
@@ -6,7 +9,11 @@ void func_80012024(void)
     func_800DAE84();
     func_8001213C();
     while (1) {
+#ifdef MMX4_PC
+        VSync(D_8013BD44 == 0 ? 1 : 0);
+#else
         VSync(0);
+#endif
         PutDispEnv(&cur_draw_info->dispenv);
         PutDrawEnv(&cur_draw_info->drawenv);
         DrawOTag(&cur_draw_info->ordering_table.end);
@@ -25,6 +32,9 @@ void func_80012024(void)
         load_palette();
         DrawSync(0);
         func_80012454();
+#ifdef MMX4_PC
+        mmx4_oracle_capture_object_changes(mmx4_pc_frame_number());
+#endif
     }
 }
 

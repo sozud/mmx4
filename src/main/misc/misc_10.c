@@ -7,7 +7,7 @@
 // asm(".rept 13 ; nop ; .endr");
 void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
 {
-    g_MegamanInBriefingRoomUpdateFuncs[arg0->state]();
+    g_MegamanInBriefingRoomUpdateFuncs[arg0->state](arg0);
 }
 
 // g_MegamanInBriefingRoomUpdateFuncs state 0

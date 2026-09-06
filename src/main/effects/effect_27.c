@@ -6,7 +6,7 @@
 // asm(".rept 13 ; nop ; .endr");
 void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 {
-    D_8010BEC8[arg0->state]();
+    D_8010BEC8[arg0->state](arg0);
 }
 
 // D_8010BEC8 state 0
