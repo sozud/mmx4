@@ -11,7 +11,13 @@ INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BF76C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFA00);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFB90);
+extern void func_800BFBD0(struct ItemObj* arg0);
+
+void func_800BFB90(struct ItemObj* arg0)
+{
+    arg0->on_screen = 0;
+    func_800BFBD0(arg0);
+}
 
 void func_800BFBB0(struct ItemObj* arg0)
 {

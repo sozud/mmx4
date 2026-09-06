@@ -13,7 +13,7 @@ u8* mmx4_sp_background_cursor;
 void* mmx4_sp_background_primitive_cursor;
 void* mmx4_sp_ordering_cursor;
 void* mmx4_sp_auxiliary_cursor;
-struct Unk* mmx4_sp_current_main;
+struct MainObj* mmx4_sp_current_main;
 struct WeaponObj* mmx4_sp_current_weapon;
 struct ShotObj* mmx4_sp_current_shot;
 struct VisualObj* mmx4_sp_current_visual;

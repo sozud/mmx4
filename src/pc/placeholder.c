@@ -1000,13 +1000,6 @@ void func_800D3C58(struct QuadObj* arg0)
     }
 }
 
-void func_800D3FBC(struct QuadObj* arg0)
-{
-    if (arg0->backref != NULL)
-        *(u8*)arg0->backref = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
-}
-
 static P_TAG* background_heads[2][6][8];
 static P_TAG* background_tails[2][6][8];
 

@@ -15,7 +15,18 @@ INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_8009982C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_800998D4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_800999D0);
+void func_8002D9BC(void*);
+
+void func_800999D0(struct ShotObj* arg0)
+{
+    func_80015DC8(arg0);
+    func_8002D9BC(arg0);
+    func_8002B318((struct BaseObj*)arg0, 0x19, 0x19);
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->state = 4;
+        arg0->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_80099A28);
 

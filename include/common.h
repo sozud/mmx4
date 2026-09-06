@@ -346,66 +346,70 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 
 #define OBJECT_HEADER(object) ((struct ObjectHeader*)(object))
 
+#define MAIN_OBJ_TAIL_FIELDS                        \
+    s32 unk20;                                  \
+    s32 unk24;                                  \
+    s32 unk28;                                  \
+    s32 unk2C;                                  \
+    const u8* const* animation_table;            \
+    const u8* animation_cursor;                  \
+    s16 animation_speed;                         \
+    u8 pad3A[2];                                 \
+    const u8* sprite_frames;                     \
+    u16 unk40;                                   \
+    u16 unk42;                                   \
+    union AnimationStep animation_step;          \
+    u8 previous_animation_index;                 \
+    s8 pad49[7];                                 \
+    const u8* unk50;                             \
+    const u8* unk54;                             \
+    const u16* collision_data;                   \
+    s8 unk5C;                                    \
+    s8 unk5D;                                    \
+    s8 unk5E;                                    \
+    s8 unk5F;                                    \
+    s8 unk60;                                    \
+    s8 unk61;                                    \
+    s8 unk62;                                    \
+    s8 unk63;                                    \
+    s8 unk64;                                    \
+    s8 unk65;                                    \
+    s8 unk66;                                    \
+    s8 unk67;                                    \
+    struct Unk_unk68* unk68;                     \
+    s16 unk6C;                                   \
+    s16 unk6E;                                   \
+    u8 unk70;                                    \
+    s8 : 8;                                      \
+    s8 unk72;                                    \
+    s8 unk73;                                    \
+    s8 unk74;                                    \
+    s8 unk75;                                    \
+    s8 unk76;                                    \
+    s8 unk77;                                    \
+    s8 unk78;                                    \
+    s8 unk79;                                    \
+    s8 unk7A;                                    \
+    u8 unk7B;                                    \
+    s16 unk7C;                                   \
+    s16 unk7E;                                   \
+    u32 unk80;                                   \
+    s32 unk84;                                   \
+    u32 unk88;                                   \
+    union {                                      \
+        u16 unk8C_half;                          \
+        u32 unk8C;                               \
+    } state_8c;                                  \
+    u32 unk90;                                   \
+    u32 unk94;                                   \
+    u32 pad98;
+
 struct Unk {
     BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
-    s32 unk20;
-    s32 unk24;
-    s32 unk28;
-    s32 unk2C;
-    const u8* const* animation_table;
-    const u8* animation_cursor;
-    s16 animation_speed;
-    u8 pad3A[2];
-    const u8* sprite_frames;
-    u16 unk40;
-    u16 unk42;
-    union AnimationStep animation_step;
-    u8 previous_animation_index;
-    s8 pad49[7];
-    const u8* unk50;
-    const u8* unk54;
-    const u16* collision_data;
-    s8 unk5C;
-    s8 unk5D;
-    s8 unk5E;
-    s8 unk5F;
-    s8 unk60;
-    s8 unk61;
-    s8 unk62;
-    s8 unk63;
-    s8 unk64;
-    s8 unk65;
-    s8 unk66;
-    s8 unk67;
-    struct Unk_unk68* unk68;
-    s16 unk6C;
-    s16 unk6E;
-    u8 unk70;
-    s8 : 8;
-    s8 unk72;
-    s8 unk73;
-    s8 unk74;
-    s8 unk75;
-    s8 unk76;
-    s8 unk77;
-    s8 unk78;
-    s8 unk79;
-    s8 unk7A;
-    u8 unk7B;
-    s16 unk7C;
-    u8 pad7E[0x84 - 0x7E];
-    s32 unk84;
-    u8 pad88[0x8C - 0x88];
-    union {
-        u16 unk8C_half;
-        u32 unk8C;
-    } state_8c;
-    u32 unk90;
-    u32 unk94;
-    u32 pad98;
-}; // size 0x9c
+    MAIN_OBJ_TAIL_FIELDS
+};
 
 struct BackgroundObj {
     u8 unk0;
@@ -1396,7 +1400,7 @@ struct MainObj {
     BASE_OBJ_FIELDS
     f32 unk18;
     f32 unk1C;
-    s8 pad20[0x9C - 0x20];
+    MAIN_OBJ_TAIL_FIELDS
 };
 
 struct Unk14 {
@@ -1747,7 +1751,7 @@ extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
 extern void (*g_TitleUpdateFuncs[])();
 extern void (*D_8010EB84[4])();
 extern void (*g_SelectACharacterUpdateFuncs[3])();
-extern struct Unk main_objects[0x30]; // D_8013BED0
+extern struct MainObj main_objects[0x30]; // D_8013BED0
 extern void (*g_SearchLightUpdateFuncs[3])(struct QuadObj*);
 extern void (*D_8010FC84[])();
 extern void (*g_TitleUpdate2Funcs[])();

@@ -4821,7 +4821,7 @@ void func_80023D90(void)
 void init_objects(void)
 {
     struct UnkObj* var_s0;
-    struct Unk* var_s0_2;
+    struct MainObj* var_s0_2;
     struct WeaponObj* var_s0_3;
     struct ShotObj* var_s0_4;
     struct VisualObj* var_s0_5;

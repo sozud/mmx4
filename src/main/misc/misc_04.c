@@ -2,7 +2,12 @@
 // 800C8774..800C8FA8
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_04", func_800C8774);
+extern void (*D_8010DC18[])(struct MiscObj*);
+
+void func_800C8774(struct MiscObj* arg0)
+{
+    D_8010DC18[arg0->state](arg0);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_04", func_800C87B0);
 

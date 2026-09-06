@@ -111,13 +111,33 @@ INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031AE0);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031B90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031CAC);
+extern void func_80031CEC(struct PlayerObj* arg0);
+extern void func_80031DD4(struct PlayerObj* arg0);
+
+void func_80031CAC(struct PlayerObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_80031CEC(arg0);
+    } else {
+        func_80031DD4(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031CEC);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031DD4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031EDC);
+void func_80031F1C(struct PlayerObj* arg0);
+void func_8003200C(struct PlayerObj* arg0);
+
+void func_80031EDC(struct PlayerObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_80031F1C(arg0);
+    } else {
+        func_8003200C(arg0);
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031F1C);
 

@@ -12,6 +12,6 @@ INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_50", func_80069A08);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_50", func_80069A6C);
 
-void func_80069A8C(struct Unk* arg0)
+void func_80069A8C(struct MainObj* arg0)
 {
 }

@@ -48,7 +48,11 @@ void func_800D3AFC(struct QuadObj* arg0)
 INCLUDE_ASM("asm/us/main/nonmatchings/quads/search_light", func_800D3C58);
 
 // SearchLight state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/search_light", func_800D3FBC);
+void func_800D3FBC(struct QuadObj* arg0)
+{
+    OBJECT_HEADER(arg0->backref)->active = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 // search light helper
 void func_800D3FE0(struct Unk22* arg0)
