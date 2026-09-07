@@ -7,11 +7,14 @@ on:
     paths-ignore:
       - '*.md'
       - '**/*.md'
-  pull_request:
+  pull_request_target:
     paths-ignore:
       - '*.md'
       - '**/*.md'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ${{ github.ref }}-${{ github.job }}-${{ github.event_name }}-${{ github.number }}
@@ -25,7 +28,9 @@ jobs:
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: recursive
+          persist-credentials: false
       - name: Install requirements
         run: |
           sudo apt-get update
@@ -42,17 +47,22 @@ jobs:
     name: Capture and compare scene oracles
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    environment:
+      name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
     steps:
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: recursive
+          persist-credentials: false
       - name: Clone Mednafen oracle
         uses: actions/checkout@v4
         with:
           repository: sozud/mednafen-git
           ref: mmx4-oracle
           path: tools/mednafen
+          persist-credentials: false
       - name: Install requirements
         run: |
           sudo apt-get update
@@ -69,6 +79,7 @@ jobs:
           ref: main
           token: ${{ secrets.MMX4_DEPS_TOKEN }}
           path: disks/dependencies
+          persist-credentials: false
       - name: Extract game dependencies
         working-directory: disks
         run: cat dependencies/mmx4.us.tar.gz.part_* | tar -zxf -
@@ -168,6 +179,8 @@ jobs:
           - dependency: us
             version: us
     runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
     env:
       VERSION: ${{ matrix.version }}
     steps:
@@ -178,8 +191,9 @@ jobs:
       - name: Clone main repo
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: true
+          persist-credentials: false
       # - name: Build psximager
       #   run: |
       #     sudo apt-get install libcdio-dev libvcdinfo-dev libboost-all-dev
@@ -196,6 +210,7 @@ jobs:
           ref: main
           token: ${{ secrets.MMX4_DEPS_TOKEN }}
           path: 'disks/dependencies'
+          persist-credentials: false
       - name: Setting up dependencies
         working-directory: disks
         run: cat dependencies/mmx4.us.tar.gz.part_* | tar -zxf -
