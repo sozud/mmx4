@@ -38,4 +38,4 @@ int VSync(int mode)
     return elapsed;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/psxsdk/libetc/vsync", v_wait);
+INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/vsync", v_wait);

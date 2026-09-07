@@ -2,7 +2,7 @@
 // 800B4E34..800B5570
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_32", func_800B4E34);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B4E34);
 
 void func_800B518C(struct VisualObj* arg0)
 {
@@ -40,9 +40,9 @@ void func_800B5280(struct VisualObj* arg0)
     func_8002B718((struct MovingObj*)arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_32", func_800B52D8);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B52D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_32", func_800B5348);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B5348);
 
 void func_800B5448(struct VisualObj* arg0)
 {

@@ -9,11 +9,11 @@ void func_800C20AC(struct ItemObj* arg0)
     D_8010CC94[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_09", func_800C20F4);
+INCLUDE_ASM("main/nonmatchings/items/item_09", func_800C20F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_09", func_800C229C);
+INCLUDE_ASM("main/nonmatchings/items/item_09", func_800C229C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_09", func_800C24C0);
+INCLUDE_ASM("main/nonmatchings/items/item_09", func_800C24C0);
 
 void (*D_8010CC94[])(struct ItemObj*) = {
     func_800C20F4,

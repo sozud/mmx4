@@ -15,7 +15,7 @@ void func_800B5730(struct EffectObj* arg0)
     func_800B5798(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_00", func_800B5798);
+INCLUDE_ASM("main/nonmatchings/effects/effect_00", func_800B5798);
 
 void (*D_8010A798[])(struct EffectObj*) = {
     func_800B5730,

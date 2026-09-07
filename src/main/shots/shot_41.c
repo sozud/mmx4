@@ -2,43 +2,43 @@
 // 800A56E4..800A6374
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A56E4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A56E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5A04);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5A04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5AA4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5AA4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5BA8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5BA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5C90);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5C90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5D20);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5D20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5D78);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5D78);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5DEC);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5DEC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5E60);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5E60);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A5F4C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5F4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A6028);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A6028);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A6094);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A6094);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A60D0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A60D0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A61CC);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A61CC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A6238);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A6238);
 
 void func_800A6258(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A6260);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A6260);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_41", func_800A62D0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A62D0);
 
 void func_800A62F0(struct ShotObj* arg0)
 {

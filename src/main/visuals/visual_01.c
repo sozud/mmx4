@@ -2,7 +2,7 @@
 // 800AED18..800AEED8
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_01", func_800AED18);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_01", func_800AED18);
 
 void func_800AEE5C(struct VisualObj* arg0, struct PlayerObj* arg1)
 {

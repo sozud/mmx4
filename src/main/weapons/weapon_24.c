@@ -2,8 +2,8 @@
 // 80097EEC..800981CC
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_24", func_80097EEC);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80097EEC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_24", func_80097FC4);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80097FC4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_24", func_80098138);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80098138);

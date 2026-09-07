@@ -38,7 +38,7 @@ void func_800D8FDC(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_01", func_800D9008);
+INCLUDE_ASM("main/nonmatchings/layers/layer_01", func_800D9008);
 
 void func_800D9050(struct LayerObj* arg0)
 {
@@ -78,7 +78,7 @@ void func_800D910C(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_01", func_800D9138);
+INCLUDE_ASM("main/nonmatchings/layers/layer_01", func_800D9138);
 
 void func_800D91A0(struct LayerObj* arg0)
 {

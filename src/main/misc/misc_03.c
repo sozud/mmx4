@@ -14,6 +14,6 @@ void func_800C85D0(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_03", func_800C8610);
+INCLUDE_ASM("main/nonmatchings/misc/misc_03", func_800C8610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_03", func_800C8708);
+INCLUDE_ASM("main/nonmatchings/misc/misc_03", func_800C8708);

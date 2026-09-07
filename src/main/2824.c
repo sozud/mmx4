@@ -82,7 +82,7 @@ void func_800122E0(struct DrawInfo* arg0)
     arg0->drawenv.b0 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/2824", func_80012328);
+INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
 
 void func_80012454(void)
 {

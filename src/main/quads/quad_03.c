@@ -2,7 +2,7 @@
 // 800D514C..800D526C
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_03", func_800D514C);
+INCLUDE_ASM("main/nonmatchings/quads/quad_03", func_800D514C);
 
 void func_800D5210(struct QuadObj* arg0)
 {

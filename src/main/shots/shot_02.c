@@ -11,19 +11,19 @@ void func_80099D18(struct ShotObj* arg0)
     D_80108CC4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_80099D54);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099D54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_80099E34);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099E34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_80099F28);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099F28);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_80099F48);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099F48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A10C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A10C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A264);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A264);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A338);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A338);
 
 void func_8009A358(struct ShotObj* arg0)
 {
@@ -46,28 +46,28 @@ void func_8009A3B4(struct ShotObj* arg0)
     D_80108CF8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A448);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A448);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A4F4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A4F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A598);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A598);
 
 void func_8009A5B8(struct ShotObj* arg0)
 {
     D_80108D28[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A5F4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A5F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A6B4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A6B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A7D8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A7D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A7F8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A7F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A87C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A87C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_02", func_8009A964);
+INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A964);
 
 void (*D_80108D28[])(struct ShotObj*) = {
     func_8009A5F4,

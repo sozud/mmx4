@@ -246,7 +246,7 @@ void func_8002FD28(struct BarObj* arg0)
     arg0->unk5 = 1;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_8002FD70);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_8002FD70);
 
 void func_800300AC(struct BarObj* arg0)
 {
@@ -279,19 +279,19 @@ void func_80030128(struct BarObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_800301BC);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_800301BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_800304E4);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_800304E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80030728);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80030728);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80030A2C);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80030A2C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80030C54);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80030C54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80030DF8);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80030DF8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80030EC8);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80030EC8);
 
 void func_80030F9C(struct BarObj* arg0)
 {
@@ -315,7 +315,7 @@ void func_80031014(struct BarObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1FD10", func_80031064);
+INCLUDE_ASM("main/nonmatchings/1FD10", func_80031064);
 
 void func_80031130(struct BarObj* arg0)
 {

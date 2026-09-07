@@ -7,15 +7,15 @@ void func_800922D8(struct WeaponObj* arg0)
     D_80108728[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092314);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092314);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092408);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092408);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092490);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092490);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_800924F8);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_800924F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_00", func_80092598);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092598);
 
 void func_80092600(struct WeaponObj* arg0)
 {

@@ -7,9 +7,9 @@ void func_800B4610(struct VisualObj* arg0)
     D_8010A6C8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B464C);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B464C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B46C8);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B46C8);
 
 void func_800B46E8(struct VisualObj* arg0)
 {
@@ -26,22 +26,22 @@ void func_800B4754(struct VisualObj* arg0)
     D_8010A6E4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B4790);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4790);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B4808);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4808);
 
 void func_800B4858(struct VisualObj* arg0)
 {
     D_8010A6EC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B4894);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4894);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B490C);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B490C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B4960);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4960);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_30", func_800B499C);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B499C);
 
 void func_800B4A18(struct VisualObj* arg0)
 {

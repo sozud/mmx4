@@ -2,12 +2,12 @@
 // 800C91B0..800C938C
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_06", func_800C91B0);
+INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C91B0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_06", func_800C91EC);
+INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C91EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_06", func_800C92B8);
+INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C92B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_06", func_800C92E0);
+INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C92E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_06", func_800C9368);
+INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C9368);

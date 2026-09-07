@@ -19,22 +19,22 @@ void func_800DA8B4(struct LayerObj* arg0)
     func_800DA90C(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DA90C);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DA90C);
 
 void func_800DA964(struct LayerObj* arg0)
 {
     func_8002B108(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DA984);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DA984);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DAB40);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DAB40);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DAB9C);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DAB9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DABE4);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DABE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_07", func_800DADA0);
+INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DADA0);
 
 void func_800DAE84(void)
 {

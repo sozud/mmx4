@@ -10,13 +10,13 @@ void func_800684F8(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068548);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068548);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_800688B8);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800688B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068A10);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068A10);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068A68);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068A68);
 
 void func_80068B3C(struct MainObj* arg0)
 {
@@ -29,9 +29,9 @@ void func_80068B44(struct MainObj* arg0)
     D_800FFBA8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068B80);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068B80);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068C2C);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068C2C);
 
 extern void (*D_800FFBB0[])(struct MainObj*);
 
@@ -62,25 +62,25 @@ void func_80068D4C(void)
     func_80015DC8();
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068D6C);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068D6C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80068F88);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068F88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069000);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069000);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_8006917C);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_8006917C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_800691B8);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800691B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069248);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069248);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_800692AC);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800692AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_800692E8);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800692E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069330);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069330);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_800693AC);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800693AC);
 
 extern void (*D_800FFBC8[])(struct MainObj*);
 
@@ -89,10 +89,10 @@ void func_80069414(struct MainObj* arg0)
     D_800FFBC8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069450);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069450);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_8006951C);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_8006951C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069610);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_49", func_80069660);
+INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069660);

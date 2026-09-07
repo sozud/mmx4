@@ -2,13 +2,13 @@
 // 800D3388..800D3928
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_57", func_800D3388);
+INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3388);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_57", func_800D34AC);
+INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D34AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_57", func_800D34F0);
+INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D34F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_57", func_800D3510);
+INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3510);
 
 void func_800D354C(struct UnkObj* arg0)
 {
@@ -91,7 +91,7 @@ void func_800D3700(struct UnkObj* arg0)
     is_on_screen(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_57", func_800D3798);
+INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3798);
 
 void func_800D38A0(struct UnkObj* arg0)
 {

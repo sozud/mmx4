@@ -7,7 +7,7 @@ void func_800B4B64(struct VisualObj* arg0)
     D_8010A704[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_31", func_800B4BA0);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_31", func_800B4BA0);
 
 void func_800B4CC8(struct VisualObj* arg0)
 {
@@ -18,7 +18,7 @@ void func_800B4CC8(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_31", func_800B4D00);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_31", func_800B4D00);
 
 void func_800B4E14(struct VisualObj* arg0)
 {

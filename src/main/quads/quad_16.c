@@ -2,7 +2,7 @@
 // 800D802C..800D8648
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_16", func_800D802C);
+INCLUDE_ASM("main/nonmatchings/quads/quad_16", func_800D802C);
 
 void func_800D8150(struct QuadObj* arg0)
 {
@@ -12,7 +12,7 @@ void func_800D8150(struct QuadObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_16", func_800D8180);
+INCLUDE_ASM("main/nonmatchings/quads/quad_16", func_800D8180);
 
 void func_800D8290(struct QuadObj* arg0)
 {
@@ -28,7 +28,7 @@ void func_800D8290(struct QuadObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_16", func_800D82E8);
+INCLUDE_ASM("main/nonmatchings/quads/quad_16", func_800D82E8);
 
 void func_800D83DC(struct QuadObj* arg0)
 {
@@ -44,7 +44,7 @@ void func_800D842C(struct QuadObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_16", func_800D845C);
+INCLUDE_ASM("main/nonmatchings/quads/quad_16", func_800D845C);
 
 void func_800D8578(struct QuadObj* arg0)
 {

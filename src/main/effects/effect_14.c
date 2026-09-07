@@ -2,11 +2,11 @@
 // 800B89B4..800B8AF8
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_14", func_800B89B4);
+INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B89B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_14", func_800B89CC);
+INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B89CC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_14", func_800B8A9C);
+INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B8A9C);
 
 void func_800B8ABC(struct EffectObj* arg0)
 {

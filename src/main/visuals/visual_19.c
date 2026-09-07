@@ -2,7 +2,7 @@
 // 800B2698..800B28CC
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_19", func_800B2698);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_19", func_800B2698);
 
 void func_800B2880(struct VisualObj* arg0)
 {

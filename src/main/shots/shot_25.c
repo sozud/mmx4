@@ -7,7 +7,7 @@ void func_8009EB6C(struct ShotObj* arg0)
     D_80109160[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_25", func_8009EBA8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_25", func_8009EBA8);
 
 void func_8009ED70(struct Unk* arg0)
 {

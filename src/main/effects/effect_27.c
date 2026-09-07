@@ -90,7 +90,7 @@ void func_800BBA24(struct EffectObj* arg0)
 }
 
 // D_8010BEC8 state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_27", func_800BBBF4);
+INCLUDE_ASM("main/nonmatchings/effects/effect_27", func_800BBBF4);
 
 void (*D_8010BEC8[])(struct EffectObj*) = {
     func_800BB9F4,

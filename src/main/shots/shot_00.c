@@ -7,13 +7,13 @@ void func_800994A0(struct ShotObj* arg0)
     D_80108C74[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_800994DC);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_800994DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_80099784);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_80099784);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_8009982C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_8009982C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_800998D4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_800998D4);
 
 void func_8002D9BC(void*);
 
@@ -28,9 +28,9 @@ void func_800999D0(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_80099A28);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_80099A28);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_00", func_80099A8C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_80099A8C);
 
 void func_80099B0C(struct ShotObj* arg0)
 {

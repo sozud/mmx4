@@ -7,9 +7,9 @@ void func_800BF730(struct ItemObj* arg0)
     D_8010C730[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BF76C);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BF76C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFA00);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFA00);
 
 extern void func_800BFBD0(struct ItemObj* arg0);
 
@@ -24,13 +24,13 @@ void func_800BFBB0(struct ItemObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFBD0);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFBD0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFCC0);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFCC0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800BFF0C);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFF0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_02", func_800C00BC);
+INCLUDE_ASM("main/nonmatchings/items/item_02", func_800C00BC);
 
 void func_800C03BC(s8 arg0)
 {

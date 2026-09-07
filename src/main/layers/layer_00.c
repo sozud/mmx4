@@ -7,7 +7,7 @@ void func_800D8648(struct LayerObj* arg0)
     D_8010FF08[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_00", func_800D8684);
+INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8684);
 
 void func_800D872C(struct LayerObj* arg0)
 {
@@ -149,7 +149,7 @@ void func_800D8BAC(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_00", func_800D8BB4);
+INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8BB4);
 
 void func_800D8C24(struct LayerObj* arg0)
 {
@@ -205,7 +205,7 @@ void func_800D8CF4(struct LayerObj* arg0)
     arg0->unk7++;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_00", func_800D8DE0);
+INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8DE0);
 
 void func_800D8E40(struct LayerObj* arg0)
 {
@@ -215,7 +215,7 @@ void func_800D8E40(struct LayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_00", func_800D8E94);
+INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8E94);
 
 void (*D_8010FF08[])(struct LayerObj*) = {
     func_800D8684,

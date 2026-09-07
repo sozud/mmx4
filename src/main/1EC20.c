@@ -169,7 +169,7 @@ void func_8002E698(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 2
-INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E7BC);
+INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E7BC);
 
 // engine_state_3_update_funcs state 3
 void func_8002E8D4(struct EngineObj* arg0)
@@ -200,7 +200,7 @@ void func_8002E8D4(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 4 (mission selection)
-INCLUDE_ASM("asm/us/main/nonmatchings/1EC20", func_8002E994);
+INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E994);
 
 // engine_state_3_update_funcs state 5
 void func_8002ED80(struct EngineObj* arg0)

@@ -64,4 +64,4 @@ void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
     func_800D69A8(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_09", func_800D69A8);
+INCLUDE_ASM("main/nonmatchings/quads/quad_09", func_800D69A8);

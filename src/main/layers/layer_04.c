@@ -73,7 +73,7 @@ void func_800DA228(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_04", func_800DA230);
+INCLUDE_ASM("main/nonmatchings/layers/layer_04", func_800DA230);
 
 void (*D_8010FF88[])(struct LayerObj*) = {
     func_800DA098,
