@@ -1,6 +1,21 @@
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033414);
+s32 func_80033414(struct PlayerObj* arg0)
+{
+    if (func_80033694(arg0) != 0) {
+        func_80034754((struct Unk7*)arg0);
+        return 1;
+    }
+    if ((arg0->pressed_input & 0x80) != 0) {
+        func_80034538((struct Unk7*)arg0);
+        return 1;
+    }
+    if (func_8003356C(arg0) == 0) {
+        return 0;
+    }
+    func_800344EC(arg0);
+    return 1;
+}
 
 s32 func_80033494(struct PlayerObj* arg0)
 {
@@ -746,7 +761,7 @@ void func_80035B6C(struct PlayerObj* arg0)
         engine_obj.unk19 = 0;
         engine_obj.unk1A = 0;
         arg0->on_screen = 0;
-        func_8001540C(3, 0xC, (struct Unk6*)arg0);
+        func_8001540C(3, 0xC, arg0);
         arg0->unkC7 = 0;
         arg0->unkC6 = 0;
         arg0->unk5 = (u8)arg0->unk5 + 1;

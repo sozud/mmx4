@@ -35,7 +35,7 @@ s32 func_8002938C(s32 id)
     return index;
 }
 
-s32 func_8001540C(s32 arg0, s32 arg1, struct Unk6* arg2)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2)
 {
     u32 bank = arg0 & 0x7F;
     u32 group = arg0 & 0xF;
