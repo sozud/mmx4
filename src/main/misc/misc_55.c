@@ -6,9 +6,9 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3084);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D31F8);
 
-void func_800D323C(struct Unk* arg0)
+void func_800D323C(struct MiscObj* arg0)
 {
-    func_8002B694();
+    func_8002B694((struct AnimatedObj*)arg0);
     func_80015DC8(arg0);
     is_on_screen(arg0);
     if (func_8002B160(arg0) != 0) {

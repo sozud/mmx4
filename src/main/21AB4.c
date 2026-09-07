@@ -567,8 +567,6 @@ void func_80032D28(struct PlayerObj* arg0)
     arg0->unkBA = var_v0;
 }
 
-extern void func_8002B694(void*);
-
 void func_80032DE0(struct PlayerObj* arg0)
 {
     s32 velocity;

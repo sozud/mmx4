@@ -849,7 +849,7 @@ void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
                     object->y_pos.i.hi = y;
                     object->backref = record;
                     if (record->object_type == 0) {
-                        struct Unk* main = (struct Unk*)object;
+                        struct MainObj* main = (struct MainObj*)object;
 
                         index = (u8)func_8002938C(record->id);
                         main->unk40 = D_801406A8[index] >> 7;
@@ -1055,7 +1055,7 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
         frame->clut = unknown->unk42;
         frame->index = unknown->animation_step.fields.frame_index;
     } else if (PC_OBJECT_IN_ARRAY(object, main_objects)) {
-        struct Unk* main = (struct Unk*)object;
+        struct MainObj* main = (struct MainObj*)object;
 
         frame->data = (void*)main->sprite_frames;
         frame->texture = main->unk40;
@@ -1505,7 +1505,7 @@ void func_80036F50(struct PlayerObj* player)
     }
 }
 
-s32 func_8002DD04(struct Unk* object)
+s32 func_8002DD04(struct MainObj* object)
 {
     struct WeaponObj* weapon;
 

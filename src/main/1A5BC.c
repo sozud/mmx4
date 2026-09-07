@@ -767,20 +767,20 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B468);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B560);
 
-void func_8002B694(struct Unk* arg0)
+void func_8002B694(struct AnimatedObj* arg0)
 {
-    arg0->x_pos.val += arg0->unk20;
-    arg0->y_pos.val -= arg0->unk24;
+    arg0->x_pos.val += arg0->x_vel.val;
+    arg0->y_pos.val -= arg0->y_vel.val;
 
     if (arg0->unk15) {
-        arg0->unk20 += arg0->unk28;
+        arg0->x_vel.val += arg0->unk28;
     } else {
-        arg0->unk20 -= arg0->unk28;
+        arg0->x_vel.val -= arg0->unk28;
     }
 
-    arg0->unk24 -= arg0->unk2C;
-    if (arg0->unk24 < FIXED(-6.5)) {
-        arg0->unk24 = FIXED(-6.5);
+    arg0->y_vel.val -= arg0->unk2C;
+    if (arg0->y_vel.val < FIXED(-6.5)) {
+        arg0->y_vel.val = FIXED(-6.5);
     }
 }
 
@@ -817,7 +817,7 @@ s32 func_8002B780(void)
     return result;
 }
 
-u8 func_8002B7B0(struct MiscObj* arg0, s32 arg1, s32 arg2)
+s32 func_8002B7B0(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
 {
     return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2);
 }
@@ -886,26 +886,29 @@ u8 func_8002B810(s32 arg0, s32 arg1)
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 
-void func_8002B93C(struct MovingObj* arg0, u8 arg1)
+void func_8002B93C(struct MovingObj* arg0, s32 arg1)
 {
+    u8 angle;
     s16 var_a2, var_v0;
     s16 var_v1;
-    if (arg1 < 0x10) {
+
+    angle = arg1;
+    if (angle < 0x10) {
         var_a2 = 1;
-        if (arg1 < 8) {
-            var_v1 = 8 - arg1;
+        if (angle < 8) {
+            var_v1 = 8 - angle;
             var_v0 = 1;
         } else {
-            var_v1 = arg1 - 8;
+            var_v1 = angle - 8;
             var_v0 = -1;
         }
     } else {
         var_a2 = -1;
-        if (arg1 < 0x18) {
-            var_v1 = 0x18 - arg1;
+        if (angle < 0x18) {
+            var_v1 = 0x18 - angle;
             var_v0 = -1;
         } else {
-            var_v1 = arg1 - 0x18;
+            var_v1 = angle - 0x18;
             var_v0 = 1;
         }
     }

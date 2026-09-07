@@ -9,7 +9,7 @@ void func_8009EB6C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_25", func_8009EBA8);
 
-void func_8009ED70(struct Unk* arg0)
+void func_8009ED70(struct ShotObj* arg0)
 {
     func_80015DC8(arg0);
     func_8002B694(arg0);

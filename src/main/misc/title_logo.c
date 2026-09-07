@@ -61,7 +61,7 @@ void func_800CD90C(struct MiscObj* arg0)
     if (arg0->ext.title_logo.palette_shift_speed != 0) {
         arg0->ext.title_logo.palette_shift_speed--;
     } else {
-        arg0->ext.title_logo.palette_shift_value = func_8002B7B0(arg0, FIXED(216), FIXED(72));
+        arg0->ext.title_logo.palette_shift_value = func_8002B7B0(OBJECT_HEADER(arg0), FIXED(216), FIXED(72));
         arg0->ext.title_logo.palette_shift_speed = 3;
         arg0->ext.title_logo.unk50 = NULL;
         arg0->state++;
@@ -72,7 +72,7 @@ void func_800CD90C(struct MiscObj* arg0)
 void func_800CD974(struct MiscObj* arg0)
 {
     struct MiscObj* obj;
-    u8 temp_v0 = func_8002B7B0(arg0, FIXED(216), FIXED(72));
+    u8 temp_v0 = func_8002B7B0(OBJECT_HEADER(arg0), FIXED(216), FIXED(72));
     if ((arg0->ext.title_logo.palette_shift_value ^ temp_v0) & 0x10) {
         arg0->x_pos.i.hi = 0xD8;
         arg0->y_pos.i.hi = 0x48;
@@ -94,10 +94,10 @@ void func_800CD974(struct MiscObj* arg0)
         } else {
             arg0->ext.title_logo.palette_shift_speed--;
         }
-        func_8002B93C(arg0, temp_v0);
+        func_8002B93C(MOVING_OBJECT(arg0), temp_v0);
         arg0->x_vel.val *= 10;
         arg0->y_vel.val *= 8;
-        func_8002B718((struct MovingObj*)arg0);
+        func_8002B718(MOVING_OBJECT(arg0));
         is_on_screen(arg0);
     }
 }

@@ -263,6 +263,11 @@ struct StageObjectRecord {
     u8 flags, id, subtype, object_type;
     s16 x, y;
 };
+
+struct FixedPointPosition {
+    s32 x;
+    s32 y;
+};
 struct BootTransitionDataRegion {
     u8 preceding_record_tail[3];
     u8 stage_map[9];
@@ -367,6 +372,23 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #endif
 
 #define OBJECT_HEADER(object) ((struct ObjectHeader*)(object))
+#define BASE_OBJECT(object) ((struct BaseObj*)(object))
+#define MOVING_OBJECT(object) ((struct MovingObj*)(object))
+
+union MainObjState80 {
+    struct {
+        u32 unk80;
+        s32 unk84;
+    } words;
+    struct {
+        u8 unk80;
+        u8 index;
+        u8 flags[3];
+        u8 unk85;
+        u8 unk86;
+        u8 unk87;
+    } bytes;
+};
 
 #define MAIN_OBJ_TAIL_FIELDS                        \
     s32 unk20;                                  \
@@ -415,8 +437,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
     u8 unk7B;                                    \
     s16 unk7C;                                   \
     s16 unk7E;                                   \
-    u32 unk80;                                   \
-    s32 unk84;                                   \
+    union MainObjState80 state_80;               \
     u32 unk88;                                   \
     union {                                      \
         u16 unk8C_half;                          \
@@ -426,10 +447,10 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
     u32 unk94;                                   \
     u32 pad98;
 
-struct Unk {
+struct MainObj {
     BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
+    f32 unk18;
+    f32 unk1C;
     MAIN_OBJ_TAIL_FIELDS
 };
 
@@ -597,13 +618,13 @@ struct PlayerObj {
 }; // size 0xE4
 
 MMX4_STATIC_ASSERT(player_unk68_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct Unk, unk68));
+    MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
 MMX4_STATIC_ASSERT(player_unk6C_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk6C) == MMX4_OFFSET_OF(struct Unk, unk6C));
+    MMX4_OFFSET_OF(struct PlayerObj, unk6C) == MMX4_OFFSET_OF(struct MainObj, unk6C));
 MMX4_STATIC_ASSERT(player_unk6E_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct Unk, unk6E));
+    MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct MainObj, unk6E));
 MMX4_STATIC_ASSERT(player_unk70_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct Unk, unk70));
+    MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct MainObj, unk70));
 MMX4_STATIC_ASSERT(player_held_input_offset,
     MMX4_OFFSET_OF(struct PlayerObj, input.buttons.held) == MMX4_OFFSET_OF(struct PlayerObj, input));
 MMX4_STATIC_ASSERT(player_previous_input_offset,
@@ -652,7 +673,9 @@ struct ShotObj {
     s8 unk66;
     s8 : 8;
     s32 unk68;
-    s8 pad6C[0x72 - 0x6C];
+    s8 pad6C[0x70 - 0x6C];
+    u8 unk70;
+    s8 pad71;
     s8 unk72;
     s8 unk73;
     s8 unk74;
@@ -1347,12 +1370,7 @@ struct EngineObj {
 #define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
 #define ENGINE_UNK2E (engine_obj.character_state.bytes[8])
 
-#ifdef MMX4_PC
 #define engine_flags engine_obj.character_state.fields.flags
-#else
-extern u8 engine_obj_27;
-#define engine_flags engine_obj_27
-#endif
 
 struct Unk66 {
     u8 pad[0x34];
@@ -1401,13 +1419,6 @@ struct GameInfo {
 struct Unk80139690 {
     u8 pad;
     s8 unk1;
-};
-
-struct MainObj {
-    BASE_OBJ_FIELDS
-    f32 unk18;
-    f32 unk1C;
-    MAIN_OBJ_TAIL_FIELDS
 };
 
 struct Unk14 {
@@ -1461,7 +1472,6 @@ MMX4_STATIC_ASSERT(psx_effect_object_size, sizeof(struct EffectObj) == 0x30);
         MMX4_OFFSET_OF(struct type, first_tail_member) == sizeof(struct ObjectHeader))
 
 ASSERT_OBJECT_HEADER(BaseObj, bg_offset);
-ASSERT_OBJECT_HEADER(Unk, bg_offset);
 ASSERT_OBJECT_HEADER(PlayerObj, bg_offset);
 ASSERT_OBJECT_HEADER(VisualObj, bg_offset);
 ASSERT_OBJECT_HEADER(ShotObj, bg_offset);
@@ -1505,7 +1515,7 @@ ASSERT_MOVING_OBJECT(MiscObj);
             MMX4_OFFSET_OF(struct AnimatedObj, previous_animation_index))
 
 ASSERT_ANIMATED_OBJECT(PlayerObj);
-ASSERT_ANIMATED_OBJECT(Unk);
+ASSERT_ANIMATED_OBJECT(MainObj);
 ASSERT_ANIMATED_OBJECT(VisualObj);
 ASSERT_ANIMATED_OBJECT(ShotObj);
 ASSERT_ANIMATED_OBJECT(UnkObj);
@@ -1933,10 +1943,12 @@ extern u8* cur_draw_info_drawenv;
 
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
-void func_8009ED70(struct Unk*);
+void func_8009ED70(struct ShotObj*);
 extern union CdSectorBuffer D_8012F4B4;
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];
+extern s32 D_800F99C4[][2];
+extern struct FixedPointPosition D_800F99D4[];
 
 #include "func_tables.h"
 
@@ -2000,7 +2012,7 @@ u8 func_800D9B08(struct LayerObj*);
 void func_800DA984(u8);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
-struct Unk* func_800AFAB4(s8, s16, s16, u8);
+struct VisualObj* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
 void quad_is_on_screen(struct QuadObj*);
@@ -2013,6 +2025,13 @@ void func_8001FB50();
 void func_8002217C(u16, u8, u8);
 void func_80022730(struct AbcObj*);
 void func_8002B718(struct MovingObj*);
+s32 func_8002B7B0(struct ObjectHeader*, s32, s32);
+void func_8002B93C(struct MovingObj*, s32);
+void func_800DABE4(u8, s16, s16);
+s32 func_8002B1E8(struct BaseObj*, s32, s32);
+s32 func_8002D9BC(void*);
+void func_800BF60C(struct BaseObj*, s8);
+void func_800C813C(s32, void*, void*);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);

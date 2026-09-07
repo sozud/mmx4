@@ -58,7 +58,7 @@ void func_800AEC48(struct VisualObj* arg0, struct PlayerObj* arg1)
     func_8002B318(arg0, 0x20, 0x20);
 }
 
-void func_800AEC9C(struct Unk* arg0, struct Unk* arg1)
+void func_800AEC9C(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     arg0->unk15 = arg1->unk15;
     if (arg0->unk15 == 0) {

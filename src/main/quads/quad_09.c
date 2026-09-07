@@ -5,7 +5,7 @@
 void func_800D67DC(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
-    struct Unk* temp_a2 = arg0->unk5C;
+    struct PlayerObj* temp_a2 = arg0->unk5C;
     s32 var_a3 = 0;
     if (g_Player.unkC3 != 0) {
         var_a3 = 1;
@@ -39,7 +39,7 @@ void func_800D67DC(struct QuadObj* arg0)
     func_800D6944(arg0, ptr);
 }
 
-void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct Unk* arg2)
+void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     arg0->active = -0x7D;
     arg0->on_screen = 1;
