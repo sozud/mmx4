@@ -208,8 +208,6 @@ void func_80049CC8(struct MainObj* arg0)
     }
 }
 
-extern void (*D_800FB120[])(struct MainObj*);
-
 void func_80049DE8(struct MainObj* arg0)
 {
     D_800FB120[arg0->unk6](arg0);
@@ -239,8 +237,6 @@ void func_80049FE8(struct MainObj* arg0)
     }
     func_80015DC8(arg0);
 }
-
-extern void (*D_800FB130[])(struct MainObj*);
 
 void func_8004A0AC(struct MainObj* arg0)
 {

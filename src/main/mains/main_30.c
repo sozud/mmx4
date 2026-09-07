@@ -2,7 +2,10 @@
 // 8005B3FC..8005B894
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B3FC);
+void func_8005B3FC(struct MainObj* arg0)
+{
+    D_800FD9C4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B438);
 

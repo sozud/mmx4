@@ -76,7 +76,10 @@ void func_800DA5B4(struct LayerObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA5C4);
+void func_800DA5C4(struct LayerObj* arg0)
+{
+    D_8010FFC0[arg0->unk7](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA600);
 

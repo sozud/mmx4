@@ -17,7 +17,10 @@ void func_8004CA14(struct MainObj* arg0)
     arg0->unk5 = arg0->state_8c.unk8C;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CA20);
+void func_8004CA20(struct MainObj* arg0)
+{
+    D_800FB880[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CA5C);
 
@@ -25,7 +28,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CA94);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CBD4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CC64);
+void func_8004CC64(struct MainObj* arg0)
+{
+    D_800FB888[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CCA0);
 

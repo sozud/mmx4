@@ -716,7 +716,7 @@ struct WeaponObj {
     s8 unk64;
     s8 unk65;
     s8 unk66;
-    s8 : 8;
+    s8 unk67;
     s32 unk68;
     s8 pad6C[0x72 - 0x6C];
     s8 unk72;
