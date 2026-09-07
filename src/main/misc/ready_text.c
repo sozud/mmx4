@@ -173,7 +173,7 @@ void func_800CB394(struct MiscObj* arg0)
         engine_obj.unk1E = 1;
         return;
     }
-    func_8002B694();
+    func_8002B694((struct AnimatedObj*)arg0);
 }
 
 // ReadyText State 2
