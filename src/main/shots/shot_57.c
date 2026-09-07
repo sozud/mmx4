@@ -2,13 +2,13 @@
 // 800AE450..800AEAC0
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE450);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE450);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE4F0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE4F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE594);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE594);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE63C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE63C);
 
 void func_800AE65C(struct ShotObj* arg0)
 {
@@ -81,17 +81,17 @@ void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE88C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE88C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE8E4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE8E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE95C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE95C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AE9D8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE9D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AEA58);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AEA58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_57", func_800AEAA0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AEAA0);
 
 void (*D_8010A064[])(struct ShotObj*) = {
     func_800AE450,

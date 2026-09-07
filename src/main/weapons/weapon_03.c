@@ -2,21 +2,21 @@
 // 80094A78..800951C0
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094A78);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094A78);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094B24);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094B24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094C18);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094C18);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094D40);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094D40);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094DC0);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094DC0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094E50);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094E50);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094EC8);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094EC8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_03", func_80094F14);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094F14);
 
 void func_80094F74(void)
 {

@@ -120,7 +120,7 @@ void func_80049AA0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049C0C);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049C0C);
 
 void func_80049C78(struct MainObj* arg0)
 {
@@ -200,13 +200,13 @@ void func_80049DE8(struct MainObj* arg0)
     D_800FB120[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049E24);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049E68);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E68);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049F20);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049F20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_80049FE8);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049FE8);
 
 extern void (*D_800FB130[])(struct MainObj*);
 
@@ -216,15 +216,15 @@ void func_8004A0AC(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A0FC);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A0FC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A178);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A178);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A31C);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A31C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A378);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A378);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A468);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A468);
 
 void func_8004A5B0(struct MainObj* arg0)
 {
@@ -232,7 +232,7 @@ void func_8004A5B0(struct MainObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A5E0);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A5E0);
 
 void func_8004A644(struct MainObj* arg0)
 {
@@ -244,7 +244,7 @@ void func_8004A644(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/mains/main_10", func_8004A690);
+INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A690);
 
 void func_8002B694(void);
 

@@ -1,3 +1,9 @@
+#ifdef VERSION_JP
+#define ASM_ROOT "asm/jp/"
+#else
+#define ASM_ROOT "asm/us/"
+#endif
+
 #if defined(MMX4_PC) || defined(SKIP_ASM) || defined(PERMUTER)
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
@@ -7,7 +13,7 @@
             "\t.align\t2\n"                         \
             "\t.globl\t" #NAME "\n"                 \
             "\t.ent\t" #NAME "\n" #NAME ":\n"       \
-            ".include \"" FOLDER "/" #NAME ".s\"\n" \
+            ".include \"" ASM_ROOT FOLDER "/" #NAME ".s\"\n" \
             "\t.set reorder\n"                      \
             "\t.set at\n"                           \
             "\t.end\t" #NAME "\n"                   \
@@ -15,7 +21,7 @@
 
 #define INCLUDE_RODATA(FOLDER, NAME)                \
     __asm__(".pushsection .rodata\n"                \
-            ".include \"" FOLDER "/" #NAME ".s\"\n" \
+            ".include \"" ASM_ROOT FOLDER "/" #NAME ".s\"\n" \
             ".popsection");
 
 __asm__(".include \"macro.inc\"\n");

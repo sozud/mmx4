@@ -2,65 +2,65 @@
 // 800AAC98..800ABE08
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AAC98);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAC98);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AAD44);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAD44);
 
 void func_800AAD64(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AAD6C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAD6C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AAE94);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAE94);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AAFF8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAFF8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB050);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB050);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB128);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB128);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB170);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB170);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB224);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB224);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB32C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB32C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB384);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB384);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB3A4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB3A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB4C0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB4C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB518);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB518);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB564);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB564);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB5A4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB5A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB66C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB66C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB6C4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB6C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB710);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB710);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB768);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB768);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB7C0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB7C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB814);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB814);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB868);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB868);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB8C0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB8C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB8EC);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB8EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB98C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB98C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800AB9C8);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB9C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_53", func_800ABB50);
+INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800ABB50);
 
 void func_800ABB70(struct ShotObj* arg0)
 {

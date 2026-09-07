@@ -2,7 +2,7 @@
 // 800AF6A0..800AFB50
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_03", func_800AF6A0);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF6A0);
 
 void func_800AF808(struct Unk* arg0)
 {
@@ -14,9 +14,9 @@ void func_800AF828(struct Unk* arg0, s8 arg1)
     func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (get_random() & 1) ^ 1);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_03", func_800AF878);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF878);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_03", func_800AF95C);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF95C);
 
 struct Unk* func_800AFAB4(s8 arg0, s16 x, s16 y, u8 arg3)
 {

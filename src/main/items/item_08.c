@@ -10,25 +10,25 @@ void func_800C1994(struct ItemObj* arg0)
     is_on_screen(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C19F0);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C19F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1B54);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1B98);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B98);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1C24);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1C88);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1D90);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1D90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1E10);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E10);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1E7C);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E7C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C1FE4);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1FE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_08", func_800C204C);
+INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C204C);
 
 void (*D_8010CC64[])(struct ItemObj*) = {
     func_800C19F0,

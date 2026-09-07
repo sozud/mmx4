@@ -45,7 +45,7 @@ void func_800D3AFC(struct QuadObj* arg0)
 }
 
 // SearchLight state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/search_light", func_800D3C58);
+INCLUDE_ASM("main/nonmatchings/quads/search_light", func_800D3C58);
 
 // SearchLight state 2
 void func_800D3FBC(struct QuadObj* arg0)
@@ -64,7 +64,7 @@ void func_800D3FE0(struct Unk22* arg0)
 }
 
 // search light helper
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/search_light", func_800D4024);
+INCLUDE_ASM("main/nonmatchings/quads/search_light", func_800D4024);
 
 struct SearchLightInit D_8010F600[6] = {
     { { 0x0000, -0x0100, 0x0080, -0x0100, 0x0028, 0, 0, 0 }, 0x0060 },

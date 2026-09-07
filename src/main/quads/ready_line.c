@@ -568,7 +568,7 @@ void func_800D6694(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/ready_line", func_800D6700);
+INCLUDE_ASM("main/nonmatchings/quads/ready_line", func_800D6700);
 
 void func_800D6780(struct QuadObj* arg0)
 {

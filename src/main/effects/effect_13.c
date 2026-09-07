@@ -7,17 +7,17 @@ void func_800B84DC(struct EffectObj* arg0)
     D_8010B638[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B8518);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8518);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B8554);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8554);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B8610);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B8630);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8630);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B875C);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B875C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_13", func_800B887C);
+INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B887C);
 
 void (*D_8010B638[])(struct EffectObj*) = {
     func_800B8518,

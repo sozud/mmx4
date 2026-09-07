@@ -2,4 +2,4 @@
 // 800D9C84..800DA05C
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/layers/layer_03", func_800D9C84);
+INCLUDE_ASM("main/nonmatchings/layers/layer_03", func_800D9C84);

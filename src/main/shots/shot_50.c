@@ -2,11 +2,11 @@
 // 800AA2FC..800AA5E0
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_50", func_800AA2FC);
+INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA2FC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_50", func_800AA3A0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA3A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_50", func_800AA488);
+INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA488);
 
 void func_800AA5A4(struct ShotObj* arg0)
 {

@@ -98,9 +98,9 @@ void func_800AF58C(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_07", func_800AF610);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_07", func_800AF610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_07", func_800AF658);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_07", func_800AF658);
 
 void (*D_8010A1C8[])(struct VisualObj*, struct PlayerObj*) = {
     func_800AF488,

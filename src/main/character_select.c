@@ -209,10 +209,10 @@ void engine_state_1(struct EngineObj* arg0)
 }
 
 // character_select_state_3_update_funcs state 0
-INCLUDE_ASM("asm/us/main/nonmatchings/character_select", func_80029A48);
+INCLUDE_ASM("main/nonmatchings/character_select", func_80029A48);
 
 // character_select_state_3_update_funcs state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/character_select", func_80029BD8);
+INCLUDE_ASM("main/nonmatchings/character_select", func_80029BD8);
 
 void (*character_select_state_2_update_funcs[])(struct EngineObj*) = {
     character_select_state_2_substate_0,

@@ -11,7 +11,7 @@ void func_800AFB50(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_04", func_800AFB90);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_04", func_800AFB90);
 
 void func_800AFC4C(struct VisualObj* arg0)
 {

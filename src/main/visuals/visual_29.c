@@ -7,17 +7,17 @@ void func_800B41CC(struct VisualObj* arg0)
     D_8010A6AC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4208);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4208);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4274);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4274);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4450);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4450);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4480);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4480);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4558);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4558);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/visuals/visual_29", func_800B4578);
+INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4578);
 
 void func_800B4598(struct VisualObj* arg0)
 {

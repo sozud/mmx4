@@ -11,13 +11,13 @@ void func_800C7A68(struct MiscObj* arg0)
     D_8010D9EC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7AB0);
+INCLUDE_ASM("main/nonmatchings/misc/misc_00", func_800C7AB0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B0C);
+INCLUDE_ASM("main/nonmatchings/misc/misc_00", func_800C7B0C);
 
 void func_800C7B60(struct MiscObj* arg0)
 {
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_00", func_800C7B80);
+INCLUDE_ASM("main/nonmatchings/misc/misc_00", func_800C7B80);

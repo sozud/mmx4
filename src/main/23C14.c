@@ -150,7 +150,7 @@ void func_80033750(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800337DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800337DC);
 
 void func_800338CC(struct PlayerObj* arg0)
 {
@@ -327,7 +327,7 @@ void func_80033D10(struct PlayerObj* arg0)
     func_800360B0(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033D54);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80033D54);
 
 u8 func_8002D8B8(struct PlayerObj* arg0);
 u8 func_8002D94C(struct PlayerObj* arg0);
@@ -369,9 +369,9 @@ s32 func_80033F5C(struct PlayerObj* arg0)
     return 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80033FF0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80033FF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800340BC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800340BC);
 
 s32 func_80034100(struct PlayerObj* arg0)
 {
@@ -387,7 +387,7 @@ s32 func_80034100(struct PlayerObj* arg0)
     return 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034150);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034150);
 
 s32 func_80034238(struct Unk11* arg0)
 {
@@ -428,7 +428,7 @@ s32 func_80034238(struct Unk11* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034320);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034320);
 
 void func_8003439C(void)
 {
@@ -550,15 +550,15 @@ void func_8003470C(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034754);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034754);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800347D0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800347D0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003484C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003484C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800348B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800348B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003490C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003490C);
 
 void func_80034968(struct PlayerObj* arg0)
 {
@@ -581,7 +581,7 @@ void func_80034968(struct PlayerObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800349F4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800349F4);
 
 extern void func_80036034(struct PlayerObj* arg0);
 extern void func_80036A94(struct PlayerObj* arg0);
@@ -600,25 +600,25 @@ void func_80034AFC(struct PlayerObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034B64);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034B64);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034BDC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034BDC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034C58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034C58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034CB0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034CB0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034D20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034D20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034D64);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034D64);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034DC8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034DC8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034E2C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034E2C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80034F7C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80034F7C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035048);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80035048);
 
 s32 func_800350A4(struct PlayerObj* arg0, s32 arg1)
 {
@@ -635,7 +635,7 @@ s32 func_800350A4(struct PlayerObj* arg0, s32 arg1)
     return func_80015D60(arg0, arg1);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003516C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003516C);
 
 extern s16 D_800F8B3C[];
 extern const u32* D_8011AFF0[];
@@ -866,7 +866,7 @@ void func_80035848(struct PlayerObj* arg0)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800358A4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800358A4);
 
 void func_80035A24(struct PlayerObj* arg0)
 {
@@ -929,13 +929,13 @@ void func_80035B6C(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035C20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80035C20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035D00);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80035D00);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035D34);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80035D34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80035D84);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80035D84);
 
 void func_80035DDC(struct PlayerObj* arg0)
 {
@@ -1042,7 +1042,7 @@ void func_80036054(struct PlayerObj* arg0)
     func_800361F8(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036088);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036088);
 
 void func_800360B0(struct PlayerObj* arg0)
 {
@@ -1167,7 +1167,7 @@ void func_800363EC(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036470);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036470);
 
 void func_80036534(struct PlayerObj* arg0)
 {
@@ -1212,11 +1212,11 @@ void func_800365A4(struct PlayerObj* arg0)
     func_8002B694(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003666C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003666C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800366C0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800366C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800367F8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800367F8);
 
 extern f32 D_800F8BD8[];
 
@@ -1290,7 +1290,7 @@ void func_80036B18(void)
     engine_obj.unk1C = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036B38);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036B38);
 
 void func_80036B88(struct PlayerObj* arg0)
 {
@@ -1300,9 +1300,9 @@ void func_80036B88(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036BF4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036BF4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036DA0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036DA0);
 
 struct VisualObj* func_80036E1C(s8 arg0, s8 arg1, s8 arg2, void* arg3)
 {
@@ -1322,7 +1322,7 @@ struct VisualObj* func_80036E1C(s8 arg0, s8 arg1, s8 arg2, void* arg3)
     return visual_obj;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036E98);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036E98);
 
 void func_80036EE8(struct PlayerObj* arg0)
 {
@@ -1338,7 +1338,7 @@ void func_80036EE8(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80036F50);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80036F50);
 
 void func_80037104(struct PlayerObj* arg0)
 {
@@ -1455,9 +1455,9 @@ s32 func_80037338(struct PlayerObj* arg0)
     return 1;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800373DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800373DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037484);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037484);
 
 s32 func_8003751C(struct PlayerObj* arg0)
 {
@@ -1617,7 +1617,7 @@ void func_80037A24(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037A98);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037A98);
 
 void func_80037B1C(struct PlayerObj* arg0, s8 arg1)
 {
@@ -1648,19 +1648,19 @@ void func_80037BC4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037C28);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037C28);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037D08);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037D08);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037DB0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037DB0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037DFC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037DFC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037E4C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037E4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037EAC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037EAC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80037F78);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80037F78);
 
 void func_80037FF0(struct PlayerObj* arg0)
 {
@@ -1842,9 +1842,9 @@ void func_80038524(struct PlayerObj* arg0, s32 arg1)
     func_800350A4(arg0, arg1);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038568);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038568);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800385EC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800385EC);
 
 void func_80038678(struct PlayerObj* arg0)
 {
@@ -1880,11 +1880,11 @@ void func_80038748(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800387A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800387A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800387F4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800387F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038854);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038854);
 
 void func_800388F0(struct PlayerObj* arg0)
 {
@@ -1896,25 +1896,25 @@ void func_800388F0(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038970);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038970);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800389DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800389DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038A80);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038A80);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038AE8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038AE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038B80);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038B80);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038C10);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038C10);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038CA8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038CA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038D38);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038D38);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038D88);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038D88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038E44);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038E44);
 
 void func_80038E90(struct PlayerObj* arg0)
 {
@@ -1929,27 +1929,27 @@ void func_80038E90(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038F0C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038F0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80038F64);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80038F64);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003904C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003904C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800390C4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800390C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039120);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039120);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039160);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039160);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039230);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039230);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039270);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039270);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039328);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039328);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039378);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039378);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039570);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039570);
 
 void func_80039700(struct PlayerObj* arg0)
 {
@@ -1957,7 +1957,7 @@ void func_80039700(struct PlayerObj* arg0)
     D_800F8D94[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003974C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003974C);
 
 void func_800397B0(struct PlayerObj* arg0)
 {
@@ -1971,7 +1971,7 @@ void func_800397E8(struct PlayerObj* arg0)
     func_80034238(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039808);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039808);
 
 s32 func_80039880(struct PlayerObj* arg0)
 {
@@ -2052,7 +2052,7 @@ s32 func_80039A00(struct PlayerObj* arg0)
     return 1;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039AC8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039AC8);
 
 s32 func_80039B44(struct PlayerObj* arg0)
 {
@@ -2085,35 +2085,35 @@ void func_80039C20(struct PlayerObj* arg0)
     arg0->unk8C = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039C34);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039C34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039CC4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039CC4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039D9C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039D9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039E5C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039E5C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80039F28);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80039F28);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A000);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A000);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A104);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A104);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A1DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A1DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A328);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A328);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A374);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A374);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A3EC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A3EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A5E4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A5E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A7B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A7B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A8A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A8A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003A9F0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003A9F0);
 
 void func_8003AAE8(struct PlayerObj* arg0)
 {
@@ -2121,11 +2121,11 @@ void func_8003AAE8(struct PlayerObj* arg0)
     D_800F8DAC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AB34);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AB34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003ABE0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003ABE0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AD74);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AD74);
 
 void func_8003AE08(struct PlayerObj* arg0)
 {
@@ -2133,25 +2133,25 @@ void func_8003AE08(struct PlayerObj* arg0)
     D_800F8DB8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AE54);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AE54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AEE0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AEE0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AF20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AF20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AF58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AF58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003AFD4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003AFD4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B044);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B044);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B1A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B1A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B1E0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B1E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B24C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B24C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B340);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B340);
 
 void func_8003B3DC(struct QuxObj* arg0)
 {
@@ -2164,85 +2164,85 @@ void func_8003B3DC(struct QuxObj* arg0)
     arg0->unk5C &= ~0x80;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B458);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B458);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B470);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B470);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B694);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B694);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B7B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B7B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003B98C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003B98C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BA24);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BA24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BAE8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BAE8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BB20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BB20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BDA0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BDA0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BE28);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BE28);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003BF1C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003BF1C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C08C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C08C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C584);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C584);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C624);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C624);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C6EC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C6EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C8F4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C8F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003C9A4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003C9A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CA44);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CA44);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CB08);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CB08);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CBCC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CBCC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CCBC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CCBC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CD38);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CD38);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CF24);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CF24);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003CF6C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003CF6C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D01C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D01C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D164);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D164);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D254);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D254);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D338);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D338);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D35C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D35C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D39C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D39C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D3B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D3B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D3F8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D3F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D4C8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D4C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D638);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D638);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D6EC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D6EC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D7A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D7A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D7E4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D7E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D8A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D8A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003D9E0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003D9E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DC1C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC1C);
 
 void func_8003DC44(struct BaseObj* arg0, s8 arg1)
 {
@@ -2250,69 +2250,69 @@ void func_8003DC44(struct BaseObj* arg0, s8 arg1)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DC50);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC50);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DC8C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC8C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DCD8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DCD8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DD14);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD14);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DD2C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD2C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DD54);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD54);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DDA0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DDA0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DDDC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DDDC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DE08);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE08);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DE84);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE84);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003DF9C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003DF9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E048);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E048);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E0B0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E0B0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E0D0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E0D0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E274);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E274);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E368);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E368);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E488);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E488);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E5F8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E5F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E750);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E750);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003E8A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003E8A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003EA08);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003EA08);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003EB4C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003EB4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003ED00);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003ED00);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003EDF0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003EDF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003EEF8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003EEF8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F068);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F068);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F204);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F204);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F244);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F244);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F31C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F31C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F44C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F44C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F570);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F570);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F618);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F618);
 
 void func_8003F648(struct QuxObj* arg0)
 {
@@ -2321,42 +2321,42 @@ void func_8003F648(struct QuxObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F698);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F698);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F76C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F76C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003F908);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003F908);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FA58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FA58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FBD8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FBD8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FD08);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FD08);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FF14);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FF14);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FF58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FF58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8003FF9C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8003FF9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800400C8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800400C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800401F8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800401F8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040248);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040248);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800402C4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800402C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800403DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800403DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800405D4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800405D4);
 
 void func_80040608(struct MainObj* arg0)
 {
     D_800F9974[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040644);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040644);
 
 void func_80040760(struct PlayerObj* arg0, s8 arg1)
 {
@@ -2382,13 +2382,13 @@ void func_80040760(struct PlayerObj* arg0, s8 arg1)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040810);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040810);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040838);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040838);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040ABC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040ABC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040CCC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040CCC);
 
 void func_80040DF8(struct MainObj* arg0)
 {
@@ -2427,7 +2427,7 @@ void func_80040E44(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80040EFC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80040EFC);
 
 void func_80040E44(struct MainObj* arg0);
 void func_80040EFC(struct MainObj* arg0);
@@ -2441,9 +2441,9 @@ void func_80041020(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041060);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041060);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800411D4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800411D4);
 
 void func_80041060(struct MainObj* arg0);
 void func_800411D4(struct MainObj* arg0);
@@ -2464,7 +2464,7 @@ void func_800413C4(struct BaseObj* arg0)
     func_8002B318(arg0, 0x90, 0x90);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004140C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004140C);
 
 void func_8004140C(struct MainObj* arg0);
 
@@ -2477,23 +2477,23 @@ void func_80041524(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041564);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041564);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800415B0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800415B0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041854);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041854);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041958);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041958);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800419B8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800419B8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041C94);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041C94);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041DF0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041DF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80041F88);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80041F88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004205C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004205C);
 
 void func_800420E8(struct MainObj* arg0)
 {
@@ -2512,35 +2512,35 @@ void func_80042120(struct MainObj* arg0)
     CollisionRelated(arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042170);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042170);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042248);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042248);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004234C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004234C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042384);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042384);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800423A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800423A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042414);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042414);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800424CC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800424CC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004258C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004258C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800425C8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800425C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042648);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042648);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800426BC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800426BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004272C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004272C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800427C0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800427C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042824);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042824);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042884);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042884);
 
 extern void (*D_800F9C54[])(struct MainObj*);
 
@@ -2549,15 +2549,15 @@ void func_80042914(struct MainObj* arg0)
     D_800F9C54[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042950);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042950);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042A48);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042A48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042AFC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042AFC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042CB0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042CB0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042CC4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042CC4);
 
 extern void (*D_800F9C8C[])(struct MainObj*);
 
@@ -2579,11 +2579,11 @@ void func_80042D20(struct MainObj* arg0)
     func_80015D60(arg0, 0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042D60);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042D60);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042DD8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042DD8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042E18);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042E18);
 
 void func_80042E70(struct MainObj* arg0)
 {
@@ -2595,9 +2595,9 @@ void func_80042E70(struct MainObj* arg0)
     func_80015D60(arg0, 3);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042EB8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042EB8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042F18);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042F18);
 
 extern void (*D_800F9CA4[])(struct MainObj*);
 
@@ -2606,29 +2606,29 @@ void func_80042F80(struct MainObj* arg0)
     D_800F9CA4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80042FBC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80042FBC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043064);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043064);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800430C0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800430C0);
 
 void func_80043128(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043130);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043130);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004316C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004316C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043198);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043198);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043214);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043214);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043250);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043250);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043280);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043280);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800432F0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800432F0);
 
 void func_80043340(struct MainObj* arg0)
 {
@@ -2638,9 +2638,9 @@ void func_80043340(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043390);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043390);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800435C4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800435C4);
 
 void func_800436D0(struct MainObj* arg0)
 {
@@ -2671,9 +2671,9 @@ void func_8004372C(struct MainObj* arg0)
     D_800F9E88[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043768);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043768);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800437A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800437A8);
 
 extern void (*D_800F9E90[])(struct MainObj*);
 
@@ -2682,9 +2682,9 @@ void func_8004381C(struct MainObj* arg0)
     D_800F9E90[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043858);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043858);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043898);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043898);
 
 extern void (*D_800F9E98[])(struct MainObj*);
 
@@ -2693,9 +2693,9 @@ void func_80043900(struct MainObj* arg0)
     D_800F9E98[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004393C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004393C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043978);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043978);
 
 extern void (*D_800F9EA0[])(struct MainObj*);
 
@@ -2704,13 +2704,13 @@ void func_80043A48(struct MainObj* arg0)
     D_800F9EA0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043A84);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043A84);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043B0C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043B0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043C0C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043C0C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043CB8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043CB8);
 
 extern void (*D_800F9EAC[])(struct MainObj*);
 
@@ -2719,286 +2719,286 @@ void func_80043D54(struct MainObj* arg0)
     D_800F9EAC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043D90);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043D90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043DE0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043DE0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043E90);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043E90);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043ECC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043ECC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043F04);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043F04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80043F78);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80043F78);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004415C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004415C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800441E4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800441E4);
 
 void func_80044314(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004431C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004431C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004441C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004441C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044458);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044458);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044508);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044508);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044630);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044630);
 
 void func_80044694(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004469C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004469C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800446D8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800446D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044738);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044738);
 
 void func_800447A4(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800447AC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800447AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800447E8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800447E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044814);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044814);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800448C4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800448C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800448E4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800448E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044920);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044920);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044978);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044978);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800449D8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800449D8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044A4C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044A4C);
 
 void func_80044AA0(void)
 {
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044AA8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044AA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044AE4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044AE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044B18);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044B18);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044B78);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044B78);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044BA8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044BA8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044BE4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044BE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044BFC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044BFC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044C58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044C58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044D8C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044D8C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044DE4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044DE4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044F4C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044F4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80044F88);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80044F88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800450A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800450A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045198);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045198);
 
 void func_80045240(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->state_8c.unk8C_half;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004524C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004524C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800452B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800452B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800452FC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800452FC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004539C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004539C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045404);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045404);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045464);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045464);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800454A4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800454A4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004550C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004550C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045560);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045560);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800455BC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800455BC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045648);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045648);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045694);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045694);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045728);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045728);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800457A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800457A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004583C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004583C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800458B4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800458B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045940);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045940);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045D80);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045D80);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80045DD8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80045DD8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046104);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046104);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046134);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046134);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004619C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004619C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046220);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046220);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004636C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004636C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046400);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046400);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046610);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046640);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046640);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800466A8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800466A8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004677C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004677C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046818);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046818);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046864);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046864);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800468CC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800468CC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800469A0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800469A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046A4C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046A4C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046AA4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046AA4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046B30);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046B30);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046B80);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046B80);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80046C8C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80046C8C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047038);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047038);
 
 void func_80047078(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->unk94;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047084);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047084);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800470C0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800470C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047140);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047140);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047188);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047188);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800471C4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800471C4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047244);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047244);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047314);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047314);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047378);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047378);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800473C8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800473C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047404);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047404);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047660);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047660);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047794);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047794);
 
 void func_800477D0(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->unk94;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800477DC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800477DC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047818);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047818);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047900);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047900);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047974);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047974);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800479E4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800479E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047A20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047A20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047A34);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047A34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047B04);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047B04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047C88);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047C88);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047D04);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047D04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80047E58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80047E58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004808C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004808C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800480D0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800480D0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004831C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004831C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048348);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048348);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800483AC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800483AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800483E8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800483E8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048434);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048434);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800484C8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800484C8);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_8004852C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004852C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048584);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048584);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048610);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048610);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048770);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048770);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800487AC);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800487AC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800487F0);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800487F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048864);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048864);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_800488F4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_800488F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048970);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048970);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048A1C);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048A1C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048A58);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048A58);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048B04);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048B04);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048B98);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048B98);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048BD4);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048BD4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048C20);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048C20);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/23C14", func_80048CF8);
+INCLUDE_ASM("main/nonmatchings/23C14", func_80048CF8);
 
 s8 D_800F8BF8[24] = { 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1 };
 s8 D_800F8C10[24] = { 0, 1, 1, 1, 1, 1, 1, 1, 1 };

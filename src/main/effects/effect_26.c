@@ -2,27 +2,27 @@
 // 800BB1F0..800BB9B8
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB1F0);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB1F0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB314);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB314);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB364);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB364);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB508);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB508);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB588);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB588);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB5F4);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB5F4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB68C);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB68C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB750);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB750);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB85C);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB85C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB888);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB888);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_26", func_800BB928);
+INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB928);
 
 void func_800BB97C(struct EffectObj* arg0)
 {

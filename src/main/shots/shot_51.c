@@ -2,19 +2,19 @@
 // 800AA5E0..800AAAD4
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA5E0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA5E0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA68C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA68C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA730);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA730);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA7B4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA7B4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA85C);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA85C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA954);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA954);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_51", func_800AA994);
+INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA994);
 
 void func_800AAA98(struct ShotObj* arg0)
 {

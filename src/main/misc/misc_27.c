@@ -7,9 +7,9 @@ void func_800CC908(struct MiscObj* arg0)
     D_8010E960[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_27", func_800CC944);
+INCLUDE_ASM("main/nonmatchings/misc/misc_27", func_800CC944);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_27", func_800CCA14);
+INCLUDE_ASM("main/nonmatchings/misc/misc_27", func_800CCA14);
 
 void (*D_8010E960[])(struct MiscObj*) = {
     func_800CC944,

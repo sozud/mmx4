@@ -2,13 +2,13 @@
 // 800C52CC..800C5544
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_21", func_800C52CC);
+INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C52CC);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_21", func_800C53A0);
+INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C53A0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_21", func_800C5444);
+INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C5444);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/items/item_21", func_800C54DC);
+INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C54DC);
 
 void func_800C54FC(struct ItemObj* arg0)
 {

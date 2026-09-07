@@ -2,9 +2,9 @@
 // 800D3084..800D3388
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_55", func_800D3084);
+INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3084);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_55", func_800D31F8);
+INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D31F8);
 
 void func_800D323C(struct Unk* arg0)
 {
@@ -16,8 +16,8 @@ void func_800D323C(struct Unk* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_55", func_800D3288);
+INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3288);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_55", func_800D330C);
+INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D330C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/misc/misc_55", func_800D332C);
+INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D332C);

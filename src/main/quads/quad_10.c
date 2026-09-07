@@ -29,12 +29,12 @@ void func_800D6AD8(struct QuadObj* arg0)
     D_8010FCB8[arg0->state](arg0, ptr, temp_a2);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_10", func_800D6B9C);
+INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6B9C);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_10", func_800D6C48);
+INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6C48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_10", func_800D6CA0);
+INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6CA0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_10", func_800D6D48);
+INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6D48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/quad_10", func_800D6DC4);
+INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6DC4);

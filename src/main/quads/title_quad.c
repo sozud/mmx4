@@ -39,7 +39,7 @@ void func_800D6F94(struct QuadObj* entity)
 }
 
 // TitleUpdate2 state 1
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/title_quad", func_800D7058);
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7058);
 
 // TitleUpdate2 state 3
 void func_800D7100(struct QuadObj* arg0)
@@ -136,7 +136,7 @@ void func_800D7194(struct QuadObj* arg0)
 }
 
 // TitleUpdate2 state 6
-INCLUDE_ASM("asm/us/main/nonmatchings/quads/title_quad", func_800D7468);
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7468);
 
 // TitleUpdate2 state 2
 void func_800D76D8(struct QuadObj* arg0)

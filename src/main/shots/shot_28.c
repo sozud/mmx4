@@ -10,11 +10,11 @@ void func_8009F46C(struct ShotObj* arg0)
     D_801091C4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_28", func_8009F4C0);
+INCLUDE_ASM("main/nonmatchings/shots/shot_28", func_8009F4C0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_28", func_8009F594);
+INCLUDE_ASM("main/nonmatchings/shots/shot_28", func_8009F594);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_28", func_8009F618);
+INCLUDE_ASM("main/nonmatchings/shots/shot_28", func_8009F618);
 
 void (*D_801091C4[])(struct ShotObj*) = {
     func_8009F4C0,

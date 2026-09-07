@@ -7,9 +7,9 @@ void func_800927EC(struct WeaponObj* arg0)
     D_80108748[arg0->state](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_19", func_80092828);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_19", func_80092828);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/weapons/weapon_19", func_80092918);
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_19", func_80092918);
 
 void (*D_80108748[])(struct WeaponObj*) = {
     func_80092828,

@@ -2,9 +2,9 @@
 // 800AAAD4..800AAC98
 #include "common.h"
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_52", func_800AAAD4);
+INCLUDE_ASM("main/nonmatchings/shots/shot_52", func_800AAAD4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/shots/shot_52", func_800AAB74);
+INCLUDE_ASM("main/nonmatchings/shots/shot_52", func_800AAB74);
 
 void func_800AAC5C(struct ShotObj* arg0)
 {

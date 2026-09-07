@@ -34,4 +34,4 @@ void func_800BC370(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/effects/effect_30", func_800BC3E8);
+INCLUDE_ASM("main/nonmatchings/effects/effect_30", func_800BC3E8);
