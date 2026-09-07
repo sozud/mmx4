@@ -2,6 +2,11 @@
 // 800CCA34..800CD78C
 #include "common.h"
 
+static inline void set_engine_flags(u8 flags)
+{
+    engine_flags = flags;
+}
+
 enum SubTypes {
     X_PORTRAIT,
     ZERO_PORTRAIT,
@@ -393,7 +398,7 @@ void func_800CD530(struct MiscObj* arg0)
     case 1:
         func_80015DC8(arg0);
         if (arg0->animation_step.fields.relative_step == 0) {
-            engine_flags |= (1 << (arg0->unk2 - 7));
+            set_engine_flags(engine_flags | (1 << (arg0->unk2 - 7)));
         }
         if ((s8)engine_flags & 0x80) {
             arg0->unk6 = (u8)arg0->unk6 + 1;
@@ -412,7 +417,7 @@ void func_800CD530(struct MiscObj* arg0)
         func_80015DC8(arg0);
         func_8002B718((struct MovingObj*)arg0);
         if (arg0->on_screen == 0) {
-            engine_flags &= ~(1 << (arg0->unk2 - 7));
+            set_engine_flags(engine_flags & ~(1 << (arg0->unk2 - 7)));
             arg0->state = (u8)arg0->state + 1;
         }
         break;

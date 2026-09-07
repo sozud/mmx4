@@ -2971,9 +2971,8 @@ void func_8004372C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043768);
 
-void func_800437A8(void)
+void func_800437A8(struct MainObj* arg0)
 {
-    register struct MainObj* arg0;
     struct MainObj* temp_s0;
     s32 temp_v0;
 

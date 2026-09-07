@@ -1124,25 +1124,25 @@ void func_800441E4(struct MainObj* arg0);
 void func_8004431C(struct MainObj* arg0);
 
 // D_800F9E88
-void func_80043768(void);
-void func_800437A8(void);
+void func_80043768(struct MainObj* arg0);
+void func_800437A8(struct MainObj* arg0);
 
 // D_800F9E90
-void func_80043858(void);
-void func_80043898(void);
+void func_80043858(struct MainObj* arg0);
+void func_80043898(struct MainObj* arg0);
 
 // D_800F9E98
-void func_8004393C(void);
-void func_80043978(void);
+void func_8004393C(struct MainObj* arg0);
+void func_80043978(struct MainObj* arg0);
 
 // D_800F9EA0
-void func_80043A84(void);
-void func_80043B0C(void);
-void func_80043C0C(void);
+void func_80043A84(struct MainObj* arg0);
+void func_80043B0C(struct MainObj* arg0);
+void func_80043C0C(struct MainObj* arg0);
 
 // D_800F9EAC
-void func_80043D90(void);
-void func_80043DE0(void);
+void func_80043D90(struct MainObj* arg0);
+void func_80043DE0(struct MainObj* arg0);
 
 // D_800F9EB4
 void func_80043ECC(void);
