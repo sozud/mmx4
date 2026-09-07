@@ -5696,7 +5696,20 @@ INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028690);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028A48);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028AD8);
+void func_80028AD8(struct BackgroundObj* arg0)
+{
+    if (--arg0->unk37 == 0) {
+        arg0->unk34 = arg0->unk34 & 0xFFFE;
+        return;
+    }
+    if (--arg0->unk3D == 0) {
+        arg0->unk3F = arg0->unk3F ^ 0x80;
+        arg0->unk3D = arg0->unk3B;
+    }
+    if (arg0->unk3F >= 0) {
+        arg0->y_pos.i.hi += arg0->unk46;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/323C", func_80028B68);
 

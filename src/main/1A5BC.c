@@ -2,6 +2,12 @@
 
 u8 func_8002B810(s32 arg0, s32 arg1);
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
+s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);
+s32 func_8002CC34(struct PlayerObj* arg0, u8 arg1);
+s32 func_8002CD70(struct PlayerObj* arg0, u8 arg1);
+void func_8002CA18(struct PlayerObj* arg0);
+void func_8002CB58(struct PlayerObj* arg0);
+void func_8002CC98(struct PlayerObj* arg0);
 
 // might also be inlined inside reset_objects
 void func_80029DBC(void)
@@ -877,7 +883,35 @@ u8 func_8002B810(s32 arg0, s32 arg1)
     return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B93C);
+extern s32 D_800F459C[];
+extern s32 D_800F45C0[];
+
+void func_8002B93C(struct MovingObj* arg0, u8 arg1)
+{
+    s16 var_a2, var_v0;
+    s16 var_v1;
+    if (arg1 < 0x10) {
+        var_a2 = 1;
+        if (arg1 < 8) {
+            var_v1 = 8 - arg1;
+            var_v0 = 1;
+        } else {
+            var_v1 = arg1 - 8;
+            var_v0 = -1;
+        }
+    } else {
+        var_a2 = -1;
+        if (arg1 < 0x18) {
+            var_v1 = 0x18 - arg1;
+            var_v0 = -1;
+        } else {
+            var_v1 = arg1 - 0x18;
+            var_v0 = 1;
+        }
+    }
+    arg0->x_vel.val = D_800F459C[var_v1] * var_v0;
+    arg0->y_vel.val = D_800F45C0[var_v1] * var_a2;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002B9F0);
 
@@ -1012,15 +1046,42 @@ INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002C99C);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002C9E4);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CA18);
+void func_8002CA18(struct PlayerObj* arg0)
+{
+    s16 temp_v0;
+
+    temp_v0 = D_8013B7F8 - D_8013B7E0;
+    if ((func_8002CAF0(arg0, func_8002D7E4(arg0, temp_v0, D_8013B7FC)) == 0) && (func_8002CAF0(arg0, func_8002D7E4(arg0, temp_v0, D_8013B7FC - D_8013B7E4)) == 0)) {
+        func_8002CAF0(arg0,
+            func_8002D7E4(arg0, temp_v0, D_8013B7FC + D_8013B7E4 - 1));
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CAF0);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CB58);
+void func_8002CB58(struct PlayerObj* arg0)
+{
+    s16 temp_v0;
+
+    temp_v0 = (D_8013B7F8 + D_8013B7E0) - 1;
+    if ((func_8002CC34(arg0, func_8002D7E4(arg0, temp_v0, D_8013B7FC)) == 0) && (func_8002CC34(arg0, func_8002D7E4(arg0, temp_v0, D_8013B7FC - D_8013B7E4)) == 0)) {
+        func_8002CC34(arg0,
+            func_8002D7E4(arg0, temp_v0, D_8013B7FC + D_8013B7E4 - 1));
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CC34);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CC98);
+void func_8002CC98(struct PlayerObj* arg0)
+{
+    s16 temp_v0;
+
+    temp_v0 = D_8013B7FC - D_8013B7E4;
+    if ((func_8002CD70(arg0, func_8002D7E4(arg0, D_8013B7F8, temp_v0)) == 0) && (func_8002CD70(arg0, func_8002D7E4(arg0, D_8013B7F8 - D_8013B7E0, temp_v0)) == 0)) {
+        func_8002CD70(arg0,
+            func_8002D7E4(arg0, D_8013B7F8 + D_8013B7E0 - 1, temp_v0));
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002CD70);
 

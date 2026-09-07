@@ -484,7 +484,7 @@ struct PlayerObj {
     s8 unk66;
     s8 unk67;
     struct Unk_unk68* unk68;
-    s16 : 16;
+    s16 unk6C;
     s16 unk6E;
     u8 unk70;
     s8 unk71;
@@ -575,6 +575,8 @@ struct PlayerObj {
 
 MMX4_STATIC_ASSERT(player_unk68_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct Unk, unk68));
+MMX4_STATIC_ASSERT(player_unk6C_offset,
+    MMX4_OFFSET_OF(struct PlayerObj, unk6C) == MMX4_OFFSET_OF(struct Unk, unk6C));
 MMX4_STATIC_ASSERT(player_unk6E_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct Unk, unk6E));
 MMX4_STATIC_ASSERT(player_unk70_offset,
@@ -1766,6 +1768,7 @@ extern s16 D_8013B7F0;
 extern s16 D_8013B7F4;
 extern s16 D_8013B7F8;
 extern s16 D_8013B7FC;
+extern s16 D_8013B800;
 extern s16 D_8013B804;
 extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
@@ -2009,7 +2012,7 @@ s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
 s32 func_8002D5E4(struct PlayerObj*, s16);
 u8 func_8002D724(struct PlayerObj*, s16, s16);
-s32 func_8002D7E4(struct Unk*, s16, s16);
+u8 func_8002D7E4(struct PlayerObj*, s16, s16);
 u8 func_8002D900(struct PlayerObj*);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);

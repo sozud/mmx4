@@ -123,7 +123,26 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDispMask);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", DrawSync);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", checkRECT);
+extern u8 D_8011E18A;
+extern s16 D_8011E18C;
+extern s16 D_8011E18E;
+extern void (*D_8011E184)(const char* fmt, ...);
+
+void checkRECT(const char* log, RECT* r)
+{
+    switch (D_8011E18A) {
+    case 1:
+        if (r->w > D_8011E18C || r->w + r->x > D_8011E18C || r->y > D_8011E18E || r->y + r->h > D_8011E18E || r->w <= 0 || r->x < 0 || r->y < 0 || r->h <= 0) {
+            D_8011E184("%s:bad RECT", log);
+            D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
+        }
+        break;
+    case 2:
+        D_8011E184("%s:", log);
+        D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
+        break;
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", ClearImage);
 
@@ -139,7 +158,28 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", MoveImage);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", ClearOTag);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", ClearOTagR);
+const char D_80011EB4[] = "ClearOTagR(%08x,%d)...\n";
+
+typedef struct {
+    u8 pad[0x2c];
+    int (*otc)(u_long*, int);
+} ClearOTagRApi;
+
+extern u8 D_8011E18A;
+extern void (*D_8011E184)(const char*, ...);
+extern ClearOTagRApi* D_8011E180;
+extern u32 D_8011E244;
+
+u_long* ClearOTagR(u_long* ot, int n)
+{
+    if (D_8011E18A >= 2) {
+        D_8011E184(D_80011EB4, ot, n);
+    }
+
+    D_8011E180->otc(ot, n);
+    *ot = (s32)&D_8011E244 & 0xFFFFFF;
+    return ot;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", DrawPrim);
 
@@ -169,7 +209,52 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDrawMode);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDrawEnv);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", SetDrawEnv2);
+#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
+#define LOW(x) (*(s32*)&(x))
+
+extern s16 D_8011E18C;
+extern s16 D_8011E18E;
+
+int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env)
+{
+    DR_ENV* dr;
+    RECT rect;
+    s32 len = 0;
+
+    dr = dr_env;
+    dr->code[0] = get_cs(env->clip.x, env->clip.y);
+    dr->code[1] = get_ce(
+        (s32)(((u32)(u16)(env->clip).w + (u32)(u16)(env->clip).x + -1) * 0x10000) >> 0x10,
+        (s32)(((u32)(u16)(env->clip).y + (u32)(u16)(env->clip).h + -1) * 0x10000) >> 0x10);
+    dr->code[2] = get_ofs(env->ofs[0], env->ofs[1]);
+    dr->code[3] = get_mode(env->dfe, env->dtd, env->tpage);
+    dr->code[4] = get_tw(&env->tw);
+    dr->code[5] = 0xE6000000;
+    len = 7;
+    if (env->isbg) {
+        rect.x = env->clip.x;
+        rect.y = env->clip.y;
+        rect.w = env->clip.w;
+        rect.h = env->clip.h;
+        rect.w = CLAMP(rect.w, 0, D_8011E18C - 1);
+        rect.h = CLAMP(rect.h, 0, D_8011E18E - 1);
+        if (rect.x & 0x3F || rect.w & 0x3F) {
+            rect.x -= env->ofs[0];
+            rect.y -= env->ofs[1];
+            (&dr->tag)[len++] = 0x60000000 | (env->b0 << 16) | (env->g0 << 8) | env->r0;
+            (&dr->tag)[len++] = LOW(rect.x);
+            (&dr->tag)[len++] = LOW(rect.w);
+            rect.x += env->ofs[0];
+            rect.y += env->ofs[1];
+        } else {
+            (&dr->tag)[len++] = 0x02000000 | (env->b0 << 16) | (env->g0 << 8) | env->r0;
+            (&dr->tag)[len++] = LOW(rect.x);
+            (&dr->tag)[len++] = LOW(rect.w);
+        }
+    }
+    setlen(dr, len - 1);
+    return;
+}
 
 extern u8 D_8011E188;
 
@@ -205,11 +290,108 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", get_dx);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _status);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _otc);
+extern volatile s32* D_8011E26C;
+extern s32* D_8011E270;
+extern volatile s32* D_8011E274;
+extern volatile s32* D_8011E278;
+
+#define OT_TYPE u_long
+
+s32 _otc(OT_TYPE arg0, s32 arg1)
+{
+    s32 temp;
+
+    *D_8011E278 |= 0x08000000;
+    *D_8011E274 = 0;
+    temp = arg0 - 4 + arg1 * 4;
+    *D_8011E26C = temp;
+    *D_8011E270 = arg1;
+    *D_8011E274 = 0x11000002;
+    set_alarm();
+    if (*D_8011E274 & 0x01000000) {
+        while (1) {
+            if (get_alarm()) {
+                return -1;
+            } else {
+                if (!(*D_8011E274 & 0x01000000)) {
+                    break;
+                }
+            }
+        }
+    }
+    return arg1;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _clr);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _dws);
+extern s16 D_8011E18C;
+extern s16 D_8011E18E;
+extern s32* D_8011E258;
+extern volatile u32* D_8011E25C;
+extern volatile u32* D_8011E260;
+extern volatile u32* D_8011E264;
+extern volatile u32* D_8011E268;
+
+#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
+#define D_80090CA0 D_8011E18C
+#define D_80090CA2 D_8011E18E
+#define GPU_STATUS D_8011E25C
+#define GPU_DATA ((volatile u32*)D_8011E258)
+#define DMA1_MADR ((s32**)D_8011E260)
+#define DMA1_BCR D_8011E264
+#define DMA1_CHCR D_8011E268
+
+s32 _dws(RECT* arg0, s32* arg1)
+{
+    s32 temp_a0;
+    s32 size;
+    s32 var_s0;
+    s32* img_ptr;
+    s32 var_s4;
+
+    img_ptr = arg1;
+    set_alarm();
+    var_s4 = 0;
+
+    arg0->w = CLAMP(arg0->w, 0, D_80090CA0);
+    arg0->h = CLAMP(arg0->h, 0, D_80090CA2);
+
+    temp_a0 = ((arg0->w * arg0->h) + 1) / 2;
+    if (temp_a0 <= 0) {
+        return -1;
+    }
+
+    var_s0 = temp_a0 % 16;
+    size = temp_a0 / 16;
+    if (!(*GPU_STATUS & 0x04000000)) {
+        while (1) {
+            if (get_alarm()) {
+                return -1;
+            } else if (*GPU_STATUS & 0x04000000) {
+                break;
+            }
+        }
+    }
+
+    *GPU_STATUS = 0x04000000;
+    *GPU_DATA = 0x01000000;
+    *GPU_DATA = var_s4 ? 0xB0000000 : 0xA0000000;
+    *GPU_DATA = *(s32*)(&arg0->x);
+    *GPU_DATA = *(s32*)(&arg0->w);
+
+    for (var_s0 = var_s0 - 1; var_s0 != -1; var_s0--) {
+        *GPU_DATA = *img_ptr++;
+    }
+
+    if (size != 0) {
+        *GPU_STATUS = 0x04000002;
+        *DMA1_MADR = img_ptr;
+        *DMA1_BCR = (size << 0x10) | 0x10;
+        *DMA1_CHCR = 0x01000201;
+    }
+
+    return 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _drs);
 
@@ -248,7 +430,45 @@ INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _exeque);
 
 INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _reset);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/D9840", _sync);
+extern void _exeque(void);
+extern s32 D_8011E28C;
+extern s32 D_8011E290;
+
+s32 _sync(s32 arg0)
+{
+    s32 temp_s0;
+
+    if (!arg0) {
+        set_alarm();
+        while (*(s32*)(&D_8011E28C) != *(s32*)(&D_8011E290)) {
+            _exeque();
+            if (get_alarm())
+                return -1;
+        }
+
+        while ((*D_8011E268 & 0x01000000) || !(*D_8011E25C & 0x04000000)) {
+            if (get_alarm())
+                return -1;
+        }
+
+        return 0;
+    }
+
+    temp_s0 = (D_8011E28C - D_8011E290) & 0x3F;
+    if (temp_s0) {
+        _exeque();
+    }
+
+    if ((*D_8011E268 & 0x01000000) || !(*D_8011E25C & 0x04000000)) {
+        if (!temp_s0) {
+            return 1;
+        } else {
+            return temp_s0;
+        }
+    }
+
+    return temp_s0;
+}
 
 extern s32 D_8011E2A0;
 extern s32 D_8011E2A4;
