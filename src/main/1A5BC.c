@@ -1397,7 +1397,10 @@ u8 func_8002D94C(struct PlayerObj* arg0)
     return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi + temp_v1->unk1 + temp_v1->unk3);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D994);
+u8 func_8002D994(struct PlayerObj* arg0)
+{
+    return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/1A5BC", func_8002D9BC);
 

@@ -567,7 +567,42 @@ void func_80032D28(struct PlayerObj* arg0)
     arg0->unkBA = var_v0;
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032DE0);
+extern void func_8002B694(void*);
+
+void func_80032DE0(struct PlayerObj* arg0)
+{
+    s32 velocity;
+    s32 direction;
+
+    if (arg0->unkC4 != 0) {
+        return;
+    }
+
+    velocity = arg0->x_vel.val;
+    if (velocity != 0) {
+        direction = 2;
+        if (velocity > 0) {
+            direction = 1;
+        }
+        if ((direction & arg0->unk89) != 0) {
+            arg0->x_vel.val = 0;
+            arg0->unk28 = 0;
+        }
+    }
+
+    func_8002B694(arg0);
+
+    if (arg0->unk15 != 0) {
+        if (arg0->x_vel.val <= 0) {
+            return;
+        }
+    } else if (arg0->x_vel.val >= 0) {
+        return;
+    }
+
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032E94);
 

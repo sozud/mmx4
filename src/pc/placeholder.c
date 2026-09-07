@@ -22,8 +22,8 @@ extern u16 D_80106070[64];
 extern u8* D_80141EE8[];
 extern u32* D_80137E08;
 
-s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan);
-s32 func_800157AC(u8 type, s32 unused, struct Unk6* source);
+s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan);
+s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
 s32 func_8002938C(s32 id)
 {
@@ -59,10 +59,9 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2)
     return func_800154E8(arg0 & 0xFF, *(u8*)command & 0x3F, arg2, arg0 & 0xFF);
 }
 
-s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan)
+s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan)
 {
     VagAtr tone;
-    const u8* object = (const u8*)source;
     u8 packed1 = ((u8*)D_80137E08)[1];
     u8 packed2 = ((u8*)D_80137E08)[2];
     u8 packed3 = ((u8*)D_80137E08)[3];
@@ -75,10 +74,10 @@ s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan)
 
     if (source != NULL) {
         if (arg0 & 0x80) {
-            pan = object[2];
+            pan = source->unk2;
         } else {
-            s16 x = *(const s16*)(object + 0xA);
-            s8 background = *(const s8*)(object + 0x14);
+            s16 x = source->x_pos.i.hi;
+            s8 background = source->bg_offset;
 
             if (background >= 0 && background < COUNT(background_objects))
                 x -= background_objects[background].x_pos.i.hi;
@@ -116,7 +115,7 @@ s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan)
     return 0;
 }
 
-s32 func_800157AC(u8 type, s32 unused, struct Unk6* source)
+s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
 {
     u8 packed1 = ((u8*)D_80137E08)[1];
     u8 packed2 = ((u8*)D_80137E08)[2];

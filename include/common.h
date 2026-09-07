@@ -576,7 +576,8 @@ struct PlayerObj {
     s32 unkCC;
     s32 unkD0;
     s8 unkD4;
-    s8 padD5[0xD7 - 0xD5];
+    u8 unkD5;
+    u8 unkD6;
     s8 unkD7;
     s8 : 8;
     s8 unkD9;
@@ -925,24 +926,6 @@ struct Unk5 {
     s32 unk8;
 };
 
-struct Unk6 {
-    u8 pad0[5];
-    u8 unk5;
-    u8 pad5[4];
-    s16 unkA;
-    s16 padc;
-    s16 unkE;
-    u8 pad6[0x19];
-    s32 unk20;
-    s32 unk24;
-    s32 unk28;
-    s32 unk2C;
-    u8 pad30[0x3];
-    u16 unk40;
-    u16 unk42;
-    u8 pad2f[0x37];
-    s8 unk67;
-};
 struct Unk7 {
     u8 pad[0x80];
     u16 unk80;
@@ -1567,6 +1550,7 @@ struct RectPtrPair {
 extern struct QuadObj g_QuadObjects[0x20];
 extern struct ArchivePathData D_800EE54C;
 extern u8 D_800F8B30[];
+extern u8 D_800F8B34[][4];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];
@@ -1977,7 +1961,7 @@ void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
 void func_80015DC8();
 s32 func_80033694(struct PlayerObj*);
-void func_80034538(struct Unk7*);
+void func_80034538(struct PlayerObj*);
 void func_80034754(struct Unk7*);
 void func_80025188(s32, u8);
 void func_80025588(s16, s16, s16, s16, s32);
@@ -2030,6 +2014,7 @@ s32 func_8002D5E4(struct PlayerObj*, s16);
 u8 func_8002D724(struct PlayerObj*, s16, s16);
 u8 func_8002D7E4(struct PlayerObj*, s16, s16);
 u8 func_8002D900(struct PlayerObj*);
+u8 func_8002D994(struct PlayerObj*);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 void func_80016334(void);
