@@ -21,7 +21,6 @@ extern s32 D_8010F678[3];
 extern u16 D_80106070[64];
 extern u8* D_80141EE8[];
 extern u32* D_80137E08;
-extern u8 D_8013B800[4];
 
 s32 func_800154E8(s32 arg0, s32 arg1, struct Unk6* source, u8 pan);
 s32 func_800157AC(u8 type, s32 unused, struct Unk6* source);
@@ -395,7 +394,7 @@ u8 func_8002D724(struct PlayerObj* object, s16 x, s16 y)
     return get_stage_tile_attribute(object->bg_offset, x, y);
 }
 
-s32 func_8002D7E4(struct Unk* object, s16 x, s16 y)
+u8 func_8002D7E4(struct PlayerObj* object, s16 x, s16 y)
 {
     u8 attribute = get_stage_tile_attribute(object->bg_offset, x, y);
 
@@ -406,7 +405,7 @@ s32 func_8002D7E4(struct Unk* object, s16 x, s16 y)
     return attribute;
 }
 
-s32 func_8002CC34(struct Unk* object, u8 attribute)
+s32 func_8002CC34(struct PlayerObj* object, u8 attribute)
 {
     switch (attribute) {
     case 0x38:
@@ -416,31 +415,50 @@ s32 func_8002CC34(struct Unk* object, u8 attribute)
     case 0x3E:
     case 0x3F:
         D_8013B7DC |= 1;
-        *(s16*)D_8013B800 = ~object->unk6C;
+        D_8013B800 = ~object->unk6C;
         return -1;
     default:
         return 0;
     }
 }
 
-void func_8002CB58(struct Unk* object)
+s32 func_8002CAF0(struct PlayerObj* object, u8 attribute)
 {
-    s16 x = D_8013B7F8 + D_8013B7E0 - 1;
-    u8 attribute;
+    switch (attribute) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 2;
+        D_8013B800 = 0x10 - object->unk6C;
+        return -1;
+    default:
+        return 0;
+    }
+}
 
-    attribute = func_8002D7E4(object, x, D_8013B7FC);
-    if (func_8002CC34(object, attribute))
-        return;
-    attribute = func_8002D7E4(object, x, D_8013B7FC - D_8013B7E4);
-    if (func_8002CC34(object, attribute))
-        return;
-    attribute = func_8002D7E4(object, x, D_8013B7FC + D_8013B7E4 - 1);
-    func_8002CC34(object, attribute);
+s32 func_8002CD70(struct PlayerObj* object, u8 attribute)
+{
+    switch (attribute) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 4;
+        D_8013B804 = 0x10 - object->unk6E;
+        return -1;
+    default:
+        return 0;
+    }
 }
 
 s32 func_8002D490(struct PlayerObj* object)
 {
-    s16 offset = *(s16*)D_8013B800;
+    s16 offset = D_8013B800;
     s16 x;
 
     if (D_8013B7DC & 1) {
@@ -465,7 +483,7 @@ void func_8002C9E4(struct PlayerObj* object)
 {
     object->x_pos.i.lo = 0;
     object->y_pos.i.lo = 0;
-    object->x_pos.i.hi += *(s16*)D_8013B800;
+    object->x_pos.i.hi += D_8013B800;
     object->y_pos.i.hi += D_8013B804;
 }
 
