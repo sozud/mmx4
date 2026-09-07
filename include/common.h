@@ -275,6 +275,14 @@ union AnimationStep {
     } fields;
 };
 
+union PlayerUnk8A {
+    u16 packed;
+    struct {
+        u8 low;
+        s8 high;
+    } bytes;
+};
+
 MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u32));
 
 #define OBJECT_HEADER_FIELDS \
@@ -334,6 +342,14 @@ struct MovingObj {
 
 struct AnimatedObj {
     ANIMATED_OBJ_FIELDS
+};
+
+struct CollisionObj {
+    u8 pad0[8];
+    f32 x_pos;
+    f32 y_pos;
+    u8 pad10[0x58];
+    struct Unk_unk68* collision_bounds;
 };
 
 #ifdef MMX4_PC
@@ -512,7 +528,7 @@ struct PlayerObj {
     s8 unk87;
     s8 unk88;
     u8 unk89;
-    u16 unk8A;
+    union PlayerUnk8A unk8A;
     s8 unk8C;
     s8 : 8;
     s8 unk8E;
@@ -1939,7 +1955,7 @@ s32 func_80034F7C();
 void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
-s32 func_8001540C(s32, s32, struct Unk6*);
+s32 func_8001540C(s32, s32, void*);
 s32 func_800350A4(struct PlayerObj*, s32);
 void func_8002B318(struct BaseObj*, s32, s32);
 void func_800127C8(s32);

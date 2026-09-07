@@ -97,19 +97,147 @@ void func_800315E0(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031688);
+void func_80031688(struct PlayerObj* arg0)
+{
+    if ((func_80034100(arg0) == 0) && (func_80033EA4(arg0) == 0) && (func_80037290(arg0) == 0) && (func_80039880(arg0) == 0) && (func_80033494(arg0) == 0) && (func_800398F0(arg0) == 0)) {
+        if (func_800334F4(arg0) != 0) {
+            func_80015DC8(arg0);
+            if (arg0->animation_step.fields.relative_step < 0) {
+                func_800344EC(arg0);
+                return;
+            }
+            func_8002B718((struct MovingObj*)arg0);
+            func_80038568(arg0, 7);
+            return;
+        }
+        func_8003443C(arg0);
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031764);
+void func_80031764(struct PlayerObj* arg0)
+{
+    if (func_80034100(arg0) == 0 && func_80033EA4(arg0) == 0 && func_80037290(arg0) == 0 && func_80039880(arg0) == 0 && func_80033494(arg0) == 0 && func_800398F0(arg0) == 0) {
+        if (func_8003356C(arg0) != 0) {
+            func_80015DC8(arg0);
+            func_8002B718((struct MovingObj*)arg0);
+            func_80038568(arg0, 8);
+        } else {
+            func_8003443C(arg0);
+        }
+    }
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031820);
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_800318D0);
+void func_800318D0(struct PlayerObj* arg0)
+{
+    if (arg0->unkC3) {
+        arg0->y_vel.val = 0;
+    }
+    if (arg0->unk89 & 4) {
+        arg0->y_vel.val = 0;
+    }
+    if (!(arg0->input.buttons.held & 0x80)) {
+        arg0->y_vel.val = 0;
+    }
+    if (func_80037338(arg0) == 0 && func_8003996C(arg0) == 0) {
+        func_80015DC8(arg0);
+        if (arg0->animation_step.fields.event & 0x80) {
+            arg0->animation_step.fields.event &= 0x3F;
+            func_8001540C(1, 1, arg0);
+        }
+        if (func_80033F5C(arg0) == 0) {
+            if (arg0->unk8A.bytes.high == 0) {
+                if (func_80033AC0(arg0) != 0) {
+                    return;
+                }
+            } else {
+                arg0->unk8A.bytes.high--;
+            }
+            if (func_800339E0(arg0) == 0) {
+                func_800365A4(arg0);
+                func_80036B88(arg0);
+                if (arg0->y_vel.val <= 0) {
+                    func_80038524(arg0, 0xB);
+                    arg0->unk67 = -1;
+                    arg0->unk5 = 7;
+                    arg0->unk6 = 0;
+                } else {
+                    func_80038568(arg0, 0xA);
+                }
+            }
+        }
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031A24);
+void func_80031A24(struct PlayerObj* arg0)
+{
+    if (arg0->unk89 & 8) {
+        func_80034668();
+        return;
+    }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031AE0);
+    if ((func_80037338(arg0) == 0) && (func_80039A00(arg0) == 0) && (func_80033F5C(arg0) == 0) && (func_80033AC0(arg0) == 0) && (func_800339E0(arg0) == 0)) {
+        func_80015DC8(arg0);
+        func_800365A4(arg0);
+        func_80036B88(arg0);
+        func_80038568(arg0, 0xB);
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031B90);
+void func_80031AE0(struct PlayerObj* arg0)
+{
+    if ((func_80034100(arg0) == 0) && (func_80033EA4(arg0) == 0) && (func_80037290(arg0) == 0) && (func_80039880(arg0) == 0) && (func_80033414(arg0) == 0) && (func_800398F0(arg0) == 0)) {
+        func_80015DC8(arg0);
+        if (arg0->animation_step.fields.relative_step < 0) {
+            func_8003443C(arg0);
+        } else {
+            func_80038568(arg0, 0xC);
+        }
+    }
+}
+
+void func_80031B90(struct PlayerObj* arg0)
+{
+    s8 timer;
+
+    if (arg0->unk89 & 8) {
+        func_80034668();
+        return;
+    }
+    if (arg0->unkC3 != 0) {
+        func_80034604(arg0);
+        return;
+    }
+    if (func_80037338(arg0) != 0) {
+        return;
+    }
+    if ((arg0->unk89 & 3) == 0) {
+        func_80034604(arg0);
+        return;
+    }
+    if (func_80033B34(arg0) != 0) {
+        return;
+    }
+
+    func_80015DC8(arg0);
+    if (arg0->animation_step.fields.event & 0x80) {
+        if (arg0->unk89 & 1) {
+            arg0->unk15 = 0;
+        } else {
+            arg0->unk15 = 0x40;
+        }
+        arg0->animation_step.fields.event &= 0x3F;
+    }
+
+    timer = arg0->unk8A.bytes.low - 1;
+    arg0->unk8A.bytes.low = timer;
+    if (timer == 0) {
+        func_80034AFC(arg0);
+        return;
+    }
+    func_80038568(arg0, 0xD);
+}
 
 extern void func_80031CEC(struct PlayerObj* arg0);
 extern void func_80031DD4(struct PlayerObj* arg0);
@@ -123,9 +251,80 @@ void func_80031CAC(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031CEC);
+void func_80031CEC(struct PlayerObj* arg0)
+{
+    s32 should_end_state;
+    s32 direction_mask;
+    s32 vertical_mask;
+    u8 collision_flags;
+    s8 timer;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031DD4);
+    if (arg0->unkC3 != 0) {
+        func_80034604(arg0);
+        return;
+    }
+
+    if (func_80037338(arg0) != 0) {
+        return;
+    }
+
+    collision_flags = arg0->unk89;
+    vertical_mask = collision_flags & 4;
+    should_end_state = vertical_mask != 0;
+    if (arg0->unk15 != 0) {
+        direction_mask = collision_flags & 2;
+    } else {
+        direction_mask = collision_flags & 1;
+    }
+    if (direction_mask != 0) {
+        should_end_state = 1;
+    }
+
+    if (should_end_state != 0) {
+        func_80034604(arg0);
+        return;
+    }
+
+    func_80015DC8(arg0);
+    func_8002B694(arg0);
+    func_80036B88(arg0);
+
+    timer = arg0->unk8A.bytes.low - 1;
+    arg0->unk8A.bytes.low = timer;
+    if (timer == 0) {
+        arg0->x_vel.val = 0;
+        arg0->unk6++;
+        return;
+    }
+
+    func_80038568(arg0, 0xE);
+}
+
+void func_80031DD4(struct PlayerObj* arg0)
+{
+    if (arg0->unkC3 != 0) {
+        arg0->y_vel.val = 0;
+    }
+    if ((arg0->unk89 & 4) != 0) {
+        arg0->y_vel.val = 0;
+    }
+    if ((arg0->input.buttons.held & 0x80) == 0) {
+        arg0->y_vel.val = 0;
+    }
+    if ((func_80037338(arg0) == 0) && (func_8003996C(arg0) == 0) && (func_80033F5C(arg0) == 0) && (func_80033AC0(arg0) == 0) && (func_800339E0(arg0) == 0)) {
+        func_80015DC8(arg0);
+        func_800365A4(arg0);
+        func_80036B88(arg0);
+        if (arg0->y_vel.val <= 0) {
+            func_80038524(arg0, 0xB);
+            arg0->unk67 = -1;
+            arg0->unk5 = 7;
+            arg0->unk6 = 0;
+            return;
+        }
+        func_80038568(arg0, 0xE);
+    }
+}
 
 void func_80031F1C(struct PlayerObj* arg0);
 void func_8003200C(struct PlayerObj* arg0);
@@ -139,9 +338,68 @@ void func_80031EDC(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80031F1C);
+void func_80031F1C(struct PlayerObj* arg0)
+{
+    if (arg0->unk89 & 8) {
+        func_80034668();
+        return;
+    }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_8003200C);
+    if (arg0->unkC3 != 0) {
+        func_80034604(arg0);
+        return;
+    }
+    if (func_80037338(arg0) != 0) {
+        return;
+    }
+    if (func_80039B44(arg0) != 0) {
+        return;
+    }
+    if ((arg0->unk89 & 3) == 0) {
+        func_80034604(arg0);
+        return;
+    }
+
+    if (func_80033B34(arg0) != 0) {
+        return;
+    }
+    if (func_80033B8C(arg0) != 0) {
+        func_80015DC8(arg0);
+        func_8002B718((struct MovingObj*)arg0);
+        func_80036B88(arg0);
+        func_80038568(arg0, 0xF);
+        return;
+    }
+    func_80034B64(arg0);
+}
+
+void func_8003200C(struct PlayerObj* arg0)
+{
+    s8 timer;
+
+    if (arg0->unk89 & 8) {
+        func_80034668();
+        return;
+    }
+    if (arg0->unkC3 != 0) {
+        func_80034604(arg0);
+        return;
+    }
+    if ((func_80037338(arg0) == 0) && (func_80039A00(arg0) == 0)) {
+        func_80015DC8(arg0);
+        func_8002B694(arg0);
+        func_80036B88(arg0);
+        timer = arg0->unk8A.bytes.low - 1;
+        arg0->unk8A.bytes.low = timer;
+        if (timer == 0) {
+            arg0->x_vel.val = 0;
+            arg0->unk5 = 7;
+            arg0->unk6 = 0;
+            return;
+        }
+        func_80038568(arg0, 0xB);
+    }
+}
 
 void func_800320E4(struct PlayerObj* arg0)
 {
@@ -210,11 +468,104 @@ void func_80032B04(struct PlayerObj* arg0)
     D_800F8ABC[arg0->unk63](arg0);
 }
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032B50);
+void func_80032B50(struct PlayerObj* arg0)
+{
+    func_80032DE0();
+    if (arg0->unk2 == 0) {
+        if (arg0->animation_step.fields.frame_index == 0xEC) {
+            func_800362F8(arg0, 0x49);
+        } else {
+            func_800361F8(arg0);
+        }
+    }
+    if (arg0->unk61 == 0x3C) {
+        func_8003470C(arg0);
+        if (arg0->unkC3 != 0) {
+            arg0->unkA4 = 0;
+            arg0->unk61 = 0;
+            return;
+        }
+        func_800363EC(arg0);
+        arg0->unkA4 = -1;
+    }
+}
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032BF4);
+void func_80032BF4(struct PlayerObj* arg0)
+{
+    s8 temp_v0;
 
-INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032D28);
+    func_80032DE0();
+    func_80036B88(arg0);
+    temp_v0 = arg0->unk6;
+    if (temp_v0 == 0) {
+        arg0->unk6 = temp_v0 + 1;
+        return;
+    }
+    if ((arg0->unk67 != 0) && (arg0->unk89 & 8)) {
+        arg0->unk67 = 0;
+        if (arg0->unk15 != 0) {
+            arg0->x_vel.val = FIXED(-0.5);
+        } else {
+            arg0->x_vel.val = FIXED(0.5);
+        }
+        arg0->y_vel.val = 0;
+        arg0->unk2C = 0;
+    }
+    if (arg0->unk61 == 0x3C) {
+        if (arg0->unk89 & 8) {
+            arg0->unk67 = 0;
+            func_800343A4(arg0);
+        } else if (arg0->unk2C != 0) {
+            func_800350A4(arg0, 0xB);
+            arg0->unk67 = -1;
+            arg0->unk5 = 7;
+            arg0->unk6 = 0;
+        } else {
+            func_80034604(arg0);
+        }
+        if (arg0->unkC3 != 0) {
+            arg0->unkA4 = 0;
+            arg0->unk61 = 0;
+            return;
+        }
+        func_800363EC(arg0);
+        arg0->unkA4 = -1;
+    }
+}
+
+void func_80032D28(struct PlayerObj* arg0)
+{
+    s8 temp_v1;
+    s8 var_v0;
+
+    if (arg0->input.buttons.held & 2) {
+        arg0->unk15 = 0;
+    }
+    if (arg0->input.buttons.held & 1) {
+        arg0->unk15 = 0x40;
+    }
+
+    temp_v1 = arg0->unkBA;
+    if (temp_v1 > 0) {
+        return;
+    }
+    if (temp_v1 == 0) {
+        arg0->unkA4 = 0;
+        func_8003470C(arg0);
+        return;
+    }
+
+    if (temp_v1 == -1) {
+        func_800350A4(arg0, 0x25);
+        var_v0 = -2;
+    } else if (arg0->animation_step.fields.relative_step < 0) {
+        func_800350A4(arg0, 0x24);
+        var_v0 = 1;
+    } else {
+        return;
+    }
+    arg0->unkBA = var_v0;
+}
 
 INCLUDE_ASM("asm/us/main/nonmatchings/21AB4", func_80032DE0);
 
