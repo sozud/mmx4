@@ -2,8 +2,6 @@
 // 800684F8..8006970C
 #include "common.h"
 
-extern void (*D_800FFB78[])(struct MainObj*);
-
 void func_800684F8(struct MainObj* arg0)
 {
     D_800FFB78[arg0->state](arg0);
@@ -24,7 +22,6 @@ void func_80068B3C(struct MainObj* arg0)
 
 void func_80068B44(struct MainObj* arg0)
 {
-    extern void (*D_800FFBA8[])(struct MainObj*);
 
     D_800FFBA8[arg0->unk6](arg0);
 }
@@ -32,8 +29,6 @@ void func_80068B44(struct MainObj* arg0)
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068B80);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068C2C);
-
-extern void (*D_800FFBB0[])(struct MainObj*);
 
 void func_80068CB0(struct MainObj* arg0)
 {
@@ -68,21 +63,31 @@ INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068F88);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069000);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_8006917C);
+void func_8006917C(struct MainObj* arg0)
+{
+    D_800FFBB8[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800691B8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069248);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800692AC);
+void func_800692AC(struct MainObj* arg0)
+{
+    D_800FFBC0[arg0->unk6](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800692E8);
+void func_800692E8(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069330);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800693AC);
-
-extern void (*D_800FFBC8[])(struct MainObj*);
 
 void func_80069414(struct MainObj* arg0)
 {
@@ -93,6 +98,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069450);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_8006951C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069610);
+void func_80069610(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 11);
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069660);

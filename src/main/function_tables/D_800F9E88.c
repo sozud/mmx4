@@ -25,3 +25,8 @@ void (*D_800F9EAC[])(struct MainObj*) = {
     func_80043D90,
     func_80043DE0,
 };
+
+void (*D_800F9EB4[])(struct MainObj*) = {
+    func_80043ECC,
+    func_80043F04,
+};

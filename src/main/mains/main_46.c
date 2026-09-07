@@ -2,13 +2,19 @@
 // 80066A48..80066DAC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066A48);
+void func_80066A48(struct MainObj* arg0)
+{
+    D_800FF9A4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066A84);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066B00);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066C40);
+void func_80066C40(struct MainObj* arg0)
+{
+    func_8002B318(arg0, 0x100, 0x100);
+}
 
 void func_80066C64(struct MainObj* arg0)
 {
