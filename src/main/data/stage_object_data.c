@@ -5,7 +5,7 @@
     ((address + 0x13C) & 0xFF), (((address + 0x13C) >> 8) & 0xFF), 0x0F, 0x80
 #else
 #define STAGE_OBJECT_POINTER(address) \
-    ((address) & 0xFF), (((address) >> 8) & 0xFF), 0x0F, 0x80
+    ((address)&0xFF), (((address) >> 8) & 0xFF), 0x0F, 0x80
 #endif
 
 struct StageObjectRecord stage_object_records_0_0[71] = {
