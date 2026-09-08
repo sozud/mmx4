@@ -127,7 +127,7 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdControlF);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdControlB);
 
-extern void CD_vol(CdlATV* vol);
+extern s32 CD_vol(CdlATV* vol);
 
 int CdMix(CdlATV* vol)
 {

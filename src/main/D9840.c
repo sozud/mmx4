@@ -134,17 +134,15 @@ typedef struct {
     void* clr;
 } ClearImageApi;
 
-#define CLEAR_IMAGE_API (*(ClearImageApi**)(u_long)0x8011E180)
+extern ClearImageApi* D_8011E180;
 
 s32 ClearImage(RECT* rect, u_char r, u_char g, u_char b)
 {
     checkRECT(&D_80011E6C, rect);
-    return CLEAR_IMAGE_API->addque2(
-        CLEAR_IMAGE_API->clr, rect, 8,
+    return D_8011E180->addque2(
+        D_8011E180->clr, rect, 8,
         (((b & 0xFF) << 0x10) | ((g & 0xFF) << 8) | (r & 0xFF)));
 }
-
-#undef CLEAR_IMAGE_API
 
 INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
 
