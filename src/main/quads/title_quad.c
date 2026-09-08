@@ -5,10 +5,15 @@
 // white quad that turns into "MEGAMAN" on title screen
 
 // TitleUpdate2 state 0
+#ifndef VERSION_JP
 extern s16 D_8010FCCC[][8];
 extern u16 D_8010FD94[];
 extern s16 D_8010FD7C[][2];
+#endif
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D6F94);
+#else
 void func_800D6F94(struct QuadObj* entity)
 {
     u16* ptr;
@@ -37,11 +42,17 @@ void func_800D6F94(struct QuadObj* entity)
     entity->ext.unk_ext2.unk43 = 0; // 0x43
     entity->unk34 = temp;
 }
+#endif
 
 // TitleUpdate2 state 1
+#ifndef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7058);
+#endif
 
 // TitleUpdate2 state 3
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7154_jp);
+#else
 void func_800D7100(struct QuadObj* arg0)
 {
     // seems to be a timer before the white Quad appears
@@ -53,8 +64,10 @@ void func_800D7100(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
     arg0->state = 4;
 }
+#endif
 
 // TitleUpdate2 state 4
+#ifndef VERSION_JP
 void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 {
     if (game_info.unkA == 2) {
@@ -63,8 +76,14 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
     }
     quad_is_on_screen(arg0);
 }
+#endif
 
 // TitleUpdate2 state 5
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D71FC_jp);
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7250_jp);
+INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7340_jp);
+#else
 void func_800D7194(struct QuadObj* arg0)
 {
     f32* xy_ptr;
@@ -134,6 +153,7 @@ void func_800D7194(struct QuadObj* arg0)
     }
     quad_is_on_screen(arg0);
 }
+#endif
 
 // TitleUpdate2 state 6
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7468);
@@ -150,6 +170,81 @@ void TitleUpdate2(struct QuadObj* arg0)
     g_TitleUpdate2Funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_JP
+extern void func_800D7154_jp();
+extern void func_800D71FC_jp();
+extern void func_800D7250_jp();
+extern void func_800D7340_jp();
+
+s16 D_8010FCCC[3][8] = {
+    { 0, 0, 319, 0, 319, 120, 0, 120 },
+    { 80, 192, 319, 121, 319, 240, 80, 240 },
+    { 330, 120, 80, 191, 81, 192, 331, 121 },
+};
+
+s16 D_8010FE0C_jp[2][8] = {
+    { 80, 191, 0, 120, 4, 121, 84, 192 },
+    { 0, 120, 330, 120, 331, 121, 1, 121 },
+};
+
+s16 D_8010FE2C_jp[7][2] = {
+    { 0, 120 },
+    { 330, 120 },
+    { 80, 192 },
+    { 80, 192 },
+    { 6, 122 },
+    { 316, 122 },
+    { 81, 188 },
+};
+
+s16 D_8010FE48_jp[3][8] = {
+    { 81, 188, 80, 104, 19, 59, 230, 59 },
+    { 230, 59, 80, 102, 24, 61, 217, 61 },
+    { 217, 61, 80, 191, 0, 119, 0, 240 },
+};
+
+s16 D_8010FE78_jp[3][2] = { { 80, 240 }, { 0, 20 }, { 40, 0 } };
+
+u16 D_8010FD94[4] = { 0x83E0, 0x8BC2, 0x93C4, 0x9BC6 };
+u16 D_8010FD7C[26] = {
+    0xA3C8,
+    0xAFCB,
+    0xB7CD,
+    0xBFCF,
+    0xC7D1,
+    0xCFD3,
+    0xDBD6,
+    0xE3D8,
+    0xEBDA,
+    0xF3DC,
+    0xFFFF,
+    0x8421,
+    0x8422,
+    0x8424,
+    0x8426,
+    0x8428,
+    0x842A,
+    0x842C,
+    0x842E,
+    0x8430,
+    0x8432,
+    0x8433,
+    0x8435,
+    0x8437,
+    0x8439,
+    0x845F,
+};
+
+void (*g_TitleUpdate2Funcs[])(struct QuadObj*) = {
+    func_800D6F94,
+    func_800D7154_jp,
+    func_800D76D8,
+    func_800D71FC_jp,
+    func_800D7250_jp,
+    func_800D7340_jp,
+    func_800D7468,
+};
+#else
 s16 D_8010FCCC[11][8] = {
     { 0, 0, 319, 0, 319, 120, 0, 120 },
     { 80, 192, 319, 121, 319, 240, 80, 240 },
@@ -217,3 +312,4 @@ void (*g_TitleUpdate2Funcs[])(struct QuadObj*) = {
     func_800D7194,
     func_800D7468,
 };
+#endif

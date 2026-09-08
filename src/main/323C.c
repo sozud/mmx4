@@ -126,9 +126,17 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80012E2C);
 
 void func_80012E38(void)
 {
+#ifdef VERSION_JP
+    func_80013AD8(0x41, 0, 0);
+#else
     func_80013AD8(0x40, 0, 0);
+#endif
     func_80014C70();
+#ifdef VERSION_JP
+    func_80013890(0x42, WINDOW_ARCHIVE_DATA);
+#else
     func_80013890(0x41, WINDOW_ARCHIVE_DATA);
+#endif
     func_80014C70();
 }
 
@@ -147,7 +155,11 @@ void func_80012EB8(void)
     s32 var_a0;
 
     if (engine_obj.cur_character == CHARACTER_X) { // g_GameVars.unk43
+#ifdef VERSION_JP
+        var_a0 = 0x4F;
+#else
         var_a0 = 0x4E;
+#endif
         if (engine_obj.unk37 == 0) { // g_GameVars.unk37
             var_a0 = 0x4B;
         }
@@ -2534,7 +2546,13 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     D_8013E188[3] = 0;
     need_palette_load |= 1;
     reset_objects();
-    for (var_s0 = 0; var_s0 < 14; var_s0++) {
+    for (var_s0 = 0;
+#ifdef VERSION_JP
+         var_s0 < 9;
+#else
+         var_s0 < 14;
+#endif
+         var_s0++) {
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != NULL) {
             temp_v0->active = 1;
@@ -2565,7 +2583,7 @@ void func_8001D8DC(struct GameInfo* arg0)
                 arg0->unk2++;
             }
         }
-        if (controller_state & (PADRdown | PADstart)) {
+        if (controller_state & (PAD_CONFIRM | PADstart)) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->mode++;
@@ -2695,7 +2713,14 @@ void func_8001DCCC(struct GameInfo* arg0)
     background_objects[1].unk3 = 1;
     background_objects[2].unk3 = 0;
     need_palette_load |= 1;
+#ifdef VERSION_JP
+    func_8001DC7C(0xB, 0);
+    func_8001DC7C(0xB, 1);
+    func_8001DC7C(0xB, 5);
+    func_8001DC7C(0xB, 9);
+#else
     D_80139690 = OBJECT_HEADER(func_8001DC7C(0xB, 0xA));
+#endif
     func_800129A4(8);
     arg0->unk4 = 0;
     arg0->mode++;
@@ -2709,7 +2734,14 @@ void func_8001DDB0(struct GameInfo* arg0)
     }
     if (D_80173C84 == 2) {
         arg0->unkD = 1;
+#ifdef VERSION_JP
+        D_80139690 = OBJECT_HEADER(func_8001DC7C(0xB, 2));
+        func_8001DC7C(0xB, 3);
+        func_8001DC7C(0xB, 4);
+        arg0->unk4 = 0x3C;
+#else
         arg0->unk4 = 0xA;
+#endif
         arg0->mode++;
     }
 }
@@ -2718,12 +2750,36 @@ void func_8001DE20(struct GameInfo* arg0)
 {
     arg0->unk4--;
     if (arg0->unk4 == 0) {
+#ifdef VERSION_JP
+        arg0->unkA = 1;
+        arg0->unk4 = 0x46;
+#else
         arg0->unkA = 2;
+#endif
         arg0->mode++;
     }
 }
 
+#ifdef VERSION_JP
+extern s16 D_800F2368_jp[];
+#else
 extern s16 D_800F2204[];
+#endif
+
+#ifdef VERSION_JP
+void func_8001DF24_jp(struct GameInfo* arg0)
+{
+    arg0->unk4--;
+    if (arg0->unk4 == 0) {
+        arg0->unkA = 2;
+        arg0->mode++;
+    }
+    if (background_objects[1].x_pos.i.hi >= 10) {
+        background_objects[1].x_pos.i.hi -= 9;
+    }
+}
+#endif
+
 void func_8001DE54(struct GameInfo* arg0)
 {
     s16 temp_v0_2;
@@ -2731,21 +2787,41 @@ void func_8001DE54(struct GameInfo* arg0)
     s16 var_a2;
     s16* var_a1;
     s32* var_a0;
-    s32 saved_reg_s2;
     struct MiscObj* temp_v0;
+#ifdef VERSION_JP
+    struct MiscObj* first;
+#else
+    s32 saved_reg_s2;
+#endif
 
     background_objects[1].x_pos.i.hi = 0x400;
     background_objects[1].unk4C = 1;
     if (D_80139690->state == 2) {
+#ifdef VERSION_JP
+        first = find_free_misc_obj();
+        if (first != NULL) {
+            first->id = 0x13;
+            first->active = 1;
+            first->unk2 = 0xA;
+        }
+#endif
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != 0) {
             temp_v0->id = 0x1D;
             temp_v0->active = 1;
             temp_v0->unk2 = 0x20;
+#ifdef VERSION_JP
+            temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)first;
+#else
             temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)saved_reg_s2;
+#endif
             D_80139690 = OBJECT_HEADER(temp_v0);
         }
+#ifdef VERSION_JP
+        var_a1 = D_800F2368_jp;
+#else
         var_a1 = D_800F2204;
+#endif
         var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
@@ -2765,6 +2841,9 @@ void func_8001DE54(struct GameInfo* arg0)
 void func_8001DF48(struct GameInfo* arg0)
 {
     if (D_80139690->id == 0x13) {
+#ifdef VERSION_JP
+        ZeroObjectState(OBJECT_HEADER(((struct MiscObj*)D_80139690)->ext.pointer.unk50));
+#endif
         arg0->unk4 = 0x32;
         arg0->mode++;
     }
@@ -2785,14 +2864,28 @@ void func_8001DF7C(struct GameInfo* arg0)
         arg0->unk4 = 0xA;
         arg0->mode++;
     }
+#ifdef VERSION_JP
+    background_objects[0].x_pos.i.hi += 6;
+#endif
 }
+
+#ifdef VERSION_JP
+void func_8001E194_jp(struct GameInfo* arg0)
+{
+    if (--arg0->unk4 == 0) {
+        arg0->mode++;
+    }
+}
+#endif
 
 void func_8001E000(struct GameInfo* arg0)
 {
+#ifndef VERSION_JP
     if (arg0->unk4 != 0) {
         arg0->unk4--;
         return;
     }
+#endif
     if (D_80139690->active == 0) {
         g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
         D_8013E188[0] = 0;
@@ -2814,6 +2907,9 @@ void func_8001E000(struct GameInfo* arg0)
         arg0->unkA = 0;
         arg0->mode++;
     }
+#ifdef VERSION_JP
+    background_objects[0].x_pos.i.hi += 11;
+#endif
 }
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001E130);
@@ -2821,14 +2917,21 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001E130);
 void func_8001E3FC(struct GameInfo* arg0)
 {
     if (D_80139690->active == 0) {
+#ifdef VERSION_JP
+        arg0->unk4 = 6;
+#else
         arg0->unk4 = 0x10;
         arg0->unk6 = 0;
+#endif
         arg0->mode++;
+#ifndef VERSION_JP
         SP_PALETTE[0x306 / 2] = 0x8000;
         need_palette_load |= 1;
+#endif
     }
 }
 
+#ifndef VERSION_JP
 void func_8001E458(struct GameInfo* arg0)
 {
     s16 temp_a1;
@@ -2846,7 +2949,9 @@ void func_8001E458(struct GameInfo* arg0)
         arg0->mode++;
     }
 }
+#endif
 
+#ifndef VERSION_JP
 void func_8001E4F0(struct GameInfo* arg0)
 {
     if (--arg0->unk4 == 0) {
@@ -2855,6 +2960,7 @@ void func_8001E4F0(struct GameInfo* arg0)
         arg0->mode++;
     }
 }
+#endif
 
 void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
 {
@@ -2868,7 +2974,13 @@ void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
             obj->id = 2;
             obj->unk2 = 0xD;
         }
-        for (var_s0 = 0; var_s0 < 9; var_s0++) {
+        for (var_s0 = 0;
+#ifdef VERSION_JP
+             var_s0 < 5;
+#else
+             var_s0 < 9;
+#endif
+             var_s0++) {
             obj = (struct BaseObj*)find_free_misc_obj();
             if (obj != NULL) {
                 obj->active = 1;
@@ -2964,7 +3076,11 @@ s32 func_8001E850(u8* arg0, u8 arg1)
             misc->unk2 = arg0[0];
             arg0++;
             misc->unk7 = counter++;
+#ifdef VERSION_JP
+            misc->y_pos.i.hi = arg0[0];
+#else
             misc->y_pos.i.hi = arg0[0] & 0xF0;
+#endif
             misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
         }
@@ -3215,7 +3331,12 @@ void engine_state_6(struct EngineObj* arg0)
 // D_800F241C state 0
 void func_8001FF8C(struct EngineObj* arg0)
 {
-    if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADstart) || D_80166D68 == 0xFF) && !arg0->unk10 && !arg0->unkF) {
+    if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADstart)
+#ifndef VERSION_JP
+            || D_80166D68 == 0xFF
+#endif
+            )
+        && !arg0->unk10 && !arg0->unkF) {
         arg0->unk1 = 2;
     } else {
         if (g_Player.state == 3) {
@@ -3300,7 +3421,7 @@ void func_80020638(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PADRdown) {
+        if (controller_state & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             if (D_80141BDC[3] != 2U) {
                 func_800129F0(8);
@@ -3365,7 +3486,7 @@ void func_80020808(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PADRdown) {
+        if (controller_state & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
@@ -3420,7 +3541,7 @@ void func_80020984(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PADRdown) {
+        if (controller_state & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
@@ -3483,7 +3604,7 @@ void func_80020B8C(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PADRdown) {
+        if (controller_state & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             if ((u8)D_80141BDC[3] != 0) {
                 func_800129F0(8);
@@ -3526,7 +3647,7 @@ void func_80020CB8(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
         func_800204CC(D_80141BDC + 3, arg0->unk8); // why not D_80141BDF?
-        if (controller_state & PADRdown) {
+        if (controller_state & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
@@ -3599,7 +3720,7 @@ void func_80020F24(struct EngineObj* arg0)
     if (D_80141BDC[0] == 0) {
         if (arg0->character_state.fields.menu_state == 0) {
             func_800204CC(D_80141BDC + 3, 1);
-            if (controller_state & PADRdown) {
+            if (controller_state & PAD_CONFIRM) {
                 func_8001540C(0, 0x22, 0);
                 if ((u8)D_80141BDC[3] == 0) {
                     func_800129F0(8);
@@ -3607,16 +3728,26 @@ void func_80020F24(struct EngineObj* arg0)
                 } else {
                     arg0->character_state.fields.menu_state = 1;
                     func_80029DBC();
+#ifdef VERSION_JP
+                    D_80141BDC[3] = 1;
+#else
                     D_80141BDC[3] = 0;
+#endif
                     func_80020DEC(&D_800F247C, 0x78);
                 }
             }
         } else {
             func_800204CC(D_80141BDC + 3, 1);
-            if (controller_state & PADRdown) {
+            if (controller_state & PAD_CONFIRM) {
                 func_8001540C(0, 0x22, 0);
                 arg0->character_state.fields.menu_state = 0;
-                if ((u8)D_80141BDC[3] == 1) {
+                if ((u8)D_80141BDC[3] ==
+#ifdef VERSION_JP
+                    0
+#else
+                    1
+#endif
+                ) {
                     arg0->unk7 = 0;
                     if (engine_obj.stage != 0 && engine_obj.unk5F >= 3) {
                         func_8001C3E8();
@@ -4054,6 +4185,9 @@ s32 func_8002938C();
 
 #define CONFIG D_801397DC
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/323C", func_80022730);
+#else
 void func_80022730(struct AbcObj* arg0)
 {
     s32 charOffset;
@@ -4063,7 +4197,7 @@ void func_80022730(struct AbcObj* arg0)
     s32 temp_v1;
     s16 temp_a2;
     struct MiscObj* obj;
-    struct MiscUnk50_1* readyText;
+    u8* readyText;
     u16 value;
     u16* src;
     u16* dst;
@@ -4509,6 +4643,7 @@ void func_80022730(struct AbcObj* arg0)
         break;
     }
 }
+#endif
 
 #undef CONFIG
 
@@ -4583,7 +4718,13 @@ void func_8002328C(struct AbcObj* arg0)
             arg0->unk6 = -0x78U;
             arg0->unk8 = (u16)(arg0->unk8 + 0x12);
         } else {
-            arg0->unk6 = (u16)(arg0->unk6 + 0xC);
+            arg0->unk6 = (u16)(arg0->unk6 +
+#ifdef VERSION_JP
+                0x10
+#else
+                0xC
+#endif
+            );
         }
         if (arg0->unkF == 0) {
             arg0->unk4 = (u16)(arg0->unk4 & 0xEFFF);
@@ -4715,11 +4856,23 @@ void func_800237E4(struct EngineObj* arg0)
                 arg0->unk2++;
             }
         } else {
+#ifdef VERSION_JP
+            background_objects[0].y_pos.val += FIXED(7.0 / 16);
+            if (background_objects[0].y_pos.i.hi == 0x11FF) {
+#else
             background_objects[0].y_pos.val += FIXED(7.0 / 16);
             if (background_objects[0].y_pos.i.hi == 4304) {
+#endif
                 arg0->unk2 = 0;
+#ifdef VERSION_JP
+                arg0->unk4 = 0x258;
+#else
                 arg0->unk4 = 0x1A4;
+#endif
                 arg0->unk1++;
+#ifdef VERSION_JP
+                func_80016F0C();
+#endif
             }
         }
     }
@@ -4738,7 +4891,11 @@ void func_80023870(struct EngineObj* arg0)
             obj->unk2 = 2;
             obj->ext.title_logo.palette_shift_speed = 0;
         }
+#ifdef VERSION_JP
+        arg0->unk4 = 0x12C;
+#else
         arg0->unk4 = 0xB4;
+#endif
     }
 }
 
@@ -4746,7 +4903,13 @@ void func_800238F0(struct EngineObj* arg0)
 {
     if (arg0->unk4 == 0) {
         background_objects[0].y_pos.val += FIXED(0.5);
-        if (background_objects[0].y_pos.i.hi == 4480) {
+        if (background_objects[0].y_pos.i.hi ==
+#ifdef VERSION_JP
+            4864
+#else
+            4480
+#endif
+        ) {
             arg0->unk1++;
             background_objects[0].unk3 = 0;
             background_objects[1].unk3 = 1;
@@ -5696,6 +5859,9 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80028690);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80028A48);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/323C", func_80028AD8);
+#else
 void func_80028AD8(struct BackgroundObj* arg0)
 {
     if (--arg0->unk37 == 0) {
@@ -5710,6 +5876,7 @@ void func_80028AD8(struct BackgroundObj* arg0)
         arg0->y_pos.i.hi += arg0->unk46;
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80028B68);
 
@@ -5858,10 +6025,27 @@ void (*D_800F2194[3])(struct GameInfo*) = {
     func_8001D9D0,
 };
 
+#ifdef VERSION_JP
+u8 D_800F21A0[] = {
+    0x00,
+    0x01,
+    0x02,
+    0x05,
+    0x07,
+    0x09,
+    0x0D,
+    0x0E,
+    0x0F,
+    0x08,
+    0x03,
+    0x00,
+};
+#else
 u8 D_800F21A0[] = {
     0x12, 0x13, 0x00, 0x0b, 0x0c, 0x07, 0x11, 0x09,
     0x02, 0x0d, 0x0e, 0x0f, 0x10, 0x05, 0x00, 0x00
 };
+#endif
 
 void (*D_800F21B0[11])(struct GameInfo*) = {
     func_8001D1F0,
@@ -5877,6 +6061,130 @@ void (*D_800F21B0[11])(struct GameInfo*) = {
     func_8002A41C,
 };
 
+#ifdef VERSION_JP
+u8 D_800F21F8[4] = { 0x00, 0x01, 0x04, 0x07 };
+s16 D_800F21DC[2] = { 0x0809, 0x0000 };
+
+s16 D_800F2368_jp[12] = {
+    -176,
+    -220,
+    308,
+    -220,
+    374,
+    -220,
+    792,
+    -220,
+    -77,
+    -143,
+    176,
+    -154,
+};
+
+u8 D_800F2380_jp[] = {
+    0x97,
+    0x01,
+    0x50,
+    0xFF,
+    0xDA,
+    0xFD,
+    0xB5,
+    0x02,
+    0x71,
+    0xFF,
+    0x73,
+    0x02,
+};
+
+s16 D_800F2204[18] = {
+    -110,
+    693,
+    110,
+    605,
+    363,
+    583,
+    -22,
+    693,
+    484,
+    693,
+    11,
+    187,
+    220,
+    0,
+    275,
+    242,
+    66,
+    429,
+};
+
+s16 D_800F23B0_jp[18] = {
+    181,
+    27,
+    225,
+    27,
+    231,
+    27,
+    269,
+    27,
+    190,
+    34,
+    213,
+    33,
+    234,
+    31,
+    147,
+    110,
+    184,
+    104,
+};
+
+s16 D_800F224C[18] = {
+    187,
+    110,
+    207,
+    102,
+    230,
+    100,
+    195,
+    110,
+    241,
+    110,
+    198,
+    64,
+    217,
+    47,
+    222,
+    69,
+    203,
+    86,
+};
+
+extern void func_8001DF24_jp(struct GameInfo*);
+extern void func_8001E194_jp(struct GameInfo*);
+
+void (*D_800F2294[15])(struct GameInfo*) = {
+    func_8001DCCC,
+    func_8001E690,
+    func_8001DDB0,
+    func_8001DE20,
+    func_8001DF24_jp,
+    func_8001DE54,
+    func_8001DF48,
+    func_8001DF7C,
+    func_8001E194_jp,
+    func_8001E000,
+    func_8001E130,
+    func_8001E3FC,
+    func_8001E54C,
+    func_8001E638,
+    func_8001E6BC,
+};
+
+u8 D_800F22D0[16] = { 0x20, 0x03, 0x80, 0x04, 0xA0, 0x00, 0x10, 0x01, 0x30, 0x02, 0x40, 0x05, 0xD0, 0xFF, 0x01, 0x00 };
+u8 D_800F22E0[16] = { 0x20, 0x04, 0xA0, 0x03, 0x80, 0x00, 0x10, 0x01, 0x30, 0x02, 0x40, 0x05, 0xD0, 0xFF, 0x00, 0x00 };
+u8 D_800F22F0[16] = { 0x40, 0x54, 0x40, 0x55, 0x70, 0x58, 0xB0, 0x53, 0x10, 0x05, 0xD0, 0xFF, 0x02, 0x00, 0x00, 0x00 };
+u8 D_800F2300[16] = { 0x50, 0x2A, 0x40, 0x2B, 0x60, 0x2C, 0x90, 0x29, 0x10, 0x72, 0xD0, 0xFF, 0x02, 0x00, 0x00, 0x00 };
+u8 D_800F2474_jp[4] = { 0x50, 0x2E, 0x70, 0x2C };
+#else
 s16 D_800F21DC[14] = {
     0x8442,
     0x8C84,
@@ -6069,3 +6377,4 @@ u8 D_800F2300[16] = {
     0x00,
     0x00,
 };
+#endif

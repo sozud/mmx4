@@ -97,6 +97,21 @@ void func_800315E0(struct PlayerObj* arg0)
     }
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031688);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031764);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031820);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800318D0);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031A24);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031AE0);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031B90);
+#else
 void func_80031688(struct PlayerObj* arg0)
 {
     if ((func_80034100(arg0) == 0) && (func_80033EA4(arg0) == 0) && (func_80037290(arg0) == 0) && (func_80039880(arg0) == 0) && (func_80033494(arg0) == 0) && (func_800398F0(arg0) == 0)) {
@@ -238,6 +253,7 @@ void func_80031B90(struct PlayerObj* arg0)
     }
     func_80038568(arg0, 0xD);
 }
+#endif
 
 extern void func_80031CEC(struct PlayerObj* arg0);
 extern void func_80031DD4(struct PlayerObj* arg0);
@@ -251,6 +267,11 @@ void func_80031CAC(struct PlayerObj* arg0)
     }
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031CEC);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031DD4);
+#else
 void func_80031CEC(struct PlayerObj* arg0)
 {
     s32 should_end_state;
@@ -325,6 +346,7 @@ void func_80031DD4(struct PlayerObj* arg0)
         func_80038568(arg0, 0xE);
     }
 }
+#endif
 
 void func_80031F1C(struct PlayerObj* arg0);
 void func_8003200C(struct PlayerObj* arg0);
@@ -338,6 +360,11 @@ void func_80031EDC(struct PlayerObj* arg0)
     }
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80031F1C);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_8003200C);
+#else
 void func_80031F1C(struct PlayerObj* arg0)
 {
     if (arg0->unk89 & 8) {
@@ -400,6 +427,7 @@ void func_8003200C(struct PlayerObj* arg0)
         func_80038568(arg0, 0xB);
     }
 }
+#endif
 
 void func_800320E4(struct PlayerObj* arg0)
 {
@@ -468,6 +496,34 @@ void func_80032B04(struct PlayerObj* arg0)
     D_800F8ABC[arg0->unk63](arg0);
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032B50);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032BF4);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032D28);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032DE0);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032F64);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032FA4);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033054);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800330B4);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033108);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800331A8);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033210);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800332C0);
+
+#else
 void func_80032B50(struct PlayerObj* arg0)
 {
     func_80032DE0();
@@ -620,6 +676,7 @@ INCLUDE_ASM("main/nonmatchings/21AB4", func_80033210);
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_800332C0);
 
+#endif
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80033368);
 
 void (*D_800F8990[])(struct PlayerObj*) = {

@@ -1,9 +1,10 @@
 import json
 import os
 
-BUILD_DIR = "build/us"
-EXPECTED_DIR = "expected/build/us"
-EMPTY_OBJ = "build/us/empty.o"
+VERSION = os.environ.get("VERSION", "us").lower()
+BUILD_DIR = f"build/{VERSION}"
+EXPECTED_DIR = f"expected/build/{VERSION}"
+EMPTY_OBJ = f"build/{VERSION}/empty.o"
 OUTPUT = "objdiff.json"
 
 CATEGORIES = [
@@ -13,7 +14,7 @@ CATEGORIES = [
 
 
 def is_excluded(src):
-    return src.endswith(".bss.s") or src == "asm/us/main/header.s"
+    return src.endswith(".bss.s") or src == f"asm/{VERSION}/main/header.s"
 
 
 def category_for(src):

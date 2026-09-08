@@ -1,4 +1,5 @@
 #include "common.h"
+
 #ifdef MMX4_PC
 #include "../pc/oracle.h"
 #endif

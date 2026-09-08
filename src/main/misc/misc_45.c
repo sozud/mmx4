@@ -2,6 +2,10 @@
 // 800D0E48..800D1284
 #include "common.h"
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E7C_jp);
+#endif
+
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E48);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D1060);

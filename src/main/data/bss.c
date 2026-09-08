@@ -408,6 +408,10 @@ u8* D_80141F00;
 u16 lastFilterAmountR;
 u8 pad_80141F06[2];
 
+#ifdef VERSION_JP
+u8 jp_bss_padding[0xE0];
+#endif
+
 #ifdef MMX4_PC
 
 u16 lastFilterAmountG, lastFilterAmountB;

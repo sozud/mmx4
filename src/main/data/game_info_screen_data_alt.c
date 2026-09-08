@@ -1,8 +1,16 @@
 #include "common.h"
 
+#ifdef VERSION_JP
+#define GAME_INFO_ALT_X 0x50
+#define GAME_INFO_ALT_Y 0x30
+#else
+#define GAME_INFO_ALT_X 0x40
+#define GAME_INFO_ALT_Y 0x2E
+#endif
+
 u8 D_800F2328[16] = {
-    0x40,
-    0x2E,
+    GAME_INFO_ALT_X,
+    GAME_INFO_ALT_Y,
     0x40,
     0x31,
     0x60,

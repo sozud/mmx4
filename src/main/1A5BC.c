@@ -49,7 +49,11 @@ void func_80029E1C(struct GameInfo* arg0)
         } else {
             obj->unk50 = D_800F457C;
         }
+#ifdef VERSION_JP
+        obj->x_pos.i.hi = 0x20;
+#else
         obj->x_pos.i.hi = 0x38;
+#endif
     }
 
     if (D_80141BE0 != 0) {
@@ -883,6 +887,12 @@ u8 func_8002B810(s32 arg0, s32 arg1)
     return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B93C);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B9F0);
+
+#else
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 
@@ -918,6 +928,7 @@ void func_8002B93C(struct MovingObj* arg0, s32 arg1)
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B9F0);
 
+#endif
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BAA4);
 
 s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)
@@ -937,6 +948,14 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BB80);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BD58);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C160);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C26C);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C2EC);
+
+#else
 s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 {
     s16 center0;
@@ -988,6 +1007,7 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C26C);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C2EC);
 
+#endif
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C36C);
 
 // megaman falls through floor in intro stage if nopped out
@@ -1094,6 +1114,18 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C99C);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C9E4);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CA18);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CAF0);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CB58);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CC34);
+
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CC98);
+
+#else
 void func_8002CA18(struct PlayerObj* arg0)
 {
     s16 temp_v0;
@@ -1131,6 +1163,7 @@ void func_8002CC98(struct PlayerObj* arg0)
     }
 }
 
+#endif
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CD70);
 
 void func_8002CDD4(struct PlayerObj* arg0)
@@ -1400,10 +1433,14 @@ u8 func_8002D94C(struct PlayerObj* arg0)
     return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi + temp_v1->unk1 + temp_v1->unk3);
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002D994);
+#else
 u8 func_8002D994(struct PlayerObj* arg0)
 {
     return func_8002D724(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002D9BC);
 

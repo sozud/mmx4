@@ -1,5 +1,13 @@
 #include "common.h"
 
+#ifdef VERSION_JP
+#define CD_AUDIO_FIRST_TRACK 0x4C
+#define CD_AUDIO_LAST_TRACK 0x4E
+#else
+#define CD_AUDIO_FIRST_TRACK 0x4A
+#define CD_AUDIO_LAST_TRACK 0x4C
+#endif
+
 struct CdImageOrigin D_800F1614[11] = {
     { 0x140, 0x100 },
     { 0x3C0, 0x100 },
@@ -22,4 +30,4 @@ void (*D_800F1640[3])(void) = {
 
 u8 D_800F164C[4] = { 1, 2, 0, 0 };
 s16 D_800F1650[2] = { 1, 0 };
-u8 D_800F1654[4] = { 0x4A, 0x4C, 0, 0 };
+u8 D_800F1654[4] = { CD_AUDIO_FIRST_TRACK, CD_AUDIO_LAST_TRACK, 0, 0 };

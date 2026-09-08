@@ -1,5 +1,10 @@
 // VisualObj, visual_object_update_funcs[33]
 // 800B2AD0..800B2D48
+#ifdef VERSION_JP
+#define PLAYER_UNKA6_ADDRESS 0x80141A4E
+#else
+#define PLAYER_UNKA6_ADDRESS 0x8014196E
+#endif
 #include "common.h"
 
 void func_800B2AD0(struct VisualObj* arg0)
@@ -73,7 +78,7 @@ void func_800B2C8C(struct MiscObj* arg0)
         arg0->on_screen = 0;
         if (engine_obj.unk1F != 0 && g_Player.unkA6 != 0) {
             arg0->on_screen = 1;
-            playerUnkA6 = *(u8*)0x8014196E;
+            playerUnkA6 = *(u8*)PLAYER_UNKA6_ADDRESS;
             arg0->x_pos.i.hi = 0x20;
             arg0->y_pos.i.hi = 0x34;
             arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
