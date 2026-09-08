@@ -29,8 +29,6 @@ D_800F21F8 = 0x800F2360;
 D_800F2294 = 0x800F23F8;
 D_800F23B0_jp = 0x800F23B0;
 
-/* JP BSS addresses recovered from relocations in the original executable. */
-/* These are absolute aliases because the regional BSS layout differs. */
 background_objects = 0x80141A90;
 effect_objects = 0x80143078;
 engine_obj = 0x80172278;
