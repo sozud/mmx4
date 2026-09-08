@@ -1,14 +1,15 @@
 #include "common.h"
 
 #ifdef VERSION_JP
-extern volatile s32 *D_8011CB84;
-extern volatile s32 *D_8011CB88;
+extern volatile s32* D_8011CB84;
+extern volatile s32* D_8011CB88;
 extern volatile s32 D_8011CB8C;
 extern volatile s32 D_8011CB90;
 extern volatile s32 D_8011DC50;
 extern void v_wait(int v, int timeout);
 
-int VSync(int mode) {
+int VSync(int mode)
+{
     int syncFlag;
     int elapsed;
     int timeout;

@@ -271,30 +271,28 @@ void SetDrawMode(DR_MODE* p, s32 dfe, s32 dtd, s32 tpage, RECT* tw)
 
 INCLUDE_ASM("main/nonmatchings/D9840", SetDrawEnv);
 
-#define CLAMP(a,b,c) (a >= b ? (a > c ? c : a) : b)
+#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
 #define LOW(x) (*(s32*)&(x))
 
 extern s16 D_8011E18C;
 extern s16 D_8011E18E;
 
-int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env) {
+int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env)
+{
     DR_ENV* dr;
     RECT rect;
-    s32 len=0;
+    s32 len = 0;
 
     dr = dr_env;
     dr->code[0] = get_cs(env->clip.x, env->clip.y);
     dr->code[1] = get_ce(
-                (s32)(((u32)(u16)(env->clip).w + (u32)(u16)(env->clip).x + -1) *
-                      0x10000) >> 0x10,
-                (s32)(((u32)(u16)(env->clip).y + (u32)(u16)(env->clip).h + -1) *
-                      0x10000) >> 0x10
-    );
+        (s32)(((u32)(u16)(env->clip).w + (u32)(u16)(env->clip).x + -1) * 0x10000) >> 0x10,
+        (s32)(((u32)(u16)(env->clip).y + (u32)(u16)(env->clip).h + -1) * 0x10000) >> 0x10);
     dr->code[2] = get_ofs(env->ofs[0], env->ofs[1]);
     dr->code[3] = get_mode(env->dfe, env->dtd, env->tpage);
     dr->code[4] = get_tw(&env->tw);
-    dr->code[5]= 0xE6000000;
-    len=7;
+    dr->code[5] = 0xE6000000;
+    len = 7;
     if (env->isbg) {
         rect.x = env->clip.x;
         rect.y = env->clip.y;
@@ -316,7 +314,7 @@ int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env) {
             (&dr->tag)[len++] = LOW(rect.w);
         }
     }
-    setlen(dr, len-1);
+    setlen(dr, len - 1);
     return;
 }
 #else
@@ -495,10 +493,10 @@ INCLUDE_ASM("main/nonmatchings/D9840", get_dx);
 INCLUDE_ASM("main/nonmatchings/D9840", _status);
 
 #ifdef VERSION_JP
-extern volatile s32 *D_8011E26C;
-extern s32 *D_8011E270;
-extern volatile s32 *D_8011E274;
-extern volatile s32 *D_8011E278;
+extern volatile s32* D_8011E26C;
+extern s32* D_8011E270;
+extern volatile s32* D_8011E274;
+extern volatile s32* D_8011E278;
 
 #define OT_TYPE u_long
 
@@ -514,12 +512,10 @@ s32 _otc(OT_TYPE arg0, s32 arg1)
     *D_8011E274 = 0x11000002;
     set_alarm();
     if (*D_8011E274 & 0x01000000) {
-       while (1)
-        {
+        while (1) {
             if (get_alarm()) {
                 return -1;
-            }
-            else {
+            } else {
                 if (!(*D_8011E274 & 0x01000000)) {
                     break;
                 }
@@ -533,22 +529,23 @@ INCLUDE_ASM("main/nonmatchings/D9840", _clr);
 
 extern s16 D_8011E18C;
 extern s16 D_8011E18E;
-extern s32 *D_8011E258;
-extern volatile u32 *D_8011E25C;
-extern volatile u32 *D_8011E260;
-extern volatile u32 *D_8011E264;
-extern volatile u32 *D_8011E268;
+extern s32* D_8011E258;
+extern volatile u32* D_8011E25C;
+extern volatile u32* D_8011E260;
+extern volatile u32* D_8011E264;
+extern volatile u32* D_8011E268;
 
-#define CLAMP(a,b,c) (a >= b ? (a > c ? c : a) : b)
+#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
 #define D_80090CA0 D_8011E18C
 #define D_80090CA2 D_8011E18E
 #define GPU_STATUS D_8011E25C
-#define GPU_DATA ((volatile u32 *)D_8011E258)
-#define DMA1_MADR ((s32 **)D_8011E260)
+#define GPU_DATA ((volatile u32*)D_8011E258)
+#define DMA1_MADR ((s32**)D_8011E260)
 #define DMA1_BCR D_8011E264
 #define DMA1_CHCR D_8011E268
 
-s32 _dws(RECT* arg0, s32* arg1) {
+s32 _dws(RECT* arg0, s32* arg1)
+{
     s32 temp_a0;
     s32 size;
     s32 var_s0;
