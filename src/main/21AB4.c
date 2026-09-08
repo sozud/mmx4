@@ -568,28 +568,6 @@ void func_80032D28(struct PlayerObj* arg0)
     arg0->unkBA = var_v0;
 }
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032DE0);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032F64);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032FA4);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80033054);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_800330B4);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80033108);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_800331A8);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80033210);
-
-INCLUDE_ASM("main/nonmatchings/21AB4", func_800332C0);
-
-#else
 void func_80032DE0(struct PlayerObj* arg0)
 {
     s32 velocity;
@@ -625,6 +603,26 @@ void func_80032DE0(struct PlayerObj* arg0)
     arg0->unk28 = 0;
 }
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032F64);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80032FA4);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033054);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800330B4);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033108);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800331A8);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_80033210);
+
+INCLUDE_ASM("main/nonmatchings/21AB4", func_800332C0);
+
+#else
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032F64);

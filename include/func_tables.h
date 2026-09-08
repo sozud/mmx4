@@ -1174,7 +1174,7 @@ void func_800447A4(void);
 // D_800FA0C4
 void func_800447E8(void);
 void func_80044814(void);
-void func_800448C4(void);
+void func_800448C4(struct MainObj*);
 
 // D_800FA0D0
 void func_80044920(void);
