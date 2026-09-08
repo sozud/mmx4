@@ -1,8 +1,24 @@
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/intr", ResetCallback);
+typedef struct
+{
+    int unk0;
+    int unk4;
+    void (*unk8)(void);
+    int (*unkC)();
+} D_800320D4_t;
 
-INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/intr", InterruptCallback);
+extern D_800320D4_t* D_8011DC1C;
+
+int ResetCallback(void)
+{
+    return D_8011DC1C->unkC();
+}
+
+void InterruptCallback(void)
+{
+    D_8011DC1C->unk8();
+}
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/intr", DMACallback);
 

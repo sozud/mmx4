@@ -18,7 +18,23 @@ INCLUDE_ASM("main/nonmatchings/D9840", LoadClut2);
 
 INCLUDE_ASM("main/nonmatchings/D9840", SetDefDrawEnv);
 
-INCLUDE_ASM("main/nonmatchings/D9840", SetDefDispEnv);
+DISPENV* SetDefDispEnv(DISPENV* env, s32 x, s32 y, s32 w, s32 h)
+{
+    env->disp.x = (s16)x;
+    env->disp.y = (s16)y;
+    env->disp.w = (s16)w;
+    env->disp.h = (s16)h;
+    env->screen.x = 0;
+    env->screen.y = 0;
+    env->screen.w = 0;
+    env->screen.h = 0;
+    env->isrgb24 = 0;
+    env->isinter = 0;
+    env->pad1 = 0;
+    env->pad0 = 0;
+
+    return env;
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", GetTPage);
 
@@ -123,18 +139,25 @@ INCLUDE_ASM("main/nonmatchings/D9840", SetDispMask);
 
 INCLUDE_ASM("main/nonmatchings/D9840", DrawSync);
 
+typedef struct {
+    u_long unk_00[2];
+    s32 (*addque2)();
+    void* clr;
+    u_long unk_10[2];
+    void (*cwc)();
+    u_long unk_1C;
+    void* dws;
+    u_long unk_24[2];
+    s32 (*otc)(u_long*, s32);
+} GpuApi;
+
+extern GpuApi* D_8011E180;
+extern void (*D_8011E184)(const char*, ...);
+
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/D9840", checkRECT);
 
 extern const char D_80011E6C;
-
-typedef struct {
-    u8 pad[8];
-    s32 (*addque2)(void*, RECT*, s32, s32);
-    void* clr;
-} ClearImageApi;
-
-extern ClearImageApi* D_8011E180;
 
 s32 ClearImage(RECT* rect, u_char r, u_char g, u_char b)
 {
@@ -148,7 +171,11 @@ INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
 
 INCLUDE_RODATA("main/nonmatchings/D9840", D_80011E6C);
 
-INCLUDE_ASM("main/nonmatchings/D9840", LoadImage);
+int LoadImage(RECT* rect, u_long* p)
+{
+    checkRECT("LoadImage", rect);
+    return D_8011E180->addque2(D_8011E180->dws, rect, 8, p);
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", StoreImage);
 
@@ -156,13 +183,66 @@ INCLUDE_ASM("main/nonmatchings/D9840", MoveImage);
 
 INCLUDE_ASM("main/nonmatchings/D9840", ClearOTag);
 
-INCLUDE_ASM("main/nonmatchings/D9840", ClearOTagR);
+const char D_80011EB4[] __attribute__((section(".rodata"), aligned(4))) = "ClearOTagR(%08x,%d)...\n";
+
+extern u8 D_8011E18A;
+extern u32 D_8011E244;
+
+u_long* ClearOTagR(u_long* ot, int n)
+{
+    if (D_8011E18A >= 2) {
+        D_8011E184(D_80011EB4, ot, n);
+    }
+
+    D_8011E180->otc(ot, n);
+    *ot = (s32)&D_8011E244 & 0xFFFFFF;
+    return ot;
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", DrawPrim);
 
-INCLUDE_ASM("main/nonmatchings/D9840", DrawOTag);
+extern u8 D_8011E18A;
 
-INCLUDE_ASM("main/nonmatchings/D9840", PutDrawEnv);
+void DrawOTag(u_long* p)
+{
+    if (D_8011E18A >= 2) {
+        D_8011E184("DrawOTag(%08x)...\n", p);
+    }
+    D_8011E180->addque2(D_8011E180->cwc, p, 0, 0);
+}
+
+extern u8 D_8011E18A;
+extern void SetDrawEnv2(void*, DRAWENV*);
+
+DRAWENV* PutDrawEnv(DRAWENV* env)
+{
+    typedef struct {
+        unsigned int addr : 24;
+        unsigned int len : 8;
+    } PUTDRAWENV_TAG;
+    typedef struct {
+        s32 words[23];
+    } PUTDRAWENV_COPY;
+
+    GpuApi* queue;
+    void* dr_env;
+    u8* debug;
+
+    debug = &D_8011E18A;
+    if (*debug >= 2) {
+        D_8011E184("PutDrawEnv(%08x)...\n", env);
+    }
+
+    dr_env = (u8*)env + 0x1C;
+    SetDrawEnv2(dr_env, env);
+    ((PUTDRAWENV_TAG*)dr_env)->addr = 0xFFFFFF;
+
+    queue = D_8011E180;
+    queue->addque2(queue->cwc, dr_env, 0x40, 0);
+    *(PUTDRAWENV_COPY*)(debug + 0xE) = *(PUTDRAWENV_COPY*)env;
+
+    return env;
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", DrawOTagEnv);
 
@@ -182,7 +262,12 @@ INCLUDE_ASM("main/nonmatchings/D9840", SetDrawOffset);
 
 INCLUDE_ASM("main/nonmatchings/D9840", SetPriority);
 
-INCLUDE_ASM("main/nonmatchings/D9840", SetDrawMode);
+void SetDrawMode(DR_MODE* p, s32 dfe, s32 dtd, s32 tpage, RECT* tw)
+{
+    setlen(p, 2);
+    p->code[0] = get_mode(dfe, dtd, tpage & 0xFFFF);
+    p->code[1] = get_tw(tw);
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", SetDrawEnv);
 
@@ -209,7 +294,15 @@ void checkRECT(const char* log, RECT* r)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/D9840", ClearImage);
+extern const char D_80011E6C;
+
+s32 ClearImage(RECT* rect, u_char r, u_char g, u_char b)
+{
+    checkRECT(&D_80011E6C, rect);
+    return D_8011E180->addque2(
+        D_8011E180->clr, rect, 8,
+        (((b & 0xFF) << 0x10) | ((g & 0xFF) << 8) | (r & 0xFF)));
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
 
@@ -225,14 +318,7 @@ INCLUDE_ASM("main/nonmatchings/D9840", ClearOTag);
 
 const char D_80011EB4[] = "ClearOTagR(%08x,%d)...\n";
 
-typedef struct {
-    u8 pad[0x2c];
-    int (*otc)(u_long*, int);
-} ClearOTagRApi;
-
 extern u8 D_8011E18A;
-extern void (*D_8011E184)(const char*, ...);
-extern ClearOTagRApi* D_8011E180;
 extern u32 D_8011E244;
 
 u_long* ClearOTagR(u_long* ot, int n)
@@ -495,7 +581,14 @@ void _cwc(s32 arg0)
     *D_8011E268 = 0x01000401;
 }
 
-INCLUDE_ASM("main/nonmatchings/D9840", _param);
+extern volatile u32* D_8011E25C;
+extern s32* D_8011E258;
+
+s32 _param(s32 arg0)
+{
+    *D_8011E25C = arg0 | 0x10000000;
+    return *D_8011E258 & 0xFFFFFF;
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", _addque);
 
@@ -564,7 +657,15 @@ INCLUDE_ASM("main/nonmatchings/D9840", _version);
 
 INCLUDE_ASM("main/nonmatchings/D9840", memset2);
 
-INCLUDE_ASM("main/nonmatchings/D9840", DecDCTReset);
+extern void MDEC_reset(s32 mode);
+
+void DecDCTReset(s32 mode)
+{
+    if (mode == 0) {
+        ResetCallback();
+    }
+    MDEC_reset(mode);
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", DecDCTGetEnv);
 
@@ -572,9 +673,29 @@ INCLUDE_ASM("main/nonmatchings/D9840", DecDCTPutEnv);
 
 INCLUDE_ASM("main/nonmatchings/D9840", DecDCTBufSize);
 
-INCLUDE_ASM("main/nonmatchings/D9840", DecDCTin);
+extern void MDEC_in(int* arg0, unsigned int arg1);
 
-INCLUDE_ASM("main/nonmatchings/D9840", DecDCTout);
+void DecDCTin(u_long* buf, int mode)
+{
+    if (mode & 1) {
+        *buf &= 0xF7FFFFFF;
+    } else {
+        *buf |= 0x08000000;
+    }
+    if (mode & 2) {
+        *buf |= 0x02000000;
+    } else {
+        *buf &= 0xFDFFFFFF;
+    }
+    MDEC_in((int*)buf, (u16)*buf);
+}
+
+extern void MDEC_out(u_long* buf, int size);
+
+void DecDCTout(u_long* buf, int size)
+{
+    MDEC_out(buf, size);
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", DecDCTinSync);
 
