@@ -410,6 +410,7 @@ StopCARD2 = 0x800EDC18;
 _patch_card = 0x800EDC80;
 _patch_card2 = 0x800EDD38;
 _ExitCard = 0x800EDDC8;
+func_800EDC74 = 0x800EDE50;
 setjmp = 0x800EDE68;
 strcpy = 0x800EDE78;
 memcpy = 0x800EDE88;

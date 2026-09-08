@@ -101,6 +101,8 @@ def run_suite(args: argparse.Namespace) -> int:
         ]
         if args.reuse_audio:
             command.append("--reuse-audio")
+        if args.reuse_psx_audio:
+            command.append("--reuse-psx-audio")
         subprocess.run(command, cwd=ROOT, check=True)
         report_path = case_output / "comparison.json"
         cases.append({
@@ -489,6 +491,11 @@ def main() -> int:
     parser.add_argument("--no-build", action="store_true")
     parser.add_argument("--reuse-audio", action="store_true",
                         help="reanalyze existing WAV/log artifacts without capturing")
+    parser.add_argument(
+        "--reuse-psx-audio",
+        action="store_true",
+        help="reuse existing PSX WAV/log artifacts while recapturing the PC target",
+    )
     args = parser.parse_args()
     if not 1 <= args.frames <= 36000:
         parser.error("--frames must be in the range 1..36000")
@@ -542,7 +549,7 @@ def main() -> int:
             MMX4_ORACLE_AUTOPLAY="0",
             MMX4_ORACLE_LOG_INTERVAL="0",
         )
-        if not args.reuse_audio:
+        if not args.reuse_audio and not args.reuse_psx_audio:
             run_logged(
                 [str(args.mednafen.resolve()), str(args.disc.resolve()),
                  str(args.bios.resolve()), "10000"],

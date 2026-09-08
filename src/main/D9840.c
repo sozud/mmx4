@@ -126,7 +126,23 @@ INCLUDE_ASM("main/nonmatchings/D9840", DrawSync);
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/D9840", checkRECT);
 
-INCLUDE_ASM("main/nonmatchings/D9840", ClearImage);
+extern const char D_80011E6C;
+
+typedef struct {
+    u8 pad[8];
+    s32 (*addque2)(void*, RECT*, s32, s32);
+    void* clr;
+} ClearImageApi;
+
+extern ClearImageApi* D_8011E180;
+
+s32 ClearImage(RECT* rect, u_char r, u_char g, u_char b)
+{
+    checkRECT(&D_80011E6C, rect);
+    return D_8011E180->addque2(
+        D_8011E180->clr, rect, 8,
+        (((b & 0xFF) << 0x10) | ((g & 0xFF) << 8) | (r & 0xFF)));
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
 
@@ -566,7 +582,10 @@ INCLUDE_ASM("main/nonmatchings/D9840", DecDCToutSync);
 
 INCLUDE_ASM("main/nonmatchings/D9840", DecDCTinCallback);
 
-INCLUDE_ASM("main/nonmatchings/D9840", DecDCToutCallback);
+int DecDCToutCallback(void (*func)())
+{
+    return DMACallback(1, func);
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", MDEC_reset);
 
