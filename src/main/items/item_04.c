@@ -15,7 +15,17 @@ INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C09C4);
 
 INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0C78);
 
-INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0D98);
+void func_800C0D98(struct ItemObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        background_objects[0].unk1C = 0x11C0;
+        background_objects[0].unk24 = 0x11C0;
+    }
+    if (arg0->unk88 != 0) {
+        func_800C0DFC(arg0);
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0DFC);
 

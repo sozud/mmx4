@@ -9,9 +9,33 @@ void func_800922D8(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092314);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092408);
+void func_80092408(struct WeaponObj* arg0)
+{
+    if (func_8002B1E8(arg0, 0xC, 8) == 0) {
+        func_80015DC8(arg0);
+        if (arg0->unk98 == 0) {
+            func_80092490(arg0);
+            func_8002B318((struct BaseObj*)arg0, 0xC, 8);
+            return;
+        }
+        func_800924F8(arg0);
+        return;
+    }
+    func_80092600(arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092490);
+void func_80092490(struct AnimatedObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        func_80092CEC((struct ShotObj*)arg0);
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->animation_step.fields.event = 0;
+            arg0->unk5++;
+        }
+    } else {
+        func_8002B718((struct MovingObj*)arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_800924F8);
 

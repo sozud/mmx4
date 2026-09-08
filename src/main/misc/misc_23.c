@@ -16,7 +16,7 @@ void func_800CBD80(struct MiscObj* arg0)
     arg0->on_screen = 1;
     arg0->unk38 = 0;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
-    arg0->animation_table = &D_8010A4C0;
+    arg0->animation_table = D_8010A4C0;
     arg0->unk40 = 0;
     if (arg0->ext.unk.unk54 != 2) {
         arg0->unk42 = 0x7805;
@@ -90,7 +90,7 @@ u32 D_8010A47C[17] = {
     0x11000160,
 };
 
-const u32* D_8010A4C0[3] = {
+u32* D_8010A4C0[3] = {
     D_8010A440,
     D_8010A45C,
     D_8010A47C,
