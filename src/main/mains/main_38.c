@@ -71,4 +71,24 @@ INCLUDE_ASM("main/nonmatchings/mains/main_38", func_8006135C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80061424);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_800614E8);
+extern u32* D_800FE890[];
+
+void func_800614E8(struct VisualObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x10;
+        obj->unk2 = 0;
+        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = D_800FE890;
+        obj->unk3C = arg0->unk3C;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 4;
+        obj->unk15 = arg0->unk15;
+        obj->x_pos.val = arg0->x_pos.val;
+        obj->y_pos.val = arg0->y_pos.val;
+    }
+}

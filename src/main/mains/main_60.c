@@ -214,7 +214,27 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077C74);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077CE8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077D48);
+extern u32* D_80101A6C[];
+
+void func_80077D48(struct VisualObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x1C;
+        obj->unk2 = 0;
+        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = D_80101A6C;
+        obj->unk3C = arg0->unk3C;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 4;
+        obj->unk15 = arg0->unk15;
+        obj->x_pos.val = arg0->x_pos.val;
+        obj->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077DF0);
 
@@ -224,11 +244,47 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077F60);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077FFC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800780D4);
+void func_800780D4(struct VisualObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x1C;
+        obj->unk2 = 2;
+        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = D_80101A6C;
+        obj->unk3C = arg0->unk3C;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 3;
+        obj->unk15 = arg0->unk15;
+        obj->x_pos.val = arg0->x_pos.val;
+        obj->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80078180);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_8007826C);
+void func_8007826C(struct PlayerObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x1C;
+        obj->unk2 = 3;
+        obj->unk50 = arg0;
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = D_80101A6C;
+        obj->unk3C = arg0->unk3C;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 3;
+        obj->unk15 = arg0->unk15;
+        obj->x_pos.val = arg0->x_pos.val;
+        obj->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80078314);
 
