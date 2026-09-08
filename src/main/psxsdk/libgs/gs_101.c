@@ -2,20 +2,6 @@
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CD_set_test_parmnum);
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", callback);
-
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", cb_read);
-
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", cd_read_retry);
-
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadBreak);
-
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdRead);
-
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadSync);
-
-#else
 extern u8* D_8011DFE0;
 extern u8 D_8011DFF9;
 extern void (*D_8011DD1C)(u8, u8*);
@@ -54,8 +40,6 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadBreak);
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdRead);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadSync);
-
-#endif
 CdlCB CdReadCallback(CdlCB func)
 {
     extern s32 D_8011E028;
