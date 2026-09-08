@@ -7,7 +7,15 @@ long GetVideoMode(void)
     return D_8011DC80;
 }
 
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", StSetRing);
+extern s32 D_80175E54;
+extern s32 D_80175F30;
+
+void StSetRing(u_long* ring_addr, u_long ring_size)
+{
+    D_80175E54 = ring_addr;
+    D_80175F30 = ring_size;
+    StClearRing();
+}
 
 void def_cbsync(u_char intr, u_char* result);
 void def_cbready(u_char intr, u_char* result);
@@ -413,7 +421,21 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_ready);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_cw);
 
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_vol);
+extern u8* D_8011DFE4;
+extern u8* D_8011DFE8;
+extern u8* D_8011DFEC;
+
+s32 CD_vol(CdlATV* vol)
+{
+    *D_8011DFE0 = 2;
+    *D_8011DFE8 = vol->val0;
+    *D_8011DFEC = vol->val1;
+    *D_8011DFE0 = 3;
+    *D_8011DFE4 = vol->val2;
+    *D_8011DFE8 = vol->val3;
+    *D_8011DFEC = 0x20;
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_flush);
 
