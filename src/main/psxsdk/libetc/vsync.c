@@ -1,5 +1,9 @@
 #include "common.h"
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/vsync", VSync);
+
+#else
 extern volatile s32* D_8011CB84;
 extern volatile s32* D_8011CB88;
 extern volatile s32 D_8011CB8C;
@@ -38,4 +42,5 @@ int VSync(int mode)
     return elapsed;
 }
 
+#endif
 INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/vsync", v_wait);

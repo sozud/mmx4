@@ -151,7 +151,7 @@ void character_select_state_3(struct EngineObj* arg0)
         engine_obj.character_state.bytes[4] = 0;
         arg0->unk37 = 0;
     }
-    if (controller_state & (PADRdown | PADstart)) {
+    if (controller_state & (PAD_CONFIRM | PADstart)) {
         arg0->character_state.bytes[0] = 1;
         arg0->unk1++;
         func_8001540C(5, 1, 0);

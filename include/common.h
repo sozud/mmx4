@@ -73,6 +73,14 @@ typedef u16 Palette[16];
 #include "scratchpad.h"
 #include "archive_memory.h"
 
+#ifdef VERSION_JP
+#define PAD_CONFIRM PADRright
+#define PAD_CANCEL PADRdown
+#else
+#define PAD_CONFIRM PADRdown
+#define PAD_CANCEL PADRright
+#endif
+
 union MainPaletteData {
     u8 raw[0x200];
     struct {
@@ -190,7 +198,11 @@ struct TileEffectRecord {
 };
 struct ArchivePathData {
     s8 stage_archive_indices[12];
+#ifdef VERSION_JP
+    char paths[162][64];
+#else
     char paths[163][64];
+#endif
 };
 struct VisualAttachmentOffset {
     s16 x, y;
@@ -816,11 +828,6 @@ struct LayerObj {
     f32 unk1C;
     s8 pad20[0x30 - 0x20];
 }; // size 0x30
-
-struct MiscUnk50_1 {
-    u8 pad[0x16];
-    u8 unk16;
-};
 
 struct MiscUnk50_2 {
     s8 unk0;
@@ -1691,7 +1698,7 @@ extern s16 D_800F21DC[];
 extern u8 D_800F21F8[];
 extern u8 D_800F22D0[];
 extern u8 D_800F22E0[];
-extern u8 D_800F2300[16];
+extern u8 D_800F2300[];
 extern u8 D_800F2328[16];
 extern RECT D_800F2428;
 extern RECT D_800F2430;
@@ -1728,8 +1735,9 @@ extern void (*D_800FB104[])();
 extern u8 D_8010B465;
 #endif
 extern u8 x_ready_text_flags[];
-#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags + 0x10))
-extern struct MiscUnk50_1* const* D_800F2DD8[];
+extern u8 x_ready_text_flags_1[];
+#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags_1 + 0x0C))
+extern u8* const* D_800F2DD8[];
 extern const u32* const* D_800F2EE8[];
 extern const u32* const* D_800F2F00[];
 extern struct MiscObj* D_801397BC;

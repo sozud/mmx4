@@ -1,0 +1,20 @@
+// Source-facing US names for rodata that moved in the Japanese executable.
+D_80010050 = 0x80010050;
+D_80010058 = 0x80010058;
+D_8001005C = 0x8001005C;
+D_80010090 = 0x80010090;
+D_80010094 = 0x80010094;
+D_800100A8 = 0x800100A8;
+D_800100C0 = 0x800100CC;
+D_80010D7C = 0x80010D88;
+D_80011534 = 0x80011568;
+D_800119C0 = 0x800119F4;
+D_80011B04 = 0x80011B38;
+D_80011B14 = 0x80011B48;
+D_80011C74 = 0x80011CA8;
+D_80011E6C = 0x80011EA0;
+jtbl_80011540_jp = 0x80011540; // force_not_migration:True
+D_800F2368_jp = 0x800F2368;
+
+// Canonical source-facing names at their Japanese executable addresses.
+g_Player = 0x801419A8;

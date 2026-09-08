@@ -1,5 +1,10 @@
 #include "common.h"
 
+#ifdef VERSION_JP
+struct Unk5 D_800F0E18[] = {
+#include "archive_data.jp.inc"
+};
+#else
 struct Unk5 D_800F0E18[] = {
     { (s32)0x0000001Cu, (s32)0x00002000u, (s32)0x00000002u },
     { (s32)0x00000020u, (s32)0x00001800u, (s32)0x00000001u },
@@ -165,3 +170,4 @@ struct Unk5 D_800F0E18[] = {
     { (s32)0x00038E13u, (s32)0x00120000u, (s32)0x582D5350u },
     { (s32)0x00039053u, (s32)0x02353F20u, (s32)0x00000000u },
 };
+#endif

@@ -2,6 +2,16 @@
 // 800CD78C..800CDCC0
 #include "common.h"
 
+#ifdef VERSION_JP
+#define TITLE_FADE_X 120
+#define TITLE_SPARKLE_X 216
+#define TITLE_PALETTE_WORDS 24
+#else
+#define TITLE_FADE_X 144
+#define TITLE_SPARKLE_X 208
+#define TITLE_PALETTE_WORDS 16
+#endif
+
 extern s32 D_8010EC00[];
 extern s32* D_8010E81C[];
 
@@ -35,12 +45,12 @@ void func_800CD78C(struct MiscObj* arg0)
     arg0->unk42 = 0x7840;
     if (arg0->unk2 == 0x20) {
         func_80015D60(arg0, 0);
-        arg0->x_pos.i.hi = 144; // set x pos of "MEGAMAN" while it's fading from white
+        arg0->x_pos.i.hi = TITLE_FADE_X; // set x pos of "MEGAMAN" while it's fading from white
         arg0->y_pos.i.hi = 72;
         arg0->state = 5;
     } else if (arg0->unk2 == 0x21) {
         func_80015D60(arg0, 1);
-        arg0->x_pos.i.hi = 208; // set x pos of "sparkle" effect
+        arg0->x_pos.i.hi = TITLE_SPARKLE_X; // set x pos of "sparkle" effect
         arg0->y_pos.i.hi = 72;
         arg0->state = 7;
     } else {
@@ -152,11 +162,11 @@ void func_800CDB84(struct MiscObj* arg0)
         if (--arg0->ext.title_logo.palette_shift_value) {
             src = arg0->ext.title_logo.palette1;
             dst = arg0->ext.title_logo.palette2;
-            for (i = 0; i < 16; i++) {
+            for (i = 0; i < TITLE_PALETTE_WORDS; i++) {
                 *dst++ = *src++;
             }
             need_palette_load |= 1;
-            arg0->ext.title_logo.palette1 = (s32*)((u8*)arg0->ext.title_logo.palette1 + 0x40);
+            arg0->ext.title_logo.palette1 += TITLE_PALETTE_WORDS;
         } else {
             arg0->id = 0x13;
             arg0->unk2 = 0;

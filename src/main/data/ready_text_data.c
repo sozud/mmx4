@@ -63,113 +63,74 @@ u8 D_800F2C58[] = {
     0x01,
 };
 
+#ifdef VERSION_JP
 u8 x_ready_text_flags[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0,
 };
 
-static struct MiscUnk50_1* x_ready_text[] = {
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x00),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x04),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x1C),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x20),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x24),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x30),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x40),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x48),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x50),
-    (struct MiscUnk50_1*)(x_ready_text_flags + 0x58),
+u8 x_ready_text_flags_1[] = {
+    0, 1, 0, 1, 1, 0, 1, 1,
+    0, 1, 1, 1, 0, 0, 0, 0,
 };
+static u8 x_ready_text_flags_2[] = { 0, 0, 0, 0 };
+static u8 x_ready_text_flags_3[] = { 1, 0, 0, 0 };
+static u8 x_ready_text_flags_4[] = { 1, 0, 1, 1, 1, 0, 0, 0 };
+static u8 x_ready_text_flags_5[] = {
+    0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+};
+static u8 x_ready_text_flags_6[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
+static u8 x_ready_text_flags_7[] = { 1, 0, 1, 1, 0, 1, 0, 0 };
+static u8 x_ready_text_flags_8[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
+static u8 x_ready_text_flags_9[] = { 0, 0, 0, 0 };
+
+static u8* x_ready_text[] = {
+    &x_ready_text_flags[0],
+    &x_ready_text_flags_1[0],
+    &x_ready_text_flags_2[0],
+    &x_ready_text_flags_3[0],
+    &x_ready_text_flags_4[0],
+    &x_ready_text_flags_5[0],
+    &x_ready_text_flags_6[0],
+    &x_ready_text_flags_7[0],
+    &x_ready_text_flags_8[0],
+    &x_ready_text_flags_9[0],
+};
+#else
+u8 x_ready_text_flags[] = {
+    0, 0, 0, 0,
+};
+
+u8 x_ready_text_flags_1[] = {
+    0, 1, 0, 0, 1, 1, 1, 1,
+    0, 0, 1, 1, 1, 1, 0, 0,
+    1, 1, 1, 1, 1, 0, 0, 0,
+};
+static u8 x_ready_text_flags_2[] = { 0, 0, 0, 0 };
+static u8 x_ready_text_flags_3[] = { 1, 1, 0, 0 };
+static u8 x_ready_text_flags_4[] = {
+    1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+};
+static u8 x_ready_text_flags_5[] = {
+    0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0,
+};
+static u8 x_ready_text_flags_6[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
+static u8 x_ready_text_flags_7[] = { 1, 0, 1, 1, 1, 0, 1, 0 };
+static u8 x_ready_text_flags_8[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
+static u8 x_ready_text_flags_9[] = { 0, 0, 0, 0 };
+
+static u8* x_ready_text[] = {
+    &x_ready_text_flags[0],
+    &x_ready_text_flags_1[0],
+    &x_ready_text_flags_2[0],
+    &x_ready_text_flags_3[0],
+    &x_ready_text_flags_4[0],
+    &x_ready_text_flags_5[0],
+    &x_ready_text_flags_6[0],
+    &x_ready_text_flags_7[0],
+    &x_ready_text_flags_8[0],
+    &x_ready_text_flags_9[0],
+};
+#endif
 
 u8 D_800F2D18[] = {
     0x0A,
@@ -235,107 +196,43 @@ u8 D_800F2D18[] = {
 };
 
 static u8 zero_ready_text_flags[] = {
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    0,
-    1,
-    0,
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0,
 };
+static u8 zero_ready_text_flags_1[] = { 0, 0, 1, 0, 1, 0, 0, 0 };
+static u8 zero_ready_text_flags_2[] = { 0, 0, 0, 0 };
+static u8 zero_ready_text_flags_3[] = {
+    1, 0, 1, 1, 0, 1, 0, 0,
+    1, 1, 1, 0, 1, 0, 1, 1,
+#ifdef VERSION_JP
+    0, 1, 1, 1, 0, 0, 0, 0,
+#else
+    1, 0, 1, 1, 1, 0, 0, 0,
+#endif
+};
+static u8 zero_ready_text_flags_4[] = { 0, 0, 0, 0 };
+static u8 zero_ready_text_flags_5[] = {
+    1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0,
+};
+static u8 zero_ready_text_flags_6[] = { 0, 1, 0, 1, 0, 0, 0, 0 };
+static u8 zero_ready_text_flags_7[] = { 1, 0, 1, 1, 0, 1, 0, 0 };
+static u8 zero_ready_text_flags_8[] = { 0, 1, 1, 0, 1, 0, 1, 0 };
+static u8 zero_ready_text_flags_9[] = { 0, 0, 0, 0 };
 
-static struct MiscUnk50_1* zero_ready_text[] = {
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x00),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x04),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x0C),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x10),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x28),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x2C),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x38),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x40),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x48),
-    (struct MiscUnk50_1*)(zero_ready_text_flags + 0x50),
+static u8* zero_ready_text[] = {
+    &zero_ready_text_flags[0],
+    &zero_ready_text_flags_1[0],
+    &zero_ready_text_flags_2[0],
+    &zero_ready_text_flags_3[0],
+    &zero_ready_text_flags_4[0],
+    &zero_ready_text_flags_5[0],
+    &zero_ready_text_flags_6[0],
+    &zero_ready_text_flags_7[0],
+    &zero_ready_text_flags_8[0],
+    &zero_ready_text_flags_9[0],
 };
 
 const u8* D_800F2DD0[] = { D_800F2C58, D_800F2D18 };
-struct MiscUnk50_1* const* D_800F2DD8[] = {
+u8* const* D_800F2DD8[] = {
     x_ready_text,
     zero_ready_text,
 };

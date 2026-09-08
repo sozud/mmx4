@@ -2,6 +2,10 @@
 // 80065930..80065B8C
 #include "common.h"
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/mains/main_44", func_8006596C_jp);
+#endif
+
 void func_80065930(struct MainObj* arg0)
 {
     D_800FF87C[arg0->state](arg0);

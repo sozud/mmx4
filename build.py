@@ -1,8 +1,25 @@
 import os
+import re
 import subprocess
 import ninja_syntax
 
-EXTRA_CPP_DEFS = " -DSKIP_ASM=1" if os.environ.get("MMX4_PROGRESS_REPORT") == "1" else ""
+VERSION = os.environ.get("VERSION", "us").lower()
+if VERSION not in ("us", "jp"):
+    raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us' or 'jp'")
+
+OUTPUT_DIR = f"build/{VERSION}"
+ASM_ROOT = f"asm/{VERSION}/main"
+LINKER_SCRIPT = "main.ld" if VERSION == "us" else f"main.{VERSION}.ld"
+UNDEFINED_SYMBOL_FILES = (
+    f"config/undefined_funcs_auto.{VERSION}.main.txt "
+    f"config/undefined_syms_auto.{VERSION}.main.txt "
+    f"config/undefined_syms.{VERSION}.main.txt"
+)
+if VERSION == "jp":
+    UNDEFINED_SYMBOL_FILES += " config/undefined_syms.jp.manual.txt"
+EXTRA_CPP_DEFS = f" -DVERSION_{VERSION.upper()}=1"
+if os.environ.get("MMX4_PROGRESS_REPORT") == "1":
+    EXTRA_CPP_DEFS += " -DSKIP_ASM=1"
 
 
 def anchor_noload_bss(linker_script_path):
@@ -19,6 +36,7 @@ def anchor_noload_bss(linker_script_path):
             linker_script.write(linker_script_text)
 
     return linker_script_text
+
 
 def add_lib(srcs, output_dir, lib_name, flags, folder):
     for src in srcs:
@@ -139,8 +157,11 @@ ninja.rule('aspsx_263',
 ninja.rule('as',
            'mipsel-linux-gnu-as -no-pad-sections -I./src/main $in -o $out')
 
+ninja.rule('as_empty',
+           'mipsel-linux-gnu-as -no-pad-sections /dev/null -o $out')
+
 ninja.rule('link',
-           'mipsel-linux-gnu-ld -Map=build/us/main.map -T main.ld config/undefined_funcs_auto.us.main.txt config/undefined_syms_auto.us.main.txt config/undefined_syms.us.main.txt $in -o $out')
+           f'mipsel-linux-gnu-ld -Map={OUTPUT_DIR}/main.map -T {LINKER_SCRIPT} {UNDEFINED_SYMBOL_FILES} $in -o $out')
 
 ninja.rule('objcopy',
            'mipsel-linux-gnu-objcopy --pad-to=0x120000 --gap-fill=0 $in -O binary $out')
@@ -165,37 +186,53 @@ def build_35():
         srcs.extend(os.path.join(root, f) for f in files
                     if f.endswith('.c'))
 
+    output_dir = OUTPUT_DIR
+    linker_script_text = anchor_noload_bss(LINKER_SCRIPT)
+    srcs = [
+        src for src in srcs
+        if f"{output_dir}/{os.path.splitext(src)[0]}.c.o" in linker_script_text
+    ]
+
     linker_inputs = []
-    output_dir = "build/us"
     add_lib_263(srcs, output_dir, linker_inputs)
 
     asms = []
-    directory = 'asm/us/main/data'
-    asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    for root, dirs, files in os.walk(ASM_ROOT):
+        dirs[:] = [d for d in dirs if d not in ('matchings', 'nonmatchings')]
+        asms.extend(
+            os.path.join(root, filename)
+            for filename in files
+            if filename.endswith('.s')
+        )
 
-    directory = 'asm/us/main'
-    asms.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
-
-    for root, dirs, files in os.walk('asm/us/main/psxsdk'):
-        asms.extend([os.path.join(root, f) for f in files if os.path.isfile(os.path.join(root, f))])
-
-    linker_script_text = anchor_noload_bss('main.ld')
     asms = [src for src in asms
             if f"{output_dir}/{os.path.splitext(src)[0]}.s.o" in linker_script_text]
 
     add_asm(asms, output_dir, linker_inputs)
 
-    assets = []
-    # directory = 'assets/main/'
-    # assets.extend([os.path.join(directory, f) for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))])
+    referenced_asm_objects = set(re.findall(
+        rf"{re.escape(output_dir)}/{re.escape(ASM_ROOT)}/[^\s();]+\.s\.o",
+        linker_script_text,
+    ))
+    present_asm_objects = {
+        f"{output_dir}/{os.path.splitext(src)[0]}.s.o" for src in asms
+    }
+    for obj_name in sorted(referenced_asm_objects - present_asm_objects):
+        ninja.build(obj_name, 'as_empty')
+        linker_inputs.append(obj_name)
 
-    for asset in assets:
-        # assets
+    asset_objects = set(re.findall(
+        rf"{re.escape(output_dir)}/(assets/[^\s();]+\.bin)\.o",
+        linker_script_text,
+    ))
+    for asset in sorted(asset_objects):
+        obj_name = f"{output_dir}/{asset}.o"
         ninja.build(
-            f"build/us/{asset}.o",
+            obj_name,
             'ld_binary',
             inputs=[asset],
             variables={'FLAGS': "", 'FOLDER': ""})
+        linker_inputs.append(obj_name)
 
     ninja.build("objects", 'phony', inputs=linker_inputs)
 

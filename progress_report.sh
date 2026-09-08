@@ -3,7 +3,13 @@ set -e
 
 OBJDIFF_VERSION=v3.3.1
 OBJDIFF_CLI=bin/objdiff-cli-linux-x86_64
-REPORT=build/us/report.json
+VERSION=${VERSION:-us}
+export VERSION
+REPORT="build/$VERSION/report.json"
+
+if [ -d "build/$VERSION" ]; then
+    find "build/$VERSION" -depth -delete
+fi
 
 if [ ! -x "$OBJDIFF_CLI" ]; then
     mkdir -p bin
@@ -13,18 +19,24 @@ if [ ! -x "$OBJDIFF_CLI" ]; then
 fi
 
 python3 ./build.py
-ninja
-sha1sum --check check.us.txt
+if [ "$VERSION" = us ]; then
+    ninja
+    sha1sum --check check.us.txt
+else
+    ninja objects
+fi
 
-rm -rf expected/build/us
+if [ -d "expected/build/$VERSION" ]; then
+    find "expected/build/$VERSION" -depth -delete
+fi
 mkdir -p expected/build
-cp -a build/us expected/build/us
+cp -a "build/$VERSION" "expected/build/$VERSION"
 
 MMX4_PROGRESS_REPORT=1 python3 ./build.py
 MMX4_PROGRESS_REPORT=1 ninja objects
 
-: > build/us/empty.s
-mipsel-linux-gnu-as build/us/empty.s -o build/us/empty.o
+: > "build/$VERSION/empty.s"
+mipsel-linux-gnu-as "build/$VERSION/empty.s" -o "build/$VERSION/empty.o"
 
 python3 ./tools/gen_objdiff.py
 "$OBJDIFF_CLI" report generate -o "$REPORT"

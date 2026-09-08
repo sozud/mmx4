@@ -123,6 +123,55 @@ INCLUDE_ASM("main/nonmatchings/D9840", SetDispMask);
 
 INCLUDE_ASM("main/nonmatchings/D9840", DrawSync);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/D9840", checkRECT);
+
+INCLUDE_ASM("main/nonmatchings/D9840", ClearImage);
+
+INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
+
+INCLUDE_RODATA("main/nonmatchings/D9840", D_80011E6C);
+
+INCLUDE_ASM("main/nonmatchings/D9840", LoadImage);
+
+INCLUDE_ASM("main/nonmatchings/D9840", StoreImage);
+
+INCLUDE_ASM("main/nonmatchings/D9840", MoveImage);
+
+INCLUDE_ASM("main/nonmatchings/D9840", ClearOTag);
+
+INCLUDE_ASM("main/nonmatchings/D9840", ClearOTagR);
+
+INCLUDE_ASM("main/nonmatchings/D9840", DrawPrim);
+
+INCLUDE_ASM("main/nonmatchings/D9840", DrawOTag);
+
+INCLUDE_ASM("main/nonmatchings/D9840", PutDrawEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", DrawOTagEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", GetDrawEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", PutDispEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", GetDispEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", GetODE);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetTexWindow);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetDrawArea);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetDrawOffset);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetPriority);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetDrawMode);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetDrawEnv);
+
+INCLUDE_ASM("main/nonmatchings/D9840", SetDrawEnv2);
+#else
 extern u8 D_8011E18A;
 extern s16 D_8011E18C;
 extern s16 D_8011E18E;
@@ -255,6 +304,7 @@ int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env)
     setlen(dr, len - 1);
     return;
 }
+#endif
 
 extern u8 D_8011E188;
 
@@ -290,6 +340,14 @@ INCLUDE_ASM("main/nonmatchings/D9840", get_dx);
 
 INCLUDE_ASM("main/nonmatchings/D9840", _status);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/D9840", _otc);
+
+INCLUDE_ASM("main/nonmatchings/D9840", _clr);
+
+INCLUDE_ASM("main/nonmatchings/D9840", _dws);
+
+#else
 extern volatile s32* D_8011E26C;
 extern s32* D_8011E270;
 extern volatile s32* D_8011E274;
@@ -393,6 +451,7 @@ s32 _dws(RECT* arg0, s32* arg1)
     return 0;
 }
 
+#endif
 INCLUDE_ASM("main/nonmatchings/D9840", _drs);
 
 extern volatile u32* D_8011E25C;
@@ -430,6 +489,9 @@ INCLUDE_ASM("main/nonmatchings/D9840", _exeque);
 
 INCLUDE_ASM("main/nonmatchings/D9840", _reset);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/D9840", _sync);
+#else
 extern void _exeque(void);
 extern s32 D_8011E28C;
 extern s32 D_8011E290;
@@ -469,6 +531,7 @@ s32 _sync(s32 arg0)
 
     return temp_s0;
 }
+#endif
 
 extern s32 D_8011E2A0;
 extern s32 D_8011E2A4;

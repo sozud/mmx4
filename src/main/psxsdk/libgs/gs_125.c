@@ -69,6 +69,36 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdDataSync);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdIntToPos);
 
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdPosToInt);
+
+INCLUDE_RODATA("main/nonmatchings/psxsdk/libgs/gs_125", D_800119C0);
+
+INCLUDE_RODATA("main/nonmatchings/psxsdk/libgs/gs_125", D_80011B04);
+
+INCLUDE_RODATA("main/nonmatchings/psxsdk/libgs/gs_125", D_80011B14);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", getintr);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_sync);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_ready);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_cw);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_vol);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_flush);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_initvol);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_initintr);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_init);
+
+INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_datasync);
+
+#else
 int CdPosToInt(CdlLOC* p)
 {
     char temp_a1;
@@ -198,4 +228,5 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_init);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_datasync);
 
+#endif
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CD_getsector);

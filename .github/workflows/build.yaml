@@ -172,12 +172,16 @@ jobs:
             sound-comparison
 
   build-and-test:
+    name: Build and test PSX (${{ matrix.version }})
     strategy:
       matrix:
-        version: ["us"]
         include:
-          - dependency: us
-            version: us
+          - version: us
+            dependency: us
+            splat_config: SLUS_005.61.splat.yaml
+          - version: jp
+            dependency: jp
+            splat_config: SLPS_009.02.splat.yaml
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
@@ -213,13 +217,13 @@ jobs:
           persist-credentials: false
       - name: Setting up dependencies
         working-directory: disks
-        run: cat dependencies/mmx4.us.tar.gz.part_* | tar -zxf -
+        run: cat dependencies/mmx4.${{ matrix.dependency }}.tar.gz.part_* | tar -zxf -
       - name: Extract dependencies
         run: sh extract.sh
       - name: Get Compiler
         run: sh compiler.sh
       - name: Split game data
-        run: splat split ./config/SLUS_005.61.splat.yaml
+        run: splat split ./config/${{ matrix.splat_config }}
       - name: Build binaries
         run: sh build.sh
       # - name: Build CD Image
