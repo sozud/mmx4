@@ -940,14 +940,6 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BB80);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BD58);
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C160);
-
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C26C);
-
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C2EC);
-
-#else
 s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 {
     s16 center0;
@@ -999,7 +991,6 @@ INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C26C);
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C2EC);
 
-#endif
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C36C);
 
 // megaman falls through floor in intro stage if nopped out
