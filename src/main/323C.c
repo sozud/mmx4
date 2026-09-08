@@ -3998,9 +3998,9 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     }
     restored.palette_flags = source->palette_flags;
     restored.unk5A = source->unk5A;
-    restored.pad5C[0] = source->pad5C[0];
-    restored.pad5C[1] = source->pad5C[1];
-    restored.pad5C[2] = source->pad5C[2];
+    restored.unk5C[0] = source->pad5C[0];
+    restored.unk5C[1] = source->pad5C[1];
+    restored.unk5C[2] = source->pad5C[2];
     restored.unk5F = source->unk5F;
     restored.unk60 = source->unk60;
     restored.pad61[0] = source->pad61[0];

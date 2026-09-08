@@ -1862,3 +1862,273 @@ void func_8001E130(struct GameInfo* arg0)
         D_80139690 = OBJECT_HEADER(obj);
     }
 }
+
+void func_800924F8(struct WeaponObj* arg0)
+{
+    arg0->unk50 = 0;
+    if (arg0->unk98 > 0) {
+        func_80092600(arg0);
+        return;
+    }
+
+    arg0->x_vel.val = -arg0->x_vel.val;
+    if (get_random() & 1) {
+        arg0->y_vel.val = FIXED(4.05);
+    } else {
+        arg0->y_vel.val = FIXED(-4.05);
+    }
+    arg0->state = 2;
+    arg0->unk5 = 0;
+    arg0->unk15 ^= 0x40;
+    func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
+}
+
+void func_800C00BC(struct ItemObj* arg0)
+{
+    struct CollisionObj* player;
+    u16 flag;
+    s32 shift;
+
+    if (g_Player.unkC5 == 0) {
+        player = (struct CollisionObj*)&g_Player;
+        if (!(g_Player.unk5C & 0x7F)) {
+            return;
+        }
+    } else {
+        player = (struct CollisionObj*)&qux_object;
+        if (!(qux_object.unk5C & 0x7F)) {
+            return;
+        }
+    }
+    if (!func_8002C160((struct CollisionObj*)arg0, player)) {
+        return;
+    }
+
+    arg0->unk5 = 0;
+    switch (arg0->unk7C) {
+    case 0:
+        func_800BFF0C(arg0, 4, 1);
+        break;
+    case 1:
+        func_800BFF0C(arg0, 0x10, 2);
+        break;
+    case 2:
+    case 3:
+    case 6:
+        func_800BFCC0(arg0, arg0->unk7C);
+        arg0->state = 3;
+        break;
+    case 4:
+        engine_obj.unk44++;
+        if (engine_obj.unk44 >= 10) {
+            engine_obj.unk44 = 9;
+        } else {
+            func_8001540C(0, 0x15, 0);
+        }
+        arg0->state = 3;
+        break;
+    case 5:
+        func_800BFF0C(arg0, engine_obj.unk46, 4);
+        break;
+    case 7:
+        flag = engine_obj.unk5A;
+        if ((flag & 0xFF) == 0xFF) {
+            arg0->state = 3;
+            break;
+        }
+        shift = arg0->unk2 - 7;
+        if (flag & (1 << shift)) {
+            arg0->state = 3;
+            break;
+        }
+        engine_obj.unk5A = flag | (1 << shift);
+        engine_obj.unk46 += 2;
+        func_8001540C(0, 0x15, 0);
+        arg0->state = 3;
+        break;
+    case 8:
+        flag = engine_obj.unk5A;
+        if ((flag & 0x3000) == 0x3000) {
+            break;
+        }
+        shift = arg0->unk2 - 15;
+        if (flag & (0x1000 << shift)) {
+            break;
+        }
+        engine_obj.unk5A = flag | (0x1000 << shift);
+        arg0->state = 3;
+        engine_obj.unk5C[arg0->unk2 == 15 ? 0 : 1] = -0x80;
+        func_8001540C(0, 0x15, 0);
+        break;
+    case 9:
+        flag = engine_obj.unk5A;
+        if ((flag & 0x4000) || (flag & (0x4000 << (arg0->unk2 - 17)))) {
+            break;
+        }
+        engine_obj.unk5A = flag | (0x4000 << (arg0->unk2 - 17));
+        arg0->state = 3;
+        func_8001540C(0, 0x15, 0);
+        engine_obj.unk5C[2] = 0;
+        break;
+    case 10:
+        flag = engine_obj.unk5A;
+        if ((flag & 0x8000) || (flag & (0x8000 << (arg0->unk2 - 18)))) {
+            break;
+        }
+        engine_obj.unk5A = flag | (0x8000 << (arg0->unk2 - 18));
+        arg0->state = 3;
+        func_8001540C(0, 0x15, 0);
+        break;
+    default:
+        arg0->state = 3;
+        break;
+    }
+}
+
+void func_800C0DFC(struct ItemObj* arg0)
+{
+    s32 i;
+    s32* source;
+    s32* destination;
+
+    destination = (s32*)((u8*)SP_PALETTE + 0xEE0);
+    if (arg0->unk88 != 0) {
+        source = (s32*)((u8*)SP_ARC_30 + 0x9A0);
+    } else {
+        source = (s32*)((u8*)SP_ARC_30 + 0xA80);
+    }
+    for (i = 0; i < 0x38; i++) {
+        destination[i] = source[i];
+    }
+    need_palette_load |= 1;
+}
+
+void func_80068D6C(struct MainObj* arg0)
+{
+    s16 x;
+    s16 y;
+
+    if (arg0->unk67 != 0) {
+        return;
+    }
+
+    CollisionRelated((struct PlayerObj*)arg0);
+    if (!(arg0->unk70 & 8)) {
+        func_80015D60(arg0, 0xF);
+        SP_CUR_MAIN_OBJ->state_80.bytes.unk80 = 5;
+        arg0->unk5 = 3;
+        arg0->unk2C = 0x4200;
+        arg0->unk6 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk67 = -1;
+        return;
+    }
+
+    if (SP_CUR_MAIN_OBJ->state_80.bytes.unk85 == 2 || arg0->unk5 == 6) {
+        return;
+    }
+
+    if (arg0->unk15 != 0) {
+        x = arg0->x_pos.i.hi + arg0->unk68->unk0 + arg0->unk68->unk2;
+    } else {
+        x = arg0->x_pos.i.hi - arg0->unk68->unk0 - arg0->unk68->unk2;
+    }
+    y = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 + 8;
+    if (func_8002D724((struct PlayerObj*)arg0, x, y) != 0) {
+        return;
+    }
+
+    if (arg0->unk2 == 0) {
+        arg0->unk15 = arg0->unk15 == 0 ? 0x40 : 0;
+        arg0->unk20 = -arg0->unk20;
+        return;
+    }
+    if (arg0->unk70 & 3) {
+        return;
+    }
+
+    func_80015D60(arg0, 0x19);
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+    if (SP_CUR_MAIN_OBJ->state_80.bytes.unk86 == 0) {
+        arg0->unk24 = 0x38000;
+        arg0->unk2C = 0x4200;
+        arg0->unk20 = arg0->unk15 == 0 ? -0x10000 : 0x10000;
+    } else {
+        arg0->unk24 = 0x48000;
+        arg0->unk2C = 0x5200;
+        arg0->unk20 = arg0->unk15 == 0 ? -0x20000 : 0x20000;
+    }
+    arg0->unk67 = 1;
+}
+
+void func_80069000(struct MainObj* arg0)
+{
+    s16 distance;
+    s16 y_distance;
+    u8 mode;
+
+    if (arg0->unk67 != 0 || arg0->unk5 == 6) {
+        return;
+    }
+    if (SP_CUR_MAIN_OBJ->state_80.fields.unk83 != 0) {
+        SP_CUR_MAIN_OBJ->state_80.fields.unk83--;
+        return;
+    }
+
+    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+    if (distance < 0) {
+        distance = -distance;
+    }
+    if (distance > 0x80) {
+        return;
+    }
+
+    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0 : 0x40;
+    mode = SP_CUR_MAIN_OBJ->state_80.bytes.unk85;
+    if (mode == 1 || (mode == 2 && arg0->unk2 != 0)) {
+        SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x40;
+    } else {
+        y_distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+        if (y_distance >= 0x21) {
+            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x80;
+        } else if (y_distance < -0x10) {
+            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x82;
+        } else {
+            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x81;
+        }
+    }
+    func_80015D60(arg0, 0xA);
+    arg0->unk5 = 6;
+    arg0->unk6 = 0;
+}
+
+void func_800998D4(struct ShotObj* arg0)
+{
+    struct MiscObj* misc;
+
+    func_8002B694((struct AnimatedObj*)arg0);
+    func_80015DC8(arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x19, 0x19);
+    if (arg0->unk70 & 8) {
+        arg0->unk60 = 5;
+        arg0->unk68 = 0;
+        arg0->unk50 = D_80108C58;
+        arg0->unk5++;
+        func_80015D60(arg0, 0xB);
+        if (!(arg0->unk70 & 3)) {
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 0x41;
+                misc->id = 4;
+                misc->unk2 = 0;
+                misc->state = 0;
+                misc->ext.pointer.unk50 = arg0->unk7C;
+                misc->x_pos.val = arg0->x_pos.val + (get_random() & 3);
+                misc->y_pos.val = arg0->y_pos.val + (get_random() & 3);
+            }
+        }
+    }
+    func_8002D9BC(arg0);
+}

@@ -388,6 +388,16 @@ union MainObjState80 {
         u8 unk86;
         u8 unk87;
     } bytes;
+    struct {
+        u8 unk80;
+        u8 unk81;
+        u8 unk82;
+        u8 unk83;
+        u8 unk84;
+        u8 unk85;
+        u8 unk86;
+        u8 unk87;
+    } fields;
 };
 
 #define MAIN_OBJ_TAIL_FIELDS                        \
@@ -611,7 +621,7 @@ struct PlayerObj {
     u16 unkDA;
     s8 padDC[0xDE - 0xDC];
     s8 unkDE;
-    s8 : 8;
+    s8 unkDF;
     s8 unkE0;
     s8 unkE1;
     s8 padE2[0xE4 - 0xE2];
@@ -660,11 +670,12 @@ struct VisualObj {
 struct ShotObj {
     ANIMATED_OBJ_FIELDS
     s8 pad49[0x50 - 0x49];
-    s32 unk50;
+    const u8* unk50;
     s32 unk54;
     s32 : 32;
     s8 unk5C;
-    s8 pad5D[0x61 - 0x5D];
+    s8 pad5D[0x60 - 0x5D];
+    s8 unk60;
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -700,7 +711,10 @@ struct WeaponObj {
     BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
-    s8 pad20[0x30 - 0x20];
+    f32 x_vel;
+    f32 y_vel;
+    s32 unk28;
+    s32 unk2C;
     s32 unk30;
     s8 pad34[0x3C - 0x34];
     void* unk3C;
@@ -732,7 +746,9 @@ struct WeaponObj {
     struct PlayerObj* owner;
     s8 pad80[0x8C - 0x80];
     s8 unk8C;
-    s8 pad8D[0x94 - 0x8D];
+    s8 pad8D;
+    s8 unk8E;
+    s8 pad8F[0x94 - 0x8F];
     u8 unk94;
     s8 pad95[0x98 - 0x95];
     s8 unk98;
@@ -756,7 +772,11 @@ struct ItemObj {
     BASE_OBJ_FIELDS
     f32 unk18;
     f32 unk1C;
-    s8 pad20[0x50 - 0x20];
+    f32 x_vel;
+    f32 y_vel;
+    s32 unk28;
+    s32 unk2C;
+    s8 pad30[0x50 - 0x30];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
@@ -766,9 +786,11 @@ struct ItemObj {
     s8 unk64;
     s8 unk65;
     s8 unk66;
-    s8 : 8;
+    s8 unk67;
     s32 unk68;
-    s8 pad6C[0x72 - 0x6C];
+    s8 pad6C[0x70 - 0x6C];
+    u8 unk70;
+    s8 : 8;
     s8 unk72;
     s8 unk73;
     s8 unk74;
@@ -778,7 +800,14 @@ struct ItemObj {
     s8 unk78;
     s8 : 8;
     s8 unk7A;
-    s8 pad7B[0x8C - 0x7B];
+    s8 pad7B;
+    u8 unk7C;
+    s8 pad7D[0x80 - 0x7D];
+    s8 unk80;
+    s8 unk81;
+    u16 unk82;
+    s8 pad84[0x88 - 0x84];
+    s32 unk88;
 }; // size 0x8C
 
 struct LayerObj {
@@ -1360,7 +1389,7 @@ struct EngineObj {
     s8 player_initial_data[0x10]; // 0x49
     s8 palette_flags; // 0x59
     u16 unk5A;
-    s8 pad5C[0x5F - 0x5C];
+    s8 unk5C[3];
     u8 unk5F;
     u8 unk60;
     u8 pad61[3];
@@ -1584,7 +1613,30 @@ extern s8 D_800F8D14[];
 extern struct VisualAttachmentOffset D_8010A1AC[2];
 extern struct VisualAttachmentOffset D_8010A1B4[2];
 extern struct VisualAttachmentInit D_8010A1BC[4];
-extern const u32* D_8010A4C0[3];
+extern u8 D_80108C44[4];
+extern u8 D_80108C48[4];
+extern u8 D_80108C4C[4];
+extern u8 D_80108C50[4];
+extern u8 D_80108C58[4];
+extern u8 D_8010A1D4[];
+struct Visual03Bounds {
+    s32 x;
+    s32 y;
+};
+extern struct Visual03Bounds D_8010A1E4[];
+
+extern u16 D_80108768[48];
+
+struct PlayerFrameOffset {
+    s8 x;
+    s8 y;
+};
+union PlayerFrameOffsetData {
+    struct PlayerFrameOffset offsets[256];
+    s8 components[512];
+};
+extern union PlayerFrameOffsetData D_8011B230;
+extern u32* D_8010A4C0[3];
 extern u8 D_8010A4F8[];
 extern u8 D_8010A504[];
 extern u16 D_8010A588[];
@@ -2028,6 +2080,7 @@ void func_8002B718(struct MovingObj*);
 s32 func_8002B7B0(struct ObjectHeader*, s32, s32);
 void func_8002B93C(struct MovingObj*, s32);
 void func_800DABE4(u8, s16, s16);
+s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);
 void func_800BF60C(struct BaseObj*, s8);

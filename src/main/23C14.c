@@ -3122,7 +3122,37 @@ void func_80044314(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8004431C);
+void func_8004431C(struct MainObj* arg0)
+{
+    s32 temp_v0;
+
+    if (arg0->unk5 == 2) {
+        if (arg0->unk88 == 0) {
+            temp_v0 = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+            if (temp_v0 >= 0) {
+                if (temp_v0 < 0x20) {
+                    goto block_6;
+                }
+            } else if (arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 0x20) {
+            block_6:
+                if ((arg0->unk15 == 0 && g_Player.x_pos.val < arg0->x_pos.val) || (arg0->unk15 != 0 && g_Player.x_pos.val > arg0->x_pos.val)) {
+                    arg0->unk88 = 1;
+                }
+            }
+        } else {
+            temp_v0 = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+            if (temp_v0 >= 0) {
+                if (temp_v0 >= 0x21) {
+                    goto block_15;
+                }
+            } else if (arg0->y_pos.i.hi - g_Player.y_pos.i.hi >= 0x21) {
+            block_15:
+                arg0->unk88 = 0;
+                arg0->state_8c.unk8C = 0x78;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8004441C);
 

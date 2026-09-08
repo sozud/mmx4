@@ -2,7 +2,76 @@
 // 800AF6A0..800AFB50
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF6A0);
+u8 D_8010A1D4[] = {
+    0x00,
+    0x01,
+    0x05,
+    0x0A,
+    0x0B,
+    0x17,
+    0x0C,
+    0x0D,
+    0x11,
+    0x12,
+    0x0E,
+    0x0F,
+    0x10,
+    0x09,
+    0x00,
+    0x00,
+};
+
+struct Visual03Bounds D_8010A1E4[14] = {
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+    { 0x20, 0x20 },
+};
+
+void func_800AF6A0(struct VisualObj* arg0)
+{
+    switch (arg0->state) {
+    case 0:
+        arg0->on_screen = 1;
+        func_80015D60(arg0, D_8010A1D4[arg0->unk2]);
+        arg0->state++;
+        func_8002B318(BASE_OBJECT(arg0), D_8010A1E4[arg0->unk2].x,
+            D_8010A1E4[arg0->unk2].y);
+        break;
+    case 1:
+        if (func_8002B1E8(BASE_OBJECT(arg0),
+                D_8010A1E4[arg0->unk2].x,
+                D_8010A1E4[arg0->unk2].y)
+            == 0) {
+            func_80015DC8(arg0);
+            if ((arg0->unk2 == 9) && (arg0->animation_step.fields.event != 0)) {
+                arg0->animation_step.fields.event = 0;
+                g_Player.unkDF = 0;
+            }
+            if (arg0->animation_step.fields.relative_step < 0) {
+                arg0->state = 2;
+            }
+        } else {
+            arg0->state = 2;
+        }
+        func_8002B318(BASE_OBJECT(arg0), D_8010A1E4[arg0->unk2].x,
+            D_8010A1E4[arg0->unk2].y);
+        break;
+    case 2:
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        break;
+    }
+}
 
 void func_800AF808(struct BaseObj* arg0)
 {
