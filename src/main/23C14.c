@@ -1,8 +1,5 @@
 #include "common.h"
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/23C14", func_80033414);
-#else
 s32 func_80033414(struct PlayerObj* arg0)
 {
     if (func_80033694(arg0) != 0) {
@@ -19,7 +16,6 @@ s32 func_80033414(struct PlayerObj* arg0)
     func_800344EC(arg0);
     return 1;
 }
-#endif
 
 s32 func_80033494(struct PlayerObj* arg0)
 {
@@ -2299,7 +2295,11 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003D164);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D254);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D338);
+void func_8003D338(struct AnimatedObj* arg0)
+{
+    arg0->y_vel.val -= arg0->unk2C;
+    arg0->x_vel.val -= arg0->unk28;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D35C);
 
