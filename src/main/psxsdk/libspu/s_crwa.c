@@ -14,7 +14,24 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libspu/s_crwa", _spu_r_);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libspu/s_crwa", _spu_t);
 
-INCLUDE_ASM("main/nonmatchings/psxsdk/libspu/s_crwa", _spu_write);
+extern u16 D_8011C144;
+extern s32 D_8011C148;
+extern s32 D_8011C154;
+extern s32 _spu_t(s32 arg0, ...);
+extern void _spu_writeByIO(void* arg0, s32 arg1);
+
+s32 _spu_write(void* arg0, s32 arg1)
+{
+    if (D_8011C148 == 0) {
+        _spu_t(2, D_8011C144 << D_8011C154);
+        _spu_t(1);
+        _spu_t(3, arg0, arg1);
+    } else {
+        _spu_writeByIO(arg0, arg1);
+    }
+
+    return arg1;
+}
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libspu/s_crwa", _spu_read);
 

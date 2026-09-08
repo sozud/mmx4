@@ -154,8 +154,25 @@ typedef struct {
 extern GpuApi* D_8011E180;
 extern void (*D_8011E184)(const char*, ...);
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/D9840", checkRECT);
+extern u8 D_8011E18A;
+extern s16 D_8011E18C;
+extern s16 D_8011E18E;
+
+void checkRECT(const char* log, RECT* r)
+{
+    switch (D_8011E18A) {
+    case 1:
+        if (r->w > D_8011E18C || r->w + r->x > D_8011E18C || r->y > D_8011E18E || r->y + r->h > D_8011E18E || r->w <= 0 || r->x < 0 || r->y < 0 || r->h <= 0) {
+            D_8011E184("%s:bad RECT", log);
+            D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
+        }
+        break;
+    case 2:
+        D_8011E184("%s:", log);
+        D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
+        break;
+    }
+}
 
 extern const char D_80011E6C;
 
@@ -171,6 +188,7 @@ INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
 
 INCLUDE_RODATA("main/nonmatchings/D9840", D_80011E6C);
 
+#ifdef VERSION_JP
 int LoadImage(RECT* rect, u_long* p)
 {
     checkRECT("LoadImage", rect);
@@ -318,41 +336,6 @@ int SetDrawEnv2(DR_ENV* dr_env, DRAWENV* env)
     return;
 }
 #else
-extern u8 D_8011E18A;
-extern s16 D_8011E18C;
-extern s16 D_8011E18E;
-extern void (*D_8011E184)(const char* fmt, ...);
-
-void checkRECT(const char* log, RECT* r)
-{
-    switch (D_8011E18A) {
-    case 1:
-        if (r->w > D_8011E18C || r->w + r->x > D_8011E18C || r->y > D_8011E18E || r->y + r->h > D_8011E18E || r->w <= 0 || r->x < 0 || r->y < 0 || r->h <= 0) {
-            D_8011E184("%s:bad RECT", log);
-            D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
-        }
-        break;
-    case 2:
-        D_8011E184("%s:", log);
-        D_8011E184("(%d,%d)-(%d,%d)\n", r->x, r->y, r->w, r->h);
-        break;
-    }
-}
-
-extern const char D_80011E6C;
-
-s32 ClearImage(RECT* rect, u_char r, u_char g, u_char b)
-{
-    checkRECT(&D_80011E6C, rect);
-    return D_8011E180->addque2(
-        D_8011E180->clr, rect, 8,
-        (((b & 0xFF) << 0x10) | ((g & 0xFF) << 8) | (r & 0xFF)));
-}
-
-INCLUDE_ASM("main/nonmatchings/D9840", ClearImage2);
-
-INCLUDE_RODATA("main/nonmatchings/D9840", D_80011E6C);
-
 INCLUDE_ASM("main/nonmatchings/D9840", LoadImage);
 
 INCLUDE_ASM("main/nonmatchings/D9840", StoreImage);
@@ -492,7 +475,6 @@ INCLUDE_ASM("main/nonmatchings/D9840", get_dx);
 
 INCLUDE_ASM("main/nonmatchings/D9840", _status);
 
-#ifdef VERSION_JP
 extern volatile s32* D_8011E26C;
 extern s32* D_8011E270;
 extern volatile s32* D_8011E274;
@@ -596,111 +578,6 @@ s32 _dws(RECT* arg0, s32* arg1)
     return 0;
 }
 
-#else
-extern volatile s32* D_8011E26C;
-extern s32* D_8011E270;
-extern volatile s32* D_8011E274;
-extern volatile s32* D_8011E278;
-
-#define OT_TYPE u_long
-
-s32 _otc(OT_TYPE arg0, s32 arg1)
-{
-    s32 temp;
-
-    *D_8011E278 |= 0x08000000;
-    *D_8011E274 = 0;
-    temp = arg0 - 4 + arg1 * 4;
-    *D_8011E26C = temp;
-    *D_8011E270 = arg1;
-    *D_8011E274 = 0x11000002;
-    set_alarm();
-    if (*D_8011E274 & 0x01000000) {
-        while (1) {
-            if (get_alarm()) {
-                return -1;
-            } else {
-                if (!(*D_8011E274 & 0x01000000)) {
-                    break;
-                }
-            }
-        }
-    }
-    return arg1;
-}
-
-INCLUDE_ASM("main/nonmatchings/D9840", _clr);
-
-extern s16 D_8011E18C;
-extern s16 D_8011E18E;
-extern s32* D_8011E258;
-extern volatile u32* D_8011E25C;
-extern volatile u32* D_8011E260;
-extern volatile u32* D_8011E264;
-extern volatile u32* D_8011E268;
-
-#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
-#define D_80090CA0 D_8011E18C
-#define D_80090CA2 D_8011E18E
-#define GPU_STATUS D_8011E25C
-#define GPU_DATA ((volatile u32*)D_8011E258)
-#define DMA1_MADR ((s32**)D_8011E260)
-#define DMA1_BCR D_8011E264
-#define DMA1_CHCR D_8011E268
-
-s32 _dws(RECT* arg0, s32* arg1)
-{
-    s32 temp_a0;
-    s32 size;
-    s32 var_s0;
-    s32* img_ptr;
-    s32 var_s4;
-
-    img_ptr = arg1;
-    set_alarm();
-    var_s4 = 0;
-
-    arg0->w = CLAMP(arg0->w, 0, D_80090CA0);
-    arg0->h = CLAMP(arg0->h, 0, D_80090CA2);
-
-    temp_a0 = ((arg0->w * arg0->h) + 1) / 2;
-    if (temp_a0 <= 0) {
-        return -1;
-    }
-
-    var_s0 = temp_a0 % 16;
-    size = temp_a0 / 16;
-    if (!(*GPU_STATUS & 0x04000000)) {
-        while (1) {
-            if (get_alarm()) {
-                return -1;
-            } else if (*GPU_STATUS & 0x04000000) {
-                break;
-            }
-        }
-    }
-
-    *GPU_STATUS = 0x04000000;
-    *GPU_DATA = 0x01000000;
-    *GPU_DATA = var_s4 ? 0xB0000000 : 0xA0000000;
-    *GPU_DATA = *(s32*)(&arg0->x);
-    *GPU_DATA = *(s32*)(&arg0->w);
-
-    for (var_s0 = var_s0 - 1; var_s0 != -1; var_s0--) {
-        *GPU_DATA = *img_ptr++;
-    }
-
-    if (size != 0) {
-        *GPU_STATUS = 0x04000002;
-        *DMA1_MADR = img_ptr;
-        *DMA1_BCR = (size << 0x10) | 0x10;
-        *DMA1_CHCR = 0x01000201;
-    }
-
-    return 0;
-}
-
-#endif
 INCLUDE_ASM("main/nonmatchings/D9840", _drs);
 
 extern volatile u32* D_8011E25C;
@@ -745,9 +622,6 @@ INCLUDE_ASM("main/nonmatchings/D9840", _exeque);
 
 INCLUDE_ASM("main/nonmatchings/D9840", _reset);
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/D9840", _sync);
-#else
 extern void _exeque(void);
 extern s32 D_8011E28C;
 extern s32 D_8011E290;
@@ -758,7 +632,7 @@ s32 _sync(s32 arg0)
 
     if (!arg0) {
         set_alarm();
-        while (*(s32*)(&D_8011E28C) != *(s32*)(&D_8011E290)) {
+        while (D_8011E28C != D_8011E290) {
             _exeque();
             if (get_alarm())
                 return -1;
@@ -787,8 +661,6 @@ s32 _sync(s32 arg0)
 
     return temp_s0;
 }
-#endif
-
 extern s32 D_8011E2A0;
 extern s32 D_8011E2A4;
 
