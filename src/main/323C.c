@@ -3088,7 +3088,12 @@ s32 func_8001E850(u8* arg0, u8 arg1)
     return arg0[1];
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001E954);
+void func_8001E954(struct GameInfo* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        arg0->mode++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001E980);
 
