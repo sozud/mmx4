@@ -72,6 +72,17 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libgl-dev libgles-dev libgl1-mesa-dri libglx-mesa0 xvfb
+      - name: Resolve Mednafen revision
+        id: mednafen_revision
+        run: |
+          echo "sha=$(git -C tools/mednafen rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "image_os=${ImageOS:-unknown}" >> "$GITHUB_OUTPUT"
+      - name: Restore Mednafen oracle build
+        id: mednafen_cache
+        uses: actions/cache@v4
+        with:
+          path: tools/mednafen-build/src/mednafen
+          key: mednafen-oracle-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}
       - name: Get game dependencies
         uses: actions/checkout@v4
         with:
@@ -84,16 +95,34 @@ jobs:
         working-directory: disks
         run: cat dependencies/mmx4.us.tar.gz.part_* | tar -zxf -
       - name: Locate oracle inputs
+        id: oracle_inputs
         run: |
           test -f disks/mmx4.us.cue
           oracle_bios=$(find disks -type f -iname 'SCPH1001.BIN' -print -quit)
           test -n "$oracle_bios"
           cp "$oracle_bios" tools/SCPH1001.BIN
+          echo "disc_sha=$(sha256sum disks/mmx4.us.bin | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+          echo "bios_sha=$(sha256sum tools/SCPH1001.BIN | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
+      - name: Restore Mednafen scene captures
+        id: mednafen_scene_cache
+        uses: actions/cache@v4
+        with:
+          path: mednafen-object-changes
+          key: mednafen-scenes-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/oracle/run_mednafen_scene_suite.py', 'tools/oracle/scene_suite.py') }}
+      - name: Restore Mednafen sound captures
+        id: mednafen_sound_cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            sound-comparison/**/psx.wav
+            sound-comparison/**/psx.log
+          key: mednafen-sound-v1-frames360-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/audio_fixture.py') }}
       - name: Configure Linux port
         run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSYZ_RENDERER=sdl3_gl
       - name: Build Linux port
         run: cmake --build build-linux --parallel
       - name: Configure Mednafen oracle
+        if: steps.mednafen_cache.outputs.cache-hit != 'true'
         working-directory: tools
         run: |
           mkdir mednafen-build
@@ -124,8 +153,12 @@ jobs:
             --disable-wswan \
             --without-libflac
       - name: Build Mednafen oracle
+        if: steps.mednafen_cache.outputs.cache-hit != 'true'
         run: make --directory tools/mednafen-build --jobs "$(nproc)"
+      - name: Verify Mednafen oracle build
+        run: test -x tools/mednafen-build/src/mednafen
       - name: Capture Mednafen scenes
+        if: steps.mednafen_scene_cache.outputs.cache-hit != 'true'
         run: |
           python3 tools/oracle/run_mednafen_scene_suite.py \
             --mednafen tools/mednafen-build/src/mednafen \
@@ -150,6 +183,10 @@ jobs:
             --output scene-comparison | tee scene-comparison/summary.txt
       - name: Compare sound captures
         run: |
+          reuse_args=()
+          if [[ '${{ steps.mednafen_sound_cache.outputs.cache-hit }}' == 'true' ]]; then
+            reuse_args+=(--reuse-psx-audio)
+          fi
           python3 tools/audio_fixture.py \
             --suite frontend \
             --pc build-linux/mmx4_pc \
@@ -157,7 +194,8 @@ jobs:
             --disc disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --output sound-comparison \
-            --no-build
+            --no-build \
+            "${reuse_args[@]}"
       - name: Upload oracle artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -248,10 +286,10 @@ jobs:
           token: ${{ secrets.MMX4_INFO_TOKEN }}
           path: 'info'
       - name: Generate functions list
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: python3 ./tools/funcs_todo.py > info/functions.md
       - name: Generate duplicates report
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
             cd tools/dups
             cargo run --release -- --threshold .90 --output-file ../../info/duplicates.txt

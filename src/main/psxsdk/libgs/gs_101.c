@@ -56,4 +56,12 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdRead);
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadSync);
 
 #endif
-INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_101", CdReadCallback);
+CdlCB CdReadCallback(CdlCB func)
+{
+    extern s32 D_8011E028;
+    CdlCB previous;
+
+    previous = (CdlCB)D_8011E028;
+    D_8011E028 = (s32)func;
+    return previous;
+}
