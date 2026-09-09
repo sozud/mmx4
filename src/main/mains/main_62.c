@@ -8,7 +8,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BABC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BB90);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BC0C);
+void func_8007BC0C(struct BarObj* arg0)
+{
+    D_80102214[arg0->unk5](arg0);
+}
 
 void func_8007BC48(struct MainObj* arg0)
 {
@@ -26,6 +29,13 @@ void func_8007BF74(void)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BF7C);
+void func_8007BF7C(struct BarObj* arg0)
+{
+    D_80102254[arg0->unk5](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BFB8);
+void func_8007BFB8(struct MainObj* arg0)
+{
+    arg0->on_screen = 0;
+    D_8010225C[arg0->state](arg0);
+}
