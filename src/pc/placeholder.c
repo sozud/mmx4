@@ -2108,7 +2108,7 @@ void func_800998D4(struct ShotObj* arg0)
     if (arg0->unk70 & 8) {
         arg0->unk60 = 5;
         arg0->unk68 = 0;
-        arg0->unk50 = D_80108C58;
+        arg0->unk50.data = D_80108C58;
         arg0->unk5++;
         func_80015D60(arg0, 0xB);
         if (!(arg0->unk70 & 3)) {

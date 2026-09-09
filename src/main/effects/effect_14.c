@@ -2,7 +2,12 @@
 // 800B89B4..800B8AF8
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B89B4);
+void func_800B89B4(struct EffectObj* arg0)
+{
+    arg0->ext.effect_14.unk16 = 0;
+    arg0->ext.effect_14.unk14 = 0;
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B89CC);
 

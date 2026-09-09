@@ -20,7 +20,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089EC8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089F58);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089F94);
+void func_80089F94(struct MainObj* arg0)
+{
+    arg0->x_pos.val += arg0->unk20;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089FAC);
 

@@ -440,7 +440,7 @@ struct WeaponObj* find_free_weapon_obj()
     struct WeaponObj* current;
     for (current = &weapon_objects[0]; current < &weapon_objects[0x10]; current++) {
         if (!current->active) {
-            current->unk50 = 0;
+            current->unk50 = NULL;
             current->unk54 = 0;
             current->unk68 = 0;
             current->unk98 = 0;
@@ -470,7 +470,7 @@ struct ShotObj* find_free_shot_obj(void)
     struct ShotObj* current;
     for (current = &shot_objects[0]; current < &shot_objects[0x20]; current++) {
         if (!current->active) {
-            current->unk50 = 0;
+            current->unk50.data = NULL;
             current->unk54 = 0;
             current->unk68 = 0;
             current->unk98 = 0;

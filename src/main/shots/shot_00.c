@@ -37,9 +37,9 @@ void func_80099784(struct ShotObj* arg0)
     }
     func_8002D9BC(arg0);
     if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50 = D_80108C48;
+        arg0->unk50.data = D_80108C48;
         func_8002D9BC(arg0);
-        arg0->unk50 = D_80108C44;
+        arg0->unk50.data = D_80108C44;
     }
 }
 
@@ -57,9 +57,9 @@ void func_8009982C(struct ShotObj* arg0)
         arg0->state = 4;
     }
     if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50 = D_80108C4C;
+        arg0->unk50.data = D_80108C4C;
     } else {
-        arg0->unk50 = D_80108C50;
+        arg0->unk50.data = D_80108C50;
     }
     func_8002D9BC(arg0);
 }

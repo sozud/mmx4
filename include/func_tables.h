@@ -23,6 +23,7 @@ void func_80016D0C(void);
 void func_80016DAC(void);
 void func_80016E34(void);
 void func_80016E84(void);
+void func_80016FB4(s32);
 
 // D_800F1F64
 extern void (*D_800F1F64[])(struct EngineObj* arg0);
@@ -1201,7 +1202,7 @@ void func_80044B18(void);
 void func_80044B78(void);
 
 // D_800FA0F0
-void func_80044BE4(void);
+void func_80044BE4(struct MainObj*);
 void func_80044BFC(void);
 void func_80044C58(void);
 void func_80044D8C(void);
@@ -5459,12 +5460,23 @@ void func_800B9AE8(struct EffectObj*);
 void func_800B9B58(struct EffectObj*);
 void func_800B9A48(void);
 void func_800B9A68(void);
+void func_800B9AB8(struct EffectObj*);
+void func_800B9AD8(struct EffectObj*);
+void func_800B9B28(struct EffectObj*);
+void func_800B9B48(struct EffectObj*);
 void func_800B9B60(void);
 
 // D_8010B7D4
 extern void (*D_8010B7D4[])(struct EffectObj*);
 void func_800B9C0C(struct EffectObj*);
 void func_800B9C44(struct EffectObj*);
+void func_800B9CD8(struct EffectObj*);
+void func_800B9CF8(struct EffectObj*);
+void func_800B9D48(struct EffectObj*);
+void func_800B9D68(struct EffectObj*);
+void func_800B9DB8(struct EffectObj*);
+void func_800B9DCC(struct EffectObj*);
+void func_800B9DE4(struct EffectObj*);
 
 // D_8010B7DC
 extern void (*D_8010B7DC[])(struct EffectObj*);
@@ -5492,6 +5504,17 @@ void func_800BA520(struct EffectObj*);
 extern void (*D_8010BE24[])(struct EffectObj*);
 void func_800BA5B8(struct EffectObj*);
 void func_800BA5F0(struct EffectObj*);
+void func_800BA684(struct EffectObj*);
+void func_800BA6AC(struct EffectObj*);
+void func_800BA808(struct EffectObj*);
+void func_800BA81C(struct EffectObj*);
+void func_800BA86C(struct EffectObj*);
+void func_800BA898(struct EffectObj*);
+void func_800BA90C(struct EffectObj*);
+void func_800BA938(struct EffectObj*);
+void func_800BA988(struct EffectObj*);
+void func_800BA9A8(struct EffectObj*);
+void func_800BA9C0(struct EffectObj*);
 
 // D_8010BE2C
 extern void (*D_8010BE2C[])(struct EffectObj*);
@@ -5525,6 +5548,14 @@ void func_800BAF04(struct EffectObj*);
 extern void (*D_8010BE90[])(struct EffectObj*);
 void func_800BAF9C(struct EffectObj*);
 void func_800BAFD4(struct EffectObj*);
+void func_800BB068(struct EffectObj*);
+void func_800BB088(struct EffectObj*);
+void func_800BB0D8(struct EffectObj*);
+void func_800BB0F8(struct EffectObj*);
+void func_800BB148(struct EffectObj*);
+void func_800BB168(struct EffectObj*);
+void func_800BB180(struct EffectObj*);
+void func_800BDF40(struct EffectObj*);
 
 // D_8010BE98
 extern void (*D_8010BE98[])(struct EffectObj*);

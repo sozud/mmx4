@@ -12,11 +12,23 @@ void func_8008AEC4(struct BaseObj* arg0, s8 arg1)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AED0);
+void func_8008AED0(struct MainObj* arg0)
+{
+    arg0->x_pos.val += arg0->unk20;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AEE8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AF10);
+void func_8008AF10(struct MainObj* arg0)
+{
+    s32 value;
+
+    value = arg0->ext.main_72.unk84 << 8;
+    if (arg0->unk15 == 0) {
+        value = -value;
+    }
+    arg0->unk20 = value;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AF30);
 

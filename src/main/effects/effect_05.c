@@ -4,7 +4,14 @@
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_05", func_800B60BC);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_05", func_800B649C);
+void func_800B649C(struct EffectObj* arg0)
+{
+    arg0->ext.effect_5.unk1C = 0;
+    arg0->ext.effect_5.unk1E = 0;
+    arg0->ext.effect_5.unk14 = 0;
+    arg0->ext.effect_5.unk18 = 0;
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_05", func_800B64BC);
 

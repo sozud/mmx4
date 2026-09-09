@@ -456,6 +456,16 @@ struct Main49Ext {
     u8 unk86;
 };
 
+struct Main36Ext {
+    u8 pad80[8];
+    u8 saved_unk5;
+};
+
+struct Main72Ext {
+    u8 pad80[4];
+    s16 unk84;
+};
+
 struct Main60Ext {
     u8 pad80[0xA];
     u8 saved_unk5;
@@ -486,6 +496,7 @@ union MainObjExt {
     struct MainSavedState94Ext main_32;
     struct MainSavedState94Ext main_33;
     struct MainSavedState94Ext main_35;
+    struct Main36Ext main_36;
     struct MainSavedState94Ext main_37;
     struct MainSavedState80Ext main_38;
     struct MainSavedState94Ext main_44;
@@ -496,6 +507,7 @@ union MainObjExt {
     struct Main60Ext main_60;
     struct MainSavedState94Ext main_67;
     struct MainSavedState94Ext main_70;
+    struct Main72Ext main_72;
     struct Main75Ext main_75;
 };
 
@@ -764,7 +776,10 @@ struct VisualObj {
 struct ShotObj {
     ANIMATED_OBJ_FIELDS
     s8 pad49[0x50 - 0x49];
-    const u8* unk50;
+    union {
+        const u8* data;
+        struct PlayerObj* player;
+    } unk50;
     s32 unk54;
     s32 : 32;
     s8 unk5C;
@@ -797,7 +812,8 @@ struct ShotObj {
         s32 value;
         u8 bytes[4];
     } unk84;
-    s32 : 32;
+    s16 unk88;
+    s16 unk8A;
     s8 unk8C;
     s8 pad8D[0x98 - 0x8D];
     s8 unk98;
@@ -1242,6 +1258,7 @@ extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
+extern u8 D_800FF7A4[];
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -1557,6 +1574,19 @@ struct UnkEffectExt {
     s8 : 8;
     s32 unk18;
 };
+
+struct Effect5Ext {
+    u32 unk14;
+    u32 unk18;
+    u8 unk1C;
+    u8 pad1D;
+    u8 unk1E;
+};
+
+struct Effect14Ext {
+    u16 unk14;
+    u8 unk16;
+};
 struct ScalingX {
     struct Unk14* unk14;
     s8 unk18;
@@ -1573,6 +1603,15 @@ struct PaletteAnimationExt {
 
 union EffectExt {
     struct UnkEffectExt unk_effect;
+    struct Effect5Ext effect_5;
+    struct Effect14Ext effect_14;
+    struct UnkEffectExt effect_15;
+    struct UnkEffectExt effect_19;
+    struct UnkEffectExt effect_20;
+    struct UnkEffectExt effect_22;
+    struct UnkEffectExt effect_25;
+    struct UnkEffectExt effect_27;
+    struct UnkEffectExt effect_32;
     struct ScalingX scaling_x;
     struct PaletteAnimationExt palette_animation;
 };
