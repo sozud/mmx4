@@ -5907,7 +5907,20 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80028658);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80028690);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028A48);
+void func_80028A48(struct BackgroundObj* arg0)
+{
+    if (--arg0->unk36 == 0) {
+        arg0->unk34 &= ~0x10;
+        return;
+    }
+    if (--arg0->unk3C == 0) {
+        arg0->unk3E ^= 0x80;
+        arg0->unk3C = arg0->unk3A;
+    }
+    if (arg0->unk3E >= 0) {
+        arg0->x_pos.i.hi += arg0->unk45;
+    }
+}
 
 void func_80028AD8(struct BackgroundObj* arg0)
 {

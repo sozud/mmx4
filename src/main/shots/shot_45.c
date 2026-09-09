@@ -9,7 +9,10 @@ void func_800A7AF0(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7B2C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7BC8);
+void func_800A7BC8(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7BE8);
 
@@ -17,9 +20,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7C50);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7CE8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7E10);
+void func_800A7E10(struct ShotObj* arg0)
+{
+    func_80015DC8(arg0);
+    func_8002B718((struct MovingObj*)arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7E40);
+void func_800A7E40(struct ShotObj* arg0)
+{
+    D_80109AA4[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+    is_on_screen((struct BaseObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7E98);
 
@@ -35,15 +47,28 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A8164);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A81E0);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A826C);
+void func_800A826C(struct ShotObj* arg0)
+{
+    func_80015DC8(arg0);
+    func_8002B718((struct MovingObj*)arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A829C);
+void func_800A829C(struct ShotObj* arg0)
+{
+    D_80109ABC[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A82EC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A833C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A836C);
+void func_800A836C(struct ShotObj* arg0)
+{
+    D_80109AC4[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+    is_on_screen((struct BaseObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A83C4);
 

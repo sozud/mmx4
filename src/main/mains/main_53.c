@@ -21,7 +21,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B2A4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B398);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B514);
+void func_8006B514(struct UnkObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_8006B2A4();
+    } else {
+        func_8006B398(arg0);
+    }
+    func_8002B694(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B568);
 

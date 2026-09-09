@@ -1082,8 +1082,8 @@ void func_800361B0(struct PlayerObj* arg0, s32 arg1, s32 arg2)
     u16* var_v1;
     u32 var_a3;
 
-    var_a0 = SP_PALETTE_BANK + (arg1 << 4);
-    var_v1 = SP_PALETTE + (arg2 << 4);
+    var_a0 = SP_PALETTE_BANK[arg1];
+    var_v1 = SP_PALETTES[arg2];
 
     for (var_a3 = 0; var_a3 < 16; var_a3++) {
         *var_v1++ = *var_a0++;
@@ -1104,7 +1104,7 @@ void func_800361F8(struct PlayerObj* arg0)
             } else {
                 temp = ((arg0->unk93 - 1) << 6);
                 var_a0 = SP_PALETTE;
-                var_v1 = SP_PALETTE_BANK + 0x30 + temp;
+                var_v1 = SP_PALETTE_BANK[3] + temp;
                 for (a2 = 0; a2 < 0x20; a2++) {
                     *var_a0++ = *var_v1++;
                 }
@@ -1134,7 +1134,7 @@ void func_800362F8(struct PlayerObj* arg0, s32 arg1)
     if (arg0->unk2 == 0) {
         if (arg0->unkD9 == 0) {
             var_a0 = SP_PALETTE;
-            var_v1 = SP_PALETTE_BANK + (arg1 << 4);
+            var_v1 = SP_PALETTE_BANK[arg1];
             for (var_a2 = 0; var_a2 < 0x10; var_a2++) {
                 *var_a0++ = *var_v1++;
             }
@@ -1885,7 +1885,16 @@ void func_80038748(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800387A8);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800387F4);
+void func_800387F4(struct PlayerObj* arg0)
+{
+    u8 temp_s0;
+
+    temp_s0 = D_800F8D44[arg0->unk97];
+    func_800350A4(arg0, temp_s0);
+    if (temp_s0 == 0x5D) {
+        arg0->animation_step.fields.duration = arg0->unk91 - 8;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80038854);
 
@@ -2069,7 +2078,21 @@ s32 func_80039A00(struct PlayerObj* arg0)
     return 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80039AC8);
+s32 func_80039AC8(struct PlayerObj* arg0)
+{
+    if (func_80039BB8(arg0) == 0) {
+        return 0;
+    }
+    func_800350A4(arg0, 0x5D);
+    func_8001540C(1, 7, arg0);
+    func_800363B8(arg0, 8);
+    arg0->unk84 = 0;
+    arg0->unk86 = 0;
+    arg0->unk5 = 0x33;
+    arg0->unk6 = 0;
+    func_8003A7B4(arg0);
+    return 1;
+}
 
 s32 func_80039B44(struct PlayerObj* arg0)
 {

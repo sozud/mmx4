@@ -176,4 +176,11 @@ void func_80080604(struct BarObj* arg0)
     D_80103590[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_80080640);
+void func_80080640(struct MainObj* arg0)
+{
+    arg0->on_screen = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    CollisionRelated((struct PlayerObj*)arg0);
+    D_801035B0[arg0->state](arg0);
+}

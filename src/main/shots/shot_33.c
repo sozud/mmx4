@@ -11,19 +11,29 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A03F4);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A068C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0A18);
+void func_800A0A18(struct ShotObj* arg0)
+{
+    arg0->unk62 = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0A38);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0C4C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0FC8);
+void func_800A0FC8(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0FE8);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A12EC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A16DC);
+void func_800A16DC(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_801094EC[])(struct ShotObj*) = {
     func_800A03F4,

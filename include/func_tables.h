@@ -2709,9 +2709,11 @@ void func_8007211C(struct BarObj* arg0);
 void func_80071CB0(void);
 
 // D_80101414
+extern void (*D_80101414[])(struct MainObj *);
 void func_80072204(struct MainObj* arg0);
 void func_80072418(void);
 void func_800725EC(struct BarObj* arg0);
+void func_80074368(s32 arg0);
 
 // D_80101420
 extern void (*D_80101420[])(struct MainObj*);
@@ -3265,6 +3267,7 @@ void func_800804A0(void);
 void func_800805D8(void);
 
 // D_801035B0
+extern void (*D_801035B0[])(struct MainObj *);
 void func_8007DD98(void);
 void func_8007FD24(void);
 void func_80080604(struct BarObj* arg0);
@@ -4084,6 +4087,7 @@ void func_80095854(struct WeaponObj*);
 void func_8009596C(struct WeaponObj*);
 void func_80095B94(struct WeaponObj*);
 void func_80095BE8(struct WeaponObj*);
+void func_80095DA8(struct WeaponObj *arg0);
 
 // D_80108968
 extern void (*D_80108968[])(struct WeaponObj*);

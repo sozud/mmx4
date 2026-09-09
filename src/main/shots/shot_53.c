@@ -4,7 +4,10 @@
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAC98);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAD44);
+void func_800AAD44(struct ShotObj* arg0)
+{
+    func_8009216C(arg0);
+}
 
 void func_800AAD64(struct ShotObj* arg0)
 {
@@ -14,7 +17,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAD6C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAE94);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAFF8);
+void func_800AAFF8(struct ShotObj* arg0)
+{
+    D_80109D1C[arg0->unk6](arg0);
+    func_8002B318((struct BaseObj*)arg0, 0x80, 0x80);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB050);
 

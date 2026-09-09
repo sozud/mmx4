@@ -217,8 +217,9 @@ void func_800CB5B4(s32 arg0, s32 arg1)
     u32 var_a2;
 
     var_a2 = 0;
-    var_a0 = SP_PALETTE_BANK + ((arg1 + 0x39) << 4);
-    var_v1 = SP_PALETTE + 0x10;
+    arg1 += 0x39;
+    var_a0 = SP_PALETTE_BANK[arg1];
+    var_v1 = SP_PALETTES[1];
     do {
         *var_v1++ = *var_a0++;
         var_a2 += 1;

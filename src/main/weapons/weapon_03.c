@@ -16,7 +16,21 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094E50);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094EC8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094F14);
+void func_80094F14(s32 arg0)
+{
+    u16* var_a0;
+    u16* var_v1;
+    u32 var_a1;
+
+    var_a1 = 0;
+    var_a0 = SP_PALETTE_BANK[(s16)arg0];
+    var_v1 = SP_PALETTES[1];
+    do {
+        *var_v1++ = *var_a0++;
+        var_a1 += 1;
+    } while (var_a1 < 0x10U);
+    need_palette_load |= 1;
+}
 
 void func_80094F74(void)
 {
