@@ -1324,9 +1324,17 @@ void func_80016334(void)
     D_801441B0 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800163BC);
+void func_800163BC(s32 arg0)
+{
+    D_80171EA9 = 0;
+    func_80016420(D_80139524);
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800163EC);
+void func_800163EC(void)
+{
+    D_80171EA9 = 1;
+    func_80016420(D_80139524);
+}
 
 void func_80016448(u8 arg0);
 extern u8 D_80139524;
@@ -1607,7 +1615,12 @@ start:
     goto start;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800170B0);
+extern RECT D_800F1AD0;
+
+void func_800170B0(void)
+{
+    LoadImage(&D_800F1AD0, SP_VRAM_IMAGE);
+}
 
 void func_800170E0(void)
 {
@@ -5023,7 +5036,7 @@ void init_objects(void)
     struct PlayerObj* ptr = &g_Player;
     struct BazObj* ptr2;
     struct PlayerObj* ptr3 = &g_Entity;
-    struct QuxObj* ptr4;
+    struct RideArmorObj* ptr4;
 
     SP_SPRITE_COUNT = 0;
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;

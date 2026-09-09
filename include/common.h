@@ -442,6 +442,56 @@ struct Main13Ext {
     u32 saved_unk5;
 };
 
+struct Main11Ext {
+    u8 pad80[7];
+    u8 saved_unk5;
+};
+
+struct Main12Ext {
+    u8 pad80[2];
+    u8 saved_unk5;
+};
+
+struct Main22Ext {
+    u32 saved_unk5;
+    u32 unk84;
+    u8 pad88[0xC];
+    u32 unk94;
+};
+
+struct Main24Ext {
+    u32 unk80;
+    u8 pad84[0x10];
+    u32 saved_unk5;
+};
+
+struct Main25Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
+    u8 pad8C[8];
+    u32 saved_unk5;
+};
+
+struct Main35Ext {
+    u32 unk80;
+    u32 unk84;
+    u8 pad88[0xC];
+    u32 saved_unk5;
+};
+
+struct Main48Ext {
+    u8 pad80[4];
+    u8 saved_unk5;
+};
+
+struct Main73Ext {
+    u8 pad80[0xC];
+    u8 effect_state;
+    u8 object_id;
+    u8 unk8E;
+};
+
 struct Main18Ext {
     u8 pad80[0x17];
     u8 saved_unk5;
@@ -478,6 +528,11 @@ struct Main60Ext {
     u8 saved_unk5;
 };
 
+struct Main64Ext {
+    u8 pad80[0xB];
+    u8 unk8B;
+};
+
 struct Main75Ext {
     u8 pad80[0xE];
     u8 saved_unk5;
@@ -491,30 +546,35 @@ union MainObjExt {
     struct MainSavedState94Ext main_6;
     struct MainSavedState94Ext main_7;
     struct Main10Ext main_10;
+    struct Main11Ext main_11;
+    struct Main12Ext main_12;
     struct Main13Ext main_13;
     struct MainSavedState90Ext main_14;
     struct MainSavedState90Ext main_17;
     struct Main18Ext main_18;
     struct Main21Ext main_21;
-    struct MainSavedState80Ext main_22;
-    struct MainSavedState94Ext main_24;
-    struct MainSavedState94Ext main_25;
+    struct Main22Ext main_22;
+    struct Main24Ext main_24;
+    struct Main25Ext main_25;
     struct MainSavedState94Ext main_27;
     struct MainSavedState94Ext main_32;
     struct MainSavedState94Ext main_33;
-    struct MainSavedState94Ext main_35;
+    struct Main35Ext main_35;
     struct Main36Ext main_36;
     struct MainSavedState94Ext main_37;
     struct MainSavedState80Ext main_38;
     struct MainSavedState94Ext main_44;
+    struct Main48Ext main_48;
     struct Main49Ext main_49;
     struct MainSavedState94Ext main_51;
     struct MainSavedState94Ext main_52;
     struct MainSavedState80Ext main_58;
     struct Main60Ext main_60;
+    struct Main64Ext main_64;
     struct MainSavedState94Ext main_67;
     struct MainSavedState94Ext main_70;
     struct Main72Ext main_72;
+    struct Main73Ext main_73;
     struct Main75Ext main_75;
 };
 
@@ -1086,13 +1146,15 @@ struct BazObj {
     s8 pad44[0x50 - 0x44];
 }; // size 0x50
 
-struct QuxObj {
+struct RideArmorObj {
     BASE_OBJ_FIELDS
     s32 unk18;
     s32 unk1C;
     s8 pad20[0x5C - 0x20];
     s8 unk5C;
-    s8 pad5D[0x8A - 0x5D];
+    s8 pad5D[0x7E - 0x5D];
+    u8 unk7E;
+    s8 pad7F[0x8A - 0x7F];
     s16 unk8A;
     s16 unk8C;
     s8 pad8E[0x97 - 0x8E];
@@ -1651,8 +1713,15 @@ struct Effect22Ext {
     u16 unk18;
 };
 
+struct Effect8Ext {
+    u8 pad14[2];
+    u8 unk16;
+    u8 pad17;
+    u16 unk18;
+};
+
 struct Effect42Ext {
-    struct ShotObj* owner;
+    struct MainObj* owner;
     u8 timer;
 };
 
@@ -1692,6 +1761,7 @@ union EffectExt {
     u16 effect_26_timer;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
+    struct Effect8Ext effect_8;
     struct Effect14Ext effect_14;
     struct UnkEffectExt effect_15;
     struct UnkEffectExt effect_19;
@@ -1733,7 +1803,7 @@ ASSERT_OBJECT_HEADER(ItemObj, bg_offset);
 ASSERT_OBJECT_HEADER(LayerObj, bg_offset);
 ASSERT_OBJECT_HEADER(MiscObj, bg_offset);
 ASSERT_OBJECT_HEADER(BazObj, bg_offset);
-ASSERT_OBJECT_HEADER(QuxObj, bg_offset);
+ASSERT_OBJECT_HEADER(RideArmorObj, bg_offset);
 ASSERT_OBJECT_HEADER(MainObj, bg_offset);
 ASSERT_OBJECT_HEADER(QuadObj, unk14);
 ASSERT_OBJECT_HEADER(EffectObj, ext);
@@ -2081,7 +2151,7 @@ extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
 extern const u8* D_800FB0BC[12];
 extern struct LayerObj layer_objects[4];
-extern struct QuxObj qux_object;
+extern struct RideArmorObj qux_object;
 extern struct GameInfo game_info;
 extern void (*D_800F485C[1])();
 extern void (*ReadyTextUpdateFuncs[3])();

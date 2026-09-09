@@ -6,7 +6,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE2C4);
 
 void func_800BE30C(struct EffectObj* arg0)
 {
-    arg0->ext.effect_42.owner->unk8C = 1;
+    arg0->ext.effect_42.owner->ext.main_73.effect_state = 1;
     arg0->unk5++;
 }
 
@@ -33,7 +33,13 @@ void func_800BE4D4(struct EffectObj* arg0)
     D_8010C100[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE510);
+void func_800BE510(struct EffectObj* arg0)
+{
+    if (g_Player.unkBC == 0) {
+        arg0->ext.effect_42.owner->ext.main_73.effect_state = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800BE540(struct EffectObj* arg0)
 {

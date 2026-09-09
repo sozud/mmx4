@@ -11,7 +11,12 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4208);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4274);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4450);
+void func_800B4450(struct VisualObj* arg0)
+{
+    arg0->unk5++;
+    arg0->unk50->input.buttons.held = 0;
+    func_80015DC8(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4480);
 

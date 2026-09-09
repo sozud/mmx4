@@ -2204,7 +2204,7 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003B24C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003B340);
 
-void func_8003B3DC(struct QuxObj* arg0)
+void func_8003B3DC(struct RideArmorObj* arg0)
 {
     arg0->unk8A = g_Player.input.buttons.held;
     arg0->unk8C = g_Player.pressed_input;
@@ -2329,7 +2329,14 @@ void func_8003DD14(struct MainObj* arg0)
     arg0->x_pos.val += arg0->unk20;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD2C);
+void func_8003DD2C(struct MainObj* arg0)
+{
+    if (arg0->unk15 != 0) {
+        arg0->unk20 = FIXED(1.375);
+    } else {
+        arg0->unk20 = FIXED(-1.375);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD54);
 
@@ -2397,9 +2404,14 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003F44C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003F570);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003F618);
+void func_8003F618(struct RideArmorObj* arg0)
+{
+    if (arg0->unk7E == 0) {
+        func_8003DC44(BASE_OBJECT(arg0), 1);
+    }
+}
 
-void func_8003F648(struct QuxObj* arg0)
+void func_8003F648(struct RideArmorObj* arg0)
 {
     if (!(arg0->unk97 & 2)) {
         D_800F9138[arg0->unk6](arg0);
@@ -3076,7 +3088,12 @@ void func_80043214(struct MainObj* arg0)
     D_800F9CC0[arg0->unk7](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80043250);
+void func_80043250(struct MainObj* arg0)
+{
+    arg0->unk24 = 0;
+    arg0->unk7++;
+    func_80015D60(arg0, 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043280);
 
@@ -3460,7 +3477,12 @@ void func_80044AA8(struct MainObj* arg0)
     D_800FA0E4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044AE4);
+void func_80044AE4(struct MainObj* arg0)
+{
+    arg0->unk7C = 0x3C;
+    arg0->unk6++;
+    func_80015D60(arg0, 8);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044B18);
 

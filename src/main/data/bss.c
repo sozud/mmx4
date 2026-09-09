@@ -461,7 +461,7 @@ struct ItemObj item_objects[0x20];
 struct MiscObj misc_objects[0x40];
 
 struct LayerObj layer_objects[4];
-struct QuxObj qux_object;
+struct RideArmorObj qux_object;
 struct QuadObj g_QuadObjects[0x20];
 s32 player_gfx_buf_0[0x400];
 s32 player_gfx_buf_1[0x4000];

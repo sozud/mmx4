@@ -43,7 +43,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F86C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FA24);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FABC);
+void func_8006FABC(struct MainObj* arg0)
+{
+    engine_obj.enable_boss = 0;
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 void func_8006FAE4(struct MainObj* arg0)
 {

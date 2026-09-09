@@ -26,4 +26,7 @@ void func_800630AC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_800630DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_42", func_800631A8);
+void func_800631A8(struct MainObj* arg0)
+{
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
