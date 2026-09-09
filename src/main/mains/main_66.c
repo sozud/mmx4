@@ -108,4 +108,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66", func_8008225C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80082354);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80082404);
+void func_80082404(struct MainObj* arg0)
+{
+    if (arg0->x_pos.val > g_Player.x_pos.val) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = 0x40;
+    }
+}

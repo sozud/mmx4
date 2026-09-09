@@ -6,7 +6,16 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_24", func_800BABA8);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_24", func_800BAC58);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_24", func_800BAD10);
+void func_800BAD10(struct EffectObj* arg0)
+{
+    u16 temp_v0;
+
+    temp_v0 = arg0->ext.effect_24.timer - 1;
+    arg0->ext.effect_24.timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_24", func_800BAD44);
 

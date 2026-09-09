@@ -14,7 +14,10 @@ INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2C3C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2D6C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2DE0);
+void func_800C2DE0(struct ItemObj* arg0)
+{
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_800C2E00(struct ItemObj* arg0)
 {
@@ -36,7 +39,13 @@ INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3030);
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3114);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3198);
+void func_800C3198(struct ItemObj* arg0)
+{
+    if (++arg0->timer_84 == 0x32) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C31C4);
 

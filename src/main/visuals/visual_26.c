@@ -32,7 +32,7 @@ void func_800B28CC(struct VisualObj* arg0)
     arg0->y_pos.val = temp_s1->y_pos.val;
 
     if (D_8010A598[arg0->unk2] != 0) {
-        decompress_player_gfx(arg0, 0x140, D_8010A598[arg0->unk2]);
+        decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, D_8010A598[arg0->unk2]);
     }
 
     func_8002B318(arg0, D_8010A5A0[arg0->unk2].x,

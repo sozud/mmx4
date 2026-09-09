@@ -1948,24 +1948,6 @@ void func_800C00BC(struct ItemObj* arg0)
     }
 }
 
-void func_800C0DFC(struct ItemObj* arg0)
-{
-    s32 i;
-    s32* source;
-    s32* destination;
-
-    destination = (s32*)((u8*)SP_PALETTE + 0xEE0);
-    if (arg0->unk88 != 0) {
-        source = (s32*)((u8*)SP_ARC_30 + 0x9A0);
-    } else {
-        source = (s32*)((u8*)SP_ARC_30 + 0xA80);
-    }
-    for (i = 0; i < 0x38; i++) {
-        destination[i] = source[i];
-    }
-    need_palette_load |= 1;
-}
-
 void func_80068D6C(struct MainObj* arg0)
 {
     s16 x;

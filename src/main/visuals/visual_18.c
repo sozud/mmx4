@@ -30,7 +30,7 @@ void func_800B2544(struct VisualObj* arg0)
         arg0->unk49 = 0;
         func_80015D60(arg0, 0);
         arg0->state++;
-        decompress_player_gfx(arg0, 0x140, 0x20);
+        decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     } else {
         func_80015DC8(arg0);
     }

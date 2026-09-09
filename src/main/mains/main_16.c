@@ -14,7 +14,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004EA88);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004EC44);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004ECB0);
+void func_8004ECB0(struct MainObj* arg0)
+{
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[4] = 0;
+    arg0->ext.raw[5] = 0;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_8004ECE4(struct MainObj* arg0)
 {
@@ -75,13 +84,26 @@ INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004F910);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004F9B4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FAAC);
+void func_8004FAAC(struct MainObj* arg0)
+{
+    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0x11) {
+        arg0->unk5 = 2;
+        arg0->y_pos.u.hi -= 0x28;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FAE4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FBF4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FC50);
+void func_8004FC50(struct AnimatedObj* arg0)
+{
+    if (arg0->x_pos.val > g_Player.x_pos.val) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = 0x40;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FC80);
 

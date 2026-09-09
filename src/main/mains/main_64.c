@@ -6,7 +6,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C30C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C3FC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C5C4);
+void func_8007C5C4(struct MainObj* arg0)
+{
+    arg0->on_screen = 1;
+    arg0->unk6++;
+    func_80015D60(arg0, 0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C5F8);
 
@@ -21,7 +26,14 @@ void func_8007C824(struct MainObj* arg0)
     D_80102978[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C860);
+void func_8007C860(struct MainObj* arg0)
+{
+    if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
+        arg0->unk15 = 0x40;
+    } else {
+        arg0->unk15 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C890);
 

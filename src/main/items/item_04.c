@@ -27,7 +27,25 @@ void func_800C0D98(struct ItemObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0DFC);
+void func_800C0DFC(struct ItemObj* arg0)
+{
+    s32* destination;
+    s32* source;
+    u32 i;
+
+    destination = SP_PALETTE_WORDS + 0x3B8;
+    if (arg0->unk88 != 0) {
+        source = SP_ARC_30 + 0x268;
+    } else {
+        source = SP_ARC_30 + 0x2A0;
+    }
+    i = 0;
+    do {
+        *destination++ = *source++;
+        i++;
+    } while (i < 0x38);
+    need_palette_load |= 1;
+}
 
 void (*D_8010C908[])(struct ItemObj*) = {
     func_800C0864,

@@ -367,6 +367,11 @@ struct AnimatedObj {
     ANIMATED_OBJ_FIELDS
 };
 
+struct GraphicsObj {
+    ANIMATED_OBJ_FIELDS
+    s8 unk49;
+};
+
 struct CollisionObj {
     u8 pad0[8];
     f32 x_pos;
@@ -386,6 +391,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define OBJECT_HEADER(object) ((struct ObjectHeader*)(object))
 #define BASE_OBJECT(object) ((struct BaseObj*)(object))
 #define MOVING_OBJECT(object) ((struct MovingObj*)(object))
+#define GRAPHICS_OBJECT(object) ((struct GraphicsObj*)(object))
 
 struct Main0Ext {
     u8 unk80;
@@ -737,11 +743,17 @@ struct PlayerObj {
     s8 unk7A;
     union {
         u32 history;
-        struct {
-            u16 held;
-            u16 previous;
-        } buttons;
-    } input;
+    struct {
+        u16 held;
+        u16 previous;
+    } buttons;
+    struct {
+        u8 held_low;
+        u8 held_high;
+        u8 previous_low;
+        u8 previous_high;
+    } bytes;
+} input;
     u16 pressed_input;
     u16 unk82;
     s8 unk84;
@@ -961,6 +973,21 @@ struct UnkObj {
     u8 pad55[0x60 - 0x55];
 }; // size 0x60
 
+struct Item2Ext {
+    s8 unk80;
+    s8 unk81;
+    u16 unk82;
+};
+
+struct Item12Ext {
+    s32 x_offset;
+};
+
+union ItemExt {
+    struct Item2Ext item_2;
+    struct Item12Ext item_12;
+};
+
 struct ItemObj {
     BASE_OBJ_FIELDS
     f32 unk18;
@@ -996,10 +1023,9 @@ struct ItemObj {
     s8 pad7B;
     u8 unk7C;
     s8 pad7D[0x80 - 0x7D];
-    s8 unk80;
-    s8 unk81;
-    u16 unk82;
-    s8 pad84[0x88 - 0x84];
+    union ItemExt ext;
+    u16 timer_84;
+    s8 pad86[0x88 - 0x86];
     s32 unk88;
 }; // size 0x8C
 
@@ -1713,11 +1739,31 @@ struct Effect22Ext {
     u16 unk18;
 };
 
+struct Effect24Ext {
+    struct EffectObj* spawned_effect;
+    u16 timer;
+    u8 unk1A;
+    u8 unk1B;
+};
+
+struct Effect38Ext {
+    u8 pad14;
+    u8 timer;
+    u8 unk16;
+    u8 unk17;
+};
+
 struct Effect8Ext {
     u8 pad14[2];
     u8 unk16;
     u8 pad17;
     u16 unk18;
+};
+
+struct Effect9Ext {
+    u16 transition_timer;
+    u16 movement_timer;
+    s16 direction;
 };
 
 struct Effect42Ext {
@@ -1757,7 +1803,7 @@ struct PaletteAnimationExt {
 };
 
 union EffectExt {
-    u16 effect_9_timer;
+    struct Effect9Ext effect_9;
     u16 effect_26_timer;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
@@ -1767,9 +1813,11 @@ union EffectExt {
     struct UnkEffectExt effect_19;
     struct UnkEffectExt effect_20;
     struct Effect22Ext effect_22;
+    struct Effect24Ext effect_24;
     struct UnkEffectExt effect_25;
     struct UnkEffectExt effect_27;
     struct UnkEffectExt effect_32;
+    struct Effect38Ext effect_38;
     struct Effect42Ext effect_42;
     struct Effect43Ext effect_43;
     struct ScalingX scaling_x;
@@ -2339,6 +2387,16 @@ void func_80027AAC(struct BackgroundObj*);
 void func_80027AFC(struct BackgroundObj*);
 void func_80027B70(struct Unk9*);
 void func_80027BE4(struct BackgroundObj*);
+void func_80027E90(struct BackgroundObj*);
+void func_80027EBC(struct BackgroundObj*);
+void func_80027F50(void);
+void func_80027F7C(void);
+void func_80028310(struct BackgroundObj*);
+void func_80028338(struct BackgroundObj*);
+void func_80028364(struct BackgroundObj*);
+void func_800283D0(struct BackgroundObj*);
+void func_800283F8(void);
+void func_80028424(void);
 s32 func_80039C34(struct Unk12*);
 s32 func_80039E5C(struct Unk12*);
 s32 func_80039F28(struct Unk12*);

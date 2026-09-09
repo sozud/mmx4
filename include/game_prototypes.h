@@ -64,7 +64,7 @@ extern void character_select_state_5 (struct EngineObj *arg0);
 extern void character_select_state_6 (struct EngineObj *arg0);
 extern void clear_vram_rect_ptrs (void);
 extern void decompress_gfx (u16 *src, u16 *dest);
-extern void decompress_player_gfx (struct PlayerObj *arg0, s16 x, s16 y);
+extern void decompress_player_gfx (struct GraphicsObj *arg0, s16 x, s16 y);
 extern void dmy_nothing1 (short int arg0, short int arg1, unsigned char arg2, unsigned char arg3);
 extern void engine_state_0 (struct EngineObj *arg0);
 extern void engine_state_1 (struct EngineObj *arg0);

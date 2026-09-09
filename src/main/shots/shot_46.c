@@ -39,7 +39,12 @@ void func_800A916C(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A91D8);
+void func_800A91D8(struct ShotObj* arg0)
+{
+    func_80015DC8();
+    func_8002B718((struct MovingObj*)arg0);
+    is_on_screen((struct BaseObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9210);
 

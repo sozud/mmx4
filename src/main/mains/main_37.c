@@ -54,4 +54,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800609C4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060A10);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060A58);
+void func_80060A58(struct AnimatedObj* arg0)
+{
+    if (arg0->x_pos.val > g_Player.x_pos.val) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = 0x40;
+    }
+}

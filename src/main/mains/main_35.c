@@ -26,7 +26,12 @@ void func_8005EF6C(struct MainObj* arg0)
     arg0->unk5 = arg0->ext.main_35.saved_unk5;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EF78);
+void func_8005EF78(struct MainObj* arg0)
+{
+    func_80015DC8();
+    arg0->unk24 = 0x60000;
+    func_8002B718((struct MovingObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EFB0);
 
@@ -55,4 +60,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F3D4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F47C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F4E0);
+void func_8005F4E0(struct MainObj* arg0)
+{
+    if (arg0->x_pos.val > g_Player.x_pos.val) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = 0x40;
+    }
+}
