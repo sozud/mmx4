@@ -37,28 +37,28 @@ void func_80049904(struct MainObj* arg0)
         } else {
             arg0->unk15 = 0x40;
         }
-        arg0->state_8c.unk8C = 1;
-        arg0->unk90 = 1;
+        arg0->ext.main_10.unk8C = 1;
+        arg0->ext.main_10.unk90 = 1;
         break;
     case 1:
         arg0->unk7A = 1;
         arg0->unk15 = 0x40;
-        arg0->state_8c.unk8C = 0;
-        arg0->unk90 = 1;
+        arg0->ext.main_10.unk8C = 0;
+        arg0->ext.main_10.unk90 = 1;
         break;
     case 2:
         arg0->unk7A = 1;
         arg0->unk15 = 0;
-        arg0->state_8c.unk8C = 0;
-        arg0->unk90 = 1;
+        arg0->ext.main_10.unk8C = 0;
+        arg0->ext.main_10.unk90 = 1;
         break;
     case 3:
     case 4:
     case 9:
     case 10:
         arg0->unk7A = 1;
-        arg0->state_8c.unk8C = 0;
-        arg0->unk90 = 0;
+        arg0->ext.main_10.unk8C = 0;
+        arg0->ext.main_10.unk90 = 0;
         break;
     case 5:
     case 6:
@@ -66,8 +66,8 @@ void func_80049904(struct MainObj* arg0)
     case 12:
         arg0->unk7A = 1;
         arg0->unk2C = -0x600;
-        arg0->state_8c.unk8C = 0;
-        arg0->unk90 = 0;
+        arg0->ext.main_10.unk8C = 0;
+        arg0->ext.main_10.unk90 = 0;
         break;
     case 7:
     case 8:
@@ -75,13 +75,13 @@ void func_80049904(struct MainObj* arg0)
     case 14:
         arg0->unk7A = 1;
         arg0->unk2C = 0x600;
-        arg0->state_8c.unk8C = 0;
-        arg0->unk90 = 0;
+        arg0->ext.main_10.unk8C = 0;
+        arg0->ext.main_10.unk90 = 0;
         break;
     }
     arg0->unk7C = 1;
     arg0->state = 1;
-    arg0->state_80.words.unk84 = 0;
+    arg0->ext.main_10.unk84 = 0;
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
@@ -94,15 +94,15 @@ void func_80049AA0(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     D_800FB104[arg0->unk5](arg0);
-    if (arg0->state_8c.unk8C != 0) {
-        if (arg0->unk90 != 0) {
+    if (arg0->ext.main_10.unk8C != 0) {
+        if (arg0->ext.main_10.unk90 != 0) {
             temp_s1 = &g_Player.unkBA;
             if ((*temp_s1 == 0) && (func_8002D9BC(arg0) != 0) && (*temp_s1 != 0)) {
                 g_Player.unkA5 = arg0->unk15;
-                arg0->state_8c.unk8C = 3;
+                arg0->ext.main_10.unk8C = 3;
             }
         }
-        arg0->unk94 = arg0->unk5;
+        arg0->ext.main_10.saved_unk5 = arg0->unk5;
         if (func_8002DD04(arg0) < 0) {
             func_800AF808(arg0);
             func_800C813C(6, &D_800FB0EC, arg0);
@@ -125,15 +125,15 @@ void func_80049C0C(struct MainObj* arg0)
     arg0->unk7A = 0;
     arg0->unk62 = 0;
     func_80015930(2, 0xD);
-    if (arg0->state_8c.unk8C == 3) {
+    if (arg0->ext.main_10.unk8C == 3) {
         g_Player.unkBA = 0;
     }
-    arg0->state_80.words.unk80 = 0;
-    arg0->state_80.words.unk84 = 0;
-    arg0->unk88 = 0;
-    arg0->state_8c.unk8C = 0;
-    arg0->unk90 = 0;
-    arg0->unk94 = 0;
+    arg0->ext.main_10.unk80 = 0;
+    arg0->ext.main_10.unk84 = 0;
+    arg0->ext.main_10.unk88 = 0;
+    arg0->ext.main_10.unk8C = 0;
+    arg0->ext.main_10.unk90 = 0;
+    arg0->ext.main_10.saved_unk5 = 0;
     arg0->state = 3;
 }
 
@@ -148,7 +148,7 @@ void func_80049C78(struct MainObj* arg0)
 
 void func_80049CBC(struct MainObj* arg0)
 {
-    arg0->unk5 = arg0->unk94;
+    arg0->unk5 = arg0->ext.main_10.saved_unk5;
 }
 
 void func_80049CC8(struct MainObj* arg0)
@@ -160,14 +160,14 @@ void func_80049CC8(struct MainObj* arg0)
         break;
     case 1:
         if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
-            arg0->state_8c.unk8C = 1;
+            arg0->ext.main_10.unk8C = 1;
             arg0->unk7A = 0;
             arg0->unk5 = 3;
         }
         break;
     case 2:
         if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi >= 0xC1) {
-            arg0->state_8c.unk8C = 1;
+            arg0->ext.main_10.unk8C = 1;
             arg0->unk7A = 0;
             arg0->unk5 = 3;
         }
@@ -179,7 +179,7 @@ void func_80049CC8(struct MainObj* arg0)
     case 7:
     case 8:
         if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
-            arg0->state_8c.unk8C = 1;
+            arg0->ext.main_10.unk8C = 1;
             arg0->unk7A = 0;
             arg0->unk15 = 0x40;
             if (!(arg0->unk2 & 1)) {
@@ -198,7 +198,7 @@ void func_80049CC8(struct MainObj* arg0)
     case 14:
         arg0->unk7A = 0;
         arg0->unk15 = 0;
-        arg0->state_8c.unk8C = 1;
+        arg0->ext.main_10.unk8C = 1;
         if (!(arg0->unk2 & 1)) {
             arg0->unk20 = FIXED(-8);
         } else {
@@ -222,10 +222,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049F20);
 void func_80049FE8(struct MainObj* arg0)
 {
     func_8002B718((struct MovingObj*)arg0);
-    if (arg0->state_80.words.unk84 == 0) {
+    if (arg0->ext.main_10.unk84 == 0) {
         func_8004A5E0(arg0);
     } else {
-        arg0->state_80.words.unk84--;
+        arg0->ext.main_10.unk84--;
     }
     if (arg0->unk24 < 0
             ? (g_Player.y_pos.i.hi - 0x18) < arg0->y_pos.i.hi

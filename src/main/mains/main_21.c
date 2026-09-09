@@ -29,4 +29,7 @@ void func_80054FBC(struct MainObj* arg0)
     func_8002B694((struct AnimatedObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_21", func_80054FDC);
+void func_80054FDC(struct MainObj* arg0)
+{
+    arg0->unk5 = arg0->ext.main_21.saved_unk5;
+}

@@ -11,7 +11,10 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_28", func_800B3EB8);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_28", func_800B3FD4);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_28", func_800B41AC);
+void func_800B41AC(struct VisualObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010A6A0[])(struct VisualObj*) = {
     func_800B3EB8,

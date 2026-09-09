@@ -7,7 +7,10 @@ void func_800B9690(struct EffectObj* arg0)
     D_8010B7A8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_18", func_800B96CC);
+void func_800B96CC(struct EffectObj* arg0)
+{
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_18", func_800B96E0);
 

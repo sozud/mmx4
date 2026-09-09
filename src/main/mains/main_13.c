@@ -18,7 +18,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004C9E8);
 
 void func_8004CA14(struct MainObj* arg0)
 {
-    arg0->unk5 = arg0->state_8c.unk8C;
+    arg0->unk5 = arg0->ext.main_13.saved_unk5;
 }
 
 void func_8004CA20(struct MainObj* arg0)

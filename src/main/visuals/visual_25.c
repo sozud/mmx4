@@ -6,7 +6,10 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_25", func_800B3D3C);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_25", func_800B3DE8);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_25", func_800B3E20);
+void func_800B3E20(struct VisualObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800B3E40(struct VisualObj* arg0)
 {

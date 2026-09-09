@@ -40,7 +40,7 @@ void func_80089314(struct MainObj* arg0)
 
 void func_80089334(struct MainObj* arg0)
 {
-    arg0->unk5 = arg0->unk94;
+    arg0->unk5 = arg0->ext.main_70.saved_unk5;
 }
 
 void func_80089340(struct MainObj* arg0)

@@ -387,30 +387,119 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define BASE_OBJECT(object) ((struct BaseObj*)(object))
 #define MOVING_OBJECT(object) ((struct MovingObj*)(object))
 
-union MainObjState80 {
-    struct {
-        u32 unk80;
-        s32 unk84;
-    } words;
-    struct {
-        u8 unk80;
-        u8 index;
-        u8 flags[3];
-        u8 unk85;
-        u8 unk86;
-        u8 unk87;
-    } bytes;
-    struct {
-        u8 unk80;
-        u8 unk81;
-        u8 unk82;
-        u8 unk83;
-        u8 unk84;
-        u8 unk85;
-        u8 unk86;
-        u8 unk87;
-    } fields;
+struct Main0Ext {
+    u8 unk80;
+    u8 index;
+    u8 flags[3];
+    u8 unk85;
 };
+
+struct Main3Ext {
+    u32 unk80;
+    s32 unk84;
+    u32 unk88;
+    u32 unk8C;
+    u32 saved_unk5;
+};
+
+struct Main5Ext {
+    u8 pad80[0xC];
+    u16 saved_unk5;
+};
+
+struct MainSavedState80Ext {
+    u32 saved_unk5;
+};
+
+struct Main10Ext {
+    u32 unk80;
+    s32 unk84;
+    u32 unk88;
+    u32 unk8C;
+    u32 unk90;
+    u32 saved_unk5;
+};
+
+struct MainSavedState8CExt {
+    u8 pad80[0xC];
+    u32 saved_unk5;
+};
+
+struct MainSavedState90Ext {
+    u8 pad80[0x10];
+    u32 saved_unk5;
+};
+
+struct MainSavedState94Ext {
+    u8 pad80[0x14];
+    u32 saved_unk5;
+};
+
+struct Main18Ext {
+    u8 pad80[0x17];
+    u8 saved_unk5;
+};
+
+struct Main21Ext {
+    s16 timer_80;
+    s16 timer_82;
+    u8 saved_unk5;
+};
+
+struct Main49Ext {
+    u8 unk80;
+    u8 index;
+    u8 unk82;
+    u8 unk83;
+    u8 pad84;
+    u8 unk85;
+    u8 unk86;
+};
+
+struct Main60Ext {
+    u8 pad80[0xA];
+    u8 saved_unk5;
+};
+
+struct Main75Ext {
+    u8 pad80[0xE];
+    u8 saved_unk5;
+};
+
+union MainObjExt {
+    u32 raw[7];
+    struct Main0Ext main_0;
+    struct Main3Ext main_3;
+    struct Main5Ext main_5;
+    struct MainSavedState94Ext main_6;
+    struct MainSavedState94Ext main_7;
+    struct Main10Ext main_10;
+    struct MainSavedState8CExt main_13;
+    struct MainSavedState90Ext main_14;
+    struct MainSavedState90Ext main_17;
+    struct Main18Ext main_18;
+    struct Main21Ext main_21;
+    struct MainSavedState80Ext main_22;
+    struct MainSavedState94Ext main_24;
+    struct MainSavedState94Ext main_25;
+    struct MainSavedState94Ext main_27;
+    struct MainSavedState94Ext main_32;
+    struct MainSavedState94Ext main_33;
+    struct MainSavedState94Ext main_35;
+    struct MainSavedState94Ext main_37;
+    struct MainSavedState80Ext main_38;
+    struct MainSavedState94Ext main_44;
+    struct Main49Ext main_49;
+    struct MainSavedState94Ext main_51;
+    struct MainSavedState94Ext main_52;
+    struct MainSavedState80Ext main_58;
+    struct Main60Ext main_60;
+    struct MainSavedState94Ext main_67;
+    struct MainSavedState94Ext main_70;
+    struct Main75Ext main_75;
+};
+
+MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
 
 #define MAIN_OBJ_TAIL_FIELDS                        \
     s32 unk20;                                  \
@@ -459,15 +548,7 @@ union MainObjState80 {
     u8 unk7B;                                    \
     s16 unk7C;                                   \
     s16 unk7E;                                   \
-    union MainObjState80 state_80;               \
-    u32 unk88;                                   \
-    union {                                      \
-        u16 unk8C_half;                          \
-        u32 unk8C;                               \
-    } state_8c;                                  \
-    u32 unk90;                                   \
-    u32 unk94;                                   \
-    u32 pad98;
+    union MainObjExt ext;
 
 struct MainObj {
     BASE_OBJ_FIELDS
@@ -712,7 +793,10 @@ struct ShotObj {
     s8 : 8;
     struct WeaponObj* unk7C; // might be something else
     s32 : 32;
-    s32 unk84;
+    union {
+        s32 value;
+        u8 bytes[4];
+    } unk84;
     s32 : 32;
     s8 unk8C;
     s8 pad8D[0x98 - 0x8D];

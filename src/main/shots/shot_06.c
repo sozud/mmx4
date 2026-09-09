@@ -4,7 +4,7 @@
 
 void func_8009A984(struct ShotObj* arg0)
 {
-    if (arg0->unk84 == 0) {
+    if (arg0->unk84.value == 0) {
         CollisionRelated(arg0);
     }
     D_80108D5C[arg0->state](arg0);

@@ -17,7 +17,10 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E3A8);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E490);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E5A4);
+void func_8009E5A4(struct ShotObj* arg0)
+{
+    arg0->unk5 = arg0->unk84.bytes[1];
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E5B0);
 
