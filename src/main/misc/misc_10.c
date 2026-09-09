@@ -51,12 +51,12 @@ void func_800CA030(struct MiscObj* arg0)
 {
     if (arg0->unk2 == 0) {
         if (!(engine_obj.unk40 & 0x10)) {
-            func_80015DC8(arg0, engine_obj.unk40);
+            func_80015DC8(arg0);
         } else {
             func_80015D60(arg0, engine_obj.unk40 & 0xF);
         }
     } else if (!(engine_obj.unk40 & 0x20)) {
-        func_80015DC8(arg0, engine_obj.unk40);
+        func_80015DC8(arg0);
     } else {
         func_80015D60(arg0, engine_obj.unk40 & 0xF);
     }

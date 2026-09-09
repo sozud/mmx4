@@ -2505,7 +2505,7 @@ void func_8001C3E8(void);
 void reset_game_engine(void);
 void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
-void func_80015DC8();
+void func_80015DC8(struct AnimatedObj*);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);
 void func_80034754(struct Unk7*);

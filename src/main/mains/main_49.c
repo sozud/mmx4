@@ -95,9 +95,9 @@ void func_80068CEC(struct MainObj* arg0)
     func_80015D60(arg0, 8);
 }
 
-void func_80068D4C(void)
+void func_80068D4C(struct MainObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068D6C);

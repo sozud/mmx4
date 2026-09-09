@@ -16,7 +16,7 @@ void func_800A9C7C(struct ShotObj* arg0)
         arg0->on_screen = 0;
         return;
     }
-    func_80015DC8();
+    func_80015DC8(arg0);
 }
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9CBC);

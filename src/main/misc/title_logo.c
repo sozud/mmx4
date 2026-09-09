@@ -136,7 +136,7 @@ void func_800CDAD0(struct MiscObj* arg0)
 // TitleLogoUpdate state 5
 void func_800CDB10(struct MiscObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     // transition "MEGAMAN" to white before full logo appears
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->ext.title_logo.palette2 = (s32*)(SP_PALETTE + 0x100);

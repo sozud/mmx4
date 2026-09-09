@@ -18,7 +18,7 @@ void func_800AC31C(struct ShotObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
     }
-    func_80015DC8();
+    func_80015DC8(arg0);
 }
 
 void func_800AC364(struct ShotObj* arg0)

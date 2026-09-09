@@ -34,7 +34,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D06E0);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0754);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D07C0);
+void func_800D07C0(struct MainObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->state = 2;
+        engine_obj.unkF = 1;
+    }
+}
 
 union AnimationStep D_8010EFD8[1] = { { .packed = 0x00000101 } };
 

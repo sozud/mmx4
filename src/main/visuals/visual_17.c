@@ -31,7 +31,7 @@ void func_800B2200(struct VisualObj* arg0)
         temp_s0 = arg0->unk50;
         arg0->x_pos.val = temp_s0->x_pos.val;
         arg0->y_pos.val = temp_s0->y_pos.val;
-        func_80015DC8();
+        func_80015DC8(arg0);
         if (temp_s0->unk8A.packed == 0) {
             ZeroObjectState(arg0);
         } else {

@@ -24,7 +24,7 @@ void func_8004BCC8(struct MainObj* arg0)
     arg0->unk6 = 0;
     arg0->unk7 = 0;
     arg0->unk7E = 8;
-    func_80015DC8();
+    func_80015DC8(arg0);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004BCFC);

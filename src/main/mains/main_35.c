@@ -28,7 +28,7 @@ void func_8005EF6C(struct MainObj* arg0)
 
 void func_8005EF78(struct MainObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     arg0->unk24 = 0x60000;
     func_8002B718((struct MovingObj*)arg0);
 }

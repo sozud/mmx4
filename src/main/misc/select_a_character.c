@@ -253,7 +253,7 @@ void func_800CD0A4(struct MiscObj* arg0)
 // D_8010EBA0 state 1
 void func_800CD110(struct MiscObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (engine_obj.cur_character != arg0->ext.sel_char.cur_character_selected) {
         arg0->unk6 = 0;
         func_8001540C(5, 0, NULL);
@@ -309,7 +309,7 @@ void func_800CD2BC(struct MiscObj* arg0)
 {
     struct BaseObj* obj;
 
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.event != 0) {
         arg0->animation_step.fields.event = 0;
         obj = (struct BaseObj*)find_free_misc_obj();
@@ -365,7 +365,7 @@ void func_800CD498(struct MiscObj* arg0)
 {
     struct MiscObj* temp_v0;
 
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.event != 0) {
         arg0->animation_step.fields.event = 0;
         temp_v0 = find_free_misc_obj();
