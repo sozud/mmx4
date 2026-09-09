@@ -2,7 +2,10 @@
 // 800743FC..80074E84
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_800743FC);
+void func_800743FC(struct MainObj* arg0)
+{
+    D_80101658[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074438);
 
@@ -10,21 +13,33 @@ INCLUDE_ASM("main/nonmatchings/mains/main_58", func_800745E8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_800747EC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_8007482C);
+void func_8007482C(struct MainObj* arg0)
+{
+    arg0->unk5 = arg0->state_80.words.unk80;
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074838);
+void func_80074838(struct MainObj* arg0)
+{
+    D_8010167C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074874);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_800748B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_8007491C);
+void func_8007491C(struct MainObj* arg0)
+{
+    D_80101684[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074958);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_800749B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074A0C);
+void func_80074A0C(struct MainObj* arg0)
+{
+    D_8010168C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074A48);
 
@@ -34,7 +49,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074B10);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074B68);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074BD8);
+void func_80074BD8(struct MainObj* arg0)
+{
+    D_8010169C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074C14);
 

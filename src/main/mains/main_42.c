@@ -9,13 +9,20 @@ void func_80062D60(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062D9C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062E70);
+void func_80062E70(struct MainObj* arg0)
+{
+    func_80015D60(arg0, 0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062E90);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062F60);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_42", func_800630AC);
+void func_800630AC(struct MainObj* arg0)
+{
+    func_80015DC8(arg0);
+    func_8002B718(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_800630DC);
 

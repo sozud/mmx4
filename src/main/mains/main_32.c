@@ -2,7 +2,10 @@
 // 8005C824..8005D1F4
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005C824);
+void func_8005C824(struct MainObj* arg0)
+{
+    D_800FDD2C[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005C860);
 
@@ -10,9 +13,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005C960);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CADC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CAFC);
+void func_8005CAFC(struct MainObj* arg0)
+{
+    arg0->unk5 = arg0->unk94;
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CB08);
+void func_8005CB08(struct MainObj* arg0)
+{
+    func_8005D118();
+    D_800FDD5C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CB54);
 

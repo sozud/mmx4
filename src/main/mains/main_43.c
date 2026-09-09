@@ -74,7 +74,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800648D0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800649C0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064AE8);
+void func_80064AE8(struct MainObj* arg0)
+{
+    D_800FF790[arg0->unk6](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064B38);
 
@@ -125,4 +129,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065794);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065898);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065910);
+void func_80065910(struct MainObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
