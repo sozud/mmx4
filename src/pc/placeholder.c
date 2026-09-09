@@ -2009,7 +2009,7 @@ void func_80068D6C(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
     if (!(arg0->unk70 & 8)) {
         func_80015D60(arg0, 0xF);
-        SP_CUR_MAIN_OBJ->state_80.bytes.unk80 = 5;
+        SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 5;
         arg0->unk5 = 3;
         arg0->unk2C = 0x4200;
         arg0->unk6 = 0;
@@ -2019,7 +2019,7 @@ void func_80068D6C(struct MainObj* arg0)
         return;
     }
 
-    if (SP_CUR_MAIN_OBJ->state_80.bytes.unk85 == 2 || arg0->unk5 == 6) {
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2 || arg0->unk5 == 6) {
         return;
     }
 
@@ -2045,7 +2045,7 @@ void func_80068D6C(struct MainObj* arg0)
     func_80015D60(arg0, 0x19);
     arg0->unk5 = 4;
     arg0->unk6 = 0;
-    if (SP_CUR_MAIN_OBJ->state_80.bytes.unk86 == 0) {
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0) {
         arg0->unk24 = 0x38000;
         arg0->unk2C = 0x4200;
         arg0->unk20 = arg0->unk15 == 0 ? -0x10000 : 0x10000;
@@ -2066,8 +2066,8 @@ void func_80069000(struct MainObj* arg0)
     if (arg0->unk67 != 0 || arg0->unk5 == 6) {
         return;
     }
-    if (SP_CUR_MAIN_OBJ->state_80.fields.unk83 != 0) {
-        SP_CUR_MAIN_OBJ->state_80.fields.unk83--;
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk83 != 0) {
+        SP_CUR_MAIN_OBJ->ext.main_49.unk83--;
         return;
     }
 
@@ -2080,17 +2080,17 @@ void func_80069000(struct MainObj* arg0)
     }
 
     arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0 : 0x40;
-    mode = SP_CUR_MAIN_OBJ->state_80.bytes.unk85;
+    mode = SP_CUR_MAIN_OBJ->ext.main_49.unk85;
     if (mode == 1 || (mode == 2 && arg0->unk2 != 0)) {
-        SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x40;
+        SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x40;
     } else {
         y_distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
         if (y_distance >= 0x21) {
-            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x80;
+            SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x80;
         } else if (y_distance < -0x10) {
-            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x82;
+            SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x82;
         } else {
-            SP_CUR_MAIN_OBJ->state_80.fields.unk82 = 0x81;
+            SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x81;
         }
     }
     func_80015D60(arg0, 0xA);

@@ -12,7 +12,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC204);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC31C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC364);
+void func_800AC364(struct ShotObj* arg0)
+{
+    D_80109DB8[arg0->unk6](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC3BC);
 
@@ -20,7 +24,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC440);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC4A8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC4F8);
+void func_800AC4F8(struct ShotObj* arg0)
+{
+    D_80109DC4[arg0->unk6](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC550);
 
@@ -28,11 +36,17 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC5BC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC610);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC66C);
+void func_800AC66C(struct ShotObj* arg0)
+{
+    D_80109DD0[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC6A8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC6E8);
+void func_800AC6E8(struct ShotObj* arg0)
+{
+    func_8009216C(arg0);
+}
 
 void func_800AC708(struct ShotObj* arg0)
 {
@@ -40,7 +54,10 @@ void func_800AC708(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC710);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC7CC);
+void func_800AC7CC(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800AC7EC(struct ShotObj* arg0)
 {

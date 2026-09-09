@@ -15,9 +15,15 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4450);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4480);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4558);
+void func_800B4558(struct VisualObj* arg0)
+{
+    func_80015DC8(arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4578);
+void func_800B4578(struct VisualObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800B4598(struct VisualObj* arg0)
 {

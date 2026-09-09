@@ -35,7 +35,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075700);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800757F4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800758FC);
+void func_800758FC(struct MainObj* arg0)
+{
+    arg0->unk5 = arg0->ext.main_60.saved_unk5;
+}
 
 void func_80075908(struct MainObj* arg0)
 {

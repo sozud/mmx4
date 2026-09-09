@@ -9,21 +9,33 @@ void func_800B35B8(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B35F4);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B36F0);
+void func_800B36F0(struct VisualObj* arg0)
+{
+    D_8010A654[arg0->unk5](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B372C);
+void func_800B372C(struct VisualObj* arg0)
+{
+    D_8010A66C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3768);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B37F8);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3848);
+void func_800B3848(struct VisualObj* arg0)
+{
+    D_8010A674[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3884);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B392C);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B397C);
+void func_800B397C(struct VisualObj* arg0)
+{
+    D_8010A67C[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B39B8);
 

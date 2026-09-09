@@ -19,15 +19,15 @@ void func_80092CEC(struct ShotObj* arg0)
 {
     struct WeaponObj* weapon;
 
-    if (arg0->unk84 == 0) {
+    if (arg0->unk84.value == 0) {
         weapon = arg0->unk7C;
         if (weapon->unk8E == 0) {
-            arg0->unk84 = 1;
+            arg0->unk84.value = 1;
         }
         if (weapon->unk15 != arg0->unk15) {
-            arg0->unk84 = 1;
+            arg0->unk84.value = 1;
         }
-        if (arg0->unk84 == 0) {
+        if (arg0->unk84.value == 0) {
             func_80092E2C(arg0, weapon, arg0->id);
         }
     }

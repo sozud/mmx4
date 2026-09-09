@@ -30,7 +30,10 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD338);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD404);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD440);
+void func_800AD440(struct ShotObj* arg0)
+{
+    D_80109E30[arg0->unk5](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD47C);
 
@@ -38,7 +41,10 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD4DC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD538);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD630);
+void func_800AD630(struct ShotObj* arg0)
+{
+    D_80109E5C[arg0->unk5](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD66C);
 
@@ -46,15 +52,29 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD6DC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD820);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD868);
+void func_800AD868(struct ShotObj* arg0)
+{
+    D_80109E94[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD8C0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD92C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD9C4);
+void func_800AD9C4(struct ShotObj* arg0)
+{
+    func_80015DC8(arg0);
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADA0C);
+void func_800ADA0C(struct ShotObj* arg0)
+{
+    D_80109E9C[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADA64);
 
@@ -68,11 +88,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADD40);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADDB4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADE04);
+void func_800ADE04(struct ShotObj* arg0)
+{
+    D_80109EA8[arg0->unk5](arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADE54);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADED4);
+void func_800ADED4(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800ADEF4(struct ShotObj* arg0)
 {

@@ -9,7 +9,10 @@ void func_800B4610(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B464C);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B46C8);
+void func_800B46C8(struct VisualObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800B46E8(struct VisualObj* arg0)
 {
@@ -37,9 +40,20 @@ void func_800B4858(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4894);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B490C);
+void func_800B490C(struct VisualObj* arg0)
+{
+    func_80015DC8(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+    if (--arg0->unk54 == 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4960);
+void func_800B4960(struct VisualObj* arg0)
+{
+    D_8010A6F4[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B499C);
 
