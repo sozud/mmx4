@@ -36,6 +36,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_23", func_800565EC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056618);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056718);
+void func_80056718(struct MainObj* arg0)
+{
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056738);
+void func_80056738(struct MainObj* arg0)
+{
+    D_800FCEC8[arg0->state](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}

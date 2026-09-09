@@ -2,7 +2,11 @@
 // 8004E890..8004FF90
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004E890);
+void func_8004E890(struct MainObj* arg0)
+{
+    D_800FBD8C[arg0->state](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004E8E0);
 

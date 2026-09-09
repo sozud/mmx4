@@ -486,12 +486,6 @@ void func_8002C9E4(struct PlayerObj* object)
     object->y_pos.i.hi += D_8013B804;
 }
 
-void func_8002C99C(struct PlayerObj* object)
-{
-    if (func_8002D490(object) && func_8002D25C(object))
-        func_8002C9E4(object);
-}
-
 void func_8002E994(struct EngineObj* arg0)
 {
     u16 direction = D_80166C08 & 0xF000;

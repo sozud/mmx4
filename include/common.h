@@ -2118,6 +2118,9 @@ s8 func_800136B0();
 void func_800137F0();
 void MyCdReadyCallback(u8 status, u8* result);
 void func_80018000(s32);
+void func_8002B0C8(struct ObjectHeader* arg0);
+void func_8002B108(struct ObjectHeader* arg0);
+void func_8002B694(struct AnimatedObj* arg0);
 
 enum SelectedPlayer {
     CHARACTER_X,
