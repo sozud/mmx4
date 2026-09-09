@@ -13,7 +13,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D85C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D8F0);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DA08);
+void func_8009DA08(struct ShotObj* arg0)
+{
+    g_Player.x_pos.val = arg0->x_pos.val;
+    g_Player.y_pos.val = arg0->y_pos.val;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DA28);
 

@@ -94,7 +94,14 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE9D8);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AEA58);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AEAA0);
+void func_800AEAA0(struct ShotObj* arg0)
+{
+    struct PlayerObj* parent;
+
+    parent = arg0->unk50.player;
+    arg0->x_pos.val = parent->unk18;
+    arg0->y_pos.val = parent->unk1C;
+}
 
 void (*D_8010A064[])(struct ShotObj*) = {
     func_800AE450,

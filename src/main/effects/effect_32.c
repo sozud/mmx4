@@ -7,7 +7,11 @@ void func_800BC518(struct EffectObj* arg0)
     D_8010BF90[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_32", func_800BC554);
+void func_800BC554(struct EffectObj* arg0)
+{
+    arg0->ext.effect_32.unk15 = 0;
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_32", func_800BC568);
 

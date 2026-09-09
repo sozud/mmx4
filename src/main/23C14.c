@@ -2815,7 +2815,14 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80042248);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8004234C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042384);
+void func_80042384(struct MainObj* arg0)
+{
+    if (arg0->unk67 == 0) {
+        arg0->unk5 = 2;
+    } else {
+        arg0->unk5 = 6;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800423A0);
 
@@ -3309,7 +3316,11 @@ void func_80044BA8(struct MainObj* arg0)
     D_800FA0F0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044BE4);
+void func_80044BE4(struct MainObj* arg0)
+{
+    arg0->unk7C = 0x28;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044BFC);
 

@@ -7,27 +7,82 @@ void func_800B9BD0(struct EffectObj* arg0)
     D_8010B7D4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9C0C);
+void func_800B9C0C(struct EffectObj* arg0)
+{
+    arg0->unk5 = 2;
+    arg0->ext.effect_20.unk14 = 3;
+    arg0->state++;
+    func_800B9C44(arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9C44);
+void func_800B9C44(struct EffectObj* arg0)
+{
+    arg0->ext.effect_20.unk15 = arg0->ext.effect_20.unk14;
+    func_800B9DE4(arg0);
+    D_8010B7DC[arg0->unk5](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9C98);
+void func_800B9C98(struct EffectObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_800B9CD8(arg0);
+    } else {
+        func_800B9CF8(arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9CD8);
+void func_800B9CD8(struct EffectObj* arg0)
+{
+    background_objects[0].unk2E = 0xC0;
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9CF8);
+void func_800B9CF8(struct EffectObj* arg0)
+{
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9D08);
+void func_800B9D08(struct EffectObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_800B9D48(arg0);
+    } else {
+        func_800B9D68(arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9D48);
+void func_800B9D48(struct EffectObj* arg0)
+{
+    background_objects[0].unk2E = 0x90;
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9D68);
+void func_800B9D68(struct EffectObj* arg0)
+{
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9D78);
+void func_800B9D78(struct EffectObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_800B9DB8(arg0);
+    } else {
+        func_800B9DCC(arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9DB8);
+void func_800B9DB8(struct EffectObj* arg0)
+{
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9DCC);
+void func_800B9DCC(struct EffectObj* arg0)
+{
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
 void func_800B9DDC(struct EffectObj* arg0)
 {
@@ -40,4 +95,11 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9E54);
 void (*D_8010B7D4[])(struct EffectObj*) = {
     func_800B9C0C,
     func_800B9C44,
+};
+
+void (*D_8010B7DC[])(struct EffectObj*) = {
+    func_800B9C98,
+    func_800B9D08,
+    func_800B9D78,
+    func_800B9DDC,
 };

@@ -13,9 +13,9 @@ void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
 void func_800BB9F4(struct EffectObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
-        arg0->ext.unk_effect.unk14 = 0;
-        arg0->ext.unk_effect.unk15 = 0;
-        arg0->ext.unk_effect.unk16 = 0;
+        arg0->ext.effect_27.unk14 = 0;
+        arg0->ext.effect_27.unk15 = 0;
+        arg0->ext.effect_27.unk16 = 0;
         arg0->state = 1;
         arg0->unk5 = 0;
     }
@@ -37,13 +37,13 @@ void func_800BBA24(struct EffectObj* arg0)
             quad->link.owner = arg0;
         }
         arg0->unk5 = 1;
-        arg0->ext.unk_effect.unk14++;
+        arg0->ext.effect_27.unk14++;
         return;
     case 1:
         var_i = 0;
         // spawn blue quads behind "READY"
-        if (arg0->ext.unk_effect.unk14 == 0) {
-            arg0->ext.unk_effect.unk14 = 0;
+        if (arg0->ext.effect_27.unk14 == 0) {
+            arg0->ext.effect_27.unk14 = 0;
             do {
                 quad = find_free_quad_obj();
                 if (quad != NULL) {
@@ -52,7 +52,7 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->unk2 = 1;
                     quad->unk7 = var_i;
                     quad->link.owner = arg0;
-                    arg0->ext.unk_effect.unk14++;
+                    arg0->ext.effect_27.unk14++;
                 }
                 var_i += 1;
             } while (var_i < 0xA);
@@ -62,8 +62,8 @@ void func_800BBA24(struct EffectObj* arg0)
         return;
     case 2:
         var_i = 0;
-        if (arg0->ext.unk_effect.unk14 == 0) {
-            arg0->ext.unk_effect.unk14 = 0;
+        if (arg0->ext.effect_27.unk14 == 0) {
+            arg0->ext.effect_27.unk14 = 0;
             do {
                 quad = find_free_quad_obj();
                 if (quad != NULL) {
@@ -72,7 +72,7 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->unk2 = 2;
                     quad->unk7 = get_random() & 3;
                     quad->link.owner = arg0;
-                    arg0->ext.unk_effect.unk14++;
+                    arg0->ext.effect_27.unk14++;
                 }
                 var_i += 1;
             } while (var_i < 8);
@@ -81,16 +81,19 @@ void func_800BBA24(struct EffectObj* arg0)
         }
         break;
     case 3:
-        if (arg0->ext.unk_effect.unk14 == 0) {
-            arg0->ext.unk_effect.unk14 = 0;
-            arg0->ext.unk_effect.unk16 = 1;
+        if (arg0->ext.effect_27.unk14 == 0) {
+            arg0->ext.effect_27.unk14 = 0;
+            arg0->ext.effect_27.unk16 = 1;
         }
         break;
     }
 }
 
 // D_8010BEC8 state 2
-INCLUDE_ASM("main/nonmatchings/effects/effect_27", func_800BBBF4);
+void func_800BBBF4(struct EffectObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010BEC8[])(struct EffectObj*) = {
     func_800BB9F4,

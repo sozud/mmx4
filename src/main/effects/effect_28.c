@@ -13,7 +13,10 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBD24);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBD88);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBE84);
+void func_800BBE84(struct EffectObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBEA4);
 

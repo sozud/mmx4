@@ -114,7 +114,12 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80012D28);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80012D4C);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012D68);
+void func_80012D68(u32* src, u32* dst, s32 count)
+{
+    do {
+        *dst++ = *src++;
+    } while (--count);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80012D88);
 
@@ -3164,7 +3169,10 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001F798);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F850);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F8DC);
+void func_8001F8DC(void)
+{
+    func_80016FB4(3);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F8FC);
 

@@ -17,6 +17,13 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFE20);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFEA4);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFF08);
+void func_800AFF08(struct VisualObj* arg0)
+{
+    struct PlayerObj* parent;
+
+    parent = arg0->unk50;
+    arg0->x_pos.val = parent->unk18;
+    arg0->y_pos.val = parent->unk1C;
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFF28);
