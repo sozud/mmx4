@@ -631,7 +631,7 @@ struct BackgroundObj {
 union PlayerUnk88 {
     u16 value;
     struct {
-        s8 timer;
+        u8 timer;
         u8 collision_flags;
     } bytes;
 };
@@ -2317,7 +2317,7 @@ void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
 s32 func_8002D5E4(struct PlayerObj*, s16);
-u8 func_8002D724(void*, s16, s16);
+u8 func_8002D724(struct PlayerObj*, s16, s16);
 u8 func_8002D7E4(struct PlayerObj*, s16, s16);
 u8 func_8002D900(struct PlayerObj*);
 u8 func_8002D994(struct PlayerObj*);
