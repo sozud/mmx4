@@ -42,7 +42,7 @@ s32 func_800334F4(struct PlayerObj* arg0)
 
     if (arg0->input.buttons.held & 1) {
         arg0->unk15 = 0x40;
-        if (!(arg0->unk89 & 1)) {
+        if (!(arg0->unk88.bytes.collision_flags & 1)) {
             arg0->x_vel.val = FIXED(0.5);
             return 1;
         } else {
@@ -51,7 +51,7 @@ s32 func_800334F4(struct PlayerObj* arg0)
     }
 
     arg0->unk15 = 0;
-    if (!(arg0->unk89 & 2)) {
+    if (!(arg0->unk88.bytes.collision_flags & 2)) {
         arg0->x_vel.val = FIXED(-0.5);
         return 1;
     } else {
@@ -74,13 +74,13 @@ s32 func_8003356C(struct PlayerObj* arg0)
 
     if (buttons & 1) {
         arg0->unk15 = 0x40;
-        if (arg0->unk89 & 1) {
+        if (arg0->unk88.bytes.collision_flags & 1) {
             return 0;
         }
         arg0->x_vel.val = FIXED(2);
     } else {
         arg0->unk15 = 0;
-        if (arg0->unk89 & 2) {
+        if (arg0->unk88.bytes.collision_flags & 2) {
             return 0;
         }
         arg0->x_vel.val = FIXED(-2);
@@ -94,7 +94,7 @@ void func_800335E4(struct PlayerObj* arg0)
     s8 temp_v1;
 
     temp_v1 = arg0->unk5; // fake
-    if ((arg0->unk5 != 0) && (temp_v1 != 1) && (arg0->unk67 == 0) && (arg0->unkA4 <= 0) && (arg0->unkC5 >= 0) && (arg0->unkC4 == 0) && !(arg0->unk89 & 8)) {
+    if ((arg0->unk5 != 0) && (temp_v1 != 1) && (arg0->unk67 == 0) && (arg0->unkA4 <= 0) && (arg0->unkC5 >= 0) && (arg0->unkC4 == 0) && !(arg0->unk88.bytes.collision_flags & 8)) {
         if (arg0->unk2 != 0) {
             func_80036054(arg0);
         }
@@ -115,13 +115,13 @@ s32 func_80033694(struct PlayerObj* arg0)
         arg0->unk15 = 0;
     }
     if (arg0->unk15 != 0) {
-        if ((arg0->unk89 & 1)) {
+        if ((arg0->unk88.bytes.collision_flags & 1)) {
             return 0;
         } else {
             arg0->x_vel.val = FIXED(6.5);
             return 1;
         }
-    } else if (!(arg0->unk89 & 2)) {
+    } else if (!(arg0->unk88.bytes.collision_flags & 2)) {
         arg0->x_vel.val = FIXED(-6.5);
         return 1;
     } else {
@@ -135,16 +135,16 @@ void func_80033750(struct PlayerObj* arg0)
 
     arg0->unk87 = 0;
     if ((arg0->unkC3 == 0) && (temp_v1 = arg0->unk5, (temp_v1 != 0)) && (temp_v1 != 1)) {
-        if (arg0->unk88 == 0) {
+        if (arg0->unk88.bytes.timer == 0) {
             arg0->unk82 = arg0->pressed_input & 3;
             if (arg0->unk82 != 0) {
-                arg0->unk88 = 0xC;
+                arg0->unk88.bytes.timer = 0xC;
             }
         } else {
-            arg0->unk88--;
+            arg0->unk88.bytes.timer--;
             if (arg0->pressed_input & arg0->unk82) {
                 arg0->unk87 = 1;
-                arg0->unk88 = 0;
+                arg0->unk88.bytes.timer = 0;
             }
         }
     }
@@ -240,7 +240,7 @@ s32 func_80033AC0(struct PlayerObj* arg0)
         return 0;
     }
 
-    if (!(arg0->unk89 & 3)) {
+    if (!(arg0->unk88.bytes.collision_flags & 3)) {
         return 0;
     }
 
@@ -274,17 +274,17 @@ s32 func_80033B8C(struct PlayerObj* arg0)
     if ((arg0->unkC3 != 0) || (arg0->unk4A == 0)) {
         return 0;
     }
-    return (arg0->input.buttons.held & 3 & arg0->unk89) != 0;
+    return (arg0->input.buttons.held & 3 & arg0->unk88.bytes.collision_flags) != 0;
 }
 
 void func_80033BC8(struct PlayerObj* arg0)
 {
     s8 temp_v1;
     if (arg0->unkD9 == 0 && (temp_v1 = arg0->unk5, temp_v1 != 0) && (temp_v1 != 1)) {
-        if ((arg0->unk89 & 0xC) == 0xC) {
+        if ((arg0->unk88.bytes.collision_flags & 0xC) == 0xC) {
             arg0->unk5C = -0x80;
         }
-        if ((arg0->unk89 & 3) == 3) {
+        if ((arg0->unk88.bytes.collision_flags & 3) == 3) {
             arg0->unk5C = -0x80;
         }
         if (arg0->unk79 != 0 && arg0->unk61 == 0 && arg0->unk7A == 0) {
@@ -539,7 +539,7 @@ void func_80034668(struct PlayerObj* arg0)
 
 void func_8003470C(struct PlayerObj* arg0)
 {
-    if (arg0->unk89 & 8) {
+    if (arg0->unk88.bytes.collision_flags & 8) {
         arg0->unk67 = 0;
         arg0->unk86 = 0;
         func_800343A4(arg0);
@@ -570,7 +570,7 @@ void func_80034968(struct PlayerObj* arg0)
     arg0->unk84 = 0;
     arg0->unk86 = 0;
     arg0->unk8A.bytes.low = 8;
-    if (arg0->unk89 & 1) {
+    if (arg0->unk88.bytes.collision_flags & 1) {
         arg0->unk15 = 0x40;
     } else {
         arg0->unk15 = 0;
@@ -1186,7 +1186,7 @@ void func_800365A4(struct PlayerObj* arg0)
     if (!arg0->unkC3 && (arg0->input.buttons.held & 3)) {
         if (arg0->input.buttons.held & 1) {
             arg0->unk15 = 0x40;
-            if (!(arg0->unk89 & 1)) {
+            if (!(arg0->unk88.bytes.collision_flags & 1)) {
                 if (arg0->unk84 != 0) {
                     arg0->x_vel.val = FIXED(4.125);
                 } else {
@@ -1197,7 +1197,7 @@ void func_800365A4(struct PlayerObj* arg0)
             }
         } else {
             arg0->unk15 = 0;
-            if (!(arg0->unk89 & 2)) {
+            if (!(arg0->unk88.bytes.collision_flags & 2)) {
                 if (arg0->unk84 != 0) {
                     arg0->x_vel.val = FIXED(-4.125);
                 } else {
@@ -1495,7 +1495,7 @@ s32 func_800375B4(struct PlayerObj* arg0)
     if (arg0->unk15) {
         var_v1 = 1;
     }
-    if ((var_v1 & arg0->unk89) || !(arg0->pressed_input & 0x40)) {
+    if ((var_v1 & arg0->unk88.bytes.collision_flags) || !(arg0->pressed_input & 0x40)) {
         return 0;
     }
 
@@ -2350,7 +2350,16 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003DF9C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003E048);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003E0B0);
+s32 func_8003E0B0(struct PlayerObj* arg0)
+{
+    s32 mask;
+
+    mask = 1;
+    if (arg0->unk15 != 0) {
+        mask = 2;
+    }
+    return arg0->unk88.value & mask;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003E0D0);
 
@@ -2763,7 +2772,64 @@ void func_80041C94(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80041DF0);
+void func_80041DF0(struct MainObj* arg0)
+{
+    s32 target_x;
+    s32 target_y;
+    s32 x_velocity;
+    s32 y_velocity;
+
+    switch (arg0->unk2) {
+    case 0:
+        target_x = background_objects[0].x_pos.val + FIXED(-256);
+        target_y = background_objects[0].y_pos.val + FIXED(-256);
+        break;
+    case 1:
+        target_x = background_objects[0].x_pos.val + FIXED(-256);
+        target_y = background_objects[0].y_pos.val + FIXED(496);
+        break;
+    }
+
+    func_8002B93C(
+        MOVING_OBJECT(arg0),
+        func_8002B7B0(OBJECT_HEADER(arg0), target_x, target_y));
+
+    if (arg0->ext.main_0.unk85 == 2) {
+        x_velocity = arg0->unk20 * 2;
+        y_velocity = arg0->unk24 * 2;
+    } else {
+        x_velocity = arg0->unk20 * 4;
+        y_velocity = arg0->unk24 * 4;
+    }
+
+    arg0->unk20 = x_velocity;
+    *(volatile s32*)&arg0->unk24 = y_velocity;
+    func_8002B694((struct AnimatedObj*)arg0);
+    func_80015DC8(arg0);
+
+    if (arg0->on_screen == 0) {
+        if (arg0->ext.main_0.unk85 != 0) {
+            arg0->state = 2;
+            return;
+        }
+
+        arg0->unk16 = 0x12;
+        arg0->unk5 = 7;
+        arg0->bg_offset = -1;
+        arg0->x_pos.val = D_800F99D4[arg0->unk2].x;
+        arg0->y_pos.val = D_800F99D4[arg0->unk2].y;
+        arg0->ext.main_0.unk80 = 0;
+        func_80015D60(arg0, 6);
+
+        if (arg0->unk2 >= 2 && arg0->unk2 <= 3) {
+            arg0->unk15 = 0x40;
+        } else {
+            arg0->unk15 = 0;
+        }
+    }
+
+    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+}
 
 void func_80041F88(struct MainObj* arg0)
 {
@@ -3028,7 +3094,7 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80043390);
 void func_800435C4(struct MainObj* arg0)
 {
     if (arg0->unk5 != 8) {
-        func_80043F78();
+        func_80043F78(arg0);
         func_8004415C(arg0);
         func_8004431C(arg0);
         func_800441E4(arg0);
@@ -3171,7 +3237,71 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80043ECC);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043F04);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80043F78);
+void func_80043F78(struct MainObj* arg0)
+{
+    s16 temp_v0;
+    s16 var_v1;
+    s32 temp_v0_2;
+
+    if (arg0->unk5 == 2) {
+        temp_v0 = arg0->unk7C;
+        if (temp_v0 != 0) {
+            arg0->unk7C = temp_v0 - 1;
+            return;
+        }
+
+        if (arg0->unk15 != 0) {
+            var_v1 = arg0->x_pos.u.hi + arg0->unk68->unk0 + 0x10;
+        } else {
+            var_v1 = arg0->x_pos.u.hi - arg0->unk68->unk0 - 0x10;
+        }
+
+        if (((s32(*)(void*, s16, s16))func_8002D724)(
+                arg0, var_v1,
+                arg0->unk68->unk3 + (arg0->y_pos.u.hi + arg0->unk68->unk1))
+            == 0) {
+            arg0->ext.main_3.unk8C = 0x78;
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            func_80015D60(arg0, 2);
+        }
+
+        if (arg0->ext.main_3.unk88 == 0) {
+            if (arg0->unk15 != 0) {
+                if ((arg0->unk70 & 1) != 0) {
+                    arg0->unk5 = 3;
+                    arg0->unk6 = 0;
+                    arg0->ext.main_3.unk8C = 0x78;
+                    func_80015D60(arg0, 2);
+                }
+            } else if ((arg0->unk70 & 2) != 0) {
+                arg0->unk5 = 3;
+                arg0->unk6 = 0;
+                arg0->ext.main_3.unk8C = 0x78;
+                func_80015D60(arg0, 2);
+            }
+        } else {
+            temp_v0_2 = arg0->x_pos.val - g_Player.x_pos.val;
+            if (arg0->unk15 != 0) {
+                if (temp_v0_2 <= 0) {
+                    if ((arg0->unk70 & 1) == 0) {
+                        return;
+                    }
+                }
+            } else if (temp_v0_2 >= 0) {
+                if ((arg0->unk70 & 2) == 0) {
+                    return;
+                }
+            }
+
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            arg0->ext.main_3.unk88 = 0;
+            arg0->ext.main_3.unk8C = 0x3C;
+            func_80015D60(arg0, 2);
+        }
+    }
+}
 
 void func_8004415C(struct MainObj* arg0)
 {

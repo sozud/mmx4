@@ -79,4 +79,21 @@ int VSync(int mode)
 }
 
 #endif
-INCLUDE_ASM("main/nonmatchings/psxsdk/libetc/vsync", v_wait);
+extern volatile s32 D_8011DC50;
+extern void func_800EDC74(const char*);
+extern void ChangeClearRCnt(long, long);
+
+void v_wait(int v, int timeout)
+{
+    volatile int t = timeout << 15;
+    while (D_8011DC50 < v) {
+        if (!t--) {
+            func_800EDC74(
+                "VSync: timeout\n\0"
+                "$Id: intr.c,v 1.74 1996/12/04 07:30:16 makoto Exp $");
+            ChangeClearPAD(0);
+            ChangeClearRCnt(3, 0);
+            return;
+        }
+    }
+}

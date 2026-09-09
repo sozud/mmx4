@@ -414,7 +414,7 @@ struct MainSavedState80Ext {
 struct Main10Ext {
     u32 unk80;
     s32 unk84;
-    u32 unk88;
+    s32 unk88;
     u32 unk8C;
     u32 unk90;
     u32 saved_unk5;
@@ -432,6 +432,13 @@ struct MainSavedState90Ext {
 
 struct MainSavedState94Ext {
     u8 pad80[0x14];
+    u32 saved_unk5;
+};
+
+struct Main13Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
     u32 saved_unk5;
 };
 
@@ -484,7 +491,7 @@ union MainObjExt {
     struct MainSavedState94Ext main_6;
     struct MainSavedState94Ext main_7;
     struct Main10Ext main_10;
-    struct MainSavedState8CExt main_13;
+    struct Main13Ext main_13;
     struct MainSavedState90Ext main_14;
     struct MainSavedState90Ext main_17;
     struct Main18Ext main_18;
@@ -621,6 +628,14 @@ struct BackgroundObj {
     s8 pad51[3];
 }; // size 0x54
 
+union PlayerUnk88 {
+    u16 value;
+    struct {
+        s8 timer;
+        u8 collision_flags;
+    } bytes;
+};
+
 // similar to Unk
 struct PlayerObj {
     ANIMATED_OBJ_FIELDS
@@ -669,8 +684,7 @@ struct PlayerObj {
     s8 : 8;
     s8 unk86;
     s8 unk87;
-    s8 unk88;
-    u8 unk89;
+    union PlayerUnk88 unk88;
     union PlayerUnk8A unk8A;
     s8 unk8C;
     u8 unk8D;
@@ -1503,7 +1517,7 @@ union EngineCharacterState {
 struct EngineObj {
     s8 state;
     s8 unk1;
-    s8 unk2;
+    u8 unk2;
     s8 unk3;
     s16 unk4;
     s8 unk6;
@@ -1657,7 +1671,7 @@ struct Effect14Ext {
 };
 struct ScalingX {
     struct Unk14* unk14;
-    s8 unk18;
+    u8 unk18;
 };
 
 struct PaletteAnimationExt {
@@ -1671,6 +1685,7 @@ struct PaletteAnimationExt {
 
 union EffectExt {
     u16 effect_9_timer;
+    u16 effect_26_timer;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
     struct Effect14Ext effect_14;
@@ -1906,6 +1921,7 @@ extern u8 D_800F2490[];
 extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern u16 D_80106770[64];
 extern u8 D_800FAEF0[8];
+extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
@@ -2214,6 +2230,8 @@ extern u8 D_8010DBF8[];
 
 s32 func_80034E2C();
 s32 func_80034F7C();
+s16 func_8002BAA4(void);
+void func_80036470(s32 arg0);
 void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
@@ -2299,7 +2317,7 @@ void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
 s32 func_8002D5E4(struct PlayerObj*, s16);
-u8 func_8002D724(struct PlayerObj*, s16, s16);
+u8 func_8002D724(void*, s16, s16);
 u8 func_8002D7E4(struct PlayerObj*, s16, s16);
 u8 func_8002D900(struct PlayerObj*);
 u8 func_8002D994(struct PlayerObj*);

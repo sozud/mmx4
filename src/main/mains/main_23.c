@@ -32,7 +32,12 @@ void func_80056478(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_800564B4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_800565EC);
+void func_800565EC(struct MainObj* arg0)
+{
+    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
+        arg0->unk5 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056618);
 

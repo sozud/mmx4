@@ -455,29 +455,6 @@ s32 func_8002CD70(struct PlayerObj* object, u8 attribute)
     }
 }
 
-s32 func_8002D490(struct PlayerObj* object)
-{
-    s16 offset = D_8013B800;
-    s16 x;
-
-    if (D_8013B7DC & 1) {
-        if (object->unk15)
-            x = D_8013B7F0 + offset + D_8013B7E8 + D_8013B7E0 - 1;
-        else
-            x = D_8013B7F0 + offset - D_8013B7E8 + D_8013B7E0 - 1;
-    } else {
-        if (object->unk15)
-            x = D_8013B7F0 + offset + D_8013B7E8 - D_8013B7E0;
-        else
-            x = D_8013B7F0 + offset - D_8013B7E8 - D_8013B7E0;
-    }
-    if (func_8002D5E4(object, x))
-        return -1;
-    object->x_pos.i.lo = 0;
-    object->x_pos.i.hi += offset;
-    return 0;
-}
-
 void func_8002C9E4(struct PlayerObj* object)
 {
     object->x_pos.i.lo = 0;

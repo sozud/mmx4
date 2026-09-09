@@ -455,7 +455,20 @@ s32 get_mode(s32 dfe, s32 dtd, s32 tpage)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/D9840", get_cs);
+extern u8 D_8011E188;
+extern s16 D_8011E18C;
+extern s16 D_8011E18E;
+
+s32 get_cs(s16 x, s16 y)
+{
+    x = x >= 0 ? (x > D_8011E18C - 1 ? D_8011E18C - 1 : x) : 0;
+    y = y >= 0 ? (y > D_8011E18E - 1 ? D_8011E18E - 1 : y) : 0;
+    if (D_8011E188 - 1 <= 1U) {
+        return 0xE3000000 | ((y & 0xFFF) << 12) | (x & 0xFFF);
+    } else {
+        return 0xE3000000 | ((y & 0x3FF) << 10) | (x & 0x3FF);
+    }
+}
 
 #define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
 
@@ -481,7 +494,19 @@ u32 get_ofs(s32 arg0, u16 arg1)
     return 0xe5000000 | ((arg1 & 0x7ff) << 0xB) | (arg0 & 0x7ff);
 }
 
-INCLUDE_ASM("main/nonmatchings/D9840", get_tw);
+u32 get_tw(RECT* arg0)
+{
+    u32 pad[4];
+
+    if (arg0 != 0) {
+        pad[0] = (u8)arg0->x >> 3;
+        pad[2] = (s32)(-arg0->w & 0xFF) >> 3;
+        pad[1] = (u8)arg0->y >> 3;
+        pad[3] = (s32)(-arg0->h & 0xFF) >> 3;
+        return (pad[1] << 0xF) | 0xE2000000 | ((pad[0] << 0xA)) | (pad[3] << 5) | pad[2];
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/D9840", get_dx);
 
@@ -686,7 +711,22 @@ INCLUDE_ASM("main/nonmatchings/D9840", get_alarm);
 
 INCLUDE_ASM("main/nonmatchings/D9840", _version);
 
-INCLUDE_ASM("main/nonmatchings/D9840", memset2);
+void memset2(s8* dst, s8 value, s32 count)
+{
+    s8 scratch[8];
+    s32 index;
+    s8* ptr;
+
+    ptr = dst;
+    index = count - 1;
+    if (count != 0) {
+        do {
+            *ptr = value;
+            index -= 1;
+            ptr += 1;
+        } while (index != -1);
+    }
+}
 
 extern void MDEC_reset(s32 mode);
 
