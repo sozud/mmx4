@@ -631,9 +631,13 @@ struct BackgroundObj {
 union PlayerUnk88 {
     u16 value;
     struct {
-        u8 timer;
+        s8 timer;
         u8 collision_flags;
     } bytes;
+    struct {
+        u8 timer;
+        u8 collision_flags;
+    } unsigned_bytes;
 };
 
 // similar to Unk
@@ -1517,7 +1521,7 @@ union EngineCharacterState {
 struct EngineObj {
     s8 state;
     s8 unk1;
-    u8 unk2;
+    s8 unk2;
     s8 unk3;
     s16 unk4;
     s8 unk6;
@@ -1671,7 +1675,7 @@ struct Effect14Ext {
 };
 struct ScalingX {
     struct Unk14* unk14;
-    u8 unk18;
+    s8 unk18;
 };
 
 struct PaletteAnimationExt {
