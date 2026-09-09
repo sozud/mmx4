@@ -9,7 +9,12 @@ void func_80098990(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_58", func_800989CC);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_58", func_80098A78);
+void func_80098A78(struct WeaponObj* arg0)
+{
+    if ((u8)arg0->unk5-- == 0) {
+        arg0->state = 2;
+    }
+}
 
 void func_80098A9C(struct WeaponObj* arg0)
 {

@@ -13,11 +13,20 @@ INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C38C8);
 
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C39AC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3A0C);
+void func_800C3A0C(struct ItemObj* arg0)
+{
+    arg0->state++;
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3A20);
+void func_800C3A20(struct ItemObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3A40);
+void func_800C3A40(struct ItemObj* arg0)
+{
+    D_8010D064[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3A7C);
 
@@ -29,7 +38,10 @@ INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3BA4);
 
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3C9C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3CE4);
+void func_800C3CE4(struct ItemObj* arg0)
+{
+    background_objects[0].unk47 = 2;
+}
 
 void (*D_8010D040[])(struct ItemObj*) = {
     func_800C38C8,

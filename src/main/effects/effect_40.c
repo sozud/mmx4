@@ -9,7 +9,12 @@ void func_800BE038(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_40", func_800BE074);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_40", func_800BE0DC);
+void func_800BE0FC(struct EffectObj* arg0);
+
+void func_800BE0DC(struct EffectObj* arg0)
+{
+    func_800BE0FC(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_40", func_800BE0FC);
 

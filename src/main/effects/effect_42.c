@@ -4,7 +4,11 @@
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE2C4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE30C);
+void func_800BE30C(struct EffectObj* arg0)
+{
+    arg0->ext.effect_42.owner->unk8C = 1;
+    arg0->unk5++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE32C);
 
@@ -14,7 +18,10 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE434);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE4A8);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE4D4);
+void func_800BE4D4(struct EffectObj* arg0)
+{
+    D_8010C100[arg0->unk5](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE510);
 

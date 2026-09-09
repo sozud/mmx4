@@ -673,7 +673,7 @@ struct PlayerObj {
     u8 unk89;
     union PlayerUnk8A unk8A;
     s8 unk8C;
-    s8 : 8;
+    u8 unk8D;
     s8 unk8E;
     s8 unk8F;
     s8 unk90;
@@ -973,6 +973,22 @@ struct SelectACharacterExt {
     u8 cur_character_selected;
 };
 
+struct Misc4Ext {
+    struct MainObj* owner;
+};
+
+struct Misc6Ext {
+    u8 pad50[4];
+    union {
+        s32 packed;
+        struct {
+            s16 x;
+            s16 y;
+        } position;
+    } saved_position;
+    u8 timer;
+};
+
 struct UnkExt {
     struct MiscUnk50_2* unk50;
     s8 unk54;
@@ -988,6 +1004,8 @@ union MiscExt {
     struct MiscPointerExt pointer;
     struct TitleLogoExt title_logo;
     struct SelectACharacterExt sel_char;
+    struct Misc4Ext misc_4;
+    struct Misc6Ext misc_6;
     struct UnkExt unk;
 };
 
@@ -1575,6 +1593,24 @@ struct UnkEffectExt {
     s32 unk18;
 };
 
+struct Effect22Ext {
+    u8 unk14;
+    u8 unk15;
+    u8 unk16;
+    u8 pad17;
+    u16 unk18;
+};
+
+struct Effect42Ext {
+    struct ShotObj* owner;
+    u8 timer;
+};
+
+struct Effect43Ext {
+    u16 unk14;
+    u16 unk16;
+};
+
 struct Effect5Ext {
     u32 unk14;
     u32 unk18;
@@ -1608,10 +1644,12 @@ union EffectExt {
     struct UnkEffectExt effect_15;
     struct UnkEffectExt effect_19;
     struct UnkEffectExt effect_20;
-    struct UnkEffectExt effect_22;
+    struct Effect22Ext effect_22;
     struct UnkEffectExt effect_25;
     struct UnkEffectExt effect_27;
     struct UnkEffectExt effect_32;
+    struct Effect42Ext effect_42;
+    struct Effect43Ext effect_43;
     struct ScalingX scaling_x;
     struct PaletteAnimationExt palette_animation;
 };
@@ -2136,6 +2174,8 @@ extern RECT D_80137CFC;
 extern s32 D_80137D08[];
 extern s32 D_800F99C4[][2];
 extern struct FixedPointPosition D_800F99D4[];
+extern u32* D_8010DBC0[];
+extern u8 D_8010DBF8[];
 
 #include "func_tables.h"
 

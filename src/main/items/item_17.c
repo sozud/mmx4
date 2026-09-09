@@ -6,7 +6,10 @@ INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C413C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C41C8);
 
-INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C4290);
+void func_800C4290(struct ItemObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800C42B0(struct ItemObj* arg0)
 {

@@ -13,11 +13,20 @@ INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5D44);
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F04);
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F30);
+void func_800C5F30(struct ItemObj* arg0)
+{
+    func_80015DC8(arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F50);
+void func_800C5F50(struct ItemObj* arg0)
+{
+    func_80015DC8(arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F70);
+void func_800C5F70(struct ItemObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F90);
 

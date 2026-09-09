@@ -117,7 +117,12 @@ void func_800521DC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052218);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800522A8);
+void func_800522A8(struct MainObj* arg0)
+{
+    if (g_Player.unkC0 == -1) {
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800522C8);
 
