@@ -5801,7 +5801,12 @@ void func_80028070(struct BackgroundObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_800280BC);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800280F4);
+void func_800280F4(struct BackgroundObj* arg0)
+{
+    func_80027EE8(arg0);
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + arg0->unk42;
+    func_80027FA8(arg0);
+}
 
 void func_80028138(void)
 {
@@ -5914,7 +5919,15 @@ void func_80028AD8(struct BackgroundObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028B68);
+void func_80028B68(s8 arg0, s8 arg1, s8 arg2)
+{
+    background_objects[0].unk36 = arg0;
+    background_objects[0].unk45 = arg1;
+    background_objects[0].unk3E = arg1;
+    background_objects[0].unk3C = arg2;
+    background_objects[0].unk3A = arg2;
+    background_objects[0].unk34 |= 0x10;
+}
 
 void func_80028BAC(s8 arg0, s8 arg1, s8 arg2)
 {
