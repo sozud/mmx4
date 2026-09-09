@@ -3176,7 +3176,13 @@ void func_8001F8DC(void)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F8FC);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F93C);
+void func_8001F93C(struct EngineObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->unk4 = 0x3C;
+        arg0->unk2 = (u8)arg0->unk2 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F968);
 

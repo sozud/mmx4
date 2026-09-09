@@ -36,7 +36,7 @@ void func_800B3358(struct VisualObj* arg0)
         }
         break;
     case 1:
-        if ((u8)entity->unk88 != 0) {
+        if (entity->unk88.unsigned_bytes.timer != 0) {
             arg0->unk5++;
             func_80015D60(arg0, 0x15);
         }
