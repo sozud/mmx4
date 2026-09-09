@@ -738,7 +738,8 @@ segments:
       - [0xEF8B0, .data, function_tables/D_800FEF74]
       - [0xEF8BC, data]
       - [0xF00CC, .data, function_tables/D_800FF790]
-      - [0xF00E0, data]
+      - [0xF00E0, .data, data/D_800FF7A4]
+      - [0xF00E4, data]
       - [0xF01B8, .data, function_tables/D_800FF87C]
       - [0xF01C4, data]
       - [0xF02A0, .data, function_tables/D_800FF964]
@@ -1476,4 +1477,5 @@ segments:
       - [0x10BD24, .data, data/visual_animation_data_b]
       - [0x10C9E4, data]
       - {type: bss, vram: 0x80141FE8, name: bss}
-  - [0x11FC18]
+  - [0x11FC18, bin, padding/jp_exe]
+  - [0x120000]
