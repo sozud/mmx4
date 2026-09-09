@@ -22,7 +22,10 @@ void func_8004ACF0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AD18);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004ADE8);
+void func_8004ADE8(struct MainObj* arg0)
+{
+    arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_11.saved_unk5;
+}
 
 void func_8004AE00(struct MainObj* arg0)
 {

@@ -17,7 +17,14 @@ void func_8008AED0(struct MainObj* arg0)
     arg0->x_pos.val += arg0->unk20;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AEE8);
+void func_8008AEE8(struct MainObj* arg0)
+{
+    if (arg0->unk15 != 0) {
+        arg0->unk20 = FIXED(1.375);
+    } else {
+        arg0->unk20 = FIXED(-1.375);
+    }
+}
 
 void func_8008AF10(struct MainObj* arg0)
 {
@@ -50,11 +57,18 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B69C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B7D4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B898);
+void func_8008B898(struct MainObj* arg0)
+{
+    func_8008AEC4(BASE_OBJECT(arg0), 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B8B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B984);
+void func_8008B984(struct MainObj* arg0)
+{
+    arg0->unk42 &= 0x7FFF;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_8008B9B0(void)
 {

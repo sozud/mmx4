@@ -19,11 +19,19 @@ INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEFCC);
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF1FC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF508);
+void func_800BF508(struct ItemObj* self)
+{
+    if ((self->unk2 == 5) || (self->unk2 == 0xD)) {
+        self->state = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF530);
 
-INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF5EC);
+void func_800BF5EC(struct ItemObj* arg0)
+{
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
 

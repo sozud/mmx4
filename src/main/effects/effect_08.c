@@ -25,13 +25,19 @@ void func_800B70EC(struct EffectObj* arg0)
 void func_800B7140(struct EffectObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800B7180();
+        func_800B7180(arg0);
     } else {
         func_800B71A8();
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7180);
+void func_800B7180(struct EffectObj* arg0)
+{
+    arg0->unk6++;
+    background_objects[0].unk4 = 2;
+    arg0->ext.effect_8.unk16 = 0;
+    arg0->ext.effect_8.unk18 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B71A8);
 
@@ -76,13 +82,18 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7394);
 void func_800B73D4(struct EffectObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800B7414();
+        func_800B7414(arg0);
     } else {
         func_800B7440();
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7414);
+void func_800B7414(struct EffectObj* arg0)
+{
+    background_objects[1].unk4 = 6;
+    background_objects[2].unk4 = 1;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7440);
 

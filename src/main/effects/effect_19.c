@@ -25,15 +25,23 @@ void func_800B99B4(struct EffectObj* arg0)
 void func_800B9A08(struct EffectObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800B9A48();
+        func_800B9A48(arg0);
     } else {
-        func_800B9A68();
+        func_800B9A68(arg0);
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_19", func_800B9A48);
+void func_800B9A48(struct EffectObj* arg0)
+{
+    background_objects[0].unk2E = 0xC0;
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_19", func_800B9A68);
+void func_800B9A68(struct EffectObj* arg0)
+{
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
 void func_800B9A78(struct EffectObj* arg0)
 {

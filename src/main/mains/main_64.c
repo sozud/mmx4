@@ -70,7 +70,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D174);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D234);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D2F4);
+void func_8007D2F4(struct MainObj* arg0)
+{
+    arg0->ext.main_64.unk8B = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 0x25);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D324);
 

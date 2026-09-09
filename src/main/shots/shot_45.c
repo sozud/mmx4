@@ -61,7 +61,14 @@ void func_800A829C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A82EC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A833C);
+void func_800A833C(struct ShotObj* arg0)
+{
+    if (--arg0->unk88 == 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800A836C(struct ShotObj* arg0)
 {

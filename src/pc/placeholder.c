@@ -455,14 +455,6 @@ s32 func_8002CD70(struct PlayerObj* object, u8 attribute)
     }
 }
 
-void func_8002C9E4(struct PlayerObj* object)
-{
-    object->x_pos.i.lo = 0;
-    object->y_pos.i.lo = 0;
-    object->x_pos.i.hi += D_8013B800;
-    object->y_pos.i.hi += D_8013B804;
-}
-
 void func_8002E994(struct EngineObj* arg0)
 {
     u16 direction = D_80166C08 & 0xF000;

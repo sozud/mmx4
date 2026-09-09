@@ -11,7 +11,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_24", func_800567C4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056AC4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056BA8);
+void func_80056BA8(struct MainObj* arg0)
+{
+    arg0->unk7A = 0;
+    arg0->ext.main_24.unk80 = 0;
+    arg0->ext.main_24.saved_unk5 = 0;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_80056BD0(struct MainObj* arg0)
 {

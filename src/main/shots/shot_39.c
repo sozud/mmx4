@@ -51,7 +51,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5144);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5194);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5318);
+void func_800A5318(struct ShotObj* arg0)
+{
+    func_8002B694((struct AnimatedObj*)arg0);
+    func_80015DC8(arg0);
+}
 
 void (*D_8010984C[])(struct ShotObj*) = {
     func_800A4800,

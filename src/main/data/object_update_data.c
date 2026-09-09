@@ -440,7 +440,7 @@ void (*layer_object_update_funcs[])(struct LayerObj*) = {
     func_800DA878,
 };
 
-void (*D_800F2AD4[])(struct QuxObj*) = {
+void (*D_800F2AD4[])(struct RideArmorObj*) = {
     func_8003B3DC,
     func_8003D3F8,
 };
