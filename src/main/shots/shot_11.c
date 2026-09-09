@@ -11,7 +11,10 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_11", func_8009B6B8);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_11", func_8009B734);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_11", func_8009B7D8);
+void func_8009B7D8(struct ShotObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_80108E5C[])(struct ShotObj*) = {
     func_8009B6B8,

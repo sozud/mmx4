@@ -920,7 +920,33 @@ void func_8002B93C(struct MovingObj* arg0, s32 arg1)
     arg0->y_vel.val = D_800F45C0[var_v1] * var_a2;
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B9F0);
+void func_8002B9F0(s32* arg0, s32* arg1, u8 arg2)
+{
+    s16 var_a3, var_v0;
+    s16 var_v1;
+
+    if (arg2 < 0x10) {
+        var_a3 = 1;
+        if (arg2 < 8) {
+            var_v1 = 8 - arg2;
+            var_v0 = 1;
+        } else {
+            var_v1 = arg2 - 8;
+            var_v0 = -1;
+        }
+    } else {
+        var_a3 = -1;
+        if (arg2 < 0x18) {
+            var_v1 = 0x18 - arg2;
+            var_v0 = -1;
+        } else {
+            var_v1 = arg2 - 0x18;
+            var_v0 = 1;
+        }
+    }
+    *arg0 = D_800F459C[var_v1] * var_v0;
+    *arg1 = D_800F45C0[var_v1] * var_a3;
+}
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BAA4);
 
 s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)

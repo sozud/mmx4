@@ -2,7 +2,14 @@
 // 80072194..800743FC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072194);
+void func_80072194(struct MainObj* arg0)
+{
+    D_80101414[arg0->state](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+    if (!(g_Player.unk5C & 0x7F)) {
+        func_80074368(0x38);
+    }
+}
 
 void func_80072204(struct MainObj* arg0)
 {
