@@ -2,7 +2,12 @@
 // 80088BA0..80089AA4
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088BA0);
+void func_80088BA0(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_801049E4[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088BE8);
 
@@ -28,20 +33,29 @@ INCLUDE_ASM("main/nonmatchings/mains/main_70", func_800891C8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_8008924C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089314);
+void func_80089314(struct MainObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_80089334(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->unk94;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089340);
+void func_80089340(struct MainObj* arg0)
+{
+    D_80104A28[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_8008937C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_800893DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089438);
+void func_80089438(struct MainObj* arg0)
+{
+    D_80104A30[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089474);
 

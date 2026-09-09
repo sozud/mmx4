@@ -733,7 +733,9 @@ struct WeaponObj {
     void* unk3C;
     u16 unk40;
     u16 unk42;
-    s8 pad44[0x50 - 0x44];
+    s8 pad44[0x46 - 0x44];
+    s8 unk46;
+    s8 pad47[0x50 - 0x47];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
