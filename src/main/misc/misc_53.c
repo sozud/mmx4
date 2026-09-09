@@ -26,4 +26,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2FC4);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D301C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D3048);
+void func_800D3048(struct MiscObj* arg0)
+{
+    D_8010F580[arg0->state](arg0);
+}

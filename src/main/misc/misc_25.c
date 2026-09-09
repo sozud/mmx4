@@ -8,4 +8,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC4E0);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC738);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC79C);
+void func_800CC79C(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}

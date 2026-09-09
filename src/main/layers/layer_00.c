@@ -169,7 +169,7 @@ void func_800D8C84(struct LayerObj* arg0)
 {
     struct BaseObj* temp_v0;
 
-    if (*(s8*)&arg0->unk1C == 1) {
+    if (arg0->private_state.signed_byte == 1) {
         arg0->unk7++;
         temp_v0 = (struct BaseObj*)find_free_item_obj();
         if (temp_v0 != NULL) {

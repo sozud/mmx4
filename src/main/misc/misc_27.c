@@ -9,7 +9,10 @@ void func_800CC908(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_27", func_800CC944);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_27", func_800CCA14);
+void func_800CCA14(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010E960[])(struct MiscObj*) = {
     func_800CC944,

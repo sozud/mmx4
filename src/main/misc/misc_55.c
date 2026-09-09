@@ -18,6 +18,16 @@ void func_800D323C(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3288);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D330C);
+void func_800D330C(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D332C);
+void func_800D332C(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_55.owner->unk94 != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+    D_8010F58C[arg0->state](arg0);
+}

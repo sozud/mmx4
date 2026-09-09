@@ -6,7 +6,10 @@
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0820_jp);
 #endif
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D07EC);
+void func_800D07EC(struct MiscObj* arg0)
+{
+    D_8010F084[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0828);
 
