@@ -11,7 +11,11 @@ INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5C88);
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5D44);
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F04);
+void func_800C5F04(struct ItemObj* arg0)
+{
+    arg0->unk5++;
+    func_80015DC8(arg0);
+}
 
 void func_800C5F30(struct ItemObj* arg0)
 {

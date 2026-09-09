@@ -26,7 +26,11 @@ void func_800CC0AC(struct MiscObj* arg0)
     D_8010E924[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC0E8);
+void func_800CC0E8(struct MiscObj* arg0)
+{
+    arg0->unk6++;
+    func_80015D60(arg0, 0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC114);
 

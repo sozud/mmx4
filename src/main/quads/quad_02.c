@@ -19,7 +19,14 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4C50);
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4DE0);
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4F84);
+void func_800D4F84(struct QuadObj* arg0)
+{
+    if (arg0->unk2 == 0x15) {
+        arg0->ext.quad_2.x_scale.bytes.integer = 0xF;
+    } else {
+        arg0->ext.quad_2.x_scale.bytes.integer = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4FA0);
 

@@ -22,14 +22,26 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2854);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D28BC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D28E8);
+void func_800D28E8(struct MiscObj* arg0)
+{
+    D_8010F528[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2924);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2970);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D29C0);
+void func_800D29C0(struct PlayerObj* arg0)
+{
+    D_8010F530[arg0->unk6](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D29FC);
+void func_800D29FC(struct BarObj* arg0)
+{
+    D_8010F538[arg0->unk5](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2A38);
+void func_800D2A38(struct MiscObj* arg0)
+{
+    D_8010F544[arg0->state](arg0);
+}

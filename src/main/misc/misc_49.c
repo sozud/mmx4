@@ -6,6 +6,12 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_49", func_800D1990);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_49", func_800D1A48);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_49", func_800D1AE8);
+void func_800D1AE8(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_49", func_800D1B08);
+void func_800D1B08(struct MiscObj* arg0)
+{
+    D_8010F1E0[arg0->state](arg0);
+}

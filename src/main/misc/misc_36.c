@@ -2,10 +2,18 @@
 // 800CF2B8..800CF4B8
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF2B8);
+void func_800CF2B8(struct MiscObj* arg0)
+{
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+    D_8010EF00[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF300);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF428);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF498);
+void func_800CF498(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}

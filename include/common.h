@@ -925,10 +925,16 @@ struct ItemObj {
     s32 unk88;
 }; // size 0x8C
 
+union LayerPrivateState {
+    f32 value;
+    s8 signed_byte;
+    u8 misc_20_active;
+};
+
 struct LayerObj {
     BASE_OBJ_FIELDS
     f32 unk18;
-    f32 unk1C;
+    union LayerPrivateState private_state;
     s8 pad20[0x30 - 0x20];
 }; // size 0x30
 
@@ -989,6 +995,14 @@ struct Misc6Ext {
     u8 timer;
 };
 
+struct Misc20Ext {
+    struct LayerObj* owner;
+};
+
+struct Misc55Ext {
+    struct WeaponObj* owner;
+};
+
 struct UnkExt {
     struct MiscUnk50_2* unk50;
     s8 unk54;
@@ -1006,6 +1020,8 @@ union MiscExt {
     struct SelectACharacterExt sel_char;
     struct Misc4Ext misc_4;
     struct Misc6Ext misc_6;
+    struct Misc20Ext misc_20;
+    struct Misc55Ext misc_55;
     struct UnkExt unk;
 };
 
@@ -1374,6 +1390,21 @@ struct QuadUnkExt2 {
     u8 unk43;
 };
 
+union QuadScale {
+    u16 value;
+    struct {
+        u8 fraction;
+        u8 integer;
+    } bytes;
+};
+
+struct Quad2Ext {
+    const s32* vertices;
+    union QuadScale x_scale;
+    union QuadScale y_scale;
+    u8 direction[2];
+};
+
 struct QuadUnkExt3 {
     u8 unk38;
 };
@@ -1388,6 +1419,7 @@ union QuadExt {
     struct SearchLightMotion search_light;
     struct QuadUnkExt unk_ext;
     struct QuadUnkExt2 unk_ext2;
+    struct Quad2Ext quad_2;
     struct QuadUnkExt3 unk_ext3;
     struct QuadUnkExt4 unk_ext4;
     u32 unk38;
@@ -1638,6 +1670,7 @@ struct PaletteAnimationExt {
 };
 
 union EffectExt {
+    u16 effect_9_timer;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
     struct Effect14Ext effect_14;

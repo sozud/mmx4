@@ -457,7 +457,19 @@ s32 get_mode(s32 dfe, s32 dtd, s32 tpage)
 
 INCLUDE_ASM("main/nonmatchings/D9840", get_cs);
 
-INCLUDE_ASM("main/nonmatchings/D9840", get_ce);
+#define CLAMP(a, b, c) (a >= b ? (a > c ? c : a) : b)
+
+s32 get_ce(s16 x, s16 y)
+{
+    x = CLAMP(x, 0, D_8011E18C - 1);
+    y = CLAMP(y, 0, D_8011E18E - 1);
+
+    if ((u32)(D_8011E188 - 1) < 2U) {
+        return 0xE4000000 | ((y & 0xFFF) << 12) | (x & 0xFFF);
+    } else {
+        return 0xE4000000 | ((y & 0x3FF) << 10) | (x & 0x3FF);
+    }
+}
 
 extern u8 D_8011E188;
 

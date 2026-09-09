@@ -2,11 +2,17 @@
 // 800CF790..800CFB70
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_39", func_800CF790);
+void func_800CF790(struct MiscObj* arg0)
+{
+    D_8010EF20[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_39", func_800CF7CC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_39", func_800CF824);
+void func_800CF824(struct MiscObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_39", func_800CF844);
 

@@ -84,7 +84,14 @@ void func_800AB868(struct ShotObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB8C0);
+void func_800AB8C0(struct ShotObj* arg0)
+{
+    arg0->unk88 = 0x32;
+    arg0->unk8A = 2;
+    arg0->unk50.data = NULL;
+    arg0->unk8C = 1;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB8EC);
 
