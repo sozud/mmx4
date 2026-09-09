@@ -11,4 +11,7 @@ void func_80074FC0(struct MainObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_59", func_80074FE0);
+void func_80074FE0(struct MainObj* arg0)
+{
+    D_801016A8[arg0->state](arg0);
+}

@@ -42,7 +42,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083DC8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083E44);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083E70);
+void func_80083E70(struct MainObj* arg0)
+{
+    D_80104370[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083EAC);
 
