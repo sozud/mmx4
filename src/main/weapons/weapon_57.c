@@ -11,7 +11,10 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_57", func_80098874);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_57", func_800988C4);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_57", func_80098970);
+void func_80098970(struct WeaponObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_80108BA8[])(struct WeaponObj*) = {
     func_80098874,

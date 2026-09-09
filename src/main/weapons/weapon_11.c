@@ -18,7 +18,14 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800946F0);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_80094794);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009481C);
+void func_8009481C(struct MiscObj* arg0)
+{
+    if (arg0->state == 0) {
+        func_8009485C(arg0);
+    } else {
+        func_80094A04(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009485C);
 

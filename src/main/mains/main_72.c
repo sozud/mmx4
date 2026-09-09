@@ -6,7 +6,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008ADFC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AE94);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AEC4);
+void func_8008AEC4(struct BaseObj* arg0, s8 arg1)
+{
+    arg0->unk5 = arg1;
+    arg0->unk6 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AED0);
 
@@ -50,4 +54,7 @@ void func_8008B9B8(void)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B9C0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B9FC);
+void func_8008B9FC(struct MainObj* arg0)
+{
+    D_80104F48[arg0->state](arg0);
+}

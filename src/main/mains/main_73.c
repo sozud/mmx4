@@ -16,7 +16,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BDAC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BE74);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BEC4);
+void func_8008BEC4(struct MainObj* arg0)
+{
+    D_801052BC[arg0->unk5](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BF00);
 
@@ -28,7 +31,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C0C0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C10C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C204);
+void func_8008C204(struct MainObj* arg0)
+{
+    D_801052C8[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C240);
 
@@ -36,7 +42,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C27C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C30C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C360);
+void func_8008C360(struct MainObj* arg0)
+{
+    D_801052D0[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C39C);
 
@@ -56,7 +65,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C888);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C8E0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C95C);
+void func_8008C95C(struct MainObj* arg0)
+{
+    D_801052DC[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C998);
 
@@ -72,7 +84,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CC7C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CCD4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CD44);
+void func_8008CD44(struct MainObj* arg0)
+{
+    D_80105300[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CD80);
 
@@ -94,7 +109,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D2FC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D340);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D37C);
+void func_8008D37C(struct MainObj* arg0)
+{
+    D_80105350[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D3B8);
 

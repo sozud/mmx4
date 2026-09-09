@@ -6,7 +6,11 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093564);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093610);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_8009372C);
+void func_8009372C(struct WeaponObj* arg0)
+{
+    D_8010882C[arg0->unk5](arg0);
+    func_80093C54(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_8009377C);
 
@@ -20,7 +24,11 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093930);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_800939F4);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093A5C);
+void func_80093A5C(struct WeaponObj* arg0)
+{
+    D_8010883C[arg0->unk5](arg0);
+    func_80093C54(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093AAC);
 
