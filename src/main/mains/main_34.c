@@ -2,13 +2,20 @@
 // 8005E570..8005EC58
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E570);
+void func_8005E570(struct MainObj* arg0)
+{
+    D_800FE168[arg0->state](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E5C0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E754);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E7CC);
+void func_8005E7CC(struct MainObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E7EC);
 
@@ -33,4 +40,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EB40);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EBF4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EC38);
+void func_8005EC38(struct MainObj* arg0)
+{
+    func_8002B718((struct MovingObj*)arg0);
+}

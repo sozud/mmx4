@@ -6,6 +6,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_59", func_80074E84);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_59", func_80074F4C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_59", func_80074FC0);
+void func_80074FC0(struct MainObj* arg0)
+{
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_59", func_80074FE0);

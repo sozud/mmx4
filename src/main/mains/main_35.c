@@ -2,7 +2,11 @@
 // 8005EC58..8005F510
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EC58);
+void func_8005EC58(struct MainObj* arg0)
+{
+    D_800FE2AC[arg0->state](arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005ECA8);
 
@@ -10,7 +14,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EE2C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EF40);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EF6C);
+void func_8005EF6C(struct MainObj* arg0)
+{
+    arg0->unk5 = arg0->unk94;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EF78);
 
