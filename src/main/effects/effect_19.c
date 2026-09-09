@@ -65,9 +65,17 @@ void func_800B9AE8(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_19", func_800B9B28);
+void func_800B9B28(struct EffectObj* arg0)
+{
+    background_objects[0].unk2E = 0x90;
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_19", func_800B9B48);
+void func_800B9B48(struct EffectObj* arg0)
+{
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
 void func_800B9B58(struct EffectObj* arg0)
 {

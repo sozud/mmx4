@@ -13,7 +13,11 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_11", func_800CA110);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_11", func_800CA188);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_11", func_800CA208);
+void func_800CA208(struct MiscObj* arg0)
+{
+    arg0->ext.title_logo.palette_shift_speed = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010E580[])(struct MiscObj*) = {
     func_800CA110,

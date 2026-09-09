@@ -1040,7 +1040,13 @@ void func_80036054(struct PlayerObj* arg0)
     func_800361F8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80036088);
+void func_80036088(struct PlayerObj* arg0)
+{
+    arg0->unk84 = 0;
+    arg0->unk86 = 0;
+    arg0->unk8C = 0;
+    func_80036054(arg0);
+}
 
 void func_800360B0(struct PlayerObj* arg0)
 {
@@ -2298,7 +2304,13 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003D8A8);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D9E0);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC1C);
+void func_8003DC1C(struct PlayerObj* arg0, s8 arg1)
+{
+    if (arg0->unk8D == 0) {
+        g_Player.unkD4 = arg1;
+        g_Player.unk6 = 0;
+    }
+}
 
 void func_8003DC44(struct BaseObj* arg0, s8 arg1)
 {
@@ -2323,7 +2335,12 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD54);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DDA0);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DDDC);
+void func_8003DDDC(struct PlayerObj* arg0)
+{
+    g_Player.x_pos = arg0->x_pos;
+    g_Player.y_pos = arg0->y_pos;
+    g_Player.unk15 = arg0->unk15;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE08);
 
@@ -2453,7 +2470,11 @@ void func_80040760(struct PlayerObj* arg0, s8 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80040810);
+void func_80040810(struct MainObj* arg0)
+{
+    arg0->unk5 = 0xC;
+    func_80015D60(arg0, 0);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80040838);
 

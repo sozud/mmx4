@@ -17,7 +17,11 @@ INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C27D8);
 
 INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2850);
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C28E8);
+void func_800C28E8(struct ItemObj* arg0)
+{
+    func_80015DC8(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2918);
 

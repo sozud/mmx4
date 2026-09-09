@@ -9,7 +9,10 @@ void func_800C5544(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5580);
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C56B4);
+void func_800C56B4(struct ItemObj* arg0)
+{
+    D_8010D328[arg0->unk5](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C56F0);
 

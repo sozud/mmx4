@@ -16,7 +16,10 @@ INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7460);
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C74D4);
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7538);
+void func_800C7538(struct ItemObj* arg0)
+{
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7558);
 
@@ -24,7 +27,10 @@ INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7578);
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7648);
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C76A4);
+void func_800C76A4(struct ItemObj* arg0)
+{
+    D_8010D9DC[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C76E0);
 

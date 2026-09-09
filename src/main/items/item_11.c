@@ -16,13 +16,19 @@ INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2D6C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2DE0);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2E00);
+void func_800C2E00(struct ItemObj* arg0)
+{
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2E20);
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2EAC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2F18);
+void func_800C2F18(struct ItemObj* arg0)
+{
+    D_8010CFD0[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2F54);
 
