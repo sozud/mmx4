@@ -12,10 +12,21 @@ void func_800B7604(struct EffectObj* arg0)
     arg0->state++;
     background_objects[2].x_pos.val = 0;
     background_objects[2].y_pos.val = 0;
-    arg0->ext.effect_9_timer = 1;
+    arg0->ext.effect_9.transition_timer = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B7630);
+void func_800B7630(struct EffectObj* arg0)
+{
+    s16 temp_v0;
+
+    temp_v0 = arg0->ext.effect_9.transition_timer - 1;
+    arg0->ext.effect_9.transition_timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->ext.effect_9.direction = 0;
+        arg0->unk5 = 0;
+        arg0->state++;
+    }
+}
 
 void func_800B7668(struct EffectObj* arg0)
 {

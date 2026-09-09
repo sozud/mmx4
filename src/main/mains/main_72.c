@@ -4,7 +4,15 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008ADFC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AE94);
+void func_8008AE94(struct MainObj* arg0)
+{
+    if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
+        arg0->unk15 = 0x40;
+        return;
+    }
+
+    arg0->unk15 = 0;
+}
 
 void func_8008AEC4(struct BaseObj* arg0, s8 arg1)
 {

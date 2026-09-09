@@ -25,7 +25,14 @@ void func_8007E45C(struct MainObj* arg0)
     D_801034B8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E498);
+void func_8007E498(struct MainObj* arg0)
+{
+    if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
+        arg0->unk15 = 0x40;
+    } else {
+        arg0->unk15 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E4C8);
 

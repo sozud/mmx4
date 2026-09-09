@@ -41,7 +41,7 @@ void func_800BFA00(struct ItemObj* arg0)
         func_80015DC8(arg0);
     }
     if (arg0->backref == NULL) {
-        if (--arg0->unk82 == 0) {
+        if (--arg0->ext.item_2.unk82 == 0) {
             arg0->state = 3;
             return;
         }
@@ -56,7 +56,7 @@ void func_800BFA00(struct ItemObj* arg0)
         }
     } else {
         arg0->on_screen = 0;
-        if ((arg0->unk82 >= 0x3C) || !(D_80141BD8.unk0 & 1)) {
+        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(D_80141BD8.unk0 & 1)) {
             is_on_screen((struct BaseObj*)arg0);
         }
     }
@@ -90,8 +90,8 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
     player_status = player_health & 0x80;
     if ((player_health & 0x7F) < engine_obj.unk46) {
         func_800C03BC(1);
-        arg0->unk80 = arg1;
-        arg0->unk81 = 2;
+        arg0->ext.item_2.unk80 = arg1;
+        arg0->ext.item_2.unk81 = 2;
         arg0->state = 2;
         arg0->unk5 = 0;
         arg0->unk6 = 0;

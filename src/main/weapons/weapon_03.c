@@ -85,7 +85,7 @@ void func_80094F74(void)
             if (obj->y_pos.i.hi >= entity->y_pos.i.hi) {
                 entity->y_pos.i.hi = obj->y_pos.i.hi;
             }
-            decompress_player_gfx(entity, 320, 64);
+            decompress_player_gfx(GRAPHICS_OBJECT(entity), 320, 64);
             if (entity->unkDA != 0 && entity->unkDA < 60) {
                 entity->on_screen ^= 1;
             }

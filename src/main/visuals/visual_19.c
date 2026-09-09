@@ -7,7 +7,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_19", func_800B2698);
 void func_800B2880(struct VisualObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        decompress_player_gfx(arg0, 0x140, 0x20);
+        decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     }
     func_8002B318(arg0, 0x18, 0x30);
 }

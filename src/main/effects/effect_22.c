@@ -77,7 +77,13 @@ void func_800BA86C(struct EffectObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_22", func_800BA898);
+void func_800BA898(struct EffectObj* arg0)
+{
+    if (g_Player.x_pos.i.hi >= 0xFE0) {
+        engine_obj.checkpoint = 2;
+        engine_obj.unkF = -0x40;
+    }
+}
 
 void func_800BA8CC(struct EffectObj* arg0)
 {

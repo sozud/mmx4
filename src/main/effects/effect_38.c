@@ -13,7 +13,14 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD708);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD7B0);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD890);
+void func_800BD890(struct EffectObj* arg0)
+{
+    arg0->ext.effect_38.timer--;
+    if (arg0->ext.effect_38.timer == 0) {
+        arg0->ext.effect_38.timer = 0x64;
+        arg0->state++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD8C4);
 

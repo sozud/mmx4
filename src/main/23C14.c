@@ -2231,7 +2231,11 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003B98C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003BA24);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003BAE8);
+void func_8003BAE8(struct RideArmorObj* arg0)
+{
+    func_80015930(5, 0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003BB20);
 
@@ -2458,7 +2462,21 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_800402C4);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800403DC);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800405D4);
+void func_800405D4(struct RideArmorObj* arg0)
+{
+    u8* backref = arg0->backref;
+
+    if (backref != NULL) {
+        *backref = 0x80;
+    }
+    arg0->active = 0;
+    arg0->unk2 = 0;
+    arg0->on_screen = 0;
+    arg0->state = 0;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+}
 
 void func_80040608(struct MainObj* arg0)
 {
@@ -2912,7 +2930,11 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80042170);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80042248);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8004234C);
+void func_8004234C(struct MainObj* arg0)
+{
+    func_80015930(2, 0xF);
+    func_8002B0C8(arg0);
+}
 
 void func_80042384(struct MainObj* arg0)
 {

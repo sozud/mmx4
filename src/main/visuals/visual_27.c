@@ -14,6 +14,6 @@ void func_800B2A3C(struct VisualObj* arg0)
     arg0->previous_animation_index = -1;
     arg0->animation_step.fields.frame_index = 0;
 
-    decompress_player_gfx(arg0, 0x140, 0x20);
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     ZeroObjectState(arg0);
 }
