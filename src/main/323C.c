@@ -5879,7 +5879,12 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80028424);
 #include "helpers/bg_is_on_screen.h"
 #undef FUNC_NAME
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028518);
+void func_80028518(struct BackgroundObj* arg0)
+{
+    arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi + arg0->unk40;
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + arg0->unk42;
+    func_80028450(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80028564);
 

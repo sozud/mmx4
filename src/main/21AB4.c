@@ -606,7 +606,14 @@ void func_80032DE0(struct PlayerObj* arg0)
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032F64);
+void func_80032F64(struct PlayerObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        func_80032FA4(arg0);
+    } else {
+        func_80033054(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032FA4);
 

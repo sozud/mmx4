@@ -1093,7 +1093,12 @@ void func_8002C954(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C99C);
+void func_8002C99C(struct PlayerObj* arg0)
+{
+    if ((func_8002D490() != 0) && (func_8002D25C(arg0) != 0)) {
+        func_8002C9E4(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C9E4);
 
