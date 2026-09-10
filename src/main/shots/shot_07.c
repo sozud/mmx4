@@ -2,6 +2,9 @@
 // 8009AD30..8009AEE4
 #include "common.h"
 
+u8 D_80108D6C[4] = { 0xFE, 0x16, 0x07, 0x0E };
+u8 D_80108D70[4] = { 0xF8, 0x0A, 0x0D, 0x1A };
+
 void func_8009AD30(struct ShotObj* arg0)
 {
     D_80108D74[arg0->state](arg0);

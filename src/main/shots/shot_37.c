@@ -2,6 +2,22 @@
 // 800A3C78..800A428C
 #include "common.h"
 
+s8 D_8010979C[4] = { -11, -11, 22, 22 };
+
+u16 D_801097A0[11][2] = {
+    { 0x43, 0x28 },
+    { 0x80, 0x28 },
+    { 0xBC, 0x28 },
+    { 0xF8, 0x28 },
+    { 0x52, 0x70 },
+    { 0x9E, 0x70 },
+    { 0xEA, 0x70 },
+    { 0x43, 0xB0 },
+    { 0x80, 0xB0 },
+    { 0xBC, 0xB0 },
+    { 0xF8, 0xB0 },
+};
+
 void func_800A3C78(struct ShotObj* arg0)
 {
     D_801097CC[arg0->state](arg0);

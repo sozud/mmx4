@@ -2,6 +2,8 @@
 // 8009BD28..8009BF14
 #include "common.h"
 
+u8 D_80108EB8[4] = { 0xFD, 0xFE, 0x05, 0x04 };
+
 void func_8009BD28(struct ShotObj* arg0)
 {
     D_80108EBC[arg0->state](arg0);

@@ -57,3 +57,18 @@ void (*D_8010D040[])(struct ItemObj*) = {
     func_800C3A0C,
     func_800C3A20,
 };
+
+void (*D_8010D050[4])(struct ItemObj*) = {
+    func_800C3A40,
+    func_800C3BA4,
+    func_800C3C9C,
+    func_800C3CE4,
+};
+
+u8 D_8010D060[4] = { 0, 0xFD, 0x80, 0x20 };
+
+void (*D_8010D064[3])(struct ItemObj*) = {
+    func_800C3A7C,
+    func_800C3AD4,
+    func_800C3B40,
+};

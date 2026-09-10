@@ -45,3 +45,26 @@ void func_800D3048(struct MiscObj* arg0)
 {
     D_8010F580[arg0->state](arg0);
 }
+
+union AnimationStep D_8010F550[3] = {
+    { .packed = 0x00010001 },
+    { .packed = 0x01010001 },
+    { .packed = 0x02FE0001 },
+};
+union AnimationStep* D_8010F55C[1] = { D_8010F550 };
+
+void (*D_8010F560[8])(struct MiscObj*) = {
+    func_800D2B9C,
+    func_800D2C04,
+    func_800D2CA4,
+    func_800D2D7C,
+    func_800D2DCC,
+    func_800D2E1C,
+    func_800D2E64,
+    func_800D2EDC,
+};
+void (*D_8010F580[3])(struct MiscObj*) = {
+    func_800D2A74,
+    func_800D2FC4,
+    func_800D301C,
+};

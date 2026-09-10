@@ -32,8 +32,24 @@ void func_800A56C0(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+u8 D_80109890[4] = { 0xCF, 0x82, 0x60, 0xFF };
+
+u8 D_80109894[4] = { 0, 8, 0x2E, 0x78 };
+
+s16 D_80109898[4] = { 0x0AE0, 0x14E0, 0x1710, 0 };
+
+u8 D_801098A0[8] = { 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0 };
+
+u8 D_801098A8[16] = { 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 6, 7, 8, 9, 0x0A, 0x0B, 0x0C, 0, 0 };
+
 void (*D_801098B8[])(struct ShotObj*) = {
     func_800A5384,
     func_800A5540,
     func_800A56C0,
+};
+
+void (*D_801098C4[3])(struct ShotObj*) = {
+    func_800A5404,
+    func_800A5460,
+    func_800A5500,
 };

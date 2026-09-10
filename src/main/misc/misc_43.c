@@ -35,3 +35,45 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D06E0);
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0754);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D07C0);
+
+union AnimationStep D_8010EFD8[1] = { { .packed = 0x00000101 } };
+
+union AnimationStep D_8010EFDC[4] = {
+    { .packed = 0x00010002 },
+    { .packed = 0x02010002 },
+    { .packed = 0x01010001 },
+    { .packed = 0x01000101 },
+};
+
+union AnimationStep D_8010EFEC[7] = {
+    { .packed = 0x02010002 },
+    { .packed = 0x0001000A },
+    { .packed = 0x02010002 },
+    { .packed = 0x03010006 },
+    { .packed = 0x00010002 },
+    { .packed = 0x04010001 },
+    { .packed = 0x04000101 },
+};
+
+union AnimationStep* D_8010F008[3] = {
+    D_8010EFD8,
+    D_8010EFDC,
+    D_8010EFEC,
+};
+
+void (*D_8010F014[3])(struct MiscObj*) = {
+    func_800D03B0,
+    func_800D04D0,
+    func_800D0528,
+};
+
+void (*D_8010F020[8])(struct MiscObj*) = {
+    func_800D0548,
+    func_800D05B0,
+    func_800D05F4,
+    func_800D0658,
+    func_800D0698,
+    func_800D06E0,
+    func_800D0754,
+    func_800D07C0,
+};

@@ -52,6 +52,23 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDD08);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDDE8);
 
+u16 D_8010C02C[14] = {
+    0x0190,
+    0x0700,
+    0,
+    0x0300,
+    0x0190,
+    0x0800,
+    0,
+    0x0300,
+    0x0170,
+    0x0C00,
+    0,
+    0x0300,
+    0,
+    0x0F78,
+};
+
 void (*D_8010C048[])(struct EffectObj*) = {
     func_800BD690,
     func_800BD708,

@@ -412,9 +412,72 @@ u8 pad_80141F06[2];
 u8 jp_bss_padding[0xE0];
 #endif
 
+u8 D_80141F08[0x14];
+u8 D_80141F1C[0x10];
+u8 D_80141F2C[0x4];
+u32 D_80141F30[8];
+#ifndef MMX4_PC
+u8* D_80141F50[2];
+u8 D_80141F58[0x10];
+#endif
+struct RectPtrPair* vram_rect_ptr;
+u8 D_80141F6C[0x4];
+u16 D_80141F70[0x800];
+s32 D_80142F70;
+u8 D_80142F74[0x4];
+u8 D_80142F78[0x8];
+struct DrawInfo* cur_draw_info;
+u8* cur_draw_info_dispenv_disp_w;
+u8* cur_draw_info_dispenv_screen_x;
+u8* cur_draw_info_dispenv_screen_w;
+u8* cur_draw_info_dispenv_isinter;
+u8* cur_draw_info_drawenv;
+struct EffectObj effect_objects[0x20];
+u8 pad_80143598[0x18];
+struct QuadObj g_QuadObjects[0x20];
+u8 D_801441B0;
+u8 pad_801441B1[3];
+u16* D_801441B4;
+u8 D_801441B8;
+u8 pad_801441B9;
+u16 lastFilterAmountB;
+u8 D_801441BC[0x4];
+u8 D_801441C0[0x8];
+u16 D_801441C8[3][32][32];
+union SepBundle D_801459C8;
+#ifndef MMX4_PC
+struct MainPrimitiveBuffer temp1[1];
+#ifdef VERSION_JP
+u8 pad_80153AA8[0x456C];
+#else
+u8 pad_801539C8[0x464C];
+#endif
+u8 D_80158014[0x59B4];
+#ifdef VERSION_JP
+u8 pad_8015D9C8[0xE0];
+#endif
+#endif
+u8* D_8015D9C8;
+#ifndef MMX4_PC
+u8 pad_8015D9CC[4];
+#endif
+struct BgDrawRelated D_8015D9D0[2];
+struct RectPtrPair vram_rect_ptrs[8];
+struct ItemObj item_objects[0x20];
+u8 need_palette_load;
+#ifndef MMX4_PC
+u8 pad_need_palette_load[3];
+#endif
+s32 D_80166BB4;
+#ifndef MMX4_PC
+u8 pad_80166BB8[0x14];
+s32 _snd_openflag;
+u8 pad_snd_openflag[0x14];
+#endif
+
 #ifdef MMX4_PC
 
-u16 lastFilterAmountG, lastFilterAmountB;
+u16 lastFilterAmountG;
 u8 g_FilterModeG;
 u16 g_FilterAmountG;
 
@@ -424,63 +487,42 @@ u8 D_80166D68[0x22];
 
 u8 D_80171EA9;
 u8 D_80171EA8;
-u8 D_801441B8;
 s8 D_80141F4A;
 u8 D_80173C84;
 s32 D_80175EE8[1];
 s8 D_801F6018, D_801F6019, D_801F604F;
-u8 D_801441B0;
-
 struct DrawInfo draw_infos[2];
-struct DrawInfo* cur_draw_info;
-u8* cur_draw_info_dispenv_screen_w;
-u8* cur_draw_info_drawenv;
 u16 D_80166C08;
 u16 D_80166C0A;
 u16 controller_state;
-struct RectPtrPair vram_rect_ptrs[8];
-struct RectPtrPair* vram_rect_ptr;
 struct MainBssState main_bss_state;
 #ifndef MMX4_PC
 struct GameThread* D_801F8300;
 #endif
-u8* D_8015D9C8;
 u8* D_80173C80;
-s32 D_80142F70, D_80166BB4;
 u8 pc_archive_arena[0x88000];
 union TitleScratch D_80169498;
-u8 need_palette_load;
 struct GameInfo game_info;
 s8 D_80173C6C[4];
 u8* D_80141F50[8];
 struct PlayerObj g_Entity;
 struct EngineObj engine_obj;
 struct BarObj bar_object;
-struct EffectObj effect_objects[0x20];
-struct ItemObj item_objects[0x20];
 struct MiscObj misc_objects[0x40];
 
 struct LayerObj layer_objects[4];
 struct RideArmorObj qux_object;
-struct QuadObj g_QuadObjects[0x20];
 s32 player_gfx_buf_0[0x400];
 s32 player_gfx_buf_1[0x4000];
 u16 g_FilterAmountR;
 u8 g_FilterModeR;
-u32 D_80141F30[8];
-u16 D_80141F70[0x800];
 u8* pc_archive_slots[22];
 
 u8 layout_width, layout_height;
-u16* D_801441B4;
-struct MainPrimitiveBuffer temp1[2];
 struct SecondaryPrimitiveBuffer temp2[2];
-struct BgDrawRelated D_8015D9D0[2];
+struct MainPrimitiveBuffer temp1[2];
 DR_TPAGE D_80171EB0[2][6][8];
 u8 D_80141BE8[0x300];
-u16 D_801441C8[3][32][32];
-
-union SepBundle D_801459C8;
 u8 window_archive_data[0x3000];
 u8 replay_data[0x2000];
 

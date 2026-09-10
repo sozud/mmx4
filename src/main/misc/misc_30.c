@@ -13,3 +13,8 @@ void func_800CDE24(struct MiscObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
+
+void (*D_8010EC30[2])(struct MiscObj*) = {
+    func_800CDCFC,
+    func_800CDE24,
+};

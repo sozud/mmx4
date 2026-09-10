@@ -1,0 +1,8 @@
+#include "common.h"
+
+u16 D_800F8BCC[6] = { 0x10, 0x0E, 0x1A, 0x11, 0x10, 0x1A };
+
+f32 D_800F8BD8[2] = {
+    { 0x000CFFF5 },
+    { 0x0009FFF6 },
+};

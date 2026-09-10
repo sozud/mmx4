@@ -2,6 +2,17 @@
 // 800AFC9C..800AFF78
 #include "common.h"
 
+void (*D_8010A2A4[])(struct BarObj*) = {
+    func_800AFD20,
+    func_800AFD6C,
+};
+
+void (*D_8010A2AC[])(struct BarObj*) = {
+    func_800AFDA8,
+    func_800AFE20,
+    func_800AFEA4,
+};
+
 INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFC9C);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFD20);

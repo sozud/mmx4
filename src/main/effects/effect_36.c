@@ -26,6 +26,25 @@ void func_800BD348(struct EffectObj* arg0)
     D_8010C008[arg0->state](arg0);
 }
 
+u16 D_8010BFE8[16] = {
+    0,
+    0xFFFF,
+    0xAB3F,
+    0x829F,
+    0x81FF,
+    0x815F,
+    0x80DD,
+    0x84D8,
+    0x84B4,
+    0x8470,
+    0xAB3F,
+    0x829F,
+    0x81FF,
+    0x815F,
+    0x80DD,
+    0x84D4,
+};
+
 void (*D_8010C008[])(struct EffectObj*) = {
     func_800BD1E4,
     func_800BD23C,

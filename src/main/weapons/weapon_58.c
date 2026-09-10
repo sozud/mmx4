@@ -21,6 +21,12 @@ void func_80098A9C(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+u8 D_80108BB4[4] = { 0xF4, 0xB1, 0x16, 0x88 };
+
+u8 D_80108BB8[4] = { 0xF4, 0xB1, 0x16, 0x4C };
+
+u8 D_80108BBC[4] = { 0xF4, 0, 0x16, 0x39 };
+
 void (*D_80108BC0[])(struct WeaponObj*) = {
     func_800989CC,
     func_80098A78,

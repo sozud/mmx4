@@ -34,8 +34,17 @@ void func_800C5F70(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F90);
 
+u8 D_8010D340[4] = { 0, 0, 4, 4 };
+
 void (*D_8010D344[])(struct ItemObj*) = {
     func_800C5C88,
     func_800C5F90,
     func_800C5F70,
+};
+
+void (*D_8010D350[])(struct ItemObj*) = {
+    func_800C5D44,
+    func_800C5F04,
+    func_800C5F50,
+    func_800C5F30,
 };

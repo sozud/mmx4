@@ -2,6 +2,10 @@
 // 8009CC64..8009CF38
 #include "common.h"
 
+u8 D_80108F9C[4] = { 0, 0, 4, 4 };
+u8 D_80108FA0[8] = { 3, 5, 4, 6, 4, 6, 3, 5 };
+s8 D_80108FA8[4] = { 0, 0, 0, 0 };
+
 void func_8009CC64(struct ShotObj* arg0)
 {
     D_80108FAC[arg0->state](arg0);

@@ -2,6 +2,8 @@
 // 800BAF60..800BB1F0
 #include "common.h"
 
+s16 D_8010BE8C[2] = { 0x0580, 0x0A40 };
+
 void func_800BAF60(struct EffectObj* arg0)
 {
     D_8010BE90[arg0->state](arg0);
@@ -96,7 +98,7 @@ void (*D_8010BE90[])(struct EffectObj*) = {
     func_800BAFD4,
 };
 
-void (*D_8010BE98[])(struct EffectObj*) = {
+void (*D_8010BE98[4])(struct EffectObj*) = {
     func_800BB028,
     func_800BB098,
     func_800BB108,

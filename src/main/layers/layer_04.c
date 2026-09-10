@@ -2,6 +2,8 @@
 // 800DA05C..800DA298
 #include "common.h"
 
+s16 D_8010FF84[2] = { 0x8D0, 0 };
+
 void func_800DA05C(struct LayerObj* arg0)
 {
     D_8010FF88[arg0->state](arg0);

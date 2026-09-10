@@ -54,3 +54,6 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C8214);
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C833C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C842C);
+
+s32 D_8010DAC8[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
+s32 D_8010DAE8[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };

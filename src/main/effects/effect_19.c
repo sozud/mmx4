@@ -2,6 +2,8 @@
 // 800B9940..800B9BD0
 #include "common.h"
 
+s16 D_8010B7B4[2] = { 0x06CA, 0x15C0 };
+
 void func_800B9940(struct EffectObj* arg0)
 {
     D_8010B7B8[arg0->state](arg0);

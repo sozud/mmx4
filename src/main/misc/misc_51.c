@@ -34,3 +34,22 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_51", func_800D2030);
 INCLUDE_ASM("main/nonmatchings/misc/misc_51", func_800D2094);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_51", func_800D212C);
+
+void (*D_8010F4BC[3])(struct MiscObj*) = {
+    func_800D1E0C,
+    func_800D1E9C,
+    func_800D1F04,
+};
+
+void (*D_8010F4C8[4])(struct MiscObj*) = {
+    func_800D1F24,
+    func_800D2030,
+    func_800D2094,
+    func_800D212C,
+};
+
+void (*D_8010F4D8[3])(struct MiscObj*) = {
+    func_800D1F74,
+    func_800D1FB8,
+    func_800D2010,
+};

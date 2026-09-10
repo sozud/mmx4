@@ -2,6 +2,17 @@
 // 800D4948..800D514C
 #include "common.h"
 
+s16 D_8010F728[8][2] = {
+    { 0x28, 0x10 },
+    { 0x78, 0x10 },
+    { 0xC8, 0x10 },
+    { 0x118, 0x10 },
+    { 0x28, 0xE0 },
+    { 0x78, 0xE0 },
+    { 0xC8, 0xE0 },
+    { 0x118, 0xE0 },
+};
+
 void func_800D4948(struct QuadObj* arg0)
 {
     D_8010F748[arg0->state](arg0);

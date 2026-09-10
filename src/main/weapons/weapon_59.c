@@ -32,6 +32,13 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098DA0);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098EA8);
 
+u8 D_80108BCC[4] = { 0xFC, 0xFD, 6, 5 };
+
+s16 D_80108BD0[2][2] = {
+    { -0x2B, 0 },
+    { -0x2C, 0x19 },
+};
+
 void (*D_80108BD8[])(struct WeaponObj*) = {
     func_80098AF8,
     func_80098C08,

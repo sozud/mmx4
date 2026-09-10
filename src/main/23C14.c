@@ -2995,8 +2995,10 @@ void func_80041F88(struct MainObj* arg0)
     func_8002B318((struct BaseObj*)arg0, 0x70, 0x70);
 }
 
-extern s32 D_800F99E4[];
-extern s32 D_800F99E8[];
+#ifdef VERSION_JP
+INCLUDE_ASM("main/nonmatchings/23C14", func_8004205C);
+#else
+extern struct FixedPointPosition D_800F99E4[];
 
 void func_8004205C(struct MainObj* arg0)
 {
@@ -3004,15 +3006,16 @@ void func_8004205C(struct MainObj* arg0)
     s32 y_offset;
 
     func_80015D60(arg0, 0);
-    arg0->x_pos.val = background_objects[0].x_pos.val + D_800F99E4[arg0->unk2 * 2];
+    arg0->x_pos.val = background_objects[0].x_pos.val + D_800F99E4[arg0->unk2].x;
     y_base = background_objects[0].y_pos.val;
-    y_offset = D_800F99E8[arg0->unk2 * 2];
+    y_offset = D_800F99E4[arg0->unk2].y;
     arg0->unk5 = 6;
     arg0->unk15 = 0;
     arg0->bg_offset = 0;
     arg0->ext.main_0.unk80 = 1;
     arg0->y_pos.val = y_base + y_offset;
 }
+#endif
 
 void func_800420E8(struct MainObj* arg0)
 {

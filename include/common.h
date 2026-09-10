@@ -1498,7 +1498,7 @@ extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
 extern u8 D_800FF7A4[];
-extern u8 D_800FF7A8[16];
+extern u8 D_800FF7A8[4];
 extern const u8* D_800FF6C8[];
 extern u8 D_80104CDC[];
 extern u8 D_80104CE0[];
@@ -2126,9 +2126,9 @@ extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern u32* D_8011BF40[54];
 extern u32* D_8011C0E4[3];
-extern u32* D_800FE890[];
-extern u32* D_80101624[];
-extern u32* D_80101A6C[];
+extern union AnimationStep* D_800FE890[21];
+extern void* D_80101624[12];
+extern void* D_80101A6C[30];
 #ifdef MMX4_PC
 extern struct MainBssState main_bss_state;
 #define D_80141BD8 (main_bss_state.flags)
@@ -2461,7 +2461,7 @@ struct XaSequenceData {
 };
 extern struct XaSequenceData D_800F1A0C;
 extern u8* D_80141F00;
-extern u8* D_80141F50[8];
+extern u8* D_80141F50[];
 extern u8* cur_draw_info_dispenv_screen_w;
 extern u8* cur_draw_info_drawenv;
 
