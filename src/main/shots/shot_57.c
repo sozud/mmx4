@@ -37,9 +37,9 @@ void func_800AE6B4(struct BazObj* arg0)
 
 void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1)
 {
-    s32 var_v1 = arg0->unk2 == 0 ? 2 : 1;
+    PlayerChargeState charge_state = arg0->unk2 == 0 ? PLAYER_CHARGE_FULL : PLAYER_CHARGE_PARTIAL;
 
-    if (arg1->unk9B[0] == var_v1 || arg1->unk9B[1] == var_v1) {
+    if (arg1->charge_state[0] == charge_state || arg1->charge_state[1] == charge_state) {
         arg0->on_screen = 1;
         func_80015D60(arg0, arg0->unk2 + 8);
         arg0->state++;
@@ -48,7 +48,7 @@ void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1)
 
 void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1)
 {
-    if ((arg1->unk9B[0] == 0) && (arg1->unk9B[1] == 0)) {
+    if ((arg1->charge_state[0] == PLAYER_CHARGE_NONE) && (arg1->charge_state[1] == PLAYER_CHARGE_NONE)) {
         arg0->on_screen = 0;
         arg0->state = 0;
     } else {

@@ -21,7 +21,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080F04);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_8008107C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_800810C4);
+void func_800810C4(struct MainObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+    } else {
+        arg0->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081104);
 

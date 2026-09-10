@@ -1080,7 +1080,10 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80015178);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80015284);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800153D4);
+void func_800153D4(u8 arg0)
+{
+    arg0 ? SsSetStereo() : SsSetMono();
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001540C);
 
@@ -1572,7 +1575,13 @@ void func_80016F0C()
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80016FB4);
+void func_80016FB4(s32 arg0)
+{
+    if (ENGINE_STAGE_ID == 0x10C || D_80173C84 != 0) {
+        D_80139534 = arg0;
+        D_80141BD0 = 1;
+    }
+}
 
 void decompress_gfx(u16* src, u16* dest)
 {
@@ -2148,7 +2157,12 @@ void InitMemcards(void)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C854);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001C8AC);
+void func_8001C8AC(void)
+{
+    TestEvent(D_80139680);
+    TestEvent(D_80139684);
+    TestEvent(D_80139688);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C8F4);
 
@@ -3165,7 +3179,17 @@ void func_8001F118(void)
     func_80023D68();
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F150);
+struct MiscObj* func_8001F150(struct EngineObj* arg0, u8 arg1)
+{
+    struct MiscObj* obj = find_free_misc_obj();
+
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x2D;
+        obj->unk2 = arg1;
+    }
+    return obj;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F198);
 
@@ -3195,7 +3219,14 @@ void func_8001F8DC(void)
     func_80016FB4(3);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F8FC);
+s32 func_8001F8FC(struct GameInfo* arg0)
+{
+    if (--arg0->unk6 == 0) {
+        func_80016F0C();
+        return 0;
+    }
+    return 1;
+}
 
 void func_8001F93C(struct EngineObj* arg0)
 {
@@ -3217,7 +3248,13 @@ void func_8001F9A0(struct EngineObj* arg0)
     D_800F23B8[arg0->unk2](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F9DC);
+void func_8001F9DC(struct EngineObj* arg0)
+{
+    if (*D_80141BDC == 0) {
+        func_8001D134();
+        arg0->unk2++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001FA24);
 
@@ -4113,6 +4150,7 @@ struct ReplayData {
     u16 padA;
     struct SerializedEngineObj initial_engine;
     struct SerializedEngineObj saved_engine;
+    u16 inputs[0xE10];
 };
 
 static struct EngineObj replay_saved_engine;
@@ -4192,6 +4230,7 @@ struct ReplayData {
     u16 padA;
     struct EngineObj initial_engine;
     struct EngineObj saved_engine;
+    u16 inputs[0xE10];
 };
 #define REPLAY_SAVED_ENGINE (((struct ReplayData*)REPLAY_DATA)->saved_engine)
 #endif
@@ -4221,7 +4260,17 @@ void func_80022074(void)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_800220C4);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80022138);
+void func_80022138(void)
+{
+    struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
+    s32 frame;
+
+    frame = replay->frame;
+    if (frame != 0xE10) {
+        replay->inputs[frame] = g_Player.input.buttons.held;
+        replay->frame += 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8002217C);
 
