@@ -11,9 +11,111 @@ void func_800C081C(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0864);
 
-INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C09C4);
+void func_800C09C4(struct ItemObj* arg0)
+{
+    s32 temp_s1;
+    s32 temp_v0;
+    s32 next_state;
+    u32 temp_a0;
+    u8 state;
 
-INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0C78);
+    temp_s1 = func_8002DD04((struct MainObj*)arg0);
+    temp_a0 = arg0->unk5C;
+    if (((temp_a0 < arg0->unk84.previous_value) && (temp_a0 != 0)) || (arg0->unk88 != 0)) {
+        func_800C0DFC(arg0);
+        arg0->unk88 ^= 1;
+    }
+
+    arg0->unk84.previous_value = arg0->unk5C;
+    if (arg0->unk2 == 0) {
+        temp_v0 = arg0->ext.item_4.timer - 1;
+        arg0->ext.item_4.timer = temp_v0;
+        if (temp_v0 == 0) {
+            arg0->ext.item_4.timer = 5;
+            if (arg0->unk5C < 0x50) {
+                func_800B10E4(0x11, 0xCA8, 0x198, 0xCB8, 0x1A8, 1);
+            }
+            if (arg0->unk5C < 0x3C) {
+                func_800B10E4(0x11, 0xC90, 0x168, 0xCA0, 0x180, 1);
+            }
+            if (arg0->unk5C < 0x28) {
+                func_800B10E4(0x11, 0xCA8, 0x140, 0xCB8, 0x160, 1);
+            }
+        }
+    }
+
+    if (temp_s1 < 0) {
+        func_800DABE4(D_8010C8B4.object_ids[arg0->unk2 * 0x10], 0, 0);
+        switch (arg0->unk2) {
+        case 0:
+            engine_obj.character_state.bytes[0] = 1;
+            break;
+        case 1:
+            engine_obj.character_state.bytes[1] = 1;
+            break;
+        case 2:
+            engine_obj.character_state.bytes[2] = 1;
+            break;
+        case 3:
+            engine_obj.character_state.bytes[3] = 1;
+            break;
+        }
+
+        if (arg0->unk2 != 0) {
+            arg0->unk7C.item_4_timer = 0x1E;
+        } else {
+            arg0->unk7C.item_4_timer = 0x50;
+        }
+        state = arg0->state;
+        next_state = state + 1;
+    } else {
+        if (engine_obj.character_state.bytes[1] != 0 && arg0->unk2 == 1) {
+            arg0->state += 2;
+        }
+        if (engine_obj.character_state.bytes[2] != 0 && arg0->unk2 == 2) {
+            arg0->state += 2;
+        }
+        if (engine_obj.character_state.bytes[3] == 0 || arg0->unk2 != 3) {
+            return;
+        }
+        state = arg0->state;
+        next_state = state + 2;
+    }
+
+    arg0->state = next_state;
+}
+
+void func_800C0C78(struct ItemObj* arg0)
+{
+    s32 temp_v0;
+    s32 var_v0;
+
+    temp_v0 = arg0->unk7C.item_4_timer - 1;
+    arg0->unk7C.item_4_timer = temp_v0;
+    if (temp_v0 != 0) {
+        if ((D_80141BD8.unk0 & 3) == 0) {
+            if (arg0->unk2 != 0) {
+                func_800AF878(arg0, 1, 0x20, 0x30);
+            } else {
+                func_800AF878(arg0, 1, 0x20, 0x70);
+            }
+        }
+        if (arg0->unk2 != 0) {
+            var_v0 = D_80141BD8.unk0 & 3;
+        } else {
+            var_v0 = D_80141BD8.unk0 & 7;
+        }
+        if (var_v0 == 0) {
+            func_800C813C(4, D_8010C904, arg0);
+        }
+        if ((D_80141BD8.unk0 & 0xF) == 0) {
+            func_8001540C(
+                0, D_8010C918[get_random() & 3], (struct Unk6*)arg0);
+        }
+    } else {
+        arg0->state++;
+    }
+}
 
 void func_800C0D98(struct ItemObj* arg0)
 {
@@ -53,3 +155,5 @@ void (*D_8010C908[])(struct ItemObj*) = {
     func_800C0C78,
     func_800C0D98,
 };
+
+s32 D_8010C918[4] = { 0, 1, 2, 3 };

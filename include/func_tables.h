@@ -1290,7 +1290,7 @@ void func_80047244(void);
 // D_800FA6F0
 void func_80047404(void);
 void func_80047660(void);
-void func_80047794(void);
+void func_80047794(struct MainObj* arg0);
 
 // D_800FA6FC
 void func_8009216C(void* arg0);
@@ -2265,6 +2265,7 @@ void func_80064C84(void);
 void func_80064CF4(void);
 
 // D_800FF7AC
+void func_8006528C(struct MainObj*);
 void func_8006530C(void);
 void func_8006537C(void);
 void func_80065458(void);
@@ -3681,6 +3682,7 @@ void func_8008A2E0(struct MainObj* arg0);
 void func_8008A60C(struct MainObj* arg0);
 void func_8008A9F4(struct MainObj* arg0);
 void func_80089F58(struct MainObj *arg0);
+void func_8008A024(struct MainObj* arg0);
 
 // D_80104D28
 extern void (*D_80104D28[])(struct MainObj *);
@@ -3737,7 +3739,7 @@ void func_8008C10C(void);
 
 // D_801052D0
 extern void (*D_801052D0[])(struct MainObj *);
-void func_8008C240(void);
+void func_8008C240(struct MainObj*);
 void func_8008C27C(void);
 void func_8008C30C(void);
 
@@ -5399,6 +5401,7 @@ extern void (*D_8010B638[])(struct EffectObj*);
 void func_800B8518(struct EffectObj*);
 void func_800B8554(struct EffectObj*);
 void func_800B8610(struct EffectObj*);
+void func_800B8630(void);
 
 // D_8010B6B8
 extern void (*D_8010B6B8[])(struct EffectObj*);
@@ -5743,6 +5746,7 @@ void func_800C09C4(struct ItemObj*);
 void func_800C0C78(struct ItemObj*);
 void func_800C0D98(struct ItemObj*);
 void func_800C0DFC(struct ItemObj*);
+void func_800B10E4(s32, s32, s32, s32, s32, s32);
 
 // D_8010CA9C
 extern void (*D_8010CA9C[])(struct ItemObj*);
@@ -6313,7 +6317,7 @@ void func_800D07C0(void);
 extern void (*D_8010F084[])(struct MiscObj*);
 void func_800D0828(void);
 void func_800D0988(void);
-void func_800D09E4(void);
+void func_800D09E4(struct MiscObj*);
 
 // D_8010F090
 void func_800D0A04(void);
@@ -6433,7 +6437,7 @@ void func_800D2EDC(void);
 extern void (*D_8010F580[])(struct MiscObj*);
 void func_800D2A74(void);
 void func_800D2FC4(void);
-void func_800D301C(void);
+void func_800D301C(struct MiscObj*);
 
 // D_8010F58C
 extern void (*D_8010F58C[])(struct MiscObj*);

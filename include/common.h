@@ -524,6 +524,21 @@ struct Main36Ext {
     u8 saved_unk5;
 };
 
+struct Main43Ext {
+    u8 pad80[0x10];
+    u16 unk90;
+};
+
+struct Main71Ext {
+    u8 pad80[4];
+    s16 unk84;
+    u8 unk86;
+    u8 unk87;
+    u8 unk88;
+    u8 pad89;
+    u8 unk8A;
+};
+
 struct Main72Ext {
     u8 pad80[4];
     s16 unk84;
@@ -567,6 +582,7 @@ union MainObjExt {
     struct MainSavedState94Ext main_33;
     struct Main35Ext main_35;
     struct Main36Ext main_36;
+    struct Main43Ext main_43;
     struct MainSavedState94Ext main_37;
     struct MainSavedState80Ext main_38;
     struct MainSavedState94Ext main_44;
@@ -579,6 +595,7 @@ union MainObjExt {
     struct Main64Ext main_64;
     struct MainSavedState94Ext main_67;
     struct MainSavedState94Ext main_70;
+    struct Main71Ext main_71;
     struct Main72Ext main_72;
     struct Main73Ext main_73;
     struct Main75Ext main_75;
@@ -937,7 +954,9 @@ struct WeaponObj {
     s8 unk66;
     s8 unk67;
     s32 unk68;
-    s8 pad6C[0x72 - 0x6C];
+    s8 pad6C[4];
+    u8 unk70;
+    s8 unk71;
     s8 unk72;
     s8 unk73;
     s8 unk74;
@@ -979,13 +998,34 @@ struct Item2Ext {
     u16 unk82;
 };
 
+struct Item04Data {
+    u16 unk0;
+    u16 unk2[6];
+    u8 object_ids[50];
+};
+
+struct Item4Ext {
+    s32 timer;
+};
+
 struct Item12Ext {
     s32 x_offset;
 };
 
 union ItemExt {
     struct Item2Ext item_2;
+    struct Item4Ext item_4;
     struct Item12Ext item_12;
+};
+
+union ItemUnk84 {
+    u16 timer;
+    u32 previous_value;
+};
+
+union ItemUnk7C {
+    u8 value;
+    s32 item_4_timer;
 };
 
 struct ItemObj {
@@ -999,7 +1039,9 @@ struct ItemObj {
     s8 pad30[0x50 - 0x30];
     s32 unk50;
     s32 unk54;
-    s8 pad58[0x61 - 0x58];
+    s8 pad58[0x5C - 0x58];
+    s8 unk5C;
+    s8 pad5D[0x61 - 0x5D];
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -1021,11 +1063,9 @@ struct ItemObj {
     s8 : 8;
     s8 unk7A;
     s8 pad7B;
-    u8 unk7C;
-    s8 pad7D[0x80 - 0x7D];
+    union ItemUnk7C unk7C;
     union ItemExt ext;
-    u16 timer_84;
-    s8 pad86[0x88 - 0x86];
+    union ItemUnk84 unk84;
     s32 unk88;
 }; // size 0x8C
 
@@ -1063,6 +1103,12 @@ struct ReadyTextExt {
 
 struct MiscPointerExt {
     void* unk50;
+};
+
+struct Misc2Ext {
+    u8 pad50[4];
+    struct MainObj* owner;
+    u8 unk58;
 };
 
 struct TitleLogoExt {
@@ -1118,6 +1164,7 @@ struct UnkExt {
 };
 
 union MiscExt {
+    struct Misc2Ext misc_2;
     struct ReadyTextExt ready_text;
     struct MiscPointerExt pointer;
     struct TitleLogoExt title_logo;
@@ -1399,6 +1446,12 @@ extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
 extern u8 D_800FF7A4[];
+extern u8 D_800FF7A8[16];
+extern u8 D_80104CDC[];
+extern u8 D_80104CE0[];
+extern struct Item04Data D_8010C8B4;
+extern u8 D_8010C904[];
+extern s32 D_8010C918[4];
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -1731,6 +1784,11 @@ struct UnkEffectExt {
     s32 unk18;
 };
 
+struct Effect4Ext {
+    u16 timer;
+    s16 unk16;
+};
+
 struct Effect22Ext {
     u8 unk14;
     u8 unk15;
@@ -1767,7 +1825,10 @@ struct Effect9Ext {
 };
 
 struct Effect42Ext {
-    struct MainObj* owner;
+    union {
+        struct MainObj* main;
+        struct PlayerObj* player;
+    } owner;
     u8 timer;
 };
 
@@ -1805,6 +1866,7 @@ struct PaletteAnimationExt {
 union EffectExt {
     struct Effect9Ext effect_9;
     u16 effect_26_timer;
+    struct Effect4Ext effect_4;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
     struct Effect8Ext effect_8;

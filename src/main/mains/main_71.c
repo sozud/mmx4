@@ -18,7 +18,17 @@ void func_80089EBC(struct BaseObj* arg0, s8 arg1)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089EC8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089F58);
+void func_80089F58(struct MainObj* arg0)
+{
+    arg0->unk5 = 2;
+    arg0->unk54 = D_80104CDC;
+    arg0->unk50 = D_80104CE0;
+    arg0->unk6 = 0;
+    arg0->ext.main_71.unk88 = 0;
+    arg0->ext.main_71.unk86 = 0;
+    arg0->ext.main_71.unk87 = 0;
+    arg0->unk60 = 5;
+}
 
 void func_80089F94(struct MainObj* arg0)
 {
@@ -36,7 +46,20 @@ void func_80089FAC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089FD4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_8008A024);
+void func_8008A024(struct MainObj* arg0)
+{
+    s32 var_v1;
+    u8 temp_a1;
+
+    temp_a1 = arg0->ext.main_71.unk8A;
+    if (temp_a1 != 0) {
+        var_v1 = arg0->ext.main_71.unk84 << 8;
+        if (!(temp_a1 & 1)) {
+            var_v1 = -var_v1;
+        }
+        arg0->unk20 = var_v1;
+    }
+}
 
 void func_8008A05C(void)
 {

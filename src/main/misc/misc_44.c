@@ -15,7 +15,10 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0828);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0988);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D09E4);
+void func_800D09E4(struct MiscObj* arg0)
+{
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0A04);
 

@@ -30,7 +30,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E690);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E718);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E7B4);
+void func_8009E7B4(struct ShotObj* arg0)
+{
+    s8 temp_v0;
+
+    temp_v0 = (u8)arg0->unk7 - 1;
+    arg0->unk7 = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk7 = 0x37;
+        arg0->x_vel.val = -FIXED(4);
+        arg0->unk5 = 7;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E7EC);
 

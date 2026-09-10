@@ -929,7 +929,15 @@ void func_80035B6C(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80035C20);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80035D00);
+void func_80035D00(struct PlayerObj* arg0)
+{
+    if (arg0->unkC7 != 0) {
+        arg0->unkC7--;
+        return;
+    }
+    arg0->state = 3;
+    arg0->unk5 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80035D34);
 
@@ -3663,7 +3671,18 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80047404);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80047660);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80047794);
+void func_80047794(struct MainObj* arg0)
+{
+    arg0->unk7A = 0;
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[4] = 0;
+    arg0->ext.raw[5] = 0;
+    arg0->unk61 = 0;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_800477D0(struct MainObj* arg0)
 {

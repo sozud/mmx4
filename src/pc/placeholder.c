@@ -1868,7 +1868,7 @@ void func_800C00BC(struct ItemObj* arg0)
     }
 
     arg0->unk5 = 0;
-    switch (arg0->unk7C) {
+    switch (arg0->unk7C.value) {
     case 0:
         func_800BFF0C(arg0, 4, 1);
         break;
@@ -1878,7 +1878,7 @@ void func_800C00BC(struct ItemObj* arg0)
     case 2:
     case 3:
     case 6:
-        func_800BFCC0(arg0, arg0->unk7C);
+        func_800BFCC0(arg0, arg0->unk7C.value);
         arg0->state = 3;
         break;
     case 4:

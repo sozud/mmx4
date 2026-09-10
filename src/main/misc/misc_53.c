@@ -24,7 +24,11 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2F34);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2FC4);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D301C);
+void func_800D301C(struct MiscObj* arg0)
+{
+    engine_obj.unkF = 1;
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 void func_800D3048(struct MiscObj* arg0)
 {
