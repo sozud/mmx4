@@ -14,7 +14,18 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2D7C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2DCC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2E1C);
+void func_800D2E1C(struct MiscObj* arg0)
+{
+    struct EffectObj* effect;
+
+    arg0->ext.misc_53.timer = 0x12C;
+    arg0->unk5++;
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 0x41;
+        effect->id = 0x1C;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2E64);
 

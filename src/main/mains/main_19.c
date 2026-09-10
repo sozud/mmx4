@@ -16,7 +16,15 @@ void func_80052C2C(struct MainObj* arg0)
     D_800FC7B8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052C70);
+void func_80052C70(struct MainObj* arg0)
+{
+    func_8002B718((struct MovingObj*)arg0);
+    CollisionRelated((struct PlayerObj*)arg0);
+    if (arg0->unk70 != 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052CB8);
 

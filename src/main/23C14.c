@@ -1674,7 +1674,14 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80037C28);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80037D08);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80037DB0);
+void func_80037DB0(struct PlayerObj* arg0)
+{
+    func_800350A4(arg0, 0x5F);
+    func_800363B8(arg0, 5);
+    arg0->unk67 = 1;
+    arg0->unk5 = 0x26;
+    arg0->unk6 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80037DFC);
 
@@ -2384,7 +2391,20 @@ void func_8003DC44(struct BaseObj* arg0, s8 arg1)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC50);
+s32 func_8003DC50(struct RideArmorObj* arg0)
+{
+    u16 collision_flags = arg0->collision_flags;
+
+    if (collision_flags & 2) {
+        arg0->unk15 = 0;
+        return 1;
+    }
+    if (collision_flags & 1) {
+        arg0->unk15 = 0x40;
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DC8C);
 
@@ -2830,7 +2850,13 @@ void func_80041524(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80041564);
+void func_80041564(struct BaseObj* arg0)
+{
+    arg0->unk15 = 0;
+    func_80015D60(arg0, 0);
+    arg0->unk6++;
+    func_8002B318(arg0, 0x90, 0x90);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800415B0);
 

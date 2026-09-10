@@ -10,7 +10,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA40C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA46C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA4B4);
+void func_800CA4B4(struct MiscObj* arg0)
+{
+    arg0->on_screen = 0;
+    if (engine_obj.unk3 == arg0->unk2) {
+        is_on_screen(BASE_OBJECT(arg0));
+    }
+}
 
 void func_800CA4F0(struct MiscObj* arg0)
 {

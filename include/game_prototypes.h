@@ -382,6 +382,7 @@ extern void func_8003AAE8 (struct PlayerObj *arg0);
 extern void func_8003AE08 (struct PlayerObj *arg0);
 extern void func_8003B3DC (struct RideArmorObj *arg0);
 extern void func_8003DC44 (struct BaseObj *arg0, s8 arg1);
+extern s32 func_8003DC50 (struct RideArmorObj *arg0);
 extern void func_8003F648 (struct RideArmorObj *arg0);
 extern void func_80040608 (struct MainObj *arg0);
 extern void func_800420E8 (struct MainObj *arg0);

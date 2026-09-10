@@ -1,0 +1,3 @@
+#include "common.h"
+
+struct Unk_unk68 D_8010D0FC = { 0x27, 0x3C, 0x38, 0x1F };

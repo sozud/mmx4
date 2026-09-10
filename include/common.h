@@ -1002,7 +1002,7 @@ struct WeaponObj {
     s32 unk80;
     s8 unk84; s8 pad85[0x8C - 0x85];
     s8 unk8C;
-    s8 pad8D;
+    s8 unk8D;
     s8 unk8E;
     s8 pad8F[0x94 - 0x8F];
     u8 unk94;
@@ -1081,7 +1081,7 @@ struct ItemObj {
     s8 unk65;
     s8 unk66;
     s8 unk67;
-    s32 unk68;
+    struct Unk_unk68* unk68;
     s8 pad6C[0x70 - 0x6C];
     u8 unk70;
     s8 : 8;
@@ -1188,6 +1188,15 @@ struct Misc55Ext {
     struct WeaponObj* owner;
 };
 
+struct Misc53Ext {
+    u8 pad50[4];
+    struct EffectObj* effect;
+    s16 timer;
+    u8 movement_timer;
+    u8 pad5B;
+    s8 x_step;
+};
+
 struct UnkExt {
     struct MiscUnk50_2* unk50;
     s8 unk54;
@@ -1202,6 +1211,7 @@ union MiscExt {
     struct Misc2Ext misc_2;
     struct Misc11Ext misc_11;
     struct Misc24Ext misc_24;
+    struct Misc53Ext misc_53;
     struct ReadyTextExt ready_text;
     struct MiscPointerExt pointer;
     struct TitleLogoExt title_logo;
@@ -2157,6 +2167,7 @@ extern u16 D_80106770[64];
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
+extern struct Unk_unk68 D_8010D0FC;
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
 extern s8 D_80173C6C[4];

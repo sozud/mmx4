@@ -24,7 +24,14 @@ void func_8009403C(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80094078);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80094104);
+void func_80094104(struct WeaponObj* arg0)
+{
+    arg0->unk50 = 0;
+    arg0->unk68 = 0;
+    g_Player.unk98--;
+    g_Player.unk99--;
+    ZeroObjectState((struct ObjectHeader*)arg0);
+}
 
 void func_80094154(struct WeaponObj* arg0)
 {
