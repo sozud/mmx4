@@ -11,7 +11,13 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_17", func_800B913C);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_17", func_800B91E0);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_17", func_800B9310);
+void func_800B9310(struct EffectObj* arg0)
+{
+    if (--arg0->ext.effect_17.timer != 0) {
+        engine_obj.character_state.fields.active = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_17", func_800B9354);
 

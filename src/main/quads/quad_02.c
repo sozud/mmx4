@@ -13,7 +13,15 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4A64);
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4B30);
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4C14);
+void func_800D4C14(struct QuadObj* arg0)
+{
+    if (arg0->unk7 == 0) {
+        arg0->state = 0;
+        return;
+    }
+    arg0->unk7--;
+    quad_is_on_screen(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4C50);
 

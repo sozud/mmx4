@@ -11,7 +11,15 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098AF8);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098C08);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098C84);
+void func_80098C84(struct WeaponObj* arg0)
+{
+    struct PlayerObj* owner = arg0->owner;
+    u8 timer = owner->unk86;
+    if (timer != 0) {
+        owner->unk86 = timer - 1;
+    }
+    ZeroObjectState((struct ObjectHeader*)arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098CC0);
 

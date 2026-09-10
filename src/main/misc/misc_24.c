@@ -48,9 +48,23 @@ void func_800CC350(struct MiscObj* arg0)
     D_8010E934[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC38C);
+void func_800CC38C(struct MiscObj* arg0)
+{
+    arg0->unk6++;
+    func_80015D60(arg0, 3);
+    arg0->ext.misc_24.child_active = 0;
+    arg0->ext.misc_24.child->ext.misc_11.active = 1;
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC3D4);
+void func_800CC3D4(struct MiscObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC418);
 

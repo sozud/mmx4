@@ -19,7 +19,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080DF4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080F04);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_8008107C);
+void func_8008107C(struct MainObj* self)
+{
+    if (--self->unk7C == 0) {
+        engine_obj.unkF = 0x40;
+    }
+    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+}
 
 void func_800810C4(struct MainObj* arg0)
 {

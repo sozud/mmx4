@@ -4,7 +4,14 @@
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_36", func_800BD1E4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_36", func_800BD23C);
+void func_800BD23C(struct EffectObj* arg0)
+{
+    struct Unk_unk68* collision_bounds = arg0->ext.effect_36.collision_bounds;
+    if ((collision_bounds->unk0 == 0) || (collision_bounds->unk1 != 2)) {
+        arg0->state = 2;
+        g_Player.unk61 = 0x78;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_36", func_800BD280);
 

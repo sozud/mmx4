@@ -31,7 +31,16 @@ void func_800BDA2C(struct EffectObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDA4C);
+void func_800BDA4C(void* arg0)
+{
+    struct MiscObj* obj = find_free_misc_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x22;
+        obj->ext.pointer.unk50 = arg0;
+        obj->unk2 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDA94);
 

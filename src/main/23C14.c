@@ -348,7 +348,6 @@ s32 func_80033EA4(struct PlayerObj* arg0)
 }
 
 void func_80034D64(struct PlayerObj*);
-void func_800387A8(struct PlayerObj*);
 
 s32 func_80033F5C(struct PlayerObj* arg0)
 {
@@ -1409,9 +1408,9 @@ void func_800371E4(struct PlayerObj* arg0)
     if (arg0->unk93 == 6) {
         func_80036E1C(1, 0x12, 0, 0);
         func_80036DA0(1, 6, 3, 0);
-        arg0->unkC8 = 0;
-        arg0->unkCC = 0;
-        arg0->unkD0 = 0;
+        arg0->weapon_06_slots[0] = 0;
+        arg0->weapon_06_slots[1] = 0;
+        arg0->weapon_06_slots[2] = 0;
     }
     if (arg0->unk93 == 8) {
         func_80036E1C(1, 0x1B, 1, 0);
@@ -1911,7 +1910,15 @@ void func_80038748(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800387A8);
+void func_800387A8(struct PlayerObj* arg0)
+{
+    func_800387F4(arg0);
+    arg0->x_pos.i.lo = 0;
+    arg0->y_pos.i.lo = 0;
+    arg0->unk5 = 0x20;
+    arg0->unk6 = 0;
+    arg0->x_pos.i.hi = (arg0->x_pos.i.hi & 0xFFF0) + 8;
+}
 
 void func_800387F4(struct PlayerObj* arg0)
 {
@@ -2399,7 +2406,17 @@ void func_8003DD2C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DD54);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DDA0);
+void func_8003DDA0(struct RideArmorObj* arg0)
+{
+    u16 collision_flags = arg0->collision_flags;
+    if (collision_flags & 3) {
+        s32 x_velocity = arg0->unk98 << 8;
+        if (!(collision_flags & 1)) {
+            x_velocity = -x_velocity;
+        }
+        arg0->x_vel.val = x_velocity;
+    }
+}
 
 void func_8003DDDC(struct PlayerObj* arg0)
 {
@@ -2453,7 +2470,14 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003EEF8);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003F068);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003F204);
+void func_8003F204(struct RideArmorObj* arg0)
+{
+    if (arg0->unk46 == 0) {
+        func_8003DC44(BASE_OBJECT(arg0), 1);
+        return;
+    }
+    func_80015DC8(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003F244);
 
@@ -3680,7 +3704,17 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80046B80);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80046C8C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80047038);
+void func_80047038(struct MainObj* arg0)
+{
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[4] = 0;
+    arg0->ext.raw[5] = 0;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+    func_80015930(2, 2);
+}
 
 void func_80047078(struct MainObj* arg0)
 {

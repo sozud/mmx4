@@ -6,7 +6,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D460);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D4E8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D548);
+void func_8008D548(struct MainObj* arg0)
+{
+    if ((D_801406AC == 2) && (D_8013BD40 == 0)) {
+        D_80171EA8 = 1;
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D590);
 

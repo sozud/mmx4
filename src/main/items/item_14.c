@@ -36,7 +36,15 @@ INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3B40);
 
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3BA4);
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3C9C);
+void func_800C3C9C(struct ItemObj* arg0)
+{
+    if (background_objects[0].unk34 == 0) {
+        background_objects[0].unk22 = 0x100;
+        background_objects[0].unk2A = 0x100;
+        background_objects[0].unk2C = 0x60;
+        arg0->unk5++;
+    }
+}
 
 void func_800C3CE4(struct ItemObj* arg0)
 {

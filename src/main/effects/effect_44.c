@@ -11,7 +11,13 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_44", func_800BE878);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_44", func_800BE8E4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_44", func_800BE960);
+void func_800BE960(struct EffectObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        func_80036B18();
+        func_8002B108(arg0);
+    }
+}
 
 void (*D_8010C13C[])(struct EffectObj*) = {
     func_800BE878,

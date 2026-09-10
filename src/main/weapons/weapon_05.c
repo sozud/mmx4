@@ -39,7 +39,16 @@ void func_80095D18(struct WeaponObj* arg0)
     arg0->unk5 = 2;
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095D60);
+void func_80095D60(struct WeaponObj* arg0)
+{
+    func_80015D60(arg0, 6);
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk50 = 0;
+    arg0->unk68 = 0;
+    arg0->state = 2;
+    arg0->unk5 = 0;
+}
 
 void func_80095DA8(struct WeaponObj* arg0)
 {

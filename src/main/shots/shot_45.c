@@ -63,7 +63,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A82EC);
 
 void func_800A833C(struct ShotObj* arg0)
 {
-    if (--arg0->unk88 == 0) {
+    if (--arg0->timer == 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
         arg0->unk6 = 0;

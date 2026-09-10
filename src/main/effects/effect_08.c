@@ -77,14 +77,22 @@ void func_800B7368(struct EffectObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7394);
+void func_800B7394(struct EffectObj* arg0)
+{
+    if (g_Player.x_pos.i.hi >= 0xDD0) {
+        engine_obj.checkpoint = 2;
+        engine_obj.unkF = -0x40;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800B73D4(struct EffectObj* arg0)
 {
     if (arg0->unk6 == 0) {
         func_800B7414(arg0);
     } else {
-        func_800B7440();
+        func_800B7440(arg0);
     }
 }
 
@@ -95,7 +103,15 @@ void func_800B7414(struct EffectObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7440);
+void func_800B7440(struct EffectObj* arg0)
+{
+    if (g_Player.x_pos.i.hi < 0x1709) {
+        engine_obj.checkpoint = 3;
+        engine_obj.unkF = -0x40;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800B7480(struct EffectObj* arg0)
 {

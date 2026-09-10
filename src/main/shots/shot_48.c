@@ -8,7 +8,16 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9AEC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9C24);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9C7C);
+void func_800A9C7C(struct ShotObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->on_screen = 0;
+        return;
+    }
+    func_80015DC8();
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9CBC);
 
