@@ -43,7 +43,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005398C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053A88);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053B18);
+u8 func_80053B18(struct PlayerObj* arg0, s16 arg1, s16 arg2)
+{
+    arg1 = arg0->x_pos.i.hi + arg1;
+    arg2 = arg0->y_pos.i.hi + arg2;
+    return func_8002D724(arg0, arg1, arg2);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053B54);
 

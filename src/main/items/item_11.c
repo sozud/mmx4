@@ -41,7 +41,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3114);
 
 void func_800C3198(struct ItemObj* arg0)
 {
-    if (++arg0->timer_84 == 0x32) {
+    if (++arg0->unk84.timer == 0x32) {
         arg0->unk5 = 3;
         arg0->unk6 = 0;
     }

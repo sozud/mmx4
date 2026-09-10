@@ -21,7 +21,10 @@ void func_800C7538(struct ItemObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7558);
+void func_800C7558(struct ItemObj* arg0)
+{
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7578);
 

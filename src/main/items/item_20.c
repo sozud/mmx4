@@ -15,13 +15,25 @@ void func_800C4E78(struct ItemObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_20", func_800C4EC8);
+void func_800C4EC8(struct ItemObj* arg0)
+{
+    if (func_8002BB80(arg0, &g_Player) != 0) {
+        arg0->unk5 = 1;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_20", func_800C4F04);
+void func_800C4F04(struct ItemObj* arg0)
+{
+    func_8001540C(2, 0xEC, arg0);
+    arg0->unk5 = 2;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_20", func_800C4F40);
 
-INCLUDE_ASM("main/nonmatchings/items/item_20", func_800C5058);
+void func_800C5058(struct ItemObj* arg0)
+{
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_20", func_800C5078);
 

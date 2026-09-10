@@ -61,7 +61,19 @@ void func_800C87B0(struct MiscObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_04", func_800C8938);
+void func_800C8938(struct MiscObj* arg0)
+{
+    struct MainObj* temp_s1;
+
+    temp_s1 = arg0->ext.misc_4.owner;
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+
+    temp_s1->unk7C--;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_04", func_800C899C);
 

@@ -47,14 +47,12 @@ list(REMOVE_ITEM MMX4_PC_GAME_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_40.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_42.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_43.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_44.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_45.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_46.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_49.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_50.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_51.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_52.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_53.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_55.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_57.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_03.c

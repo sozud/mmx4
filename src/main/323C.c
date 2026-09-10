@@ -1113,7 +1113,15 @@ void func_80015930(u8 arg0, u8 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80015A10);
+s32 SpuGetKeyStatus(s32);
+
+s32 func_80015A10(s32 arg0)
+{
+    u8* entry = D_80141F50[2];
+
+    entry += (arg0 & 0xFF) * 4;
+    return SpuGetKeyStatus(1 << (entry[3] & 0x1F)) == 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80015A50);
 
