@@ -2,10 +2,6 @@
 // 800D07EC..800D0E48
 #include "common.h"
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0820_jp);
-#endif
-
 void func_800D07EC(struct MiscObj* arg0)
 {
     D_8010F084[arg0->state](arg0);
@@ -26,7 +22,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0AA4);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0B14);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0B68);
+void func_800D0B68(struct UnkObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->unk54 = 0x3C;
+        arg0->unk5 = 4;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0B90);
 

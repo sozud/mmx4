@@ -124,7 +124,7 @@ void func_800A916C(struct ShotObj* arg0)
 
 void func_800A91D8(struct ShotObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     func_8002B718((struct MovingObj*)arg0);
     is_on_screen((struct BaseObj*)arg0);
 }

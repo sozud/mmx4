@@ -1177,10 +1177,8 @@ void func_80015D90(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
     arg0->animation_step.packed = *arg0->animation_cursor;
 }
 
-void func_80015DC8(void* object)
+void func_80015DC8(struct AnimatedObj* arg0)
 {
-    struct AnimatedObj* arg0 = object;
-
     if (--arg0->animation_step.fields.duration == 0) {
         arg0->animation_cursor = &arg0->animation_cursor[arg0->animation_step.fields.relative_step];
         __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));

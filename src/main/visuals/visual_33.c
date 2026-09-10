@@ -46,7 +46,7 @@ void func_800B2AD0(struct VisualObj* arg0)
         func_80015D60(arg0, var_s1 + 0x20);
         arg0->unk2 = var_s1;
     } else {
-        func_80015DC8(arg0, var_s1);
+        func_80015DC8(arg0);
     }
 
     arg0->unk15 = player->unk15;

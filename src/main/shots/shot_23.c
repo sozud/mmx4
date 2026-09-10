@@ -23,7 +23,7 @@ void func_8009DF60(struct ShotObj* arg0)
         arg0->unk5 = 0;
         arg0->unk7C->unk80 = 0;
     }
-    func_80015DC8();
+    func_80015DC8(arg0);
 }
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_23", func_8009DFA0);

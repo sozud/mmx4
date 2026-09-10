@@ -26,7 +26,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D1614);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D166C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D16E0);
+void func_800D16E0(struct UnkObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->unk54 = 0x1E;
+        arg0->unk5 = 6;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D1708);
 
@@ -34,7 +40,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D177C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D17F0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D1864);
+void func_800D1864(struct UnkObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->unk54 = 0x3C;
+        arg0->unk5 = 10;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D188C);
 

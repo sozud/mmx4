@@ -51,7 +51,7 @@ void func_800312B4(struct PlayerObj* arg0)
 
 void func_80031410(struct PlayerObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->unk6 == 0) {
         if (arg0->unkBE != 0) {
             if (--arg0->unkBE == 0) {
@@ -452,7 +452,7 @@ INCLUDE_ASM("main/nonmatchings/21AB4", func_80032840);
 
 void func_800328CC(struct PlayerObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk67 = 0;
         func_8003443C(arg0);
@@ -461,7 +461,7 @@ void func_800328CC(struct PlayerObj* arg0)
 
 void func_80032910(struct PlayerObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.relative_step < 0) {
         func_80034604(arg0);
     }

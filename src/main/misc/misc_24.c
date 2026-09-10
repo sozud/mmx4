@@ -58,7 +58,7 @@ void func_800CC38C(struct MiscObj* arg0)
 
 void func_800CC3D4(struct MiscObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state = 2;
         arg0->unk5 = 0;

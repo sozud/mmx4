@@ -2007,7 +2007,7 @@ void func_80039230(struct PlayerObj* arg0)
     if (arg0->unkDE == 0) {
         func_8003470C(arg0);
     } else {
-        func_80015DC8();
+        func_80015DC8(arg0);
     }
 }
 
@@ -2727,7 +2727,7 @@ void func_800411D4(struct MainObj* arg0)
     u8 index;
     struct ShotObj* shot;
 
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.event != 3) {
         func_8002B718((struct MovingObj*)arg0);
     }
@@ -2803,7 +2803,7 @@ void func_8004140C(struct MainObj* arg0)
     struct VisualObj* visual;
     struct ShotObj* shot;
 
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.event == 1) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
@@ -3189,7 +3189,7 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80043064);
 
 void func_800430C0(struct MainObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     func_8002B694(arg0);
     if (arg0->unk70 & 8) {
         arg0->unk2C = 0;
@@ -3345,7 +3345,7 @@ void func_80043CB8(struct MainObj* arg0)
 {
     extern u16 D_80106470;
 
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->unk70 & 8) {
         if (arg0->ext.main_3.unk80 != 0) {
             arg0->collision_data = &D_80106470;

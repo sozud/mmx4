@@ -6,7 +6,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_25", func_800B3D3C);
 
 void func_800B3DE8(struct VisualObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     func_8002B318((struct BaseObj*)arg0, 0x30, 0x30);
 }
 

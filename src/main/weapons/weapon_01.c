@@ -36,7 +36,7 @@ void func_800933EC(struct WeaponObj* arg0)
 
 void func_8009343C(struct WeaponObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->unk46 == 0) {
         func_80093260(arg0);
     }

@@ -30,7 +30,7 @@ void func_80099784(struct ShotObj* arg0)
     arg0->x_pos.val = weapon->x_pos.val;
     arg0->y_pos.val = weapon->y_pos.val;
     arg0->unk42 = weapon->unk42;
-    func_80015DC8();
+    func_80015DC8(arg0);
     func_8002B318((struct BaseObj*)arg0, 0x5A, 0x5A);
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->state = 4;
@@ -51,7 +51,7 @@ void func_8009982C(struct ShotObj* arg0)
     arg0->x_pos.val = weapon->x_pos.val;
     arg0->y_pos.val = weapon->y_pos.val;
     arg0->unk42 = weapon->unk42;
-    func_80015DC8();
+    func_80015DC8(arg0);
     func_8002B318((struct BaseObj*)arg0, 0x5A, 0x5A);
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->state = 4;

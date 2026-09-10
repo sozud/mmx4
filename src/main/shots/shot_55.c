@@ -116,7 +116,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD338);
 
 void func_800AD404(struct ShotObj* arg0)
 {
-    func_80015DC8();
+    func_80015DC8(arg0);
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->timer = 0x80;
     }
