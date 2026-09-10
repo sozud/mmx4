@@ -80,7 +80,15 @@ void func_800714C0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800714F4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80071598);
+void func_80071598(struct MainObj* arg0)
+{
+    if (arg0->unk24 > 0) {
+        arg0->unk2C = -FIXED(0.8125);
+        arg0->unk24 = 0;
+        arg0->unk6++;
+        arg0->ext.main_56.flags &= ~2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800715D4);
 

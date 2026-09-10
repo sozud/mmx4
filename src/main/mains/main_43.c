@@ -118,7 +118,15 @@ void func_8006528C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800652C8);
+void func_800652C8(struct MainObj* arg0)
+{
+    u8 animation_id;
+
+    animation_id = D_800FF6C8[arg0->ext.main_43.animation_set]
+                             [arg0->ext.main_43.animation_index];
+    arg0->ext.main_43.animation_id = animation_id;
+    func_80015D60(arg0, animation_id);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006530C);
 

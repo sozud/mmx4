@@ -10,7 +10,14 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093130);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800931A8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093260);
+void func_80093260(struct WeaponObj* arg0)
+{
+    func_80015D60(arg0, 3);
+    arg0->unk50 = 0;
+    arg0->unk75 = 0;
+    arg0->state = 4;
+    arg0->unk5 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800932A0);
 
@@ -27,10 +34,20 @@ void func_800933EC(struct WeaponObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_8009343C);
+void func_8009343C(struct WeaponObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->unk46 == 0) {
+        func_80093260(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_8009347C);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800934D8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093524);
+void func_80093524(struct WeaponObj* arg0)
+{
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
+    func_8002B318(BASE_OBJECT(arg0), 0x18, 0x28);
+}

@@ -10,4 +10,8 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_04", func_800953D0);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04", func_80095430);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04", func_8009547C);
+void func_8009547C(struct WeaponObj* arg0)
+{
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x28);
+}

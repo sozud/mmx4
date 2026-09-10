@@ -75,7 +75,16 @@ void func_8008C95C(struct MainObj* arg0)
     D_801052DC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C998);
+void func_8008C998(struct MainObj* arg0)
+{
+    arg0->unk24 = FIXED(5);
+    arg0->unk28 = 0;
+    arg0->unk20 = 0;
+    arg0->unk2C = 0x4200;
+    arg0->ext.main_73.unk89 = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C9E0);
 
@@ -110,7 +119,17 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D19C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D278);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D2FC);
+void func_8008D2FC(struct MainObj* arg0)
+{
+    s16 temp_v0;
+
+    temp_v0 = arg0->unk7C - 1;
+    arg0->unk7C = temp_v0;
+    if (temp_v0 == 0) {
+        engine_obj.unkF = 1;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D340);
 

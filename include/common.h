@@ -306,6 +306,13 @@ union PlayerUnk8A {
     } bytes;
 };
 
+typedef s8 PlayerChargeState;
+enum {
+    PLAYER_CHARGE_NONE,
+    PLAYER_CHARGE_PARTIAL,
+    PLAYER_CHARGE_FULL,
+};
+
 MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u32));
 
 #define OBJECT_HEADER_FIELDS \
@@ -492,7 +499,9 @@ struct Main48Ext {
 };
 
 struct Main73Ext {
-    u8 pad80[0xC];
+    u8 pad80[9];
+    s8 unk89;
+    u8 pad8A[2];
     u8 effect_state;
     u8 object_id;
     u8 unk8E;
@@ -501,6 +510,11 @@ struct Main73Ext {
 struct Main18Ext {
     u8 pad80[0x17];
     u8 saved_unk5;
+};
+
+struct Main19Ext {
+    u8 pad80;
+    u8 animation_index;
 };
 
 struct Main21Ext {
@@ -525,8 +539,23 @@ struct Main36Ext {
 };
 
 struct Main43Ext {
-    u8 pad80[0x10];
+    u8 pad80[0xC];
+    u16 animation_index;
+    u16 animation_length;
     u16 unk90;
+    u8 pad92[4];
+    u8 animation_id;
+    s8 animation_set;
+};
+
+struct Main56Ext {
+    u8 pad80[0xB];
+    u8 flags;
+};
+
+struct Main487Ext {
+    u8 pad80[0xA];
+    u8 unk8A;
 };
 
 struct Main71Ext {
@@ -573,6 +602,7 @@ union MainObjExt {
     struct MainSavedState90Ext main_14;
     struct MainSavedState90Ext main_17;
     struct Main18Ext main_18;
+    struct Main19Ext main_19;
     struct Main21Ext main_21;
     struct Main22Ext main_22;
     struct Main24Ext main_24;
@@ -583,6 +613,7 @@ union MainObjExt {
     struct Main35Ext main_35;
     struct Main36Ext main_36;
     struct Main43Ext main_43;
+    struct Main487Ext main_487;
     struct MainSavedState94Ext main_37;
     struct MainSavedState80Ext main_38;
     struct MainSavedState94Ext main_44;
@@ -590,6 +621,7 @@ union MainObjExt {
     struct Main49Ext main_49;
     struct MainSavedState94Ext main_51;
     struct MainSavedState94Ext main_52;
+    struct Main56Ext main_56;
     struct MainSavedState80Ext main_58;
     struct Main60Ext main_60;
     struct Main64Ext main_64;
@@ -793,7 +825,7 @@ struct PlayerObj {
     s8 unk98;
     s8 unk99;
     s8 unk9A;
-    s8 unk9B[2];
+    PlayerChargeState charge_state[2];
     u8 unk9D;
     u8 unk9E;
     s8 unk9F;
@@ -1447,6 +1479,7 @@ extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
 extern u8 D_800FF7A4[];
 extern u8 D_800FF7A8[16];
+extern const u8* D_800FF6C8[];
 extern u8 D_80104CDC[];
 extern u8 D_80104CE0[];
 extern struct Item04Data D_8010C8B4;
@@ -2248,6 +2281,7 @@ extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
 extern s8 D_8013B810;
 extern u8 D_8013B814;
+extern u8 D_8013B8A0[];
 extern struct AbcObj abc_object;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];

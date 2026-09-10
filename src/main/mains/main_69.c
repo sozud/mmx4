@@ -54,7 +54,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086860);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086900);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800869BC);
+void func_800869BC(struct MainObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->unk6++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800869F8);
 
@@ -220,7 +226,16 @@ void func_80088974(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800889A4);
+void func_800889A4(struct BaseObj* arg0)
+{
+    s16 right_edge = background_objects[0].x_pos.i.hi + 0xB0;
+
+    if (arg0->x_pos.i.hi < right_edge) {
+        arg0->unk15 = 0x40;
+    } else {
+        arg0->unk15 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800889DC);
 

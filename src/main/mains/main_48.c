@@ -88,7 +88,15 @@ void func_8006808C(struct MainObj* arg0)
     D_800FFB54[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800680C8);
+void func_800680C8(struct MainObj* arg0)
+{
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = FIXED(2);
+    arg0->unk2C = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 1);
+}
 
 void func_80068108(struct MainObj* arg0)
 {

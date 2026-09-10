@@ -450,9 +450,22 @@ INCLUDE_ASM("main/nonmatchings/21AB4", func_800327CC);
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032840);
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_800328CC);
+void func_800328CC(struct PlayerObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk67 = 0;
+        func_8003443C(arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032910);
+void func_80032910(struct PlayerObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.relative_step < 0) {
+        func_80034604(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032950);
 

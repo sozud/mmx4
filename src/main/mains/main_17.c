@@ -38,7 +38,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_17", func_80050540);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_17", func_80050644);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_17", func_80050690);
+void func_80050690(struct MainObj* arg0)
+{
+    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
+        arg0->unk5 = 5;
+        arg0->unk2C = 0x4200;
+        arg0->unk6 = 0;
+        arg0->unk24 = 0;
+        arg0->unk67 = 1;
+    }
+}
 
 void func_800506D8(struct AnimatedObj* arg0)
 {

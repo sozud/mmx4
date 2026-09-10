@@ -37,7 +37,14 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004C394);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004C56C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004C654);
+void func_8004C654(struct MainObj* arg0)
+{
+    if (arg0->unk2 == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_8004C694(struct MainObj* arg0)
 {
