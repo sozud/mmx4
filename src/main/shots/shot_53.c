@@ -25,7 +25,13 @@ void func_800AAFF8(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB050);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB128);
+void func_800AB128(struct ShotObj* arg0)
+{
+    func_80015D60(arg0, 8);
+    arg0->timer = 0x3C;
+    arg0->unk8A = 4;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB170);
 
@@ -39,7 +45,7 @@ void func_800AB32C(struct ShotObj* arg0)
 
 void func_800AB384(struct ShotObj* arg0)
 {
-    arg0->unk88 = 1;
+    arg0->timer = 1;
     arg0->unk8A = 6;
     arg0->unk6++;
 }
@@ -52,9 +58,22 @@ void func_800AB4C0(struct ShotObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB518);
+void func_800AB518(struct ShotObj* arg0)
+{
+    func_80015D60(arg0, 9);
+    arg0->timer = 1;
+    arg0->x_vel.val = FIXED(-1);
+    arg0->y_vel.val = 0;
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB564);
+void func_800AB564(struct ShotObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk6++;
+    }
+    func_80015DC8();
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB5A4);
 
@@ -86,7 +105,7 @@ void func_800AB868(struct ShotObj* arg0)
 
 void func_800AB8C0(struct ShotObj* arg0)
 {
-    arg0->unk88 = 0x32;
+    arg0->timer = 0x32;
     arg0->unk8A = 2;
     arg0->unk50.data = NULL;
     arg0->unk8C = 1;

@@ -92,7 +92,16 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE95C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE9D8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AEA58);
+void func_800AEA58(struct MiscObj* self, struct EffectObj* parent)
+{
+    self->ext.ready_text.unk54 = 3;
+    self->ext.ready_text.stay_up_timer = 8;
+    self->ext.ready_text.palette_pos = (5 - self->unk2) * 2;
+    self->x_pos.val = parent->x_pos.val;
+    self->y_pos.val = parent->y_pos.val;
+    self->state = 1;
+    self->unk5 = 0;
+}
 
 void func_800AEAA0(struct ShotObj* arg0)
 {

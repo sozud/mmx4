@@ -12,7 +12,10 @@ void func_800C1994(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C19F0);
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B54);
+void func_800C1B54(struct ItemObj* arg0)
+{
+    D_8010CC70[arg0->unk5](arg0, &engine_obj, &g_Player);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B98);
 

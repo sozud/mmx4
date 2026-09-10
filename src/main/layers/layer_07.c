@@ -30,7 +30,10 @@ INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DA984);
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DAB40);
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DAB9C);
+void func_800DAB9C(struct TileEffectRecord* arg0, s32 arg1, s32 arg2, s32 arg3)
+{
+    D_801441C8[arg0->layer][arg2 & 0x1F][arg1 & 0x1F] = arg0->tiles[arg3 & 0xFF];
+}
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DABE4);
 

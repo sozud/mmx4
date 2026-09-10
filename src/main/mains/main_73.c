@@ -105,7 +105,21 @@ void func_8008CD44(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CD80);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CF68);
+void func_8008CF68(struct MainObj* arg0)
+{
+    s16 timer = arg0->unk7C, next_timer = timer;
+    u16 flags;
+    if (timer == 0) {
+        next_timer = 0x10;
+        arg0->unk7C = next_timer;
+        flags = arg0->unk42 | 0x8000;
+    } else {
+        next_timer--;
+        arg0->unk7C = next_timer;
+        flags = arg0->unk42 & 0x7FFF;
+    }
+    arg0->unk42 = flags;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CFAC);
 

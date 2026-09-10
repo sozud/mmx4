@@ -16,7 +16,13 @@ INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6814);
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6894);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C68E0);
+void func_800C68E0(struct ItemObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        func_80015D60(arg0, 0xC);
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6928);
 

@@ -9,7 +9,12 @@ void func_800B8F5C(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_16", func_800B8F98);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_16", func_800B902C);
+void func_800B902C(struct EffectObj* arg0)
+{
+    if (background_objects[0].x_pos.i.hi >= D_8010B700[arg0->unk2 * 2]) {
+        arg0->state++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_16", func_800B9070);
 

@@ -16,7 +16,7 @@ void func_800A7208(struct ShotObj* arg0)
     struct WeaponObj* weapon;
 
     weapon = arg0->unk7C;
-    weapon->pad80[4]--;
+    weapon->unk84--;
     arg0->on_screen = 0;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
@@ -57,11 +57,23 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7878);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7928);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A79A4);
+void func_800A79A4(struct ShotObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->state = 5;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A79E0);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7A54);
+void func_800A7A54(struct ShotObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->state = 8;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7A90);
 

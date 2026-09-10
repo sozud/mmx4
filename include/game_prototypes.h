@@ -370,6 +370,8 @@ extern void func_800384DC (struct PlayerObj *arg0);
 extern void func_80038524 (struct PlayerObj *arg0, s32 arg1);
 extern void func_80038568 (struct PlayerObj *arg0, s32 arg1);
 extern void func_80038678 (struct PlayerObj *arg0);
+extern void func_800387A8 (struct PlayerObj *arg0);
+extern void func_800387F4 (struct PlayerObj *arg0);
 extern void func_800388F0 (struct PlayerObj *arg0);
 extern void func_80038E90 (struct PlayerObj *arg0);
 extern void func_80039700 (struct PlayerObj *arg0);
