@@ -60,7 +60,14 @@ void func_80057D58(struct MainObj* arg0)
     D_800FD18C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057D94);
+void func_80057D94(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60((struct Unk19*)arg0, 3);
+        arg0->unk6 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057DDC);
 

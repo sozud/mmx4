@@ -40,7 +40,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070A38);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070C88);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070CB0);
+void func_80070CB0(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80070CDC(struct MainObj* arg0)
 {

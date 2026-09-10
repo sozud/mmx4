@@ -199,7 +199,27 @@ void func_800D9934(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D993C);
+void func_800D993C(struct LayerObj* arg0)
+{
+    s16 player_x = g_Player.x_pos.i.hi;
+    s8 offset = 0;
+
+    while (1) {
+        if (player_x - D_8010FF58[offset] < 0) {
+            break;
+        }
+        offset++;
+        if (offset >= 4) {
+            break;
+        }
+    }
+    arg0->bg_offset = offset;
+    if (offset != arg0->unk15) {
+        arg0->unk5 = offset;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+}
 
 void func_800D99B0(struct LayerObj* arg0)
 {

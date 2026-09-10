@@ -95,7 +95,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_8008460C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800846D0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084724);
+void func_80084724(struct MainObj* arg0)
+{
+    func_80015DC8(arg0);
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+}
 
 void func_80084774(struct MainObj* arg0)
 {
@@ -110,7 +118,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084910);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_8008498C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800849FC);
+void func_800849FC(struct MainObj* arg0)
+{
+    func_80015DC8(arg0);
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+}
 
 void func_80084A40(struct MainObj* arg0)
 {
