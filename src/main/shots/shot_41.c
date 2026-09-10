@@ -67,6 +67,53 @@ void func_800A62F0(struct ShotObj* arg0)
     D_80109950[arg0->state](arg0);
 }
 
+u8 D_801098D0[4] = { 0xEE, 0xF3, 0x18, 0x19 };
+
+u8 D_801098D4[2][4] = {
+    { 0xF7, 0xF2, 0x10, 0x18 },
+    { 0xF7, 0xF7, 0x0F, 0x11 },
+};
+
+u8 D_801098DC[4] = { 0xF2, 0xF0, 0x1D, 0x1D };
+
+u8 D_801098E0[4] = { 0xF6, 0xF6, 0x13, 0x13 };
+
+u8 D_801098E4[4] = { 0, 0, 0x0A, 9 };
+
+u8 D_801098E8[4] = { 0xEC, 0x85, 0x26, 0xFA };
+
+u8 D_801098EC[4] = { 0xF6, 0xF6, 0x13, 0x13 };
+
+u8 D_801098F0[4] = { 1, 0, 0x0A, 9 };
+
+s16 D_801098F4[8] = { 0, 8, -4, -0x0C, 4, -8, 0, 0x0C };
+
+u16 D_80109904[8] = { 0x90, 0xB0, 0x150, 0x1D0, 0xE0, 0x180, 0x1A0, 0x120 };
+
+void (*D_80109914[3])(struct ShotObj*) = {
+    func_800A5AA4,
+    func_800A5BA8,
+    func_800A5C90,
+};
+
+void (*D_80109920[5])(struct ShotObj*) = {
+    func_800A5D78,
+    func_800A5DEC,
+    func_800A5E60,
+    func_800A5F4C,
+    func_800A6028,
+};
+
+void (*D_80109934[7])(struct ShotObj*) = {
+    func_800A6238,
+    func_800A6258,
+    func_800A5A04,
+    func_800A5D20,
+    func_800A6094,
+    func_800A60D0,
+    func_800A61CC,
+};
+
 void (*D_80109950[])(struct ShotObj*) = {
     func_800A56E4,
     func_800A6260,

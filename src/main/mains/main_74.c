@@ -2,6 +2,13 @@
 // 8008D460..8008FB38
 #include "common.h"
 
+#ifdef VERSION_JP
+extern u8 D_8013B980_jp[];
+#define D_8013B8A0_VERSION D_8013B980_jp
+#else
+#define D_8013B8A0_VERSION D_8013B8A0
+#endif
+
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D460);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008D4E8);
@@ -92,7 +99,7 @@ void func_8008E3C0(struct MainObj* arg0)
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk5 = 2;
         arg0->unk6 = 0;
-        D_8013B8A0[0] = 0x1E;
+        D_8013B8A0_VERSION[0] = 0x1E;
     }
 
     func_80015DC8(arg0);
@@ -120,7 +127,7 @@ void func_8008E638(struct MainObj* arg0)
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk5 = 2;
         arg0->unk6 = 0;
-        D_8013B8A0[0] = 0xA;
+        D_8013B8A0_VERSION[0] = 0xA;
     }
     func_80015DC8(arg0);
 }

@@ -2,6 +2,8 @@
 // 8009D74C..8009DD40
 #include "common.h"
 
+u8 D_80109004[4] = { 0xF7, 0xF8, 0x11, 0x10 };
+
 void func_8009D74C(struct ShotObj* arg0)
 {
     D_80109008[arg0->state](arg0);

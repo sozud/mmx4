@@ -56,11 +56,12 @@ INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdStatus);
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdMode);
 
+extern u8 D_8011DD3C[];
 extern u8 D_8011DD3D;
 
 int CdLastCom(void)
 {
-    return D_8011DD3D;
+    return D_8011DD3C[1];
 }
 
 INCLUDE_ASM("main/nonmatchings/psxsdk/libgs/gs_125", CdLastPos);
@@ -202,7 +203,7 @@ extern int (*D_8011DD20)(u8, u8*);
 extern const char* D_8011DD40[];
 extern char* D_8011DDC0[];
 extern volatile CdlIntr D_8011DFF8;
-extern u8 D_8013BA80;
+extern u8 D_8013BB60_jp;
 extern char* D_8013BA98[];
 
 int CD_sync(int mode, u_char* result)
@@ -244,7 +245,7 @@ int CD_sync(int mode, u_char* result)
 
             while (intr = getintr()) {
                 if (intr & 4 && D_8011DD20 != 0) {
-                    D_8011DD20(D_8011DFF8.ready, &D_8013BA80);
+                    D_8011DD20(D_8011DFF8.ready, &D_8013BB60_jp);
                 }
                 if (intr & 2 && D_8011DD1C != 0) {
                     D_8011DD1C(D_8011DFF8.sync, &D_8013BA78);
@@ -370,7 +371,7 @@ int CD_sync(int mode, u_char* result)
             func_800EDC74(&D_80011B04);
             printf(&D_80011B14,
                 D_8013BA98[0],
-                D_8011DD40[D_8011DD3D],
+                D_8011DD40[D_8011DD3C[1]],
                 D_8011DDC0[D_8011DFF8.sync],
                 D_8011DDC0[D_8011DFF8.ready]);
             CD_flush();

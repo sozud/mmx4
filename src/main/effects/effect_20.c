@@ -92,12 +92,21 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9DE4);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_20", func_800B9E54);
 
+void (*D_8010B7C0[4])(struct EffectObj*) = {
+    func_800B9A08,
+    func_800B9A78,
+    func_800B9AE8,
+    func_800B9B58,
+};
+
+s16 D_8010B7D0[2] = { 0x0740, 0x0A00 };
+
 void (*D_8010B7D4[])(struct EffectObj*) = {
     func_800B9C0C,
     func_800B9C44,
 };
 
-void (*D_8010B7DC[])(struct EffectObj*) = {
+void (*D_8010B7DC[4])(struct EffectObj*) = {
     func_800B9C98,
     func_800B9D08,
     func_800B9D78,

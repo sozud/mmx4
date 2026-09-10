@@ -2,6 +2,30 @@
 // 800B4E34..800B5570
 #include "common.h"
 
+u8 D_8010A714[4] = { 0xF, 6, 0x16, 0xF0 };
+u8 D_8010A718[4] = { 0xF8, 0x16, 2, 0xFF };
+u8 D_8010A71C[4] = { 0xD, 0xC, 0xD, 0xB };
+s32 D_8010A720[8] = {
+    -0x50000,
+    -0x42000,
+    0x45000,
+    0x28000,
+    -0x48000,
+    -0x43000,
+    0x50000,
+    0x22000,
+};
+s32 D_8010A740[8] = {
+    -0x10000,
+    0x8000,
+    0xC000,
+    0x12000,
+    0x10000,
+    -0x8000,
+    -0xC000,
+    -0x12000,
+};
+
 INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B4E34);
 
 void func_800B518C(struct VisualObj* arg0)

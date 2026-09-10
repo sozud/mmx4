@@ -2,6 +2,72 @@
 // 800C081C..800C0E74
 #include "common.h"
 
+struct Item04Data D_8010C8B4 = {
+    0x0CC0,
+    { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
+    {
+        0,
+        0,
+        0xC8,
+        6,
+        0x98,
+        1,
+        0xB0,
+        0xC,
+        0xC0,
+        0xC,
+        0xB0,
+        0xC,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0xC8,
+        8,
+        0x98,
+        1,
+        0xB0,
+        0xC,
+        0xC0,
+        0xC,
+        0xB0,
+        0xC,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        0xC8,
+        0xA,
+        0x98,
+        1,
+        0xB0,
+        0xC,
+        0xC0,
+        0xC,
+        0xB0,
+        0xC,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0,
+    },
+};
+
+u8 D_8010C8F4[4][4] = {
+    { 0xE8, 0xA8, 0x18, 0xA0 },
+    { 0xE8, 0xD8, 0x18, 0x50 },
+    { 0xE8, 0xD8, 0x18, 0x50 },
+    { 0xE8, 0xD8, 0x18, 0x50 },
+};
+
+u8 D_8010C904[4] = { 0x0A, 0x0B, 0x0C, 0x0D };
+
 void func_800C081C(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;

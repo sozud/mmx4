@@ -2,6 +2,8 @@
 // 8009F46C..8009F638
 #include "common.h"
 
+u8 D_801091C0[4] = { 0xDB, 0xF2, 0x1E, 0x37 };
+
 void func_8009F46C(struct ShotObj* arg0)
 {
     struct BaseObj* unk7C = arg0->unk7C;

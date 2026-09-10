@@ -74,6 +74,73 @@ void func_800CC418(struct MiscObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
+union AnimationStep D_8010E83C[16] = {
+    { .packed = 0x00010002 },
+    { .packed = 0x01010002 },
+    { .packed = 0x02010002 },
+    { .packed = 0x03010002 },
+    { .packed = 0x04010001 },
+    { .packed = 0x05010005 },
+    { .packed = 0x04010001 },
+    { .packed = 0x06010005 },
+    { .packed = 0x04010001 },
+    { .packed = 0x07010004 },
+    { .packed = 0x04010001 },
+    { .packed = 0x08010004 },
+    { .packed = 0x09010006 },
+    { .packed = 0x0A010004 },
+    { .packed = 0x0B010004 },
+    { .packed = 0x0C000003 },
+};
+
+union AnimationStep D_8010E87C[8] = {
+    { .packed = 0x0D010003 },
+    { .packed = 0x0E010003 },
+    { .packed = 0x0F010003 },
+    { .packed = 0x10010003 },
+    { .packed = 0x11010003 },
+    { .packed = 0x12010003 },
+    { .packed = 0x13010003 },
+    { .packed = 0x14F90003 },
+};
+
+union AnimationStep D_8010E89C[8] = {
+    { .packed = 0x15010003 },
+    { .packed = 0x16010003 },
+    { .packed = 0x17010003 },
+    { .packed = 0x18010003 },
+    { .packed = 0x19010003 },
+    { .packed = 0x1A010003 },
+    { .packed = 0x1B010003 },
+    { .packed = 0x1CF90003 },
+};
+
+union AnimationStep D_8010E8BC[16] = {
+    { .packed = 0x0C010003 },
+    { .packed = 0x0B010004 },
+    { .packed = 0x0A010004 },
+    { .packed = 0x09010006 },
+    { .packed = 0x08010004 },
+    { .packed = 0x04010001 },
+    { .packed = 0x07010004 },
+    { .packed = 0x04010001 },
+    { .packed = 0x06010005 },
+    { .packed = 0x04010001 },
+    { .packed = 0x05010005 },
+    { .packed = 0x04010001 },
+    { .packed = 0x03010002 },
+    { .packed = 0x02010002 },
+    { .packed = 0x01010001 },
+    { .packed = 0x00000001 },
+};
+
+union AnimationStep* D_8010E8FC[4] = {
+    D_8010E83C,
+    D_8010E87C,
+    D_8010E89C,
+    D_8010E8BC,
+};
+
 void (*D_8010E90C[])(struct MiscObj*) = {
     func_800CBF14,
     func_800CC040,

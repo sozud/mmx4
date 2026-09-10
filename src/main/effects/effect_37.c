@@ -25,3 +25,8 @@ void (*D_8010C018[])(struct EffectObj*) = {
     func_800BD478,
     func_800BD4EC,
 };
+
+void (*D_8010C024[2])(struct EffectObj*) = {
+    func_800BD50C,
+    func_800BD5AC,
+};

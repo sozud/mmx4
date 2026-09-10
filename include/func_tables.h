@@ -1,3 +1,6 @@
+#ifndef MMX4_FUNC_TABLES_H
+#define MMX4_FUNC_TABLES_H
+
 // D_800EE45C
 void func_80012740(s32, void*);
 void func_800127C8(s32);
@@ -5322,8 +5325,8 @@ extern void (*D_8010B34C[])(struct EffectObj*);
 void func_800B599C(struct EffectObj*);
 void func_800B5B54(struct EffectObj*);
 
-// D_8010B3C0
-extern void (*D_8010B3C0[])(struct EffectObj*);
+// D_8010B42C
+extern void (*D_8010B42C[])(struct EffectObj*);
 void func_800B5D04(struct EffectObj*);
 void func_800B5E2C(struct EffectObj*);
 
@@ -6602,6 +6605,7 @@ void func_800D8578(struct QuadObj*);
 void func_800D802C(struct QuadObj*);
 void func_800D83DC(struct QuadObj*);
 void func_800D85C8(struct QuadObj*);
+void func_800D8578(struct QuadObj*);
 
 // D_8010FF08
 extern void (*D_8010FF08[])(struct LayerObj*);
@@ -6821,3 +6825,5 @@ extern void (*D_800FFBB8[])(struct MainObj*);
 extern void (*D_800FFBC0[])(struct MainObj*);
 extern void (*D_800FFBC8[])(struct MainObj*);
 extern void (*D_800FFC3C[])(struct MainObj*);
+
+#endif

@@ -41,6 +41,14 @@ void func_800BAF24(struct EffectObj* arg0)
     D_8010BE80[arg0->state](arg0);
 }
 
+void (*D_8010BE6C[5])(struct EffectObj*) = {
+    func_800BAC58,
+    func_800BAD10,
+    func_800BAD44,
+    func_800BADD0,
+    func_800BAE5C,
+};
+
 void (*D_8010BE80[])(struct EffectObj*) = {
     func_800BABA8,
     func_800BAE94,

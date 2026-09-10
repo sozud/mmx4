@@ -2,6 +2,95 @@
 // 800AAC98..800ABE08
 #include "common.h"
 
+s8 D_80109C38[3][4] = {
+    { -34, -40, 67, 79 },
+    { -54, -19, 20, 25 },
+    { 0, 4, 26, 35 },
+};
+
+s16 D_80109C44[8][3][2] = {
+    { { 0x3E0, 0x278 }, { 0x610, 0x258 }, { 0x610, 0x2A8 } },
+    { { 0x3E0, 0x2B8 }, { 0x4D8, 0x1D0 }, { 0x610, 0x2B8 } },
+    { { 0x3E0, 0x2B8 }, { 0x3E0, 0x258 }, { 0x610, 0x288 } },
+    { { 0x610, 0x2B8 }, { 0x3E0, 0x258 }, { 0x3E0, 0x2A8 } },
+    { { 0x610, 0x2B8 }, { 0x3E0, 0x258 }, { 0x3E0, 0x2A8 } },
+    { { 0x610, 0x2B8 }, { 0x3E0, 0x258 }, { 0x3E0, 0x2B8 } },
+    { { 0x568, 0x1D0 }, { 0x528, 0x1D0 }, { 0x448, 0x1D0 } },
+    { { 0x598, 0x308 }, { 0x448, 0x1D0 }, { 0x4E8, 0x308 } },
+};
+
+s16 D_80109CA4[8][3][2] = {
+    { { 0x448, 0x278 }, { 0x598, 0x258 }, { 0x598, 0x2A8 } },
+    { { 0x448, 0x2B8 }, { 0x4D8, 0x248 }, { 0x598, 0x2B8 } },
+    { { 0x448, 0x2B8 }, { 0x448, 0x258 }, { 0x598, 0x288 } },
+    { { 0x578, 0x2B8 }, { 0x498, 0x258 }, { 0x498, 0x2A8 } },
+    { { 0x598, 0x2B8 }, { 0x498, 0x258 }, { 0x498, 0x2A8 } },
+    { { 0x578, 0x2B8 }, { 0x408, 0x258 }, { 0x448, 0x2B8 } },
+    { { 0x568, 0x248 }, { 0x528, 0x258 }, { 0x448, 0x248 } },
+    { { 0x598, 0x2B8 }, { 0x448, 0x248 }, { 0x4E8, 0x2B8 } },
+};
+
+u8 D_80109D04[8][3] = {
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 0, 0, 0 },
+    { 1, 0, 0 },
+    { 1, 0, 2 },
+    { 1, 0, 0 },
+    { 0, 0, 0 },
+    { 1, 0, 1 },
+};
+
+void (*D_80109D1C[])(struct ShotObj*) = {
+    func_800AAD6C,
+    func_800AAE94,
+};
+
+void (*D_80109D24[])(struct ShotObj*) = {
+    func_800AB128,
+    func_800AB170,
+    func_800AB224,
+};
+
+void (*D_80109D30[])(struct ShotObj*) = {
+    func_800AB384,
+    func_800AB3A4,
+};
+
+void (*D_80109D38[])(struct ShotObj*) = {
+    func_800AB518,
+    func_800AB564,
+    func_800AB5A4,
+};
+
+void (*D_80109D44[])(struct ShotObj*) = {
+    func_800AB6C4,
+    func_800AB710,
+};
+
+void (*D_80109D4C[])(struct ShotObj*) = {
+    func_800AB7C0,
+    func_800AB814,
+};
+
+void (*D_80109D54[])(struct ShotObj*) = {
+    func_800AB8C0,
+    func_800AB8EC,
+};
+
+void (*D_80109D5C[])(struct ShotObj*) = {
+    func_800AAD44,
+    func_800AAD64,
+    func_800AAFF8,
+    func_800AB050,
+    func_800AB32C,
+    func_800AB4C0,
+    func_800AB66C,
+    func_800AB98C,
+    func_800AB868,
+    func_800AB768,
+};
+
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAC98);
 
 void func_800AAD44(struct ShotObj* arg0)

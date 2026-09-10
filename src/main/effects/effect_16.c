@@ -23,3 +23,5 @@ void (*D_8010B6F4[])(struct EffectObj*) = {
     func_800B902C,
     func_800B9070,
 };
+
+s16 D_8010B700[4] = { 0x7000, 0x7100, 0x4000, 0x4150 };

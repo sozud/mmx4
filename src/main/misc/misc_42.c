@@ -12,3 +12,8 @@ void func_800CFE98(struct MiscObj* arg0)
 INCLUDE_ASM("main/nonmatchings/misc/misc_42", func_800CFEE0);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_42", func_800D0118);
+
+void (*D_8010EFD0[2])(struct MiscObj*) = {
+    func_800CFEE0,
+    func_800D0118,
+};

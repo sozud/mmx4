@@ -20,6 +20,8 @@ void func_800C54FC(struct ItemObj* arg0)
     D_8010D250[arg0->state](arg0);
 }
 
+u8 D_8010D24C[4] = { 0, 0, 8, 0x0E };
+
 void (*D_8010D250[])(struct ItemObj*) = {
     func_800C52CC,
     func_800C5444,

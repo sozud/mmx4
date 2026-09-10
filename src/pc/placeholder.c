@@ -147,19 +147,6 @@ s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source)
     return 0;
 }
 
-u32 D_800F45E4[10] = {
-    0,
-    0x1936,
-    0x4DA8,
-    0x88D5,
-    0xD218,
-    0x137EF,
-    0x1DEF1,
-    0x34BEB,
-    0xA2736,
-    0xFFFFFFFF,
-};
-
 struct ControllerButtons {
     u16 current;
     u16 previous;

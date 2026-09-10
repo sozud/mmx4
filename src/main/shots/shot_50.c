@@ -2,6 +2,12 @@
 // 800AA2FC..800AA5E0
 #include "common.h"
 
+void (*D_80109BEC[])(struct ShotObj*) = {
+    func_800AA20C,
+    func_800AA2FC,
+    func_800AA3A0,
+};
+
 INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA2FC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA3A0);

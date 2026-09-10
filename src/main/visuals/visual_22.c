@@ -62,3 +62,5 @@ void (*D_8010A5D4[])(struct VisualObj*) = {
     func_800B3100,
     func_800B320C,
 };
+
+u32 D_8010A5E0 = 0x33CD;

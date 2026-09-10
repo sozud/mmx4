@@ -96,3 +96,17 @@ void (*D_8010FFA0[])(struct LayerObj*) = {
     func_800DA358,
     func_800DA478,
 };
+
+s16 D_8010FFAC[2] = { 0x6A0, 0x810 };
+
+void (*D_8010FFB0[])(struct LayerObj*) = {
+    func_800DA498,
+    func_800DA4FC,
+    func_800DA560,
+    func_800DA748,
+};
+
+void (*D_8010FFC0[])(struct LayerObj*) = {
+    func_800DA600,
+    func_800DA6A4,
+};

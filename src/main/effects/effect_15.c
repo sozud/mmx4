@@ -155,7 +155,19 @@ void func_800B8E6C(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_15", func_800B8E74);
 
+u16 D_8010B6C4[6] = { 0x0760, 0x0BA0, 0x13F0, 0x1700, 0x1775, 0 };
+
 void (*D_8010B6D0[])(struct EffectObj*) = {
     func_800B8B34,
     func_800B8B6C,
+};
+
+void (*D_8010B6D8[7])(struct EffectObj*) = {
+    func_800B8BC0,
+    func_800B8C30,
+    func_800B8CA0,
+    func_800B8D10,
+    func_800B8D8C,
+    func_800B8DFC,
+    func_800B8E6C,
 };

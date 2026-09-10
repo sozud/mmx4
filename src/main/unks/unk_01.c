@@ -50,3 +50,8 @@ void func_800D3A84(struct UnkObj* arg0)
     arg0->on_screen = 0;
     D_8010F5F8[arg0->state](arg0);
 }
+
+void (*D_8010F5F8[2])(struct UnkObj*) = {
+    func_800D3964,
+    func_800D39EC,
+};

@@ -31,3 +31,11 @@ void func_800D332C(struct MiscObj* arg0)
     }
     D_8010F58C[arg0->state](arg0);
 }
+
+void (*D_8010F58C[5])(struct MiscObj*) = {
+    func_800D3084,
+    func_800D31F8,
+    func_800D330C,
+    func_800D323C,
+    func_800D3288,
+};

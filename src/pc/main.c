@@ -24,17 +24,6 @@ struct UnkObj* mmx4_sp_current_unk;
 struct QuadObj* mmx4_sp_current_quad;
 struct LayerObj* mmx4_sp_current_layer;
 
-struct ObjectHeader* (*g_MakeObjectFuncs[8])() = {
-    (struct ObjectHeader * (*)()) find_free_main_obj,
-    (struct ObjectHeader * (*)()) find_free_weapon_obj,
-    (struct ObjectHeader * (*)()) find_free_visual_obj,
-    (struct ObjectHeader * (*)()) find_free_effect_obj,
-    (struct ObjectHeader * (*)()) find_free_item_obj,
-    (struct ObjectHeader * (*)()) find_free_misc_obj,
-    (struct ObjectHeader * (*)()) find_free_quad_obj,
-    (struct ObjectHeader * (*)()) find_free_layer_obj,
-};
-
 s32 mmx4_pc_sfx_group = -1;
 u32 mmx4_pc_sfx_index;
 const char* mmx4_pc_sfx_raw;

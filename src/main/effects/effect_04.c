@@ -9,6 +9,43 @@ void func_800B5EB0(struct EffectObj* arg0)
     arg0->state++;
     func_80016FB4(3);
 }
+u8 D_8010B434[16] = {
+#ifdef VERSION_JP
+    0x75,
+    0x76,
+    0x77,
+    0x78,
+    0x79,
+    0x7A,
+    0x7B,
+    0x7C,
+    0x7D,
+    0,
+    0x7E,
+    0x7F,
+    0x80,
+    0,
+    0,
+    0,
+#else
+    0x76,
+    0x77,
+    0x78,
+    0x79,
+    0x7A,
+    0x7B,
+    0x7C,
+    0x7D,
+    0x7E,
+    0,
+    0x7F,
+    0x80,
+    0x81,
+    0,
+    0,
+    0,
+#endif
+};
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_04", func_800B5EEC);
 

@@ -2,6 +2,10 @@
 // 8009F638..8009FB60
 #include "common.h"
 
+u8 D_801091D0[8] = { 0xF5, 0xFD, 0x1B, 0x0A, 2, 2, 0x0D, 4 };
+s32 D_801091D8[2] = { 0x5000, -0x5000 };
+s32 D_801091E0[4] = { 0x10000, -0x10000, -0x10000, 0x10000 };
+
 void func_8009F638(struct ShotObj* arg0)
 {
     D_801091F0[arg0->state](arg0);

@@ -50,3 +50,37 @@ void (*D_8010B4F8[])(struct EffectObj*) = {
     func_800B7630,
     func_800B7668,
 };
+
+void (*D_8010B504[])(struct EffectObj*) = {
+    func_800B76A4,
+    func_800B7764,
+    func_800B7934,
+    func_800B7B18,
+    func_800B7CFC,
+};
+
+struct Effect09MovementStep {
+    u8 timer;
+    s8 direction;
+    u8 tile_offset;
+    u8 pad;
+};
+
+struct Effect09MovementStep D_8010B518[4] = {
+    { 5, 1, 0, 0 },
+    { 5, 1, 1, 0 },
+    { 5, 1, 2, 0 },
+    { 5, -3, 3, 0 },
+};
+
+struct Effect09MovementStep D_8010B528[3] = {
+    { 5, 1, 4, 0 },
+    { 5, 1, 5, 0 },
+    { 5, -2, 6, 0 },
+};
+
+struct Effect09MovementStep D_8010B534[3] = {
+    { 5, 1, 7, 0 },
+    { 5, 1, 8, 0 },
+    { 5, -2, 9, 0 },
+};
