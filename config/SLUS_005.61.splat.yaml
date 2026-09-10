@@ -1402,6 +1402,8 @@ segments:
       - [0xFD864, .data, function_tables/D_8010D064]
       - [0xFD870, .data, items/item_15]
       - [0xFD87C, data]
+      - [0xFD8FC, .data, data/item_16_collision_data]
+      - [0xFD900, data]
       - [0xFD98C, .data, items/item_17]
       - [0xFD998, data]
       - [0xFD9CC, .data, items/item_18]

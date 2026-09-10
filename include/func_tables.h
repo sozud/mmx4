@@ -6434,7 +6434,7 @@ void func_800D2C04(void);
 void func_800D2CA4(void);
 void func_800D2D7C(void);
 void func_800D2DCC(void);
-void func_800D2E1C(void);
+void func_800D2E1C(struct MiscObj*);
 void func_800D2E64(void);
 void func_800D2EDC(void);
 

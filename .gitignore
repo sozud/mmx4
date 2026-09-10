@@ -3,6 +3,7 @@ bin
 assets
 build
 build.ninja
+.ninja_deps
 disks
 config/undefined_funcs_auto.us.main.txt
 config/undefined_syms_auto.us.main.txt

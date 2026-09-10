@@ -49,7 +49,14 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7600);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A766C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A77D8);
+void func_800A77D8(struct ShotObj* arg0)
+{
+    func_80015DC8();
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60(arg0, 0xF);
+        arg0->unk5 = 5;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7820);
 

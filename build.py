@@ -143,8 +143,10 @@ ninja.rule('compile',
            description='Building $out from $in')
 
 ninja.rule('cpp_263',
-           command=f'cpp $CPP_FLAGS $in $out',
-           description='Running preprocessor on $out from $in')
+           command=f'cpp $CPP_FLAGS -MMD -MF $out.d -MT $out $in $out',
+           description='Running preprocessor on $out from $in',
+           depfile='$out.d',
+           deps='gcc')
 
 ninja.rule('cc1_263',
            command='./bin/cc1 -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char $in -o $out',

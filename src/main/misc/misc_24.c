@@ -66,7 +66,13 @@ void func_800CC3D4(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC418);
+void func_800CC418(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_24.child_active != 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0->ext.misc_24.child));
+    }
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010E90C[])(struct MiscObj*) = {
     func_800CBF14,
