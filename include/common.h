@@ -2117,6 +2117,7 @@ extern u32* D_8010E55C[];
 extern u32* D_8010ECD4[];
 extern s8 D_8010FE38[];
 extern u8 D_8010FED4[];
+extern s16 D_8010FF00[4];
 extern u8 D_801193F0[];
 extern u32 D_801194F0[];
 extern u8 D_8011A030[];
@@ -2125,6 +2126,9 @@ extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern u32* D_8011BF40[54];
 extern u32* D_8011C0E4[3];
+extern u32* D_800FE890[];
+extern u32* D_80101624[];
+extern u32* D_80101A6C[];
 #ifdef MMX4_PC
 extern struct MainBssState main_bss_state;
 #define D_80141BD8 (main_bss_state.flags)

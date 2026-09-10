@@ -1,0 +1,3 @@
+#include "common.h"
+
+s16 D_8010FF00[] = { 0x8D0, 0xD30, 0x13C0, 0x1A50 };

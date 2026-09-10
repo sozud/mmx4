@@ -149,7 +149,26 @@ void func_800D8BAC(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8BB4);
+void func_800D8BB4(struct LayerObj* arg0)
+{
+    s16 player_x = g_Player.x_pos.i.hi;
+    s8 offset = 0;
+
+    while (1) {
+        if (player_x - D_8010FF00[offset] < 0) {
+            break;
+        }
+        offset++;
+        if (offset >= 4) {
+            break;
+        }
+    }
+    arg0->bg_offset = offset;
+    if (offset != arg0->unk15) {
+        arg0->unk5 = offset;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800D8C24(struct LayerObj* arg0)
 {
@@ -215,7 +234,17 @@ void func_800D8E40(struct LayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8E94);
+u8 func_800D8E94(struct LayerObj* arg0)
+{
+    f32 x_pos;
+    s16 threshold;
+
+    threshold = D_8010FF00[(u8)arg0->bg_offset - 1];
+    x_pos = g_Player.x_pos;
+    if (x_pos.i.hi >= threshold && (16 + threshold) >= x_pos.i.hi)
+        return 1;
+    return 0;
+}
 
 void (*D_8010FF08[])(struct LayerObj*) = {
     func_800D8684,
