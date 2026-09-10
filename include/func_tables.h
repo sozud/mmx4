@@ -6598,6 +6598,7 @@ void func_800D845C(struct QuadObj*);
 
 // D_8010FEF0
 extern void (*D_8010FEF0[])(struct QuadObj*);
+void func_800D8578(struct QuadObj*);
 void func_800D802C(struct QuadObj*);
 void func_800D83DC(struct QuadObj*);
 void func_800D85C8(struct QuadObj*);

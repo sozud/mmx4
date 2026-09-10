@@ -214,8 +214,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077C74);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077CE8);
 
-extern u32* D_80101A6C[];
-
 void func_80077D48(struct VisualObj* arg0)
 {
     struct VisualObj* obj = find_free_visual_obj();

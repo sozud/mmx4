@@ -149,8 +149,6 @@ void func_800D8BAC(struct LayerObj* arg0)
 {
 }
 
-extern s16 D_8010FF00[];
-
 void func_800D8BB4(struct LayerObj* arg0)
 {
     s16 player_x = g_Player.x_pos.i.hi;
@@ -236,14 +234,12 @@ void func_800D8E40(struct LayerObj* arg0)
     }
 }
 
-extern s16 D_8010FEFE[];
-
 u8 func_800D8E94(struct LayerObj* arg0)
 {
     f32 x_pos;
     s16 threshold;
 
-    threshold = D_8010FEFE[(u8)arg0->bg_offset];
+    threshold = D_8010FF00[(u8)arg0->bg_offset - 1];
     x_pos = g_Player.x_pos;
     if (x_pos.i.hi >= threshold && (16 + threshold) >= x_pos.i.hi)
         return 1;
