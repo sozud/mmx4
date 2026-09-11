@@ -1118,7 +1118,7 @@ void func_80015930(u8 arg0, u8 arg1)
 
 s32 SpuGetKeyStatus(s32);
 
-s32 func_80015A10(s32 arg0)
+s32 func_80015A10(s32 arg0, struct MainObj* owner)
 {
     u8* entry = D_80141F50[2];
 
@@ -2010,7 +2010,16 @@ void func_80019B64(struct EngineObj* arg0)
     D_800F1F94[arg0->unk2](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80019BA0);
+void func_80019BA0(struct EngineObj* arg0)
+{
+    arg0->unk2 = (u8)arg0->unk2 + 1;
+    reset_objects();
+    func_8001B644(D_800F1E90);
+#ifndef VERSION_JP
+    D_80141BDF[0] = 1;
+#endif
+    func_8001C008(4, 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80019BF4);
 
@@ -2153,7 +2162,13 @@ void InitMemcards(void)
     EnableEvent(D_80139688);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001C854);
+void func_8001C854(void)
+{
+    TestEvent(D_80139670);
+    TestEvent(D_80139674);
+    TestEvent(D_80139678);
+    TestEvent(D_8013967C);
+}
 
 void func_8001C8AC(void)
 {
