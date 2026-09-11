@@ -59,6 +59,8 @@ void func_800556D4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_22", func_80055710);
 
+void func_800559BC(struct MainObj*);
+
 void func_80055758(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
