@@ -94,7 +94,17 @@ void func_8004FAAC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FAE4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FBF4);
+void func_8004FBF4(struct MainObj* arg0)
+{
+    if ((arg0->unk67 == 0) && (arg0->unk5 != 0xA) && !(arg0->unk70 & 8)) {
+        arg0->unk5 = 3;
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk6 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk67 = 1;
+    }
+}
 
 void func_8004FC50(struct AnimatedObj* arg0)
 {

@@ -2,7 +2,17 @@
 // 800631C8..80065930
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800631C8);
+void func_800643B0(struct MainObj* arg0);
+void func_8006458C(struct MainObj* arg0);
+
+void func_800631C8(struct MainObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        D_800FF6E4[arg0->state](arg0);
+    } else {
+        D_800FF6F0[arg0->state](arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063234);
 
@@ -61,7 +71,14 @@ INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064154);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064338);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064360);
+void func_80064360(struct MainObj* arg0)
+{
+    if ((arg0->ext.main_43.unk94 == 0) && (arg0->ext.main_43.unk92 != 0)) {
+        func_8006458C(arg0);
+    } else {
+        func_800643B0(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800643B0);
 

@@ -447,6 +447,21 @@ struct MainSavedState90Ext {
     u32 saved_unk5;
 };
 
+struct Main17Ext {
+    u32 unk80;
+    u8 pad84[0xC];
+    u32 saved_unk5;
+};
+
+struct Main37Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
+    u32 unk8C;
+    u8 pad90[4];
+    u32 saved_unk5;
+};
+
 struct MainSavedState94Ext {
     u8 pad80[0x14];
     u32 saved_unk5;
@@ -518,7 +533,9 @@ struct Main73Ext {
 };
 
 struct Main18Ext {
-    u8 pad80[0x17];
+    u8 pad80[2];
+    u8 unk82;
+    u8 pad83[0x14];
     u8 saved_unk5;
 };
 
@@ -553,7 +570,10 @@ struct Main43Ext {
     u16 animation_index;
     u16 animation_length;
     u16 unk90;
-    u8 pad92[4];
+    u8 unk92;
+    u8 pad93;
+    u8 unk94;
+    u8 pad95;
     u8 animation_id;
     s8 animation_set;
 };
@@ -589,8 +609,16 @@ struct Main60Ext {
 };
 
 struct Main64Ext {
-    u8 pad80[0xB];
+    u8 pad80[4];
+    u16 unk84;
+    u16 unk86;
+    u8 pad88[3];
     u8 unk8B;
+};
+
+struct Main74Ext {
+    u8 pad80[0x17];
+    u8 unk97;
 };
 
 struct Main75Ext {
@@ -610,7 +638,7 @@ union MainObjExt {
     struct Main12Ext main_12;
     struct Main13Ext main_13;
     struct MainSavedState90Ext main_14;
-    struct MainSavedState90Ext main_17;
+    struct Main17Ext main_17;
     struct Main18Ext main_18;
     struct Main19Ext main_19;
     struct Main21Ext main_21;
@@ -624,7 +652,7 @@ union MainObjExt {
     struct Main36Ext main_36;
     struct Main43Ext main_43;
     struct Main487Ext main_487;
-    struct MainSavedState94Ext main_37;
+    struct Main37Ext main_37;
     struct MainSavedState80Ext main_38;
     struct MainSavedState94Ext main_44;
     struct Main48Ext main_48;
@@ -640,6 +668,7 @@ union MainObjExt {
     struct Main71Ext main_71;
     struct Main72Ext main_72;
     struct Main73Ext main_73;
+    struct Main74Ext main_74;
     struct Main75Ext main_75;
 };
 
@@ -2623,6 +2652,8 @@ void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);
 void func_80038E44(struct PlayerObj*, s32);
+void func_800921E8(s32);
+void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 
 enum SelectedPlayer {
     CHARACTER_X,

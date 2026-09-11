@@ -33,4 +33,10 @@ void func_8004E810(struct MainObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E830);
+void func_8004E830(struct MainObj* arg0)
+{
+    D_800FBBA0[arg0->state](arg0);
+    if (arg0->state != 5) {
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    }
+}

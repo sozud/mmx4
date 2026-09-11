@@ -2,7 +2,13 @@
 // 80050708..8005284C
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80050708);
+void func_80050708(struct MainObj* arg0)
+{
+    D_800FC344[arg0->state](arg0);
+    if (arg0->ext.main_18.unk82 == 0 && arg0->state < 2) {
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_8005077C);
 

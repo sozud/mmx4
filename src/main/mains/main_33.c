@@ -25,7 +25,16 @@ void func_8005D850(struct MainObj* arg0)
     D_800FDF80[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D88C);
+void func_8005D88C(struct MainObj* arg0)
+{
+    arg0->unk7C = 0xB4;
+    if (arg0->unk15 == 0) {
+        arg0->unk20 = FIXED(-2.5);
+    } else {
+        arg0->unk20 = FIXED(2.5);
+    }
+    arg0->unk6 = 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D8B8);
 

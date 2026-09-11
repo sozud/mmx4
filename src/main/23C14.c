@@ -2663,7 +2663,31 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE84);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DF9C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003E048);
+s32 func_8003E048(struct PlayerObj* arg0)
+{
+    s32 mask;
+    s32 flags;
+    s32 result;
+
+    if (!(arg0->unk97 & 8)) {
+        mask = 2;
+        if (arg0->unk15 != 0) {
+            mask = 1;
+        }
+        return mask & arg0->unk88.value;
+    }
+
+    mask = 2;
+    if (arg0->unk15 != 0) {
+        mask = 1;
+    }
+    flags = arg0->unk88.value;
+    result = mask & flags;
+    if (result == 0) {
+        result = flags & 0x100;
+    }
+    return result;
+}
 
 s32 func_8003E0B0(struct PlayerObj* arg0)
 {
@@ -4168,7 +4192,19 @@ void func_800483AC(struct MainObj* arg0)
     D_800FAE60[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800483E8);
+void func_800483E8(struct MainObj* arg0)
+{
+    s32 x_vel;
+
+    x_vel = FIXED(-0.5);
+    arg0->unk6++;
+    if (arg0->unk15 != 0) {
+        x_vel = FIXED(0.5);
+    }
+    arg0->unk20 = x_vel;
+    arg0->unk24 = FIXED(1.5);
+    func_80015D60(arg0, 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80048434);
 

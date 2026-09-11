@@ -25,7 +25,19 @@ void func_80054F14(struct MainObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_21", func_80054F34);
+void func_80054F34(struct MainObj* arg0)
+{
+    if (arg0->ext.main_21.timer_80 == 0) {
+        if (arg0->ext.main_21.timer_82 == 0) {
+            arg0->unk5 = 3;
+            func_80015D60(arg0, 0);
+            return;
+        }
+        arg0->ext.main_21.timer_82--;
+        return;
+    }
+    arg0->ext.main_21.timer_80--;
+}
 
 void func_80054F98(struct MainObj* arg0)
 {
