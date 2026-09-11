@@ -695,7 +695,17 @@ void func_80033054(struct PlayerObj* arg0)
     func_80036B88(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_800330B4);
+void func_800330B4(struct PlayerObj* arg0)
+{
+    if (func_80034100(arg0) == 0) {
+        if (arg0->unkC0 == 0) {
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+        } else {
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80033108);
 

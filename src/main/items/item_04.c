@@ -87,12 +87,12 @@ void func_800C09C4(struct ItemObj* arg0)
 
     temp_s1 = func_8002DD04(MAIN_OBJECT(arg0));
     temp_a0 = arg0->unk5C;
-    if (((temp_a0 < arg0->unk84.previous_value) && (temp_a0 != 0)) || (arg0->unk88 != 0)) {
+    if (((temp_a0 < arg0->tail_ext.item_4.unk84.previous_value) && (temp_a0 != 0)) || (arg0->tail_ext.item_4.unk88 != 0)) {
         func_800C0DFC(arg0);
-        arg0->unk88 ^= 1;
+        arg0->tail_ext.item_4.unk88 ^= 1;
     }
 
-    arg0->unk84.previous_value = arg0->unk5C;
+    arg0->tail_ext.item_4.unk84.previous_value = arg0->unk5C;
     if (arg0->unk2 == 0) {
         temp_v0 = arg0->ext.item_4.timer - 1;
         arg0->ext.item_4.timer = temp_v0;
@@ -189,7 +189,7 @@ void func_800C0D98(struct ItemObj* arg0)
         background_objects[0].unk1C = 0x11C0;
         background_objects[0].unk24 = 0x11C0;
     }
-    if (arg0->unk88 != 0) {
+    if (arg0->tail_ext.item_4.unk88 != 0) {
         func_800C0DFC(arg0);
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
@@ -202,7 +202,7 @@ void func_800C0DFC(struct ItemObj* arg0)
     u32 i;
 
     destination = SP_PALETTE_WORDS + 0x3B8;
-    if (arg0->unk88 != 0) {
+    if (arg0->tail_ext.item_4.unk88 != 0) {
         source = SP_ARC_30 + 0x268;
     } else {
         source = SP_ARC_30 + 0x2A0;

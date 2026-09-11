@@ -158,7 +158,7 @@ void func_800C3114(struct ItemObj* arg0)
     if (owner->animation_step.fields.event == 1) {
         func_80015D60(owner, 4);
         arg0->unk7C.misc->ext.misc_11.active = 1;
-        arg0->unk84.timer = 0;
+        arg0->tail_ext.item_4.unk84.timer = 0;
         func_80036AE4(0x16, g_Player.unk15);
         func_8001540C(5, 1, NULL);
         arg0->unk6 = (u8)arg0->unk6 + 1;
@@ -167,7 +167,7 @@ void func_800C3114(struct ItemObj* arg0)
 
 void func_800C3198(struct ItemObj* arg0)
 {
-    if (++arg0->unk84.timer == 0x32) {
+    if (++arg0->tail_ext.item_11.unk84.timer == 0x32) {
         arg0->unk5 = 3;
         arg0->unk6 = 0;
     }
