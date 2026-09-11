@@ -21,7 +21,7 @@ void func_80092CEC(struct ShotObj* arg0)
 
     if (arg0->unk84.value == 0) {
         weapon = arg0->unk7C;
-        if (weapon->unk8E == 0) {
+        if (weapon->ext.weapon_20.unk8E == 0) {
             arg0->unk84.value = 1;
         }
         if (weapon->unk15 != arg0->unk15) {

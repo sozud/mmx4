@@ -68,7 +68,16 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2EB4);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2F2C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3010);
+void func_800A3010(struct ShotObj* arg0)
+{
+    func_8002B93C(MOVING_OBJECT(arg0), arg0->unk2 + 0xC);
+    arg0->x_vel.val *= 4;
+    if (arg0->unk15 == 0x40) {
+        arg0->x_vel.val = -arg0->x_vel.val;
+    }
+    arg0->y_vel.val *= 4;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3078);
 

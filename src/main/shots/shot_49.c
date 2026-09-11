@@ -11,7 +11,17 @@ void (*D_80109BD0[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9DF4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9EC0);
+void func_800A9EC0(struct ShotObj* arg0)
+{
+    if (--arg0->timer == 0) {
+        arg0->timer = 0x1D;
+        arg0->unk5++;
+        func_80015D60(arg0, 0xF);
+        return;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9F30);
 

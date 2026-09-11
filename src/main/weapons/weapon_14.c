@@ -25,8 +25,8 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_14", func_80095F9C);
 void func_80096018(struct WeaponObj* arg0)
 {
     if (g_Player.input.buttons.held & 0xC) {
-        arg0->unk8D = 5;
-        arg0->unk8C = 0;
+        arg0->ext.weapon_14.unk8D = 5;
+        arg0->ext.weapon_14.unk8C = 0;
         arg0->unk5 = 1;
     }
     func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x18);

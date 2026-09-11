@@ -49,7 +49,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E8E0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E9EC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009EAA4);
+void func_8009EAA4(struct ShotObj* arg0)
+{
+    u8 active;
+
+    active = arg0->unk7C->active;
+    if ((active & 7) == ((active & 0x70) >> 4)) {
+        arg0->unk5 = 3;
+    }
+    if ((u8)arg0->unk7C->x_pos.val != 4) {
+        arg0->unk5 = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009EAF0);
 

@@ -21,7 +21,17 @@ void func_8009DA08(struct ShotObj* arg0)
     g_Player.y_pos.val = arg0->y_pos.val;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DA28);
+void func_8009DA28(struct ShotObj* arg0)
+{
+    arg0->timer = 0x78;
+    arg0->unk2C = 0;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->x_vel.val = 0;
+    arg0->unk5++;
+    func_8009DA08(arg0);
+    arg0->unk90.val = 0x30;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DA7C);
 

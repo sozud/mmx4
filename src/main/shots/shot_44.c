@@ -41,7 +41,16 @@ void func_800A74E4(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7504);
+void func_800A7504(struct ShotObj* arg0)
+{
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->timer == 0) {
+        arg0->unk5 = 1;
+        arg0->unk28 = -(arg0->x_vel.val >> 4);
+        arg0->unk2C = arg0->y_vel.val >> 4;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7570);
 
@@ -82,7 +91,16 @@ void func_800A7A54(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7A90);
+void func_800A7A90(struct ShotObj* arg0)
+{
+    arg0->x_pos.val += arg0->x_vel.val;
+    arg0->y_pos.val -= arg0->y_vel.val;
+    arg0->x_vel.val += arg0->unk28;
+    arg0->y_vel.val -= arg0->unk2C;
+    if (arg0->y_vel.val < FIXED(-6.5)) {
+        arg0->y_vel.val = FIXED(-6.5);
+    }
+}
 
 u8 D_801099D4[4] = { 0xFA, 0xFC, 0x0A, 0x07 };
 

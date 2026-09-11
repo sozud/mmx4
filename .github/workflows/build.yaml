@@ -7,6 +7,10 @@ on:
     paths-ignore:
       - '*.md'
       - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '**/*.md'
   pull_request_target:
     paths-ignore:
       - '*.md'
@@ -17,16 +21,17 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.ref }}-${{ github.job }}-${{ github.event_name }}-${{ github.number }}
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
   build-linux:
     name: Build Linux port
+    if: github.event_name != 'pull_request_target'
     runs-on: ubuntu-latest
     steps:
       - name: Clone main repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: recursive
@@ -45,19 +50,21 @@ jobs:
 
   oracle-scene-suite:
     name: Capture and compare scene oracles
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment:
       name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
     steps:
       - name: Clone main repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: recursive
           persist-credentials: false
+          allow-unsafe-pr-checkout: true
       - name: Clone Mednafen oracle
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: sozud/mednafen-git
           ref: mmx4-oracle
@@ -79,12 +86,12 @@ jobs:
           echo "image_os=${ImageOS:-unknown}" >> "$GITHUB_OUTPUT"
       - name: Restore Mednafen oracle build
         id: mednafen_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: tools/mednafen-build/src/mednafen
           key: mednafen-oracle-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}
       - name: Get game dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: sozud/mmx4-deps
           ref: main
@@ -105,13 +112,13 @@ jobs:
           echo "bios_sha=$(sha256sum tools/SCPH1001.BIN | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
       - name: Restore Mednafen scene captures
         id: mednafen_scene_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: mednafen-object-changes
           key: mednafen-scenes-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/oracle/run_mednafen_scene_suite.py', 'tools/oracle/scene_suite.py') }}
       - name: Restore Mednafen sound captures
         id: mednafen_sound_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             sound-comparison/**/psx.wav
@@ -198,7 +205,7 @@ jobs:
             "${reuse_args[@]}"
       - name: Upload oracle artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: scene-oracle-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: ignore
@@ -211,6 +218,7 @@ jobs:
 
   build-and-test:
     name: Build and test PSX (${{ matrix.version }})
+    if: github.event_name != 'pull_request'
     strategy:
       matrix:
         include:
@@ -231,11 +239,12 @@ jobs:
       - name: Install python requirements
         run: pip3 install splat64==0.24.6 spimdisasm==1.26.0 rabbitizer==1.11.0 n64img==0.3.3 pygfxd crunch64 tabulate
       - name: Clone main repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           submodules: true
           persist-credentials: false
+          allow-unsafe-pr-checkout: true
       # - name: Build psximager
       #   run: |
       #     sudo apt-get install libcdio-dev libvcdinfo-dev libboost-all-dev
@@ -246,7 +255,7 @@ jobs:
       - name: Lint
         run: sh format.sh && git diff --exit-code
       - name: Get dependencies
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: sozud/mmx4-deps
           ref: main
@@ -273,13 +282,13 @@ jobs:
         run: sh progress_report.sh
       - name: Upload progress report
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.version }}_report
           path: build/${{ matrix.version }}/report.json
       - name: Get dependencies
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: sozud/mmx4-info
           ref: main

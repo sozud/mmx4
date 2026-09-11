@@ -10,7 +10,16 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_8009596C);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095A28);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095AAC);
+void func_80095AAC(struct WeaponObj* arg0)
+{
+    if (func_80095C38(arg0) == 0) {
+        if ((arg0->unk70 & 8) == 0) {
+            func_80095D18(arg0);
+        }
+        func_8002B718(MOVING_OBJECT(arg0));
+        func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095B10);
 
@@ -35,7 +44,18 @@ void func_80095BE8(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095C38);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095CC0);
+void func_80095CC0(struct WeaponObj* arg0)
+{
+    func_80015D60(arg0, 1);
+    arg0->unk67 = 0;
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = FIXED(6);
+    } else {
+        arg0->x_vel.val = FIXED(-6);
+    }
+    arg0->y_vel.val = 0;
+    arg0->unk5 = 1;
+}
 
 void func_80095D18(struct WeaponObj* arg0)
 {
