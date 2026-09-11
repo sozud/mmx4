@@ -28,7 +28,14 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D05F4);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0658);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0698);
+void func_800D0698(struct MiscObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (arg0->animation_step.fields.event != 0) {
+        func_8002B718(MOVING_OBJECT(arg0));
+        arg0->unk5 = 5;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D06E0);
 

@@ -449,6 +449,12 @@ struct MainSavedState94Ext {
     u32 saved_unk5;
 };
 
+struct Main52Ext {
+    u8 unk80;
+    u8 pad81[0x13];
+    u32 saved_unk5;
+};
+
 struct Main13Ext {
     u32 unk80;
     u32 unk84;
@@ -621,7 +627,7 @@ union MainObjExt {
     struct Main48Ext main_48;
     struct Main49Ext main_49;
     struct MainSavedState94Ext main_51;
-    struct MainSavedState94Ext main_52;
+    struct Main52Ext main_52;
     struct Main56Ext main_56;
     struct Main58Ext main_58;
     struct Main60Ext main_60;
@@ -1111,7 +1117,10 @@ struct LayerObj {
     BASE_OBJ_FIELDS
     f32 unk18;
     union LayerPrivateState private_state;
-    s8 pad20[0x30 - 0x20];
+    s8 pad20[0x24 - 0x20];
+    u8 unk24;
+    u8 unk25;
+    s8 pad26[0x30 - 0x26];
 }; // size 0x30
 
 struct MiscUnk50_2 {
@@ -1144,7 +1153,7 @@ struct Misc2Ext {
 };
 
 struct Misc11Ext { u8 pad50[4], active; };
-struct Misc24Ext { struct MainObj* main; u16 timer, child_active; struct MiscObj* child; };
+struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
     struct MiscObj* unk50;

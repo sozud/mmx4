@@ -69,7 +69,13 @@ void func_80082CC4(struct MainObj* arg0)
     D_80103ED4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082D00);
+void func_80082D00(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    func_80015D60(arg0, 0x14);
+    arg0->unk7C = 0x1A;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082D48);
 

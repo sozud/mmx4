@@ -132,7 +132,25 @@ void func_800BA9B8(struct EffectObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_22", func_800BA9C0);
+void func_800BA9C0(struct EffectObj* arg0)
+{
+    s16 player_x = g_Player.x_pos.i.hi;
+    s8 offset = 0;
+    while (1) {
+        if (player_x - D_8010BE1C[offset] < 0) {
+            break;
+        }
+        offset++;
+        if (offset >= 3) {
+            break;
+        }
+    }
+    arg0->ext.effect_22.unk14 = offset;
+    if (offset != arg0->ext.effect_22.unk15) {
+        arg0->unk5 = offset;
+        arg0->unk6 = 0;
+    }
+}
 
 s16 D_8010BE1C[4] = { 0x0960, 0x0A08, 0x1700, 0 };
 

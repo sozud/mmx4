@@ -51,7 +51,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009099C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090A28);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090AC0);
+void func_80090AC0(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090B04);
 
