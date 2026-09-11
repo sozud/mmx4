@@ -37,7 +37,23 @@ void func_80058DFC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80058E38);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80058F94);
+void func_80058F94(struct MainObj* arg0)
+{
+    s8 next_state;
+
+    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= 0xBD) {
+        func_8001540C(2, 0x51, arg0);
+        arg0->unk7A = 0;
+        if (arg0->ext.main_27.unk80 == 0) {
+            next_state = 2;
+        } else {
+            arg0->unk7C = 1;
+            next_state = 7;
+        }
+        arg0->unk5 = next_state;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80059010(struct MainObj* arg0)
 {

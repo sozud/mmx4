@@ -73,7 +73,20 @@ INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089588);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089798);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089910);
+void func_80089910(struct MainObj* arg0)
+{
+    s16 timer;
+
+    if (arg0->ext.main_70.unk87 != 0) {
+        D_80104A4C[arg0->ext.main_70.unk86](arg0);
+    } else {
+        timer = arg0->ext.main_70.unk80 - 1;
+        arg0->ext.main_70.unk80 = timer;
+        if (timer == 0) {
+            arg0->ext.main_70.unk87 = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089984);
 

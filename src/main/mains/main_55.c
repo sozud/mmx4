@@ -25,13 +25,24 @@ INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F41C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F494);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F504);
+void func_8006F504(struct MainObj* arg0)
+{
+    D_80100800[arg0->unk6](arg0);
+    arg0->unk20 = background_objects[arg0->bg_offset].unk47 << 0x10;
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F584);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F5F4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F7B4);
+void func_8006F7B4(struct MainObj* arg0)
+{
+    D_80100810[arg0->unk6](arg0);
+    arg0->unk20 = background_objects[arg0->bg_offset].unk47 << 0x10;
+    func_80015DC8(arg0);
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_8006F83C(struct MainObj* arg0)
 {

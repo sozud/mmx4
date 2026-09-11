@@ -1,10 +1,5 @@
 #include "common.h"
 
-struct FixedMatrix2 {
-    s16 m00, m01;
-    s16 m10, m11;
-};
-
 struct FixedMatrix2 D_800F2ADC[16] = {
     { 256, 0, 0, 256 },
     { 236, 97, -97, 236 },

@@ -1015,7 +1015,26 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C26C);
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C2EC);
+void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
+{
+    s16 center0;
+    s16 center1;
+    struct Unk_unk68* bounds1;
+    struct Unk_unk68* bounds0;
+
+    bounds0 = arg0->collision_bounds;
+    bounds1 = arg1->collision_bounds;
+    center0 = arg0->y_pos.i.hi + bounds0->unk1;
+    center1 = arg1->y_pos.i.hi + bounds1->unk1;
+    if (center0 > center1) {
+        center0 = center0 - bounds0->unk3;
+        center1 = bounds1->unk3 + center1;
+    } else {
+        center0 = bounds0->unk3 + center0;
+        center1 = center1 - bounds1->unk3;
+    }
+    arg1->unk6E = center0 - center1;
+}
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002C36C);
 
@@ -1291,7 +1310,23 @@ s32 func_8002CF98(struct PlayerObj* entity, u8 arg1, s16 arg2, s16 arg3)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002D180);
+s32 func_8002D180(struct PlayerObj* arg0, s16 arg1, s16 arg2, s32 arg3)
+{
+    D_8013B7D8 = 1;
+
+    if (arg0->unk67 != 0) {
+        if (arg3 == 0) {
+            if ((arg1 & 0xF) < arg2) {
+                return 0;
+            }
+        }
+    }
+
+    arg0->unk70 = 8;
+    arg0->y_pos.i.lo = 0;
+    arg0->y_pos.i.hi -= arg1 - (arg2 + (arg1 & ~0xF));
+    return -1;
+}
 
 s32 func_8002D1F8(struct PlayerObj* arg0, u8 arg1, s32 arg2)
 {

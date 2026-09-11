@@ -6,7 +6,30 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089AA4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089B58);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089C0C);
+s32 func_80089C0C(struct MainObj* arg0)
+{
+    u8 flags;
+
+    if (arg0->unk2 == 0) {
+        flags = arg0->ext.main_71.unk8A;
+        if (flags != 0) {
+            if (flags & 1) {
+                arg0->unk15 = 0x40;
+            } else {
+                arg0->unk15 = 0;
+            }
+            return 1;
+        }
+    } else {
+        if ((arg0->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
+            arg0->unk15 = 0x40;
+        } else {
+            arg0->unk15 = 0;
+        }
+    }
+
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089C7C);
 

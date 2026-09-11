@@ -620,7 +620,7 @@ union AnimationStep* D_800FADD0[] = {
     D_800FAD48,
 };
 
-void (*D_800FAE20[4])() = {
+void (*D_800FAE20[4])(struct MainObj*) = {
     func_80047D04,
     func_80047E58,
     func_80049288,

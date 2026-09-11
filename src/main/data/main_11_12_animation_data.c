@@ -334,7 +334,7 @@ u8 D_800FB514[] = {
     0x00,
 };
 
-void (*D_800FB51C[])() = {
+void (*D_800FB51C[])(struct MainObj*) = {
     func_8004A78C,
     func_8004A9F4,
     func_8004AB6C,

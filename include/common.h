@@ -281,6 +281,12 @@ struct FixedPointPosition {
     s32 x;
     s32 y;
 };
+
+struct FixedMatrix2 {
+    s16 m00, m01;
+    s16 m10, m11;
+};
+
 struct BootTransitionDataRegion {
     u8 preceding_record_tail[3];
     u8 stage_map[9];
@@ -386,6 +392,8 @@ struct CollisionObj {
     f32 y_pos;
     u8 pad10[0x58];
     struct Unk_unk68* collision_bounds;
+    s16 unk6C;
+    s16 unk6E;
 };
 
 #ifdef MMX4_PC
@@ -607,6 +615,7 @@ struct Main72Ext {
 struct Main60Ext {
     u8 pad80[0xA];
     u8 saved_unk5;
+    u8 unk8B;
 };
 
 struct Main64Ext {
@@ -627,11 +636,46 @@ struct Main75Ext {
     u8 saved_unk5;
 };
 
+struct Main8Ext {
+    u32 unk80;
+    u32 unk84;
+    u8 unk88;
+    u8 unk89;
+    u8 pad8A;
+    u8 unk8B;
+    u8 unk8C;
+};
+
+struct Main27Ext {
+    u8 unk80;
+    u8 pad81[0x13];
+    u32 saved_unk5;
+};
+
+struct Main41Ext {
+    u8 pad80[2];
+    u8 unk82;
+    u8 unk83;
+    u8 unk84;
+};
+
+struct Main70Ext {
+    u16 unk80;
+    u16 unk82;
+    u8 pad84;
+    u8 unk85;
+    u8 unk86;
+    u8 unk87;
+    u8 pad88[0xC];
+    u32 saved_unk5;
+};
+
 union MainObjExt {
     u32 raw[7];
     struct Main0Ext main_0;
     struct Main3Ext main_3;
     struct Main5Ext main_5;
+    struct Main8Ext main_8;
     struct MainSavedState94Ext main_6;
     struct MainSavedState94Ext main_7;
     struct Main10Ext main_10;
@@ -646,11 +690,12 @@ union MainObjExt {
     struct Main22Ext main_22;
     struct Main24Ext main_24;
     struct Main25Ext main_25;
-    struct MainSavedState94Ext main_27;
+    struct Main27Ext main_27;
     struct MainSavedState94Ext main_32;
     struct MainSavedState94Ext main_33;
     struct Main35Ext main_35;
     struct Main36Ext main_36;
+    struct Main41Ext main_41;
     struct Main43Ext main_43;
     struct Main487Ext main_487;
     struct Main37Ext main_37;
@@ -665,7 +710,7 @@ union MainObjExt {
     struct Main60Ext main_60;
     struct Main64Ext main_64;
     struct MainSavedState94Ext main_67;
-    struct MainSavedState94Ext main_70;
+    struct Main70Ext main_70;
     struct Main71Ext main_71;
     struct Main72Ext main_72;
     struct Main73Ext main_73;
@@ -770,7 +815,7 @@ struct BackgroundObj {
     s8 unk44;
     s8 unk45;
     s8 unk46;
-    u8 unk47;
+    s8 unk47;
     s8 unk48;
     s8 unk49;
     u8 unk4A;
@@ -1050,7 +1095,8 @@ struct WeaponObj {
     void* unk3C;
     u16 unk40;
     u16 unk42;
-    s8 pad44[0x46 - 0x44];
+    s8 unk44;
+    s8 unk45;
     s8 unk46;
     s8 pad47[0x50 - 0x47];
     s32 unk50;
@@ -1063,7 +1109,7 @@ struct WeaponObj {
     s8 unk65;
     s8 unk66;
     s8 unk67;
-    s32 unk68;
+    struct Unk_unk68* unk68;
     s8 pad6C[4];
     u8 unk70;
     s8 unk71;
@@ -1347,6 +1393,14 @@ struct BazObj {
     s8 pad44[0x50 - 0x44];
 }; // size 0x50
 
+union RideArmorUnk98 {
+    s16 packed;
+    struct {
+        u8 low;
+        u8 high;
+    } bytes;
+};
+
 struct RideArmorObj {
     BASE_OBJ_FIELDS
     s32 unk18;
@@ -1356,15 +1410,18 @@ struct RideArmorObj {
     s8 unk46;
     s8 pad47[0x5C - 0x47];
     s8 unk5C;
-    s8 pad5D[0x7E - 0x5D];
+    s8 pad5D[0x7D - 0x5D];
+    u8 unk7D;
     u8 unk7E;
-    s8 pad7F[0x88 - 0x7F];
+    s8 pad7F;
+    u8 unk80;
+    s8 pad81[0x88 - 0x81];
     u16 collision_flags;
     s16 unk8A;
     s16 unk8C;
     s8 pad8E[0x97 - 0x8E];
     s8 unk97;
-    s16 unk98;
+    union RideArmorUnk98 unk98;
     s8 pad9A[0xB0 - 0x9A];
 }; // size 0xB0
 
@@ -2201,6 +2258,7 @@ extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern u32* D_8011BF40[54];
+extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
 extern union AnimationStep* D_800FE890[21];
 extern void* D_80101624[12];
@@ -2247,7 +2305,9 @@ extern u16 D_80106770[64];
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
+extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_8010D0FC;
+extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
 extern s8 D_80173C6C[4];
@@ -2568,6 +2628,9 @@ s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
+void func_8003516C(struct PlayerObj*, s32, s32);
+s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
+s32 func_8002B780(void);
 void func_8002B318(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
 void func_800127FC(void);
