@@ -75,7 +75,18 @@ void func_8008C3F4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C43C);
+void func_8008C43C(struct MainObj* arg0)
+{
+    func_80015DC8(arg0);
+    if (arg0->unk70 & 4) {
+        arg0->unk6 += 1;
+        func_80015D60(arg0, 5);
+        func_8001540C(2, 0xF7, NULL);
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        func_80015DC8(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C4B4);
 

@@ -55,4 +55,21 @@ void func_8004C694(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004C6C4);
+void func_8004C6C4(struct MainObj* arg0)
+{
+    s16 object_x;
+    s16 distance;
+
+    if ((arg0->unk7C != 0) && (arg0->unk5 == 2)) {
+        object_x = arg0->x_pos.i.hi;
+        if ((g_Player.x_pos.i.hi - object_x) >= 0) {
+            distance = g_Player.x_pos.i.hi - object_x;
+        } else {
+            distance = object_x - g_Player.x_pos.i.hi;
+        }
+        if (distance < 0x90) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+        }
+    }
+}

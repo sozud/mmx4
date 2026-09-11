@@ -299,7 +299,24 @@ void func_8007826C(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80078314);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_8007856C);
+void func_8007856C(struct MainObj* arg0)
+{
+    s32 player_x = g_Player.x_pos.val;
+
+    if (arg0->x_pos.val < player_x) {
+        if (func_8002B780() & 1) {
+            arg0->ext.main_60.unk8B = 0;
+        } else {
+            arg0->ext.main_60.unk8B = 1;
+        }
+    } else {
+        if (func_8002B780() & 1) {
+            arg0->ext.main_60.unk8B = 2;
+        } else {
+            arg0->ext.main_60.unk8B = 3;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800785E4);
 

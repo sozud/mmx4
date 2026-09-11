@@ -4114,7 +4114,26 @@ void func_80021D84(void)
     func_800AE6B4(&baz_objects[1]);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80021DBC);
+void func_80021DBC(s16* arg0, s16* arg1, s32 arg2)
+{
+    struct FixedMatrix2* matrix;
+    s16 x;
+    s16 y;
+    s32 product0;
+    s32 product1;
+    s32 product2;
+    s32 product3;
+
+    matrix = &D_800F2ADC[arg2 & 0xFF];
+    x = *arg0;
+    y = *arg1;
+    product0 = x * matrix->m00;
+    product1 = y * matrix->m01;
+    product2 = x * matrix->m10;
+    product3 = y * matrix->m11;
+    *arg0 = (product0 >> 8) + (product1 >> 8);
+    *arg1 = (product2 >> 8) + (product3 >> 8);
+}
 
 void func_80021E3C(void)
 {
@@ -5052,7 +5071,22 @@ void func_80023A54(struct EngineObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80023AA8);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80023B98);
+void func_80023B98(struct MiscObj* arg0)
+{
+    s8 timer;
+
+    timer = (s8)arg0->ext.misc_11.active;
+    if (timer == 0) {
+        func_80015DC8(arg0);
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->state = 2;
+            arg0->ext.misc_11.active = get_random() & 0x1F;
+        }
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->ext.misc_11.active = timer - 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80023C0C);
 
