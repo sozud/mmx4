@@ -203,4 +203,21 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0600);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B06AC);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0804);
+void func_800B0804(struct VisualObj* arg0)
+{
+    struct PlayerObj* player;
+    u8 frame;
+
+    player = arg0->unk50;
+    if (player->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    frame = player->animation_step.fields.frame_index;
+    if (arg0->animation_step.fields.frame_index != frame) {
+        func_80015D90(ANIMATED_OBJECT(arg0), 0x19, frame);
+    }
+    if (arg0->unk50->unk7 >= 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+    }
+}

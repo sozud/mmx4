@@ -104,7 +104,29 @@ void func_80068108(struct MainObj* arg0)
     func_8002B718(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068138);
+void func_80068138(struct MainObj* arg0)
+{
+    s32 distance;
+    s32 max_distance;
+    s8 state;
+
+    if ((arg0->unk67 == 0) && ((state = arg0->unk5) != 4) && (state != 5)) {
+        max_distance = D_800FFAD8[(s8)SP_CUR_MAIN_OBJ->ext.main_0.index];
+        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+        if (distance >= 0) {
+            if (max_distance >= distance) {
+                goto activate;
+            }
+            return;
+        }
+        if (max_distance < (arg0->x_pos.i.hi - g_Player.x_pos.i.hi)) {
+            return;
+        }
+    activate:
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800681C4);
 

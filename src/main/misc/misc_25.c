@@ -20,7 +20,17 @@ void func_800CC460(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC4E0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC738);
+void func_800CC738(struct MiscObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x30, 0x10);
+        if (arg0->animation_step.fields.relative_step != 0) {
+            return;
+        }
+    }
+    arg0->state++;
+}
 
 void func_800CC79C(struct MiscObj* arg0)
 {

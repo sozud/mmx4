@@ -11,7 +11,17 @@ void func_800CE894(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CE8DC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEA40);
+void func_800CEA40(struct MiscObj* self)
+{
+    D_8010EEE4[self->unk5](self);
+    func_800CEFC0(self);
+    func_800CF0B0(self);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state++;
+    }
+}
 
 void func_800CEAC8(struct MiscObj* arg0)
 {
@@ -24,16 +34,60 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEB44);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEBC0);
 
-void func_800CEE30(struct PlayerObj* arg0)
+void func_800CEE30(struct MiscObj* arg0)
 {
     D_8010EEF4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEE6C);
+void func_800CEE6C(struct MiscObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_80015D60(self, 4);
+    self->y_vel.val = FIXED(1);
+    self->ext.misc_34.enabled = 0;
+    self->x_vel.val = 0;
+    self->ext.misc_34.timer = 0x1E;
+    self->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEEC4);
+void func_800CEEC4(struct MiscObj* self)
+{
+    u8 timer;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEF34);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    timer = self->ext.misc_34.timer - 1;
+    self->ext.misc_34.timer = timer;
+    if (timer == 0) {
+        self->ext.misc_34.timer = 0x1E;
+        self->x_vel.val = FIXED(3);
+        self->y_vel.val = 0;
+        self->unk28 = FIXED(-0.0625);
+        self->unk6++;
+    }
+}
+
+void func_800CEF34(struct MiscObj* self)
+{
+    u8 timer;
+    struct Misc34Related* related;
+
+    func_8002B694(ANIMATED_OBJECT(self));
+    timer = self->ext.misc_34.timer - 1;
+    self->ext.misc_34.timer = timer;
+    if (timer == 0) {
+        related = self->ext.misc_34.related;
+        related->active = 1;
+        if (!(ENGINE_CHECKPOINT & 1)) {
+            related->variant = self->ext.misc_34.variant;
+        } else {
+            related->variant = 3;
+        }
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEFC0);
 
@@ -145,7 +199,7 @@ void (*D_8010EEE4[4])(struct MiscObj*) = {
     func_800CEE30,
 };
 
-void (*D_8010EEF4[3])(struct PlayerObj*) = {
+void (*D_8010EEF4[3])(struct MiscObj*) = {
     func_800CEE6C,
     func_800CEEC4,
     func_800CEF34,

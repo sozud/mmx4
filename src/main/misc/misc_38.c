@@ -4,7 +4,14 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF4B8);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF5F0);
+void func_800CF5F0(struct MiscObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state++;
+    }
+}
 
 void func_800CF640(struct MiscObj* arg0)
 {

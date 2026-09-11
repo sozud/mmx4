@@ -8,7 +8,10 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFC6C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFD38);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFE00);
+void func_800CFE00(struct MiscObj* arg0)
+{
+    D_8010EFBC[arg0->unk5](arg0);
+}
 
 void func_800CFE3C(struct MiscObj* arg0)
 {

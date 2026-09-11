@@ -6,7 +6,14 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_31", func_800CDE44);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_31", func_800CDF4C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_31", func_800CE080);
+void func_800CE080(struct MiscObj* self)
+{
+    if (D_80171EA9 != self->ext.misc_31.animation) {
+        self->animation_step.fields.frame_index = D_80171EA9 == 0 ? 0x57 : 0x56;
+        self->ext.misc_31.animation = D_80171EA9;
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void func_800CE0D8(struct MiscObj* arg0)
 {

@@ -4,7 +4,14 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_14", func_800CA754);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_14", func_800CA7E4);
+void func_800CA7E4(struct MiscObj* self)
+{
+    if (--self->unk7 == 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+    } else {
+        is_on_screen(BASE_OBJECT(self));
+    }
+}
 
 void func_800CA830(struct MiscObj* arg0)
 {

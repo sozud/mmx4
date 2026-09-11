@@ -34,7 +34,24 @@ void func_8009403C(struct WeaponObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80094078);
+void func_80094078(struct WeaponObj* arg0)
+{
+    u32 i;
+
+    if (arg0->unk70 & 8) {
+        func_8001540C(0, 0x1A, arg0);
+        arg0->unk67 = 0;
+        i = 0;
+        do {
+            func_8009416C(arg0);
+            i++;
+        } while (i < 4);
+        func_80028B68(8, 6, 1);
+        arg0->unk5 = 1;
+        return;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
 void func_80094104(struct WeaponObj* arg0)
 {

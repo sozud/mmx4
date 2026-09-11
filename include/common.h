@@ -550,9 +550,16 @@ struct Main73PartsExt {
 };
 
 struct Main18Ext {
-    u8 pad80[2];
+    u8 pad80;
+    u8 unk81;
     u8 unk82;
-    u8 pad83[0x14];
+    u8 pad83;
+    u8 unk84;
+    s8 unk85;
+    u8 pad86;
+    u8 unk87;
+    u8 unk88;
+    u8 pad89[0xE];
     u8 saved_unk5;
 };
 
@@ -681,7 +688,8 @@ struct Main27Ext {
 };
 
 struct Main41Ext {
-    u8 pad80[2];
+    u8 unk80;
+    u8 pad81;
     u8 unk82;
     u8 unk83;
     u8 unk84;
@@ -1371,6 +1379,33 @@ struct Misc20Ext {
     struct LayerObj* owner;
 };
 
+struct Misc31Ext {
+    u8 pad50[4], animation;
+};
+
+struct Misc33Ext {
+    s8* completion_flag;
+    u16 timer;
+};
+
+struct Misc34Related {
+    u8 pad0[0x16], active, variant;
+};
+
+struct Misc34Ext {
+    struct Misc34Related* related;
+    u8 timer;
+    u8 pad55;
+    u8 variant;
+    u8 pad57[2];
+    u8 enabled;
+};
+
+struct Misc39Ext {
+    void* related;
+    u16 timer;
+};
+
 struct Misc55Ext {
     struct WeaponObj* owner;
 };
@@ -1409,6 +1444,10 @@ union MiscExt {
     struct Misc4Ext misc_4;
     struct Misc6Ext misc_6;
     struct Misc20Ext misc_20;
+    struct Misc31Ext misc_31;
+    struct Misc33Ext misc_33;
+    struct Misc34Ext misc_34;
+    struct Misc39Ext misc_39;
     struct Misc55Ext misc_55;
     struct UnkExt unk;
 };
@@ -2723,6 +2762,7 @@ extern u8 D_8010A104[9][16];
 extern u8 D_80102984[32];
 extern u8 D_801029A4[32];
 extern u8 D_80109E10[];
+extern s16 D_800FFAD8[];
 
 #include "func_tables.h"
 
@@ -2752,14 +2792,17 @@ void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
+void func_80028B68(s8, s8, s8);
 void func_800292D0(struct StageObjectRecord*);
 struct ObjectHeader* MakeObject(u8);
+s32 func_8002B7DC(struct ObjectHeader*, struct ObjectHeader*);
 void func_80094F74(void);
 void func_80015284(void);
 void func_8001C3E8(void);
 void reset_game_engine(void);
 void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
+void func_80015D90(struct AnimatedObj*, s32, s32);
 void func_80015DC8(struct AnimatedObj*);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);

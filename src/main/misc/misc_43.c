@@ -20,7 +20,13 @@ void func_800D0528(struct MiscObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0548);
+void func_800D0548(struct MiscObj* arg0)
+{
+    if (background_objects[g_Player.bg_offset].x_pos.i.hi == 0x12F0) {
+        func_80036AE4(0x15, 0);
+        arg0->unk5 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D05B0);
 
@@ -41,7 +47,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D06E0);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0754);
 
-void func_800D07C0(struct MainObj* arg0)
+void func_800D07C0(struct MiscObj* arg0)
 {
     if (abc_object.unkC == 0) {
         arg0->state = 2;
