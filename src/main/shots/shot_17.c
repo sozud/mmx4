@@ -18,7 +18,17 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C784);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C860);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C96C);
+void func_8009C96C(struct ShotObj* arg0)
+{
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        func_800AF808(BASE_OBJECT(arg0));
+    }
+}
 
 void func_8009C9C8(struct ShotObj* arg0)
 {

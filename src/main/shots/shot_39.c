@@ -45,7 +45,14 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4FEC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5070);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A50EC);
+void func_800A50EC(struct ShotObj* arg0)
+{
+    if (--arg0->timer == 0) {
+        func_80015D60(arg0, 0x16);
+        arg0->timer = 0x28;
+        arg0->unk5 = 5;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5144);
 

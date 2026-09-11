@@ -402,6 +402,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define ANIMATED_OBJECT(object) ((struct AnimatedObj*)(object))
 #define GRAPHICS_OBJECT(object) ((struct GraphicsObj*)(object))
 #define PLAYER_OBJECT(object) ((struct PlayerObj*)(object))
+#define MAIN_OBJECT(object) ((struct MainObj*)(object))
 
 struct Main0Ext {
     u8 unk80;
@@ -967,7 +968,7 @@ struct ShotObj {
     s8 unk64;
     s8 unk65;
     s8 unk66;
-    s8 : 8;
+    s8 unk67;
     s32 unk68;
     s8 pad6C[0x70 - 0x6C];
     u8 unk70;
@@ -991,10 +992,50 @@ struct ShotObj {
     s16 timer;
     s16 unk8A;
     s8 unk8C;
-    s8 pad8D[0x98 - 0x8D];
+    s8 pad8D[0x90 - 0x8D];
+    f32 unk90;
+    s8 pad94[0x98 - 0x94];
     s8 unk98;
-    s8 pad99[0x9C - 0x99];
+    s8 unk99;
+    s8 pad9A[0x9C - 0x9A];
 }; // size 0x9C
+
+struct Weapon7Ext {
+    u16 timer;
+};
+
+struct Weapon10Ext {
+    u8 timer;
+    u8 pad8D[0x90 - 0x8D];
+    u8 unk90;
+};
+
+struct Weapon14Ext {
+    u8 unk8C;
+    s8 unk8D;
+};
+
+struct Weapon16Ext {
+    u16 timer;
+    u8 pad8E[0x91 - 0x8E];
+    u8 unk91;
+};
+
+struct Weapon20Ext {
+    u8 pad8C[0x8E - 0x8C];
+    s8 unk8E;
+};
+
+union WeaponObjExt {
+    u8 raw[0x94 - 0x8C];
+    struct Weapon7Ext weapon_7;
+    struct Weapon10Ext weapon_10;
+    struct Weapon14Ext weapon_14;
+    struct Weapon16Ext weapon_16;
+    struct Weapon20Ext weapon_20;
+};
+
+MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
 
 struct WeaponObj {
     BASE_OBJ_FIELDS
@@ -1039,10 +1080,7 @@ struct WeaponObj {
     struct PlayerObj* owner;
     s32 unk80;
     s8 unk84; s8 pad85[0x8C - 0x85];
-    s8 unk8C;
-    s8 unk8D;
-    s8 unk8E;
-    s8 pad8F[0x94 - 0x8F];
+    union WeaponObjExt ext;
     u8 unk94;
     s8 pad95[0x98 - 0x95];
     s8 unk98;
@@ -1052,6 +1090,8 @@ struct WeaponObj {
 #ifndef MMX4_PC
 MMX4_STATIC_ASSERT(psx_weapon_owner_offset,
     MMX4_OFFSET_OF(struct WeaponObj, owner) == 0x7C);
+MMX4_STATIC_ASSERT(psx_weapon_ext_offset,
+    MMX4_OFFSET_OF(struct WeaponObj, ext) == 0x8C);
 #endif
 
 struct UnkObj {

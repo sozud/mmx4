@@ -9,7 +9,21 @@ void func_800919C4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091A00);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091AC4);
+void func_80091AC4(struct MainObj* arg0)
+{
+    if (arg0->unk70 & 8) {
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->unk7C = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk20 = arg0->ext.raw[0];
+        return;
+    }
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091B1C);
 

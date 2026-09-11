@@ -43,7 +43,17 @@ void (*D_80109574[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A16FC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A18A8);
+void func_800A18A8(struct ShotObj* arg0)
+{
+    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk67 = -1;
+        arg0->y_vel.val = 0;
+        arg0->unk28 = 0;
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A18F4);
 
