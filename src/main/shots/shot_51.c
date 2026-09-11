@@ -16,7 +16,27 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA5E0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA68C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA730);
+void func_800AA730(struct ShotObj* arg0)
+{
+    s32 angle;
+    u16 player_x;
+
+    arg0->timer = 0x3C;
+    arg0->unk5++;
+    player_x = g_Player.x_pos.u.hi;
+    arg0->unk8C.half = player_x;
+    angle = func_8002B810(arg0->x_pos.val - (player_x << 16), 0);
+    arg0->unk84.value = angle;
+    if (angle & 0x10) {
+        arg0->x_vel.val = FIXED(-8);
+    } else {
+        arg0->x_vel.val = FIXED(8);
+    }
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    func_80015DC8(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA7B4);
 

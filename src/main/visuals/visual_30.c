@@ -55,7 +55,18 @@ void func_800B4960(struct VisualObj* arg0)
     D_8010A6F4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B499C);
+void func_800B499C(struct VisualObj* arg0)
+{
+    struct PlayerObj* player;
+
+    player = arg0->unk50;
+    arg0->unk16 = 4;
+    arg0->x_pos.val = player->x_pos.val + (arg0->unk15 == 0 ? FIXED(-7) : FIXED(7));
+    arg0->y_pos.val = player->y_pos.val + FIXED(-93);
+    func_80015D60(arg0, 0x11);
+    arg0->unk54 = 0x30;
+    arg0->unk6++;
+}
 
 void func_800B4A18(struct VisualObj* arg0)
 {

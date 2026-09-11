@@ -7654,7 +7654,7 @@ void (*D_8010591C[2])() = {
     func_8008E638,
 };
 
-void (*D_80105924[4])() = {
+void (*D_80105924[4])(struct MainObj*) = {
     func_8008E6D4,
     func_8008E748,
     func_8008E8C8,

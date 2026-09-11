@@ -622,8 +622,11 @@ struct Main64Ext {
     u8 pad80[4];
     u16 unk84;
     u16 unk86;
-    u8 pad88[3];
+    u8 unk88;
+    u8 pad89[2];
     u8 unk8B;
+    u8 pad8C[5];
+    u8 unk91;
 };
 
 struct Main74Ext {
@@ -995,6 +998,11 @@ struct VisualObj {
     u8 pa58[0x70 - 0x60];
 }; // size 0x70
 
+union ShotUnk8C {
+    u16 half;
+    s8 byte;
+};
+
 struct ShotObj {
     ANIMATED_OBJ_FIELDS
     s8 pad49[0x50 - 0x49];
@@ -1032,12 +1040,13 @@ struct ShotObj {
     s32 : 32;
     union {
         s32 value;
+        u16 halves[2];
         u8 bytes[4];
     } unk84;
     s16 timer;
     s16 unk8A;
-    s8 unk8C;
-    s8 pad8D[0x90 - 0x8D];
+    union ShotUnk8C unk8C;
+    s8 pad8E[0x90 - 0x8E];
     f32 unk90;
     s8 pad94[0x98 - 0x94];
     s8 unk98;
@@ -2038,7 +2047,26 @@ struct Effect14Ext {
     u8 unk16;
 };
 struct Effect17Ext { u8 pad14[4], timer; };
-struct Effect32Ext { u8 unk14, unk15, unk16, pad17, palette[4]; u8* palette_source; };
+union Effect32Palette {
+    s32 packed;
+    struct {
+        u8 timer;
+        u8 unk1;
+        s8 step;
+        u8 id;
+    } fields;
+};
+
+union Effect32PaletteSource {
+    u8* bytes;
+    s32* words;
+};
+
+struct Effect32Ext {
+    u8 unk14, unk15, unk16, pad17;
+    union Effect32Palette palette;
+    union Effect32PaletteSource palette_source;
+};
 struct Effect36Ext { u8 pad14[4]; struct Unk_unk68* collision_bounds; };
 struct ScalingX {
     struct Unk14* unk14;
@@ -2070,6 +2098,7 @@ union EffectExt {
     struct Effect24Ext effect_24;
     struct UnkEffectExt effect_25;
     struct UnkEffectExt effect_27;
+    struct Effect32Ext effect_23;
     struct Effect32Ext effect_32;
     struct Effect36Ext effect_36;
     struct Effect38Ext effect_38;
@@ -2306,6 +2335,8 @@ extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
 extern struct Unk_unk68 D_8010884C[];
+extern struct Unk_unk68 D_80105374;
+extern struct Unk_unk68* D_8013B8B0;
 extern struct Unk_unk68 D_8010D0FC;
 extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;
@@ -2613,6 +2644,11 @@ extern struct FixedPointPosition D_800F99D4[];
 extern struct FixedPointPosition D_800F99E4[];
 extern u32* D_8010DBC0[];
 extern u8 D_8010DBF8[];
+extern u8 D_8010A074[9][16];
+extern u8 D_8010A104[9][16];
+extern u8 D_80102984[32];
+extern u8 D_801029A4[32];
+extern u8 D_80109E10[];
 
 #include "func_tables.h"
 
@@ -2631,6 +2667,7 @@ s32 func_800350A4(struct PlayerObj*, s32);
 void func_8003516C(struct PlayerObj*, s32, s32);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
 s32 func_8002B780(void);
+s32 func_8002938C();
 void func_8002B318(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
 void func_800127FC(void);
@@ -2698,7 +2735,7 @@ void func_80026648();
 s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
-void func_800DA984(u8);
+void func_800DA984();
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
 struct VisualObj* func_800AFAB4(s8, s16, s16, u8);
@@ -2718,7 +2755,7 @@ s32 func_8002B7B0(struct ObjectHeader*, s32, s32);
 void func_8002B93C(struct MovingObj*, s32);
 void func_8002B9F0(s32 *arg0, s32 *arg1, u8 arg2);
 void func_80028A48(struct BackgroundObj *arg0);
-void func_800DABE4(u8, s16, s16);
+void func_800DABE4(u8, s32, s32);
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);

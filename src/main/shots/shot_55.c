@@ -90,11 +90,39 @@ void (*D_80109EB8[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AC8C4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACCAC);
+void func_800ACCAC(struct ShotObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+        return;
+    }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACD04);
+    arg0->state++;
+    func_800C813C(6, D_80109E10, arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACD84);
+void func_800ACD04(struct ShotObj* arg0)
+{
+    struct WeaponObj* weapon = arg0->unk7C;
+
+    arg0->on_screen = 0;
+    arg0->x_pos.u.hi = weapon->x_pos.u.hi + arg0->unk84.halves[0];
+    arg0->y_pos.u.hi = weapon->y_pos.u.hi + arg0->unk84.halves[1];
+    arg0->unk15 = weapon->unk15;
+    if (arg0->timer != 0) {
+        func_80015DC8(arg0);
+        func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    }
+}
+
+void func_800ACD84(struct ShotObj* arg0)
+{
+    if (arg0->unk7C->unk6 == 3) {
+        arg0->unk5++;
+        func_80015D60(arg0, 0x13);
+        func_8001540C(2, 6, arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACDE4);
 
@@ -138,7 +166,13 @@ void func_800AD630(struct ShotObj* arg0)
     D_80109E5C[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD66C);
+void func_800AD66C(struct ShotObj* arg0)
+{
+    D_80109E80[arg0->unk2](arg0);
+    arg0->unk42 = arg0->unk7C->unk42;
+    func_8002E184(PLAYER_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD6DC);
 

@@ -196,7 +196,19 @@ void func_800AB7C0(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB814);
+void func_800AB814(struct ShotObj* arg0)
+{
+    s32 limit;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(arg0);
+    limit = arg0->unk28;
+    if (limit < arg0->x_pos.val) {
+        arg0->x_pos.val = limit;
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800AB868(struct ShotObj* arg0)
 {
@@ -209,7 +221,7 @@ void func_800AB8C0(struct ShotObj* arg0)
     arg0->timer = 0x32;
     arg0->unk8A = 2;
     arg0->unk50.data = NULL;
-    arg0->unk8C = 1;
+    arg0->unk8C.byte = 1;
     arg0->unk6++;
 }
 
@@ -241,7 +253,7 @@ void func_800ABB70(struct ShotObj* arg0)
         func_800AFAB4(0, arg0->x_pos.i.hi - 15, arg0->y_pos.i.hi - 20, -1);
     }
     if (temp_s1->unk94 == 1) {
-        arg0->unk8C = 0;
+        arg0->unk8C.byte = 0;
         arg0->state = 1;
         arg0->unk5 = 3;
         arg0->unk6 = 0;

@@ -59,13 +59,35 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7E98);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7F44);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7FF8);
+void func_800A7FF8(struct ShotObj* arg0)
+{
+    D_80109AAC[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+    } else {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A8074);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A80D4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A8164);
+void func_800A8164(struct ShotObj* arg0)
+{
+    D_80109AB4[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+    } else {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A81E0);
 

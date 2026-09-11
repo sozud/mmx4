@@ -35,7 +35,19 @@ void func_8007C860(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C890);
+u8 func_8007C890(struct MainObj* arg0)
+{
+    if (arg0->ext.main_64.unk88 == 0) {
+        if (arg0->ext.main_64.unk91 == 0) {
+            if (arg0->unk5C < 0x18) {
+                return D_801029A4[get_random() & 0x1F];
+            }
+            return D_80102984[get_random() & 0x1F];
+        }
+        return 3;
+    }
+    return 0;
+}
 
 void func_8007C914(struct MainObj* arg0)
 {

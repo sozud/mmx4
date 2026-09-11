@@ -51,7 +51,25 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2AA0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2B8C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2C70);
+void func_800A2C70(struct ShotObj* arg0)
+{
+    s16 timer;
+    s8 on_screen;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        func_8001540C(2, 0x96, arg0);
+        arg0->unk6++;
+        return;
+    }
+
+    on_screen = arg0->on_screen ^ 1;
+    arg0->on_screen = on_screen;
+    if (on_screen != 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2CEC);
 

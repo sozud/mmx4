@@ -22,7 +22,7 @@ void func_800B58F4(struct EffectObj* arg0)
             arg0->unk6 = 0;
         }
     }
-    func_800DA984(arg0->unk6);
+    func_800DA984((u8)arg0->unk6);
 }
 
 void (*D_8010AFAC[])(struct EffectObj*) = {
