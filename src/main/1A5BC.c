@@ -825,7 +825,7 @@ s32 func_8002B7B0(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
     return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2) & 0xFF;
 }
 
-u8 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
+s32 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
 {
     return func_8002B810(arg0->x_pos.val - arg1->x_pos.val,
                arg0->y_pos.val - arg1->y_pos.val)

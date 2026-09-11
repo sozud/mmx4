@@ -11,7 +11,16 @@ void func_800CF2B8(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF300);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_36", func_800CF428);
+void func_800CF428(struct MiscObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if ((func_8002B160(BASE_OBJECT(self)) == 0) && (self->animation_step.fields.relative_step != 0)) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    self->state++;
+}
 
 void func_800CF498(struct MiscObj* arg0)
 {

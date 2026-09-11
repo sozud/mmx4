@@ -153,7 +153,25 @@ void func_80084E4C(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084E54);
+void func_80084E54(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+
+    if (arg0->unk7 == 0) {
+        arg0->unk7++;
+        arg0->unk7C = 0x78;
+        func_80015D60(arg0, 0x29);
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x20;
+            visual->unk2 = 5;
+        }
+    } else {
+        func_80015DC8(arg0);
+        arg0->unk7C--;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084EE4);
 

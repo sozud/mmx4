@@ -21,13 +21,56 @@ void func_800CE6AC(struct MiscObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE6CC);
+void func_800CE6CC(struct MiscObj* self)
+{
+    u16 timer;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE754);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->ext.misc_33.timer - 1;
+    self->ext.misc_33.timer = timer;
+    if (timer == 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
+    }
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    self->state++;
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE7C8);
+void func_800CE754(struct MiscObj* self)
+{
+    D_8010EDF0[self->unk6](self);
+    if (*self->ext.misc_33.completion_flag == 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE81C);
+void func_800CE7C8(struct MiscObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    self->ext.misc_33.timer = 0x14;
+    self->unk6 += 1;
+    func_8001540C(2, 0xE8, self);
+    is_on_screen(BASE_OBJECT(self));
+}
+
+void func_800CE81C(struct MiscObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->ext.misc_33.timer != 0) {
+        if ((self->on_screen ^= 1) != 0) {
+            func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+        }
+        self->ext.misc_33.timer--;
+    } else {
+        is_on_screen(BASE_OBJECT(self));
+    }
+}
 
 #define STEP(value)       \
     {                     \

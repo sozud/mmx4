@@ -130,7 +130,19 @@ void func_800A8DB8(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8DC0);
+void func_800A8DC0(struct ShotObj* arg0)
+{
+    D_80109B14[arg0->unk5](arg0);
+    if (func_8002DD04(arg0) != 0) {
+        arg0->state = 2;
+    }
+    func_80015DC8(arg0);
+    func_8002B718(MOVING_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->unk7C->state == 4) {
+        arg0->state = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8E50);
 

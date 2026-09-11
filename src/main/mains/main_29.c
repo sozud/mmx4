@@ -27,7 +27,25 @@ void func_8005AA0C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AA14);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AB34);
+u8 func_8005AB34(struct MainObj* arg0)
+{
+    s32 state;
+
+    state = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    if ((u8)(state - 4) >= 24) {
+        state = 1;
+    }
+    if ((u8)(state - 4) < 8) {
+        state = 2;
+    }
+    if ((u8)(state - 12) < 8) {
+        state = 0;
+    }
+    if ((u8)(state - 20) < 8) {
+        state = 3;
+    }
+    return state;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005ABC0);
 
