@@ -16,7 +16,21 @@ void func_800D323C(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3288);
+void func_800D3288(struct MiscObj* arg0)
+{
+    arg0->x_pos.u.hi = arg0->ext.misc_55.owner->x_pos.u.hi;
+    arg0->y_pos.u.hi = arg0->ext.misc_55.owner->y_pos.u.hi;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->ext.misc_55.owner->state == 2) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
 void func_800D330C(struct MiscObj* arg0)
 {

@@ -31,7 +31,25 @@ void func_8006B514(struct MainObj* arg0)
     func_8002B694(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B568);
+s32 func_8006B568(struct MainObj* arg0)
+{
+    s32 background_x;
+    s32 x;
+    s32 distance;
+
+    arg0->ext.main_53.unk84 = 1;
+    func_8006B514(arg0);
+    if (arg0->unk67 != 0) {
+        return 0;
+    }
+    background_x = background_objects[arg0->bg_offset].x_pos.val;
+    x = arg0->x_pos.val - FIXED(64);
+    distance = x - background_x;
+    if (distance < 0) {
+        distance = background_x - x;
+    }
+    return distance <= 0x1FFFF;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B5F8);
 

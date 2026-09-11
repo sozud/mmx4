@@ -19,7 +19,23 @@ void func_8007BC48(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BC50);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BCC4);
+void func_8007BCC4(struct MainObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->unk7E;
+    if (timer == 0) {
+        if (func_8007BABC(arg0) == 0) {
+            arg0->unk5--;
+            func_80015D60(arg0, 2);
+            if (arg0->ext.main_62.unk86 != 0) {
+                func_8001540C(2, 0xA2, arg0);
+            }
+        }
+    } else {
+        arg0->unk7E = timer - 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BD4C);
 

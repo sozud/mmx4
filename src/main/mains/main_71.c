@@ -39,7 +39,33 @@ void func_80089EBC(struct BaseObj* arg0, s8 arg1)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089EC8);
+void func_80089EC8(struct MainObj* arg0)
+{
+    if (arg0->unk5 < 2) {
+        return;
+    }
+    if (arg0->unk5 == 6) {
+        return;
+    }
+    if (arg0->unk5 == 7) {
+        return;
+    }
+    if (arg0->unk5 == 0xB) {
+        return;
+    }
+    if (arg0->ext.main_71.unk88 == 0) {
+        return;
+    }
+    if (arg0->ext.main_71.unk8D & 8) {
+        return;
+    }
+    if (arg0->unk67 != 0) {
+        return;
+    }
+    if (arg0->ext.main_71.unk86 == 0) {
+        func_80089EBC(BASE_OBJECT(arg0), 6);
+    }
+}
 
 void func_80089F58(struct MainObj* arg0)
 {

@@ -9,7 +9,12 @@ void func_800D07EC(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0828);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0988);
+void func_800D0988(struct MiscObj* arg0)
+{
+    func_800D0C68(arg0);
+    D_8010F090[arg0->unk5](UNK_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+}
 
 void func_800D09E4(struct MiscObj* arg0)
 {
@@ -18,9 +23,26 @@ void func_800D09E4(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0A04);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0AA4);
+void func_800D0AA4(struct UnkObj* arg0)
+{
+    if (background_objects[g_Player.bg_offset].x_pos.i.hi == 0xFD0) {
+        func_80036AE4(0x15, 0);
+        arg0->unk54 = 0x3C;
+        arg0->unk5 = 2;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0B14);
+void func_800D0B14(struct UnkObj* arg0)
+{
+    s8 timer;
+
+    timer = arg0->unk54 - 1;
+    arg0->unk54 = timer;
+    if (timer == 0) {
+        func_8002217C(0x29, 1, 0);
+        arg0->unk5 = 3;
+    }
+}
 
 void func_800D0B68(struct UnkObj* arg0)
 {
@@ -30,11 +52,29 @@ void func_800D0B68(struct UnkObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0B90);
+void func_800D0B90(struct UnkObj* arg0)
+{
+    s8 timer;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0BE4);
+    timer = arg0->unk54 - 1;
+    arg0->unk54 = timer;
+    if (timer == 0) {
+        func_8002217C(0x2A, 2, 0);
+        arg0->unk5 = 5;
+    }
+}
 
-void func_800D0C60(void)
+void func_800D0BE4(struct UnkObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        background_objects[g_Player.bg_offset].unk24 = 0x11B0;
+        func_80036B18();
+        ENGINE_UNK2E = 1;
+        arg0->unk5 = 6;
+    }
+}
+
+void func_800D0C60(struct UnkObj* arg0)
 {
 }
 
@@ -77,7 +117,7 @@ void (*D_8010F084[3])(struct MiscObj*) = {
     func_800D09E4,
 };
 
-void (*D_8010F090[7])(struct MiscObj*) = {
+void (*D_8010F090[7])(struct UnkObj*) = {
     func_800D0A04,
     func_800D0AA4,
     func_800D0B14,
