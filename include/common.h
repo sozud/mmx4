@@ -57,6 +57,7 @@ typedef u16 Palette[16];
 #undef SsVabTransCompleted
 #include <libetc.h>
 #include <kernel.h>
+#include <libapi.h>
 #include <libcd.h>
 #include <libpress.h>
 #else
@@ -398,7 +399,9 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define OBJECT_HEADER(object) ((struct ObjectHeader*)(object))
 #define BASE_OBJECT(object) ((struct BaseObj*)(object))
 #define MOVING_OBJECT(object) ((struct MovingObj*)(object))
+#define ANIMATED_OBJECT(object) ((struct AnimatedObj*)(object))
 #define GRAPHICS_OBJECT(object) ((struct GraphicsObj*)(object))
+#define PLAYER_OBJECT(object) ((struct PlayerObj*)(object))
 
 struct Main0Ext {
     u8 unk80;
@@ -813,7 +816,7 @@ struct PlayerObj {
     u16 pressed_input;
     u16 unk82;
     s8 unk84;
-    s8 : 8;
+    s8 unk85;
     s8 unk86;
     s8 unk87;
     union PlayerUnk88 unk88;
@@ -1340,11 +1343,6 @@ struct Unk5 {
     s32 unk0;
     s32 unk4;
     s32 unk8;
-};
-
-struct Unk7 {
-    u8 pad[0x80];
-    u16 unk80;
 };
 
 struct Unk9 {
@@ -2423,6 +2421,7 @@ extern s32 D_8013967C;
 extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
+extern u8 D_800F1E90[];
 extern u8* D_80173C80;
 extern u8 D_80173C84;
 extern void (*D_8010EBB4[16])();
@@ -2482,6 +2481,7 @@ extern RECT D_80137CFC;
 extern s32 D_80137D08[];
 extern s32 D_800F99C4[][2];
 extern struct FixedPointPosition D_800F99D4[];
+extern struct FixedPointPosition D_800F99E4[];
 extern u32* D_8010DBC0[];
 extern u8 D_8010DBF8[];
 
@@ -2495,6 +2495,9 @@ void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
 s32 func_8001540C(s32, s32, void*);
+s32 func_80015A10(s32, struct MainObj*);
+void func_8001B644(u8*);
+void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
 void func_8002B318(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
@@ -2517,7 +2520,14 @@ s32 func_80015D60(void*, s32);
 void func_80015DC8(struct AnimatedObj*);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);
-void func_80034754(struct Unk7*);
+void func_80034668(struct PlayerObj*);
+void func_80034754(struct PlayerObj*);
+void func_8003484C(struct PlayerObj*);
+void func_8003490C(struct PlayerObj*);
+void func_80034968(struct PlayerObj*);
+void func_80034D64(struct PlayerObj*);
+void func_80036A94(struct PlayerObj*);
+void func_80036E98(struct PlayerObj*);
 void func_80025188(s32, u8);
 void func_80025588(s16, s16, s16, s16, s32);
 void func_80027AAC(struct BackgroundObj*);
@@ -2609,6 +2619,10 @@ void func_80018000(s32);
 void func_8002B0C8(struct ObjectHeader* arg0);
 void func_8002B108(struct ObjectHeader* arg0);
 void func_8002B694(struct AnimatedObj* arg0);
+void func_80036034(struct PlayerObj*);
+s32 func_80038D38(struct PlayerObj*);
+s32 func_80038D88(struct PlayerObj*);
+void func_80038E44(struct PlayerObj*, s32);
 
 enum SelectedPlayer {
     CHARACTER_X,
