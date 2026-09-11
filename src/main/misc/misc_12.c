@@ -8,7 +8,14 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA3C0);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA40C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA46C);
+void func_800CA46C(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_24.main->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800CA4B4(struct MiscObj* arg0)
 {

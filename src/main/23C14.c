@@ -4193,7 +4193,23 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_800469A0);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80046A4C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80046AA4);
+void func_80046AA4(struct MainObj* arg0)
+{
+    s32 player_x;
+
+    if ((arg0->unk5 == 3) && (arg0->y_pos.val + FIXED(16) >= g_Player.y_pos.val)) {
+        player_x = g_Player.x_pos.val;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->unk20 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk7C = 0xF;
+        arg0->unk15 = (arg0->x_pos.val < player_x) << 6;
+        func_80015D60(arg0, 2);
+    }
+}
 
 void func_80046B30(struct MainObj* arg0)
 {

@@ -2,7 +2,21 @@
 // 800CC460..800CC7BC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC460);
+void func_800CC460(struct MiscObj* arg0)
+{
+    struct ObjectHeader* owner;
+
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+    owner = OBJECT_HEADER(arg0->ext.unk.unk50);
+    if (owner->active != 0x41) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else if (owner->id != 0x30) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else {
+        D_8010E94C[arg0->state](arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC4E0);
 

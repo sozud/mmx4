@@ -16,7 +16,20 @@ void func_800BDF20(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_39", func_800BDF40);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_39", func_800BDFC8);
+void func_800BDFC8(struct EffectObj* arg0)
+{
+    u16 x;
+    s32 i;
+
+    x = arg0->x_pos.u.hi;
+    i = 0;
+    do {
+        func_800DA984(arg0->ext.effect_24.unk1B, (s16)x - 0x40,
+            arg0->y_pos.i.hi - 0x20);
+        x += 0x80;
+        i += 1;
+    } while (i < 0x1A);
+}
 
 u8 D_8010C064[4][4] = {
     { 8, 0, 1, 3 },

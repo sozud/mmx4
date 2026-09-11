@@ -20,7 +20,27 @@ void func_800BE32C(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE364);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE434);
+void func_800BE434(struct EffectObj* arg0)
+{
+    s32 count;
+    s32 match;
+    u32 i;
+
+    count = 0;
+    i = 0;
+    match = 3;
+    do {
+        if (arg0->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == match) {
+            count += 1;
+        }
+        i += 1;
+    } while (i < 3U);
+    if (count == 3) {
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
+        arg0->ext.effect_42.timer = 0xC8;
+    }
+}
 
 void func_800BE4A8(struct EffectObj* arg0)
 {

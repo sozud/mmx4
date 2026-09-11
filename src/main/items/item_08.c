@@ -99,7 +99,16 @@ void func_800C1B54(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B98);
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C24);
+void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
+{
+    if (arg2->unkC4 < 0) {
+        arg1->unk10 = 1;
+        arg1->unk12 = 1;
+        func_8001540C(0, 0x10, arg0);
+        arg2->unk68 = NULL;
+        arg0->unk5 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C88);
 
@@ -111,7 +120,17 @@ INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E7C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1FE4);
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C204C);
+void func_800C204C(struct ItemObj* arg0)
+{
+    volatile struct PlayerObj* player = &g_Player;
+
+    if (arg0->unk72 & 4) {
+        player->unk71 = (u8)(player->unk71 & 0xB);
+    }
+    if (arg0->unk72 & 8) {
+        player->unk71 = (u8)(player->unk71 & 7);
+    }
+}
 
 void (*D_8010CC64[])(struct ItemObj*) = {
     func_800C19F0,

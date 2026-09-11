@@ -77,7 +77,18 @@ void func_800C8938(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_04", func_800C899C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_04", func_800C8B74);
+void func_800C8B74(struct MiscObj* arg0)
+{
+    struct MainObj* main_obj;
+
+    main_obj = arg0->ext.misc_24.main;
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x38, 0x20);
+        return;
+    }
+    main_obj->unk7C = (u16)main_obj->unk7C - 1;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_04", func_800C8BDC);
 

@@ -50,7 +50,25 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDBD4);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDD08);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDDE8);
+void func_800BDDE8(s32 arg0, s32 arg1)
+{
+    s8 clear_value = 0;
+    u32 i = 0;
+    s32 count;
+    u8* ptr;
+
+    arg0 &= 0xFF;
+    arg1 &= 0xFF;
+    for (; i < 0x20; i++) {
+        if (item_objects[i].id == arg0 && item_objects[i].unk2 == arg1) {
+            ptr = (u8*)&item_objects[i];
+            count = sizeof(struct ItemObj) - 1;
+            do {
+                *ptr++ = clear_value;
+            } while (count-- != 0);
+        }
+    }
+}
 
 u16 D_8010C02C[14] = {
     0x0190,

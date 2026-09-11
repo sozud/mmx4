@@ -541,6 +541,13 @@ struct Main73Ext {
     u8 unk8E;
 };
 
+struct Main73PartsExt {
+    struct MainObj* parts[3];
+    u8 effect_state;
+    u8 object_id;
+    u8 unk8E;
+};
+
 struct Main18Ext {
     u8 pad80[2];
     u8 unk82;
@@ -717,11 +724,14 @@ union MainObjExt {
     struct Main71Ext main_71;
     struct Main72Ext main_72;
     struct Main73Ext main_73;
+    struct Main73PartsExt main_73_parts;
     struct Main74Ext main_74;
     struct Main75Ext main_75;
 };
 
+#ifndef MMX4_PC
 MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
+#endif
 
 #define MAIN_OBJ_TAIL_FIELDS                        \
     s32 unk20;                                  \
@@ -955,7 +965,8 @@ struct PlayerObj {
     s8 unkDF;
     s8 unkE0;
     s8 unkE1;
-    s8 padE2[0xE4 - 0xE2];
+    u8 unkE2;
+    s8 : 8;
 }; // size 0xE4
 
 MMX4_STATIC_ASSERT(player_unk68_offset,
@@ -1181,6 +1192,7 @@ union ItemExt {
     struct Item2Ext item_2;
     struct Item4Ext item_4;
     struct Item12Ext item_12;
+    struct MainObj* owner;
 };
 
 union ItemUnk84 {
@@ -1191,6 +1203,8 @@ union ItemUnk84 {
 union ItemUnk7C {
     u8 value;
     s32 item_4_timer;
+    struct MiscObj* misc;
+    void* object;
 };
 
 struct ItemObj {
@@ -2755,6 +2769,7 @@ s32 func_8002B7B0(struct ObjectHeader*, s32, s32);
 void func_8002B93C(struct MovingObj*, s32);
 void func_8002B9F0(s32 *arg0, s32 *arg1, u8 arg2);
 void func_80028A48(struct BackgroundObj *arg0);
+void func_80028BAC(s8, s8, s8);
 void func_800DABE4(u8, s32, s32);
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
