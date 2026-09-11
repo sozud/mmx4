@@ -23,7 +23,22 @@ INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F304);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F41C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F494);
+void func_8006F494(struct MainObj* arg0)
+{
+    s32 y_diff;
+
+    y_diff = g_Player.y_pos.val - arg0->y_pos.val;
+    if (y_diff >= 0) {
+        if (y_diff <= 0xFFFFF) {
+            goto set_state;
+        }
+    } else if (arg0->y_pos.val - g_Player.y_pos.val <= 0xFFFFF) {
+    set_state:
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+    }
+    func_80015DC8(arg0);
+}
 
 void func_8006F504(struct MainObj* arg0)
 {

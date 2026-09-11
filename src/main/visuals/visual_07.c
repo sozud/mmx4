@@ -98,9 +98,26 @@ void func_800AF58C(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_07", func_800AF610);
+s32 func_800AF610(struct PlayerObj* arg0)
+{
+    if (arg0->unk2 != 0) {
+        return D_8010A104[0][arg0->unk17] == 1;
+    }
+    return D_8010A074[0][arg0->unk17] == 1;
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_07", func_800AF658);
+s32 func_800AF658(struct PlayerObj* arg0)
+{
+    u8 state;
+
+    if (arg0->unk2 == 0) {
+        state = D_8010A074[0][arg0->unk17];
+    } else {
+        state = D_8010A104[0][arg0->unk17];
+    }
+
+    return state == 2;
+}
 
 void (*D_8010A1C8[])(struct VisualObj*, struct PlayerObj*) = {
     func_800AF488,

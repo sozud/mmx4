@@ -36,7 +36,7 @@ extern struct VisualObj *find_free_visual_obj (void);
 extern struct VisualObj *func_8002AF4C (struct VisualObj *arg0, s32 arg1);
 extern struct WeaponObj *find_free_weapon_obj (void);
 extern u8 func_8001385C (void);
-extern u8 func_8002B810 (s32 arg0, s32 arg1);
+extern s32 func_8002B810 (s32 arg0, s32 arg1);
 extern u8 func_8002D8B8 (struct PlayerObj *arg0);
 extern u8 func_8002D94C (struct PlayerObj *arg0);
 extern u8 get_random ();

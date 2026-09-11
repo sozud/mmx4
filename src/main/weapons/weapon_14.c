@@ -20,7 +20,17 @@ void func_80095DC0(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_14", func_80095E3C);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_14", func_80095F9C);
+void func_80095F9C(struct WeaponObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x2C, 0x18) == 0) {
+        func_80015DC8(arg0);
+        func_8002B718(MOVING_OBJECT(arg0));
+        D_80108984[arg0->unk5](arg0);
+        return;
+    }
+
+    func_80095DA8(arg0);
+}
 
 void func_80096018(struct WeaponObj* arg0)
 {

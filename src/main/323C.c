@@ -4307,7 +4307,6 @@ void func_80022138(void)
 INCLUDE_ASM("main/nonmatchings/323C", func_8002217C);
 
 void func_8002328C(struct AbcObj*);
-s32 func_8002938C();
 
 #define CONFIG D_801397DC
 

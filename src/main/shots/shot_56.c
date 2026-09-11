@@ -35,7 +35,15 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800ADF30);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800AE1BC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800AE2AC);
+void func_800AE2AC(struct ShotObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+    if (arg0->on_screen == 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
 void func_800AE2FC(struct ShotObj* arg0)
 {

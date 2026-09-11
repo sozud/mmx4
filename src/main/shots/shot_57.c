@@ -168,7 +168,16 @@ void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE88C);
+void func_800AE88C(struct UnkObj* arg0, struct PlayerObj* arg1)
+{
+    if (arg1->unk8C == 0) {
+        arg0->on_screen = 0;
+        arg0->state = 0;
+        return;
+    }
+
+    D_8010A194[arg0->unk5](arg0, arg1);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE8E4);
 

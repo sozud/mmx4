@@ -153,7 +153,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E8C8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E99C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E9B8);
+void func_8008E9B8(struct MainObj* arg0)
+{
+    D_80105924[arg0->unk6](arg0);
+    if (arg0->animation_step.fields.event != 0) {
+        D_8013B8B0 = &D_80105374;
+    } else {
+        D_8013B8B0 = NULL;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EA3C);
 

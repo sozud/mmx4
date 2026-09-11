@@ -11,7 +11,15 @@ void func_800BE57C(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_43", func_800BE598);
+void func_800BE598(struct EffectObj* arg0)
+{
+    u32 direction;
+
+    arg0->ext.effect_9.transition_timer = 1;
+    direction = D_801406A8[func_8002938C(0xA4)] >> 7;
+    arg0->unk5++;
+    arg0->ext.effect_9.direction = direction;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_43", func_800BE5F4);
 

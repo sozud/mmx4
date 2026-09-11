@@ -1,6 +1,5 @@
 #include "common.h"
 
-u8 func_8002B810(s32 arg0, s32 arg1);
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CC34(struct PlayerObj* arg0, u8 arg1);
@@ -823,7 +822,7 @@ s32 func_8002B780(void)
 
 s32 func_8002B7B0(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
 {
-    return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2);
+    return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2) & 0xFF;
 }
 
 u8 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
@@ -833,10 +832,11 @@ u8 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
         & 0xFF;
 }
 
-u8 func_8002B810(s32 arg0, s32 arg1)
+s32 func_8002B810(s32 arg0, s32 arg1)
 {
     extern u32 D_800F45E4[];
     s32 temp_lo;
+    s32 angle;
     s16 var_a3, var_a2;
     u32* ptr;
 
@@ -879,12 +879,15 @@ u8 func_8002B810(s32 arg0, s32 arg1)
             if ((s16)arg0 == 8) {
                 return 0;
             }
-            return 0x18 + arg0;
+            angle = 0x18 + arg0;
+        } else {
+            angle = 0x18 - arg0;
         }
-        return 0x18 - arg0;
+    } else {
+        angle = (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
     }
 
-    return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
+    return angle & 0xFF;
 }
 
 extern s32 D_800F459C[];

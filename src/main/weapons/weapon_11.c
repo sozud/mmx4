@@ -50,4 +50,18 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009485C);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800948D4);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_80094A04);
+void func_80094A04(struct MiscObj* arg0)
+{
+    s8 on_screen;
+
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x14, 0x18) == 0) {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        on_screen = arg0->on_screen ^ 1;
+        arg0->on_screen = on_screen;
+        if (on_screen != 0) {
+            func_8002B318(BASE_OBJECT(arg0), 0x14, 0x18);
+        }
+    } else {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}

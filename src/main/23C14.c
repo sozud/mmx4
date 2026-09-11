@@ -428,7 +428,30 @@ s32 func_80034238(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80034320);
+void func_80034320(struct PlayerObj* arg0)
+{
+    s32 blocked;
+
+    blocked = 0;
+    if (arg0->unk15 != 0) {
+        blocked = arg0->unk88.bytes.collision_flags & 1;
+        if (arg0->x_vel.val <= 0) {
+            blocked = 1;
+        }
+    } else {
+        if (arg0->unk88.bytes.collision_flags & 2) {
+            blocked = 1;
+        }
+        if (arg0->x_vel.val >= 0) {
+            blocked = 1;
+        }
+    }
+    if (blocked != 0) {
+        arg0->x_vel.val = 0;
+        arg0->unk28 = 0;
+        arg0->unk6++;
+    }
+}
 
 void func_8003439C(void)
 {
@@ -1789,7 +1812,23 @@ void func_80037A24(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80037A98);
+s32 func_80037A98(struct PlayerObj* arg0)
+{
+    s8 charge_level;
+    s8 charge_type;
+
+    charge_level = arg0->charge_levels[arg0->unk93];
+    if (charge_level == 0) {
+        return 0;
+    }
+
+    charge_type = arg0->unk94[0];
+    if (D_800F8C10[charge_type] != 0 && (arg0->unkA7 & 1) != 0) {
+        return 1;
+    }
+
+    return charge_level >= D_800F8BE0.charge.animation_indices[charge_type];
+}
 
 void func_80037B1C(struct PlayerObj* arg0, s8 arg1)
 {

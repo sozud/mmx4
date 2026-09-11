@@ -41,7 +41,19 @@ void func_800A4F04(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4F24);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4FEC);
+void func_800A4FEC(struct ShotObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if ((arg0->unk84.bytes[0] == 0) && (arg0->y_vel.val < 0)) {
+        func_80015D60(arg0, 3);
+        arg0->unk84.bytes[0] = 1;
+    }
+    func_80015DC8(arg0);
+    if (arg0->unk70 & 8) {
+        func_80015D60(arg0, 0xA);
+        arg0->unk5 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A5070);
 

@@ -47,15 +47,32 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B39B8);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3A60);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3AB0);
+void func_800B3AB0(struct VisualObj* arg0)
+{
+    arg0->unk42 = arg0->unk50->unk42;
+    is_on_screen(BASE_OBJECT(arg0));
+    if (g_Player.unkBC == 0) {
+        func_80015DC8(arg0);
+        if (arg0->animation_step.fields.relative_step == 0) {
+            ZeroObjectState(OBJECT_HEADER(arg0));
+        }
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B1C);
+void func_800B3B1C(struct VisualObj* arg0)
+{
+    D_8010A684[arg0->unk6](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B58);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B94);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3C34);
+void func_800B3C34(struct VisualObj* arg0)
+{
+    D_8010A68C[arg0->unk6](arg0);
+    arg0->unk42 = arg0->unk50->unk42;
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3C90);
 

@@ -1730,7 +1730,6 @@ void func_800E9040(void)
 
 extern s16 D_800F224C[];
 extern union TitleScratch D_80169498;
-u8 func_8002B810(s32 arg0, s32 arg1);
 
 void func_8001E130(struct GameInfo* arg0)
 {
