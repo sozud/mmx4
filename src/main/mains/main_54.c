@@ -114,7 +114,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E034);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E260);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E2E4);
+void func_8006E2E4(struct MainObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        func_80015D60(arg0, 0x19);
+        arg0->unk7E = 3;
+        arg0->unk6 = 7;
+        func_800921E8(7);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E334);
 

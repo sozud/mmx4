@@ -34,7 +34,18 @@ void func_8004AE00(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AE20);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B040);
+void func_8004B040(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->unk15 ^= 0x40;
+        func_80015D60(arg0, 0);
+        if (arg0->unk2 == 0) {
+            arg0->unk5 = 2;
+        } else {
+            arg0->unk5 = 4;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B0A0);
 

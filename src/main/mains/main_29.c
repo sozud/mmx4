@@ -2,7 +2,14 @@
 // 8005A4CC..8005B3FC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A4CC);
+void func_8005A4CC(struct MainObj* arg0)
+{
+    if (arg0->unk2 >= 0) {
+        D_800FD838[arg0->state](arg0);
+    } else {
+        D_800FD848[arg0->state](arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A538);
 

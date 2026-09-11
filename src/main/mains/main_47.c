@@ -21,4 +21,15 @@ void func_800672D8(struct MainObj* arg0)
     arg0->unk6 = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_47", func_800672EC);
+void func_800672EC(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        if (arg0->x_pos.i.hi >= 0x1AA1) {
+            arg0->unk6 = 1;
+            return;
+        }
+        func_8002B718(MOVING_OBJECT(arg0));
+        return;
+    }
+    arg0->unk42 &= 0x7FFF;
+}

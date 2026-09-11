@@ -21,7 +21,20 @@ void func_8008BEC4(struct MainObj* arg0)
     D_801052BC[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BF00);
+void func_8008BF00(struct MainObj* arg0)
+{
+    if (arg0->unk70 & 3) {
+        if (arg0->unk70 & 1) {
+            arg0->unk15 = 0;
+        } else {
+            arg0->unk15 = 0x40;
+        }
+    } else if ((arg0->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
+        arg0->unk15 = 0x40;
+    } else {
+        arg0->unk15 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BF54);
 
@@ -160,4 +173,10 @@ void func_8008D37C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D3B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D410);
+void func_8008D410(struct MainObj* arg0)
+{
+    if (--arg0->ext.main_74.unk97 == 0) {
+        arg0->ext.main_74.unk97 = 4;
+        func_800AF95C(OBJECT_HEADER(arg0), 1, 0x60, 0x60, 2);
+    }
+}

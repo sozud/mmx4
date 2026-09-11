@@ -39,7 +39,20 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B6B0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B79C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B848);
+void func_8006B848(struct MainObj* arg0)
+{
+    func_80015D60(arg0, 2);
+    if (arg0->unk2 == 4) {
+        arg0->unk20 = FIXED(-1);
+    } else {
+        arg0->unk20 = FIXED(11);
+    }
+    arg0->unk24 = FIXED(8);
+    arg0->unk2C = FIXED(0.3125);
+    arg0->unk67 = 1;
+    arg0->unk5 = 6;
+    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x20);
+}
 
 void func_8006B8BC(struct MainObj* arg0)
 {
