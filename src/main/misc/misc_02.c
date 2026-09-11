@@ -5,15 +5,26 @@
 void func_800C7EDC(struct MiscObj* arg0)
 {
     if (arg0->state == 0) {
-        func_800C7F1C();
+        func_800C7F1C(arg0);
     } else {
-        func_800C80D8();
+        func_800C80D8(arg0);
     }
 }
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C7F1C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C80D8);
+void func_800C80D8(struct MiscObj* arg0)
+{
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        arg0->on_screen ^= 1;
+        if (arg0->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800C813C(s32 arg0, void* arg1, void* arg2)
 {

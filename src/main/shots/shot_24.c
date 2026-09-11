@@ -26,7 +26,25 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E5B0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E608);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E690);
+void func_8009E690(struct ShotObj* arg0)
+{
+    s8 timer;
+    u8* owner_state;
+
+    owner_state = (u8*)&arg0->unk7C->x_pos;
+    if (*owner_state == 4) {
+        *owner_state = 5;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+    timer = (u8)arg0->unk7 - 1;
+    arg0->unk7 = timer;
+    if (timer == 0) {
+        func_8001540C(2, 0x64, arg0);
+        arg0->x_vel.val = FIXED(6);
+        arg0->unk7 = 0x2A;
+        arg0->unk5 = 5;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E718);
 

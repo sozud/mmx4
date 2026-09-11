@@ -24,15 +24,56 @@ void func_800C68E0(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6928);
+void func_800C6928(struct ItemObj* arg0)
+{
+    if (ANIMATED_OBJECT(arg0)->animation_step.fields.event != 0) {
+        func_80036B18();
+        func_80016F0C();
+        func_800164D8();
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6984);
+void func_800C6984(struct ItemObj* arg0)
+{
+    s32 x_pos;
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6A0C);
+    if ((u8)arg0->unk72 & 8) {
+        func_80015D60(arg0, 1);
+        func_80036AE4(0x18, g_Player.unk15);
+        func_800C661C(arg0, 0x24, 0);
+        x_pos = arg0->x_pos.val;
+        g_Player.unkE2 = 1;
+        g_Player.x_pos.val = x_pos;
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    }
+}
+
+void func_800C6A0C(struct ItemObj* arg0)
+{
+    if (g_Player.unkE2 == 2) {
+        func_800C661C(arg0, 0x25, 0);
+        func_800C661C(arg0, 0x25, 1);
+        func_800C661C(arg0, 0x25, 2);
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6A7C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6ACC);
+void func_800C6ACC(struct ItemObj* arg0)
+{
+    s32 timer;
+
+    timer = arg0->unk7C.item_4_timer;
+    if (timer == 0) {
+        func_80015D60(arg0, 1);
+        func_800C661C(arg0, 0x26, arg0->unk2);
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        return;
+    }
+    arg0->unk7C.item_4_timer = timer - 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6B30);
 

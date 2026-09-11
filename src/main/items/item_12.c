@@ -8,7 +8,12 @@ INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C32BC);
 
 INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C3364);
 
-INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C3438);
+void func_800C3438(struct ItemObj* arg0)
+{
+    if (func_800C34F0(arg0) && (g_Player.unk70 & 8)) {
+        g_Player.unk5C = -0x80;
+    }
+}
 
 void func_800C3484(struct ItemObj* arg0)
 {

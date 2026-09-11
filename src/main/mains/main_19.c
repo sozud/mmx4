@@ -73,7 +73,31 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_800537E0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005398C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053A88);
+u8 func_80053A88(struct PlayerObj* arg0, s16 arg1, s16 arg2)
+{
+    s32 saved_x_pos;
+    s32 saved_y_pos;
+    s32 saved_unk18;
+    s32 saved_unk1C;
+    u8 result;
+
+    saved_x_pos = arg0->x_pos.val;
+    saved_y_pos = arg0->y_pos.val;
+    saved_unk18 = arg0->unk18;
+    saved_unk1C = arg0->unk1C;
+    arg0->unk18 = saved_x_pos;
+    arg0->unk1C = saved_y_pos;
+    arg0->x_pos.u.hi = arg0->x_pos.u.hi + arg1;
+    arg0->y_pos.u.hi = arg0->y_pos.u.hi + arg2;
+    CollisionRelated(arg0);
+    result = arg0->unk70;
+    arg0->x_pos.val = saved_x_pos;
+    arg0->y_pos.val = saved_y_pos;
+    arg0->unk18 = saved_unk18;
+    arg0->unk1C = saved_unk1C;
+    arg0->unk70 = 0;
+    return result;
+}
 
 u8 func_80053B18(struct PlayerObj* arg0, s16 arg1, s16 arg2)
 {

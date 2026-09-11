@@ -21,7 +21,16 @@ void func_800C40A4(struct ItemObj* arg0)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_16", func_800C40F0);
+void func_800C40F0(struct ItemObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        if (arg0->x_pos.i.hi >= 0x1AA1) {
+            arg0->unk5 = 1;
+            return;
+        }
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+}
 
 struct Unk_unk68 D_8010D0FC = { 0x27, 0x3C, 0x38, 0x1F };
 

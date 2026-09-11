@@ -128,7 +128,16 @@ void func_800C2E00(struct ItemObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2E20);
+void func_800C2E20(struct ItemObj* arg0)
+{
+    if ((u8)arg0->unk72 & 8) {
+        g_Player.x_pos.u.hi = arg0->x_pos.u.hi;
+        g_Player.y_pos.i.hi = ((u16)arg0->y_pos.i.hi - arg0->unk68->unk3) - g_Player.unk68->unk3;
+        func_80036AE4(0x14, g_Player.unk15);
+        reset_main_and_shots();
+        arg0->unk5 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2EAC);
 
@@ -141,7 +150,20 @@ INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2F54);
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3030);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3114);
+void func_800C3114(struct ItemObj* arg0)
+{
+    struct MainObj* owner;
+
+    owner = arg0->ext.owner;
+    if (owner->animation_step.fields.event == 1) {
+        func_80015D60(owner, 4);
+        arg0->unk7C.misc->ext.misc_11.active = 1;
+        arg0->unk84.timer = 0;
+        func_80036AE4(0x16, g_Player.unk15);
+        func_8001540C(5, 1, NULL);
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+    }
+}
 
 void func_800C3198(struct ItemObj* arg0)
 {

@@ -568,7 +568,16 @@ void func_800D6694(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/quads/ready_line", func_800D6700);
+void func_800D6700(struct QuadObj* arg0)
+{
+    arg0->unk14.val += arg0->ext.ready_line.x_vel.val;
+    arg0->unk2C.val -= arg0->ext.ready_line.x_vel.val;
+    arg0->ext.ready_line.x_vel.val += FIXED(4);
+    quad_is_on_screen(arg0);
+    if (arg0->unk14.i.hi >= 0x14B) {
+        arg0->state++;
+    }
+}
 
 void func_800D6780(struct QuadObj* arg0)
 {

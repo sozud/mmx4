@@ -80,11 +80,42 @@ void func_800C76A4(struct ItemObj* arg0)
     D_8010D9DC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C76E0);
+void func_800C76E0(struct ItemObj* arg0)
+{
+    struct MiscObj* misc;
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7754);
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x33;
+        misc->unk2 = 0x20;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->ext.misc_24.main = MAIN_OBJECT(arg0);
+        arg0->unk84.timer = 0x78;
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C77BC);
+void func_800C7754(struct ItemObj* arg0)
+{
+    if (--arg0->unk84.timer == 0) {
+        func_80015D60(arg0, 4);
+        func_80015D60(arg0->unk7C.object, 8);
+        arg0->unk84.timer = 0x78;
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+    }
+}
+
+void func_800C77BC(struct ItemObj* arg0)
+{
+    if (--arg0->unk84.timer == 0) {
+        func_80036AE4(0x16, g_Player.unk15);
+        func_8001540C(5, 1, NULL);
+        arg0->unk84.timer = 0x28;
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7830);
 

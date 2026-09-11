@@ -11,7 +11,10 @@ void func_800CE340(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE388);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE670);
+void func_800CE670(struct MiscObj* arg0)
+{
+    D_8010EDE8[arg0->unk5](arg0);
+}
 
 void func_800CE6AC(struct MiscObj* arg0)
 {
