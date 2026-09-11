@@ -2526,7 +2526,30 @@ void func_8003AE08(struct PlayerObj* arg0)
     D_800F8DB8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003AE54);
+void func_8003AE54(struct PlayerObj* arg0)
+{
+    u8 event;
+    s32 scratch;
+
+    func_8003B1A0(arg0, 0x23);
+    event = arg0->animation_step.fields.event;
+    if (event & 0x20) {
+        arg0->animation_step.fields.event = event & 0x1F;
+        if (arg0->unk15 != 0) {
+            arg0->x_vel.val = FIXED(4);
+        } else {
+            arg0->x_vel.val = -FIXED(4);
+        }
+        scratch = FIXED(6.75);
+        arg0->y_vel.val = scratch;
+        scratch = (u8)arg0->unk6;
+        arg0->unk28 = -FIXED(0.25);
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk7A = 0;
+        scratch += 1;
+        arg0->unk6 = scratch;
+    }
+}
 
 void func_8003AEE0(struct PlayerObj* arg0)
 {
@@ -2792,7 +2815,34 @@ void func_8003DDDC(struct PlayerObj* arg0)
     g_Player.unk15 = arg0->unk15;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE08);
+s32 func_8003DE08(struct MainObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        if (arg0->unk5 != 1) {
+            if (arg0->unk5 != 2) {
+                if (arg0->unk5 != 5) {
+                    return 1;
+                }
+            }
+        }
+    } else {
+        if (arg0->unk5 == 0) {
+            return 1;
+        }
+        if (arg0->unk5 != 1) {
+            if (arg0->unk5 != 2) {
+                if (arg0->unk5 != 5) {
+                    if (arg0->unk5 != 4) {
+                        if (arg0->unk5 != 0xC) {
+                            return 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003DE84);
 

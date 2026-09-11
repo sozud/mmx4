@@ -8,7 +8,17 @@ INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C63BC);
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C661C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6680);
+void func_800C6680(struct ItemObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x88, 0x88) == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        D_8010D3E0[arg0->unk5](arg0);
+        func_8002E184(PLAYER_OBJECT(arg0));
+        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+        return;
+    }
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C670C);
 

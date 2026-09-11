@@ -31,7 +31,20 @@ void func_800D6AD8(struct QuadObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6B9C);
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6C48);
+void func_800D6C48(struct QuadObj* arg0, struct PlayerObj* arg1, void* arg2)
+{
+    u8 value;
+
+    value = arg0->ext.quad_10.unk44;
+    arg0->ext.quad_10.unk38 -= 1;
+    if (value >= 0x78U) {
+        arg0->ext.quad_10.unk44 = 0x78;
+        arg0->state++;
+    } else {
+        arg0->ext.quad_10.unk44 = value + 4;
+    }
+    func_800D6DC4(arg0, arg1, arg2);
+}
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6CA0);
 

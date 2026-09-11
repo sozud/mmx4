@@ -75,7 +75,22 @@ void func_800DA228(struct LayerObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_04", func_800DA230);
+void func_800DA230(struct LayerObj* arg0)
+{
+    s8 index;
+
+    for (index = 0; index < 1; index++) {
+        if (g_Player.x_pos.i.hi - D_8010FF84[index] < 0) {
+            break;
+        }
+    }
+
+    arg0->bg_offset = index;
+    if (index != arg0->unk15) {
+        arg0->unk5 = index;
+        arg0->unk6 = 0;
+    }
+}
 
 void (*D_8010FF88[])(struct LayerObj*) = {
     func_800DA098,

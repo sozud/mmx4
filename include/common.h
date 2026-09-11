@@ -411,6 +411,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define GRAPHICS_OBJECT(object) ((struct GraphicsObj*)(object))
 #define PLAYER_OBJECT(object) ((struct PlayerObj*)(object))
 #define MAIN_OBJECT(object) ((struct MainObj*)(object))
+#define UNK_OBJECT(object) ((struct UnkObj*)(object))
 
 struct Main0Ext {
     u8 unk80;
@@ -604,6 +605,21 @@ struct Main487Ext {
     u8 unk8A;
 };
 
+struct Main53Ext {
+    u8 unk80;
+    u8 unk81;
+    u8 unk82;
+    u8 unk83;
+    u8 unk84;
+    u8 unk85;
+};
+
+struct Main62Ext {
+    u32 unk80;
+    u8 pad84[2];
+    u8 unk86;
+};
+
 struct Main71Ext {
     u8 pad80[4];
     s16 unk84;
@@ -612,6 +628,8 @@ struct Main71Ext {
     u8 unk88;
     u8 pad89;
     u8 unk8A;
+    u8 pad8B[2];
+    u8 unk8D;
 };
 
 struct Main72Ext {
@@ -721,6 +739,8 @@ union MainObjExt {
     struct Main64Ext main_64;
     struct MainSavedState94Ext main_67;
     struct Main70Ext main_70;
+    struct Main53Ext main_53;
+    struct Main62Ext main_62;
     struct Main71Ext main_71;
     struct Main72Ext main_72;
     struct Main73Ext main_73;
@@ -1162,7 +1182,9 @@ MMX4_STATIC_ASSERT(psx_weapon_ext_offset,
 
 struct UnkObj {
     ANIMATED_OBJ_FIELDS
-    s8 pad49[0x50 - 0x49];
+    s8 pad49[0x4B - 0x49];
+    s8 unk4B;
+    s8 pad4C[0x50 - 0x4C];
     u8* unk50;
     u8 unk54;
     u8 pad55[0x60 - 0x55];
@@ -1287,6 +1309,10 @@ struct MiscPointerExt {
     void* unk50;
 };
 
+struct Misc7Ext {
+    f32* position;
+};
+
 struct Misc2Ext {
     u8 pad50[4];
     struct MainObj* owner;
@@ -1294,6 +1320,17 @@ struct Misc2Ext {
 };
 
 struct Misc11Ext { u8 pad50[4], active; };
+
+struct Misc51Ext {
+    struct MainObj* source;
+    u8 unk54;
+};
+
+struct Misc45Ext {
+    u8 pad50[0x5A - 0x50];
+    s16 target_x;
+    u8 direction;
+};
 struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
@@ -1341,7 +1378,7 @@ struct Misc55Ext {
 struct Misc53Ext {
     u8 pad50[4];
     struct EffectObj* effect;
-    s16 timer;
+    u16 timer;
     u8 movement_timer;
     u8 pad5B;
     s8 x_step;
@@ -1359,7 +1396,10 @@ struct UnkExt {
 
 union MiscExt {
     struct Misc2Ext misc_2;
+    struct Misc7Ext misc_7;
     struct Misc11Ext misc_11;
+    struct Misc45Ext misc_45;
+    struct Misc51Ext misc_51;
     struct Misc24Ext misc_24;
     struct Misc53Ext misc_53;
     struct ReadyTextExt ready_text;
@@ -1758,7 +1798,11 @@ struct QuadUnkExt2 {
     u8 unk43;
 };
 
-struct Quad4Ext { u16 pad38; u8 timer; };
+struct Quad4Ext {
+    u8 unk38;
+    u8 unk39;
+    u8 timer;
+};
 union QuadScale {
     u16 value;
     struct {
@@ -1778,6 +1822,19 @@ struct QuadUnkExt3 {
     u8 unk38;
 };
 
+struct Quad5Ext {
+    s32* data;
+    u16 unk3C;
+    s16 unk3E;
+    u16 index;
+};
+
+struct Quad10Ext {
+    s32 unk38;
+    u8 pad3C[0x44 - 0x3C];
+    u8 unk44;
+};
+
 struct QuadUnkExt4 {
     s32 : 32;
     u16 unk3C;
@@ -1789,6 +1846,8 @@ union QuadExt {
     struct QuadUnkExt unk_ext;
     struct QuadUnkExt2 unk_ext2;
     struct Quad4Ext quad_4;
+    struct Quad5Ext quad_5;
+    struct Quad10Ext quad_10;
     struct Quad2Ext quad_2;
     struct QuadUnkExt3 unk_ext3;
     struct QuadUnkExt4 unk_ext4;
@@ -2294,6 +2353,7 @@ extern u32* D_8010ECD4[];
 extern s8 D_8010FE38[];
 extern u8 D_8010FED4[];
 extern s16 D_8010FF00[4];
+extern s32* D_8010FAB4[8];
 extern u8 D_801193F0[];
 extern u32 D_801194F0[];
 extern u8 D_8011A030[];
@@ -2802,6 +2862,7 @@ void MyCdReadyCallback(u8 status, u8* result);
 void func_80018000(s32);
 void func_8002B0C8(struct ObjectHeader* arg0);
 void func_8002B108(struct ObjectHeader* arg0);
+void func_8002B560(s8, s8);
 void func_8002B694(struct AnimatedObj* arg0);
 void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);

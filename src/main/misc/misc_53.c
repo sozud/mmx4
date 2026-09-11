@@ -4,15 +4,39 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2A74);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2B9C);
+void func_800D2B9C(struct MiscObj* arg0)
+{
+    if (g_Player.x_pos.i.hi >= 0x6E1) {
+        arg0->unk5++;
+        func_80036AE4(0x14, 0x40);
+        background_objects[0].unk24 = 0x6B0;
+        background_objects[0].unk26 = 0x6B0;
+        arg0->ext.misc_53.timer = 0x50;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2C04);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2CA4);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2D7C);
+void func_800D2D7C(struct MiscObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->y_vel.val < 0) {
+        arg0->y_vel.val = 0;
+        arg0->unk5++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2DCC);
+void func_800D2DCC(struct MiscObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->on_screen == 0) {
+        arg0->unk5++;
+    }
+}
 
 void func_800D2E1C(struct MiscObj* arg0)
 {
@@ -27,9 +51,33 @@ void func_800D2E1C(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2E64);
+void func_800D2E64(struct MiscObj* arg0)
+{
+    struct EffectObj* effect;
+    s16 timer;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2EDC);
+    timer = arg0->ext.misc_53.timer - 1;
+    arg0->ext.misc_53.timer = timer;
+    if (timer == 0) {
+        arg0->unk5++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 2;
+            effect->unk2 = 0xC;
+            arg0->ext.misc_53.effect = effect;
+        }
+    }
+}
+
+void func_800D2EDC(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_53.effect->active == 0) {
+        arg0->unk5++;
+        func_8002B560(0x1C, 0);
+        arg0->ext.misc_53.timer = 0x1E;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2F34);
 

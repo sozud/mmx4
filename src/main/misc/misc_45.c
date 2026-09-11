@@ -8,7 +8,19 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E7C_jp);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E48);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D1060);
+void func_800D1060(struct MiscObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.misc_45.direction == 0) {
+        if (arg0->x_pos.i.hi > arg0->ext.misc_45.target_x) {
+            arg0->unk28 = FIXED(1);
+            arg0->unk5++;
+        }
+    } else if (arg0->x_pos.i.hi < arg0->ext.misc_45.target_x) {
+        arg0->unk28 = -FIXED(1);
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D10E4);
 
@@ -20,7 +32,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D1164);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D11B0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D11CC);
+void func_800D11CC(struct MiscObj* arg0)
+{
+    if (engine_flags != 0) {
+        D_8010F174[arg0->unk5](arg0);
+        arg0->on_screen = 1;
+    }
+}
 
 void func_800D1228(struct MiscObj* arg0)
 {
