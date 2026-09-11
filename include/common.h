@@ -473,7 +473,8 @@ struct Main37Ext {
 };
 
 struct MainSavedState94Ext {
-    u8 pad80[0x14];
+    u32 unk80;
+    u8 pad84[0x10];
     u32 saved_unk5;
 };
 
@@ -488,6 +489,12 @@ struct Main13Ext {
     u32 unk84;
     u32 unk88;
     u32 saved_unk5;
+};
+
+struct Main14Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
 };
 
 struct Main11Ext {
@@ -534,9 +541,11 @@ struct Main48Ext {
 };
 
 struct Main73Ext {
-    u8 pad80[9];
+    struct EffectObj* effect;
+    u8 pad84[5];
     s8 unk89;
-    u8 pad8A[2];
+    u8 pad8A;
+    u8 unk8B;
     u8 effect_state;
     u8 object_id;
     u8 unk8E;
@@ -583,7 +592,10 @@ struct Main36Ext {
 };
 
 struct Main43Ext {
-    u8 pad80[0xC];
+    u8 pad80[0x4];
+    struct EffectObj* effect;
+    u8 pad88[2];
+    u16 unk8A;
     u16 animation_index;
     u16 animation_length;
     u16 unk90;
@@ -644,7 +656,7 @@ struct Main60Ext {
 };
 
 struct Main64Ext {
-    u8 pad80[4];
+    struct EffectObj* effect;
     u16 unk84;
     u16 unk86;
     u8 unk88;
@@ -652,6 +664,7 @@ struct Main64Ext {
     u8 unk8B;
     u8 pad8C[5];
     u8 unk91;
+    u8 unk92;
 };
 
 struct Main74Ext {
@@ -711,6 +724,7 @@ union MainObjExt {
     struct Main12Ext main_12;
     struct Main13Ext main_13;
     struct MainSavedState90Ext main_14;
+    struct Main14Ext main_14_1;
     struct Main17Ext main_17;
     struct Main18Ext main_18;
     struct Main19Ext main_19;
@@ -1206,6 +1220,12 @@ struct Item4Ext {
     s32 timer;
 };
 
+struct Item10Unk {
+	u8 timer;
+	u8 previous_value;
+	u8 value;
+};
+
 struct Item12Ext {
     s32 x_offset;
 };
@@ -1227,6 +1247,22 @@ union ItemUnk7C {
     s32 item_4_timer;
     struct MiscObj* misc;
     void* object;
+    s32 item_26_value;
+};
+
+struct Item4Unk {
+    union ItemUnk84 unk84;
+    s32 unk88;
+};
+
+struct Item11Unk {
+    union ItemUnk84 unk84;
+};
+
+union ItemTailExt {
+    struct Item4Unk item_4;
+    struct Item10Unk item_10;
+    struct Item11Unk item_11;
 };
 
 struct ItemObj {
@@ -1266,8 +1302,7 @@ struct ItemObj {
     s8 pad7B;
     union ItemUnk7C unk7C;
     union ItemExt ext;
-    union ItemUnk84 unk84;
-    s32 unk88;
+    union ItemTailExt tail_ext;
 }; // size 0x8C
 
 union LayerPrivateState {

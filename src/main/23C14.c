@@ -2683,9 +2683,50 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003CF6C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D01C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D164);
+#define SOME_COORDINATE_CONVERSION(IN) ((v * 4) + 24) % 16 | (((v + 6) / 4) + 480) * 64;
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D254);
+void func_8003D164(struct VisualObj* arg0, s32 arg1)
+{
+    s32 v;
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0xD;
+        obj->unk2 = arg1;
+        obj->x_pos.i.hi = arg0->x_pos.i.hi;
+        obj->y_pos.i.hi = arg0->y_pos.i.hi;
+        obj->animation_table = arg0->animation_table;
+        obj->unk40 = arg0->unk40;
+        obj->unk3C = arg0->unk3C;
+        v = (u8)func_8002938C(0x82);
+        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk16 = arg0->unk16;
+        obj->unk50 = arg0;
+        obj->unk15 = arg0->unk15;
+    }
+}
+
+void func_8003D254(struct VisualObj* arg0)
+{
+    s32 v;
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0xF;
+        obj->unk2 = 0;
+        obj->x_pos.i.hi = arg0->x_pos.i.hi;
+        obj->y_pos.i.hi = arg0->y_pos.i.hi;
+        obj->animation_table = arg0->animation_table;
+        obj->unk40 = arg0->unk40;
+        obj->unk3C = arg0->unk3C;
+        v = (u8)func_8002938C(0x82);
+        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk16 = arg0->unk16;
+        obj->unk50 = arg0;
+        obj->unk15 = arg0->unk15;
+    }
+}
+#undef SOME_COORDINATE_CONVERSION
 
 void func_8003D338(struct AnimatedObj* arg0)
 {
@@ -2719,7 +2760,33 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003D3F8);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D4C8);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D638);
+void func_8003D638(struct VisualObj* arg0, u8 arg1)
+{
+    struct VisualObj* obj;
+    u8 active;
+    u8 unk16;
+    u8 unk15;
+
+    obj = find_free_visual_obj();
+    if (obj == NULL) {
+        return;
+    }
+    active = arg0->active;
+    obj->id = 0xC;
+    obj->unk2 = arg1;
+    obj->active = active;
+    obj->x_pos.val = arg0->x_pos.val;
+    obj->y_pos.val = arg0->y_pos.val;
+    obj->animation_table = arg0->animation_table;
+    obj->unk40 = arg0->unk40;
+    obj->unk3C = arg0->unk3C;
+    obj->unk42 = arg0->unk42 & 0x7FFF;
+    unk16 = arg0->unk16;
+    obj->unk16 = unk16;
+    unk15 = arg0->unk15;
+    obj->unk50 = (struct PlayerObj*)arg0;
+    obj->unk15 = unk15;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D6EC);
 

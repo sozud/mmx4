@@ -24,7 +24,13 @@ INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C670C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6814);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6894);
+void func_800C6894(struct ItemObj* arg0)
+{
+    if (abc_object.unkC == 1) {
+        func_80015D60(arg0, 0xB);
+        arg0->unk5++;
+    }
+}
 
 void func_800C68E0(struct ItemObj* arg0)
 {
@@ -69,7 +75,14 @@ void func_800C6A0C(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6A7C);
+void func_800C6A7C(struct ItemObj* arg0)
+{
+    if (g_Player.unkE2 == 3) {
+        func_80015D60(arg0, 2);
+        arg0->unk7C.item_26_value = 0x14;
+        arg0->unk5++;
+    }
+}
 
 void func_800C6ACC(struct ItemObj* arg0)
 {
@@ -85,7 +98,13 @@ void func_800C6ACC(struct ItemObj* arg0)
     arg0->unk7C.item_4_timer = timer - 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6B30);
+void func_800C6B30(struct ItemObj* arg0)
+{
+    if (g_Player.unkE2 == 4) {
+        func_80015D60(arg0, 13);
+        arg0->unk5++;
+    }
+}
 
 void func_800C6B7C(struct ItemObj* arg0)
 {

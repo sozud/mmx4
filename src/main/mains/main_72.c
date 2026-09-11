@@ -45,7 +45,28 @@ void func_8008AF10(struct MainObj* arg0)
     arg0->unk20 = value;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008AF30);
+#define SOME_COORDINATE_CONVERSION(IN) ((v * 4) + 24) % 16 | (((v + 6) / 4) + 480) * 64
+void func_8008AF30(struct MainObj* arg0, s32 arg1)
+{
+    s32 v;
+    struct ShotObj* obj = find_free_shot_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x2F;
+        obj->unk2 = arg1;
+        obj->x_pos.i.hi = arg0->x_pos.i.hi;
+        obj->y_pos.i.hi = arg0->y_pos.i.hi;
+        obj->animation_table = arg0->animation_table;
+        obj->unk40 = arg0->unk40;
+        obj->unk3C = arg0->sprite_frames;
+        v = (u8)func_8002938C(0x48);
+        obj->unk42 = SOME_COORDINATE_CONVERSION(v);
+        obj->unk16 = arg0->unk16;
+        obj->unk7C = arg0;
+        obj->unk15 = arg0->unk15;
+    }
+}
+#undef SOME_COORDINATE_CONVERSION
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B020);
 

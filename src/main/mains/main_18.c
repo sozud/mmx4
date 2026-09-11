@@ -125,7 +125,14 @@ void func_80052008(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052044);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_8005216C);
+void func_8005216C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk7C = 0x30;
+        arg0->unk6 = 2;
+    }
+}
 
 void func_800521B0(struct MainObj* arg0)
 {

@@ -45,7 +45,14 @@ void func_8004D408(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D444);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D480);
+void func_8004D480(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->ext.main_14_1.unk80 == 0) {
+        arg0->ext.main_14_1.unk88 = 0xFF;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D4D0);
 

@@ -1167,7 +1167,22 @@ void func_8002CA18(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CAF0);
+s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1)
+{
+    switch (arg1) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 2;
+        D_8013B800 = 0x10 - arg0->unk6C;
+        return -1;
+    default:
+        return 0;
+    }
+}
 
 void func_8002CB58(struct PlayerObj* arg0)
 {
@@ -1180,7 +1195,22 @@ void func_8002CB58(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CC34);
+s32 func_8002CC34(struct PlayerObj* arg0, u8 arg1)
+{
+    switch (arg1) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 1;
+        D_8013B800 = ~arg0->unk6C;
+        return -1;
+    default:
+        return 0;
+    }
+}
 
 void func_8002CC98(struct PlayerObj* arg0)
 {
@@ -1193,7 +1223,23 @@ void func_8002CC98(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002CD70);
+s32 func_8002CD70(struct PlayerObj* arg0, u8 arg1)
+{
+    switch (arg1) {
+    case 0x38:
+    case 0x39:
+    case 0x3A:
+    case 0x3C:
+    case 0x3E:
+    case 0x3F:
+        D_8013B7DC |= 4;
+        D_8013B804 = 0x10 - arg0->unk6E;
+        return -1;
+        return 0; // permuter discovered this works!
+    default:
+        // return 0; // this does not work
+    }
+}
 
 void func_8002CDD4(struct PlayerObj* arg0)
 {
