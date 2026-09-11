@@ -144,7 +144,25 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087254);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800872E8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087364);
+void func_80087364(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8009227C() == 0) {
+        if (--arg0->unk7E == 0) {
+            func_8001540C(0, 0xE, NULL);
+            arg0->unk7E = 3;
+        }
+        if (++arg0->unk5C == 0x30) {
+            func_800889DC(arg0);
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+            arg0->unk7E = 0;
+            func_80036B18();
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_80087414(struct MainObj* arg0)
 {

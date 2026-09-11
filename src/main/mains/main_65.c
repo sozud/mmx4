@@ -50,7 +50,12 @@ void func_8007E8C0(struct MainObj* arg0)
     func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E918);
+void func_8007E918(struct MainObj* arg0)
+{
+    func_8007E498(arg0);
+    func_80015D60(ANIMATED_OBJECT(arg0), 0xB);
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E95C);
 

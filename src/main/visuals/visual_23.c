@@ -17,7 +17,7 @@ void func_800B322C(struct VisualObj* arg0)
         break;
     case 2:
         // see func_800AF28C & func_8003D4C8 for a similar pattern
-        arg0->unk42 = (((func_8002938C(0x84) * 4 + 0x18) % 16) | ((((func_8002938C(0x84) + 6) / 4) + 0x1E0) << 6));
+        arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x84));
         func_80015D60(arg0, 0x2B);
         break;
     }

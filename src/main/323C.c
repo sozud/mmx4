@@ -3253,7 +3253,23 @@ void func_8001EC34(struct GameInfo* arg0)
     func_80023D68();
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001EC90);
+void func_8001EC90(struct GameInfo* arg0)
+{
+    reset_objects();
+    D_80141BDF[0] = 0;
+    if (D_800F1D90 != 0xFF) {
+        arg0->unk8 = func_8001E850(D_800F22D0, 0) & 0xFF;
+        arg0->mode = arg0->mode + 1;
+    } else {
+        arg0->unk8 = func_8001E850(D_800F22E0, 0) & 0xFF;
+        arg0->mode = arg0->mode + 3;
+    }
+    background_objects[0].unk3 = 0;
+    background_objects[1].unk3 = 0;
+    background_objects[2].unk3 = 0;
+    func_8001E980(0);
+    func_800129A4(8);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001ED44);
 

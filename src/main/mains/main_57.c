@@ -2,6 +2,11 @@
 // 80072194..800743FC
 #include "common.h"
 
+extern void* D_80100EB0[];
+extern u8 D_80100EBC[];
+
+void func_800742AC(struct MainObj* arg0);
+
 void func_80072194(struct MainObj* arg0)
 {
     D_80101414[arg0->state](arg0);
@@ -73,13 +78,41 @@ void func_80072904(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072960);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072A14);
+void func_80072A14(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, arg0);
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 0x4);
+        arg0->unk7C = 0x50;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072A84);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072BCC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072C20);
+void func_80072C20(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8009227C() != 0) {
+        return;
+    }
+    if (--arg0->unk7E == 0) {
+        func_8001540C(0, 0xE, NULL);
+        arg0->unk7E = 3;
+    }
+    if (++arg0->unk5C == 0x30) {
+        func_800742AC(arg0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        arg0->unk7E = 0;
+        func_80036B18();
+    }
+}
 
 void func_80072CC4(struct MainObj* arg0)
 {
@@ -162,7 +195,17 @@ void func_800731A0(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073228);
+void func_80073228(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, arg0);
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 2);
+        arg0->unk6++;
+    }
+}
 
 void func_80073294(struct MainObj* arg0)
 {
@@ -216,7 +259,18 @@ INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073748);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800737FC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073878);
+void func_80073878(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, arg0);
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        func_80015D60(arg0, 0x1A);
+        arg0->unk7C = 0x40;
+        arg0->unk6++;
+    }
+}
 
 void func_800738EC(struct MainObj* arg0)
 {
@@ -317,7 +371,33 @@ void func_8007427C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800742AC);
+void func_800742AC(struct MainObj* arg0)
+{
+    u32 byte_offset;
+    u8** choices;
+    u8 i;
+    u32 rnd;
+    u32 gr;
+
+    byte_offset = arg0->unk5C - 1;
+    if ((s32)byte_offset < 0) {
+        byte_offset = arg0->unk5C + 0xE;
+    }
+    byte_offset = (byte_offset >> 2);
+    byte_offset &= 0x3FC;
+    choices = D_80100EB0[byte_offset / sizeof(*D_80100EB0)];
+    gr = get_random();
+    i = 0;
+    byte_offset += (u32)D_80100EBC;
+    rnd = gr & 0xF;
+    while (i < 4) {
+        if (rnd < ((u8*)byte_offset)[i]) {
+            arg0->ext.main_57.unk88 = choices[i];
+            return;
+        }
+        i++;
+    }
+}
 
 void func_80074368(s32 arg0)
 {

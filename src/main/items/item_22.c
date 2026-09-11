@@ -115,7 +115,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5994);
 
 void func_800C5B5C(struct ItemObj* arg0)
 {
-    arg0->unk84.bytes[0] = arg0->unk2;
+    arg0->tail_ext.unk1.unk84.bytes[0] = arg0->unk2;
 
     switch (arg0->unk2) {
     case 0:
