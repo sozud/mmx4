@@ -77,7 +77,7 @@ void func_8009347C(struct WeaponObj* arg0)
 void func_800934D8(struct WeaponObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->on_screen = 0;
         arg0->state = 3;
     } else {

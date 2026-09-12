@@ -390,57 +390,6 @@ u8 func_8002D7E4(struct PlayerObj* object, s16 x, s16 y)
     return attribute;
 }
 
-s32 func_8002CC34(struct PlayerObj* object, u8 attribute)
-{
-    switch (attribute) {
-    case 0x38:
-    case 0x39:
-    case 0x3A:
-    case 0x3C:
-    case 0x3E:
-    case 0x3F:
-        D_8013B7DC |= 1;
-        D_8013B800 = ~object->unk6C;
-        return -1;
-    default:
-        return 0;
-    }
-}
-
-s32 func_8002CAF0(struct PlayerObj* object, u8 attribute)
-{
-    switch (attribute) {
-    case 0x38:
-    case 0x39:
-    case 0x3A:
-    case 0x3C:
-    case 0x3E:
-    case 0x3F:
-        D_8013B7DC |= 2;
-        D_8013B800 = 0x10 - object->unk6C;
-        return -1;
-    default:
-        return 0;
-    }
-}
-
-s32 func_8002CD70(struct PlayerObj* object, u8 attribute)
-{
-    switch (attribute) {
-    case 0x38:
-    case 0x39:
-    case 0x3A:
-    case 0x3C:
-    case 0x3E:
-    case 0x3F:
-        D_8013B7DC |= 4;
-        D_8013B804 = 0x10 - object->unk6E;
-        return -1;
-    default:
-        return 0;
-    }
-}
-
 void func_8002E994(struct EngineObj* arg0)
 {
     u16 direction = D_80166C08 & 0xF000;
