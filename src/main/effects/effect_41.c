@@ -7,7 +7,19 @@ void func_800BE184(struct EffectObj* arg0)
     D_8010C0F8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_41", func_800BE1C0);
+void func_800BE1C0(struct EffectObj* arg0)
+{
+    u8* palette;
+
+    arg0->ext.effect_41.unk14 = 1;
+    palette = D_8010C0F4[0];
+    arg0->ext.effect_41.palette_source.bytes = palette;
+    arg0->ext.effect_41.palette.fields.timer = palette[0];
+    arg0->ext.effect_41.palette.fields.unk1 = arg0->ext.effect_41.palette_source.bytes[1];
+    arg0->ext.effect_41.palette.fields.step = arg0->ext.effect_41.palette_source.bytes[2];
+    arg0->ext.effect_41.palette.fields.id = arg0->ext.effect_41.palette_source.bytes[3];
+    arg0->state = (u8)arg0->state + 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_41", func_800BE214);
 

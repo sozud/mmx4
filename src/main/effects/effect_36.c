@@ -2,12 +2,25 @@
 // 800BD1E4..800BD384
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_36", func_800BD1E4);
+void func_800BD1E4(struct EffectObj* arg0)
+{
+    struct EffectObj* spawned;
+
+    spawned = find_free_effect_obj();
+    if (spawned != NULL) {
+        spawned->active = 1;
+        spawned->id = 2;
+        spawned->unk2 = 0xC;
+        arg0->ext.effect_36.spawned_effect = spawned;
+        arg0->state = 1;
+    }
+    arg0->ext.effect_36.timer = 0x1E;
+}
 
 void func_800BD23C(struct EffectObj* arg0)
 {
-    struct Unk_unk68* collision_bounds = arg0->ext.effect_36.collision_bounds;
-    if ((collision_bounds->unk0 == 0) || (collision_bounds->unk1 != 2)) {
+    struct EffectObj* spawned = arg0->ext.effect_36.spawned_effect;
+    if ((spawned->active == 0) || (spawned->id != 2)) {
         arg0->state = 2;
         g_Player.unk61 = 0x78;
     }

@@ -9,18 +9,6 @@ struct Item26AnimationStep {
     u8 command;
 };
 
-#ifdef VERSION_JP
-extern u8 D_801722A6_jp;
-extern u8 D_801722A7_jp;
-extern u8 D_801722A8_jp;
-extern u8 D_801722A9_jp;
-extern u8 D_801722AA_jp;
-extern u8 D_801722AB_jp;
-extern u8 D_801722AC_jp;
-extern u8 D_801722AD_jp;
-#else
-#endif
-
 extern struct Item26AnimationStep D_8010D6BC[];
 extern struct Item26AnimationStep D_8010D6C0[];
 extern struct Item26AnimationStep D_8010D750[];
@@ -144,16 +132,6 @@ void (*D_8010D9A4[])(struct ItemObj*) = {
 u8 D_8010D9B8[4] = { 0, 0, 0x20, 8 };
 
 u8* D_8010D9BC[8] = {
-#ifdef VERSION_JP
-    &D_801722A6_jp,
-    &D_801722A7_jp,
-    &D_801722A8_jp,
-    &D_801722A9_jp,
-    &D_801722AA_jp,
-    &D_801722AB_jp,
-    &D_801722AC_jp,
-    &D_801722AD_jp,
-#else
     &engine_obj.character_state.bytes[8],
     &engine_obj.character_state.bytes[9],
     &engine_obj.character_state.bytes[10],
@@ -162,7 +140,6 @@ u8* D_8010D9BC[8] = {
     &engine_obj.character_state.bytes[13],
     &engine_obj.character_state.bytes[14],
     &engine_obj.character_state.bytes[15],
-#endif
 };
 
 void (*D_8010D9DC[])(struct ItemObj*) = {

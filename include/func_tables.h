@@ -5480,7 +5480,7 @@ void func_800B8E74(struct EffectObj*);
 
 // D_8010B6F4
 extern void (*D_8010B6F4[])(struct EffectObj*);
-extern s16 D_8010B700[];
+extern struct Effect16Coordinate D_8010B700[];
 void func_800B8F98(struct EffectObj*);
 void func_800B902C(struct EffectObj*);
 void func_800B9070(struct EffectObj*);

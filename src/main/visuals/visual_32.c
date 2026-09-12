@@ -64,7 +64,21 @@ void func_800B5280(struct VisualObj* arg0)
     func_8002B718((struct MovingObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B52D8);
+void func_800B52D8(struct VisualObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->state = 2;
+    }
+    if (arg0->unk2 == 5) {
+        arg0->on_screen = 0;
+        if ((arg0->unk50->input.buttons.held & 1) != 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        is_on_screen(BASE_OBJECT(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B5348);
 
