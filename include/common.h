@@ -2192,11 +2192,58 @@ struct Effect24Ext {
     u8 unk1B;
 };
 
+struct Effect12Ext {
+    s32* source;
+    s32* destination;
+    s8* cursor;
+    u32 palette_state;
+    u16 unk24;
+    u16 timer;
+    u8 unk28;
+    u8 palette_group;
+    u8 palette_id;
+    u8 palette_count;
+};
+
+struct Effect16Ext {
+    u8 pad14[4];
+    u16 saved_background_2A;
+    u16 saved_background_28;
+};
+
+struct Effect16Coordinate {
+    u16 primary;
+    u16 secondary;
+};
+
 struct Effect38Ext {
     u8 pad14;
     u8 timer;
     u8 unk16;
     u8 unk17;
+};
+
+struct Effect28Ext {
+    u8 pad14[4];
+    u8 timer;
+    u8 filter_timer;
+    u8 pad1A[2];
+    u8 palette_index;
+    u8 finished;
+};
+
+struct Effect37Ext {
+    u8 pad14[4];
+    u8 timer;
+    u8 pad19[3];
+    u8 action;
+    u8 finished;
+};
+
+struct Effect34Ext {
+    u8 unk14;
+    u8 pad15;
+    u16 timer;
 };
 
 struct Effect8Ext {
@@ -2251,14 +2298,47 @@ union Effect32Palette {
 union Effect32PaletteSource {
     u8* bytes;
     s32* words;
+    struct Effect28AnimationStep* animation;
 };
 
 struct Effect32Ext {
+    u8 unk14;
+    s8 unk15;
+    u8 unk16, pad17;
+    union Effect32Palette palette;
+    union Effect32PaletteSource palette_source;
+};
+
+struct EffectPaletteExt {
     u8 unk14, unk15, unk16, pad17;
     union Effect32Palette palette;
     union Effect32PaletteSource palette_source;
 };
-struct Effect36Ext { u8 pad14[4]; struct Unk_unk68* collision_bounds; };
+
+struct Effect23Ext {
+    u32 unk14;
+    union Effect32Palette palette;
+    union Effect32PaletteSource palette_source;
+};
+
+struct Effect41Ext {
+    u32 unk14;
+    union Effect32Palette palette;
+    union Effect32PaletteSource palette_source;
+};
+
+struct Effect36Ext {
+    u8 pad14[4];
+    struct EffectObj* spawned_effect;
+    u32 timer;
+};
+
+struct Effect28AnimationStep {
+    u8 timer;
+    u8 unused;
+    s8 frame_step;
+    u8 frame;
+};
 struct ScalingX {
     struct Unk14* unk14;
     s8 unk18;
@@ -2274,6 +2354,8 @@ struct PaletteAnimationExt {
 };
 
 union EffectExt {
+    struct Effect12Ext effect_12;
+    struct Effect16Ext effect_16;
     struct Effect9Ext effect_9;
     u16 effect_26_timer;
     struct Effect4Ext effect_4;
@@ -2289,10 +2371,17 @@ union EffectExt {
     struct Effect24Ext effect_24;
     struct UnkEffectExt effect_25;
     struct UnkEffectExt effect_27;
-    struct Effect32Ext effect_23;
+    struct Effect23Ext effect_23;
+    struct Effect28Ext effect_28;
+    struct EffectPaletteExt effect_29;
     struct Effect32Ext effect_32;
+    struct Effect34Ext effect_34;
     struct Effect36Ext effect_36;
+    struct Effect37Ext effect_37;
     struct Effect38Ext effect_38;
+    struct EffectPaletteExt effect_39;
+    struct EffectPaletteExt effect_40;
+    struct Effect41Ext effect_41;
     struct Effect42Ext effect_42;
     struct Effect43Ext effect_43;
     struct ScalingX scaling_x;
@@ -2510,6 +2599,13 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
+extern struct EffectObj* D_8013B8E8[22];
+extern u8* D_8010BE5C[2];
+extern struct Effect28AnimationStep* D_8010BF24[3];
+extern s16 D_8010BFA8[10];
+extern u8* D_8010C084[2];
+extern u8* D_8010C0CC[2];
+extern u8* D_8010C0F4[1];
 extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
@@ -2870,6 +2966,8 @@ void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct ShotObj*);
 s32 func_8002DD04(struct MainObj*);
+void func_800BC63C(void);
+void func_800BDBD4(void);
 extern union CdSectorBuffer D_8012F4B4;
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];

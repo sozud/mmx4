@@ -7,7 +7,21 @@ void func_800B41CC(struct VisualObj* arg0)
     D_8010A6AC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4208);
+void func_800B4208(struct VisualObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = 2;
+    arg0->unk54 = 0x3C;
+    arg0->unk5 = 0;
+    arg0->unk56 = 4;
+    arg0->unk2C = 0;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->x_vel.val = 0;
+    func_80015D60(arg0, 0xA);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4274);
 

@@ -9,7 +9,17 @@ void func_800BD384(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_37", func_800BD3C0);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_37", func_800BD478);
+void func_800BD478(struct EffectObj* arg0)
+{
+    if (arg0->ext.effect_37.finished != 0) {
+        D_8010C024[arg0->ext.effect_37.action](arg0);
+        return;
+    }
+
+    if (--arg0->ext.effect_37.timer == 0) {
+        arg0->ext.effect_37.finished = 1;
+    }
+}
 
 void func_800BD4EC(struct EffectObj* arg0)
 {

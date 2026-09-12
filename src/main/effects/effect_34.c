@@ -7,7 +7,19 @@ void func_800BCE48(struct EffectObj* arg0)
     D_8010BFDC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BCE84);
+void func_800BCE84(struct EffectObj* arg0)
+{
+    if (engine_obj.checkpoint != 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    if (g_Player.x_pos.i.hi >= 0x241) {
+        arg0->ext.effect_34.unk14 = 0;
+        arg0->ext.effect_34.timer = D_8010BFA8[0];
+        arg0->state = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BCEE4);
 

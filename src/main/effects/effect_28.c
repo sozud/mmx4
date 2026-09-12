@@ -9,7 +9,15 @@ void func_800BBC14(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBC50);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBD24);
+void func_800BBD24(struct EffectObj* arg0)
+{
+    if (arg0->unk7 == 0) {
+        func_80028BAC(10, 4, 2);
+        arg0->unk7 = 10;
+        arg0->state++;
+    }
+    arg0->unk7--;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBD88);
 
@@ -20,7 +28,23 @@ void func_800BBE84(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBEA4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBF34);
+void func_800BBF34(struct EffectObj* arg0)
+{
+    if (--arg0->ext.effect_28.filter_timer == 0) {
+        need_palette_load |= 1;
+        arg0->ext.effect_28.timer = 0x28;
+        arg0->ext.effect_28.filter_timer = 4;
+        arg0->ext.effect_28.palette_index ^= 1;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+        arg0->ext.effect_28.finished = 0;
+    } else {
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterAmountB = 0x7C00;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBFCC);
 
@@ -37,13 +61,6 @@ void (*D_8010BEE4[])(struct EffectObj*) = {
 };
 
 s32 D_8010BEEC[4] = { 0, 1, 2, 3 };
-
-struct Effect28AnimationStep {
-    u8 timer;
-    u8 unused;
-    s8 frame_step;
-    u8 frame;
-};
 
 struct Effect28AnimationStep D_8010BEFC[3] = {
     { 2, 0, 1, 0 },

@@ -7,7 +7,22 @@ void func_800B4610(struct VisualObj* arg0)
     D_8010A6C8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B464C);
+void func_800B464C(struct VisualObj* arg0)
+{
+    struct PlayerObj* player = arg0->unk50;
+
+    arg0->state++;
+    arg0->unk3C = player->unk3C;
+    arg0->unk40 = player->unk40;
+    arg0->unk42 = player->unk42 & 0x7FFF;
+    arg0->bg_offset = player->bg_offset;
+    arg0->animation_table = player->animation_table;
+    arg0->unk15 = player->unk15;
+    arg0->unk5 = (s8)((s32)((u8)arg0->unk2 << 24) >> 28);
+    arg0->unk6 = 0;
+    arg0->unk5C = 0;
+    arg0->unk2 &= 0xF;
+}
 
 void func_800B46C8(struct VisualObj* arg0)
 {
@@ -29,16 +44,43 @@ void func_800B4754(struct VisualObj* arg0)
     D_8010A6E4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4790);
+void func_800B4790(struct VisualObj* arg0)
+{
+    struct PlayerObj* player = arg0->unk50;
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4808);
+    arg0->unk16 = 4;
+    arg0->x_pos.val = player->x_pos.val + ((arg0->unk15 == 0) ? FIXED(-5) : FIXED(5));
+    arg0->y_pos.val = player->y_pos.val + FIXED(-224);
+    func_80015D60(arg0, 0x12);
+    arg0->unk6++;
+}
+
+void func_800B4808(struct VisualObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x100, 0x100);
+    if (arg0->unk5C != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
 void func_800B4858(struct VisualObj* arg0)
 {
     D_8010A6EC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_30", func_800B4894);
+void func_800B4894(struct VisualObj* arg0)
+{
+    struct PlayerObj* player;
+
+    player = arg0->unk50;
+    arg0->unk16 = 4;
+    arg0->x_pos.val = player->x_pos.val + (arg0->unk15 != 0 ? FIXED(-5) : FIXED(5));
+    arg0->y_pos.val = player->y_pos.val + FIXED(-16);
+    func_80015D60(arg0, 0x14);
+    arg0->unk6++;
+}
 
 void func_800B490C(struct VisualObj* arg0)
 {

@@ -13,7 +13,16 @@ void func_800BC554(struct EffectObj* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_32", func_800BC568);
+void func_800BC568(struct EffectObj* arg0)
+{
+    func_800BC63C();
+    if (arg0->ext.effect_32.unk15 != 0) {
+        func_800BC5D4(arg0);
+    }
+    if ((arg0->ext.effect_32.palette.fields.step == 0) && (func_8002B160(BASE_OBJECT(arg0)) == 1)) {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800BC5D4(struct EffectObj* arg0)
 {

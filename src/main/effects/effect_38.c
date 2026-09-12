@@ -7,7 +7,28 @@ void func_800BD654(struct EffectObj* arg0)
     D_8010C048[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD690);
+void func_800BD690(struct EffectObj* arg0)
+{
+    s8 next_state;
+
+    if (engine_obj.substage == 0) {
+        arg0->unk2 = (u8)engine_obj.checkpoint;
+        func_800BDBD4();
+    } else if (engine_obj.checkpoint != 0) {
+        next_state = 6;
+        goto write_state;
+    } else {
+        arg0->unk2 = 6;
+    }
+
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->ext.effect_38.timer = 0;
+    next_state = (u8)arg0->state + 1;
+
+write_state:
+    arg0->state = next_state;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD708);
 
@@ -22,7 +43,15 @@ void func_800BD890(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD8C4);
+void func_800BD8C4(struct EffectObj* arg0)
+{
+    if (--arg0->ext.effect_38.timer == 0 && arg0->ext.effect_38.unk16 != 0) {
+        func_80036AE4(0x15, 0x40);
+        func_800BDB10(arg0);
+        arg0->ext.effect_38.timer = 0x64;
+        arg0->state++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD938);
 
@@ -42,7 +71,23 @@ void func_800BDA4C(void* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDA94);
+void func_800BDA94(void* arg0)
+{
+    s8 var_s0;
+    struct MiscObj* temp_v0;
+
+    var_s0 = 0;
+    do {
+        temp_v0 = find_free_misc_obj();
+        if (temp_v0 != NULL) {
+            temp_v0->active = 0x41;
+            temp_v0->id = 0x21;
+            temp_v0->ext.pointer.unk50 = arg0;
+            temp_v0->unk2 = var_s0;
+        }
+        var_s0 += 1;
+    } while (var_s0 < 2U);
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDB10);
 
