@@ -107,7 +107,26 @@ void func_8009A7D8(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A7F8);
+void func_8009A7F8(struct ShotObj* arg0)
+{
+    s16 x_pos;
+
+    arg0->state = 4;
+    arg0->on_screen = 1;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk15 == 0) {
+        x_pos = (u16)arg0->x_pos.i.hi - 0x19;
+    } else {
+        x_pos = (u16)arg0->x_pos.i.hi + 0x19;
+    }
+    arg0->x_pos.i.hi = x_pos;
+    arg0->unk5C = 1;
+    arg0->unk60 = 2;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x21;
+    func_80015D60(arg0, 4);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A87C);
 

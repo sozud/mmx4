@@ -241,6 +241,7 @@ typedef union {
         u16 lo;
         u16 hi;
     } u;
+    u8 bytes[4];
 } f32;
 struct TitlePointState {
     f32 coordinates[36];
@@ -1058,6 +1059,19 @@ union ShotUnk8C {
     s32 word;
     u16 half;
     s8 byte;
+    struct ObjectHeader* object;
+};
+
+union ShotUnk58 {
+    const u8* data;
+    const u16* collision_data;
+    struct Unk_unk68* collision_bounds;
+};
+
+struct Shot24Ext {
+    u8 owner_state;
+    u8 owner_notified;
+    s16 timer;
 };
 
 struct ShotObj {
@@ -1067,8 +1081,8 @@ struct ShotObj {
         const u8* data;
         struct PlayerObj* player;
     } unk50;
-    s32 unk54;
-    s32 : 32;
+    const u8* unk54;
+    union ShotUnk58 unk58;
     s8 unk5C;
     s8 pad5D[0x60 - 0x5D];
     s8 unk60;
@@ -1079,7 +1093,7 @@ struct ShotObj {
     s8 unk65;
     s8 unk66;
     s8 unk67;
-    s32 unk68;
+    struct Unk_unk68* unk68;
     s8 pad6C[0x70 - 0x6C];
     u8 unk70;
     s8 pad71;
@@ -1099,16 +1113,26 @@ struct ShotObj {
         s32 value;
         u16 halves[2];
         u8 bytes[4];
+        struct Shot24Ext shot_24;
     } unk84;
     s16 timer;
     s16 unk8A;
     union ShotUnk8C unk8C;
     f32 unk90;
-    s8 pad94[0x98 - 0x94];
+    s8 pad94;
+    u8 unk95;
+    s8 pad96[0x98 - 0x96];
     s8 unk98;
     s8 unk99;
     s8 pad9A[0x9C - 0x9A];
 }; // size 0x9C
+
+MMX4_STATIC_ASSERT(shot_unk54_offset,
+    MMX4_OFFSET_OF(struct ShotObj, unk54) == MMX4_OFFSET_OF(struct MainObj, unk54));
+MMX4_STATIC_ASSERT(shot_unk58_offset,
+    MMX4_OFFSET_OF(struct ShotObj, unk58) == MMX4_OFFSET_OF(struct MainObj, collision_data));
+MMX4_STATIC_ASSERT(shot_unk68_offset,
+    MMX4_OFFSET_OF(struct ShotObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
 
 struct Weapon7Ext {
     u16 timer;
@@ -1151,6 +1175,13 @@ struct Weapon29Ext {
     s32 unk90;
 };
 
+struct Shot46Ext {
+    u8 unk8C;
+    u8 pad8D;
+    u8 unk8E;
+    u8 unk8F;
+};
+
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     struct Weapon7Ext weapon_7;
@@ -1159,6 +1190,7 @@ union WeaponObjExt {
     struct Weapon16Ext weapon_16;
     struct Weapon20Ext weapon_20;
     struct Weapon29Ext weapon_29;
+    struct Shot46Ext shot_46;
 };
 
 MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
@@ -2522,6 +2554,16 @@ extern struct Unk_unk68 D_80103F04;
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
+extern u16 D_80106070[64];
+extern struct Unk_unk68 D_801060F0[32];
+extern struct Unk_unk68 D_801061F0[32];
+extern u8 D_80109028[4];
+extern u8 D_8010902C[32][4];
+extern u8 D_801090C4[4];
+extern u16 D_801090E8[3][2];
+extern u8 D_80109104[8];
+extern struct Unk_unk68 D_80109894;
+extern u8 D_80109BA8[2][4];
 extern u8 D_80108BA4[];
 extern struct EffectObj* D_8013B8A8;
 extern struct Unk_unk68* D_8013B8B0;
@@ -2827,6 +2869,7 @@ extern u8* cur_draw_info_drawenv;
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct ShotObj*);
+s32 func_8002DD04(struct MainObj*);
 extern union CdSectorBuffer D_8012F4B4;
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];

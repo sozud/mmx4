@@ -7,11 +7,49 @@ void func_8009E0B8(struct ShotObj* arg0)
     D_8010910C[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E0F4);
+void func_8009E0F4(struct ShotObj* arg0)
+{
+    u16 flags;
+    struct WeaponObj* owner;
+    u8 owner_state;
+
+    arg0->unk58.collision_data = D_80106070;
+    arg0->unk54 = D_801090C4;
+    arg0->unk50.data = D_801090C4;
+    arg0->unk84.shot_24.timer = 0x20;
+    flags = arg0->unk42;
+    owner = arg0->unk7C;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk6 = 0;
+    arg0->unk84.shot_24.owner_notified = 0;
+    arg0->unk42 = flags & 0x7FFF;
+    owner_state = owner->unk6;
+    arg0->unk5C = 1;
+    arg0->unk60 = 4;
+    arg0->unk84.shot_24.owner_state = owner_state;
+    func_80015D60(arg0, 4);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E188);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E34C);
+void func_8009E34C(struct ShotObj* arg0)
+{
+    if (arg0->unk84.shot_24.timer == 0) {
+        if (arg0->unk84.shot_24.owner_notified == 0) {
+            arg0->unk7C->x_pos.bytes[0] = 0xFF;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    arg0->unk84.shot_24.timer--;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E3A8);
 
@@ -19,7 +57,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E490);
 
 void func_8009E5A4(struct ShotObj* arg0)
 {
-    arg0->unk5 = arg0->unk84.bytes[1];
+    arg0->unk5 = arg0->unk84.shot_24.owner_notified;
 }
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E5B0);
@@ -80,7 +118,16 @@ void func_8009EAA4(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009EAF0);
+void func_8009EAF0(struct ShotObj* arg0)
+{
+    u8 pad[8];
+    arg0->state = 0;
+    arg0->x_pos.i.hi = D_801090E8[arg0->unk2][0];
+    arg0->y_pos.i.hi = D_801090E8[arg0->unk2][1];
+    func_800C813C(6, D_80109104, arg0);
+    func_800AF808(arg0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 u8 D_801090C4[4] = { 0xFD, 0xFD, 0x05, 0x05 };
 

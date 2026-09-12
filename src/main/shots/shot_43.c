@@ -9,7 +9,21 @@ void func_800A6960(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_43", func_800A699C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_43", func_800A6C00);
+void func_800A6C00(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+    } else {
+        func_8002D9BC(arg0);
+        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+            return;
+        }
+    }
+    arg0->state = 3;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_43", func_800A6C7C);
 

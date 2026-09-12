@@ -7,7 +7,26 @@ void func_800A5348(struct ShotObj* arg0)
     D_801098B8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_40", func_800A5384);
+void func_800A5384(struct ShotObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = 2;
+    arg0->unk68 = &D_80109894;
+    arg0->unk5C = 3;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    arg0->unk8A = 0;
+    arg0->unk84.value = 0;
+    arg0->unk54 = NULL;
+    arg0->unk50.data = NULL;
+    arg0->unk58.data = NULL;
+    arg0->unk60 = 6;
+    arg0->unk61 = 0;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x7E;
+    func_80015D60(arg0, 2);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_40", func_800A5404);
 
@@ -34,7 +53,7 @@ void func_800A56C0(struct ShotObj* arg0)
 
 u8 D_80109890[4] = { 0xCF, 0x82, 0x60, 0xFF };
 
-u8 D_80109894[4] = { 0, 8, 0x2E, 0x78 };
+struct Unk_unk68 D_80109894 = { 0, 8, 0x2E, 0x78 };
 
 s16 D_80109898[4] = { 0x0AE0, 0x14E0, 0x1710, 0 };
 

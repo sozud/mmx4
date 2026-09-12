@@ -36,7 +36,13 @@ void func_800A7BC8(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7BE8);
+void func_800A7BE8(struct ShotObj* arg0)
+{
+    D_80109A84[arg0->unk5](arg0);
+    if (arg0->unk8C.object->state == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7C50);
 

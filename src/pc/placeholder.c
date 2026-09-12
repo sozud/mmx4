@@ -18,7 +18,6 @@ extern struct HudSpriteOrigin D_800F30F4[8];
 extern struct PlayerGaugePosition D_800F3124[2];
 extern u16 D_800F312C[4];
 extern s32 D_8010F678[3];
-extern u16 D_80106070[64];
 extern u8* D_80141EE8[];
 extern u32* D_80137E08;
 
