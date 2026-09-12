@@ -444,11 +444,11 @@ struct MainSavedState80Ext {
 
 struct Main58Ext { u32 saved_unk5, unk84, unk88; };
 struct Main10Ext {
-    u32 unk80;
-    s32 unk84;
-    s32 unk88;
-    u32 unk8C;
-    u32 unk90;
+    u32 timer;
+    s32 turn_delay;
+    s32 struggle;
+    u32 hold_state;
+    u32 can_grab;
     u32 saved_unk5;
 };
 
@@ -2715,7 +2715,7 @@ extern u16 D_80166C08;
 extern u16 D_80166C0A;
 extern s8 D_800F8BE9[];
 extern u8 D_800FB0EC[8];
-extern void (*D_800FB104[])();
+extern void (*dragonfly_step_funcs[])();
 #ifdef MMX4_PC
 #define D_8010B465 (((u8*)D_8010B464)[1])
 #else
@@ -2850,7 +2850,7 @@ extern struct UnkObj foo_objects[3];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
 extern struct MiscObj misc_objects[0x40];
-extern const u8* D_800FB0BC[12];
+extern const u8* dragonfly_animations[12];
 extern struct LayerObj layer_objects[4];
 extern struct RideArmorObj qux_object;
 extern struct GameInfo game_info;

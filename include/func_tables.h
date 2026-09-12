@@ -208,7 +208,7 @@ void func_80046B30(struct MainObj* arg0);
 void func_800473C8(struct MainObj* arg0);
 void func_80047C88(struct MainObj* arg0);
 void func_800498C0(struct MainObj* arg0);
-void func_800498C8(struct MainObj* arg0);
+void dragonfly_update(struct MainObj* arg0);
 void func_8004A718(struct MainObj* arg0);
 void func_8004B8C0(struct MainObj* arg0);
 void func_8004C734(struct MainObj* arg0);
@@ -1400,37 +1400,37 @@ void func_800488F4(void);
 void func_8004970C(void);
 void func_800497FC(void);
 
-// D_800FB0F4
-extern void (*D_800FB0F4[])(struct MainObj*);
-void func_80049904(struct MainObj*);
-void func_80049AA0(struct MainObj*);
-void func_80049C0C(struct MainObj*);
-void func_80049C78(struct MainObj*);
+// dragonfly_state_funcs
+extern void (*dragonfly_state_funcs[])(struct MainObj*);
+void dragonfly_init(struct MainObj*);
+void dragonfly_run(struct MainObj*);
+void dragonfly_finish(struct MainObj*);
+void dragonfly_despawn(struct MainObj*);
 
-// D_800FB104
+// dragonfly_step_funcs
 void func_8009216C(void* arg0);
-void func_80049CBC(struct MainObj* arg0);
-void func_80049CC8(struct MainObj* arg0);
-void func_80049DE8(struct MainObj* arg0);
-void func_8004A0AC(struct MainObj* arg0);
-void func_8004A5B0(struct MainObj* arg0);
-void func_8004A6E8(struct MainObj* arg0);
+void dragonfly_resume_step(struct MainObj* arg0);
+void dragonfly_wait(struct MainObj* arg0);
+void dragonfly_hunt(struct MainObj* arg0);
+void dragonfly_carry(struct MainObj* arg0);
+void dragonfly_flee(struct MainObj* arg0);
+void dragonfly_fly_past(struct MainObj* arg0);
 
 // D_800FB120
 void func_80049E24(struct MainObj* arg0);
 void func_80049E68(struct MainObj* arg0);
-void func_80049F20(struct MainObj* arg0);
-void func_80049FE8(struct MainObj* arg0);
+void dragonfly_hunt_hover(struct MainObj* arg0);
+void dragonfly_hunt_close(struct MainObj* arg0);
 
 // D_800FB130
-void func_8004A0FC(struct MainObj* arg0);
-void func_8004A5E0(struct MainObj* arg0);
+void dragonfly_carry_grab(struct MainObj* arg0);
+void dragonfly_face_player(struct MainObj* arg0);
 void func_8004A178(struct MainObj* arg0);
-void func_8004A31C(struct MainObj* arg0);
-void func_8004A378(struct MainObj* arg0);
-void func_8004A644(struct MainObj* arg0);
+void dragonfly_carry_lift(struct MainObj* arg0);
+void dragonfly_carry_rise(struct MainObj* arg0);
+void dragonfly_hold_player(struct MainObj* arg0);
 s32 func_8004A690(struct MainObj* arg0);
-void func_8004A468(struct MainObj* arg0);
+void dragonfly_carry_squeeze(struct MainObj* arg0);
 
 // D_800FB51C
 extern void (*D_800FB51C[])(struct MainObj*);
@@ -6787,7 +6787,7 @@ extern void (*D_800FAEB4[])(struct MainObj*);
 extern void (*D_800FAEBC[])(struct MainObj*);
 extern void (*D_800FAEC4[])(struct MainObj*);
 extern void (*D_800FAED8[])(struct MainObj*);
-extern void (*D_800FB104[])(struct MainObj*);
+extern void (*dragonfly_step_funcs[])(struct MainObj*);
 extern void (*D_800FB120[])(struct MainObj*);
 extern void (*D_800FB130[])(struct MainObj*);
 extern void (*D_800FB550[])(struct MainObj*);

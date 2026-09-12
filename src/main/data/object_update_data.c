@@ -25,7 +25,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_800473C8,
     func_80047C88,
     func_800498C0,
-    func_800498C8,
+    dragonfly_update,
     func_8004A718,
     func_8004B8C0,
     func_8004C734,
