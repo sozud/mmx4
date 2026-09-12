@@ -1,32 +1,32 @@
 #include "common.h"
 
-void (*D_800F9E88[])(struct MainObj*) = {
-    func_80043768,
-    func_800437A8,
+void (*spike_marl_patrol_funcs[])(struct MainObj*) = {
+    spike_marl_patrol_begin,
+    spike_marl_patrol_update,
 };
 
-void (*D_800F9E90[])(struct MainObj*) = {
+void (*spike_marl_turn_funcs[])(struct MainObj*) = {
     func_80043858,
     func_80043898,
 };
 
-void (*D_800F9E98[])(struct MainObj*) = {
-    func_8004393C,
-    func_80043978,
+void (*spike_marl_curl_funcs[])(struct MainObj*) = {
+    spike_marl_curl_begin,
+    spike_marl_curl_update,
 };
 
-void (*D_800F9EA0[])(struct MainObj*) = {
-    func_80043A84,
-    func_80043B0C,
+void (*spike_marl_roll_funcs[])(struct MainObj*) = {
+    spike_marl_roll_begin,
+    spike_marl_roll_update,
     func_80043C0C,
 };
 
-void (*D_800F9EAC[])(struct MainObj*) = {
-    func_80043D90,
-    func_80043DE0,
+void (*spike_marl_uncurl_funcs[])(struct MainObj*) = {
+    spike_marl_uncurl_begin,
+    spike_marl_uncurl_update,
 };
 
-void (*D_800F9EB4[])(struct MainObj*) = {
-    func_80043ECC,
-    func_80043F04,
+void (*spike_marl_roll_entry_funcs[])(struct MainObj*) = {
+    spike_marl_roll_entry_begin,
+    spike_marl_roll_entry_update,
 };

@@ -4045,29 +4045,29 @@ void func_800432F0(struct MainObj* arg0)
     }
 }
 
-void func_80043340(struct MainObj* arg0)
+void spike_marl_update(struct MainObj* arg0)
 {
 
-    D_800F9E58[arg0->state](arg0);
+    spike_marl_state_funcs[arg0->state](arg0);
     CollisionRelated(PLAYER_OBJECT(arg0));
 }
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043390);
 
-void func_800435C4(struct MainObj* arg0)
+void spike_marl_run(struct MainObj* arg0)
 {
     if (arg0->unk5 != 8) {
-        func_80043F78(arg0);
-        func_8004415C(arg0);
-        func_8004431C(arg0);
-        func_800441E4(arg0);
-        func_80044314(arg0);
+        spike_marl_check_patrol_path(arg0);
+        spike_marl_begin_fall(arg0);
+        spike_marl_track_player_side(arg0);
+        spike_marl_detect_player(arg0);
+        spike_marl_noop(arg0);
     }
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_800F9E64[arg0->unk5](arg0);
+    spike_marl_step_funcs[arg0->unk5](arg0);
     func_8002D9BC(arg0);
-    arg0->ext.main_3.saved_unk5 = (u32)arg0->unk5;
+    arg0->ext.main_3.saved_step = (u32)arg0->unk5;
     if (func_8002DD04(arg0) < 0) {
         func_800AF808((struct BaseObj*)arg0);
         func_800C813C(7, &D_800F9E50, arg0);
@@ -4079,16 +4079,16 @@ void func_800435C4(struct MainObj* arg0)
     arg0->state = 2;
 }
 
-void func_800436D0(struct MainObj* arg0)
+void spike_marl_cleanup(struct MainObj* arg0)
 {
     u8 subtype;
 
     subtype = (u8)arg0->unk2;
-    arg0->ext.main_3.unk80 = 0;
-    arg0->ext.main_3.unk84 = 0;
-    arg0->ext.main_3.unk88 = 0;
-    arg0->ext.main_3.unk8C = 0;
-    arg0->ext.main_3.saved_unk5 = 0;
+    arg0->ext.main_3.alerted = 0;
+    arg0->ext.main_3.roll_timer = 0;
+    arg0->ext.main_3.player_ahead = 0;
+    arg0->ext.main_3.turn_timer = 0;
+    arg0->ext.main_3.saved_step = 0;
     if (subtype < 2U) {
         func_8002B0C8(OBJECT_HEADER(arg0));
         return;
@@ -4096,16 +4096,16 @@ void func_800436D0(struct MainObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_80043720(struct MainObj* arg0)
+void spike_marl_resume_step(struct MainObj* arg0)
 {
-    arg0->unk5 = arg0->ext.main_3.saved_unk5;
+    arg0->unk5 = arg0->ext.main_3.saved_step;
 }
 
-void func_8004372C(struct MainObj* arg0)
+void spike_marl_patrol(struct MainObj* arg0)
 {
-    D_800F9E88[arg0->unk6](arg0);
+    spike_marl_patrol_funcs[arg0->unk6](arg0);
 }
-void func_80043768(struct MainObj* arg0)
+void spike_marl_patrol_begin(struct MainObj* arg0)
 {
     s32 velocity = FIXED(-0.8);
     arg0->unk6 = 1;
@@ -4115,46 +4115,46 @@ void func_80043768(struct MainObj* arg0)
     arg0->unk20 = velocity;
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
-void func_800437A8(struct MainObj* arg0)
+void spike_marl_patrol_update(struct MainObj* arg0)
 {
     struct MainObj* temp_s0;
     s32 temp_v0;
 
     temp_s0 = arg0;
-    if (temp_s0->ext.main_3.unk88 == 0) {
-        temp_v0 = temp_s0->ext.main_3.unk8C - 1;
-        temp_s0->ext.main_3.unk8C = temp_v0;
+    if (temp_s0->ext.main_3.player_ahead == 0) {
+        temp_v0 = temp_s0->ext.main_3.turn_timer - 1;
+        temp_s0->ext.main_3.turn_timer = temp_v0;
         if (temp_v0 == 0) {
             func_80015D60(temp_s0, 2);
             temp_s0->unk5 = 3;
             temp_s0->unk6 = 0;
-            temp_s0->ext.main_3.unk8C = 0x78;
+            temp_s0->ext.main_3.turn_timer = 0x78;
         }
     }
     func_8002B718((struct MovingObj*)temp_s0);
     func_80015DC8(ANIMATED_OBJECT(temp_s0));
 }
 
-void func_8004381C(struct MainObj* arg0)
+void spike_marl_turn(struct MainObj* arg0)
 {
-    D_800F9E90[arg0->unk6](arg0);
+    spike_marl_turn_funcs[arg0->unk6](arg0);
 }
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043858);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043898);
 
-void func_80043900(struct MainObj* arg0)
+void spike_marl_curl(struct MainObj* arg0)
 {
-    D_800F9E98[arg0->unk6](arg0);
+    spike_marl_curl_funcs[arg0->unk6](arg0);
 }
-void func_8004393C(struct MainObj* arg0)
+void spike_marl_curl_begin(struct MainObj* arg0)
 {
     func_80015D60(arg0, 3);
     func_80015DC8(ANIMATED_OBJECT(arg0));
     arg0->unk6 = 1;
 }
-void func_80043978(struct MainObj* self)
+void spike_marl_curl_update(struct MainObj* self)
 {
     switch (self->animation_step.fields.event) {
     case 1:
@@ -4178,11 +4178,11 @@ void func_80043978(struct MainObj* self)
 
     func_80015DC8(ANIMATED_OBJECT(self));
 }
-void func_80043A48(struct MainObj* arg0)
+void spike_marl_roll(struct MainObj* arg0)
 {
-    D_800F9EA0[arg0->unk6](arg0);
+    spike_marl_roll_funcs[arg0->unk6](arg0);
 }
-void func_80043A84(struct MainObj* self)
+void spike_marl_roll_begin(struct MainObj* self)
 {
     s32 value;
 
@@ -4200,13 +4200,13 @@ void func_80043A84(struct MainObj* self)
     }
     func_80015DC8(ANIMATED_OBJECT(self));
 }
-void func_80043B0C(struct MainObj* self)
+void spike_marl_roll_update(struct MainObj* self)
 {
     s32 timer;
     u8 flags;
 
-    timer = self->ext.main_10.turn_delay + 4;
-    self->ext.main_10.turn_delay = timer;
+    timer = self->ext.main_3.roll_timer + 4;
+    self->ext.main_3.roll_timer = timer;
     if (timer < 0 || (self->unk15 == 0 ? g_Player.x_pos.val > self->x_pos.val : g_Player.x_pos.val < self->x_pos.val)) {
         self->unk28 = FIXED(-0.09375);
         self->unk6 = 2;
@@ -4226,11 +4226,11 @@ void func_80043B0C(struct MainObj* self)
 }
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043C0C);
 
-void func_80043CB8(struct MainObj* arg0)
+void spike_marl_fall(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->unk70 & 8) {
-        if (arg0->ext.main_3.unk80 != 0) {
+        if (arg0->ext.main_3.alerted != 0) {
             arg0->collision_data = D_80106470;
             arg0->unk60 = 3;
             arg0->unk5 = 7;
@@ -4249,21 +4249,21 @@ void func_80043CB8(struct MainObj* arg0)
     func_8002B694(ANIMATED_OBJECT(arg0));
 }
 
-void func_80043D54(struct MainObj* arg0)
+void spike_marl_uncurl(struct MainObj* arg0)
 {
-    D_800F9EAC[arg0->unk6](arg0);
+    spike_marl_uncurl_funcs[arg0->unk6](arg0);
 }
-void func_80043D90(struct MainObj* arg0)
+void spike_marl_uncurl_begin(struct MainObj* arg0)
 {
     func_80015D60(arg0, 4);
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->ext.raw[2] = 1;
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[3] = 0;
+    arg0->ext.main_3.player_ahead = 1;
+    arg0->ext.main_3.alerted = 0;
+    arg0->ext.main_3.roll_timer = 0;
+    arg0->ext.main_3.turn_timer = 0;
     arg0->unk6 = 1;
 }
-void func_80043DE0(struct MainObj* arg0)
+void spike_marl_uncurl_update(struct MainObj* arg0)
 {
     switch (arg0->animation_step.fields.event) {
     case 1:
@@ -4282,12 +4282,12 @@ void func_80043DE0(struct MainObj* arg0)
     }
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
-void func_80043E90(struct MainObj* arg0)
+void spike_marl_roll_entry(struct MainObj* arg0)
 {
-    D_800F9EB4[arg0->unk6](arg0);
+    spike_marl_roll_entry_funcs[arg0->unk6](arg0);
 }
 
-void func_80043ECC(struct MainObj* arg0)
+void spike_marl_roll_entry_begin(struct MainObj* arg0)
 {
     arg0->unk6 = 1;
     if (arg0->unk15 == 0) {
@@ -4301,7 +4301,7 @@ void func_80043ECC(struct MainObj* arg0)
     arg0->unk7C = 0x30;
 }
 
-void func_80043F04(struct MainObj* arg0)
+void spike_marl_roll_entry_update(struct MainObj* arg0)
 {
     s32 x_vel;
 
@@ -4318,7 +4318,7 @@ void func_80043F04(struct MainObj* arg0)
     }
 }
 
-void func_80043F78(struct MainObj* arg0)
+void spike_marl_check_patrol_path(struct MainObj* arg0)
 {
     s16 temp_v0;
     s16 var_v1;
@@ -4341,24 +4341,24 @@ void func_80043F78(struct MainObj* arg0)
                 arg0, var_v1,
                 arg0->unk68->unk3 + (arg0->y_pos.u.hi + arg0->unk68->unk1))
             == 0) {
-            arg0->ext.main_3.unk8C = 0x78;
+            arg0->ext.main_3.turn_timer = 0x78;
             arg0->unk5 = 3;
             arg0->unk6 = 0;
             func_80015D60(arg0, 2);
         }
 
-        if (arg0->ext.main_3.unk88 == 0) {
+        if (arg0->ext.main_3.player_ahead == 0) {
             if (arg0->unk15 != 0) {
                 if ((arg0->unk70 & 1) != 0) {
                     arg0->unk5 = 3;
                     arg0->unk6 = 0;
-                    arg0->ext.main_3.unk8C = 0x78;
+                    arg0->ext.main_3.turn_timer = 0x78;
                     func_80015D60(arg0, 2);
                 }
             } else if ((arg0->unk70 & 2) != 0) {
                 arg0->unk5 = 3;
                 arg0->unk6 = 0;
-                arg0->ext.main_3.unk8C = 0x78;
+                arg0->ext.main_3.turn_timer = 0x78;
                 func_80015D60(arg0, 2);
             }
         } else {
@@ -4377,14 +4377,14 @@ void func_80043F78(struct MainObj* arg0)
 
             arg0->unk5 = 3;
             arg0->unk6 = 0;
-            arg0->ext.main_3.unk88 = 0;
-            arg0->ext.main_3.unk8C = 0x3C;
+            arg0->ext.main_3.player_ahead = 0;
+            arg0->ext.main_3.turn_timer = 0x3C;
             func_80015D60(arg0, 2);
         }
     }
 }
 
-void func_8004415C(struct MainObj* arg0)
+void spike_marl_begin_fall(struct MainObj* arg0)
 {
     if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
         if (arg0->unk5 != 5) {
@@ -4400,7 +4400,7 @@ void func_8004415C(struct MainObj* arg0)
     }
 }
 
-void func_800441E4(struct MainObj* arg0)
+void spike_marl_detect_player(struct MainObj* arg0)
 {
     s16 temp_v1;
     s32 temp_v0;
@@ -4423,12 +4423,12 @@ void func_800441E4(struct MainObj* arg0)
             } else if (temp_v1 - g_Player.x_pos.i.hi < 0x60) {
             check_facing:
                 if (!(arg0->unk70 & 3) && ((arg0->unk15 == 0 && g_Player.x_pos.val < arg0->x_pos.val) || (arg0->unk15 != 0 && g_Player.x_pos.val > arg0->x_pos.val))) {
-                    arg0->ext.main_3.unk80 = 1;
+                    arg0->ext.main_3.alerted = 1;
                 }
             }
         }
 
-        if ((arg0->unk5 == 2) && (arg0->ext.main_3.unk80 != 0)) {
+        if ((arg0->unk5 == 2) && (arg0->ext.main_3.alerted != 0)) {
             arg0->unk5 = 4;
             arg0->unk6 = 0;
             arg0->unk20 = 0;
@@ -4437,16 +4437,16 @@ void func_800441E4(struct MainObj* arg0)
     }
 }
 
-void func_80044314(struct MainObj* arg0)
+void spike_marl_noop(struct MainObj* arg0)
 {
 }
 
-void func_8004431C(struct MainObj* arg0)
+void spike_marl_track_player_side(struct MainObj* arg0)
 {
     s32 temp_v0;
 
     if (arg0->unk5 == 2) {
-        if (arg0->ext.main_3.unk88 == 0) {
+        if (arg0->ext.main_3.player_ahead == 0) {
             temp_v0 = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
             if (temp_v0 >= 0) {
                 if (temp_v0 < 0x20) {
@@ -4455,7 +4455,7 @@ void func_8004431C(struct MainObj* arg0)
             } else if (arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 0x20) {
             block_6:
                 if ((arg0->unk15 == 0 && g_Player.x_pos.val < arg0->x_pos.val) || (arg0->unk15 != 0 && g_Player.x_pos.val > arg0->x_pos.val)) {
-                    arg0->ext.main_3.unk88 = 1;
+                    arg0->ext.main_3.player_ahead = 1;
                 }
             }
         } else {
@@ -4466,8 +4466,8 @@ void func_8004431C(struct MainObj* arg0)
                 }
             } else if (arg0->y_pos.i.hi - g_Player.y_pos.i.hi >= 0x21) {
             block_15:
-                arg0->ext.main_3.unk88 = 0;
-                arg0->ext.main_3.unk8C = 0x78;
+                arg0->ext.main_3.player_ahead = 0;
+                arg0->ext.main_3.turn_timer = 0x78;
             }
         }
     }
@@ -4904,11 +4904,11 @@ void func_80047084(struct MainObj* arg0)
 
 void func_800470C0(struct MainObj* arg0)
 {
-    if (arg0->ext.main_3.unk80 == 0) {
-        arg0->ext.main_3.unk84 = 0x48;
+    if (arg0->ext.main_6.unk80 == 0) {
+        arg0->ext.main_6.unk84 = 0x48;
         func_80015D60(arg0, 0);
     } else {
-        arg0->ext.main_3.unk84 = 8;
+        arg0->ext.main_6.unk84 = 8;
         func_80015D60(arg0, 1);
     }
     arg0->unk7C = 0x28;
