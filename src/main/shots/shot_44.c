@@ -16,7 +16,7 @@ void func_800A7208(struct ShotObj* arg0)
     struct WeaponObj* weapon;
 
     weapon = arg0->unk7C;
-    weapon->unk84--;
+    weapon->unk84.byte--;
     arg0->on_screen = 0;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

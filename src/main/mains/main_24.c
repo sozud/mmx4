@@ -31,7 +31,23 @@ void func_80056BDC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056C18);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056D20);
+void func_80056D20(struct MainObj* arg0)
+{
+    s32 direction;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 == 0) {
+        direction = arg0->unk2 & 3;
+        arg0->unk2C = (direction < 2) ? FIXED(0.1875) : FIXED(-0.1875);
+    }
+    if (arg0->unk20 == 0) {
+        arg0->unk7C = 0xA;
+        arg0->unk28 >>= 2;
+        func_80015D60(arg0, 2);
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056DB4);
 

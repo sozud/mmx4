@@ -2216,7 +2216,24 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001CB24);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CC5C);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CD70);
+s32 func_8001CD70(s32 arg0)
+{
+    s32 retries;
+    s32 result;
+
+    retries = 3;
+    func_8001C854();
+    do {
+        if (_card_load(arg0 * 0x10) != 0) {
+            result = func_8001CEDC();
+            if (result == 0) {
+                return 0;
+            }
+        }
+        retries--;
+    } while (retries != 0);
+    return result;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CDE4);
 
@@ -2232,7 +2249,25 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001CEDC);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CF74);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CFF4);
+s32 func_8001CFF4(s32 arg0)
+{
+    s32 retries;
+    s32 result;
+
+    retries = 10;
+    result = 2;
+    func_8001C8AC();
+    do {
+        if (_card_clear(arg0 * 0x10) != 0) {
+            result = func_8001CF74();
+            if (result == 0) {
+                break;
+            }
+        }
+        retries--;
+    } while (retries != 0);
+    return result;
+}
 
 void func_8001D064(void)
 {
@@ -3264,7 +3299,18 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001F3D4);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F488);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F5D8);
+void func_8001F5D8(struct EngineObj* arg0)
+{
+    if (!(arg0->unk4 & 1)) {
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterAmountB = 0x7C00;
+    } else {
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F634);
 
@@ -3272,7 +3318,16 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001F6E8);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F798);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F850);
+void func_8001F850(struct EngineObj* arg0)
+{
+    if (--arg0->unk4 == 0) {
+        ((void (*)(s32, u8, u8))func_8002217C)(
+            arg0->character_state.bytes[0] + 0x10, 0x80, 0);
+        arg0->unk2++;
+    } else if (arg0->unk4 == 0xF0 - *(s16*)&arg0->unk6) {
+        func_8001540C(5, (u8)arg0->character_state.bytes[0], 0);
+    }
+}
 
 void func_8001F8DC(void)
 {
@@ -4301,6 +4356,69 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.pad61[2] = source->pad61[2];
     engine_obj = restored;
 }
+
+static void save_replay_engine(struct SerializedEngineObj* target)
+{
+    s32 i;
+
+    target->state = engine_obj.state;
+    target->unk1 = engine_obj.unk1;
+    target->unk2 = engine_obj.unk2;
+    target->unk3 = engine_obj.unk3;
+    target->unk4 = engine_obj.unk4;
+    target->unk6 = engine_obj.unk6;
+    target->unk7 = engine_obj.unk7;
+    target->unk8 = engine_obj.unk8;
+    target->unkA = engine_obj.unkA;
+    target->stage = engine_obj.stage;
+    target->substage = engine_obj.substage;
+    target->unkE = engine_obj.unkE;
+    target->unkF = engine_obj.unkF;
+    target->unk10 = engine_obj.unk10;
+    target->unk11 = engine_obj.unk11;
+    target->unk12 = engine_obj.unk12;
+    target->unk13 = engine_obj.unk13;
+    target->unk14 = engine_obj.unk14;
+    target->unk15 = engine_obj.unk15;
+    target->unk16 = engine_obj.unk16;
+    target->unk17 = engine_obj.unk17;
+    target->unk18 = engine_obj.unk18;
+    target->unk19 = engine_obj.unk19;
+    target->unk1A = engine_obj.unk1A;
+    target->unk1B = engine_obj.unk1B;
+    target->unk1C = engine_obj.unk1C;
+    target->checkpoint = engine_obj.checkpoint;
+    target->unk1E = engine_obj.unk1E;
+    target->unk1F = engine_obj.unk1F;
+    target->boss_ptr = engine_obj.boss_ptr;
+    target->enable_boss = engine_obj.enable_boss;
+    target->unk25 = engine_obj.unk25;
+    target->character_state = engine_obj.character_state;
+    target->pad36 = engine_obj.pad36;
+    target->unk37 = engine_obj.unk37;
+    target->unk40 = engine_obj.unk40;
+    target->unk41 = engine_obj.unk41;
+    target->unk42 = engine_obj.unk42;
+    target->cur_character = engine_obj.cur_character;
+    target->unk44 = engine_obj.unk44;
+    target->unk45 = engine_obj.unk45;
+    target->unk46 = engine_obj.unk46;
+    target->unk47 = engine_obj.unk47;
+    target->unk48 = engine_obj.unk48;
+    for (i = 0; i < COUNT(engine_obj.player_initial_data); i++) {
+        target->player_initial_data[i] = engine_obj.player_initial_data[i];
+    }
+    target->palette_flags = engine_obj.palette_flags;
+    target->unk5A = engine_obj.unk5A;
+    target->pad5C[0] = engine_obj.unk5C[0];
+    target->pad5C[1] = engine_obj.unk5C[1];
+    target->pad5C[2] = engine_obj.unk5C[2];
+    target->unk5F = engine_obj.unk5F;
+    target->unk60 = engine_obj.unk60;
+    target->pad61[0] = engine_obj.pad61[0];
+    target->pad61[1] = engine_obj.pad61[1];
+    target->pad61[2] = engine_obj.pad61[2];
+}
 #else
 struct ReplayData {
     u32 frame;
@@ -4337,7 +4455,19 @@ void func_80022074(void)
     engine_obj = REPLAY_SAVED_ENGINE;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800220C4);
+void func_800220C4(void)
+{
+    struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
+
+    replay->frame = 0;
+    replay->flags = D_80141BD8.unk0;
+    replay->random = cur_random;
+#ifdef MMX4_PC
+    save_replay_engine(&replay->initial_engine);
+#else
+    replay->initial_engine = engine_obj;
+#endif
+}
 
 void func_80022138(void)
 {
@@ -5628,7 +5758,22 @@ void func_800264D0(s32 layer, s32 x, s32 y)
     D_801441C8[layer][tile_y][tile_x] = (inner_y * 16 + (SP_BG_TILE_PIXELS + block * 256))[inner_x];
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800265B4);
+void func_800265B4(void)
+{
+    struct BackgroundObj* obj = background_objects;
+    u32 i;
+
+    SP_BG_PRIM_CURSOR = &D_8015D9D0[SP_DRAW_BUFFER];
+    for (i = 0; i < 3; i++) {
+        if (obj->unk3 != 0) {
+            SP_CUR_BG_INDEX = i;
+            func_800267D4(i);
+            func_80026CEC(i);
+            func_80026894(i);
+        }
+        obj++;
+    }
+}
 
 void func_80026648(void)
 {
