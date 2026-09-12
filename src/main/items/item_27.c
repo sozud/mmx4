@@ -80,27 +80,27 @@ void func_800C76E0(struct ItemObj* arg0)
         misc->x_pos.val = arg0->x_pos.val;
         misc->y_pos.val = arg0->y_pos.val;
         misc->ext.misc_24.main = MAIN_OBJECT(arg0);
-        arg0->unk84.timer = 0x78;
+        arg0->tail_ext.item_4.unk84.timer = 0x78;
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }
 }
 
 void func_800C7754(struct ItemObj* arg0)
 {
-    if (--arg0->unk84.timer == 0) {
+    if (--arg0->tail_ext.item_4.unk84.timer == 0) {
         func_80015D60(arg0, 4);
         func_80015D60(arg0->unk7C.object, 8);
-        arg0->unk84.timer = 0x78;
+        arg0->tail_ext.item_4.unk84.timer = 0x78;
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }
 }
 
 void func_800C77BC(struct ItemObj* arg0)
 {
-    if (--arg0->unk84.timer == 0) {
+    if (--arg0->tail_ext.item_4.unk84.timer == 0) {
         func_80036AE4(0x16, g_Player.unk15);
         func_8001540C(5, 1, NULL);
-        arg0->unk84.timer = 0x28;
+        arg0->tail_ext.item_4.unk84.timer = 0x28;
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }
 }

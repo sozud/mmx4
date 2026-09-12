@@ -2,6 +2,9 @@
 // 8007501C..8007872C
 #include "common.h"
 
+extern void* D_80101B4C[];
+extern u8 D_80101B58[];
+
 void func_8007501C(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
@@ -126,7 +129,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076D14);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076DB0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076E1C);
+void func_80076E1C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        func_8001540C(2, 0xB6, arg0);
+        arg0->ext.main_60.unk8E = 1;
+        arg0->unk7C = 0x78;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076E88);
 
@@ -350,6 +362,34 @@ void func_8007856C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800785E4);
+void func_800785E4(struct MainObj* arg0)
+{
+    u32 idx;
+    u8** table;
+    u8* weights;
+    u8* base;
+    u8 i;
+    u32 rnd;
+    u32 gr;
+
+    idx = arg0->unk5C - 1;
+    if ((s32)idx < 0)
+        idx = arg0->unk5C + 0xE;
+    idx >>= 4;
+    idx &= 0xFF;
+    table = ((u8**)D_80101B4C)[idx];
+    gr = get_random();
+    i = 0;
+    base = D_80101B58;
+    weights = base + idx * 3;
+    rnd = gr & 0xF;
+    while (i < 3) {
+        if (rnd < weights[i]) {
+            arg0->ext.main_60.unk84 = table[i];
+            return;
+        }
+        i++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800786AC);

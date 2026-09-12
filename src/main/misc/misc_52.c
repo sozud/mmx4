@@ -2,6 +2,8 @@
 // 800D2190..800D2A74
 #include "common.h"
 
+extern void (*D_8010F518[])(struct MiscObj*);
+
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2190);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2420);
@@ -16,7 +18,19 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D25FC);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D26F4);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2794);
+void func_800D2794(struct MiscObj* arg0)
+{
+    D_8010F518[arg0->unk2](arg0);
+    if (D_80141BD8.unk0 % 10 == 0) {
+        u8 unk56;
+        arg0->y_pos.i.hi += arg0->ext.misc_52.unk57;
+        unk56 = --arg0->ext.misc_52.unk56;
+        if (unk56 == 0) {
+            arg0->ext.misc_52.unk56 = 7;
+            arg0->ext.misc_52.unk57 *= -1;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2854);
 

@@ -40,7 +40,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CCA8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CCFC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CD5C);
+void func_8005CD5C(struct MainObj* arg0)
+{
+    func_80015DC8((struct AnimatedObj*)arg0);
+    if (--arg0->ext.main_32.unk80 == 0) {
+        func_80015D60(arg0, 3);
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8005CDB0(struct MainObj* arg0)
 {

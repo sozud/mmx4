@@ -2,6 +2,8 @@
 // 80069A94..8006A50C
 #include "common.h"
 
+void func_8006A450(struct MainObj* arg0);
+
 void func_80069A94(struct MainObj* arg0)
 {
     D_800FFD84[arg0->state](arg0);
@@ -53,7 +55,16 @@ void func_80069FDC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A018);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A078);
+void func_8006A078(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        func_8001540C(2, 0xA2, arg0);
+        func_8006A450(arg0);
+        arg0->unk7C = 0x3C;
+        arg0->unk6++;
+    }
+}
 
 void func_8006A0E4(struct MainObj* arg0)
 {

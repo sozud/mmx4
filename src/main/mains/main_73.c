@@ -159,7 +159,31 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D0D0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D138);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D19C);
+void func_8008D19C(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 5;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.u.hi = arg0->x_pos.u.hi;
+            effect->y_pos.u.hi = arg0->y_pos.u.hi;
+            arg0->ext.main_73.effect = effect;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->unk7E-- == 0) {
+        u8 unk8B;
+        arg0->ext.main_73.unk8B = unk8B = arg0->ext.main_73.unk8B - 5;
+        arg0->unk42 ^= 0x8000;
+        if (unk8B >= 0x1A) {
+            arg0->ext.main_73.unk8B = 0;
+        }
+        arg0->unk7E = arg0->ext.main_73.unk8B < 6 ? 5 : arg0->ext.main_73.unk8B;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D278);
 

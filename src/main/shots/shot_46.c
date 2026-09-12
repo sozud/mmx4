@@ -87,7 +87,12 @@ void (*D_80109B50[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8628);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8A58);
+s32 func_800A8A58(struct ShotObj* arg0, s32 arg1, s32 arg2)
+{
+    POS_BOUNDS_CHECK_FAIL_RET0(arg0->x_pos.val, arg1)
+    POS_BOUNDS_CHECK_FAIL_RET0(arg0->y_pos.val, arg2)
+    return 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8AE4);
 

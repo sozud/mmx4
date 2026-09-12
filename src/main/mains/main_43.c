@@ -115,7 +115,26 @@ INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064DC8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064E58);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064F24);
+void func_80064F24(struct VisualObj* arg0, s8 arg1)
+{
+    struct VisualObj* temp_v0;
+
+    temp_v0 = find_free_visual_obj();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0x11;
+        temp_v0->unk2 = arg1;
+        temp_v0->x_pos.val = arg0->x_pos.val;
+        temp_v0->y_pos.val = arg0->y_pos.val;
+        temp_v0->animation_table = arg0->animation_table;
+        temp_v0->unk40 = arg0->unk40;
+        temp_v0->unk3C = arg0->unk3C;
+        temp_v0->unk42 = arg0->unk42 & 0x7FFF;
+        temp_v0->unk16 = arg0->unk16;
+        temp_v0->unk50 = (struct PlayerObj*)arg0;
+        temp_v0->unk15 = arg0->unk15;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064FD8);
 
@@ -147,9 +166,56 @@ void func_800652C8(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006530C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006537C);
+void func_8006537C(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.u.hi = arg0->x_pos.u.hi;
+            effect->y_pos.u.hi = arg0->y_pos.u.hi;
+            arg0->ext.main_43.effect = effect;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->unk7E-- == 0) {
+        u16 temp;
+        arg0->ext.main_43.unk8A = temp = arg0->ext.main_43.unk8A - 5;
+        arg0->unk42 ^= 0x8000;
+        if (temp >= 0x1A) {
+            arg0->ext.main_43.unk8A = 0;
+        }
+        arg0->unk7E = arg0->ext.main_43.unk8A < 6 ? 5 : arg0->ext.main_43.unk8A;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065458);
+void func_80065458(struct MainObj* arg0)
+{
+    struct EffectObj* effect = arg0->ext.main_43.effect;
+    arg0->on_screen = 0;
+    if (effect->active != 0) {
+        if (effect->unk7 == 0) {
+            if (arg0->unk7E-- == 0) {
+                arg0->unk7E = 5;
+                arg0->unk42 ^= 0x8000;
+            }
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        if (engine_obj.stage == 1) {
+            engine_obj.unkF = 0x10;
+        } else {
+            engine_obj.unkF = -0x80;
+            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
+            engine_obj.checkpoint += 9;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+}
 
 void func_80065538(struct MainObj* arg0)
 {

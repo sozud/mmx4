@@ -9,6 +9,11 @@ struct Item10AnimationStep {
     u8 command;
 };
 
+struct Item10Offset {
+    s16 x;
+    s16 y;
+};
+
 struct Item10AnimationStep D_8010CCA0[4] = {
     { 3, 0, 1, 0 },
     { 3, 0, 1, 1 },
@@ -172,15 +177,77 @@ INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2850);
 
 void func_800C28E8(struct ItemObj* arg0)
 {
-    func_80015DC8(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2918);
+extern struct Item10Offset D_8010CE5C[5];
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2A04);
+void func_800C2918(struct ItemObj* arg0)
+{
+    if (arg0->tail_ext.item_10.timer == 0) {
+        struct MiscObj* obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 0x24;
+            obj->unk15 = get_random() & 0x40;
+            obj->state = 0;
+            obj->unk5 = 0;
+            obj->unk6 = 0;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[get_random() & 3].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[get_random() & 3].y;
+            obj->unk2 = 0;
+            obj->ext.pointer.unk50 = arg0;
+        }
+        arg0->tail_ext.item_10.timer = (get_random() & 3) * 10;
+        return;
+    }
+    arg0->tail_ext.item_10.timer--;
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2AF0);
+void func_800C2A04(struct ItemObj* arg0)
+{
+    if (arg0->tail_ext.item_10.previous_value == 0) {
+        struct MiscObj* obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 0x24;
+            obj->unk15 = get_random() & 0x40;
+            obj->state = 0;
+            obj->unk5 = 0;
+            obj->unk6 = 0;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[(get_random() & 3)].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[(get_random() & 3)].y;
+            obj->unk2 = 1;
+            obj->ext.pointer.unk50 = arg0;
+        }
+        arg0->tail_ext.item_10.previous_value = (get_random() & 3) * 15;
+        return;
+    }
+    arg0->tail_ext.item_10.previous_value--;
+}
+
+void func_800C2AF0(struct ItemObj* arg0)
+{
+    if (arg0->tail_ext.item_10.value == 0) {
+        struct MiscObj* obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 0x41;
+            obj->id = 0x24;
+            obj->unk15 = get_random() & 0x40;
+            obj->state = 0;
+            obj->unk5 = 0;
+            obj->unk6 = 0;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[get_random() & 3].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[get_random() & 3].y;
+            obj->unk2 = 2;
+            obj->ext.pointer.unk50 = arg0;
+        }
+        arg0->tail_ext.item_10.value = (get_random() & 3) * 12;
+        return;
+    }
+    arg0->tail_ext.item_10.value--;
+}
 
 void (*D_8010CE34[])(struct ItemObj*) = {
     func_800C2528,
@@ -189,11 +256,6 @@ void (*D_8010CE34[])(struct ItemObj*) = {
     func_800C2850,
     func_800C28E8,
     func_800C2918,
-};
-
-struct Item10Offset {
-    s16 x;
-    s16 y;
 };
 
 u8 D_8010CE4C[4] = { 0, 0xF8, 0x20, 0x18 };
