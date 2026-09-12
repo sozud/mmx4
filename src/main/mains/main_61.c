@@ -96,7 +96,20 @@ INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A1EC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A2B4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A3B0);
+void func_8007A3B0(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if ((arg0->unk7 == 0) && (arg0->unk24 < 0)) {
+        func_80015D60(arg0, 3);
+        arg0->unk7 = 1;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        func_80015D60(arg0, 0xA);
+        func_8001540C(2, 0xA6, arg0);
+        arg0->unk6 = 4;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A444);
 

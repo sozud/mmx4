@@ -37,7 +37,7 @@ s32 func_80097214(struct WeaponObj* arg0)
 void func_80097278(struct WeaponObj* arg0)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         func_800972C8(arg0);
     } else {
         func_80097328(arg0);

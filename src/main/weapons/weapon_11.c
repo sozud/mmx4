@@ -8,7 +8,20 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_80094280);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800942E8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009443C);
+void func_8009443C(s8 arg0)
+{
+    struct WeaponObj* weapon_obj;
+
+    weapon_obj = find_free_weapon_obj();
+    if (weapon_obj != NULL) {
+        weapon_obj->active = 1;
+        weapon_obj->id = 0xB;
+        weapon_obj->unk2 = arg0;
+        weapon_obj->bg_offset = g_Player.bg_offset;
+        g_Player.unk98++;
+        g_Player.unk99++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800944B8);
 

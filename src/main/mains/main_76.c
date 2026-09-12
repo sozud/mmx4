@@ -36,7 +36,23 @@ void func_80091E18(struct MainObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091E38);
+void func_80091E38(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk6++;
+        arg0->unk61 = 0x28;
+    }
+    if (arg0->unk61 & 7) {
+        arg0->unk42 &= 0x7FFF;
+    } else {
+        arg0->unk42 |= 0x8000;
+    }
+    if (--arg0->unk61 == 0) {
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091EC4);
 
@@ -46,7 +62,30 @@ INCLUDE_ASM("main/nonmatchings/mains/main_76", func_8009216C);
 
 INCLUDE_RODATA("main/nonmatchings/mains/main_76", D_80010D7C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_800921E8);
+void func_800921E8(s32 arg0)
+{
+    u32 object_id;
+    u32 random_value;
+    s8 value;
+
+#ifndef VERSION_JP
+    object_id = arg0 & 0xFF;
+    if (object_id >= 8U) {
+#endif
+        random_value = get_random() & 0xFF;
+        random_value %= 3U;
+#ifdef VERSION_JP
+        object_id = arg0 & 0xFF;
+#endif
+        func_8001663C(D_80105FC8[object_id][random_value & 0xFF], 0x7F);
+        value = 1;
+#ifndef VERSION_JP
+    } else {
+        value = 0x3C;
+    }
+#endif
+    engine_obj.unk36 = value;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_8009227C);
 

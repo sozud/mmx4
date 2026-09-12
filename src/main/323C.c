@@ -4258,7 +4258,7 @@ struct SerializedEngineObj {
     s32 boss_ptr;
     s8 enable_boss, unk25;
     union EngineCharacterState character_state;
-    s8 pad36, unk37;
+    s8 unk36, unk37;
     u32 unk38, unk3C;
     u8 unk40;
     s8 unk41;
@@ -4328,7 +4328,7 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.enable_boss = source->enable_boss;
     restored.unk25 = source->unk25;
     restored.character_state = source->character_state;
-    restored.pad36 = source->pad36;
+    restored.unk36 = source->unk36;
     restored.unk37 = source->unk37;
     // unk38 and 38 are baked psx pointers. these are left uninitialized.
     // they get set in engine stage 5
@@ -4394,7 +4394,7 @@ static void save_replay_engine(struct SerializedEngineObj* target)
     target->enable_boss = engine_obj.enable_boss;
     target->unk25 = engine_obj.unk25;
     target->character_state = engine_obj.character_state;
-    target->pad36 = engine_obj.pad36;
+    target->unk36 = engine_obj.unk36;
     target->unk37 = engine_obj.unk37;
     target->unk40 = engine_obj.unk40;
     target->unk41 = engine_obj.unk41;

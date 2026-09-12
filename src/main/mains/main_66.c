@@ -43,7 +43,22 @@ void func_800810C4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081104);
+void func_80081104(struct MainObj* arg0)
+{
+    s8 state;
+
+    if ((arg0->ext.main_66.unk86 == 0) && (--arg0->ext.main_66.unk87 == 0)) {
+        func_80015D60(arg0, 0x20);
+        arg0->collision_data = (const u16*)D_80107E84;
+        state = 5;
+    } else {
+        func_80015D60(arg0, 1);
+        func_8001540C(2, 0xE1, arg0);
+        state = 3;
+    }
+    arg0->unk5 = state;
+    arg0->unk6 = 0;
+}
 
 void func_80081198(struct MainObj* arg0)
 {

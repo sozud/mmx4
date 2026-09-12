@@ -675,7 +675,8 @@ struct Main74Ext {
 };
 
 struct Main75Ext {
-    u8 pad80[0xE];
+    struct EffectObj* unk80;
+    u8 pad84[0xA];
     u8 saved_unk5;
 };
 
@@ -701,6 +702,12 @@ struct Main41Ext {
     u8 unk82;
     u8 unk83;
     u8 unk84;
+};
+
+struct Main66Ext {
+    u8 pad80[6];
+    u8 unk86;
+    u8 unk87;
 };
 
 struct Main70Ext {
@@ -754,6 +761,7 @@ union MainObjExt {
     struct Main58Ext main_58;
     struct Main60Ext main_60;
     struct Main64Ext main_64;
+    struct Main66Ext main_66;
     struct MainSavedState94Ext main_67;
     struct Main70Ext main_70;
     struct Main53Ext main_53;
@@ -1085,7 +1093,7 @@ struct ShotObj {
     s8 : 8;
     s8 unk7A;
     s8 : 8;
-    struct WeaponObj* unk7C; // might be something else
+    struct WeaponObj* unk7C;
     s32 : 32;
     union {
         s32 value;
@@ -1133,6 +1141,16 @@ union WeaponUnk84 {
     u8 byte;
 };
 
+union WeaponUnk80 {
+    s32 word;
+    u8 bytes[4];
+};
+
+struct Weapon29Ext {
+    u8 pad8C[4];
+    s32 unk90;
+};
+
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     struct Weapon7Ext weapon_7;
@@ -1140,6 +1158,7 @@ union WeaponObjExt {
     struct Weapon14Ext weapon_14;
     struct Weapon16Ext weapon_16;
     struct Weapon20Ext weapon_20;
+    struct Weapon29Ext weapon_29;
 };
 
 MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
@@ -1152,16 +1171,16 @@ struct WeaponObj {
     f32 y_vel;
     s32 unk28;
     s32 unk2C;
-    s32 unk30;
-    s8 pad34[0x3C - 0x34];
+    u32** animation_table;
+    u32* animation_cursor;
+    void* unk38;
     void* unk3C;
     u16 unk40;
     u16 unk42;
-    s8 unk44;
-    s8 unk45;
-    s8 unk46;
-    s8 pad47[0x50 - 0x47];
-    s32 unk50;
+    union AnimationStep animation_step;
+    u8 previous_animation_index;
+    s8 pad49[0x50 - 0x49];
+    const u8* unk50;
     s32 unk54;
     s8 pad58[0x61 - 0x58];
     s8 unk61;
@@ -1186,7 +1205,7 @@ struct WeaponObj {
     s8 unk7A;
     s8 pad7B;
     struct PlayerObj* owner;
-    s32 unk80;
+    union WeaponUnk80 unk80;
     union WeaponUnk84 unk84;
     s8 pad88[0x8C - 0x88];
     union WeaponObjExt ext;
@@ -2030,7 +2049,7 @@ struct EngineObj {
     s8 enable_boss; // 0x24
     s8 unk25;
     union EngineCharacterState character_state; // 0x26
-    s8 pad36;
+    s8 unk36;
     s8 unk37;
     void* unk38;
     struct BaseObj* unk3C;
@@ -2291,6 +2310,7 @@ ASSERT_OBJECT_HEADER(EffectObj, ext);
 ASSERT_MOVING_OBJECT(PlayerObj);
 ASSERT_MOVING_OBJECT(VisualObj);
 ASSERT_MOVING_OBJECT(MiscObj);
+ASSERT_MOVING_OBJECT(WeaponObj);
 
 #undef ASSERT_MOVING_OBJECT
 
@@ -2314,6 +2334,7 @@ ASSERT_ANIMATED_OBJECT(VisualObj);
 ASSERT_ANIMATED_OBJECT(ShotObj);
 ASSERT_ANIMATED_OBJECT(UnkObj);
 ASSERT_ANIMATED_OBJECT(MiscObj);
+ASSERT_ANIMATED_OBJECT(WeaponObj);
 
 #undef ASSERT_ANIMATED_OBJECT
 
@@ -2495,9 +2516,17 @@ extern s32 D_800FA110[2];
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
+extern u8 D_80105FC8[13][3];
+extern struct Unk_unk68 D_80103F00;
+extern struct Unk_unk68 D_80103F04;
+extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
+extern u8 D_80108BA4[];
+extern struct EffectObj* D_8013B8A8;
 extern struct Unk_unk68* D_8013B8B0;
+extern struct ShotObj* D_8013B8C0;
+extern struct ShotObj* D_8013B8C4;
 extern struct Unk_unk68 D_8010D0FC;
 extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;

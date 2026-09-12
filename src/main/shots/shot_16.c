@@ -11,7 +11,17 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_16", func_8009C3A0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_16", func_8009C45C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_16", func_8009C588);
+void func_8009C588(struct ShotObj* arg0)
+{
+    struct WeaponObj* weapon;
+
+    weapon = arg0->unk7C;
+    if ((weapon->active != 0) && (weapon->id == 0x1D) && (weapon->unk2 >= 0)) {
+        weapon->ext.weapon_29.unk90 = 0;
+        weapon->unk80.bytes[1] &= 0xFE;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_80108F54[])(struct ShotObj*) = {
     func_8009C3A0,

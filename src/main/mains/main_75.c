@@ -2,7 +2,25 @@
 // 8008FB38..800919C4
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8008FB38);
+void func_8008FB38(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+
+    if (g_Player.unkC4 == 0) {
+        if (g_Player.x_pos.i.hi >= 0xD31) {
+            background_objects[1].unk3 = 0;
+        }
+        arg0->active |= 4;
+        func_80036AE4(0x14, 0x40);
+        arg0->unk5++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x18;
+            arg0->ext.main_75.unk80 = effect;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8008FBCC);
 
@@ -57,7 +75,18 @@ void func_8009093C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009099C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090A28);
+void func_80090A28(struct MainObj* arg0)
+{
+    s16 timer;
+
+    timer = D_8013B8C0->timer;
+    if ((timer == 0x80) && (D_8013B8C4->timer == timer)) {
+        arg0->unk6++;
+        D_8013B8C0->state++;
+        D_8013B8C4->state++;
+        func_80015D60(arg0, 0x17);
+    }
+}
 
 void func_80090AC0(struct MainObj* arg0)
 {
@@ -96,7 +125,30 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80091008);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_800910E0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009114C);
+void func_8009114C(struct MainObj* arg0)
+{
+    u8 flags;
+    u8 reset;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    flags = arg0->unk70;
+    reset = 0;
+    if (flags & 3) {
+        if (arg0->unk15 != 0) {
+            reset = flags & 1;
+        } else if (flags & 2) {
+            reset = 1;
+        }
+        if (reset != 0) {
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+            arg0->unk20 = 0;
+            arg0->unk15 ^= 0x40;
+        }
+    }
+}
 
 void func_800911DC(struct MainObj* arg0)
 {

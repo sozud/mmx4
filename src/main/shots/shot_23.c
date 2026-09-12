@@ -21,7 +21,7 @@ void func_8009DF60(struct ShotObj* arg0)
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
-        arg0->unk7C->unk80 = 0;
+        arg0->unk7C->unk80.word = 0;
     }
     func_80015DC8(arg0);
 }

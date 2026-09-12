@@ -31,7 +31,7 @@ void (*D_800FA3CC[])(struct MainObj*) = {
     func_80045648,
 };
 
-void (*D_800FA3DC[])() = {
+void (*D_800FA3DC[])(struct MainObj*) = {
     func_80045728,
     func_800457A8,
     func_8004583C,
@@ -47,7 +47,7 @@ void (*D_800FA3FC[])(struct MainObj*) = {
     func_80046220,
 };
 
-void (*D_800FA404[])() = {
+void (*D_800FA404[])(struct MainObj*) = {
     func_80046400,
     func_80046610,
 };

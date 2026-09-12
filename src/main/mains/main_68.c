@@ -136,7 +136,23 @@ void func_80084A40(struct MainObj* arg0)
     D_801043CC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084A7C);
+void func_80084A7C(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk50 = (const u8*)&D_80103F00;
+        arg0->unk54 = (const u8*)&D_80103F04;
+        arg0->unk6++;
+        func_80015D60(arg0, 0x15);
+        arg0->unk7C = 0x28;
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084B14);
 

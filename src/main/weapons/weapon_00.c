@@ -15,7 +15,7 @@ void func_80092408(struct WeaponObj* arg0)
         func_80015DC8(arg0);
         if (arg0->unk98 == 0) {
             func_80092490(arg0);
-            func_8002B318((struct BaseObj*)arg0, 0xC, 8);
+            func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
             return;
         }
         func_800924F8(arg0);
@@ -33,13 +33,22 @@ void func_80092490(struct AnimatedObj* arg0)
             arg0->unk5++;
         }
     } else {
-        func_8002B718((struct MovingObj*)arg0);
+        func_8002B718(MOVING_OBJECT(arg0));
     }
 }
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_800924F8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092598);
+void func_80092598(struct WeaponObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0xC, 8) == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(arg0));
+        func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
+        return;
+    }
+    func_80092600(arg0);
+}
 
 void func_80092600(struct WeaponObj* arg0)
 {

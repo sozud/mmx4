@@ -64,7 +64,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008DE5C);
 void func_8008DEC4(struct MainObj* arg0)
 {
     D_801058DC[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008DF1C);
@@ -87,7 +87,7 @@ void func_8008E14C(struct MainObj* arg0)
 void func_8008E18C(struct MainObj* arg0)
 {
     D_801058F0[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E1E4);
@@ -115,7 +115,7 @@ void func_8008E3C0(struct MainObj* arg0)
 void func_8008E404(struct MainObj* arg0)
 {
     D_8010590C[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E45C);
@@ -142,7 +142,7 @@ void func_8008E638(struct MainObj* arg0)
 void func_8008E67C(struct MainObj* arg0)
 {
     D_8010591C[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008E6D4);
@@ -205,7 +205,25 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008F6FC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008F76C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008F7F0);
+void func_8008F7F0(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+
+    if (abc_object.unkC == 0) {
+        arg0->unk5 = 6;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = -0x7F;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = arg0->x_pos.i.hi;
+            D_8013B8A8 = effect;
+            effect->y_pos.i.hi = arg0->y_pos.i.hi;
+        }
+        func_80015D60(arg0, 0);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008F884);
 
