@@ -19,7 +19,7 @@ void func_800D14D8(struct MiscObj* arg0)
 void func_800D14F8(struct UnkObj* arg0)
 {
     if (background_objects[g_Player.bg_offset].x_pos.i.hi == g_Player.x_pos.i.hi - 0x30) {
-        arg0->unk54 = 0x3C;
+        arg0->ext.timer = 0x3C;
         arg0->unk5 = 1;
     }
 }
@@ -28,8 +28,8 @@ void func_800D154C(struct UnkObj* arg0)
 {
     s8 timer;
 
-    timer = arg0->unk54 - 1;
-    arg0->unk54 = timer;
+    timer = arg0->ext.timer - 1;
+    arg0->ext.timer = timer;
     if (timer == 0) {
         func_8001540C(2, 0x2A, arg0);
         arg0->unk4B = 1;
@@ -52,7 +52,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D166C);
 void func_800D16E0(struct UnkObj* arg0)
 {
     if (abc_object.unkC == 0) {
-        arg0->unk54 = 0x1E;
+        arg0->ext.timer = 0x1E;
         arg0->unk5 = 6;
     }
 }
@@ -66,7 +66,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D17F0);
 void func_800D1864(struct UnkObj* arg0)
 {
     if (abc_object.unkC == 0) {
-        arg0->unk54 = 0x3C;
+        arg0->ext.timer = 0x3C;
         arg0->unk5 = 10;
     }
 }

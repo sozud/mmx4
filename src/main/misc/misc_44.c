@@ -27,7 +27,7 @@ void func_800D0AA4(struct UnkObj* arg0)
 {
     if (background_objects[g_Player.bg_offset].x_pos.i.hi == 0xFD0) {
         func_80036AE4(0x15, 0);
-        arg0->unk54 = 0x3C;
+        arg0->ext.timer = 0x3C;
         arg0->unk5 = 2;
     }
 }
@@ -36,8 +36,8 @@ void func_800D0B14(struct UnkObj* arg0)
 {
     s8 timer;
 
-    timer = arg0->unk54 - 1;
-    arg0->unk54 = timer;
+    timer = arg0->ext.timer - 1;
+    arg0->ext.timer = timer;
     if (timer == 0) {
         func_8002217C(0x29, 1, 0);
         arg0->unk5 = 3;
@@ -47,7 +47,7 @@ void func_800D0B14(struct UnkObj* arg0)
 void func_800D0B68(struct UnkObj* arg0)
 {
     if (abc_object.unkC == 0) {
-        arg0->unk54 = 0x3C;
+        arg0->ext.timer = 0x3C;
         arg0->unk5 = 4;
     }
 }
@@ -56,8 +56,8 @@ void func_800D0B90(struct UnkObj* arg0)
 {
     s8 timer;
 
-    timer = arg0->unk54 - 1;
-    arg0->unk54 = timer;
+    timer = arg0->ext.timer - 1;
+    arg0->ext.timer = timer;
     if (timer == 0) {
         func_8002217C(0x2A, 2, 0);
         arg0->unk5 = 5;

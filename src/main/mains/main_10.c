@@ -288,8 +288,17 @@ void func_8004A0FC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A178);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A31C);
-
+void func_8004A31C(struct MainObj* arg0)
+{
+    func_8004A644(arg0);
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk24 = FIXED(1.5);
+        arg0->ext.main_10.unk80 = 0x32;
+        arg0->ext.main_10.unk88 = 0;
+        arg0->unk6 = 3;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 void func_8004A378(struct MainObj* arg0)
 {
     u32 temp_v0;

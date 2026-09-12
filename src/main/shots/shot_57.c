@@ -136,7 +136,7 @@ void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1)
         arg0->on_screen = 0;
         arg0->state = 0;
     } else {
-        func_80015DC8(arg0);
+        func_80015DC8(ANIMATED_OBJECT(arg0));
     }
 }
 
@@ -161,7 +161,7 @@ void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
     if (player->unk8C != 0) {
         if (player->unk8C > 0) {
             arg0->on_screen = 1;
-            func_800AEA58();
+            func_800AEA58(arg0, player);
             return;
         }
         player->unk8C = 0;
@@ -178,29 +178,75 @@ void func_800AE88C(struct UnkObj* arg0, struct PlayerObj* arg1)
 
     D_8010A194[arg0->unk5](arg0, arg1);
 }
-
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE8E4);
-
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE95C);
-
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE9D8);
-
-void func_800AEA58(struct MiscObj* self, struct EffectObj* parent)
+void func_800AE8E4(struct UnkObj* arg0, struct PlayerObj* player)
 {
-    self->ext.ready_text.unk54 = 3;
-    self->ext.ready_text.stay_up_timer = 8;
-    self->ext.ready_text.palette_pos = (5 - self->unk2) * 2;
-    self->x_pos.val = parent->x_pos.val;
-    self->y_pos.val = parent->y_pos.val;
+    if (arg0->ext.afterimage.position_timer != 0) {
+        arg0->ext.afterimage.position_timer--;
+    } else {
+        arg0->ext.afterimage.position_timer = 3;
+        func_800AEAA0(arg0);
+    }
+    if (player->unk8C < 0) {
+        arg0->unk5++;
+    }
+}
+
+void func_800AE95C(struct UnkObj* self, struct PlayerObj* player)
+{
+    s16 timer;
+    s16 next_timer;
+
+    if (player->unk8C > 0) {
+        func_800AEA58(self, player);
+        return;
+    }
+
+    timer = self->ext.afterimage.blink_timer;
+    if (timer != 0) {
+        next_timer = timer - 1;
+        self->ext.afterimage.blink_timer = next_timer;
+        if (next_timer & 1) {
+            func_800AEAA0(self);
+        }
+    } else {
+        self->unk5++;
+    }
+}
+
+void func_800AE9D8(struct UnkObj* self, struct PlayerObj* player)
+{
+    if (player->unk8C > 0) {
+        func_800AEA58(self, player);
+        return;
+    }
+    if (self->ext.afterimage.palette_offset != 0) {
+        func_800AEAA0(self);
+        self->ext.afterimage.palette_offset--;
+        return;
+    }
+    self->on_screen = 0;
+    self->state = 0;
+    if (self->unk2 == 2) {
+        player->unk8C = 0;
+    }
+}
+
+void func_800AEA58(struct UnkObj* self, struct PlayerObj* player)
+{
+    self->ext.afterimage.position_timer = 3;
+    self->ext.afterimage.blink_timer = 8;
+    self->ext.afterimage.palette_offset = (5 - self->unk2) * 2;
+    self->x_pos.val = player->x_pos.val;
+    self->y_pos.val = player->y_pos.val;
     self->state = 1;
     self->unk5 = 0;
 }
 
-void func_800AEAA0(struct ShotObj* arg0)
+void func_800AEAA0(struct UnkObj* arg0)
 {
     struct PlayerObj* parent;
 
-    parent = arg0->unk50.player;
+    parent = arg0->link.player;
     arg0->x_pos.val = parent->unk18;
     arg0->y_pos.val = parent->unk1C;
 }

@@ -129,7 +129,6 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
         }
     }
 }
-
 INCLUDE_ASM("main/nonmatchings/items/item_02", func_800C00BC);
 
 void func_800C03BC(s8 arg0)

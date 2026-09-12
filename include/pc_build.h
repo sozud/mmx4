@@ -26,6 +26,8 @@ void mmx4_pc_thread_yield(void);
 void mmx4_pc_thread_close(void);
 void mmx4_pc_thread_replace(void (*entry)(void));
 
+extern const char* mmx4_pc_replay_path;
+
 extern DR_MODE D_80139250[2];
 extern SPRT D_80139268[2][17];
 

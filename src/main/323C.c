@@ -1,5 +1,11 @@
 #include "common.h"
 
+void func_80027E28(struct BackgroundObj* arg0);
+void func_80027EE8(struct BackgroundObj* arg0);
+void func_800282D0(struct BackgroundObj* arg0);
+void func_80028450(struct BackgroundObj* arg0);
+void func_80028AD8(struct BackgroundObj* arg0);
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>
@@ -3896,7 +3902,7 @@ void func_80020DEC(u8* arg0, s16 arg1)
         obj->active = 1;
         obj->unk2 = -1;
         obj->id = 0;
-        obj->unk50 = &D_800F2490;
+        obj->link.data = D_800F2490;
         obj->x_pos.i.hi = arg1;
     }
 }
@@ -6097,7 +6103,7 @@ void func_80027DC0(struct BackgroundObj* arg0)
 
 void func_80027DF0(struct BackgroundObj* arg0)
 {
-    func_80027E28();
+    func_80027E28(arg0);
     func_80027EE8(arg0);
     func_80027FA8(arg0);
 }
@@ -6209,7 +6215,7 @@ void func_80028268(struct BackgroundObj* arg0)
 
 void func_80028298(struct BackgroundObj* arg0)
 {
-    func_800282D0((struct GameInfo*)arg0);
+    func_800282D0(arg0);
     func_80028390(arg0);
     func_80028450(arg0);
 }
