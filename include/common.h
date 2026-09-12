@@ -419,10 +419,11 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define MISC_OBJECT(object) ((struct MiscObj*)(object))
 
 struct Main0Ext {
-    u8 unk80;
+    u8 background_relative;
     u8 index;
     u8 flags[3];
-    u8 unk85;
+    u8 exit_mode;
+    u8 damage_flash_timer;
 };
 
 struct Main3Ext {
@@ -439,12 +440,12 @@ struct Main5Ext {
 };
 
 struct Main6Ext {
-    u32 unk80;
-    u32 unk84;
-    u32 unk88;
-    u32 unk8C;
-    u32 unk90;
-    u32 saved_unk5;
+    u32 armor_broken;
+    u32 ground_probe_distance;
+    u32 armor_health;
+    u32 core_health;
+    u32 hitbox_toggle;
+    u32 saved_step;
 };
 
 struct MainSavedState80Ext {

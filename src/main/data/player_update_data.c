@@ -2,18 +2,18 @@
 #include "func_tables.h"
 
 void (*D_800F9988[13])(struct MainObj*) = {
-    func_80040810,
-    func_80040DF8,
-    func_80041020,
-    func_80041384,
-    func_80041524,
-    func_80041958,
+    background_dragon_reset,
+    background_dragon_wait_for_animation,
+    background_dragon_fireball,
+    background_dragon_projectile_attack,
+    background_dragon_multi_shot,
+    background_dragon_sequence,
     func_800419B8,
-    func_80041C94,
-    func_80041DF0,
-    func_80041F88,
-    func_8004205C,
-    func_800420E8,
+    background_dragon_fly_to_route_start,
+    background_dragon_fly_offscreen,
+    background_dragon_fly_to_staging_position,
+    background_dragon_attach_to_background,
+    background_dragon_noop,
     func_80040CCC,
 };
 

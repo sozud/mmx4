@@ -198,13 +198,13 @@ void func_800210B8(struct EngineObj*);
 
 // D_800F24A4 (main_object_update_funcs)
 extern void (*main_object_update_funcs[])(struct MainObj*);
-void func_80040608(struct MainObj* arg0);
+void background_dragon_update(struct MainObj* arg0);
 void func_80042120(struct MainObj* arg0);
 void func_80042914(struct MainObj* arg0);
 void spike_marl_update(struct MainObj* arg0);
 void func_8004441C(struct MainObj* arg0);
 void func_80044F4C(struct MainObj* arg0);
-void func_80046B30(struct MainObj* arg0);
+void bulldozer_update(struct MainObj* arg0);
 void func_800473C8(struct MainObj* arg0);
 void func_80047C88(struct MainObj* arg0);
 void func_800498C0(struct MainObj* arg0);
@@ -1039,29 +1039,29 @@ void func_8003F908(struct RideArmorObj*);
 void func_8003FA58(struct RideArmorObj*);
 void func_8003FD08(struct RideArmorObj*);
 
-// D_800F9974
-extern void (*D_800F9974[])(struct MainObj*);
+// background_dragon_state_funcs
+extern void (*background_dragon_state_funcs[])(struct MainObj*);
 void func_80040644(struct MainObj*);
 void func_80040838(struct MainObj*);
-void func_800420F0(struct MainObj*);
+void background_dragon_cleanup(struct MainObj*);
 
 // D_800F9988
 extern void (*D_800F9988[])(struct MainObj*);
-void func_80040810(struct MainObj*);
-void func_80040DF8(struct MainObj*);
-void func_80041020(struct MainObj*);
-void func_80041384(struct MainObj*);
-void func_80041524(struct MainObj*);
-void func_80041564(struct MainObj*);
+void background_dragon_reset(struct MainObj*);
+void background_dragon_wait_for_animation(struct MainObj*);
+void background_dragon_fireball(struct MainObj*);
+void background_dragon_projectile_attack(struct MainObj*);
+void background_dragon_multi_shot(struct MainObj*);
+void background_dragon_sequence_begin(struct MainObj*);
 void func_800415B0(struct MainObj*);
 void func_80041854(struct MainObj*);
-void func_80041958(struct MainObj*);
+void background_dragon_sequence(struct MainObj*);
 void func_800419B8(struct MainObj*);
-void func_80041C94(struct MainObj*);
-void func_80041DF0(struct MainObj*);
-void func_80041F88(struct MainObj*);
-void func_8004205C(struct MainObj*);
-void func_800420E8(struct MainObj*);
+void background_dragon_fly_to_route_start(struct MainObj*);
+void background_dragon_fly_offscreen(struct MainObj*);
+void background_dragon_fly_to_staging_position(struct MainObj*);
+void background_dragon_attach_to_background(struct MainObj*);
+void background_dragon_noop(struct MainObj*);
 void func_80040CCC(struct MainObj*);
 
 // D_800F9AEC
@@ -1283,24 +1283,25 @@ void func_800468CC(struct MainObj*);
 void func_800469A0(struct MainObj*);
 void func_80046A4C(struct MainObj*);
 
-// D_800FA538
-extern void (*D_800FA538[])(struct MainObj*);
+// bulldozer_state_funcs
+extern void (*bulldozer_state_funcs[])(struct MainObj*);
 void func_80046B80(void);
 void func_80046C8C(void);
-void func_80047038(struct MainObj*);
+void bulldozer_cleanup(struct MainObj*);
 
 // D_800FA544
 void func_8009216C(void* arg0);
-void func_80047078(struct MainObj* arg0);
-void func_80047084(struct MainObj* arg0);
-void func_80047188(struct MainObj* arg0);
+void bulldozer_resume_step(struct MainObj* arg0);
+void bulldozer_rev(struct MainObj* arg0);
+void bulldozer_charge(struct MainObj* arg0);
 void func_80047314(struct MainObj* arg0);
+void func_80047378(struct MainObj* arg0);
 
-// D_800FA558
-void func_800470C0(struct MainObj*);
+// bulldozer_rev_funcs
+void bulldozer_rev_begin(struct MainObj*);
 void func_80047140(void);
 
-// D_800FA560
+// bulldozer_charge_funcs
 void func_800471C4(void);
 void func_80047244(void);
 
@@ -6773,8 +6774,8 @@ extern void (*spike_marl_roll_entry_funcs[])(struct MainObj*);
 extern void (*D_800FA0E4[])(struct MainObj*);
 extern void (*D_800FA0F0[])(struct MainObj*);
 extern void (*D_800FA388[])(struct MainObj*);
-extern void (*D_800FA558[])(struct MainObj*);
-extern void (*D_800FA560[])(struct MainObj*);
+extern void (*bulldozer_rev_funcs[])(struct MainObj*);
+extern void (*bulldozer_charge_funcs[])(struct MainObj*);
 extern void (*D_800FA6F0[])(struct MainObj*);
 extern void (*D_800FA710[])(struct MainObj*);
 extern void (*D_800FA71C[])(struct MainObj*);
