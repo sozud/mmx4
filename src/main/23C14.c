@@ -4205,8 +4205,8 @@ void func_80043B0C(struct MainObj* self)
     s32 timer;
     u8 flags;
 
-    timer = self->ext.main_10.unk84 + 4;
-    self->ext.main_10.unk84 = timer;
+    timer = self->ext.main_10.turn_delay + 4;
+    self->ext.main_10.turn_delay = timer;
     if (timer < 0 || (self->unk15 == 0 ? g_Player.x_pos.val > self->x_pos.val : g_Player.x_pos.val < self->x_pos.val)) {
         self->unk28 = FIXED(-0.09375);
         self->unk6 = 2;

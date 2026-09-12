@@ -2,174 +2,172 @@
 // 800498C8..8004A718
 #include "common.h"
 
-// didn't notice any differences when nopped out
-void func_800498C8(struct MainObj* arg0)
+void dragonfly_update(struct MainObj* self)
 {
-    D_800FB0F4[arg0->state](arg0);
+    dragonfly_state_funcs[self->state](self);
 }
 
-void func_80049904(struct MainObj* arg0)
+void dragonfly_init(struct MainObj* self)
 {
-    arg0->unk5C = 6;
-    arg0->unk60 = 3;
-    arg0->unk61 = 0;
-    arg0->collision_data = D_80106770;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = 6;
-    arg0->animation_table = D_800FB0BC;
-    arg0->unk68 = &D_800FAEFC;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk67 = 0;
-    arg0->unk54 = D_800FAEF0;
-    arg0->unk50 = D_800FAEF0;
-    arg0->unk62 = 0;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_80015D60(arg0, 0);
+    self->unk5C = 6;
+    self->unk60 = 3;
+    self->unk61 = 0;
+    self->collision_data = D_80106770;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk16 = 6;
+    self->animation_table = dragonfly_animations;
+    self->unk68 = &D_800FAEFC;
+    self->unk20 = 0;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk67 = 0;
+    self->unk54 = D_800FAEF0;
+    self->unk50 = D_800FAEF0;
+    self->unk62 = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    func_80015D60(self, 0);
 
-    switch (arg0->unk2) {
+    switch (self->unk2) {
     case 0:
-        if (arg0->x_pos.val > g_Player.x_pos.val) {
-            arg0->unk15 = 0;
+        if (self->x_pos.val > g_Player.x_pos.val) {
+            self->unk15 = 0;
         } else {
-            arg0->unk15 = 0x40;
+            self->unk15 = 0x40;
         }
-        arg0->ext.main_10.unk8C = 1;
-        arg0->ext.main_10.unk90 = 1;
+        self->ext.main_10.hold_state = 1;
+        self->ext.main_10.can_grab = 1;
         break;
     case 1:
-        arg0->unk7A = 1;
-        arg0->unk15 = 0x40;
-        arg0->ext.main_10.unk8C = 0;
-        arg0->ext.main_10.unk90 = 1;
+        self->unk7A = 1;
+        self->unk15 = 0x40;
+        self->ext.main_10.hold_state = 0;
+        self->ext.main_10.can_grab = 1;
         break;
     case 2:
-        arg0->unk7A = 1;
-        arg0->unk15 = 0;
-        arg0->ext.main_10.unk8C = 0;
-        arg0->ext.main_10.unk90 = 1;
+        self->unk7A = 1;
+        self->unk15 = 0;
+        self->ext.main_10.hold_state = 0;
+        self->ext.main_10.can_grab = 1;
         break;
     case 3:
     case 4:
     case 9:
     case 10:
-        arg0->unk7A = 1;
-        arg0->ext.main_10.unk8C = 0;
-        arg0->ext.main_10.unk90 = 0;
+        self->unk7A = 1;
+        self->ext.main_10.hold_state = 0;
+        self->ext.main_10.can_grab = 0;
         break;
     case 5:
     case 6:
     case 11:
     case 12:
-        arg0->unk7A = 1;
-        arg0->unk2C = -0x600;
-        arg0->ext.main_10.unk8C = 0;
-        arg0->ext.main_10.unk90 = 0;
+        self->unk7A = 1;
+        self->unk2C = -0x600;
+        self->ext.main_10.hold_state = 0;
+        self->ext.main_10.can_grab = 0;
         break;
     case 7:
     case 8:
     case 13:
     case 14:
-        arg0->unk7A = 1;
-        arg0->unk2C = 0x600;
-        arg0->ext.main_10.unk8C = 0;
-        arg0->ext.main_10.unk90 = 0;
+        self->unk7A = 1;
+        self->unk2C = 0x600;
+        self->ext.main_10.hold_state = 0;
+        self->ext.main_10.can_grab = 0;
         break;
     }
-    arg0->unk7C = 1;
-    arg0->state = 1;
-    arg0->ext.main_10.unk84 = 0;
-    arg0->unk5 = 2;
-    arg0->unk6 = 0;
+    self->unk7C = 1;
+    self->state = 1;
+    self->ext.main_10.turn_delay = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
 }
 
-void func_80049AA0(struct MainObj* arg0)
+void dragonfly_run(struct MainObj* self)
 {
-    s8* temp_s1;
-    s16 temp_v0;
+    s8* held;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FB104[arg0->unk5](arg0);
-    if (arg0->ext.main_10.unk8C != 0) {
-        if (arg0->ext.main_10.unk90 != 0) {
-            temp_s1 = &g_Player.unkBA;
-            if ((*temp_s1 == 0) && (func_8002D9BC(arg0) != 0) && (*temp_s1 != 0)) {
-                g_Player.unkA5 = arg0->unk15;
-                arg0->ext.main_10.unk8C = 3;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    dragonfly_step_funcs[self->unk5](self);
+    if (self->ext.main_10.hold_state != 0) {
+        if (self->ext.main_10.can_grab != 0) {
+            held = &g_Player.unkBA;
+            if ((*held == 0) && (func_8002D9BC(self) != 0) && (*held != 0)) {
+                g_Player.unkA5 = self->unk15;
+                self->ext.main_10.hold_state = 3;
             }
         }
-        arg0->ext.main_10.saved_unk5 = arg0->unk5;
-        if (func_8002DD04(arg0) < 0) {
-            func_800AF808(arg0);
-            func_800C813C(6, &D_800FB0EC, arg0);
-            func_800BF60C(arg0, 0x11);
-            arg0->state = 2;
-        } else if (func_8002B1E8(arg0, 0x40, 0x40) == 0) {
-            func_8002B318(arg0, 0x20, 0x20);
-            if (--arg0->unk7C == 0) {
-                func_8001540C(2, 0xD, arg0);
-                arg0->unk7C = 0x3C;
+        self->ext.main_10.saved_unk5 = self->unk5;
+        if (func_8002DD04(self) < 0) {
+            func_800AF808(self);
+            func_800C813C(6, &D_800FB0EC, self);
+            func_800BF60C(self, 0x11);
+            self->state = 2;
+        } else if (func_8002B1E8(self, 0x40, 0x40) == 0) {
+            func_8002B318(self, 0x20, 0x20);
+            if (--self->unk7C == 0) {
+                func_8001540C(2, 0xD, self);
+                self->unk7C = 0x3C;
             }
         } else {
-            arg0->state = 2;
+            self->state = 2;
         }
     }
 }
 
-void func_80049C0C(struct MainObj* arg0)
+void dragonfly_finish(struct MainObj* self)
 {
-    arg0->unk7A = 0;
-    arg0->unk62 = 0;
+    self->unk7A = 0;
+    self->unk62 = 0;
     func_80015930(2, 0xD);
-    if (arg0->ext.main_10.unk8C == 3) {
+    if (self->ext.main_10.hold_state == 3) {
         g_Player.unkBA = 0;
     }
-    arg0->ext.main_10.unk80 = 0;
-    arg0->ext.main_10.unk84 = 0;
-    arg0->ext.main_10.unk88 = 0;
-    arg0->ext.main_10.unk8C = 0;
-    arg0->ext.main_10.unk90 = 0;
-    arg0->ext.main_10.saved_unk5 = 0;
-    arg0->state = 3;
+    self->ext.main_10.timer = 0;
+    self->ext.main_10.turn_delay = 0;
+    self->ext.main_10.struggle = 0;
+    self->ext.main_10.hold_state = 0;
+    self->ext.main_10.can_grab = 0;
+    self->ext.main_10.saved_unk5 = 0;
+    self->state = 3;
 }
 
-void func_80049C78(struct MainObj* arg0)
+void dragonfly_despawn(struct MainObj* self)
 {
-    if (arg0->unk2 < 3) {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+    if (self->unk2 < 3) {
+        func_8002B0C8(OBJECT_HEADER(self));
         return;
     }
-    func_8002B108(OBJECT_HEADER(arg0));
+    func_8002B108(OBJECT_HEADER(self));
 }
 
-void func_80049CBC(struct MainObj* arg0)
+void dragonfly_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_10.saved_unk5;
+    self->unk5 = self->ext.main_10.saved_unk5;
 }
 
-void func_80049CC8(struct MainObj* arg0)
+void dragonfly_wait(struct MainObj* self)
 {
-    switch (arg0->unk2) {
+    switch (self->unk2) {
     case 0:
-        arg0->unk7A = 0;
-        arg0->unk5 = 3;
+        self->unk7A = 0;
+        self->unk5 = 3;
         break;
     case 1:
-        if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
-            arg0->ext.main_10.unk8C = 1;
-            arg0->unk7A = 0;
-            arg0->unk5 = 3;
+        if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
+            self->ext.main_10.hold_state = 1;
+            self->unk7A = 0;
+            self->unk5 = 3;
         }
         break;
     case 2:
-        if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi >= 0xC1) {
-            arg0->ext.main_10.unk8C = 1;
-            arg0->unk7A = 0;
-            arg0->unk5 = 3;
+        if (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0xC1) {
+            self->ext.main_10.hold_state = 1;
+            self->unk7A = 0;
+            self->unk5 = 3;
         }
         break;
     case 3:
@@ -178,16 +176,16 @@ void func_80049CC8(struct MainObj* arg0)
     case 6:
     case 7:
     case 8:
-        if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
-            arg0->ext.main_10.unk8C = 1;
-            arg0->unk7A = 0;
-            arg0->unk15 = 0x40;
-            if (!(arg0->unk2 & 1)) {
-                arg0->unk20 = FIXED(8);
+        if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
+            self->ext.main_10.hold_state = 1;
+            self->unk7A = 0;
+            self->unk15 = 0x40;
+            if (!(self->unk2 & 1)) {
+                self->unk20 = FIXED(8);
             } else {
-                arg0->unk20 = FIXED(6);
+                self->unk20 = FIXED(6);
             }
-            arg0->unk5 = 6;
+            self->unk5 = 6;
         }
         break;
     case 9:
@@ -196,231 +194,231 @@ void func_80049CC8(struct MainObj* arg0)
     case 12:
     case 13:
     case 14:
-        arg0->unk7A = 0;
-        arg0->unk15 = 0;
-        arg0->ext.main_10.unk8C = 1;
-        if (!(arg0->unk2 & 1)) {
-            arg0->unk20 = FIXED(-8);
+        self->unk7A = 0;
+        self->unk15 = 0;
+        self->ext.main_10.hold_state = 1;
+        if (!(self->unk2 & 1)) {
+            self->unk20 = FIXED(-8);
         } else {
-            arg0->unk20 = FIXED(-6);
+            self->unk20 = FIXED(-6);
         }
-        arg0->unk5 = 6;
+        self->unk5 = 6;
     }
 }
 
-void func_80049DE8(struct MainObj* arg0)
+void dragonfly_hunt(struct MainObj* self)
 {
-    D_800FB120[arg0->unk6](arg0);
+    D_800FB120[self->unk6](self);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E24);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E68);
 
-void func_80049F20(struct MainObj* arg0)
+void dragonfly_hunt_hover(struct MainObj* self)
 {
-    if (arg0->ext.main_10.unk84 == 0) {
-        func_8004A5E0(arg0);
+    if (self->ext.main_10.turn_delay == 0) {
+        dragonfly_face_player(self);
     } else {
-        arg0->ext.main_10.unk84--;
+        self->ext.main_10.turn_delay--;
     }
 
-    if (--arg0->ext.main_10.unk80 == 0) {
+    if (--self->ext.main_10.timer == 0) {
         if (get_random() & 1) {
-            func_8004A5E0(arg0);
-            func_80015D60(arg0, 1);
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
+            dragonfly_face_player(self);
+            func_80015D60(self, 1);
+            self->unk5 = 4;
+            self->unk6 = 0;
             return;
         }
 
-        if (g_Player.y_pos.i.hi - 0x18 < arg0->y_pos.i.hi) {
-            arg0->unk24 = FIXED(3);
+        if (g_Player.y_pos.i.hi - 0x18 < self->y_pos.i.hi) {
+            self->unk24 = FIXED(3);
         } else {
-            arg0->unk24 = FIXED(-3);
+            self->unk24 = FIXED(-3);
         }
-        arg0->unk6 = 3;
+        self->unk6 = 3;
     }
 
-    func_80015DC8(arg0);
+    func_80015DC8(self);
 }
 
-void func_80049FE8(struct MainObj* arg0)
+void dragonfly_hunt_close(struct MainObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    if (arg0->ext.main_10.unk84 == 0) {
-        func_8004A5E0(arg0);
+    func_8002B718((struct MovingObj*)self);
+    if (self->ext.main_10.turn_delay == 0) {
+        dragonfly_face_player(self);
     } else {
-        arg0->ext.main_10.unk84--;
+        self->ext.main_10.turn_delay--;
     }
-    if (arg0->unk24 < 0
-            ? (g_Player.y_pos.i.hi - 0x18) < arg0->y_pos.i.hi
-            : arg0->x_pos.i.hi < (g_Player.x_pos.i.hi - 0x18)) {
-        func_8004A5E0(arg0);
-        func_80015D60(arg0, 1);
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+    if (self->unk24 < 0
+            ? (g_Player.y_pos.i.hi - 0x18) < self->y_pos.i.hi
+            : self->x_pos.i.hi < (g_Player.x_pos.i.hi - 0x18)) {
+        dragonfly_face_player(self);
+        func_80015D60(self, 1);
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
-    func_80015DC8(arg0);
+    func_80015DC8(self);
 }
 
-void func_8004A0AC(struct MainObj* arg0)
+void dragonfly_carry(struct MainObj* self)
 {
-    D_800FB130[arg0->unk6](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    D_800FB130[self->unk6](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
-void func_8004A0FC(struct MainObj* arg0)
+void dragonfly_carry_grab(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        func_8004A5E0(arg0);
-        arg0->unk50 = D_800FAEF8;
-        arg0->unk62 = 3;
-        arg0->unk60 = 0;
-        func_80015D60(arg0, 2);
-        arg0->unk6 = 1;
-        arg0->ext.main_10.unk80 = 0xB4;
+    if (self->animation_step.fields.event != 0) {
+        dragonfly_face_player(self);
+        self->unk50 = D_800FAEF8;
+        self->unk62 = 3;
+        self->unk60 = 0;
+        func_80015D60(self, 2);
+        self->unk6 = 1;
+        self->ext.main_10.timer = 0xB4;
         return;
     }
 
-    func_80015DC8(arg0);
+    func_80015DC8(self);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A178);
 
-void func_8004A31C(struct MainObj* arg0)
+void dragonfly_carry_lift(struct MainObj* self)
 {
-    func_8004A644(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk24 = FIXED(1.5);
-        arg0->ext.main_10.unk80 = 0x32;
-        arg0->ext.main_10.unk88 = 0;
-        arg0->unk6 = 3;
+    dragonfly_hold_player(self);
+    if (self->animation_step.fields.event != 0) {
+        self->unk24 = FIXED(1.5);
+        self->ext.main_10.timer = 0x32;
+        self->ext.main_10.struggle = 0;
+        self->unk6 = 3;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
-void func_8004A378(struct MainObj* arg0)
+void dragonfly_carry_rise(struct MainObj* self)
 {
-    u32 temp_v0;
-    s32 temp_v1;
+    u32 timer;
+    s32 struggle;
 
-    func_8004A644(arg0);
-    temp_v1 = arg0->ext.main_10.unk88 + func_8002BAA4();
-    arg0->ext.main_10.unk88 = temp_v1;
-    if (temp_v1 >= 0x15) {
+    dragonfly_hold_player(self);
+    struggle = self->ext.main_10.struggle + func_8002BAA4();
+    self->ext.main_10.struggle = struggle;
+    if (struggle >= 0x15) {
         g_Player.unkBA = 0;
-        arg0->unk50 = D_800FAEF0;
-        arg0->unk62 = 0;
-        func_80015D60(arg0, 5);
-        arg0->unk24 = 0x20000;
-        arg0->unk50 = NULL;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+        self->unk50 = D_800FAEF0;
+        self->unk62 = 0;
+        func_80015D60(self, 5);
+        self->unk24 = 0x20000;
+        self->unk50 = NULL;
+        self->unk5 = 5;
+        self->unk6 = 0;
         return;
     }
 
-    temp_v0 = arg0->ext.main_10.unk80 - 1;
-    arg0->ext.main_10.unk80 = temp_v0;
-    if (temp_v0 == 0) {
-        func_80015D60(arg0, 4);
-        arg0->ext.main_10.unk80 = 0xA;
-        arg0->unk7E = 1;
-        arg0->unk24 = 0;
-        arg0->unk6 = 4;
+    timer = self->ext.main_10.timer - 1;
+    self->ext.main_10.timer = timer;
+    if (timer == 0) {
+        func_80015D60(self, 4);
+        self->ext.main_10.timer = 0xA;
+        self->unk7E = 1;
+        self->unk24 = 0;
+        self->unk6 = 4;
     } else {
-        func_80015DC8(arg0);
+        func_80015DC8(self);
     }
 
-    if (!(func_8004A690(arg0) & 0xFF)) {
-        func_8002B718(MOVING_OBJECT(arg0));
+    if (!(func_8004A690(self) & 0xFF)) {
+        func_8002B718(MOVING_OBJECT(self));
     }
 }
 
-void func_8004A468(struct MainObj* arg0)
+void dragonfly_carry_squeeze(struct MainObj* self)
 {
-    s16 temp_v0;
-    s32 temp_v1;
-    u32 temp_v1_2;
+    s16 sound_timer;
+    s32 struggle;
+    u32 squeeze;
 
-    temp_v0 = (u16)arg0->unk7E - 1;
-    arg0->unk7E = temp_v0;
-    if (temp_v0 == 0) {
-        func_8001540C(2, 0xE, arg0);
-        arg0->unk7E = 0x14;
+    sound_timer = (u16)self->unk7E - 1;
+    self->unk7E = sound_timer;
+    if (sound_timer == 0) {
+        func_8001540C(2, 0xE, self);
+        self->unk7E = 0x14;
     }
 
-    func_8004A644(arg0);
-    temp_v1 = arg0->ext.main_10.unk88 + func_8002BAA4();
-    arg0->ext.main_10.unk88 = temp_v1;
-    if (temp_v1 >= 0x15) {
+    dragonfly_hold_player(self);
+    struggle = self->ext.main_10.struggle + func_8002BAA4();
+    self->ext.main_10.struggle = struggle;
+    if (struggle >= 0x15) {
         func_80015930(2, 0xE);
         g_Player.unkBA = 0;
-        arg0->unk50 = NULL;
-        arg0->unk62 = 0;
-        func_80015D60(arg0, 5);
-        arg0->unk24 = 0x20000;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+        self->unk50 = NULL;
+        self->unk62 = 0;
+        func_80015D60(self, 5);
+        self->unk24 = 0x20000;
+        self->unk5 = 5;
+        self->unk6 = 0;
         return;
     }
 
-    if (arg0->animation_step.fields.event != 0) {
-        temp_v1_2 = arg0->ext.main_10.unk80 - 1;
-        arg0->ext.main_10.unk80 = temp_v1_2;
-        if (temp_v1_2 == 9 || temp_v1_2 == 4) {
+    if (self->animation_step.fields.event != 0) {
+        squeeze = self->ext.main_10.timer - 1;
+        self->ext.main_10.timer = squeeze;
+        if (squeeze == 9 || squeeze == 4) {
             func_80036470(2);
         }
-        if (arg0->ext.main_10.unk80 == 0) {
+        if (self->ext.main_10.timer == 0) {
             func_80015930(2, 0xE);
             g_Player.unkBA = 0;
-            arg0->unk62 = 0;
-            func_80015D60(arg0, 5);
-            arg0->unk24 = 0x20000;
-            arg0->unk50 = NULL;
-            arg0->unk5 = 5;
-            arg0->unk6 = 0;
+            self->unk62 = 0;
+            func_80015D60(self, 5);
+            self->unk24 = 0x20000;
+            self->unk50 = NULL;
+            self->unk5 = 5;
+            self->unk6 = 0;
             return;
         }
     }
 
-    func_80015DC8(arg0);
+    func_80015DC8(self);
 }
 
-void func_8004A5B0(struct MainObj* arg0)
+void dragonfly_flee(struct MainObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    func_80015DC8(arg0);
+    func_8002B718((struct MovingObj*)self);
+    func_80015DC8(self);
 }
 
-void func_8004A5E0(struct MainObj* arg0)
+void dragonfly_face_player(struct MainObj* self)
 {
-    if (arg0->unk15 != 0) {
-        if (arg0->x_pos.val > g_Player.x_pos.val) {
-            arg0->unk15 = 0;
-            arg0->ext.main_10.unk84 = 0x10;
+    if (self->unk15 != 0) {
+        if (self->x_pos.val > g_Player.x_pos.val) {
+            self->unk15 = 0;
+            self->ext.main_10.turn_delay = 0x10;
         }
-    } else if (arg0->x_pos.val < g_Player.x_pos.val) {
-        arg0->unk15 = 0x40;
-        arg0->ext.main_10.unk84 = 0x10;
+    } else if (self->x_pos.val < g_Player.x_pos.val) {
+        self->unk15 = 0x40;
+        self->ext.main_10.turn_delay = 0x10;
     }
 }
 
-void func_8004A644(struct MainObj* arg0)
+void dragonfly_hold_player(struct MainObj* self)
 {
-    g_Player.y_pos.i.hi = arg0->y_pos.i.hi + 0x18;
-    if (arg0->unk15 == 0) {
-        g_Player.x_pos.i.hi = arg0->x_pos.i.hi - 0x18;
+    g_Player.y_pos.i.hi = self->y_pos.i.hi + 0x18;
+    if (self->unk15 == 0) {
+        g_Player.x_pos.i.hi = self->x_pos.i.hi - 0x18;
     } else {
-        g_Player.x_pos.i.hi = arg0->x_pos.i.hi + 0x18;
+        g_Player.x_pos.i.hi = self->x_pos.i.hi + 0x18;
     }
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A690);
 
-void func_8004A6E8(struct MainObj* arg0)
+void dragonfly_fly_past(struct MainObj* self)
 {
-    func_8002B694((struct AnimatedObj*)arg0);
-    func_80015DC8(arg0);
+    func_8002B694((struct AnimatedObj*)self);
+    func_80015DC8(self);
 }
 
 u8 D_800FAEF0[8] = { 0xEE, 0xEC, 0x2A, 0x24, 0xD7, 0xEA, 0x3F, 0x35 };
@@ -429,7 +427,7 @@ u8 D_800FAEF8[4] = { 0xDB, 0x09, 0x20, 0x17 };
 
 struct Unk_unk68 D_800FAEFC = { -24, 3, 0x0A, 0x02 };
 
-u8 D_800FAF00[0xC] = {
+u8 dragonfly_anim_0[0xC] = {
     0x01,
     0x00,
     0x01,
@@ -444,7 +442,7 @@ u8 D_800FAF00[0xC] = {
     0x02,
 };
 
-u8 D_800FAF0C[0xF0] = {
+u8 dragonfly_anim_1[0xF0] = {
     0x01,
     0x00,
     0x01,
@@ -687,7 +685,7 @@ u8 D_800FAF0C[0xF0] = {
     0x1A,
 };
 
-u8 D_800FAFFC[0xC] = {
+u8 dragonfly_anim_2[0xC] = {
     0x01,
     0x00,
     0x01,
@@ -702,7 +700,7 @@ u8 D_800FAFFC[0xC] = {
     0x1A,
 };
 
-u8 D_800FB008[0x3C] = {
+u8 dragonfly_anim_3[0x3C] = {
     0x01,
     0x00,
     0x01,
@@ -765,7 +763,7 @@ u8 D_800FB008[0x3C] = {
     0x37,
 };
 
-u8 D_800FB044[0x3C] = {
+u8 dragonfly_anim_4[0x3C] = {
     0x01,
     0x00,
     0x01,
@@ -828,7 +826,7 @@ u8 D_800FB044[0x3C] = {
     0x46,
 };
 
-u8 D_800FB080[0x24] = {
+u8 dragonfly_anim_5[0x24] = {
     0x01,
     0x00,
     0x01,
@@ -867,43 +865,43 @@ u8 D_800FB080[0x24] = {
     0x19,
 };
 
-u8 D_800FB0A4[4] = { 0x01, 0x01, 0x00, 0x47 };
-u8 D_800FB0A8[4] = { 0x01, 0x01, 0x00, 0x48 };
-u8 D_800FB0AC[4] = { 0x01, 0x01, 0x00, 0x49 };
-u8 D_800FB0B0[4] = { 0x01, 0x01, 0x00, 0x4A };
-u8 D_800FB0B4[4] = { 0x01, 0x01, 0x00, 0x4B };
-u8 D_800FB0B8[4] = { 0x01, 0x01, 0x00, 0x4C };
+u8 dragonfly_anim_6[4] = { 0x01, 0x01, 0x00, 0x47 };
+u8 dragonfly_anim_7[4] = { 0x01, 0x01, 0x00, 0x48 };
+u8 dragonfly_anim_8[4] = { 0x01, 0x01, 0x00, 0x49 };
+u8 dragonfly_anim_9[4] = { 0x01, 0x01, 0x00, 0x4A };
+u8 dragonfly_anim_10[4] = { 0x01, 0x01, 0x00, 0x4B };
+u8 dragonfly_anim_11[4] = { 0x01, 0x01, 0x00, 0x4C };
 
-const u8* D_800FB0BC[12] = {
-    D_800FAF00,
-    D_800FAF0C,
-    D_800FAFFC,
-    D_800FB008,
-    D_800FB044,
-    D_800FB080,
-    D_800FB0A4,
-    D_800FB0A8,
-    D_800FB0AC,
-    D_800FB0B0,
-    D_800FB0B4,
-    D_800FB0B8,
+const u8* dragonfly_animations[12] = {
+    dragonfly_anim_0,
+    dragonfly_anim_1,
+    dragonfly_anim_2,
+    dragonfly_anim_3,
+    dragonfly_anim_4,
+    dragonfly_anim_5,
+    dragonfly_anim_6,
+    dragonfly_anim_7,
+    dragonfly_anim_8,
+    dragonfly_anim_9,
+    dragonfly_anim_10,
+    dragonfly_anim_11,
 };
 
 u8 D_800FB0EC[8] = { 6, 7, 8, 9, 10, 11, 0, 0 };
 
-void (*D_800FB0F4[])(struct MainObj*) = {
-    func_80049904,
-    func_80049AA0,
-    func_80049C0C,
-    func_80049C78,
+void (*dragonfly_state_funcs[])(struct MainObj*) = {
+    dragonfly_init,
+    dragonfly_run,
+    dragonfly_finish,
+    dragonfly_despawn,
 };
 
-void (*D_800FB104[])(struct MainObj*) = {
+void (*dragonfly_step_funcs[])(struct MainObj*) = {
     func_8009216C,
-    func_80049CBC,
-    func_80049CC8,
-    func_80049DE8,
-    func_8004A0AC,
-    func_8004A5B0,
-    func_8004A6E8,
+    dragonfly_resume_step,
+    dragonfly_wait,
+    dragonfly_hunt,
+    dragonfly_carry,
+    dragonfly_flee,
+    dragonfly_fly_past,
 };
