@@ -10,13 +10,13 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80093EB4);
 
 void func_80093FC4(struct WeaponObj* arg0)
 {
-    if ((u8)arg0->unk45 & 0x40) {
-        arg0->unk45 = 0;
+    if (arg0->animation_step.fields.event & 0x40) {
+        arg0->animation_step.fields.event = 0;
         func_8001540C(0, 0x1A, arg0);
     }
-    if (arg0->unk45 & 0x80) {
+    if (arg0->animation_step.fields.event & 0x80) {
         arg0->unk68 = D_8010884C;
-        arg0->unk45 = 0;
+        arg0->animation_step.fields.event = 0;
         arg0->unk67 = 0;
         arg0->unk5 = 1;
     }
@@ -59,7 +59,7 @@ void func_80094104(struct WeaponObj* arg0)
     arg0->unk68 = 0;
     g_Player.unk98--;
     g_Player.unk99--;
-    ZeroObjectState((struct ObjectHeader*)arg0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
 void func_80094154(struct WeaponObj* arg0)
@@ -70,4 +70,17 @@ void func_80094154(struct WeaponObj* arg0)
     arg0->unk68 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_8009416C);
+void func_8009416C(struct WeaponObj* arg0)
+{
+    struct MiscObj* temp_v0;
+
+    temp_v0 = find_free_misc_obj();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 1;
+        temp_v0->id = 0x25;
+        temp_v0->unk2 = 0;
+        temp_v0->bg_offset = arg0->bg_offset;
+        temp_v0->x_pos.val = arg0->x_pos.val;
+        temp_v0->y_pos.val = arg0->y_pos.val;
+    }
+}

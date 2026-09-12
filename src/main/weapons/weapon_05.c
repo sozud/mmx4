@@ -57,11 +57,11 @@ void func_80095B10(struct WeaponObj* arg0)
 void func_80095B94(struct WeaponObj* arg0)
 {
     func_80015DC8(arg0);
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         func_80095DA8(arg0);
         return;
     }
-    func_8002B318((struct BaseObj*)arg0, 0x2C, 0x20);
+    func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
 }
 
 void func_80095BE8(struct WeaponObj* arg0)
@@ -70,10 +70,30 @@ void func_80095BE8(struct WeaponObj* arg0)
     arg0->unk68 = 0;
     g_Player.unk98--;
     g_Player.unk99--;
-    ZeroObjectState((struct ObjectHeader*)arg0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095C38);
+s32 func_80095C38(struct WeaponObj* arg0)
+{
+    s32 mask;
+    u32 flags;
+
+    mask = 2;
+    if (arg0->unk15 != 0) {
+        mask = 1;
+    }
+    flags = arg0->unk70;
+    if (mask & flags) {
+        if (flags & 8) {
+            func_80095D60(arg0);
+        } else {
+            func_80095D18(arg0);
+        }
+        func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+        return 1;
+    }
+    return 0;
+}
 
 void func_80095CC0(struct WeaponObj* arg0)
 {

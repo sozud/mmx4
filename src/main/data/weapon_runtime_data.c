@@ -26,7 +26,7 @@ struct Unk_unk68 D_801087E8[] = {
 
 void (*D_801087EC[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_800932A0,
-    (void (*)(struct WeaponObj*))func_80093310,
+    func_80093310,
     (void (*)(struct WeaponObj*))func_800933EC,
     (void (*)(struct WeaponObj*))func_8009343C,
 };
@@ -268,7 +268,7 @@ struct Unk_unk68 D_80108998[] = {
 };
 
 void (*D_8010899C[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80096794,
+    func_80096794,
     (void (*)(struct WeaponObj*))func_80096834,
     (void (*)(struct WeaponObj*))func_800968F8,
     (void (*)(struct WeaponObj*))func_80096994,

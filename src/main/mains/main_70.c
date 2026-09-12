@@ -59,7 +59,7 @@ void func_80089438(struct MainObj* arg0)
 
 void func_80089474(struct MainObj* arg0)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     func_80015D60(arg0, 2);
     arg0->unk7C = 0x27;
     arg0->unk6++;
@@ -90,4 +90,24 @@ void func_80089910(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089984);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089A10);
+void func_80089A10(struct MainObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->ext.main_70.unk82 - 1;
+    arg0->ext.main_70.unk82 = timer;
+    if (timer == 0) {
+        arg0->ext.main_70.unk80 = 0x28;
+        need_palette_load |= 1;
+        arg0->ext.main_70.unk82 = 4;
+        arg0->ext.main_70.unk86 ^= 1;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+        arg0->ext.main_70.unk87 = 0;
+    } else {
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterAmountB = 0x7C00;
+    }
+}
