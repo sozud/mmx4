@@ -607,6 +607,14 @@ struct Main56Ext {
     u8 flags;
 };
 
+struct Main57Ext {
+    u8 pad80[8];
+    struct Unk_unk68* unk88;
+    u8 pad8C[0x93 - 0x8C];
+    u8 unk93;
+    u8 unk94;
+};
+
 struct Main487Ext {
     u8 pad80[0xA];
     u8 unk8A;
@@ -742,6 +750,7 @@ union MainObjExt {
     struct MainSavedState94Ext main_51;
     struct Main52Ext main_52;
     struct Main56Ext main_56;
+    struct Main57Ext main_57;
     struct Main58Ext main_58;
     struct Main60Ext main_60;
     struct Main64Ext main_64;
@@ -1038,6 +1047,7 @@ struct VisualObj {
 }; // size 0x70
 
 union ShotUnk8C {
+    s32 word;
     u16 half;
     s8 byte;
 };
@@ -1085,7 +1095,6 @@ struct ShotObj {
     s16 timer;
     s16 unk8A;
     union ShotUnk8C unk8C;
-    s8 pad8E[0x90 - 0x8E];
     f32 unk90;
     s8 pad94[0x98 - 0x94];
     s8 unk98;
@@ -1117,6 +1126,11 @@ struct Weapon16Ext {
 struct Weapon20Ext {
     u8 pad8C[0x8E - 0x8C];
     s8 unk8E;
+};
+
+union WeaponUnk84 {
+    s32 word;
+    u8 byte;
 };
 
 union WeaponObjExt {
@@ -1173,7 +1187,8 @@ struct WeaponObj {
     s8 pad7B;
     struct PlayerObj* owner;
     s32 unk80;
-    s8 unk84; s8 pad85[0x8C - 0x85];
+    union WeaponUnk84 unk84;
+    s8 pad88[0x8C - 0x88];
     union WeaponObjExt ext;
     u8 unk94;
     s8 pad95[0x98 - 0x95];
@@ -1245,7 +1260,16 @@ struct ItemObj {
     f32 y_vel;
     s32 unk28;
     s32 unk2C;
-    s8 pad30[0x50 - 0x30];
+    const u8* const* animation_table;
+    const u8* animation_cursor;
+    s16 animation_speed;
+    u8 pad3A[2];
+    const u8* sprite_frames;
+    u16 unk40;
+    u16 unk42;
+    union AnimationStep animation_step;
+    u8 previous_animation_index;
+    s8 pad49[0x50 - 0x49];
     s32 unk50;
     s32 unk54;
     s8 pad58[0x5C - 0x58];
@@ -2337,6 +2361,10 @@ extern struct QuadObj g_QuadObjects[0x20];
 extern struct ArchivePathData D_800EE54C;
 extern u8 D_800F8B30[];
 extern u8 D_800F8B34[][4];
+extern struct Unk_unk68 D_80100E78;
+extern struct Unk_unk68 D_80100E7C;
+extern u16 D_801013C8[18];
+extern u16 D_801013EC[20];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];

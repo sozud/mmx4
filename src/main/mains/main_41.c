@@ -9,7 +9,25 @@ void func_800623C4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062400);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_41", func_800624B4);
+void func_800624B4(struct MainObj* arg0)
+{
+    struct ItemObj* item;
+
+    item = find_free_item_obj();
+    if (item != NULL) {
+        item->active = arg0->active;
+        item->id = 0x13;
+        item->unk2 = -0x80;
+        item->animation_table = arg0->animation_table;
+        item->sprite_frames = arg0->sprite_frames;
+        item->unk40 = arg0->unk40;
+        item->unk42 = arg0->unk42;
+        item->x_pos = arg0->x_pos;
+        item->y_pos = arg0->y_pos;
+        item->unk15 = arg0->unk15;
+        item->ext.owner = arg0;
+    }
+}
 
 void func_80062550(struct MainObj* arg0)
 {

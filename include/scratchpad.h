@@ -65,6 +65,7 @@ extern u8* pc_archive_slots[22];
 #define SP_OT_CURSOR mmx4_sp_ordering_cursor
 #define SP_AUX_CURSOR mmx4_sp_auxiliary_cursor
 #define SP_AUX_POLY_F4_CURSOR ((POLY_F4*)mmx4_sp_auxiliary_cursor)
+#define SP_CUR_BG_INDEX (*MMX4_SP_PTR(0x114, s32))
 #define SP_BG_SPRITE_COUNT (*MMX4_SP_PTR(0x11C, s32))
 #define SP_SPRITE_COUNT (*MMX4_SP_PTR(0x124, s32))
 #else
@@ -104,6 +105,7 @@ extern u8* pc_archive_slots[22];
 #define SP_OT_CURSOR (*(void**)0x1F80010C)
 #define SP_AUX_CURSOR (*(void**)0x1F800110)
 #define SP_AUX_POLY_F4_CURSOR (*(POLY_F4**)0x1F800110)
+#define SP_CUR_BG_INDEX (*(s32*)0x1F800114)
 #define SP_BG_SPRITE_COUNT (*(s32*)0x1F80011C)
 #define SP_SPRITE_COUNT (*(s32*)0x1F800124)
 #endif

@@ -39,7 +39,13 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DB1C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DB9C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DCF4);
+void func_8009DCF4(struct ShotObj* arg0)
+{
+    if (arg0->unk8C.word == 3 && g_Player.unkBA != 0) {
+        g_Player.unkBA = 0;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_80109008[])(struct ShotObj*) = {
     func_8009D788,

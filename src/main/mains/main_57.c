@@ -188,7 +188,22 @@ INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073F90);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80074068);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800740CC);
+void func_800740CC(struct MainObj* arg0)
+{
+    if (--arg0->unk7C != 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    if (arg0->unk5C >= 0x18) {
+        arg0->ext.main_57.unk88 = &D_80100E78;
+    } else {
+        arg0->ext.main_57.unk88 = &D_80100E7C;
+    }
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+    arg0->ext.main_57.unk93 = 0;
+    arg0->ext.main_57.unk94 = 1;
+}
 
 void func_80074158(struct MainObj* arg0)
 {
@@ -210,4 +225,19 @@ void func_8007427C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800742AC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80074368);
+void func_80074368(s32 arg0)
+{
+    u16* list;
+    u32* attrs;
+
+    list = D_801013C8;
+    if (engine_obj.stage == 0xC) {
+        list = D_801013EC;
+    }
+    while (*list != 0) {
+        attrs = SP_BG_TILE_ATTRS;
+        attrs[*list] &= ~0xFF;
+        attrs[*list] |= arg0;
+        list++;
+    }
+}
