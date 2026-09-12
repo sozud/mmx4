@@ -11,7 +11,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4800);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4968);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4A50);
+void func_800A4A50(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_8002D9BC(arg0);
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->state = 3;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800A4ABC(struct ShotObj* arg0)
 {
@@ -19,7 +30,26 @@ void func_800A4ABC(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4ADC);
+void func_800A4ADC(struct ShotObj* arg0)
+{
+    u16 x_pos;
+    arg0->unk58.collision_bounds = D_801061F0;
+    if (arg0->unk15 == 0) {
+        x_pos = arg0->x_pos.u.hi - 0x20;
+    } else {
+        x_pos = arg0->x_pos.u.hi + 0x20;
+    }
+    arg0->x_pos.u.hi = x_pos;
+    arg0->y_vel.val = FIXED(-3);
+    arg0->unk5C = 1;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk16 = 0;
+    arg0->unk60 = 6;
+    func_80015D60(arg0, 0x10);
+    arg0->state = 5;
+    arg0->unk5 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4B6C);
 

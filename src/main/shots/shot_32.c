@@ -7,7 +7,15 @@ u8 D_80109258[4] = { 0xF8, 0xCC, 0x0F, 0x65 };
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_32", func_800A0170);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_32", func_800A02FC);
+void func_800A02FC(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->state++;
+    }
+}
 
 void func_800A035C(struct ShotObj* arg0)
 {

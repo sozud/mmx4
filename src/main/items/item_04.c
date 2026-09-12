@@ -85,7 +85,7 @@ void func_800C09C4(struct ItemObj* arg0)
     u32 temp_a0;
     u8 state;
 
-    temp_s1 = func_8002DD04((struct MainObj*)arg0);
+    temp_s1 = func_8002DD04(MAIN_OBJECT(arg0));
     temp_a0 = arg0->unk5C;
     if (((temp_a0 < arg0->unk84.previous_value) && (temp_a0 != 0)) || (arg0->unk88 != 0)) {
         func_800C0DFC(arg0);

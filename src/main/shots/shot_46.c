@@ -133,7 +133,7 @@ void func_800A8DB8(struct ShotObj* arg0)
 void func_800A8DC0(struct ShotObj* arg0)
 {
     D_80109B14[arg0->unk5](arg0);
-    if (func_8002DD04(arg0) != 0) {
+    if (func_8002DD04(MAIN_OBJECT(arg0)) != 0) {
         arg0->state = 2;
     }
     func_80015DC8(arg0);
@@ -146,7 +146,23 @@ void func_800A8DC0(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8E50);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8FBC);
+void func_800A8FBC(struct ShotObj* arg0)
+{
+    struct VisualObj* visual;
+
+    arg0->unk7C->ext.shot_46.unk8F = arg0->unk95 - 2;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->timer == 0) {
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x20;
+            visual->unk2 = arg0->unk95;
+            visual->unk50 = (struct PlayerObj*)arg0;
+            arg0->timer = (arg0->unk95 == 4) ? 0x24 : 0x18;
+        }
+    }
+}
 
 void func_800A9054(struct ShotObj* arg0)
 {
@@ -226,9 +242,37 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A96F8);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A97C0);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9818);
+void func_800A9818(struct ShotObj* arg0)
+{
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+    func_8002D9BC(arg0);
+    D_80109B50[arg0->unk2](arg0);
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk2 != 0) {
+        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+            CollisionRelated(PLAYER_OBJECT(arg0));
+            return;
+        }
+        arg0->state = 2;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A98AC);
+void func_800A98AC(struct ShotObj* arg0)
+{
+    s8 state = arg0->unk2;
+
+    switch (state) {
+    case 1:
+    case 2:
+        arg0->unk7C->ext.shot_46.unk8E--;
+        break;
+    case 6:
+        arg0->unk7C->ext.shot_46.unk8C--;
+        break;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800A9928(struct ShotObj* arg0)
 {

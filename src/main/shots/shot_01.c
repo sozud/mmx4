@@ -20,7 +20,20 @@ void func_80099B30(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_01", func_80099B6C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_01", func_80099C68);
+void func_80099C68(struct ShotObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(arg0));
+        func_8002D9BC(arg0);
+        if (func_8002DD04(MAIN_OBJECT(arg0)) != 0) {
+            arg0->state = 2;
+        }
+    } else {
+        arg0->state++;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+}
 
 void func_80099CF0(struct ShotObj* arg0)
 {

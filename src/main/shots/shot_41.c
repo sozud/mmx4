@@ -10,7 +10,21 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5AA4);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5BA8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5C90);
+void func_800A5C90(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+        return;
+    }
+    if (--arg0->unk8A == 0) {
+        arg0->unk6 -= 2;
+        return;
+    }
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->state++;
+}
 
 void func_800A5D20(struct ShotObj* arg0)
 {
@@ -92,7 +106,16 @@ void func_800A6258(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A6260);
+void func_800A6260(struct ShotObj* arg0)
+{
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        func_800AF808(BASE_OBJECT(arg0));
+    } else {
+        D_80109934[arg0->unk5](arg0);
+    }
+}
 
 void func_800A62D0(struct ShotObj* arg0)
 {
