@@ -201,7 +201,7 @@ extern void (*main_object_update_funcs[])(struct MainObj*);
 void func_80040608(struct MainObj* arg0);
 void func_80042120(struct MainObj* arg0);
 void func_80042914(struct MainObj* arg0);
-void func_80043340(struct MainObj* arg0);
+void spike_marl_update(struct MainObj* arg0);
 void func_8004441C(struct MainObj* arg0);
 void func_80044F4C(struct MainObj* arg0);
 void func_80046B30(struct MainObj* arg0);
@@ -1123,52 +1123,52 @@ void func_80043250(struct MainObj*);
 void func_80043280(void);
 void func_800432F0(struct MainObj*);
 
-// D_800F9E58
+// spike_marl_state_funcs
 extern u8 D_800F9E50[8];
 void func_80043390(struct MainObj* arg0);
-void func_800435C4(struct MainObj* arg0);
-void func_800436D0(struct MainObj* arg0);
+void spike_marl_run(struct MainObj* arg0);
+void spike_marl_cleanup(struct MainObj* arg0);
 
-// D_800F9E64
-extern void (*D_800F9E64[9])(struct MainObj*);
+// spike_marl_step_funcs
+extern void (*spike_marl_step_funcs[9])(struct MainObj*);
 void func_8009216C(void* arg0);
-void func_80043720(struct MainObj* arg0);
-void func_8004372C(struct MainObj* arg0);
-void func_8004381C(struct MainObj* arg0);
-void func_80043900(struct MainObj* arg0);
-void func_80043A48(struct MainObj* arg0);
-void func_80043CB8(struct MainObj* arg0);
-void func_80043D54(struct MainObj* arg0);
-void func_80043E90(struct MainObj* arg0);
-void func_80043F78(struct MainObj* arg0);
-void func_8004415C(struct MainObj* arg0);
-void func_800441E4(struct MainObj* arg0);
-void func_8004431C(struct MainObj* arg0);
+void spike_marl_resume_step(struct MainObj* arg0);
+void spike_marl_patrol(struct MainObj* arg0);
+void spike_marl_turn(struct MainObj* arg0);
+void spike_marl_curl(struct MainObj* arg0);
+void spike_marl_roll(struct MainObj* arg0);
+void spike_marl_fall(struct MainObj* arg0);
+void spike_marl_uncurl(struct MainObj* arg0);
+void spike_marl_roll_entry(struct MainObj* arg0);
+void spike_marl_check_patrol_path(struct MainObj* arg0);
+void spike_marl_begin_fall(struct MainObj* arg0);
+void spike_marl_detect_player(struct MainObj* arg0);
+void spike_marl_track_player_side(struct MainObj* arg0);
 
-// D_800F9E88
-void func_80043768(struct MainObj* arg0);
-void func_800437A8(struct MainObj* arg0);
+// spike_marl_patrol_funcs
+void spike_marl_patrol_begin(struct MainObj* arg0);
+void spike_marl_patrol_update(struct MainObj* arg0);
 
-// D_800F9E90
+// spike_marl_turn_funcs
 void func_80043858(struct MainObj* arg0);
 void func_80043898(struct MainObj* arg0);
 
-// D_800F9E98
-void func_8004393C(struct MainObj* arg0);
-void func_80043978(struct MainObj* arg0);
+// spike_marl_curl_funcs
+void spike_marl_curl_begin(struct MainObj* arg0);
+void spike_marl_curl_update(struct MainObj* arg0);
 
-// D_800F9EA0
-void func_80043A84(struct MainObj* arg0);
-void func_80043B0C(struct MainObj* arg0);
+// spike_marl_roll_funcs
+void spike_marl_roll_begin(struct MainObj* arg0);
+void spike_marl_roll_update(struct MainObj* arg0);
 void func_80043C0C(struct MainObj* arg0);
 
-// D_800F9EAC
-void func_80043D90(struct MainObj* arg0);
-void func_80043DE0(struct MainObj* arg0);
+// spike_marl_uncurl_funcs
+void spike_marl_uncurl_begin(struct MainObj* arg0);
+void spike_marl_uncurl_update(struct MainObj* arg0);
 
-// D_800F9EB4
-void func_80043ECC(struct MainObj*);
-void func_80043F04(struct MainObj*);
+// spike_marl_roll_entry_funcs
+void spike_marl_roll_entry_begin(struct MainObj*);
+void spike_marl_roll_entry_update(struct MainObj*);
 
 // D_800FA080
 extern void (*D_800FA080[])(struct MainObj*);
@@ -6763,13 +6763,13 @@ extern void (*D_800F9C8C[])(struct MainObj*);
 extern void (*D_800F9CA4[])(struct MainObj*);
 extern void (*D_800F9CB4[])(struct MainObj*);
 extern void (*D_800F9CC0[])(struct MainObj*);
-extern void (*D_800F9E58[])(struct MainObj*);
-extern void (*D_800F9E88[])(struct MainObj*);
-extern void (*D_800F9E90[])(struct MainObj*);
-extern void (*D_800F9E98[])(struct MainObj*);
-extern void (*D_800F9EA0[])(struct MainObj*);
-extern void (*D_800F9EAC[])(struct MainObj*);
-extern void (*D_800F9EB4[])(struct MainObj*);
+extern void (*spike_marl_state_funcs[])(struct MainObj*);
+extern void (*spike_marl_patrol_funcs[])(struct MainObj*);
+extern void (*spike_marl_turn_funcs[])(struct MainObj*);
+extern void (*spike_marl_curl_funcs[])(struct MainObj*);
+extern void (*spike_marl_roll_funcs[])(struct MainObj*);
+extern void (*spike_marl_uncurl_funcs[])(struct MainObj*);
+extern void (*spike_marl_roll_entry_funcs[])(struct MainObj*);
 extern void (*D_800FA0E4[])(struct MainObj*);
 extern void (*D_800FA0F0[])(struct MainObj*);
 extern void (*D_800FA388[])(struct MainObj*);

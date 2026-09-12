@@ -426,16 +426,25 @@ struct Main0Ext {
 };
 
 struct Main3Ext {
-    u32 unk80;
-    s32 unk84;
-    u32 unk88;
-    u32 unk8C;
-    u32 saved_unk5;
+    u32 alerted;
+    s32 roll_timer;
+    u32 player_ahead;
+    u32 turn_timer;
+    u32 saved_step;
 };
 
 struct Main5Ext {
     u8 pad80[0xC];
     u16 saved_unk5;
+};
+
+struct Main6Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
+    u32 unk8C;
+    u32 unk90;
+    u32 saved_unk5;
 };
 
 struct MainSavedState80Ext {
@@ -732,7 +741,7 @@ union MainObjExt {
     struct Main3Ext main_3;
     struct Main5Ext main_5;
     struct Main8Ext main_8;
-    struct MainSavedState94Ext main_6;
+    struct Main6Ext main_6;
     struct MainSavedState94Ext main_7;
     struct Main10Ext main_10;
     struct Main11Ext main_11;

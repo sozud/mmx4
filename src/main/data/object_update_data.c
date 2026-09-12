@@ -18,7 +18,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_80040608,
     func_80042120,
     func_80042914,
-    func_80043340,
+    spike_marl_update,
     func_8004441C,
     func_80044F4C,
     func_80046B30,
