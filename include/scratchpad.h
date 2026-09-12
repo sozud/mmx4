@@ -68,6 +68,8 @@ extern u8* pc_archive_slots[22];
 #define SP_CUR_BG_INDEX (*MMX4_SP_PTR(0x114, s32))
 #define SP_BG_SPRITE_COUNT (*MMX4_SP_PTR(0x11C, s32))
 #define SP_SPRITE_COUNT (*MMX4_SP_PTR(0x124, s32))
+#define SP_ARCHIVE_ENTRY(archive, index) \
+    ((s32*)((u8*)(archive) + (archive)[index]))
 #else
 #define SP_DRAW_BUFFER (*(s32*)0x1F800000)
 #define SP_BG_TILEMAP (*(u8**)0x1F800004)
@@ -108,6 +110,8 @@ extern u8* pc_archive_slots[22];
 #define SP_CUR_BG_INDEX (*(s32*)0x1F800114)
 #define SP_BG_SPRITE_COUNT (*(s32*)0x1F80011C)
 #define SP_SPRITE_COUNT (*(s32*)0x1F800124)
+#define SP_ARCHIVE_ENTRY(archive, index) \
+    ((s32*)((s32)(archive) + (archive)[index]))
 #endif
 
 #endif

@@ -1,5 +1,7 @@
 #include "common.h"
 
+void func_8002C99C(struct PlayerObj* arg0);
+
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CC34(struct PlayerObj* arg0, u8 arg1);
@@ -44,9 +46,9 @@ void func_80029E1C(struct GameInfo* arg0)
         obj->id = 0;
         obj->unk2 = -1;
         if (D_80141BE0 != 0) {
-            obj->unk50 = D_800F4568;
+            obj->link.data = D_800F4568;
         } else {
-            obj->unk50 = D_800F457C;
+            obj->link.data = D_800F457C;
         }
 #ifdef VERSION_JP
         obj->x_pos.i.hi = 0x20;
@@ -522,7 +524,7 @@ struct ItemObj* find_free_item_obj()
     struct ItemObj* current;
     for (current = &item_objects[0]; current < &item_objects[0x20]; current++) {
         if (!current->active) {
-            current->unk50 = 0;
+            current->unk50 = NULL;
             current->unk54 = 0;
             current->unk68 = 0;
             current->unk61 = 0;
@@ -950,7 +952,15 @@ void func_8002B9F0(s32* arg0, s32* arg1, u8 arg2)
     *arg0 = D_800F459C[var_v1] * var_v0;
     *arg1 = D_800F45C0[var_v1] * var_a3;
 }
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002BAA4);
+s16 func_8002BAA4(void)
+{
+    u16 flags = g_Player.pressed_input;
+    s16 count = (flags & 0xF) != 0;
+    if (flags & 0x1B0) {
+        count++;
+    }
+    return count;
+}
 
 s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)
 {

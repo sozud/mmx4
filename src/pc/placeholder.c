@@ -1811,26 +1811,6 @@ void func_8001E130(struct GameInfo* arg0)
     }
 }
 
-void func_800924F8(struct WeaponObj* arg0)
-{
-    arg0->unk50 = 0;
-    if (arg0->unk98 > 0) {
-        func_80092600(arg0);
-        return;
-    }
-
-    arg0->x_vel.val = -arg0->x_vel.val;
-    if (get_random() & 1) {
-        arg0->y_vel.val = FIXED(4.05);
-    } else {
-        arg0->y_vel.val = FIXED(-4.05);
-    }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk15 ^= 0x40;
-    func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
-}
-
 void func_800C00BC(struct ItemObj* arg0)
 {
     struct CollisionObj* player;

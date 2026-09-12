@@ -1297,7 +1297,7 @@ void func_80047188(struct MainObj* arg0);
 void func_80047314(struct MainObj* arg0);
 
 // D_800FA558
-void func_800470C0(void);
+void func_800470C0(struct MainObj*);
 void func_80047140(void);
 
 // D_800FA560
@@ -5083,6 +5083,8 @@ void func_800AE594(struct ShotObj*);
 void func_800AE63C(struct ShotObj*);
 
 void func_800AE88C(struct UnkObj*, struct PlayerObj*);
+void func_800AEA58(struct UnkObj*, struct PlayerObj*);
+void func_800AEAA0(struct UnkObj*);
 
 // D_8010A194
 extern void (*D_8010A194[])(struct UnkObj*, struct PlayerObj*);
@@ -5820,6 +5822,7 @@ extern void (*D_8010CC64[])(struct ItemObj*);
 void func_800C19F0(struct ItemObj*);
 void func_800C1B54(struct ItemObj*);
 void func_800C1FE4(struct ItemObj*);
+void func_800C204C(struct ItemObj*);
 
 // D_8010CC70
 typedef void (*Item08StateFunc)(struct ItemObj*, struct EngineObj*, struct PlayerObj*);

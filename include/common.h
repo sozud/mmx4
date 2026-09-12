@@ -413,6 +413,10 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define PLAYER_OBJECT(object) ((struct PlayerObj*)(object))
 #define MAIN_OBJECT(object) ((struct MainObj*)(object))
 #define UNK_OBJECT(object) ((struct UnkObj*)(object))
+#define SHOT_OBJECT(object) ((struct ShotObj*)(object))
+#define VISUAL_OBJECT(object) ((struct VisualObj*)(object))
+#define EFFECT_OBJECT(object) ((struct EffectObj*)(object))
+#define MISC_OBJECT(object) ((struct MiscObj*)(object))
 
 struct Main0Ext {
     u8 unk80;
@@ -1254,14 +1258,32 @@ MMX4_STATIC_ASSERT(psx_weapon_ext_offset,
     MMX4_OFFSET_OF(struct WeaponObj, ext) == 0x8C);
 #endif
 
+union UnkObjLink {
+    u8* data;
+    struct UnkObj* previous;
+    struct PlayerObj* player;
+};
+
+struct PlayerAfterimageExt {
+    s16 position_timer;
+    s16 blink_timer;
+    s16 palette_offset;
+    u8 pad5A[6];
+};
+
+union UnkObjExt {
+    u8 raw[0xC];
+    u8 timer;
+    struct PlayerAfterimageExt afterimage;
+};
+
 struct UnkObj {
     ANIMATED_OBJ_FIELDS
     s8 pad49[0x4B - 0x49];
     s8 unk4B;
     s8 pad4C[0x50 - 0x4C];
-    u8* unk50;
-    u8 unk54;
-    u8 pad55[0x60 - 0x55];
+    union UnkObjLink link;
+    union UnkObjExt ext;
 }; // size 0x60
 
 struct Item2Ext {
@@ -1285,6 +1307,7 @@ struct Item12Ext {
 };
 
 union ItemExt {
+    u32 packed;
     struct Item2Ext item_2;
     struct Item4Ext item_4;
     struct Item12Ext item_12;
@@ -2573,6 +2596,7 @@ extern u8 D_8011A030[];
 extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
+extern const u32* D_8011AFF0[];
 extern u32* D_8011BF40[54];
 extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
@@ -2652,6 +2676,11 @@ extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
+extern u16 D_80106470[];
+extern struct Unk_unk68 D_800F9CD0;
+extern struct Unk_unk68 D_800F9CD4;
+extern struct Unk_unk68 D_800F9CD8;
+extern struct Unk_unk68 D_800F9CDC;
 extern struct Unk_unk68 D_801061F0[32];
 extern u8 D_80109028[4];
 extern u8 D_8010902C[32][4];
@@ -2998,6 +3027,13 @@ void func_8001B644(u8*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
 void func_8003516C(struct PlayerObj*, s32, s32);
+void func_80034BDC(struct PlayerObj*);
+void func_80034CB0(struct PlayerObj*);
+void func_80036088(struct PlayerObj*);
+void func_800363B8(struct PlayerObj*, u8);
+struct WeaponObj* func_80036DA0(s8, s8, s8, struct PlayerObj*);
+void func_80037484(struct PlayerObj*, s32);
+void func_80038748(struct PlayerObj*);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
 s32 func_8002B780(void);
 s32 func_8002938C();

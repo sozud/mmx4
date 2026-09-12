@@ -75,7 +75,7 @@ struct Item08AnimationStep D_8010CBE0[30] = {
     { 2, 2, 0, 0 },
 };
 
-u8 D_8010CC58[4] = { 0, 0, 0x10, 0x20 };
+struct Unk_unk68 D_8010CC58 = { 0, 0, 0x10, 0x20 };
 
 struct Item08AnimationStep* D_8010CC5C[2] = {
     D_8010CB68,
@@ -87,7 +87,7 @@ void func_800C1994(struct ItemObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     D_8010CC64[arg0->state](arg0);
-    is_on_screen(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
 }
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C19F0);
@@ -118,7 +118,16 @@ INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E10);
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E7C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1FE4);
+void func_800C1FE4(struct ItemObj* arg0)
+{
+    func_8002E184(PLAYER_OBJECT(arg0));
+    func_800C204C(arg0);
+    if (arg0->ext.packed != 0 && engine_obj.character_state.fields.active != 0) {
+        arg0->state = 1;
+        arg0->unk5 = 0;
+        arg0->unk68 = &D_8010CC58;
+    }
+}
 
 void func_800C204C(struct ItemObj* arg0)
 {
