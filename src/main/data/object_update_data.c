@@ -15,13 +15,13 @@ void (*D_800F2498[])(struct EngineObj*) = {
 };
 
 void (*main_object_update_funcs[])(struct MainObj*) = {
-    func_80040608,
+    background_dragon_update,
     func_80042120,
     func_80042914,
     spike_marl_update,
     func_8004441C,
     func_80044F4C,
-    func_80046B30,
+    bulldozer_update,
     func_800473C8,
     func_80047C88,
     func_800498C0,

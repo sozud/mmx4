@@ -207,26 +207,26 @@ u8 D_800FA528[16] = {
     0x00,
 };
 
-void (*D_800FA538[])() = {
+void (*bulldozer_state_funcs[])() = {
     func_80046B80,
     func_80046C8C,
-    func_80047038,
+    bulldozer_cleanup,
 };
 
 void (*D_800FA544[])() = {
     func_8009216C,
-    func_80047078,
-    func_80047084,
-    func_80047188,
+    bulldozer_resume_step,
+    bulldozer_rev,
+    bulldozer_charge,
     func_80047314,
 };
 
-void (*D_800FA558[])() = {
-    func_800470C0,
+void (*bulldozer_rev_funcs[])() = {
+    bulldozer_rev_begin,
     func_80047140,
 };
 
-void (*D_800FA560[])() = {
+void (*bulldozer_charge_funcs[])() = {
     func_800471C4,
     func_80047244,
 };
