@@ -2912,8 +2912,6 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003CF6C);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D01C);
 
-#define SOME_COORDINATE_CONVERSION(IN) ((v * 4) + 24) % 16 | (((v + 6) / 4) + 480) * 64;
-
 void func_8003D164(struct VisualObj* arg0, s32 arg1)
 {
     s32 v;
@@ -2955,7 +2953,6 @@ void func_8003D254(struct VisualObj* arg0)
         obj->unk15 = arg0->unk15;
     }
 }
-#undef SOME_COORDINATE_CONVERSION
 
 void func_8003D338(struct AnimatedObj* arg0)
 {

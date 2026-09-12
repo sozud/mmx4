@@ -30,6 +30,18 @@ __asm__(".include \"macro.inc\"\n");
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
+#define SOME_COORDINATE_CONVERSION(v) ((((v) * 4) + 24) % 16 | ((((v) + 6) / 4) + 480) * 64)
+#define POS_BOUNDS_CHECK_FAIL_RET0(a, b)         \
+    if (a - b >= 0) {                            \
+        if (a - b <= 0x2FFFF) {                  \
+        } else {                                 \
+            return 0;                            \
+        }                                        \
+    } else {                                     \
+        if (b - a > 0x2FFFF)                     \
+            return 0;                            \
+    }
+
 #define MMX4_STATIC_ASSERT(name, condition) typedef char static_assert_##name[(condition) ? 1 : -1]
 #ifdef MMX4_PC
 #define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
@@ -620,7 +632,9 @@ struct Main43Ext {
 };
 
 struct Main56Ext {
-    u8 pad80[0xB];
+    struct EffectObj *effect;
+    u8 *unk84;
+    u8 pad88[3];
     u8 flags;
 };
 
@@ -670,9 +684,13 @@ struct Main72Ext {
 };
 
 struct Main60Ext {
-    u8 pad80[0xA];
+    u8 pad80[4];
+    u8 *unk84;
+    u8 pad88[2];
     u8 saved_unk5;
     u8 unk8B;
+    u8 pad8C[2];
+    u8 unk8E;
 };
 
 struct Main64Ext {
@@ -696,6 +714,9 @@ struct Main75Ext {
     struct EffectObj* unk80;
     u8 pad84[0xA];
     u8 saved_unk5;
+    u8 pad8F[4];
+    s8 unk93;
+    s8 unk94;
 };
 
 struct Main8Ext {
@@ -1543,6 +1564,12 @@ struct Misc55Ext {
     struct WeaponObj* owner;
 };
 
+struct Misc52Ext {
+    u8 pad50[6];
+    s8 unk56;
+    s8 unk57;
+};
+
 struct Misc53Ext {
     u8 pad50[4];
     struct EffectObj* effect;
@@ -1569,7 +1596,6 @@ union MiscExt {
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
     struct Misc24Ext misc_24;
-    struct Misc53Ext misc_53;
     struct ReadyTextExt ready_text;
     struct MiscPointerExt pointer;
     struct TitleLogoExt title_logo;
@@ -1581,6 +1607,8 @@ union MiscExt {
     struct Misc33Ext misc_33;
     struct Misc34Ext misc_34;
     struct Misc39Ext misc_39;
+    struct Misc52Ext misc_52;
+    struct Misc53Ext misc_53;
     struct Misc55Ext misc_55;
     struct UnkExt unk;
 };

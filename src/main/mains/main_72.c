@@ -45,7 +45,6 @@ void func_8008AF10(struct MainObj* arg0)
     arg0->unk20 = value;
 }
 
-#define SOME_COORDINATE_CONVERSION(IN) ((v * 4) + 24) % 16 | (((v + 6) / 4) + 480) * 64
 void func_8008AF30(struct MainObj* arg0, s32 arg1)
 {
     s32 v;
@@ -66,7 +65,6 @@ void func_8008AF30(struct MainObj* arg0, s32 arg1)
         obj->unk15 = arg0->unk15;
     }
 }
-#undef SOME_COORDINATE_CONVERSION
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B020);
 

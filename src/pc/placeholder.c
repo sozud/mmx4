@@ -751,7 +751,7 @@ void func_80028FEC(s16 left, s16 right, s16 top, s16 bottom, u8 direction)
 
                         index = (u8)func_8002938C(record->id);
                         main->unk40 = D_801406A8[index] >> 7;
-                        main->unk42 = ((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6);
+                        main->unk42 = SOME_COORDINATE_CONVERSION(index);
                         main->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[index];
                     }
                     record->flags |= 1;

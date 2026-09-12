@@ -174,7 +174,30 @@ void func_8007DA20(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DAFC);
+void func_8007DAFC(struct MainObj* arg0)
+{
+    struct EffectObj* effect = arg0->ext.main_64.effect;
+    arg0->on_screen = 0;
+    if (effect->active != 0) {
+        if (effect->unk7 == 0) {
+            if (arg0->unk7E-- == 0) {
+                arg0->unk7E = 5;
+                arg0->unk42 ^= 0x8000;
+            }
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        if (engine_obj.stage != 0xC) {
+            engine_obj.unkF = 0x10;
+        } else {
+            engine_obj.unkF = -0x80;
+            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
+            engine_obj.checkpoint += 9;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+}
 
 void func_8007DBDC(struct BarObj* arg0)
 {
