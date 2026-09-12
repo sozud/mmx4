@@ -21,7 +21,17 @@ void func_800AC114(struct ShotObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC180);
+void func_800AC180(struct ShotObj* arg0)
+{
+    if (--arg0->timer == 0) {
+        arg0->unk6++;
+        func_8002B93C(MOVING_OBJECT(arg0),
+            func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
+        arg0->x_vel.val *= 4;
+        arg0->y_vel.val *= 4;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC204);
 

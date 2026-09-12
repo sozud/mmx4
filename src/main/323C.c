@@ -2037,7 +2037,28 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001A710);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001A7D4);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001A860);
+void func_8001A860(struct EngineObj* arg0)
+{
+    s8 next_state;
+
+    reset_objects();
+    arg0->unk1 = 3;
+    arg0->unk2 = 0;
+    arg0->unk3 = 0;
+    D_80141BDF[0] = 0;
+    if (arg0->unk4 == 8) {
+        arg0->unk8 = func_8001E850(D_800F2338.scripts[0], 1);
+        next_state = 8;
+    } else {
+#ifdef VERSION_JP
+        arg0->unk8 = func_8001E850(D_800F2474_jp, 1);
+#else
+        arg0->unk8 = func_8001E850(D_800F2310, 1);
+#endif
+        next_state = 9;
+    }
+    arg0->state = next_state;
+}
 
 void func_8001A8E8(struct EngineObj* arg0)
 {
@@ -2082,7 +2103,19 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001B10C);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001B388);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001B4E4);
+void func_8001B4E4(struct EngineObj* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        reset_objects();
+        func_8001E980(1);
+        engine_obj.state = 1;
+        engine_obj.unk1 = 6;
+        engine_obj.unk2 = 0;
+        engine_obj.unk3 = 0;
+        func_80012740(1, &func_8001FB50);
+        func_800127FC();
+    }
+}
 
 void func_8001B558(struct EngineObj* arg0)
 {
@@ -2187,7 +2220,13 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001CD70);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CDE4);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CE84);
+s32 func_8001CE84(s32 device_num)
+{
+    struct MemcardPath buf = D_800100C0;
+
+    buf.path[2] += device_num;
+    return format(buf.path) ^ 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CEDC);
 
@@ -3148,7 +3187,15 @@ void func_8001E954(struct GameInfo* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001E980);
+void func_8001E980(u8 arg0)
+{
+    if (arg0 == 0) {
+        LoadImage(&D_800F2388,
+            (u_long*)(WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[1]));
+    } else {
+        need_palette_load |= 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001E9E0);
 
@@ -5044,7 +5091,14 @@ void func_800238F0(struct EngineObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80023970);
+void func_80023970(struct EngineObj* arg0)
+{
+    background_objects[1].y_pos.val += FIXED(0.5);
+    if (background_objects[1].y_pos.i.hi == D_800F2FDC[arg0->cur_character]) {
+        arg0->unk1++;
+        func_800129F0(8);
+    }
+}
 
 void func_800239E0(struct EngineObj* arg0)
 {
@@ -5744,7 +5798,22 @@ void func_80027974(struct BackgroundObj* arg0)
     func_80027BE4(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800279D8);
+void func_800279D8(struct BackgroundObj* arg0)
+{
+    s32 scroll_x;
+
+    arg0->unk14.val = arg0->x_pos.val;
+    arg0->unk18.val = arg0->y_pos.val;
+    arg0->unk49 = -(u8)arg0->unk48;
+    func_80027AAC(arg0);
+    func_80027AFC(arg0);
+    func_80027BE4(arg0);
+    scroll_x = background_objects[0].x_pos.i.hi;
+    if (scroll_x < 0) {
+        scroll_x += 3;
+    }
+    background_objects[0].y_pos.i.hi = (u16)background_objects[0].unk20 - (scroll_x >> 2);
+}
 
 void func_80027A5C(struct BackgroundObj* a0)
 {

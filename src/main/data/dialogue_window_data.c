@@ -73,4 +73,4 @@ const u32* D_800F2FD4[1] = { D_800F2F60 };
 #else
 const u32* D_800F2FD4[2] = { D_800F2F60, NULL };
 #endif
-u16 D_800F2FDC[2] = { 0x0300, 0x0600 };
+s16 D_800F2FDC[2] = { 0x0300, 0x0600 };

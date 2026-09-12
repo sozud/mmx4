@@ -2103,7 +2103,24 @@ void func_80038524(struct PlayerObj* arg0, s32 arg1)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80038568);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800385EC);
+void func_800385EC(void)
+{
+    struct PlayerObj* player = &g_Player;
+    u16 held = player->input.buttons.held;
+
+    if (!(held & 0x10)) {
+        player->charge_state[0] = 0;
+        player->unk9D = 0;
+    }
+    if (!(held & 0x20)) {
+        player->charge_state[1] = 0;
+        player->unk9E = 0;
+    }
+    if (player->unk9D == 0 && player->unk9E == 0) {
+        func_800384DC(player);
+        func_800361F8(player);
+    }
+}
 
 void func_80038678(struct PlayerObj* arg0)
 {
@@ -2269,9 +2286,47 @@ void func_80038F0C(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80038F64);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003904C);
+void func_8003904C(struct PlayerObj* arg0)
+{
+    s32 should_reset;
+    u8 timer;
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800390C4);
+    should_reset = func_800390C4(arg0) != 0;
+    timer = arg0->unkE1;
+    if (timer == 0) {
+        should_reset = 1;
+    }
+    if (should_reset != 0) {
+        arg0->unk7A = 0;
+        arg0->unkE0 = 0;
+        engine_obj.unk1C = 0;
+        func_800361F8(arg0);
+        func_8003470C(arg0);
+    } else {
+        arg0->unkE1 = timer - 1;
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+}
+
+s32 func_800390C4(struct PlayerObj* arg0)
+{
+    s32 wall_flag;
+
+    if (arg0->unk88.bytes.collision_flags & 4) {
+        arg0->y_vel.val = 0;
+        arg0->unk2C = 0;
+    }
+    wall_flag = 2;
+    if (arg0->unk15 != 0) {
+        wall_flag = 1;
+    }
+    if (wall_flag & arg0->unk88.bytes.collision_flags) {
+        arg0->x_vel.val = 0;
+        arg0->unk28 = 0;
+        return 1;
+    }
+    return 0;
+}
 
 void func_80039120(struct PlayerObj* arg0)
 {
@@ -2295,7 +2350,16 @@ void func_80039230(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80039270);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80039328);
+void func_80039328(struct PlayerObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->active = 0;
+        arg0->on_screen = 0;
+        g_Player.unkDE = 0;
+        g_Player.unk7A = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80039378);
 
@@ -2496,7 +2560,21 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003A1DC);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003A328);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003A374);
+void func_8003A374(struct PlayerObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk8E = 0;
+        if (engine_obj.unkF != 0) {
+            func_80034F7C();
+            return;
+        }
+        if (arg0->unkC0 != 0) {
+            func_80034E2C();
+            return;
+        }
+        func_800343A4(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003A3EC);
 
@@ -2639,7 +2717,22 @@ void func_8003BAE8(struct RideArmorObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003BB20);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003BDA0);
+void func_8003BDA0(struct RideArmorObj* arg0)
+{
+    if (!(arg0->unk70 & 8)) {
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        return;
+    }
+    func_8003C6EC(arg0, arg0->unk82);
+    func_8003CCBC(arg0);
+    if (arg0->unk7D == 0) {
+        func_8003CB08(arg0);
+    }
+    func_8003C8F4(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8003CD38(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003BE28);
 
@@ -3510,11 +3603,49 @@ void func_8004258C(struct MainObj* arg0)
     D_800F9B14[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800425C8);
+void func_800425C8(struct MainObj* arg0)
+{
+    if (arg0->unk7C == 0) {
+        arg0->unk6++;
+        func_8001540C(2, 0x10, arg0);
+        func_80015D60(arg0, 2);
+        arg0->unk28 = FIXED(-0.08984375);
+    } else {
+        arg0->unk7C--;
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042648);
+void func_80042648(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk15 ^= 0x40;
+        func_80015D60(arg0, 1);
+        arg0->unk6++;
+        if (arg0->unk67 == 0) {
+            arg0->unk7C = 0x1E;
+        }
+        arg0->unk67 = 0;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800426BC);
+void func_800426BC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk7C == 0x1E) {
+        func_8001540C(2, 0xF, arg0);
+    }
+    if (arg0->unk7C == 0) {
+        arg0->unk28 = 0;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    } else {
+        arg0->unk7C--;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8004272C);
 
@@ -3633,7 +3764,19 @@ void func_80042EB8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042F18);
+void func_80042F18(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
+            arg0->unk15 = 0x40;
+        } else {
+            arg0->unk15 = 0;
+        }
+    }
+}
 
 void func_80042F80(struct MainObj* arg0)
 {
@@ -3690,7 +3833,20 @@ void func_80043130(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8004316C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80043198);
+void func_80043198(struct MainObj* arg0)
+{
+    if (arg0->unk7 == 0) {
+        arg0->unk7++;
+        arg0->unk20 = 0;
+        arg0->unk24 = FIXED(1);
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(arg0));
+        if (arg0->on_screen == 0) {
+            arg0->state++;
+        }
+    }
+}
 
 void func_80043214(struct MainObj* arg0)
 {
@@ -3706,7 +3862,14 @@ void func_80043250(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80043280);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800432F0);
+void func_800432F0(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (arg0->on_screen == 0) {
+        arg0->state++;
+    }
+}
 
 void func_80043340(struct MainObj* arg0)
 {
@@ -3859,9 +4022,36 @@ void func_80043E90(struct MainObj* arg0)
     D_800F9EB4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80043ECC);
+void func_80043ECC(struct MainObj* arg0)
+{
+    arg0->unk6 = 1;
+    if (arg0->unk15 == 0) {
+        arg0->unk20 = FIXED(-0.5);
+    } else {
+        arg0->unk20 = FIXED(0.5);
+    }
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk7C = 0x30;
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80043F04);
+void func_80043F04(struct MainObj* arg0)
+{
+    s32 x_vel;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        x_vel = FIXED(-2);
+        if (arg0->unk15 & 0x40) {
+            x_vel = FIXED(2);
+        }
+        arg0->unk20 = x_vel;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80043F78(struct MainObj* arg0)
 {
@@ -4027,9 +4217,19 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80044458);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044508);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044630);
+void func_80044630(struct MainObj* arg0)
+{
+    if (arg0->unk2 == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    }
+    func_80015930(2, 7);
+    func_80015930(2, 8);
+    func_80015930(2, 9);
+}
 
-void func_80044694(void)
+void func_80044694(struct MainObj* arg0)
 {
 }
 
@@ -4038,11 +4238,37 @@ void func_8004469C(struct MainObj* arg0)
     D_800FA0B8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800446D8);
+void func_800446D8(struct MainObj* arg0)
+{
+    s32 x_vel;
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044738);
+    x_vel = FIXED(-2);
+    arg0->unk6++;
+    if (arg0->unk15 != 0) {
+        x_vel = FIXED(2);
+    }
+    arg0->unk20 = x_vel;
+    func_80015D60(arg0, 2);
+    func_8001540C(2, 7, arg0);
+}
 
-void func_800447A4(void)
+void func_80044738(struct MainObj* arg0)
+{
+    s32 distance;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    distance = arg0->x_pos.val - g_Player.x_pos.val;
+    if (distance < 0) {
+        distance = g_Player.x_pos.val - arg0->x_pos.val;
+    }
+    if (distance <= 0x4FFFF) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
+
+void func_800447A4(struct MainObj* arg0)
 {
 }
 
@@ -4069,15 +4295,53 @@ void func_800448E4(struct MainObj* arg0)
     D_800FA0D0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044920);
+void func_80044920(struct MainObj* arg0)
+{
+    arg0->unk7C = 0x1E;
+    arg0->unk67 = -1;
+    arg0->unk6++;
+    func_80015D60(arg0, 4);
+    func_8001540C(2, 8, arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044978);
+void func_80044978(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk24 = 0;
+        arg0->unk2C = FIXED(0.1875);
+        arg0->unk6++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800449D8);
+void func_800449D8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        arg0->unk24 = 0;
+        arg0->unk2C = 0;
+        arg0->unk67 = 0;
+        arg0->unk6++;
+        func_80015D60(arg0, 5);
+        func_8001540C(2, 9, arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044A4C);
+void func_80044A4C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015930(2, 9);
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        arg0->unk60 = 2;
+    }
+}
 
-void func_80044AA0(void)
+void func_80044AA0(struct MainObj* arg0)
 {
 }
 
@@ -4093,7 +4357,17 @@ void func_80044AE4(struct MainObj* arg0)
     func_80015D60(arg0, 8);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044B18);
+void func_80044B18(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk24 = FIXED(3);
+        arg0->unk2C = 0;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044B78);
 
@@ -4112,7 +4386,14 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80044BFC);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044C58);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044D8C);
+void func_80044D8C(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 7);
+        arg0->unk6 = 2;
+        arg0->unk7E = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80044DE4);
 
@@ -4152,7 +4433,21 @@ void func_8004539C(struct MainObj* arg0)
     D_800FA3C4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80045404);
+void func_80045404(struct MainObj* arg0)
+{
+    s32* velocity;
+    s32 x_vel;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    velocity = D_800FA108;
+    if (!(arg0->unk15 & 0x40)) {
+        velocity++;
+    }
+    x_vel = *velocity;
+    arg0->unk24 = FIXED(1);
+    arg0->unk20 = x_vel;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80045464);
 
@@ -4164,11 +4459,40 @@ void func_800454A4(struct MainObj* arg0)
     D_800FA3CC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8004550C);
+void func_8004550C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015930(2, 0x13);
+    func_8001540C(2, 0x14, arg0);
+    arg0->unk6++;
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80045560);
+void func_80045560(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk7C-- == 4) {
+        arg0->unk6++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800455BC);
+void func_800455BC(struct MainObj* arg0)
+{
+    s32* velocity;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    velocity = D_800FA110;
+    if (arg0->unk15 & 0x40) {
+        velocity++;
+    }
+    arg0->unk20 = *velocity;
+    if (arg0->unk7C-- == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, 9);
+        arg0->unk28 = FIXED(0.1875);
+        arg0->unk2C = FIXED(-0.03125);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80045648);
 

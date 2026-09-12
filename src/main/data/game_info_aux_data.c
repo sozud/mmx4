@@ -1,10 +1,5 @@
 #include "common.h"
 
-struct GameInfoAuxData {
-    u8 scripts[3][16];
-    u32 lookup[8];
-};
-
 struct GameInfoAuxData D_800F2338 = {
 #ifdef VERSION_JP
     {
@@ -31,4 +26,4 @@ struct GameInfoAuxData D_800F2338 = {
     },
 };
 
-s16 D_800F2388[4] = { 0, 480, 256, 2 };
+RECT D_800F2388 = { 0, 480, 256, 2 };
