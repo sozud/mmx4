@@ -50,7 +50,19 @@ void func_8005F124(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F160);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F1A4);
+void func_8005F1A4(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk54 = (const u8*)&D_800FE1BC;
+        arg0->unk50 = (const u8*)&D_800FE1C0;
+    }
+    if (--arg0->unk7C == 0) {
+        func_8005F4E0(arg0);
+        func_80015D60(arg0, 2);
+        arg0->unk7E = 3;
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F230);
 
@@ -58,7 +70,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F2F4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F3D4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F47C);
+void func_8005F47C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if ((u8)(arg0->unk5 - 3) >= 2 && !(arg0->unk70 & 8)) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        arg0->unk2C = FIXED(0.234375);
+    }
+}
 
 void func_8005F4E0(struct MainObj* arg0)
 {

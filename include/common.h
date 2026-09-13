@@ -504,6 +504,33 @@ struct Main37Ext {
     u32 saved_unk5;
 };
 
+struct Main32Ext {
+    u32 unk80;
+    u8 pad84[4];
+    u32 unk88;
+    u8 pad8C[8];
+    u32 saved_unk5;
+};
+
+struct Main33Ext {
+    u8 pad80[5];
+    u8 unk85;
+    u8 pad86[0xE];
+    u32 saved_unk5;
+};
+
+struct Main34Ext {
+    s8 unk80;
+    u8 pad81;
+    u8 unk82;
+};
+
+struct Main38Ext {
+    u32 saved_unk5;
+    u8 pad84[4];
+    u32 unk88;
+};
+
 struct MainSavedState94Ext {
     u8 pad80[0x10];
     u32 unk90;
@@ -624,8 +651,11 @@ struct Main49Ext {
 };
 
 struct Main36Ext {
-    u8 pad80[8];
+    u8 pad80[4];
+    struct MainObj* unk84;
     u8 saved_unk5;
+    u8 pad89[3];
+    u8 unk8C;
 };
 
 struct Main43Ext {
@@ -824,15 +854,16 @@ union MainObjExt {
     struct Main27Ext main_27;
     struct Main28Ext main_28;
     struct Main29Ext main_29;
-    struct MainSavedState94Ext main_32;
-    struct MainSavedState94Ext main_33;
+    struct Main32Ext main_32;
+    struct Main33Ext main_33;
+    struct Main34Ext main_34;
     struct Main35Ext main_35;
     struct Main36Ext main_36;
     struct Main41Ext main_41;
     struct Main43Ext main_43;
     struct Main487Ext main_487;
     struct Main37Ext main_37;
-    struct MainSavedState80Ext main_38;
+    struct Main38Ext main_38;
     struct MainSavedState94Ext main_44;
     struct Main48Ext main_48;
     struct Main49Ext main_49;
@@ -2757,6 +2788,16 @@ extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
 extern struct Unk_unk68 D_800FC860;
+extern u8 D_800FD9BC[];
+extern void (*D_800FD9E0[])(struct MainObj*);
+extern struct Unk_unk68 D_800FD9EC[];
+extern struct Unk_unk68 D_800FDC80;
+extern s32 D_800FDC90[2];
+extern struct Unk_unk68 D_800FDFB8;
+extern u16 D_800FDFBC[];
+extern void (*D_800FE174[])(struct MainObj*);
+extern struct Unk_unk68 D_800FE1BC;
+extern struct Unk_unk68 D_800FE1C0;
 extern u8 D_800FD1D0[];
 extern void (*D_800FD1F4[])(struct BaseObj*);
 extern void (*D_800FD858[])(struct MainObj*);
@@ -3263,6 +3304,10 @@ void func_80055C54(void);
 void func_8005807C(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
 void func_800AF878(struct BaseObj*, s32, s32, s32);
+void func_8005F4E0(struct MainObj*);
+void func_8006135C(struct MainObj*);
+void func_80061424(struct MainObj*);
+void func_800614E8(struct VisualObj*);
 void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);

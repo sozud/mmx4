@@ -30,11 +30,37 @@ void func_8005BC50(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BCA0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BD6C);
+void func_8005BD6C(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk54 = (const u8*)&D_800FD9EC;
+        arg0->ext.main_0.flags[0] = 1;
+        arg0->animation_step.fields.event = 0;
+    }
+    if (arg0->animation_step.fields.relative_step < 0) {
+        func_80015D60(arg0, 7);
+        arg0->unk5 = 7;
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BDE4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BF48);
+void func_8005BF48(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk54 = (const u8*)&D_800FD9EC;
+        arg0->ext.main_0.flags[0] = 1;
+        arg0->animation_step.fields.event = 0;
+    }
+    if (arg0->animation_step.fields.relative_step < 0) {
+        func_80015D60(arg0, 4);
+        arg0->unk5 = 9;
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BFC0);
 

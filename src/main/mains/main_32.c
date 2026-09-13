@@ -36,7 +36,15 @@ void func_8005CC6C(struct MainObj* arg0)
     D_800FDD64[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CCA8);
+void func_8005CCA8(struct MainObj* arg0)
+{
+    func_80015D60(arg0, 1);
+    arg0->ext.main_32.unk80 = 5;
+    arg0->unk20 = 0;
+    arg0->unk54 = (const u8*)&D_800FDC80;
+    arg0->unk50 = (const u8*)&D_800FDC80;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CCFC);
 
@@ -47,7 +55,23 @@ void func_8005CDB0(struct MainObj* arg0)
     D_800FDD6C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CDEC);
+void func_8005CDEC(struct MainObj* arg0)
+{
+    s32* velocity;
+    s32 selected;
+    u8 step;
+
+    func_80015D60(arg0, 3);
+    velocity = D_800FDC90;
+    if (arg0->unk15 & 0x40) {
+        velocity++;
+    }
+    selected = *velocity;
+    step = arg0->unk6;
+    arg0->unk24 = FIXED(0.3125);
+    arg0->unk20 = selected;
+    arg0->unk6 = step + 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CE50);
 
@@ -56,7 +80,23 @@ void func_8005CE80(struct MainObj* arg0)
     D_800FDD74[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CEBC);
+void func_8005CEBC(struct MainObj* arg0)
+{
+    s32* velocity;
+    s32 selected;
+
+    func_80015D60(arg0, 3);
+    velocity = D_800FDC90;
+    if (arg0->unk15 & 0x40) {
+        velocity++;
+    }
+    selected = *velocity;
+    arg0->unk50 = (const u8*)&D_800FDC80;
+    arg0->unk24 = 0;
+    arg0->ext.main_32.unk88 = 1;
+    arg0->unk20 = selected;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CF30);
 

@@ -37,7 +37,15 @@ void func_80060268(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800602A4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060354);
+void func_80060354(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60(arg0, 0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800603A0(struct MainObj* arg0)
 {
@@ -46,9 +54,25 @@ void func_800603A0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800603DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800604A0);
+void func_800604A0(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800604EC);
+void func_800604EC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60(arg0, 0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80060538(struct MainObj* arg0)
 {
@@ -59,7 +83,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060574);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800606D8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060870);
+void func_80060870(struct MainObj* arg0)
+{
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        arg0->unk28 = FIXED(0.125);
+        arg0->unk20 = 0;
+        arg0->unk6 = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800608CC);
 
@@ -71,7 +104,15 @@ void func_8006097C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800609C4);
+void func_800609C4(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk20 == 0) {
+        arg0->unk7C = 0x28;
+        arg0->unk6 = 6;
+    }
+}
 
 void func_80060A10(struct MainObj* arg0)
 {
