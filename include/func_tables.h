@@ -1299,10 +1299,10 @@ void func_80047378(struct MainObj* arg0);
 
 // bulldozer_rev_funcs
 void bulldozer_rev_begin(struct MainObj*);
-void func_80047140(void);
+void func_80047140(struct MainObj*);
 
 // bulldozer_charge_funcs
-void func_800471C4(void);
+void func_800471C4(struct MainObj*);
 void func_80047244(void);
 
 // D_800FA6F0
@@ -1319,8 +1319,8 @@ void func_80047B04(struct MainObj* arg0);
 
 // D_800FA710
 void func_80047818(void);
-void func_80047900(void);
-void func_80047974(void);
+void func_80047900(struct MainObj*);
+void func_80047974(struct MainObj*);
 
 // D_800FA71C
 void func_80047A20(void);
@@ -1347,22 +1347,21 @@ void func_80049884(struct MainObj* arg0);
 
 // D_800FAE60
 void func_8004831C(struct MainObj*);
-void func_80048348(void);
+void func_80048348(struct MainObj*);
 
 // D_800FAE68
 void func_800483E8(struct MainObj* arg0);
 void func_80048434(void);
-void func_800484C8(void);
-void func_8004852C(void);
-void func_8004852C(void);
-void func_80048584(void);
+void func_800484C8(struct MainObj*);
+void func_8004852C(struct MainObj*);
+void func_80048584(struct MainObj*);
 void func_80048610(void);
 
 // D_800FAE84
 void func_800487AC(struct MainObj*);
-void func_800487F0(void);
-void func_80048864(void);
-void func_800488F4(void);
+void func_800487F0(struct MainObj*);
+void func_80048864(struct MainObj*);
+void func_800488F4(struct MainObj*);
 void func_80048970(void);
 
 // D_800FAE98
@@ -1373,33 +1372,31 @@ void func_80048B04(void);
 void func_80048BD4(void);
 void func_80048C20(void);
 void func_80048CF8(void);
-void func_800488F4(void);
 void func_80048970(void);
 
 // D_800FAEB4
-void func_80048E0C(void);
-void func_80048E70(void);
+void func_80048E0C(struct MainObj*);
+void func_80048E70(struct MainObj*);
 
 // D_800FAEBC
-void func_80048F34(void);
-void func_80048F98(void);
+void func_80048F34(struct MainObj*);
+void func_80048F98(struct MainObj*);
 
 // D_800FAEC4
-void func_80049064(void);
+void func_80049064(struct MainObj*);
 void func_800490D4(void);
 void func_800491BC(void);
 
 // D_800FAED0
-void func_800492C4(void);
+void func_800492C4(struct MainObj*);
 void func_8004932C(void);
 
 // D_800FAED8
-void func_800494E0(void);
+void func_800494E0(struct MainObj*);
 void func_8004955C(void);
 void func_80049654(void);
-void func_800488F4(void);
 void func_8004970C(void);
-void func_800497FC(void);
+void func_800497FC(struct MainObj*);
 
 // dragonfly_state_funcs
 extern void (*dragonfly_state_funcs[])(struct MainObj*);

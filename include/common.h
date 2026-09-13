@@ -414,6 +414,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define MAIN_OBJECT(object) ((struct MainObj*)(object))
 #define UNK_OBJECT(object) ((struct UnkObj*)(object))
 #define SHOT_OBJECT(object) ((struct ShotObj*)(object))
+#define WEAPON_OBJECT(object) ((struct WeaponObj*)(object))
 #define VISUAL_OBJECT(object) ((struct VisualObj*)(object))
 #define EFFECT_OBJECT(object) ((struct EffectObj*)(object))
 #define MISC_OBJECT(object) ((struct MiscObj*)(object))
@@ -435,7 +436,8 @@ struct Main3Ext {
 };
 
 struct Main5Ext {
-    u8 pad80[0xC];
+    u8 unk80;
+    u8 pad81[0xB];
     u16 saved_unk5;
 };
 
@@ -488,7 +490,8 @@ struct Main37Ext {
 };
 
 struct MainSavedState94Ext {
-    u8 pad80[0x14];
+    u8 pad80[0x10];
+    u32 unk90;
     u32 saved_unk5;
 };
 
@@ -705,6 +708,13 @@ struct Main8Ext {
     u8 unk8C;
 };
 
+struct Main9Ext {
+    u8 pad80[0xD];
+    u8 object_id;
+    u8 pad8E[2];
+    struct EffectObj* effect;
+};
+
 struct Main27Ext {
     u8 unk80;
     u8 pad81[0x13];
@@ -742,6 +752,7 @@ union MainObjExt {
     struct Main3Ext main_3;
     struct Main5Ext main_5;
     struct Main8Ext main_8;
+    struct Main9Ext main_9;
     struct Main6Ext main_6;
     struct MainSavedState94Ext main_7;
     struct Main10Ext main_10;
@@ -2677,6 +2688,10 @@ extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern u16 D_80106770[64];
 extern s32 D_800FA108[2];
 extern s32 D_800FA110[2];
+extern s32 D_800FA118[2];
+extern s32 D_800FA120[2];
+extern u8 D_800FA6E8[8];
+extern u32 D_800FA72C;
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FAEFC;
@@ -3145,6 +3160,7 @@ s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);
 void func_800BF60C(struct BaseObj*, s8);
+void func_800C7DA4(s32, const u8*, void*, s32);
 void func_800C813C(s32, void*, void*);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
