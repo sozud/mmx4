@@ -23,7 +23,20 @@ void func_800D2420(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D24B4);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D254C);
+void func_800D254C(struct MiscObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        arg0->state = 2;
+        arg0->unk6 = 0;
+        arg0->ext.unk.unk55 = 0x1E;
+        if (engine_obj.cur_character == 0) {
+            arg0->unk5 = 0;
+        } else {
+            arg0->unk5 = 1;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D25AC);
 
@@ -45,7 +58,22 @@ void func_800D2794(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2854);
+void func_800D2854(struct MiscObj* arg0)
+{
+    u8 timer;
+
+    timer = arg0->ext.unk.unk55;
+    if (timer == 0) {
+        arg0->ext.unk.unk55 = 0x1E;
+        arg0->unk6++;
+    } else {
+        arg0->ext.unk.unk55 = timer - 1;
+    }
+    arg0->on_screen = 0;
+    if (D_80141BD8.unk0 & 1) {
+        is_on_screen(BASE_OBJECT(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D28BC);
 
@@ -54,16 +82,37 @@ void func_800D28E8(struct MiscObj* arg0)
     D_8010F528[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2924);
+void func_800D2924(struct MiscObj* arg0)
+{
+    u8 timer;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2970);
+    is_on_screen(BASE_OBJECT(arg0));
+    timer = arg0->ext.unk.unk55 - 1;
+    arg0->ext.unk.unk55 = timer;
+    if (timer == 0) {
+        engine_obj.unkF = 0x40;
+    }
+}
 
-void func_800D29C0(struct PlayerObj* arg0)
+void func_800D2970(struct MiscObj* arg0)
+{
+    u8 timer;
+
+    arg0->on_screen = 0;
+    timer = arg0->ext.unk.unk55 - 1;
+    arg0->ext.unk.unk55 = timer;
+    if (timer == 0) {
+        func_80036B18();
+        func_8002B108(OBJECT_HEADER(arg0));
+    }
+}
+
+void func_800D29C0(struct MiscObj* arg0)
 {
     D_8010F530[arg0->unk6](arg0);
 }
 
-void func_800D29FC(struct BarObj* arg0)
+void func_800D29FC(struct MiscObj* arg0)
 {
     D_8010F538[arg0->unk5](arg0);
 }
@@ -101,8 +150,8 @@ void (*D_8010F518[4])(struct MiscObj*) = {
     func_800D26F4,
 };
 void (*D_8010F528[2])(struct MiscObj*) = { func_800D2854, func_800D28BC };
-void (*D_8010F530[2])(struct PlayerObj*) = { func_800D2854, func_800D2970 };
-void (*D_8010F538[3])(struct BarObj*) = {
+void (*D_8010F530[2])(struct MiscObj*) = { func_800D2854, func_800D2970 };
+void (*D_8010F538[3])(struct MiscObj*) = {
     func_800D28E8,
     func_800D2924,
     func_800D29C0,
