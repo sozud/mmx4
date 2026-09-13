@@ -8,6 +8,7 @@ if VERSION not in ("us", "jp"):
     raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us' or 'jp'")
 
 OUTPUT_DIR = f"build/{VERSION}"
+BUILD_FILE = f"{OUTPUT_DIR}/build.ninja"
 ASM_ROOT = f"asm/{VERSION}/main"
 LINKER_SCRIPT = "main.ld" if VERSION == "us" else f"main.{VERSION}.ld"
 UNDEFINED_SYMBOL_FILES = (
@@ -136,7 +137,9 @@ def add_asm(srcs, output_dir, linker_inputs):
     # linker_inputs.append("build/us/asm/us/main/data/800.data.s.o")
 
 
-ninja = ninja_syntax.Writer(open("build.ninja", "w"))
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+ninja = ninja_syntax.Writer(open(BUILD_FILE, "w"))
+ninja.variable("builddir", OUTPUT_DIR)
 
 ninja.rule('compile',
            command='sh dosemu_wrapper.sh $in $out $FLAGS $FOLDER',

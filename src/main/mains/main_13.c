@@ -64,7 +64,20 @@ void func_8004CC64(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CCA0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CDC8);
+void func_8004CDC8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        func_80028B68(8, 4, 1);
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        if (arg0->ext.main_13.unk80 == 0x8000) {
+            func_80015D60(arg0, 0);
+        }
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8004CE48(struct MainObj* arg0)
 {

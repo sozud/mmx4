@@ -469,14 +469,29 @@ struct MainSavedState8CExt {
     u32 saved_unk5;
 };
 
-struct MainSavedState90Ext {
-    u8 pad80[0x10];
+struct Main14Ext {
+    u32 unk80;
+    u32 unk84;
+    s32 unk88;
+    u32 unk8C;
     u32 saved_unk5;
+    u32 unk94;
+};
+
+struct Main16Ext {
+    u32 unk80;
+    s32 unk84;
+    s32 unk88;
+    u32 unk8C;
+    u32 unk90;
+    u32 unk94;
+    u32 unk98;
 };
 
 struct Main17Ext {
     u32 unk80;
-    u8 pad84[0xC];
+    u32 unk84;
+    u8 pad88[8];
     u32 saved_unk5;
 };
 
@@ -568,13 +583,13 @@ struct Main73PartsExt {
 };
 
 struct Main18Ext {
-    u8 pad80;
+    u8 unk80;
     u8 unk81;
     u8 unk82;
-    u8 pad83;
+    u8 unk83;
     u8 unk84;
     s8 unk85;
-    u8 pad86;
+    u8 unk86;
     u8 unk87;
     u8 unk88;
     u8 pad89[0xE];
@@ -759,7 +774,8 @@ union MainObjExt {
     struct Main11Ext main_11;
     struct Main12Ext main_12;
     struct Main13Ext main_13;
-    struct MainSavedState90Ext main_14;
+    struct Main14Ext main_14;
+    struct Main16Ext main_16;
     struct Main17Ext main_17;
     struct Main18Ext main_18;
     struct Main19Ext main_19;
@@ -2689,11 +2705,19 @@ extern u16 D_80106770[64];
 extern s32 D_800FA108[2];
 extern s32 D_800FA110[2];
 extern s32 D_800FA118[2];
+extern s32 D_800FB89C[2];
 extern s32 D_800FA120[2];
 extern u8 D_800FA6E8[8];
 extern u32 D_800FA72C;
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
+extern struct Unk_unk68 D_800FBBBC;
+extern struct Unk_unk68 D_800FBEF4;
+extern struct Unk_unk68 D_800FBF00;
+extern struct Unk_unk68 D_800FBF04;
+extern struct Unk_unk68 D_800FBF0C;
+extern struct Unk_unk68 D_800FB890[3];
+extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
 extern u8 D_80105FC8[13][3];
 extern struct Unk_unk68 D_80103F00;
@@ -3161,6 +3185,7 @@ s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);
 void func_800BF60C(struct BaseObj*, s8);
 void func_800C7DA4(s32, const u8*, void*, s32);
+void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);

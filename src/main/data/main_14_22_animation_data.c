@@ -416,7 +416,7 @@ void (*D_800FBDC8[2])() = {
     func_8004ED60,
 };
 
-void (*D_800FBDD0[3])() = {
+void (*D_800FBDD0[3])(struct MainObj*) = {
     func_8004EFE0,
     func_8004F0C4,
     func_8004F118,
@@ -428,7 +428,7 @@ void (*D_800FBDDC[3])() = {
     func_8004F34C,
 };
 
-void (*D_800FBDE8[3])() = {
+void (*D_800FBDE8[3])(struct MainObj*) = {
     func_8004F460,
     func_8004F4D4,
     func_8004F62C,
@@ -961,18 +961,18 @@ void (*D_800FC358[12])() = {
     func_800521DC,
 };
 
-void (*D_800FC388[2])() = {
+void (*D_800FC388[2])(struct MainObj*) = {
     func_80050CAC,
     func_80050D14,
 };
 
-void (*D_800FC390[3])() = {
+void (*D_800FC390[3])(struct MainObj*) = {
     func_80050E44,
     func_80050EB0,
     func_80050F60,
 };
 
-void (*D_800FC39C[6])() = {
+void (*D_800FC39C[6])(struct MainObj*) = {
     func_80051020,
     func_80051060,
     func_800510D4,
@@ -981,7 +981,7 @@ void (*D_800FC39C[6])() = {
     func_800512BC,
 };
 
-void (*D_800FC3B4[6])() = {
+void (*D_800FC3B4[6])(struct MainObj*) = {
     func_80051374,
     func_800513DC,
     func_800514A4,
@@ -990,14 +990,14 @@ void (*D_800FC3B4[6])() = {
     func_80051678,
 };
 
-void (*D_800FC3CC[4])() = {
+void (*D_800FC3CC[4])(struct MainObj*) = {
     func_80051768,
     func_800517D0,
     func_80051A4C,
     func_80051B74,
 };
 
-void (*D_800FC3DC[4])() = {
+void (*D_800FC3DC[4])(struct MainObj*) = {
     func_80051CD0,
     func_80051D60,
     func_80051F68,
