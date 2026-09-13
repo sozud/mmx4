@@ -794,13 +794,23 @@ struct Main72Ext {
 struct Main60Ext {
     struct EffectObj* effect;
     u8* unk84;
-    u8 pad88[2];
+    u16 unk88;
     u8 saved_unk5;
     u8 unk8B;
-    u8 pad8C[2];
+    u8 pad8C;
+    u8 unk8D;
     u8 unk8E;
-    u8 pad8F[5];
+    u8 unk8F;
+    u8 unk90;
+    u8 pad91[3];
     u8 unk94;
+};
+
+struct Main61Ext {
+    u8 pad80[6];
+    u8 unk86;
+    u8 pad87[5];
+    u8 unk8C;
 };
 
 struct Main64Ext {
@@ -959,6 +969,7 @@ union MainObjExt {
     struct Main57Ext main_57;
     struct Main58Ext main_58;
     struct Main60Ext main_60;
+    struct Main61Ext main_61;
     struct Main64Ext main_64;
     struct Main66Ext main_66;
     struct MainSavedState94Ext main_67;
@@ -2945,6 +2956,8 @@ extern struct Unk_unk68 D_801079F8[];
 extern struct Unk_unk68 D_80107A78[];
 extern struct Unk_unk68 D_80107B78[];
 extern struct Unk_unk68 D_801013BC[3];
+extern s32 D_80101CB8[3];
+extern struct Unk_unk68 D_80101CA8;
 extern struct Unk_unk68 D_8010133C;
 extern struct Unk_unk68 D_80101340;
 extern struct Unk_unk68 D_80101344;
