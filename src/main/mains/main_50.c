@@ -11,7 +11,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_50", func_80069748);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_50", func_800698D8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_50", func_80069A08);
+void func_80069A08(struct MainObj* arg0)
+{
+    if (++arg0->ext.main_50.timer != 0x30) {
+        if (!(D_80141BD8.unk0 & 7)) {
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x18);
+        }
+    } else {
+        arg0->state = 3;
+    }
+}
 
 void func_80069A6C(struct MainObj* arg0)
 {

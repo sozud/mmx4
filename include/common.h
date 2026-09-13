@@ -551,7 +551,11 @@ struct MainSavedState94Ext {
 
 struct Main52Ext {
     u8 unk80;
-    u8 pad81[0x13];
+    u8 pad81[7];
+    u8 unk88;
+    u8 pad89[3];
+    u8 unk8C;
+    u8 pad8D[7];
     u32 saved_unk5;
 };
 
@@ -610,7 +614,7 @@ struct Main48Ext {
     u8 unk80;
     u8 unk81;
     s8 unk82;
-    u8 pad83;
+    s8 unk83;
     u8 saved_unk5;
 };
 
@@ -663,6 +667,19 @@ struct Main49Ext {
     u8 pad84;
     u8 unk85;
     u8 unk86;
+};
+
+struct Main50Ext {
+    u8 pad80[2];
+    u16 timer;
+};
+
+struct Main54Ext {
+    u8 pad80[6];
+    u8 unk86;
+    u8 unk87;
+    u8 pad88[4];
+    const s8* unk8C;
 };
 
 struct Main36Ext {
@@ -893,8 +910,10 @@ union MainObjExt {
     struct Main48Ext main_48;
     struct Main46Ext main_46;
     struct Main49Ext main_49;
+    struct Main50Ext main_50;
     struct MainSavedState94Ext main_51;
     struct Main52Ext main_52;
+    struct Main54Ext main_54;
     struct Main56Ext main_56;
     struct Main57Ext main_57;
     struct Main58Ext main_58;
@@ -1696,7 +1715,9 @@ struct BarObj {
     s8 state;
     s8 unk5;
     s8 unk6;
-    s8 pad7[0x14 - 7];
+    s8 pad7;
+    s32 x_pos;
+    s8 padC[8];
     s8 unk14;
     s8 : 8;
     u8 unk16[8]; // size unconfirmed
@@ -1978,6 +1999,10 @@ extern u8 D_800FF994[];
 extern u8 D_800FF998[];
 extern struct Unk_unk68 D_80106670[];
 extern u8 D_80104CDC[];
+extern union AnimationStep D_801001F8[];
+extern union AnimationStep D_801001FC[];
+extern struct Unk_unk68 D_80100210;
+extern struct Unk_unk68 D_80100214;
 extern u8 D_80104CE0[];
 extern struct Item04Data D_8010C8B4;
 extern u8 D_8010C904[];
@@ -3342,6 +3367,9 @@ void func_8005F4E0(struct MainObj*);
 void func_8006135C(struct MainObj*);
 void func_80061424(struct MainObj*);
 void func_800614E8(struct VisualObj*);
+void func_80068340(struct MainObj*);
+void func_8006AE80(struct MainObj*);
+void func_8006EA78(struct MainObj*);
 void func_80062240(struct MainObj*);
 void func_80065268(struct MainObj*);
 void func_800652C8(struct MainObj*);

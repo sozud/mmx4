@@ -20,7 +20,7 @@ void (*D_800FFB24[6])(struct MainObj*) = {
     func_80067BB0,
     func_80067C34,
 };
-void (*D_800FFB3C[6])() = {
+void (*D_800FFB3C[6])(struct MainObj*) = {
     func_80067D00,
     func_80067DAC,
     func_80067EE4,

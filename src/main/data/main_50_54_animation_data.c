@@ -130,14 +130,14 @@ union AnimationStep* D_800FFD44[14] = {
 
 u8 D_800FFD7C[8] = { 8, 9, 10, 11, 12, 0, 0, 0 };
 
-void (*D_800FFD84[4])() = {
+void (*D_800FFD84[4])(struct MainObj*) = {
     func_80069AD0,
     func_80069BE4,
     func_80069CE4,
     func_80069D74,
 };
 
-void (*D_800FFD94[7])() = {
+void (*D_800FFD94[7])(struct MainObj*) = {
     func_8009216C,
     func_80069D94,
     func_80069DA0,
@@ -147,22 +147,22 @@ void (*D_800FFD94[7])() = {
     func_8006A208,
 };
 
-void (*D_800FFDB0[1])() = {
+void (*D_800FFDB0[1])(struct MainObj*) = {
     func_80069DDC,
 };
 
-void (*D_800FFDB4[2])() = {
+void (*D_800FFDB4[2])(struct MainObj*) = {
     func_80069E64,
     func_80069F28,
 };
 
-void (*D_800FFDBC[3])() = {
+void (*D_800FFDBC[3])(struct MainObj*) = {
     func_8006A018,
     func_8006A078,
     func_8006A0E4,
 };
 
-void (*D_800FFDC8[2])() = {
+void (*D_800FFDC8[2])(struct MainObj*) = {
     func_8006A16C,
     func_8006A1B4,
 };
@@ -388,19 +388,19 @@ void (*D_800FFFAC[5])() = {
     func_8006AC8C,
 };
 
-void (*D_800FFFC0[4])() = {
+void (*D_800FFFC0[4])(struct MainObj*) = {
     func_8006A788,
     func_8006A7F0,
     func_8006A83C,
     func_8006A998,
 };
 
-void (*D_800FFFD0[2])() = {
+void (*D_800FFFD0[2])(struct MainObj*) = {
     func_8006AA54,
     func_8006AAB4,
 };
 
-void (*D_800FFFD8[3])() = {
+void (*D_800FFFD8[3])(struct MainObj*) = {
     func_8006ACC8,
     func_8006AD84,
     func_8006AE0C,
@@ -617,7 +617,7 @@ u8 D_801001B8[8] = { 12, 13, 14, 15, 16, 17, 18, 19 };
 
 u8 D_801001C0[8] = { 20, 21, 22, 23, 24, 25, 26, 0 };
 
-void (*D_801001C8[2])() = {
+void (*D_801001C8[2])(struct BarObj*) = {
     func_8006AF70,
     func_8006B114,
 };

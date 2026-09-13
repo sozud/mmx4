@@ -4,7 +4,16 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006EB40);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006ECC4);
+void func_8006ECC4(struct MainObj* arg0)
+{
+    s32 distance;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    distance = arg0->x_pos.val - background_objects[arg0->bg_offset].x_pos.val;
+    if (distance > FIXED(48) && distance < FIXED(272)) {
+        arg0->unk5 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006ED44);
 

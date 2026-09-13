@@ -124,7 +124,24 @@ void func_80067BB0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067C34);
+void func_80067C34(struct MainObj* arg0)
+{
+    struct MainObj* work = SP_CUR_MAIN_OBJ;
+    s8 state = work->ext.main_48.unk80;
+
+    if (state == 0) {
+        if (++work->ext.main_48.unk83 >= 2) {
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            SP_CUR_MAIN_OBJ->ext.main_48.unk83 = 0;
+        } else {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+        }
+    } else {
+        work->ext.main_48.unk80 = state - 1;
+    }
+}
 
 void func_80067CB0(struct MainObj* arg0)
 {
@@ -138,7 +155,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067DAC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067EE4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068000);
+void func_80068000(struct MainObj* arg0)
+{
+    if (SP_CUR_MAIN_OBJ->ext.main_48.unk82 < 9) {
+        func_80068340(arg0);
+        arg0->unk6 -= 2;
+    } else {
+        arg0->unk6++;
+    }
+}
 
 void func_80068060(struct MainObj* arg0)
 {

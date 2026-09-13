@@ -146,7 +146,19 @@ void func_800691B8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069248);
+void func_80069248(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2) {
+            arg0->unk5 = 7;
+        } else {
+            arg0->unk5 = 2;
+        }
+        arg0->unk6 = 0;
+        arg0->unk67 = 0;
+    }
+}
 
 void func_800692AC(struct MainObj* arg0)
 {
@@ -161,9 +173,31 @@ void func_800692E8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80069330);
+void func_80069330(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 < 0) {
+        SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 4;
+        func_80015D60(arg0, 9);
+        arg0->unk5 = 3;
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk6 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk67 = -1;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_800693AC);
+void func_800693AC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (++SP_CUR_MAIN_OBJ->ext.main_49.index == 0x3C) {
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80069414(struct MainObj* arg0)
 {

@@ -4,7 +4,17 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006AF70);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B114);
+void func_8006B114(struct BarObj* arg0)
+{
+    if (arg0->x_pos < background_objects[arg0->unk14].x_pos.val - 0x20) {
+        if (arg0->unk2 == 2) {
+            arg0->unk5 = 5;
+        } else {
+            arg0->unk5 = 2;
+        }
+        arg0->state++;
+    }
+}
 
 void func_8006B180(struct BarObj* arg0)
 {
