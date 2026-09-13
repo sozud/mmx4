@@ -1,6 +1,6 @@
 #include "common.h"
 
-void (*D_8010F538[])(struct BarObj*) = {
+void (*D_8010F538[])(struct MiscObj*) = {
     func_800D28E8,
     func_800D2924,
     func_800D29C0,
