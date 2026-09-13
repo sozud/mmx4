@@ -6,6 +6,7 @@ OBJDIFF_CLI=bin/objdiff-cli-linux-x86_64
 VERSION=${VERSION:-us}
 export VERSION
 REPORT="build/$VERSION/report.json"
+BUILD_FILE="build/$VERSION/build.ninja"
 
 if [ -d "build/$VERSION" ]; then
     find "build/$VERSION" -depth -delete
@@ -20,10 +21,10 @@ fi
 
 python3 ./build.py
 if [ "$VERSION" = us ]; then
-    ninja
+    ninja -f "$BUILD_FILE"
     sha1sum --check check.us.txt
 else
-    ninja objects
+    ninja -f "$BUILD_FILE" objects
 fi
 
 if [ -d "expected/build/$VERSION" ]; then
@@ -33,7 +34,7 @@ mkdir -p expected/build
 cp -a "build/$VERSION" "expected/build/$VERSION"
 
 MMX4_PROGRESS_REPORT=1 python3 ./build.py
-MMX4_PROGRESS_REPORT=1 ninja objects
+MMX4_PROGRESS_REPORT=1 ninja -f "$BUILD_FILE" objects
 
 : > "build/$VERSION/empty.s"
 mipsel-linux-gnu-as "build/$VERSION/empty.s" -o "build/$VERSION/empty.o"

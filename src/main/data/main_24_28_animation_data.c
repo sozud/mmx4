@@ -7,7 +7,7 @@ void (*D_800FD1E8[])() = {
     func_8005824C,
 };
 
-void (*D_800FD1F4[])() = {
+void (*D_800FD1F4[])(struct BaseObj*) = {
     func_800585F4,
     func_80058658,
     func_80058660,

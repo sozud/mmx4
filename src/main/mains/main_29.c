@@ -13,7 +13,18 @@ void func_8005A4CC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A538);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A6C0);
+void func_8005A6C0(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FD858[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0x68) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x68, 0x68);
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_8005A750(struct MainObj* arg0)
 {
@@ -49,7 +60,21 @@ u8 func_8005AB34(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005ABC0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005ACA0);
+void func_8005ACA0(struct MainObj* arg0)
+{
+    struct Main29Ext* context;
+    struct Main29Record* record;
+    struct Main29Record* target;
+
+    context = &SP_CUR_MAIN_OBJ->ext.main_29;
+    record = context->record;
+    target = context->target;
+    if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
+        record->unk4 = 2;
+    }
+    target->unk4 = 2;
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AD00);
 

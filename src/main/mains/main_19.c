@@ -37,9 +37,27 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052CB8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052E94);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_800531B4);
+void func_800531B4(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk6 = 3;
+        if (SP_CUR_MAIN_OBJ->ext.main_19.animation_index < 2) {
+            func_80015D60(arg0, 0xB);
+        } else {
+            func_80015D60(arg0, 0xA);
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053224);
+void func_80053224(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk6 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_19.unk80 ^= 1;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053274);
 

@@ -536,8 +536,14 @@ struct Main12Ext {
 struct Main22Ext {
     u32 saved_unk5;
     u32 unk84;
-    u8 pad88[0xC];
+    u8 pad88[4];
+    u32 unk8C;
+    u8 pad90[4];
     u32 unk94;
+};
+
+struct Main23Ext {
+    u8 unk80;
 };
 
 struct Main24Ext {
@@ -597,7 +603,7 @@ struct Main18Ext {
 };
 
 struct Main19Ext {
-    u8 pad80;
+    u8 unk80;
     u8 animation_index;
 };
 
@@ -732,8 +738,39 @@ struct Main9Ext {
 
 struct Main27Ext {
     u8 unk80;
-    u8 pad81[0x13];
+    u8 pad81[7];
+    u8 unk88;
+    u8 pad89[2];
+    u8 unk8B;
+    s32 unk8C;
+    u8 pad90[4];
     u32 saved_unk5;
+};
+
+struct Main28Context {
+    s8 unk0;
+    u8 pad1[0x83];
+    struct MainObj* objects[4];
+    u16 count;
+};
+
+struct Main28Ext {
+    struct Main28Context* context;
+    u8 pad84[6];
+    u16 index;
+};
+
+struct Main29Record {
+    s8 unk0;
+    s8 unk1;
+    u8 pad2[2];
+    s8 unk4;
+};
+
+struct Main29Ext {
+    u8 pad80[0xC];
+    struct Main29Record* target;
+    struct Main29Record* record;
 };
 
 struct Main41Ext {
@@ -781,9 +818,12 @@ union MainObjExt {
     struct Main19Ext main_19;
     struct Main21Ext main_21;
     struct Main22Ext main_22;
+    struct Main23Ext main_23;
     struct Main24Ext main_24;
     struct Main25Ext main_25;
     struct Main27Ext main_27;
+    struct Main28Ext main_28;
+    struct Main29Ext main_29;
     struct MainSavedState94Ext main_32;
     struct MainSavedState94Ext main_33;
     struct Main35Ext main_35;
@@ -2716,6 +2756,10 @@ extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
+extern struct Unk_unk68 D_800FC860;
+extern u8 D_800FD1D0[];
+extern void (*D_800FD1F4[])(struct BaseObj*);
+extern void (*D_800FD858[])(struct MainObj*);
 extern struct Unk_unk68 D_800FB890[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
@@ -3215,6 +3259,10 @@ void func_8002B0C8(struct ObjectHeader* arg0);
 void func_8002B108(struct ObjectHeader* arg0);
 void func_8002B560(s8, s8);
 void func_8002B694(struct AnimatedObj* arg0);
+void func_80055C54(void);
+void func_8005807C(struct MainObj*);
+void func_800583B0(struct MainObj*, s16, s16, s32);
+void func_800AF878(struct BaseObj*, s32, s32, s32);
 void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);

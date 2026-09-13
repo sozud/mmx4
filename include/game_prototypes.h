@@ -426,7 +426,7 @@ extern void func_8004CA14 (struct MainObj *arg0);
 extern void func_800559B4 (void);
 extern void func_80056470 (void);
 extern void func_8005824C (struct MainObj *arg0);
-extern void func_80058658 (void);
+extern void func_80058658 (struct BaseObj *arg0);
 extern void func_80059E38 (struct MainObj *arg0);
 extern void func_8005A3DC (struct MainObj *arg0);
 extern void func_8005A750 (struct MainObj *arg0);

@@ -33,7 +33,17 @@ void func_800574C0(struct MainObj* arg0)
     D_800FD168[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_800574FC);
+void func_800574FC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8005807C(arg0);
+    if (arg0->unk15 == 0) {
+        arg0->unk20 = FIXED(-1);
+    } else {
+        arg0->unk20 = FIXED(1);
+    }
+    arg0->unk6 = 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_8005754C);
 
@@ -44,7 +54,17 @@ void func_800577E8(struct MainObj* arg0)
     D_800FD174[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057824);
+void func_80057824(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8005807C(arg0);
+    if (arg0->unk15 == 0) {
+        arg0->unk20 = FIXED(-2);
+    } else {
+        arg0->unk20 = FIXED(2);
+    }
+    arg0->unk6 = 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057874);
 
@@ -55,7 +75,19 @@ void func_80057A44(struct MainObj* arg0)
     D_800FD180[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057A80);
+void func_80057A80(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk2C = FIXED(0.2578125);
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->ext.raw[1] = 2;
+        func_80015D60(arg0, 4);
+        arg0->unk6 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057AE8);
 
@@ -75,7 +107,16 @@ void func_80057D94(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057DDC);
+void func_80057DDC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015D60(arg0, 4);
+        arg0->ext.main_25.unk84 = 2;
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057E34);
 

@@ -308,11 +308,41 @@ void func_800522C8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052324);
+void func_80052324(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 == FIXED(-0.75)) {
+        arg0->unk2C = FIXED(-0.015625);
+        arg0->unk7C = 0x64;
+        arg0->unk6 = 4;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052374);
+void func_80052374(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        engine_obj.enable_boss = 1;
+        engine_obj.unk25 = 2;
+        engine_obj.boss_ptr = (s32)arg0;
+        arg0->ext.main_18.unk82 = 0;
+        arg0->unk24 = 0;
+        arg0->unk2C = 0;
+        arg0->unk5 = 8;
+        arg0->unk6 = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800523EC);
+void func_800523EC(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 == 0) {
+        arg0->unk68 = &D_800FBF0C;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052444);
 

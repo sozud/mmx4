@@ -23,7 +23,17 @@ void func_8005A3DC(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_28", func_8005A3E4);
+void func_8005A3E4(struct MainObj* arg0)
+{
+    struct Main28Context* context;
+
+    context = arg0->ext.main_28.context;
+    if (context->unk0 != 0 && context->objects[arg0->ext.main_28.index] == arg0) {
+        context->count--;
+        context->objects[arg0->ext.main_28.index] = NULL;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_28", func_8005A460);
 
