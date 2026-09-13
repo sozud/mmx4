@@ -119,7 +119,18 @@ void func_80089FAC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089FD4);
+void func_80089FD4(struct MainObj* arg0)
+{
+    s32 velocity;
+
+    if (func_80089C0C(arg0) & 0xFF) {
+        velocity = arg0->ext.main_71.unk84 << 8;
+        if (arg0->unk15 == 0) {
+            velocity = -velocity;
+        }
+        arg0->unk20 = velocity;
+    }
+}
 
 void func_8008A024(struct MainObj* arg0)
 {

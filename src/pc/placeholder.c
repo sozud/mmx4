@@ -1335,7 +1335,7 @@ void func_80025188(s32 slot, u8 index)
     }
 }
 
-void func_800253F0(struct PlayerObj* player, s32 gauge)
+void func_800253F0(struct MainObj* player, s32 gauge)
 {
     s8 value = player->unk5C & 0x7F;
     s8 target = gauge == 0 ? engine_obj.unk46 : 0x30;

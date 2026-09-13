@@ -6,7 +6,17 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BA38);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BB6C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BCB0);
+void func_8008BCB0(struct MainObj* arg0)
+{
+    typedef void (*SignedSoundFunction)(u16, u8, s8);
+    s8* engine_state = &engine_obj.character_state.bytes[9];
+
+    arg0->on_screen = 1;
+    arg0->unk7C = 2;
+    arg0->unk6++;
+    ((SignedSoundFunction)func_8002217C)(0x27, 0xFF, *engine_state);
+    *engine_state = 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BD10);
 
