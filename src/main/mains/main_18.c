@@ -331,7 +331,7 @@ void func_80052374(struct MainObj* arg0)
     if (--arg0->unk7C == 0) {
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 2;
-        engine_obj.boss_ptr = (s32)arg0;
+        engine_obj.boss_ptr = arg0;
         arg0->ext.main_18.unk82 = 0;
         arg0->unk24 = 0;
         arg0->unk2C = 0;

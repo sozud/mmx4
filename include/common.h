@@ -917,10 +917,21 @@ struct Main68Ext {
     struct MainObj* unk80;
     u8 pad84[4];
     struct EffectObj* effect;
-    u8 pad8C[2];
+    u8 unk8C;
+    u8 pad8D;
     u8 unk8E;
     u8 unk8F;
     u8 unk90;
+};
+
+struct Main69Ext {
+    struct EffectObj* effect;
+    struct MainObj* linked_object;
+    u8 pad88[4];
+    u8 unk8C;
+    u8 unk8D;
+    u8 unk8E;
+    u8 unk8F;
 };
 
 struct Main67Ext {
@@ -941,8 +952,8 @@ struct Main66Ext {
 };
 
 struct Main70Ext {
-    u16 unk80;
-    u16 unk82;
+    s16 unk80;
+    s16 unk82;
     u8 pad84;
     u8 unk85;
     u8 unk86;
@@ -1008,6 +1019,7 @@ union MainObjExt {
     struct Main66Ext main_66;
     struct Main67Ext main_67;
     struct Main68Ext main_68;
+    struct Main69Ext main_69;
     struct Main70Ext main_70;
     struct Main53Ext main_53;
     struct Main62Ext main_62;
@@ -2383,7 +2395,7 @@ struct EngineObj {
     s8 checkpoint; // 0x1d
     s8 unk1E;
     s8 unk1F;
-    s32 boss_ptr; // 0x20
+    struct MainObj* boss_ptr; // 0x20
     s8 enable_boss; // 0x24
     s8 unk25;
     union EngineCharacterState character_state; // 0x26
@@ -2988,6 +3000,17 @@ extern struct Unk_unk68 D_80103EF4;
 extern struct Unk_unk68 D_80103EE8;
 extern struct Unk_unk68 D_80103F00;
 extern struct Unk_unk68 D_80103F04;
+extern struct Unk_unk68 D_80104504;
+extern struct Unk_unk68 D_80104508;
+extern struct Unk_unk68 D_8010450C;
+extern struct Unk_unk68 D_80104510;
+extern struct Unk_unk68 D_80108084[];
+extern struct Unk_unk68 D_80108104[];
+extern struct Unk_unk68 D_801049AC;
+extern void* D_80104E7C[];
+extern struct Unk_unk68 D_80104F00;
+extern struct Unk_unk68 D_80104F04;
+extern struct Unk_unk68 D_80108184[];
 extern u8 D_8010439C[8];
 extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
@@ -3410,6 +3433,7 @@ void func_80034D64(struct PlayerObj*);
 void func_80036A94(struct PlayerObj*);
 void func_80036E98(struct PlayerObj*);
 void func_80025188(s32, u8);
+void func_800253F0(struct MainObj*, s32);
 void func_80025588(s16, s16, s16, s16, s32);
 void func_80027AAC(struct BackgroundObj*);
 void func_80027AFC(struct BackgroundObj*);

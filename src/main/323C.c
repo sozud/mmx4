@@ -4277,7 +4277,7 @@ struct SerializedEngineObj {
     s8 unk14, unk15, unk16, unk17;
     s8 unk18, unk19, unk1A, unk1B;
     s8 unk1C, checkpoint, unk1E, unk1F;
-    s32 boss_ptr;
+    u32 boss_ptr;
     s8 enable_boss, unk25;
     union EngineCharacterState character_state;
     s8 unk36, unk37;
@@ -4311,6 +4311,31 @@ struct ReplayData {
 
 static struct EngineObj replay_saved_engine;
 #define REPLAY_SAVED_ENGINE replay_saved_engine
+
+#define PSX_MAIN_OBJECTS_ADDRESS 0x8013BED0
+#define PSX_MAIN_OBJ_SIZE 0x9C
+
+static struct MainObj* restore_replay_main_object(u32 address)
+{
+    u32 offset;
+
+    if (address < PSX_MAIN_OBJECTS_ADDRESS) {
+        return NULL;
+    }
+    offset = address - PSX_MAIN_OBJECTS_ADDRESS;
+    if ((offset % PSX_MAIN_OBJ_SIZE) != 0 || (offset / PSX_MAIN_OBJ_SIZE) >= COUNT(main_objects)) {
+        return NULL;
+    }
+    return &main_objects[offset / PSX_MAIN_OBJ_SIZE];
+}
+
+static u32 save_replay_main_object(struct MainObj* object)
+{
+    if (object < &main_objects[0] || object >= &main_objects[COUNT(main_objects)]) {
+        return 0;
+    }
+    return PSX_MAIN_OBJECTS_ADDRESS + (object - &main_objects[0]) * PSX_MAIN_OBJ_SIZE;
+}
 
 static void restore_replay_engine(const struct SerializedEngineObj* source)
 {
@@ -4346,7 +4371,7 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.checkpoint = source->checkpoint;
     restored.unk1E = source->unk1E;
     restored.unk1F = source->unk1F;
-    restored.boss_ptr = source->boss_ptr;
+    restored.boss_ptr = restore_replay_main_object(source->boss_ptr);
     restored.enable_boss = source->enable_boss;
     restored.unk25 = source->unk25;
     restored.character_state = source->character_state;
@@ -4412,7 +4437,7 @@ static void save_replay_engine(struct SerializedEngineObj* target)
     target->checkpoint = engine_obj.checkpoint;
     target->unk1E = engine_obj.unk1E;
     target->unk1F = engine_obj.unk1F;
-    target->boss_ptr = engine_obj.boss_ptr;
+    target->boss_ptr = save_replay_main_object(engine_obj.boss_ptr);
     target->enable_boss = engine_obj.enable_boss;
     target->unk25 = engine_obj.unk25;
     target->character_state = engine_obj.character_state;
@@ -5480,7 +5505,7 @@ void func_80024E70(void)
     struct EngineObj* ptr = &engine_obj;
 
     if (engine_obj.unk1F != 0) {
-        func_800253F0(player, 0);
+        func_800253F0(MAIN_OBJECT(player), 0);
         func_80025188(1, engine_obj.unk44 + 0x3B);
         func_80025188(0, (engine_obj.unk46 - 0x20) / 2 + 0x45);
         if (player->unk2 == 0) {

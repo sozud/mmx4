@@ -2,7 +2,36 @@
 // 8008ADFC..8008BA38
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008ADFC);
+void func_8008ADFC(struct MainObj* arg0)
+{
+    s32 x_pos;
+    s32 y_pos;
+
+    x_pos = arg0->x_pos.val;
+    y_pos = arg0->y_pos.val;
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk5C = 0x18;
+    arg0->unk60 = 6;
+    arg0->animation_table = (const u8* const*)D_80104E7C;
+    arg0->unk54 = (const u8*)&D_80104F00;
+    arg0->unk50 = (const u8*)&D_80104F00;
+    arg0->unk68 = &D_80104F04;
+    arg0->collision_data = (const u16*)D_80108184;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    arg0->unk7C = 0;
+    arg0->on_screen = 0;
+    arg0->unk61 = 0;
+    arg0->unk67 = 0;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk16 = 5;
+    arg0->unk18.val = x_pos;
+    arg0->unk1C.val = y_pos;
+}
 
 void func_8008AE94(struct MainObj* arg0)
 {
