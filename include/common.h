@@ -743,14 +743,15 @@ struct Main56Ext {
 
 struct Main57Ext {
     struct EffectObj* effect;
-    u8 pad84[4];
+    struct ShotObj* shot;
     struct Unk_unk68* unk88;
     u8 pad8C[4];
     u8 unk90;
-    u8 pad91;
+    u8 unk91;
     u8 unk92;
     u8 unk93;
     u8 unk94;
+    u8 unk95;
 };
 
 struct Main487Ext {
@@ -791,13 +792,15 @@ struct Main72Ext {
 };
 
 struct Main60Ext {
-    u8 pad80[4];
-    u8 *unk84;
+    struct EffectObj* effect;
+    u8* unk84;
     u8 pad88[2];
     u8 saved_unk5;
     u8 unk8B;
     u8 pad8C[2];
     u8 unk8E;
+    u8 pad8F[5];
+    u8 unk94;
 };
 
 struct Main64Ext {
@@ -2939,6 +2942,9 @@ extern struct Unk_unk68 D_80105374;
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
 extern struct Unk_unk68 D_801079F8[];
+extern struct Unk_unk68 D_80107A78[];
+extern struct Unk_unk68 D_80107B78[];
+extern struct Unk_unk68 D_801013BC[3];
 extern struct Unk_unk68 D_8010133C;
 extern struct Unk_unk68 D_80101340;
 extern struct Unk_unk68 D_80101344;
