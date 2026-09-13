@@ -233,7 +233,7 @@ u8 D_8013B898[0x4];
 u8 D_8013B89C[0x4];
 u8 D_8013B8A0[0x4];
 u8 D_8013B8A4[0x4];
-struct EffectObj* D_8013B8A8;
+struct ObjectHeader* D_8013B8A8;
 u8 D_8013B8AC[0x4];
 struct Unk_unk68* D_8013B8B0;
 u8 D_8013B8B4[0x4];

@@ -632,7 +632,10 @@ struct Main48Ext {
 };
 
 struct Main73Ext {
-    struct EffectObj* effect;
+    union {
+        struct EffectObj* effect;
+        s8* script;
+    } unk80;
     u8 pad84[5];
     s8 unk89;
     u8 pad8A;
@@ -838,15 +841,33 @@ struct Main64Ext {
 };
 
 struct Main74Ext {
-    u8 pad80[0x17];
+    u8 pad80[0xC];
+    u8 unk8C;
+    u8 effect_state;
+    u8 pad8E;
+    u8 timer;
+    u8 animation_index;
+    u8 unk91;
+    u8 unk92;
+    u8 unk93;
+    u8 unk94;
+    u8 pad95;
+    u8 unk96;
     u8 unk97;
 };
 
 struct Main75Ext {
-    struct EffectObj* unk80;
-    u8 pad84[0xA];
+    union {
+        struct EffectObj* effect;
+        struct MainObj* child;
+    } unk80;
+    u8 pad84[4];
+    struct WeaponObj* weapon;
+    s16 background_unk1E;
     u8 saved_unk5;
-    u8 pad8F[4];
+    u8 pad8F[2];
+    u8 random_index;
+    u8 unk92;
     s8 unk93;
     s8 unk94;
 };
@@ -2399,7 +2420,10 @@ struct EngineObj {
     s8 enable_boss; // 0x24
     s8 unk25;
     union EngineCharacterState character_state; // 0x26
-    s8 unk36;
+    union {
+        s8 value;
+        u8 timer;
+    } unk36;
     s8 unk37;
     void* unk38;
     struct BaseObj* unk3C;
@@ -3016,6 +3040,8 @@ extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
+extern struct Unk_unk68 D_80105364;
+extern u8 D_801058D4[8];
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
 extern struct Unk_unk68 D_801079F8[];
@@ -3051,8 +3077,9 @@ extern u8 D_80109104[8];
 extern struct Unk_unk68 D_80109894;
 extern u8 D_80109BA8[2][4];
 extern u8 D_80108BA4[];
-extern struct EffectObj* D_8013B8A8;
+extern struct ObjectHeader* D_8013B8A8;
 extern struct Unk_unk68* D_8013B8B0;
+extern u8 D_8013B8B8[8];
 extern struct ShotObj* D_8013B8C0;
 extern struct ShotObj* D_8013B8C4;
 extern struct Unk_unk68 D_8010D0FC;
@@ -3406,6 +3433,7 @@ void func_800127FC(void);
 void func_800129A4(s8);
 void func_80013530(void);
 typedef unsigned long CdLoadAddress;
+extern u32 D_80141F30[8];
 void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
@@ -3422,6 +3450,7 @@ void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
 void func_80015D90(struct AnimatedObj*, s32, s32);
 void func_80015DC8(struct AnimatedObj*);
+void func_8001653C(void);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);
 void func_80034668(struct PlayerObj*);
