@@ -28,7 +28,16 @@ void func_80066580(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_45", func_800665BC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80066804);
+void func_80066804(struct MainObj* arg0)
+{
+    if (arg0->x_pos.i.hi >= 0x19A1) {
+        engine_obj.enable_boss = 1;
+        engine_obj.unk25 = 2;
+        engine_obj.boss_ptr = (s32)arg0;
+        arg0->unk6 = 2;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80066858);
 
