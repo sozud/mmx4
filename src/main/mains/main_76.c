@@ -58,9 +58,23 @@ INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091EC4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091FC8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_8009216C);
+void func_8009216C(void* arg0)
+{
+    struct Main76HandlerTable handlers = D_80010D7C;
+    struct MainObj* object = arg0;
 
-INCLUDE_RODATA("main/nonmatchings/mains/main_76", D_80010D7C);
+    handlers.funcs[object->unk63](arg0);
+}
+
+const struct Main76HandlerTable D_80010D7C = { {
+    NULL,
+    (void (*)(void*))func_80091E38,
+    NULL,
+    (void (*)(void*))func_80091EC4,
+    (void (*)(void*))func_80091EC4,
+    (void (*)(void*))func_80091FC8,
+    (void (*)(void*))func_80091FC8,
+} };
 
 void func_800921E8(s32 arg0)
 {
@@ -84,10 +98,27 @@ void func_800921E8(s32 arg0)
         value = 0x3C;
     }
 #endif
-    engine_obj.unk36 = value;
+    engine_obj.unk36.value = value;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_8009227C);
+s32 func_8009227C(void)
+{
+#ifdef VERSION_JP
+    if (D_80173C84 == 0) {
+        engine_obj.unk36.timer = 0;
+        func_8001653C();
+    }
+#else
+    if ((D_80173C84 == 0) && (engine_obj.unk36.timer != 0)) {
+        engine_obj.unk36.timer--;
+        if (engine_obj.unk36.timer == 0) {
+            engine_obj.unk36.timer = 0;
+            func_8001653C();
+        }
+    }
+#endif
+    return engine_obj.unk36.timer;
+}
 
 void (*D_80105FB4[])(struct MainObj*) = {
     func_80091A00,

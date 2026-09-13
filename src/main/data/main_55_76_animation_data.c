@@ -7163,7 +7163,7 @@ void (*D_8010531C[6])() = {
     func_8008CD44,
 };
 
-void (*D_80105334[7])() = {
+void (*D_80105334[7])(struct MainObj*) = {
     func_8008CFAC,
     func_8008D050,
     func_8008D0D0,
@@ -7661,13 +7661,13 @@ void (*D_80105924[4])(struct MainObj*) = {
     func_8008E99C,
 };
 
-void (*D_80105934[3])() = {
+void (*D_80105934[3])(struct MainObj*) = {
     func_8008EA3C,
     func_8008EA88,
     func_8008EAE4,
 };
 
-void (*D_80105940[5])() = {
+void (*D_80105940[5])(struct MainObj*) = {
     func_8008EC48,
     func_8008ED18,
     func_8008EDE8,
