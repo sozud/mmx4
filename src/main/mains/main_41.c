@@ -103,4 +103,11 @@ void func_80062D18(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062D20);
+void func_80062D20(struct MainObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    } else {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}

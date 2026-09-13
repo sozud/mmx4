@@ -148,9 +148,56 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D838);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D9AC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DA20);
+void func_8007DA20(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.u.hi = arg0->x_pos.u.hi;
+            effect->y_pos.u.hi = arg0->y_pos.u.hi;
+            arg0->ext.main_64.effect = effect;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->unk7E-- == 0) {
+        u8 unk92;
+        arg0->ext.main_64.unk92 = unk92 = arg0->ext.main_64.unk92 - 5;
+        arg0->unk42 ^= 0x8000;
+        if (unk92 >= 0x1A) {
+            arg0->ext.main_64.unk92 = 0;
+        }
+        arg0->unk7E = arg0->ext.main_64.unk92 < 6 ? 5 : arg0->ext.main_64.unk92;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DAFC);
+void func_8007DAFC(struct MainObj* arg0)
+{
+    struct EffectObj* effect = arg0->ext.main_64.effect;
+    arg0->on_screen = 0;
+    if (effect->active != 0) {
+        if (effect->unk7 == 0) {
+            if (arg0->unk7E-- == 0) {
+                arg0->unk7E = 5;
+                arg0->unk42 ^= 0x8000;
+            }
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    } else {
+        if (engine_obj.stage != 0xC) {
+            engine_obj.unkF = 0x10;
+        } else {
+            engine_obj.unkF = -0x80;
+            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
+            engine_obj.checkpoint += 9;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+}
 
 void func_8007DBDC(struct BarObj* arg0)
 {

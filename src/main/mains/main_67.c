@@ -2,6 +2,8 @@
 // 80082434..80083218
 #include "common.h"
 
+void func_80082F20(struct VisualObj* arg0);
+
 void func_80082434(struct MainObj* arg0)
 {
     D_80103E84[arg0->state](arg0);
@@ -60,7 +62,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082B68);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082BA4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082C04);
+void func_80082C04(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        func_8001540C(2, 0xA2, arg0);
+        func_80082F20(VISUAL_OBJECT(arg0));
+        arg0->unk7C = 0x3C;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082C70);
 
@@ -96,4 +107,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082FEC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_67", func_800830D0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_8008318C);
+s32 func_8008318C(struct MainObj* arg0, s32 arg1, s32 arg2)
+{
+    POS_BOUNDS_CHECK_FAIL_RET0(arg0->x_pos.val, arg1)
+    POS_BOUNDS_CHECK_FAIL_RET0(arg0->y_pos.val, arg2)
+    return 1;
+}

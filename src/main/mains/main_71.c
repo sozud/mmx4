@@ -4,7 +4,33 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089AA4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_71", func_80089B58);
+void func_80089B58(struct VisualObj* arg0, u8 arg1)
+{
+    struct VisualObj* obj;
+    u8 active;
+    u8 unk16;
+    u8 unk15;
+
+    obj = find_free_visual_obj();
+    if (obj == NULL) {
+        return;
+    }
+    active = arg0->active;
+    obj->id = 0xC;
+    obj->unk2 = arg1;
+    obj->active = active;
+    obj->x_pos.val = arg0->x_pos.val;
+    obj->y_pos.val = arg0->y_pos.val;
+    obj->animation_table = arg0->animation_table;
+    obj->unk40 = arg0->unk40;
+    obj->unk3C = arg0->unk3C;
+    obj->unk42 = arg0->unk42 & 0x7FFF;
+    unk16 = arg0->unk16;
+    obj->unk16 = unk16;
+    unk15 = arg0->unk15;
+    obj->unk50 = (struct PlayerObj*)arg0;
+    obj->unk15 = unk15;
+}
 
 s32 func_80089C0C(struct MainObj* arg0)
 {

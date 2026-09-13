@@ -74,7 +74,16 @@ void func_8009347C(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800934D8);
+void func_800934D8(struct WeaponObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->on_screen = 0;
+        arg0->state = 3;
+    } else {
+        func_80093524(arg0);
+    }
+}
 
 void func_80093524(struct WeaponObj* arg0)
 {
