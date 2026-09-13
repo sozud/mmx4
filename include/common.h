@@ -913,10 +913,31 @@ struct Main41Ext {
     u8 unk84;
 };
 
+struct Main68Ext {
+    struct MainObj* unk80;
+    u8 pad84[4];
+    struct EffectObj* effect;
+    u8 pad8C[2];
+    u8 unk8E;
+    u8 unk8F;
+    u8 unk90;
+};
+
+struct Main67Ext {
+    u8 pad80[9];
+    u8 unk89;
+    u8 unk8A;
+    u8 pad8B[9];
+    u32 saved_unk5;
+};
+
 struct Main66Ext {
-    u8 pad80[6];
+    struct EffectObj* effect;
+    u8 pad84[2];
     u8 unk86;
     u8 unk87;
+    u8 pad88[12];
+    struct MainObj* unk94;
 };
 
 struct Main70Ext {
@@ -985,7 +1006,8 @@ union MainObjExt {
     struct Main64Ext main_64;
     struct Main65Ext main_65;
     struct Main66Ext main_66;
-    struct MainSavedState94Ext main_67;
+    struct Main67Ext main_67;
+    struct Main68Ext main_68;
     struct Main70Ext main_70;
     struct Main53Ext main_53;
     struct Main62Ext main_62;
@@ -1015,7 +1037,9 @@ MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
     u16 unk42;                                   \
     union AnimationStep animation_step;          \
     u8 previous_animation_index;                 \
-    s8 pad49[7];                                 \
+    s8 pad49[2];                                 \
+    s8 unk4B;                                    \
+    s8 pad4C[4];                                 \
     const u8* unk50;                             \
     const u8* unk54;                             \
     const u16* collision_data;                   \
@@ -2866,6 +2890,7 @@ extern u32* D_8011C0E4[3];
 extern union AnimationStep* D_800FE890[21];
 extern void* D_80101624[12];
 extern void* D_80101A6C[30];
+extern void* D_80103E08[29];
 #ifdef MMX4_PC
 extern struct MainBssState main_bss_state;
 #define D_80141BD8 (main_bss_state.flags)
@@ -2958,8 +2983,13 @@ extern struct Unk_unk68 D_800FB890[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
 extern u8 D_80105FC8[13][3];
+extern struct Unk_unk68 D_80103EE4;
+extern struct Unk_unk68 D_80103EF4;
+extern struct Unk_unk68 D_80103EE8;
 extern struct Unk_unk68 D_80103F00;
 extern struct Unk_unk68 D_80103F04;
+extern u8 D_8010439C[8];
+extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
