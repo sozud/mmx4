@@ -16,7 +16,18 @@ void func_80072204(struct MainObj* arg0)
     D_80101420[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072240);
+void func_80072240(struct MainObj* arg0)
+{
+    struct EffectObj* effect = find_free_effect_obj();
+
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x18;
+        arg0->ext.main_57.effect = effect;
+        func_80036AE4(0x14, 0x40);
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800722A0);
 
@@ -44,7 +55,21 @@ void func_800728C8(struct MainObj* arg0)
     D_80101464[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072904);
+void func_80072904(struct MainObj* arg0)
+{
+    s32 x_vel = FIXED(-0.75);
+
+    arg0->unk6++;
+    if (arg0->unk15 != 0) {
+        x_vel = FIXED(0.75);
+    }
+    arg0->unk20 = x_vel;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    engine_obj.enable_boss = 1;
+    func_80015D60(arg0, 0x26);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072960);
 
@@ -73,30 +98,99 @@ void func_80072DF8(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072E34);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072EF8);
+void func_80072EF8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, arg0);
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        func_80015D60(arg0, 2);
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072F68);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072FF0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073084);
+void func_80073084(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C <= 0) {
+        arg0->unk54 = (const u8*)&D_8010133C;
+        arg0->unk50 = (const u8*)&D_80101344;
+        func_80074368(0x38);
+        func_80015D60(arg0, 3);
+        arg0->unk6++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073100);
+void func_80073100(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        if (arg0->ext.main_57.unk92 == 0) {
+            func_80015D60(arg0, 0);
+        }
+        func_8007427C(arg0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80073164(struct MainObj* arg0)
 {
     D_8010149C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800731A0);
+void func_800731A0(struct MainObj* arg0)
+{
+    s32 x_vel = FIXED(-3);
+
+    if (arg0->unk15 != 0) {
+        x_vel = FIXED(3);
+    }
+    arg0->unk24 = FIXED(6.5);
+    arg0->unk2C = FIXED(0.2578125);
+    arg0->unk54 = (const u8*)&D_8010133C;
+    arg0->unk20 = x_vel;
+    arg0->unk28 = 0;
+    arg0->unk50 = (const u8*)&D_80101344;
+    func_80015D60(arg0, 1);
+    arg0->ext.main_57.unk90 = 0;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073228);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073294);
+void func_80073294(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk54 = (const u8*)&D_80101340;
+        arg0->unk50 = (const u8*)&D_80101348;
+        if (arg0->unk70 & 8) {
+            arg0->ext.main_57.unk90 = 1;
+            arg0->unk67 = 1;
+        }
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_8007330C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_8007342C);
+void func_8007342C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C <= 0) {
+        arg0->unk54 = (const u8*)&D_8010133C;
+        arg0->unk50 = (const u8*)&D_80101344;
+        func_80074368(0x38);
+        func_80015D60(arg0, 3);
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800734A8);
 

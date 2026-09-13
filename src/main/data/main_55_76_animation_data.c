@@ -755,7 +755,7 @@ struct Unk_unk68 D_80100D38[2] = {
 
 u8 D_80100D40[4] = { 0xE0, 0x00, 0x20, 0x00 };
 
-void (*D_80100D44[7])() = {
+void (*D_80100D44[7])(struct MainObj*) = {
     func_8006FD50,
     func_8006FEC8,
     func_8006FFC0,
@@ -765,7 +765,7 @@ void (*D_80100D44[7])() = {
     func_80070294,
 };
 
-void (*D_80100D60[3])() = {
+void (*D_80100D60[3])(struct MainObj*) = {
     func_800704AC,
     func_80070514,
     func_80070648,
@@ -798,7 +798,7 @@ s16 D_80100D6C[24] = {
     (s16)0x00F3,
 };
 
-void (*D_80100D9C[5])() = {
+void (*D_80100D9C[5])(struct MainObj*) = {
     func_800708DC,
     func_80070948,
     func_80070A38,
@@ -817,7 +817,7 @@ void (*D_80100DB8[4])() = {
     func_8007100C,
 };
 
-void (*D_80100DC8[3])() = {
+void (*D_80100DC8[3])(struct MainObj*) = {
     func_80071228,
     func_800712A4,
     func_800713A4,
@@ -829,19 +829,19 @@ void (*D_80100DD4[3])() = {
     func_800715D4,
 };
 
-void (*D_80100DE0[3])() = {
+void (*D_80100DE0[3])(struct MainObj*) = {
     func_80071740,
     func_800718F4,
     func_8007196C,
 };
 
-void (*D_80100DEC[3])() = {
+void (*D_80100DEC[3])(struct MainObj*) = {
     func_80071740,
     func_800718F4,
     func_8007196C,
 };
 
-void (*D_80100DF8[5])() = {
+void (*D_80100DF8[5])(struct MainObj*) = {
     func_80071A74,
     func_80071AD8,
     func_80071B60,
@@ -862,13 +862,13 @@ void (*D_80100E0C[10])() = {
     func_80071A38,
 };
 
-void (*D_80100E34[3])() = {
+void (*D_80100E34[3])(struct MainObj*) = {
     func_80071EEC,
     func_80071F5C,
     func_8007203C,
 };
 
-void (*D_80100E40[4])() = {
+void (*D_80100E40[4])(struct MainObj*) = {
     func_800702E8,
     func_80071D30,
     func_8007211C,
@@ -1436,7 +1436,7 @@ void (*D_80101414[3])() = {
     func_800725EC,
 };
 
-void (*D_80101420[2])() = {
+void (*D_80101420[2])(struct MainObj*) = {
     func_80072240,
     func_800722A0,
 };
@@ -1462,7 +1462,7 @@ void (*D_80101458[3])() = {
     func_800727C0,
 };
 
-void (*D_80101464[6])() = {
+void (*D_80101464[6])(struct MainObj*) = {
     func_80072904,
     func_80072960,
     func_80072A14,
@@ -1476,7 +1476,7 @@ void (*D_8010147C[2])() = {
     func_80072DB0,
 };
 
-void (*D_80101484[6])() = {
+void (*D_80101484[6])(struct MainObj*) = {
     func_80072E34,
     func_80072EF8,
     func_80072F68,
@@ -1485,7 +1485,7 @@ void (*D_80101484[6])() = {
     func_80073100,
 };
 
-void (*D_8010149C[6])() = {
+void (*D_8010149C[6])(struct MainObj*) = {
     func_800731A0,
     func_80073228,
     func_80073294,
