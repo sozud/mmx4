@@ -9,9 +9,39 @@ void func_800CA0C8(struct MiscObj* arg0)
     D_8010E580[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_11", func_800CA110);
+void func_800CA110(struct MiscObj* arg0)
+{
+    s8 variant;
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_11", func_800CA188);
+    variant = arg0->unk2;
+    switch (variant) {
+    case 1:
+    case 2:
+        func_80015D60(arg0, variant + 1);
+        break;
+    case 3:
+        is_on_screen(BASE_OBJECT(arg0));
+        break;
+    }
+    arg0->ext.misc_11.active = 0;
+    arg0->state = (u8)arg0->state + 1;
+}
+
+void func_800CA188(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_11.active != 0) {
+        arg0->state++;
+    }
+    if (arg0->unk2 == 0) {
+        arg0->on_screen ^= 1;
+        if (arg0->on_screen == 0) {
+            return;
+        }
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800CA208(struct MiscObj* arg0)
 {

@@ -7,7 +7,18 @@ void func_800D7A54(struct QuadObj* arg0)
     D_8010FE20[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_14", func_800D7A90);
+void func_800D7A90(struct QuadObj* arg0)
+{
+    arg0->active = -0x6D;
+    arg0->bg_offset = (u8)g_Player.bg_offset;
+    arg0->unk34 = 0x11;
+    arg0->unk36 = 2;
+    arg0->x_pos.i.hi = 0;
+    arg0->y_pos.i.hi = 0;
+    func_800D7C70(arg0, (u8)arg0->unk2);
+    arg0->unk5 = 0;
+    arg0->state = (u8)arg0->state + 1;
+}
 
 void func_800D7AF8(struct QuadObj* arg0)
 {
@@ -30,7 +41,21 @@ void func_800D7B70(struct QuadObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_14", func_800D7BBC);
+void func_800D7BBC(struct QuadObj* arg0)
+{
+    arg0->unk14.i.hi = arg0->unk14.i.hi + 3;
+    arg0->unk1C.i.hi = arg0->unk1C.i.hi - 3;
+    arg0->unk24.i.hi = arg0->unk24.i.hi - 6;
+    arg0->unk2C.i.hi = arg0->unk2C.i.hi + 6;
+    if (arg0->unk24.i.hi - arg0->unk2C.i.hi >= 0) {
+        if (arg0->unk24.i.hi - arg0->unk2C.i.hi < 0x40) {
+            return;
+        }
+        arg0->unk5++;
+    } else if (arg0->unk2C.i.hi - arg0->unk24.i.hi >= 0x40) {
+        arg0->unk5++;
+    }
+}
 
 void func_800D7C3C(struct QuadObj* arg0)
 {

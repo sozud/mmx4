@@ -31,7 +31,7 @@ void func_800C3A40(struct ItemObj* arg0)
 void func_800C3A7C(struct ItemObj* arg0)
 {
     if (g_Player.unk5 != 0) {
-        arg0->unk7C.item_4_timer = 0x4000;
+        arg0->unk7C.timer = 0x4000;
         func_80028BAC(0x20, 1, 1);
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }

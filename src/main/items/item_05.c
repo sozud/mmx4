@@ -131,7 +131,26 @@ void func_800C1224(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_05", func_800C1244);
 
-INCLUDE_ASM("main/nonmatchings/items/item_05", func_800C1318);
+void func_800C1318(void)
+{
+    s8 index;
+    struct ItemObj* item;
+
+    index = 1;
+    do {
+        item = find_free_item_obj();
+        if (item == NULL) {
+            break;
+        }
+        item->unk2 = index;
+        index += 1;
+        item->active = 0x41;
+        item->id = 5;
+        item->state = 0;
+        item->unk5 = 0;
+        item->unk6 = 0;
+    } while ((u8)index < 9U);
+}
 
 void (*D_8010CA9C[])(struct ItemObj*) = {
     func_800C0EBC,

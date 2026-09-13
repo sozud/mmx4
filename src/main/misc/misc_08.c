@@ -6,7 +6,13 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C9510);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C969C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C9914);
+void func_800C9914(struct MiscObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->ext.unk.unk55 = 0xF;
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C993C);
 

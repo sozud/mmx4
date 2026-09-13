@@ -94,10 +94,10 @@ void func_800C09C4(struct ItemObj* arg0)
 
     arg0->unk84.previous_value = arg0->unk5C;
     if (arg0->unk2 == 0) {
-        temp_v0 = arg0->ext.item_4.timer - 1;
-        arg0->ext.item_4.timer = temp_v0;
+        temp_v0 = arg0->ext.timer - 1;
+        arg0->ext.timer = temp_v0;
         if (temp_v0 == 0) {
-            arg0->ext.item_4.timer = 5;
+            arg0->ext.timer = 5;
             if (arg0->unk5C < 0x50) {
                 func_800B10E4(0x11, 0xCA8, 0x198, 0xCB8, 0x1A8, 1);
             }
@@ -128,9 +128,9 @@ void func_800C09C4(struct ItemObj* arg0)
         }
 
         if (arg0->unk2 != 0) {
-            arg0->unk7C.item_4_timer = 0x1E;
+            arg0->unk7C.timer = 0x1E;
         } else {
-            arg0->unk7C.item_4_timer = 0x50;
+            arg0->unk7C.timer = 0x50;
         }
         state = arg0->state;
         next_state = state + 1;
@@ -156,8 +156,8 @@ void func_800C0C78(struct ItemObj* arg0)
     s32 temp_v0;
     s32 var_v0;
 
-    temp_v0 = arg0->unk7C.item_4_timer - 1;
-    arg0->unk7C.item_4_timer = temp_v0;
+    temp_v0 = arg0->unk7C.timer - 1;
+    arg0->unk7C.timer = temp_v0;
     if (temp_v0 != 0) {
         if ((D_80141BD8.unk0 & 3) == 0) {
             if (arg0->unk2 != 0) {

@@ -38,7 +38,17 @@ void func_800C351C(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C3578);
 
-INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C369C);
+void func_800C369C(struct ItemObj* arg0)
+{
+    struct EngineObj* engine = &engine_obj;
+    struct PlayerObj* player = &g_Player;
+
+    if (arg0->unk5 == 0) {
+        func_800C36E8(arg0, engine, player);
+        return;
+    }
+    func_800C37C4(arg0, engine, player);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C36E8);
 

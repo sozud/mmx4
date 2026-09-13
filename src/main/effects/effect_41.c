@@ -21,7 +21,15 @@ void func_800BE1C0(struct EffectObj* arg0)
     arg0->state = (u8)arg0->state + 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_41", func_800BE214);
+void func_800BE214(struct EffectObj* arg0)
+{
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        func_800BE25C(arg0);
+        return;
+    }
+
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_41", func_800BE25C);
 

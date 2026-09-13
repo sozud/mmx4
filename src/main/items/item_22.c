@@ -81,19 +81,75 @@ void func_800C56F0(struct ItemObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5710);
+void func_800C5710(struct ItemObj* arg0)
+{
+    func_8002B560(0x25, arg0->unk2);
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    need_palette_load |= 1;
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5774);
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C580C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5904);
+void func_800C5904(struct ItemObj* arg0)
+{
+    u8 start;
+    u8 end;
+    u8* data;
+
+    start = D_8010D284[arg0->unk2].start;
+    end = start + D_8010D284[arg0->unk2].length;
+    data = D_8010D284[arg0->unk2].data;
+    while (start < end) {
+        D_80141BE8[layout_width + start] = *data++;
+        start++;
+    }
+    background_objects[0].unk4C = 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5994);
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5B5C);
+void func_800C5B5C(struct ItemObj* arg0)
+{
+    arg0->unk84.bytes[0] = arg0->unk2;
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5BCC);
+    switch (arg0->unk2) {
+    case 0:
+        if (D_80141BE8[layout_width + 6] == 0x44) {
+            arg0->unk2 = 2;
+        }
+        break;
+    case 1:
+        if (D_80141BE8[layout_width + 6] == 0x43) {
+            arg0->unk2 = 2;
+        }
+        break;
+    }
+}
+
+void func_800C5BCC(struct ItemObj* arg0)
+{
+    struct EffectObj* effect;
+    s32 y_pos;
+
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x25;
+        effect->unk2 = (u8)arg0->unk2;
+        effect->x_pos.val = arg0->x_pos.val;
+        y_pos = arg0->y_pos.val;
+        effect->ext.effect_37.unk1E = 0x2D;
+        effect->ext.effect_37.unk1F = 4;
+        effect->ext.effect_37.unk20 = 3;
+        effect->ext.effect_37.unk21 = 0x14;
+        effect->y_pos.val = y_pos;
+    }
+}
 
 void (*D_8010D318[])(struct ItemObj*) = {
     func_800C5580,

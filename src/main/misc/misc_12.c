@@ -4,7 +4,16 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA228);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA3C0);
+void func_800CA3C0(struct MiscObj* arg0)
+{
+    arg0->on_screen = 0;
+    if (engine_obj.unk3 == arg0->unk2) {
+        arg0->unk42 = 0x780A;
+        is_on_screen(BASE_OBJECT(arg0));
+    } else {
+        arg0->unk42 = 0x7809;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA40C);
 

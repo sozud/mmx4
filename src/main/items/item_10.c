@@ -166,9 +166,31 @@ INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2528);
 
 INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2638);
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C27D8);
+void func_800C27D8(struct ItemObj* arg0)
+{
+    if (--arg0->unk84.bytes[3] == 0) {
+        arg0->state++;
+    }
+    func_800C2918(arg0);
+    func_800C2A04(arg0);
+    func_800C2AF0(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2850);
+void func_800C2850(struct ItemObj* arg0)
+{
+    arg0->ext.timer = 1;
+    arg0->unk42 &= 0x7FFF;
+    func_800C813C(5, D_8010CE54, arg0);
+    func_800DABE4(
+        (u8)arg0->unk2,
+        (s16)(arg0->x_pos.u.hi - 0x20),
+        (s16)(arg0->y_pos.u.hi - 0x28));
+    func_80015D60(arg0, 0xC);
+    is_on_screen(BASE_OBJECT(arg0));
+    arg0->state = (u8)arg0->state + 1;
+}
 
 void func_800C28E8(struct ItemObj* arg0)
 {

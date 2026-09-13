@@ -35,7 +35,19 @@ void func_800BE714(struct EffectObj* arg0)
     arg0->unk5++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_43", func_800BE730);
+void func_800BE730(struct EffectObj* arg0)
+{
+    if (--arg0->ext.effect_43.unk14 == 0) {
+        func_8001540C(5, 0, NULL);
+        func_80028B68(0xA, 2, 1);
+        arg0->ext.effect_43.unk14 = 0xA;
+    }
+
+    if (--arg0->ext.effect_43.unk16 == 0) {
+        func_8001540C(0, 0x13, NULL);
+        arg0->ext.effect_43.unk16 = 0x28;
+    }
+}
 
 void func_800BE7C4(struct EffectObj* arg0)
 {

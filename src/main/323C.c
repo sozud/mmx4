@@ -5264,7 +5264,7 @@ void func_80023B98(struct MiscObj* arg0)
 {
     s8 timer;
 
-    timer = (s8)arg0->ext.misc_11.active;
+    timer = arg0->ext.misc_11.active;
     if (timer == 0) {
         func_80015DC8(arg0);
         if (arg0->animation_step.fields.relative_step == 0) {

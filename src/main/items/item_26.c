@@ -6,7 +6,19 @@ INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C62DC);
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C63BC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C661C);
+void func_800C661C(struct ItemObj* arg0, s8 arg1, s8 arg2)
+{
+    struct VisualObj* visualObj;
+
+    visualObj = find_free_visual_obj();
+    if (visualObj != NULL) {
+        visualObj->active = 0x41;
+        visualObj->id = arg1;
+        visualObj->unk2 = arg2;
+        visualObj->bg_offset = arg0->bg_offset;
+        visualObj->unk50 = PLAYER_OBJECT(arg0);
+    }
+}
 
 void func_800C6680(struct ItemObj* arg0)
 {
@@ -22,7 +34,18 @@ void func_800C6680(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C670C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6814);
+void func_800C6814(struct ItemObj* arg0)
+{
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        if (engine_obj.unk37 != 0) {
+            func_8002217C(0x35, 0xFF, 0);
+        } else {
+            func_8002217C(D_8010D40C[arg0->unk2], 0xFF, 0);
+        }
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6894);
 
@@ -75,14 +98,14 @@ void func_800C6ACC(struct ItemObj* arg0)
 {
     s32 timer;
 
-    timer = arg0->unk7C.item_4_timer;
+    timer = arg0->unk7C.timer;
     if (timer == 0) {
         func_80015D60(arg0, 1);
         func_800C661C(arg0, 0x26, arg0->unk2);
         arg0->unk5 = (u8)arg0->unk5 + 1;
         return;
     }
-    arg0->unk7C.item_4_timer = timer - 1;
+    arg0->unk7C.timer = timer - 1;
 }
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6B30);

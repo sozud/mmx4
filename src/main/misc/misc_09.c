@@ -25,4 +25,20 @@ void func_800C9DA4(struct MiscObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_09", func_800C9E34);
+void func_800C9E34(struct MiscObj* arg0)
+{
+    u8 on_screen;
+
+    if (arg0->ext.misc_2.owner->ext.raw[0] == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        on_screen = arg0->on_screen ^ 1;
+        arg0->on_screen = on_screen;
+        if (on_screen != 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+        if (arg0->animation_step.fields.event != 1) {
+            return;
+        }
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}

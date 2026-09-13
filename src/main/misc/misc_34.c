@@ -91,7 +91,21 @@ void func_800CEF34(struct MiscObj* self)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEFC0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CF0B0);
+void func_800CF0B0(struct MiscObj* self)
+{
+    if ((self->unk17 != 1) && (self->unk17 != 4)) {
+        if (--self->ext.misc_34.unk5A == 0) {
+            if (self->unk17 == 2) {
+                func_80015D60(self, 3);
+                self->ext.misc_34.enabled = 0;
+                self->ext.misc_34.unk5A = 0x24;
+            } else {
+                func_80015D60(self, 1);
+                self->ext.misc_34.enabled = 1;
+            }
+        }
+    }
+}
 
 #define STEP(value)       \
     {                     \

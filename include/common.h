@@ -1308,18 +1308,14 @@ struct Item04Data {
     u8 object_ids[50];
 };
 
-struct Item4Ext {
-    s32 timer;
-};
-
 struct Item12Ext {
     s32 x_offset;
 };
 
 union ItemExt {
     u32 packed;
+    s32 timer;
     struct Item2Ext item_2;
-    struct Item4Ext item_4;
     struct Item12Ext item_12;
     struct MainObj* owner;
 };
@@ -1327,11 +1323,12 @@ union ItemExt {
 union ItemUnk84 {
     u16 timer;
     u32 previous_value;
+    u8 bytes[4];
 };
 
 union ItemUnk7C {
     u8 value;
-    s32 item_4_timer;
+    s32 timer;
     struct MiscObj* misc;
     void* object;
 };
@@ -1435,7 +1432,7 @@ struct Misc2Ext {
     u8 unk58;
 };
 
-struct Misc11Ext { u8 pad50[4], active; };
+struct Misc11Ext { u8 pad50[4]; s8 active; };
 
 struct Misc51Ext {
     struct MainObj* source;
@@ -1507,6 +1504,7 @@ struct Misc34Ext {
     u8 variant;
     u8 pad57[2];
     u8 enabled;
+    u16 unk5A;
 };
 
 struct Misc39Ext {
@@ -2271,6 +2269,10 @@ struct Effect37Ext {
     u8 pad19[3];
     u8 action;
     u8 finished;
+    u8 unk1E;
+    u8 unk1F;
+    u8 unk20;
+    u8 unk21;
 };
 
 struct Effect34Ext {

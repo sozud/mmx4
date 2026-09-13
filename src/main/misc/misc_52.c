@@ -4,7 +4,20 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2190);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2420);
+void func_800D2420(struct MiscObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        if (g_Player.x_pos.i.hi >= 0x911) {
+            arg0->unk6++;
+            background_objects[0].unk26 = 0x8C0;
+            func_80036AE4(0x14, 0x40);
+        }
+    } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
+        arg0->unk6 = 0;
+        arg0->ext.unk.unk55 = 0x1E;
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D24B4);
 

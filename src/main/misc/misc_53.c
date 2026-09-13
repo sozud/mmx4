@@ -79,7 +79,26 @@ void func_800D2EDC(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2F34);
+void func_800D2F34(struct MiscObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->ext.misc_53.timer - 1;
+    arg0->ext.misc_53.timer = timer;
+    if (timer == 0) {
+        arg0->state = 2;
+        D_8013E188[0] = -1;
+        D_8013E188[1] = -1;
+        D_8013E188[2] = -1;
+        D_8013E188[3] = -1;
+        g_FilterModeR = 1;
+        g_FilterModeB = 4;
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterModeG = 2;
+        g_FilterAmountB = 0x7C00;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2FC4);
 

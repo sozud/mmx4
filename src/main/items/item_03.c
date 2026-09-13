@@ -53,7 +53,16 @@ INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C0558);
 
 INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C05FC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C07B8);
+void func_800C07B8(struct ItemObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        func_8001540C(5, 0, NULL);
+        func_80028BAC(0x20, 2, 1);
+    }
+    arg0->unk7C.timer = 0;
+    arg0->ext.timer = 0;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void (*D_8010C8A4[])(struct ItemObj*) = {
     func_800C044C,

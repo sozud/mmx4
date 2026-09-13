@@ -38,4 +38,17 @@ void func_800C7B60(struct MiscObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_00", func_800C7B80);
+void func_800C7B80(struct MainObj* arg0, s8 arg1)
+{
+    struct MiscObj* misc;
+
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 1;
+        misc->unk2 = arg1;
+        misc->unk15 = arg0->unk15;
+        misc->x_pos = arg0->x_pos;
+        misc->y_pos = arg0->y_pos;
+    }
+}

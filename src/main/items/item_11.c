@@ -116,7 +116,16 @@ void func_800C2BE0(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2C3C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2D6C);
+void func_800C2D6C(struct ItemObj* arg0)
+{
+    D_8010CFBC[arg0->unk5](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_800C2DE0(struct ItemObj* arg0)
 {

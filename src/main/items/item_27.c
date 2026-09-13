@@ -45,9 +45,27 @@ void func_800C7164(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C71C0);
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7460);
+void func_800C7460(struct ItemObj* arg0)
+{
+    D_8010D9A4[arg0->unk5](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->state = 4;
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C74D4);
+void func_800C74D4(struct ItemObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state = 3;
+        engine_obj.character_state.bytes[arg0->unk2 + 6] = 2;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800C7538(struct ItemObj* arg0)
 {
@@ -61,7 +79,17 @@ void func_800C7558(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7578);
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7648);
+void func_800C7648(struct ItemObj* arg0)
+{
+    if (g_Player.unkC0 < 0) {
+        arg0->unk84.timer = 0;
+        background_objects[0].unk26 = background_objects[0].x_pos.i.hi;
+        background_objects[0].unk24 = background_objects[0].x_pos.i.hi;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        func_8001540C(5, 0, NULL);
+    }
+}
 
 void func_800C76A4(struct ItemObj* arg0)
 {
@@ -107,7 +135,19 @@ void func_800C77BC(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7830);
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C785C);
+void func_800C785C(struct ItemObj* arg0)
+{
+    u8 checkpoint;
+
+    if (g_Player.unkC0 < 0) {
+        func_80036B18();
+        checkpoint = (u8)arg0->unk2;
+        engine_obj.unkF = -0x40;
+        engine_obj.checkpoint = checkpoint & 0xF;
+        arg0->state = 3;
+        arg0->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C78BC);
 
