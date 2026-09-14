@@ -71,7 +71,7 @@ void func_80090148(struct MainObj* arg0)
 {
     D_80105E98[arg0->unk5](arg0);
     if (arg0->unk5 >= 2) {
-        func_8002B318(arg0, 0xA0, 0xA0);
+        func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
     }
 }
 
@@ -188,9 +188,23 @@ void func_80090BE0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090C54);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090CFC);
+void func_80090CFC(struct MainObj* arg0)
+{
+    if (arg0->ext.main_75.unk92 != 0) {
+        arg0->unk7C = 0x78;
+        arg0->unk6++;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090D24);
+void func_80090D24(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_80090D6C(struct MainObj* arg0)
 {
