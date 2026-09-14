@@ -39,9 +39,35 @@ void func_80066804(struct MainObj* arg0)
     func_8002B718(MOVING_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80066858);
+void func_80066858(struct MainObj* arg0)
+{
+    if (arg0->x_pos.i.hi >= 0x1AA1) {
+        arg0->unk7E = 3;
+        arg0->unk6 = 3;
+    } else {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_8006689C);
+void func_8006689C(struct MainObj* arg0)
+{
+    s16 timer;
+
+    if (arg0->unk5C < 0x30) {
+        timer = (u16)arg0->unk7E - 1;
+        arg0->unk7E = timer;
+        if (timer == 0) {
+            func_8001540C(0, 0xE, NULL);
+            arg0->unk7E = 3;
+        }
+        arg0->unk5C = (u8)arg0->unk5C + 1;
+        return;
+    }
+    arg0->ext.main_45.unk88 = 0xFF;
+    arg0->unk5 = 1;
+    arg0->unk6 = 0;
+    func_80036B18();
+}
 
 void func_8006692C(struct MainObj* arg0)
 {
