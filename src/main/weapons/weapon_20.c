@@ -1,5 +1,3 @@
-// WeaponObj, weapon_object_update_funcs[20, 21]
-// 800929A0..80092D64
 #include "common.h"
 
 void func_800929A0(struct WeaponObj* arg0)
@@ -27,20 +25,20 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_20", func_80092B5C);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20", func_80092C2C);
 
-void func_80092CEC(struct ShotObj* arg0)
+void func_80092CEC(struct WeaponObj* arg0)
 {
-    struct WeaponObj* weapon;
+    struct PlayerObj* owner;
 
-    if (arg0->unk84.value == 0) {
-        weapon = arg0->unk7C;
-        if (weapon->ext.weapon_20.unk8E == 0) {
-            arg0->unk84.value = 1;
+    if (arg0->unk84.word == 0) {
+        owner = arg0->owner;
+        if (owner->unk8E == 0) {
+            arg0->unk84.word = 1;
         }
-        if (weapon->unk15 != arg0->unk15) {
-            arg0->unk84.value = 1;
+        if (owner->unk15 != arg0->unk15) {
+            arg0->unk84.word = 1;
         }
-        if (arg0->unk84.value == 0) {
-            func_80092E2C(arg0, weapon, arg0->id);
+        if (arg0->unk84.word == 0) {
+            func_80092E2C(VISUAL_OBJECT(arg0), owner, arg0->id);
         }
     }
 }

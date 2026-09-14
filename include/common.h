@@ -3113,6 +3113,8 @@ extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
+extern struct Unk_unk68 D_801044FC;
+extern struct Unk_unk68 D_80104500;
 extern struct Unk_unk68 D_80105360;
 extern struct Unk_unk68 D_80105364;
 extern u8 D_801058D4[8];

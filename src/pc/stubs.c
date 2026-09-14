@@ -5,11 +5,40 @@
 #include <stdlib.h>
 #include <string.h>
 
+unsigned long mmx4_pc_frame_number(void);
+
+static const char* mmx4_pc_seen_stubs[2048];
+static size_t mmx4_pc_seen_stub_count;
+static int mmx4_pc_stub_continue = -1;
+
+static int mmx4_pc_stub_first_visit(const char* name)
+{
+    size_t i;
+
+    for (i = 0; i < mmx4_pc_seen_stub_count; i++) {
+        if (mmx4_pc_seen_stubs[i] == name)
+            return 0;
+    }
+    if (mmx4_pc_seen_stub_count < sizeof(mmx4_pc_seen_stubs) / sizeof(mmx4_pc_seen_stubs[0]))
+        mmx4_pc_seen_stubs[mmx4_pc_seen_stub_count++] = name;
+    return 1;
+}
+
 static void mmx4_pc_unimplemented(const char* name)
 {
-    fprintf(stderr, "MMX4 PC: unimplemented traced game function: %s\n", name);
-    assert(!"undecompiled function-table target reached");
-    abort();
+    if (mmx4_pc_stub_continue < 0)
+        mmx4_pc_stub_continue = getenv("MMX4_PC_STUB_CONTINUE") != NULL;
+    if (!mmx4_pc_stub_continue) {
+        fprintf(stderr, "MMX4 PC: unimplemented traced game function: %s\n",
+            name);
+        assert(!"undecompiled function-table target reached");
+        abort();
+    }
+    if (mmx4_pc_stub_first_visit(name)) {
+        fprintf(stderr, "MMX4 PC: stub visit %zu frame %lu: %s\n",
+            mmx4_pc_seen_stub_count, mmx4_pc_frame_number(), name);
+        fflush(stderr);
+    }
 }
 
 #define PC_GAME_STUB(name)                \
@@ -420,7 +449,6 @@ PC_GAME_STUB(func_80097EEC)
 PC_GAME_STUB(func_800981CC)
 PC_GAME_STUB(func_80098338)
 PC_GAME_STUB(func_80098474)
-PC_GAME_STUB(func_800AED18)
 PC_GAME_STUB(func_800AF6A0)
 PC_GAME_STUB(func_800AFB90)
 PC_GAME_STUB(func_800AFC9C)
@@ -510,7 +538,6 @@ PC_GAME_STUB(func_80091218)
 PC_GAME_STUB(func_80091898)
 PC_GAME_STUB(func_80091A00)
 PC_GAME_STUB(func_80091D1C)
-PC_GAME_STUB(func_80092314)
 PC_GAME_STUB(func_80092408)
 PC_GAME_STUB(func_80092598)
 PC_GAME_STUB(func_80092614)
@@ -1019,9 +1046,6 @@ PC_GAME_STUB(func_800CC38C)
 PC_GAME_STUB(func_800CC3D4)
 PC_GAME_STUB(func_800D8DE0)
 PC_GAME_STUB(func_800DABE4)
-PC_GAME_STUB(func_80032140)
-PC_GAME_STUB(func_80032224)
-PC_GAME_STUB(func_80032300)
 PC_GAME_STUB(func_80034320)
 PC_GAME_STUB(func_8003253C)
 PC_GAME_STUB(func_8003267C)
@@ -1033,7 +1057,6 @@ PC_GAME_STUB(func_80032D28)
 PC_GAME_STUB(func_80032DE0)
 PC_GAME_STUB(func_8003356C)
 PC_GAME_STUB(func_800339E0)
-PC_GAME_STUB(func_800337DC)
 PC_GAME_STUB(func_80033AC0)
 PC_GAME_STUB(func_80033F5C)
 PC_GAME_STUB(func_8003443C)
@@ -1047,7 +1070,6 @@ PC_GAME_STUB(func_80035C20)
 PC_GAME_STUB(func_80035D00)
 PC_GAME_STUB(func_800363EC)
 PC_GAME_STUB(func_800365A4)
-PC_GAME_STUB(func_80038568)
 PC_GAME_STUB(func_800387A8)
 PC_GAME_STUB(func_80038970)
 PC_GAME_STUB(func_800389DC)
@@ -1619,7 +1641,6 @@ PC_GAME_STUB(func_80087ED4)
 PC_GAME_STUB(func_80087F30)
 PC_GAME_STUB(func_80087FB4)
 PC_GAME_STUB(func_80088020)
-PC_GAME_STUB(func_800880BC)
 PC_GAME_STUB(func_80088140)
 PC_GAME_STUB(func_800881F8)
 PC_GAME_STUB(func_80088338)
@@ -1627,11 +1648,9 @@ PC_GAME_STUB(func_800883CC)
 PC_GAME_STUB(func_800884D0)
 PC_GAME_STUB(func_80088530)
 PC_GAME_STUB(func_800885DC)
-PC_GAME_STUB(func_80088658)
 PC_GAME_STUB(func_800886A0)
 PC_GAME_STUB(func_800886F0)
 PC_GAME_STUB(func_800887DC)
-PC_GAME_STUB(func_8008888C)
 PC_GAME_STUB(func_80088BE8)
 PC_GAME_STUB(func_80088EA4)
 PC_GAME_STUB(func_80088F78)
@@ -2457,7 +2476,6 @@ PC_GAME_STUB(func_800864FC)
 PC_GAME_STUB(func_8008654C)
 PC_GAME_STUB(func_80086640)
 PC_GAME_STUB(func_80086C00)
-PC_GAME_STUB(func_80086C70)
 PC_GAME_STUB(func_80086D04)
 PC_GAME_STUB(func_80086D84)
 PC_GAME_STUB(func_80086E2C)
