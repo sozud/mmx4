@@ -38,7 +38,25 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2870);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2928);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A29C8);
+void func_800A29C8(struct ShotObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        func_8001540C(2, 0x98, arg0);
+        func_800C813C(4, D_801096DC, arg0);
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    } else {
+        arg0->on_screen ^= 1;
+        if (arg0->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    }
+}
 
 void func_800A2A58(struct ShotObj* arg0)
 {
@@ -71,7 +89,17 @@ void func_800A2C70(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2CEC);
+void func_800A2CEC(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk54 = (const u8*)&D_801096C0;
+        arg0->unk50.data = (const u8*)&D_801096C4;
+        arg0->unk8C.word = 0;
+        arg0->unk6++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2D54);
 
@@ -82,7 +110,17 @@ void func_800A2E6C(struct ShotObj* arg0)
     D_80109748[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2EB4);
+void func_800A2EB4(struct ShotObj* arg0)
+{
+    arg0->unk68 = &D_801096B0;
+    arg0->unk54 = (const u8*)&D_801096C8;
+    arg0->unk50.data = (const u8*)&D_801096CC;
+    arg0->unk5C = 3;
+    arg0->unk60 = 6;
+    arg0->unk16 = 4;
+    func_80015D60(arg0, 0x20);
+    arg0->unk5++;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2F2C);
 
@@ -99,9 +137,39 @@ void func_800A3010(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3078);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3170);
+void func_800A3170(struct ShotObj* arg0)
+{
+    s16 temp_v0;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A31CC);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    temp_v0 = arg0->timer - 1;
+    arg0->timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->timer = 0x32;
+        arg0->unk6++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+void func_800A31CC(struct ShotObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        func_8001540C(2, 0x98, arg0);
+        func_800C813C(4, D_801096DC, arg0);
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    } else {
+        arg0->on_screen ^= 1;
+        if (arg0->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+        }
+    }
+}
 
 void func_800A325C(struct ShotObj* arg0)
 {
@@ -130,9 +198,34 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A366C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3758);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A382C);
+void func_800A382C(struct ShotObj* arg0)
+{
+    arg0->unk18 = arg0->x_pos.val;
+    arg0->unk1C = arg0->y_pos.val;
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        func_8001540C(2, 0x98, arg0);
+        func_800C813C(5, D_801096DC, arg0);
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A38B0);
+void func_800A38B0(struct ShotObj* arg0)
+{
+    RECT** table;
+    struct WeaponObj* weapon;
+
+    weapon = arg0->unk7C;
+    if (arg0->unk7 == 4) {
+        table = D_80109698;
+    } else {
+        table = D_8010969C;
+    }
+    weapon->ext.rect = table[get_random() & 7];
+}
 
 RECT D_80109598[8] = {
     { 0x30, 0x90, 0xF0, 0x150 },
@@ -186,18 +279,16 @@ s16 D_801096A0[2][2] = {
     { 36, -31 },
 };
 
-s8 D_801096A8[10][4] = {
-    { -39, 21, 27, 30 },
-    { 0, 10, 9, 3 },
-    { 0, 0, 6, 6 },
-    { 0, -4, 10, 7 },
-    { -12, -32, 23, 63 },
-    { -4, -20, 9, 30 },
-    { -37, -56, 73, 118 },
-    { -28, -48, 55, 88 },
-    { -13, -12, 23, 23 },
-    { -5, -8, 9, 15 },
-};
+struct Unk_unk68 D_801096A8 = { -39, 21, 27, 30 };
+struct Unk_unk68 D_801096AC = { 0, 10, 9, 3 };
+struct Unk_unk68 D_801096B0 = { 0, 0, 6, 6 };
+struct Unk_unk68 D_801096B4 = { 0, -4, 10, 7 };
+struct Unk_unk68 D_801096B8 = { -12, -32, 23, 63 };
+struct Unk_unk68 D_801096BC = { -4, -20, 9, 30 };
+struct Unk_unk68 D_801096C0 = { -37, -56, 73, 118 };
+struct Unk_unk68 D_801096C4 = { -28, -48, 55, 88 };
+struct Unk_unk68 D_801096C8 = { -13, -12, 23, 23 };
+struct Unk_unk68 D_801096CC = { -5, -8, 9, 15 };
 
 s32 D_801096D0[3] = { 0x30000, 0x20000, 0x10000 };
 

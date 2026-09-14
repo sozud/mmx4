@@ -60,7 +60,16 @@ void func_8009E5A4(struct ShotObj* arg0)
     arg0->unk5 = arg0->unk84.shot_24.owner_notified;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E5B0);
+void func_8009E5B0(struct ShotObj* arg0)
+{
+    if (D_801090D4[arg0->unk2][0] + 0x1AA0 < arg0->x_pos.i.hi) {
+        arg0->unk28 = 0;
+        arg0->unk5 = 3;
+        return;
+    }
+
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E608);
 

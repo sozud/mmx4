@@ -11,7 +11,19 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A63B0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A6510);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A6600);
+void func_800A6600(struct ShotObj* arg0)
+{
+    if (SHOT_OBJECT(arg0->backref)->state == 2) {
+        arg0->unk50.data = NULL;
+    } else {
+        arg0->unk50.data = D_80109964;
+    }
+    arg0->unk8C.word = 1;
+    arg0->unk5 = 2;
+    arg0->timer = 0x3C;
+    arg0->unk60 = 6;
+    func_80015D60(arg0, 0x1F);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A666C);
 
@@ -30,7 +42,20 @@ void func_800A6794(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A67FC);
+s32 func_800A67FC(struct ShotObj* arg0)
+{
+    struct WeaponObj* weapon;
+
+    weapon = arg0->unk7C;
+    if (weapon->active == 0) {
+        arg0->unk5 = 1;
+    } else if (weapon->id != 0x17) {
+        arg0->unk5 = 1;
+    } else if (func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(weapon)) != 0) {
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A6860);
 

@@ -245,7 +245,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9654);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A96F8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A97C0);
+void func_800A97C0(struct ShotObj* arg0)
+{
+    struct WeaponObj* weapon;
+
+    weapon = arg0->unk7C;
+    arg0->x_pos.u.hi = weapon->x_pos.u.hi;
+    arg0->y_pos.u.hi = weapon->y_pos.u.hi;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state = 2;
+    }
+}
 
 void func_800A9818(struct ShotObj* arg0)
 {

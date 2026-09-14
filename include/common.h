@@ -430,6 +430,7 @@ MMX4_STATIC_ASSERT(psx_base_object_size, sizeof(struct BaseObj) == 0x18);
 #define VISUAL_OBJECT(object) ((struct VisualObj*)(object))
 #define EFFECT_OBJECT(object) ((struct EffectObj*)(object))
 #define MISC_OBJECT(object) ((struct MiscObj*)(object))
+#define COLLISION_OBJECT(object) ((struct CollisionObj*)(object))
 
 struct Main0Ext {
     u8 background_relative;
@@ -1334,10 +1335,17 @@ struct VisualObj {
     u8 pa58[0x70 - 0x60];
 }; // size 0x70
 
+struct Shot29Ext {
+    u8 timer;
+    u8 unk8D;
+};
+
 union ShotUnk8C {
     s32 word;
     u16 half;
     s8 byte;
+    u8 bytes[4];
+    struct Shot29Ext shot_29;
     struct ObjectHeader* object;
 };
 
@@ -1413,13 +1421,21 @@ MMX4_STATIC_ASSERT(shot_unk58_offset,
 MMX4_STATIC_ASSERT(shot_unk68_offset,
     MMX4_OFFSET_OF(struct ShotObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
 
+struct Weapon1Ext {
+    u8 pad8C;
+    u8 timer;
+    u8 pad8E[0x90 - 0x8E];
+    u8 unk90;
+};
+
 struct Weapon7Ext {
     u16 timer;
 };
 
 struct Weapon10Ext {
     u8 timer;
-    u8 pad8D[0x90 - 0x8D];
+    u8 pad8D[0x8F - 0x8D];
+    u8 unk8F;
     u8 unk90;
 };
 
@@ -1442,6 +1458,12 @@ struct Weapon20Ext {
 union WeaponUnk84 {
     s32 word;
     u8 byte;
+    u8 bytes[4];
+};
+
+union WeaponUnk88 {
+    u16 half;
+    u8 bytes[2];
 };
 
 union WeaponUnk80 {
@@ -1463,6 +1485,8 @@ struct Shot46Ext {
 
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
+    RECT* rect;
+    struct Weapon1Ext weapon_1;
     struct Weapon7Ext weapon_7;
     struct Weapon10Ext weapon_10;
     struct Weapon14Ext weapon_14;
@@ -1518,7 +1542,8 @@ struct WeaponObj {
     struct PlayerObj* owner;
     union WeaponUnk80 unk80;
     union WeaponUnk84 unk84;
-    s8 pad88[0x8C - 0x88];
+    union WeaponUnk88 unk88;
+    s8 pad8A[0x8C - 0x8A];
     union WeaponObjExt ext;
     u8 unk94;
     s8 pad95[0x98 - 0x95];
@@ -3077,6 +3102,26 @@ extern u8 D_80109104[8];
 extern struct Unk_unk68 D_80109894;
 extern u8 D_80109BA8[2][4];
 extern u8 D_80108BA4[];
+extern struct Unk_unk68 D_801087CC[];
+extern struct Unk_unk68 D_801087FC[];
+extern struct Unk_unk68 D_80108800[];
+extern u8 D_8010889C[];
+extern u32* D_8011C018[22];
+extern s16 D_801090D4[3][2];
+extern struct Unk_unk68 D_801096B0;
+extern struct Unk_unk68 D_801096C0;
+extern struct Unk_unk68 D_801096C4;
+extern struct Unk_unk68 D_801096C8;
+extern struct Unk_unk68 D_801096CC;
+extern u8 D_801096DC[12];
+extern RECT** D_80109698;
+extern RECT** D_8010969C;
+extern u8 D_80109890[4];
+extern u8 D_80109964[4];
+extern u8 D_801099DC[4];
+extern u8 D_801099E0[4];
+extern u8 D_801099E4[4];
+extern u8 D_80109DA4[4];
 extern struct ObjectHeader* D_8013B8A8;
 extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];

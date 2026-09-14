@@ -90,7 +90,23 @@ void func_800A7570(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7600);
+void func_800A7600(struct ShotObj* arg0)
+{
+    s16 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    temp_v0 = arg0->timer - 1;
+    arg0->timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk5 = 3;
+        if (arg0->unk2 == 0) {
+            arg0->timer = 0x78;
+        } else {
+            arg0->timer = 0xB4;
+        }
+        arg0->unk8A = 0x1E0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A766C);
 
@@ -103,11 +119,37 @@ void func_800A77D8(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7820);
+void func_800A7820(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk50.data = D_801099DC;
+    }
+
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->state = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7878);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7928);
+void func_800A7928(struct ShotObj* arg0)
+{
+    s16 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk50.data = D_801099E0;
+    }
+    temp_v0 = arg0->timer - 1;
+    arg0->timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk50.data = NULL;
+        func_80015D60(arg0, (arg0->unk2 * 4) + 0x1A);
+        arg0->unk5 = 2;
+    }
+}
 
 void func_800A79A4(struct ShotObj* arg0)
 {
@@ -117,7 +159,18 @@ void func_800A79A4(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A79E0);
+void func_800A79E0(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk50.data = D_801099E4;
+    }
+    if (--arg0->timer == 0) {
+        arg0->unk50.data = NULL;
+        func_80015D60(arg0, 0x1C);
+        arg0->unk5 = 1;
+    }
+}
 
 void func_800A7A54(struct ShotObj* arg0)
 {
