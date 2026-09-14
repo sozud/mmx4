@@ -4,7 +4,14 @@
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3388);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D34AC);
+void func_800D34AC(struct MiscObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(arg0) != 0) {
+        arg0->state = 2;
+    }
+}
 
 void func_800D34F0(struct MiscObj* arg0)
 {

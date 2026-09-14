@@ -64,7 +64,37 @@ void func_8009982C(struct ShotObj* arg0)
     func_8002D9BC(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_800998D4);
+void func_800998D4(struct ShotObj* arg0)
+{
+    struct MiscObj* temp_v0;
+
+    func_8002B694(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x19, 0x19);
+
+    if (arg0->unk70 & 8) {
+        arg0->unk60 = 5;
+        arg0->unk68 = 0;
+        arg0->unk50.data = D_80108C58;
+        arg0->unk5 = arg0->unk5 + 1;
+        func_80015D60(arg0, 0xB);
+
+        if (!(arg0->unk70 & 3)) {
+            temp_v0 = find_free_misc_obj();
+            if (temp_v0 != 0) {
+                temp_v0->active = 0x41;
+                temp_v0->id = 4;
+                temp_v0->unk2 = 0;
+                temp_v0->state = 0;
+                temp_v0->ext.pointer.unk50 = arg0->unk7C;
+                temp_v0->x_pos.val = arg0->x_pos.val + (get_random() & 3);
+                temp_v0->y_pos.val = arg0->y_pos.val + (get_random() & 3);
+            }
+        }
+    }
+
+    func_8002D9BC(arg0);
+}
 
 void func_800999D0(struct ShotObj* arg0)
 {

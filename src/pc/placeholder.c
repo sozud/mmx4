@@ -1921,31 +1921,3 @@ void func_80068D6C(struct MainObj* arg0)
     }
     arg0->unk67 = 1;
 }
-void func_800998D4(struct ShotObj* arg0)
-{
-    struct MiscObj* misc;
-
-    func_8002B694((struct AnimatedObj*)arg0);
-    func_80015DC8(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x19, 0x19);
-    if (arg0->unk70 & 8) {
-        arg0->unk60 = 5;
-        arg0->unk68 = 0;
-        arg0->unk50.data = D_80108C58;
-        arg0->unk5++;
-        func_80015D60(arg0, 0xB);
-        if (!(arg0->unk70 & 3)) {
-            misc = find_free_misc_obj();
-            if (misc != NULL) {
-                misc->active = 0x41;
-                misc->id = 4;
-                misc->unk2 = 0;
-                misc->state = 0;
-                misc->ext.pointer.unk50 = arg0->unk7C;
-                misc->x_pos.val = arg0->x_pos.val + (get_random() & 3);
-                misc->y_pos.val = arg0->y_pos.val + (get_random() & 3);
-            }
-        }
-    }
-    func_8002D9BC(arg0);
-}

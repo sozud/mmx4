@@ -313,7 +313,25 @@ void func_800ADCE8(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADD40);
+void func_800ADD40(struct ShotObj* arg0)
+{
+    s16 timer;
+    s32 velocity;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    timer = arg0->unk8A - 1;
+    arg0->unk8A = timer;
+    velocity = FIXED(-5);
+    if ((timer << 0x10) == 0) {
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        if (arg0->unk15 != 0) {
+            velocity = FIXED(5);
+        }
+        arg0->x_vel.val = velocity;
+        arg0->y_vel.val = 0;
+        func_8001540C(2, 4, arg0);
+    }
+}
 
 void func_800ADDB4(struct ShotObj* arg0)
 {

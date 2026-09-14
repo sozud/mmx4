@@ -239,7 +239,15 @@ void func_800D9A04(struct LayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9A58);
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9B08);
+u8 func_800D9B08(struct LayerObj* arg0)
+{
+    s32 left = D_8010FF58[(u8)arg0->bg_offset - 1];
+    s32 x = g_Player.x_pos.i.hi;
+    if (x >= left && x <= left + 0x10) {
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9B48);
 

@@ -37,7 +37,13 @@ void func_800DA964(struct LayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DA984);
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_07", func_800DAB40);
+u8 func_800DAB40(s16 arg0, s16 arg1, s16 arg2, s16 arg3)
+{
+    if (((arg0 - 0x20) <= arg2) && (arg2 < (arg0 + 0x160)) && ((arg1 - 0x20) <= arg3) && (arg3 < (arg1 + 0x110))) {
+        return 1;
+    }
+    return 0;
+}
 
 void func_800DAB9C(struct TileEffectRecord* arg0, s32 arg1, s32 arg2, s32 arg3)
 {

@@ -9,7 +9,14 @@ void func_800C91B0(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C91EC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C92B8);
+void func_800C92B8(struct MiscObj* arg0)
+{
+    s8 timer = arg0->ext.misc_6.timer - 1;
+    arg0->ext.misc_6.timer = timer;
+    if (timer == 0) {
+        arg0->state = 2;
+    }
+}
 
 void func_800C92E0(struct MiscObj* arg0)
 {

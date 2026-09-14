@@ -2,7 +2,21 @@
 // 800BE2C4..800BE57C
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE2C4);
+void func_800BE2C4(struct EffectObj* arg0)
+{
+    arg0->ext.effect_42.owner.main->ext.main_73.unk8E = 0;
+    switch (arg0->ext.effect_42.owner.main->ext.main_73.object_id) {
+    case 0:
+    case 1:
+    case 2:
+        arg0->state = 1;
+        break;
+    default:
+        arg0->ext.effect_42.owner.main->ext.main_73.effect_state = 1;
+        arg0->state = 2;
+        break;
+    }
+}
 
 void func_800BE30C(struct EffectObj* arg0)
 {

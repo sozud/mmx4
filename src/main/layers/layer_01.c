@@ -3,6 +3,7 @@
 #include "common.h"
 
 void func_800D9008(struct LayerObj* arg0);
+void func_800D9138(struct LayerObj* arg0);
 
 void func_800D8ED4(struct LayerObj* arg0)
 {
@@ -85,7 +86,16 @@ void func_800D910C(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_01", func_800D9138);
+void func_800D9138(struct LayerObj* arg0)
+{
+    s16 value;
+    value = background_objects[0].x_pos.i.hi - 0x960;
+    value >>= 1;
+    value = value + (value >> 1);
+    background_objects[1].x_pos.i.hi = value + background_objects[1].unk40;
+    value = background_objects[0].y_pos.i.hi - 0x500;
+    background_objects[1].y_pos.i.hi = background_objects[1].unk42 + (background_objects[0].y_pos.i.hi - (value >> 2));
+}
 
 void func_800D91A0(struct LayerObj* arg0)
 {

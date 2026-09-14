@@ -38,7 +38,17 @@ void func_800C34E8(struct ItemObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C34F0);
+u8 func_800C34F0(struct MainObj* arg0)
+{
+    s32 player_x;
+    s32 object_x;
+    object_x = arg0->x_pos.i.hi;
+    player_x = g_Player.x_pos.i.hi;
+    if (object_x - 0x30 < player_x && player_x < object_x + 0x30) {
+        return 1;
+    }
+    return 0;
+}
 
 void (*D_8010CFE0[])(struct ItemObj*) = {
     func_800C32BC,

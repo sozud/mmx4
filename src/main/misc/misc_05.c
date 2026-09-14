@@ -33,7 +33,11 @@ void func_800C90A0(struct MiscObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_05", func_800C90C0);
+void func_800C90C0(struct MiscObj* arg0)
+{
+    func_80015D60(arg0, arg0->ext.unk.unk54);
+    arg0->state = 4;
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_05", func_800C90F8);
 

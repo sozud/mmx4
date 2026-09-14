@@ -28,9 +28,32 @@ void func_800CEAC8(struct MiscObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEAE8);
+void func_800CEAE8(struct MiscObj* arg0)
+{
+    u8 timer;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    timer = arg0->ext.unk.unk54 - 1;
+    arg0->ext.unk.unk54 = timer;
+    if (timer == 0) {
+        arg0->ext.unk.unk54 = 0x24;
+        arg0->unk5 = 1;
+        func_80015D60(arg0, 2);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEB44);
+void func_800CEB44(struct MiscObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->ext.misc_34.timer == 0) {
+        engine_obj.unk10 = 0;
+        engine_obj.unk12 = 0;
+        engine_obj.unk11 = 0;
+        engine_obj.unk13 = 0;
+        self->unk5 = 2;
+        self->ext.misc_34.enabled = 1;
+        func_80015D60(self, 1);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEBC0);
 

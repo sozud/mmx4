@@ -75,7 +75,16 @@ void func_800D2854(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D28BC);
+void func_800D28BC(struct MiscObj* arg0)
+{
+    s8 timer = arg0->ext.unk.unk55;
+    arg0->on_screen = 0;
+    timer--;
+    arg0->ext.unk.unk55 = timer;
+    if (!(timer & 0xFF)) {
+        engine_obj.unkF = 0x40;
+    }
+}
 
 void func_800D28E8(struct MiscObj* arg0)
 {

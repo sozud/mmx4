@@ -158,7 +158,15 @@ void func_800D1864(struct UnkObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D188C);
+void func_800D188C(struct UnkObj* arg0)
+{
+    s8 timer = arg0->ext.timer - 1;
+    arg0->ext.timer = timer;
+    if (timer == 0) {
+        engine_obj.unkF = 1;
+        arg0->state = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D18C0);
 
