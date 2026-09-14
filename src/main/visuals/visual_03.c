@@ -97,7 +97,7 @@ struct VisualObj* func_800AFAB4(s8 arg0, s16 x, s16 y, u8 arg3)
         temp_v0->state = 0;
         temp_v0->unk5 = 0;
         temp_v0->unk6 = 0;
-        temp_v0->unk5C = arg3;
+        temp_v0->unk5C.value = arg3;
         temp_v0->x_pos.i.hi = x;
         temp_v0->x_pos.i.lo = 0;
         temp_v0->y_pos.i.hi = y;

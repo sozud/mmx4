@@ -4,7 +4,17 @@
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB1F0);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB314);
+void func_800BB314(struct EffectObj* arg0)
+{
+    s8 temp_v0;
+
+    temp_v0 = arg0->ext.unk_effect.unk16 - 1;
+    arg0->ext.unk_effect.unk16 = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->ext.unk_effect.unk16 = 4;
+        func_800AF95C(OBJECT_HEADER(arg0), 1, 0x60, 0x60, 2);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB364);
 

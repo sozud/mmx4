@@ -20,7 +20,7 @@ void func_800B464C(struct VisualObj* arg0)
     arg0->unk15 = player->unk15;
     arg0->unk5 = (s8)((s32)((u8)arg0->unk2 << 24) >> 28);
     arg0->unk6 = 0;
-    arg0->unk5C = 0;
+    arg0->unk5C.value = 0;
     arg0->unk2 &= 0xF;
 }
 
@@ -59,7 +59,7 @@ void func_800B4808(struct VisualObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002B318(BASE_OBJECT(arg0), 0x100, 0x100);
-    if (arg0->unk5C != 0) {
+    if (arg0->unk5C.value != 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
     }

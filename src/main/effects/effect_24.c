@@ -41,7 +41,25 @@ void func_800BAD44(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_24", func_800BADD0);
+void func_800BADD0(struct EffectObj* arg0)
+{
+    struct EffectObj* effect;
+    u8 counter;
+    u8 old_unk5;
+
+    effect = D_8013B8E8[arg0->ext.effect_24.unk1B];
+    effect->unk5++;
+    counter = arg0->ext.effect_24.unk1B + 1;
+    arg0->ext.effect_24.unk1B = counter;
+    if (counter == 0x16) {
+        old_unk5 = arg0->unk5;
+        arg0->ext.effect_9.direction = 0x3C;
+        arg0->unk5 = old_unk5 + 1;
+        if (engine_obj.stage == 0) {
+            func_8001653C();
+        }
+    }
+}
 
 void func_800BAE5C(struct EffectObj* arg0)
 {

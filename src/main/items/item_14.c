@@ -37,9 +37,33 @@ void func_800C3A7C(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3AD4);
+void func_800C3AD4(struct ItemObj* arg0)
+{
+    if (background_objects[0].unk34 != 0) {
+        return;
+    }
 
-INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3B40);
+    if (arg0->y_pos.i.hi == 0x8D0) {
+        arg0->unk6++;
+        return;
+    }
+
+    if (arg0->unk7C.timer <= 0xFFFF) {
+        arg0->unk7C.timer += FIXED(0.0625);
+    }
+
+    arg0->y_pos.val -= arg0->unk7C.timer;
+}
+
+void func_800C3B40(struct ItemObj* arg0)
+{
+    background_objects[0].unk28 = 0x2D0;
+    background_objects[0].unk2A = 0x2D0;
+    background_objects[0].unk47 = 1;
+    func_8001540C(5, 5, NULL);
+    arg0->unk6 = 0;
+    arg0->unk5++;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3BA4);
 

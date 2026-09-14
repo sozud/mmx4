@@ -52,9 +52,38 @@ void func_800C369C(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C36E8);
 
-INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C37C4);
+void func_800C37C4(struct ItemObj* arg0, struct EngineObj* arg1,
+    struct PlayerObj* arg2)
+{
+    if (arg0->animation_step.fields.event == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        if (arg1->unk10 != 0) {
+            arg1->unk10 = 0;
+            arg1->unk11 = 0;
+            arg1->unk12 = 0;
+            arg1->unk13 = 0;
+            arg1->unk14 = 0;
+        }
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C3828);
+void func_800C3828(struct ItemObj* arg0)
+{
+    u8 type;
+
+    func_8002E184(PLAYER_OBJECT(arg0));
+
+    type = 7;
+    if (engine_obj.substage != 0) {
+        type = 0x10;
+    }
+
+    func_800DABE4(type, (s16)(arg0->x_pos.u.hi - 0x10),
+        arg0->y_pos.i.hi);
+}
 
 void (*D_8010D030[])(struct ItemObj*) = {
     func_800C3578,

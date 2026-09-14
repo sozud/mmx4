@@ -24,7 +24,7 @@ void func_800B1394(struct VisualObj* self)
     self->unk3C = (u8*)sprite_frames + offset;
     self->bg_offset = g_Player.bg_offset;
     self->unk40 = 0;
-    if (self->unk5C == 2) {
+    if (self->unk5C.value == 2) {
         self->unk42 = 0x7806;
     } else {
         self->unk42 = 0x7805;
@@ -32,7 +32,7 @@ void func_800B1394(struct VisualObj* self)
     if (self->unk7 == 0) {
         self->unk16 = 1;
     }
-    func_80015D60(self, self->unk5C);
+    func_80015D60(self, self->unk5C.value);
     self->state++;
     self->unk7 = get_random() & 1;
     is_on_screen(BASE_OBJECT(self));
@@ -47,11 +47,11 @@ void func_800B1450(struct VisualObj* arg0)
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->x_vel.val = 0;
         arg0->y_vel.val = 0;
-        arg0->unk5C = 0;
+        arg0->unk5C.value = 0;
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
-    temp_v1 = (u8)arg0->unk5C;
+    temp_v1 = (u8)arg0->unk5C.value;
     arg0->on_screen = 0;
     if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((D_80141BD8.unk0 & 1) == arg0->unk7)) {
         is_on_screen((struct BaseObj*)arg0);

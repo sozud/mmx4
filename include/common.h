@@ -1115,6 +1115,11 @@ struct MainObj {
     MAIN_OBJ_TAIL_FIELDS
 };
 
+union BackgroundUnk3E {
+    u16 half;
+    s8 bytes[2];
+};
+
 struct BackgroundObj {
     u8 unk0;
     u8 unk1;
@@ -1147,8 +1152,7 @@ struct BackgroundObj {
     s8 unk3B;
     s8 unk3C;
     s8 unk3D;
-    s8 unk3E;
-    s8 unk3F;
+    union BackgroundUnk3E unk3E;
     u16 unk40;
     u16 unk42;
     s8 unk44;
@@ -1321,6 +1325,15 @@ struct Unk_unk68 {
     u8 unk3;
 };
 
+union VisualUnk5C {
+    s8 value;
+    struct PlayerObj* owner;
+    struct {
+        s8 pad5C[0x5E - 0x5C];
+        s16 unk5E;
+    } fields;
+};
+
 struct VisualObj {
     ANIMATED_OBJ_FIELDS
     u8 unk49;
@@ -1328,10 +1341,9 @@ struct VisualObj {
     struct PlayerObj* unk50; // 0x50, guessed
     s16 unk54;
     s16 unk56;
-    s32 : 32;
-    s8 unk5C;
-    s8 : 8;
-    s16 unk5E;
+    s16 unk58;
+    s16 unk5A;
+    union VisualUnk5C unk5C;
     u8 pa58[0x70 - 0x60];
 }; // size 0x70
 
@@ -1483,6 +1495,13 @@ struct Shot46Ext {
     u8 unk8F;
 };
 
+struct Shot55Ext {
+    u8 pad8C[0x90 - 0x8C];
+    u8 unk90;
+    u8 pad91;
+    u8 unk92;
+};
+
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
@@ -1494,6 +1513,7 @@ union WeaponObjExt {
     struct Weapon20Ext weapon_20;
     struct Weapon29Ext weapon_29;
     struct Shot46Ext shot_46;
+    struct Shot55Ext shot_55;
 };
 
 MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
@@ -1664,7 +1684,7 @@ struct ItemObj {
     s8 pad49[0x50 - 0x49];
     s32 unk50;
     s32 unk54;
-    s8 pad58[0x5C - 0x58];
+    s32 unk58;
     s8 unk5C;
     s8 pad5D[0x61 - 0x5D];
     s8 unk61;
@@ -3101,6 +3121,11 @@ extern u16 D_801090E8[3][2];
 extern u8 D_80109104[8];
 extern struct Unk_unk68 D_80109894;
 extern u8 D_80109BA8[2][4];
+extern u8 D_8010BF38[4][2];
+extern s16 D_8010C0C4[2][2];
+extern u16 D_8010BFE8[16];
+extern u8 D_8010C158[8];
+extern s16 D_8010CB24[2];
 extern u8 D_80108BA4[];
 extern struct Unk_unk68 D_801087CC[];
 extern struct Unk_unk68 D_801087FC[];

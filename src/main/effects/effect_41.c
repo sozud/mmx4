@@ -31,7 +31,23 @@ void func_800BE214(struct EffectObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_41", func_800BE25C);
+void func_800BE25C(struct EffectObj* arg0)
+{
+    s8 timer;
+    s32* frame;
+
+    timer = arg0->ext.effect_41.palette.fields.timer - 1;
+    arg0->ext.effect_41.palette.fields.timer = timer;
+    if (timer != 0) {
+        return;
+    }
+
+    frame = arg0->ext.effect_41.palette_source.words + arg0->ext.effect_41.palette.fields.step;
+    arg0->ext.effect_41.palette_source.words = frame;
+    arg0->ext.effect_41.palette.packed = *frame;
+    func_800DA984(arg0->ext.effect_41.palette.fields.id,
+        arg0->x_pos.i.hi - 0x10, arg0->y_pos.i.hi - 0x10);
+}
 
 u8 D_8010C0DC[6][4] = {
     { 0x0E, 0, 1, 0 },

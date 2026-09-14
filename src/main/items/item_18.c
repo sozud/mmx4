@@ -9,7 +9,25 @@ void func_800C4544(struct ItemObj* arg0)
     D_8010D1CC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_18", func_800C458C);
+void func_800C458C(struct ItemObj* arg0)
+{
+    arg0->unk16 = 6;
+    arg0->x_pos.i.hi = 0x24B0;
+    arg0->y_pos.i.hi = 0xC0;
+    arg0->animation_table = NULL;
+    arg0->unk5C = 0;
+    arg0->unk61 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk50 = 0;
+    arg0->unk54 = 0;
+    arg0->unk58 = 0;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = FIXED(0.125);
+    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x60);
+    arg0->state = 1;
+}
 
 void func_800C460C(struct ItemObj* arg0)
 {

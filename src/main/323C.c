@@ -6359,10 +6359,10 @@ void func_80028A48(struct BackgroundObj* arg0)
         return;
     }
     if (--arg0->unk3C == 0) {
-        arg0->unk3E ^= 0x80;
+        arg0->unk3E.bytes[0] ^= 0x80;
         arg0->unk3C = arg0->unk3A;
     }
-    if (arg0->unk3E >= 0) {
+    if (arg0->unk3E.bytes[0] >= 0) {
         arg0->x_pos.i.hi += arg0->unk45;
     }
 }
@@ -6374,10 +6374,10 @@ void func_80028AD8(struct BackgroundObj* arg0)
         return;
     }
     if (--arg0->unk3D == 0) {
-        arg0->unk3F ^= 0x80;
+        arg0->unk3E.bytes[1] ^= 0x80;
         arg0->unk3D = arg0->unk3B;
     }
-    if (arg0->unk3F >= 0) {
+    if (arg0->unk3E.bytes[1] >= 0) {
         arg0->y_pos.i.hi += arg0->unk46;
     }
 }
@@ -6386,7 +6386,7 @@ void func_80028B68(s8 arg0, s8 arg1, s8 arg2)
 {
     background_objects[0].unk36 = arg0;
     background_objects[0].unk45 = arg1;
-    background_objects[0].unk3E = arg1;
+    background_objects[0].unk3E.bytes[0] = arg1;
     background_objects[0].unk3C = arg2;
     background_objects[0].unk3A = arg2;
     background_objects[0].unk34 |= 0x10;
@@ -6396,7 +6396,7 @@ void func_80028BAC(s8 arg0, s8 arg1, s8 arg2)
 {
     background_objects[0].unk37 = arg0;
     background_objects[0].unk46 = arg1;
-    background_objects[0].unk3F = arg1;
+    background_objects[0].unk3E.bytes[1] = arg1;
     background_objects[0].unk3D = arg2;
     background_objects[0].unk3B = arg2;
     background_objects[0].unk34 |= 1;
