@@ -27,7 +27,15 @@ void func_800B372C(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3768);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B37F8);
+void func_800B37F8(struct VisualObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800B3848(struct VisualObj* arg0)
 {
@@ -36,7 +44,15 @@ void func_800B3848(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3884);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B392C);
+void func_800B392C(struct VisualObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800B397C(struct VisualObj* arg0)
 {
@@ -45,7 +61,15 @@ void func_800B397C(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B39B8);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3A60);
+void func_800B3A60(struct VisualObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_800B3AB0(struct VisualObj* arg0)
 {
@@ -76,7 +100,20 @@ void func_800B3C34(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3C90);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3CCC);
+void func_800B3CCC(struct VisualObj* arg0)
+{
+    struct PlayerObj* source;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    source = arg0->unk50;
+    arg0->x_pos.val = source->x_pos.val;
+    arg0->y_pos.val = source->y_pos.val;
+    arg0->unk15 = source->unk15;
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void (*D_8010A64C[])(struct VisualObj*) = {
     func_800B35F4,

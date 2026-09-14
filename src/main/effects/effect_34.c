@@ -27,7 +27,25 @@ void func_800BD01C(struct EffectObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BD024);
+void func_800BD024(struct EffectObj* arg0)
+{
+    u16* src;
+    u16* dst;
+    u32 count;
+
+    src = D_8010BFE8;
+    count = 0;
+    arg0->ext.unk_effect.unk14 = 1;
+    arg0->ext.unk_effect.unk15 = 0;
+    arg0->state++;
+    dst = SP_PALETTE;
+    arg0->ext.effect_4.unk16 = 0x20;
+    dst += 0x5E0 / 2;
+    do {
+        *dst++ = *src++;
+        count++;
+    } while (count < 0x10U);
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BD080);
 

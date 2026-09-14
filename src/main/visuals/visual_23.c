@@ -7,7 +7,7 @@ void func_800B322C(struct VisualObj* arg0)
     arg0->state = 1;
     switch (arg0->unk2) {
     case 0:
-        arg0->unk5C = 0;
+        arg0->unk5C.value = 0;
         arg0->x_pos.i.hi -= arg0->unk15 ? -0x33 : 0x33;
         arg0->y_pos.i.hi -= 4;
         func_80015D60(arg0, 0x13);

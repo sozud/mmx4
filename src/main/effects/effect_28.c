@@ -26,7 +26,27 @@ void func_800BBE84(struct EffectObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBEA4);
+void func_800BBEA4(struct EffectObj* arg0)
+{
+    u8 temp_v0;
+
+    temp_v0 = arg0->ext.effect_28.filter_timer - 1;
+    arg0->ext.effect_28.filter_timer = temp_v0;
+    if (temp_v0 == 0) {
+        need_palette_load |= 1;
+        arg0->ext.effect_28.timer = 0x5A;
+        arg0->ext.effect_28.filter_timer = 4;
+        arg0->ext.effect_28.palette_index ^= 1;
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+        arg0->ext.effect_28.finished = 0;
+        return;
+    }
+    g_FilterAmountR = 0x1F;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+}
 
 void func_800BBF34(struct EffectObj* arg0)
 {

@@ -21,7 +21,13 @@ void func_800C165C(struct ItemObj* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C169C);
+void func_800C169C(struct ItemObj* arg0)
+{
+    if (D_8010CB24[arg0->unk2] < g_Player.x_pos.i.hi) {
+        engine_obj.unkF = 0x40;
+        func_8002B108(OBJECT_HEADER(arg0));
+    }
+}
 
 void (*D_8010CAA8[])(struct ItemObj*) = {
     func_800C13D8,

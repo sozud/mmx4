@@ -148,7 +148,17 @@ void func_800C2E20(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2EAC);
+void func_800C2EAC(struct ItemObj* arg0)
+{
+    if (g_Player.unkC0 < 0) {
+        arg0->tail_ext.unk1.unk84.timer = 0;
+        background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
+        background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 2;
+        func_8001540C(5, 0, NULL);
+    }
+}
 
 void func_800C2F18(struct ItemObj* arg0)
 {
@@ -182,7 +192,19 @@ void func_800C3198(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C31C4);
+void func_800C31C4(struct ItemObj* arg0)
+{
+    u8 checkpoint;
+
+    if (g_Player.unkC0 < 0) {
+        func_80036B18();
+        checkpoint = arg0->unk2;
+        engine_obj.unkF = -0x40;
+        engine_obj.checkpoint = checkpoint & 0xF;
+        arg0->state = 3;
+        arg0->unk5 = 0;
+    }
+}
 
 void (*D_8010CFAC[])(struct ItemObj*) = {
     func_800C2C3C,

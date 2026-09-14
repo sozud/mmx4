@@ -20,7 +20,7 @@ void func_800B2AD0(struct VisualObj* arg0)
         arg0->unk42 = 0x7802;
         arg0->unk40 = 0;
         arg0->unk16 = 3;
-        arg0->unk5C = 0;
+        arg0->unk5C.value = 0;
         arg0->state++;
     }
 
@@ -52,11 +52,11 @@ void func_800B2AD0(struct VisualObj* arg0)
     arg0->unk15 = player->unk15;
     arg0->x_pos.val = player->x_pos.val;
     arg0->y_pos.val = player->y_pos.val;
-    if (arg0->unk5C == 0) {
-        arg0->unk5C = 8;
+    if (arg0->unk5C.value == 0) {
+        arg0->unk5C.value = 8;
         func_8001540C(0, 0x1F, arg0);
     } else {
-        arg0->unk5C--;
+        arg0->unk5C.value--;
     }
     func_8002B318(arg0, 0x28, 0x28);
 }

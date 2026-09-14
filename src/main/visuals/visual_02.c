@@ -33,7 +33,7 @@ void func_800AEF18(struct VisualObj* arg0)
     arg0->unk42 = 0x7802;
     arg0->unk16 = 0;
     arg0->unk15 = g_Player.unk15;
-    arg0->unk5C = 0;
+    arg0->unk5C.value = 0;
     func_800AF1AC(arg0);
     arg0->x_pos.i.lo = 0;
     arg0->y_pos.i.lo = 0;
@@ -80,7 +80,7 @@ void func_800AF084(struct VisualObj* arg0)
 
 void func_800AF15C(struct VisualObj* arg0)
 {
-    if (arg0->animation_step.fields.relative_step == 0 || arg0->unk5C != 0) {
+    if (arg0->animation_step.fields.relative_step == 0 || arg0->unk5C.value != 0) {
         ZeroObjectState(arg0);
     } else {
         func_8002B318(arg0, 0x40, 0x20);
@@ -91,14 +91,14 @@ void func_800AF1AC(struct VisualObj* arg0)
 {
     struct PlayerObj* entity = &g_Player;
 
-    if (arg0->unk5C == 0) {
+    if (arg0->unk5C.value == 0) {
         if (entity->unk8E == 0) {
-            arg0->unk5C = 1;
+            arg0->unk5C.value = 1;
         }
         if (entity->unk15 != arg0->unk15) {
-            arg0->unk5C = 1;
+            arg0->unk5C.value = 1;
         }
-        if (arg0->unk5C == 0) {
+        if (arg0->unk5C.value == 0) {
             func_80092E2C(arg0, entity, arg0->unk2);
         }
     }

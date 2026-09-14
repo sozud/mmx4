@@ -97,7 +97,20 @@ void func_800C1B54(struct ItemObj* arg0)
     D_8010CC70[arg0->unk5](arg0, &engine_obj, &g_Player);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1B98);
+void func_800C1B98(struct ItemObj* arg0, struct EngineObj* arg1,
+    struct PlayerObj* arg2)
+{
+    func_8002E184(PLAYER_OBJECT(arg0));
+    func_800C204C(arg0);
+    if (func_800C1E7C(arg0)) {
+        if (arg0->unk7C.timer == 0) {
+            reset_main_and_shots();
+        }
+        arg2->unkC4 = 1;
+        background_objects[0].unk3E.half &= 0xF;
+        arg0->unk5 = 1;
+    }
+}
 
 void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
 {
@@ -112,9 +125,33 @@ void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerOb
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C88);
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1D90);
+void func_800C1D90(struct ItemObj* arg0, struct EngineObj* arg1,
+    struct PlayerObj* arg2)
+{
+    arg2->x_pos.val += 0xA400;
+    if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
+        arg2->unkC4 = 0;
+        func_80035EA4(arg2);
+        arg0->unk5 = 4;
+        func_80015D60(arg0, 1);
+        func_8001540C(0, 0x11, arg0);
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E10);
+void func_800C1E10(struct ItemObj* arg0, struct EngineObj* arg1,
+    struct PlayerObj* arg2)
+{
+    if (arg0->animation_step.fields.event < 2) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event == 1) {
+            func_8001540C(0, 0x10, arg0);
+            arg0->animation_step.fields.event = 0;
+        }
+    } else {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E7C);
 

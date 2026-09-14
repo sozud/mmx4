@@ -30,7 +30,27 @@ void func_800BDF20(struct EffectObj* arg0)
     func_800BDF40(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_39", func_800BDF40);
+void func_800BDF40(struct EffectObj* arg0)
+{
+    s8 temp_v0;
+
+    temp_v0 = arg0->ext.effect_39.palette.fields.timer - 1;
+    arg0->ext.effect_39.palette.fields.timer = temp_v0;
+    if (temp_v0 != 0) {
+        return;
+    }
+
+    arg0->ext.effect_39.palette_source.words += arg0->ext.effect_39.palette.fields.step;
+    arg0->ext.effect_39.palette.packed = *arg0->ext.effect_39.palette_source.words;
+
+    if (arg0->unk2 == 0) {
+        func_800BDFC8(arg0);
+        return;
+    }
+
+    func_800DA984(arg0->ext.effect_39.palette.fields.id,
+        arg0->x_pos.i.hi - 0x40, arg0->y_pos.i.hi - 0x20);
+}
 
 void func_800BDFC8(struct EffectObj* arg0)
 {

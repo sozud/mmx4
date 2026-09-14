@@ -11,7 +11,21 @@ void func_800BE9A0(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_00", func_800BE9E8);
 
-INCLUDE_ASM("main/nonmatchings/items/item_00", func_800BEB14);
+void func_800BEB14(struct ItemObj* arg0)
+{
+    u8 var_a0;
+
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_800C813C(7, D_8010C158, arg0);
+        var_a0 = 7;
+        if (arg0->unk2 == 0) {
+            var_a0 = 2;
+        }
+        func_800DABE4(var_a0, arg0->x_pos.i.hi - 0x20,
+            arg0->y_pos.i.hi - 0x18);
+        arg0->state = 2;
+    }
+}
 
 void func_800BEB94(struct ItemObj* arg0)
 {
