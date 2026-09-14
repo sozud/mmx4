@@ -35,7 +35,14 @@ void func_8005A3E4(struct MainObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_28", func_8005A460);
+void func_8005A460(struct MainObj* arg0)
+{
+    func_800AF808(BASE_OBJECT(arg0));
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    func_800C813C(2, D_800FD594, arg0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_8005A4AC(struct MainObj* arg0)
 {

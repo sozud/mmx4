@@ -311,7 +311,6 @@ s32 func_80013614(s32 arg0, s32* arg1)
 
 void func_80013650(void)
 {
-
     if (D_80137CD8 == 0) {
         CdReadyCallback(MyCdReadyCallback);
     } else {
@@ -2040,8 +2039,27 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001A498);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001A710);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001A7D4);
+void func_8001A7D4(struct EngineObj* arg0)
+{
+    u8* timer_ptr;
+    u8 temp_v1;
+    u32 temp_v1_2;
 
+    timer_ptr = &D_801721BA;
+    temp_v1 = *timer_ptr - 1;
+    *timer_ptr = temp_v1;
+    temp_v1_2 = temp_v1 & 0xFF;
+    if (temp_v1_2 < 0x79U) {
+        if (!(controller_state & PAD_CONFIRM)) {
+            if (temp_v1_2 != 0) {
+                return;
+            }
+        } else {
+            func_8001540C(0, 0x22, 0);
+        }
+        arg0->unk1 = (u8)arg0->unk1 + 1;
+    }
+}
 void func_8001A860(struct EngineObj* arg0)
 {
     s8 next_state;
@@ -6162,11 +6180,36 @@ void func_80027E48(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = v0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027E68);
+void func_80027E68(struct BackgroundObj* arg0)
+{
+    s16 value = background_objects[0].y_pos.i.hi;
+    value >>= 1;
+    value = value + (value >> 1);
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027E90);
+void func_80027E90(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 2;
+    value += second;
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027EBC);
+void func_80027EBC(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 1;
+    value += second;
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
 void func_80027EE8(struct BackgroundObj* arg0)
 {
@@ -6182,11 +6225,36 @@ void func_80027F08(struct BackgroundObj* arg0)
     arg0->x_pos.i.hi = v0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027F28);
+void func_80027F28(struct BackgroundObj* arg0)
+{
+    s16 value = background_objects[0].x_pos.i.hi;
+    value >>= 1;
+    value = value + (value >> 1);
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027F50);
+void func_80027F50(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 2;
+    value += second;
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80027F7C);
+void func_80027F7C(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 1;
+    value += second;
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
 #define FUNC_NAME func_80027FA8
 #include "helpers/bg_is_on_screen.h"
@@ -6219,21 +6287,21 @@ void func_80028138(void)
 
 void func_80028140(struct BackgroundObj* arg0)
 {
-    func_80027F28();
+    func_80027F28(arg0);
     func_80027E68(arg0);
     func_80027FA8(arg0);
 }
 
 void func_80028178(struct BackgroundObj* arg0)
 {
-    func_80027F50();
+    func_80027F50(arg0);
     func_80027E90(arg0);
     func_80027FA8(arg0);
 }
 
 void func_800281B0(struct BackgroundObj* arg0)
 {
-    func_80027F7C();
+    func_80027F7C(arg0);
     func_80027EBC(arg0);
     func_80027FA8(arg0);
 }
@@ -6274,11 +6342,36 @@ void func_800282F0(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = v0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028310);
+void func_80028310(struct BackgroundObj* arg0)
+{
+    s16 value = background_objects[0].y_pos.i.hi;
+    value >>= 1;
+    value = value + (value >> 1);
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028338);
+void func_80028338(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 2;
+    value += second;
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028364);
+void func_80028364(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 1;
+    value += second;
+    value = arg0->unk42 + value;
+    arg0->y_pos.i.hi = value;
+}
 
 void func_80028390(struct BackgroundObj* arg0)
 {
@@ -6294,11 +6387,36 @@ void func_800283B0(struct BackgroundObj* arg0)
     arg0->x_pos.i.hi = v0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800283D0);
+void func_800283D0(struct BackgroundObj* arg0)
+{
+    s16 value = background_objects[0].x_pos.i.hi;
+    value >>= 1;
+    value = value + (value >> 1);
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800283F8);
+void func_800283F8(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 2;
+    value += second;
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80028424);
+void func_80028424(struct BackgroundObj* arg0)
+{
+    volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
+    s16 value = background[0];
+    s16 second = background[0];
+    value >>= 1;
+    value += second;
+    value = arg0->unk40 + value;
+    arg0->x_pos.i.hi = value;
+}
 
 #define FUNC_NAME func_80028450
 #include "helpers/bg_is_on_screen.h"
@@ -6338,14 +6456,14 @@ void func_800285E8(struct BackgroundObj* arg0)
 
 void func_80028620(struct BackgroundObj* arg0)
 {
-    func_800283F8();
+    func_800283F8(arg0);
     func_80028338(arg0);
     func_80028450(arg0);
 }
 
 void func_80028658(struct BackgroundObj* arg0)
 {
-    func_80028424();
+    func_80028424(arg0);
     func_80028364(arg0);
     func_80028450(arg0);
 }

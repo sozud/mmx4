@@ -211,8 +211,19 @@ void dragonfly_hunt(struct MainObj* self)
     D_800FB120[self->unk6](self);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E24);
-
+void func_80049E24(struct MainObj* arg0)
+{
+    s32 velocity = arg0->unk15;
+    if (velocity != 0) {
+        velocity = FIXED(4);
+    } else {
+        velocity = FIXED(-4);
+    }
+    arg0->unk20 = velocity;
+    arg0->ext.raw[0] = 0xB4;
+    arg0->unk6 = 1;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E68);
 
 void dragonfly_hunt_hover(struct MainObj* self)
@@ -413,8 +424,21 @@ void dragonfly_hold_player(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A690);
+u8 func_8004A690(struct MainObj* arg0)
+{
+    struct Unk_unk68* offsets;
+    s16 x, y;
 
+    offsets = arg0->unk68;
+    x = arg0->x_pos.i.hi + offsets->unk0;
+    y = arg0->y_pos.i.hi - offsets->unk1;
+
+    return func_8002D724(
+               PLAYER_OBJECT(arg0),
+               x,
+               y)
+        & 0xFF;
+}
 void dragonfly_fly_past(struct MainObj* self)
 {
     func_8002B694((struct AnimatedObj*)self);
