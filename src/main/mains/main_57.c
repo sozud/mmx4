@@ -93,7 +93,15 @@ void func_80072A14(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072A84);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072BCC);
+void func_80072BCC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (abc_object.unkC == 0) {
+        arg0->unk7E = 3;
+        arg0->unk6++;
+        func_800921E8(1);
+    }
+}
 
 void func_80072C20(struct MainObj* arg0)
 {
@@ -122,7 +130,13 @@ void func_80072CC4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072D14);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072DB0);
+void func_80072DB0(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C <= 0) {
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80072DF8(struct MainObj* arg0)
 {
@@ -143,9 +157,41 @@ void func_80072EF8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072F68);
+void func_80072F68(struct MainObj* self)
+{
+    s32 value;
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072FF0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 1) {
+        value = FIXED(-3);
+        if (self->unk15 != 0) {
+            value = FIXED(3);
+        }
+        self->unk54 = (const u8*)&D_80101340;
+        self->unk20 = value;
+        self->unk50 = (const u8*)&D_80101348;
+        func_8001540C(2, 0x93, self);
+        self->unk6++;
+    }
+}
+
+void func_80072FF0(struct MainObj* arg0)
+{
+    s32 mask;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    mask = 2;
+    if (arg0->unk15 != 0) {
+        mask = 1;
+    }
+    if (mask & arg0->unk70) {
+        func_80074368(0x39);
+        func_80028B68(0x1E, 4, 1);
+        func_8001540C(2, 0x90, arg0);
+        arg0->unk7C = 0x28;
+        arg0->unk6++;
+    }
+}
 
 void func_80073084(struct MainObj* arg0)
 {
@@ -356,7 +402,13 @@ void func_80073974(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800739D4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073B00);
+void func_80073B00(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 1);
+        arg0->unk6++;
+    }
+}
 
 void func_80073B58(struct MainObj* arg0)
 {

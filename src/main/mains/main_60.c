@@ -45,7 +45,12 @@ void func_80075128(struct MainObj* arg0)
     arg0->unk5++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_8007517C);
+void func_8007517C(struct MainObj* arg0)
+{
+    if (arg0->ext.main_60.effect->active == 0) {
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800751AC);
 
@@ -130,7 +135,18 @@ void func_80075AD0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075B54);
+void func_80075B54(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (abc_object.unkC == 0) {
+        engine_obj.boss_ptr = arg0;
+        engine_obj.enable_boss = 1;
+        engine_obj.unk25 = 1;
+        arg0->unk7C = 3;
+        arg0->unk6++;
+        func_800921E8(6);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075BC4);
 
@@ -363,7 +379,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077258);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077318);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077444);
+void func_80077444(struct MainObj* arg0)
+{
+    func_800780D4(ANIMATED_OBJECT(arg0));
+    func_8001540C(2, 0xBE, arg0);
+    arg0->unk7C = 0x3C;
+    arg0->unk6++;
+}
 
 void func_80077490(struct MainObj* arg0)
 {
@@ -527,7 +549,14 @@ void func_80077B0C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077B74);
+void func_80077B74(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 3);
+        arg0->unk7C = 0x1E;
+        arg0->unk6++;
+    }
+}
 
 void func_80077BD0(struct MainObj* arg0)
 {
@@ -643,14 +672,14 @@ void func_80077F60(struct MainObj* arg0, s8 arg1)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077FFC);
 
-void func_800780D4(struct VisualObj* arg0)
+void func_800780D4(struct AnimatedObj* arg0)
 {
     struct VisualObj* obj = find_free_visual_obj();
     if (obj != NULL) {
         obj->active = 0x41;
         obj->id = 0x1C;
         obj->unk2 = 2;
-        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk50 = PLAYER_OBJECT(arg0);
         obj->unk42 = arg0->unk42;
         obj->animation_table = D_80101A6C;
         obj->unk3C = arg0->unk3C;
@@ -736,4 +765,21 @@ void func_800785E4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800786AC);
+void func_800786AC(void)
+{
+    u8 clear_value;
+    u32 i;
+    s32 j;
+    u8* dst;
+
+    clear_value = 0;
+    for (i = 0; i < 0x20; i++) {
+        if ((shot_objects[i].id == 0x25) || ((shot_objects[i].unk2 != 0) && (shot_objects[i].unk2 < 5))) {
+            dst = (u8*)&shot_objects[i];
+            j = 0x9B;
+            do {
+                *dst++ = clear_value;
+            } while (j-- != 0);
+        }
+    }
+}

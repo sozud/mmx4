@@ -816,9 +816,13 @@ struct Main60Ext {
 };
 
 struct Main61Ext {
-    u8 pad80[6];
+    u8 pad80[5];
+    u8 unk85;
     u8 unk86;
-    u8 pad87[5];
+    u8 pad87[2];
+    u8 unk89;
+    u8 unk8A;
+    u8 pad8B;
     u8 unk8C;
 };
 
@@ -3626,6 +3630,9 @@ void func_800C813C(s32, void*, void*);
 s32 func_80064E58(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
 void func_8005D148(struct MainObj*);
+void func_800780D4(struct AnimatedObj*);
+void func_8007DC54(struct AnimatedObj*, s32);
+s32 func_8009227C(void);
 void func_800CA9EC(struct MainObj*, s32);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
