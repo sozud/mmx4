@@ -10,3 +10,6 @@
 [submodule "tools/psyz"]
 	path = tools/psyz
 	url = https://github.com/psyqz/psyz
+[submodule "tools/harness"]
+	path = tools/harness
+	url = https://github.com/sozud/harness.git
