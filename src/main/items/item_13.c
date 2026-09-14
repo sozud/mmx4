@@ -81,7 +81,8 @@ void func_800C3828(struct ItemObj* arg0)
         type = 0x10;
     }
 
-    func_800DABE4(type, arg0->x_pos.i.hi - 0x10, arg0->y_pos.i.hi);
+    func_800DABE4(type, (s16)(arg0->x_pos.u.hi - 0x10),
+        arg0->y_pos.i.hi);
 }
 
 void (*D_8010D030[])(struct ItemObj*) = {

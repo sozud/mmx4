@@ -21,8 +21,8 @@ void func_800BEB14(struct ItemObj* arg0)
         if (arg0->unk2 == 0) {
             var_a0 = 2;
         }
-        func_800DABE4(var_a0, arg0->x_pos.i.hi - 0x20,
-            arg0->y_pos.i.hi - 0x18);
+        func_800DABE4(var_a0, (s16)(arg0->x_pos.u.hi - 0x20),
+            (s16)(arg0->y_pos.u.hi - 0x18));
         arg0->state = 2;
     }
 }
