@@ -27,7 +27,15 @@ void func_80055E9C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80055F1C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80055FD0);
+void func_80055FD0(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 < 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80056018(struct MainObj* arg0)
 {

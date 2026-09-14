@@ -45,4 +45,15 @@ void func_80054B98(struct MainObj* arg0)
     func_8002B108(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_20", func_80054BBC);
+void func_80054BBC(struct MainObj* self)
+{
+    D_800FC9A8[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        if (self->unk7C == 0) {
+            func_8002B318(BASE_OBJECT(self), 0x50, 0x80);
+        }
+    } else {
+        func_8002B108(OBJECT_HEADER(self));
+    }
+}
