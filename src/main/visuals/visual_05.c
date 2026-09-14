@@ -121,4 +121,16 @@ void func_800AFF08(struct VisualObj* arg0)
     arg0->y_pos.val = parent->unk1C;
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_05", func_800AFF28);
+void func_800AFF28(struct VisualObj* arg0)
+{
+    struct ObjectHeader* parent;
+
+    arg0->unk54 = 3;
+    arg0->unk56 = 8;
+    arg0->unk58 = (5 - arg0->unk2) * 2;
+    parent = *(struct ObjectHeader**)&arg0->unk5C;
+    arg0->x_pos.val = parent->x_pos.val;
+    arg0->y_pos.val = parent->y_pos.val;
+    arg0->unk5 = 0;
+    arg0->state++;
+}

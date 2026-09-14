@@ -71,7 +71,22 @@ void func_8009E5B0(struct ShotObj* arg0)
     func_8002B718(MOVING_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E608);
+void func_8009E608(struct ShotObj* arg0)
+{
+    u8 temp_v1;
+    u8 state;
+
+    temp_v1 = *(u8*)&arg0->unk7C->x_pos.val;
+    if ((temp_v1 == arg0->unk2) || (temp_v1 == 4)) {
+        func_8001540C(2, 0x63, arg0);
+        state = arg0->unk7C->unk6;
+        arg0->unk28 = 1;
+        arg0->x_vel.val = FIXED(-2);
+        arg0->unk7 = 0x10;
+        arg0->unk5 = 4;
+        arg0->unk84.bytes[0] = state;
+    }
+}
 
 void func_8009E690(struct ShotObj* arg0)
 {

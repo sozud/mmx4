@@ -57,7 +57,27 @@ struct Item17SpawnPosition D_8010D174[6] = {
     { 0x1360, 0x0480 },
 };
 
-INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C413C);
+void func_800C413C(struct ItemObj* arg0)
+{
+    u8 state;
+    u8 bg_offset;
+    s32 index;
+
+    state = arg0->state;
+    arg0->active = 1;
+    arg0->animation_table = 0;
+    arg0->state = state + 1;
+    bg_offset = g_Player.bg_offset;
+    index = arg0->unk2;
+    arg0->sprite_frames = 0;
+    arg0->unk16 = 6;
+    arg0->unk15 = 0;
+    arg0->on_screen = 0;
+    arg0->bg_offset = bg_offset;
+    arg0->x_pos.val = D_8010D174[index].x << 16;
+    arg0->y_pos.val = D_8010D174[arg0->unk2].y << 16;
+    arg0->unk7C.object = D_8010D15C[arg0->unk2];
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C41C8);
 

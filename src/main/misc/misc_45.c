@@ -51,7 +51,25 @@ void func_800D115C(void)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D1164);
+struct Misc45PositionData {
+    s16 x;
+    s16 y;
+    s16 width;
+    s16 height;
+};
+
+extern struct Misc45PositionData D_8010F0C4[];
+
+void func_800D1164(struct MiscObj* self)
+{
+    s32 index;
+    struct MainObj* source;
+
+    index = self->unk2;
+    source = self->ext.misc_2.owner;
+    self->x_pos.u.hi = source->x_pos.u.hi + D_8010F0C4[index].x;
+    self->y_pos.u.hi = source->y_pos.u.hi + D_8010F0C4[self->unk2].y;
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D11B0);
 
@@ -72,13 +90,6 @@ void func_800D1248(struct MiscObj* arg0)
 {
     D_8010F188[arg0->state](arg0);
 }
-
-struct Misc45PositionData {
-    s16 x;
-    s16 y;
-    s16 width;
-    s16 height;
-};
 
 struct Misc45PositionData D_8010F0C4[] = {
     { -120, 176, 184, 160 },

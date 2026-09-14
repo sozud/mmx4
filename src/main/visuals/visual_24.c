@@ -88,7 +88,11 @@ void func_800B3B1C(struct VisualObj* arg0)
     D_8010A684[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B58);
+void func_800B3B58(struct VisualObj* arg0)
+{
+    func_80015D60(arg0, 0x13);
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B94);
 
@@ -98,7 +102,11 @@ void func_800B3C34(struct VisualObj* arg0)
     arg0->unk42 = arg0->unk50->unk42;
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3C90);
+void func_800B3C90(struct VisualObj* arg0)
+{
+    func_80015D60(arg0, 0x15);
+    arg0->unk6++;
+}
 
 void func_800B3CCC(struct VisualObj* arg0)
 {

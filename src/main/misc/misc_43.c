@@ -28,7 +28,13 @@ void func_800D0548(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D05B0);
+void func_800D05B0(struct MiscObj* arg0)
+{
+    if (g_Player.unkC0 == -1) {
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 2;
+    }
+}
 
 void func_800D05F4(struct MiscObj* arg0)
 {
@@ -45,7 +51,13 @@ void func_800D05F4(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0658);
+void func_800D0658(struct MiscObj* arg0)
+{
+    if (abc_object.unkC == 0) {
+        func_80015D60(arg0, 2);
+        arg0->unk5 = 4;
+    }
+}
 
 void func_800D0698(struct MiscObj* arg0)
 {

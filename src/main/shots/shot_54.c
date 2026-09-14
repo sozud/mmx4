@@ -185,7 +185,20 @@ void func_800AC7EC(struct ShotObj* arg0)
     D_80109DF8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC848);
+u8 func_800AC848(struct ShotObj* arg0, s16 arg1, s16 arg2)
+{
+    s16 x;
+    s16 y;
+
+    x = arg0->x_pos.i.hi;
+    if ((x - arg1 >= 0) ? (x - arg1 < 3) : (arg1 - x < 3)) {
+        y = arg0->y_pos.i.hi;
+        if ((y - arg2 >= 0) ? (y - arg2 < 3) : (arg2 - y < 3)) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 u8 D_80109D90[4] = { 0xF5, 0xFB, 9, 9 };
 

@@ -20,7 +20,14 @@ void func_800CF640(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF660);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF708);
+void func_800CF708(struct MiscObj* arg0)
+{
+    struct ObjectHeader* target = arg0->ext.pointer.unk50;
+    arg0->x_pos.val = target->x_pos.val;
+    arg0->y_pos.val = target->y_pos.val;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800CF754(struct MiscObj* arg0)
 {

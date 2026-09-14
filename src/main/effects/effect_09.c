@@ -43,7 +43,20 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B7B18);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B7CFC);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B7E88);
+u8 func_800B7E88(s16* bounds)
+{
+    s16 x;
+    s16 y;
+
+    x = g_Player.x_pos.i.hi;
+    y = g_Player.y_pos.i.hi;
+    if ((x > bounds[0]) && (x < bounds[1]) && (bounds[2] < y)) {
+        if (y < bounds[3]) {
+            return 1;
+        }
+    }
+    return 0;
+}
 
 void (*D_8010B4F8[])(struct EffectObj*) = {
     func_800B7604,
