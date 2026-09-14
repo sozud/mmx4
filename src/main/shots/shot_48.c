@@ -6,7 +6,19 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9964);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9AEC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_48", func_800A9C24);
+void func_800A9C24(struct ShotObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        arg0->unk5++;
+        func_80015D60(arg0, 0xD);
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_800A9C7C(struct ShotObj* arg0)
 {

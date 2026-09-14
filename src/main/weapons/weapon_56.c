@@ -11,7 +11,7 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_56", func_80098630);
 
 void func_80098728(struct WeaponObj* arg0)
 {
-    func_800987DC();
+    func_800987DC(arg0);
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002B718(MOVING_OBJECT(arg0));
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0 && arg0->unk98 == 0) {
@@ -31,7 +31,13 @@ void func_800987A8(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_56", func_800987DC);
+void func_800987DC(struct WeaponObj* arg0)
+{
+    if (background_objects[0].unk4 == 1) {
+        arg0->x_pos.u.hi += background_objects[0].x_pos.u.hi - background_objects[0].unk14.u.hi;
+        arg0->y_pos.u.hi += background_objects[0].y_pos.u.hi - background_objects[0].unk18.u.hi;
+    }
+}
 
 void (*D_80108B88[])(struct WeaponObj*) = {
     func_80098630,

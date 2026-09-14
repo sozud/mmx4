@@ -6,7 +6,22 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80092F08);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093014);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093130);
+void func_80093130(struct WeaponObj* arg0)
+{
+    u8 temp_v0;
+
+    temp_v0 = arg0->ext.weapon_1.timer - 1;
+    arg0->ext.weapon_1.timer = temp_v0;
+    if (temp_v0 == 0) {
+        func_80015D60(arg0, 1);
+        arg0->unk16 = 3;
+        arg0->state++;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+    func_80093524(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800931A8);
 
@@ -19,7 +34,18 @@ void func_80093260(struct WeaponObj* arg0)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800932A0);
+void func_800932A0(struct WeaponObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 2);
+        arg0->unk50 = (const u8*)D_801087FC;
+        arg0->unk68 = D_80108800;
+        arg0->ext.weapon_1.unk90 = 0;
+        arg0->unk75 = 1;
+        arg0->unk5++;
+    }
+}
 
 void func_80093310(struct WeaponObj* arg0)
 {

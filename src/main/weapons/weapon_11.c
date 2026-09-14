@@ -59,7 +59,21 @@ void func_8009481C(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009485C);
+void func_8009485C(struct MiscObj* arg0)
+{
+    s32* sprite_frames;
+    s32 offset;
+
+    func_800948D4(arg0);
+    sprite_frames = SP_SPRITE_FRAMES;
+    offset = sprite_frames[6];
+    arg0->animation_table = D_8011C018;
+    arg0->unk40 = 0;
+    arg0->unk42 = 0x7802;
+    arg0->unk16 = 0;
+    arg0->unk3C = (u8*)sprite_frames + offset;
+    func_80015D60(arg0, D_8010889C[get_random() & 7]);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800948D4);
 

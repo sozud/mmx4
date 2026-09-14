@@ -130,11 +130,43 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACE90);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACF60);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD00C);
+void func_800AD00C(struct ShotObj* arg0)
+{
+    s16 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    temp_v0 = arg0->unk90.u.lo - 1;
+    arg0->unk90.i.lo = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk5++;
+        if (arg0->unk2 == 3) {
+            func_80015D60(arg0, 0x16);
+        } else {
+            func_80015D60(arg0, 0x11);
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD080);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD12C);
+void func_800AD12C(struct ShotObj* arg0)
+{
+    s16 x_pos;
+    s16 target_x_pos;
+    s32 delta;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+
+    x_pos = arg0->x_pos.i.hi;
+    target_x_pos = arg0->unk7C->x_pos.i.hi;
+    delta = x_pos - target_x_pos;
+    if (delta >= 0 ? delta < 0x30 : (target_x_pos - x_pos) < 0x30) {
+        arg0->x_vel.val = 0;
+        arg0->unk90.u.lo = 0x3C;
+        arg0->unk5++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD1B0);
 
@@ -155,7 +187,14 @@ void func_800AD440(struct ShotObj* arg0)
     D_80109E30[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD47C);
+void func_800AD47C(struct ShotObj* arg0)
+{
+    if (arg0->unk8C.object->unk5 == 3) {
+        arg0->unk5++;
+        func_80015D60(arg0, 0xE);
+        func_8001540C(2, 6, arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD4DC);
 

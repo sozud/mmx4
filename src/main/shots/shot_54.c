@@ -104,7 +104,21 @@ void func_800AC4F8(struct ShotObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC550);
+void func_800AC550(struct ShotObj* arg0)
+{
+    s16 timer;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        arg0->unk50.data = D_80109DA4;
+        arg0->timer = 0xD2;
+        arg0->unk6++;
+    }
+    if (arg0->timer & 1) {
+        func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    }
+}
 
 void func_800AC5BC(struct ShotObj* arg0)
 {

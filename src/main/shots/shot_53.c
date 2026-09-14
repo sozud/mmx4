@@ -179,7 +179,20 @@ void func_800AB6C4(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB710);
+void func_800AB710(struct ShotObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->animation_step.fields.event = 0;
+        arg0->unk50.data = (const u8*)D_80109C38[1];
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_800AB768(struct ShotObj* arg0)
 {

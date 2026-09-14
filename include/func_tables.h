@@ -4242,7 +4242,7 @@ extern void (*D_80108B88[])(struct WeaponObj*);
 void func_80098630(struct WeaponObj*);
 void func_80098728(struct WeaponObj*);
 void func_800987A8(struct WeaponObj*);
-void func_800987DC(void);
+void func_800987DC(struct WeaponObj*);
 
 // D_80108BA8
 extern void (*D_80108BA8[])(struct WeaponObj*);
