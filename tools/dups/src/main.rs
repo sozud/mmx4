@@ -5,10 +5,11 @@ use std::io::BufReader;
 use std::io::Read;
 use std::io::Write;
 use std::process::exit;
+use std::sync::OnceLock;
 
 mod levenshtein_hashmap;
 mod types;
-use levenshtein_hashmap::LevenshteinHashMap;
+use levenshtein_hashmap::{levenshtein_similarity, LevenshteinHashMap};
 use types::{DupsFile, Function, Instruction};
 // parse .s file to get instructions and function name
 fn parse_instructions(input: &str, dir: &str, file: &str) -> Function {
@@ -90,7 +91,7 @@ fn process_directory(dir_path: &str, funcs: &mut Vec<Function>) {
                             && func.ops[0].op == 0x03E00008
                             && func.ops[1].op == 0x00000000;
                         if !is_null {
-                            funcs.push(func.clone());
+                            funcs.push(func);
                         }
                     } else if item_path.is_dir() {
                         process_directory(&item_path.to_string_lossy(), funcs);
@@ -181,8 +182,13 @@ fn process_directory_for_include_asm(dir: &str) -> Vec<IncludeAsmEntry> {
     output
 }
 
+fn include_asm_regex() -> &'static Regex {
+    static RE: OnceLock<Regex> = OnceLock::new();
+    RE.get_or_init(|| Regex::new("INCLUDE_ASM\\((?:\\s+)?\"([^\"]*)\", ([^)]*)\\)").unwrap())
+}
+
 fn process_buffer_for_include_asm(file_content: &str, file_path: &str) -> Vec<IncludeAsmEntry> {
-    let re = Regex::new("INCLUDE_ASM\\((?:\\s+)?\"([^\"]*)\", ([^)]*)\\)").unwrap();
+    let re = include_asm_regex();
     let mut output = Vec::new();
     let mut buffer = String::new();
 
@@ -229,15 +235,13 @@ fn do_dups_report(output_file: Option<String>, threshold: f64) {
 
     let mut files = Vec::new();
 
-    let pairs: Vec<SrcAsmPair> = vec![
-        SrcAsmPair {
-            asm_dir: String::from("../../asm/us/main/matchings/"),
-            src_dir: String::from("../../src/main/"),
-            overlay_name: String::from("MAIN"),
-            include_asm: get_all_include_asm("../../src/main/"),
-            path_matcher: "/main/".to_string(),
-        },
-    ];
+    let pairs: Vec<SrcAsmPair> = vec![SrcAsmPair {
+        asm_dir: String::from("../../asm/us/main/matchings/"),
+        src_dir: String::from("../../src/main/"),
+        overlay_name: String::from("MAIN"),
+        include_asm: get_all_include_asm("../../src/main/"),
+        path_matcher: "/main/".to_string(),
+    }];
 
     for pair in pairs.clone() {
         let dir = pair.asm_dir;
@@ -262,9 +266,9 @@ fn do_dups_report(output_file: Option<String>, threshold: f64) {
         }
     }
 
-    for file in &files {
-        for func in &file.funcs {
-            hash_map.insert(func.key.clone(), func.clone());
+    for file in files {
+        for func in file.funcs {
+            hash_map.insert(func);
         }
     }
 
@@ -286,6 +290,9 @@ fn do_dups_report(output_file: Option<String>, threshold: f64) {
         .expect("Error writing to file");
 
         for (_, functions) in entries {
+            if functions.iter().all(|f| f.decompiled) {
+                continue; // Skip completed entry
+            }
             if functions.len() > 1 {
                 // Write separator to file
                 writeln!(output_file, "-------------------------------------------------------------------------------")
@@ -353,7 +360,7 @@ fn do_ordered_compare(dirs: Vec<String>, threshold: f64) {
 
         files.push(DupsFile {
             name: dir.to_string(),
-            funcs: funcs.clone(),
+            funcs,
         });
     }
 
@@ -375,7 +382,7 @@ fn do_ordered_compare(dirs: Vec<String>, threshold: f64) {
 
     for func_0 in &files[0].funcs {
         for func_1 in &files[1].funcs {
-            let result = levenshtein_similarity(&func_0.key, &func_1.key);
+            let result = levenshtein_similarity(&func_0.key, &func_1.key, threshold);
 
             if result >= threshold {
                 println!(
@@ -437,34 +444,6 @@ fn main() {
     }
 }
 
-fn levenshtein_similarity(s1: &[u8], s2: &[u8]) -> f64 {
-    let len1 = s1.len();
-    let len2 = s2.len();
-    let mut dp = vec![vec![0; len2 + 1]; len1 + 1];
-
-    for i in 0..=len1 {
-        dp[i][0] = i;
-    }
-
-    for j in 0..=len2 {
-        dp[0][j] = j;
-    }
-
-    for (i, x) in s1.iter().enumerate() {
-        for (j, y) in s2.iter().enumerate() {
-            dp[i + 1][j + 1] = if x == y {
-                dp[i][j]
-            } else {
-                dp[i][j].min(dp[i][j + 1]).min(dp[i + 1][j]) + 1
-            };
-        }
-    }
-
-    let max_len = len1.max(len2) as f64;
-    let result = (max_len - dp[len1][len2] as f64) / max_len;
-    result
-}
-
 fn process_asm_directory(dir: &str, files: &mut Vec<DupsFile>) {
     let mut funcs = Vec::new();
     process_directory(&dir, &mut funcs);
@@ -479,7 +458,7 @@ fn process_asm_directory(dir: &str, files: &mut Vec<DupsFile>) {
 
     files.push(DupsFile {
         name: dir.to_string(),
-        funcs: funcs.clone(),
+        funcs,
     });
 }
 
@@ -492,7 +471,7 @@ mod tests {
     fn test_levenshtein_similarity_1() {
         let s1 = "hello".as_bytes();
         let s2 = "hello".as_bytes();
-        let similarity = levenshtein_similarity(s1, s2);
+        let similarity = levenshtein_similarity(s1, s2, 0.9);
         assert_eq!(similarity, 1.0);
     }
 
@@ -501,7 +480,7 @@ mod tests {
     fn test_levenshtein_similarity_09() {
         let s1 = "hello hello hello".as_bytes();
         let s2 = "hello hello hellu".as_bytes();
-        let similarity = levenshtein_similarity(s1, s2);
+        let similarity = levenshtein_similarity(s1, s2, 0.9);
         assert!(similarity >= 0.9);
         assert!(similarity < 1.0);
     }
@@ -511,7 +490,7 @@ mod tests {
     fn test_levenshtein_similarity_09_2() {
         let s1 = "hello hello hello".as_bytes();
         let s2 = "hello hell o hello".as_bytes();
-        let similarity = levenshtein_similarity(s1, s2);
+        let similarity = levenshtein_similarity(s1, s2, 0.9);
         assert!(similarity >= 0.9);
         assert!(similarity < 1.0);
     }
@@ -521,7 +500,7 @@ mod tests {
     fn test_levenshtein_similarity_0() {
         let s1 = "hello".as_bytes();
         let s2 = "world".as_bytes();
-        let similarity = levenshtein_similarity(s1, s2);
+        let similarity = levenshtein_similarity(s1, s2, 0.0);
         assert_eq!(similarity, 0.2);
     }
 
