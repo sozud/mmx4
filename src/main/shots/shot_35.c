@@ -32,7 +32,35 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A25EC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2748);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A27F4);
+void func_800A27F4(struct ShotObj* arg0)
+{
+    s16 timer;
+    struct WeaponObj* weapon;
+    u8 next_state;
+    s8 index;
+    u16* table;
+    u16 background_x;
+    u16 offset;
+
+    weapon = arg0->unk7C;
+    if (weapon->unk6 != 5) {
+        timer = (u16)arg0->timer - 1;
+        arg0->timer = timer;
+        if (timer != 0) {
+            return;
+        }
+    }
+
+    next_state = arg0->unk6 + 1;
+    index = arg0->unk2;
+    table = *(u16**)&weapon->ext;
+    background_x = background_objects[0].unk1E;
+    offset = table[index];
+
+    arg0->timer = 15;
+    arg0->unk6 = next_state;
+    arg0->x_pos.i.hi = background_x + (offset + 0x10);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2870);
 

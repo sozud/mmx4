@@ -1591,9 +1591,14 @@ struct PlayerAfterimageExt {
     u8 pad5A[6];
 };
 
+struct Unk0Ext {
+    u8 selection_index;
+};
+
 union UnkObjExt {
     u8 raw[0xC];
-    u8 timer;
+    s8 timer;
+    struct Unk0Ext unk_0;
     struct PlayerAfterimageExt afterimage;
 };
 
@@ -2331,10 +2336,17 @@ struct Quad5Ext {
     u16 index;
 };
 
-struct Quad10Ext {
-    s32 unk38;
-    u8 pad3C[0x44 - 0x3C];
-    u8 unk44;
+struct Quad10State {
+    s32 counter;
+    s32 x_step;
+    s32 y_step;
+    u8 progress;
+    u8 history[16];
+};
+
+struct PlayerUnk8CFields {
+    s8 unk8C;
+    u8 unk8D;
 };
 
 struct QuadUnkExt4 {
@@ -2349,7 +2361,6 @@ union QuadExt {
     struct QuadUnkExt2 unk_ext2;
     struct Quad4Ext quad_4;
     struct Quad5Ext quad_5;
-    struct Quad10Ext quad_10;
     struct Quad2Ext quad_2;
     struct QuadUnkExt3 unk_ext3;
     struct QuadUnkExt4 unk_ext4;

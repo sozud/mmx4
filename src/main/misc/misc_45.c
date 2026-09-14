@@ -22,7 +22,30 @@ void func_800D1060(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D10E4);
+void func_800D10E4(struct MiscObj* arg0)
+{
+    volatile u8 stack_pad[0x10];
+    s32 var_v0;
+    s32 var_v1;
+    s32 var_a0;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.misc_45.direction == 0) {
+        var_v1 = arg0->ext.misc_45.target_x;
+        var_v0 = arg0->x_pos.i.hi;
+        var_a0 = var_v1;
+    } else {
+        var_v0 = arg0->ext.misc_45.target_x;
+        var_v1 = arg0->x_pos.i.hi;
+        var_a0 = var_v0;
+    }
+    if (var_v0 < var_v1) {
+        arg0->x_pos.i.hi = var_a0;
+        arg0->unk28 = 0;
+        arg0->x_vel.val = 0;
+        arg0->unk5++;
+    }
+}
 
 void func_800D115C(void)
 {

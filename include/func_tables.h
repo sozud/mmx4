@@ -6446,7 +6446,7 @@ void func_800D0C60(struct UnkObj*);
 // D_8010F174
 extern void (*D_8010F174[])(struct MiscObj*);
 void func_800D1060(struct MiscObj*);
-void func_800D10E4(void);
+void func_800D10E4(struct MiscObj*);
 void func_800D115C(void);
 void func_800D1164(void);
 void func_800D11B0(void);
@@ -6460,19 +6460,20 @@ void func_800D1228(struct MiscObj*);
 // D_8010F1A4
 extern void (*D_8010F1A4[])(struct MiscObj*);
 void func_800D12C0(void);
-void func_800D1464(void);
+void func_800D1464(struct MiscObj*);
 void func_800D14D8(struct MiscObj*);
 
 // D_8010F1B0
 void func_800D14F8(struct UnkObj*);
 void func_800D154C(struct UnkObj*);
 void func_800D15A8(struct UnkObj*);
-void func_800D1614(void);
-void func_800D166C(void);
+extern void (*D_8010F1B0[])(struct UnkObj*);
+void func_800D1614(struct UnkObj*);
+void func_800D166C(struct UnkObj*);
 void func_800D16E0(struct UnkObj*);
-void func_800D1708(void);
-void func_800D177C(void);
-void func_800D17F0(void);
+void func_800D1708(struct UnkObj*);
+void func_800D177C(struct UnkObj*);
+void func_800D17F0(struct UnkObj*);
 void func_800D1864(struct UnkObj*);
 void func_800D188C(void);
 
@@ -6649,12 +6650,12 @@ void func_800D6700(struct QuadObj*);
 void func_800D6780(struct QuadObj*);
 
 // D_8010FCB8
-extern void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, void*);
-void func_800D6B9C(struct QuadObj*, struct PlayerObj*, void*);
-void func_800D6C48(struct QuadObj*, struct PlayerObj*, void*);
-void func_800D6CA0(struct QuadObj*, struct PlayerObj*, void*);
-void func_800D6DC4(struct QuadObj*, struct PlayerObj*, void*);
-void func_800D6D48(struct QuadObj*, struct PlayerObj*, void*);
+extern void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+void func_800D6B9C(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+void func_800D6C48(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+void func_800D6CA0(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+void func_800D6DC4(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+void func_800D6D48(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
 
 // D_8010FDD0
 extern void (*D_8010FDD0[])(struct QuadObj*);
