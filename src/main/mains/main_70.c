@@ -63,7 +63,28 @@ void func_800890B0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089138);
+void func_80089138(struct MainObj* self)
+{
+    s16 countdown;
+    u16 timer;
+
+    if ((D_80141BD8.unk0 & 3) == 0) {
+        func_80089798();
+    }
+
+    countdown = self->unk7E;
+    if (countdown == 0) {
+        func_80089910(self);
+    } else {
+        self->unk7E = countdown - 1;
+    }
+
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if ((timer << 0x10) == 0) {
+        self->unk5 = (u8)self->unk5 + 1;
+    }
+}
 
 void func_800891C8(struct MainObj* arg0)
 {

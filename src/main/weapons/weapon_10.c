@@ -73,7 +73,25 @@ void func_800938C0(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093930);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_800939F4);
+void func_800939F4(struct WeaponObj* arg0)
+{
+    struct PlayerObj* owner;
+    u8 state;
+    s32 y;
+
+    owner = arg0->owner;
+    if ((u8)owner->unk8F != 0) {
+        arg0->on_screen = 1;
+        state = (u8)arg0->state + 1;
+        arg0->x_pos.val = owner->x_pos.val;
+        y = owner->y_pos.val;
+        arg0->ext.weapon_10.timer = 0x10;
+        arg0->state = state;
+        arg0->unk5 = 0;
+        arg0->y_pos.val = y;
+        func_80093C54(arg0);
+    }
+}
 
 void func_80093A5C(struct WeaponObj* arg0)
 {

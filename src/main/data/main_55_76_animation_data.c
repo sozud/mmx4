@@ -5706,7 +5706,7 @@ void (*D_80104460[4])(struct MainObj*) = {
     func_800857C8,
 };
 
-void (*D_80104470[7])() = {
+void (*D_80104470[7])(struct ItemObj*) = {
     func_800858DC,
     func_80085988,
     func_80085A44,

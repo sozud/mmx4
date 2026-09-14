@@ -975,7 +975,8 @@ struct Main67Ext {
 
 struct Main66Ext {
     struct EffectObj* effect;
-    u8 pad84[2];
+    u8 pad84;
+    u8 unk85;
     u8 unk86;
     u8 unk87;
     u8 pad88[12];
@@ -1657,6 +1658,7 @@ union ItemUnk84 {
 
 union ItemUnk7C {
     u8 value;
+    u16 timer16;
     s32 timer;
     struct MiscObj* misc;
     void* object;
@@ -3111,6 +3113,7 @@ extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
+extern struct Unk_unk68 D_80105360;
 extern struct Unk_unk68 D_80105364;
 extern u8 D_801058D4[8];
 extern u16 D_80106070[64];
@@ -3327,6 +3330,7 @@ extern s16 D_8013B84C[2];
 extern s8 D_8013B810;
 extern u8 D_8013B814;
 extern u8 D_8013B8A0[];
+extern struct EffectObj* D_8013B8AC;
 extern struct AbcObj abc_object;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
@@ -3629,6 +3633,8 @@ void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
 s32 func_80064E58(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
+void func_80089798(void);
+void func_80089910(struct MainObj*);
 void func_8005D148(struct MainObj*);
 void func_800780D4(struct AnimatedObj*);
 void func_8007DC54(struct AnimatedObj*, s32);

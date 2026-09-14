@@ -131,14 +131,14 @@ void func_8008C3F4(struct MainObj* arg0)
 
 void func_8008C43C(struct MainObj* arg0)
 {
-    func_80015DC8(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->unk70 & 4) {
         arg0->unk6 += 1;
         func_80015D60(arg0, 5);
         func_8001540C(2, 0xF7, NULL);
     } else {
         func_8002B694(ANIMATED_OBJECT(arg0));
-        func_80015DC8(arg0);
+        func_80015DC8(ANIMATED_OBJECT(arg0));
     }
 }
 
@@ -166,7 +166,20 @@ void func_8008C888(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C8E0);
+void func_8008C8E0(struct MainObj* arg0)
+{
+    if (arg0->unk70 & 8) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 1;
+        arg0->unk7C = 0;
+        arg0->unk60 = 6;
+        func_8008BF00(arg0);
+        func_8001540C(2, 0xF1, NULL);
+        return;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8008C95C(struct MainObj* arg0)
 {
@@ -359,7 +372,20 @@ void func_8008D37C(struct MainObj* arg0)
     D_80105350[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008D3B8);
+s32 func_8008D3B8(struct MainObj* arg0, s8 arg1)
+{
+    struct EffectObj* effect;
+
+    arg0->ext.main_73.object_id = arg1;
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x2A;
+        effect->unk2 = 0;
+        effect->ext.effect_42.owner.main = arg0;
+        D_8013B8AC = effect;
+    }
+}
 
 void func_8008D410(struct MainObj* arg0)
 {
