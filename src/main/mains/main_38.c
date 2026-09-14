@@ -23,7 +23,15 @@ void func_80060D3C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060DC8);
+void func_80060DC8(struct MainObj* arg0)
+{
+    arg0->ext.raw[2] = 2;
+    if (arg0->ext.raw[3] != 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    }
+}
 
 void func_80060E08(struct MainObj* arg0)
 {

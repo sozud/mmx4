@@ -102,7 +102,25 @@ void func_800704AC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070514);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070648);
+void func_80070648(struct MainObj* arg0)
+{
+    u8 value;
+
+    if (arg0->unk7C == 0) {
+        if (arg0->ext.main_56.unk84 == NULL) {
+            func_800703E0(arg0);
+        } else if (*arg0->ext.main_56.unk84 == 0xFF) {
+            func_800703E0(arg0);
+        }
+        value = *arg0->ext.main_56.unk84;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        arg0->ext.main_56.unk84++;
+        arg0->unk5 = value;
+    } else {
+        arg0->unk7C--;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800706D4);
 
@@ -126,7 +144,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070948);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070A38);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070C88);
+void func_80070C88(struct MainObj* arg0)
+{
+    if (arg0->ext.main_56.effect->active == 0) {
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80070CB0(struct MainObj* arg0)
 {

@@ -97,11 +97,24 @@ void func_8005EA78(struct MainObj* arg0)
     func_8002B694(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EAF8);
+void func_8005EAF8(struct MainObj* arg0)
+{
+    func_80015D60(arg0, 4);
+    SP_CUR_MAIN_OBJ->ext.main_34.unk80 = 0x30;
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EB40);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005EBF4);
+void func_8005EBF4(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->y_pos.i.hi >= 0x210) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
 
 void func_8005EC38(struct MainObj* arg0)
 {

@@ -624,6 +624,11 @@ struct Main35Ext {
     u32 saved_unk5;
 };
 
+struct Main45Ext {
+    u8 pad80[8];
+    u8 unk88;
+};
+
 struct Main48Ext {
     u8 unk80;
     u8 unk81;
@@ -1023,6 +1028,7 @@ union MainObjExt {
     struct Main39Ext main_39;
     struct Main40Ext main_40;
     struct MainSavedState94Ext main_44;
+    struct Main45Ext main_45;
     struct Main48Ext main_48;
     struct Main46Ext main_46;
     struct Main49Ext main_49;
@@ -2200,6 +2206,8 @@ extern struct Unk_unk68 D_80106670[];
 extern u8 D_80104CDC[];
 extern union AnimationStep D_801001F8[];
 extern union AnimationStep D_801001FC[];
+extern struct Unk_unk68 D_80100200;
+extern struct Unk_unk68 D_80100204;
 extern struct Unk_unk68 D_80100210;
 extern struct Unk_unk68 D_80100214;
 extern struct Unk_unk68 D_80100844;
@@ -3058,6 +3066,7 @@ extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
+extern struct Unk_unk68 D_800FBF10;
 extern struct Unk_unk68 D_800FC860;
 extern u8 D_800FD9BC[];
 extern void (*D_800FD9E0[])(struct MainObj*);
@@ -3072,6 +3081,7 @@ extern struct Unk_unk68 D_800FE1C0;
 extern u8 D_800FD1D0[];
 extern void (*D_800FD1F4[])(struct BaseObj*);
 extern void (*D_800FD858[])(struct MainObj*);
+extern struct Unk_unk68 D_800FB88C;
 extern struct Unk_unk68 D_800FB890[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
@@ -3613,6 +3623,10 @@ void func_800BF60C(struct BaseObj*, s8);
 void func_800C7DA4(s32, const u8*, void*, s32);
 void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
+s32 func_80064E58(struct MainObj*, s32);
+void func_800527C0(struct AnimatedObj*);
+void func_8005D148(struct MainObj*);
+void func_800CA9EC(struct MainObj*, s32);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);

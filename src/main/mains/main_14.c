@@ -86,7 +86,14 @@ void func_8004D370(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D3C8);
+void func_8004D3C8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.raw[2] == 7) {
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8004D408(struct MainObj* arg0)
 {
@@ -121,7 +128,26 @@ void func_8004D5E0(struct MainObj* arg0)
     D_800FBA44[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D61C);
+void func_8004D61C(struct MainObj* self)
+{
+    s32* table;
+    s32 velocity;
+
+    func_80015D60(self, 0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+
+    table = D_800FB89C;
+    if (self->unk15 & 0x40) {
+        table++;
+    }
+
+    velocity = *table;
+    self->unk54 = (const u8*)&D_800FB88C;
+    self->unk50 = (const u8*)&D_800FB88C;
+    self->unk20 = velocity;
+    engine_obj.character_state.bytes[0] = 0;
+    self->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D69C);
 

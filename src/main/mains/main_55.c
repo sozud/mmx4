@@ -120,4 +120,28 @@ INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FB20);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FBFC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FCB8);
+s32 func_8006FCB8(struct PlayerObj* arg0, s32 arg1, s32 arg2)
+{
+    s16 temp_a1;
+    s16 temp_a2;
+    s32 temp_v0;
+    u8 tile;
+    s32 temp_v1;
+    s32 var_v0;
+
+    temp_a1 = arg0->x_pos.u.hi + arg1;
+    temp_a2 = arg0->y_pos.u.hi + arg2;
+    temp_v0 = ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(
+        arg0, temp_a1, temp_a2);
+    tile = temp_v0;
+    var_v0 = 1;
+    if ((u32)((temp_v0 - 0x10) & 0xFF) >= 9U) {
+        temp_v1 = tile;
+        if (temp_v1 == 0x38) {
+            return (arg0->y_pos.i.hi >= 0x121) * 2;
+        }
+        var_v0 = -(temp_v1 == 0x24) & 3;
+        return var_v0;
+    }
+    return var_v0;
+}

@@ -116,7 +116,23 @@ void func_80074B10(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074B68);
+void func_80074B68(struct MainObj* arg0)
+{
+    s32 state;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 0);
+        state = arg0->unk2;
+        if (state != 0) {
+            state = 5;
+        } else {
+            state = 2;
+        }
+        arg0->unk5 = state;
+        arg0->unk6 = 0;
+        arg0->unk7E = 0x28;
+    }
+}
 
 void func_80074BD8(struct MainObj* arg0)
 {

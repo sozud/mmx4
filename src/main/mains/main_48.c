@@ -94,7 +94,16 @@ void func_80067860(struct MainObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800678B0);
+void func_800678B0(struct MainObj* arg0)
+{
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 1);
+    SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800678F8);
 
@@ -228,4 +237,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068340);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068404);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800684BC);
+void func_800684BC(struct MainObj* arg0)
+{
+    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xB0) {
+        arg0->unk15 = 0x40;
+        arg0->state = 1;
+        arg0->unk5 = 3;
+    }
+}

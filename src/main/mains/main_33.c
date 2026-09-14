@@ -13,7 +13,19 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D348);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D4E0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D7E8);
+void func_8005D7E8(struct MainObj* arg0)
+{
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[5] = 0;
+    background_objects[0].unk26 = 0x1100;
+    background_objects[0].unk2A = 0x220;
+    background_objects[0].unk28 = FIXED(0.00831);
+    g_Player.unk61 = 0;
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 void func_8005D844(struct MainObj* arg0)
 {
