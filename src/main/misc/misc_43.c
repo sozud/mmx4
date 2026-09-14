@@ -30,7 +30,20 @@ void func_800D0548(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D05B0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D05F4);
+void func_800D05F4(struct MiscObj* arg0)
+{
+    u16 sound_id;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        sound_id = 0x27;
+        if (engine_obj.cur_character == 0) {
+            sound_id = 0x2E;
+        }
+        func_8002217C(sound_id, 0xFF, 0);
+        arg0->unk5 = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0658);
 
@@ -43,9 +56,23 @@ void func_800D0698(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D06E0);
+void func_800D06E0(struct MiscObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->y_pos.i.hi < background_objects[g_Player.bg_offset].y_pos.i.hi - 0x30) {
+        arg0->ext.unk.unk54 = 0x3C;
+        arg0->unk5 = 6;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D0754);
+void func_800D0754(struct MiscObj* arg0)
+{
+    if (--arg0->ext.unk.unk54 != 0) {
+        return;
+    }
+    func_8002217C(engine_obj.cur_character == 0 ? 0x2F : 0x28, 0, 0);
+    arg0->unk5 = 7;
+}
 
 void func_800D07C0(struct MiscObj* arg0)
 {

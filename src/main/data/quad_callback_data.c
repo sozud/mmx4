@@ -6,7 +6,7 @@ void (*D_8010FCAC[])(struct QuadObj*) = {
     func_800D6780,
 };
 
-void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, void*) = {
+void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {
     func_800D6B9C,
     func_800D6C48,
     func_800D6CA0,

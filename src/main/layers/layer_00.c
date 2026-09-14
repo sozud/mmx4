@@ -226,7 +226,18 @@ void func_800D8CF4(struct LayerObj* arg0)
     arg0->unk7++;
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_00", func_800D8DE0);
+void func_800D8DE0(struct LayerObj* arg0)
+{
+    if (g_Player.unkC0 < 0) {
+        func_80036B18();
+        background_objects[0].unk1C = 0x1A50;
+        background_objects[0].unk24 = 0x1A50;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        arg0->private_state.signed_byte = 0;
+    }
+}
 
 void func_800D8E40(struct LayerObj* arg0)
 {

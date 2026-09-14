@@ -5,7 +5,7 @@
 void func_800D6AD8(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
-    void* temp_a2 = arg0->unk5C;
+    struct PlayerObj* temp_a2 = arg0->unk5C;
     s32 var_a1 = 0;
     if (g_Player.unkC3 != 0) {
         var_a1 = 1;
@@ -31,23 +31,52 @@ void func_800D6AD8(struct QuadObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6B9C);
 
-void func_800D6C48(struct QuadObj* arg0, struct PlayerObj* arg1, void* arg2)
+void func_800D6C48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
+    struct Quad10State* state;
     u8 value;
 
-    value = arg0->ext.quad_10.unk44;
-    arg0->ext.quad_10.unk38 -= 1;
+    state = (struct Quad10State*)&arg0->ext;
+    value = state->progress;
+    state->counter -= 1;
     if (value >= 0x78U) {
-        arg0->ext.quad_10.unk44 = 0x78;
+        state->progress = 0x78;
         arg0->state++;
     } else {
-        arg0->ext.quad_10.unk44 = value + 4;
+        state->progress = value + 4;
     }
     func_800D6DC4(arg0, arg1, arg2);
 }
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6CA0);
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6D48);
+void func_800D6D48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+{
+    struct Quad10State* state;
+    struct PlayerUnk8CFields* player_state;
+    u8* cursor;
+    u8 value;
+    s32 index;
+
+    state = (struct Quad10State*)&arg0->ext;
+    player_state = (struct PlayerUnk8CFields*)&arg2->unk8C;
+    index = 0xF;
+    do {
+        cursor = (u8*)state + index;
+        value = cursor[0xC];
+        index--;
+        cursor[0xD] = value;
+    } while (index != 0);
+
+    state->history[0] = (player_state->unk8D - 8) & 0x1F;
+    if (state->counter == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    state->progress -= 4;
+    state->counter--;
+    func_800D6DC4(arg0, arg1, arg2);
+}
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6DC4);
