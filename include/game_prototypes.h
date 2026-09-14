@@ -16,6 +16,7 @@ extern s32 func_80033494 (struct PlayerObj *arg0);
 extern s32 func_800334F4 (struct PlayerObj *arg0);
 extern s32 func_800337DC (struct PlayerObj *arg0);
 extern s32 func_80033EA4 (struct PlayerObj *arg0);
+extern s32 func_80033414 (struct PlayerObj *arg0);
 extern s32 func_80034100 (struct PlayerObj *arg0);
 extern s32 func_80034238 (struct PlayerObj *arg0);
 extern s32 func_80035FC4 (s32 arg0);

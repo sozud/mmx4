@@ -27,7 +27,7 @@ void func_80092408(struct WeaponObj* arg0)
 void func_80092490(struct AnimatedObj* arg0)
 {
     if (arg0->unk5 == 0) {
-        func_80092CEC(SHOT_OBJECT(arg0));
+        func_80092CEC(WEAPON_OBJECT(arg0));
         if (arg0->animation_step.fields.event != 0) {
             arg0->animation_step.fields.event = 0;
             arg0->unk5++;

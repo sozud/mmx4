@@ -187,7 +187,28 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086BB0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086C00);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086C70);
+void func_80086C70(struct PlayerObj* self)
+{
+    s16 timer;
+    struct VisualObj* visual_obj;
+
+    timer = (s16)self->input.buttons.held;
+    if (timer == 0) {
+        visual_obj = find_free_visual_obj();
+        if (visual_obj != NULL) {
+            visual_obj->active = 0x41;
+            visual_obj->id = 0x1E;
+            visual_obj->unk2 = 0x10;
+            visual_obj->unk50 = self;
+            visual_obj->unk54 = 0x20;
+            self->input.buttons.held = 0x20;
+            func_80015D60(self, 0x16);
+            self->unk7 = (u8)self->unk7 + 1;
+        }
+    } else {
+        self->input.buttons.held = timer - 1;
+    }
+}
 
 void func_80086D04(struct MainObj* arg0)
 {
@@ -541,7 +562,23 @@ void func_80088020(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800880BC);
+void func_800880BC(struct MainObj* self)
+{
+    u16 timer;
+    u16 background;
+
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if ((timer << 0x10) == 0) {
+        background = background_objects[0].unk1E;
+        self->unk7C = 0x14;
+        self->unk20 = FIXED(32);
+        self->unk28 = (s32)0xFFFF0000;
+        self->x_pos.i.hi = (s16)(background + 0xA0);
+        func_8001540C(2, 0xD3, self);
+        self->unk6 = (u8)self->unk6 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80088140);
 
@@ -603,7 +640,13 @@ void func_800885DC(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80088658);
+void func_80088658(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->unk6++;
+    }
+}
 
 void func_800886A0(struct MainObj* arg0)
 {
@@ -619,7 +662,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800886F0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800887DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_8008888C);
+void func_8008888C(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 3;
+        arg0->unk54 = (const u8*)&D_801044FC;
+        arg0->unk6 = 0;
+        arg0->unk50 = (const u8*)&D_80104500;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800888D0);
 
