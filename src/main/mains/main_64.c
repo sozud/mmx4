@@ -70,7 +70,14 @@ void func_8007C914(struct MainObj* arg0)
     func_8001540C(2, 0xC6, arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C968);
+void func_8007C968(struct MainObj* arg0)
+{
+    func_8007C914(arg0);
+    arg0->unk7 = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 2);
+    arg0->ext.main_64.unk88 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C9B0);
 
