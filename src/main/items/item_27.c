@@ -133,7 +133,13 @@ void func_800C77BC(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7830);
+void func_800C7830(struct ItemObj* arg0)
+{
+    if (--arg0->tail_ext.unk1.unk84.timer == 0) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800C785C(struct ItemObj* arg0)
 {

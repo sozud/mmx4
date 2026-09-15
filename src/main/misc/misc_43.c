@@ -13,7 +13,11 @@ void func_800D0374(struct MiscObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D03B0);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D04D0);
+void func_800D04D0(struct MiscObj* arg0)
+{
+    D_8010F020[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+}
 
 void func_800D0528(struct MiscObj* arg0)
 {

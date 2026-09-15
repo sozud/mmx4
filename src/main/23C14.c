@@ -4052,7 +4052,12 @@ void func_80042DD8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042E18);
+void func_80042E18(struct MainObj* arg0)
+{
+    D_800F9C98[arg0->unk6](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_80042E70(struct MainObj* arg0)
 {
@@ -4829,7 +4834,11 @@ void func_80044B18(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80044B78);
+void func_80044B78(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_80044BA8(struct MainObj* arg0)
 {
@@ -5056,7 +5065,11 @@ void func_80045D80(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80045DD8);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80046104);
+void func_80046104(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_80046134(struct MainObj* arg0)
 {
@@ -5084,7 +5097,11 @@ void func_8004636C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80046400);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80046610);
+void func_80046610(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
 void func_80046640(struct MainObj* arg0)
 {

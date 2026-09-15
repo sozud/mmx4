@@ -286,7 +286,32 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80091218);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80091448);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_800914EC);
+void func_800914EC(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    s8 var_a0;
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk5++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = -0x7F;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = arg0->x_pos.i.hi;
+            effect->y_pos.i.hi = arg0->y_pos.i.hi;
+            arg0->ext.main_75.unk80.effect = effect;
+        }
+    }
+    if (arg0->unk7E-- == 0) {
+        arg0->ext.main_75.unk95 -= 5;
+        var_a0 = arg0->ext.main_75.unk95;
+        arg0->unk42 ^= 0x8000;
+        if (var_a0 < 5) {
+            var_a0 = 5;
+        }
+        arg0->unk7E = var_a0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_800915C4);
 

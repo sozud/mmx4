@@ -7,7 +7,11 @@ void func_800CF790(struct MiscObj* arg0)
     D_8010EF20[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_39", func_800CF7CC);
+void func_800CF7CC(struct MiscObj* arg0)
+{
+    D_8010EF28[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800CF824(struct MiscObj* arg0)
 {

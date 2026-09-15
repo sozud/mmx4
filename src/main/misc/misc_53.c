@@ -100,7 +100,11 @@ void func_800D2F34(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2FC4);
+void func_800D2FC4(struct MiscObj* arg0)
+{
+    D_8010F560[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+}
 
 void func_800D301C(struct MiscObj* arg0)
 {

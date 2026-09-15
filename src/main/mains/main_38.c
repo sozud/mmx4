@@ -67,7 +67,15 @@ void func_80060F98(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060FF8);
+void func_80060FF8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 4;
+        arg0->ext.main_38.unk88 = 1;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8006104C(struct MainObj* arg0)
 {
@@ -151,9 +159,53 @@ void func_80061310(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_8006135C);
+void func_8006135C(struct PlayerObj* arg0)
+{
+    s32 is_zero;
+    struct ShotObj* shot;
+    u8 i;
+    for (i = 0; i < 2; i++) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x14;
+            shot->unk2 = i;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = D_800FE890;
+            shot->unk3C = arg0->unk3C;
+            shot->unk40 = arg0->unk40;
+            shot->unk15 = arg0->unk15;
+            shot->bg_offset = arg0->bg_offset;
+            is_zero = (arg0->unk2 == 0);
+            shot->unk16 = is_zero ? 2 : 1;
+        }
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80061424);
+void func_80061424(struct MainObj* arg0)
+{
+    s32 is_zero;
+    struct ShotObj* shot;
+    u8 i;
+    for (i = 0; i < 2; i++) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x15;
+            shot->unk2 = i;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)D_800FE890;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk40 = arg0->unk40;
+            shot->unk15 = arg0->unk15;
+            shot->bg_offset = arg0->bg_offset;
+            is_zero = (i == 0);
+            shot->unk16 = is_zero ? 4 : 6;
+        }
+    }
+}
 
 void func_800614E8(struct VisualObj* arg0)
 {

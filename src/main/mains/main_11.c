@@ -16,7 +16,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004A9F4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AB6C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004ACDC);
+void func_8004ACDC(struct MainObj* arg0)
+{
+    arg0->state++;
+}
 
 void func_8004ACF0(struct MainObj* arg0)
 {

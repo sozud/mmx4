@@ -424,7 +424,13 @@ void func_80073B58(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073BDC);
+void func_80073BDC(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80073C08(struct MainObj* arg0)
 {
