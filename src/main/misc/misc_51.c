@@ -45,7 +45,11 @@ void func_800D1F04(struct MiscObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_51", func_800D1F24);
+void func_800D1F24(struct MiscObj* arg0)
+{
+    D_8010F4D8[arg0->unk6](arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800D1F74(struct MiscObj* arg0)
 {

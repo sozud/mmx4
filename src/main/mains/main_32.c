@@ -95,7 +95,11 @@ void func_8005CDEC(struct MainObj* arg0)
     arg0->unk6 = step + 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CE50);
+void func_8005CE50(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_8005CE80(struct MainObj* arg0)
 {
@@ -120,7 +124,11 @@ void func_8005CEBC(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005CF30);
+void func_8005CF30(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_8005CF60(struct MainObj* arg0)
 {

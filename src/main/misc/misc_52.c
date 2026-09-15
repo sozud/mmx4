@@ -38,7 +38,11 @@ void func_800D254C(struct MiscObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D25AC);
+void func_800D25AC(struct MiscObj* arg0)
+{
+    D_8010F50C[arg0->unk5](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D25FC);
 

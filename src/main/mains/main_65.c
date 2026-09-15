@@ -434,7 +434,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65", func_80080370);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_800804A0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_800805D8);
+void func_800805D8(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        engine_obj.unkF = 1;
+    }
+}
 
 void func_80080604(struct MainObj* arg0)
 {

@@ -100,7 +100,12 @@ void func_8004D408(struct MainObj* arg0)
     D_800FBA34[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D444);
+void func_8004D444(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    arg0->ext.main_14.unk80 = 0xC;
+    arg0->unk6++;
+}
 
 void func_8004D480(struct MainObj* arg0)
 {
@@ -149,7 +154,11 @@ void func_8004D61C(struct MainObj* self)
     self->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D69C);
+void func_8004D69C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_8004D6CC(struct AnimatedObj* arg0)
 {

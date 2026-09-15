@@ -18,7 +18,11 @@ void func_800D1D38(struct MiscObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_50", func_800D1D58);
+void func_800D1D58(struct MiscObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800D1D88(struct MiscObj* arg0)
 {

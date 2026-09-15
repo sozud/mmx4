@@ -18,9 +18,17 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C993C);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C99CC);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C9C64);
+void func_800C9C64(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    D_8010E0E0[arg0->unk5](arg0);
+}
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C9CB0);
+void func_800C9CB0(struct ItemObj* arg0)
+{
+    D_8010E0EC[(u8)arg0->unk54](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+}
 
 void func_800C9D08(struct MiscObj* arg0)
 {

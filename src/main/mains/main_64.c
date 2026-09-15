@@ -27,7 +27,11 @@ void func_8007C69C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C6E8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C7D4);
+void func_8007C7D4(struct MainObj* arg0)
+{
+    D_80102968[arg0->unk6](arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_8007C824(struct MainObj* arg0)
 {

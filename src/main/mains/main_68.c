@@ -26,7 +26,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800833D0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800834B0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083544);
+void func_80083544(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->state = 1;
+        arg0->unk5 = 2;
+    }
+}
 
 void func_80083574(struct MainObj* arg0)
 {
@@ -169,7 +175,14 @@ void func_80083DC8(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083E44);
+void func_80083E44(struct MainObj* arg0)
+{
+    arg0->on_screen = 0;
+    if (--arg0->unk7C == 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80083E70(struct MainObj* arg0)
 {
@@ -476,7 +489,33 @@ void func_80085238(struct MainObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800852C4);
+void func_800852C4(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    s8 var_a0;
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk5++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = arg0->x_pos.i.hi;
+            effect->y_pos.i.hi = arg0->y_pos.i.hi;
+            arg0->ext.main_68.effect = effect;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+    if (arg0->unk7E-- == 0) {
+        arg0->ext.main_68.unk90 -= 5;
+        var_a0 = arg0->ext.main_68.unk90;
+        arg0->unk42 ^= 0x8000;
+        if (var_a0 < 5) {
+            var_a0 = 5;
+        }
+        arg0->unk7E = var_a0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800853A4);
 

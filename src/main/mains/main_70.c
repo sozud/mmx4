@@ -9,7 +9,11 @@ void func_80088BA0(struct MainObj* arg0)
     D_801049E4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088BE8);
+void func_80088BE8(struct MainObj* arg0)
+{
+    D_801049F0[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088C40);
 

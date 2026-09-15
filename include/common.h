@@ -880,6 +880,7 @@ struct Main75Ext {
     u8 unk92;
     s8 unk93;
     s8 unk94;
+    u8 unk95;
 };
 
 struct Main8Ext {
@@ -3675,7 +3676,7 @@ void func_8005807C(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
 void func_800AF878(struct BaseObj*, s32, s32, s32);
 void func_8005F4E0(struct MainObj*);
-void func_8006135C(struct MainObj*);
+void func_8006135C(struct PlayerObj*);
 void func_80061424(struct MainObj*);
 void func_800614E8(struct VisualObj*);
 void func_80068340(struct MainObj*);
