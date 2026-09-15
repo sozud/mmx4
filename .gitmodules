@@ -13,3 +13,7 @@
 [submodule "tools/harness"]
 	path = tools/harness
 	url = https://github.com/sozud/harness.git
+[submodule "tools/mednafen"]
+	path = tools/mednafen
+	url = https://github.com/sozud/mednafen-git.git
+	branch = mmx4-oracle

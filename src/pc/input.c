@@ -31,6 +31,102 @@ struct PendingCapture {
 static struct PendingCapture pending_capture;
 static int have_pending_capture;
 static int initialized;
+static FILE* replay_file;
+static u8 replay_stage;
+static u8 replay_substage;
+static unsigned long replay_length;
+static unsigned long replay_consumed;
+static int replay_started;
+static int replay_complete;
+static int replay_exit_requested;
+
+static void replay_fail(const char* reason)
+{
+    fprintf(stderr, "MMX4 PC: replay %s: %s\n", mmx4_pc_replay_path, reason);
+    exit(EXIT_FAILURE);
+}
+
+static void open_replay(void)
+{
+    unsigned char header[16];
+    long size;
+
+    if (mmx4_pc_replay_path == NULL || *mmx4_pc_replay_path == '\0')
+        return;
+    replay_file = fopen(mmx4_pc_replay_path, "rb");
+    if (replay_file == NULL)
+        replay_fail("unable to open");
+    if (fseek(replay_file, 0, SEEK_END) != 0)
+        replay_fail("not seekable");
+    size = ftell(replay_file);
+    if (size < 0)
+        replay_fail("unable to measure");
+    if (size < 18 || ((size - 16) % 2) != 0)
+        replay_fail("empty, odd-length, or truncated input stream");
+    rewind(replay_file);
+    if (fread(header, sizeof(header), 1, replay_file) != 1)
+        replay_fail("unable to read header");
+    if (memcmp(header, "MMX4RPL1", 8) != 0)
+        replay_fail("invalid magic");
+    if (header[12] != 0 || header[13] != 0 || header[14] != 0 || header[15] != 0)
+        replay_fail("nonzero reserved header bytes");
+    replay_stage = header[8];
+    replay_substage = header[9];
+    replay_length = (unsigned long)((size - 16) / 2);
+    replay_exit_requested = getenv("MMX4_REPLAY_EXIT") != NULL;
+    fprintf(stderr, "MMX4 PC: replay %s: %lu frames, stage %u-%u\n",
+        mmx4_pc_replay_path, replay_length, replay_stage, replay_substage);
+}
+
+static u16 replay_input(void)
+{
+    unsigned char input[2];
+
+    if (replay_file == NULL)
+        return 0;
+    if (!replay_started) {
+        if (engine_obj.state != 6 || (u8)engine_obj.stage != replay_stage || (u8)engine_obj.substage != replay_substage)
+            return 0;
+        replay_started = 1;
+        fprintf(stderr, "MMX4 PC: replay started at stage %u-%u (engine state 6)\n",
+            replay_stage, replay_substage);
+    }
+    if (replay_complete)
+        return 0;
+    if (fread(input, sizeof(input), 1, replay_file) != 1)
+        replay_fail("input stream ended unexpectedly");
+    replay_consumed++;
+    if (replay_consumed == replay_length) {
+        replay_complete = 1;
+        fclose(replay_file);
+        replay_file = NULL;
+        fprintf(stderr, "MMX4 PC: replay finished after %lu frames\n",
+            replay_consumed);
+    }
+    return (u16)(input[0] | (input[1] << 8));
+}
+
+int mmx4_pc_replay_active(void)
+{
+    return replay_file != NULL || replay_started;
+}
+
+long mmx4_pc_replay_frame(void)
+{
+    if (!replay_started || replay_consumed == 0)
+        return -1;
+    return (long)(replay_consumed - 1);
+}
+
+int mmx4_pc_replay_complete(void)
+{
+    return replay_complete;
+}
+
+int mmx4_pc_replay_exit_requested(void)
+{
+    return replay_exit_requested;
+}
 
 static u16 button_mask(const char* name)
 {
@@ -171,13 +267,17 @@ void mmx4_pc_input_update(u8* pad_buffer)
     if (!initialized) {
         const char* value = getenv("MMX4_MAX_FRAMES");
         parse_script();
+        open_replay();
         if (value != NULL)
             max_frames = strtoul(value, NULL, 0);
         initialized = 1;
     }
     if (max_frames != 0 && frame_number >= max_frames)
         exit(EXIT_SUCCESS);
-    buttons = scripted_input() | oracle_input() | keyboard_input();
+    if (mmx4_pc_replay_active())
+        buttons = replay_input();
+    else
+        buttons = scripted_input() | oracle_input() | keyboard_input();
     pad_buffer[0] = 0;
     pad_buffer[1] = 0x41;
     pad_buffer[2] = (u8)(~buttons >> 8);

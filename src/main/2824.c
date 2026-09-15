@@ -34,7 +34,7 @@ void func_80012024(void)
         DrawSync(0);
         func_80012454();
 #ifdef MMX4_PC
-        mmx4_oracle_capture_object_changes(mmx4_pc_frame_number());
+        mmx4_pc_frame_end();
 #endif
     }
 }

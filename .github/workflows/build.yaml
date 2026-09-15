@@ -63,13 +63,6 @@ jobs:
           submodules: recursive
           persist-credentials: false
           allow-unsafe-pr-checkout: true
-      - name: Clone Mednafen oracle
-        uses: actions/checkout@v7
-        with:
-          repository: sozud/mednafen-git
-          ref: mmx4-oracle
-          path: tools/mednafen
-          persist-credentials: false
       - name: Install requirements
         run: |
           sudo apt-get update
