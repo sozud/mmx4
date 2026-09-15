@@ -12,3 +12,4 @@ config/undefined_syms_auto.jp.main.txt
 main.jp.ld
 expected
 objdiff.json
+replay-runs

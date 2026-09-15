@@ -29,6 +29,49 @@ u32 mmx4_pc_sfx_index;
 const char* mmx4_pc_sfx_raw;
 u32 mmx4_pc_sfx_frames = 360;
 s32 mmx4_pc_canonical_load;
+const char* mmx4_pc_replay_path;
+
+static int configure_replay(const char* path)
+{
+    unsigned char header[16];
+    char value[4][4];
+    FILE* replay;
+    long size;
+    int i;
+
+    replay = fopen(path, "rb");
+    if (replay == NULL) {
+        fprintf(stderr, "MMX4 PC: unable to open replay %s\n", path);
+        return -1;
+    }
+    if (fseek(replay, 0, SEEK_END) != 0 || (size = ftell(replay)) < 0) {
+        fprintf(stderr, "MMX4 PC: unable to measure replay %s\n", path);
+        fclose(replay);
+        return -1;
+    }
+    if (size < 18 || ((size - 16) % 2) != 0) {
+        fprintf(stderr, "MMX4 PC: empty, odd-length, or truncated replay %s\n",
+            path);
+        fclose(replay);
+        return -1;
+    }
+    rewind(replay);
+    if (fread(header, sizeof(header), 1, replay) != 1 || memcmp(header, "MMX4RPL1", 8) != 0 || header[12] != 0 || header[13] != 0 || header[14] != 0 || header[15] != 0) {
+        fprintf(stderr, "MMX4 PC: invalid replay header in %s\n", path);
+        fclose(replay);
+        return -1;
+    }
+    fclose(replay);
+
+    for (i = 0; i < 4; i++)
+        snprintf(value[i], sizeof(value[i]), "%u", header[8 + i]);
+    setenv("MMX4_ORACLE_SCENE", "initial-stage", 1);
+    setenv("MMX4_DIRECT_STAGE", value[0], 1);
+    setenv("MMX4_DIRECT_SUBSTAGE", value[1], 1);
+    setenv("MMX4_DIRECT_CHECKPOINT", value[2], 1);
+    setenv("MMX4_DIRECT_CHARACTER", value[3], 1);
+    return 0;
+}
 
 static int parse_sfx(const char* text)
 {
@@ -66,6 +109,8 @@ static int parse_args(int argc, char** argv, const char** disc)
             }
         } else if (strcmp(argv[i], "--cue") == 0 && i + 1 < argc) {
             *disc = argv[++i];
+        } else if (strcmp(argv[i], "--replay") == 0 && i + 1 < argc) {
+            mmx4_pc_replay_path = argv[++i];
         } else if (strcmp(argv[i], "--audio-raw") == 0 && i + 1 < argc) {
             mmx4_pc_sfx_raw = argv[++i];
         } else if (strcmp(argv[i], "--frames") == 0 && i + 1 < argc) {
@@ -82,6 +127,7 @@ static int parse_args(int argc, char** argv, const char** disc)
             mmx4_pc_canonical_load = 0;
         } else if (strcmp(argv[i], "--help") == 0) {
             printf("usage: %s [--cue GAME.cue] [--sfx INDEX|GROUP:INDEX] "
+                   "[--replay FILE] "
                    "[--audio-raw FILE --frames N] "
                    "[--canonical-load|--fast-load]\n",
                 argv[0]);
@@ -95,6 +141,8 @@ static int parse_args(int argc, char** argv, const char** disc)
         fprintf(stderr, "MMX4 PC: --audio-raw requires --sfx\n");
         return -1;
     }
+    if (mmx4_pc_replay_path != NULL && configure_replay(mmx4_pc_replay_path) != 0)
+        return -1;
     return 0;
 }
 
