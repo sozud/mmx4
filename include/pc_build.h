@@ -29,6 +29,7 @@ void mmx4_pc_thread_replace(void (*entry)(void));
 extern const char* mmx4_pc_replay_path;
 int mmx4_pc_replay_active(void);
 long mmx4_pc_replay_frame(void);
+void mmx4_pc_render_log_dump(void);
 int mmx4_pc_replay_complete(void);
 int mmx4_pc_replay_exit_requested(void);
 

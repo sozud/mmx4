@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[2]
-REPLAY_SHA256 = "de0c04fd6a01abcd2f2e78192359284004e56f7619261ff5d461442d5f15763b"
+REPLAY_SHA256 = "e2ea3b524007787270960b7e74275fc2a043c42f53b9bfd09ffb199d5f239ef7"
 ABORT_MARKERS = (
     "unimplemented traced game function:",
     "unavailable game function:",
@@ -34,7 +34,7 @@ def validate_replay(path):
     data = path.read_bytes()
     if len(data) < 18 or (len(data) - 16) % 2:
         raise SystemExit(f"{path}: empty, odd-length, or truncated replay")
-    if data[:8] != b"MMX4RPL1":
+    if data[:8] not in (b"MMX4RPL1", b"MMX4RPL2"):
         raise SystemExit(f"{path}: invalid replay magic")
     if any(data[12:16]):
         raise SystemExit(f"{path}: nonzero reserved header bytes")
@@ -42,6 +42,7 @@ def validate_replay(path):
         "path": str(path),
         "sha256": sha256(path),
         "frames": (len(data) - 16) // 2,
+        "clock": "pad-read" if data[:8] == b"MMX4RPL2" else "video-frame",
         "stage": data[8],
         "substage": data[9],
         "checkpoint": data[10],
@@ -115,7 +116,7 @@ def report_frames(name, header, rows):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--replay", type=Path,
-                        default=WORKSPACE / "recordings/intro-20260912-153816.mmx4r")
+                        default=WORKSPACE / "tools/oracle/recordings/intro-20260912-153816-normalized.mmx4r")
     parser.add_argument("--output", type=Path,
                         default=WORKSPACE / "replay-runs")
     parser.add_argument("--build", type=Path, default=WORKSPACE / "build-asan")
@@ -191,6 +192,8 @@ def main():
     env = os.environ.copy()
     env.update(
         ASAN_OPTIONS="detect_leaks=0",
+        MMX4_CANONICAL_LOAD="1",
+        MMX4_MAX_FRAMES="36000",
         MMX4_OBJECT_LOG_DIR=str(pc_dir),
         MMX4_REPLAY_EXIT="1",
     )

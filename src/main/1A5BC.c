@@ -1153,7 +1153,7 @@ void func_8002C954(struct PlayerObj* arg0)
 
 void func_8002C99C(struct PlayerObj* arg0)
 {
-    if ((func_8002D490() != 0) && (func_8002D25C(arg0) != 0)) {
+    if ((func_8002D490(arg0) != 0) && (func_8002D25C(arg0) != 0)) {
         func_8002C9E4(arg0);
     }
 }

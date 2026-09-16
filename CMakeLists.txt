@@ -34,40 +34,35 @@ file(GLOB MMX4_PC_GAME_SOURCES CONFIGURE_DEPENDS
 )
 
 list(REMOVE_ITEM MMX4_PC_GAME_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/D9840.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_30.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_31.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_32.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_33.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_34.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_35.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_36.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_38.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_39.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_40.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_42.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_43.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_45.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_46.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_49.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_50.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_51.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_52.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_55.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/misc/misc_57.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_03.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_04.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_05.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_06.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_08.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_09.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/quads/quad_10.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/unks/unk_00.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/unks/unk_01.c
-)
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/D9840.c)
 
 file(GLOB MMX4_PC_FUNCTION_TABLE_SOURCES CONFIGURE_DEPENDS
     src/main/function_tables/*.c)
+list(REMOVE_ITEM MMX4_PC_FUNCTION_TABLE_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EC30.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EC38.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010ECD8.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EDDC.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EED8.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EEF4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF00.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF0C.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF20.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EFC4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EFD0.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F014.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F188.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F1A4.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F1E0.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F4AC.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F4BC.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F528.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F530.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F538.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F544.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F58C.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F5BC.c
+)
 list(APPEND MMX4_PC_GAME_SOURCES ${MMX4_PC_FUNCTION_TABLE_SOURCES})
 
 add_executable(mmx4_pc
@@ -77,6 +72,7 @@ add_executable(mmx4_pc
     src/pc/objectlog.c
     src/pc/oracle.c
     src/pc/placeholder.c
+    src/pc/renderlog.c
     src/pc/screenshot.c
     src/pc/stubs.c
     src/pc/threads.c
@@ -88,7 +84,7 @@ target_compile_options(mmx4_pc PRIVATE -ffunction-sections -fdata-sections)
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(mmx4_pc PRIVATE
         -fno-strict-aliasing
-        -Wno-error=implicit-function-declaration)
+        -Werror=implicit-function-declaration)
 endif()
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
     target_compile_options(mmx4_pc PRIVATE

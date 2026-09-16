@@ -2,6 +2,8 @@
 // 800D67DC..800D6AD8
 #include "common.h"
 
+void func_800D69A8();
+
 void func_800D67DC(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;

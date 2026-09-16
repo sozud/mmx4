@@ -7,14 +7,14 @@ import tempfile
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[2]
-GOOD = b"MMX4RPL1" + bytes([0, 0, 0, 0]) + bytes(4) + b"\x00\x00"
+GOOD = b"MMX4RPL2" + bytes([0, 0, 0, 0]) + bytes(4) + b"\x00\x00"
 
 CASES = (
     ("empty", b""),
     ("header only", GOOD[:16]),
     ("odd length", GOOD + b"\x00"),
     ("truncated header", GOOD[:12]),
-    ("bad magic", b"MMX4RPL2" + GOOD[8:]),
+    ("bad magic", b"MMX4RPL3" + GOOD[8:]),
     ("nonzero reserved", GOOD[:12] + b"\x01\x00\x00\x00" + GOOD[16:]),
 )
 

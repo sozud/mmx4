@@ -139,7 +139,7 @@ void func_80099A8C(struct ShotObj* arg0)
 
 void func_80099B0C(struct ShotObj* arg0)
 {
-    arg0->unk7C->unk54 = 0;
+    arg0->unk7C->unk54 = NULL;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 

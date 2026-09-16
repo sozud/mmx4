@@ -65,148 +65,56 @@ u8 D_800F2C58[] = {
 
 #ifdef VERSION_JP
 u8 x_ready_text_flags[] = {
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0,
+    0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0,
+    0, 0, 0, 0,
+    1, 0, 0, 0,
+    1, 0, 1, 1, 1, 0, 0, 0,
+    0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 0, 0,
+    0, 1, 0, 1, 1, 0, 0, 0,
+    1, 0, 1, 1, 0, 1, 0, 0,
+    0, 1, 0, 1, 1, 0, 0, 0,
+    0, 0, 0, 0,
 };
-
-u8 x_ready_text_flags_1[] = {
-    0,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-};
-static u8 x_ready_text_flags_2[] = { 0, 0, 0, 0 };
-static u8 x_ready_text_flags_3[] = { 1, 0, 0, 0 };
-static u8 x_ready_text_flags_4[] = { 1, 0, 1, 1, 1, 0, 0, 0 };
-static u8 x_ready_text_flags_5[] = {
-    0,
-    1,
-    0,
-    1,
-    1,
-    1,
-    0,
-    1,
-    1,
-    0,
-    0,
-    0,
-};
-static u8 x_ready_text_flags_6[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
-static u8 x_ready_text_flags_7[] = { 1, 0, 1, 1, 0, 1, 0, 0 };
-static u8 x_ready_text_flags_8[] = { 0, 1, 0, 1, 1, 0, 0, 0 };
-static u8 x_ready_text_flags_9[] = { 0, 0, 0, 0 };
 
 static u8* x_ready_text[] = {
-    &x_ready_text_flags[0],
-    &x_ready_text_flags_1[0],
-    &x_ready_text_flags_2[0],
-    &x_ready_text_flags_3[0],
-    &x_ready_text_flags_4[0],
-    &x_ready_text_flags_5[0],
-    &x_ready_text_flags_6[0],
-    &x_ready_text_flags_7[0],
-    &x_ready_text_flags_8[0],
-    &x_ready_text_flags_9[0],
+    x_ready_text_flags + 0,
+    x_ready_text_flags + 4,
+    x_ready_text_flags + 20,
+    x_ready_text_flags + 24,
+    x_ready_text_flags + 28,
+    x_ready_text_flags + 36,
+    x_ready_text_flags + 48,
+    x_ready_text_flags + 56,
+    x_ready_text_flags + 64,
+    x_ready_text_flags + 72,
 };
 #else
 u8 x_ready_text_flags[] = {
-    0,
-    0,
-    0,
-    0,
+    0, 0, 0, 0,
+    0, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0,
+    1, 1, 1, 1, 1, 0, 0, 0,
+    0, 0, 0, 0,
+    1, 1, 0, 0,
+    1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0,
+    0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0,
+    0, 1, 1, 0, 1, 1, 1, 0,
+    1, 0, 1, 1, 1, 0, 1, 0,
+    0, 1, 1, 0, 1, 1, 1, 0,
+    0, 0, 0, 0,
 };
-
-u8 x_ready_text_flags_1[] = {
-    0,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-};
-static u8 x_ready_text_flags_2[] = { 0, 0, 0, 0 };
-static u8 x_ready_text_flags_3[] = { 1, 1, 0, 0 };
-static u8 x_ready_text_flags_4[] = {
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-    0,
-};
-static u8 x_ready_text_flags_5[] = {
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    1,
-    1,
-    1,
-    1,
-    0,
-    0,
-    0,
-};
-static u8 x_ready_text_flags_6[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
-static u8 x_ready_text_flags_7[] = { 1, 0, 1, 1, 1, 0, 1, 0 };
-static u8 x_ready_text_flags_8[] = { 0, 1, 1, 0, 1, 1, 1, 0 };
-static u8 x_ready_text_flags_9[] = { 0, 0, 0, 0 };
 
 static u8* x_ready_text[] = {
-    &x_ready_text_flags[0],
-    &x_ready_text_flags_1[0],
-    &x_ready_text_flags_2[0],
-    &x_ready_text_flags_3[0],
-    &x_ready_text_flags_4[0],
-    &x_ready_text_flags_5[0],
-    &x_ready_text_flags_6[0],
-    &x_ready_text_flags_7[0],
-    &x_ready_text_flags_8[0],
-    &x_ready_text_flags_9[0],
+    x_ready_text_flags + 0,
+    x_ready_text_flags + 4,
+    x_ready_text_flags + 28,
+    x_ready_text_flags + 32,
+    x_ready_text_flags + 36,
+    x_ready_text_flags + 48,
+    x_ready_text_flags + 64,
+    x_ready_text_flags + 72,
+    x_ready_text_flags + 80,
+    x_ready_text_flags + 88,
 };
 #endif
 

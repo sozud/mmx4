@@ -400,10 +400,13 @@ struct GraphicsObj {
 };
 
 struct CollisionObj {
-    u8 pad0[8];
-    f32 x_pos;
-    f32 y_pos;
-    u8 pad10[0x58];
+    ANIMATED_OBJ_FIELDS
+    s8 pad49[0x50 - 0x49];
+    const u8* unk50;
+    const u8* unk54;
+    const u8* unk58;
+    s8 unk5C;
+    s8 pad5D[0x68 - 0x5D];
     struct Unk_unk68* collision_bounds;
     s16 unk6C;
     s16 unk6E;
@@ -1548,7 +1551,7 @@ struct WeaponObj {
     u8 previous_animation_index;
     s8 pad49[0x50 - 0x49];
     const u8* unk50;
-    s32 unk54;
+    const u8* unk54;
     s8 pad58[0x61 - 0x58];
     s8 unk61;
     s8 unk62;
@@ -1582,6 +1585,11 @@ struct WeaponObj {
     s8 unk98;
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
+
+MMX4_STATIC_ASSERT(weapon_unk54_offset,
+    MMX4_OFFSET_OF(struct WeaponObj, unk54) == MMX4_OFFSET_OF(struct MainObj, unk54));
+MMX4_STATIC_ASSERT(weapon_unk54_width,
+    sizeof(((struct WeaponObj*)0)->unk54) == sizeof(((struct MainObj*)0)->unk54));
 
 #ifndef MMX4_PC
 MMX4_STATIC_ASSERT(psx_weapon_owner_offset,
@@ -1700,9 +1708,9 @@ struct ItemObj {
     union AnimationStep animation_step;
     u8 previous_animation_index;
     s8 pad49[0x50 - 0x49];
-    s32 unk50;
-    s32 unk54;
-    s32 unk58;
+    const u8* unk50;
+    const u8* unk54;
+    const u8* unk58;
     s8 unk5C;
     s8 pad5D[0x61 - 0x5D];
     s8 unk61;
@@ -1947,15 +1955,8 @@ struct BarObj {
 }; // size 0x34
 
 struct BazObj {
-    BASE_OBJ_FIELDS
-    s8 pad18[0x30 - 0x18];
-    u32** animation_table;
-    s32 pad34;
-    s32 unk38;
-    void* unk3C;
-    u16 unk40;
-    u16 unk42;
-    s8 pad44[0x50 - 0x44];
+    ANIMATED_OBJ_FIELDS
+    s8 pad49[0x50 - 0x49];
 }; // size 0x50
 
 union RideArmorUnk98 {
@@ -1975,7 +1976,9 @@ struct RideArmorObj {
     s8 unk46;
     s8 pad47[0x5C - 0x47];
     s8 unk5C;
-    s8 pad5D[0x70 - 0x5D];
+    s8 pad5D[0x63 - 0x5D];
+    s8 unk63;
+    s8 pad64[0x70 - 0x64];
     u8 unk70;
     s8 pad71[0x7D - 0x71];
     u8 unk7D;
@@ -1984,7 +1987,11 @@ struct RideArmorObj {
     u8 unk80;
     s8 pad81;
     u8 unk82;
-    s8 pad83[0x88 - 0x83];
+    s8 pad83;
+    u8 unk84;
+    u8 unk85;
+    u8 unk86;
+    s8 pad87;
     u16 collision_flags;
     s16 unk8A;
     s16 unk8C;
@@ -2142,11 +2149,11 @@ struct SecondaryPrimitiveBuffer {
 };
 
 struct BackgroundPrimitiveBuffer {
-    u8 data[0x200];
+    SPRT_16 data[32];
 };
 
 struct OrderingTableBuffer {
-    u8 data[0x100];
+    DR_TPAGE data[32];
 };
 
 struct AuxiliaryPrimitiveBuffer {
@@ -2582,7 +2589,7 @@ struct UnkEffectExt {
     u8 unk15;
     u8 unk16;
     s8 : 8;
-    s32 unk18;
+    void* unk18;
 };
 
 struct Effect4Ext {
@@ -3214,9 +3221,10 @@ extern void (*dragonfly_step_funcs[])();
 extern u8 D_8010B465;
 #endif
 extern u8 x_ready_text_flags[];
-extern u8 x_ready_text_flags_1[];
-#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags_1 + 0x0C))
+#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags + 0x10))
 extern u8* const* D_800F2DD8[];
+extern const u8* D_800F2DD0[];
+extern u16 D_800F2F40[16];
 extern const u32* const* D_800F2EE8[];
 extern const u32* const* D_800F2F00[];
 extern s16 D_800F2FDC[2];
@@ -3521,6 +3529,12 @@ s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
+void func_8003443C(struct PlayerObj*);
+void func_80034150(struct PlayerObj*);
+void func_80035EA4(struct PlayerObj*);
+void func_80036534(struct PlayerObj*);
+void func_800CEFC0(struct MiscObj*);
+void func_800CF0B0(struct MiscObj*);
 void func_8003516C(struct PlayerObj*, s32, s32);
 void func_80034BDC(struct PlayerObj*);
 void func_80034CB0(struct PlayerObj*);
@@ -3654,6 +3668,9 @@ u8 func_8002D994(struct PlayerObj*);
 void func_800E5D78(s32);
 s32 func_800E5D90(s32, s32, s32);
 void func_80016334(void);
+#ifdef MMX4_PC
+void func_80016124(void);
+#endif
 void func_8001663C(u8, u8);
 void func_800175AC(u8);
 s32 func_800E5ACC(void);
@@ -3671,6 +3688,12 @@ void func_8002B0C8(struct ObjectHeader* arg0);
 void func_8002B108(struct ObjectHeader* arg0);
 void func_8002B560(s8, s8);
 void func_8002B694(struct AnimatedObj* arg0);
+#ifdef MMX4_PC
+void func_8002C36C(struct PlayerObj*, struct PlayerObj*, s32);
+s32 func_8002D490(struct PlayerObj*);
+void func_8002E294(struct PlayerObj*, struct PlayerObj*);
+void func_8002E380(struct PlayerObj*, struct PlayerObj*, s32);
+#endif
 void func_80055C54(void);
 void func_8005807C(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
@@ -3698,6 +3721,76 @@ enum SelectedPlayer {
 };
 
 #ifdef MMX4_PC
+long SpuSetTransferMode(long);
+void StCdInterrupt(void);
+void func_80012328(void);
+void func_80012F44(void);
+void func_80014A90(s32, s32);
+void func_80014C70(void);
+void func_80017100(void);
+void func_800179BC(void);
+void func_80017E84(void);
+void func_80017F2C(void);
+void func_8001A9EC(struct EngineObj*);
+void func_800200D4(struct EngineObj*);
+void func_800204CC(u8*, s32);
+void func_80021F34(void);
+void func_80024260(void);
+void func_80024334(struct VisualObj*);
+void func_80024920(struct QuadObj*);
+void func_80024B9C(struct QuadObj*);
+void func_8002588C(struct PlayerObj*, s32, s32);
+void func_800262B8(u8);
+void func_80026AA0(s32);
+void func_80027344(s32, s32, s32);
+void func_800275DC(s32, s32, s32);
+void func_80028690(struct BackgroundObj*);
+void func_80028E24(void);
+void func_8002B3C0(struct BaseObj*);
+s32 func_8002BB80(struct MainObj*, struct MainObj*);
+s32 func_8002C160(struct CollisionObj*, struct CollisionObj*);
+void func_8002C26C(struct CollisionObj*, struct CollisionObj*);
+void func_8002C2EC(struct CollisionObj*, struct CollisionObj*);
+s32 func_8003356C(struct PlayerObj*);
+s32 func_800339E0(struct PlayerObj*);
+s32 func_80033AC0(struct PlayerObj*);
+s32 func_80033B34(struct PlayerObj*);
+s32 func_80033B8C(struct PlayerObj*);
+void func_80033D54(struct PlayerObj*);
+s32 func_80033F5C(struct PlayerObj*);
+void func_800344A0(struct PlayerObj*);
+void func_8003470C(struct PlayerObj*);
+void func_80034AFC(struct PlayerObj*);
+void func_80034B64(struct PlayerObj*);
+void func_800363EC(struct PlayerObj*);
+void func_80036F50(struct PlayerObj*);
+s32 func_80037338(struct PlayerObj*);
+s32 func_8003751C(struct PlayerObj*);
+s32 func_80037A98(struct PlayerObj*);
+s32 func_8003996C(struct PlayerObj*);
+s32 func_80039B44(struct PlayerObj*);
+s32 func_80039CC4(struct PlayerObj*);
+s32 func_80039D9C(struct PlayerObj*);
+void func_8004FC50(struct AnimatedObj*);
+void func_800506D8(struct AnimatedObj*);
+void func_8006AE50(struct AnimatedObj*);
+void func_8006B2A4(void);
+void func_8006B398(struct MainObj*);
+void func_8006E920(struct MainObj*, s32);
+void func_800889A4(struct BaseObj*);
+void func_800889DC(struct MainObj*);
+void func_80092E2C(struct VisualObj*, struct PlayerObj*, s32);
+void func_80093524(struct WeaponObj*);
+void func_800A7A90(struct ShotObj*);
+void func_800AFB90(struct VisualObj*);
+void func_800BC3E8(struct EffectObj*);
+void func_800BD024(struct EffectObj*);
+void func_800BD080(struct EffectObj*);
+void func_800BDB10(struct EffectObj*);
+void func_800D9B48(struct LayerObj*);
+void func_800E0D0C(void);
+void func_800E9040(void);
+
 #include "game_prototypes.h"
 #endif
 

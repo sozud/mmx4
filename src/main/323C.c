@@ -4560,7 +4560,7 @@ void func_80022730(struct AbcObj* arg0)
     s32 temp_a0;
     s32 temp_a1;
     s32 temp_v0;
-    s32 temp_v1;
+    signed long temp_v1;
     s16 temp_a2;
     struct MiscObj* obj;
     u8* readyText;
@@ -4622,7 +4622,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_a1,
                         &engine_obj.cur_character);
 
-                    temp_v1 = (s32)SP_MENU_FRAMES;
+                    temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->ext.pointer.unk50 = readyText;
@@ -4712,7 +4712,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_a1,
                         (s8*)temp_a2);
 
-                    temp_v1 = (s32)SP_MENU_FRAMES;
+                    temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                     obj->state = 0;
@@ -4770,7 +4770,7 @@ void func_80022730(struct AbcObj* arg0)
                             (s8*)temp_a2,
                             D_801397DC);
 
-                        temp_v1 = (s32)SP_MENU_FRAMES;
+                        temp_v1 = (signed long)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->state = 0;
@@ -4835,7 +4835,7 @@ void func_80022730(struct AbcObj* arg0)
                             temp_a1,
                             (s8*)temp_a2);
 
-                        temp_v1 = (s32)SP_MENU_FRAMES;
+                        temp_v1 = (signed long)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
 
                         obj->state = 0;
@@ -5397,8 +5397,8 @@ void init_objects(void)
     SP_SPRITE_COUNT = 0;
     SP_PRIM_CURSOR = temp1[SP_DRAW_BUFFER].data;
     SP_DRAW_MODE_CURSOR = temp2[SP_DRAW_BUFFER].data;
-    SP_BG_PRIM_CURSOR = &temp3[SP_DRAW_BUFFER];
-    SP_OT_CURSOR = &temp4[SP_DRAW_BUFFER];
+    SP_BG_PRIM_CURSOR = temp3[SP_DRAW_BUFFER].data;
+    SP_OT_CURSOR = temp4[SP_DRAW_BUFFER].data;
     SP_AUX_CURSOR = temp5[SP_DRAW_BUFFER].data;
 
     func_80024E70();
