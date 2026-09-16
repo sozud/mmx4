@@ -11,7 +11,19 @@ void func_8009B67C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_11", func_8009B6B8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_11", func_8009B734);
+void func_8009B734(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+    } else if (func_8002BB80(arg0, &g_Player) == 0 && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_8009B7D8(struct ShotObj* arg0)
 {

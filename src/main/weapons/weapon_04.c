@@ -2,7 +2,25 @@
 // 800951C0..800954BC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04", func_800951C0);
+void func_800951C0(struct WeaponObj* arg0)
+{
+    s32 disabled;
+
+    disabled = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        disabled = 1;
+    }
+    if (g_Player.unk93 != 4) {
+        disabled = 1;
+    }
+    if (g_Player.unk96 == 0xD) {
+        disabled = 1;
+    }
+    if (disabled != 0) {
+        arg0->state = 3;
+    }
+    D_80108920[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04", func_80095254);
 

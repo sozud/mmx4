@@ -42,7 +42,16 @@ void func_800B3848(struct VisualObj* arg0)
     D_8010A674[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3884);
+void func_800B3884(struct VisualObj* arg0)
+{
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = D_8010A61C[get_random() & 3];
+    } else {
+        arg0->x_vel.val = -D_8010A61C[get_random() & 3];
+    }
+    arg0->y_vel.val = D_8010A62C[get_random() & 3];
+    arg0->unk6++;
+}
 
 void func_800B392C(struct VisualObj* arg0)
 {
@@ -59,7 +68,16 @@ void func_800B397C(struct VisualObj* arg0)
     D_8010A67C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B39B8);
+void func_800B39B8(struct VisualObj* arg0)
+{
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = D_8010A5FC[get_random() & 3];
+    } else {
+        arg0->x_vel.val = -D_8010A5FC[get_random() & 3];
+    }
+    arg0->y_vel.val = D_8010A60C[get_random() & 3];
+    arg0->unk6++;
+}
 
 void func_800B3A60(struct VisualObj* arg0)
 {
