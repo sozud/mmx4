@@ -48,7 +48,7 @@ jobs:
       - name: Build
         run: cmake --build build-linux --parallel
       - name: Check replay format validation
-        run: python3 tools/oracle/test_replay_validation.py
+        run: python3 tools/oracle/test_replay_validation.py --binary build-linux/mmx4_pc
 
   oracle-scene-suite:
     name: Capture and compare scene oracles
