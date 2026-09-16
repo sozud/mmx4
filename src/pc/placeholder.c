@@ -700,8 +700,7 @@ void func_8002217C(u16 message, u8 portrait, u8 delay_only)
     abc_object.unkE = 0;
     D_801397D8 = portrait;
     if (!(portrait & 0x80)) {
-        D_801397DC = (struct Func80022730Config*)(
-            D_800F2DD0[(u8)engine_obj.cur_character] + portrait * 12);
+        D_801397DC = (struct Func80022730Config*)(D_800F2DD0[(u8)engine_obj.cur_character] + portrait * 12);
         if (engine_obj.cur_character == 0) {
             u8 palette_index = ((u8*)D_801397DC)[3];
             u16* portrait_palette = (u16*)((u8*)SP_PALETTE
@@ -3835,7 +3834,7 @@ void func_80041060(struct MainObj* arg0)
         arg0->y_pos.val = 0x01700000;
         next_substep = (u8)arg0->unk6;
 
-start_attack:
+    start_attack:
         arg0->unk6 = next_substep + 1;
         if (arg0->unk15 != 0) {
             velocity = 0xC000;
@@ -4405,7 +4404,7 @@ void func_80042AFC(struct MainObj* arg0)
     } else if (func_8002DD04(arg0) < 0) {
         func_800AF808(BASE_OBJECT(arg0));
         func_800C813C(3, D_800F9C48, arg0);
-spawn_item:
+    spawn_item:
         item = find_free_item_obj();
         if (item != NULL) {
             item->active = 0x21;
@@ -4877,8 +4876,7 @@ void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
     s16 x_overlap;
     s16 y_overlap;
 
-    if (arg1->unk68 == NULL ||
-        !func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1)))
+    if (arg1->unk68 == NULL || !func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1)))
         return;
     func_8002C26C(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
     func_8002C2EC(COLLISION_OBJECT(arg0), COLLISION_OBJECT(arg1));
@@ -4915,12 +4913,10 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
     s16 dy = y0 >= y1 ? y0 - y1 : y1 - y0;
     u8 flags = 0;
 
-    if (dy == bounds0->unk3 + bounds1->unk3 &&
-        dx < bounds0->unk2 + bounds1->unk2) {
+    if (dy == bounds0->unk3 + bounds1->unk3 && dx < bounds0->unk2 + bounds1->unk2) {
         flags |= y0 < y1 ? 4 : 8;
     }
-    if (dx == bounds0->unk2 + bounds1->unk2 &&
-        dy < bounds0->unk3 + bounds1->unk3) {
+    if (dx == bounds0->unk2 + bounds1->unk2 && dy < bounds0->unk3 + bounds1->unk3) {
         flags |= x0 < x1 ? 2 : 1;
         arg1->unk4A = arg0->unk75;
     }
@@ -4963,11 +4959,9 @@ s8 func_800C1E7C(struct ItemObj* arg0)
     dx = item_x >= player_x ? item_x - player_x : player_x - item_x;
     if (dx > item_bounds->unk2 + player_bounds->unk2)
         return 0;
-    if (g_Player.y_pos.i.hi - player_bounds->unk3 <
-        arg0->y_pos.i.hi - item_bounds->unk3)
+    if (g_Player.y_pos.i.hi - player_bounds->unk3 < arg0->y_pos.i.hi - item_bounds->unk3)
         return 0;
-    return arg0->y_pos.i.hi + item_bounds->unk3 >=
-           g_Player.y_pos.i.hi + player_bounds->unk3;
+    return arg0->y_pos.i.hi + item_bounds->unk3 >= g_Player.y_pos.i.hi + player_bounds->unk3;
 }
 
 void func_80032FA4(struct PlayerObj* arg0)
@@ -4993,7 +4987,7 @@ void func_80032FA4(struct PlayerObj* arg0)
 }
 
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
-                   struct PlayerObj* arg2)
+    struct PlayerObj* arg2)
 {
     static const s16 offsets[7] = { 0, 0x30, 0xA0, 0, 0x50, 0xB0, 0x5A0 };
     (void)arg2;

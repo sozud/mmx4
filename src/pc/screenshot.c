@@ -89,8 +89,7 @@ void mmx4_pc_write_replay_frame(long frame)
     value = getenv("MMX4_ORACLE_FRAME_INTERVAL");
     if (value != NULL)
         interval = strtoul(value, NULL, 0);
-    if ((unsigned long)frame < first || (unsigned long)frame > last ||
-        interval == 0 || ((unsigned long)frame - first) % interval != 0)
+    if ((unsigned long)frame < first || (unsigned long)frame > last || interval == 0 || ((unsigned long)frame - first) % interval != 0)
         return;
     if (mkdir(directory, 0777) != 0 && errno != EEXIST)
         return;
