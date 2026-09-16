@@ -52,7 +52,7 @@ static void log_open(void)
         "animstep\ttex\tclut\tbackref\n");
     fprintf(frame_log,
         "frame\tgame\tengine\tstate\tstage\tsubstage\tcheckpoint\tcharacter\t"
-        "rng\tpad\tpad_prev\thealth\tplayer_x\tplayer_y\tbg0_x\tbg0_y\n");
+        "rng\tpad\tpad_prev\thealth\tplayer_x\tplayer_y\tbg0_x\tbg0_y\tphase\n");
 }
 
 static const char* field_u8(char* buffer, size_t size, const void* base,
@@ -216,12 +216,13 @@ void mmx4_pc_object_log_dump(void)
     memcpy(&game, &game_info, sizeof(game));
     memcpy(&engine, &engine_obj, sizeof(engine));
     fprintf(frame_log,
-        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\n",
+        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\n",
         frame, game, engine, engine_obj.state, engine_obj.stage,
         engine_obj.substage, engine_obj.checkpoint, engine_obj.cur_character,
         cur_random, D_80166C08, D_80166C0A, engine_obj.unk46,
         g_Player.x_pos.val, g_Player.y_pos.val,
-        background_objects[0].x_pos.val, background_objects[0].y_pos.val);
+        background_objects[0].x_pos.val, background_objects[0].y_pos.val,
+        D_80141BD8.unk0);
     log_objects(frame, game, engine);
     fflush(frame_log);
     fflush(object_log);
@@ -229,8 +230,19 @@ void mmx4_pc_object_log_dump(void)
 
 void mmx4_pc_frame_end(void)
 {
+    const char* stop_after = getenv("MMX4_ORACLE_FRAME_STOP_AFTER");
+    long replay_frame = mmx4_pc_replay_frame();
+    long capture_frame = replay_frame - 1;
+
+    mmx4_pc_write_replay_frame(capture_frame);
     mmx4_oracle_capture_object_changes(mmx4_pc_frame_number());
     mmx4_pc_object_log_dump();
+    if (stop_after != NULL && capture_frame >= strtol(stop_after, NULL, 0)) {
+        fprintf(stderr, "MMX4 PC: frame capture stopped after replay frame %ld\n",
+            capture_frame);
+        fflush(NULL);
+        exit(EXIT_SUCCESS);
+    }
     if (mmx4_pc_replay_complete() && mmx4_pc_replay_exit_requested()) {
         if (object_log != NULL) {
             fclose(object_log);

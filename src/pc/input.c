@@ -66,15 +66,18 @@ static void open_replay(void)
     rewind(replay_file);
     if (fread(header, sizeof(header), 1, replay_file) != 1)
         replay_fail("unable to read header");
-    if (memcmp(header, "MMX4RPL1", 8) != 0)
+    if (memcmp(header, "MMX4RPL2", 8) != 0) {
+        if (memcmp(header, "MMX4RPL1", 8) == 0)
+            replay_fail("legacy video-clock replay; normalize it to MMX4RPL2 first");
         replay_fail("invalid magic");
+    }
     if (header[12] != 0 || header[13] != 0 || header[14] != 0 || header[15] != 0)
         replay_fail("nonzero reserved header bytes");
     replay_stage = header[8];
     replay_substage = header[9];
     replay_length = (unsigned long)((size - 16) / 2);
     replay_exit_requested = getenv("MMX4_REPLAY_EXIT") != NULL;
-    fprintf(stderr, "MMX4 PC: replay %s: %lu frames, stage %u-%u\n",
+    fprintf(stderr, "MMX4 PC: replay %s: %lu pad-read samples, stage %u-%u\n",
         mmx4_pc_replay_path, replay_length, replay_stage, replay_substage);
 }
 
@@ -88,6 +91,7 @@ static u16 replay_input(void)
         if (engine_obj.state != 6 || (u8)engine_obj.stage != replay_stage || (u8)engine_obj.substage != replay_substage)
             return 0;
         replay_started = 1;
+        D_80141BD8.unk0 = 0;
         fprintf(stderr, "MMX4 PC: replay started at stage %u-%u (engine state 6)\n",
             replay_stage, replay_substage);
     }

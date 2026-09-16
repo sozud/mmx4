@@ -7,6 +7,9 @@ from pathlib import Path
 import statistics
 import sys
 
+import ssim
+from ssim import read_ppm
+
 
 STATE_FIELDS = (
     "trigger", "object", "slot", "old_active", "active", "old_id", "id",
@@ -14,54 +17,6 @@ STATE_FIELDS = (
     "old_phase", "phase",
 )
 SCENES = ("title", "character-select", "mission-briefing", "initial-stage")
-
-
-def read_ppm(path: Path):
-    with path.open("rb") as stream:
-        if stream.readline() != b"P6\n":
-            raise ValueError(f"{path}: expected binary PPM")
-        width, height = map(int, stream.readline().split())
-        if stream.readline() != b"255\n":
-            raise ValueError(f"{path}: expected 8-bit PPM")
-        pixels = stream.read()
-    if len(pixels) != width * height * 3:
-        raise ValueError(f"{path}: truncated image")
-    return width, height, pixels
-
-
-def image_ssim(width, height, left, right):
-    scores = []
-    c1, c2 = (0.01 * 255) ** 2, (0.03 * 255) ** 2
-    for top in range(0, height, 8):
-        for x0 in range(0, width, 8):
-            a, b = [], []
-            for y in range(top, min(top + 8, height)):
-                for x in range(x0, min(x0 + 8, width)):
-                    offset = (y * width + x) * 3
-                    a.append(
-                        0.2126 * left[offset]
-                        + 0.7152 * left[offset + 1]
-                        + 0.0722 * left[offset + 2]
-                    )
-                    b.append(
-                        0.2126 * right[offset]
-                        + 0.7152 * right[offset + 1]
-                        + 0.0722 * right[offset + 2]
-                    )
-            mean_a, mean_b = statistics.mean(a), statistics.mean(b)
-            variance_a = sum((value - mean_a) ** 2 for value in a) / len(a)
-            variance_b = sum((value - mean_b) ** 2 for value in b) / len(b)
-            covariance = sum(
-                (x - mean_a) * (y - mean_b) for x, y in zip(a, b)
-            ) / len(a)
-            scores.append(
-                ((2 * mean_a * mean_b + c1) * (2 * covariance + c2))
-                / (
-                    (mean_a * mean_a + mean_b * mean_b + c1)
-                    * (variance_a + variance_b + c2)
-                )
-            )
-    return statistics.mean(scores) if scores else math.nan
 
 
 def load_events(directory: Path):
@@ -84,20 +39,22 @@ def compare_scene(original: Path, port: Path, output, minimum_threshold,
         b=[changes for _, changes in right_events],
         autojunk=False,
     )
-    scores = []
-    writer = csv.writer(output, delimiter="\t", lineterminator="\n")
-    writer.writerow(("mednafen_event", "pc_event", "mednafen_image", "pc_image", "ssim"))
+    matched = []
     for left_index, right_index, count in matcher.get_matching_blocks():
         for offset in range(count):
             left = left_events[left_index + offset][0]
             right = right_events[right_index + offset][0]
-            left_image = read_ppm(original / left[1])
-            right_image = read_ppm(port / right[1])
-            if left_image[:2] != (320, 240) or right_image[:2] != (320, 240):
+            left_image = original / left[1]
+            right_image = port / right[1]
+            if (read_ppm(left_image)[:2] != (320, 240)
+                    or read_ppm(right_image)[:2] != (320, 240)):
                 raise ValueError("suite images must both be 320x240")
-            score = image_ssim(320, 240, left_image[2], right_image[2])
-            scores.append(score)
-            writer.writerow((left[0], right[0], left[1], right[1], f"{score:.9f}"))
+            matched.append((left, right, left_image, right_image))
+    scores = ssim.score_pairs((left, right) for _, _, left, right in matched)
+    writer = csv.writer(output, delimiter="\t", lineterminator="\n")
+    writer.writerow(("mednafen_event", "pc_event", "mednafen_image", "pc_image", "ssim"))
+    for (left, right, _, _), score in zip(matched, scores):
+        writer.writerow((left[0], right[0], left[1], right[1], f"{score:.9f}"))
     unmatched_left = len(left_events) - len(scores)
     unmatched_right = len(right_events) - len(scores)
     passed = bool(

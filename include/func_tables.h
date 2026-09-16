@@ -910,6 +910,10 @@ void func_80035AA8(struct PlayerObj*);
 void func_80035B6C(struct PlayerObj*);
 void func_80035C20(struct PlayerObj*);
 void func_80035D00(struct PlayerObj*);
+#ifdef MMX4_PC
+void func_80035D34(s8);
+void func_80035D84(s8);
+#endif
 
 // D_800F8C78
 extern void (*D_800F8C78[])(struct PlayerObj*);
@@ -1064,6 +1068,9 @@ void background_dragon_fly_to_staging_position(struct MainObj*);
 void background_dragon_attach_to_background(struct MainObj*);
 void background_dragon_noop(struct MainObj*);
 void func_80040CCC(struct MainObj*);
+#ifdef MMX4_PC
+s32 func_80040ABC(struct MainObj*);
+#endif
 
 // D_800F9AEC
 extern void (*D_800F9AEC[])(struct MainObj*);
@@ -1287,8 +1294,8 @@ void func_80046A4C(struct MainObj*);
 
 // bulldozer_state_funcs
 extern void (*bulldozer_state_funcs[])(struct MainObj*);
-void func_80046B80(void);
-void func_80046C8C(void);
+void func_80046B80(struct MainObj* arg0);
+void func_80046C8C(struct MainObj* arg0);
 void bulldozer_cleanup(struct MainObj*);
 
 // D_800FA544
@@ -1305,7 +1312,7 @@ void func_80047140(struct MainObj*);
 
 // bulldozer_charge_funcs
 void func_800471C4(struct MainObj*);
-void func_80047244(void);
+void func_80047244(struct MainObj* arg0);
 
 // D_800FA6F0
 void func_80047404(void);
@@ -4509,7 +4516,7 @@ void func_8009EAA4(struct ShotObj* arg0);
 
 // D_80109160
 extern void (*D_80109160[])(struct ShotObj*);
-void func_8009EBA8(void);
+void func_8009EBA8(struct ShotObj*);
 void func_8002C808(struct PlayerObj* arg0);
 void func_8009EE40(struct ShotObj* arg0);
 void func_8009EE60(struct ShotObj* arg0);
@@ -5634,6 +5641,9 @@ void func_800BA9B8(struct EffectObj*);
 extern void (*D_8010BE64[])(struct EffectObj*);
 void func_800BAA6C(struct EffectObj*);
 void func_800BAAE0(struct EffectObj*);
+#ifdef MMX4_PC
+void func_800BAB3C(struct EffectObj*);
+#endif
 
 // D_8010BE6C
 extern void (*D_8010BE6C[])(struct EffectObj*);
@@ -5709,6 +5719,9 @@ extern u8* D_8010BF88[];
 extern void (*D_8010BF90[])(struct EffectObj*);
 void func_800BC554(struct EffectObj*);
 void func_800BC568(struct EffectObj*);
+#ifdef MMX4_PC
+void func_800BC5D4(struct EffectObj*);
+#endif
 
 // D_8010BF98
 extern void (*D_8010BF98[])(struct EffectObj*);
@@ -6422,7 +6435,7 @@ void func_800D0118(void);
 
 // D_8010F014
 extern void (*D_8010F014[])(struct MiscObj*);
-void func_800D03B0(void);
+void func_800D03B0(struct MiscObj*);
 void func_800D04D0(struct MiscObj* arg0);
 void func_800D0528(struct MiscObj*);
 

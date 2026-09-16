@@ -64,3 +64,46 @@ int mmx4_pc_write_state_screenshot(unsigned long transition,
     fclose(manifest);
     return 1;
 }
+
+void mmx4_pc_write_replay_frame(long frame)
+{
+    const char* directory = getenv("MMX4_ORACLE_FRAME_DIR");
+    const char* value;
+    unsigned long first = 0;
+    unsigned long last = ~0UL;
+    unsigned long interval = 1;
+    char path[1024];
+    unsigned char* pixels;
+    int width;
+    int height;
+    FILE* image;
+
+    if (directory == NULL || *directory == '\0' || frame < 0)
+        return;
+    value = getenv("MMX4_ORACLE_FRAME_FIRST");
+    if (value != NULL)
+        first = strtoul(value, NULL, 0);
+    value = getenv("MMX4_ORACLE_FRAME_LAST");
+    if (value != NULL)
+        last = strtoul(value, NULL, 0);
+    value = getenv("MMX4_ORACLE_FRAME_INTERVAL");
+    if (value != NULL)
+        interval = strtoul(value, NULL, 0);
+    if ((unsigned long)frame < first || (unsigned long)frame > last || interval == 0 || ((unsigned long)frame - first) % interval != 0)
+        return;
+    if (mkdir(directory, 0777) != 0 && errno != EEXIST)
+        return;
+    pixels = Psyz_VideoAllocCapturedFrame(&width, &height);
+    if (pixels == NULL || width <= 0 || height <= 0) {
+        free(pixels);
+        return;
+    }
+    snprintf(path, sizeof(path), "%s/frame_%06ld.ppm", directory, frame);
+    image = fopen(path, "wb");
+    if (image != NULL) {
+        fprintf(image, "P6\n%d %d\n255\n", width, height);
+        fwrite(pixels, 3, (size_t)width * height, image);
+        fclose(image);
+    }
+    free(pixels);
+}

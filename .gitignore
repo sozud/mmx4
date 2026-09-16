@@ -13,3 +13,5 @@ main.jp.ld
 expected
 objdiff.json
 replay-runs
+replay-ssim
+tools/oracle/recordings/*.mp4

@@ -47,6 +47,8 @@ jobs:
         run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
       - name: Build
         run: cmake --build build-linux --parallel
+      - name: Check replay format validation
+        run: python3 tools/oracle/test_replay_validation.py --binary build-linux/mmx4_pc
 
   oracle-scene-suite:
     name: Capture and compare scene oracles
@@ -196,6 +198,26 @@ jobs:
             --output sound-comparison \
             --no-build \
             "${reuse_args[@]}"
+      - name: Run stage 0 replay regression
+        env:
+          GALLIUM_DRIVER: llvmpipe
+          LIBGL_ALWAYS_SOFTWARE: "true"
+          SDL_AUDIODRIVER: dummy
+        run: |
+          python3 tools/oracle/run_replay_regression.py \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --cue disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --build build-linux \
+            --skip-build
+      - name: Upload replay evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: replay-regression-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: replay-runs
       - name: Upload oracle artifacts
         if: always()
         uses: actions/upload-artifact@v7
