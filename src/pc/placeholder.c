@@ -5175,17 +5175,3 @@ void func_80033108(struct PlayerObj* arg0)
     if (arg0->unkC2 == 0)
         func_80034150(arg0);
 }
-
-void func_8002E380(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 flags)
-{
-    s32 x_delta = arg0->x_pos.val - arg0->unk18;
-    s32 y_delta = arg0->y_pos.val - arg0->unk1C;
-
-    if (x_delta != 0) {
-        u8 direction = x_delta > 0 ? 2 : 1;
-        if ((direction & (u8)flags) == 0)
-            arg1->x_pos.i.hi += arg0->x_pos.i.hi - (s16)(arg0->unk18 >> 16);
-    }
-    if (y_delta > 0)
-        arg1->y_pos.i.hi += arg0->y_pos.i.hi - (s16)(arg0->unk1C >> 16);
-}

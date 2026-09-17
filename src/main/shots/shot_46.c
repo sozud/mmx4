@@ -260,8 +260,8 @@ void func_800A97C0(struct ShotObj* arg0)
 
 void func_800A9818(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     func_8002D9BC(arg0);
     D_80109B50[arg0->unk2](arg0);
     arg0->unk42 &= 0x7FFF;

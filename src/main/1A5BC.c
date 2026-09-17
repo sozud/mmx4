@@ -1062,7 +1062,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
 
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
-        temp_v1 = arg0->x_pos.val - arg0->unk18;
+        temp_v1 = arg0->x_pos.val - arg0->unk18.val;
         D_8013B7D8 = 0;
         D_8013B7DC = 0;
 
@@ -1074,7 +1074,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
             }
         }
 
-        if (arg0->y_pos.val - arg0->unk1C >= 0) {
+        if (arg0->y_pos.val - arg0->unk1C.val >= 0) {
             func_8002CDD4(arg0);
             if (D_8013B7D8 != 0) {
                 return;
@@ -1583,20 +1583,20 @@ void func_8002E184(struct PlayerObj* arg0)
     if (arg0->unk68 != NULL) {
         func_8002E294(arg0, &g_Player);
         if (arg0->unk76 > 0) {
-            func_8002E380(arg0, &g_Player, arg0->unk72);
+            func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&g_Player), arg0->unk72);
         }
         func_8002C36C(arg0, &g_Player, 0);
         if (g_Entity.active != 0) {
             func_8002E294(arg0, &g_Entity);
             if (arg0->unk77 > 0) {
-                func_8002E380(arg0, &g_Entity, arg0->unk73);
+                func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&g_Entity), arg0->unk73);
             }
             func_8002C36C(arg0, &g_Entity, 1);
         }
         if (qux_object.active != 0) {
             func_8002E294(arg0, (struct PlayerObj*)&qux_object);
             if (arg0->unk78 > 0) {
-                func_8002E380(arg0, (struct PlayerObj*)&qux_object, arg0->unk74);
+                func_8002E380(MOVING_OBJECT(arg0), MOVING_OBJECT(&qux_object), arg0->unk74);
             }
             func_8002C36C(arg0, (struct PlayerObj*)&qux_object, 2);
         }
@@ -1605,7 +1605,33 @@ void func_8002E184(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002E294);
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002E380);
+void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
+{
+    s32 delta;
+    s32 direction;
+    u16 target_hi;
+    u16 target_prev_hi;
+    u16 target_prev_hi_y;
+
+    delta = arg0->x_pos.val - arg0->unk18.val;
+    if (delta != 0) {
+        direction = 1;
+        if (delta > 0) {
+            direction = 2;
+        }
+        if (!(direction & arg2)) {
+            target_hi = arg1->x_pos.u.hi;
+            target_prev_hi = arg1->unk18.u.hi;
+            arg1->x_pos.i.hi = (target_hi - target_prev_hi) + (arg0->x_pos.u.hi - (arg0->unk18.u.hi - target_prev_hi));
+        }
+    }
+    delta = arg0->y_pos.val - arg0->unk1C.val;
+    if (delta > 0) {
+        target_hi = arg1->y_pos.u.hi;
+        target_prev_hi_y = arg1->unk1C.u.hi;
+        arg1->y_pos.i.hi = (target_hi - target_prev_hi_y) + (arg0->y_pos.u.hi - (arg0->unk1C.u.hi - target_prev_hi_y));
+    }
+}
 
 u8 D_800F4508[0x20] = {
     0x5F,

@@ -33,8 +33,8 @@ void func_800A9C7C(struct ShotObj* arg0)
 
 void func_800A9CBC(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109BB8[arg0->unk5](arg0);
     if (arg0->unk7C->state == 2) {
         func_800AF808(BASE_OBJECT(arg0));

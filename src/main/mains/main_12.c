@@ -16,7 +16,25 @@ void func_8004BC14(struct MainObj* arg0)
     arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_12.saved_unk5;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004BC2C);
+void func_8004BC2C(struct MainObj* arg0)
+{
+    struct MainObj* current;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    current = SP_CUR_MAIN_OBJ;
+    if (current->ext.main_12.unk88 == 0) {
+        if (arg0->unk24 >= 0) {
+            arg0->unk24 = FIXED(0.5);
+            arg0->unk2C = -arg0->unk2C;
+            current->ext.main_12.unk88 = 1;
+        }
+    } else if (arg0->unk24 < 0) {
+        arg0->unk24 = FIXED(-0.5);
+        arg0->unk2C = -arg0->unk2C;
+        current->ext.main_12.unk88 = 0;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8004BCC8(struct MainObj* arg0)
 {

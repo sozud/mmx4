@@ -125,8 +125,8 @@ void func_800A62D0(struct ShotObj* arg0)
 void func_800A62F0(struct ShotObj* arg0)
 {
     struct WeaponObj* temp_s0 = arg0->unk7C;
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     CollisionRelated(arg0);
     if (temp_s0->state == 2) {
         arg0->state = 2;

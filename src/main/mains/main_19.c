@@ -101,18 +101,18 @@ u8 func_80053A88(struct PlayerObj* arg0, s16 arg1, s16 arg2)
 
     saved_x_pos = arg0->x_pos.val;
     saved_y_pos = arg0->y_pos.val;
-    saved_unk18 = arg0->unk18;
-    saved_unk1C = arg0->unk1C;
-    arg0->unk18 = saved_x_pos;
-    arg0->unk1C = saved_y_pos;
+    saved_unk18 = arg0->unk18.val;
+    saved_unk1C = arg0->unk1C.val;
+    arg0->unk18.val = saved_x_pos;
+    arg0->unk1C.val = saved_y_pos;
     arg0->x_pos.u.hi = arg0->x_pos.u.hi + arg1;
     arg0->y_pos.u.hi = arg0->y_pos.u.hi + arg2;
     CollisionRelated(arg0);
     result = arg0->unk70;
     arg0->x_pos.val = saved_x_pos;
     arg0->y_pos.val = saved_y_pos;
-    arg0->unk18 = saved_unk18;
-    arg0->unk1C = saved_unk1C;
+    arg0->unk18.val = saved_unk18;
+    arg0->unk1C.val = saved_unk1C;
     arg0->unk70 = 0;
     return result;
 }

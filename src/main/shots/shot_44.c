@@ -25,8 +25,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7240);
 
 void func_800A7318(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109A24[arg0->unk5](arg0);
     if (arg0->unk7C->state >= 2) {
         arg0->state = 5;
@@ -45,8 +45,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A73C4);
 
 void func_800A7458(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109A30[arg0->unk5](arg0);
     if (arg0->unk7C->state >= 2) {
         arg0->state = 8;
