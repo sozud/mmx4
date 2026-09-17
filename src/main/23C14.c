@@ -2453,7 +2453,41 @@ s32 func_80038D38(struct PlayerObj* arg0)
     return result;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80038D88);
+s32 func_80038D88(struct PlayerObj* arg0)
+{
+    u16 buttons;
+
+    buttons = arg0->input.buttons.held;
+    arg0->y_pos.i.hi += D_800F8D78[arg0->unkD6];
+    arg0->unkD6 = (arg0->unkD6 + 1) & 0xF;
+    arg0->x_vel.val = 0;
+
+    if (buttons & 3) {
+        if (buttons & 1) {
+            if (arg0->unk88.bytes.collision_flags & 1) {
+                return 0;
+            }
+            arg0->x_vel.val = FIXED(2);
+            if (arg0->unk15 != 0) {
+                return 1;
+            }
+            return -1;
+        }
+        if (!(arg0->unk88.bytes.collision_flags & 2)) {
+            goto move_left;
+        }
+    }
+
+return_zero:
+    return 0;
+
+move_left:
+    arg0->x_vel.val = FIXED(-2);
+    if (arg0->unk15 != 0) {
+        return -1;
+    }
+    return 1;
+}
 
 void func_80038E44(struct PlayerObj* arg0, s32 arg1)
 {

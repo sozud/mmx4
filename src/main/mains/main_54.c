@@ -210,7 +210,29 @@ void func_8006DCF4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006DD44);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006DF68);
+void func_8006DF68(struct MainObj* arg0)
+{
+    s16 timer;
+
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        background_objects[0].unk26 = 0x24C0;
+        background_objects[0].unk24 = 0x24D0;
+        background_objects[0].unk2A = 0xD0;
+        background_objects[0].unk28 = 0xD0;
+        func_80015D60(arg0, 0x16);
+        arg0->unk2C = FIXED(0.125);
+        arg0->unk24 = FIXED(7.5);
+        arg0->unk20 = FIXED(1.875);
+        arg0->unk7E = 0;
+        func_8001540C(2, 0x81, arg0);
+        arg0->unk6 = 4;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E034);
 

@@ -65,7 +65,18 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B5F8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B6B0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B79C);
+void func_8006B79C(struct MainObj* arg0)
+{
+    if (arg0->x_pos.val - background_objects[arg0->bg_offset].x_pos.val > FIXED(160)) {
+        arg0->unk20 = FIXED(5);
+        arg0->unk5 = 2;
+        func_80015D60(arg0, 0);
+    }
+    arg0->ext.main_53.unk81 = func_8006B1C4(arg0, 0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x20);
+}
 
 void func_8006B848(struct MainObj* arg0)
 {

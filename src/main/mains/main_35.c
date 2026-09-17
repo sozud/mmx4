@@ -16,7 +16,7 @@ void func_8005EF40(struct MainObj* arg0)
 {
     arg0->unk7A = 0;
     arg0->ext.main_35.unk80 = 0;
-    arg0->ext.main_35.unk84 = 0;
+    arg0->ext.main_35.sound_timer = 0;
     arg0->ext.main_35.saved_unk5 = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
@@ -71,7 +71,34 @@ void func_8005F1A4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F230);
+void func_8005F230(struct MainObj* arg0)
+{
+    s16 timer;
+    s32 velocity;
+
+    if (--arg0->ext.main_35.sound_timer == 0) {
+        func_8001540C(2, 0x58, arg0);
+        arg0->ext.main_35.sound_timer = 0x14;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    timer = (u16)arg0->unk7E - 1;
+    arg0->unk7E = timer;
+    if (timer == 0) {
+        func_800B0CA0(1, 2, arg0, 8, 1);
+        arg0->unk7E = 3;
+    }
+    if (arg0->animation_step.fields.event != 0) {
+        velocity = arg0->unk15;
+        if (velocity == 0) {
+            velocity = FIXED(-4);
+        } else {
+            velocity = FIXED(4);
+        }
+        arg0->unk20 = velocity;
+        velocity = 3;
+        arg0->unk6 = velocity;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F2F4);
 

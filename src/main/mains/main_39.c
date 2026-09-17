@@ -9,7 +9,19 @@ void func_80061590(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_39", func_800615CC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_39", func_8006185C);
+void func_8006185C(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FE9B0[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    func_8002DD04(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x1000, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        return;
+    }
+    arg0->state = 2;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_39", func_800618F4);
 

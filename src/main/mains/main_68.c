@@ -331,7 +331,31 @@ void func_800845C0(struct MainObj* arg0)
     func_80015D60(arg0, 0x1B);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_8008460C);
+void func_8008460C(struct MainObj* arg0)
+{
+    u8 var_s1;
+    struct ShotObj* temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    var_s1 = 0;
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+        do {
+            temp_v0 = find_free_shot_obj();
+            if (temp_v0 != 0) {
+                temp_v0->active = 0x41;
+                temp_v0->id = 0x2E;
+                temp_v0->unk2 = 6;
+                temp_v0->timer = var_s1;
+                temp_v0->unk7C = WEAPON_OBJECT(arg0);
+                arg0->ext.main_68.unk8C += 1;
+                func_8001540C(2, 0xA, arg0);
+            }
+            var_s1 += 1;
+        } while (var_s1 < 4);
+    }
+}
 
 void func_800846D0(struct MainObj* arg0)
 {
@@ -358,7 +382,27 @@ void func_80084774(struct MainObj* arg0)
     D_801043BC[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800847B0);
+void func_800847B0(struct MainObj* arg0)
+{
+    if (arg0->unk7 == 0) {
+        s32 other_x = arg0->ext.main_68.unk80->x_pos.val;
+
+        arg0->unk7 = (u8)(*(volatile u8*)&arg0->unk7 + 1);
+        arg0->unk15 = (arg0->x_pos.val < other_x) << 6;
+        func_80015D60(arg0, 0x11);
+        return;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk50 = &D_80103F08;
+        arg0->unk7 = 0;
+        arg0->unk54 = &D_80103F0C;
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+        func_80015D60(arg0, 0x12);
+        func_8001540C(2, 0, arg0);
+    }
+}
 
 void func_80084870(struct MainObj* arg0)
 {

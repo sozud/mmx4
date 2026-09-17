@@ -150,7 +150,24 @@ void func_800C6B84(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6C2C);
+void func_800C6C2C(struct VisualObj* arg0)
+{
+    struct BaseObj* temp_a1 = arg0->unk50;
+    if (arg0->state == 0) {
+        func_800C6DD4(arg0, temp_a1);
+        arg0->unk54 = 0x78;
+        func_8001540C(2, 0x23, 0);
+    } else if (arg0->unk54 == 0) {
+        g_Player.unkE2 = 2;
+        func_80015930(2, 0x23);
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        arg0->unk54--;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6CE4);
 

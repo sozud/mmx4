@@ -7,7 +7,39 @@ void func_800623C4(struct MainObj* arg0)
     D_800FEE38[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062400);
+void func_80062400(struct MainObj* arg0)
+{
+    s8 mode = 2;
+
+    arg0->state = 1;
+    if (arg0->unk2 != 0) {
+        mode = 6;
+    }
+    arg0->unk5 = mode;
+    arg0->unk5C = 3;
+    arg0->unk60 = 3;
+    arg0->animation_table = (const u8* const*)D_800FEDE0;
+    arg0->unk50 = &D_800FEE34;
+    arg0->unk68 = &D_800FEE30;
+    arg0->collision_data = D_801060F0;
+    arg0->unk16 = 5;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0;
+    arg0->bg_offset = 0;
+    arg0->unk61 = 0;
+    arg0->unk54 = NULL;
+    arg0->unk67 = 0;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->ext.main_41.unk84 = 0;
+    arg0->ext.main_41.unk83 = 0;
+    arg0->ext.main_41.unk82 = 0;
+    arg0->unk7E = 0xF0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+}
 
 void func_800624B4(struct MainObj* arg0)
 {

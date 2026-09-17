@@ -89,7 +89,7 @@ void func_8004D370(struct MainObj* arg0)
 void func_8004D3C8(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.raw[2] == 7) {
+    if (arg0->ext.main_14.visual_variant == 7) {
         arg0->unk5 = 4;
         arg0->unk6 = 0;
     }
@@ -111,7 +111,7 @@ void func_8004D480(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (--arg0->ext.main_14.unk80 == 0) {
-        arg0->ext.main_14.unk88 = 0xFF;
+        arg0->ext.main_14.visual_variant = 0xFF;
         arg0->unk6++;
     }
 }
@@ -195,6 +195,29 @@ void func_8004D6CC(struct AnimatedObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D6FC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D784);
+void func_8004D784(struct MainObj* arg0, s8 arg1)
+{
+    struct VisualObj* temp_v0;
+
+    temp_v0 = find_free_visual_obj();
+    if (temp_v0 != 0) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0xB;
+        temp_v0->unk50 = PLAYER_OBJECT(arg0);
+        temp_v0->unk2 = arg1;
+        arg0->ext.main_14.visual_variant = arg1;
+        temp_v0->state = 0;
+        temp_v0->unk5 = 0;
+        temp_v0->unk6 = 0;
+        temp_v0->unk38 = 0;
+        temp_v0->unk3C = ANIMATED_OBJECT(arg0)->unk3C;
+        temp_v0->animation_table = ANIMATED_OBJECT(arg0)->animation_table;
+        temp_v0->unk40 = arg0->unk40;
+        temp_v0->unk42 = arg0->unk42;
+        temp_v0->unk16 = 4;
+        temp_v0->x_pos.val = arg0->x_pos.val;
+        temp_v0->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D84C);

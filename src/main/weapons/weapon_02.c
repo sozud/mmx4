@@ -2,7 +2,30 @@
 // 80093CBC..800941D4
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80093CBC);
+void func_80093CBC(struct WeaponObj* arg0)
+{
+    s32 should_change_state;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+
+    should_change_state = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        should_change_state = 1;
+    }
+    if (g_Player.unk93 != 2) {
+        should_change_state = 1;
+    }
+    if (g_Player.unk96 == 0xB) {
+        should_change_state = 1;
+    }
+    if (should_change_state != 0) {
+        arg0->state = 3;
+    }
+
+    D_80108854[arg0->state](arg0);
+    CollisionRelated(PLAYER_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80093D78);
 

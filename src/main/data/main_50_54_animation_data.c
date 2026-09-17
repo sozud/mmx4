@@ -622,7 +622,7 @@ void (*D_801001C8[2])(struct BarObj*) = {
     func_8006B114,
 };
 
-void (*D_801001D0[7])() = {
+void (*D_801001D0[7])(struct MainObj*) = {
     func_8009216C,
     func_8006B1BC,
     func_8006B5F8,

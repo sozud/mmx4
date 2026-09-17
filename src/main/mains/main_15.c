@@ -2,7 +2,26 @@
 // 8004D930..8004E890
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004D930);
+void func_8004D930(struct MainObj* arg0)
+{
+    if (!(func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi,
+              arg0->y_pos.i.hi)
+            & 0xFF)) {
+        arg0->state = 1;
+        arg0->unk5 = 1;
+        arg0->unk2 = 0;
+        arg0->unk54 = &D_800FBA50;
+        arg0->unk50 = &D_800FBA50;
+    }
+
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        if (arg0->unk2 == 2) {
+            func_8002B318(BASE_OBJECT(arg0), 0x25, 0x25);
+        }
+    } else {
+        arg0->state = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004D9CC);
 

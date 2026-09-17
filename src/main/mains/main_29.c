@@ -78,7 +78,28 @@ void func_8005ACA0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AD00);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AEB4);
+void func_8005AEB4(struct MainObj* arg0)
+{
+    struct MainObj* source = arg0->ext.main_29.source;
+
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+    arg0->on_screen = 1;
+    arg0->x_pos.val = source->x_pos.val;
+    arg0->y_pos.val = source->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = source->animation_table;
+    __builtin_memcpy(&arg0->animation_speed, &source->animation_speed, sizeof(u32));
+    arg0->sprite_frames = source->sprite_frames;
+    arg0->unk40 = source->unk40;
+    arg0->unk42 = source->unk42;
+    arg0->unk16 = 7;
+    arg0->unk7C = 0;
+    arg0->ext.main_29.unk94 = 0;
+    func_80015D60(arg0, 5);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AF5C);
 
