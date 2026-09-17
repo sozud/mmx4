@@ -3224,7 +3224,7 @@ void func_8007DBDC(struct BarObj* arg0);
 // D_801034B8
 extern void (*D_801034B8[])(struct MainObj*);
 void func_8007DF50(void);
-void func_8007DC54(struct AnimatedObj*, s32);
+void func_8007DC54(struct AnimatedObj*, u32);
 void func_8007E01C(struct MainObj*);
 void func_8007E098(struct MainObj*);
 void func_8007E128(struct MainObj*);

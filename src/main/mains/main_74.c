@@ -168,7 +168,7 @@ void func_8008DF8C(struct MainObj* arg0)
             miscObj->active = 0x41;
             miscObj->id = 0x37;
             miscObj->unk2 = arg0->ext.main_74.animation_index;
-            miscObj->ext.misc_7.position = (f32*)arg0;
+            miscObj->ext.misc_7.position = arg0;
         }
         shotObj = find_free_shot_obj();
         if (shotObj != NULL) {
@@ -387,7 +387,20 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008ED18);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EDE8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EED4);
+void func_8008EED4(struct MainObj* arg0)
+{
+    g_Player.x_pos.i.hi += 4;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x5A;
+        arg0->unk6++;
+    }
+
+    if (arg0->unk7C % 10 == 0) {
+        func_8001540C(2, 0xA, arg0);
+    }
+}
 
 void func_8008EF94(struct MainObj* arg0)
 {

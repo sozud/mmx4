@@ -243,7 +243,30 @@ void func_80082F20(struct VisualObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082FEC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_800830D0);
+void func_800830D0(struct MainObj* arg0)
+{
+    s32 var_s1;
+    struct VisualObj* temp_v0;
+
+    var_s1 = 0;
+    do {
+        temp_v0 = find_free_visual_obj();
+        if (temp_v0 != 0) {
+            temp_v0->active = 0x41;
+            temp_v0->id = 0x1F;
+            temp_v0->unk2 = var_s1;
+            temp_v0->unk50 = PLAYER_OBJECT(arg0);
+            temp_v0->unk42 = arg0->unk42;
+            temp_v0->animation_table = (u32**)D_80103E08;
+            temp_v0->unk3C = arg0->sprite_frames;
+            temp_v0->unk40 = arg0->unk40;
+            temp_v0->bg_offset = arg0->bg_offset;
+            temp_v0->unk16 = 5;
+            temp_v0->unk15 = arg0->unk15;
+        }
+        var_s1 += 1;
+    } while ((var_s1 & 0xFF) < 4U);
+}
 
 s32 func_8008318C(struct MainObj* arg0, s32 arg1, s32 arg2)
 {

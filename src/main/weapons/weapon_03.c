@@ -2,7 +2,28 @@
 // 80094A78..800951C0
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094A78);
+void func_80094A78(struct WeaponObj* arg0)
+{
+    s32 var_a1;
+
+    var_a1 = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk93 != 3) {
+        var_a1 = 1;
+    }
+    if (g_Player.unkBF != 0) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk5C == 0) {
+        var_a1 = 1;
+    }
+    if (var_a1 != 0) {
+        arg0->state = 3;
+    }
+    D_801088E8[arg0->state](arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094B24);
 
@@ -24,13 +45,37 @@ void func_80094D40(struct WeaponObj* arg0)
 
     offset = *(s16*)offset_ptr;
     if (offset == 0x40) {
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->unk5++;
         return;
     }
     *(s16*)offset_ptr = offset + 8;
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094DC0);
+void func_80094DC0(struct WeaponObj* arg0)
+{
+    u16 temp_v0;
+    u16* field_8c;
+
+    field_8c = (u16*)&arg0->ext.raw[0];
+    if (arg0->unk15 != 0) {
+        arg0->x_pos.i.hi = g_Player.x_pos.u.hi + 0x40;
+    } else {
+        arg0->x_pos.i.hi = g_Player.x_pos.u.hi - 0x40;
+    }
+
+    temp_v0 = field_8c[1];
+    if (temp_v0 == 0) {
+        arg0->on_screen = 1;
+        arg0->unk50 = 0;
+        arg0->unk5++;
+        return;
+    }
+
+    if (temp_v0 < 0x1F) {
+        arg0->on_screen ^= 1;
+    }
+    field_8c[1]--;
+}
 
 void func_80094E50(struct WeaponObj* arg0)
 {

@@ -2,7 +2,19 @@
 // 800C3224..800C351C
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C3224);
+void func_800C3224(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_8010CFE0[arg0->state](arg0);
+    arg0->x_pos.val -= arg0->ext.packed;
+    func_8002E184(arg0);
+    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x30, 0);
+    } else {
+        arg0->state = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C32BC);
 

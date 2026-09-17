@@ -11,7 +11,21 @@ void func_8009D74C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D788);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D85C);
+void func_8009D85C(struct ShotObj* arg0)
+{
+    if ((arg0->unk8C.word == 3) && (g_Player.unkBA != 0)) {
+        arg0->unk5 = 2;
+        func_8009DA28(arg0);
+        return;
+    }
+
+    if (--arg0->timer == 0) {
+        arg0->timer = 0x28;
+        arg0->unk5++;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D8F0);
 
@@ -33,7 +47,31 @@ void func_8009DA28(struct ShotObj* arg0)
     arg0->unk90.val = 0x30;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DA7C);
+void func_8009DA7C(struct ShotObj* arg0)
+{
+    s16 temp_v1;
+    s32 temp_v0;
+
+    func_8009DA08(arg0);
+    temp_v1 = arg0->timer - func_8002BAA4();
+    arg0->timer = temp_v1;
+    if (temp_v1 < 0) {
+        arg0->timer = 0x1E;
+        arg0->unk5++;
+        g_Player.unkBA = 0;
+        arg0->unk50.data = 0;
+        arg0->unk54 = 0;
+        return;
+    }
+    arg0->timer = temp_v1 - 1;
+    temp_v0 = arg0->unk90.val - 1;
+    arg0->unk90.val = temp_v0;
+    if (temp_v0 == 0) {
+        func_80036470(4);
+        arg0->unk90.val = 0x30;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8009DB1C(struct ShotObj* arg0)
 {
