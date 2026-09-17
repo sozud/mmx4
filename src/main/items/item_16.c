@@ -2,7 +2,19 @@
 // 800C3FEC..800C413C
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/items/item_16", func_800C3FEC);
+void func_800C3FEC(struct ItemObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_8010D100[arg0->state](arg0);
+    func_8002E184(arg0);
+    if (!(BASE_OBJECT(arg0->unk7C.object)->on_screen & 1)) {
+        if ((g_Player.unk4A != 0) || (arg0->unk76 != 0)) {
+            arg0->ext.owner->active = 1;
+        }
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x200, 0x100);
+}
 
 void func_800C40A4(struct ItemObj* arg0)
 {

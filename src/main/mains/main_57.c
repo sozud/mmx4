@@ -76,7 +76,34 @@ void func_80072904(struct MainObj* arg0)
     func_80015D60(arg0, 0x26);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072960);
+void func_80072960(struct MainObj* arg0)
+{
+    s16 temp_a0;
+    s32 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_80028BAC(0x18, 2, 1);
+        func_8001540C(2, 0x91, arg0);
+    }
+
+    temp_a0 = arg0->x_pos.i.hi;
+    temp_v0 = temp_a0 - g_Player.x_pos.i.hi;
+    if (temp_v0 >= 0) {
+        if (temp_v0 < 0xC1) {
+            goto update;
+        }
+        return;
+    }
+
+    if (g_Player.x_pos.i.hi - temp_a0 < 0xC1) {
+    update:
+        arg0->unk20 = 0;
+        func_80015D60(arg0, 1);
+        arg0->unk6++;
+    }
+}
 
 void func_80072A14(struct MainObj* arg0)
 {

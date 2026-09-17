@@ -4,7 +4,21 @@
 
 INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C52CC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C53A0);
+s32 func_800C53A0(struct ItemObj* arg0)
+{
+    struct MainObj* object;
+
+    for (object = main_objects; object < main_objects + COUNT(main_objects); object++) {
+        if (object->active == 0 || object->id != 0x29) {
+            continue;
+        }
+        if (func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(object)) == 0) {
+            continue;
+        }
+        return 1;
+    }
+    return 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C5444);
 

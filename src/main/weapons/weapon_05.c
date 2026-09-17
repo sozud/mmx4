@@ -2,7 +2,27 @@
 // 800957B0..80095DC0
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_800957B0);
+void func_800957B0(struct WeaponObj* arg0)
+{
+    s32 shouldSetState;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+
+    shouldSetState = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        shouldSetState = 1;
+    }
+    if (g_Player.unk93 != 5) {
+        shouldSetState = 1;
+    }
+    if (shouldSetState != 0) {
+        arg0->state = 3;
+    }
+
+    D_80108958[arg0->state](arg0);
+    CollisionRelated(PLAYER_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095854);
 

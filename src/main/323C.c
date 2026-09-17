@@ -3703,7 +3703,25 @@ void func_800204AC(struct EngineObj* arg0)
     func_800193D8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800204CC);
+void func_800204CC(s8* arg0, s32 arg1)
+{
+    if (controller_state & 0x1000) {
+        func_8001540C(0, 0xC, 0);
+        if (*arg0 == 0) {
+            *arg0 = arg1;
+        } else {
+            *arg0 = *arg0 - 1;
+        }
+    }
+    if (controller_state & 0x4000) {
+        func_8001540C(0, 0xC, 0);
+        if (*arg0 == arg1) {
+            *arg0 = 0;
+            return;
+        }
+        *arg0 = *arg0 + 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80020580);
 

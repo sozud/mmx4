@@ -4073,7 +4073,33 @@ void func_80042384(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800423A0);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042414);
+void func_80042414(struct MainObj* arg0)
+{
+    s32 var_a0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk6 == 0) {
+        if (arg0->animation_step.fields.event != 0) {
+            func_8001540C(2, 0x11, arg0);
+            var_a0 = FIXED(2);
+            arg0->unk6++;
+            if (arg0->unk15 != 0) {
+                var_a0 = FIXED(-2);
+            }
+            arg0->unk24 = FIXED(6);
+            arg0->unk20 = var_a0;
+            arg0->unk28 = 0;
+            arg0->unk2C = FIXED(0.2578125);
+        }
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        if (arg0->unk24 < 0) {
+            func_80015D60(arg0, 4);
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800424CC);
 

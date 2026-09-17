@@ -855,7 +855,7 @@ struct Main65Ext {
 };
 
 struct Main64Ext {
-    struct EffectObj* effect;
+    void* object;
     u16 unk84;
     u16 unk86;
     u8 unk88;
@@ -1795,7 +1795,7 @@ struct MiscPointerExt {
 };
 
 struct Misc7Ext {
-    f32* position;
+    void* position;
 };
 
 struct Misc2Ext {
@@ -3130,6 +3130,7 @@ extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
 extern u8 D_80105FC8[13][3];
 extern struct Unk_unk68 D_80103EE4;
+extern struct Unk_unk68 D_80103EF0;
 extern struct Unk_unk68 D_80103EF4;
 extern struct Unk_unk68 D_80103EE8;
 extern struct Unk_unk68 D_80103F00;
@@ -3209,6 +3210,8 @@ extern u8 D_80108BA4[];
 extern struct Unk_unk68 D_801087CC[];
 extern struct Unk_unk68 D_801087FC[];
 extern struct Unk_unk68 D_80108800[];
+extern struct Unk_unk68 D_801089FC[];
+extern struct Unk_unk68 D_80108A50[];
 extern u8 D_8010889C[];
 extern u32* D_8011C018[22];
 extern s16 D_801090D4[3][2];
@@ -3694,7 +3697,7 @@ void func_80089798(void);
 void func_80089910(struct MainObj*);
 void func_8005D148(struct MainObj*);
 void func_800780D4(struct AnimatedObj*);
-void func_8007DC54(struct AnimatedObj*, s32);
+void func_8007DC54(struct AnimatedObj*, u32);
 s32 func_8009227C(void);
 void func_800CA9EC(struct MainObj*, s32);
 void is_on_screen(struct BaseObj*);
@@ -3748,6 +3751,10 @@ void func_8006EA78(struct MainObj*);
 void func_80062240(struct MainObj*);
 void func_80065268(struct MainObj*);
 void func_800652C8(struct MainObj*);
+void func_800204CC(s8*, s32);
+void func_80097670(struct WeaponObj*);
+void func_800976DC(struct WeaponObj*);
+void func_80097B14(struct WeaponObj*);
 void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);
@@ -3780,7 +3787,6 @@ void func_80017E84(void);
 void func_80017F2C(void);
 void func_8001A9EC(struct EngineObj*);
 void func_800200D4(struct EngineObj*);
-void func_800204CC(u8*, s32);
 void func_80021F34(void);
 void func_80024260(void);
 void func_80024334(struct VisualObj*);

@@ -198,7 +198,28 @@ void func_8007D138(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D174);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D234);
+void func_8007D234(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    shot = find_free_shot_obj();
+    if (shot != 0) {
+        shot->active = arg0->active;
+        shot->id = 0x2A;
+        shot->unk2 = arg0->ext.main_5.pad81[0xA];
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->animation_table = arg0->animation_table;
+        shot->unk40 = arg0->unk40;
+        shot->unk3C = arg0->sprite_frames;
+        shot->unk42 = arg0->unk42 & 0x7FFF;
+        shot->unk16 = arg0->unk16;
+        shot->unk15 = 0;
+        shot->unk7C = arg0->ext.main_64.object;
+        shot->backref = arg0;
+        func_8001540C(2, 0xC3, arg0);
+    }
+}
 
 void func_8007D2F4(struct MainObj* arg0)
 {
@@ -317,7 +338,7 @@ void func_8007DA20(struct MainObj* arg0)
             effect->id = 0x1A;
             effect->x_pos.u.hi = arg0->x_pos.u.hi;
             effect->y_pos.u.hi = arg0->y_pos.u.hi;
-            arg0->ext.main_64.effect = effect;
+            arg0->ext.main_64.object = effect;
         }
     }
     is_on_screen(BASE_OBJECT(arg0));
@@ -334,7 +355,7 @@ void func_8007DA20(struct MainObj* arg0)
 
 void func_8007DAFC(struct MainObj* arg0)
 {
-    struct EffectObj* effect = arg0->ext.main_64.effect;
+    struct EffectObj* effect = arg0->ext.main_64.object;
     arg0->on_screen = 0;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
@@ -367,6 +388,35 @@ void func_8007DC18(struct MainObj* arg0)
     D_80102A54[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DC54);
+void func_8007DC54(struct AnimatedObj* arg0, u32 arg1)
+{
+    struct MiscObj* obj;
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 0x41;
+        obj->id = 0x26;
+        obj->unk2 = 2;
+        obj->ext.misc_7.position = arg0;
+    }
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 0x41;
+        obj->id = 0x26;
+        obj->unk2 = 3;
+        obj->ext.misc_7.position = arg0;
+    }
+
+    if (arg1 < 2U) {
+        obj = find_free_misc_obj();
+        if (obj != 0) {
+            obj->active = 0x41;
+            obj->id = 0x26;
+            obj->unk2 = arg1;
+            obj->ext.misc_7.position = arg0;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DD0C);

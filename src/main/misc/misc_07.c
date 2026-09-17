@@ -12,8 +12,8 @@ void func_800C93C8(struct MiscObj* arg0)
     s16 x;
 
     func_80015D60(arg0, 0xA);
-    arg0->x_pos.val = arg0->ext.misc_7.position[0].val;
-    arg0->y_pos.val = arg0->ext.misc_7.position[1].val;
+    arg0->x_pos.val = ((struct FixedPointPosition*)arg0->ext.misc_7.position)->x;
+    arg0->y_pos.val = ((struct FixedPointPosition*)arg0->ext.misc_7.position)->y;
     if (arg0->unk2 != 0) {
         if (arg0->unk15 != 0) {
             x = arg0->x_pos.u.hi + 3;

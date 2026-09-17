@@ -601,7 +601,25 @@ void func_800857C8(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085814);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800858DC);
+void func_800858DC(struct MainObj* arg0)
+{
+    u8 state = arg0->unk5;
+
+    arg0->unk4B = -1;
+    arg0->unk68 = &D_80103EF0;
+    arg0->unk24 = FIXED(-1);
+    arg0->unk54 = 0;
+    arg0->ext.main_68.unk8C = 0;
+    arg0->unk20 = 0;
+    state++;
+    arg0->unk42 &= 0x7FFF;
+    arg0->unk5 = state;
+    arg0->unk15 = (g_Player.x_pos.i.hi >= arg0->x_pos.i.hi) << 6;
+    func_80015D60(arg0, 8);
+    func_8001540C(2, 0xE, arg0);
+    func_80015D60(arg0->ext.main_68.unk80, 9);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085988);
 
