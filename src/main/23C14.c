@@ -2770,7 +2770,29 @@ s32 func_80039C34(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80039CC4);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80039D9C);
+s32 func_80039D9C(struct PlayerObj* arg0)
+{
+    if (!(arg0->unkB9 & 4)) {
+        return 0;
+    } else if (!(arg0->pressed_input & 0x80)) {
+        return 0;
+    } else {
+        func_800350A4(arg0, 0x63);
+        func_8001540C(1, 1, arg0);
+        func_800363B8(arg0, 7);
+        arg0->y_vel.val = FIXED(5.8125);
+        arg0->x_vel.val = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk84 = 0;
+        arg0->unk86 = 6;
+        arg0->unk8C = 0;
+        func_800365A4(arg0);
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+        return 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80039E5C);
 
@@ -5147,7 +5169,24 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_80044F88);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800450A8);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80045198);
+void func_80045198(struct MainObj* arg0)
+{
+    struct MainObj* target;
+    u8 subtype;
+    func_80015930(2, 0x13);
+    func_80015930(2, 0x14);
+    arg0->on_screen = 0;
+    subtype = arg0->unk2;
+    if ((subtype >= 3) && (subtype <= 4)) {
+        target = arg0->ext.main_5.owner;
+        if ((target->active != 0) && (target->id == 0x16)) {
+            target->ext.main_22.parts_mask ^= 1 << arg0->ext.main_5.part_index;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_80045240(struct MainObj* arg0)
 {
@@ -5774,7 +5813,26 @@ void func_800483E8(struct MainObj* arg0)
     func_80015D60(arg0, 2);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80048434);
+void func_80048434(struct MainObj* arg0)
+{
+    s32 x_vel;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        func_80015D60(arg0, 4);
+        x_vel = FIXED(-1.5);
+        arg0->unk6++;
+        if (arg0->unk15 != 0) {
+            x_vel = FIXED(1.5);
+        }
+        arg0->unk20 = x_vel;
+        arg0->unk24 = 0;
+        arg0->unk50 = (const u8*)&D_800FA730;
+        arg0->ext.main_8.unk88 = 0;
+    }
+}
 
 void func_800484C8(struct MainObj* arg0)
 {
@@ -5881,14 +5939,55 @@ void func_800488F4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80048970);
+void func_80048970(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_800B0CA0(0x21, 2, arg0, 0x18, 6);
+        func_800B0CA0(0x22, 2, arg0, 0x18, 6);
+        func_8001540C(2, 0x18, arg0);
+        func_80028BAC(0xA, 4, 2);
+        arg0->animation_step.fields.event = 0;
+    }
+    if (arg0->animation_step.fields.event < 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80048A1C(struct MainObj* arg0)
 {
     D_800FAE84[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80048A58);
+void func_80048A58(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    struct VisualObj* visual;
+    arg0->unk6++;
+    func_80015D60(arg0, 8);
+    shot = find_free_shot_obj();
+    if (shot != 0) {
+        shot->active = 0x41;
+        shot->id = 4;
+        shot->unk7C = WEAPON_OBJECT(arg0);
+        shot->state = 0;
+        shot->unk5 = 0;
+        shot->unk6 = 0;
+    }
+    visual = find_free_visual_obj();
+    if (visual != 0) {
+        visual->active = 0x41;
+        visual->id = 6;
+        visual->state = 0;
+        visual->unk5 = 0;
+        visual->unk6 = 0;
+        visual->unk50 = PLAYER_OBJECT(arg0);
+        visual->unk2 = 1;
+    }
+
+    arg0->unk20 = arg0->x_pos.i.hi;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80048B04);
 

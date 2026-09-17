@@ -330,23 +330,6 @@ void func_80016124(void)
     addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
 }
 
-void func_8001A9EC(struct EngineObj* obj)
-{
-    u8 previous_character = 0;
-
-    if (engine_obj.unk1 != 0)
-        previous_character = D_80141BDF[0];
-
-    D_800F1FA0[obj->unk1](obj);
-    if (D_80141BDF[0] != previous_character && (controller_state & 0x50) == 0) {
-        func_8001540C(0, 0xC, 0);
-    }
-
-    func_80016124();
-    update_misc_objects();
-    init_objects();
-}
-
 s32 func_8002B1E8(struct BaseObj* object, s32 x_margin, s32 y_margin)
 {
     s32 x = (u16)object->x_pos.i.hi;

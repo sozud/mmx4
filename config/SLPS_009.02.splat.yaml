@@ -101,7 +101,7 @@ segments:
       - [0x1CD0, .rodata, misc/misc_38]
       - [0x1CE8, .rodata, misc/misc_39]
       - [0x1CFC, .rodata, misc/misc_42]
-      - [0x1D40, rodata, quads/title_quad]
+      - [0x1D40, .rodata, quads/title_quad]
       - [0x1D68, .rodata, psxsdk/libspu/s_crwa]
       - [0x1DB0, .rodata, psxsdk/libsnd/ssopenpj]
       - [0x1DEC, .rodata, psxsdk/libspu/s_sca]

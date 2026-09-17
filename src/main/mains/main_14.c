@@ -116,7 +116,31 @@ void func_8004D480(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D4D0);
+void func_8004D4D0(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+
+    effect = find_free_effect_obj();
+    if (effect != 0) {
+        effect->active = 1;
+        effect->id = 0x11;
+        effect->unk2 = arg0->unk2;
+        effect->on_screen = 0;
+        effect->state = 0;
+        effect->unk5 = 0;
+        effect->unk6 = 0;
+        effect->unk7 = 0;
+        effect->x_pos.val = arg0->x_pos.val;
+        effect->y_pos.val = arg0->y_pos.val;
+        effect->ext.effect_17.source = ANIMATED_OBJECT(arg0);
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015930(2, 0x40);
+    func_8001540C(2, 0x41, arg0);
+    func_8004D84C(ANIMATED_OBJECT(arg0));
+    arg0->unk6++;
+}
 
 void func_8004D580(struct MainObj* arg0)
 {

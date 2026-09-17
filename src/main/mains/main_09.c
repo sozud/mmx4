@@ -175,7 +175,30 @@ void func_800494E0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_09", func_8004955C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_09", func_80049654);
+void func_80049654(struct MainObj* arg0)
+{
+    if (arg0->unk7E != 0) {
+        arg0->unk7E--;
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+    }
+
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+
+    if (arg0->y_pos.i.hi < 0x90) {
+        func_80028BAC(-1, 4, 2);
+        arg0->x_pos.i.hi = 0x1240;
+        arg0->unk24 = FIXED(-2.5);
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk15 = 0;
+        arg0->unk7E = 0x78;
+        arg0->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_09", func_8004970C);
 
