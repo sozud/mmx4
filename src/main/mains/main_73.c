@@ -64,7 +64,26 @@ void func_8008BF00(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008BF54);
+void func_8008BF54(struct MainObj* arg0, s32 arg1, s32 arg2)
+{
+    struct ShotObj* temp_v0;
+
+    temp_v0 = find_free_shot_obj();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 0x41;
+        temp_v0->id = arg1 + 0x30;
+        temp_v0->unk2 = arg2;
+        temp_v0->x_pos.val = arg0->x_pos.val;
+        temp_v0->y_pos.val = arg0->y_pos.val;
+        temp_v0->animation_table = (u32**)arg0->animation_table;
+        temp_v0->unk40 = arg0->unk40;
+        temp_v0->unk3C = (u8*)arg0->sprite_frames;
+        temp_v0->unk42 = arg0->unk42 & 0x7FFF;
+        temp_v0->unk16 = arg0->unk16;
+        temp_v0->unk7C = WEAPON_OBJECT(arg0);
+        temp_v0->unk15 = arg0->unk15;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C014);
 
@@ -152,7 +171,21 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C5A8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C664);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C7E4);
+void func_8008C7E4(struct MainObj* arg0)
+{
+    if (arg0->unk70 & 3) {
+        arg0->unk7C = 0x1E;
+        arg0->unk6++;
+        func_80028B68(8, 4, 2);
+        func_80015D60(arg0, 8);
+        arg0->unk54 = (const u8*)&D_80105264;
+        arg0->unk50 = (const u8*)&D_80105260;
+        func_8001540C(2, 0xF7, 0);
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+}
 
 void func_8008C888(struct MainObj* arg0)
 {
@@ -195,7 +228,7 @@ void func_8008C998(struct MainObj* arg0)
     arg0->unk24 = FIXED(5);
     arg0->unk28 = 0;
     arg0->unk20 = 0;
-    arg0->unk2C = 0x4200;
+    arg0->unk2C = FIXED(0.2578125);
     arg0->ext.main_73.unk89 = 0;
     arg0->unk6++;
     func_80015D60(arg0, 2);
@@ -268,7 +301,29 @@ void func_8008CF68(struct MainObj* arg0)
     arg0->unk42 = flags;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CFAC);
+void func_8008CFAC(struct MainObj* arg0)
+{
+    s32 var_a1;
+
+    var_a1 = 0x40;
+    if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
+        var_a1 = 0;
+        arg0->unk15 = 0x40;
+    } else {
+        arg0->unk15 = 0;
+    }
+    func_80036AE4(0x14, var_a1);
+    arg0->unk5 = 1;
+    arg0->unk2C = FIXED(0.2578125);
+    arg0->unk28 = 0;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk7C = 0x10;
+    arg0->unk7E = 0x10;
+    arg0->unk42 &= 0x7FFF;
+    func_80015D60(arg0, 0xB);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_8008D050(struct MainObj* arg0)
 {

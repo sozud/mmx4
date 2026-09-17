@@ -583,6 +583,7 @@ void func_800D1284(struct MiscObj* arg0);
 void func_8009481C(struct MiscObj* arg0);
 void func_800948D4(struct MiscObj* arg0);
 void func_8009485C(struct MiscObj *arg0);
+void func_80094794(struct MiscObj *arg0);
 void func_80094A04(struct MiscObj *arg0);
 void func_80098474(struct MiscObj* arg0);
 void func_800D1B08(struct MiscObj* arg0);
@@ -2703,9 +2704,10 @@ void func_800712A4(struct MainObj*);
 void func_800713A4(struct MainObj*);
 
 // D_80100DD4
-void func_800714F4(void);
+extern void (*D_80100DD4[])(struct MainObj*);
+void func_800714F4(struct MainObj*);
 void func_80071598(struct MainObj*);
-void func_800715D4(void);
+void func_800715D4(struct MainObj*);
 
 // D_80100DE0
 extern void (*D_80100DE0[])(struct MainObj*);
@@ -3541,14 +3543,14 @@ void func_80085768(struct MainObj*);
 void func_800857C8(struct MainObj*);
 
 // D_80104470
-extern void (*D_80104470[])(struct ItemObj*);
-void func_800858DC(struct ItemObj*);
-void func_80085988(struct ItemObj*);
-void func_80085A44(struct ItemObj*);
+extern void (*D_80104470[])(struct MainObj*);
+void func_800858DC(struct MainObj*);
+void func_80085988(struct MainObj*);
+void func_80085A44(struct MainObj*);
 void func_80085BE4(struct MainObj*);
-void func_80085C38(struct ItemObj*);
-void func_80085D38(struct ItemObj*);
-void func_80085DCC(struct ItemObj*);
+void func_80085C38(struct MainObj*);
+void func_80085D38(struct MainObj*);
+void func_80085DCC(struct MainObj*);
 
 // D_8010448C
 extern void (*D_8010448C[])(struct MainObj *);
@@ -3556,7 +3558,7 @@ void func_80083574(struct MainObj* arg0);
 void func_800851FC(struct BarObj *arg0);
 void func_80085604(struct MainObj *arg0);
 void func_80085814(void);
-void func_80085E70(struct ItemObj*);
+void func_80085E70(struct MainObj*);
 
 // D_801047D4
 extern void (*D_801047D4[])(struct MainObj *);

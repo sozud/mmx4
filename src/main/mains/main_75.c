@@ -222,7 +222,28 @@ void func_80090D6C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090E2C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090F0C);
+void func_80090F0C(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        arg0->unk6++;
+        func_80015930(2, 2);
+        func_80015D60(arg0, 0xA);
+        func_8001540C(2, 0, arg0);
+        arg0->ext.main_75.weapon->unk88.half = 0;
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x37;
+            shot->unk2 = 6;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+        }
+        func_80028B68(0x14, 4, 2);
+    }
+}
 
 void func_80090FC0(struct MainObj* arg0)
 {

@@ -360,7 +360,22 @@ void func_80084774(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800847B0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084870);
+void func_80084870(struct MainObj* arg0)
+{
+    struct ObjectHeader* temp_v1;
+
+    func_8002B93C(MOVING_OBJECT(arg0),
+        func_8002B7B0(OBJECT_HEADER(arg0), FIXED(1232), FIXED(336)) & 0xFF);
+    arg0->unk20 *= 4;
+    arg0->unk24 *= 4;
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8008318C(arg0, FIXED(1232), FIXED(336)) & 0xFF) {
+        temp_v1 = OBJECT_HEADER(arg0->ext.main_68.unk80);
+        arg0->unk6++;
+        temp_v1->unk5++;
+    }
+}
 
 void func_80084910(struct MainObj* arg0)
 {
@@ -604,28 +619,51 @@ void func_80085BE4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085C38);
 
-void func_80085D38(struct ItemObj* self)
+void func_80085D38(struct MainObj* self)
 {
     u16 temp_v0;
 
     if (self->unk5C < 0x30) {
-        temp_v0 = self->unk7C.timer16 - 1;
-        self->unk7C.timer16 = temp_v0;
+        temp_v0 = self->unk7C - 1;
+        self->unk7C = temp_v0;
         if ((temp_v0 << 0x10) == 0) {
             func_8001540C(0, 0xE, 0);
-            self->unk7C.timer16 = 2;
+            self->unk7C = 2;
         }
         self->unk5C = (s8)((u8)self->unk5C + 1);
     } else {
-        self->unk7C.timer16 = 0x5A;
+        self->unk7C = 0x5A;
         self->unk5 = (s8)((u8)self->unk5 + 1);
     }
     is_on_screen(BASE_OBJECT(self));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085DCC);
+void func_80085DCC(struct MainObj* arg0)
+{
+    s16 temp_v0;
+    u32 temp_v1;
 
-void func_80085E70(struct ItemObj* arg0)
+    temp_v0 = arg0->unk7C - 1;
+    arg0->unk7C = temp_v0;
+    if (temp_v0 == 0) {
+        temp_v1 = 1;
+        arg0->collision_data = (const u16*)D_80108004;
+        arg0->unk50 = (const u8*)&D_80103F00;
+        arg0->unk54 = (const u8*)&D_80103F04;
+        arg0->unk2 = temp_v1;
+        arg0->state = temp_v1;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        arg0->ext.main_68.unk91 = 0;
+        func_80036B18();
+        temp_v1 = (u32)arg0->ext.main_68.unk80;
+        ((struct MainObj*)temp_v1)->state++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+void func_80085E70(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;

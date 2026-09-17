@@ -164,4 +164,24 @@ void func_8005D118(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005D148);
+void func_8005D148(struct MainObj* arg0)
+{
+    struct ShotObj* temp_v0;
+
+    temp_v0 = find_free_shot_obj();
+    if (temp_v0 != NULL) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 7;
+        temp_v0->unk2 = 0;
+        temp_v0->unk40 = arg0->unk40;
+        temp_v0->unk42 = arg0->unk42;
+        temp_v0->animation_table = (u32**)arg0->animation_table;
+        temp_v0->unk3C = (u8*)arg0->sprite_frames;
+        temp_v0->bg_offset = arg0->bg_offset;
+        temp_v0->unk15 = arg0->unk15;
+        temp_v0->x_pos.val = arg0->x_pos.val;
+        temp_v0->y_pos.val = arg0->y_pos.val;
+        temp_v0->unk7C = WEAPON_OBJECT(arg0);
+        temp_v0->unk16 = 6;
+    }
+}

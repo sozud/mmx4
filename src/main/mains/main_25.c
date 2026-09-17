@@ -139,4 +139,22 @@ void func_8005807C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_800580AC);
+void func_800580AC(struct MainObj* arg0)
+{
+    if ((arg0->unk5 != 4) && (arg0->unk5 != 6) && !(arg0->unk70 & 8)) {
+        func_80015D60(arg0, 3);
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        if (arg0->unk15 == 0) {
+            arg0->x_pos.u.hi -= 2;
+        } else {
+            arg0->x_pos.u.hi += 2;
+        }
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->ext.main_25.unk84 = 2;
+        arg0->unk20 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk67 = 1;
+    }
+}

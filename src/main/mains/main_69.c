@@ -687,7 +687,32 @@ void func_8008888C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800888D0);
+s32 func_800888D0(struct MainObj* arg0)
+{
+    volatile struct WeaponObj* weapon;
+    s32 active;
+    s32 i;
+    s32 x_diff;
+
+    i = 0;
+    weapon = weapon_objects;
+    active = weapon_objects->active;
+    do {
+        if (active != 0 && weapon->unk50 != 0) {
+            x_diff = (u16)weapon->x_pos.i.hi - (u16)arg0->x_pos.i.hi;
+            if (arg0->unk15 == 0) {
+                if ((x_diff << 16) <= 0 && weapon->x_vel.val >= 0) {
+                    return 1;
+                }
+            } else if ((x_diff << 16) >= 0 && weapon->x_vel.val <= 0) {
+                return 1;
+            }
+        }
+        i += 1;
+    } while ((u32)(i & 0xFF) < 0x10U);
+
+    return 0;
+}
 
 void func_80088974(struct MainObj* arg0)
 {
