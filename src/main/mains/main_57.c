@@ -346,7 +346,29 @@ void func_800736DC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073748);
+void func_80073748(struct MainObj* arg0)
+{
+    u8 i;
+    struct ShotObj* shot;
+
+    i = 0;
+    do {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x23;
+            shot->unk2 = i + arg0->unk7C;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+            shot->unk7 = arg0->ext.main_57.unk91;
+            arg0->ext.main_57.shot = shot;
+        }
+        i++;
+    } while (i < 2);
+
+    arg0->unk7E = 0x20;
+    arg0->unk7C += 2;
+    arg0->unk6++;
+}
 
 void func_800737FC(struct MainObj* arg0)
 {

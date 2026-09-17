@@ -122,7 +122,17 @@ void func_80070648(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800706D4);
+void func_800706D4(struct MainObj* arg0)
+{
+    D_80100D60[arg0->unk6](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+
+    if (((func_8006FCB8(PLAYER_OBJECT(arg0), 0, 0) & 0xFF) == 3) && !(arg0->ext.main_56.flags & 2)) {
+        func_8006FBFC(arg0);
+        arg0->ext.main_56.flags |= 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070778);
 
@@ -225,7 +235,26 @@ void func_80071598(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800715D4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8007168C);
+void func_8007168C(struct MainObj* arg0)
+{
+    s32 direction;
+    s32 result;
+
+    D_80100DD4[arg0->unk6](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_800714C0(arg0);
+
+    direction = -0x30;
+    if (arg0->unk15 != 0) {
+        direction = 0x30;
+    }
+
+    result = func_8006FCB8(PLAYER_OBJECT(arg0), direction, 0);
+    if ((result & 0xFF) == 3 && !(arg0->ext.main_56.flags & 2)) {
+        func_8006FBFC(arg0);
+        arg0->ext.main_56.flags |= 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80071740);
 
@@ -289,13 +318,31 @@ void func_80071AD8(struct MainObj* arg0)
     } else if (--arg0->unk7C == 0) {
         arg0->unk7C = 0xA;
         arg0->unk7 = 0;
-        arg0->ext.main_56.unk89 = 5;
+        arg0->ext.main_56.unk89.value = 5;
         arg0->unk6++;
     }
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80071B60);
+void func_80071B60(struct MainObj* arg0)
+{
+    s16 timer;
+    s8 step;
+
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer != 0) {
+        step = arg0->ext.main_56.unk89.value;
+        arg0->x_pos.i.hi = arg0->x_pos.u.hi + step;
+        arg0->ext.main_56.unk89.signed_value *= -1;
+        return;
+    }
+
+    arg0->unk6++;
+    func_80015D60(arg0, 0x17);
+    func_8001540C(2, 0xCA, arg0);
+    func_800C813C(6, D_80100D38, arg0);
+}
 
 void func_80071C00(struct MainObj* arg0)
 {
@@ -343,7 +390,7 @@ void func_80071EEC(struct MainObj* arg0)
     func_80036AE4(0x14, g_Player.unk15);
     arg0->unk7C = 0x7F;
     arg0->unk7E = 0x19;
-    arg0->ext.main_56.unk89 = 0x19;
+    arg0->ext.main_56.unk89.value = 0x19;
     arg0->unk5++;
     func_80015D90(ANIMATED_OBJECT(arg0), 0x16, 0);
     is_on_screen(BASE_OBJECT(arg0));
@@ -367,8 +414,8 @@ void func_80071F5C(struct MainObj* arg0)
     }
     is_on_screen(BASE_OBJECT(arg0));
     if (arg0->unk7E-- == 0) {
-        arg0->ext.main_56.unk89 -= 5;
-        var_a0 = arg0->ext.main_56.unk89;
+        arg0->ext.main_56.unk89.value -= 5;
+        var_a0 = arg0->ext.main_56.unk89.value;
         arg0->unk42 ^= 0x8000;
         if (var_a0 < 5) {
             var_a0 = 5;

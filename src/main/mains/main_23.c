@@ -2,7 +2,30 @@
 // 80055E04..80056788
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80055E04);
+void func_80055E04(struct MainObj* arg0)
+{
+    s8 step;
+    u8 background_relative;
+    u8 background_offset;
+
+    step = arg0->unk6;
+    if (step == 0) {
+        arg0->unk6 = step + 1;
+        func_80055C54();
+        background_relative = arg0->ext.main_23.unk80;
+        background_offset = background_relative & 0x7F;
+        if (background_relative & 0x80) {
+            arg0->unk15 ^= 0x40;
+        }
+        func_80015D60(arg0, background_offset + 0x12);
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80055E9C(struct MainObj* arg0)
 {

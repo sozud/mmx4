@@ -148,4 +148,27 @@ INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A2BC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A388);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A450);
+void func_8006A450(struct MainObj* arg0)
+{
+    u8 i;
+    struct ShotObj* shot;
+
+    i = 0;
+    do {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x1D;
+            shot->unk2 = i;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)D_800FFD44;
+            shot->unk3C = (u8*)arg0->sprite_frames;
+            shot->unk40 = arg0->unk40;
+            shot->unk15 = arg0->unk15;
+            shot->bg_offset = arg0->bg_offset;
+            shot->unk16 = 4;
+        }
+        i++;
+    } while (i < 2);
+}

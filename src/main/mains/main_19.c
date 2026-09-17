@@ -15,7 +15,23 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_800528BC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052A68);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80052B94);
+void func_80052B94(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk6 = 1;
+        func_80015D60(
+            arg0, D_800FC7B4[SP_CUR_MAIN_OBJ->ext.main_19.animation_index]);
+        return;
+    }
+
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_19.unk80 = get_random() & 1;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_80052C2C(struct MainObj* arg0)
 {

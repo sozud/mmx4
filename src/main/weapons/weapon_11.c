@@ -46,7 +46,30 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800944B8);
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009462C);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800946F0);
+void func_800946F0(struct MiscObj* arg0)
+{
+    s32 var_a1;
+
+    var_a1 = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk93 != 2) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk96 == 0xB) {
+        var_a1 = 1;
+    }
+    if (var_a1 != 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (arg0->state == 0) {
+        func_80094794(arg0);
+        return;
+    }
+    func_80094A04(arg0);
+}
 
 void func_80094794(struct MiscObj* arg0)
 {

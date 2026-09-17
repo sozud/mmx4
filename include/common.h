@@ -673,7 +673,9 @@ struct Main18Ext {
     u8 unk86;
     u8 unk87;
     u8 unk88;
-    u8 pad89[0xE];
+    u8 pad89;
+    u16 unk8A;
+    u8 pad8C[0x97 - 0x8C];
     u8 saved_unk5;
 };
 
@@ -707,8 +709,11 @@ struct Main54Ext {
     u8 pad80[6];
     u8 unk86;
     u8 unk87;
-    u8 pad88[4];
+    u8 pad88;
+    u8 unk89;
+    u8 pad8A[2];
     const s8* unk8C;
+    u8* unk90;
 };
 
 struct Main55Ext {
@@ -746,11 +751,16 @@ struct Main46Ext {
     u8 unk95;
 };
 
+union Main56Unk89 {
+    u8 value;
+    s8 signed_value;
+};
+
 struct Main56Ext {
     struct EffectObj *effect;
     u8 *unk84;
     u8 unk88;
-    u8 unk89;
+    union Main56Unk89 unk89;
     u8 pad8A;
     u8 flags;
 };
@@ -824,11 +834,14 @@ struct Main61Ext {
     u8 pad80[5];
     u8 unk85;
     u8 unk86;
-    u8 pad87[2];
+    u8 unk87;
+    u8 pad88;
     u8 unk89;
     u8 unk8A;
     u8 pad8B;
     u8 unk8C;
+    u8 pad8D[0x94 - 0x8D];
+    struct MainObj* unk94;
 };
 
 struct Main65Ext {
@@ -959,6 +972,7 @@ struct Main68Ext {
     u8 unk8E;
     u8 unk8F;
     u8 unk90;
+    u8 unk91;
 };
 
 struct Main69Ext {
@@ -3169,6 +3183,16 @@ extern struct Unk_unk68 D_800F9CD8;
 extern struct Unk_unk68 D_800F9CDC;
 extern struct Unk_unk68 D_801061F0[32];
 extern struct Unk_unk68 D_801069F4[];
+extern struct Unk_unk68 D_801087D0[];
+extern struct Unk_unk68 D_80108004[];
+extern struct Unk_unk68 D_80100D38[2];
+extern struct Unk_unk68 D_80105260;
+extern struct Unk_unk68 D_80105264;
+extern u8 D_800FC7B4[4];
+extern u8 D_800FE2A4[8];
+extern u8** D_801002A4[3];
+extern u8 D_801002B0[12];
+extern union AnimationStep* D_800FFD44[14];
 extern u8 D_80109028[4];
 extern u8 D_8010902C[32][4];
 extern u8 D_801090C4[4];
@@ -3734,6 +3758,9 @@ void func_8003D6EC(struct AnimatedObj*, s32);
 void func_80038E44(struct PlayerObj*, s32);
 void func_800921E8(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
+void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
+void func_8006FBFC(struct MainObj*);
+s32 func_8006FCB8(struct PlayerObj*, s32, s32);
 
 enum SelectedPlayer {
     CHARACTER_X,

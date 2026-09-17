@@ -329,7 +329,35 @@ void func_8006EA78(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006EAA8);
+void func_8006EAA8(struct MainObj* arg0)
+{
+    u8* base;
+    u8* current;
+    u8* thresholds;
+    u32 random;
+    u8 index;
+    s32 i;
+
+    random = get_random();
+    i = 0;
+    random &= 0xF;
+    index = arg0->ext.main_54.unk89;
+    thresholds = D_801002B0;
+    base = D_801002A4[index][0];
+    thresholds += (index << 1) + index;
+    current = base;
+
+    for (; i < 3; i++) {
+        if (random < *thresholds) {
+            arg0->ext.main_54.unk90 = current;
+            return;
+        }
+        current += 4;
+        thresholds++;
+    }
+
+    arg0->ext.main_54.unk90 = base + i * 4;
+}
 
 void (*D_801005E4[])(struct MainObj*) = {
     func_8006BB70,

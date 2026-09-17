@@ -118,7 +118,30 @@ void func_80093A5C(struct WeaponObj* arg0)
     func_80093C54(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093AAC);
+void func_80093AAC(struct WeaponObj* arg0)
+{
+    u8* timer;
+    u8 temp_v0;
+
+    timer = &arg0->ext.weapon_10.timer;
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 7);
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+
+    temp_v0 = *timer;
+    if (temp_v0 == 0) {
+        arg0->unk50 = (const u8*)D_801087D0;
+        arg0->unk64 = 1;
+        *timer = 0x78;
+        arg0->unk5++;
+        return;
+    }
+
+    *timer = temp_v0 - 1;
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_80093B4C(struct WeaponObj* arg0)
 {
