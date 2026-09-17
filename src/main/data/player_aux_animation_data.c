@@ -10,8 +10,8 @@ struct FixedPointPosition D_800F99E4[4] = {
     { 0x1C00000, -0x800000 },
     { 0x1C00000, 0x1700000 },
 };
-u8 D_800F9A04[4] = { 0, 2, 18, 20 };
-s8 D_800F9A08[4] = { -19, -16, 46, 38 };
+struct Unk_unk68 D_800F9A04 = { 0, 2, 18, 20 };
+struct Unk_unk68 D_800F9A08 = { -19, -16, 46, 38 };
 
 union AnimationStep D_800F9A0C[] = { { 0x00000001 } };
 union AnimationStep D_800F9A10[] = {

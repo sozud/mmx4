@@ -2580,7 +2580,30 @@ void func_80039120(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80039160);
+void func_80039160(struct PlayerObj* arg0)
+{
+    s8 event;
+    u8 temp_a1;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    if (event & 0x80) {
+        arg0->animation_step.fields.event = event & 0x7F;
+        func_8001540C(1, 9, arg0);
+        func_800363B8(arg0, 5U);
+        func_800355C0();
+        g_Entity.active = 1;
+        g_Entity.x_pos.val = arg0->x_pos.val;
+        g_Entity.y_pos.val = arg0->y_pos.val;
+        temp_a1 = arg0->unk15;
+        g_Entity.unk67 = 1;
+        g_Entity.unkDA = 0xF0;
+        g_Entity.unkDC = 0;
+        g_Entity.unk15 = temp_a1;
+        func_80035EA4(&g_Entity);
+        arg0->unk6 = (u8)arg0->unk6 + 1;
+    }
+}
 
 void func_80039230(struct PlayerObj* arg0)
 {
@@ -2828,7 +2851,32 @@ s32 func_80039D9C(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80039E5C);
+s32 func_80039E5C(struct PlayerObj* arg0)
+{
+    if (!(arg0->unkB9 & 8)) {
+        return 0;
+    }
+    if (!(arg0->input.buttons.held & 4)) {
+        return 0;
+    }
+    if (!(arg0->pressed_input & 0x20)) {
+        return 0;
+    }
+    if (arg0->unk8E != 0) {
+        return 0;
+    }
+
+    func_80039C20(arg0);
+    func_800350A4(arg0, 0x65);
+    func_8001540C(0, 0x1B, arg0);
+    func_800363B8(arg0, 9);
+    arg0->unk67 = 1;
+    arg0->unk7A = 1;
+    arg0->unk5 = 0x39;
+    arg0->unk6 = 0;
+    func_8003AE08(arg0);
+    return 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80039F28);
 
@@ -3087,7 +3135,32 @@ void func_8003B98C(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003BA24);
+void func_8003BA24(struct RideArmorObj* arg0)
+{
+    if (arg0->on_screen != 0) {
+        if (arg0->unk5 == 0) {
+            arg0->unk5 = 1;
+            arg0->x_vel.val = FIXED(10);
+            arg0->unk28 = 0;
+            arg0->y_vel.val = 0;
+            arg0->unk2C = FIXED(0.265625);
+            g_Player.unkC5 = 0;
+            func_80036AE4(0x17, 0x40);
+        } else {
+            if (arg0->unk70 & 8) {
+                arg0->y_vel.val = 0;
+                arg0->unk2C = 0;
+            }
+            func_8002B694(ANIMATED_OBJECT(arg0));
+        }
+    } else {
+        arg0->state = 3;
+        arg0->unk5 = 0;
+        func_80036B18();
+    }
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_8003BAE8(struct RideArmorObj* arg0)
 {
@@ -3141,7 +3214,21 @@ void func_8003C584(struct RideArmorObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003C624);
+void func_8003C624(struct RideArmorObj* arg0)
+{
+    u32 value;
+
+    if ((u32)((u8)arg0->unk6 - 1) < 4U) {
+        value = arg0->unk94.value;
+        value += arg0->unk90;
+        arg0->unk94.value = value;
+        background_objects[arg0->bg_offset].unk47 -= value >> 16;
+        if (background_objects[arg0->bg_offset].unk47 < 6) {
+            background_objects[arg0->bg_offset].unk47 = 6;
+        }
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003C6EC);
 
@@ -3177,7 +3264,35 @@ void func_8003C9A4(struct RideArmorObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003CA44);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003CB08);
+void func_8003CB08(struct RideArmorObj* arg0)
+{
+    u16 flags;
+
+    flags = arg0->unk8A;
+    arg0->unk80.bytes.unk80 &= 0xFE;
+    if (flags & 3) {
+        if (flags & 1) {
+            if (arg0->x_vel.val < ((s32*)D_800F8DC8)[0xB4 + arg0->unk7D]) {
+                arg0->x_vel.val = ((s32*)D_800F8DC8)[0xB4 + arg0->unk7D];
+                arg0->unk28 = 0;
+            }
+            arg0->unk7C = 1;
+            return;
+        }
+        if (flags & 2) {
+            if (arg0->x_vel.val >= ((s32*)D_800F8DC8)[0xB2 + arg0->unk7D]) {
+                arg0->x_vel.val = ((s32*)D_800F8DC8)[0xB2 + arg0->unk7D];
+                arg0->unk28 = 0;
+            }
+            arg0->unk7C = 0;
+        }
+    } else {
+        arg0->x_vel.val = 0;
+        arg0->unk28 = 0;
+        arg0->unk7C = 1;
+        arg0->unk80.bytes.unk80 &= 0xFE;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003CBCC);
 
@@ -3565,7 +3680,7 @@ void func_8003F618(struct RideArmorObj* arg0)
 
 void func_8003F648(struct RideArmorObj* arg0)
 {
-    if (!(arg0->unk97 & 2)) {
+    if (!(arg0->unk94.bytes.unk97 & 2)) {
         D_800F9138[arg0->unk6](arg0);
     }
 }
@@ -4108,7 +4223,42 @@ void func_80042120(struct MainObj* arg0)
     CollisionRelated(PLAYER_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80042170);
+void func_80042170(struct MainObj* arg0)
+{
+    u8 state;
+    s32 y_pos;
+    s32 x_pos;
+    u8 bg_offset;
+
+    state = (u8)arg0->state;
+    arg0->unk5 = 2;
+    y_pos = arg0->y_pos.val;
+    arg0->unk7C = 0;
+    arg0->unk2 = 0;
+    state += 1;
+    arg0->state = state;
+    x_pos = arg0->x_pos.val;
+    bg_offset = (u8)g_Player.bg_offset;
+    arg0->unk1C.val = y_pos;
+    arg0->unk18.val = x_pos;
+    arg0->bg_offset = (s8)bg_offset;
+    arg0->unk15 = (g_Player.x_pos.val >= arg0->x_pos.val) << 6;
+    arg0->animation_table = (u32**)D_800F9AB8;
+    arg0->unk16 = 6;
+    arg0->unk68 = &D_800F9A04;
+    arg0->unk54 = &D_800F9A08;
+    arg0->unk50 = &D_800F9A08;
+    arg0->collision_data = D_80106370;
+    arg0->unk5C = 0xF;
+    arg0->unk61 = 0;
+    arg0->unk60 = 4;
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    func_80015D60(arg0, 1);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80042248);
 

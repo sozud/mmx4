@@ -27,7 +27,24 @@ void func_8005B52C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B578);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B64C);
+void func_8005B64C(struct MainObj* arg0)
+{
+    if (func_8002DD04(arg0) < 0) {
+        arg0->unk5 = 0;
+        arg0->active |= 4;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        return;
+    }
+
+    D_800FD9D0[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+        return;
+    }
+    func_8002B0C8(OBJECT_HEADER(arg0));
+}
 
 void func_8005B708(struct MainObj* arg0)
 {

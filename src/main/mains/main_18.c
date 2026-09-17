@@ -227,7 +227,32 @@ void func_80051374(struct MainObj* arg0)
     arg0->unk6 = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800513DC);
+void func_800513DC(struct MainObj* arg0)
+{
+    s16 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->collision_data = D_801060F0;
+    }
+    temp_v0 = (u16)arg0->unk7C - 1;
+    arg0->unk7C = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk24 = FIXED(6);
+        arg0->unk7C = 0x50;
+        arg0->unk70 = 0;
+        arg0->unk2C = 0;
+        arg0->unk6 = 2;
+        return;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if ((arg0->y_pos.i.hi >= 0x8BA) && (arg0->unk2C != 0)) {
+        arg0->y_pos.i.hi = 0x8BA;
+        arg0->unk24 = 0;
+        arg0->unk2C = 0;
+        func_8001540C(2, 0x38, arg0);
+    }
+}
 
 void func_800514A4(struct MainObj* arg0)
 {

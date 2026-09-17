@@ -185,7 +185,29 @@ void func_80012EB8(void)
     func_80015C10();
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80012F44);
+void func_80012F44(void)
+{
+    u8* saved_data;
+    s32* dst;
+    s32* src;
+    u32 i;
+
+    saved_data = D_8015D9C8;
+    func_80013AD8(D_800EE47E[engine_obj.checkpoint], 4, D_80141F38);
+    func_80014C70();
+
+    i = 0;
+    dst = SP_PALETTE_WORDS + 0x500 / 4;
+    src = SP_ARC_30 + ((engine_obj.checkpoint << 5) + 0x280 / 4);
+    do {
+        *dst++ = *src++;
+        i++;
+    } while (i < 0x80U);
+
+    D_8015D9C8 = saved_data;
+    need_palette_load |= 1;
+    D_80171EA8 = (u8)engine_obj.checkpoint;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80013014);
 
@@ -3355,7 +3377,28 @@ void func_8001EC90(struct GameInfo* arg0)
     func_800129A4(8);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001ED44);
+void func_8001ED44(struct GameInfo* arg0)
+{
+    if (*D_80141BDC == 0) {
+        if (controller_state & PAD_CONFIRM) {
+            func_8001540C(0, 0x22, 0);
+            if (D_80141BDF[0] != 1) {
+                func_800129F0(8);
+            }
+            arg0->mode = (u8)arg0->mode + 1;
+#ifdef VERSION_JP
+        } else if (controller_state & PADRdown) {
+#else
+        } else if (controller_state & PADRup) {
+#endif
+            func_800129F0(8);
+            D_80141BDF[0] = 2;
+            arg0->mode = (u8)arg0->mode + 1;
+        } else {
+            func_800204CC(D_80141BDC + 3, arg0->unk8);
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001EE08);
 
@@ -3384,7 +3427,31 @@ void func_8001EF48(struct GameInfo* arg0)
     arg0->mode++;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001EFF0);
+void func_8001EFF0(struct GameInfo* arg0)
+{
+    struct TransitionState* transition;
+
+    transition = (struct TransitionState*)D_80141BDC;
+    if (D_80141BDC[0] == 0) {
+        if ((transition->selection == 0) || (func_8001E980(1), D_80141BDF[0] == 0)) {
+            arg0->unk0 = 9;
+            engine_obj.unk1 = 0;
+            engine_obj.unk2 = 0;
+            engine_obj.unk3 = 0;
+        } else {
+            background_objects[0].unk4C = 1;
+            background_objects[1].unk4C = 1;
+            background_objects[2].unk4C = 1;
+            background_objects[1].unk3 = 1;
+            background_objects[2].unk3 = 1;
+            background_objects[2].x_pos.i.hi = 0;
+            arg0->unk0 = 6;
+            arg0->mode = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        }
+    }
+}
 
 void func_8001F0BC(struct GameInfo* arg0)
 {
