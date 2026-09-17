@@ -182,13 +182,13 @@ void (*D_800FD3BC[])() = {
     func_80058E38,
 };
 
-void (*D_800FD3C0[])() = {
+void (*D_800FD3C0[])(struct MainObj*) = {
     func_8005904C,
     func_800590BC,
     func_80059154,
 };
 
-void (*D_800FD3CC[])() = {
+void (*D_800FD3CC[])(struct MainObj*) = {
     func_8005922C,
     func_80059290,
     func_80059344,

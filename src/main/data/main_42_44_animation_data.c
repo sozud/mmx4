@@ -693,7 +693,7 @@ struct FixedPointPosition D_800FF7B8[8] = {
     { (s32)0x00058000, (s32)0x00004000 },
 };
 
-void (*D_800FF7F8[5])() = {
+void (*D_800FF7F8[5])(struct MainObj*) = {
     func_8009216C,
     func_8009216C,
     func_80065704,

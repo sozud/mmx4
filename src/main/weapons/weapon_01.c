@@ -23,7 +23,31 @@ void func_80093130(struct WeaponObj* arg0)
     func_80093524(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_800931A8);
+void func_800931A8(struct WeaponObj* arg0)
+{
+    s32 expired;
+    u8 timer;
+
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x18, 0x28) == 0) {
+        timer = arg0->ext.weapon_1.lifetime - 1;
+        expired = (timer & 0xFF) == 0;
+        arg0->ext.weapon_1.lifetime = timer;
+        if ((u8)arg0->unk72 & 0xC) {
+            expired = 1;
+        }
+        if (expired != 0) {
+            func_80093260(arg0);
+        } else {
+            D_801087EC[arg0->unk5](arg0);
+        }
+        func_80093524(arg0);
+    } else {
+        arg0->on_screen = 0;
+        arg0->state = 3;
+        arg0->unk50 = 0;
+        arg0->unk75 = 0;
+    }
+}
 
 void func_80093260(struct WeaponObj* arg0)
 {
@@ -50,7 +74,7 @@ void func_800932A0(struct WeaponObj* arg0)
 void func_80093310(struct WeaponObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_800933A0(arg0, arg0->ext.raw);
+    func_800933A0(arg0, &arg0->ext.weapon_1.lifetime);
     if ((arg0->unk76 != 0) && ((arg0->unk72 & 3) != 0)) {
         func_80015D60(arg0, 4);
         if (arg0->unk72 & 1) {
@@ -83,7 +107,7 @@ void func_800933EC(struct WeaponObj* arg0)
 
 void func_8009343C(struct WeaponObj* arg0)
 {
-    func_80015DC8(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         func_80093260(arg0);
     }

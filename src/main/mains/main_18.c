@@ -229,13 +229,37 @@ void func_80051374(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800513DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800514A4);
+void func_800514A4(struct MainObj* arg0)
+{
+    s16 timer;
+
+    if (arg0->unk7C >= 0x29) {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+
+    if (timer == 0) {
+        arg0->x_pos.val = g_Player.x_pos.val;
+        if (arg0->x_pos.i.hi < 0x17CD) {
+            arg0->x_pos.i.hi = 0x17CD;
+        }
+        if (arg0->x_pos.i.hi >= 0x18B6) {
+            arg0->x_pos.i.hi = 0x18B5;
+        }
+        arg0->unk24 = FIXED(-8);
+        arg0->unk7C = 0xA;
+        arg0->unk6 = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80051564);
 
 void func_80051630(struct MainObj* arg0)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event != 0) {
         func_80015D60((struct Unk19*)arg0, 6);
         arg0->unk6 = 5;

@@ -17,7 +17,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060144);
 void func_80060228(struct MainObj* arg0)
 {
     arg0->unk62 = 0;
-    arg0->ext.main_37.unk80 = 0;
+    arg0->ext.main_37.unk80.word = 0;
     arg0->ext.main_37.unk84 = 0;
     arg0->ext.main_37.unk88 = 0;
     arg0->ext.main_37.unk8C = 0;
@@ -35,7 +35,29 @@ void func_80060268(struct MainObj* arg0)
     D_800FE704[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800602A4);
+void func_800602A4(struct MainObj* arg0)
+{
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        arg0->ext.main_37.unk80.saved_direction = arg0->unk15;
+        func_80060A58(ANIMATED_OBJECT(arg0));
+        arg0->unk24 = 0;
+        if (arg0->unk15 == 0) {
+            arg0->unk20 = FIXED(-1.5);
+        } else {
+            arg0->unk20 = FIXED(1.5);
+        }
+        if (arg0->unk15 != arg0->ext.main_37.unk80.saved_direction) {
+            func_80015D60(arg0, 2);
+            arg0->unk5 = 3;
+            arg0->unk6 = 2;
+        } else {
+            func_80015D60(arg0, 3);
+            arg0->unk6 = 1;
+        }
+    }
+}
 
 void func_80060354(struct MainObj* arg0)
 {

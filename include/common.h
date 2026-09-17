@@ -493,7 +493,7 @@ struct MainSavedState8CExt {
 struct Main14Ext {
     u32 unk80;
     u32 unk84;
-    s32 unk88;
+    s32 visual_variant;
     u32 unk8C;
     u32 saved_unk5;
     u32 unk94;
@@ -516,8 +516,13 @@ struct Main17Ext {
     u32 saved_unk5;
 };
 
+union Main37Unk80 {
+    u32 word;
+    u8 saved_direction;
+};
+
 struct Main37Ext {
-    u32 unk80;
+    union Main37Unk80 unk80;
     u32 unk84;
     u32 unk88;
     u32 unk8C;
@@ -534,7 +539,9 @@ struct Main32Ext {
 };
 
 struct Main33Ext {
-    u8 pad80[5];
+    u8 pad80[2];
+    s16 unk82;
+    u8 pad84;
     u8 unk85;
     u8 pad86[0xE];
     u32 saved_unk5;
@@ -629,7 +636,7 @@ struct Main25Ext {
 
 struct Main35Ext {
     u32 unk80;
-    u32 unk84;
+    u32 sound_timer;
     u8 pad88[0xC];
     u32 saved_unk5;
 };
@@ -736,7 +743,7 @@ struct Main36Ext {
 };
 
 struct Main43Ext {
-    u8 pad80[4];
+    struct ShotObj* shot;
     struct EffectObj* effect;
     u16 unk88;
     u16 unk8A;
@@ -925,9 +932,11 @@ struct Main9Ext {
 
 struct Main27Ext {
     u8 unk80;
-    u8 pad81[7];
+    u8 collision_direction;
+    u8 pad82[6];
     u8 unk88;
-    u8 pad89[2];
+    u8 pad89;
+    u8 unk8A;
     u8 unk8B;
     s32 unk8C;
     u8 pad90[4];
@@ -955,9 +964,11 @@ struct Main29Record {
 };
 
 struct Main29Ext {
-    u8 pad80[0xC];
+    struct MainObj* source;
+    u8 pad84[8];
     struct Main29Record* target;
     struct Main29Record* record;
+    u16 unk94;
 };
 
 struct Main41Ext {
@@ -1110,9 +1121,9 @@ MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
     s8 pad49[2];                                 \
     s8 unk4B;                                    \
     s8 pad4C[4];                                 \
-    const u8* unk50;                             \
-    const u8* unk54;                             \
-    const u16* collision_data;                   \
+    const void* unk50;                           \
+    const void* unk54;                           \
+    const void* collision_data;                  \
     s8 unk5C;                                    \
     s8 unk5D;                                    \
     s8 unk5E;                                    \
@@ -1470,7 +1481,7 @@ MMX4_STATIC_ASSERT(shot_unk68_offset,
     MMX4_OFFSET_OF(struct ShotObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
 
 struct Weapon1Ext {
-    u8 pad8C;
+    u8 lifetime;
     u8 timer;
     u8 pad8E[0x90 - 0x8E];
     u8 unk90;
@@ -1571,8 +1582,8 @@ struct WeaponObj {
     union AnimationStep animation_step;
     u8 previous_animation_index;
     s8 pad49[0x50 - 0x49];
-    const u8* unk50;
-    const u8* unk54;
+    const void* unk50;
+    const void* unk54;
     s8 pad58[0x61 - 0x58];
     s8 unk61;
     s8 unk62;
@@ -3146,6 +3157,10 @@ extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FBBBC;
 extern struct Unk_unk68 D_800FBA50;
 extern struct Unk_unk68 D_800FBEF4;
+extern struct Unk_unk68 D_800FBE0C;
+extern struct Unk_unk68 D_800FBE10;
+extern struct Unk_unk68 D_800FBE14;
+extern u8 D_800FBEB0[4];
 extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
@@ -3161,6 +3176,14 @@ extern u16 D_800FDFBC[];
 extern void (*D_800FE174[])(struct MainObj*);
 extern struct Unk_unk68 D_800FE1BC;
 extern struct Unk_unk68 D_800FE1C0;
+extern union AnimationStep* D_800FEDE0[19];
+extern struct Unk_unk68 D_800FEE30;
+extern struct Unk_unk68 D_800FEE34;
+extern struct Unk_unk68 D_80103F08;
+extern struct Unk_unk68 D_80103F0C;
+extern s8 D_800F8D78[16];
+extern struct Unk_unk68 D_80108944[];
+extern struct Unk_unk68 D_80108948[];
 extern u8 D_800FD1D0[];
 extern void (*D_800FD1F4[])(struct BaseObj*);
 extern void (*D_800FD858[])(struct MainObj*);
@@ -3733,7 +3756,7 @@ void func_800BF60C(struct BaseObj*, s8);
 void func_800C7DA4(s32, const u8*, void*, s32);
 void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
-s32 func_80064E58(struct MainObj*, s32);
+struct ShotObj* func_80064E58(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
 void func_80089798(void);
 void func_80089910(struct MainObj*);

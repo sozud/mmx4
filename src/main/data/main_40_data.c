@@ -1,7 +1,11 @@
 #include "common.h"
 #include "func_tables.h"
 
-void (*D_800FE9B0[3])() = { func_80061918, func_80061AA8, func_80061D90 };
+void (*D_800FE9B0[3])(struct MainObj*) = {
+    func_80061918,
+    func_80061AA8,
+    func_80061D90,
+};
 void (*D_800FE9BC[3])(struct MainObj*) = { func_80061AE4, func_80061B58, func_80061D18 };
 
 s8 D_800FE9C8[4] = { -32, -32, 64, 80 };

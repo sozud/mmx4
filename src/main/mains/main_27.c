@@ -81,7 +81,27 @@ void func_8005904C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_800590BC);
+void func_800590BC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->unk15 ^= 0x40;
+        func_80015D60(arg0, 1);
+        arg0->unk7C = 0x14;
+        if (arg0->ext.main_27.unk8A == 0) {
+            arg0->unk6 = 2;
+        } else {
+            if (arg0->unk15 == 0) {
+                arg0->unk20 = FIXED(-4);
+            } else {
+                arg0->unk20 = FIXED(4);
+            }
+            func_80015D60(arg0, 7);
+            arg0->unk5 = 7;
+            arg0->unk6 = 1;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059154);
 
@@ -103,7 +123,24 @@ void func_8005922C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059290);
+void func_80059290(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7E == 0) {
+        if (arg0->unk15 == 0) {
+            arg0->x_pos.u.hi -= 6;
+        } else {
+            arg0->x_pos.u.hi += 6;
+        }
+        arg0->ext.main_27.collision_direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+        if (arg0->unk15 == 0) {
+            arg0->x_pos.u.hi += 6;
+        } else {
+            arg0->x_pos.u.hi -= 6;
+        }
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059344);
 
