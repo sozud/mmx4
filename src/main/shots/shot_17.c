@@ -7,8 +7,8 @@ u8 D_80108F64[8] = { 0xFF, 0xFF, 0x04, 0x05, 0xF8, 0xF6, 0x0E, 0x0E };
 
 void func_8009C5F0(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80108F6C[arg0->state](arg0);
 }
 

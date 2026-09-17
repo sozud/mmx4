@@ -1510,9 +1510,40 @@ void func_80016BDC(void)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80016C5C);
+void func_80016C5C(void)
+{
+    s32 status;
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80016D0C);
+    status = CdSync(1, 0);
+    if ((status == 2) && (D_80139564 != 0) && (D_801441B8 == 0) && (CdControl(CdlReadS, 0, D_80139554) != 0)) {
+        D_8013955C = 0;
+        D_80139530 = status;
+        if (D_80139554[0] & 0x10) {
+            D_8013952C = 1;
+        }
+    }
+}
+
+void func_80016D0C(void)
+{
+    s32 status;
+
+    status = CdSync(1, 0);
+    if (status == 2) {
+        if (D_80139564 == status) {
+            if (CdControlB(CdlPause, 0, 0) == 0) {
+                return;
+            }
+            SsSetSerialAttr(0, 0, 0);
+            func_80016420(0);
+            D_80139564 = 0;
+        } else {
+            SsSetSerialAttr(0, 0, 0);
+            func_80016420(0);
+        }
+        D_80139530 = 0;
+    }
+}
 
 void func_80016DAC()
 {
@@ -3292,7 +3323,30 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001ED44);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001EE08);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001EF48);
+void func_8001EF48(struct GameInfo* arg0)
+{
+    if (D_80141BDC[0] != 0) {
+        return;
+    }
+
+    if (controller_state & PAD_CONFIRM) {
+        func_8001540C(0, 0x22, 0);
+        if (D_80141BDF[0] != 0) {
+            func_800129F0(8);
+        }
+#ifdef VERSION_JP
+    } else if (controller_state & PADRdown) {
+#else
+    } else if (controller_state & PADRup) {
+#endif
+        func_800129F0(8);
+        D_80141BDF[0] = 2;
+    } else {
+        return;
+    }
+
+    arg0->mode++;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001EFF0);
 
@@ -5335,7 +5389,27 @@ void func_80023B98(struct MiscObj* arg0)
     arg0->ext.misc_11.active = timer - 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80023C0C);
+void func_80023C0C(struct MiscObj* arg0)
+{
+    s8 timer;
+    struct MiscObj* spawned;
+
+    timer = arg0->ext.misc_11.active;
+    if (timer == 0) {
+        if (arg0->unk2 != 2) {
+            spawned = find_free_misc_obj();
+            if (spawned != NULL) {
+                spawned->active = 0x41;
+                spawned->id = 0x38;
+                spawned->unk2 = get_random() & 1;
+                spawned->ext.misc_11.active = get_random();
+            }
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    arg0->ext.misc_11.active = timer - 1;
+}
 
 void func_80023CA4(struct MiscObj* arg0)
 {
@@ -6541,9 +6615,9 @@ void func_80028BF0(void)
     x = FIXED(checkpoint->x);
     g_Player.x_pos.val = x;
     y = FIXED(checkpoint->y);
-    g_Player.unk18 = x;
+    g_Player.unk18.val = x;
     g_Player.y_pos.val = y;
-    g_Player.unk1C = y;
+    g_Player.unk1C.val = y;
 
     g_Player.unk15 = checkpoint->facing;
     background_objects[0].x_pos.i.hi = checkpoint->bg0_x;

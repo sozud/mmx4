@@ -115,8 +115,8 @@ void func_80099A28(struct ShotObj* arg0)
         func_800999D0(arg0);
     }
 
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     CollisionRelated((struct PlayerObj*)arg0);
 }
 

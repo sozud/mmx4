@@ -21,8 +21,8 @@ void func_800AFC9C(struct VisualObj* arg0)
     owner = arg0->unk5C.owner;
     arg0->animation_step.fields.frame_index = owner->animation_step.fields.frame_index;
     temp_a1 = owner->unk15;
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk15 = temp_a1;
     if (owner->pad4B[0] == 0) {
         arg0->on_screen = 0;
@@ -117,8 +117,8 @@ void func_800AFF08(struct VisualObj* arg0)
     struct PlayerObj* parent;
 
     parent = arg0->unk50;
-    arg0->x_pos.val = parent->unk18;
-    arg0->y_pos.val = parent->unk1C;
+    arg0->x_pos.val = parent->unk18.val;
+    arg0->y_pos.val = parent->unk1C.val;
 }
 
 void func_800AFF28(struct VisualObj* arg0)

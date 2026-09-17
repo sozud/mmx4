@@ -353,8 +353,8 @@ void func_800311EC(void)
         return;
     }
     if (g_Player.unkBC == 0 || --g_Player.unkBC == 0) {
-        g_Player.unk18 = g_Player.x_pos.val;
-        g_Player.unk1C = g_Player.y_pos.val;
+        g_Player.unk18.val = g_Player.x_pos.val;
+        g_Player.unk1C.val = g_Player.y_pos.val;
         D_800F8980[g_Player.state](&g_Player);
         func_80094F74();
     }

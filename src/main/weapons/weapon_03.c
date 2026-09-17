@@ -117,8 +117,8 @@ void func_80094F74(void)
                 entity->unk5 = 0x25;
             }
         }
-        entity->unk18 = entity->x_pos.val;
-        entity->unk1C = entity->y_pos.val;
+        entity->unk18.val = entity->x_pos.val;
+        entity->unk1C.val = entity->y_pos.val;
         D_800F8980[entity->state](entity);
         if (entity->active != 0) {
             CollisionRelated(entity);

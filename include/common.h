@@ -360,8 +360,8 @@ MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u3
 
 #define MOVING_OBJ_FIELDS \
     BASE_OBJ_FIELDS        \
-    s32 unk18;             \
-    s32 unk1C;             \
+    f32 unk18;             \
+    f32 unk1C;             \
     f32 x_vel;             \
     f32 y_vel;
 
@@ -591,6 +591,8 @@ struct Main11Ext {
 struct Main12Ext {
     u8 pad80[2];
     u8 saved_unk5;
+    u8 pad83[0x88 - 0x83];
+    u16 unk88;
 };
 
 struct Main22Ext {
@@ -1535,8 +1537,8 @@ MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
 
 struct WeaponObj {
     BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
+    f32 unk18;
+    f32 unk1C;
     f32 x_vel;
     f32 y_vel;
     s32 unk28;
@@ -1967,27 +1969,39 @@ union RideArmorUnk98 {
     } bytes;
 };
 
+union RideArmorUnk80 {
+    u32 packed;
+    struct {
+        u8 unk80;
+        u8 unk81;
+        u8 unk82;
+        u8 unk83;
+    } bytes;
+};
+
 struct RideArmorObj {
     BASE_OBJ_FIELDS
-    s32 unk18;
-    s32 unk1C;
+    f32 unk18;
+    f32 unk1C;
     f32 x_vel;
-    s8 pad24[0x46 - 0x24];
+    f32 y_vel;
+    s32 unk28;
+    s32 unk2C;
+    s8 pad30[0x46 - 0x30];
     s8 unk46;
     s8 pad47[0x5C - 0x47];
     s8 unk5C;
     s8 pad5D[0x63 - 0x5D];
     s8 unk63;
-    s8 pad64[0x70 - 0x64];
+    s8 pad64[0x67 - 0x64];
+    s8 unk67;
+    s8 pad68[0x70 - 0x68];
     u8 unk70;
     s8 pad71[0x7D - 0x71];
     u8 unk7D;
     u8 unk7E;
     s8 pad7F;
-    u8 unk80;
-    s8 pad81;
-    u8 unk82;
-    s8 pad83;
+    union RideArmorUnk80 unk80;
     u8 unk84;
     u8 unk85;
     u8 unk86;
@@ -1995,7 +2009,8 @@ struct RideArmorObj {
     u16 collision_flags;
     s16 unk8A;
     s16 unk8C;
-    s8 pad8E[0x97 - 0x8E];
+    s16 unk8E;
+    s8 pad90[0x97 - 0x90];
     s8 unk97;
     union RideArmorUnk98 unk98;
     s8 pad9A[0xB0 - 0x9A];
@@ -3153,6 +3168,7 @@ extern struct Unk_unk68 D_800F9CD4;
 extern struct Unk_unk68 D_800F9CD8;
 extern struct Unk_unk68 D_800F9CDC;
 extern struct Unk_unk68 D_801061F0[32];
+extern struct Unk_unk68 D_801069F4[];
 extern u8 D_80109028[4];
 extern u8 D_8010902C[32][4];
 extern u8 D_801090C4[4];
@@ -3692,7 +3708,7 @@ void func_8002B694(struct AnimatedObj* arg0);
 void func_8002C36C(struct PlayerObj*, struct PlayerObj*, s32);
 s32 func_8002D490(struct PlayerObj*);
 void func_8002E294(struct PlayerObj*, struct PlayerObj*);
-void func_8002E380(struct PlayerObj*, struct PlayerObj*, s32);
+void func_8002E380(struct MovingObj*, struct MovingObj*, u8);
 #endif
 void func_80055C54(void);
 void func_8005807C(struct MainObj*);
@@ -3711,6 +3727,10 @@ void func_800652C8(struct MainObj*);
 void func_80036034(struct PlayerObj*);
 s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);
+s32 func_800373DC(struct PlayerObj*);
+void func_8003C624(struct RideArmorObj*);
+void func_8003D254(struct VisualObj*);
+void func_8003D6EC(struct AnimatedObj*, s32);
 void func_80038E44(struct PlayerObj*, s32);
 void func_800921E8(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);

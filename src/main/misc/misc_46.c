@@ -11,8 +11,8 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D12C0);
 
 void func_800D1464(struct MiscObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_8010F1B0[arg0->unk5](UNK_OBJECT(arg0));
     if (arg0->unk5 < 8) {
         func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);

@@ -483,7 +483,7 @@ void func_800327CC(struct PlayerObj* arg0)
         y = arg0->y_pos.u.hi;
         arg0->animation_step.fields.event = 0;
         arg0->y_pos.i.hi = y - 0x10;
-        ((f32*)&arg0->unk1C)->i.hi = y - 0x20;
+        arg0->unk1C.i.hi = y - 0x20;
         func_80035EA4(arg0);
     }
     if (arg0->animation_step.fields.relative_step < 0) {

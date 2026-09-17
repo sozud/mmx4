@@ -65,8 +65,8 @@ void func_8009A338(struct ShotObj* arg0)
 
 void func_8009A358(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     CollisionRelated(arg0);
     D_80108CE4[arg0->state](arg0);
 }

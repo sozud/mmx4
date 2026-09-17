@@ -4,8 +4,8 @@
 
 void func_800D1DC4(struct MiscObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_8010F4BC[arg0->state](arg0);
 }
 

@@ -146,8 +146,8 @@ void func_800AE7DC(struct UnkObj* arg0)
 
     arg0->animation_step.fields.frame_index = player->animation_step.fields.frame_index;
     arg0->unk15 = player->unk15;
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
 
     if (arg0->state == 0) {
         func_800AE848(arg0, player);
@@ -247,8 +247,8 @@ void func_800AEAA0(struct UnkObj* arg0)
     struct PlayerObj* parent;
 
     parent = arg0->link.player;
-    arg0->x_pos.val = parent->unk18;
-    arg0->y_pos.val = parent->unk1C;
+    arg0->x_pos.val = parent->unk18.val;
+    arg0->y_pos.val = parent->unk1C.val;
 }
 
 void (*D_8010A064[])(struct ShotObj*) = {

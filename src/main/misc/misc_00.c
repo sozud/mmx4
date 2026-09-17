@@ -6,8 +6,8 @@ extern void (*D_8010D9EC[])(struct MiscObj*);
 
 void func_800C7A68(struct MiscObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_8010D9EC[arg0->state](arg0);
 }
 void func_800C7AB0(struct MiscObj* arg0)

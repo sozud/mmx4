@@ -88,8 +88,8 @@ void func_800A29C8(struct ShotObj* arg0)
 
 void func_800A2A58(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109734[arg0->unk5](arg0);
 }
 
@@ -133,8 +133,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2D54);
 
 void func_800A2E6C(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109748[arg0->unk5](arg0);
 }
 
@@ -201,8 +201,8 @@ void func_800A31CC(struct ShotObj* arg0)
 
 void func_800A325C(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     D_80109760[arg0->unk5](arg0);
     func_8002D9BC(arg0);
 }
@@ -228,8 +228,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3758);
 
 void func_800A382C(struct ShotObj* arg0)
 {
-    arg0->unk18 = arg0->x_pos.val;
-    arg0->unk1C = arg0->y_pos.val;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     func_8002B694(ANIMATED_OBJECT(arg0));
     CollisionRelated(PLAYER_OBJECT(arg0));
     if (arg0->unk70 & 8) {
