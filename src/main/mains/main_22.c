@@ -15,7 +15,7 @@ void func_8005529C(struct MainObj* arg0)
 {
     arg0->ext.main_22.saved_unk5 = 0;
     arg0->ext.main_22.unk84 = 0;
-    arg0->ext.main_22.unk94 = 0;
+    arg0->ext.main_22.parts_mask = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 

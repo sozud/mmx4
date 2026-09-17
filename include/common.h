@@ -89,9 +89,11 @@ typedef u16 Palette[16];
 #ifdef VERSION_JP
 #define PAD_CONFIRM PADRright
 #define PAD_CANCEL PADRdown
+#define PAD_SELECTION_BUTTONS (PADRright | PADRdown)
 #else
 #define PAD_CONFIRM PADRdown
 #define PAD_CANCEL PADRright
+#define PAD_SELECTION_BUTTONS (PADRup | PADRdown)
 #endif
 
 union MainPaletteData {
@@ -455,6 +457,9 @@ struct Main5Ext {
     u8 unk80;
     u8 pad81[0xB];
     u16 saved_unk5;
+    u16 part_index;
+    u8 pad90[4];
+    struct MainObj* owner;
 };
 
 struct Main6Ext {
@@ -601,7 +606,7 @@ struct Main22Ext {
     u8 pad88[4];
     u32 unk8C;
     u8 pad90[4];
-    u32 unk94;
+    u32 parts_mask;
 };
 
 struct Main23Ext {
@@ -1798,6 +1803,16 @@ struct Misc7Ext {
     void* position;
 };
 
+struct Misc5Ext {
+    struct MainObj* owner;
+    s8 animation;
+};
+
+struct Misc8Ext {
+    u8 pad50[5];
+    u8 timer;
+};
+
 struct Misc2Ext {
     u8 pad50[4];
     struct MainObj* owner;
@@ -1812,10 +1827,25 @@ struct Misc51Ext {
 };
 
 struct Misc45Ext {
-    u8 pad50[0x5A - 0x50];
+    u8 pad50[5];
+    u8 timer;
+    u8 pad56[0x5A - 0x56];
     s16 target_x;
     u8 direction;
 };
+
+struct Misc08EffectTriplet {
+    u8 first;
+    u8 second;
+    u8 third;
+};
+
+struct Misc08EffectTripletTable {
+    struct Misc08EffectTriplet entries[26];
+    u8 padding[2];
+};
+
+extern struct Misc08EffectTripletTable D_8010E090;
 struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
@@ -1915,7 +1945,9 @@ struct UnkExt {
 
 union MiscExt {
     struct Misc2Ext misc_2;
+    struct Misc5Ext misc_5;
     struct Misc7Ext misc_7;
+    struct Misc8Ext misc_8;
     struct Misc11Ext misc_11;
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
@@ -2348,7 +2380,7 @@ struct QuadUnkExt {
     u16 unk38;
 };
 
-struct QuadUnkExt2 {
+struct TitleQuadExt {
     u16 unk38;
     u8 unk3A[4];
     u8 unk3E[4];
@@ -2387,12 +2419,12 @@ struct Quad5Ext {
     u16 index;
 };
 
-struct Quad10State {
+struct Quad10Ext {
     s32 counter;
     s32 x_step;
     s32 y_step;
     u8 progress;
-    u8 history[16];
+    u8 history[3];
 };
 
 struct PlayerUnk8CFields {
@@ -2409,12 +2441,13 @@ union QuadExt {
     struct ReadyLineExt ready_line;
     struct SearchLightMotion search_light;
     struct QuadUnkExt unk_ext;
-    struct QuadUnkExt2 unk_ext2;
+    struct TitleQuadExt title_quad;
     struct Quad4Ext quad_4;
     struct Quad5Ext quad_5;
     struct Quad2Ext quad_2;
     struct QuadUnkExt3 unk_ext3;
     struct QuadUnkExt4 unk_ext4;
+    struct Quad10Ext quad_10;
     u32 unk38;
 };
 
@@ -2737,7 +2770,10 @@ struct Effect14Ext {
     u16 unk14;
     u8 unk16;
 };
-struct Effect17Ext { u8 pad14[4], timer; };
+struct Effect17Ext {
+    struct AnimatedObj* source;
+    u8 timer;
+};
 union Effect32Palette {
     s32 packed;
     struct {
@@ -3076,8 +3112,10 @@ extern s16 D_800F21DC[];
 extern u8 D_800F21F8[];
 extern u8 D_800F22D0[];
 extern u8 D_800F22E0[];
+extern u8 D_800F22F0[16];
 extern u8 D_800F2300[];
 extern u8 D_800F2310[12];
+extern u8 D_800F231C[12];
 extern u8 D_800F2328[16];
 struct GameInfoAuxData {
     u8 scripts[3][16];
@@ -3102,9 +3140,11 @@ extern s32 D_800FB89C[2];
 extern s32 D_800FA120[2];
 extern u8 D_800FA6E8[8];
 extern u32 D_800FA72C;
+extern u32 D_800FA730;
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
 extern struct Unk_unk68 D_800FBBBC;
+extern struct Unk_unk68 D_800FBA50;
 extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
@@ -3129,6 +3169,7 @@ extern struct Unk_unk68 D_800FB890[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
 extern u8 D_80105FC8[13][3];
+extern union AnimationStep D_80105FF0[32];
 extern struct Unk_unk68 D_80103EE4;
 extern struct Unk_unk68 D_80103EF0;
 extern struct Unk_unk68 D_80103EF4;
@@ -3612,6 +3653,7 @@ void func_8001DC30(void);
 s32 func_80015D60(void*, s32);
 void func_80015D90(struct AnimatedObj*, s32, s32);
 void func_80015DC8(struct AnimatedObj*);
+void func_8004D84C(struct AnimatedObj*);
 void func_8001653C(void);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);

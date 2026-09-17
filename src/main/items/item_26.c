@@ -133,7 +133,22 @@ void func_800C6B7C(struct ItemObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6B84);
+void func_800C6B84(struct VisualObj* arg0)
+{
+    struct PlayerObj* owner = arg0->unk50;
+
+    if (owner->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else if (arg0->state == 0) {
+        func_800C6DD4(arg0, owner);
+        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+    } else if (g_Player.unkE2 == 1) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6C2C);
 

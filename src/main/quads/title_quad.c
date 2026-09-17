@@ -5,22 +5,25 @@
 // white quad that turns into "MEGAMAN" on title screen
 
 // TitleUpdate2 state 0
-#ifndef VERSION_JP
 extern s16 D_8010FCCC[][8];
 extern u16 D_8010FD94[];
+#ifdef VERSION_JP
+extern s16 D_8010FE78_jp[];
+extern u16 D_8010FD7C[];
+#else
 extern s16 D_8010FD7C[][2];
 #endif
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D6F94);
-#else
-void func_800D6F94(struct QuadObj* entity)
+void func_800D6F94(struct QuadObj* arg0)
 {
+    struct QuadObj* entity = arg0;
     u16* ptr;
+#ifndef VERSION_JP
     u16 temp;
+#endif
 
     entity->bg_offset = -1;
-    entity->ext.unk_ext2.unk42 = 1; // 0x42
+    entity->ext.title_quad.unk42 = 1; // 0x42
     entity->x_pos.i.hi = 0;
     entity->y_pos.i.hi = 0;
     entity->active |= 0x80;
@@ -35,14 +38,58 @@ void func_800D6F94(struct QuadObj* entity)
     entity->unk2C.i.hi = *ptr++;
     entity->unk30.i.hi = *ptr;
 
+#ifdef VERSION_JP
+    switch (entity->unk2) {
+    case 0:
+    case 1:
+    case 9: {
+        u16 color = D_8010FD7C[11];
+
+        entity->unk36 = 0x11;
+        entity->ext.title_quad.unk38 = 0x3C;
+        entity->state = 1;
+        entity->unk34 = color;
+        quad_is_on_screen(entity);
+        break;
+    }
+
+    case 2:
+    case 3:
+    case 4: {
+        u16 color = D_8010FD94[0];
+
+        entity->unk36 = 0x10;
+        entity->state = 3;
+        entity->unk34 = color;
+        entity->unk1C = entity->unk14;
+        entity->unk20 = entity->unk18;
+        entity->unk24 = entity->unk2C;
+        entity->unk28 = entity->unk30;
+        entity->ext.title_quad.unk38 = D_8010FE78_jp[entity->unk2];
+        entity->ext.title_quad.unk43 = 0;
+        break;
+    }
+
+    case 5: {
+        u16 color = D_8010FD7C[11];
+
+        entity->unk36 = 0x12;
+        entity->state = 4;
+        entity->unk2 = 4;
+        entity->ext.title_quad.unk43 = 0;
+        entity->unk34 = color;
+        break;
+    }
+    }
+#else
     temp = D_8010FD94[0];
     entity->unk36 = 0x10;
     entity->state = 3;
-    entity->ext.unk_ext2.unk38 = 0x14;
-    entity->ext.unk_ext2.unk43 = 0; // 0x43
+    entity->ext.title_quad.unk38 = 0x14;
+    entity->ext.title_quad.unk43 = 0; // 0x43
     entity->unk34 = temp;
-}
 #endif
+}
 
 // TitleUpdate2 state 1
 #ifndef VERSION_JP
@@ -56,11 +103,11 @@ INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7154_jp);
 void func_800D7100(struct QuadObj* arg0)
 {
     // seems to be a timer before the white Quad appears
-    if (arg0->ext.unk_ext2.unk38 != 0) {
-        arg0->ext.unk_ext2.unk38--;
+    if (arg0->ext.title_quad.unk38 != 0) {
+        arg0->ext.title_quad.unk38--;
         return;
     }
-    arg0->ext.unk_ext2.unk38 = 3;
+    arg0->ext.title_quad.unk38 = 3;
     quad_is_on_screen(arg0);
     arg0->state = 4;
 }
@@ -71,7 +118,7 @@ void func_800D7100(struct QuadObj* arg0)
 void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 {
     if (game_info.unkA == 2) {
-        arg0->ext.unk_ext2.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
+        arg0->ext.title_quad.unk38 = 0x2C; // sets animation speed of white quad that transforms into "MEGAMAN"
         arg0->state = 5;
     }
     quad_is_on_screen(arg0);
@@ -104,31 +151,31 @@ void func_800D7194(struct QuadObj* arg0)
         x_diff = xy_ptr[0].val - FIXED(ptr[0]);
         y_diff = xy_ptr[1].val - FIXED(ptr[1]);
         temp_v0 = func_8002B810(x_diff, y_diff);
-        if ((((arg0->ext.unk_ext2.unk3E[pos] ^ temp_v0) & 0x10) || (arg0->ext.unk_ext2.unk3A[pos] != 0)) && (arg0->ext.unk_ext2.unk42 == 0)) {
+        if ((((arg0->ext.title_quad.unk3E[pos] ^ temp_v0) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
             xy_ptr[0].val = FIXED(ptr[0]);
             xy_ptr[1].val = FIXED(ptr[1]);
-            arg0->ext.unk_ext2.unk3A[pos] = 1;
+            arg0->ext.title_quad.unk3A[pos] = 1;
         } else {
-            xy_ptr[0].val -= x_diff / arg0->ext.unk_ext2.unk38;
-            xy_ptr[1].val -= y_diff / arg0->ext.unk_ext2.unk38;
-            arg0->ext.unk_ext2.unk3A[pos] = 0;
+            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
+            arg0->ext.title_quad.unk3A[pos] = 0;
             if (pos == 3) {
-                arg0->ext.unk_ext2.unk42 = 0;
+                arg0->ext.title_quad.unk42 = 0;
             }
         }
         xy_ptr += 2;
-        arg0->ext.unk_ext2.unk3E[pos] = temp_v0;
+        arg0->ext.title_quad.unk3E[pos] = temp_v0;
         pos++;
     } while (pos < 4);
 
-    if ((arg0->ext.unk_ext2.unk38 % 3) == 0) {
+    if ((arg0->ext.title_quad.unk38 % 3) == 0) {
         palette = D_8010FD94;
-        temp_v1 = arg0->ext.unk_ext2.unk43;
+        temp_v1 = arg0->ext.title_quad.unk43;
         temp_v0_2 = temp_v1 + 1;
-        arg0->ext.unk_ext2.unk43 = temp_v0_2;
+        arg0->ext.title_quad.unk43 = temp_v0_2;
         if (temp_v0_2 < 0xE) {
             temp_v0_2 = temp_v1 + 2;
-            arg0->ext.unk_ext2.unk43 = temp_v0_2;
+            arg0->ext.title_quad.unk43 = temp_v0_2;
             var_v0 = &palette[temp_v0_2];
         } else {
             var_v0 = &palette[14];
@@ -136,8 +183,8 @@ void func_800D7194(struct QuadObj* arg0)
         arg0->unk34 = *var_v0;
     }
 
-    arg0->ext.unk_ext2.unk38--;
-    if (arg0->ext.unk_ext2.unk38 == 0) {
+    arg0->ext.title_quad.unk38--;
+    if (arg0->ext.title_quad.unk38 == 0) {
         arg0->state = 2;
         ptr = D_8010FD7C[0];
         arg0->unk14.i.hi = *(u16*)ptr++;
@@ -149,7 +196,7 @@ void func_800D7194(struct QuadObj* arg0)
         arg0->unk2C.i.hi = *(u16*)ptr++;
         arg0->unk30.i.hi = *(u16*)ptr;
         arg0->unk2 = 4;
-        arg0->ext.unk_ext2.unk38 = 3;
+        arg0->ext.title_quad.unk38 = 3;
     }
     quad_is_on_screen(arg0);
 }
@@ -203,7 +250,7 @@ s16 D_8010FE48_jp[3][8] = {
     { 217, 61, 80, 191, 0, 119, 0, 240 },
 };
 
-s16 D_8010FE78_jp[3][2] = { { 80, 240 }, { 0, 20 }, { 40, 0 } };
+s16 D_8010FE78_jp[6] = { 80, 240, 0, 20, 40, 0 };
 
 u16 D_8010FD94[4] = { 0x83E0, 0x8BC2, 0x93C4, 0x9BC6 };
 u16 D_8010FD7C[26] = {

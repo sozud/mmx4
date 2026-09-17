@@ -208,17 +208,6 @@ struct Misc08EffectDescriptor D_8010E058[28] = {
     { 0, 0 },
 };
 
-struct Misc08EffectTriplet {
-    u8 first;
-    u8 second;
-    u8 third;
-};
-
-struct Misc08EffectTripletTable {
-    struct Misc08EffectTriplet entries[26];
-    u8 padding[2];
-};
-
 struct Misc08EffectTripletTable D_8010E090 = { {
                                                    { 0x22, 0x30, 0x15 },
                                                    { 0x22, 0x30, 0x15 },

@@ -2145,7 +2145,23 @@ void func_8001A8E8(struct EngineObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001A9EC);
+void func_8001A9EC(struct EngineObj* arg0)
+{
+    u8 previous_selection;
+
+    if (engine_obj.unk1 != 0) {
+        previous_selection = D_80141BDF[0];
+    } else {
+        previous_selection = 0;
+    }
+    D_800F1FA0[arg0->unk1](arg0);
+    if ((D_80141BDF[0] != previous_selection) && !(controller_state & PAD_SELECTION_BUTTONS)) {
+        func_8001540C(0, 0xC, 0);
+    }
+    func_80016124();
+    update_misc_objects();
+    init_objects();
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001AA98);
 
@@ -3286,7 +3302,27 @@ void func_8001E980(u8 arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001E9E0);
+void func_8001E9E0(struct GameInfo* arg0)
+{
+    struct MiscObj* obj;
+
+    reset_objects();
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 1;
+        obj->id = 0x1F;
+        obj->unk2 = 0x56;
+        obj->y_pos.i.hi = 0x80;
+    }
+    D_80141BDF[0] = 0;
+    arg0->unk8 = func_8001E850(D_800F22F0, 0) & 0xFF;
+    background_objects[0].unk3 = 0;
+    background_objects[1].unk3 = 0;
+    background_objects[2].unk3 = 0;
+    func_8001E980(0);
+    func_800129A4(8);
+    arg0->mode++;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001EA90);
 
@@ -3409,7 +3445,32 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001F634);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F6E8);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F798);
+void func_8001F798(struct EngineObj* arg0)
+{
+    u8 a1;
+
+    if (--arg0->unk4 == 0) {
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+        arg0->unk3 = 0;
+        arg0->unk2++;
+
+        if (arg0->cur_character != 0) {
+            *(s16*)&arg0->unk6 = 0x46;
+            a1 = 0;
+        } else {
+            *(s16*)&arg0->unk6 = 0x3C;
+            a1 = 0;
+        }
+
+        arg0->unk4 = 0xF0;
+        func_8001540C(5, a1, 0);
+    } else {
+        func_8001F5D8(arg0);
+    }
+    need_palette_load |= 1;
+}
 
 void func_8001F850(struct EngineObj* arg0)
 {
@@ -3723,7 +3784,29 @@ void func_800204CC(s8* arg0, s32 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80020580);
+void func_80020580(struct EngineObj* arg0)
+{
+    s8 next_state;
+
+    func_8001D134();
+    D_80141BDF[0] = 0;
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    func_8001E980(0);
+    if (arg0->stage != 0) {
+        func_8001C3E8();
+    }
+    arg0->unk4 = 0x78;
+    func_800129A4(8);
+    if (arg0->stage == 0) {
+        arg0->unk8 = func_8001E850(D_800F231C, 1);
+        next_state = arg0->unk1 + 5;
+    } else {
+        arg0->unk8 = func_8001E850(D_800F2328, 1);
+        next_state = arg0->unk1 + 1;
+    }
+    arg0->unk1 = next_state;
+}
 
 void func_80020638(struct EngineObj* arg0)
 {
