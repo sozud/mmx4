@@ -125,7 +125,26 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B5C0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B69C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B7D4);
+void func_8008B7D4(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, 9);
+        arg0->ext.main_72.lifetime = 0x80;
+        arg0->ext.main_72.spawn_timer = 0x30;
+        func_8008AE94(arg0);
+        func_8001540C(2, 0x4C, arg0);
+    }
+
+    if (--arg0->ext.main_72.lifetime != 0) {
+        if ((--arg0->ext.main_72.spawn_timer & 0xF) != 0) {
+            func_8008AF30(arg0, 1);
+        }
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        func_8008AEC4(BASE_OBJECT(arg0), 2);
+    }
+}
 
 void func_8008B898(struct MainObj* arg0)
 {

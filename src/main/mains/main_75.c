@@ -75,7 +75,31 @@ void func_80090148(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_800901B0);
+void func_800901B0(struct MainObj* arg0)
+{
+    u8 temp_unk6;
+
+    if (arg0->unk7 == 0) {
+        arg0->unk7++;
+        func_80015D60(arg0, 8);
+        func_80015D60(MAIN_OBJECT(arg0->ext.main_75.weapon), 5);
+        arg0->ext.main_75.weapon->unk84.halves[0] = 0x18;
+        arg0->ext.main_75.weapon->unk84.halves[1] = 4;
+        arg0->unk24 = FIXED(0.5);
+        arg0->unk7C = 0x3C;
+        arg0->unk68 = &D_801059D8;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(arg0));
+        if (--arg0->unk7C == 0) {
+            temp_unk6 = arg0->unk6;
+            arg0->unk5 = 2;
+            arg0->unk7 = 0;
+            *(volatile u8*)&arg0->unk6 = temp_unk6 + 1;
+            arg0->unk6 = 0;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009027C);
 

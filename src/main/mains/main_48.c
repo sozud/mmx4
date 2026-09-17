@@ -158,7 +158,22 @@ void func_80067CB0(struct MainObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067D00);
+void func_80067D00(struct MainObj* arg0)
+{
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk6++;
+    func_80015D60(arg0, 1);
+    SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
+    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi > 0) {
+        arg0->unk15 = 0x40;
+    }
+    SP_CUR_MAIN_OBJ->ext.main_48.collision_result = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    func_800681C4(arg0);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067DAC);
 

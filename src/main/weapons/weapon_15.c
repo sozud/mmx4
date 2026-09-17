@@ -25,7 +25,33 @@ void func_800969D8(struct WeaponObj* arg0)
     D_801089AC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_15", func_80096A84);
+void func_80096A84(struct WeaponObj* arg0)
+{
+    s8 i;
+    struct QuadObj* quad;
+
+    i = 0;
+    arg0->ext.weapon_15.unk8D = 8;
+    arg0->ext.weapon_15.unk8C = 8;
+    arg0->ext.weapon_15.unk8E = 0xF0;
+    arg0->ext.weapon_15.unk8F = 6;
+
+    do {
+        quad = find_free_quad_obj();
+        if (quad != 0) {
+            quad->active = 1;
+            quad->id = 0xA;
+            quad->unk2 = i;
+            quad->unk5C = PLAYER_OBJECT(arg0);
+        }
+        i++;
+    } while (i < 4);
+
+    func_80096C8C(arg0, &g_Player);
+    func_8001540C(0, 0x1D, arg0);
+    arg0->unk5 = 0;
+    arg0->state = (u8)arg0->state + 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_15", func_80096B54);
 

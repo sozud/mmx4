@@ -206,7 +206,7 @@ void func_8007D234(struct MainObj* arg0)
     if (shot != 0) {
         shot->active = arg0->active;
         shot->id = 0x2A;
-        shot->unk2 = arg0->ext.main_5.pad81[0xA];
+        shot->unk2 = arg0->ext.main_64.unk8B;
         shot->x_pos.val = arg0->x_pos.val;
         shot->y_pos.val = arg0->y_pos.val;
         shot->animation_table = arg0->animation_table;

@@ -14,7 +14,36 @@ void func_80062E70(struct MainObj* arg0)
     func_80015D60(arg0, 0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062E90);
+void func_80062E90(struct MainObj* arg0)
+{
+    s16 temp_v0;
+    s32 temp_a2;
+    s32 temp_v0_2;
+
+    temp_v0 = (u16)arg0->unk7C - 1;
+    arg0->unk7C = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->unk7C = 0x5A;
+        func_8002B93C(
+            MOVING_OBJECT(arg0),
+            func_8002B7DC(
+                OBJECT_HEADER(arg0),
+                OBJECT_HEADER(&g_Player))
+                & 0xFF);
+
+        temp_v0_2 = arg0->unk20;
+        temp_a2 = arg0->unk24;
+        arg0->unk20 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = -((s32)(temp_v0_2 * 0x2D) >> 8);
+        arg0->unk2C = -((s32)(temp_a2 * 0x2D) >> 8);
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->ext.main_42.unk84 = 0;
+        arg0->ext.main_42.background_relative += 1;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062F60);
 

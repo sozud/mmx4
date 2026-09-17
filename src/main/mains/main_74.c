@@ -168,7 +168,7 @@ void func_8008DF8C(struct MainObj* arg0)
             miscObj->active = 0x41;
             miscObj->id = 0x37;
             miscObj->unk2 = arg0->ext.main_74.animation_index;
-            miscObj->ext.misc_7.position = arg0;
+            miscObj->ext.misc_55.owner = arg0;
         }
         shotObj = find_free_shot_obj();
         if (shotObj != NULL) {
@@ -383,7 +383,26 @@ void func_8008EBC0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EC48);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008ED18);
+void func_8008ED18(struct MainObj* arg0)
+{
+    struct MiscObj* miscObj;
+
+    arg0->unk7C--;
+    if (arg0->unk7C == 0) {
+        arg0->unk7C = 0x3C;
+        arg0->unk6++;
+    }
+    if ((arg0->unk7C % 10) == 0) {
+        func_8001540C(2, 0xA, arg0);
+        miscObj = find_free_misc_obj();
+        if (miscObj != 0) {
+            miscObj->active = 0x41;
+            miscObj->id = 0x37;
+            miscObj->unk2 = 2;
+            miscObj->ext.misc_55.owner = arg0;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EDE8);
 

@@ -13,7 +13,7 @@ struct Main28InitData D_800FD5FC[4] = {
     { 9, 0x40 },
 };
 
-void (*D_800FD604[])() = {
+void (*D_800FD604[])(struct MainObj*) = {
     func_8009216C,
     func_80059E38,
     func_80059E40,

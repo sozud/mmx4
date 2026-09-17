@@ -46,7 +46,7 @@ void func_800D330C(struct MiscObj* arg0)
 
 void func_800D332C(struct MiscObj* arg0)
 {
-    if (arg0->ext.misc_55.owner->unk94 != 0) {
+    if (arg0->ext.misc_55.owner->ext.main_74.unk94 != 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
     }
