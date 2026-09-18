@@ -27,6 +27,9 @@
 __asm__(".include \"macro.inc\"\n");
 #endif
 
+#define SCREEN_WIDTH 320
+#define SCREEN_HEIGHT 240
+
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
@@ -41,6 +44,11 @@ __asm__(".include \"macro.inc\"\n");
         if (b - a > 0x2FFFF)                     \
             return 0;                            \
     }
+
+#define ABS(A, B) ((A) - (B) >= 0) ? (A) - (B) : (B) - (A)
+
+#define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
+#define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
 
 #define MMX4_STATIC_ASSERT(name, condition) typedef char static_assert_##name[(condition) ? 1 : -1]
 #ifdef MMX4_PC
@@ -1465,6 +1473,7 @@ struct ShotObj {
     s8 pad49[0x50 - 0x49];
     union {
         const u8* data;
+        s16* frames;
         struct PlayerObj* player;
     } unk50;
     const u8* unk54;
@@ -1631,7 +1640,8 @@ struct WeaponObj {
     u16 unk42;
     union AnimationStep animation_step;
     u8 previous_animation_index;
-    s8 pad49[0x50 - 0x49];
+    s8 unk49;
+    s8 pad4A[0x50 - 0x4A];
     const void* unk50;
     const void* unk54;
     s8 pad58[0x61 - 0x58];
@@ -1663,7 +1673,8 @@ struct WeaponObj {
     s8 pad8A[0x8C - 0x8A];
     union WeaponObjExt ext;
     u8 unk94;
-    s8 pad95[0x98 - 0x95];
+    u8 unk95;
+    s8 pad96[0x98 - 0x96];
     s8 unk98;
     s8 pad99[0x9C - 0x99];
 }; // size 0x9C
@@ -1733,11 +1744,17 @@ struct Item12Ext {
     s32 x_offset;
 };
 
+struct Item23Ext {
+	s16 unk80;
+	s16 timer;
+};
+
 union ItemExt {
     u32 packed;
     s32 timer;
     struct Item2Ext item_2;
     struct Item12Ext item_12;
+    struct Item23Ext item_23;
     struct MainObj* owner;
 };
 
@@ -2479,6 +2496,15 @@ struct Quad2Ext {
     u8 direction[2];
 };
 
+struct QuadMotionData {
+    s8 speed[4];
+    u16 vertex[4];
+};
+
+extern struct QuadMotionData D_8010F77C[21];
+extern s8 D_8010F878[4];
+extern u8 D_8013B960[0x10];
+
 struct QuadUnkExt3 {
     u8 unk38;
 };
@@ -3135,6 +3161,7 @@ extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern const u32* D_8011AFF0[];
 extern u32* D_8011BF40[54];
+extern u32* D_8011C070[9];
 extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
 extern union AnimationStep* D_800FE890[21];
@@ -3339,6 +3366,10 @@ extern u16 D_8010BFE8[16];
 extern u8 D_8010C158[8];
 extern s16 D_8010CB24[2];
 extern u8 D_80108BA4[];
+extern struct Unk_unk68 D_80108704[];
+extern struct Unk_unk68 D_80108718[];
+extern struct Unk_unk68 D_801087C8[];
+extern struct Unk_unk68 D_801087E8[];
 extern struct Unk_unk68 D_801087CC[];
 extern struct Unk_unk68 D_801087FC[];
 extern struct Unk_unk68 D_80108800[];
@@ -3820,6 +3851,7 @@ struct VisualObj* func_800AFAB4(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
 void quad_is_on_screen(struct QuadObj*);
+s32 func_800D4024(struct QuadObj*);
 void func_80015930(u8, u8);
 void func_80016F0C();
 void func_80023D30();

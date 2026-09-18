@@ -7,7 +7,37 @@ void func_800922D8(struct WeaponObj* arg0)
     D_80108728[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_00", func_80092314);
+void func_80092314(struct WeaponObj* arg0)
+{
+    struct PlayerObj* owner;
+
+    arg0->active = 0x21;
+    arg0->on_screen = 1;
+    arg0->unk50 = (const u8*)D_80108704;
+    arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
+    arg0->animation_table = D_8011BF40;
+    arg0->unk42 = 0x7802;
+    arg0->unk40 = 0;
+    arg0->unk16 = 0;
+    owner = arg0->owner;
+    arg0->unk15 = owner->unk15;
+    arg0->unk84.word = 0;
+    func_80092CEC(WEAPON_OBJECT(arg0));
+    arg0->x_pos.i.lo = 0;
+    arg0->y_pos.i.lo = 0;
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = FIXED(6.75);
+    } else {
+        arg0->x_vel.val = FIXED(-6.75);
+    }
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    func_80015D60(arg0, 0x15);
+    func_8001540C(1, 8, arg0);
+    arg0->state++;
+    func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
+}
 
 void func_80092408(struct WeaponObj* arg0)
 {

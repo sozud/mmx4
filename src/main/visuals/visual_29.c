@@ -23,7 +23,42 @@ void func_800B4208(struct VisualObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4274);
+void func_800B4274(struct VisualObj* arg0)
+{
+    u16 x_distance;
+    u16 y_distance;
+
+    if (--arg0->unk54 != 0) {
+        if (--arg0->unk56 == 0) {
+            arg0->unk56 = 1;
+            x_distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
+            y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
+            func_8002B93C(MOVING_OBJECT(arg0), (u8)func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
+            // pursuit/homing missile?
+            if (x_distance >= 17 || y_distance >= 17) {
+                arg0->x_vel.val *= 4;
+                arg0->y_vel.val *= 4;
+            } else if (x_distance >= 9 || y_distance >= 9) {
+                arg0->x_vel.val *= 3;
+                arg0->y_vel.val *= 3;
+            } else if (x_distance >= 5 || y_distance >= 5) {
+                arg0->x_vel.val *= 2;
+                arg0->y_vel.val *= 2;
+            } else if (x_distance >= 3 || y_distance >= 3) {
+                arg0->x_vel.val *= 1;
+                arg0->y_vel.val *= 1;
+            } else {
+                arg0->x_pos.val = g_Player.x_pos.val;
+                arg0->y_pos.val = g_Player.y_pos.val;
+            }
+        }
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        arg0->unk5++;
+        func_80015D60(arg0, 0xB);
+    }
+}
 
 void func_800B4450(struct VisualObj* arg0)
 {

@@ -1,10 +1,5 @@
 #include "common.h"
 
-struct QuadMotionData {
-    s8 speed[4];
-    u16 vertex[4];
-};
-
 s32 D_8010F754[4][2] = {
     { -0xF00, -0x700 },
     { 0xF00, -0x700 },

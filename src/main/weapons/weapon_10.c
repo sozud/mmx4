@@ -23,7 +23,48 @@ void func_80093564(struct WeaponObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_10", func_80093610);
+void func_80093610(struct WeaponObj* arg0)
+{
+    struct PlayerObj* player = &g_Player;
+    s32* player_gfx;
+    s32* sprite_frames;
+    s32 gfx_offset;
+    s32 frames_offset;
+    struct Weapon10Ext* ext;
+
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    player_gfx = SP_PLAYER_GFX;
+    arg0->unk50 = (const u8*)D_801087C8;
+    gfx_offset = player_gfx[2];
+    sprite_frames = SP_SPRITE_FRAMES;
+    arg0->unk38 = (u8*)player_gfx + gfx_offset;
+    frames_offset = sprite_frames[10];
+    arg0->animation_table = D_8011C070;
+    arg0->unk40 = 0x530;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 0;
+    arg0->unk3C = (u8*)sprite_frames + frames_offset;
+    arg0->unk15 = player->unk15;
+    ext = &arg0->ext.weapon_10;
+    func_80092E2C((struct VisualObj*)arg0, player, arg0->id);
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = FIXED(8);
+    } else {
+        arg0->x_vel.val = FIXED(-8);
+    }
+    arg0->unk49 = 1;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    ext->timer = 0x10;
+    ext->unk8F = 0;
+    func_80015D60(arg0, 0);
+    func_8001540C(1, 8, arg0);
+    arg0->unk5 = 0;
+    arg0->state++;
+    func_80093C54(arg0);
+}
 
 void func_8009372C(struct WeaponObj* arg0)
 {
