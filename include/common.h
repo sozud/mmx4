@@ -918,13 +918,16 @@ struct Main74Ext {
     u8 unk97;
 };
 
+struct ShotObj;
+
 struct Main75Ext {
     union {
         struct EffectObj* effect;
+        struct ShotObj* shot;
         struct MainObj* child;
     } unk80;
     u8 pad84[4];
-    struct WeaponObj* weapon;
+    struct ShotObj* shot;
     s16 background_unk1E;
     u8 saved_unk5;
     u8 pad8F[2];
@@ -1452,6 +1455,11 @@ struct Shot24Ext {
     s16 timer;
 };
 
+struct Shot55Unk84 {
+    s16 x;
+    s16 y;
+};
+
 struct ShotObj {
     ANIMATED_OBJ_FIELDS
     s8 pad49[0x50 - 0x49];
@@ -1492,6 +1500,7 @@ struct ShotObj {
         u16 halves[2];
         u8 bytes[4];
         struct Shot24Ext shot_24;
+        struct Shot55Unk84 shot_55;
     } unk84;
     s16 timer;
     s16 unk8A;
@@ -3560,6 +3569,7 @@ extern struct Unk_unk68 D_800FDA08[];
 extern struct Unk_unk68 D_80100220;
 extern struct Unk_unk68 D_80100224;
 extern struct Unk_unk68 D_801059D8;
+extern struct Unk_unk68 D_801059DC;
 extern u8 D_801374B4;
 extern u8 D_801374B8;
 extern s8 D_80137CE4;

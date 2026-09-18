@@ -43,9 +43,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8008FDF8);
 void func_8008FEE0(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.main_75.weapon->animation_step.fields.relative_step == 0) {
+    if (arg0->ext.main_75.shot->animation_step.fields.relative_step == 0) {
         arg0->unk5++;
-        arg0->ext.main_75.unk80.child->unk5++;
+        arg0->ext.main_75.unk80.shot->unk5++;
         func_8001540C(2, 8, arg0);
         arg0->unk7C = 0x1E;
     }
@@ -82,9 +82,9 @@ void func_800901B0(struct MainObj* arg0)
     if (arg0->unk7 == 0) {
         arg0->unk7++;
         func_80015D60(arg0, 8);
-        func_80015D60(MAIN_OBJECT(arg0->ext.main_75.weapon), 5);
-        arg0->ext.main_75.weapon->unk84.halves[0] = 0x18;
-        arg0->ext.main_75.weapon->unk84.halves[1] = 4;
+        func_80015D60(arg0->ext.main_75.shot, 5);
+        arg0->ext.main_75.shot->unk84.shot_55.x = 0x18;
+        arg0->ext.main_75.shot->unk84.shot_55.y = 4;
         arg0->unk24 = FIXED(0.5);
         arg0->unk7C = 0x3C;
         arg0->unk68 = &D_801059D8;
@@ -106,7 +106,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009027C);
 void func_80090470(struct MainObj* arg0)
 {
     arg0->unk6++;
-    func_80015D60(arg0->ext.main_75.weapon, 6);
+    func_80015D60(arg0->ext.main_75.shot, 6);
     func_8001540C(2, 2, arg0);
     arg0->unk20 = 0;
     arg0->unk24 = FIXED(-0.5);
@@ -200,7 +200,7 @@ void func_80090BD4(struct MainObj* arg0)
 void func_80090BE0(struct MainObj* arg0)
 {
     arg0->unk6++;
-    func_80015D60(arg0->ext.main_75.weapon, 6);
+    func_80015D60(arg0->ext.main_75.shot, 6);
     func_8001540C(2, 2, NULL);
     arg0->unk24 = FIXED(-0.5);
     arg0->unk7C = 0x64;
@@ -244,7 +244,36 @@ void func_80090D6C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090E2C);
+void func_80090E2C(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s16 var_a0;
+    u8 direction;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk7 == 0) {
+        if (--arg0->unk7C == 0) {
+            arg0->unk7++;
+            func_80015D60(arg0, 9);
+            func_80015D60(arg0->ext.main_75.shot, 6);
+            func_8001540C(2, 2, 0);
+            direction = arg0->unk15;
+            shot = arg0->ext.main_75.shot;
+            var_a0 = 0x18;
+            if (direction != 0) {
+                var_a0 = -0x18;
+            }
+            shot->unk84.shot_55.x = var_a0;
+            arg0->ext.main_75.shot->unk84.shot_55.y = -0x10;
+            arg0->unk68 = &D_801059DC;
+        }
+    } else if (arg0->animation_step.fields.event != 0) {
+        arg0->unk20 = 0;
+        arg0->unk24 = FIXED(-5);
+        arg0->unk7 = 0;
+        arg0->unk6++;
+    }
+}
 
 void func_80090F0C(struct MainObj* arg0)
 {
@@ -257,7 +286,7 @@ void func_80090F0C(struct MainObj* arg0)
         func_80015930(2, 2);
         func_80015D60(arg0, 0xA);
         func_8001540C(2, 0, arg0);
-        arg0->ext.main_75.weapon->unk88.half = 0;
+        arg0->ext.main_75.shot->timer = 0;
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;

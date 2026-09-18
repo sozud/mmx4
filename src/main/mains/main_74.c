@@ -368,7 +368,31 @@ void func_8008EA88(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EAE4);
+void func_8008EAE4(struct MainObj* arg0)
+{
+    s16 timer;
+    struct ShotObj* shot;
+
+    timer = arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        arg0->unk5 = 7;
+        arg0->unk6 = 0;
+        return;
+    }
+    if ((timer % 10) == 0) {
+        func_8001540C(2, 0, arg0);
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x38;
+            shot->unk2 = 1;
+            shot->x_pos.i.hi = (u16)arg0->x_pos.i.hi + 0x10;
+            shot->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x10;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+        }
+    }
+}
 
 void func_8008EBC0(struct MainObj* arg0)
 {
@@ -404,7 +428,28 @@ void func_8008ED18(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008EDE8);
+void func_8008EDE8(struct MainObj* arg0)
+{
+    struct MiscObj* misc;
+
+    g_Player.x_pos.i.hi += 3;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x5A;
+        arg0->unk6++;
+    }
+    if (arg0->unk7C % 10 == 0) {
+        func_8001540C(2, 10, arg0);
+        misc = find_free_misc_obj();
+        if (misc != 0) {
+            misc->active = 0x41;
+            misc->id = 0x37;
+            misc->unk2 = 2;
+            misc->ext.misc_7.position = arg0;
+        }
+    }
+}
 
 void func_8008EED4(struct MainObj* arg0)
 {
