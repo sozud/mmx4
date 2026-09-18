@@ -78,7 +78,35 @@ void func_8004DF40(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004DFEC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E128);
+void func_8004E128(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 8;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->bg_offset = (u8)arg0->bg_offset;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk15 = arg0->unk15;
+        }
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+        func_80015D60(arg0, 1);
+        arg0->ext.main_0.flags[1] = 0x78;
+        arg0->ext.main_0.background_relative &= 0xFD;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E218);
 

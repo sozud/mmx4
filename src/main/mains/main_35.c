@@ -100,7 +100,38 @@ void func_8005F230(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005F2F4);
+void func_8005F2F4(struct MainObj* arg0)
+{
+    s32 value;
+    s32 mask;
+
+    if (--arg0->ext.main_35.sound_timer == 0) {
+        func_8001540C(2, 0x58, arg0);
+        arg0->ext.main_35.sound_timer = 0x14;
+    }
+
+    if (--arg0->unk7E == 0) {
+        func_800B0CA0(1, 2, arg0, 8, 1);
+        arg0->unk7E = 2;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+
+    if (arg0->unk15 == 0) {
+        mask = 0xA;
+        value = arg0->unk70 & 0xA;
+    } else {
+        mask = 9;
+        value = arg0->unk70 & 9;
+    }
+
+    if (value == mask) {
+        arg0->unk7C = 0x3C;
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8005F3D4(struct MainObj* arg0)
 {

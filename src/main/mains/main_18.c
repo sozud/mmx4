@@ -187,7 +187,32 @@ void func_8005115C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800511E8);
+void func_800511E8(struct MainObj* arg0)
+{
+    s32 blocked;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk54 = &D_800FBEFC;
+        arg0->unk50 = &D_800FBEFC;
+    }
+    if (arg0->ext.main_18.unk83 >= 0xA) {
+        func_80015D60(arg0, 0xC);
+        arg0->unk6 = 5;
+    }
+    if (arg0->unk15 == 0) {
+        blocked = arg0->unk70 & 2;
+    } else {
+        blocked = arg0->unk70 & 1;
+    }
+    if (blocked != 0) {
+        func_8001540C(2, 0x37, arg0);
+        func_80028B68(0x10, 8, 2);
+        func_80015D60(arg0, 0xC);
+        arg0->unk6 = 5;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_800512BC(struct MainObj* arg0)
 {
@@ -280,7 +305,26 @@ void func_800514A4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80051564);
+void func_80051564(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->ext.main_18.unk82 = 0;
+        arg0->unk68 = &D_800FBF0C;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk50 = &D_800FBEF4;
+        arg0->unk54 = &D_800FBEF4;
+    }
+    if (arg0->unk70 & 8) {
+        func_8001540C(2, 0x37, arg0);
+        func_80028BAC(0x10, 8, 2);
+        arg0->ext.main_18.unk89 = 0xA6;
+        func_80015D60(arg0, 5);
+        arg0->unk6 = 4;
+    }
+}
 
 void func_80051630(struct MainObj* arg0)
 {
@@ -474,7 +518,39 @@ void func_800523EC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052444);
+void func_80052444(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (arg0->unk2C == FIXED(0.0625)) {
+        if (arg0->ext.main_18.unk84 == 0) {
+            if (arg0->y_pos.i.hi >= 0x891) {
+                goto landed;
+            }
+            return;
+        }
+        if (arg0->y_pos.i.hi >= 0x8B1) {
+            goto landed;
+        }
+        return;
+    }
+
+    if (arg0->ext.main_18.unk84 == 0) {
+        if (arg0->y_pos.i.hi < 0x890) {
+            goto landed;
+        }
+        return;
+    }
+    if (arg0->y_pos.i.hi >= 0x8B0) {
+        return;
+    }
+
+landed:
+    arg0->unk68 = &D_800FBF0C;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052524);
 

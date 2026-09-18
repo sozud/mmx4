@@ -8,7 +8,33 @@ void func_8004C734(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004C784);
+void func_8004C784(struct MainObj* arg0)
+{
+    arg0->unk5C = 0x10;
+    arg0->unk60 = 3;
+    arg0->unk61 = 0;
+    arg0->collision_data = D_801068F0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)D_800FB804;
+    arg0->unk16 = 6;
+    arg0->unk68 = &D_800FB704;
+    arg0->unk54 = &D_800FB6FC;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->unk50 = &D_800FB700;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    func_8004CEF4(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, 0);
+    arg0->ext.main_13.unk80 = 0x8000;
+    arg0->state = 1;
+    arg0->ext.main_13.unk84 = 0;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004C860);
 

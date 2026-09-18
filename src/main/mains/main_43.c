@@ -263,7 +263,34 @@ void func_80064C84(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064CF4);
+void func_80064CF4(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    if (arg0->animation_step.fields.relative_step != 0) {
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->ext.main_43.shot = func_80064E58(arg0, 1);
+            arg0->animation_step.fields.event = 0;
+            if (arg0->unk15 == 0) {
+                arg0->ext.main_43.shot->unk84.value = FIXED(8);
+            } else {
+                arg0->ext.main_43.shot->unk84.value = FIXED(-8);
+            }
+        }
+    } else {
+        shot = arg0->ext.main_43.shot;
+        if (shot->unk5 == 0) {
+            arg0->unk24 = FIXED(3.5);
+            arg0->unk5 = 2;
+            arg0->unk2C = 0;
+            arg0->unk6 = 1;
+            arg0->unk7 = 1;
+            func_80015D60(arg0, 0x1F);
+            shot->unk84.value = 0;
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_80064DC8(struct MainObj* arg0)
 {
