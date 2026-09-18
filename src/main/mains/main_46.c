@@ -55,4 +55,28 @@ void func_80066C74(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066CCC);
+void func_80066CCC(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    if (arg0->ext.main_46.unk80->x_pos.bytes[0] == 3) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x18;
+            shot->unk2 = 0;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->bg_offset = (u8)arg0->bg_offset;
+            shot->x_pos.i.hi = (u16)arg0->x_pos.i.hi - 0x2D;
+            shot->y_pos.i.hi = (u16)arg0->y_pos.i.hi - 0x5D;
+            shot->unk15 = 0;
+            shot->unk7C = arg0->ext.main_46.unk80;
+            shot->state = 0;
+        }
+        func_80015D60(arg0, 0xD);
+        arg0->ext.main_46.unk80->x_pos.bytes[0] = 0x80;
+    }
+}

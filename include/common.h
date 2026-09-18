@@ -551,7 +551,7 @@ struct Main32Ext {
 struct Main33Ext {
     u8 pad80[2];
     s16 unk82;
-    u8 pad84;
+    u8 unk84;
     u8 unk85;
     u8 pad86[0xE];
     u32 saved_unk5;
@@ -565,7 +565,7 @@ struct Main34Ext {
 
 struct Main38Ext {
     u32 saved_unk5;
-    u8 pad84[4];
+    s32 unk84;
     u32 unk88;
 };
 
@@ -606,7 +606,8 @@ struct Main13Ext {
 };
 
 struct Main11Ext {
-    u8 pad80[7];
+    u8 unk80;
+    u8 pad81[6];
     u8 saved_unk5;
 };
 
@@ -696,7 +697,7 @@ struct Main18Ext {
     u8 unk86;
     u8 unk87;
     u8 unk88;
-    u8 pad89;
+    u8 unk89;
     u16 unk8A;
     u8 pad8C[0x97 - 0x8C];
     u8 saved_unk5;
@@ -749,7 +750,8 @@ struct Main36Ext {
     u8 pad80[4];
     struct MainObj* unk84;
     u8 saved_unk5;
-    u8 pad89[3];
+    u8 pad89;
+    u16 unk8A;
     u8 unk8C;
 };
 
@@ -770,7 +772,8 @@ struct Main43Ext {
 };
 
 struct Main46Ext {
-    u8 pad80[0x15];
+    struct WeaponObj* unk80;
+    u8 pad84[0x95 - 0x84];
     u8 unk95;
 };
 
@@ -3186,6 +3189,7 @@ extern u8 D_800F247C[];
 extern u8 D_800F2490[];
 extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern u16 D_80106770[64];
+extern struct Unk_unk68 D_801068F0[33];
 extern s32 D_800FA108[2];
 extern s32 D_800FA110[2];
 extern s32 D_800FA118[2];
@@ -3196,9 +3200,16 @@ extern u32 D_800FA72C;
 extern u32 D_800FA730;
 extern u8 D_800FAEF0[8];
 extern u8 D_800FAEF8[4];
+extern struct Unk_unk68 D_800FB6FC;
+extern struct Unk_unk68 D_800FB700;
+extern struct Unk_unk68 D_800FB704;
+extern union AnimationStep* D_800FB804[18];
 extern struct Unk_unk68 D_800FBBBC;
+extern struct Unk_unk68 D_800FBBC0;
+extern struct Unk_unk68 D_800FBBC4;
 extern struct Unk_unk68 D_800FBA50;
 extern struct Unk_unk68 D_800FBEF4;
+extern struct Unk_unk68 D_800FBEFC;
 extern struct Unk_unk68 D_800FBE0C;
 extern struct Unk_unk68 D_800FBE10;
 extern struct Unk_unk68 D_800FBE14;

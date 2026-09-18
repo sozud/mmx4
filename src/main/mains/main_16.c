@@ -132,7 +132,34 @@ void func_8004F2A0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004F34C);
+void func_8004F34C(struct MainObj* arg0)
+{
+    s16 value;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    value = (u16)arg0->unk7C ^ arg0->ext.main_16.unk88;
+    arg0->unk7C = value;
+    if (value == 0) {
+        arg0->unk60 = 3;
+        arg0->unk50 = &D_800FBBC0;
+    } else {
+        arg0->unk60 = 6;
+        arg0->unk50 = &D_800FBBC4;
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->ext.main_16.unk88 = 1;
+        func_8001540C(2, 0x28, arg0);
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->unk60 = 3;
+        arg0->unk50 = &D_800FBBC0;
+        func_8004FC50(ANIMATED_OBJECT(arg0));
+        func_80015D60(arg0, 0);
+        arg0->ext.main_16.unk8C = 0;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8004F424(struct MainObj* arg0)
 {

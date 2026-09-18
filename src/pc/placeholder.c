@@ -4528,26 +4528,6 @@ void func_80046C8C(struct MainObj* arg0)
     }
 }
 
-void func_80047244(struct MainObj* arg0)
-{
-    struct Unk_unk68* bounds = arg0->unk68;
-    s16 x;
-    s16 y;
-
-    if (arg0->unk15 != 0) {
-        x = arg0->x_pos.i.hi + bounds->unk0
-            + (s32)arg0->ext.main_6.ground_probe_distance;
-    } else {
-        x = arg0->x_pos.i.hi - bounds->unk0
-            - (s32)arg0->ext.main_6.ground_probe_distance;
-    }
-    y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3;
-    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0x38) {
-        func_8002B718(MOVING_OBJECT(arg0));
-    }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-}
-
 void func_80035C20(struct PlayerObj* arg0)
 {
     s32 i;

@@ -25,7 +25,33 @@ void func_8005B52C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B578);
+void func_8005B578(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk5--;
+
+        if (arg0->unk15 == 0
+                ? arg0->x_pos.i.hi < g_Player.x_pos.i.hi
+                : arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0xF;
+                shot->unk7C = WEAPON_OBJECT(arg0);
+                shot->state = 0;
+                shot->unk5 = 0;
+                shot->unk6 = 0;
+            }
+        }
+
+        func_80015D60(arg0, 0xA);
+        return;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8005B64C(struct MainObj* arg0)
 {

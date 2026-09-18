@@ -50,7 +50,32 @@ void func_80060E50(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060E94);
+void func_80060E94(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7E == 0) {
+        switch (arg0->ext.main_38.unk84) {
+        case 0:
+            arg0->unk5 = 3;
+            arg0->unk7E = 0x14;
+            break;
+        case 1:
+            arg0->unk5 = 5;
+            arg0->unk7E = 0x14;
+            break;
+        case 2:
+            arg0->unk5 = 5;
+            arg0->unk7E = 0xA;
+            break;
+        }
+        arg0->unk6 = 0;
+        if (arg0->ext.main_38.unk84 != 2) {
+            arg0->ext.main_38.unk84++;
+        } else {
+            arg0->ext.main_38.unk84 = 0;
+        }
+    }
+}
 
 void func_80060F5C(struct MainObj* arg0)
 {
