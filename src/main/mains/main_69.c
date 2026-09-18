@@ -736,4 +736,31 @@ void func_800889A4(struct BaseObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800889DC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80088AD0);
+void func_80088AD0(struct MainObj* arg0)
+{
+    u8 i;
+    struct VisualObj* visual_obj;
+    struct VisualObj* previous;
+
+    for (i = 0; i < 3; i++) {
+        visual_obj = func_8002AF4C(NULL, 1);
+        if (visual_obj != NULL) {
+            visual_obj->active = 0x41;
+            visual_obj->id = 5;
+            visual_obj->unk2 = i;
+            visual_obj->bg_offset = g_Player.bg_offset;
+            visual_obj->unk40 = arg0->unk40;
+            visual_obj->unk3C = (void*)arg0->sprite_frames;
+            visual_obj->animation_table = (u32**)arg0->animation_table;
+            visual_obj->unk42 = arg0->unk42;
+            visual_obj->unk5C.owner = PLAYER_OBJECT(arg0);
+            visual_obj->unk16 = 6;
+            if (i != 0) {
+                visual_obj->unk50 = PLAYER_OBJECT(previous);
+            } else {
+                visual_obj->unk50 = PLAYER_OBJECT(arg0);
+            }
+        }
+        previous = visual_obj;
+    }
+}
