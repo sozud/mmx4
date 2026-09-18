@@ -170,13 +170,39 @@ void func_800708DC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070948);
+void func_80070948(struct MainObj* arg0)
+{
+    struct VisualObj* visual_obj;
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, 3);
+        arg0->unk7C = 0xF0;
+        visual_obj = find_free_visual_obj();
+        if (visual_obj != NULL) {
+            visual_obj->active = 0x41;
+            visual_obj->id = 0x17;
+            visual_obj->unk40 = arg0->unk40;
+            visual_obj->animation_table = (u32**)arg0->animation_table;
+            visual_obj->unk3C = (void*)arg0->sprite_frames;
+            visual_obj->unk42 = arg0->unk42;
+            visual_obj->unk15 = arg0->unk15;
+            visual_obj->bg_offset = arg0->bg_offset;
+            visual_obj->x_pos.val = arg0->x_pos.val;
+            visual_obj->y_pos.val = arg0->y_pos.val;
+            visual_obj->unk50 = PLAYER_OBJECT(arg0);
+            visual_obj->unk2 = 0;
+            arg0->ext.main_56.unk80.visual = visual_obj;
+        }
+        func_8001540C(2, 0xB0, arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070A38);
 
 void func_80070C88(struct MainObj* arg0)
 {
-    if (arg0->ext.main_56.effect->active == 0) {
+    if (arg0->ext.main_56.unk80.effect->active == 0) {
         arg0->unk5 = 6;
         arg0->unk6 = 0;
     }
@@ -429,7 +455,7 @@ void func_80071F5C(struct MainObj* arg0)
             effect->id = 0x1A;
             effect->x_pos.i.hi = arg0->x_pos.i.hi;
             effect->y_pos.i.hi = arg0->y_pos.i.hi;
-            arg0->ext.main_56.effect = effect;
+            arg0->ext.main_56.unk80.effect = effect;
         }
     }
     is_on_screen(BASE_OBJECT(arg0));
@@ -446,7 +472,7 @@ void func_80071F5C(struct MainObj* arg0)
 
 void func_8007203C(struct MainObj* arg0)
 {
-    struct EffectObj* effect = arg0->ext.main_56.effect;
+    struct EffectObj* effect = arg0->ext.main_56.unk80.effect;
     arg0->on_screen = 0;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {

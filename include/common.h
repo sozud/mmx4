@@ -782,8 +782,13 @@ union Main56Unk89 {
     s8 signed_value;
 };
 
+union Main56Unk80 {
+    struct EffectObj* effect;
+    struct VisualObj* visual;
+};
+
 struct Main56Ext {
-    struct EffectObj *effect;
+    union Main56Unk80 unk80;
     u8 *unk84;
     u8 unk88;
     union Main56Unk89 unk89;
@@ -2344,6 +2349,7 @@ extern struct Unk_unk68 D_80100214;
 extern struct Unk_unk68 D_80100844;
 extern struct Unk_unk68 D_80100848;
 extern u8 D_80104CE0[];
+extern struct Unk_unk68 D_80104CEC;
 extern struct Item04Data D_8010C8B4;
 extern u8 D_8010C904[];
 extern s32 D_8010C918[4];

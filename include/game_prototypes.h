@@ -452,7 +452,7 @@ extern void func_8007BF74 (void);
 extern void func_8007FD1C (struct MainObj *arg0);
 extern void func_80084E4C (struct MainObj *arg0);
 extern void func_80089334 (struct MainObj *arg0);
-extern void func_8008A05C (void);
+extern void func_8008A05C (struct MainObj *arg0, s32 arg1, s32 arg2);
 extern void func_8008AD74 (void);
 extern void func_8008AD7C (void);
 extern void func_8008B9B0 (void);
