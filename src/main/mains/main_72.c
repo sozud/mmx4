@@ -99,7 +99,36 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B020);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B188);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B270);
+void func_8008B270(struct MainObj* arg0)
+{
+    s8 state;
+    u8 timer1;
+    u8 timer2;
+
+    state = arg0->unk6;
+    if (state == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, 8);
+        arg0->ext.main_72.lifetime = 0x40;
+        arg0->ext.main_72.spawn_timer = 0x10;
+        func_8008AE94(arg0);
+        func_8001540C(2, 0x4C, arg0);
+    }
+
+    timer1 = arg0->ext.main_72.lifetime - 1;
+    arg0->ext.main_72.lifetime = timer1;
+    if (timer1 != 0) {
+        timer2 = arg0->ext.main_72.spawn_timer - 1;
+        arg0->ext.main_72.spawn_timer = timer2;
+        if (timer2 == 0) {
+            func_8008AF30(arg0, 0);
+            arg0->ext.main_72.spawn_timer = 0x10;
+        }
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        func_8008AEC4(BASE_OBJECT(arg0), 2);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B33C);
 
@@ -121,7 +150,32 @@ void func_8008B42C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B4B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B5C0);
+void func_8008B5C0(struct MainObj* arg0)
+{
+    if (arg0->unk6 == 0) {
+        arg0->unk6 = 1;
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk24 = 0;
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->unk67 = 1;
+        func_80015D60(arg0, 3);
+    }
+    if (arg0->unk70 & 8) {
+        func_8008AEC4(BASE_OBJECT(arg0), 5);
+        return;
+    }
+    if ((arg0->y_pos.i.hi - g_Player.y_pos.i.hi) >= -0x30) {
+        func_8008AEC4(BASE_OBJECT(arg0), 2);
+        return;
+    }
+    arg0->unk20 = 0;
+    func_8008AF10(arg0);
+    if (arg0->unk24 < FIXED(-5.875)) {
+        arg0->unk24 = FIXED(-5.875);
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B69C);
 

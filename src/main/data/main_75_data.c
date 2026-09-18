@@ -11,7 +11,7 @@ void (*D_80105EC4[6])() = {
     func_80090AC0,
 };
 void (*D_80105EDC[4])() = { func_80090BE0, func_80090C54, func_80090CFC, func_80090D24 };
-void (*D_80105EEC[6])() = {
+void (*D_80105EEC[6])(struct MainObj*) = {
     func_80090E2C,
     func_80090F0C,
     func_80090FC0,
