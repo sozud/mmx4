@@ -376,7 +376,7 @@ s32 func_800340BC(struct PlayerObj* arg0)
 s32 func_80034100(struct PlayerObj* arg0)
 {
     if (engine_obj.unkF != 0) {
-        func_80034F7C();
+        func_80034F7C(arg0);
         return 1;
     }
 
@@ -765,7 +765,47 @@ void func_80034DC8(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80034E2C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80034F7C);
+void func_80034F7C(struct PlayerObj* arg0)
+{
+    u8 flags;
+    u8 sound_id;
+    u8 sound_arg;
+
+    func_80036088(arg0);
+    func_80038490(arg0);
+
+    flags = engine_obj.unkF;
+    engine_obj.unk1C = 1;
+
+    if (flags & 0x10) {
+        func_80036534(arg0);
+        func_80036E98(arg0);
+
+        sound_id = 0x21;
+        if (arg0->unk2 == 0) {
+            sound_id = 0x22;
+            sound_arg = 0x75;
+        } else {
+            sound_arg = 0x72;
+        }
+        func_8001663C(sound_id, sound_arg);
+
+        arg0->unk5 = 0x19;
+        arg0->unk6 = 0;
+        return;
+    }
+
+    if (flags & 0x40) {
+        arg0->state = 3;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        return;
+    }
+
+    func_800350A4(arg0, 3);
+    func_80036E98(arg0);
+    func_80035048(arg0);
+}
 
 void func_80035048(struct PlayerObj* arg0)
 {
@@ -2981,7 +3021,7 @@ void func_8003A374(struct PlayerObj* arg0)
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->unk8E = 0;
         if (engine_obj.unkF != 0) {
-            func_80034F7C();
+            func_80034F7C(arg0);
             return;
         }
         if (arg0->unkC0 != 0) {
@@ -3464,7 +3504,31 @@ void func_8003D3B4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D3F8);
+void func_8003D3F8(struct RideArmorObj* arg0)
+{
+    u8 previous_input;
+
+    if (g_Player.unkC0 == 0) {
+        arg0->collision_flags = g_Player.input.buttons.held;
+        arg0->unk8A = g_Player.pressed_input;
+    } else {
+        arg0->collision_flags = 0;
+        arg0->unk8A = 0;
+    }
+    if (g_Player.unkBC != 0) {
+        func_8002B3C0(BASE_OBJECT(arg0));
+        return;
+    }
+
+    arg0->unk18 = arg0->x_pos;
+    arg0->unk1C = arg0->y_pos;
+
+    previous_input = arg0->unk71;
+    arg0->unk71 = 0;
+    arg0->input_flags = arg0->unk70 | previous_input;
+    D_800F912C[arg0->state](arg0);
+    arg0->unk5C &= ~0x80;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003D4C8);
 
@@ -6314,9 +6378,62 @@ void func_80048BD4(struct MainObj* arg0)
     func_80015D60(arg0, 2);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80048C20);
+void func_80048C20(struct MainObj* arg0)
+{
+    s32 x_velocity;
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80048CF8);
+    if (arg0->animation_step.fields.event != 0) {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+    if (arg0->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x1F, arg0);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        x_velocity = FIXED(-8.5);
+        if (arg0->unk15 != 0) {
+            x_velocity = FIXED(8.5);
+        }
+        arg0->unk20 = x_velocity;
+        arg0->unk24 = FIXED(-4);
+        arg0->unk2C = FIXED(-0.1875);
+        arg0->unk28 = 0;
+        arg0->unk6++;
+        func_80015D60(arg0, 4);
+        arg0->unk60 = 5;
+        arg0->unk50 = (const u8*)&D_800FA730;
+        arg0->ext.main_8.unk88 = 0;
+        arg0->unk7E = 0x14;
+    }
+}
+
+void func_80048CF8(struct MainObj* arg0)
+{
+    if (arg0->unk7E != 0) {
+        arg0->unk7E--;
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+    }
+    if (arg0->animation_step.fields.event != 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+    if (arg0->y_pos.i.hi < 0x90) {
+        if (arg0->unk15 != 0) {
+            arg0->x_pos.i.hi = 0x12B0;
+        } else {
+            arg0->x_pos.i.hi = 0x11A0;
+        }
+        arg0->unk24 = FIXED(-2.5);
+        arg0->unk60 = 3;
+        arg0->unk50 = (const u8*)&D_800FA72C;
+        arg0->ext.main_8.unk88 = 1;
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk6++;
+        arg0->unk15 ^= 0x40;
+    }
+}
 
 s8 D_800F8BF8[24] = { 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1 };
 s8 D_800F8C10[24] = { 0, 1, 1, 1, 1, 1, 1, 1, 1 };

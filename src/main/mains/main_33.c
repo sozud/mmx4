@@ -136,7 +136,59 @@ void func_8005E0CC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005E108);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005E1BC);
+void func_8005E1BC(struct MainObj* arg0)
+{
+    s32 variant;
+    s32 should_transition;
+    s16 timer;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+
+    variant = arg0->ext.main_33.variant;
+    if (variant == 5) {
+        goto state_5;
+    }
+    if (variant >= 6) {
+        if (variant == 6) {
+            goto state_6;
+        }
+        goto timer_update;
+    }
+    if (variant >= 0) {
+        goto state_low;
+    }
+    goto timer_update;
+
+state_low:
+    should_transition = arg0->y_pos.i.hi < 0x2F0;
+    goto transition_check;
+
+state_5:
+    should_transition = arg0->y_pos.i.hi < 0x2A0;
+    goto transition_check;
+
+state_6:
+    should_transition = arg0->y_pos.i.hi < 0x280;
+
+transition_check:
+    if (should_transition != 0) {
+        arg0->unk7E = 4;
+        arg0->unk6 = 2;
+        return;
+    }
+
+timer_update:
+    timer = arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        arg0->unk2C = FIXED(0.2578125);
+        arg0->ext.main_33.unk84 = 0;
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        func_80015D60(arg0, 7);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005E298);
 

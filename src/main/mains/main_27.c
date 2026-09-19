@@ -207,4 +207,39 @@ void func_80059B0C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059B7C);
+void func_80059B7C(struct MainObj* arg0)
+{
+    s16 timer;
+
+    if (arg0->ext.main_27.unk8C != 1) {
+        arg0->ext.main_27.unk8C--;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    timer = arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        arg0->ext.main_27.pad89 = 0;
+        arg0->ext.main_27.unk8A = 0;
+        if (arg0->unk15 == 0) {
+            if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
+                timer = 0x14;
+                arg0->unk7C = timer;
+                timer = 4;
+                arg0->unk28 = 0;
+                arg0->unk24 = 0;
+            } else {
+                timer = 6;
+            }
+        } else if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi) {
+            timer = 0x14;
+            arg0->unk7C = timer;
+            timer = 4;
+            arg0->unk28 = 0;
+            arg0->unk24 = 0;
+        } else {
+            timer = 6;
+        }
+        arg0->unk5 = timer;
+        arg0->unk6 = 0;
+    }
+}

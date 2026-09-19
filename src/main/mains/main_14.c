@@ -7,7 +7,47 @@ void func_8004CF24(struct MainObj* arg0)
     D_800FB9FC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004CF60);
+void func_8004CF60(struct MainObj* arg0)
+{
+    u8 bg_offset;
+    s32 x_pos;
+    s32 y_pos;
+
+    arg0->active = 0x41;
+    arg0->unk5C = 0xE;
+    arg0->unk60 = 3;
+    arg0->unk61 = 0;
+
+    bg_offset = g_Player.bg_offset;
+    x_pos = arg0->x_pos.val;
+    y_pos = arg0->y_pos.val;
+
+    arg0->collision_data = D_80106974;
+    arg0->animation_table = (const u8* const*)D_800FB9AC;
+    arg0->unk16 = 5;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->unk68 = 0;
+    arg0->unk54 = &D_800FB88C;
+    arg0->unk50 = &D_800FB88C;
+    arg0->bg_offset = bg_offset;
+    arg0->unk18.val = x_pos;
+    arg0->unk1C.val = y_pos;
+    func_8004D6CC(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, 0);
+    arg0->ext.main_14.unk80 = 0;
+    arg0->ext.main_14.unk84 = 0;
+    arg0->ext.main_14.visual_variant = 0;
+    arg0->ext.main_14.unk8C = 0;
+    arg0->ext.main_14.saved_unk5 = 0;
+    arg0->ext.main_14.unk94 = 0;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D044);
 

@@ -5004,35 +5004,6 @@ s32 func_80034E2C(void)
     return 0;
 }
 
-s32 func_80034F7C(void)
-{
-    struct PlayerObj* player = &g_Player;
-
-    func_80036088(player);
-    func_80038490(player);
-    engine_obj.unk1C = 1;
-
-    if (engine_obj.unkF & 0x10) {
-        func_80036534(player);
-        func_80036E98(player);
-        if (player->unk2 == 0)
-            func_8001663C(0x22, 0x75);
-        else
-            func_8001663C(0x21, 0x72);
-        player->unk5 = 0x19;
-        player->unk6 = 0;
-    } else if (engine_obj.unkF & 0x40) {
-        player->state = 3;
-        player->unk5 = 0;
-        player->unk6 = 0;
-    } else {
-        func_800350A4(player, 3);
-        func_80036E98(player);
-        func_80035048(player);
-    }
-    return 0;
-}
-
 void func_80031540(struct PlayerObj* player)
 {
     func_80015DC8(ANIMATED_OBJECT(player));
@@ -5081,7 +5052,7 @@ void func_80034150(struct PlayerObj* arg0)
 void func_80033108(struct PlayerObj* arg0)
 {
     if (engine_obj.unkF != 0) {
-        func_80034F7C();
+        func_80034F7C(arg0);
         return;
     }
     arg0->x_vel.val = arg0->animation_step.fields.event == 0 ? 0x8000 : 0x20000;
