@@ -9,7 +9,41 @@ void func_800C5C4C(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5C88);
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5D44);
+void func_800C5D44(struct ItemObj* arg0)
+{
+    u16 x_distance;
+    u16 y_distance;
+
+    if (arg0->ext.item_23.unk80 != 0) {
+        if (--arg0->ext.item_23.timer == 0) {
+            arg0->ext.item_2.unk82 = 1;
+            x_distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
+            y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
+            func_8002B93C(MOVING_OBJECT(arg0), (u8)func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
+            if (x_distance >= 17 || y_distance >= 17) {
+                arg0->x_vel.val *= 8;
+                arg0->y_vel.val *= 8;
+            } else if (x_distance >= 9 || y_distance >= 9) {
+                arg0->x_vel.val *= 4;
+                arg0->y_vel.val *= 4;
+            } else if (x_distance >= 5 || y_distance >= 5) {
+                arg0->x_vel.val *= 2;
+                arg0->y_vel.val *= 2;
+            } else if (x_distance >= 3 || y_distance >= 3) {
+                arg0->x_vel.val *= 1;
+                arg0->y_vel.val *= 1;
+            } else {
+                arg0->x_pos.val = g_Player.x_pos.val;
+                arg0->y_pos.val = g_Player.y_pos.val;
+            }
+        }
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        arg0->unk5++;
+        func_80015D60(arg0, 0xB);
+    }
+}
 
 void func_800C5F04(struct ItemObj* arg0)
 {

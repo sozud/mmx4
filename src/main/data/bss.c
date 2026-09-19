@@ -248,7 +248,11 @@ u8 D_8013B8E0[0x4];
 u8 D_8013B8E4[0x4];
 struct EffectObj* D_8013B8E8[22];
 u16 D_8013B940[16];
+#ifdef VERSION_JP
+u8 D_8013BA40_jp[0x10];
+#else
 u8 D_8013B960[0x10];
+#endif
 u8 D_8013B970[0x108];
 u8 D_8013BA78[0x8];
 u8 D_8013BA80[0x8];

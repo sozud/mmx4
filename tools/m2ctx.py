@@ -67,11 +67,17 @@ def main():
         "c_file",
         help="""File from which to create context""",
     )
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="""Output context file (default: ctx.c)""",
+    )
     args = parser.parse_args()
 
     output = import_c_file(args.c_file)
 
-    with open(os.path.join(root_dir, "ctx.c"), "w", encoding="UTF-8") as f:
+    output_path = args.output or os.path.join(root_dir, "ctx.c")
+    with open(output_path, "w", encoding="UTF-8") as f:
         f.write(output)
 
 

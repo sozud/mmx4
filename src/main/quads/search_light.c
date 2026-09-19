@@ -64,7 +64,34 @@ void func_800D3FE0(struct Unk22* arg0)
 }
 
 // search light helper
-INCLUDE_ASM("main/nonmatchings/quads/search_light", func_800D4024);
+s32 func_800D4024(struct QuadObj* arg0)
+{
+    u16 x, y, x2, y2;
+    u16 width, height;
+    s32 x_p, y_p;
+    s32 visible;
+
+    visible = 0;
+    x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
+    y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
+    width = ABS(arg0->unk1C.i.hi, arg0->unk14.i.hi);
+    height = ABS(arg0->unk30.i.hi, arg0->unk18.i.hi);
+    if (ON_SCREEN_X(x, width)) {
+        if (ON_SCREEN_Y(y, height)) {
+            visible = 1;
+        }
+    }
+    x_p = arg0->x_pos.u.hi + arg0->unk14.u.hi;
+    y_p = arg0->y_pos.u.hi + arg0->unk18.u.hi;
+    x2 = x_p + (u16)(width >> 1) - background_objects[arg0->bg_offset].x_pos.u.hi;
+    y2 = y_p + (u16)(height >> 1) - background_objects[arg0->bg_offset].y_pos.u.hi;
+    if (ON_SCREEN_X(x2, width)) {
+        if (ON_SCREEN_Y(y2, height)) {
+            visible = 1;
+        }
+    }
+    return visible;
+}
 
 struct SearchLightInit D_8010F600[6] = {
     { { 0x0000, -0x0100, 0x0080, -0x0100, 0x0028, 0, 0, 0 }, 0x0060 },

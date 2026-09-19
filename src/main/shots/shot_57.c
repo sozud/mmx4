@@ -88,9 +88,36 @@ s16* D_80109FEC[30] = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE450);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE4F0);
+void func_800AE4F0(struct ShotObj* arg0)
+{
+    u32 i;
+    u32 start;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE594);
+    if (arg0->unk7C->unk95 != 0) {
+        start = arg0->unk8C.bytes[0];
+        for (i = 0; i < arg0->unk8C.bytes[1] + 1; i++) {
+            arg0->unk50.frames = D_80109FEC[start++];
+            func_8002D9BC(arg0);
+        }
+        arg0->state = 2;
+    }
+}
+
+void func_800AE594(struct ShotObj* arg0)
+{
+    u32 i;
+    u32 start;
+
+    if (arg0->unk7C->unk95 != 0) {
+        start = arg0->unk8C.bytes[0];
+        for (i = 0; i < arg0->unk8C.bytes[1] + 1; i++) {
+            arg0->unk50.frames = D_80109FEC[start++];
+            func_8002D9BC(arg0);
+        }
+        return;
+    }
+    arg0->state = 3;
+}
 
 void func_800AE63C(struct ShotObj* arg0)
 {

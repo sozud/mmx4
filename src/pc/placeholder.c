@@ -899,24 +899,6 @@ void func_800B5D04(struct EffectObj* arg0)
     arg0->state++;
 }
 
-s32 func_800D4024(struct QuadObj* arg0)
-{
-    struct BackgroundObj* bg = &background_objects[arg0->bg_offset];
-    s32 x = (u16)arg0->x_pos.i.hi - (u16)bg->x_pos.i.hi;
-    s32 y = (u16)arg0->y_pos.i.hi - (u16)bg->y_pos.i.hi;
-    u32 half_width = abs((s16)(arg0->unk1C.i.hi - arg0->unk14.i.hi));
-    u32 half_height = abs((s16)(arg0->unk30.i.hi - arg0->unk18.i.hi));
-    s32 visible = 0;
-
-    if ((u16)(x + half_width) < (u16)(0x140 + half_width * 2) && (u16)(y + half_height) < (u16)(0xF0 + half_height * 2))
-        visible = 1;
-    x += arg0->unk14.i.hi + (half_width >> 1);
-    y += arg0->unk18.i.hi + (half_height >> 1);
-    if ((u16)(x + half_width) < (u16)(0x140 + half_width * 2) && (u16)(y + half_height) < (u16)(0xF0 + half_height * 2))
-        visible = 1;
-    return visible;
-}
-
 void func_800D3C58(struct QuadObj* arg0)
 {
     const struct SearchLightInit* init = &D_8010F600[(u8)arg0->unk2];
@@ -2047,34 +2029,6 @@ void func_80038568(struct PlayerObj* arg0, s32 arg1)
     duration = arg0->animation_step.fields.duration;
     func_8003516C(arg0, arg1, arg0->animation_step.fields.event & 0x3F);
     arg0->animation_step.fields.duration = duration;
-}
-
-void func_80092314(struct WeaponObj* arg0)
-{
-    struct PlayerObj* owner;
-
-    arg0->active = 0x21;
-    arg0->on_screen = 1;
-    arg0->unk50 = (const u8*)D_80108704;
-    arg0->animation_table = D_8011BF40;
-    arg0->unk42 = 0x7802;
-    owner = arg0->owner;
-    arg0->unk40 = 0;
-    arg0->unk16 = 0;
-    arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
-    arg0->unk15 = owner->unk15;
-    arg0->unk84.word = 0;
-    func_80092CEC(WEAPON_OBJECT(arg0));
-    arg0->x_pos.i.lo = 0;
-    arg0->y_pos.i.lo = 0;
-    arg0->x_vel.val = arg0->unk15 != 0 ? FIXED(6.75) : FIXED(-6.75);
-    arg0->unk28 = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    func_80015D60(arg0, 0x15);
-    func_8001540C(1, 8, arg0);
-    arg0->state = (u8)arg0->state + 1;
-    func_8002B318(BASE_OBJECT(arg0), 0xC, 8);
 }
 
 void func_800366C0(struct PlayerObj*);

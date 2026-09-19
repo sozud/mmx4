@@ -73,4 +73,31 @@ void func_800D56C8(struct QuadObj* arg0)
     arg0->unk30.val = p[1] * arg0->ext.quad_5.scale;
 }
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_05", func_800D57A8);
+s32 func_800D57A8(struct QuadObj* arg0)
+{
+    u16 x, y, x2, y2;
+    u16 width, height;
+    s32 x_p, y_p;
+    s32 result;
+
+    result = 0;
+    x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
+    y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
+    width = ABS(arg0->unk1C.i.hi, arg0->unk14.i.hi);
+    height = ABS(arg0->unk30.i.hi, arg0->unk18.i.hi);
+    if (ON_SCREEN_X(x, width)) {
+        if (ON_SCREEN_Y(y, height)) {
+            result = 1;
+        }
+    }
+    x_p = arg0->x_pos.u.hi + arg0->unk14.u.hi;
+    y_p = arg0->y_pos.u.hi + arg0->unk18.u.hi;
+    x2 = x_p + (u16)(width >> 1) - background_objects[arg0->bg_offset].x_pos.u.hi;
+    y2 = y_p + (u16)(height >> 1) - background_objects[arg0->bg_offset].y_pos.u.hi;
+    if (ON_SCREEN_X(x2, width)) {
+        if (ON_SCREEN_Y(y2, height)) {
+            result = 1;
+        }
+    }
+    return result;
+}
