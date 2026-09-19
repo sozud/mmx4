@@ -2504,6 +2504,9 @@ struct QuadMotionData {
 extern struct QuadMotionData D_8010F77C[21];
 extern s8 D_8010F878[4];
 extern u8 D_8013B960[0x10];
+#ifdef VERSION_JP
+extern u8 D_8013BA40_jp[0x10];
+#endif
 
 struct QuadUnkExt3 {
     u8 unk38;

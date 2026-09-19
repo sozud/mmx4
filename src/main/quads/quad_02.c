@@ -55,7 +55,11 @@ void func_800D4DE0(struct QuadObj* arg0)
     if (integer == 0) {
         arg0->unk5++;
         if (arg0->unk2 == 0x15) {
+#ifdef VERSION_JP
+            D_8013BA40_jp[0] = 1;
+#else
             D_8013B960[0] = 1;
+#endif
         }
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
@@ -89,7 +93,11 @@ void func_800D4FA0(struct QuadObj* arg0)
     if (integer == 0) {
         arg0->state++;
         if (arg0->unk2 == 0x15) {
+#ifdef VERSION_JP
+            D_8013BA40_jp[0] = 0;
+#else
             D_8013B960[0] = 0;
+#endif
         }
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
