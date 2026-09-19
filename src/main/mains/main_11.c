@@ -71,7 +71,32 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B514);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B668);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B748);
+void func_8004B748(struct MainObj* self)
+{
+    u8 flags;
+
+    if (self->unk2 == 0) {
+        flags = SP_CUR_MAIN_OBJ->ext.main_11.unk80;
+        if (flags & 3) {
+            if (flags & 2) {
+                self->unk15 = 0x40;
+            } else {
+                self->unk15 = 0;
+            }
+            func_80015D60(self, 0);
+        } else {
+            func_80015D60(self, 1);
+        }
+        self->unk5 = 2;
+    } else {
+        func_80015D60(self, 1);
+        SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 4;
+        self->unk24 = FIXED(3);
+        self->unk20 = 0;
+        self->unk5 = 6;
+    }
+    self->unk6 = 0;
+}
 
 void func_8004B808(struct MainObj* arg0)
 {

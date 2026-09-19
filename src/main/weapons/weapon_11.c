@@ -44,7 +44,28 @@ void func_8009443C(s8 arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800944B8);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_8009462C);
+void func_8009462C(struct WeaponObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x38) == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->unk5 == 0) {
+            if (arg0->animation_step.fields.event == 1) {
+                arg0->unk50 = D_80108850;
+                arg0->animation_step.fields.event = 0;
+                arg0->unk64 = 1;
+            }
+            if (arg0->animation_step.fields.event == 2) {
+                arg0->animation_step.fields.event = 0;
+                arg0->unk5 = (u8)arg0->unk5 + 1;
+            }
+        } else {
+            func_8002B718(MOVING_OBJECT(arg0));
+        }
+        func_8002B318(BASE_OBJECT(arg0), 0x28, 0x38);
+        return;
+    }
+    func_80094154(arg0);
+}
 
 void func_800946F0(struct MiscObj* arg0)
 {

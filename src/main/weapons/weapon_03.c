@@ -25,7 +25,33 @@ void func_80094A78(struct WeaponObj* arg0)
     D_801088E8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094B24);
+void func_80094B24(struct WeaponObj* arg0)
+{
+    u32** animation_table;
+
+    arg0->on_screen = 1;
+    arg0->unk50 = D_801088E4;
+    arg0->unk64 = 1;
+    arg0->unk38 = g_Player.unk38;
+    arg0->unk3C = g_Player.unk3C;
+    animation_table = g_Player.animation_table;
+    arg0->unk40 = 0x500;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 1;
+    arg0->animation_table = animation_table;
+    arg0->unk15 = g_Player.unk15;
+    arg0->animation_step.fields.frame_index = g_Player.animation_step.fields.frame_index;
+    arg0->x_pos.val = g_Player.x_pos.val;
+    arg0->y_pos.val = g_Player.y_pos.val;
+    arg0->ext.weapon_3.lifetime = 0x96;
+    arg0->ext.weapon_3.timer = 0;
+    arg0->ext.weapon_3.unk90 = 0;
+    arg0->ext.weapon_3.unk91 = 8;
+    func_8001540C(1, 9, arg0);
+    arg0->unk5 = 0;
+    arg0->state = (u8)arg0->state + 1;
+    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x20);
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094C18);
 

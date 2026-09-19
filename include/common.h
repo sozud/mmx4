@@ -557,7 +557,8 @@ struct Main32Ext {
 };
 
 struct Main33Ext {
-    u8 pad80[2];
+    u8 pad80;
+    u8 variant;
     s16 unk82;
     u8 unk84;
     u8 unk85;
@@ -1541,6 +1542,13 @@ struct Weapon7Ext {
     u16 timer;
 };
 
+struct Weapon3Ext {
+    u16 timer;
+    u16 lifetime;
+    u8 unk90;
+    u8 unk91;
+};
+
 struct Weapon10Ext {
     u8 timer;
     u8 pad8D[0x8F - 0x8D];
@@ -1560,7 +1568,8 @@ struct Weapon16Ext {
 };
 
 struct Weapon20Ext {
-    u8 pad8C[0x8E - 0x8C];
+    u8 lifetime;
+    u8 timer;
     s8 unk8E;
 };
 
@@ -1611,6 +1620,7 @@ union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
     struct Weapon1Ext weapon_1;
+    struct Weapon3Ext weapon_3;
     struct Weapon7Ext weapon_7;
     struct Weapon10Ext weapon_10;
     struct Weapon14Ext weapon_14;
@@ -2129,7 +2139,8 @@ struct RideArmorObj {
     s8 unk67;
     s8 pad68[0x70 - 0x68];
     u8 unk70;
-    s8 pad71[0x7C - 0x71];
+    u8 unk71;
+    s8 pad72[0x7C - 0x72];
     u8 unk7C;
     u8 unk7D;
     u8 unk7E;
@@ -2146,7 +2157,9 @@ struct RideArmorObj {
     u32 unk90;
     union RideArmorUnk94 unk94;
     union RideArmorUnk98 unk98;
-    s8 pad9A[0xB0 - 0x9A];
+    s8 pad9A[0xA8 - 0x9A];
+    s8 input_flags;
+    s8 padA9[0xB0 - 0xA9];
 }; // size 0xB0
 
 // D_8013BC28
@@ -3286,6 +3299,14 @@ extern u8 D_800FD1D0[];
 extern void (*D_800FD1F4[])(struct BaseObj*);
 extern void (*D_800FD858[])(struct MainObj*);
 extern struct Unk_unk68 D_800FB88C;
+extern union AnimationStep* D_800FB9AC[];
+extern struct Unk_unk68 D_80106974[];
+extern union AnimationStep* D_800FC9DC[];
+extern struct Unk_unk68 D_800FC9F4;
+extern struct Unk_unk68 D_800FC9F8;
+extern struct Unk_unk68 D_80108504[];
+extern struct Unk_unk68 D_80108850[];
+extern struct Unk_unk68 D_801088E4[];
 extern struct Unk_unk68 D_800FB890[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 D_800FAEFC;
@@ -3745,7 +3766,7 @@ extern s16 D_800FFAD8[];
 #include "func_tables.h"
 
 s32 func_80034E2C();
-s32 func_80034F7C();
+void func_80034F7C(struct PlayerObj*);
 s16 func_8002BAA4(void);
 void func_80036470(s8);
 void func_800129F0(s32);
@@ -3756,6 +3777,7 @@ s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
+void func_80035048(struct PlayerObj*);
 void func_8003443C(struct PlayerObj*);
 void func_80034150(struct PlayerObj*);
 void func_80035EA4(struct PlayerObj*);
@@ -3797,6 +3819,8 @@ s32 func_80015D60(void*, s32);
 void func_80015D90(struct AnimatedObj*, s32, s32);
 void func_80015DC8(struct AnimatedObj*);
 void func_8004D84C(struct AnimatedObj*);
+void func_8004D6CC(struct AnimatedObj*);
+void func_80094154(struct WeaponObj*);
 void func_8001653C(void);
 s32 func_80033694(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);

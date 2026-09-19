@@ -68,7 +68,44 @@ void func_80057824(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057874);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057978);
+void func_80057978(struct MainObj* arg0)
+{
+    s32 distance;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->ext.main_25.unk84 = 1;
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->ext.main_25.unk84 = 0;
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk20 == 0) {
+        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+        if (distance >= 0) {
+            if (distance < 0x1A) {
+                arg0->unk6 = 0;
+            } else {
+                func_80015D60(arg0, 0);
+                arg0->unk5 = 2;
+                arg0->unk6 = 0;
+                arg0->ext.main_25.unk80 = 0x40;
+                arg0->ext.main_25.unk84 = 0;
+            }
+        } else {
+            distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+            if (distance < 0x1A) {
+                arg0->unk6 = 0;
+            } else {
+                func_80015D60(arg0, 0);
+                arg0->unk5 = 2;
+                arg0->unk6 = 0;
+                arg0->ext.main_25.unk80 = 0x40;
+                arg0->ext.main_25.unk84 = 0;
+            }
+        }
+    }
+}
 
 void func_80057A44(struct MainObj* arg0)
 {

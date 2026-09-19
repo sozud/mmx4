@@ -1622,7 +1622,7 @@ struct Unk_unk68 D_800FC9F4 = { -8, -16, 16, 32 };
 
 struct Unk_unk68 D_800FC9F8 = { 0, 0, 8, 16 };
 
-void (*D_800FC9FC[4])() = {
+void (*D_800FC9FC[4])(struct MainObj*) = {
     func_80054CA8,
     func_80054D8C,
     func_80054EF8,

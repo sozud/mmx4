@@ -27,7 +27,56 @@ void func_80091AC4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091B1C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091C64);
+void func_80091C64(struct MainObj* arg0)
+{
+    s16 object_y;
+    s16 player_y;
+    s16 current_timer;
+    s16 new_timer;
+    s32 distance;
+    s32 velocity;
+
+    object_y = arg0->y_pos.u.hi - 8;
+    player_y = g_Player.y_pos.i.hi;
+    distance = player_y - object_y;
+
+    if (distance >= 0) {
+        if (distance < 0x10) {
+            goto close_range;
+        }
+        goto far_range;
+    }
+    if ((object_y - player_y) < 0x10) {
+        goto close_range;
+    }
+    goto far_range;
+
+close_range:
+    velocity = arg0->unk20;
+    if (velocity < 0) {
+        velocity = FIXED(-4);
+    } else {
+        velocity = FIXED(4);
+    }
+    arg0->unk20 = velocity;
+    new_timer = 0x78;
+    goto store_timer;
+
+far_range:
+    current_timer = arg0->unk7E;
+    if (current_timer == 0) {
+        if (arg0->unk20 < 0) {
+            arg0->unk20 = FIXED(-2);
+        } else {
+            arg0->unk20 = FIXED(2);
+        }
+        return;
+    }
+    new_timer = current_timer - 1;
+
+store_timer:
+    arg0->unk7E = new_timer;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091D1C);
 
