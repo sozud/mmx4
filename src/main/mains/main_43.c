@@ -153,7 +153,29 @@ void func_80063FBC(struct MainObj* arg0)
     func_80015D60(arg0, 3);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063FE4);
+void func_80063FE4(struct AnimatedObj* self)
+{
+    if (self->animation_step.fields.relative_step != 0) {
+        if (self->animation_step.fields.event == 1) {
+            func_80065088(self, self->unk7);
+            self->animation_step.fields.event = 0;
+            func_8001540C(2, 0x72, self);
+        }
+        if (self->animation_step.fields.event == 2) {
+            self->animation_step.fields.event = 0;
+            func_80064FD8(self);
+        }
+    } else {
+        self->y_vel.val = FIXED(3.5);
+        self->unk5 = 2;
+        self->unk2C = 0;
+        self->unk6 = 1;
+        self->unk7 = 1;
+        func_80015D60(self, 0x1F);
+        func_8001540C(2, 0x70, self);
+    }
+    func_80015DC8(self);
+}
 
 void func_800640B4(struct MainObj* arg0)
 {

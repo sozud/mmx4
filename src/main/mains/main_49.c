@@ -2,6 +2,8 @@
 // 800684F8..8006970C
 #include "common.h"
 
+extern u8 D_800FFB64[];
+
 void func_800684F8(struct MainObj* arg0)
 {
     D_800FFB78[arg0->state](arg0);
@@ -57,7 +59,37 @@ void func_80068A10(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068A68);
+void func_80068A68(struct MainObj* arg0)
+{
+    s8 temp_a2;
+    u8 temp_v0;
+    u8* temp_v1;
+
+    if (arg0->unk6 == 0) {
+        temp_a2 = arg0->unk2;
+        if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= ((s16*)D_800FFB64)[temp_a2]) {
+            temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
+            temp_v1[0x81] = (u8)((temp_a2 - 6) * 0x10);
+            arg0->unk6 = (u8)arg0->unk6 + 1;
+        }
+    } else {
+        temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
+        temp_v0 = temp_v1[0x81];
+        if (temp_v0 == 0) {
+            arg0->state = 1;
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            arg0->unk7A = 0;
+            if (g_Player.x_pos.val < arg0->x_pos.val) {
+                arg0->unk15 = 0;
+                return;
+            }
+            arg0->unk15 = 0x40;
+            return;
+        }
+        temp_v1[0x81] = temp_v0 - 1;
+    }
+}
 
 void func_80068B3C(struct MainObj* arg0)
 {
@@ -93,7 +125,6 @@ void func_80068CB0(struct MainObj* arg0)
 
 extern u32 D_801076F8[];
 extern u8 D_800FFB60[];
-extern u8 D_800FFB64[];
 
 void func_80068CEC(struct MainObj* arg0)
 {

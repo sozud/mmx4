@@ -11,7 +11,28 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065BC8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065CD4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065DCC);
+void func_80065DCC(struct MainObj* arg0)
+{
+    s16 timer;
+
+    func_80066970();
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        if (func_8002BAD0(1, -0x20, 0x80) == 0x1C) {
+            arg0->state = 3;
+            arg0->unk5 = 0;
+        } else {
+            arg0->unk7C = 1;
+        }
+    }
+    if ((arg0->unk6 == 0) && ((arg0->x_pos.i.hi + 0x69 >= g_Player.x_pos.i.hi) || (g_Player.x_pos.i.hi >= 0x1B36))) {
+        func_80036AE4(0x14, 0x40);
+        arg0->unk6 = 1;
+    }
+    func_8002E184(PLAYER_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x100, 0x100);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065EA4);
 

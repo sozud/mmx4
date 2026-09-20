@@ -9,7 +9,34 @@ void func_80067350(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_8006738C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067550);
+extern u8 D_800FFAE0[];
+extern void (*D_800FFAF8[])();
+
+void func_80067550(struct MainObj* arg0)
+{
+    s8 nextState;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = arg0->unk5;
+
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(5, D_800FFAE0, arg0);
+        nextState = 2;
+    } else {
+        func_80068138(arg0);
+        D_800FFAF8[arg0->unk5](arg0);
+        func_8002D9BC(arg0);
+        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+            return;
+        }
+        nextState = (u8)arg0->state + 1;
+    }
+
+    arg0->state = nextState;
+}
 
 void func_80067628(struct MainObj* arg0)
 {
@@ -250,7 +277,24 @@ INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800681C4);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068340);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068404);
+void func_80068404(struct ObjectHeader* arg0)
+{
+    SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk81 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk83 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.collision_result = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk86 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk88 = 0;
+
+    if (arg0->unk2 & 0x80) {
+        ZeroObjectState(arg0);
+    } else {
+        func_8002B0C8(arg0);
+    }
+}
 
 void func_800684BC(struct MainObj* arg0)
 {

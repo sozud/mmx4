@@ -111,7 +111,40 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005DC58);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005DED4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005DF84);
+void func_8005DF84(struct MainObj* self)
+{
+    s16 target;
+    s16 position;
+    s16 distance;
+
+    target = self->ext.main_33.unk82;
+    position = self->x_pos.i.hi;
+    if ((target - position) >= 0) {
+        distance = target - position;
+    } else {
+        distance = position - target;
+    }
+
+    if (distance == 0) {
+        func_80015D60(self, 5);
+        self->unk7C = 0x1E;
+        self->unk6 = 4;
+    } else if (distance < 6) {
+        if (self->unk15 != 0) {
+            self->unk20 = FIXED(1);
+        } else {
+            self->unk20 = FIXED(-1);
+        }
+    } else if (distance < 0x18) {
+        if (self->unk15 != 0) {
+            self->unk20 = FIXED(2);
+        } else {
+            self->unk20 = FIXED(-2);
+        }
+    }
+
+    func_8002B718(MOVING_OBJECT(self));
+}
 
 void func_8005E044(struct MainObj* arg0)
 {

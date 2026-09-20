@@ -605,6 +605,14 @@ struct MainSavedState94Ext {
     u32 saved_unk5;
 };
 
+struct Main51Ext {
+    u32 unk80;
+    u32 unk84;
+    u8 pad88[8];
+    u32 unk90;
+    u32 saved_unk5;
+};
+
 struct Main7Ext {
     u32 unk80;
     u32 unk84;
@@ -664,7 +672,7 @@ struct Main24Ext {
 };
 
 struct Main47Ext {
-    u32 unk80;
+    struct BaseObj* unk80;
     u32 unk84;
     u32 unk88;
     u32 unk8C;
@@ -703,6 +711,9 @@ struct Main48Ext {
     s8 unk83;
     u8 saved_unk5;
     u8 collision_result;
+    u8 unk86;
+    u8 unk87;
+    u8 unk88;
 };
 
 struct Main73Ext {
@@ -775,7 +786,7 @@ struct Main54Ext {
     u8 pad88;
     u8 unk89;
     u8 pad8A[2];
-    const s8* unk8C;
+    struct EffectObj* unk8C;
     u8* unk90;
 };
 
@@ -792,6 +803,7 @@ struct Main36Ext {
     u8 pad89;
     u16 unk8A;
     u8 unk8C;
+    u8 unk8D;
 };
 
 struct Main43Ext {
@@ -1184,7 +1196,7 @@ union MainObjExt {
     struct Main46Ext main_46;
     struct Main49Ext main_49;
     struct Main50Ext main_50;
-    struct MainSavedState94Ext main_51;
+    struct Main51Ext main_51;
     struct Main52Ext main_52;
     struct Main54Ext main_54;
     struct Main55Ext main_55;
@@ -3744,6 +3756,8 @@ extern struct Unk_unk68 D_800FDA04[];
 extern struct Unk_unk68 D_800FDA08[];
 extern struct Unk_unk68 D_80100220;
 extern struct Unk_unk68 D_80100224;
+extern struct Unk_unk68 D_80100208;
+extern struct Unk_unk68 D_8010020C;
 extern struct Unk_unk68 D_801059D8;
 extern struct Unk_unk68 D_801059DC;
 extern u8 D_801374B4;

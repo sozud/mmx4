@@ -53,7 +53,29 @@ void func_800630AC(struct MainObj* arg0)
     func_8002B718(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_42", func_800630DC);
+void func_800630DC(struct MainObj* self)
+{
+    extern char D_800FEF6C;
+    extern void (*D_800FEF80[])(struct MainObj*);
+
+    if (func_8002DD04(self) < 0) {
+        self->unk5 = 0;
+        self->state += 1;
+        self->unk42 &= 0x7FFF;
+        func_800AF808(BASE_OBJECT(self));
+        func_800C813C(6, &D_800FEF6C, self);
+        return;
+    }
+
+    D_800FEF80[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+        return;
+    }
+
+    func_8002B0C8(OBJECT_HEADER(self));
+}
 
 void func_800631A8(struct MainObj* arg0)
 {

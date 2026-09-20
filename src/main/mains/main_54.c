@@ -212,18 +212,66 @@ void func_8006D830(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006D888);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006DB04);
+void func_8006DB04(struct MainObj* arg0)
+{
+    g_Player.x_pos.i.hi = arg0->x_pos.u.hi;
+    func_80028B68(0x1E, 8, 2);
+    func_80015D60(arg0, 2);
+    arg0->unk16 = 6;
+    arg0->unk54 = &D_8010020C;
+    arg0->unk50 = &D_80100208;
+    arg0->unk28 = 0;
+    if (arg0->unk15 != 0) {
+        arg0->unk20 = FIXED(-3.244140625);
+    } else {
+        arg0->unk20 = FIXED(3.244140625);
+    }
+    arg0->unk2C = FIXED(0.21875);
+    arg0->unk24 = FIXED(6.5625);
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_8001540C(2, 0x81, arg0);
+    arg0->unk5 = 4;
+    arg0->unk6 = 1;
+    arg0->unk62 = 0;
+    arg0->unk60 = 9;
+    arg0->ext.main_54.pad80[4] = 0;
+    g_Player.unkBA = 0;
+}
 
 void func_8006DBE8(struct MainObj* arg0)
 {
     D_80100674[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006DC24);
+void func_8006DC24(struct MainObj* arg0)
+{
+    struct EffectObj* temp_v0;
+
+    if (g_Player.x_pos.i.hi >= 0x2500 || engine_obj.stage == 0xC) {
+        temp_v0 = find_free_effect_obj();
+        if (temp_v0 != 0) {
+            temp_v0->active = 1;
+            temp_v0->id = 0x18;
+            arg0->ext.main_54.unk8C = temp_v0;
+        }
+
+        func_80036AE4(0x14, 0x40);
+        if (engine_obj.stage == 8) {
+            background_objects[0].unk26 = 0x24A0;
+            background_objects[0].unk24 = 0x24E0;
+            background_objects[0].unk2A = 0xF8;
+            background_objects[0].unk28 = 0xF8;
+        }
+
+        arg0->unk7C = 3;
+        arg0->unk7E = 1;
+        arg0->unk6 = 1;
+    }
+}
 
 void func_8006DCF4(struct MainObj* arg0)
 {
-    if (arg0->ext.main_54.unk8C[0] == 0 && ((s16)background_objects[0].x_pos.u.hi == 0x24A0 || engine_obj.stage == 0xC)) {
+    if (arg0->ext.main_54.unk8C->active == 0 && (background_objects[0].x_pos.i.hi == 0x24A0 || engine_obj.stage == 0xC)) {
         arg0->unk6 = 2;
     }
 }
