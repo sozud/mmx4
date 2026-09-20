@@ -50,7 +50,31 @@ void func_8005E8B4(struct MainObj* arg0)
     D_800FE19C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_34", func_8005E8F0);
+extern u32* D_800FE0FC;
+
+void func_8005E8F0(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    if (arg0->animation_step.fields.event == 1) {
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x13;
+            shot->unk40 = arg0->unk40;
+            shot->animation_table = &D_800FE0FC;
+            shot->unk42 = arg0->unk42;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk2 = 0;
+            shot->bg_offset = arg0->bg_offset;
+            shot->x_pos.val = arg0->x_pos.val - 0x10;
+            shot->y_pos.val = arg0->y_pos.val - 0x20;
+            shot->unk7C = arg0->backref;
+            SP_CUR_MAIN_OBJ->ext.main_34.unk82 = 0;
+            arg0->unk6++;
+        }
+    }
+}
 
 void func_8005E9C0(struct MainObj* arg0)
 {

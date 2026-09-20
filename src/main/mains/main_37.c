@@ -12,7 +12,27 @@ void func_8005FDBC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_37", func_8005FE1C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_80060144);
+extern void (*D_800FE6F0[])(struct MainObj*);
+extern char D_800FE6CC[];
+
+void func_80060144(struct MainObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_800FE6F0[self->unk5](self);
+    func_8002D9BC(self);
+    self->ext.main_37.saved_unk5 = self->unk5;
+    if (func_8002DD04(self) < 0) {
+        func_800AF808(BASE_OBJECT(self));
+        func_800C813C(0xA, &D_800FE6CC, self);
+        func_800BF60C(BASE_OBJECT(self), 0x13);
+        self->state = 2;
+    } else if (self->unk2 == 3 || func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+    } else {
+        self->state = 2;
+    }
+}
 
 void func_80060228(struct MainObj* arg0)
 {
@@ -74,7 +94,31 @@ void func_800603A0(struct MainObj* arg0)
     D_800FE70C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_37", func_800603DC);
+void func_800603DC(struct MainObj* arg0)
+{
+    s32 direction_mask;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 == 0) {
+        direction_mask = arg0->unk70 & 2;
+    } else {
+        direction_mask = arg0->unk70 & 1;
+    }
+    if (direction_mask != 0) {
+        arg0->unk6 = 2;
+        arg0->unk15 ^= 0x40;
+        arg0->unk20 = -arg0->unk20;
+        func_80015D60(arg0, 2);
+        return;
+    }
+    if ((arg0->unk70 & 8) == 0) {
+        arg0->unk20 = 0;
+        arg0->unk24 = FIXED(-1.5);
+        func_80015D60(arg0, 3);
+        arg0->unk6 = 1;
+    }
+}
 
 void func_800604A0(struct MainObj* arg0)
 {

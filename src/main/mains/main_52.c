@@ -99,7 +99,37 @@ void func_8006AC8C(struct MainObj* arg0)
     D_800FFFD8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006ACC8);
+void func_8006ACC8(struct MainObj* arg0)
+{
+    s8 event;
+    s32 variant;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    if (event == 2) {
+        variant = arg0->ext.main_52.unk8C;
+        arg0->ext.main_52.unk80 = 1;
+        arg0->unk24 = FIXED(6);
+        arg0->unk2C = FIXED(0.25);
+        if (variant == 0) {
+            if (arg0->unk15 != 0) {
+                arg0->unk20 = FIXED(1.8);
+            } else {
+                arg0->unk20 = FIXED(-1.8);
+            }
+        } else if (variant == 1) {
+            arg0->unk20 = 0;
+        } else if (variant == event) {
+            if (arg0->unk15 == 0) {
+                arg0->unk20 = FIXED(1.8);
+            } else {
+                arg0->unk20 = FIXED(-1.8);
+            }
+        }
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        arg0->unk6 = 1;
+    }
+}
 
 void func_8006AD84(struct MainObj* arg0)
 {

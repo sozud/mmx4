@@ -11,7 +11,35 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066DE8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066F1C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_47", func_800671D8);
+extern u16 D_800FF9F0[][2];
+
+void func_800671D8(struct MainObj* self)
+{
+    s16 timer7C;
+    s16 timer7E;
+    s32 tableIndex;
+    s32 x;
+    s32 y;
+    s32 frameArea[2];
+
+    timer7C = self->unk7C - 1;
+    self->unk7C = timer7C;
+    if (timer7C == 0) {
+        self->state = 3;
+        return;
+    }
+
+    timer7E = self->unk7E - 1;
+    self->unk7E = timer7E;
+    if (timer7E == 0) {
+        tableIndex = self->unk2;
+        y = (u16)self->ext.main_47.unk80->x_pos.i.hi + D_800FF9F0[tableIndex][0];
+        x = (u16)self->y_pos.i.hi + D_800FF9F0[tableIndex][1];
+        func_800B10E4(0x11, (s16)(y - 6), (s16)(x - 6),
+            (s16)(y + 6), (s16)(x + 6), 1);
+        self->unk7E = 10;
+    }
+}
 
 void func_800672BC(struct MainObj* arg0)
 {

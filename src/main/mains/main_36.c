@@ -11,7 +11,24 @@ void func_8005F510(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005F558);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005F758);
+extern void (*D_800FE4B4[])(struct MainObj*);
+
+void func_8005F758(struct MainObj* arg0)
+{
+    D_800FE4B4[arg0->unk5](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8D == 0) && (g_Player.unkBA == 0) && (func_8002D9BC(arg0) != 0) && (g_Player.unkBA != 0)) {
+        SP_CUR_MAIN_OBJ->ext.main_36.unk8D = 1;
+    }
+
+    SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5 = arg0->unk5;
+    func_8005FCD8(arg0);
+
+    if (func_8002B160(BASE_OBJECT(arg0)) == 1) {
+        arg0->state = 2;
+    }
+}
 
 void func_8005F844(struct MainObj* arg0)
 {
