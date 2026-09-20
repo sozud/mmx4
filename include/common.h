@@ -788,6 +788,8 @@ struct Main54Ext {
     u8 pad8A[2];
     struct EffectObj* unk8C;
     u8* unk90;
+    u8 unk94;
+    u8 unk95;
 };
 
 struct Main55Ext {
@@ -850,7 +852,7 @@ struct Main56Ext {
 struct Main57Ext {
     struct EffectObj* effect;
     struct ShotObj* shot;
-    struct Unk_unk68* unk88;
+    u8* script;
     u8 pad8C[4];
     u8 unk90;
     u8 unk91;
@@ -911,7 +913,9 @@ struct Main60Ext {
     u8 unk8E;
     u8 unk8F;
     u8 unk90;
-    u8 pad91[3];
+    u8 unk91;
+    u8 unk92;
+    u8 unk93;
     u8 unk94;
 };
 
@@ -2490,6 +2494,7 @@ extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
+extern u8 D_8013B838;
 extern u8 D_800FF7A4[];
 extern u8 D_800FF7A8[4];
 extern const u8* D_800FF6C8[];
@@ -3228,8 +3233,8 @@ extern struct QuadObj g_QuadObjects[0x20];
 extern struct ArchivePathData D_800EE54C;
 extern u8 D_800F8B30[];
 extern u8 D_800F8B34[][4];
-extern struct Unk_unk68 D_80100E78;
-extern struct Unk_unk68 D_80100E7C;
+extern u8 D_80100E78[4];
+extern u8 D_80100E7C[4];
 extern u16 D_801013C8[18];
 extern u16 D_801013EC[20];
 extern struct Unk_unk68 D_800F8BC4;

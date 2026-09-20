@@ -10,7 +10,7 @@ void func_800742AC(struct MainObj* arg0);
 void func_80072194(struct MainObj* arg0)
 {
     D_80101414[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    CollisionRelated(PLAYER_OBJECT(arg0));
     if (!(g_Player.unk5C & 0x7F)) {
         func_80074368(0x38);
     }
@@ -155,7 +155,26 @@ void func_80072CC4(struct MainObj* arg0)
     func_8007427C(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072D14);
+void func_80072D14(struct MainObj* self)
+{
+    u8 value;
+
+    if (*self->ext.main_57.script == 0xFF) {
+        func_800742AC(self);
+    }
+
+    value = *self->ext.main_57.script;
+    if ((value & 0xFF) == 3) {
+        func_80015D60(self, 0x1A);
+        self->unk7C = 0x1E;
+        self->unk6++;
+    } else {
+        self->unk5 = value;
+        self->unk6 = 0;
+    }
+
+    self->ext.main_57.script++;
+}
 
 void func_80072DB0(struct MainObj* arg0)
 {
@@ -170,7 +189,31 @@ void func_80072DF8(struct MainObj* arg0)
     D_80101484[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072E34);
+void func_80072E34(struct MainObj* arg0)
+{
+    s32 var_v1;
+
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk6 = (u8)arg0->unk6 + 1;
+    if (arg0->ext.main_57.unk92 != 0) {
+        func_80015D60(arg0, 0x17);
+        var_v1 = -0x18000;
+        if (arg0->unk15 != 0) {
+            var_v1 = 0x18000;
+        }
+        arg0->unk54 = (u8*)&D_80101340;
+        arg0->unk20 = var_v1;
+        arg0->unk50 = (u8*)&D_80101348;
+        func_8001540C(2, 0x93, arg0);
+        arg0->unk6 = 3;
+        return;
+    }
+    arg0->unk54 = (u8*)&D_8010133C;
+    arg0->unk50 = (u8*)&D_80101344;
+    func_80015D60(arg0, 1);
+}
 
 void func_80072EF8(struct MainObj* arg0)
 {
@@ -343,7 +386,25 @@ void func_8007353C(struct MainObj* arg0)
     arg0->unk7C = 0x80;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800735BC);
+void func_800735BC(struct MainObj* arg0)
+{
+    s16 timer;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_8001540C(2, 0x92, arg0);
+        func_80028BAC(0x18, 3, 1);
+    }
+    if (arg0->animation_step.fields.event != 2) {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+    timer = arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer <= 0) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80073650(struct MainObj* arg0)
 {
@@ -427,7 +488,7 @@ void func_80073878(struct MainObj* arg0)
 
 void func_800738EC(struct MainObj* arg0)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (--arg0->unk7C == 0) {
         arg0->unk5 = 3;
         arg0->unk6 = 0;
@@ -525,7 +586,32 @@ void func_80073E44(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073E80);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073F90);
+void func_80073F90(struct MainObj* arg0)
+{
+    struct VisualObj* temp_v0;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 < 0) {
+        arg0->unk67 = -1;
+    }
+    if ((arg0->unk67 == -1) && (arg0->unk70 & 8)) {
+        func_80015D60(arg0, 0x14);
+        if (arg0->ext.main_57.unk92 == 0) {
+            temp_v0 = find_free_visual_obj();
+            if (temp_v0 != 0) {
+                temp_v0->active = 0x41;
+                temp_v0->id = 0x18;
+                temp_v0->unk2 = 0x50;
+                temp_v0->unk15 = arg0->unk15;
+                temp_v0->unk50 = PLAYER_OBJECT(arg0);
+                arg0->ext.main_57.unk92 = 1;
+            }
+        }
+        arg0->unk67 = 0;
+        func_80028BAC(0x10, 3, 1);
+        arg0->unk6++;
+    }
+}
 
 void func_80074068(struct MainObj* arg0)
 {
@@ -545,9 +631,9 @@ void func_800740CC(struct MainObj* arg0)
         return;
     }
     if (arg0->unk5C >= 0x18) {
-        arg0->ext.main_57.unk88 = &D_80100E78;
+        arg0->ext.main_57.script = D_80100E78;
     } else {
-        arg0->ext.main_57.unk88 = &D_80100E7C;
+        arg0->ext.main_57.script = D_80100E7C;
     }
     arg0->unk5 = 3;
     arg0->unk6 = 0;
@@ -622,7 +708,7 @@ void func_800742AC(struct MainObj* arg0)
     rnd = gr & 0xF;
     while (i < 4) {
         if (rnd < ((u8*)byte_offset)[i]) {
-            arg0->ext.main_57.unk88 = choices[i];
+            arg0->ext.main_57.script = choices[i];
             return;
         }
         i++;

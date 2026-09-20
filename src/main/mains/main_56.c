@@ -9,7 +9,31 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FD50);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FEC8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FFC0);
+void func_8006FFC0(struct MainObj* arg0)
+{
+    struct MainObj* obj;
+    u8 counter;
+
+    arg0->on_screen = 1;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk7C = 0x1E;
+        arg0->unk24 = FIXED(1);
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        func_80015D60(arg0, 0x26);
+        engine_obj.enable_boss = 1;
+        engine_obj.unk25 = 1;
+        engine_obj.boss_ptr = arg0;
+        D_8013B838 = 0;
+        do {
+            obj = func_8006FB20(arg0, D_80100D40[D_8013B838], 0x18);
+            obj->unk24 = FIXED(0.875);
+            counter = D_8013B838 + 1;
+            D_8013B838 = counter;
+        } while ((u32)(counter & 0xFF) < 3U);
+        func_8001540C(2, 0xAD, arg0);
+    }
+}
 
 void func_800700AC(struct MainObj* arg0)
 {
@@ -23,7 +47,26 @@ void func_800700AC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070118);
+void func_80070118(struct MainObj* arg0)
+{
+    arg0->on_screen = 1;
+    if (arg0->unk6 == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            if (engine_obj.stage == 5) {
+                ((void (*)(s32, s32, s32))func_8002217C)(
+                    0xD, 0xFF, (s32)(s8)ENGINE_UNK2E);
+                ENGINE_UNK2E = 1;
+            }
+            arg0->unk6 = (u8)arg0->unk6 + 1;
+        }
+    } else if (abc_object.unkC == 0) {
+        arg0->unk6 = 0;
+        arg0->unk7C = 2;
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        func_800921E8(4);
+    }
+}
 
 void func_800701DC(struct MainObj* arg0)
 {
@@ -219,10 +262,29 @@ void func_80070CB0(struct MainObj* arg0)
 void func_80070CDC(struct MainObj* arg0)
 {
     D_80100D9C[arg0->unk6](arg0);
-    func_80015DC8(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070D2C);
+void func_80070D2C(struct MainObj* self)
+{
+    if (self->unk7 == 0) {
+        self->unk60 = 9;
+        self->unk50 = &D_8010085C;
+        self->unk54 = &D_80100860;
+        self->unk24 = FIXED(9);
+        self->unk20 = 0;
+        self->ext.main_56.flags &= 0xFC;
+        self->unk7++;
+        func_80015D60(self, 7);
+        func_8001540C(2, 0xAF, self);
+    }
+
+    if (self->on_screen == 0) {
+        self->unk7 = 0;
+        self->unk7C = 0x3C;
+        self->unk6++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070DDC);
 
@@ -256,8 +318,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800713A4);
 void func_80071468(struct MainObj* arg0)
 {
     D_80100DC8[arg0->unk6](arg0);
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
 }
 
 void func_800714C0(struct MainObj* arg0)
@@ -267,7 +329,28 @@ void func_800714C0(struct MainObj* arg0)
     arg0->unk24 -= arg0->unk2C;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800714F4);
+void func_800714F4(struct MainObj* self)
+{
+    s32 value = -0x50000;
+
+    self->unk60 = 7;
+    self->unk50 = &D_80100868;
+    self->unk54 = &D_8010086C;
+    self->unk6++;
+
+    if (self->unk15 != 0) {
+        value = 0x50000;
+    }
+
+    self->unk24 = FIXED(-9.5);
+    self->unk20 = value;
+    self->unk28 = 0;
+    self->unk2C = FIXED(-0.2578125);
+    self->ext.main_56.flags &= 0xFD;
+
+    func_80015D60(self, 4);
+    func_8001540C(2, 0xAF, self);
+}
 
 void func_80071598(struct MainObj* arg0)
 {
@@ -279,7 +362,21 @@ void func_80071598(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800715D4);
+void func_800715D4(struct MainObj* entity)
+{
+    if (entity->on_screen == 0) {
+        entity->unk5 = 2;
+        entity->unk6 = 0;
+
+        if (entity->x_pos.i.hi < background_objects[entity->bg_offset].x_pos.i.hi) {
+            entity->x_pos.i.hi = background_objects[entity->bg_offset].unk1E + 0x40;
+        } else {
+            entity->x_pos.i.hi = background_objects[entity->bg_offset].unk1E + 0x120;
+        }
+
+        entity->y_pos.i.hi = background_objects[entity->bg_offset].y_pos.i.hi - 0x50;
+    }
+}
 
 void func_8007168C(struct MainObj* arg0)
 {

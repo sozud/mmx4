@@ -328,7 +328,33 @@ void func_8006E2E4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E334);
+void func_8006E334(struct MainObj* arg0)
+{
+    if (func_8009227C() == 0) {
+        if (engine_obj.stage == 8) {
+            s16* background_object = &background_objects[0].unk26;
+
+            if (*background_object != 0x24B0) {
+                *background_object -= 1;
+            }
+        }
+
+        if (--arg0->unk7E == 0) {
+            func_8001540C(0, 0xE, 0);
+            arg0->unk7E = 3;
+        }
+
+        if (++arg0->unk5C == 0x30) {
+            arg0->ext.main_54.unk89 = 0;
+            arg0->ext.main_54.unk95 = 1;
+            func_8006EAA8(arg0);
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            arg0->ext.main_54.unk90--;
+            func_80036B18();
+        }
+    }
+}
 
 void func_8006E414(struct MainObj* arg0)
 {
@@ -370,7 +396,24 @@ void func_8006E674(struct MainObj* arg0)
     D_801006A0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E6B0);
+void func_8006E6B0(struct AnimatedObj* self)
+{
+    func_80015DC8(self);
+    if (self->animation_step.fields.event != 0) {
+        if (self->unk15 == 0) {
+            self->x_vel.val = FIXED(-1.75);
+        } else {
+            self->x_vel.val = FIXED(1.75);
+        }
+        self->y_vel.val = FIXED(7.4375);
+        self->unk28 = 0;
+        self->unk2C = FIXED(0.21875);
+        func_8002B694(self);
+        func_8001540C(2, 0x81, self);
+        func_80015D60(self, 2);
+        self->unk6 = 1;
+    }
+}
 
 void func_8006E750(struct MainObj* arg0)
 {
@@ -387,7 +430,22 @@ void func_8006E750(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E7CC);
+void func_8006E7CC(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if ((func_8002D724(
+             PLAYER_OBJECT(arg0),
+             (s16)((u16)arg0->x_pos.i.hi + arg0->unk68->unk0),
+             (s16)(arg0->unk68->unk3 + ((u16)arg0->y_pos.i.hi + arg0->unk68->unk1) + 0x10))
+            & 0xFF)
+        == 0x38) {
+        func_8001540C(2, 0x88, arg0);
+        func_80028BAC(0x10, 4, 2);
+        func_80015D60(arg0, 3);
+        arg0->unk6 = 3;
+    }
+}
 
 void func_8006E88C(struct MainObj* arg0)
 {
