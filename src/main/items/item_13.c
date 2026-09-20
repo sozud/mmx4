@@ -50,7 +50,34 @@ void func_800C369C(struct ItemObj* arg0)
     func_800C37C4(arg0, engine, player);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C36E8);
+void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
+    struct PlayerObj* player)
+{
+    s16 y_diff;
+    struct Unk_unk68* player_bounds;
+    struct Unk_unk68* item_bounds;
+
+    y_diff = (u16)self->y_pos.i.hi - (u16)player->y_pos.i.hi;
+    if (y_diff >= 0) {
+        player_bounds = player->unk68;
+        item_bounds = self->unk68;
+        if (y_diff >= player_bounds->unk3 + player_bounds->unk1 + (item_bounds->unk3 - item_bounds->unk1)) {
+            if (engine->unk10 == 0) {
+                engine->unk10 = 1;
+                engine->unk11 = 1;
+                engine->unk12 = 1;
+                engine->unk13 = 1;
+                engine->unk14 = 1;
+            }
+            func_80015D60(self, 1);
+            func_8001540C(5, 2, self);
+            if (self->unk2 != 0) {
+                background_objects[0].unk28 = 0x100;
+            }
+            self->unk5++;
+        }
+    }
+}
 
 void func_800C37C4(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)

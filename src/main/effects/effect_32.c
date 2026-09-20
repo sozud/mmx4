@@ -15,7 +15,7 @@ void func_800BC554(struct EffectObj* arg0)
 
 void func_800BC568(struct EffectObj* arg0)
 {
-    func_800BC63C();
+    func_800BC63C(arg0);
     if (arg0->ext.effect_32.unk15 != 0) {
         func_800BC5D4(arg0);
     }
@@ -40,7 +40,23 @@ void func_800BC5D4(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_32", func_800BC63C);
+void func_800BC63C(struct EffectObj* self)
+{
+    s16 x_pos;
+    s32 delta;
+
+    x_pos = self->x_pos.i.hi;
+    delta = g_Player.x_pos.i.hi - x_pos;
+    if (delta >= 0 ? delta < 0x30 : (x_pos - g_Player.x_pos.i.hi) < 0x30) {
+        if (self->ext.effect_32.unk15 != 1 && self->ext.effect_32.palette.fields.step == 0) {
+            func_800BC6FC(self, 0);
+            self->ext.effect_32.unk15 = 1;
+        }
+    } else if (self->ext.effect_32.unk15 == 1 && self->ext.effect_32.palette.fields.step == 0) {
+        func_800BC6FC(self, 1);
+        self->ext.effect_32.unk15 = -1;
+    }
+}
 
 void func_800BC6FC(struct EffectObj* arg0, s32 arg1)
 {

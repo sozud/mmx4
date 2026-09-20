@@ -205,7 +205,30 @@ void func_8008B898(struct MainObj* arg0)
     func_8008AEC4(BASE_OBJECT(arg0), 2);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B8B8);
+void func_8008B8B8(struct MainObj* self)
+{
+    s32 result;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_80104F10[self->unk5](self);
+    CollisionRelated(PLAYER_OBJECT(self));
+    func_8002D9BC(self);
+    result = func_8002DD04(self);
+    if (result < 0) {
+        func_800C813C(7, D_80104F08, self);
+        self->state = 2;
+        self->unk5 = 0;
+    } else if (result != 0) {
+        func_80089B58(VISUAL_OBJECT(self), 8);
+    }
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    self->state = 2;
+    self->unk5 = 0;
+}
 
 void func_8008B984(struct MainObj* arg0)
 {

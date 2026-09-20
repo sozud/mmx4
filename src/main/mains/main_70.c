@@ -40,7 +40,28 @@ void func_80088D8C(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088E04);
+void func_80088E04(struct MainObj* self)
+{
+    s16 timer;
+    u8 count;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if (timer == 0) {
+        func_8001540C(0, 0xE, NULL);
+        self->unk7C = 3;
+    }
+    count = self->unk5C + 1;
+    self->unk5C = count;
+    if ((s8)count == 0x30) {
+        func_80036B18();
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->unk7C = 0xA;
+        self->state++;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088EA4);
 
@@ -52,7 +73,30 @@ void func_80088F78(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088FF0);
+void func_80088FF0(struct MainObj* self)
+{
+    u8 i;
+
+    for (i = 0; i < 4U; i++) {
+        D_8013E188[i] = -1;
+    }
+    g_FilterModeR = 0;
+    g_FilterModeG = 0;
+    g_FilterModeB = 0;
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    self->ext.main_70.unk86 = 0;
+    self->ext.main_70.unk80 = 0x28;
+    self->ext.main_70.unk82 = 4;
+    engine_obj.enable_boss = 0;
+    engine_obj.boss_ptr = NULL;
+    self->unk7C = 0x28;
+    self->unk7E = 5;
+    self->unk42 &= ~0x8000;
+    engine_obj.character_state.bytes[0] = 1;
+    self->unk5++;
+}
 
 void func_800890B0(struct MainObj* arg0)
 {
@@ -103,7 +147,27 @@ void func_800891C8(struct MainObj* arg0)
     arg0->unk5++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_8008924C);
+void func_8008924C(struct MainObj* self)
+{
+    s16 timer;
+
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if (timer == 0) {
+        self->unk5++;
+        return;
+    }
+    if ((D_80141BD8.unk0 & 7) == 0) {
+        self->y_pos.i.hi = (get_random() & 0x7F) + 0x360;
+        func_800C813C(5, &D_801049B0, self);
+    }
+    timer = self->unk7E - 1;
+    self->unk7E = timer;
+    if (timer == 0) {
+        func_800AF878(BASE_OBJECT(self), 1, 0x20, 0x20);
+        self->unk7E = 5;
+    }
+}
 
 void func_80089314(struct MainObj* arg0)
 {

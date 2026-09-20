@@ -74,7 +74,28 @@ void func_80096794(struct WeaponObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06", func_80096834);
+void func_80096834(struct WeaponObj* self, struct PlayerObj* player,
+    struct PlayerObj* owner)
+{
+    struct QuadObj* quad;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x18, 0x18);
+    if ((player->unk8F != 0) && (player->unk96 == 6)) {
+        self->unk50 = &D_80108994;
+        self->ext.weapon_6.lifetime = 0x3C;
+        self->unk64 = 1;
+        self->ext.weapon_6.timer = 6;
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = 1;
+            quad->id = 9;
+            quad->unk2 = (u8)self->unk2;
+            quad->unk5C = owner;
+        }
+        self->state = (u8)self->state + 1;
+    }
+}
 
 void func_800968F8(struct WeaponObj* arg0)
 {
