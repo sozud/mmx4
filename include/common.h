@@ -959,7 +959,7 @@ struct Main64Ext {
 };
 
 struct Main74Ext {
-    u8 pad80[0xC];
+    struct MainObj* children[3];
     u8 unk8C;
     u8 effect_state;
     u8 pad8E;
@@ -1114,6 +1114,7 @@ struct Main68Ext {
     u8 unk8F;
     u8 unk90;
     u8 unk91;
+    s8 unk92;
 };
 
 struct Main69Ext {
@@ -3477,6 +3478,10 @@ extern struct Unk_unk68 D_801044FC;
 extern struct Unk_unk68 D_80104500;
 extern struct Unk_unk68 D_80105360;
 extern struct Unk_unk68 D_80105364;
+extern struct Unk_unk68 D_8010535C;
+extern struct Unk_unk68 D_80105368;
+extern struct Unk_unk68 D_8010536C;
+extern struct Unk_unk68 D_80105370;
 extern u8 D_801058D4[8];
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
@@ -3495,6 +3500,7 @@ extern struct Unk_unk68 D_80102958;
 extern struct Unk_unk68 D_8010295C;
 extern struct Unk_unk68 D_80102960;
 extern struct Unk_unk68 D_80102964;
+extern struct Unk_unk68 D_80108724[];
 extern struct Unk_unk68 D_80102A60;
 extern struct Unk_unk68 D_80102A64;
 extern struct Unk_unk68 D_80102A68;
