@@ -2,7 +2,41 @@
 // 80097EEC..800981CC
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80097EEC);
+void func_80097EEC(struct WeaponObj* arg0)
+{
+    s32 var_a0;
+    struct PlayerObj* ptr = &g_Player;
+
+    var_a0 = 0;
+    if (g_Player.unk5C == 0) {
+        var_a0 = 1;
+    }
+    if (g_Player.unkC3 != 0) {
+        var_a0 = 1;
+    }
+    if (g_Player.unkBF != 0) {
+        var_a0 = 1;
+    }
+    if (arg0->unk84.word != g_Player.unk17) {
+        var_a0 = 1;
+    }
+    if (var_a0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    if (arg0->state != 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.relative_step == 0) {
+            ZeroObjectState(OBJECT_HEADER(arg0));
+        } else {
+            func_80098138(arg0, ptr);
+        }
+    } else {
+        func_80097FC4(arg0, ptr);
+        func_80098138(arg0, ptr);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80097FC4);
 

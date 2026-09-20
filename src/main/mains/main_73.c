@@ -110,7 +110,25 @@ void func_8008C240(struct MainObj* arg0)
     func_8001540C(2, 0xF4, NULL);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C27C);
+void func_8008BF54(struct MainObj*, s32, s32);
+
+void func_8008C27C(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk7C = 0x32;
+        arg0->unk6++;
+        func_8008BF00(arg0);
+        return;
+    }
+
+    if (arg0->animation_step.fields.event != 0) {
+        func_8008BF00(arg0);
+        func_8008BF54(arg0, 0, 0);
+        func_8001540C(2, 0xF5, 0);
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8008C30C(struct MainObj* arg0)
 {
