@@ -6776,7 +6776,7 @@ struct Unk_unk68 D_80104F08[2] = {
     { 28, 29, 30, 0 },
 };
 
-void (*D_80104F10[11])() = {
+void (*D_80104F10[11])(struct MainObj*) = {
     func_8009216C,
     func_8008B898,
     func_8008B020,

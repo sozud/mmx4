@@ -2,7 +2,34 @@
 // 800C62DC..800C7164
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C62DC);
+void func_800C62DC(struct ItemObj* self)
+{
+    struct MainObj* linked_object;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (self->unk2 != 6) {
+        if (self->state == 0) {
+            func_800C63BC(self);
+            return;
+        }
+        func_800C6680(self);
+        return;
+    }
+    linked_object = self->unk7C.object;
+    if (linked_object->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    if (self->state == 0) {
+        self->unk68 = &D_8010D3CC;
+        self->unk75 = 1;
+        self->x_pos.i.hi = linked_object->x_pos.i.hi;
+        self->y_pos.i.hi = linked_object->y_pos.i.hi - 0x4E;
+        self->state++;
+    }
+    func_8002E184(self);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C63BC);
 
@@ -183,7 +210,7 @@ struct Item26AnimationStep {
 };
 
 u8 D_8010D3C8[4] = { 0, 0, 0x10, 0x0C };
-u8 D_8010D3CC[4] = { 0, 0, 0x20, 0x0C };
+struct Unk_unk68 D_8010D3CC = { 0, 0, 0x20, 0x0C };
 u8 D_8010D3D0[8] = { 1, 2, 4, 4, 8, 0, 0, 0 };
 u8 D_8010D3D8[8] = { 3, 4, 5, 5, 6, 0, 0, 0 };
 

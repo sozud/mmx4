@@ -25,7 +25,25 @@ void func_800C93C8(struct MiscObj* arg0)
     arg0->state = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_07", func_800C9450);
+void func_800C9450(struct MiscObj* self)
+{
+    s16 x_pos;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    self->x_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->x;
+    self->y_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->y;
+    if (self->unk2 != 0) {
+        if (self->unk15 != 0) {
+            x_pos = (u16)self->x_pos.i.hi + 3;
+        } else {
+            x_pos = (u16)self->x_pos.i.hi - 3;
+        }
+        self->x_pos.i.hi = x_pos;
+    }
+    if (self->animation_step.fields.event != 0) {
+        self->state = 2;
+    }
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+}
 
 void func_800C94F0(struct MiscObj* arg0)
 {

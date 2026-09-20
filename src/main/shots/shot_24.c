@@ -108,7 +108,25 @@ void func_8009E690(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E718);
+void func_8009E718(struct ShotObj* self)
+{
+    s8 subtype;
+    s8 timer;
+    struct WeaponObj* owner;
+
+    func_8002B718(MOVING_OBJECT(self));
+    subtype = self->unk2;
+    owner = self->unk7C;
+    if ((owner->x_pos.i.hi + D_801090E0[subtype]) < self->x_pos.i.hi) {
+        owner->unk7 = (u8)owner->unk7 | D_801090F4[subtype];
+    }
+    timer = self->unk7 - 1;
+    self->unk7 = timer;
+    if (timer == 0) {
+        self->unk7 = 0x10;
+        self->unk5 = 6;
+    }
+}
 
 void func_8009E7B4(struct ShotObj* arg0)
 {
@@ -127,7 +145,20 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E7EC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E8E0);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E9EC);
+void func_8009E9EC(struct ShotObj* self)
+{
+    if ((self->unk7C->x_pos.i.hi + *D_801090D4[self->unk2]) < self->x_pos.i.hi) {
+        self->unk61 = 0;
+        self->unk7C->active = (u8)self->unk7C->active & D_80109100[self->unk2];
+        if (((u8)self->unk7C->active & 0xF) == (D_801090F4[self->unk2] ^ 0xF)) {
+            self->unk5 = 3;
+            return;
+        }
+        self->unk5 = 0xA;
+        return;
+    }
+    func_8002B718(MOVING_OBJECT(self));
+}
 
 void func_8009EAA4(struct ShotObj* arg0)
 {

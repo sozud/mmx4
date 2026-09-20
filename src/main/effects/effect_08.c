@@ -142,7 +142,28 @@ void func_800B7520(struct EffectObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B7528);
+void func_800B7528(struct EffectObj* self)
+{
+    s8 value;
+
+    value = 0;
+    for (;;) {
+        if ((g_Player.x_pos.i.hi - D_8010B4D0[value]) >= 0) {
+            if ((value = value + 1) < 3) {
+                continue;
+            }
+        }
+        break;
+    }
+    if ((value == 2) && (g_Player.y_pos.i.hi >= 0x128)) {
+        value = 4;
+    }
+    self->ext.unk_effect.unk14 = value;
+    if (value != self->ext.unk_effect.unk15) {
+        self->unk5 = value;
+        self->unk6 = 0;
+    }
+}
 
 s16 D_8010B4D0[4] = { 0x0760, 0x0808, 0x1700, 0 };
 

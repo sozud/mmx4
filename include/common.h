@@ -1128,14 +1128,23 @@ struct Main68Ext {
     s8 unk92;
 };
 
+union Main69State {
+    u32 word;
+    struct {
+        u8 unk8C;
+        u8 unk8D;
+        u8 unk8E;
+        u8 unk8F;
+    } bytes;
+};
+
 struct Main69Ext {
     struct EffectObj* effect;
     struct MainObj* linked_object;
     u8* script;
-    u8 unk8C;
-    u8 unk8D;
-    u8 unk8E;
-    u8 unk8F;
+    union Main69State state;
+    u32 unk90;
+    u32 unk94;
 };
 
 struct Main67Ext {
@@ -1152,7 +1161,12 @@ struct Main66Ext {
     u8 unk85;
     u8 unk86;
     u8 unk87;
-    u8 pad88[12];
+    u8 pad88;
+    u8 unk89;
+    u8 unk8A;
+    u8 pad8B;
+    u8 unk8C;
+    u8 pad8D[7];
     struct MainObj* unk94;
 };
 
@@ -2658,9 +2672,6 @@ struct QuadMotionData {
 extern struct QuadMotionData D_8010F77C[21];
 extern s8 D_8010F878[4];
 extern u8 D_8013B960[0x10];
-#ifdef VERSION_JP
-extern u8 D_8013BA40_jp[0x10];
-#endif
 
 struct QuadUnkExt3 {
     u8 unk38;
@@ -3535,6 +3546,7 @@ extern struct Unk_unk68 D_80108004[];
 extern struct Unk_unk68 D_80100D38[2];
 extern struct Unk_unk68 D_80105260;
 extern struct Unk_unk68 D_80105264;
+extern struct Unk_unk68 D_801049B0[2];
 extern u8 D_800FC7B4[4];
 extern u8 D_800FE2A4[8];
 extern u8** D_801002A4[3];
@@ -3552,6 +3564,7 @@ extern s16 D_8010C0C4[2][2];
 extern u16 D_8010BFE8[16];
 extern u8 D_8010C158[8];
 extern s16 D_8010CB24[2];
+extern s16 D_8010B4D0[4];
 extern u8 D_80108BA4[];
 extern struct Unk_unk68 D_80108704[];
 extern struct Unk_unk68 D_80108718[];
@@ -3560,11 +3573,15 @@ extern struct Unk_unk68 D_801087E8[];
 extern struct Unk_unk68 D_801087CC[];
 extern struct Unk_unk68 D_801087FC[];
 extern struct Unk_unk68 D_80108800[];
+extern struct Unk_unk68 D_80108994[];
 extern struct Unk_unk68 D_801089FC[];
 extern struct Unk_unk68 D_80108A50[];
 extern u8 D_8010889C[];
 extern u32* D_8011C018[22];
 extern s16 D_801090D4[3][2];
+extern s16 D_801090E0[4];
+extern u8 D_801090F4[4];
+extern u8 D_80109100[4];
 extern struct Unk_unk68 D_801096B0;
 extern struct Unk_unk68 D_801096C0;
 extern struct Unk_unk68 D_801096C4;
@@ -3580,11 +3597,14 @@ extern u8 D_801099E0[4];
 extern u8 D_801099E4[4];
 extern u8 D_80109DA4[4];
 extern struct ObjectHeader* D_8013B8A8;
+extern u16 D_8013B858[0x10];
+extern s16 D_8013B878[0x10];
 extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];
 extern struct ShotObj* D_8013B8C0;
 extern struct ShotObj* D_8013B8C4;
 extern struct Unk_unk68 D_8010D0FC;
+extern struct Unk_unk68 D_8010D3CC;
 extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
@@ -3872,6 +3892,8 @@ extern void (*D_8010FC90[])();
 extern struct Unk14* D_8010B1F8[];
 extern s32 D_8010B23C[][4];
 extern s32 D_8013E188[4];
+extern struct Unk_unk68 D_80104F08[2];
+extern void (*D_80104F10[])(struct MainObj*);
 // extern s32 D_8013E18C;
 // extern s32 D_8013E190;
 // extern s32 D_8013E194;
@@ -3914,7 +3936,11 @@ void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct ShotObj*);
 s32 func_8002DD04(struct MainObj*);
-void func_800BC63C(void);
+void func_800BC63C(struct EffectObj*);
+void func_800BC6FC(struct EffectObj*, s32);
+void func_800C63BC(struct ItemObj*);
+void func_800C6680(struct ItemObj*);
+void func_80089B58(struct VisualObj*, u8);
 void func_800BDBD4(void);
 extern union CdSectorBuffer D_8012F4B4;
 extern RECT D_80137CFC;

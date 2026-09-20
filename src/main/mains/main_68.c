@@ -84,7 +84,34 @@ void func_80083574(struct MainObj* arg0)
     D_80104340[arg0->unk5](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800835B0);
+void func_800835B0(struct MainObj* self)
+{
+    s16 x_pos;
+
+    self->on_screen = 0;
+    self->unk6++;
+    self->x_pos.val = g_Player.x_pos.val;
+    x_pos = self->x_pos.i.hi;
+    if (x_pos < 0x470) {
+        self->x_pos.i.hi = 0x470;
+    } else if (x_pos >= 0x531) {
+        self->x_pos.i.hi = 0x530;
+    }
+    self->y_pos.val = FIXED(0x150);
+    self->unk7C = 5;
+    self->ext.main_68.unk92 = 2;
+    self->ext.main_68.unk8C = 0;
+    self->ext.main_68.unk8E = 0;
+    self->unk7E = 4;
+    if (self->x_pos.i.hi >= 0x4D1) {
+        self->unk15 = 0;
+    } else {
+        self->unk15 = 0x40;
+    }
+    func_80015D60(self, 0);
+    func_80015D60(self->ext.main_68.unk80, 5);
+    func_8001540C(2, 3, self);
+}
 
 void func_80083688(struct MainObj* arg0)
 {
@@ -772,7 +799,27 @@ void func_800852C4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800853A4);
+void func_800853A4(struct MainObj* self)
+{
+    struct MainObj* target;
+
+    target = self->ext.main_68.effect;
+    self->on_screen = 0;
+    if (target->active != 0) {
+        if (target->unk7 == 0) {
+            if (self->unk7E-- == 0) {
+                self->unk7E = 5;
+                self->unk42 ^= 0x8000;
+            }
+            is_on_screen(BASE_OBJECT(self));
+        }
+    } else {
+        func_80036AE4(0x14, 0x40);
+        self->unk7C = 0x78;
+        self->unk5++;
+        background_objects[0].unk28 += 0x100;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085460);
 

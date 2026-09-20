@@ -89,7 +89,38 @@ void func_800BDA94(void* arg0)
     } while (var_s0 < 2U);
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDB10);
+void func_800BDB10(struct EffectObj* self)
+{
+    struct MiscObj* misc;
+    s8 state;
+    u8 subtype;
+
+    if (self->ext.effect_38.unk16 == 0 || (self->unk2 & 1) != 0 || engine_obj.substage != 0) {
+        return;
+    }
+    misc = find_free_misc_obj();
+    if (misc == NULL) {
+        return;
+    }
+    misc->active = 0x41;
+    misc->id = 0x21;
+    misc->ext.misc_7.position = self;
+    subtype = self->ext.effect_38.unk17;
+    switch (subtype) {
+    case 0:
+        state = 2;
+        break;
+    case 1:
+        state = 3;
+        break;
+    case 2:
+        state = 4;
+        break;
+    default:
+        return;
+    }
+    misc->unk2 = state;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDBD4);
 
