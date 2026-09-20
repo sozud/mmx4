@@ -41,7 +41,20 @@ void func_800790AC(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_800790E8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_800791D4);
+void func_800791D4(struct MainObj* arg0)
+{
+    if (*arg0->ext.main_61.script == 0) {
+        s16* y_pos = &background_objects[g_Player.bg_offset].y_pos.i.hi;
+        engine_obj.enable_boss = 1;
+        engine_obj.unk25 = 0;
+        engine_obj.boss_ptr = arg0;
+        arg0->y_pos.i.hi = *y_pos - 0x20;
+        arg0->ext.main_61.pad8B = 1;
+        func_8001540C(2, 0xA7, arg0);
+        arg0->unk7C = 2;
+        arg0->unk6 = 2;
+    }
+}
 
 void func_8007927C(struct MainObj* arg0)
 {
@@ -127,7 +140,42 @@ void func_80079644(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_800796DC);
+void func_800796DC(struct MainObj* self)
+{
+    s16 temp_v0;
+    s8 state;
+
+    temp_v0 = self->unk7C - 1;
+    self->unk7C = temp_v0;
+    if (temp_v0 != 0) {
+        return;
+    }
+
+    if (self->ext.main_61.unk85 != 0) {
+        if (self->unk2 == 0) {
+            if (self->ext.main_61.unk8A != 0) {
+                self->unk6 = 3;
+                return;
+            }
+        } else if (self->ext.main_61.unk94->ext.main_61.unk8A != 0) {
+            self->ext.main_61.unk86 = 0xFF;
+            self->unk15 = self->ext.main_61.unk94->unk15;
+            self->unk6 = 4;
+            return;
+        }
+
+        self->unk2C = 0x3800;
+        state = 5;
+    } else {
+        self->unk2C = 0x3800;
+        state = 2;
+    }
+
+    self->unk20 = 0;
+    self->unk28 = 0;
+    self->unk24 = 0;
+    self->unk6 = state;
+}
 
 void func_80079794(struct MainObj* arg0)
 {
@@ -166,7 +214,39 @@ void func_80079914(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007996C);
+void func_8007996C(struct MainObj* self)
+{
+    struct MainObj* parent;
+    u16 timer;
+    s16 backgroundY;
+    int drawFlags;
+    int one;
+
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if ((timer << 16) == 0) {
+        parent = self->ext.main_61.unk94;
+        if (parent->unk5 != 6) {
+            backgroundY = background_objects[g_Player.bg_offset].x_pos.i.hi;
+            if (self->x_pos.i.hi < backgroundY + 0xA0) {
+                drawFlags = 0x40;
+                self->unk15 = drawFlags;
+            } else {
+                self->unk15 = 0;
+            }
+        } else {
+            drawFlags = parent->unk15 ^ 0x40;
+            self->unk15 = drawFlags;
+        }
+        one = 1;
+        self->ext.main_61.unk85 = one;
+        func_80015D60(self, 2);
+        self->unk5 = 6;
+        self->ext.main_61.pad8D[1] = one;
+        self->ext.main_61.unk87 = 0;
+        self->unk6 = 7;
+    }
+}
 
 void func_80079A50(struct MainObj* arg0)
 {
@@ -241,7 +321,48 @@ void func_8007A168(struct MainObj* arg0)
     arg0->unk6 = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A1EC);
+void func_8007A1EC(struct MainObj* arg0)
+{
+    u16 timer;
+    u16 timer2;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 == 0) {
+        if ((arg0->unk70 & 2) == 0) {
+            goto done;
+        }
+        timer = arg0->unk7C;
+        arg0->unk15 = 0x40;
+        timer--;
+        arg0->unk7C = timer;
+        if ((timer << 16) == 0) {
+            goto destroy;
+        }
+        goto update;
+    }
+
+    if ((arg0->unk70 & 1) == 0) {
+        goto done;
+    }
+    timer2 = arg0->unk7C;
+    arg0->unk15 = 0;
+    timer2--;
+    arg0->unk7C = timer2;
+    if ((timer2 << 16) != 0) {
+        goto update;
+    }
+
+destroy:
+    func_8007B6BC(ANIMATED_OBJECT(arg0));
+    goto done;
+
+update:
+    func_80015D60(arg0, 2);
+    arg0->unk6 = 2;
+
+done:;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A2B4);
 
@@ -409,7 +530,28 @@ void func_8007B180(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007B1BC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007B2FC);
+void func_8007B2FC(struct MainObj* arg0)
+{
+    s32 flags;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if ((arg0->unk7 == 0) && (arg0->unk24 < 0)) {
+        arg0->unk7 = 1;
+        func_80015D60(arg0, 3);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 == 0) {
+        flags = arg0->unk70 & 2;
+    } else {
+        flags = arg0->unk70 & 1;
+    }
+    if (flags != 0) {
+        arg0->ext.main_61.pad88 = 0;
+        func_80015D60(arg0, 6);
+        arg0->unk7C = 0x28;
+        arg0->unk6 = 2;
+    }
+}
 
 void func_8007B3A8(struct MainObj* arg0)
 {

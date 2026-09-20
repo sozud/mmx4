@@ -920,7 +920,8 @@ struct Main60Ext {
 };
 
 struct Main61Ext {
-    u8 pad80[5];
+    s8* script;
+    u8 pad84;
     u8 unk85;
     u8 unk86;
     u8 unk87;
@@ -3485,15 +3486,21 @@ extern struct Unk_unk68 D_80107B78[];
 extern struct Unk_unk68 D_801013BC[3];
 extern s32 D_80101CB8[3];
 extern struct Unk_unk68 D_80101CA8;
+extern struct Unk_unk68 D_801016B8;
+extern struct Unk_unk68 D_801016C0;
+extern struct Unk_unk68 D_80102948;
 extern struct Unk_unk68 D_80102950;
 extern struct Unk_unk68 D_80102954;
 extern struct Unk_unk68 D_80102958;
 extern struct Unk_unk68 D_8010295C;
+extern struct Unk_unk68 D_80102960;
+extern struct Unk_unk68 D_80102964;
 extern struct Unk_unk68 D_80102A60;
 extern struct Unk_unk68 D_80102A64;
 extern struct Unk_unk68 D_80102A68;
 extern struct Unk_unk68 D_80102A6C;
 extern struct Unk_unk68 D_80102A70;
+extern struct Unk_unk68 D_80102A74;
 extern struct Unk_unk68 D_8010133C;
 extern struct Unk_unk68 D_80101340;
 extern struct Unk_unk68 D_80101344;
@@ -3680,7 +3687,6 @@ extern s16 D_8016DEA2;
 extern s16 D_8016DEA4;
 #endif
 extern struct GameThread* D_801F8300;
-extern u16 D_801419BE[];
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
 extern void (*g_TitleUpdateFuncs[])();
 extern void (*D_8010EB84[4])();
