@@ -14,10 +14,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006A638);
 
 void func_8006A70C(struct MainObj* arg0)
 {
-    arg0->ext.main_52.unk80 = 0;
-    arg0->ext.main_52.unk88 = 0;
-    arg0->ext.main_52.unk8C = 0;
-    arg0->ext.main_52.saved_unk5 = 0;
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[4] = 0;
+    arg0->ext.raw[5] = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 

@@ -25,13 +25,11 @@ void func_80058D50(struct MainObj* arg0)
 void func_80058DBC(struct MainObj* arg0)
 {
     arg0->unk7A = 0;
-    arg0->ext.main_27.unk80 = 0;
-    arg0->ext.main_27.collision_direction = 0;
-    arg0->ext.main_27.unk88 = 0;
-    arg0->ext.main_27.unk8A = 0;
-    arg0->ext.main_27.unk8B = 0;
-    arg0->ext.main_27.unk8C = 0;
-    arg0->ext.main_27.saved_unk5 = 0;
+    arg0->ext.raw[0] = 0;
+    arg0->ext.raw[1] = 0;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->ext.raw[5] = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 

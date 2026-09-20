@@ -2286,42 +2286,7 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001C07C);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C210);
 
-void func_8001C30C(struct MenuCharacterData* arg0)
-{
-    u8 i;
-    s8 mode;
-    u16 flags;
-    struct EngineObj* obj;
-
-    engine_obj.cur_character = arg0->character;
-    engine_obj.unk46 = arg0->unk46;
-    engine_obj.unk48 = arg0->unk48;
-    engine_obj.palette_flags = arg0->palette_flags;
-    engine_obj.unk5F = arg0->unk5F;
-
-    flags = arg0->flags;
-    obj = &engine_obj;
-    engine_obj.unk5A = flags;
-
-    i = 0;
-    engine_obj.unk47 = arg0->unk47;
-    engine_obj.unk37 = arg0->unk37;
-
-    for (; i < 0x10; i++) {
-        D_800EE430[i] = arg0->player_initial_data[i];
-    }
-
-    mode = 2;
-    if (arg0->flags & D_800F1D94.sign_bit_mask) {
-        mode = 4;
-    }
-
-    obj->unk44 = mode;
-    obj->unk5C[0] = 0;
-    obj->unk5C[1] = 0;
-    obj->unk5C[2] = 0;
-    obj->unk45 = obj->unk46;
-}
+INCLUDE_ASM("main/nonmatchings/323C", func_8001C30C);
 
 void func_8001C3E8(void)
 {
