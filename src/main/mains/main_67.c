@@ -23,7 +23,7 @@ void func_800826C8(struct MainObj* arg0)
     D_80103EAC[arg0->unk5](arg0, y);
 }
 
-void func_80082710(struct MainObj* arg0)
+void func_80082710(struct MainObj* arg0, s32 y)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_80015D60(arg0, 0x13);
@@ -37,9 +37,26 @@ void func_80082710(struct MainObj* arg0)
     func_8002E184(PLAYER_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082784);
+void func_80082784(struct MainObj* arg0, s32 y)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C == 0) {
+        func_800BF60C(BASE_OBJECT(arg0), 8);
+        func_800C813C(6, D_80103E7C, arg0);
+        arg0->on_screen = 0;
+        arg0->unk5++;
+    } else {
+        if (--arg0->unk7E == 0) {
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x40, 0x20);
+            arg0->unk7E = 5;
+        }
+        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+        func_8002E184(PLAYER_OBJECT(arg0));
+    }
+}
 
-void func_8008284C(struct MainObj* arg0)
+void func_8008284C(struct MainObj* arg0, s32 y)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

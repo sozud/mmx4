@@ -125,7 +125,24 @@ void func_800867C4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086860);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086900);
+void func_80086900(struct MainObj* self)
+{
+    if (--self->unk7C == 0) {
+        func_80015D60(self, 0x18);
+        func_80088974(self);
+        func_8002217C(0x23, 3, 0);
+        self->unk6++;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(self));
+        self->unk20 += self->unk28;
+        if (self->unk7C & 1) {
+            self->x_pos.val += self->unk20;
+        } else {
+            self->x_pos.val -= self->unk20;
+        }
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void func_800869BC(struct MainObj* arg0)
 {
@@ -234,7 +251,26 @@ void func_80086D04(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80086D84);
+void func_80086D84(struct MainObj* arg0)
+{
+    u16 value;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_8001540C(2, 0xD5, arg0);
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_80015D60(arg0, 0);
+        value = 0x1E;
+        if (engine_obj.cur_character == 0) {
+            value = 0x25;
+        }
+        func_8002217C(value, 0xFFU, ENGINE_UNK2E);
+        ENGINE_UNK2E = 1;
+        arg0->unk7++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_80086E2C(struct MainObj* arg0)
 {
@@ -386,7 +422,28 @@ void func_80087414(struct MainObj* arg0)
     is_on_screen((struct BaseObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_8008746C);
+void func_8008746C(struct MainObj* arg0)
+{
+    u8 value;
+
+    if (*arg0->ext.main_69.script == 0xFF) {
+        func_800889DC(arg0);
+    }
+    arg0->unk54 = &D_801044FC;
+    arg0->unk50 = &D_80104500;
+    arg0->collision_data = (const u16*)D_80108084;
+    arg0->ext.main_69.unk8D = 0;
+    value = *arg0->ext.main_69.script;
+    if (value == 3) {
+        func_80015D60(arg0, 2);
+        arg0->unk7C = 0x3C;
+        arg0->unk6++;
+    } else {
+        arg0->unk5 = value;
+        arg0->unk6 = 0;
+    }
+    arg0->ext.main_69.script++;
+}
 
 void func_8008752C(struct MainObj* arg0)
 {
@@ -459,7 +516,35 @@ void func_80087708(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800877A4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087860);
+void func_80087860(struct MainObj* arg0)
+{
+    struct ShotObj* shot_obj;
+    s16 timer;
+
+    if (arg0->animation_step.fields.relative_step == 0) {
+        timer = arg0->unk7C - 1;
+        arg0->unk7C = timer;
+        if (timer == 0) {
+            arg0->unk54 = &D_80104508;
+            arg0->unk50 = &D_80104504;
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+        }
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            shot_obj = find_free_shot_obj();
+            if (shot_obj != 0) {
+                shot_obj->active = 0x41;
+                shot_obj->id = 0x2D;
+                shot_obj->unk2 = 0x40;
+                shot_obj->unk7C = WEAPON_OBJECT(arg0);
+                shot_obj->unk8C.object = OBJECT_HEADER(arg0);
+            }
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_80087928(struct MainObj* arg0)
 {
@@ -486,7 +571,24 @@ void func_80087980(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087A00);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087AF8);
+void func_80087AF8(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk15 != 0) {
+        if (arg0->unk20 < 0) {
+            arg0->unk20 = 0;
+        }
+    } else if (arg0->unk20 > 0) {
+        arg0->unk20 = 0;
+    }
+    if (arg0->unk20 == 0) {
+        arg0->unk54 = (const u8*)&D_801044FC;
+        arg0->unk50 = (const u8*)&D_80104500;
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_80087B98(struct MainObj* arg0)
 {
@@ -561,7 +663,35 @@ void func_80087D3C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80087E0C);
+void func_80087E0C(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s16 timer;
+
+    if (arg0->animation_step.fields.relative_step == 0) {
+        timer = arg0->unk7C - 1;
+        arg0->unk7C = timer;
+        if (timer == 0) {
+            arg0->unk54 = &D_801044FC;
+            arg0->unk50 = &D_80104500;
+            func_80015D60(arg0, 0x17);
+            arg0->unk7C = 0x28;
+            arg0->unk6++;
+        }
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            shot = find_free_shot_obj();
+            if (shot != 0) {
+                shot->active = 0x41;
+                shot->id = 0x2D;
+                shot->unk2 = 0;
+                shot->unk7C = WEAPON_OBJECT(arg0);
+                shot->unk8C.object = OBJECT_HEADER(arg0);
+            }
+        }
+    }
+}
 
 void func_80087ED4(struct MainObj* arg0)
 {
@@ -627,7 +757,7 @@ void func_80088020(struct MainObj* arg0)
 
 void func_800880BC(struct MainObj* self)
 {
-    u16 timer;
+    s16 timer;
     u16 background;
 
     timer = self->unk7C - 1;
@@ -639,11 +769,34 @@ void func_800880BC(struct MainObj* self)
         self->unk28 = (s32)0xFFFF0000;
         self->x_pos.i.hi = (s16)(background + 0xA0);
         func_8001540C(2, 0xD3, self);
-        self->unk6 = (u8)self->unk6 + 1;
+        self->unk6++;
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_80088140);
+void func_80088140(struct MainObj* self)
+{
+    u16 timer;
+    s32 delta;
+
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
+    if ((timer << 0x10) == 0) {
+        self->unk54 = &D_801044FC;
+        self->unk50 = &D_80104500;
+        func_80015D60(self, 7);
+        self->unk6 = (u8)self->unk6 + 1;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(self));
+        delta = self->unk20 + self->unk28;
+        self->unk20 = delta;
+        if (self->unk7C & 1) {
+            self->x_pos.val += delta;
+        } else {
+            self->x_pos.val -= delta;
+        }
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800881F8);
 
@@ -723,7 +876,29 @@ void func_800886A0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800886F0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800887DC);
+void func_800887DC(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_8001540C(2, 0xD5, arg0);
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x2D;
+            shot->unk2 = 0x50;
+            shot->timer = 1;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+            shot->unk8C.word = (s32)arg0;
+        }
+        func_8001540C(2, 0xD9, arg0);
+        arg0->unk7C = 0x50;
+        arg0->unk6++;
+    }
+}
 
 void func_8008888C(struct MainObj* arg0)
 {

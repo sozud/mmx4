@@ -716,18 +716,29 @@ struct Main48Ext {
     u8 unk88;
 };
 
+union Main73EffectData {
+    struct {
+        u8 state;
+        u8 object_id;
+        u8 unk8E;
+        u8 pad8F;
+    } bytes;
+    struct {
+        u16 x;
+        u16 y;
+    } position;
+};
+
 struct Main73Ext {
     union {
         struct EffectObj* effect;
         s8* script;
     } unk80;
     u8 pad84[5];
-    s8 unk89;
+    u8 unk89;
     u8 pad8A;
     u8 unk8B;
-    u8 effect_state;
-    u8 object_id;
-    u8 unk8E;
+    union Main73EffectData effect;
 };
 
 struct Main73PartsExt {
@@ -1120,7 +1131,7 @@ struct Main68Ext {
 struct Main69Ext {
     struct EffectObj* effect;
     struct MainObj* linked_object;
-    u8 pad88[4];
+    u8* script;
     u8 unk8C;
     u8 unk8D;
     u8 unk8E;
@@ -3472,6 +3483,7 @@ extern struct Unk_unk68 D_80108184[];
 extern u8 D_8010439C[8];
 extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
+extern struct Unk_unk68 D_80103E7C[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
 extern struct Unk_unk68 D_801044FC;
