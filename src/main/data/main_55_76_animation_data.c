@@ -4851,7 +4851,7 @@ void (*D_80103C0C[4])() = {
     func_8008107C,
 };
 
-void (*D_80103C1C[12])() = {
+void (*D_80103C1C[12])(struct MainObj*) = {
     func_800811D4,
     func_80081230,
     func_8008127C,
@@ -4884,7 +4884,7 @@ void (*D_80103C64[3])() = {
     func_80081D30,
 };
 
-void (*D_80103C70[5])() = {
+void (*D_80103C70[5])(struct MainObj*) = {
     func_80082050,
     func_800820A4,
     func_80082170,
@@ -5131,7 +5131,7 @@ void (*D_80103E90[7])() = {
     func_80082D9C,
 };
 
-void (*D_80103EAC[3])() = {
+void (*D_80103EAC[3])(struct MainObj*, s32) = {
     func_80082710,
     func_80082784,
     func_8008284C,
@@ -5616,7 +5616,7 @@ u8 D_8010439C[8] = {
     0x00,
 };
 
-void (*D_801043A4[5])() = {
+void (*D_801043A4[5])(struct MainObj*) = {
     func_80084254,
     func_80084338,
     func_80084394,
@@ -6099,27 +6099,27 @@ void (*D_80104870[9])() = {
     func_80087364,
 };
 
-void (*D_80104894[4])() = {
+void (*D_80104894[4])(struct MainObj*) = {
     func_8008746C,
     func_8008752C,
     func_8008759C,
     func_80087604,
 };
 
-void (*D_801048A4[4])() = {
+void (*D_801048A4[4])(struct MainObj*) = {
     func_80087698,
     func_80087708,
     func_800877A4,
     func_80087860,
 };
 
-void (*D_801048B4[3])() = {
+void (*D_801048B4[3])(struct MainObj*) = {
     func_80087980,
     func_80087A00,
     func_80087AF8,
 };
 
-void (*D_801048C0[6])() = {
+void (*D_801048C0[6])(struct MainObj*) = {
     func_80087BE8,
     func_80087C70,
     func_80087D3C,
@@ -6128,7 +6128,7 @@ void (*D_801048C0[6])() = {
     func_80087F30,
 };
 
-void (*D_801048D8[9])() = {
+void (*D_801048D8[9])(struct MainObj*) = {
     func_80087FB4,
     func_80088020,
     func_800880BC,
@@ -6140,7 +6140,7 @@ void (*D_801048D8[9])() = {
     func_80088530,
 };
 
-void (*D_801048FC[6])() = {
+void (*D_801048FC[6])(struct MainObj*) = {
     func_800885DC,
     func_80088658,
     func_800886A0,
@@ -7108,7 +7108,7 @@ void* D_801052A4[2] = {
     D_80105294,
 };
 
-void (*D_801052AC[4])() = {
+void (*D_801052AC[4])(struct MainObj*) = {
     func_8008BCB0,
     func_8008BD10,
     func_8008BD5C,

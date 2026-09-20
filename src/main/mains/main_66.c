@@ -152,7 +152,32 @@ void func_800813BC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081404);
+void func_80081404(struct MainObj* self)
+{
+    struct MiscObj* obj;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        func_80015D60(self, 0xA);
+        obj = find_free_misc_obj();
+        if (obj != 0) {
+            obj->active = 0x41;
+            obj->id = 0x27;
+            obj->x_pos.val = self->x_pos.val + FIXED(-1);
+            obj->y_pos.val = self->y_pos.val + FIXED(-31);
+            obj->bg_offset = self->bg_offset;
+            obj->animation_table = self->animation_table;
+            obj->unk40 = self->unk40;
+            obj->unk3C = self->sprite_frames;
+            obj->unk42 = self->unk42 & 0x7FFF;
+            obj->ext.misc_7.position = self;
+            obj->state = 0;
+            obj->unk5 = 0;
+        }
+        self->unk7C = 0x3E;
+        self->unk6 = 7;
+    }
+}
 
 void func_800814E8(struct MainObj* arg0)
 {
@@ -199,7 +224,24 @@ void func_800815B8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081624);
+void func_80081624(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_8009227C() == 0) {
+        if (--arg0->unk7E == 0) {
+            func_8001540C(0, 0xE, 0);
+            arg0->unk7E = 3;
+        }
+        if (++arg0->unk5C == 0x30) {
+            arg0->ext.main_66.pad88[4] = 1;
+            func_80015D60(arg0, 1);
+            func_8001540C(2, 0xE1, arg0);
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            func_80036B18();
+        }
+    }
+}
 
 void func_800816DC(struct MainObj* arg0)
 {
@@ -284,7 +326,34 @@ void func_80082050(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_800820A4);
+void func_800820A4(struct MainObj* arg0)
+{
+    s16 x_pos;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (!(D_80141BD8.unk0 & 1)) {
+        if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi) {
+            arg0->unk20 = FIXED(4);
+        } else {
+            arg0->unk20 = FIXED(-4);
+        }
+    }
+
+    x_pos = arg0->x_pos.i.hi;
+    if (x_pos - g_Player.x_pos.i.hi >= 0) {
+        if (x_pos - g_Player.x_pos.i.hi < 3) {
+        } else {
+            func_8002B718(MOVING_OBJECT(arg0));
+        }
+    } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
+        func_8002B718(MOVING_OBJECT(arg0));
+    }
+
+    if (arg0->ext.main_66.unk94->unk6 == 4) {
+        arg0->unk7C = 0x3C;
+        arg0->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80082170);
 
