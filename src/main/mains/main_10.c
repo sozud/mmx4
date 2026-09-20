@@ -220,7 +220,7 @@ void func_80049E24(struct MainObj* arg0)
         velocity = FIXED(-4);
     }
     arg0->unk20 = velocity;
-    arg0->ext.raw[0] = 0xB4;
+    arg0->ext.main_10.timer = 0xB4;
     arg0->unk6 = 1;
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }

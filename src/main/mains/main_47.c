@@ -15,12 +15,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47", func_800671D8);
 
 void func_800672BC(struct MainObj* arg0)
 {
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[4] = 0;
-    arg0->ext.raw[5] = 0;
+    arg0->ext.main_47.unk80 = 0;
+    arg0->ext.main_47.unk84 = 0;
+    arg0->ext.main_47.unk88 = 0;
+    arg0->ext.main_47.unk8C = 0;
+    arg0->ext.main_47.unk90 = 0;
+    arg0->ext.main_47.unk94 = 0;
 }
 
 void func_800672D8(struct MainObj* arg0)

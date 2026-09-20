@@ -23,8 +23,8 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_08", func_800978DC);
 void func_80097A24(struct WeaponObj* arg0)
 {
     if ((func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) && (arg0->unk98 == 0)) {
-        if (arg0->ext.raw[0] != 0) {
-            arg0->ext.raw[0]--;
+        if (arg0->ext.weapon_8.timer != 0) {
+            arg0->ext.weapon_8.timer--;
             func_80015DC8(ANIMATED_OBJECT(arg0));
             func_8002B718(MOVING_OBJECT(arg0));
             arg0->unk50 = (const u8*)&D_801089FC[arg0->animation_step.fields.event];

@@ -1,11 +1,6 @@
 #include "common.h"
 #include "func_tables.h"
 
-struct Main28InitData {
-    u8 unk84;
-    u8 unk15;
-};
-
 struct Main28InitData D_800FD5FC[4] = {
     { 5, 0x00 },
     { 5, 0x40 },

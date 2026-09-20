@@ -2220,7 +2220,7 @@ void func_8001B558(struct EngineObj* arg0)
             game_info.unk0 = 7;
             game_info.unk2 = 0;
             game_info.unk3 = 0;
-            if (D_800F1D90 != 0xFF) {
+            if (D_800F1D90[0] != 0xFF) {
                 game_info.unk8 = func_8001E850(&D_800F22D0, 0);
                 game_info.mode = 1;
                 D_80141BDF[0] = 1;
@@ -2233,7 +2233,34 @@ void func_8001B558(struct EngineObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001B644);
+void func_8001B644(u8* arg0)
+{
+    struct MiscObj* obj;
+    u8* data;
+    u8 engine_state;
+
+    data = arg0;
+    while (*data != 0xFF) {
+        obj = find_free_misc_obj();
+        if (obj != 0) {
+            obj->active = 0x41;
+            obj->id = 0x2A;
+            obj->unk2 = 0;
+            obj->x_pos.i.hi = 0xA0;
+            obj->y_pos.i.hi = *data++;
+            obj->animation_step.fields.frame_index = *data++;
+            if (engine_obj.unk1 != 3) {
+                obj->ext.misc_42.unk54 = engine_obj.unk1;
+                obj->ext.misc_42.unk55 = 1;
+            } else {
+                engine_state = (u8)engine_obj.unk2;
+                obj->ext.misc_42.unk55 = 2;
+                obj->ext.misc_42.unk54 = engine_state;
+            }
+            obj->ext.misc_42.unk56 = *data++;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001B718);
 
@@ -2261,7 +2288,26 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001C210);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C30C);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001C3E8);
+void func_8001C3E8(void)
+{
+    u8 var_t2;
+    s8* ptr;
+
+    var_t2 = 0;
+    ptr = (s8*)&D_800F1D90[0];
+    ptr[0] = engine_obj.cur_character;
+    D_800F1D91 = engine_obj.unk46;
+    D_800F1D92 = engine_obj.unk48;
+    D_800F1D94.byte_0 = engine_obj.palette_flags;
+    D_800F1D94.byte_1 = engine_obj.unk5F;
+    D_800F1D94.halfword_2 = engine_obj.unk5A;
+    D_800F1D93 = engine_obj.unk47;
+    D_800F1D94.padding[0] = engine_obj.unk37;
+    for (var_t2 = 0; var_t2 < 0x10; var_t2++) {
+        *(s16*)&(ptr + var_t2 * 2)[8] = D_800EE430[var_t2];
+    }
+    ptr[0x28] = D_80171EA9;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C4B4);
 
@@ -3363,7 +3409,7 @@ void func_8001EC90(struct GameInfo* arg0)
 {
     reset_objects();
     D_80141BDF[0] = 0;
-    if (D_800F1D90 != 0xFF) {
+    if (D_800F1D90[0] != 0xFF) {
         arg0->unk8 = func_8001E850(D_800F22D0, 0) & 0xFF;
         arg0->mode = arg0->mode + 1;
     } else {

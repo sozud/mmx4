@@ -103,7 +103,7 @@ void func_80093858(struct WeaponObj* arg0)
     u8 temp_v0;
 
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_800933A0(arg0, arg0->ext.raw);
+    func_800933A0(arg0, &arg0->ext.weapon_10.timer);
     temp_v0 = arg0->ext.weapon_10.timer;
     if (temp_v0 == 0) {
         temp_v0 = 0x98;

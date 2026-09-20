@@ -8,24 +8,53 @@ void func_8004FF90(struct MainObj* arg0)
     CollisionRelated((struct PlayerObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_17", func_8004FFE0);
+void func_8004FFE0(struct MainObj* arg0)
+{
+    arg0->unk5C = 6;
+    arg0->unk60 = 2;
+    arg0->unk61 = 0;
+    arg0->collision_data = D_80106AF4;
+    arg0->bg_offset = (u8)g_Player.bg_offset;
+    arg0->unk16 = 6;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)D_800FBE94;
+    arg0->unk68 = &D_800FBE08;
+    arg0->unk54 = &D_800FBE00;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->unk50 = &D_800FBE04;
+    func_800506D8(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, 0);
+    arg0->ext.main_17.unk80 = 4;
+    arg0->ext.main_17.unk84 = 3;
+    arg0->ext.main_17.unk88 = 0xC;
+    arg0->ext.main_17.unk8C = 0;
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+    arg0->ext.main_17.saved_unk5 = arg0->y_pos.val;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_17", func_800500D4);
 
 void func_80050238(struct MainObj* arg0)
 {
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[4] = 0;
-    arg0->ext.raw[5] = 0;
+    arg0->ext.main_17.unk80 = 0;
+    arg0->ext.main_17.unk84 = 0;
+    arg0->ext.main_17.unk88 = 0;
+    arg0->ext.main_17.unk8C = 0;
+    arg0->ext.main_17.unk90 = 0;
+    arg0->ext.main_17.saved_unk5 = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
 void func_8005026C(struct MainObj* arg0)
 {
-    arg0->unk5 = arg0->ext.main_17.saved_unk5;
+    arg0->unk5 = arg0->ext.raw[4];
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_17", func_80050278);

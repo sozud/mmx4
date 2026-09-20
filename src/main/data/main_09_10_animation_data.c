@@ -15,7 +15,7 @@ void (*D_800FA710[3])() = {
     func_80047974,
 };
 
-void (*D_800FA71C[2])() = {
+void (*D_800FA71C[2])(struct MainObj*) = {
     func_80047A20,
     func_80047A34,
 };
@@ -688,7 +688,7 @@ void (*D_800FAEBC[2])() = {
     func_80048F98,
 };
 
-void (*D_800FAEC4[3])() = {
+void (*D_800FAEC4[3])(struct MainObj*) = {
     func_80049064,
     func_800490D4,
     func_800491BC,

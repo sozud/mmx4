@@ -56,7 +56,32 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099F48);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A10C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A264);
+extern u8 D_80108CD4;
+extern u8 D_80108CDC;
+
+void func_8009A264(struct ShotObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        arg0->unk50.data = &D_80108CD4;
+        func_80015D60(arg0, 0x18);
+        func_800C7DA4(8, &D_80108CDC, arg0, -1);
+        arg0->unk60 = 3;
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    } else {
+        func_8002D9BC(arg0);
+        func_80015DC8((struct AnimatedObj*)arg0);
+        if (arg0->animation_step.fields.relative_step < 0) {
+            arg0->state = 2;
+            arg0->unk5 = 0;
+        }
+    }
+
+    if (func_8002B1E8((struct BaseObj*)arg0, 0x19, 0x19) == 0) {
+        func_8002B318((struct BaseObj*)arg0, 0x19, 0x19);
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_8009A338(struct ShotObj* arg0)
 {

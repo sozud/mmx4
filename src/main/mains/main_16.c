@@ -24,12 +24,12 @@ void func_8004EC44(struct MainObj* arg0)
 
 void func_8004ECB0(struct MainObj* arg0)
 {
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[4] = 0;
-    arg0->ext.raw[5] = 0;
+    arg0->ext.main_16.unk80 = 0;
+    arg0->ext.main_16.unk84 = 0;
+    arg0->ext.main_16.unk88 = 0;
+    arg0->ext.main_16.unk8C = 0;
+    arg0->ext.main_16.unk90 = 0;
+    arg0->ext.main_16.unk94 = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
@@ -43,7 +43,7 @@ void func_8004ED20(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     arg0->unk7C = 0x1E;
     arg0->unk6 = 1;
-    arg0->ext.raw[3] = 2;
+    arg0->ext.main_16.unk8C = 2;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004ED60);
@@ -72,7 +72,34 @@ void func_8004EFA4(struct MainObj* arg0)
     D_800FBDD0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004EFE0);
+void func_8004EFE0(struct MainObj* arg0)
+{
+    struct MiscObj* misc;
+    u8 temp_v1;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        misc = find_free_misc_obj();
+        if (misc != 0) {
+            misc->active = 0x41;
+            misc->id = 5;
+            misc->unk40 = arg0->unk40;
+            misc->unk42 = arg0->unk42 & 0x7FFF;
+            misc->animation_table = (u32**)arg0->animation_table;
+            misc->unk3C = (void*)arg0->sprite_frames;
+            misc->bg_offset = arg0->bg_offset;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val;
+            temp_v1 = arg0->unk15;
+            misc->ext.misc_7.position = &arg0->ext.main_16.unk90;
+            misc->state = 0;
+            misc->unk15 = temp_v1;
+        }
+        func_8004FD38(arg0, 5);
+        func_80015D60(arg0, 2);
+        arg0->unk6 = 1;
+    }
+}
 
 void func_8004F0C4(struct MainObj* arg0)
 {

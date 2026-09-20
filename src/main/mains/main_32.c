@@ -54,10 +54,10 @@ void func_8005CCA8(struct MainObj* arg0)
 void func_8005CCFC(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.raw[0] == 0) {
-        arg0->ext.raw[2] = 1;
+    if (--arg0->ext.main_32.unk80 == 0) {
+        arg0->ext.main_32.unk88 = 1;
         func_8005D148(arg0);
-        arg0->ext.raw[0] = 13;
+        arg0->ext.main_32.unk80 = 13;
         arg0->unk6++;
     }
 }

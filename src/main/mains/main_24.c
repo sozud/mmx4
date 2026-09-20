@@ -9,7 +9,28 @@ void func_80056788(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_24", func_800567C4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056AC4);
+void func_80056AC4(struct MainObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_800FCFB4[self->unk5](self);
+
+    if (self->unk5 != 3) {
+        func_8002D9BC(self);
+        self->ext.main_24.saved_unk5 = self->unk5;
+
+        if (func_8002DD04(self) < 0) {
+            func_800AF808(self);
+            func_800C813C(5, D_800FCFA0, self);
+            func_800BF60C(BASE_OBJECT(self), 0xC);
+        } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+            func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+            return;
+        }
+
+        self->state = 2;
+    }
+}
 
 void func_80056BA8(struct MainObj* arg0)
 {
