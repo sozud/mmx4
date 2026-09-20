@@ -33,8 +33,8 @@ void func_8005530C(struct MainObj* arg0)
 {
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_80015D60(arg0, 1);
-    arg0->ext.raw[1] = 8;
-    arg0->ext.raw[4] = 0;
+    arg0->ext.main_22.unk84 = 8;
+    arg0->ext.main_22.unk90 = 0;
     arg0->unk6++;
 }
 

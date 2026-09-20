@@ -10,16 +10,14 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_06", func_800963E8);
 
 void func_80096584(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
-    u8* temp_a0;
-
     arg0->unk15 = arg1->unk15;
-    temp_a0 = arg0->ext.raw;
     if (arg0->unk15 != 0) {
-        arg0->ext.raw[1] = arg0->ext.raw[0];
+        arg0->ext.weapon_6.adjusted_direction = arg0->ext.weapon_6.direction;
     } else {
-        arg0->ext.raw[1] = 0x20 - arg0->ext.raw[0];
+        arg0->ext.weapon_6.adjusted_direction = 0x20 - arg0->ext.weapon_6.direction;
     }
-    func_8002B93C(MOVING_OBJECT(arg0), (temp_a0[1] - 8) & 0x1F);
+    func_8002B93C(MOVING_OBJECT(arg0),
+        (arg0->ext.weapon_6.adjusted_direction - 8) & 0x1F);
     arg0->x_pos.val = arg1->x_pos.val + arg0->x_vel.val * 0x60;
     arg0->y_pos.val = arg1->y_pos.val + arg0->y_vel.val * 0x60;
     func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
@@ -55,24 +53,23 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_06", func_80096834);
 
 void func_800968F8(struct WeaponObj* arg0)
 {
-    u8* temp_s1 = arg0->ext.raw;
     u8 temp_v0;
 
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.raw[2] == 0) {
+    if (arg0->ext.weapon_6.lifetime == 0) {
         arg0->unk50 = 0;
         arg0->on_screen = 0;
         arg0->state = 3;
         return;
     }
-    temp_v0 = arg0->ext.raw[3];
+    temp_v0 = arg0->ext.weapon_6.timer;
     if (temp_v0 == 0) {
-        arg0->ext.raw[3] = 6;
+        arg0->ext.weapon_6.timer = 6;
         arg0->unk64++;
     } else {
-        arg0->ext.raw[3] = temp_v0 - 1;
+        arg0->ext.weapon_6.timer = temp_v0 - 1;
     }
-    temp_s1[2] -= 1;
+    arg0->ext.weapon_6.lifetime -= 1;
     func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
 }
 

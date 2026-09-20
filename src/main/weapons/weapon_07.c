@@ -31,13 +31,13 @@ void func_80097048(struct WeaponObj* arg0)
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
         D_801089D8[arg0->unk5](arg0);
         if (arg0->unk50 != 0) {
-            temp_v0 = arg0->ext.raw[5];
+            temp_v0 = arg0->ext.weapon_7.unk91;
             if (temp_v0 == 0) {
-                arg0->ext.raw[5] = 4;
+                arg0->ext.weapon_7.unk91 = 4;
                 arg0->unk64++;
                 return;
             }
-            arg0->ext.raw[5] = temp_v0 - 1;
+            arg0->ext.weapon_7.unk91 = temp_v0 - 1;
         }
     } else {
         func_800972C8(arg0);
@@ -61,9 +61,9 @@ void func_80097144(struct WeaponObj* arg0)
             arg0->unk98 = 0;
             arg0->unk5++;
         } else {
-            if (arg0->ext.raw[4] != 0) {
-                arg0->ext.raw[4]--;
-                if (arg0->ext.raw[4] == 0) {
+            if (arg0->ext.weapon_7.unk90 != 0) {
+                arg0->ext.weapon_7.unk90--;
+                if (arg0->ext.weapon_7.unk90 == 0) {
                     arg0->unk2C = FIXED(-0.21484375);
                 }
             }

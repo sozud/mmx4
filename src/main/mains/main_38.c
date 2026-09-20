@@ -25,8 +25,8 @@ void func_80060D3C(struct MainObj* arg0)
 
 void func_80060DC8(struct MainObj* arg0)
 {
-    arg0->ext.raw[2] = 2;
-    if (arg0->ext.raw[3] != 0) {
+    arg0->ext.main_38.unk88 = 2;
+    if (arg0->ext.main_38.unk8C != 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     } else {
         func_8002B0C8(OBJECT_HEADER(arg0));

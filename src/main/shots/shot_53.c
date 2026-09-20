@@ -272,7 +272,7 @@ void func_800ABB70(struct ShotObj* arg0)
         arg0->unk6 = 0;
         arg0->unk7 = 1;
         arg0->unk50.data = NULL;
-        temp_s1->ext.raw[0] = 0;
+        temp_s1->ext.weapon_6.direction = 0;
         func_800AFAB4(0, arg0->x_pos.i.hi + 15, arg0->y_pos.i.hi + 20, 0);
         func_800AFAB4(0, arg0->x_pos.i.hi - 15, arg0->y_pos.i.hi + 20, 1);
         func_800AFAB4(0, arg0->x_pos.i.hi + 15, arg0->y_pos.i.hi + 0, -1);

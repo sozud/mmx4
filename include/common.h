@@ -342,6 +342,11 @@ union PlayerUnk8A {
     } bytes;
 };
 
+union PlayerUnkDC {
+    s16 value;
+    u16 unsigned_value;
+};
+
 typedef s8 PlayerChargeState;
 enum {
     PLAYER_CHARGE_NONE,
@@ -530,7 +535,9 @@ struct Main16Ext {
 struct Main17Ext {
     u32 unk80;
     u32 unk84;
-    u8 pad88[8];
+    u32 unk88;
+    u32 unk8C;
+    u32 unk90;
     u32 saved_unk5;
 };
 
@@ -557,7 +564,7 @@ struct Main32Ext {
 };
 
 struct Main33Ext {
-    u8 pad80;
+    u8 unk80;
     u8 variant;
     s16 unk82;
     u8 unk84;
@@ -576,6 +583,7 @@ struct Main38Ext {
     u32 saved_unk5;
     s32 unk84;
     u32 unk88;
+    u32 unk8C;
 };
 
 struct Main39Ext {
@@ -593,6 +601,15 @@ struct Main40Ext {
 struct MainSavedState94Ext {
     u32 unk80;
     u8 pad84[0xC];
+    u32 unk90;
+    u32 saved_unk5;
+};
+
+struct Main7Ext {
+    u32 unk80;
+    u32 unk84;
+    s32 saved_x_velocity;
+    s32 saved_y_velocity;
     u32 unk90;
     u32 saved_unk5;
 };
@@ -632,7 +649,7 @@ struct Main22Ext {
     u32 unk84;
     u8 pad88[4];
     u32 unk8C;
-    u8 pad90[4];
+    u32 unk90;
     u32 parts_mask;
 };
 
@@ -644,6 +661,19 @@ struct Main24Ext {
     u32 unk80;
     u8 pad84[0x10];
     u32 saved_unk5;
+};
+
+struct Main47Ext {
+    u32 unk80;
+    u32 unk84;
+    u32 unk88;
+    u32 unk8C;
+    u32 unk90;
+    u32 unk94;
+};
+
+struct Main76Ext {
+    s32 saved_x_velocity;
 };
 
 struct Main25Ext {
@@ -987,11 +1017,46 @@ struct Main28Context {
     u16 count;
 };
 
+struct Main28InitData {
+    u8 unk84;
+    u8 unk15;
+};
+
 struct Main28Ext {
     struct Main28Context* context;
-    u8 pad84[6];
+    u8 unk84;
+    u8 unk85;
+    u16 unk86;
+    u16 unk88;
     u16 index;
 };
+
+struct MenuRuntimeData {
+    u8 byte_0;
+    u8 byte_1;
+    u16 halfword_2;
+    u8 buffer[33];
+    u8 padding[3];
+    u8 button_lookup[24];
+    u16 low_button_masks[8];
+    u16 high_button_masks[3];
+    u16 sign_bit_mask;
+};
+
+struct MenuCharacterData {
+    u8 character;
+    u8 unk46;
+    u8 unk48;
+    u8 unk47;
+    u8 palette_flags;
+    u8 unk5F;
+    u16 flags;
+    u16 player_initial_data[16];
+    u8 character_mode;
+    u8 unk37;
+};
+typedef char MenuCharacterData_must_be_0x2A_bytes
+    [sizeof(struct MenuCharacterData) == 0x2A ? 1 : -1];
 
 struct Main29Record {
     s8 unk0;
@@ -1081,7 +1146,7 @@ union MainObjExt {
     struct Main8Ext main_8;
     struct Main9Ext main_9;
     struct Main6Ext main_6;
-    struct MainSavedState94Ext main_7;
+    struct Main7Ext main_7;
     struct Main10Ext main_10;
     struct Main11Ext main_11;
     struct Main12Ext main_12;
@@ -1096,6 +1161,7 @@ union MainObjExt {
     struct Main23Ext main_23;
     struct Main24Ext main_24;
     struct Main25Ext main_25;
+    struct Main47Ext main_47;
     struct Main27Ext main_27;
     struct Main28Ext main_28;
     struct Main29Ext main_29;
@@ -1142,6 +1208,7 @@ union MainObjExt {
     struct Main73PartsExt main_73_parts;
     struct Main74Ext main_74;
     struct Main75Ext main_75;
+    struct Main76Ext main_76;
 };
 
 #ifndef MMX4_PC
@@ -1381,7 +1448,7 @@ struct PlayerObj {
     s8 : 8;
     s8 unkD9;
     u16 unkDA;
-    s16 unkDC;
+    union PlayerUnkDC unkDC;
     s8 unkDE;
     s8 unkDF;
     s8 unkE0;
@@ -1540,13 +1607,32 @@ struct Weapon1Ext {
 
 struct Weapon7Ext {
     u16 timer;
+    u8 pad8E[2];
+    u8 unk90;
+    u8 unk91;
 };
 
 struct Weapon3Ext {
-    u16 timer;
+    u16 offset;
     u16 lifetime;
     u8 unk90;
     u8 unk91;
+};
+
+struct Weapon6Ext {
+    u8 direction;
+    u8 adjusted_direction;
+    u8 lifetime;
+    u8 timer;
+};
+
+struct Weapon8Ext {
+    u8 timer;
+};
+
+struct Weapon17Ext {
+    u8 pad8C;
+    u8 timer;
 };
 
 struct Weapon10Ext {
@@ -1620,12 +1706,15 @@ union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
     struct Weapon1Ext weapon_1;
+    struct Weapon6Ext weapon_6;
     struct Weapon3Ext weapon_3;
     struct Weapon7Ext weapon_7;
+    struct Weapon8Ext weapon_8;
     struct Weapon10Ext weapon_10;
     struct Weapon14Ext weapon_14;
     struct Weapon15Ext weapon_15;
     struct Weapon16Ext weapon_16;
+    struct Weapon17Ext weapon_17;
     struct Weapon20Ext weapon_20;
     struct Weapon29Ext weapon_29;
     struct Shot46Ext shot_46;
@@ -1907,7 +1996,21 @@ struct Misc2Ext {
     u8 unk58;
 };
 
+struct Misc9Ext {
+    u8 pad50[4];
+    struct ItemObj* owner;
+    u8 unk58;
+};
+
 struct Misc11Ext { u8 pad50[4]; s8 active; };
+
+struct Misc42Ext {
+    u8 pad50[4];
+    s8 unk54;
+    s8 unk55;
+    s8 unk56;
+    s8 unk57;
+};
 
 struct Misc51Ext {
     struct MainObj* source;
@@ -2033,10 +2136,12 @@ struct UnkExt {
 
 union MiscExt {
     struct Misc2Ext misc_2;
+    struct Misc9Ext misc_9;
     struct Misc5Ext misc_5;
     struct Misc7Ext misc_7;
     struct Misc8Ext misc_8;
     struct Misc11Ext misc_11;
+    struct Misc42Ext misc_42;
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
     struct Misc24Ext misc_24;
@@ -2121,6 +2226,11 @@ union RideArmorUnk94 {
     } bytes;
 };
 
+union RideArmorUnk90 {
+    u32 value;
+    s8 byte;
+};
+
 struct RideArmorObj {
     BASE_OBJ_FIELDS
     f32 unk18;
@@ -2129,7 +2239,8 @@ struct RideArmorObj {
     f32 y_vel;
     s32 unk28;
     s32 unk2C;
-    s8 pad30[0x46 - 0x30];
+    s8 pad30[0x45 - 0x30];
+    s8 unk45;
     s8 unk46;
     s8 pad47[0x5C - 0x47];
     s8 unk5C;
@@ -2154,7 +2265,7 @@ struct RideArmorObj {
     s16 unk8A;
     s16 unk8C;
     s16 unk8E;
-    u32 unk90;
+    union RideArmorUnk90 unk90;
     union RideArmorUnk94 unk94;
     union RideArmorUnk98 unk98;
     s8 pad9A[0xA8 - 0x9A];
@@ -3268,6 +3379,10 @@ extern struct Unk_unk68 D_800FBBC4;
 extern struct Unk_unk68 D_800FBA50;
 extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBEFC;
+extern struct Unk_unk68 D_800FBE00;
+extern struct Unk_unk68 D_800FBE04;
+extern struct Unk_unk68 D_800FBE08;
+extern union AnimationStep* D_800FBE94[];
 extern struct Unk_unk68 D_800FBE0C;
 extern struct Unk_unk68 D_800FBE10;
 extern struct Unk_unk68 D_800FBE14;
@@ -3304,6 +3419,12 @@ extern struct Unk_unk68 D_80106974[];
 extern union AnimationStep* D_800FC9DC[];
 extern struct Unk_unk68 D_800FC9F4;
 extern struct Unk_unk68 D_800FC9F8;
+extern struct Unk_unk68* D_800FC73C[2];
+extern u8 D_800FCFA0[];
+extern union AnimationStep* D_800FD554[];
+extern struct Main28InitData D_800FD5FC[];
+extern struct Unk_unk68 D_80106AF4[];
+extern struct Unk_unk68 D_80107074[];
 extern struct Unk_unk68 D_80108504[];
 extern struct Unk_unk68 D_80108850[];
 extern struct Unk_unk68 D_801088E4[];
@@ -3638,7 +3759,11 @@ extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 extern u8 D_800F1C0F[];
 #endif
 extern u32 D_800F1D8C;
-extern u8 D_800F1D90;
+extern u8 D_800F1D90[];
+extern u8 D_800F1D91;
+extern u8 D_800F1D92;
+extern u8 D_800F1D93;
+extern struct MenuRuntimeData D_800F1D94;
 extern CdlATV D_80139644;
 extern u8 D_80171EA9;
 extern s32 D_80166BB4;
@@ -3775,6 +3900,7 @@ void func_80012A3C();
 s32 func_8001540C(s32, s32, void*);
 s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
+void func_8001C30C(struct MenuCharacterData*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
 void func_80035048(struct PlayerObj*);
@@ -3972,6 +4098,8 @@ s32 func_80038D38(struct PlayerObj*);
 s32 func_80038D88(struct PlayerObj*);
 s32 func_800373DC(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
+void func_8003D8A8(struct RideArmorObj*, s32, s32);
+s32 func_8003DCD8(struct RideArmorObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);
 void func_80038E44(struct PlayerObj*, s32);
@@ -4055,6 +4183,7 @@ void func_800BDB10(struct EffectObj*);
 void func_800D9B48(struct LayerObj*);
 void func_800E0D0C(void);
 void func_800E9040(void);
+void func_800D18C0(struct UnkObj*);
 
 #include "game_prototypes.h"
 #endif

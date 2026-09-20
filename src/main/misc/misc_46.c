@@ -168,7 +168,36 @@ void func_800D188C(struct UnkObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_46", func_800D18C0);
+void func_800D18C0(struct UnkObj* arg0)
+{
+    s32 var_s1;
+    struct VisualObj* temp_v0;
+    struct VisualObj* var_s2;
+
+    var_s1 = 0;
+    do {
+        temp_v0 = func_8002AF4C(NULL, 1);
+        if (temp_v0 != 0) {
+            temp_v0->active = 0x41;
+            temp_v0->id = 5;
+            temp_v0->unk2 = var_s1;
+            temp_v0->bg_offset = g_Player.bg_offset;
+            temp_v0->unk40 = (u16)arg0->unk40;
+            temp_v0->unk3C = arg0->unk3C;
+            temp_v0->animation_table = arg0->animation_table;
+            temp_v0->unk42 = (u16)arg0->unk42;
+            temp_v0->unk16 = 6;
+            temp_v0->unk5C.owner = PLAYER_OBJECT(arg0);
+            if (var_s1 & 0xFF) {
+                temp_v0->unk50 = PLAYER_OBJECT(var_s2);
+            } else {
+                temp_v0->unk50 = PLAYER_OBJECT(arg0);
+            }
+        }
+        var_s1 += 1;
+        var_s2 = temp_v0;
+    } while ((u32)(var_s1 & 0xFF) < 3U);
+}
 
 union AnimationStep D_8010F194[1] = {
     { .packed = 0x00000101 },

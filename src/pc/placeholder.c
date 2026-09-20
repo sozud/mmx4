@@ -2495,25 +2495,25 @@ void func_80043390(struct MainObj* arg0)
         arg0->collision_data = D_80106470;
         func_80015D60(arg0, 1);
         arg0->unk60 = 3;
-        arg0->ext.raw[3] = 0x78;
-        arg0->ext.raw[0] = 0;
-        arg0->ext.raw[2] = 0;
+        arg0->ext.main_3.turn_timer = 0x78;
+        arg0->ext.main_3.alerted = 0;
+        arg0->ext.main_3.player_ahead = 0;
         arg0->unk5 = 2;
         break;
     case 1:
         arg0->collision_data = (const u16*)D_801060F0;
-        arg0->ext.raw[3] = 0x78;
+        arg0->ext.main_3.turn_timer = 0x78;
         arg0->unk60 = 4;
-        arg0->ext.raw[0] = 1;
-        arg0->ext.raw[2] = 0;
+        arg0->ext.main_3.alerted = 1;
+        arg0->ext.main_3.player_ahead = 0;
         arg0->unk5 = 5;
         break;
     default:
         arg0->collision_data = (const u16*)D_801060F0;
         arg0->unk60 = 4;
-        arg0->ext.raw[0] = 1;
-        arg0->ext.raw[2] = 0;
-        arg0->ext.raw[3] = 0x78;
+        arg0->ext.main_3.alerted = 1;
+        arg0->ext.main_3.player_ahead = 0;
+        arg0->ext.main_3.turn_timer = 0x78;
         func_80015D60(arg0, 5);
         arg0->unk5 = 8;
         break;
@@ -5021,31 +5021,6 @@ void func_80031540(struct PlayerObj* player)
         player->state = 3;
         player->unk5 = 0;
         player->unk6 = 0;
-    }
-}
-
-void func_80034150(struct PlayerObj* arg0)
-{
-    s16 background_x = background_objects[(u8)arg0->bg_offset].x_pos.i.hi;
-    s16 delta = arg0->x_pos.i.hi - 0x40 - background_x;
-    s32 aligned;
-
-    if (delta > 0) {
-        arg0->unk15 = 0;
-        aligned = delta < 3;
-    } else if (delta < 0) {
-        arg0->unk15 = 0x40;
-        aligned = delta >= -2;
-    } else {
-        aligned = 1;
-    }
-    if (aligned) {
-        func_80036534(arg0);
-        background_x = background_objects[(u8)arg0->bg_offset].x_pos.i.hi;
-        arg0->unkC0 = -1;
-        arg0->unk15 = 0x40;
-        arg0->unk5 = 0x14;
-        arg0->x_pos.i.hi = background_x + 0x40;
     }
 }
 

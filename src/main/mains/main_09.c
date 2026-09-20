@@ -130,7 +130,37 @@ void func_800490D4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_09", func_800491BC);
+void func_800491BC(struct MainObj* self)
+{
+    struct MiscObj* misc;
+    s8* data;
+    u16 timer;
+
+    data = (s8*)self->ext.main_9.effect;
+    self->on_screen = 0;
+    if (data[0] != 0) {
+        if (data[7] == 0) {
+            timer = self->unk7E;
+            self->unk7E = timer - 1;
+            if (timer == 0) {
+                self->unk7E = 5;
+                self->unk42 = self->unk42 ^ 0x8000;
+            }
+            func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+            return;
+        }
+        self->unk7 = -0x80;
+        return;
+    }
+    misc = find_free_misc_obj();
+    if (misc != 0) {
+        misc->active = 0x41;
+        misc->id = 0x2E;
+        misc->state = 0;
+    }
+    func_80036AE4(0x14, 0x40);
+    ZeroObjectState(OBJECT_HEADER(self));
+}
 
 void func_80049288(struct MainObj* arg0)
 {

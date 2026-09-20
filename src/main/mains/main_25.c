@@ -120,7 +120,7 @@ void func_80057A80(struct MainObj* arg0)
         arg0->unk2C = FIXED(0.2578125);
     }
     if (arg0->animation_step.fields.event == 1) {
-        arg0->ext.raw[1] = 2;
+        arg0->ext.main_25.unk84 = 2;
         func_80015D60(arg0, 4);
         arg0->unk6 = 1;
     }

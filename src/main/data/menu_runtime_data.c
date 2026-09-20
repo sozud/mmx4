@@ -1,17 +1,5 @@
 #include "common.h"
 
-struct MenuRuntimeData {
-    u8 byte_0;
-    u8 byte_1;
-    u16 halfword_2;
-    u8 buffer[33];
-    u8 padding[3];
-    u8 button_lookup[24];
-    u16 low_button_masks[8];
-    u16 high_button_masks[3];
-    u16 sign_bit_mask;
-};
-
 struct MenuRuntimeData D_800F1D94 = {
     0,
     0,

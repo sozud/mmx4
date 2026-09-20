@@ -18,7 +18,7 @@ void func_80091AC4(struct MainObj* arg0)
         arg0->unk24 = 0;
         arg0->unk28 = 0;
         arg0->unk2C = 0;
-        arg0->unk20 = arg0->ext.raw[0];
+        arg0->unk20 = arg0->ext.main_76.saved_x_velocity;
         return;
     }
 

@@ -26,12 +26,18 @@ void func_80050BFC(struct MainObj* arg0)
 {
     if (g_Player.x_pos.i.hi >= 0x18F1) {
         func_80036B18();
-        arg0->ext.raw[0] = 0;
-        arg0->ext.raw[1] = 0;
-        arg0->ext.raw[2] = 0;
-        arg0->ext.raw[3] = 0;
-        arg0->ext.raw[4] = 0;
-        arg0->ext.raw[5] = 0;
+        arg0->ext.main_18.unk80 = 0;
+        arg0->ext.main_18.unk81 = 0;
+        arg0->ext.main_18.unk82 = 0;
+        arg0->ext.main_18.unk83 = 0;
+        arg0->ext.main_18.unk84 = 0;
+        arg0->ext.main_18.unk85 = 0;
+        arg0->ext.main_18.unk86 = 0;
+        arg0->ext.main_18.unk87 = 0;
+        arg0->ext.main_18.unk88 = 0;
+        arg0->ext.main_18.unk89 = 0;
+        arg0->ext.main_18.unk8A = 0;
+        arg0->ext.main_18.saved_unk5 = 0;
         engine_obj.unkF = 0x40;
         func_8002B0C8(OBJECT_HEADER(arg0));
     }

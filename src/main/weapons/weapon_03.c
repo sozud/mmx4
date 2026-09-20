@@ -44,7 +44,7 @@ void func_80094B24(struct WeaponObj* arg0)
     arg0->x_pos.val = g_Player.x_pos.val;
     arg0->y_pos.val = g_Player.y_pos.val;
     arg0->ext.weapon_3.lifetime = 0x96;
-    arg0->ext.weapon_3.timer = 0;
+    arg0->ext.weapon_3.offset = 0;
     arg0->ext.weapon_3.unk90 = 0;
     arg0->ext.weapon_3.unk91 = 8;
     func_8001540C(1, 9, arg0);
@@ -62,7 +62,7 @@ void func_80094D40(struct WeaponObj* arg0)
     s16 offset;
 
     arg0->on_screen = 1;
-    offset_ptr = (u16*)&arg0->ext.raw[0];
+    offset_ptr = &arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
         arg0->x_pos.i.hi = g_Player.x_pos.u.hi + *offset_ptr;
     } else {
@@ -82,7 +82,7 @@ void func_80094DC0(struct WeaponObj* arg0)
     u16 temp_v0;
     u16* field_8c;
 
-    field_8c = (u16*)&arg0->ext.raw[0];
+    field_8c = &arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
         arg0->x_pos.i.hi = g_Player.x_pos.u.hi + 0x40;
     } else {
@@ -107,17 +107,17 @@ void func_80094E50(struct WeaponObj* arg0)
 {
     s16 temp_v0;
     s16 var_v0;
-    s16* field_8c;
+    u16* field_8c;
 
     arg0->on_screen = 1;
-    field_8c = (s16*)&arg0->ext.raw[0];
+    field_8c = &arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi + *(u16*)field_8c;
+        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi + *field_8c;
     } else {
-        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi - *(u16*)field_8c;
+        arg0->x_pos.i.hi = (u16)g_Player.x_pos.i.hi - *field_8c;
     }
 
-    temp_v0 = *field_8c;
+    temp_v0 = (s16)*field_8c;
     if (temp_v0 == 0) {
         arg0->state = 3;
     } else {
