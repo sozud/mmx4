@@ -9,7 +9,6 @@
 unsigned long mmx4_pc_frame_number(void);
 
 struct RideArmorObj;
-
 static const char* mmx4_pc_seen_stubs[2048];
 static size_t mmx4_pc_seen_stub_count;
 static int mmx4_pc_stub_continue = -1;
@@ -49,6 +48,8 @@ static void mmx4_pc_unimplemented(const char* name)
     {                                     \
         mmx4_pc_unimplemented(#name);     \
     }
+
+PC_GAME_STUB(func_8006FB20)
 
 PC_GAME_STUB(func_8003D8A8)
 PC_GAME_STUB(func_8003DCD8)

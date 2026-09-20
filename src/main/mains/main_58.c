@@ -147,7 +147,28 @@ void func_80074BD8(struct MainObj* arg0)
     D_8010169C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_58", func_80074C14);
+void func_80074C14(struct MainObj* arg0)
+{
+    s32 velocity;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, 0);
+    arg0->unk7C = 0x3C;
+    if (arg0->unk2 == 1) {
+        velocity = 0x18000;
+        if (arg0->y_pos.i.hi >= 0x369) {
+            velocity = -0x18000;
+        }
+        arg0->unk24 = velocity;
+    } else {
+        velocity = -0x18000;
+        if (arg0->x_pos.i.hi >= 0x951) {
+            velocity = 0x18000;
+        }
+        arg0->unk20 = velocity;
+    }
+    arg0->unk6++;
+}
 
 void func_80074CB8(struct MainObj* arg0)
 {
@@ -197,7 +218,7 @@ void func_80074DDC(struct AnimatedObj* arg0)
         obj->active = 0x41;
         obj->id = 0x10;
         obj->unk2 = 0;
-        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk50 = PLAYER_OBJECT(arg0);
         obj->unk42 = arg0->unk42;
         obj->animation_table = D_80101624;
         obj->unk3C = arg0->unk3C;
