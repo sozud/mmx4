@@ -265,7 +265,34 @@ void func_800AD4DC(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD538);
+void func_800AD538(struct ShotObj* self)
+{
+    s32 velocity;
+
+    func_8002B93C(
+        MOVING_OBJECT(self),
+        func_8002B7B0(
+            OBJECT_HEADER(self), FIXED(3616),
+            D_80109E24[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]]
+                << 16)
+            & 0xFF);
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
+    if (func_800AC848(
+            self, 0xE20,
+            D_80109E24[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]])
+        & 0xFF) {
+        velocity = FIXED(-1.5);
+        self->y_vel.val = 0;
+        self->unk5 = (u8)self->unk5 + 1;
+        if (self->unk15 != 0) {
+            velocity = FIXED(1.5);
+        }
+        self->x_vel.val = velocity;
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+}
 
 void func_800AD630(struct ShotObj* arg0)
 {

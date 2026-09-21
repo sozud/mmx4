@@ -991,6 +991,7 @@ extern void (*D_800F90E8[])(struct RideArmorObj*);
 void func_8003BB20(struct RideArmorObj*);
 void func_8003BDA0(struct RideArmorObj*);
 void func_8003BE28(struct RideArmorObj*);
+void func_8003CBCC(struct RideArmorObj*);
 void func_8003C584(struct RideArmorObj*);
 void func_8003BF1C(struct RideArmorObj*);
 void func_8003C08C(struct RideArmorObj*);
@@ -2128,7 +2129,7 @@ void func_8005F9A4(struct MainObj* arg0);
 extern void (*D_800FE4C4[])(struct MainObj*);
 void func_8005F9F4(void);
 void func_8005FB38(struct MainObj*);
-void func_8005FBBC(void);
+void func_8005FBBC(struct MainObj*);
 void func_8005FCAC(struct MainObj*);
 void func_8005FCD8(struct MainObj*);
 
@@ -2337,13 +2338,16 @@ void func_80065B30(struct MainObj* arg0);
 void func_80065B6C(struct MainObj* arg0);
 
 // D_800FF964
-void func_80065BC8(void);
-void func_80065CD4(void);
+void func_80065BC8(struct MainObj*);
+void func_80065CD4(struct MainObj*);
 void func_80065DCC(struct MainObj*);
 void func_80065EA4(void);
 void func_800661AC(void);
+void func_8006630C(struct MainObj*);
+void func_80066478(struct MainObj*);
 
 // D_800FF978
+extern void (*D_800FF978[])(struct MainObj*);
 void func_80066580(struct MainObj*);
 void func_8006692C(struct MainObj*);
 
@@ -3160,6 +3164,7 @@ void func_8007B90C(void);
 void func_8007BB90(struct MainObj*);
 
 // D_8010221C
+extern void (*D_8010221C[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_8007BC48(struct MainObj* arg0);
 u8 func_8007BABC(struct MainObj*);
@@ -3174,7 +3179,7 @@ void func_8007BF74(void);
 // D_8010225C
 extern void (*D_8010225C[])(struct MainObj*);
 void func_8007BC0C(struct BarObj* arg0);
-void func_8007BD4C(void);
+void func_8007BD4C(struct MainObj*);
 void func_8007BF7C(struct BarObj* arg0);
 
 // D_80102480
@@ -5888,7 +5893,7 @@ void func_800BF530(struct ItemObj*);
 void func_800BF5EC(struct ItemObj*);
 
 // D_8010C300
-void func_800BEED4(void);
+void func_800BEED4(struct ItemObj*);
 void func_800BEFCC(void);
 void func_800BF1FC(void);
 void func_800BF508(struct ItemObj*);
@@ -6156,6 +6161,7 @@ void func_800C7558(struct ItemObj*);
 // D_8010D9A4
 extern void (*D_8010D9A4[])(struct ItemObj*);
 void func_800C7578(struct ItemObj*);
+s8 func_800C7970(struct ItemObj*, struct PlayerObj*);
 void func_800C7648(struct ItemObj*);
 void func_800C76A4(struct ItemObj*);
 void func_800C785C(struct ItemObj*);

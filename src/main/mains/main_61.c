@@ -30,7 +30,38 @@ void func_80078E2C(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_80078EB0);
+void func_80078EB0(struct MainObj* self)
+{
+    struct EffectObj* effect;
+    u8 value;
+
+    if (--self->unk7C == 0) {
+        self->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
+            self->ext.main_61.data.effect = effect;
+        }
+    }
+
+    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+
+    if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
+        self->unk61 -= 5;
+        if ((s8)self->unk61 >= 0x1A) {
+            self->unk61 = 0;
+        }
+        value = self->unk61;
+        if ((s8)self->unk61 < 5) {
+            value = 5;
+        }
+        self->unk7E = (s8)value;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_80078FA4);
 
@@ -43,7 +74,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_61", func_800790E8);
 
 void func_800791D4(struct MainObj* arg0)
 {
-    if (*arg0->ext.main_61.script == 0) {
+    if (*arg0->ext.main_61.data.script == 0) {
         s16* y_pos = &background_objects[g_Player.bg_offset].y_pos.i.hi;
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 0;

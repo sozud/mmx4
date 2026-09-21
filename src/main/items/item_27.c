@@ -77,7 +77,29 @@ void func_800C7558(struct ItemObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7578);
+void func_800C7578(struct ItemObj* self)
+{
+    struct MiscObj* effect;
+    u8 height;
+
+    if (func_800C7970(self, &g_Player)) {
+        g_Player.x_pos.i.hi = (s16)(u16)self->x_pos.i.hi;
+        height = self->unk68->unk3;
+        g_Player.y_pos.i.hi = ((u16)self->y_pos.i.hi - height) - g_Player.unk68->unk3;
+        func_80036AE4(0x14, g_Player.unk15);
+        reset_main_and_shots();
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 0x41;
+            effect->id = 0x33;
+            effect->unk2 = 0x10;
+            effect->x_pos.val = self->x_pos.val;
+            effect->y_pos.val = self->y_pos.val;
+            effect->ext.misc_5.owner = MAIN_OBJECT(self);
+        }
+        self->unk5 = 1;
+    }
+}
 
 void func_800C7648(struct ItemObj* arg0)
 {

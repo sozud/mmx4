@@ -57,7 +57,30 @@ void func_8007BCC4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BD4C);
+void func_8007BD4C(struct MainObj* self)
+{
+    s32 result;
+    u8 frame_index;
+
+    D_8010221C[self->unk5](self);
+    frame_index = self->animation_step.fields.frame_index;
+    if ((3 <= frame_index) && (frame_index < 12)) {
+        self->unk54 = (const void*)((u32*)&D_80102124)[frame_index];
+        self->unk50 = D_80102148[self->animation_step.fields.frame_index];
+    } else {
+        self->unk54 = NULL;
+        self->unk50 = NULL;
+    }
+    result = func_8002DD04(self);
+    if ((result == 3) || (result == 0xC) || (result == 0x22)) {
+        self->unk7E = 0x14;
+        self->unk5 = 0;
+        self->state++;
+        self->unk42 = (self->unk42 & 0x7FFF) + 2;
+    } else {
+        func_8002D9BC(self);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BE40);
 

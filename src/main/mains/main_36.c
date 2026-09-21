@@ -61,7 +61,34 @@ void func_8005FB38(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005FBBC);
+void func_8005FBBC(struct MainObj* self)
+{
+    struct MainObj* current;
+    u16 timer;
+
+    current = SP_CUR_MAIN_OBJ;
+    timer = current->ext.main_36.unk8A - 1;
+    current->ext.main_36.unk8A = timer;
+    if (timer == 0) {
+        self->unk62 = 0;
+        self->unk50 = NULL;
+        self->unk54 = NULL;
+        g_Player.unkBA = 0;
+        self->unk6++;
+        current = SP_CUR_MAIN_OBJ;
+        if (current->ext.main_36.unk8C != 0) {
+            *(u8*)&current->ext.main_36.unk84->unk54 = 1;
+        }
+        func_80015D60(self, 6);
+        return;
+    }
+    if (current->ext.main_36.unk8C != 0 && timer == 0x40) {
+        func_80036470(4);
+    }
+    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8A & 7) == 0) {
+        func_8001540C(2, 0xED, self);
+    }
+}
 
 void func_8005FCAC(struct MainObj* arg0)
 {

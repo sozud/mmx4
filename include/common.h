@@ -701,8 +701,17 @@ struct Main35Ext {
 };
 
 struct Main45Ext {
-    u8 pad80[8];
+    u8 unk80;
+    u8 unk81;
+    u8 unk82;
+    u8 unk83;
+    s16 unk84;
+    u8 unk86;
+    u8 unk87;
     u8 unk88;
+    u8 unk89;
+    s16 unk8A;
+    struct MainObj* unk8C;
 };
 
 struct Main48Ext {
@@ -931,8 +940,13 @@ struct Main60Ext {
     u8 unk94;
 };
 
-struct Main61Ext {
+union Main61Data {
     s8* script;
+    struct EffectObj* effect;
+};
+
+struct Main61Ext {
+    union Main61Data data;
     u8 pad84;
     u8 unk85;
     u8 unk86;
@@ -1912,6 +1926,19 @@ union ItemExt {
     struct Item23Ext item_23;
     struct MainObj* owner;
 };
+
+struct Item01StageEntry {
+    u16 x;
+    u16 y;
+    u16 left;
+    u16 right;
+    u16 trigger_x;
+    u16 flags_and_palette;
+    u16 velocity;
+    u16 sound_id;
+};
+
+extern struct Item01StageEntry D_8010C160[15];
 
 union ItemUnk84 {
     u16 timer;
@@ -3609,6 +3636,22 @@ extern struct Unk_unk68 D_80105260;
 extern struct Unk_unk68 D_80105264;
 extern struct Unk_unk68 D_801049B0[2];
 extern u8 D_800FC7B4[4];
+extern s8 D_800FF898[4];
+extern u8 D_800FF89C[20];
+extern union AnimationStep* D_800FF918[19];
+extern struct Unk_unk68 D_80107678[];
+extern struct Unk_unk68 D_80100854;
+extern struct Unk_unk68 D_80100858;
+extern struct Unk_unk68 D_80102124;
+extern struct Unk_unk68* D_80102148[12];
+extern struct Unk_unk68 D_801034B4;
+extern struct Unk_unk68 D_8010526C;
+extern struct Unk_unk68 D_80105270;
+extern u8 D_80108C0C[7][4];
+extern u8 D_80108C28[8];
+extern u8 D_80108C30[8];
+extern u8 D_8010CFFC[4];
+extern u16 D_8010D000[4];
 extern u8 D_800FE2A4[8];
 extern u8** D_801002A4[3];
 extern u8 D_801002B0[12];

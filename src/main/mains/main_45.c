@@ -7,9 +7,70 @@ void func_80065B8C(struct MainObj* arg0)
     D_800FF964[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065BC8);
+void func_80065BC8(struct MainObj* self)
+{
+    self->active |= 4;
+    self->unk60 = 2;
+    self->on_screen = 0;
+    self->unk5C = 0;
+    self->unk61 = 1;
+    self->collision_data = D_80107678;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    self->unk20 = 0;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk67 = 0;
+    self->unk75 = 1;
+    self->unk76 = 0;
+    self->unk54 = NULL;
+    self->unk50 = NULL;
+    self->unk15 = 0;
+    self->ext.main_45.unk80 = 0;
+    self->ext.main_45.unk81 = 0;
+    self->ext.main_45.unk82 = 0;
+    self->ext.main_45.unk83 = 0;
+    self->animation_table = (const u8* const*)D_800FF918;
+    self->unk16 = 4;
+    self->unk68 = (struct Unk_unk68*)D_800FF898;
+    self->ext.main_45.unk84 = 0x320;
+    self->ext.main_45.unk88 = 0x80;
+    self->ext.main_45.unk89 = 0;
+    self->ext.main_45.unk86 = D_800FF89C[0];
+    self->ext.main_45.unk87 = 0;
+    func_80015D60(self, 0);
+    self->state = 1;
+    self->unk5 = 0;
+    self->unk6 = 0;
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_45", func_80065CD4);
+void func_80065CD4(struct MainObj* self)
+{
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    self->ext.main_45.unk8A = self->x_pos.i.hi;
+    func_8006630C(self);
+    D_800FF978[self->unk5](self);
+    func_80066478(self);
+    if ((self->ext.main_45.unk80 & 7) == 7) {
+        func_800AF808(BASE_OBJECT(self));
+        engine_obj.enable_boss = 0;
+        engine_obj.boss_ptr = NULL;
+        self->ext.main_45.unk8C->active = 0;
+        self->unk7C = 0x78;
+        self->unk7E = 1;
+        self->state = 2;
+        if (g_Player.unk5 == 2) {
+            func_80036AE4(0x14, 0x40);
+            self->unk6 = 1;
+        } else {
+            self->unk6 = 0;
+        }
+    }
+    func_8002B318(BASE_OBJECT(self), 0x100, 0x100);
+}
 
 void func_80065DCC(struct MainObj* arg0)
 {
