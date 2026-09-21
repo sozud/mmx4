@@ -442,9 +442,61 @@ void func_800320E4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032140);
+void func_80032140(struct PlayerObj* arg0)
+{
+    s8 event;
+    u8 unsigned_event;
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032224);
+    if ((func_80037290(arg0) == 0) && (func_80039880(arg0) == 0)) {
+        if (arg0->pressed_input & 0x80) {
+            func_80034538(arg0);
+            return;
+        }
+        if (func_800398F0(arg0) == 0) {
+            unsigned_event = arg0->animation_step.fields.event;
+            if (unsigned_event & 0x20) {
+                arg0->animation_step.fields.event = unsigned_event & 0xF;
+                func_800366C0(arg0);
+            }
+            event = arg0->animation_step.fields.event;
+            if (event & 0x80) {
+                arg0->animation_step.fields.event = event & 0xF;
+                func_8001540C(1, 5, arg0);
+                arg0->unk8C = 1;
+                arg0->unk6++;
+                return;
+            }
+            func_80038568(arg0, 0x10);
+        }
+    }
+}
+
+void func_80032224(struct PlayerObj* arg0)
+{
+    u8 event;
+
+    if ((func_80037290(arg0) == 0) && (func_8003A000(arg0) == 0)) {
+        if (arg0->pressed_input & 0x80) {
+            func_80034538(arg0);
+            return;
+        }
+        if (func_800398F0(arg0) == 0) {
+            if (func_800337DC(arg0) != 0) {
+                func_800347D0(arg0);
+                return;
+            }
+            event = arg0->animation_step.fields.event;
+            if (event & 0x40) {
+                arg0->animation_step.fields.event = event & 0xF;
+                func_8003666C(arg0);
+            }
+            if (!(arg0->unk85 & 3)) {
+                func_800367F8(arg0);
+            }
+            func_80038568(arg0, 0x10);
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/21AB4", func_80032300);
 
@@ -611,9 +663,60 @@ void func_80032910(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032950);
+void func_80032950(struct PlayerObj* arg0)
+{
+    u16 buttons;
+    u8 duration;
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032A28);
+    if ((func_80033FF0() == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
+        if (arg0->pressed_input & 2) {
+            arg0->unk15 = 0;
+        }
+        if (arg0->pressed_input & 1) {
+            arg0->unk15 = 0x40;
+        }
+        buttons = arg0->input.buttons.held;
+        if (buttons & 4) {
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+            func_8002B718(MOVING_OBJECT(arg0));
+            return;
+        }
+        if (buttons & 8) {
+            duration = arg0->animation_step.fields.duration;
+            func_8003516C(arg0, 0x20, arg0->animation_step.fields.event);
+            arg0->animation_step.fields.duration = duration;
+            func_80034DC8(arg0);
+        }
+    }
+}
+
+void func_80032A28(struct PlayerObj* arg0)
+{
+    u16 buttons;
+    s8 duration;
+
+    if ((func_80033FF0() == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
+        if (arg0->pressed_input & 2) {
+            arg0->unk15 = 0;
+        }
+        if (arg0->pressed_input & 1) {
+            arg0->unk15 = 0x40;
+        }
+
+        buttons = arg0->input.buttons.held;
+        if (buttons & 4) {
+            duration = arg0->animation_step.fields.duration;
+            func_8003516C(arg0, 0x1F, arg0->animation_step.fields.event);
+            arg0->animation_step.fields.duration = duration;
+            func_80034D64(arg0);
+            return;
+        }
+        if (buttons & 8) {
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+            func_8002B718(MOVING_OBJECT(arg0));
+        }
+    }
+}
 
 void func_80032B04(struct PlayerObj* arg0)
 {
@@ -757,7 +860,28 @@ void func_80032DE0(struct PlayerObj* arg0)
     arg0->unk28 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/21AB4", func_80032E94);
+void func_80032E94(struct PlayerObj* arg0)
+{
+    if (engine_obj.unkF != 0) {
+        func_80034F7C(arg0);
+        return;
+    }
+    if ((arg0->unkC0 > 0) && (arg0->unkC1 == 0x17)) {
+        func_80034E2C(arg0);
+        return;
+    }
+    if (arg0->unkC5 == 0) {
+        func_80035EA4(arg0);
+        func_80034538(arg0);
+        arg0->unk86 = 1;
+        return;
+    }
+    if (arg0->unk6 == 0) {
+        func_800350A4(arg0, (u8)arg0->unkD4);
+        arg0->unk6++;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_80032F64(struct PlayerObj* arg0)
 {

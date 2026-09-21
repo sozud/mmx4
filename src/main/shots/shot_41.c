@@ -79,7 +79,31 @@ void func_800A5DEC(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5E60);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5F4C);
+void func_800A5F4C(struct ShotObj* arg0)
+{
+    func_8002D9BC(arg0);
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if ((arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x78) {
+        arg0->y_vel.val = 0;
+    }
+
+    if (--arg0->timer == 0) {
+        arg0->unk68 = NULL;
+        arg0->y_vel.val = FIXED(-4);
+        arg0->unk6++;
+    }
+
+    if (arg0->animation_step.fields.event == 1) {
+        func_8001540C(2, 6, arg0);
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        func_8001540C(2, 7, arg0);
+    }
+
+    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x80);
+}
 
 void func_800A6028(struct ShotObj* arg0)
 {

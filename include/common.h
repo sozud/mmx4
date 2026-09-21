@@ -1557,6 +1557,7 @@ struct Shot29Ext {
 union ShotUnk8C {
     s32 word;
     u16 half;
+    s16 halves[2];
     s8 byte;
     u8 bytes[4];
     struct Shot29Ext shot_29;
@@ -1566,6 +1567,7 @@ union ShotUnk8C {
 union ShotUnk58 {
     const u8* data;
     const u16* collision_data;
+    const union AnimationStep* animation_steps;
     struct Unk_unk68* collision_bounds;
 };
 
@@ -1773,7 +1775,7 @@ struct WeaponObj {
     f32 unk1C;
     f32 x_vel;
     f32 y_vel;
-    s32 unk28;
+    f32 unk28;
     s32 unk2C;
     u32** animation_table;
     u32* animation_cursor;
@@ -3568,6 +3570,8 @@ extern union AnimationStep* D_800FFD44[14];
 extern u8 D_80109028[4];
 extern u8 D_8010902C[32][4];
 extern u8 D_801090C4[4];
+extern u8 D_801090C8[4];
+extern u8 D_801090CC[2][4];
 extern u16 D_801090E8[3][2];
 extern u8 D_80109104[8];
 extern struct Unk_unk68 D_80109894;
@@ -3592,6 +3596,7 @@ extern struct Unk_unk68 D_80108A50[];
 extern u8 D_8010889C[];
 extern u32* D_8011C018[22];
 extern s16 D_801090D4[3][2];
+extern s16 D_8010977C[4][2];
 extern s16 D_801090E0[4];
 extern u8 D_801090F4[4];
 extern u8 D_80109100[4];
@@ -4031,15 +4036,21 @@ void func_8004D6CC(struct AnimatedObj*);
 void func_80094154(struct WeaponObj*);
 void func_8001653C(void);
 s32 func_80033694(struct PlayerObj*);
+s32 func_80033FF0(void);
 void func_80034538(struct PlayerObj*);
 void func_80034668(struct PlayerObj*);
 void func_80034754(struct PlayerObj*);
+void func_800347D0(struct PlayerObj*);
 void func_8003484C(struct PlayerObj*);
 void func_8003490C(struct PlayerObj*);
 void func_80034968(struct PlayerObj*);
 void func_80034D64(struct PlayerObj*);
 void func_80036A94(struct PlayerObj*);
+void func_800366C0(struct PlayerObj*);
+void func_800367F8(struct PlayerObj*);
 void func_80036E98(struct PlayerObj*);
+s32 func_80039AC8(struct PlayerObj*);
+s32 func_8003A000(struct PlayerObj*);
 void func_80025188(s32, u8);
 void func_800253F0(struct MainObj*, s32);
 void func_80025588(s16, s16, s16, s16, s32);
