@@ -30,9 +30,42 @@ write_state:
     arg0->state = next_state;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD708);
+void func_800BD708(struct EffectObj* self)
+{
+    s8 subtype;
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD7B0);
+    subtype = self->unk2;
+    if (g_Player.x_pos.i.hi >= D_8010C02C[subtype * 2]) {
+        if (!(subtype & 1) && engine_obj.substage == 0) {
+            func_800BDA4C(self);
+            engine_obj.unk10 = 1;
+            engine_obj.unk12 = 1;
+            engine_obj.unk11 = 1;
+            engine_obj.unk13 = 1;
+        }
+        self->state++;
+    }
+}
+
+void func_800BD7B0(struct EffectObj* self)
+{
+    s8 subtype;
+
+    func_800BDBD4();
+    subtype = self->unk2;
+    if (g_Player.x_pos.i.hi >= D_8010C02C[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
+        func_80036AE4(0x14, 0x40);
+        func_800BDD08(self);
+        if ((engine_obj.checkpoint & 1) || engine_obj.substage != 0) {
+            self->ext.effect_38.unk16 = 1;
+            self->ext.effect_38.timer = 0xA;
+            self->state += 2;
+        } else {
+            self->ext.effect_38.timer = 0x14;
+            self->state++;
+        }
+    }
+}
 
 void func_800BD890(struct EffectObj* arg0)
 {
@@ -60,7 +93,7 @@ void func_800BDA2C(struct EffectObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800BDA4C(void* arg0)
+void func_800BDA4C(struct EffectObj* arg0)
 {
     struct MiscObj* obj = find_free_misc_obj();
     if (obj != NULL) {

@@ -7,7 +7,30 @@ void func_800C5C4C(struct ItemObj* arg0)
     D_8010D344[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5C88);
+void func_800C5C88(struct ItemObj* self)
+{
+    struct MainObj* owner;
+
+    owner = self->backref;
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk16 = 2;
+    self->ext.item_23.unk80 = 0x12C;
+    self->ext.item_23.timer = 4;
+    self->unk5 = 0;
+    self->backref = NULL;
+    self->tail_ext.unk1.unk84.previous_value = 0;
+    self->unk68 = &D_8010D340;
+    self->unk2C = 0;
+    self->unk28 = 0;
+    self->unk7C.owner = owner;
+    func_8002B93C(MOVING_OBJECT(self),
+        func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+    self->x_vel.val *= 8;
+    self->y_vel.val *= 8;
+    func_80015D60(self, 0xA);
+    func_8001540C(2, 0xC5, self);
+}
 
 void func_800C5D44(struct ItemObj* arg0)
 {
@@ -16,7 +39,7 @@ void func_800C5D44(struct ItemObj* arg0)
 
     if (arg0->ext.item_23.unk80 != 0) {
         if (--arg0->ext.item_23.timer == 0) {
-            arg0->ext.item_2.unk82 = 1;
+            arg0->ext.item_23.timer = 1;
             x_distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
             y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
             func_8002B93C(MOVING_OBJECT(arg0), (u8)func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
@@ -68,7 +91,7 @@ void func_800C5F70(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_23", func_800C5F90);
 
-u8 D_8010D340[4] = { 0, 0, 4, 4 };
+struct Unk_unk68 D_8010D340 = { 0, 0, 4, 4 };
 
 void (*D_8010D344[])(struct ItemObj*) = {
     func_800C5C88,

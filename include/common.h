@@ -1923,6 +1923,7 @@ union ItemUnk7C {
     u8 value;
     u16 timer16;
     s32 timer;
+    struct MainObj* owner;
     struct MiscObj* misc;
     void* object;
     s32 item_26_value;

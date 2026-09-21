@@ -15,7 +15,23 @@ void func_800B8518(struct EffectObj* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8554);
+void func_800B8554(struct EffectObj* self)
+{
+    s16 pos;
+
+    pos = self->x_pos.i.hi - 0x10;
+    if (background_objects[0].x_pos.i.hi - 0x10 <= pos && background_objects[0].x_pos.i.hi + 0x150 >= pos) {
+        pos = self->y_pos.i.hi;
+        if (background_objects[0].y_pos.i.hi - 0x10 <= pos && background_objects[0].y_pos.i.hi + 0x100 >= pos) {
+            func_800B875C(self, background_objects[0].x_pos.i.hi);
+            self->ext.unk_effect.unk15++;
+        }
+    }
+
+    if (self->ext.unk_effect.unk15 >= 0x1F) {
+        self->state++;
+    }
+}
 
 void func_800B8610(struct EffectObj* arg0)
 {

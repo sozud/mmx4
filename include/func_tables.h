@@ -5553,6 +5553,7 @@ void func_800B8470(struct EffectObj*);
 extern void (*D_8010B638[])(struct EffectObj*);
 void func_800B8518(struct EffectObj*);
 void func_800B8554(struct EffectObj*);
+void func_800B875C(struct EffectObj*, s16);
 void func_800B8610(struct EffectObj*);
 void func_800B8630(void);
 
@@ -5813,6 +5814,9 @@ extern void (*D_8010C048[])(struct EffectObj*);
 void func_800BD690(struct EffectObj*);
 void func_800BD708(struct EffectObj*);
 void func_800BD7B0(struct EffectObj*);
+void func_800BDA4C(struct EffectObj*);
+void func_800BDD08(struct EffectObj*);
+extern u16 D_8010C02C[14];
 void func_800BD890(struct EffectObj*);
 void func_800BD8C4(struct EffectObj*);
 void func_800BD938(struct EffectObj*);
@@ -5930,6 +5934,7 @@ void func_800C13D8(struct ItemObj*);
 void func_800C14F0(struct ItemObj*);
 extern u8 D_8010CB08[3][4];
 void func_800C1590(struct ItemObj*);
+extern u8 D_8010CB14[4][4];
 void func_800C165C(struct ItemObj*);
 void func_800C169C(struct ItemObj*);
 
@@ -6020,6 +6025,7 @@ void func_800C3828(struct ItemObj*);
 // D_8010D040
 extern void (*D_8010D040[])(struct ItemObj*);
 void func_800C38C8(struct ItemObj*);
+extern struct Unk_unk68 D_8010D060;
 void func_800C39AC(struct ItemObj*);
 void func_800C3A0C(struct ItemObj*);
 void func_800C3A20(struct ItemObj*);
@@ -6106,6 +6112,7 @@ void func_800C5BCC(struct ItemObj*);
 // D_8010D344
 extern void (*D_8010D344[])(struct ItemObj*);
 void func_800C5C88(struct ItemObj*);
+extern struct Unk_unk68 D_8010D340;
 void func_800C5F90(struct ItemObj*);
 void func_800C5F70(struct ItemObj*);
 
@@ -6477,6 +6484,9 @@ void func_800CFB20(struct MiscObj*);
 extern void (*D_8010EFBC[])(struct MiscObj*);
 void func_800CFC6C(struct MiscObj*);
 void func_800CFD38(struct MiscObj*);
+extern s32 D_8010EF94[4];
+extern s32 D_8010EFA4[4];
+extern u16 D_8010EFB4[4];
 
 // D_8010EFC4
 extern void (*D_8010EFC4[])(struct MiscObj*);
@@ -6679,6 +6689,7 @@ void func_800D46D4(struct QuadObj*);
 // D_8010F748
 extern void (*D_8010F748[])(struct QuadObj*);
 void func_800D4A64(struct QuadObj*);
+extern s32 D_8010F754[4][2];
 void func_800D4B30(struct QuadObj*);
 void func_800D4C14(struct QuadObj*);
 

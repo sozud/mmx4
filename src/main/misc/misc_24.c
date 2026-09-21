@@ -39,7 +39,34 @@ void func_800CC1F8(struct MiscObj* arg0)
     D_8010E92C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC234);
+void func_800CC234(struct MiscObj* self)
+{
+    struct MainObj* main;
+
+    func_80015D60(self, 1);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    main = find_free_main_obj();
+    if (main != NULL) {
+        main->active = 0x41;
+        if (self->unk2 == 0) {
+            main->id = 0x30;
+        } else {
+            main->id = 3;
+        }
+        main->unk2 = -0x80;
+        main->unk15 = self->unk15;
+        main->x_pos.val = self->x_pos.val;
+        if (main->id == 3) {
+            main->y_pos.val = self->y_pos.val - FIXED(4);
+        } else {
+            main->y_pos.val = self->y_pos.val;
+        }
+        self->ext.misc_5.owner = main;
+        self->ext.misc_24.timer = 0x20;
+        self->unk6++;
+        func_8001540C(2, 0xE7, self);
+    }
+}
 
 void func_800CC304(struct MiscObj* arg0)
 {

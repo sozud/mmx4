@@ -10,7 +10,43 @@ void (*D_80109BEC[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA2FC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA3A0);
+void func_800AA3A0(struct ShotObj* self)
+{
+    s32 velocity;
+
+    velocity = self->x_vel.val;
+    if (velocity < 0) {
+        if (self->unk70 & 2) {
+            self->x_vel.val = -velocity;
+            if ((self->unk70 & 0xD) == 0xD) {
+                self->unk84.value = 1;
+            }
+        }
+    } else if (self->unk70 & 1) {
+        self->x_vel.val = -velocity;
+        if ((self->unk70 & 0xE) == 0xE) {
+            self->unk84.value = 1;
+        }
+    }
+
+    velocity = self->y_vel.val;
+    if (velocity < 0) {
+        if (self->unk70 & 8) {
+            self->y_vel.val = -velocity;
+            if ((self->unk70 & 0xC) == 0xC) {
+                self->unk84.value = 1;
+            }
+        }
+    } else if (self->unk70 & 4) {
+        self->y_vel.val = -velocity;
+        if ((self->unk70 & 0xC) == 0xC) {
+            self->unk84.value = 1;
+        }
+    }
+
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_800AA488(struct ShotObj* arg0)
 {
