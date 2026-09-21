@@ -112,7 +112,28 @@ void func_8008BF54(struct MainObj* arg0, s32 arg1, s32 arg2)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C014);
+void func_8008C014(struct MainObj* arg0, s8 arg1)
+{
+    struct MainObj* source;
+    struct MiscObj* temp_v0;
+
+    source = arg0;
+    temp_v0 = find_free_misc_obj();
+    if (temp_v0 != 0) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0x31;
+        temp_v0->unk2 = arg1;
+        temp_v0->x_pos.val = source->x_pos.val;
+        temp_v0->y_pos.val = source->y_pos.val;
+        temp_v0->animation_table = (u32**)source->animation_table;
+        temp_v0->unk40 = source->unk40;
+        temp_v0->unk3C = (u8*)source->sprite_frames;
+        temp_v0->unk42 = source->unk42 & 0x7FFF;
+        temp_v0->unk16 = source->unk16;
+        temp_v0->ext.pointer.unk50 = source;
+        temp_v0->unk15 = 0;
+    }
+}
 
 void func_8008C0C0(struct MainObj* arg0)
 {

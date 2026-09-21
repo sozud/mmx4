@@ -7,7 +7,35 @@ void func_800919C4(struct MainObj* arg0)
     D_80105FB4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091A00);
+void func_80091A00(struct MainObj* arg0)
+{
+    struct MainObj* self = arg0;
+
+    self->state = 1;
+    self->unk5C = 3;
+    self->unk60 = 4;
+    self->animation_table = (const u8* const*)D_80105F90;
+    self->unk54 = D_80105FB0;
+    self->unk50 = D_80105FAC;
+    self->unk68 = (struct Unk_unk68*)D_80105FA8;
+    self->collision_data = D_80108484;
+    self->unk20 = FIXED(2);
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7C = 0;
+    self->unk7E = 0;
+    self->bg_offset = 0;
+    self->unk61 = 0;
+    self->unk67 = 0;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk16 = 5;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->ext.main_76.saved_x_velocity = self->unk20;
+    func_80015D60(self, 0);
+}
 
 void func_80091AC4(struct MainObj* arg0)
 {

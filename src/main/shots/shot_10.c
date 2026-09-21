@@ -9,7 +9,27 @@ void func_8009B3E8(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_10", func_8009B424);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_10", func_8009B594);
+void func_8009B594(struct ShotObj* arg0)
+{
+    struct ShotObj* self = arg0;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        if (self->unk84.value >= 3) {
+            func_800AF808(BASE_OBJECT(self));
+        }
+        self->state = (u8)self->state + 1;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+    } else {
+        self->state = (u8)self->state + 1;
+    }
+    self->unk84.value += 1;
+}
 
 void func_8009B654(struct ShotObj* arg0)
 {
