@@ -481,7 +481,8 @@ struct Main5Ext {
     u8 unk8B;
     u16 saved_unk5;
     u16 part_index;
-    u8 pad90[4];
+    u16 target_x;
+    u16 target_y;
     struct MainObj* owner;
 };
 
@@ -2158,6 +2159,12 @@ struct Misc52Ext {
     s8 unk57;
 };
 
+struct Misc22Ext {
+    struct MainObj* owner;
+    u8 pad54[2];
+    u8 timer;
+};
+
 struct Misc53Ext {
     u8 pad50[4];
     struct EffectObj* effect;
@@ -2200,6 +2207,7 @@ union MiscExt {
     struct Misc34Ext misc_34;
     struct Misc39Ext misc_39;
     struct Misc52Ext misc_52;
+    struct Misc22Ext misc_22;
     struct Misc53Ext misc_53;
     struct Misc55Ext misc_55;
     struct UnkExt unk;

@@ -930,7 +930,7 @@ void func_80077F60(struct MainObj* arg0, s8 arg1)
         shot->active = 0x41;
         shot->id = 0x25;
         shot->unk2 = arg1;
-        shot->unk7C = (struct WeaponObj*)arg0;
+        shot->unk7C = WEAPON_OBJECT(arg0);
         shot->unk42 = arg0->unk42;
         shot->animation_table = D_80101A6C;
         shot->unk3C = (void*)arg0->sprite_frames;
@@ -941,7 +941,34 @@ void func_80077F60(struct MainObj* arg0, s8 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077FFC);
+void func_80077FFC(struct MainObj* arg0)
+{
+    struct MainObj* self;
+    s32 variant;
+    s32 i;
+    struct ShotObj* shot;
+
+    self = arg0;
+    i = 0;
+    variant = ((self->ext.main_60.unk8B & 1) == 0) * 2;
+    do {
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x26;
+            shot->unk2 = variant + i;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk42 = self->unk42;
+            shot->animation_table = (u32**)D_80101A6C;
+            shot->unk3C = self->sprite_frames;
+            shot->unk40 = self->unk40;
+            shot->bg_offset = (s8)(u8)self->bg_offset;
+            shot->unk16 = 4;
+            shot->unk15 = self->unk15;
+        }
+        i += 1;
+    } while ((u8)i < 3);
+}
 
 void func_800780D4(struct AnimatedObj* arg0)
 {

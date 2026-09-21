@@ -5950,7 +5950,34 @@ void func_80046640(struct MainObj* arg0)
     D_800FA40C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800466A8);
+void func_800466A8(struct MainObj* arg0)
+{
+    struct MainObj* self = arg0;
+
+    func_80015D60(self, 1);
+    func_8001540C(2, 0x13, self);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B93C(
+        MOVING_OBJECT(self),
+        func_8002B7B0(
+            OBJECT_HEADER(self),
+            self->ext.main_5.target_y << 0x10,
+            self->ext.main_5.target_x << 0x10)
+            & 0xFF);
+
+    self->unk7C = 0x14;
+    if (self->unk15 == 0) {
+        if (self->ext.main_5.part_index & 1) {
+            self->unk7C = 0x16;
+        }
+    }
+    if (self->unk15 != 0) {
+        if (!(self->ext.main_5.part_index & 1)) {
+            self->unk7C += 2;
+        }
+    }
+    self->unk6++;
+}
 
 void func_8004677C(struct MainObj* arg0)
 {

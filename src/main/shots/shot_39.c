@@ -61,7 +61,27 @@ void func_800A4D00(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4D20);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4E48);
+void func_800A4E48(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        func_8002D9BC(arg0);
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->state = 9;
+    }
+    if (arg0->unk7C->state == 2) {
+        arg0->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 1) {
+        arg0->state = 9;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800A4F04(struct ShotObj* arg0)
 {
@@ -69,7 +89,34 @@ void func_800A4F04(struct ShotObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4F24);
+void func_800A4F24(struct ShotObj* arg0)
+{
+    struct ShotObj* self = arg0;
+    u32 var_v0;
+    u8 var_v1;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        func_80015D60(self, 3);
+        self->unk2C = FIXED(0.21875);
+        self->unk5 = 1;
+        self->unk6 = 1;
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+        self->y_vel.val = 0;
+        self->unk7 = 0;
+        self->unk8A = 3;
+        self->unk84.bytes[0] = 0;
+        if (engine_obj.stage == 3) {
+            var_v1 = D_801097FC[self->unk7];
+            var_v0 = var_v1 >> 4;
+        } else {
+            var_v1 = D_80109800[self->unk7];
+            var_v0 = var_v1 >> 4;
+        }
+        self->unk42 = (var_v1 & 0xF) | ((var_v0 + 0x1E0) << 6);
+    }
+}
 
 void func_800A4FEC(struct ShotObj* arg0)
 {

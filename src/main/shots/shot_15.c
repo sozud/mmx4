@@ -22,12 +22,28 @@ void func_8009C258(struct ShotObj* arg)
 
 void func_8009C260(struct ShotObj* arg0)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    func_80015DC8(arg0);
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002D9BC(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_15", func_8009C298);
+void func_8009C298(struct ShotObj* arg0)
+{
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        func_800AF808(BASE_OBJECT(arg0));
+        return;
+    }
+
+    D_80108EE8[arg0->unk5](arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0xA, 0xA) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0xA, 0xA);
+        return;
+    }
+
+    arg0->state++;
+}
 
 void func_8009C344(struct ShotObj* arg0)
 {

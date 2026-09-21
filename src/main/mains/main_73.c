@@ -369,7 +369,35 @@ void func_8008CA60(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CB2C);
+void func_8008CB2C(struct MainObj* arg)
+{
+    struct MainObj* self;
+    s16 targetY;
+
+    self = arg;
+
+    if (--self->unk7C == 0) {
+        self->unk6 = 2;
+        *(volatile u16*)&self->unk7C = 0;
+        self->unk7C = 0x32;
+        func_80015D60(self, 9);
+        func_8008BF54(self, 1, 1);
+        self->ext.main_73.unk89++;
+        return;
+    }
+
+    targetY = (s16)self->ext.main_5.part_index;
+    if (self->y_pos.i.hi < targetY) {
+        if (self->unk24 < FIXED(-4)) {
+            self->unk24 = FIXED(-4);
+            self->unk2C = 0;
+        }
+        func_8002B694(ANIMATED_OBJECT(self));
+    } else {
+        self->y_pos.i.hi = targetY;
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008CBF8);
 

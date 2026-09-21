@@ -7,7 +7,26 @@ void func_800A22D4(struct ShotObj* arg0)
     D_801096F4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2310);
+void func_800A2310(struct ShotObj* arg0)
+{
+    struct WeaponObj* temp_v1;
+
+    arg0->unk58.data = (u8*)D_80105FF0;
+    arg0->unk67 = 0;
+    arg0->state = (u8)arg0->state + 1 + ((s8)arg0->unk2 >> 4);
+    arg0->unk2 = (u8)arg0->unk2 & 0xF;
+    if (arg0->state < 4) {
+        temp_v1 = arg0->unk7C;
+        arg0->unk3C = temp_v1->unk3C;
+        arg0->unk40 = temp_v1->unk40;
+        arg0->unk42 = temp_v1->unk42 & 0x7FFF;
+        arg0->bg_offset = (s8)(u8)temp_v1->bg_offset;
+        arg0->animation_table = temp_v1->animation_table;
+        arg0->unk15 = temp_v1->unk15;
+    }
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+}
 
 void func_800A23B4(struct ShotObj* arg0)
 {
@@ -30,7 +49,23 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A24F0);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A25EC);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2748);
+void func_800A2748(struct ShotObj* arg0)
+{
+    func_8002B718(MOVING_OBJECT(arg0));
+    if ((u8)arg0->unk2 & 1) {
+        is_on_screen(BASE_OBJECT(arg0));
+    }
+    if (background_objects[0].y_pos.i.hi - 0x30 >= arg0->y_pos.i.hi) {
+        arg0->unk54 = (const u8*)&D_801096B8;
+        arg0->unk50.data = (const u8*)&D_801096BC;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+        arg0->y_vel.val = FIXED(-0.5);
+        arg0->unk2C = FIXED(0.09375);
+        arg0->timer = 0xF0;
+        arg0->unk16 = 2;
+        arg0->unk6++;
+    }
+}
 
 void func_800A27F4(struct ShotObj* arg0)
 {
@@ -62,9 +97,48 @@ void func_800A27F4(struct ShotObj* arg0)
     arg0->x_pos.i.hi = background_x + (offset + 0x10);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2870);
+void func_800A2870(struct ShotObj* arg0)
+{
+    s16 temp_v0;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2928);
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    temp_v0 = arg0->timer;
+    if (temp_v0 != 0) {
+        arg0->timer = temp_v0 - 1;
+        return;
+    }
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xB);
+        func_800C813C(4, D_801096DC, arg0);
+        func_8001540C(2, 0x9A, arg0);
+        func_80028BAC(0x10, 3, 1);
+        arg0->timer = 0x100;
+        arg0->unk6++;
+    }
+}
+
+void func_800A2928(struct ShotObj* arg0)
+{
+    s16 temp_v0;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(arg0->unk7C)) != 0) {
+        func_8001540C(2, 0x98, arg0);
+        func_800C813C(4, D_801096DC, arg0);
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+    temp_v0 = (u16)arg0->timer - 1;
+    arg0->timer = temp_v0;
+    if (temp_v0 == 0) {
+        arg0->timer = 0x32;
+        arg0->unk6++;
+    }
+}
 
 void func_800A29C8(struct ShotObj* arg0)
 {
@@ -224,7 +298,30 @@ void func_800A3658(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A366C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3758);
+void func_800A3758(struct ShotObj* object)
+{
+    struct ShotObj* arg0;
+    s8 index;
+
+    arg0 = (struct ShotObj*)object;
+    index = arg0->unk2;
+    if (index < 3) {
+        arg0->x_vel.val = D_801096D0[index];
+    } else {
+        arg0->x_vel.val = -(((s32*)((u8*)&D_801096A8 + 0x1C))[index]);
+    }
+    arg0->y_vel.val = FIXED(6.5);
+    arg0->unk2C = FIXED(0.2578125);
+    arg0->unk5C = 5;
+    arg0->unk60 = 6;
+    arg0->unk68 = (struct Unk_unk68*)((u8*)&D_801096A8 + 4);
+    arg0->unk54 = (const u8*)&D_801096B8;
+    arg0->unk50.data = (const u8*)&D_801096BC;
+    arg0->unk28 = 0;
+    arg0->unk16 = 2;
+    func_80015D60(arg0, 0xA);
+    arg0->unk5++;
+}
 
 void func_800A382C(struct ShotObj* arg0)
 {

@@ -7,7 +7,28 @@ void func_8009CAC0(struct ShotObj* arg0)
     D_80108F90[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_18", func_8009CAFC);
+void func_8009CAFC(struct ShotObj* arg0)
+{
+    struct ShotObj* self = arg0;
+
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk54 = D_80108F8C;
+    self->unk50.data = D_80108F8C;
+    self->unk16 = 0;
+    self->unk68 = 0;
+    self->unk58.data = (u8*)D_80106070;
+
+    func_8002B93C(
+        MOVING_OBJECT(self),
+        func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+
+    self->unk60 = 3;
+    self->unk5C = 1;
+    self->x_vel.val *= 2;
+    self->y_vel.val *= 2;
+    func_80015D60(self, 0xC);
+}
 
 void func_8009CBA0(struct ShotObj* arg0)
 {
