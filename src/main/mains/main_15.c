@@ -108,7 +108,38 @@ void func_8004E128(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E218);
+void func_8004E218(struct MainObj* self)
+{
+    s32 x_velocity;
+
+    if (self->unk6 == 0) {
+        self->collision_data = D_801069F4;
+        self->unk54 = &D_800FBA50;
+        self->unk50 = &D_800FBA50;
+        self->unk6++;
+        func_80015D60(self, 1);
+        x_velocity = FIXED(-0.375);
+        if (self->unk15 != 0) {
+            x_velocity = FIXED(0.375);
+        }
+        self->unk20 = x_velocity;
+        self->unk28 = 0;
+        self->unk24 = 0;
+        self->unk2C = 0;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->unk15 != 0) {
+        if (self->unk70 & 1) {
+            self->unk15 = 0;
+            self->unk20 = -self->unk20;
+        }
+    } else if (self->unk70 & 2) {
+        self->unk15 = 0x40;
+        self->unk20 = -self->unk20;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E300);
 

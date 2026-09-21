@@ -355,7 +355,36 @@ void func_800820A4(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80082170);
+void func_80082170(struct MainObj* self)
+{
+    s16 x_pos;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (!(D_80141BD8.unk0 & 1)) {
+        if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
+            self->unk20 = FIXED(4);
+        } else {
+            self->unk20 = FIXED(-4);
+        }
+    }
+
+    x_pos = self->x_pos.i.hi;
+    if (x_pos - g_Player.x_pos.i.hi >= 0) {
+        if (x_pos - g_Player.x_pos.i.hi < 3) {
+        } else {
+            func_8002B718(MOVING_OBJECT(self));
+        }
+    } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
+        func_8002B718(MOVING_OBJECT(self));
+    }
+
+    if (--self->unk7C == 0) {
+        func_8001540C(2, 0xE2, self);
+        func_80015D60(self, 0x11);
+        self->unk7C = 0x3C;
+        self->unk6 = 3;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_8008225C);
 

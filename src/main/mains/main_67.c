@@ -258,7 +258,36 @@ void func_80082F20(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_67", func_80082FEC);
+void func_80082FEC(struct MainObj* self)
+{
+    if (self->ext.main_67.direction == 0) {
+        if (self->ext.main_67.vertical_speed < FIXED(0.375) + 1) {
+            if (self->ext.main_67.vertical_speed > 0 && self->ext.main_67.delay != 0) {
+                self->ext.main_67.delay--;
+            } else {
+                self->ext.main_67.vertical_speed += FIXED(0.015625);
+                self->y_pos.val -= self->ext.main_67.vertical_speed / 2;
+                self->y_pos.val -= self->ext.main_67.vertical_speed;
+            }
+        } else {
+            self->ext.main_67.delay = 0xF;
+            self->ext.main_67.direction = 1;
+        }
+    } else {
+        if (self->ext.main_67.vertical_speed >= FIXED(-0.375)) {
+            if (self->ext.main_67.vertical_speed < 0 && self->ext.main_67.delay != 0) {
+                self->ext.main_67.delay--;
+            } else {
+                self->ext.main_67.vertical_speed -= FIXED(0.015625);
+                self->y_pos.val -= self->ext.main_67.vertical_speed / 2;
+                self->y_pos.val -= self->ext.main_67.vertical_speed;
+            }
+        } else {
+            self->ext.main_67.delay = 0xF;
+            self->ext.main_67.direction = 0;
+        }
+    }
+}
 
 void func_800830D0(struct MainObj* arg0)
 {

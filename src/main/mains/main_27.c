@@ -175,7 +175,45 @@ void func_80059978(struct MainObj* arg0)
     D_800FD3E4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_800599B4);
+void func_800599B4(struct MainObj* self)
+{
+    s16 timer;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = (u16)self->unk7C - 1;
+    self->unk7C = timer;
+    if (timer != 0) {
+        return;
+    }
+
+    self->ext.main_27.unk8A = 1;
+    if (self->unk15 == 0) {
+        if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
+            goto action;
+        }
+        goto common;
+    }
+    if (g_Player.x_pos.i.hi < self->x_pos.i.hi) {
+        goto action;
+    }
+    goto common;
+
+action:
+    func_80015D60(self, 2);
+    self->unk5 = 4;
+    self->unk6 = 1;
+    self->unk7C = 1;
+    return;
+
+common:
+    self->unk7C = 0x14;
+    self->unk6 = 1;
+    if (self->unk15 == 0) {
+        self->unk20 = FIXED(-4);
+    } else {
+        self->unk20 = FIXED(4);
+    }
+}
 
 void func_80059A94(struct MainObj* arg0)
 {

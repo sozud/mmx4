@@ -49,7 +49,36 @@ void func_800862A4(struct MainObj* arg0)
     CollisionRelated(PLAYER_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800862F4);
+void func_800862F4(struct MainObj* self)
+{
+    s32 facing;
+
+    if (self->x_pos.i.hi > g_Player.x_pos.i.hi) {
+        facing = 1;
+    } else {
+        facing = 0;
+    }
+    facing <<= 6;
+    func_80088974(self);
+    func_80036AE4(0x14, facing);
+    func_8002B560(0x25, 0x10);
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    need_palette_load |= 1;
+    if (self->unk67 == 0) {
+        func_80015D60(self, 0x18);
+        self->unk6 += 3;
+    } else {
+        func_80015D60(self, 0xA);
+        self->unk20 = self->unk15 ? FIXED(-3) : FIXED(3);
+        self->unk28 = 0;
+        self->unk24 = 0;
+        self->unk2C = FIXED(0.2578125);
+        self->unk6++;
+    }
+    is_on_screen(self);
+}
 
 void func_800863E8(struct MainObj* self)
 {

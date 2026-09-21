@@ -249,7 +249,32 @@ void func_800A2EB4(struct ShotObj* arg0)
     arg0->unk5++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2F2C);
+void func_800A2F2C(struct ShotObj* self)
+{
+    struct MainObj* owner;
+    s32 collision;
+    u16 flags;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_80109750[self->unk6](self);
+    func_8002D9BC(self);
+    collision = func_8002DD04(MAIN_OBJECT(self));
+    owner = self->unk7C;
+    if (collision < 0 || owner->state == 2) {
+        func_8001540C(2, 0x98, self);
+        func_800C813C(4, D_801096DC, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
+    }
+    if (collision > 0) {
+        flags = self->unk42 | 0x8000;
+    } else {
+        flags = self->unk42 & 0x7FFF;
+    }
+    self->unk42 = flags;
+}
 
 void func_800A3010(struct ShotObj* arg0)
 {
@@ -308,7 +333,33 @@ void func_800A325C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A32B8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A33A0);
+void func_800A33A0(struct ShotObj* self)
+{
+    struct ShotObj* owner;
+    s32 collision;
+    u16 flags;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_80109768[self->unk6](self);
+    func_8002D9BC(self);
+    collision = func_8002DD04(MAIN_OBJECT(self));
+    owner = SHOT_OBJECT(self->unk7C);
+    if (collision < 0 || owner->state == 2) {
+        func_8001540C(2, 0x97, self);
+        func_800C813C(4, D_801096DC, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
+    }
+    if (collision > 0) {
+        flags = self->unk42 | 0x8000;
+    } else {
+        flags = self->unk42 & 0x7FFF;
+    }
+    self->unk42 = flags;
+    CollisionRelated(self);
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A348C);
 

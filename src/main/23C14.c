@@ -150,7 +150,48 @@ void func_80033750(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800337DC);
+s32 func_800337DC(struct PlayerObj* self)
+{
+    s32 collision_side;
+    u16 held;
+    u8 timer;
+
+    collision_side = 2;
+    if (self->unk15 != 0) {
+        collision_side = 1;
+    }
+    if (collision_side & self->unk88.bytes.collision_flags) {
+        return 1;
+    }
+
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk15 != 0) {
+        if (self->x_vel.val <= FIXED(4.125) - 1) {
+            self->x_vel.val = FIXED(4.125);
+        }
+    } else if (self->x_vel.val > FIXED(-4.125)) {
+        self->x_vel.val = FIXED(-4.125);
+    }
+
+    timer = self->unk85 - 1;
+    self->unk85 = timer;
+    if ((timer << 24) == 0) {
+        return 1;
+    }
+
+    held = self->input.buttons.held;
+    if (!(held & 0x103)) {
+        return 1;
+    }
+    if (self->unk15 != 0) {
+        if (held & 2) {
+            return 1;
+        }
+    } else if (held & 1) {
+        return 1;
+    }
+    return 0;
+}
 
 void func_800338CC(struct PlayerObj* arg0)
 {

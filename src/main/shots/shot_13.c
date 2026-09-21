@@ -34,7 +34,25 @@ void func_8009BD64(struct ShotObj* arg0)
     func_80015D60(self, 3);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_13", func_8009BE14);
+void func_8009BE14(struct ShotObj* self)
+{
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (ENGINE_STAGE_ID != 3 || engine_obj.checkpoint != 0 || g_Player.x_pos.i.hi < 0x7B7) {
+        func_8002D9BC(self);
+    }
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        func_800AF808(self);
+        self->state = 2;
+    } else {
+        self->unk42 &= 0x7FFF;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+        return;
+    }
+    self->state = 2;
+}
 
 void func_8009BEF4(struct ShotObj* arg0)
 {

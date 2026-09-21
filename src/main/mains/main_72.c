@@ -130,7 +130,31 @@ void func_8008B270(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B33C);
+void func_8008B33C(struct MainObj* self)
+{
+    s8 state;
+
+    state = self->unk6;
+    if (state == 0) {
+        self->unk6 = state + 1;
+        func_8008AE94(self);
+        self->unk24 = FIXED(5.5);
+        self->unk2C = FIXED(0.2578125);
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk67 = 1;
+        func_80015D60(self, 2);
+        self->unk70 &= 0xF7;
+        func_8001540C(2, 0x48, self);
+    }
+    self->unk20 = 0;
+    func_8008AF10(self);
+    if (!(self->unk70 & 4) && self->unk24 >= 0 && self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
+        func_8002B694(ANIMATED_OBJECT(self));
+        return;
+    }
+    func_8008AEC4(BASE_OBJECT(self), 2);
+}
 
 void func_8008B42C(struct MainObj* arg0)
 {
