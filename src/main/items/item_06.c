@@ -35,7 +35,25 @@ void func_800C14F0(struct ItemObj* arg0)
     arg0->unk42 = flags;
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C1590);
+void func_800C1590(struct ItemObj* self)
+{
+    s32 timer;
+
+    timer = self->unk7C.timer - 1;
+    self->unk7C.timer = timer;
+    if (timer != 0) {
+        if (!(D_80141BD8.unk0 & 7)) {
+            func_800AF878(BASE_OBJECT(self), 1, 0x1F, 0x3F);
+        }
+        if (!(D_80141BD8.unk0 & 0xF)) {
+            func_8001540C(0, D_8010CB14[get_random() & 3][0], self);
+        }
+    } else {
+        engine_obj.enable_boss = 0;
+        engine_obj.boss_ptr = NULL;
+        self->state++;
+    }
+}
 
 void func_800C165C(struct ItemObj* arg0)
 {
@@ -97,7 +115,7 @@ u8 D_8010CB08[3][4] = {
     { 2, 3, 4, 0 },
 };
 
-u32 D_8010CB14[4] = { 0, 1, 2, 3 };
+u8 D_8010CB14[4][4] = { { 0 }, { 1 }, { 2 }, { 3 } };
 s16 D_8010CB24[2] = { 0x18C0, 0x18E8 };
 u16 D_8010CB28[2] = { 0x1028, 0x1028 };
 

@@ -79,7 +79,29 @@ void func_800C413C(struct ItemObj* arg0)
     arg0->unk7C.object = D_8010D15C[arg0->unk2];
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_17", func_800C41C8);
+void func_800C41C8(struct ItemObj* self)
+{
+    u8 i;
+    struct EffectObj* effect;
+
+    for (i = 0; i < 4; i++) {
+        self->unk68 = self->unk7C.timer + i * 4;
+        if (func_8002C160(self, &g_Player) != 0) {
+            effect = find_free_effect_obj();
+            if (effect != NULL) {
+                effect->active = 1;
+                effect->id = 0x15;
+                effect->unk2 = 4;
+                effect->ext.effect_5.pad1D = self->unk2 + 8;
+            }
+            self->state++;
+            return;
+        }
+        if (self->unk2 == 3) {
+            return;
+        }
+    }
+}
 
 void func_800C4290(struct ItemObj* arg0)
 {

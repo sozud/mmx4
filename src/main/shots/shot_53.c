@@ -164,7 +164,35 @@ void func_800AB564(struct ShotObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB5A4);
+void func_800AB5A4(struct ShotObj* self)
+{
+    s16 timer;
+    struct ShotObj* shot;
+    struct WeaponObj* owner;
+
+    owner = self->unk7C;
+    timer = self->timer - 1;
+    self->timer = timer;
+    if (timer == 0) {
+        func_8001540C(2, 7, self);
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x36;
+            shot->unk2 = 2;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->unk7C = owner;
+        }
+        self->timer = 6;
+    }
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->x_pos.i.hi < 0x4D8) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        owner->ext.raw[2] = 1;
+    }
+}
 
 void func_800AB66C(struct ShotObj* arg0)
 {
@@ -238,7 +266,36 @@ void func_800AB8C0(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB8EC);
+void func_800AB8EC(struct ShotObj* self)
+{
+    s16 timer;
+    s16 blink_timer;
+
+    timer = self->timer - 1;
+    self->timer = timer;
+    if (timer == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->unk68 = NULL;
+        self->unk76 = 0;
+        self->unk77 = 0;
+        self->x_pos.i.hi = 0;
+        self->y_pos.i.hi = 0;
+        self->unk8C.byte = 0;
+        self->unk15 = 0;
+        return;
+    }
+
+    blink_timer = self->unk8A - 1;
+    self->unk8A = blink_timer;
+    if (blink_timer == 0) {
+        self->unk8A = 2;
+        self->unk8C.byte ^= 1;
+    }
+    if ((u8)self->unk8C.byte != 0) {
+        func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    }
+}
 
 void func_800AB98C(struct ShotObj* arg0)
 {

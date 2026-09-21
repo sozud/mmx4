@@ -93,7 +93,33 @@ void func_800D6F94(struct QuadObj* arg0)
 
 // TitleUpdate2 state 1
 #ifndef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7058);
+void func_800D7058(struct QuadObj* self)
+{
+    s32 velocity;
+
+    if (game_info.unkA != 1) {
+        quad_is_on_screen(self);
+        return;
+    }
+
+    if (self->unk2 == 0) {
+        self->unk28.val += FIXED(-8);
+        self->unk30.val += FIXED(-8);
+        if (self->unk28.i.hi < self->unk20.i.hi) {
+            self->state = 2;
+            return;
+        }
+    } else {
+        velocity = FIXED(8);
+        self->unk20.val += velocity;
+        self->unk18.val += velocity;
+        if (self->unk20.i.hi > self->unk28.i.hi) {
+            self->state = 2;
+            return;
+        }
+    }
+    quad_is_on_screen(self);
+}
 #endif
 
 // TitleUpdate2 state 3

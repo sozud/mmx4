@@ -21,7 +21,30 @@ void func_800BE598(struct EffectObj* arg0)
     arg0->ext.effect_9.direction = direction;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_43", func_800BE5F4);
+void func_800BE5F4(struct EffectObj* self)
+{
+    struct MiscObj* misc;
+    u16 timer;
+
+    if (D_80171EA8 == 0) {
+        timer = self->ext.effect_9.transition_timer - 1;
+        self->ext.effect_9.transition_timer = timer;
+        if (!(timer & 0xFFFF)) {
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 0x41;
+                misc->id = 0x39;
+                misc->unk2 = ((u32)get_random() & 0xFF) % 6;
+                misc->unk40 = self->ext.effect_16.saved_background_2A;
+            }
+            func_8001540C(5, 0, NULL);
+            func_80028BAC(5, 2, 1);
+            self->ext.effect_9.transition_timer = 5;
+        }
+    } else {
+        ZeroObjectState(OBJECT_HEADER(self));
+    }
+}
 
 void func_800BE6D8(struct EffectObj* arg0)
 {

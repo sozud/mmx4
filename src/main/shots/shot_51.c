@@ -55,7 +55,38 @@ void func_800AA7B4(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA85C);
+void func_800AA85C(struct ShotObj* self)
+{
+    struct ShotObj* shot;
+
+    if (self->animation_step.fields.relative_step == 0) {
+        self->timer = 0x3C;
+        self->unk5++;
+        func_80015D90(ANIMATED_OBJECT(self), 0x15, 7);
+        return;
+    }
+
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x34;
+            shot->unk2 = 0;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->animation_table = self->animation_table;
+            shot->unk40 = self->unk40;
+            shot->unk3C = self->unk3C;
+            shot->unk42 = self->unk42 & 0x7FFF;
+            shot->unk16 = self->unk16;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk15 = self->unk15;
+        }
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_800AA954(struct ShotObj* arg0)
 {

@@ -6,7 +6,24 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFB70);
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFC6C);
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFD38);
+void func_800CFD38(struct MiscObj* self)
+{
+    s8 subtype;
+
+    subtype = self->unk2;
+    if (self->y_vel.val < D_8010EFA4[subtype]) {
+        self->unk2C = -D_8010EF94[subtype];
+        func_80015D60(self, 2);
+    }
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    self->unk5 = 0;
+    self->ext.misc_24.timer = D_8010EFB4[self->unk2] + (get_random() & 0x3F);
+}
 
 void func_800CFE00(struct MiscObj* arg0)
 {

@@ -32,7 +32,24 @@ void func_800D4984(struct QuadObj* arg0)
     arg0->unk30.val = p[1] * arg0->ext.quad_2.y_scale.value;
 }
 
-INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4A64);
+void func_800D4A64(struct QuadObj* self)
+{
+    self->unk36 = 0x10;
+    self->unk34 = 0x771;
+    self->bg_offset = -1;
+    self->x_pos.val = FIXED(160);
+    self->y_pos.val = FIXED(128);
+    self->ext.quad_2.vertices = &D_8010F754[0][0];
+    self->ext.quad_2.x_scale.value = 0x100;
+    self->ext.quad_2.y_scale.value = 0x100;
+    self->active |= 0x90;
+    func_800D4984(self);
+    self->ext.quad_2.direction[0] = func_8002B810(
+        self->x_pos.val - (D_8010F728[self->unk2][0] << 16),
+        self->y_pos.val - (D_8010F728[self->unk2][1] << 16));
+    quad_is_on_screen(self);
+    self->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4B30);
 

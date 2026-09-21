@@ -11,7 +11,32 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_33", func_800BC784);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_33", func_800BC92C);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_33", func_800BCD84);
+void func_800BCD84(struct EffectObj* self)
+{
+    switch (self->unk2 & 0xF0) {
+    case 0:
+        if (self->backref != NULL) {
+            func_8002B108(OBJECT_HEADER(self));
+        } else {
+            ZeroObjectState(OBJECT_HEADER(self));
+        }
+        break;
+    case 0x10:
+        if (self->backref != NULL) {
+            func_8002B108(OBJECT_HEADER(self));
+        } else {
+            ZeroObjectState(OBJECT_HEADER(self));
+        }
+        break;
+    case 0x20:
+        if (self->backref != NULL) {
+            func_8002B0C8(OBJECT_HEADER(self));
+        } else {
+            ZeroObjectState(OBJECT_HEADER(self));
+        }
+        break;
+    }
+}
 
 void func_800BCE40(struct EffectObj* arg0)
 {

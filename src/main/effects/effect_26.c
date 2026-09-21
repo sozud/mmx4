@@ -72,7 +72,34 @@ void func_800BB5F4(struct EffectObj* arg0)
     arg0->ext.effect_26_timer = 10;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB68C);
+void func_800BB68C(struct EffectObj* self)
+{
+    s32 i;
+    struct QuadObj* quad;
+    u16 timer;
+
+    timer = self->ext.effect_9.transition_timer;
+    if (timer != 0) {
+        self->ext.effect_9.transition_timer = timer - 1;
+        func_800BB314(self);
+        func_800BB508(self);
+        return;
+    }
+
+    i = 0;
+    do {
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = 1;
+            quad->id = 6;
+            quad->x_pos.i.hi = self->x_pos.i.hi;
+            quad->y_pos.i.hi = self->y_pos.i.hi;
+            quad->unk6 = i;
+        }
+        i++;
+    } while ((u32)i < 0x10U);
+    self->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB750);
 
