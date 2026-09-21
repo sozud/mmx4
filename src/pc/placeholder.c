@@ -2110,35 +2110,6 @@ s32 func_8003A000(struct PlayerObj* arg0)
     return 1;
 }
 
-s32 func_800337DC(struct PlayerObj* arg0)
-{
-    u16 held;
-
-    if ((arg0->unk15 != 0 ? 1 : 2) & (u8)arg0->unk88.bytes.collision_flags) {
-        return 1;
-    }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk15 != 0) {
-        if (arg0->x_vel.val < FIXED(4.125)) {
-            arg0->x_vel.val = FIXED(4.125);
-        }
-    } else if (arg0->x_vel.val > FIXED(-4.125)) {
-        arg0->x_vel.val = FIXED(-4.125);
-    }
-    arg0->unk85 = (u8)arg0->unk85 - 1;
-    if ((u8)arg0->unk85 == 0) {
-        return 1;
-    }
-    held = arg0->input.buttons.held;
-    if ((held & 0x103) == 0) {
-        return 1;
-    }
-    if (arg0->unk15 != 0) {
-        return (held & 2) != 0;
-    }
-    return (held & 1) != 0;
-}
-
 void func_80032300(struct PlayerObj* arg0)
 {
     s8 event;

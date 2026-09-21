@@ -45,7 +45,30 @@ void func_80099D18(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099D54);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099E34);
+void func_80099E34(struct ShotObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+
+    if (engine_obj.stage == 0 && engine_obj.substage != 0 && self->x_pos.i.hi >= 0xF41) {
+        self->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+
+    func_8002D9BC(self);
+    if (func_8002BB80(self, &g_Player) == 0) {
+        if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            func_800AF808(self);
+            self->state = 2;
+        }
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+            func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+            return;
+        }
+    }
+    self->state = 2;
+}
 
 void func_80099F28(struct ShotObj* arg0)
 {

@@ -125,7 +125,44 @@ INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062778);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062910);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062A0C);
+void func_80062A0C(struct MainObj* self)
+{
+    s16 animation_count;
+    s8 state;
+
+    state = self->unk6;
+    switch (state) {
+    case 0:
+        self->unk6 = 1;
+        self->ext.main_41.unk84 = 0;
+        self->ext.main_41.unk83 = 0;
+        self->unk7C = 0;
+        func_80015D60(self, 0xB);
+        return;
+    case 1:
+        animation_count = self->unk7C;
+        if (animation_count >= 6) {
+            self->unk6 = 2;
+            func_80015D60(self, 0xC);
+            return;
+        }
+        if (self->animation_step.fields.relative_step < 0) {
+            self->unk7C = animation_count + 1;
+        }
+        break;
+    case 2:
+        if (self->animation_step.fields.relative_step < 0) {
+            self->state = 2;
+            self->unk5 = 0;
+            self->unk6 = 0;
+            return;
+        }
+        break;
+    default:
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062AEC);
 

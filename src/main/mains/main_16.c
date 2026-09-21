@@ -254,7 +254,39 @@ void func_8004F910(struct MainObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004F9B4);
+void func_8004F9B4(struct MainObj* self)
+{
+    s16 timer;
+    u8 facing;
+    struct MiscObj* misc;
+
+    timer = (u16)self->unk7C - 1;
+    self->unk7C = timer;
+    if (timer == 0) {
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 5;
+            misc->unk2 = 0;
+            misc->unk40 = self->unk40;
+            misc->unk42 = self->unk42 & 0x7FFF;
+            misc->animation_table = self->animation_table;
+            misc->unk3C = self->sprite_frames;
+            misc->unk15 = self->unk15;
+            misc->bg_offset = (s8)(u8)self->bg_offset;
+            misc->x_pos.val = self->x_pos.val;
+            misc->y_pos.val = self->y_pos.val;
+            facing = self->unk15;
+            misc->ext.misc_5.animation = 0x14;
+            misc->state = 3;
+            misc->unk15 = facing;
+        }
+        self->ext.main_16.unk90 = 1;
+        self->ext.main_16.unk80 = 0;
+        self->unk5 = 4;
+        self->unk6 = 0;
+    }
+}
 
 void func_8004FAAC(struct MainObj* arg0)
 {

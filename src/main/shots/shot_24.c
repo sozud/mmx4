@@ -165,7 +165,33 @@ void func_8009E7B4(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E7EC);
+void func_8009E7EC(struct ShotObj* self)
+{
+    s8 shot_variant;
+    s8 timer;
+    struct WeaponObj* weapon;
+
+    func_8002B718(MOVING_OBJECT(self));
+    shot_variant = self->unk2;
+    weapon = self->unk7C;
+    if (self->x_pos.i.hi < weapon->x_pos.i.hi + D_801090E0[shot_variant]) {
+        weapon->unk7 = (u8)weapon->unk7 & D_801090FC[shot_variant];
+    }
+
+    timer = (u8)self->unk7 - 1;
+    self->unk7 = timer;
+    if (timer == 0) {
+        if (self->unk84.bytes[0] >= 3 && self->unk84.bytes[0] <= 4) {
+            self->unk7C->x_pos.bytes[0] = 0xFF;
+        }
+        self->unk28 = 0;
+        self->unk5 = 3;
+    } else if (timer == 26) {
+        if (self->unk84.bytes[0] < 3 || self->unk84.bytes[0] > 4) {
+            self->unk7C->x_pos.bytes[0] = 0xFF;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E8E0);
 

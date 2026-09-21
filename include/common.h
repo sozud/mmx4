@@ -1017,7 +1017,10 @@ struct Main8Ext {
 };
 
 struct Main9Ext {
-    u8 pad80[0xD];
+    const u8* animation_1;
+    const u8* animation_2;
+    u8 animation_timer;
+    u8 pad89[4];
     u8 object_id;
     u8 pad8E[2];
     struct EffectObj* effect;
@@ -1149,7 +1152,9 @@ struct Main69Ext {
 };
 
 struct Main67Ext {
-    u8 pad80[9];
+    s32 vertical_speed;
+    s32 delay;
+    u8 direction;
     u8 unk89;
     u8 unk8A;
     u8 pad8B[9];
@@ -3603,6 +3608,10 @@ extern u32* D_8011C018[22];
 extern s16 D_801090D4[3][2];
 extern s16 D_8010977C[4][2];
 extern s16 D_801090E0[4];
+extern u8 D_801090FC[4];
+extern u8 D_80109B98[4];
+extern u8 D_80109B9C[4];
+extern u8 D_80109BA0[2][4];
 extern u8 D_801090F4[4];
 extern u8 D_80109100[4];
 extern struct Unk_unk68 D_801096B0;

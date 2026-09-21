@@ -184,7 +184,29 @@ void func_800492C4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_09", func_8004932C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_09", func_800493F8);
+void func_800493F8(struct MainObj* self)
+{
+    s8 timer;
+
+    D_800FAED0[self->unk6](self);
+    func_8002D9BC(self);
+    if (self->ext.main_9.animation_timer != 0) {
+        self->unk50 = self->ext.main_9.animation_1;
+        func_8002D9BC(self);
+        self->unk50 = self->ext.main_9.animation_2;
+    }
+
+    timer = self->unk61;
+    if (timer != 0) {
+        self->unk61 = timer - 1;
+        self->unk42 = (timer & 2) ? self->unk42 | 0x8000
+                                  : self->unk42 & 0x7FFF;
+        if (self->unk61 == 0) {
+            self->unk42 &= 0x7FFF;
+        }
+    }
+    func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+}
 
 void func_800494E0(struct MainObj* arg0)
 {

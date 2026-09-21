@@ -105,7 +105,31 @@ void func_800AA148(struct ShotObj* arg0)
     arg0->unk2C = FIXED(0.34375);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800AA20C);
+void func_800AA20C(struct ShotObj* self)
+{
+    if ((self->unk70 & 0xB) || --self->timer == 0) {
+        self->unk5++;
+        if (self->id == 0x32) {
+            func_80015D60(self, 0x18);
+            self->unk68 = (struct Unk_unk68*)D_80109B9C;
+            self->unk54 = D_80109B98;
+            self->unk50.data = D_80109B98;
+            self->unk60 = 4;
+            return;
+        }
+        func_80015D60(self, 0x15);
+        self->unk54 = D_80109BA0[0];
+        self->unk50.data = D_80109BA0[0];
+        self->unk68 = NULL;
+        self->unk60 = 3;
+        return;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        func_80015D60(self, 0x14);
+    }
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void (*D_80109BE0[])(struct ShotObj*) = {
     func_800A9DF4,

@@ -46,7 +46,38 @@ void func_8009DF60(struct ShotObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_23", func_8009DFA0);
+void func_8009DFA0(struct ShotObj* self)
+{
+    struct VisualObj* visual;
+
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        func_80015D60(self, 0x12);
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = (s8)(u8)self->active;
+            visual->id = 0x14;
+            visual->unk2 = 0;
+            visual->x_pos.val = self->x_pos.val;
+            visual->y_pos.val = self->y_pos.val;
+            visual->animation_table = self->animation_table;
+            visual->unk40 = self->unk40;
+            visual->unk3C = self->unk3C;
+            visual->unk42 = self->unk42 & 0x7FFF;
+            visual->unk16 = self->unk16;
+            visual->unk15 = self->unk15;
+            visual->unk50 = PLAYER_OBJECT(self);
+        }
+    } else {
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk5 = 0;
+            self->unk6 = 0;
+            self->unk2 = 0;
+            func_80015D60(self, 0x13);
+        }
+        func_80015DC8(ANIMATED_OBJECT(self));
+    }
+}
 
 void func_8009E098(struct ShotObj* arg0)
 {
