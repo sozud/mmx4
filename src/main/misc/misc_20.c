@@ -27,7 +27,20 @@ void func_800CB940(struct MiscObj* arg0)
     arg0->bg_offset = bg;
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_20", func_800CB9C4);
+void func_800CB9C4(struct MiscObj* arg0)
+{
+    s32 offset;
+
+    if (arg0->ext.misc_20.owner->unk18.val != 0) {
+        offset = arg0->ext.misc_20.owner->unk18.val + FIXED(1);
+        arg0->x_pos.val -= offset;
+    }
+    if ((u16)(g_Player.x_pos.i.hi - 0x16B9) < 0x72F || func_8002B160(BASE_OBJECT(arg0)) == 0) {
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->state++;
+}
 
 void func_800CBA5C(struct MiscObj* arg0)
 {

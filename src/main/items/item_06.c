@@ -11,7 +11,29 @@ void func_800C1390(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C13D8);
 
-INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C14F0);
+void func_800C14F0(struct ItemObj* arg0)
+{
+    s32 collision;
+    u16 flags;
+
+    is_on_screen(BASE_OBJECT(arg0));
+    func_8002E184(arg0);
+    collision = func_8002DD04(MAIN_OBJECT(arg0));
+    if (collision < 0) {
+        engine_obj.character_state.fields.active = 1;
+        arg0->on_screen = 0;
+        arg0->unk7C.timer = 0x3C;
+        func_800C813C(0xB, D_8010CB08, arg0);
+        arg0->state++;
+        return;
+    }
+    if (collision > 0) {
+        flags = arg0->unk42 | 0x8000;
+    } else {
+        flags = arg0->unk42 & 0x7FFF;
+    }
+    arg0->unk42 = flags;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C1590);
 

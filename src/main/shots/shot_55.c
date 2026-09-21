@@ -126,7 +126,26 @@ void func_800ACD84(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACDE4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACE90);
+void func_800ACE90(struct ShotObj* arg0)
+{
+    s32 velocity;
+
+    func_8002B93C(MOVING_OBJECT(arg0),
+        func_8002B7B0(OBJECT_HEADER(arg0), FIXED(3616), D_80109E24[arg0->timer] << 16) & 0xFF);
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
+    if (func_800AC848(arg0, 0xE20, D_80109E24[arg0->timer]) & 0xFF) {
+        velocity = FIXED(-1.5);
+        arg0->y_vel.val = 0;
+        arg0->unk5++;
+        if (arg0->unk15 != 0) {
+            velocity = FIXED(1.5);
+        }
+        arg0->x_vel.val = velocity;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACF60);
 
@@ -147,7 +166,32 @@ void func_800AD00C(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD080);
+void func_800AD080(struct ShotObj* arg0)
+{
+    s32 velocity;
+    u8 direction;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        velocity = FIXED(-1.5);
+        arg0->animation_step.fields.event = 0;
+        direction = arg0->unk15 ^ 0x40;
+        arg0->unk15 = direction;
+        if (direction != 0) {
+            velocity = FIXED(1.5);
+        }
+        arg0->x_vel.val = velocity;
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5++;
+        if (arg0->unk2 == 3) {
+            func_80015D60(arg0, 0xF);
+        } else {
+            func_80015D60(arg0, 0x14);
+        }
+        func_8001540C(2, 5, arg0);
+    }
+}
 
 void func_800AD12C(struct ShotObj* arg0)
 {
@@ -267,7 +311,24 @@ void func_800AD8C0(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD92C);
+void func_800AD92C(struct ShotObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        arg0->unk50.data = (u8*)&D_80109E18[2];
+        arg0->timer--;
+    }
+    if (arg0->timer == 0) {
+        arg0->unk50.data = NULL;
+        arg0->unk5++;
+        if (arg0->unk2 == 6) {
+            func_80015D60(arg0, 0x1A);
+        } else {
+            func_80015D60(arg0, 0x1D);
+        }
+    }
+}
 
 void func_800AD9C4(struct ShotObj* arg0)
 {

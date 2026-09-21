@@ -552,7 +552,39 @@ landed:
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052524);
+void func_80052524(struct MainObj* arg0)
+{
+    u8 flags, next_flags, phase_value;
+
+    flags = arg0->ext.main_18.unk80;
+    if ((flags & 0xC0) == 0x40) {
+        next_flags = flags | 0x80;
+        arg0->ext.main_18.unk80 = next_flags;
+        if ((next_flags & 0x3F) < 3 && (get_random() & 3) >= 2) {
+            func_800527C0(ANIMATED_OBJECT(arg0));
+            arg0->unk68 = &D_800FBF0C;
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            return;
+        }
+        phase_value = *(u8*)&arg0->unk7E;
+        switch (phase_value) {
+        case 0:
+            arg0->unk68 = &D_800FBF0C;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            *(u8*)&arg0->unk7E = 1;
+            break;
+        case 1:
+            arg0->unk68 = &D_800FBF0C;
+            func_80015D60(arg0, 4);
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            *(u8*)&arg0->unk7E = 0;
+            break;
+        }
+    }
+}
 
 void func_80052614(struct MainObj* arg0)
 {

@@ -49,7 +49,28 @@ void func_800BB588(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB5F4);
+void func_800BB5F4(struct EffectObj* arg0)
+{
+    struct QuadObj* quad;
+    u16 timer;
+
+    timer = arg0->ext.effect_26_timer;
+    if (timer != 0) {
+        arg0->ext.effect_26_timer = timer - 1;
+        func_800BB314(arg0);
+        func_800BB508(arg0);
+        return;
+    }
+    arg0->state++;
+    quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = 1;
+        quad->id = 8;
+        quad->x_pos.i.hi = arg0->x_pos.i.hi;
+        quad->y_pos.i.hi = arg0->y_pos.i.hi;
+    }
+    arg0->ext.effect_26_timer = 10;
+}
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB68C);
 

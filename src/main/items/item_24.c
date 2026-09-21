@@ -42,7 +42,28 @@ void func_800C6054(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C609C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C6198);
+void func_800C6198(struct ItemObj* arg0)
+{
+    s32 collision;
+    u16 flags;
+
+    collision = func_8002DD04(MAIN_OBJECT(arg0));
+    if (collision < 0) {
+        arg0->on_screen = 0;
+        func_800C813C(0xA, D_8010D398, arg0);
+        arg0->unk7C.timer = 0x1E;
+        arg0->state++;
+        return;
+    }
+    if (collision > 0) {
+        flags = arg0->unk42 | 0x8000;
+    } else {
+        flags = arg0->unk42 & 0x7FFF;
+    }
+    arg0->unk42 = flags;
+    func_8002E184(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C6228);
 

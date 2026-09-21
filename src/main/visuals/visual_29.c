@@ -67,7 +67,30 @@ void func_800B4450(struct VisualObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_29", func_800B4480);
+void func_800B4480(struct VisualObj* arg0)
+{
+    struct ShotObj* shot;
+
+    if ((s16)arg0->unk50->input.buttons.previous != 0) {
+        arg0->unk5++;
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = (u8)arg0->active;
+            shot->id = 0x2A;
+            shot->unk2 = (u8)arg0->unk2;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val;
+            shot->animation_table = arg0->animation_table;
+            shot->unk40 = arg0->unk40;
+            shot->unk3C = arg0->unk3C;
+            shot->unk42 = arg0->unk42 & 0x7FFF;
+            shot->unk16 = arg0->unk16;
+            shot->unk15 = 0;
+            shot->unk7C = WEAPON_OBJECT(arg0);
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_800B4558(struct VisualObj* arg0)
 {

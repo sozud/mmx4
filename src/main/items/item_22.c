@@ -91,7 +91,22 @@ void func_800C5710(struct ItemObj* arg0)
     func_8002B108(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5774);
+void func_800C5774(struct ItemObj* arg0)
+{
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->ext.item_22.collision_side = 1;
+        arg0->unk5++;
+        func_800C5BCC(arg0);
+        return;
+    }
+    arg0->x_pos.i.hi += 0x1A0;
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->unk5++;
+        func_800C5BCC(arg0);
+        arg0->ext.item_22.collision_side = 2;
+    }
+    arg0->x_pos.i.hi -= 0x1A0;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C580C);
 

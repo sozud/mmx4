@@ -9,7 +9,36 @@ void func_800A47C4(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4800);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4968);
+void func_800A4968(struct ShotObj* arg0)
+{
+    s16 timer;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->y_vel.val == 0) {
+        arg0->unk2C = FIXED(0.0625);
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        func_8002D9BC(arg0);
+    }
+
+    timer = (u16)arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        func_80015D60(arg0, 0xD);
+        arg0->state = 2;
+    }
+    if (arg0->unk7C->state == 2) {
+        arg0->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 1) {
+        arg0->state = 2;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800A4A50(struct ShotObj* arg0)
 {
