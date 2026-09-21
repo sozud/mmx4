@@ -25,7 +25,29 @@ void func_800B372C(struct VisualObj* arg0)
     D_8010A66C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3768);
+void func_800B3768(struct VisualObj* arg0)
+{
+    arg0->unk15 = 0;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = FIXED(1.25);
+        break;
+    case 1:
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = FIXED(-1.25);
+        break;
+    case 2:
+        arg0->x_vel.val = FIXED(1.25);
+        arg0->y_vel.val = 0;
+        break;
+    case 3:
+        arg0->x_vel.val = FIXED(-1.25);
+        arg0->y_vel.val = 0;
+        break;
+    }
+    arg0->unk6++;
+}
 
 void func_800B37F8(struct VisualObj* arg0)
 {

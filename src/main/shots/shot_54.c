@@ -168,7 +168,26 @@ void func_800AC708(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800AC710);
+void func_800AC710(struct ShotObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        func_800AF808(arg0);
+        return;
+    }
+
+    D_80109DDC[arg0->unk5](arg0);
+    CollisionRelated(arg0);
+    func_8002D9BC(arg0);
+    if (arg0->unk5 != 5 && func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x28) != 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_800AC7CC(struct ShotObj* arg0)
 {

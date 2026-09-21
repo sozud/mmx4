@@ -1894,11 +1894,16 @@ struct Item23Ext {
 	s16 timer;
 };
 
+struct Item22Ext {
+    s32 collision_side;
+};
+
 union ItemExt {
     u32 packed;
     s32 timer;
     struct Item2Ext item_2;
     struct Item12Ext item_12;
+    struct Item22Ext item_22;
     struct Item23Ext item_23;
     struct MainObj* owner;
 };

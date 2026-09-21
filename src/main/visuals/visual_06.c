@@ -197,9 +197,43 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800AFF78);
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0320);
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B054C);
+void func_800B054C(struct VisualObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->unk50->unk88.bytes.collision_flags = 0x20;
+    }
+    if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && *(u16*)&arg0->unk50->state != 0x501)) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (arg0->unk2 != 1 || g_Player.unkBC == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+}
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0600);
+void func_800B0600(struct VisualObj* arg0)
+{
+    struct PlayerObj* player;
+    s32 animation;
+
+    player = arg0->unk50;
+    if (player->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (player->unk7 == 0) {
+        animation = player->unk17 + 1;
+        if (arg0->unk17 != animation) {
+            func_80015D60(arg0, animation);
+        } else {
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+        }
+    }
+    if (arg0->unk50->unk7 >= 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B06AC);
 

@@ -9,8 +9,8 @@ struct Item03StageEntry {
     u16 right;
     u16 trigger_x;
     u16 object_id;
-    u16 width;
-    u16 height;
+    s16 width;
+    s16 height;
 };
 
 struct Item03StageEntry D_8010C740[22] = {
@@ -49,7 +49,20 @@ void func_800C0404(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C044C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C0558);
+void func_800C0558(struct ItemObj* arg0)
+{
+    s8 index;
+
+    index = arg0->unk2;
+    if (g_Player.y_pos.i.hi >= D_8010C740[index].velocity) {
+        if (index == 0) {
+            func_8001540C(5, 2, NULL);
+        }
+        arg0->unk7C.timer = 10;
+        arg0->state++;
+    }
+    func_8002B318(BASE_OBJECT(arg0), D_8010C740[arg0->unk2].width, D_8010C740[arg0->unk2].height);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C05FC);
 

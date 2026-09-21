@@ -20,7 +20,25 @@ s32 func_800C53A0(struct ItemObj* arg0)
     return 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_21", func_800C5444);
+void func_800C5444(struct ItemObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        if (func_800C53A0(arg0) == 0) {
+            return;
+        }
+        func_800DABE4(arg0->unk2, 0, 0);
+        arg0->unk5 = 1;
+        func_80015D60(arg0, 0xE);
+    } else {
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->on_screen = 0;
+            arg0->state = 2;
+            return;
+        }
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800C54DC(struct ItemObj* arg0)
 {

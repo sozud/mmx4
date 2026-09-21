@@ -4436,6 +4436,7 @@ void func_8009BA4C(struct ShotObj*);
 void func_8009BA6C(struct ShotObj*);
 void func_8009BAE8(struct ShotObj*);
 void func_8009BC14(struct ShotObj*);
+extern u8 D_80108E98[4];
 void func_8009BD08(struct ShotObj*);
 
 // D_80108EBC
@@ -5092,6 +5093,7 @@ void func_800AC6A8(struct ShotObj*);
 extern void (*D_80109DF8[])(struct ShotObj*);
 void func_800ABE08(struct ShotObj*);
 void func_800AC710(struct ShotObj*);
+u8 func_800AC848(struct ShotObj*, s16, s16);
 void func_800AC7CC(struct ShotObj*);
 
 // D_80109E30
@@ -5265,6 +5267,7 @@ void func_800B1AD8(struct VisualObj*);
 extern void (*D_8010A520[])(struct VisualObj*);
 void func_800B1B34(struct VisualObj*);
 void func_800B1B74(struct VisualObj*);
+extern u8 D_8010A510[16];
 void func_800B1C3C(struct VisualObj*);
 
 // D_8010A52C
@@ -5925,6 +5928,7 @@ void func_800C1318(void);
 extern void (*D_8010CAA8[])(struct ItemObj*);
 void func_800C13D8(struct ItemObj*);
 void func_800C14F0(struct ItemObj*);
+extern u8 D_8010CB08[3][4];
 void func_800C1590(struct ItemObj*);
 void func_800C165C(struct ItemObj*);
 void func_800C169C(struct ItemObj*);

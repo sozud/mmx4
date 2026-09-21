@@ -38,7 +38,28 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_12", func_8009BA6C);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_12", func_8009BAE8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_12", func_8009BC14);
+void func_8009BC14(struct ShotObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+
+    if (arg0->unk70 & 8) {
+        func_8001540C(5, 2, NULL);
+        func_800C813C(4, D_80108E98, arg0);
+        arg0->state = 6;
+    }
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_8001540C(5, 2, NULL);
+        func_800C813C(4, D_80108E98, arg0);
+        arg0->state = 6;
+    }
+    if (func_8002BB80(arg0, &g_Player) != 0) {
+        func_8001540C(5, 2, NULL);
+        func_800C813C(4, D_80108E98, arg0);
+        arg0->state = 6;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+}
 
 void func_8009BD08(struct ShotObj* arg0)
 {

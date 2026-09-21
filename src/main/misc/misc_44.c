@@ -21,7 +21,15 @@ void func_800D09E4(struct MiscObj* arg0)
     func_8002B108(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_44", func_800D0A04);
+void func_800D0A04(struct UnkObj* arg0)
+{
+    if (g_Player.x_pos.i.hi >= 0xFE0) {
+        func_80036AE4(0x14, 0x40);
+        background_objects[g_Player.bg_offset].unk26 = 0xFD0;
+        background_objects[g_Player.bg_offset].unk24 = 0xFD0;
+        arg0->unk5 = 1;
+    }
+}
 
 void func_800D0AA4(struct UnkObj* arg0)
 {

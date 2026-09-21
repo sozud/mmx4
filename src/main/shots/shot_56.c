@@ -33,7 +33,26 @@ void (*D_80109F34[])(struct ShotObj*) = {
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800ADF30);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800AE1BC);
+void func_800AE1BC(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
+    s8 angle;
+
+    owner = arg0->unk7C;
+    angle = func_8002B7B0(OBJECT_HEADER(arg0),
+        owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16));
+    arg0->unk8C.byte = angle;
+    func_8002B93C(MOVING_OBJECT(arg0), angle & 0xFF);
+    arg0->x_vel.val *= (get_random() & 3) + 2;
+    arg0->y_vel.val *= (get_random() & 3) + 2;
+    func_8002B718(MOVING_OBJECT(arg0));
+    if ((arg0->unk8C.bytes[0] ^ func_8002B7B0(OBJECT_HEADER(arg0), owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16))) & 0x10) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+}
 
 void func_800AE2AC(struct ShotObj* arg0)
 {
@@ -54,7 +73,24 @@ void func_800AE31C(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_56", func_800AE324);
+void func_800AE324(struct ShotObj* arg0)
+{
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        func_800AF808(arg0);
+        return;
+    }
+
+    D_80109F34[arg0->unk5](arg0);
+    CollisionRelated(arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x28) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_800AE3D4(struct ShotObj* arg0)
 {

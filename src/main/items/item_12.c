@@ -18,7 +18,25 @@ void func_800C3224(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C32BC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C3364);
+void func_800C3364(struct ItemObj* arg0)
+{
+    u16 timer;
+
+    D_8010CFF0[arg0->unk5](arg0);
+    timer = arg0->unk7C.timer16 - 1;
+    arg0->unk7C.timer16 = timer;
+    if (timer != 0) {
+        if (!(D_80141BD8.unk0 & 7)) {
+            arg0->y_pos.u.hi += 0x10;
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
+            arg0->y_pos.u.hi -= 0x10;
+            func_80028BAC(8, 4, 1);
+        }
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_800C3438(struct ItemObj* arg0)
 {

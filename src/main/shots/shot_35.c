@@ -321,7 +321,33 @@ void func_800A3658(struct ShotObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A366C);
+void func_800A366C(struct ShotObj* arg0)
+{
+    struct BaseObj* target;
+    s32 collision;
+    u16 flags;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80109774[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    collision = func_8002DD04(MAIN_OBJECT(arg0));
+    target = BASE_OBJECT(arg0->unk7C);
+    if (collision < 0 || target->state == 2) {
+        func_8001540C(2, 0x98, arg0);
+        func_800C813C(4, D_801096DC, arg0);
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+    if (collision > 0) {
+        flags = arg0->unk42 | 0x8000;
+    } else {
+        flags = arg0->unk42 & 0x7FFF;
+    }
+    arg0->unk42 = flags;
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800A3758(struct ShotObj* object)
 {

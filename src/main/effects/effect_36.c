@@ -26,7 +26,24 @@ void func_800BD23C(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_36", func_800BD280);
+void func_800BD280(struct EffectObj* arg0)
+{
+    u32 i;
+
+    g_Player.unk61 = 0x78;
+    if (--arg0->ext.effect_36.timer == 0) {
+        arg0->state = 3;
+        for (i = 0; i < 4; i++) {
+            D_8013E188[i] = -1;
+        }
+        g_FilterModeR = 1;
+        g_FilterModeG = 2;
+        g_FilterModeB = 4;
+        g_FilterAmountR = 0x1F;
+        g_FilterAmountG = 0x3E0;
+        g_FilterAmountB = 0x7C00;
+    }
+}
 
 void func_800BD31C(struct EffectObj* arg0)
 {
