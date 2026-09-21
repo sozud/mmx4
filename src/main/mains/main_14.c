@@ -260,4 +260,35 @@ void func_8004D784(struct MainObj* arg0, s8 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D84C);
+void func_8004D84C(struct AnimatedObj* arg0)
+{
+    struct VisualObj* visual_obj;
+    u32 i;
+    u32 j;
+
+    for (j = 0; j < 3; j++) {
+        for (i = 0; i < 4; i++) {
+            visual_obj = find_free_visual_obj();
+            if (visual_obj == NULL) {
+                return;
+            }
+
+            visual_obj->active = 0x41;
+            visual_obj->unk50 = PLAYER_OBJECT(arg0);
+            visual_obj->id = 8;
+            visual_obj->unk2 = i;
+            visual_obj->state = 0;
+            visual_obj->unk5 = 0;
+            visual_obj->unk6 = 0;
+            visual_obj->bg_offset = arg0->bg_offset;
+            visual_obj->unk38 = 0;
+            visual_obj->unk3C = arg0->unk3C;
+            visual_obj->animation_table = arg0->animation_table;
+            visual_obj->unk40 = arg0->unk40;
+            visual_obj->unk42 = arg0->unk42;
+            visual_obj->unk16 = 6;
+            visual_obj->x_pos.val = arg0->x_pos.val;
+            visual_obj->y_pos.val = arg0->y_pos.val;
+        }
+    }
+}

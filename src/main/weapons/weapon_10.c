@@ -54,7 +54,7 @@ void func_80093610(struct WeaponObj* arg0)
         arg0->x_vel.val = FIXED(-8);
     }
     arg0->unk49 = 1;
-    arg0->unk28 = 0;
+    arg0->unk28.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     ext->timer = 0x10;

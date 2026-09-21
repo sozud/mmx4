@@ -239,7 +239,24 @@ void func_800A9054(struct ShotObj* arg0)
     func_8001540C(2, 5, arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A90C8);
+void func_800A90C8(struct ShotObj* arg0)
+{
+    s8 direction;
+    struct WeaponObj* owner;
+
+    owner = arg0->unk7C;
+    direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(owner));
+    arg0->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
+    arg0->x_vel.val *= 6;
+    arg0->y_vel.val *= 6;
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (func_800A8A58(arg0, owner->x_pos.val, owner->y_pos.val) & 0xFF) {
+        arg0->state = 2;
+        owner->unk80.word = 0;
+    }
+}
 
 void func_800A916C(struct ShotObj* arg0)
 {
@@ -257,7 +274,24 @@ void func_800A91D8(struct ShotObj* arg0)
     is_on_screen((struct BaseObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9210);
+void func_800A9210(struct ShotObj* arg0)
+{
+    s8 direction;
+
+    direction = func_8002B7B0(OBJECT_HEADER(arg0),
+        arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10);
+    arg0->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
+    arg0->x_vel.val *= 3;
+    arg0->y_vel.val *= 3;
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (func_800A8A58(arg0,
+            arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10)
+        & 0xFF) {
+        arg0->unk5++;
+        arg0->timer = (arg0->unk95 + 1) * 0x28;
+    }
+}
 
 void func_800A92C8(struct ShotObj* arg0)
 {
@@ -269,9 +303,45 @@ void func_800A92C8(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9334);
+void func_800A9334(struct ShotObj* arg0)
+{
+    s8 direction;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A93FC);
+    direction = func_8002B7B0(OBJECT_HEADER(arg0),
+        arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10);
+    arg0->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
+    arg0->x_vel.val *= 6;
+    arg0->y_vel.val *= 6;
+    if ((func_800A8A58(arg0,
+             arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10)
+            & 0xFF)
+        || (arg0->unk98 != 0)) {
+        arg0->timer = 0xF0;
+        arg0->unk5++;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
+
+void func_800A93FC(struct ShotObj* arg0)
+{
+    s16 timer;
+    s8 direction;
+
+    timer = arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        arg0->unk5++;
+        direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+        arg0->pad94 = direction;
+        func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
+        arg0->x_vel.val *= 6;
+        arg0->y_vel.val *= 6;
+        func_8001540C(2, 0xB, arg0);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_800A94A4(struct ShotObj* arg0)
 {
@@ -291,9 +361,47 @@ void func_800A94D4(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9544);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9654);
+void func_800A9654(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A96F8);
+    owner = arg0->unk7C;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->state = 2;
+    }
+    arg0->x_pos.u.hi = owner->x_pos.u.hi + owner->y_vel.u.hi;
+    arg0->y_pos.u.hi = owner->y_pos.u.hi + owner->unk28.u.hi;
+    if (!(D_80141BD8.unk0 & 7)) {
+        func_800C813C(6, D_80109AF4, arg0);
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+void func_800A96F8(struct ShotObj* arg0)
+{
+    switch (arg0->unk5) {
+    case 0:
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        if (arg0->y_vel.val < 0) {
+            arg0->y_vel.val = 0;
+            arg0->unk5++;
+        }
+        break;
+    case 1:
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        if (arg0->unk70 & 8) {
+            arg0->unk5++;
+            func_80015D60(arg0, 0x20);
+            func_8001540C(2, 6, arg0);
+        }
+        break;
+    }
+
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800A97C0(struct ShotObj* arg0)
 {

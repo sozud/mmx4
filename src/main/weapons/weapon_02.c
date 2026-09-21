@@ -51,7 +51,7 @@ void func_8009403C(struct WeaponObj* arg0)
         arg0->unk67 = -1;
         arg0->unk2C = 0x4200;
         arg0->x_vel.val = 0;
-        arg0->unk28 = 0;
+        arg0->unk28.val = 0;
         arg0->y_vel.val = 0;
         arg0->unk5 = 2;
     }

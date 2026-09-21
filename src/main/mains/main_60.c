@@ -903,7 +903,30 @@ void func_80077D48(struct AnimatedObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077DF0);
+void func_80077DF0(struct MainObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x1C;
+        obj->unk2 = 1;
+        obj->unk50 = PLAYER_OBJECT(arg0);
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = D_80101A6C;
+        obj->unk3C = arg0->sprite_frames;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 3;
+        obj->unk15 = arg0->unk15;
+        if (engine_obj.stage == 7) {
+            obj->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x20;
+        } else {
+            obj->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0x120;
+        }
+        obj->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x60;
+    }
+}
 
 void func_80077ED0(struct MainObj* arg0)
 {

@@ -38,7 +38,22 @@ void func_800AA730(struct ShotObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA7B4);
+void func_800AA7B4(struct ShotObj* arg0)
+{
+    s32 angle;
+
+    angle = func_8002B810(arg0->x_pos.val - (arg0->unk8C.halves[0] << 16), 0);
+    if ((angle ^ arg0->unk84.value) & 0x10) {
+        arg0->unk5++;
+        arg0->x_pos.val = arg0->unk8C.halves[0] << 16;
+        arg0->y_pos.val = arg0->unk8C.halves[1] << 16;
+        func_80015D60(arg0, 0x16);
+    } else {
+        func_8002B694(ANIMATED_OBJECT(arg0));
+    }
+    arg0->unk84.value = angle & 0xFF;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA85C);
 

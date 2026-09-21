@@ -57,7 +57,35 @@ s32 func_800A67FC(struct ShotObj* arg0)
     return 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A6860);
+void func_800A6860(struct ShotObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_801099A4[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+
+    if (arg0->unk8C.word == 0) {
+        if ((s8)func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+            func_800AF808(arg0);
+            arg0->unk5 = 1;
+            return;
+        }
+
+        if (func_8002BB80(arg0, &g_Player) != 0 || func_800A67FC(arg0) != 0) {
+            arg0->unk5 = 1;
+            return;
+        }
+
+        if (arg0->unk90.val != 0) {
+            arg0->unk90.val--;
+        } else {
+            arg0->unk5 = 1;
+            return;
+        }
+    }
+
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800A6940(struct ShotObj* arg0)
 {

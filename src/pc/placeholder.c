@@ -2033,38 +2033,6 @@ void func_80038568(struct PlayerObj* arg0, s32 arg1)
 
 void func_800366C0(struct PlayerObj*);
 
-void func_80032140(struct PlayerObj* arg0)
-{
-    s8 event;
-
-    if (func_80037290(arg0) != 0) {
-        return;
-    }
-    if (func_80039880(arg0) != 0) {
-        return;
-    }
-    if (arg0->pressed_input & 0x80) {
-        func_80034538(arg0);
-        return;
-    }
-    if (func_800398F0(arg0) != 0) {
-        return;
-    }
-    if ((u8)arg0->animation_step.fields.event & 0x20) {
-        arg0->animation_step.fields.event &= 0xF;
-        func_800366C0(arg0);
-    }
-    event = arg0->animation_step.fields.event;
-    if (event & 0x80) {
-        arg0->animation_step.fields.event = event & 0xF;
-        func_8001540C(1, 5, arg0);
-        arg0->unk8C = 1;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
-        return;
-    }
-    func_80038568(arg0, 0x10);
-}
-
 void func_800367F8(struct PlayerObj*);
 extern u16 D_800F8BCC[6];
 
@@ -2106,35 +2074,6 @@ void func_800366C0(struct PlayerObj* arg0)
 
 s32 func_8003A000(struct PlayerObj*);
 void func_800347D0(struct PlayerObj*);
-
-void func_80032224(struct PlayerObj* arg0)
-{
-    if (func_80037290(arg0) != 0) {
-        return;
-    }
-    if (func_8003A000(arg0) != 0) {
-        return;
-    }
-    if (arg0->pressed_input & 0x80) {
-        func_80034538(arg0);
-        return;
-    }
-    if (func_800398F0(arg0) != 0) {
-        return;
-    }
-    if (func_800337DC(arg0) != 0) {
-        func_800347D0(arg0);
-        return;
-    }
-    if ((u8)arg0->animation_step.fields.event & 0x40) {
-        arg0->animation_step.fields.event &= 0xF;
-        func_8003666C(arg0);
-    }
-    if (((u8)arg0->unk85 & 3) == 0) {
-        func_800367F8(arg0);
-    }
-    func_80038568(arg0, 0x10);
-}
 
 void func_8003B24C(struct PlayerObj*);
 
@@ -2705,7 +2644,7 @@ void func_80092684(struct WeaponObj* arg0)
     if (arg0->unk15 == 0) {
         arg0->x_vel.val = -arg0->x_vel.val;
     }
-    arg0->unk28 = 0;
+    arg0->unk28.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     func_80015D60(arg0, arg0->unk2 + 0x1A);

@@ -30,7 +30,7 @@ void func_80092828(struct WeaponObj* arg0)
     } else {
         arg0->x_vel.val = FIXED(-10);
     }
-    arg0->unk28 = 0;
+    arg0->unk28.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk2C = 0;
     func_80015D60(arg0, 0x18);
