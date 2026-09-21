@@ -172,11 +172,6 @@ u8 D_8010E04C[4] = { '7', '8', 0, 0 };
 u8 D_8010E050[4] = { 1, 2, 3, 4 };
 u8 D_8010E054[4] = { 5, 6, 7, 0 };
 
-struct Misc08EffectDescriptor {
-    u8 effect_id;
-    u8 variant;
-};
-
 struct Misc08EffectDescriptor D_8010E058[28] = {
     { 0x16, 0 },
     { 0x16, 1 },

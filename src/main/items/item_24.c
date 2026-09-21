@@ -44,7 +44,21 @@ INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C609C);
 
 INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C6198);
 
-INCLUDE_ASM("main/nonmatchings/items/item_24", func_800C6228);
+extern u32 D_8010D3B8[];
+
+void func_800C6228(struct ItemObj* arg0)
+{
+    if (--arg0->unk7C.timer != 0) {
+        if ((D_80141BD8.unk0 & 7) == 0) {
+            func_800AF878(BASE_OBJECT(arg0), 1, 0xF, 0x3F);
+        }
+        if ((D_80141BD8.unk0 & 0xF) == 0) {
+            func_8001540C(0, D_8010D3B8[get_random() & 3], arg0);
+        }
+    } else {
+        func_8002B108(OBJECT_HEADER(arg0));
+    }
+}
 
 void (*D_8010D3AC[])(struct ItemObj*) = {
     func_800C609C,

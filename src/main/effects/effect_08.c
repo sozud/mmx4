@@ -27,7 +27,7 @@ void func_800B7140(struct EffectObj* arg0)
     if (arg0->unk6 == 0) {
         func_800B7180(arg0);
     } else {
-        func_800B71A8();
+        func_800B71A8(arg0);
     }
 }
 
@@ -39,7 +39,47 @@ void func_800B7180(struct EffectObj* arg0)
     arg0->ext.effect_8.unk18 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_08", func_800B71A8);
+void func_800B71A8(struct EffectObj* arg0)
+{
+    s16 diff;
+    s8 sum;
+    s32 t;
+
+    if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
+        diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
+        arg0->ext.effect_8.unk18 = diff;
+        if (diff >= 0) {
+            if (diff >= 8) {
+                arg0->ext.effect_8.unk18 = 8;
+            }
+        } else {
+            if (diff < -8) {
+                arg0->ext.effect_8.unk18 = -8;
+            }
+        }
+        sum = arg0->ext.effect_8.unk17 + arg0->ext.effect_8.unk18;
+        arg0->ext.effect_8.unk17 = sum;
+        if (sum >= 0) {
+            if (sum < 8) {
+                return;
+            }
+            if (++arg0->ext.effect_8.unk16 >= 3) {
+                arg0->ext.effect_8.unk16 = 0;
+            }
+        } else {
+            if (sum >= -7) {
+                return;
+            }
+            if (--arg0->ext.effect_8.unk16 < 0) {
+                arg0->ext.effect_8.unk16 = 2;
+            }
+        }
+        t = arg0->ext.effect_8.unk16;
+        background_objects[1].unk4C = 1;
+        background_objects[1].x_pos.i.hi = t << 9;
+        arg0->ext.effect_8.unk17 = 0;
+    }
+}
 
 void func_800B72C4(struct EffectObj* arg0)
 {

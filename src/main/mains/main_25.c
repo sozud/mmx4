@@ -155,9 +155,43 @@ void func_80057DDC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057E34);
+void func_80057E34(struct MainObj* arg0)
+{
+    s16 tx;
+    s16 ty;
+    u8 r;
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    tx = arg0->x_pos.u.hi + arg0->unk68->unk0;
+    ty = (arg0->y_pos.u.hi + arg0->unk68->unk1) - arg0->unk68->unk3;
+    r = func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
+    tx -= arg0->unk68->unk2;
+    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
+    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx + arg0->unk68->unk2 * 2, ty);
+    if (r != 0 && r != 0x24) {
+        arg0->unk6 = 3;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057F34);
+void func_80057F34(struct MainObj* arg0)
+{
+    s16 tx;
+    s16 ty;
+    u8 r;
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    tx = arg0->x_pos.u.hi + arg0->unk68->unk0;
+    ty = (arg0->y_pos.u.hi + arg0->unk68->unk1) - arg0->unk68->unk3;
+    r = func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
+    tx -= arg0->unk68->unk2;
+    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
+    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx + arg0->unk68->unk2 * 2, ty);
+    if (r == 0 || r == 0x24) {
+        arg0->unk5 = 4;
+        arg0->ext.main_25.unk88 = 0;
+        arg0->unk6 = 1;
+    }
+}
 
 void func_80058044(struct MainObj* arg0)
 {

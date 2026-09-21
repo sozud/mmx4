@@ -689,7 +689,7 @@ void func_80087BE8(struct MainObj* arg0)
     } else {
         arg0->ext.main_69.state.bytes.unk8F = 0x28;
     }
-    arg0->unk7C = (s16)(s8) * (volatile u8*)&arg0->ext.main_69.state.bytes.unk8F;
+    arg0->unk7C = arg0->ext.main_69.state.bytes.unk8F;
     arg0->unk6++;
 }
 
@@ -725,16 +725,16 @@ void func_80087D3C(struct MainObj* arg0)
 
     if (arg0->animation_step.fields.relative_step == 0) {
         if (--arg0->unk7C == 0) {
-            func_80015D60(arg0, 4);
+            func_80015D60(ANIMATED_OBJECT(arg0), 4);
             func_8001540C(2, 0xDA, arg0);
-            arg0->unk7C = (s8)arg0->ext.main_69.state.bytes.unk8F;
+            arg0->unk7C = arg0->ext.main_69.state.bytes.unk8F;
             arg0->unk6++;
         }
     } else {
         func_80015DC8(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.event != 0) {
             shot = find_free_shot_obj();
-            if (shot != 0) {
+            if (shot != NULL) {
                 shot->active = 0x41;
                 shot->id = 0x2D;
                 shot->unk2 = 1;

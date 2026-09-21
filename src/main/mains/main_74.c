@@ -342,7 +342,7 @@ void func_8008E244(struct MainObj* self)
     u32 i;
 
     count = 0;
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < COUNT(self->ext.main_74.children); i++) {
         if (self->ext.main_74.children[i]->unk5 == 3) {
             count++;
         }
@@ -351,7 +351,7 @@ void func_8008E244(struct MainObj* self)
         self->unk5 = 2;
         self->unk6 = 0;
         func_8008D764(self, 0);
-        *D_8013B8A0 = 0x1E;
+        D_8013B8A0[0] = 0x1E;
         return;
     }
     func_80015DC8(ANIMATED_OBJECT(self));
@@ -405,36 +405,29 @@ void func_8008E45C(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
-void func_8008E4BC(struct MainObj* self)
+void func_8008E4BC(struct MainObj* arg0)
 {
-    s32 count;
     u32 i;
-
-    count = 0;
-    i = 0;
-    do {
-        if (self->ext.main_74.children[i]->unk5 == 3) {
+    s32 count = 0;
+    for (i = 0; i < COUNT(arg0->ext.main_74.children); i++) {
+        if (arg0->ext.main_74.children[i]->unk5 == 3) {
             count++;
         }
-        i++;
-    } while (i < 3U);
-
-    if ((self->animation_step.fields.relative_step == 0) && (count == 3)) {
-        self->unk5 = 2;
-        self->unk6 = 0;
-        func_8008D764(self, 0);
-        *D_8013B8A0 = 0x1E;
+    }
+    if ((arg0->animation_step.fields.relative_step == 0) && (count == 3)) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        func_8008D764(arg0, 0);
+        D_8013B8A0[0] = 0x1E;
         return;
     }
-
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->animation_step.fields.relative_step != 0) {
-        func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step != 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
         return;
     }
-
-    self->x_pos.i.hi = 0;
-    self->y_pos.i.hi = 0;
+    arg0->x_pos.i.hi = 0;
+    arg0->y_pos.i.hi = 0;
 }
 
 void func_8008E590(struct MainObj* arg0)

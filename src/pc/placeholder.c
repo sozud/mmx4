@@ -721,7 +721,7 @@ void func_8002217C(u16 message, u8 portrait, u8 delay_only)
         window->id = 0x16;
         window->unk2 = 2;
         window->unk16 = 0x11;
-        window->animation_table = D_800F2FD4;
+        window->animation_table = (u32**)D_800F2FD4;
         window->unk40 = 0x1E00;
         window->unk42 = engine_obj.stage == 0xD ? 0x78CF : 0x7846;
         window->bg_offset = -1;
@@ -3134,7 +3134,7 @@ void func_8004A178(struct MainObj* arg0)
                 arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - 0x18;
             }
             arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x18;
-            func_8002B93C(arg0, func_8002B7DC(arg0, &g_Player) & 0xFF);
+            func_8002B93C(MOVING_OBJECT(arg0), func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
             x_vel = arg0->unk20;
             y_vel = arg0->unk24;
             arg0->x_pos.val = saved_x;
@@ -3482,7 +3482,7 @@ void func_800419B8(struct MainObj* arg0)
 {
     s32 distance;
 
-    func_8002B93C(arg0,
+    func_8002B93C(MOVING_OBJECT(arg0),
         func_8002B7B0(OBJECT_HEADER(arg0), g_Player.x_pos.val, 0x01700000));
 
     distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
@@ -3539,7 +3539,7 @@ void func_800B158C(struct VisualObj* arg0)
         return;
     }
 
-    func_80015DC8(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->unk2 == 0) {
         arg0->x_pos.i.hi = (u16)owner->x_pos.i.hi + 0x58;
     } else {
@@ -3698,7 +3698,7 @@ void func_80041060(struct MainObj* arg0)
             }
         }
 
-        func_8002B93C(arg0,
+        func_8002B93C(MOVING_OBJECT(arg0),
             func_8002B7B0(OBJECT_HEADER(arg0),
                 (s32)D_800F99BC[index] << 16, 0x01700000));
         arg0->unk20 *= 2;
@@ -3734,7 +3734,7 @@ void func_800415B0(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     target = arg0->unk15 != 0 ? g_Player.x_pos.val + offset
                               : g_Player.x_pos.val - offset;
-    func_8002B93C(arg0, func_8002B7B0(OBJECT_HEADER(arg0), target, 0x02140000));
+    func_8002B93C(MOVING_OBJECT(arg0), func_8002B7B0(OBJECT_HEADER(arg0), target, 0x02140000));
     arg0->unk20 *= 4;
     arg0->unk24 *= 4;
     func_8002B718(MOVING_OBJECT(arg0));
@@ -4607,7 +4607,7 @@ void func_800BBC50(struct EffectObj* arg0)
     g_FilterAmountB = 0;
     arg0->ext.effect_28.timer = 0x28;
     arg0->ext.effect_28.filter_timer = 4;
-    arg0->ext.effect_28.pad1A[0] = 3;
+    arg0->ext.effect_28.pad1A = 3;
     arg0->ext.effect_28.palette_index = 0;
     func_8002B560(2, 1);
     arg0->state++;
@@ -4671,24 +4671,6 @@ void func_800C19F0(struct ItemObj* arg0)
     func_80015D60(ANIMATED_OBJECT(arg0), 0);
 }
 
-void func_800BBFCC(struct EffectObj* arg0)
-{
-    s32 x = background_objects[0].x_pos.i.hi;
-    s32 y = background_objects[0].y_pos.i.hi;
-    s32 quadrant = func_8002B780() % 4;
-
-    arg0->ext.effect_28.pad1A[1] = (u8)quadrant;
-    if (quadrant == 1 || quadrant == 3)
-        x += 0xA0;
-    if (quadrant == 2 || quadrant == 3)
-        y += 0x78;
-    x += func_8002B780() % 0xA0;
-    y += func_8002B780() % 0x78;
-    func_800AFAB4(0, (s16)x, (s16)y, 0xFF);
-    if ((D_80141BD8.unk0 & 3) == 0)
-        func_8001540C(0, get_random() & 3, NULL);
-}
-
 void func_800BBD88(struct EffectObj* arg0)
 {
     if (arg0->ext.effect_28.finished) {
@@ -4699,9 +4681,9 @@ void func_800BBD88(struct EffectObj* arg0)
 
     arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi + 0xA0;
     arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi + 0x80;
-    if (--arg0->ext.effect_28.pad1A[0] == 0) {
+    if (--arg0->ext.effect_28.pad1A == 0) {
         func_800BBFCC(arg0);
-        arg0->ext.effect_28.pad1A[0] = 3;
+        arg0->ext.effect_28.pad1A = 3;
     }
     if (arg0->unk7 == 0) {
         func_80028BAC(10, 4, 2);

@@ -26,7 +26,22 @@ void func_800BF508(struct ItemObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF530);
+extern u32 D_8010C310[4];
+
+void func_800BF530(struct ItemObj* arg0)
+{
+    if (--arg0->unk7C.timer != 0) {
+        if ((D_80141BD8.unk0 & 7) == 0) {
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x1F, 0x1F);
+        }
+        if ((D_80141BD8.unk0 & 0xF) == 0) {
+            func_8001540C(0, D_8010C310[get_random() & 3], arg0);
+        }
+    } else {
+        arg0->unk5 = 0;
+        arg0->state++;
+    }
+}
 
 void func_800BF5EC(struct ItemObj* arg0)
 {

@@ -81,9 +81,41 @@ void func_800DA5C4(struct LayerObj* arg0)
     D_8010FFC0[arg0->unk7](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA600);
+void func_800DA600(struct LayerObj* arg0)
+{
+    if (arg0->unk18.val < 0x5801) {
+        if (arg0->unk18.val > 0) {
+            if (arg0->private_state.value.val != 0) {
+                arg0->private_state.value.val--;
+                return;
+            }
+        }
+        arg0->unk18.val += 0x400;
+        background_objects[1].y_pos.val -= arg0->unk18.val / 2;
+        background_objects[2].y_pos.val -= arg0->unk18.val;
+        return;
+    }
+    arg0->private_state.value.val = 0x1E;
+    arg0->unk7++;
+}
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA6A4);
+void func_800DA6A4(struct LayerObj* arg0)
+{
+    if (arg0->unk18.val >= -0x5800) {
+        if (arg0->unk18.val < 0) {
+            if (arg0->private_state.value.val != 0) {
+                arg0->private_state.value.val--;
+                return;
+            }
+        }
+        arg0->unk18.val -= 0x400;
+        background_objects[1].y_pos.val -= arg0->unk18.val / 2;
+        background_objects[2].y_pos.val -= arg0->unk18.val;
+        return;
+    }
+    arg0->private_state.value.val = 0x1E;
+    arg0->unk7--;
+}
 
 void func_800DA748(struct LayerObj* arg0)
 {

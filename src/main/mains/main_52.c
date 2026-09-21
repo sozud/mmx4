@@ -2,6 +2,9 @@
 // 8006A50C..8006AF70
 #include "common.h"
 
+extern u8 D_800FFF9C[];
+extern void (*D_800FFFAC[])(struct MainObj*);
+
 void func_8006A50C(struct MainObj* arg0)
 {
     D_800FFFA0[arg0->state](arg0);
@@ -10,7 +13,23 @@ void func_8006A50C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006A55C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006A638);
+void func_8006A638(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FFFAC[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    arg0->ext.main_52.saved_unk5 = arg0->unk5;
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(arg0);
+        func_800C813C(3, &D_800FFF9C, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0);
+    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_8006A70C(struct MainObj* arg0)
 {

@@ -603,9 +603,50 @@ void func_8008030C(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_80080370);
+void func_80080370(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x28;
+        arg0->unk5++;
+    }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_800804A0);
+    if ((arg0->unk7C & 7) == 0) {
+        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            arg0->y_pos.i.hi + (get_random() & 0x1F), 0);
+    }
+
+    if ((arg0->unk7C & 3) == 4) {
+        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            arg0->y_pos.i.hi + (get_random() & 0x1F), 1);
+    }
+
+    if ((arg0->unk7C & 3) != 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    }
+}
+
+void func_800804A0(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x1E;
+        arg0->unk5++;
+        ZeroObjectState(OBJECT_HEADER(arg0->ext.main_65.unk84));
+    }
+
+    if ((arg0->unk7C & 7) == 0) {
+        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            arg0->y_pos.i.hi + (get_random() & 0x1F), 0);
+    }
+
+    if ((arg0->unk7C & 3) == 4) {
+        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            arg0->y_pos.i.hi + (get_random() & 0x1F), 1);
+    }
+
+    if ((arg0->unk7C & 1) != 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    }
+}
 
 void func_800805D8(struct MainObj* arg0)
 {

@@ -2,6 +2,8 @@
 // 80088BA0..80089AA4
 #include "common.h"
 
+extern u8 D_80104A3C[];
+
 void func_80088BA0(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
@@ -117,7 +119,7 @@ void func_80089138(struct MainObj* self)
     u16 timer;
 
     if ((D_80141BD8.unk0 & 3) == 0) {
-        func_80089798();
+        func_80089798(self);
     }
 
     countdown = self->unk7E;
@@ -241,7 +243,31 @@ void func_80089524(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089588);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80089798);
+void func_80089798(struct MainObj* arg0)
+{
+    s16 x = background_objects[0].x_pos.i.hi;
+    s16 y = background_objects[0].y_pos.i.hi;
+    arg0->ext.main_70.unk85 = func_8002B780() % 4;
+    switch (arg0->ext.main_70.unk85) {
+    case 0:
+        break;
+    case 1:
+        x += 0xA0;
+        break;
+    case 3:
+        x += 0xA0;
+        // Fall through.
+    case 2:
+        y += 0x78;
+        break;
+    }
+    x += func_8002B780() % 0xA0;
+    y += func_8002B780() % 0x78;
+    func_800AFAB4(0, x, y, 0xFF);
+    if ((D_80141BD8.unk0 & 3) == 0) {
+        func_8001540C(0, D_80104A3C[(get_random() & 3) * 4], NULL);
+    }
+}
 
 void func_80089910(struct MainObj* arg0)
 {
