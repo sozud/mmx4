@@ -13,7 +13,28 @@ INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEBFC);
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BED6C);
 
-INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEED4);
+void func_800BEED4(struct ItemObj* self)
+{
+    s8 index;
+
+    index = self->unk2;
+    if (g_Player.x_pos.i.hi < D_8010C160[index].left) {
+        return;
+    }
+    if (index == 9) {
+        func_8001540C(5, 1, NULL);
+    }
+    if (self->unk2 == 0xD) {
+        func_8001540C(5, 0, NULL);
+    }
+    func_80028B68(0x18, 3, 1);
+    self->ext.timer = 1;
+    self->unk5 = (u8)self->unk5 + 1;
+    if (self->unk2 == 0xD) {
+        func_800B10E4(0x21, 0xE10, 0x1E0, 0xF10, 0x1F0, 6);
+        func_800B10E4(0x22, 0xE10, 0x1E0, 0xF10, 0x1F0, 6);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEFCC);
 
@@ -56,17 +77,6 @@ void func_800BF60C(struct BaseObj* arg0, s8 arg1)
 }
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF638);
-
-struct Item01StageEntry {
-    u16 x;
-    u16 y;
-    u16 left;
-    u16 right;
-    u16 trigger_x;
-    u16 flags_and_palette;
-    u16 velocity;
-    u16 sound_id;
-};
 
 struct Item01StageEntry D_8010C160[15] = {
     { 0x0240, 0x00E0, 0x0200, 0x0100, 0x0100, 0x0040, 0x0C00, 0x0000 },

@@ -231,7 +231,38 @@ void func_8008C43C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C4B4);
+void func_8008C4B4(struct MainObj* self)
+{
+    u32 animation;
+
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk54 = &D_80105270;
+        self->animation_step.fields.event = 0;
+        self->unk50 = &D_8010526C;
+        self->unk6++;
+        animation = func_8002B7DC(
+                        OBJECT_HEADER(self), OBJECT_HEADER(&g_Player))
+            | 0x10;
+        if ((animation & 0xFF) < 0x14U) {
+            animation = 0x14;
+        }
+        if ((animation & 0xFF) >= 0x1DU) {
+            animation = 0x1C;
+        }
+        func_8002B93C(MOVING_OBJECT(self), animation & 0xFF);
+        self->unk2C = 0;
+        self->unk28 = 0;
+        self->unk20 *= 8;
+        self->unk24 *= 8;
+        if ((self->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
+            self->unk15 = 0x40;
+        } else {
+            self->unk15 = 0;
+        }
+        func_8002B694(ANIMATED_OBJECT(self));
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_8008C5A8(struct MainObj* arg0)
 {

@@ -386,7 +386,34 @@ void func_80071228(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800712A4);
+void func_800712A4(struct MainObj* self)
+{
+    s16 timer;
+    s32 x_velocity;
+
+    if (self->unk7 == 0) {
+        timer = (u16)self->unk7C - 1;
+        self->unk7C = timer;
+        x_velocity = FIXED(-6);
+        if (timer == 0) {
+            self->unk7 = (u8)self->unk7 + 1;
+            if (self->unk15 != 0) {
+                x_velocity = FIXED(6);
+            }
+            self->unk50 = &D_80100854;
+            self->unk20 = x_velocity;
+            self->unk54 = &D_80100858;
+            func_80015D60(self, 6);
+            func_8001540C(2, 0xAF, self);
+        }
+    } else if (self->on_screen == 0) {
+        self->unk7C = 0x78;
+        self->unk7 = 0;
+        self->unk20 = 0;
+        self->unk6 = (u8)self->unk6 + 1;
+        self->y_pos.i.hi = background_objects[self->bg_offset].unk22 - 0x50;
+    }
+}
 
 void func_800713A4(struct MainObj* arg0)
 {

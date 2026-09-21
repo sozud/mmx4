@@ -16,7 +16,28 @@ void func_800C3224(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_12", func_800C32BC);
+void func_800C32BC(struct ItemObj* self)
+{
+    self->active = 1;
+    self->x_pos.i.hi = D_8010D000[self->unk2];
+    self->y_pos.i.hi = 0x1A8;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk68 = (struct Unk_unk68*)D_8010CFFC;
+    self->unk40 = 0x1500;
+    self->animation_step.fields.frame_index = 0;
+    self->unk16 = 6;
+    self->unk15 = 0;
+    self->sprite_frames = (u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
+    self->unk42 = 0x7901;
+    self->unk7C.timer16 = 0x80;
+    self->unk76 = 1;
+    self->unk67 = 0;
+    self->unk75 = 1;
+    self->state = 1;
+    self->ext.item_12.x_offset = 0x400;
+}
 
 void func_800C3364(struct ItemObj* arg0)
 {

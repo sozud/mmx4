@@ -196,7 +196,33 @@ void func_800C6C2C(struct VisualObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6CE4);
+void func_800C6CE4(struct VisualObj* self)
+{
+    struct PlayerObj* owner;
+
+    owner = self->unk50;
+    if (self->state == 0) {
+        func_800C6DD4(self, owner);
+        if (self->unk2 == 1) {
+            self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x58;
+        }
+        if (self->unk2 == 2) {
+            self->unk15 = 0x40;
+            self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x58;
+        }
+        self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x6A;
+        func_8001540C(2, 0x24, NULL);
+    } else if (self->animation_step.fields.relative_step == 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.frame_index == 0x24) {
+            g_Player.unkE2 = 3;
+        }
+    }
+    func_8002B318(BASE_OBJECT(self), 0x88, 0x88);
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6DD4);
 

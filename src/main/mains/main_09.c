@@ -225,7 +225,40 @@ void func_800494E0(struct MainObj* arg0)
     func_80036AE4(0x15, 0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_09", func_8004955C);
+void func_8004955C(struct MainObj* self)
+{
+    s32 x_velocity;
+    struct VisualObj* visual;
+
+    if (self->ext.main_9.effect->active == 0) {
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 6;
+            visual->unk50 = PLAYER_OBJECT(self);
+            visual->unk2 = 3;
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 6;
+            visual->unk50 = PLAYER_OBJECT(self);
+            visual->unk2 = 4;
+        }
+        self->unk6 = (u8)self->unk6 + 1;
+        func_80028BAC(-1, 4, 2);
+        x_velocity = FIXED(-8.5);
+        if (self->unk15 != 0) {
+            x_velocity = FIXED(8.5);
+        }
+        self->unk24 = FIXED(-6);
+        self->unk20 = x_velocity;
+        self->unk28 = 0;
+        self->unk2C = FIXED(-0.09375);
+        func_80015D60(self, 4);
+        self->unk7E = 0x14;
+    }
+}
 
 void func_80049654(struct MainObj* arg0)
 {

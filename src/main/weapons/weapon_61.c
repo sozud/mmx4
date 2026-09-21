@@ -22,7 +22,37 @@ void func_80099338(struct WeaponObj* arg0)
     func_80099388(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_61", func_80099388);
+void func_80099388(struct WeaponObj* self)
+{
+    s8 index;
+    s8 event;
+    u16 timer;
+    struct PlayerObj* owner;
+
+    owner = self->owner;
+    self->x_pos.i.hi = (s16)(u16)owner->x_pos.i.hi;
+    self->y_pos.i.hi = (s16)(u16)owner->y_pos.i.hi;
+    self->animation_step.fields.event = (s8)((u8)owner->animation_step.fields.event >> 4);
+    if (self->unk2 != 0) {
+        timer = self->unk88.half - 1;
+        self->unk88.half = timer;
+        if ((timer << 16) == 0) {
+            self->unk88.half = 6;
+            self->unk64 = (u8)self->unk64 + 1;
+        }
+    }
+    index = self->unk2;
+    if ((D_80108C28[index] == owner->unk17) && (D_80108C30[index] == owner->unk5) && (owner->state == 1)) {
+        event = self->animation_step.fields.event;
+        if (event == 0) {
+            self->unk50 = NULL;
+            return;
+        }
+        self->unk50 = &D_80108C0C[event];
+        return;
+    }
+    ZeroObjectState(OBJECT_HEADER(self));
+}
 
 void func_80099480(struct WeaponObj* arg0)
 {

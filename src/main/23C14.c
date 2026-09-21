@@ -3160,7 +3160,43 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003A3EC);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003A5E4);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003A7B4);
+void func_8003A7B4(struct PlayerObj* arg0)
+{
+    s8 state;
+
+    if (func_800340BC(arg0) != 0) {
+        arg0->unk8E = 0;
+        return;
+    }
+
+    state = arg0->unk6;
+    if (state == 0) {
+        arg0->unk6 = state + 1;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    }
+
+    func_8003B1A0(arg0, 0x1E);
+    if ((u8)arg0->animation_step.fields.event & 0x40) {
+        arg0->unk8E = 0;
+        if (func_80039AC8(arg0) != 0) {
+            return;
+        }
+        arg0->unk8E = 1;
+    }
+
+    if (arg0->pressed_input & 2) {
+        arg0->unk15 = 0;
+    }
+    if (arg0->pressed_input & 1) {
+        arg0->unk15 = 0x40;
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk8E = 0;
+        func_8003516C(arg0, 0x1F, 2);
+        func_80034D64(arg0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003A8A0);
 
@@ -3429,7 +3465,39 @@ void func_8003BDA0(struct RideArmorObj* arg0)
     func_8003CD38(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003BE28);
+void func_8003BE28(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk2C = FIXED(0.3125);
+    }
+    self->unk67 = 1;
+    func_8003C6EC(self, 4);
+    if ((*(u32*)&self->unk70 & 5) != 5) {
+        func_8002B694(ANIMATED_OBJECT(self));
+        if (self->y_vel.val < 0) {
+            self->unk5 = 4;
+            self->unk6 = 0;
+        } else if (!((u16)self->unk8A & 0x80)) {
+            self->unk5 = 4;
+            self->unk6 = 0;
+            self->y_vel.val = 0;
+        }
+    } else {
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->y_vel.val = 0;
+        if (self->unk70 & 1) {
+            self->x_vel.val = 0;
+            self->unk28 = 0;
+        }
+    }
+    func_8003CCBC(self);
+    if (self->unk7D != 0) {
+        self->unk8E = 1;
+    }
+    func_8003CBCC(self);
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003BF1C);
 
