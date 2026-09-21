@@ -4,6 +4,7 @@
 extern s32 func_80013614 (s32 arg0, s32 *arg1);
 extern s32 func_800169D8 (void);
 extern s32 func_8001CEDC (void);
+extern s32 func_8001CFF4(s32 arg0);
 extern s32 func_8001CF74 (void);
 extern s32 func_8001E850 (u8 *arg0, u8 arg1);
 extern void func_8001E980 (u8 arg0);

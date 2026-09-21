@@ -2024,7 +2024,31 @@ void func_80037BC4(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80037C28);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_80037D08);
+void func_80037D08(struct PlayerObj* arg0)
+{
+    s8 i;
+    struct PlayerObj* player;
+    struct WeaponObj* weapon;
+    struct WeaponObj* first_weapon;
+
+    player = arg0;
+    i = 0;
+    do {
+        weapon = find_free_weapon_obj();
+        if (weapon != 0) {
+            weapon->active = 1;
+            weapon->id = player->unk96;
+            weapon->unk2 = i;
+            weapon->bg_offset = player->bg_offset;
+            if (i == 0) {
+                first_weapon = weapon;
+            } else {
+                weapon->owner = (struct PlayerObj*)first_weapon;
+            }
+        }
+        i++;
+    } while (i < 9);
+}
 
 void func_80037DB0(struct PlayerObj* arg0)
 {
@@ -3619,7 +3643,28 @@ void func_8003D638(struct VisualObj* arg0, u8 arg1)
     obj->unk15 = unk15;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003D6EC);
+void func_8003D6EC(struct AnimatedObj* arg0, s32 arg1)
+{
+    struct AnimatedObj* animated_obj;
+    struct VisualObj* visual_obj;
+
+    animated_obj = arg0;
+    visual_obj = find_free_visual_obj();
+    if (visual_obj != 0) {
+        visual_obj->active = 0x41;
+        visual_obj->id = 0x16;
+        visual_obj->unk2 = (char)arg1;
+        visual_obj->x_pos.i.hi = (short)(unsigned short)animated_obj->x_pos.i.hi;
+        visual_obj->y_pos.i.hi = (short)(unsigned short)animated_obj->y_pos.i.hi;
+        visual_obj->animation_table = animated_obj->animation_table;
+        visual_obj->unk40 = animated_obj->unk40;
+        visual_obj->unk3C = animated_obj->unk3C;
+        visual_obj->unk42 = animated_obj->unk42 & 0x7FFF;
+        visual_obj->unk16 = animated_obj->unk16;
+        visual_obj->unk50 = (struct PlayerObj*)animated_obj;
+        visual_obj->unk15 = animated_obj->unk15;
+    }
+}
 
 void func_8003D7A0(void)
 {

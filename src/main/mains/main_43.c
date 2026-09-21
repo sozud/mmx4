@@ -375,7 +375,28 @@ void func_80064F24(struct VisualObj* arg0, s8 arg1)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064FD8);
+void func_80064FD8(struct AnimatedObj* arg0)
+{
+    struct AnimatedObj* self;
+    struct VisualObj* temp_v0;
+
+    self = arg0;
+    temp_v0 = find_free_visual_obj();
+    if (temp_v0 != 0) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0x14;
+        temp_v0->unk2 = 1;
+        temp_v0->x_pos.val = self->x_pos.val;
+        temp_v0->y_pos.val = self->y_pos.val + FIXED(28);
+        temp_v0->animation_table = self->animation_table;
+        temp_v0->unk40 = self->unk40;
+        temp_v0->unk3C = self->unk3C;
+        temp_v0->unk42 = self->unk42 & 0x7FFF;
+        temp_v0->unk16 = self->unk16;
+        temp_v0->unk50 = (struct PlayerObj*)self;
+        temp_v0->unk15 = self->unk15;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065088);
 

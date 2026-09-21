@@ -5004,26 +5004,6 @@ s32 func_80034E2C(void)
     return 0;
 }
 
-void func_80031540(struct PlayerObj* player)
-{
-    func_80015DC8(ANIMATED_OBJECT(player));
-    if (player->unk6 == 0) {
-        if (player->animation_step.fields.relative_step == 0) {
-            func_800350A4(player, 4);
-            player->unk6++;
-        }
-    } else if (func_8002B1E8(BASE_OBJECT(player), 0x20, 0x40) == 0) {
-        func_8002B718(MOVING_OBJECT(player));
-        if (player->unk68 != NULL)
-            func_80036B88(player);
-    } else {
-        player->on_screen = 0;
-        player->state = 3;
-        player->unk5 = 0;
-        player->unk6 = 0;
-    }
-}
-
 void func_80033108(struct PlayerObj* arg0)
 {
     if (engine_obj.unkF != 0) {

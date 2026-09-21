@@ -160,9 +160,63 @@ void func_8006A26C(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A2BC);
+void func_8006A2BC(struct MainObj* arg0)
+{
+    struct MainObj* source;
+    s8 side;
+    struct ShotObj* shot;
 
-INCLUDE_ASM("main/nonmatchings/mains/main_51", func_8006A388);
+    source = arg0;
+    shot = find_free_shot_obj();
+    if (shot != 0) {
+        shot->active = 0x41;
+        shot->id = 0x1E;
+        side = engine_obj.cur_character ^ (source->ext.main_51.unk84 & 1);
+        shot->unk2 = side;
+        if ((source->ext.main_51.unk84 == 3) && (engine_obj.cur_character == 0)) {
+            shot->unk2 = side + 1;
+        }
+        shot->unk7C = (struct WeaponObj*)source;
+        shot->unk42 = source->unk42;
+        shot->animation_table = (u32**)D_800FFD44;
+        shot->unk3C = source->sprite_frames;
+        shot->unk40 = source->unk40;
+        shot->unk15 = source->unk15;
+        shot->bg_offset = (s8)(u8)source->bg_offset;
+        shot->unk16 = 4;
+    }
+}
+
+void func_8006A388(struct MainObj* arg0)
+{
+    u8 i;
+    struct MainObj* obj;
+    struct ShotObj* shot;
+
+    obj = arg0;
+    i = 0;
+    do {
+        shot = find_free_shot_obj();
+        if (shot != 0) {
+            shot->active = 0x41;
+            shot->id = 0x1E;
+            if (i == 0) {
+                shot->unk2 = 0;
+            } else {
+                shot->unk2 = 2;
+            }
+            shot->unk7C = (struct WeaponObj*)obj;
+            shot->unk42 = obj->unk42;
+            shot->animation_table = (u32**)D_800FFD44;
+            shot->unk3C = obj->sprite_frames;
+            shot->unk40 = obj->unk40;
+            shot->unk15 = obj->unk15;
+            shot->bg_offset = (s8)(u8)obj->bg_offset;
+            shot->unk16 = 4;
+        }
+        i++;
+    } while (i < 2);
+}
 
 void func_8006A450(struct MainObj* arg0)
 {

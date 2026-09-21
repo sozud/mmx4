@@ -32,7 +32,26 @@ void func_80098C84(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098CC0);
+void func_80098CC0(struct WeaponObj* arg0)
+{
+    struct WeaponObj* self = arg0;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        func_800AF808(self);
+        self->on_screen = 0;
+    } else if (func_8002BB80(self, &g_Player) == 0 && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+        return;
+    } else {
+        self->on_screen = 0;
+    }
+
+    ZeroObjectState(OBJECT_HEADER(self));
+}
 
 void func_80098D64(struct ShotObj* arg0)
 {

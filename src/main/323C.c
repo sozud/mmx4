@@ -2373,7 +2373,32 @@ s32 func_8001CD70(s32 arg0)
     return result;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CDE4);
+int func_8001CDE4(int arg0)
+{
+    int var_s0;
+    int var_s1;
+    int var_s2;
+
+    var_s1 = 0x10;
+    var_s2 = 0xFF;
+    func_8001C854();
+    do {
+        if (_card_info(arg0 << 4) != 0) {
+            var_s0 = func_8001CEDC();
+            if ((var_s0 & 1) || (var_s0 != var_s2)) {
+                var_s2 = var_s0;
+            } else {
+                break;
+            }
+        }
+    } while (--var_s1 != 0);
+
+    if (var_s0 == 2) {
+        func_8001CFF4(arg0);
+        var_s0 = 0;
+    }
+    return var_s0;
+}
 
 s32 func_8001CE84(s32 device_num)
 {
@@ -2383,7 +2408,27 @@ s32 func_8001CE84(s32 device_num)
     return format(buf.path) ^ 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CEDC);
+s32 func_8001CEDC(void)
+{
+    const long MAX_LOOPS = 250000;
+    long var_s0;
+
+    for (var_s0 = MAX_LOOPS - 1; var_s0 != 0; var_s0--) {
+        if (TestEvent(D_80139670)) {
+            return 0;
+        }
+        if (TestEvent(D_80139674)) {
+            return 1;
+        }
+        if (TestEvent(D_80139678)) {
+            return 2;
+        }
+        if (TestEvent(D_8013967C)) {
+            return 3;
+        }
+    }
+    return 3;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CF74);
 
@@ -3537,7 +3582,31 @@ void func_8001F398(struct EngineObj* arg0)
     D_800F23B0[arg0->unk2](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001F3D4);
+void func_8001F3D4(struct MainObj* obj)
+{
+    s32 background_index;
+    u32 i;
+
+    *(s16*)&obj->state = 6;
+    background_index = ((s8*)&obj->unk42)[1];
+    obj->on_screen = 0;
+    obj->unk2++;
+    if (background_index == 0) {
+        background_objects[0].x_pos.val = FIXED(512);
+    } else {
+        background_objects[background_index].x_pos.val = FIXED(256);
+    }
+
+    for (i = 0; i < 4; i++) {
+        D_8013E188[i] = -1;
+    }
+    g_FilterModeR = 0;
+    g_FilterModeG = 0;
+    g_FilterModeB = 0;
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001F488);
 
