@@ -3,7 +3,12 @@ bin
 assets
 build
 build.ninja
+build-linux/
+compile_commands.json
 .ninja_deps
+.ninja_log
+.cache
+.venv
 disks
 config/undefined_funcs_auto.us.main.txt
 config/undefined_syms_auto.us.main.txt

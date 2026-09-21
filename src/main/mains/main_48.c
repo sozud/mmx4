@@ -141,7 +141,35 @@ void func_80067A80(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067AA8);
+void func_80067AA8(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    struct MiscObj* misc;
+
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x1A;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
+        shot->unk7C = arg0;
+        shot->unk84.value = 0;
+        func_8002B93C(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
+        SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 8;
+        arg0->unk6++;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk82++;
+    }
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x19;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
+        misc->ext.pointer.unk50 = arg0;
+    }
+}
 
 void func_80067BB0(struct MainObj* arg0)
 {
@@ -204,7 +232,38 @@ void func_80067D00(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067DAC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067EE4);
+void func_80067EE4(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    struct MiscObj* misc;
+
+    if (arg0->animation_step.fields.event == 0) {
+        return;
+    }
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x1A;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
+        shot->unk7C = arg0;
+        shot->unk84.value = 0;
+        func_8002B93C(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
+        SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 8;
+        arg0->unk6++;
+        SP_CUR_MAIN_OBJ->ext.main_48.unk82++;
+    }
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x19;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
+        misc->ext.pointer.unk50 = arg0;
+    }
+}
 
 void func_80068000(struct MainObj* arg0)
 {
@@ -245,8 +304,8 @@ void func_800680C8(struct MainObj* arg0)
 
 void func_80068108(struct MainObj* arg0)
 {
-    func_80015DC8(arg0);
-    func_8002B718(arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
 }
 
 void func_80068138(struct MainObj* arg0)

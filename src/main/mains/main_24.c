@@ -2,6 +2,8 @@
 // 80056788..80057100
 #include "common.h"
 
+extern u8 D_800FCFA0[];
+
 void func_80056788(struct MainObj* arg0)
 {
     D_800FCFA8[arg0->state](arg0);

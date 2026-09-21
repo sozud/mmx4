@@ -165,9 +165,67 @@ void func_800C2F18(struct ItemObj* arg0)
     D_8010CFD0[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C2F54);
+void func_800C2F54(struct ItemObj* arg0)
+{
+    struct MiscObj* slot;
+    void* sprite_frames;
+    s8 bg_off;
 
-INCLUDE_ASM("main/nonmatchings/items/item_11", func_800C3030);
+    if (++arg0->tail_ext.unk1.unk84.timer == 0x60) {
+        slot = find_free_misc_obj();
+        if (slot == NULL) {
+            return;
+        }
+        slot->active = 0x41;
+        slot->id = 0xB;
+        slot->unk2 = 1;
+        bg_off = g_Player.bg_offset;
+        slot->unk16 = 1;
+        slot->bg_offset = bg_off;
+        slot->unk15 = arg0->unk15;
+        slot->unk40 = arg0->unk40;
+        slot->unk42 = arg0->unk42;
+        sprite_frames = (void*)arg0->sprite_frames;
+        slot->animation_table = (u32**)D_8010CF98;
+        slot->unk3C = sprite_frames;
+        slot->x_pos.val = arg0->x_pos.val;
+        slot->y_pos.val = arg0->y_pos.val;
+        slot->ext.misc_11.active = 0;
+        arg0->unk7C.misc = slot;
+        arg0->tail_ext.unk1.unk84.timer = 0;
+        arg0->unk6++;
+    }
+}
+
+void func_800C3030(struct ItemObj* arg0)
+{
+    struct MiscObj* slot;
+    void* sprite_frames;
+
+    if (++arg0->tail_ext.unk1.unk84.timer == 0x60) {
+        slot = find_free_misc_obj();
+        if (slot == NULL) {
+            return;
+        }
+        slot->active = 0x41;
+        slot->id = 0xB;
+        slot->unk2 = 2;
+        slot->unk16 = 0x10;
+        slot->bg_offset = g_Player.bg_offset;
+        slot->unk15 = arg0->unk15;
+        slot->unk40 = arg0->unk40;
+        slot->unk42 = arg0->unk42;
+        sprite_frames = (void*)arg0->sprite_frames;
+        slot->animation_table = (u32**)D_8010CF98;
+        slot->unk3C = sprite_frames;
+        slot->x_pos.val = arg0->x_pos.val;
+        slot->y_pos.val = arg0->y_pos.val;
+        slot->ext.misc_11.active = 0;
+        arg0->ext.owner = (struct MainObj*)slot;
+        arg0->tail_ext.unk1.unk84.timer = 0;
+        arg0->unk6++;
+    }
+}
 
 void func_800C3114(struct ItemObj* arg0)
 {

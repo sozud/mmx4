@@ -39,7 +39,48 @@ void func_800BA684(struct EffectObj* arg0)
     arg0->ext.effect_22.unk18 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_22", func_800BA6AC);
+void func_800BA6AC(struct EffectObj* arg0)
+{
+    s16 diff;
+    s8 sum;
+    s32 t;
+
+    if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
+        diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
+        arg0->ext.effect_22.unk18 = diff;
+        if (diff >= 0) {
+            if (diff >= 8) {
+                arg0->ext.effect_22.unk18 = 8;
+            }
+        } else {
+            if (diff < -8) {
+                arg0->ext.effect_22.unk18 = -8;
+            }
+        }
+
+        sum = arg0->ext.effect_22.unk17 + arg0->ext.effect_22.unk18;
+        arg0->ext.effect_22.unk17 = sum;
+        if ((s8)sum >= 0) {
+            if ((s8)sum < 8) {
+                return;
+            }
+            if (++arg0->ext.effect_22.unk16 >= 3) {
+                arg0->ext.effect_22.unk16 = 0;
+            }
+        } else {
+            if ((s8)sum >= -7) {
+                return;
+            }
+            if (--arg0->ext.effect_22.unk16 < 0) {
+                arg0->ext.effect_22.unk16 = 2;
+            }
+        }
+        t = arg0->ext.effect_22.unk16;
+        background_objects[1].unk4C = 1;
+        background_objects[1].x_pos.i.hi = t << 9;
+        arg0->ext.effect_22.unk17 = 0;
+    }
+}
 
 void func_800BA7C8(struct EffectObj* arg0)
 {

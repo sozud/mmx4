@@ -1,0 +1,6 @@
+CompileFlags:
+    Add:
+      - -std=gnu89
+      - --target=mipsel-none-elf
+      - -msoft-float
+      - -funsigned-char

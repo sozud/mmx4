@@ -66,7 +66,33 @@ void func_800BBF34(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_28", func_800BBFCC);
+extern s32 D_8010BEEC[4];
+
+void func_800BBFCC(struct EffectObj* arg0)
+{
+    s16 x = background_objects[0].x_pos.i.hi;
+    s16 y = background_objects[0].y_pos.i.hi;
+    arg0->ext.effect_28.unk1B = func_8002B780() % 4;
+    switch (arg0->ext.effect_28.unk1B) {
+    case 0:
+        break;
+    case 1:
+        x += 0xA0;
+        break;
+    case 3:
+        x += 0xA0;
+        // Fall through.
+    case 2:
+        y += 0x78;
+        break;
+    }
+    x += func_8002B780() % 0xA0;
+    y += func_8002B780() % 0x78;
+    func_800AFAB4(0, x, y, 0xFF);
+    if ((D_80141BD8.unk0 & 3) == 0) {
+        func_8001540C(0, D_8010BEEC[get_random() & 3], NULL);
+    }
+}
 
 void (*D_8010BED4[])(struct EffectObj*) = {
     func_800BBC50,

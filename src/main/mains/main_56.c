@@ -2,6 +2,9 @@
 // 8006FD50..80072194
 #include "common.h"
 
+extern struct Unk_unk68 D_8010085C;
+extern struct Unk_unk68 D_80100864;
+
 extern void* D_801008C8[];
 extern u8 D_801008D4[];
 
@@ -286,11 +289,83 @@ void func_80070D2C(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070DDC);
+void func_80070DDC(struct MainObj* arg0)
+{
+    switch (arg0->unk7) {
+    case 0:
+        if (--arg0->unk7C != 0)
+            break;
+        arg0->unk7++;
+        arg0->x_pos = g_Player.x_pos;
+        arg0->unk24 = 0xFFF70000;
+        arg0->unk50 = &D_80100864;
+        arg0->ext.main_56.flags &= 0xFE;
+        func_80015D60(arg0, 8);
+        break;
+    case 1:
+        if (arg0->on_screen == 0)
+            break;
+        arg0->unk7++;
+        func_8001540C(2, 0xAF, arg0);
+        break;
+    case 2:
+        if (arg0->on_screen != 0)
+            break;
+        arg0->unk7 = 0;
+        arg0->unk7C = 0x28;
+        arg0->unk6++;
+        break;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070EE8);
+void func_80070EE8(struct MainObj* arg0)
+{
+    switch (arg0->unk7) {
+    case 0:
+        if (--arg0->unk7C == 0) {
+            arg0->unk7++;
+            arg0->x_pos.val = g_Player.x_pos.val;
+            arg0->y_pos.val = (background_objects[0].unk20 + 0x140) << 0x10;
+            arg0->unk24 = 0x90000;
+            arg0->unk50 = &D_8010085C;
+            arg0->ext.main_56.flags &= 0xFE;
+            func_80015D60(arg0, 7);
+        }
+        break;
+    case 1:
+        if (arg0->on_screen != 0) {
+            arg0->unk7++;
+            func_8001540C(2, 0xAF, arg0);
+        }
+        break;
+    case 2:
+        if (arg0->on_screen == 0) {
+            arg0->unk7 = 0;
+            arg0->unk7C = 0x5A;
+            arg0->unk6++;
+        }
+        break;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8007100C);
+void func_8007100C(struct MainObj* arg0)
+{
+    s32 bg_idx;
+
+    if (--arg0->unk7C != 0) {
+        return;
+    }
+    bg_idx = arg0->bg_offset;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    if (arg0->x_pos.i.hi < background_objects[bg_idx].x_pos.i.hi + 0xA0) {
+        arg0->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x40;
+    } else {
+        arg0->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x120;
+    }
+    arg0->y_pos.i.hi = background_objects[arg0->bg_offset].y_pos.u.hi - 0x50;
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800710D4);
 
@@ -313,7 +388,25 @@ void func_80071228(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800712A4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_800713A4);
+void func_800713A4(struct MainObj* arg0)
+{
+    s32 bg_idx;
+
+    if (--arg0->unk7C != 0) {
+        return;
+    }
+    bg_idx = arg0->bg_offset;
+    arg0->unk5 = 2;
+    arg0->unk6 = 0;
+
+    if (arg0->x_pos.i.hi < background_objects[bg_idx].x_pos.i.hi) {
+        arg0->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x40;
+    } else {
+        arg0->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x120;
+    }
+
+    arg0->y_pos.i.hi = background_objects[arg0->bg_offset].y_pos.u.hi - 0x50;
+}
 
 void func_80071468(struct MainObj* arg0)
 {

@@ -510,7 +510,47 @@ void func_80073974(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800739D4);
+void func_800739D4(struct MainObj* arg0)
+{
+    struct VisualObj* vobj;
+    struct ShotObj* sobj;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (--arg0->unk7E == 0) {
+        func_8001540C(2, 0x94, arg0);
+        arg0->unk7E = 0x18;
+    }
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x30;
+        arg0->unk6++;
+    }
+
+    if (arg0->animation_step.fields.event == 2) {
+        vobj = find_free_visual_obj();
+        if (vobj != NULL) {
+            vobj->active = 0x41;
+            vobj->id = 0x18;
+            vobj->unk2 = 0x10;
+            vobj->unk15 = arg0->unk15;
+            vobj->unk50 = arg0;
+            vobj->x_pos.i.hi = arg0->x_pos.i.hi + (arg0->unk15 ? 0x15 : -0x15);
+            vobj->y_pos.i.hi = arg0->y_pos.i.hi;
+        }
+    }
+
+    if (arg0->unk7C == 0x40) {
+        sobj = find_free_shot_obj();
+        if (sobj != NULL) {
+            sobj->active = 0x41;
+            sobj->id = 0x23;
+            sobj->unk2 = 0x10;
+            sobj->unk7C = arg0;
+            arg0->ext.main_57.shot = sobj;
+        }
+    }
+}
 
 void func_80073B00(struct MainObj* arg0)
 {
@@ -557,7 +597,48 @@ void func_80073C44(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073CA4);
+void func_80073CA4(struct MainObj* arg0)
+{
+    struct VisualObj* vobj;
+    struct ShotObj* sobj;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+
+    if (--arg0->unk7E == 0) {
+        func_8001540C(2, 0x94, arg0);
+        arg0->unk7E = 0x18;
+    }
+
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 0x16);
+        arg0->unk7C = 0x80;
+        arg0->unk6++;
+    }
+
+    if (arg0->animation_step.fields.event == 2) {
+        vobj = find_free_visual_obj();
+        if (vobj != NULL) {
+            vobj->active = 0x41;
+            vobj->id = 0x18;
+            vobj->unk2 = 0x30;
+            vobj->unk15 = arg0->unk15;
+            vobj->unk50 = arg0;
+            vobj->x_pos.i.hi = arg0->x_pos.i.hi + (arg0->unk15 ? 0x15 : -0x15);
+            vobj->y_pos.i.hi = arg0->y_pos.i.hi;
+        }
+    }
+
+    if (arg0->unk7C == 0x40) {
+        sobj = find_free_shot_obj();
+        if (sobj != NULL) {
+            sobj->active = 0x41;
+            sobj->id = 0x23;
+            sobj->unk2 = 0x20;
+            sobj->unk7C = arg0;
+            arg0->ext.main_57.shot = sobj;
+        }
+    }
+}
 
 void func_80073DDC(struct MainObj* arg0)
 {

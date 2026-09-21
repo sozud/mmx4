@@ -9,6 +9,7 @@ if VERSION not in ("us", "jp"):
 
 OUTPUT_DIR = f"build/{VERSION}"
 BUILD_FILE = f"{OUTPUT_DIR}/build.ninja"
+COMPILATION_DATABASE = "compile_commands.json"
 ASM_ROOT = f"asm/{VERSION}/main"
 LINKER_SCRIPT = "main.ld" if VERSION == "us" else f"main.{VERSION}.ld"
 UNDEFINED_SYMBOL_FILES = (
@@ -272,3 +273,10 @@ def build_35():
 build_35()
 
 ninja.close()
+
+with open(COMPILATION_DATABASE, "w") as compilation_database:
+    subprocess.run(
+        ["ninja", "-f", BUILD_FILE, "-t", "compdb", "cpp_263"],
+        check=True,
+        stdout=compilation_database,
+    )

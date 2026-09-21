@@ -2,6 +2,8 @@
 // 80083218..80085F08
 #include "common.h"
 
+extern void (*D_80104354[])(struct MainObj*);
+
 void func_80083218(struct MainObj* arg0)
 {
     struct EffectObj* effect;
@@ -175,17 +177,15 @@ void func_80083A18(struct MainObj* arg0)
 
 void func_80083A58(struct MainObj* arg0)
 {
-    s16 timer;
-
     D_80104354[arg0->unk6](arg0);
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (D_80141BD8.unk0 % 10 == 0) {
         arg0->y_pos.i.hi += arg0->ext.main_68.unk92;
-        timer = arg0->unk7E - 1;
-        arg0->unk7E = timer;
-        if (timer == 0) {
+        if (--arg0->unk7E == 0) {
+            s32 t;
             arg0->unk7E = 4;
-            arg0->ext.main_68.unk92 *= -1;
+            t = arg0->ext.main_68.unk92;
+            arg0->ext.main_68.unk92 = -t;
         }
     }
 }
@@ -910,7 +910,20 @@ void func_800857C8(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085814);
+void func_80085814(struct MainObj* arg0)
+{
+    D_80104460[arg0->unk5](arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (D_80141BD8.unk0 % 10 == 0) {
+        arg0->y_pos.i.hi += arg0->ext.main_68.unk92;
+        if (--arg0->unk7E == 0) {
+            s32 t;
+            arg0->unk7E = 4;
+            t = arg0->ext.main_68.unk92;
+            arg0->ext.main_68.unk92 = -t;
+        }
+    }
+}
 
 void func_800858DC(struct MainObj* arg0)
 {

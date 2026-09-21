@@ -948,7 +948,7 @@ struct Main61Ext {
 
 struct Main65Ext {
     struct MainObj* unk80;
-    u8 pad84[4];
+    struct MainObj* unk84;
     s16 unk88;
     u8 unk8A;
     u8 pad8B[2];
@@ -1138,7 +1138,7 @@ union Main69State {
         u8 unk8C;
         u8 unk8D;
         u8 unk8E;
-        u8 unk8F;
+        s8 unk8F;
     } bytes;
 };
 
@@ -2068,6 +2068,11 @@ struct Misc42Ext {
     s8 unk57;
 };
 
+struct Misc15Ext {
+	u8 pad50[4];
+	u16 unk54;
+};
+
 struct Misc51Ext {
     struct MainObj* source;
     u8 unk54;
@@ -2092,7 +2097,27 @@ struct Misc08EffectTripletTable {
     u8 padding[2];
 };
 
+struct Misc08EffectDescriptor {
+    u8 effect_id;
+    u8 variant;
+};
+
 extern struct Misc08EffectTripletTable D_8010E090;
+extern u8 D_8010E02C[];
+extern u8 D_8010E030[];
+extern u8 D_8010E034[];
+extern u8 D_8010E038[];
+extern u8 D_8010E03C[];
+extern u8 D_8010E040[];
+extern u8 D_8010E044[];
+extern u8 D_8010E048[];
+extern u8 D_8010E04C[];
+extern u8 D_8010E050[];
+extern u8 D_8010E054[];
+extern struct Misc08EffectDescriptor D_8010E058[];
+extern u8 D_80104A3C[];
+extern void (*D_80104354[])(struct MainObj*);
+void func_800C833C(s32 arg0, u8* arg1, struct MiscObj* arg2, s32 arg3, s32 arg4);
 struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
@@ -2203,6 +2228,7 @@ union MiscExt {
     struct Misc7Ext misc_7;
     struct Misc8Ext misc_8;
     struct Misc11Ext misc_11;
+    struct Misc15Ext misc_15;
     struct Misc42Ext misc_42;
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
@@ -2952,9 +2978,9 @@ struct Effect4Ext {
 struct Effect22Ext {
     u8 unk14;
     u8 unk15;
-    u8 unk16;
-    u8 pad17;
-    u16 unk18;
+    s8 unk16;
+    s8 unk17;
+    s16 unk18;
 };
 
 struct Effect24Ext {
@@ -2999,7 +3025,8 @@ struct Effect28Ext {
     u8 pad14[4];
     u8 timer;
     u8 filter_timer;
-    u8 pad1A[2];
+    u8 pad1A;
+    u8 unk1B;
     u8 palette_index;
     u8 finished;
 };
@@ -3007,13 +3034,15 @@ struct Effect28Ext {
 struct Effect37Ext {
     u8 pad14[4];
     u8 timer;
-    u8 pad19[3];
+    u8 unk19;
+    u8 pad1A[2];
     u8 action;
     u8 finished;
     u8 unk1E;
     u8 unk1F;
     u8 unk20;
     u8 unk21;
+    u8 unk22;
 };
 
 struct Effect34Ext {
@@ -3024,15 +3053,21 @@ struct Effect34Ext {
 
 struct Effect8Ext {
     u8 pad14[2];
-    u8 unk16;
-    u8 pad17;
-    u16 unk18;
+    s8 unk16;
+    s8 unk17;
+    s16 unk18;
 };
 
 struct Effect9Ext {
     u16 transition_timer;
     u16 movement_timer;
     s16 direction;
+    u16 target_x;
+    u8* movement_table;
+    u8 timer;
+    s8 frame;
+    u8 pad22[2];
+    s32 velocity;
 };
 
 struct Effect42Ext {
@@ -4136,13 +4171,14 @@ void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
 struct ShotObj* func_80064E58(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
-void func_80089798(void);
+void func_80089798(struct MainObj*);
 void func_80089910(struct MainObj*);
 void func_8005D148(struct MainObj*);
 void func_800780D4(struct AnimatedObj*);
 void func_8007DC54(struct AnimatedObj*, u32);
 s32 func_8009227C(void);
-void func_800CA9EC(struct MainObj*, s32);
+void func_800CA9EC(struct MiscObj*, u8);
+void func_800CAB10(struct MiscObj*, u8);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
@@ -4215,6 +4251,7 @@ void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
 void func_8006FBFC(struct MainObj*);
 s32 func_8006FCB8(struct PlayerObj*, s32, s32);
+void func_800BBFCC(struct EffectObj*);
 
 enum SelectedPlayer {
     CHARACTER_X,
