@@ -4,7 +4,24 @@
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A56E4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5A04);
+void func_800A5A04(struct ShotObj* arg0)
+{
+    struct ShotObj* self = arg0;
+
+    func_8002D9BC(self);
+    if (--self->timer == 0) {
+        self->timer = 7;
+        self->y_vel.val = -self->y_vel.val;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x100, 0x100) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+    } else {
+        self->unk5 = 0;
+        self->state++;
+    }
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5AA4);
 

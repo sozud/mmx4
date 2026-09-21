@@ -94,11 +94,61 @@ s32 func_800A8A58(struct ShotObj* arg0, s32 arg1, s32 arg2)
     return 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8AE4);
+void func_800A8AE4(struct ShotObj* arg0)
+{
+    struct ShotObj* shot;
+    struct WeaponObj* weapon;
+
+    shot = arg0;
+    weapon = shot->unk7C;
+    func_80015DC8(ANIMATED_OBJECT(shot));
+    if (shot->animation_step.fields.event != 0) {
+        shot->unk50.data = (u8*)D_80109ACC[4];
+    } else {
+        shot->unk50.data = 0;
+    }
+    shot->unk15 = weapon->unk15;
+    shot->x_pos.val = weapon->x_pos.val;
+    shot->y_pos.val = weapon->y_pos.val;
+    shot->on_screen = 0;
+    if (weapon->on_screen != 0) {
+        is_on_screen(BASE_OBJECT(shot));
+        return;
+    }
+    shot->unk50.data = 0;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8B88);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8C88);
+void func_800A8C88(struct ShotObj* arg0)
+{
+    struct ShotObj* shot;
+    s16 timer;
+    s32 velocity;
+    s8 frame;
+
+    shot = arg0;
+    func_80015DC8(ANIMATED_OBJECT(shot));
+    timer = (u16)shot->timer - 1;
+    shot->timer = timer;
+    if (timer == 0) {
+        if (shot->unk2 == 1) {
+            velocity = FIXED(5);
+            if (shot->unk99 != 0) {
+                velocity = FIXED(-5);
+            }
+            shot->x_vel.val = velocity;
+            shot->y_vel.val = 0;
+            frame = (u8)shot->unk5 + 1;
+        } else {
+            frame = (u8)shot->unk5 + 2;
+            velocity = FIXED(-5);
+            shot->x_vel.val = 0;
+            shot->y_vel.val = velocity;
+        }
+        shot->unk5 = frame;
+    }
+}
 
 void func_800A8D1C(struct ShotObj* arg0)
 {

@@ -3151,6 +3151,7 @@ void func_8007B418(void);
 void func_8007B588(struct MainObj*);
 void func_8007B5F0(struct MainObj*);
 void func_8007B640(struct MainObj*);
+void func_8007B834(struct MainObj*);
 
 // D_80102214
 extern void (*D_80102214[])(struct BarObj*);
@@ -3863,7 +3864,7 @@ void func_8008CA60(struct MainObj*);
 
 void func_8009633C(struct WeaponObj*, struct PlayerObj*);
 void func_80096584(struct WeaponObj*, struct PlayerObj*);
-void func_8008CB2C(void);
+void func_8008CB2C(struct MainObj*);
 void func_8008CBF8(void);
 void func_8008CC7C(struct MainObj*);
 void func_8008CCD4(struct MainObj*);
@@ -4484,6 +4485,7 @@ void func_8009C96C(struct ShotObj*);
 // D_80108F90
 extern void (*D_80108F90[])(struct ShotObj*);
 void func_8009CAFC(struct ShotObj*);
+extern u8 D_80108F8C[4];
 void func_8009CBA0(struct ShotObj*);
 void func_8009CC44(struct ShotObj*);
 
@@ -4648,6 +4650,10 @@ void func_800A220C(struct ShotObj*);
 
 // D_801096F4
 extern void (*D_801096F4[])(struct ShotObj*);
+extern struct Unk_unk68 D_801096A8;
+extern struct Unk_unk68 D_801096B8;
+extern struct Unk_unk68 D_801096BC;
+extern s32 D_801096D0[3];
 void func_800A2310(struct ShotObj*);
 void func_800A23E0(struct ShotObj*);
 void func_800A2A58(struct ShotObj*);
@@ -4747,6 +4753,8 @@ void func_800A4F04(struct ShotObj*);
 // D_80109874
 extern void (*D_80109874[])(struct ShotObj*);
 void func_800A4F24(struct ShotObj*);
+extern u8 D_801097FC[4];
+extern u8 D_80109800[4];
 void func_800A4FEC(struct ShotObj*);
 void func_800A5070(struct ShotObj*);
 void func_800A50EC(struct ShotObj*);
@@ -4892,6 +4900,7 @@ void func_800A833C(struct ShotObj*);
 extern void (*D_80109AC4[])(struct ShotObj*);
 void func_800A83C4(struct ShotObj*);
 void func_800A84D4(struct ShotObj*);
+void func_800A858C(struct ShotObj*);
 
 // D_80109B14
 extern void (*D_80109B14[])(struct ShotObj*);
@@ -5909,6 +5918,7 @@ extern void (*D_8010CA9C[])(struct ItemObj*);
 void func_800C0EBC(struct ItemObj*);
 void func_800C1050(struct ItemObj*);
 void func_800C1224(struct ItemObj*);
+void func_800C1244(struct ItemObj*);
 void func_800C1318(void);
 
 // D_8010CAA8

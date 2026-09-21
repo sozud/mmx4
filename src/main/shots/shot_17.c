@@ -39,7 +39,24 @@ void func_8009C9D0(struct ShotObj* arg0)
     func_8009216C(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C9F0);
+void func_8009C9F0(struct ShotObj* arg0)
+{
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        func_800AF808(BASE_OBJECT(arg0));
+        return;
+    }
+
+    D_80108F78[arg0->unk5](arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        return;
+    }
+
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_8009CAA0(struct ShotObj* arg0)
 {

@@ -507,7 +507,7 @@ void func_8007B054(struct MainObj* arg0)
 
 void func_8007B0F8(struct MainObj* arg0)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event != 0) {
         func_80015D60((struct Unk19*)arg0, 2);
         arg0->unk6 = 7;
@@ -635,4 +635,31 @@ void func_8007B7B4(void)
     need_palette_load |= 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007B834);
+void func_8007B834(struct MainObj* arg0)
+{
+    struct MainObj* source;
+    struct MiscObj* temp_v0;
+
+    source = arg0;
+    temp_v0 = find_free_misc_obj();
+    if (temp_v0 != 0) {
+        temp_v0->active = 0x41;
+        temp_v0->id = 0x16;
+        temp_v0->unk2 = 8;
+        temp_v0->unk15 = source->unk15;
+        temp_v0->x_pos.i.hi = source->x_pos.i.hi;
+        temp_v0->y_pos.i.hi = source->y_pos.i.hi;
+        temp_v0->bg_offset = (u8)source->bg_offset;
+        temp_v0->animation_table = (u32**)source->animation_table;
+        temp_v0->unk40 = source->unk40;
+        temp_v0->unk3C = (void*)source->sprite_frames;
+        temp_v0->unk42 = source->unk42 & 0x7FFF;
+        temp_v0->unk16 = 5;
+        temp_v0->ext.misc_22.owner = source;
+        temp_v0->ext.misc_22.timer = 0xA;
+        func_80015D60(temp_v0, 0x19);
+        temp_v0->state = 0;
+        temp_v0->unk5 = 0;
+        temp_v0->unk6 = 1;
+    }
+}

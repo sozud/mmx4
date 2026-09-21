@@ -129,7 +129,33 @@ void func_800C1224(struct ItemObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_05", func_800C1244);
+void func_800C1244(struct ItemObj* arg0)
+{
+    struct VisualObj* visualObj;
+
+    visualObj = find_free_visual_obj();
+    if (visualObj != 0) {
+        visualObj->active = 0x41;
+        visualObj->unk50 = PLAYER_OBJECT(arg0);
+        visualObj->id = 0xE;
+        if (((u8*)D_8010C9C4)[arg0->unk2 * sizeof(struct Item05MotionConfig)] == 0) {
+            visualObj->unk2 = 1;
+        } else {
+            visualObj->unk2 = 3;
+        }
+        visualObj->state = 0;
+        visualObj->unk5 = 0;
+        visualObj->unk6 = 0;
+        visualObj->unk38 = 0;
+        visualObj->unk3C = (void*)arg0->sprite_frames;
+        visualObj->animation_table = (u32**)arg0->animation_table;
+        visualObj->unk40 = arg0->unk40;
+        visualObj->unk42 = arg0->unk42;
+        visualObj->unk16 = 5;
+        visualObj->x_pos.val = arg0->x_pos.val;
+        visualObj->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 void func_800C1318(void)
 {

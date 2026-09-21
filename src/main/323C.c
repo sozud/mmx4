@@ -2262,7 +2262,30 @@ void func_8001B644(u8* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001B718);
+void func_8001B718(signed short arg0, signed char arg1, signed char arg2)
+{
+    struct MiscObj* obj;
+    u8 engine_state;
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 0x41;
+        obj->id = 0x2A;
+        obj->unk2 = 0;
+        obj->animation_step.fields.frame_index = arg1;
+        obj->x_pos.i.hi = 0xA0;
+        obj->y_pos.i.hi = arg0;
+        if (engine_obj.unk1 != 3) {
+            obj->ext.misc_42.unk54 = engine_obj.unk1;
+            obj->ext.misc_42.unk55 = 1;
+        } else {
+            engine_state = (u8)engine_obj.unk2;
+            obj->ext.misc_42.unk55 = 2;
+            obj->ext.misc_42.unk54 = engine_state;
+        }
+        obj->ext.misc_42.unk56 = arg2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001B7C0);
 

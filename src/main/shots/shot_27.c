@@ -33,7 +33,25 @@ void func_8009F240(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_27", func_8009F27C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_27", func_8009F3A8);
+void func_8009F3A8(struct ShotObj* arg0)
+{
+    struct ShotObj* shot = arg0;
+
+    func_80015DC8(ANIMATED_OBJECT(shot));
+    func_8002B718(MOVING_OBJECT(shot));
+    func_8002D9BC(shot);
+    if (func_8002BB80(MAIN_OBJECT(shot), MAIN_OBJECT(&g_Player)) == 0) {
+        if (func_8002DD04(MAIN_OBJECT(shot)) < 0) {
+            func_800AF808(BASE_OBJECT(shot));
+            shot->state = 2;
+        }
+        if (func_8002B1E8(BASE_OBJECT(shot), 0x20, 0x20) == 0) {
+            func_8002B318(BASE_OBJECT(shot), 0x10, 0x10);
+            return;
+        }
+    }
+    shot->state = 2;
+}
 
 void func_8009F44C(struct ShotObj* arg0)
 {

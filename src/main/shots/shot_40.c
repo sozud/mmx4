@@ -42,7 +42,24 @@ void func_800A5404(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_40", func_800A5460);
+void func_800A5460(struct ShotObj* arg0)
+{
+    struct ShotObj* shot = arg0;
+
+    if (shot->timer == 0) {
+        shot->unk5 = 2;
+        shot->unk6 = 0;
+        shot->unk50.data = 0;
+        func_80015D60(shot, 3);
+        return;
+    }
+    if ((engine_obj.stage == 7) && (shot->unk70 & 0xB) && (shot->unk7 == 0)) {
+        shot->unk8A = 0x14;
+        shot->unk7 = 1;
+    }
+    shot->timer = (u16)shot->timer - 1;
+    func_80015DC8(ANIMATED_OBJECT(shot));
+}
 
 void func_800A5500(struct ShotObj* arg0)
 {
