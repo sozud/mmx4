@@ -66,36 +66,36 @@ void func_800C5078(void)
     p1 = main_objects;
     for (i = 0; i < COUNT(main_objects); p1++, i++) {
         if (p1->active != 0) {
-            p1->y_pos.val = 0x8000000 - p1->y_pos.val;
-            p1->unk1C.val = 0x8000000 - p1->unk1C.val;
+            p1->y_pos.val = FIXED(0x800) - p1->y_pos.val;
+            p1->unk1C.val = FIXED(0x800) - p1->unk1C.val;
         }
     }
     p2 = misc_objects;
     for (i = 0; i < COUNT(misc_objects); p2++, i++) {
         if (p2->active != 0) {
-            p2->y_pos.val = 0x8000000 - p2->y_pos.val;
-            p2->unk1C.val = 0x8000000 - p2->unk1C.val;
+            p2->y_pos.val = FIXED(0x800) - p2->y_pos.val;
+            p2->unk1C.val = FIXED(0x800) - p2->unk1C.val;
         }
     }
     p3 = weapon_objects;
     for (i = 0; i < COUNT(weapon_objects); p3++, i++) {
         if (p3->active != 0) {
-            p3->y_pos.val = 0x8000000 - p3->y_pos.val;
-            p3->unk1C.val = 0x8000000 - p3->unk1C.val;
+            p3->y_pos.val = FIXED(0x800) - p3->y_pos.val;
+            p3->unk1C.val = FIXED(0x800) - p3->unk1C.val;
         }
     }
     p4 = shot_objects;
     for (i = 0; i < COUNT(shot_objects); p4++, i++) {
         if (p4->active != 0) {
-            p4->y_pos.val = 0x8000000 - p4->y_pos.val;
-            p4->unk1C.val = 0x8000000 - p4->unk1C.val;
+            p4->y_pos.val = FIXED(0x800) - p4->y_pos.val;
+            p4->unk1C.val = FIXED(0x800) - p4->unk1C.val;
         }
     }
     p5 = visual_objects;
     for (i = 0; i < COUNT(visual_objects); p5++, i++) {
         if (p5->active != 0) {
-            p5->y_pos.val = 0x8000000 - p5->y_pos.val;
-            p5->unk1C.val = 0x8000000 - p5->unk1C.val;
+            p5->y_pos.val = FIXED(0x800) - p5->y_pos.val;
+            p5->unk1C.val = FIXED(0x800) - p5->unk1C.val;
         }
     }
 }

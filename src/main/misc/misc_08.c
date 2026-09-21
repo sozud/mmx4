@@ -22,41 +22,41 @@ void func_800C969C(struct MiscObj* arg0)
             case 2:
             case 3:
             case 4:
-                func_800C833C(2, D_8010E02C, arg0, 0x80000, 0);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(0));
                 break;
             case 5:
             case 20:
-                func_800C833C(3, D_8010E02C, arg0, 0x100000, 0x100000);
-                func_800C833C(3, D_8010E030, arg0, 0x300000, 0x100000);
-                func_800C833C(4, D_8010E040, arg0, 0x280000, 0x300000);
-                func_800C833C(4, D_8010E044, arg0, 0x280000, 0x400000);
+                func_800C833C(3, D_8010E02C, arg0, FIXED(16), FIXED(16));
+                func_800C833C(3, D_8010E030, arg0, FIXED(48), FIXED(16));
+                func_800C833C(4, D_8010E040, arg0, FIXED(40), FIXED(48));
+                func_800C833C(4, D_8010E044, arg0, FIXED(40), FIXED(64));
                 break;
             case 6:
-                func_800C833C(2, D_8010E02C, arg0, 0x80000, 0x200000);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32));
                 break;
             case 7:
             case 8:
-                func_800C833C(2, D_8010E02C, arg0, 0xFFF80000, ((arg0->unk2 - 7) << 19) + 0x200000);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(-8), FIXED(32) + FIXED((arg0->unk2 - 7) * 8));
                 break;
             case 9:
             case 10:
             case 11:
             case 12:
-                func_800C833C(2, D_8010E02C, arg0, 0xFFF80000, ((arg0->unk2 - 9) << 18) + 0x200000);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(-8), FIXED(32) + FIXED((arg0->unk2 - 9) * 4));
                 break;
             case 13:
             case 14:
-                func_800C833C(2, D_8010E02C, arg0, 0x80000, ((arg0->unk2 - 13) << 19) + 0x200000);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32) + FIXED((arg0->unk2 - 13) * 8));
                 break;
             case 15:
             case 16:
             case 17:
             case 18:
-                func_800C833C(2, D_8010E02C, arg0, 0x80000, ((arg0->unk2 - 15) << 18) + 0x200000);
+                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32) + FIXED((arg0->unk2 - 15) * 4));
                 break;
             case 19:
-                func_800C833C(4, D_8010E050, arg0, 0x100000, 0x180000);
-                func_800C833C(3, D_8010E054, arg0, 0x100000, 0x380000);
+                func_800C833C(4, D_8010E050, arg0, FIXED(16), FIXED(24));
+                func_800C833C(3, D_8010E054, arg0, FIXED(16), FIXED(56));
                 break;
             }
         }
@@ -117,44 +117,44 @@ void func_800C99CC(struct MiscObj* arg0)
             case 22:
             case 23:
             case 24:
-                func_800C833C(2, D_8010E038, arg0, 0x80000, 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED(32));
                 break;
             case 5:
             case 20:
             case 21:
             case 25:
-                func_800C833C(4, D_8010E034, arg0, 0x100000, 0x100000);
-                func_800C833C(4, D_8010E038, arg0, 0x200000, 0x100000);
-                func_800C833C(3, D_8010E03C, arg0, 0x300000, 0x100000);
-                func_800C833C(3, D_8010E048, arg0, 0x280000, 0x300000);
-                func_800C833C(2, D_8010E04C, arg0, 0x280000, 0x400000);
+                func_800C833C(4, D_8010E034, arg0, FIXED(16), FIXED(16));
+                func_800C833C(4, D_8010E038, arg0, FIXED(32), FIXED(16));
+                func_800C833C(3, D_8010E03C, arg0, FIXED(48), FIXED(16));
+                func_800C833C(3, D_8010E048, arg0, FIXED(40), FIXED(48));
+                func_800C833C(2, D_8010E04C, arg0, FIXED(40), FIXED(64));
                 break;
             case 6:
-                func_800C833C(2, D_8010E038, arg0, 0x80000, 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED(32));
                 break;
             case 7:
             case 8:
-                func_800C833C(2, D_8010E038, arg0, 0xFFF80000, ((arg0->unk2 - 7) << 19) + 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(-8), FIXED((arg0->unk2 - 7) * 8) + FIXED(32));
                 break;
             case 9:
             case 10:
             case 11:
             case 12:
-                func_800C833C(2, D_8010E038, arg0, 0xFFF80000, ((arg0->unk2 - 9) << 18) + 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(-8), FIXED((arg0->unk2 - 9) * 4) + FIXED(32));
                 break;
             case 13:
             case 14:
-                func_800C833C(2, D_8010E038, arg0, 0x80000, ((arg0->unk2 - 7) << 19) + 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED((arg0->unk2 - 7) * 8) + FIXED(32));
                 break;
             case 15:
             case 16:
             case 17:
             case 18:
-                func_800C833C(2, D_8010E038, arg0, 0x80000, ((arg0->unk2 - 9) << 18) + 0x200000);
+                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED((arg0->unk2 - 9) * 4) + FIXED(32));
                 break;
             case 19:
-                func_800C833C(4, D_8010E034, arg0, 0x100000, 0x180000);
-                func_800C833C(4, D_8010E038, arg0, 0x100000, 0x380000);
+                func_800C833C(4, D_8010E034, arg0, FIXED(16), FIXED(24));
+                func_800C833C(4, D_8010E038, arg0, FIXED(16), FIXED(56));
                 break;
             }
         }
