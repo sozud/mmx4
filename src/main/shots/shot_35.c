@@ -45,7 +45,35 @@ void func_800A23E0(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A241C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A24F0);
+void func_800A24F0(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
+    s32 collision;
+    u16 flags;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_8010971C[arg0->unk6](arg0);
+    func_8002D9BC(arg0);
+    if (arg0->unk6 != 0) {
+        collision = func_8002DD04(MAIN_OBJECT(arg0));
+        owner = arg0->unk7C;
+        if (collision < 0 || owner->state == 2) {
+            func_8001540C(2, 0x98, arg0);
+            func_800C813C(4, D_801096DC, arg0);
+            arg0->state = 6;
+            arg0->unk5 = 0;
+            arg0->unk6 = 0;
+            ZeroObjectState(OBJECT_HEADER(arg0));
+        }
+        if (collision > 0) {
+            flags = arg0->unk42 | 0x8000;
+        } else {
+            flags = arg0->unk42 & 0x7FFF;
+        }
+        arg0->unk42 = flags;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A25EC);
 
@@ -228,7 +256,39 @@ void func_800A2CEC(struct ShotObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2D54);
+void func_800A2D54(struct ShotObj* arg0)
+{
+    s32 i;
+    struct ShotObj* shot;
+
+    if (arg0->unk8C.word != 0) {
+        i = 0;
+        do {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x23;
+                shot->unk2 = i + 0x40;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val + FIXED(4);
+                shot->unk3C = arg0->unk3C;
+                shot->unk40 = arg0->unk40;
+                shot->unk42 = arg0->unk42 & 0x7FFF;
+                shot->bg_offset = (u8)arg0->bg_offset;
+                shot->animation_table = arg0->animation_table;
+                shot->unk15 = arg0->unk15;
+                shot->unk7C = arg0->unk7C;
+            }
+            i++;
+        } while ((u8)i < 9);
+        func_8001540C(2, 0x97, arg0);
+        arg0->unk8C.word = 0;
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800A2E6C(struct ShotObj* arg0)
 {
@@ -287,7 +347,38 @@ void func_800A3010(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A3078);
+void func_800A3078(struct ShotObj* arg0)
+{
+    u8 flags;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(arg0)) == 1) {
+        arg0->state = 6;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+    } else {
+        flags = arg0->unk70;
+        if (flags & 2) {
+            func_8001540C(2, 0x9A, arg0);
+            func_80015D60(arg0, 0x22);
+        } else if (flags & 1) {
+            func_8001540C(2, 0x9A, arg0);
+            func_80015D60(arg0, 0x22);
+            arg0->unk15 = 0x40;
+        } else if (flags & 8) {
+            func_8001540C(2, 0x9A, arg0);
+            func_80015D60(arg0, 0x21);
+        } else {
+            is_on_screen(BASE_OBJECT(arg0));
+            return;
+        }
+        arg0->timer = 0x100;
+        arg0->unk6++;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_800A3170(struct ShotObj* arg0)
 {

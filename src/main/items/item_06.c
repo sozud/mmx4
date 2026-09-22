@@ -9,7 +9,40 @@ void func_800C1390(struct ItemObj* arg0)
     D_8010CAA8[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_06", func_800C13D8);
+void func_800C13D8(struct ItemObj* arg0)
+{
+    u8 bg_offset;
+    s32* archive;
+    s32 frame_index;
+
+    arg0->active = 0x41;
+    arg0->unk75 = 1;
+    bg_offset = g_Player.bg_offset;
+    arg0->unk16 = 5;
+    arg0->unk5C = 0x20;
+    arg0->unk15 = 0;
+    arg0->unk61 = 0;
+    arg0->bg_offset = bg_offset;
+    arg0->unk68 = (struct Unk_unk68*)D_8010CACC[arg0->unk2];
+    arg0->unk54 = D_8010CAD4[arg0->unk2];
+    arg0->unk58 = (u8*)D_80108504;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->animation_step.fields.frame_index = 0;
+    frame_index = func_8002938C(0x98) & 0xFF;
+    archive = SP_MENU_FRAMES;
+    arg0->unk40 = D_801406A8[frame_index] >> 7;
+    arg0->sprite_frames = (u8*)archive + archive[frame_index];
+    if (arg0->unk2 == 0) {
+        arg0->unk42 = 0x79CE;
+    } else {
+        arg0->unk42 = 0x7946;
+    }
+    arg0->animation_table = (const u8* const*)D_8010CAF4;
+    arg0->state = (u8)arg0->state + 1;
+}
 
 void func_800C14F0(struct ItemObj* arg0)
 {

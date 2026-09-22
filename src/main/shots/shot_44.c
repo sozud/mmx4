@@ -9,7 +9,33 @@ void func_800A6FCC(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7008);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7104);
+void func_800A7104(struct ShotObj* arg0)
+{
+    u8 saved_unk61;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80109A0C[arg0->unk5](arg0);
+    if (arg0->unk7C->state >= 2) {
+        func_800AF808(BASE_OBJECT(arg0));
+        arg0->state = 2;
+    }
+    func_8002D9BC(arg0);
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        arg0->state = 2;
+    }
+    saved_unk61 = (u8)g_Player.unk61;
+    g_Player.unk61 = 0;
+    if (func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&g_Player)) != 0) {
+        g_Player.unk61 = saved_unk61;
+        func_800AF808(BASE_OBJECT(arg0));
+        arg0->state = 2;
+    } else {
+        g_Player.unk61 = saved_unk61;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800A7208(struct ShotObj* arg0)
 {

@@ -102,7 +102,27 @@ void func_800AAD64(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAD6C);
+void func_800AAD6C(struct ShotObj* arg0)
+{
+    s8 direction;
+
+    arg0->unk8C.bytes[2] = arg0->unk7C->ext.raw[1];
+    arg0->unk15 = 0;
+    arg0->unk5C = 0x30;
+    arg0->x_pos.i.hi = D_80109C44[arg0->unk8C.bytes[2]][arg0->unk2][0];
+    arg0->y_pos.i.hi = D_80109C44[arg0->unk8C.bytes[2]][arg0->unk2][1];
+    direction = func_8002B7B0(OBJECT_HEADER(arg0),
+        D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][0] << 16,
+        D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][1] << 16);
+    arg0->unk8C.bytes[1] = direction;
+    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
+    func_80015D60(arg0, 7);
+    arg0->unk8C.byte = 1;
+    arg0->unk68 = (struct Unk_unk68*)D_80109C38[2];
+    arg0->x_vel.val *= 3;
+    arg0->y_vel.val *= 3;
+    arg0->unk6++;
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAE94);
 
@@ -124,7 +144,41 @@ void func_800AB128(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB170);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB224);
+void func_800AB224(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
+    struct ShotObj* shot;
+    u32 i;
+
+    owner = arg0->unk7C;
+    arg0->timer--;
+    if (arg0->timer == 0) {
+        i = 0;
+        do {
+            func_8001540C(2, 3, arg0);
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x36;
+                shot->unk2 = 0;
+                shot->unk7 = i;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk7C = owner;
+            }
+            i++;
+        } while (i < 4);
+        arg0->timer = 0x28;
+        arg0->unk8A--;
+        if (arg0->unk8A == 0) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            owner->ext.raw[2] = 1;
+            return;
+        }
+        arg0->unk6--;
+    }
+}
 
 void func_800AB32C(struct ShotObj* arg0)
 {
@@ -139,7 +193,47 @@ void func_800AB384(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB3A4);
+void func_800AB3A4(struct ShotObj* arg0)
+{
+    s16 timer;
+    s16 count;
+    struct ShotObj* shot;
+    struct MiscObj* misc;
+    struct WeaponObj* owner;
+
+    owner = arg0->unk7C;
+    timer = (u16)arg0->timer - 1;
+    arg0->timer = timer;
+    if (timer == 0) {
+        func_8001540C(2, 8, arg0);
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x36;
+            shot->unk2 = 1;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val - FIXED(24);
+            shot->unk7C = owner;
+        }
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 0x37;
+            misc->unk2 = 3;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val - FIXED(24);
+            misc->ext.misc_55.owner = MAIN_OBJECT(shot);
+        }
+        arg0->timer = 0x1E;
+        count = (u16)arg0->unk8A - 1;
+        arg0->unk8A = count;
+        if (count == 0) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            owner->ext.raw[2] = 1;
+        }
+    }
+}
 
 void func_800AB4C0(struct ShotObj* arg0)
 {

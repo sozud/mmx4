@@ -385,9 +385,69 @@ void func_800ADA64(struct ShotObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADAD8);
+void func_800ADAD8(struct ShotObj* arg0)
+{
+    u8 i;
+    struct ShotObj* shot;
+    struct WeaponObj* owner;
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ADBE0);
+    if (arg0->unk5 == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.relative_step == 0) {
+            i = 0;
+            owner = arg0->unk7C;
+            arg0->unk5 = (u8)arg0->unk5 + 1;
+            do {
+                shot = find_free_shot_obj();
+                if (shot != NULL) {
+                    shot->active = 0x41;
+                    shot->id = 0x37;
+                    shot->unk2 = i + 0xA;
+                    shot->timer = 0;
+                    shot->unk7C = owner;
+                    shot->unk84.halves[0] = arg0->x_pos.u.hi - owner->x_pos.u.hi;
+                    shot->unk84.halves[1] = arg0->y_pos.u.hi - owner->y_pos.u.hi;
+                    func_8001540C(2, 4, arg0);
+                }
+                i++;
+            } while (i < 2);
+        }
+    } else {
+        arg0->state = (u8)arg0->state + 1;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+void func_800ADBE0(struct ShotObj* arg0)
+{
+    struct ShotObj* shot;
+    struct WeaponObj* owner;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk8A != 0) {
+        func_8002B718(MOVING_OBJECT(arg0));
+        arg0->unk8A = (u16)arg0->unk8A - 1;
+        return;
+    }
+    owner = arg0->unk7C;
+    arg0->unk5 = (u8)arg0->unk5 + 1;
+    func_80015D60(arg0, 0x20);
+    arg0->unk50.data = (u8*)D_80109E18;
+    if (arg0->timer < 2) {
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x37;
+            shot->unk2 = (u8)arg0->unk2;
+            shot->timer = (u16)arg0->timer + 1;
+            shot->unk7C = arg0->unk7C;
+            shot->unk84.halves[0] = arg0->x_pos.u.hi - owner->x_pos.u.hi;
+            shot->unk84.halves[1] = arg0->y_pos.u.hi - owner->y_pos.u.hi;
+        }
+    } else {
+        owner->ext.shot_55.unk92 = 1;
+    }
+}
 
 void func_800ADCE8(struct ShotObj* arg0)
 {

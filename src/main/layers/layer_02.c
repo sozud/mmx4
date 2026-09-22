@@ -12,7 +12,25 @@ void func_800D9218(struct LayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9268);
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9330);
+void func_800D9330(struct LayerObj* arg0)
+{
+    f32* bg1_x = &background_objects[1].x_pos;
+
+    arg0->unk15 = (u8)arg0->bg_offset;
+    func_800D993C(arg0);
+    D_8010FF6C[arg0->unk5](arg0);
+    bg1_x->val += arg0->unk18.val;
+    background_objects[2].x_pos.val += arg0->unk18.val >> 1;
+    switch (arg0->unk17) {
+    case 1:
+        func_800D99B0(arg0);
+        break;
+    case 2:
+        func_800D9A04(arg0);
+        break;
+    }
+    func_800D9A58(arg0);
+}
 
 void func_800D93FC(struct LayerObj* arg0)
 {
