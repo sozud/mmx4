@@ -602,7 +602,40 @@ void func_80052614(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800526AC);
+void func_800526AC(struct MainObj* self)
+{
+    u8 timer;
+    u8 random;
+    u16 flags;
+    s32 value;
+
+    timer = self->ext.main_18.unk89;
+    if (timer & 0xE0) {
+        if ((self->ext.main_18.unk8A & 0x3FF) == 0) {
+            self->ext.main_18.unk89 = 0;
+            return;
+        }
+
+        timer--;
+        self->ext.main_18.unk89 = timer;
+        if ((timer & 0x1F) == 0) {
+            do {
+                random = get_random();
+                if (random) {
+                    random %= 10;
+                }
+                flags = self->ext.main_18.unk8A;
+            } while ((flags & D_800FBEDC[random]) == 0);
+
+            value = flags ^ D_800FBEDC[random];
+            self->ext.main_18.unk8A = value;
+            if (value == 0x8000) {
+                self->ext.main_18.unk85 = self->unk5C;
+            }
+            self->ext.main_18.unk89 = (self->ext.main_18.unk89 - 0x20) | 0xC;
+        }
+    }
+}
 
 void func_800527C0(struct AnimatedObj* arg0)
 {

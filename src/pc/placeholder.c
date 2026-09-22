@@ -3755,37 +3755,6 @@ void func_800415B0(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
-void func_80041854(struct MainObj* arg0)
-{
-    u8* ext = (u8*)&arg0->ext;
-    s16 count;
-
-    if (arg0->animation_step.fields.event == 0) {
-        arg0->unk24 = 0;
-    }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk24 = 0x55555;
-    }
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk24 = -0x55555;
-    }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step < 0) {
-        func_80015D60(arg0, 0);
-        count = arg0->unk7E + 1;
-        arg0->unk7E = count;
-        if (count >= 3) {
-            arg0->unk7E = 0;
-            arg0->unk5 = ext[5] != 0 ? 8 : 6;
-        } else {
-            arg0->unk5 = ext[5] != 0 ? 8 : 5;
-        }
-        arg0->unk6 = 0;
-    }
-    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
-}
-
 void func_800994DC(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;

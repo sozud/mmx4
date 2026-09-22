@@ -1122,7 +1122,30 @@ void func_8001512C(void)
     SsSetSerialVol(0, 0x4A, 0x4A);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80015178);
+void func_80015178(void)
+{
+    s8 i;
+
+    for (i = 0; i < 6; i++) {
+        if (D_8013E198[i] != -1) {
+            SsVabClose(D_8013E198[i]);
+            D_8013E198[i] = -1;
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        if (D_8013E1C8[i] != -1) {
+            SsSepClose(D_8013E1C8[i]);
+            D_8013E1C8[i] = -1;
+        }
+    }
+
+    func_800E0CEC();
+    SsUtSetReverbType(0);
+    SsUtSetReverbDepth(0, 0);
+    SsEnd();
+    func_800DCF40();
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80015284);
 
@@ -1432,7 +1455,45 @@ void func_800164D8(void)
         ((u8*)&D_800F1A0C)[temp_v0 + 1]);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001653C);
+void func_8001653C(void)
+{
+    s8 pad[8];
+    s32 track;
+    s32 volume;
+
+    if ((u32)((u8)engine_obj.stage - 0xB) < 2U) {
+        if (engine_obj.stage == 0xB) {
+            if (engine_obj.substage == 0) {
+                if (engine_obj.cur_character == 0) {
+                    track = 0xF;
+                    volume = 0x75;
+                } else {
+                    track = 0xD;
+                    volume = 0x7F;
+                }
+            } else {
+                track = 0xB;
+                volume = 0x7F;
+            }
+        } else if (engine_obj.stage == 0xC) {
+            if (engine_obj.substage == 0) {
+                track = 7;
+                volume = 0x70;
+            } else if (D_80171EA8 == 0) {
+                track = 2;
+                volume = 0x7F;
+            } else {
+                track = 1;
+                volume = 0x75;
+            }
+        }
+    } else {
+        track = D_800F1A0C.alternate[engine_obj.stage].sequence;
+        volume = D_800F1A0C.alternate[engine_obj.stage].volume;
+    }
+
+    func_8001663C(track, volume);
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001663C);
 
@@ -2098,7 +2159,29 @@ void func_80019BA0(struct EngineObj* arg0)
     func_8001C008(4, 2);
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80019BF4);
+void func_80019BF4(struct EngineObj* arg0)
+{
+    u16* controller = &controller_state;
+
+    if (*controller & (PADLup | PADLdown)) {
+        D_80141BDF[0] ^= 1;
+    }
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        func_8001540C(0, 0x22, 0);
+        if (D_80141BDF[0] == 0 && !(*controller & PAD_SELECTION_ALT)) {
+            arg0->unk2 = (u8)arg0->unk2 + 1;
+            reset_objects();
+            func_8001B644(D_800F1EAC);
+            func_8001B718(0x40, (D_801721B6 + 0xB) & 0xFF, 0xFF);
+            D_801721BA = 2;
+            return;
+        }
+        reset_objects();
+        D_80141BDF[0] = 0;
+        arg0->unk1 = 0;
+        arg0->unk2 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80019D04);
 
@@ -2282,7 +2365,7 @@ void func_8001B644(u8* arg0)
     }
 }
 
-void func_8001B718(signed short arg0, signed char arg1, signed char arg2)
+void func_8001B718(s16 arg0, u8 arg1, u8 arg2)
 {
     struct MiscObj* obj;
     u8 engine_state;
@@ -2395,7 +2478,26 @@ INCLUDE_ASM("main/nonmatchings/323C", func_8001C8F4);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001CB24);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001CC5C);
+void func_8001CC5C(s32 device_num, struct MemcardFileList* list, char* pattern)
+{
+    struct DIRENTRY dir;
+    char path[0x20];
+
+    *(struct MemcardPath*)path = D_800100C0;
+    memset(path + 6, 0, 0x1A);
+    strcpy(path + 5, pattern);
+    path[2] += device_num;
+    list->count = 0;
+    list->total_size = 0;
+    if (firstfile(path, &dir) == &dir) {
+        do {
+            strcpy(list->names[list->count], dir.name);
+            list->sizes[list->count] = dir.size;
+            list->total_size += dir.size;
+            list->count++;
+        } while (nextfile(&dir) == &dir);
+    }
+}
 
 s32 func_8001CD70(s32 arg0)
 {
@@ -3480,7 +3582,29 @@ void func_8001E9E0(struct GameInfo* arg0)
     arg0->mode++;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001EA90);
+void func_8001EA90(struct GameInfo* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        if (controller_state & (PADstart | PAD_SELECTION_ALT)) {
+            func_800129F0(8);
+            D_80141BDF[0] = 2;
+            arg0->mode++;
+            return;
+        }
+        if ((controller_state & PAD_CONFIRM) && D_80141BDF[0] != 1) {
+            func_8001540C(0, 0x22, 0);
+            func_800129F0(8);
+            arg0->mode++;
+            return;
+        }
+        func_800204CC(D_80141BDF, arg0->unk8);
+        if ((controller_state & (PADLleft | PADLright | PAD_CONFIRM)) && D_80141BDF[0] == 1) {
+            func_8001540C(0, 0xC, 0);
+            D_80171EA9 ^= 1;
+            func_800153D4(D_80171EA9);
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001EBA0);
 

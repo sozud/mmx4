@@ -131,7 +131,31 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005368C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_800537E0);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005398C);
+u8 func_8005398C(struct MainObj* self)
+{
+    u16 player_x;
+    u16 player_y;
+    s16 dy;
+    s16 dx;
+    s32 flags;
+
+    player_x = g_Player.x_pos.u.hi;
+    player_y = g_Player.y_pos.u.hi;
+    dy = player_y - self->y_pos.u.hi;
+    dx = player_x - self->x_pos.u.hi;
+    flags = 0;
+
+    if ((dx < 0 ? -dx : dx) < 0x40 || (dy < 0 ? -dy : dy) >= 0x60) {
+        flags = 1;
+    }
+    if ((dx < 0 ? -dx : dx) >= 0x80) {
+        flags |= 2;
+    }
+
+    func_8002B93C(MOVING_OBJECT(self),
+        func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+    return flags;
+}
 
 u8 func_80053A88(struct PlayerObj* arg0, s16 arg1, s16 arg2)
 {

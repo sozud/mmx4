@@ -768,7 +768,31 @@ void func_8002B460(void)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B468);
+struct EffectObj* func_8002B468(s8 id, s8 arg1)
+{
+    struct EffectObj* effect;
+    s8 i;
+
+    i = 0;
+    if (id >= 0) {
+        do {
+            effect = &effect_objects[i];
+            if (effect->active != 0 && effect->id == id && effect->unk2 == arg1) {
+                return effect;
+            }
+            i++;
+        } while (i < 0x20);
+    } else {
+        id &= 0x7F;
+        do {
+            effect = &effect_objects[i];
+            if (effect->active != 0 && effect->id == id) {
+                return effect;
+            }
+            i++;
+        } while (i < 0x20);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002B560);
 
