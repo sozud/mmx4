@@ -340,8 +340,8 @@ void func_80086D84(struct MainObj* arg0)
         if (engine_obj.cur_character == 0) {
             value = 0x25;
         }
-        func_8002217C(value, 0xFFU, ENGINE_UNK2E);
-        ENGINE_UNK2E = 1;
+        func_8002217C(value, 0xFFU, engine_obj.character_state.bytes[8]);
+        engine_obj.character_state.bytes[8] = 1;
         arg0->unk7++;
     }
     is_on_screen(BASE_OBJECT(arg0));
@@ -423,8 +423,8 @@ void func_8008700C(struct MainObj* arg0)
 void func_80087088(struct MainObj* arg0)
 {
     if (--arg0->unk7C == 0) {
-        func_8002217C(0x22, 0xFF, ENGINE_UNK2E);
-        ENGINE_UNK2E = 1;
+        func_8002217C(0x22, 0xFF, engine_obj.character_state.bytes[8]);
+        engine_obj.character_state.bytes[8] = 1;
         arg0->unk7++;
     }
 }

@@ -179,7 +179,19 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19", func_80053EB8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005402C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_19", func_8005440C);
+void func_8005440C(struct MainObj* self)
+{
+    s32 index;
+
+    index = (SP_CUR_MAIN_OBJ->ext.main_19.animation_index << 2) + SP_CUR_MAIN_OBJ->ext.main_19.unk80;
+    self->unk20 = D_800FC814[index] << 16;
+    self->unk24 = D_800FC824[index] << 16;
+    self->unk15 = D_800FC834[index];
+    func_80015D60(self, D_800FC83C[index]);
+    self->unk54 = D_800FC754[SP_CUR_MAIN_OBJ->ext.main_19.unk80];
+    self->unk50 = D_800FC764[SP_CUR_MAIN_OBJ->ext.main_19.unk80];
+    self->unk68 = D_800FC774[SP_CUR_MAIN_OBJ->ext.main_19.unk80];
+}
 
 void func_80054518(struct MainObj* arg0)
 {

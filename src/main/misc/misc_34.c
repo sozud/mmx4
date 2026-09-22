@@ -101,7 +101,7 @@ void func_800CEF34(struct MiscObj* self)
     if (timer == 0) {
         related = self->ext.misc_34.related;
         related->active = 1;
-        if (!(ENGINE_CHECKPOINT & 1)) {
+        if (!((u8)engine_obj.checkpoint & 1)) {
             related->variant = self->ext.misc_34.variant;
         } else {
             related->variant = 3;

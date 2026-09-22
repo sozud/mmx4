@@ -10,7 +10,39 @@ extern u8 D_801008D4[];
 
 INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FD50);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FEC8);
+void func_8006FEC8(struct MainObj* self)
+{
+    s16 countdown;
+    struct EffectObj* effect;
+
+    self->on_screen = 0;
+    switch (self->unk6) {
+    case 0:
+        effect = find_free_effect_obj();
+        if (effect != 0) {
+            effect->active = 1;
+            effect->id = 0x18;
+            self->ext.main_56.unk80.effect = effect;
+            self->unk6 = (u8)self->unk6 + 1;
+        }
+        break;
+    case 1:
+        if (self->ext.main_56.unk80.effect->active == 0) {
+            self->unk6++;
+            self->unk7C = 0x3C;
+        }
+        break;
+    case 2:
+        countdown = (u16)self->unk7C - 1;
+        self->unk7C = countdown;
+        if (countdown == 0) {
+            self->unk6 = 0;
+            self->unk5 = (u8)self->unk5 + 1;
+            func_80015D60(self, 0x1D);
+        }
+        break;
+    }
+}
 
 void func_8006FFC0(struct MainObj* arg0)
 {
@@ -58,8 +90,8 @@ void func_80070118(struct MainObj* arg0)
         if (arg0->animation_step.fields.event != 0) {
             if (engine_obj.stage == 5) {
                 ((void (*)(s32, s32, s32))func_8002217C)(
-                    0xD, 0xFF, (s32)(s8)ENGINE_UNK2E);
-                ENGINE_UNK2E = 1;
+                    0xD, 0xFF, (s32)(s8)engine_obj.character_state.bytes[8]);
+                engine_obj.character_state.bytes[8] = 1;
             }
             arg0->unk6 = (u8)arg0->unk6 + 1;
         }

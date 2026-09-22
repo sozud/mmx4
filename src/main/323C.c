@@ -627,8 +627,6 @@ extern s32 D_80137CBC;
 extern s32 D_80137CC8;
 extern s32 D_80137CCC;
 extern s32* D_80137CD0;
-extern u32 D_80137CD4;
-#define D_80137CD6 (((u16*)&D_80137CD4)[1])
 extern s32 D_80137CDC;
 extern s32 D_80137CEC;
 extern u8* D_80137DC4;
@@ -671,7 +669,7 @@ void func_80013E68(u8 status, u8* result)
         CdGetSector(D_80137CD0, 0x200);
         D_80137CDC = *D_80137CD0++;
         D_80137CC8 = *D_80137CD0++;
-        D_80137CD4 = *D_80137CD0++;
+        D_80137CD4.word = *D_80137CD0++;
         temp_a1 = *D_80137CD0++;
         D_80137CE8 = 1;
         D_80137DC4 = D_80137DCC;
@@ -681,15 +679,15 @@ void func_80013E68(u8 status, u8* result)
         return;
 
     block_6:
-        (&sp10.unk0)[D_80137CD6]();
+        (&sp10.unk0)[D_80137CD4.f.handler]();
         if (D_80137CBC == 0) {
-            if (((u32)D_80137CD4 >> 16) == 0) {
-                *D_800F15BC[D_80137CD4] = D_80137DC4;
+            if ((D_80137CD4.word >> 16) == 0) {
+                *D_800F15BC[D_80137CD4.word] = D_80137DC4;
                 D_80137DC4 += D_80137DC8;
             }
             D_80137CDC -= 1;
             temp_v1_2 = *D_80137CD0++;
-            D_80137CD4 = temp_v1_2;
+            D_80137CD4.word = temp_v1_2;
             temp_v0 = *D_80137CD0++;
             D_80137CBC = temp_v0;
             if ((temp_v1_2 >> 16) == 0) {
@@ -717,7 +715,29 @@ void func_80014140(void)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_800141BC);
+void func_800141BC(void)
+{
+    u8 index;
+
+    if (D_80137CE8 != 0) {
+        D_80137CE8 = 0;
+        D_80137CC4 = D_80137DC4;
+    }
+    if (func_800136B0() == -1) {
+        CdReadyCallback(0);
+        CdControlB(CdlPause, NULL, NULL);
+        D_801406AC = 0x80;
+        return;
+    }
+    if (D_80137CBC == 0) {
+        index = D_80137CD4.f.op;
+        if (D_8013E1C8[index] != -1) {
+            SsSepClose(D_8013E1C8[index]);
+            D_8013E1C8[index] = -1;
+        }
+        D_8013E1C8[index] = SsSepOpenJ((unsigned long*)D_80137DC4, D_8013E198[index], 3);
+    }
+}
 
 extern struct CdImageOrigin D_800F1614[];
 extern u16 D_8012F4A8;
@@ -736,7 +756,7 @@ void func_800142BC(void)
     D_80137CF4 = temp_v0;
     if (temp_v0 - D_80137CF0 < 7) {
         if (D_80137CE8 != 0) {
-            temp_v0_2 = &D_800F1614[(u8)D_80137CD4].x;
+            temp_v0_2 = &D_800F1614[D_80137CD4.f.arg].x;
             D_8012F4A8 = *temp_v0_2++;
             temp_v0_3 = *temp_v0_2;
             D_80137CE8 = 0;
@@ -763,7 +783,7 @@ void func_800142BC(void)
         if (temp_a0 == 0x10) {
             D_801374B8 = 0;
         }
-        switch ((D_80137CD4 >> 8) & 0xFF) {
+        switch ((D_80137CD4.word >> 8) & 0xFF) {
         case 0:
             if (D_8012F4AC == D_8012F4B0 + 0xF0) {
                 D_8012F4A8 += 0x40;
@@ -815,7 +835,7 @@ void func_80014514(void)
         D_801406AC = 0x80;
         return;
     }
-    temp_s1 = D_80137CD4 >> 8;
+    temp_s1 = D_80137CD4.word >> 8;
     D_80137D04[D_801374B8].transfer_pending = 0;
     if (D_80137CE8 != 0) {
         archive = (struct SoundArchive*)D_80141F00;
@@ -3873,7 +3893,7 @@ void func_8001FDBC(void)
 extern void func_800164D8(void);
 void func_8001FEC0(void)
 {
-    if (((ENGINE_STAGE_ID != 0x10C) || (ENGINE_UNK2E != 0) || (engine_obj.cur_character == 0)) && ((engine_obj.stage != 0xC) || ((u32)(ENGINE_CHECKPOINT - 2) >= 8U)) && (engine_obj.stage != 9)) {
+    if (((ENGINE_STAGE_ID != 0x10C) || (engine_obj.character_state.bytes[8] != 0) || (engine_obj.cur_character == 0)) && ((engine_obj.stage != 0xC) || ((u32)((u8)engine_obj.checkpoint - 2) >= 8U)) && (engine_obj.stage != 9)) {
         func_800164D8();
     }
 }

@@ -77,7 +77,7 @@ void func_800D0BE4(struct UnkObj* arg0)
     if (abc_object.unkC == 0) {
         background_objects[g_Player.bg_offset].unk24 = 0x11B0;
         func_80036B18();
-        ENGINE_UNK2E = 1;
+        engine_obj.character_state.bytes[8] = 1;
         arg0->unk5 = 6;
     }
 }

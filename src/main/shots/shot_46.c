@@ -118,7 +118,28 @@ void func_800A8AE4(struct ShotObj* arg0)
     shot->unk50.data = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8B88);
+void func_800A8B88(struct ShotObj* self)
+{
+    s32 collision;
+    s32 x;
+    s32 y;
+    struct WeaponObj* weapon;
+
+    weapon = self->unk7C;
+    if (self->unk2 == 1) {
+        x = weapon->x_pos.val + (D_80109B0C[0][self->unk99] << 16);
+        y = weapon->y_pos.val + (D_80109B0C[2][self->pad9A[0]] << 16);
+    } else {
+        y = weapon->y_pos.val + (D_80109B0C[3][1] << 16);
+        x = weapon->x_pos.val + (D_80109B0C[1][self->unk99] << 16);
+    }
+    collision = func_8002B7B0(OBJECT_HEADER(self), x, y);
+    if (func_800A8A58(self, x, y) & 0xFF) {
+        self->timer = 0x14;
+        self->unk5 = (u8)self->unk5 + 1;
+    }
+    func_8002B93C(MOVING_OBJECT(self), collision & 0xFF);
+}
 
 void func_800A8C88(struct ShotObj* arg0)
 {

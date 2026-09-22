@@ -311,8 +311,8 @@ void func_8006E260(struct MainObj* arg0)
         if (engine_obj.stage == 8) {
             arg0->unk15 = 0;
             func_80015D60(arg0, 0x18);
-            func_8002217C(0x10, 0xFF, ENGINE_UNK2E);
-            ENGINE_UNK2E = 1;
+            func_8002217C(0x10, 0xFF, engine_obj.character_state.bytes[8]);
+            engine_obj.character_state.bytes[8] = 1;
         }
         arg0->unk6 = 6;
     }

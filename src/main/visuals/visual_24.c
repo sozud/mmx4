@@ -13,7 +13,36 @@ void func_800B35B8(struct VisualObj* arg0)
     D_8010A64C[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B35F4);
+void func_800B35F4(struct VisualObj* self)
+{
+    u8 background;
+    s32 state;
+
+    self->unk3C = self->unk50->unk3C;
+    self->animation_table = self->unk50->animation_table;
+    self->unk40 = self->unk50->unk40;
+    if (self->unk2 == 0x20) {
+        self->unk42 = self->unk50->unk42;
+    } else {
+        self->unk42 = self->unk50->unk42 & 0x7FFF;
+    }
+    self->unk16 = 3;
+    background = (u8)g_Player.bg_offset;
+    self->state = (u8)self->state + 1;
+    state = (s32)((u8)self->unk2 << 24) >> 28;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->bg_offset = (s8)background;
+    self->unk5 = (s8)state;
+    if (state == 2) {
+        func_80015D60(self, 0x18);
+    } else {
+        func_80015D60(self, 0x1D);
+    }
+    self->unk2 = (u8)self->unk2 & 0xF;
+}
 
 void func_800B36F0(struct VisualObj* arg0)
 {

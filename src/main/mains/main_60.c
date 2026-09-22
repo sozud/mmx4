@@ -128,8 +128,8 @@ void func_80075AD0(struct MainObj* arg0)
     arg0->unk7C = timer;
     if (timer == 0) {
         if (engine_obj.stage == 7) {
-            func_8002217C(0xF, 0xFF, ENGINE_UNK2E);
-            ENGINE_UNK2E = 1;
+            func_8002217C(0xF, 0xFF, engine_obj.character_state.bytes[8]);
+            engine_obj.character_state.bytes[8] = 1;
         }
         arg0->unk6++;
     }
