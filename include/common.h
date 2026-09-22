@@ -149,6 +149,15 @@ typedef char SoundArchive_header_must_be_8_bytes[sizeof(struct SoundArchive) == 
 struct CdImageOrigin {
     u16 x, y;
 };
+union CdCommand {
+    u32 word;
+    struct {
+        u8 arg; // 0x0
+        u8 op; // 0x1
+        u16 handler; // 0x2
+    } f;
+};
+extern union CdCommand D_80137CD4;
 struct HudSpriteOrigin {
     s16 x, y;
     u16 clut;
@@ -597,6 +606,8 @@ struct Main39Ext {
 struct Main40Ext {
     u8 unk80;
     u8 unk81;
+    u16 timer;
+    u16 trigger_time;
 };
 
 struct MainSavedState94Ext {
@@ -2930,8 +2941,6 @@ struct EngineObj {
 }; // size 0x64
 
 #define ENGINE_STAGE_ID (*(u16*)&engine_obj.stage)
-#define ENGINE_CHECKPOINT (*(u8*)&engine_obj.checkpoint)
-#define ENGINE_UNK2E (engine_obj.character_state.bytes[8])
 
 #define engine_flags engine_obj.character_state.fields.flags
 
@@ -3521,6 +3530,13 @@ extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
 extern struct Unk_unk68 D_800FBF10;
 extern struct Unk_unk68 D_800FC860;
+extern struct Unk_unk68* D_800FC754[4];
+extern struct Unk_unk68* D_800FC764[4];
+extern struct Unk_unk68* D_800FC774[4];
+extern s16 D_800FC814[8];
+extern s16 D_800FC824[8];
+extern u8 D_800FC834[8];
+extern u8 D_800FC83C[8];
 extern u8 D_800FD9BC[];
 extern void (*D_800FD9E0[])(struct MainObj*);
 extern struct Unk_unk68 D_800FD9EC[];

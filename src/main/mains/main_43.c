@@ -75,8 +75,8 @@ void func_800637A8(struct MainObj* arg0)
     if (arg0->animation_step.fields.event != 0) {
         arg0->unk5 = 7;
         if (engine_obj.stage == 1) {
-            ((void (*)(u16, u8, s8))func_8002217C)(8, 0xFF, ENGINE_UNK2E);
-            ENGINE_UNK2E = 1;
+            ((void (*)(u16, u8, s8))func_8002217C)(8, 0xFF, engine_obj.character_state.bytes[8]);
+            engine_obj.character_state.bytes[8] = 1;
         }
     } else {
         func_80015DC8(ANIMATED_OBJECT(arg0));

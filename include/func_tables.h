@@ -2219,7 +2219,7 @@ void func_80061D18(struct MainObj*);
 // D_800FEA78
 void func_80061DFC(void);
 void func_80061F2C(void);
-void func_800620C8(void);
+void func_800620C8(struct MainObj*);
 void func_800621C0(struct MainObj*);
 
 // D_800FEE38

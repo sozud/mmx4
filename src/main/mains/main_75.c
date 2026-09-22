@@ -86,8 +86,8 @@ void func_8008FF50(struct MainObj* arg0)
                     sound_id = 0x29;
                 }
                 ((void (*)(u16, u8, s8))func_8002217C)(
-                    sound_id, 0xFF, ENGINE_UNK2E);
-                ENGINE_UNK2E = 1;
+                    sound_id, 0xFF, engine_obj.character_state.bytes[8]);
+                engine_obj.character_state.bytes[8] = 1;
             }
             arg0->unk6++;
         }

@@ -11,7 +11,27 @@ INCLUDE_ASM("main/nonmatchings/mains/main_40", func_80061DFC);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_40", func_80061F2C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_40", func_800620C8);
+void func_800620C8(struct MainObj* self)
+{
+    s32 index;
+
+    self->ext.main_40.timer--;
+    if (self->ext.main_40.timer != 0) {
+        if (!(D_80141BD8.unk0 & 7)) {
+            if (self->ext.main_40.unk80 < 2U) {
+                func_800AF878(BASE_OBJECT(self), 1, 0x10, 0x30);
+            }
+        }
+        if (self->ext.main_40.unk80 >= 2U && self->ext.main_40.timer == self->ext.main_40.trigger_time) {
+            index = (self->ext.main_40.unk80 - 2) * 2;
+            ((void (*)(s32, s32, s32))func_800DABE4)(self->ext.main_40.unk81 + 6,
+                self->x_pos.i.hi + D_800FEA5C[index],
+                self->y_pos.i.hi + D_800FEA5C[index + 1]);
+        }
+    } else {
+        self->state++;
+    }
+}
 
 void func_800621C0(struct MainObj* arg0)
 {

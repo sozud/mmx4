@@ -979,7 +979,31 @@ void func_80085BE4(struct MainObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085C38);
+void func_80085C38(struct MainObj* self)
+{
+    u16 sound_id;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk6 == 0) {
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk15 = (g_Player.x_pos.i.hi >= self->x_pos.i.hi) << 6;
+            func_80036AE4(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
+            self->unk6 = (u8)self->unk6 + 1;
+            sound_id = 0x2C;
+            if (engine_obj.cur_character == 0) {
+                sound_id = 0x31;
+            }
+            ((void (*)(s32, s32, s32))func_8002217C)(
+                sound_id, 0xFFU, engine_obj.character_state.bytes[9]);
+            engine_obj.character_state.bytes[9] = 1;
+        }
+    } else if (abc_object.unkC == 0) {
+        self->unk6 = 0;
+        self->unk7C = 1;
+        self->unk5 = (u8)self->unk5 + 1;
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void func_80085D38(struct MainObj* self)
 {

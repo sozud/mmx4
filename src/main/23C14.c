@@ -3984,7 +3984,29 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003EA08);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003EB4C);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003ED00);
+void func_8003ED00(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk98.packed = 0x160;
+        func_80015D60(self, 7);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x30);
+    }
+    if (func_8003DC8C(self) != 0) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (self->unk46 == 0) {
+            func_8003DC44(BASE_OBJECT(self), 1);
+        } else if ((u16)self->unk8A & 0x80) {
+            func_8003DC44(BASE_OBJECT(self), 4);
+        } else if (func_8003DCD8(self) != 0 || (self->collision_flags & 3)) {
+            func_8003DC44(BASE_OBJECT(self), 3);
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003EDF0);
 
