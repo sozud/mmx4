@@ -179,7 +179,7 @@ void func_800C6B84(struct VisualObj* arg0)
 
 void func_800C6C2C(struct VisualObj* arg0)
 {
-    struct BaseObj* temp_a1 = arg0->unk50;
+    struct PlayerObj* temp_a1 = arg0->unk50;
     if (arg0->state == 0) {
         func_800C6DD4(arg0, temp_a1);
         arg0->unk54 = 0x78;
@@ -224,7 +224,37 @@ void func_800C6CE4(struct VisualObj* self)
     func_8002B318(BASE_OBJECT(self), 0x88, 0x88);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6DD4);
+void func_800C6DD4(struct VisualObj* arg0, struct PlayerObj* arg1)
+{
+    arg0->on_screen = 1;
+    arg0->unk3C = arg1->unk3C;
+    arg0->animation_table = arg1->animation_table;
+    arg0->unk40 = arg1->unk40;
+    arg0->unk42 = arg1->unk42;
+    arg0->unk15 = 0;
+    arg0->x_pos.val = arg1->x_pos.val;
+    arg0->y_pos.val = arg1->y_pos.val;
+    switch (arg0->id) {
+    case 35:
+        arg0->unk16 = 3;
+        func_80015D60(arg0, arg0->unk2);
+        break;
+    case 36:
+        arg0->unk16 = 1;
+        func_80015D60(arg0, 7);
+        break;
+    case 37:
+        arg0->unk16 = 0;
+        if (arg0->unk2 == 0) {
+            func_80015D60(arg0, 8);
+        } else {
+            func_80015D60(arg0, 9);
+        }
+        break;
+    }
+    arg0->unk5 = 0;
+    arg0->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6EDC);
 

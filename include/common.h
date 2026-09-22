@@ -1683,6 +1683,11 @@ struct Weapon1Ext {
     u8 unk90;
 };
 
+struct Weapon2Ext {
+    u8 lifetime;
+    u8 timer;
+};
+
 struct Weapon7Ext {
     u16 timer;
     u8 pad8E[2];
@@ -1784,6 +1789,7 @@ union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
     struct Weapon1Ext weapon_1;
+    struct Weapon2Ext weapon_2;
     struct Weapon6Ext weapon_6;
     struct Weapon3Ext weapon_3;
     struct Weapon7Ext weapon_7;
@@ -3553,6 +3559,7 @@ extern s16 D_800FC814[8];
 extern s16 D_800FC824[8];
 extern u8 D_800FC834[8];
 extern u8 D_800FC83C[8];
+extern u8 D_800FCE80[];
 extern u8 D_800FD9BC[];
 extern void (*D_800FD9E0[])(struct MainObj*);
 extern struct Unk_unk68 D_800FD9EC[];
@@ -3746,6 +3753,7 @@ extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];
 extern struct ShotObj* D_8013B8C0;
 extern struct ShotObj* D_8013B8C4;
+extern u8 D_8010D0BC[4][16];
 extern struct Unk_unk68 D_8010D0FC;
 extern struct Unk_unk68 D_8010D3CC;
 extern struct FixedMatrix2 D_800F2ADC[16];

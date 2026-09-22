@@ -29,7 +29,34 @@ void func_80093CBC(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80093D78);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_02", func_80093EB4);
+void func_80093EB4(struct WeaponObj* arg0)
+{
+    u32 i;
+
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x38) == 0) {
+        if (arg0->ext.weapon_2.lifetime == 0) {
+            func_8001540C(0, 0x1A, arg0);
+            for (i = 0; i < 8U; i++) {
+                func_8009416C(arg0);
+            }
+        } else {
+            arg0->ext.weapon_2.lifetime--;
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+            D_80108864[arg0->unk5](arg0);
+            if (arg0->unk50 != NULL) {
+                if (arg0->ext.weapon_2.timer == 0) {
+                    arg0->ext.weapon_2.timer = 8;
+                    arg0->unk64++;
+                } else {
+                    arg0->ext.weapon_2.timer--;
+                }
+            }
+            func_8002B318(BASE_OBJECT(arg0), 0x28, 0x38);
+            return;
+        }
+    }
+    func_80094154(arg0);
+}
 
 void func_80093FC4(struct WeaponObj* arg0)
 {

@@ -102,7 +102,28 @@ void func_800565EC(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056618);
+void func_80056618(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+    }
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(7, D_800FCE80, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0x16);
+    } else {
+        func_8002D9BC(arg0);
+        D_800FCEAC[arg0->unk5](arg0);
+        if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x40) == 0) {
+            func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+            return;
+        }
+    }
+    arg0->state = (u8)arg0->state + 1;
+}
 
 void func_80056718(struct MainObj* arg0)
 {

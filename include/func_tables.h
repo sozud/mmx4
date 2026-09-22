@@ -1817,7 +1817,7 @@ void func_800565EC(struct MainObj* arg0);
 // D_800FCEC8
 extern void (*D_800FCEC8[])(struct MainObj*);
 void func_800564B4(void);
-void func_80056618(void);
+void func_80056618(struct MainObj* arg0);
 void func_80056718(struct MainObj* arg0);
 
 // D_800FCFA8
@@ -5936,6 +5936,10 @@ void func_800C1318(void);
 
 // D_8010CAA8
 extern void (*D_8010CAA8[])(struct ItemObj*);
+struct Item06AnimationStep;
+extern u8* D_8010CACC[2];
+extern u8* D_8010CAD4[2];
+extern struct Item06AnimationStep* D_8010CAF4[5];
 void func_800C13D8(struct ItemObj*);
 void func_800C14F0(struct ItemObj*);
 extern u8 D_8010CB08[3][4];
@@ -6867,6 +6871,10 @@ void func_800D9728(struct LayerObj*);
 void func_800D986C(struct LayerObj*);
 void func_800D98D0(struct LayerObj*);
 void func_800D9934(struct LayerObj*);
+void func_800D993C(struct LayerObj*);
+void func_800D99B0(struct LayerObj*);
+void func_800D9A04(struct LayerObj*);
+void func_800D9A58(struct LayerObj*);
 
 // D_8010FF88
 extern void (*D_8010FF88[])(struct LayerObj*);
@@ -6982,6 +6990,7 @@ extern void (*D_800FCB34[])(struct MainObj*);
 extern void (*D_800FCB3C[])(struct MainObj*);
 extern void (*D_800FCE88[])(struct MainObj*);
 extern void (*D_800FCEA0[])(struct MainObj*);
+extern void (*D_800FCEAC[])(struct MainObj*);
 extern void (*D_800FCFA8[])(struct MainObj*);
 extern void (*D_800FCFC4[])(struct MainObj*);
 extern void (*D_800FD140[])(struct MainObj*);

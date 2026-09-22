@@ -16,7 +16,25 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C638);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C784);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_17", func_8009C860);
+void func_8009C860(struct ShotObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if ((u32)(arg0->x_pos.u.hi - 0x1721) >= 0xFF) {
+        arg0->x_vel.val = 0;
+        arg0->y_vel.val = FIXED(-2);
+    }
+    if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= 0xAC && arg0->y_vel.val < 0) {
+        func_80015D60(arg0, 6);
+        arg0->unk60 = 4;
+        arg0->unk50.data = D_80108F60;
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+        arg0->y_pos.val = (background_objects[arg0->bg_offset].y_pos.i.hi + 0xAC) << 16;
+        arg0->y_vel.val = FIXED(0.5);
+        arg0->x_vel.val = 0;
+    }
+}
 
 void func_8009C96C(struct ShotObj* arg0)
 {

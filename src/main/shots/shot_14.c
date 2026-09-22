@@ -32,7 +32,36 @@ void func_8009BF50(struct ShotObj* arg0)
     func_80015D60(arg0, 5);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_14", func_8009BFE0);
+void func_8009BFE0(struct ShotObj* arg0)
+{
+    s32 in_range;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (engine_obj.stage == 3) {
+        if ((u8)arg0->unk2 < 4) {
+            in_range = g_Player.x_pos.i.hi < 0x7B7;
+        } else {
+            in_range = g_Player.x_pos.i.hi < 0x9B7;
+        }
+        if (in_range != 0) {
+            func_8002D9BC(arg0);
+        }
+    } else {
+        func_8002D9BC(arg0);
+    }
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        arg0->state = 2;
+    } else {
+        arg0->unk42 &= 0x7FFF;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_8009C0D0(struct ShotObj* arg0)
 {
