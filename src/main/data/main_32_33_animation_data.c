@@ -116,17 +116,11 @@ void (*D_800FDD5C[2])() = {
     func_8005CB90,
 };
 
-void (*D_800FDD64[2])() = {
+void (*D_800FDD64[6])() = {
     func_8005CCA8,
     func_8005CCFC,
-};
-
-void (*D_800FDD6C[2])() = {
     func_8005CDEC,
     func_8005CE50,
-};
-
-void (*D_800FDD74[2])() = {
     func_8005CEBC,
     func_8005CF30,
 };

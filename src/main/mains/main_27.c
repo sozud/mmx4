@@ -256,7 +256,7 @@ void func_80059B7C(struct MainObj* arg0)
     timer = arg0->unk7C - 1;
     arg0->unk7C = timer;
     if (timer == 0) {
-        arg0->ext.main_27.pad89 = 0;
+        arg0->ext.main_27.unk89 = 0;
         arg0->ext.main_27.unk8A = 0;
         if (arg0->unk15 == 0) {
             if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {

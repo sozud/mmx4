@@ -74,7 +74,7 @@ void func_8005CD5C(struct MainObj* arg0)
 
 void func_8005CDB0(struct MainObj* arg0)
 {
-    D_800FDD6C[arg0->unk6](arg0);
+    D_800FDD64[arg0->unk6 + 2](arg0);
 }
 
 void func_8005CDEC(struct MainObj* arg0)
@@ -103,7 +103,7 @@ void func_8005CE50(struct MainObj* arg0)
 
 void func_8005CE80(struct MainObj* arg0)
 {
-    D_800FDD74[arg0->unk6](arg0);
+    D_800FDD64[arg0->unk6 + 4](arg0);
 }
 
 void func_8005CEBC(struct MainObj* arg0)
