@@ -11,7 +11,7 @@ void func_80055E04(struct MainObj* arg0)
     step = arg0->unk6;
     if (step == 0) {
         arg0->unk6 = step + 1;
-        func_80055C54();
+        func_80055C54(arg0);
         background_relative = arg0->ext.main_23.unk80;
         background_offset = background_relative & 0x7F;
         if (background_relative & 0x80) {
@@ -72,7 +72,7 @@ void func_80056230(struct MainObj* arg0)
     s32 velocity;
 
     arg0->unk6++;
-    func_80055C54();
+    func_80055C54(arg0);
     velocity = FIXED(-4.5);
     if (arg0->unk15 != 0) {
         velocity = FIXED(4.5);

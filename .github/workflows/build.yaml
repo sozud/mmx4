@@ -250,6 +250,26 @@ jobs:
             --interval 10 \
             --top 20 \
             --min-ssim 0.964921577
+          python3 tools/oracle/run_replay_regression.py \
+            --replay tools/oracle/recordings/stage-2-0-normalized.mmx4r \
+            --expect-sha256 8bd5f8e5c995ecc85c9d29e0e647f09eed774071e1fd2699231f6c437de9f470 \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --cue disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --build build-linux \
+            --skip-build
+          python3 tools/oracle/run_replay_ssim.py \
+            --replay tools/oracle/recordings/stage-2-0-normalized.mmx4r \
+            --expect-sha256 8bd5f8e5c995ecc85c9d29e0e647f09eed774071e1fd2699231f6c437de9f470 \
+            --output replay-runs/stage-2-0-ssim \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --cue disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --build build-linux \
+            --skip-build \
+            --interval 10 \
+            --top 20 \
+            --min-ssim 0.916146449
       - name: Upload replay evidence
         if: failure()
         uses: actions/upload-artifact@v7

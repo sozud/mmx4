@@ -85,14 +85,14 @@ void func_800C41C8(struct ItemObj* self)
     struct EffectObj* effect;
 
     for (i = 0; i < 4; i++) {
-        self->unk68 = self->unk7C.timer + i * 4;
+        self->unk68 = &self->unk7C.bounds[i];
         if (func_8002C160(self, &g_Player) != 0) {
             effect = find_free_effect_obj();
             if (effect != NULL) {
                 effect->active = 1;
                 effect->id = 0x15;
                 effect->unk2 = 4;
-                effect->ext.effect_5.pad1D = self->unk2 + 8;
+                effect->ext.effect_21.index = self->unk2 + 8;
             }
             self->state++;
             return;

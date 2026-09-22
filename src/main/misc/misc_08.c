@@ -172,9 +172,9 @@ void func_800C9C64(struct MainObj* arg0)
     D_8010E0E0[arg0->unk5](arg0);
 }
 
-void func_800C9CB0(struct ItemObj* arg0)
+void func_800C9CB0(struct MiscObj* arg0)
 {
-    D_8010E0EC[(u8)arg0->unk54](arg0);
+    D_8010E0EC[arg0->ext.misc_8.alternate](arg0);
     func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
 }
 

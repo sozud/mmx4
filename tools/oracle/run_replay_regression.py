@@ -116,6 +116,13 @@ def load_log(path):
             truncated += 1
             continue
         rows.setdefault(int(fields[0]), []).append(fields)
+    if "cd_state" in header and "cd_pending" in header:
+        state_index = header.index("cd_state")
+        pending_index = header.index("cd_pending")
+        for frame_rows in rows.values():
+            for fields in frame_rows:
+                if fields[state_index] == "1":
+                    fields[pending_index] = "-"
     if truncated and rows:
         # A partial row can only appear at the end of an interrupted run, so the
         # frame it belongs to was never fully written.

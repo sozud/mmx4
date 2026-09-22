@@ -6,6 +6,7 @@ void SelectACharacterUpdate(struct MiscObj*);
 void func_80035048(struct PlayerObj*);
 
 extern u16 D_800F1868[18];
+extern struct Unk_unk68 D_800FBEF8;
 extern u8 D_800F164C[4];
 extern s16 D_800F1650[2];
 extern union MainPaletteData D_800F1660;
@@ -3595,6 +3596,1807 @@ void func_8004F4D4(struct MainObj* arg0)
         arg0->unk7C = 8;
         arg0->ext.main_16.unk88++;
     }
+}
+
+void func_800B6660(struct EffectObj* arg0);
+
+static u8 effect_05_probe(s16 x, s32 y_offset)
+{
+    s16 y = (u16)g_Player.y_pos.i.hi + y_offset;
+
+    if (g_Player.unk68 != NULL)
+        y += (s8)g_Player.unk68->unk1 + g_Player.unk68->unk3;
+
+    return func_8002D724(&g_Player, x, y);
+}
+
+static void effect_05_dispatch(struct EffectObj* arg0)
+{
+    if (arg0->state < 2)
+        D_8010B450[arg0->state](arg0);
+    else
+        D_8010B458[arg0->state - 2](arg0);
+}
+
+void func_800B60BC(struct EffectObj* arg0)
+{
+    struct Effect5Ext* ext = &arg0->ext.effect_5;
+    s32 delta;
+    s32 step;
+    u8 tile;
+
+    ext->unk21 = ext->unk20;
+    ext->unk20 = effect_05_probe(g_Player.x_pos.i.hi, 0);
+    delta = g_Player.x_pos.val - g_Player.unk18.val;
+    if (g_Player.state != 1)
+        goto facing;
+
+    for (;;) {
+        switch (ext->unk20) {
+        case 0:
+            if (arg0->state == 2)
+                D_8010B458[0](arg0);
+            goto record;
+        case 16:
+            ext->unk20 = effect_05_probe(g_Player.x_pos.i.hi, -0x10);
+            continue;
+        case 17:
+        case 18:
+        case 19:
+        case 20:
+        case 25:
+        case 26:
+            arg0->state = 1;
+            if (ext->unk21 == 0x3C && g_Player.unk15 != 0 && g_Player.unk5 != 0xC)
+                goto hold;
+            step = delta - 0x38000;
+            if (step < -0x68000)
+                step = -0x68000;
+            goto push;
+        case 21:
+        case 22:
+        case 23:
+        case 24:
+        case 27:
+        case 28:
+            arg0->state = 1;
+            if (ext->unk21 == 0x3C && g_Player.unk15 == 0 && g_Player.unk5 != 0xC)
+                goto hold;
+            step = delta + 0x38000;
+            if (step > 0x68000)
+                step = 0x68000;
+            goto push;
+        case 60:
+            effect_05_dispatch(arg0);
+            goto record;
+        default:
+            arg0->state = 1;
+            goto record;
+        }
+    }
+
+hold:
+    g_Player.x_pos.val = g_Player.unk18.val;
+    goto probe;
+push:
+    g_Player.x_pos.val = g_Player.unk18.val + step;
+probe:
+    tile = effect_05_probe(g_Player.x_pos.i.hi, 0);
+    ext->unk20 = tile;
+    if (tile < 0x1D) {
+        if (tile >= 0x10)
+            goto facing;
+        if (tile == 0 && arg0->state == 2)
+            goto record;
+    }
+    effect_05_dispatch(arg0);
+record:
+    ext->unk1C = g_Player.unk5;
+facing:
+    if (g_Player.x_pos.val != g_Player.unk18.val)
+        ext->unk1E = (g_Player.x_pos.val >= g_Player.unk18.val) << 6;
+}
+
+void func_800B64BC(struct EffectObj* arg0)
+{
+    struct Effect5Ext* ext = &arg0->ext.effect_5;
+
+    ext->unk1F = 0;
+    if (g_Player.state != 1)
+        return;
+
+    switch (g_Player.unk5) {
+    case 48:
+        if (ext->unk1C != 0x32)
+            return;
+        ext->unk14 = g_Player.x_vel.val;
+        goto adjust;
+    case 2:
+        ext->unk14 = g_Player.x_pos.val - g_Player.unk18.val;
+    adjust:
+        if (ext->unk1C == 3)
+            ext->unk14 = ext->unk1E != 0 ? 0x8000 : -0x8000;
+        if (ext->unk1C == 4)
+            ext->unk14 = ext->unk1E != 0 ? 0x20000 : -0x20000;
+        goto accelerate;
+    case 5:
+    case 8:
+        ext->unk14 = g_Player.x_vel.val;
+    accelerate:
+        if (ext->unk1E != 0) {
+            ext->unk18 = -0x1800;
+            ext->unk1D = 1;
+        } else {
+            ext->unk18 = 0x1800;
+            ext->unk1D = 0;
+        }
+        break;
+    case 12: {
+        s32 speed;
+
+        if (g_Player.unk6 != 2)
+            return;
+        ext->unk14 = 0;
+        speed = g_Player.x_vel.val;
+        if (speed < 0)
+            speed = -speed;
+        ext->unk1F = speed / 0xC000;
+        ext->unk1E = g_Player.unk15;
+        if (g_Player.unk15 != 0) {
+            ext->unk18 = 0x2800;
+            ext->unk1D = 3;
+        } else {
+            ext->unk18 = -0x2800;
+            ext->unk1D = 2;
+        }
+        break;
+    }
+    default:
+        return;
+    }
+    arg0->state++;
+}
+
+static int effect_05_tile_slides(u8 tile)
+{
+    return tile == 0x3C || tile == 0 || tile == 0x18 || tile == 0x1C || tile == 0x14 || tile == 0x1A;
+}
+
+void func_800B6660(struct EffectObj* arg0)
+{
+    struct Effect5Ext* ext = &arg0->ext.effect_5;
+    s16 x;
+    s16 previous;
+
+    if (g_Player.unk5 == 6 || g_Player.unk5 == 9 || (g_Player.unk88.bytes.collision_flags & 3)) {
+        arg0->state = 1;
+        return;
+    }
+
+    if (ext->unk1D < 2) {
+        arg0->x_pos.val = g_Player.x_pos.val + ext->unk14;
+        ext->unk14 += ext->unk18;
+        if (!effect_05_tile_slides(effect_05_probe(arg0->x_pos.i.hi, 0))) {
+            g_Player.x_pos.val = arg0->x_pos.val;
+            arg0->state = 1;
+            return;
+        }
+        g_Player.x_pos.val = arg0->x_pos.val;
+        if (ext->unk1D != 0 ? ext->unk14 < 0 : ext->unk14 >= 0)
+            arg0->state = 1;
+    } else if (--ext->unk1F == 0xFF) {
+        ext->unk18 = ext->unk18 > 0 ? -0x600 : 0x600;
+        ext->unk1D -= 2;
+        func_800B6660(arg0);
+    } else {
+        s32 moved;
+
+        arg0->x_pos.val = g_Player.x_pos.val + ext->unk14;
+        ext->unk14 += ext->unk18;
+        if (!effect_05_tile_slides(effect_05_probe(arg0->x_pos.i.hi, 0))) {
+            g_Player.x_pos.val = arg0->x_pos.val;
+            arg0->state = 1;
+            return;
+        }
+        g_Player.x_pos.val = arg0->x_pos.val;
+        if (g_Player.unk5 != 0xC && g_Player.unk6 != 2) {
+            moved = arg0->x_pos.val - g_Player.unk18.val;
+            if (ext->unk14 > 0 ? ext->unk14 < moved : moved < ext->unk14)
+                arg0->state = 1;
+        }
+    }
+
+    x = g_Player.x_pos.i.hi;
+    previous = g_Player.unk18.i.hi;
+    if (ext->unk1D & 1) {
+        if (g_Player.x_pos.val < g_Player.unk18.val && previous == x)
+            arg0->state = 1;
+    } else if (g_Player.unk18.val < g_Player.x_pos.val) {
+        if (x - previous < 0 ? x != (s16)(previous - 1) : x - previous != 1)
+            arg0->state = 1;
+    }
+}
+
+extern struct Effect21SpawnRecord* D_8010BD68[20];
+extern u8* D_8010BDD8[8];
+
+s32 func_800B9E54(struct Effect21SpawnRecord* record)
+{
+    struct BackgroundObj* background = &background_objects[g_Player.bg_offset];
+
+    if ((u16)(record->x - background->x_pos.i.hi + 0x280) >= 0x640)
+        return 0;
+    return (u16)(record->y - background->y_pos.i.hi + 0x1E0) < 0x4B0;
+}
+
+void func_800B9EC0(struct EffectObj* arg0)
+{
+    struct Effect21Ext* ext = &arg0->ext.effect_21;
+
+    ext->timer = 0;
+    arg0->state++;
+    switch (arg0->unk2) {
+    case 0:
+        ext->spawned = 0;
+        ext->phase = 0;
+        break;
+    case 1:
+    case 2:
+    case 4:
+    case 5:
+        ext->cursor = D_8010BD68[ext->index & 0x7F];
+        break;
+    case 3:
+        ext->index = 8;
+        break;
+    }
+}
+
+void func_800B9F38(struct EffectObj* arg0)
+{
+    struct Effect21Ext* ext = &arg0->ext.effect_21;
+    struct EffectObj* effect;
+    u8* list;
+    u32 bit;
+    u8 id;
+
+    ext->was_inside = ext->inside;
+    if ((u16)(g_Player.x_pos.i.hi - 0x2A1) < 0x9BF)
+        ext->inside = 1;
+    if (ext->inside == 0)
+        return;
+    if (ext->inside != ext->was_inside) {
+        ext->phase = 0;
+        ext->timer = 0;
+    }
+    if (ext->timer != 0) {
+        ext->timer--;
+        return;
+    }
+
+    list = D_8010BDD8[ext->phase * 2 + ext->inside - 1];
+    do {
+        id = *list & 0x7F;
+        bit = 1 << id;
+        if ((u8)func_800B9E54(D_8010BD68[id]) != 0 && !(ext->spawned & bit)) {
+            effect = find_free_effect_obj();
+            if (effect != NULL) {
+                effect->active = 1;
+                effect->id = 0x15;
+                effect->unk2 = 1;
+                effect->ext.effect_21.index = id;
+                ext->spawned |= bit;
+            }
+        }
+    } while (!(*list++ & 0x80));
+
+    list = D_8010BDD8[((ext->phase + 2) & 3) * 2 + ext->inside - 1];
+    do {
+        id = *list & 0x7F;
+        bit = 1 << id;
+        if (ext->spawned & bit) {
+            effect = find_free_effect_obj();
+            if (effect != NULL) {
+                effect->active = 1;
+                effect->id = 0x15;
+                effect->unk2 = 2;
+                effect->ext.effect_21.index = id;
+                ext->spawned &= ~bit;
+            }
+        }
+    } while (!(*list++ & 0x80));
+
+    ext->phase = (ext->phase + 1) & 3;
+    ext->timer = ext->inside == 1 ? 0x96 : 0x8C;
+}
+
+void func_800BA178(struct EffectObj* arg0)
+{
+    struct Effect21Ext* ext = &arg0->ext.effect_21;
+    struct MiscObj* misc;
+    struct ItemObj* item;
+    struct EffectObj* effect;
+
+    if (arg0->unk5 != 0) {
+        if (--ext->timer != 0)
+            return;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x15;
+            effect->unk2 = 5;
+            effect->ext.effect_21.index = ext->index;
+        }
+        arg0->state++;
+        return;
+    }
+
+    if (ext->timer != 0) {
+        ext->timer--;
+        return;
+    }
+    misc = find_free_misc_obj();
+    if (misc == NULL)
+        return;
+    misc->active = 0x41;
+    misc->id = 8;
+    misc->x_pos.i.hi = ext->cursor->x;
+    misc->y_pos.i.hi = ext->cursor->y;
+    misc->unk2 = ext->cursor->object_id;
+    if (!(arg0->unk2 & 1)) {
+        misc->unk2 = ext->cursor->flags | 0x80;
+        ext->timer = 4;
+    } else {
+        ext->timer = 3;
+    }
+    if (!(ext->cursor->flags & 0x80)) {
+        ext->cursor++;
+        return;
+    }
+    if (arg0->unk2 == 4) {
+        ext->timer = 0x78;
+        arg0->unk5++;
+        return;
+    }
+    if (arg0->unk2 == 5) {
+        item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 1;
+            item->id = 0x11;
+            item->unk2 = ext->index - 8;
+        }
+    }
+    arg0->state++;
+}
+
+void func_800BA340(struct EffectObj* arg0)
+{
+    struct Effect21Ext* ext = &arg0->ext.effect_21;
+    struct MiscObj* misc;
+    struct ItemObj* item;
+
+    switch (arg0->unk5) {
+    case 0:
+        if (g_Player.x_pos.i.hi >= 0xC60)
+            arg0->unk5 = 1;
+        break;
+    case 1:
+        arg0->unk5 = 2;
+        ext->cursor = D_8010BD68[ext->index];
+        break;
+    case 2:
+        if (ext->timer != 0) {
+            ext->timer--;
+            break;
+        }
+        misc = find_free_misc_obj();
+        if (misc == NULL)
+            break;
+        misc->active = 0x41;
+        misc->id = 8;
+        misc->x_pos.i.hi = ext->cursor->x;
+        misc->y_pos.i.hi = ext->cursor->y;
+        misc->unk2 = ext->cursor->object_id;
+        ext->timer = 1;
+        if (!(ext->cursor->flags & 0x80)) {
+            ext->cursor++;
+            break;
+        }
+        item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 1;
+            item->id = 0x11;
+            item->unk2 = ext->index - 8;
+        }
+        if (ext->index == 0xD) {
+            arg0->state++;
+        } else {
+            ext->index++;
+            arg0->unk5 = 1;
+        }
+        break;
+    }
+}
+
+extern u16 D_8010B6C4[6];
+
+void func_800B8E74(struct EffectObj* arg0)
+{
+    s8 index;
+
+    if (g_Player.y_pos.i.hi < 0x500) {
+        for (index = 0; index < 2; index++) {
+            if (g_Player.x_pos.i.hi - (s16)D_8010B6C4[index] < 0)
+                break;
+        }
+        if (index == 2)
+            index = 1;
+    } else {
+        for (index = 2; index < 5; index++) {
+            if (g_Player.x_pos.i.hi - (s16)D_8010B6C4[index] < 0)
+                break;
+        }
+    }
+    arg0->ext.effect_15.unk14 = index;
+    if (index != arg0->ext.effect_15.unk15) {
+        arg0->unk5 = index;
+        arg0->unk6 = 0;
+    }
+}
+
+extern u8 D_8010B534[];
+
+void func_800B76A4(struct EffectObj* arg0)
+{
+    struct Effect9Ext* ext = &arg0->ext.effect_9;
+
+    if (ext->direction != 0) {
+        background_objects[2].y_pos.val = 0;
+        ext->transition_timer = 1;
+        background_objects[2].unk4C = 1;
+        arg0->unk5 = 0;
+        arg0->state--;
+        return;
+    }
+    background_objects[2].y_pos.val = 0x1800000;
+    background_objects[2].unk4C = 1;
+    ext->movement_timer = 0x168;
+    ext->movement_table = D_8010B534;
+    ext->timer = ext->movement_table[0];
+    ext->frame = ext->movement_table[1];
+    ext->target_x = ext->movement_table[2];
+    background_objects[2].x_pos.i.hi = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    ext->velocity = 0x10000;
+    arg0->unk5++;
+}
+
+extern u8 D_8010B528[];
+
+void func_800B7764(struct EffectObj* arg0)
+{
+    struct Effect9Ext* ext = &arg0->ext.effect_9;
+    s32 target;
+
+    if (--ext->movement_timer == 0) {
+        ext->movement_table = D_8010B528;
+        ext->timer = ext->movement_table[0];
+        ext->frame = ext->movement_table[1];
+        ext->target_x = ext->movement_table[2];
+        ext->movement_timer = 0xB4;
+        if (ext->direction != 0)
+            arg0->unk5--;
+        else
+            arg0->unk5++;
+        return;
+    }
+    if (--ext->timer == 0) {
+        ext->movement_table += ext->frame * 4;
+        ext->target_x = ext->movement_table[2];
+        ext->timer = ext->movement_table[0];
+        ext->frame = ext->movement_table[1];
+        background_objects[2].unk4C = 1;
+        background_objects[2].x_pos.i.hi = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    }
+    if (ext->direction != 0) {
+        if (ext->velocity > 0x18000)
+            ext->velocity -= 0x400;
+    } else if (ext->velocity <= 0x17FFF) {
+        ext->velocity += 0x400;
+    }
+    background_objects[2].x_pos.val += ext->velocity;
+    target = ext->target_x << 9;
+    if (background_objects[2].x_pos.i.hi >= target + 0xC0) {
+        background_objects[2].x_pos.i.hi = target;
+        background_objects[2].unk4C = 1;
+    }
+    background_objects[2].y_pos.val -= 0x20000;
+    if (background_objects[2].y_pos.val == 0x1000000) {
+        background_objects[2].y_pos.val = 0x1800000;
+        background_objects[2].unk4C = 1;
+    }
+}
+
+extern void (*D_800FBEC0[])(struct MainObj*);
+void func_80050690(struct MainObj* arg0);
+
+void func_800500D4(struct MainObj* arg0)
+{
+    s32 collision;
+    s16 x;
+    s16 y;
+
+    func_80050690(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FBEC0[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    arg0->ext.main_17.unk90 = arg0->unk5;
+    collision = func_8002DD04(arg0);
+    x = arg0->x_pos.i.hi + arg0->unk68->unk0;
+    y = arg0->unk68->unk3 + (u16)(arg0->y_pos.i.hi + arg0->unk68->unk1);
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0x3E) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(4, D_800FBEB0, arg0);
+        arg0->state = 2;
+        return;
+    }
+    if (collision < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(4, D_800FBEB0, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0);
+        arg0->state = 2;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) != 0) {
+        arg0->state = 2;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
+
+void func_80050278(struct MainObj* arg0)
+{
+    struct Main17Ext* ext = &arg0->ext.main_17;
+    s32 dx;
+
+    if (--ext->unk80 != 0) {
+        if (arg0->unk70 & 3)
+            arg0->unk15 ^= 0x40;
+        arg0->unk20 = arg0->unk15 != 0 ? 0x10000 : -0x10000;
+        arg0->unk24 = 0x80000;
+        ext->saved_unk5 = arg0->y_pos.val;
+        func_8002B718(MOVING_OBJECT(arg0));
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (!(dx < 0x61 && arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 0x11) && --ext->unk88 != 0) {
+        if (--ext->unk84 == 0) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            func_80015D60(arg0, 1);
+        } else {
+            arg0->unk7C = 0x14;
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
+        }
+        return;
+    }
+    arg0->unk20 = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+    arg0->unk28 = -0x1000;
+    ext->unk8C = 1;
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+    func_80015D60(arg0, 2);
+}
+
+extern void (*D_800FB868[])(struct MainObj*);
+extern u8 D_800FB84C[];
+void func_8004CE48(struct MainObj* arg0);
+void func_8004CE94(struct MainObj* arg0);
+
+void func_8004C860(struct MainObj* arg0)
+{
+    func_8004CE48(arg0);
+    func_8004CE94(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FB868[arg0->unk5](arg0);
+    if (arg0->state != 2)
+        func_8002D9BC(arg0);
+    arg0->ext.main_13.saved_unk5 = arg0->unk5;
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(9, D_800FB84C, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 8);
+        arg0->unk7C = 0x20;
+        arg0->unk7E = 6;
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        return;
+    }
+    if (arg0->state == 2)
+        return;
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0x68) != 0) {
+        arg0->state = 3;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+}
+
+void func_8004CEF4(struct AnimatedObj* arg0);
+
+void func_8004CA94(struct MainObj* arg0)
+{
+    u8 roll;
+    s32 dx;
+    u32 animation;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+    roll = get_random() & 0xF;
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (roll < 2) {
+        arg0->unk7C = 0x3C;
+        return;
+    }
+    if (roll < 4) {
+        arg0->ext.main_13.unk80 = 0x8001;
+        return;
+    }
+    animation = roll < (dx < 0x81 ? 12 : 8) ? 2 : 1;
+    func_8004CEF4(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, animation);
+    arg0->ext.main_13.unk88 = animation;
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+}
+
+void func_8004CCA0(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s8 event;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    if (event == 1) {
+        func_80015D60(arg0, 0);
+        arg0->ext.main_13.unk88 = 0;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        return;
+    }
+    if (event != 2)
+        return;
+    func_8001540C(2, 0x31, arg0);
+    if (arg0->animation_step.fields.event == 0)
+        return;
+    shot = find_free_shot_obj();
+    if (shot == NULL)
+        return;
+    shot->active = 0x41;
+    shot->id = 5;
+    shot->unk2 = 0;
+    shot->unk40 = arg0->unk40;
+    shot->unk42 = arg0->unk42;
+    shot->animation_table = (u32**)arg0->animation_table;
+    shot->unk3C = (void*)arg0->sprite_frames;
+    shot->unk15 = arg0->unk15;
+    shot->bg_offset = arg0->bg_offset;
+    shot->x_pos.val = arg0->x_pos.val;
+    shot->unk84.collision_state = (u32*)&arg0->ext.main_13.unk80;
+    shot->y_pos.val = arg0->y_pos.val;
+    if (arg0->ext.main_13.unk88 == (u32)event)
+        shot->state = 3;
+}
+
+extern u8 D_80108D04[28];
+extern u8 D_80108D20[8];
+
+void func_8009A5F4(struct ShotObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk15 != 0)
+        arg0->x_pos.i.hi += 0x20;
+    else
+        arg0->x_pos.i.hi -= 0x20;
+    arg0->y_vel.val = 0x70000;
+    arg0->unk2C = 0x4200;
+    arg0->unk16 = 0;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x18;
+    arg0->x_vel.val = arg0->unk15 != 0 ? 0x2C000 : -0x2C000;
+    arg0->unk54 = D_80108D04;
+    arg0->unk50.data = D_80108D04;
+    arg0->unk5C = 6;
+    arg0->unk68 = NULL;
+    arg0->unk60 = 2;
+    func_80015D60(arg0, 5);
+}
+
+void func_800B7CFC(struct EffectObj* arg0)
+{
+    struct Effect9Ext* ext = &arg0->ext.effect_9;
+    s32 target;
+
+    if (--ext->movement_timer == 0) {
+        ext->direction = 1;
+        ext->movement_timer = 0x78;
+        ext->movement_table = D_8010B528;
+        ext->timer = ext->movement_table[0];
+        ext->frame = ext->movement_table[1];
+        arg0->unk5--;
+        ext->target_x = ext->movement_table[2];
+        return;
+    }
+    if (--ext->timer == 0) {
+        ext->movement_table += ext->frame * 4;
+        ext->target_x = ext->movement_table[2];
+        ext->timer = ext->movement_table[0];
+        ext->frame = ext->movement_table[1];
+        background_objects[2].unk4C = 1;
+        background_objects[2].x_pos.i.hi = (ext->target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+    }
+    if (ext->velocity <= 0x47FFF)
+        ext->velocity += 0x400;
+    background_objects[2].x_pos.val += ext->velocity;
+    target = ext->target_x << 9;
+    if (background_objects[2].x_pos.i.hi >= target + 0xC0) {
+        background_objects[2].x_pos.i.hi = target;
+        background_objects[2].unk4C = 1;
+    }
+    background_objects[2].y_pos.val -= 0x20000;
+    if (background_objects[2].y_pos.val == 0x1000000) {
+        background_objects[2].y_pos.val = 0x1800000;
+        background_objects[2].unk4C = 1;
+    }
+}
+
+extern union AnimationStep* D_8010DF48[57];
+
+void func_800C9510(struct MiscObj* arg0)
+{
+    s32 resource;
+    u8 alternate;
+
+    arg0->animation_table = (u32**)D_8010DF48;
+    alternate = (u8)arg0->unk2 >> 7;
+    arg0->ext.misc_8.alternate = alternate;
+    arg0->unk2 &= 0x7F;
+    arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(0x99);
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    resource = func_8002938C(0x99);
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    resource = func_8002938C(0x99);
+    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    arg0->unk16 = 7;
+    arg0->unk15 = 0;
+    if ((u8)(arg0->unk2 - 0xD) < 6) {
+        arg0->unk15 = 0x40;
+        arg0->x_pos.i.hi += 0x10;
+    }
+    arg0->ext.misc_8.timer = 0;
+    if (arg0->ext.misc_8.alternate != 0)
+        func_80015D60(arg0, D_8010E090.entries[arg0->unk2].first);
+    else
+        func_80015D60(arg0, D_8010E058[arg0->unk2].effect_id);
+}
+
+void func_800C833C(s32 count, u8* variants, struct MiscObj* owner, s32 x_offset, s32 y_offset)
+{
+    struct MiscObj* misc;
+
+    while (count & 0xFF) {
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 3;
+            misc->unk2 = 0;
+            misc->unk15 = get_random() & 0x40;
+            misc->state = 0;
+            misc->unk5 = 0;
+            misc->unk6 = 0;
+            misc->x_pos.val = owner->x_pos.val + (get_random() & 3) + x_offset;
+            misc->y_pos.val = owner->y_pos.val + (get_random() & 3) + y_offset;
+            misc->ext.misc_2.owner = MAIN_OBJECT(owner);
+            misc->ext.misc_2.unk58 = *variants++;
+        }
+        count--;
+    }
+}
+
+extern u8 D_8010D198[4];
+extern u8* D_8010D1BC[4];
+extern struct Unk_unk68 D_80106270[32];
+
+void func_800C42EC(struct ItemObj* arg0)
+{
+    static const s32 offsets[7][3] = {
+        { 0, 0x300000, 0x200000 },
+        { 1, -0x200000, 0x100000 },
+        { 2, 0, 0 },
+        { 3, 0x180000, -0x100000 },
+        { 0, -0x180000, -0x200000 },
+        { 1, 0x100000, -0x180000 },
+        { 2, -0x100000, 0x180000 },
+    };
+    s32 resource;
+    s32 i;
+
+    if (arg0->state == 0) {
+        arg0->state++;
+        arg0->unk58 = (const u8*)D_80106270;
+        arg0->unk54 = D_8010D198;
+        arg0->animation_table = (const u8* const*)D_8010DF48;
+        arg0->bg_offset = g_Player.bg_offset;
+        resource = func_8002938C(0x99);
+        arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+        resource = func_8002938C(0x99);
+        arg0->unk40 = D_801406A8[resource] >> 7;
+        resource = func_8002938C(0x99);
+        arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+        arg0->unk16 = 7;
+        arg0->unk15 = 0;
+        return;
+    }
+    if (func_8002DD04(MAIN_OBJECT(arg0)) != 0) {
+        func_800DABE4(0x26, 0x430, 0x170);
+        get_random();
+        for (i = 0; i < 7; i++)
+            func_800C833C(5, D_8010D1BC[offsets[i][0]], (struct MiscObj*)arg0,
+                offsets[i][1], offsets[i][2]);
+        func_8002B108(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x70, 0x50) == 1)
+        func_8002B0C8(OBJECT_HEADER(arg0));
+}
+
+extern union AnimationStep* D_800FCE04[];
+extern struct Unk_unk68 D_800FCB48[];
+extern struct Unk_unk68 D_800FCB4C[2];
+extern struct VisualSpawnOffset D_800FCE90[5];
+extern struct Unk_unk68 D_800FCE9C[];
+extern union AnimationStep D_800FCF1C[];
+extern struct Unk_unk68 D_80106DF4[];
+
+void func_80055C54(struct MainObj* arg0)
+{
+    struct Main23Ext* ext = &arg0->ext.main_23;
+    s16 x = arg0->x_pos.i.hi;
+    s16 y = (u16)arg0->y_pos.i.hi + (s8)arg0->unk68->unk1 + arg0->unk68->unk3 + 1;
+    u8 tile;
+
+    ext->unk81 = ext->unk80;
+    tile = func_8002D724(PLAYER_OBJECT(arg0), x, y);
+    if (tile == 0) {
+        tile = func_8002D724(PLAYER_OBJECT(arg0), x, y + 0x10);
+        if (tile == 0) {
+            ext->unk80 = 3;
+            return;
+        }
+    }
+    if ((u8)(tile - 0x11) < 0xE) {
+        if (tile < 0x19) {
+            ext->unk80 = 1;
+            if (tile < 0x15 ? arg0->unk15 != 0 : arg0->unk15 == 0)
+                ext->unk80 = 0x81;
+        } else {
+            ext->unk80 = 2;
+            if (tile < 0x1B ? arg0->unk15 != 0 : arg0->unk15 == 0)
+                ext->unk80 = 0x82;
+        }
+        return;
+    }
+    if (tile == 0x3E) {
+        if (arg0->on_screen != 0) {
+            func_800AF808(BASE_OBJECT(arg0));
+            func_800C813C(7, D_800FCE80, arg0);
+            arg0->state++;
+        }
+        return;
+    }
+    if (tile != 0x10)
+        ext->unk80 = 0;
+}
+
+void func_800564B4(struct MainObj* arg0)
+{
+    arg0->unk5 = 1;
+    arg0->state++;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->bg_offset = g_Player.bg_offset;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+        break;
+    case 1:
+        arg0->unk15 = 0;
+        break;
+    case 2:
+        arg0->unk15 = 0x40;
+        break;
+    }
+    arg0->animation_table = (const u8* const*)D_800FCE04;
+    arg0->unk16 = 6;
+    arg0->unk68 = D_800FCB48;
+    arg0->unk54 = D_800FCB4C;
+    arg0->unk50 = D_800FCB4C;
+    arg0->unk5C = 3;
+    arg0->unk60 = 1;
+    arg0->collision_data = (const u16*)D_80106DF4;
+    arg0->ext.main_23.unk80 = 0;
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->unk7C = 10;
+    arg0->ext.main_23.unk81 = 0;
+    arg0->ext.main_23.unk82 = 0;
+    func_80015D60(arg0, arg0->ext.main_23.unk80 + 4);
+}
+
+void func_80055F1C(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.main_23.unk80 & 0x80) {
+        arg0->unk24 = 0x40000;
+        arg0->unk20 = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+    } else {
+        arg0->unk24 = 0x38000;
+        arg0->unk20 = arg0->unk15 != 0 ? 0x48000 : -0x48000;
+    }
+    arg0->unk2C = 0x4200;
+    arg0->unk67 = 1;
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, 0x11);
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+}
+
+static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual == NULL)
+        return NULL;
+    visual->active = 0x41;
+    visual->id = 3;
+    visual->unk2 = 5;
+    visual->bg_offset = arg0->bg_offset;
+    visual->unk15 = facing;
+    visual->unk40 = arg0->unk40;
+    visual->unk3C = (void*)arg0->sprite_frames;
+    visual->animation_table = (u32**)arg0->animation_table;
+    visual->unk42 = arg0->unk42;
+    return visual;
+}
+
+void func_80056054(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+    u8 i;
+
+    if (arg0->unk6 == 0) {
+        arg0->unk6++;
+        func_80015D60(arg0, arg0->ext.main_23.unk80 + 0xA);
+        return;
+    }
+    if (arg0->unk6 != 1)
+        return;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        if (arg0->ext.main_23.unk82 & 1) {
+            arg0->unk5 = 1;
+            arg0->unk6 = 0;
+            arg0->ext.main_23.unk82 &= 0xFE;
+            arg0->unk15 ^= 0x40;
+        }
+        return;
+    }
+    if (arg0->animation_step.fields.event != 2)
+        return;
+    for (i = 0; i < 5; i++) {
+        visual = main_23_spawn_visual(arg0, arg0->unk15 ^ 0x40);
+        if (visual == NULL)
+            continue;
+        if (arg0->unk15 != 0)
+            visual->x_pos.i.hi = arg0->x_pos.i.hi - D_800FCE90[i].x;
+        else
+            visual->x_pos.i.hi = arg0->x_pos.i.hi + D_800FCE90[i].x;
+        visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + D_800FCE90[i].y;
+        visual->unk16 = arg0->unk16;
+        arg0->animation_step.fields.event = 0;
+    }
+}
+
+void func_800562AC(struct MainObj* arg0)
+{
+    struct Main23Ext* ext = &arg0->ext.main_23;
+    struct VisualObj* visual;
+    u8 wall;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80055C54(arg0);
+    if (ext->unk81 != ext->unk80) {
+        if (ext->unk80 == 3 || (ext->unk80 & 0x80)) {
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            func_80015D60(arg0, ext->unk81 + 0xD);
+        } else {
+            func_80015D60(arg0, (ext->unk80 & 0x7F) + 4);
+        }
+    }
+    wall = arg0->unk15 != 0 ? arg0->unk70 & 1 : arg0->unk70 & 2;
+    if (wall) {
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        ext->unk82 |= 1;
+    }
+    if (--arg0->unk7C != 0)
+        return;
+    visual = main_23_spawn_visual(arg0, arg0->unk15);
+    if (visual == NULL)
+        return;
+    visual->x_pos.i.hi = arg0->unk15 != 0 ? arg0->x_pos.i.hi - 0x28 : arg0->x_pos.i.hi + 0x28;
+    visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)(ext->unk80 < 0x80 ? ((u8*)D_800FCE9C)[ext->unk80] : ((u8*)D_800FCF1C)[ext->unk80 - 0x80]);
+    visual->unk16 = arg0->unk16;
+    arg0->unk7C = 5;
+}
+
+void func_800B8630(struct EffectObj* arg0)
+{
+    struct MainObj* main = find_free_main_obj();
+    s32 resource;
+    s32 row;
+
+    if (main == NULL)
+        return;
+    main->active = 0x41;
+    main->id = 0x15;
+    main->unk2 = func_8002B780() % 4;
+    main->x_pos.val = arg0->x_pos.val;
+    main->y_pos.val = arg0->y_pos.val;
+    main->unk40 = D_801406A8[(u8)func_8002938C(0x15)] >> 7;
+    resource = (u8)func_8002938C(0x15);
+    row = (u8)func_8002938C(0x15);
+    main->unk42 = ((resource * 4 + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    resource = (u8)func_8002938C(0x15);
+    main->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+}
+
+void func_800B875C(struct EffectObj* arg0, s16 unused)
+{
+    s16 x;
+    s16 y;
+    u8 i;
+
+    x = arg0->x_pos.i.hi - 0x10;
+    arg0->x_pos.i.hi = x;
+    y = arg0->y_pos.i.hi - 0x10;
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0) {
+        for (i = 1; i < 0x10; i++) {
+            if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y + i * 16) == 0) {
+                arg0->y_pos.i.hi += i * 16;
+                func_800B8630(arg0);
+                return;
+            }
+        }
+        return;
+    }
+    for (i = 1; i < 0x10; i++) {
+        if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, y - i * 16) != 0) {
+            arg0->y_pos.i.hi -= (i - 1) * 16;
+            func_800B8630(arg0);
+            return;
+        }
+    }
+}
+
+extern void (*D_800FCA0C[])(struct MainObj*);
+extern u8 D_800FC9F0[];
+
+void func_80054D8C(struct MainObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FCA0C[arg0->unk5](arg0);
+    arg0->ext.main_21.saved_unk5 = arg0->unk5;
+    collision = func_8002DD04(arg0);
+    func_8002D9BC(arg0);
+    if (collision < 0 || func_8002BB80(arg0, MAIN_OBJECT(&g_Player)) != 0 || (arg0->unk70 & 8)) {
+        func_80015D60(arg0, 4);
+        func_800C813C(3, D_800FC9F0, arg0);
+        func_8001540C(5, 1, NULL);
+        arg0->state = 2;
+        return;
+    }
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        arg0->state = 3;
+        return;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+extern void* D_8010CB40[];
+extern struct Unk_unk68 D_8010CB28[];
+
+void func_800C16F0(struct ItemObj* arg0)
+{
+    s32 resource;
+    s32 row;
+
+    arg0->active = 0x41;
+    arg0->animation_table = (const u8* const*)D_8010CB40;
+    arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(0x87);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk40 = D_801406A8[func_8002938C(0x87)] >> 7;
+    resource = func_8002938C(0x87);
+    row = func_8002938C(0x87);
+    arg0->unk42 = ((resource * 4 + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    arg0->unk16 = 6;
+    arg0->unk15 = 0;
+    arg0->unk68 = D_8010CB28;
+    func_80015D60(ANIMATED_OBJECT(arg0), 0);
+    arg0->unk76 = 0;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0x8000;
+    arg0->unk7C.value = 0;
+}
+
+extern void* D_800FC2B4[];
+extern struct Unk_unk68 D_800FBF0C;
+extern void (*D_800FC358[])(struct MainObj*);
+extern u8 D_800FC33C[];
+void func_800527C0(struct AnimatedObj* arg0);
+void func_800527F0(struct MainObj* arg0);
+void func_80052524(struct MainObj* arg0);
+void func_80052614(struct MainObj* arg0);
+void func_800526AC(struct MainObj* arg0);
+
+void func_8005077C(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+
+    arg0->unk60 = 4;
+    arg0->unk61 = -0x80;
+    arg0->unk5C = 0;
+    arg0->collision_data = (const u16*)D_80106B74;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)D_800FC2B4;
+    arg0->unk16 = 0x22;
+    arg0->unk67 = 0;
+    arg0->unk68 = &D_800FBF0C;
+    arg0->unk54 = NULL;
+    arg0->unk50 = NULL;
+    func_800527C0(ANIMATED_OBJECT(arg0));
+    func_80015D60(arg0, 0x21);
+    ext->unk8A = 0x8000;
+    *(u8*)&arg0->unk7E = 0xFF;
+    ext->unk80 = 0;
+    ext->unk81 = 0;
+    ext->unk82 = 0;
+    ext->unk83 = 0;
+    ext->unk84 = 0;
+    ext->unk85 = 0;
+    ext->unk86 = 0;
+    ext->unk87 = 0;
+    ext->unk88 = 1;
+    ext->unk89 = 0;
+    ext->unk82 = 1;
+    ext->unk8A = 0;
+    ext->unk8C = 0;
+    ext->unk90 = 0;
+    arg0->state = 1;
+    arg0->unk5 = 0xB;
+    arg0->unk6 = 0;
+}
+
+void func_80050874(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+    s32 hit;
+    u8 invulnerable;
+
+    func_80052524(arg0);
+    func_80052614(arg0);
+    func_800526AC(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FC358[arg0->unk5](arg0);
+    if (arg0->state >= 2) {
+        func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+        return;
+    }
+    invulnerable = arg0->unk61;
+    if (invulnerable & 0x7F) {
+        arg0->unk61 = invulnerable - 1;
+        if ((u8)(invulnerable - 1) == 0)
+            arg0->unk42 &= 0x7FFF;
+    } else {
+        ext->saved_unk5 = arg0->unk5;
+        hit = func_8002DD04(arg0);
+        if (hit < 0) {
+            g_Player.unk61 = 0x7F;
+            func_8001540C(5, 2, NULL);
+            func_800AF808(BASE_OBJECT(arg0));
+            g_Player.unk7A = 1;
+            func_800C813C(4, D_800FC33C, arg0);
+            arg0->unk7C = 4;
+            arg0->unk7E = 8;
+            ext->unk8A = 0;
+            ext->unk89 = 0;
+            arg0->unk68 = NULL;
+            arg0->state = 2;
+            arg0->unk42 &= 0x7FFF;
+            return;
+        }
+        if (hit == 0 || hit == 0x7F) {
+            ext->unk87 = 0;
+        } else {
+            arg0->unk61 = engine_obj.cur_character != 0 ? 1 : 6;
+            ext->unk87 = 1;
+            arg0->unk42 |= 0x8000;
+            if (!(ext->unk80 & 0xC0))
+                ext->unk80 = (ext->unk80 | 0x40) + 1;
+            if (ext->unk81 != 0) {
+                switch (hit - 1) {
+                case 0:
+                    ext->unk83 += 2;
+                    break;
+                case 9:
+                case 23:
+                case 24:
+                case 25:
+                case 26:
+                    ext->unk83 += 5;
+                    break;
+                case 18:
+                    ext->unk83 += 10;
+                    break;
+                }
+            }
+        }
+    }
+    func_8002D9BC(arg0);
+    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+}
+
+void func_80050A9C(struct MainObj* arg0)
+{
+    s32 saved[2];
+
+    arg0->y_pos.i.hi++;
+    if (arg0->y_pos.i.hi >= 0x931) {
+        func_800DABE4(0x17, 0, 0);
+        engine_obj.enable_boss = 0;
+        engine_obj.boss_ptr = NULL;
+        arg0->state = 3;
+        func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+        return;
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 4;
+        func_800AF95C(OBJECT_HEADER(arg0), 1, 0x20, 0x30, 2);
+    }
+    if (--arg0->unk7E == 0) {
+        saved[0] = arg0->x_pos.val;
+        saved[1] = arg0->y_pos.val;
+        memcpy(&arg0->ext.main_18.unk80, saved, sizeof(saved));
+        arg0->unk7E = 8;
+        arg0->x_pos.i.hi = 0x18E2;
+        arg0->y_pos.i.hi = 0x89E;
+        func_800AF95C(OBJECT_HEADER(arg0), 1, 0x18, 0x30, 2);
+        memcpy(saved, &arg0->ext.main_18.unk80, sizeof(saved));
+        arg0->x_pos.val = saved[0];
+        arg0->y_pos.val = saved[1];
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+}
+
+void func_80050D14(struct MainObj* arg0)
+{
+    if (arg0->unk15 == 0 ? (arg0->unk70 & 2) : (arg0->unk70 & 1)) {
+        if (arg0->ext.main_18.unk84 != 0) {
+            func_800527C0(ANIMATED_OBJECT(arg0));
+            func_80015D60(arg0, 6);
+            arg0->unk5 = 3;
+            arg0->unk6 = 2;
+        } else {
+            arg0->unk15 = arg0->unk15 == 0 ? 0x40 : 0;
+            func_800527F0(arg0);
+        }
+    }
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk24 == 0x30000)
+        arg0->unk2C = 0x2000;
+    if (arg0->unk24 == -0x30000)
+        arg0->unk2C = -0x2000;
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
+
+void func_80052218(struct MainObj* arg0)
+{
+    u32 i;
+
+    for (i = 0; i < 0x20; i++) {
+        if (item_objects[i].id != 8)
+            item_objects[i].active = 0;
+    }
+    arg0->unk24 = 0x10000;
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk7C = 0x74;
+    func_80036AE4(0x15, 0);
+    arg0->unk6 = 1;
+}
+
+void func_800527F0(struct MainObj* arg0)
+{
+    arg0->unk5 = 7;
+    arg0->unk6 = 0;
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    if (arg0->ext.main_18.unk84 == 0)
+        arg0->unk2C = arg0->y_pos.i.hi < 0x891 ? 0x1000 : -0x1000;
+    else
+        arg0->unk2C = arg0->y_pos.i.hi >= 0x8B1 ? -0x1000 : 0x1000;
+}
+
+void func_80051A4C(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
+        if (--ext->unk85 == 0) {
+            func_8001540C(0, 0xE, NULL);
+            ext->unk85 = 3;
+        }
+        arg0->unk5C++;
+    }
+    if (arg0->animation_step.fields.event == 3)
+        func_8001540C(2, 0x39, arg0);
+    if (arg0->animation_step.fields.event != 1)
+        return;
+    arg0->unk61 = 0;
+    if (ext->unk88 == 0) {
+        ext->unk88 = 1;
+        func_80015D60(arg0, 0xB);
+        arg0->unk50 = (const u8*)&D_800FBEF8;
+        func_800527C0(ANIMATED_OBJECT(arg0));
+    } else {
+        ext->unk88 = 0;
+        func_80015D60(arg0, 0);
+        arg0->unk50 = (const u8*)&D_800FBEF4;
+    }
+    arg0->unk6 = 3;
+    arg0->unk7C = 0x1E;
+}
+
+extern u16 D_800FBEDC[12];
+extern struct Unk_unk68 D_800FBF08;
+extern u8 D_800FC340[];
+
+void func_800517D0(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+    struct ShotObj* shot;
+    struct MiscObj* misc;
+    s16 i;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        for (i = 0; i < 10; i++) {
+            if (D_800FBEDC[i] & ext->unk8A)
+                continue;
+            shot = find_free_shot_obj();
+            if (shot == NULL)
+                continue;
+            shot->active = 0x41;
+            shot->id = 0xC;
+            shot->unk2 = i;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->x_pos.val = (i << 21) + 0x17B10000;
+            shot->y_pos.val = 0x8200000;
+            shot->state = 3;
+            shot->unk15 = 0;
+            shot->unk7C = (struct WeaponObj*)&ext->unk8A;
+            shot->bg_offset = arg0->bg_offset;
+        }
+        ext->unk8A = 0x83FF;
+    }
+    if (arg0->animation_step.fields.event == 4) {
+        arg0->unk50 = (const u8*)&D_800FBF08;
+        arg0->unk54 = (const u8*)&D_800FBF08;
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        func_8001540C(2, 0x34, arg0);
+        for (i = 0; i < 8; i++) {
+            misc = find_free_misc_obj();
+            if (misc == NULL)
+                continue;
+            misc->active = 0x41;
+            misc->id = 6;
+            misc->unk2 = i;
+            misc->unk40 = arg0->unk40;
+            misc->unk42 = arg0->unk42 & 0x7FFF;
+            misc->animation_table = (u32**)arg0->animation_table;
+            misc->unk3C = (void*)arg0->sprite_frames;
+            misc->bg_offset = arg0->bg_offset;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->unk15 = 0;
+            misc->state = 0;
+            misc->y_pos.val = arg0->y_pos.val;
+        }
+        arg0->unk61 = -0x80;
+    }
+    if (arg0->animation_step.fields.event != 1)
+        return;
+    if (ext->unk88 == 0) {
+        arg0->unk50 = (const u8*)&D_800FBEF8;
+        arg0->unk54 = (const u8*)&D_800FBEF8;
+        func_80015D60(arg0, 0xA);
+    } else {
+        func_800527C0(ANIMATED_OBJECT(arg0));
+        arg0->unk50 = (const u8*)&D_800FBEF4;
+        arg0->unk54 = (const u8*)&D_800FBEF4;
+        func_80015D60(arg0, 9);
+    }
+    ext->unk85 = 3;
+    arg0->unk6 = 2;
+}
+
+void func_80051B74(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+
+    if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
+        if (--ext->unk85 == 0) {
+            func_8001540C(0, 0xE, NULL);
+            ext->unk85 = 3;
+        }
+        arg0->unk5C++;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+    if (arg0->animation_step.fields.event == 0) {
+        arg0->unk7C = 1;
+        return;
+    }
+    if (ext->unk88 != 0) {
+        func_80015D60(arg0, 0x10);
+        arg0->unk5 = 9;
+        arg0->unk6 = 0;
+        return;
+    }
+    ext->unk85 = 0;
+    ext->unk80 = 0;
+    func_800527F0(arg0);
+    if (*(u8*)&arg0->unk7E == 0xFF) {
+        *(u8*)&arg0->unk7E = get_random() & 1;
+        func_80036B18();
+    }
+}
+
+static void main_18_wall_hit(struct MainObj* arg0)
+{
+    func_800C813C(2, D_800FC340, arg0);
+    func_8001540C(2, 0x37, arg0);
+}
+
+void func_80051D60(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+
+    if (arg0->unk20 < 0) {
+        if (arg0->unk70 & 2) {
+            main_18_wall_hit(arg0);
+            func_80028B68(8, 4, 2);
+            arg0->unk15 = 0x40;
+            arg0->unk20 = -arg0->unk20;
+        }
+    } else if (arg0->unk70 & 1) {
+        main_18_wall_hit(arg0);
+        func_80028B68(8, 4, 2);
+        arg0->unk15 = 0;
+        arg0->unk20 = -arg0->unk20;
+    }
+    if (arg0->unk24 < 0 ? (arg0->unk70 & 8) : (arg0->unk70 & 4)) {
+        func_8001540C(5, 2, NULL);
+        main_18_wall_hit(arg0);
+        func_80028BAC(8, 4, 2);
+        arg0->unk24 = -arg0->unk24;
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (ext->unk86 == 2) {
+        if (ext->unk87 != 0) {
+            func_80015D60(arg0, 0xF);
+            arg0->unk6 = 3;
+        }
+        return;
+    }
+    if (--arg0->unk7C != 0)
+        return;
+    if ((u16)(arg0->y_pos.i.hi - 0x849) < 0x47 && (u16)(arg0->x_pos.i.hi - 0x17D1) < 0xEF) {
+        arg0->unk7C = 0x30;
+        arg0->unk6 = 2;
+        func_800527C0(ANIMATED_OBJECT(arg0));
+    } else {
+        arg0->unk7C = 1;
+    }
+}
+
+void func_80052044(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+    struct ShotObj* shot;
+    s16 i;
+
+    for (i = (ext->unk86 ^ 1) & 0xFF; i < 8; i += 2) {
+        shot = find_free_shot_obj();
+        if (shot == NULL)
+            continue;
+        shot->active = 0x41;
+        shot->id = 0xC;
+        shot->unk2 = i;
+        shot->unk40 = arg0->unk40;
+        shot->unk42 = arg0->unk42;
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->bg_offset = arg0->bg_offset;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->unk7C = (struct WeaponObj*)&arg0->state;
+        shot->state = 0;
+        shot->unk15 = arg0->unk15;
+    }
+    func_80015D60(arg0, ext->unk86 + 0xD);
+    ext->unk86++;
+    func_8001540C(2, 0x36, arg0);
+    arg0->unk6 = 1;
+}
+
+void func_800C91EC(struct MiscObj* arg0)
+{
+    func_80015D60(arg0, arg0->unk2 + 0x11);
+    arg0->ext.misc_6.saved_position.position.x = arg0->x_pos.i.hi;
+    arg0->ext.misc_6.saved_position.position.y = arg0->y_pos.i.hi;
+    func_8002B93C(MOVING_OBJECT(arg0), (arg0->unk2 * 4) & 0xFC);
+    arg0->ext.misc_6.timer = 0x14;
+    arg0->state = 1;
+    arg0->x_pos.val += arg0->x_vel.val * 180;
+    arg0->y_pos.val -= arg0->y_vel.val * 180;
+    arg0->x_vel.val = -(arg0->x_vel.val * 4);
+    arg0->y_vel.val = -(arg0->y_vel.val * 4);
+}
+
+extern u8 D_80108E68[4];
+extern u8 D_80108E6C[4];
+extern u8 D_80108E70[4];
+extern u8 D_80108E98[4];
+
+void func_8009B85C(struct ShotObj* arg0)
+{
+    const u8* offsets = (const u8*)&D_80108E74 + 0x14 + arg0->unk2 * 2;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk42 &= 0x7FFF;
+    func_8002B93C(MOVING_OBJECT(arg0), (arg0->unk2 * 4) & 0xFC);
+    arg0->y_vel.val *= 6;
+    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)offsets[1];
+    if (arg0->unk15 == 0) {
+        arg0->x_vel.val *= 6;
+        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi + (s8)offsets[0];
+    } else {
+        arg0->x_vel.val = -(arg0->x_vel.val * 6);
+        arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - (s8)offsets[0];
+    }
+    arg0->unk54 = D_80108E68;
+    arg0->unk50.data = D_80108E68;
+    arg0->unk5C = 6;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk60 = 3;
+    func_80015D60(arg0, arg0->unk2 + 0x11);
+}
+
+void func_8009BA6C(struct ShotObj* arg0)
+{
+    arg0->state = 4;
+    arg0->unk58.data = (const u8*)D_80105FF0;
+    arg0->unk68 = (struct Unk_unk68*)D_80108E70;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk54 = D_80108E6C;
+    arg0->unk50.data = D_80108E6C;
+    arg0->unk16 = 0;
+    arg0->x_vel.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk60 = 3;
+    arg0->unk42 &= 0x7FFF;
+    func_80015D60(arg0, 0x1D);
+}
+
+extern u8 D_8013B8E4[4];
+
+void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor)
+{
+    s16 x;
+    s16 y;
+    s32 roll;
+    u8 variant;
+
+    x_range &= get_random();
+    if (get_random() & 1)
+        x = arg0->x_pos.u.hi + (x_range & 0xFF);
+    else
+        x = arg0->x_pos.u.hi - (x_range & 0xFF);
+    y_range &= get_random();
+    if (get_random() & 1)
+        y = arg0->y_pos.u.hi + (y_range & 0xFF);
+    else
+        y = arg0->y_pos.u.hi - (y_range & 0xFF);
+    roll = func_8002B780();
+    divisor &= 0xFF;
+    if (divisor == 0 || roll % divisor == 0) {
+        D_8013B8E4[0]++;
+        variant = (D_8013B8E4[0] & 1) ? 2 : 3;
+    } else {
+        variant = 0xFF;
+    }
+    func_800AFAB4((s8)type, x, y, variant);
+}
+
+extern union AnimationStep* D_800FD1B8[];
+extern struct Unk_unk68 D_80106F74[];
+extern struct Unk_unk68 D_800FD19C[];
+extern void (*D_800FD1E8[])(struct MainObj*);
+
+void func_80058194(struct MainObj* arg0)
+{
+    arg0->state++;
+    arg0->unk5 = 2;
+    arg0->unk2 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)D_800FD1B8;
+    arg0->unk16 = 6;
+    arg0->collision_data = (const u16*)D_80106F74;
+    arg0->unk54 = (const u8*)D_800FD19C;
+    arg0->unk60 = 3;
+    arg0->unk5C = 9;
+    arg0->ext.main_26.last_health = 9;
+    arg0->ext.main_26.stage = 2;
+    arg0->unk15 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk50 = NULL;
+    arg0->unk61 = 0;
+    arg0->unk20 = 0;
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->x_pos.i.hi &= ~0xF;
+    arg0->y_pos.i.hi &= ~0xF;
+}
+
+void func_80058254(struct MainObj* arg0)
+{
+    struct Main26Ext* ext = &arg0->ext.main_26;
+    s32 hit = func_8002DD04(arg0);
+    s8 stage;
+
+    if (ext->last_health != arg0->unk5C) {
+        stage = ext->stage--;
+        if (stage == 1) {
+            func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi, 5);
+            arg0->unk5C = 1;
+        } else if (stage == 2) {
+            func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi, 0);
+        }
+        ext->last_health = arg0->unk5C;
+    }
+    if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10) == 0 || hit < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        func_8001540C(5, 1, NULL);
+        return;
+    }
+    D_800FD1E8[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x50, 0x30) != 0)
+        func_8002B0C8(OBJECT_HEADER(arg0));
+}
+
+void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base)
+{
+    u8 above;
+    u8 below;
+    u8 tile;
+    s16 left = (x & -0x10) - 0x10;
+    s16 top = y & -0x10;
+
+    above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x20);
+    if (above != 0x38)
+        above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x30);
+    below = func_8002D724(PLAYER_OBJECT(arg0), x, y + 0x30);
+
+    switch (above) {
+    case 0x31:
+        tile = 2;
+        break;
+    case 0:
+        tile = 3;
+        break;
+    case 0x30:
+        tile = 1;
+        break;
+    case 0x3C:
+        tile = 0;
+        break;
+    default:
+        tile = 4;
+        break;
+    }
+    func_800DABE4(tile + base, left, top - 0x20);
+
+    switch (below) {
+    case 0x31:
+        tile = 0x11;
+        break;
+    case 0:
+        tile = 0x12;
+        break;
+    case 0x30:
+        tile = 0x10;
+        break;
+    case 0x3C:
+        tile = 0xF;
+        break;
+    default:
+        tile = 0x13;
+        break;
+    }
+    func_800DABE4(tile + base, left, top + 0x10);
+
+    base &= 0xFF;
+    func_800DABE4(base == 0 ? 0x1E : base == 5 ? 0x1F
+                                               : 0x20,
+        left, top);
 }
 
 void func_800C6EDC(struct VisualObj* arg0)

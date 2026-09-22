@@ -10,7 +10,7 @@ void func_800B84DC(struct EffectObj* arg0)
 void func_800B8518(struct EffectObj* arg0)
 {
     arg0->ext.unk_effect.unk14 = 0;
-    func_800B8630();
+    func_800B8630(arg0);
     arg0->ext.unk_effect.unk15 = 0;
     arg0->state++;
 }
