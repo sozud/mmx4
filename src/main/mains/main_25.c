@@ -126,7 +126,30 @@ void func_80057A80(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057AE8);
+void func_80057AE8(struct MainObj* self)
+{
+    s16 tx;
+    s16 ty;
+    u8 hits;
+
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+
+    tx = self->x_pos.u.hi + self->unk68->unk0;
+    ty = self->unk68->unk3 + (self->y_pos.u.hi + self->unk68->unk1) + 0x1B;
+
+    hits = func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    tx -= self->unk68->unk2;
+    hits |= func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    hits |= func_8002D724(PLAYER_OBJECT(self), tx + self->unk68->unk2 * 2, ty);
+
+    if (hits != 0 && hits != 0x24) {
+        func_80015D60(self, 5);
+        self->unk2C = 0;
+        self->unk24 = 0;
+        self->unk6 = 2;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057C00);
 

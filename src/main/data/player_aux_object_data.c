@@ -1,7 +1,7 @@
 #include "common.h"
 #include "func_tables.h"
 
-void (*D_800F9AF8[7])() = {
+void (*D_800F9AF8[7])(struct MainObj*) = {
     func_8009216C,
     func_80042384,
     func_800423A0,

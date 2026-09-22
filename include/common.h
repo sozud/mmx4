@@ -97,10 +97,12 @@ typedef u16 Palette[16];
 #ifdef VERSION_JP
 #define PAD_CONFIRM PADRright
 #define PAD_CANCEL PADRdown
+#define PAD_SELECTION_ALT PADRdown
 #define PAD_SELECTION_BUTTONS (PADRright | PADRdown)
 #else
 #define PAD_CONFIRM PADRdown
 #define PAD_CANCEL PADRright
+#define PAD_SELECTION_ALT PADRup
 #define PAD_SELECTION_BUTTONS (PADRup | PADRdown)
 #endif
 
@@ -3464,11 +3466,22 @@ extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
+extern u8 D_801721B6;
 extern u8 D_801721BA;
 struct MemcardPath {
     char path[6];
 };
+
 extern const struct MemcardPath D_800100C0;
+
+struct MemcardFileList {
+    char names[15][22];
+    u8 count; // 0x14A
+    s8 pad14B;
+    s32 total_size; // 0x14C
+    s32 sizes[15]; // 0x150
+};
+
 extern u8 D_800F2180[];
 extern u8 D_800F21A0[];
 extern s16 D_800F21DC[];
@@ -3525,6 +3538,9 @@ extern struct Unk_unk68 D_800FBE0C;
 extern struct Unk_unk68 D_800FBE10;
 extern struct Unk_unk68 D_800FBE14;
 extern u8 D_800FBEB0[4];
+extern s32 D_800F9090[2];
+extern s32 D_800F9098[2];
+extern u16 D_800FBEDC[12];
 extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
@@ -4006,6 +4022,8 @@ extern s32 D_80139680;
 extern s32 D_80139684;
 extern s32 D_80139688;
 extern u8 D_800F1E90[];
+extern u8 D_800F1EAC[];
+extern u8 D_800F9AE4[8];
 extern u8* D_80173C80;
 extern u8 D_80173C84;
 extern void (*D_8010EBB4[16])();
@@ -4096,6 +4114,7 @@ void func_80012A3C();
 s32 func_8001540C(s32, s32, void*);
 s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
+void func_8001B718(s16, u8, u8);
 void func_8001C30C(struct MenuCharacterData*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
@@ -4303,6 +4322,8 @@ s32 func_800373DC(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
 void func_8003D8A8(struct RideArmorObj*, s32, s32);
 s32 func_8003DCD8(struct RideArmorObj*);
+void func_8003D7E4(struct RideArmorObj*, s32, s32);
+s32 func_8003B340(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);
 void func_80038E44(struct PlayerObj*, s32);
@@ -4381,10 +4402,15 @@ void func_80093524(struct WeaponObj*);
 void func_800A7A90(struct ShotObj*);
 void func_800AFB90(struct VisualObj*);
 void func_800BC3E8(struct EffectObj*);
+void func_800427C0(struct MainObj*);
+void func_80042824(struct MainObj*);
+void func_80042884(struct MainObj*);
 void func_800BD024(struct EffectObj*);
 void func_800BD080(struct EffectObj*);
 void func_800BDB10(struct EffectObj*);
 void func_800D9B48(struct LayerObj*);
+void func_800DCF40(void);
+void func_800E0CEC(void);
 void func_800E0D0C(void);
 void func_800E9040(void);
 void func_800D18C0(struct UnkObj*);
