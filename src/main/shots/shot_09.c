@@ -28,7 +28,7 @@ void func_8009B12C(struct ShotObj* arg0)
     temp_v0 = arg0->unk84.value - 1;
     arg0->unk84.value = temp_v0;
     if (temp_v0 != 0) {
-        if (*(u32*)&arg0->unk7C->active != 0) {
+        if (*(u32*)arg0->unk7C != 0) {
             func_8002D9BC(arg0);
             func_8002DD04(MAIN_OBJECT(arg0));
             if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {

@@ -7,7 +7,50 @@ void func_800B3E7C(struct VisualObj* arg0)
     D_8010A6A0[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_28", func_800B3EB8);
+void func_800B3EB8(struct VisualObj* obj)
+{
+    u16 flags;
+    u8 player_direction;
+    s8 type;
+    s8 mode;
+    struct PlayerObj* player = obj->unk50;
+
+    flags = obj->unk42;
+    player_direction = player->unk15;
+    obj->unk42 = flags & 0x7FFF;
+    obj->on_screen = 1;
+    obj->unk15 = player_direction;
+    type = obj->unk2;
+
+    switch (type) {
+    case 0:
+        func_80015D60(obj, 0xA);
+        obj->unk54 = 9;
+        break;
+    case 1:
+        func_80015D60(obj, 0x1A);
+        mode = obj->unk5C.fields.mode;
+        switch (mode) {
+        case 0:
+            obj->unk54 = 0x20;
+        case 1:
+        case 2:
+            obj->unk54 = 0x28;
+            break;
+        }
+        break;
+    case 2:
+        func_80015D60(obj, 0x19);
+        player->unk8F = 2;
+        break;
+    case 3:
+        func_80015D60(obj, 0xE);
+        break;
+    }
+
+    obj->unk5C.value = 0;
+    obj->state++;
+}
 
 INCLUDE_ASM("main/nonmatchings/visuals/visual_28", func_800B3FD4);
 

@@ -219,7 +219,47 @@ void func_800906E4(struct MainObj* arg0)
     D_80105EB8[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090720);
+void func_80090720(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s16 timer;
+    s16 x_offset;
+    s8 state;
+
+    state = arg0->unk7;
+    if (state == 0) {
+        arg0->unk7++;
+        func_80015D60(arg0, 8);
+        func_80015D60(arg0->ext.main_75.shot, 5);
+        func_8001540C(2, 1, arg0);
+        shot = arg0->ext.main_75.shot;
+        x_offset = 0x18;
+        if (arg0->unk15 != 0) {
+            x_offset = -0x18;
+        }
+        shot->unk84.shot_55.x = x_offset;
+        arg0->ext.main_75.shot->unk84.shot_55.y = 4;
+        arg0->unk24 = FIXED(0.5);
+        arg0->unk7C = 0x3C;
+        arg0->unk68 = &D_801059D8;
+        arg0->ext.main_75.unk94 = 1;
+        arg0->unk20 = 0;
+        arg0->ext.main_75.unk93 = 0xA;
+        return;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    timer = (u16)arg0->unk7C - 1;
+    arg0->unk7C = timer;
+    if (timer == 0) {
+        arg0->unk7 = 0;
+        arg0->unk6++;
+        func_80015D60(arg0, 0xB);
+        func_80015930(2U, 1U);
+        func_80015D60(arg0->ext.main_75.shot, 7);
+        arg0->unk24 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090838);
 

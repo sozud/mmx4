@@ -2,16 +2,26 @@
 // 800A16FC..800A22D4
 #include "common.h"
 
-s8 D_80109510[10][4] = {
-    { -6, -10, 10, 18 },
-    { -17, -10, 33, 18 },
-    { 0, -1, 11, 3 },
-    { -6, -5, 10, 11 },
-    { -7, -15, 13, 30 },
-    { 0, 0, 7, 8 },
-    { 10, 10, 10, 11 },
-    { 40, 40, 40, 42 },
-    { 41, 41, 41, 42 },
+struct Shot34Data {
+    struct Unk_unk68 bounds[6];
+    u8 effect_animation_ids[3][4];
+    s8 trailing_data[4];
+};
+
+struct Shot34Data D_80109510 = {
+    {
+        { -6, -10, 10, 18 },
+        { -17, -10, 33, 18 },
+        { 0, -1, 11, 3 },
+        { -6, -5, 10, 11 },
+        { -7, -15, 13, 30 },
+        { 0, 0, 7, 8 },
+    },
+    {
+        { 10, 10, 10, 11 },
+        { 40, 40, 40, 42 },
+        { 41, 41, 41, 42 },
+    },
     { 18, 9, -18, 9 },
 };
 
@@ -106,7 +116,40 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1CCC);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1E3C);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1F7C);
+void func_800A1F7C(struct ShotObj* arg0)
+{
+    s16 shot_x;
+    s32 distance;
+    u8 collision_flags;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+
+    if (arg0->unk6 == 0) {
+        shot_x = arg0->x_pos.i.hi;
+        distance = g_Player.x_pos.i.hi - shot_x;
+        if (distance >= 0 ? distance < 8 : shot_x - g_Player.x_pos.i.hi < 8) {
+            arg0->x_vel.val = 0;
+            arg0->unk6++;
+            func_80015D60(arg0, 0x11);
+            return;
+        }
+
+        collision_flags = arg0->unk70;
+        if ((collision_flags & 3) && !(collision_flags & 8)) {
+            arg0->x_vel.val = 0;
+            arg0->unk6++;
+            arg0->unk15 ^= 0x40;
+            func_80015D60(arg0, 0x11);
+        }
+    } else if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->y_vel.val = FIXED(-3);
+        func_80015D60(arg0, 0x10);
+        arg0->unk68 = &D_80109510.bounds[2];
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A2098);
 

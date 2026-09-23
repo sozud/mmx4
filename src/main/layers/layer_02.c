@@ -255,7 +255,27 @@ void func_800D9A04(struct LayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9A58);
+void func_800D9A58(struct LayerObj* arg0)
+{
+    struct MiscObj* misc;
+    u8 state = arg0->private_state.value.bytes[0];
+
+    if (state != 1) {
+        if (state == 0) {
+            if ((s16)func_8002BAD0(1, 0, 0x40) == 0x18) {
+                misc = find_free_misc_obj();
+                if (misc != 0) {
+                    misc->active = 0x41;
+                    misc->id = 0x14;
+                    misc->ext.misc_20.owner = arg0;
+                    arg0->private_state.value.bytes[0] = 1;
+                }
+            }
+        } else if ((s16)func_8002BAD0(1, 0, 0x40) != 0x18) {
+            arg0->private_state.value.bytes[0] = 0;
+        }
+    }
+}
 
 u8 func_800D9B08(struct LayerObj* arg0)
 {

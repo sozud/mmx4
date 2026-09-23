@@ -45,7 +45,47 @@ void func_8006F244(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006F304);
+void func_8006F304(struct MainObj* arg0)
+{
+    s16 timer = arg0->unk7C;
+    s16 remaining;
+    u32** animation_table;
+    struct ShotObj* shot;
+
+    if (timer == 0) {
+        if (arg0->animation_step.fields.event == 1) {
+            arg0->animation_step.fields.event = 0;
+            shot = find_free_shot_obj();
+            if (shot != 0) {
+                shot->active = 0x41;
+                shot->id = 0x22;
+                shot->unk40 = arg0->unk40;
+                shot->unk42 = arg0->unk42;
+                shot->unk3C = ANIMATED_OBJECT(arg0)->unk3C;
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                animation_table = ANIMATED_OBJECT(arg0)->animation_table;
+                shot->unk7C = WEAPON_OBJECT(arg0);
+                shot->unk2 = 0;
+                shot->animation_table = animation_table;
+            }
+        }
+        if (arg0->animation_step.fields.event == 2) {
+            arg0->animation_step.fields.event = 0;
+            arg0->unk7C = 10;
+            remaining = (u16)arg0->unk7E - 1;
+            arg0->unk7E = remaining;
+            if (remaining == 0) {
+                arg0->unk6++;
+                func_80015D60(arg0, 3);
+            }
+        }
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+    } else {
+        arg0->unk7C = timer - 1;
+    }
+}
 
 void func_8006F41C(struct MainObj* arg0)
 {
@@ -150,7 +190,27 @@ void func_8006FAE4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FB20);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006FBFC);
+struct VisualObj* func_8006FBFC(struct MainObj* arg0)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual != 0) {
+        visual->active = 0x41;
+        visual->id = 0x17;
+        visual->unk2 = 2;
+        visual->x_pos.val = arg0->x_pos.val;
+        visual->y_pos.val = arg0->y_pos.val - FIXED(8);
+        visual->unk40 = arg0->unk40;
+        visual->animation_table = ANIMATED_OBJECT(arg0)->animation_table;
+        visual->unk3C = ANIMATED_OBJECT(arg0)->unk3C;
+        visual->unk15 = arg0->unk15;
+        visual->bg_offset = arg0->bg_offset;
+        visual->unk50 = PLAYER_OBJECT(arg0);
+        func_8001540C(2, 0xAE, arg0);
+        return visual;
+    }
+    return 0;
+}
 
 s32 func_8006FCB8(struct PlayerObj* arg0, s32 arg1, s32 arg2)
 {

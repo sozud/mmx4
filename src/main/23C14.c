@@ -1856,7 +1856,26 @@ s32 func_80037338(struct PlayerObj* arg0)
     return 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800373DC);
+s32 func_800373DC(struct PlayerObj* arg0)
+{
+    if (arg0->unkC3 != 0 || arg0->unk2 != 0) {
+        return 0;
+    }
+    if (func_800375B4(arg0) != 0) {
+        return 1;
+    }
+    func_80037708(arg0);
+    if (arg0->unk8F == 0) {
+        return 0;
+    }
+    if (D_800F8BF8[arg0->unk96] == 0) {
+        func_800387A8(arg0);
+    } else {
+        arg0->unk8C = 0;
+        func_80037484(arg0, 1);
+    }
+    return 1;
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80037484);
 
@@ -3425,7 +3444,22 @@ void func_8003B24C(struct PlayerObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003B340);
+s32 func_8003B340(struct PlayerObj* arg0)
+{
+    if (arg0->unkC3 != 0 || !(arg0->animation_step.fields.event & 0x40)) {
+        return 0;
+    }
+
+    arg0->unk8E = 0;
+    if (func_80033EA4(arg0) != 0 || func_80039880(arg0) != 0 || func_80033414(arg0) != 0) {
+        return 1;
+    }
+    if (func_800398F0(arg0) != 0) {
+        return 1;
+    }
+    arg0->unk8E = 1;
+    return 0;
+}
 
 void func_8003B3DC(struct RideArmorObj* arg0)
 {

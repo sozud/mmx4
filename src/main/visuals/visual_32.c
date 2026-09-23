@@ -80,7 +80,41 @@ void func_800B52D8(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B5348);
+void func_800B5348(struct VisualObj* self)
+{
+    u8 i;
+    u8 shot_type;
+    s8 state;
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    state = self->unk5;
+    if (state == 0) {
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk5 = state + 1;
+            i = 0;
+            do {
+                shot = find_free_shot_obj();
+                if (shot != 0) {
+                    shot->active = 0x41;
+                    shot->id = 0x2E;
+                    shot_type = self->unk2;
+                    shot->timer = i;
+                    shot->unk7C = WEAPON_OBJECT(self);
+                    shot->unk2 = shot_type + 1;
+                }
+                i += 1;
+            } while (i < 2);
+            self->unk56 = 5;
+        }
+    } else if (--self->unk56 == 0) {
+        self->state = 2;
+    }
+    is_on_screen(BASE_OBJECT(self));
+    if (self->unk50->state == 2) {
+        self->state = 2;
+    }
+}
 
 void func_800B5448(struct VisualObj* arg0)
 {

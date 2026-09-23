@@ -29,7 +29,7 @@ void func_8004ECB0(struct MainObj* arg0)
     arg0->ext.main_16.unk88 = 0;
     arg0->ext.main_16.unk8C = 0;
     arg0->ext.main_16.unk90 = 0;
-    arg0->ext.main_16.unk94 = 0;
+    arg0->ext.main_16.shot_09_active = 0;
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
@@ -319,6 +319,29 @@ void func_8004FC50(struct AnimatedObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FC80);
+void func_8004FC80(struct MainObj* obj)
+{
+    struct ShotObj* shot = find_free_shot_obj();
+
+    if (shot != 0) {
+        u8 final_unk15;
+
+        shot->active = 0x41;
+        shot->id = 9;
+        shot->unk2 = 0;
+        shot->unk40 = obj->unk40;
+        shot->unk42 = obj->unk42;
+        shot->animation_table = ANIMATED_OBJECT(obj)->animation_table;
+        shot->unk3C = ANIMATED_OBJECT(obj)->unk3C;
+        shot->unk15 = obj->unk15;
+        shot->bg_offset = obj->bg_offset;
+        shot->x_pos.val = obj->x_pos.val;
+        shot->y_pos.val = obj->y_pos.val;
+        final_unk15 = obj->unk15;
+        shot->unk7C = (struct WeaponObj*)&obj->ext.main_16.shot_09_active;
+        shot->state = 0;
+        shot->unk15 = final_unk15;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_16", func_8004FD38);
