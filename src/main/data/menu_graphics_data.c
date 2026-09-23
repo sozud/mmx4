@@ -37,11 +37,6 @@ u8 D_800F1FC0[32] = {
     0xF7,
 };
 
-struct MenuTextureData {
-    u32 texture[96];
-    s16 bounds[8];
-};
-
 struct MenuTextureData D_800F1FE0 = {
     {
         0x00000700,

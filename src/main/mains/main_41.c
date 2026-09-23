@@ -123,7 +123,43 @@ void func_800626F0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062778);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_41", func_80062910);
+void func_80062910(struct MainObj* self)
+{
+    s16 timer;
+
+    switch (self->unk6) {
+    case 0:
+        self->unk6 = 1;
+        self->ext.main_41.unk84 = 0;
+        self->ext.main_41.unk83 = 0;
+        self->unk7C = 0;
+        func_80015D60(self, 2);
+        break;
+    case 1:
+        if (self->animation_step.fields.relative_step < 0) {
+            self->unk6 = 2;
+            func_80015D60(self, 3);
+            return;
+        }
+        func_80015DC8(ANIMATED_OBJECT(self));
+        break;
+    case 2:
+        timer = self->unk7C;
+        if (timer >= 6) {
+            self->unk5 = 2;
+            self->unk6 = 0;
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xEB, self);
+            }
+            return;
+        }
+        if (self->animation_step.fields.relative_step < 0) {
+            self->unk7C = timer + 1;
+        }
+        func_80015DC8(ANIMATED_OBJECT(self));
+        break;
+    }
+}
 
 void func_80062A0C(struct MainObj* self)
 {

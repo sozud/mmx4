@@ -2437,7 +2437,11 @@ void func_8001C3E8(void)
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C4B4);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_8001C5A8);
+void func_8001C5A8(u8** arg0)
+{
+    __builtin_memcpy(*arg0 + 0x60, D_800F1FC0, 0x20);
+    __builtin_memcpy(*arg0 + 0x80, D_800F1FE0.texture, 0x180);
+}
 
 void InitMemcards(void)
 {

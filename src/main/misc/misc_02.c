@@ -60,7 +60,47 @@ void func_800C813C(s32 arg0, void* arg1, void* arg2)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C8214);
+void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5)
+{
+    s32 var_s1;
+    u8* var_s3;
+    s16 var_s4;
+    struct MainObj* var_s2;
+    struct MiscObj* temp_v0;
+    struct MiscObj* obj;
+    u8 temp_v1;
+
+    var_s3 = arg1;
+    var_s1 = arg0;
+    var_s4 = arg3;
+    var_s2 = arg2;
+    if (var_s1 & 0xFF) {
+        do {
+            temp_v0 = find_free_misc_obj();
+            if (temp_v0 != NULL) {
+                obj = temp_v0;
+                obj->active = 0x41;
+                obj->id = 3;
+                obj->unk2 = 1;
+                obj->unk15 = get_random() & 0x40;
+                obj->state = 0;
+                obj->unk5 = 0;
+                obj->unk6 = 0;
+                obj->x_pos.val = var_s2->x_pos.val + (get_random() & 3) + arg4;
+                obj->y_pos.val = var_s2->y_pos.val + (get_random() & 3) + arg5;
+                temp_v1 = *var_s3;
+                obj->ext.misc_2.owner = var_s2;
+                obj->unk42 = var_s4;
+                obj->ext.misc_2.unk58 = temp_v1;
+                obj->unk3C = ANIMATED_OBJECT(obj->ext.misc_2.owner)->unk3C;
+                obj->animation_table = ANIMATED_OBJECT(obj->ext.misc_2.owner)->animation_table;
+                var_s3 += 1;
+                obj->unk40 = obj->ext.misc_2.owner->unk40;
+            }
+            var_s1 -= 1;
+        } while (var_s1 & 0xFF);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C833C);
 

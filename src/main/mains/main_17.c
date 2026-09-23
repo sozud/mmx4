@@ -93,7 +93,43 @@ void func_80050480(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_17", func_80050540);
+void func_80050540(struct MainObj* self)
+{
+    s32 distance;
+    s32 target_y;
+    s32 current_y;
+
+    if (self->unk70 & 8) {
+        if (self->ext.main_17.unk8C != 0) {
+            self->unk5 = 4;
+            self->unk6 = 0;
+            self->unk67 = 0;
+        } else {
+            func_80015D60(self, 0);
+            target_y = self->ext.main_17.saved_unk5;
+            current_y = self->y_pos.val;
+            distance = target_y - current_y;
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->unk24 = 0;
+            self->unk2C = 0;
+            self->unk20 = 0;
+            self->unk28 = 0;
+            self->unk67 = 0;
+            if (distance >= 0 ? distance > 0x7FFFF : current_y - target_y > 0x7FFFF) {
+                self->ext.main_17.unk80 = 4;
+                self->ext.main_17.unk84 = 3;
+                self->ext.main_17.unk88 = 0xC;
+            }
+        }
+    } else {
+        func_8002B694(ANIMATED_OBJECT(self));
+        if (self->unk20 == 0) {
+            self->unk28 = 0;
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_80050644(struct MainObj* arg0)
 {

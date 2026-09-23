@@ -4074,7 +4074,38 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003E0D0);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003E274);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003E368);
+void func_8003E368(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk98.packed = 0x160;
+        func_80015D60(self, 0);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x29);
+        self->pad87 = 0;
+    }
+    if (self->unk94.bytes.pad94[0] == 2) {
+        func_8003DC44(BASE_OBJECT(self), 0xD);
+        return;
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->input_flags & 8)) {
+        func_8003DC44(BASE_OBJECT(self), 0xC);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (func_8003DC50(self)) {
+            func_8003DC44(BASE_OBJECT(self), 2);
+        } else if ((u16)self->unk8A & 0x80) {
+            func_8003DC44(BASE_OBJECT(self), 4);
+        } else if (func_8003DCD8(self)) {
+            func_8003DC44(BASE_OBJECT(self), 3);
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003E488);
 
@@ -4184,9 +4215,74 @@ void func_8003F244(struct RideArmorObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003F31C);
+void func_8003F31C(struct RideArmorObj* self)
+{
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (!(self->input_flags & 8)) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+        } else {
+            func_8003DC50(self);
+            if (!(self->unk94.bytes.unk97 & 0x10)) {
+                if (self->unk94.bytes.pad94[0] == 0) {
+                    self->unk6 = 2;
+                    self->unk98.packed = 0x420;
+                    if (self->unk15 == 0) {
+                        self->x_vel.val = FIXED(-4.125);
+                    } else {
+                        self->x_vel.val = FIXED(4.125);
+                    }
+                    self->unk90.byte = 0x1E;
+                    func_8003D7E4(self, 4, 1);
+                    func_80015D60(self, 0xF);
+                    func_8003DC1C(PLAYER_OBJECT(self), 0x36);
+                    if (self->unk2 == 0) {
+                        func_8001540C(5, 5, 0);
+                    } else {
+                        func_8001540C(5, 6, 0);
+                    }
+                }
+            }
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003F44C);
+void func_8003F44C(struct RideArmorObj* self)
+{
+    u32 i;
+    u8 parts;
+
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (!(self->input_flags & 8)) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+        } else {
+            func_8003DC50(self);
+            if (!(self->unk94.bytes.unk97 & 0x10)) {
+                if (self->unk94.bytes.pad94[0] == 0) {
+                    self->unk6 = 5;
+                    parts = self->spawned_parts;
+                    for (i = 0; i < 3; i++, parts >>= 1) {
+                        if (!(parts & 1)) {
+                            func_8003D8A8(self, (u8)i, 1);
+                            self->spawned_parts |= 1 << i;
+                        }
+                    }
+                    self->unk7E = 0x10;
+                    func_8001540C(5, 6, 0);
+                }
+            }
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_8003F570(struct RideArmorObj* arg0)
 {
@@ -4247,7 +4343,41 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003F908);
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003FA58);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003FBD8);
+void func_8003FBD8(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk7D = 1;
+        self->unk98.packed = 0x160;
+        func_80015D60(self, 0xD);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x3C);
+        self->pad87 = 0;
+        func_8001540C(5, 5, 0);
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (self->input_flags & 8) {
+        func_8003DC44(BASE_OBJECT(self), 5);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if ((u16)self->unk8A & 0x80) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+            return;
+        }
+        if (func_8003DCD8(self)) {
+            func_8003DC44(BASE_OBJECT(self), 0x11);
+            return;
+        }
+        if (func_8003DC50(self)) {
+            func_8003DD2C(MAIN_OBJECT(self));
+            func_8003DD14(MAIN_OBJECT(self));
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_8003FD08);
 
@@ -4267,9 +4397,84 @@ void func_8003FF58(struct MainObj* arg0)
     arg0->y_pos.val += arg0->unk24;
 }
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_8003FF9C);
+void func_8003FF9C(struct RideArmorObj* self)
+{
+    s32 velocity;
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800400C8);
+    switch (self->unk90.bytes.action_state) {
+    case 1:
+        self->unk90.bytes.action_state = 2;
+        self->saved_x_vel = self->x_vel.val >> 8;
+        self->saved_y_vel = self->y_vel.val >> 8;
+        self->saved_x_accel = self->unk28 >> 8;
+        self->saved_y_accel = self->unk2C >> 8;
+        if (self->unk15 == 0) {
+            velocity = self->launch_speed << 8;
+        } else {
+            velocity = -(self->launch_speed << 8);
+        }
+        self->x_vel.val = velocity;
+        self->unk28 = 0x5800;
+        self->y_vel.val = 0;
+        self->unk2C = 0x5800;
+        break;
+    case 2:
+        func_8002B694(ANIMATED_OBJECT(self));
+        velocity = self->x_vel.val;
+        if (velocity < 0) {
+            velocity = -velocity;
+        }
+        if (velocity < 0x4800) {
+            self->unk90.bytes.action_state = 0;
+            self->unk94.bytes.unk97 ^= 2;
+            self->x_vel.val = self->saved_x_vel << 8;
+            self->unk28 = self->saved_x_accel << 8;
+            self->unk2C = self->saved_y_accel << 8;
+        }
+        if (self->input_flags & 8) {
+            self->y_vel.val = 0;
+        }
+        break;
+    }
+}
+
+void func_800400C8(struct PlayerObj* self)
+{
+    s8 temp_v0;
+    u8 temp_v1;
+
+    temp_v1 = self->unk8D;
+    switch (temp_v1) {
+    case 1:
+        self->unk8D = 2;
+        *(u8*)&self->unk8C = 0xFF;
+        g_Player.unkC5 = 0;
+        self->unk97 ^= 0x40;
+        func_80035EA4(&g_Player);
+        self->unk90 = 0x1E;
+        self->unk97 |= 4;
+        func_800C813C(7, D_800F9118, self);
+        return;
+    case 2:
+        temp_v0 = (u8)self->unk90 - 1;
+        self->unk90 = temp_v0;
+        if (temp_v0 == 0) {
+            self->state = 2;
+            self->on_screen = 0;
+            func_800AF808(BASE_OBJECT(self));
+            func_80015930(5, 8);
+            return;
+        }
+        func_800AF878(BASE_OBJECT(self), 0, 0x1F, 0x1F);
+        return;
+    default:
+        if ((*(u8*)&self->unk8C == 0) && !(*(u8*)&self->unk97 & 0x80)) {
+            self->unk85 = 0;
+            self->unk42 &= 0x7FFF;
+        }
+        return;
+    }
+}
 
 void func_800401F8(struct PlayerObj* arg0)
 {
@@ -4289,7 +4494,27 @@ void func_800401F8(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_80040248);
 
-INCLUDE_ASM("main/nonmatchings/23C14", func_800402C4);
+void func_800402C4(struct PlayerObj* self)
+{
+    s16 x_limit;
+    s16 y_limit;
+    if (self->unk97 & 0x40) {
+        x_limit = (u16)background_objects[self->bg_offset].unk1C + 0x140;
+        if (self->x_pos.i.hi + 0x20 >= x_limit) {
+            self->x_pos.i.hi = background_objects[self->bg_offset].unk1C + 0x120;
+        }
+        if (self->x_pos.i.hi - 0x20 < background_objects[self->bg_offset].unk1E) {
+            self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x20;
+        }
+    }
+    y_limit = (u16)background_objects[self->bg_offset].unk20 + 0xF0;
+    if (self->y_pos.i.hi - 0x20 >= y_limit) {
+        self->state = 2;
+        if (self->unk97 & 0x40) {
+            g_Player.unk5C = -0x80;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/23C14", func_800403DC);
 
