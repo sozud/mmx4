@@ -169,7 +169,42 @@ void func_8002E698(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 2
-INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E7BC);
+void func_8002E7BC(struct EngineObj* arg0)
+{
+    struct MiscObj* misc;
+    struct QuadObj* quad;
+    u8 i;
+
+    if (controller_state & (PAD_CONFIRM | PADstart)) {
+        background_objects[0].y_pos.i.hi = 0x110;
+        background_objects[0].unk4C = 1;
+    }
+    if (background_objects[0].y_pos.i.hi < 0x110) {
+        background_objects[0].y_pos.i.hi++;
+        return;
+    }
+
+    arg0->unk2 = 0;
+    arg0->unk1++;
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0xD;
+        misc->unk2 = 0;
+    }
+    for (i = 0; i < 8; i++) {
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = -0x7F;
+            quad->id = 1;
+            quad->unk2 = i;
+        }
+    }
+    arg0->unk3C = BASE_OBJECT(quad);
+    if (arg0->unk5F >= 5) {
+        arg0->unk3 = 8;
+    }
+}
 
 // engine_state_3_update_funcs state 3
 void func_8002E8D4(struct EngineObj* arg0)

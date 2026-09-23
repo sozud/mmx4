@@ -854,7 +854,7 @@ struct Main43Ext {
     u8 unk93;
     u8 unk94;
     u8 unk95;
-    u8 animation_id;
+    s8 animation_id;
     s8 animation_set;
 };
 
@@ -2365,6 +2365,10 @@ union RideArmorUnk94 {
 union RideArmorUnk90 {
     u32 value;
     s8 byte;
+    struct {
+        u8 pad90[3];
+        u8 action_state;
+    } bytes;
 };
 
 struct RideArmorObj {
@@ -2391,7 +2395,7 @@ struct RideArmorObj {
     u8 unk7C;
     u8 unk7D;
     u8 unk7E;
-    s8 pad7F;
+    u8 spawned_parts;
     union RideArmorUnk80 unk80;
     u8 unk84;
     u8 unk85;
@@ -2404,7 +2408,13 @@ struct RideArmorObj {
     union RideArmorUnk90 unk90;
     union RideArmorUnk94 unk94;
     union RideArmorUnk98 unk98;
-    s8 pad9A[0xA8 - 0x9A];
+    s16 pad9A;
+    s16 saved_x_vel;
+    s16 saved_y_vel;
+    s16 saved_x_accel;
+    s16 saved_y_accel;
+    s16 launch_speed;
+    s8 padA6[2];
     s8 input_flags;
     s8 padA9[0xB0 - 0xA9];
 }; // size 0xB0
@@ -4256,6 +4266,13 @@ void func_800BF60C(struct BaseObj*, s8);
 void func_800C7DA4(s32, const u8*, void*, s32);
 void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
+extern u8 D_800F9118[8];
+struct MenuTextureData {
+    u32 texture[96];
+    s16 bounds[8];
+};
+extern u8 D_800F1FC0[32];
+extern struct MenuTextureData D_800F1FE0;
 struct ShotObj* func_80064E58(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
 void func_80089798(struct MainObj*);

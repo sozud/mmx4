@@ -1855,7 +1855,7 @@ void func_80058044(struct MainObj* arg0);
 // D_800FD168
 void func_800574FC(struct MainObj*);
 void func_8005754C(void);
-void func_800576F4(void);
+void func_800576F4(struct MainObj*);
 
 // D_800FD174
 void func_80057824(struct MainObj*);
