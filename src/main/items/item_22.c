@@ -69,7 +69,40 @@ void func_800C5544(struct ItemObj* arg0)
     D_8010D318[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5580);
+void func_800C5580(struct ItemObj* self)
+{
+    s32 rand_x;
+    s32 rand_y;
+    s32 x_offset;
+    s32 frame_index;
+    const u8* archive;
+    s8 state;
+    s8 bg_offset;
+
+    self->unk54 = D_8010D2C0;
+    self->unk58 = (u8*)D_80108584;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk5C = 3;
+    self->unk40 = D_801406A8[func_8002938C(0x28)] >> 7;
+
+    rand_x = func_8002938C(0x28);
+    rand_y = func_8002938C(0x28);
+    x_offset = rand_x * 4 + 0x18;
+    self->unk42 = (x_offset % 16) | (((rand_y + 6) / 4 + 0x1E0) << 6);
+
+    frame_index = func_8002938C(0x28) * 4;
+    archive = (const u8*)SP_MENU_FRAMES;
+    state = self->state + 1;
+    self->sprite_frames = archive + *(const s32*)((unsigned long)frame_index + (unsigned long)archive);
+
+    bg_offset = g_Player.bg_offset;
+    self->animation_table = (u8**)D_8010D2F0;
+    self->unk7C.timer = 0xC8;
+    self->ext.packed = 0;
+    self->state = state;
+    self->unk5 = 0;
+    self->bg_offset = bg_offset;
+}
 
 void func_800C56B4(struct ItemObj* arg0)
 {

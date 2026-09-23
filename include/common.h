@@ -1589,6 +1589,7 @@ struct Shot29Ext {
 
 union ShotUnk8C {
     s32 word;
+    struct ShotObj* shot;
     u16 half;
     s16 halves[2];
     s8 byte;
@@ -1653,6 +1654,7 @@ struct ShotObj {
     s32 : 32;
     union {
         s32 value;
+        u32* collision_state;
         u16 halves[2];
         u8 bytes[4];
         struct Shot24Ext shot_24;
@@ -1699,8 +1701,8 @@ struct Weapon7Ext {
 struct Weapon3Ext {
     u16 offset;
     u16 lifetime;
-    u8 unk90;
-    u8 unk91;
+    s8 unk90;
+    s8 unk91;
 };
 
 struct Weapon6Ext {
@@ -1729,6 +1731,10 @@ struct Weapon10Ext {
 struct Weapon14Ext {
     u8 unk8C;
     s8 unk8D;
+};
+
+struct Weapon13Ext {
+    u8 timer;
 };
 
 struct Weapon16Ext {
@@ -1797,6 +1803,7 @@ union WeaponObjExt {
     struct Weapon8Ext weapon_8;
     struct Weapon10Ext weapon_10;
     struct Weapon14Ext weapon_14;
+    struct Weapon13Ext weapon_13;
     struct Weapon15Ext weapon_15;
     struct Weapon16Ext weapon_16;
     struct Weapon17Ext weapon_17;
@@ -1840,7 +1847,7 @@ struct WeaponObj {
     s8 pad6C[4];
     u8 unk70;
     s8 unk71;
-    s8 unk72;
+    u8 unk72;
     s8 unk73;
     s8 unk74;
     s8 unk75;
@@ -2121,6 +2128,11 @@ struct Misc15Ext {
 	u16 unk54;
 };
 
+struct Misc16Ext {
+    u8 pad50[4];
+    u16 timer;
+};
+
 struct Misc51Ext {
     struct MainObj* source;
     u8 unk54;
@@ -2278,6 +2290,7 @@ union MiscExt {
     struct Misc8Ext misc_8;
     struct Misc11Ext misc_11;
     struct Misc15Ext misc_15;
+    struct Misc16Ext misc_16;
     struct Misc42Ext misc_42;
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
@@ -2634,6 +2647,17 @@ extern s8 D_800FEA5C[];
 extern struct Unk_unk68 D_800FF5B0;
 extern u16 D_800FF6E0;
 extern u16 D_800FF6E2;
+extern struct Unk_unk68 D_801075F4[];
+
+struct Effect14ItemSpawn {
+    u8 reserved;
+    u8 id;
+    u16 x;
+    u16 y;
+};
+extern struct Effect14ItemSpawn D_8010B644[19];
+extern struct Unk_unk68 D_80108584[];
+extern u8 D_8010CB54[2][4];
 extern u8 D_800FF774[];
 extern u8 D_800FF994[];
 extern u8 D_800FF998[];
@@ -3027,6 +3051,11 @@ struct UnkEffectExt {
     void* unk18;
 };
 
+struct Effect26Ext {
+    u16 timer;
+    u8 quad_timer;
+};
+
 struct Effect4Ext {
     u16 timer;
     s16 unk16;
@@ -3228,7 +3257,7 @@ union EffectExt {
     struct Effect12Ext effect_12;
     struct Effect16Ext effect_16;
     struct Effect9Ext effect_9;
-    u16 effect_26_timer;
+    struct Effect26Ext effect_26;
     struct Effect4Ext effect_4;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
@@ -3477,6 +3506,8 @@ extern struct EffectObj* D_8013B8E8[22];
 extern u8* D_8010BE5C[2];
 extern struct Effect28AnimationStep* D_8010BF24[3];
 extern s16 D_8010BFA8[10];
+extern u8 D_8010BFBC[12];
+extern s16 D_8010BFC8[10];
 extern u8* D_8010C084[2];
 extern u8* D_8010C0CC[2];
 extern u8* D_8010C0F4[1];

@@ -106,7 +106,45 @@ store_timer:
     arg0->unk7E = new_timer;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091D1C);
+void func_80091D1C(struct MainObj* self)
+{
+    s32 collision;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->on_screen = 0;
+
+    if (self->unk5 == 0) {
+        if (self->unk7C != 0) {
+            self->unk7C--;
+        }
+        func_80091C64(self);
+        if (self->unk7C == 0) {
+            func_80091B1C(self);
+        }
+    } else {
+        func_80091AC4(self);
+    }
+
+    CollisionRelated(PLAYER_OBJECT(self));
+    collision = func_8002DD04(self);
+    if (collision < 0) {
+        func_800AF808(BASE_OBJECT(self));
+        func_800C813C(4, D_80105FA4, self);
+        self->state = 2;
+        return;
+    }
+
+    if (collision != 0) {
+        self->unk7C = 0x3C;
+    }
+    func_8002D9BC(self);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state = 2;
+    }
+}
 
 void func_80091E18(struct MainObj* arg0)
 {

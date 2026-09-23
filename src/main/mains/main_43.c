@@ -285,9 +285,72 @@ void func_800646B0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800646EC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800648D0);
+void func_800648D0(struct MainObj* arg0)
+{
+    struct VisualObj* self = VISUAL_OBJECT(arg0);
+    s8 state = self->unk7;
+    u32 i;
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800649C0);
+    switch (state) {
+    case 0:
+        self->unk7 = 1;
+        func_80015D60(self, 4);
+        break;
+    case 1:
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk7 = 2;
+        } else if (self->animation_step.fields.event != 0) {
+            for (i = 0; i < 4U; i++) {
+                func_80064F24(self, (i + 1) & 0xFF);
+            }
+            self->animation_step.fields.event = 0;
+            func_8001540C(2, 0x73, self);
+        }
+        func_80015DC8(ANIMATED_OBJECT(self));
+        break;
+    case 2:
+        self->unk6 = 2;
+        self->unk7 = 0;
+        break;
+    }
+}
+
+void func_800649C0(struct MainObj* self)
+{
+    switch (self->unk7) {
+    case 0:
+        self->unk7 = 1;
+        self->ext.main_43.shot->state = 2;
+        self->unk24 = FIXED(1);
+        self->unk2C = FIXED(0.5);
+        func_80015D60(self, 5);
+        break;
+    case 1:
+        if (self->animation_step.fields.relative_step != 0) {
+            if (self->animation_step.fields.event != 0) {
+                self->animation_step.fields.event = 0;
+                self->unk24 = 0;
+                self->unk2C = 0;
+            }
+            func_80015DC8(ANIMATED_OBJECT(self));
+            func_8002B694(ANIMATED_OBJECT(self));
+        } else {
+            self->unk7 = 2;
+        }
+        break;
+    case 2:
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->x_pos.i.lo = 0;
+        self->y_pos.i.lo = 0;
+        self->x_pos.i.hi = D_800FF6E0 + 0xA0;
+        self->y_pos.i.hi = D_800FF6E2 + 0x70;
+        func_8006528C(self);
+        self->collision_data = D_801075F4;
+        break;
+    }
+}
 
 void func_80064AE8(struct MainObj* arg0)
 {
@@ -417,7 +480,7 @@ struct ShotObj* func_80064E58(struct MainObj* arg0, s32 variant)
     return result;
 }
 
-void func_80064F24(struct VisualObj* arg0, s8 arg1)
+void func_80064F24(struct VisualObj* arg0, u8 arg1)
 {
     struct VisualObj* temp_v0;
 

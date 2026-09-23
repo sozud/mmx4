@@ -15,7 +15,27 @@ void func_800D2B9C(struct MiscObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2C04);
+void func_800D2C04(struct MiscObj* self)
+{
+    s16 timer;
+
+    if (background_objects[0].x_pos.i.hi != background_objects[0].unk26) {
+        return;
+    }
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    timer = self->ext.misc_53.timer - 1;
+    self->ext.misc_53.timer = timer;
+    if (timer != 0) {
+        return;
+    }
+
+    self->ext.misc_53.movement_timer = 0xA;
+    self->ext.misc_53.x_step = 1;
+    self->unk5++;
+    func_8002217C(engine_obj.cur_character == 0 ? 0x2D : 0x26, 8, 0);
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_53", func_800D2CA4);
 

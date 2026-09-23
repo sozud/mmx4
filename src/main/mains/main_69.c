@@ -985,7 +985,29 @@ void func_800886A0(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800886F0);
+void func_800886F0(struct MainObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk7C == 0) {
+        func_8002B694(ANIMATED_OBJECT(self));
+    } else {
+        self->unk7C--;
+    }
+
+    if (self->unk67 == 1 && self->unk24 < 0) {
+        self->unk67 = -1;
+        self->unk7C = 0x10;
+        func_8001540C(2, 0xD8, self);
+    }
+
+    if (self->unk67 == -1 && (self->unk70 & 8)) {
+        func_8001540C(2, 0xD1, self);
+        func_80015D60(self, 4);
+        func_80028BAC(0x18, 2, 1);
+        self->unk67 = 0;
+        self->unk6++;
+    }
+}
 
 void func_800887DC(struct MainObj* arg0)
 {

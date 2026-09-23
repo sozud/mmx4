@@ -53,7 +53,40 @@ void func_80094B24(struct WeaponObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x80, 0x20);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03", func_80094C18);
+void func_80094C18(struct WeaponObj* self)
+{
+    struct Weapon3Ext* ext = &self->ext.weapon_3;
+    s8 palette_index;
+    s8 timer;
+
+    self->y_pos.val = g_Player.y_pos.val;
+    self->animation_step.fields.frame_index = g_Player.animation_step.fields.frame_index;
+    self->unk15 = g_Player.unk15;
+    D_801088F8[self->unk5](self);
+
+    if (D_80141BD8.unk0 & 1) {
+        func_80094F14(D_80108904[ext->unk90]);
+        palette_index = ext->unk90 + 1;
+        ext->unk90 = palette_index;
+        if (palette_index == 6) {
+            ext->unk90 = 0;
+        }
+    }
+
+    if (self->unk50 != NULL) {
+        timer = ext->unk91;
+        if (timer == 0) {
+            ext->unk91 = 8;
+            self->unk64++;
+        } else {
+            ext->unk91 = timer - 1;
+        }
+    }
+
+    if (self->on_screen != 0) {
+        func_8002B318(BASE_OBJECT(self), 0x80, 0x20);
+    }
+}
 
 void func_80094D40(struct WeaponObj* arg0)
 {

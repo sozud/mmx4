@@ -166,7 +166,40 @@ void func_8009A5B8(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A5F4);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A6B4);
+void func_8009A6B4(struct ShotObj* self)
+{
+    s8* player_state = &g_Player.unk5C;
+    s8 previous_state;
+    u32* collision_state;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    previous_state = *player_state;
+    func_8002D9BC(self);
+    if (previous_state != *player_state) {
+        collision_state = self->unk84.collision_state;
+        if (*collision_state == 0x8000) {
+            *collision_state = 0x8001;
+        }
+    }
+
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        func_800C813C(6, D_80108D20, self);
+        self->state = 2;
+    } else {
+        self->unk42 &= 0x7FFF;
+    }
+
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
+        func_800C813C(6, D_80108D20, self);
+        self->state = 2;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+    } else {
+        self->state = 2;
+    }
+}
 
 void func_8009A7D8(struct ShotObj* arg0)
 {
@@ -205,7 +238,7 @@ void func_8009A87C(struct ShotObj* arg0)
     player_active = g_Player.unk5C;
     func_8002D9BC(arg0);
     if (player_active != g_Player.unk5C) {
-        collision_state = (s32*)arg0->unk84.value;
+        collision_state = (s32*)arg0->unk84.collision_state;
         if (*collision_state == 0x8000) {
             *collision_state = 0x8001;
         }

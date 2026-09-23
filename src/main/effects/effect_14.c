@@ -9,7 +9,27 @@ void func_800B89B4(struct EffectObj* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_14", func_800B89CC);
+void func_800B89CC(struct EffectObj* self)
+{
+    struct Effect14ItemSpawn* entry;
+    struct ItemObj* item;
+    entry = D_8010B644;
+
+    if (entry->id != 0xFF) {
+        do {
+            item = find_free_item_obj();
+            if (item != NULL) {
+                item->active = 0x41;
+                item->id = 7;
+                item->unk2 = entry->id;
+                item->x_pos.i.hi = entry->x;
+                item->y_pos.i.hi = entry->y;
+            }
+            entry++;
+        } while (entry->id != 0xFF);
+    }
+    self->state++;
+}
 
 void func_800B8A9C(struct EffectObj* arg0)
 {

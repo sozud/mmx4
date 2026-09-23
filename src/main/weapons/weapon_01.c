@@ -2,7 +2,35 @@
 // 80092F08..80093564
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80092F08);
+void func_80092F08(struct WeaponObj* self)
+{
+    s32 should_reset;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+
+    should_reset = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        should_reset = 1;
+    }
+    if (g_Player.unk93 != 1) {
+        should_reset = 1;
+    }
+    if (should_reset != 0) {
+        self->state = 3;
+    }
+
+    D_801087D4[self->state](self);
+    if (self->unk75 != 0) {
+        func_8002E184(PLAYER_OBJECT(self));
+        if (self->unk72 & 4) {
+            g_Player.unk71 &= 0xB;
+        }
+        if (self->unk72 & 8) {
+            g_Player.unk71 &= 7;
+        }
+    }
+}
 
 void func_80093014(struct WeaponObj* arg0)
 {
@@ -73,7 +101,7 @@ void func_800931A8(struct WeaponObj* arg0)
         timer = arg0->ext.weapon_1.lifetime - 1;
         expired = (timer & 0xFF) == 0;
         arg0->ext.weapon_1.lifetime = timer;
-        if ((u8)arg0->unk72 & 0xC) {
+        if (arg0->unk72 & 0xC) {
             expired = 1;
         }
         if (expired != 0) {

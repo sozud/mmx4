@@ -177,7 +177,32 @@ void func_800C785C(struct ItemObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C78BC);
+void func_800C78BC(struct ItemObj* self)
+{
+    u8 slot;
+    struct MiscObj* misc;
+
+    for (slot = 8; slot < 0x10; slot++) {
+        if (engine_obj.character_state.bytes[slot] == 0) {
+            break;
+        }
+    }
+
+    if (slot == 0x10) {
+        func_80015D60(self, 1);
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 0x33;
+            misc->unk2 = 0;
+            misc->x_pos.val = self->x_pos.val;
+            misc->y_pos.val = self->y_pos.val;
+            misc->ext.misc_51.source = MAIN_OBJECT(self);
+            self->unk7C.misc = misc;
+        }
+        self->unk5 = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7970);
 
