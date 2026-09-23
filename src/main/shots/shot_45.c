@@ -139,7 +139,7 @@ void func_800A7F44(struct ShotObj* arg0)
             shot->id = 0x2D;
             shot->unk2 = 0x20;
             shot->unk7C = WEAPON_OBJECT(self);
-            shot->unk8C.word = self->unk8C.word;
+            shot->unk8C.object = self->unk8C.object;
         }
         self->timer = 0xA;
     }

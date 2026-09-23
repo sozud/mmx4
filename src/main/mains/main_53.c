@@ -4,9 +4,9 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006AF70);
 
-void func_8006B114(struct BarObj* arg0)
+void func_8006B114(struct MainObj* arg0)
 {
-    if (arg0->x_pos < background_objects[arg0->unk14].x_pos.val - 0x20) {
+    if (arg0->x_pos.val < background_objects[arg0->bg_offset].x_pos.val - 0x20) {
         if (arg0->unk2 == 2) {
             arg0->unk5 = 5;
         } else {
@@ -16,7 +16,7 @@ void func_8006B114(struct BarObj* arg0)
     }
 }
 
-void func_8006B180(struct BarObj* arg0)
+void func_8006B180(struct MainObj* arg0)
 {
     D_801001C8[arg0->unk5](arg0);
 }
@@ -34,7 +34,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B398);
 void func_8006B514(struct MainObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_8006B2A4();
+        func_8006B2A4(arg0);
     } else {
         func_8006B398(arg0);
     }

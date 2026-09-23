@@ -9,7 +9,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_62", func_8007BABC);
 void func_8007BB90(struct MainObj* arg0)
 {
     if (func_8007BABC(arg0) == 0) {
+#ifdef MMX4_PC
+        if ((arg0->unk2 >= 4) || (arg0->ext.main_62.unk80->animation_step.fields.event != 0)) {
+#else
         if ((arg0->ext.main_62.unk80->animation_step.fields.event != 0) || (arg0->unk2 >= 4)) {
+#endif
             func_80015D60(arg0, 2);
             arg0->unk5 = 2;
             arg0->state++;
@@ -65,8 +69,8 @@ void func_8007BD4C(struct MainObj* self)
     D_8010221C[self->unk5](self);
     frame_index = self->animation_step.fields.frame_index;
     if ((3 <= frame_index) && (frame_index < 12)) {
-        self->unk54 = (const void*)((u32*)&D_80102124)[frame_index];
-        self->unk50 = D_80102148[self->animation_step.fields.frame_index];
+        self->unk54 = D_80102130[frame_index - 3];
+        self->unk50 = D_80102154[self->animation_step.fields.frame_index - 3];
     } else {
         self->unk54 = NULL;
         self->unk50 = NULL;

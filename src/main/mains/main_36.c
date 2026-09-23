@@ -77,7 +77,7 @@ void func_8005FBBC(struct MainObj* self)
         self->unk6++;
         current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_36.unk8C != 0) {
-            *(u8*)&current->ext.main_36.unk84->unk54 = 1;
+            current->ext.main_36.unk84->ext.misc_11.active = 1;
         }
         func_80015D60(self, 6);
         return;

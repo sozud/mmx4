@@ -1025,7 +1025,7 @@ void func_800887DC(struct MainObj* arg0)
             shot->unk2 = 0x50;
             shot->timer = 1;
             shot->unk7C = WEAPON_OBJECT(arg0);
-            shot->unk8C.word = (s32)arg0;
+            shot->unk8C.object = OBJECT_HEADER(arg0);
         }
         func_8001540C(2, 0xD9, arg0);
         arg0->unk7C = 0x50;

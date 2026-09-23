@@ -6,11 +6,6 @@ struct AnimationTable12 {
     s32 count;
 };
 
-struct CollisionBoundsTable6 {
-    struct Unk_unk68 bounds;
-    struct Unk_unk68* variants[6];
-};
-
 void (*D_801005F0[12])() = {
     func_8009216C,
     func_8006C278,
@@ -2676,22 +2671,21 @@ struct Unk_unk68 D_80102124 = { -117, -35, 80, 32 };
 
 struct Unk_unk68 D_80102128 = { -107, -30, 59, 26 };
 
-struct CollisionBoundsTable6 D_8010212C = {
-    { 72, -35, 49, 38 },
-    {
-        &D_80102108,
-        &D_8010210C,
-        &D_80102110,
-        &D_80102114,
-        &D_80102118,
-        &D_8010211C,
-    },
-};
+struct Unk_unk68 D_8010212C = { 72, -35, 49, 38 };
 
-struct Unk_unk68* D_80102148[12] = {
+struct Unk_unk68* D_80102130[9] = {
+    &D_80102108,
+    &D_8010210C,
+    &D_80102110,
+    &D_80102114,
+    &D_80102118,
+    &D_8010211C,
     &D_80102120,
     &D_80102124,
     &D_80102128,
+};
+
+struct Unk_unk68* D_80102154[9] = {
     &D_801020E4,
     &D_801020E8,
     &D_801020EC,

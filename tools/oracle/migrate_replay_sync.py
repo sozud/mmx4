@@ -16,6 +16,7 @@ def sync_points_from_log(path):
     previous_mode = None
     previous_load_busy = False
     previous_reads = 0
+    previous_xa_stops = 0
     with path.open(newline="") as source:
         for row in csv.DictReader(source, delimiter="\t"):
             sample = int(row["frame"])
@@ -43,7 +44,15 @@ def sync_points_from_log(path):
                             f"{path}: load completed at sample {completed_at} "
                             f"but was logged in sample {sample}")
                     point["phase"] = "input" if completed_at == sample else "frame"
+                if int(row.get("cd_read_pending") or 0):
+                    point["pending"] = 1
                 points.append(point)
+            xa_stops = int(row.get("xa_stops") or 0)
+            if xa_stops - previous_xa_stops > 1:
+                raise RuntimeError(f"{path}: {xa_stops - previous_xa_stops} XA streams stopped in sample {sample}")
+            if xa_stops != previous_xa_stops:
+                points.append({"sample": int(row["xa_stop_sample"]), "kind": "xa-complete"})
+            previous_xa_stops = xa_stops
             previous_mode = mode
             previous_load_busy = load_busy
             previous_reads = reads

@@ -71,7 +71,8 @@ def load_sync(path, replay_metadata):
             points != sorted(points) or len(identities) != len(set(identities)) or
             any(not isinstance(point, int) or point < 0 or
                 point >= replay_metadata["frames"] for point in points) or
-            any(point.get("kind") not in ("start", "mode-return", "load-complete")
+            any(point.get("kind") not in ("start", "mode-return", "load-complete",
+                                           "xa-complete")
                 for point in entries)):
         raise SystemExit(f"{path}: invalid sync points")
     return document

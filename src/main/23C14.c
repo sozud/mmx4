@@ -4166,7 +4166,7 @@ void func_8003ED00(struct RideArmorObj* self)
         return;
     }
     if (!(self->unk94.bytes.unk97 & 2)) {
-        if (self->unk46 == 0) {
+        if (self->animation_step.fields.relative_step == 0) {
             func_8003DC44(BASE_OBJECT(self), 1);
         } else if ((u16)self->unk8A & 0x80) {
             func_8003DC44(BASE_OBJECT(self), 4);
@@ -4200,7 +4200,7 @@ void func_8003EDF0(struct RideArmorObj* self)
     }
 
     if (!(self->unk94.bytes.unk97 & 2)) {
-        if ((input & 3) || (self->unk45 & 1)) {
+        if ((input & 3) || (self->animation_step.fields.event & 1)) {
             if (timer < 0) {
                 func_8003DC44(BASE_OBJECT(self), 8);
             } else {
@@ -4220,7 +4220,7 @@ INCLUDE_ASM("main/nonmatchings/23C14", func_8003F068);
 
 void func_8003F204(struct RideArmorObj* arg0)
 {
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         func_8003DC44(BASE_OBJECT(arg0), 1);
         return;
     }
@@ -4360,12 +4360,12 @@ void func_8003F698(struct RideArmorObj* arg0)
         func_8003DC1C(PLAYER_OBJECT(arg0), 0x3F);
         func_8001540C(5, 7, 0);
     }
-    if (arg0->unk46 == 0) {
+    if (arg0->animation_step.fields.relative_step == 0) {
         arg0->pad87 = 0;
         func_8003DC44(BASE_OBJECT(arg0), 1);
         return;
     }
-    if (arg0->unk45 != 0 && func_8003DCD8(arg0) != 0 && arg0->unk86 < 3U) {
+    if (arg0->animation_step.fields.event != 0 && func_8003DCD8(arg0) != 0 && arg0->unk86 < 3U) {
         func_8003DC44(BASE_OBJECT(arg0), 3);
     }
     func_80015DC8(ANIMATED_OBJECT(arg0));
@@ -4440,8 +4440,8 @@ void func_8003FF9C(struct RideArmorObj* self)
         self->unk90.bytes.action_state = 2;
         self->saved_x_vel = self->x_vel.val >> 8;
         self->saved_y_vel = self->y_vel.val >> 8;
-        self->saved_x_accel = self->unk28 >> 8;
-        self->saved_y_accel = self->unk2C >> 8;
+        self->unkA0.saved_accel.x = self->unk28 >> 8;
+        self->unkA0.saved_accel.y = self->unk2C >> 8;
         if (self->unk15 == 0) {
             velocity = self->launch_speed << 8;
         } else {
@@ -4462,8 +4462,8 @@ void func_8003FF9C(struct RideArmorObj* self)
             self->unk90.bytes.action_state = 0;
             self->unk94.bytes.unk97 ^= 2;
             self->x_vel.val = self->saved_x_vel << 8;
-            self->unk28 = self->saved_x_accel << 8;
-            self->unk2C = self->saved_y_accel << 8;
+            self->unk28 = self->unkA0.saved_accel.x << 8;
+            self->unk2C = self->unkA0.saved_accel.y << 8;
         }
         if (self->input_flags & 8) {
             self->y_vel.val = 0;

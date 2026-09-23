@@ -1,6 +1,8 @@
 #ifndef MMX4_PC_BUILD_H
 #define MMX4_PC_BUILD_H
 
+#define PC_TILEMAP_SIZE (0x300 + 0x300)
+
 struct UnkObj* find_free_unk_obj(void);
 void func_80012024(void);
 void update_misc_objects(void);
@@ -35,6 +37,9 @@ int mmx4_pc_replay_exit_requested(void);
 int mmx4_pc_replay_cd_load_due(int input_phase);
 unsigned long mmx4_pc_replay_consumed(void);
 void mmx4_pc_replay_cd_load_consume(void);
+int mmx4_pc_replay_cd_load_pending(void);
+int mmx4_pc_replay_xa_stop_due(void);
+void mmx4_pc_replay_xa_stop_consume(void);
 void mmx4_pc_complete_scheduled_cd_load(int input_phase);
 
 extern DR_MODE D_80139250[2];

@@ -1510,6 +1510,11 @@ extern s32 D_80139544;
 extern s16 D_8013955C;
 extern s32 D_80141BD4;
 
+#ifdef MMX4_PC
+extern u32 mmx4_pc_xa_stops;
+extern u32 mmx4_pc_xa_stop_sample;
+#endif
+
 void func_800168D8(void)
 {
     s32 temp_s2;
@@ -1518,6 +1523,23 @@ void func_800168D8(void)
 
     if (D_80141BD4 == 2) {
         temp_s2 = D_80139530;
+#ifdef MMX4_PC
+        if (mmx4_pc_replay_active()) {
+            if (temp_s2 == D_80141BD4)
+                D_8013955C = 1;
+            if (mmx4_pc_replay_xa_stop_due()) {
+                mmx4_pc_replay_xa_stop_consume();
+                if (*(u8*)&D_80139568 == 0) {
+                    D_80139530 = 5;
+                } else {
+                    mmx4_pc_xa_stops++;
+                    mmx4_pc_xa_stop_sample = mmx4_pc_replay_consumed();
+                    func_80016F0C();
+                }
+            }
+            return;
+        }
+#endif
         if ((temp_s2 == D_80141BD4) && ((D_8013955C = 1, temp_v0 = CdLastCom(), (temp_v0 == 0x1B)) || (temp_v0 == 0x11)) && (CdSync(1, D_80139554) == temp_s2)) {
             if (temp_v0 == 0x11) {
                 temp_v0_2 = CdPosToInt(D_80139554 + 5);
@@ -2429,10 +2451,17 @@ void func_8001C3E8(void)
     D_800F1D94.halfword_2 = engine_obj.unk5A;
     D_800F1D93 = engine_obj.unk47;
     D_800F1D94.padding[0] = engine_obj.unk37;
+#ifdef MMX4_PC
+    for (var_t2 = 0; var_t2 < 0x10; var_t2++) {
+        memcpy(&D_800F1D94.buffer[var_t2 * 2], &D_800EE430[var_t2], sizeof(s16));
+    }
+    D_800F1D94.buffer[0x20] = D_80171EA9;
+#else
     for (var_t2 = 0; var_t2 < 0x10; var_t2++) {
         *(s16*)&(ptr + var_t2 * 2)[8] = D_800EE430[var_t2];
     }
     ptr[0x28] = D_80171EA9;
+#endif
 }
 
 INCLUDE_ASM("main/nonmatchings/323C", func_8001C4B4);

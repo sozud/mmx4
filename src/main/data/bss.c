@@ -404,7 +404,7 @@ s16 D_80141BD2;
 s32 D_80141BD4;
 u8 pad_80141BD8[0x10]; // D_80141BD8/BDC/BDE/BDF, g_FilterModeG, g_FilterAmountG: PC main_bss_state
 #ifdef MMX4_PC
-u8 D_80141BE8[0x300 + 0x300];
+u8 D_80141BE8[PC_TILEMAP_SIZE];
 #else
 u8 D_80141BE8[0x300];
 #endif

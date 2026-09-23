@@ -7,6 +7,9 @@ extern s32 D_80137DE4;
 
 u32 mmx4_pc_cd_reads;
 u32 mmx4_pc_cd_read_sample;
+u32 mmx4_pc_cd_read_pending;
+u32 mmx4_pc_xa_stops;
+u32 mmx4_pc_xa_stop_sample;
 static s32 completing_phase = -1;
 
 static void mmx4_pc_cd_ready_callback(void)
@@ -25,9 +28,13 @@ void mmx4_pc_advance_cd_load(void)
         } else if (completing_phase >= 0 && mmx4_pc_replay_cd_load_due(completing_phase)) {
             while (D_801406AC == 1) {
                 mmx4_pc_cd_ready_callback();
-                func_80014780();
+                if (D_801406AC == 1 || !completing_phase)
+                    func_80014780();
             }
             if (D_801406AC == 2) {
+                if (completing_phase && mmx4_pc_replay_cd_load_pending())
+                    D_8013BD40 = 1;
+                mmx4_pc_cd_read_pending = mmx4_pc_replay_cd_load_pending();
                 mmx4_pc_replay_cd_load_consume();
                 mmx4_pc_cd_reads++;
                 mmx4_pc_cd_read_sample = mmx4_pc_replay_consumed();
@@ -54,9 +61,11 @@ void mmx4_pc_complete_scheduled_cd_load(int input_phase)
     if (!mmx4_pc_replay_active() || (!input_phase && mmx4_pc_replay_frame() < 0))
         return;
     completing_phase = input_phase;
-    while ((D_801406AC == 1 && mmx4_pc_replay_cd_load_due(input_phase)) || D_8013BD40 != 0) {
+    while ((D_801406AC == 1 && mmx4_pc_replay_cd_load_due(input_phase))
+        || (!input_phase && D_8013BD40 != 0)) {
         mmx4_pc_advance_cd_load();
-        func_80014780();
+        if (!input_phase)
+            func_80014780();
     }
     completing_phase = -1;
 }
