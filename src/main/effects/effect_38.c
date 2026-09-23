@@ -86,7 +86,41 @@ void func_800BD8C4(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BD938);
+void func_800BD938(struct EffectObj* self)
+{
+    u8 timer;
+
+    if (self->ext.effect_38.timer == 0x50) {
+        func_800BDA94(self);
+    }
+
+    timer = self->ext.effect_38.timer - 1;
+    self->ext.effect_38.timer = timer;
+    if (timer != 0) {
+        return;
+    }
+
+    switch (self->ext.effect_38.unk17) {
+    case 0:
+        engine_obj.checkpoint++;
+        break;
+    case 1:
+        engine_obj.checkpoint += 2;
+        break;
+    case 2:
+        break;
+    default:
+        engine_obj.checkpoint += 2;
+        break;
+    }
+
+    if (engine_obj.checkpoint < 6) {
+        engine_obj.unkF = -0x40;
+    } else {
+        engine_obj.unkF = 0x40;
+    }
+    self->state++;
+}
 
 void func_800BDA2C(struct EffectObj* arg0)
 {
@@ -157,7 +191,39 @@ void func_800BDB10(struct EffectObj* self)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDBD4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDD08);
+void func_800BDD08(struct EffectObj* self)
+{
+    u32 i;
+    s32 count;
+    s8 fill = 0;
+    s8* ptr;
+
+    for (i = 0; i < 0x30; i++) {
+        ptr = (s8*)&main_objects[i];
+        count = sizeof(main_objects[i]) - 1;
+        do {
+            *ptr++ = fill;
+        } while (count-- != 0);
+    }
+
+    for (i = 0; i < 0x20; i++) {
+        ptr = (s8*)&shot_objects[i];
+        count = sizeof(shot_objects[i]) - 1;
+        do {
+            *ptr++ = fill;
+        } while (count-- != 0);
+    }
+
+    for (i = 0; i < 0x40; i++) {
+        if (misc_objects[i].id < 0x21 || misc_objects[i].id > 0x22) {
+            ptr = (s8*)&misc_objects[i];
+            count = sizeof(misc_objects[i]) - 1;
+            do {
+                *ptr++ = fill;
+            } while (count-- != 0);
+        }
+    }
+}
 
 void func_800BDDE8(s32 arg0, s32 arg1)
 {

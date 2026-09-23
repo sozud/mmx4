@@ -12,7 +12,29 @@ void func_8009F46C(struct ShotObj* arg0)
     D_801091C4[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_28", func_8009F4C0);
+void func_8009F4C0(struct ShotObj* self)
+{
+    struct WeaponObj* owner = self->unk7C;
+
+    self->unk40 = owner->unk40;
+    self->unk42 = owner->unk42 & 0x7FFF;
+    self->animation_table = owner->animation_table;
+    self->unk3C = owner->unk3C;
+    self->unk15 = owner->unk15;
+    self->bg_offset = owner->bg_offset;
+    self->x_pos.val = owner->x_pos.val;
+    self->y_pos.val = owner->y_pos.val;
+    self->unk50.data = D_801091C0;
+    self->unk5C = 1;
+    self->unk16 = 4;
+    self->unk54 = NULL;
+    self->unk60 = 6;
+    self->unk68 = NULL;
+    self->unk58.data = NULL;
+    func_80015D60(self, 0xB);
+    self->unk5 = 2;
+    self->state++;
+}
 
 void func_8009F594(struct ShotObj* arg0)
 {

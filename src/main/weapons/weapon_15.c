@@ -55,7 +55,23 @@ void func_80096A84(struct WeaponObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_15", func_80096B54);
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_15", func_80096C8C);
+void func_80096C8C(struct WeaponObj* self, struct PlayerObj* player)
+{
+    u8* angle = &self->ext.weapon_15.unk8C;
+
+    self->unk15 = player->unk15;
+    if (player->unk15 != 0) {
+        self->x_pos.i.hi = player->x_pos.u.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        angle[1] = angle[0];
+    } else {
+        self->x_pos.i.hi = player->x_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        angle[1] = 0x20 - angle[0];
+    }
+    self->y_pos.i.hi = player->y_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+    func_8002B93C(MOVING_OBJECT(self), (angle[1] - 8) & 0x1F);
+    self->x_pos.val += self->x_vel.val * 104;
+    self->y_pos.val += self->y_vel.val * 104;
+}
 
 void func_80096DC0(struct WeaponObj* arg0)
 {

@@ -261,7 +261,44 @@ void func_80090720(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_75", func_80090838);
+void func_80090838(struct MainObj* self)
+{
+    struct ShotObj* first;
+    struct ShotObj* second;
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        first = find_free_shot_obj();
+        if (first != NULL) {
+            first->active = 0x41;
+            first->id = 0x37;
+            first->unk2 = 2;
+            first->unk7C = WEAPON_OBJECT(self);
+            D_8013B8C0 = first;
+        }
+        second = find_free_shot_obj();
+        if (second != NULL) {
+            second->active = 0x41;
+            second->id = 0x37;
+            second->unk2 = 3;
+            second->unk7C = WEAPON_OBJECT(self);
+            D_8013B8C4 = second;
+        }
+        first->unk8C.shot = second;
+        second->unk8C.shot = first;
+    }
+    if (self->animation_step.fields.frame_index == 0x1E) {
+        shot = self->ext.main_75.shot;
+        shot->unk84.shot_55.x = self->unk15 != 0 ? -0x20 : 0x20;
+        self->ext.main_75.shot->unk84.shot_55.y = -4;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk7C = 0x3C;
+        self->unk6++;
+    }
+}
 
 void func_8009093C(struct MainObj* arg0)
 {

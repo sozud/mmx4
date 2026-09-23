@@ -21,7 +21,37 @@ void func_800BCE84(struct EffectObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BCEE4);
+void func_800BCEE4(struct EffectObj* self)
+{
+    struct EffectObj* effect;
+    u8 index;
+    s16 timer;
+
+    timer = self->ext.effect_34.timer - 1;
+    self->ext.effect_34.timer = timer;
+    if (timer == 0) {
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x21;
+            effect->unk2 = D_8010BFBC[self->ext.effect_34.unk14];
+            effect->x_pos.u.hi = D_8010BFC8[self->ext.effect_34.unk14];
+            effect->y_pos.u.hi = 0x270;
+            effect->backref = NULL;
+            effect->state = 0;
+        }
+
+        index = self->ext.effect_34.unk14 + 1;
+        self->ext.effect_34.unk14 = index;
+        timer = D_8010BFA8[index];
+        self->ext.effect_34.timer = timer;
+        if (timer == 0) {
+            self->state = 2;
+        }
+    } else if (self->ext.effect_34.unk14 == 1 && !(background_objects[g_Player.bg_offset].unk34 & 0x10)) {
+        func_80028B68(8, 4, 2);
+    }
+}
 
 void func_800BD01C(struct EffectObj* arg0)
 {

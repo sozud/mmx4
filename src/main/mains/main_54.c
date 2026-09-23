@@ -33,7 +33,39 @@ void func_8006BFF8(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006C07C);
+void func_8006C07C(struct MainObj* self)
+{
+    struct EffectObj* effect;
+    s8 delay;
+    s8 next_delay;
+
+    self->unk7C--;
+    if (self->unk7C == 0) {
+        self->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = self->x_pos.u.hi;
+            effect->y_pos.i.hi = self->y_pos.u.hi;
+            self->ext.main_54.unk8C = effect;
+        }
+    }
+    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
+        delay = self->unk61 - 5;
+        self->unk61 = delay;
+        if (delay >= 0x1A) {
+            self->unk61 = 0;
+        }
+        next_delay = self->unk61;
+        if (self->unk61 < 5) {
+            next_delay = 5;
+        }
+        self->unk7E = next_delay;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006C170);
 

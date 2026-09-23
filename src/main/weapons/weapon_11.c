@@ -138,7 +138,36 @@ void func_8009485C(struct MiscObj* arg0)
     func_80015D60(arg0, D_8010889C[get_random() & 7]);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_11", func_800948D4);
+void func_800948D4(struct MiscObj* self)
+{
+    self->on_screen = 1;
+
+    if (get_random() & 1) {
+        self->x_pos.u.hi += get_random() & 0xF;
+    } else {
+        self->x_pos.u.hi -= get_random() & 0xF;
+    }
+
+    if (get_random() & 1) {
+        self->y_pos.u.hi += get_random() & 0x17;
+    } else {
+        self->y_pos.u.hi -= get_random() & 0x17;
+    }
+
+    if (get_random() & 1) {
+        self->unk15 = 0;
+    } else {
+        self->unk15 = 0x40;
+    }
+
+    self->x_vel.val = D_801088A4[get_random() & 7];
+    self->y_vel.val = D_801088C4[get_random() & 7];
+    self->unk28 = 0;
+    self->unk2C = FIXED(0.3125);
+    self->unk5 = 0;
+    self->state++;
+    func_8002B318(BASE_OBJECT(self), 0x14, 0x18);
+}
 
 void func_80094A04(struct MiscObj* arg0)
 {

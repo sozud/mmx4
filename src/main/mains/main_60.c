@@ -75,7 +75,39 @@ void func_8007566C(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075700);
+void func_80075700(struct MainObj* self)
+{
+    struct EffectObj* effect;
+    s8 delay;
+    s8 next_delay;
+
+    self->unk7C--;
+    if (self->unk7C == 0) {
+        self->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = self->x_pos.u.hi;
+            effect->y_pos.i.hi = self->y_pos.u.hi;
+            self->ext.main_60.effect = effect;
+        }
+    }
+    func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+    if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
+        delay = self->unk61 - 5;
+        self->unk61 = delay;
+        if (delay >= 0x1A) {
+            self->unk61 = 0;
+        }
+        next_delay = self->unk61;
+        if (self->unk61 < 5) {
+            next_delay = 5;
+        }
+        self->unk7E = next_delay;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800757F4);
 
@@ -341,7 +373,39 @@ void func_800768CC(struct MainObj* arg0)
     D_80101C0C[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076908);
+void func_80076908(struct MainObj* self)
+{
+    u16 background_x = background_objects[0].x_pos.u.hi;
+    u16 background_y = background_objects[0].y_pos.u.hi;
+    u8 variant;
+    s32 player_x;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    variant = self->ext.main_60.unk8B;
+    switch (variant) {
+    case 0:
+        self->x_pos.i.hi = background_x - 0x40;
+        self->y_pos.i.hi = background_y + 0x10;
+        break;
+    case 1:
+        self->x_pos.i.hi = background_x - 0x40;
+        self->y_pos.i.hi = background_y + 0xC8;
+        break;
+    case 2:
+        self->x_pos.i.hi = background_x + 0x180;
+        self->y_pos.i.hi = background_y + 0x10;
+        break;
+    case 3:
+        self->x_pos.i.hi = background_x + 0x180;
+        self->y_pos.i.hi = background_y + 0xC8;
+        break;
+    }
+    player_x = g_Player.x_pos.val;
+    self->unk7C = 0x3C;
+    self->active = 0x41;
+    self->unk15 = (player_x >= self->x_pos.val) << 6;
+    self->unk6++;
+}
 
 void func_800769FC(struct MainObj* arg0)
 {

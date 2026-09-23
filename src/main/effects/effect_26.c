@@ -2,16 +2,52 @@
 // 800BB1F0..800BB9B8
 #include "common.h"
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB1F0);
+void func_800BB1F0(struct EffectObj* self)
+{
+    struct QuadObj* quad;
+
+    self->unk2 = get_random() & 0x1F;
+
+    quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = 1;
+        quad->id = 4;
+        quad->unk2 = self->unk2;
+        quad->x_pos.u.hi = self->x_pos.u.hi;
+        quad->y_pos.u.hi = self->y_pos.u.hi;
+    }
+
+    quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = 1;
+        quad->id = 4;
+        quad->unk2 = (self->unk2 + 10) & 0x1F;
+        quad->x_pos.u.hi = self->x_pos.u.hi;
+        quad->y_pos.u.hi = self->y_pos.u.hi;
+    }
+
+    quad = find_free_quad_obj();
+    if (quad != NULL) {
+        quad->active = 1;
+        quad->id = 4;
+        quad->unk2 = (self->unk2 + 21) & 0x1F;
+        quad->x_pos.u.hi = self->x_pos.u.hi;
+        quad->y_pos.u.hi = self->y_pos.u.hi;
+    }
+
+    self->ext.effect_26.timer = 8;
+    self->ext.effect_26.quad_timer = 4;
+    self->state++;
+}
 
 void func_800BB314(struct EffectObj* arg0)
 {
     s8 temp_v0;
 
-    temp_v0 = arg0->ext.unk_effect.unk16 - 1;
-    arg0->ext.unk_effect.unk16 = temp_v0;
+    temp_v0 = arg0->ext.effect_26.quad_timer - 1;
+    arg0->ext.effect_26.quad_timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->ext.unk_effect.unk16 = 4;
+        arg0->ext.effect_26.quad_timer = 4;
         func_800AF95C(OBJECT_HEADER(arg0), 1, 0x60, 0x60, 2);
     }
 }
@@ -54,9 +90,9 @@ void func_800BB5F4(struct EffectObj* arg0)
     struct QuadObj* quad;
     u16 timer;
 
-    timer = arg0->ext.effect_26_timer;
+    timer = arg0->ext.effect_26.timer;
     if (timer != 0) {
-        arg0->ext.effect_26_timer = timer - 1;
+        arg0->ext.effect_26.timer = timer - 1;
         func_800BB314(arg0);
         func_800BB508(arg0);
         return;
@@ -69,7 +105,7 @@ void func_800BB5F4(struct EffectObj* arg0)
         quad->x_pos.i.hi = arg0->x_pos.i.hi;
         quad->y_pos.i.hi = arg0->y_pos.i.hi;
     }
-    arg0->ext.effect_26_timer = 10;
+    arg0->ext.effect_26.timer = 10;
 }
 
 void func_800BB68C(struct EffectObj* self)
@@ -107,8 +143,8 @@ void func_800BB85C(struct EffectObj* arg0)
 {
     u16 timer;
 
-    timer = arg0->ext.effect_26_timer;
-    arg0->ext.effect_26_timer = timer - 1;
+    timer = arg0->ext.effect_26.timer;
+    arg0->ext.effect_26.timer = timer - 1;
     if (timer == 0) {
         arg0->state = (u8)arg0->state + 1;
     }
