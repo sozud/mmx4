@@ -540,7 +540,7 @@ struct Main16Ext {
     s32 unk88;
     u32 unk8C;
     u32 unk90;
-    u32 unk94;
+    u32 shot_09_active;
     u32 unk98;
 };
 
@@ -1563,7 +1563,8 @@ union VisualUnk5C {
     s8 value;
     struct PlayerObj* owner;
     struct {
-        s8 pad5C[0x5E - 0x5C];
+        s8 pad5C;
+        s8 mode;
         s16 unk5E;
     } fields;
 };
@@ -2238,7 +2239,8 @@ struct Misc55Ext {
 };
 
 struct Misc52Ext {
-    u8 pad50[6];
+    u8 pad50[5];
+    u8 timer;
     s8 unk56;
     s8 unk57;
 };
@@ -4355,7 +4357,7 @@ void func_80038E44(struct PlayerObj*, s32);
 void func_800921E8(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
-void func_8006FBFC(struct MainObj*);
+struct VisualObj* func_8006FBFC(struct MainObj*);
 s32 func_8006FCB8(struct PlayerObj*, s32, s32);
 void func_800BBFCC(struct EffectObj*);
 

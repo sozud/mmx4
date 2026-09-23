@@ -337,7 +337,35 @@ void func_80073294(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_8007330C);
+void func_8007330C(struct MainObj* arg0)
+{
+    s32 side_mask;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk67 == 1 && arg0->unk24 < 0) {
+        arg0->unk67 = -1;
+    }
+    if (arg0->unk67 == -1 && (arg0->unk70 & 8)) {
+        func_8001540C(2, 0x90, arg0);
+        func_8001540C(2, 0x93, arg0);
+        func_80028BAC(0x18, 3, 1);
+        arg0->unk67 = 0;
+    }
+    if (arg0->unk67 == 0) {
+        side_mask = 2;
+        if (arg0->unk15 != 0) {
+            side_mask = 1;
+        }
+        if (side_mask & arg0->unk70) {
+            func_80074368(0x39);
+            func_8001540C(2, 0x90, arg0);
+            func_80028B68(0x1E, 4, 1);
+            arg0->unk7C = 0x28;
+            arg0->unk6++;
+        }
+    }
+}
 
 void func_8007342C(struct MainObj* arg0)
 {

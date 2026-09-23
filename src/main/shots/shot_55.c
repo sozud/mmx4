@@ -229,7 +229,47 @@ void func_800AD1B0(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD224);
+void func_800AD224(struct ShotObj* self)
+{
+    s16 timer;
+    s32 x_velocity;
+    struct WeaponObj* owner;
+    u8 direction;
+
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        x_velocity = FIXED(-1.5);
+        self->animation_step.fields.event = 0;
+        direction = self->unk15 ^ 0x40;
+        self->unk15 = direction;
+        if (direction != 0) {
+            x_velocity = FIXED(1.5);
+        }
+        self->x_vel.val = x_velocity;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        timer = (u16)self->unk8A + 1;
+        self->unk8A = timer;
+        if (timer == 2) {
+            self->unk5++;
+            if (self->unk2 == 3) {
+                owner = self->unk7C;
+                owner->unk6++;
+                func_80015D60(self, 0x15);
+                return;
+            }
+            func_80015D60(self, 0x10);
+            return;
+        }
+        self->unk5 = 3;
+        if (self->unk2 == 3) {
+            func_80015D60(self, 0x14);
+        } else {
+            func_80015D60(self, 0xF);
+        }
+        func_8001540C(2, 5, self);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD338);
 

@@ -4662,6 +4662,7 @@ extern struct Unk_unk68 D_801096A8;
 extern struct Unk_unk68 D_801096B8;
 extern struct Unk_unk68 D_801096BC;
 extern s32 D_801096D0[3];
+extern u8 D_801096E8[12];
 void func_800A2310(struct ShotObj*);
 void func_800A23E0(struct ShotObj*);
 void func_800A2A58(struct ShotObj*);
@@ -6613,12 +6614,12 @@ void func_800D2010(struct MiscObj*);
 // D_8010F50C
 extern void (*D_8010F50C[])(struct MiscObj*);
 void func_800D2420(struct MiscObj*);
-void func_800D24B4(void);
+void func_800D24B4(struct MiscObj*);
 void func_800D254C(struct MiscObj*);
 
 // D_8010F518
 void func_800D25AC(struct MiscObj* arg0);
-void func_800D25FC(void);
+void func_800D25FC(struct MiscObj*);
 void func_800D26F4(void);
 void func_800D26F4(void);
 

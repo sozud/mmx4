@@ -16,19 +16,34 @@ void func_800D2420(struct MiscObj* arg0)
         }
     } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
         arg0->unk6 = 0;
-        arg0->ext.unk.unk55 = 0x1E;
+        arg0->ext.misc_52.timer = 0x1E;
         arg0->unk5++;
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D24B4);
+void func_800D24B4(struct MiscObj* self)
+{
+    u8 timer = self->ext.misc_52.timer;
+
+    if (timer == 0) {
+        self->unk5++;
+        func_8002217C(engine_obj.cur_character == 0 ? 0x2B : 0x23, 0xFF, 0);
+    } else {
+        self->ext.misc_52.timer = timer - 1;
+    }
+
+    self->on_screen = 0;
+    if (D_80141BD8.unk0 & 1) {
+        is_on_screen(BASE_OBJECT(self));
+    }
+}
 
 void func_800D254C(struct MiscObj* arg0)
 {
     if (abc_object.unkC == 0) {
         arg0->state = 2;
         arg0->unk6 = 0;
-        arg0->ext.unk.unk55 = 0x1E;
+        arg0->ext.misc_52.timer = 0x1E;
         if (engine_obj.cur_character == 0) {
             arg0->unk5 = 0;
         } else {
@@ -44,7 +59,38 @@ void func_800D25AC(struct MiscObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D25FC);
+void func_800D25FC(struct MiscObj* obj)
+{
+    s8 state;
+    u8 timer;
+
+    if (D_80141BDC[0] == 0) {
+        state = obj->unk5;
+        switch (state) {
+        case 0:
+            timer = obj->ext.misc_52.timer - 1;
+            obj->ext.misc_52.timer = timer;
+            if (timer == 0) {
+                obj->unk5++;
+            }
+            break;
+        case 1:
+            obj->unk5 = state + 1;
+            func_8002217C(0x24, 0xFF, 0);
+            break;
+        case 2:
+            if (abc_object.unkC == 0) {
+                obj->state = 2;
+                obj->unk5 = 2;
+                obj->unk6 = 0;
+                obj->ext.misc_52.timer = 0x1E;
+            }
+            break;
+        }
+        func_80015DC8(ANIMATED_OBJECT(obj));
+    }
+    is_on_screen(BASE_OBJECT(obj));
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D26F4);
 
@@ -66,12 +112,12 @@ void func_800D2854(struct MiscObj* arg0)
 {
     u8 timer;
 
-    timer = arg0->ext.unk.unk55;
+    timer = arg0->ext.misc_52.timer;
     if (timer == 0) {
-        arg0->ext.unk.unk55 = 0x1E;
+        arg0->ext.misc_52.timer = 0x1E;
         arg0->unk6++;
     } else {
-        arg0->ext.unk.unk55 = timer - 1;
+        arg0->ext.misc_52.timer = timer - 1;
     }
     arg0->on_screen = 0;
     if (D_80141BD8.unk0 & 1) {
@@ -81,11 +127,11 @@ void func_800D2854(struct MiscObj* arg0)
 
 void func_800D28BC(struct MiscObj* arg0)
 {
-    s8 timer = arg0->ext.unk.unk55;
+    u8 timer = arg0->ext.misc_52.timer;
     arg0->on_screen = 0;
     timer--;
-    arg0->ext.unk.unk55 = timer;
-    if (!(timer & 0xFF)) {
+    arg0->ext.misc_52.timer = timer;
+    if (timer == 0) {
         engine_obj.unkF = 0x40;
     }
 }
@@ -100,8 +146,8 @@ void func_800D2924(struct MiscObj* arg0)
     u8 timer;
 
     is_on_screen(BASE_OBJECT(arg0));
-    timer = arg0->ext.unk.unk55 - 1;
-    arg0->ext.unk.unk55 = timer;
+    timer = arg0->ext.misc_52.timer - 1;
+    arg0->ext.misc_52.timer = timer;
     if (timer == 0) {
         engine_obj.unkF = 0x40;
     }
@@ -112,8 +158,8 @@ void func_800D2970(struct MiscObj* arg0)
     u8 timer;
 
     arg0->on_screen = 0;
-    timer = arg0->ext.unk.unk55 - 1;
-    arg0->ext.unk.unk55 = timer;
+    timer = arg0->ext.misc_52.timer - 1;
+    arg0->ext.misc_52.timer = timer;
     if (timer == 0) {
         func_80036B18();
         func_8002B108(OBJECT_HEADER(arg0));
