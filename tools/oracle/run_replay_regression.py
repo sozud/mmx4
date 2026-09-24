@@ -127,6 +127,20 @@ def describe(header, row):
     return " ".join(f"{name}={value}" for name, value in zip(header, row))
 
 
+def describe_field(name, psx, pc):
+    if ":" not in psx or ":" not in pc:
+        return f"{name}: psx={psx} pc={pc}"
+    base_psx, bytes_psx = psx.split(":", 1)
+    base_pc, bytes_pc = pc.split(":", 1)
+    if base_psx != base_pc or len(bytes_psx) != len(bytes_pc):
+        return f"{name}: psx={psx} pc={pc}"
+    base = int(base_psx, 16)
+    changes = [f"+0x{base + i // 2:02X} psx={bytes_psx[i:i + 2]} pc={bytes_pc[i:i + 2]}"
+               for i in range(0, len(bytes_psx), 2)
+               if bytes_psx[i:i + 2] != bytes_pc[i:i + 2]]
+    return ", ".join(changes)
+
+
 def report_frames(name, header, rows):
     if not rows:
         print(f"   {name}: no frames logged")
@@ -256,7 +270,7 @@ def main():
         if abort:
             print(f"   first aborting or unavailable function: {abort}")
             status = 1
-        for name in ("frames.tsv", "objects.tsv", "extensions.tsv"):
+        for name in ("frames.tsv", "objects.tsv", "extensions.tsv", "state.tsv"):
             header, rows, truncated = load_log(directory / name)
             logs[(side, name)] = (header, rows)
             last = report_frames(f"{side}/{name}", header, rows)
@@ -272,7 +286,7 @@ def main():
                     print(f"     consumed all {metadata['frames']} inputs")
 
     print("== comparison")
-    for name in ("frames.tsv", "objects.tsv", "extensions.tsv"):
+    for name in ("frames.tsv", "objects.tsv", "extensions.tsv", "state.tsv"):
         header_a, rows_a = logs[("psx", name)]
         header_b, rows_b = logs[("pc", name)]
         if header_a and header_b and header_a != header_b:
@@ -312,13 +326,13 @@ def main():
                         print(f"     {key[0]}[{key[1]}] missing on pc")
                         print(f"       psx {describe(header_a, ra)}")
                     else:
-                        fields = [f"{n}: psx={x} pc={y}"
+                        fields = [describe_field(n, x, y)
                                   for n, x, y in zip(header_a, ra, rb) if x != y]
                         print(f"     {key[0]}[{key[1]}] " + ", ".join(fields))
             else:
                 print(f"     psx {describe(header_a, rows_a[frame][0])}")
                 print(f"     pc  {describe(header_b, rows_b[frame][0])}")
-            for neighbour in (frame - 1, frame + 1):
+            for neighbour in (frame - 1, frame + 1) if name != "state.tsv" else ():
                 if neighbour in rows_a and neighbour in rows_b and header_a:
                     print(f"     frame {neighbour} psx {describe(header_a, rows_a[neighbour][0])}")
                     print(f"     frame {neighbour} pc  {describe(header_b, rows_b[neighbour][0])}")

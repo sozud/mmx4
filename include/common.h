@@ -660,10 +660,14 @@ struct Main11Ext {
 };
 
 struct Main12Ext {
-    u8 pad80[2];
+    u8 unk80;
+    u8 unk81;
     u8 saved_unk5;
-    u8 pad83[0x88 - 0x83];
+    u8 pad83[3];
+    u16 unk86;
     u16 unk88;
+    u16 unk8A;
+    u16 unk8C;
 };
 
 struct Main22Ext {
@@ -790,6 +794,13 @@ struct Main18Ext {
 struct Main19Ext {
     u8 unk80;
     u8 animation_index;
+    u8 unk82;
+    u8 unk83;
+    u16 unk84;
+    u16 unk86;
+    u16 unk88;
+    u16 unk8A;
+    u8 unk8C;
 };
 
 struct Main21Ext {
@@ -3080,16 +3091,13 @@ struct Effect24Ext {
 };
 
 struct Effect12Ext {
-    s32* source;
-    s32* destination;
-    s8* cursor;
-    u32 palette_state;
-    u16 unk24;
+    struct MainObj* children[4];
+    u16 cooldown;
     u16 timer;
-    u8 unk28;
-    u8 palette_group;
-    u8 palette_id;
-    u8 palette_count;
+    u8 spawned;
+    u8 child_count;
+    u8 child_subtype;
+    u8 child_id;
 };
 
 struct Effect16Ext {
@@ -4218,7 +4226,7 @@ void func_8004D6CC(struct AnimatedObj*);
 void func_80094154(struct WeaponObj*);
 void func_8001653C(void);
 s32 func_80033694(struct PlayerObj*);
-s32 func_80033FF0(void);
+s32 func_80033FF0(struct PlayerObj*);
 void func_80034538(struct PlayerObj*);
 void func_80034668(struct PlayerObj*);
 void func_80034754(struct PlayerObj*);

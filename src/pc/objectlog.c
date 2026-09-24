@@ -27,6 +27,9 @@ struct LogTable {
 static FILE* object_log;
 static FILE* frame_log;
 static FILE* extension_log;
+static FILE* state_log;
+extern u32 mmx4_pc_cd_reads;
+extern u32 mmx4_pc_cd_read_sample;
 
 extern u32 D_800FA724;
 extern u32 D_800FA728;
@@ -55,7 +58,9 @@ static void log_open(void)
     frame_log = fopen(path, "w");
     snprintf(path, sizeof(path), "%s/extensions.tsv", directory);
     extension_log = fopen(path, "w");
-    if (object_log == NULL || frame_log == NULL || extension_log == NULL) {
+    snprintf(path, sizeof(path), "%s/state.tsv", directory);
+    state_log = fopen(path, "w");
+    if (object_log == NULL || frame_log == NULL || extension_log == NULL || state_log == NULL) {
         perror(directory);
         exit(EXIT_FAILURE);
     }
@@ -66,10 +71,13 @@ static void log_open(void)
     fprintf(frame_log,
         "frame\tgame\tengine\tstate\tstage\tsubstage\tcheckpoint\tcharacter\t"
         "rng\tpad\tpad_prev\thealth\tplayer_x\tplayer_y\tbg0_x\tbg0_y\tphase\t"
-        "cd_state\tcd_pending\thud\tboss\ttransition\tentity_intro\n");
+        "cd_state\tcd_pending\thud\tboss\ttransition\tentity_intro\t"
+        "player_health\tcd_reads\tcd_read_sample\n");
     fprintf(extension_log,
         "frame\tgame\tengine\ttable\tslot\tid\text80_value\text84_value\t"
         "ext88\text89\text8a\text8b\text8c\n");
+    fprintf(state_log,
+        "frame\tgame\tengine\ttable\tslot\tregion_a\tregion_b\tregion_c\n");
 }
 
 static const char* main_8_pointer_value(char* buffer, size_t size, const void* pointer)
@@ -245,6 +253,16 @@ static void log_objects(long frame, u32 game, u32 engine)
                     main->ext.main_8.unk88, main->ext.main_8.unk89,
                     main->ext.main_8.unk8A, main->ext.main_8.unk8B,
                     main->ext.main_8.unk8C);
+            } else if (table == 2 && object->id == 19) {
+                const struct MainObj* main = (const struct MainObj*)raw;
+                const struct Main19Ext* ext = &main->ext.main_19;
+                const u32 ext80 = ext->unk80 | (ext->animation_index << 8) | (ext->unk82 << 16) | (ext->unk83 << 24);
+                const u32 ext84 = ext->unk84 | (ext->unk86 << 16);
+                fprintf(extension_log,
+                    "%ld\t%08x\t%08x\tmain\t%zu\t%d\t%08x\t%08x\t%u\t%u\t%u\t%u\t%u\n",
+                    frame, game, engine, slot, object->id, ext80, ext84,
+                    ext->unk88 & 0xff, ext->unk88 >> 8,
+                    ext->unk8A & 0xff, ext->unk8A >> 8, ext->unk8C);
             }
         }
     }
@@ -263,11 +281,59 @@ static void log_objects(long frame, u32 game, u32 engine)
     }
 }
 
+_Static_assert(offsetof(struct EngineObj, unk1F) - offsetof(struct EngineObj, state) == 0x1F, "engine region a");
+_Static_assert(offsetof(struct EngineObj, unk37) - offsetof(struct EngineObj, enable_boss) == 0x37 - 0x24, "engine region b");
+_Static_assert(offsetof(struct EngineObj, unk60) - offsetof(struct EngineObj, unk40) == 0x60 - 0x40, "engine region c");
+_Static_assert(offsetof(struct PlayerObj, unk67) - offsetof(struct PlayerObj, unk5C) == 0x67 - 0x5C, "player region a");
+_Static_assert(offsetof(struct PlayerObj, unkC7) - offsetof(struct PlayerObj, unk6C) == 0xC7 - 0x6C, "player region b");
+_Static_assert(offsetof(struct PlayerObj, unkE2) - offsetof(struct PlayerObj, unkD4) == 0xE2 - 0xD4, "player region c");
+
+static void write_state_bytes(unsigned offset, const void* address, size_t length)
+{
+    const u8* bytes = address;
+    size_t i;
+
+    fprintf(state_log, "\t%02x:", offset);
+    for (i = 0; i < length; i++)
+        fprintf(state_log, "%02x", bytes[i]);
+}
+
+static void write_player_state(long frame, u32 game, u32 engine,
+    const char* table, const struct PlayerObj* player)
+{
+    fprintf(state_log, "%ld\t%08x\t%08x\t%s\t0", frame, game, engine, table);
+    write_state_bytes(0x5C, &player->unk5C, 0x68 - 0x5C);
+    write_state_bytes(0x6C, &player->unk6C, 0xC8 - 0x6C);
+    write_state_bytes(0xD4, &player->unkD4, 0xE4 - 0xD4);
+    fputc('\n', state_log);
+}
+
+_Static_assert(sizeof(struct BackgroundObj) == 0x54, "background layout");
+
+static void write_background_state(long frame, u32 game, u32 engine, int slot)
+{
+    fprintf(state_log, "%ld\t%08x\t%08x\tbackground\t%d", frame, game, engine, slot);
+    write_state_bytes(0x00, &background_objects[slot], 0x54);
+    write_state_bytes(0x54, NULL, 0);
+    write_state_bytes(0x54, NULL, 0);
+    fputc('\n', state_log);
+}
+
+static void write_engine_state(long frame, u32 game, u32 engine)
+{
+    fprintf(state_log, "%ld\t%08x\t%08x\tengine\t0", frame, game, engine);
+    write_state_bytes(0x00, &engine_obj.state, 0x20);
+    write_state_bytes(0x24, &engine_obj.enable_boss, 0x38 - 0x24);
+    write_state_bytes(0x40, &engine_obj.unk40, 0x61 - 0x40);
+    fputc('\n', state_log);
+}
+
 void mmx4_pc_object_log_dump(void)
 {
     long frame = mmx4_pc_replay_frame();
     u32 game;
     u32 engine;
+    int i;
 
     log_open();
     if (object_log == NULL || frame < 0)
@@ -275,7 +341,7 @@ void mmx4_pc_object_log_dump(void)
     memcpy(&game, &game_info, sizeof(game));
     memcpy(&engine, &engine_obj, sizeof(engine));
     fprintf(frame_log,
-        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\n",
+        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\t%u\t%u\t%u\n",
         frame, game, engine, engine_obj.state, engine_obj.stage,
         engine_obj.substage, engine_obj.checkpoint, engine_obj.cur_character,
         cur_random, D_80166C08, D_80166C0A, engine_obj.unk46,
@@ -283,9 +349,16 @@ void mmx4_pc_object_log_dump(void)
         background_objects[0].x_pos.val, background_objects[0].y_pos.val,
         D_80141BD8.unk0, D_801406AC, D_8013BD40,
         engine_obj.unk1F, engine_obj.enable_boss, engine_obj.unk1E,
-        g_Entity.unkD9);
+        g_Entity.unkD9, (u8)g_Player.unk5C, mmx4_pc_cd_reads,
+        mmx4_pc_cd_read_sample);
     log_objects(frame, game, engine);
+    write_engine_state(frame, game, engine);
+    write_player_state(frame, game, engine, "player", &g_Player);
+    write_player_state(frame, game, engine, "entity", &g_Entity);
+    for (i = 0; i < 3; i++)
+        write_background_state(frame, game, engine, i);
     fflush(frame_log);
+    fflush(state_log);
     fflush(object_log);
     fflush(extension_log);
 }
@@ -310,9 +383,11 @@ void mmx4_pc_frame_end(void)
             fclose(object_log);
             fclose(frame_log);
             fclose(extension_log);
+            fclose(state_log);
             object_log = NULL;
             frame_log = NULL;
             extension_log = NULL;
+            state_log = NULL;
         }
         fprintf(stderr, "MMX4 PC: replay complete, exiting\n");
         fflush(NULL);

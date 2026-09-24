@@ -668,7 +668,7 @@ void func_80032950(struct PlayerObj* arg0)
     u16 buttons;
     u8 duration;
 
-    if ((func_80033FF0() == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
+    if ((func_80033FF0(arg0) == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
         if (arg0->pressed_input & 2) {
             arg0->unk15 = 0;
         }
@@ -695,7 +695,7 @@ void func_80032A28(struct PlayerObj* arg0)
     u16 buttons;
     s8 duration;
 
-    if ((func_80033FF0() == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
+    if ((func_80033FF0(arg0) == 0) && (func_800373DC(arg0) == 0) && (func_80039AC8(arg0) == 0)) {
         if (arg0->pressed_input & 2) {
             arg0->unk15 = 0;
         }

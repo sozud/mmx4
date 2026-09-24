@@ -13,15 +13,15 @@ void func_800B806C(struct EffectObj* arg0)
 void func_800B80A8(struct EffectObj* arg0)
 {
     arg0->ext.effect_12.timer = 0x60;
-    arg0->ext.effect_12.source = NULL;
-    arg0->ext.effect_12.destination = NULL;
-    arg0->ext.effect_12.cursor = NULL;
-    arg0->ext.effect_12.palette_state = 0;
-    arg0->ext.effect_12.unk24 = 0;
-    arg0->ext.effect_12.unk28 = 0;
-    arg0->ext.effect_12.palette_group = (u8)arg0->unk2 >> 4;
-    arg0->ext.effect_12.palette_count = D_8010B61C[(u8)arg0->unk2 & 0xF];
-    arg0->ext.effect_12.palette_id = D_8010B624[(u8)arg0->unk2 & 0xF];
+    arg0->ext.effect_12.children[0] = NULL;
+    arg0->ext.effect_12.children[1] = NULL;
+    arg0->ext.effect_12.children[2] = NULL;
+    arg0->ext.effect_12.children[3] = NULL;
+    arg0->ext.effect_12.cooldown = 0;
+    arg0->ext.effect_12.spawned = 0;
+    arg0->ext.effect_12.child_count = (u8)arg0->unk2 >> 4;
+    arg0->ext.effect_12.child_id = D_8010B61C[(u8)arg0->unk2 & 0xF];
+    arg0->ext.effect_12.child_subtype = D_8010B624[(u8)arg0->unk2 & 0xF];
     arg0->state = 1;
     arg0->unk5 = 0;
 }

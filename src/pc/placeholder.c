@@ -37,6 +37,57 @@ extern u8 D_8013B848[4];
 extern u8 D_8013B850[8];
 extern void (*D_80103558[14])(struct MainObj*);
 extern u32 D_800FA734;
+extern union AnimationStep* D_800FB63C[];
+extern struct Unk_unk68 D_800FB684;
+extern struct Unk_unk68 D_800FB688;
+extern struct Unk_unk68 D_800FB68C;
+extern struct Unk_unk68 D_800FB690;
+extern struct Unk_unk68 D_800FB694;
+extern struct Unk_unk68 D_800FB698;
+extern struct Unk_unk68 D_800FB69C;
+extern struct Unk_unk68 D_800FB6A0;
+extern struct Unk_unk68 D_800FB6A4;
+extern struct Unk_unk68 D_80106870[];
+extern u8 D_800FB67C[];
+extern void (*D_800FB6B4[])(struct MainObj*);
+extern void* D_8010DA9C[];
+extern union AnimationStep* D_800FBD0C[];
+extern struct Unk_unk68 D_800FBBB8;
+extern struct Unk_unk68 D_800FBBC8;
+extern struct Unk_unk68 D_80106A74[];
+extern u8 D_800FBD80[];
+extern void (*D_800FBD9C[])(struct MainObj*);
+extern u8 D_80108D94[4];
+extern u8 D_80108D98[4];
+extern s8 D_80108D9C[6][2];
+extern union AnimationStep* D_800FC69C[];
+extern struct Unk_unk68* D_800FC744[2];
+extern struct Unk_unk68* D_800FC74C[2];
+extern struct Unk_unk68 D_80106BF4[];
+extern u8 D_800FC708[8];
+extern void (*D_800FC79C[])(struct MainObj*);
+extern u8 D_800FC7D4[4];
+extern u8 D_800FC7D8[4];
+extern s16 D_800FC7E8[6];
+extern u8 D_80108E58[4];
+extern u8 D_80105FA4[4];
+extern u8 D_8010D3C8[4];
+extern u8 D_8010D3D0[8];
+extern u8 D_8010D414[8];
+extern u8 D_8010D3D8[8];
+extern void* D_8010D684[14];
+
+struct Effect10Trigger {
+    s16 left;
+    s16 right;
+    s16 top;
+    s16 bottom;
+    u8 sound_id;
+    u8 pad;
+};
+
+extern struct Effect10Trigger* D_8010B590[2];
+u8 func_800B7E88(s16* bounds);
 
 s32 func_800154E8(s32 arg0, s32 arg1, struct BaseObj* source, u8 pan);
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
@@ -44,6 +95,14 @@ s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
 s32 func_8002C160(struct CollisionObj*, struct CollisionObj*);
 void func_800BF638(struct BaseObj*, s8, s16, s16);
 void func_80046AA4(struct MainObj*);
+void func_8004C6C4(struct MainObj*);
+void func_8004C694(struct MainObj*);
+void func_8004FBF4(struct MainObj*);
+void func_8004FC80(struct MainObj*);
+u8 func_80053A88(struct PlayerObj*, s16, s16);
+u8 func_80053B18(struct PlayerObj*, s16, s16);
+u8 func_8005398C(struct MainObj*);
+void func_80091AC4(struct MainObj*);
 extern struct Unk_unk68 D_80108708[];
 
 struct Effect00BackgroundUpdate {
@@ -533,13 +592,21 @@ u8 func_8002D724(struct PlayerObj* object, s16 x, s16 y)
 
 u8 func_8002D7E4(struct PlayerObj* object, s16 x, s16 y)
 {
-    u8 attribute = get_stage_tile_attribute(object->bg_offset, x, y);
+    s8 layer = object->bg_offset;
+    s32 block_x = x >> 8;
+    s32 block_y = y >> 8;
+    u8 block;
+    u16 tile;
 
-    if (attribute == 0)
+    if (layer < 0 || layer >= 3 || block_x < 0 || block_y < 0 || block_x >= layout_width || block_y >= layout_height)
+        return 0;
+    block = SP_BG_TILEMAP[layer * layout_size + block_y * layout_width + block_x];
+    if (block == 0)
         return 0;
     object->unk6C = x & 0xF;
     object->unk6E = y & 0xF;
-    return attribute;
+    tile = SP_BG_TILE_PIXELS[block * 0x100 + ((y & 0xF0) >> 4) * 0x10 + ((x & 0xF0) >> 4)];
+    return SP_BG_TILE_ATTRS[tile & 0x3FFF] & 0xFF;
 }
 
 void func_8002E994(struct EngineObj* arg0)
@@ -812,53 +879,79 @@ void func_8002217C(u16 message, u8 portrait, u8 delay_only)
 
 void func_80028690(struct BackgroundObj* bg)
 {
-    s16 step = (s8)bg->unk47;
-    s16 player_x = g_Player.x_pos.i.hi;
-    s16 player_y = g_Player.y_pos.i.hi;
+    s16 target;
+    s16 origin;
+    s16 delta;
+    s16 next;
 
-    if (bg->unk1E != bg->unk26) {
-        s16 next = bg->unk1E;
-        if (bg->unk26 >= bg->x_pos.i.hi)
-            next = bg->x_pos.i.hi + step;
-        else if (player_x - bg->x_pos.i.hi - bg->unk30 >= 5)
-            next = bg->x_pos.i.hi - step;
-        if ((step >= 0 && next < bg->unk26) || (step < 0 && next > bg->unk26))
-            bg->unk1E = next;
-        else
-            bg->unk1E = bg->unk26;
+    target = bg->unk26;
+    if (bg->unk1E != target) {
+        origin = bg->x_pos.i.hi;
+        if (target >= origin) {
+            next = origin + (s8)bg->unk47;
+        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk30 + 2) < 5) {
+            next = target;
+        } else {
+            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+            if (delta >= 0)
+                delta = 0;
+            next = delta + origin - (s8)bg->unk47;
+        }
+        bg->unk1E = next < target ? next : target;
     }
-    if (bg->unk1C != bg->unk24) {
-        s16 next = bg->unk1C;
-        if (bg->unk24 < bg->x_pos.i.hi)
-            next = bg->x_pos.i.hi - step;
-        else if (player_x - bg->x_pos.i.hi - bg->unk32 < 4)
-            next = bg->x_pos.i.hi + step;
-        if ((step >= 0 && next > bg->unk24) || (step < 0 && next < bg->unk24))
-            bg->unk1C = next;
-        else
-            bg->unk1C = bg->unk24;
+
+    target = bg->unk24;
+    if (bg->unk1C != target) {
+        origin = bg->x_pos.i.hi;
+        if (target < origin) {
+            next = origin - (s8)bg->unk47;
+            bg->unk1C = next < target ? target : next;
+        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk32 + 2) >= 4) {
+            bg->unk1C = target;
+        } else {
+            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+            if (delta < 0)
+                delta = 0;
+            next = delta + origin + (s8)bg->unk47;
+            bg->unk1C = target < next ? next : target;
+        }
     }
-    if (bg->unk22 != bg->unk2A) {
-        s16 next = bg->unk22;
-        if (bg->unk2A >= bg->y_pos.i.hi)
-            next = bg->y_pos.i.hi + step;
-        else if (player_y - bg->y_pos.i.hi - bg->unk2C < 4)
-            next = bg->y_pos.i.hi - step;
-        if ((step >= 0 && next < bg->unk2A) || (step < 0 && next > bg->unk2A))
+
+    target = bg->unk2A;
+    if (bg->unk22 != target) {
+        origin = bg->y_pos.i.hi;
+        if (target >= origin) {
+            next = origin + (s8)bg->unk47;
+            bg->unk22 = next < target ? next : target;
+        } else {
+            next = g_Player.y_pos.i.hi - origin - bg->unk2C + 2;
+            if (next < 4) {
+                delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+                if (delta >= 0)
+                    delta = 0;
+                next = delta + origin - (s8)bg->unk47;
+                if (next < target)
+                    next = target;
+            }
             bg->unk22 = next;
-        else
-            bg->unk22 = bg->unk2A;
+        }
     }
-    if (bg->unk20 != bg->unk28) {
-        s16 next = bg->unk20;
-        if (bg->unk28 < bg->y_pos.i.hi)
-            next = bg->y_pos.i.hi - step;
-        else if (player_y - bg->y_pos.i.hi - bg->unk2E < 4)
-            next = bg->y_pos.i.hi + step;
-        if ((step >= 0 && next > bg->unk28) || (step < 0 && next < bg->unk28))
-            bg->unk20 = next;
-        else
-            bg->unk20 = bg->unk28;
+
+    target = bg->unk28;
+    if (bg->unk20 != target) {
+        origin = bg->y_pos.i.hi;
+        if (target < origin) {
+            next = origin - (s8)bg->unk47;
+            bg->unk20 = next < target ? target : next;
+        } else if ((s16)(g_Player.y_pos.i.hi - origin - bg->unk2E + 2) >= 4) {
+            bg->unk20 = target;
+        } else {
+            delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+            if (delta < 0)
+                delta = 0;
+            next = delta + origin + (s8)bg->unk47;
+            bg->unk20 = next < target ? next : target;
+        }
     }
 }
 
@@ -980,6 +1073,37 @@ void func_800B5D04(struct EffectObj* arg0)
     arg0->ext.palette_animation.palette_count = destination >> 8;
     func_800B5C60(arg0);
     arg0->state++;
+}
+
+void func_800B7EE8(struct EffectObj* arg0)
+{
+    struct Effect10Trigger* triggers;
+    u8 index;
+
+    if (arg0->state == 0) {
+        arg0->state++;
+        arg0->ext.unk_effect.unk14 = 0;
+        return;
+    }
+
+    triggers = D_8010B590[(s8)engine_obj.substage];
+    for (index = 0; index < 4; index++) {
+        struct Effect10Trigger* trigger = &triggers[index];
+        u8 bit = 1 << index;
+        u8 active = arg0->ext.unk_effect.unk14;
+
+        if (func_800B7E88(&trigger->left)) {
+            if (!(active & bit)) {
+                if (engine_obj.substage == 0 || active == 0)
+                    func_8001540C(5, trigger->sound_id, NULL);
+                arg0->ext.unk_effect.unk14 = active | bit;
+            }
+        } else if (active & bit) {
+            if (engine_obj.substage == 0 || (active != 3 && active != 6))
+                func_80015930(5, trigger->sound_id);
+            arg0->ext.unk_effect.unk14 = active & ~bit;
+        }
+    }
 }
 
 void func_800D3C58(struct QuadObj* arg0)
@@ -1356,6 +1480,116 @@ void func_80024334(struct VisualObj* object)
     }
 
     SP_PRIM_CURSOR = primitive;
+    SP_DRAW_MODE_CURSOR = draw_mode;
+}
+
+void func_8002588C(struct PlayerObj* arg0, s32 part, s32 clut)
+{
+    POLY_FT4* primitive;
+    DR_TPAGE* draw_mode;
+    P_TAG* first_draw_mode;
+    P_TAG** tail;
+    u8* table;
+    u8* frame_data;
+    u16* frame_header;
+    s32 frame_count;
+    s32 origin_x;
+    s32 origin_y;
+    u8 flipped;
+    u16 texture;
+
+    if (arg0->bg_offset < 0) {
+        origin_x = arg0->x_pos.i.hi;
+        origin_y = arg0->y_pos.i.hi;
+    } else {
+        struct BackgroundObj* background = &background_objects[arg0->bg_offset];
+
+        origin_x = (u16)(arg0->x_pos.i.hi - background->x_pos.i.hi);
+        origin_y = (u16)(arg0->y_pos.i.hi - background->y_pos.i.hi);
+    }
+    origin_x = (s16)origin_x;
+    origin_y = (s16)origin_y;
+
+    primitive = SP_PRIM_CURSOR;
+    draw_mode = SP_DRAW_MODE_CURSOR;
+    first_draw_mode = (P_TAG*)draw_mode;
+    table = (u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, part + 5);
+    frame_header = (u16*)(table + arg0->animation_step.fields.frame_index * 4);
+    frame_count = frame_header[0];
+    frame_data = table + frame_header[1] * 4;
+    flipped = arg0->unk15;
+    texture = arg0->unk40;
+
+    if (frame_count == 0)
+        return;
+
+    while (frame_count-- != 0) {
+        u8 flags = frame_data[0];
+        s32 x0 = (s8)frame_data[2];
+        s32 x1;
+        s32 y0;
+        s32 y1;
+        u32 texture_index;
+        u16 primitive_clut;
+        s32 v0;
+
+        if (flipped == 0) {
+            x1 = x0 + 16;
+        } else {
+            x1 = -x0;
+            x0 = -(x0 + 16);
+        }
+        x0 += origin_x;
+        x1 += origin_x;
+        y0 = origin_y + (s8)frame_data[3];
+        y1 = y0 + 16;
+        primitive_clut = clut + ((flags & 0xC) >> 2);
+        texture_index = texture + (frame_data[1] | ((flags & 3) << 8));
+        v0 = texture_index & 0xF0;
+
+        if (((flags & 0x40) ^ flipped) == 0) {
+            setlen(primitive, 3);
+            setcode(primitive, arg0->active & 0x10 ? 0x7F : 0x7D);
+            primitive->clut = primitive_clut;
+            primitive->x0 = x0;
+            primitive->y0 = y0;
+            primitive->u0 = texture_index * 16;
+            primitive->v0 = v0;
+            draw_mode->code[0] = ((texture_index & 0xFFFF) >> 8) | 0xE1000020;
+        } else {
+            s32 u0 = texture_index * 16 - 1;
+            s32 u1 = texture_index * 16 | 0xF;
+            s32 v1 = v0 + 16;
+
+            setlen(primitive, 9);
+            setcode(primitive, arg0->active & 0x10 ? 0x2F : 0x2D);
+            primitive->tpage = ((texture_index & 0xFFFF) >> 8) | 0x20;
+            primitive->clut = primitive_clut;
+            if ((u8)u0 == 0xFF) {
+                u0 = texture_index * 16;
+                x1--;
+            }
+            if ((u8)v1 == 0) {
+                v1 = v0 | 0xF;
+                y1--;
+            }
+            setXY4(primitive, x0, y0, x1, y0, x0, y1, x1, y1);
+            setUV4(primitive, u1, v0, u0, v0, u1, v1, u0, v1);
+            draw_mode->code[0] = 0xE1000020;
+        }
+
+        setlen(draw_mode, 1);
+        setaddr(draw_mode, primitive);
+        setaddr(primitive, draw_mode + 1);
+        primitive++;
+        draw_mode++;
+        frame_data += 4;
+    }
+
+    SP_PRIM_CURSOR = primitive;
+    tail = &((P_TAG**)D_8013BC40[SP_DRAW_BUFFER])[(arg0->unk16 >> 4) * 8 + (arg0->unk16 & 0xF)];
+    setaddr(*tail, first_draw_mode);
+    *tail = (P_TAG*)(primitive - 1);
     SP_DRAW_MODE_CURSOR = draw_mode;
 }
 
@@ -2314,6 +2548,1532 @@ void func_800367F8(struct PlayerObj* arg0)
         visual->x_pos.u.hi = arg0->x_pos.u.hi - D_800F8BCC[index];
     }
     visual->y_pos.u.hi = arg0->y_pos.u.hi;
+}
+
+void func_80036BF4(struct PlayerObj* arg0, s16 ground_y)
+{
+    struct VisualObj* visual;
+    s32 resource;
+    s32 column;
+    s32 row;
+
+    if (func_8002D724(arg0, arg0->x_pos.i.hi, ground_y) != 0x24 || arg0->unkDF != 0) {
+        return;
+    }
+
+    arg0->unkDF = 1;
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 3;
+        visual->unk2 = 9;
+        visual->bg_offset = arg0->bg_offset;
+        visual->unk16 = 1;
+        visual->animation_table = D_8011BF40;
+        resource = func_8002938C(0x84) & 0xFF;
+        visual->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+        resource = func_8002938C(0x84) & 0xFF;
+        visual->unk40 = D_801406A8[resource] >> 7;
+        column = ((func_8002938C(0x84) & 0xFF) << 2) + 0x18;
+        row = func_8002938C(0x84) & 0xFF;
+        visual->unk42 = (u16)((column - (column & 0x7F0))
+            | ((((row + 6) >> 2) + 0x1E0) << 6));
+        visual->unk15 = arg0->unk15;
+        visual->x_pos.i.hi = arg0->x_pos.i.hi;
+        visual->y_pos.i.hi = ground_y - 8;
+    }
+
+    if (engine_obj.stage == 1) {
+        func_8001540C(5, (get_random() & 1) + 3, arg0);
+    } else {
+        func_8001540C(2, 0xAE, arg0);
+    }
+}
+
+void func_8004B8FC(struct MainObj* arg0)
+{
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0x90;
+    arg0->unk61 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)D_800FB63C;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->ext.main_12.unk88 = 0;
+    arg0->unk67 = 0;
+    arg0->ext.main_12.unk81 = 0;
+    arg0->collision_data = D_80106870;
+
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk5C = 3;
+        arg0->unk60 = 3;
+        arg0->unk5 = 2;
+        arg0->unk24 = -0x8000;
+        arg0->unk2C = -0x800;
+        arg0->unk16 = 6;
+        arg0->unk68 = &D_800FB684;
+        arg0->unk54 = &D_800FB68C;
+        arg0->unk50 = &D_800FB688;
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0);
+        break;
+    case 1:
+        arg0->unk5C = 3;
+        arg0->unk60 = 3;
+        arg0->unk5 = 6;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->unk24 = 0x4000;
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        arg0->unk16 = 6;
+        arg0->unk68 = &D_800FB690;
+        arg0->unk54 = NULL;
+        arg0->unk50 = NULL;
+        arg0->ext.main_12.unk8A = 0;
+        func_80015D60(ANIMATED_OBJECT(arg0), 3);
+        break;
+    case 2:
+        arg0->unk5C = 3;
+        arg0->unk60 = 3;
+        arg0->unk7E = 0;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->unk16 = 6;
+        arg0->unk68 = NULL;
+        arg0->unk54 = NULL;
+        arg0->unk50 = NULL;
+        arg0->ext.main_12.unk8A = 0;
+        func_80015D60(ANIMATED_OBJECT(arg0), 2);
+        break;
+    }
+}
+
+void func_8004BAF8(struct MainObj* arg0)
+{
+    s32 result;
+
+    if (arg0->unk5 != 5 || arg0->unk6 != 4)
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    func_8004C6C4(arg0);
+    D_800FB6B4[(u8)arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    result = func_8002DD04(arg0);
+    if (result < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(5, D_800FB67C, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0xE);
+        arg0->state++;
+        return;
+    }
+    if (result > 0)
+        arg0->ext.main_12.saved_unk5 = arg0->unk5;
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
+        arg0->state++;
+        return;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+
+void func_8004BCFC(struct MainObj* arg0)
+{
+    s32 transition = 0;
+
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->unk7E-- != 0)
+            return;
+        arg0->unk6 = 1;
+        arg0->unk7 = 0;
+        arg0->unk67 = 1;
+        arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
+        arg0->unk24 = 0x80000;
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+        if (arg0->unk2 == 2) {
+            if ((get_random() & 3) == 0) {
+                arg0->ext.main_12.unk80 = 0x10;
+                arg0->ext.main_12.unk81 = 1;
+            } else {
+                arg0->ext.main_12.unk80 = 0xF;
+                arg0->ext.main_12.unk81 = 0;
+            }
+        } else {
+            arg0->ext.main_12.unk80 = get_random() & 0xF;
+        }
+        arg0->unk2C = 0;
+        arg0->unk68 = &D_800FB690;
+        arg0->unk54 = &D_800FB698;
+        arg0->unk50 = &D_800FB694;
+        func_80015D60(ANIMATED_OBJECT(arg0), 2);
+        break;
+
+    case 1: {
+        struct Unk_unk68* bounds;
+        s16 x;
+        s16 y;
+
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        bounds = arg0->unk68;
+        x = arg0->x_pos.i.hi + bounds->unk0;
+        y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3 + 4;
+        if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0x24) {
+            arg0->unk6 = 2;
+            func_80015D60(ANIMATED_OBJECT(arg0), 9);
+        } else if (arg0->unk7 == 0) {
+            func_800C7B80(arg0, 1);
+            arg0->unk7 = 1;
+            func_8001540C(2, 0x25, arg0);
+        }
+        transition = (u8)arg0->unk70 & 4;
+        break;
+    }
+
+    case 2:
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        transition = arg0->y_pos.i.hi < g_Player.y_pos.i.hi;
+        break;
+    }
+
+    if (transition) {
+        func_8004C694(arg0);
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
+
+void func_8004BF5C(struct MainObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 1;
+            func_80015D60(ANIMATED_OBJECT(arg0), 6);
+        }
+        break;
+    case 1:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 2;
+            func_80015D60(ANIMATED_OBJECT(arg0), 7);
+            arg0->unk68 = &D_800FB69C;
+            arg0->unk54 = &D_800FB6A4;
+            arg0->unk50 = &D_800FB6A0;
+        }
+        break;
+    case 2:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->unk6 = 3;
+            arg0->unk7E = 10;
+        }
+        break;
+    case 3:
+        if (--arg0->unk7E == 0) {
+            u8 direction;
+
+            arg0->unk6 = 4;
+            arg0->ext.main_12.unk8C = 0;
+            direction = (u8)func_8002B7DC(
+                OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+            if ((u8)(direction - 8) < 0x10) {
+                arg0->unk15 = 0;
+                if (direction < 0xC)
+                    direction = 0xC;
+                if (direction >= 0x15)
+                    direction = 0x14;
+            } else {
+                arg0->unk15 = 0x40;
+                if ((u8)(direction - 0x18) < 4)
+                    direction = 0x1C;
+                else if ((u8)(direction - 5) < 3)
+                    direction = 4;
+            }
+            func_8002B93C(MOVING_OBJECT(arg0), direction);
+            arg0->unk28 = 0;
+            arg0->unk2C = 0;
+            arg0->unk20 *= 6;
+            arg0->unk24 *= 6;
+            func_80015D60(ANIMATED_OBJECT(arg0), 8);
+        }
+        break;
+    case 4: {
+        struct Unk_unk68* bounds;
+        s16 x;
+        s16 y;
+
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        bounds = arg0->unk68;
+        x = arg0->x_pos.i.hi + bounds->unk0 + bounds->unk2;
+        y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3;
+        if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0x24) {
+            s16 tile = x / 16;
+            if ((u16)tile != arg0->ext.main_12.unk8C) {
+                func_800C7B80(arg0, 1);
+                func_8001540C(2, 0x25, arg0);
+                arg0->ext.main_12.unk8C = tile;
+            }
+        }
+        break;
+    }
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
+
+void func_8004E8E0(struct MainObj* arg0)
+{
+    arg0->unk5C = 0x10;
+    arg0->unk60 = 3;
+    arg0->unk61 = 0;
+    arg0->collision_data = D_80106A74;
+    arg0->animation_table = (const u8* const*)D_800FBD0C;
+    arg0->unk16 = 6;
+    arg0->unk68 = &D_800FBBC8;
+    arg0->unk54 = &D_800FBBB8;
+    arg0->unk50 = &D_800FBBC0;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk67 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    func_8004FC50(ANIMATED_OBJECT(arg0));
+
+    arg0->ext.main_16.unk80 = 0;
+    arg0->ext.main_16.unk84 = 0;
+    arg0->ext.main_16.unk8C = 0;
+    arg0->ext.main_16.unk90 = 0;
+    arg0->ext.main_16.shot_09_active = 1;
+
+    switch (arg0->unk2) {
+    case 0:
+        func_80015D60(ANIMATED_OBJECT(arg0), 0);
+        arg0->unk5 = 2;
+        break;
+    case 1:
+        func_80015D60(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk5 = 2;
+        break;
+    case 2:
+        func_80015D60(ANIMATED_OBJECT(arg0), 1);
+        arg0->unk7C = 0x14;
+        arg0->unk5 = 9;
+        break;
+    case 3:
+        func_80015D60(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk5 = 0xA;
+        break;
+    case 4:
+        func_80015D60(ANIMATED_OBJECT(arg0), 0x11);
+        arg0->unk7E = 3;
+        arg0->unk5 = 8;
+        arg0->unk42 += 2;
+        break;
+    case 5:
+        func_80015D60(ANIMATED_OBJECT(arg0), 2);
+        arg0->unk7E = 3;
+        arg0->unk5 = 2;
+        arg0->unk42 += 2;
+        break;
+    }
+
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+}
+
+void func_8004EA88(struct MainObj* arg0)
+{
+    s32 collision;
+
+    func_8004FBF4(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (arg0->unk7 == 0) {
+        func_8004FD38(arg0, 2);
+        arg0->unk7 = 1;
+    }
+
+    D_800FBD9C[(u8)arg0->unk5](arg0);
+    if (arg0->unk5 == 0xA)
+        return;
+
+    if (engine_obj.character_state.bytes[0] != 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(0xB, D_800FBD80, arg0);
+        arg0->unk7C = 0x20;
+        arg0->unk7E = 6;
+        arg0->ext.main_16.shot_09_active = 0;
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        return;
+    }
+
+    func_8002D9BC(arg0);
+    collision = func_8002DD04(arg0);
+    if (collision < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(0xB, D_800FBD80, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0x13);
+        arg0->unk7C = 0x20;
+        arg0->unk7E = 6;
+        arg0->ext.main_16.shot_09_active = 0;
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        return;
+    }
+
+    if ((u32)(collision - 0x1B) < 2 && arg0->ext.main_16.unk8C != 1) {
+        arg0->unk54 = &D_800FBBB8;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xE);
+        arg0->ext.main_16.unk90 = 0;
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+    }
+
+    if (arg0->state == 2)
+        return;
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0xA8) != 0) {
+        arg0->ext.main_16.shot_09_active = 0;
+        arg0->state = 3;
+    } else {
+        func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+    }
+}
+
+void func_8004FD38(struct MainObj* arg0, s32 animation)
+{
+    struct MiscObj* misc;
+    struct Unk_unk68* bounds;
+    s16 x;
+    s16 y;
+    s32 resource;
+
+    if (arg0->unk67 != 0)
+        return;
+
+    bounds = arg0->unk68;
+    x = arg0->x_pos.i.hi + bounds->unk0;
+    y = arg0->y_pos.i.hi + bounds->unk1 + bounds->unk3 - 4;
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) != 0x24)
+        return;
+
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 5;
+        misc->animation_table = (u32**)D_8010DA9C;
+        misc->unk42 = 0x7888;
+        misc->unk40 = (u16)((u32)D_801406A8[4] >> 7);
+        misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 4);
+        misc->bg_offset = arg0->bg_offset;
+        misc->y_pos.val = arg0->y_pos.val + FIXED(6);
+        misc->unk15 = arg0->unk15;
+        if ((s8)animation == 2) {
+            misc->unk2 = 1;
+            misc->ext.misc_5.owner = arg0;
+            misc->x_pos.val = arg0->x_pos.val - FIXED(13);
+        } else {
+            misc->unk2 = 0;
+            misc->x_pos.val = arg0->x_pos.val;
+        }
+        misc->ext.misc_5.animation = (s8)animation;
+        misc->state = 3;
+    }
+
+    if ((s8)animation != 2)
+        return;
+
+    misc = find_free_misc_obj();
+    if (misc == NULL)
+        return;
+    misc->active = 0x41;
+    misc->id = 5;
+    misc->unk2 = 1;
+    misc->animation_table = (u32**)D_8010DA9C;
+    resource = func_8002938C(0x84);
+    misc->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    resource = func_8002938C(0x84);
+    misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    misc->unk42 = 0x7888;
+    misc->bg_offset = arg0->bg_offset;
+    misc->y_pos.val = arg0->y_pos.val + FIXED(6);
+    misc->unk15 = arg0->unk15;
+    misc->state = 3;
+    misc->ext.misc_5.animation = (s8)animation;
+    misc->ext.misc_5.owner = arg0;
+    misc->x_pos.val = arg0->x_pos.val + FIXED(13);
+}
+
+void func_8004ED60(struct MainObj* arg0)
+{
+    s32 random;
+    s32 distance;
+
+    func_8004FC50(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+
+    arg0->ext.main_16.unk8C = 0;
+    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (distance < 0)
+        distance = -distance;
+
+    if (distance < 0x61) {
+        if (weapon_objects[0].active != 0)
+            goto choose_state_6;
+        if ((get_random() & 7) < 5)
+            goto choose_state_6;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0x10);
+        arg0->ext.main_16.unk80 = 1;
+        arg0->ext.main_16.unk90 = 1;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        return;
+    }
+
+    random = get_random() & 0xF;
+    if (weapon_objects[0].active != 0) {
+        if (random < 0xC) {
+            func_80015D60(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk90 = 1;
+            arg0->ext.main_16.unk80 = 0;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+        if (random < 0xE) {
+            func_80015D60(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk80 = 1;
+            arg0->ext.main_16.unk90 = 1;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+    } else {
+        if (random < 0xC) {
+            func_80015D60(ANIMATED_OBJECT(arg0), 0x11);
+            arg0->unk5 = 8;
+            arg0->unk6 = 0;
+            return;
+        }
+        if (random < 0xE) {
+            func_80015D60(ANIMATED_OBJECT(arg0), 0x10);
+            arg0->ext.main_16.unk80 = 1;
+            arg0->ext.main_16.unk90 = 1;
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            return;
+        }
+    }
+
+choose_state_6:
+    arg0->ext.main_16.unk8C = 1;
+    arg0->unk61 = (u8)engine_obj.cur_character;
+    func_8004FC80(arg0);
+    arg0->unk5 = 6;
+    arg0->unk6 = 0;
+}
+
+void func_8004F1A0(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 0)
+        return;
+
+    arg0->unk54 = &D_800FBBB8;
+    func_8004FC50(ANIMATED_OBJECT(arg0));
+    if (arg0->unk2 >= 4) {
+        arg0->unk7E = 3;
+        func_80015D60(ANIMATED_OBJECT(arg0), 0x11);
+        arg0->unk5 = 8;
+    } else {
+        func_80015D60(ANIMATED_OBJECT(arg0), 0);
+        arg0->unk5 = 2;
+    }
+    arg0->unk6 = 0;
+}
+
+void func_8004F6B8(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 0)
+        return;
+
+    func_80015D60(ANIMATED_OBJECT(arg0), 0x12);
+    func_8001540C(2, 0x29, arg0);
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 9;
+        shot->unk2 = 3;
+        shot->unk40 = arg0->unk40;
+        shot->unk42 = arg0->unk42;
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->unk15 = arg0->unk15;
+        shot->bg_offset = arg0->bg_offset;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->unk15 = arg0->unk15;
+        shot->x_vel.val = arg0->unk15 != 0 ? FIXED(1) : FIXED(-1);
+        shot->y_vel.val = 0;
+        shot->state = 3;
+    }
+    arg0->unk7C = 0x14;
+    arg0->unk6 = 1;
+}
+
+void func_8004F7D0(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0)
+        return;
+
+    func_80015D60(ANIMATED_OBJECT(arg0), 0x13);
+    func_8001540C(2, 0x29, arg0);
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 9;
+        shot->unk2 = 4;
+        shot->unk40 = arg0->unk40;
+        shot->unk42 = arg0->unk42;
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->unk15 = arg0->unk15;
+        shot->bg_offset = arg0->bg_offset;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->unk15 = arg0->unk15;
+        shot->x_vel.val = arg0->unk15 != 0 ? FIXED(1) : FIXED(-1);
+        shot->y_vel.val = 0;
+        shot->state = 3;
+    }
+    if (arg0->unk2 < 4) {
+        arg0->unk7C = 0x14;
+    } else {
+        func_8004FC50(ANIMATED_OBJECT(arg0));
+        arg0->unk7C = 0x3C;
+    }
+    arg0->unk6 = 2;
+}
+
+void func_8009B0B8(struct ShotObj* arg0)
+{
+    arg0->unk58.collision_bounds = D_801060F0;
+    arg0->unk16 = 5;
+    arg0->unk54 = D_80108D94;
+    arg0->unk50.data = D_80108D94;
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    arg0->unk68 = NULL;
+    arg0->unk84.value = 0x1E;
+    arg0->unk42 &= 0x7FFF;
+    func_80015D60(ANIMATED_OBJECT(arg0), 5);
+}
+
+void func_8009B1E8(struct ShotObj* arg0)
+{
+    s32 index = arg0->unk2;
+
+    arg0->state = 4;
+    arg0->on_screen = 1;
+    arg0->unk58.collision_data = D_80106070;
+    arg0->unk54 = D_80108D98;
+    arg0->unk50.data = D_80108D98;
+    arg0->unk42 &= 0x7FFF;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    if (arg0->unk15 == 0)
+        arg0->x_pos.i.hi += D_80108D9C[index][0];
+    else
+        arg0->x_pos.i.hi -= D_80108D9C[index][0];
+    arg0->y_vel.val *= 4;
+    arg0->x_vel.val *= 4;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    arg0->y_pos.i.hi += D_80108D9C[index][1];
+    func_80015D60(ANIMATED_OBJECT(arg0), index + 8);
+}
+
+void func_8009B6B8(struct ShotObj* arg0)
+{
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk54 = D_80108E58;
+    arg0->unk50.data = D_80108E58;
+    arg0->unk58.collision_data = D_80106070;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk60 = 3;
+    arg0->x_vel.val *= 3;
+    arg0->y_vel.val *= 3;
+    func_80015D60(ANIMATED_OBJECT(arg0), 0x11);
+}
+
+void func_80091B1C(struct MainObj* arg0)
+{
+    struct Unk_unk68* bounds;
+    s32 velocity = arg0->unk20;
+    s16 x;
+    s16 y;
+    s32 reverse = 0;
+
+    if (!(arg0->unk70 & 8)) {
+        arg0->unk5 = 1;
+        arg0->unk6 = 0;
+        arg0->unk7C = 0;
+        arg0->unk20 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0x4200;
+        arg0->ext.main_76.saved_x_velocity = velocity;
+        return;
+    }
+
+    bounds = arg0->unk68;
+    y = arg0->y_pos.i.hi + bounds->unk1 + (u8)bounds->unk3 + 4;
+    if (arg0->unk20 < 0) {
+        reverse = (arg0->unk70 & 2) != 0;
+        x = arg0->x_pos.i.hi + bounds->unk0 - (u8)bounds->unk2;
+    } else {
+        reverse = (arg0->unk70 & 1) != 0;
+        x = arg0->x_pos.i.hi + bounds->unk0 + (u8)bounds->unk2;
+    }
+    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) < 0x38)
+        reverse = 1;
+    if (reverse)
+        arg0->unk20 = -arg0->unk20;
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
+
+void func_800C63BC(struct ItemObj* arg0)
+{
+    struct ItemObj* child;
+    s32 discard;
+    u8 resource;
+    s32 column;
+    s32 row;
+
+    discard = g_Player.unk2 != 0;
+    if (engine_obj.unk37 != 0) {
+        if (g_Player.unkA7 != 0)
+            discard = 1;
+    } else {
+        if (D_8010D3D0[(u8)arg0->unk2] & g_Player.unkA7)
+            discard = 1;
+        if (arg0->unk2 == 2 && g_Player.unkB8 == 2)
+            discard = 0;
+        if (arg0->unk2 == 3 && g_Player.unkB8 == 1)
+            discard = 0;
+    }
+
+    if (discard) {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    arg0->on_screen = 1;
+    arg0->unk68 = (struct Unk_unk68*)D_8010D3C8;
+    arg0->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(0xA2) & 0xFF;
+    arg0->animation_table = (const u8* const*)D_8010D684;
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    arg0->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    column = resource * 4 + 0x18;
+    row = resource + 6;
+    arg0->unk42 = (u16)((column - (column & 0x7F0)) | (((row >> 2) + 0x1E0) << 6));
+    arg0->unk16 = 4;
+    arg0->unk15 = 0;
+    arg0->unk75 = 1;
+    g_Player.unkE2 = 0;
+    func_80015D60(ANIMATED_OBJECT(arg0), 0);
+
+    do {
+        arg0->y_pos.u.hi += 0x10;
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    } while (!(arg0->unk70 & 8));
+
+    child = find_free_item_obj();
+    if (child != NULL) {
+        child->active = 1;
+        child->id = 0x1A;
+        child->unk2 = 6;
+        child->unk7C.object = arg0;
+        child->bg_offset = arg0->bg_offset;
+    }
+
+    func_800C661C(arg0, 0x23, D_8010D3D8[(u8)arg0->unk2]);
+    arg0->unk5 = 0;
+    arg0->state++;
+    func_8002E184(PLAYER_OBJECT(arg0));
+    func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+}
+
+s32 func_800B8490(struct EffectObj* arg0)
+{
+    if ((u16)(arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi + 0x40) >= 0x1C0)
+        return 1;
+    return (u16)(arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi + 0x40) >= 0x170;
+}
+
+void func_800B8114(struct EffectObj* arg0)
+{
+    struct Effect12Ext* ext = &arg0->ext.effect_12;
+    struct MainObj* child;
+    s32 distance;
+    u8 index;
+    s16 i;
+
+    if (func_800B8490(arg0) != 0) {
+        arg0->state = 2;
+        return;
+    }
+
+    for (i = 0; i < ext->child_count; i++) {
+        child = ext->children[i];
+        if (child != NULL && child->active == 0)
+            ext->children[i] = NULL;
+    }
+
+    switch (arg0->unk5) {
+    case 0:
+        distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+        if (distance < 0)
+            distance = -distance;
+        if ((s16)distance < 0x80)
+            arg0->unk5 = 1;
+        break;
+    case 1:
+        for (i = 0; i < ext->child_count; i++) {
+            if (ext->children[i] != NULL)
+                continue;
+            if (ext->cooldown != 0) {
+                ext->cooldown--;
+                continue;
+            }
+            child = find_free_main_obj();
+            if (child == NULL)
+                continue;
+            ext->children[i] = child;
+            child->active = 0x41;
+            child->id = ext->child_id;
+            child->unk2 = ext->child_subtype;
+            child->x_pos.val = arg0->x_pos.val;
+            child->y_pos.val = arg0->y_pos.val;
+            ext->cooldown = 0x20;
+            index = func_8002938C(child->id);
+            child->unk40 = D_801406A8[index] >> 7;
+            index = func_8002938C(child->id);
+            child->unk42 = SOME_COORDINATE_CONVERSION(index);
+            index = func_8002938C(child->id);
+            child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[index];
+            ext->spawned++;
+            if (ext->spawned >= ext->child_count)
+                arg0->unk5 = 2;
+        }
+        break;
+    case 2:
+        child = NULL;
+        for (i = 0; i < ext->child_count; i++)
+            child = ext->children[i];
+        if (child == NULL) {
+            arg0->unk5 = 3;
+            ext->spawned = 0;
+            ext->cooldown = 0;
+            ext->timer = 0x60;
+        }
+        break;
+    case 3:
+        if (--ext->timer == 0)
+            arg0->unk5 = 0;
+        break;
+    }
+}
+
+struct Item05MotionConfig {
+    u32 collision_mode;
+    s32 velocity;
+    s16 acceleration;
+    s16 unused;
+};
+
+struct Item05StageConfig {
+    u16 tile;
+    u16 index;
+    u16 x;
+    u16 y;
+};
+
+extern void* D_8010C9B4[4];
+extern struct Item05MotionConfig D_8010C9C4[9];
+extern struct Item05StageConfig D_8010CA30[9];
+extern u8 D_8010CA78[9][4];
+void func_800C1244(struct ItemObj*);
+void func_800C1318(void);
+
+void func_800C0EBC(struct ItemObj* arg0)
+{
+    s8 index;
+
+    arg0->active = 0x41;
+    arg0->state++;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)D_8010C9B4;
+    arg0->unk42 = 0x788C;
+    arg0->unk40 = D_801406A8[5] >> 7;
+    arg0->unk16 = 6;
+    arg0->unk5C = 0xF;
+    arg0->unk61 = 0;
+    arg0->unk54 = NULL;
+    index = arg0->unk2;
+    arg0->unk68 = (struct Unk_unk68*)D_8010CA78[index];
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[5];
+    arg0->x_pos.i.hi = D_8010CA30[index].x;
+    arg0->y_pos.i.hi = D_8010CA30[index].y;
+    arg0->y_vel.val = D_8010C9C4[index].velocity;
+    arg0->unk2C = (u16)D_8010C9C4[index].acceleration;
+    arg0->unk75 = 1;
+    arg0->unk76 = 0;
+    func_80015D60(arg0, (u8)D_8010C9C4[index].collision_mode != 0 ? 2 : 0);
+    func_800C1244(arg0);
+    if (arg0->unk2 == 0)
+        func_800C1318();
+}
+
+void func_800C1050(struct ItemObj* arg0)
+{
+    const struct Item05MotionConfig* config;
+    s32 offset;
+    s32 y;
+    u8 old_flags;
+    u8 flags;
+
+    func_8002B318(BASE_OBJECT(arg0), D_8010CA78[arg0->unk2][2], D_8010CA78[arg0->unk2][3]);
+    config = &D_8010C9C4[arg0->unk2];
+    if (arg0->unk76 == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        arg0->y_vel.val = config->velocity;
+    } else if ((u8)config->collision_mode != 0) {
+        arg0->y_vel.val = -0x1A000;
+    }
+
+    offset = arg0->y_pos.val - g_Player.y_pos.val;
+    old_flags = g_Player.unk71;
+    func_8002B718((struct MovingObj*)arg0);
+    func_8002E184(PLAYER_OBJECT(arg0));
+    flags = g_Player.unk71;
+    if (flags != old_flags && (flags & 3)) {
+        y = arg0->y_pos.val - offset - arg0->y_vel.val / 4;
+        g_Player.y_pos.val = y;
+        g_Player.unk71 = 0;
+        func_8002E184(PLAYER_OBJECT(arg0));
+        g_Player.y_pos.val = y;
+        if (g_Player.unk71 & 3)
+            g_Player.y_pos.val = y + g_Player.y_vel.val;
+        else
+            g_Player.y_pos.val = y - arg0->y_vel.val * 3;
+        g_Player.unk71 = flags;
+    }
+
+    if (arg0->y_pos.i.hi >= 0x621) {
+        arg0->y_pos.i.hi = 0x4E0;
+        arg0->y_vel.val = config->velocity;
+    }
+}
+
+void func_80034C58(struct PlayerObj* arg0);
+void func_80034D20(struct PlayerObj* arg0);
+
+s32 func_80033FF0(struct PlayerObj* arg0)
+{
+    u8 attribute = func_8002D994(arg0);
+
+    if (arg0->unk88.bytes.collision_flags & 8) {
+        func_80034D20(arg0);
+        return 1;
+    }
+    if ((arg0->input.buttons.held & 4) && attribute == 0x21) {
+        func_80034C58(arg0);
+        return 1;
+    }
+    if ((u8)(attribute - 0x20) < 2 && !(arg0->pressed_input & 0x80))
+        return 0;
+    func_800350A4(arg0, 0x1E);
+    arg0->unk5 = 0xE;
+    arg0->unk6 = 4;
+    return 1;
+}
+
+void func_80037DB0(struct PlayerObj* arg0);
+void func_80037DFC(struct PlayerObj* arg0);
+void func_80037E4C(struct PlayerObj* arg0, s32 arg1);
+void func_80037EAC(struct PlayerObj* arg0, s32 arg1);
+void func_80037F78(struct PlayerObj* arg0);
+s32 func_800375B4(struct PlayerObj* arg0);
+void func_80037708(struct PlayerObj* arg0);
+void func_800387A8(struct PlayerObj* arg0);
+
+void func_80037484(struct PlayerObj* arg0, s32 arg1)
+{
+    switch ((s8)(arg0->unk96 - 2)) {
+    case 0:
+    case 9:
+        func_80037DB0(arg0);
+        break;
+    case 10:
+        func_80037DFC(arg0);
+        break;
+    case 2:
+        func_80037E4C(arg0, arg1);
+        break;
+    case 11:
+        func_80037EAC(arg0, arg1);
+        break;
+    case 5:
+    case 14:
+        func_80037F78(arg0);
+        break;
+    }
+}
+
+void func_8004F4D4(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->unk7C == 8)
+        func_8001540C(2, 0x27, arg0);
+    if (--arg0->unk7C != 0)
+        return;
+
+    func_8001540C(2, 0x29, arg0);
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 9;
+        shot->unk2 = arg0->ext.main_16.unk88;
+        shot->unk40 = arg0->unk40;
+        shot->unk42 = arg0->unk42;
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->bg_offset = arg0->bg_offset;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        shot->state = 3;
+        shot->unk15 = arg0->unk15;
+    }
+
+    arg0->ext.main_16.unk80 &= 0x1F;
+    if (shot != NULL)
+        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_16.unk80);
+    arg0->ext.main_16.unk80 += arg0->ext.main_16.unk84;
+    if ((s32)arg0->ext.main_16.unk80 < 0x10) {
+        func_80015D60(arg0, 7);
+        arg0->unk6 = 2;
+    } else {
+        arg0->unk7C = 8;
+        arg0->ext.main_16.unk88++;
+    }
+}
+
+void func_800C6EDC(struct VisualObj* arg0)
+{
+    s32 resource;
+    s32 column;
+    s32 index;
+
+    if (arg0->state == 0) {
+        arg0->active = 1;
+        arg0->on_screen = 1;
+        resource = func_8002938C(0xA2) & 0xFF;
+        column = resource * 4 + 0x18;
+        index = (s8)D_8010D414[arg0->unk2];
+        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, index + 10);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, index + 18);
+        arg0->animation_table = D_8011BF40;
+        arg0->unk40 = 0x520;
+        arg0->unk42 = (column - (column & 0x7F0)) | ((((resource + 6) >> 2) + 0x1E0) << 6);
+        arg0->unk16 = 0;
+        arg0->unk15 = g_Player.unk15;
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->y_pos.val = g_Player.y_pos.val;
+        func_80015D60(ANIMATED_OBJECT(arg0), engine_obj.unk37 != 0 ? 0x26 : 0x25);
+        arg0->state++;
+        decompress_player_gfx((struct GraphicsObj*)arg0, 0x140, 0x20);
+    } else if (arg0->animation_step.fields.relative_step == 0) {
+        g_Player.unkE2 = 4;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->animation_step.fields.event = 0;
+            if (engine_obj.unk37 != 0) {
+                g_Player.unkA7 = 0xF;
+                g_Player.unkB8 = 2;
+                engine_obj.unk48 = 2;
+            } else {
+                u8 bit = D_8010D3D0[arg0->unk2];
+
+                g_Player.unkA7 |= bit;
+                if (bit == 4) {
+                    if (arg0->unk2 == 2)
+                        g_Player.unkB8 = 1;
+                    if (arg0->unk2 == 3)
+                        g_Player.unkB8 = 2;
+                    engine_obj.unk48 = g_Player.unkB8;
+                }
+            }
+            engine_obj.unk47 = g_Player.unkA7;
+        }
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+}
+
+void func_800C670C(struct ItemObj* arg0)
+{
+    s16 dx = g_Player.x_pos.u.hi - arg0->x_pos.u.hi;
+    s16 dy;
+
+    if (dx < 0)
+        dx = -dx;
+    if (dx >= 0x41)
+        return;
+
+    dy = g_Player.y_pos.u.hi - arg0->y_pos.u.hi;
+    if ((dy > 0 && dy >= 0x11) || (dy <= 0 && -dy >= 0x69))
+        return;
+
+    func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+    if (g_Player.x_pos.val - arg0->x_pos.val > 0) {
+        func_80036AE4(0x14, 0);
+        arg0->unk15 = 0x40;
+    } else {
+        func_80036AE4(0x14, 0x40);
+        arg0->unk15 = 0;
+    }
+    func_80016F0C();
+    func_8001663C(0x1B, 0x7F);
+    arg0->unk5++;
+}
+
+void func_800528BC(struct MainObj* arg0)
+{
+    s32 index;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk5 = 2;
+    arg0->unk5C = 4;
+    arg0->unk60 = 3;
+    arg0->animation_table = (const u8* const*)D_800FC69C;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0;
+    arg0->unk61 = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    arg0->unk67 = 0;
+    arg0->unk20 = 0;
+    arg0->unk24 = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk20 = FIXED(8);
+        arg0->unk15 = 0x40;
+        break;
+    case 1:
+        arg0->unk20 = FIXED(-8);
+        arg0->unk15 = 0;
+        break;
+    case 2:
+        arg0->unk24 = FIXED(8);
+        break;
+    }
+    arg0->unk16 = 6;
+
+    arg0->ext.main_19.unk80 = get_random() & 1;
+    arg0->ext.main_19.animation_index = (u8)arg0->unk2;
+    index = arg0->unk2 >> 1;
+    arg0->unk54 = D_800FC744[index];
+    arg0->unk50 = D_800FC74C[index];
+    arg0->unk68 = D_800FC73C[index];
+    arg0->collision_data = D_80106BF4;
+    func_8002C808(PLAYER_OBJECT(arg0));
+    arg0->unk5 = arg0->unk70 != 0 ? 2 : 5;
+}
+
+void func_80052A68(struct MainObj* arg0)
+{
+    s32 collision;
+    s16 x;
+    s16 y;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FC79C[(u8)arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    collision = func_8002DD04(arg0);
+    if (collision < 0) {
+        arg0->unk20 = 0;
+        arg0->unk24 = 0;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0;
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(8, D_800FC708, arg0);
+        x = arg0->x_pos.i.hi;
+        y = arg0->y_pos.i.hi;
+        if (arg0->ext.main_19.animation_index < 2) {
+            x += arg0->unk15 != 0 ? -0x10 : 0x10;
+        } else {
+            y += 0x10;
+        }
+        func_800BF638(BASE_OBJECT(arg0), 0xC, x, y);
+        arg0->state = 2;
+        return;
+    }
+
+    if (func_8002B160(BASE_OBJECT(arg0)) != 0)
+        arg0->state = 2;
+    else
+        is_on_screen(BASE_OBJECT(arg0));
+}
+
+u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
+{
+    struct Unk_unk68* bounds = arg0->unk68;
+    s32 first;
+    s32 second;
+    s16 probe;
+    s16 edge;
+
+    if (vertical == 0) {
+        if (direction == 0) {
+            probe = -(u16)arg0->ext.main_19.unk8A;
+            edge = probe - (u8)bounds->unk3;
+        } else {
+            probe = arg0->ext.main_19.unk8A;
+            edge = probe + (u8)bounds->unk3;
+        }
+        if (arg0->unk15 == 0) {
+            first = func_80053A88(PLAYER_OBJECT(arg0), -1, probe);
+            second = func_80053B18(PLAYER_OBJECT(arg0), -4, edge);
+        } else {
+            first = func_80053A88(PLAYER_OBJECT(arg0), 1, probe);
+            second = func_80053B18(PLAYER_OBJECT(arg0), 4, edge);
+        }
+        if ((first & 0xF) == (1 << arg0->ext.main_19.animation_index))
+            return (u8)second < 0x38;
+        return 1;
+    }
+
+    if (direction == 0) {
+        probe = -(u16)arg0->ext.main_19.unk8A;
+        edge = probe - (u8)bounds->unk2;
+    } else {
+        probe = arg0->ext.main_19.unk8A;
+        edge = probe + (u8)bounds->unk2;
+    }
+    first = func_80053A88(PLAYER_OBJECT(arg0), probe, -1);
+    second = func_80053B18(PLAYER_OBJECT(arg0), edge, -4);
+    if ((first & 0xF) == 4)
+        return (u8)second < 0x38;
+    return 1;
+}
+
+void func_80052CB8(struct MainObj* arg0)
+{
+    u8 animation;
+    u16 probe_result;
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (arg0->ext.main_19.animation_index == 0) {
+            arg0->unk15 = 0x40;
+            arg0->ext.main_19.unk82 = 1;
+        } else {
+            arg0->unk15 = 0;
+            arg0->ext.main_19.unk82 = 2;
+        }
+        arg0->ext.main_19.unk84 = (get_random() & 1) ? 0x50 : 0x20;
+        probe_result = func_800537E0(arg0, arg0->ext.main_19.unk80, 0);
+        if (probe_result != 0)
+            arg0->ext.main_19.unk80 ^= 1;
+        animation = D_800FC7D4[arg0->ext.main_19.unk80];
+        arg0->ext.main_19.unk8A = 0x15;
+    } else {
+        arg0->ext.main_19.unk84 = (get_random() & 1) ? 0x40 : 0x20;
+        if (func_800537E0(arg0, arg0->ext.main_19.unk80, 1) != 0)
+            arg0->ext.main_19.unk80 ^= 1;
+        arg0->unk15 = D_800FC7D8[arg0->ext.main_19.unk80];
+        arg0->ext.main_19.unk8A = 0x17;
+        arg0->ext.main_19.unk82 = 4;
+        animation = 2;
+    }
+
+    arg0->unk68 = D_800FC73C[arg0->unk2 >> 1];
+    func_80015D60(ANIMATED_OBJECT(arg0), animation);
+    arg0->unk6 = 1;
+    arg0->ext.main_19.unk86 = arg0->x_pos.u.hi;
+    arg0->ext.main_19.unk88 = arg0->y_pos.u.hi;
+}
+
+u8 func_80053B54(struct MainObj* arg0)
+{
+    s16 dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    s16 dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    u8 direction;
+    s32 selected = 0;
+
+    if (dx < 0)
+        dx = -dx;
+    if (dy < 0)
+        dy = -dy;
+    direction = (u8)func_8002B7DC(
+        OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (dx < 0x40 && dy >= 0x60)
+            return 0;
+        if (arg0->ext.main_19.animation_index == 0)
+            selected = (u8)(direction - 8) < 0x11;
+        else
+            selected = (u8)(direction - 9) >= 0xF;
+    } else {
+        if (dx >= 0x80)
+            return 0;
+        selected = (u8)(direction - 0x10) < 0x11;
+    }
+
+    if (selected)
+        arg0->ext.main_19.unk83 = direction & 0x1E;
+    return selected;
+}
+
+void func_80052E94(struct MainObj* arg0)
+{
+    s32 distance;
+    u8 flags;
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (arg0->animation_step.fields.relative_step < 0) {
+            distance = arg0->y_pos.i.hi - (s16)arg0->ext.main_19.unk88;
+            if (distance < 0)
+                distance = -distance;
+            if (distance <= arg0->ext.main_19.unk84 && func_800537E0(arg0, arg0->ext.main_19.unk80, 0) == 0) {
+                if (arg0->unk7C >= 0x3C && func_80053B54(arg0) != 0) {
+                    arg0->unk5 = 4;
+                    arg0->unk6 = 0;
+                }
+                goto update_animation;
+            }
+
+            flags = func_8005398C(arg0);
+            if (flags & 1) {
+                arg0->unk6 = 4;
+                arg0->ext.main_19.unk80 = arg0->unk24 < 0 ? 1 : 0;
+                arg0->unk20 = 0;
+                arg0->unk24 *= 3;
+                func_80015D60(ANIMATED_OBJECT(arg0), 6);
+            } else if (func_80053B54(arg0) != 0) {
+                arg0->unk5 = 4;
+                arg0->unk6 = 0;
+            } else {
+                arg0->unk6 = 2;
+                func_80015D60(ANIMATED_OBJECT(arg0), 6);
+            }
+        } else if (arg0->animation_step.fields.event != 0) {
+            if (arg0->ext.main_19.unk80 == 0)
+                arg0->y_pos.u.hi -= arg0->ext.main_19.unk8A;
+            else
+                arg0->y_pos.u.hi += arg0->ext.main_19.unk8A;
+            arg0->animation_step.fields.event = 0;
+        }
+    } else {
+        if (arg0->animation_step.fields.relative_step < 0) {
+            distance = arg0->x_pos.i.hi - (s16)arg0->ext.main_19.unk86;
+            if (distance < 0)
+                distance = -distance;
+            if (distance <= arg0->ext.main_19.unk84 && func_800537E0(arg0, arg0->ext.main_19.unk80, 1) == 0) {
+                if (arg0->unk7C >= 0x3C && func_80053B54(arg0) != 0) {
+                    arg0->unk5 = 4;
+                    arg0->unk6 = 0;
+                }
+                goto update_animation;
+            }
+
+            flags = func_8005398C(arg0);
+            if (flags & 2) {
+                arg0->unk6 = 4;
+                if (arg0->unk20 >= 0) {
+                    arg0->unk15 = 0x40;
+                    arg0->ext.main_19.unk80 = 1;
+                } else {
+                    arg0->unk15 = 0;
+                    arg0->ext.main_19.unk80 = 0;
+                }
+                arg0->unk24 = 0;
+                arg0->unk20 *= 3;
+                func_80015D60(ANIMATED_OBJECT(arg0), 5);
+            } else if (func_80053B54(arg0) != 0) {
+                arg0->unk5 = 4;
+                arg0->unk6 = 0;
+            } else {
+                arg0->unk6 = 2;
+                func_80015D60(ANIMATED_OBJECT(arg0), 5);
+            }
+        } else if (arg0->animation_step.fields.event != 0) {
+            if (arg0->ext.main_19.unk80 == 0)
+                arg0->x_pos.u.hi -= arg0->ext.main_19.unk8A;
+            else
+                arg0->x_pos.u.hi += arg0->ext.main_19.unk8A;
+            arg0->animation_step.fields.event = 0;
+        }
+    }
+
+update_animation:
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
+
+void func_8005368C(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s32 index;
+
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->ext.main_19.unk80 = get_random() & 1;
+        return;
+    }
+
+    if (arg0->animation_step.fields.event == 0) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        index = arg0->ext.main_19.animation_index;
+        shot->active = 0x41;
+        shot->id = 0xB;
+        shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index * 2];
+        shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[index * 2 + 1];
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk40 = arg0->unk40;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->unk42 = arg0->unk42 & 0x7FFF;
+        shot->unk7C = (struct WeaponObj*)arg0;
+        shot->unk16 = arg0->unk16;
+        shot->unk15 = arg0->unk15;
+        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_19.unk83);
+    }
+    arg0->animation_step.fields.event = 0;
+}
+
+void func_80053338(struct MainObj* arg0)
+{
+    struct Unk_unk68* bounds;
+    s16 probe_x;
+    s16 probe_y;
+    s32 distance;
+    s32 nearby;
+    u8 collision;
+    u8 direction;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    bounds = arg0->unk68;
+    nearby = 0;
+    if (arg0->ext.main_19.animation_index < 2) {
+        probe_y = arg0->y_pos.i.hi;
+        if (arg0->ext.main_19.unk80 == 0)
+            probe_y -= (u8)bounds->unk3;
+        else
+            probe_y += (u8)bounds->unk3;
+        probe_x = arg0->x_pos.i.hi + (arg0->unk15 != 0 ? 4 : -4);
+        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    } else {
+        probe_x = arg0->x_pos.i.hi;
+        if (arg0->unk15 == 0)
+            probe_x -= (u8)bounds->unk2;
+        else
+            probe_x += (u8)bounds->unk2;
+        probe_y = arg0->y_pos.i.hi - 4;
+        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    }
+    if (distance < 0)
+        distance = -distance;
+    if (distance < 0x18)
+        nearby = 1;
+
+    collision = func_8002D724(PLAYER_OBJECT(arg0), probe_x, probe_y);
+    if ((arg0->unk70 & (u8)~arg0->ext.main_19.unk82) == 0 && collision >= 0x38 && !nearby) {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xB);
+        arg0->unk6 = 6;
+        arg0->ext.main_19.unk80 ^= 1;
+        direction = arg0->ext.main_19.unk80;
+        if ((arg0->unk70 >> (direction + 2)) & 1)
+            arg0->ext.main_19.unk80 = direction ^ 1;
+    } else {
+        func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+        arg0->unk6 = 6;
+        arg0->unk15 ^= 0x40;
+        arg0->ext.main_19.unk80 ^= 1;
+        direction = arg0->ext.main_19.unk80;
+        if ((arg0->unk70 >> direction) & 1)
+            arg0->ext.main_19.unk80 = direction ^ 1;
+    }
+}
+
+void func_800C7C30(struct MiscObj* arg0)
+{
+    s32 resource;
+    s32 column;
+    s32 row;
+
+    arg0->state = 1;
+    arg0->unk6 = 0;
+    arg0->bg_offset = 0;
+    arg0->animation_table = (u32**)D_8010DA9C;
+    resource = func_8002938C(0x84);
+    arg0->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    resource = func_8002938C(0x84);
+    column = resource * 4 + 0x18;
+    row = func_8002938C(0x84);
+    arg0->unk42 = (u16)((column - ((column >> 4) << 4))
+        | ((((row + 6) >> 2) + 0x1E0) << 6));
+    resource = func_8002938C(0x84);
+    arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    arg0->unk16 = arg0->unk2 == 5 ? 5 : 0x11;
+    func_80015D60(ANIMATED_OBJECT(arg0), arg0->unk2);
 }
 
 s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x,
