@@ -77,15 +77,15 @@ void func_800D4DE0(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->unk14.val += D_8010F878[0] << 16;
-            arg0->unk1C.val += D_8010F77C[arg0->unk2].speed[0] << 16;
-            arg0->unk24.val += D_8010F77C[arg0->unk2].speed[2] << 16;
-            arg0->unk2C.val += D_8010F77C[arg0->unk2].speed[2] << 16;
+            arg0->unk14.val += D_8010F774[arg0->unk2].speed[0] << 16;
+            arg0->unk1C.val += D_8010F774[arg0->unk2].speed[0] << 16;
+            arg0->unk24.val += D_8010F774[arg0->unk2].speed[2] << 16;
+            arg0->unk2C.val += D_8010F774[arg0->unk2].speed[2] << 16;
         } else {
-            arg0->unk24.u.hi += D_8010F77C[arg0->unk2].speed[0] * 2;
-            arg0->unk2C.u.hi += D_8010F77C[arg0->unk2].speed[2] * 2;
-            arg0->unk28.u.hi += D_8010F77C[arg0->unk2].speed[1] * 2;
-            arg0->unk30.u.hi += D_8010F77C[arg0->unk2].speed[3] * 2;
+            arg0->unk24.u.hi += D_8010F774[arg0->unk2].speed[0] * 2;
+            arg0->unk2C.u.hi += D_8010F774[arg0->unk2].speed[2] * 2;
+            arg0->unk28.u.hi += D_8010F774[arg0->unk2].speed[1] * 2;
+            arg0->unk30.u.hi += D_8010F774[arg0->unk2].speed[3] * 2;
         }
     }
 }
@@ -111,15 +111,15 @@ void func_800D4FA0(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->unk14.val += D_8010F878[2] << 16;
-            arg0->unk1C.val += D_8010F77C[arg0->unk2].speed[2] << 16;
-            arg0->unk24.val += D_8010F77C[arg0->unk2].speed[0] << 16;
-            arg0->unk2C.val += D_8010F77C[arg0->unk2].speed[0] << 16;
+            arg0->unk14.val += D_8010F774[arg0->unk2].speed[2] << 16;
+            arg0->unk1C.val += D_8010F774[arg0->unk2].speed[2] << 16;
+            arg0->unk24.val += D_8010F774[arg0->unk2].speed[0] << 16;
+            arg0->unk2C.val += D_8010F774[arg0->unk2].speed[0] << 16;
         } else {
-            arg0->unk1C.u.hi += D_8010F77C[arg0->unk2].speed[0] * 2;
-            arg0->unk14.u.hi += D_8010F77C[arg0->unk2].speed[2] * 2;
-            arg0->unk20.u.hi += D_8010F77C[arg0->unk2].speed[1] * 2;
-            arg0->unk18.u.hi += D_8010F77C[arg0->unk2].speed[3] * 2;
+            arg0->unk1C.u.hi += D_8010F774[arg0->unk2].speed[0] * 2;
+            arg0->unk14.u.hi += D_8010F774[arg0->unk2].speed[2] * 2;
+            arg0->unk20.u.hi += D_8010F774[arg0->unk2].speed[1] * 2;
+            arg0->unk18.u.hi += D_8010F774[arg0->unk2].speed[3] * 2;
         }
     }
 }

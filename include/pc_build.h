@@ -32,6 +32,8 @@ long mmx4_pc_replay_frame(void);
 void mmx4_pc_render_log_dump(void);
 int mmx4_pc_replay_complete(void);
 int mmx4_pc_replay_exit_requested(void);
+int mmx4_pc_replay_cd_load_ready(void);
+void mmx4_pc_complete_scheduled_cd_load(void);
 
 extern DR_MODE D_80139250[2];
 extern SPRT D_80139268[2][17];

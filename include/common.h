@@ -897,7 +897,11 @@ struct Main57Ext {
 };
 
 struct Main487Ext {
+#ifdef MMX4_PC
+    u8 pad80[0x12];
+#else
     u8 pad80[0xA];
+#endif
     u8 unk8A;
 };
 
@@ -1034,11 +1038,11 @@ struct Main75Ext {
 };
 
 struct Main8Ext {
-    u32 unk80;
-    u32 unk84;
+    const void* unk80;
+    const void* unk84;
     u8 unk88;
     u8 unk89;
-    u8 pad8A;
+    u8 unk8A;
     u8 unk8B;
     u8 unk8C;
 };
@@ -2799,12 +2803,11 @@ struct Quad2Ext {
 };
 
 struct QuadMotionData {
-    s8 speed[4];
     u16 vertex[4];
+    s8 speed[4];
 };
 
-extern struct QuadMotionData D_8010F77C[21];
-extern s8 D_8010F878[4];
+extern struct QuadMotionData D_8010F774[22];
 extern u8 D_8013B960[0x10];
 
 struct QuadUnkExt3 {

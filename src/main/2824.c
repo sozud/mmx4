@@ -2,6 +2,8 @@
 
 #ifdef MMX4_PC
 #include "../pc/oracle.h"
+void mmx4_pc_finish_cd_load(void);
+extern s32 mmx4_pc_canonical_load;
 #endif
 
 // entrypoint
@@ -12,6 +14,8 @@ void func_80012024(void)
     while (1) {
 #ifdef MMX4_PC
         VSync(D_8013BD44 == 0 ? 1 : 0);
+        if (mmx4_pc_canonical_load)
+            mmx4_pc_finish_cd_load();
 #else
         VSync(0);
 #endif
@@ -34,6 +38,7 @@ void func_80012024(void)
         DrawSync(0);
         func_80012454();
 #ifdef MMX4_PC
+        mmx4_pc_complete_scheduled_cd_load();
         mmx4_pc_frame_end();
 #endif
     }

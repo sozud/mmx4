@@ -98,6 +98,8 @@ def main():
                         help="capture every Nth replay frame (default: 10)")
     parser.add_argument("--top", type=int, default=100,
                         help="write browsable PNG triplets for the N worst frames")
+    parser.add_argument("--min-ssim", type=float,
+                        help="fail after writing the report if the worst score is below this value")
     parser.add_argument("--psx-frames", type=int, default=20000)
     parser.add_argument("--reuse-psx", type=Path,
                         help="reuse a previous raw/psx capture directory")
@@ -115,6 +117,8 @@ def main():
         parser.error(f"capture range must be within 0..{metadata['frames'] - 1}")
     if args.interval < 1 or args.top < 1:
         parser.error("--interval and --top must be positive")
+    if args.min_ssim is not None and not 0.0 <= args.min_ssim <= 1.0:
+        parser.error("--min-ssim must be between 0 and 1")
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     output = args.output / stamp
@@ -203,6 +207,10 @@ def main():
     print(f"worst={ranked[0][1]:.6f}, best={ranked[-1][1]:.6f}")
     print(f"report: {output / 'scores.tsv'}")
     print(f"images: {output / 'index.html'}")
+    if args.min_ssim is not None and ranked[0][1] < args.min_ssim:
+        raise SystemExit(
+            f"worst SSIM {ranked[0][1]:.9f} is below required "
+            f"{args.min_ssim:.9f}")
 
 
 if __name__ == "__main__":

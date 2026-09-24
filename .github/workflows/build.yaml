@@ -198,7 +198,7 @@ jobs:
             --output sound-comparison \
             --no-build \
             "${reuse_args[@]}"
-      - name: Run stage 0 replay regression
+      - name: Run stage replay regressions
         env:
           GALLIUM_DRIVER: llvmpipe
           LIBGL_ALWAYS_SOFTWARE: "true"
@@ -210,6 +210,26 @@ jobs:
             --bios tools/SCPH1001.BIN \
             --build build-linux \
             --skip-build
+          python3 tools/oracle/run_replay_regression.py \
+            --replay tools/oracle/recordings/stage-0-1-normalized.mmx4r \
+            --expect-sha256 f03e0290dff7b87486d4d05940ddd14e4e4999af65ff91b9c006ce585ba1668b \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --cue disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --build build-linux \
+            --skip-build
+          python3 tools/oracle/run_replay_ssim.py \
+            --replay tools/oracle/recordings/stage-0-1-normalized.mmx4r \
+            --expect-sha256 f03e0290dff7b87486d4d05940ddd14e4e4999af65ff91b9c006ce585ba1668b \
+            --output replay-runs/stage-0-1-ssim \
+            --mednafen tools/mednafen-build/src/mednafen \
+            --cue disks/mmx4.us.cue \
+            --bios tools/SCPH1001.BIN \
+            --build build-linux \
+            --skip-build \
+            --interval 10 \
+            --top 20 \
+            --min-ssim 0.943857397
       - name: Upload replay evidence
         if: failure()
         uses: actions/upload-artifact@v7
