@@ -41,8 +41,12 @@ static int replay_complete;
 static int replay_exit_requested;
 static unsigned long replay_load_points[64];
 static unsigned char replay_load_input_phase[64];
+static unsigned char replay_load_pending[64];
 static size_t replay_load_point_count;
 static size_t replay_load_point_index;
+static unsigned long replay_xa_stop_points[64];
+static size_t replay_xa_stop_point_count;
+static size_t replay_xa_stop_point_index;
 
 static void replay_fail(const char* reason)
 {
@@ -95,6 +99,8 @@ static void open_replay_sync(void)
         char* colon = strchr(cursor, ':');
         char* kind;
         char* load_kind;
+        char* xa_kind;
+        char* pending;
         unsigned long sample;
 
         if (object_end == NULL || colon == NULL || colon > object_end)
@@ -102,6 +108,14 @@ static void open_replay_sync(void)
         sample = strtoul(colon + 1, NULL, 10);
         kind = strstr(colon, "\"kind\"");
         load_kind = kind == NULL ? NULL : strstr(kind, "\"load-complete\"");
+        xa_kind = kind == NULL ? NULL : strstr(kind, "\"xa-complete\"");
+        if (kind != NULL && kind < object_end && xa_kind != NULL && xa_kind < object_end) {
+            if (replay_xa_stop_point_count == COUNT(replay_xa_stop_points)) {
+                free(document);
+                replay_fail("too many xa-complete sync points");
+            }
+            replay_xa_stop_points[replay_xa_stop_point_count++] = sample;
+        }
         if (kind != NULL && kind < object_end && load_kind != NULL && load_kind < object_end) {
             if (replay_load_point_count == COUNT(replay_load_points)) {
                 free(document);
@@ -110,6 +124,8 @@ static void open_replay_sync(void)
             char* phase = strstr(colon, "\"phase\"");
 
             replay_load_input_phase[replay_load_point_count] = phase != NULL && phase < object_end && strstr(phase, "\"input\"") != NULL && strstr(phase, "\"input\"") < object_end;
+            pending = strstr(colon, "\"pending\"");
+            replay_load_pending[replay_load_point_count] = pending != NULL && pending < object_end;
             replay_load_points[replay_load_point_count++] = sample;
         }
         cursor = object_end + 1;
@@ -221,6 +237,26 @@ int mmx4_pc_replay_cd_load_due(int input_phase)
 unsigned long mmx4_pc_replay_consumed(void)
 {
     return replay_consumed;
+}
+
+int mmx4_pc_replay_cd_load_pending(void)
+{
+    if (!replay_started || replay_load_point_index >= replay_load_point_count)
+        return 0;
+    return replay_load_pending[replay_load_point_index];
+}
+
+int mmx4_pc_replay_xa_stop_due(void)
+{
+    if (!replay_started || replay_xa_stop_point_index >= replay_xa_stop_point_count)
+        return 0;
+    return replay_consumed >= replay_xa_stop_points[replay_xa_stop_point_index];
+}
+
+void mmx4_pc_replay_xa_stop_consume(void)
+{
+    if (replay_xa_stop_point_index < replay_xa_stop_point_count)
+        replay_xa_stop_point_index++;
 }
 
 void mmx4_pc_replay_cd_load_consume(void)

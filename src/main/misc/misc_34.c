@@ -93,18 +93,18 @@ void func_800CEEC4(struct MiscObj* self)
 void func_800CEF34(struct MiscObj* self)
 {
     u8 timer;
-    struct Misc34Related* related;
+    struct EffectObj* related;
 
     func_8002B694(ANIMATED_OBJECT(self));
     timer = self->ext.misc_34.timer - 1;
     self->ext.misc_34.timer = timer;
     if (timer == 0) {
         related = self->ext.misc_34.related;
-        related->active = 1;
+        related->ext.effect_38.active = 1;
         if (!((u8)engine_obj.checkpoint & 1)) {
-            related->variant = self->ext.misc_34.variant;
+            related->ext.effect_38.variant = self->ext.misc_34.variant;
         } else {
-            related->variant = 3;
+            related->ext.effect_38.variant = 3;
         }
         self->unk5 = 0;
         self->unk6 = 0;

@@ -57,7 +57,7 @@ void func_800BD7B0(struct EffectObj* self)
         func_80036AE4(0x14, 0x40);
         func_800BDD08(self);
         if ((engine_obj.checkpoint & 1) || engine_obj.substage != 0) {
-            self->ext.effect_38.unk16 = 1;
+            self->ext.effect_38.active = 1;
             self->ext.effect_38.timer = 0xA;
             self->state += 2;
         } else {
@@ -78,7 +78,7 @@ void func_800BD890(struct EffectObj* arg0)
 
 void func_800BD8C4(struct EffectObj* arg0)
 {
-    if (--arg0->ext.effect_38.timer == 0 && arg0->ext.effect_38.unk16 != 0) {
+    if (--arg0->ext.effect_38.timer == 0 && arg0->ext.effect_38.active != 0) {
         func_80036AE4(0x15, 0x40);
         func_800BDB10(arg0);
         arg0->ext.effect_38.timer = 0x64;
@@ -100,7 +100,7 @@ void func_800BD938(struct EffectObj* self)
         return;
     }
 
-    switch (self->ext.effect_38.unk17) {
+    switch (self->ext.effect_38.variant) {
     case 0:
         engine_obj.checkpoint++;
         break;
@@ -162,7 +162,7 @@ void func_800BDB10(struct EffectObj* self)
     s8 state;
     u8 subtype;
 
-    if (self->ext.effect_38.unk16 == 0 || (self->unk2 & 1) != 0 || engine_obj.substage != 0) {
+    if (self->ext.effect_38.active == 0 || (self->unk2 & 1) != 0 || engine_obj.substage != 0) {
         return;
     }
     misc = find_free_misc_obj();
@@ -172,7 +172,7 @@ void func_800BDB10(struct EffectObj* self)
     misc->active = 0x41;
     misc->id = 0x21;
     misc->ext.misc_7.position = self;
-    subtype = self->ext.effect_38.unk17;
+    subtype = self->ext.effect_38.variant;
     switch (subtype) {
     case 0:
         state = 2;

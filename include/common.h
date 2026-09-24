@@ -604,6 +604,8 @@ struct Main38Ext {
     s32 unk84;
     u32 unk88;
     u32 unk8C;
+    u32 unk90;
+    u32 unk94;
 };
 
 struct Main39Ext {
@@ -646,7 +648,9 @@ struct Main7Ext {
 
 struct Main52Ext {
     u8 unk80;
-    u8 pad81[7];
+    u8 pad81[3];
+    u8 unk84;
+    u8 pad85[3];
     u8 unk88;
     u8 pad89[3];
     u8 unk8C;
@@ -839,6 +843,7 @@ struct Main49Ext {
 struct Main50Ext {
     u8 pad80[2];
     u16 timer;
+    u8 unk84;
 };
 
 struct Main54Ext {
@@ -862,9 +867,9 @@ struct Main55Ext {
 
 struct Main36Ext {
     u8 pad80[4];
-    struct MainObj* unk84;
+    struct MiscObj* unk84;
     u8 saved_unk5;
-    u8 pad89;
+    u8 unk89;
     u16 unk8A;
     u8 unk8C;
     u8 unk8D;
@@ -1180,7 +1185,7 @@ struct Main41Ext {
 struct Main42Ext {
     u8 background_relative;
     u8 pad81[3];
-    u32 unk84;
+    struct MiscObj* unk84;
 };
 
 struct Main68Ext {
@@ -1221,7 +1226,9 @@ struct Main67Ext {
     u8 direction;
     u8 unk89;
     u8 unk8A;
-    u8 pad8B[9];
+    u8 pad8B[2];
+    u8 unk8D;
+    u8 pad8E[6];
     u32 saved_unk5;
 };
 
@@ -1251,6 +1258,11 @@ struct Main70Ext {
     u32 saved_unk5;
 };
 
+struct Main20Ext {
+    s8 unk80;
+    s8 unk81;
+};
+
 union MainObjExt {
     u32 raw[7];
     struct Main0Ext main_0;
@@ -1269,6 +1281,7 @@ union MainObjExt {
     struct Main17Ext main_17;
     struct Main18Ext main_18;
     struct Main19Ext main_19;
+    struct Main20Ext main_20;
     struct Main21Ext main_21;
     struct Main22Ext main_22;
     struct Main23Ext main_23;
@@ -1693,6 +1706,7 @@ struct ShotObj {
     union {
         s32 value;
         u32* collision_state;
+        struct EffectObj* effect;
         u16 halves[2];
         u8 bytes[4];
         struct Shot24Ext shot_24;
@@ -1830,9 +1844,15 @@ struct Shot55Ext {
     u8 unk92;
 };
 
+struct Weapon60Ext {
+    struct MainObj* target;
+    u8 direction;
+};
+
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
+    struct MainObj* target;
     struct Weapon1Ext weapon_1;
     struct Weapon2Ext weapon_2;
     struct Weapon6Ext weapon_6;
@@ -1844,6 +1864,7 @@ union WeaponObjExt {
     struct Weapon13Ext weapon_13;
     struct Weapon15Ext weapon_15;
     struct Weapon16Ext weapon_16;
+    struct Weapon60Ext weapon_60;
     struct Weapon17Ext weapon_17;
     struct Weapon20Ext weapon_20;
     struct Weapon29Ext weapon_29;
@@ -1851,7 +1872,9 @@ union WeaponObjExt {
     struct Shot55Ext shot_55;
 };
 
+#ifndef MMX4_PC
 MMX4_STATIC_ASSERT(weapon_obj_ext_size, sizeof(union WeaponObjExt) == 0x8);
+#endif
 
 struct WeaponObj {
     BASE_OBJ_FIELDS
@@ -2267,18 +2290,17 @@ struct Misc33Ext {
     u16 timer;
 };
 
-struct Misc34Related {
-    u8 pad0[0x16], active, variant;
-};
-
 struct Misc34Ext {
-    struct Misc34Related* related;
+    struct EffectObj* related;
     u8 timer;
     u8 pad55;
     u8 variant;
-    u8 pad57[2];
+    u8 unk57;
+    u8 unk58;
     u8 enabled;
     u16 unk5A;
+    u8 unk5C;
+    u8 unk5D;
 };
 
 struct Misc39Ext {
@@ -2391,6 +2413,14 @@ struct BazObj {
     s8 pad49[0x50 - 0x49];
 }; // size 0x50
 
+union RideArmorUnkA0 {
+    struct {
+        s16 x;
+        s16 y;
+    } saved_accel;
+    struct EffectObj* chaser_effect;
+};
+
 union RideArmorUnk98 {
     s16 packed;
     struct {
@@ -2427,26 +2457,40 @@ union RideArmorUnk90 {
 };
 
 struct RideArmorObj {
-    BASE_OBJ_FIELDS
-    f32 unk18;
-    f32 unk1C;
-    f32 x_vel;
-    f32 y_vel;
-    s32 unk28;
-    s32 unk2C;
-    s8 pad30[0x45 - 0x30];
-    s8 unk45;
-    s8 unk46;
-    s8 pad47[0x5C - 0x47];
+    ANIMATED_OBJ_FIELDS
+    s8 unk49;
+    s8 unk4A;
+    s8 pad4B[0x50 - 0x4B];
+    void* unk50;
+    const void* unk54;
+    const void* unk58;
     s8 unk5C;
-    s8 pad5D[0x63 - 0x5D];
+    s8 unk5D;
+    s8 unk5E;
+    s8 unk5F;
+    s8 unk60;
+    s8 unk61;
+    s8 unk62;
     s8 unk63;
-    s8 pad64[0x67 - 0x64];
+    s8 unk64;
+    s8 unk65;
+    s8 unk66;
     s8 unk67;
-    s8 pad68[0x70 - 0x68];
+    struct Unk_unk68* unk68;
+    s16 unk6C;
+    s16 unk6E;
     u8 unk70;
     u8 unk71;
-    s8 pad72[0x7C - 0x72];
+    u8 unk72;
+    u8 unk73;
+    u8 unk74;
+    s8 unk75;
+    s8 unk76;
+    s8 unk77;
+    s8 unk78;
+    s8 unk79;
+    s8 unk7A;
+    s8 pad7B;
     u8 unk7C;
     u8 unk7D;
     u8 unk7E;
@@ -2466,13 +2510,31 @@ struct RideArmorObj {
     s16 pad9A;
     s16 saved_x_vel;
     s16 saved_y_vel;
-    s16 saved_x_accel;
-    s16 saved_y_accel;
+    union RideArmorUnkA0 unkA0;
     s16 launch_speed;
-    s8 padA6[2];
+    u16 unkA6;
     s8 input_flags;
     s8 padA9[0xB0 - 0xA9];
 }; // size 0xB0
+
+#define ASSERT_RIDE_ARMOR_FIELD(ride_field, player_field)                         \
+    MMX4_STATIC_ASSERT(ride_armor_##ride_field,                                  \
+        MMX4_OFFSET_OF(struct RideArmorObj, ride_field) == MMX4_OFFSET_OF(struct PlayerObj, player_field))
+ASSERT_RIDE_ARMOR_FIELD(unk49, unk49);
+ASSERT_RIDE_ARMOR_FIELD(unk50, unk50);
+ASSERT_RIDE_ARMOR_FIELD(unk5C, unk5C);
+ASSERT_RIDE_ARMOR_FIELD(unk68, unk68);
+ASSERT_RIDE_ARMOR_FIELD(unk70, unk70);
+ASSERT_RIDE_ARMOR_FIELD(unk7A, unk7A);
+ASSERT_RIDE_ARMOR_FIELD(unk7C, input);
+ASSERT_RIDE_ARMOR_FIELD(unk80, pressed_input);
+ASSERT_RIDE_ARMOR_FIELD(collision_flags, unk88);
+ASSERT_RIDE_ARMOR_FIELD(unk8A, unk8A);
+ASSERT_RIDE_ARMOR_FIELD(unk8E, unk8E);
+#undef ASSERT_RIDE_ARMOR_FIELD
+#ifndef MMX4_PC
+MMX4_STATIC_ASSERT(psx_ride_armor_size, sizeof(struct RideArmorObj) == 0xB0);
+#endif
 
 // D_8013BC28
 struct AbcObj {
@@ -3139,8 +3201,8 @@ struct Effect16Coordinate {
 struct Effect38Ext {
     u8 pad14;
     u8 timer;
-    u8 unk16;
-    u8 unk17;
+    u8 active;
+    u8 variant;
 };
 
 struct Effect28Ext {
@@ -3265,6 +3327,15 @@ struct Effect32Ext {
     union Effect32PaletteSource palette_source;
 };
 
+struct Effect33Ext {
+    u8 timer;
+    u8 period;
+    u8 proximity;
+    u8 variant;
+    u8 burst;
+    u8 cooldown;
+};
+
 struct EffectPaletteExt {
     u8 unk14, unk15, unk16, pad17;
     union Effect32Palette palette;
@@ -3332,6 +3403,7 @@ union EffectExt {
     struct Effect28Ext effect_28;
     struct EffectPaletteExt effect_29;
     struct Effect32Ext effect_32;
+    struct Effect33Ext effect_33;
     struct Effect34Ext effect_34;
     struct Effect36Ext effect_36;
     struct Effect37Ext effect_37;
@@ -3782,7 +3854,9 @@ extern struct Unk_unk68 D_80107678[];
 extern struct Unk_unk68 D_80100854;
 extern struct Unk_unk68 D_80100858;
 extern struct Unk_unk68 D_80102124;
-extern struct Unk_unk68* D_80102148[12];
+extern struct Unk_unk68 D_8010212C;
+extern struct Unk_unk68* D_80102130[9];
+extern struct Unk_unk68* D_80102154[9];
 extern struct Unk_unk68 D_801034B4;
 extern struct Unk_unk68 D_8010526C;
 extern struct Unk_unk68 D_80105270;
@@ -4507,7 +4581,7 @@ s32 func_80039D9C(struct PlayerObj*);
 void func_8004FC50(struct AnimatedObj*);
 void func_800506D8(struct AnimatedObj*);
 void func_8006AE50(struct AnimatedObj*);
-void func_8006B2A4(void);
+void func_8006B2A4(struct MainObj*);
 void func_8006B398(struct MainObj*);
 void func_8006E920(struct MainObj*, s32);
 void func_800889A4(struct BaseObj*);
