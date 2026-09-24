@@ -569,9 +569,10 @@ struct Main37Ext {
 
 struct Main32Ext {
     u32 unk80;
-    u8 pad84[4];
+    u32 unk84;
     u32 unk88;
-    u8 pad8C[8];
+    u32 unk8C;
+    u32 unk90;
     u32 saved_unk5;
 };
 
@@ -581,7 +582,14 @@ struct Main33Ext {
     s16 unk82;
     u8 unk84;
     u8 unk85;
-    u8 pad86[0xE];
+    u8 unk86;
+    u8 unk87;
+    s16 unk88;
+    u8 pad8A[4];
+    u16 unk8E;
+    u8 unk90;
+    u8 unk91;
+    u8 pad92[2];
     u32 saved_unk5;
 };
 
@@ -1080,13 +1088,18 @@ struct Main9Ext {
 struct Main27Ext {
     u8 unk80;
     u8 collision_direction;
-    u8 pad82[6];
+    u8 unk82;
+    u8 pad83;
+    s32 unk84;
     u8 unk88;
-    u8 pad89;
+    u8 unk89;
     u8 unk8A;
     u8 unk8B;
     s32 unk8C;
-    u8 pad90[4];
+    u8 unk90;
+    u8 unk91;
+    u8 unk92;
+    u8 pad93;
     u32 saved_unk5;
 };
 
@@ -2728,7 +2741,7 @@ extern POLY_F4 D_80139F70[2];
 extern DR_TPAGE D_80139FA0[2];
 extern POLY_F4 D_80139FB0[2][128];
 extern DR_TPAGE D_80171EB0[2][6][8];
-extern u8 D_80141BE8[0x300];
+extern u8 D_80141BE8[];
 extern u16 D_801441C8[3][32][32];
 
 #ifndef MMX4_PC

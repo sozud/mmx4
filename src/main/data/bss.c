@@ -217,10 +217,10 @@ u8 pad_8013B811[3];
 u8 D_8013B814;
 u8 pad_8013B815[3];
 u8 D_8013B818[0x10];
-u8 D_8013B828[0x4];
-u8 D_8013B82C[0x4];
-u8 D_8013B830[0x4];
-u8 D_8013B834[0x4];
+struct Unk_unk68* D_8013B828;
+struct Unk_unk68* D_8013B82C;
+struct Unk_unk68* D_8013B830;
+struct Unk_unk68* D_8013B834;
 u8 D_8013B838;
 u8 pad_8013B839[7];
 u8 D_8013B840[0x4];
@@ -402,8 +402,12 @@ s8 D_80141BD0;
 u8 pad_80141BD1[1];
 s16 D_80141BD2;
 s32 D_80141BD4;
-u8 pad_80141BD8[0x1A8]; // D_80141BD8/BDC/BDE/BDF, g_FilterModeG, g_FilterAmountG: PC main_bss_state
-u8 D_80141D80[0x168];
+u8 pad_80141BD8[0x10]; // D_80141BD8/BDC/BDE/BDF, g_FilterModeG, g_FilterAmountG: PC main_bss_state
+#ifdef MMX4_PC
+u8 D_80141BE8[0x300 + 0x300];
+#else
+u8 D_80141BE8[0x300];
+#endif
 u8* D_80141EE8[6];
 u8* D_80141F00;
 u16 lastFilterAmountR;
@@ -528,7 +532,6 @@ u8 layout_width, layout_height;
 struct SecondaryPrimitiveBuffer temp2[2];
 struct MainPrimitiveBuffer temp1[2];
 DR_TPAGE D_80171EB0[2][6][8];
-u8 D_80141BE8[0x300];
 u8 window_archive_data[0x3000];
 u8 replay_data[0x2000];
 
