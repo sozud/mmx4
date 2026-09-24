@@ -95,6 +95,36 @@ def run(command, log_path, env, timeout):
     return completed.returncode
 
 
+def headless_build(build):
+    cache = build / "CMakeCache.txt"
+    if not cache.is_file():
+        return False
+    return "PSYZ_RENDERER:STRING=headless" in cache.read_text(errors="replace").splitlines()
+
+
+def psx_cache_stamp(args, metadata):
+    return {
+        "replay_sha256": metadata["sha256"],
+        "psx_frames": args.psx_frames,
+        "mednafen_sha256": sha256(args.mednafen),
+    }
+
+
+def psx_cache_valid(directory, stamp):
+    path = directory / "complete.json"
+    if not path.is_file():
+        return False
+    try:
+        return json.loads(path.read_text()) == stamp
+    except ValueError:
+        return False
+
+
+def psx_log_complete(directory, frames):
+    header, rows, truncated = load_log(directory / "frames.tsv")
+    return not truncated and len(rows) == frames and first_abort(directory / "run.log") is None
+
+
 def first_abort(log_path):
     for line in log_path.read_text(errors="replace").splitlines():
         if any(marker in line for marker in ABORT_MARKERS):
@@ -183,6 +213,8 @@ def main():
                         help="reuse the PSX log named by --psx-log")
     parser.add_argument("--psx-log", type=Path,
                         help="existing PSX log directory to compare against")
+    parser.add_argument("--psx-cache", type=Path,
+                        help="reuse or store the PSX log under DIR/REPLAY_SHA256")
     parser.add_argument("--expect-sha256", default=REPLAY_SHA256)
     parser.add_argument("--sync", type=Path,
                         help="sync sidecar (default: REPLAY.sync.json when present)")
@@ -223,12 +255,21 @@ def main():
     if not binary.is_file():
         raise SystemExit(f"{binary}: PC binary is missing")
 
+    cache_stamp = None
+    if args.psx_cache is not None:
+        psx_dir = args.psx_cache / metadata["sha256"]
+        cache_stamp = psx_cache_stamp(args, metadata)
     if args.skip_psx:
         if args.psx_log is None:
             raise SystemExit("--skip-psx requires --psx-log")
         psx_dir = args.psx_log
+    elif cache_stamp is not None and psx_cache_valid(psx_dir, cache_stamp):
+        print(f"== reusing the cached PSX oracle log {psx_dir}")
+        metadata["psx_cached"] = True
     else:
-        psx_dir.mkdir()
+        if psx_dir.exists():
+            shutil.rmtree(psx_dir)
+        psx_dir.mkdir(parents=True)
         print("== running the PSX oracle")
         env = os.environ.copy()
         env.update(
@@ -239,6 +280,9 @@ def main():
         code = run((str(args.mednafen), str(args.cue), str(args.bios),
                     str(args.psx_frames)), psx_dir / "run.log", env, args.timeout)
         metadata["psx_exit"] = code
+        if (cache_stamp is not None and code == 0 and
+                psx_log_complete(psx_dir, metadata["frames"])):
+            (psx_dir / "complete.json").write_text(json.dumps(cache_stamp) + "\n")
 
     print("== running the PC port")
     env = os.environ.copy()
@@ -252,7 +296,7 @@ def main():
     if sync:
         env["MMX4_REPLAY_SYNC"] = str(sync_path)
     command = [str(binary), "--replay", str(args.replay)]
-    if shutil.which("xvfb-run") is not None:
+    if not headless_build(args.build) and shutil.which("xvfb-run") is not None:
         command = ["xvfb-run", "-a", *command]
     metadata["pc_exit"] = run(command, pc_dir / "run.log", env, args.timeout)
 

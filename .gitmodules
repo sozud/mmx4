@@ -9,7 +9,8 @@
 	url = https://github.com/simonlindholm/asm-differ.git
 [submodule "tools/psyz"]
 	path = tools/psyz
-	url = https://github.com/psyqz/psyz
+	url = https://github.com/sozud/psyz.git
+	branch = mmx4
 [submodule "tools/harness"]
 	path = tools/harness
 	url = https://github.com/sozud/harness.git

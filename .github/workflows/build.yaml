@@ -120,7 +120,7 @@ jobs:
             sound-comparison/**/psx.log
           key: mednafen-sound-v1-frames360-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/audio_fixture.py') }}
       - name: Configure Linux port
-        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSYZ_RENDERER=sdl3_gl
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSYZ_RENDERER=headless
       - name: Build Linux port
         run: cmake --build build-linux --parallel
       - name: Configure Mednafen oracle
@@ -198,10 +198,14 @@ jobs:
             --output sound-comparison \
             --no-build \
             "${reuse_args[@]}"
+      - name: Restore Mednafen replay logs
+        id: mednafen_replay_cache
+        uses: actions/cache/restore@v6
+        with:
+          path: replay-psx
+          key: mednafen-replays-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/oracle/recordings/*-normalized.mmx4r') }}
       - name: Run stage replay regressions
         env:
-          GALLIUM_DRIVER: llvmpipe
-          LIBGL_ALWAYS_SOFTWARE: "true"
           SDL_AUDIODRIVER: dummy
         run: |
           python3 tools/oracle/run_replay_regression.py \
@@ -209,7 +213,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
+            --skip-build \
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-0-1-normalized.mmx4r \
             --expect-sha256 f03e0290dff7b87486d4d05940ddd14e4e4999af65ff91b9c006ce585ba1668b \
@@ -217,19 +222,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-0-1-normalized.mmx4r \
-            --expect-sha256 f03e0290dff7b87486d4d05940ddd14e4e4999af65ff91b9c006ce585ba1668b \
-            --output replay-runs/stage-0-1-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.943857397
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-1-0-normalized.mmx4r \
             --expect-sha256 f7c735b37ac7f3c75d8c787c3c3145b3a8b91aee27ed64041cc37177db0b37f5 \
@@ -237,19 +231,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-1-0-normalized.mmx4r \
-            --expect-sha256 f7c735b37ac7f3c75d8c787c3c3145b3a8b91aee27ed64041cc37177db0b37f5 \
-            --output replay-runs/stage-1-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.964921577
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-2-0-normalized.mmx4r \
             --expect-sha256 8bd5f8e5c995ecc85c9d29e0e647f09eed774071e1fd2699231f6c437de9f470 \
@@ -257,19 +240,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-2-0-normalized.mmx4r \
-            --expect-sha256 8bd5f8e5c995ecc85c9d29e0e647f09eed774071e1fd2699231f6c437de9f470 \
-            --output replay-runs/stage-2-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.916146449
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-3-0-normalized.mmx4r \
             --expect-sha256 67afc6dafb06b689dab10b98cc62e4036a4abe409b0a7d13cd411bfec1f7fd59 \
@@ -277,19 +249,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-3-0-normalized.mmx4r \
-            --expect-sha256 67afc6dafb06b689dab10b98cc62e4036a4abe409b0a7d13cd411bfec1f7fd59 \
-            --output replay-runs/stage-3-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.945563651
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-4-0-normalized.mmx4r \
             --expect-sha256 8f32a3f64eafc9cc9dafc111bf750ca78a38b79949b7ac64c6677da6fbe5b998 \
@@ -297,19 +258,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-4-0-normalized.mmx4r \
-            --expect-sha256 8f32a3f64eafc9cc9dafc111bf750ca78a38b79949b7ac64c6677da6fbe5b998 \
-            --output replay-runs/stage-4-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.961073962
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-5-0-normalized.mmx4r \
             --expect-sha256 d6b16b88375dd0ec1ea0323a2ec9bcbc1302686bcd44f752629537394e7b1b91 \
@@ -317,19 +267,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-5-0-normalized.mmx4r \
-            --expect-sha256 d6b16b88375dd0ec1ea0323a2ec9bcbc1302686bcd44f752629537394e7b1b91 \
-            --output replay-runs/stage-5-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.928310994
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-6-0-normalized.mmx4r \
             --expect-sha256 8fcaab24c9a370b220ae4c5d202cdc365c58d0210a6beb249394731d091120b1 \
@@ -337,19 +276,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-6-0-normalized.mmx4r \
-            --expect-sha256 8fcaab24c9a370b220ae4c5d202cdc365c58d0210a6beb249394731d091120b1 \
-            --output replay-runs/stage-6-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.905447840
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-7-0-normalized.mmx4r \
             --expect-sha256 36ea614236b5f55111ef90da50faa2cfc257592921460d7f92baf5079747a4d2 \
@@ -357,19 +285,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-7-0-normalized.mmx4r \
-            --expect-sha256 36ea614236b5f55111ef90da50faa2cfc257592921460d7f92baf5079747a4d2 \
-            --output replay-runs/stage-7-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.909080800
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-8-0-normalized.mmx4r \
             --expect-sha256 3f190204ccc82c909df2f5d0606281540f409811ccf44ca218cc9a7d534d2d4d \
@@ -377,19 +294,8 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-8-0-normalized.mmx4r \
-            --expect-sha256 3f190204ccc82c909df2f5d0606281540f409811ccf44ca218cc9a7d534d2d4d \
-            --output replay-runs/stage-8-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.971564124
+            --psx-cache replay-psx
           python3 tools/oracle/run_replay_regression.py \
             --replay tools/oracle/recordings/stage-9-0-normalized.mmx4r \
             --expect-sha256 23c2fbd2486e3dc9333ee651573e5bd2e0d7bce5c306c35c9273da2aebde3c0f \
@@ -397,19 +303,21 @@ jobs:
             --cue disks/mmx4.us.cue \
             --bios tools/SCPH1001.BIN \
             --build build-linux \
-            --skip-build
-          python3 tools/oracle/run_replay_ssim.py \
-            --replay tools/oracle/recordings/stage-9-0-normalized.mmx4r \
-            --expect-sha256 23c2fbd2486e3dc9333ee651573e5bd2e0d7bce5c306c35c9273da2aebde3c0f \
-            --output replay-runs/stage-9-0-ssim \
-            --mednafen tools/mednafen-build/src/mednafen \
-            --cue disks/mmx4.us.cue \
-            --bios tools/SCPH1001.BIN \
-            --build build-linux \
             --skip-build \
-            --interval 10 \
-            --top 20 \
-            --min-ssim 0.944809337
+            --psx-cache replay-psx
+      - name: Check Mednafen replay logs
+        id: mednafen_replay_logs
+        if: always() && steps.mednafen_replay_cache.outputs.cache-hit != 'true'
+        run: |
+          expected=$(ls tools/oracle/recordings/*-normalized.mmx4r | wc -l)
+          complete=$(find replay-psx -name complete.json 2>/dev/null | wc -l)
+          echo "complete=$([[ $complete -eq $expected ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+      - name: Save Mednafen replay logs
+        if: always() && steps.mednafen_replay_logs.outputs.complete == 'true'
+        uses: actions/cache/save@v6
+        with:
+          path: replay-psx
+          key: ${{ steps.mednafen_replay_cache.outputs.cache-primary-key }}
       - name: Upload replay evidence
         if: failure()
         uses: actions/upload-artifact@v7
@@ -417,7 +325,9 @@ jobs:
           name: replay-regression-${{ github.run_id }}-${{ github.run_attempt }}
           if-no-files-found: ignore
           retention-days: 7
-          path: replay-runs
+          path: |
+            replay-runs
+            replay-psx
       - name: Upload oracle artifacts
         if: always()
         uses: actions/upload-artifact@v7
