@@ -13330,7 +13330,6 @@ void func_8005F9F4(struct MainObj* arg0)
 extern union AnimationStep* D_8010EEB8[5];
 extern u8 D_8010EECC[12];
 
-
 void func_800CE8DC(struct MiscObj* arg0)
 {
     struct Misc34Ext* ext = &arg0->ext.misc_34;
