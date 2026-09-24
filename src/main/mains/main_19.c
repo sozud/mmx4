@@ -81,7 +81,7 @@ void func_80053274(struct MainObj* arg0)
     struct MainObj* current;
 
     if (arg0->animation_step.fields.relative_step < 0) {
-        current = *(struct MainObj**)0x1F80004C;
+        current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_19.animation_index < 2) {
             animation = 9;
             if (current->ext.main_19.unk80 == 0) {

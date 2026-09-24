@@ -38,7 +38,7 @@ void func_80012024(void)
         DrawSync(0);
         func_80012454();
 #ifdef MMX4_PC
-        mmx4_pc_complete_scheduled_cd_load();
+        mmx4_pc_complete_scheduled_cd_load(0);
         mmx4_pc_frame_end();
 #endif
     }

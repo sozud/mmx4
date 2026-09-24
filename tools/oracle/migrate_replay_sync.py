@@ -15,21 +15,38 @@ def sync_points_from_log(path):
     points = []
     previous_mode = None
     previous_load_busy = False
+    previous_reads = 0
     with path.open(newline="") as source:
         for row in csv.DictReader(source, delimiter="\t"):
             sample = int(row["frame"])
             mode = int(row["state"])
             load_busy = int(row["cd_state"]) == 1 or int(row["cd_pending"]) != 0
+            reads = int(row.get("cd_reads") or 0)
             if mode == 6 and (previous_mode is None or previous_mode != 6):
                 points.append({
                     "sample": sample,
                     "mode": 6,
                     "kind": "start" if previous_mode is None else "mode-return",
                 })
-            if previous_load_busy and not load_busy:
-                points.append({"sample": sample + 1, "kind": "load-complete"})
+            if "cd_reads" in row:
+                completed = reads - previous_reads
+            else:
+                completed = int(previous_load_busy and not load_busy)
+            if completed > 1:
+                raise RuntimeError(f"{path}: {completed} loads completed in sample {sample}")
+            if completed:
+                point = {"sample": sample + 1, "kind": "load-complete"}
+                if "cd_read_sample" in row:
+                    completed_at = int(row["cd_read_sample"])
+                    if completed_at not in (sample, sample + 1):
+                        raise RuntimeError(
+                            f"{path}: load completed at sample {completed_at} "
+                            f"but was logged in sample {sample}")
+                    point["phase"] = "input" if completed_at == sample else "frame"
+                points.append(point)
             previous_mode = mode
             previous_load_busy = load_busy
+            previous_reads = reads
     if not points or points[0]["sample"] != 0:
         raise RuntimeError(f"{path}: replay did not start in mode 6 at sample 0")
     return sorted(points, key=lambda point: point["sample"])

@@ -1271,6 +1271,9 @@ s32 func_8002CD70(struct PlayerObj* arg0, u8 arg1)
         return -1;
         return 0; // permuter discovered this works!
     default:
+#ifdef MMX4_PC
+        return 0;
+#endif
         // return 0; // this does not work
     }
 }
@@ -1571,7 +1574,15 @@ u8 func_8002D8B8(struct PlayerObj* arg0)
 u8 func_8002D900(struct PlayerObj* arg0)
 {
     s16 x = arg0->x_pos.i.hi;
+#ifdef MMX4_PC
+    s16 y = arg0->y_pos.i.hi - 1;
+
+    if (arg0->unk68 != NULL) {
+        y += arg0->unk68->unk1 + arg0->unk68->unk3;
+    }
+#else
     s16 y = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3 - 1;
+#endif
 
     return func_8002D724(arg0, x, y);
 }

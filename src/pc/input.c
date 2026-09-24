@@ -40,6 +40,7 @@ static int replay_started;
 static int replay_complete;
 static int replay_exit_requested;
 static unsigned long replay_load_points[64];
+static unsigned char replay_load_input_phase[64];
 static size_t replay_load_point_count;
 static size_t replay_load_point_index;
 
@@ -106,6 +107,9 @@ static void open_replay_sync(void)
                 free(document);
                 replay_fail("too many load-complete sync points");
             }
+            char* phase = strstr(colon, "\"phase\"");
+
+            replay_load_input_phase[replay_load_point_count] = phase != NULL && phase < object_end && strstr(phase, "\"input\"") != NULL && strstr(phase, "\"input\"") < object_end;
             replay_load_points[replay_load_point_count++] = sample;
         }
         cursor = object_end + 1;
@@ -167,6 +171,7 @@ static u16 replay_input(void)
         return 0;
     if (fread(input, sizeof(input), 1, replay_file) != 1)
         replay_fail("input stream ended unexpectedly");
+    mmx4_pc_complete_scheduled_cd_load(1);
     replay_consumed++;
     if (replay_consumed == replay_length) {
         replay_complete = 1;
@@ -200,19 +205,28 @@ int mmx4_pc_replay_exit_requested(void)
     return replay_exit_requested;
 }
 
-int mmx4_pc_replay_cd_load_ready(void)
+int mmx4_pc_replay_cd_load_due(int input_phase)
 {
-    unsigned long sample;
+    unsigned long consumed = replay_consumed + (input_phase ? 1 : 0);
 
     if (!replay_started)
         return 1;
     if (replay_load_point_index >= replay_load_point_count)
         return 0;
-    sample = replay_load_points[replay_load_point_index];
-    if (replay_consumed < sample)
+    if (replay_load_input_phase[replay_load_point_index] != input_phase)
         return 0;
-    replay_load_point_index++;
-    return 1;
+    return consumed >= replay_load_points[replay_load_point_index];
+}
+
+unsigned long mmx4_pc_replay_consumed(void)
+{
+    return replay_consumed;
+}
+
+void mmx4_pc_replay_cd_load_consume(void)
+{
+    if (replay_started && replay_load_point_index < replay_load_point_count)
+        replay_load_point_index++;
 }
 
 static u16 button_mask(const char* name)
