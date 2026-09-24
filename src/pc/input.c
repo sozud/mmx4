@@ -39,11 +39,78 @@ static unsigned long replay_consumed;
 static int replay_started;
 static int replay_complete;
 static int replay_exit_requested;
+static unsigned long replay_load_points[64];
+static size_t replay_load_point_count;
+static size_t replay_load_point_index;
 
 static void replay_fail(const char* reason)
 {
     fprintf(stderr, "MMX4 PC: replay %s: %s\n", mmx4_pc_replay_path, reason);
     exit(EXIT_FAILURE);
+}
+
+static void open_replay_sync(void)
+{
+    const char* override = getenv("MMX4_REPLAY_SYNC");
+    char* default_path = NULL;
+    const char* path = override;
+    FILE* file;
+    char* document;
+    long size;
+    char* cursor;
+
+    if (path == NULL || *path == '\0') {
+        size_t length = strlen(mmx4_pc_replay_path);
+        default_path = malloc(length + sizeof(".sync.json"));
+        if (default_path == NULL)
+            abort();
+        memcpy(default_path, mmx4_pc_replay_path, length);
+        memcpy(default_path + length, ".sync.json", sizeof(".sync.json"));
+        path = default_path;
+    }
+    file = fopen(path, "rb");
+    free(default_path);
+    if (file == NULL)
+        return;
+    if (fseek(file, 0, SEEK_END) != 0 || (size = ftell(file)) < 0) {
+        fclose(file);
+        replay_fail("unable to read sync sidecar");
+    }
+    rewind(file);
+    document = malloc((size_t)size + 1);
+    if (document == NULL)
+        abort();
+    if (fread(document, (size_t)size, 1, file) != 1) {
+        free(document);
+        fclose(file);
+        replay_fail("unable to read sync sidecar");
+    }
+    document[size] = '\0';
+    fclose(file);
+
+    cursor = document;
+    while ((cursor = strstr(cursor, "\"sample\"")) != NULL) {
+        char* object_end = strchr(cursor, '}');
+        char* colon = strchr(cursor, ':');
+        char* kind;
+        char* load_kind;
+        unsigned long sample;
+
+        if (object_end == NULL || colon == NULL || colon > object_end)
+            break;
+        sample = strtoul(colon + 1, NULL, 10);
+        kind = strstr(colon, "\"kind\"");
+        load_kind = kind == NULL ? NULL : strstr(kind, "\"load-complete\"");
+        if (kind != NULL && kind < object_end && load_kind != NULL && load_kind < object_end) {
+            if (replay_load_point_count == COUNT(replay_load_points)) {
+                free(document);
+                replay_fail("too many load-complete sync points");
+            }
+            replay_load_points[replay_load_point_count++] = sample;
+        }
+        cursor = object_end + 1;
+    }
+    free(document);
 }
 
 static void open_replay(void)
@@ -77,6 +144,7 @@ static void open_replay(void)
     replay_substage = header[9];
     replay_length = (unsigned long)((size - 16) / 2);
     replay_exit_requested = getenv("MMX4_REPLAY_EXIT") != NULL;
+    open_replay_sync();
     fprintf(stderr, "MMX4 PC: replay %s: %lu pad-read samples, stage %u-%u\n",
         mmx4_pc_replay_path, replay_length, replay_stage, replay_substage);
 }
@@ -130,6 +198,21 @@ int mmx4_pc_replay_complete(void)
 int mmx4_pc_replay_exit_requested(void)
 {
     return replay_exit_requested;
+}
+
+int mmx4_pc_replay_cd_load_ready(void)
+{
+    unsigned long sample;
+
+    if (!replay_started)
+        return 1;
+    if (replay_load_point_index >= replay_load_point_count)
+        return 0;
+    sample = replay_load_points[replay_load_point_index];
+    if (replay_consumed < sample)
+        return 0;
+    replay_load_point_index++;
+    return 1;
 }
 
 static u16 button_mask(const char* name)

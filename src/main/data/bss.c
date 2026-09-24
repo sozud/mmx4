@@ -237,7 +237,7 @@ u8 D_8013B8A4[0x4];
 struct ObjectHeader* D_8013B8A8;
 struct EffectObj* D_8013B8AC;
 struct Unk_unk68* D_8013B8B0;
-u8 D_8013B8B4[0x4];
+void* D_8013B8B4;
 u8 D_8013B8B8[0x8];
 struct ShotObj* D_8013B8C0;
 struct ShotObj* D_8013B8C4;
@@ -491,6 +491,8 @@ u8 D_80166D68[0x22];
 
 u8 D_80171EA9;
 u8 D_80171EA8;
+struct MainObj* D_80171FE0;
+u8 D_80171FE5;
 s8 D_80141F4A;
 u8 D_80173C84;
 s32 D_80175EE8[1];

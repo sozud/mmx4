@@ -53,7 +53,7 @@ void func_800BADD0(struct EffectObj* arg0)
     arg0->ext.effect_24.unk1B = counter;
     if (counter == 0x16) {
         old_unk5 = arg0->unk5;
-        arg0->ext.effect_9.direction = 0x3C;
+        arg0->ext.effect_24.timer = 0x3C;
         arg0->unk5 = old_unk5 + 1;
         if (engine_obj.stage == 0) {
             func_8001653C();

@@ -14,7 +14,7 @@ from pathlib import Path
 WORKSPACE = Path(__file__).resolve().parents[2]
 REPLAY_SHA256 = "e2ea3b524007787270960b7e74275fc2a043c42f53b9bfd09ffb199d5f239ef7"
 ABORT_MARKERS = (
-    "unimplemented traced game function:",
+    "unimplemented traced game function",
     "unavailable game function:",
     "undecompiled function-table target reached",
     "AddressSanitizer",
@@ -50,6 +50,31 @@ def validate_replay(path):
         "distinct_masks": len({data[16 + 2 * i : 18 + 2 * i]
                                for i in range((len(data) - 16) // 2)}),
     }
+
+
+def load_sync(path, replay_metadata):
+    if not path.is_file():
+        return None
+    document = json.loads(path.read_text())
+    if document.get("format") != "MMX4SYNC1":
+        raise SystemExit(f"{path}: invalid sync format")
+    if document.get("clock") != "pad-read":
+        raise SystemExit(f"{path}: sync clock must be pad-read")
+    if document.get("replay_sha256") != replay_metadata["sha256"]:
+        raise SystemExit(f"{path}: replay SHA-256 does not match")
+    if document.get("samples") != replay_metadata["frames"]:
+        raise SystemExit(f"{path}: replay sample count does not match")
+    entries = document.get("sync_points", [])
+    points = [point.get("sample") for point in entries]
+    identities = [(point.get("sample"), point.get("kind")) for point in entries]
+    if (not points or entries[0].get("kind") != "start" or points[0] != 0 or
+            points != sorted(points) or len(identities) != len(set(identities)) or
+            any(not isinstance(point, int) or point < 0 or
+                point >= replay_metadata["frames"] for point in points) or
+            any(point.get("kind") not in ("start", "mode-return", "load-complete")
+                for point in entries)):
+        raise SystemExit(f"{path}: invalid sync points")
+    return document
 
 
 def git(*args):
@@ -137,6 +162,8 @@ def main():
     parser.add_argument("--psx-log", type=Path,
                         help="existing PSX log directory to compare against")
     parser.add_argument("--expect-sha256", default=REPLAY_SHA256)
+    parser.add_argument("--sync", type=Path,
+                        help="sync sidecar (default: REPLAY.sync.json when present)")
     args = parser.parse_args()
 
     metadata = validate_replay(args.replay)
@@ -144,6 +171,9 @@ def main():
         raise SystemExit(
             f"{args.replay}: sha256 {metadata['sha256']} does not match "
             f"expected {args.expect_sha256}")
+    sync_path = args.sync or Path(str(args.replay) + ".sync.json")
+    sync = load_sync(sync_path, metadata)
+    sync_points = {point["sample"] for point in sync["sync_points"]} if sync else {0}
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     output = args.output / stamp
@@ -197,6 +227,8 @@ def main():
         MMX4_OBJECT_LOG_DIR=str(pc_dir),
         MMX4_REPLAY_EXIT="1",
     )
+    if sync:
+        env["MMX4_REPLAY_SYNC"] = str(sync_path)
     command = [str(binary), "--replay", str(args.replay)]
     if shutil.which("xvfb-run") is not None:
         command = ["xvfb-run", "-a", *command]
@@ -212,6 +244,8 @@ def main():
     print(f"   commit {metadata['commit']} on {metadata['branch']}"
           + (" (dirty worktree)" if metadata["dirty"] else ""))
     print(f"   evidence {output}")
+    if sync:
+        print(f"   {len(sync_points)} explicit sync points from {sync_path}")
 
     status = 0
     logs = {}
@@ -222,7 +256,7 @@ def main():
         if abort:
             print(f"   first aborting or unavailable function: {abort}")
             status = 1
-        for name in ("frames.tsv", "objects.tsv"):
+        for name in ("frames.tsv", "objects.tsv", "extensions.tsv"):
             header, rows, truncated = load_log(directory / name)
             logs[(side, name)] = (header, rows)
             last = report_frames(f"{side}/{name}", header, rows)
@@ -238,7 +272,7 @@ def main():
                     print(f"     consumed all {metadata['frames']} inputs")
 
     print("== comparison")
-    for name in ("frames.tsv", "objects.tsv"):
+    for name in ("frames.tsv", "objects.tsv", "extensions.tsv"):
         header_a, rows_a = logs[("psx", name)]
         header_b, rows_b = logs[("pc", name)]
         if header_a and header_b and header_a != header_b:
@@ -246,11 +280,18 @@ def main():
             status = 1
             continue
         shared = sorted(set(rows_a) & set(rows_b))
+        missing_pc = sorted(set(rows_a) - set(rows_b))
+        missing_psx = sorted(set(rows_b) - set(rows_a))
         differing = [frame for frame in shared if rows_a[frame] != rows_b[frame]]
         print(f"   {name}: compared {len(shared)} shared frames, "
               f"{len(differing)} differing")
         metadata[f"{name}_shared"] = len(shared)
         metadata[f"{name}_differing"] = len(differing)
+        metadata[f"{name}_missing_pc"] = len(missing_pc)
+        if missing_pc or missing_psx:
+            print(f"   {name}: {len(missing_pc)} PC gaps, "
+                  f"{len(missing_psx)} PSX gaps")
+            status = 1
         if not differing:
             continue
         status = 1
