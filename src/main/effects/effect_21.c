@@ -25,13 +25,6 @@ void func_800BA540(struct EffectObj* arg0)
     D_8010BE10[arg0->state](arg0);
 }
 
-struct Effect21SpawnRecord {
-    u16 x;
-    u16 y;
-    u8 object_id;
-    u8 flags;
-};
-
 struct Effect21SpawnRecord D_8010B7EC[6] = {
     { 0x0300, 0x01B0, 0x00, 0x00 },
     { 0x0310, 0x01B0, 0x01, 0x01 },

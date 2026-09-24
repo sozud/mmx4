@@ -679,8 +679,15 @@ struct Main22Ext {
     u32 parts_mask;
 };
 
+struct Main26Ext {
+    s8 last_health;
+    s8 stage;
+};
+
 struct Main23Ext {
     u8 unk80;
+    u8 unk81;
+    u8 unk82;
 };
 
 struct Main24Ext {
@@ -787,7 +794,9 @@ struct Main18Ext {
     u8 unk88;
     u8 unk89;
     u16 unk8A;
-    u8 pad8C[0x97 - 0x8C];
+    u32 unk8C;
+    u32 unk90;
+    u8 pad94[3];
     u8 saved_unk5;
 };
 
@@ -1250,6 +1259,7 @@ union MainObjExt {
     struct Main21Ext main_21;
     struct Main22Ext main_22;
     struct Main23Ext main_23;
+    struct Main26Ext main_26;
     struct Main24Ext main_24;
     struct Main25Ext main_25;
     struct Main47Ext main_47;
@@ -1995,6 +2005,7 @@ union ItemUnk7C {
     struct MainObj* owner;
     struct MiscObj* misc;
     void* object;
+    struct Unk_unk68* bounds;
     s32 item_26_value;
 };
 
@@ -2112,7 +2123,8 @@ struct Misc5Ext {
 };
 
 struct Misc8Ext {
-    u8 pad50[5];
+    u8 pad50[4];
+    u8 alternate;
     u8 timer;
 };
 
@@ -3180,12 +3192,32 @@ struct Effect43Ext {
     u16 unk16;
 };
 
+struct Effect21SpawnRecord {
+    u16 x;
+    u16 y;
+    u8 object_id;
+    u8 flags;
+};
+
+struct Effect21Ext {
+    struct Effect21SpawnRecord* cursor;
+    u32 spawned;
+    u8 timer;
+    u8 index;
+    u8 phase;
+    u8 inside;
+    u8 was_inside;
+};
+
 struct Effect5Ext {
-    u32 unk14;
-    u32 unk18;
+    s32 unk14;
+    s32 unk18;
     u8 unk1C;
-    u8 pad1D;
+    u8 unk1D;
     u8 unk1E;
+    u8 unk1F;
+    u8 unk20;
+    u8 unk21;
 };
 
 struct Effect14Ext {
@@ -3272,6 +3304,7 @@ union EffectExt {
     struct Effect4Ext effect_4;
     struct UnkEffectExt unk_effect;
     struct Effect5Ext effect_5;
+    struct Effect21Ext effect_21;
     struct Effect8Ext effect_8;
     struct Effect14Ext effect_14;
     struct Effect17Ext effect_17;
@@ -4364,7 +4397,7 @@ s32 func_8002D490(struct PlayerObj*);
 void func_8002E294(struct PlayerObj*, struct PlayerObj*);
 void func_8002E380(struct MovingObj*, struct MovingObj*, u8);
 #endif
-void func_80055C54(void);
+void func_80055C54(struct MainObj*);
 void func_8005807C(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
 void func_800AF878(struct BaseObj*, s32, s32, s32);

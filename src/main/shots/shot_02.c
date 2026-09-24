@@ -2,35 +2,21 @@
 // 80099D10..8009A984
 #include "common.h"
 
-u8 D_80108D04[28] = {
-    0xF9,
-    0xF7,
-    0x0F,
-    0x10,
-    0xE3,
-    0xF0,
-    0x15,
-    0x0C,
-    0xAF,
-    0xE3,
-    0x2D,
-    0x16,
-    0xC2,
-    0xEA,
-    0x22,
-    0x0F,
-    0xDF,
-    0xF4,
-    0x19,
-    0x07,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+struct Shot2Hitbox {
+    s8 x;
+    s8 y;
+    u8 width;
+    u8 height;
+};
+
+struct Shot2Hitbox D_80108D04[7] = {
+    { -7, -9, 0x0F, 0x10 },
+    { -29, -16, 0x15, 0x0C },
+    { -81, -29, 0x2D, 0x16 },
+    { -62, -22, 0x22, 0x0F },
+    { -33, -12, 0x19, 0x07 },
+    { 0, 0, 0, 0 },
+    { 0, 0, 0, 0 },
 };
 u8 D_80108D20[8] = { 0x0F, 0x10, 0x11, 0x0F, 0x10, 0x11, 0, 0 };
 
@@ -233,8 +219,8 @@ void func_8009A87C(struct ShotObj* arg0)
     s8 player_active;
 
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->unk54 = (u8*)&D_80108CB8[arg0->animation_step.fields.frame_index];
-    arg0->unk50.data = (u8*)&D_80108CB8[arg0->animation_step.fields.frame_index];
+    arg0->unk54 = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
+    arg0->unk50.data = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
     player_active = g_Player.unk5C;
     func_8002D9BC(arg0);
     if (player_active != g_Player.unk5C) {
