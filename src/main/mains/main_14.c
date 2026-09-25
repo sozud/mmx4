@@ -49,7 +49,34 @@ void func_8004CF60(struct MainObj* arg0)
     arg0->state++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D044);
+void func_8004D044(struct MainObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FBA08[arg0->unk5](arg0);
+    func_8004D6FC(arg0);
+    func_8002D9BC(arg0);
+    collision = func_8002DD04(arg0);
+    if (arg0->unk5 != 0) {
+        arg0->ext.main_14.saved_unk5 = arg0->unk5;
+    }
+    if (collision < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(6, D_800FB9F4, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 8);
+    } else {
+        if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+            func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+            return;
+        }
+        if (arg0->x_pos.val > g_Player.x_pos.val && arg0->ext.main_14.unk8C == 0) {
+            arg0->ext.main_14.unk94 = 1;
+        }
+    }
+    arg0->state = 2;
+}
 
 void func_8004D160(struct MainObj* arg0)
 {

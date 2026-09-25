@@ -10,7 +10,34 @@ void func_800473C8(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_07", func_80047404);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_07", func_80047660);
+void func_80047660(struct MainObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FA6FC[arg0->unk5](arg0);
+    if (arg0->ext.main_7.unk90 != 0) {
+        func_8002D9BC(arg0);
+        arg0->ext.main_7.saved_unk5 = arg0->unk5;
+        if (func_8002DD04(arg0) < 0) {
+            func_800AF808(BASE_OBJECT(arg0));
+            func_800C813C(5, D_800FA6E0, arg0);
+            if (!(arg0->unk2 & 1)) {
+                func_800BF638(BASE_OBJECT(arg0), 0xE, arg0->x_pos.u.hi - 0xA, arg0->y_pos.i.hi);
+            } else {
+                func_800BF638(BASE_OBJECT(arg0), 0xE, arg0->x_pos.u.hi + 0xA, arg0->y_pos.i.hi);
+            }
+            arg0->state = 2;
+            return;
+        }
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        if (arg0->unk5 != 2 || arg0->unk6 != 0) {
+            func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        }
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_80047794(struct MainObj* arg0)
 {
@@ -99,7 +126,45 @@ void func_80047A34(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_07", func_80047B04);
+void func_80047B04(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 2) {
+        struct ShotObj* shot;
+
+        func_8001540C(2, 0x17, arg0);
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 2;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->unk2 = (u8)arg0->unk2 & 1;
+            shot->unk15 = arg0->unk15;
+            shot->bg_offset = arg0->bg_offset;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val;
+            func_8002B93C(MOVING_OBJECT(arg0),
+                func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
+            if ((arg0->unk15 == 0 && arg0->unk20 < 0) || (arg0->unk15 != 0 && arg0->unk20 > 0)) {
+                shot->x_vel.val = arg0->unk20;
+                shot->y_vel.val = arg0->unk24;
+            } else {
+                shot->x_vel.val = arg0->ext.main_7.saved_x_velocity;
+                shot->y_vel.val = arg0->ext.main_7.saved_y_velocity;
+            }
+            arg0->unk20 = 0;
+            arg0->unk24 = 0;
+        }
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        func_80015D60(arg0, 1);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 struct Unk_unk68 D_800FA568 = { -13, -12, 25, 24 };
 

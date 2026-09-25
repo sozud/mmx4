@@ -69,8 +69,6 @@ void func_800BF5EC(struct ItemObj* arg0)
     func_8002B108(OBJECT_HEADER(arg0));
 }
 
-void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-
 void func_800BF60C(struct BaseObj* arg0, s8 arg1)
 {
     func_800BF638(arg0, arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
