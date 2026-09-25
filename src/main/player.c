@@ -2677,9 +2677,91 @@ void func_8003666C(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_800366C0);
+void func_800366C0(struct PlayerObj* arg0)
+{
+    s16 x_pos;
+    s32 frame_offset;
+    u8 facing;
+    struct VisualObj* visual_obj;
+    s32* sprite_frames;
 
-INCLUDE_ASM("main/nonmatchings/player", func_800367F8);
+    if (func_8002D900(arg0) == 0x24) {
+        func_800367F8(arg0);
+        return;
+    }
+
+    visual_obj = find_free_visual_obj();
+    if (visual_obj == NULL) {
+        return;
+    }
+
+    visual_obj->active = 0x21;
+    visual_obj->id = 3;
+    visual_obj->unk2 = 2;
+    visual_obj->state = 0;
+    visual_obj->unk5 = 0;
+    visual_obj->unk6 = 0;
+    visual_obj->bg_offset = arg0->bg_offset;
+    sprite_frames = SP_SPRITE_FRAMES;
+    visual_obj->unk38 = 0;
+    frame_offset = sprite_frames[1];
+    visual_obj->animation_table = D_8011BF40;
+    visual_obj->unk42 = 0x7804;
+    visual_obj->unk40 = 0;
+    visual_obj->unk16 = 1;
+    visual_obj->unk3C = (u8*)sprite_frames + frame_offset;
+    facing = arg0->unk15;
+    visual_obj->unk15 = facing;
+    if (facing == 0) {
+        x_pos = arg0->x_pos.u.hi + D_800F8BCC[arg0->unk2 * 2];
+    } else {
+        x_pos = arg0->x_pos.u.hi - D_800F8BCC[arg0->unk2 * 2];
+    }
+    visual_obj->x_pos.i.hi = x_pos;
+    visual_obj->y_pos.i.hi = arg0->y_pos.u.hi + D_800F8BCC[arg0->unk2 * 2 + 1];
+}
+
+void func_800367F8(struct PlayerObj* arg0)
+{
+    s16 x_pos;
+    u8 facing;
+    struct VisualObj* visual_obj;
+    s32* menu_frames;
+    s32 column;
+    s32 row;
+    s32 index;
+    u8 bg_offset;
+
+    if (func_8002D900(arg0) == 0x24) {
+        visual_obj = find_free_visual_obj();
+        if (visual_obj != NULL) {
+            visual_obj->active = 0x41;
+            visual_obj->id = 3;
+            visual_obj->unk2 = 8;
+            bg_offset = arg0->bg_offset;
+            visual_obj->unk16 = 1;
+            visual_obj->animation_table = D_8011BF40;
+            visual_obj->bg_offset = bg_offset;
+            index = func_8002938C(0x84) & 0xFF;
+            menu_frames = SP_MENU_FRAMES;
+            visual_obj->unk3C = (u8*)menu_frames + menu_frames[index];
+            index = func_8002938C(0x84) & 0xFF;
+            visual_obj->unk40 = D_801406A8[index] >> 7;
+            column = func_8002938C(0x84);
+            row = func_8002938C(0x84);
+            visual_obj->unk42 = (((column & 0xFF) * 4 + 0x18) % 16) | ((((row & 0xFF) + 6) / 4 + 0x1E0) << 6);
+            facing = arg0->unk15;
+            visual_obj->unk15 = facing;
+            if (facing == 0) {
+                x_pos = arg0->x_pos.u.hi + D_800F8BCC[4 + arg0->unk2];
+            } else {
+                x_pos = arg0->x_pos.u.hi - D_800F8BCC[4 + arg0->unk2];
+            }
+            visual_obj->x_pos.i.hi = x_pos;
+            visual_obj->y_pos.i.hi = arg0->y_pos.u.hi;
+        }
+    }
+}
 
 extern f32 D_800F8BD8[];
 
@@ -3933,9 +4015,110 @@ void func_80039328(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_80039378);
+void func_80039378(struct PlayerObj* arg0)
+{
+    struct WeaponObj* weapon;
+    s8 event;
+    s8 row;
+    s8 column;
 
-INCLUDE_ASM("main/nonmatchings/player", func_80039570);
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    if (event & 0x80) {
+        arg0->animation_step.fields.event = event & 0x7F;
+        if (arg0->unk96 == 2) {
+            weapon = func_80036DA0(1, 2, 0, NULL);
+            if (weapon != NULL) {
+                func_80036E1C(1, 0x1A, 1, weapon);
+            }
+            arg0->unk98++;
+            arg0->unk99++;
+        }
+        if (arg0->unk96 == 0xB) {
+            func_80036DA0(1, 0xB, 0, NULL);
+            arg0->unk98++;
+            arg0->unk99++;
+        }
+        if (arg0->unk96 == 7) {
+            func_80036DA0(1, 7, 0, NULL);
+            func_80036DA0(1, 7, 1, NULL);
+            arg0->unk98 += 2;
+            arg0->unk99 += 2;
+        }
+        if (arg0->unk96 == 0x10) {
+            func_80036E1C(1, 0x13, 0, NULL);
+            func_80036E1C(1, 0x13, 1, NULL);
+            for (row = 0; row < 2; row++) {
+                for (column = 0; column < 5; column++) {
+                    func_80036DA0(1, 0x10, column | (row << 7), NULL);
+                }
+            }
+            arg0->unk98++;
+            arg0->unk99++;
+        }
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_8003470C(arg0);
+    }
+}
+
+void func_80039570(struct PlayerObj* arg0)
+{
+    s8 event;
+    struct WeaponObj* weapon;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    if (event & 0x80) {
+        arg0->animation_step.fields.event = event & 0x7F;
+        if (arg0->unk17 == 0x63) {
+            weapon = func_80036DA0(1, 4, 0, NULL);
+        } else {
+            weapon = func_80036DA0(1, 4, 1, NULL);
+        }
+        if (weapon != NULL) {
+            func_80036E1C(1, 0x1A, 0, weapon);
+        }
+        arg0->unk98++;
+        arg0->unk99++;
+    }
+
+    if ((arg0->unk17 == 0x63) && (arg0->unk8E == 0)) {
+        if (arg0->unk88.bytes.collision_flags & 8) {
+            arg0->unk67 = 0;
+            if (func_80034100(arg0) != 0) {
+                return;
+            }
+            if (func_80033EA4(arg0) != 0) {
+                return;
+            }
+            if (func_80037290(arg0) != 0) {
+                return;
+            }
+            if (func_80033494(arg0) != 0) {
+                return;
+            }
+            if (func_800334F4(arg0) != 0) {
+                func_800344A0(arg0);
+                return;
+            }
+            if (arg0->unk8F != 0) {
+                func_80038748(arg0);
+                arg0->unk5 = 2;
+                arg0->unk6 = 0;
+                return;
+            }
+            arg0->unk67 = 1;
+        } else {
+            func_80034604(arg0);
+            return;
+        }
+    }
+
+    if (arg0->animation_step.fields.relative_step == 0) {
+        func_8003470C(arg0);
+    }
+}
 
 void func_80039700(struct PlayerObj* arg0)
 {
@@ -4214,7 +4397,42 @@ s32 func_80039E5C(struct PlayerObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/player", func_80039F28);
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003A000);
+s32 func_8003A000(struct PlayerObj* arg0)
+{
+    if (arg0->unk2 == 0) {
+        return 0;
+    }
+    if (arg0->unkC3 != 0) {
+        return 0;
+    }
+    if (((u8)arg0->unkB9 & 0x80) == 0) {
+        return 0;
+    }
+    if ((arg0->pressed_input & 0x20) == 0) {
+        return 0;
+    }
+    if (arg0->unk8E != 0) {
+        return 0;
+    }
+    arg0->unk8E = 1;
+    arg0->unkBB = 0;
+    func_80036034(arg0);
+    func_800350A4(arg0, 0x68);
+    func_8001540C(1, 8, arg0);
+    func_800363B8(arg0, 9);
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = FIXED(4.125);
+    } else {
+        arg0->x_vel.val = FIXED(-4.125);
+    }
+    arg0->unk28 = FIXED(-0.21875);
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk5 = 0x3B;
+    arg0->unk6 = 0;
+    func_8003B24C(arg0);
+    return 1;
+}
 
 void func_8003A104(struct PlayerObj* arg0)
 {
@@ -4273,9 +4491,132 @@ void func_8003A374(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003A3EC);
+void func_8003A3EC(struct PlayerObj* arg0)
+{
+    s8 saved_unk8E;
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003A5E4);
+    if (arg0->unk6 == 0) {
+        if (arg0->unk5 == 0x31) {
+            func_8003B1A0(arg0, 0x1B);
+        }
+        arg0->unk6++;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->unk5 == 0x37) {
+            func_8003B1A0(arg0, 0x22);
+        }
+    }
+    if (arg0->unkC3 != 0) {
+        arg0->y_vel.val = 0;
+    }
+    if (arg0->unk88.bytes.collision_flags & 4) {
+        arg0->y_vel.val = 0;
+    }
+    if (!(arg0->input.buttons.held & 0x80)) {
+        arg0->y_vel.val = 0;
+    }
+    if (arg0->unk8E != 0 && arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk8E = 0;
+    }
+    if (func_8003996C(arg0) != 0) {
+        return;
+    }
+    saved_unk8E = arg0->unk8E;
+    arg0->unk8E = 0;
+    if ((arg0->animation_step.fields.event & 0x40) && func_8003996C(arg0) != 0) {
+        return;
+    }
+    if (arg0->unk8A.bytes.high == 0) {
+        if (func_80033F5C(arg0) != 0 || func_80033AC0(arg0) != 0 || func_800339E0(arg0) != 0) {
+            return;
+        }
+    } else {
+        arg0->unk8A.bytes.high--;
+    }
+
+    arg0->unk8E = saved_unk8E;
+    func_800365A4(arg0);
+    func_80036B88(arg0);
+    if (arg0->y_vel.val <= 0) {
+        if (arg0->unk8E != 0) {
+            if (arg0->unk5 == 0x31) {
+                arg0->unk5 = 0x32;
+            } else {
+                arg0->unk5 = 0x38;
+            }
+            arg0->unk6 = 1;
+        } else {
+            func_8003516C(arg0, 0xB, 5);
+            arg0->unk8A.bytes.low = 0;
+            arg0->unk5 = 7;
+            arg0->unk6 = 0;
+        }
+        arg0->unk67 = -1;
+    }
+}
+
+void func_8003A5E4(struct PlayerObj* arg0)
+{
+    u8 duration;
+    u8 saved_unk8E;
+
+    if (arg0->unk88.bytes.collision_flags & 8) {
+        arg0->unk67 = 0;
+        arg0->unk84 = 0;
+        arg0->unk86 = 0;
+        arg0->unk8C = 0;
+        if (arg0->unk8E != 0) {
+            if (arg0->unk5 == 0x32) {
+                duration = arg0->animation_step.fields.duration;
+                func_8003516C(arg0, 0x5C, arg0->animation_step.fields.event & 0x1F);
+                arg0->animation_step.fields.duration = duration;
+                func_8003B1E0(arg0, 0x1C);
+                arg0->unk5 = 0x30;
+                arg0->unk6 = 1;
+                return;
+            }
+            arg0->unk8E = 0;
+        }
+        func_80034668(arg0);
+        return;
+    }
+
+    if (arg0->unk6 == 0) {
+        if (arg0->unk5 == 0x32) {
+            func_8003B1A0(arg0, 0x1B);
+        }
+        arg0->unk6++;
+    } else {
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        if (arg0->unk5 == 0x38) {
+            func_8003B1A0(arg0, 0x22);
+        }
+    }
+
+    if (arg0->unk8E != 0 && arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk8E = 0;
+    }
+    if (func_80039A00(arg0) != 0) {
+        return;
+    }
+    saved_unk8E = arg0->unk8E;
+    arg0->unk8E = 0;
+    if ((arg0->animation_step.fields.event & 0x40) && func_80039A00(arg0) != 0) {
+        return;
+    }
+    if (func_80033F5C(arg0) != 0 || func_80033AC0(arg0) != 0 || func_800339E0(arg0) != 0) {
+        return;
+    }
+
+    arg0->unk8E = saved_unk8E;
+    func_800365A4(arg0);
+    func_80036B88(arg0);
+    if (arg0->unk8E == 0) {
+        func_8003516C(arg0, 0xB, 5);
+        arg0->unk5 = 7;
+        arg0->unk6 = 0;
+    }
+}
 
 void func_8003A7B4(struct PlayerObj* arg0)
 {
@@ -4315,7 +4656,59 @@ void func_8003A7B4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003A8A0);
+void func_8003A8A0(struct PlayerObj* arg0)
+{
+    u8 collision_flags;
+    s8 substate;
+    s32 airborne;
+
+    collision_flags = arg0->unk88.bytes.collision_flags;
+    if (collision_flags & 8) {
+        arg0->unk8E = 0;
+        func_80034668(arg0);
+        return;
+    }
+    airborne = arg0->unkC3 != 0;
+    if (!(collision_flags & 3)) {
+        airborne = 1;
+    }
+    if (airborne) {
+        arg0->unk8E = 0;
+        func_80034604(arg0);
+        return;
+    }
+    if (func_80033B34(arg0) != 0) {
+        arg0->unk8E = 0;
+        return;
+    }
+    if (func_80033B8C(arg0) != 0) {
+        substate = arg0->unk6;
+        if (substate == 0) {
+            arg0->unk6 = substate + 1;
+        } else {
+            func_80015DC8(ANIMATED_OBJECT(arg0));
+        }
+        func_8003B1A0(arg0, 0x1F);
+        if (arg0->animation_step.fields.event & 0x40) {
+            arg0->unk8E = 0;
+            if (func_80039B44(arg0) != 0) {
+                return;
+            }
+            arg0->unk8E = 1;
+        }
+        func_8002B718(MOVING_OBJECT(arg0));
+        func_80036B88(arg0);
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk8E = 0;
+            func_800350A4(arg0, 0xF);
+            arg0->unk5 = 0xB;
+            arg0->unk6 = 0;
+        }
+    } else {
+        arg0->unk8E = 0;
+        func_80034B64(arg0);
+    }
+}
 
 void func_8003A9F0(struct PlayerObj* player)
 {
@@ -4381,7 +4774,57 @@ void func_8003AB34(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003ABE0);
+void func_8003ABE0(struct PlayerObj* arg0)
+{
+    s16 x_pos;
+    struct MiscObj* debris;
+    u32 i;
+
+    if (arg0->unk88.bytes.collision_flags & 8) {
+        func_800350A4(arg0, 0x62);
+        i = 0;
+        arg0->unk67 = 0;
+        arg0->unk84 = 0;
+        arg0->unk86 = 0;
+        arg0->unk8C = 0;
+        do {
+            debris = find_free_misc_obj();
+            if (debris != NULL) {
+                debris->active = 0x21;
+                debris->id = 0x2F;
+                debris->unk2 = 0;
+                debris->bg_offset = arg0->bg_offset;
+                if (arg0->unk15 == 0) {
+                    x_pos = arg0->x_pos.u.hi - 0x10;
+                } else {
+                    x_pos = arg0->x_pos.u.hi + 0x10;
+                }
+                debris->x_pos.i.hi = x_pos;
+                debris->y_pos.i.hi = arg0->y_pos.i.hi;
+            }
+            i++;
+        } while (i < 8);
+        func_8001540C(0, 0x1A, arg0);
+        arg0->unk6++;
+        return;
+    }
+
+    arg0->unk8E = 0;
+    if (func_80033F5C(arg0) == 0 && func_80033AC0(arg0) == 0 && func_800339E0(arg0) == 0) {
+        arg0->unk8E = 1;
+        arg0->x_vel.val = 0;
+        if (arg0->unkC3 == 0) {
+            if (arg0->input.buttons.held & 2) {
+                arg0->x_vel.val = FIXED(-1.5);
+            }
+            if (arg0->input.buttons.held & 1) {
+                arg0->x_vel.val = FIXED(1.5);
+            }
+        }
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        func_80036B88(arg0);
+    }
+}
 
 void func_8003AD74(struct PlayerObj* arg0)
 {
@@ -4479,7 +4922,55 @@ void func_8003AFD4(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_8003B044);
+void func_8003B044(struct PlayerObj* arg0)
+{
+    u32 i;
+    s32 frame_offset;
+    s32* sprite_frames;
+    struct VisualObj* visual_obj;
+    struct WeaponObj* weapon;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event & 0x80) {
+        arg0->animation_step.fields.event = 0;
+        visual_obj = find_free_visual_obj();
+        if (visual_obj != NULL) {
+            visual_obj->active = 0x21;
+            visual_obj->id = 3;
+            visual_obj->unk2 = 0xD;
+            visual_obj->bg_offset = arg0->bg_offset;
+            sprite_frames = SP_SPRITE_FRAMES;
+            frame_offset = sprite_frames[6];
+            visual_obj->animation_table = D_8011C018;
+            visual_obj->unk40 = 0;
+            visual_obj->unk42 = 0x7803;
+            visual_obj->unk16 = 0;
+            visual_obj->unk3C = (u8*)sprite_frames + frame_offset;
+            visual_obj->x_pos.val = arg0->x_pos.val;
+            visual_obj->y_pos.val = arg0->y_pos.val;
+            visual_obj->unk15 = arg0->unk15;
+        }
+    }
+    if (arg0->animation_step.fields.event & 0x40) {
+        arg0->animation_step.fields.event = 0;
+        i = 0;
+        do {
+            weapon = find_free_weapon_obj();
+            if (weapon != NULL) {
+                weapon->active = 0x21;
+                weapon->id = 0x24;
+                weapon->unk2 = i;
+                weapon->bg_offset = arg0->bg_offset;
+            }
+            i++;
+        } while (i < 9);
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk8E = 0;
+        arg0->unk7A = 0;
+        func_8003470C(arg0);
+    }
+}
 
 void func_8003B1A0(struct PlayerObj* arg0, s8 arg1)
 {
