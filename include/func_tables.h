@@ -1569,6 +1569,7 @@ void func_8004EC44(struct MainObj*);
 void func_8004ECB0(struct MainObj*);
 
 // D_800FBD9C
+extern void (*D_800FBD9C[11])();
 void func_8009216C(void* arg0);
 void func_8004FAE4(struct MainObj* arg0);
 void func_8004ECE4(struct MainObj* arg0);

@@ -6,7 +6,6 @@ void SelectACharacterUpdate(struct MiscObj*);
 void func_80035048(struct PlayerObj*);
 
 extern u16 D_800F1868[18];
-extern struct Unk_unk68 D_800FBEF8;
 extern u8 D_800F164C[4];
 extern s16 D_800F1650[2];
 extern union MainPaletteData D_800F1660;
@@ -51,11 +50,8 @@ extern u8 D_800FB67C[];
 extern void (*D_800FB6B4[])(struct MainObj*);
 extern void* D_8010DA9C[];
 extern union AnimationStep* D_800FBD0C[];
-extern struct Unk_unk68 D_800FBBB8;
 extern struct Unk_unk68 D_800FBBC8;
 extern struct Unk_unk68 D_80106A74[];
-extern u8 D_800FBD80[];
-extern void (*D_800FBD9C[])(struct MainObj*);
 extern u8 D_80108D94[4];
 extern u8 D_80108D98[4];
 extern s8 D_80108D9C[6][2];
@@ -95,7 +91,6 @@ s32 func_8002C160(struct CollisionObj*, struct CollisionObj*);
 void func_80046AA4(struct MainObj*);
 void func_8004C6C4(struct MainObj*);
 void func_8004C694(struct MainObj*);
-void func_8004FBF4(struct MainObj*);
 void func_8004FC80(struct MainObj*);
 u8 func_80053A88(struct PlayerObj*, s16, s16);
 u8 func_80053B18(struct PlayerObj*, s16, s16);
@@ -2741,65 +2736,6 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->unk7 = 0;
 }
 
-void func_8004EA88(struct MainObj* arg0)
-{
-    s32 collision;
-
-    func_8004FBF4(arg0);
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    if (arg0->unk7 == 0) {
-        func_8004FD38(arg0, 2);
-        arg0->unk7 = 1;
-    }
-
-    D_800FBD9C[(u8)arg0->unk5](arg0);
-    if (arg0->unk5 == 0xA)
-        return;
-
-    if (engine_obj.character_state.bytes[0] != 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(0xB, D_800FBD80, arg0);
-        arg0->unk7C = 0x20;
-        arg0->unk7E = 6;
-        arg0->ext.main_16.shot_09_active = 0;
-        arg0->on_screen = 0;
-        arg0->state = 2;
-        return;
-    }
-
-    func_8002D9BC(arg0);
-    collision = func_8002DD04(arg0);
-    if (collision < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(0xB, D_800FBD80, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0x13);
-        arg0->unk7C = 0x20;
-        arg0->unk7E = 6;
-        arg0->ext.main_16.shot_09_active = 0;
-        arg0->on_screen = 0;
-        arg0->state = 2;
-        return;
-    }
-
-    if ((u32)(collision - 0x1B) < 2 && arg0->ext.main_16.unk8C != 1) {
-        arg0->unk54 = &D_800FBBB8;
-        func_80015D60(ANIMATED_OBJECT(arg0), 0xE);
-        arg0->ext.main_16.unk90 = 0;
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
-    }
-
-    if (arg0->state == 2)
-        return;
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0xA8) != 0) {
-        arg0->ext.main_16.shot_09_active = 0;
-        arg0->state = 3;
-    } else {
-        func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
-    }
-}
-
 void func_8004FD38(struct MainObj* arg0, s32 animation)
 {
     struct MiscObj* misc;
@@ -2952,75 +2888,6 @@ void func_8004F1A0(struct MainObj* arg0)
         arg0->unk5 = 2;
     }
     arg0->unk6 = 0;
-}
-
-void func_8004F6B8(struct MainObj* arg0)
-{
-    struct ShotObj* shot;
-
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 0)
-        return;
-
-    func_80015D60(ANIMATED_OBJECT(arg0), 0x12);
-    func_8001540C(2, 0x29, arg0);
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 9;
-        shot->unk2 = 3;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->unk15 = arg0->unk15;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->unk15 = arg0->unk15;
-        shot->x_vel.val = arg0->unk15 != 0 ? FIXED(1) : FIXED(-1);
-        shot->y_vel.val = 0;
-        shot->state = 3;
-    }
-    arg0->unk7C = 0x14;
-    arg0->unk6 = 1;
-}
-
-void func_8004F7D0(struct MainObj* arg0)
-{
-    struct ShotObj* shot;
-
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C != 0)
-        return;
-
-    func_80015D60(ANIMATED_OBJECT(arg0), 0x13);
-    func_8001540C(2, 0x29, arg0);
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 9;
-        shot->unk2 = 4;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->unk15 = arg0->unk15;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->unk15 = arg0->unk15;
-        shot->x_vel.val = arg0->unk15 != 0 ? FIXED(1) : FIXED(-1);
-        shot->y_vel.val = 0;
-        shot->state = 3;
-    }
-    if (arg0->unk2 < 4) {
-        arg0->unk7C = 0x14;
-    } else {
-        func_8004FC50(ANIMATED_OBJECT(arg0));
-        arg0->unk7C = 0x3C;
-    }
-    arg0->unk6 = 2;
 }
 
 void func_8009B0B8(struct ShotObj* arg0)
@@ -3403,46 +3270,6 @@ void func_80037484(struct PlayerObj* arg0, s32 arg1)
     case 14:
         func_80037F78(arg0);
         break;
-    }
-}
-
-void func_8004F4D4(struct MainObj* arg0)
-{
-    struct ShotObj* shot;
-
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk7C == 8)
-        func_8001540C(2, 0x27, arg0);
-    if (--arg0->unk7C != 0)
-        return;
-
-    func_8001540C(2, 0x29, arg0);
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 9;
-        shot->unk2 = arg0->ext.main_16.unk88;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->state = 3;
-        shot->unk15 = arg0->unk15;
-    }
-
-    arg0->ext.main_16.unk80 &= 0x1F;
-    if (shot != NULL)
-        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_16.unk80);
-    arg0->ext.main_16.unk80 += arg0->ext.main_16.unk84;
-    if ((s32)arg0->ext.main_16.unk80 < 0x10) {
-        func_80015D60(arg0, 7);
-        arg0->unk6 = 2;
-    } else {
-        arg0->unk7C = 8;
-        arg0->ext.main_16.unk88++;
     }
 }
 
@@ -4818,40 +4645,8 @@ void func_800527F0(struct MainObj* arg0)
         arg0->unk2C = arg0->y_pos.i.hi >= 0x8B1 ? -0x1000 : 0x1000;
 }
 
-void func_80051A4C(struct MainObj* arg0)
-{
-    struct Main18Ext* ext = &arg0->ext.main_18;
-
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
-        if (--ext->unk85 == 0) {
-            func_8001540C(0, 0xE, NULL);
-            ext->unk85 = 3;
-        }
-        arg0->unk5C++;
-    }
-    if (arg0->animation_step.fields.event == 3)
-        func_8001540C(2, 0x39, arg0);
-    if (arg0->animation_step.fields.event != 1)
-        return;
-    arg0->unk61 = 0;
-    if (ext->unk88 == 0) {
-        ext->unk88 = 1;
-        func_80015D60(arg0, 0xB);
-        arg0->unk50 = (const u8*)&D_800FBEF8;
-        func_800527C0(ANIMATED_OBJECT(arg0));
-    } else {
-        ext->unk88 = 0;
-        func_80015D60(arg0, 0);
-        arg0->unk50 = (const u8*)&D_800FBEF4;
-    }
-    arg0->unk6 = 3;
-    arg0->unk7C = 0x1E;
-}
-
 extern u16 D_800FBEDC[12];
 extern struct Unk_unk68 D_800FBF08;
-extern u8 D_800FC340[];
 
 void func_800517D0(struct MainObj* arg0)
 {
@@ -4923,117 +4718,6 @@ void func_800517D0(struct MainObj* arg0)
     }
     ext->unk85 = 3;
     arg0->unk6 = 2;
-}
-
-void func_80051B74(struct MainObj* arg0)
-{
-    struct Main18Ext* ext = &arg0->ext.main_18;
-
-    if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
-        if (--ext->unk85 == 0) {
-            func_8001540C(0, 0xE, NULL);
-            ext->unk85 = 3;
-        }
-        arg0->unk5C++;
-    }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C != 0)
-        return;
-    if (arg0->animation_step.fields.event == 0) {
-        arg0->unk7C = 1;
-        return;
-    }
-    if (ext->unk88 != 0) {
-        func_80015D60(arg0, 0x10);
-        arg0->unk5 = 9;
-        arg0->unk6 = 0;
-        return;
-    }
-    ext->unk85 = 0;
-    ext->unk80 = 0;
-    func_800527F0(arg0);
-    if (*(u8*)&arg0->unk7E == 0xFF) {
-        *(u8*)&arg0->unk7E = get_random() & 1;
-        func_80036B18();
-    }
-}
-
-static void main_18_wall_hit(struct MainObj* arg0)
-{
-    func_800C813C(2, D_800FC340, arg0);
-    func_8001540C(2, 0x37, arg0);
-}
-
-void func_80051D60(struct MainObj* arg0)
-{
-    struct Main18Ext* ext = &arg0->ext.main_18;
-
-    if (arg0->unk20 < 0) {
-        if (arg0->unk70 & 2) {
-            main_18_wall_hit(arg0);
-            func_80028B68(8, 4, 2);
-            arg0->unk15 = 0x40;
-            arg0->unk20 = -arg0->unk20;
-        }
-    } else if (arg0->unk70 & 1) {
-        main_18_wall_hit(arg0);
-        func_80028B68(8, 4, 2);
-        arg0->unk15 = 0;
-        arg0->unk20 = -arg0->unk20;
-    }
-    if (arg0->unk24 < 0 ? (arg0->unk70 & 8) : (arg0->unk70 & 4)) {
-        func_8001540C(5, 2, NULL);
-        main_18_wall_hit(arg0);
-        func_80028BAC(8, 4, 2);
-        arg0->unk24 = -arg0->unk24;
-    }
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (ext->unk86 == 2) {
-        if (ext->unk87 != 0) {
-            func_80015D60(arg0, 0xF);
-            arg0->unk6 = 3;
-        }
-        return;
-    }
-    if (--arg0->unk7C != 0)
-        return;
-    if ((u16)(arg0->y_pos.i.hi - 0x849) < 0x47 && (u16)(arg0->x_pos.i.hi - 0x17D1) < 0xEF) {
-        arg0->unk7C = 0x30;
-        arg0->unk6 = 2;
-        func_800527C0(ANIMATED_OBJECT(arg0));
-    } else {
-        arg0->unk7C = 1;
-    }
-}
-
-void func_80052044(struct MainObj* arg0)
-{
-    struct Main18Ext* ext = &arg0->ext.main_18;
-    struct ShotObj* shot;
-    s16 i;
-
-    for (i = (ext->unk86 ^ 1) & 0xFF; i < 8; i += 2) {
-        shot = find_free_shot_obj();
-        if (shot == NULL)
-            continue;
-        shot->active = 0x41;
-        shot->id = 0xC;
-        shot->unk2 = i;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->unk7C = (struct WeaponObj*)&arg0->state;
-        shot->state = 0;
-        shot->unk15 = arg0->unk15;
-    }
-    func_80015D60(arg0, ext->unk86 + 0xD);
-    ext->unk86++;
-    func_8001540C(2, 0x36, arg0);
-    arg0->unk6 = 1;
 }
 
 void func_800C91EC(struct MiscObj* arg0)
@@ -5821,83 +5505,6 @@ void func_800567C4(struct MainObj* arg0)
     arg0->unk6 = 0;
 }
 
-static void main_24_trail(struct MainObj* arg0, u8 subtype, u8 facing)
-{
-    struct MiscObj* misc;
-
-    if ((++arg0->ext.main_24.unk80 & 3) != 0)
-        return;
-    misc = find_free_misc_obj();
-    if (misc == NULL)
-        return;
-    misc->active = 0x41;
-    misc->id = 7;
-    misc->unk2 = subtype;
-    misc->unk40 = arg0->unk40;
-    misc->unk42 = arg0->unk42 & 0x7FFF;
-    misc->animation_table = (u32**)arg0->animation_table;
-    misc->unk3C = (void*)arg0->sprite_frames;
-    misc->bg_offset = arg0->bg_offset;
-    misc->x_pos.val = arg0->x_pos.val;
-    misc->y_pos.val = arg0->y_pos.val;
-    misc->ext.misc_7.position = &arg0->x_pos;
-    misc->state = 0;
-    misc->unk15 = facing;
-}
-
-void func_80056C18(struct MainObj* arg0)
-{
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    main_24_trail(arg0, 0, arg0->unk15);
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 1);
-        arg0->unk6 = 1;
-    }
-}
-
-void func_80056DB4(struct MainObj* arg0)
-{
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    main_24_trail(arg0, 1, arg0->unk15 ^ 0x40);
-    if (--arg0->unk7C != 0)
-        return;
-    arg0->unk2C = 0;
-    arg0->unk24 = (arg0->unk2 & 3) < 2 ? -0x20000 : 0x20000;
-    arg0->unk7C = 1;
-    arg0->unk7E = 8;
-    arg0->unk6 = 3;
-}
-
-void func_80056EF4(struct MainObj* arg0)
-{
-    struct ShotObj* shot;
-
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    main_24_trail(arg0, 1, arg0->unk15 ^ 0x40);
-    if (--arg0->unk7E != 0)
-        return;
-    func_80015D60(arg0, 9);
-    shot = find_free_shot_obj();
-    if (shot != NULL) {
-        shot->active = 0x41;
-        shot->id = 0xD;
-        shot->unk2 = 0;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->state = 0;
-        shot->unk15 = arg0->unk15;
-    }
-    arg0->unk7E = --arg0->unk7C == 0 ? 0x7FFF : 8;
-}
-
 extern void* D_8010CF98[5];
 extern u8 D_8010CFCC[4];
 
@@ -6363,35 +5970,6 @@ void func_8005D8B8(struct MainObj* arg0)
         arg0->unk5 = 4;
         arg0->unk6 = 0;
     }
-}
-
-void func_8005D9C4(struct MainObj* arg0)
-{
-    struct Main33Ext* ext = &arg0->ext.main_33;
-
-    if (--arg0->unk7C == 0)
-        arg0->unk7C = 1;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk20 != 0)
-        return;
-    if (arg0->unk15 == 0) {
-        arg0->unk15 = 0x40;
-        arg0->unk20 = 0x28000;
-    } else {
-        arg0->unk15 = 0;
-        arg0->unk20 = -0x28000;
-    }
-    func_80015D60(arg0, 0);
-    arg0->unk28 = 0;
-    if (--ext->unk86 == 0 && ext->unk85 != 0) {
-        arg0->unk7C = 0x40;
-        arg0->unk20 = 0x10000;
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
-        return;
-    }
-    arg0->unk6 = 1;
 }
 
 void func_8005DC58(struct MainObj* arg0)
