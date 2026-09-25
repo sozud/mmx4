@@ -1,5 +1,7 @@
 #include "common.h"
 
+extern u16 D_800F44D6;
+
 void character_select_state_0(struct EngineObj* arg0)
 {
     u8 var_v1;
@@ -225,11 +227,17 @@ void (*character_select_state_3_update_funcs[])() = {
 };
 
 void character_select_state_0(struct EngineObj*);
+
 void character_select_state_1(struct EngineObj*);
+
 void character_select_state_2(struct EngineObj*);
+
 void character_select_state_3(struct EngineObj*);
+
 void character_select_state_4(struct EngineObj*);
+
 void character_select_state_5(struct EngineObj*);
+
 void character_select_state_6(struct EngineObj*);
 
 void (*D_800F44A8[])(struct EngineObj*) = {
@@ -240,4 +248,38 @@ void (*D_800F44A8[])(struct EngineObj*) = {
     character_select_state_4,
     character_select_state_5,
     character_select_state_6,
+};
+
+u16 D_800F44C4[9] = {
+#ifdef VERSION_JP
+    0x40,
+    0x40,
+#else
+    0x20,
+    0x20,
+#endif
+    0x8000,
+    0x8000,
+    0x8000,
+    0x8000,
+    0x8000,
+    0x8000,
+    6,
+};
+
+u16 D_800F44D6 = 0;
+
+u16 D_800F44D8[8] = {
+    0x2000,
+    0x2000,
+    0x2000,
+    0x2000,
+    0x2000,
+    0x2000,
+#ifdef VERSION_JP
+    0x40,
+#else
+    0x20,
+#endif
+    0,
 };
