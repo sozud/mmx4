@@ -905,8 +905,6 @@ void func_800142BC(void)
 
 extern u32 D_80137CE0;
 
-extern u8* D_80141EE8[];
-
 void func_80014514(void)
 {
     s32 temp_s0;
@@ -1243,7 +1241,32 @@ void func_80015178(void)
     func_800DCF40();
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80015284);
+void func_80015284(void)
+{
+    s8 i;
+
+    for (i = 0; i < 4; i++) {
+        if (D_8013E1C8[i] != -1) {
+            SsSepClose(D_8013E1C8[i]);
+            D_8013E1C8[i] = -1;
+        }
+    }
+
+    for (i = 0; i < 6; i++) {
+        if (D_8013E198[i] != -1) {
+            SsVabClose(D_8013E198[i]);
+            D_8013E198[i] = -1;
+        }
+    }
+
+    for (i = 0; i < 4; i++) {
+        D_8013924C[i] = 0xFF;
+    }
+
+    for (i = 0; i < 24; i++) {
+        D_80139234[i] = -1;
+    }
+}
 
 void func_800153D4(u8 arg0)
 {
@@ -1291,7 +1314,61 @@ s32 func_80015A10(s32 arg0, struct MainObj* owner)
     return SpuGetKeyStatus(1 << (entry[3] & 0x1F)) == 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80015A50);
+s32 func_80015A50(u8 slot)
+{
+    u8* state;
+    s32 remaining;
+    s32 amount;
+    s16 result;
+    s8 vab_id;
+    u8* archive;
+    u32 header;
+    u8* vab_data;
+
+    state = &D_80137DFC;
+    if (*state != 0) {
+        if (*state == 1) {
+            goto transfer;
+        }
+        goto complete;
+    }
+
+    archive = cur_draw_info_drawenv;
+    header = *(u32*)archive;
+    D_80137E00.offset = 0;
+    D_80137E00.remaining = ((struct SoundArchive*)archive)->unk4;
+    D_80137DFD = header >> 24;
+    vab_data = archive + (header & 0xFFFFFF);
+    SsVabClose(D_8013E198[slot]);
+    vab_id = SsVabOpenHeadSticky(vab_data, D_80137DFD, D_80141F30[slot]);
+    if (vab_id == -1) {
+        return -1;
+    }
+    D_8013E198[slot] = vab_id;
+    D_80141EE8[slot] = vab_data;
+    D_80141F50[slot] = ((struct SoundArchive*)cur_draw_info_drawenv)->sound_entries;
+    (*state)++;
+
+transfer:
+    remaining = D_80137E00.remaining;
+    amount = 0x1000;
+    if (remaining < 0x1001) {
+        amount = remaining;
+    }
+    result = SsVabTransBodyPartly(cur_draw_info_dispenv_screen_w + D_80137E00.offset, amount, D_80137DFD);
+    if (result == -1) {
+        return -1;
+    }
+    SsVabTransCompleted(1);
+    D_80137E00.remaining -= amount;
+    D_80137E00.offset += amount;
+
+complete:
+    if (result == D_80137DFD) {
+        D_80137DFC = 0;
+    }
+    return result;
+}
 
 extern u8 D_800F1654[];
 

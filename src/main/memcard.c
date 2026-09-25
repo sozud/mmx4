@@ -5,7 +5,11 @@ INCLUDE_RODATA("main/nonmatchings/memcard", D_80010094);
 
 INCLUDE_RODATA("main/nonmatchings/memcard", D_800100A8);
 
+#ifdef MMX4_PC
+const struct MemcardPath D_800100C0 = { "bu00:" };
+#else
 INCLUDE_RODATA("main/nonmatchings/memcard", D_800100C0);
+#endif
 
 void InitMemcards(void)
 {
@@ -46,7 +50,7 @@ INCLUDE_ASM("main/nonmatchings/memcard", func_8001C8F4);
 
 INCLUDE_ASM("main/nonmatchings/memcard", func_8001CB24);
 
-void func_8001CC5C(s32 device_num, struct MemcardFileList* list, char* pattern)
+void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern)
 {
     struct DIRENTRY dir;
     char path[0x20];

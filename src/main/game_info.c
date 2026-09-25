@@ -1056,7 +1056,7 @@ void func_8001EC90(struct GameInfo* arg0)
 {
     reset_objects();
     D_80141BDF[0] = 0;
-    if (D_800F1D90[0] != 0xFF) {
+    if (D_800F1D90.save.character != 0xFF) {
         arg0->unk8 = func_8001E850(D_800F22D0, 0) & 0xFF;
         arg0->mode = arg0->mode + 1;
     } else {
