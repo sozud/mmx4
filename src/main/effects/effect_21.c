@@ -8,7 +8,58 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800B9F38);
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800BA178);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800BA340);
+void func_800BA340(struct EffectObj* arg0)
+{
+    struct MiscObj* misc;
+    struct ItemObj* item;
+    struct Effect21SpawnRecord* record;
+    u8 timer;
+
+    switch (arg0->unk5) {
+    case 0:
+        if (g_Player.x_pos.i.hi >= 0xC60) {
+            arg0->unk5 = 1;
+        }
+        break;
+    case 1:
+        arg0->unk5 = 2;
+        arg0->ext.effect_21.cursor = D_8010BD68[arg0->ext.effect_21.index];
+        break;
+    case 2:
+        timer = arg0->ext.effect_21.timer;
+        if (timer == 0) {
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 0x41;
+                misc->id = 8;
+                misc->x_pos.i.hi = arg0->ext.effect_21.cursor->x;
+                misc->y_pos.i.hi = arg0->ext.effect_21.cursor->y;
+                misc->unk2 = arg0->ext.effect_21.cursor->object_id;
+                record = arg0->ext.effect_21.cursor;
+                arg0->ext.effect_21.timer = 1;
+                if (record->flags & 0x80) {
+                    item = find_free_item_obj();
+                    if (item != NULL) {
+                        item->active = 1;
+                        item->id = 0x11;
+                        item->unk2 = arg0->ext.effect_21.index - 8;
+                    }
+                    if (arg0->ext.effect_21.index == 0xD) {
+                        arg0->state++;
+                        return;
+                    }
+                    arg0->ext.effect_21.index++;
+                    arg0->unk5 = 1;
+                    return;
+                }
+                arg0->ext.effect_21.cursor = record + 1;
+            }
+        } else {
+            arg0->ext.effect_21.timer = timer - 1;
+        }
+        break;
+    }
+}
 
 void func_800BA4E4(struct EffectObj* arg0)
 {

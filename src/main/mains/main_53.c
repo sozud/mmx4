@@ -99,7 +99,53 @@ void func_8006B8BC(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x30, 0x20);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_53", func_8006B8F4);
+void func_8006B8F4(struct MainObj* arg0)
+{
+    s32 destroyed;
+
+    arg0->unk54 = &D_800FFFE8;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->unk65 = arg0->ext.main_53.unk82;
+    destroyed = func_8002DD04(arg0) < 0;
+    if (!destroyed) {
+        arg0->unk54 = D_800FFFEC;
+        arg0->ext.main_53.unk82 = arg0->unk65;
+        arg0->unk65 = arg0->ext.main_53.unk83;
+        destroyed = func_8002DD04(arg0) < 0;
+    }
+    if (destroyed) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        func_800C813C(8, D_801001B8, arg0);
+        func_800C813C(7, D_801001C0, arg0);
+        func_800AF808(BASE_OBJECT(arg0));
+        return;
+    }
+    arg0->ext.main_53.unk83 = arg0->unk65;
+    D_801001D0[arg0->unk5](arg0);
+    if ((u8)func_8006B1C4(arg0, 1) == 0x24) {
+        if (arg0->ext.main_53.unk85 == 0) {
+            arg0->x_pos.i.hi -= 8;
+            arg0->y_pos.i.hi += 0x10;
+            func_800C7B80(arg0, 4);
+            arg0->ext.main_53.unk85 = 2;
+            arg0->x_pos.i.hi += 8;
+            arg0->y_pos.i.hi -= 0x10;
+        } else {
+            arg0->ext.main_53.unk85--;
+        }
+    } else {
+        arg0->ext.main_53.unk85 = 0;
+    }
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+    }
+}
 
 void func_8006BAA4(struct MainObj* arg0)
 {

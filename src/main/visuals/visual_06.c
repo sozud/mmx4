@@ -235,7 +235,52 @@ void func_800B0600(struct VisualObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B06AC);
+void func_800B06AC(struct VisualObj* arg0)
+{
+    s32 frame;
+    s32 animation;
+
+    if (arg0->unk50->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (arg0->unk50->unk7 != 0) {
+        if (arg0->unk50->unk7 < 0) {
+            return;
+        }
+    } else {
+        if (arg0->unk2 == 3) {
+            if (arg0->unk17 != arg0->unk50->unk17) {
+                func_80015D60(ANIMATED_OBJECT(arg0), arg0->unk50->unk17);
+            } else {
+                func_80015DC8(ANIMATED_OBJECT(arg0));
+            }
+        } else {
+            frame = arg0->unk50->animation_step.fields.frame_index;
+            if ((u8)frame == 0x18 || (u8)frame == 0x1B || (u8)frame == 0x1C || (u8)frame == 0x1D) {
+                arg0->unk16 = 7;
+            } else {
+                arg0->unk16 = 5;
+            }
+            animation = arg0->unk50->unk17 + 1;
+            if (arg0->unk17 != animation) {
+                func_80015D60(ANIMATED_OBJECT(arg0), animation);
+            } else {
+                func_80015DC8(ANIMATED_OBJECT(arg0));
+            }
+        }
+        if (arg0->animation_step.fields.event != 0) {
+            if (arg0->unk54 != 0) {
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.unk89 = 0x1A;
+            } else {
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.unk89 = 0x1B;
+            }
+            arg0->animation_step.fields.event = 0;
+            arg0->unk54 ^= 1;
+        }
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+}
 
 void func_800B0804(struct VisualObj* arg0)
 {

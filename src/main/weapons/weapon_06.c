@@ -48,7 +48,58 @@ void func_80096584(struct WeaponObj* arg0, struct PlayerObj* arg1)
     func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
 }
 
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_06", func_8009663C);
+s32 func_8009663C(struct WeaponObj* arg0, struct PlayerObj* player, struct MainObj* target)
+{
+    s32 slot;
+    s8 active;
+
+    if (target == player->weapon_06_slots[0]) {
+        return 0;
+    }
+    if (target == player->weapon_06_slots[1]) {
+        return 0;
+    }
+    if (target == player->weapon_06_slots[2]) {
+        return 0;
+    }
+    active = target->active;
+    if (active == 0) {
+        return 0;
+    }
+    if (active & 4) {
+        return 0;
+    }
+    if (target->unk7A != 0) {
+        return 0;
+    }
+    if (target->unk54 == NULL) {
+        return 0;
+    }
+    if (target->unk5C == 0) {
+        return 0;
+    }
+    slot = -1;
+    if (player->weapon_06_slots[2] == NULL) {
+        slot = 2;
+    }
+    if (player->weapon_06_slots[1] == NULL) {
+        slot = 1;
+    }
+    if (player->weapon_06_slots[0] == NULL) {
+        slot = 0;
+    }
+    if (slot != -1 && func_8002BB80(MAIN_OBJECT(arg0), target) != 0) {
+        if (func_80036DA0(1, 6, slot, PLAYER_OBJECT(target)) != NULL) {
+            player->weapon_06_slots[slot] = target;
+            player->unk99++;
+            func_8001540C(0, 0x1C, arg0);
+        }
+        arg0->unk50 = NULL;
+        func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
+        return 1;
+    }
+    return 0;
+}
 
 void func_80096794(struct WeaponObj* arg0)
 {
