@@ -9,7 +9,41 @@ void func_8005C824(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005C860);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_32", func_8005C960);
+void func_8005C960(struct MainObj* arg0)
+{
+    s32 hit;
+    u8 i;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FDD40[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (arg0->unk5 != 0) {
+        arg0->ext.main_32.saved_unk5 = arg0->unk5;
+    }
+    for (i = 0; i < 2 - arg0->ext.main_32.unk88; i++) {
+        arg0->unk54 = (const u8*)D_800FDD38[i];
+        hit = func_8002DD04(arg0);
+        if (hit < 0) {
+            if (i == 0 && arg0->ext.main_32.unk88 == 0) {
+                func_8005D148(arg0);
+            }
+            func_800AF808(BASE_OBJECT(arg0));
+            func_800C813C(4, D_800FDD28, arg0);
+            func_800BF60C(BASE_OBJECT(arg0), 8);
+            arg0->state++;
+            return;
+        }
+        if (hit != 0) {
+            break;
+        }
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    } else {
+        arg0->state++;
+    }
+}
 
 void func_8005CADC(struct MainObj* arg0)
 {

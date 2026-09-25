@@ -23,7 +23,37 @@ void func_80054738(struct MainObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_20", func_80054758);
+void func_80054758(struct MainObj* arg0)
+{
+    s32 collision = func_8002DD04(arg0);
+    s8 countdown;
+
+    if (arg0->unk2 == 0 && arg0->ext.main_20.unk80 != arg0->unk5C) {
+        countdown = arg0->ext.main_20.unk81--;
+        if (countdown != 1) {
+            if (countdown == 2) {
+                func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10, 0);
+            }
+        } else {
+            func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10, 5);
+            arg0->unk5C = 1;
+        }
+        arg0->ext.main_20.unk80 = arg0->unk5C;
+    }
+    if (collision < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        return;
+    }
+    D_800FC99C[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+    } else {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_20", func_800548B8);
 

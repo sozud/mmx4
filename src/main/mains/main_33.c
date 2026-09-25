@@ -9,7 +9,48 @@ void func_8005D1F4(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D230);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D348);
+void func_8005D348(struct MainObj* arg0)
+{
+    s32 x;
+    s32 y;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FDF64[arg0->unk5](arg0);
+    if (arg0->ext.main_33.unk85 == 0) {
+        arg0->ext.main_33.saved_unk5 = arg0->unk5;
+        if (func_8002DD04(arg0) < 0) {
+            g_Player.unk7A = 1;
+            g_Player.unk61 = 0x7F;
+            func_800AF808(BASE_OBJECT(arg0));
+            func_800C813C(9, D_800FDF40, arg0);
+            arg0->unk54 = NULL;
+            arg0->unk50 = NULL;
+            func_800DABE4(1, 0, 0);
+            arg0->unk7C = 0x5A;
+            arg0->unk7E = 4;
+            arg0->on_screen = 0;
+            arg0->state = 2;
+            arg0->unk5 = 0;
+            return;
+        }
+    }
+    func_8002D9BC(arg0);
+    if (arg0->ext.main_33.unk90 != 0) {
+        arg0->ext.main_33.unk90--;
+        if (--arg0->ext.main_33.unk91 == 0) {
+            x = arg0->x_pos.val;
+            y = arg0->y_pos.val;
+            arg0->x_pos.i.hi = D_800FDDA0[arg0->ext.main_33.unk87 * 2] + 0x20;
+            arg0->y_pos.i.hi = D_800FDDA0[arg0->ext.main_33.unk87 * 2 + 1] + 0x20;
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x20, 0x20);
+            arg0->x_pos.val = x;
+            arg0->y_pos.val = y;
+            arg0->ext.main_33.unk91 = 6;
+        }
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D4E0);
 

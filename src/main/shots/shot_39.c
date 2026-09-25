@@ -109,7 +109,45 @@ void func_800A4ADC(struct ShotObj* arg0)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4B6C);
+void func_800A4B6C(struct ShotObj* arg0)
+{
+    u8 color;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80109874[arg0->unk5](arg0);
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk5 != 6) {
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    }
+    if (arg0->unk6 != 0) {
+        func_8002D9BC(arg0);
+        if (D_80141BD8.unk0 & 1) {
+            if (++arg0->unk7 == 4) {
+                arg0->unk7 = 0;
+            }
+            if (engine_obj.stage == 3) {
+                color = D_801097FC[arg0->unk7];
+            } else {
+                color = D_80109800[arg0->unk7];
+            }
+            arg0->unk42 = (color & 0xF) | (((color >> 4) + 0x1E0) << 6);
+        }
+    }
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->state = 6;
+    }
+    if (arg0->unk7C->state == 2) {
+        arg0->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 1) {
+        arg0->state = 6;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+}
 
 void func_800A4D00(struct ShotObj* arg0)
 {

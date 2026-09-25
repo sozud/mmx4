@@ -29,7 +29,38 @@ void func_8009DD7C(struct ShotObj* arg0)
     func_80015D60(arg0, 0x13);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_23", func_8009DE04);
+void func_8009DE04(struct ShotObj* arg0)
+{
+    struct MainObj* owner = MAIN_OBJECT(arg0->unk7C);
+    s32 hit;
+
+    arg0->x_pos.val = owner->x_pos.val + arg0->unk84.value;
+    arg0->y_pos.val = owner->y_pos.val;
+    arg0->y_pos.i.hi += arg0->timer;
+    if (owner->ext.main_43.flash_timer != 0) {
+        arg0->unk61 = 1;
+    }
+    if (owner->state == 2) {
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    }
+    D_801090B8[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    hit = 0;
+    if (owner->ext.main_43.hurt_collision == 0 && owner->ext.main_43.big_web_done == 0) {
+        hit = func_8002DD04(MAIN_OBJECT(arg0));
+    }
+    if (arg0->unk61 != 0) {
+        arg0->unk61--;
+    } else if (hit != 0) {
+        arg0->unk5 = 1;
+        func_80015D60(arg0, 0x14);
+        owner->unk5 = 1;
+        owner->unk6 = 0;
+        arg0->unk61 = 0x1E;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_8009DF40(struct ShotObj* arg0)
 {
