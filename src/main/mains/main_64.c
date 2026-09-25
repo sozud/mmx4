@@ -4,7 +4,64 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C30C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C3FC);
+void func_8007C3FC(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    s32* archive;
+    s32 offset;
+
+    if (g_Player.unkC4 != 0) {
+        return;
+    }
+    switch (arg0->unk6) {
+    case 0:
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x18;
+            arg0->ext.main_64.object = effect;
+        }
+        func_80036AE4(0x14, 0x40);
+        arg0->unk6 = 1;
+        arg0->unk7 = 0;
+        break;
+    case 1:
+        effect = arg0->ext.main_64.object;
+        if (effect->active != 0) {
+            break;
+        }
+        arg0->unk6 = 2;
+        arg0->bg_offset = g_Player.bg_offset;
+        if (engine_obj.stage != 0xC) {
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        } else {
+            archive = SP_MENU_FRAMES;
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            offset = archive[4];
+            arg0->unk42 = 0x7888;
+            arg0->sprite_frames = (u8*)archive + offset;
+        }
+        arg0->animation_table = (const u8* const*)cyber_peacock_animations;
+        arg0->unk16 = 4;
+        arg0->unk60 = 5;
+        arg0->unk61 = -0x80;
+        arg0->unk63 = 2;
+        arg0->unk5C = 0;
+        arg0->unk62 = 0;
+        arg0->unk7C = 0x20;
+        engine_obj.enable_boss = 0;
+        engine_obj.unk25 = 0;
+        engine_obj.boss_ptr = arg0;
+        break;
+    case 2:
+        if (--arg0->unk7C == 0) {
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+        }
+        break;
+    }
+}
 
 void cyber_peacock_intro_appear_start(struct MainObj* self)
 {

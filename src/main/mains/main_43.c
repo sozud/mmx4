@@ -206,7 +206,55 @@ void web_spider_drop(struct MainObj* self)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063B20);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063DD8);
+void func_80063DD8(struct MainObj* arg0)
+{
+    switch (arg0->unk7) {
+    case 0:
+        if (arg0->unk7C == 0) {
+            if ((get_random() & 0xF) != 0 && g_Player.unkBA == 0) {
+                arg0->unk5 = 3;
+                arg0->unk6 = 0;
+                arg0->unk7 = 0;
+                if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi >= 0) {
+                    arg0->unk15 = 0;
+                } else {
+                    arg0->unk15 = 0x40;
+                }
+            } else {
+                arg0->unk24 = FIXED(3.5);
+                arg0->unk2C = 0;
+                arg0->unk7 = 1;
+                func_80015D60(arg0, 0x1F);
+                func_8001540C(2, 0x70, arg0);
+            }
+        } else {
+            arg0->unk7C--;
+        }
+        break;
+    case 1:
+        if (arg0->on_screen == 0) {
+            arg0->unk7 = 2;
+            arg0->unk7C = 8;
+            if (arg0->ext.main_43.hurt_collision != 0) {
+                arg0->collision_data = D_801075F4;
+                arg0->ext.main_43.hurt_collision = 0;
+            }
+        }
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->animation_step.fields.event = 0;
+            func_8001540C(2, 0x70, arg0);
+        }
+        func_80015DC8(ANIMATED_OBJECT(arg0));
+        func_8002B694(ANIMATED_OBJECT(arg0));
+        break;
+    case 2:
+        if (--arg0->unk7C == 0) {
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+        }
+        break;
+    }
+}
 
 void web_spider_shoot(struct MainObj* self)
 {

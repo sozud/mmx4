@@ -852,7 +852,12 @@ struct Main50Ext {
 };
 
 struct Main54Ext {
-    u8 pad80[6];
+    u8 unk80;
+    u8 unk81;
+    u8 unk82;
+    u8 pad83;
+    u8 unk84;
+    u8 unk85;
     u8 unk86;
     u8 unk87;
     u8 pad88;
@@ -2844,6 +2849,12 @@ extern struct Item04Data D_8010C8B4;
 extern u8 D_8010C904[];
 extern s32 D_8010C918[4];
 extern u8 D_800FB67C[];
+extern struct Unk_unk68 D_800FFFE8;
+extern struct Unk_unk68 D_800FFFEC[2];
+extern u8 D_801001B8[8];
+extern u8 D_801001C0[8];
+extern struct Unk_unk68 D_8010024C;
+extern u8 D_801005B0[4];
 extern u8 D_800FBB84[4];
 extern u8 D_800FDD28[4];
 extern u16 D_800FDDA0[14];
@@ -3364,6 +3375,8 @@ struct Effect21Ext {
     u8 was_inside;
 };
 
+extern struct Effect21SpawnRecord* D_8010BD68[20];
+
 struct Effect5Ext {
     s32 unk14;
     s32 unk18;
@@ -3619,6 +3632,7 @@ extern u16 frost_walrus_floor_tiles_rush[20];
 extern s16 frost_walrus_burst_offsets[20][2];
 extern u8 frost_walrus_burst_subtypes[32];
 extern void* jet_stingray_animations[45];
+extern void* cyber_peacock_animations[38];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern struct Unk_unk68 D_800F9124;
@@ -3815,6 +3829,10 @@ extern struct Unk_unk68 D_800FBE0C;
 extern struct Unk_unk68 D_800FBE10;
 extern struct Unk_unk68 D_800FBE14;
 extern u8 D_800FBEB0[4];
+extern s32 D_800F9070[2];
+extern s32 D_800F9078[2];
+extern s32 D_800F9080[2];
+extern s32 D_800F9088[2];
 extern s32 D_800F9090[2];
 extern s32 D_800F9098[2];
 extern u16 D_800FBEDC[12];
@@ -4364,6 +4382,9 @@ void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct ShotObj*);
 s32 func_8002DD04(struct MainObj*);
 void func_8004C6C4(struct MainObj*);
+u8 func_8003CF24(struct RideArmorObj*);
+void func_8003D338(struct AnimatedObj*);
+void func_8003D39C(struct MainObj*);
 void func_80050690(struct MainObj*);
 void func_800BC63C(struct EffectObj*);
 void func_800BC6FC(struct EffectObj*, s32);

@@ -314,7 +314,73 @@ INCLUDE_ASM("main/nonmatchings/mains/main_61", func_80079A8C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_80079B50);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_80079DD8);
+void func_80079DD8(struct MainObj* arg0)
+{
+    s32 rnd;
+    struct MainObj* clone;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--arg0->unk7C != 0) {
+        return;
+    }
+    func_8001540C(2, 0xAA, arg0);
+    arg0->ext.main_61.split = 1;
+    rnd = get_random();
+    clone = find_free_main_obj();
+    if (clone != NULL) {
+        clone->unk5C = 0x7F;
+        clone->active = 0x41;
+        clone->id = 0x3D;
+        clone->unk2 = 1;
+        clone->unk60 = 5;
+        clone->x_pos.val = arg0->x_pos.val;
+        clone->y_pos.val = arg0->y_pos.val;
+        clone->unk67 = 0;
+        clone->collision_data = arg0->collision_data;
+        clone->unk54 = arg0->unk54;
+        clone->unk50 = arg0->unk50;
+        clone->unk68 = arg0->unk68;
+        clone->bg_offset = arg0->bg_offset;
+        clone->animation_table = arg0->animation_table;
+        clone->unk40 = arg0->unk40;
+        clone->unk70 = 0;
+        clone->sprite_frames = arg0->sprite_frames;
+        clone->unk42 = arg0->unk42 & 0x7FFF;
+        clone->unk16 = arg0->unk16;
+        clone->unk5C = 0x30;
+        if (!(rnd & 1)) {
+            clone->unk15 = 0x40;
+            clone->unk20 = FIXED(-2.75);
+        } else {
+            clone->unk15 = 0;
+            clone->unk20 = FIXED(2.75);
+        }
+        clone->unk2C = FIXED(0.21875);
+        clone->unk28 = 0;
+        clone->unk24 = 0;
+        clone->state = 1;
+        clone->unk5 = 3;
+        clone->unk6 = 3;
+        func_80015D60(clone, 3);
+        clone->ext.main_61.partner = arg0;
+        arg0->ext.main_61.partner = clone;
+        clone->ext.main_61.split = 1;
+        clone->ext.main_61.blink_timer = 0x7F;
+    }
+    func_80015D60(arg0, 3);
+    if (!(rnd & 1)) {
+        arg0->unk15 = 0;
+        arg0->unk20 = FIXED(2.75);
+    } else {
+        arg0->unk15 = 0x40;
+        arg0->unk20 = FIXED(-2.75);
+    }
+    arg0->unk2C = FIXED(0.21875);
+    arg0->unk28 = 0;
+    arg0->unk24 = 0;
+    arg0->ext.main_61.stunned = 0;
+    arg0->unk6 = 3;
+}
 
 void split_mushroom_spore_rain_land(struct MainObj* self)
 {

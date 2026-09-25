@@ -298,7 +298,68 @@ void func_8003CCBC(struct RideArmorObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/bike", func_8003CD38);
+void func_8003CD38(struct RideArmorObj* arg0)
+{
+    s32 limit;
+
+    switch (func_8003CF24(arg0)) {
+    case 0:
+        if (arg0->unk7C == 0) {
+            limit = D_800F9070[arg0->unk7D];
+            if (arg0->x_vel.val <= limit) {
+                arg0->x_vel.val = limit;
+                func_8003D39C(MAIN_OBJECT(arg0));
+            } else {
+                func_8002B694(ANIMATED_OBJECT(arg0));
+            }
+        } else {
+            limit = D_800F9078[arg0->unk7D];
+            if (arg0->x_vel.val < limit) {
+                func_8003D338(ANIMATED_OBJECT(arg0));
+                func_8002B718(MOVING_OBJECT(arg0));
+            } else {
+                func_8002B694(ANIMATED_OBJECT(arg0));
+            }
+        }
+        break;
+    case 1:
+        if (arg0->unk7C != 0) {
+            limit = D_800F9080[arg0->unk7D];
+            if (arg0->x_vel.val < limit) {
+                func_8003D338(ANIMATED_OBJECT(arg0));
+                func_8002B718(MOVING_OBJECT(arg0));
+            } else {
+                arg0->x_vel.val = limit;
+                func_8003D39C(MAIN_OBJECT(arg0));
+            }
+        } else {
+            limit = D_800F9088[arg0->unk7D];
+            if (limit < arg0->x_vel.val) {
+                func_8003D338(ANIMATED_OBJECT(arg0));
+                func_8002B718(MOVING_OBJECT(arg0));
+            } else {
+                func_8002B694(ANIMATED_OBJECT(arg0));
+            }
+        }
+        break;
+    default:
+        if (arg0->unk7C == 0) {
+            func_8002B694(ANIMATED_OBJECT(arg0));
+            limit = D_800F9090[arg0->unk7D];
+            if (limit - arg0->x_vel.val >= 0) {
+                arg0->x_vel.val = limit;
+            }
+        } else {
+            func_8003D338(ANIMATED_OBJECT(arg0));
+            func_8002B718(MOVING_OBJECT(arg0));
+            limit = D_800F9098[arg0->unk7D];
+            if (limit - arg0->x_vel.val < 0) {
+                arg0->x_vel.val = limit;
+            }
+        }
+        break;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
 

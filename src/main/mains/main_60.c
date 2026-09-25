@@ -699,7 +699,27 @@ void storm_owl_storm_start(struct MainObj* self)
     self->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077318);
+void func_80077318(struct MainObj* arg0)
+{
+    s32 target_x = (background_objects[0].x_pos.i.hi + 0xA0) << 16;
+    s32 target_y = (background_objects[0].y_pos.i.hi + 0x70) << 16;
+    s32 x;
+    s32 y;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_8002B93C(MOVING_OBJECT(arg0), func_8002B7B0(OBJECT_HEADER(arg0), target_x, target_y) & 0xFF);
+    arg0->unk20 *= 2;
+    x = arg0->x_pos.val;
+    arg0->unk24 *= 2;
+    if (x - target_x >= 0 ? x - target_x <= FIXED(3.99999) : target_x - x <= FIXED(3.99999)) {
+        y = arg0->y_pos.val;
+        if (y - target_y >= 0 ? y - target_y <= FIXED(3.99999) : target_y - y <= FIXED(3.99999)) {
+            func_80015D60(arg0, 6);
+            arg0->unk6++;
+        }
+    }
+}
 
 void storm_owl_storm_charge(struct MainObj* self)
 {

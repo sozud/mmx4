@@ -12,7 +12,61 @@ void func_800A428C(struct ShotObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_38", func_800A42C8);
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_38", func_800A4518);
+void func_800A4518(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner = arg0->unk7C;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    if (arg0->unk2 < 5) {
+        func_800A46FC(arg0);
+        if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+            func_800AF808(BASE_OBJECT(arg0));
+            arg0->state++;
+            return;
+        }
+    } else {
+        if (owner->state == 2) {
+            arg0->state++;
+            return;
+        }
+        if (--arg0->timer == 0) {
+            switch (arg0->unk84.value) {
+            case 0:
+                arg0->unk84.value = 1;
+                arg0->timer = 0x2D;
+                arg0->y_vel.val = 0;
+                break;
+            case 1:
+                arg0->timer = 0xC;
+                arg0->unk84.value = 2;
+                arg0->y_vel.val = FIXED(21);
+                break;
+            case 2:
+                arg0->unk84.value = 3;
+                arg0->timer = 0x3E;
+                arg0->y_vel.val = 0;
+                break;
+            case 3:
+                arg0->unk84.value = 4;
+                arg0->y_vel.val = FIXED(21);
+                arg0->timer = 0xC;
+                break;
+            }
+        }
+    }
+    if (owner->active == 0) {
+        arg0->state++;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, arg0->unk2 < 5 ? 0x20 : 0x80) == 0) {
+        if (arg0->unk2 < 5) {
+            func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        }
+    } else {
+        arg0->state++;
+    }
+}
 
 void func_800A46D4(struct ShotObj* arg0)
 {

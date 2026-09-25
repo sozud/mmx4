@@ -231,7 +231,42 @@ void func_8006D69C(struct MainObj* arg0)
     D_80100664[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006D6D8);
+void func_8006D6D8(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 6);
+        arg0->unk16 = 6;
+        arg0->unk60 = 6;
+        arg0->unk54 = D_801001FC;
+        arg0->unk50 = D_801001F8;
+        arg0->unk5 = 4;
+        arg0->unk62 = 0;
+        arg0->ext.main_54.unk84 = 0;
+        arg0->unk6 = 2;
+    }
+    if (g_Player.unkBA == 0) {
+        return;
+    }
+    func_8001540C(2, 0x86, arg0);
+    if (arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi >= 0xA1) {
+        arg0->unk15 = 0;
+    } else {
+        arg0->unk15 = 0x40;
+    }
+    g_Player.unk15 = arg0->unk15;
+    g_Player.y_pos.i.hi = arg0->y_pos.i.hi - 8;
+    if (arg0->unk15 == 0) {
+        g_Player.x_pos.i.hi = arg0->x_pos.i.hi - 0x23;
+        arg0->unk20 = FIXED(-6);
+    } else {
+        g_Player.x_pos.i.hi = arg0->x_pos.i.hi + 0x23;
+        arg0->unk20 = FIXED(6);
+    }
+    func_80015D60(arg0, 5);
+    arg0->unk16 = 1;
+    arg0->unk7C = 0x30;
+    arg0->unk6 = 1;
+}
 
 void func_8006D830(struct MainObj* arg0)
 {
@@ -266,7 +301,7 @@ void func_8006DB04(struct MainObj* arg0)
     arg0->unk6 = 1;
     arg0->unk62 = 0;
     arg0->unk60 = 9;
-    arg0->ext.main_54.pad80[4] = 0;
+    arg0->ext.main_54.unk84 = 0;
     g_Player.unkBA = 0;
 }
 
@@ -334,7 +369,52 @@ void func_8006DF68(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E034);
+void func_8006E034(struct MainObj* arg0)
+{
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi >= 0xE0) {
+        arg0->unk20 = 0;
+        arg0->unk2C = FIXED(1);
+    }
+    if (arg0->unk24 == 0) {
+        arg0->unk68 = &D_8010024C;
+        func_80015D60(arg0, 0x17);
+    }
+    if (arg0->unk24 < 0) {
+        switch (arg0->unk7E) {
+        case 0:
+            if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi + arg0->unk68->unk0,
+                    arg0->unk68->unk3 + (arg0->y_pos.i.hi + arg0->unk68->unk1) + 0x40)
+                == 0x38) {
+                if (engine_obj.stage == 8) {
+                    func_800DABE4(8, 0x2580, 0x140);
+                    func_8001540C(2, 0x80, arg0);
+                    func_800C813C(4, D_801005B0, arg0);
+                }
+                arg0->unk7E = 1;
+            }
+            break;
+        case 1:
+            if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi + arg0->unk68->unk0,
+                    arg0->unk68->unk3 + (arg0->y_pos.i.hi + arg0->unk68->unk1) + 0x10)
+                == 0x38) {
+                arg0->unk7E = 2;
+                func_80015D60(arg0, 3);
+                if (engine_obj.stage == 0xC) {
+                    func_8001540C(2, 0x82, arg0);
+                }
+            }
+            break;
+        }
+    }
+    if (arg0->unk70 & 8) {
+        func_80028BAC(0x10, 4, 2);
+        arg0->ext.main_54.unk85 = 1;
+        arg0->unk6 = 5;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+}
 
 void func_8006E260(struct MainObj* arg0)
 {
