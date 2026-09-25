@@ -44,7 +44,44 @@ void web_spider_intro_warning(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063334);
+void func_80063334(struct MainObj* arg0)
+{
+    s32* archive;
+    s32 offset;
+
+    if (arg0->ext.main_43.effect->active == 0) {
+        arg0->unk5 = 2;
+        arg0->unk54 = &D_800FF5AC;
+        arg0->unk50 = &D_800FF5A8;
+        arg0->unk68 = NULL;
+        arg0->collision_data = D_801075F4;
+        arg0->bg_offset = g_Player.bg_offset;
+        if (engine_obj.stage != 0xC) {
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        } else {
+            archive = SP_MENU_FRAMES;
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            offset = archive[4];
+            arg0->unk42 = 0x7888;
+            arg0->sprite_frames = (u8*)archive + offset;
+        }
+        arg0->animation_table = (const u8* const*)web_spider_animations;
+        arg0->unk16 = 4;
+        arg0->unk60 = 6;
+        arg0->unk61 = -0x80;
+        arg0->unk63 = 2;
+        arg0->unk7C = 7;
+        arg0->unk5C = 0;
+        arg0->unk62 = 0;
+        arg0->ext.main_43.flash_timer = 0;
+        arg0->ext.main_43.shot = NULL;
+        arg0->ext.main_43.hurt_collision = 0;
+        arg0->ext.main_43.big_web_done = 0;
+        engine_obj.enable_boss = 0;
+        engine_obj.unk25 = 1;
+        engine_obj.boss_ptr = arg0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006346C);
 

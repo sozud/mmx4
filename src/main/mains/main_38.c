@@ -9,7 +9,44 @@ void func_80060A88(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060AC4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060BC4);
+void func_80060BC4(struct MainObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FE8FC[arg0->unk5](arg0);
+    collision = func_8002DD04(arg0);
+    func_8002D9BC(arg0);
+    func_8002E184(PLAYER_OBJECT(arg0));
+    if (arg0->unk5 != 0) {
+        arg0->ext.main_38.saved_unk5 = arg0->unk5;
+    }
+    if (collision < 0) {
+        func_800C813C(6, D_800FE8E4, arg0);
+        if (engine_obj.stage == 8) {
+            func_800DABE4(0xB, (s16)(arg0->x_pos.i.hi - 0x28), arg0->y_pos.i.hi);
+        }
+        arg0->ext.main_38.unk88 = 2;
+        arg0->ext.main_38.unk8C = 1;
+        arg0->unk7C = 0x20;
+        arg0->unk7E = 5;
+        arg0->on_screen = 0;
+        arg0->state++;
+        return;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x50, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x20);
+        return;
+    }
+    if (arg0->unk5 != 4) {
+        if (g_Player.x_pos.val > arg0->x_pos.val) {
+            arg0->state += 2;
+        } else {
+            arg0->unk5 = 2;
+        }
+    }
+}
 
 void func_80060D3C(struct MainObj* arg0)
 {

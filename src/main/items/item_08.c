@@ -90,7 +90,40 @@ void func_800C1994(struct ItemObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C19F0);
+void func_800C19F0(struct ItemObj* arg0)
+{
+    s32 column;
+    s32 row;
+    s32 x;
+    s8 bg_offset;
+
+    arg0->active = 0x49;
+    arg0->unk16 = 6;
+    arg0->unk40 = D_801406A8[func_8002938C(0x80)] >> 7;
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x80)];
+    column = func_8002938C(0x80);
+    row = func_8002938C(0x80);
+    x = column * 4 + 0x18;
+    arg0->unk42 = (x % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    arg0->animation_table = (const u8* const*)D_8010CC5C;
+    bg_offset = g_Player.bg_offset;
+    arg0->unk7C.timer = (u8)arg0->unk2 & 0x10;
+    arg0->unk15 = 0;
+    arg0->unk67 = 0;
+    arg0->unk75 = 1;
+    arg0->bg_offset = bg_offset;
+    arg0->ext.packed = (u8)arg0->unk2 & 0x40;
+    if (arg0->unk2 & 0xC0) {
+        arg0->state = 2;
+        arg0->unk68 = NULL;
+    } else {
+        arg0->state = 1;
+        arg0->unk68 = &D_8010CC58;
+    }
+    arg0->unk5 = 0;
+    arg0->unk2 &= 0xF;
+    func_80015D60(ANIMATED_OBJECT(arg0), 0);
+}
 
 void func_800C1B54(struct ItemObj* arg0)
 {

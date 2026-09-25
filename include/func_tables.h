@@ -1547,6 +1547,7 @@ void func_8004D61C(struct MainObj*);
 void func_8004D69C(struct MainObj* arg0);
 
 // D_800FBB88
+extern void (*D_800FBB88[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_8004E218(struct MainObj* arg0);
 void func_8004DF40(struct MainObj* arg0);
@@ -1557,6 +1558,9 @@ void func_8004DEA0(struct MainObj* arg0);
 // D_800FBBA0
 void func_8004E55C(struct MainObj*);
 void func_8004E6A4(struct MainObj*);
+void func_8004D9CC(struct MainObj*);
+void func_8004DB10(struct MainObj*);
+void func_8004DCB0(struct MainObj*);
 void func_8004E810(struct MainObj* arg0);
 void func_8004E300(struct MainObj*);
 void func_8004E490(struct MainObj*);
@@ -1743,6 +1747,7 @@ void func_80054758(struct MainObj*);
 void func_80054BBC(struct MainObj*);
 
 // D_800FC99C
+extern void (*D_800FC99C[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_80054710(struct MainObj* arg0);
 void func_80054738(struct MainObj* arg0);
@@ -2012,6 +2017,7 @@ void func_8005C960(struct MainObj*);
 void func_8005CADC(struct MainObj*);
 
 // D_800FDD40
+extern void (*D_800FDD40[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_8005CAFC(struct MainObj* arg0);
 void func_8005CB08(struct MainObj* arg0);
@@ -2046,6 +2052,7 @@ void func_8005D4E0(struct MainObj*);
 void func_8005D7E8(struct MainObj*);
 
 // D_800FDF64
+extern void (*D_800FDF64[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_8005D844(struct MainObj* arg0);
 void func_8005D850(struct MainObj* arg0);
@@ -2178,6 +2185,7 @@ void func_80060D3C(struct MainObj*);
 void func_80060DC8(struct MainObj*);
 
 // D_800FE8FC
+extern void (*D_800FE8FC[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_80060E08(struct MainObj* arg0);
 void func_80060E14(struct MainObj* arg0);
@@ -4854,6 +4862,7 @@ extern void (*D_801099C0[])(struct ShotObj*);
 void func_800A699C(struct ShotObj*);
 void func_800A6C00(struct ShotObj*);
 void func_800A6C7C(struct ShotObj*);
+void func_800A6DF4(struct ShotObj*);
 void func_800A6DCC(struct ShotObj*);
 void func_800A6DEC(struct ShotObj*);
 

@@ -47,7 +47,42 @@ u8 D_8010B434[16] = {
 #endif
 };
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_04", func_800B5EEC);
+void func_800B5EEC(struct EffectObj* arg0)
+{
+    switch (arg0->unk5) {
+    case 0:
+        if (D_80173C84 != 0) {
+            break;
+        }
+        if (ENGINE_STAGE_ID == 0x000A) {
+            if (D_80171EA8 == 0) {
+                arg0->unk5 = 1;
+            } else {
+                arg0->unk5 = 3;
+            }
+        } else if (ENGINE_STAGE_ID == 0x010C || D_80171EA8 != 0) {
+            arg0->unk5 = 3;
+        } else if (engine_obj.substage != 0) {
+            arg0->unk5++;
+        } else {
+            arg0->unk5 = 3;
+        }
+        break;
+    case 1:
+        D_80171EA8 = 1;
+        func_80013AD8(D_8010B434[engine_obj.stage], 4, D_80141F38);
+        arg0->unk5++;
+        break;
+    case 2:
+        if (D_801406AC == 2 && D_8013BD40 == 0) {
+            arg0->unk5++;
+        }
+        break;
+    case 3:
+        arg0->state++;
+        break;
+    }
+}
 
 void func_800B6060(struct EffectObj* arg0)
 {

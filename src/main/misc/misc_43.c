@@ -11,7 +11,30 @@ void func_800D0374(struct MiscObj* arg0)
     D_8010F014[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_43", func_800D03B0);
+void func_800D03B0(struct MiscObj* arg0)
+{
+    s8 bg_offset = g_Player.bg_offset;
+    s32 column;
+    s32 row;
+
+    arg0->y_vel.val = FIXED(10);
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = FIXED(0.125);
+    arg0->bg_offset = bg_offset;
+    arg0->unk40 = D_801406A8[func_8002938C(0x45)] >> 7;
+    column = func_8002938C(0x45);
+    row = func_8002938C(0x45);
+    column *= 4;
+    arg0->unk42 = ((column + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x45)];
+    arg0->animation_table = (u32**)D_8010F008;
+    arg0->unk16 = 6;
+    arg0->unk15 = 0;
+    arg0->state = 1;
+    arg0->unk5 = 0;
+    func_80015D60(ANIMATED_OBJECT(arg0), 0);
+}
 
 void func_800D04D0(struct MiscObj* arg0)
 {

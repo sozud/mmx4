@@ -330,15 +330,196 @@ void func_8003E368(struct RideArmorObj* self)
     func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E488);
+void func_8003E488(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk98.packed = 0x160;
+        func_80015D60(self, 1);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x2A);
+        self->pad87 = 0;
+    }
+    if (self->unk94.bytes.pad94[0] == 2) {
+        func_8003DC44(BASE_OBJECT(self), 0xD);
+        return;
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->input_flags & 8)) {
+        func_8003DC44(BASE_OBJECT(self), 0xC);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (!func_8003DC50(self)) {
+            func_8003DC44(BASE_OBJECT(self), 1);
+            return;
+        }
+        if ((u16)self->unk8A & 0x80) {
+            func_8003DC44(BASE_OBJECT(self), 4);
+            return;
+        }
+        if (func_8003DCD8(self)) {
+            func_8003DC44(BASE_OBJECT(self), 3);
+            return;
+        }
+        func_8003DD2C(MAIN_OBJECT(self));
+        func_8003DD14(MAIN_OBJECT(self));
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        func_8001540C(5, (u8)self->animation_step.fields.event, NULL);
+        self->animation_step.fields.event = 0;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E5F8);
+void func_8003E5F8(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        if ((u8)self->pad87 == 1) {
+            func_8003D7E4(self, 2, 1);
+            func_80015D60(self, 0xA);
+            func_8003DC1C(PLAYER_OBJECT(self), 0x32);
+            func_8001540C(5, 5, NULL);
+        } else {
+            func_8003D7E4(self, 0, 0);
+            func_80015D60(self, 8);
+            func_8003DC1C(PLAYER_OBJECT(self), 0x31);
+            func_8001540C(5, 0, NULL);
+        }
+        self->unk80.bytes.unk81 = 0;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->unk80.bytes.unk81 != 0) {
+            func_8003DC44(BASE_OBJECT(self), 3);
+        } else {
+            self->pad87 = 0;
+            self->unk80.bytes.unk81 = 0;
+            func_8003DC44(BASE_OBJECT(self), 1);
+        }
+        return;
+    }
+    if ((self->animation_step.fields.event & 1) && func_8003DCD8(self)
+        && self->unk80.bytes.unk81 == 0 && (u8)self->pad87 < 2) {
+        self->pad87++;
+        self->unk80.bytes.unk81 = 1;
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E750);
+void func_8003E750(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->y_vel.val = FIXED(5.5);
+        self->unk6 = 1;
+        self->unk2C = FIXED(0.2578125);
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+        self->unk67 = 1;
+        if (self->unk2 == 0) {
+            func_8003D638(VISUAL_OBJECT(self), 6);
+        }
+        func_80015D60(self, 2);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x2B);
+        self->pad87 = 0;
+        if (self->unk2 == 0) {
+            func_8001540C(5, 4, NULL);
+        } else {
+            func_8001540C(5, 3, NULL);
+        }
+    }
+    if (func_8003DCD8(self)) {
+        func_8003DC44(BASE_OBJECT(self), 6);
+        return;
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (self->unk94.bytes.unk97 & 2) {
+        return;
+    }
+    self->x_vel.val = 0;
+    func_8003DD54(self);
+    if (!(self->input_flags & 4) && self->y_vel.val >= 0 && (self->collision_flags & 0x80)) {
+        func_8002B694(ANIMATED_OBJECT(self));
+        return;
+    }
+    func_8003DC44(BASE_OBJECT(self), 0xC);
+}
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E8A0);
+void func_8003E8A0(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk98.packed = 0x160;
+        self->unk67 = 0;
+        self->unk7D = 0;
+        func_80015D60(self, 4);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x2D);
+        self->input_flags |= 8;
+        if (self->unk2 == 0) {
+            func_8001540C(5, 1, NULL);
+        } else {
+            func_8001540C(5, 0, NULL);
+            func_80015930(5, 5);
+            func_8001540C(5, 0, NULL);
+        }
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (self->animation_step.fields.relative_step == 0) {
+        func_8003DC44(BASE_OBJECT(self), 1);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (!(self->input_flags & 8)) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+        } else if (func_8003DCD8(self)) {
+            func_8003DC44(BASE_OBJECT(self), 3);
+        } else if (func_8003DC50(self)) {
+            func_8003DD2C(MAIN_OBJECT(self));
+            func_8003DD14(MAIN_OBJECT(self));
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003EA08);
+void func_8003EA08(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        func_8003D7E4(self, 3, 1);
+        func_80015D60(self, 0xB);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x33);
+        func_8001540C(5, 5, NULL);
+    }
+    if (self->input_flags & 8) {
+        func_8003DC44(BASE_OBJECT(self), 5);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+        func_8003DDA0(self);
+        if (self->y_vel.val >= 0 && ((self->input_flags & 4) || !(self->collision_flags & 0x80))) {
+            self->y_vel.val = 0;
+        }
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk5 = self->y_vel.val < 0 ? 0xC : 4;
+        } else {
+            if (self->y_vel.val < FIXED(-5.875)) {
+                self->y_vel.val = FIXED(-5.875);
+            }
+            func_8002B694(ANIMATED_OBJECT(self));
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003EB4C);
 
@@ -560,11 +741,127 @@ void func_8003F698(struct RideArmorObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003F76C);
+void func_8003F76C(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        if (self->collision_flags & 8) {
+            func_80015D60(self, 9);
+            func_8003DC1C(PLAYER_OBJECT(self), 0x33);
+            func_8003D8A8(self, 1, 0);
+        } else {
+            func_8003D8A8(self, 0, 0);
+        }
+        func_8001540C(5, 7, NULL);
+    }
+    if (self->input_flags & 8) {
+        func_8003DC44(BASE_OBJECT(self), 5);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        self->x_vel.val = 0;
+        self->unk28 = 0;
+        func_8003DDA0(self);
+        if (self->y_vel.val >= 0 && ((self->input_flags & 4) || !(self->collision_flags & 0x80))) {
+            self->y_vel.val = 0;
+        }
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk5 = self->y_vel.val < 0 ? 0xC : 4;
+        } else {
+            if (self->y_vel.val < FIXED(-5.875)) {
+                self->y_vel.val = FIXED(-5.875);
+            }
+            func_8002B694(ANIMATED_OBJECT(self));
+            if (self->animation_step.fields.event != 0 && func_8003DCD8(self) && self->unk86 < 3) {
+                func_8003DC44(BASE_OBJECT(self), 6);
+            }
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003F908);
+void func_8003F908(struct RideArmorObj* self)
+{
+    s8 timer;
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003FA58);
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk7D = 1;
+        self->unk98.packed = 0x420;
+        if (self->unk15 != 0) {
+            self->x_vel.val = FIXED(4.125);
+        } else {
+            self->x_vel.val = FIXED(-4.125);
+        }
+        self->unk90.byte = 0x1E;
+        self->unk2C = 0;
+        self->y_vel.val = 0;
+        func_80015D60(self, 0xC);
+        func_8003DC1C(PLAYER_OBJECT(self), 0x2F);
+        func_8001540C(5, 2, NULL);
+    }
+    if (func_8003DC8C(self)) {
+        func_8003DC44(BASE_OBJECT(self), 0xB);
+        return;
+    }
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if (func_8003DCD8(self)) {
+            func_8003DC44(BASE_OBJECT(self), 0x10);
+        } else if ((self->input_flags & 3) || !func_8003E048(PLAYER_OBJECT(self))) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+            return;
+        } else {
+            func_8003DD14(MAIN_OBJECT(self));
+            timer = self->unk90.byte--;
+            if (timer < 0) {
+                func_8003DC44(BASE_OBJECT(self), 0xC);
+                return;
+            }
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
+
+void func_8003FA58(struct RideArmorObj* self)
+{
+    s8 timer;
+
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        if (self->collision_flags & 8) {
+            func_8003D8A8(self, 1, 0);
+            func_80015D60(self, 0xA);
+            func_8003DC1C(PLAYER_OBJECT(self), 0x37);
+        } else {
+            func_8003D8A8(self, 0, 0);
+        }
+        func_8001540C(5, 7, NULL);
+    }
+    timer = (u8)self->unk90.byte - 1;
+    self->unk90.byte = timer;
+    if (!(self->unk94.bytes.unk97 & 2)) {
+        if ((self->input_flags & 3) || timer < 0) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+        } else if (self->animation_step.fields.relative_step == 0) {
+            func_8003DD14(MAIN_OBJECT(self));
+            self->unk5 = 0xF;
+            self->unk6 = 1;
+        } else {
+            if (func_8003E048(PLAYER_OBJECT(self))) {
+                func_8003DD14(MAIN_OBJECT(self));
+            }
+            if (func_8003DCD8(self) && self->unk86 < 3) {
+                func_8003DC44(BASE_OBJECT(self), 0x10);
+                if (self->collision_flags & 8) {
+                    func_80015D60(self, 0xA);
+                } else {
+                    func_80015D60(self, 0xC);
+                }
+            }
+        }
+    }
+    func_80015DC8(ANIMATED_OBJECT(self));
+}
 
 void func_8003FBD8(struct RideArmorObj* self)
 {

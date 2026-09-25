@@ -101,7 +101,45 @@ void func_8004CC64(struct MainObj* arg0)
     D_800FB888[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CCA0);
+void func_8004CCA0(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s8 event;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    event = arg0->animation_step.fields.event;
+    switch (event) {
+    case 1:
+        func_80015D60(arg0, 0);
+        arg0->ext.main_13.unk88 = 0;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        break;
+    case 2:
+        func_8001540C(2, 0x31, arg0);
+        if (arg0->animation_step.fields.event != 0) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 5;
+                shot->unk2 = 0;
+                shot->unk40 = arg0->unk40;
+                shot->unk42 = arg0->unk42;
+                shot->animation_table = (u32**)arg0->animation_table;
+                shot->unk3C = (void*)arg0->sprite_frames;
+                shot->unk15 = arg0->unk15;
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk84.collision_state = &arg0->ext.main_13.unk80;
+                if (arg0->ext.main_13.unk88 == event) {
+                    shot->state = 3;
+                }
+            }
+        }
+        break;
+    }
+}
 
 void func_8004CDC8(struct MainObj* arg0)
 {

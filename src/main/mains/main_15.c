@@ -179,7 +179,39 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E490);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E55C);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E6A4);
+void func_8004E6A4(struct MainObj* arg0)
+{
+    u16 x;
+
+    if (ENGINE_STAGE_ID == 0x102 && engine_obj.character_state.bytes[0] != 0) {
+        x = arg0->x_pos.i.hi;
+        if ((u16)(x - 0xC0F) < 0x1E2 || (u16)(x - 0x100F) < 0x1E2
+            || (u16)(x - 0x1315) < 0x1DC || (u16)(x - 0x1613) < 0x1BF) {
+            arg0->state = 3;
+            arg0->unk6 = 0;
+            return;
+        }
+    }
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(4, D_800FBB84, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0x12);
+        arg0->state++;
+        return;
+    }
+    func_8004DB10(arg0);
+    func_8004D9CC(arg0);
+    func_8004DCB0(arg0);
+    D_800FBB88[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x25, 0x25);
+    } else {
+        arg0->state++;
+    }
+}
 
 void func_8004E810(struct MainObj* arg0)
 {

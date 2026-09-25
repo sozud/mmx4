@@ -142,7 +142,52 @@ void func_80059290(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059344);
+void func_80059344(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    u8 direction;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    direction = arg0->ext.main_27.collision_direction;
+    if ((u32)(direction - 9) < 0xF) {
+        if (arg0->unk15 != 0) {
+            arg0->unk7C = 0xA;
+            arg0->unk6 = 3;
+        }
+    } else if ((u32)(direction - 8) >= 0x11 && arg0->unk15 == 0) {
+        arg0->unk7C = 0xA;
+        arg0->unk6 = 3;
+    }
+    if (arg0->unk6 == 3) {
+        return;
+    }
+    func_80015D60(arg0, 4);
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0xE;
+        shot->unk2 = arg0->unk2;
+        shot->unk40 = arg0->unk40;
+        shot->unk42 = arg0->unk42;
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->unk15 = arg0->unk15;
+        shot->bg_offset = arg0->bg_offset;
+        shot->x_pos.val = arg0->x_pos.val;
+        shot->y_pos.val = arg0->y_pos.val;
+        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_27.collision_direction);
+        shot->state = 0;
+        shot->x_vel.val *= 3;
+        shot->y_vel.val *= 3;
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0xA;
+        arg0->unk6 = 3;
+    } else {
+        arg0->unk7E = 0x14;
+        arg0->unk6 = 1;
+    }
+}
 
 void func_800594D8(struct MainObj* arg0)
 {
