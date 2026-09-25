@@ -1249,6 +1249,7 @@ void func_80046134(struct MainObj* arg0);
 void func_8004636C(struct MainObj* arg0);
 void func_80046640(struct MainObj* arg0);
 void func_80046864(struct MainObj* arg0);
+extern void (*D_800FA394[])();
 
 // D_800FA3BC
 extern void (*D_800FA3BC[])(struct MainObj*);

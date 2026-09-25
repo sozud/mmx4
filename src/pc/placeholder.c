@@ -20,7 +20,6 @@ extern struct HudSpriteOrigin D_800F30F4[8];
 extern struct PlayerGaugePosition D_800F3124[2];
 extern u16 D_800F312C[4];
 extern s32 D_8010F678[3];
-extern u8* D_80141EE8[];
 extern u32* D_80137E08;
 extern struct Unk_unk68 D_80108704[];
 extern u8 D_80108CD0[];
@@ -2436,52 +2435,6 @@ s32 func_8003A000(struct PlayerObj* arg0)
     arg0->unk6 = 0;
     func_8003B24C(arg0);
     return 1;
-}
-
-void func_80032300(struct PlayerObj* arg0)
-{
-    s8 event;
-
-    if (func_80033EA4(arg0) != 0) {
-        return;
-    }
-    if (func_80037290(arg0) != 0) {
-        return;
-    }
-    if (func_80039880(arg0) != 0) {
-        return;
-    }
-    if (func_80033414(arg0) != 0) {
-        return;
-    }
-    if (func_800398F0(arg0) != 0) {
-        return;
-    }
-    event = arg0->animation_step.fields.event;
-    if (event & 0x80) {
-        arg0->animation_step.fields.event = event & 0x7F;
-        func_8001540C(1, 6, arg0);
-    }
-    if (((u8)arg0->animation_step.fields.event & 0x40) && arg0->unk85 == 0) {
-        if ((arg0->unk15 != 0 ? 1 : 2) & (u8)arg0->unk88.bytes.collision_flags) {
-            arg0->x_vel.val = 0;
-        }
-        if (arg0->x_vel.val != 0) {
-            func_8002B694(ANIMATED_OBJECT(arg0));
-            if (arg0->unk15 != 0) {
-                if (arg0->x_vel.val < 0) {
-                    arg0->x_vel.val = 0;
-                }
-            } else if (arg0->x_vel.val > 0) {
-                arg0->x_vel.val = 0;
-            }
-        }
-    }
-    if (arg0->animation_step.fields.relative_step < 0) {
-        func_800343A4(arg0);
-        return;
-    }
-    func_80038568(arg0, 0x11);
 }
 
 void func_800AED18(struct VisualObj* arg0)
@@ -6085,38 +6038,6 @@ void func_800C2C3C(struct ItemObj* arg0)
     arg0->state = (arg0->unk2 & 0x80) ? 3 : 1;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
-}
-
-extern u16 D_800F8B50[8];
-extern u16 D_800F8B60[6];
-extern u16 D_800F8B6C[20];
-
-void func_800358A4(struct PlayerObj* arg0)
-{
-    switch (engine_obj.stage) {
-    case 3:
-        arg0->y_pos.i.hi = D_800F8B50[engine_obj.substage * 4 + engine_obj.checkpoint];
-        break;
-    case 6:
-        arg0->y_pos.i.hi = engine_obj.substage != 0 ? 0x9CB : D_800F8B60[engine_obj.checkpoint];
-        break;
-    case 12:
-        arg0->y_pos.i.hi = engine_obj.substage != 0 ? 0x1CB : D_800F8B6C[engine_obj.checkpoint];
-        break;
-    }
-    if (arg0->unk2 == 0) {
-        arg0->unkA7 = engine_obj.unk47;
-        arg0->unkB8 = engine_obj.unk48;
-    } else {
-        arg0->y_pos.i.hi--;
-    }
-    arg0->y_pos.i.lo = 0;
-    engine_obj.unk1C = 0;
-    func_80035EA4(arg0);
-    func_800343A4(arg0);
-    background_objects[0].unk44 = 1;
-    background_objects[1].unk44 = 1;
-    background_objects[2].unk44 = 1;
 }
 
 extern union AnimationStep* D_800FD990[];
@@ -11067,34 +10988,6 @@ void func_80044F88(struct MainObj* arg0)
     else if (arg0->unk2 == 4)
         arg0->unk5 = 9;
     func_80015D60(arg0, 1);
-}
-
-void func_800450A8(struct MainObj* arg0)
-{
-    s32 collision;
-
-    func_80046AA4(arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) != 0) {
-        arg0->state = 2;
-        arg0->unk18.val = arg0->x_pos.val;
-        arg0->unk1C.val = arg0->y_pos.val;
-        return;
-    }
-    collision = func_8002DD04(arg0);
-    if (arg0->unk5 != 0)
-        arg0->ext.main_5.saved_unk5 = (u8)arg0->unk5;
-    if (collision < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(5, D_800FA340, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0);
-        arg0->state = 2;
-        return;
-    }
-    D_800FA394[(u8)arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
 }
 
 void func_80099D54(struct ShotObj* arg0)
@@ -16775,7 +16668,7 @@ void func_800403DC(struct RideArmorObj* arg0)
 
 static u16 misc_31_palette(struct MiscObj* arg0)
 {
-    return arg0->unk2 == 3 && D_800F1D90[0] == 0xFF ? 0x7804 : 0x7800;
+    return arg0->unk2 == 3 && D_800F1D90.save.character == 0xFF ? 0x7804 : 0x7800;
 }
 
 void func_800CDE44(struct MiscObj* arg0)

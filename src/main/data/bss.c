@@ -63,10 +63,10 @@ u8* D_80137DE0;
 s32 D_80137DE4;
 struct PcCdLocBuffer D_80137DE8;
 u8 pad_80137DF4[8];
-s8 D_80137DFC;
-u8 pad_80137DFD[3];
-u8 D_80137E00[0x4];
-u8 D_80137E04[0x4];
+u8 D_80137DFC;
+u8 D_80137DFD;
+u8 pad_80137DFE[2];
+struct SoundTransfer D_80137E00;
 u32* D_80137E08;
 #ifdef MMX4_PC
 _Alignas(void*) char D_80137E0C[SS_SEQ_TABSIZ * 3 * 10];
@@ -486,9 +486,14 @@ u16 lastFilterAmountG;
 u8 g_FilterModeG;
 u16 g_FilterAmountG;
 
+u8* D_801721B0;
 u8 D_801721B6;
+u8 D_801721B7;
 u8 D_801721B8;
+u8 D_801721B9;
 u8 D_801721BA;
+struct MemcardSaveSlot* D_801721BC;
+struct MemcardFileList D_80173AE0;
 s8 D_801721E4;
 
 u8 D_80166D68[0x22];

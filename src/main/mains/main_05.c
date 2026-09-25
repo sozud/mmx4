@@ -10,7 +10,34 @@ void func_80044F4C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_05", func_80044F88);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_05", func_800450A8);
+void func_800450A8(struct MainObj* arg0)
+{
+    s32 collision;
+    s8 subtype;
+
+    func_80046AA4(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        collision = func_8002DD04(arg0);
+        subtype = arg0->unk5;
+        if (subtype != 0) {
+            arg0->ext.main_5.saved_unk5 = subtype;
+        }
+        if (collision < 0) {
+            func_800AF808(BASE_OBJECT(arg0));
+            func_800C813C(5, D_800FA340, arg0);
+            func_800BF60C(BASE_OBJECT(arg0), 0);
+            arg0->state = 2;
+            return;
+        }
+        D_800FA394[arg0->unk5](arg0);
+        func_8002D9BC(arg0);
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    } else {
+        arg0->state = 2;
+    }
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+}
 
 void func_80045198(struct MainObj* arg0)
 {

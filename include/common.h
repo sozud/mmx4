@@ -146,6 +146,11 @@ struct SoundArchive {
     u32 unk4;
     u8 sound_entries[0];
 };
+struct SoundTransfer {
+    s32 remaining;
+    s32 offset;
+};
+
 typedef char SoundArchive_header_must_be_8_bytes[sizeof(struct SoundArchive) == 8 ? 1 : -1];
 
 struct CdImageOrigin {
@@ -1141,12 +1146,23 @@ struct Main28Ext {
     u16 index;
 };
 
+struct MemcardSaveSlot {
+    u8 character;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+    u8 unk5;
+    u16 unk6;
+    u16 unk8[16];
+    u8 unk28;
+    u8 unk29;
+};
+typedef char MemcardSaveSlot_must_be_0x2A_bytes[sizeof(struct MemcardSaveSlot) == 0x2A ? 1 : -1];
+
 struct MenuRuntimeData {
-    u8 byte_0;
-    u8 byte_1;
-    u16 halfword_2;
-    u8 buffer[33];
-    u8 padding[3];
+    struct MemcardSaveSlot save;
+    u8 pad2A[2];
     u8 button_lookup[24];
     u16 low_button_masks[8];
     u16 high_button_masks[3];
@@ -3677,8 +3693,12 @@ extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
+extern u8* D_801721B0;
 extern u8 D_801721B6;
+extern u8 D_801721B7;
+extern u8 D_801721B9;
 extern u8 D_801721BA;
+extern struct MemcardSaveSlot* D_801721BC;
 struct MemcardPath {
     char path[6];
 };
@@ -3692,6 +3712,8 @@ struct MemcardFileList {
     s32 total_size; // 0x14C
     s32 sizes[15]; // 0x150
 };
+
+extern struct MemcardFileList D_80173AE0;
 
 extern u8 D_800F2180[];
 extern u8 D_800F21A0[];
@@ -3967,7 +3989,9 @@ extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
 extern s8 D_80173C6C[4];
-extern s8 D_80137DFC;
+extern u8 D_80137DFC;
+extern u8 D_80137DFD;
+extern struct SoundTransfer D_80137E00;
 extern u8 D_80137DD4;
 extern u8 D_80137DDC;
 extern s32 D_8013BD44;
@@ -4181,11 +4205,7 @@ extern struct BootTransitionDataRegion g_BootTransitionDataRegion;
 extern u8 D_800F1C0F[];
 #endif
 extern u32 D_800F1D8C;
-extern u8 D_800F1D90[];
-extern u8 D_800F1D91;
-extern u8 D_800F1D92;
-extern u8 D_800F1D93;
-extern struct MenuRuntimeData D_800F1D94;
+extern struct MenuRuntimeData D_800F1D90;
 extern CdlATV D_80139644;
 extern u8 D_80171EA9;
 extern s32 D_80166BB4;
@@ -4289,6 +4309,7 @@ struct XaSequenceData {
 };
 extern struct XaSequenceData D_800F1A0C;
 extern u8* D_80141F00;
+extern u8* D_80141EE8[];
 extern u8* D_80141F50[];
 extern u8* cur_draw_info_dispenv_screen_w;
 extern u8* cur_draw_info_drawenv;
@@ -4330,7 +4351,14 @@ void func_80012A3C();
 s32 func_8001540C(s32, s32, void*);
 s32 func_80015A10(s32, struct MainObj*);
 void func_8001B644(u8*);
+s32 func_8001CB24(u8* buffer, s32 device_num, s32 size);
+void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern);
+s32 func_8001CD70(s32 arg0);
+int func_8001CDE4(int arg0);
+s32 func_8001CE84(s32 device_num);
 void func_8001B718(s16, u8, u8);
+void func_8001B7C0(s16 x, s16 y, u8 arg2);
+void func_8001C210(void);
 void func_8001C30C(struct MenuCharacterData*);
 void func_8001C008(s32, s32);
 s32 func_800350A4(struct PlayerObj*, s32);
@@ -4338,6 +4366,11 @@ void func_80035048(struct PlayerObj*);
 void func_8003443C(struct PlayerObj*);
 void func_80034150(struct PlayerObj*);
 void func_80035EA4(struct PlayerObj*);
+void func_80046AA4(struct MainObj* arg0);
+extern u8 D_800FA340[];
+extern u16 D_800F8B50[2][4];
+extern u16 D_800F8B60[6];
+extern u16 D_800F8B6C[20];
 void func_80036534(struct PlayerObj*);
 void func_800CEFC0(struct MiscObj*);
 void func_800CF0B0(struct MiscObj*);

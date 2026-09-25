@@ -519,7 +519,43 @@ void func_80032224(struct PlayerObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_80032300);
+void func_80032300(struct PlayerObj* arg0)
+{
+    s32 wall_flag;
+    s8 event;
+
+    if (func_80033EA4(arg0) == 0 && func_80037290(arg0) == 0 && func_80039880(arg0) == 0 && func_80033414(arg0) == 0 && func_800398F0(arg0) == 0) {
+        event = arg0->animation_step.fields.event;
+        if (event & 0x80) {
+            arg0->animation_step.fields.event = event & 0x7F;
+            func_8001540C(1, 6, arg0);
+        }
+        if ((arg0->animation_step.fields.event & 0x40) && arg0->unk85 == 0) {
+            wall_flag = 2;
+            if (arg0->unk15 != 0) {
+                wall_flag = 1;
+            }
+            if (wall_flag & arg0->unk88.bytes.collision_flags) {
+                arg0->x_vel.val = 0;
+            }
+            if (arg0->x_vel.val != 0) {
+                func_8002B694(ANIMATED_OBJECT(arg0));
+                if (arg0->unk15 != 0) {
+                    if (arg0->x_vel.val < 0) {
+                        arg0->x_vel.val = 0;
+                    }
+                } else if (arg0->x_vel.val > 0) {
+                    arg0->x_vel.val = 0;
+                }
+            }
+        }
+        if (arg0->animation_step.fields.relative_step < 0) {
+            func_800343A4(arg0);
+            return;
+        }
+        func_80038568(arg0, 0x11);
+    }
+}
 
 void func_80032468(struct PlayerObj* arg0)
 {
@@ -2173,7 +2209,44 @@ void func_80035848(struct PlayerObj* arg0)
     arg0->unk5 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/player", func_800358A4);
+void func_800358A4(struct PlayerObj* arg0)
+{
+    struct EngineObj* engine = &engine_obj;
+
+    switch (engine_obj.stage) {
+    case 3:
+        arg0->y_pos.i.hi = D_800F8B50[engine_obj.substage][engine_obj.checkpoint];
+        break;
+    case 6:
+        if (engine_obj.substage == 0) {
+            arg0->y_pos.i.hi = D_800F8B60[engine_obj.checkpoint];
+        } else {
+            arg0->y_pos.i.hi = 0x9CB;
+        }
+        break;
+    case 12:
+        if (engine_obj.substage == 0) {
+            arg0->y_pos.i.hi = D_800F8B6C[engine_obj.checkpoint];
+        } else {
+            arg0->y_pos.i.hi = 0x1CB;
+        }
+        break;
+    }
+
+    if (arg0->unk2 == 0) {
+        arg0->unkA7 = engine->unk47;
+        arg0->unkB8 = engine->unk48;
+    } else {
+        arg0->y_pos.i.hi--;
+    }
+    arg0->y_pos.i.lo = 0;
+    engine->unk1C = 0;
+    func_80035EA4(arg0);
+    func_800343A4(arg0);
+    background_objects[0].unk44 = 1;
+    background_objects[1].unk44 = 1;
+    background_objects[2].unk44 = 1;
+}
 
 void func_80035A24(struct PlayerObj* arg0)
 {
@@ -4614,15 +4687,9 @@ void (*D_800F8B44[])(struct PlayerObj*) = {
     func_80035A24,
 };
 
-u16 D_800F8B50[8] = {
-    0x0000,
-    0x00AB,
-    0x09CB,
-    0x025B,
-    0x0000,
-    0x01AB,
-    0x08AB,
-    0x0000,
+u16 D_800F8B50[2][4] = {
+    { 0x0000, 0x00AB, 0x09CB, 0x025B },
+    { 0x0000, 0x01AB, 0x08AB, 0x0000 },
 };
 
 u16 D_800F8B60[6] = {
