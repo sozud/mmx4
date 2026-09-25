@@ -18,7 +18,36 @@ void func_8005824C(struct MainObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_26", func_80058254);
+void func_80058254(struct MainObj* arg0)
+{
+    s32 hit = func_8002DD04(arg0);
+    s8 stage;
+
+    if (arg0->ext.main_26.last_health != arg0->unk5C) {
+        stage = arg0->ext.main_26.stage--;
+        if (stage != 1) {
+            if (stage == 2) {
+                func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi, 0);
+            }
+        } else {
+            func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi, 5);
+            arg0->unk5C = 1;
+        }
+        arg0->ext.main_26.last_health = arg0->unk5C;
+    }
+    if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10) == 0 || hit < 0) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        arg0->unk42 &= 0x7FFF;
+        func_8001540C(5, 1, NULL);
+        return;
+    }
+    D_800FD1E8[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x50, 0x30) != 0) {
+        func_8002B0C8(OBJECT_HEADER(arg0));
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_26", func_800583B0);
 

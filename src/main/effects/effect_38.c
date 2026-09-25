@@ -189,7 +189,41 @@ void func_800BDB10(struct EffectObj* self)
     misc->unk2 = state;
 }
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_38", func_800BDBD4);
+void func_800BDBD4(void)
+{
+    switch (engine_obj.checkpoint) {
+    case 1:
+        if (engine_obj.cur_character == 0) {
+            func_800BDDE8(2, 4);
+            func_800BDDE8(2, 0xF);
+            func_800BDDE8(0x1A, 0);
+        } else {
+            func_800BDDE8(2, 0xC);
+            func_800BDDE8(2, 0xF);
+        }
+        break;
+    case 3:
+        if (engine_obj.cur_character == 0) {
+            func_800BDDE8(2, 4);
+            func_800BDDE8(2, 0xC);
+            func_800BDDE8(0x1A, 0);
+        } else {
+            func_800BDDE8(2, 4);
+            func_800BDDE8(2, 0xF);
+        }
+        break;
+    case 5:
+        if (engine_obj.cur_character == 0) {
+            func_800BDDE8(2, 4);
+            func_800BDDE8(2, 0xC);
+            func_800BDDE8(2, 0xF);
+        } else {
+            func_800BDDE8(2, 4);
+            func_800BDDE8(2, 0xC);
+        }
+        break;
+    }
+}
 
 void func_800BDD08(struct EffectObj* self)
 {

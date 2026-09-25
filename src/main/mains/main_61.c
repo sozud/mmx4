@@ -70,7 +70,33 @@ void split_mushroom_intro(struct MainObj* self)
     split_mushroom_intro_funcs[self->unk6](self);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_800790E8);
+void func_800790E8(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+
+    if (engine_obj.stage == 3) {
+        if (engine_obj.cur_character == 0 ? g_Player.y_pos.i.hi < 0x1CC : g_Player.y_pos.i.hi < 0x1CB) {
+            effect = find_free_effect_obj();
+            if (effect != NULL) {
+                effect->active = 1;
+                effect->id = 0x18;
+                arg0->ext.main_61.data.effect = effect;
+            }
+            func_80036AE4(0x14, 0);
+        } else {
+            return;
+        }
+    } else {
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x18;
+            arg0->ext.main_61.data.effect = effect;
+        }
+        func_80036AE4(0x14, 0x40);
+    }
+    arg0->unk6 = 1;
+}
 
 void split_mushroom_intro_drop(struct MainObj* self)
 {

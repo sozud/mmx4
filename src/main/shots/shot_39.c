@@ -7,7 +7,36 @@ void func_800A47C4(struct ShotObj* arg0)
     D_8010984C[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_39", func_800A4800);
+void func_800A4800(struct ShotObj* arg0)
+{
+    u8 y_offset;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk61 = 1;
+    arg0->unk2C = FIXED(0.125);
+    arg0->y_vel.val = FIXED(4.5);
+    arg0->unk58.data = NULL;
+    arg0->unk42 &= 0x7FFF;
+    arg0->unk28 = D_80109828[arg0->unk2];
+    if (arg0->unk15 == 0) {
+        arg0->x_pos.i.hi += (s8)D_80109804[arg0->unk2 * 2];
+        arg0->x_vel.val = D_80109818[arg0->unk2];
+    } else {
+        arg0->x_pos.i.hi -= (s8)D_80109804[arg0->unk2 * 2];
+        arg0->x_vel.val = -D_80109818[arg0->unk2];
+    }
+    y_offset = D_80109804[arg0->unk2 * 2 + 1];
+    arg0->unk50.data = D_801097F4;
+    arg0->timer = 0x28;
+    arg0->unk5C = 1;
+    arg0->unk60 = 6;
+    arg0->unk16 = 0;
+    arg0->unk68 = NULL;
+    arg0->unk54 = NULL;
+    arg0->y_pos.i.hi += (s8)y_offset;
+    func_80015D60(arg0, 0xB);
+}
 
 void func_800A4968(struct ShotObj* arg0)
 {

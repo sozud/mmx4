@@ -346,7 +346,36 @@ void storm_owl_grab_carry(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800766FC);
+void func_800766FC(struct MainObj* arg0)
+{
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+    if (g_Player.x_pos.i.hi <= background_objects[0].x_pos.i.hi + 0x10
+        || g_Player.x_pos.i.hi >= background_objects[0].x_pos.i.hi + 0x130) {
+        arg0->unk20 = 0;
+        arg0->unk28 = 0;
+    }
+    g_Player.x_pos.i.hi = arg0->x_pos.i.hi;
+    g_Player.y_pos.i.hi = arg0->y_pos.i.hi + 0x1C;
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    if (arg0->unk70 & 8) {
+        func_8001540C(2, 0xBB, arg0);
+        func_80028BAC(8, 4, 1);
+        func_80036470(9);
+        func_80015D60(arg0, 1);
+        if (arg0->unk15 == 0) {
+            arg0->unk20 = FIXED(-2);
+        } else {
+            arg0->unk20 = FIXED(2);
+        }
+        arg0->unk24 = FIXED(-1);
+        g_Player.unkBA = 0;
+        arg0->unk68 = &D_801016C0;
+        arg0->unk62 = 0;
+        arg0->unk50 = (const u8*)&D_801016B8;
+        arg0->unk6++;
+    }
+}
 
 void storm_owl_grab_leave(struct MainObj* self)
 {

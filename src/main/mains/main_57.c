@@ -150,7 +150,35 @@ void frost_walrus_intro_roar(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072A84);
+void func_80072A84(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+    u8 i;
+
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        for (i = 0; i < 20; i++) {
+            visual = find_free_visual_obj();
+            if (visual != NULL) {
+                visual->active = 0x41;
+                visual->id = 0x18;
+                visual->unk2 = frost_walrus_burst_subtypes[i];
+                visual->x_pos.i.hi = arg0->x_pos.i.hi + frost_walrus_burst_offsets[i][0];
+                visual->y_pos.i.hi = arg0->y_pos.i.hi + frost_walrus_burst_offsets[i][1];
+                visual->unk50 = PLAYER_OBJECT(arg0);
+            }
+        }
+        func_8001540C(2, 0x94, arg0);
+    }
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 0x1A);
+        if (engine_obj.stage == 2) {
+            func_8002217C(9, 0xFF, engine_obj.character_state.bytes[8]);
+            engine_obj.character_state.bytes[8] = 1;
+        }
+        arg0->unk6++;
+    }
+}
 
 void frost_walrus_intro_start_health_bar(struct MainObj* self)
 {

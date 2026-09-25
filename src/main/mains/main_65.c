@@ -120,7 +120,32 @@ void magma_dragoon_intro_ready(struct MainObj* self)
     func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E350);
+void func_8007E350(struct MainObj* arg0)
+{
+    if (arg0->unk5C < 0x30) {
+        if (--arg0->unk7E == 0) {
+            func_8001540C(0, 0xE, 0);
+            arg0->unk7E = 3;
+        }
+        arg0->unk5C++;
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    } else {
+        func_80015D60(arg0, 0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        arg0->unk54 = &D_80102A64;
+        func_80036B18();
+        if (engine_obj.stage == 0xC) {
+            background_objects[0].unk26 = 0x110;
+            background_objects[0].unk24 = 0x1B0;
+        } else {
+            background_objects[0].unk26 = 0x13F0;
+            background_objects[0].unk24 = 0x1490;
+        }
+        background_objects[0].unk48 = 4;
+        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    }
+}
 
 void magma_dragoon_intro(struct MainObj* self)
 {

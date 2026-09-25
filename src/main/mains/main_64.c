@@ -42,7 +42,38 @@ void cyber_peacock_intro_start_health_bar(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C6E8);
+void func_8007C6E8(struct MainObj* arg0)
+{
+    s8 health;
+
+    if (func_8009227C() != 0) {
+        return;
+    }
+    if (arg0->animation_step.fields.relative_step == 0) {
+        health = arg0->unk5C;
+        if (health < 0x30) {
+            if (--arg0->unk7C == 0) {
+                func_8001540C(0, 0xE, 0);
+                arg0->unk7C = 2;
+            }
+            arg0->unk5C++;
+            return;
+        }
+        arg0->state = 1;
+        arg0->ext.main_64.saved_health = health;
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+        arg0->unk61 = 0;
+        func_80036B18();
+        return;
+    }
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->animation_step.fields.event = 0;
+        func_8001540C(2, 0xC2, arg0);
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void cyber_peacock_intro_appear(struct MainObj* self)
 {

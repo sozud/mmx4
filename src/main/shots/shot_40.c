@@ -72,7 +72,33 @@ void func_800A5500(struct ShotObj* arg0)
     func_80015DC8(arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_40", func_800A5540);
+void func_800A5540(struct ShotObj* arg0)
+{
+    s32 x_offset;
+
+    if (arg0->unk7C->active != 0 && arg0->unk7C->id == 0x3F) {
+        arg0->unk18.val = arg0->x_pos.val;
+        arg0->unk1C.val = arg0->y_pos.val;
+        D_801098C4[arg0->unk5](arg0);
+        func_8002D9BC(arg0);
+        func_8002C808(PLAYER_OBJECT(arg0));
+        if (arg0->unk8A != 0) {
+            if (!(D_80141BD8.unk0 & 3)) {
+                func_800AF878(BASE_OBJECT(arg0), 1, 0x60, 0x60);
+                func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x30);
+                x_offset = get_random() & 0x30;
+                func_800C833C(7, D_801098A0, (struct MiscObj*)arg0, x_offset, get_random() & 0x30);
+            }
+            if (--arg0->unk8A == 0) {
+                func_800DABE4(0, D_80109898[arg0->unk2], 0x150);
+                func_800C813C(0xE, D_801098A8, arg0);
+            }
+        }
+        func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+        return;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 void func_800A56C0(struct ShotObj* arg0)
 {

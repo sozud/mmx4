@@ -11,7 +11,37 @@ void func_800BEBB4(struct ItemObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEBFC);
 
-INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BED6C);
+void func_800BED6C(struct ItemObj* arg0)
+{
+    s32 collision;
+    s8 index;
+
+    if (arg0->unk2 == 13) {
+        arg0->unk76 = -1;
+    }
+    D_8010C300[arg0->unk5](arg0);
+    func_8002B318(BASE_OBJECT(arg0), D_8010C250[arg0->unk2].width, D_8010C250[arg0->unk2].height);
+    func_8002E184(PLAYER_OBJECT(arg0));
+    index = arg0->unk2;
+    if (!((u8)D_8010C160[index].flags_and_palette & 0x80) && (index != 12 || arg0->unk5 == 3)) {
+        collision = func_8002DD04(MAIN_OBJECT(arg0));
+        if (collision < 0) {
+            if (arg0->unk2 == 12) {
+                func_800DABE4((u8)D_8010C160[12].sound_id, 0, 0);
+            }
+            arg0->on_screen = 0;
+            arg0->unk7C.timer = 60;
+            arg0->state++;
+            func_800C7DA4(15, D_8010C2C8, arg0, 0);
+            return;
+        }
+        if (collision > 0) {
+            arg0->unk42 |= 0x8000;
+        } else {
+            arg0->unk42 &= 0x7FFF;
+        }
+    }
+}
 
 void func_800BEED4(struct ItemObj* self)
 {
@@ -92,13 +122,6 @@ struct Item01StageEntry D_8010C160[15] = {
     { 0x0DB0, 0x00A8, 0x0CE0, 0x0168, 0x0168, 0x004F, 0x1C00, 0x000A },
     { 0x0EA0, 0x01E0, 0x0EA0, 0x03D0, 0x03D0, 0x00D0, 0x5000, 0x0000 },
     { 0x02F0, 0x0130, 0x0250, 0x0188, 0x0188, 0x0053, 0x2C00, 0x0000 },
-};
-
-struct Item01SpriteBounds {
-    u8 x_offset;
-    u8 y_offset;
-    u8 width;
-    u8 height;
 };
 
 struct Item01SpriteBounds D_8010C250[15] = {

@@ -76,7 +76,39 @@ void func_8004DF40(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004DFEC);
+void func_8004DFEC(struct MainObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        arg0->unk6++;
+        func_80015D60(arg0, 5);
+        arg0->unk7C = 0x3C;
+    case 1:
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->collision_data = D_801060F0;
+            arg0->unk54 = &D_800FBA54;
+            arg0->unk50 = &D_800FBA54;
+        }
+        if (--arg0->unk7C == 0) {
+            arg0->unk6++;
+            func_80015D60(arg0, 6);
+        }
+        break;
+    case 2:
+        if (arg0->animation_step.fields.relative_step == 0) {
+            func_80015D60(arg0, 1);
+            arg0->unk5 = 1;
+            arg0->collision_data = D_801069F4;
+            arg0->unk54 = &D_800FBA50;
+            arg0->unk50 = &D_800FBA50;
+            arg0->unk6 = 0;
+            arg0->ext.main_0.flags[0] = 0x78;
+            arg0->ext.main_0.background_relative &= 0xFE;
+        }
+        break;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+}
 
 void func_8004E128(struct MainObj* arg0)
 {
