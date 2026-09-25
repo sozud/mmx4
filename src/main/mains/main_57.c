@@ -2,35 +2,35 @@
 // 80072194..800743FC
 #include "common.h"
 
-extern u8** D_80100EB0[];
-extern u8 D_80100EBC[][4];
+extern u8** frost_walrus_scripts[];
+extern u8 frost_walrus_script_weights[][4];
 
-void func_800742AC(struct MainObj* arg0);
+void frost_walrus_choose_script(struct MainObj* arg0);
 
-void func_80072194(struct MainObj* arg0)
+void frost_walrus_update(struct MainObj* self)
 {
-    D_80101414[arg0->state](arg0);
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    frost_walrus_state_funcs[self->state](self);
+    CollisionRelated(PLAYER_OBJECT(self));
     if (!(g_Player.unk5C & 0x7F)) {
-        func_80074368(0x38);
+        frost_walrus_set_floor_tiles(0x38);
     }
 }
 
-void func_80072204(struct MainObj* arg0)
+void frost_walrus_start(struct MainObj* self)
 {
-    D_80101420[arg0->unk5](arg0);
+    frost_walrus_start_funcs[self->unk5](self);
 }
 
-void func_80072240(struct MainObj* arg0)
+void frost_walrus_start_warning(struct MainObj* self)
 {
     struct EffectObj* effect = find_free_effect_obj();
 
     if (effect != NULL) {
         effect->active = 1;
         effect->id = 0x18;
-        arg0->ext.main_57.effect = effect;
+        self->ext.main_57.effect = effect;
         func_80036AE4(0x14, 0x40);
-        arg0->unk5++;
+        self->unk5++;
     }
 }
 
@@ -38,20 +38,20 @@ INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800722A0);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072418);
 
-void func_800725DC(struct MainObj* arg0)
+void frost_walrus_reset(struct MainObj* self)
 {
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
+    self->unk5 = 3;
+    self->unk6 = 0;
 }
 
-void func_800725EC(struct BarObj* arg0)
+void frost_walrus_death(struct BarObj* self)
 {
-    D_80101458[arg0->unk5](arg0);
+    frost_walrus_death_funcs[self->unk5](self);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072628);
 
-void func_800726CC(struct MainObj* self)
+void frost_walrus_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
     s8 delay;
@@ -87,40 +87,40 @@ void func_800726CC(struct MainObj* self)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_800727C0);
 
-void func_800728C8(struct MainObj* arg0)
+void frost_walrus_intro(struct MainObj* self)
 {
-    D_80101464[arg0->unk6](arg0);
+    frost_walrus_intro_funcs[self->unk6](self);
 }
 
-void func_80072904(struct MainObj* arg0)
+void frost_walrus_intro_walk(struct MainObj* self)
 {
     s32 x_vel = FIXED(-0.75);
 
-    arg0->unk6++;
-    if (arg0->unk15 != 0) {
+    self->unk6++;
+    if (self->unk15 != 0) {
         x_vel = FIXED(0.75);
     }
-    arg0->unk20 = x_vel;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
+    self->unk20 = x_vel;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
     engine_obj.enable_boss = 1;
-    func_80015D60(arg0, 0x26);
+    func_80015D60(self, 0x26);
 }
 
-void func_80072960(struct MainObj* arg0)
+void frost_walrus_intro_approach(struct MainObj* self)
 {
     s16 temp_a0;
     s32 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 1) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->animation_step.fields.event == 1) {
         func_80028BAC(0x18, 2, 1);
-        func_8001540C(2, 0x91, arg0);
+        func_8001540C(2, 0x91, self);
     }
 
-    temp_a0 = arg0->x_pos.i.hi;
+    temp_a0 = self->x_pos.i.hi;
     temp_v0 = temp_a0 - g_Player.x_pos.i.hi;
     if (temp_v0 >= 0) {
         if (temp_v0 < 0xC1) {
@@ -131,68 +131,68 @@ void func_80072960(struct MainObj* arg0)
 
     if (g_Player.x_pos.i.hi - temp_a0 < 0xC1) {
     update:
-        arg0->unk20 = 0;
-        func_80015D60(arg0, 1);
-        arg0->unk6++;
+        self->unk20 = 0;
+        func_80015D60(self, 1);
+        self->unk6++;
     }
 }
 
-void func_80072A14(struct MainObj* arg0)
+void frost_walrus_intro_roar(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, self);
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 0x4);
-        arg0->unk7C = 0x50;
-        arg0->unk6++;
+    if (self->animation_step.fields.relative_step == 0) {
+        func_80015D60(self, 0x4);
+        self->unk7C = 0x50;
+        self->unk6++;
     }
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80072A84);
 
-void func_80072BCC(struct MainObj* arg0)
+void frost_walrus_intro_start_health_bar(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (abc_object.unkC == 0) {
-        arg0->unk7E = 3;
-        arg0->unk6++;
+        self->unk7E = 3;
+        self->unk6++;
         func_800921E8(1);
     }
 }
 
-void func_80072C20(struct MainObj* arg0)
+void frost_walrus_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (func_8009227C() != 0) {
         return;
     }
-    if (--arg0->unk7E == 0) {
+    if (--self->unk7E == 0) {
         func_8001540C(0, 0xE, NULL);
-        arg0->unk7E = 3;
+        self->unk7E = 3;
     }
-    if (++arg0->unk5C == 0x30) {
-        func_800742AC(arg0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->unk7E = 0;
+    if (++self->unk5C == 0x30) {
+        frost_walrus_choose_script(self);
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->unk7E = 0;
         func_80036B18();
     }
 }
 
-void func_80072CC4(struct MainObj* arg0)
+void frost_walrus_think(struct MainObj* self)
 {
-    D_8010147C[arg0->unk6](arg0);
-    func_8007427C(arg0);
+    frost_walrus_think_funcs[self->unk6](self);
+    frost_walrus_face_player(self);
 }
 
-void func_80072D14(struct MainObj* self)
+void frost_walrus_think_next(struct MainObj* self)
 {
     u8 value;
 
     if (*self->ext.main_57.script == 0xFF) {
-        func_800742AC(self);
+        frost_walrus_choose_script(self);
     }
 
     value = *self->ext.main_57.script;
@@ -208,58 +208,58 @@ void func_80072D14(struct MainObj* self)
     self->ext.main_57.script++;
 }
 
-void func_80072DB0(struct MainObj* arg0)
+void frost_walrus_think_pause(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C <= 0) {
-        arg0->unk6 = 0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C <= 0) {
+        self->unk6 = 0;
     }
 }
 
-void func_80072DF8(struct MainObj* arg0)
+void frost_walrus_charge(struct MainObj* self)
 {
-    D_80101484[arg0->unk6](arg0);
+    frost_walrus_charge_funcs[self->unk6](self);
 }
 
-void func_80072E34(struct MainObj* arg0)
+void frost_walrus_charge_start(struct MainObj* self)
 {
     s32 var_v1;
 
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk6 = (u8)arg0->unk6 + 1;
-    if (arg0->ext.main_57.unk92 != 0) {
-        func_80015D60(arg0, 0x17);
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk6 = (u8)self->unk6 + 1;
+    if (self->ext.main_57.tusks_broken != 0) {
+        func_80015D60(self, 0x17);
         var_v1 = -0x18000;
-        if (arg0->unk15 != 0) {
+        if (self->unk15 != 0) {
             var_v1 = 0x18000;
         }
-        arg0->unk54 = (u8*)&D_80101340;
-        arg0->unk20 = var_v1;
-        arg0->unk50 = (u8*)&D_80101348;
-        func_8001540C(2, 0x93, arg0);
-        arg0->unk6 = 3;
+        self->unk54 = (u8*)&D_80101340;
+        self->unk20 = var_v1;
+        self->unk50 = (u8*)&D_80101348;
+        func_8001540C(2, 0x93, self);
+        self->unk6 = 3;
         return;
     }
-    arg0->unk54 = (u8*)&D_8010133C;
-    arg0->unk50 = (u8*)&D_80101344;
-    func_80015D60(arg0, 1);
+    self->unk54 = (u8*)&D_8010133C;
+    self->unk50 = (u8*)&D_80101344;
+    func_80015D60(self, 1);
 }
 
-void func_80072EF8(struct MainObj* arg0)
+void frost_walrus_charge_windup(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, self);
     }
-    if (arg0->animation_step.fields.event == 2) {
-        func_80015D60(arg0, 2);
-        arg0->unk6++;
+    if (self->animation_step.fields.event == 2) {
+        func_80015D60(self, 2);
+        self->unk6++;
     }
 }
 
-void func_80072F68(struct MainObj* self)
+void frost_walrus_charge_run(struct MainObj* self)
 {
     s32 value;
 
@@ -277,224 +277,224 @@ void func_80072F68(struct MainObj* self)
     }
 }
 
-void func_80072FF0(struct MainObj* arg0)
+void frost_walrus_charge_slide(struct MainObj* self)
 {
     s32 mask;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
     mask = 2;
-    if (arg0->unk15 != 0) {
+    if (self->unk15 != 0) {
         mask = 1;
     }
-    if (mask & arg0->unk70) {
-        func_80074368(0x39);
+    if (mask & self->unk70) {
+        frost_walrus_set_floor_tiles(0x39);
         func_80028B68(0x1E, 4, 1);
-        func_8001540C(2, 0x90, arg0);
-        arg0->unk7C = 0x28;
-        arg0->unk6++;
+        func_8001540C(2, 0x90, self);
+        self->unk7C = 0x28;
+        self->unk6++;
     }
 }
 
-void func_80073084(struct MainObj* arg0)
+void frost_walrus_charge_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C <= 0) {
-        arg0->unk54 = (const u8*)&D_8010133C;
-        arg0->unk50 = (const u8*)&D_80101344;
-        func_80074368(0x38);
-        func_80015D60(arg0, 3);
-        arg0->unk6++;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C <= 0) {
+        self->unk54 = (const u8*)&D_8010133C;
+        self->unk50 = (const u8*)&D_80101344;
+        frost_walrus_set_floor_tiles(0x38);
+        func_80015D60(self, 3);
+        self->unk6++;
     }
 }
 
-void func_80073100(struct MainObj* arg0)
+void frost_walrus_charge_finish(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        if (arg0->ext.main_57.unk92 == 0) {
-            func_80015D60(arg0, 0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->ext.main_57.tusks_broken == 0) {
+            func_80015D60(self, 0);
         }
-        func_8007427C(arg0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+        frost_walrus_face_player(self);
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80073164(struct MainObj* arg0)
+void frost_walrus_leap(struct MainObj* self)
 {
-    D_8010149C[arg0->unk6](arg0);
+    frost_walrus_leap_funcs[self->unk6](self);
 }
 
-void func_800731A0(struct MainObj* arg0)
+void frost_walrus_leap_start(struct MainObj* self)
 {
     s32 x_vel = FIXED(-3);
 
-    if (arg0->unk15 != 0) {
+    if (self->unk15 != 0) {
         x_vel = FIXED(3);
     }
-    arg0->unk24 = FIXED(6.5);
-    arg0->unk2C = FIXED(0.2578125);
-    arg0->unk54 = (const u8*)&D_8010133C;
-    arg0->unk20 = x_vel;
-    arg0->unk28 = 0;
-    arg0->unk50 = (const u8*)&D_80101344;
-    func_80015D60(arg0, 1);
-    arg0->ext.main_57.unk90 = 0;
-    arg0->unk6++;
+    self->unk24 = FIXED(6.5);
+    self->unk2C = FIXED(0.2578125);
+    self->unk54 = (const u8*)&D_8010133C;
+    self->unk20 = x_vel;
+    self->unk28 = 0;
+    self->unk50 = (const u8*)&D_80101344;
+    func_80015D60(self, 1);
+    self->ext.main_57.leap_grounded = 0;
+    self->unk6++;
 }
 
-void func_80073228(struct MainObj* arg0)
+void frost_walrus_leap_windup(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, self);
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 2);
-        arg0->unk6++;
+    if (self->animation_step.fields.relative_step == 0) {
+        func_80015D60(self, 2);
+        self->unk6++;
     }
 }
 
-void func_80073294(struct MainObj* arg0)
+void frost_walrus_leap_jump(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk54 = (const u8*)&D_80101340;
-        arg0->unk50 = (const u8*)&D_80101348;
-        if (arg0->unk70 & 8) {
-            arg0->ext.main_57.unk90 = 1;
-            arg0->unk67 = 1;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        self->unk54 = (const u8*)&D_80101340;
+        self->unk50 = (const u8*)&D_80101348;
+        if (self->unk70 & 8) {
+            self->ext.main_57.leap_grounded = 1;
+            self->unk67 = 1;
         }
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_8007330C(struct MainObj* arg0)
+void frost_walrus_leap_air(struct MainObj* self)
 {
     s32 side_mask;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk67 == 1 && arg0->unk24 < 0) {
-        arg0->unk67 = -1;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk67 == 1 && self->unk24 < 0) {
+        self->unk67 = -1;
     }
-    if (arg0->unk67 == -1 && (arg0->unk70 & 8)) {
-        func_8001540C(2, 0x90, arg0);
-        func_8001540C(2, 0x93, arg0);
+    if (self->unk67 == -1 && (self->unk70 & 8)) {
+        func_8001540C(2, 0x90, self);
+        func_8001540C(2, 0x93, self);
         func_80028BAC(0x18, 3, 1);
-        arg0->unk67 = 0;
+        self->unk67 = 0;
     }
-    if (arg0->unk67 == 0) {
+    if (self->unk67 == 0) {
         side_mask = 2;
-        if (arg0->unk15 != 0) {
+        if (self->unk15 != 0) {
             side_mask = 1;
         }
-        if (side_mask & arg0->unk70) {
-            func_80074368(0x39);
-            func_8001540C(2, 0x90, arg0);
+        if (side_mask & self->unk70) {
+            frost_walrus_set_floor_tiles(0x39);
+            func_8001540C(2, 0x90, self);
             func_80028B68(0x1E, 4, 1);
-            arg0->unk7C = 0x28;
-            arg0->unk6++;
+            self->unk7C = 0x28;
+            self->unk6++;
         }
     }
 }
 
-void func_8007342C(struct MainObj* arg0)
+void frost_walrus_leap_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C <= 0) {
-        arg0->unk54 = (const u8*)&D_8010133C;
-        arg0->unk50 = (const u8*)&D_80101344;
-        func_80074368(0x38);
-        func_80015D60(arg0, 3);
-        arg0->unk6++;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C <= 0) {
+        self->unk54 = (const u8*)&D_8010133C;
+        self->unk50 = (const u8*)&D_80101344;
+        frost_walrus_set_floor_tiles(0x38);
+        func_80015D60(self, 3);
+        self->unk6++;
     }
 }
 
-void func_800734A8(struct MainObj* arg0)
+void frost_walrus_leap_finish(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 0);
-        func_8007427C(arg0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->ext.main_57.unk90 = 0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        func_80015D60(self, 0);
+        frost_walrus_face_player(self);
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->ext.main_57.leap_grounded = 0;
     }
 }
 
-void func_80073500(struct MainObj* arg0)
+void frost_walrus_walk(struct MainObj* self)
 {
-    D_801014B4[arg0->unk6](arg0);
+    frost_walrus_walk_funcs[self->unk6](self);
 }
 
-void func_8007353C(struct MainObj* arg0)
+void frost_walrus_walk_start(struct MainObj* self)
 {
     s32 x_vel = FIXED(-0.75);
 
-    arg0->unk6++;
-    if (arg0->unk15 != 0) {
+    self->unk6++;
+    if (self->unk15 != 0) {
         x_vel = FIXED(0.75);
     }
-    arg0->unk20 = x_vel;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    func_80015D60(arg0, 6);
-    arg0->unk54 = (const u8*)&D_8010133C;
-    arg0->unk50 = (const u8*)&D_80101344;
-    arg0->unk7C = 0x80;
+    self->unk20 = x_vel;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    func_80015D60(self, 6);
+    self->unk54 = (const u8*)&D_8010133C;
+    self->unk50 = (const u8*)&D_80101344;
+    self->unk7C = 0x80;
 }
 
-void func_800735BC(struct MainObj* arg0)
+void frost_walrus_walk_stomp(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 1) {
-        func_8001540C(2, 0x92, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 1) {
+        func_8001540C(2, 0x92, self);
         func_80028BAC(0x18, 3, 1);
     }
-    if (arg0->animation_step.fields.event != 2) {
-        func_8002B718(MOVING_OBJECT(arg0));
+    if (self->animation_step.fields.event != 2) {
+        func_8002B718(MOVING_OBJECT(self));
     }
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer <= 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80073650(struct MainObj* arg0)
+void frost_walrus_shards(struct MainObj* self)
 {
-    D_801014BC[arg0->unk6](arg0);
+    frost_walrus_shards_funcs[self->unk6](self);
 }
 
-void func_8007368C(struct MainObj* arg0)
+void frost_walrus_shards_start(struct MainObj* self)
 {
-    func_80015D60(arg0, 7);
-    arg0->unk54 = (const u8*)&D_8010133C;
-    arg0->unk50 = (const u8*)&D_80101344;
-    arg0->unk6++;
+    func_80015D60(self, 7);
+    self->unk54 = (const u8*)&D_8010133C;
+    self->unk50 = (const u8*)&D_80101344;
+    self->unk6++;
 }
 
-void func_800736DC(struct MainObj* arg0)
+void frost_walrus_shards_count(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->ext.main_57.unk90 = 0;
-        if (arg0->unk5C >= 0x18) {
-            arg0->ext.main_57.unk91 = 4;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->ext.main_57.leap_grounded = 0;
+        if (self->unk5C >= 0x18) {
+            self->ext.main_57.shard_count = 4;
         } else {
-            arg0->ext.main_57.unk91 = 8;
+            self->ext.main_57.shard_count = 8;
         }
-        arg0->unk7C = 0;
-        arg0->unk6++;
+        self->unk7C = 0;
+        self->unk6++;
     }
 }
 
-void func_80073748(struct MainObj* arg0)
+void frost_walrus_shards_fire(struct MainObj* self)
 {
     u8 i;
     struct ShotObj* shot;
@@ -505,330 +505,330 @@ void func_80073748(struct MainObj* arg0)
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0x23;
-            shot->unk2 = i + arg0->unk7C;
-            shot->unk7C = WEAPON_OBJECT(arg0);
-            shot->unk7 = arg0->ext.main_57.unk91;
-            arg0->ext.main_57.shot = shot;
+            shot->unk2 = i + self->unk7C;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk7 = self->ext.main_57.shard_count;
+            self->ext.main_57.shot = shot;
         }
         i++;
     } while (i < 2);
 
-    arg0->unk7E = 0x20;
-    arg0->unk7C += 2;
-    arg0->unk6++;
+    self->unk7E = 0x20;
+    self->unk7C += 2;
+    self->unk6++;
 }
 
-void func_800737FC(struct MainObj* arg0)
+void frost_walrus_shards_repeat(struct MainObj* self)
 {
-    if (arg0->unk7E != 0) {
-        arg0->unk7E--;
+    if (self->unk7E != 0) {
+        self->unk7E--;
         return;
     }
-    if (arg0->unk7C == arg0->ext.main_57.unk91) {
-        func_80015D60(arg0, 1);
-        arg0->unk7C = 0;
-        arg0->unk6++;
+    if (self->unk7C == self->ext.main_57.shard_count) {
+        func_80015D60(self, 1);
+        self->unk7C = 0;
+        self->unk6++;
     } else {
-        arg0->unk6--;
+        self->unk6--;
     }
 }
 
-void func_80073878(struct MainObj* arg0)
+void frost_walrus_shards_finish(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 3) {
+        func_8001540C(2, 0x92, self);
     }
-    if (arg0->animation_step.fields.event == 2) {
-        func_80015D60(arg0, 0x1A);
-        arg0->unk7C = 0x40;
-        arg0->unk6++;
-    }
-}
-
-void func_800738EC(struct MainObj* arg0)
-{
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    if (self->animation_step.fields.event == 2) {
+        func_80015D60(self, 0x1A);
+        self->unk7C = 0x40;
+        self->unk6++;
     }
 }
 
-void func_80073938(struct MainObj* arg0)
+void frost_walrus_shards_wait(struct MainObj* self)
 {
-    D_801014D4[arg0->unk6](arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+    }
 }
 
-void func_80073974(struct MainObj* arg0)
+void frost_walrus_breath(struct MainObj* self)
 {
-    func_80015D60(arg0, 4);
-    arg0->unk54 = (const u8*)&D_8010133C;
-    arg0->unk50 = (const u8*)&D_80101344;
-    arg0->unk7C = 0x80;
-    arg0->unk7E = 0x18;
-    arg0->unk6++;
+    frost_walrus_breath_funcs[self->unk6](self);
 }
 
-void func_800739D4(struct MainObj* arg0)
+void frost_walrus_breath_start(struct MainObj* self)
+{
+    func_80015D60(self, 4);
+    self->unk54 = (const u8*)&D_8010133C;
+    self->unk50 = (const u8*)&D_80101344;
+    self->unk7C = 0x80;
+    self->unk7E = 0x18;
+    self->unk6++;
+}
+
+void frost_walrus_breath_blow(struct MainObj* self)
 {
     struct VisualObj* vobj;
     struct ShotObj* sobj;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 
-    if (--arg0->unk7E == 0) {
-        func_8001540C(2, 0x94, arg0);
-        arg0->unk7E = 0x18;
+    if (--self->unk7E == 0) {
+        func_8001540C(2, 0x94, self);
+        self->unk7E = 0x18;
     }
 
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0x30;
-        arg0->unk6++;
+    if (--self->unk7C == 0) {
+        self->unk7C = 0x30;
+        self->unk6++;
     }
 
-    if (arg0->animation_step.fields.event == 2) {
+    if (self->animation_step.fields.event == 2) {
         vobj = find_free_visual_obj();
         if (vobj != NULL) {
             vobj->active = 0x41;
             vobj->id = 0x18;
             vobj->unk2 = 0x10;
-            vobj->unk15 = arg0->unk15;
-            vobj->unk50 = arg0;
-            vobj->x_pos.i.hi = arg0->x_pos.i.hi + (arg0->unk15 ? 0x15 : -0x15);
-            vobj->y_pos.i.hi = arg0->y_pos.i.hi;
+            vobj->unk15 = self->unk15;
+            vobj->unk50 = self;
+            vobj->x_pos.i.hi = self->x_pos.i.hi + (self->unk15 ? 0x15 : -0x15);
+            vobj->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
 
-    if (arg0->unk7C == 0x40) {
+    if (self->unk7C == 0x40) {
         sobj = find_free_shot_obj();
         if (sobj != NULL) {
             sobj->active = 0x41;
             sobj->id = 0x23;
             sobj->unk2 = 0x10;
-            sobj->unk7C = arg0;
-            arg0->ext.main_57.shot = sobj;
+            sobj->unk7C = self;
+            self->ext.main_57.shot = sobj;
         }
     }
 }
 
-void func_80073B00(struct MainObj* arg0)
+void frost_walrus_breath_wait(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 1);
-        arg0->unk6++;
+    if (--self->unk7C == 0) {
+        func_80015D60(self, 1);
+        self->unk6++;
     }
 }
 
-void func_80073B58(struct MainObj* arg0)
+void frost_walrus_breath_launch(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->ext.main_57.shot->unk8C.word = arg0->animation_step.fields.event;
-        func_800C813C(0xA, D_801013BC, arg0->ext.main_57.shot);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 1) {
+        self->ext.main_57.shot->unk8C.word = self->animation_step.fields.event;
+        func_800C813C(0xA, D_801013BC, self->ext.main_57.shot);
     }
-    if (arg0->animation_step.fields.event == 2) {
-        func_80015D60(arg0, 0);
-        arg0->unk7C = 0x20;
-        arg0->unk6++;
-    }
-}
-
-void func_80073BDC(struct MainObj* arg0)
-{
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    if (self->animation_step.fields.event == 2) {
+        func_80015D60(self, 0);
+        self->unk7C = 0x20;
+        self->unk6++;
     }
 }
 
-void func_80073C08(struct MainObj* arg0)
+void frost_walrus_breath_finish(struct MainObj* self)
 {
-    D_801014E8[arg0->unk6](arg0);
+    if (--self->unk7C == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+    }
 }
 
-void func_80073C44(struct MainObj* arg0)
+void frost_walrus_blizzard(struct MainObj* self)
 {
-    func_80015D60(arg0, 0x16);
-    arg0->unk54 = (const u8*)&D_8010133C;
-    arg0->unk50 = (const u8*)&D_80101344;
-    arg0->unk7C = 0x100;
-    arg0->unk7E = 0x18;
-    arg0->unk6++;
+    frost_walrus_blizzard_funcs[self->unk6](self);
 }
 
-void func_80073CA4(struct MainObj* arg0)
+void frost_walrus_blizzard_start(struct MainObj* self)
+{
+    func_80015D60(self, 0x16);
+    self->unk54 = (const u8*)&D_8010133C;
+    self->unk50 = (const u8*)&D_80101344;
+    self->unk7C = 0x100;
+    self->unk7E = 0x18;
+    self->unk6++;
+}
+
+void frost_walrus_blizzard_blow(struct MainObj* self)
 {
     struct VisualObj* vobj;
     struct ShotObj* sobj;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 
-    if (--arg0->unk7E == 0) {
-        func_8001540C(2, 0x94, arg0);
-        arg0->unk7E = 0x18;
+    if (--self->unk7E == 0) {
+        func_8001540C(2, 0x94, self);
+        self->unk7E = 0x18;
     }
 
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 0x16);
-        arg0->unk7C = 0x80;
-        arg0->unk6++;
+    if (--self->unk7C == 0) {
+        func_80015D60(self, 0x16);
+        self->unk7C = 0x80;
+        self->unk6++;
     }
 
-    if (arg0->animation_step.fields.event == 2) {
+    if (self->animation_step.fields.event == 2) {
         vobj = find_free_visual_obj();
         if (vobj != NULL) {
             vobj->active = 0x41;
             vobj->id = 0x18;
             vobj->unk2 = 0x30;
-            vobj->unk15 = arg0->unk15;
-            vobj->unk50 = arg0;
-            vobj->x_pos.i.hi = arg0->x_pos.i.hi + (arg0->unk15 ? 0x15 : -0x15);
-            vobj->y_pos.i.hi = arg0->y_pos.i.hi;
+            vobj->unk15 = self->unk15;
+            vobj->unk50 = self;
+            vobj->x_pos.i.hi = self->x_pos.i.hi + (self->unk15 ? 0x15 : -0x15);
+            vobj->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
 
-    if (arg0->unk7C == 0x40) {
+    if (self->unk7C == 0x40) {
         sobj = find_free_shot_obj();
         if (sobj != NULL) {
             sobj->active = 0x41;
             sobj->id = 0x23;
             sobj->unk2 = 0x20;
-            sobj->unk7C = arg0;
-            arg0->ext.main_57.shot = sobj;
+            sobj->unk7C = self;
+            self->ext.main_57.shot = sobj;
         }
     }
 }
 
-void func_80073DDC(struct MainObj* arg0)
+void frost_walrus_blizzard_wait(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0x60;
-        arg0->unk6++;
+    if (--self->unk7C == 0) {
+        self->unk7C = 0x60;
+        self->unk6++;
     }
 }
 
-void func_80073E10(struct MainObj* arg0)
+void frost_walrus_blizzard_finish(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    if (--self->unk7C == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80073E3C(struct MainObj* arg0)
+void frost_walrus_blizzard_idle(struct MainObj* self)
 {
 }
 
-void func_80073E44(struct MainObj* arg0)
+void frost_walrus_stagger(struct MainObj* self)
 {
-    D_801014FC[arg0->unk6](arg0);
+    frost_walrus_stagger_funcs[self->unk6](self);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_57", func_80073E80);
 
-void func_80073F90(struct MainObj* arg0)
+void frost_walrus_stagger_fall(struct MainObj* self)
 {
     struct VisualObj* temp_v0;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
-        arg0->unk67 = -1;
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk24 < 0) {
+        self->unk67 = -1;
     }
-    if ((arg0->unk67 == -1) && (arg0->unk70 & 8)) {
-        func_80015D60(arg0, 0x14);
-        if (arg0->ext.main_57.unk92 == 0) {
+    if ((self->unk67 == -1) && (self->unk70 & 8)) {
+        func_80015D60(self, 0x14);
+        if (self->ext.main_57.tusks_broken == 0) {
             temp_v0 = find_free_visual_obj();
             if (temp_v0 != 0) {
                 temp_v0->active = 0x41;
                 temp_v0->id = 0x18;
                 temp_v0->unk2 = 0x50;
-                temp_v0->unk15 = arg0->unk15;
-                temp_v0->unk50 = PLAYER_OBJECT(arg0);
-                arg0->ext.main_57.unk92 = 1;
+                temp_v0->unk15 = self->unk15;
+                temp_v0->unk50 = PLAYER_OBJECT(self);
+                self->ext.main_57.tusks_broken = 1;
             }
         }
-        arg0->unk67 = 0;
+        self->unk67 = 0;
         func_80028BAC(0x10, 3, 1);
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_80074068(struct MainObj* arg0)
+void frost_walrus_stagger_slide(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->unk70 & 3) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->unk70 & 3) {
         func_80028B68(0x10, 3, 1);
-        arg0->unk7C = 0x20;
-        arg0->unk6++;
+        self->unk7C = 0x20;
+        self->unk6++;
     }
 }
 
-void func_800740CC(struct MainObj* arg0)
+void frost_walrus_stagger_recover(struct MainObj* self)
 {
-    if (--arg0->unk7C != 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (--self->unk7C != 0) {
+        func_80015DC8(ANIMATED_OBJECT(self));
         return;
     }
-    if (arg0->unk5C >= 0x18) {
-        arg0->ext.main_57.script = D_80100E78;
+    if (self->unk5C >= 0x18) {
+        self->ext.main_57.script = frost_walrus_script_recover_high;
     } else {
-        arg0->ext.main_57.script = D_80100E7C;
+        self->ext.main_57.script = frost_walrus_script_recover_low;
     }
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
-    arg0->ext.main_57.unk93 = 0;
-    arg0->ext.main_57.unk94 = 1;
+    self->unk5 = 3;
+    self->unk6 = 0;
+    self->ext.main_57.flashing = 0;
+    self->ext.main_57.flash_timer = 1;
 }
 
-void func_80074158(struct MainObj* arg0)
+void frost_walrus_regrow(struct MainObj* self)
 {
-    D_8010150C[arg0->unk6](arg0);
+    frost_walrus_regrow_funcs[self->unk6](self);
 }
 
-void func_80074194(struct MainObj* arg0)
+void frost_walrus_regrow_start(struct MainObj* self)
 {
     struct VisualObj* visual;
 
-    arg0->collision_data = (const u16*)D_801060F0;
+    self->collision_data = (const u16*)D_801060F0;
     visual = find_free_visual_obj();
     if (visual != NULL) {
         visual->active = 0x41;
         visual->id = 0x18;
         visual->unk2 = 0x20;
-        visual->unk15 = arg0->unk15;
-        visual->unk50 = PLAYER_OBJECT(arg0);
-        visual->x_pos.u.hi = arg0->x_pos.u.hi;
-        visual->y_pos.u.hi = arg0->y_pos.u.hi;
-        func_80015D60(arg0, 0x19);
-        arg0->unk6++;
+        visual->unk15 = self->unk15;
+        visual->unk50 = PLAYER_OBJECT(self);
+        visual->x_pos.u.hi = self->x_pos.u.hi;
+        visual->y_pos.u.hi = self->y_pos.u.hi;
+        func_80015D60(self, 0x19);
+        self->unk6++;
     }
 }
 
-void func_80074220(struct MainObj* arg0)
+void frost_walrus_regrow_finish(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->collision_data = (const u16*)D_80107A78;
-        arg0->ext.main_57.unk94 = 0;
-        arg0->ext.main_57.unk92 = 0;
-        arg0->ext.main_57.unk95 = 0;
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->collision_data = (const u16*)D_80107A78;
+        self->ext.main_57.flash_timer = 0;
+        self->ext.main_57.tusks_broken = 0;
+        self->ext.main_57.staggered = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_8007427C(struct MainObj* arg0)
+void frost_walrus_face_player(struct MainObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
-void func_800742AC(struct MainObj* arg0)
+void frost_walrus_choose_script(struct MainObj* self)
 {
     u8 index;
     u8** choices;
@@ -836,34 +836,34 @@ void func_800742AC(struct MainObj* arg0)
     u8 i;
     u32 rnd;
 
-    index = (arg0->unk5C - 1) / 16;
-    choices = D_80100EB0[index];
+    index = (self->unk5C - 1) / 16;
+    choices = frost_walrus_scripts[index];
     rnd = get_random();
     i = 0;
-    thresholds = D_80100EBC[index];
+    thresholds = frost_walrus_script_weights[index];
     rnd &= 0xF;
     while (i < 4) {
         if (rnd < thresholds[i]) {
-            arg0->ext.main_57.script = choices[i];
+            self->ext.main_57.script = choices[i];
             return;
         }
         i++;
     }
 }
 
-void func_80074368(s32 arg0)
+void frost_walrus_set_floor_tiles(s32 self)
 {
     u16* list;
     u32* attrs;
 
-    list = D_801013C8;
+    list = frost_walrus_floor_tiles;
     if (engine_obj.stage == 0xC) {
-        list = D_801013EC;
+        list = frost_walrus_floor_tiles_rush;
     }
     while (*list != 0) {
         attrs = SP_BG_TILE_ATTRS;
         attrs[*list] &= ~0xFF;
-        attrs[*list] |= arg0;
+        attrs[*list] |= self;
         list++;
     }
 }

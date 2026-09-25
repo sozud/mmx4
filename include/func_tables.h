@@ -241,7 +241,7 @@ void func_80061590(struct MainObj* arg0);
 void func_80061DC0(struct MainObj* arg0);
 void func_800623C4(struct MainObj* arg0);
 void func_80062D60(struct MainObj* arg0);
-void func_800631C8(struct MainObj* arg0);
+void web_spider_update(struct MainObj* arg0);
 void func_80065930(struct MainObj* arg0);
 void func_80065B8C(struct MainObj* arg0);
 void func_80066A48(struct MainObj* arg0);
@@ -254,16 +254,16 @@ void func_8006A50C(struct MainObj* arg0);
 void func_8006BAC4(struct MainObj* arg0);
 void func_8006BB00(struct MainObj* arg0);
 void func_8006FAE4(struct MainObj* arg0);
-void func_80072158(struct MainObj* arg0);
-void func_80072194(struct MainObj* arg0);
+void jet_stingray_update(struct MainObj* arg0);
+void frost_walrus_update(struct MainObj* arg0);
 void func_800743FC(struct MainObj* arg0);
 void func_80074FE0(struct MainObj *arg0);
-void func_8007501C(struct MainObj *arg0);
-void func_8007872C(struct MainObj *arg0);
+void storm_owl_update(struct MainObj *arg0);
+void split_mushroom_update(struct MainObj *arg0);
 void func_8007BFB8(struct MainObj *arg0);
 void func_8007C2D0(struct MainObj *arg0);
-void func_8007DC18(struct MainObj *arg0);
-void func_80080640(struct MainObj* arg0);
+void cyber_peacock_update(struct MainObj *arg0);
+void magma_dragoon_update(struct MainObj* arg0);
 void func_800806A0(struct MainObj* arg0);
 void func_80082434(struct MainObj *arg0);
 void func_80085ECC(struct MainObj* arg0);
@@ -2249,80 +2249,80 @@ void func_80062E90(struct MainObj* arg0);
 void func_80062F60(struct MainObj* arg0);
 void func_800630AC(struct MainObj* arg0);
 
-// D_800FF6E4
-void func_80063234(struct MainObj*);
+// web_spider_state_funcs
+void web_spider_intro(struct MainObj*);
 void func_8006398C(struct MainObj*);
-void func_80065538(struct MainObj*);
+void web_spider_death(struct MainObj*);
 
-// D_800FF6F0
+// spiderling_state_funcs
 void func_80065574(struct MainObj*);
-void func_8006565C(struct MainObj*);
-void func_80065910(struct MainObj* arg0);
+void spiderling_run(struct MainObj*);
+void spiderling_despawn(struct MainObj* arg0);
 
-// D_800FF6FC
-void func_800632A4(struct MainObj*);
+// web_spider_intro_funcs
+void web_spider_intro_warning(struct MainObj*);
 void func_80063334(struct MainObj*);
 void func_8006346C(struct MainObj*);
-void func_80063600(struct MainObj*);
-void func_8006364C(struct MainObj*);
-void func_800636A0(struct MainObj*);
-void func_800637A8(struct MainObj*);
-void func_80063814(struct MainObj*);
-void func_80063854(struct MainObj*);
-void func_80063914(struct MainObj*);
+void web_spider_intro_spawn_thread(struct MainObj*);
+void web_spider_intro_wait(struct MainObj*);
+void web_spider_intro_descend(struct MainObj*);
+void web_spider_intro_pose(struct MainObj*);
+void web_spider_intro_start_health_bar(struct MainObj*);
+void web_spider_intro_fill_health(struct MainObj*);
+void web_spider_intro_climb(struct MainObj*);
 
-// D_800FF734
+// web_spider_step_funcs
 void func_8009216C(void* arg0);
-void func_80064AE8(struct MainObj* arg0);
-void func_80063AE4(struct MainObj* arg0);
-void func_80063F80(struct MainObj* arg0);
-void func_800640B4(struct MainObj* arg0);
-void func_80064360(struct MainObj* arg0);
-void func_800646B0(struct MainObj* arg0);
+void web_spider_fall(struct MainObj* arg0);
+void web_spider_drop(struct MainObj* arg0);
+void web_spider_shoot(struct MainObj* arg0);
+void web_spider_swing(struct MainObj* arg0);
+void web_spider_attack(struct MainObj* arg0);
+void web_spider_big_web(struct MainObj* arg0);
 
-// D_800FF750
+// web_spider_drop_funcs
 void func_80063B20(struct MainObj*);
 void func_80063DD8(struct MainObj*);
 void func_80063DD8(struct MainObj*);
 
-// D_800FF75C
-void func_80063FBC(struct MainObj*);
-void func_80063FE4(struct AnimatedObj*);
-void func_80064FD8(struct AnimatedObj*);
-void func_80065088(struct AnimatedObj*, u8);
+// web_spider_shoot_funcs
+void web_spider_shoot_start(struct MainObj*);
+void web_spider_shoot_fire(struct AnimatedObj*);
+void web_spider_spawn_web_flash(struct AnimatedObj*);
+void web_spider_spawn_web_shot(struct AnimatedObj*, u8);
 
-// D_800FF768
-void func_800640F0(struct MainObj*);
+// web_spider_swing_funcs
+void web_spider_swing_start(struct MainObj*);
 void func_80064154(struct MainObj*);
-void func_80064338(struct MainObj*);
+void web_spider_swing_wait(struct MainObj*);
 
-// D_800FF784
+// web_spider_big_web_funcs
 void func_800646EC(struct MainObj*);
-void func_800648D0(struct MainObj*);
-void func_80064F24(struct VisualObj*, u8);
-void func_800649C0(struct MainObj*);
+void web_spider_big_web_spin(struct MainObj*);
+void web_spider_spawn_web_piece(struct VisualObj*, u8);
+void web_spider_big_web_center(struct MainObj*);
 
-// D_800FF790
-extern void (*D_800FF790[])(struct MainObj*);
-void func_80064B38(struct MainObj*);
-void func_80064BA8(struct MainObj*);
-void func_80064C0C(struct MainObj*);
-void func_80064C84(struct MainObj*);
-void func_80064CF4(struct MainObj*);
+// web_spider_fall_funcs
+extern void (*web_spider_fall_funcs[])(struct MainObj*);
+void web_spider_fall_start(struct MainObj*);
+void web_spider_fall_slow(struct MainObj*);
+void web_spider_fall_land(struct MainObj*);
+void web_spider_fall_crash(struct MainObj*);
+void web_spider_fall_rethread(struct MainObj*);
 
-// D_800FF7AC
-void func_8006528C(struct MainObj*);
-void func_8006530C(struct MainObj*);
-void func_8006537C(struct MainObj*);
-void func_80065458(struct MainObj*);
+// web_spider_death_funcs
+void web_spider_set_attack_cooldown(struct MainObj*);
+void web_spider_death_start(struct MainObj*);
+void web_spider_death_explode(struct MainObj*);
+void web_spider_death_finish(struct MainObj*);
 
-// D_800FF7F8
-extern void (*D_800FF7F8[])(struct MainObj*);
+// spiderling_step_funcs
+extern void (*spiderling_step_funcs[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_8009216C(void* arg0);
-void func_80065704(struct MainObj* arg0);
-void func_80065794(struct MainObj* arg0);
-void func_80065898(struct MainObj* arg0);
+void spiderling_fall(struct MainObj* arg0);
+void spiderling_crawl(struct MainObj* arg0);
+void spiderling_leave(struct MainObj* arg0);
 
 // D_800FF87C
 void func_8006596C(void);
@@ -2690,202 +2690,202 @@ void func_8006FA24(struct MainObj*);
 void func_8006FABC(struct MainObj* arg0);
 struct MainObj* func_8006FB20(struct MainObj*, s32, s32);
 
-// D_80100D44
-extern s8 D_80100D40[];
-extern void (*D_80100D44[])(struct MainObj*);
+// jet_stingray_intro_funcs
+extern s8 jet_stingray_bubble_offsets[];
+extern void (*jet_stingray_intro_funcs[])(struct MainObj*);
 void func_8006FD50(struct MainObj*);
-void func_8006FEC8(struct MainObj*);
-void func_8006FFC0(struct MainObj*);
-void func_800700AC(struct MainObj*);
-void func_80070118(struct MainObj*);
-void func_800701DC(struct MainObj*);
-void func_80070294(struct MainObj*);
+void jet_stingray_intro_warning(struct MainObj*);
+void jet_stingray_intro_emerge(struct MainObj*);
+void jet_stingray_intro_rise(struct MainObj*);
+void jet_stingray_intro_pose(struct MainObj*);
+void jet_stingray_intro_fill_health(struct MainObj*);
+void jet_stingray_intro_finish(struct MainObj*);
 
-// D_80100D60
-extern void (*D_80100D60[])(struct MainObj*);
-void func_800704AC(struct MainObj*);
+// jet_stingray_swim_funcs
+extern void (*jet_stingray_swim_funcs[])(struct MainObj*);
+void jet_stingray_swim_start(struct MainObj*);
 void func_80070514(struct MainObj*);
-void func_80070648(struct MainObj*);
+void jet_stingray_swim_next(struct MainObj*);
 
-// D_80100D9C
-extern void (*D_80100D9C[])(struct MainObj*);
-void func_800708DC(struct MainObj*);
-void func_80070948(struct MainObj*);
+// jet_stingray_vortex_funcs
+extern void (*jet_stingray_vortex_funcs[])(struct MainObj*);
+void jet_stingray_vortex_start(struct MainObj*);
+void jet_stingray_vortex_spawn(struct MainObj*);
 void func_80070A38(struct MainObj*);
-void func_80070C88(struct MainObj*);
-void func_80070CB0(struct MainObj*);
+void jet_stingray_vortex_wait(struct MainObj*);
+void jet_stingray_vortex_finish(struct MainObj*);
 
-// D_80100DB8
+// jet_stingray_ambush_funcs
 extern struct Unk_unk68 D_8010085C;
 extern struct Unk_unk68 D_80100860;
-void func_80070D2C(struct MainObj*);
-void func_80070DDC(struct MainObj*);
-void func_80070EE8(struct MainObj*);
-void func_8007100C(struct MainObj*);
+void jet_stingray_ambush_exit(struct MainObj*);
+void jet_stingray_ambush_drop(struct MainObj*);
+void jet_stingray_ambush_rise(struct MainObj*);
+void jet_stingray_ambush_return(struct MainObj*);
 
-// D_80100DC8
-extern void (*D_80100DC8[])(struct MainObj *);
-void func_80071228(struct MainObj*);
-void func_800712A4(struct MainObj*);
-void func_800713A4(struct MainObj*);
+// jet_stingray_dash_funcs
+extern void (*jet_stingray_dash_funcs[])(struct MainObj *);
+void jet_stingray_dash_start(struct MainObj*);
+void jet_stingray_dash_charge(struct MainObj*);
+void jet_stingray_dash_return(struct MainObj*);
 
-// D_80100DD4
+// jet_stingray_leap_funcs
 extern struct Unk_unk68 D_80100868;
 extern struct Unk_unk68 D_8010086C[];
-extern void (*D_80100DD4[])(struct MainObj*);
-void func_800714F4(struct MainObj*);
-void func_80071598(struct MainObj*);
-void func_800715D4(struct MainObj*);
+extern void (*jet_stingray_leap_funcs[])(struct MainObj*);
+void jet_stingray_leap_start(struct MainObj*);
+void jet_stingray_leap_fall(struct MainObj*);
+void jet_stingray_leap_return(struct MainObj*);
 
-// D_80100DE0
-extern void (*D_80100DE0[])(struct MainObj*);
+// jet_stingray_missiles_funcs
+extern void (*jet_stingray_missiles_funcs[])(struct MainObj*);
 void func_80071740(struct MainObj*);
-void func_800718F4(struct MainObj*);
-void func_8007196C(struct MainObj*);
+void jet_stingray_missiles_repeat(struct MainObj*);
+void jet_stingray_missiles_finish(struct MainObj*);
 
-// D_80100DEC
-extern void (*D_80100DEC[])(struct MainObj*);
+// jet_stingray_missiles_wide_funcs
+extern void (*jet_stingray_missiles_wide_funcs[])(struct MainObj*);
 
-// D_80100DF8
-extern void (*D_80100DF8[])(struct MainObj*);
-void func_80071A74(struct MainObj*);
-void func_80071AD8(struct MainObj*);
-void func_80071B60(struct MainObj*);
-void func_80071C00(struct MainObj*);
-void func_80071C60(struct MainObj*);
+// jet_stingray_stagger_funcs
+extern void (*jet_stingray_stagger_funcs[])(struct MainObj*);
+void jet_stingray_stagger_start(struct MainObj*);
+void jet_stingray_stagger_wait(struct MainObj*);
+void jet_stingray_stagger_shake(struct MainObj*);
+void jet_stingray_stagger_flee(struct MainObj*);
+void jet_stingray_stagger_return(struct MainObj*);
 
-// D_80100E0C
+// jet_stingray_step_funcs
 void func_8009216C(void* arg0);
-void func_80071D1C(struct MainObj* arg0);
-void func_800706D4(struct MainObj* arg0);
+void jet_stingray_reset(struct MainObj* arg0);
+void jet_stingray_swim(struct MainObj* arg0);
 void func_80070778(struct MainObj* arg0);
-void func_80070CDC(struct MainObj* arg0);
+void jet_stingray_vortex(struct MainObj* arg0);
 void func_800710D4(struct MainObj* arg0);
-void func_80071468(struct MainObj* arg0);
-void func_800714C0(struct MainObj* arg0);
-void func_8007168C(struct MainObj* arg0);
-void func_800719FC(struct MainObj* arg0);
-void func_80071A38(struct MainObj* arg0);
+void jet_stingray_dash(struct MainObj* arg0);
+void jet_stingray_apply_leap(struct MainObj* arg0);
+void jet_stingray_leap(struct MainObj* arg0);
+void jet_stingray_missiles(struct MainObj* arg0);
+void jet_stingray_missiles_wide(struct MainObj* arg0);
 
-// D_80100E34
-extern void (*D_80100E34[])(struct MainObj*);
-void func_80071EEC(struct MainObj*);
-void func_80071F5C(struct MainObj*);
-void func_8007203C(struct MainObj*);
+// jet_stingray_death_funcs
+extern void (*jet_stingray_death_funcs[])(struct MainObj*);
+void jet_stingray_death_start(struct MainObj*);
+void jet_stingray_death_explode(struct MainObj*);
+void jet_stingray_death_finish(struct MainObj*);
 
-// D_80100E40
-extern void (*D_80100E40[])(struct MainObj*);
-void func_800702E8(struct MainObj*);
+// jet_stingray_state_funcs
+extern void (*jet_stingray_state_funcs[])(struct MainObj*);
+void jet_stingray_intro(struct MainObj*);
 void func_80071D30(struct MainObj*);
-void func_8007211C(struct MainObj* arg0);
-void func_80071CB0(struct MainObj*);
+void jet_stingray_death(struct MainObj* arg0);
+void jet_stingray_stagger(struct MainObj*);
 
-// D_80101414
-extern void (*D_80101414[])(struct MainObj *);
-void func_80072204(struct MainObj* arg0);
+// frost_walrus_state_funcs
+extern void (*frost_walrus_state_funcs[])(struct MainObj *);
+void frost_walrus_start(struct MainObj* arg0);
 void func_80072418(struct MainObj*);
-void func_800725EC(struct BarObj* arg0);
-void func_80074368(s32 arg0);
+void frost_walrus_death(struct BarObj* arg0);
+void frost_walrus_set_floor_tiles(s32 arg0);
 
-// D_80101420
-extern void (*D_80101420[])(struct MainObj*);
-void func_80072240(struct MainObj*);
+// frost_walrus_start_funcs
+extern void (*frost_walrus_start_funcs[])(struct MainObj*);
+void frost_walrus_start_warning(struct MainObj*);
 void func_800722A0(struct MainObj*);
 
-// D_80101428
+// frost_walrus_step_funcs
 void func_8009216C(void* arg0);
-void func_800725DC(struct MainObj* arg0);
-void func_800728C8(struct MainObj* arg0);
-void func_80072CC4(struct MainObj* arg0);
-void func_80072DF8(struct MainObj* arg0);
-void func_80073164(struct MainObj* arg0);
-void func_80073500(struct MainObj* arg0);
-void func_80073650(struct MainObj* arg0);
-void func_80073938(struct MainObj* arg0);
-void func_80073C08(struct MainObj* arg0);
-void func_80073E44(struct MainObj* arg0);
-void func_80074158(struct MainObj* arg0);
+void frost_walrus_reset(struct MainObj* arg0);
+void frost_walrus_intro(struct MainObj* arg0);
+void frost_walrus_think(struct MainObj* arg0);
+void frost_walrus_charge(struct MainObj* arg0);
+void frost_walrus_leap(struct MainObj* arg0);
+void frost_walrus_walk(struct MainObj* arg0);
+void frost_walrus_shards(struct MainObj* arg0);
+void frost_walrus_breath(struct MainObj* arg0);
+void frost_walrus_blizzard(struct MainObj* arg0);
+void frost_walrus_stagger(struct MainObj* arg0);
+void frost_walrus_regrow(struct MainObj* arg0);
 
-// D_80101458
-extern void (*D_80101458[])(struct BarObj*);
+// frost_walrus_death_funcs
+extern void (*frost_walrus_death_funcs[])(struct BarObj*);
 void func_80072628(struct MainObj*);
-void func_800726CC(struct MainObj*);
+void frost_walrus_death_explode(struct MainObj*);
 void func_800727C0(struct MainObj* arg0);
 
-// D_80101464
-extern void (*D_80101464[])(struct MainObj*);
-void func_80072904(struct MainObj*);
-void func_80072960(struct MainObj*);
-void func_80072A14(struct MainObj*);
+// frost_walrus_intro_funcs
+extern void (*frost_walrus_intro_funcs[])(struct MainObj*);
+void frost_walrus_intro_walk(struct MainObj*);
+void frost_walrus_intro_approach(struct MainObj*);
+void frost_walrus_intro_roar(struct MainObj*);
 void func_80072A84(struct MainObj*);
-void func_80072BCC(struct MainObj*);
-void func_80072C20(struct MainObj*);
+void frost_walrus_intro_start_health_bar(struct MainObj*);
+void frost_walrus_intro_fill_health(struct MainObj*);
 
-// D_8010147C
-extern void (*D_8010147C[])(struct MainObj*);
-void func_80072D14(struct MainObj*);
-void func_80072DB0(struct MainObj*);
+// frost_walrus_think_funcs
+extern void (*frost_walrus_think_funcs[])(struct MainObj*);
+void frost_walrus_think_next(struct MainObj*);
+void frost_walrus_think_pause(struct MainObj*);
 
-// D_80101484
-extern void (*D_80101484[])(struct MainObj*);
-void func_80072E34(struct MainObj*);
-void func_80072EF8(struct MainObj*);
-void func_80072F68(struct MainObj*);
-void func_80072FF0(struct MainObj*);
-void func_80073084(struct MainObj*);
-void func_80073100(struct MainObj*);
+// frost_walrus_charge_funcs
+extern void (*frost_walrus_charge_funcs[])(struct MainObj*);
+void frost_walrus_charge_start(struct MainObj*);
+void frost_walrus_charge_windup(struct MainObj*);
+void frost_walrus_charge_run(struct MainObj*);
+void frost_walrus_charge_slide(struct MainObj*);
+void frost_walrus_charge_recover(struct MainObj*);
+void frost_walrus_charge_finish(struct MainObj*);
 
-// D_8010149C
-extern void (*D_8010149C[])(struct MainObj*);
-void func_800731A0(struct MainObj*);
-void func_80073228(struct MainObj*);
-void func_80073294(struct MainObj*);
-void func_8007330C(struct MainObj*);
-void func_8007342C(struct MainObj*);
-void func_800734A8(struct MainObj*);
+// frost_walrus_leap_funcs
+extern void (*frost_walrus_leap_funcs[])(struct MainObj*);
+void frost_walrus_leap_start(struct MainObj*);
+void frost_walrus_leap_windup(struct MainObj*);
+void frost_walrus_leap_jump(struct MainObj*);
+void frost_walrus_leap_air(struct MainObj*);
+void frost_walrus_leap_recover(struct MainObj*);
+void frost_walrus_leap_finish(struct MainObj*);
 
-// D_801014B4
-extern void (*D_801014B4[])(struct MainObj*);
-void func_8007353C(struct MainObj*);
-void func_800735BC(struct MainObj*);
+// frost_walrus_walk_funcs
+extern void (*frost_walrus_walk_funcs[])(struct MainObj*);
+void frost_walrus_walk_start(struct MainObj*);
+void frost_walrus_walk_stomp(struct MainObj*);
 
-// D_801014BC
-extern void (*D_801014BC[])(struct MainObj*);
-void func_8007368C(struct MainObj*);
-void func_800736DC(struct MainObj*);
-void func_80073748(struct MainObj*);
-void func_800737FC(struct MainObj*);
-void func_80073878(struct MainObj*);
-void func_800738EC(struct MainObj*);
+// frost_walrus_shards_funcs
+extern void (*frost_walrus_shards_funcs[])(struct MainObj*);
+void frost_walrus_shards_start(struct MainObj*);
+void frost_walrus_shards_count(struct MainObj*);
+void frost_walrus_shards_fire(struct MainObj*);
+void frost_walrus_shards_repeat(struct MainObj*);
+void frost_walrus_shards_finish(struct MainObj*);
+void frost_walrus_shards_wait(struct MainObj*);
 
-// D_801014D4
-extern void (*D_801014D4[])(struct MainObj*);
-void func_80073974(struct MainObj*);
-void func_800739D4(struct MainObj*);
-void func_80073B00(struct MainObj*);
-void func_80073B58(struct MainObj*);
-void func_80073BDC(struct MainObj* arg0);
+// frost_walrus_breath_funcs
+extern void (*frost_walrus_breath_funcs[])(struct MainObj*);
+void frost_walrus_breath_start(struct MainObj*);
+void frost_walrus_breath_blow(struct MainObj*);
+void frost_walrus_breath_wait(struct MainObj*);
+void frost_walrus_breath_launch(struct MainObj*);
+void frost_walrus_breath_finish(struct MainObj* arg0);
 
-// D_801014E8
-extern void (*D_801014E8[])(struct MainObj*);
-void func_80073C44(struct MainObj*);
-void func_80073CA4(struct MainObj*);
-void func_80073DDC(struct MainObj*);
-void func_80073E10(struct MainObj*);
-void func_80073E3C(struct MainObj*);
+// frost_walrus_blizzard_funcs
+extern void (*frost_walrus_blizzard_funcs[])(struct MainObj*);
+void frost_walrus_blizzard_start(struct MainObj*);
+void frost_walrus_blizzard_blow(struct MainObj*);
+void frost_walrus_blizzard_wait(struct MainObj*);
+void frost_walrus_blizzard_finish(struct MainObj*);
+void frost_walrus_blizzard_idle(struct MainObj*);
 
-// D_801014FC
-extern void (*D_801014FC[])(struct MainObj*);
+// frost_walrus_stagger_funcs
+extern void (*frost_walrus_stagger_funcs[])(struct MainObj*);
 void func_80073E80(struct MainObj*);
-void func_80073F90(struct MainObj*);
-void func_80074068(struct MainObj*);
-void func_800740CC(struct MainObj*);
+void frost_walrus_stagger_fall(struct MainObj*);
+void frost_walrus_stagger_slide(struct MainObj*);
+void frost_walrus_stagger_recover(struct MainObj*);
 
-// D_8010150C
-extern void (*D_8010150C[])(struct MainObj*);
-void func_80074194(struct MainObj*);
-void func_80074220(struct MainObj*);
-void func_8007427C(struct MainObj* arg0);
+// frost_walrus_regrow_funcs
+extern void (*frost_walrus_regrow_funcs[])(struct MainObj*);
+void frost_walrus_regrow_start(struct MainObj*);
+void frost_walrus_regrow_finish(struct MainObj*);
+void frost_walrus_face_player(struct MainObj* arg0);
 
 // D_80101658
 extern void (*D_80101658[])(struct MainObj*);
@@ -2931,236 +2931,236 @@ void func_80074E84(struct MainObj*);
 void func_80074F4C(struct MainObj*);
 void func_80074FC0(struct MainObj* arg0);
 
-// D_80101B64
-extern void (*D_80101B64[])(struct MainObj*);
-void func_80075064(struct MainObj* arg0);
+// storm_owl_state_funcs
+extern void (*storm_owl_state_funcs[])(struct MainObj*);
+void storm_owl_start(struct MainObj* arg0);
 void func_80075320(struct MainObj*);
-void func_80075630(struct MainObj* arg0);
+void storm_owl_death(struct MainObj* arg0);
 
-// D_80101B70
-extern void (*D_80101B70[])(struct MainObj*);
-void func_800750A0(struct MainObj*);
-void func_80075128(struct MainObj*);
-void func_8007517C(struct MainObj*);
+// storm_owl_start_funcs
+extern void (*storm_owl_start_funcs[])(struct MainObj*);
+void storm_owl_start_wait_player(struct MainObj*);
+void storm_owl_start_warning(struct MainObj*);
+void storm_owl_start_wait_warning(struct MainObj*);
 void func_800751AC(struct MainObj*);
 
-// D_80101B80
+// storm_owl_step_funcs
 void func_8009216C(void* arg0);
-void func_800758FC(struct MainObj* arg0);
-void func_80075908(struct MainObj *arg0);
-void func_80075DDC(struct MainObj *arg0);
-void func_8007624C(struct MainObj *arg0);
-void func_800768CC(struct MainObj *arg0);
-void func_80076A74(struct MainObj *arg0);
-void func_80076C70(struct MainObj *arg0);
-void func_80076F74(struct MainObj *arg0);
-void func_8007720C(struct MainObj *arg0);
-void func_80077798(struct MainObj *arg0);
-void func_80077868(struct MainObj *arg0);
-void func_80077A44(struct MainObj *arg0);
-void func_80077D48(struct AnimatedObj* arg0);
-void func_80077ED0(struct MainObj* arg0);
+void storm_owl_resume_step(struct MainObj* arg0);
+void storm_owl_intro(struct MainObj *arg0);
+void storm_owl_patrol(struct MainObj *arg0);
+void storm_owl_grab(struct MainObj *arg0);
+void storm_owl_reenter(struct MainObj *arg0);
+void storm_owl_feather(struct MainObj *arg0);
+void storm_owl_feather_volley(struct MainObj *arg0);
+void storm_owl_cyclone(struct MainObj *arg0);
+void storm_owl_storm(struct MainObj *arg0);
+void storm_owl_hover(struct MainObj *arg0);
+void storm_owl_stagger(struct MainObj *arg0);
+void storm_owl_ground_cyclone(struct MainObj *arg0);
+void storm_owl_spawn_roar(struct AnimatedObj* arg0);
+void storm_owl_spawn_feather(struct MainObj* arg0);
 void func_80078314(struct MainObj* arg0);
-void func_8007856C(struct MainObj* arg0);
-void func_800785E4(struct MainObj*);
+void storm_owl_choose_corner(struct MainObj* arg0);
+void storm_owl_choose_pattern(struct MainObj*);
 
-// D_80101BB4
-extern void (*D_80101BB4[])(struct MainObj*);
-void func_8007566C(struct MainObj*);
-void func_80075700(struct MainObj*);
+// storm_owl_death_funcs
+extern void (*storm_owl_death_funcs[])(struct MainObj*);
+void storm_owl_death_start(struct MainObj*);
+void storm_owl_death_explode(struct MainObj*);
 void func_800757F4(struct MainObj* arg0);
 
-// D_80101BC0
-extern void (*D_80101BC0[])(struct MainObj*);
+// storm_owl_intro_funcs
+extern void (*storm_owl_intro_funcs[])(struct MainObj*);
 void func_80075944(struct MainObj*);
-void func_800759EC(struct MainObj*);
-void func_80075A54(struct MainObj*);
-void func_80075AD0(struct MainObj*);
-void func_80075B54(struct MainObj*);
-void func_80075BC4(struct MainObj*);
+void storm_owl_intro_land(struct MainObj*);
+void storm_owl_intro_roar(struct MainObj*);
+void storm_owl_intro_pose(struct MainObj*);
+void storm_owl_intro_start_health_bar(struct MainObj*);
+void storm_owl_intro_fill_health(struct MainObj*);
 void func_80075C6C(struct MainObj*);
-void func_80075D38(struct MainObj*);
+void storm_owl_intro_rise(struct MainObj*);
 
-// D_80101BE0
+// storm_owl_patrol_funcs
 typedef struct {
     s16 x;
     s16 y;
     s32 vx;
     s32 vy;
 } Main60Waypoint;
-extern Main60Waypoint D_80101AE4[];
-extern void (*D_80101BE0[])(struct MainObj*);
-void func_80075E18(struct MainObj*);
+extern Main60Waypoint storm_owl_waypoints[];
+extern void (*storm_owl_patrol_funcs[])(struct MainObj*);
+void storm_owl_patrol_start(struct MainObj*);
 void func_80075E78(struct MainObj*);
-void func_8007601C(struct MainObj*);
+void storm_owl_patrol_wait(struct MainObj*);
 void func_800760C4(struct MainObj*);
-void func_800761A0(struct MainObj*);
+void storm_owl_patrol_return(struct MainObj*);
 
-// D_80101BF4
+// storm_owl_grab_funcs
 extern struct Unk_unk68 D_801016A4;
 extern struct Unk_unk68 D_801016BC;
 extern struct Unk_unk68 D_801016C4;
-extern void (*D_80101BF4[])(struct MainObj*);
-void func_80076288(struct MainObj*);
+extern void (*storm_owl_grab_funcs[])(struct MainObj*);
+void storm_owl_grab_dive(struct MainObj*);
 void func_80076364(struct MainObj*);
 void func_8007651C(struct MainObj*);
-void func_8007662C(struct MainObj*);
+void storm_owl_grab_carry(struct MainObj*);
 void func_800766FC(struct MainObj*);
-void func_8007681C(struct MainObj*);
+void storm_owl_grab_leave(struct MainObj*);
 
-// D_80101C0C
-extern void (*D_80101C0C[])(struct MainObj*);
-void func_80076908(struct MainObj*);
-void func_800769FC(struct MainObj*);
+// storm_owl_reenter_funcs
+extern void (*storm_owl_reenter_funcs[])(struct MainObj*);
+void storm_owl_reenter_warp(struct MainObj*);
+void storm_owl_reenter_wait(struct MainObj*);
 
-// D_80101C14
-extern void (*D_80101C14[])(struct MainObj*);
-void func_80076AB0(struct MainObj*);
-void func_80076B14(struct MainObj*);
-void func_80076B84(struct MainObj*);
-void func_80076C1C(struct MainObj*);
+// storm_owl_feather_funcs
+extern void (*storm_owl_feather_funcs[])(struct MainObj*);
+void storm_owl_feather_start(struct MainObj*);
+void storm_owl_feather_fire(struct MainObj*);
+void storm_owl_feather_takeoff(struct MainObj*);
+void storm_owl_feather_leave(struct MainObj*);
 
-// D_80101C24
-extern void (*D_80101C24[])(struct MainObj*);
-void func_80076CAC(struct MainObj*);
+// storm_owl_feather_volley_funcs
+extern void (*storm_owl_feather_volley_funcs[])(struct MainObj*);
+void storm_owl_feather_volley_start(struct MainObj*);
 void func_80076D14(struct MainObj*);
-void func_80076DB0(struct MainObj*);
-void func_80076E1C(struct MainObj*);
-void func_80076E88(struct MainObj*);
-void func_80076F14(struct MainObj*);
+void storm_owl_feather_volley_aim(struct MainObj*);
+void storm_owl_feather_volley_release(struct MainObj*);
+void storm_owl_feather_volley_wait(struct MainObj*);
+void storm_owl_feather_volley_leave(struct MainObj*);
 
-// D_80101C3C
-extern void (*D_80101C3C[])(struct MainObj*);
-void func_80076FB0(struct MainObj*);
-void func_80077028(struct MainObj*);
-void func_800770F0(struct MainObj*);
-void func_800771AC(struct MainObj*);
+// storm_owl_cyclone_funcs
+extern void (*storm_owl_cyclone_funcs[])(struct MainObj*);
+void storm_owl_cyclone_start(struct MainObj*);
+void storm_owl_cyclone_fire(struct MainObj*);
+void storm_owl_cyclone_finish(struct MainObj*);
+void storm_owl_cyclone_leave(struct MainObj*);
 
-// D_80101C4C
-extern void (*D_80101C4C[])(struct MainObj*);
-void func_80077258(struct MainObj*);
+// storm_owl_storm_funcs
+extern void (*storm_owl_storm_funcs[])(struct MainObj*);
+void storm_owl_storm_start(struct MainObj*);
 void func_80077318(struct MainObj*);
-void func_80077444(struct MainObj*);
-void func_80077490(struct MainObj*);
-void func_80077504(struct MainObj*);
+void storm_owl_storm_charge(struct MainObj*);
+void storm_owl_storm_begin(struct MainObj*);
+void storm_owl_storm_rain(struct MainObj*);
 void func_80077580(struct MainObj*);
-void func_80077614(struct MainObj*);
-void func_80077694(struct MainObj*);
-void func_80077738(struct MainObj*);
+void storm_owl_storm_rain_again(struct MainObj*);
+void storm_owl_storm_end(struct MainObj*);
+void storm_owl_storm_leave(struct MainObj*);
 
-// D_80101C70
-extern void (*D_80101C70[])(struct MainObj*);
-void func_800777D4(struct MainObj*);
-void func_8007781C(struct MainObj*);
+// storm_owl_hover_funcs
+extern void (*storm_owl_hover_funcs[])(struct MainObj*);
+void storm_owl_hover_start(struct MainObj*);
+void storm_owl_hover_wait(struct MainObj*);
 
-// D_80101C78
-extern void (*D_80101C78[])(struct MainObj*);
-void func_800778A4(struct MainObj*);
-void func_80077FFC(struct MainObj*);
-void func_800786AC(void);
-void func_80077954(struct MainObj*);
-void func_800779D4(struct MainObj*);
+// storm_owl_stagger_funcs
+extern void (*storm_owl_stagger_funcs[])(struct MainObj*);
+void storm_owl_stagger_start(struct MainObj*);
+void storm_owl_spawn_cyclones(struct MainObj*);
+void storm_owl_clear_shots(void);
+void storm_owl_stagger_recover(struct MainObj*);
+void storm_owl_stagger_leave(struct MainObj*);
 
-// D_80101C84
-extern void (*D_80101C84[])(struct MainObj*);
-void func_80077A80(struct MainObj*);
-void func_80077B0C(struct MainObj*);
-void func_80077B74(struct MainObj*);
-void func_80077BD0(struct MainObj*);
-void func_80077C40(struct MainObj* arg0);
-void func_80077C74(struct MainObj*);
-void func_80077CE8(struct MainObj*);
+// storm_owl_ground_cyclone_funcs
+extern void (*storm_owl_ground_cyclone_funcs[])(struct MainObj*);
+void storm_owl_ground_cyclone_start(struct MainObj*);
+void storm_owl_ground_cyclone_drop(struct MainObj*);
+void storm_owl_ground_cyclone_land(struct MainObj*);
+void storm_owl_ground_cyclone_fire(struct MainObj*);
+void storm_owl_ground_cyclone_wait(struct MainObj* arg0);
+void storm_owl_ground_cyclone_takeoff(struct MainObj*);
+void storm_owl_ground_cyclone_leave(struct MainObj*);
 void func_80078180(struct MainObj* arg0);
 
-// D_80101FF8
-extern void (*D_80101FF8[])(struct MainObj*);
+// split_mushroom_state_funcs
+extern void (*split_mushroom_state_funcs[])(struct MainObj*);
 void func_8007877C(struct MainObj*);
 void func_800788E4(struct MainObj*);
-void func_80078DF0(struct MainObj* arg0);
+void split_mushroom_death(struct MainObj* arg0);
 
-// D_80102004
+// split_mushroom_step_funcs
 void func_8009216C(void* arg0);
-void func_800790AC(struct MainObj *arg0);
-void func_80079608(struct MainObj *arg0);
-void func_80079A50(struct MainObj *arg0);
-void func_8007A12C(struct MainObj *arg0);
-void func_8007A4B0(struct MainObj *arg0);
-void func_8007A930(struct MainObj *arg0);
-void func_8007B180(struct MainObj *arg0);
+void split_mushroom_intro(struct MainObj *arg0);
+void split_mushroom_stun(struct MainObj *arg0);
+void split_mushroom_spore_rain(struct MainObj *arg0);
+void split_mushroom_walk(struct MainObj *arg0);
+void split_mushroom_dash(struct MainObj *arg0);
+void split_mushroom_combo(struct MainObj *arg0);
+void split_mushroom_wall_jump(struct MainObj *arg0);
 
-// D_80102024
-extern void (*D_80102024[])(struct MainObj*);
-void func_80078E2C(struct MainObj*);
-void func_80078EB0(struct MainObj*);
+// split_mushroom_death_funcs
+extern void (*split_mushroom_death_funcs[])(struct MainObj*);
+void split_mushroom_death_start(struct MainObj*);
+void split_mushroom_death_explode(struct MainObj*);
 void func_80078FA4(struct MainObj*);
 
-// D_80102030
-extern void (*D_80102030[])(struct MainObj*);
+// split_mushroom_intro_funcs
+extern void (*split_mushroom_intro_funcs[])(struct MainObj*);
 void func_800790E8(struct MainObj*);
-void func_800791D4(struct MainObj*);
-void func_8007927C(struct MainObj*);
-void func_80079364(struct MainObj*);
+void split_mushroom_intro_drop(struct MainObj*);
+void split_mushroom_intro_bounce(struct MainObj*);
+void split_mushroom_intro_land(struct MainObj*);
 void func_800793AC(struct MainObj*);
-void func_80079518(struct MainObj*);
-void func_80079568(struct MainObj*);
+void split_mushroom_intro_start_health_bar(struct MainObj*);
+void split_mushroom_intro_fill_health(struct MainObj*);
 
-// D_8010204C
-extern void (*D_8010204C[])(struct MainObj*);
-void func_80079644(struct MainObj*);
-void func_800796DC(struct MainObj*);
-void func_80079794(struct MainObj*);
-void func_800797E8(struct MainObj*);
+// split_mushroom_stun_funcs
+extern void (*split_mushroom_stun_funcs[])(struct MainObj*);
+void split_mushroom_stun_start(struct MainObj*);
+void split_mushroom_stun_wait(struct MainObj*);
+void split_mushroom_stun_fall(struct MainObj*);
+void split_mushroom_stun_merge(struct MainObj*);
 void func_80079824(struct MainObj*);
-void func_80079914(struct MainObj*);
-void func_8007996C(struct MainObj*);
+void split_mushroom_stun_land(struct MainObj*);
+void split_mushroom_stun_split(struct MainObj*);
 
-// D_80102068
-extern void (*D_80102068[])(struct MainObj*);
+// split_mushroom_spore_rain_funcs
+extern void (*split_mushroom_spore_rain_funcs[])(struct MainObj*);
 void func_80079A8C(struct MainObj*);
 void func_80079B50(struct MainObj*);
 void func_80079DD8(struct MainObj*);
-void func_80079FE4(struct MainObj*);
-void func_8007A048(struct MainObj*);
-void func_8007A09C(struct MainObj*);
+void split_mushroom_spore_rain_land(struct MainObj*);
+void split_mushroom_spore_rain_recover(struct MainObj*);
+void split_mushroom_spore_rain_finish(struct MainObj*);
 
-// D_80102080
-extern void (*D_80102080[])(struct MainObj*);
-void func_8007A168(struct MainObj*);
-void func_8007A1EC(struct MainObj*);
+// split_mushroom_walk_funcs
+extern void (*split_mushroom_walk_funcs[])(struct MainObj*);
+void split_mushroom_walk_start(struct MainObj*);
+void split_mushroom_walk_move(struct MainObj*);
 void func_8007A2B4(struct MainObj*);
-void func_8007A3B0(struct MainObj*);
+void split_mushroom_walk_fall(struct MainObj*);
 void func_8007A444(struct MainObj*);
 
-// D_80102094
-extern void (*D_80102094[])(struct MainObj*);
+// split_mushroom_dash_funcs
+extern void (*split_mushroom_dash_funcs[])(struct MainObj*);
 void func_8007A4EC(struct MainObj*);
 void func_8007A63C(struct MainObj*);
-void func_8007A7F0(struct MainObj*);
-void func_8007A854(struct MainObj*);
-void func_8007A8AC(struct MainObj*);
+void split_mushroom_dash_land(struct MainObj*);
+void split_mushroom_dash_recover(struct MainObj*);
+void split_mushroom_dash_finish(struct MainObj*);
 
-// D_801020A8
-extern void (*D_801020A8[])(struct MainObj*);
+// split_mushroom_combo_funcs
+extern void (*split_mushroom_combo_funcs[])(struct MainObj*);
 void func_8007A96C(struct MainObj*);
 void func_8007AB1C(struct MainObj*);
-void func_8007ADB4(struct MainObj*);
+void split_mushroom_combo_swing(struct MainObj*);
 void func_8007AE2C(struct MainObj*);
-void func_8007AFB4(struct MainObj*);
-void func_8007B054(struct MainObj*);
-void func_8007B0F8(struct MainObj*);
-void func_8007B140(struct MainObj*);
+void split_mushroom_combo_repeat(struct MainObj*);
+void split_mushroom_combo_sync(struct MainObj*);
+void split_mushroom_combo_end(struct MainObj*);
+void split_mushroom_combo_restart(struct MainObj*);
 
-// D_801020C8
-extern void (*D_801020C8[])(struct MainObj*);
+// split_mushroom_wall_jump_funcs
+extern void (*split_mushroom_wall_jump_funcs[])(struct MainObj*);
 void func_8007B1BC(struct MainObj*);
-void func_8007B2FC(struct MainObj*);
+void split_mushroom_wall_jump_air(struct MainObj*);
 void func_8007B6BC(struct AnimatedObj*);
-void func_8007B3A8(struct MainObj*);
+void split_mushroom_wall_jump_cling(struct MainObj*);
 void func_8007B418(struct MainObj*);
-void func_8007B588(struct MainObj*);
-void func_8007B5F0(struct MainObj*);
-void func_8007B640(struct MainObj*);
-void func_8007B834(struct MainObj*);
+void split_mushroom_wall_jump_turn(struct MainObj*);
+void split_mushroom_wall_jump_land(struct MainObj*);
+void split_mushroom_wall_jump_finish(struct MainObj*);
+void split_mushroom_spawn_afterimage(struct MainObj*);
 
 // D_80102214
 extern void (*D_80102214[])(struct BarObj*);
@@ -3192,185 +3192,185 @@ void func_8007BFF4(struct MainObj*);
 void func_8007C144(struct MainObj*);
 void func_8007C2B0(struct MainObj* arg0);
 
-// D_80102968
-extern void (*D_80102968[])(struct MainObj*);
-void func_8007C5C4(struct MainObj*);
-void func_8007C5F8(struct MainObj*);
-void func_8007C69C(struct MainObj*);
+// cyber_peacock_intro_appear_funcs
+extern void (*cyber_peacock_intro_appear_funcs[])(struct MainObj*);
+void cyber_peacock_intro_appear_start(struct MainObj*);
+void cyber_peacock_intro_pose(struct MainObj*);
+void cyber_peacock_intro_start_health_bar(struct MainObj*);
 void func_8007C6E8(struct MainObj*);
 
-// D_80102978
-extern void (*D_80102978[])(struct MainObj*);
+// cyber_peacock_intro_funcs
+extern void (*cyber_peacock_intro_funcs[])(struct MainObj*);
 void func_8007C30C(struct MainObj*);
 void func_8007C3FC(struct MainObj*);
-void func_8007C7D4(struct MainObj* arg0);
+void cyber_peacock_intro_appear(struct MainObj* arg0);
 
-// D_801029D4
-extern void (*D_801029D4[])(struct MainObj*);
-void func_8007C968(struct MainObj*);
-void func_8007C9B0(struct MainObj*);
+// cyber_peacock_teleport_funcs
+extern void (*cyber_peacock_teleport_funcs[])(struct MainObj*);
+void cyber_peacock_teleport_start(struct MainObj*);
+void cyber_peacock_teleport_vanish(struct MainObj*);
 void func_8007CA68(struct MainObj*);
-void func_8007CC8C(struct MainObj*);
-void func_8007CD54(struct MainObj*);
+void cyber_peacock_teleport_appear(struct MainObj*);
+void cyber_peacock_teleport_wait(struct MainObj*);
 
-// D_801029E8
-extern void (*D_801029E8[])(struct MainObj*);
-void func_8007CDE4(struct MainObj*);
-void func_8007CE3C(struct MainObj*);
-void func_8007CE98(struct MainObj*);
-void func_8007CEF8(struct MainObj*);
+// cyber_peacock_rising_kick_funcs
+extern void (*cyber_peacock_rising_kick_funcs[])(struct MainObj*);
+void cyber_peacock_rising_kick_start(struct MainObj*);
+void cyber_peacock_rising_kick_jump(struct MainObj*);
+void cyber_peacock_rising_kick_rise(struct MainObj*);
+void cyber_peacock_rising_kick_finish(struct MainObj*);
 
-// D_801029F8
-extern void (*D_801029F8[])(struct MainObj*);
-void func_8007CFA4(struct MainObj*);
-void func_8007D010(struct MainObj*);
-void func_8007D0CC(struct MainObj*);
+// cyber_peacock_slash_funcs
+extern void (*cyber_peacock_slash_funcs[])(struct MainObj*);
+void cyber_peacock_slash_start(struct MainObj*);
+void cyber_peacock_slash_swing(struct MainObj*);
+void cyber_peacock_slash_finish(struct MainObj*);
 
-// D_80102A04
-extern void (*D_80102A04[])(struct MainObj*);
+// cyber_peacock_aiming_laser_funcs
+extern void (*cyber_peacock_aiming_laser_funcs[])(struct MainObj*);
 void func_8007D174(struct MainObj*);
-void func_8007D234(struct MainObj*);
-void func_8007D2F4(struct MainObj*);
-void func_8007D324(struct MainObj*);
-void func_8007D374(struct MainObj*);
-void func_8007D3DC(struct MainObj* arg0);
-void func_8007D424(struct MainObj*);
-void func_8007D470(struct MainObj*);
-void func_8007D4E4(struct MainObj*);
+void cyber_peacock_spawn_missile(struct MainObj*);
+void cyber_peacock_aiming_laser_start(struct MainObj*);
+void cyber_peacock_aiming_laser_raise(struct MainObj*);
+void cyber_peacock_aiming_laser_target(struct MainObj*);
+void cyber_peacock_aiming_laser_wait(struct MainObj* arg0);
+void cyber_peacock_aiming_laser_fire(struct MainObj*);
+void cyber_peacock_aiming_laser_next(struct MainObj*);
+void cyber_peacock_aiming_laser_finish(struct MainObj*);
 
-// D_80102A20
-extern void (*D_80102A20[])(struct MainObj*);
-void func_8007CF68(struct MainObj* arg0);
-void func_8007D138(struct MainObj* arg0);
-void func_8007D558(struct MainObj* arg0);
-void func_8007CF68(struct MainObj* arg0);
+// cyber_peacock_attack_funcs
+extern void (*cyber_peacock_attack_funcs[])(struct MainObj*);
+void cyber_peacock_rising_kick(struct MainObj* arg0);
+void cyber_peacock_slash(struct MainObj* arg0);
+void cyber_peacock_aiming_laser(struct MainObj* arg0);
+void cyber_peacock_rising_kick(struct MainObj* arg0);
 
-// D_80102A30
+// cyber_peacock_step_funcs
 void func_8009216C(void* arg0);
 void func_8009216C(void* arg0);
-void func_8007CDA8(struct MainObj *arg0);
-void func_8007D594(struct MainObj *arg0);
+void cyber_peacock_teleport(struct MainObj *arg0);
+void cyber_peacock_attack(struct MainObj *arg0);
 void func_8007D5D0(struct MainObj* arg0);
 void func_8007D710(struct MainObj* arg0);
 
-// D_80102A48
-extern void (*D_80102A48[])(struct BarObj*);
-void func_8007D9AC(struct MainObj*);
-void func_8007DA20(struct MainObj*);
-void func_8007DAFC(struct MainObj*);
+// cyber_peacock_death_funcs
+extern void (*cyber_peacock_death_funcs[])(struct BarObj*);
+void cyber_peacock_death_start(struct MainObj*);
+void cyber_peacock_death_explode(struct MainObj*);
+void cyber_peacock_death_finish(struct MainObj*);
 
-// D_80102A54
-extern void (*D_80102A54[])(struct MainObj*);
-void func_8007C824(struct MainObj* arg0);
+// cyber_peacock_state_funcs
+extern void (*cyber_peacock_state_funcs[])(struct MainObj*);
+void cyber_peacock_intro(struct MainObj* arg0);
 void func_8007D838(struct MainObj*);
-void func_8007DBDC(struct BarObj* arg0);
+void cyber_peacock_death(struct BarObj* arg0);
 
-// D_801034B8
-extern void (*D_801034B8[])(struct MainObj*);
-void func_8007DF50(struct MainObj*);
-void func_8007DC54(struct AnimatedObj*, u32);
-void func_8007E01C(struct MainObj*);
-void func_8007E098(struct MainObj*);
-void func_8007E128(struct MainObj*);
-void func_8007E1C0(struct MainObj*);
-void func_8007E25C(struct MainObj*);
-void func_8007E2B8(struct MainObj*);
+// magma_dragoon_intro_funcs
+extern void (*magma_dragoon_intro_funcs[])(struct MainObj*);
+void magma_dragoon_intro_warning(struct MainObj*);
+void magma_dragoon_spawn_flames(struct AnimatedObj*, u32);
+void magma_dragoon_intro_leap(struct MainObj*);
+void magma_dragoon_intro_descend(struct MainObj*);
+void magma_dragoon_intro_land(struct MainObj*);
+void magma_dragoon_intro_pose(struct MainObj*);
+void magma_dragoon_intro_start_health_bar(struct MainObj*);
+void magma_dragoon_intro_ready(struct MainObj*);
 void func_8007E350(struct MainObj*);
 
-// D_801034D8
-extern void (*D_801034D8[])(struct MainObj*);
-void func_8007E5D0(struct MainObj*);
-void func_8007E66C(struct MainObj*);
+// magma_dragoon_dive_kick_funcs
+extern void (*magma_dragoon_dive_kick_funcs[])(struct MainObj*);
+void magma_dragoon_dive_kick_jump(struct MainObj*);
+void magma_dragoon_dive_kick_rise(struct MainObj*);
 void func_8007E6F8(struct MainObj*);
 void func_8007E848(struct MainObj*);
 
-// D_801034E8
-extern void (*D_801034E8[])(struct MainObj*);
-void func_8007E918(struct MainObj*);
+// magma_dragoon_flame_burst_funcs
+extern void (*magma_dragoon_flame_burst_funcs[])(struct MainObj*);
+void magma_dragoon_flame_burst_start(struct MainObj*);
 void func_8007E95C(struct MainObj*);
 
-// D_801034F0
-extern void (*D_801034F0[])(struct MainObj*);
-void func_8007EA94(struct MainObj*);
-void func_8007EAE8(struct MainObj*);
-void func_8007EBD0(struct MainObj*);
+// magma_dragoon_fire_volley_funcs
+extern void (*magma_dragoon_fire_volley_funcs[])(struct MainObj*);
+void magma_dragoon_fire_volley_start(struct MainObj*);
+void magma_dragoon_fire_volley_fire(struct MainObj*);
+void magma_dragoon_fire_volley_wait(struct MainObj*);
 
-// D_801034FC
-extern void (*D_801034FC[])(struct MainObj*);
-void func_8007EC74(struct MainObj*);
-void func_8007ECEC(struct MainObj*);
+// magma_dragoon_breath_funcs
+extern void (*magma_dragoon_breath_funcs[])(struct MainObj*);
+void magma_dragoon_breath_start(struct MainObj*);
+void magma_dragoon_breath_fire(struct MainObj*);
 
-// D_80103504
-extern void (*D_80103504[])(struct MainObj*);
-void func_8007EE18(struct MainObj*);
-void func_8007EED8(struct MainObj*);
-void func_8007EF94(struct MainObj*);
-void func_8007F00C(struct MainObj*);
+// magma_dragoon_leap_center_funcs
+extern void (*magma_dragoon_leap_center_funcs[])(struct MainObj*);
+void magma_dragoon_leap_center_start(struct MainObj*);
+void magma_dragoon_leap_center_glide(struct MainObj*);
+void magma_dragoon_leap_center_land(struct MainObj*);
+void magma_dragoon_leap_center_recover(struct MainObj*);
 
-// D_80103514
-extern void (*D_80103514[])(struct MainObj*);
-void func_8007F0B4(struct MainObj*);
+// magma_dragoon_leap_wall_funcs
+extern void (*magma_dragoon_leap_wall_funcs[])(struct MainObj*);
+void magma_dragoon_leap_wall_start(struct MainObj*);
 void func_8007F174(struct MainObj*);
-void func_8007F2F4(struct MainObj*);
+void magma_dragoon_leap_wall_finish(struct MainObj*);
 
-// D_80103520
-extern void (*D_80103520[])(struct MainObj*);
-void func_8007F3B8(struct MainObj*);
+// magma_dragoon_fireball_funcs
+extern void (*magma_dragoon_fireball_funcs[])(struct MainObj*);
+void magma_dragoon_fireball_start(struct MainObj*);
 void func_8007F404(struct MainObj*);
 
-// D_80103528
-extern void (*D_80103528[])(struct MainObj*);
-void func_8007F564(struct MainObj*);
+// magma_dragoon_fireball_low_funcs
+extern void (*magma_dragoon_fireball_low_funcs[])(struct MainObj*);
+void magma_dragoon_fireball_low_start(struct MainObj*);
 void func_8007F5B0(struct MainObj*);
 
-// D_80103530
-extern void (*D_80103530[])(struct MainObj*);
-void func_8007F71C(struct MainObj*);
+// magma_dragoon_rising_punch_funcs
+extern void (*magma_dragoon_rising_punch_funcs[])(struct MainObj*);
+void magma_dragoon_rising_punch_start(struct MainObj*);
 void func_8007F780(struct MainObj*);
-void func_8007F878(struct MainObj*);
-void func_8007F93C(struct MainObj*);
-void func_8007F9C8(struct MainObj*);
+void magma_dragoon_rising_punch_rise(struct MainObj*);
+void magma_dragoon_rising_punch_land(struct MainObj*);
+void magma_dragoon_rising_punch_recover(struct MainObj*);
 
-// D_80103544
-extern void (*D_80103544[])(struct MainObj*);
+// magma_dragoon_stagger_funcs
+extern void (*magma_dragoon_stagger_funcs[])(struct MainObj*);
 void func_8007FAA4(struct MainObj*);
-void func_8007FB48(struct MainObj*);
-void func_8007FB98(struct MainObj*);
-void func_8007FBFC(struct MainObj*);
-void func_8007FC78(struct MainObj*);
+void magma_dragoon_stagger_rise(struct MainObj*);
+void magma_dragoon_stagger_burn(struct MainObj*);
+void magma_dragoon_stagger_fall(struct MainObj*);
+void magma_dragoon_stagger_recover(struct MainObj*);
 
-// D_80103558
+// magma_dragoon_step_funcs
 void func_8009216C(void* arg0);
-void func_8007FD1C(struct MainObj* arg0);
-void func_8007E45C(struct MainObj *arg0);
+void magma_dragoon_hold(struct MainObj* arg0);
+void magma_dragoon_intro(struct MainObj *arg0);
 void func_8007E4C8(struct MainObj* arg0);
-void func_8007E8C0(struct MainObj *arg0);
-void func_8007EA3C(struct MainObj *arg0);
-void func_8007EC1C(struct MainObj *arg0);
-void func_8007EDC0(struct MainObj *arg0);
-void func_8007F05C(struct MainObj *arg0);
-void func_8007F360(struct MainObj *arg0);
-void func_8007F50C(struct MainObj *arg0);
-void func_8007F690(struct MainObj* arg0);
-void func_8007FA4C(struct MainObj *arg0);
-void func_8007FCC4(struct MainObj *arg0);
+void magma_dragoon_dive_kick(struct MainObj *arg0);
+void magma_dragoon_flame_burst(struct MainObj *arg0);
+void magma_dragoon_fire_volley(struct MainObj *arg0);
+void magma_dragoon_breath(struct MainObj *arg0);
+void magma_dragoon_leap_center(struct MainObj *arg0);
+void magma_dragoon_leap_wall(struct MainObj *arg0);
+void magma_dragoon_fireball(struct MainObj *arg0);
+void magma_dragoon_fireball_low(struct MainObj* arg0);
+void magma_dragoon_rising_punch(struct MainObj *arg0);
+void magma_dragoon_stagger(struct MainObj *arg0);
 
-// D_80103590
-extern void (*D_80103590[])(struct MainObj*);
-void func_8007FE84(struct MainObj*);
+// magma_dragoon_death_funcs
+extern void (*magma_dragoon_death_funcs[])(struct MainObj*);
+void magma_dragoon_death_start(struct MainObj*);
 void func_8007FF00(struct MainObj*);
 void func_8007FFFC(struct MainObj*);
-void func_800802A4(struct MainObj*, s32, s32);
-void func_8008030C(struct MainObj*);
-void func_80080370(struct MainObj*);
-void func_800804A0(struct MainObj*);
-void func_800805D8(struct MainObj* arg0);
+void magma_dragoon_death_wait_explosion(struct MainObj*, s32, s32);
+void magma_dragoon_death_wait_dialog(struct MainObj*);
+void magma_dragoon_death_smoke(struct MainObj*);
+void magma_dragoon_death_vanish(struct MainObj*);
+void magma_dragoon_death_end(struct MainObj* arg0);
 
-// D_801035B0
-extern void (*D_801035B0[])(struct MainObj *);
+// magma_dragoon_state_funcs
+extern void (*magma_dragoon_state_funcs[])(struct MainObj *);
 void func_8007DD98(struct MainObj*);
 void func_8007FD24(struct MainObj*);
-void func_80080604(struct MainObj* arg0);
+void magma_dragoon_death(struct MainObj* arg0);
 
 // D_80103BDC
 void func_80080700(void);
@@ -7050,14 +7050,14 @@ extern void (*D_800FE9BC[])(struct MainObj*);
 extern void (*D_800FEA78[])(struct MainObj*);
 extern void (*D_800FEE38[])(struct MainObj*);
 extern void (*D_800FEF74[])(struct MainObj*);
-extern void (*D_800FF6E4[])(struct MainObj*);
-extern void (*D_800FF6F0[])(struct MainObj*);
-extern void (*D_800FF6FC[])(struct MainObj*);
-extern void (*D_800FF750[])(struct MainObj*);
-extern void (*D_800FF75C[])(struct MainObj*);
-extern void (*D_800FF768[])(struct MainObj*);
-extern void (*D_800FF784[])(struct MainObj*);
-extern void (*D_800FF7AC[])(struct MainObj*);
+extern void (*web_spider_state_funcs[])(struct MainObj*);
+extern void (*spiderling_state_funcs[])(struct MainObj*);
+extern void (*web_spider_intro_funcs[])(struct MainObj*);
+extern void (*web_spider_drop_funcs[])(struct MainObj*);
+extern void (*web_spider_shoot_funcs[])(struct MainObj*);
+extern void (*web_spider_swing_funcs[])(struct MainObj*);
+extern void (*web_spider_big_web_funcs[])(struct MainObj*);
+extern void (*web_spider_death_funcs[])(struct MainObj*);
 extern void (*D_800FF87C[])(struct MainObj*);
 extern void (*D_800FF894[])(struct MainObj*);
 extern void (*D_800FF964[])(struct MainObj*);

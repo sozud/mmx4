@@ -468,7 +468,7 @@ union AnimationStep D_800FF500[] = {
     { 0x3C000001 },
 };
 
-union AnimationStep* D_800FF504[40] = {
+union AnimationStep* web_spider_animations[40] = {
     D_800FEF94,
     D_800FEF9C,
     D_800FF004,
@@ -579,7 +579,7 @@ u8 D_800FF6A0[8] = { 9, 6, 7, 9, 8, 7, 6, 8 };
 
 u8 D_800FF6A8[8] = { 6, 9, 7, 9, 7, 8, 6, 8 };
 
-RECT* D_800FF6B0[6] = {
+RECT* web_spider_swing_paths[6] = {
     D_800FF5C0,
     D_800FF5E0,
     D_800FF600,
@@ -588,7 +588,7 @@ RECT* D_800FF6B0[6] = {
     D_800FF660,
 };
 
-const u8* D_800FF6C8[6] = {
+const u8* web_spider_swing_animations[6] = {
     D_800FF680,
     D_800FF688,
     D_800FF690,
@@ -597,92 +597,92 @@ const u8* D_800FF6C8[6] = {
     D_800FF6A8,
 };
 
-u16 D_800FF6E0 = 0x0000;
+u16 web_spider_arena_x = 0x0000;
 
-u16 D_800FF6E2 = 0x0000;
+u16 web_spider_arena_y = 0x0000;
 
-void (*D_800FF6E4[3])(struct MainObj*) = {
-    func_80063234,
+void (*web_spider_state_funcs[3])(struct MainObj*) = {
+    web_spider_intro,
     func_8006398C,
-    func_80065538,
+    web_spider_death,
 };
 
-void (*D_800FF6F0[3])() = {
+void (*spiderling_state_funcs[3])() = {
     func_80065574,
-    func_8006565C,
-    func_80065910,
+    spiderling_run,
+    spiderling_despawn,
 };
 
-void (*D_800FF6FC[10])(struct MainObj*) = {
-    func_800632A4,
+void (*web_spider_intro_funcs[10])(struct MainObj*) = {
+    web_spider_intro_warning,
     func_80063334,
     func_8006346C,
-    func_80063600,
-    func_8006364C,
-    func_800636A0,
-    func_800637A8,
-    func_80063814,
-    func_80063854,
-    func_80063914,
+    web_spider_intro_spawn_thread,
+    web_spider_intro_wait,
+    web_spider_intro_descend,
+    web_spider_intro_pose,
+    web_spider_intro_start_health_bar,
+    web_spider_intro_fill_health,
+    web_spider_intro_climb,
 };
 
 u8 D_800FF724[16] = { 0x07, 0x05, 0x06, 0x04, 0x02, 0x03, 0x01, 0x00, 0x01, 0x00, 0x03, 0x02, 0x05, 0x04, 0x07, 0x06 };
 
-void (*D_800FF734[7])() = {
+void (*web_spider_step_funcs[7])() = {
     func_8009216C,
-    func_80064AE8,
-    func_80063AE4,
-    func_80063F80,
-    func_800640B4,
-    func_80064360,
-    func_800646B0,
+    web_spider_fall,
+    web_spider_drop,
+    web_spider_shoot,
+    web_spider_swing,
+    web_spider_attack,
+    web_spider_big_web,
 };
 
-void (*D_800FF750[3])() = {
+void (*web_spider_drop_funcs[3])() = {
     func_80063B20,
     func_80063DD8,
     func_80063DD8,
 };
 
-void (*D_800FF75C[3])() = {
-    func_80063FBC,
-    func_80063FE4,
-    func_80063FE4,
+void (*web_spider_shoot_funcs[3])() = {
+    web_spider_shoot_start,
+    web_spider_shoot_fire,
+    web_spider_shoot_fire,
 };
 
-void (*D_800FF768[3])(struct MainObj*) = {
-    func_800640F0,
+void (*web_spider_swing_funcs[3])(struct MainObj*) = {
+    web_spider_swing_start,
     func_80064154,
-    func_80064338,
+    web_spider_swing_wait,
 };
 
-u8 D_800FF774[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03 };
+u8 web_spider_swing_sets[16] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03, 0x04, 0x05, 0x02, 0x03 };
 
-void (*D_800FF784[3])() = {
+void (*web_spider_big_web_funcs[3])() = {
     func_800646EC,
-    func_800648D0,
-    func_800649C0,
+    web_spider_big_web_spin,
+    web_spider_big_web_center,
 };
 
-void (*D_800FF790[5])(struct MainObj*) = {
-    func_80064B38,
-    func_80064BA8,
-    func_80064C0C,
-    func_80064C84,
-    func_80064CF4,
+void (*web_spider_fall_funcs[5])(struct MainObj*) = {
+    web_spider_fall_start,
+    web_spider_fall_slow,
+    web_spider_fall_land,
+    web_spider_fall_crash,
+    web_spider_fall_rethread,
 };
 
-u8 D_800FF7A4[4] = { 0x10, 0x14, 0x18, 0x20 };
+u8 web_spider_move_timers[4] = { 0x10, 0x14, 0x18, 0x20 };
 
-u8 D_800FF7A8[4] = { 0x5A, 0x50, 0x44, 0x32 };
+u8 web_spider_attack_cooldowns[4] = { 0x5A, 0x50, 0x44, 0x32 };
 
-void (*D_800FF7AC[3])(struct MainObj*) = {
-    func_8006530C,
-    func_8006537C,
-    func_80065458,
+void (*web_spider_death_funcs[3])(struct MainObj*) = {
+    web_spider_death_start,
+    web_spider_death_explode,
+    web_spider_death_finish,
 };
 
-struct FixedPointPosition D_800FF7B8[8] = {
+struct FixedPointPosition spiderling_velocities[8] = {
     { (s32)0x00010000, (s32)0x00000000 },
     { (s32)0x00058000, (s32)0x00004000 },
     { (s32)0x00028000, (s32)0x00000000 },
@@ -693,12 +693,12 @@ struct FixedPointPosition D_800FF7B8[8] = {
     { (s32)0x00058000, (s32)0x00004000 },
 };
 
-void (*D_800FF7F8[5])(struct MainObj*) = {
+void (*spiderling_step_funcs[5])(struct MainObj*) = {
     func_8009216C,
     func_8009216C,
-    func_80065704,
-    func_80065794,
-    func_80065898,
+    spiderling_fall,
+    spiderling_crawl,
+    spiderling_leave,
 };
 
 struct Unk_unk68 D_800FF80C = { -11, -10, 21, 23 };

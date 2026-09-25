@@ -33,7 +33,7 @@ void func_800A4230(struct ShotObj* arg0)
 
     if ((u32)((u8)arg0->unk2 - 1) < 4U) {
         owner = MAIN_OBJECT(arg0->unk7C);
-        owner->ext.main_60.unk88 -= 1 << arg0->unk84.value;
+        owner->ext.main_60.feather_mask -= 1 << arg0->unk84.value;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

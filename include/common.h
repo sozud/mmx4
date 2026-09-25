@@ -882,15 +882,15 @@ struct Main36Ext {
 struct Main43Ext {
     struct ShotObj* shot;
     struct EffectObj* effect;
-    u16 unk88;
-    u16 unk8A;
+    u16 big_web_done;
+    u16 flash_timer;
     u16 animation_index;
     u16 animation_length;
-    u16 unk90;
-    u8 unk92;
-    u8 unk93;
+    u16 attack_cooldown;
+    u8 attack_count;
+    u8 move_direction;
     u8 unk94;
-    u8 unk95;
+    u8 hurt_collision;
     s8 animation_id;
     s8 animation_set;
 };
@@ -912,11 +912,11 @@ union Main56Unk80 {
 };
 
 struct Main56Ext {
-    union Main56Unk80 unk80;
-    u8 *unk84;
-    u8 unk88;
+    union Main56Unk80 object;
+    u8 *pattern;
+    u8 vortex_result;
     union Main56Unk89 unk89;
-    u8 unk8A;
+    u8 flash_timer;
     u8 flags;
 };
 
@@ -925,12 +925,12 @@ struct Main57Ext {
     struct ShotObj* shot;
     u8* script;
     RECT* rect;
-    u8 unk90;
-    u8 unk91;
-    u8 unk92;
-    u8 unk93;
-    u8 unk94;
-    u8 unk95;
+    u8 leap_grounded;
+    u8 shard_count;
+    u8 tusks_broken;
+    u8 flashing;
+    u8 flash_timer;
+    u8 staggered;
 };
 
 struct Main487Ext {
@@ -979,19 +979,19 @@ struct Main72Ext {
 
 struct Main60Ext {
     struct EffectObj* effect;
-    u8* unk84;
-    u16 unk88;
+    u8* pattern;
+    u16 feather_mask;
     u8 saved_unk5;
-    u8 unk8B;
+    u8 corner;
     u8 pad8C;
-    u8 unk8D;
-    u8 unk8E;
-    u8 unk8F;
-    u8 unk90;
+    u8 shot_count;
+    u8 feathers_holding;
+    u8 storm_active;
+    u8 storm_timer;
     u8 unk91;
-    u8 unk92;
-    u8 unk93;
-    u8 unk94;
+    u8 patrol_delay;
+    u8 flash_timer;
+    u8 flash_mode;
 };
 
 union Main61Data {
@@ -1001,43 +1001,46 @@ union Main61Data {
 
 struct Main61Ext {
     union Main61Data data;
-    u8 pad84;
-    u8 unk85;
-    u8 unk86;
-    u8 unk87;
-    u8 pad88;
-    u8 unk89;
-    u8 unk8A;
-    u8 pad8B;
-    u8 unk8C;
-    u8 pad8D[0x94 - 0x8D];
-    struct MainObj* unk94;
+    u8 flash_timer;
+    u8 split;
+    u8 blink_timer;
+    u8 combo_count;
+    u8 stunned;
+    u8 split_hits;
+    u8 merge;
+    u8 active;
+    u8 speed_level;
+    u8 hit_lock;
+    u8 split_done;
+    u8 pad8F[0x94 - 0x8F];
+    struct MainObj* partner;
 };
 
 struct Main65Ext {
-    struct MainObj* unk80;
-    struct MainObj* unk84;
-    s16 unk88;
-    u8 unk8A;
-    u8 pad8B[2];
-    u8 unk8D;
-    u8 unk8E;
+    struct MainObj* object;
+    struct MainObj* smoke;
+    s16 jump_start_y;
+    u8 flash_timer;
+    u8 leap_frames;
+    u8 leap_to_right;
+    u8 attack;
+    u8 attack_repeat;
 };
 
 struct Main64Ext {
     void* object;
-    u16 unk84;
-    u16 unk86;
-    u8 unk88;
-    u8 unk89;
+    u16 target_x;
+    u16 target_y;
+    u8 skip_attack;
+    u8 next_step;
     u8 unk8A;
-    u8 unk8B;
-    s16 unk8C;
-    s16 unk8E;
-    u8 unk90;
-    u8 unk91;
-    u8 unk92;
-    u8 unk93;
+    u8 shot_count;
+    s16 arena_x;
+    s16 arena_y;
+    u8 hit_count;
+    u8 force_laser;
+    u8 flash_timer;
+    u8 saved_health;
 };
 
 struct Main74Ext {
@@ -2771,14 +2774,14 @@ extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
 extern struct BackgroundObj background_objects[3];
-extern u8 D_8013B838;
-extern u8 D_800FF7A4[];
-extern u8 D_800FF7A8[4];
-extern const u8* D_800FF6C8[];
+extern u8 jet_stingray_bubble_index;
+extern u8 web_spider_move_timers[];
+extern u8 web_spider_attack_cooldowns[4];
+extern const u8* web_spider_swing_animations[];
 extern s8 D_800FEA5C[];
 extern struct Unk_unk68 D_800FF5B0;
-extern u16 D_800FF6E0;
-extern u16 D_800FF6E2;
+extern u16 web_spider_arena_x;
+extern u16 web_spider_arena_y;
 extern struct Unk_unk68 D_801075F4[];
 
 struct Effect14ItemSpawn {
@@ -2790,7 +2793,7 @@ struct Effect14ItemSpawn {
 extern struct Effect14ItemSpawn D_8010B644[19];
 extern struct Unk_unk68 D_80108584[];
 extern u8 D_8010CB54[2][4];
-extern u8 D_800FF774[];
+extern u8 web_spider_swing_sets[];
 extern u8 D_800FF994[];
 extern u8 D_800FF998[];
 extern struct Unk_unk68 D_80106670[];
@@ -3562,10 +3565,10 @@ extern struct QuadObj g_QuadObjects[0x20];
 extern struct ArchivePathData D_800EE54C;
 extern u8 D_800F8B30[];
 extern u8 D_800F8B34[][4];
-extern u8 D_80100E78[4];
-extern u8 D_80100E7C[4];
-extern u16 D_801013C8[18];
-extern u16 D_801013EC[20];
+extern u8 frost_walrus_script_recover_high[4];
+extern u8 frost_walrus_script_recover_low[4];
+extern u16 frost_walrus_floor_tiles[18];
+extern u16 frost_walrus_floor_tiles_rush[20];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
 extern s8 D_800F8BF8[];
@@ -3639,7 +3642,7 @@ extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
 extern union AnimationStep* D_800FE890[21];
 extern void* D_80101624[12];
-extern void* D_80101A6C[30];
+extern void* storm_owl_animations[30];
 extern void* D_80103E08[29];
 #ifdef MMX4_PC
 extern struct MainBssState main_bss_state;
@@ -3841,7 +3844,7 @@ extern struct Unk_unk68 D_801079F8[];
 extern struct Unk_unk68 D_80107A78[];
 extern struct Unk_unk68 D_80107B78[];
 extern struct Unk_unk68 D_801013BC[3];
-extern s32 D_80101CB8[3];
+extern s32 split_mushroom_walk_speeds[3];
 extern struct Unk_unk68 D_80101CA8;
 extern struct Unk_unk68 D_801016B8;
 extern struct Unk_unk68 D_801016C0;
@@ -4103,9 +4106,9 @@ extern s16 D_8013B800;
 extern s16 D_8013B804;
 extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
-extern s16 D_8013B844[2];
-extern s16 D_8013B84C[2];
-extern s16 D_8013B850[4];
+extern s16 magma_dragoon_arena_center[2];
+extern s16 magma_dragoon_arena_floor[2];
+extern s16 magma_dragoon_arena_ceiling[4];
 extern s8 D_8013B810;
 extern u8 D_8013B814;
 extern u8 D_8013B8A0[];
@@ -4310,8 +4313,8 @@ extern u32* D_8010DBC0[];
 extern u8 D_8010DBF8[];
 extern u8 D_8010A074[9][16];
 extern u8 D_8010A104[9][16];
-extern u8 D_80102984[32];
-extern u8 D_801029A4[32];
+extern u8 cyber_peacock_attacks[32];
+extern u8 cyber_peacock_attacks_low_health[32];
 extern u8 D_80109E10[];
 extern s16 D_800FFAD8[];
 
@@ -4468,13 +4471,13 @@ struct MenuTextureData {
 };
 extern u8 D_800F1FC0[32];
 extern struct MenuTextureData D_800F1FE0;
-struct ShotObj* func_80064E58(struct MainObj*, s32);
+struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
 void func_800527C0(struct AnimatedObj*);
 void func_80089798(struct MainObj*);
 void func_80089910(struct MainObj*);
 void func_8005D148(struct MainObj*);
-void func_800780D4(struct AnimatedObj*);
-void func_8007DC54(struct AnimatedObj*, u32);
+void storm_owl_spawn_storm_charge(struct AnimatedObj*);
+void magma_dragoon_spawn_flames(struct AnimatedObj*, u32);
 s32 func_8009227C(void);
 void func_800CA9EC(struct MiscObj*, u8);
 void func_800CAB10(struct MiscObj*, u8);
@@ -4528,8 +4531,8 @@ void func_80068340(struct MainObj*);
 void func_8006AE80(struct MainObj*);
 void func_8006EA78(struct MainObj*);
 void func_80062240(struct MainObj*);
-void func_80065268(struct MainObj*);
-void func_800652C8(struct MainObj*);
+void web_spider_set_move_timer(struct MainObj*);
+void web_spider_set_swing_animation(struct MainObj*);
 void func_800204CC(s8*, s32);
 void func_80097670(struct WeaponObj*);
 void func_800976DC(struct WeaponObj*);
@@ -4550,8 +4553,8 @@ void func_80038E44(struct PlayerObj*, s32);
 void func_800921E8(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
-struct VisualObj* func_8006FBFC(struct MainObj*);
-s32 func_8006FCB8(struct PlayerObj*, s32, s32);
+struct VisualObj* jet_stingray_spawn_splash(struct MainObj*);
+s32 jet_stingray_check_surface(struct PlayerObj*, s32, s32);
 void func_800BBFCC(struct EffectObj*);
 
 enum SelectedPlayer {

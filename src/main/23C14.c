@@ -6619,8 +6619,8 @@ void func_800468CC(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002B93C(MOVING_OBJECT(arg0),
         func_8002B7B0(OBJECT_HEADER(arg0),
-            *(u16*)&arg0->ext.main_43.unk92 << 0x10,
-            arg0->ext.main_43.unk90 << 0x10)
+            *(u16*)&arg0->ext.main_43.attack_count << 0x10,
+            arg0->ext.main_43.attack_cooldown << 0x10)
             & 0xFF);
 
     arg0->unk7C = 0x14;
