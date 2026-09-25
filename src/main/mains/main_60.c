@@ -206,7 +206,7 @@ void func_80075D38(struct MainObj* arg0)
     func_8002B718(MOVING_OBJECT(arg0));
     index = (engine_obj.stage != 7) * 2;
     arg0->ext.main_60.unk8B = index;
-    if (arg0->y_pos.i.hi < (s16)(background_objects[0].y_pos.i.hi + ((u16*)D_80101AE4)[(index & 0xFF) * 6 + 1])) {
+    if (arg0->y_pos.i.hi < (s16)(background_objects[0].y_pos.i.hi + (u16)D_80101AE4[index & 0xFF].y)) {
         arg0->unk5 = 3;
         arg0->unk20 = 0;
         arg0->unk24 = 0;
@@ -237,8 +237,8 @@ void func_8007601C(struct MainObj* self)
     func_80015DC8(ANIMATED_OBJECT(self));
 
     if (self->ext.main_60.unk92 == 0) {
-        self->unk20 = D_80101AE8[self->ext.main_60.unk8B * 3];
-        self->unk24 = D_80101AEC[self->ext.main_60.unk8B * 3];
+        self->unk20 = D_80101AE4[self->ext.main_60.unk8B].vx;
+        self->unk24 = D_80101AE4[self->ext.main_60.unk8B].vy;
         self->unk28 = FIXED(0.015625);
         self->unk6++;
         self->unk15 = ((~self->unk20 >> 31) & 0x40);
@@ -259,7 +259,7 @@ void func_800761A0(struct MainObj* arg0)
     func_8002B694(ANIMATED_OBJECT(arg0));
     arg0->unk24 += FIXED(0.015625);
 
-    target_x = background_objects[0].x_pos.i.hi + ((u16*)D_80101AE4)[arg0->ext.main_60.unk8B * 6];
+    target_x = background_objects[0].x_pos.i.hi + (u16)D_80101AE4[arg0->ext.main_60.unk8B].x;
     x_pos = arg0->x_pos.i.hi;
     distance = x_pos - target_x;
     if (distance < 0) {
@@ -1161,7 +1161,7 @@ void func_800786AC(void)
     for (i = 0; i < 0x20; i++) {
         if ((shot_objects[i].id == 0x25) || ((shot_objects[i].unk2 != 0) && (shot_objects[i].unk2 < 5))) {
             dst = (u8*)&shot_objects[i];
-            j = 0x9B;
+            j = sizeof(shot_objects[i]) - 1;
             do {
                 *dst++ = clear_value;
             } while (j-- != 0);

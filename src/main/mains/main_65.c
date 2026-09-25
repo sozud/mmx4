@@ -271,7 +271,7 @@ void func_8007EC74(struct MainObj* arg0)
     arg0->unk6++;
 }
 
-void func_8007ECEC(struct WeaponObj* self)
+void func_8007ECEC(struct MainObj* self)
 {
     struct ShotObj* shot;
 
@@ -282,19 +282,18 @@ void func_8007ECEC(struct WeaponObj* self)
             shot->active = 0x41;
             shot->id = 0x29;
             shot->unk2 = 2;
-            shot->unk7C = self;
+            shot->unk7C = WEAPON_OBJECT(self);
         }
-        self->unk80.word = (s32)shot;
+        self->ext.main_65.unk80 = (struct MainObj*)shot;
         self->animation_step.fields.event = 0;
     }
     if (self->animation_step.fields.event == 2) {
-        shot = (struct ShotObj*)self->unk80.word;
-        shot->unk6++;
+        self->ext.main_65.unk80->unk6++;
         self->animation_step.fields.event = 0;
     }
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6 = 0;
-        if (self->ext.raw[1] == 3) {
+        if (self->ext.main_65.unk8D == 3) {
             self->unk5 = 0xC;
         } else {
             self->unk5 = 3;
@@ -339,8 +338,8 @@ void func_8007EED8(struct MainObj* self)
     func_80015DC8(ANIMATED_OBJECT(self));
     func_8002B694(ANIMATED_OBJECT(self));
 
-    if (self->y_pos.i.hi < D_8013B84C[2]) {
-        self->y_pos.i.hi = D_8013B84C[2];
+    if (self->y_pos.i.hi < D_8013B850[0]) {
+        self->y_pos.i.hi = D_8013B850[0];
         self->unk24 = 0;
         self->unk2C = 0;
     }

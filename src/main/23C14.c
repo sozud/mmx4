@@ -1080,14 +1080,8 @@ void func_800355C0(void)
     entity->unk5C = engine_obj.unk46;
     entity->unk5D = engine_obj.unk46;
     entity->unk5E = engine_obj.unk46;
-#ifdef MMX4_PC
-    entity->animation_cursor = entity->animation_table[0];
-    entity->unk38 = (s32*)entity->animation_cursor;
-    entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
-#else
     entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
     entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
-#endif
     entity->unk40 = 0x540;
     entity->unk16 = 2;
     entity->unk42 = 0x7800;
@@ -1675,7 +1669,14 @@ void func_80036B38(struct PlayerObj* arg0)
 void func_80036B88(struct PlayerObj* arg0)
 {
     if (func_8002D900(arg0) == 0x24) {
+#ifdef MMX4_PC
+        s16 temp = arg0->y_pos.i.hi;
+
+        if (arg0->unk68 != NULL)
+            temp += arg0->unk68->unk1 + arg0->unk68->unk3;
+#else
         s16 temp = arg0->y_pos.i.hi + arg0->unk68->unk1 + arg0->unk68->unk3;
+#endif
         func_80036BF4(arg0, temp & ~0xF);
     }
 }

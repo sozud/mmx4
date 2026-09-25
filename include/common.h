@@ -852,17 +852,21 @@ struct Main54Ext {
     u8 unk87;
     u8 pad88;
     u8 unk89;
-    u8 pad8A[2];
+    u8 unk8A;
+    u8 pad8B;
     struct EffectObj* unk8C;
     u8* unk90;
     u8 unk94;
     u8 unk95;
+    u8 unk96;
 };
 
 struct Main55Ext {
     u8 pad80[5];
     u8 unk85;
     u8 unk86;
+    u8 unk87;
+    u8 unk88;
 };
 
 struct Main36Ext {
@@ -912,7 +916,7 @@ struct Main56Ext {
     u8 *unk84;
     u8 unk88;
     union Main56Unk89 unk89;
-    u8 pad8A;
+    u8 unk8A;
     u8 flags;
 };
 
@@ -920,7 +924,7 @@ struct Main57Ext {
     struct EffectObj* effect;
     struct ShotObj* shot;
     u8* script;
-    u8 pad8C[4];
+    RECT* rect;
     u8 unk90;
     u8 unk91;
     u8 unk92;
@@ -1026,12 +1030,14 @@ struct Main64Ext {
     u16 unk86;
     u8 unk88;
     u8 unk89;
-    u8 pad8A;
+    u8 unk8A;
     u8 unk8B;
-    u8 pad8C[4];
+    s16 unk8C;
+    s16 unk8E;
     u8 unk90;
     u8 unk91;
     u8 unk92;
+    u8 unk93;
 };
 
 struct Main74Ext {
@@ -1791,7 +1797,8 @@ struct Weapon13Ext {
 
 struct Weapon16Ext {
     u16 timer;
-    u8 pad8E[0x91 - 0x8E];
+    u16 delay;
+    u8 pad90;
     u8 unk91;
 };
 
@@ -1896,7 +1903,10 @@ struct WeaponObj {
     s8 pad4A[0x50 - 0x4A];
     const void* unk50;
     const void* unk54;
-    s8 pad58[0x61 - 0x58];
+    const void* unk58;
+    s8 unk5C;
+    s8 pad5D[3];
+    s8 unk60;
     s8 unk61;
     s8 unk62;
     s8 unk63;
@@ -2201,6 +2211,11 @@ struct Misc51Ext {
     u8 unk54;
 };
 
+struct Misc49Ext {
+    void* owner;
+    u16 timer;
+};
+
 struct Misc45Ext {
     u8 pad50[5];
     u8 timer;
@@ -2325,6 +2340,18 @@ struct Misc22Ext {
     u8 timer;
 };
 
+struct Misc26Ext {
+    struct MainObj* owner;
+    u8 timer;
+};
+
+struct Misc30Ext {
+    struct MainObj* owner;
+    s8 unk54;
+    u8 pad55;
+    u16 unk56;
+};
+
 struct Misc53Ext {
     u8 pad50[4];
     struct EffectObj* effect;
@@ -2356,6 +2383,7 @@ union MiscExt {
     struct Misc42Ext misc_42;
     struct Misc45Ext misc_45;
     struct Misc51Ext misc_51;
+    struct Misc49Ext misc_49;
     struct Misc24Ext misc_24;
     struct ReadyTextExt ready_text;
     struct MiscPointerExt pointer;
@@ -2370,6 +2398,8 @@ union MiscExt {
     struct Misc39Ext misc_39;
     struct Misc52Ext misc_52;
     struct Misc22Ext misc_22;
+    struct Misc30Ext misc_30;
+    struct Misc26Ext misc_26;
     struct Misc53Ext misc_53;
     struct Misc55Ext misc_55;
     struct UnkExt unk;
@@ -4075,6 +4105,7 @@ extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
 extern s16 D_8013B844[2];
 extern s16 D_8013B84C[2];
+extern s16 D_8013B850[4];
 extern s8 D_8013B810;
 extern u8 D_8013B814;
 extern u8 D_8013B8A0[];

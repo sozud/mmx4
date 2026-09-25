@@ -15,7 +15,8 @@ CASES = (
     ("odd length", GOOD + b"\x00"),
     ("truncated header", GOOD[:12]),
     ("bad magic", b"MMX4RPL3" + GOOD[8:]),
-    ("nonzero reserved", GOOD[:12] + b"\x01\x00\x00\x00" + GOOD[16:]),
+    ("unknown loadout", GOOD[:12] + b"\x02\x00\x00\x00" + GOOD[16:]),
+    ("nonzero reserved", GOOD[:12] + b"\x00\x01\x00\x00" + GOOD[16:]),
 )
 
 

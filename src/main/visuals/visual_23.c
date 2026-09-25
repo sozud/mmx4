@@ -26,7 +26,7 @@ void func_800B322C(struct VisualObj* arg0)
 
 void func_800B3358(struct VisualObj* arg0)
 {
-    struct PlayerObj* entity = arg0->unk50;
+    struct MainObj* owner = MAIN_OBJECT(arg0->unk50);
 
     switch (arg0->unk5) {
     case 0:
@@ -36,7 +36,7 @@ void func_800B3358(struct VisualObj* arg0)
         }
         break;
     case 1:
-        if (entity->unk88.unsigned_bytes.timer != 0) {
+        if (owner->ext.main_56.unk88 != 0) {
             arg0->unk5++;
             func_80015D60(arg0, 0x15);
         }
@@ -47,7 +47,7 @@ void func_800B3358(struct VisualObj* arg0)
         }
         break;
     }
-    if (entity->state >= 2) {
+    if (owner->state >= 2) {
         arg0->state = 2;
     }
 }

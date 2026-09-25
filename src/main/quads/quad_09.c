@@ -2,7 +2,7 @@
 // 800D67DC..800D6AD8
 #include "common.h"
 
-void func_800D69A8();
+void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target);
 
 void func_800D67DC(struct QuadObj* arg0)
 {
@@ -38,7 +38,7 @@ void func_800D67DC(struct QuadObj* arg0)
         func_800D68D0(arg0, ptr, temp_a2);
         return;
     }
-    func_800D6944(arg0, ptr);
+    func_800D6944(arg0, ptr, temp_a2);
 }
 
 void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
@@ -53,7 +53,7 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     arg0->state++;
 }
 
-void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
+void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     if (arg0->ext.unk_ext3.unk38 == 0) {
         ZeroObjectState(arg0);
@@ -63,7 +63,7 @@ void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1)
         arg0->on_screen ^= 1;
     }
     arg0->ext.unk_ext3.unk38 -= 1;
-    func_800D69A8(arg0);
+    func_800D69A8(arg0, arg1, arg2);
 }
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_09", func_800D69A8);

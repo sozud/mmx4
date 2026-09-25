@@ -25,14 +25,14 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_17", func_800B20CC);
 
 void func_800B2200(struct VisualObj* arg0)
 {
-    struct PlayerObj* temp_s0;
+    struct MainObj* owner;
 
     if (arg0->unk2 == 0) {
-        temp_s0 = arg0->unk50;
-        arg0->x_pos.val = temp_s0->x_pos.val;
-        arg0->y_pos.val = temp_s0->y_pos.val;
+        owner = MAIN_OBJECT(arg0->unk50);
+        arg0->x_pos.val = owner->x_pos.val;
+        arg0->y_pos.val = owner->y_pos.val;
         func_80015DC8(arg0);
-        if (temp_s0->unk8A.packed == 0) {
+        if (owner->ext.main_43.unk8A == 0) {
             ZeroObjectState(arg0);
         } else {
             func_8002B318(arg0, 0x10, 0x10);
