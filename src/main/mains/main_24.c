@@ -52,7 +52,37 @@ void func_80056BDC(struct MainObj* arg0)
     D_800FCFC4[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056C18);
+void func_80056C18(struct MainObj* arg0)
+{
+    struct MiscObj* trail;
+    u8 facing;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (!(++arg0->ext.main_24.unk80 & 3)) {
+        trail = find_free_misc_obj();
+        if (trail != NULL) {
+            trail->active = 0x41;
+            trail->id = 7;
+            trail->unk2 = 0;
+            trail->unk40 = arg0->unk40;
+            trail->unk42 = arg0->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)arg0->animation_table;
+            trail->unk3C = (void*)arg0->sprite_frames;
+            trail->bg_offset = arg0->bg_offset;
+            trail->x_pos.val = arg0->x_pos.val;
+            trail->y_pos.val = arg0->y_pos.val;
+            facing = arg0->unk15;
+            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->state = 0;
+            trail->unk15 = facing;
+        }
+    }
+    if (--arg0->unk7C == 0) {
+        func_80015D60(arg0, 1);
+        arg0->unk6 = 1;
+    }
+}
 
 void func_80056D20(struct MainObj* arg0)
 {
@@ -72,9 +102,96 @@ void func_80056D20(struct MainObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056DB4);
+void func_80056DB4(struct MainObj* arg0)
+{
+    struct MiscObj* trail;
+    u8 facing;
 
-INCLUDE_ASM("main/nonmatchings/mains/main_24", func_80056EF4);
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (!(++arg0->ext.main_24.unk80 & 3)) {
+        trail = find_free_misc_obj();
+        if (trail != NULL) {
+            trail->active = 0x41;
+            trail->id = 7;
+            trail->unk2 = 1;
+            trail->unk40 = arg0->unk40;
+            trail->unk42 = arg0->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)arg0->animation_table;
+            trail->unk3C = (void*)arg0->sprite_frames;
+            trail->bg_offset = arg0->bg_offset;
+            trail->x_pos.val = arg0->x_pos.val;
+            trail->y_pos.val = arg0->y_pos.val;
+            facing = arg0->unk15;
+            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->state = 0;
+            trail->unk15 = facing ^ 0x40;
+        }
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->unk2C = 0;
+        if ((arg0->unk2 & 3) < 2) {
+            arg0->unk24 = FIXED(-2);
+        } else {
+            arg0->unk24 = FIXED(2);
+        }
+        arg0->unk7C = 1;
+        arg0->unk7E = 8;
+        arg0->unk6 = 3;
+    }
+}
+
+void func_80056EF4(struct MainObj* arg0)
+{
+    struct MiscObj* trail;
+    struct ShotObj* shot;
+    u8 facing;
+
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    if (!(++arg0->ext.main_24.unk80 & 3)) {
+        trail = find_free_misc_obj();
+        if (trail != NULL) {
+            trail->active = 0x41;
+            trail->id = 7;
+            trail->unk2 = 1;
+            trail->unk40 = arg0->unk40;
+            trail->unk42 = arg0->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)arg0->animation_table;
+            trail->unk3C = (void*)arg0->sprite_frames;
+            trail->bg_offset = arg0->bg_offset;
+            trail->x_pos.val = arg0->x_pos.val;
+            trail->y_pos.val = arg0->y_pos.val;
+            facing = arg0->unk15;
+            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->state = 0;
+            trail->unk15 = facing ^ 0x40;
+        }
+    }
+    if (--arg0->unk7E == 0) {
+        func_80015D60(arg0, 9);
+        shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0xD;
+            shot->unk2 = 0;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->bg_offset = arg0->bg_offset;
+            shot->x_pos.val = arg0->x_pos.val;
+            shot->y_pos.val = arg0->y_pos.val;
+            shot->unk15 = arg0->unk15;
+            shot->state = 0;
+        }
+        if (--arg0->unk7C == 0) {
+            arg0->unk7E = 0x7FFF;
+        } else {
+            arg0->unk7E = 8;
+        }
+    }
+}
 
 void func_800570A4(struct MainObj* arg0)
 {

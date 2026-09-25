@@ -50,7 +50,34 @@ void func_8005D88C(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D8B8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D9C4);
+void func_8005D9C4(struct MainObj* arg0)
+{
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 1;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(arg0));
+    if (arg0->unk20 != 0) {
+        return;
+    }
+    if (arg0->unk15 == 0) {
+        arg0->unk15 = 0x40;
+        arg0->unk20 = FIXED(2.5);
+    } else {
+        arg0->unk15 = 0;
+        arg0->unk20 = -FIXED(2.5);
+    }
+    func_80015D60(arg0, 0);
+    arg0->unk28 = 0;
+    if (--arg0->ext.main_33.unk86 == 0 && arg0->ext.main_33.unk85 != 0) {
+        arg0->unk7C = 0x40;
+        arg0->unk20 = FIXED(1);
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+        return;
+    }
+    arg0->unk6 = 1;
+}
 
 void func_8005DAB8(struct MainObj* arg0)
 {
