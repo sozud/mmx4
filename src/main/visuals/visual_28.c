@@ -13,10 +13,10 @@ void func_800B3EB8(struct VisualObj* obj)
     u8 player_direction;
     s8 type;
     s8 mode;
-    struct PlayerObj* player = obj->unk50;
+    struct MainObj* owner = MAIN_OBJECT(obj->unk50);
 
     flags = obj->unk42;
-    player_direction = player->unk15;
+    player_direction = owner->unk15;
     obj->unk42 = flags & 0x7FFF;
     obj->on_screen = 1;
     obj->unk15 = player_direction;
@@ -41,7 +41,7 @@ void func_800B3EB8(struct VisualObj* obj)
         break;
     case 2:
         func_80015D60(obj, 0x19);
-        player->unk8F = 2;
+        owner->ext.main_60.unk8F = 2;
         break;
     case 3:
         func_80015D60(obj, 0xE);

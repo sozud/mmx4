@@ -11,8 +11,8 @@ void func_80099338(struct WeaponObj* arg0)
 {
     arg0->state = 1;
     arg0->unk64 = 1;
-    arg0->pad58[4] = 1;
-    arg0->pad58[8] = 3;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
     arg0->on_screen = 0;
     arg0->bg_offset = 0;
     arg0->unk68 = NULL;

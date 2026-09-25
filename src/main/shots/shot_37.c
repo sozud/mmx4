@@ -29,11 +29,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_37", func_800A3FEC);
 
 void func_800A4230(struct ShotObj* arg0)
 {
-    struct WeaponObj* weapon;
+    struct MainObj* owner;
 
     if ((u32)((u8)arg0->unk2 - 1) < 4U) {
-        weapon = arg0->unk7C;
-        weapon->unk88.half -= 1 << arg0->unk84.value;
+        owner = MAIN_OBJECT(arg0->unk7C);
+        owner->ext.main_60.unk88 -= 1 << arg0->unk84.value;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

@@ -193,7 +193,18 @@ void func_80012F44(void)
     u32 i;
 
     saved_data = D_8015D9C8;
+#ifdef MMX4_PC
+    {
+        extern struct ArchiveSelectionData D_800EE480;
+        static const u8 pointer_high_bytes[2] = { 0x01, 0x80 };
+        u8 checkpoint = engine_obj.checkpoint;
+        func_80013AD8(checkpoint < 2 ? pointer_high_bytes[checkpoint]
+                                     : ((u8*)&D_800EE480)[checkpoint - 2],
+            4, D_80141F38);
+    }
+#else
     func_80013AD8(D_800EE47E[engine_obj.checkpoint], 4, D_80141F38);
+#endif
     func_80014C70();
 
     i = 0;
@@ -2754,6 +2765,7 @@ void func_8001D064(void)
             u8 substage = 0;
             u8 checkpoint = 0;
             u8 character = 0;
+            u8 loadout = 0;
             const char* value;
 
             value = getenv("MMX4_DIRECT_STAGE");
@@ -2768,6 +2780,9 @@ void func_8001D064(void)
             value = getenv("MMX4_DIRECT_CHARACTER");
             if (value != NULL)
                 character = (u8)strtoul(value, NULL, 0);
+            value = getenv("MMX4_DIRECT_LOADOUT");
+            if (value != NULL)
+                loadout = (u8)strtoul(value, NULL, 0);
             D_80173C80 = MAIN_ARCHIVE_ARENA;
             reset_game_engine();
             engine_obj.stage = 0xE;
@@ -2785,6 +2800,20 @@ void func_8001D064(void)
             engine_obj.substage = substage;
             engine_obj.checkpoint = checkpoint;
             engine_obj.cur_character = character;
+            if (loadout == 1) {
+                engine_obj.unk44 = 4;
+                engine_obj.unk45 = 0x30;
+                engine_obj.unk46 = 0x30;
+                engine_obj.palette_flags = 0xFF;
+                engine_obj.unk5A = 0xF0FF;
+                engine_obj.unk5C[0] = 0xA0;
+                engine_obj.unk5C[1] = 0xA0;
+                engine_obj.unk5C[2] = 0x20;
+                if (character == CHARACTER_X) {
+                    engine_obj.unk47 = 0x0F;
+                    engine_obj.unk48 = 2;
+                }
+            }
             engine_obj.state = 4;
             func_800128B8(func_8001FB50);
             return;

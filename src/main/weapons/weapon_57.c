@@ -15,8 +15,8 @@ void func_80098874(struct WeaponObj* arg0)
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
     arg0->unk54 = 0;
-    arg0->pad58[4] = 1;
-    arg0->pad58[8] = 3;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
     func_80015D60(arg0, 0xC);
 }
 

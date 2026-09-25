@@ -2,8 +2,8 @@
 // 80072194..800743FC
 #include "common.h"
 
-extern void* D_80100EB0[];
-extern u8 D_80100EBC[];
+extern u8** D_80100EB0[];
+extern u8 D_80100EBC[][4];
 
 void func_800742AC(struct MainObj* arg0);
 
@@ -830,25 +830,20 @@ void func_8007427C(struct MainObj* arg0)
 
 void func_800742AC(struct MainObj* arg0)
 {
-    u32 byte_offset;
+    u8 index;
     u8** choices;
+    u8* thresholds;
     u8 i;
     u32 rnd;
-    u32 gr;
 
-    byte_offset = arg0->unk5C - 1;
-    if ((s32)byte_offset < 0) {
-        byte_offset = arg0->unk5C + 0xE;
-    }
-    byte_offset = (byte_offset >> 2);
-    byte_offset &= 0x3FC;
-    choices = D_80100EB0[byte_offset / sizeof(*D_80100EB0)];
-    gr = get_random();
+    index = (arg0->unk5C - 1) / 16;
+    choices = D_80100EB0[index];
+    rnd = get_random();
     i = 0;
-    byte_offset += (u32)D_80100EBC;
-    rnd = gr & 0xF;
+    thresholds = D_80100EBC[index];
+    rnd &= 0xF;
     while (i < 4) {
-        if (rnd < ((u8*)byte_offset)[i]) {
+        if (rnd < thresholds[i]) {
             arg0->ext.main_57.script = choices[i];
             return;
         }

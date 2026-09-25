@@ -36,7 +36,7 @@ def validate_replay(path):
         raise SystemExit(f"{path}: empty, odd-length, or truncated replay")
     if data[:8] not in (b"MMX4RPL1", b"MMX4RPL2"):
         raise SystemExit(f"{path}: invalid replay magic")
-    if any(data[12:16]):
+    if data[12] > 1 or any(data[13:16]):
         raise SystemExit(f"{path}: nonzero reserved header bytes")
     return {
         "path": str(path),
@@ -47,6 +47,7 @@ def validate_replay(path):
         "substage": data[9],
         "checkpoint": data[10],
         "character": data[11],
+        "loadout": data[12],
         "distinct_masks": len({data[16 + 2 * i : 18 + 2 * i]
                                for i in range((len(data) - 16) // 2)}),
     }

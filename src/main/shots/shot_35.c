@@ -98,15 +98,15 @@ void func_800A2748(struct ShotObj* arg0)
 void func_800A27F4(struct ShotObj* arg0)
 {
     s16 timer;
-    struct WeaponObj* weapon;
+    struct MainObj* owner;
     u8 next_state;
     s8 index;
     u16* table;
     u16 background_x;
     u16 offset;
 
-    weapon = arg0->unk7C;
-    if (weapon->unk6 != 5) {
+    owner = MAIN_OBJECT(arg0->unk7C);
+    if (owner->unk6 != 5) {
         timer = (u16)arg0->timer - 1;
         arg0->timer = timer;
         if (timer != 0) {
@@ -116,7 +116,7 @@ void func_800A27F4(struct ShotObj* arg0)
 
     next_state = arg0->unk6 + 1;
     index = arg0->unk2;
-    table = *(u16**)&weapon->ext;
+    table = (u16*)owner->ext.main_57.rect;
     background_x = background_objects[0].unk1E;
     offset = table[index];
 
@@ -533,13 +533,13 @@ void func_800A3758(struct ShotObj* object)
     if (index < 3) {
         arg0->x_vel.val = D_801096D0[index];
     } else {
-        arg0->x_vel.val = -(((s32*)((u8*)&D_801096A8 + 0x1C))[index]);
+        arg0->x_vel.val = -D_801096D0[index - 3];
     }
     arg0->y_vel.val = FIXED(6.5);
     arg0->unk2C = FIXED(0.2578125);
     arg0->unk5C = 5;
     arg0->unk60 = 6;
-    arg0->unk68 = (struct Unk_unk68*)((u8*)&D_801096A8 + 4);
+    arg0->unk68 = &D_801096AC;
     arg0->unk54 = (const u8*)&D_801096B8;
     arg0->unk50.data = (const u8*)&D_801096BC;
     arg0->unk28 = 0;
@@ -566,15 +566,15 @@ void func_800A382C(struct ShotObj* arg0)
 void func_800A38B0(struct ShotObj* arg0)
 {
     RECT** table;
-    struct WeaponObj* weapon;
+    struct MainObj* owner;
 
-    weapon = arg0->unk7C;
+    owner = MAIN_OBJECT(arg0->unk7C);
     if (arg0->unk7 == 4) {
         table = D_80109698;
     } else {
         table = D_8010969C;
     }
-    weapon->ext.rect = table[get_random() & 7];
+    owner->ext.main_57.rect = table[get_random() & 7];
 }
 
 RECT D_80109598[8] = {

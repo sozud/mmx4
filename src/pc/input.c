@@ -158,7 +158,7 @@ static void open_replay(void)
             replay_fail("legacy video-clock replay; normalize it to MMX4RPL2 first");
         replay_fail("invalid magic");
     }
-    if (header[12] != 0 || header[13] != 0 || header[14] != 0 || header[15] != 0)
+    if (header[12] > 1 || header[13] != 0 || header[14] != 0 || header[15] != 0)
         replay_fail("nonzero reserved header bytes");
     replay_stage = header[8];
     replay_substage = header[9];

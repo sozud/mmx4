@@ -849,7 +849,7 @@ extern void func_800D6780 (struct QuadObj *arg0);
 extern void func_800D67A0 (struct QuadObj *arg0);
 extern void func_800D67DC (struct QuadObj *arg0);
 extern void func_800D68D0 (struct QuadObj *arg0, struct PlayerObj *arg1, struct PlayerObj *arg2);
-extern void func_800D6944 (struct QuadObj *arg0, struct PlayerObj *arg1);
+extern void func_800D6944 (struct QuadObj *arg0, struct PlayerObj *arg1, struct PlayerObj *arg2);
 extern void func_800D6AD8 (struct QuadObj *arg0);
 extern void func_800D6F94 (struct QuadObj *entity);
 extern void func_800D7100 (struct QuadObj *arg0);

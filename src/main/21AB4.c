@@ -95,13 +95,7 @@ void func_80031540(struct PlayerObj* arg0)
     } else {
         if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x40) == 0) {
             func_8002B718(MOVING_OBJECT(arg0));
-#ifdef MMX4_PC
-            if (arg0->unk68 != NULL) {
-#endif
-                func_80036B88(arg0);
-#ifdef MMX4_PC
-            }
-#endif
+            func_80036B88(arg0);
             return;
         }
         arg0->on_screen = 0;
