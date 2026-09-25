@@ -36,7 +36,7 @@ void func_800B3358(struct VisualObj* arg0)
         }
         break;
     case 1:
-        if (owner->ext.main_56.unk88 != 0) {
+        if (owner->ext.main_56.vortex_result != 0) {
             arg0->unk5++;
             func_80015D60(arg0, 0x15);
         }

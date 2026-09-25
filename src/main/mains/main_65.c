@@ -4,7 +4,7 @@
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007DD98);
 
-void func_8007DF50(struct MainObj* self)
+void magma_dragoon_intro_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
 
@@ -14,7 +14,7 @@ void func_8007DF50(struct MainObj* self)
         effect->id = 0x18;
         effect->x_pos.i.hi = self->x_pos.i.hi;
         effect->y_pos.i.hi = self->y_pos.i.hi;
-        self->ext.main_65.unk80 = (struct MainObj*)effect;
+        self->ext.main_65.object = (struct MainObj*)effect;
     }
     self->unk15 = 0;
     self->unk6++;
@@ -32,182 +32,182 @@ void func_8007DF50(struct MainObj* self)
     }
 }
 
-void func_8007E01C(struct MainObj* arg0)
+void magma_dragoon_intro_leap(struct MainObj* self)
 {
-    if (arg0->ext.main_65.unk80->active == 0) {
-        arg0->unk24 = FIXED(2);
-        arg0->unk20 = 0;
-        arg0->unk28 = FIXED(0.0078125);
-        arg0->unk6++;
-        func_80015D60(arg0, 0xF);
-        func_8007DC54(ANIMATED_OBJECT(arg0), 0);
-        arg0->unk67 = 1;
-        arg0->unk7E = 0x14;
+    if (self->ext.main_65.object->active == 0) {
+        self->unk24 = FIXED(2);
+        self->unk20 = 0;
+        self->unk28 = FIXED(0.0078125);
+        self->unk6++;
+        func_80015D60(self, 0xF);
+        magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 0);
+        self->unk67 = 1;
+        self->unk7E = 0x14;
     }
 }
 
-void func_8007E098(struct MainObj* arg0)
+void magma_dragoon_intro_descend(struct MainObj* self)
 {
-    if ((arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x20) {
-        arg0->unk20 = FIXED(-2);
-        arg0->unk24 = FIXED(-2);
-        arg0->unk2C = FIXED(0.1875);
-        arg0->unk28 = 0;
-        arg0->unk68 = &D_80102A60;
-        arg0->unk6++;
+    if ((self->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x20) {
+        self->unk20 = FIXED(-2);
+        self->unk24 = FIXED(-2);
+        self->unk2C = FIXED(0.1875);
+        self->unk28 = 0;
+        self->unk68 = &D_80102A60;
+        self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007E128(struct MainObj* arg0)
+void magma_dragoon_intro_land(struct MainObj* self)
 {
-    if (arg0->unk70 & 8) {
-        func_80015D60(arg0, 0x10);
-        arg0->unk67 = 0;
-        func_8001540C(2, 2, arg0);
-        arg0->unk20 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk6++;
-        func_8007DC54(ANIMATED_OBJECT(arg0), 2);
+    if (self->unk70 & 8) {
+        func_80015D60(self, 0x10);
+        self->unk67 = 0;
+        func_8001540C(2, 2, self);
+        self->unk20 = 0;
+        self->unk24 = 0;
+        self->unk2C = 0;
+        self->unk6++;
+        magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007E1C0(struct MainObj* arg0)
+void magma_dragoon_intro_pose(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 0x11);
-        arg0->unk6++;
+    if (self->animation_step.fields.relative_step == 0) {
+        func_80015D60(self, 0x11);
+        self->unk6++;
         if (engine_obj.stage == 4) {
             ((void (*)(u16, u8, s8))func_8002217C)(
                 0xB, 0xFF, engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007E25C(struct MainObj* arg0)
+void magma_dragoon_intro_start_health_bar(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
-        arg0->unk6++;
+        self->unk6++;
         func_800921E8(3);
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007E2B8(struct MainObj* arg0)
+void magma_dragoon_intro_ready(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0 && func_8009227C() == 0) {
-        func_80015D60(arg0, 0x12);
+    if (self->animation_step.fields.relative_step == 0 && func_8009227C() == 0) {
+        func_80015D60(self, 0x12);
         engine_obj.enable_boss = 1;
-        arg0->unk7E = 3;
-        arg0->unk20 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk6++;
+        self->unk7E = 3;
+        self->unk20 = 0;
+        self->unk24 = 0;
+        self->unk2C = 0;
+        self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E350);
 
-void func_8007E45C(struct MainObj* arg0)
+void magma_dragoon_intro(struct MainObj* self)
 {
-    D_801034B8[arg0->unk6](arg0);
+    magma_dragoon_intro_funcs[self->unk6](self);
 }
 
-void func_8007E498(struct MainObj* arg0)
+void magma_dragoon_face_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
-        arg0->unk15 = 0x40;
+    if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
+        self->unk15 = 0x40;
     } else {
-        arg0->unk15 = 0;
+        self->unk15 = 0;
     }
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E4C8);
 
-void func_8007E5D0(struct MainObj* arg0)
+void magma_dragoon_dive_kick_jump(struct MainObj* self)
 {
     s32 var_a0;
 
-    func_8007E498(arg0);
-    func_80015D60(arg0, 3);
-    func_8007DC54(ANIMATED_OBJECT(arg0), 2);
-    arg0->unk67 = 1;
-    func_8001540C(2, 0, arg0);
+    magma_dragoon_face_player(self);
+    func_80015D60(self, 3);
+    magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
+    self->unk67 = 1;
+    func_8001540C(2, 0, self);
     var_a0 = FIXED(-0.75);
-    arg0->unk6 = (u8)arg0->unk6 + 1;
-    if (arg0->unk15 != 0) {
+    self->unk6 = (u8)self->unk6 + 1;
+    if (self->unk15 != 0) {
         var_a0 = FIXED(0.75);
     }
-    arg0->unk24 = FIXED(4);
-    arg0->unk28 = FIXED(0.03125);
-    arg0->unk20 = var_a0;
-    arg0->unk2C = FIXED(-0.03125);
-    arg0->ext.main_65.unk88 = (u16)arg0->y_pos.i.hi;
+    self->unk24 = FIXED(4);
+    self->unk28 = FIXED(0.03125);
+    self->unk20 = var_a0;
+    self->unk2C = FIXED(-0.03125);
+    self->ext.main_65.jump_start_y = (u16)self->y_pos.i.hi;
 }
 
-void func_8007E66C(struct MainObj* arg0)
+void magma_dragoon_dive_kick_rise(struct MainObj* self)
 {
-    if ((arg0->ext.main_65.unk88 - arg0->y_pos.i.hi) >= 0x51) {
-        arg0->unk6++;
-        func_80015D60(arg0, 4);
-        func_8001540C(2, 1, arg0);
-        arg0->unk60 = 6;
-        arg0->unk24 = FIXED(-6);
-        arg0->unk28 = 0;
-        arg0->unk2C = 0;
+    if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) >= 0x51) {
+        self->unk6++;
+        func_80015D60(self, 4);
+        func_8001540C(2, 1, self);
+        self->unk60 = 6;
+        self->unk24 = FIXED(-6);
+        self->unk28 = 0;
+        self->unk2C = 0;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E6F8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E848);
 
-void func_8007E8C0(struct MainObj* arg0)
+void magma_dragoon_dive_kick(struct MainObj* self)
 {
-    D_801034D8[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_dive_kick_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007E918(struct MainObj* arg0)
+void magma_dragoon_flame_burst_start(struct MainObj* self)
 {
-    func_8007E498(arg0);
-    func_80015D60(ANIMATED_OBJECT(arg0), 0xB);
-    arg0->unk6++;
+    magma_dragoon_face_player(self);
+    func_80015D60(ANIMATED_OBJECT(self), 0xB);
+    self->unk6++;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E95C);
 
-void func_8007EA3C(struct MainObj* arg0)
+void magma_dragoon_flame_burst(struct MainObj* self)
 {
-    D_801034E8[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_flame_burst_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007EA94(struct MainObj* arg0)
+void magma_dragoon_fire_volley_start(struct MainObj* self)
 {
-    func_8007E498(arg0);
-    func_80015D60(arg0, 0xC);
-    func_8001540C(2, 3, arg0);
-    arg0->unk6++;
+    magma_dragoon_face_player(self);
+    func_80015D60(self, 0xC);
+    func_8001540C(2, 3, self);
+    self->unk6++;
 }
 
-void func_8007EAE8(struct MainObj* self)
+void magma_dragoon_fire_volley_fire(struct MainObj* self)
 {
     s8 event;
     s8 shot_index;
@@ -229,7 +229,7 @@ void func_8007EAE8(struct MainObj* self)
             shot->unk7C = WEAPON_OBJECT(self);
             shot_index = self->animation_step.fields.event;
             if (shot_index == 0xA) {
-                self->ext.main_65.unk80 = MAIN_OBJECT(shot);
+                self->ext.main_65.object = MAIN_OBJECT(shot);
                 shot->unk7 = 1;
             } else {
                 shot->unk7 = shot_index - 1;
@@ -244,34 +244,34 @@ void func_8007EAE8(struct MainObj* self)
     }
 }
 
-void func_8007EBD0(struct MainObj* arg0)
+void magma_dragoon_fire_volley_wait(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 9;
-        arg0->unk6 = 0;
+    func_80015DC8((struct AnimatedObj*)self);
+    if (--self->unk7C == 0) {
+        self->unk5 = 9;
+        self->unk6 = 0;
     }
 }
 
-void func_8007EC1C(struct MainObj* arg0)
+void magma_dragoon_fire_volley(struct MainObj* self)
 {
-    D_801034F0[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_fire_volley_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007EC74(struct MainObj* arg0)
+void magma_dragoon_breath_start(struct MainObj* self)
 {
-    if (arg0->x_pos.i.hi > D_8013B844[0]) {
-        arg0->unk15 = 0;
+    if (self->x_pos.i.hi > magma_dragoon_arena_center[0]) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
-    func_80015D60(arg0, 0xA);
-    func_8001540C(2, 3, arg0);
-    arg0->unk6++;
+    func_80015D60(self, 0xA);
+    func_8001540C(2, 3, self);
+    self->unk6++;
 }
 
-void func_8007ECEC(struct MainObj* self)
+void magma_dragoon_breath_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
 
@@ -284,16 +284,16 @@ void func_8007ECEC(struct MainObj* self)
             shot->unk2 = 2;
             shot->unk7C = WEAPON_OBJECT(self);
         }
-        self->ext.main_65.unk80 = (struct MainObj*)shot;
+        self->ext.main_65.object = (struct MainObj*)shot;
         self->animation_step.fields.event = 0;
     }
     if (self->animation_step.fields.event == 2) {
-        self->ext.main_65.unk80->unk6++;
+        self->ext.main_65.object->unk6++;
         self->animation_step.fields.event = 0;
     }
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6 = 0;
-        if (self->ext.main_65.unk8D == 3) {
+        if (self->ext.main_65.attack == 3) {
             self->unk5 = 0xC;
         } else {
             self->unk5 = 3;
@@ -302,403 +302,403 @@ void func_8007ECEC(struct MainObj* self)
     }
 }
 
-void func_8007EDC0(struct MainObj* arg0)
+void magma_dragoon_breath(struct MainObj* self)
 {
-    D_801034FC[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_breath_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007EE18(struct MainObj* arg0)
+void magma_dragoon_leap_center_start(struct MainObj* self)
 {
     s32 var_v1;
 
-    if (arg0->x_pos.i.hi > D_8013B844[0]) {
-        arg0->unk15 = 0;
+    if (self->x_pos.i.hi > magma_dragoon_arena_center[0]) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
-    func_80015D60(arg0, 3);
-    func_8007DC54(ANIMATED_OBJECT(arg0), 2);
-    arg0->unk67 = 1;
-    func_8001540C(2, 0, arg0);
+    func_80015D60(self, 3);
+    magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
+    self->unk67 = 1;
+    func_8001540C(2, 0, self);
     var_v1 = FIXED(-5);
-    if (arg0->unk15 != 0) {
+    if (self->unk15 != 0) {
         var_v1 = FIXED(5);
     }
-    arg0->unk24 = FIXED(3);
-    arg0->unk2C = FIXED(-0.03125);
-    arg0->unk20 = var_v1;
-    arg0->unk28 = 0;
-    arg0->unk50 = (const u8*)&D_80102A70;
-    arg0->unk6++;
+    self->unk24 = FIXED(3);
+    self->unk2C = FIXED(-0.03125);
+    self->unk20 = var_v1;
+    self->unk28 = 0;
+    self->unk50 = (const u8*)&D_80102A70;
+    self->unk6++;
 }
 
-void func_8007EED8(struct MainObj* self)
+void magma_dragoon_leap_center_glide(struct MainObj* self)
 {
     func_80015DC8(ANIMATED_OBJECT(self));
     func_8002B694(ANIMATED_OBJECT(self));
 
-    if (self->y_pos.i.hi < D_8013B850[0]) {
-        self->y_pos.i.hi = D_8013B850[0];
+    if (self->y_pos.i.hi < magma_dragoon_arena_ceiling[0]) {
+        self->y_pos.i.hi = magma_dragoon_arena_ceiling[0];
         self->unk24 = 0;
         self->unk2C = 0;
     }
 
     if (self->unk15 == 0
-            ? self->x_pos.i.hi < (*D_8013B844 - 0x10)
-            : (*D_8013B844 + 0x10) < self->x_pos.i.hi) {
+            ? self->x_pos.i.hi < (*magma_dragoon_arena_center - 0x10)
+            : (*magma_dragoon_arena_center + 0x10) < self->x_pos.i.hi) {
         self->unk2C = FIXED(0.12109375);
         self->unk6++;
     }
 }
 
-void func_8007EF94(struct MainObj* arg0)
+void magma_dragoon_leap_center_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk6++;
-        func_80015D60(arg0, 6);
-        func_8007DC54(ANIMATED_OBJECT(arg0), 2);
-        arg0->unk67 = 0;
-        func_8001540C(2, 2, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk6++;
+        func_80015D60(self, 6);
+        magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
+        self->unk67 = 0;
+        func_8001540C(2, 2, self);
     }
 }
 
-void func_8007F00C(struct MainObj* arg0)
+void magma_dragoon_leap_center_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk50 = (const u8*)&D_80102A6C;
-        arg0->unk6 = 0;
-        arg0->unk5 = 7;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk50 = (const u8*)&D_80102A6C;
+        self->unk6 = 0;
+        self->unk5 = 7;
     }
 }
 
-void func_8007F05C(struct MainObj* arg0)
+void magma_dragoon_leap_center(struct MainObj* self)
 {
-    D_80103504[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_leap_center_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007F0B4(struct MainObj* arg0)
+void magma_dragoon_leap_wall_start(struct MainObj* self)
 {
-    arg0->ext.main_65.pad8B[0] = 0x40;
-    func_8007E498(arg0);
-    arg0->unk24 = FIXED(6);
-    arg0->unk2C = FIXED(0.1875);
-    arg0->unk28 = 0;
-    arg0->unk50 = (const u8*)&D_80102A70;
-    func_80015D60(arg0, 3);
-    func_8007DC54(ANIMATED_OBJECT(arg0), 2);
-    arg0->unk67 = 1;
-    func_8001540C(2, 0, arg0);
-    if (arg0->x_pos.i.hi < D_8013B844[0]) {
-        arg0->ext.main_65.pad8B[1] = 1;
+    self->ext.main_65.leap_frames = 0x40;
+    magma_dragoon_face_player(self);
+    self->unk24 = FIXED(6);
+    self->unk2C = FIXED(0.1875);
+    self->unk28 = 0;
+    self->unk50 = (const u8*)&D_80102A70;
+    func_80015D60(self, 3);
+    magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
+    self->unk67 = 1;
+    func_8001540C(2, 0, self);
+    if (self->x_pos.i.hi < magma_dragoon_arena_center[0]) {
+        self->ext.main_65.leap_to_right = 1;
     } else {
-        arg0->ext.main_65.pad8B[1] = 0;
+        self->ext.main_65.leap_to_right = 0;
     }
-    arg0->unk6++;
+    self->unk6++;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F174);
 
-void func_8007F2F4(struct MainObj* arg0)
+void magma_dragoon_leap_wall_finish(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        if (arg0->ext.main_65.unk8D == 3) {
-            arg0->unk5 = 5;
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->ext.main_65.attack == 3) {
+            self->unk5 = 5;
         } else {
-            arg0->unk5 = 3;
-            func_80015D60(arg0, 0);
+            self->unk5 = 3;
+            func_80015D60(self, 0);
         }
-        arg0->unk6 = 0;
+        self->unk6 = 0;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_8007F360(struct MainObj* arg0)
+void magma_dragoon_leap_wall(struct MainObj* self)
 {
-    D_80103514[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_leap_wall_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007F3B8(struct MainObj* arg0)
+void magma_dragoon_fireball_start(struct MainObj* self)
 {
-    func_8007E498(arg0);
-    func_80015D60(arg0, 8);
-    arg0->unk50 = (const u8*)&D_80102A70;
-    arg0->unk6++;
+    magma_dragoon_face_player(self);
+    func_80015D60(self, 8);
+    self->unk50 = (const u8*)&D_80102A70;
+    self->unk6++;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F404);
 
-void func_8007F50C(struct MainObj* arg0)
+void magma_dragoon_fireball(struct MainObj* self)
 {
-    D_80103520[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_fireball_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007F564(struct MainObj* arg0)
+void magma_dragoon_fireball_low_start(struct MainObj* self)
 {
-    func_8007E498(arg0);
-    func_80015D60(arg0, 9);
-    arg0->unk50 = (const u8*)&D_80102A70;
-    arg0->unk6++;
+    magma_dragoon_face_player(self);
+    func_80015D60(self, 9);
+    self->unk50 = (const u8*)&D_80102A70;
+    self->unk6++;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F5B0);
 
-void func_8007F690(struct MainObj* arg0)
+void magma_dragoon_fireball_low(struct MainObj* self)
 {
-    D_80103528[arg0->unk6](arg0);
-    if ((u32)(arg0->animation_step.fields.frame_index - 0x19) < 2U) {
-        arg0->unk54 = (const u8*)&D_80102A68;
+    magma_dragoon_fireball_low_funcs[self->unk6](self);
+    if ((u32)(self->animation_step.fields.frame_index - 0x19) < 2U) {
+        self->unk54 = (const u8*)&D_80102A68;
     } else {
-        arg0->unk54 = (const u8*)&D_80102A64;
+        self->unk54 = (const u8*)&D_80102A64;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007F71C(struct MainObj* arg0)
+void magma_dragoon_rising_punch_start(struct MainObj* self)
 {
-    arg0->unk60 = 8;
-    func_8007E498(arg0);
-    func_80015D60(arg0, 5);
-    func_8001540C(2, 5, arg0);
-    arg0->unk50 = (const u8*)&D_80102A70;
-    arg0->unk6++;
+    self->unk60 = 8;
+    magma_dragoon_face_player(self);
+    func_80015D60(self, 5);
+    func_8001540C(2, 5, self);
+    self->unk50 = (const u8*)&D_80102A70;
+    self->unk6++;
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F780);
 
-void func_8007F878(struct MainObj* arg0)
+void magma_dragoon_rising_punch_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
 
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk50 = (const u8*)&D_80102A74;
+    if (self->animation_step.fields.event == 2) {
+        self->unk50 = (const u8*)&D_80102A74;
     }
 
-    if (arg0->unk15 != 0) {
-        if (arg0->unk20 < 0) {
+    if (self->unk15 != 0) {
+        if (self->unk20 < 0) {
             goto reset_velocity;
         }
-    } else if (arg0->unk20 >= 0) {
+    } else if (self->unk20 >= 0) {
     reset_velocity:
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
+        self->unk20 = 0;
+        self->unk28 = 0;
     }
 
-    if (arg0->unk24 < 0) {
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk6++;
-        func_80015D60(arg0, 7);
-        arg0->unk50 = (const u8*)&D_80102A6C;
-    }
-}
-
-void func_8007F93C(struct MainObj* arg0)
-{
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk6++;
-        func_80015D60(arg0, 6);
-        arg0->unk50 = (const u8*)&D_80102A6C;
-        arg0->unk60 = 4;
-        func_8007DC54(ANIMATED_OBJECT(arg0), 2);
-        arg0->unk67 = 0;
-        func_8001540C(2, 2, arg0);
+    if (self->unk24 < 0) {
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk6++;
+        func_80015D60(self, 7);
+        self->unk50 = (const u8*)&D_80102A6C;
     }
 }
 
-void func_8007F9C8(struct MainObj* arg0)
+void magma_dragoon_rising_punch_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step != 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk6++;
+        func_80015D60(self, 6);
+        self->unk50 = (const u8*)&D_80102A6C;
+        self->unk60 = 4;
+        magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
+        self->unk67 = 0;
+        func_8001540C(2, 2, self);
+    }
+}
+
+void magma_dragoon_rising_punch_recover(struct MainObj* self)
+{
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step != 0) {
         return;
     }
-    arg0->unk6 = 0;
-    if ((arg0->y_pos.i.hi <= D_8013B84C[0]) && (arg0->ext.main_65.unk8D == 3)) {
-        if (arg0->ext.main_65.unk8E++ == 0) {
+    self->unk6 = 0;
+    if ((self->y_pos.i.hi <= magma_dragoon_arena_floor[0]) && (self->ext.main_65.attack == 3)) {
+        if (self->ext.main_65.attack_repeat++ == 0) {
             return;
         }
     }
-    arg0->unk5 = 9;
+    self->unk5 = 9;
 }
 
-void func_8007FA4C(struct MainObj* arg0)
+void magma_dragoon_rising_punch(struct MainObj* self)
 {
-    D_80103530[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_rising_punch_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FAA4);
 
-void func_8007FB48(struct MainObj* arg0)
+void magma_dragoon_stagger_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
-        arg0->unk6++;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk24 < 0) {
+        self->unk6++;
     }
 }
 
-void func_8007FB98(struct MainObj* arg0)
+void magma_dragoon_stagger_burn(struct MainObj* self)
 {
     struct MainObj* child;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    child = arg0->ext.main_65.unk80;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    child = self->ext.main_65.object;
     if (child->animation_step.fields.relative_step < 0) {
         child->state = 2;
-        arg0->unk24 = 0;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk6++;
+        self->unk24 = 0;
+        self->unk2C = FIXED(0.2578125);
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk6++;
     }
 }
 
-void func_8007FBFC(struct MainObj* arg0)
+void magma_dragoon_stagger_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk6++;
-        func_80015D60(arg0, 0);
-        if (arg0->ext.main_65.unk8A & 1) {
-            arg0->ext.main_65.unk8A = 0x3D;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk6++;
+        func_80015D60(self, 0);
+        if (self->ext.main_65.flash_timer & 1) {
+            self->ext.main_65.flash_timer = 0x3D;
         } else {
-            arg0->ext.main_65.unk8A = 0x3E;
+            self->ext.main_65.flash_timer = 0x3E;
         }
-        arg0->unk7C = 1;
+        self->unk7C = 1;
     }
 }
 
-void func_8007FC78(struct MainObj* arg0)
+void magma_dragoon_stagger_recover(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 9;
-        arg0->unk6 = 0;
+    func_80015DC8((struct AnimatedObj*)self);
+    if (--self->unk7C == 0) {
+        self->unk5 = 9;
+        self->unk6 = 0;
     }
 }
 
-void func_8007FCC4(struct MainObj* arg0)
+void magma_dragoon_stagger(struct MainObj* self)
 {
-    D_80103544[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x40, 0x40);
+    magma_dragoon_stagger_funcs[self->unk6](self);
+    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
 }
 
-void func_8007FD1C(struct MainObj* arg0)
+void magma_dragoon_hold(struct MainObj* self)
 {
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FD24);
 
-void func_8007FE84(struct MainObj* arg0)
+void magma_dragoon_death_start(struct MainObj* self)
 {
-    arg0->unk7C = 0x7F;
-    arg0->unk7E = 0x19;
-    arg0->unk61 = 0x19;
-    arg0->unk5++;
-    arg0->unk42 &= 0x7FFF;
-    func_80015D60(arg0, 0xD);
+    self->unk7C = 0x7F;
+    self->unk7E = 0x19;
+    self->unk61 = 0x19;
+    self->unk5++;
+    self->unk42 &= 0x7FFF;
+    func_80015D60(self, 0xD);
     func_80036AE4(0x14, g_Player.unk15);
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FF00);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FFFC);
 
-void func_800802A4(struct MainObj* arg0, s32 arg1, s32 arg2)
+void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2)
 {
-    if (arg0->ext.main_65.unk80->active == 0) {
-        arg0->unk5++;
+    if (self->ext.main_65.object->active == 0) {
+        self->unk5++;
         ((void (*)(u16, u8, s32))func_8002217C)(0xC, 0xFF, arg2);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8008030C(struct MainObj* arg0)
+void magma_dragoon_death_wait_dialog(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
-        func_80015D60(arg0, 0x13);
-        arg0->unk7C = 0x50;
-        arg0->unk5++;
+        func_80015D60(self, 0x13);
+        self->unk7C = 0x50;
+        self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_80080370(struct MainObj* arg0)
+void magma_dragoon_death_smoke(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0x28;
-        arg0->unk5++;
+    if (--self->unk7C == 0) {
+        self->unk7C = 0x28;
+        self->unk5++;
     }
 
-    if ((arg0->unk7C & 7) == 0) {
-        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            arg0->y_pos.i.hi + (get_random() & 0x1F), 0);
+    if ((self->unk7C & 7) == 0) {
+        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            self->y_pos.i.hi + (get_random() & 0x1F), 0);
     }
 
-    if ((arg0->unk7C & 3) == 4) {
-        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            arg0->y_pos.i.hi + (get_random() & 0x1F), 1);
+    if ((self->unk7C & 3) == 4) {
+        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            self->y_pos.i.hi + (get_random() & 0x1F), 1);
     }
 
-    if ((arg0->unk7C & 3) != 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
-    }
-}
-
-void func_800804A0(struct MainObj* arg0)
-{
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0x1E;
-        arg0->unk5++;
-        ZeroObjectState(OBJECT_HEADER(arg0->ext.main_65.unk84));
-    }
-
-    if ((arg0->unk7C & 7) == 0) {
-        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            arg0->y_pos.i.hi + (get_random() & 0x1F), 0);
-    }
-
-    if ((arg0->unk7C & 3) == 4) {
-        func_800AFAB4(0, arg0->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            arg0->y_pos.i.hi + (get_random() & 0x1F), 1);
-    }
-
-    if ((arg0->unk7C & 1) != 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+    if ((self->unk7C & 3) != 0) {
+        func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
 
-void func_800805D8(struct MainObj* arg0)
+void magma_dragoon_death_vanish(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
+    if (--self->unk7C == 0) {
+        self->unk7C = 0x1E;
+        self->unk5++;
+        ZeroObjectState(OBJECT_HEADER(self->ext.main_65.smoke));
+    }
+
+    if ((self->unk7C & 7) == 0) {
+        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            self->y_pos.i.hi + (get_random() & 0x1F), 0);
+    }
+
+    if ((self->unk7C & 3) == 4) {
+        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
+            self->y_pos.i.hi + (get_random() & 0x1F), 1);
+    }
+
+    if ((self->unk7C & 1) != 0) {
+        func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    }
+}
+
+void magma_dragoon_death_end(struct MainObj* self)
+{
+    if (--self->unk7C == 0) {
         engine_obj.unkF = 1;
     }
 }
 
-void func_80080604(struct MainObj* arg0)
+void magma_dragoon_death(struct MainObj* self)
 {
-    D_80103590[arg0->unk5](arg0);
+    magma_dragoon_death_funcs[self->unk5](self);
 }
 
-void func_80080640(struct MainObj* arg0)
+void magma_dragoon_update(struct MainObj* self)
 {
-    arg0->on_screen = 0;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    CollisionRelated((struct PlayerObj*)arg0);
-    D_801035B0[arg0->state](arg0);
+    self->on_screen = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated((struct PlayerObj*)self);
+    magma_dragoon_state_funcs[self->state](self);
 }

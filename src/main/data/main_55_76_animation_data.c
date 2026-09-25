@@ -322,13 +322,13 @@ u8* D_801008BC[3] = {
     D_801008A4,
 };
 
-void* D_801008C8[3] = {
+void* jet_stingray_patterns[3] = {
     D_801008BC,
     D_801008B0,
     D_801008A8,
 };
 
-u8 D_801008D4[12] = { 0x02, 0x08, 0x10, 0x03, 0x06, 0x10, 0x06, 0x10, 0x10, 0x00, 0x00, 0x00 };
+u8 jet_stingray_pattern_weights[12] = { 0x02, 0x08, 0x10, 0x03, 0x06, 0x10, 0x06, 0x10, 0x10, 0x00, 0x00, 0x00 };
 
 struct Unk_unk68 D_801008E0[4] = {
     { 9, 0, 1, 0 },
@@ -695,7 +695,7 @@ struct Unk_unk68 D_80100C78[3] = {
     { 4, 0, -2, -111 },
 };
 
-void* D_80100C84[45] = {
+void* jet_stingray_animations[45] = {
     D_801008E0,
     D_801008F0,
     D_80100900,
@@ -748,25 +748,25 @@ struct Unk_unk68 D_80100D38[2] = {
     { 25, 26, 0, 0 },
 };
 
-s8 D_80100D40[4] = { 0xE0, 0x00, 0x20, 0x00 };
+s8 jet_stingray_bubble_offsets[4] = { 0xE0, 0x00, 0x20, 0x00 };
 
-void (*D_80100D44[7])(struct MainObj*) = {
+void (*jet_stingray_intro_funcs[7])(struct MainObj*) = {
     func_8006FD50,
-    func_8006FEC8,
-    func_8006FFC0,
-    func_800700AC,
-    func_80070118,
-    func_800701DC,
-    func_80070294,
+    jet_stingray_intro_warning,
+    jet_stingray_intro_emerge,
+    jet_stingray_intro_rise,
+    jet_stingray_intro_pose,
+    jet_stingray_intro_fill_health,
+    jet_stingray_intro_finish,
 };
 
-void (*D_80100D60[3])(struct MainObj*) = {
-    func_800704AC,
+void (*jet_stingray_swim_funcs[3])(struct MainObj*) = {
+    jet_stingray_swim_start,
     func_80070514,
-    func_80070648,
+    jet_stingray_swim_next,
 };
 
-s16 D_80100D6C[24] = {
+s16 jet_stingray_vortex_debris_offsets[24] = {
     (s16)0x0008,
     (s16)0x003C,
     (s16)0x0078,
@@ -793,81 +793,81 @@ s16 D_80100D6C[24] = {
     (s16)0x00F3,
 };
 
-void (*D_80100D9C[5])(struct MainObj*) = {
-    func_800708DC,
-    func_80070948,
+void (*jet_stingray_vortex_funcs[5])(struct MainObj*) = {
+    jet_stingray_vortex_start,
+    jet_stingray_vortex_spawn,
     func_80070A38,
-    func_80070C88,
-    func_80070CB0,
+    jet_stingray_vortex_wait,
+    jet_stingray_vortex_finish,
 };
 
-u8 D_80100DB0[4] = { 0x15, 0xEB, 0xF0, 0x23 };
+u8 jet_stingray_splash_x_offsets[4] = { 0x15, 0xEB, 0xF0, 0x23 };
 
-u8 D_80100DB4[4] = { 0xED, 0x02, 0xE7, 0x0D };
+u8 jet_stingray_splash_y_offsets[4] = { 0xED, 0x02, 0xE7, 0x0D };
 
-void (*D_80100DB8[4])() = {
-    func_80070D2C,
-    func_80070DDC,
-    func_80070EE8,
-    func_8007100C,
+void (*jet_stingray_ambush_funcs[4])() = {
+    jet_stingray_ambush_exit,
+    jet_stingray_ambush_drop,
+    jet_stingray_ambush_rise,
+    jet_stingray_ambush_return,
 };
 
-void (*D_80100DC8[3])(struct MainObj*) = {
-    func_80071228,
-    func_800712A4,
-    func_800713A4,
+void (*jet_stingray_dash_funcs[3])(struct MainObj*) = {
+    jet_stingray_dash_start,
+    jet_stingray_dash_charge,
+    jet_stingray_dash_return,
 };
 
-void (*D_80100DD4[3])(struct MainObj*) = {
-    func_800714F4,
-    func_80071598,
-    func_800715D4,
+void (*jet_stingray_leap_funcs[3])(struct MainObj*) = {
+    jet_stingray_leap_start,
+    jet_stingray_leap_fall,
+    jet_stingray_leap_return,
 };
 
-void (*D_80100DE0[3])(struct MainObj*) = {
+void (*jet_stingray_missiles_funcs[3])(struct MainObj*) = {
     func_80071740,
-    func_800718F4,
-    func_8007196C,
+    jet_stingray_missiles_repeat,
+    jet_stingray_missiles_finish,
 };
 
-void (*D_80100DEC[3])(struct MainObj*) = {
+void (*jet_stingray_missiles_wide_funcs[3])(struct MainObj*) = {
     func_80071740,
-    func_800718F4,
-    func_8007196C,
+    jet_stingray_missiles_repeat,
+    jet_stingray_missiles_finish,
 };
 
-void (*D_80100DF8[5])(struct MainObj*) = {
-    func_80071A74,
-    func_80071AD8,
-    func_80071B60,
-    func_80071C00,
-    func_80071C60,
+void (*jet_stingray_stagger_funcs[5])(struct MainObj*) = {
+    jet_stingray_stagger_start,
+    jet_stingray_stagger_wait,
+    jet_stingray_stagger_shake,
+    jet_stingray_stagger_flee,
+    jet_stingray_stagger_return,
 };
 
-void (*D_80100E0C[10])() = {
+void (*jet_stingray_step_funcs[10])() = {
     func_8009216C,
-    func_80071D1C,
-    func_800706D4,
+    jet_stingray_reset,
+    jet_stingray_swim,
     func_80070778,
-    func_80070CDC,
+    jet_stingray_vortex,
     func_800710D4,
-    func_80071468,
-    func_8007168C,
-    func_800719FC,
-    func_80071A38,
+    jet_stingray_dash,
+    jet_stingray_leap,
+    jet_stingray_missiles,
+    jet_stingray_missiles_wide,
 };
 
-void (*D_80100E34[3])(struct MainObj*) = {
-    func_80071EEC,
-    func_80071F5C,
-    func_8007203C,
+void (*jet_stingray_death_funcs[3])(struct MainObj*) = {
+    jet_stingray_death_start,
+    jet_stingray_death_explode,
+    jet_stingray_death_finish,
 };
 
-void (*D_80100E40[4])(struct MainObj*) = {
-    func_800702E8,
+void (*jet_stingray_state_funcs[4])(struct MainObj*) = {
+    jet_stingray_intro,
     func_80071D30,
-    func_8007211C,
-    func_80071CB0,
+    jet_stingray_death,
+    jet_stingray_stagger,
 };
 
 u8 D_80100E50[4] = { 3, 6, 4, 255 };
@@ -886,9 +886,9 @@ u8 D_80100E6C[4] = { 6, 7, 4, 255 };
 
 u8 D_80100E70[8] = { 6, 7, 7, 5, 255, 0, 0, 0 };
 
-u8 D_80100E78[4] = { 4, 11, -1, 0 };
+u8 frost_walrus_script_recover_high[4] = { 4, 11, -1, 0 };
 
-u8 D_80100E7C[4] = { 9, 11, -1, 0 };
+u8 frost_walrus_script_recover_low[4] = { 9, 11, -1, 0 };
 
 u8* D_80100E80[4] = {
     D_80100E50,
@@ -911,13 +911,13 @@ u8* D_80100EA0[4] = {
     D_80100E70,
 };
 
-u8** D_80100EB0[3] = {
+u8** frost_walrus_scripts[3] = {
     D_80100EA0,
     D_80100E90,
     D_80100E80,
 };
 
-u8 D_80100EBC[3][4] = {
+u8 frost_walrus_script_weights[3][4] = {
     { 0x02, 0x0A, 0x0E, 0x10 },
     { 0x05, 0x07, 0x0C, 0x10 },
     { 0x05, 0x07, 0x0C, 0x10 },
@@ -1263,7 +1263,7 @@ struct Unk_unk68 D_8010123C[24] = {
     { 3, 0, -23, 60 },
 };
 
-void* D_8010129C[39] = {
+void* frost_walrus_animations[39] = {
     D_80100EC8,
     D_80100ECC,
     D_80100F34,
@@ -1315,7 +1315,7 @@ struct Unk_unk68 D_80101344 = { -37, -28, 79, 98 };
 
 struct Unk_unk68 D_80101348 = { -55, -9, 112, 80 };
 
-s16 D_8010134C[40] = {
+s16 frost_walrus_burst_offsets[40] = {
     (s16)0xFFB2,
     (s16)0xFFFA,
     (s16)0xFFD2,
@@ -1358,7 +1358,7 @@ s16 D_8010134C[40] = {
     (s16)0x0021,
 };
 
-u8 D_8010139C[32] = { 0x00, 0x01, 0x01, 0x03, 0x03, 0x02, 0x02, 0x00, 0x00, 0x00, 0x03, 0x02, 0x03, 0x02, 0x00, 0x00, 0x02, 0x02, 0x03, 0x03, 0x0C, 0x0D, 0x0E, 0x0F, 0x0D, 0x0F, 0x0C, 0x0E, 0x0D, 0x0F, 0x00, 0x00 };
+u8 frost_walrus_burst_subtypes[32] = { 0x00, 0x01, 0x01, 0x03, 0x03, 0x02, 0x02, 0x00, 0x00, 0x00, 0x03, 0x02, 0x03, 0x02, 0x00, 0x00, 0x02, 0x02, 0x03, 0x03, 0x0C, 0x0D, 0x0E, 0x0F, 0x0D, 0x0F, 0x0C, 0x0E, 0x0D, 0x0F, 0x00, 0x00 };
 
 struct Unk_unk68 D_801013BC[3] = {
     { 12, 13, 35, 15 },
@@ -1366,7 +1366,7 @@ struct Unk_unk68 D_801013BC[3] = {
     { 36, 15, 0, 0 },
 };
 
-u16 D_801013C8[18] = {
+u16 frost_walrus_floor_tiles[18] = {
 #ifdef VERSION_JP
     0x0387,
     0x055B,
@@ -1406,7 +1406,7 @@ u16 D_801013C8[18] = {
     0x0000,
 };
 
-u16 D_801013EC[20] = {
+u16 frost_walrus_floor_tiles_rush[20] = {
     0x0383,
     0x03A0,
     0x0390,
@@ -1429,110 +1429,110 @@ u16 D_801013EC[20] = {
     0x0000,
 };
 
-void (*D_80101414[3])() = {
-    func_80072204,
+void (*frost_walrus_state_funcs[3])() = {
+    frost_walrus_start,
     func_80072418,
-    func_800725EC,
+    frost_walrus_death,
 };
 
-void (*D_80101420[2])(struct MainObj*) = {
-    func_80072240,
+void (*frost_walrus_start_funcs[2])(struct MainObj*) = {
+    frost_walrus_start_warning,
     func_800722A0,
 };
 
-void (*D_80101428[12])() = {
+void (*frost_walrus_step_funcs[12])() = {
     func_8009216C,
-    func_800725DC,
-    func_800728C8,
-    func_80072CC4,
-    func_80072DF8,
-    func_80073164,
-    func_80073500,
-    func_80073650,
-    func_80073938,
-    func_80073C08,
-    func_80073E44,
-    func_80074158,
+    frost_walrus_reset,
+    frost_walrus_intro,
+    frost_walrus_think,
+    frost_walrus_charge,
+    frost_walrus_leap,
+    frost_walrus_walk,
+    frost_walrus_shards,
+    frost_walrus_breath,
+    frost_walrus_blizzard,
+    frost_walrus_stagger,
+    frost_walrus_regrow,
 };
 
-void (*D_80101458[3])() = {
+void (*frost_walrus_death_funcs[3])() = {
     func_80072628,
-    func_800726CC,
+    frost_walrus_death_explode,
     func_800727C0,
 };
 
-void (*D_80101464[6])(struct MainObj*) = {
-    func_80072904,
-    func_80072960,
-    func_80072A14,
+void (*frost_walrus_intro_funcs[6])(struct MainObj*) = {
+    frost_walrus_intro_walk,
+    frost_walrus_intro_approach,
+    frost_walrus_intro_roar,
     func_80072A84,
-    func_80072BCC,
-    func_80072C20,
+    frost_walrus_intro_start_health_bar,
+    frost_walrus_intro_fill_health,
 };
 
-void (*D_8010147C[2])() = {
-    func_80072D14,
-    func_80072DB0,
+void (*frost_walrus_think_funcs[2])() = {
+    frost_walrus_think_next,
+    frost_walrus_think_pause,
 };
 
-void (*D_80101484[6])(struct MainObj*) = {
-    func_80072E34,
-    func_80072EF8,
-    func_80072F68,
-    func_80072FF0,
-    func_80073084,
-    func_80073100,
+void (*frost_walrus_charge_funcs[6])(struct MainObj*) = {
+    frost_walrus_charge_start,
+    frost_walrus_charge_windup,
+    frost_walrus_charge_run,
+    frost_walrus_charge_slide,
+    frost_walrus_charge_recover,
+    frost_walrus_charge_finish,
 };
 
-void (*D_8010149C[6])(struct MainObj*) = {
-    func_800731A0,
-    func_80073228,
-    func_80073294,
-    func_8007330C,
-    func_8007342C,
-    func_800734A8,
+void (*frost_walrus_leap_funcs[6])(struct MainObj*) = {
+    frost_walrus_leap_start,
+    frost_walrus_leap_windup,
+    frost_walrus_leap_jump,
+    frost_walrus_leap_air,
+    frost_walrus_leap_recover,
+    frost_walrus_leap_finish,
 };
 
-void (*D_801014B4[2])() = {
-    func_8007353C,
-    func_800735BC,
+void (*frost_walrus_walk_funcs[2])() = {
+    frost_walrus_walk_start,
+    frost_walrus_walk_stomp,
 };
 
-void (*D_801014BC[6])() = {
-    func_8007368C,
-    func_800736DC,
-    func_80073748,
-    func_800737FC,
-    func_80073878,
-    func_800738EC,
+void (*frost_walrus_shards_funcs[6])() = {
+    frost_walrus_shards_start,
+    frost_walrus_shards_count,
+    frost_walrus_shards_fire,
+    frost_walrus_shards_repeat,
+    frost_walrus_shards_finish,
+    frost_walrus_shards_wait,
 };
 
-void (*D_801014D4[5])() = {
-    func_80073974,
-    func_800739D4,
-    func_80073B00,
-    func_80073B58,
-    func_80073BDC,
+void (*frost_walrus_breath_funcs[5])() = {
+    frost_walrus_breath_start,
+    frost_walrus_breath_blow,
+    frost_walrus_breath_wait,
+    frost_walrus_breath_launch,
+    frost_walrus_breath_finish,
 };
 
-void (*D_801014E8[5])() = {
-    func_80073C44,
-    func_80073CA4,
-    func_80073DDC,
-    func_80073E10,
-    func_80073E3C,
+void (*frost_walrus_blizzard_funcs[5])() = {
+    frost_walrus_blizzard_start,
+    frost_walrus_blizzard_blow,
+    frost_walrus_blizzard_wait,
+    frost_walrus_blizzard_finish,
+    frost_walrus_blizzard_idle,
 };
 
-void (*D_801014FC[4])() = {
+void (*frost_walrus_stagger_funcs[4])() = {
     func_80073E80,
-    func_80073F90,
-    func_80074068,
-    func_800740CC,
+    frost_walrus_stagger_fall,
+    frost_walrus_stagger_slide,
+    frost_walrus_stagger_recover,
 };
 
-void (*D_8010150C[2])() = {
-    func_80074194,
-    func_80074220,
+void (*frost_walrus_regrow_funcs[2])() = {
+    frost_walrus_regrow_start,
+    frost_walrus_regrow_finish,
 };
 
 struct Unk_unk68 D_80101514 = { -10, -10, 20, 20 };
@@ -2026,7 +2026,7 @@ union AnimationStep D_80101970[] = {
     { 0x8F000001 },
 };
 
-void* D_80101A6C[30] = {
+void* storm_owl_animations[30] = {
     D_801016C8,
     D_801016E0,
     D_801016F8,
@@ -2059,173 +2059,173 @@ void* D_80101A6C[30] = {
     D_80101970,
 };
 
-Main60Waypoint D_80101AE4[4] = {
+Main60Waypoint storm_owl_waypoints[4] = {
     { 0x0018, 0x0028, 0x00020000, 0xFFFF0000 },
     { 0x0018, 0x00B0, 0x00028000, 0x00000800 },
     { 0x0128, 0x0028, 0xFFFE0000, 0xFFFF0000 },
     { 0x0128, 0x00B0, 0xFFFD8000, 0x00000800 },
 };
 
-u8 D_80101B14[4] = { 3, 3, 8, 255 };
+u8 storm_owl_pattern_0[4] = { 3, 3, 8, 255 };
 
-u8 D_80101B18[4] = { 3, 3, 255, 0 };
+u8 storm_owl_pattern_1[4] = { 3, 3, 255, 0 };
 
-u8 D_80101B1C[4] = { 3, 3, 8, 255 };
+u8 storm_owl_pattern_2[4] = { 3, 3, 8, 255 };
 
-u8 D_80101B20[4] = { 3, 7, 255, 0 };
+u8 storm_owl_pattern_3[4] = { 3, 7, 255, 0 };
 
-u8 D_80101B24[4] = { 12, 7, 3, 255 };
+u8 storm_owl_pattern_4[4] = { 12, 7, 3, 255 };
 
-u8 D_80101B28[4] = { 12, 12, 3, 255 };
+u8 storm_owl_pattern_5[4] = { 12, 12, 3, 255 };
 
-u8 D_80101B2C[4] = { 12, 9, 3, 255 };
+u8 storm_owl_pattern_6[4] = { 12, 9, 3, 255 };
 
-u8* D_80101B30[2] = {
-    D_80101B14,
-    D_80101B18,
+u8* storm_owl_patterns_high_health[2] = {
+    storm_owl_pattern_0,
+    storm_owl_pattern_1,
 };
 
-u8* D_80101B38[2] = {
-    D_80101B1C,
-    D_80101B20,
+u8* storm_owl_patterns_mid_health[2] = {
+    storm_owl_pattern_2,
+    storm_owl_pattern_3,
 };
 
-u8* D_80101B40[3] = {
-    D_80101B24,
-    D_80101B28,
-    D_80101B2C,
+u8* storm_owl_patterns_low_health[3] = {
+    storm_owl_pattern_4,
+    storm_owl_pattern_5,
+    storm_owl_pattern_6,
 };
 
-void* D_80101B4C[3] = {
-    D_80101B40,
-    D_80101B38,
-    D_80101B30,
+void* storm_owl_patterns[3] = {
+    storm_owl_patterns_low_health,
+    storm_owl_patterns_mid_health,
+    storm_owl_patterns_high_health,
 };
 
-u8 D_80101B58[12] = { 0x04, 0x0A, 0x10, 0x08, 0x10, 0x10, 0x0A, 0x10, 0x10, 0x00, 0x00, 0x00 };
+u8 storm_owl_pattern_weights[12] = { 0x04, 0x0A, 0x10, 0x08, 0x10, 0x10, 0x0A, 0x10, 0x10, 0x00, 0x00, 0x00 };
 
-void (*D_80101B64[3])() = {
-    func_80075064,
+void (*storm_owl_state_funcs[3])() = {
+    storm_owl_start,
     func_80075320,
-    func_80075630,
+    storm_owl_death,
 };
 
-void (*D_80101B70[4])() = {
-    func_800750A0,
-    func_80075128,
-    func_8007517C,
+void (*storm_owl_start_funcs[4])() = {
+    storm_owl_start_wait_player,
+    storm_owl_start_warning,
+    storm_owl_start_wait_warning,
     func_800751AC,
 };
 
-void (*D_80101B80[13])() = {
+void (*storm_owl_step_funcs[13])() = {
     func_8009216C,
-    func_800758FC,
-    func_80075908,
-    func_80075DDC,
-    func_8007624C,
-    func_800768CC,
-    func_80076A74,
-    func_80076C70,
-    func_80076F74,
-    func_8007720C,
-    func_80077798,
-    func_80077868,
-    func_80077A44,
+    storm_owl_resume_step,
+    storm_owl_intro,
+    storm_owl_patrol,
+    storm_owl_grab,
+    storm_owl_reenter,
+    storm_owl_feather,
+    storm_owl_feather_volley,
+    storm_owl_cyclone,
+    storm_owl_storm,
+    storm_owl_hover,
+    storm_owl_stagger,
+    storm_owl_ground_cyclone,
 };
 
-void (*D_80101BB4[3])() = {
-    func_8007566C,
-    func_80075700,
+void (*storm_owl_death_funcs[3])() = {
+    storm_owl_death_start,
+    storm_owl_death_explode,
     func_800757F4,
 };
 
-void (*D_80101BC0[8])() = {
+void (*storm_owl_intro_funcs[8])() = {
     func_80075944,
-    func_800759EC,
-    func_80075A54,
-    func_80075AD0,
-    func_80075B54,
-    func_80075BC4,
+    storm_owl_intro_land,
+    storm_owl_intro_roar,
+    storm_owl_intro_pose,
+    storm_owl_intro_start_health_bar,
+    storm_owl_intro_fill_health,
     func_80075C6C,
-    func_80075D38,
+    storm_owl_intro_rise,
 };
 
-void (*D_80101BE0[5])() = {
-    func_80075E18,
+void (*storm_owl_patrol_funcs[5])() = {
+    storm_owl_patrol_start,
     func_80075E78,
-    func_8007601C,
+    storm_owl_patrol_wait,
     func_800760C4,
-    func_800761A0,
+    storm_owl_patrol_return,
 };
 
-void (*D_80101BF4[6])() = {
-    func_80076288,
+void (*storm_owl_grab_funcs[6])() = {
+    storm_owl_grab_dive,
     func_80076364,
     func_8007651C,
-    func_8007662C,
+    storm_owl_grab_carry,
     func_800766FC,
-    func_8007681C,
+    storm_owl_grab_leave,
 };
 
-void (*D_80101C0C[2])() = {
-    func_80076908,
-    func_800769FC,
+void (*storm_owl_reenter_funcs[2])() = {
+    storm_owl_reenter_warp,
+    storm_owl_reenter_wait,
 };
 
-void (*D_80101C14[4])() = {
-    func_80076AB0,
-    func_80076B14,
-    func_80076B84,
-    func_80076C1C,
+void (*storm_owl_feather_funcs[4])() = {
+    storm_owl_feather_start,
+    storm_owl_feather_fire,
+    storm_owl_feather_takeoff,
+    storm_owl_feather_leave,
 };
 
-void (*D_80101C24[6])() = {
-    func_80076CAC,
+void (*storm_owl_feather_volley_funcs[6])() = {
+    storm_owl_feather_volley_start,
     func_80076D14,
-    func_80076DB0,
-    func_80076E1C,
-    func_80076E88,
-    func_80076F14,
+    storm_owl_feather_volley_aim,
+    storm_owl_feather_volley_release,
+    storm_owl_feather_volley_wait,
+    storm_owl_feather_volley_leave,
 };
 
-void (*D_80101C3C[4])() = {
-    func_80076FB0,
-    func_80077028,
-    func_800770F0,
-    func_800771AC,
+void (*storm_owl_cyclone_funcs[4])() = {
+    storm_owl_cyclone_start,
+    storm_owl_cyclone_fire,
+    storm_owl_cyclone_finish,
+    storm_owl_cyclone_leave,
 };
 
-void (*D_80101C4C[9])() = {
-    func_80077258,
+void (*storm_owl_storm_funcs[9])() = {
+    storm_owl_storm_start,
     func_80077318,
-    func_80077444,
-    func_80077490,
-    func_80077504,
+    storm_owl_storm_charge,
+    storm_owl_storm_begin,
+    storm_owl_storm_rain,
     func_80077580,
-    func_80077614,
-    func_80077694,
-    func_80077738,
+    storm_owl_storm_rain_again,
+    storm_owl_storm_end,
+    storm_owl_storm_leave,
 };
 
-void (*D_80101C70[2])() = {
-    func_800777D4,
-    func_8007781C,
+void (*storm_owl_hover_funcs[2])() = {
+    storm_owl_hover_start,
+    storm_owl_hover_wait,
 };
 
-void (*D_80101C78[3])() = {
-    func_800778A4,
-    func_80077954,
-    func_800779D4,
+void (*storm_owl_stagger_funcs[3])() = {
+    storm_owl_stagger_start,
+    storm_owl_stagger_recover,
+    storm_owl_stagger_leave,
 };
 
-void (*D_80101C84[7])() = {
-    func_80077A80,
-    func_80077B0C,
-    func_80077B74,
-    func_80077BD0,
-    func_80077C40,
-    func_80077C74,
-    func_80077CE8,
+void (*storm_owl_ground_cyclone_funcs[7])() = {
+    storm_owl_ground_cyclone_start,
+    storm_owl_ground_cyclone_drop,
+    storm_owl_ground_cyclone_land,
+    storm_owl_ground_cyclone_fire,
+    storm_owl_ground_cyclone_wait,
+    storm_owl_ground_cyclone_takeoff,
+    storm_owl_ground_cyclone_leave,
 };
 
 struct Unk_unk68 D_80101CA0 = { -11, -16, 20, 35 };
@@ -2236,14 +2236,14 @@ struct Unk_unk68 D_80101CA8 = { 0, 0, 8, 23 };
 
 struct Unk_unk68 D_80101CAC = { -16, 0, 8, 23 };
 
-s16 D_80101CB0[4] = {
+s16 split_mushroom_hop_speeds[4] = {
     (s16)0x0040,
     (s16)0x003A,
     (s16)0x0034,
     (s16)0x0000,
 };
 
-s32 D_80101CB8[3] = {
+s32 split_mushroom_walk_speeds[3] = {
     FIXED(3),
     FIXED(4.5),
     FIXED(6),
@@ -2506,7 +2506,7 @@ union AnimationStep D_80101F7C[] = {
     { 0x81FC0001 },
 };
 
-void* D_80101F90[26] = {
+void* split_mushroom_animations[26] = {
     D_80101CC4,
     D_80101CD4,
     D_80101CF4,
@@ -2535,93 +2535,93 @@ void* D_80101F90[26] = {
     D_80101F7C,
 };
 
-void (*D_80101FF8[3])() = {
+void (*split_mushroom_state_funcs[3])() = {
     func_8007877C,
     func_800788E4,
-    func_80078DF0,
+    split_mushroom_death,
 };
 
-void (*D_80102004[8])() = {
+void (*split_mushroom_step_funcs[8])() = {
     func_8009216C,
-    func_800790AC,
-    func_80079608,
-    func_80079A50,
-    func_8007A12C,
-    func_8007A4B0,
-    func_8007A930,
-    func_8007B180,
+    split_mushroom_intro,
+    split_mushroom_stun,
+    split_mushroom_spore_rain,
+    split_mushroom_walk,
+    split_mushroom_dash,
+    split_mushroom_combo,
+    split_mushroom_wall_jump,
 };
 
-void (*D_80102024[3])(struct MainObj*) = {
-    func_80078E2C,
-    func_80078EB0,
+void (*split_mushroom_death_funcs[3])(struct MainObj*) = {
+    split_mushroom_death_start,
+    split_mushroom_death_explode,
     func_80078FA4,
 };
 
-void (*D_80102030[7])() = {
+void (*split_mushroom_intro_funcs[7])() = {
     func_800790E8,
-    func_800791D4,
-    func_8007927C,
-    func_80079364,
+    split_mushroom_intro_drop,
+    split_mushroom_intro_bounce,
+    split_mushroom_intro_land,
     func_800793AC,
-    func_80079518,
-    func_80079568,
+    split_mushroom_intro_start_health_bar,
+    split_mushroom_intro_fill_health,
 };
 
-void (*D_8010204C[7])() = {
-    func_80079644,
-    func_800796DC,
-    func_80079794,
-    func_800797E8,
+void (*split_mushroom_stun_funcs[7])() = {
+    split_mushroom_stun_start,
+    split_mushroom_stun_wait,
+    split_mushroom_stun_fall,
+    split_mushroom_stun_merge,
     func_80079824,
-    func_80079914,
-    func_8007996C,
+    split_mushroom_stun_land,
+    split_mushroom_stun_split,
 };
 
-void (*D_80102068[6])() = {
+void (*split_mushroom_spore_rain_funcs[6])() = {
     func_80079A8C,
     func_80079B50,
     func_80079DD8,
-    func_80079FE4,
-    func_8007A048,
-    func_8007A09C,
+    split_mushroom_spore_rain_land,
+    split_mushroom_spore_rain_recover,
+    split_mushroom_spore_rain_finish,
 };
 
-void (*D_80102080[5])() = {
-    func_8007A168,
-    func_8007A1EC,
+void (*split_mushroom_walk_funcs[5])() = {
+    split_mushroom_walk_start,
+    split_mushroom_walk_move,
     func_8007A2B4,
-    func_8007A3B0,
+    split_mushroom_walk_fall,
     func_8007A444,
 };
 
-void (*D_80102094[5])() = {
+void (*split_mushroom_dash_funcs[5])() = {
     func_8007A4EC,
     func_8007A63C,
-    func_8007A7F0,
-    func_8007A854,
-    func_8007A8AC,
+    split_mushroom_dash_land,
+    split_mushroom_dash_recover,
+    split_mushroom_dash_finish,
 };
 
-void (*D_801020A8[8])() = {
+void (*split_mushroom_combo_funcs[8])() = {
     func_8007A96C,
     func_8007AB1C,
-    func_8007ADB4,
+    split_mushroom_combo_swing,
     func_8007AE2C,
-    func_8007AFB4,
-    func_8007B054,
-    func_8007B0F8,
-    func_8007B140,
+    split_mushroom_combo_repeat,
+    split_mushroom_combo_sync,
+    split_mushroom_combo_end,
+    split_mushroom_combo_restart,
 };
 
-void (*D_801020C8[7])() = {
+void (*split_mushroom_wall_jump_funcs[7])() = {
     func_8007B1BC,
-    func_8007B2FC,
-    func_8007B3A8,
+    split_mushroom_wall_jump_air,
+    split_mushroom_wall_jump_cling,
     func_8007B418,
-    func_8007B588,
-    func_8007B5F0,
-    func_8007B640,
+    split_mushroom_wall_jump_turn,
+    split_mushroom_wall_jump_land,
+    split_mushroom_wall_jump_finish,
 };
 
 struct Unk_unk68 D_801020E4 = { 88, -26, 14, 18 };
@@ -3317,7 +3317,7 @@ union AnimationStep D_801028AC[] = {
     { 0x34000004 },
 };
 
-void* D_801028B0[38] = {
+void* cyber_peacock_animations[38] = {
     D_8010248C,
     D_80102550,
     D_80102578,
@@ -3374,84 +3374,84 @@ struct Unk_unk68 D_80102960 = { -87, -50, -61, 92 };
 
 struct Unk_unk68 D_80102964 = { -32, -12, 44, 55 };
 
-void (*D_80102968[4])() = {
-    func_8007C5C4,
-    func_8007C5F8,
-    func_8007C69C,
+void (*cyber_peacock_intro_appear_funcs[4])() = {
+    cyber_peacock_intro_appear_start,
+    cyber_peacock_intro_pose,
+    cyber_peacock_intro_start_health_bar,
     func_8007C6E8,
 };
 
-void (*D_80102978[3])() = {
+void (*cyber_peacock_intro_funcs[3])() = {
     func_8007C30C,
     func_8007C3FC,
-    func_8007C7D4,
+    cyber_peacock_intro_appear,
 };
 
-u8 D_80102984[32] = { 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03 };
+u8 cyber_peacock_attacks[32] = { 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03 };
 
-u8 D_801029A4[32] = { 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
+u8 cyber_peacock_attacks_low_health[32] = { 0x00, 0x00, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03 };
 
-u8 D_801029C4[8] = { 0x03, 0x23, 0x03, 0x08, 0x23, 0x00, 0x00, 0x00 };
+u8 cyber_peacock_attack_animations[8] = { 0x03, 0x23, 0x03, 0x08, 0x23, 0x00, 0x00, 0x00 };
 
-u8 D_801029CC[8] = { 0x02, 0x03, 0x03, 0x03, 0x03, 0x00, 0x00, 0x00 };
+u8 cyber_peacock_attack_steps[8] = { 0x02, 0x03, 0x03, 0x03, 0x03, 0x00, 0x00, 0x00 };
 
-void (*D_801029D4[5])() = {
-    func_8007C968,
-    func_8007C9B0,
+void (*cyber_peacock_teleport_funcs[5])() = {
+    cyber_peacock_teleport_start,
+    cyber_peacock_teleport_vanish,
     func_8007CA68,
-    func_8007CC8C,
-    func_8007CD54,
+    cyber_peacock_teleport_appear,
+    cyber_peacock_teleport_wait,
 };
 
-void (*D_801029E8[4])() = {
-    func_8007CDE4,
-    func_8007CE3C,
-    func_8007CE98,
-    func_8007CEF8,
+void (*cyber_peacock_rising_kick_funcs[4])() = {
+    cyber_peacock_rising_kick_start,
+    cyber_peacock_rising_kick_jump,
+    cyber_peacock_rising_kick_rise,
+    cyber_peacock_rising_kick_finish,
 };
 
-void (*D_801029F8[3])() = {
-    func_8007CFA4,
-    func_8007D010,
-    func_8007D0CC,
+void (*cyber_peacock_slash_funcs[3])() = {
+    cyber_peacock_slash_start,
+    cyber_peacock_slash_swing,
+    cyber_peacock_slash_finish,
 };
 
-void (*D_80102A04[7])() = {
-    func_8007D2F4,
-    func_8007D324,
-    func_8007D374,
-    func_8007D3DC,
-    func_8007D424,
-    func_8007D470,
-    func_8007D4E4,
+void (*cyber_peacock_aiming_laser_funcs[7])() = {
+    cyber_peacock_aiming_laser_start,
+    cyber_peacock_aiming_laser_raise,
+    cyber_peacock_aiming_laser_target,
+    cyber_peacock_aiming_laser_wait,
+    cyber_peacock_aiming_laser_fire,
+    cyber_peacock_aiming_laser_next,
+    cyber_peacock_aiming_laser_finish,
 };
 
-void (*D_80102A20[4])() = {
-    func_8007CF68,
-    func_8007D138,
-    func_8007D558,
-    func_8007CF68,
+void (*cyber_peacock_attack_funcs[4])() = {
+    cyber_peacock_rising_kick,
+    cyber_peacock_slash,
+    cyber_peacock_aiming_laser,
+    cyber_peacock_rising_kick,
 };
 
-void (*D_80102A30[6])() = {
+void (*cyber_peacock_step_funcs[6])() = {
     func_8009216C,
     func_8009216C,
-    func_8007CDA8,
-    func_8007D594,
+    cyber_peacock_teleport,
+    cyber_peacock_attack,
     func_8007D5D0,
     func_8007D710,
 };
 
-void (*D_80102A48[3])() = {
-    func_8007D9AC,
-    func_8007DA20,
-    func_8007DAFC,
+void (*cyber_peacock_death_funcs[3])() = {
+    cyber_peacock_death_start,
+    cyber_peacock_death_explode,
+    cyber_peacock_death_finish,
 };
 
-void (*D_80102A54[3])() = {
-    func_8007C824,
+void (*cyber_peacock_state_funcs[3])() = {
+    cyber_peacock_intro,
     func_8007D838,
-    func_8007DBDC,
+    cyber_peacock_death,
 };
 
 struct Unk_unk68 D_80102A60 = { -1, 22, 13, 17 };
@@ -4154,7 +4154,7 @@ union AnimationStep D_801033EC[] = {
     { 0x76000001 },
 };
 
-void* D_8010341C[38] = {
+void* magma_dragoon_animations[38] = {
     D_80102A7C,
     D_80102A80,
     D_80102B00,
@@ -4197,111 +4197,111 @@ void* D_8010341C[38] = {
 
 struct Unk_unk68 D_801034B4 = { 36, 37, 36, 37 };
 
-void (*D_801034B8[8])() = {
-    func_8007DF50,
-    func_8007E01C,
-    func_8007E098,
-    func_8007E128,
-    func_8007E1C0,
-    func_8007E25C,
-    func_8007E2B8,
+void (*magma_dragoon_intro_funcs[8])() = {
+    magma_dragoon_intro_warning,
+    magma_dragoon_intro_leap,
+    magma_dragoon_intro_descend,
+    magma_dragoon_intro_land,
+    magma_dragoon_intro_pose,
+    magma_dragoon_intro_start_health_bar,
+    magma_dragoon_intro_ready,
     func_8007E350,
 };
 
-void (*D_801034D8[4])() = {
-    func_8007E5D0,
-    func_8007E66C,
+void (*magma_dragoon_dive_kick_funcs[4])() = {
+    magma_dragoon_dive_kick_jump,
+    magma_dragoon_dive_kick_rise,
     func_8007E6F8,
     func_8007E848,
 };
 
-void (*D_801034E8[2])() = {
-    func_8007E918,
+void (*magma_dragoon_flame_burst_funcs[2])() = {
+    magma_dragoon_flame_burst_start,
     func_8007E95C,
 };
 
-void (*D_801034F0[3])() = {
-    func_8007EA94,
-    func_8007EAE8,
-    func_8007EBD0,
+void (*magma_dragoon_fire_volley_funcs[3])() = {
+    magma_dragoon_fire_volley_start,
+    magma_dragoon_fire_volley_fire,
+    magma_dragoon_fire_volley_wait,
 };
 
-void (*D_801034FC[2])() = {
-    func_8007EC74,
-    func_8007ECEC,
+void (*magma_dragoon_breath_funcs[2])() = {
+    magma_dragoon_breath_start,
+    magma_dragoon_breath_fire,
 };
 
-void (*D_80103504[4])() = {
-    func_8007EE18,
-    func_8007EED8,
-    func_8007EF94,
-    func_8007F00C,
+void (*magma_dragoon_leap_center_funcs[4])() = {
+    magma_dragoon_leap_center_start,
+    magma_dragoon_leap_center_glide,
+    magma_dragoon_leap_center_land,
+    magma_dragoon_leap_center_recover,
 };
 
-void (*D_80103514[3])() = {
-    func_8007F0B4,
+void (*magma_dragoon_leap_wall_funcs[3])() = {
+    magma_dragoon_leap_wall_start,
     func_8007F174,
-    func_8007F2F4,
+    magma_dragoon_leap_wall_finish,
 };
 
-void (*D_80103520[2])() = {
-    func_8007F3B8,
+void (*magma_dragoon_fireball_funcs[2])() = {
+    magma_dragoon_fireball_start,
     func_8007F404,
 };
 
-void (*D_80103528[2])(struct MainObj*) = {
-    func_8007F564,
+void (*magma_dragoon_fireball_low_funcs[2])(struct MainObj*) = {
+    magma_dragoon_fireball_low_start,
     func_8007F5B0,
 };
 
-void (*D_80103530[5])() = {
-    func_8007F71C,
+void (*magma_dragoon_rising_punch_funcs[5])() = {
+    magma_dragoon_rising_punch_start,
     func_8007F780,
-    func_8007F878,
-    func_8007F93C,
-    func_8007F9C8,
+    magma_dragoon_rising_punch_rise,
+    magma_dragoon_rising_punch_land,
+    magma_dragoon_rising_punch_recover,
 };
 
-void (*D_80103544[5])() = {
+void (*magma_dragoon_stagger_funcs[5])() = {
     func_8007FAA4,
-    func_8007FB48,
-    func_8007FB98,
-    func_8007FBFC,
-    func_8007FC78,
+    magma_dragoon_stagger_rise,
+    magma_dragoon_stagger_burn,
+    magma_dragoon_stagger_fall,
+    magma_dragoon_stagger_recover,
 };
 
-void (*D_80103558[14])() = {
+void (*magma_dragoon_step_funcs[14])() = {
     func_8009216C,
-    func_8007FD1C,
-    func_8007E45C,
+    magma_dragoon_hold,
+    magma_dragoon_intro,
     func_8007E4C8,
-    func_8007E8C0,
-    func_8007EA3C,
-    func_8007EC1C,
-    func_8007EDC0,
-    func_8007F05C,
-    func_8007F360,
-    func_8007F50C,
-    func_8007F690,
-    func_8007FA4C,
-    func_8007FCC4,
+    magma_dragoon_dive_kick,
+    magma_dragoon_flame_burst,
+    magma_dragoon_fire_volley,
+    magma_dragoon_breath,
+    magma_dragoon_leap_center,
+    magma_dragoon_leap_wall,
+    magma_dragoon_fireball,
+    magma_dragoon_fireball_low,
+    magma_dragoon_rising_punch,
+    magma_dragoon_stagger,
 };
 
-void (*D_80103590[8])() = {
-    func_8007FE84,
+void (*magma_dragoon_death_funcs[8])() = {
+    magma_dragoon_death_start,
     func_8007FF00,
     func_8007FFFC,
-    func_800802A4,
-    func_8008030C,
-    func_80080370,
-    func_800804A0,
-    func_800805D8,
+    magma_dragoon_death_wait_explosion,
+    magma_dragoon_death_wait_dialog,
+    magma_dragoon_death_smoke,
+    magma_dragoon_death_vanish,
+    magma_dragoon_death_end,
 };
 
-void (*D_801035B0[3])() = {
+void (*magma_dragoon_state_funcs[3])() = {
     func_8007DD98,
     func_8007FD24,
-    func_80080604,
+    magma_dragoon_death,
 };
 
 struct Unk_unk68 D_801035BC = { -21, -26, 36, 51 };

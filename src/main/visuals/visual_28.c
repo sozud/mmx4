@@ -41,7 +41,7 @@ void func_800B3EB8(struct VisualObj* obj)
         break;
     case 2:
         func_80015D60(obj, 0x19);
-        owner->ext.main_60.unk8F = 2;
+        owner->ext.main_60.storm_active = 2;
         break;
     case 3:
         func_80015D60(obj, 0xE);
