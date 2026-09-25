@@ -124,7 +124,35 @@ void func_800AAD6C(struct ShotObj* arg0)
     arg0->unk6++;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAE94);
+void func_800AAE94(struct ShotObj* arg0)
+{
+    u8 index;
+    s8 variant;
+
+    func_8002B718(MOVING_OBJECT(arg0));
+    if ((func_8002B7B0(OBJECT_HEADER(arg0),
+             D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][0] << 16,
+             D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][1] << 16)
+            ^ (s8)arg0->unk8C.bytes[1])
+        & 0x10) {
+        arg0->unk6 = 0;
+        arg0->x_pos.i.hi = D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][0];
+        arg0->y_pos.i.hi = D_80109CA4[arg0->unk8C.bytes[2]][arg0->unk2][1];
+        index = arg0->unk8C.bytes[2];
+        variant = arg0->unk2;
+        if (D_80109D04[index][variant] != 0) {
+            arg0->unk5 = 9;
+            if (D_80109D04[arg0->unk8C.bytes[2]][arg0->unk2] == 2) {
+                arg0->unk15 = 0x40;
+            }
+        } else if (index == 5 && variant != 0) {
+            arg0->unk5 = 8;
+            arg0->unk15 = 0x40;
+        } else {
+            arg0->unk5 = 3;
+        }
+    }
+}
 
 void func_800AAFF8(struct ShotObj* arg0)
 {
@@ -396,7 +424,30 @@ void func_800AB98C(struct ShotObj* arg0)
     D_80109D54[arg0->unk6](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB9C8);
+void func_800AB9C8(struct ShotObj* arg0)
+{
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+        arg0->unk8C.byte = 0;
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        arg0->unk50.data = NULL;
+        func_800AFAB4(0, arg0->x_pos.i.hi + 15, arg0->y_pos.i.hi + 20, 0);
+        func_800AFAB4(0, arg0->x_pos.i.hi - 15, arg0->y_pos.i.hi + 20, 1);
+        func_800AFAB4(0, arg0->x_pos.i.hi + 15, arg0->y_pos.i.hi, -1);
+        func_800AFAB4(0, arg0->x_pos.i.hi - 15, arg0->y_pos.i.hi, -1);
+        func_800AFAB4(0, arg0->x_pos.i.hi + 15, arg0->y_pos.i.hi - 20, -1);
+        func_800AFAB4(0, arg0->x_pos.i.hi - 15, arg0->y_pos.i.hi - 20, -1);
+        arg0->x_pos.i.hi = 0;
+        arg0->y_pos.i.hi = 0;
+        arg0->unk5C = 0x30;
+        return;
+    }
+    D_80109D5C[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    func_8002E184(PLAYER_OBJECT(arg0));
+}
 
 void func_800ABB50(struct ShotObj* arg0)
 {

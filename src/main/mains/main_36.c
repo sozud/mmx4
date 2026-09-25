@@ -40,7 +40,36 @@ void func_8005F864(struct MainObj* arg0)
     arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005F87C);
+void func_8005F87C(struct MainObj* arg0)
+{
+    struct MiscObj* misc;
+
+    if (SP_CUR_MAIN_OBJ->ext.main_36.unk8D != 0 && g_Player.unkBA != 0) {
+        misc = find_free_misc_obj();
+        if (misc != NULL) {
+            SP_CUR_MAIN_OBJ->ext.main_36.unk8C = 1;
+            misc->active = 0x41;
+            misc->id = 0xB;
+            misc->unk16 = 1;
+            misc->unk15 = arg0->unk15;
+            misc->unk40 = arg0->unk40;
+            misc->unk42 = arg0->unk42;
+            misc->unk3C = (void*)arg0->sprite_frames;
+            misc->animation_table = (u32**)D_800FE48C;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->y_pos.val = arg0->y_pos.val;
+            misc->bg_offset = g_Player.bg_offset;
+            misc->ext.misc_11.active = 0;
+            SP_CUR_MAIN_OBJ->ext.main_36.unk84 = misc;
+            func_80015D60(misc, 0);
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            func_80015D60(arg0, 0);
+        }
+    }
+    func_8002B718(MOVING_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(arg0));
+}
 
 void func_8005F9A4(struct MainObj* arg0)
 {
@@ -48,7 +77,26 @@ void func_8005F9A4(struct MainObj* arg0)
     is_on_screen((struct BaseObj*)arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005F9F4);
+void func_8005F9F4(struct MainObj* arg0)
+{
+    s32 distance;
+
+    SP_CUR_MAIN_OBJ->ext.main_36.unk89 = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    func_8002B93C(MOVING_OBJECT(arg0), SP_CUR_MAIN_OBJ->ext.main_36.unk89);
+    SP_CUR_MAIN_OBJ->ext.main_36.unk84->x_vel.val = arg0->unk20;
+    SP_CUR_MAIN_OBJ->ext.main_36.unk84->y_vel.val = arg0->unk24;
+    func_8002B718(MOVING_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(SP_CUR_MAIN_OBJ->ext.main_36.unk84));
+    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (distance >= 0 ? distance < 2 : arg0->x_pos.i.hi - g_Player.x_pos.i.hi < 2) {
+        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+        if (distance >= 0 ? distance < 2 : arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 2) {
+            func_80015D60(arg0, 3);
+            func_80015D60(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 3);
+            arg0->unk6++;
+        }
+    }
+}
 
 void func_8005FB38(struct MainObj* arg0)
 {

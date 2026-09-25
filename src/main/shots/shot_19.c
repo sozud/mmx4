@@ -26,7 +26,27 @@ void func_8009CD80(struct ShotObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_19", func_8009CDE0);
+void func_8009CDE0(struct ShotObj* arg0)
+{
+    if (--arg0->unk84.value != 0) {
+        if (arg0->unk84.value == 0x20) {
+            arg0->unk7C->unk1C.bytes[0] = 1;
+        }
+        if (!(D_80141BD8.unk0 & 7)) {
+            if (arg0->unk84.value >= 0x34) {
+                func_800C842C(8, D_80108FA0, arg0, 0x28, D_800FFC14);
+                arg0->x_pos.i.hi += 0x20;
+                func_800C842C(8, D_80108FA0, arg0, 0x28, D_800FFC14);
+                arg0->x_pos.i.hi -= 0x20;
+            }
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
+            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
+            func_80028BAC(8, 4, 1);
+        }
+    } else {
+        arg0->state++;
+    }
+}
 
 void func_8009CF18(struct ShotObj* arg0)
 {

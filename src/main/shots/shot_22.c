@@ -27,7 +27,33 @@ void func_8009D85C(struct ShotObj* arg0)
     func_8002B718(MOVING_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D8F0);
+void func_8009D8F0(struct ShotObj* arg0)
+{
+    s32 target;
+    s32 direction;
+
+    if (arg0->unk8C.word == 3 && g_Player.unkBA != 0) {
+        arg0->unk5 = 2;
+        func_8009DA28(arg0);
+        return;
+    }
+    if (arg0->timer != 0) {
+        if (!(D_80141BD8.unk0 & 3)) {
+            target = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+            direction = arg0->unk84.value;
+            if ((direction - (target & 0xFF)) & 0x1F) {
+                arg0->unk84.value = (u32)((target - direction) & 0x1F) < 0x10 ? direction + 1 : direction - 1;
+                arg0->unk84.value &= 0x1F;
+                func_8002B93C(MOVING_OBJECT(arg0), arg0->unk84.value);
+                arg0->x_vel.val *= 3;
+                arg0->y_vel.val *= 3;
+            }
+        }
+        arg0->timer--;
+    }
+    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(arg0));
+}
 
 void func_8009DA08(struct ShotObj* arg0)
 {
@@ -96,7 +122,30 @@ void func_8009DB1C(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009DB9C);
+void func_8009DB9C(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80109014[arg0->unk5](arg0);
+    owner = arg0->unk7C;
+    if (owner->state == 1 && arg0->unk8C.word != 0 && g_Player.unkBA == 0
+        && func_8002D9BC(arg0) != 0 && g_Player.unkBA != 0) {
+        arg0->unk8C.word = 3;
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->y_pos.val = g_Player.y_pos.val;
+    }
+    owner = arg0->unk7C;
+    if ((arg0->unk8C.word != 3 || g_Player.unkBA == 0 || owner->state != 2)
+        && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        if (arg0->unk8A == 0) {
+            func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        }
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_8009DCF4(struct ShotObj* arg0)
 {

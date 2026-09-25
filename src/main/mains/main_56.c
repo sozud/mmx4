@@ -8,7 +8,36 @@ extern struct Unk_unk68 D_80100864;
 extern void* jet_stingray_patterns[];
 extern u8 jet_stingray_pattern_weights[];
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_8006FD50);
+void func_8006FD50(struct MainObj* arg0)
+{
+    if (g_Player.unkC4 == 0) {
+        func_80036AE4(0x14, 0x40);
+        arg0->unk5++;
+        arg0->on_screen = 0;
+        arg0->unk54 = NULL;
+        arg0->unk50 = NULL;
+        arg0->unk68 = NULL;
+        arg0->collision_data = D_801079F8;
+        arg0->bg_offset = g_Player.bg_offset;
+        if (engine_obj.stage != 0xC) {
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        } else {
+            arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
+            arg0->unk42 = 0x7888;
+        }
+        arg0->animation_table = (const u8* const*)jet_stingray_animations;
+        arg0->unk16 = 6;
+        arg0->unk5C = 0;
+        arg0->unk60 = 4;
+        arg0->x_pos.val = (background_objects[arg0->bg_offset].unk1E + 0x10B) << 16;
+        arg0->y_pos.val = (background_objects[arg0->bg_offset].unk22 + 0x130) << 16;
+        arg0->unk62 = 0;
+        arg0->unk63 = 2;
+        arg0->ext.main_56.object.effect = NULL;
+        arg0->ext.main_56.pattern = NULL;
+    }
+}
 
 void jet_stingray_intro_warning(struct MainObj* self)
 {

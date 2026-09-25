@@ -9,7 +9,35 @@ void func_8004B8C0(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004B8FC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_12", func_8004BAF8);
+void func_8004BAF8(struct MainObj* arg0)
+{
+    s32 result;
+    s8 mode = arg0->unk5;
+
+    if (mode != 5 || arg0->unk6 != 4) {
+        CollisionRelated(PLAYER_OBJECT(arg0));
+    }
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    func_8004C6C4(arg0);
+    D_800FB6B4[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    result = func_8002DD04(arg0);
+    if (result < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(5, D_800FB67C, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0xE);
+    } else {
+        if (result > 0) {
+            SP_CUR_MAIN_OBJ->ext.main_12.saved_unk5 = arg0->unk5;
+        }
+        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
+            is_on_screen(BASE_OBJECT(arg0));
+            return;
+        }
+    }
+    arg0->state++;
+}
 
 void func_8004BC14(struct MainObj* arg0)
 {

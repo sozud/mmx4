@@ -10,7 +10,30 @@ void func_8005EC58(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005ECA8);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EE2C);
+void func_8005EE2C(struct MainObj* arg0)
+{
+    func_8005F47C(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FE2B8[arg0->unk5](arg0);
+    if (arg0->unk5 == 4) {
+        return;
+    }
+    if (engine_obj.stage != 3 || g_Player.x_pos.i.hi < 0x9B7) {
+        func_8002D9BC(arg0);
+    }
+    arg0->ext.main_35.saved_unk5 = arg0->unk5;
+    if (func_8002DD04(arg0) < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(5, D_800FE2A4, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0xC);
+        arg0->state = 2;
+    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    } else {
+        arg0->state = 2;
+    }
+}
 
 void func_8005EF40(struct MainObj* arg0)
 {

@@ -2057,6 +2057,16 @@ struct Item01StageEntry {
 
 extern struct Item01StageEntry D_8010C160[15];
 
+struct Item01SpriteBounds {
+    u8 x_offset;
+    u8 y_offset;
+    u8 width;
+    u8 height;
+};
+
+extern struct Item01SpriteBounds D_8010C250[15];
+extern u8 D_8010C2C8[16];
+
 union ItemUnk84 {
     u16 timer;
     u32 previous_value;
@@ -2490,6 +2500,7 @@ union RideArmorUnk80 {
 
 union RideArmorUnk94 {
     u32 value;
+    u16 halves[2];
     struct {
         u8 pad94[3];
         s8 unk97;
@@ -2832,6 +2843,20 @@ extern struct Unk_unk68 D_80104CEC;
 extern struct Item04Data D_8010C8B4;
 extern u8 D_8010C904[];
 extern s32 D_8010C918[4];
+extern u8 D_800FB67C[];
+extern u8 D_801097F4[4];
+extern u8 D_80109804[8];
+extern s32 D_80109818[4];
+extern s32 D_80109828[4];
+extern s16 D_80109898[4];
+extern u8 D_801098A0[8];
+extern u8 D_801098A8[16];
+extern struct Unk_unk68 D_80106270[32];
+extern u8 D_8010D198[4];
+extern u8* D_8010D1BC[4];
+extern union AnimationStep* D_8010DF48[57];
+extern s32 D_8010DB08[8];
+extern s32 D_8010DB28[8];
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -3585,8 +3610,12 @@ extern u8 frost_walrus_script_recover_high[4];
 extern u8 frost_walrus_script_recover_low[4];
 extern u16 frost_walrus_floor_tiles[18];
 extern u16 frost_walrus_floor_tiles_rush[20];
+extern s16 frost_walrus_burst_offsets[20][2];
+extern u8 frost_walrus_burst_subtypes[32];
+extern void* jet_stingray_animations[45];
 extern struct Unk_unk68 D_800F8BC4;
 extern struct Unk_unk68 D_800F8BC8;
+extern struct Unk_unk68 D_800F9124;
 extern s8 D_800F8BF8[];
 extern s8 D_800F8C10[];
 extern s8 D_800F8C28[];
@@ -3657,6 +3686,8 @@ extern u32* D_8011C070[9];
 extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
 extern union AnimationStep* D_800FE890[21];
+extern union AnimationStep* D_800FFC14[10];
+extern union AnimationStep* D_800FE48C[7];
 extern void* D_80101624[12];
 extern void* storm_owl_animations[30];
 extern void* D_80103E08[29];
@@ -3761,6 +3792,7 @@ extern struct Unk_unk68 D_800FBBBC;
 extern struct Unk_unk68 D_800FBBC0;
 extern struct Unk_unk68 D_800FBBC4;
 extern struct Unk_unk68 D_800FBA50;
+extern struct Unk_unk68 D_800FBA54;
 extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBEF8;
 extern u8 D_800FC340[4];
@@ -3984,6 +4016,7 @@ extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];
 extern struct ShotObj* D_8013B8C0;
 extern struct ShotObj* D_8013B8C4;
+extern u8 D_8010D07C[4][16];
 extern u8 D_8010D0BC[4][16];
 extern struct Unk_unk68 D_8010D0FC;
 extern struct Unk_unk68 D_8010D3CC;
@@ -4320,6 +4353,8 @@ void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void func_8009ED70(struct ShotObj*);
 s32 func_8002DD04(struct MainObj*);
+void func_8004C6C4(struct MainObj*);
+void func_80050690(struct MainObj*);
 void func_800BC63C(struct EffectObj*);
 void func_800BC6FC(struct EffectObj*, s32);
 void func_800C63BC(struct ItemObj*);
@@ -4504,7 +4539,7 @@ s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);
 void func_800BF60C(struct BaseObj*, s8);
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-void func_800C7DA4(s32, const u8*, void*, s32);
+void func_800C7DA4(s32, u8*, void*, s32);
 void func_8004D784(struct MainObj*, s8);
 void func_800C813C(s32, void*, void*);
 extern u8 D_800F9118[8];
@@ -4565,6 +4600,8 @@ void func_80055C54(struct MainObj*);
 void func_8005807C(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
 void func_800AF878(struct BaseObj*, s32, s32, s32);
+void func_800C842C(s32, u8*, void*, s32, void*);
+void func_800BDDE8(s32, s32);
 void func_8005F4E0(struct MainObj*);
 void func_8006135C(struct PlayerObj*);
 void func_80061424(struct MainObj*);

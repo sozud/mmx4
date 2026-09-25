@@ -273,7 +273,27 @@ s32 func_8003E0B0(struct PlayerObj* arg0)
     return arg0->unk88.value & mask;
 }
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E0D0);
+void func_8003E0D0(struct RideArmorObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->unk68 = &D_800F9124;
+        *(u8*)&self->unk8C = 0;
+        func_80015D60(self, 0x11);
+    } else if (!(self->input_flags & 8)) {
+        func_8003DC44(BASE_OBJECT(self), 0xC);
+    } else if (g_Player.unkC0 == 0 && engine_obj.unkF == 0
+        && (g_Player.unk2 == 0 || g_Player.unk8E == 0) && g_Player.unk7A == 0
+        && g_Player.unkE0 == 0 && !(self->unk94.halves[1] & 0x8200)
+        && func_8002C160(COLLISION_OBJECT(&g_Player), COLLISION_OBJECT(self))
+        && engine_obj.unkF == 0 && g_Player.unk5C > 0 && g_Player.unkA4 == 0
+        && g_Player.unk79 == 0) {
+        func_8003DC44(BASE_OBJECT(self), 0xA);
+        func_80015D60(self, 0x12);
+        self->unk94.bytes.unk97 |= 0x40;
+        g_Player.unkC5 = 1;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003E274);
 

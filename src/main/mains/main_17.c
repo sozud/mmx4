@@ -39,7 +39,32 @@ void func_8004FFE0(struct MainObj* arg0)
     arg0->ext.main_17.saved_unk5 = arg0->y_pos.val;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_17", func_800500D4);
+void func_800500D4(struct MainObj* arg0)
+{
+    s32 collision;
+
+    func_80050690(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_800FBEC0[arg0->unk5](arg0);
+    func_8002D9BC(arg0);
+    arg0->ext.main_17.unk90 = arg0->unk5;
+    collision = func_8002DD04(arg0);
+    if (func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi + arg0->unk68->unk0,
+            arg0->unk68->unk3 + (arg0->y_pos.i.hi + arg0->unk68->unk1))
+        == 0x3E) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(4, D_800FBEB0, arg0);
+    } else if (collision < 0) {
+        func_800AF808(BASE_OBJECT(arg0));
+        func_800C813C(4, D_800FBEB0, arg0);
+        func_800BF60C(BASE_OBJECT(arg0), 0);
+    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        return;
+    }
+    arg0->state = 2;
+}
 
 void func_80050238(struct MainObj* arg0)
 {

@@ -59,7 +59,40 @@ void func_800C6680(struct ItemObj* arg0)
     func_8002B0C8(OBJECT_HEADER(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C670C);
+void func_800C670C(struct ItemObj* arg0)
+{
+    struct PlayerObj* player = &g_Player;
+    s16 dx;
+    s16 dy;
+    s32 close;
+
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0) {
+        dx = -dx;
+    }
+    if (dx < 0x41) {
+        dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+        if (dy > 0) {
+            close = dy < 0x11;
+        } else {
+            dy = -dy;
+            close = dy < 0x69;
+        }
+        if (close) {
+            func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+            if (player->x_pos.val - arg0->x_pos.val > 0) {
+                func_80036AE4(0x14, 0);
+                arg0->unk15 = 0x40;
+            } else {
+                func_80036AE4(0x14, 0x40);
+                arg0->unk15 = 0;
+            }
+            func_80016F0C();
+            func_8001663C(0x1B, 0x7F);
+            arg0->unk5++;
+        }
+    }
+}
 
 void func_800C6814(struct ItemObj* arg0)
 {
