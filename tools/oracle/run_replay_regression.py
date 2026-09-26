@@ -191,6 +191,50 @@ def report_frames(name, header, rows):
     return last
 
 
+def semantic_main19_extensions(rows, object_header, objects):
+    """Compare stable Main19 fields after initialization of a reused slot."""
+    object_columns = {name: index for index, name in enumerate(object_header)}
+    object_lookup = {
+        (frame, row[object_columns["slot"]]): row
+        for frame, frame_rows in objects.items()
+        for row in frame_rows
+        if row[object_columns["table"]] == "main" and row[object_columns["id"]] == "19"
+    }
+    normalized = {}
+    ready = set()
+    for frame in sorted(rows):
+        frame_rows = rows[frame]
+        ready.intersection_update(row[4] for row in frame_rows
+                                  if row[3] == "main" and row[5] == "19")
+        output = []
+        for row in frame_rows:
+            if row[3] != "main" or row[5] != "19":
+                output.append(row)
+                continue
+            object_row = object_lookup.get((frame, row[4]))
+            if object_row is None:
+                output.append(row)
+                continue
+            state = int(object_row[object_columns["state"]])
+            step = int(object_row[object_columns["step"]])
+            substep = int(object_row[object_columns["substep"]])
+            if state == 0:
+                ready.discard(row[4])
+                continue
+            if row[4] not in ready:
+                if step != 2 or substep == 0:
+                    continue
+                ready.add(row[4])
+            fields = list(row)
+            ext80 = int(fields[6], 16)
+            # The high byte may still contain a native pointer from the prior object.
+            fields[6] = f"--{ext80 & 0xFFFFFF:06x}"
+            fields[12] = "-"  # Main19 never reads this byte.
+            output.append(tuple(fields))
+        normalized[frame] = output
+    return normalized
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--replay", type=Path,
@@ -209,6 +253,8 @@ def main():
     parser.add_argument("--timeout", type=int, default=7200)
     parser.add_argument("--limit", type=int, default=3,
                         help="differing frames to report per log")
+    parser.add_argument("--main19-semantic-extensions", action="store_true",
+                        help="compare stable Main19 fields and report raw byte differences separately")
     parser.add_argument("--skip-build", action="store_true")
     parser.add_argument("--skip-psx", action="store_true",
                         help="reuse the PSX log named by --psx-log")
@@ -346,6 +392,17 @@ def main():
             print(f"   {name}: schema mismatch between the two logs")
             status = 1
             continue
+        if name == "extensions.tsv" and args.main19_semantic_extensions:
+            raw_differing = sum(
+                rows_a[frame] != rows_b[frame]
+                for frame in set(rows_a) & set(rows_b)
+            )
+            print(f"   {name}: {raw_differing} frames differ in raw bytes")
+            metadata[f"{name}_raw_differing"] = raw_differing
+            object_header_a, objects_a = logs[("psx", "objects.tsv")]
+            object_header_b, objects_b = logs[("pc", "objects.tsv")]
+            rows_a = semantic_main19_extensions(rows_a, object_header_a, objects_a)
+            rows_b = semantic_main19_extensions(rows_b, object_header_b, objects_b)
         shared = sorted(set(rows_a) & set(rows_b))
         missing_pc = sorted(set(rows_a) - set(rows_b))
         missing_psx = sorted(set(rows_b) - set(rows_a))

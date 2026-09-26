@@ -615,14 +615,24 @@ struct Main38Ext {
 
 struct Main39Ext {
     union {
-    	struct {
-    		u16 unk80;
-    		s16 unk82;
-    	} h;
-    	u32 w;
+        struct {
+            u16 unk80;
+            s16 unk82;
+        } h;
+        u32 w;
     } unk80;
-    u32 unk84;
+    union {
+        struct {
+            s16 unk84;
+            u16 unk86;
+        } h;
+        u32 w;
+    } unk84;
     u8 unk88;
+    u8 pad89[3];
+    s32 unk8C;
+    s32 unk90;
+    u8 unk94;
 };
 
 struct Main40Ext {
@@ -798,7 +808,8 @@ struct Main73Ext {
         struct EffectObj* effect;
         s8* script;
     } unk80;
-    u8 pad84[5];
+    u8* cycle_script;
+    u8 cycle_step;
     u8 unk89;
     u8 pad8A;
     u8 unk8B;
@@ -999,6 +1010,7 @@ struct Main71Ext {
     u8 unk8A;
     u8 pad8B[2];
     u8 unk8D;
+    u8 unk8E;
 };
 
 struct Main72Ext {
@@ -1149,23 +1161,13 @@ struct Main27Ext {
     u32 saved_unk5;
 };
 
-struct Main28Context {
-    s8 unk0;
-    u8 pad1[7];
-    f32 x_pos;
-    f32 y_pos;
-    u8 pad10[0x74];
-    struct MainObj* objects[4];
-    u16 count;
-};
-
 struct Main28InitData {
     u8 unk84;
     u8 unk15;
 };
 
 struct Main28Ext {
-    struct Main28Context* context;
+    struct MainObj* context;
     u8 unk84;
     u8 unk85;
     u16 unk86;
@@ -1205,10 +1207,16 @@ struct Main29Record {
 
 struct Main29Ext {
     struct MainObj* source;
-    u8 pad84[8];
-    struct Main29Record* target;
-    struct Main29Record* record;
+    union {
+        struct MainObj* children[4];
+        struct {
+            struct MainObj* children[2];
+            struct Main29Record* target;
+            struct Main29Record* record;
+        } controller;
+    } slots;
     u16 unk94;
+    u16 unk96;
 };
 
 struct Main41Ext {
@@ -1227,7 +1235,7 @@ struct Main42Ext {
 
 struct Main68Ext {
     struct MainObj* unk80;
-    u8 pad84[4];
+    struct VisualObj* visual;
     struct EffectObj* effect;
     u8 unk8C;
     u8 pad8D;
@@ -1250,7 +1258,7 @@ union Main69State {
 
 struct Main69Ext {
     struct EffectObj* effect;
-    struct MainObj* linked_object;
+    struct VisualObj* linked_object;
     u8* script;
     union Main69State state;
     u32 unk90;
@@ -3441,6 +3449,7 @@ struct Effect14Ext {
 struct Effect17Ext {
     struct AnimatedObj* source;
     u8 timer;
+    u8 phase;
 };
 union Effect32Palette {
     s32 packed;
@@ -4137,7 +4146,6 @@ extern void (*dragonfly_step_funcs[])();
 extern u8 D_8010B465;
 #endif
 extern u8 x_ready_text_flags[];
-#define D_800F2CA4 ((const u32* const**)(x_ready_text_flags + 0x10))
 extern u8* const* D_800F2DD8[];
 extern const u8* D_800F2DD0[];
 extern u16 D_800F2F40[16];

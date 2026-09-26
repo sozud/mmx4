@@ -460,10 +460,10 @@ void func_800A98AC(struct ShotObj* arg0)
     switch (state) {
     case 1:
     case 2:
-        arg0->unk7C->ext.shot_46.unk8E--;
+        MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8E--;
         break;
     case 6:
-        arg0->unk7C->ext.shot_46.unk8C--;
+        MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8C--;
         break;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));

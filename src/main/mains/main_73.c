@@ -57,7 +57,7 @@ void func_8008BDAC(struct MainObj* arg0)
             arg0->unk6 = 0;
             arg0->unk7 = 0;
             arg0->unk61 = 0;
-            arg0->ext.main_73.pad84[4] = 0;
+            arg0->ext.main_73.cycle_step = 0;
             func_80036B18();
             return;
         }

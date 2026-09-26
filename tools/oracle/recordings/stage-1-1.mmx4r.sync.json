@@ -1,0 +1,10 @@
+{
+  "format": "MMX4SYNC1",
+  "replay_sha256": "d496835108e98b21883b68c73fe22a97a3400a424897af0bc42b5969f0294eaa",
+  "clock": "pad-read",
+  "samples": 10732,
+  "scene": {"stage": 1, "substage": 1, "checkpoint": 0, "character": 0},
+  "sync_points": [
+    {"sample": 0, "mode": 6, "kind": "start"}
+  ]
+}

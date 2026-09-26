@@ -3,6 +3,7 @@
 #include "common.h"
 
 extern u8 D_800FFB64[];
+extern s16 main49_activation_distances[4];
 
 void func_800684F8(struct MainObj* arg0)
 {
@@ -62,12 +63,14 @@ void func_80068A10(struct MainObj* arg0)
 void func_80068A68(struct MainObj* arg0)
 {
     s8 temp_a2;
+    s16 threshold;
     u8 temp_v0;
     u8* temp_v1;
 
     if (arg0->unk6 == 0) {
         temp_a2 = arg0->unk2;
-        if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= ((s16*)D_800FFB64)[temp_a2]) {
+        threshold = main49_activation_distances[temp_a2 - 6];
+        if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= threshold) {
             temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
             temp_v1[0x81] = (u8)((temp_a2 - 6) * 0x10);
             arg0->unk6 = (u8)arg0->unk6 + 1;

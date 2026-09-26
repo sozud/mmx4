@@ -350,7 +350,7 @@ void func_80086D04(struct MainObj* arg0)
         is_on_screen(BASE_OBJECT(arg0));
     }
     if (--arg0->unk7C == 0) {
-        arg0->ext.main_69.linked_object->unk5C = 1;
+        arg0->ext.main_69.linked_object->unk5C.value = 1;
         engine_obj.enable_boss = 1;
         arg0->unk7++;
     }
@@ -944,7 +944,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69", func_800881F8);
 void func_80088338(struct MainObj* arg0)
 {
     if (--arg0->unk7C == 0) {
-        arg0->ext.main_69.linked_object->unk5C = 1;
+        arg0->ext.main_69.linked_object->unk5C.value = 1;
         func_8002B560(0x25, 0x10);
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;

@@ -506,7 +506,7 @@ void func_80022730(struct AbcObj* arg0)
                         obj->x_pos.i.hi = 0xF0;
                         obj->y_pos.i.hi = 0x48;
 
-                        obj->animation_table = D_800F2CA4[CONFIG->unk2];
+                        obj->animation_table = D_800F2EE8[CONFIG->unk2 - 0x91];
 
                         if (CONFIG->unk4 != 0) {
                             obj->unk40 = (D_801406A8[CONFIG->unk1] >> 7) + 0xB0;

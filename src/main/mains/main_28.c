@@ -51,7 +51,7 @@ void func_80059C84(struct MainObj* arg0)
 
 void func_80059D6C(struct MainObj* arg0)
 {
-    struct Main28Context* context = arg0->ext.main_28.context;
+    struct MainObj* context = arg0->ext.main_28.context;
 
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
@@ -86,12 +86,12 @@ void func_8005A3DC(struct MainObj* arg0)
 
 void func_8005A3E4(struct MainObj* arg0)
 {
-    struct Main28Context* context;
+    struct MainObj* context;
 
     context = arg0->ext.main_28.context;
-    if (context->unk0 != 0 && context->objects[arg0->ext.main_28.index] == arg0) {
-        context->count--;
-        context->objects[arg0->ext.main_28.index] = NULL;
+    if (context->active != 0 && context->ext.main_29.slots.children[arg0->ext.main_28.index] == arg0) {
+        context->ext.main_29.unk94--;
+        context->ext.main_29.slots.children[arg0->ext.main_28.index] = NULL;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

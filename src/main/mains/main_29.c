@@ -67,8 +67,8 @@ void func_8005ACA0(struct MainObj* arg0)
     struct Main29Record* target;
 
     context = &SP_CUR_MAIN_OBJ->ext.main_29;
-    record = context->record;
-    target = context->target;
+    record = context->slots.controller.record;
+    target = context->slots.controller.target;
     if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
         record->unk4 = 2;
     }

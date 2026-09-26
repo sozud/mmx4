@@ -317,9 +317,6 @@ union AnimationStep D_800FE20C[] = {
     { 0x11010002 },
     { 0x12010002 },
     { 0x13010102 },
-};
-
-union AnimationStep D_800FE254[] = {
     { 0x0E010001 },
     { 0x0F010001 },
     { 0x10010001 },
@@ -352,7 +349,7 @@ union AnimationStep* D_800FE280[9] = {
     D_800FE1C4,
     D_800FE1DC,
     D_800FE20C,
-    D_800FE254,
+    &D_800FE20C[18],
     D_800FE26C,
     D_800FE270,
     D_800FE274,
