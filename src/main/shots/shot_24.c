@@ -80,7 +80,6 @@ void func_8009E3A8(struct ShotObj* arg0)
 void func_8009E490(struct ShotObj* arg0)
 {
     struct WeaponObj* weapon;
-    u8* collision_states;
     s32 result;
 
     arg0->unk18.val = arg0->x_pos.val;
@@ -94,8 +93,7 @@ void func_8009E490(struct ShotObj* arg0)
         result = func_8002DD04(MAIN_OBJECT(arg0));
 
         if (arg0->unk42 & 0x8000) {
-            collision_states = arg0->unk7C->backref;
-            collision_states[arg0->unk2 + 2] = 2;
+            ((struct Shot24Owner*)arg0->unk7C)->collision_states[arg0->unk2 + 2] = 2;
         }
         if (result < 0) {
             weapon = arg0->unk7C;

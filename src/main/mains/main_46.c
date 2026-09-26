@@ -31,31 +31,36 @@ void func_80066A84(struct MainObj* arg0)
 
 void func_80066B00(struct MainObj* self)
 {
-    struct Main45Ext* owner;
-
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     D_800FF9B0[self->unk5](self);
     func_8002D9BC(self);
-    owner = self->ext.main_46.owner;
 
-    if ((func_8002DD04(self) < 0) || ((owner->attack_flags & 7) == 7)) {
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
-        self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
-        func_800AF808(BASE_OBJECT(self));
-        func_800C813C(6, D_800FF99C, self);
-        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
-        self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
-        self->unk42 &= 0x7FFF;
-        func_80015D60(self, 0xE);
-        owner->attack_flags |= 8;
-        self->state = 2;
-    } else {
-        if (self->unk42 & 0x8000) {
-            owner->layer_signals->collision_state = 2;
-        }
-        func_8002B318(BASE_OBJECT(self), 0x100, 0x100);
+    if (func_8002DD04(self) < 0) {
+        goto hit;
     }
+    if ((self->ext.main_46.owner->attack_flags & 7) != 7) {
+        goto active;
+    }
+
+hit:
+    self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
+    func_800AF808(BASE_OBJECT(self));
+    func_800C813C(6, D_800FF99C, self);
+    self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
+    self->unk42 &= 0x7FFF;
+    func_80015D60(self, 0xE);
+    self->ext.main_46.owner->attack_flags |= 8;
+    self->state = 2;
+    return;
+
+active:
+    if (self->unk42 & 0x8000) {
+        self->ext.main_46.owner->layer_signals->collision_state = 2;
+    }
+    func_8002B318(BASE_OBJECT(self), 0x100, 0x100);
 }
 
 void func_80066C40(struct MainObj* arg0)

@@ -1694,6 +1694,16 @@ struct Shot24Ext {
     s16 timer;
 };
 
+struct Shot24Owner {
+    OBJECT_HEADER_FIELDS
+    u8* collision_states;
+};
+
+#ifndef MMX4_PC
+MMX4_STATIC_ASSERT(shot_24_owner_collision_states_offset,
+    MMX4_OFFSET_OF(struct Shot24Owner, collision_states) == 0x14);
+#endif
+
 struct Shot55Unk84 {
     s16 x;
     s16 y;
