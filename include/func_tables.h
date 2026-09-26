@@ -5512,7 +5512,7 @@ void func_800B5798(struct EffectObj*);
 // D_8010AFAC
 extern void (*D_8010AFAC[])(struct EffectObj*);
 void func_800B58DC(struct EffectObj*);
-void func_800B58F4(struct EffectObj*);
+void func_800B58F4(struct EffectObj*, s32, s32);
 
 // D_8010B34C
 extern void (*D_8010B34C[])(struct EffectObj*);

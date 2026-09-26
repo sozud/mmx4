@@ -666,7 +666,7 @@ extern void func_800B56D4 (struct VisualObj *arg0);
 extern void func_800B56F4 (struct EffectObj *arg0);
 extern void func_800B5730 (struct EffectObj *arg0);
 extern void func_800B58A0 (struct EffectObj *arg0);
-extern void func_800B58F4 (struct EffectObj *arg0);
+extern void func_800B58F4 (struct EffectObj *arg0, s32 arg1, s32 arg2);
 extern void func_800B599C (struct EffectObj *arg0);
 extern void func_800B5B54 (struct EffectObj *arg0);
 extern void func_800B5C60 (struct EffectObj *arg0);

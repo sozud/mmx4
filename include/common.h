@@ -239,7 +239,7 @@ struct TileEffectRecord {
     s16 x, y;
     u16 padA;
     u16* tiles;
-    u32 has_next;
+    u8 has_next;
 };
 struct ArchivePathData {
     s8 stage_archive_indices[12];
@@ -4596,7 +4596,7 @@ void func_80026648();
 s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
-void func_800DA984();
+void func_800DA984(s32 arg0, s32 arg1, s32 arg2);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
 struct VisualObj* func_800AFAB4(s8, s16, s16, u8);

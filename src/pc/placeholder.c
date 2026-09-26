@@ -234,7 +234,6 @@ extern u8 D_80108CBC[4];
 extern s8 D_80108CC0[2][2];
 extern struct TileEffectRecord** D_80119388[26];
 extern u8 D_8013B8E0[];
-u8 func_800DAB40(s16, s16, s16, s16);
 void func_800DADA0(struct TileEffectRecord*, u16, u16, u8, u8);
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
@@ -7656,54 +7655,6 @@ void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
     }
 }
 
-void func_800DABE4(u8 arg0, s32 arg1, s32 arg2)
-{
-    struct TileEffectRecord* record
-        = D_80119388[engine_obj.stage * 2 + engine_obj.substage][arg0 & 0xFF];
-    s16 origin_x = (s16)arg1;
-    s16 origin_y = (s16)arg2;
-
-    for (;;) {
-        s16 x = record->x + origin_x;
-        s16 y = record->y + origin_y;
-        s32 count = record->packed_count >> 1;
-        s32 horizontal = record->packed_count & 1;
-        u16 bg_x = background_objects[record->layer].x_pos.i.hi;
-        u16 bg_y = background_objects[record->layer].y_pos.i.hi;
-        s32 i = 0;
-
-        while (count != 0) {
-            s16 tile_x = x;
-            s16 tile_y = y;
-            s32 visible = func_800DAB40((s16)bg_x, (s16)bg_y, tile_x, tile_y);
-
-            if (tile_x < 0) {
-                tile_x += 0xF;
-            }
-            if (tile_y < 0) {
-                tile_y += 0xF;
-            }
-            func_800DADA0(record, (u16)(tile_x >> 4), (u16)(tile_y >> 4),
-                (u8)i, (u8)visible);
-
-            if (horizontal) {
-                x += 0x10;
-            } else {
-                y += 0x10;
-            }
-            i++;
-            if ((i & 0xFF) == count) {
-                break;
-            }
-        }
-
-        if (record->has_next == 0) {
-            break;
-        }
-        record++;
-    }
-}
-
 void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     s32 x = arg2 & get_random();
@@ -12107,47 +12058,6 @@ void func_800698D8(struct MainObj* arg0)
     arg0->ext.main_50.unk84 = 0;
     arg0->state = 2;
     arg0->unk5 = 0;
-}
-
-void func_800DAB9C(struct TileEffectRecord*, s32, s32, s32);
-
-void func_800DA984(s32 arg0, s32 arg1, s32 arg2)
-{
-    struct TileEffectRecord* record
-        = D_80119388[engine_obj.stage * 2 + engine_obj.substage][(u8)arg0];
-
-    for (;;) {
-        u16 x = record->x + (u16)arg1;
-        u16 y = record->y + (u16)arg2;
-        s32 count = record->packed_count >> 1;
-        s32 horizontal = record->packed_count & 1;
-        u16 bg_x = background_objects[record->layer].x_pos.i.hi;
-        u16 bg_y = background_objects[record->layer].y_pos.i.hi;
-        u8 i = 0;
-
-        while (count != 0) {
-            s16 tile_x = x;
-            s16 tile_y = y;
-
-            if (func_800DAB40((s16)bg_x, (s16)bg_y, tile_x, tile_y)) {
-                if (tile_x < 0)
-                    tile_x += 0xF;
-                if (tile_y < 0)
-                    tile_y += 0xF;
-                func_800DAB9C(record, (u16)(tile_x >> 4), (u16)(tile_y >> 4), i);
-            }
-            if (horizontal)
-                x += 0x10;
-            else
-                y += 0x10;
-            i++;
-            if (i == count)
-                break;
-        }
-        if (record->has_next == 0)
-            break;
-        record++;
-    }
 }
 
 extern struct Unk_unk68 D_801074F4[];
