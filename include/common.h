@@ -239,7 +239,7 @@ struct TileEffectRecord {
     s16 x, y;
     u16 padA;
     u16* tiles;
-    u32 has_next;
+    u8 has_next;
 };
 struct ArchivePathData {
     s8 stage_archive_indices[12];
@@ -614,9 +614,14 @@ struct Main38Ext {
 };
 
 struct Main39Ext {
-    u8 pad80[2];
-    s16 unk82;
-    u8 pad84[4];
+    union {
+    	struct {
+    		u16 unk80;
+    		s16 unk82;
+    	} h;
+    	u32 w;
+    } unk80;
+    u32 unk84;
     u8 unk88;
 };
 
@@ -2400,7 +2405,7 @@ struct Misc30Ext {
     struct MainObj* owner;
     s8 unk54;
     u8 pad55;
-    u16 unk56;
+    s16 unk56;
 };
 
 struct Misc53Ext {
@@ -4596,7 +4601,7 @@ void func_80026648();
 s16 func_8002BAD0(s16, s16, s16);
 u8 func_800D8E94(struct LayerObj*);
 u8 func_800D9B08(struct LayerObj*);
-void func_800DA984();
+void func_800DA984(s32 arg0, s32 arg1, s32 arg2);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
 struct VisualObj* func_800AFAB4(s8, s16, s16, u8);
@@ -4710,7 +4715,7 @@ s32 func_800373DC(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
 void func_8003D8A8(struct RideArmorObj*, s32, s32);
 s32 func_8003DCD8(struct RideArmorObj*);
-void func_8003D7E4(struct RideArmorObj*, s32, s32);
+s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
 s32 func_8003B340(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);

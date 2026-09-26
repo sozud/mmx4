@@ -14,7 +14,7 @@ void func_800B58DC(struct EffectObj* arg0)
     arg0->state++;
 }
 
-void func_800B58F4(struct EffectObj* arg0)
+void func_800B58F4(struct EffectObj* arg0, s32 arg1, s32 arg2)
 {
     if (++arg0->unk5 == 3) {
         arg0->unk5 = 0;
@@ -22,7 +22,7 @@ void func_800B58F4(struct EffectObj* arg0)
             arg0->unk6 = 0;
         }
     }
-    func_800DA984((u8)arg0->unk6);
+    func_800DA984((u8)arg0->unk6, arg1, arg2);
 }
 
 void (*D_8010AFAC[])(struct EffectObj*) = {

@@ -89,7 +89,25 @@ void func_8003D7A0(void)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D7E4);
+// The unused integer return type preserves the original delay-slot scheduling.
+s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
+{
+    struct WeaponObj* weapon = find_free_weapon_obj();
+    if (weapon != NULL) {
+        weapon->active = 0x41;
+        weapon->id = variant + 0x3D;
+        weapon->unk2 = kind;
+        weapon->x_pos.i.hi = arg0->x_pos.i.hi;
+        weapon->y_pos.i.hi = arg0->y_pos.i.hi;
+        weapon->animation_table = arg0->animation_table;
+        weapon->unk40 = arg0->unk40;
+        weapon->unk3C = arg0->unk3C;
+        weapon->unk42 = arg0->unk42 & 0x7FFF;
+        weapon->unk16 = arg0->unk16;
+        weapon->owner = (struct PlayerObj*)arg0;
+        weapon->unk15 = arg0->unk15;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D8A8);
 

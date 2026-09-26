@@ -128,7 +128,37 @@ void func_800864FC(struct MainObj* arg0)
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_69", func_8008654C);
+void func_8008654C(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+    s16 timer;
+    s8 level;
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk6++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = arg0->x_pos.i.hi;
+            effect->y_pos.i.hi = arg0->y_pos.i.hi;
+            arg0->ext.main_69.effect = effect;
+        }
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+    timer = arg0->unk7E;
+    arg0->unk7E = timer - 1;
+    if (timer != 0)
+        return;
+    arg0->unk42 ^= 0x8000;
+    arg0->unk61 -= 5;
+    if (arg0->unk61 >= 0x1A)
+        arg0->unk61 = 0;
+    level = arg0->unk61;
+    if (level < 5)
+        level = 5;
+    arg0->unk7E = level;
+}
 
 void func_80086640(struct MainObj* self)
 {

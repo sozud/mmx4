@@ -368,7 +368,31 @@ void cyber_peacock_slash(struct MainObj* self)
     cyber_peacock_slash_funcs[self->unk6](self);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D174);
+void func_8007D174(struct MainObj* arg0)
+{
+    u8 unk15;
+    s8 active;
+
+    struct ItemObj* item = find_free_item_obj();
+    if (item != NULL) {
+        active = arg0->active;
+        item->id = 0x17;
+        item->active = active;
+        item->unk2 = arg0->ext.main_64.shot_count;
+        item->x_pos.val = arg0->x_pos.val;
+        item->y_pos.val = arg0->y_pos.val;
+        item->animation_table = (void*)arg0->animation_table;
+        item->unk40 = arg0->unk40;
+        item->sprite_frames = (void*)arg0->sprite_frames;
+        item->unk42 = arg0->unk42 & 0x7FFF;
+        item->unk16 = arg0->unk16;
+        unk15 = arg0->unk15;
+        item->backref = (void*)arg0;
+        item->unk15 = unk15;
+        arg0->ext.main_64.object = item;
+        func_8001540C(2, 0xC4, arg0);
+    }
+}
 
 void cyber_peacock_spawn_missile(struct MainObj* self)
 {

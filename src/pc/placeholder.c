@@ -234,7 +234,6 @@ extern u8 D_80108CBC[4];
 extern s8 D_80108CC0[2][2];
 extern struct TileEffectRecord** D_80119388[26];
 extern u8 D_8013B8E0[];
-u8 func_800DAB40(s16, s16, s16, s16);
 void func_800DADA0(struct TileEffectRecord*, u16, u16, u8, u8);
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
@@ -7656,54 +7655,6 @@ void func_800DADA0(struct TileEffectRecord* arg0, u16 arg1, u16 arg2, u8 arg3,
     }
 }
 
-void func_800DABE4(u8 arg0, s32 arg1, s32 arg2)
-{
-    struct TileEffectRecord* record
-        = D_80119388[engine_obj.stage * 2 + engine_obj.substage][arg0 & 0xFF];
-    s16 origin_x = (s16)arg1;
-    s16 origin_y = (s16)arg2;
-
-    for (;;) {
-        s16 x = record->x + origin_x;
-        s16 y = record->y + origin_y;
-        s32 count = record->packed_count >> 1;
-        s32 horizontal = record->packed_count & 1;
-        u16 bg_x = background_objects[record->layer].x_pos.i.hi;
-        u16 bg_y = background_objects[record->layer].y_pos.i.hi;
-        s32 i = 0;
-
-        while (count != 0) {
-            s16 tile_x = x;
-            s16 tile_y = y;
-            s32 visible = func_800DAB40((s16)bg_x, (s16)bg_y, tile_x, tile_y);
-
-            if (tile_x < 0) {
-                tile_x += 0xF;
-            }
-            if (tile_y < 0) {
-                tile_y += 0xF;
-            }
-            func_800DADA0(record, (u16)(tile_x >> 4), (u16)(tile_y >> 4),
-                (u8)i, (u8)visible);
-
-            if (horizontal) {
-                x += 0x10;
-            } else {
-                y += 0x10;
-            }
-            i++;
-            if ((i & 0xFF) == count) {
-                break;
-            }
-        }
-
-        if (record->has_next == 0) {
-            break;
-        }
-        record++;
-    }
-}
-
 void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     s32 x = arg2 & get_random();
@@ -8307,23 +8258,6 @@ void func_800BBD88(struct EffectObj* arg0)
         arg0->unk7 = 10;
     }
     arg0->unk7--;
-}
-
-void func_8002C26C(struct CollisionObj* arg0, struct CollisionObj* arg1)
-{
-    s16 center0 = arg0->x_pos.i.hi + arg0->collision_bounds->unk0;
-    s16 center1 = arg1->x_pos.i.hi + arg1->collision_bounds->unk0;
-    s16 edge0;
-    s16 edge1;
-
-    if (center1 < center0) {
-        edge0 = center0 - arg0->collision_bounds->unk2;
-        edge1 = center1 + arg1->collision_bounds->unk2;
-    } else {
-        edge0 = center0 + arg0->collision_bounds->unk2;
-        edge1 = center1 - arg1->collision_bounds->unk2;
-    }
-    arg1->unk6C = edge0 - edge1;
 }
 
 void func_8002E294(struct PlayerObj* arg0, struct PlayerObj* arg1)
@@ -11148,38 +11082,6 @@ void func_80086124(struct MainObj* arg0)
     func_8002D9BC(arg0);
 }
 
-void func_8008654C(struct MainObj* arg0)
-{
-    struct EffectObj* effect;
-    s16 timer;
-    s8 level;
-
-    if (--arg0->unk7C == 0) {
-        arg0->unk6++;
-        effect = find_free_effect_obj();
-        if (effect != NULL) {
-            effect->active = 1;
-            effect->id = 0x1A;
-            effect->x_pos.i.hi = arg0->x_pos.i.hi;
-            effect->y_pos.i.hi = arg0->y_pos.i.hi;
-            arg0->ext.main_69.effect = effect;
-        }
-    }
-    is_on_screen(BASE_OBJECT(arg0));
-    timer = arg0->unk7E;
-    arg0->unk7E = timer - 1;
-    if (timer != 0)
-        return;
-    arg0->unk42 ^= 0x8000;
-    arg0->unk61 -= 5;
-    if (arg0->unk61 >= 0x1A)
-        arg0->unk61 = 0;
-    level = arg0->unk61;
-    if (level < 5)
-        level = 5;
-    arg0->unk7E = level;
-}
-
 void func_80086860(struct MainObj* arg0)
 {
     if (arg0->unk7C != 0) {
@@ -12107,47 +12009,6 @@ void func_800698D8(struct MainObj* arg0)
     arg0->ext.main_50.unk84 = 0;
     arg0->state = 2;
     arg0->unk5 = 0;
-}
-
-void func_800DAB9C(struct TileEffectRecord*, s32, s32, s32);
-
-void func_800DA984(s32 arg0, s32 arg1, s32 arg2)
-{
-    struct TileEffectRecord* record
-        = D_80119388[engine_obj.stage * 2 + engine_obj.substage][(u8)arg0];
-
-    for (;;) {
-        u16 x = record->x + (u16)arg1;
-        u16 y = record->y + (u16)arg2;
-        s32 count = record->packed_count >> 1;
-        s32 horizontal = record->packed_count & 1;
-        u16 bg_x = background_objects[record->layer].x_pos.i.hi;
-        u16 bg_y = background_objects[record->layer].y_pos.i.hi;
-        u8 i = 0;
-
-        while (count != 0) {
-            s16 tile_x = x;
-            s16 tile_y = y;
-
-            if (func_800DAB40((s16)bg_x, (s16)bg_y, tile_x, tile_y)) {
-                if (tile_x < 0)
-                    tile_x += 0xF;
-                if (tile_y < 0)
-                    tile_y += 0xF;
-                func_800DAB9C(record, (u16)(tile_x >> 4), (u16)(tile_y >> 4), i);
-            }
-            if (horizontal)
-                x += 0x10;
-            else
-                y += 0x10;
-            i++;
-            if (i == count)
-                break;
-        }
-        if (record->has_next == 0)
-            break;
-        record++;
-    }
 }
 
 extern struct Unk_unk68 D_801074F4[];
@@ -13878,26 +13739,6 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->unkA6 = 0;
     RIDE_U8(arg0, 0x8C) = 0;
     arg0->pad87 = 0;
-}
-
-void func_8003D7E4(struct RideArmorObj* arg0, s32 kind, s32 variant)
-{
-    struct WeaponObj* weapon = find_free_weapon_obj();
-
-    if (weapon == NULL)
-        return;
-    weapon->active = 0x41;
-    weapon->id = variant + 0x3D;
-    weapon->unk2 = kind;
-    weapon->x_pos.i.hi = arg0->x_pos.i.hi;
-    weapon->y_pos.i.hi = arg0->y_pos.i.hi;
-    weapon->animation_table = arg0->animation_table;
-    weapon->unk40 = arg0->unk40;
-    weapon->unk3C = arg0->unk3C;
-    weapon->unk42 = arg0->unk42 & 0x7FFF;
-    weapon->owner = (struct PlayerObj*)arg0;
-    weapon->unk16 = arg0->unk16;
-    weapon->unk15 = arg0->unk15;
 }
 
 void func_8003D8A8(struct RideArmorObj* arg0, s32 kind, s32 variant)
@@ -17150,28 +16991,6 @@ void func_800A60D0(struct ShotObj* arg0)
     }
 }
 
-void func_8007D174(struct MainObj* arg0)
-{
-    struct ItemObj* item = find_free_item_obj();
-
-    if (item == NULL)
-        return;
-    item->id = 0x17;
-    item->active = arg0->active;
-    item->unk2 = arg0->ext.main_64.shot_count;
-    item->x_pos.val = arg0->x_pos.val;
-    item->y_pos.val = arg0->y_pos.val;
-    item->animation_table = (void*)arg0->animation_table;
-    item->unk40 = arg0->unk40;
-    item->sprite_frames = (void*)arg0->sprite_frames;
-    item->unk42 = arg0->unk42 & 0x7FFF;
-    item->unk16 = arg0->unk16;
-    item->backref = (void*)arg0;
-    item->unk15 = arg0->unk15;
-    arg0->ext.main_64.object = item;
-    func_8001540C(2, 0xC4, arg0);
-}
-
 extern u8 cyber_peacock_attack_animations[];
 extern u8 cyber_peacock_attack_steps[];
 void cyber_peacock_face_player(struct MainObj* arg0);
@@ -19871,37 +19690,6 @@ void func_8007B6BC(struct AnimatedObj* obj)
         arg0->unk5 = 6;
     }
     arg0->unk6 = 0;
-}
-
-void func_800CDCFC(struct MiscObj* arg0)
-{
-    struct MainObj* owner = arg0->ext.misc_30.owner;
-
-    if (owner->state >= 2) {
-        arg0->on_screen = 0;
-        ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
-    }
-    if (arg0->unk2 == 0) {
-        if (--arg0->ext.misc_30.unk56 == 0) {
-            arg0->state = 1;
-            func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
-            return;
-        }
-        if (arg0->ext.misc_30.unk54 == 0)
-            arg0->x_pos.i.hi += 0x20;
-        else
-            arg0->x_pos.i.hi -= 0x20;
-        arg0->y_pos.i.hi++;
-        arg0->ext.misc_30.unk54 ^= 0x20;
-    } else {
-        if (--arg0->ext.misc_30.unk54 == 0)
-            arg0->state = 1;
-        arg0->x_pos.val = arg0->ext.misc_30.owner->x_pos.val;
-        arg0->y_pos.val = arg0->ext.misc_30.owner->y_pos.val;
-    }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
 }
 
 extern u8 D_801097F8[];
