@@ -1,0 +1,14 @@
+{
+  "format": "MMX4SYNC1",
+  "replay_sha256": "695fc9e54519004457e5303fd099ba9454559ce818a4810e9fbed887b5a10bc4",
+  "clock": "pad-read",
+  "samples": 11314,
+  "scene": {"stage": 3, "substage": 1, "checkpoint": 0, "character": 0},
+  "sync_points": [
+    {"sample": 0, "mode": 6, "kind": "start"},
+    {"sample": 2209, "mode": 6, "kind": "mode-return"},
+    {"sample": 2654, "mode": 6, "kind": "mode-return"},
+    {"sample": 4910, "mode": 6, "kind": "mode-return"},
+    {"sample": 7256, "mode": 6, "kind": "mode-return"}
+  ]
+}

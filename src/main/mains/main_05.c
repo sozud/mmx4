@@ -405,18 +405,18 @@ void func_800468CC(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002B93C(MOVING_OBJECT(arg0),
         func_8002B7B0(OBJECT_HEADER(arg0),
-            *(u16*)&arg0->ext.main_43.attack_count << 0x10,
-            arg0->ext.main_43.attack_cooldown << 0x10)
+            arg0->ext.main_5.target_y << 0x10,
+            arg0->ext.main_5.target_x << 0x10)
             & 0xFF);
 
     arg0->unk7C = 0x14;
     if (arg0->unk15 == 0) {
-        if (arg0->ext.main_43.animation_length & 1) {
+        if (arg0->ext.main_5.part_index & 1) {
             arg0->unk7C = 0x16;
         }
     }
     if (arg0->unk15 != 0) {
-        if (!(arg0->ext.main_43.animation_length & 1)) {
+        if (!(arg0->ext.main_5.part_index & 1)) {
             arg0->unk7C += 2;
         }
     }

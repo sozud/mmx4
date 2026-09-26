@@ -62,6 +62,11 @@ void func_800A7BC8(struct ShotObj* arg0)
 void func_800A7BE8(struct ShotObj* arg0)
 {
     D_80109A84[arg0->unk5](arg0);
+#ifdef MMX4_PC
+    if (arg0->unk8C.object == NULL) {
+        return;
+    }
+#endif
     if (arg0->unk8C.object->state == 2) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     }

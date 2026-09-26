@@ -26,7 +26,7 @@ void func_8006185C(struct MainObj* arg0)
 void func_800618F4(struct MainObj* arg0)
 {
     arg0->ext.main_39.unk80.w = 0;
-    arg0->ext.main_39.unk84 = 0;
+    arg0->ext.main_39.unk84.w = 0;
     func_8002B108(OBJECT_HEADER(arg0));
 }
 
