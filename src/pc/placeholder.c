@@ -235,7 +235,9 @@ extern struct Unk_unk68* D_800FD5C0[2];
 extern void* D_8010D37C[7];
 extern u8 D_8010D3A4[4];
 extern u32 D_8010D3A8;
-struct Item19SpawnPosition { u16 x, y; };
+struct Item19SpawnPosition {
+    u16 x, y;
+};
 extern struct Item19SpawnPosition D_8010D1D8[4];
 extern u8 D_8010D1E8[4];
 extern u8 D_8010D1EC[4];
@@ -20607,9 +20609,7 @@ void func_8005754C(struct MainObj* self)
         self->ext.main_25.unk84 = 0;
 
     self->ext.main_25.unk80--;
-    if (self->ext.main_25.unk80 == 0 ||
-        (self->unk15 == 0 && (self->unk70 & 2)) ||
-        (self->unk15 != 0 && (self->unk70 & 1))) {
+    if (self->ext.main_25.unk80 == 0 || (self->unk15 == 0 && (self->unk70 & 2)) || (self->unk15 != 0 && (self->unk70 & 1))) {
         self->unk6 = 2;
         self->unk28 = -0x1000;
         self->ext.main_25.unk80 = 0x80;
@@ -20659,8 +20659,7 @@ void func_80057874(struct MainObj* self)
         self->ext.main_25.unk84 = 0;
         return;
     }
-    if ((self->unk15 == 0 && self->x_pos.i.hi < g_Player.x_pos.i.hi) ||
-        (self->unk15 != 0 && g_Player.x_pos.i.hi < self->x_pos.i.hi)) {
+    if ((self->unk15 == 0 && self->x_pos.i.hi < g_Player.x_pos.i.hi) || (self->unk15 != 0 && g_Player.x_pos.i.hi < self->x_pos.i.hi)) {
         self->unk28 = -0x1000;
         self->unk6 = 2;
     }
@@ -20844,9 +20843,18 @@ void func_800745E8(struct MainObj* self)
         return;
     }
     switch (self->unk2) {
-    case 0: x_margin = 0x60; y_margin = 0x40; break;
-    case 1: x_margin = 0x40; y_margin = 0x50; break;
-    case 2: x_margin = 0x50; y_margin = 0x40; break;
+    case 0:
+        x_margin = 0x60;
+        y_margin = 0x40;
+        break;
+    case 1:
+        x_margin = 0x40;
+        y_margin = 0x50;
+        break;
+    case 2:
+        x_margin = 0x50;
+        y_margin = 0x40;
+        break;
     }
     if (func_8002B1E8(BASE_OBJECT(self), x_margin, y_margin) == 0) {
         if (self->active != 0)
@@ -20862,13 +20870,23 @@ void func_8004B418(struct MainObj* self)
     u8 angle = context[4] & 0xFE;
     u8 animation = 0x11;
     switch (angle) {
-    case 2: case 4: case 6: case 10: case 12: case 14:
+    case 2:
+    case 4:
+    case 6:
+    case 10:
+    case 12:
+    case 14:
         animation = 0x12;
         break;
     case 8:
         animation = 0x13;
         break;
-    case 18: case 20: case 22: case 26: case 28: case 30:
+    case 18:
+    case 20:
+    case 22:
+    case 26:
+    case 28:
+    case 30:
         animation = 0x14;
         break;
     case 24:
@@ -20893,10 +20911,14 @@ void func_8004B2BC(struct MainObj* self)
     case 0:
         self->unk15 = 0x40;
         break;
-    case 2: case 4: case 6:
+    case 2:
+    case 4:
+    case 6:
         self->unk15 = 0x40;
         /* fall through */
-    case 10: case 12: case 14:
+    case 10:
+    case 12:
+    case 14:
         if (angle >= 10)
             self->unk15 = 0;
         func_80015D60(self, 7);
@@ -20907,10 +20929,14 @@ void func_8004B2BC(struct MainObj* self)
     case 16:
         self->unk15 = 0;
         break;
-    case 18: case 20: case 22:
+    case 18:
+    case 20:
+    case 22:
         self->unk15 = 0;
         /* fall through */
-    case 26: case 28: case 30:
+    case 26:
+    case 28:
+    case 30:
         if (angle >= 26)
             self->unk15 = 0x40;
         func_80015D60(self, 9);
@@ -20942,8 +20968,7 @@ void func_8004B0A0(struct MainObj* self)
         return;
     }
 
-    if (self->x_pos.i.hi < g_Player.x_pos.i.hi - 0x10 ||
-        self->x_pos.i.hi > g_Player.x_pos.i.hi + 0x10) {
+    if (self->x_pos.i.hi < g_Player.x_pos.i.hi - 0x10 || self->x_pos.i.hi > g_Player.x_pos.i.hi + 0x10) {
         if (--*timer != 0) {
             s16 old_y = g_Player.y_pos.i.hi;
             g_Player.y_pos.i.hi = old_y - 0x30;
@@ -20973,9 +20998,7 @@ void func_80061B58(struct MainObj* self)
         self->unk2C = 0;
     }
     self->unk7E++;
-    if ((self->unk7E & 7) == 0 &&
-        (!(background_objects[0].unk34 & 0x10) ||
-         (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
+    if ((self->unk7E & 7) == 0 && (!(background_objects[0].unk34 & 0x10) || (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
         func_80028B68(8, 4, 2);
     if ((self->unk7E & 0xF) == 0)
         func_800AFAB4(0, self->x_pos.i.hi, self->y_pos.i.hi + 0x10, 1);
@@ -21027,8 +21050,7 @@ void func_80061918(struct MainObj* self)
     if (g_Player.y_pos.val >= ext->unk8C || self->y_pos.val >= g_Player.y_pos.val)
         return;
     s32 target_x = g_Player.x_pos.i.hi + (self->unk2 & 1 ? 0x10 : -0x10);
-    if (target_x - self->x_pos.i.hi >= -0x10 &&
-        target_x - self->x_pos.i.hi <= 0x10) {
+    if (target_x - self->x_pos.i.hi >= -0x10 && target_x - self->x_pos.i.hi <= 0x10) {
         self->unk2C = 0x8000;
         self->unk5 = 2;
     }
@@ -21042,13 +21064,12 @@ void func_8009C45C(struct ShotObj* self)
         if (self->animation_step.fields.relative_step == 0) {
             func_80015D60(self, self->unk84.value + 1);
             self->unk5 = 1;
-            if (owner->active != 0 && owner->id == 0x1D &&
-                owner->state == 1 && owner->unk2 >= 0)
+            if (owner->active != 0 && owner->id == 0x1D && owner->state == 1 && owner->unk2 >= 0)
                 owner->unk5 = 4;
         } else {
             s8 index = self->animation_step.fields.event;
             self->unk50.data = index > 0 && index <= 12 ? D_80108F24[index - 1]
-                                                   : D_80108F20;
+                                                        : D_80108F20;
         }
     }
     func_80015DC8(ANIMATED_OBJECT(self));
@@ -21078,12 +21099,11 @@ void func_800C4778(struct ItemObj* self)
         self->animation_table = (const u8* const*)D_800FEDE0;
         self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         self->unk40 = D_801406A8[index] >> 7;
-        self->unk42 = ((index * 4 + 0x18) & 0xF) |
-                      ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF);
+        self->unk42 = ((index * 4 + 0x18) & 0xF) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF);
         self->unk54 = NULL;
         self->unk50 = NULL;
-        self->unk68 = (struct Unk_unk68*)(self->unk2 == 0 ? D_8010D1E8 :
-                                           self->unk2 == 1 ? D_8010D1EC : D_8010D1F0);
+        self->unk68 = (struct Unk_unk68*)(self->unk2 == 0 ? D_8010D1E8 : self->unk2 == 1 ? D_8010D1EC
+                                                                                         : D_8010D1F0);
         self->unk76 = -1;
         self->unk75 = 1;
         self->unk16 = 6;
@@ -21148,8 +21168,7 @@ void func_800C609C(struct ItemObj* self)
     self->on_screen = 1;
     index = func_8002938C(0x9E);
     self->unk40 = D_801406A8[index] >> 7;
-    self->unk42 = ((((index * 4 + 0x18) & 0xF)) |
-                   ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF));
+    self->unk42 = ((((index * 4 + 0x18) & 0xF)) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     self->animation_table = (const u8* const*)D_8010D37C;
     self->unk5C = 0x20;
@@ -21281,8 +21300,7 @@ void func_80089C7C(struct MainObj* self)
     } else {
         ext->unk8A = 0;
     }
-    if (self->unk67 != 0 || ext->unk86 != 0 || ext->unk87 != 0 ||
-        (ext->unk8D & 8) != 0)
+    if (self->unk67 != 0 || ext->unk86 != 0 || ext->unk87 != 0 || (ext->unk8D & 8) != 0)
         return;
     y = self->y_pos.u.hi + self->unk68->unk3;
     if (ext->unk8A & self->unk70) {
@@ -21744,8 +21762,7 @@ void func_8009C784(struct ShotObj* self)
         self->x_vel.val = 0;
         self->y_vel.val = -0x20000;
     }
-    if (self->y_pos.i.hi - background_objects[(s8)self->bg_offset].y_pos.i.hi >= 0xAC &&
-        self->unk2 != 0) {
+    if (self->y_pos.i.hi - background_objects[(s8)self->bg_offset].y_pos.i.hi >= 0xAC && self->unk2 != 0) {
         self->unk2C = 0x1000;
         self->unk28 = 0;
         self->y_vel.val = 0x10000 - self->y_vel.val;
@@ -21949,8 +21966,7 @@ void func_80062778(struct MainObj* self)
         return;
     }
     direction = self->unk15 ? 1 : 2;
-    if (((flags & 3) && (flags & direction)) ||
-        ext->unk80 == (self->unk15 ? 2 : 1)) {
+    if (((flags & 3) && (flags & direction)) || ext->unk80 == (self->unk15 ? 2 : 1)) {
         self->unk5 = 2;
         self->unk6 = 0;
         ext->unk82 = self->animation_step.fields.event;
@@ -22011,8 +22027,7 @@ void func_80089588(struct MainObj* self)
         column = index * 4 + 0x18;
         index = func_8002938C(0x3A);
         row = index + 6;
-        child->unk42 = (column - (column / 16) * 16) |
-                       (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+        child->unk42 = (column - (column / 16) * 16) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
         index = func_8002938C(0x3A);
         child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
         child->unk15 = part < 3 ? 0x40 : 0;
@@ -22056,8 +22071,7 @@ void func_800C52CC(struct ItemObj* self)
     self->animation_table = (const u8* const*)D_800FEDE0;
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     self->unk40 = D_801406A8[index] >> 7;
-    self->unk42 = (column - (column & 0x7F0)) |
-                  (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+    self->unk42 = (column - (column & 0x7F0)) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
     self->unk16 = 6;
     self->unk68 = (struct Unk_unk68*)D_8010D24C;
     self->state = 1;
@@ -22098,8 +22112,10 @@ void func_800A9964(struct ShotObj* self)
     self->y_vel.val *= 4;
     dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
     dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-    if (dx < 0) dx = -dx;
-    if (dy < 0) dy = -dy;
+    if (dx < 0)
+        dx = -dx;
+    if (dy < 0)
+        dy = -dy;
     self->unk8A = ((dx + dy) / 4) + 1;
 }
 
@@ -22184,8 +22200,7 @@ void func_8005AF5C(struct MainObj* self)
                         index = func_8002938C(child->id);
                         column = index * 4 + 0x18;
                         row = index + 6;
-                        child->unk42 = (column - (column / 16) * 16) |
-                                       (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+                        child->unk42 = (column - (column / 16) * 16) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
                         index = func_8002938C(child->id);
                         child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
                         self->unk7C = 1;
@@ -22211,8 +22226,7 @@ void func_8005AF5C(struct MainObj* self)
         if (self->ext.main_29.unk94 == 0) {
             self->unk6 = 4;
             self->unk7C = 0x78;
-            if (source->ext.main_29.slots.controller.record != NULL &&
-                source->ext.main_29.slots.controller.record->unk0 != 0) {
+            if (source->ext.main_29.slots.controller.record != NULL && source->ext.main_29.slots.controller.record->unk0 != 0) {
                 source->ext.main_29.slots.controller.record->unk4 = 2;
                 source_ext[1] |= 2;
             }
@@ -22319,10 +22333,7 @@ void func_8004AE20(struct MainObj* self)
             break;
         }
     } else if (self->unk2 == 0) {
-        if ((flags == 1 && (self->unk70 & 2)) ||
-            (flags == 2 && (self->unk70 & 1)) ||
-            (flags == 4 && (self->unk70 & 4)) ||
-            (flags == 8 && (self->unk70 & 8))) {
+        if ((flags == 1 && (self->unk70 & 2)) || (flags == 2 && (self->unk70 & 1)) || (flags == 4 && (self->unk70 & 4)) || (flags == 8 && (self->unk70 & 8))) {
             owner->ext.main_11.unk80 = flags | 0x10;
         }
     } else {
@@ -22379,9 +22390,7 @@ void func_8004A78C(struct MainObj* self)
     }
     func_8002B718(MOVING_OBJECT(self));
     x = self->x_pos.u.hi;
-    if (engine_obj.character_state.fields.active != 0 &&
-        ((u32)(x - 0xC0F) < 0x1E2 || (u32)(x - 0x100F) < 0x1E2 ||
-         (u32)(x - 0x1315) < 0x1DC || (u32)(x - 0x1613) < 0x1BF)) {
+    if (engine_obj.character_state.fields.active != 0 && ((u32)(x - 0xC0F) < 0x1E2 || (u32)(x - 0x100F) < 0x1E2 || (u32)(x - 0x1315) < 0x1DC || (u32)(x - 0x1613) < 0x1BF)) {
         func_80015D60(self, 0x16);
         self->state = 2;
         self->unk5C = 1;
@@ -22471,8 +22480,7 @@ void func_8005A758(struct MainObj* self)
             } else if (self->unk2 == 1) {
                 if (direction < 2) {
                     result = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-                    if ((direction == 0 && result < 0x10) ||
-                        (direction == 1 && result < 5))
+                    if ((direction == 0 && result < 0x10) || (direction == 1 && result < 5))
                         direction = 2;
                     else
                         direction = 3;
@@ -22481,8 +22489,7 @@ void func_8005A758(struct MainObj* self)
             } else if (self->unk2 == 2) {
                 if (direction >= 2) {
                     result = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-                    if ((direction == 2 && result < 8) ||
-                        (direction != 2 && result < 0x18))
+                    if ((direction == 2 && result < 8) || (direction != 2 && result < 0x18))
                         direction = 1;
                     else
                         direction = 0;
@@ -22552,8 +22559,7 @@ void func_800C4D20(struct ItemObj* self)
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     column = func_8002938C(0x9C);
     row = func_8002938C(0x9C);
-    self->unk42 = ((column * 4 + 0x18) & 0xF) |
-                  (((row + 6) / 4 + 0x1E0) << 6);
+    self->unk42 = ((column * 4 + 0x18) & 0xF) | (((row + 6) / 4 + 0x1E0) << 6);
     self->animation_step.fields.frame_index = self->unk2 & 7;
     self->unk15 = (self->unk2 & 8) ? 0x40 : 0;
     self->unk68 = (struct Unk_unk68*)D_8010D20C;
@@ -22794,7 +22800,8 @@ void func_8005B8D0(struct MainObj* self)
     self->unk67 = 0;
     self->unk7C = 0x96;
     ((u8*)&self->ext)[2] = 0;
-    *(s16*)&self->ext = variant == 0 ? 0x60 : variant == 1 ? 0x80 : 0xB0;
+    *(s16*)&self->ext = variant == 0 ? 0x60 : variant == 1 ? 0x80
+                                                           : 0xB0;
     func_80015D60(self, 1);
     func_8002B318(BASE_OBJECT(self), 0x70, 0x30);
 }
@@ -22828,8 +22835,7 @@ void func_800C49BC(struct ItemObj* self)
                     index = (u8)func_8002938C(0x29);
                     spawned->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
                     spawned->unk40 = D_801406A8[index] >> 7;
-                    spawned->unk42 = ((index * 4 + 0x18) & 0xF) |
-                                     (((index + 6) / 4 + 0x1E0) << 6);
+                    spawned->unk42 = ((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6);
                     spawned->x_pos = self->x_pos;
                     spawned->y_pos.val = self->y_pos.val + 0x280000;
                     spawned->unk15 = 0;
@@ -22865,8 +22871,7 @@ void func_800BE9E8(struct ItemObj* self)
     self->animation_table = (const u8* const*)D_801094D0;
     column = func_8002938C(0x9A);
     row = func_8002938C(0x9A);
-    self->unk42 = ((column * 4 + 0x18) & 0xF) |
-                  (((row + 6) / 4 + 0x1E0) << 6);
+    self->unk42 = ((column * 4 + 0x18) & 0xF) | (((row + 6) / 4 + 0x1E0) << 6);
     index = func_8002938C(0x9A);
     self->unk40 = D_801406A8[index] >> 7;
     index = func_8002938C(0x9A);
@@ -22985,22 +22990,30 @@ void func_8009A9E4(struct ShotObj* self)
     self->y_vel.val *= 3;
 
     switch (variant) {
-    case 0: case 2: case 4:
+    case 0:
+    case 2:
+    case 4:
         offset = 6;
         break;
     case 6:
         offset = 8;
         break;
-    case 8: case 10: case 12:
+    case 8:
+    case 10:
+    case 12:
         offset = 4;
         break;
-    case 16: case 18: case 20:
+    case 16:
+    case 18:
+    case 20:
         offset = 12;
         break;
     case 22:
         offset = 10;
         break;
-    case 24: case 26: case 28:
+    case 24:
+    case 26:
+    case 28:
         offset = 14;
         break;
     default:
@@ -23016,8 +23029,7 @@ void func_80062AEC(struct MainObj* self)
 {
     for (s32 i = 0; i < 0x20; i++) {
         struct ItemObj* item = &item_objects[i];
-        if (item->active == 0 || item->id != 0x13 ||
-            (u8)(item->unk2 - 1) >= 3)
+        if (item->active == 0 || item->id != 0x13 || (u8)(item->unk2 - 1) >= 3)
             continue;
         if (func_8002C160(COLLISION_OBJECT(self), COLLISION_OBJECT(item)) == 0)
             continue;
@@ -23184,15 +23196,15 @@ void func_8005C0E4(struct MainObj* self)
         func_800AFAB4(0, x - direction * 0x33, (s16)((u16)y - 1), 0xFF);
         func_800AFAB4(0, x - direction * 0x50, y, 0xFF);
         func_800C833C(5, D_800FDC28, (struct MiscObj*)self,
-                       direction * 0x470000, 0x10000);
+            direction * 0x470000, 0x10000);
         func_800C833C(1, D_800FDC30, (struct MiscObj*)self,
-                       direction * 0x280000, 0);
+            direction * 0x280000, 0);
         func_800C833C(1, D_800FDC34, (struct MiscObj*)self,
-                       direction * 0xC0000, -0x10000);
+            direction * 0xC0000, -0x10000);
         func_800C833C(1, D_800FDC38, (struct MiscObj*)self,
-                       -direction * 0x150000, 0x20000);
+            -direction * 0x150000, 0x20000);
         func_800C833C(1, D_800FDC3C, (struct MiscObj*)self,
-                       -direction * 0x330000, -0x10000);
+            -direction * 0x330000, -0x10000);
     }
     func_8002D9BC(self);
     if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0)
@@ -23216,8 +23228,7 @@ void func_800C20F4(struct ItemObj* self)
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
     column = func_8002938C(0xA1);
     row = func_8002938C(0xA1);
-    self->unk42 = ((column * 4 + 0x18) & 0xF) |
-                  (((row + 6) / 4 + 0x1E0) << 6);
+    self->unk42 = ((column * 4 + 0x18) & 0xF) | (((row + 6) / 4 + 0x1E0) << 6);
     self->unk16 = 6;
     self->animation_step.fields.frame_index = 0;
     self->unk5C = 0;
@@ -23244,20 +23255,16 @@ void func_80059F60(struct MainObj* self)
 
     switch (self->unk2) {
     case 0:
-        turn = (self->unk20 <= -0x500000 && self->unk15 == 0) ||
-               (self->unk20 >= -0x10000 && self->unk15 != 0);
+        turn = (self->unk20 <= -0x500000 && self->unk15 == 0) || (self->unk20 >= -0x10000 && self->unk15 != 0);
         break;
     case 1:
-        turn = (self->unk20 > 0x4FFFFF && self->unk15 != 0) ||
-               (self->unk20 <= 0x10000 && self->unk15 == 0);
+        turn = (self->unk20 > 0x4FFFFF && self->unk15 != 0) || (self->unk20 <= 0x10000 && self->unk15 == 0);
         break;
     case 2:
-        turn = (self->unk24 <= -0x500000 && self->unk15 == 0) ||
-               (self->unk24 >= -0x10000 && self->unk15 != 0);
+        turn = (self->unk24 <= -0x500000 && self->unk15 == 0) || (self->unk24 >= -0x10000 && self->unk15 != 0);
         break;
     case 3:
-        turn = (self->unk24 > 0x4FFFFF && self->unk15 != 0) ||
-               (self->unk24 <= 0x10000 && self->unk15 == 0);
+        turn = (self->unk24 > 0x4FFFFF && self->unk15 != 0) || (self->unk24 <= 0x10000 && self->unk15 == 0);
         break;
     }
     if (self->unk7E != 0)
@@ -23487,13 +23494,23 @@ void func_8004B668(struct MainObj* self)
         return;
     angle = ext->pad81[3] & 0xFE;
     switch (angle) {
-    case 2: case 4: case 6: case 10: case 12: case 14:
+    case 2:
+    case 4:
+    case 6:
+    case 10:
+    case 12:
+    case 14:
         animation = 0x12;
         break;
     case 8:
         animation = 0x13;
         break;
-    case 18: case 20: case 22: case 26: case 28: case 30:
+    case 18:
+    case 20:
+    case 22:
+    case 26:
+    case 28:
+    case 30:
         animation = 0x14;
         break;
     case 24:
@@ -23522,8 +23539,7 @@ void func_800C229C(struct ItemObj* self)
         old_velocity = self->x_vel.val;
         center = (s16)self->unk7C.timer16;
         position = self->x_pos.i.hi;
-        if ((old_velocity > 0 && position >= center + range) ||
-            (old_velocity <= 0 && position <= center - range))
+        if ((old_velocity > 0 && position >= center + range) || (old_velocity <= 0 && position <= center - range))
             self->x_vel.val = -old_velocity;
         if (func_8002B1E8(BASE_OBJECT(self), range + 0xA0, 0x30) == 0)
             func_8002B318(BASE_OBJECT(self), 0x30, 0x20);
@@ -23535,8 +23551,7 @@ void func_800C229C(struct ItemObj* self)
         old_velocity = self->y_vel.val;
         center = ((s16*)&self->unk7C)[1];
         position = self->y_pos.i.hi;
-        if ((old_velocity > 0 && position <= center - range) ||
-            (old_velocity <= 0 && position >= center + range))
+        if ((old_velocity > 0 && position <= center - range) || (old_velocity <= 0 && position >= center + range))
             self->y_vel.val = -old_velocity;
         if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x30) == 0)
             func_8002B318(BASE_OBJECT(self), 0x30, range + 0x78);
@@ -23841,7 +23856,7 @@ void func_8005C474(struct MainObj* self)
         direction = self->unk15 ? -1 : 1;
         func_800AFAB4(0, x + direction * 0x4D, y, 1);
         func_800C833C(5, D_800FDC28, (struct MiscObj*)self,
-                       direction * 0x4D0000, 0);
+            direction * 0x4D0000, 0);
         func_80015D60(self, 0xB);
     }
     if (self->y_pos.val - background_objects[(u8)self->bg_offset].y_pos.val > 0xA80000) {
@@ -23856,15 +23871,15 @@ void func_8005C474(struct MainObj* self)
         func_800AFAB4(0, x - direction * 0x33, (s16)((u16)y - 1), 0xFF);
         func_800AFAB4(0, x - direction * 0x50, y, 0xFF);
         func_800C833C(5, D_800FDC28, (struct MiscObj*)self,
-                       direction * 0x470000, 0x10000);
+            direction * 0x470000, 0x10000);
         func_800C833C(1, D_800FDC30, (struct MiscObj*)self,
-                       direction * 0x280000, 0);
+            direction * 0x280000, 0);
         func_800C833C(1, D_800FDC34, (struct MiscObj*)self,
-                       direction * 0xC0000, -0x10000);
+            direction * 0xC0000, -0x10000);
         func_800C833C(1, D_800FDC38, (struct MiscObj*)self,
-                       -direction * 0x150000, 0x20000);
+            -direction * 0x150000, 0x20000);
         func_800C833C(1, D_800FDC3C, (struct MiscObj*)self,
-                       -direction * 0x330000, -0x10000);
+            -direction * 0x330000, -0x10000);
     }
     saved_bounds = self->unk54;
     self->collision_data = D_801060F0;
@@ -24319,9 +24334,16 @@ void func_80055358(struct MainObj* self)
         s16 y;
         u8 subtype;
     } parts[10] = {
-        { -48, 10, 3 }, { 48, 10, 3 }, { -22, 69, 4 }, { 22, 69, 4 },
-        { -40, -16, 3 }, { 40, -16, 3 }, { -40, 36, 4 }, { 40, 36, 4 },
-        { -26, -28, 3 }, { 26, -28, 3 },
+        { -48, 10, 3 },
+        { 48, 10, 3 },
+        { -22, 69, 4 },
+        { 22, 69, 4 },
+        { -40, -16, 3 },
+        { 40, -16, 3 },
+        { -40, 36, 4 },
+        { 40, 36, 4 },
+        { -26, -28, 3 },
+        { 26, -28, 3 },
     };
     struct Main22Ext* ext = &self->ext.main_22;
     u8 i;
@@ -24373,9 +24395,16 @@ void func_800559BC(struct MainObj* self)
         s16 y;
         u8 subtype;
     } parts[10] = {
-        { -48, 10, 3 }, { 48, 10, 3 }, { -22, 69, 4 }, { 22, 69, 4 },
-        { -40, -16, 3 }, { 40, -16, 3 }, { -40, 36, 4 }, { 40, 36, 4 },
-        { -26, -28, 3 }, { 26, -28, 3 },
+        { -48, 10, 3 },
+        { 48, 10, 3 },
+        { -22, 69, 4 },
+        { 22, 69, 4 },
+        { -40, -16, 3 },
+        { 40, -16, 3 },
+        { -40, 36, 4 },
+        { 40, 36, 4 },
+        { -26, -28, 3 },
+        { 26, -28, 3 },
     };
     struct Main22Ext* ext = &self->ext.main_22;
     u8 spawned = 0;
