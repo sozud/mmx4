@@ -513,7 +513,68 @@ void split_mushroom_dash(struct MainObj* self)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A4EC);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_61", func_8007A63C);
+void func_8007A63C(struct MainObj* self)
+{
+    u16 resetValue;
+
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+
+    if (self->unk15 != 0) {
+        goto state1;
+    }
+    if ((self->unk70 & 2) == 0) {
+        goto done;
+    }
+
+    func_8001540C(2, 0xA8, self);
+    split_mushroom_spawn_afterimage(self);
+    if ((background_objects[g_Player.bg_offset].unk34 & 0x10) == 0) {
+        func_80028B68(0x10, 8, 2);
+    }
+
+    if (--self->unk7E == 0) {
+        goto complete;
+    }
+    self->unk15 = 0x40;
+    resetValue = 0xA;
+    goto reset;
+
+state1:
+    if ((self->unk70 & 1) == 0) {
+        goto done;
+    }
+
+    func_8001540C(2, 0xA8, self);
+    split_mushroom_spawn_afterimage(self);
+    if ((background_objects[g_Player.bg_offset].unk34 & 0x10) == 0) {
+        func_80028B68(0x10, 8, 2);
+    }
+
+    if (--self->unk7E != 0) {
+        goto state_off;
+    }
+
+complete:
+    self->unk15 ^= 0x40;
+    func_80015D60(self, 3);
+    self->unk20 = 0;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0x3800;
+    func_80015930(2, 0xA7);
+    self->unk6 = 2;
+    goto done;
+
+state_off:
+    resetValue = 0xA;
+    self->unk15 = 0;
+reset:
+    self->unk7C = resetValue;
+    self->unk6 = 0;
+done:
+    return;
+}
 
 void split_mushroom_dash_land(struct MainObj* self)
 {

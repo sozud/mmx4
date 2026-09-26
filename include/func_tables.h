@@ -2379,10 +2379,11 @@ void func_80066970(void);
 
 // D_800FF9A4
 void func_80066A84(struct MainObj*);
-void func_80066B00(void);
+void func_80066B00(struct MainObj*);
 void func_80066C40(struct MainObj* arg0);
 
 // D_800FF9B0
+extern void (*D_800FF9B0[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_80066C64(struct MainObj* arg0);
 void func_80066C74(struct MainObj* arg0);
@@ -4588,6 +4589,7 @@ void func_8009E490(struct ShotObj*);
 void func_8009EAF0(struct ShotObj*);
 
 // D_80109124
+extern void (*D_80109124[])(struct ShotObj*);
 void func_8009216C(void* arg0);
 void func_8009E5A4(struct ShotObj* arg0);
 void func_8009E5B0(struct ShotObj* arg0);

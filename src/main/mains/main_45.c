@@ -28,7 +28,7 @@ void func_80065BC8(struct MainObj* self)
     self->unk54 = NULL;
     self->unk50 = NULL;
     self->unk15 = 0;
-    self->ext.main_45.unk80 = 0;
+    self->ext.main_45.attack_flags = 0;
     self->ext.main_45.unk81 = 0;
     self->ext.main_45.unk82 = 0;
     self->ext.main_45.unk83 = 0;
@@ -36,7 +36,7 @@ void func_80065BC8(struct MainObj* self)
     self->unk16 = 4;
     self->unk68 = (struct Unk_unk68*)D_800FF898;
     self->ext.main_45.unk84 = 0x320;
-    self->ext.main_45.unk88 = 0x80;
+    self->ext.main_45.projectile_command = 0x80;
     self->ext.main_45.unk89 = 0;
     self->ext.main_45.unk86 = D_800FF89C[0];
     self->ext.main_45.unk87 = 0;
@@ -54,11 +54,11 @@ void func_80065CD4(struct MainObj* self)
     func_8006630C(self);
     D_800FF978[self->unk5](self);
     func_80066478(self);
-    if ((self->ext.main_45.unk80 & 7) == 7) {
+    if ((self->ext.main_45.attack_flags & 7) == 7) {
         func_800AF808(BASE_OBJECT(self));
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = NULL;
-        self->ext.main_45.unk8C->active = 0;
+        *self->ext.main_45.layer_bg_offset = 0;
         self->unk7C = 0x78;
         self->unk7E = 1;
         self->state = 2;
@@ -145,7 +145,7 @@ void func_8006689C(struct MainObj* arg0)
         arg0->unk5C = (u8)arg0->unk5C + 1;
         return;
     }
-    arg0->ext.main_45.unk88 = 0xFF;
+    arg0->ext.main_45.projectile_command = 0xFF;
     arg0->unk5 = 1;
     arg0->unk6 = 0;
     func_80036B18();

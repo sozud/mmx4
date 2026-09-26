@@ -213,7 +213,48 @@ s32 func_8003DE08(struct MainObj* arg0)
     return 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003DE84);
+void func_8003DE84(struct RideArmorObj* arg0)
+{
+    u16 active_mask;
+    u16 buttons;
+    u16 current_mask;
+    s8 mode;
+
+    if (arg0->unk8C.bytes.cooldown != 0 || (arg0->unk94.bytes.unk97 & 2) != 0) {
+        return;
+    }
+
+    if (arg0->unk8E.bytes.active == 0) {
+        buttons = arg0->unk8A & 3;
+        if (buttons != 0 && buttons != 3) {
+            arg0->unk8E.bytes.active = 1;
+            arg0->pad9A = buttons;
+            arg0->unk8E.bytes.timer = 12;
+        }
+        return;
+    }
+
+    active_mask = arg0->pad9A;
+    current_mask = arg0->unk8A;
+    if ((active_mask & current_mask) != 0 && func_8003DE08(MAIN_OBJECT(arg0)) == 0) {
+        mode = arg0->unk67;
+        if (mode == 0) {
+            func_8003DC44(BASE_OBJECT(arg0), 7);
+            arg0->unk94.bytes.unk97 ^= 8;
+            return;
+        }
+        if (arg0->unk7D == 0) {
+            func_8003DC44(BASE_OBJECT(arg0), 15);
+            arg0->unk94.bytes.unk97 ^= 8;
+            return;
+        }
+    }
+
+    arg0->unk8E.bytes.timer--;
+    if (arg0->unk8E.bytes.timer == 0) {
+        arg0->unk8E.bytes.active = 0;
+    }
+}
 
 void func_8003DF9C(struct PlayerObj* arg0)
 {

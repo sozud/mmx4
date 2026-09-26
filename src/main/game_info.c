@@ -1093,7 +1093,46 @@ void func_8001ED44(struct GameInfo* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/game_info", func_8001EE08);
+void func_8001EE08(struct GameInfo* arg0)
+{
+    if (D_80141BDC[0] == 0) {
+        if (D_80141BDF[0] != 1) {
+            func_8001E980(1);
+        }
+        {
+            s32 state = (u8)D_80141BDC[3];
+
+            if (state != 1) {
+                if (state < 2 && state == 0) {
+                    func_8001C30C(&D_800F1D90.save);
+                    engine_obj.state = 1;
+                    engine_obj.unk1 = 6;
+                    engine_obj.unk2 = 0;
+                    engine_obj.unk3 = 0;
+                    func_80012740(1, &func_8001FB50);
+                    func_800127FC();
+                    return;
+                }
+            } else {
+                arg0->unk0 = 9;
+                engine_obj.unk1 = 0;
+                engine_obj.unk2 = 0;
+                engine_obj.unk3 = 0;
+                return;
+            }
+            background_objects[0].unk4C = 1;
+            background_objects[1].unk4C = 1;
+            background_objects[2].unk4C = 1;
+            background_objects[1].unk3 = 1;
+            background_objects[2].unk3 = 1;
+            background_objects[2].x_pos.i.hi = 0;
+            arg0->unk0 = 6;
+            arg0->mode = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        }
+    }
+}
 
 void func_8001EF48(struct GameInfo* arg0)
 {
