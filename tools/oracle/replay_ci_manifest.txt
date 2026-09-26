@@ -21,4 +21,3 @@ tools/oracle/recordings/stage-8-1.mmx4r 04c1298530e6f2b4c6f66ceebdf6f0cdff512c5a
 tools/oracle/recordings/stage-2-1.mmx4r 14d61607526c92342063cf3dd2511d4dd70f659dcae1a1b5472fd35a3e2af629
 tools/oracle/recordings/stage-3-1.mmx4r 695fc9e54519004457e5303fd099ba9454559ce818a4810e9fbed887b5a10bc4
 tools/oracle/recordings/stage-12-1.mmx4r 9d948317d7562cba4eefead1937a38f15603808019a4f173f2820a284539c994
-tools/oracle/recordings/stage-10-0.mmx4r a2a0523715dcb6ae92f51eb25674bc2531b9178b74b27165395e43a0fe4118b6
