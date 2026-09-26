@@ -16,7 +16,7 @@ void func_800AED18(struct VisualObj* arg0)
     if (obj->state == 0) {
         obj->on_screen = 1;
         obj->unk38 = 0;
-        obj->unk3C = *(s8**)0x1F80001C + (*(s32**)0x1F80001C)[1];
+        obj->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
         obj->animation_table = D_8011BF40;
         obj->unk42 = 0x7802;
         obj->unk40 = 0;
