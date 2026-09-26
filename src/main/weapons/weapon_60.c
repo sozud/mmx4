@@ -22,7 +22,7 @@ void func_800992C4(struct WeaponObj* arg0)
 
 u8 D_80108BF0[4] = { 0xFC, 0xFD, 6, 5 };
 
-s16 D_80108BF4[3][2] = {
+struct Weapon60SpawnOffset D_80108BF4[3] = {
     { -0x28, 0 },
     { -0x28, 0 },
     { -0x28, 0 },

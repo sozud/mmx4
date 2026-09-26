@@ -261,7 +261,44 @@ void jet_stingray_swim(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80070778);
+void func_80070778(struct MainObj* self)
+{
+    switch (self->unk6) {
+    case 0:
+        self->unk67 = -1;
+        self->unk68 = &D_80100884;
+        self->unk20 = 0;
+        self->unk24 = -FIXED(2);
+        self->ext.main_56.flags &= 2;
+        /* fall through */
+    case 1:
+        if (self->unk70 & 8) {
+            self->unk67 = 0;
+            self->unk24 = 0;
+            self->unk6 = (u8)self->unk6 + 1;
+            func_80015D60(self, 0);
+            self->unk7C = 0x28;
+            self->unk50 = &D_8010084C;
+            self->unk54 = &D_80100850;
+        }
+        break;
+    case 2:
+        if (--self->unk7C == 0) {
+            self->unk5 = 4;
+            self->unk6 = 0;
+        }
+        break;
+    }
+
+    CollisionRelated(PLAYER_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if ((jet_stingray_check_surface(PLAYER_OBJECT(self), 0, 0) & 0xFF) == 3
+        && !(self->ext.main_56.flags & 2)) {
+        jet_stingray_spawn_splash(self);
+        self->ext.main_56.flags |= 2;
+    }
+}
 
 void jet_stingray_vortex_start(struct MainObj* self)
 {

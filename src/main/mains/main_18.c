@@ -5,7 +5,7 @@
 void func_80050708(struct MainObj* arg0)
 {
     D_800FC344[arg0->state](arg0);
-    if (arg0->ext.main_18.unk82 == 0 && arg0->state < 2) {
+    if (arg0->ext.main_18.state.runtime.unk82 == 0 && arg0->state < 2) {
         CollisionRelated(PLAYER_OBJECT(arg0));
     }
 }
@@ -14,7 +14,41 @@ INCLUDE_ASM("main/nonmatchings/mains/main_18", func_8005077C);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80050874);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80050A9C);
+void func_80050A9C(struct MainObj* arg0)
+{
+    s16 value;
+
+    value = arg0->y_pos.i.hi + 1;
+    arg0->y_pos.i.hi = value;
+    if (value >= 0x931) {
+        func_800DABE4(0x17, 0, 0);
+        engine_obj.enable_boss = 0;
+        engine_obj.boss_ptr = NULL;
+        arg0->state = 3;
+    } else {
+        value = arg0->unk7C - 1;
+        arg0->unk7C = value;
+        if (value == 0) {
+            arg0->unk7C = 4;
+            func_800AF95C(OBJECT_HEADER(arg0), 1, 0x20, 0x30, 2);
+        }
+
+        value = arg0->unk7E - 1;
+        arg0->unk7E = value;
+        if (value == 0) {
+            arg0->ext.main_18.state.saved_position.x = arg0->x_pos.val;
+            arg0->ext.main_18.state.saved_position.y = arg0->y_pos.val;
+            arg0->unk7E = 8;
+            arg0->x_pos.i.hi = 0x18E2;
+            arg0->y_pos.i.hi = 0x89E;
+            func_800AF95C(OBJECT_HEADER(arg0), 1, 0x18, 0x30, 2);
+            arg0->x_pos.val = arg0->ext.main_18.state.saved_position.x;
+            arg0->y_pos.val = arg0->ext.main_18.state.saved_position.y;
+        }
+    }
+
+    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+}
 
 void func_80050BC4(struct MainObj* arg0)
 {
@@ -70,7 +104,7 @@ void func_80050E08(struct MainObj* arg0)
 
 void func_80050E44(struct MainObj* arg0)
 {
-    arg0->ext.main_18.unk84 = 1;
+    arg0->ext.main_18.state.runtime.unk84 = 1;
     func_80015D60(arg0, 1);
     arg0->unk7C = 1;
     arg0->unk2C = FIXED(0.0625);
@@ -116,8 +150,8 @@ void func_80050F60(struct MainObj* arg0)
         arg0->unk50 = (const u8*)&D_800FBEF4;
     }
     if (arg0->animation_step.fields.event == 1) {
-        arg0->ext.main_18.unk84 = 0;
-        arg0->ext.main_18.unk80 &= 0x3F;
+        arg0->ext.main_18.state.runtime.unk84 = 0;
+        arg0->ext.main_18.state.runtime.unk80 &= 0x3F;
         func_80015D60(arg0, 2);
         func_800527F0(arg0);
     }
@@ -176,7 +210,7 @@ void func_8005115C(struct MainObj* arg0)
     if (--arg0->unk7C == 0) {
         func_8001540C(2, 0x35, arg0);
         arg0->unk60 = 6;
-        arg0->ext.main_18.unk81 = 1;
+        arg0->ext.main_18.state.runtime.unk81 = 1;
         func_80015D60(arg0, 3);
         if (arg0->unk15 != 0) {
             arg0->unk20 = FIXED(4);
@@ -196,7 +230,7 @@ void func_800511E8(struct MainObj* arg0)
         arg0->unk54 = &D_800FBEFC;
         arg0->unk50 = &D_800FBEFC;
     }
-    if (arg0->ext.main_18.unk83 >= 0xA) {
+    if (arg0->ext.main_18.state.runtime.unk83 >= 0xA) {
         func_80015D60(arg0, 0xC);
         arg0->unk6 = 5;
     }
@@ -227,9 +261,9 @@ void func_800512BC(struct MainObj* arg0)
     if (arg0->animation_step.fields.event == 1) {
         func_80015D60(arg0, 2);
         func_800527F0(arg0);
-        arg0->ext.main_18.unk83 = 0;
-        arg0->ext.main_18.unk81 = 0;
-        arg0->ext.main_18.unk80 = 0;
+        arg0->ext.main_18.state.runtime.unk83 = 0;
+        arg0->ext.main_18.state.runtime.unk81 = 0;
+        arg0->ext.main_18.state.runtime.unk80 = 0;
     }
 }
 
@@ -240,7 +274,7 @@ void func_80051338(struct MainObj* arg0)
 
 void func_80051374(struct MainObj* arg0)
 {
-    arg0->ext.main_18.unk82 = 1;
+    arg0->ext.main_18.state.runtime.unk82 = 1;
     arg0->unk50 = (const u8*)&D_800FBF00;
     arg0->unk54 = (const u8*)&D_800FBF00;
     func_800527C0(ANIMATED_OBJECT(arg0));
@@ -308,7 +342,7 @@ void func_800514A4(struct MainObj* arg0)
 void func_80051564(struct MainObj* arg0)
 {
     if (--arg0->unk7C == 0) {
-        arg0->ext.main_18.unk82 = 0;
+        arg0->ext.main_18.state.runtime.unk82 = 0;
         arg0->unk68 = &D_800FBF0C;
     }
     func_8002B718(MOVING_OBJECT(arg0));
@@ -340,7 +374,7 @@ void func_80051678(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 2) {
         if (arg0->ext.main_18.unk8A == 0x8000) {
-            arg0->ext.main_18.unk85 = arg0->unk5C;
+            arg0->ext.main_18.state.runtime.unk85 = arg0->unk5C;
         }
         arg0->collision_data = (const u16*)D_80106B74;
         arg0->unk50 = (const u8*)&D_800FBEF4;
@@ -353,7 +387,7 @@ void func_80051678(struct MainObj* arg0)
         arg0->unk2C = FIXED(0.0625);
         arg0->unk5 = 6;
         arg0->unk6 = 0;
-        arg0->ext.main_18.unk80 = 0;
+        arg0->ext.main_18.state.runtime.unk80 = 0;
     }
 }
 
@@ -382,9 +416,9 @@ void func_80051A4C(struct MainObj* arg0)
 
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
-        if (--arg0->ext.main_18.unk85 == 0) {
+        if (--arg0->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, 0xE, NULL);
-            arg0->ext.main_18.unk85 = 3;
+            arg0->ext.main_18.state.runtime.unk85 = 3;
         }
         arg0->unk5C++;
     }
@@ -413,9 +447,9 @@ void func_80051B74(struct MainObj* arg0)
 {
 
     if (*(u8*)&arg0->unk7E == 0xFF && arg0->unk5C < 0x30) {
-        if (--arg0->ext.main_18.unk85 == 0) {
+        if (--arg0->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, 0xE, NULL);
-            arg0->ext.main_18.unk85 = 3;
+            arg0->ext.main_18.state.runtime.unk85 = 3;
         }
         arg0->unk5C++;
     }
@@ -423,8 +457,8 @@ void func_80051B74(struct MainObj* arg0)
     if (--arg0->unk7C == 0) {
         if (arg0->animation_step.fields.event != 0) {
             if (arg0->ext.main_18.unk88 == 0) {
-                arg0->ext.main_18.unk85 = 0;
-                arg0->ext.main_18.unk80 = 0;
+                arg0->ext.main_18.state.runtime.unk85 = 0;
+                arg0->ext.main_18.state.runtime.unk80 = 0;
                 func_800527F0(arg0);
                 if (*(u8*)&arg0->unk7E == 0xFF) {
                     *(u8*)&arg0->unk7E = get_random() & 1;
@@ -448,7 +482,7 @@ void func_80051C94(struct MainObj* arg0)
 
 void func_80051CD0(struct MainObj* arg0)
 {
-    arg0->ext.main_18.unk80 = 0x80;
+    arg0->ext.main_18.state.runtime.unk80 = 0x80;
     func_800527C0(ANIMATED_OBJECT(arg0));
     arg0->unk68 = &D_800FBF10;
 
@@ -502,7 +536,7 @@ void func_80051D60(struct MainObj* arg0)
     }
 
     func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->ext.main_18.unk86 != 2) {
+    if (arg0->ext.main_18.state.runtime.unk86 != 2) {
         if (--arg0->unk7C == 0) {
             if ((u16)(arg0->y_pos.i.hi - 0x849) < 0x47 && (u16)(arg0->x_pos.i.hi - 0x17D1) < 0xEF) {
                 arg0->unk7C = 0x30;
@@ -512,7 +546,7 @@ void func_80051D60(struct MainObj* arg0)
             }
             arg0->unk7C = 1;
         }
-    } else if (arg0->ext.main_18.unk87 != 0) {
+    } else if (arg0->ext.main_18.state.runtime.unk87 != 0) {
         func_80015D60(arg0, 0xF);
         arg0->unk6 = 3;
     }
@@ -535,7 +569,7 @@ void func_80051F94(struct MainObj* arg0)
     }
     if (arg0->animation_step.fields.event == 1) {
         arg0->unk68 = &D_800FBF0C;
-        arg0->ext.main_18.unk86 = 0;
+        arg0->ext.main_18.state.runtime.unk86 = 0;
         arg0->unk5 = 8;
         arg0->unk6 = 0;
     }
@@ -551,7 +585,7 @@ void func_80052044(struct MainObj* arg0)
     struct ShotObj* shot;
     s16 i;
 
-    for (i = (arg0->ext.main_18.unk86 ^ 1) & 0xFF; i < 8; i += 2) {
+    for (i = (arg0->ext.main_18.state.runtime.unk86 ^ 1) & 0xFF; i < 8; i += 2) {
         shot = find_free_shot_obj();
         if (shot == NULL) {
             continue;
@@ -570,8 +604,8 @@ void func_80052044(struct MainObj* arg0)
         shot->unk7C = (struct WeaponObj*)&arg0->state;
         shot->state = 0;
     }
-    func_80015D60(arg0, arg0->ext.main_18.unk86 + 0xD);
-    arg0->ext.main_18.unk86++;
+    func_80015D60(arg0, arg0->ext.main_18.state.runtime.unk86 + 0xD);
+    arg0->ext.main_18.state.runtime.unk86++;
     func_8001540C(2, 0x36, arg0);
     arg0->unk6 = 1;
 }
@@ -635,7 +669,7 @@ void func_80052374(struct MainObj* arg0)
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 2;
         engine_obj.boss_ptr = arg0;
-        arg0->ext.main_18.unk82 = 0;
+        arg0->ext.main_18.state.runtime.unk82 = 0;
         arg0->unk24 = 0;
         arg0->unk2C = 0;
         arg0->unk5 = 8;
@@ -660,7 +694,7 @@ void func_80052444(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
 
     if (arg0->unk2C == FIXED(0.0625)) {
-        if (arg0->ext.main_18.unk84 == 0) {
+        if (arg0->ext.main_18.state.runtime.unk84 == 0) {
             if (arg0->y_pos.i.hi >= 0x891) {
                 goto landed;
             }
@@ -672,7 +706,7 @@ void func_80052444(struct MainObj* arg0)
         return;
     }
 
-    if (arg0->ext.main_18.unk84 == 0) {
+    if (arg0->ext.main_18.state.runtime.unk84 == 0) {
         if (arg0->y_pos.i.hi < 0x890) {
             goto landed;
         }
@@ -692,10 +726,10 @@ void func_80052524(struct MainObj* arg0)
 {
     u8 flags, next_flags, phase_value;
 
-    flags = arg0->ext.main_18.unk80;
+    flags = arg0->ext.main_18.state.runtime.unk80;
     if ((flags & 0xC0) == 0x40) {
         next_flags = flags | 0x80;
-        arg0->ext.main_18.unk80 = next_flags;
+        arg0->ext.main_18.state.runtime.unk80 = next_flags;
         if ((next_flags & 0x3F) < 3 && (get_random() & 3) >= 2) {
             func_800527C0(ANIMATED_OBJECT(arg0));
             arg0->unk68 = &D_800FBF0C;
@@ -724,10 +758,10 @@ void func_80052524(struct MainObj* arg0)
 
 void func_80052614(struct MainObj* arg0)
 {
-    if (arg0->ext.main_18.unk81 == 0 && arg0->unk5C < arg0->ext.main_18.unk85 && arg0->ext.main_18.unk87 != 0 && arg0->ext.main_18.unk88 == 0) {
-        arg0->ext.main_18.unk82 = 0;
-        arg0->ext.main_18.unk85 = 0;
-        arg0->ext.main_18.unk84 = 0;
+    if (arg0->ext.main_18.state.runtime.unk81 == 0 && arg0->unk5C < arg0->ext.main_18.state.runtime.unk85 && arg0->ext.main_18.state.runtime.unk87 != 0 && arg0->ext.main_18.unk88 == 0) {
+        arg0->ext.main_18.state.runtime.unk82 = 0;
+        arg0->ext.main_18.state.runtime.unk85 = 0;
+        arg0->ext.main_18.state.runtime.unk84 = 0;
         func_80015D60(arg0, 7);
         arg0->unk20 = 0;
         arg0->unk28 = 0;
@@ -766,7 +800,7 @@ void func_800526AC(struct MainObj* self)
             value = flags ^ D_800FBEDC[random];
             self->ext.main_18.unk8A = value;
             if (value == 0x8000) {
-                self->ext.main_18.unk85 = self->unk5C;
+                self->ext.main_18.state.runtime.unk85 = self->unk5C;
             }
             self->ext.main_18.unk89 = (self->ext.main_18.unk89 - 0x20) | 0xC;
         }

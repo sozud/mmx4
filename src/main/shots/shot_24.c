@@ -77,7 +77,39 @@ void func_8009E3A8(struct ShotObj* arg0)
     arg0->unk60 = 6;
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_24", func_8009E490);
+void func_8009E490(struct ShotObj* arg0)
+{
+    struct WeaponObj* weapon;
+    s32 result;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    D_80109124[arg0->unk5](arg0);
+    arg0->unk84.bytes[1] = (u8)arg0->unk5;
+    func_8002D9BC(arg0);
+#ifdef VERSION_JP
+    if (arg0->unk7C->x_pos.i.hi - 8 < D_801419B2_jp) {
+#endif
+        result = func_8002DD04(MAIN_OBJECT(arg0));
+
+        if (arg0->unk42 & 0x8000) {
+            ((struct Shot24Owner*)arg0->unk7C)->collision_states[arg0->unk2 + 2] = 2;
+        }
+        if (result < 0) {
+            weapon = arg0->unk7C;
+            weapon->unk7 = (u8)weapon->unk7 & D_801090FC[arg0->unk2];
+            arg0->unk5 = 8;
+            return;
+        }
+#ifdef VERSION_JP
+    }
+#endif
+    if ((u8)arg0->unk7C->active & D_801090F4[arg0->unk2]) {
+        arg0->state = 5;
+        return;
+    }
+    func_8002B318(BASE_OBJECT(arg0), 0x200, 0x100);
+}
 
 void func_8009E5A4(struct ShotObj* arg0)
 {

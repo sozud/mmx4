@@ -36,7 +36,66 @@ void func_8009F94C(struct ShotObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_29", func_8009F9E0);
+void func_8009F9E0(struct ShotObj* arg0)
+{
+    struct ShotObj* shot;
+    u8 verticalTimer;
+    u8 spawnTimer;
+    s32 targetY;
+    s32 delta;
+    struct MiscObj* effect;
+    s16 spawnX;
+
+    shot = arg0;
+    verticalTimer = shot->unk8C.bytes[1];
+    if (verticalTimer != 0) {
+        shot->unk8C.bytes[1] = verticalTimer - 1;
+        targetY = shot->y_pos.i.hi + 8;
+        delta = g_Player.y_pos.i.hi - targetY;
+        if (delta >= 0) {
+            if (delta < 3) {
+                shot->y_vel.val = 0;
+                goto vertical_done;
+            }
+        } else if (targetY - g_Player.y_pos.i.hi < 3) {
+            goto vertical_zero;
+        }
+        if (g_Player.y_pos.i.hi - 8 >= shot->y_pos.i.hi) {
+            shot->y_vel.val = -0x20000;
+        } else {
+            shot->y_vel.val = 0x20000;
+        }
+        goto vertical_done;
+    }
+vertical_zero:
+    shot->y_vel.val = 0;
+vertical_done:
+    spawnTimer = shot->unk8C.bytes[2];
+    if (spawnTimer != 0) {
+        shot->unk8C.bytes[2] = spawnTimer - 1;
+    } else if (shot->unk90.bytes[1] != 0) {
+        effect = find_free_misc_obj();
+        if (effect != 0) {
+            effect->active = 0x21;
+            effect->id = 0x17;
+            effect->unk2 = 0;
+            effect->unk15 = get_random() & 0x40;
+            effect->ext.misc_5.animation = 0;
+            if (shot->unk15 == 0) {
+                spawnX = (u16)shot->x_pos.i.hi + 0x10;
+            } else {
+                spawnX = (u16)shot->x_pos.i.hi - 0x10;
+            }
+            effect->x_pos.i.hi = spawnX;
+            effect->y_pos.i.hi = (u16)shot->y_pos.i.hi;
+            effect->unk7 = 1;
+            effect->x_vel.val = 0;
+            effect->y_vel.val = 0;
+            effect->unk16 = 7;
+        }
+        shot->unk8C.bytes[2] = 1;
+    }
+}
 
 void func_8009FB38(struct ShotObj* arg0)
 {

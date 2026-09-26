@@ -6,7 +6,7 @@
 void func_8003B3DC(struct RideArmorObj* arg0)
 {
     arg0->unk8A = g_Player.input.buttons.held;
-    arg0->unk8C = g_Player.pressed_input;
+    arg0->unk8C.value = g_Player.pressed_input;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 
@@ -136,7 +136,7 @@ void func_8003BE28(struct RideArmorObj* self)
     }
     func_8003CCBC(self);
     if (self->unk7D != 0) {
-        self->unk8E = 1;
+        self->unk8E.value = 1;
     }
     func_8003CBCC(self);
 }
@@ -186,7 +186,7 @@ INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
 
 void func_8003C8F4(struct RideArmorObj* arg0)
 {
-    if (arg0->unk8C & 0x80) {
+    if (arg0->unk8C.value & 0x80) {
         if (arg0->unk7D == 0) {
             arg0->unk5 = 2;
             arg0->unk6 = 0;
@@ -196,7 +196,7 @@ void func_8003C8F4(struct RideArmorObj* arg0)
             func_8003B458(arg0, 0x45);
         } else {
             arg0->y_vel.val = FIXED(6.5);
-            arg0->unk8E = 1;
+            arg0->unk8E.value = 1;
             arg0->unk6 = 0;
             arg0->unk67 = 1;
             arg0->unk80.bytes.unk80 |= 2;
@@ -288,7 +288,7 @@ void func_8003CBCC(struct RideArmorObj* arg0)
 
 void func_8003CCBC(struct RideArmorObj* arg0)
 {
-    if (arg0->unk7D == 0 && (arg0->unk7E != 0 || (arg0->unk8C & 0x100) != 0)) {
+    if (arg0->unk7D == 0 && (arg0->unk7E != 0 || (arg0->unk8C.value & 0x100) != 0)) {
         arg0->unk7D = 1;
         arg0->unk5 = 5;
         arg0->unk6 = 0;

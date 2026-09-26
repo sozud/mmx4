@@ -29,11 +29,43 @@ void func_80066A84(struct MainObj* arg0)
     arg0->unk6 = 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_46", func_80066B00);
+void func_80066B00(struct MainObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    D_800FF9B0[self->unk5](self);
+    func_8002D9BC(self);
+
+    if (func_8002DD04(self) < 0) {
+        goto hit;
+    }
+    if ((self->ext.main_46.owner->attack_flags & 7) != 7) {
+        goto active;
+    }
+
+hit:
+    self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
+    func_800AF808(BASE_OBJECT(self));
+    func_800C813C(6, D_800FF99C, self);
+    self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
+    self->unk42 &= 0x7FFF;
+    func_80015D60(self, 0xE);
+    self->ext.main_46.owner->attack_flags |= 8;
+    self->state = 2;
+    return;
+
+active:
+    if (self->unk42 & 0x8000) {
+        self->ext.main_46.owner->layer_signals->collision_state = 2;
+    }
+    func_8002B318(BASE_OBJECT(self), 0x100, 0x100);
+}
 
 void func_80066C40(struct MainObj* arg0)
 {
-    func_8002B318(arg0, 0x100, 0x100);
+    func_8002B318(BASE_OBJECT(arg0), 0x100, 0x100);
 }
 
 void func_80066C64(struct MainObj* arg0)
@@ -59,7 +91,7 @@ void func_80066CCC(struct MainObj* arg0)
 {
     struct ShotObj* shot;
 
-    if (arg0->ext.main_46.unk80->x_pos.bytes[0] == 3) {
+    if (arg0->ext.main_46.owner->projectile_command == 3) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -73,10 +105,10 @@ void func_80066CCC(struct MainObj* arg0)
             shot->x_pos.i.hi = (u16)arg0->x_pos.i.hi - 0x2D;
             shot->y_pos.i.hi = (u16)arg0->y_pos.i.hi - 0x5D;
             shot->unk15 = 0;
-            shot->unk7C = arg0->ext.main_46.unk80;
+            shot->unk7C = (struct WeaponObj*)arg0->ext.main_46.owner;
             shot->state = 0;
         }
         func_80015D60(arg0, 0xD);
-        arg0->ext.main_46.unk80->x_pos.bytes[0] = 0x80;
+        arg0->ext.main_46.owner->projectile_command = 0x80;
     }
 }
