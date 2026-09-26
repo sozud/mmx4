@@ -15544,68 +15544,6 @@ void func_80030C54(struct BarObj* arg0)
         func_8001540C(0, 0x17, 0);
 }
 
-void func_80030DF8(struct BarObj* arg0)
-{
-    switch (arg0->unk6) {
-    case 0:
-        func_800129F0(8);
-        arg0->unk6++;
-        break;
-    case 1:
-        if (D_80141BDC[0] == 0)
-            arg0->unk6++;
-        break;
-    case 2:
-        func_8002A41C((struct GameInfo*)arg0);
-        return;
-    case 3:
-        func_800129A4(8);
-        arg0->unk6++;
-        break;
-    case 4:
-        if (D_80141BDC[0] == 0) {
-            arg0->unk5 = 2;
-            arg0->unk6 = 0;
-            return;
-        }
-        break;
-    default:
-        return;
-    }
-    func_80023D90();
-}
-
-void func_80030EC8(struct BarObj* arg0)
-{
-    switch (arg0->unk6) {
-    case 0:
-        func_800129F0(8);
-        arg0->unk6++;
-        break;
-    case 1:
-        if (D_80141BDC[0] == 0)
-            arg0->unk6++;
-        break;
-    case 2:
-        func_80021104((struct EngineObj*)arg0);
-        return;
-    case 3:
-        func_800129A4(8);
-        arg0->unk6++;
-        break;
-    case 4:
-        if (D_80141BDC[0] == 0) {
-            arg0->unk6 = 0;
-            arg0->unk5 = arg0->unk28;
-            return;
-        }
-        break;
-    default:
-        return;
-    }
-    func_80023D90();
-}
-
 void func_800385EC(void);
 
 void func_80031064(struct BarObj* arg0)
@@ -17463,37 +17401,6 @@ void func_80075320(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
 }
 
-void func_800757F4(struct MainObj* arg0)
-{
-    struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_60.effect;
-    u16 flash;
-
-    arg0->on_screen = 0;
-    if (effect->active == 0) {
-        memset(&arg0->ext.main_60, 0, sizeof(arg0->ext.main_60));
-        engine_obj.enable_boss = 0;
-        engine_obj.boss_ptr = NULL;
-        if (engine_obj.stage == 0xC) {
-            engine_obj.unkF = -0x80;
-            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
-            engine_obj.checkpoint += 9;
-        } else {
-            engine_obj.unkF = 0x10;
-        }
-        ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
-    }
-    if (effect->unk7 != 0)
-        return;
-    flash = arg0->unk7E;
-    arg0->unk7E = flash - 1;
-    if (flash == 0) {
-        arg0->unk7E = 5;
-        arg0->unk42 ^= 0x8000;
-    }
-    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
-}
-
 void storm_owl_spawn_intro_wind(struct MainObj* arg0);
 
 void func_80075944(struct MainObj* arg0)
@@ -18783,37 +18690,6 @@ void func_80072628(struct MainObj* arg0)
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
-void func_800727C0(struct MainObj* arg0)
-{
-    struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_57.effect;
-    u16 flash;
-
-    arg0->on_screen = 0;
-    if (effect->active == 0) {
-        memset(&arg0->ext.main_57, 0, sizeof(arg0->ext.main_57));
-        engine_obj.enable_boss = 0;
-        engine_obj.boss_ptr = NULL;
-        if (engine_obj.stage == 0xC) {
-            engine_obj.unkF = -0x80;
-            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
-            engine_obj.checkpoint += 9;
-        } else {
-            engine_obj.unkF = 0x10;
-        }
-        ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
-    }
-    if (effect->unk7 != 0)
-        return;
-    flash = arg0->unk7E;
-    arg0->unk7E = flash - 1;
-    if (flash == 0) {
-        arg0->unk7E = 5;
-        arg0->unk42 ^= 0x8000;
-    }
-    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
-}
-
 void func_80073E80(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -19259,37 +19135,6 @@ void func_800788E4(struct MainObj* arg0)
         arg0->ext.main_61.speed_level = 2;
     if ((u32)((u8)arg0->unk5 - 1) >= 2)
         func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
-}
-
-void func_80078FA4(struct MainObj* arg0)
-{
-    struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_61.data.effect;
-    u16 flash;
-
-    arg0->on_screen = 0;
-    if (effect->active == 0) {
-        memset(&arg0->ext.main_61, 0, sizeof(arg0->ext.main_61));
-        engine_obj.enable_boss = 0;
-        engine_obj.boss_ptr = NULL;
-        if (engine_obj.stage == 0xC) {
-            engine_obj.unkF = -0x80;
-            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
-            engine_obj.checkpoint += 9;
-        } else {
-            engine_obj.unkF = 0x10;
-        }
-        ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
-    }
-    if (effect->unk7 != 0)
-        return;
-    flash = arg0->unk7E;
-    arg0->unk7E = flash - 1;
-    if (flash == 0) {
-        arg0->unk7E = 5;
-        arg0->unk42 ^= 0x8000;
-    }
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
@@ -19921,37 +19766,6 @@ void func_8006BD1C(struct MainObj* arg0)
         arg0->unk50 = &D_8010023C;
         func_8002D9BC(arg0);
         arg0->unk50 = saved;
-    }
-    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
-}
-
-void func_8006C170(struct MainObj* arg0)
-{
-    struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_54.unk8C;
-    u16 flash;
-
-    arg0->on_screen = 0;
-    if (effect->active == 0) {
-        memset(&arg0->ext.main_54, 0, sizeof(arg0->ext.main_54));
-        engine_obj.enable_boss = 0;
-        engine_obj.boss_ptr = NULL;
-        if (engine_obj.stage == 0xC) {
-            engine_obj.unkF = -0x80;
-            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
-            engine_obj.checkpoint += 9;
-        } else {
-            engine_obj.unkF = 0x10;
-        }
-        ZeroObjectState(OBJECT_HEADER(arg0));
-        return;
-    }
-    if (effect->unk7 != 0)
-        return;
-    flash = arg0->unk7E;
-    arg0->unk7E = flash - 1;
-    if (flash == 0) {
-        arg0->unk7E = 5;
-        arg0->unk42 ^= 0x8000;
     }
     func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
 }

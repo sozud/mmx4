@@ -109,7 +109,37 @@ void storm_owl_death_explode(struct MainObj* self)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800757F4);
+void func_800757F4(struct MainObj* arg0)
+{
+    struct EffectObj* effect = arg0->ext.main_60.effect;
+    arg0->on_screen = 0;
+    if (effect->active != 0) {
+        if (effect->unk7 == 0) {
+            if (arg0->unk7E-- == 0) {
+                arg0->unk7E = 5;
+                arg0->unk42 ^= 0x8000;
+            }
+            func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+        }
+    } else {
+        arg0->ext.raw[0] = 0;
+        arg0->ext.raw[1] = 0;
+        arg0->ext.raw[2] = 0;
+        arg0->ext.raw[3] = 0;
+        arg0->ext.raw[4] = 0;
+        arg0->ext.raw[5] = 0;
+        engine_obj.enable_boss = 0;
+        engine_obj.boss_ptr = NULL;
+        if (engine_obj.stage != 0xC) {
+            engine_obj.unkF = 0x10;
+        } else {
+            engine_obj.unkF = -0x80;
+            engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
+            engine_obj.checkpoint += 9;
+        }
+        ZeroObjectState(OBJECT_HEADER(arg0));
+    }
+}
 
 void storm_owl_resume_step(struct MainObj* self)
 {

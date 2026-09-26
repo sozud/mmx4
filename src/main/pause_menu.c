@@ -66,9 +66,71 @@ INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030A2C);
 
 INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030C54);
 
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030DF8);
+void func_80030DF8(struct BarObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        func_800129F0(8);
+        arg0->unk6++;
+        func_80023D90();
+        return;
+    case 1:
+        if (D_80141BDC[0] == 0) {
+            arg0->unk6++;
+        }
+        func_80023D90();
+        return;
+    case 2:
+        func_8002A41C((struct GameInfo*)arg0);
+        return;
+    case 3:
+        func_800129A4(8);
+        arg0->unk6++;
+        func_80023D90();
+        return;
+    case 4:
+        if (D_80141BDC[0] == 0) {
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        }
+        func_80023D90();
+        return;
+    }
+}
 
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_80030EC8);
+void func_80030EC8(struct BarObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        func_800129F0(8);
+        arg0->unk6++;
+        func_80023D90();
+        return;
+    case 1:
+        if (D_80141BDC[0] == 0) {
+            arg0->unk6++;
+        }
+        func_80023D90();
+        return;
+    case 2:
+        func_80021104((struct EngineObj*)arg0);
+        return;
+    case 3:
+        func_800129A4(8);
+        arg0->unk6++;
+        func_80023D90();
+        return;
+    case 4:
+        if (D_80141BDC[0] == 0) {
+            arg0->unk5 = arg0->unk28;
+            arg0->unk6 = 0;
+            return;
+        }
+        func_80023D90();
+        return;
+    }
+}
 
 void func_80030F9C(struct BarObj* arg0)
 {
