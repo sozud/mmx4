@@ -23,7 +23,12 @@ void func_8006185C(struct MainObj* arg0)
     arg0->state = 2;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_39", func_800618F4);
+void func_800618F4(struct MainObj* arg0)
+{
+    arg0->ext.main_39.unk80.w = 0;
+    arg0->ext.main_39.unk84 = 0;
+    func_8002B108(OBJECT_HEADER(arg0));
+}
 
 INCLUDE_ASM("main/nonmatchings/mains/main_39", func_80061918);
 
@@ -56,7 +61,7 @@ void func_80061D18(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     object_id = arg0->unk2;
     if (!(object_id & 1)) {
-        func_800DABE4((s8)object_id / 2, arg0->ext.main_39.unk82, 0x120);
+        func_800DABE4((s8)object_id / 2, arg0->ext.main_39.unk80.h.unk82, 0x120);
     }
     arg0->ext.main_39.unk88 = 1;
     arg0->unk2C = FIXED(0.125);

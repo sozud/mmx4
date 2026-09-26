@@ -614,9 +614,14 @@ struct Main38Ext {
 };
 
 struct Main39Ext {
-    u8 pad80[2];
-    s16 unk82;
-    u8 pad84[4];
+    union {
+    	struct {
+    		u16 unk80;
+    		s16 unk82;
+    	} h;
+    	u32 w;
+    } unk80;
+    u32 unk84;
     u8 unk88;
 };
 
@@ -2400,7 +2405,7 @@ struct Misc30Ext {
     struct MainObj* owner;
     s8 unk54;
     u8 pad55;
-    u16 unk56;
+    s16 unk56;
 };
 
 struct Misc53Ext {
@@ -4710,7 +4715,7 @@ s32 func_800373DC(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
 void func_8003D8A8(struct RideArmorObj*, s32, s32);
 s32 func_8003DCD8(struct RideArmorObj*);
-void func_8003D7E4(struct RideArmorObj*, s32, s32);
+s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
 s32 func_8003B340(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);

@@ -71,7 +71,7 @@ void func_800DA984(s32 effect_id, s32 x_offset, s32 y_offset)
         for (index = 0; index != tile_count; index++) {
             s16 tile_x = x;
             s16 tile_y = y;
-            if ((u8)func_800DAB40(bg_x, bg_y, tile_x, tile_y)) {
+            if (func_800DAB40(bg_x, bg_y, tile_x, tile_y)) {
                 func_800DAB9C(record, (u16)(tile_x / 16), (u16)(tile_y / 16), (u8)index);
             }
             UPDATE_XY(horizontal & byte_mask);

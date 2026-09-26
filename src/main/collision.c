@@ -70,7 +70,26 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
     return distance < object0->collision_bounds->unk3 + object1->collision_bounds->unk3;
 }
 
-INCLUDE_ASM("main/nonmatchings/collision", func_8002C26C);
+void func_8002C26C(struct CollisionObj* arg0, struct CollisionObj* arg1)
+{
+    s16 center0;
+    s16 center1;
+    struct Unk_unk68* bounds1;
+    struct Unk_unk68* bounds0;
+
+    bounds0 = arg0->collision_bounds;
+    bounds1 = arg1->collision_bounds;
+    center0 = arg0->x_pos.i.hi + bounds0->unk0;
+    center1 = arg1->x_pos.i.hi + bounds1->unk0;
+    if (center0 > center1) {
+        center0 -= bounds0->unk2;
+        center1 += bounds1->unk2;
+    } else {
+        center0 += bounds0->unk2;
+        center1 -= bounds1->unk2;
+    }
+    arg1->unk6C = center0 - center1;
+}
 
 void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
 {

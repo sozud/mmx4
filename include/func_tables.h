@@ -2218,7 +2218,7 @@ void func_80061310(struct MainObj*);
 // D_800FE9A4
 void func_800615CC(void);
 void func_8006185C(struct MainObj*);
-void func_800618F4(void);
+void func_800618F4(struct MainObj*);
 
 // D_800FE9B0
 extern void (*D_800FE9B0[])(struct MainObj*);
