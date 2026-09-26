@@ -1892,6 +1892,11 @@ struct Weapon60Ext {
     u8 direction;
 };
 
+struct Weapon60SpawnOffset {
+    s16 x;
+    s16 y;
+};
+
 union WeaponObjExt {
     u8 raw[0x94 - 0x8C];
     RECT* rect;
@@ -3773,7 +3778,7 @@ extern union AnimationStep* D_800FDEE4[23];
 extern struct Unk_unk68 D_800FDD88;
 extern struct Unk_unk68 D_800FDD8C;
 extern u8 D_80108BF0[4];
-extern s16 D_80108BF4[3][2];
+extern struct Weapon60SpawnOffset D_80108BF4[3];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
 #ifdef VERSION_JP

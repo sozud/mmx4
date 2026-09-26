@@ -14236,7 +14236,50 @@ void func_80098EA8(struct WeaponObj* arg0)
 }
 
 extern u8 D_80108BF0[4];
-extern s16 D_80108BF4[3][2];
+extern struct Weapon60SpawnOffset D_80108BF4[3];
+
+void func_80098F88(struct WeaponObj* self)
+{
+    u8 direction;
+    struct Weapon60SpawnOffset offset = D_80108BF4[self->unk2];
+
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
+    self->unk50 = D_80108BF0;
+    self->x_pos.i.hi += self->unk15 == 0 ? offset.x : -offset.x;
+    self->y_pos.i.hi += offset.y;
+
+    switch (self->unk2) {
+    case 0:
+        direction = self->unk15 == 0 ? 0x10 : 0;
+        break;
+    case 1:
+        direction = self->unk15 == 0 ? 0x14 : 0x1C;
+        break;
+    case 2:
+        direction = self->unk15 == 0 ? 0xC : 4;
+        break;
+    default:
+        direction = 0;
+        break;
+    }
+    self->ext.weapon_60.direction = direction;
+    func_8002B93C(MOVING_OBJECT(self), direction);
+    self->unk5C = 1;
+    self->unk60 = 3;
+    self->unk88.half = 8;
+    self->unk28.val = 0;
+    self->unk2C = 0;
+    *(s16*)self->pad8A = 1;
+    self->ext.target = NULL;
+    self->unk84.word = 0;
+    self->x_vel.val *= 6;
+    self->y_vel.val *= 6;
+    func_80015D60(self, 0x21);
+}
 
 void func_80099118(struct WeaponObj* arg0)
 {
