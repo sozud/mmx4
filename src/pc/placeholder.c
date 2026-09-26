@@ -1280,27 +1280,6 @@ static s32 get_pc_sprite_frame(struct VisualObj* object,
 
 #undef PC_OBJECT_IN_ARRAY
 
-void func_80024260(void)
-{
-    u32 buffer = SP_DRAW_BUFFER;
-    u32 i;
-
-    for (i = 0; i < 4; i++) {
-        OT_TYPE* ordering_tag = &cur_draw_info->ordering_table.start + D_80173C6C[i];
-        u32 j;
-
-        for (j = 0; j < 8; j++) {
-            P_TAG* head = D_8013E1E8[buffer][i][j];
-
-            if (head != NULL) {
-                setaddr(D_8013BC40[buffer][i][j], getaddr(ordering_tag));
-                setaddr(ordering_tag, head);
-            }
-        }
-    }
-    mmx4_pc_render_log_dump();
-}
-
 void func_80024334(struct VisualObj* object)
 {
     POLY_FT4* primitive;
@@ -15623,26 +15602,6 @@ void func_80017E84(void)
             for (j = 0; j < 8; j++) {
                 D_8013E1E8[buffer][i][j] = NULL;
                 D_8013BC40[buffer][i][j] = (P_TAG*)&D_8013E1E8[buffer][i][j];
-            }
-        }
-    }
-}
-
-void func_80017F2C(void)
-{
-    u32 buffer = SP_DRAW_BUFFER;
-    u32 i;
-    u32 j;
-
-    for (i = 0; i < 4; i++) {
-        OT_TYPE* ordering_tag = &cur_draw_info->ordering_table.start + D_80173C6C[i];
-
-        for (j = 0; j < 8; j++) {
-            P_TAG* head = D_8013E1E8[buffer][i][j];
-
-            if (head != NULL) {
-                setaddr(D_8013BC40[buffer][i][j], getaddr(ordering_tag));
-                setaddr(ordering_tag, head);
             }
         }
     }

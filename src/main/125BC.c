@@ -1301,7 +1301,30 @@ void func_800241E8(void)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/125BC", func_80024260);
+void func_80024260(void)
+{
+    u32 buffer;
+    u32 i;
+    u32 j;
+    OT_TYPE* otag;
+
+    buffer = SP_DRAW_BUFFER;
+
+    for (i = 0; i < 4; i++) {
+        otag = &cur_draw_info->ordering_table.start + D_80173C6C[i];
+
+        for (j = 0; j < 8; j++) {
+            if (D_8013E1E8[buffer][i][j] != NULL) {
+                setaddr(D_8013BC40[buffer][i][j], getaddr(otag));
+                setaddr(otag, D_8013E1E8[buffer][i][j]);
+            }
+        }
+    }
+
+#ifdef MMX4_PC
+    mmx4_pc_render_log_dump();
+#endif
+}
 
 INCLUDE_ASM("main/nonmatchings/125BC", func_80024334);
 

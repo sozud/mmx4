@@ -2075,7 +2075,26 @@ INCLUDE_ASM("main/nonmatchings/323C", func_800179BC);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80017E84);
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80017F2C);
+void func_80017F2C(void)
+{
+    u32 buffer;
+    u32 i;
+    u32 j;
+    OT_TYPE* otag;
+
+    buffer = SP_DRAW_BUFFER;
+
+    for (i = 0; i < 4; i++) {
+        otag = &cur_draw_info->ordering_table.start + D_80173C6C[i];
+
+        for (j = 0; j < 8; j++) {
+            if (D_8013E1E8[buffer][i][j] != NULL) {
+                setaddr(D_8013BC40[buffer][i][j], getaddr(otag));
+                setaddr(otag, D_8013E1E8[buffer][i][j]);
+            }
+        }
+    }
+}
 
 // general movie playing code
 #ifndef SKIP_MDEC
