@@ -216,7 +216,7 @@ void func_8004CF24(struct MainObj* arg0);
 void func_8004E830(struct MainObj* arg0);
 void func_8004E890(struct MainObj* arg0);
 void func_8004FF90(struct MainObj* arg0);
-void func_80050708(struct MainObj* arg0);
+void ice_core_update(struct MainObj* arg0);
 void func_8005284C(struct MainObj* arg0);
 void func_8005458C(struct MainObj* arg0);
 void func_80054C50(struct MainObj* arg0);
@@ -1628,75 +1628,75 @@ void func_80050480(struct MainObj* arg0);
 void func_80050540(struct MainObj* arg0);
 void func_80050644(struct MainObj* arg0);
 
-// D_800FC344
+// ice_core_state_funcs
 void func_8005077C(struct MainObj*);
 void func_80050874(struct MainObj*);
-void func_80050A9C(struct MainObj*);
-void func_80050BC4(struct MainObj*);
-void func_80050BFC(struct MainObj*);
+void ice_core_death_sink(struct MainObj*);
+void ice_core_death_release_camera(struct MainObj*);
+void ice_core_death_wait_player(struct MainObj*);
 
-// D_800FC358
+// ice_core_step_funcs
 void func_8009216C(void* arg0);
-void func_80050C64(struct MainObj* arg0);
-void func_80050C70(struct MainObj* arg0);
-void func_80050E08(struct MainObj* arg0);
-void func_80050FE4(struct MainObj* arg0);
-void func_80051338(struct MainObj* arg0);
-void func_800523EC(struct MainObj* arg0);
-void func_80052444(struct MainObj* arg0);
-void func_8005172C(struct MainObj* arg0);
-void func_80051C94(struct MainObj* arg0);
-void func_80052008(struct MainObj* arg0);
-void func_800521DC(struct MainObj* arg0);
+void ice_core_resume_step(struct MainObj* arg0);
+void ice_core_drift(struct MainObj* arg0);
+void ice_core_bob(struct MainObj* arg0);
+void ice_core_charge(struct MainObj* arg0);
+void ice_core_stomp(struct MainObj* arg0);
+void ice_core_fall(struct MainObj* arg0);
+void ice_core_float(struct MainObj* arg0);
+void ice_core_build(struct MainObj* arg0);
+void ice_core_bounce(struct MainObj* arg0);
+void ice_core_spray(struct MainObj* arg0);
+void ice_core_intro(struct MainObj* arg0);
 
-// D_800FC388
-void func_80050CAC(struct MainObj*);
+// ice_core_drift_funcs
+void ice_core_drift_start(struct MainObj*);
 void func_80050D14(struct MainObj*);
 
-// D_800FC390
-void func_80050E44(struct MainObj*);
-void func_80050EB0(struct MainObj*);
-void func_80050F60(struct MainObj*);
+// ice_core_bob_funcs
+void ice_core_bob_start(struct MainObj*);
+void ice_core_bob_move(struct MainObj*);
+void ice_core_bob_recover(struct MainObj*);
 
-// D_800FC39C
-void func_80051020(struct MainObj*);
-void func_80051060(struct MainObj*);
-void func_800510D4(struct MainObj*);
-void func_8005115C(struct MainObj*);
-void func_800511E8(struct MainObj*);
-void func_800512BC(struct MainObj*);
+// ice_core_charge_funcs
+void ice_core_charge_face(struct MainObj*);
+void ice_core_charge_back_off(struct MainObj*);
+void ice_core_charge_slide(struct MainObj*);
+void ice_core_charge_start(struct MainObj*);
+void ice_core_charge_run(struct MainObj*);
+void ice_core_charge_recover(struct MainObj*);
 
-// D_800FC3B4
-void func_80051374(struct MainObj*);
-void func_800513DC(struct MainObj*);
-void func_800514A4(struct MainObj*);
-void func_80051564(struct MainObj*);
-void func_80051630(struct MainObj*);
-void func_80051678(struct MainObj*);
+// ice_core_stomp_funcs
+void ice_core_stomp_start(struct MainObj*);
+void ice_core_stomp_land(struct MainObj*);
+void ice_core_stomp_rise(struct MainObj*);
+void ice_core_stomp_drop(struct MainObj*);
+void ice_core_stomp_impact(struct MainObj*);
+void ice_core_stomp_recover(struct MainObj*);
 
-// D_800FC3CC
-void func_80051768(struct MainObj*);
+// ice_core_build_funcs
+void ice_core_build_open(struct MainObj*);
 void func_800517D0(struct MainObj*);
-void func_80051A4C(struct MainObj*);
-void func_80051B74(struct MainObj*);
+void ice_core_build_grow(struct MainObj*);
+void ice_core_build_wait(struct MainObj*);
 
-// D_800FC3DC
-void func_80051CD0(struct MainObj*);
-void func_80051D60(struct MainObj*);
-void func_80051F68(struct MainObj*);
-void func_80051F94(struct MainObj*);
+// ice_core_bounce_funcs
+void ice_core_bounce_start(struct MainObj*);
+void ice_core_bounce_move(struct MainObj*);
+void ice_core_bounce_wait(struct MainObj*);
+void ice_core_bounce_reform(struct MainObj*);
 
-// D_800FC3EC
-void func_80052044(struct MainObj*);
-void func_8005216C(struct MainObj*);
-void func_800521B0(struct MainObj*);
+// ice_core_spray_funcs
+void ice_core_spray_fire(struct MainObj*);
+void ice_core_spray_wait_event(struct MainObj*);
+void ice_core_spray_wait(struct MainObj*);
 
-// D_800FC3F8
+// ice_core_intro_funcs
 void func_80052218(struct MainObj*);
-void func_800522A8(struct MainObj*);
-void func_800522C8(struct MainObj*);
-void func_80052324(struct MainObj*);
-void func_80052374(struct MainObj*);
+void ice_core_intro_wait_player(struct MainObj*);
+void ice_core_intro_descend(struct MainObj*);
+void ice_core_intro_slow(struct MainObj*);
+void ice_core_intro_start_fight(struct MainObj*);
 void func_800527F0(struct MainObj*);
 
 // D_800FC784
@@ -7012,15 +7012,15 @@ extern void (*D_800FBDD0[])(struct MainObj*);
 extern void (*D_800FBDDC[])(struct MainObj*);
 extern void (*D_800FBDE8[])(struct MainObj*);
 extern void (*D_800FBDF4[])(struct MainObj*);
-extern void (*D_800FC344[])(struct MainObj*);
-extern void (*D_800FC388[])(struct MainObj*);
-extern void (*D_800FC390[])(struct MainObj*);
-extern void (*D_800FC39C[])(struct MainObj*);
-extern void (*D_800FC3B4[])(struct MainObj*);
-extern void (*D_800FC3CC[])(struct MainObj*);
-extern void (*D_800FC3DC[])(struct MainObj*);
-extern void (*D_800FC3EC[])(struct MainObj*);
-extern void (*D_800FC3F8[])(struct MainObj*);
+extern void (*ice_core_state_funcs[])(struct MainObj*);
+extern void (*ice_core_drift_funcs[])(struct MainObj*);
+extern void (*ice_core_bob_funcs[])(struct MainObj*);
+extern void (*ice_core_charge_funcs[])(struct MainObj*);
+extern void (*ice_core_stomp_funcs[])(struct MainObj*);
+extern void (*ice_core_build_funcs[])(struct MainObj*);
+extern void (*ice_core_bounce_funcs[])(struct MainObj*);
+extern void (*ice_core_spray_funcs[])(struct MainObj*);
+extern void (*ice_core_intro_funcs[])(struct MainObj*);
 extern void (*D_800FC784[])(struct MainObj*);
 extern void (*D_800FC790[])(struct MainObj*);
 extern void (*D_800FC7DC[])(struct MainObj*);

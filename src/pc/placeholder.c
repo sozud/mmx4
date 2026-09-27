@@ -4239,13 +4239,13 @@ void func_800C16F0(struct ItemObj* arg0)
 
 extern void* D_800FC2B4[];
 extern struct Unk_unk68 D_800FBF0C;
-extern void (*D_800FC358[])(struct MainObj*);
+extern void (*ice_core_step_funcs[])(struct MainObj*);
 extern u8 D_800FC33C[];
-void func_800527C0(struct AnimatedObj* arg0);
+void ice_core_face_player(struct AnimatedObj* arg0);
 void func_800527F0(struct MainObj* arg0);
-void func_80052524(struct MainObj* arg0);
-void func_80052614(struct MainObj* arg0);
-void func_800526AC(struct MainObj* arg0);
+void ice_core_pick_attack(struct MainObj* arg0);
+void ice_core_check_rebuild(struct MainObj* arg0);
+void ice_core_shed_ice(struct MainObj* arg0);
 
 void func_8005077C(struct MainObj* arg0)
 {
@@ -4264,9 +4264,9 @@ void func_8005077C(struct MainObj* arg0)
     arg0->unk68 = &D_800FBF0C;
     arg0->unk54 = NULL;
     arg0->unk50 = NULL;
-    func_800527C0(ANIMATED_OBJECT(arg0));
+    ice_core_face_player(ANIMATED_OBJECT(arg0));
     func_80015D60(arg0, 0x21);
-    ext->unk8A = 0x8000;
+    ext->ice_pieces = 0x8000;
     *(u8*)&arg0->unk7E = 0xFF;
     ext->state.runtime.unk80 = 0;
     ext->state.runtime.unk81 = 0;
@@ -4277,9 +4277,9 @@ void func_8005077C(struct MainObj* arg0)
     ext->state.runtime.unk86 = 0;
     ext->state.runtime.unk87 = 0;
     ext->unk88 = 1;
-    ext->unk89 = 0;
+    ext->shed_timer = 0;
     ext->state.runtime.unk82 = 1;
-    ext->unk8A = 0;
+    ext->ice_pieces = 0;
     ext->unk8C = 0;
     ext->unk90 = 0;
     arg0->state = 1;
@@ -4293,12 +4293,12 @@ void func_80050874(struct MainObj* arg0)
     s32 hit;
     u8 invulnerable;
 
-    func_80052524(arg0);
-    func_80052614(arg0);
-    func_800526AC(arg0);
+    ice_core_pick_attack(arg0);
+    ice_core_check_rebuild(arg0);
+    ice_core_shed_ice(arg0);
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_800FC358[arg0->unk5](arg0);
+    ice_core_step_funcs[arg0->unk5](arg0);
     if (arg0->state >= 2) {
         func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
         return;
@@ -4319,8 +4319,8 @@ void func_80050874(struct MainObj* arg0)
             func_800C813C(4, D_800FC33C, arg0);
             arg0->unk7C = 4;
             arg0->unk7E = 8;
-            ext->unk8A = 0;
-            ext->unk89 = 0;
+            ext->ice_pieces = 0;
+            ext->shed_timer = 0;
             arg0->unk68 = NULL;
             arg0->state = 2;
             arg0->unk42 &= 0x7FFF;
@@ -4361,7 +4361,7 @@ void func_80050D14(struct MainObj* arg0)
 {
     if (arg0->unk15 == 0 ? (arg0->unk70 & 2) : (arg0->unk70 & 1)) {
         if (arg0->ext.main_18.state.runtime.unk84 != 0) {
-            func_800527C0(ANIMATED_OBJECT(arg0));
+            ice_core_face_player(ANIMATED_OBJECT(arg0));
             func_80015D60(arg0, 6);
             arg0->unk5 = 3;
             arg0->unk6 = 2;
@@ -4421,7 +4421,7 @@ void func_800517D0(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.event == 3) {
         for (i = 0; i < 10; i++) {
-            if (D_800FBEDC[i] & ext->unk8A)
+            if (D_800FBEDC[i] & ext->ice_pieces)
                 continue;
             shot = find_free_shot_obj();
             if (shot == NULL)
@@ -4437,10 +4437,10 @@ void func_800517D0(struct MainObj* arg0)
             shot->y_pos.val = 0x8200000;
             shot->state = 3;
             shot->unk15 = 0;
-            shot->unk7C = (struct WeaponObj*)&ext->unk8A;
+            shot->unk7C = (struct WeaponObj*)&ext->ice_pieces;
             shot->bg_offset = arg0->bg_offset;
         }
-        ext->unk8A = 0x83FF;
+        ext->ice_pieces = 0x83FF;
     }
     if (arg0->animation_step.fields.event == 4) {
         arg0->unk50 = (const u8*)&D_800FBF08;
@@ -4474,7 +4474,7 @@ void func_800517D0(struct MainObj* arg0)
         arg0->unk54 = (const u8*)&D_800FBEF8;
         func_80015D60(arg0, 0xA);
     } else {
-        func_800527C0(ANIMATED_OBJECT(arg0));
+        ice_core_face_player(ANIMATED_OBJECT(arg0));
         arg0->unk50 = (const u8*)&D_800FBEF4;
         arg0->unk54 = (const u8*)&D_800FBEF4;
         func_80015D60(arg0, 9);

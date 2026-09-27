@@ -844,8 +844,8 @@ union Main18StateData {
 struct Main18Ext {
     union Main18StateData state;
     u8 unk88;
-    u8 unk89;
-    u16 unk8A;
+    u8 shed_timer;
+    u16 ice_pieces;
     u32 unk8C;
     u32 unk90;
     u8 pad94[3];
@@ -4680,7 +4680,7 @@ struct MenuTextureData {
 extern u8 D_800F1FC0[32];
 extern struct MenuTextureData D_800F1FE0;
 struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
-void func_800527C0(struct AnimatedObj*);
+void ice_core_face_player(struct AnimatedObj*);
 void func_80089798(struct MainObj*);
 void func_80089910(struct MainObj*);
 void func_8005D148(struct MainObj*);

@@ -260,7 +260,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_8004E830,
     func_8004E890,
     func_8004FF90,
-    func_80050708,
+    ice_core_update,
     func_8005284C,
     func_8005458C,
     func_80054C50,
