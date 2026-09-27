@@ -848,21 +848,15 @@ u8 func_8008FA0C(struct ObjectHeader* arg0, s16 arg1, s16 arg2)
 
 void func_8008FA88(struct MainObj* arg0)
 {
-    s32 index;
-    void** table;
-    u8 r;
-    u8 i;
-    u8* p;
-
-    index = arg0->unk5C < 0x19;
-    table = D_80105E8C[index];
-    r = get_random();
-    i = 0;
-    p = &D_80105E94[index * 2];
-    r = (r >> 2) & 0xF;
+    s32 low_health = arg0->unk5C < 0x19;
+    const u8** scripts = D_80105E8C[low_health];
+    u8 roll = get_random();
+    u8 i = 0;
+    u8* weights = &D_80105E94[low_health * 2];
+    roll = (roll >> 2) & 0xF;
     while (i < 2) {
-        if (r < p[i]) {
-            arg0->ext.main_74.children[1] = table[i];
+        if (roll < weights[i]) {
+            arg0->ext.main_74.children[1] = scripts[i];
             return;
         }
         i++;
