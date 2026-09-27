@@ -250,7 +250,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_80044F4C,
     bulldozer_update,
     func_800473C8,
-    func_80047C88,
+    eregion_update,
     func_800498C0,
     dragonfly_update,
     func_8004A718,

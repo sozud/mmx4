@@ -259,7 +259,7 @@ static void log_objects(long frame, u32 game, u32 engine)
                     frame, game, engine, slot, object->id,
                     main_8_pointer_value(ext80, sizeof(ext80), main->ext.main_8.unk80),
                     main_8_pointer_value(ext84, sizeof(ext84), main->ext.main_8.unk84),
-                    main->ext.main_8.unk88, main->ext.main_8.unk89,
+                    main->ext.main_8.unk88, main->ext.main_8.queued_sound,
                     main->ext.main_8.unk8A, main->ext.main_8.unk8B,
                     main->ext.main_8.unk8C);
             } else if (table == 2 && object->id == 19) {

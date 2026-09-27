@@ -377,7 +377,7 @@ extern u32 D_800FA73C;
 extern u32 D_800FA740;
 extern u32 D_800FA744;
 extern struct Unk_unk68 D_801066F0[];
-extern void (*D_800FAE38[])(struct MainObj*);
+extern void (*eregion_step_funcs[])(struct MainObj*);
 extern s16 D_8010F728[8][2];
 extern s32 D_800F459C[];
 extern s16 D_8010A63C[];
@@ -8716,7 +8716,7 @@ void func_80047E58(struct MainObj* arg0)
     }
 
     arg0->ext.main_8.unk8C = arg0->unk65;
-    D_800FAE38[arg0->unk5](arg0);
+    eregion_step_funcs[arg0->unk5](arg0);
 
     if (arg0->unk61 != 0) {
         s8 timer = arg0->unk61--;
@@ -9100,7 +9100,7 @@ void func_8004932C(struct MainObj* arg0)
             arg0->unk5 = 1;
             arg0->unk7C = 1;
         } else {
-            func_8004808C(arg0);
+            eregion_pick_start(arg0);
         }
         arg0->unk6 = 0;
         arg0->x_pos.i.hi = (s16)arg0->unk20;
@@ -9482,7 +9482,7 @@ void func_80047D04(struct MainObj* arg0)
 {
     struct VisualObj* visual;
 
-    arg0->ext.main_8.unk89 = 0xFF;
+    arg0->ext.main_8.queued_sound = 0xFF;
     arg0->ext.main_8.unk8B = 0;
     arg0->ext.main_8.unk8C = 0;
     arg0->on_screen = 1;

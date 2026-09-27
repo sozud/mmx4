@@ -1220,3 +1220,5 @@ double_step_funcs = 0x8010531C;
 colonel_face_player = 0x80088974;
 colonel_spawn_afterimages = 0x80088AD0;
 colonel_step_funcs = 0x801047E8;
+eregion_pick_start = 0x8004808C;
+eregion_step_funcs = 0x800FAE38;

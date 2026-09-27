@@ -1130,7 +1130,7 @@ struct Main8Ext {
     const void* unk80;
     const void* unk84;
     u8 unk88;
-    u8 unk89;
+    u8 queued_sound;
     u8 unk8A;
     u8 unk8B;
     u8 unk8C;

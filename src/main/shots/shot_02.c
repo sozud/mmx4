@@ -124,7 +124,7 @@ void func_8009A4F4(struct ShotObj* arg0)
 {
     if (arg0->animation_step.fields.event < 0) {
         if (func_8002D9BC(arg0) == 1) {
-            MAIN_OBJECT(arg0->unk7C)->ext.main_8.unk89 = 0x1C;
+            MAIN_OBJECT(arg0->unk7C)->ext.main_8.queued_sound = 0x1C;
         }
     }
 

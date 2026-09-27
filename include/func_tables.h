@@ -206,7 +206,7 @@ void func_8004441C(struct MainObj* arg0);
 void func_80044F4C(struct MainObj* arg0);
 void bulldozer_update(struct MainObj* arg0);
 void func_800473C8(struct MainObj* arg0);
-void func_80047C88(struct MainObj* arg0);
+void eregion_update(struct MainObj* arg0);
 void func_800498C0(struct MainObj* arg0);
 void dragonfly_update(struct MainObj* arg0);
 void func_8004A718(struct MainObj* arg0);
@@ -1345,77 +1345,77 @@ void func_80047974(struct MainObj*);
 void func_80047A20(struct MainObj*);
 void func_80047A34(struct MainObj*);
 
-// D_800FAE20
-extern void (*D_800FAE20[])(struct MainObj*);
+// eregion_state_funcs
+extern void (*eregion_state_funcs[])(struct MainObj*);
 void func_80047D04(struct MainObj* arg0);
 void func_80047E58(struct MainObj* arg0);
-void func_80049288(struct MainObj* arg0);
-void func_800493F8(struct MainObj* arg0);
+void eregion_death(struct MainObj* arg0);
+void eregion_recoil(struct MainObj* arg0);
 
-// D_800FAE38
-void func_8004808C(struct MainObj*);
+// eregion_step_funcs
+void eregion_pick_start(struct MainObj*);
 void func_800480D0(struct MainObj*);
-void func_800483AC(struct MainObj* arg0);
-void func_80048770(struct MainObj* arg0);
-void func_80048A1C(struct MainObj* arg0);
-void func_80048B98(struct MainObj* arg0);
-void func_80048DD0(struct MainObj* arg0);
-void func_80049028(struct MainObj* arg0);
-void func_80048EF8(struct MainObj* arg0);
-void func_80049884(struct MainObj* arg0);
+void eregion_roar(struct MainObj* arg0);
+void eregion_stomp(struct MainObj* arg0);
+void eregion_leap(struct MainObj* arg0);
+void eregion_wing_slash(struct MainObj* arg0);
+void eregion_pounce(struct MainObj* arg0);
+void eregion_spread(struct MainObj* arg0);
+void eregion_fireball(struct MainObj* arg0);
+void eregion_intro(struct MainObj* arg0);
 
-// D_800FAE60
-void func_8004831C(struct MainObj*);
-void func_80048348(struct MainObj*);
+// eregion_roar_funcs
+void eregion_roar_start(struct MainObj*);
+void eregion_roar_wait(struct MainObj*);
 
-// D_800FAE68
-void func_800483E8(struct MainObj* arg0);
-void func_80048434(struct MainObj*);
-void func_800484C8(struct MainObj*);
-void func_8004852C(struct MainObj*);
-void func_80048584(struct MainObj*);
-void func_80048610(struct MainObj*);
+// eregion_stomp_funcs
+void eregion_stomp_lift(struct MainObj* arg0);
+void eregion_stomp_step(struct MainObj*);
+void eregion_stomp_follow(struct MainObj*);
+void eregion_stomp_advance(struct MainObj*);
+void eregion_stomp_drop(struct MainObj*);
+void eregion_stomp_land(struct MainObj*);
 
-// D_800FAE84
-void func_800487AC(struct MainObj*);
-void func_800487F0(struct MainObj*);
-void func_80048864(struct MainObj*);
-void func_800488F4(struct MainObj*);
-void func_80048970(struct MainObj*);
+// eregion_leap_funcs
+void eregion_leap_crouch(struct MainObj*);
+void eregion_leap_jump(struct MainObj*);
+void eregion_leap_rise(struct MainObj*);
+void eregion_fall(struct MainObj*);
+void eregion_land(struct MainObj*);
 
-// D_800FAE98
-void func_80048A58(struct MainObj*);
+// eregion_wing_slash_funcs
+void eregion_wing_slash_start(struct MainObj*);
 void func_80048B04(struct MainObj*);
 
-// D_800FAEA0
-void func_80048BD4(struct MainObj*);
-void func_80048C20(struct MainObj*);
-void func_80048CF8(struct MainObj*);
+// eregion_pounce_funcs
+void eregion_pounce_crouch(struct MainObj*);
+void eregion_pounce_jump(struct MainObj*);
+void eregion_pounce_rise(struct MainObj*);
 
-// D_800FAEB4
-void func_80048E0C(struct MainObj*);
-void func_80048E70(struct MainObj*);
+// eregion_fireball_funcs
+void eregion_fireball_open(struct MainObj*);
+void eregion_fireball_fire(struct MainObj*);
 
-// D_800FAEBC
-void func_80048F34(struct MainObj*);
-void func_80048F98(struct MainObj*);
+// eregion_spread_funcs
+void eregion_spread_open(struct MainObj*);
+void eregion_spread_fire(struct MainObj*);
 
-// D_800FAEC4
-void func_80049064(struct MainObj*);
-void func_800490D4(struct MainObj* arg0);
-void func_800491BC(struct MainObj*);
+// eregion_death_funcs
+void eregion_death_start(struct MainObj*);
+void eregion_death_blink(struct MainObj* arg0);
+void eregion_death_wait_explosion(struct MainObj*);
 
-// D_800FAED0
-extern void (*D_800FAED0[])(struct MainObj*);
-void func_800492C4(struct MainObj*);
+// eregion_recoil_funcs
+extern void (*eregion_recoil_funcs[])(struct MainObj*);
+void eregion_recoil_start(struct MainObj*);
 void func_8004932C(struct MainObj*);
 
-// D_800FAED8
-void func_800494E0(struct MainObj*);
-void func_8004955C(struct MainObj*);
-void func_80049654(struct MainObj*);
+// eregion_intro_funcs
+void eregion_intro_warning(struct MainObj*);
+void eregion_intro_leap(struct MainObj*);
+void eregion_intro_rise(struct MainObj*);
 void func_8004970C(struct MainObj*);
-void func_800497FC(struct MainObj*);
+void eregion_intro_fill_health(struct MainObj*);
 
 // dragonfly_state_funcs
 extern void (*dragonfly_state_funcs[])(struct MainObj*);
@@ -6985,15 +6985,15 @@ extern void (*bulldozer_charge_funcs[])(struct MainObj*);
 extern void (*D_800FA6F0[])(struct MainObj*);
 extern void (*D_800FA710[])(struct MainObj*);
 extern void (*D_800FA71C[])(struct MainObj*);
-extern void (*D_800FAE60[])(struct MainObj*);
-extern void (*D_800FAE68[])(struct MainObj*);
-extern void (*D_800FAE84[])(struct MainObj*);
-extern void (*D_800FAE98[])(struct MainObj*);
-extern void (*D_800FAEA0[])(struct MainObj*);
-extern void (*D_800FAEB4[])(struct MainObj*);
-extern void (*D_800FAEBC[])(struct MainObj*);
-extern void (*D_800FAEC4[])(struct MainObj*);
-extern void (*D_800FAED8[])(struct MainObj*);
+extern void (*eregion_roar_funcs[])(struct MainObj*);
+extern void (*eregion_stomp_funcs[])(struct MainObj*);
+extern void (*eregion_leap_funcs[])(struct MainObj*);
+extern void (*eregion_wing_slash_funcs[])(struct MainObj*);
+extern void (*eregion_pounce_funcs[])(struct MainObj*);
+extern void (*eregion_fireball_funcs[])(struct MainObj*);
+extern void (*eregion_spread_funcs[])(struct MainObj*);
+extern void (*eregion_death_funcs[])(struct MainObj*);
+extern void (*eregion_intro_funcs[])(struct MainObj*);
 extern void (*dragonfly_step_funcs[])(struct MainObj*);
 extern void (*D_800FB120[])(struct MainObj*);
 extern void (*D_800FB130[])(struct MainObj*);
