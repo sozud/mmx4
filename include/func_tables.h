@@ -1057,8 +1057,8 @@ void func_80040644(struct MainObj*);
 void func_80040838(struct MainObj*);
 void background_dragon_cleanup(struct MainObj*);
 
-// D_800F9988
-extern void (*D_800F9988[])(struct MainObj*);
+// background_dragon_step_funcs
+extern void (*background_dragon_step_funcs[])(struct MainObj*);
 void background_dragon_reset(struct MainObj*);
 void background_dragon_wait_for_animation(struct MainObj*);
 void background_dragon_fireball(struct MainObj*);
@@ -1066,7 +1066,7 @@ void background_dragon_projectile_attack(struct MainObj*);
 void background_dragon_multi_shot(struct MainObj*);
 void background_dragon_sequence_begin(struct MainObj*);
 void func_800415B0(struct MainObj*);
-void func_80041854(struct MainObj*);
+void background_dragon_sequence_bob(struct MainObj*);
 void background_dragon_sequence(struct MainObj*);
 void func_800419B8(struct MainObj*);
 void background_dragon_fly_to_route_start(struct MainObj*);

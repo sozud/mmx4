@@ -317,8 +317,8 @@ extern u8 D_80109154[4];
 extern s8 D_80109158[8];
 extern union AnimationStep* D_800F9934[16];
 extern struct Unk_unk68 D_801062F0[32];
-void func_80040760(struct PlayerObj*, s8);
-extern void (*D_800F9988[13])(struct MainObj*);
+void background_dragon_spawn_trail(struct PlayerObj*, s8);
+extern void (*background_dragon_step_funcs[13])(struct MainObj*);
 extern s16 D_800F98EC[36];
 extern u8 D_800F986C[128];
 extern u16 D_800F99BC[4];
@@ -7125,8 +7125,8 @@ void func_80040644(struct MainObj* arg0)
     engine_obj.boss_ptr = arg0;
     arg0->x_pos.val = 0;
     arg0->y_pos.val = 0;
-    func_80040760(PLAYER_OBJECT(arg0), 0);
-    func_80040760(PLAYER_OBJECT(arg0), 1);
+    background_dragon_spawn_trail(PLAYER_OBJECT(arg0), 0);
+    background_dragon_spawn_trail(PLAYER_OBJECT(arg0), 1);
     func_80015D60(arg0, 0);
 
     arg0->unk5 = 6;
@@ -7197,7 +7197,7 @@ void func_80040838(struct MainObj* arg0)
         }
     }
 
-    D_800F9988[arg0->unk5](arg0);
+    background_dragon_step_funcs[arg0->unk5](arg0);
 
     blocked = func_8002B780() & 1;
     if (!blocked && ext[5] == 2) {

@@ -1229,3 +1229,5 @@ ice_core_face_player = 0x800527C0;
 ice_core_step_funcs = 0x800FC358;
 spike_sled_animations = 0x800FDEE4;
 drone_pod_step_funcs = 0x80104A00;
+background_dragon_spawn_trail = 0x80040760;
+background_dragon_step_funcs = 0x800F9988;
