@@ -7,7 +7,40 @@ void func_80060A88(struct MainObj* arg0)
     D_800FE8EC[arg0->state](arg0);
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_38", func_80060AC4);
+void func_80060AC4(struct MainObj* obj)
+{
+    obj->active = 0x41;
+    obj->unk5C = 0x12;
+    obj->unk60 = 6;
+    obj->unk61 = 0;
+    obj->bg_offset = g_Player.bg_offset;
+    obj->collision_data = &D_801074F4;
+    obj->animation_table = (const u8* const*)D_800FE890;
+    obj->unk16 = 5;
+    obj->unk68 = &D_800FE73C;
+    obj->unk54 = &D_800FE734;
+    obj->unk15 = 0;
+    obj->unk20 = 0;
+    obj->unk24 = 0;
+    obj->unk28 = 0;
+    obj->unk2C = 0;
+    obj->unk67 = 0;
+    obj->unk50 = &D_800FE738;
+    obj->unk18.val = obj->x_pos.val;
+    obj->unk1C.val = obj->y_pos.val;
+    func_80015D60(obj, 0);
+    obj->unk7E = 0xA;
+    obj->ext.main_38.saved_unk5 = 0;
+    obj->ext.main_38.unk84 = 0;
+    obj->ext.main_38.unk88 = 0;
+    obj->ext.main_38.unk8C = 0;
+    obj->ext.main_38.unk90 = 0;
+    obj->ext.main_38.unk94 = 0;
+    obj->unk7C = 0;
+    obj->unk5 = 2;
+    obj->unk6 = 0;
+    obj->state++;
+}
 
 void func_80060BC4(struct MainObj* arg0)
 {

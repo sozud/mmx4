@@ -102,7 +102,30 @@ void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4,
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C833C);
+void func_800C833C(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)
+{
+    u8 i;
+    u8* vars = variants;
+    s32 xoff = x_offset;
+    struct MainObj* obj = owner;
+
+    for (i = count; i; i--) {
+        struct MiscObj* misc = find_free_misc_obj();
+        if (misc != NULL) {
+            misc->active = 0x41;
+            misc->id = 3;
+            misc->unk2 = 0;
+            misc->unk15 = get_random() & 0x40;
+            misc->state = 0;
+            misc->unk5 = 0;
+            misc->unk6 = 0;
+            misc->x_pos.val = obj->x_pos.val + (get_random() & 3) + xoff;
+            misc->y_pos.val = obj->y_pos.val + (get_random() & 3) + y_offset;
+            misc->ext.misc_2.unk58 = *vars++;
+            misc->ext.misc_2.owner = obj;
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C842C);
 

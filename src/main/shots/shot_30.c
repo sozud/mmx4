@@ -20,7 +20,25 @@ void func_8009FE58(struct ShotObj* arg0)
 {
 }
 
-INCLUDE_ASM("main/nonmatchings/shots/shot_30", func_8009FE60);
+void func_8009FE60(struct ShotObj* arg0)
+{
+    struct VisualObj* obj = find_free_visual_obj();
+    if (obj != NULL) {
+        obj->active = 0x41;
+        obj->id = 0x10;
+        obj->unk2 = 1;
+        obj->unk50 = (struct PlayerObj*)arg0;
+        obj->unk42 = arg0->unk42;
+        obj->animation_table = arg0->animation_table;
+        obj->unk3C = arg0->unk3C;
+        obj->unk40 = arg0->unk40;
+        obj->bg_offset = arg0->bg_offset;
+        obj->unk16 = 3;
+        obj->unk15 = arg0->unk15;
+        obj->x_pos.val = arg0->x_pos.val;
+        obj->y_pos.val = arg0->y_pos.val;
+    }
+}
 
 void (*D_80109200[3])(struct ShotObj*) = {
     func_8009F89C,

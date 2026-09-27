@@ -85,6 +85,14 @@ void func_80013530(void)
     }
 }
 
+void func_80012E18(u8* start, u8* end)
+{
+    do {
+        *(s32*)start = 0;
+        start += 4;
+    } while (start != end);
+}
+
 void func_80014A90(s32 arg0, s32 arg1)
 {
     u8 mode = 0xA0;
