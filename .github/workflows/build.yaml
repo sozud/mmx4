@@ -54,7 +54,7 @@ jobs:
     name: Capture and compare scene oracles
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     environment:
       name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
     steps:

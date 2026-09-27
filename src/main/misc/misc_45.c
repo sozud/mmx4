@@ -66,7 +66,7 @@ void func_800D1164(struct MiscObj* self)
     struct MainObj* source;
 
     index = self->unk2;
-    source = self->ext.misc_2.owner;
+    source = self->ext.misc_45.owner;
     self->x_pos.u.hi = source->x_pos.u.hi + D_8010F0C4[index].x;
     self->y_pos.u.hi = source->y_pos.u.hi + D_8010F0C4[self->unk2].y;
 }

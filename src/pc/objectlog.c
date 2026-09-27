@@ -80,7 +80,7 @@ static void log_open(void)
         "frame\tgame\tengine\ttable\tslot\tid\text80_value\text84_value\t"
         "ext88\text89\text8a\text8b\text8c\n");
     fprintf(state_log,
-        "frame\tgame\tengine\ttable\tslot\tregion_a\tregion_b\tregion_c\n");
+        "frame\tgame\tengine\ttable\tslot\tregion_a\tregion_b\tregion_c\tbounds\n");
 }
 
 static const char* main_8_pointer_value(char* buffer, size_t size, const void* pointer)
@@ -314,7 +314,7 @@ static void write_player_state(long frame, u32 game, u32 engine,
     write_state_bytes(0x5C, &player->unk5C, 0x68 - 0x5C);
     write_state_bytes(0x6C, &player->unk6C, 0xC8 - 0x6C);
     write_state_bytes(0xD4, &player->unkD4, 0xE4 - 0xD4);
-    fputc('\n', state_log);
+    fprintf(state_log, "\t%d\n", player->unk68 != NULL);
 }
 
 _Static_assert(sizeof(struct BackgroundObj) == 0x54, "background layout");
@@ -325,7 +325,7 @@ static void write_background_state(long frame, u32 game, u32 engine, int slot)
     write_state_bytes(0x00, &background_objects[slot], 0x54);
     write_state_bytes(0x54, NULL, 0);
     write_state_bytes(0x54, NULL, 0);
-    fputc('\n', state_log);
+    fputs("\t-\n", state_log);
 }
 
 static void write_engine_state(long frame, u32 game, u32 engine)
@@ -334,7 +334,7 @@ static void write_engine_state(long frame, u32 game, u32 engine)
     write_state_bytes(0x00, &engine_obj.state, 0x20);
     write_state_bytes(0x24, &engine_obj.enable_boss, 0x38 - 0x24);
     write_state_bytes(0x40, &engine_obj.unk40, 0x61 - 0x40);
-    fputc('\n', state_log);
+    fputs("\t-\n", state_log);
 }
 
 void mmx4_pc_object_log_dump(void)

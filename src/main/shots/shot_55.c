@@ -44,9 +44,6 @@ void (*D_80109E5C[])(struct ShotObj*) = {
     func_800AD12C,
     func_800AD1B0,
     func_800AD224,
-};
-
-void (*D_80109E80[])(struct ShotObj*) = {
     func_800AD338,
     func_800AD404,
     func_800AD630,
@@ -341,7 +338,7 @@ void func_800AD630(struct ShotObj* arg0)
 
 void func_800AD66C(struct ShotObj* arg0)
 {
-    D_80109E80[arg0->unk2](arg0);
+    D_80109E5C[arg0->unk2 + 9](arg0);
     arg0->unk42 = arg0->unk7C->unk42;
     func_8002E184(PLAYER_OBJECT(arg0));
     func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
@@ -419,7 +416,7 @@ void func_800ADA64(struct ShotObj* arg0)
     arg0->x_pos.val = weapon->x_pos.val;
     arg0->y_pos.val = weapon->y_pos.val;
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (weapon->ext.shot_55.unk90 == 0) {
+    if (MAIN_OBJECT(weapon)->ext.main_75.hit_active == 0) {
         arg0->state++;
     }
     is_on_screen(BASE_OBJECT(arg0));
@@ -485,7 +482,7 @@ void func_800ADBE0(struct ShotObj* arg0)
             shot->unk84.halves[1] = arg0->y_pos.u.hi - owner->y_pos.u.hi;
         }
     } else {
-        owner->ext.shot_55.unk92 = 1;
+        MAIN_OBJECT(owner)->ext.main_75.unk92 = 1;
     }
 }
 
@@ -495,7 +492,7 @@ void func_800ADCE8(struct ShotObj* arg0)
 
     weapon = arg0->unk7C;
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (weapon->ext.shot_55.unk92 != 0) {
+    if (MAIN_OBJECT(weapon)->ext.main_75.unk92 != 0) {
         arg0->unk8A = 0x14;
         arg0->unk5++;
     }

@@ -50,6 +50,13 @@ void func_800C369C(struct ItemObj* arg0)
     func_800C37C4(arg0, engine, player);
 }
 
+#ifdef MMX4_PC
+#define ITEM13_PLAYER_EXTENT(bounds) \
+    ((bounds) != NULL ? (bounds)->unk3 + (bounds)->unk1 : 0)
+#else
+#define ITEM13_PLAYER_EXTENT(bounds) ((bounds)->unk3 + (bounds)->unk1)
+#endif
+
 void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
     struct PlayerObj* player)
 {
@@ -61,7 +68,7 @@ void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
     if (y_diff >= 0) {
         player_bounds = player->unk68;
         item_bounds = self->unk68;
-        if (y_diff >= player_bounds->unk3 + player_bounds->unk1 + (item_bounds->unk3 - item_bounds->unk1)) {
+        if (y_diff >= ITEM13_PLAYER_EXTENT(player_bounds) + (item_bounds->unk3 - item_bounds->unk1)) {
             if (engine->unk10 == 0) {
                 engine->unk10 = 1;
                 engine->unk11 = 1;

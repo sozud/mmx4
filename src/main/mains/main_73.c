@@ -613,7 +613,7 @@ s32 func_8008D3B8(struct MainObj* arg0, s8 arg1)
 {
     struct EffectObj* effect;
 
-    arg0->ext.main_73.effect.bytes.object_id = arg1;
+    arg0->ext.main_73_parts.object_id = arg1;
     effect = find_free_effect_obj();
     if (effect != NULL) {
         effect->active = 1;

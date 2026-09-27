@@ -34,7 +34,7 @@ const char* mmx4_pc_replay_path;
 static int configure_replay(const char* path)
 {
     unsigned char header[16];
-    char value[4][4];
+    char value[5][4];
     FILE* replay;
     long size;
     int i;
@@ -56,7 +56,7 @@ static int configure_replay(const char* path)
         return -1;
     }
     rewind(replay);
-    if (fread(header, sizeof(header), 1, replay) != 1 || memcmp(header, "MMX4RPL2", 8) != 0 || header[12] > 1 || header[13] != 0 || header[14] != 0 || header[15] != 0) {
+    if (fread(header, sizeof(header), 1, replay) != 1 || memcmp(header, "MMX4RPL2", 8) != 0 || header[12] > 2 || header[13] > 10 || header[14] != 0 || header[15] != 0) {
         fprintf(stderr, "MMX4 PC: invalid replay header in %s\n", path);
         fclose(replay);
         return -1;
@@ -65,12 +65,16 @@ static int configure_replay(const char* path)
 
     for (i = 0; i < 4; i++)
         snprintf(value[i], sizeof(value[i]), "%u", header[8 + i]);
+    snprintf(value[4], sizeof(value[4]), "%u", header[13]);
     setenv("MMX4_ORACLE_SCENE", "initial-stage", 1);
     setenv("MMX4_DIRECT_STAGE", value[0], 1);
     setenv("MMX4_DIRECT_SUBSTAGE", value[1], 1);
     setenv("MMX4_DIRECT_CHECKPOINT", value[2], 1);
     setenv("MMX4_DIRECT_CHARACTER", value[3], 1);
     setenv("MMX4_DIRECT_LOADOUT", header[12] ? "1" : "0", 1);
+    if (header[12] == 2)
+        setenv("MMX4_DIRECT_LOADOUT", "2", 1);
+    setenv("MMX4_DIRECT_STORY", value[4], 1);
     return 0;
 }
 

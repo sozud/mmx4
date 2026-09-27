@@ -106,7 +106,7 @@ void func_800AAD6C(struct ShotObj* arg0)
 {
     s8 direction;
 
-    arg0->unk8C.bytes[2] = arg0->unk7C->ext.raw[1];
+    arg0->unk8C.bytes[2] = MAIN_OBJECT(arg0->unk7C)->ext.main_74.effect_state;
     arg0->unk15 = 0;
     arg0->unk5C = 0x30;
     arg0->x_pos.i.hi = D_80109C44[arg0->unk8C.bytes[2]][arg0->unk2][0];
@@ -201,7 +201,7 @@ void func_800AB224(struct ShotObj* arg0)
         if (arg0->unk8A == 0) {
             arg0->unk5 = 3;
             arg0->unk6 = 0;
-            owner->ext.raw[2] = 1;
+            MAIN_OBJECT(owner)->ext.main_74.unk8E = 1;
             return;
         }
         arg0->unk6--;
@@ -258,7 +258,7 @@ void func_800AB3A4(struct ShotObj* arg0)
         if (count == 0) {
             arg0->unk5 = 3;
             arg0->unk6 = 0;
-            owner->ext.raw[2] = 1;
+            MAIN_OBJECT(owner)->ext.main_74.unk8E = 1;
         }
     }
 }
@@ -312,7 +312,7 @@ void func_800AB5A4(struct ShotObj* self)
     if (self->x_pos.i.hi < 0x4D8) {
         self->unk5 = 3;
         self->unk6 = 0;
-        owner->ext.raw[2] = 1;
+        MAIN_OBJECT(owner)->ext.main_74.unk8E = 1;
     }
 }
 
