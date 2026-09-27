@@ -26,7 +26,7 @@ void func_800C5904(struct ItemObj*);
 void func_800C5B5C(struct ItemObj*);
 void func_800B9354(struct EffectObj*);
 void func_800B94B8(struct EffectObj*);
-void func_8008C014(struct MainObj*, s8);
+void double_spawn_afterimage(struct MainObj*, s8);
 void func_800624B4(struct MainObj*);
 
 extern u16 D_800F1868[18];
@@ -129,7 +129,7 @@ extern s32 D_800FA130[2];
 extern u8 D_80108F60[4];
 extern u8 D_80108F64[8];
 extern void (*D_80104A00[4])(struct MainObj*);
-extern void (*D_8010531C[6])(struct MainObj*);
+extern void (*double_step_funcs[6])(struct MainObj*);
 extern u8* D_8010529C[2];
 extern void* D_801052A4[2];
 extern s8 D_8010A428[4][2];
@@ -21670,15 +21670,15 @@ void func_8008CD80(struct MainObj* self)
 
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
-    D_8010531C[self->unk5](self);
+    double_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
     collision = func_8002DD04(self);
 
-    if (ext->unk8B != 0) {
-        ext->unk8B--;
-        if (ext->unk8B == 0)
+    if (ext->blink_delay != 0) {
+        ext->blink_delay--;
+        if (ext->blink_delay == 0)
             self->collision_data = D_80108204;
-        if (ext->unk8B & 1)
+        if (ext->blink_delay & 1)
             self->unk42 |= 0x8000;
         else
             self->unk42 &= 0x7FFF;
@@ -21690,13 +21690,13 @@ void func_8008CD80(struct MainObj* self)
         g_Player.unk7A = 1;
     } else if (collision > 0 && collision != 0x7F) {
         self->collision_data = D_801060F0;
-        ext->unk8B = 0x40;
+        ext->blink_delay = 0x40;
         if (collision < 0x13 || collision > 0x17) {
             s32 kind = (get_random() & 1) ? 2 : 3;
-            func_8008BF54(self, kind, 0);
-            func_8008BF54(self, kind, 1);
+            double_spawn_shot(self, kind, 0);
+            double_spawn_shot(self, kind, 1);
             for (s8 i = 0; i < 4; i++)
-                func_8008C014(self, i);
+                double_spawn_afterimage(self, i);
         }
     }
     func_8002D9BC(self);
@@ -22975,7 +22975,7 @@ void func_8008BA38(struct MainObj* self)
     self->unk28 = 0;
     self->unk2C = 0;
     self->unk16 = 4;
-    ext->unk8B = 0;
+    ext->blink_delay = 0;
     ext->pad8A = 0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;

@@ -271,7 +271,7 @@ void func_80085F08(struct MainObj* arg0);
 void func_80088BA0(struct MainObj* arg0);
 void func_8008ADC0(struct MainObj* arg0);
 void func_8008B9FC(struct MainObj* arg0);
-void func_8008D37C(struct MainObj* arg0);
+void double_update(struct MainObj* arg0);
 void sigma_final_update(struct MainObj* arg0);
 void general_update(struct MainObj* arg0);
 void func_800919C4(struct MainObj* arg0);
@@ -3850,78 +3850,78 @@ void func_8008ADFC(struct MainObj*);
 void func_8008B8B8(struct MainObj*);
 void func_8008B9C0(struct MainObj* arg0);
 
-// D_801052AC
-extern void (*D_801052AC[])(struct MainObj*);
-void func_8008BCB0(struct MainObj*);
-void func_8008BD10(struct MainObj*);
-void func_8008BD5C(struct MainObj*);
-void func_8008BDAC(struct MainObj*);
+// double_intro_talk_funcs
+extern void (*double_intro_talk_funcs[])(struct MainObj*);
+void double_intro_dialogue(struct MainObj*);
+void double_intro_wait_dialogue(struct MainObj*);
+void double_intro_voice(struct MainObj*);
+void double_intro_fill_health(struct MainObj*);
 
-// D_801052BC
-extern void (*D_801052BC[])(struct MainObj *);
+// double_intro_funcs
+extern void (*double_intro_funcs[])(struct MainObj *);
 void func_8008BA38(struct MainObj*);
 void func_8008BB6C(struct MainObj*);
-void func_8008BE74(struct MainObj* arg0);
+void double_intro_talk(struct MainObj* arg0);
 
-// D_801052C8
-extern void (*D_801052C8[])(struct MainObj *);
-void func_8008C0C0(struct MainObj*);
+// double_wait_funcs
+extern void (*double_wait_funcs[])(struct MainObj *);
+void double_wait_start(struct MainObj*);
 void func_8008C10C(struct MainObj*);
 
-// D_801052D0
-extern void (*D_801052D0[])(struct MainObj *);
-void func_8008C240(struct MainObj*);
-void func_8008C27C(struct MainObj*);
-void func_8008C30C(struct MainObj*);
+// double_energy_ball_funcs
+extern void (*double_energy_ball_funcs[])(struct MainObj *);
+void double_energy_ball_windup(struct MainObj*);
+void double_energy_ball_throw(struct MainObj*);
+void double_energy_ball_recover(struct MainObj*);
 
-// D_801052DC
-extern void (*D_801052DC[])(struct MainObj *);
-void func_8008C39C(struct MainObj*);
-void func_8008C3F4(struct MainObj*);
-void func_8008C43C(struct MainObj*);
-void func_8008C4B4(struct MainObj*);
-void func_8008C5A8(struct MainObj*);
+// double_dive_funcs
+extern void (*double_dive_funcs[])(struct MainObj *);
+void double_dive_leap(struct MainObj*);
+void double_dive_rise(struct MainObj*);
+void double_dive_climb(struct MainObj*);
+void double_dive_aim(struct MainObj*);
+void double_dive_fall(struct MainObj*);
 void func_8008C664(struct MainObj*);
-void func_8008C7E4(struct MainObj*);
-void func_8008C888(struct MainObj*);
-void func_8008C8E0(struct MainObj*);
+void double_dive_hit_wall(struct MainObj*);
+void double_dive_stun(struct MainObj*);
+void double_dive_land(struct MainObj*);
 
-// D_80105300
-extern void (*D_80105300[])(struct MainObj *);
-void func_8008C998(struct MainObj*);
-void func_8008C9E0(struct MainObj*);
-void func_8008CA60(struct MainObj*);
+// double_aerial_shot_funcs
+extern void (*double_aerial_shot_funcs[])(struct MainObj *);
+void double_aerial_shot_jump(struct MainObj*);
+void double_aerial_shot_fire(struct MainObj*);
+void double_aerial_shot_hang(struct MainObj*);
 
 void func_8009633C(struct WeaponObj*, struct PlayerObj*);
 void func_80096584(struct WeaponObj*, struct PlayerObj*);
 s32 func_8009663C(struct WeaponObj*, struct PlayerObj*, struct MainObj*);
-void func_8008CB2C(struct MainObj*);
+void double_aerial_shot_fire_again(struct MainObj*);
 void func_8008CBF8(void);
-void func_8008CC7C(struct MainObj*);
-void func_8008CCD4(struct MainObj*);
+void double_aerial_shot_drop(struct MainObj*);
+void double_aerial_shot_land(struct MainObj*);
 
-// D_8010531C
+// double_step_funcs
 void func_8009216C(void* arg0);
-void func_8008C204(struct MainObj* arg0);
-void func_8008C360(struct MainObj* arg0);
-void func_8008C95C(struct MainObj* arg0);
-void func_8008CD44(struct MainObj* arg0);
+void double_wait(struct MainObj* arg0);
+void double_energy_ball(struct MainObj* arg0);
+void double_dive(struct MainObj* arg0);
+void double_aerial_shot(struct MainObj* arg0);
 
-// D_80105334
-extern void (*D_80105334[7])(struct MainObj*);
-void func_8008CFAC(struct MainObj*);
-void func_8008D050(struct MainObj*);
-void func_8008D0D0(struct MainObj*);
-void func_8008D138(struct MainObj*);
-void func_8008D19C(struct MainObj*);
-void func_8008D278(struct MainObj*);
-void func_8008D2FC(struct MainObj*);
+// double_death_funcs
+extern void (*double_death_funcs[7])(struct MainObj*);
+void double_death_start(struct MainObj*);
+void double_death_fall(struct MainObj*);
+void double_death_wait(struct MainObj*);
+void double_death_wait_dialogue(struct MainObj*);
+void double_death_blink(struct MainObj*);
+void double_death_wait_explosion(struct MainObj*);
+void double_death_finish(struct MainObj*);
 
-// D_80105350
-extern void (*D_80105350[])(struct MainObj *);
-void func_8008BEC4(struct MainObj *arg0);
+// double_state_funcs
+extern void (*double_state_funcs[])(struct MainObj *);
+void double_intro(struct MainObj *arg0);
 void func_8008CD80(struct MainObj*);
-void func_8008D340(struct MainObj*);
+void double_death(struct MainObj*);
 
 // sigma_final_intro_funcs
 extern void (*sigma_final_intro_funcs[])(struct MainObj *);
@@ -4024,7 +4024,7 @@ void func_8008F578(struct MainObj*);
 void sigma_final_death_collapse(struct MainObj*);
 void sigma_final_death_wait_player(struct MainObj*);
 
-void func_8008BF54(struct MainObj*, s32, s32);
+void double_spawn_shot(struct MainObj*, s32, s32);
 s32 func_8008D3B8(struct MainObj*, s8);
 void sigma_final_set_target(struct MainObj*, s32);
 void sigma_final_death_explosion(struct MainObj*);

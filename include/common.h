@@ -812,9 +812,9 @@ struct Main73Ext {
     } unk80;
     u8* cycle_script;
     u8 cycle_step;
-    u8 unk89;
+    u8 shot_count;
     u8 pad8A;
-    u8 unk8B;
+    u8 blink_delay;
     union Main73EffectData effect;
 };
 

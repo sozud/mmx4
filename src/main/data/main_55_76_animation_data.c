@@ -7052,75 +7052,75 @@ void* D_801052A4[2] = {
     D_80105294,
 };
 
-void (*D_801052AC[4])(struct MainObj*) = {
-    func_8008BCB0,
-    func_8008BD10,
-    func_8008BD5C,
-    func_8008BDAC,
+void (*double_intro_talk_funcs[4])(struct MainObj*) = {
+    double_intro_dialogue,
+    double_intro_wait_dialogue,
+    double_intro_voice,
+    double_intro_fill_health,
 };
 
-void (*D_801052BC[3])() = {
+void (*double_intro_funcs[3])() = {
     func_8008BA38,
     func_8008BB6C,
-    func_8008BE74,
+    double_intro_talk,
 };
 
-void (*D_801052C8[2])() = {
-    func_8008C0C0,
+void (*double_wait_funcs[2])() = {
+    double_wait_start,
     func_8008C10C,
 };
 
-void (*D_801052D0[3])() = {
-    func_8008C240,
-    func_8008C27C,
-    func_8008C30C,
+void (*double_energy_ball_funcs[3])() = {
+    double_energy_ball_windup,
+    double_energy_ball_throw,
+    double_energy_ball_recover,
 };
 
-void (*D_801052DC[9])() = {
-    func_8008C39C,
-    func_8008C3F4,
-    func_8008C43C,
-    func_8008C4B4,
-    func_8008C5A8,
+void (*double_dive_funcs[9])() = {
+    double_dive_leap,
+    double_dive_rise,
+    double_dive_climb,
+    double_dive_aim,
+    double_dive_fall,
     func_8008C664,
-    func_8008C7E4,
-    func_8008C888,
-    func_8008C8E0,
+    double_dive_hit_wall,
+    double_dive_stun,
+    double_dive_land,
 };
 
-void (*D_80105300[7])() = {
-    func_8008C998,
-    func_8008C9E0,
-    func_8008CA60,
-    func_8008CB2C,
+void (*double_aerial_shot_funcs[7])() = {
+    double_aerial_shot_jump,
+    double_aerial_shot_fire,
+    double_aerial_shot_hang,
+    double_aerial_shot_fire_again,
     func_8008CBF8,
-    func_8008CC7C,
-    func_8008CCD4,
+    double_aerial_shot_drop,
+    double_aerial_shot_land,
 };
 
-void (*D_8010531C[6])() = {
+void (*double_step_funcs[6])() = {
     func_8009216C,
     func_8009216C,
-    func_8008C204,
-    func_8008C360,
-    func_8008C95C,
-    func_8008CD44,
+    double_wait,
+    double_energy_ball,
+    double_dive,
+    double_aerial_shot,
 };
 
-void (*D_80105334[7])(struct MainObj*) = {
-    func_8008CFAC,
-    func_8008D050,
-    func_8008D0D0,
-    func_8008D138,
-    func_8008D19C,
-    func_8008D278,
-    func_8008D2FC,
+void (*double_death_funcs[7])(struct MainObj*) = {
+    double_death_start,
+    double_death_fall,
+    double_death_wait,
+    double_death_wait_dialogue,
+    double_death_blink,
+    double_death_wait_explosion,
+    double_death_finish,
 };
 
-void (*D_80105350[3])() = {
-    func_8008BEC4,
+void (*double_state_funcs[3])() = {
+    double_intro,
     func_8008CD80,
-    func_8008D340,
+    double_death,
 };
 
 struct Unk_unk68 D_8010535C = { -10, -81, 103, 70 };
