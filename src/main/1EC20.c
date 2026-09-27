@@ -260,9 +260,7 @@ void func_8002EDD4(struct EngineObj* arg0)
     const char* scene = getenv("MMX4_ORACLE_SCENE");
     const char* loadout = getenv("MMX4_DIRECT_LOADOUT");
 
-    if (scene != NULL && strcmp(scene, "mission-briefing") == 0 &&
-        loadout != NULL && strtoul(loadout, NULL, 0) == 2 &&
-        arg0->stage >= 1 && arg0->stage <= 8) {
+    if (scene != NULL && strcmp(scene, "mission-briefing") == 0 && loadout != NULL && strtoul(loadout, NULL, 0) == 2 && arg0->stage >= 1 && arg0->stage <= 8) {
         arg0->palette_flags = (u8)(0xFF & ~(1 << (arg0->stage - 1)));
     }
 #endif
