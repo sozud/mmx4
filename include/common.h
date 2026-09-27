@@ -565,9 +565,9 @@ union Main37Unk80 {
 
 struct Main37Ext {
     union Main37Unk80 unk80;
-    u32 unk84;
-    u32 unk88;
-    u32 unk8C;
+    f32 unk84;
+    f32 unk88;
+    f32 unk8C;
     u8 pad90[4];
     u32 saved_unk5;
 };
@@ -644,7 +644,9 @@ struct Main40Ext {
 
 struct MainSavedState94Ext {
     u32 unk80;
-    u8 pad84[0xC];
+    u32 unk84;
+    u32 unk88;
+    u32 unk8C;
     u32 unk90;
     u32 saved_unk5;
 };
@@ -2319,7 +2321,9 @@ extern u8 D_8010E054[];
 extern struct Misc08EffectDescriptor D_8010E058[];
 extern u8 D_80104A3C[];
 extern void (*D_80104354[])(struct MainObj*);
-void func_800C833C(s32 arg0, u8* arg1, struct MiscObj* arg2, s32 arg3, s32 arg4);
+void func_80012E18(u8* arg0, u8* arg1);
+void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5);
+void func_800C833C(u8 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4);
 struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
@@ -2879,6 +2883,8 @@ extern u8 D_80104CDC[];
 extern union AnimationStep D_801001F8[];
 extern union AnimationStep D_801001FC[];
 extern union AnimationStep* D_80105F90[5];
+extern void* D_80105E8C[2];
+extern u8 D_80105E94[4];
 extern s8 D_80105FA8[4];
 extern s8 D_80105FAC[4];
 extern s8 D_80105FB0[4];
@@ -3816,6 +3822,7 @@ extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
 extern u8* D_801721B0;
+extern u8 D_801721B4[2];
 extern u8 D_801721B6;
 extern u8 D_801721B7;
 extern u8 D_801721B9;
@@ -3976,8 +3983,11 @@ extern struct Unk_unk68 D_80104F04;
 extern struct Unk_unk68 D_80108184[];
 extern u8 D_8010439C[8];
 extern u8 D_801043B8[4];
-extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_80103E7C[];
+extern struct Unk_unk68 D_801074F4[];
+extern struct Unk_unk68 D_80107778[];
+extern struct Unk_unk68 D_80107E84[];
+extern struct Unk_unk68 D_80107F04[];
 extern struct Unk_unk68 D_8010884C[];
 extern struct Unk_unk68 D_80105374;
 extern struct Unk_unk68 D_801044FC;
@@ -4050,6 +4060,16 @@ extern u8 D_80108C30[8];
 extern u8 D_8010CFFC[4];
 extern u16 D_8010D000[4];
 extern u8 D_800FE2A4[8];
+extern u8 D_800FE6D8[12];
+extern struct Unk_unk68 D_800FE734;
+extern struct Unk_unk68 D_800FE738;
+extern struct Unk_unk68 D_800FE73C;
+extern struct Unk_unk68 D_800FF80C;
+extern struct Unk_unk68 D_800FF810;
+extern struct Unk_unk68 D_800FFC54;
+extern struct Unk_unk68 D_800FFC58;
+extern struct Unk_unk68 D_800FFC5C;
+extern union AnimationStep* D_800FF874[2];
 extern u8** D_801002A4[3];
 extern u8 D_801002B0[12];
 extern union AnimationStep* D_800FFD44[14];

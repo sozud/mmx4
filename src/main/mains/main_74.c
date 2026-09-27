@@ -846,4 +846,25 @@ u8 func_8008FA0C(struct ObjectHeader* arg0, s16 arg1, s16 arg2)
     return 0;
 }
 
-INCLUDE_ASM("main/nonmatchings/mains/main_74", func_8008FA88);
+void func_8008FA88(struct MainObj* arg0)
+{
+    s32 index;
+    void** table;
+    u8 r;
+    u8 i;
+    u8* p;
+
+    index = arg0->unk5C < 0x19;
+    table = D_80105E8C[index];
+    r = get_random();
+    i = 0;
+    p = &D_80105E94[index * 2];
+    r = (r >> 2) & 0xF;
+    while (i < 2) {
+        if (r < p[i]) {
+            arg0->ext.main_74.children[1] = table[i];
+            return;
+        }
+        i++;
+    }
+}

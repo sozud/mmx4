@@ -60,7 +60,41 @@ void func_800193D8(struct EngineObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_800194C8);
+extern u8 D_800F1DEC[];
+
+void func_800194C8(struct EngineObj* engine)
+{
+    u8 i;
+    s32 z;
+
+    reset_objects();
+    D_801721B0 = D_8015D9C8;
+    D_801721BC = (struct MemcardSaveSlot*)(D_8015D9C8 + 0x200);
+    func_80012E18(D_8015D9C8, D_8015D9C8 + 0x1FFC);
+    for (i = 0; i < 2; i++) {
+        D_801721B4[i] = func_8001CDE4(i);
+    }
+    *D_80141BDF = 0;
+    func_8001E980(0);
+    D_801721B9 = 1;
+    z = 0;
+    if (D_801721B4[z] == 0 || D_801721B4[1] == 0) {
+        engine->unk1 = 1;
+        engine->unk2 = 0;
+        func_8001B644(D_800F1DEC);
+        if (D_801721B4[0] == 0) {
+            func_8001B718(0x70, 0xBU, 0U);
+        }
+        if (D_801721B4[1] == 0) {
+            func_8001B718(0x90, 0xCU, 1U);
+        }
+        func_8001C008(2, 0);
+        return;
+    }
+    engine->unk1 = 0xB;
+    D_801721B8 = 0;
+    func_8001B644(D_800F1DFC);
+}
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001961C);
 
@@ -748,9 +782,64 @@ void func_8001C07C(void)
     D_800F1D90.save = *D_801721BC;
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001C210);
+void func_8001C210(void)
+{
+    struct MemcardSaveSlot* slot;
+    u8 i;
+    s8 mode;
+    struct EngineObj* obj = &engine_obj;
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001C30C);
+    slot = D_801721BC;
+    engine_obj.cur_character = slot->character;
+    engine_obj.unk46 = slot->unk1;
+    engine_obj.unk48 = slot->unk2;
+    engine_obj.palette_flags = slot->unk4;
+    engine_obj.unk5F = slot->unk5;
+    engine_obj.unk5A = slot->unk6;
+    engine_obj.unk47 = slot->unk3;
+    engine_obj.unk37 = slot->unk29;
+    for (i = 0; i < 16; i++) {
+        D_800EE430[i] = slot->unk8[i];
+    }
+    mode = 2;
+    if (slot->unk6 & D_800F1D90.sign_bit_mask) {
+        mode = 4;
+    }
+    obj->unk44 = mode;
+    obj->unk5C[0] = 0;
+    obj->unk5C[1] = 0;
+    obj->unk5C[2] = 0;
+    obj->unk45 = obj->unk46;
+    func_8001C3E8();
+}
+
+void func_8001C30C(struct MemcardSaveSlot* slot)
+{
+    u8 i;
+    s8 mode;
+    struct EngineObj* obj = &engine_obj;
+
+    engine_obj.cur_character = slot->character;
+    engine_obj.unk46 = slot->unk1;
+    engine_obj.unk48 = slot->unk2;
+    engine_obj.palette_flags = slot->unk4;
+    engine_obj.unk5F = slot->unk5;
+    engine_obj.unk5A = slot->unk6;
+    engine_obj.unk47 = slot->unk3;
+    engine_obj.unk37 = slot->unk29;
+    for (i = 0; i < 16; i++) {
+        D_800EE430[i] = slot->unk8[i];
+    }
+    mode = 2;
+    if (slot->unk6 & D_800F1D90.sign_bit_mask) {
+        mode = 4;
+    }
+    obj->unk44 = mode;
+    obj->unk5C[0] = 0;
+    obj->unk5C[1] = 0;
+    obj->unk5C[2] = 0;
+    obj->unk45 = obj->unk46;
+}
 
 void func_8001C3E8(void)
 {

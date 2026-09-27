@@ -487,6 +487,7 @@ u8 g_FilterModeG;
 u16 g_FilterAmountG;
 
 u8* D_801721B0;
+u8 D_801721B4[2];
 u8 D_801721B6;
 u8 D_801721B7;
 u8 D_801721B8;

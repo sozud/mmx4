@@ -4647,6 +4647,7 @@ void func_8009FB9C(struct ShotObj*);
 void func_8009FD00(struct ShotObj*);
 void func_8009FE38(struct ShotObj*);
 void func_8009FE58(struct ShotObj*);
+void func_8009FE60(struct ShotObj*);
 
 // D_80109248
 extern void (*D_80109248[])(struct ShotObj*);

@@ -42,11 +42,62 @@ void func_800B7668(struct EffectObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B76A4);
 
-INCLUDE_ASM("main/nonmatchings/effects/effect_09", func_800B7764);
-
 extern struct Effect09MovementStep D_8010B534[3];
 extern struct Effect09MovementStep D_8010B528[3];
 extern struct Effect09MovementStep D_8010B518[4];
+
+void func_800B7764(struct EffectObj* effect)
+{
+    s16* x_hi;
+    s32 new_hi;
+    s32 target_hi;
+
+    if (--effect->ext.effect_9.movement_timer << 16 == 0) {
+        effect->ext.effect_9.movement_table = (u8*)D_8010B528;
+        effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
+        effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
+        effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
+        effect->ext.effect_9.movement_timer = 0xB4;
+        if (effect->ext.effect_9.direction != 0) {
+            effect->unk5--;
+        } else {
+            effect->unk5++;
+        }
+        return;
+    }
+    if (--effect->ext.effect_9.timer == 0) {
+        effect->ext.effect_9.movement_table = (u8*)&effect->ext.effect_9.movement_table[(effect->ext.effect_9.frame * 4)];
+        effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
+        effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
+        effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
+
+        x_hi = &background_objects[2].x_pos.i.hi;
+        new_hi = (effect->ext.effect_9.target_x << 9) + *(u8*)x_hi;
+        *x_hi = (s16)new_hi;
+
+        background_objects[2].unk4C = 1;
+    }
+    if (effect->ext.effect_9.direction != 0) {
+        if (effect->ext.effect_9.velocity > FIXED(1.5)) {
+            effect->ext.effect_9.velocity -= FIXED(1.0 / 64);
+        }
+    } else {
+        if (effect->ext.effect_9.velocity <= FIXED(1.5) - 1) {
+            effect->ext.effect_9.velocity += FIXED(1.0 / 64);
+        }
+    }
+    background_objects[2].x_pos.val += effect->ext.effect_9.velocity;
+    target_hi = effect->ext.effect_9.target_x << 9;
+    if (background_objects[2].x_pos.i.hi >= (target_hi + 0xC0)) {
+        background_objects[2].x_pos.i.hi = target_hi;
+        background_objects[2].unk4C = 1;
+    }
+    background_objects[2].y_pos.val += FIXED(-2);
+    if (background_objects[2].y_pos.val == FIXED(256)) {
+        background_objects[2].y_pos.val = FIXED(384);
+        background_objects[2].unk4C = 1;
+    }
+}
 
 void func_800B7934(struct EffectObj* arg0)
 {
