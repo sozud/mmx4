@@ -1,8 +1,8 @@
 #include "common.h"
 
-void (*D_800FDF54[])(struct MainObj*) = {
-    func_8005D230,
-    func_8005D348,
+void (*spike_sled_state_funcs[])(struct MainObj*) = {
+    spike_sled_init,
+    spike_sled_run,
     func_8005D4E0,
-    func_8005D7E8,
+    spike_sled_despawn,
 };

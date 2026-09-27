@@ -1,40 +1,40 @@
 #include "common.h"
 #include "func_tables.h"
 
-void (*D_800FDF64[7])() = {
+void (*spike_sled_step_funcs[7])() = {
     func_8009216C,
-    func_8005D844,
-    func_8005D850,
-    func_8005DAB8,
-    func_8005DB84,
-    func_8005E0CC,
-    func_8005E3E8,
+    spike_sled_resume_step,
+    spike_sled_patrol,
+    spike_sled_fall,
+    spike_sled_charge,
+    spike_sled_bomb,
+    spike_sled_intro,
 };
 
-void (*D_800FDF80[3])() = {
-    func_8005D88C,
-    func_8005D8B8,
-    func_8005D9C4,
+void (*spike_sled_patrol_funcs[3])() = {
+    spike_sled_patrol_start,
+    spike_sled_patrol_drive,
+    spike_sled_patrol_turn,
 };
 
-void (*D_800FDF8C[5])(struct MainObj*) = {
-    func_8005DBC0,
+void (*spike_sled_charge_funcs[5])(struct MainObj*) = {
+    spike_sled_charge_start,
     func_8005DC58,
     func_8005DED4,
-    func_8005DF84,
-    func_8005E044,
+    spike_sled_charge_approach,
+    spike_sled_charge_leap,
 };
 
-void (*D_800FDFA0[3])() = {
+void (*spike_sled_bomb_funcs[3])() = {
     func_8005E108,
-    func_8005E1BC,
+    spike_sled_bomb_rise,
     func_8005E298,
 };
 
-void (*D_800FDFAC[3])() = {
-    func_8005E424,
-    func_8005E47C,
-    func_8005E500,
+void (*spike_sled_intro_funcs[3])() = {
+    spike_sled_intro_drive,
+    spike_sled_intro_fill_health,
+    spike_sled_intro_start_fight,
 };
 
 struct Unk_unk68 D_800FDFB8 = { 0, 0, 16, 21 };

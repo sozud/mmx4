@@ -584,15 +584,15 @@ struct Main32Ext {
 struct Main33Ext {
     u8 unk80;
     u8 variant;
-    s16 unk82;
+    s16 target_x;
     u8 unk84;
-    u8 unk85;
-    u8 unk86;
+    u8 intro_active;
+    u8 intro_laps;
     u8 unk87;
     s16 unk88;
     u8 pad8A[4];
     u16 unk8E;
-    u8 unk90;
+    u8 flash_timer;
     u8 unk91;
     u8 pad92[2];
     u32 saved_unk5;
@@ -3805,7 +3805,7 @@ extern struct Unk_unk68 D_8010084C;
 extern struct Unk_unk68 D_80100850;
 extern struct Unk_unk68 D_80100884;
 extern struct Unk_unk68 D_801072F4[];
-extern union AnimationStep* D_800FDEE4[23];
+extern union AnimationStep* spike_sled_animations[23];
 extern struct Unk_unk68 D_800FDD88;
 extern struct Unk_unk68 D_800FDD8C;
 extern u8 D_80108BF0[4];

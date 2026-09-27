@@ -5377,7 +5377,7 @@ void func_800C3578(struct ItemObj* arg0)
 }
 
 extern struct Unk_unk68 D_801072F4[];
-extern union AnimationStep* D_800FDEE4[23];
+extern union AnimationStep* spike_sled_animations[23];
 extern struct Unk_unk68 D_800FDD88;
 extern struct Unk_unk68 D_800FDD8C;
 extern u8 D_800FDD90[8];
@@ -5467,7 +5467,7 @@ void func_8005DC58(struct MainObj* arg0)
     u8 first;
 
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (ext->unk82 != 0) {
+    if (ext->target_x != 0) {
         arg0->unk6 = 3;
         return;
     }
@@ -5499,14 +5499,14 @@ void func_8005DC58(struct MainObj* arg0)
                     ext->variant = first;
             }
         }
-        ext->unk82 = ext->variant * 64 + 0x1220;
-        target = ext->unk82;
+        ext->target_x = ext->variant * 64 + 0x1220;
+        target = ext->target_x;
     }
     if (arg0->unk15 == 0) {
-        if (!(arg0->x_pos.i.hi < 0x1220 && ext->unk82 == 0) && !(arg0->x_pos.i.hi < target))
+        if (!(arg0->x_pos.i.hi < 0x1220 && ext->target_x == 0) && !(arg0->x_pos.i.hi < target))
             return;
     } else {
-        if (!(arg0->x_pos.i.hi >= 0x1321 && ext->unk82 == 0) && !(target < arg0->x_pos.i.hi))
+        if (!(arg0->x_pos.i.hi >= 0x1321 && ext->target_x == 0) && !(target < arg0->x_pos.i.hi))
             return;
     }
     func_80015D60(arg0, 4);
@@ -5583,7 +5583,7 @@ void func_8005E298(struct MainObj* arg0)
     arg0->x_pos.val = x;
     arg0->y_pos.val = y;
     arg0->unk42 = ext->unk8E;
-    ext->unk90 = 0x20;
+    ext->flash_timer = 0x20;
     ext->unk91 = 6;
     ext->variant = 0xFF;
     ext->unk87 = slot;

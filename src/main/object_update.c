@@ -275,7 +275,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_8005B3FC,
     func_8005B894,
     func_8005C824,
-    func_8005D1F4,
+    spike_sled_update,
     func_8005E570,
     func_8005EC58,
     func_8005F510,

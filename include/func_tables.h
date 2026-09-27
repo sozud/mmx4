@@ -231,7 +231,7 @@ void func_8005A4CC(struct MainObj* arg0);
 void func_8005B3FC(struct MainObj* arg0);
 void func_8005B894(struct MainObj* arg0);
 void func_8005C824(struct MainObj* arg0);
-void func_8005D1F4(struct MainObj* arg0);
+void spike_sled_update(struct MainObj* arg0);
 void func_8005E570(struct MainObj* arg0);
 void func_8005EC58(struct MainObj* arg0);
 void func_8005F510(struct MainObj* arg0);
@@ -2045,43 +2045,43 @@ void func_8005D0A0(struct MainObj*);
 void func_8005D0D8(struct MainObj*);
 void func_8005D118(struct MainObj*);
 
-// D_800FDF54
-void func_8005D230(struct MainObj*);
-void func_8005D348(struct MainObj*);
+// spike_sled_state_funcs
+void spike_sled_init(struct MainObj*);
+void spike_sled_run(struct MainObj*);
 void func_8005D4E0(struct MainObj*);
-void func_8005D7E8(struct MainObj*);
+void spike_sled_despawn(struct MainObj*);
 
-// D_800FDF64
-extern void (*D_800FDF64[])(struct MainObj*);
+// spike_sled_step_funcs
+extern void (*spike_sled_step_funcs[])(struct MainObj*);
 void func_8009216C(void* arg0);
-void func_8005D844(struct MainObj* arg0);
-void func_8005D850(struct MainObj* arg0);
-void func_8005DAB8(struct MainObj* arg0);
-void func_8005DB84(struct MainObj* arg0);
-void func_8005E0CC(struct MainObj* arg0);
-void func_8005E3E8(struct MainObj* arg0);
+void spike_sled_resume_step(struct MainObj* arg0);
+void spike_sled_patrol(struct MainObj* arg0);
+void spike_sled_fall(struct MainObj* arg0);
+void spike_sled_charge(struct MainObj* arg0);
+void spike_sled_bomb(struct MainObj* arg0);
+void spike_sled_intro(struct MainObj* arg0);
 
-// D_800FDF80
-void func_8005D88C(struct MainObj* arg0);
-void func_8005D8B8(struct MainObj*);
-void func_8005D9C4(struct MainObj*);
+// spike_sled_patrol_funcs
+void spike_sled_patrol_start(struct MainObj* arg0);
+void spike_sled_patrol_drive(struct MainObj*);
+void spike_sled_patrol_turn(struct MainObj*);
 
-// D_800FDF8C
-void func_8005DBC0(struct MainObj*);
+// spike_sled_charge_funcs
+void spike_sled_charge_start(struct MainObj*);
 void func_8005DC58(struct MainObj*);
 void func_8005DED4(struct MainObj*);
-void func_8005DF84(struct MainObj*);
-void func_8005E044(struct MainObj*);
+void spike_sled_charge_approach(struct MainObj*);
+void spike_sled_charge_leap(struct MainObj*);
 
-// D_800FDFA0
+// spike_sled_bomb_funcs
 void func_8005E108(struct MainObj*);
-void func_8005E1BC(struct MainObj*);
+void spike_sled_bomb_rise(struct MainObj*);
 void func_8005E298(struct MainObj*);
 
-// D_800FDFAC
-void func_8005E424(struct MainObj*);
-void func_8005E47C(struct MainObj*);
-void func_8005E500(struct MainObj*);
+// spike_sled_intro_funcs
+void spike_sled_intro_drive(struct MainObj*);
+void spike_sled_intro_fill_health(struct MainObj*);
+void spike_sled_intro_start_fight(struct MainObj*);
 
 // D_800FE168
 extern void (*D_800FE168[])(struct MainObj*);
@@ -7053,11 +7053,11 @@ extern void (*D_800FD9C4[])(struct MainObj*);
 extern void (*D_800FDC48[])(struct MainObj*);
 extern void (*D_800FDD64[])(struct MainObj*);
 extern void (*D_800FDD7C[])(struct MainObj*);
-extern void (*D_800FDF54[])(struct MainObj*);
-extern void (*D_800FDF80[])(struct MainObj*);
-extern void (*D_800FDF8C[])(struct MainObj*);
-extern void (*D_800FDFA0[])(struct MainObj*);
-extern void (*D_800FDFAC[])(struct MainObj*);
+extern void (*spike_sled_state_funcs[])(struct MainObj*);
+extern void (*spike_sled_patrol_funcs[])(struct MainObj*);
+extern void (*spike_sled_charge_funcs[])(struct MainObj*);
+extern void (*spike_sled_bomb_funcs[])(struct MainObj*);
+extern void (*spike_sled_intro_funcs[])(struct MainObj*);
 extern void (*D_800FE19C[])(struct MainObj*);
 extern void (*D_800FE2D4[])(struct MainObj*);
 extern void (*D_800FE6E4[])(struct MainObj*);

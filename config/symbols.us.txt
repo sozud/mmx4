@@ -1227,3 +1227,4 @@ ice_core_check_rebuild = 0x80052614;
 ice_core_shed_ice = 0x800526AC;
 ice_core_face_player = 0x800527C0;
 ice_core_step_funcs = 0x800FC358;
+spike_sled_animations = 0x800FDEE4;
