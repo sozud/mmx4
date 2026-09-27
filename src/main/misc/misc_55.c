@@ -2,61 +2,62 @@
 // 800D3084..800D3388
 #include "common.h"
 
+// sigma_final_fx_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3084);
 
-void func_800D31F8(struct MiscObj* arg0)
+void sigma_final_fx_charge(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
     }
 }
 
-void func_800D323C(struct MiscObj* arg0)
+void sigma_final_fx_gust(struct MiscObj* self)
 {
-    func_8002B694((struct AnimatedObj*)arg0);
-    func_80015DC8(arg0);
-    is_on_screen(arg0);
-    if (func_8002B160(arg0) != 0) {
-        arg0->state = 2;
+    func_8002B694((struct AnimatedObj*)self);
+    func_80015DC8(self);
+    is_on_screen(self);
+    if (func_8002B160(self) != 0) {
+        self->state = 2;
     }
 }
 
-void func_800D3288(struct MiscObj* arg0)
+void sigma_final_fx_follow(struct MiscObj* self)
 {
-    arg0->x_pos.u.hi = arg0->ext.misc_55.owner->x_pos.u.hi;
-    arg0->y_pos.u.hi = arg0->ext.misc_55.owner->y_pos.u.hi;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->ext.misc_55.owner->state == 2) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
+    self->x_pos.u.hi = self->ext.misc_55.owner->x_pos.u.hi;
+    self->y_pos.u.hi = self->ext.misc_55.owner->y_pos.u.hi;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (self->ext.misc_55.owner->state == 2) {
+        self->state = 2;
+        self->unk5 = 0;
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) != 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
+    if (func_8002B160(BASE_OBJECT(self)) != 0) {
+        self->state = 2;
+        self->unk5 = 0;
     }
 }
 
-void func_800D330C(struct MiscObj* arg0)
+void sigma_final_fx_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800D332C(struct MiscObj* arg0)
+void sigma_final_fx_update(struct MiscObj* self)
 {
-    if (arg0->ext.misc_55.owner->ext.main_74.unk94 != 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
+    if (self->ext.misc_55.owner->ext.main_74.death_kind != 0) {
+        self->state = 2;
+        self->unk5 = 0;
     }
-    D_8010F58C[arg0->state](arg0);
+    sigma_final_fx_state_funcs[self->state](self);
 }
 
-void (*D_8010F58C[5])(struct MiscObj*) = {
+void (*sigma_final_fx_state_funcs[5])(struct MiscObj*) = {
     func_800D3084,
-    func_800D31F8,
-    func_800D330C,
-    func_800D323C,
-    func_800D3288,
+    sigma_final_fx_charge,
+    sigma_final_fx_despawn,
+    sigma_final_fx_gust,
+    sigma_final_fx_follow,
 };

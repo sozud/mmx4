@@ -6,82 +6,82 @@ struct AnimationTable12 {
     s32 count;
 };
 
-void (*D_801005F0[12])() = {
+void (*slash_beast_step_funcs[12])() = {
     func_8009216C,
-    func_8006C278,
-    func_8006C288,
-    func_8006C670,
-    func_8006CB14,
+    slash_beast_start_pattern,
+    slash_beast_crescent,
+    slash_beast_decide,
+    slash_beast_jump,
     func_8006CDD4,
-    func_8006CE9C,
+    slash_beast_dash,
     func_8006D3DC,
-    func_8006D69C,
-    func_8006DBE8,
-    func_8006E414,
-    func_8006E674,
+    slash_beast_grab,
+    slash_beast_intro,
+    slash_beast_stagger,
+    slash_beast_high_leap,
 };
 
-void (*D_80100620[3])(struct MainObj*) = {
-    func_8006BFF8,
-    func_8006C07C,
-    func_8006C170,
+void (*slash_beast_death_funcs[3])(struct MainObj*) = {
+    slash_beast_death_start,
+    slash_beast_death_blink,
+    slash_beast_death_finish,
 };
 
-void (*D_8010062C[4])(struct MainObj*) = {
-    func_8006C2C4,
+void (*slash_beast_crescent_funcs[4])(struct MainObj*) = {
+    slash_beast_crescent_jump,
     func_8006C378,
-    func_8006C598,
-    func_8006C61C,
+    slash_beast_crescent_land,
+    slash_beast_crescent_recover,
 };
 
-void (*D_8010063C[2])() = {
+void (*slash_beast_decide_funcs[2])() = {
     func_8006C6AC,
-    func_8006CA80,
+    slash_beast_crouch,
 };
 
-void (*D_80100644[3])(struct MainObj*) = {
+void (*slash_beast_jump_funcs[3])(struct MainObj*) = {
     func_8006CB50,
     func_8006CC3C,
-    func_8006CD80,
+    slash_beast_jump_recover,
 };
 
-void (*D_80100650[5])(struct MainObj*) = {
-    func_8006CED8,
-    func_8006CF2C,
+void (*slash_beast_dash_funcs[5])(struct MainObj*) = {
+    slash_beast_dash_windup,
+    slash_beast_dash_start,
     func_8006CFB8,
     func_8006D280,
-    func_8006D368,
+    slash_beast_dash_turn,
 };
 
-void (*D_80100664[4])(struct MainObj*) = {
-    func_8006D6D8,
-    func_8006D830,
+void (*slash_beast_grab_funcs[4])(struct MainObj*) = {
+    slash_beast_grab_check,
+    slash_beast_grab_windup,
     func_8006D888,
-    func_8006DB04,
+    slash_beast_grab_throw,
 };
 
-void (*D_80100674[8])(struct MainObj*) = {
-    func_8006DC24,
-    func_8006DCF4,
+void (*slash_beast_intro_funcs[8])(struct MainObj*) = {
+    slash_beast_intro_wait_player,
+    slash_beast_intro_wait_warning,
     func_8006DD44,
-    func_8006DF68,
-    func_8006E034,
-    func_8006E260,
-    func_8006E2E4,
-    func_8006E334,
+    slash_beast_intro_leap,
+    slash_beast_intro_land,
+    slash_beast_intro_pose,
+    slash_beast_intro_wait_dialogue,
+    slash_beast_intro_fill_health,
 };
 
-void (*D_80100694[3])(struct MainObj*) = {
+void (*slash_beast_stagger_funcs[3])(struct MainObj*) = {
     func_8006E450,
-    func_8006E594,
-    func_8006E604,
+    slash_beast_stagger_land,
+    slash_beast_stagger_recover,
 };
 
-void (*D_801006A0[4])(struct MainObj*) = {
-    func_8006E6B0,
-    func_8006E750,
-    func_8006E7CC,
-    func_8006E88C,
+void (*slash_beast_high_leap_funcs[4])(struct MainObj*) = {
+    slash_beast_high_leap_jump,
+    slash_beast_high_leap_fall,
+    slash_beast_high_leap_land,
+    slash_beast_high_leap_recover,
 };
 
 struct Unk_unk68 D_801006B0 = { -19, -8, 54, 12 };
@@ -5478,7 +5478,7 @@ union AnimationStep D_80104274[] = {
     { 0x3C000001 },
 };
 
-void* D_80104290[44] = {
+void* sigma_animations[44] = {
     D_80103F10,
     D_80103F2C,
     D_80103FE4,
@@ -5525,96 +5525,96 @@ void* D_80104290[44] = {
     D_80104274,
 };
 
-void (*D_80104340[5])(struct MainObj*) = {
-    func_80083218,
+void (*sigma_intro_funcs[5])(struct MainObj*) = {
+    sigma_intro_wait_player,
     func_8008329C,
-    func_800833D0,
-    func_800834B0,
-    func_80083544,
+    sigma_intro_fill_health,
+    sigma_intro_wait,
+    sigma_intro_finish,
 };
 
-void (*D_80104354[7])(struct MainObj*) = {
-    func_800835B0,
-    func_80083688,
+void (*sigma_cloak_teleport_funcs[7])(struct MainObj*) = {
+    sigma_cloak_teleport_appear,
+    sigma_cloak_teleport_fade_in,
     func_80083710,
     func_800837FC,
-    func_80083954,
-    func_800839B0,
-    func_80083A18,
+    sigma_cloak_teleport_wait_shots,
+    sigma_cloak_teleport_fade_out,
+    sigma_cloak_teleport_finish,
 };
 
-void (*D_80104370[6])() = {
-    func_80083B20,
-    func_80083BB8,
+void (*sigma_cloak_dash_funcs[6])() = {
+    sigma_cloak_dash_appear,
+    sigma_cloak_dash_fade_in,
     func_80083C2C,
-    func_80083D30,
-    func_80083DC8,
-    func_80083E44,
+    sigma_cloak_dash_run,
+    sigma_cloak_dash_fade_out,
+    sigma_cloak_dash_finish,
 };
 
-void (*D_80104388[6])(struct MainObj*) = {
-    func_80083EAC,
-    func_80083F6C,
-    func_80083FFC,
-    func_800840D0,
-    func_80084154,
-    func_800841D4,
+void (*sigma_scythe_spin_funcs[6])(struct MainObj*) = {
+    sigma_scythe_spin_jump,
+    sigma_scythe_spin_rise,
+    sigma_scythe_spin_throw,
+    sigma_scythe_spin_wait,
+    sigma_scythe_spin_land,
+    sigma_scythe_spin_recover,
 };
 
-u8 D_801043A0[4] = { 0x07, 0x04, 0x00, 0x00 };
+u8 sigma_scythe_plant_next[4] = { 0x07, 0x04, 0x00, 0x00 };
 
-void (*D_801043A4[5])(struct MainObj*) = {
-    func_80084254,
-    func_80084338,
-    func_80084394,
-    func_8008442C,
-    func_800844AC,
+void (*sigma_scythe_plant_funcs[5])(struct MainObj*) = {
+    sigma_scythe_plant_jump,
+    sigma_scythe_plant_apex,
+    sigma_scythe_plant_throw,
+    sigma_scythe_plant_land,
+    sigma_scythe_plant_wait,
 };
 
-u8 D_801043B8[4] = { 0x03, 0x03, 0x04, 0x00 };
+u8 sigma_cloak_pattern[4] = { 0x03, 0x03, 0x04, 0x00 };
 
-void (*D_801043BC[4])() = {
-    func_800845C0,
-    func_8008460C,
-    func_800846D0,
-    func_80084724,
+void (*sigma_darts_funcs[4])() = {
+    sigma_darts_start,
+    sigma_darts_spawn,
+    sigma_darts_pose,
+    sigma_darts_wait,
 };
 
-void (*D_801043CC[5])(struct MainObj*) = {
-    func_800847B0,
-    func_80084870,
-    func_80084910,
-    func_8008498C,
-    func_800849FC,
+void (*sigma_scythe_retrieve_funcs[5])(struct MainObj*) = {
+    sigma_scythe_retrieve_jump,
+    sigma_scythe_retrieve_rise,
+    sigma_scythe_retrieve_wait,
+    sigma_scythe_retrieve_land,
+    sigma_scythe_retrieve_recover,
 };
 
-void (*D_801043E0[3])(struct MainObj*) = {
+void (*sigma_eye_laser_funcs[3])(struct MainObj*) = {
     func_80084B14,
-    func_80084CD4,
-    func_80084DB8,
+    sigma_eye_laser_fire,
+    sigma_eye_laser_wait,
 };
 
-void (*D_801043EC[5])() = {
+void (*sigma_cloak_step_funcs[5])() = {
     func_8009216C,
-    func_80084E4C,
-    func_80084570,
-    func_80083A58,
-    func_80083E70,
+    sigma_idle,
+    sigma_cloak_pick_attack,
+    sigma_cloak_teleport,
+    sigma_cloak_dash,
 };
 
-void (*D_80104400[9])() = {
+void (*sigma_step_funcs[9])() = {
     func_8009216C,
-    func_80084E4C,
-    func_80084218,
-    func_80084534,
-    func_80084774,
-    func_80084A40,
-    func_80084A7C,
-    func_80084E10,
-    func_80084E54,
+    sigma_idle,
+    sigma_scythe_spin,
+    sigma_scythe_plant,
+    sigma_darts,
+    sigma_scythe_retrieve,
+    sigma_land_pause,
+    sigma_eye_laser,
+    sigma_pose,
 };
 
-void (*D_80104424[2])() = {
+void (*sigma_fight_funcs[2])() = {
     func_80084EE4,
     func_8008502C,
 };
@@ -5638,37 +5638,37 @@ s16 D_8010442C[16] = {
     (s16)0x001E,
 };
 
-void (*D_8010444C[5])(struct MainObj*) = {
-    func_80085238,
-    func_800852C4,
-    func_800853A4,
+void (*sigma_death_funcs[5])(struct MainObj*) = {
+    sigma_death_start,
+    sigma_death_blink,
+    sigma_death_wait_explosion,
     func_80085460,
-    func_80085580,
+    sigma_death_finish,
 };
 
-void (*D_80104460[4])(struct MainObj*) = {
-    func_80085640,
-    func_800856C4,
-    func_80085768,
-    func_800857C8,
+void (*sigma_cloak_stagger_funcs[4])(struct MainObj*) = {
+    sigma_cloak_stagger_start,
+    sigma_cloak_stagger_trail,
+    sigma_cloak_stagger_fade,
+    sigma_cloak_stagger_finish,
 };
 
-void (*D_80104470[7])(struct MainObj*) = {
-    func_800858DC,
-    func_80085988,
+void (*sigma_reveal_funcs[7])(struct MainObj*) = {
+    sigma_reveal_start,
+    sigma_reveal_fall,
     func_80085A44,
-    func_80085BE4,
-    func_80085C38,
-    func_80085D38,
-    func_80085DCC,
+    sigma_reveal_wait_cloak,
+    sigma_reveal_dialogue,
+    sigma_reveal_fill_health,
+    sigma_reveal_finish,
 };
 
-void (*D_8010448C[5])() = {
-    func_80083574,
-    func_800851FC,
-    func_80085604,
-    func_80085814,
-    func_80085E70,
+void (*sigma_state_funcs[5])() = {
+    sigma_intro,
+    sigma_fight,
+    sigma_death,
+    sigma_cloak_stagger,
+    sigma_reveal,
 };
 
 u8 D_801044A0[8] = { 3, 6, 4, 5, 255, 0, 0, 0 };
@@ -7503,7 +7503,7 @@ union AnimationStep D_801057D4[] = {
     { 0x04000001 },
 };
 
-void* D_80105814[39] = {
+void* sigma_final_animations[39] = {
     D_80105378,
     D_8010538C,
     D_801053A0,
@@ -7545,116 +7545,116 @@ void* D_80105814[39] = {
     D_801057D4,
 };
 
-void (*D_801058B0[5])() = {
-    func_8008D460,
-    func_8008D4E8,
-    func_8008D548,
-    func_8008D590,
+void (*sigma_final_intro_funcs[5])() = {
+    sigma_final_intro_lock_camera,
+    sigma_final_intro_start_music,
+    sigma_final_intro_wait_load,
+    sigma_final_intro_load,
     func_8008D5C8,
 };
 
-void (*D_801058C4[4])() = {
-    func_8008D874,
-    func_8008D8DC,
-    func_8008D95C,
-    func_8008D9C8,
+void (*sigma_final_appear_funcs[4])() = {
+    sigma_final_appear_start,
+    sigma_final_appear_pose,
+    sigma_final_appear_dialogue,
+    sigma_final_appear_fill_health,
 };
 
-u8 D_801058D4[8] = { 0x1C, 0x21, 0x1F, 0x24, 0x1D, 0x22, 0x20, 0x25 };
+u8 sigma_final_laser_animations[8] = { 0x1C, 0x21, 0x1F, 0x24, 0x1D, 0x22, 0x20, 0x25 };
 
-void (*D_801058DC[5])() = {
-    func_8008DC5C,
-    func_8008DC9C,
-    func_8008DD38,
-    func_8008DDE8,
-    func_8008DE5C,
+void (*sigma_final_laser_funcs[5])() = {
+    sigma_final_laser_start,
+    sigma_final_laser_aim,
+    sigma_final_laser_fire,
+    sigma_final_laser_wait,
+    sigma_final_laser_repeat,
 };
 
-void (*D_801058F0[5])() = {
-    func_8008DF1C,
-    func_8008DF8C,
-    func_8008E040,
-    func_8008E0CC,
-    func_8008E14C,
+void (*sigma_final_big_beam_funcs[5])() = {
+    sigma_final_big_beam_start,
+    sigma_final_big_beam_charge,
+    sigma_final_big_beam_fire,
+    sigma_final_big_beam_wait,
+    sigma_final_big_beam_recover,
 };
 
-void (*D_80105904[2])() = {
-    func_8008E1E4,
-    func_8008E244,
+void (*sigma_final_hide_upper_funcs[2])() = {
+    sigma_final_hide_upper_start,
+    sigma_final_hide_upper_wait,
 };
 
-void (*D_8010590C[2])() = {
-    func_8008E354,
-    func_8008E3C0,
+void (*sigma_final_show_upper_funcs[2])() = {
+    sigma_final_show_upper_start,
+    sigma_final_show_upper_wait,
 };
 
-void (*D_80105914[2])() = {
-    func_8008E45C,
-    func_8008E4BC,
+void (*sigma_final_hide_lower_funcs[2])() = {
+    sigma_final_hide_lower_start,
+    sigma_final_hide_lower_wait,
 };
 
-void (*D_8010591C[2])() = {
-    func_8008E5CC,
-    func_8008E638,
+void (*sigma_final_show_lower_funcs[2])() = {
+    sigma_final_show_lower_start,
+    sigma_final_show_lower_wait,
 };
 
-void (*D_80105924[4])(struct MainObj*) = {
-    func_8008E6D4,
+void (*sigma_final_grab_funcs[4])(struct MainObj*) = {
+    sigma_final_grab_start,
     func_8008E748,
-    func_8008E8C8,
-    func_8008E99C,
+    sigma_final_grab_release,
+    sigma_final_grab_finish,
 };
 
-void (*D_80105934[3])(struct MainObj*) = {
-    func_8008EA3C,
-    func_8008EA88,
-    func_8008EAE4,
+void (*sigma_final_spit_funcs[3])(struct MainObj*) = {
+    sigma_final_spit_open,
+    sigma_final_spit_wait,
+    sigma_final_spit_fire,
 };
 
-void (*D_80105940[5])(struct MainObj*) = {
+void (*sigma_final_wind_funcs[5])(struct MainObj*) = {
     func_8008EC48,
-    func_8008ED18,
-    func_8008EDE8,
-    func_8008EED4,
-    func_8008EF94,
+    sigma_final_wind_start,
+    sigma_final_wind_push,
+    sigma_final_wind_push_hard,
+    sigma_final_wind_finish,
 };
 
-void (*D_80105954[2])() = {
-    func_8008F0A4,
-    func_8008F134,
+void (*sigma_final_summon_funcs[2])() = {
+    sigma_final_summon_start,
+    sigma_final_summon_wait,
 };
 
-void (*D_8010595C[14])() = {
+void (*sigma_final_step_funcs[14])() = {
     func_8009216C,
-    func_8008D86C,
+    sigma_final_idle,
     func_8008DAE8,
-    func_8008DAAC,
-    func_8008E404,
-    func_8008E318,
-    func_8008E67C,
-    func_8008E590,
-    func_8008F16C,
-    func_8008DEC4,
-    func_8008E18C,
-    func_8008EBC0,
-    func_8008F01C,
-    func_8008E9B8,
+    sigma_final_appear,
+    sigma_final_show_upper,
+    sigma_final_hide_upper,
+    sigma_final_show_lower,
+    sigma_final_hide_lower,
+    sigma_final_summon,
+    sigma_final_laser,
+    sigma_final_big_beam,
+    sigma_final_spit,
+    sigma_final_wind,
+    sigma_final_grab,
 };
 
-void (*D_80105994[7])() = {
+void (*sigma_final_death_funcs[7])() = {
     func_8008F3F4,
-    func_8008F4BC,
+    sigma_final_death_blink,
     func_8008F578,
-    func_8008F6FC,
-    func_8008F76C,
-    func_8008F7F0,
-    func_8008F884,
+    sigma_final_death_collapse,
+    sigma_final_death_wait_player,
+    sigma_final_death_explosion,
+    sigma_final_death_finish,
 };
 
-void (*D_801059B0[3])(struct MainObj*) = {
-    func_8008D830,
+void (*sigma_final_state_funcs[3])(struct MainObj*) = {
+    sigma_final_intro,
     func_8008F1A8,
-    func_8008F938,
+    sigma_final_death,
 };
 
 struct Unk_unk68 D_801059BC = { -43, -48, 82, -125 };
@@ -8051,7 +8051,7 @@ union AnimationStep D_80105DB4[] = {
     { 0x8C000001 },
 };
 
-void* D_80105DB8[46] = {
+void* general_animations[46] = {
     D_801059E0,
     D_801059E4,
     D_80105A1C,
@@ -8118,9 +8118,9 @@ void* D_80105E84[2] = {
     D_80105E78,
 };
 
-void* D_80105E8C[2] = {
+void* general_scripts[2] = {
     D_80105E7C,
     D_80105E84,
 };
 
-u8 D_80105E94[4] = { 0x09, 0x10, 0x09, 0x10 };
+u8 general_script_weights[4] = { 0x09, 0x10, 0x09, 0x10 };

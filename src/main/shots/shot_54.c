@@ -2,38 +2,39 @@
 // 800ABE08..800AC8C4
 #include "common.h"
 
+// sigma_final_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_54", func_800ABE08);
 
-void func_800AC114(struct ShotObj* arg0)
+void sigma_final_shot_fireball(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer;
+    timer = self->timer;
     if (timer != 0) {
         timer--;
-        arg0->timer = timer;
+        self->timer = timer;
         if (timer == 0) {
-            arg0->y_vel.val = 0;
+            self->y_vel.val = 0;
         }
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(self);
+    func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
 }
 
-void func_800AC180(struct ShotObj* arg0)
+void sigma_lightning_aim(struct ShotObj* self)
 {
-    if (--arg0->timer == 0) {
-        arg0->unk6++;
-        func_8002B93C(MOVING_OBJECT(arg0),
-            func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
-        arg0->x_vel.val *= 4;
-        arg0->y_vel.val *= 4;
+    if (--self->timer == 0) {
+        self->unk6++;
+        func_8002B93C(MOVING_OBJECT(self),
+            func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+        self->x_vel.val *= 4;
+        self->y_vel.val *= 4;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_800AC204(struct ShotObj* self)
+void sigma_lightning_fly(struct ShotObj* self)
 {
     s8 shot_type = 5;
     struct ShotObj* shot;
@@ -68,183 +69,183 @@ void func_800AC204(struct ShotObj* self)
     func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_800AC31C(struct ShotObj* arg0)
+void sigma_lightning_fade(struct ShotObj* self)
 {
-    arg0->timer--;
-    if (arg0->timer == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    self->timer--;
+    if (self->timer == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    func_80015DC8(arg0);
+    func_80015DC8(self);
 }
 
-void func_800AC364(struct ShotObj* arg0)
+void sigma_final_shot_lightning(struct ShotObj* self)
 {
-    D_80109DB8[arg0->unk6](arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    sigma_lightning_funcs[self->unk6](self);
+    func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
 }
 
-void func_800AC3BC(struct ShotObj* arg0)
+void sigma_ice_fall(struct ShotObj* self)
 {
     s32 x_vel;
 
-    if (arg0->unk70 & 8) {
+    if (self->unk70 & 8) {
         if (get_random() & 1) {
             x_vel = FIXED(2);
         } else {
             x_vel = FIXED(-2);
         }
-        arg0->x_vel.val = x_vel;
-        arg0->y_vel.val = 0;
-        arg0->unk28 = 0;
-        arg0->unk2C = 0;
-        arg0->timer = 0x20;
-        arg0->unk6++;
+        self->x_vel.val = x_vel;
+        self->y_vel.val = 0;
+        self->unk28 = 0;
+        self->unk2C = 0;
+        self->timer = 0x20;
+        self->unk6++;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(arg0);
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(self);
 }
 
-void func_800AC440(struct ShotObj* arg0)
+void sigma_ice_slide(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        func_80015D60(arg0, 0x11);
-        arg0->unk6++;
+        func_80015D60(self, 0x11);
+        self->unk6++;
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(arg0);
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(self);
 }
 
-void func_800AC4A8(struct ShotObj* arg0)
+void sigma_ice_melt(struct ShotObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(arg0);
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(self);
 }
 
-void func_800AC4F8(struct ShotObj* arg0)
+void sigma_final_shot_ice(struct ShotObj* self)
 {
-    D_80109DC4[arg0->unk6](arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    sigma_ice_funcs[self->unk6](self);
+    func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
 }
 
-void func_800AC550(struct ShotObj* arg0)
+void sigma_spike_extend(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        arg0->unk50.data = D_80109DA4;
-        arg0->timer = 0xD2;
-        arg0->unk6++;
+        self->unk50.data = D_80109DA4;
+        self->timer = 0xD2;
+        self->unk6++;
     }
-    if (arg0->timer & 1) {
-        func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    if (self->timer & 1) {
+        func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
     }
 }
 
-void func_800AC5BC(struct ShotObj* arg0)
+void sigma_spike_active(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        arg0->timer = 0x3C;
-        arg0->unk50.data = NULL;
-        arg0->unk6++;
+        self->timer = 0x3C;
+        self->unk50.data = NULL;
+        self->unk6++;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
 }
 
-void func_800AC610(struct ShotObj* arg0)
+void sigma_spike_retract(struct ShotObj* self)
 {
-    arg0->timer--;
-    if (arg0->timer == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    self->timer--;
+    if (self->timer == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    if (arg0->timer & 1) {
-        func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    if (self->timer & 1) {
+        func_8002B318(BASE_OBJECT(self), 0x28, 0x28);
     }
 }
 
-void func_800AC66C(struct ShotObj* arg0)
+void sigma_final_shot_spike(struct ShotObj* self)
 {
-    D_80109DD0[arg0->unk6](arg0);
+    sigma_spike_funcs[self->unk6](self);
 }
 
-void func_800AC6A8(struct ShotObj* arg0)
+void sigma_final_shot_lightning_split(struct ShotObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    func_80015DC8(arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x28, 0x28);
+    func_8002B718((struct MovingObj*)self);
+    func_80015DC8(self);
+    func_8002B318((struct BaseObj*)self, 0x28, 0x28);
 }
 
-void func_800AC6E8(struct ShotObj* arg0)
+void sigma_final_shot_resume(struct ShotObj* self)
 {
-    func_8009216C(arg0);
+    func_8009216C(self);
 }
 
-void func_800AC708(struct ShotObj* arg0)
+void sigma_final_shot_idle(struct ShotObj* self)
 {
 }
 
-void func_800AC710(struct ShotObj* arg0)
+void sigma_final_shot_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        func_800AF808(arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        func_800AF808(self);
         return;
     }
 
-    D_80109DDC[arg0->unk5](arg0);
-    CollisionRelated(arg0);
-    func_8002D9BC(arg0);
-    if (arg0->unk5 != 5 && func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x28) != 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    sigma_final_shot_step_funcs[self->unk5](self);
+    CollisionRelated(self);
+    func_8002D9BC(self);
+    if (self->unk5 != 5 && func_8002B1E8(BASE_OBJECT(self), 0x28, 0x28) != 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800AC7CC(struct ShotObj* arg0)
+void sigma_final_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800AC7EC(struct ShotObj* arg0)
+void sigma_final_shot_update(struct ShotObj* self)
 {
-    if (arg0->unk7C->unk94 != 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
+    if (self->unk7C->unk94 != 0) {
+        self->state = 2;
+        self->unk5 = 0;
     }
-    arg0->on_screen = 0;
-    D_80109DF8[arg0->state](arg0);
+    self->on_screen = 0;
+    sigma_final_shot_state_funcs[self->state](self);
 }
 
-u8 func_800AC848(struct ShotObj* arg0, s16 arg1, s16 arg2)
+u8 sigma_final_shot_at_position(struct ShotObj* self, s16 arg1, s16 arg2)
 {
     s16 x;
     s16 y;
 
-    x = arg0->x_pos.i.hi;
+    x = self->x_pos.i.hi;
     if ((x - arg1 >= 0) ? (x - arg1 < 3) : (arg1 - x < 3)) {
-        y = arg0->y_pos.i.hi;
+        y = self->y_pos.i.hi;
         if ((y - arg2 >= 0) ? (y - arg2 < 3) : (arg2 - y < 3)) {
             return 1;
         }
@@ -270,36 +271,36 @@ u8 D_80109DAC[4] = { 0xFE, 0, 0x0B, 0x0C };
 
 s16 D_80109DB0[4] = { 2, 1, 0, -1 };
 
-void (*D_80109DB8[3])(struct ShotObj*) = {
-    func_800AC180,
-    func_800AC204,
-    func_800AC31C,
+void (*sigma_lightning_funcs[3])(struct ShotObj*) = {
+    sigma_lightning_aim,
+    sigma_lightning_fly,
+    sigma_lightning_fade,
 };
 
-void (*D_80109DC4[3])(struct ShotObj*) = {
-    func_800AC3BC,
-    func_800AC440,
-    func_800AC4A8,
+void (*sigma_ice_funcs[3])(struct ShotObj*) = {
+    sigma_ice_fall,
+    sigma_ice_slide,
+    sigma_ice_melt,
 };
 
-void (*D_80109DD0[3])(struct ShotObj*) = {
-    func_800AC550,
-    func_800AC5BC,
-    func_800AC610,
+void (*sigma_spike_funcs[3])(struct ShotObj*) = {
+    sigma_spike_extend,
+    sigma_spike_active,
+    sigma_spike_retract,
 };
 
-void (*D_80109DDC[7])(struct ShotObj*) = {
-    func_800AC6E8,
-    func_800AC708,
-    func_800AC114,
-    func_800AC364,
-    func_800AC4F8,
-    func_800AC66C,
-    func_800AC6A8,
+void (*sigma_final_shot_step_funcs[7])(struct ShotObj*) = {
+    sigma_final_shot_resume,
+    sigma_final_shot_idle,
+    sigma_final_shot_fireball,
+    sigma_final_shot_lightning,
+    sigma_final_shot_ice,
+    sigma_final_shot_spike,
+    sigma_final_shot_lightning_split,
 };
 
-void (*D_80109DF8[])(struct ShotObj*) = {
+void (*sigma_final_shot_state_funcs[])(struct ShotObj*) = {
     func_800ABE08,
-    func_800AC710,
-    func_800AC7CC,
+    sigma_final_shot_run,
+    sigma_final_shot_despawn,
 };

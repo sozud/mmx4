@@ -1,37 +1,37 @@
 #include "common.h"
 #include "func_tables.h"
 
-void (*D_80105EB8[3])() = { func_80090470, func_80090508, func_800905D4 };
-void (*D_80105EC4[6])() = {
-    func_80090720,
-    func_80090838,
-    func_8009093C,
-    func_8009099C,
-    func_80090A28,
-    func_80090AC0,
+void (*general_fly_funcs[3])() = { general_fly_descend, general_fly_start, func_800905D4 };
+void (*general_punch_funcs[6])() = {
+    general_punch_rise,
+    general_punch_launch,
+    general_punch_wait,
+    general_punch_rings,
+    general_punch_wait_return,
+    general_punch_recover,
 };
-void (*D_80105EDC[4])() = { func_80090BE0, func_80090C54, func_80090CFC, func_80090D24 };
-void (*D_80105EEC[6])(struct MainObj*) = {
-    func_80090E2C,
-    func_80090F0C,
-    func_80090FC0,
-    func_80091008,
-    func_800910E0,
-    func_8009114C,
+void (*general_orbs_funcs[4])() = { general_orbs_descend, general_orbs_fire, general_orbs_wait, general_orbs_recover };
+void (*general_slam_funcs[6])(struct MainObj*) = {
+    general_slam_windup,
+    general_slam_fall,
+    general_slam_land,
+    general_slam_rise,
+    general_slam_ascend,
+    general_slam_leave,
 };
-void (*D_80105F04[7])() = {
+void (*general_step_funcs[7])() = {
     func_8009216C,
-    func_80090BD4,
+    general_resume_step,
     func_8009027C,
-    func_800906E4,
-    func_80090B04,
-    func_80090D6C,
-    func_800911DC,
+    general_fly,
+    general_punch,
+    general_orbs,
+    general_slam,
 };
-void (*D_80105F20[5])() = {
-    func_80091448,
-    func_800914EC,
+void (*general_death_funcs[5])() = {
+    general_death_start,
+    general_death_blink,
     func_800915C4,
-    func_80091754,
+    general_death_wait_explosion,
     func_800917AC,
 };
