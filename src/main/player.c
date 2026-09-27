@@ -1947,13 +1947,13 @@ void func_80035048(struct PlayerObj* arg0)
 s32 func_800350A4(struct PlayerObj* arg0, s32 arg1)
 {
     if (arg0->unk2 == 0) {
-        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 0);
     } else if (D_8011AF60[arg1] == 0) {
-        arg0->unk38 = (s32*)((s32)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
-        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
+        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 0);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 0);
     } else {
-        arg0->unk38 = (s32*)((s32)SP_PLAYER_GFX + SP_PLAYER_GFX[1]);
-        arg0->unk3C = (s32)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[5];
+        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 1);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 5);
     }
 
     return func_80015D60(arg0, arg1);

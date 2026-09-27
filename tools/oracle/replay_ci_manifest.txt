@@ -39,3 +39,4 @@ tools/oracle/recordings/stage-7-boss.mmx4r 6a3519ca89e4038eba263d600a1a6eec98441
 tools/oracle/recordings/stage-8-boss.mmx4r 12be6b440aa9d43b0ceb620cbf9660ce2d81e7c94d5c64db0d78d74f07b85296
 tools/oracle/recordings/stage-11-boss.mmx4r a6a7ee288ddffd4b09136703b9d96445fb0d1863ebecd03cd07fa076c5bcfb38
 tools/oracle/recordings/stage-12-boss.mmx4r 2c3a63b20b7a9b4a9dbef4a93b0899b14781ec17a64d094f705a8f21dc6eb7d6
+tools/oracle/recordings/stage-11-boss-zero-iris.mmx4r 6785290ff9592a265291ba1b535e9c2cd54975fa95b7e2b117b75290b965a1c0

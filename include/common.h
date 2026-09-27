@@ -4011,6 +4011,7 @@ extern struct Unk_unk68 D_80105370;
 extern u8 sigma_final_laser_animations[8];
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
+extern struct Unk_unk68 D_80107DFC[];
 extern struct Unk_unk68 D_801079F8[];
 extern struct Unk_unk68 D_80107A78[];
 extern struct Unk_unk68 D_80107B78[];

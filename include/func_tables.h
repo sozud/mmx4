@@ -3392,11 +3392,12 @@ void magma_dragoon_death(struct MainObj* arg0);
 
 // D_80103BDC
 void func_80080700(struct MainObj*);
-void func_80080834(void);
+void func_80080834(struct MainObj*);
 void func_80080D20(struct BarObj* arg0);
 void func_800810C4(struct MainObj*);
 
 // D_80103BEC
+extern void (*D_80103BEC[])(struct MainObj*);
 void func_8009216C(void* arg0);
 void func_80081104(struct MainObj* arg0);
 void func_80081198(struct MainObj *arg0);
@@ -3409,8 +3410,8 @@ void func_80082014(struct MainObj *arg0);
 // D_80103C0C
 extern void (*D_80103C0C[])(struct MainObj*);
 void func_80080D5C(struct MainObj*);
-void func_80080DF4(void);
-void func_80080F04(void);
+void func_80080DF4(struct MainObj*);
+void func_80080F04(struct MainObj*);
 void func_8008107C(struct MainObj*);
 
 // D_80103C1C
@@ -3430,28 +3431,28 @@ void func_80081624(struct MainObj*);
 
 // D_80103C4C
 extern void (*D_80103C4C[])(struct MainObj*);
-void func_80081718(void);
+void func_80081718(struct MainObj*);
 
 // D_80103C50
 extern void (*D_80103C50[])(struct MainObj*);
 void func_8008186C(struct MainObj*);
-void func_800818C4(void);
+void func_800818C4(struct MainObj*);
 void func_80081954(struct MainObj*);
-void func_800819C4(void);
-void func_80081AD0(void);
+void func_800819C4(struct MainObj*);
+void func_80081AD0(struct MainObj*);
 
 // D_80103C64
 extern void (*D_80103C64[])(struct MainObj*);
-void func_80081BA0(void);
+void func_80081BA0(struct MainObj*);
 void func_80081CF8(struct MainObj*);
-void func_80081D30(void);
+void func_80081D30(struct MainObj*);
 
 // D_80103C70
 extern void (*D_80103C70[])(struct MainObj*);
 void func_80082050(struct MainObj*);
 void func_800820A4(struct MainObj*);
 void func_80082170(struct MainObj* arg0);
-void func_8008225C(void);
+void func_8008225C(struct MainObj*);
 void func_80082354(struct MainObj*);
 
 // D_80103E84

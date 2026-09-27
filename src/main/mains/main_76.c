@@ -171,7 +171,61 @@ void func_80091E38(struct MainObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091EC4);
 
-INCLUDE_ASM("main/nonmatchings/mains/main_76", func_80091FC8);
+extern s32 D_80105FC0[2];
+
+void func_80091FC8(struct MainObj* self)
+{
+    s8 step;
+    s32 speed;
+
+    step = self->unk6;
+    if (step == 0) {
+        self->unk6 = step + 1;
+        if (g_Player.x_pos.val < self->x_pos.val) {
+            self->unk20 = D_80105FC0[self->unk63 - 5];
+        } else {
+            self->unk20 = -D_80105FC0[self->unk63 - 5];
+        }
+        self->unk28 = 0x3000;
+        self->unk24 = 0;
+        self->unk2C = 0;
+        if (self->unk63 == 5) {
+            self->unk61 = 0x12;
+        } else {
+            self->unk61 = 1;
+        }
+    }
+
+    func_8002B694(ANIMATED_OBJECT(self));
+
+    speed = self->unk20;
+    if (speed < 0) {
+        speed = -speed;
+    }
+    if (speed < 0x6000) {
+        self->unk20 = 0;
+        self->unk28 = 0;
+    }
+    if (self->unk70 & 3) {
+        self->unk20 = 0;
+        self->unk28 = 0;
+    }
+
+    if ((s8)self->unk61 % 9 != 0) {
+        self->unk42 &= 0x7FFF;
+    } else {
+        self->unk42 |= 0x8000;
+    }
+
+    self->unk61--;
+    if (self->unk61 == 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk42 &= 0x7FFF;
+    }
+}
 
 void func_8009216C(void* arg0)
 {

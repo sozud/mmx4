@@ -39,10 +39,7 @@ void func_800A7104(struct ShotObj* arg0)
 
 void func_800A7208(struct ShotObj* arg0)
 {
-    struct WeaponObj* weapon;
-
-    weapon = arg0->unk7C;
-    weapon->unk84.byte--;
+    MAIN_OBJECT(arg0->unk7C)->ext.main_66.pad84--;
     arg0->on_screen = 0;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

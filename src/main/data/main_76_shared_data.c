@@ -1,6 +1,6 @@
 #include "common.h"
 
-u16 D_80105FC0[4] = { 0, 3, 0, 10 };
+s32 D_80105FC0[2] = { FIXED(3), FIXED(10) };
 
 u8 D_80105FC8[13][3] = {
     { 0x4F, 0x4F, 0x3F },
