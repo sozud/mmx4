@@ -264,7 +264,7 @@ void func_8007BFB8(struct MainObj *arg0);
 void func_8007C2D0(struct MainObj *arg0);
 void cyber_peacock_update(struct MainObj *arg0);
 void magma_dragoon_update(struct MainObj* arg0);
-void func_800806A0(struct MainObj* arg0);
+void iris_update(struct MainObj* arg0);
 void func_80082434(struct MainObj *arg0);
 void sigma_update(struct MainObj* arg0);
 void func_80085F08(struct MainObj* arg0);
@@ -394,7 +394,7 @@ void func_800A5348(struct ShotObj*);
 void func_800A62F0(struct ShotObj*);
 void func_800A6374(struct ShotObj*);
 void func_800A6960(struct ShotObj*);
-void func_800A6FCC(struct ShotObj*);
+void iris_shot_update(struct ShotObj*);
 void func_800A7AF0(struct ShotObj*);
 void sigma_shot_update(struct ShotObj*);
 void func_80098D64(struct ShotObj*);
@@ -575,7 +575,7 @@ void func_800CF144(struct MiscObj* arg0);
 void func_800CF2B8(struct MiscObj* arg0);
 void func_800946F0(struct MiscObj* arg0);
 void func_800CF754(struct MiscObj* arg0);
-void func_800CF790(struct MiscObj* arg0);
+void iris_intro_crystal_update(struct MiscObj* arg0);
 void func_800CFE5C(struct MiscObj* arg0);
 void func_80097DD8(struct MiscObj* arg0);
 void func_800CFE98(struct MiscObj* arg0);
@@ -3390,70 +3390,70 @@ void func_8007DD98(struct MainObj*);
 void func_8007FD24(struct MainObj*);
 void magma_dragoon_death(struct MainObj* arg0);
 
-// D_80103BDC
+// iris_state_funcs
 void func_80080700(struct MainObj*);
 void func_80080834(struct MainObj*);
-void func_80080D20(struct BarObj* arg0);
-void func_800810C4(struct MainObj*);
+void iris_death(struct BarObj* arg0);
+void iris_despawn(struct MainObj*);
 
-// D_80103BEC
-extern void (*D_80103BEC[])(struct MainObj*);
+// iris_step_funcs
+extern void (*iris_step_funcs[])(struct MainObj*);
 void func_8009216C(void* arg0);
-void func_80081104(struct MainObj* arg0);
-void func_80081198(struct MainObj *arg0);
-void func_800816DC(struct MainObj *arg0);
-void func_80081830(struct MainObj *arg0);
-void func_80081B64(struct MainObj *arg0);
+void iris_robot_decide(struct MainObj* arg0);
+void iris_intro(struct MainObj *arg0);
+void iris_robot_hover(struct MainObj *arg0);
+void iris_robot_dash(struct MainObj *arg0);
+void iris_robot_release_crystal(struct MainObj *arg0);
 void func_80081E44(struct MainObj* arg0);
-void func_80082014(struct MainObj *arg0);
+void iris_crystal_drop(struct MainObj *arg0);
 
-// D_80103C0C
-extern void (*D_80103C0C[])(struct MainObj*);
-void func_80080D5C(struct MainObj*);
+// iris_death_funcs
+extern void (*iris_death_funcs[])(struct MainObj*);
+void iris_death_start(struct MainObj*);
 void func_80080DF4(struct MainObj*);
-void func_80080F04(struct MainObj*);
-void func_8008107C(struct MainObj*);
+void iris_death_wait_explosion(struct MainObj*);
+void iris_death_finish(struct MainObj*);
 
-// D_80103C1C
-extern void (*D_80103C1C[])(struct MainObj*);
-void func_800811D4(struct MainObj*);
-void func_80081230(struct MainObj*);
-void func_8008127C(struct MainObj*);
-void func_800812E4(struct MainObj*);
-void func_8008134C(struct MainObj*);
-void func_800813BC(struct MainObj*);
-void func_80081404(struct MainObj*);
-void func_800814E8(struct MainObj* arg0);
-void func_80081508(struct MainObj*);
-void func_80081564(struct MainObj*);
-void func_800815B8(struct MainObj*);
-void func_80081624(struct MainObj*);
+// iris_intro_funcs
+extern void (*iris_intro_funcs[])(struct MainObj*);
+void iris_intro_wait_player(struct MainObj*);
+void iris_intro_wait_camera(struct MainObj*);
+void iris_intro_warning(struct MainObj*);
+void iris_intro_wait_warning(struct MainObj*);
+void iris_intro_dialogue(struct MainObj*);
+void iris_intro_wait_dialogue(struct MainObj*);
+void iris_intro_toss_crystal(struct MainObj*);
+void iris_intro_wait_transform(struct MainObj* arg0);
+void iris_intro_transform(struct MainObj*);
+void iris_intro_pose(struct MainObj*);
+void iris_intro_voice(struct MainObj*);
+void iris_intro_fill_health(struct MainObj*);
 
-// D_80103C4C
-extern void (*D_80103C4C[])(struct MainObj*);
+// iris_robot_hover_funcs
+extern void (*iris_robot_hover_funcs[])(struct MainObj*);
 void func_80081718(struct MainObj*);
 
-// D_80103C50
-extern void (*D_80103C50[])(struct MainObj*);
-void func_8008186C(struct MainObj*);
+// iris_robot_dash_funcs
+extern void (*iris_robot_dash_funcs[])(struct MainObj*);
+void iris_robot_dash_land(struct MainObj*);
 void func_800818C4(struct MainObj*);
-void func_80081954(struct MainObj*);
-void func_800819C4(struct MainObj*);
+void iris_robot_dash_run(struct MainObj*);
+void iris_robot_dash_laser(struct MainObj*);
 void func_80081AD0(struct MainObj*);
 
-// D_80103C64
-extern void (*D_80103C64[])(struct MainObj*);
+// iris_robot_release_crystal_funcs
+extern void (*iris_robot_release_crystal_funcs[])(struct MainObj*);
 void func_80081BA0(struct MainObj*);
-void func_80081CF8(struct MainObj*);
-void func_80081D30(struct MainObj*);
+void iris_robot_release_crystal_wait(struct MainObj*);
+void iris_robot_release_crystal_finish(struct MainObj*);
 
-// D_80103C70
-extern void (*D_80103C70[])(struct MainObj*);
-void func_80082050(struct MainObj*);
-void func_800820A4(struct MainObj*);
-void func_80082170(struct MainObj* arg0);
-void func_8008225C(struct MainObj*);
-void func_80082354(struct MainObj*);
+// iris_crystal_drop_funcs
+extern void (*iris_crystal_drop_funcs[])(struct MainObj*);
+void iris_crystal_drop_fall(struct MainObj*);
+void iris_crystal_drop_chase(struct MainObj*);
+void iris_crystal_drop_aim(struct MainObj* arg0);
+void iris_crystal_drop_fire(struct MainObj*);
+void iris_crystal_drop_return(struct MainObj*);
 
 // D_80103E84
 extern void (*D_80103E84[])(struct MainObj*);
@@ -4875,37 +4875,37 @@ void func_800A6DF4(struct ShotObj*);
 void func_800A6DCC(struct ShotObj*);
 void func_800A6DEC(struct ShotObj*);
 
-// D_801099E8
-extern void (*D_801099E8[])(struct ShotObj*);
+// iris_shot_state_funcs
+extern void (*iris_shot_state_funcs[])(struct ShotObj*);
 void func_800A7008(struct ShotObj*);
-void func_800A7104(struct ShotObj*);
-void func_800A7208(struct ShotObj*);
-void func_800A7240(struct ShotObj*);
-void func_800A7318(struct ShotObj*);
-void func_800A73A4(struct ShotObj*);
+void iris_drone_run(struct ShotObj*);
+void iris_drone_despawn(struct ShotObj*);
+void iris_laser_init(struct ShotObj*);
+void iris_laser_run(struct ShotObj*);
+void iris_laser_despawn(struct ShotObj*);
 void func_800A73C4(struct ShotObj*);
-void func_800A7458(struct ShotObj*);
-void func_800A74E4(struct ShotObj*);
+void iris_pillar_run(struct ShotObj*);
+void iris_pillar_despawn(struct ShotObj*);
 
-// D_80109A0C
-extern void (*D_80109A0C[])(struct ShotObj*);
-void func_800A7504(struct ShotObj*);
-void func_800A7570(struct ShotObj*);
-void func_800A7600(struct ShotObj*);
+// iris_drone_funcs
+extern void (*iris_drone_funcs[])(struct ShotObj*);
+void iris_drone_launch(struct ShotObj*);
+void iris_drone_brake(struct ShotObj*);
+void iris_drone_hover(struct ShotObj*);
 void func_800A766C(struct ShotObj*);
-void func_800A77D8(struct ShotObj*);
-void func_800A7820(struct ShotObj*);
+void iris_drone_burst(struct ShotObj*);
+void iris_drone_explode(struct ShotObj*);
 
-// D_80109A24
-extern void (*D_80109A24[])(struct ShotObj*);
-void func_800A7878(struct ShotObj*);
-void func_800A7928(struct ShotObj*);
-void func_800A79A4(struct ShotObj*);
+// iris_laser_funcs
+extern void (*iris_laser_funcs[])(struct ShotObj*);
+void iris_laser_charge(struct ShotObj*);
+void iris_laser_fire(struct ShotObj*);
+void iris_laser_end(struct ShotObj*);
 
-// D_80109A30
-extern void (*D_80109A30[])(struct ShotObj*);
-void func_800A79E0(struct ShotObj*);
-void func_800A7A54(struct ShotObj*);
+// iris_pillar_funcs
+extern void (*iris_pillar_funcs[])(struct ShotObj*);
+void iris_pillar_fire(struct ShotObj*);
+void iris_pillar_end(struct ShotObj*);
 
 // D_80109A78
 extern void (*D_80109A78[])(struct ShotObj*);
@@ -6520,19 +6520,19 @@ void func_800CF640(struct MiscObj*);
 void func_800CF660(struct MiscObj*);
 void func_800CF708(struct MiscObj*);
 
-// D_8010EF20
-extern void (*D_8010EF20[])(struct MiscObj*);
-void func_800CF7CC(struct MiscObj* arg0);
-void func_800CF824(struct MiscObj*);
+// iris_intro_crystal_state_funcs
+extern void (*iris_intro_crystal_state_funcs[])(struct MiscObj*);
+void iris_intro_crystal_run(struct MiscObj* arg0);
+void iris_intro_crystal_despawn(struct MiscObj*);
 
-// D_8010EF28
-extern void (*D_8010EF28[])(struct MiscObj*);
-void func_800CF844(struct MiscObj*);
-void func_800CF898(struct MiscObj*);
-void func_800CF8F0(struct MiscObj*);
+// iris_intro_crystal_step_funcs
+extern void (*iris_intro_crystal_step_funcs[])(struct MiscObj*);
+void iris_intro_crystal_start(struct MiscObj*);
+void iris_intro_crystal_rise(struct MiscObj*);
+void iris_intro_crystal_charge(struct MiscObj*);
 void func_800CF950(struct MiscObj*);
-void func_800CFAC8(struct MiscObj*);
-void func_800CFB20(struct MiscObj*);
+void iris_intro_crystal_wait(struct MiscObj*);
+void iris_intro_crystal_leave(struct MiscObj*);
 
 // D_8010EFBC
 extern void (*D_8010EFBC[])(struct MiscObj*);
@@ -7103,7 +7103,7 @@ extern void (*D_800FFBB8[])(struct MainObj*);
 extern void (*D_800FFBC0[])(struct MainObj*);
 extern void (*D_800FFBC8[])(struct MainObj*);
 extern void (*D_800FFC3C[])(struct MainObj*);
-extern void (*D_80103BDC[])(struct MainObj*);
+extern void (*iris_state_funcs[])(struct MainObj*);
 extern void (*sigma_intro_funcs[])(struct MainObj*);
 extern void (*D_80104F3C[])(struct MainObj*);
 

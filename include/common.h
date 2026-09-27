@@ -1282,17 +1282,18 @@ struct Main67Ext {
 
 struct Main66Ext {
     struct EffectObj* effect;
-    u8 pad84;
-    u8 unk85;
-    u8 unk86;
-    u8 unk87;
-    u8 pad88;
-    u8 unk89;
-    u8 unk8A;
-    u8 pad8B;
-    u8 unk8C;
-    u8 pad8D[7];
-    struct MainObj* unk94;
+    u8 drone_count;
+    u8 hover_timer;
+    u8 crystal_released;
+    u8 release_countdown;
+    u8 flash_timer;
+    u8 trail_write;
+    u8 trail_read;
+    u8 trail_target;
+    u8 active;
+    u8 blink_timer;
+    u8 pad8E[6];
+    struct MainObj* partner;
 };
 
 struct Main70Ext {
@@ -4831,7 +4832,7 @@ void func_800889A4(struct BaseObj*);
 void func_800889DC(struct MainObj*);
 void func_80092E2C(struct VisualObj*, struct PlayerObj*, s32);
 void func_80093524(struct WeaponObj*);
-void func_800A7A90(struct ShotObj*);
+void iris_drone_move(struct ShotObj*);
 void func_800AFB90(struct VisualObj*);
 void func_800BC3E8(struct EffectObj*);
 void func_800427C0(struct MainObj*);

@@ -1211,3 +1211,6 @@ sigma_final_shot_at_position = 0x800AC848;
 general_pick_script = 0x8008FA88;
 general_step_funcs = 0x80105F04;
 general_death_funcs = 0x80105F20;
+iris_face_player = 0x80082404;
+iris_animations = 0x80103B48;
+iris_step_funcs = 0x80103BEC;

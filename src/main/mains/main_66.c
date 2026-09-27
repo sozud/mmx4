@@ -2,68 +2,71 @@
 // 800806A0..80082434
 #include "common.h"
 
-void func_800806A0(struct MainObj* arg0)
+void iris_update(struct MainObj* self)
 {
-    D_80103BDC[arg0->state](arg0);
-    if (arg0->unk2 == 0) {
-        CollisionRelated(PLAYER_OBJECT(arg0));
+    iris_state_funcs[self->state](self);
+    if (self->unk2 == 0) {
+        CollisionRelated(PLAYER_OBJECT(self));
     }
 }
 
+// iris_init
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080700);
 
+// iris_run
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080834);
 
-void func_80080D20(struct BarObj* arg0)
+void iris_death(struct BarObj* self)
 {
-    D_80103C0C[arg0->unk5](arg0);
+    iris_death_funcs[self->unk5](self);
 }
 
-void func_80080D5C(struct MainObj* arg0)
+void iris_death_start(struct MainObj* self)
 {
     struct MainObj* other;
 
     g_Player.unkBA = 0;
     func_80036AE4(0x14, g_Player.unk15);
-    arg0->unk5 = 1;
-    other = arg0->ext.main_66.unk94;
-    arg0->unk42 &= 0x7FFF;
+    self->unk5 = 1;
+    other = self->ext.main_66.partner;
+    self->unk42 &= 0x7FFF;
     other->unk42 &= 0x7FFF;
-    func_80015D60(arg0->ext.main_66.unk94, 8);
-    arg0->unk7C = 0x7F;
-    arg0->unk7E = 0x19;
-    arg0->unk61 = 0x19;
-    func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+    func_80015D60(self->ext.main_66.partner, 8);
+    self->unk7C = 0x7F;
+    self->unk7E = 0x19;
+    self->unk61 = 0x19;
+    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
 }
 
+// iris_death_blink
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80080DF4);
 
-void func_80080F04(struct MainObj* self)
+void iris_death_wait_explosion(struct MainObj* self)
 {
     struct EffectObj* effect;
     struct MainObj* linked;
 
     self->on_screen = 0;
-    self->ext.main_66.unk94->on_screen = 0;
+    self->ext.main_66.partner->on_screen = 0;
     self->on_screen = 0;
     effect = self->ext.main_66.effect;
 
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
             if (self->unk7E-- == 0) {
-                linked = self->ext.main_66.unk94;
+                linked = self->ext.main_66.partner;
                 linked->unk42 ^= 0x8000;
                 self->unk7E = 5;
                 self->unk42 ^= 0x8000;
             }
-            func_8002B318(BASE_OBJECT(self->ext.main_66.unk94), 0x60, 0x60);
+            func_8002B318(BASE_OBJECT(self->ext.main_66.partner), 0x60, 0x60);
         } else {
-            linked = self->ext.main_66.unk94;
+            linked = self->ext.main_66.partner;
             if (linked->active != 0) {
                 linked->unk5 = 1;
             }
-            self->unk15 = self->ext.main_66.unk94->unk15 ^ 0x40;
-            self->x_pos.i.hi = self->ext.main_66.unk94->x_pos.i.hi;
+            self->unk15 = self->ext.main_66.partner->unk15 ^ 0x40;
+            self->x_pos.i.hi = self->ext.main_66.partner->x_pos.i.hi;
             self->y_pos.i.hi = 0x1CA;
             self->unk16 = 0;
             func_80015D60(self, 0x23);
@@ -84,7 +87,7 @@ void func_80080F04(struct MainObj* self)
     self->unk5 = 3;
 }
 
-void func_8008107C(struct MainObj* self)
+void iris_death_finish(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         engine_obj.unkF = 0x40;
@@ -92,111 +95,111 @@ void func_8008107C(struct MainObj* self)
     func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
 }
 
-void func_800810C4(struct MainObj* arg0)
+void iris_despawn(struct MainObj* self)
 {
-    if (arg0->unk5 == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+    if (self->unk5 == 0) {
+        func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
     } else {
-        arg0->on_screen = 0;
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        self->on_screen = 0;
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_80081104(struct MainObj* arg0)
+void iris_robot_decide(struct MainObj* self)
 {
     s8 state;
 
-    if ((arg0->ext.main_66.unk86 == 0) && (--arg0->ext.main_66.unk87 == 0)) {
-        func_80015D60(arg0, 0x20);
-        arg0->collision_data = (const u16*)D_80107E84;
+    if ((self->ext.main_66.crystal_released == 0) && (--self->ext.main_66.release_countdown == 0)) {
+        func_80015D60(self, 0x20);
+        self->collision_data = (const u16*)D_80107E84;
         state = 5;
     } else {
-        func_80015D60(arg0, 1);
-        func_8001540C(2, 0xE1, arg0);
+        func_80015D60(self, 1);
+        func_8001540C(2, 0xE1, self);
         state = 3;
     }
-    arg0->unk5 = state;
-    arg0->unk6 = 0;
+    self->unk5 = state;
+    self->unk6 = 0;
 }
 
-void func_80081198(struct MainObj* arg0)
+void iris_intro(struct MainObj* self)
 {
-    D_80103C1C[arg0->unk6](arg0);
+    iris_intro_funcs[self->unk6](self);
 }
 
-void func_800811D4(struct MainObj* arg0)
+void iris_intro_wait_player(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (g_Player.x_pos.i.hi >= 0x80B) {
         background_objects[0].unk26 = 0x7F0;
         background_objects[0].unk24 = 0x830;
-        arg0->unk6 = 1;
+        self->unk6 = 1;
     }
 }
 
-void func_80081230(struct MainObj* arg0)
+void iris_intro_wait_camera(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (background_objects[0].x_pos.i.hi == 0x7F0) {
         func_80036AE4(0x15, 0);
-        arg0->unk6 = 2;
+        self->unk6 = 2;
     }
 }
 
-void func_8008127C(struct MainObj* arg0)
+void iris_intro_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (g_Player.unkC0 == -1) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x18;
-            arg0->ext.main_66.effect = effect;
+            self->ext.main_66.effect = effect;
         }
-        arg0->unk6 = 3;
+        self->unk6 = 3;
     }
 }
 
-void func_800812E4(struct MainObj* arg0)
+void iris_intro_wait_warning(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.main_66.effect->active == 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->ext.main_66.effect->active == 0) {
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
-        engine_obj.boss_ptr = arg0;
-        arg0->unk7C = 0x3C;
-        arg0->unk6 = 4;
+        engine_obj.boss_ptr = self;
+        self->unk7C = 0x3C;
+        self->unk6 = 4;
     }
 }
 
-void func_8008134C(struct MainObj* arg0)
+void iris_intro_dialogue(struct MainObj* self)
 {
     s8* state;
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
         state = &engine_obj.character_state.bytes[9];
         func_8002217C(0x20, 0xFF, *state);
         *state = 1;
-        arg0->unk6 = 5;
+        self->unk6 = 5;
     }
 }
 
-void func_800813BC(struct MainObj* arg0)
+void iris_intro_wait_dialogue(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (abc_object.unkC == 0) {
-        arg0->unk7C = 0x28;
-        arg0->unk6 = 6;
+        self->unk7C = 0x28;
+        self->unk6 = 6;
     }
 }
 
-void func_80081404(struct MainObj* self)
+void iris_intro_toss_crystal(struct MainObj* self)
 {
     struct MiscObj* obj;
 
@@ -223,113 +226,115 @@ void func_80081404(struct MainObj* self)
     }
 }
 
-void func_800814E8(struct MainObj* arg0)
+void iris_intro_wait_transform(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_80081508(struct MainObj* arg0)
+void iris_intro_transform(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(arg0, 0x1F);
-        arg0->unk7C = 0xC8;
-        arg0->unk6 = 9;
+        func_80015D60(self, 0x1F);
+        self->unk7C = 0xC8;
+        self->unk6 = 9;
     }
 }
 
-void func_80081564(struct MainObj* arg0)
+void iris_intro_pose(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(arg0, 0);
-        arg0->unk6 = 0xA;
+        func_80015D60(self, 0);
+        self->unk6 = 0xA;
     }
 }
 
-void func_800815B8(struct MainObj* arg0)
+void iris_intro_voice(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        func_8001540C(2, 0xDF, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        func_8001540C(2, 0xDF, self);
     }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk6 = 0xB;
-        arg0->unk7E = 3;
+    if (self->animation_step.fields.event == 1) {
+        self->unk6 = 0xB;
+        self->unk7E = 3;
         func_800921E8(9);
     }
 }
 
-void func_80081624(struct MainObj* arg0)
+void iris_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (func_8009227C() == 0) {
-        if (--arg0->unk7E == 0) {
+        if (--self->unk7E == 0) {
             func_8001540C(0, 0xE, 0);
-            arg0->unk7E = 3;
+            self->unk7E = 3;
         }
-        if (++arg0->unk5C == 0x30) {
-            arg0->ext.main_66.unk8C = 1;
-            func_80015D60(arg0, 1);
-            func_8001540C(2, 0xE1, arg0);
-            arg0->unk5 = 3;
-            arg0->unk6 = 0;
+        if (++self->unk5C == 0x30) {
+            self->ext.main_66.active = 1;
+            func_80015D60(self, 1);
+            func_8001540C(2, 0xE1, self);
+            self->unk5 = 3;
+            self->unk6 = 0;
             func_80036B18();
         }
     }
 }
 
-void func_800816DC(struct MainObj* arg0)
+void iris_robot_hover(struct MainObj* self)
 {
-    D_80103C4C[arg0->unk6](arg0);
+    iris_robot_hover_funcs[self->unk6](self);
 }
 
+// iris_robot_hover_chase
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081718);
 
-void func_80081830(struct MainObj* arg0)
+void iris_robot_dash(struct MainObj* self)
 {
-    D_80103C50[arg0->unk6](arg0);
+    iris_robot_dash_funcs[self->unk6](self);
 }
 
-void func_8008186C(struct MainObj* arg0)
+void iris_robot_dash_land(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        func_80015D60(arg0, 3);
-        arg0->unk24 = 0;
-        arg0->unk6 = 1;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        func_80015D60(self, 3);
+        self->unk24 = 0;
+        self->unk6 = 1;
     }
 }
 
+// iris_robot_dash_start
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_800818C4);
 
-void func_80081954(struct MainObj* arg0)
+void iris_robot_dash_run(struct MainObj* self)
 {
     s32 flags;
 
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk15 == 0) {
-        flags = arg0->unk70 & 1;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk15 == 0) {
+        flags = self->unk70 & 1;
     } else {
-        flags = arg0->unk70 & 2;
+        flags = self->unk70 & 2;
     }
     if (flags != 0) {
-        func_80015D60(arg0, 5);
-        arg0->unk6 = 3;
+        func_80015D60(self, 5);
+        self->unk6 = 3;
     }
 }
 
-void func_800819C4(struct MainObj* self)
+void iris_robot_dash_laser(struct MainObj* self)
 {
     s32 i;
     struct ShotObj* shot;
@@ -365,26 +370,28 @@ void func_800819C4(struct MainObj* self)
     }
 }
 
+// iris_robot_dash_recover
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081AD0);
 
-void func_80081B64(struct MainObj* arg0)
+void iris_robot_release_crystal(struct MainObj* self)
 {
-    D_80103C64[arg0->unk6](arg0);
+    iris_robot_release_crystal_funcs[self->unk6](self);
 }
 
+// iris_robot_release_crystal_spawn
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081BA0);
 
-void func_80081CF8(struct MainObj* arg0)
+void iris_robot_release_crystal_wait(struct MainObj* self)
 {
-    if (arg0->unk5C >= 0x18) {
-        arg0->ext.main_66.unk85 = 0xF0;
+    if (self->unk5C >= 0x18) {
+        self->ext.main_66.hover_timer = 0xF0;
     } else {
-        arg0->ext.main_66.unk85 = 0xB4;
+        self->ext.main_66.hover_timer = 0xB4;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_80081D30(struct MainObj* self)
+void iris_robot_release_crystal_finish(struct MainObj* self)
 {
     struct MainObj* crystal;
     s16 timer;
@@ -401,76 +408,77 @@ void func_80081D30(struct MainObj* self)
     self->unk7C = timer;
     if (timer == 0) {
         self->unk24 = 0;
-        self->ext.main_66.unk94->ext.main_66.unk86 = 1;
-        func_80015D60(self->ext.main_66.unk94, 1);
-        self->ext.main_66.unk94->collision_data = D_80107DFC;
+        self->ext.main_66.partner->ext.main_66.crystal_released = 1;
+        func_80015D60(self->ext.main_66.partner, 1);
+        self->ext.main_66.partner->collision_data = D_80107DFC;
         func_8001540C(2, 0xE1, self);
 
         i = 0;
         out_y = D_8013B878;
-        self->ext.main_66.unk94->unk5 = 3;
+        self->ext.main_66.partner->unk5 = 3;
         out_x = D_8013B858;
-        self->ext.main_66.unk94->unk6 = 0;
+        self->ext.main_66.partner->unk6 = 0;
         do {
-            *out_x++ = self->ext.main_66.unk94->x_pos.i.hi;
-            *out_y++ = self->ext.main_66.unk94->y_pos.i.hi - 0x50;
+            *out_x++ = self->ext.main_66.partner->x_pos.i.hi;
+            *out_y++ = self->ext.main_66.partner->y_pos.i.hi - 0x50;
         } while (++i < 0xF);
 
-        self->ext.main_66.unk89 = 0xF;
-        self->ext.main_66.unk8A = 0;
+        self->ext.main_66.trail_write = 0xF;
+        self->ext.main_66.trail_read = 0;
         self->unk5 = 6;
         self->unk6 = 0;
     }
 }
 
+// iris_crystal_follow
 INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081E44);
 
-void func_80082014(struct MainObj* arg0)
+void iris_crystal_drop(struct MainObj* self)
 {
-    D_80103C70[arg0->unk6](arg0);
+    iris_crystal_drop_funcs[self->unk6](self);
 }
 
-void func_80082050(struct MainObj* arg0)
+void iris_crystal_drop_fall(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->y_pos.i.hi >= 0x1DD) {
-        arg0->y_pos.i.hi = 0x1DC;
-        arg0->unk24 = 0;
-        arg0->unk6 = 1;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->y_pos.i.hi >= 0x1DD) {
+        self->y_pos.i.hi = 0x1DC;
+        self->unk24 = 0;
+        self->unk6 = 1;
     }
 }
 
-void func_800820A4(struct MainObj* arg0)
+void iris_crystal_drop_chase(struct MainObj* self)
 {
     s16 x_pos;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (!(D_80141BD8.unk0 & 1)) {
-        if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi) {
-            arg0->unk20 = FIXED(4);
+        if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
+            self->unk20 = FIXED(4);
         } else {
-            arg0->unk20 = FIXED(-4);
+            self->unk20 = FIXED(-4);
         }
     }
 
-    x_pos = arg0->x_pos.i.hi;
+    x_pos = self->x_pos.i.hi;
     if (x_pos - g_Player.x_pos.i.hi >= 0) {
         if (x_pos - g_Player.x_pos.i.hi < 3) {
         } else {
-            func_8002B718(MOVING_OBJECT(arg0));
+            func_8002B718(MOVING_OBJECT(self));
         }
     } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
-        func_8002B718(MOVING_OBJECT(arg0));
+        func_8002B718(MOVING_OBJECT(self));
     }
 
-    if (arg0->ext.main_66.unk94->unk6 == 4) {
-        arg0->unk7C = 0x3C;
-        arg0->unk6 = 2;
+    if (self->ext.main_66.partner->unk6 == 4) {
+        self->unk7C = 0x3C;
+        self->unk6 = 2;
     }
 }
 
-void func_80082170(struct MainObj* self)
+void iris_crystal_drop_aim(struct MainObj* self)
 {
     s16 x_pos;
 
@@ -501,7 +509,7 @@ void func_80082170(struct MainObj* self)
     }
 }
 
-void func_8008225C(struct MainObj* self)
+void iris_crystal_drop_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
     u32 timer;
@@ -536,7 +544,7 @@ void func_8008225C(struct MainObj* self)
     }
 }
 
-void func_80082354(struct MainObj* self)
+void iris_crystal_drop_return(struct MainObj* self)
 {
     s16* dst_y;
     u16* dst_x;
@@ -549,23 +557,23 @@ void func_80082354(struct MainObj* self)
         dst_y = D_8013B878;
         dst_x = D_8013B858;
         do {
-            *dst_x++ = self->ext.main_66.unk94->x_pos.i.hi;
+            *dst_x++ = self->ext.main_66.partner->x_pos.i.hi;
             i++;
-            *dst_y++ = self->ext.main_66.unk94->y_pos.i.hi - 0x50;
+            *dst_y++ = self->ext.main_66.partner->y_pos.i.hi - 0x50;
         } while (i < 0xF);
-        self->ext.main_66.unk89 = 0xF;
-        self->ext.main_66.unk8A = 0;
+        self->ext.main_66.trail_write = 0xF;
+        self->ext.main_66.trail_read = 0;
         func_80015D60(self, 0x10);
         self->unk5 = 6;
         self->unk6 = 0;
     }
 }
 
-void func_80082404(struct MainObj* arg0)
+void iris_face_player(struct MainObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }

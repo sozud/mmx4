@@ -538,7 +538,7 @@ extern void func_800A6374 (struct ShotObj *arg0);
 extern void func_800A666C (struct ShotObj *arg0, s32 arg1, s32 arg2);
 extern void func_800A6960 (struct ShotObj *arg0);
 extern void func_800A6DEC (struct ShotObj *arg0);
-extern void func_800A6FCC (struct ShotObj *arg0);
+extern void iris_shot_update (struct ShotObj *arg0);
 extern void func_800A7AF0 (struct ShotObj *arg0);
 extern void sigma_bolt_idle (struct ShotObj *arg0);
 extern void sigma_shot_update (struct ShotObj *arg0);

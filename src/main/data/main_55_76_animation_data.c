@@ -4746,7 +4746,7 @@ union AnimationStep D_80103B44[] = {
     { 0x26000101 },
 };
 
-void* D_80103B48[37] = {
+void* iris_animations[37] = {
     D_801035D0,
     D_801035F4,
     D_80103604,
@@ -4786,70 +4786,70 @@ void* D_80103B48[37] = {
     D_80103688,
 };
 
-void (*D_80103BDC[4])() = {
+void (*iris_state_funcs[4])() = {
     func_80080700,
     func_80080834,
-    func_80080D20,
-    func_800810C4,
+    iris_death,
+    iris_despawn,
 };
 
-void (*D_80103BEC[8])() = {
+void (*iris_step_funcs[8])() = {
     func_8009216C,
-    func_80081104,
-    func_80081198,
-    func_800816DC,
-    func_80081830,
-    func_80081B64,
+    iris_robot_decide,
+    iris_intro,
+    iris_robot_hover,
+    iris_robot_dash,
+    iris_robot_release_crystal,
     func_80081E44,
-    func_80082014,
+    iris_crystal_drop,
 };
 
-void (*D_80103C0C[4])() = {
-    func_80080D5C,
+void (*iris_death_funcs[4])() = {
+    iris_death_start,
     func_80080DF4,
-    func_80080F04,
-    func_8008107C,
+    iris_death_wait_explosion,
+    iris_death_finish,
 };
 
-void (*D_80103C1C[12])(struct MainObj*) = {
-    func_800811D4,
-    func_80081230,
-    func_8008127C,
-    func_800812E4,
-    func_8008134C,
-    func_800813BC,
-    func_80081404,
-    func_800814E8,
-    func_80081508,
-    func_80081564,
-    func_800815B8,
-    func_80081624,
+void (*iris_intro_funcs[12])(struct MainObj*) = {
+    iris_intro_wait_player,
+    iris_intro_wait_camera,
+    iris_intro_warning,
+    iris_intro_wait_warning,
+    iris_intro_dialogue,
+    iris_intro_wait_dialogue,
+    iris_intro_toss_crystal,
+    iris_intro_wait_transform,
+    iris_intro_transform,
+    iris_intro_pose,
+    iris_intro_voice,
+    iris_intro_fill_health,
 };
 
-void (*D_80103C4C[1])() = {
+void (*iris_robot_hover_funcs[1])() = {
     func_80081718,
 };
 
-void (*D_80103C50[5])() = {
-    func_8008186C,
+void (*iris_robot_dash_funcs[5])() = {
+    iris_robot_dash_land,
     func_800818C4,
-    func_80081954,
-    func_800819C4,
+    iris_robot_dash_run,
+    iris_robot_dash_laser,
     func_80081AD0,
 };
 
-void (*D_80103C64[3])() = {
+void (*iris_robot_release_crystal_funcs[3])() = {
     func_80081BA0,
-    func_80081CF8,
-    func_80081D30,
+    iris_robot_release_crystal_wait,
+    iris_robot_release_crystal_finish,
 };
 
-void (*D_80103C70[5])(struct MainObj*) = {
-    func_80082050,
-    func_800820A4,
-    func_80082170,
-    func_8008225C,
-    func_80082354,
+void (*iris_crystal_drop_funcs[5])(struct MainObj*) = {
+    iris_crystal_drop_fall,
+    iris_crystal_drop_chase,
+    iris_crystal_drop_aim,
+    iris_crystal_drop_fire,
+    iris_crystal_drop_return,
 };
 
 struct Unk_unk68 D_80103C84 = { -77, -41, -105, 68 };

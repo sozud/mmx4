@@ -55,7 +55,7 @@ extern struct Unk_unk68 D_801067F0[];
 extern union AnimationStep* D_800FB4B0[];
 extern u8 D_800FB514[];
 extern union AnimationStep* D_800FDBD4[];
-extern void* D_80103B48[];
+extern void* iris_animations[];
 extern struct Unk_unk68 D_801035BC;
 extern struct Unk_unk68 D_801035C4;
 extern struct Unk_unk68 D_801035C8;
@@ -22740,21 +22740,21 @@ void func_80080700(struct MainObj* self)
     self->unk2 = 0;
     self->unk15 = 0;
     self->unk18 = self->x_pos;
-    self->animation_table = (const u8* const*)D_80103B48;
+    self->animation_table = (const u8* const*)iris_animations;
     self->unk16 = 6;
     self->unk68 = &D_801035CC;
     self->unk54 = &D_801035C0;
     self->unk50 = &D_801035BC;
     self->bg_offset = g_Player.bg_offset;
     func_80015D60(self, 9);
-    ext->unk85 = 0xF0;
-    ext->unk87 = 8;
+    ext->hover_timer = 0xF0;
+    ext->release_countdown = 8;
     self->state = 1;
-    ext->pad84 = 0;
-    ext->unk86 = 0;
-    ext->pad88 = 0;
-    ext->pad8D[0] = 0;
-    ext->unk8C = 0;
+    ext->drone_count = 0;
+    ext->crystal_released = 0;
+    ext->flash_timer = 0;
+    ext->blink_timer = 0;
+    ext->active = 0;
     self->unk5 = 2;
     self->unk6 = 0;
 }
@@ -26013,23 +26013,23 @@ void func_80080834(struct MainObj* self)
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    if (ext->unk8C != 0 && self->unk5 == 3) {
-        if (--ext->unk85 == 0) {
+    if (ext->active != 0 && self->unk5 == 3) {
+        if (--ext->hover_timer == 0) {
             self->unk24 = -0x20000;
             self->unk20 = 0;
             func_80015D60(self, 2);
             self->collision_data = D_80107E84;
             self->unk5 = 4;
             self->unk6 = 0;
-        } else if (ext->unk86 == 0 && g_Player.unk5C < 8) {
+        } else if (ext->crystal_released == 0 && g_Player.unk5C < 8) {
             func_80015D60(self, 0x20);
             self->collision_data = D_80107E84;
             self->unk5 = 5;
             self->unk6 = 0;
         }
     }
-    D_80103BEC[self->unk5](self);
-    if (ext->unk8C == 0) {
+    iris_step_funcs[self->unk5](self);
+    if (ext->active == 0) {
         func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
         return;
     }
@@ -26040,19 +26040,19 @@ void func_80080834(struct MainObj* self)
     } else {
         hit = func_8002DD04(self);
     }
-    if (ext->pad88 != 0) {
-        if (ext->pad8D[0] != 0) {
-            if (--ext->pad8D[0] & 1) {
+    if (ext->flash_timer != 0) {
+        if (ext->blink_timer != 0) {
+            if (--ext->blink_timer & 1) {
                 self->unk42 |= 0x8000;
-                ext->unk94->unk42 |= 0x8000;
+                ext->partner->unk42 |= 0x8000;
             } else {
                 self->unk42 &= 0x7FFF;
-                ext->unk94->unk42 &= 0x7FFF;
+                ext->partner->unk42 &= 0x7FFF;
             }
         }
-        if (--ext->pad88 == 0) {
-            if (ext->unk86 != 0) {
-                ext->unk94->unk42 &= 0x7FFF;
+        if (--ext->flash_timer == 0) {
+            if (ext->crystal_released != 0) {
+                ext->partner->unk42 &= 0x7FFF;
             }
             if (self->unk2 != 0) {
                 self->collision_data = D_80107E84;
@@ -26066,13 +26066,13 @@ void func_80080834(struct MainObj* self)
         g_Player.unk7A = 1;
         self->state = 2;
         self->unk5 = 0;
-        ext->unk94->state = 3;
-        ext->unk94->unk5 = 0;
+        ext->partner->state = 3;
+        ext->partner->unk5 = 0;
         return;
     }
     if (hit != 0 && hit != 0x7F) {
         if (self->unk2 == 0) {
-            ext->pad88 = 0x18;
+            ext->flash_timer = 0x18;
             self->unk61 = 1;
             misc = find_free_misc_obj();
             if (misc != NULL) {
@@ -26092,10 +26092,10 @@ void func_80080834(struct MainObj* self)
             }
             if (self->unk5 != 4) {
                 for (i = 0; i < 2; i++) {
-                    if ((s8)ext->pad84 == 0x10) {
+                    if ((s8)ext->drone_count == 0x10) {
                         continue;
                     }
-                    ext->pad84++;
+                    ext->drone_count++;
                     shot = find_free_shot_obj();
                     if (shot == NULL) {
                         continue;
@@ -26129,15 +26129,15 @@ void func_80080834(struct MainObj* self)
                 }
             }
         } else {
-            ext->pad88 = 0x18;
-            ext->pad8D[0] = 0x18;
+            ext->flash_timer = 0x18;
+            ext->blink_timer = 0x18;
             self->collision_data = D_801060F0;
         }
     }
     if (self->unk2 == 0) {
         self->unk42 &= 0x7FFF;
     } else {
-        ext->unk94->unk42 = self->unk42;
+        ext->partner->unk42 = self->unk42;
     }
     func_8002D9BC(self);
     func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
@@ -26193,7 +26193,7 @@ void func_800CF950(struct MiscObj* self)
     self->unk5 = 4;
 }
 
-void func_80082404(struct MainObj*);
+void iris_face_player(struct MainObj*);
 
 void func_80081718(struct MainObj* self)
 {
@@ -26213,7 +26213,7 @@ void func_80081718(struct MainObj* self)
     dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
     dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
     if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
-        func_80082404(self);
+        iris_face_player(self);
         func_8002B718(MOVING_OBJECT(self));
     }
     func_80015DC8(ANIMATED_OBJECT(self));
@@ -26318,7 +26318,7 @@ void func_80080DF4(struct MainObj* self)
     }
     func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
-        other = self->ext.main_66.unk94;
+        other = self->ext.main_66.partner;
         self->unk42 ^= 0x8000;
         other->unk42 ^= 0x8000;
         self->unk61 -= 5;
@@ -26337,7 +26337,7 @@ void func_80081AD0(struct MainObj* self)
 {
     func_80015DC8(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        self->ext.main_66.unk85 = self->unk5C >= 0x18 ? 0xF0 : 0xB4;
+        self->ext.main_66.hover_timer = self->unk5C >= 0x18 ? 0xF0 : 0xB4;
         func_80015D60(self, 1);
         self->collision_data = D_80107DFC;
         func_8001540C(2, 0xE1, self);
@@ -26385,9 +26385,9 @@ void func_80081BA0(struct MainObj* self)
         body->unk6 = 2;
         engine_obj.boss_ptr = body;
         func_80015D60(body, 0x10);
-        body->ext.main_66.unk8C = 1;
-        body->ext.main_66.unk94 = self;
-        self->ext.main_66.unk94 = body;
+        body->ext.main_66.active = 1;
+        body->ext.main_66.partner = self;
+        self->ext.main_66.partner = body;
     }
     self->unk6 = 1;
 }
@@ -26401,28 +26401,28 @@ void func_80081E44(struct MainObj* self)
     s32 dy;
 
     if (!(D_80141BD8.unk0 & 1)) {
-        D_8013B858[ext->unk89] = ext->unk94->x_pos.i.hi;
-        D_8013B878[ext->unk89] = ext->unk94->y_pos.i.hi - 0x50;
-        if (++ext->unk89 == 0x10) {
-            ext->unk89 = 0;
+        D_8013B858[ext->trail_write] = ext->partner->x_pos.i.hi;
+        D_8013B878[ext->trail_write] = ext->partner->y_pos.i.hi - 0x50;
+        if (++ext->trail_write == 0x10) {
+            ext->trail_write = 0;
         }
-        index = ext->unk8A;
+        index = ext->trail_read;
         direction = func_8002B7B0(OBJECT_HEADER(self), (s16)D_8013B858[index] << 16, D_8013B878[index] << 16);
-        ext->pad8B = ext->unk8A;
-        if (++ext->unk8A == 0x10) {
-            ext->unk8A = 0;
+        ext->trail_target = ext->trail_read;
+        if (++ext->trail_read == 0x10) {
+            ext->trail_read = 0;
         }
         func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
         self->unk20 *= 2;
         self->unk24 *= 2;
     }
-    dx = self->x_pos.i.hi - (s16)D_8013B858[ext->pad8B];
-    dy = self->y_pos.i.hi - D_8013B878[ext->pad8B];
+    dx = self->x_pos.i.hi - (s16)D_8013B858[ext->trail_target];
+    dy = self->y_pos.i.hi - D_8013B878[ext->trail_target];
     if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
         func_8002B718(MOVING_OBJECT(self));
     }
     func_80015DC8(ANIMATED_OBJECT(self));
-    if (ext->unk94->unk5 == 4) {
+    if (ext->partner->unk5 == 4) {
         self->unk24 = -0x40000;
         self->unk20 = 0;
         self->unk5 = 7;

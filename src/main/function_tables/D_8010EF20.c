@@ -1,6 +1,6 @@
 #include "common.h"
 
-void (*D_8010EF20[])(struct MiscObj*) = {
-    func_800CF7CC,
-    func_800CF824,
+void (*iris_intro_crystal_state_funcs[])(struct MiscObj*) = {
+    iris_intro_crystal_run,
+    iris_intro_crystal_despawn,
 };
