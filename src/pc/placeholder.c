@@ -25035,22 +25035,7 @@ void func_80091218(struct MainObj* self)
 extern void* D_80105E8C[2];
 extern u8 D_80105E94[4];
 u8 func_8008FA0C(struct ObjectHeader*, s16, s16);
-
-void func_8008FA88(struct MainObj* self)
-{
-    s32 low_health = self->unk5C < 0x19;
-    const u8** scripts = D_80105E8C[low_health];
-    u8* weights = &D_80105E94[low_health * 2];
-    u32 roll = (get_random() >> 2) & 0xF;
-    u8 i;
-
-    for (i = 0; i < 2; i++) {
-        if (roll < weights[i]) {
-            self->ext.main_75.script = scripts[i];
-            return;
-        }
-    }
-}
+void func_8008FA88(struct MainObj* arg0);
 
 void func_8009027C(struct MainObj* self)
 {
