@@ -312,7 +312,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     func_80082434,
     sigma_update,
     colonel_update,
-    func_80088BA0,
+    drone_pod_update,
     func_8008ADC0,
     func_8008B9FC,
     double_update,

@@ -6204,51 +6204,51 @@ s16 D_801049CC[12] = {
     (s16)0x0400,
 };
 
-void (*D_801049E4[3])() = {
-    func_80088BE8,
+void (*drone_pod_state_funcs[3])() = {
+    drone_pod_intro,
     func_80088EA4,
-    func_80088F78,
+    drone_pod_death,
 };
 
-void (*D_801049F0[4])() = {
+void (*drone_pod_intro_funcs[4])() = {
     func_80088C40,
-    func_80088D30,
-    func_80088D8C,
-    func_80088E04,
+    drone_pod_intro_wait_player,
+    drone_pod_intro_open,
+    drone_pod_intro_fill_health,
 };
 
-void (*D_80104A00[4])() = {
+void (*drone_pod_step_funcs[4])() = {
     func_8009216C,
-    func_80089334,
-    func_80089340,
-    func_80089438,
+    drone_pod_resume_step,
+    drone_pod_rest,
+    drone_pod_launch,
 };
 
-void (*D_80104A10[6])(struct MainObj*) = {
-    func_80088FF0,
-    func_800890B0,
-    func_80089138,
-    func_800891C8,
-    func_8008924C,
-    func_80089314,
+void (*drone_pod_death_funcs[6])(struct MainObj*) = {
+    drone_pod_death_start,
+    drone_pod_death_explode,
+    drone_pod_death_alarm,
+    drone_pod_death_break_wall,
+    drone_pod_death_debris,
+    drone_pod_death_finish,
 };
 
-void (*D_80104A28[2])() = {
-    func_8008937C,
-    func_800893DC,
+void (*drone_pod_rest_funcs[2])() = {
+    drone_pod_rest_wait,
+    drone_pod_rest_open,
 };
 
-void (*D_80104A30[3])() = {
-    func_80089474,
-    func_800894BC,
-    func_80089524,
+void (*drone_pod_launch_funcs[3])() = {
+    drone_pod_launch_prepare,
+    drone_pod_launch_fire,
+    drone_pod_launch_close,
 };
 
 u8 D_80104A3C[16] = { 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00 };
 
-void (*D_80104A4C[2])(struct MainObj*) = {
-    func_80089984,
-    func_80089A10,
+void (*drone_pod_alarm_funcs[2])(struct MainObj*) = {
+    drone_pod_alarm_red,
+    drone_pod_alarm_white,
 };
 
 struct Unk_unk68 D_80104A54[13] = {

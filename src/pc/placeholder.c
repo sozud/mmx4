@@ -128,7 +128,7 @@ extern u16 D_8010D214[16];
 extern s32 D_800FA130[2];
 extern u8 D_80108F60[4];
 extern u8 D_80108F64[8];
-extern void (*D_80104A00[4])(struct MainObj*);
+extern void (*drone_pod_step_funcs[4])(struct MainObj*);
 extern void (*double_step_funcs[6])(struct MainObj*);
 extern u8* D_8010529C[2];
 extern void* D_801052A4[2];
@@ -21566,7 +21566,7 @@ void func_80088EA4(struct MainObj* self)
     s8 old_unk5C = self->unk5C;
     s32 collision;
 
-    D_80104A00[self->unk5](self);
+    drone_pod_step_funcs[self->unk5](self);
     collision = func_8002DD04(self);
     if ((s32)old_unk5C - self->unk5C >= 4)
         func_800C813C(4, &D_801049AC, self);

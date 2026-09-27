@@ -1297,12 +1297,12 @@ struct Main66Ext {
 };
 
 struct Main70Ext {
-    s16 unk80;
-    s16 unk82;
+    s16 alarm_timer;
+    s16 flash_timer;
     u8 pad84;
     u8 unk85;
-    u8 unk86;
-    u8 unk87;
+    u8 alarm_color;
+    u8 alarm_flashing;
     u8 pad88[0xC];
     u32 saved_unk5;
 };
@@ -4681,8 +4681,8 @@ extern u8 D_800F1FC0[32];
 extern struct MenuTextureData D_800F1FE0;
 struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
 void ice_core_face_player(struct AnimatedObj*);
-void func_80089798(struct MainObj*);
-void func_80089910(struct MainObj*);
+void drone_pod_random_explosion(struct MainObj*);
+void drone_pod_alarm_flash(struct MainObj*);
 void func_8005D148(struct MainObj*);
 void storm_owl_spawn_storm_charge(struct AnimatedObj*);
 void magma_dragoon_spawn_flames(struct AnimatedObj*, u32);

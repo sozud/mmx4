@@ -268,7 +268,7 @@ void iris_update(struct MainObj* arg0);
 void func_80082434(struct MainObj *arg0);
 void sigma_update(struct MainObj* arg0);
 void colonel_update(struct MainObj* arg0);
-void func_80088BA0(struct MainObj* arg0);
+void drone_pod_update(struct MainObj* arg0);
 void func_8008ADC0(struct MainObj* arg0);
 void func_8008B9FC(struct MainObj* arg0);
 void double_update(struct MainObj* arg0);
@@ -3751,50 +3751,50 @@ void colonel_jump_slam_recover(struct MainObj*);
 void colonel_face_player(struct MainObj *arg0);
 s32 colonel_shot_incoming(struct MainObj*);
 
-// D_801049E4
-extern void (*D_801049E4[])(struct MainObj *);
-void func_80088BE8(struct MainObj* arg0);
+// drone_pod_state_funcs
+extern void (*drone_pod_state_funcs[])(struct MainObj *);
+void drone_pod_intro(struct MainObj* arg0);
 void func_80088EA4(struct MainObj*);
-void func_80088F78(struct MainObj*);
+void drone_pod_death(struct MainObj*);
 
-// D_801049F0
-extern void (*D_801049F0[])(struct MainObj*);
+// drone_pod_intro_funcs
+extern void (*drone_pod_intro_funcs[])(struct MainObj*);
 void func_80088C40(struct MainObj*);
-void func_80088D30(struct MainObj*);
-void func_80088D8C(struct MainObj*);
-void func_80088E04(struct MainObj*);
+void drone_pod_intro_wait_player(struct MainObj*);
+void drone_pod_intro_open(struct MainObj*);
+void drone_pod_intro_fill_health(struct MainObj*);
 
-// D_80104A00
+// drone_pod_step_funcs
 void func_8009216C(void* arg0);
-void func_80089334(struct MainObj* arg0);
-void func_80089340(struct MainObj* arg0);
-void func_80089438(struct MainObj* arg0);
+void drone_pod_resume_step(struct MainObj* arg0);
+void drone_pod_rest(struct MainObj* arg0);
+void drone_pod_launch(struct MainObj* arg0);
 
-// D_80104A10
-extern void (*D_80104A10[])(struct MainObj*);
-void func_80088FF0(struct MainObj*);
-void func_800890B0(struct MainObj*);
-void func_80089138(struct MainObj*);
-void func_800891C8(struct MainObj*);
-void func_8008924C(struct MainObj*);
-void func_80089314(struct MainObj *arg0);
+// drone_pod_death_funcs
+extern void (*drone_pod_death_funcs[])(struct MainObj*);
+void drone_pod_death_start(struct MainObj*);
+void drone_pod_death_explode(struct MainObj*);
+void drone_pod_death_alarm(struct MainObj*);
+void drone_pod_death_break_wall(struct MainObj*);
+void drone_pod_death_debris(struct MainObj*);
+void drone_pod_death_finish(struct MainObj *arg0);
 
-// D_80104A28
-extern void (*D_80104A28[])(struct MainObj *);
-void func_8008937C(struct MainObj*);
-void func_800893DC(struct MainObj*);
+// drone_pod_rest_funcs
+extern void (*drone_pod_rest_funcs[])(struct MainObj *);
+void drone_pod_rest_wait(struct MainObj*);
+void drone_pod_rest_open(struct MainObj*);
 
-// D_80104A30
-extern void (*D_80104A30[])(struct MainObj *);
-void func_80089474(struct MainObj*);
-void func_800894BC(struct MainObj*);
-void func_80089524(struct MainObj*);
+// drone_pod_launch_funcs
+extern void (*drone_pod_launch_funcs[])(struct MainObj *);
+void drone_pod_launch_prepare(struct MainObj*);
+void drone_pod_launch_fire(struct MainObj*);
+void drone_pod_launch_close(struct MainObj*);
 void func_80089588(struct MainObj*);
 
-// D_80104A4C
-extern void (*D_80104A4C[])(struct MainObj*);
-void func_80089984(struct MainObj*);
-void func_80089A10(struct MainObj*);
+// drone_pod_alarm_funcs
+extern void (*drone_pod_alarm_funcs[])(struct MainObj*);
+void drone_pod_alarm_red(struct MainObj*);
+void drone_pod_alarm_white(struct MainObj*);
 
 // D_80104CF8
 void func_8009216C(void* arg0);
