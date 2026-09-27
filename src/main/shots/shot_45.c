@@ -24,114 +24,114 @@ s8 D_80109A40[14][4] = {
     { -62, -32, 30, 61 },
 };
 
-void func_800A7AF0(struct ShotObj* arg0)
+void colonel_shot_update(struct ShotObj* self)
 {
-    D_80109A78[arg0->state](arg0);
+    colonel_shot_state_funcs[self->state](self);
 }
 
-void func_800A7B2C(struct ShotObj* arg0)
+void colonel_shot_init(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
     u8 temp_unk15;
     s32 temp_y;
 
-    weapon = arg0->unk7C;
-    arg0->unk3C = weapon->unk3C;
-    arg0->unk40 = weapon->unk40;
-    arg0->unk42 = weapon->unk42 & 0x7FFF;
-    arg0->bg_offset = weapon->bg_offset;
-    arg0->animation_table = weapon->animation_table;
+    weapon = self->unk7C;
+    self->unk3C = weapon->unk3C;
+    self->unk40 = weapon->unk40;
+    self->unk42 = weapon->unk42 & 0x7FFF;
+    self->bg_offset = weapon->bg_offset;
+    self->animation_table = weapon->animation_table;
     temp_unk15 = weapon->unk15;
-    arg0->unk58.data = NULL;
-    arg0->unk54 = NULL;
-    arg0->unk50.data = NULL;
-    arg0->unk15 = temp_unk15;
-    arg0->x_pos.val = weapon->x_pos.val;
+    self->unk58.data = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = NULL;
+    self->unk15 = temp_unk15;
+    self->x_pos.val = weapon->x_pos.val;
     temp_y = weapon->y_pos.val;
-    arg0->state++;
-    arg0->unk5 = (s8)(u8)arg0->unk2 >> 4;
-    arg0->y_pos.val = temp_y;
-    arg0->unk2 &= 0xF;
+    self->state++;
+    self->unk5 = (s8)(u8)self->unk2 >> 4;
+    self->y_pos.val = temp_y;
+    self->unk2 &= 0xF;
 }
 
-void func_800A7BC8(struct ShotObj* arg0)
+void colonel_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A7BE8(struct ShotObj* arg0)
+void colonel_shot_run(struct ShotObj* self)
 {
-    D_80109A84[arg0->unk5](arg0);
+    colonel_shot_kind_funcs[self->unk5](self);
 #ifdef MMX4_PC
-    if (arg0->unk8C.object == NULL) {
+    if (self->unk8C.object == NULL) {
         return;
     }
 #endif
-    if (arg0->unk8C.object->state == 2) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+    if (self->unk8C.object->state == 2) {
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_800A7C50(struct ShotObj* arg0)
+void colonel_wave(struct ShotObj* self)
 {
-    D_80109A9C[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
+    colonel_wave_funcs[self->unk6](self);
+    func_8002D9BC(self);
     if (engine_obj.stage == 0xA) {
-        func_8002DD04(MAIN_OBJECT(arg0));
+        func_8002DD04(MAIN_OBJECT(self));
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
         return;
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
+    self->state = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
 }
 
+// colonel_wave_start
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7CE8);
 
-void func_800A7E10(struct ShotObj* arg0)
+void colonel_wave_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718((struct MovingObj*)arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718((struct MovingObj*)self);
 }
 
-void func_800A7E40(struct ShotObj* arg0)
+void colonel_streak(struct ShotObj* self)
 {
-    D_80109AA4[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    is_on_screen((struct BaseObj*)arg0);
+    colonel_streak_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    is_on_screen((struct BaseObj*)self);
 }
 
-void func_800A7E98(struct ShotObj* arg)
+void colonel_streak_start(struct ShotObj* arg)
 {
-    struct ShotObj* arg0 = arg;
+    struct ShotObj* self = arg;
 
-    func_80015D60(arg0, 0x10);
-    arg0->unk5C = 5;
-    arg0->unk60 = 6;
-    if (arg0->unk2 != 0) {
-        arg0->x_vel.val = FIXED(6);
-        arg0->unk15 = 0x40;
+    func_80015D60(self, 0x10);
+    self->unk5C = 5;
+    self->unk60 = 6;
+    if (self->unk2 != 0) {
+        self->x_vel.val = FIXED(6);
+        self->unk15 = 0x40;
     } else {
-        arg0->x_vel.val = FIXED(-6);
-        arg0->unk15 = 0;
+        self->x_vel.val = FIXED(-6);
+        self->unk15 = 0;
     }
-    arg0->unk50.data = (u8*)&D_80109A40[9];
-    arg0->timer = 5;
-    arg0->unk8A = 0x32;
-    arg0->y_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk58.data = 0;
-    arg0->unk54 = 0;
-    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x20;
-    arg0->unk6++;
+    self->unk50.data = (u8*)&D_80109A40[9];
+    self->timer = 5;
+    self->unk8A = 0x32;
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk58.data = 0;
+    self->unk54 = 0;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x20;
+    self->unk6++;
 }
 
-void func_800A7F44(struct ShotObj* arg0)
+void colonel_streak_move(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
     struct ShotObj* shot;
 
     func_80015DC8(ANIMATED_OBJECT(self));
@@ -156,37 +156,37 @@ void func_800A7F44(struct ShotObj* arg0)
     }
 }
 
-void func_800A7FF8(struct ShotObj* arg0)
+void colonel_marker(struct ShotObj* self)
 {
-    D_80109AAC[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    colonel_marker_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
     } else {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800A8074(struct ShotObj* arg0)
+void colonel_marker_start(struct ShotObj* self)
 {
-    func_80015D60(arg0, 0x11);
-    arg0->unk5C = 5;
-    arg0->unk60 = 6;
-    arg0->timer = 0;
-    arg0->unk58.data = NULL;
-    arg0->unk54 = NULL;
-    arg0->unk50.data = (const u8*)D_80109A40[11];
-    arg0->unk6++;
+    func_80015D60(self, 0x11);
+    self->unk5C = 5;
+    self->unk60 = 6;
+    self->timer = 0;
+    self->unk58.data = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = (const u8*)D_80109A40[11];
+    self->unk6++;
 }
 
-void func_800A80D4(struct ShotObj* arg0)
+void colonel_marker_wait(struct ShotObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    shot = SHOT_OBJECT(arg0->unk7C);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    shot = SHOT_OBJECT(self->unk7C);
     if (shot->state != 2) {
         return;
     }
@@ -194,94 +194,95 @@ void func_800A80D4(struct ShotObj* arg0)
     if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0x2D;
-        shot->unk2 = arg0->timer + 0x30;
-        shot->timer = arg0->timer + 1;
-        shot->unk7C = WEAPON_OBJECT(arg0);
+        shot->unk2 = self->timer + 0x30;
+        shot->timer = self->timer + 1;
+        shot->unk7C = WEAPON_OBJECT(self);
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
+    self->state = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
 }
 
-void func_800A8164(struct ShotObj* arg0)
+void colonel_bolt(struct ShotObj* self)
 {
-    D_80109AB4[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    colonel_bolt_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
     } else {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800A81E0(struct ShotObj* arg0)
+void colonel_bolt_start(struct ShotObj* self)
 {
-    func_80015D60(arg0, 0xF);
-    arg0->unk5C = 5;
-    arg0->unk60 = 9;
-    arg0->y_vel.val = FIXED(8);
-    arg0->x_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk58.data = NULL;
-    arg0->unk54 = NULL;
-    arg0->unk50.data = (const u8*)D_80109A40[10];
-    if (arg0->unk2 == 0) {
-        func_8001540C(2, 0xD7, arg0);
+    func_80015D60(self, 0xF);
+    self->unk5C = 5;
+    self->unk60 = 9;
+    self->y_vel.val = FIXED(8);
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk58.data = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = (const u8*)D_80109A40[10];
+    if (self->unk2 == 0) {
+        func_8001540C(2, 0xD7, self);
     }
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800A826C(struct ShotObj* arg0)
+void colonel_bolt_fall(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
+    func_80015DC8(self);
+    func_8002B718((struct MovingObj*)self);
 }
 
-void func_800A829C(struct ShotObj* arg0)
+void colonel_slash(struct ShotObj* self)
 {
-    D_80109ABC[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
+    colonel_slash_funcs[self->unk6](self);
+    func_8002D9BC(self);
 }
 
-void func_800A82EC(struct ShotObj* arg0)
+void colonel_slash_start(struct ShotObj* self)
 {
-    arg0->unk5C = 0;
-    arg0->unk60 = 9;
-    arg0->unk58.data = NULL;
-    arg0->unk54 = NULL;
-    if (arg0->unk2 == 0) {
-        arg0->unk50.data = (const u8*)D_80109A40[12];
+    self->unk5C = 0;
+    self->unk60 = 9;
+    self->unk58.data = NULL;
+    self->unk54 = NULL;
+    if (self->unk2 == 0) {
+        self->unk50.data = (const u8*)D_80109A40[12];
     } else {
-        arg0->unk50.data = (const u8*)D_80109A40[13];
+        self->unk50.data = (const u8*)D_80109A40[13];
     }
-    arg0->timer = 5;
-    arg0->unk6++;
+    self->timer = 5;
+    self->unk6++;
 }
 
-void func_800A833C(struct ShotObj* arg0)
+void colonel_slash_wait(struct ShotObj* self)
 {
-    if (--arg0->timer == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    if (--self->timer == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800A836C(struct ShotObj* arg0)
+void colonel_shockwave(struct ShotObj* self)
 {
-    D_80109AC4[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    is_on_screen((struct BaseObj*)arg0);
+    colonel_shockwave_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    is_on_screen((struct BaseObj*)self);
 }
 
+// colonel_shockwave_start
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A83C4);
 
-void func_800A84D4(struct ShotObj* arg0)
+void colonel_shockwave_spread(struct ShotObj* self)
 {
-    struct ShotObj* object = arg0;
+    struct ShotObj* object = self;
     struct ShotObj* shot;
 
     func_80015DC8(ANIMATED_OBJECT(object));
@@ -306,49 +307,50 @@ void func_800A84D4(struct ShotObj* arg0)
     }
 }
 
+// colonel_shockwave_move
 INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A858C);
 
-void (*D_80109A78[])(struct ShotObj*) = {
-    func_800A7B2C,
-    func_800A7BE8,
-    func_800A7BC8,
+void (*colonel_shot_state_funcs[])(struct ShotObj*) = {
+    colonel_shot_init,
+    colonel_shot_run,
+    colonel_shot_despawn,
 };
 
-void (*D_80109A84[])(struct ShotObj*) = {
-    func_800A7C50,
-    func_800A7E40,
-    func_800A7FF8,
-    func_800A8164,
-    func_800A829C,
-    func_800A836C,
+void (*colonel_shot_kind_funcs[])(struct ShotObj*) = {
+    colonel_wave,
+    colonel_streak,
+    colonel_marker,
+    colonel_bolt,
+    colonel_slash,
+    colonel_shockwave,
 };
 
-void (*D_80109A9C[])(struct ShotObj*) = {
+void (*colonel_wave_funcs[])(struct ShotObj*) = {
     func_800A7CE8,
-    func_800A7E10,
+    colonel_wave_fly,
 };
 
-void (*D_80109AA4[])(struct ShotObj*) = {
-    func_800A7E98,
-    func_800A7F44,
+void (*colonel_streak_funcs[])(struct ShotObj*) = {
+    colonel_streak_start,
+    colonel_streak_move,
 };
 
-void (*D_80109AAC[])(struct ShotObj*) = {
-    func_800A8074,
-    func_800A80D4,
+void (*colonel_marker_funcs[])(struct ShotObj*) = {
+    colonel_marker_start,
+    colonel_marker_wait,
 };
 
-void (*D_80109AB4[])(struct ShotObj*) = {
-    func_800A81E0,
-    func_800A826C,
+void (*colonel_bolt_funcs[])(struct ShotObj*) = {
+    colonel_bolt_start,
+    colonel_bolt_fall,
 };
 
-void (*D_80109ABC[])(struct ShotObj*) = {
-    func_800A82EC,
-    func_800A833C,
+void (*colonel_slash_funcs[])(struct ShotObj*) = {
+    colonel_slash_start,
+    colonel_slash_wait,
 };
 
-void (*D_80109AC4[])(struct ShotObj*) = {
+void (*colonel_shockwave_funcs[])(struct ShotObj*) = {
     func_800A83C4,
-    func_800A84D4,
+    colonel_shockwave_spread,
 };

@@ -2,107 +2,109 @@
 // 800A9DF4..800AA2FC
 #include "common.h"
 
-void (*D_80109BD0[])(struct ShotObj*) = {
-    func_800A9EC0,
+void (*double_aerial_funcs[])(struct ShotObj*) = {
+    double_aerial_drop,
     func_800A9F30,
-    func_800A9FD0,
-    func_800AA000,
+    double_aerial_fly,
+    double_aerial_fly_alt,
 };
 
+// double_aerial_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9DF4);
 
-void func_800A9EC0(struct ShotObj* arg0)
+void double_aerial_drop(struct ShotObj* self)
 {
-    if (--arg0->timer == 0) {
-        arg0->timer = 0x1D;
-        arg0->unk5++;
-        func_80015D60(arg0, 0xF);
+    if (--self->timer == 0) {
+        self->timer = 0x1D;
+        self->unk5++;
+        func_80015D60(self, 0xF);
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
+// double_aerial_split
 INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9F30);
 
-void func_800A9FD0(struct ShotObj* arg0)
+void double_aerial_fly(struct ShotObj* self)
 {
-    func_8002B694((struct AnimatedObj*)arg0);
-    func_80015DC8(arg0);
+    func_8002B694((struct AnimatedObj*)self);
+    func_80015DC8(self);
 }
 
-void func_800AA000(struct ShotObj* arg0)
+void double_aerial_fly_alt(struct ShotObj* self)
 {
-    func_8002B694((struct AnimatedObj*)arg0);
-    func_80015DC8(arg0);
+    func_8002B694((struct AnimatedObj*)self);
+    func_80015DC8(self);
 }
 
-void func_800AA030(struct ShotObj* arg0)
+void double_aerial_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109BD0[arg0->unk5](arg0);
-    if (arg0->unk7C->state == 2) {
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    double_aerial_funcs[self->unk5](self);
+    if (self->unk7C->state == 2) {
+        func_800AF808(BASE_OBJECT(self));
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        func_800AF808(BASE_OBJECT(self));
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
         return;
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->on_screen = 0;
+    self->state = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->on_screen = 0;
 }
 
-void func_800AA10C(struct ShotObj* arg0)
+void double_aerial_update(struct ShotObj* self)
 {
-    D_80109BE0[arg0->state](arg0);
+    double_aerial_state_funcs[self->state](self);
 }
 
-void func_800AA148(struct ShotObj* arg0)
+void func_800AA148(struct ShotObj* self)
 {
     s32 x_vel;
 
-    arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->unk16 = 3;
-    arg0->unk58.data = (const u8*)D_80105FF0;
-    arg0->unk5C = 3;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->unk7 = 0;
-    arg0->timer = 0;
-    arg0->unk8A = 0;
-    arg0->bg_offset = 0;
-    arg0->unk84.value = 0;
-    arg0->unk68 = 0;
-    arg0->unk54 = 0;
-    arg0->unk50.data = 0;
-    arg0->unk60 = 4;
-    arg0->unk61 = 0;
-    arg0->y_pos.i.hi -= 0x10;
-    func_80015D60(arg0, 0x11);
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk16 = 3;
+    self->unk58.data = (const u8*)D_80105FF0;
+    self->unk5C = 3;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->timer = 0;
+    self->unk8A = 0;
+    self->bg_offset = 0;
+    self->unk84.value = 0;
+    self->unk68 = 0;
+    self->unk54 = 0;
+    self->unk50.data = 0;
+    self->unk60 = 4;
+    self->unk61 = 0;
+    self->y_pos.i.hi -= 0x10;
+    func_80015D60(self, 0x11);
 
     x_vel = FIXED(-3);
-    arg0->timer = 0x14;
-    if (arg0->unk2 != 0) {
+    self->timer = 0x14;
+    if (self->unk2 != 0) {
         x_vel = FIXED(3);
     }
-    arg0->y_vel.val = FIXED(4.5);
-    arg0->x_vel.val = x_vel;
-    arg0->unk28 = 0;
-    arg0->unk2C = FIXED(0.34375);
+    self->y_vel.val = FIXED(4.5);
+    self->x_vel.val = x_vel;
+    self->unk28 = 0;
+    self->unk2C = FIXED(0.34375);
 }
 
 void func_800AA20C(struct ShotObj* self)
@@ -131,8 +133,8 @@ void func_800AA20C(struct ShotObj* self)
     func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void (*D_80109BE0[])(struct ShotObj*) = {
+void (*double_aerial_state_funcs[])(struct ShotObj*) = {
     func_800A9DF4,
-    func_800AA030,
-    func_800A9D98,
+    double_aerial_run,
+    double_ball_despawn,
 };

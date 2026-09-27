@@ -395,11 +395,11 @@ void func_800A62F0(struct ShotObj*);
 void func_800A6374(struct ShotObj*);
 void func_800A6960(struct ShotObj*);
 void iris_shot_update(struct ShotObj*);
-void func_800A7AF0(struct ShotObj*);
+void colonel_shot_update(struct ShotObj*);
 void sigma_shot_update(struct ShotObj*);
 void func_80098D64(struct ShotObj*);
-void func_800A9DB8(struct ShotObj*);
-void func_800AA10C(struct ShotObj*);
+void double_ball_update(struct ShotObj*);
+void double_aerial_update(struct ShotObj*);
 void func_800AA5A4(struct ShotObj*);
 void func_800AAA98(struct ShotObj*);
 void func_800AAC5C(struct ShotObj*);
@@ -591,7 +591,7 @@ void func_8009485C(struct MiscObj *arg0);
 void func_80094794(struct MiscObj *arg0);
 void func_80094A04(struct MiscObj *arg0);
 void func_80098474(struct MiscObj* arg0);
-void func_800D1B08(struct MiscObj* arg0);
+void double_afterimage_update(struct MiscObj* arg0);
 void func_800D1D88(struct MiscObj* arg0);
 void func_800D1DC4(struct MiscObj* arg0);
 void func_800D2A38(struct MiscObj* arg0);
@@ -4907,50 +4907,50 @@ extern void (*iris_pillar_funcs[])(struct ShotObj*);
 void iris_pillar_fire(struct ShotObj*);
 void iris_pillar_end(struct ShotObj*);
 
-// D_80109A78
-extern void (*D_80109A78[])(struct ShotObj*);
-void func_800A7B2C(struct ShotObj*);
-void func_800A7BE8(struct ShotObj*);
-void func_800A7BC8(struct ShotObj*);
+// colonel_shot_state_funcs
+extern void (*colonel_shot_state_funcs[])(struct ShotObj*);
+void colonel_shot_init(struct ShotObj*);
+void colonel_shot_run(struct ShotObj*);
+void colonel_shot_despawn(struct ShotObj*);
 
-// D_80109A84
-extern void (*D_80109A84[])(struct ShotObj*);
-void func_800A7C50(struct ShotObj*);
-void func_800A7E40(struct ShotObj*);
-void func_800A7FF8(struct ShotObj*);
-void func_800A8164(struct ShotObj*);
-void func_800A829C(struct ShotObj*);
-void func_800A836C(struct ShotObj*);
+// colonel_shot_kind_funcs
+extern void (*colonel_shot_kind_funcs[])(struct ShotObj*);
+void colonel_wave(struct ShotObj*);
+void colonel_streak(struct ShotObj*);
+void colonel_marker(struct ShotObj*);
+void colonel_bolt(struct ShotObj*);
+void colonel_slash(struct ShotObj*);
+void colonel_shockwave(struct ShotObj*);
 
-// D_80109A9C
-extern void (*D_80109A9C[])(struct ShotObj*);
+// colonel_wave_funcs
+extern void (*colonel_wave_funcs[])(struct ShotObj*);
 void func_800A7CE8(struct ShotObj*);
-void func_800A7E10(struct ShotObj*);
+void colonel_wave_fly(struct ShotObj*);
 
-// D_80109AA4
-extern void (*D_80109AA4[])(struct ShotObj*);
-void func_800A7E98(struct ShotObj*);
-void func_800A7F44(struct ShotObj*);
+// colonel_streak_funcs
+extern void (*colonel_streak_funcs[])(struct ShotObj*);
+void colonel_streak_start(struct ShotObj*);
+void colonel_streak_move(struct ShotObj*);
 
-// D_80109AAC
-extern void (*D_80109AAC[])(struct ShotObj*);
-void func_800A8074(struct ShotObj*);
-void func_800A80D4(struct ShotObj*);
+// colonel_marker_funcs
+extern void (*colonel_marker_funcs[])(struct ShotObj*);
+void colonel_marker_start(struct ShotObj*);
+void colonel_marker_wait(struct ShotObj*);
 
-// D_80109AB4
-extern void (*D_80109AB4[])(struct ShotObj*);
-void func_800A81E0(struct ShotObj*);
-void func_800A826C(struct ShotObj*);
+// colonel_bolt_funcs
+extern void (*colonel_bolt_funcs[])(struct ShotObj*);
+void colonel_bolt_start(struct ShotObj*);
+void colonel_bolt_fall(struct ShotObj*);
 
-// D_80109ABC
-extern void (*D_80109ABC[])(struct ShotObj*);
-void func_800A82EC(struct ShotObj*);
-void func_800A833C(struct ShotObj*);
+// colonel_slash_funcs
+extern void (*colonel_slash_funcs[])(struct ShotObj*);
+void colonel_slash_start(struct ShotObj*);
+void colonel_slash_wait(struct ShotObj*);
 
-// D_80109AC4
-extern void (*D_80109AC4[])(struct ShotObj*);
+// colonel_shockwave_funcs
+extern void (*colonel_shockwave_funcs[])(struct ShotObj*);
 void func_800A83C4(struct ShotObj*);
-void func_800A84D4(struct ShotObj*);
+void colonel_shockwave_spread(struct ShotObj*);
 void func_800A858C(struct ShotObj*);
 
 // sigma_bolt_funcs
@@ -4996,30 +4996,30 @@ void func_800A8628(struct ShotObj*);
 void sigma_shot_run(struct ShotObj*);
 void sigma_shot_despawn(struct ShotObj*);
 
-// D_80109BB8
-extern void (*D_80109BB8[])(struct ShotObj*);
-void func_800A9AEC(struct ShotObj*);
-void func_800A9C24(struct ShotObj*);
-void func_800A9C7C(struct ShotObj*);
+// double_ball_funcs
+extern void (*double_ball_funcs[])(struct ShotObj*);
+void double_ball_travel(struct ShotObj*);
+void double_ball_hold(struct ShotObj*);
+void double_ball_burst(struct ShotObj*);
 
-// D_80109BC4
-extern void (*D_80109BC4[])(struct ShotObj*);
+// double_ball_state_funcs
+extern void (*double_ball_state_funcs[])(struct ShotObj*);
 void func_800A9964(struct ShotObj*);
-void func_800A9CBC(struct ShotObj*);
-void func_800A9D98(struct ShotObj*);
+void double_ball_run(struct ShotObj*);
+void double_ball_despawn(struct ShotObj*);
 
-// D_80109BD0
-extern void (*D_80109BD0[])(struct ShotObj*);
-void func_800A9EC0(struct ShotObj*);
+// double_aerial_funcs
+extern void (*double_aerial_funcs[])(struct ShotObj*);
+void double_aerial_drop(struct ShotObj*);
 void func_800A9F30(struct ShotObj*);
-void func_800A9FD0(struct ShotObj*);
-void func_800AA000(struct ShotObj*);
+void double_aerial_fly(struct ShotObj*);
+void double_aerial_fly_alt(struct ShotObj*);
 
-// D_80109BE0
-extern void (*D_80109BE0[])(struct ShotObj*);
+// double_aerial_state_funcs
+extern void (*double_aerial_state_funcs[])(struct ShotObj*);
 void func_800A9DF4(struct ShotObj*);
-void func_800AA030(struct ShotObj*);
-void func_800A9D98(struct ShotObj*);
+void double_aerial_run(struct ShotObj*);
+void double_ball_despawn(struct ShotObj*);
 
 // D_80109BEC
 extern void (*D_80109BEC[])(struct ShotObj*);
@@ -5031,7 +5031,7 @@ void func_800AA3A0(struct ShotObj*);
 extern void (*D_80109BF8[])(struct ShotObj*);
 void func_800AA148(struct ShotObj*);
 void func_800AA488(struct ShotObj*);
-void func_800A9D98(struct ShotObj*);
+void double_ball_despawn(struct ShotObj*);
 
 // D_80109C04
 extern void (*D_80109C04[])(struct ShotObj*);
@@ -5046,13 +5046,13 @@ void func_800AA954(struct ShotObj*);
 extern void (*D_80109C20[])(struct ShotObj*);
 void func_800AA148(struct ShotObj*);
 void func_800AA994(struct ShotObj*);
-void func_800A9D98(struct ShotObj*);
+void double_ball_despawn(struct ShotObj*);
 
 // D_80109C2C
 extern void (*D_80109C2C[])(struct ShotObj*);
 void func_800AAAD4(struct ShotObj*);
 void func_800AAB74(struct ShotObj*);
-void func_800A9D98(struct ShotObj*);
+void double_ball_despawn(struct ShotObj*);
 
 // sigma_head_move_funcs
 extern void (*sigma_head_move_funcs[])(struct ShotObj*);
@@ -6621,11 +6621,11 @@ void func_800D17F0(struct UnkObj*);
 void func_800D1864(struct UnkObj*);
 void func_800D188C(struct UnkObj*);
 
-// D_8010F1E0
-extern void (*D_8010F1E0[])(struct MiscObj*);
+// double_afterimage_state_funcs
+extern void (*double_afterimage_state_funcs[])(struct MiscObj*);
 void func_800D1990(struct MiscObj*);
 void func_800D1A48(struct MiscObj*);
-void func_800D1AE8(struct MiscObj*);
+void double_afterimage_despawn(struct MiscObj*);
 
 // D_8010F4AC
 extern void (*D_8010F4AC[])(struct MiscObj*);
