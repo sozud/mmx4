@@ -154,10 +154,10 @@ s32 D_80139688;
 u8 pad_8013968C[4];
 struct ObjectHeader* D_80139690;
 u8 pad_80139694[36];
-u8 D_801396B8[0x4];
-u8 D_801396BC[0x4];
-u8 D_801396C0[0x4];
-u8 D_801396C4[0x4];
+s32 D_801396B8;
+s32 D_801396BC;
+struct MiscObj* D_801396C0;
+struct MiscObj* D_801396C4;
 struct DialogueGlyphData D_801396C8; // D_801396CA..D_801396CF
 struct MiscObj* D_801397BC;
 struct MiscObj* D_801397C0;

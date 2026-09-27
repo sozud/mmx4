@@ -2327,13 +2327,10 @@ union AnimationStep D_80101DA8[] = {
     { 0x2D010003 },
     { 0x2E010003 },
     { 0x2F010003 },
-};
-
-struct Unk_unk68 D_80101DB8[4] = {
-    { 8, 1, 1, 48 },
-    { 8, 1, 1, 49 },
-    { 8, 1, 1, 50 },
-    { 8, 1, -3, 49 },
+    { 0x30010108 },
+    { 0x31010108 },
+    { 0x32010108 },
+    { 0x31FD0108 },
 };
 
 union AnimationStep D_80101DC8[] = {
@@ -2499,7 +2496,7 @@ void* split_mushroom_animations[26] = {
     D_80101D80,
     D_80101D9C,
     D_80101DA8,
-    D_80101DB8,
+    &D_80101DA8[4],
     D_80101DC8,
     D_80101DE0,
     D_80101DF0,
@@ -5555,29 +5552,16 @@ void (*D_80104370[6])() = {
     func_80083E44,
 };
 
-void (*D_80104388[5])(struct MainObj*) = {
+void (*D_80104388[6])(struct MainObj*) = {
     func_80083EAC,
     func_80083F6C,
     func_80083FFC,
     func_800840D0,
     func_80084154,
+    func_800841D4,
 };
 
-u8 D_8010439C[8] = {
-#ifdef VERSION_JP
-    0x30,
-    0x42,
-#else
-    0xD4,
-    0x41,
-#endif
-    0x08,
-    0x80,
-    0x07,
-    0x04,
-    0x00,
-    0x00,
-};
+u8 D_801043A0[4] = { 0x07, 0x04, 0x00, 0x00 };
 
 void (*D_801043A4[5])(struct MainObj*) = {
     func_80084254,

@@ -36,8 +36,8 @@ def validate_replay(path):
         raise SystemExit(f"{path}: empty, odd-length, or truncated replay")
     if data[:8] not in (b"MMX4RPL1", b"MMX4RPL2"):
         raise SystemExit(f"{path}: invalid replay magic")
-    if data[12] > 1 or any(data[13:16]):
-        raise SystemExit(f"{path}: nonzero reserved header bytes")
+    if data[12] > 2 or data[13] > 10 or any(data[14:16]):
+        raise SystemExit(f"{path}: invalid replay header values")
     return {
         "path": str(path),
         "sha256": sha256(path),
@@ -48,6 +48,7 @@ def validate_replay(path):
         "checkpoint": data[10],
         "character": data[11],
         "loadout": data[12],
+        "story": data[13],
         "distinct_masks": len({data[16 + 2 * i : 18 + 2 * i]
                                for i in range((len(data) - 16) // 2)}),
     }
@@ -248,8 +249,9 @@ def main():
                         default=Path(os.environ.get(
                             "MMX4_MEDNAFEN",
                             WORKSPACE / "tools/mednafen-build/src/mednafen")))
-    parser.add_argument("--psx-frames", type=int, default=20000,
-                        help="emulated video frame budget for the PSX oracle")
+    parser.add_argument("--psx-frames", type=int, default=0,
+                        help="emulated video frame budget for the PSX oracle "
+                             "(default: 0, run until replay completion)")
     parser.add_argument("--timeout", type=int, default=7200)
     parser.add_argument("--limit", type=int, default=3,
                         help="differing frames to report per log")
@@ -353,6 +355,7 @@ def main():
     print(f"   {metadata['frames']} inputs, stage {metadata['stage']}-"
           f"{metadata['substage']}, checkpoint {metadata['checkpoint']}, "
           f"character {metadata['character']}, "
+          f"story {metadata['story']}, "
           f"{metadata['distinct_masks']} distinct masks")
     print(f"   commit {metadata['commit']} on {metadata['branch']}"
           + (" (dirty worktree)" if metadata["dirty"] else ""))

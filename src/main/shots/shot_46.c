@@ -226,7 +226,7 @@ void func_800A8FBC(struct ShotObj* arg0)
 {
     struct VisualObj* visual;
 
-    arg0->unk7C->ext.shot_46.unk8F = arg0->unk95 - 2;
+    MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8F = arg0->unk95 - 2;
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (--arg0->timer == 0) {
         visual = find_free_visual_obj();
@@ -275,7 +275,7 @@ void func_800A90C8(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     if (func_800A8A58(arg0, owner->x_pos.val, owner->y_pos.val) & 0xFF) {
         arg0->state = 2;
-        owner->unk80.word = 0;
+        MAIN_OBJECT(owner)->ext.main_68.unk80 = NULL;
     }
 }
 

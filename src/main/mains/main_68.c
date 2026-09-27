@@ -481,7 +481,7 @@ void func_800844AC(struct MainObj* arg0)
     } else {
         index = arg0->ext.main_68.unk8F;
         if (index != 0) {
-            state = D_8010439C[index + 3];
+            state = D_801043A0[index - 1];
             arg0->unk6 = 0;
             arg0->unk7 = 0;
             arg0->unk5 = state;
@@ -1027,7 +1027,7 @@ void func_80085D38(struct MainObj* self)
 void func_80085DCC(struct MainObj* arg0)
 {
     s16 temp_v0;
-    u32 temp_v1;
+    unsigned long temp_v1;
 
     temp_v0 = arg0->unk7C - 1;
     arg0->unk7C = temp_v0;
@@ -1043,7 +1043,7 @@ void func_80085DCC(struct MainObj* arg0)
         arg0->unk7 = 0;
         arg0->ext.main_68.unk91 = 0;
         func_80036B18();
-        temp_v1 = (u32)arg0->ext.main_68.unk80;
+        temp_v1 = (unsigned long)arg0->ext.main_68.unk80;
         ((struct MainObj*)temp_v1)->state++;
     }
     is_on_screen(BASE_OBJECT(arg0));

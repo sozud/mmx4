@@ -14,6 +14,35 @@ void func_80016F0C();
 extern u8 D_80171EA9;
 void func_800153D4(u8 arg0);
 
+#ifdef MMX4_PC
+static u8 direct_u8(const char* name)
+{
+    const char* value = getenv(name);
+    return value == NULL ? 0 : (u8)strtoul(value, NULL, 0);
+}
+
+static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
+{
+    engine_obj.unk5F = story;
+    if (loadout != 1 && loadout != 2)
+        return;
+    engine_obj.unk44 = 4;
+    engine_obj.unk45 = 0x30;
+    engine_obj.unk46 = 0x30;
+    engine_obj.palette_flags = 0xFF;
+    if (loadout == 2 && stage >= 1 && stage <= 8)
+        engine_obj.palette_flags &= (u8) ~(1 << (stage - 1));
+    engine_obj.unk5A = 0xF0FF;
+    engine_obj.unk5C[0] = 0xA0;
+    engine_obj.unk5C[1] = 0xA0;
+    engine_obj.unk5C[2] = 0x20;
+    if (character == CHARACTER_X) {
+        engine_obj.unk47 = 0x0F;
+        engine_obj.unk48 = 2;
+    }
+}
+#endif
+
 void func_8001D064(void)
 {
     s32 var_v1;
@@ -113,11 +142,16 @@ void func_8001D064(void)
             return;
         }
         if (mission_briefing) {
+            u8 stage = direct_u8("MMX4_DIRECT_STAGE");
+            u8 character = direct_u8("MMX4_DIRECT_CHARACTER");
+            u8 loadout = direct_u8("MMX4_DIRECT_LOADOUT");
+            u8 story = direct_u8("MMX4_DIRECT_STORY");
+
             D_80173C80 = MAIN_ARCHIVE_ARENA;
             reset_game_engine();
             engine_obj.stage = 0xE;
             engine_obj.substage = 0;
-            engine_obj.cur_character = CHARACTER_X;
+            engine_obj.cur_character = character;
             func_80013014();
             func_800160AC();
             engine_obj.substage = 1;
@@ -128,7 +162,10 @@ void func_8001D064(void)
             engine_obj.state = 3;
             engine_obj.stage = 0;
             engine_obj.substage = 0;
-            engine_obj.cur_character = CHARACTER_X;
+            engine_obj.cur_character = character;
+            apply_direct_progress(stage, character, loadout, story);
+            if (loadout == 2)
+                engine_obj.palette_flags = 0;
             engine_update_funcs[engine_obj.state](&engine_obj);
             func_800128B8(func_8001FB50);
             return;
@@ -139,6 +176,7 @@ void func_8001D064(void)
             u8 checkpoint = 0;
             u8 character = 0;
             u8 loadout = 0;
+            u8 story = 0;
             const char* value;
 
             value = getenv("MMX4_DIRECT_STAGE");
@@ -156,6 +194,9 @@ void func_8001D064(void)
             value = getenv("MMX4_DIRECT_LOADOUT");
             if (value != NULL)
                 loadout = (u8)strtoul(value, NULL, 0);
+            value = getenv("MMX4_DIRECT_STORY");
+            if (value != NULL)
+                story = (u8)strtoul(value, NULL, 0);
             D_80173C80 = MAIN_ARCHIVE_ARENA;
             reset_game_engine();
             engine_obj.stage = 0xE;
@@ -171,23 +212,11 @@ void func_8001D064(void)
             engine_state_0(&engine_obj);
             engine_obj.stage = stage;
             engine_obj.substage = substage;
-            engine_obj.checkpoint = checkpoint;
             engine_obj.cur_character = character;
-            if (loadout == 1) {
-                engine_obj.unk44 = 4;
-                engine_obj.unk45 = 0x30;
-                engine_obj.unk46 = 0x30;
-                engine_obj.palette_flags = 0xFF;
-                engine_obj.unk5A = 0xF0FF;
-                engine_obj.unk5C[0] = 0xA0;
-                engine_obj.unk5C[1] = 0xA0;
-                engine_obj.unk5C[2] = 0x20;
-                if (character == CHARACTER_X) {
-                    engine_obj.unk47 = 0x0F;
-                    engine_obj.unk48 = 2;
-                }
-            }
+            apply_direct_progress(stage, character, loadout, story);
             engine_obj.state = 4;
+            engine_state_4(&engine_obj);
+            engine_obj.checkpoint = checkpoint;
             func_800128B8(func_8001FB50);
             return;
         }

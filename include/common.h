@@ -1091,7 +1091,7 @@ struct Main74Ext {
     struct MainObj* children[3];
     u8 unk8C;
     u8 effect_state;
-    u8 pad8E;
+    u8 unk8E;
     u8 timer;
     u8 animation_index;
     u8 unk91;
@@ -1111,11 +1111,12 @@ struct Main75Ext {
         struct ShotObj* shot;
         struct MainObj* child;
     } unk80;
-    u8 pad84[4];
+    const u8* script;
     struct ShotObj* shot;
     s16 background_unk1E;
     u8 saved_unk5;
-    u8 pad8F[2];
+    u8 hit_timer;
+    u8 hit_active;
     u8 random_index;
     u8 unk92;
     s8 unk93;
@@ -2281,9 +2282,9 @@ struct Misc49Ext {
 };
 
 struct Misc45Ext {
-    u8 pad50[5];
-    u8 timer;
-    u8 pad56[0x5A - 0x56];
+    u8 pad50[4];
+    struct MainObj* owner;
+    s16 unk58;
     s16 target_x;
     u8 direction;
 };
@@ -3074,7 +3075,16 @@ struct QuadUnkExt4 {
     u16 unk3C;
 };
 
+struct Quad1Ext {
+    u8 settled[4];
+    u8 region[4];
+    u16 steps;
+    u8 unk42;
+    u8 delay;
+};
+
 union QuadExt {
+    struct Quad1Ext quad_1;
     struct ReadyLineExt ready_line;
     struct SearchLightMotion search_light;
     struct QuadUnkExt unk_ext;
@@ -3974,7 +3984,7 @@ extern void* D_80104E7C[];
 extern struct Unk_unk68 D_80104F00;
 extern struct Unk_unk68 D_80104F04;
 extern struct Unk_unk68 D_80108184[];
-extern u8 D_8010439C[8];
+extern u8 D_801043A0[4];
 extern u8 D_801043B8[4];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_80103E7C[];

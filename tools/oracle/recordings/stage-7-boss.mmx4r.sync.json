@@ -1,0 +1,39 @@
+{
+  "format": "MMX4SYNC1",
+  "replay_sha256": "6a3519ca89e4038eba263d600a1a6eec984416626279765eb5ddabb400717711",
+  "clock": "pad-read",
+  "samples": 7428,
+  "scene": {
+    "stage": 7,
+    "substage": 1,
+    "checkpoint": 3,
+    "character": 0
+  },
+  "sync_points": [
+    {
+      "sample": 0,
+      "mode": 6,
+      "kind": "start"
+    },
+    {
+      "sample": 497,
+      "kind": "load-complete",
+      "phase": "input",
+      "pending": 1
+    },
+    {
+      "sample": 6414,
+      "kind": "xa-complete"
+    },
+    {
+      "sample": 6688,
+      "kind": "load-complete",
+      "phase": "input"
+    },
+    {
+      "sample": 6710,
+      "kind": "load-complete",
+      "phase": "input"
+    }
+  ]
+}

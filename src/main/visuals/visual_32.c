@@ -123,7 +123,7 @@ void func_800B5448(struct VisualObj* arg0)
     arg0->x_pos.val = temp_s0->x_pos.val;
     arg0->y_pos.val = temp_s0->y_pos.val;
     is_on_screen(arg0);
-    if (temp_s0->unk91 == 0) {
+    if (MAIN_OBJECT(temp_s0)->ext.main_68.unk91 == 0) {
         arg0->state = 2;
     }
 }
@@ -136,7 +136,7 @@ void func_800B54B0(struct VisualObj* arg0)
 void func_800B54EC(struct VisualObj* arg0)
 {
     if (arg0->unk2 == 1) {
-        arg0->unk50->unk8C--;
+        MAIN_OBJECT(arg0->unk50)->ext.main_68.unk8C--;
     }
     ZeroObjectState(arg0);
 }

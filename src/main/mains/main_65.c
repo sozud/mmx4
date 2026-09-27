@@ -645,7 +645,11 @@ void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2
 {
     if (self->ext.main_65.object->active == 0) {
         self->unk5++;
+#ifdef MMX4_PC
+        func_8002217C(0xC, 0xFF, 0);
+#else
         ((void (*)(u16, u8, s32))func_8002217C)(0xC, 0xFF, arg2);
+#endif
     }
     func_80015DC8(ANIMATED_OBJECT(self));
     func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
@@ -662,6 +666,19 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
     func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 
+#ifdef MMX4_PC
+#define MAGMA_DRAGOON_SMOKE(self, kind)                                  \
+    do {                                                                 \
+        s32 smoke_x = (self)->x_pos.i.hi + (get_random() & 0x3F) - 0x20; \
+        s32 smoke_y = (self)->y_pos.i.hi + (get_random() & 0x1F);        \
+        func_800AFAB4(0, smoke_x, smoke_y, kind);                        \
+    } while (0)
+#else
+#define MAGMA_DRAGOON_SMOKE(self, kind)                                 \
+    func_800AFAB4(0, (self)->x_pos.i.hi + (get_random() & 0x3F) - 0x20, \
+        (self)->y_pos.i.hi + (get_random() & 0x1F), kind)
+#endif
+
 void magma_dragoon_death_smoke(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
@@ -670,13 +687,11 @@ void magma_dragoon_death_smoke(struct MainObj* self)
     }
 
     if ((self->unk7C & 7) == 0) {
-        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            self->y_pos.i.hi + (get_random() & 0x1F), 0);
+        MAGMA_DRAGOON_SMOKE(self, 0);
     }
 
     if ((self->unk7C & 3) == 4) {
-        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            self->y_pos.i.hi + (get_random() & 0x1F), 1);
+        MAGMA_DRAGOON_SMOKE(self, 1);
     }
 
     if ((self->unk7C & 3) != 0) {
@@ -693,13 +708,11 @@ void magma_dragoon_death_vanish(struct MainObj* self)
     }
 
     if ((self->unk7C & 7) == 0) {
-        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            self->y_pos.i.hi + (get_random() & 0x1F), 0);
+        MAGMA_DRAGOON_SMOKE(self, 0);
     }
 
     if ((self->unk7C & 3) == 4) {
-        func_800AFAB4(0, self->x_pos.i.hi + (get_random() & 0x3F) - 0x20,
-            self->y_pos.i.hi + (get_random() & 0x1F), 1);
+        MAGMA_DRAGOON_SMOKE(self, 1);
     }
 
     if ((self->unk7C & 1) != 0) {

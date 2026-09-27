@@ -1,0 +1,30 @@
+{
+  "format": "MMX4SYNC1",
+  "replay_sha256": "12be6b440aa9d43b0ceb620cbf9660ce2d81e7c94d5c64db0d78d74f07b85296",
+  "clock": "pad-read",
+  "samples": 5337,
+  "scene": {
+    "stage": 8,
+    "substage": 1,
+    "checkpoint": 3,
+    "character": 0
+  },
+  "sync_points": [
+    {
+      "sample": 0,
+      "mode": 6,
+      "kind": "start"
+    },
+    {
+      "sample": 526,
+      "kind": "load-complete",
+      "phase": "frame",
+      "pending": 1
+    },
+    {
+      "sample": 4981,
+      "mode": 6,
+      "kind": "mode-return"
+    }
+  ]
+}
