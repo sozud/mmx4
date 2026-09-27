@@ -1217,3 +1217,6 @@ iris_step_funcs = 0x80103BEC;
 double_spawn_shot = 0x8008BF54;
 double_spawn_afterimage = 0x8008C014;
 double_step_funcs = 0x8010531C;
+colonel_face_player = 0x80088974;
+colonel_spawn_afterimages = 0x80088AD0;
+colonel_step_funcs = 0x801047E8;

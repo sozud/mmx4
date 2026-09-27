@@ -11050,19 +11050,19 @@ void func_800B1F78(struct VisualObj* arg0)
 
 extern struct Unk_unk68 D_801044F8;
 extern void* D_80104770[25];
-extern void (*D_801047E8[9])();
+extern void (*colonel_step_funcs[9])();
 extern u8 D_801044A0[8];
 extern u8 D_801044A8[8];
 extern void* D_801044EC[2];
 extern u8 D_801044F4[4];
-void func_80088AD0(struct MainObj*);
-void func_80088974(struct MainObj*);
+void colonel_spawn_afterimages(struct MainObj*);
+void colonel_face_player(struct MainObj*);
 
 void func_80086008(struct MainObj* arg0)
 {
     struct Main69Ext* ext = &arg0->ext.main_69;
 
-    if (ext->state.bytes.unk8C == 0) {
+    if (ext->state.bytes.variant == 0) {
         if (ext->effect->active != 0)
             return;
         arg0->unk6 = 0;
@@ -11089,7 +11089,7 @@ void func_80086008(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
     func_80015D60(arg0, 0);
-    func_80088AD0(arg0);
+    colonel_spawn_afterimages(arg0);
     engine_obj.unk25 = 1;
     engine_obj.boss_ptr = arg0;
     arg0->state = 1;
@@ -11103,7 +11103,7 @@ void func_80086124(struct MainObj* arg0)
     struct Main69Ext* ext = &arg0->ext.main_69;
     s32 collision;
 
-    D_801047E8[arg0->unk5](arg0);
+    colonel_step_funcs[arg0->unk5](arg0);
     collision = func_8002DD04(arg0);
     if (ext->state.bytes.unk8D != 0) {
         if (ext->state.bytes.unk8D & 1)
@@ -11116,7 +11116,7 @@ void func_80086124(struct MainObj* arg0)
         }
     } else if (collision < 0) {
         arg0->state = 2;
-        arg0->unk5 = ext->state.bytes.unk8C != 0 ? 1 : 0;
+        arg0->unk5 = ext->state.bytes.variant != 0 ? 1 : 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
         g_Player.unk7A = 1;
@@ -11142,7 +11142,7 @@ void func_80086860(struct MainObj* arg0)
     arg0->unk20 = 0x200000;
     arg0->unk28 = -0x10000;
     arg0->x_pos.i.hi = background_objects[0].unk1E + 0x100;
-    func_80088974(arg0);
+    colonel_face_player(arg0);
     func_8001540C(2, 0xD3, arg0);
     arg0->unk6++;
 }
@@ -11174,7 +11174,7 @@ void func_800877A4(struct MainObj* arg0)
         arg0->x_pos.i.hi = player_x + 0x30;
     else
         arg0->x_pos.i.hi = player_x - 0x30;
-    func_80088974(arg0);
+    colonel_face_player(arg0);
     func_80015D60(arg0, 5);
     func_8001540C(2, 0xD4, arg0);
     arg0->unk54 = &D_80104508;
@@ -11293,7 +11293,7 @@ void func_800889DC(struct MainObj* arg0)
     u8** scripts;
     u8 i;
 
-    if (ext->state.bytes.unk8C == 1) {
+    if (ext->state.bytes.variant == 1) {
         ext->script = roll < 10 ? D_801044A0 : D_801044A8;
         return;
     }
@@ -22497,7 +22497,7 @@ void func_8008329C(struct MainObj* self)
     func_8001540C(2, 3, self);
     self->unk5++;
     func_800921E8(0xC);
-    func_80088AD0(self);
+    colonel_spawn_afterimages(self);
 }
 
 void func_8008A4D8(struct MainObj* self)

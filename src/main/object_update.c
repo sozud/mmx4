@@ -311,7 +311,7 @@ void (*main_object_update_funcs[])(struct MainObj*) = {
     iris_update,
     func_80082434,
     sigma_update,
-    func_80085F08,
+    colonel_update,
     func_80088BA0,
     func_8008ADC0,
     func_8008B9FC,

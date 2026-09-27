@@ -1252,10 +1252,10 @@ struct Main68Ext {
 union Main69State {
     u32 word;
     struct {
-        u8 unk8C;
+        u8 variant;
         u8 unk8D;
         u8 unk8E;
-        s8 unk8F;
+        s8 wave_delay;
     } bytes;
 };
 
@@ -4828,7 +4828,7 @@ void func_8006AE50(struct AnimatedObj*);
 void func_8006B2A4(struct MainObj*);
 void func_8006B398(struct MainObj*);
 void func_8006E920(struct MainObj*, s32);
-void func_800889A4(struct BaseObj*);
+void colonel_face_center(struct BaseObj*);
 void func_800889DC(struct MainObj*);
 void func_80092E2C(struct VisualObj*, struct PlayerObj*, s32);
 void func_80093524(struct WeaponObj*);

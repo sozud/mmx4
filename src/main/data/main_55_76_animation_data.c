@@ -5971,129 +5971,129 @@ void* D_80104770[25] = {
     D_8010476C,
 };
 
-void (*D_801047D4[3])() = {
-    func_80085F50,
+void (*colonel_state_funcs[3])() = {
+    colonel_spawn,
     func_80086124,
-    func_80086268,
+    colonel_death,
 };
 
-void (*D_801047E0[2])(struct MainObj*) = {
-    func_80085F8C,
+void (*colonel_spawn_funcs[2])(struct MainObj*) = {
+    colonel_spawn_warning,
     func_80086008,
 };
 
-void (*D_801047E8[9])() = {
+void (*colonel_step_funcs[9])() = {
     func_8009216C,
-    func_80086B60,
-    func_80086B74,
-    func_80087414,
-    func_8008765C,
-    func_80087928,
-    func_80087B98,
-    func_80087F78,
-    func_80088584,
+    colonel_start_fight,
+    colonel_intro,
+    colonel_guard,
+    colonel_teleport_slash,
+    colonel_dash,
+    colonel_saber_waves,
+    colonel_flash_strike,
+    colonel_jump_slam,
 };
 
-void (*D_8010480C[2])() = {
-    func_800862A4,
-    func_80086704,
+void (*colonel_death_funcs[2])() = {
+    colonel_defeat,
+    colonel_retreat,
 };
 
-void (*D_80104814[7])() = {
-    func_800862F4,
-    func_800863E8,
-    func_80086488,
-    func_8008649C,
-    func_800864FC,
-    func_8008654C,
-    func_80086640,
+void (*colonel_defeat_funcs[7])() = {
+    colonel_defeat_start,
+    colonel_defeat_fall,
+    colonel_defeat_next,
+    colonel_defeat_dialogue,
+    colonel_defeat_wait_dialogue,
+    colonel_defeat_blink,
+    colonel_defeat_wait_explosion,
 };
 
-void (*D_80104830[8])(struct MainObj*) = {
-    func_80086740,
-    func_800867C4,
+void (*colonel_retreat_funcs[8])(struct MainObj*) = {
+    colonel_retreat_start,
+    colonel_retreat_vanish,
     func_80086860,
-    func_80086900,
-    func_800869BC,
-    func_800869F8,
-    func_80086A6C,
-    func_80086B08,
+    colonel_retreat_reappear,
+    colonel_retreat_wait_dialogue,
+    colonel_retreat_start_again,
+    colonel_retreat_vanish_again,
+    colonel_retreat_finish,
 };
 
-void (*D_80104850[2])() = {
-    func_80086BB0,
-    func_80086F28,
+void (*colonel_intro_funcs[2])() = {
+    colonel_intro_port,
+    colonel_intro_hall,
 };
 
-void (*D_80104858[6])() = {
+void (*colonel_intro_port_funcs[6])() = {
     func_80086C00,
-    func_80086C70,
-    func_80086D04,
-    func_80086D84,
-    func_80086E2C,
-    func_80086E80,
+    colonel_intro_port_flash,
+    colonel_intro_port_blink_in,
+    colonel_intro_port_pose,
+    colonel_intro_port_voice,
+    colonel_intro_port_fill_health,
 };
 
-void (*D_80104870[9])() = {
-    func_80086F78,
-    func_8008700C,
-    func_80087088,
-    func_800870FC,
-    func_80087168,
-    func_800871C4,
-    func_80087254,
-    func_800872E8,
-    func_80087364,
+void (*colonel_intro_hall_funcs[9])() = {
+    colonel_intro_hall_wait_player,
+    colonel_intro_hall_portrait_player,
+    colonel_intro_hall_dialogue,
+    colonel_intro_hall_portrait_colonel,
+    colonel_intro_hall_wait,
+    colonel_intro_hall_blink_in,
+    colonel_intro_hall_flash,
+    colonel_intro_hall_effect,
+    colonel_intro_hall_fill_health,
 };
 
-void (*D_80104894[4])(struct MainObj*) = {
-    func_8008746C,
-    func_8008752C,
-    func_8008759C,
-    func_80087604,
+void (*colonel_guard_funcs[4])(struct MainObj*) = {
+    colonel_guard_pick,
+    colonel_guard_watch,
+    colonel_guard_block,
+    colonel_guard_recover,
 };
 
-void (*D_801048A4[4])(struct MainObj*) = {
-    func_80087698,
-    func_80087708,
+void (*colonel_teleport_slash_funcs[4])(struct MainObj*) = {
+    colonel_teleport_slash_vanish,
+    colonel_teleport_slash_shake,
     func_800877A4,
-    func_80087860,
+    colonel_teleport_slash_swing,
 };
 
-void (*D_801048B4[3])(struct MainObj*) = {
-    func_80087980,
+void (*colonel_dash_funcs[3])(struct MainObj*) = {
+    colonel_dash_start,
     func_80087A00,
-    func_80087AF8,
+    colonel_dash_brake,
 };
 
-void (*D_801048C0[6])(struct MainObj*) = {
-    func_80087BE8,
-    func_80087C70,
-    func_80087D3C,
-    func_80087E0C,
-    func_80087ED4,
-    func_80087F30,
+void (*colonel_saber_waves_funcs[6])(struct MainObj*) = {
+    colonel_saber_waves_start,
+    colonel_saber_waves_fire,
+    colonel_saber_waves_fire_high,
+    colonel_saber_waves_fire_last,
+    colonel_saber_waves_recover,
+    colonel_saber_waves_wait,
 };
 
-void (*D_801048D8[9])(struct MainObj*) = {
-    func_80087FB4,
-    func_80088020,
-    func_800880BC,
-    func_80088140,
+void (*colonel_flash_strike_funcs[9])(struct MainObj*) = {
+    colonel_flash_strike_vanish,
+    colonel_flash_strike_shake,
+    colonel_flash_strike_reappear,
+    colonel_flash_strike_slide,
     func_800881F8,
-    func_80088338,
+    colonel_flash_strike_flash,
     func_800883CC,
-    func_800884D0,
-    func_80088530,
+    colonel_flash_strike_wait,
+    colonel_flash_strike_recover,
 };
 
-void (*D_801048FC[6])(struct MainObj*) = {
-    func_800885DC,
-    func_80088658,
-    func_800886A0,
-    func_800886F0,
-    func_800887DC,
-    func_8008888C,
+void (*colonel_jump_slam_funcs[6])(struct MainObj*) = {
+    colonel_jump_slam_jump,
+    colonel_jump_slam_rise,
+    colonel_jump_slam_land,
+    colonel_jump_slam_drop,
+    colonel_jump_slam_shockwave,
+    colonel_jump_slam_recover,
 };
 
 struct Unk_unk68 D_80104914 = { -12, -13, 25, 26 };
