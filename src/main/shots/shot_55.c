@@ -16,217 +16,220 @@ s8 D_80109E18[3][4] = {
     { -99, 53, -60, 38 },
 };
 
-s16 D_80109E24[4] = { 0x208, 0x238, 0x268, 0x290 };
+s16 general_fist_rows[4] = { 0x208, 0x238, 0x268, 0x290 };
 
 u8 D_80109E2C[4] = { 2, 3, 0, 1 };
 
-void (*D_80109E30[])(struct ShotObj*) = {
-    func_800ACD84,
+void (*general_fist_leader_funcs[])(struct ShotObj*) = {
+    general_fist_wait_launch,
     func_800ACDE4,
-    func_800ACE90,
+    general_fist_fly_to_row,
     func_800ACF60,
-    func_800AD00C,
-    func_800AD080,
-    func_800AD12C,
-    func_800AD1B0,
-    func_800AD224,
+    general_fist_hold,
+    general_fist_turn,
+    general_fist_approach,
+    general_fist_pause,
+    general_fist_sweep_turn,
     func_800AD338,
-    func_800AD404,
+    general_fist_docked,
 };
 
-void (*D_80109E5C[])(struct ShotObj*) = {
-    func_800AD47C,
-    func_800AD4DC,
-    func_800AD538,
+void (*general_fist_follower_funcs[])(struct ShotObj*) = {
+    general_fist_follower_wait_launch,
+    general_fist_follower_launch,
+    general_fist_follower_fly_to_row,
     func_800ACF60,
-    func_800AD00C,
-    func_800AD080,
-    func_800AD12C,
-    func_800AD1B0,
-    func_800AD224,
+    general_fist_hold,
+    general_fist_turn,
+    general_fist_approach,
+    general_fist_pause,
+    general_fist_sweep_turn,
     func_800AD338,
-    func_800AD404,
-    func_800AD630,
-    func_800AD440,
+    general_fist_docked,
+    general_fist_follower,
+    general_fist_leader,
 };
 
 s8 D_80109E90[4] = { -63, -40, 13, -40 };
 
-void (*D_80109E94[])(struct ShotObj*) = {
+void (*general_ring_funcs[])(struct ShotObj*) = {
     func_800AD6DC,
-    func_800AD820,
+    general_ring_fly,
 };
 
-void (*D_80109E9C[])(struct ShotObj*) = {
-    func_800AD8C0,
-    func_800AD92C,
-    func_800AD9C4,
+void (*general_dust_funcs[])(struct ShotObj*) = {
+    general_dust_start,
+    general_dust_burst,
+    general_dust_end,
 };
 
-void (*D_80109EA8[])(struct ShotObj*) = {
-    func_800ADBE0,
-    func_800ADCE8,
-    func_800ADD40,
-    func_800ADDB4,
+void (*general_orb_funcs[])(struct ShotObj*) = {
+    general_orb_spread,
+    general_orb_wait,
+    general_orb_aim,
+    general_orb_fly,
 };
 
-void (*D_80109EB8[])(struct ShotObj*) = {
-    func_800ACD04,
-    func_800ACCAC,
-    func_800AD66C,
-    func_800AD66C,
-    func_800AD868,
-    func_800AD868,
-    func_800ADA0C,
-    func_800ADA0C,
-    func_800ADA64,
-    func_800ADAD8,
-    func_800ADE04,
-    func_800ADE04,
+void (*general_shot_subtype_funcs[])(struct ShotObj*) = {
+    general_shot_thruster,
+    general_shot_intro_prop,
+    general_shot_fist,
+    general_shot_fist,
+    general_shot_ring,
+    general_shot_ring,
+    general_shot_dust,
+    general_shot_dust,
+    general_shot_hit_flash,
+    general_shot_orb_launcher,
+    general_shot_orb,
+    general_shot_orb,
 };
 
+// general_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AC8C4);
 
-void func_800ACCAC(struct ShotObj* arg0)
+void general_shot_intro_prop(struct ShotObj* self)
 {
-    if (arg0->unk5 == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    if (self->unk5 == 0) {
+        func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
         return;
     }
 
-    arg0->state++;
-    func_800C813C(6, D_80109E10, arg0);
+    self->state++;
+    func_800C813C(6, D_80109E10, self);
 }
 
-void func_800ACD04(struct ShotObj* arg0)
+void general_shot_thruster(struct ShotObj* self)
 {
-    struct WeaponObj* weapon = arg0->unk7C;
+    struct WeaponObj* weapon = self->unk7C;
 
-    arg0->on_screen = 0;
-    arg0->x_pos.u.hi = weapon->x_pos.u.hi + arg0->unk84.halves[0];
-    arg0->y_pos.u.hi = weapon->y_pos.u.hi + arg0->unk84.halves[1];
-    arg0->unk15 = weapon->unk15;
-    if (arg0->timer != 0) {
-        func_80015DC8(arg0);
-        func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    self->on_screen = 0;
+    self->x_pos.u.hi = weapon->x_pos.u.hi + self->unk84.halves[0];
+    self->y_pos.u.hi = weapon->y_pos.u.hi + self->unk84.halves[1];
+    self->unk15 = weapon->unk15;
+    if (self->timer != 0) {
+        func_80015DC8(self);
+        func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
     }
 }
 
-void func_800ACD84(struct ShotObj* arg0)
+void general_fist_wait_launch(struct ShotObj* self)
 {
-    if (arg0->unk7C->unk6 == 3) {
-        arg0->unk5++;
-        func_80015D60(arg0, 0x13);
-        func_8001540C(2, 6, arg0);
+    if (self->unk7C->unk6 == 3) {
+        self->unk5++;
+        func_80015D60(self, 0x13);
+        func_8001540C(2, 6, self);
     }
 }
 
+// general_fist_launch
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACDE4);
 
-void func_800ACE90(struct ShotObj* arg0)
+void general_fist_fly_to_row(struct ShotObj* self)
 {
     s32 velocity;
 
-    func_8002B93C(MOVING_OBJECT(arg0),
-        func_8002B7B0(OBJECT_HEADER(arg0), FIXED(3616), D_80109E24[arg0->timer] << 16) & 0xFF);
-    arg0->x_vel.val *= 4;
-    arg0->y_vel.val *= 4;
-    if (func_800AC848(arg0, 0xE20, D_80109E24[arg0->timer]) & 0xFF) {
+    func_8002B93C(MOVING_OBJECT(self),
+        func_8002B7B0(OBJECT_HEADER(self), FIXED(3616), general_fist_rows[self->timer] << 16) & 0xFF);
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
+    if (sigma_final_shot_at_position(self, 0xE20, general_fist_rows[self->timer]) & 0xFF) {
         velocity = FIXED(-1.5);
-        arg0->y_vel.val = 0;
-        arg0->unk5++;
-        if (arg0->unk15 != 0) {
+        self->y_vel.val = 0;
+        self->unk5++;
+        if (self->unk15 != 0) {
             velocity = FIXED(1.5);
         }
-        arg0->x_vel.val = velocity;
+        self->x_vel.val = velocity;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
 }
 
+// general_fist_sweep
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800ACF60);
 
-void func_800AD00C(struct ShotObj* arg0)
+void general_fist_hold(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    temp_v0 = arg0->unk90.u.lo - 1;
-    arg0->unk90.i.lo = temp_v0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    temp_v0 = self->unk90.u.lo - 1;
+    self->unk90.i.lo = temp_v0;
     if (temp_v0 == 0) {
-        arg0->unk5++;
-        if (arg0->unk2 == 3) {
-            func_80015D60(arg0, 0x16);
+        self->unk5++;
+        if (self->unk2 == 3) {
+            func_80015D60(self, 0x16);
         } else {
-            func_80015D60(arg0, 0x11);
+            func_80015D60(self, 0x11);
         }
     }
 }
 
-void func_800AD080(struct ShotObj* arg0)
+void general_fist_turn(struct ShotObj* self)
 {
     s32 velocity;
     u8 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
         velocity = FIXED(-1.5);
-        arg0->animation_step.fields.event = 0;
-        direction = arg0->unk15 ^ 0x40;
-        arg0->unk15 = direction;
+        self->animation_step.fields.event = 0;
+        direction = self->unk15 ^ 0x40;
+        self->unk15 = direction;
         if (direction != 0) {
             velocity = FIXED(1.5);
         }
-        arg0->x_vel.val = velocity;
+        self->x_vel.val = velocity;
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5++;
-        if (arg0->unk2 == 3) {
-            func_80015D60(arg0, 0xF);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5++;
+        if (self->unk2 == 3) {
+            func_80015D60(self, 0xF);
         } else {
-            func_80015D60(arg0, 0x14);
+            func_80015D60(self, 0x14);
         }
-        func_8001540C(2, 5, arg0);
+        func_8001540C(2, 5, self);
     }
 }
 
-void func_800AD12C(struct ShotObj* arg0)
+void general_fist_approach(struct ShotObj* self)
 {
     s16 x_pos;
     s16 target_x_pos;
     s32 delta;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
 
-    x_pos = arg0->x_pos.i.hi;
-    target_x_pos = arg0->unk7C->x_pos.i.hi;
+    x_pos = self->x_pos.i.hi;
+    target_x_pos = self->unk7C->x_pos.i.hi;
     delta = x_pos - target_x_pos;
     if (delta >= 0 ? delta < 0x30 : (target_x_pos - x_pos) < 0x30) {
-        arg0->x_vel.val = 0;
-        arg0->unk90.u.lo = 0x3C;
-        arg0->unk5++;
+        self->x_vel.val = 0;
+        self->unk90.u.lo = 0x3C;
+        self->unk5++;
     }
 }
 
-void func_800AD1B0(struct ShotObj* arg0)
+void general_fist_pause(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    temp_v0 = arg0->unk90.u.lo - 1;
-    arg0->unk90.i.lo = temp_v0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    temp_v0 = self->unk90.u.lo - 1;
+    self->unk90.i.lo = temp_v0;
     if (temp_v0 == 0) {
-        arg0->unk5++;
-        if (arg0->unk2 == 3) {
-            func_80015D60(arg0, 0x11);
+        self->unk5++;
+        if (self->unk2 == 3) {
+            func_80015D60(self, 0x11);
         } else {
-            func_80015D60(arg0, 0x16);
+            func_80015D60(self, 0x16);
         }
     }
 }
 
-void func_800AD224(struct ShotObj* self)
+void general_fist_sweep_turn(struct ShotObj* self)
 {
     s16 timer;
     s32 x_velocity;
@@ -268,41 +271,42 @@ void func_800AD224(struct ShotObj* self)
     }
 }
 
+// general_fist_return
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD338);
 
-void func_800AD404(struct ShotObj* arg0)
+void general_fist_docked(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->timer = 0x80;
+    func_80015DC8(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->timer = 0x80;
     }
 }
 
-void func_800AD440(struct ShotObj* arg0)
+void general_fist_leader(struct ShotObj* self)
 {
-    D_80109E30[arg0->unk5](arg0);
+    general_fist_leader_funcs[self->unk5](self);
 }
 
-void func_800AD47C(struct ShotObj* arg0)
+void general_fist_follower_wait_launch(struct ShotObj* self)
 {
-    if (arg0->unk8C.object->unk5 == 3) {
-        arg0->unk5++;
-        func_80015D60(arg0, 0xE);
-        func_8001540C(2, 6, arg0);
+    if (self->unk8C.object->unk5 == 3) {
+        self->unk5++;
+        func_80015D60(self, 0xE);
+        func_8001540C(2, 6, self);
     }
 }
 
-void func_800AD4DC(struct ShotObj* arg0)
+void general_fist_follower_launch(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5++;
-        func_80015D60(arg0, 0xF);
-        func_8001540C(2, 5, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5++;
+        func_80015D60(self, 0xF);
+        func_8001540C(2, 5, self);
     }
 }
 
-void func_800AD538(struct ShotObj* self)
+void general_fist_follower_fly_to_row(struct ShotObj* self)
 {
     s32 velocity;
 
@@ -310,14 +314,14 @@ void func_800AD538(struct ShotObj* self)
         MOVING_OBJECT(self),
         func_8002B7B0(
             OBJECT_HEADER(self), FIXED(3616),
-            D_80109E24[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]]
+            general_fist_rows[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]]
                 << 16)
             & 0xFF);
     self->x_vel.val *= 4;
     self->y_vel.val *= 4;
-    if (func_800AC848(
+    if (sigma_final_shot_at_position(
             self, 0xE20,
-            D_80109E24[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]])
+            general_fist_rows[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]])
         & 0xFF) {
         velocity = FIXED(-1.5);
         self->y_vel.val = 0;
@@ -331,109 +335,110 @@ void func_800AD538(struct ShotObj* self)
     func_8002B718(MOVING_OBJECT(self));
 }
 
-void func_800AD630(struct ShotObj* arg0)
+void general_fist_follower(struct ShotObj* self)
 {
-    D_80109E5C[arg0->unk5](arg0);
+    general_fist_follower_funcs[self->unk5](self);
 }
 
-void func_800AD66C(struct ShotObj* arg0)
+void general_shot_fist(struct ShotObj* self)
 {
-    D_80109E5C[arg0->unk2 + 9](arg0);
-    arg0->unk42 = arg0->unk7C->unk42;
-    func_8002E184(PLAYER_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    general_fist_follower_funcs[self->unk2 + 9](self);
+    self->unk42 = self->unk7C->unk42;
+    func_8002E184(PLAYER_OBJECT(self));
+    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
+// general_ring_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD6DC);
 
-void func_800AD820(struct ShotObj* arg0)
+void general_ring_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (func_8002B160(BASE_OBJECT(arg0)) == 1) {
-        arg0->state = 2;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (func_8002B160(BASE_OBJECT(self)) == 1) {
+        self->state = 2;
     }
 }
 
-void func_800AD868(struct ShotObj* arg0)
+void general_shot_ring(struct ShotObj* self)
 {
-    D_80109E94[arg0->unk5](arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    general_ring_funcs[self->unk5](self);
+    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
-void func_800AD8C0(struct ShotObj* arg0)
+void general_dust_start(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->timer = 0x19;
-        arg0->unk5++;
-        if (arg0->unk2 == 6) {
-            func_80015D60(arg0, 0x19);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->timer = 0x19;
+        self->unk5++;
+        if (self->unk2 == 6) {
+            func_80015D60(self, 0x19);
         } else {
-            func_80015D60(arg0, 0x1C);
+            func_80015D60(self, 0x1C);
         }
     }
 }
 
-void func_800AD92C(struct ShotObj* arg0)
+void general_dust_burst(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
-        arg0->unk50.data = (u8*)&D_80109E18[2];
-        arg0->timer--;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        self->unk50.data = (u8*)&D_80109E18[2];
+        self->timer--;
     }
-    if (arg0->timer == 0) {
-        arg0->unk50.data = NULL;
-        arg0->unk5++;
-        if (arg0->unk2 == 6) {
-            func_80015D60(arg0, 0x1A);
+    if (self->timer == 0) {
+        self->unk50.data = NULL;
+        self->unk5++;
+        if (self->unk2 == 6) {
+            func_80015D60(self, 0x1A);
         } else {
-            func_80015D60(arg0, 0x1D);
+            func_80015D60(self, 0x1D);
         }
     }
 }
 
-void func_800AD9C4(struct ShotObj* arg0)
+void general_dust_end(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state++;
+    func_80015DC8(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state++;
     }
 }
 
-void func_800ADA0C(struct ShotObj* arg0)
+void general_shot_dust(struct ShotObj* self)
 {
-    D_80109E9C[arg0->unk5](arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0xA0, 0xA0);
+    general_dust_funcs[self->unk5](self);
+    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
-void func_800ADA64(struct ShotObj* arg0)
+void general_shot_hit_flash(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    arg0->x_pos.val = weapon->x_pos.val;
-    arg0->y_pos.val = weapon->y_pos.val;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    weapon = self->unk7C;
+    self->x_pos.val = weapon->x_pos.val;
+    self->y_pos.val = weapon->y_pos.val;
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (MAIN_OBJECT(weapon)->ext.main_75.hit_active == 0) {
-        arg0->state++;
+        self->state++;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800ADAD8(struct ShotObj* arg0)
+void general_shot_orb_launcher(struct ShotObj* self)
 {
     u8 i;
     struct ShotObj* shot;
     struct WeaponObj* owner;
 
-    if (arg0->unk5 == 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        if (arg0->animation_step.fields.relative_step == 0) {
+    if (self->unk5 == 0) {
+        func_80015DC8(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.relative_step == 0) {
             i = 0;
-            owner = arg0->unk7C;
-            arg0->unk5 = (u8)arg0->unk5 + 1;
+            owner = self->unk7C;
+            self->unk5 = (u8)self->unk5 + 1;
             do {
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -442,121 +447,121 @@ void func_800ADAD8(struct ShotObj* arg0)
                     shot->unk2 = i + 0xA;
                     shot->timer = 0;
                     shot->unk7C = owner;
-                    shot->unk84.halves[0] = arg0->x_pos.u.hi - owner->x_pos.u.hi;
-                    shot->unk84.halves[1] = arg0->y_pos.u.hi - owner->y_pos.u.hi;
-                    func_8001540C(2, 4, arg0);
+                    shot->unk84.halves[0] = self->x_pos.u.hi - owner->x_pos.u.hi;
+                    shot->unk84.halves[1] = self->y_pos.u.hi - owner->y_pos.u.hi;
+                    func_8001540C(2, 4, self);
                 }
                 i++;
             } while (i < 2);
         }
     } else {
-        arg0->state = (u8)arg0->state + 1;
+        self->state = (u8)self->state + 1;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800ADBE0(struct ShotObj* arg0)
+void general_orb_spread(struct ShotObj* self)
 {
     struct ShotObj* shot;
     struct WeaponObj* owner;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk8A != 0) {
-        func_8002B718(MOVING_OBJECT(arg0));
-        arg0->unk8A = (u16)arg0->unk8A - 1;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk8A != 0) {
+        func_8002B718(MOVING_OBJECT(self));
+        self->unk8A = (u16)self->unk8A - 1;
         return;
     }
-    owner = arg0->unk7C;
-    arg0->unk5 = (u8)arg0->unk5 + 1;
-    func_80015D60(arg0, 0x20);
-    arg0->unk50.data = (u8*)D_80109E18;
-    if (arg0->timer < 2) {
+    owner = self->unk7C;
+    self->unk5 = (u8)self->unk5 + 1;
+    func_80015D60(self, 0x20);
+    self->unk50.data = (u8*)D_80109E18;
+    if (self->timer < 2) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0x37;
-            shot->unk2 = (u8)arg0->unk2;
-            shot->timer = (u16)arg0->timer + 1;
-            shot->unk7C = arg0->unk7C;
-            shot->unk84.halves[0] = arg0->x_pos.u.hi - owner->x_pos.u.hi;
-            shot->unk84.halves[1] = arg0->y_pos.u.hi - owner->y_pos.u.hi;
+            shot->unk2 = (u8)self->unk2;
+            shot->timer = (u16)self->timer + 1;
+            shot->unk7C = self->unk7C;
+            shot->unk84.halves[0] = self->x_pos.u.hi - owner->x_pos.u.hi;
+            shot->unk84.halves[1] = self->y_pos.u.hi - owner->y_pos.u.hi;
         }
     } else {
-        MAIN_OBJECT(owner)->ext.main_75.unk92 = 1;
+        MAIN_OBJECT(owner)->ext.main_75.orbs_ready = 1;
     }
 }
 
-void func_800ADCE8(struct ShotObj* arg0)
+void general_orb_wait(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (MAIN_OBJECT(weapon)->ext.main_75.unk92 != 0) {
-        arg0->unk8A = 0x14;
-        arg0->unk5++;
+    weapon = self->unk7C;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (MAIN_OBJECT(weapon)->ext.main_75.orbs_ready != 0) {
+        self->unk8A = 0x14;
+        self->unk5++;
     }
 }
 
-void func_800ADD40(struct ShotObj* arg0)
+void general_orb_aim(struct ShotObj* self)
 {
     s16 timer;
     s32 velocity;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk8A - 1;
-    arg0->unk8A = timer;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    timer = self->unk8A - 1;
+    self->unk8A = timer;
     velocity = FIXED(-5);
     if ((timer << 0x10) == 0) {
-        arg0->unk5 = (u8)arg0->unk5 + 1;
-        if (arg0->unk15 != 0) {
+        self->unk5 = (u8)self->unk5 + 1;
+        if (self->unk15 != 0) {
             velocity = FIXED(5);
         }
-        arg0->x_vel.val = velocity;
-        arg0->y_vel.val = 0;
-        func_8001540C(2, 4, arg0);
+        self->x_vel.val = velocity;
+        self->y_vel.val = 0;
+        func_8001540C(2, 4, self);
     }
 }
 
-void func_800ADDB4(struct ShotObj* arg0)
+void general_orb_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x50, 0x30) == 1) {
-        arg0->state = 2;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (func_8002B1E8(BASE_OBJECT(self), 0x50, 0x30) == 1) {
+        self->state = 2;
     }
 }
 
-void func_800ADE04(struct ShotObj* arg0)
+void general_shot_orb(struct ShotObj* self)
 {
-    D_80109EA8[arg0->unk5](arg0);
-    is_on_screen(BASE_OBJECT(arg0));
+    general_orb_funcs[self->unk5](self);
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800ADE54(struct ShotObj* arg0)
+void general_shot_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_8002DD04(MAIN_OBJECT(arg0));
-    D_80109EB8[arg0->unk2](arg0);
-    func_8002D9BC(arg0);
-    if (arg0->unk7C->state == 2) {
-        arg0->state = 2;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    func_8002DD04(MAIN_OBJECT(self));
+    general_shot_subtype_funcs[self->unk2](self);
+    func_8002D9BC(self);
+    if (self->unk7C->state == 2) {
+        self->state = 2;
     }
 }
 
-void func_800ADED4(struct ShotObj* arg0)
+void general_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800ADEF4(struct ShotObj* arg0)
+void general_shot_update(struct ShotObj* self)
 {
-    D_80109EE8[arg0->state](arg0);
+    general_shot_state_funcs[self->state](self);
 }
 
-void (*D_80109EE8[])(struct ShotObj*) = {
+void (*general_shot_state_funcs[])(struct ShotObj*) = {
     func_800AC8C4,
-    func_800ADE54,
-    func_800ADED4,
+    general_shot_run,
+    general_shot_despawn,
 };

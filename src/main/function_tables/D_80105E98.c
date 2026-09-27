@@ -1,12 +1,12 @@
 #include "common.h"
 
-void (*D_80105E98[])(struct MainObj*) = {
-    func_8008FB38,
+void (*general_intro_funcs[])(struct MainObj*) = {
+    general_intro_wait_player,
     func_8008FBCC,
-    func_8008FD6C,
-    func_8008FDF8,
-    func_8008FEE0,
-    func_8008FF50,
-    func_8009002C,
-    func_800900E0,
+    general_intro_lock_camera,
+    general_intro_enter,
+    general_intro_land,
+    general_intro_dialogue,
+    general_intro_fill_health,
+    general_intro_finish,
 };

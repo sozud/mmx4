@@ -692,7 +692,7 @@ struct Unk_unk68 D_80100248 = { -15, -71, 48, 96 };
 
 struct Unk_unk68 D_8010024C = { 0, 0, 28, 26 };
 
-u8 D_80100250[9][4] = {
+u8 slash_beast_pattern_steps[9][4] = {
     { 0, 1, 1, 255 },
     { 0, 7, 2, 255 },
     { 0, 3, 4, 255 },
@@ -705,33 +705,33 @@ u8 D_80100250[9][4] = {
 };
 
 u8* D_80100274[4] = {
-    D_80100250[0],
-    D_80100250[1],
+    slash_beast_pattern_steps[0],
+    slash_beast_pattern_steps[1],
     0x00000000,
     0x00000000,
 };
 
 u8* D_80100284[4] = {
-    D_80100250[2],
-    D_80100250[3],
+    slash_beast_pattern_steps[2],
+    slash_beast_pattern_steps[3],
     0x00000000,
     0x00000000,
 };
 
 u8* D_80100294[4] = {
-    D_80100250[4],
-    D_80100250[6],
-    D_80100250[8],
+    slash_beast_pattern_steps[4],
+    slash_beast_pattern_steps[6],
+    slash_beast_pattern_steps[8],
     0x00000000,
 };
 
-u8** D_801002A4[3] = {
+u8** slash_beast_patterns[3] = {
     D_80100274,
     D_80100284,
     D_80100294,
 };
 
-u8 D_801002B0[12] = { 0x07, 0x10, 0x00, 0x09, 0x10, 0x00, 0x07, 0x0A, 0x10, 0x00, 0x00, 0x00 };
+u8 slash_beast_pattern_weights[12] = { 0x07, 0x10, 0x00, 0x09, 0x10, 0x00, 0x07, 0x0A, 0x10, 0x00, 0x00, 0x00 };
 
 union AnimationStep D_801002BC[] = {
     { 0x00000101 },
@@ -1000,7 +1000,7 @@ union AnimationStep D_801004FC[] = {
     { 0x00000101 },
 };
 
-union AnimationStep* D_80100514[39] = {
+union AnimationStep* slash_beast_animations[39] = {
     D_801002BC,
     D_801002C0,
     D_801002D8,

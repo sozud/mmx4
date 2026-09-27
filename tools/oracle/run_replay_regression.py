@@ -279,10 +279,16 @@ def main():
     sync_points = {point["sample"] for point in sync["sync_points"]} if sync else {0}
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    args.output.mkdir(parents=True, exist_ok=True)
     output = args.output / stamp
-    if output.exists():
-        raise SystemExit(f"{output}: output directory already exists")
-    output.mkdir(parents=True)
+    suffix = 1
+    while True:
+        try:
+            output.mkdir()
+            break
+        except FileExistsError:
+            suffix += 1
+            output = args.output / f"{stamp}-{suffix}"
     psx_dir = output / "psx"
     pc_dir = output / "pc"
     pc_dir.mkdir()

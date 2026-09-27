@@ -2,19 +2,20 @@
 // 800CC7BC..800CC908
 #include "common.h"
 
-void func_800CC7BC(struct MiscObj* arg0)
+void slash_beast_afterimage_update(struct MiscObj* self)
 {
-    D_8010E958[arg0->state](arg0);
+    slash_beast_afterimage_state_funcs[self->state](self);
 }
 
+// slash_beast_afterimage_fade
 INCLUDE_ASM("main/nonmatchings/misc/misc_26", func_800CC7F8);
 
-void func_800CC8E8(struct MiscObj* arg0)
+void slash_beast_afterimage_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010E958[])(struct MiscObj*) = {
+void (*slash_beast_afterimage_state_funcs[])(struct MiscObj*) = {
     func_800CC7F8,
-    func_800CC8E8,
+    slash_beast_afterimage_despawn,
 };

@@ -47,59 +47,60 @@ s8 D_80109B0C[4][2] = {
     { -0x20, 0x28 },
 };
 
-void (*D_80109B14[])(struct ShotObj*) = {
-    func_800A8B88,
-    func_800A8C88,
-    func_800A8D1C,
-    func_800A8D68,
-    func_800A8D1C,
-    func_800A8DB8,
+void (*sigma_bolt_funcs[])(struct ShotObj*) = {
+    sigma_bolt_gather,
+    sigma_bolt_launch,
+    sigma_bolt_bounce_wall,
+    sigma_bolt_bounce_floor,
+    sigma_bolt_bounce_wall,
+    sigma_bolt_idle,
 };
 
-void (*D_80109B2C[])(struct ShotObj*) = {
+void (*sigma_planted_scythe_funcs[])(struct ShotObj*) = {
     func_800A8E50,
-    func_800A8FBC,
-    func_800A9054,
-    func_800A90C8,
+    sigma_planted_scythe_stuck,
+    sigma_planted_scythe_recall,
+    sigma_planted_scythe_return,
 };
 
-void (*D_80109B3C[])(struct ShotObj*) = {
-    func_800A9210,
-    func_800A92C8,
-    func_800A9334,
-    func_800A93FC,
-    func_800A94A4,
+void (*sigma_dart_funcs[])(struct ShotObj*) = {
+    sigma_dart_spread,
+    sigma_dart_wait,
+    sigma_dart_strike,
+    sigma_dart_aim,
+    sigma_dart_fly,
 };
 
-void (*D_80109B50[])(struct ShotObj*) = {
-    func_800A8AE4,
-    func_800A8DC0,
-    func_800A8DC0,
-    func_800A916C,
-    func_800A91D8,
-    func_800A91D8,
-    func_800A94D4,
+void (*sigma_shot_subtype_funcs[])(struct ShotObj*) = {
+    sigma_shot_cloak_scythe,
+    sigma_shot_bolt,
+    sigma_shot_bolt,
+    sigma_shot_planted_scythe,
+    sigma_shot_drift,
+    sigma_shot_drift,
+    sigma_shot_dart,
     func_800A9544,
-    func_800A9654,
-    func_800A96F8,
-    func_800A97C0,
+    sigma_shot_cloak_fire,
+    sigma_shot_dropped_scythe,
+    sigma_shot_flash,
 };
 
+// sigma_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8628);
 
-s32 func_800A8A58(struct ShotObj* arg0, s32 arg1, s32 arg2)
+s32 sigma_shot_at_position(struct ShotObj* self, s32 arg1, s32 arg2)
 {
-    POS_BOUNDS_CHECK_FAIL_RET0(arg0->x_pos.val, arg1)
-    POS_BOUNDS_CHECK_FAIL_RET0(arg0->y_pos.val, arg2)
+    POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, arg1)
+    POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, arg2)
     return 1;
 }
 
-void func_800A8AE4(struct ShotObj* arg0)
+void sigma_shot_cloak_scythe(struct ShotObj* self)
 {
     struct ShotObj* shot;
     struct WeaponObj* weapon;
 
-    shot = arg0;
+    shot = self;
     weapon = shot->unk7C;
     func_80015DC8(ANIMATED_OBJECT(shot));
     if (shot->animation_step.fields.event != 0) {
@@ -118,7 +119,7 @@ void func_800A8AE4(struct ShotObj* arg0)
     shot->unk50.data = 0;
 }
 
-void func_800A8B88(struct ShotObj* self)
+void sigma_bolt_gather(struct ShotObj* self)
 {
     s32 collision;
     s32 x;
@@ -134,21 +135,21 @@ void func_800A8B88(struct ShotObj* self)
         x = weapon->x_pos.val + (D_80109B0C[1][self->unk99] << 16);
     }
     collision = func_8002B7B0(OBJECT_HEADER(self), x, y);
-    if (func_800A8A58(self, x, y) & 0xFF) {
+    if (sigma_shot_at_position(self, x, y) & 0xFF) {
         self->timer = 0x14;
         self->unk5 = (u8)self->unk5 + 1;
     }
     func_8002B93C(MOVING_OBJECT(self), collision & 0xFF);
 }
 
-void func_800A8C88(struct ShotObj* arg0)
+void sigma_bolt_launch(struct ShotObj* self)
 {
     struct ShotObj* shot;
     s16 timer;
     s32 velocity;
     s8 frame;
 
-    shot = arg0;
+    shot = self;
     func_80015DC8(ANIMATED_OBJECT(shot));
     timer = (u16)shot->timer - 1;
     shot->timer = timer;
@@ -171,311 +172,313 @@ void func_800A8C88(struct ShotObj* arg0)
     }
 }
 
-void func_800A8D1C(struct ShotObj* arg0)
+void sigma_bolt_bounce_wall(struct ShotObj* self)
 {
-    if (arg0->unk70 & 3) {
-        arg0->x_vel.val = 0;
-        if (arg0->unk5 == 2) {
-            arg0->y_vel.val = FIXED(-5);
+    if (self->unk70 & 3) {
+        self->x_vel.val = 0;
+        if (self->unk5 == 2) {
+            self->y_vel.val = FIXED(-5);
         } else {
-            arg0->y_vel.val = FIXED(5);
+            self->y_vel.val = FIXED(5);
         }
-        arg0->unk5++;
+        self->unk5++;
     }
 }
 
-void func_800A8D68(struct ShotObj* arg0)
+void sigma_bolt_bounce_floor(struct ShotObj* self)
 {
     s32 var_a1;
 
     var_a1 = FIXED(-5);
-    if (arg0->unk70 & 8) {
-        arg0->unk5++;
-        if (arg0->unk99 != 0) {
+    if (self->unk70 & 8) {
+        self->unk5++;
+        if (self->unk99 != 0) {
             var_a1 = FIXED(5);
         }
-        arg0->x_vel.val = var_a1;
-        if (arg0->unk2 == 2) {
-            arg0->x_vel.val = -var_a1;
+        self->x_vel.val = var_a1;
+        if (self->unk2 == 2) {
+            self->x_vel.val = -var_a1;
         }
-        arg0->y_vel.val = 0;
+        self->y_vel.val = 0;
     }
 }
 
-void func_800A8DB8(struct ShotObj* arg0)
+void sigma_bolt_idle(struct ShotObj* self)
 {
 }
 
-void func_800A8DC0(struct ShotObj* arg0)
+void sigma_shot_bolt(struct ShotObj* self)
 {
-    D_80109B14[arg0->unk5](arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) != 0) {
-        arg0->state = 2;
+    sigma_bolt_funcs[self->unk5](self);
+    if (func_8002DD04(MAIN_OBJECT(self)) != 0) {
+        self->state = 2;
     }
-    func_80015DC8(arg0);
-    func_8002B718(MOVING_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->unk7C->state == 4) {
-        arg0->state = 2;
+    func_80015DC8(self);
+    func_8002B718(MOVING_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (self->unk7C->state == 4) {
+        self->state = 2;
     }
 }
 
+// sigma_planted_scythe_fly
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A8E50);
 
-void func_800A8FBC(struct ShotObj* arg0)
+void sigma_planted_scythe_stuck(struct ShotObj* self)
 {
     struct VisualObj* visual;
 
-    MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8F = arg0->unk95 - 2;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->timer == 0) {
+    MAIN_OBJECT(self->unk7C)->ext.main_68.next_attack = self->unk95 - 2;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->timer == 0) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
             visual->id = 0x20;
-            visual->unk2 = arg0->unk95;
-            visual->unk50 = (struct PlayerObj*)arg0;
-            arg0->timer = (arg0->unk95 == 4) ? 0x24 : 0x18;
+            visual->unk2 = self->unk95;
+            visual->unk50 = (struct PlayerObj*)self;
+            self->timer = (self->unk95 == 4) ? 0x24 : 0x18;
         }
     }
 }
 
-void func_800A9054(struct ShotObj* arg0)
+void sigma_planted_scythe_recall(struct ShotObj* self)
 {
     s32 x;
     s32 target_x;
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    arg0->unk5++;
+    weapon = self->unk7C;
+    self->unk5++;
     x = weapon->x_pos.i.hi;
     if (weapon->unk15 == 0) {
         target_x = x - 0x21;
     } else {
         target_x = x + 0x21;
     }
-    arg0->unk90.i.lo = target_x;
-    arg0->unk90.u.hi = weapon->y_pos.u.hi - 0x15;
-    func_80015D60(arg0, 0x1E);
-    func_8001540C(2, 5, arg0);
+    self->unk90.i.lo = target_x;
+    self->unk90.u.hi = weapon->y_pos.u.hi - 0x15;
+    func_80015D60(self, 0x1E);
+    func_8001540C(2, 5, self);
 }
 
-void func_800A90C8(struct ShotObj* arg0)
+void sigma_planted_scythe_return(struct ShotObj* self)
 {
     s8 direction;
     struct WeaponObj* owner;
 
-    owner = arg0->unk7C;
-    direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(owner));
-    arg0->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
-    arg0->x_vel.val *= 6;
-    arg0->y_vel.val *= 6;
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (func_800A8A58(arg0, owner->x_pos.val, owner->y_pos.val) & 0xFF) {
-        arg0->state = 2;
-        MAIN_OBJECT(owner)->ext.main_68.unk80 = NULL;
+    owner = self->unk7C;
+    direction = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(owner));
+    self->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    self->x_vel.val *= 6;
+    self->y_vel.val *= 6;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (sigma_shot_at_position(self, owner->x_pos.val, owner->y_pos.val) & 0xFF) {
+        self->state = 2;
+        MAIN_OBJECT(owner)->ext.main_68.scythe = NULL;
     }
 }
 
-void func_800A916C(struct ShotObj* arg0)
+void sigma_shot_planted_scythe(struct ShotObj* self)
 {
-    D_80109B2C[arg0->unk5](arg0);
-    is_on_screen((struct BaseObj*)arg0);
-    if (arg0->unk7C->state == 2) {
-        arg0->state = 2;
+    sigma_planted_scythe_funcs[self->unk5](self);
+    is_on_screen((struct BaseObj*)self);
+    if (self->unk7C->state == 2) {
+        self->state = 2;
     }
 }
 
-void func_800A91D8(struct ShotObj* arg0)
+void sigma_shot_drift(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
-    is_on_screen((struct BaseObj*)arg0);
+    func_80015DC8(self);
+    func_8002B718((struct MovingObj*)self);
+    is_on_screen((struct BaseObj*)self);
 }
 
-void func_800A9210(struct ShotObj* arg0)
+void sigma_dart_spread(struct ShotObj* self)
 {
     s8 direction;
 
-    direction = func_8002B7B0(OBJECT_HEADER(arg0),
-        arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10);
-    arg0->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
-    arg0->x_vel.val *= 3;
-    arg0->y_vel.val *= 3;
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (func_800A8A58(arg0,
-            arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10)
+    direction = func_8002B7B0(OBJECT_HEADER(self),
+        self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
+    self->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    self->x_vel.val *= 3;
+    self->y_vel.val *= 3;
+    func_8002B718(MOVING_OBJECT(self));
+    if (sigma_shot_at_position(self,
+            self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10)
         & 0xFF) {
-        arg0->unk5++;
-        arg0->timer = (arg0->unk95 + 1) * 0x28;
+        self->unk5++;
+        self->timer = (self->unk95 + 1) * 0x28;
     }
 }
 
-void func_800A92C8(struct ShotObj* arg0)
+void sigma_dart_wait(struct ShotObj* self)
 {
-    if (--arg0->timer == 0) {
-        arg0->unk5++;
-        arg0->unk90.u.lo = g_Player.x_pos.u.hi;
-        arg0->unk90.u.hi = g_Player.y_pos.u.hi;
-        func_8001540C(2, 0xB, arg0);
+    if (--self->timer == 0) {
+        self->unk5++;
+        self->unk90.u.lo = g_Player.x_pos.u.hi;
+        self->unk90.u.hi = g_Player.y_pos.u.hi;
+        func_8001540C(2, 0xB, self);
     }
 }
 
-void func_800A9334(struct ShotObj* arg0)
+void sigma_dart_strike(struct ShotObj* self)
 {
     s8 direction;
 
-    direction = func_8002B7B0(OBJECT_HEADER(arg0),
-        arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10);
-    arg0->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
-    arg0->x_vel.val *= 6;
-    arg0->y_vel.val *= 6;
-    if ((func_800A8A58(arg0,
-             arg0->unk90.i.lo << 0x10, arg0->unk90.i.hi << 0x10)
+    direction = func_8002B7B0(OBJECT_HEADER(self),
+        self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
+    self->pad94 = direction;
+    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    self->x_vel.val *= 6;
+    self->y_vel.val *= 6;
+    if ((sigma_shot_at_position(self,
+             self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10)
             & 0xFF)
-        || (arg0->unk98 != 0)) {
-        arg0->timer = 0xF0;
-        arg0->unk5++;
+        || (self->unk98 != 0)) {
+        self->timer = 0xF0;
+        self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
 }
 
-void func_800A93FC(struct ShotObj* arg0)
+void sigma_dart_aim(struct ShotObj* self)
 {
     s16 timer;
     s8 direction;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        arg0->unk5++;
-        direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-        arg0->pad94 = direction;
-        func_8002B93C(MOVING_OBJECT(arg0), direction & 0xFF);
-        arg0->x_vel.val *= 6;
-        arg0->y_vel.val *= 6;
-        func_8001540C(2, 0xB, arg0);
+        self->unk5++;
+        direction = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        self->pad94 = direction;
+        func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+        self->x_vel.val *= 6;
+        self->y_vel.val *= 6;
+        func_8001540C(2, 0xB, self);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_800A94A4(struct ShotObj* arg0)
+void sigma_dart_fly(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
+    func_80015DC8(self);
+    func_8002B718((struct MovingObj*)self);
 }
 
-void func_800A94D4(struct ShotObj* arg0)
+void sigma_shot_dart(struct ShotObj* self)
 {
-    arg0->unk98 = func_8002DD04(MAIN_OBJECT(arg0));
-    D_80109B3C[arg0->unk5](arg0);
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->unk7C->state == 2) {
-        arg0->state = 2;
+    self->unk98 = func_8002DD04(MAIN_OBJECT(self));
+    sigma_dart_funcs[self->unk5](self);
+    is_on_screen(BASE_OBJECT(self));
+    if (self->unk7C->state == 2) {
+        self->state = 2;
     }
 }
 
+// sigma_shot_spin_scythe
 INCLUDE_ASM("main/nonmatchings/shots/shot_46", func_800A9544);
 
-void func_800A9654(struct ShotObj* arg0)
+void sigma_shot_cloak_fire(struct ShotObj* self)
 {
     struct WeaponObj* owner;
 
-    owner = arg0->unk7C;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
+    owner = self->unk7C;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
     }
-    arg0->x_pos.u.hi = owner->x_pos.u.hi + owner->y_vel.u.hi;
-    arg0->y_pos.u.hi = owner->y_pos.u.hi + owner->unk28.u.hi;
+    self->x_pos.u.hi = owner->x_pos.u.hi + owner->y_vel.u.hi;
+    self->y_pos.u.hi = owner->y_pos.u.hi + owner->unk28.u.hi;
     if (!(D_80141BD8.unk0 & 7)) {
-        func_800C813C(6, D_80109AF4, arg0);
+        func_800C813C(6, D_80109AF4, self);
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A96F8(struct ShotObj* arg0)
+void sigma_shot_dropped_scythe(struct ShotObj* self)
 {
-    switch (arg0->unk5) {
+    switch (self->unk5) {
     case 0:
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        if (arg0->y_vel.val < 0) {
-            arg0->y_vel.val = 0;
-            arg0->unk5++;
+        func_80015DC8(ANIMATED_OBJECT(self));
+        func_8002B694(ANIMATED_OBJECT(self));
+        if (self->y_vel.val < 0) {
+            self->y_vel.val = 0;
+            self->unk5++;
         }
         break;
     case 1:
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        if (arg0->unk70 & 8) {
-            arg0->unk5++;
-            func_80015D60(arg0, 0x20);
-            func_8001540C(2, 6, arg0);
+        func_80015DC8(ANIMATED_OBJECT(self));
+        func_8002B694(ANIMATED_OBJECT(self));
+        if (self->unk70 & 8) {
+            self->unk5++;
+            func_80015D60(self, 0x20);
+            func_8001540C(2, 6, self);
         }
         break;
     }
 
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A97C0(struct ShotObj* arg0)
+void sigma_shot_flash(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    arg0->x_pos.u.hi = weapon->x_pos.u.hi;
-    arg0->y_pos.u.hi = weapon->y_pos.u.hi;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
+    weapon = self->unk7C;
+    self->x_pos.u.hi = weapon->x_pos.u.hi;
+    self->y_pos.u.hi = weapon->y_pos.u.hi;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
     }
 }
 
-void func_800A9818(struct ShotObj* arg0)
+void sigma_shot_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_8002D9BC(arg0);
-    D_80109B50[arg0->unk2](arg0);
-    arg0->unk42 &= 0x7FFF;
-    if (arg0->unk2 != 0) {
-        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-            CollisionRelated(PLAYER_OBJECT(arg0));
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    func_8002D9BC(self);
+    sigma_shot_subtype_funcs[self->unk2](self);
+    self->unk42 &= 0x7FFF;
+    if (self->unk2 != 0) {
+        if (func_8002B160(BASE_OBJECT(self)) == 0) {
+            CollisionRelated(PLAYER_OBJECT(self));
             return;
         }
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800A98AC(struct ShotObj* arg0)
+void sigma_shot_despawn(struct ShotObj* self)
 {
-    s8 state = arg0->unk2;
+    s8 state = self->unk2;
 
     switch (state) {
     case 1:
     case 2:
-        MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8E--;
+        MAIN_OBJECT(self->unk7C)->ext.main_68.active_shots--;
         break;
     case 6:
-        MAIN_OBJECT(arg0->unk7C)->ext.main_68.unk8C--;
+        MAIN_OBJECT(self->unk7C)->ext.main_68.count--;
         break;
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A9928(struct ShotObj* arg0)
+void sigma_shot_update(struct ShotObj* self)
 {
-    D_80109B7C[arg0->state](arg0);
+    sigma_shot_state_funcs[self->state](self);
 }
 
-void (*D_80109B7C[])(struct ShotObj*) = {
+void (*sigma_shot_state_funcs[])(struct ShotObj*) = {
     func_800A8628,
-    func_800A9818,
-    func_800A98AC,
+    sigma_shot_run,
+    sigma_shot_despawn,
 };

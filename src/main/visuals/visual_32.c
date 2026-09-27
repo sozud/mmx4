@@ -26,61 +26,62 @@ s32 D_8010A740[8] = {
     -0x12000,
 };
 
+// sigma_fx_init
 INCLUDE_ASM("main/nonmatchings/visuals/visual_32", func_800B4E34);
 
-void func_800B518C(struct VisualObj* arg0)
+void sigma_fx_glow(struct VisualObj* self)
 {
-    if (arg0->unk50->state >= 3) {
-        arg0->state = 2;
+    if (self->unk50->state >= 3) {
+        self->state = 2;
     }
-    func_80015DC8(arg0);
-    is_on_screen(arg0);
+    func_80015DC8(self);
+    is_on_screen(self);
 }
 
-void func_800B51E0(struct VisualObj* arg0)
+void sigma_cloak_piece_wait(struct VisualObj* self)
 {
-    if (--arg0->unk54 == 0) {
-        arg0->unk54 = 30;
-        arg0->unk5++;
+    if (--self->unk54 == 0) {
+        self->unk54 = 30;
+        self->unk5++;
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
-void func_800B522C(struct VisualObj* arg0)
+void sigma_cloak_piece_blink(struct VisualObj* self)
 {
-    arg0->on_screen = 0;
-    if (--arg0->unk54 == 0) {
-        arg0->state = 2;
+    self->on_screen = 0;
+    if (--self->unk54 == 0) {
+        self->state = 2;
     }
-    if (arg0->unk54 & 1) {
-        is_on_screen(arg0);
+    if (self->unk54 & 1) {
+        is_on_screen(self);
     }
 }
 
-void func_800B5280(struct VisualObj* arg0)
+void sigma_fx_cloak_piece(struct VisualObj* self)
 {
-    D_8010A760[arg0->unk5](arg0);
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
+    sigma_cloak_piece_funcs[self->unk5](self);
+    func_80015DC8(self);
+    func_8002B718((struct MovingObj*)self);
 }
 
-void func_800B52D8(struct VisualObj* arg0)
+void sigma_fx_oneshot(struct VisualObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->state = 2;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->state = 2;
     }
-    if (arg0->unk2 == 5) {
-        arg0->on_screen = 0;
-        if ((arg0->unk50->input.buttons.held & 1) != 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+    if (self->unk2 == 5) {
+        self->on_screen = 0;
+        if ((self->unk50->input.buttons.held & 1) != 0) {
+            is_on_screen(BASE_OBJECT(self));
         }
     } else {
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800B5348(struct VisualObj* self)
+void sigma_fx_electric(struct VisualObj* self)
 {
     u8 i;
     u8 shot_type;
@@ -116,53 +117,53 @@ void func_800B5348(struct VisualObj* self)
     }
 }
 
-void func_800B5448(struct VisualObj* arg0)
+void sigma_fx_hit_glow(struct VisualObj* self)
 {
-    struct PlayerObj* temp_s0 = arg0->unk50;
-    func_80015DC8(arg0);
-    arg0->x_pos.val = temp_s0->x_pos.val;
-    arg0->y_pos.val = temp_s0->y_pos.val;
-    is_on_screen(arg0);
-    if (MAIN_OBJECT(temp_s0)->ext.main_68.unk91 == 0) {
-        arg0->state = 2;
+    struct PlayerObj* temp_s0 = self->unk50;
+    func_80015DC8(self);
+    self->x_pos.val = temp_s0->x_pos.val;
+    self->y_pos.val = temp_s0->y_pos.val;
+    is_on_screen(self);
+    if (MAIN_OBJECT(temp_s0)->ext.main_68.flash_timer == 0) {
+        self->state = 2;
     }
 }
 
-void func_800B54B0(struct VisualObj* arg0)
+void sigma_fx_run(struct VisualObj* self)
 {
-    D_8010A768[arg0->unk2](arg0);
+    sigma_fx_subtype_funcs[self->unk2](self);
 }
 
-void func_800B54EC(struct VisualObj* arg0)
+void sigma_fx_despawn(struct VisualObj* self)
 {
-    if (arg0->unk2 == 1) {
-        MAIN_OBJECT(arg0->unk50)->ext.main_68.unk8C--;
+    if (self->unk2 == 1) {
+        MAIN_OBJECT(self->unk50)->ext.main_68.count--;
     }
-    ZeroObjectState(arg0);
+    ZeroObjectState(self);
 }
 
-void func_800B5534(struct VisualObj* arg0)
+void sigma_fx_update(struct VisualObj* self)
 {
-    D_8010A784[arg0->state](arg0);
+    sigma_fx_state_funcs[self->state](self);
 }
 
-void (*D_8010A760[])(struct VisualObj*) = {
-    func_800B51E0,
-    func_800B522C,
+void (*sigma_cloak_piece_funcs[])(struct VisualObj*) = {
+    sigma_cloak_piece_wait,
+    sigma_cloak_piece_blink,
 };
 
-void (*D_8010A768[])(struct VisualObj*) = {
-    func_800B518C,
-    func_800B5280,
-    func_800B52D8,
-    func_800B5348,
-    func_800B5348,
-    func_800B52D8,
-    func_800B5448,
+void (*sigma_fx_subtype_funcs[])(struct VisualObj*) = {
+    sigma_fx_glow,
+    sigma_fx_cloak_piece,
+    sigma_fx_oneshot,
+    sigma_fx_electric,
+    sigma_fx_electric,
+    sigma_fx_oneshot,
+    sigma_fx_hit_glow,
 };
 
-void (*D_8010A784[])(struct VisualObj*) = {
+void (*sigma_fx_state_funcs[])(struct VisualObj*) = {
     func_800B4E34,
-    func_800B54B0,
-    func_800B54EC,
+    sigma_fx_run,
+    sigma_fx_despawn,
 };

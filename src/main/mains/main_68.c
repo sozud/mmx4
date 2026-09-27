@@ -2,58 +2,59 @@
 // 80083218..80085F08
 #include "common.h"
 
-extern void (*D_80104354[])(struct MainObj*);
+extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 
-void func_80083218(struct MainObj* arg0)
+void sigma_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
 
     if (g_Player.unkC4 == 0) {
-        arg0->on_screen = 0;
+        self->on_screen = 0;
         background_objects[0].unk24 -= 0x10;
         func_80036AE4(0x14, 0x40);
-        arg0->unk5++;
+        self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x18;
-            arg0->ext.main_68.effect = effect;
+            self->ext.main_68.effect = effect;
         }
     }
 }
 
+// sigma_intro_init
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_8008329C);
 
-void func_800833D0(struct MainObj* arg0)
+void sigma_intro_fill_health(struct MainObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk7E == 0) {
-        if (arg0->unk5C < 0x30) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk7E == 0) {
+        if (self->unk5C < 0x30) {
             if (func_8009227C() == 0) {
-                temp_v0 = arg0->unk7C - 1;
-                arg0->unk7C = temp_v0;
+                temp_v0 = self->unk7C - 1;
+                self->unk7C = temp_v0;
                 if (temp_v0 == 0) {
                     func_8001540C(0, 0xE, 0);
-                    arg0->unk7C = 2;
+                    self->unk7C = 2;
                 }
-                arg0->unk5C++;
+                self->unk5C++;
             }
         } else {
-            arg0->unk7C = 0x1E;
-            arg0->unk5++;
+            self->unk7C = 0x1E;
+            self->unk5++;
         }
     } else {
-        arg0->unk7E--;
+        self->unk7E--;
     }
-    arg0->on_screen = 0;
+    self->on_screen = 0;
     if (D_80141BD8.unk0 & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800834B0(struct MainObj* self)
+void sigma_intro_wait(struct MainObj* self)
 {
     s16 timer;
 
@@ -73,20 +74,20 @@ void func_800834B0(struct MainObj* self)
     }
 }
 
-void func_80083544(struct MainObj* arg0)
+void sigma_intro_finish(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->state = 1;
-        arg0->unk5 = 2;
+    if (--self->unk7C == 0) {
+        self->state = 1;
+        self->unk5 = 2;
     }
 }
 
-void func_80083574(struct MainObj* arg0)
+void sigma_intro(struct MainObj* self)
 {
-    D_80104340[arg0->unk5](arg0);
+    sigma_intro_funcs[self->unk5](self);
 }
 
-void func_800835B0(struct MainObj* self)
+void sigma_cloak_teleport_appear(struct MainObj* self)
 {
     s16 x_pos;
 
@@ -101,9 +102,9 @@ void func_800835B0(struct MainObj* self)
     }
     self->y_pos.val = FIXED(0x150);
     self->unk7C = 5;
-    self->ext.main_68.unk92 = 2;
-    self->ext.main_68.unk8C = 0;
-    self->ext.main_68.unk8E = 0;
+    self->ext.main_68.bob_step = 2;
+    self->ext.main_68.count = 0;
+    self->ext.main_68.active_shots = 0;
     self->unk7E = 4;
     if (self->x_pos.i.hi >= 0x4D1) {
         self->unk15 = 0;
@@ -111,139 +112,142 @@ void func_800835B0(struct MainObj* self)
         self->unk15 = 0x40;
     }
     func_80015D60(self, 0);
-    func_80015D60(self->ext.main_68.unk80, 5);
+    func_80015D60(self->ext.main_68.scythe, 5);
     func_8001540C(2, 3, self);
 }
 
-void func_80083688(struct MainObj* arg0)
+void sigma_cloak_teleport_fade_in(struct MainObj* self)
 {
-    arg0->unk54 = (const u8*)&D_80103EE8;
-    arg0->unk50 = (const u8*)&D_80103EE4;
-    if (arg0->unk7C == 0) {
-        arg0->unk7C = 0x28;
-        arg0->unk6++;
+    self->unk54 = (const u8*)&D_80103EE8;
+    self->unk50 = (const u8*)&D_80103EE4;
+    if (self->unk7C == 0) {
+        self->unk7C = 0x28;
+        self->unk6++;
         return;
     }
-    arg0->on_screen = 0;
-    if (arg0->unk7C & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+    self->on_screen = 0;
+    if (self->unk7C & 1) {
+        is_on_screen(BASE_OBJECT(self));
     }
-    arg0->unk7C--;
+    self->unk7C--;
 }
 
+// sigma_cloak_teleport_windup
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083710);
 
+// sigma_cloak_teleport_fire
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_800837FC);
 
-void func_80083954(struct MainObj* arg0)
+void sigma_cloak_teleport_wait_shots(struct MainObj* self)
 {
-    if (arg0->ext.main_68.unk8E == 0) {
-        arg0->unk7C = 0xA;
-        arg0->unk6++;
-        func_8001540C(2, 3, arg0);
+    if (self->ext.main_68.active_shots == 0) {
+        self->unk7C = 0xA;
+        self->unk6++;
+        func_8001540C(2, 3, self);
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800839B0(struct MainObj* arg0)
+void sigma_cloak_teleport_fade_out(struct MainObj* self)
 {
-    s16 timer = arg0->unk7C - 1;
+    s16 timer = self->unk7C - 1;
 
-    arg0->unk7C = timer;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->unk7C = 0x78;
-        arg0->unk54 = NULL;
-        arg0->unk50 = NULL;
-        arg0->unk6++;
+        self->unk7C = 0x78;
+        self->unk54 = NULL;
+        self->unk50 = NULL;
+        self->unk6++;
     }
-    arg0->on_screen = 0;
-    if (arg0->unk7C & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+    self->on_screen = 0;
+    if (self->unk7C & 1) {
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_80083A18(struct MainObj* arg0)
+void sigma_cloak_teleport_finish(struct MainObj* self)
 {
     s16 timer;
-    arg0->on_screen = 0;
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    self->on_screen = 0;
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x100;
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x100;
     }
 }
 
-void func_80083A58(struct MainObj* arg0)
+void sigma_cloak_teleport(struct MainObj* self)
 {
-    D_80104354[arg0->unk6](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    sigma_cloak_teleport_funcs[self->unk6](self);
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (D_80141BD8.unk0 % 10 == 0) {
-        arg0->y_pos.i.hi += arg0->ext.main_68.unk92;
-        if (--arg0->unk7E == 0) {
+        self->y_pos.i.hi += self->ext.main_68.bob_step;
+        if (--self->unk7E == 0) {
             s32 t;
-            arg0->unk7E = 4;
-            t = arg0->ext.main_68.unk92;
-            arg0->ext.main_68.unk92 = -t;
+            self->unk7E = 4;
+            t = self->ext.main_68.bob_step;
+            self->ext.main_68.bob_step = -t;
         }
     }
 }
 
-void func_80083B20(struct MainObj* arg0)
+void sigma_cloak_dash_appear(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0x4D1) {
-        arg0->x_pos.i.hi = 0x460;
-        arg0->unk15 = 0x40;
+        self->x_pos.i.hi = 0x460;
+        self->unk15 = 0x40;
     } else {
-        arg0->x_pos.i.hi = 0x540;
-        arg0->unk15 = 0;
+        self->x_pos.i.hi = 0x540;
+        self->unk15 = 0;
     }
-    arg0->y_pos.i.hi = 0x150;
-    arg0->unk7C = 0xA;
-    arg0->unk6++;
-    func_80015D60(arg0, 0);
-    func_80015D60(arg0->ext.main_68.unk80, 5);
-    func_8001540C(2, 3, arg0);
+    self->y_pos.i.hi = 0x150;
+    self->unk7C = 0xA;
+    self->unk6++;
+    func_80015D60(self, 0);
+    func_80015D60(self->ext.main_68.scythe, 5);
+    func_8001540C(2, 3, self);
 }
 
-void func_80083BB8(struct MainObj* arg0)
+void sigma_cloak_dash_fade_in(struct MainObj* self)
 {
-    s16 timer = arg0->unk7C - 1;
+    s16 timer = self->unk7C - 1;
 
-    arg0->unk7C = timer;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->unk7C = 0x28;
-        arg0->unk6++;
+        self->unk7C = 0x28;
+        self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->on_screen = 0;
-    if (arg0->unk7C & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    self->on_screen = 0;
+    if (self->unk7C & 1) {
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
+// sigma_cloak_dash_start
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80083C2C);
 
-void func_80083D30(struct MainObj* arg0)
+void sigma_cloak_dash_run(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->unk70 & 3) {
-        arg0->unk7C = 0xA;
-        arg0->unk68 = NULL;
-        arg0->unk6++;
-        func_8001540C(2, 3, arg0);
-        arg0->unk4B = -1;
-        arg0->ext.main_68.unk80->unk50 = NULL;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->unk70 & 3) {
+        self->unk7C = 0xA;
+        self->unk68 = NULL;
+        self->unk6++;
+        func_8001540C(2, 3, self);
+        self->unk4B = -1;
+        self->ext.main_68.scythe->unk50 = NULL;
     }
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80083DC8(struct MainObj* self)
+void sigma_cloak_dash_fade_out(struct MainObj* self)
 {
     s16 timer;
 
@@ -262,21 +266,21 @@ void func_80083DC8(struct MainObj* self)
     }
 }
 
-void func_80083E44(struct MainObj* arg0)
+void sigma_cloak_dash_finish(struct MainObj* self)
 {
-    arg0->on_screen = 0;
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+    self->on_screen = 0;
+    if (--self->unk7C == 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
 }
 
-void func_80083E70(struct MainObj* arg0)
+void sigma_cloak_dash(struct MainObj* self)
 {
-    D_80104370[arg0->unk6](arg0);
+    sigma_cloak_dash_funcs[self->unk6](self);
 }
 
-void func_80083EAC(struct MainObj* self)
+void sigma_scythe_spin_jump(struct MainObj* self)
 {
     s8 state;
     s32 x_pos;
@@ -301,134 +305,134 @@ void func_80083EAC(struct MainObj* self)
     }
 }
 
-void func_80083F6C(struct MainObj* arg0)
+void sigma_scythe_spin_rise(struct MainObj* self)
 {
-    func_8002B93C(MOVING_OBJECT(arg0),
-        func_8002B7B0(OBJECT_HEADER(arg0), FIXED(1232), FIXED(336)) & 0xFF);
-    arg0->unk20 *= 4;
-    arg0->unk24 *= 4;
-    if (func_8008318C(arg0, FIXED(1232), FIXED(336)) & 0xFF) {
-        arg0->unk7C = 0x28;
-        arg0->unk6++;
+    func_8002B93C(MOVING_OBJECT(self),
+        func_8002B7B0(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
+    self->unk20 *= 4;
+    self->unk24 *= 4;
+    if (func_8008318C(self, FIXED(1232), FIXED(336)) & 0xFF) {
+        self->unk7C = 0x28;
+        self->unk6++;
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_80083FFC(struct MainObj* arg0)
+void sigma_scythe_spin_throw(struct MainObj* self)
 {
     s16 timer;
     struct ShotObj* shot;
 
-    if (arg0->unk7 == 0) {
-        timer = arg0->unk7C;
+    if (self->unk7 == 0) {
+        timer = self->unk7C;
         timer--;
-        arg0->unk7C = timer;
+        self->unk7C = timer;
         if (timer == 0) {
-            arg0->unk7++;
-            func_80015D60(arg0, 0x1A);
+            self->unk7++;
+            func_80015D60(self, 0x1A);
         }
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        if (arg0->animation_step.fields.event != 0) {
-            arg0->animation_step.fields.event = 0;
+        func_80015DC8(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.event != 0) {
+            self->animation_step.fields.event = 0;
             shot = find_free_shot_obj();
             if (shot != 0) {
                 shot->active = 0x41;
                 shot->id = 0x2E;
                 shot->unk2 = 7;
-                shot->unk7C = WEAPON_OBJECT(arg0);
-                arg0->ext.main_68.unk80 = (struct MainObj*)shot;
+                shot->unk7C = WEAPON_OBJECT(self);
+                self->ext.main_68.scythe = (struct MainObj*)shot;
             }
         }
-        if (arg0->animation_step.fields.relative_step == 0) {
-            arg0->unk7 = 0;
-            arg0->unk6++;
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk7 = 0;
+            self->unk6++;
         }
     }
 }
 
-void func_800840D0(struct MainObj* arg0)
+void sigma_scythe_spin_wait(struct MainObj* self)
 {
-    if (arg0->ext.main_68.unk80->active == 0) {
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6++;
-        func_80015D60(arg0, 0x18);
+    if (self->ext.main_68.scythe->active == 0) {
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk24 = 0;
+        self->unk2C = FIXED(0.2578125);
+        self->unk6++;
+        func_80015D60(self, 0x18);
         func_80015930(2, 5);
-        func_8001540C(2, 8, arg0);
+        func_8001540C(2, 8, self);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 }
 
-void func_80084154(struct MainObj* arg0)
+void sigma_scythe_spin_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk50 = (const u8*)&D_80103F00;
-        arg0->unk54 = (const u8*)&D_80103F04;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x19);
-        func_8001540C(2, 1, arg0);
-    }
-}
-
-void func_800841D4(struct MainObj* arg0)
-{
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk50 = (const u8*)&D_80103F00;
+        self->unk54 = (const u8*)&D_80103F04;
+        self->unk6++;
+        func_80015D60(self, 0x19);
+        func_8001540C(2, 1, self);
     }
 }
 
-void func_80084218(struct MainObj* arg0)
+void sigma_scythe_spin_recover(struct MainObj* self)
 {
-    D_80104388[arg0->unk6](arg0);
+    func_80015DC8(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->unk7 = 0;
+    }
 }
 
-void func_80084254(struct MainObj* arg0)
+void sigma_scythe_spin(struct MainObj* self)
 {
-    if (arg0->unk7 == 0) {
-        arg0->ext.main_68.unk8F = 0;
-        arg0->unk15 = (arg0->x_pos.val <= g_Player.x_pos.val) << 6;
-        arg0->unk7 = (u8)(*(volatile u8*)&arg0->unk7 + 1);
-        func_80015D60(arg0, 0x16);
+    sigma_scythe_spin_funcs[self->unk6](self);
+}
+
+void sigma_scythe_plant_jump(struct MainObj* self)
+{
+    if (self->unk7 == 0) {
+        self->ext.main_68.next_attack = 0;
+        self->unk15 = (self->x_pos.val <= g_Player.x_pos.val) << 6;
+        self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
+        func_80015D60(self, 0x16);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk24 = FIXED(6.5);
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk50 = &D_80103F08;
-        arg0->unk7 = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk54 = &D_80103F0C;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x17);
-        func_8001540C(2, 0, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk24 = FIXED(6.5);
+        self->unk2C = FIXED(0.2578125);
+        self->unk50 = &D_80103F08;
+        self->unk7 = 0;
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk54 = &D_80103F0C;
+        self->unk6++;
+        func_80015D60(self, 0x17);
+        func_8001540C(2, 0, self);
     }
 }
 
-void func_80084338(struct MainObj* arg0)
+void sigma_scythe_plant_apex(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x1A);
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk24 < 0) {
+        self->unk24 = 0;
+        self->unk2C = 0;
+        self->unk6++;
+        func_80015D60(self, 0x1A);
     }
 }
 
-void func_80084394(struct MainObj* self)
+void sigma_scythe_plant_throw(struct MainObj* self)
 {
     struct ShotObj* shot;
 
@@ -441,7 +445,7 @@ void func_80084394(struct MainObj* self)
             shot->id = 0x2E;
             shot->unk2 = 3;
             shot->unk7C = WEAPON_OBJECT(self);
-            self->ext.main_68.unk80 = (struct MainObj*)shot;
+            self->ext.main_68.scythe = (struct MainObj*)shot;
         }
     }
     if (self->animation_step.fields.relative_step == 0) {
@@ -452,81 +456,81 @@ void func_80084394(struct MainObj* self)
     }
 }
 
-void func_8008442C(struct MainObj* arg0)
+void sigma_scythe_plant_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk50 = (const u8*)&D_80103F00;
-        arg0->unk54 = (const u8*)&D_80103F04;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x14);
-        func_8001540C(2, 1, arg0);
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk50 = (const u8*)&D_80103F00;
+        self->unk54 = (const u8*)&D_80103F04;
+        self->unk6++;
+        func_80015D60(self, 0x14);
+        func_8001540C(2, 1, self);
     }
 }
 
-void func_800844AC(struct MainObj* arg0)
+void sigma_scythe_plant_wait(struct MainObj* self)
 {
     s8 step;
     u8 index;
     u8 state;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    step = arg0->unk7;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    step = self->unk7;
     if (step == 0) {
-        if (arg0->animation_step.fields.relative_step == 0) {
-            arg0->unk7 = step + 1;
-            func_80015D60(arg0, 0x10);
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk7 = step + 1;
+            func_80015D60(self, 0x10);
         }
     } else {
-        index = arg0->ext.main_68.unk8F;
+        index = self->ext.main_68.next_attack;
         if (index != 0) {
-            state = D_801043A0[index - 1];
-            arg0->unk6 = 0;
-            arg0->unk7 = 0;
-            arg0->unk5 = state;
+            state = sigma_scythe_plant_next[index - 1];
+            self->unk6 = 0;
+            self->unk7 = 0;
+            self->unk5 = state;
         }
     }
 }
 
-void func_80084534(struct MainObj* arg0)
+void sigma_scythe_plant(struct MainObj* self)
 {
-    D_801043A4[arg0->unk6](arg0);
+    sigma_scythe_plant_funcs[self->unk6](self);
 }
 
-void func_80084570(struct MainObj* arg0)
+void sigma_cloak_pick_attack(struct MainObj* self)
 {
     u8 index;
 
-    arg0->unk5 = D_801043B8[arg0->ext.main_68.unk8F];
-    index = arg0->ext.main_68.unk8F + 1;
-    arg0->ext.main_68.unk8F = index;
-    arg0->unk54 = (const u8*)&D_80103EF4;
-    arg0->unk6 = 0;
-    arg0->unk7 = 0;
+    self->unk5 = sigma_cloak_pattern[self->ext.main_68.next_attack];
+    index = self->ext.main_68.next_attack + 1;
+    self->ext.main_68.next_attack = index;
+    self->unk54 = (const u8*)&D_80103EF4;
+    self->unk6 = 0;
+    self->unk7 = 0;
     if (index == 3) {
-        arg0->ext.main_68.unk8F = 0;
+        self->ext.main_68.next_attack = 0;
     }
 }
 
-void func_800845C0(struct MainObj* arg0)
+void sigma_darts_start(struct MainObj* self)
 {
-    arg0->unk6++;
-    arg0->unk15 = (arg0->x_pos.val <= g_Player.x_pos.val) << 6;
-    arg0->ext.main_68.unk8C = 0;
-    func_80015D60(arg0, 0x1B);
+    self->unk6++;
+    self->unk15 = (self->x_pos.val <= g_Player.x_pos.val) << 6;
+    self->ext.main_68.count = 0;
+    func_80015D60(self, 0x1B);
 }
 
-void func_8008460C(struct MainObj* arg0)
+void sigma_darts_spawn(struct MainObj* self)
 {
     u8 var_s1;
     struct ShotObj* temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
     var_s1 = 0;
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        self->unk6 = (u8)self->unk6 + 1;
         do {
             temp_v0 = find_free_shot_obj();
             if (temp_v0 != 0) {
@@ -534,158 +538,159 @@ void func_8008460C(struct MainObj* arg0)
                 temp_v0->id = 0x2E;
                 temp_v0->unk2 = 6;
                 temp_v0->timer = var_s1;
-                temp_v0->unk7C = WEAPON_OBJECT(arg0);
-                arg0->ext.main_68.unk8C += 1;
-                func_8001540C(2, 0xA, arg0);
+                temp_v0->unk7C = WEAPON_OBJECT(self);
+                self->ext.main_68.count += 1;
+                func_8001540C(2, 0xA, self);
             }
             var_s1 += 1;
         } while (var_s1 < 4);
     }
 }
 
-void func_800846D0(struct MainObj* arg0)
+void sigma_darts_pose(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk7C = 0x5A;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x2B);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk7C = 0x5A;
+        self->unk6++;
+        func_80015D60(self, 0x2B);
     }
 }
 
-void func_80084724(struct MainObj* arg0)
+void sigma_darts_wait(struct MainObj* self)
 {
-    func_80015DC8(arg0);
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
+    func_80015DC8(self);
+    if (--self->unk7C == 0) {
+        self->unk5 = 5;
+        self->unk6 = 0;
+        self->unk7 = 0;
     }
 }
 
-void func_80084774(struct MainObj* arg0)
+void sigma_darts(struct MainObj* self)
 {
-    D_801043BC[arg0->unk6](arg0);
+    sigma_darts_funcs[self->unk6](self);
 }
 
-void func_800847B0(struct MainObj* arg0)
+void sigma_scythe_retrieve_jump(struct MainObj* self)
 {
-    if (arg0->unk7 == 0) {
-        s32 other_x = arg0->ext.main_68.unk80->x_pos.val;
+    if (self->unk7 == 0) {
+        s32 other_x = self->ext.main_68.scythe->x_pos.val;
 
-        arg0->unk7 = (u8)(*(volatile u8*)&arg0->unk7 + 1);
-        arg0->unk15 = (arg0->x_pos.val < other_x) << 6;
-        func_80015D60(arg0, 0x11);
+        self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
+        self->unk15 = (self->x_pos.val < other_x) << 6;
+        func_80015D60(self, 0x11);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk50 = &D_80103F08;
-        arg0->unk7 = 0;
-        arg0->unk54 = &D_80103F0C;
-        arg0->unk6 = (u8)arg0->unk6 + 1;
-        func_80015D60(arg0, 0x12);
-        func_8001540C(2, 0, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk50 = &D_80103F08;
+        self->unk7 = 0;
+        self->unk54 = &D_80103F0C;
+        self->unk6 = (u8)self->unk6 + 1;
+        func_80015D60(self, 0x12);
+        func_8001540C(2, 0, self);
     }
 }
 
-void func_80084870(struct MainObj* arg0)
+void sigma_scythe_retrieve_rise(struct MainObj* self)
 {
     struct ObjectHeader* temp_v1;
 
-    func_8002B93C(MOVING_OBJECT(arg0),
-        func_8002B7B0(OBJECT_HEADER(arg0), FIXED(1232), FIXED(336)) & 0xFF);
-    arg0->unk20 *= 4;
-    arg0->unk24 *= 4;
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (func_8008318C(arg0, FIXED(1232), FIXED(336)) & 0xFF) {
-        temp_v1 = OBJECT_HEADER(arg0->ext.main_68.unk80);
-        arg0->unk6++;
+    func_8002B93C(MOVING_OBJECT(self),
+        func_8002B7B0(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
+    self->unk20 *= 4;
+    self->unk24 *= 4;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (func_8008318C(self, FIXED(1232), FIXED(336)) & 0xFF) {
+        temp_v1 = OBJECT_HEADER(self->ext.main_68.scythe);
+        self->unk6++;
         temp_v1->unk5++;
     }
 }
 
-void func_80084910(struct MainObj* arg0)
+void sigma_scythe_retrieve_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.main_68.unk80 == NULL) {
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6++;
-        func_80015D60(arg0, 0x18);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->ext.main_68.scythe == NULL) {
+        self->unk20 = 0;
+        self->unk28 = 0;
+        self->unk24 = 0;
+        self->unk2C = FIXED(0.2578125);
+        self->unk6++;
+        func_80015D60(self, 0x18);
         func_80015930(2, 5);
-        func_8001540C(2, 8, arg0);
+        func_8001540C(2, 8, self);
     }
 }
 
-void func_8008498C(struct MainObj* arg0)
+void sigma_scythe_retrieve_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk50 = (const u8*)&D_80103F00;
-        arg0->unk54 = (const u8*)&D_80103F04;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x19);
+    func_8002B694(ANIMATED_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk50 = (const u8*)&D_80103F00;
+        self->unk54 = (const u8*)&D_80103F04;
+        self->unk6++;
+        func_80015D60(self, 0x19);
     }
 }
 
-void func_800849FC(struct MainObj* arg0)
+void sigma_scythe_retrieve_recover(struct MainObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
+    func_80015DC8(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 6;
+        self->unk6 = 0;
+        self->unk7 = 0;
     }
 }
 
-void func_80084A40(struct MainObj* arg0)
+void sigma_scythe_retrieve(struct MainObj* self)
 {
-    D_801043CC[arg0->unk6](arg0);
+    sigma_scythe_retrieve_funcs[self->unk6](self);
 }
 
-void func_80084A7C(struct MainObj* arg0)
+void sigma_land_pause(struct MainObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk50 = (const u8*)&D_80103F00;
-        arg0->unk54 = (const u8*)&D_80103F04;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x15);
-        arg0->unk7C = 0x28;
+    if (self->unk6 == 0) {
+        self->unk50 = (const u8*)&D_80103F00;
+        self->unk54 = (const u8*)&D_80103F04;
+        self->unk6++;
+        func_80015D60(self, 0x15);
+        self->unk7C = 0x28;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7 = 0;
     }
 }
 
+// sigma_eye_laser_jump
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084B14);
 
-void func_80084CD4(struct MainObj* arg0)
+void sigma_eye_laser_fire(struct MainObj* self)
 {
     struct QuadObj* quad;
     s8 quad_type;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
-        func_8001540C(2, 9, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        func_8001540C(2, 9, self);
 
         quad = find_free_quad_obj();
         if (quad != 0) {
             quad->active = 1;
             quad->id = 0xF;
-            quad->unk2 = (arg0->unk15 != 0) * 2;
-            quad->unk5C = PLAYER_OBJECT(arg0);
-            arg0->ext.main_68.effect = (struct EffectObj*)quad;
+            quad->unk2 = (self->unk15 != 0) * 2;
+            quad->unk5C = PLAYER_OBJECT(self);
+            self->ext.main_68.effect = (struct EffectObj*)quad;
         }
 
         quad = find_free_quad_obj();
@@ -693,49 +698,49 @@ void func_80084CD4(struct MainObj* arg0)
             quad->active = 1;
             quad->id = 0xF;
             quad_type = 1;
-            if (arg0->unk15 != 0) {
+            if (self->unk15 != 0) {
                 quad_type = 3;
             }
             quad->unk2 = quad_type;
-            quad->unk5C = PLAYER_OBJECT(arg0);
-            arg0->ext.main_68.effect = (struct EffectObj*)quad;
+            quad->unk5C = PLAYER_OBJECT(self);
+            self->ext.main_68.effect = (struct EffectObj*)quad;
         }
     }
 
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk6++;
-        func_80015D60(arg0, 0x1D);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk6++;
+        func_80015D60(self, 0x1D);
     }
 }
 
-void func_80084DB8(struct MainObj* arg0)
+void sigma_eye_laser_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (*(s8*)arg0->ext.main_68.effect == 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (*(s8*)self->ext.main_68.effect == 0) {
         func_80015930(2, 9);
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
+        self->unk5 = 5;
+        self->unk6 = 0;
+        self->unk7 = 0;
     }
 }
 
-void func_80084E10(struct MainObj* arg0)
+void sigma_eye_laser(struct MainObj* self)
 {
-    D_801043E0[arg0->unk6](arg0);
+    sigma_eye_laser_funcs[self->unk6](self);
 }
 
-void func_80084E4C(struct MainObj* arg0)
+void sigma_idle(struct MainObj* self)
 {
 }
 
-void func_80084E54(struct MainObj* arg0)
+void sigma_pose(struct MainObj* self)
 {
     struct VisualObj* visual;
 
-    if (arg0->unk7 == 0) {
-        arg0->unk7++;
-        arg0->unk7C = 0x78;
-        func_80015D60(arg0, 0x29);
+    if (self->unk7 == 0) {
+        self->unk7++;
+        self->unk7C = 0x78;
+        func_80015D60(self, 0x29);
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -743,63 +748,65 @@ void func_80084E54(struct MainObj* arg0)
             visual->unk2 = 5;
         }
     } else {
-        func_80015DC8(arg0);
-        arg0->unk7C--;
+        func_80015DC8(self);
+        self->unk7C--;
     }
 }
 
+// sigma_cloak_fight
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80084EE4);
 
+// sigma_revealed_fight
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_8008502C);
 
-void func_800851FC(struct BarObj* arg0)
+void sigma_fight(struct BarObj* self)
 {
-    D_80104424[arg0->unk2](arg0);
+    sigma_fight_funcs[self->unk2](self);
 }
 
-void func_80085238(struct MainObj* arg0)
+void sigma_death_start(struct MainObj* self)
 {
     func_80015930(2, 5);
     func_80015930(2, 9);
     func_80036AE4(0x15, 0);
     engine_obj.unk1C = 1;
-    arg0->unk7C = 0x7F;
-    arg0->unk7E = 0x19;
-    arg0->ext.main_68.unk90 = 0x19;
-    arg0->unk5++;
-    func_80015D60(arg0, 0x29);
-    is_on_screen(BASE_OBJECT(arg0));
+    self->unk7C = 0x7F;
+    self->unk7E = 0x19;
+    self->ext.main_68.blink_delay = 0x19;
+    self->unk5++;
+    func_80015D60(self, 0x29);
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800852C4(struct MainObj* arg0)
+void sigma_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
     s8 var_a0;
 
-    if (--arg0->unk7C == 0) {
-        arg0->unk5++;
+    if (--self->unk7C == 0) {
+        self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x1A;
-            effect->x_pos.i.hi = arg0->x_pos.i.hi;
-            effect->y_pos.i.hi = arg0->y_pos.i.hi;
-            arg0->ext.main_68.effect = effect;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
+            self->ext.main_68.effect = effect;
         }
     }
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->unk7E-- == 0) {
-        arg0->ext.main_68.unk90 -= 5;
-        var_a0 = arg0->ext.main_68.unk90;
-        arg0->unk42 ^= 0x8000;
+    is_on_screen(BASE_OBJECT(self));
+    if (self->unk7E-- == 0) {
+        self->ext.main_68.blink_delay -= 5;
+        var_a0 = self->ext.main_68.blink_delay;
+        self->unk42 ^= 0x8000;
         if (var_a0 < 5) {
             var_a0 = 5;
         }
-        arg0->unk7E = var_a0;
+        self->unk7E = var_a0;
     }
 }
 
-void func_800853A4(struct MainObj* self)
+void sigma_death_wait_explosion(struct MainObj* self)
 {
     struct MainObj* target;
 
@@ -821,9 +828,10 @@ void func_800853A4(struct MainObj* self)
     }
 }
 
+// sigma_death_explode
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085460);
 
-void func_80085580(struct MainObj* arg0)
+void sigma_death_finish(struct MainObj* self)
 {
     if (background_objects[0].y_pos.i.hi == background_objects[0].unk20) {
         func_800DABE4(7, 0, 0);
@@ -831,30 +839,30 @@ void func_80085580(struct MainObj* arg0)
         background_objects[0].unk24 += 0x280;
         func_80036B18();
         g_Player.unk7A = 0;
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_80085604(struct MainObj* arg0)
+void sigma_death(struct MainObj* self)
 {
-    D_8010444C[arg0->unk5](arg0);
+    sigma_death_funcs[self->unk5](self);
 }
 
-void func_80085640(struct MainObj* arg0)
+void sigma_cloak_stagger_start(struct MainObj* self)
 {
-    arg0->unk4B = -1;
-    arg0->unk7C = 0x40;
-    arg0->unk7E = 4;
-    arg0->unk54 = NULL;
-    arg0->unk42 &= 0x7FFF;
-    arg0->unk5++;
-    func_80015D60(arg0, 8);
-    func_80015D60(arg0->ext.main_68.unk80, 9);
-    func_8001540C(2, 4, arg0);
-    is_on_screen(BASE_OBJECT(arg0));
+    self->unk4B = -1;
+    self->unk7C = 0x40;
+    self->unk7E = 4;
+    self->unk54 = NULL;
+    self->unk42 &= 0x7FFF;
+    self->unk5++;
+    func_80015D60(self, 8);
+    func_80015D60(self->ext.main_68.scythe, 9);
+    func_8001540C(2, 4, self);
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800856C4(struct MainObj* self)
+void sigma_cloak_stagger_trail(struct MainObj* self)
 {
     struct VisualObj* visual;
     s16 held;
@@ -880,72 +888,72 @@ void func_800856C4(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085768(struct MainObj* arg0)
+void sigma_cloak_stagger_fade(struct MainObj* self)
 {
-    s16 timer = arg0->unk7C - 1;
+    s16 timer = self->unk7C - 1;
 
-    arg0->unk7C = timer;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->unk7C = 0x78;
-        arg0->unk5++;
+        self->unk7C = 0x78;
+        self->unk5++;
     }
-    arg0->on_screen = 0;
-    if (arg0->unk7C & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+    self->on_screen = 0;
+    if (self->unk7C & 1) {
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800857C8(struct MainObj* arg0)
+void sigma_cloak_stagger_finish(struct MainObj* self)
 {
-    s16 timer = arg0->unk7C;
-    arg0->on_screen = 0;
+    s16 timer = self->unk7C;
+    self->on_screen = 0;
     timer--;
-    arg0->unk7C = timer;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->state = 1;
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
-        arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x70;
+        self->state = 1;
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->x_pos.i.hi = background_objects[0].x_pos.i.hi - 0x70;
     }
 }
 
-void func_80085814(struct MainObj* arg0)
+void sigma_cloak_stagger(struct MainObj* self)
 {
-    D_80104460[arg0->unk5](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    sigma_cloak_stagger_funcs[self->unk5](self);
+    func_80015DC8(ANIMATED_OBJECT(self));
     if (D_80141BD8.unk0 % 10 == 0) {
-        arg0->y_pos.i.hi += arg0->ext.main_68.unk92;
-        if (--arg0->unk7E == 0) {
+        self->y_pos.i.hi += self->ext.main_68.bob_step;
+        if (--self->unk7E == 0) {
             s32 t;
-            arg0->unk7E = 4;
-            t = arg0->ext.main_68.unk92;
-            arg0->ext.main_68.unk92 = -t;
+            self->unk7E = 4;
+            t = self->ext.main_68.bob_step;
+            self->ext.main_68.bob_step = -t;
         }
     }
 }
 
-void func_800858DC(struct MainObj* arg0)
+void sigma_reveal_start(struct MainObj* self)
 {
-    u8 state = arg0->unk5;
+    u8 state = self->unk5;
 
-    arg0->unk4B = -1;
-    arg0->unk68 = &D_80103EF0;
-    arg0->unk24 = FIXED(-1);
-    arg0->unk54 = 0;
-    arg0->ext.main_68.unk8C = 0;
-    arg0->unk20 = 0;
+    self->unk4B = -1;
+    self->unk68 = &D_80103EF0;
+    self->unk24 = FIXED(-1);
+    self->unk54 = 0;
+    self->ext.main_68.count = 0;
+    self->unk20 = 0;
     state++;
-    arg0->unk42 &= 0x7FFF;
-    arg0->unk5 = state;
-    arg0->unk15 = (g_Player.x_pos.i.hi >= arg0->x_pos.i.hi) << 6;
-    func_80015D60(arg0, 8);
-    func_8001540C(2, 0xE, arg0);
-    func_80015D60(arg0->ext.main_68.unk80, 9);
-    is_on_screen(BASE_OBJECT(arg0));
+    self->unk42 &= 0x7FFF;
+    self->unk5 = state;
+    self->unk15 = (g_Player.x_pos.i.hi >= self->x_pos.i.hi) << 6;
+    func_80015D60(self, 8);
+    func_8001540C(2, 0xE, self);
+    func_80015D60(self->ext.main_68.scythe, 9);
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085988(struct MainObj* arg0)
+void sigma_reveal_fall(struct MainObj* self)
 {
     struct VisualObj* temp_v0;
 
@@ -955,31 +963,32 @@ void func_80085988(struct MainObj* arg0)
             temp_v0->active = 0x41;
             temp_v0->id = 0x20;
             temp_v0->unk2 = 2;
-            temp_v0->unk50 = PLAYER_OBJECT(arg0);
+            temp_v0->unk50 = PLAYER_OBJECT(self);
         }
     }
-    if (arg0->unk70 & 8) {
-        arg0->unk7C = 0x78;
-        arg0->unk5++;
+    if (self->unk70 & 8) {
+        self->unk7C = 0x78;
+        self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
 }
 
+// sigma_reveal_burn_cloak
 INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085A44);
 
-void func_80085BE4(struct MainObj* arg0)
+void sigma_reveal_wait_cloak(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.main_68.unk8C == 0) {
-        arg0->unk5++;
-        func_80015D60(arg0, 0xF);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->ext.main_68.count == 0) {
+        self->unk5++;
+        func_80015D60(self, 0xF);
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085C38(struct MainObj* self)
+void sigma_reveal_dialogue(struct MainObj* self)
 {
     u16 sound_id;
 
@@ -1005,7 +1014,7 @@ void func_80085C38(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085D38(struct MainObj* self)
+void sigma_reveal_fill_health(struct MainObj* self)
 {
     u16 temp_v0;
 
@@ -1024,40 +1033,40 @@ void func_80085D38(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085DCC(struct MainObj* arg0)
+void sigma_reveal_finish(struct MainObj* self)
 {
     s16 temp_v0;
     unsigned long temp_v1;
 
-    temp_v0 = arg0->unk7C - 1;
-    arg0->unk7C = temp_v0;
+    temp_v0 = self->unk7C - 1;
+    self->unk7C = temp_v0;
     if (temp_v0 == 0) {
         temp_v1 = 1;
-        arg0->collision_data = (const u16*)D_80108004;
-        arg0->unk50 = (const u8*)&D_80103F00;
-        arg0->unk54 = (const u8*)&D_80103F04;
-        arg0->unk2 = temp_v1;
-        arg0->state = temp_v1;
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
-        arg0->ext.main_68.unk91 = 0;
+        self->collision_data = (const u16*)D_80108004;
+        self->unk50 = (const u8*)&D_80103F00;
+        self->unk54 = (const u8*)&D_80103F04;
+        self->unk2 = temp_v1;
+        self->state = temp_v1;
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->ext.main_68.flash_timer = 0;
         func_80036B18();
-        temp_v1 = (unsigned long)arg0->ext.main_68.unk80;
+        temp_v1 = (unsigned long)self->ext.main_68.scythe;
         ((struct MainObj*)temp_v1)->state++;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_80085E70(struct MainObj* arg0)
+void sigma_reveal(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80104470[arg0->unk5](arg0);
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    sigma_reveal_funcs[self->unk5](self);
+    CollisionRelated(PLAYER_OBJECT(self));
 }
 
-void func_80085ECC(struct MainObj* arg0)
+void sigma_update(struct MainObj* self)
 {
-    D_8010448C[arg0->state](arg0);
+    sigma_state_funcs[self->state](self);
 }
