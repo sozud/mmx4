@@ -1,0 +1,9 @@
+saber_1 hold=0:shoot frames=36 stride=2
+saber_combo_2 hold=0:shoot,8:shoot frames=48 stride=3
+saber_combo_3 hold=0:shoot,8:shoot,16:shoot,24:shoot frames=72 stride=3
+saber_walk hold=0-40:right,4:shoot frames=48 stride=3
+saber_dash hold=0-30:dash,6:shoot frames=48 stride=3
+saber_jump hold=0-30:jump,6:shoot frames=60 stride=3
+saber_fall hold=0-4:jump,24:shoot frames=60 stride=3
+saber_wall dx=-72 hold=0-60:left,2-3:jump,20:shoot frames=64 stride=3
+saber_hold hold=0-60:shoot frames=64 stride=4

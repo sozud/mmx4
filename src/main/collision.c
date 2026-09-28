@@ -121,7 +121,7 @@ void CollisionRelated(struct PlayerObj* arg0) // was func_8002C614
     s32 temp_v1;
 
     arg0->unk70 = 0;
-    arg0->unk79 = 0;
+    arg0->touching_spikes = 0;
 
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
@@ -189,7 +189,7 @@ void func_8002C760(struct PlayerObj* arg0)
 void func_8002C808(struct PlayerObj* arg0)
 {
     arg0->unk70 = 0;
-    arg0->unk79 = 0;
+    arg0->touching_spikes = 0;
     if (arg0->unk68 != NULL) {
         func_8002C760(arg0);
         if (func_8002D5E4(arg0, D_8013B7F8 - D_8013B7E0 - 1)) {
@@ -331,7 +331,7 @@ void func_8002CDD4(struct PlayerObj* arg0)
     temp_s5 = func_8002D7E4(arg0, D_8013B7F8, temp_v0);
 
     if (func_8002CF98(arg0, temp_s5, D_8013B7F8, temp_v0) == 0) {
-        if (arg0->unk67 == 0) {
+        if (arg0->air_state == 0) {
             var_s0 = 0;
             if (temp_s3 > 0 && temp_s3 < 0x20) {
                 var_s0 = 1;
@@ -439,7 +439,7 @@ s32 func_8002D180(struct PlayerObj* arg0, s16 arg1, s16 arg2, s32 arg3)
 {
     D_8013B7D8 = 1;
 
-    if (arg0->unk67 != 0) {
+    if (arg0->air_state != 0) {
         if (arg3 == 0) {
             if ((arg1 & 0xF) < arg2) {
                 return 0;
@@ -512,7 +512,7 @@ s32 func_8002D41C(struct PlayerObj* arg0, s32 arg1, s32 arg2)
         switch (arg1 & 0xFF) {
         case 0x3E:
         case 0x3F:
-            arg0->unk79 = 1;
+            arg0->touching_spikes = 1;
             return -1;
         case 0x38:
         case 0x39:
@@ -526,7 +526,7 @@ s32 func_8002D41C(struct PlayerObj* arg0, s32 arg1, s32 arg2)
         switch (arg1 & 0xFF) {
         case 0x3E:
         case 0x3F:
-            arg0->unk79 = 1;
+            arg0->touching_spikes = 1;
             return -1;
         case 0x21:
         case 0x22:
@@ -585,15 +585,15 @@ s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
     case 0x38:
     case 0x3A:
     case 0x3C:
-        arg0->unk4A = 1;
+        arg0->wall_climbable = 1;
         return -1;
     case 0x39:
-        arg0->unk4A = 0;
+        arg0->wall_climbable = 0;
         return -1;
     case 0x3E:
     case 0x3F:
-        arg0->unk4A = 0;
-        arg0->unk79 = 1;
+        arg0->wall_climbable = 0;
+        arg0->touching_spikes = 1;
         return -1;
     default:
         return 0;

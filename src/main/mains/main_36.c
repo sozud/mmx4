@@ -19,7 +19,7 @@ void func_8005F758(struct MainObj* arg0)
     D_800FE4B4[arg0->unk5](arg0);
     func_80015DC8(ANIMATED_OBJECT(arg0));
 
-    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8D == 0) && (g_Player.unkBA == 0) && (func_8002D9BC(arg0) != 0) && (g_Player.unkBA != 0)) {
+    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8D == 0) && (g_Player.stun_timer == 0) && (func_8002D9BC(arg0) != 0) && (g_Player.stun_timer != 0)) {
         SP_CUR_MAIN_OBJ->ext.main_36.unk8D = 1;
     }
 
@@ -45,7 +45,7 @@ void func_8005F87C(struct MainObj* arg0)
 {
     struct MiscObj* misc;
 
-    if (SP_CUR_MAIN_OBJ->ext.main_36.unk8D != 0 && g_Player.unkBA != 0) {
+    if (SP_CUR_MAIN_OBJ->ext.main_36.unk8D != 0 && g_Player.stun_timer != 0) {
         misc = find_free_misc_obj();
         if (misc != NULL) {
             SP_CUR_MAIN_OBJ->ext.main_36.unk8C = 1;
@@ -122,7 +122,7 @@ void func_8005FBBC(struct MainObj* self)
         self->unk62 = 0;
         self->unk50 = NULL;
         self->unk54 = NULL;
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         self->unk6++;
         current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_36.unk8C != 0) {
@@ -132,7 +132,7 @@ void func_8005FBBC(struct MainObj* self)
         return;
     }
     if (current->ext.main_36.unk8C != 0 && timer == 0x40) {
-        func_80036470(4);
+        player_damage(4);
     }
     if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8A & 7) == 0) {
         func_8001540C(2, 0xED, self);

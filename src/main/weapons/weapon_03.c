@@ -6,17 +6,17 @@ void func_80094A78(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.unkC3 != 0;
-    if (g_Player.unkC4 != 0) {
+    var_a1 = g_Player.input_locked != 0;
+    if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk93 != 3) {
+    if (g_Player.weapon != 3) {
         var_a1 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {
@@ -161,8 +161,8 @@ void func_80094E50(struct WeaponObj* arg0)
 void func_80094EC8(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
-    g_Player.unk98--;
-    g_Player.unk99--;
+    g_Player.shot_count--;
+    g_Player.special_shot_count--;
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
@@ -190,17 +190,17 @@ void func_80094F74(void)
 
     obj = &background_objects[g_Player.bg_offset];
     if (entity->active != 0) {
-        var_a0 = g_Player.unkC3 != 0;
-        if (g_Player.unkC4 != 0) {
+        var_a0 = g_Player.input_locked != 0;
+        if (g_Player.capsule_state != 0) {
             var_a0 = 1;
         }
-        if (g_Player.unk93 != 3) {
+        if (g_Player.weapon != 3) {
             var_a0 = 1;
         }
-        if (g_Player.unkBF != 0) {
+        if (g_Player.actions_reset != 0) {
             var_a0 = 1;
         }
-        if (g_Player.unk5C == 0) {
+        if (g_Player.hp == 0) {
             var_a0 = 1;
         }
         if (entity->y_pos.i.hi >= obj->y_pos.i.hi + 328) {
@@ -209,21 +209,21 @@ void func_80094F74(void)
         if (var_a0 != 0) {
             entity->active = 0;
             entity->on_screen = 0;
-            g_Player.unkDE = 0;
-            g_Player.unk7A = 0;
+            g_Player.controlling_clone = 0;
+            g_Player.spike_immune = 0;
             return;
         }
         engine_obj.unk38 = entity;
         if (entity->unk5 != 0x25) {
-            if (--entity->unkDA == 0) {
-                func_800350A4(entity, 0x62);
+            if (--entity->clone_timer == 0) {
+                player_set_animation(entity, 0x62);
                 entity->on_screen = 1;
                 entity->unk5 = 0x25;
             }
         }
         entity->unk18.val = entity->x_pos.val;
         entity->unk1C.val = entity->y_pos.val;
-        D_800F8980[entity->state](entity);
+        player_state_funcs[entity->state](entity);
         if (entity->active != 0) {
             CollisionRelated(entity);
             if (obj->x_pos.i.hi >= entity->x_pos.i.hi) {
@@ -236,7 +236,7 @@ void func_80094F74(void)
                 entity->y_pos.i.hi = obj->y_pos.i.hi;
             }
             decompress_player_gfx(GRAPHICS_OBJECT(entity), 320, 64);
-            if (entity->unkDA != 0 && entity->unkDA < 60) {
+            if (entity->clone_timer != 0 && entity->clone_timer < 60) {
                 entity->on_screen ^= 1;
             }
         }

@@ -796,190 +796,190 @@ void func_80031014(struct BarObj*);
 void func_80031064(struct BarObj*);
 void func_80031130(struct BarObj*);
 
-// D_800F8980
-extern void (*D_800F8980[])(struct PlayerObj*);
-void func_80035694(struct PlayerObj*);
-void func_800312B4(struct PlayerObj*);
-void func_80035A6C(struct PlayerObj*);
-void func_80035DDC(struct PlayerObj*);
+// player_state_funcs
+extern void (*player_state_funcs[])(struct PlayerObj*);
+void player_update_init(struct PlayerObj*);
+void player_update_normal(struct PlayerObj*);
+void player_update_death(struct PlayerObj*);
+void player_update_inactive(struct PlayerObj*);
 
-// D_800F8990
-extern void (*D_800F8990[])(struct PlayerObj*);
-void func_80031410(struct PlayerObj*);
-void func_80031540(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_80031688(struct PlayerObj*);
-void func_80031764(struct PlayerObj*);
-void func_80031820(struct PlayerObj*);
-void func_800318D0(struct PlayerObj*);
-void func_80031A24(struct PlayerObj*);
-void func_80031AE0(struct PlayerObj*);
-void func_80031B90(struct PlayerObj*);
-void func_80031CAC(struct PlayerObj*);
-void func_80031EDC(struct PlayerObj*);
-void func_80031CEC(struct PlayerObj* arg0);
-void func_80031DD4(struct PlayerObj* arg0);
-void func_800320E4(struct PlayerObj*);
-void func_80032468(struct PlayerObj*);
-void func_80032740(struct PlayerObj*);
-void func_80032950(struct PlayerObj*);
-void func_80032A28(struct PlayerObj*);
-void func_80032B04(struct PlayerObj*);
-void func_80032E94(struct PlayerObj*);
-void func_80032F64(struct PlayerObj*);
+// player_normal_state_funcs
+extern void (*player_normal_state_funcs[])(struct PlayerObj*);
+void player_beam_in(struct PlayerObj*);
+void player_beam_out(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_walk_start(struct PlayerObj*);
+void player_walk(struct PlayerObj*);
+void player_settle(struct PlayerObj*);
+void player_jump(struct PlayerObj*);
+void player_fall(struct PlayerObj*);
+void player_land(struct PlayerObj*);
+void player_wall_cling(struct PlayerObj*);
+void player_wall_jump(struct PlayerObj*);
+void player_wall_slide(struct PlayerObj*);
+void player_wall_jump_push(struct PlayerObj* arg0);
+void player_wall_jump_rise(struct PlayerObj* arg0);
+void player_dash(struct PlayerObj*);
+void player_air_dash(struct PlayerObj*);
+void player_ladder_transition(struct PlayerObj*);
+void player_ladder_up(struct PlayerObj*);
+void player_ladder_down(struct PlayerObj*);
+void player_hurt(struct PlayerObj*);
+void player_ride(struct PlayerObj*);
+void player_capsule(struct PlayerObj*);
 void func_80032FA4(struct PlayerObj*);
-void func_80033054(struct PlayerObj*);
-void func_800330B4(struct PlayerObj*);
+void player_capsule_fall(struct PlayerObj*);
+void player_script_wait(struct PlayerObj*);
 void func_80033108(struct PlayerObj*);
-void func_800331A8(struct PlayerObj*);
-void func_80033210(struct PlayerObj*);
-void func_800332C0(struct PlayerObj*);
-void func_80033368(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_80038854(struct PlayerObj*);
-void func_800388F0(struct PlayerObj*);
-void func_80038E90(struct PlayerObj*);
-void func_80039120(struct PlayerObj*);
-void func_80039160(struct PlayerObj*);
-void func_80039230(struct PlayerObj*);
-void func_80039270(struct PlayerObj*);
-void func_80039328(struct PlayerObj*);
-void func_80039378(struct PlayerObj*);
-void func_80039570(struct PlayerObj*);
-void func_80039700(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_8003A104(struct PlayerObj*);
-void func_8003A3EC(struct PlayerObj*);
-void func_8003A5E4(struct PlayerObj*);
-void func_8003A7B4(struct PlayerObj*);
-void func_8003A8A0(struct PlayerObj*);
-void func_8003A9F0(struct PlayerObj*);
-void func_8003AAE8(struct PlayerObj*);
-void func_8003A3EC(struct PlayerObj*);
-void func_8003A5E4(struct PlayerObj*);
-void func_8003AE08(struct PlayerObj*);
-void func_8003B044(struct PlayerObj*);
-void func_8003B24C(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
-void func_800315E0(struct PlayerObj*);
+void player_script_vanish(struct PlayerObj*);
+void player_script_jump(struct PlayerObj*);
+void player_script_victory(struct PlayerObj*);
+void player_stage_clear(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_ladder_shoot(struct PlayerObj*);
+void player_hover(struct PlayerObj*);
+void player_nova_strike(struct PlayerObj*);
+void player_soul_body(struct PlayerObj*);
+void player_soul_body_cast(struct PlayerObj*);
+void player_soul_body_wait(struct PlayerObj*);
+void player_soul_body_clone_advance(struct PlayerObj*);
+void player_soul_body_clone_vanish(struct PlayerObj*);
+void player_weapon_pose(struct PlayerObj*);
+void player_rising_fire(struct PlayerObj*);
+void player_rising_fire_charged(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_zero_saber(struct PlayerObj*);
+void player_zero_jump_slash(struct PlayerObj*);
+void player_zero_fall_slash(struct PlayerObj*);
+void player_zero_ladder_slash(struct PlayerObj*);
+void player_zero_wall_slash(struct PlayerObj*);
+void player_zero_raijingeki(struct PlayerObj*);
+void player_zero_hyouretsuzan(struct PlayerObj*);
+void player_zero_jump_slash(struct PlayerObj*);
+void player_zero_fall_slash(struct PlayerObj*);
+void player_zero_ryuenjin(struct PlayerObj*);
+void player_zero_rakuhouha(struct PlayerObj*);
+void player_zero_shippuuga(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
+void player_idle(struct PlayerObj*);
 
-// D_800F8A90
-extern void (*D_800F8A90[])(struct PlayerObj*);
-void func_80032140(struct PlayerObj*);
-void func_80032224(struct PlayerObj*);
-void func_80032300(struct PlayerObj*);
+// player_dash_funcs
+extern void (*player_dash_funcs[])(struct PlayerObj*);
+void player_dash_start(struct PlayerObj*);
+void player_dash_move(struct PlayerObj*);
+void player_dash_end(struct PlayerObj*);
 
-// D_800F8A9C
-extern void (*D_800F8A9C[])(struct PlayerObj*);
-void func_8003253C(struct PlayerObj*);
-void func_800325EC(struct PlayerObj*);
-void func_8003267C(struct PlayerObj*);
+// player_air_dash_funcs
+extern void (*player_air_dash_funcs[])(struct PlayerObj*);
+void player_air_dash_start(struct PlayerObj*);
+void player_air_dash_move(struct PlayerObj*);
+void player_air_dash_end(struct PlayerObj*);
 
-// D_800F8AA8
-extern void (*D_800F8AA8[])(struct PlayerObj*);
-void func_8003277C(struct PlayerObj*);
-void func_800327CC(struct PlayerObj*);
-void func_80032840(struct PlayerObj*);
-void func_800328CC(struct PlayerObj*);
-void func_80032910(struct PlayerObj*);
+// player_ladder_transition_funcs
+extern void (*player_ladder_transition_funcs[])(struct PlayerObj*);
+void player_ladder_grab(struct PlayerObj*);
+void player_ladder_climb_off_top(struct PlayerObj*);
+void player_ladder_climb_on_top(struct PlayerObj*);
+void player_ladder_step_off_bottom(struct PlayerObj*);
+void player_ladder_let_go(struct PlayerObj*);
 
-// D_800F8ABC
-extern void (*D_800F8ABC[])(struct PlayerObj*);
-void func_80032B50(struct PlayerObj*);
-void func_80032B50(struct PlayerObj*);
-void func_80032BF4(struct PlayerObj*);
-void func_80032D28(struct PlayerObj*);
-void func_80032B50(struct PlayerObj*);
+// player_hurt_funcs
+extern void (*player_hurt_funcs[])(struct PlayerObj*);
+void player_hurt_knockback(struct PlayerObj*);
+void player_hurt_knockback(struct PlayerObj*);
+void player_hurt_launch(struct PlayerObj*);
+void player_hurt_stun(struct PlayerObj*);
+void player_hurt_knockback(struct PlayerObj*);
 
-// D_800F8B44
-extern void (*D_800F8B44[])(struct PlayerObj*);
-void func_80035848(struct PlayerObj* arg0);
-void func_800358A4(struct PlayerObj* arg0);
-void func_80035A24(struct PlayerObj* arg0);
+// player_entry_funcs
+extern void (*player_entry_funcs[])(struct PlayerObj*);
+void player_entry_beam_in(struct PlayerObj* arg0);
+void player_entry_placed(struct PlayerObj* arg0);
+void player_entry_ride(struct PlayerObj* arg0);
 
-// D_800F8B94
-extern void (*D_800F8B94[])(struct PlayerObj*);
-void func_80035AA8(struct PlayerObj*);
-void func_80035B6C(struct PlayerObj*);
+// player_death_funcs
+extern void (*player_death_funcs[])(struct PlayerObj*);
+void player_death_start(struct PlayerObj*);
+void player_death_wait(struct PlayerObj*);
 void func_80035C20(struct PlayerObj*);
-void func_80035D00(struct PlayerObj*);
+void player_death_end(struct PlayerObj*);
 #ifdef MMX4_PC
-void func_80035D34(s8);
-void func_80035D84(s8);
+void player_spawn_death_orb(s8);
+void player_spawn_death_orbs(s8);
 #endif
 
-// D_800F8C78
-extern void (*D_800F8C78[])(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
+// player_fire_funcs
+extern void (*player_fire_funcs[])(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
 void func_80037C28(struct PlayerObj*);
-void func_80037BC4(struct PlayerObj*);
-void func_80037D08(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037B90(struct PlayerObj*);
+void player_fire_charged_buster(struct PlayerObj*);
+void player_fire_lightning_web_charged(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_none(struct PlayerObj*);
 void func_80037C28(struct PlayerObj*);
-void func_80037BC4(struct PlayerObj*);
-void func_80037B98(struct PlayerObj*);
-void func_80037BC4(struct PlayerObj*);
+void player_fire_charged_buster(struct PlayerObj*);
+void player_fire_weapon(struct PlayerObj*);
+void player_fire_charged_buster(struct PlayerObj*);
 
-// D_800F8D5C
-extern void (*D_800F8D5C[])(struct PlayerObj*);
-void func_80038970(struct PlayerObj*);
-void func_800389DC(struct PlayerObj*);
-void func_80038A80(struct PlayerObj*);
-void func_80038AE8(struct PlayerObj*);
-void func_80038B80(struct PlayerObj*);
-void func_80038C10(struct PlayerObj*);
-void func_80038CA8(struct PlayerObj*);
+// player_hover_funcs
+extern void (*player_hover_funcs[])(struct PlayerObj*);
+void player_hover_start(struct PlayerObj*);
+void player_hover_rise(struct PlayerObj*);
+void player_hover_hold(struct PlayerObj*);
+void player_hover_forward(struct PlayerObj*);
+void player_hover_forward_stop(struct PlayerObj*);
+void player_hover_back(struct PlayerObj*);
+void player_hover_back_stop(struct PlayerObj*);
 
-// D_800F8D88
-extern void (*D_800F8D88[])(struct PlayerObj*);
-void func_80038F0C(struct PlayerObj*);
-void func_80038F64(struct PlayerObj*);
-void func_8003904C(struct PlayerObj*);
+// player_nova_strike_funcs
+extern void (*player_nova_strike_funcs[])(struct PlayerObj*);
+void player_nova_strike_windup(struct PlayerObj*);
+void player_nova_strike_dash(struct PlayerObj*);
+void player_nova_strike_end(struct PlayerObj*);
 
-// D_800F8D94
-extern void (*D_800F8D94[])(struct PlayerObj*);
-void func_8003974C(struct PlayerObj*);
-void func_800397B0(struct PlayerObj*);
-void func_800397E8(struct PlayerObj*);
-void func_80039808(struct PlayerObj*);
+// player_rising_fire_charged_funcs
+extern void (*player_rising_fire_charged_funcs[])(struct PlayerObj*);
+void player_rising_fire_charged_start(struct PlayerObj*);
+void player_rising_fire_charged_rise(struct PlayerObj*);
+void player_rising_fire_charged_peak(struct PlayerObj*);
+void player_rising_fire_charged_fall(struct PlayerObj*);
 
-// D_800F8DAC
-extern void (*D_800F8DAC[])(struct PlayerObj*);
-void func_8003AB34(struct PlayerObj*);
-void func_8003ABE0(struct PlayerObj*);
-void func_8003AD74(struct PlayerObj*);
+// player_zero_hyouretsuzan_funcs
+extern void (*player_zero_hyouretsuzan_funcs[])(struct PlayerObj*);
+void player_zero_hyouretsuzan_start(struct PlayerObj*);
+void player_zero_hyouretsuzan_drop(struct PlayerObj*);
+void player_zero_hyouretsuzan_land(struct PlayerObj*);
 
-// D_800F8DB8
-extern void (*D_800F8DB8[])(struct PlayerObj*);
-void func_8003AE54(struct PlayerObj*);
-void func_8003AEE0(struct PlayerObj*);
-void func_8003AF20(struct PlayerObj*);
-void func_8003AF58(struct PlayerObj*);
+// player_zero_ryuenjin_funcs
+extern void (*player_zero_ryuenjin_funcs[])(struct PlayerObj*);
+void player_zero_ryuenjin_start(struct PlayerObj*);
+void player_zero_ryuenjin_rise(struct PlayerObj*);
+void player_zero_ryuenjin_peak(struct PlayerObj*);
+void player_zero_ryuenjin_fall(struct PlayerObj*);
 
 // D_800F90D8
 extern void (*D_800F90D8[])(struct RideArmorObj*);

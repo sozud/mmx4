@@ -79,7 +79,7 @@ void func_800D94FC(struct LayerObj* arg0)
         if (func_800D9B08(arg0)) {
             background_objects[0].unk24 = 0x16B0;
             background_objects[0].unk26 = 0x16B0;
-            func_80036AE4(0x14, 0x40);
+            player_start_script_action(0x14, 0x40);
             arg0->unk7 = 1;
             return;
         }
@@ -119,13 +119,13 @@ void func_800D964C(struct LayerObj* arg0)
         }
         background_objects[0].unk1C = 0x24E0;
         background_objects[0].unk24 = 0x24E0;
-        func_80036B18();
+        player_end_script_action();
         func_8001540C(5, 0xB, NULL);
         arg0->unk7 = 1;
         arg0->unk17 = 0;
         return;
     }
-    if (g_Player.unkBC == 0) {
+    if (g_Player.update_delay == 0) {
         temp_v1 = background_objects[0].x_pos.val - background_objects[0].unk14.val;
         background_objects[1].x_pos.val += temp_v1;
         background_objects[2].x_pos.val += temp_v1 >> 1;
@@ -145,7 +145,7 @@ void func_800D9768(struct LayerObj* arg0)
 {
     if (engine_obj.checkpoint != 3) {
         background_objects[0].unk26 = 0x1DE0;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         func_8001540C(5, 9, NULL);
         arg0->unk18.val = FIXED(2);
     } else {
@@ -160,8 +160,8 @@ void func_800D9768(struct LayerObj* arg0)
 
 void func_800D97F4(struct LayerObj* arg0)
 {
-    if (background_objects[0].x_pos.i.hi == background_objects[0].unk26 && g_Player.unkC0 < 0) {
-        func_80036B18();
+    if (background_objects[0].x_pos.i.hi == background_objects[0].unk26 && g_Player.script_state < 0) {
+        player_end_script_action();
     }
     if (arg0->unk18.val != 0x80000) {
         arg0->unk18.val += 0x400;

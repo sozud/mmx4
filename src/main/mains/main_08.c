@@ -447,7 +447,7 @@ void eregion_spread(struct MainObj* self)
 
 void eregion_death_start(struct MainObj* self)
 {
-    func_80036AE4(0x14, g_Player.unk15);
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk7 = 1;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
@@ -512,7 +512,7 @@ void eregion_death_wait_explosion(struct MainObj* self)
         misc->id = 0x2E;
         misc->state = 0;
     }
-    func_80036AE4(0x14, 0x40);
+    player_start_script_action(0x14, 0x40);
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
@@ -577,7 +577,7 @@ void eregion_intro_warning(struct MainObj* self)
     }
     self->unk15 = 0x40;
     self->unk6++;
-    func_80036AE4(0x15, 0);
+    player_start_script_action(0x15, 0);
 }
 
 void eregion_intro_leap(struct MainObj* self)
@@ -654,7 +654,7 @@ void eregion_intro_fill_health(struct MainObj* self)
     } else {
         self->unk5 = 2;
         self->unk6 = 0;
-        func_80036B18();
+        player_end_script_action();
     }
 }
 

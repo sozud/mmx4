@@ -13,7 +13,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D788);
 
 void func_8009D85C(struct ShotObj* arg0)
 {
-    if ((arg0->unk8C.word == 3) && (g_Player.unkBA != 0)) {
+    if ((arg0->unk8C.word == 3) && (g_Player.stun_timer != 0)) {
         arg0->unk5 = 2;
         func_8009DA28(arg0);
         return;
@@ -32,7 +32,7 @@ void func_8009D8F0(struct ShotObj* arg0)
     s32 target;
     s32 direction;
 
-    if (arg0->unk8C.word == 3 && g_Player.unkBA != 0) {
+    if (arg0->unk8C.word == 3 && g_Player.stun_timer != 0) {
         arg0->unk5 = 2;
         func_8009DA28(arg0);
         return;
@@ -84,7 +84,7 @@ void func_8009DA7C(struct ShotObj* arg0)
     if (temp_v1 < 0) {
         arg0->timer = 0x1E;
         arg0->unk5++;
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         arg0->unk50.data = 0;
         arg0->unk54 = 0;
         return;
@@ -93,7 +93,7 @@ void func_8009DA7C(struct ShotObj* arg0)
     temp_v0 = arg0->unk90.val - 1;
     arg0->unk90.val = temp_v0;
     if (temp_v0 == 0) {
-        func_80036470(4);
+        player_damage(4);
         arg0->unk90.val = 0x30;
     }
     func_80015DC8(ANIMATED_OBJECT(arg0));
@@ -130,14 +130,14 @@ void func_8009DB9C(struct ShotObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
     D_80109014[arg0->unk5](arg0);
     owner = arg0->unk7C;
-    if (owner->state == 1 && arg0->unk8C.word != 0 && g_Player.unkBA == 0
-        && func_8002D9BC(arg0) != 0 && g_Player.unkBA != 0) {
+    if (owner->state == 1 && arg0->unk8C.word != 0 && g_Player.stun_timer == 0
+        && func_8002D9BC(arg0) != 0 && g_Player.stun_timer != 0) {
         arg0->unk8C.word = 3;
         arg0->x_pos.val = g_Player.x_pos.val;
         arg0->y_pos.val = g_Player.y_pos.val;
     }
     owner = arg0->unk7C;
-    if ((arg0->unk8C.word != 3 || g_Player.unkBA == 0 || owner->state != 2)
+    if ((arg0->unk8C.word != 3 || g_Player.stun_timer == 0 || owner->state != 2)
         && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
         if (arg0->unk8A == 0) {
             func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
@@ -149,8 +149,8 @@ void func_8009DB9C(struct ShotObj* arg0)
 
 void func_8009DCF4(struct ShotObj* arg0)
 {
-    if (arg0->unk8C.word == 3 && g_Player.unkBA != 0) {
-        g_Player.unkBA = 0;
+    if (arg0->unk8C.word == 3 && g_Player.stun_timer != 0) {
+        g_Player.stun_timer = 0;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

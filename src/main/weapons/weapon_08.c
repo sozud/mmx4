@@ -4,12 +4,12 @@
 
 void func_80097860(struct WeaponObj* arg0)
 {
-    s32 should_reset = g_Player.unkC3 != 0;
+    s32 should_reset = g_Player.input_locked != 0;
 
-    if (g_Player.unkC4 != 0) {
+    if (g_Player.capsule_state != 0) {
         should_reset = 1;
     }
-    if (g_Player.unk93 != 8) {
+    if (g_Player.weapon != 8) {
         should_reset = 1;
     }
     if (should_reset != 0) {
@@ -39,8 +39,8 @@ void func_80097A24(struct WeaponObj* arg0)
 void func_80097AC8(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
-    g_Player.unk98--;
-    g_Player.unk99--;
+    g_Player.shot_count--;
+    g_Player.special_shot_count--;
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
@@ -55,12 +55,12 @@ void func_80097B14(struct WeaponObj* arg0)
 
 void func_80097B28(struct WeaponObj* arg0)
 {
-    s32 should_reset = g_Player.unkC3 != 0;
+    s32 should_reset = g_Player.input_locked != 0;
 
-    if (g_Player.unkC4 != 0) {
+    if (g_Player.capsule_state != 0) {
         should_reset = 1;
     }
-    if (g_Player.unk93 != 8) {
+    if (g_Player.weapon != 8) {
         should_reset = 1;
     }
     if (should_reset != 0) {

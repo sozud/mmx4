@@ -26,14 +26,14 @@ void iris_drone_run(struct ShotObj* self)
         func_800AF808(BASE_OBJECT(self));
         self->state = 2;
     }
-    saved_unk61 = (u8)g_Player.unk61;
-    g_Player.unk61 = 0;
+    saved_unk61 = (u8)g_Player.invincibility_timer;
+    g_Player.invincibility_timer = 0;
     if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
-        g_Player.unk61 = saved_unk61;
+        g_Player.invincibility_timer = saved_unk61;
         func_800AF808(BASE_OBJECT(self));
         self->state = 2;
     } else {
-        g_Player.unk61 = saved_unk61;
+        g_Player.invincibility_timer = saved_unk61;
     }
     func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
 }

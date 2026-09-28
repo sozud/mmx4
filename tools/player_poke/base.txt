@@ -1,0 +1,52 @@
+idle frames=90 stride=6
+idle_low_hp set=hp:4 frames=60 stride=6
+walk hold=0-35:right frames=48 stride=3
+walk_turn hold=0-20:right,21-44:left frames=52 stride=4
+walk_tap hold=0-1:right frames=24 stride=2
+walk_double_tap_dash hold=0-1:right,4-30:right frames=36 stride=3
+jump_tap hold=0-1:jump frames=40 stride=3
+jump_hold hold=0-40:jump frames=64 stride=4
+jump_forward hold=0-60:right,0-40:jump frames=64 stride=4
+jump_up_down hold=0-40:jump,12-40:left frames=64 stride=4
+dash hold=0-40:dash frames=44 stride=3
+dash_tap hold=0-2:dash frames=30 stride=2
+dash_cancel hold=0-8:dash frames=30 stride=2
+dash_jump hold=0-60:right,0-20:dash,8-40:jump frames=64 stride=4
+dash_jump_hold hold=0-60:right+dash,8-40:jump frames=64 stride=4
+wall_approach dx=-72 hold=0-20:left frames=24 stride=3
+wall_cling dx=-72 hold=0-80:left,2-3:jump frames=84 stride=4
+wall_slide_release dx=-72 hold=0-30:left,2-3:jump frames=64 stride=4
+wall_jump dx=-72 hold=0-80:left,2-3:jump,22-23:jump,42-43:jump frames=84 stride=3
+wall_jump_hold dx=-72 hold=0-80:left,2-30:jump,34-60:jump frames=84 stride=3
+wall_dash_jump dx=-72 hold=0-80:left,2-3:jump,22-40:dash,22-23:jump frames=72 stride=3
+wall_jump_away dx=-72 hold=0-22:left,2-3:jump,22-23:jump,23-60:right frames=64 stride=3
+wall_climb_repeat dx=-72 hold=0-120:left,2-3:jump,20-21:jump,34-35:jump,48-49:jump,62-63:jump frames=120 stride=4
+shoot hold=0:shoot frames=24 stride=2
+shoot_repeat hold=0:shoot,6:shoot,12:shoot,18:shoot frames=36 stride=3
+shoot_walk hold=0-36:right,6:shoot,18:shoot frames=40 stride=3
+shoot_jump hold=0-30:jump,8:shoot,20:shoot frames=56 stride=4
+shoot_dash hold=0-30:dash,6:shoot frames=36 stride=3
+shoot_wall dx=-72 hold=0-60:left,2-3:jump,30:shoot,40:shoot frames=64 stride=4
+charge_partial hold=0-40:shoot frames=64 stride=4
+charge_full hold=0-100:shoot frames=124 stride=6
+charge_full_walk hold=0-100:shoot,40-110:right frames=124 stride=6
+charge_full_jump hold=0-100:shoot,94-120:jump frames=124 stride=6
+hurt_type0 set=hp:0x90,hurt_type:0,hit_facing:0 frames=60 stride=4
+hurt_type1 set=hp:0x90,hurt_type:1,hit_facing:0 frames=60 stride=4
+hurt_type2 set=hp:0x90,hurt_type:2,hit_facing:0 frames=80 stride=4
+hurt_type3 set=hp:0x90,hurt_type:3,hit_facing:0,stun_timer:0xff frames=120 stride=6
+hurt_type4 set=hp:0x90,hurt_type:4,hit_facing:0 frames=60 stride=4
+hurt_facing_right set=hp:0x90,hurt_type:1,hit_facing:0x40 frames=60 stride=4
+hurt_air dy=-40 set=hp:0x90,hurt_type:1,hit_facing:0 frames=60 stride=4
+death set=hp:0x80 frames=150 stride=6
+beam_in poke=1:0 dy=-160 anim=1 vy=-8 set=air_state:0xff,unk70:0,unk71:0 frames=90 stride=4
+stage_clear_wait poke=1:0x19 frames=40 stride=4
+beam_out poke=1:0x19:1 anim=0x27 frames=120 stride=4
+scripted_freeze set=script_state:1,script_action:0x14,script_facing:0 frames=40 stride=4
+scripted_walk set=script_state:1,script_action:0x15,script_facing:0 frames=90 stride=4
+scripted_vanish set=script_state:1,script_action:0x16,script_facing:0x40 frames=40 stride=4
+scripted_jump set=script_state:1,script_action:0x17,script_facing:0x40 frames=80 stride=4
+scripted_victory set=script_state:1,script_action:0x18,script_facing:0x40,item_step:4 frames=120 stride=4
+ride_pose poke=1:0x12:0 set=ride_state:0xff,ride_animation:0x29 frames=60 stride=4
+capsule poke=1:0x13 set=capsule_state:0xff frames=90 stride=4
+fall_from_height dy=-120 poke=1:7 anim=11 frames=60 stride=4

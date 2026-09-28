@@ -9,10 +9,10 @@ void sigma_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    if (g_Player.unkC4 == 0) {
+    if (g_Player.capsule_state == 0) {
         self->on_screen = 0;
         background_objects[0].unk24 -= 0x10;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -66,7 +66,7 @@ void sigma_intro_wait(struct MainObj* self)
         self->unk7C = 0x3C;
         self->on_screen = 0;
         self->unk5 += 1;
-        func_80036B18();
+        player_end_script_action();
         return;
     }
     self->on_screen = 0;
@@ -769,7 +769,7 @@ void sigma_death_start(struct MainObj* self)
 {
     func_80015930(2, 5);
     func_80015930(2, 9);
-    func_80036AE4(0x15, 0);
+    player_start_script_action(0x15, 0);
     engine_obj.unk1C = 1;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
@@ -822,7 +822,7 @@ void sigma_death_wait_explosion(struct MainObj* self)
             is_on_screen(BASE_OBJECT(self));
         }
     } else {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         self->unk7C = 0x78;
         self->unk5++;
         background_objects[0].unk28 += 0x100;
@@ -838,8 +838,8 @@ void sigma_death_finish(struct MainObj* self)
         func_800DABE4(7, 0, 0);
         background_objects[0].unk2A = background_objects[0].unk28;
         background_objects[0].unk24 += 0x280;
-        func_80036B18();
-        g_Player.unk7A = 0;
+        player_end_script_action();
+        g_Player.spike_immune = 0;
         ZeroObjectState(OBJECT_HEADER(self));
     }
 }
@@ -997,7 +997,7 @@ void sigma_reveal_dialogue(struct MainObj* self)
     if (self->unk6 == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             self->unk15 = (g_Player.x_pos.i.hi >= self->x_pos.i.hi) << 6;
-            func_80036AE4(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
+            player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
             self->unk6 = (u8)self->unk6 + 1;
             sound_id = 0x2C;
             if (engine_obj.cur_character == 0) {
@@ -1052,7 +1052,7 @@ void sigma_reveal_finish(struct MainObj* self)
         self->unk6 = 0;
         self->unk7 = 0;
         self->ext.main_68.flash_timer = 0;
-        func_80036B18();
+        player_end_script_action();
         temp_v1 = (unsigned long)self->ext.main_68.scythe;
         ((struct MainObj*)temp_v1)->state++;
     }

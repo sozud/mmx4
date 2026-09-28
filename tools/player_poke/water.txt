@@ -1,0 +1,5 @@
+water_idle frames=30 stride=3
+water_walk hold=0-40:right frames=48 stride=3
+water_jump hold=0-40:jump frames=80 stride=4
+water_dash hold=0-30:dash frames=36 stride=2
+water_dash_jump hold=0-60:right,0-20:dash,8-40:jump frames=80 stride=4

@@ -50,14 +50,14 @@ void func_800D0528(struct MiscObj* arg0)
 void func_800D0548(struct MiscObj* arg0)
 {
     if (background_objects[g_Player.bg_offset].x_pos.i.hi == 0x12F0) {
-        func_80036AE4(0x15, 0);
+        player_start_script_action(0x15, 0);
         arg0->unk5 = 1;
     }
 }
 
 void func_800D05B0(struct MiscObj* arg0)
 {
-    if (g_Player.unkC0 == -1) {
+    if (g_Player.script_state == -1) {
         func_80015D60(arg0, 1);
         arg0->unk5 = 2;
     }

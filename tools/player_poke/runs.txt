@@ -1,0 +1,9 @@
+base base.txt 2 0 0 0
+base base.txt 2 0 1 0
+ladder ladder.txt 7 0 0 0
+ladder ladder.txt 7 0 1 0
+water water.txt 1 0 0 0
+water water.txt 1 0 1 0
+x_armor x_armor.txt 2 0 0 1
+zero_saber zero_saber.txt 2 0 1 0
+zero_tech zero_tech.txt 2 0 1 1

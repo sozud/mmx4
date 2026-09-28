@@ -161,7 +161,7 @@ void func_80028BF0(void)
     bg2_y = checkpoint->bg2_y + bg2_offset_y;
     background_objects[2].y_pos.i.hi = bg2_y;
     background_objects[2].unk18.i.hi = bg2_y;
-    g_Player.unkBE = checkpoint->player_unkBE;
+    g_Player.beam_in_delay = checkpoint->player_unkBE;
 }
 
 void func_80028DB4(void)

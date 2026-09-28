@@ -22,7 +22,7 @@ void func_800BD23C(struct EffectObj* arg0)
     struct EffectObj* spawned = arg0->ext.effect_36.spawned_effect;
     if ((spawned->active == 0) || (spawned->id != 2)) {
         arg0->state = 2;
-        g_Player.unk61 = 0x78;
+        g_Player.invincibility_timer = 0x78;
     }
 }
 
@@ -30,7 +30,7 @@ void func_800BD280(struct EffectObj* arg0)
 {
     u32 i;
 
-    g_Player.unk61 = 0x78;
+    g_Player.invincibility_timer = 0x78;
     if (--arg0->ext.effect_36.timer == 0) {
         arg0->state = 3;
         for (i = 0; i < 4; i++) {

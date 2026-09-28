@@ -81,10 +81,10 @@ void func_800C670C(struct ItemObj* arg0)
         if (close) {
             func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
             if (player->x_pos.val - arg0->x_pos.val > 0) {
-                func_80036AE4(0x14, 0);
+                player_start_script_action(0x14, 0);
                 arg0->unk15 = 0x40;
             } else {
-                func_80036AE4(0x14, 0x40);
+                player_start_script_action(0x14, 0x40);
                 arg0->unk15 = 0;
             }
             func_80016F0C();
@@ -126,7 +126,7 @@ void func_800C68E0(struct ItemObj* arg0)
 void func_800C6928(struct ItemObj* arg0)
 {
     if (ANIMATED_OBJECT(arg0)->animation_step.fields.event != 0) {
-        func_80036B18();
+        player_end_script_action();
         func_80016F0C();
         func_800164D8();
         arg0->unk5 = (u8)arg0->unk5 + 1;
@@ -139,10 +139,10 @@ void func_800C6984(struct ItemObj* arg0)
 
     if ((u8)arg0->unk72 & 8) {
         func_80015D60(arg0, 1);
-        func_80036AE4(0x18, g_Player.unk15);
+        player_start_script_action(0x18, g_Player.unk15);
         func_800C661C(arg0, 0x24, 0);
         x_pos = arg0->x_pos.val;
-        g_Player.unkE2 = 1;
+        g_Player.item_step = 1;
         g_Player.x_pos.val = x_pos;
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }
@@ -150,7 +150,7 @@ void func_800C6984(struct ItemObj* arg0)
 
 void func_800C6A0C(struct ItemObj* arg0)
 {
-    if (g_Player.unkE2 == 2) {
+    if (g_Player.item_step == 2) {
         func_800C661C(arg0, 0x25, 0);
         func_800C661C(arg0, 0x25, 1);
         func_800C661C(arg0, 0x25, 2);
@@ -160,7 +160,7 @@ void func_800C6A0C(struct ItemObj* arg0)
 
 void func_800C6A7C(struct ItemObj* arg0)
 {
-    if (g_Player.unkE2 == 3) {
+    if (g_Player.item_step == 3) {
         func_80015D60(arg0, 2);
         arg0->unk7C.item_26_value = 0x14;
         arg0->unk5++;
@@ -183,7 +183,7 @@ void func_800C6ACC(struct ItemObj* arg0)
 
 void func_800C6B30(struct ItemObj* arg0)
 {
-    if (g_Player.unkE2 == 4) {
+    if (g_Player.item_step == 4) {
         func_80015D60(arg0, 13);
         arg0->unk5++;
     }
@@ -202,7 +202,7 @@ void func_800C6B84(struct VisualObj* arg0)
     } else if (arg0->state == 0) {
         func_800C6DD4(arg0, owner);
         func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
-    } else if (g_Player.unkE2 == 1) {
+    } else if (g_Player.item_step == 1) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     } else {
         func_80015DC8(ANIMATED_OBJECT(arg0));
@@ -218,7 +218,7 @@ void func_800C6C2C(struct VisualObj* arg0)
         arg0->unk54 = 0x78;
         func_8001540C(2, 0x23, 0);
     } else if (arg0->unk54 == 0) {
-        g_Player.unkE2 = 2;
+        g_Player.item_step = 2;
         func_80015930(2, 0x23);
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
@@ -251,7 +251,7 @@ void func_800C6CE4(struct VisualObj* self)
     } else {
         func_80015DC8(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.frame_index == 0x24) {
-            g_Player.unkE2 = 3;
+            g_Player.item_step = 3;
         }
     }
     func_8002B318(BASE_OBJECT(self), 0x88, 0x88);

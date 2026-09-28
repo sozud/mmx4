@@ -15,7 +15,7 @@ void func_800BE878(struct EffectObj* arg0)
     }
 
     if (engine_obj.unk1C == 0) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->ext.unk_effect.unk14 = 0x30;
         arg0->state = 1;
     }
@@ -42,7 +42,7 @@ void func_800BE8E4(struct EffectObj* arg0)
 void func_800BE960(struct EffectObj* arg0)
 {
     if (abc_object.unkC == 0) {
-        func_80036B18();
+        player_end_script_action();
         func_8002B108(arg0);
     }
 }

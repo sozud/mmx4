@@ -23,7 +23,7 @@ void func_8009273C(struct WeaponObj* arg0)
 void func_800927B4(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
-    g_Player.unk98--;
+    g_Player.shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 

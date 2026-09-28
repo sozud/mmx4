@@ -47,7 +47,7 @@ void spike_sled_init(struct MainObj* self)
     engine_obj.enable_boss = 1;
     engine_obj.unk25 = 2;
     engine_obj.boss_ptr = self;
-    func_80036AE4(0x14, 0);
+    player_start_script_action(0x14, 0);
     self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
@@ -64,8 +64,8 @@ void spike_sled_run(struct MainObj* self)
     if (self->ext.main_33.intro_active == 0) {
         self->ext.main_33.saved_unk5 = self->unk5;
         if (func_8002DD04(self) < 0) {
-            g_Player.unk7A = 1;
-            g_Player.unk61 = 0x7F;
+            g_Player.spike_immune = 1;
+            g_Player.invincibility_timer = 0x7F;
             func_800AF808(BASE_OBJECT(self));
             func_800C813C(9, D_800FDF40, self);
             self->unk54 = NULL;
@@ -109,7 +109,7 @@ void spike_sled_despawn(struct MainObj* self)
     background_objects[0].unk26 = 0x1100;
     background_objects[0].unk2A = 0x220;
     background_objects[0].unk28 = FIXED(0.00831);
-    g_Player.unk61 = 0;
+    g_Player.invincibility_timer = 0;
     func_8002B108(OBJECT_HEADER(self));
 }
 
@@ -396,7 +396,7 @@ void spike_sled_intro_start_fight(struct MainObj* self)
     if (--self->unk7C == 0) {
         func_800DABE4(0, 0x1340, 0x2A0);
         self->ext.main_33.intro_active = 0;
-        func_80036B18();
+        player_end_script_action();
         func_80015D60(self, 2);
         self->unk5 = 4;
         self->unk6 = 0;

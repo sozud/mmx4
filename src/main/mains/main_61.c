@@ -20,8 +20,8 @@ void split_mushroom_death(struct MainObj* self)
 
 void split_mushroom_death_start(struct MainObj* self)
 {
-    g_Player.unkBA = 0;
-    func_80036AE4(0x14, g_Player.unk15);
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk5 = 1;
     self->unk42 &= 0x7FFF;
     func_80015D60(self, 0x15);
@@ -113,7 +113,7 @@ void func_800790E8(struct MainObj* arg0)
                 effect->id = 0x18;
                 arg0->ext.main_61.data.effect = effect;
             }
-            func_80036AE4(0x14, 0);
+            player_start_script_action(0x14, 0);
         } else {
             return;
         }
@@ -124,7 +124,7 @@ void func_800790E8(struct MainObj* arg0)
             effect->id = 0x18;
             arg0->ext.main_61.data.effect = effect;
         }
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
     }
     arg0->unk6 = 1;
 }
@@ -202,7 +202,7 @@ void split_mushroom_intro_fill_health(struct MainObj* self)
         func_80015D60(self, 2);
         self->unk5 = 7;
         self->unk6 = 0;
-        func_80036B18();
+        player_end_script_action();
     }
 }
 

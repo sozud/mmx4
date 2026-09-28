@@ -58,7 +58,7 @@ void func_80092CEC(struct WeaponObj* arg0)
 
     if (arg0->unk84.word == 0) {
         owner = arg0->owner;
-        if (owner->unk8E == 0) {
+        if (owner->attacking == 0) {
             arg0->unk84.word = 1;
         }
         if (owner->unk15 != arg0->unk15) {

@@ -25,9 +25,9 @@ void func_80098C08(struct WeaponObj* arg0)
 void func_80098C84(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner = arg0->owner;
-    u8 timer = owner->unk86;
+    u8 timer = owner->air_action;
     if (timer != 0) {
-        owner->unk86 = timer - 1;
+        owner->air_action = timer - 1;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

@@ -55,14 +55,14 @@ void ice_core_death_sink(struct MainObj* self)
 
 void ice_core_death_release_camera(struct MainObj* self)
 {
-    func_80036AE4(0x15, 0x40);
+    player_start_script_action(0x15, 0x40);
     self->state = 4;
 }
 
 void ice_core_death_wait_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0x18F1) {
-        func_80036B18();
+        player_end_script_action();
         self->ext.raw[0] = 0;
         self->ext.raw[1] = 0;
         self->ext.raw[2] = 0;
@@ -467,7 +467,7 @@ void ice_core_build_wait(struct MainObj* self)
                 func_800527F0(self);
                 if (*(u8*)&self->unk7E == 0xFF) {
                     *(u8*)&self->unk7E = get_random() & 1;
-                    func_80036B18();
+                    player_end_script_action();
                 }
             } else {
                 func_80015D60(self, 0x10);
@@ -642,7 +642,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_18", func_80052218);
 
 void ice_core_intro_wait_player(struct MainObj* self)
 {
-    if (g_Player.unkC0 == -1) {
+    if (g_Player.script_state == -1) {
         self->unk6 = 2;
     }
 }

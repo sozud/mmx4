@@ -39,7 +39,7 @@ void func_800B3100(struct VisualObj* arg0)
         }
     } else {
         temp_a0 = arg0->unk50;
-        if (((u8)temp_a0->unk94[0] == 2) && (temp_a0->active != 0) && (temp_a0->unk97 & 0x40)) {
+        if (((u8)temp_a0->shot_types[0] == 2) && (temp_a0->active != 0) && (temp_a0->last_shot_type & 0x40)) {
             arg0->unk15 = temp_a0->unk15;
             arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
             arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;

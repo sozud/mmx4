@@ -11,8 +11,8 @@ extern u8 jet_stingray_pattern_weights[];
 
 void func_8006FD50(struct MainObj* arg0)
 {
-    if (g_Player.unkC4 == 0) {
-        func_80036AE4(0x14, 0x40);
+    if (g_Player.capsule_state == 0) {
+        player_start_script_action(0x14, 0x40);
         arg0->unk5++;
         arg0->on_screen = 0;
         arg0->unk54 = NULL;
@@ -163,7 +163,7 @@ void jet_stingray_intro_finish(struct MainObj* self)
         self->unk6 = 0;
         self->unk7 = 0;
         self->state++;
-        func_80036B18();
+        player_end_script_action();
     }
 }
 
@@ -749,7 +749,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56", func_80071D30);
 
 void jet_stingray_death_start(struct MainObj* self)
 {
-    func_80036AE4(0x14, g_Player.unk15);
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_56.unk89.value = 0x19;

@@ -144,7 +144,7 @@ void func_800B3AB0(struct VisualObj* arg0)
 {
     arg0->unk42 = arg0->unk50->unk42;
     is_on_screen(BASE_OBJECT(arg0));
-    if (g_Player.unkBC == 0) {
+    if (g_Player.update_delay == 0) {
         func_80015DC8(arg0);
         if (arg0->animation_step.fields.relative_step == 0) {
             ZeroObjectState(OBJECT_HEADER(arg0));

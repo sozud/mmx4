@@ -620,7 +620,7 @@ D_8010E968 = 0x8010EA80; // size:0x160 allow_addend:true
 D_8010EB54 = 0x8010EC6C; // size:0x24 allow_addend:true
 D_8010EB78 = 0x8010EC90; // size:0xC allow_addend:true
 D_800F474C = 0x800F48A0; // size:0x40 allow_addend:true
-D_800F8BE0 = 0x800F8D1C; // size:0x18 allow_addend:true
+player_weapon_energy = 0x800F8D1C; // size:0x18 allow_addend:true
 D_800F32D4 = 0x800F3428; // size:0x40 allow_addend:true
 D_800F30F4 = 0x800F3248; // size:0x30 allow_addend:true
 

@@ -75,7 +75,7 @@ void func_800D8884(struct LayerObj* arg0)
     if (func_800D8E94(arg0)) {
         background_objects[0].unk24 = 0x8D0;
         background_objects[0].unk26 = 0x8D0;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->unk7 = 0;
         arg0->unk6++;
     }
@@ -102,7 +102,7 @@ void func_800D8974(struct LayerObj* arg0)
     if (func_800D8E94(arg0)) {
         background_objects[0].unk24 = 0xD30;
         background_objects[0].unk26 = 0xD30;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->unk7 = 0;
         arg0->unk6++;
     }
@@ -149,7 +149,7 @@ void func_800D8AFC(struct LayerObj* arg0)
     if (func_800D8E94(arg0)) {
         background_objects[0].unk24 = 0x1A50;
         background_objects[0].unk26 = 0x1A50;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->unk7 = 0;
         arg0->unk6++;
     }
@@ -243,8 +243,8 @@ void func_800D8CF4(struct LayerObj* arg0)
 
 void func_800D8DE0(struct LayerObj* arg0)
 {
-    if (g_Player.unkC0 < 0) {
-        func_80036B18();
+    if (g_Player.script_state < 0) {
+        player_end_script_action();
         background_objects[0].unk1C = 0x1A50;
         background_objects[0].unk24 = 0x1A50;
         arg0->unk5 = 5;

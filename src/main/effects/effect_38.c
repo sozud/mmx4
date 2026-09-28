@@ -54,7 +54,7 @@ void func_800BD7B0(struct EffectObj* self)
     func_800BDBD4();
     subtype = self->unk2;
     if (g_Player.x_pos.i.hi >= D_8010C02C[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         func_800BDD08(self);
         if ((engine_obj.checkpoint & 1) || engine_obj.substage != 0) {
             self->ext.effect_38.active = 1;
@@ -79,7 +79,7 @@ void func_800BD890(struct EffectObj* arg0)
 void func_800BD8C4(struct EffectObj* arg0)
 {
     if (--arg0->ext.effect_38.timer == 0 && arg0->ext.effect_38.active != 0) {
-        func_80036AE4(0x15, 0x40);
+        player_start_script_action(0x15, 0x40);
         func_800BDB10(arg0);
         arg0->ext.effect_38.timer = 0x64;
         arg0->state++;

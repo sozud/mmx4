@@ -293,9 +293,9 @@ static void log_objects(long frame, u32 game, u32 engine)
 _Static_assert(offsetof(struct EngineObj, unk1F) - offsetof(struct EngineObj, state) == 0x1F, "engine region a");
 _Static_assert(offsetof(struct EngineObj, unk37) - offsetof(struct EngineObj, enable_boss) == 0x37 - 0x24, "engine region b");
 _Static_assert(offsetof(struct EngineObj, unk60) - offsetof(struct EngineObj, unk40) == 0x60 - 0x40, "engine region c");
-_Static_assert(offsetof(struct PlayerObj, unk67) - offsetof(struct PlayerObj, unk5C) == 0x67 - 0x5C, "player region a");
-_Static_assert(offsetof(struct PlayerObj, unkC7) - offsetof(struct PlayerObj, unk6C) == 0xC7 - 0x6C, "player region b");
-_Static_assert(offsetof(struct PlayerObj, unkE2) - offsetof(struct PlayerObj, unkD4) == 0xE2 - 0xD4, "player region c");
+_Static_assert(offsetof(struct PlayerObj, air_state) - offsetof(struct PlayerObj, hp) == 0x67 - 0x5C, "player region a");
+_Static_assert(offsetof(struct PlayerObj, death_timer) - offsetof(struct PlayerObj, unk6C) == 0xC7 - 0x6C, "player region b");
+_Static_assert(offsetof(struct PlayerObj, item_step) - offsetof(struct PlayerObj, ride_animation) == 0xE2 - 0xD4, "player region c");
 
 static void write_state_bytes(unsigned offset, const void* address, size_t length)
 {
@@ -311,9 +311,9 @@ static void write_player_state(long frame, u32 game, u32 engine,
     const char* table, const struct PlayerObj* player)
 {
     fprintf(state_log, "%ld\t%08x\t%08x\t%s\t0", frame, game, engine, table);
-    write_state_bytes(0x5C, &player->unk5C, 0x68 - 0x5C);
+    write_state_bytes(0x5C, &player->hp, 0x68 - 0x5C);
     write_state_bytes(0x6C, &player->unk6C, 0xC8 - 0x6C);
-    write_state_bytes(0xD4, &player->unkD4, 0xE4 - 0xD4);
+    write_state_bytes(0xD4, &player->ride_animation, 0xE4 - 0xD4);
     fprintf(state_log, "\t%d\n", player->unk68 != NULL);
 }
 
@@ -358,7 +358,7 @@ void mmx4_pc_object_log_dump(void)
         background_objects[0].x_pos.val, background_objects[0].y_pos.val,
         D_80141BD8.unk0, D_801406AC, D_8013BD40,
         engine_obj.unk1F, engine_obj.enable_boss, engine_obj.unk1E,
-        g_Entity.unkD9, (u8)g_Player.unk5C, mmx4_pc_cd_reads,
+        g_Entity.is_clone, (u8)g_Player.hp, mmx4_pc_cd_reads,
         mmx4_pc_cd_read_sample, mmx4_pc_cd_read_pending, mmx4_pc_xa_stops,
         mmx4_pc_xa_stop_sample);
     log_objects(frame, game, engine);
@@ -380,6 +380,7 @@ void mmx4_pc_frame_end(void)
     long capture_frame = replay_frame - 1;
 
     mmx4_pc_write_replay_frame(capture_frame);
+    mmx4_pc_player_dump((long)mmx4_pc_frame_number());
     mmx4_oracle_capture_object_changes(mmx4_pc_frame_number());
     mmx4_pc_object_log_dump();
     if (stop_after != NULL && capture_frame >= strtol(stop_after, NULL, 0)) {

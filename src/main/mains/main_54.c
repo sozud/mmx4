@@ -7,7 +7,7 @@ void slash_beast_update(struct MainObj* self)
 {
     slash_beast_state_funcs[self->state](self);
     CollisionRelated(self);
-    if (!(g_Player.unk5C & 0x7F)) {
+    if (!(g_Player.hp & 0x7F)) {
         func_8006E920(self, 0x38);
     }
 }
@@ -25,8 +25,8 @@ void slash_beast_death(struct MainObj* self)
 
 void slash_beast_death_start(struct MainObj* self)
 {
-    g_Player.unkBA = 0;
-    func_80036AE4(0x14, g_Player.unk15);
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk5 = 1;
     self->unk42 &= 0x7FFF;
     func_80015D60(self, 0x13);
@@ -285,7 +285,7 @@ void slash_beast_grab_check(struct MainObj* self)
         self->ext.main_54.grab = 0;
         self->unk6 = 2;
     }
-    if (g_Player.unkBA == 0) {
+    if (g_Player.stun_timer == 0) {
         return;
     }
     func_8001540C(2, 0x86, self);
@@ -344,7 +344,7 @@ void slash_beast_grab_throw(struct MainObj* self)
     self->unk62 = 0;
     self->unk60 = 9;
     self->ext.main_54.grab = 0;
-    g_Player.unkBA = 0;
+    g_Player.stun_timer = 0;
 }
 
 void slash_beast_intro(struct MainObj* self)
@@ -364,7 +364,7 @@ void slash_beast_intro_wait_player(struct MainObj* self)
             self->ext.main_54.effect = temp_v0;
         }
 
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         if (engine_obj.stage == 8) {
             background_objects[0].unk26 = 0x24A0;
             background_objects[0].unk24 = 0x24E0;
@@ -506,7 +506,7 @@ void slash_beast_intro_fill_health(struct MainObj* self)
             self->unk5 = 3;
             self->unk6 = 0;
             self->ext.main_54.pattern--;
-            func_80036B18();
+            player_end_script_action();
         }
     }
 }

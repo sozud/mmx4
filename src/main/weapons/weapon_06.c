@@ -89,9 +89,9 @@ s32 func_8009663C(struct WeaponObj* arg0, struct PlayerObj* player, struct MainO
         slot = 0;
     }
     if (slot != -1 && func_8002BB80(MAIN_OBJECT(arg0), target) != 0) {
-        if (func_80036DA0(1, 6, slot, PLAYER_OBJECT(target)) != NULL) {
+        if (player_spawn_weapon(1, 6, slot, PLAYER_OBJECT(target)) != NULL) {
             player->weapon_06_slots[slot] = target;
-            player->unk99++;
+            player->special_shot_count++;
             func_8001540C(0, 0x1C, arg0);
         }
         arg0->unk50 = NULL;
@@ -132,7 +132,7 @@ void func_80096834(struct WeaponObj* self, struct PlayerObj* player,
 
     func_80015DC8(ANIMATED_OBJECT(self));
     func_8002B318(BASE_OBJECT(self), 0x18, 0x18);
-    if ((player->unk8F != 0) && (player->unk96 == 6)) {
+    if ((player->shot_fired != 0) && (player->shot_type == 6)) {
         self->unk50 = &D_80108994;
         self->ext.weapon_6.lifetime = 0x3C;
         self->unk64 = 1;
@@ -175,7 +175,7 @@ void func_80096994(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     arg1->weapon_06_slots[arg0->unk2] = NULL;
     arg0->unk50 = 0;
-    arg1->unk99--;
+    arg1->special_shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
@@ -185,17 +185,17 @@ void func_800969D8(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.unkC3 != 0;
-    if (g_Player.unkC4 != 0) {
+    var_a1 = g_Player.input_locked != 0;
+    if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk93 != 6) {
+    if (g_Player.weapon != 6) {
         var_a1 = 1;
     }
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a1 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {
@@ -256,7 +256,7 @@ void func_80096DC0(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     func_80015930(0, 0x1D);
-    g_Player.unk99--;
+    g_Player.special_shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 

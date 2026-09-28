@@ -92,7 +92,7 @@ void func_800AF1AC(struct VisualObj* arg0)
     struct PlayerObj* entity = &g_Player;
 
     if (arg0->unk5C.value == 0) {
-        if (entity->unk8E == 0) {
+        if (entity->attacking == 0) {
             arg0->unk5C.value = 1;
         }
         if (entity->unk15 != arg0->unk15) {

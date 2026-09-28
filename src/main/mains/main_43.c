@@ -29,14 +29,14 @@ void web_spider_intro_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    if (g_Player.unkC4 == 0) {
+    if (g_Player.capsule_state == 0) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x18;
             self->ext.main_43.effect = effect;
         }
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         web_spider_arena_x = background_objects[0].unk26;
         web_spider_arena_y = background_objects[0].unk2A;
         self->unk5 = 1;
@@ -177,7 +177,7 @@ void web_spider_intro_fill_health(struct MainObj* self)
         }
         self->unk5 = 9;
         self->unk24 = FIXED(3.5);
-        func_80036B18();
+        player_end_script_action();
         func_80015D60(self, 0x1F);
     }
 }
@@ -212,7 +212,7 @@ void func_80063DD8(struct MainObj* arg0)
     switch (arg0->unk7) {
     case 0:
         if (arg0->unk7C == 0) {
-            if ((get_random() & 0xF) != 0 && g_Player.unkBA == 0) {
+            if ((get_random() & 0xF) != 0 && g_Player.stun_timer == 0) {
                 arg0->unk5 = 3;
                 arg0->unk6 = 0;
                 arg0->unk7 = 0;
@@ -668,7 +668,7 @@ void web_spider_death_start(struct MainObj* self)
     self->unk7E = 0x19;
     self->ext.main_43.flash_timer = 0x19;
     self->unk42 &= 0x7FFF;
-    func_80036AE4(0x14, g_Player.unk15);
+    player_start_script_action(0x14, g_Player.unk15);
     func_80015D60(self, 0x22);
     is_on_screen(BASE_OBJECT(self));
 }

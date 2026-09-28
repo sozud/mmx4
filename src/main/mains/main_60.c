@@ -24,12 +24,12 @@ void storm_owl_start_wait_player(struct MainObj* self)
         if (g_Player.x_pos.i.hi >= 0x9E1) {
             return;
         }
-        func_80036AE4(0x14, 0);
+        player_start_script_action(0x14, 0);
     } else {
         if (g_Player.y_pos.i.hi < 0x6B0) {
             return;
         }
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
     }
     self->unk5++;
 }
@@ -65,8 +65,8 @@ void storm_owl_death(struct MainObj* self)
 void storm_owl_death_start(struct MainObj* self)
 {
     func_80015930(2, 0xBC);
-    g_Player.unkBA = 0;
-    func_80036AE4(0x14, g_Player.unk15);
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk5++;
     self->unk42 &= 0x7FFF;
     func_80015D60(self, 0xB);
@@ -220,7 +220,7 @@ void storm_owl_intro_fill_health(struct MainObj* self)
             self->unk7C = 3;
         }
         if ((s8)++self->unk5C == 0x30) {
-            func_80036B18();
+            player_end_script_action();
             storm_owl_choose_pattern(self);
             self->unk6++;
         }
@@ -392,7 +392,7 @@ void func_800766FC(struct MainObj* arg0)
     if (arg0->unk70 & 8) {
         func_8001540C(2, 0xBB, arg0);
         func_80028BAC(8, 4, 1);
-        func_80036470(9);
+        player_damage(9);
         func_80015D60(arg0, 1);
         if (arg0->unk15 == 0) {
             arg0->unk20 = FIXED(-2);
@@ -400,7 +400,7 @@ void func_800766FC(struct MainObj* arg0)
             arg0->unk20 = FIXED(2);
         }
         arg0->unk24 = FIXED(-1);
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         arg0->unk68 = &D_801016C0;
         arg0->unk62 = 0;
         arg0->unk50 = (const u8*)&D_801016B8;
@@ -416,7 +416,7 @@ void storm_owl_grab_leave(struct MainObj* self)
         self->unk24 += FIXED(0.125);
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         self->unk60 = 6;
         self->unk68 = &D_801016C0;
         self->unk62 = 0;
@@ -879,7 +879,7 @@ void storm_owl_stagger_start(struct MainObj* self)
 {
     func_80015DC8(ANIMATED_OBJECT(self));
     func_80015D60(self, 0xC);
-    g_Player.unkBA = 0;
+    g_Player.stun_timer = 0;
     self->unk60 = 6;
     self->unk68 = &D_801016C0;
     self->unk50 = (const u8*)&D_801016B8;

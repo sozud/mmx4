@@ -24,7 +24,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_70", func_80088C40);
 void drone_pod_intro_wait_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0x8E9) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         func_80015D60(self, 2);
         self->unk5++;
     }
@@ -59,7 +59,7 @@ void drone_pod_intro_fill_health(struct MainObj* self)
     count = self->unk5C + 1;
     self->unk5C = count;
     if ((s8)count == 0x30) {
-        func_80036B18();
+        player_end_script_action();
         self->unk5 = 3;
         self->unk6 = 0;
         self->unk7C = 0xA;

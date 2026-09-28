@@ -39,12 +39,12 @@ void general_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    if (g_Player.unkC4 == 0) {
+    if (g_Player.capsule_state == 0) {
         if (g_Player.x_pos.i.hi >= 0xD31) {
             background_objects[1].unk3 = 0;
         }
         self->active |= 4;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -63,7 +63,7 @@ void general_intro_lock_camera(struct MainObj* self)
     if (g_Player.x_pos.i.hi >= 0xDF1) {
         self->unk5++;
         self->ext.main_75.background_unk1E = background_objects[0].unk1E;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         background_objects[0].unk26 = 0xDD0;
         background_objects[0].unk2A = 0x190;
         engine_obj.enable_boss = 1;
@@ -156,7 +156,7 @@ void general_intro_fill_health(struct MainObj* self)
 void general_intro_finish(struct MainObj* self)
 {
     if (background_objects[0].unk1E == background_objects[0].unk26) {
-        func_80036B18();
+        player_end_script_action();
         background_objects[0].unk48 = 8;
         self->unk5 = 2;
         self->unk6 = 0;
@@ -624,9 +624,9 @@ void general_death_start(struct MainObj* self)
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_75.blink_delay = 0x19;
-    g_Player.unkBA = 0;
+    g_Player.stun_timer = 0;
     background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
-    func_80036AE4(0x15, 0);
+    player_start_script_action(0x15, 0);
     self->unk6 = 0;
     self->unk5++;
     self->unk42 &= 0x7FFF;
@@ -669,7 +669,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_800915C4);
 void general_death_wait_explosion(struct MainObj* self)
 {
     if (self->ext.main_75.object.child->active == 0) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         self->unk7C = 0x78;
         self->unk5++;
     }

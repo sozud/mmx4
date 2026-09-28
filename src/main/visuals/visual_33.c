@@ -1,6 +1,8 @@
 // VisualObj, visual_object_update_funcs[33]
 // 800B2AD0..800B2D48
-#ifdef VERSION_JP
+#if defined(MMX4_PC)
+#define PLAYER_UNKA6_ADDRESS (&g_Player.stock_charge)
+#elif defined(VERSION_JP)
 #define PLAYER_UNKA6_ADDRESS 0x80141A4E
 #else
 #define PLAYER_UNKA6_ADDRESS 0x8014196E
@@ -76,7 +78,7 @@ void func_800B2C8C(struct MiscObj* arg0)
         arg0->state++;
     } else {
         arg0->on_screen = 0;
-        if (engine_obj.unk1F != 0 && g_Player.unkA6 != 0) {
+        if (engine_obj.unk1F != 0 && g_Player.stock_charge != 0) {
             arg0->on_screen = 1;
             playerUnkA6 = *(u8*)PLAYER_UNKA6_ADDRESS;
             arg0->x_pos.i.hi = 0x20;

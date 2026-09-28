@@ -90,7 +90,7 @@ void func_800C1590(struct ItemObj* self)
 
 void func_800C165C(struct ItemObj* arg0)
 {
-    func_80036AE4(0x15, 0x40);
+    player_start_script_action(0x15, 0x40);
     arg0->state++;
 }
 
