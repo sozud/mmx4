@@ -4746,7 +4746,7 @@ union AnimationStep D_80103B44[] = {
     { 0x26000101 },
 };
 
-void* D_80103B48[37] = {
+void* iris_animations[37] = {
     D_801035D0,
     D_801035F4,
     D_80103604,
@@ -4786,70 +4786,70 @@ void* D_80103B48[37] = {
     D_80103688,
 };
 
-void (*D_80103BDC[4])() = {
+void (*iris_state_funcs[4])() = {
     func_80080700,
     func_80080834,
-    func_80080D20,
-    func_800810C4,
+    iris_death,
+    iris_despawn,
 };
 
-void (*D_80103BEC[8])() = {
+void (*iris_step_funcs[8])() = {
     func_8009216C,
-    func_80081104,
-    func_80081198,
-    func_800816DC,
-    func_80081830,
-    func_80081B64,
+    iris_robot_decide,
+    iris_intro,
+    iris_robot_hover,
+    iris_robot_dash,
+    iris_robot_release_crystal,
     func_80081E44,
-    func_80082014,
+    iris_crystal_drop,
 };
 
-void (*D_80103C0C[4])() = {
-    func_80080D5C,
+void (*iris_death_funcs[4])() = {
+    iris_death_start,
     func_80080DF4,
-    func_80080F04,
-    func_8008107C,
+    iris_death_wait_explosion,
+    iris_death_finish,
 };
 
-void (*D_80103C1C[12])(struct MainObj*) = {
-    func_800811D4,
-    func_80081230,
-    func_8008127C,
-    func_800812E4,
-    func_8008134C,
-    func_800813BC,
-    func_80081404,
-    func_800814E8,
-    func_80081508,
-    func_80081564,
-    func_800815B8,
-    func_80081624,
+void (*iris_intro_funcs[12])(struct MainObj*) = {
+    iris_intro_wait_player,
+    iris_intro_wait_camera,
+    iris_intro_warning,
+    iris_intro_wait_warning,
+    iris_intro_dialogue,
+    iris_intro_wait_dialogue,
+    iris_intro_toss_crystal,
+    iris_intro_wait_transform,
+    iris_intro_transform,
+    iris_intro_pose,
+    iris_intro_voice,
+    iris_intro_fill_health,
 };
 
-void (*D_80103C4C[1])() = {
+void (*iris_robot_hover_funcs[1])() = {
     func_80081718,
 };
 
-void (*D_80103C50[5])() = {
-    func_8008186C,
+void (*iris_robot_dash_funcs[5])() = {
+    iris_robot_dash_land,
     func_800818C4,
-    func_80081954,
-    func_800819C4,
+    iris_robot_dash_run,
+    iris_robot_dash_laser,
     func_80081AD0,
 };
 
-void (*D_80103C64[3])() = {
+void (*iris_robot_release_crystal_funcs[3])() = {
     func_80081BA0,
-    func_80081CF8,
-    func_80081D30,
+    iris_robot_release_crystal_wait,
+    iris_robot_release_crystal_finish,
 };
 
-void (*D_80103C70[5])(struct MainObj*) = {
-    func_80082050,
-    func_800820A4,
-    func_80082170,
-    func_8008225C,
-    func_80082354,
+void (*iris_crystal_drop_funcs[5])(struct MainObj*) = {
+    iris_crystal_drop_fall,
+    iris_crystal_drop_chase,
+    iris_crystal_drop_aim,
+    iris_crystal_drop_fire,
+    iris_crystal_drop_return,
 };
 
 struct Unk_unk68 D_80103C84 = { -77, -41, -105, 68 };
@@ -5971,129 +5971,129 @@ void* D_80104770[25] = {
     D_8010476C,
 };
 
-void (*D_801047D4[3])() = {
-    func_80085F50,
+void (*colonel_state_funcs[3])() = {
+    colonel_spawn,
     func_80086124,
-    func_80086268,
+    colonel_death,
 };
 
-void (*D_801047E0[2])(struct MainObj*) = {
-    func_80085F8C,
+void (*colonel_spawn_funcs[2])(struct MainObj*) = {
+    colonel_spawn_warning,
     func_80086008,
 };
 
-void (*D_801047E8[9])() = {
+void (*colonel_step_funcs[9])() = {
     func_8009216C,
-    func_80086B60,
-    func_80086B74,
-    func_80087414,
-    func_8008765C,
-    func_80087928,
-    func_80087B98,
-    func_80087F78,
-    func_80088584,
+    colonel_start_fight,
+    colonel_intro,
+    colonel_guard,
+    colonel_teleport_slash,
+    colonel_dash,
+    colonel_saber_waves,
+    colonel_flash_strike,
+    colonel_jump_slam,
 };
 
-void (*D_8010480C[2])() = {
-    func_800862A4,
-    func_80086704,
+void (*colonel_death_funcs[2])() = {
+    colonel_defeat,
+    colonel_retreat,
 };
 
-void (*D_80104814[7])() = {
-    func_800862F4,
-    func_800863E8,
-    func_80086488,
-    func_8008649C,
-    func_800864FC,
-    func_8008654C,
-    func_80086640,
+void (*colonel_defeat_funcs[7])() = {
+    colonel_defeat_start,
+    colonel_defeat_fall,
+    colonel_defeat_next,
+    colonel_defeat_dialogue,
+    colonel_defeat_wait_dialogue,
+    colonel_defeat_blink,
+    colonel_defeat_wait_explosion,
 };
 
-void (*D_80104830[8])(struct MainObj*) = {
-    func_80086740,
-    func_800867C4,
+void (*colonel_retreat_funcs[8])(struct MainObj*) = {
+    colonel_retreat_start,
+    colonel_retreat_vanish,
     func_80086860,
-    func_80086900,
-    func_800869BC,
-    func_800869F8,
-    func_80086A6C,
-    func_80086B08,
+    colonel_retreat_reappear,
+    colonel_retreat_wait_dialogue,
+    colonel_retreat_start_again,
+    colonel_retreat_vanish_again,
+    colonel_retreat_finish,
 };
 
-void (*D_80104850[2])() = {
-    func_80086BB0,
-    func_80086F28,
+void (*colonel_intro_funcs[2])() = {
+    colonel_intro_port,
+    colonel_intro_hall,
 };
 
-void (*D_80104858[6])() = {
+void (*colonel_intro_port_funcs[6])() = {
     func_80086C00,
-    func_80086C70,
-    func_80086D04,
-    func_80086D84,
-    func_80086E2C,
-    func_80086E80,
+    colonel_intro_port_flash,
+    colonel_intro_port_blink_in,
+    colonel_intro_port_pose,
+    colonel_intro_port_voice,
+    colonel_intro_port_fill_health,
 };
 
-void (*D_80104870[9])() = {
-    func_80086F78,
-    func_8008700C,
-    func_80087088,
-    func_800870FC,
-    func_80087168,
-    func_800871C4,
-    func_80087254,
-    func_800872E8,
-    func_80087364,
+void (*colonel_intro_hall_funcs[9])() = {
+    colonel_intro_hall_wait_player,
+    colonel_intro_hall_portrait_player,
+    colonel_intro_hall_dialogue,
+    colonel_intro_hall_portrait_colonel,
+    colonel_intro_hall_wait,
+    colonel_intro_hall_blink_in,
+    colonel_intro_hall_flash,
+    colonel_intro_hall_effect,
+    colonel_intro_hall_fill_health,
 };
 
-void (*D_80104894[4])(struct MainObj*) = {
-    func_8008746C,
-    func_8008752C,
-    func_8008759C,
-    func_80087604,
+void (*colonel_guard_funcs[4])(struct MainObj*) = {
+    colonel_guard_pick,
+    colonel_guard_watch,
+    colonel_guard_block,
+    colonel_guard_recover,
 };
 
-void (*D_801048A4[4])(struct MainObj*) = {
-    func_80087698,
-    func_80087708,
+void (*colonel_teleport_slash_funcs[4])(struct MainObj*) = {
+    colonel_teleport_slash_vanish,
+    colonel_teleport_slash_shake,
     func_800877A4,
-    func_80087860,
+    colonel_teleport_slash_swing,
 };
 
-void (*D_801048B4[3])(struct MainObj*) = {
-    func_80087980,
+void (*colonel_dash_funcs[3])(struct MainObj*) = {
+    colonel_dash_start,
     func_80087A00,
-    func_80087AF8,
+    colonel_dash_brake,
 };
 
-void (*D_801048C0[6])(struct MainObj*) = {
-    func_80087BE8,
-    func_80087C70,
-    func_80087D3C,
-    func_80087E0C,
-    func_80087ED4,
-    func_80087F30,
+void (*colonel_saber_waves_funcs[6])(struct MainObj*) = {
+    colonel_saber_waves_start,
+    colonel_saber_waves_fire,
+    colonel_saber_waves_fire_high,
+    colonel_saber_waves_fire_last,
+    colonel_saber_waves_recover,
+    colonel_saber_waves_wait,
 };
 
-void (*D_801048D8[9])(struct MainObj*) = {
-    func_80087FB4,
-    func_80088020,
-    func_800880BC,
-    func_80088140,
+void (*colonel_flash_strike_funcs[9])(struct MainObj*) = {
+    colonel_flash_strike_vanish,
+    colonel_flash_strike_shake,
+    colonel_flash_strike_reappear,
+    colonel_flash_strike_slide,
     func_800881F8,
-    func_80088338,
+    colonel_flash_strike_flash,
     func_800883CC,
-    func_800884D0,
-    func_80088530,
+    colonel_flash_strike_wait,
+    colonel_flash_strike_recover,
 };
 
-void (*D_801048FC[6])(struct MainObj*) = {
-    func_800885DC,
-    func_80088658,
-    func_800886A0,
-    func_800886F0,
-    func_800887DC,
-    func_8008888C,
+void (*colonel_jump_slam_funcs[6])(struct MainObj*) = {
+    colonel_jump_slam_jump,
+    colonel_jump_slam_rise,
+    colonel_jump_slam_land,
+    colonel_jump_slam_drop,
+    colonel_jump_slam_shockwave,
+    colonel_jump_slam_recover,
 };
 
 struct Unk_unk68 D_80104914 = { -12, -13, 25, 26 };
@@ -6204,51 +6204,51 @@ s16 D_801049CC[12] = {
     (s16)0x0400,
 };
 
-void (*D_801049E4[3])() = {
-    func_80088BE8,
+void (*drone_pod_state_funcs[3])() = {
+    drone_pod_intro,
     func_80088EA4,
-    func_80088F78,
+    drone_pod_death,
 };
 
-void (*D_801049F0[4])() = {
+void (*drone_pod_intro_funcs[4])() = {
     func_80088C40,
-    func_80088D30,
-    func_80088D8C,
-    func_80088E04,
+    drone_pod_intro_wait_player,
+    drone_pod_intro_open,
+    drone_pod_intro_fill_health,
 };
 
-void (*D_80104A00[4])() = {
+void (*drone_pod_step_funcs[4])() = {
     func_8009216C,
-    func_80089334,
-    func_80089340,
-    func_80089438,
+    drone_pod_resume_step,
+    drone_pod_rest,
+    drone_pod_launch,
 };
 
-void (*D_80104A10[6])(struct MainObj*) = {
-    func_80088FF0,
-    func_800890B0,
-    func_80089138,
-    func_800891C8,
-    func_8008924C,
-    func_80089314,
+void (*drone_pod_death_funcs[6])(struct MainObj*) = {
+    drone_pod_death_start,
+    drone_pod_death_explode,
+    drone_pod_death_alarm,
+    drone_pod_death_break_wall,
+    drone_pod_death_debris,
+    drone_pod_death_finish,
 };
 
-void (*D_80104A28[2])() = {
-    func_8008937C,
-    func_800893DC,
+void (*drone_pod_rest_funcs[2])() = {
+    drone_pod_rest_wait,
+    drone_pod_rest_open,
 };
 
-void (*D_80104A30[3])() = {
-    func_80089474,
-    func_800894BC,
-    func_80089524,
+void (*drone_pod_launch_funcs[3])() = {
+    drone_pod_launch_prepare,
+    drone_pod_launch_fire,
+    drone_pod_launch_close,
 };
 
 u8 D_80104A3C[16] = { 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00 };
 
-void (*D_80104A4C[2])(struct MainObj*) = {
-    func_80089984,
-    func_80089A10,
+void (*drone_pod_alarm_funcs[2])(struct MainObj*) = {
+    drone_pod_alarm_red,
+    drone_pod_alarm_white,
 };
 
 struct Unk_unk68 D_80104A54[13] = {
@@ -7052,75 +7052,75 @@ void* D_801052A4[2] = {
     D_80105294,
 };
 
-void (*D_801052AC[4])(struct MainObj*) = {
-    func_8008BCB0,
-    func_8008BD10,
-    func_8008BD5C,
-    func_8008BDAC,
+void (*double_intro_talk_funcs[4])(struct MainObj*) = {
+    double_intro_dialogue,
+    double_intro_wait_dialogue,
+    double_intro_voice,
+    double_intro_fill_health,
 };
 
-void (*D_801052BC[3])() = {
+void (*double_intro_funcs[3])() = {
     func_8008BA38,
     func_8008BB6C,
-    func_8008BE74,
+    double_intro_talk,
 };
 
-void (*D_801052C8[2])() = {
-    func_8008C0C0,
+void (*double_wait_funcs[2])() = {
+    double_wait_start,
     func_8008C10C,
 };
 
-void (*D_801052D0[3])() = {
-    func_8008C240,
-    func_8008C27C,
-    func_8008C30C,
+void (*double_energy_ball_funcs[3])() = {
+    double_energy_ball_windup,
+    double_energy_ball_throw,
+    double_energy_ball_recover,
 };
 
-void (*D_801052DC[9])() = {
-    func_8008C39C,
-    func_8008C3F4,
-    func_8008C43C,
-    func_8008C4B4,
-    func_8008C5A8,
+void (*double_dive_funcs[9])() = {
+    double_dive_leap,
+    double_dive_rise,
+    double_dive_climb,
+    double_dive_aim,
+    double_dive_fall,
     func_8008C664,
-    func_8008C7E4,
-    func_8008C888,
-    func_8008C8E0,
+    double_dive_hit_wall,
+    double_dive_stun,
+    double_dive_land,
 };
 
-void (*D_80105300[7])() = {
-    func_8008C998,
-    func_8008C9E0,
-    func_8008CA60,
-    func_8008CB2C,
+void (*double_aerial_shot_funcs[7])() = {
+    double_aerial_shot_jump,
+    double_aerial_shot_fire,
+    double_aerial_shot_hang,
+    double_aerial_shot_fire_again,
     func_8008CBF8,
-    func_8008CC7C,
-    func_8008CCD4,
+    double_aerial_shot_drop,
+    double_aerial_shot_land,
 };
 
-void (*D_8010531C[6])() = {
+void (*double_step_funcs[6])() = {
     func_8009216C,
     func_8009216C,
-    func_8008C204,
-    func_8008C360,
-    func_8008C95C,
-    func_8008CD44,
+    double_wait,
+    double_energy_ball,
+    double_dive,
+    double_aerial_shot,
 };
 
-void (*D_80105334[7])(struct MainObj*) = {
-    func_8008CFAC,
-    func_8008D050,
-    func_8008D0D0,
-    func_8008D138,
-    func_8008D19C,
-    func_8008D278,
-    func_8008D2FC,
+void (*double_death_funcs[7])(struct MainObj*) = {
+    double_death_start,
+    double_death_fall,
+    double_death_wait,
+    double_death_wait_dialogue,
+    double_death_blink,
+    double_death_wait_explosion,
+    double_death_finish,
 };
 
-void (*D_80105350[3])() = {
-    func_8008BEC4,
+void (*double_state_funcs[3])() = {
+    double_intro,
     func_8008CD80,
-    func_8008D340,
+    double_death,
 };
 
 struct Unk_unk68 D_8010535C = { -10, -81, 103, 70 };

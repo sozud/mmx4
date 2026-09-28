@@ -938,84 +938,84 @@ u8 D_800FC33C[4] = { 25, 26, 27, 28 };
 
 u8 D_800FC340[4] = { 31, 32, 0, 0 };
 
-void (*D_800FC344[5])() = {
+void (*ice_core_state_funcs[5])() = {
     func_8005077C,
     func_80050874,
-    func_80050A9C,
-    func_80050BC4,
-    func_80050BFC,
+    ice_core_death_sink,
+    ice_core_death_release_camera,
+    ice_core_death_wait_player,
 };
 
-void (*D_800FC358[12])() = {
+void (*ice_core_step_funcs[12])() = {
     func_8009216C,
-    func_80050C64,
-    func_80050C70,
-    func_80050E08,
-    func_80050FE4,
-    func_80051338,
-    func_800523EC,
-    func_80052444,
-    func_8005172C,
-    func_80051C94,
-    func_80052008,
-    func_800521DC,
+    ice_core_resume_step,
+    ice_core_drift,
+    ice_core_bob,
+    ice_core_charge,
+    ice_core_stomp,
+    ice_core_fall,
+    ice_core_float,
+    ice_core_build,
+    ice_core_bounce,
+    ice_core_spray,
+    ice_core_intro,
 };
 
-void (*D_800FC388[2])(struct MainObj*) = {
-    func_80050CAC,
+void (*ice_core_drift_funcs[2])(struct MainObj*) = {
+    ice_core_drift_start,
     func_80050D14,
 };
 
-void (*D_800FC390[3])(struct MainObj*) = {
-    func_80050E44,
-    func_80050EB0,
-    func_80050F60,
+void (*ice_core_bob_funcs[3])(struct MainObj*) = {
+    ice_core_bob_start,
+    ice_core_bob_move,
+    ice_core_bob_recover,
 };
 
-void (*D_800FC39C[6])(struct MainObj*) = {
-    func_80051020,
-    func_80051060,
-    func_800510D4,
-    func_8005115C,
-    func_800511E8,
-    func_800512BC,
+void (*ice_core_charge_funcs[6])(struct MainObj*) = {
+    ice_core_charge_face,
+    ice_core_charge_back_off,
+    ice_core_charge_slide,
+    ice_core_charge_start,
+    ice_core_charge_run,
+    ice_core_charge_recover,
 };
 
-void (*D_800FC3B4[6])(struct MainObj*) = {
-    func_80051374,
-    func_800513DC,
-    func_800514A4,
-    func_80051564,
-    func_80051630,
-    func_80051678,
+void (*ice_core_stomp_funcs[6])(struct MainObj*) = {
+    ice_core_stomp_start,
+    ice_core_stomp_land,
+    ice_core_stomp_rise,
+    ice_core_stomp_drop,
+    ice_core_stomp_impact,
+    ice_core_stomp_recover,
 };
 
-void (*D_800FC3CC[4])(struct MainObj*) = {
-    func_80051768,
+void (*ice_core_build_funcs[4])(struct MainObj*) = {
+    ice_core_build_open,
     func_800517D0,
-    func_80051A4C,
-    func_80051B74,
+    ice_core_build_grow,
+    ice_core_build_wait,
 };
 
-void (*D_800FC3DC[4])(struct MainObj*) = {
-    func_80051CD0,
-    func_80051D60,
-    func_80051F68,
-    func_80051F94,
+void (*ice_core_bounce_funcs[4])(struct MainObj*) = {
+    ice_core_bounce_start,
+    ice_core_bounce_move,
+    ice_core_bounce_wait,
+    ice_core_bounce_reform,
 };
 
-void (*D_800FC3EC[3])() = {
-    func_80052044,
-    func_8005216C,
-    func_800521B0,
+void (*ice_core_spray_funcs[3])() = {
+    ice_core_spray_fire,
+    ice_core_spray_wait_event,
+    ice_core_spray_wait,
 };
 
-void (*D_800FC3F8[5])() = {
+void (*ice_core_intro_funcs[5])() = {
     func_80052218,
-    func_800522A8,
-    func_800522C8,
-    func_80052324,
-    func_80052374,
+    ice_core_intro_wait_player,
+    ice_core_intro_descend,
+    ice_core_intro_slow,
+    ice_core_intro_start_fight,
 };
 
 union AnimationStep D_800FC40C[] = {

@@ -308,7 +308,7 @@ union AnimationStep D_800FDEE0[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep* D_800FDEE4[23] = {
+union AnimationStep* spike_sled_animations[23] = {
     D_800FDDBC,
     D_800FDDC8,
     D_800FDDD4,

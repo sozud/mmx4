@@ -584,15 +584,15 @@ struct Main32Ext {
 struct Main33Ext {
     u8 unk80;
     u8 variant;
-    s16 unk82;
+    s16 target_x;
     u8 unk84;
-    u8 unk85;
-    u8 unk86;
+    u8 intro_active;
+    u8 intro_laps;
     u8 unk87;
     s16 unk88;
     u8 pad8A[4];
     u16 unk8E;
-    u8 unk90;
+    u8 flash_timer;
     u8 unk91;
     u8 pad92[2];
     u32 saved_unk5;
@@ -812,9 +812,9 @@ struct Main73Ext {
     } unk80;
     u8* cycle_script;
     u8 cycle_step;
-    u8 unk89;
+    u8 shot_count;
     u8 pad8A;
-    u8 unk8B;
+    u8 blink_delay;
     union Main73EffectData effect;
 };
 
@@ -844,8 +844,8 @@ union Main18StateData {
 struct Main18Ext {
     union Main18StateData state;
     u8 unk88;
-    u8 unk89;
-    u16 unk8A;
+    u8 shed_timer;
+    u16 ice_pieces;
     u32 unk8C;
     u32 unk90;
     u8 pad94[3];
@@ -1130,7 +1130,7 @@ struct Main8Ext {
     const void* unk80;
     const void* unk84;
     u8 unk88;
-    u8 unk89;
+    u8 queued_sound;
     u8 unk8A;
     u8 unk8B;
     u8 unk8C;
@@ -1252,10 +1252,10 @@ struct Main68Ext {
 union Main69State {
     u32 word;
     struct {
-        u8 unk8C;
+        u8 variant;
         u8 unk8D;
         u8 unk8E;
-        s8 unk8F;
+        s8 wave_delay;
     } bytes;
 };
 
@@ -1282,26 +1282,27 @@ struct Main67Ext {
 
 struct Main66Ext {
     struct EffectObj* effect;
-    u8 pad84;
-    u8 unk85;
-    u8 unk86;
-    u8 unk87;
-    u8 pad88;
-    u8 unk89;
-    u8 unk8A;
-    u8 pad8B;
-    u8 unk8C;
-    u8 pad8D[7];
-    struct MainObj* unk94;
+    u8 drone_count;
+    u8 hover_timer;
+    u8 crystal_released;
+    u8 release_countdown;
+    u8 flash_timer;
+    u8 trail_write;
+    u8 trail_read;
+    u8 trail_target;
+    u8 active;
+    u8 blink_timer;
+    u8 pad8E[6];
+    struct MainObj* partner;
 };
 
 struct Main70Ext {
-    s16 unk80;
-    s16 unk82;
+    s16 alarm_timer;
+    s16 flash_timer;
     u8 pad84;
     u8 unk85;
-    u8 unk86;
-    u8 unk87;
+    u8 alarm_color;
+    u8 alarm_flashing;
     u8 pad88[0xC];
     u32 saved_unk5;
 };
@@ -3804,7 +3805,7 @@ extern struct Unk_unk68 D_8010084C;
 extern struct Unk_unk68 D_80100850;
 extern struct Unk_unk68 D_80100884;
 extern struct Unk_unk68 D_801072F4[];
-extern union AnimationStep* D_800FDEE4[23];
+extern union AnimationStep* spike_sled_animations[23];
 extern struct Unk_unk68 D_800FDD88;
 extern struct Unk_unk68 D_800FDD8C;
 extern u8 D_80108BF0[4];
@@ -4011,6 +4012,7 @@ extern struct Unk_unk68 D_80105370;
 extern u8 sigma_final_laser_animations[8];
 extern u16 D_80106070[64];
 extern struct Unk_unk68 D_801060F0[32];
+extern struct Unk_unk68 D_80107DFC[];
 extern struct Unk_unk68 D_801079F8[];
 extern struct Unk_unk68 D_80107A78[];
 extern struct Unk_unk68 D_80107B78[];
@@ -4678,9 +4680,9 @@ struct MenuTextureData {
 extern u8 D_800F1FC0[32];
 extern struct MenuTextureData D_800F1FE0;
 struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
-void func_800527C0(struct AnimatedObj*);
-void func_80089798(struct MainObj*);
-void func_80089910(struct MainObj*);
+void ice_core_face_player(struct AnimatedObj*);
+void drone_pod_random_explosion(struct MainObj*);
+void drone_pod_alarm_flash(struct MainObj*);
 void func_8005D148(struct MainObj*);
 void storm_owl_spawn_storm_charge(struct AnimatedObj*);
 void magma_dragoon_spawn_flames(struct AnimatedObj*, u32);
@@ -4826,11 +4828,11 @@ void func_8006AE50(struct AnimatedObj*);
 void func_8006B2A4(struct MainObj*);
 void func_8006B398(struct MainObj*);
 void func_8006E920(struct MainObj*, s32);
-void func_800889A4(struct BaseObj*);
+void colonel_face_center(struct BaseObj*);
 void func_800889DC(struct MainObj*);
 void func_80092E2C(struct VisualObj*, struct PlayerObj*, s32);
 void func_80093524(struct WeaponObj*);
-void func_800A7A90(struct ShotObj*);
+void iris_drone_move(struct ShotObj*);
 void func_800AFB90(struct VisualObj*);
 void func_800BC3E8(struct EffectObj*);
 void func_800427C0(struct MainObj*);

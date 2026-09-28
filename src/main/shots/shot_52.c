@@ -37,5 +37,5 @@ void func_800AAC5C(struct ShotObj* arg0)
 void (*D_80109C2C[])(struct ShotObj*) = {
     func_800AAAD4,
     func_800AAB74,
-    func_800A9D98,
+    double_ball_despawn,
 };

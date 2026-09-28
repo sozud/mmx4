@@ -200,7 +200,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0320);
 void func_800B054C(struct VisualObj* arg0)
 {
     if (arg0->animation_step.fields.event == 2) {
-        MAIN_OBJECT(arg0->unk50)->ext.main_8.unk89 = 0x20;
+        MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x20;
     }
     if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && *(u16*)&arg0->unk50->state != 0x501)) {
         ZeroObjectState(OBJECT_HEADER(arg0));
@@ -271,9 +271,9 @@ void func_800B06AC(struct VisualObj* arg0)
         }
         if (arg0->animation_step.fields.event != 0) {
             if (arg0->unk54 != 0) {
-                MAIN_OBJECT(arg0->unk50)->ext.main_8.unk89 = 0x1A;
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x1A;
             } else {
-                MAIN_OBJECT(arg0->unk50)->ext.main_8.unk89 = 0x1B;
+                MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x1B;
             }
             arg0->animation_step.fields.event = 0;
             arg0->unk54 ^= 1;

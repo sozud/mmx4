@@ -2,199 +2,197 @@
 // 800A6FCC..800A7AF0
 #include "common.h"
 
-void func_800A6FCC(struct ShotObj* arg0)
+void iris_shot_update(struct ShotObj* self)
 {
-    D_801099E8[arg0->state](arg0);
+    iris_shot_state_funcs[self->state](self);
 }
 
+// iris_drone_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A7008);
 
-void func_800A7104(struct ShotObj* arg0)
+void iris_drone_run(struct ShotObj* self)
 {
     u8 saved_unk61;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109A0C[arg0->unk5](arg0);
-    if (arg0->unk7C->state >= 2) {
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->state = 2;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    iris_drone_funcs[self->unk5](self);
+    if (self->unk7C->state >= 2) {
+        func_800AF808(BASE_OBJECT(self));
+        self->state = 2;
     }
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->state = 2;
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        func_800AF808(BASE_OBJECT(self));
+        self->state = 2;
     }
     saved_unk61 = (u8)g_Player.unk61;
     g_Player.unk61 = 0;
-    if (func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&g_Player)) != 0) {
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
         g_Player.unk61 = saved_unk61;
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->state = 2;
+        func_800AF808(BASE_OBJECT(self));
+        self->state = 2;
     } else {
         g_Player.unk61 = saved_unk61;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
 }
 
-void func_800A7208(struct ShotObj* arg0)
+void iris_drone_despawn(struct ShotObj* self)
 {
-    struct WeaponObj* weapon;
-
-    weapon = arg0->unk7C;
-    weapon->unk84.byte--;
-    arg0->on_screen = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    MAIN_OBJECT(self->unk7C)->ext.main_66.drone_count--;
+    self->on_screen = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A7240(struct ShotObj* arg0)
+void iris_laser_init(struct ShotObj* self)
 {
     s16 x_pos;
 
-    arg0->on_screen = 1;
-    arg0->unk61 = 1;
-    arg0->unk58.data = NULL;
-    arg0->x_vel.val = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    arg0->unk28 = 0;
-    arg0->unk42 &= 0x7FFF;
-    if (arg0->unk15 == 0) {
-        x_pos = arg0->x_pos.i.hi - 0xA5;
+    self->on_screen = 1;
+    self->unk61 = 1;
+    self->unk58.data = NULL;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
+    self->unk28 = 0;
+    self->unk42 &= 0x7FFF;
+    if (self->unk15 == 0) {
+        x_pos = self->x_pos.i.hi - 0xA5;
     } else {
-        x_pos = arg0->x_pos.i.hi + 0xA5;
+        x_pos = self->x_pos.i.hi + 0xA5;
     }
-    arg0->x_pos.i.hi = x_pos;
-    arg0->y_pos.i.hi -= 5;
-    if (arg0->unk2 == 0) {
-        arg0->unk16 = 0;
+    self->x_pos.i.hi = x_pos;
+    self->y_pos.i.hi -= 5;
+    if (self->unk2 == 0) {
+        self->unk16 = 0;
     } else {
-        arg0->unk16 = 1;
+        self->unk16 = 1;
     }
-    arg0->timer = 0x3C;
-    arg0->unk5C = 1;
-    arg0->unk68 = NULL;
-    arg0->unk54 = NULL;
-    arg0->unk50.data = NULL;
-    arg0->unk60 = 8;
-    func_80015D60(arg0, arg0->unk2 + 0x17);
-    arg0->state = 4;
-    arg0->unk5 = 0;
+    self->timer = 0x3C;
+    self->unk5C = 1;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = NULL;
+    self->unk60 = 8;
+    func_80015D60(self, self->unk2 + 0x17);
+    self->state = 4;
+    self->unk5 = 0;
 }
 
-void func_800A7318(struct ShotObj* arg0)
+void iris_laser_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109A24[arg0->unk5](arg0);
-    if (arg0->unk7C->state >= 2) {
-        arg0->state = 5;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    iris_laser_funcs[self->unk5](self);
+    if (self->unk7C->state >= 2) {
+        self->state = 5;
     }
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x200, 0x200);
+    func_8002D9BC(self);
+    func_8002B318(BASE_OBJECT(self), 0x200, 0x200);
 }
 
-void func_800A73A4(struct ShotObj* arg0)
+void iris_laser_despawn(struct ShotObj* self)
 {
-    arg0->on_screen = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->on_screen = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// iris_pillar_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A73C4);
 
-void func_800A7458(struct ShotObj* arg0)
+void iris_pillar_run(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109A30[arg0->unk5](arg0);
-    if (arg0->unk7C->state >= 2) {
-        arg0->state = 8;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    iris_pillar_funcs[self->unk5](self);
+    if (self->unk7C->state >= 2) {
+        self->state = 8;
     }
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x100, 0x100);
+    func_8002D9BC(self);
+    func_8002B318(BASE_OBJECT(self), 0x100, 0x100);
 }
 
-void func_800A74E4(struct ShotObj* arg0)
+void iris_pillar_despawn(struct ShotObj* self)
 {
-    arg0->on_screen = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->on_screen = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A7504(struct ShotObj* arg0)
+void iris_drone_launch(struct ShotObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->timer == 0) {
-        arg0->unk5 = 1;
-        arg0->unk28 = -(arg0->x_vel.val >> 4);
-        arg0->unk2C = arg0->y_vel.val >> 4;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->timer == 0) {
+        self->unk5 = 1;
+        self->unk28 = -(self->x_vel.val >> 4);
+        self->unk2C = self->y_vel.val >> 4;
     }
 }
 
-void func_800A7570(struct ShotObj* arg0)
+void iris_drone_brake(struct ShotObj* self)
 {
-    func_800A7A90(arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    iris_drone_move(self);
+    func_80015DC8(ANIMATED_OBJECT(self));
 
-    if (abs(arg0->x_vel.val) <= 0xFFFF) {
-        if (abs(arg0->y_vel.val) <= 0xFFFF) {
-            arg0->unk5 = 2;
-            arg0->unk61 = 0;
-            arg0->x_vel.val = 0;
-            arg0->y_vel.val = 0;
-            arg0->unk28 = 0;
-            arg0->unk2C = 0;
-            arg0->timer = 0x3C;
+    if (abs(self->x_vel.val) <= 0xFFFF) {
+        if (abs(self->y_vel.val) <= 0xFFFF) {
+            self->unk5 = 2;
+            self->unk61 = 0;
+            self->x_vel.val = 0;
+            self->y_vel.val = 0;
+            self->unk28 = 0;
+            self->unk2C = 0;
+            self->timer = 0x3C;
         }
     }
 }
 
-void func_800A7600(struct ShotObj* arg0)
+void iris_drone_hover(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    temp_v0 = arg0->timer - 1;
-    arg0->timer = temp_v0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    temp_v0 = self->timer - 1;
+    self->timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->unk5 = 3;
-        if (arg0->unk2 == 0) {
-            arg0->timer = 0x78;
+        self->unk5 = 3;
+        if (self->unk2 == 0) {
+            self->timer = 0x78;
         } else {
-            arg0->timer = 0xB4;
+            self->timer = 0xB4;
         }
-        arg0->unk8A = 0x1E0;
+        self->unk8A = 0x1E0;
     }
 }
 
+// iris_drone_chase
 INCLUDE_ASM("main/nonmatchings/shots/shot_44", func_800A766C);
 
-void func_800A77D8(struct ShotObj* arg0)
+void iris_drone_burst(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        func_80015D60(arg0, 0xF);
-        arg0->unk5 = 5;
+    func_80015DC8(self);
+    if (self->animation_step.fields.event != 0) {
+        func_80015D60(self, 0xF);
+        self->unk5 = 5;
     }
 }
 
-void func_800A7820(struct ShotObj* arg0)
+void iris_drone_explode(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk50.data = D_801099DC;
+    if (self->animation_step.fields.event == 2) {
+        self->unk50.data = D_801099DC;
     }
 
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->state = 2;
+    if (self->animation_step.fields.event == 1) {
+        self->state = 2;
     }
 }
 
-void func_800A7878(struct ShotObj* arg0)
+void iris_laser_charge(struct ShotObj* self)
 {
-    struct ShotObj* self = arg0;
-
     func_80015DC8(ANIMATED_OBJECT(self));
     if (--self->timer == 0) {
         func_8001540C(2, 0xE3, self);
@@ -211,60 +209,60 @@ void func_800A7878(struct ShotObj* arg0)
     }
 }
 
-void func_800A7928(struct ShotObj* arg0)
+void iris_laser_fire(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50.data = D_801099E0;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk50.data = D_801099E0;
     }
-    temp_v0 = arg0->timer - 1;
-    arg0->timer = temp_v0;
+    temp_v0 = self->timer - 1;
+    self->timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->unk50.data = NULL;
-        func_80015D60(arg0, (arg0->unk2 * 4) + 0x1A);
-        arg0->unk5 = 2;
+        self->unk50.data = NULL;
+        func_80015D60(self, (self->unk2 * 4) + 0x1A);
+        self->unk5 = 2;
     }
 }
 
-void func_800A79A4(struct ShotObj* arg0)
+void iris_laser_end(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->state = 5;
+    func_80015DC8(self);
+    if (self->animation_step.fields.event != 0) {
+        self->state = 5;
     }
 }
 
-void func_800A79E0(struct ShotObj* arg0)
+void iris_pillar_fire(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50.data = D_801099E4;
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk50.data = D_801099E4;
     }
-    if (--arg0->timer == 0) {
-        arg0->unk50.data = NULL;
-        func_80015D60(arg0, 0x1C);
-        arg0->unk5 = 1;
-    }
-}
-
-void func_800A7A54(struct ShotObj* arg0)
-{
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->state = 8;
+    if (--self->timer == 0) {
+        self->unk50.data = NULL;
+        func_80015D60(self, 0x1C);
+        self->unk5 = 1;
     }
 }
 
-void func_800A7A90(struct ShotObj* arg0)
+void iris_pillar_end(struct ShotObj* self)
 {
-    arg0->x_pos.val += arg0->x_vel.val;
-    arg0->y_pos.val -= arg0->y_vel.val;
-    arg0->x_vel.val += arg0->unk28;
-    arg0->y_vel.val -= arg0->unk2C;
-    if (arg0->y_vel.val < FIXED(-6.5)) {
-        arg0->y_vel.val = FIXED(-6.5);
+    func_80015DC8(self);
+    if (self->animation_step.fields.event != 0) {
+        self->state = 8;
+    }
+}
+
+void iris_drone_move(struct ShotObj* self)
+{
+    self->x_pos.val += self->x_vel.val;
+    self->y_pos.val -= self->y_vel.val;
+    self->x_vel.val += self->unk28;
+    self->y_vel.val -= self->unk2C;
+    if (self->y_vel.val < FIXED(-6.5)) {
+        self->y_vel.val = FIXED(-6.5);
     }
 }
 
@@ -278,34 +276,34 @@ u8 D_801099E0[4] = { 0x88, 0xEE, 0xE5, 0x22 };
 
 u8 D_801099E4[4] = { 0xEE, 0x85, 0x22, 0xF5 };
 
-void (*D_801099E8[])(struct ShotObj*) = {
+void (*iris_shot_state_funcs[])(struct ShotObj*) = {
     func_800A7008,
-    func_800A7104,
-    func_800A7208,
-    func_800A7240,
-    func_800A7318,
-    func_800A73A4,
+    iris_drone_run,
+    iris_drone_despawn,
+    iris_laser_init,
+    iris_laser_run,
+    iris_laser_despawn,
     func_800A73C4,
-    func_800A7458,
-    func_800A74E4,
+    iris_pillar_run,
+    iris_pillar_despawn,
 };
 
-void (*D_80109A0C[])(struct ShotObj*) = {
-    func_800A7504,
-    func_800A7570,
-    func_800A7600,
+void (*iris_drone_funcs[])(struct ShotObj*) = {
+    iris_drone_launch,
+    iris_drone_brake,
+    iris_drone_hover,
     func_800A766C,
-    func_800A77D8,
-    func_800A7820,
+    iris_drone_burst,
+    iris_drone_explode,
 };
 
-void (*D_80109A24[])(struct ShotObj*) = {
-    func_800A7878,
-    func_800A7928,
-    func_800A79A4,
+void (*iris_laser_funcs[])(struct ShotObj*) = {
+    iris_laser_charge,
+    iris_laser_fire,
+    iris_laser_end,
 };
 
-void (*D_80109A30[])(struct ShotObj*) = {
-    func_800A79E0,
-    func_800A7A54,
+void (*iris_pillar_funcs[])(struct ShotObj*) = {
+    iris_pillar_fire,
+    iris_pillar_end,
 };

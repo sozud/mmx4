@@ -2,253 +2,256 @@
 // 8005D1F4..8005E570
 #include "common.h"
 
-void func_8005D1F4(struct MainObj* arg0)
+void spike_sled_update(struct MainObj* self)
 {
-    D_800FDF54[arg0->state](arg0);
+    spike_sled_state_funcs[self->state](self);
 }
 
-void func_8005D230(struct MainObj* arg0)
+void spike_sled_init(struct MainObj* self)
 {
     u8 bg_offset;
     u16 unk42;
     s32 x_pos;
     s32 y_pos;
 
-    arg0->unk5C = 0;
-    arg0->unk60 = 6;
-    arg0->unk61 = 0;
-    arg0->collision_data = D_801072F4;
+    self->unk5C = 0;
+    self->unk60 = 6;
+    self->unk61 = 0;
+    self->collision_data = D_801072F4;
     bg_offset = (u8)g_Player.bg_offset;
-    arg0->unk16 = 6;
-    x_pos = arg0->x_pos.val;
-    arg0->y_pos.i.hi = 0x2E8;
-    y_pos = arg0->y_pos.val;
-    arg0->animation_table = (const u8* const*)D_800FDEE4;
-    arg0->unk54 = &D_800FDD88;
-    arg0->unk50 = &D_800FDD8C;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk67 = 0;
-    arg0->unk68 = NULL;
-    arg0->unk15 = 0x40;
-    arg0->bg_offset = bg_offset;
-    arg0->unk18.val = x_pos;
-    arg0->unk1C.val = y_pos;
-    func_80015D60(arg0, 0);
-    arg0->ext.main_33.unk80 = 0x7F;
-    unk42 = arg0->unk42;
-    arg0->ext.main_33.unk90 = 0;
-    arg0->ext.main_33.unk85 = 1;
-    arg0->ext.main_33.unk86 = 2;
-    arg0->ext.main_33.unk8E = unk42;
+    self->unk16 = 6;
+    x_pos = self->x_pos.val;
+    self->y_pos.i.hi = 0x2E8;
+    y_pos = self->y_pos.val;
+    self->animation_table = (const u8* const*)spike_sled_animations;
+    self->unk54 = &D_800FDD88;
+    self->unk50 = &D_800FDD8C;
+    self->unk20 = 0;
+    self->unk24 = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk67 = 0;
+    self->unk68 = NULL;
+    self->unk15 = 0x40;
+    self->bg_offset = bg_offset;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
+    func_80015D60(self, 0);
+    self->ext.main_33.unk80 = 0x7F;
+    unk42 = self->unk42;
+    self->ext.main_33.flash_timer = 0;
+    self->ext.main_33.intro_active = 1;
+    self->ext.main_33.intro_laps = 2;
+    self->ext.main_33.unk8E = unk42;
     engine_obj.enable_boss = 1;
     engine_obj.unk25 = 2;
-    engine_obj.boss_ptr = arg0;
+    engine_obj.boss_ptr = self;
     func_80036AE4(0x14, 0);
-    arg0->state = 1;
-    arg0->unk5 = 2;
-    arg0->unk6 = 0;
+    self->state = 1;
+    self->unk5 = 2;
+    self->unk6 = 0;
 }
 
-void func_8005D348(struct MainObj* arg0)
+void spike_sled_run(struct MainObj* self)
 {
     s32 x;
     s32 y;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FDF64[arg0->unk5](arg0);
-    if (arg0->ext.main_33.unk85 == 0) {
-        arg0->ext.main_33.saved_unk5 = arg0->unk5;
-        if (func_8002DD04(arg0) < 0) {
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    spike_sled_step_funcs[self->unk5](self);
+    if (self->ext.main_33.intro_active == 0) {
+        self->ext.main_33.saved_unk5 = self->unk5;
+        if (func_8002DD04(self) < 0) {
             g_Player.unk7A = 1;
             g_Player.unk61 = 0x7F;
-            func_800AF808(BASE_OBJECT(arg0));
-            func_800C813C(9, D_800FDF40, arg0);
-            arg0->unk54 = NULL;
-            arg0->unk50 = NULL;
+            func_800AF808(BASE_OBJECT(self));
+            func_800C813C(9, D_800FDF40, self);
+            self->unk54 = NULL;
+            self->unk50 = NULL;
             func_800DABE4(1, 0, 0);
-            arg0->unk7C = 0x5A;
-            arg0->unk7E = 4;
-            arg0->on_screen = 0;
-            arg0->state = 2;
-            arg0->unk5 = 0;
+            self->unk7C = 0x5A;
+            self->unk7E = 4;
+            self->on_screen = 0;
+            self->state = 2;
+            self->unk5 = 0;
             return;
         }
     }
-    func_8002D9BC(arg0);
-    if (arg0->ext.main_33.unk90 != 0) {
-        arg0->ext.main_33.unk90--;
-        if (--arg0->ext.main_33.unk91 == 0) {
-            x = arg0->x_pos.val;
-            y = arg0->y_pos.val;
-            arg0->x_pos.i.hi = D_800FDDA0[arg0->ext.main_33.unk87 * 2] + 0x20;
-            arg0->y_pos.i.hi = D_800FDDA0[arg0->ext.main_33.unk87 * 2 + 1] + 0x20;
-            func_800AF878(BASE_OBJECT(arg0), 1, 0x20, 0x20);
-            arg0->x_pos.val = x;
-            arg0->y_pos.val = y;
-            arg0->ext.main_33.unk91 = 6;
+    func_8002D9BC(self);
+    if (self->ext.main_33.flash_timer != 0) {
+        self->ext.main_33.flash_timer--;
+        if (--self->ext.main_33.unk91 == 0) {
+            x = self->x_pos.val;
+            y = self->y_pos.val;
+            self->x_pos.i.hi = D_800FDDA0[self->ext.main_33.unk87 * 2] + 0x20;
+            self->y_pos.i.hi = D_800FDDA0[self->ext.main_33.unk87 * 2 + 1] + 0x20;
+            func_800AF878(BASE_OBJECT(self), 1, 0x20, 0x20);
+            self->x_pos.val = x;
+            self->y_pos.val = y;
+            self->ext.main_33.unk91 = 6;
         }
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x48, 0x48);
+    func_8002B318(BASE_OBJECT(self), 0x48, 0x48);
 }
 
+// spike_sled_death
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005D4E0);
 
-void func_8005D7E8(struct MainObj* arg0)
+void spike_sled_despawn(struct MainObj* self)
 {
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[5] = 0;
+    self->ext.raw[0] = 0;
+    self->ext.raw[1] = 0;
+    self->ext.raw[2] = 0;
+    self->ext.raw[3] = 0;
+    self->ext.raw[5] = 0;
     background_objects[0].unk26 = 0x1100;
     background_objects[0].unk2A = 0x220;
     background_objects[0].unk28 = FIXED(0.00831);
     g_Player.unk61 = 0;
-    func_8002B108(OBJECT_HEADER(arg0));
+    func_8002B108(OBJECT_HEADER(self));
 }
 
-void func_8005D844(struct MainObj* arg0)
+void spike_sled_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_33.saved_unk5;
+    self->unk5 = self->ext.main_33.saved_unk5;
 }
 
-void func_8005D850(struct MainObj* arg0)
+void spike_sled_patrol(struct MainObj* self)
 {
-    D_800FDF80[arg0->unk6](arg0);
+    spike_sled_patrol_funcs[self->unk6](self);
 }
 
-void func_8005D88C(struct MainObj* arg0)
+void spike_sled_patrol_start(struct MainObj* self)
 {
-    arg0->unk7C = 0xB4;
-    if (arg0->unk15 == 0) {
-        arg0->unk20 = FIXED(-2.5);
+    self->unk7C = 0xB4;
+    if (self->unk15 == 0) {
+        self->unk20 = FIXED(-2.5);
     } else {
-        arg0->unk20 = FIXED(2.5);
+        self->unk20 = FIXED(2.5);
     }
-    arg0->unk6 = 1;
+    self->unk6 = 1;
 }
 
-void func_8005D8B8(struct MainObj* arg0)
+void spike_sled_patrol_drive(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->unk15 == 0 ? arg0->x_pos.i.hi >= 0x1220 : arg0->x_pos.i.hi < 0x1321) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
+    if (self->unk15 == 0 ? self->x_pos.i.hi >= 0x1220 : self->x_pos.i.hi < 0x1321) {
     } else {
-        func_80015D60(arg0, 1);
-        arg0->unk28 = FIXED(-0.125);
-        arg0->unk6 = 2;
+        func_80015D60(self, 1);
+        self->unk28 = FIXED(-0.125);
+        self->unk6 = 2;
         return;
     }
-    if (arg0->ext.main_33.unk85 == 0 && --arg0->unk7C == 0) {
-        arg0->unk7C = 1;
-        if (arg0->unk15 == 0 ? arg0->x_pos.i.hi < 0x1231 : arg0->x_pos.i.hi >= 0x1310) {
+    if (self->ext.main_33.intro_active == 0 && --self->unk7C == 0) {
+        self->unk7C = 1;
+        if (self->unk15 == 0 ? self->x_pos.i.hi < 0x1231 : self->x_pos.i.hi >= 0x1310) {
         } else {
-            func_80015D60(arg0, 2);
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
+            func_80015D60(self, 2);
+            self->unk5 = 4;
+            self->unk6 = 0;
         }
     }
 }
 
-void func_8005D9C4(struct MainObj* arg0)
+void spike_sled_patrol_turn(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 1;
+    if (--self->unk7C == 0) {
+        self->unk7C = 1;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk20 != 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B694(ANIMATED_OBJECT(self));
+    if (self->unk20 != 0) {
         return;
     }
-    if (arg0->unk15 == 0) {
-        arg0->unk15 = 0x40;
-        arg0->unk20 = FIXED(2.5);
+    if (self->unk15 == 0) {
+        self->unk15 = 0x40;
+        self->unk20 = FIXED(2.5);
     } else {
-        arg0->unk15 = 0;
-        arg0->unk20 = -FIXED(2.5);
+        self->unk15 = 0;
+        self->unk20 = -FIXED(2.5);
     }
-    func_80015D60(arg0, 0);
-    arg0->unk28 = 0;
-    if (--arg0->ext.main_33.unk86 == 0 && arg0->ext.main_33.unk85 != 0) {
-        arg0->unk7C = 0x40;
-        arg0->unk20 = FIXED(1);
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
+    func_80015D60(self, 0);
+    self->unk28 = 0;
+    if (--self->ext.main_33.intro_laps == 0 && self->ext.main_33.intro_active != 0) {
+        self->unk7C = 0x40;
+        self->unk20 = FIXED(1);
+        self->unk5 = 6;
+        self->unk6 = 0;
         return;
     }
-    arg0->unk6 = 1;
+    self->unk6 = 1;
 }
 
-void func_8005DAB8(struct MainObj* arg0)
+void spike_sled_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
 
-    if (arg0->unk6 == 0) {
-        func_8002B694(ANIMATED_OBJECT(arg0));
+    if (self->unk6 == 0) {
+        func_8002B694(ANIMATED_OBJECT(self));
 
-        if (arg0->unk1C.i.hi == arg0->y_pos.i.hi) {
-            if (arg0->ext.main_33.unk84 == 0) {
-                arg0->unk7C = 0x1E;
-                arg0->unk6 = 1;
+        if (self->unk1C.i.hi == self->y_pos.i.hi) {
+            if (self->ext.main_33.unk84 == 0) {
+                self->unk7C = 0x1E;
+                self->unk6 = 1;
             }
         }
 
-        if (arg0->y_pos.i.hi >= 0x2E9) {
-            arg0->y_pos.i.hi = 0x2E8;
-            arg0->unk24 = 0;
-            arg0->unk2C = 0;
-            func_80015D60(arg0, 2);
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
+        if (self->y_pos.i.hi >= 0x2E9) {
+            self->y_pos.i.hi = 0x2E8;
+            self->unk24 = 0;
+            self->unk2C = 0;
+            func_80015D60(self, 2);
+            self->unk5 = 4;
+            self->unk6 = 0;
         }
     } else {
-        if (--arg0->unk7C == 0) {
-            arg0->ext.main_33.unk84 = 1;
-            arg0->unk6 = 0;
+        if (--self->unk7C == 0) {
+            self->ext.main_33.unk84 = 1;
+            self->unk6 = 0;
         }
     }
 }
 
-void func_8005DB84(struct MainObj* arg0)
+void spike_sled_charge(struct MainObj* self)
 {
-    D_800FDF8C[arg0->unk6](arg0);
+    spike_sled_charge_funcs[self->unk6](self);
 }
 
-void func_8005DBC0(struct MainObj* arg0)
+void spike_sled_charge_start(struct MainObj* self)
 {
-    arg0->ext.main_33.unk82 = 0;
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        func_8001540C(2, 0x52, arg0);
+    self->ext.main_33.target_x = 0;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        func_8001540C(2, 0x52, self);
     }
-    if (arg0->animation_step.fields.event == 1) {
-        if (arg0->unk15 != 0) {
-            arg0->unk20 = FIXED(4);
+    if (self->animation_step.fields.event == 1) {
+        if (self->unk15 != 0) {
+            self->unk20 = FIXED(4);
         } else {
-            arg0->unk20 = FIXED(-4);
+            self->unk20 = FIXED(-4);
         }
-        func_80015D60(arg0, 3);
-        arg0->unk7C = 0xB4;
-        arg0->unk6 = 1;
+        func_80015D60(self, 3);
+        self->unk7C = 0xB4;
+        self->unk6 = 1;
     }
 }
 
+// spike_sled_charge_dash
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005DC58);
 
+// spike_sled_charge_target
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005DED4);
 
-void func_8005DF84(struct MainObj* self)
+void spike_sled_charge_approach(struct MainObj* self)
 {
     s16 target;
     s16 position;
     s16 distance;
 
-    target = self->ext.main_33.unk82;
+    target = self->ext.main_33.target_x;
     position = self->x_pos.i.hi;
     if ((target - position) >= 0) {
         distance = target - position;
@@ -277,39 +280,40 @@ void func_8005DF84(struct MainObj* self)
     func_8002B718(MOVING_OBJECT(self));
 }
 
-void func_8005E044(struct MainObj* arg0)
+void spike_sled_charge_leap(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        func_8001540C(2, 0x53, arg0);
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        func_8001540C(2, 0x53, self);
     }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk24 = FIXED(4);
-        arg0->unk20 = 0;
-        func_8001540C(2, 0x54, arg0);
-        func_80015D60(arg0, 6);
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+    if (self->animation_step.fields.event == 1) {
+        self->unk24 = FIXED(4);
+        self->unk20 = 0;
+        func_8001540C(2, 0x54, self);
+        func_80015D60(self, 6);
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_8005E0CC(struct MainObj* arg0)
+void spike_sled_bomb(struct MainObj* self)
 {
-    D_800FDFA0[arg0->unk6](arg0);
+    spike_sled_bomb_funcs[self->unk6](self);
 }
 
+// spike_sled_bomb_jump
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005E108);
 
-void func_8005E1BC(struct MainObj* arg0)
+void spike_sled_bomb_rise(struct MainObj* self)
 {
     s32 variant;
     s32 should_transition;
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    func_8002B718(MOVING_OBJECT(self));
 
-    variant = arg0->ext.main_33.variant;
+    variant = self->ext.main_33.variant;
     if (variant == 5) {
         goto state_5;
     }
@@ -325,74 +329,75 @@ void func_8005E1BC(struct MainObj* arg0)
     goto timer_update;
 
 state_low:
-    should_transition = arg0->y_pos.i.hi < 0x2F0;
+    should_transition = self->y_pos.i.hi < 0x2F0;
     goto transition_check;
 
 state_5:
-    should_transition = arg0->y_pos.i.hi < 0x2A0;
+    should_transition = self->y_pos.i.hi < 0x2A0;
     goto transition_check;
 
 state_6:
-    should_transition = arg0->y_pos.i.hi < 0x280;
+    should_transition = self->y_pos.i.hi < 0x280;
 
 transition_check:
     if (should_transition != 0) {
-        arg0->unk7E = 4;
-        arg0->unk6 = 2;
+        self->unk7E = 4;
+        self->unk6 = 2;
         return;
     }
 
 timer_update:
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->ext.main_33.unk84 = 0;
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        func_80015D60(arg0, 7);
+        self->unk2C = FIXED(0.2578125);
+        self->ext.main_33.unk84 = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
+        func_80015D60(self, 7);
     }
 }
 
+// spike_sled_bomb_drop
 INCLUDE_ASM("main/nonmatchings/mains/main_33", func_8005E298);
 
-void func_8005E3E8(struct MainObj* arg0)
+void spike_sled_intro(struct MainObj* self)
 {
-    D_800FDFAC[arg0->unk6](arg0);
+    spike_sled_intro_funcs[self->unk6](self);
 }
 
-void func_8005E424(struct MainObj* arg0)
+void spike_sled_intro_drive(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk7E = 3;
-        arg0->unk6 = 1;
+    func_8002B718(MOVING_OBJECT(self));
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk7E = 3;
+        self->unk6 = 1;
     }
 }
 
-void func_8005E47C(struct MainObj* arg0)
+void spike_sled_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7E == 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7E == 0) {
         func_8001540C(0, 0xE, NULL);
-        arg0->unk7E = 3;
+        self->unk7E = 3;
     }
-    if (++arg0->unk5C == 0x30) {
-        arg0->unk6 = 2;
-        arg0->unk7C = 0x3C;
+    if (++self->unk5C == 0x30) {
+        self->unk6 = 2;
+        self->unk7C = 0x3C;
     }
 }
 
-void func_8005E500(struct MainObj* arg0)
+void spike_sled_intro_start_fight(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
+    func_80015DC8(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
         func_800DABE4(0, 0x1340, 0x2A0);
-        arg0->ext.main_33.unk85 = 0;
+        self->ext.main_33.intro_active = 0;
         func_80036B18();
-        func_80015D60(arg0, 2);
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+        func_80015D60(self, 2);
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
 }
