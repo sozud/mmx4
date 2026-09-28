@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[68]
 // 80083218..80085F08
 #include "common.h"
+#include "func_tables.h"
 
 extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 
@@ -1070,3 +1071,551 @@ void sigma_update(struct MainObj* self)
 {
     sigma_state_funcs[self->state](self);
 }
+
+struct Unk_unk68 D_80103EE4 = { -14, -21, 29, 57 };
+
+struct Unk_unk68 D_80103EE8 = { -21, -26, 41, 61 };
+
+struct Unk_unk68 D_80103EEC = { 0, 0, 13, 25 };
+
+struct Unk_unk68 D_80103EF0 = { 0, 40, 37, 6 };
+
+struct Unk_unk68 D_80103EF4 = { -9, -19, 27, 56 };
+
+struct Unk_unk68 D_80103EF8[2] = {
+    { -18, -23, 29, 56 },
+    { -36, -18, 53, 53 },
+};
+
+struct Unk_unk68 D_80103F00 = { -19, -21, 25, 66 };
+
+struct Unk_unk68 D_80103F04 = { -25, -27, 40, 72 };
+
+struct Unk_unk68 D_80103F08 = { -11, -34, 21, 67 };
+
+struct Unk_unk68 D_80103F0C = { -19, -37, 37, 78 };
+
+struct Unk_unk68 D_80103F10[4] = {
+    { 58, 0, 1, 0 },
+    { 8, 0, 1, 22 },
+    { 33, 0, 1, 22 },
+    { 8, 0, -3, 21 },
+};
+
+struct Unk_unk68 D_80103F20[3] = {
+    { 1, 0, 1, 1 },
+    { 1, 0, 1, 2 },
+    { 1, 0, -2, 3 },
+};
+
+union AnimationStep D_80103F2C[] = {
+    { 0x04010005 },
+    { 0x05010004 },
+    { 0x09010003 },
+    { 0x0D010015 },
+    { 0x09010003 },
+    { 0x05010003 },
+    { 0x04010003 },
+    { 0x11000121 },
+};
+
+u32 D_80103F4C[38] = {
+    0x21010005,
+    0x06010001,
+    0x07010001,
+    0x08010001,
+    0x06010001,
+    0x07010001,
+    0x0A010001,
+    0x0B010001,
+    0x0C010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0F010001,
+    0x10010001,
+    0x0E010001,
+    0x0A010001,
+    0x0B010001,
+    0x0C010001,
+    0x06010001,
+    0x07010001,
+    0x08010001,
+    0x21010103,
+    0x12010101,
+    0x13010101,
+    0x14FE0101,
+};
+
+struct Unk_unk68 D_80103FE4[3] = {
+    { 3, 0, 1, 27 },
+    { 3, 0, 1, 28 },
+    { 3, 0, -2, 29 },
+};
+
+struct Unk_unk68 D_80103FF0[3] = {
+    { 3, 0, 1, 30 },
+    { 3, 0, 1, 31 },
+    { 3, 0, -2, 32 },
+};
+
+union AnimationStep D_80103FFC[] = {
+    { 0x17000021 },
+};
+
+struct Unk_unk68 D_80104000[3] = {
+    { 1, 0, 1, 24 },
+    { 1, 0, 1, 25 },
+    { 1, 0, -2, 26 },
+};
+
+u8 D_8010400C[8] = { 1, 0, 1, 0, 3, 0, 255, 34 };
+
+u8 D_80104014[8] = { 1, 0, 1, 1, 3, 0, 255, 35 };
+
+struct Unk_unk68 D_8010401C[11] = {
+    { 2, 0, 1, 36 },
+    { 2, 0, 1, 37 },
+    { 2, 0, 1, 38 },
+    { 2, 0, 1, 39 },
+    { 2, 0, 1, 40 },
+    { 2, 0, 1, 41 },
+    { 2, 0, 1, 42 },
+    { 2, 0, 1, 43 },
+    { 2, 0, 1, 44 },
+    { 2, 0, 1, 45 },
+    { 5, 1, -10, 33 },
+};
+
+struct Unk_unk68 D_80104048[4] = {
+    { 2, 0, 1, 46 },
+    { 2, 0, 1, 47 },
+    { 2, 0, 1, 48 },
+    { 2, 0, -3, 49 },
+};
+
+struct Unk_unk68 D_80104058[4] = {
+    { 2, 0, 1, 50 },
+    { 2, 0, 1, 51 },
+    { 2, 0, 1, 52 },
+    { 2, 0, -3, 53 },
+};
+
+u8 D_80104068[8] = { 1, 0, 1, 54, 3, 0, 255, 55 };
+
+union AnimationStep D_80104070[] = {
+    { 0x39010003 },
+    { 0x38010003 },
+    { 0x39010003 },
+    { 0x38010003 },
+    { 0x39010003 },
+    { 0x38010003 },
+    { 0x39010003 },
+    { 0x38010003 },
+    { 0x39000021 },
+};
+
+union AnimationStep D_80104094[] = {
+    { 0x3C010005 },
+    { 0x3A010005 },
+    { 0x3B01000C },
+    { 0x3A010003 },
+    { 0x3C010003 },
+    { 0x3D010003 },
+    { 0x3C000021 },
+};
+
+struct Unk_unk68 D_801040B0[4] = {
+    { 21, 0, 1, 62 },
+    { 8, 0, 1, 64 },
+    { 21, 0, 1, 63 },
+    { 8, 0, -3, 64 },
+};
+
+union AnimationStep D_801040C0[] = {
+    { 0x41010008 },
+    { 0x42010003 },
+    { 0x41010004 },
+    { 0x41000001 },
+};
+
+u8 D_801040D0[8] = { 5, 0, 1, 67, 5, 0, 255, 68 };
+
+u8 D_801040D8[8] = { 5, 0, 1, 69, 5, 0, 255, 70 };
+
+union AnimationStep D_801040E0[] = {
+    { 0x41010003 },
+    { 0x4201000C },
+    { 0x41010005 },
+    { 0x3F010005 },
+    { 0x3E000008 },
+};
+
+struct Unk_unk68 D_801040F4[4] = {
+    { 21, 0, 1, 71 },
+    { 8, 0, 1, 73 },
+    { 21, 0, 1, 72 },
+    { 8, 0, -3, 73 },
+};
+
+union AnimationStep D_80104104[] = {
+    { 0x4A010008 },
+    { 0x4B010003 },
+    { 0x4A010004 },
+    { 0x4A000001 },
+};
+
+u8 D_80104114[8] = { 5, 0, 1, 76, 5, 0, 255, 77 };
+
+u8 D_8010411C[8] = { 5, 0, 1, 78, 5, 0, 255, 79 };
+
+union AnimationStep D_80104124[] = {
+    { 0x4A010003 },
+    { 0x4B01000C },
+    { 0x4A010005 },
+    { 0x48010005 },
+    { 0x47000008 },
+};
+
+union AnimationStep D_80104138[] = {
+    { 0x50010005 },
+    { 0x5101000C },
+    { 0x50010005 },
+    { 0x52010003 },
+    { 0x5301010C },
+    { 0x43010004 },
+    { 0x43000001 },
+};
+
+union AnimationStep D_80104154[] = {
+    { 0x3C010019 },
+    { 0x3A010005 },
+    { 0x3B01000F },
+    { 0x3A010005 },
+    { 0x90010105 },
+    { 0x91010002 },
+    { 0x90010028 },
+    { 0x90000001 },
+};
+
+union AnimationStep D_80104174[] = {
+    { 0x54010005 },
+    { 0x55010019 },
+    { 0x55010003 },
+    { 0x39010105 },
+    { 0x38000003 },
+};
+
+u8 D_80104188[8] = { 3, 0, 1, 57, 3, 0, 255, 56 };
+
+struct Unk_unk68 D_80104190[4] = {
+    { 1, 0, 1, 86 },
+    { 1, 0, 1, 87 },
+    { 1, 0, 1, 88 },
+    { 1, 0, -3, 89 },
+};
+
+struct Unk_unk68 D_801041A0[3] = {
+    { 1, 0, 1, 90 },
+    { 1, 0, 1, 91 },
+    { 1, 0, -2, 92 },
+};
+
+struct Unk_unk68 D_801041AC[3] = {
+    { 1, 0, 1, 93 },
+    { 1, 0, 1, 94 },
+    { 1, 0, -2, 95 },
+};
+
+struct Unk_unk68 D_801041B8[12] = {
+    { 1, 0, 1, 107 },
+    { 1, 0, 1, 106 },
+    { 1, 0, 1, 105 },
+    { 1, 0, 1, 104 },
+    { 1, 0, 1, 103 },
+    { 1, 0, 1, 102 },
+    { 1, 0, 1, 101 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 99 },
+    { 1, 0, 1, 98 },
+    { 1, 0, 1, 97 },
+    { 1, 0, -11, 96 },
+};
+
+union AnimationStep D_801041E8[] = {
+    { 0x6C010002 },
+    { 0x6D010002 },
+    { 0x6E010002 },
+    { 0x6F010002 },
+    { 0x70010102 },
+    { 0x71010002 },
+    { 0x72000002 },
+};
+
+struct Unk_unk68 D_80104204[4] = {
+    { 2, 0, 1, 115 },
+    { 2, 0, 1, 116 },
+    { 2, 0, 1, 117 },
+    { 2, 0, -3, 118 },
+};
+
+union AnimationStep D_80104214[] = {
+    { 0x77010002 },
+    { 0x78010002 },
+    { 0x79010002 },
+    { 0x7A010002 },
+    { 0x7B010102 },
+    { 0x7C010002 },
+    { 0x7D000002 },
+};
+
+union AnimationStep D_80104230[] = {
+    { 0x7E010002 },
+    { 0x7F010002 },
+    { 0x80010002 },
+    { 0x81FD0002 },
+};
+
+union AnimationStep D_80104240[] = {
+    { 0x82010001 },
+    { 0x83010001 },
+    { 0x84010001 },
+    { 0x85010001 },
+    { 0x86010001 },
+    { 0x87000001 },
+};
+
+union AnimationStep D_80104258[] = {
+    { 0x88000001 },
+};
+
+union AnimationStep D_8010425C[] = {
+    { 0x89000001 },
+};
+
+union AnimationStep D_80104260[] = {
+    { 0x8A000001 },
+};
+
+struct Unk_unk68 D_80104264[4] = {
+    { 1, 0, 1, -114 },
+    { 1, 0, 1, -115 },
+    { 1, 0, 1, -116 },
+    { 1, 0, -3, -117 },
+};
+
+union AnimationStep D_80104274[] = {
+    { 0x3A010005 },
+    { 0x3B01000C },
+    { 0x3A010003 },
+    { 0x3C010003 },
+    { 0x8F010003 },
+    { 0x3C010020 },
+    { 0x3C000001 },
+};
+
+void* sigma_animations[44] = {
+    D_80103F10,
+    D_80103F2C,
+    D_80103FE4,
+    D_80103FF0,
+    D_80103FFC,
+    D_80103F20,
+    D_80103F4C,
+    D_80104000,
+    D_8010400C,
+    D_80104014,
+    D_8010401C,
+    D_80104048,
+    D_80104058,
+    D_80104068,
+    D_80104070,
+    D_80104094,
+    D_801040B0,
+    D_801040C0,
+    D_801040D0,
+    D_801040D8,
+    D_801040E0,
+    D_801040F4,
+    D_80104104,
+    D_80104114,
+    D_8010411C,
+    D_80104124,
+    D_80104138,
+    D_80104154,
+    D_80104174,
+    D_80104188,
+    D_80104190,
+    D_801041A0,
+    D_801041AC,
+    D_801041B8,
+    D_801041E8,
+    D_80104204,
+    D_80104214,
+    D_80104230,
+    D_80104240,
+    D_80104258,
+    D_8010425C,
+    D_80104260,
+    D_80104264,
+    D_80104274,
+};
+
+void (*sigma_intro_funcs[5])(struct MainObj*) = {
+    sigma_intro_wait_player,
+    func_8008329C,
+    sigma_intro_fill_health,
+    sigma_intro_wait,
+    sigma_intro_finish,
+};
+
+void (*sigma_cloak_teleport_funcs[7])(struct MainObj*) = {
+    sigma_cloak_teleport_appear,
+    sigma_cloak_teleport_fade_in,
+    func_80083710,
+    func_800837FC,
+    sigma_cloak_teleport_wait_shots,
+    sigma_cloak_teleport_fade_out,
+    sigma_cloak_teleport_finish,
+};
+
+void (*sigma_cloak_dash_funcs[6])() = {
+    sigma_cloak_dash_appear,
+    sigma_cloak_dash_fade_in,
+    func_80083C2C,
+    sigma_cloak_dash_run,
+    sigma_cloak_dash_fade_out,
+    sigma_cloak_dash_finish,
+};
+
+void (*sigma_scythe_spin_funcs[6])(struct MainObj*) = {
+    sigma_scythe_spin_jump,
+    sigma_scythe_spin_rise,
+    sigma_scythe_spin_throw,
+    sigma_scythe_spin_wait,
+    sigma_scythe_spin_land,
+    sigma_scythe_spin_recover,
+};
+
+u8 sigma_scythe_plant_next[4] = { 0x07, 0x04, 0x00, 0x00 };
+
+void (*sigma_scythe_plant_funcs[5])(struct MainObj*) = {
+    sigma_scythe_plant_jump,
+    sigma_scythe_plant_apex,
+    sigma_scythe_plant_throw,
+    sigma_scythe_plant_land,
+    sigma_scythe_plant_wait,
+};
+
+u8 sigma_cloak_pattern[4] = { 0x03, 0x03, 0x04, 0x00 };
+
+void (*sigma_darts_funcs[4])() = {
+    sigma_darts_start,
+    sigma_darts_spawn,
+    sigma_darts_pose,
+    sigma_darts_wait,
+};
+
+void (*sigma_scythe_retrieve_funcs[5])(struct MainObj*) = {
+    sigma_scythe_retrieve_jump,
+    sigma_scythe_retrieve_rise,
+    sigma_scythe_retrieve_wait,
+    sigma_scythe_retrieve_land,
+    sigma_scythe_retrieve_recover,
+};
+
+void (*sigma_eye_laser_funcs[3])(struct MainObj*) = {
+    func_80084B14,
+    sigma_eye_laser_fire,
+    sigma_eye_laser_wait,
+};
+
+void (*sigma_cloak_step_funcs[5])() = {
+    func_8009216C,
+    sigma_idle,
+    sigma_cloak_pick_attack,
+    sigma_cloak_teleport,
+    sigma_cloak_dash,
+};
+
+void (*sigma_step_funcs[9])() = {
+    func_8009216C,
+    sigma_idle,
+    sigma_scythe_spin,
+    sigma_scythe_plant,
+    sigma_darts,
+    sigma_scythe_retrieve,
+    sigma_land_pause,
+    sigma_eye_laser,
+    sigma_pose,
+};
+
+void (*sigma_fight_funcs[2])() = {
+    func_80084EE4,
+    func_8008502C,
+};
+
+s16 D_8010442C[16] = {
+    (s16)0x000F,
+    (s16)0xFFF2,
+    (s16)0x0007,
+    (s16)0x000E,
+    (s16)0xFFF2,
+    (s16)0xFFFF,
+    (s16)0x0028,
+    (s16)0xFFF5,
+    (s16)0xFFC6,
+    (s16)0x0003,
+    (s16)0x0040,
+    (s16)0xFFF0,
+    (s16)0xFFEB,
+    (s16)0x000A,
+    (s16)0xFFC8,
+    (s16)0x001E,
+};
+
+void (*sigma_death_funcs[5])(struct MainObj*) = {
+    sigma_death_start,
+    sigma_death_blink,
+    sigma_death_wait_explosion,
+    func_80085460,
+    sigma_death_finish,
+};
+
+void (*sigma_cloak_stagger_funcs[4])(struct MainObj*) = {
+    sigma_cloak_stagger_start,
+    sigma_cloak_stagger_trail,
+    sigma_cloak_stagger_fade,
+    sigma_cloak_stagger_finish,
+};
+
+void (*sigma_reveal_funcs[7])(struct MainObj*) = {
+    sigma_reveal_start,
+    sigma_reveal_fall,
+    func_80085A44,
+    sigma_reveal_wait_cloak,
+    sigma_reveal_dialogue,
+    sigma_reveal_fill_health,
+    sigma_reveal_finish,
+};
+
+void (*sigma_state_funcs[5])() = {
+    sigma_intro,
+    sigma_fight,
+    sigma_death,
+    sigma_cloak_stagger,
+    sigma_reveal,
+};

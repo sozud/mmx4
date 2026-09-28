@@ -139,3 +139,23 @@ u8 D_8010DBF8[8] = { 0, 1, 2, 3, 0, 1, 2, 3 };
 u8 D_8010DC00[8] = { 4, 5, 6, 7, 4, 5, 6, 7 };
 u8 D_8010DC08[8] = { 8, 9, 8, 9, 8, 9, 8, 9 };
 u8 D_8010DC10[8] = { 10, 11, 12, 13, 10, 11, 12, 13 };
+
+void (*D_8010DC18[])(struct MiscObj*) = {
+    func_800C87B0,
+    func_800C8938,
+    func_800C899C,
+    func_800C8B74,
+    func_800C8BDC,
+    func_800C8E90,
+};
+
+struct Misc04SpawnPosition {
+    u16 x;
+    u16 y;
+};
+
+struct Misc04SpawnPosition D_8010DC30[3] = {
+    { 0x06C0, 0x018D },
+    { 0x08C0, 0x018D },
+    { 0x0AC0, 0x018D },
+};

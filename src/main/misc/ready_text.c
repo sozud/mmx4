@@ -2,13 +2,14 @@
 // 800CB00C..800CB634
 #include "common.h"
 
+extern const u32* D_8010E6A0[];
+
 // megaman never appears in stage if nopped out
 void MegamanRelatedUpdate(struct MiscObj* arg0)
 {
     g_MegamanRelatedUpdateFuncs[arg0->state](arg0);
 }
 
-extern void* D_8010E6A0;
 extern u8 D_8010E6C8[];
 extern s16 D_8010E6D0[];
 extern s16 D_8010E6DC[];
@@ -30,7 +31,7 @@ void func_800CB048(struct MiscObj* arg0)
     }
 
     arg0->unk40 = 0x1E00;
-    arg0->animation_table = &D_8010E6A0;
+    arg0->animation_table = (u32**)D_8010E6A0;
     arg0->state = 1;
     arg0->bg_offset = -1;
     temp_v1 = D_8010E6C8[arg0->unk2];
@@ -232,3 +233,79 @@ void func_800CB614(struct MiscObj* arg0)
 {
     ZeroObjectState(arg0);
 }
+
+u32 D_8010E690[] = { 0x00000001 };
+
+u32 D_8010E694[] = { 0x03000001 };
+
+u32 D_8010E698[] = { 0x01000001 };
+
+u32 D_8010E69C[] = { 0x02000001 };
+
+const u32* D_8010E6A0[] = { D_8010E690, D_8010E694, D_8010E698, D_8010E69C };
+
+u8 D_8010E6B0[] = {
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    11,
+    10,
+    9,
+    8,
+    7,
+    6,
+    5,
+    4,
+    3,
+    2,
+    1,
+};
+
+u8 D_8010E6C8[] = { 1, 1, 0x17, 0x15, 0x15, 0, 0, 0 };
+
+s16 D_8010E6D0[] = {
+    160,
+    160,
+    96,
+#ifdef VERSION_JP
+    200,
+#else
+    208,
+#endif
+    256,
+    0,
+};
+
+s16 D_8010E6DC[] = { 120, 120, 112, 192, 192, 0 };
+
+u8 D_8010E6E8[] = { 0x11, 0x12, 0x10, 0x10, 0x10, 0, 0, 0 };
+
+void (*g_MegamanRelatedUpdateFuncs[3])(struct MiscObj*) = {
+    func_800CB048,
+    func_800CB1F0,
+    func_800CB614,
+};
+
+void (*D_8010E6FC[5])(struct MiscObj*) = {
+    func_800CB22C,
+    func_800CB22C,
+    func_800CB554,
+    func_800CB590,
+    func_800CB590,
+};
+
+void (*ReadyTextUpdateFuncs[3])(struct MiscObj*) = {
+    func_800CB27C,
+    func_800CB394,
+    func_800CB4E4,
+};

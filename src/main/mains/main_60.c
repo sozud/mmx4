@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[60]
 // 8007501C..8007872C
 #include "common.h"
+#include "func_tables.h"
 
 extern void* storm_owl_patterns[];
 extern u8 storm_owl_pattern_weights[];
@@ -1247,3 +1248,529 @@ void storm_owl_clear_shots(void)
         }
     }
 }
+
+struct Unk_unk68 D_801016B4 = { -14, -21, 30, 40 };
+
+struct Unk_unk68 D_801016B8 = { -14, -21, 30, 40 };
+
+struct Unk_unk68 D_801016BC = { -16, 15, 12, 9 };
+
+struct Unk_unk68 D_801016C0 = { 5, 19, 11, 5 };
+
+struct Unk_unk68 D_801016C4 = { 0, 27, 14, 25 };
+
+struct Unk_unk68 D_801016C8[6] = {
+    { 6, 0, 1, 6 },
+    { 4, 0, 1, 7 },
+    { 4, 0, 1, 8 },
+    { 6, 0, 1, 9 },
+    { 4, 0, 1, 10 },
+    { 4, 0, -5, 11 },
+};
+
+struct Unk_unk68 D_801016E0[6] = {
+    { 4, 0, 1, 0 },
+    { 2, 0, 1, 1 },
+    { 2, 0, 1, 2 },
+    { 4, 0, 1, 3 },
+    { 2, 0, 1, 4 },
+    { 2, 0, -5, 5 },
+};
+
+struct Unk_unk68 D_801016F8[3] = {
+    { 1, 0, 1, 16 },
+    { 2, 0, 1, 17 },
+    { 6, 0, -2, 18 },
+};
+
+struct Unk_unk68 D_80101704[6] = {
+    { 4, 0, 1, 19 },
+    { 6, 0, 1, 20 },
+    { 14, 0, 1, 21 },
+    { 2, 0, 1, 22 },
+    { 2, 0, 1, 23 },
+    { 33, 0, -5, 24 },
+};
+
+union AnimationStep D_8010171C[] = {
+    { 0x19010006 },
+    { 0x1A010003 },
+    { 0x1B01000A },
+    { 0x1C010003 },
+    { 0x16010002 },
+    { 0x17010002 },
+    { 0x1D000021 },
+};
+
+union AnimationStep D_80101738[] = {
+    { 0x1E010006 },
+    { 0x1F010003 },
+    { 0x2001000A },
+    { 0x21010003 },
+    { 0x22010002 },
+    { 0x23010002 },
+    { 0x24000021 },
+};
+
+union AnimationStep D_80101754[] = {
+    { 0x26010006 },
+    { 0x25010008 },
+    { 0x27010002 },
+    { 0x29010002 },
+    { 0x28000021 },
+};
+
+u8 D_80101768[8] = { 2, 0, 1, 12, 2, 0, 255, 13 };
+
+u8 D_80101770[8] = { 2, 0, 1, 14, 2, 0, 255, 15 };
+
+union AnimationStep D_80101778[] = {
+    { 0x06010006 },
+    { 0x5A010002 },
+    { 0x5B010002 },
+    { 0x5A010018 },
+    { 0x5C010008 },
+    { 0x5D010008 },
+    { 0x5E010008 },
+    { 0x5F01000B },
+    { 0x60010002 },
+    { 0x61010002 },
+    { 0x60010002 },
+    { 0x6100002F },
+};
+
+union AnimationStep D_801017A8[] = {
+    { 0x62010002 },
+    { 0x63010002 },
+    { 0x64010002 },
+    { 0x65010001 },
+    { 0x66010001 },
+    { 0x67000001 },
+};
+
+u8 D_801017C0[8] = { 2, 0, 1, 104, 2, 0, 255, 105 };
+
+struct Unk_unk68 D_801017C8[5] = {
+    { 3, 0, 1, 104 },
+    { 3, 0, 1, 106 },
+    { 3, 0, 1, 107 },
+    { 3, 0, 1, 108 },
+    { 3, 0, -4, 109 },
+};
+
+struct Unk_unk68 D_801017DC[16] = {
+    { 1, 0, 1, 62 },
+    { 1, 0, 1, 51 },
+    { 1, 0, 1, 52 },
+    { 1, 0, 1, 53 },
+    { 1, 0, 1, 54 },
+    { 1, 0, 1, 48 },
+    { 1, 0, 1, 47 },
+    { 1, 0, 1, 49 },
+    { 1, 0, 1, 50 },
+    { 1, 0, 1, 55 },
+    { 1, 0, 1, 56 },
+    { 1, 0, 1, 57 },
+    { 1, 0, 1, 58 },
+    { 1, 0, 1, 59 },
+    { 1, 0, 1, 60 },
+    { 1, 0, -15, 61 },
+};
+
+struct Unk_unk68 D_8010181C[19] = {
+    { 1, 0, 1, 63 },
+    { 1, 0, 1, 64 },
+    { 1, 0, 1, 69 },
+    { 1, 0, 1, 63 },
+    { 1, 0, 1, 68 },
+    { 1, 0, 1, 64 },
+    { 1, 0, 1, 67 },
+    { 1, 0, 1, 63 },
+    { 1, 0, 1, 66 },
+    { 1, 0, 1, 64 },
+    { 1, 0, 1, 65 },
+    { 1, 0, 1, 63 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 64 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 63 },
+    { 1, 0, 1, 72 },
+    { 1, 0, 1, 64 },
+    { 1, 0, -18, 73 },
+};
+
+union AnimationStep D_80101868[] = {
+    { 0x2E000001 },
+};
+
+union AnimationStep D_8010186C[] = {
+    { 0x2D000001 },
+};
+
+union AnimationStep D_80101870[] = {
+    { 0x2A000001 },
+};
+
+union AnimationStep D_80101874[] = {
+    { 0x2C000001 },
+};
+
+union AnimationStep D_80101878[] = {
+    { 0x2B000001 },
+};
+
+union AnimationStep D_8010187C[] = {
+    { 0x6E010008 },
+    { 0x6F010008 },
+    { 0x70010008 },
+    { 0x71000008 },
+};
+
+union AnimationStep D_8010188C[] = {
+    { 0x56010008 },
+    { 0x57010008 },
+    { 0x58010008 },
+    { 0x59000008 },
+};
+
+union AnimationStep D_8010189C[] = {
+    { 0x4A010008 },
+    { 0x4B010008 },
+    { 0x4C010008 },
+    { 0x4D000008 },
+};
+
+union AnimationStep D_801018AC[] = {
+    { 0x4E010008 },
+    { 0x4F010008 },
+    { 0x50010008 },
+    { 0x51000008 },
+};
+
+union AnimationStep D_801018BC[] = {
+    { 0x52010008 },
+    { 0x53010008 },
+    { 0x54010008 },
+    { 0x55000008 },
+};
+
+struct Unk_unk68 D_801018CC[9] = {
+    { 1, 0, 1, 69 },
+    { 1, 0, 1, 68 },
+    { 1, 0, 1, 67 },
+    { 1, 0, 1, 66 },
+    { 1, 0, 1, 65 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 72 },
+    { 1, 0, -8, 73 },
+};
+
+struct Unk_unk68 D_801018F0[8] = {
+    { 2, 0, 1, -88 },
+    { 2, 0, 1, -87 },
+    { 2, 0, 1, -86 },
+    { 2, 0, 1, -85 },
+    { 2, 0, 1, -88 },
+    { 2, 0, 1, -87 },
+    { 2, 0, 1, -86 },
+    { 2, 0, -7, -85 },
+};
+
+union AnimationStep D_80101910[] = {
+    { 0x90010002 },
+    { 0x91010002 },
+    { 0x92010002 },
+    { 0x93010002 },
+    { 0x94010002 },
+    { 0x95010002 },
+    { 0x96010002 },
+    { 0x97010002 },
+    { 0x98010002 },
+    { 0x99010002 },
+    { 0x9A010002 },
+    { 0x9B000002 },
+};
+
+union AnimationStep D_80101940[] = {
+    { 0xA7010001 },
+    { 0xA6010001 },
+    { 0xA5010001 },
+    { 0xA4010001 },
+    { 0xA3010001 },
+    { 0xA2010001 },
+    { 0xA1010001 },
+    { 0xA0010001 },
+    { 0x9F010001 },
+    { 0x9E010001 },
+    { 0x9D010001 },
+    { 0x9C000001 },
+};
+
+union AnimationStep D_80101970[] = {
+    { 0x78010001 },
+    { 0x79010001 },
+    { 0x7A010001 },
+    { 0x7B010001 },
+    { 0x7C010001 },
+    { 0x78010001 },
+    { 0x7D010001 },
+    { 0x72010001 },
+    { 0x73010001 },
+    { 0x74010001 },
+    { 0x75010001 },
+    { 0x76010001 },
+    { 0x72010001 },
+    { 0x77010001 },
+    { 0x7E010001 },
+    { 0x7F010001 },
+    { 0x80010001 },
+    { 0x81010001 },
+    { 0x82010001 },
+    { 0x7E010001 },
+    { 0x83010001 },
+    { 0x7E010001 },
+    { 0x7F010001 },
+    { 0x80010001 },
+    { 0x81010001 },
+    { 0x82010001 },
+    { 0x7E010001 },
+    { 0x83010001 },
+    { 0x84010001 },
+    { 0x85010001 },
+    { 0x86010001 },
+    { 0x87010001 },
+    { 0x88010001 },
+    { 0x84010001 },
+    { 0x89010001 },
+    { 0x84010001 },
+    { 0x85010001 },
+    { 0x86010001 },
+    { 0x87010001 },
+    { 0x88010001 },
+    { 0x84010001 },
+    { 0x89010001 },
+    { 0x84010001 },
+    { 0x85010001 },
+    { 0x86010001 },
+    { 0x87010001 },
+    { 0x88010001 },
+    { 0x84010001 },
+    { 0x89010001 },
+    { 0x8A010001 },
+    { 0x8B010001 },
+    { 0x8C010001 },
+    { 0x8D010001 },
+    { 0x8E010001 },
+    { 0x8A010001 },
+    { 0x8F010001 },
+    { 0x8A010001 },
+    { 0x8B010001 },
+    { 0x8C010001 },
+    { 0x8D010001 },
+    { 0x8E010001 },
+    { 0x8A010001 },
+    { 0x8F000001 },
+};
+
+void* storm_owl_animations[30] = {
+    D_801016C8,
+    D_801016E0,
+    D_801016F8,
+    D_80101704,
+    D_8010171C,
+    D_80101738,
+    D_80101754,
+    D_80101768,
+    D_80101770,
+    D_80101778,
+    D_801017A8,
+    D_801017C0,
+    D_801017C8,
+    D_801017DC,
+    D_8010181C,
+    D_80101868,
+    D_8010186C,
+    D_80101870,
+    D_80101874,
+    D_80101878,
+    D_8010187C,
+    D_8010188C,
+    D_8010189C,
+    D_801018AC,
+    D_801018BC,
+    D_801018CC,
+    D_801018F0,
+    D_80101910,
+    D_80101940,
+    D_80101970,
+};
+
+Main60Waypoint storm_owl_waypoints[4] = {
+    { 0x0018, 0x0028, 0x00020000, 0xFFFF0000 },
+    { 0x0018, 0x00B0, 0x00028000, 0x00000800 },
+    { 0x0128, 0x0028, 0xFFFE0000, 0xFFFF0000 },
+    { 0x0128, 0x00B0, 0xFFFD8000, 0x00000800 },
+};
+
+u8 storm_owl_pattern_0[4] = { 3, 3, 8, 255 };
+
+u8 storm_owl_pattern_1[4] = { 3, 3, 255, 0 };
+
+u8 storm_owl_pattern_2[4] = { 3, 3, 8, 255 };
+
+u8 storm_owl_pattern_3[4] = { 3, 7, 255, 0 };
+
+u8 storm_owl_pattern_4[4] = { 12, 7, 3, 255 };
+
+u8 storm_owl_pattern_5[4] = { 12, 12, 3, 255 };
+
+u8 storm_owl_pattern_6[4] = { 12, 9, 3, 255 };
+
+u8* storm_owl_patterns_high_health[2] = {
+    storm_owl_pattern_0,
+    storm_owl_pattern_1,
+};
+
+u8* storm_owl_patterns_mid_health[2] = {
+    storm_owl_pattern_2,
+    storm_owl_pattern_3,
+};
+
+u8* storm_owl_patterns_low_health[3] = {
+    storm_owl_pattern_4,
+    storm_owl_pattern_5,
+    storm_owl_pattern_6,
+};
+
+void* storm_owl_patterns[3] = {
+    storm_owl_patterns_low_health,
+    storm_owl_patterns_mid_health,
+    storm_owl_patterns_high_health,
+};
+
+u8 storm_owl_pattern_weights[12] = { 0x04, 0x0A, 0x10, 0x08, 0x10, 0x10, 0x0A, 0x10, 0x10, 0x00, 0x00, 0x00 };
+
+void (*storm_owl_state_funcs[3])() = {
+    storm_owl_start,
+    func_80075320,
+    storm_owl_death,
+};
+
+void (*storm_owl_start_funcs[4])() = {
+    storm_owl_start_wait_player,
+    storm_owl_start_warning,
+    storm_owl_start_wait_warning,
+    func_800751AC,
+};
+
+void (*storm_owl_step_funcs[13])() = {
+    func_8009216C,
+    storm_owl_resume_step,
+    storm_owl_intro,
+    storm_owl_patrol,
+    storm_owl_grab,
+    storm_owl_reenter,
+    storm_owl_feather,
+    storm_owl_feather_volley,
+    storm_owl_cyclone,
+    storm_owl_storm,
+    storm_owl_hover,
+    storm_owl_stagger,
+    storm_owl_ground_cyclone,
+};
+
+void (*storm_owl_death_funcs[3])() = {
+    storm_owl_death_start,
+    storm_owl_death_explode,
+    func_800757F4,
+};
+
+void (*storm_owl_intro_funcs[8])() = {
+    func_80075944,
+    storm_owl_intro_land,
+    storm_owl_intro_roar,
+    storm_owl_intro_pose,
+    storm_owl_intro_start_health_bar,
+    storm_owl_intro_fill_health,
+    func_80075C6C,
+    storm_owl_intro_rise,
+};
+
+void (*storm_owl_patrol_funcs[5])() = {
+    storm_owl_patrol_start,
+    func_80075E78,
+    storm_owl_patrol_wait,
+    func_800760C4,
+    storm_owl_patrol_return,
+};
+
+void (*storm_owl_grab_funcs[6])() = {
+    storm_owl_grab_dive,
+    func_80076364,
+    func_8007651C,
+    storm_owl_grab_carry,
+    func_800766FC,
+    storm_owl_grab_leave,
+};
+
+void (*storm_owl_reenter_funcs[2])() = {
+    storm_owl_reenter_warp,
+    storm_owl_reenter_wait,
+};
+
+void (*storm_owl_feather_funcs[4])() = {
+    storm_owl_feather_start,
+    storm_owl_feather_fire,
+    storm_owl_feather_takeoff,
+    storm_owl_feather_leave,
+};
+
+void (*storm_owl_feather_volley_funcs[6])() = {
+    storm_owl_feather_volley_start,
+    func_80076D14,
+    storm_owl_feather_volley_aim,
+    storm_owl_feather_volley_release,
+    storm_owl_feather_volley_wait,
+    storm_owl_feather_volley_leave,
+};
+
+void (*storm_owl_cyclone_funcs[4])() = {
+    storm_owl_cyclone_start,
+    storm_owl_cyclone_fire,
+    storm_owl_cyclone_finish,
+    storm_owl_cyclone_leave,
+};
+
+void (*storm_owl_storm_funcs[9])() = {
+    storm_owl_storm_start,
+    func_80077318,
+    storm_owl_storm_charge,
+    storm_owl_storm_begin,
+    storm_owl_storm_rain,
+    func_80077580,
+    storm_owl_storm_rain_again,
+    storm_owl_storm_end,
+    storm_owl_storm_leave,
+};
+
+void (*storm_owl_hover_funcs[2])() = {
+    storm_owl_hover_start,
+    storm_owl_hover_wait,
+};
+
+void (*storm_owl_stagger_funcs[3])() = {
+    storm_owl_stagger_start,
+    storm_owl_stagger_recover,
+    storm_owl_stagger_leave,
+};
+
+void (*storm_owl_ground_cyclone_funcs[7])() = {
+    storm_owl_ground_cyclone_start,
+    storm_owl_ground_cyclone_drop,
+    storm_owl_ground_cyclone_land,
+    storm_owl_ground_cyclone_fire,
+    storm_owl_ground_cyclone_wait,
+    storm_owl_ground_cyclone_takeoff,
+    storm_owl_ground_cyclone_leave,
+};

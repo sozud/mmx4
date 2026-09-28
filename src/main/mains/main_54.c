@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[54]
 // 8006BB00..8006EB40
 #include "common.h"
+#include "func_tables.h"
 
 void slash_beast_update(struct MainObj* self)
 {
@@ -663,8 +664,522 @@ void slash_beast_pick_pattern(struct MainObj* self)
     self->ext.main_54.pattern = base + i * 4;
 }
 
+union AnimationStep D_801001F8[] = {
+    { 0x2225F1EF },
+};
+
+union AnimationStep D_801001FC[] = {
+    { 0x313AEBE5 },
+};
+
+struct Unk_unk68 D_80100200 = { -28, -16, 34, 38 };
+
+struct Unk_unk68 D_80100204 = { -37, -24, 64, 48 };
+
+struct Unk_unk68 D_80100208 = { -11, -30, 29, 57 };
+
+struct Unk_unk68 D_8010020C = { -17, -32, 43, 66 };
+
+struct Unk_unk68 D_80100210 = { -16, -38, 31, 81 };
+
+struct Unk_unk68 D_80100214 = { -22, -43, 43, 93 };
+
+struct Unk_unk68 D_80100218 = { -42, -19, 33, 27 };
+
+struct Unk_unk68 D_8010021C = { -66, -10, 26, 6 };
+
+struct Unk_unk68 D_80100220 = { -15, -29, 26, 50 };
+
+struct Unk_unk68 D_80100224 = { -22, -36, 40, 64 };
+
+struct Unk_unk68 D_80100228 = { -11, -13, 39, 27 };
+
+struct Unk_unk68 D_8010022C = { -20, -22, 57, 46 };
+
+union AnimationStep D_80100230[] = {
+    { 0x2244F5C4 },
+};
+
+union AnimationStep D_80100234[] = {
+    { 0x3959E8C2 },
+};
+
+union AnimationStep D_80100238[] = {
+    { 0x1F47D0B1 },
+};
+
+struct Unk_unk68 D_8010023C = { -48, -73, 49, 48 };
+
+struct Unk_unk68 D_80100240 = { -74, -69, 105, 90 };
+
+struct Unk_unk68 D_80100244 = { -6, -68, 32, 80 };
+
+struct Unk_unk68 D_80100248 = { -15, -71, 48, 96 };
+
+struct Unk_unk68 D_8010024C = { 0, 0, 28, 26 };
+
+u8 slash_beast_pattern_steps[9][4] = {
+    { 0, 1, 1, 255 },
+    { 0, 7, 2, 255 },
+    { 0, 3, 4, 255 },
+    { 0, 7, 2, 255 },
+    { 5, 3, 4, 6 },
+    { 255, 0, 0, 0 },
+    { 0, 7, 2, 2 },
+    { 255, 0, 0, 0 },
+    { 5, 6, 6, 255 },
+};
+
+u8* D_80100274[4] = {
+    slash_beast_pattern_steps[0],
+    slash_beast_pattern_steps[1],
+    0x00000000,
+    0x00000000,
+};
+
+u8* D_80100284[4] = {
+    slash_beast_pattern_steps[2],
+    slash_beast_pattern_steps[3],
+    0x00000000,
+    0x00000000,
+};
+
+u8* D_80100294[4] = {
+    slash_beast_pattern_steps[4],
+    slash_beast_pattern_steps[6],
+    slash_beast_pattern_steps[8],
+    0x00000000,
+};
+
+u8** slash_beast_patterns[3] = {
+    D_80100274,
+    D_80100284,
+    D_80100294,
+};
+
+u8 slash_beast_pattern_weights[12] = { 0x07, 0x10, 0x00, 0x09, 0x10, 0x00, 0x07, 0x0A, 0x10, 0x00, 0x00, 0x00 };
+
+union AnimationStep D_801002BC[] = {
+    { 0x00000101 },
+};
+
+union AnimationStep D_801002C0[] = {
+    { 0x00010002 },
+    { 0x01010002 },
+    { 0x02010004 },
+    { 0x01010002 },
+    { 0x00010001 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_801002D8[] = {
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x05010202 },
+    { 0x06FF0102 },
+};
+
+union AnimationStep D_80100308[] = {
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x0201000C },
+    { 0x01010002 },
+    { 0x00010001 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_80100320[] = {
+    { 0x07010002 },
+    { 0x08FF0102 },
+};
+
+union AnimationStep D_80100328[] = {
+    { 0x09010013 },
+    { 0x09000101 },
+};
+
+union AnimationStep D_80100330[] = {
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x0201001C },
+    { 0x01010002 },
+    { 0x00010001 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_80100348[] = {
+    { 0x0A000101 },
+};
+
+union AnimationStep D_8010034C[] = {
+    { 0x01010002 },
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x1F010202 },
+    { 0x20010010 },
+    { 0x20000101 },
+};
+
+union AnimationStep D_80100364[] = {
+    { 0x1F010002 },
+    { 0x21010002 },
+    { 0x22010402 },
+    { 0x23010002 },
+    { 0x24010201 },
+    { 0x25010301 },
+    { 0x26010501 },
+    { 0x27010001 },
+    { 0x28010002 },
+    { 0x2701000A },
+    { 0x28010002 },
+    { 0x29010002 },
+    { 0x2A010602 },
+    { 0x2C010702 },
+    { 0x2B010001 },
+    { 0x2B000101 },
+};
+
+union AnimationStep D_801003A4[] = {
+    { 0x01010002 },
+    { 0x0201001E },
+    { 0x01010002 },
+    { 0x00010001 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_801003B8[] = {
+    { 0x00010002 },
+    { 0x1A010002 },
+    { 0x1B010201 },
+    { 0x1B010007 },
+    { 0x1A010002 },
+    { 0x00010002 },
+    { 0x17010001 },
+    { 0x18FF0101 },
+};
+
+union AnimationStep D_801003D8[] = {
+    { 0x00010002 },
+    { 0x01010002 },
+    { 0x0B010001 },
+    { 0x0D010001 },
+    { 0x0CFE0101 },
+};
+
+union AnimationStep D_801003EC[] = {
+    { 0x02010001 },
+    { 0x0E010001 },
+    { 0x09000101 },
+};
+
+union AnimationStep D_801003F8[] = {
+    { 0x0F010001 },
+    { 0x10010001 },
+    { 0x11FE0101 },
+};
+
+union AnimationStep D_80100404[] = {
+    { 0x12010002 },
+    { 0x13010202 },
+    { 0x14010002 },
+    { 0x15010014 },
+    { 0x14010002 },
+    { 0x13010001 },
+    { 0x13000101 },
+};
+
+union AnimationStep D_80100420[] = {
+    { 0x16010001 },
+    { 0x0A000101 },
+};
+
+union AnimationStep D_80100428[] = {
+    { 0x33010002 },
+    { 0x34FF0102 },
+};
+
+union AnimationStep D_80100430[] = {
+    { 0x35010002 },
+    { 0x36010002 },
+    { 0x35010002 },
+    { 0x36010002 },
+    { 0x35010002 },
+    { 0x36010018 },
+    { 0x35010002 },
+    { 0x36010002 },
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x00010001 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_80100460[] = {
+    { 0x37000101 },
+};
+
+union AnimationStep D_80100464[] = {
+    { 0x30010001 },
+    { 0x31010001 },
+    { 0x32010001 },
+    { 0x1BFD0101 },
+};
+
+union AnimationStep D_80100474[] = {
+    { 0x2D010001 },
+    { 0x2E010001 },
+    { 0x2FFE0101 },
+};
+
+union AnimationStep D_80100480[] = {
+    { 0x03010002 },
+    { 0x04FF0102 },
+};
+
+union AnimationStep D_80100488[] = {
+    { 0x05010002 },
+    { 0x06010002 },
+    { 0x05010002 },
+    { 0x06010002 },
+    { 0x1C010002 },
+    { 0x1DFF0102 },
+};
+
+union AnimationStep D_801004A0[] = {
+    { 0x19000101 },
+};
+
+union AnimationStep D_801004A4[] = {
+    { 0x00010002 },
+    { 0x1A010002 },
+    { 0x1B010014 },
+    { 0x1A010002 },
+    { 0x00010002 },
+    { 0x17010001 },
+    { 0x18FF0101 },
+};
+
+union AnimationStep D_801004C0[] = {
+    { 0x38010001 },
+    { 0x39FF0101 },
+};
+
+union AnimationStep D_801004C8[] = {
+    { 0x3A010001 },
+    { 0x3BFF0101 },
+};
+
+union AnimationStep D_801004D0[] = {
+    { 0x74000101 },
+};
+
+union AnimationStep D_801004D4[] = {
+    { 0x75000101 },
+};
+
+union AnimationStep D_801004D8[] = {
+    { 0x76000101 },
+};
+
+union AnimationStep D_801004DC[] = {
+    { 0x77000101 },
+};
+
+union AnimationStep D_801004E0[] = {
+    { 0x78000101 },
+};
+
+union AnimationStep D_801004E4[] = {
+    { 0x79000101 },
+};
+
+union AnimationStep D_801004E8[] = {
+    { 0x7A000101 },
+};
+
+union AnimationStep D_801004EC[] = {
+    { 0x7B000101 },
+};
+
+union AnimationStep D_801004F0[] = {
+    { 0x7C000101 },
+};
+
+union AnimationStep D_801004F4[] = {
+    { 0x05010002 },
+    { 0x06FF0102 },
+};
+
+union AnimationStep D_801004FC[] = {
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02010006 },
+    { 0x01010003 },
+    { 0x00010002 },
+    { 0x00000101 },
+};
+
+union AnimationStep* slash_beast_animations[39] = {
+    D_801002BC,
+    D_801002C0,
+    D_801002D8,
+    D_80100308,
+    D_80100320,
+    D_80100328,
+    D_80100330,
+    D_80100348,
+    D_8010034C,
+    D_80100364,
+    D_801003A4,
+    D_801003B8,
+    D_801003D8,
+    D_801003EC,
+    D_801003F8,
+    D_80100404,
+    D_80100420,
+    D_80100428,
+    D_80100430,
+    D_80100460,
+    D_80100464,
+    D_80100474,
+    D_80100480,
+    D_80100488,
+    D_801004A0,
+    D_801004A4,
+    D_801004C0,
+    D_801004C8,
+    D_801004D0,
+    D_801004D4,
+    D_801004D8,
+    D_801004DC,
+    D_801004E0,
+    D_801004E4,
+    D_801004E8,
+    D_801004EC,
+    D_801004F0,
+    D_801004F4,
+    D_801004FC,
+};
+
+u8 D_801005B0[4] = { 29, 30, 31, 32 };
+
+char D_801005B4[] = "\"#$";
+
+u16 D_801005B8[8] = {
+    0x0070,
+    0x0072,
+    0x0074,
+    0x0076,
+    0x0065,
+    0x0067,
+    0x0069,
+    0x006B,
+};
+
+u16 D_801005C8[14] = {
+    0x0388,
+    0x038D,
+    0x03AC,
+    0x03AF,
+    0x03B2,
+    0x03B5,
+    0x03C3,
+    0x0380,
+    0x0383,
+    0x0390,
+    0x0392,
+    0x0394,
+    0x0396,
+    0x03A0,
+};
+
 void (*slash_beast_state_funcs[])(struct MainObj*) = {
     func_8006BB70,
     func_8006BD1C,
     slash_beast_death,
+};
+
+void (*slash_beast_step_funcs[12])() = {
+    func_8009216C,
+    slash_beast_start_pattern,
+    slash_beast_crescent,
+    slash_beast_decide,
+    slash_beast_jump,
+    func_8006CDD4,
+    slash_beast_dash,
+    func_8006D3DC,
+    slash_beast_grab,
+    slash_beast_intro,
+    slash_beast_stagger,
+    slash_beast_high_leap,
+};
+
+void (*slash_beast_death_funcs[3])(struct MainObj*) = {
+    slash_beast_death_start,
+    slash_beast_death_blink,
+    slash_beast_death_finish,
+};
+
+void (*slash_beast_crescent_funcs[4])(struct MainObj*) = {
+    slash_beast_crescent_jump,
+    func_8006C378,
+    slash_beast_crescent_land,
+    slash_beast_crescent_recover,
+};
+
+void (*slash_beast_decide_funcs[2])() = {
+    func_8006C6AC,
+    slash_beast_crouch,
+};
+
+void (*slash_beast_jump_funcs[3])(struct MainObj*) = {
+    func_8006CB50,
+    func_8006CC3C,
+    slash_beast_jump_recover,
+};
+
+void (*slash_beast_dash_funcs[5])(struct MainObj*) = {
+    slash_beast_dash_windup,
+    slash_beast_dash_start,
+    func_8006CFB8,
+    func_8006D280,
+    slash_beast_dash_turn,
+};
+
+void (*slash_beast_grab_funcs[4])(struct MainObj*) = {
+    slash_beast_grab_check,
+    slash_beast_grab_windup,
+    func_8006D888,
+    slash_beast_grab_throw,
+};
+
+void (*slash_beast_intro_funcs[8])(struct MainObj*) = {
+    slash_beast_intro_wait_player,
+    slash_beast_intro_wait_warning,
+    func_8006DD44,
+    slash_beast_intro_leap,
+    slash_beast_intro_land,
+    slash_beast_intro_pose,
+    slash_beast_intro_wait_dialogue,
+    slash_beast_intro_fill_health,
+};
+
+void (*slash_beast_stagger_funcs[3])(struct MainObj*) = {
+    func_8006E450,
+    slash_beast_stagger_land,
+    slash_beast_stagger_recover,
+};
+
+void (*slash_beast_high_leap_funcs[4])(struct MainObj*) = {
+    slash_beast_high_leap_jump,
+    slash_beast_high_leap_fall,
+    slash_beast_high_leap_land,
+    slash_beast_high_leap_recover,
 };

@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[33]
 // 8005D1F4..8005E570
 #include "common.h"
+#include "func_tables.h"
 
 void spike_sled_update(struct MainObj* self)
 {
@@ -401,3 +402,253 @@ void spike_sled_intro_start_fight(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+
+struct Unk_unk68 D_800FDD88 = { -26, -17, 52, 42 };
+
+struct Unk_unk68 D_800FDD8C = { -18, -14, 35, 30 };
+
+u8 D_800FDD90[8] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x00 };
+
+u8 D_800FDD98[8] = {
+    0x21,
+    0x22,
+    0x04,
+    0x48,
+    0x50,
+    0x00,
+    0x00,
+    0x00,
+};
+
+u16 D_800FDDA0[14] = {
+    0x1200,
+    0x02A0,
+    0x1240,
+    0x02A0,
+    0x1280,
+    0x02A0,
+    0x12C0,
+    0x02A0,
+    0x1300,
+    0x02A0,
+    0x1230,
+    0x0240,
+    0x12D0,
+    0x0240,
+};
+
+union AnimationStep D_800FDDBC[] = {
+    { 0x17010001 },
+    { 0x18010001 },
+    { 0x19FE0001 },
+};
+
+union AnimationStep D_800FDDC8[] = {
+    { 0x1A010005 },
+    { 0x1B010004 },
+    { 0x1B000101 },
+};
+
+union AnimationStep D_800FDDD4[] = {
+    { 0x0D010006 },
+    { 0x0E010201 },
+    { 0x0E010003 },
+    { 0x0E000101 },
+};
+
+union AnimationStep D_800FDDE4[] = {
+    { 0x0F010002 },
+    { 0x10FF0002 },
+};
+
+union AnimationStep D_800FDDEC[] = {
+    { 0x15010002 },
+    { 0x16010001 },
+    { 0x16000101 },
+};
+
+union AnimationStep D_800FDDF8[] = {
+    { 0x0E010006 },
+    { 0x0D010002 },
+    { 0x0C010002 },
+    { 0x0B010201 },
+    { 0x0B010001 },
+    { 0x0A010002 },
+    { 0x09010002 },
+    { 0x08010002 },
+    { 0x11010004 },
+    { 0x14010002 },
+    { 0x13010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010002 },
+    { 0x07010004 },
+    { 0x07000101 },
+};
+
+union AnimationStep D_800FDE5C[] = {
+    { 0x00010005 },
+    { 0x01010004 },
+    { 0x02010004 },
+    { 0x03010003 },
+    { 0x04010003 },
+    { 0x05010003 },
+    { 0x06010003 },
+    { 0x07010003 },
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02F90003 },
+};
+
+union AnimationStep D_800FDE88[] = {
+    { 0x00010005 },
+    { 0x01010005 },
+    { 0x02010005 },
+    { 0x03010005 },
+    { 0x04010005 },
+    { 0x05010005 },
+    { 0x06010005 },
+    { 0x07F90005 },
+};
+
+union AnimationStep D_800FDEA8[] = {
+    { 0x1C000001 },
+};
+
+union AnimationStep D_800FDEAC[] = {
+    { 0x1D000001 },
+};
+
+union AnimationStep D_800FDEB0[] = {
+    { 0x1E000001 },
+};
+
+union AnimationStep D_800FDEB4[] = {
+    { 0x1F000001 },
+};
+
+union AnimationStep D_800FDEB8[] = {
+    { 0x20000001 },
+};
+
+union AnimationStep D_800FDEBC[] = {
+    { 0x21000001 },
+};
+
+union AnimationStep D_800FDEC0[] = {
+    { 0x22000001 },
+};
+
+union AnimationStep D_800FDEC4[] = {
+    { 0x23000001 },
+};
+
+union AnimationStep D_800FDEC8[] = {
+    { 0x24000001 },
+};
+
+union AnimationStep D_800FDECC[] = {
+    { 0x25000001 },
+};
+
+union AnimationStep D_800FDED0[] = {
+    { 0x26000001 },
+};
+
+union AnimationStep D_800FDED4[] = {
+    { 0x27000001 },
+};
+
+union AnimationStep D_800FDED8[] = {
+    { 0x28000001 },
+};
+
+union AnimationStep D_800FDEDC[] = {
+    { 0x29000001 },
+};
+
+union AnimationStep D_800FDEE0[] = {
+    { 0x2A000001 },
+};
+
+union AnimationStep* spike_sled_animations[23] = {
+    D_800FDDBC,
+    D_800FDDC8,
+    D_800FDDD4,
+    D_800FDDE4,
+    D_800FDDEC,
+    D_800FDDF8,
+    D_800FDE5C,
+    D_800FDE88,
+    D_800FDEA8,
+    D_800FDEAC,
+    D_800FDEB0,
+    D_800FDEB4,
+    D_800FDEB8,
+    D_800FDEBC,
+    D_800FDEC0,
+    D_800FDEC4,
+    D_800FDEC8,
+    D_800FDECC,
+    D_800FDED0,
+    D_800FDED4,
+    D_800FDED8,
+    D_800FDEDC,
+    D_800FDEE0,
+};
+
+u8 D_800FDF40[12] = { 0x08, 0x09, 0x0D, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10, 0x00, 0x00, 0x00 };
+
+u8 D_800FDF4C[8] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x00, 0x00 };
+
+void (*spike_sled_state_funcs[])(struct MainObj*) = {
+    spike_sled_init,
+    spike_sled_run,
+    func_8005D4E0,
+    spike_sled_despawn,
+};
+
+void (*spike_sled_step_funcs[7])() = {
+    func_8009216C,
+    spike_sled_resume_step,
+    spike_sled_patrol,
+    spike_sled_fall,
+    spike_sled_charge,
+    spike_sled_bomb,
+    spike_sled_intro,
+};
+
+void (*spike_sled_patrol_funcs[3])() = {
+    spike_sled_patrol_start,
+    spike_sled_patrol_drive,
+    spike_sled_patrol_turn,
+};
+
+void (*spike_sled_charge_funcs[5])(struct MainObj*) = {
+    spike_sled_charge_start,
+    func_8005DC58,
+    func_8005DED4,
+    spike_sled_charge_approach,
+    spike_sled_charge_leap,
+};
+
+void (*spike_sled_bomb_funcs[3])() = {
+    func_8005E108,
+    spike_sled_bomb_rise,
+    func_8005E298,
+};
+
+void (*spike_sled_intro_funcs[3])() = {
+    spike_sled_intro_drive,
+    spike_sled_intro_fill_health,
+    spike_sled_intro_start_fight,
+};

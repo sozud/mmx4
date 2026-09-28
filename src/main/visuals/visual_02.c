@@ -103,3 +103,10 @@ void func_800AF1AC(struct VisualObj* arg0)
         }
     }
 }
+
+struct VisualAttachmentInit D_8010A1BC[4] = {
+    { 0x03, 0x16, 0x09 },
+    { 0x02, 0x17, 0x0A },
+    { 0x02, 0x19, 0x0A },
+    { 0x00, 0x00, 0x00 },
+};

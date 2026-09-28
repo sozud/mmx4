@@ -1,5 +1,5 @@
 // MiscObj, misc_object_update_funcs[1]
-// 800C7BF4..800C7EDC
+// 800C7BF4..800C7DA4
 #include "common.h"
 
 struct Misc01AnimationStep {
@@ -124,44 +124,6 @@ void func_800C7D40(struct MiscObj* arg0)
 void func_800C7D84(struct MiscObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
-}
-
-void func_800C7DA4(s32 count, u8* variants, void* source, s32 x_velocity)
-{
-    struct BaseObj* source_obj;
-    struct MiscObj* obj;
-    s32 remaining;
-    u8* variant;
-    s32 velocity;
-
-    variant = variants;
-    remaining = count;
-    velocity = x_velocity;
-    source_obj = source;
-    if (remaining & 0xFF) {
-        do {
-            obj = find_free_misc_obj();
-            if (obj != NULL) {
-                obj->active = 0x41;
-                obj->id = 2;
-                obj->unk15 = get_random() & 0x40;
-                obj->state = 0;
-                obj->unk5 = 0;
-                obj->unk6 = 0;
-                if (velocity != -1) {
-                    obj->x_vel.val = velocity;
-                    obj->unk2 = 0;
-                } else {
-                    obj->x_vel.val = 0;
-                    obj->unk2 = 1;
-                }
-                obj->x_pos.val = source_obj->x_pos.val + D_8010DB08[get_random() & 7];
-                obj->y_pos.val = source_obj->y_pos.val + D_8010DB28[get_random() & 7];
-                obj->ext.unk.unk54 = *variant++;
-            }
-            remaining--;
-        } while (remaining & 0xFF);
-    }
 }
 
 void (*D_8010DABC[])(struct MiscObj*) = { func_800C7C30, func_800C7D40, func_800C7D84 };

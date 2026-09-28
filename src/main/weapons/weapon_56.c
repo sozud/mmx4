@@ -39,6 +39,23 @@ void func_800987DC(struct WeaponObj* arg0)
     }
 }
 
+struct Unk_unk68 D_80108B70[] = {
+    { -9, -11, 0x1A, 0x14 },
+};
+
+u16 D_80108B74[] = {
+    0xFFCC,
+    0x0001,
+    0xFFD1,
+    0x0017,
+    0xFFD0,
+    0x000F,
+    0xFFD6,
+    0xFFEA,
+    0xFFCC,
+    0x0001,
+};
+
 void (*D_80108B88[])(struct WeaponObj*) = {
     func_80098630,
     func_80098728,

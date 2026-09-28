@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[70]
 // 80088BA0..80089AA4
 #include "common.h"
+#include "func_tables.h"
 
 extern u8 D_80104A3C[];
 
@@ -326,3 +327,158 @@ void drone_pod_alarm_white(struct MainObj* self)
         g_FilterAmountB = 0x7C00;
     }
 }
+
+struct Unk_unk68 D_80104914 = { -12, -13, 25, 26 };
+
+union AnimationStep D_80104918[] = {
+    { 0x00000008 },
+};
+
+union AnimationStep D_8010491C[] = {
+    { 0x05010008 },
+    { 0x06010008 },
+    { 0x00000008 },
+};
+
+union AnimationStep D_80104928[] = {
+    { 0x00010008 },
+    { 0x01010007 },
+    { 0x02010006 },
+    { 0x03010005 },
+    { 0x02010006 },
+    { 0x01000007 },
+};
+
+union AnimationStep D_80104940[] = {
+    { 0x04000008 },
+};
+
+union AnimationStep D_80104944[] = {
+    { 0x07000008 },
+};
+
+union AnimationStep D_80104948[] = {
+    { 0x08000008 },
+};
+
+union AnimationStep D_8010494C[] = {
+    { 0x09000008 },
+};
+
+union AnimationStep D_80104950[] = {
+    { 0x0A000008 },
+};
+
+union AnimationStep D_80104954[] = {
+    { 0x0B000008 },
+};
+
+union AnimationStep D_80104958[] = {
+    { 0x0C000008 },
+};
+
+union AnimationStep D_8010495C[] = {
+    { 0x0D000008 },
+};
+
+union AnimationStep D_80104960[] = {
+    { 0x0E000008 },
+};
+
+union AnimationStep D_80104964[] = {
+    { 0x0F000008 },
+};
+
+union AnimationStep D_80104968[] = {
+    { 0x00010008 },
+    { 0x06010008 },
+    { 0x05000008 },
+};
+
+union AnimationStep* D_80104974[14] = {
+    D_80104918,
+    D_8010491C,
+    D_80104928,
+    D_80104940,
+    D_80104944,
+    D_80104948,
+    D_8010494C,
+    D_80104950,
+    D_80104954,
+    D_80104958,
+    D_8010495C,
+    D_80104960,
+    D_80104964,
+    D_80104968,
+};
+
+struct Unk_unk68 D_801049AC = { 4, 5, 6, 7 };
+
+struct Unk_unk68 D_801049B0[2] = {
+    { 8, 9, 10, 11 },
+    { 12, 0, 0, 0 },
+};
+
+u8 D_801049B8[20] = { 0x03, 0x04, 0x04, 0x05, 0x00, 0x01, 0x03, 0x05, 0x01, 0x02, 0x02, 0x03, 0x01, 0x03, 0x00, 0x02, 0xFF, 0x00, 0x00, 0x00 };
+
+s16 D_801049CC[12] = {
+    (s16)0x08F0,
+    (s16)0x02E0,
+    (s16)0x08A0,
+    (s16)0x0370,
+    (s16)0x08F0,
+    (s16)0x0400,
+    (s16)0x09C8,
+    (s16)0x02E0,
+    (s16)0x0A30,
+    (s16)0x0370,
+    (s16)0x09C8,
+    (s16)0x0400,
+};
+
+void (*drone_pod_state_funcs[3])() = {
+    drone_pod_intro,
+    func_80088EA4,
+    drone_pod_death,
+};
+
+void (*drone_pod_intro_funcs[4])() = {
+    func_80088C40,
+    drone_pod_intro_wait_player,
+    drone_pod_intro_open,
+    drone_pod_intro_fill_health,
+};
+
+void (*drone_pod_step_funcs[4])() = {
+    func_8009216C,
+    drone_pod_resume_step,
+    drone_pod_rest,
+    drone_pod_launch,
+};
+
+void (*drone_pod_death_funcs[6])(struct MainObj*) = {
+    drone_pod_death_start,
+    drone_pod_death_explode,
+    drone_pod_death_alarm,
+    drone_pod_death_break_wall,
+    drone_pod_death_debris,
+    drone_pod_death_finish,
+};
+
+void (*drone_pod_rest_funcs[2])() = {
+    drone_pod_rest_wait,
+    drone_pod_rest_open,
+};
+
+void (*drone_pod_launch_funcs[3])() = {
+    drone_pod_launch_prepare,
+    drone_pod_launch_fire,
+    drone_pod_launch_close,
+};
+
+u8 D_80104A3C[16] = { 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00 };
+
+void (*drone_pod_alarm_funcs[2])(struct MainObj*) = {
+    drone_pod_alarm_red,
+    drone_pod_alarm_white,
+};

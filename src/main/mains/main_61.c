@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[61]
 // 8007872C..8007B90C
 #include "common.h"
+#include "func_tables.h"
 
 void split_mushroom_update(struct MainObj* self)
 {
@@ -877,3 +878,396 @@ void split_mushroom_spawn_afterimage(struct MainObj* self)
         temp_v0->unk6 = 1;
     }
 }
+
+struct Unk_unk68 D_80101CA0 = { -11, -16, 20, 35 };
+
+struct Unk_unk68 D_80101CA4 = { -16, -17, 30, 37 };
+
+struct Unk_unk68 D_80101CA8 = { 0, 0, 8, 23 };
+
+struct Unk_unk68 D_80101CAC = { -16, 0, 8, 23 };
+
+s16 split_mushroom_hop_speeds[4] = {
+    (s16)0x0040,
+    (s16)0x003A,
+    (s16)0x0034,
+    (s16)0x0000,
+};
+
+s32 split_mushroom_walk_speeds[3] = {
+    FIXED(3),
+    FIXED(4.5),
+    FIXED(6),
+};
+
+struct Unk_unk68 D_80101CC4[4] = {
+    { 13, 0, 1, 0 },
+    { 11, 0, 1, 1 },
+    { 13, 0, 1, 2 },
+    { 13, 1, -3, 1 },
+};
+
+struct Unk_unk68 D_80101CD4[8] = {
+    { 3, 0, 1, 3 },
+    { 5, 0, 1, 4 },
+    { 4, 0, 1, 5 },
+    { 3, 0, 1, 6 },
+    { 3, 0, 1, 7 },
+    { 5, 0, 1, 8 },
+    { 4, 0, 1, 9 },
+    { 3, 1, -7, 10 },
+};
+
+union AnimationStep D_80101CF4[] = {
+    { 0x00010002 },
+    { 0x0B010003 },
+    { 0x0C010002 },
+    { 0x0D000101 },
+};
+
+union AnimationStep D_80101D04[] = {
+    { 0x0E000101 },
+};
+
+struct Unk_unk68 D_80101D08[9] = {
+    { 3, 0, 1, 15 },
+    { 3, 0, 1, 16 },
+    { 3, 0, 1, 17 },
+    { 3, 0, 1, 18 },
+    { 3, 0, 1, 19 },
+    { 3, 0, 1, 20 },
+    { 3, 0, 1, 21 },
+    { 3, 0, 1, 22 },
+    { 3, 1, -7, 23 },
+};
+
+struct Unk_unk68 D_80101D2C[8] = {
+    { 2, 0, 1, 24 },
+    { 2, 0, 1, 25 },
+    { 2, 0, 1, 26 },
+    { 2, 0, 1, 27 },
+    { 2, 0, 1, 28 },
+    { 2, 0, 1, 29 },
+    { 2, 0, 1, 30 },
+    { 2, 0, -7, 31 },
+};
+
+union AnimationStep D_80101D4C[] = {
+    { 0x20010003 },
+    { 0x21000101 },
+};
+
+union AnimationStep D_80101D54[] = {
+    { 0x22010004 },
+    { 0x6E010003 },
+    { 0x21010003 },
+    { 0x75010018 },
+    { 0x7601001B },
+    { 0x76000101 },
+};
+
+union AnimationStep D_80101D6C[] = {
+    { 0x73010003 },
+    { 0x74010002 },
+    { 0x73010009 },
+    { 0x73000101 },
+};
+
+union AnimationStep D_80101D7C[] = {
+    { 0x23000101 },
+};
+
+union AnimationStep D_80101D80[] = {
+    { 0x24010002 },
+    { 0x25010002 },
+    { 0x26010002 },
+    { 0x27010002 },
+    { 0x28010002 },
+    { 0x29010009 },
+    { 0x29000101 },
+};
+
+union AnimationStep D_80101D9C[] = {
+    { 0x2A010003 },
+    { 0x2B010003 },
+    { 0x2B000101 },
+};
+
+union AnimationStep D_80101DA8[] = {
+    { 0x2C010003 },
+    { 0x2D010003 },
+    { 0x2E010003 },
+    { 0x2F010003 },
+    { 0x30010108 },
+    { 0x31010108 },
+    { 0x32010108 },
+    { 0x31FD0108 },
+};
+
+union AnimationStep D_80101DC8[] = {
+    { 0x33010108 },
+    { 0x34010108 },
+    { 0x35010108 },
+    { 0x36010108 },
+    { 0x37010007 },
+    { 0x37000201 },
+};
+
+struct Unk_unk68 D_80101DE0[4] = {
+    { 4, 0, 1, 56 },
+    { 4, 0, 1, 57 },
+    { 4, 0, 1, 58 },
+    { 4, 1, -3, 59 },
+};
+
+union AnimationStep D_80101DF0[] = {
+    { 0x10010003 },
+    { 0x0F010004 },
+    { 0x3C010006 },
+    { 0x2A010002 },
+    { 0x2B010003 },
+    { 0x00000101 },
+};
+
+union AnimationStep D_80101E08[] = {
+    { 0x3D010002 },
+    { 0x3E010002 },
+    { 0x3F010002 },
+    { 0x40010002 },
+    { 0x41010002 },
+    { 0x42010002 },
+    { 0x43010002 },
+    { 0x44010002 },
+    { 0x45010002 },
+    { 0x46010002 },
+    { 0x47010002 },
+    { 0x48010002 },
+    { 0x49010002 },
+    { 0x4A010002 },
+    { 0x4B010002 },
+    { 0x4C010001 },
+    { 0x4C000101 },
+};
+
+union AnimationStep D_80101E4C[] = {
+    { 0x00010014 },
+    { 0x4D010018 },
+    { 0x4E010008 },
+    { 0x4D010002 },
+    { 0x4F010101 },
+    { 0x4F01001F },
+    { 0x50010001 },
+    { 0x50000201 },
+};
+
+union AnimationStep D_80101E6C[] = {
+    { 0x51010002 },
+    { 0x52010102 },
+    { 0x53010103 },
+    { 0x54010103 },
+    { 0x55010103 },
+    { 0x56010103 },
+    { 0x57010104 },
+    { 0x58010104 },
+    { 0x59010004 },
+    { 0x5A010003 },
+    { 0x5A000201 },
+};
+
+union AnimationStep D_80101E98[] = {
+    { 0x5B010002 },
+    { 0x5C010002 },
+    { 0x5D010002 },
+    { 0x5E010002 },
+    { 0x5F010002 },
+    { 0x60010002 },
+    { 0x5B010002 },
+    { 0x5C010002 },
+    { 0x5D010002 },
+    { 0x5E010002 },
+    { 0x5F010002 },
+    { 0x60010002 },
+    { 0x61010002 },
+    { 0x62010002 },
+    { 0x63010002 },
+    { 0x64010002 },
+    { 0x65010002 },
+    { 0x66010002 },
+    { 0x61010002 },
+    { 0x62010002 },
+    { 0x63010002 },
+    { 0x64010002 },
+    { 0x65010002 },
+    { 0x66010002 },
+    { 0x67010002 },
+    { 0x68010002 },
+    { 0x69010002 },
+    { 0x6A010002 },
+    { 0x6B010002 },
+    { 0x6C010002 },
+    { 0x67010002 },
+    { 0x68010002 },
+    { 0x69010002 },
+    { 0x6A010002 },
+    { 0x6B010002 },
+    { 0x6C010002 },
+    { 0x6D010005 },
+    { 0x6D000101 },
+};
+
+struct Unk_unk68 D_80101F30[4] = {
+    { 4, 0, 1, 111 },
+    { 4, 0, 1, 112 },
+    { 4, 0, 1, 113 },
+    { 4, 0, -3, 114 },
+};
+
+union AnimationStep D_80101F40[] = {
+    { 0x77000101 },
+};
+
+struct Unk_unk68 D_80101F44[9] = {
+    { 2, 0, 1, 15 },
+    { 2, 0, 1, 16 },
+    { 2, 0, 1, 17 },
+    { 2, 0, 1, 18 },
+    { 2, 0, 1, 19 },
+    { 2, 0, 1, 20 },
+    { 2, 0, 1, 21 },
+    { 2, 0, 1, 22 },
+    { 2, 1, -7, 23 },
+};
+
+struct Unk_unk68 D_80101F68[5] = {
+    { 1, 0, 1, 120 },
+    { 1, 0, 1, 121 },
+    { 1, 0, 1, 122 },
+    { 1, 0, 1, 123 },
+    { 1, 0, -4, 124 },
+};
+
+union AnimationStep D_80101F7C[] = {
+    { 0x7D010001 },
+    { 0x7E010001 },
+    { 0x7F010001 },
+    { 0x80010001 },
+    { 0x81FC0001 },
+};
+
+void* split_mushroom_animations[26] = {
+    D_80101CC4,
+    D_80101CD4,
+    D_80101CF4,
+    D_80101D04,
+    D_80101D08,
+    D_80101D2C,
+    D_80101D4C,
+    D_80101D54,
+    D_80101D7C,
+    D_80101D80,
+    D_80101D9C,
+    D_80101DA8,
+    &D_80101DA8[4],
+    D_80101DC8,
+    D_80101DE0,
+    D_80101DF0,
+    D_80101E08,
+    D_80101E4C,
+    D_80101E6C,
+    D_80101E98,
+    D_80101F30,
+    D_80101F40,
+    D_80101F44,
+    D_80101D6C,
+    D_80101F68,
+    D_80101F7C,
+};
+
+void (*split_mushroom_state_funcs[3])() = {
+    func_8007877C,
+    func_800788E4,
+    split_mushroom_death,
+};
+
+void (*split_mushroom_step_funcs[8])() = {
+    func_8009216C,
+    split_mushroom_intro,
+    split_mushroom_stun,
+    split_mushroom_spore_rain,
+    split_mushroom_walk,
+    split_mushroom_dash,
+    split_mushroom_combo,
+    split_mushroom_wall_jump,
+};
+
+void (*split_mushroom_death_funcs[3])(struct MainObj*) = {
+    split_mushroom_death_start,
+    split_mushroom_death_explode,
+    func_80078FA4,
+};
+
+void (*split_mushroom_intro_funcs[7])() = {
+    func_800790E8,
+    split_mushroom_intro_drop,
+    split_mushroom_intro_bounce,
+    split_mushroom_intro_land,
+    func_800793AC,
+    split_mushroom_intro_start_health_bar,
+    split_mushroom_intro_fill_health,
+};
+
+void (*split_mushroom_stun_funcs[7])() = {
+    split_mushroom_stun_start,
+    split_mushroom_stun_wait,
+    split_mushroom_stun_fall,
+    split_mushroom_stun_merge,
+    func_80079824,
+    split_mushroom_stun_land,
+    split_mushroom_stun_split,
+};
+
+void (*split_mushroom_spore_rain_funcs[6])() = {
+    func_80079A8C,
+    func_80079B50,
+    func_80079DD8,
+    split_mushroom_spore_rain_land,
+    split_mushroom_spore_rain_recover,
+    split_mushroom_spore_rain_finish,
+};
+
+void (*split_mushroom_walk_funcs[5])() = {
+    split_mushroom_walk_start,
+    split_mushroom_walk_move,
+    func_8007A2B4,
+    split_mushroom_walk_fall,
+    func_8007A444,
+};
+
+void (*split_mushroom_dash_funcs[5])() = {
+    func_8007A4EC,
+    func_8007A63C,
+    split_mushroom_dash_land,
+    split_mushroom_dash_recover,
+    split_mushroom_dash_finish,
+};
+
+void (*split_mushroom_combo_funcs[8])() = {
+    func_8007A96C,
+    func_8007AB1C,
+    split_mushroom_combo_swing,
+    func_8007AE2C,
+    split_mushroom_combo_repeat,
+    split_mushroom_combo_sync,
+    split_mushroom_combo_end,
+    split_mushroom_combo_restart,
+};
+
+void (*split_mushroom_wall_jump_funcs[7])() = {
+    func_8007B1BC,
+    split_mushroom_wall_jump_air,
+    split_mushroom_wall_jump_cling,
+    func_8007B418,
+    split_mushroom_wall_jump_turn,
+    split_mushroom_wall_jump_land,
+    split_mushroom_wall_jump_finish,
+};

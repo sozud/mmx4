@@ -42,3 +42,9 @@ void func_800D5C18(struct QuadObj* arg0)
 {
     D_8010FAE0[arg0->state](arg0);
 }
+
+void (*D_8010FAE0[])(struct QuadObj*) = {
+    func_800D5934,
+    func_800D5AB0,
+    func_800D5BF8,
+};

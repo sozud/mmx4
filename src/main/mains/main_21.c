@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[21]
 // 80054C50..80054FE8
 #include "common.h"
+#include "func_tables.h"
 
 void func_80054C50(struct MainObj* arg0)
 {
@@ -86,3 +87,57 @@ void func_80054FDC(struct MainObj* arg0)
 {
     arg0->unk5 = arg0->ext.main_21.saved_unk5;
 }
+
+union AnimationStep D_800FC9B4[] = {
+    { 0x01010003 },
+    { 0x02010005 },
+    { 0x03010003 },
+    { 0x00000150 },
+};
+
+union AnimationStep D_800FC9C4[] = {
+    { 0x04000001 },
+};
+
+union AnimationStep D_800FC9C8[] = {
+    { 0x05000001 },
+};
+
+union AnimationStep D_800FC9CC[] = {
+    { 0x06000001 },
+};
+
+union AnimationStep D_800FC9D0[] = {
+    { 0x07010006 },
+    { 0x08010006 },
+    { 0x09000106 },
+};
+
+union AnimationStep* D_800FC9DC[5] = {
+    D_800FC9B4,
+    D_800FC9C4,
+    D_800FC9C8,
+    D_800FC9CC,
+    D_800FC9D0,
+};
+
+u8 D_800FC9F0[4] = { 1, 2, 3, 0 };
+
+struct Unk_unk68 D_800FC9F4 = { -8, -16, 16, 32 };
+
+struct Unk_unk68 D_800FC9F8 = { 0, 0, 8, 16 };
+
+void (*D_800FC9FC[4])(struct MainObj*) = {
+    func_80054CA8,
+    func_80054D8C,
+    func_80054EF8,
+    func_80054F14,
+};
+
+void (*D_800FCA0C[5])() = {
+    func_8009216C,
+    func_80054FDC,
+    func_80054F34,
+    func_80054F98,
+    func_80054FBC,
+};

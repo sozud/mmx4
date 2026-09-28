@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[22]
 // 80054FE8..80055E04
 #include "common.h"
+#include "func_tables.h"
 
 void func_80054FE8(struct MainObj* arg0)
 {
@@ -211,3 +212,117 @@ void func_80055C54(struct MainObj* arg0)
         arg0->ext.main_23.unk80 = 0;
     }
 }
+
+struct Unk_unk68 D_800FCA20 = { -19, -48, 37, 92 };
+
+union AnimationStep D_800FCA24[] = {
+    { 0x00000001 },
+};
+
+union AnimationStep D_800FCA28[] = {
+    { 0x01010003 },
+    { 0x02010004 },
+    { 0x03010005 },
+    { 0x02010004 },
+    { 0x01010003 },
+    { 0x00010014 },
+    { 0x04010002 },
+    { 0x05010002 },
+    { 0x06010002 },
+    { 0x07010001 },
+    { 0x08010001 },
+    { 0x09010001 },
+    { 0x0A000001 },
+};
+
+union AnimationStep D_800FCA5C[] = {
+    { 0x09010003 },
+    { 0x08010003 },
+    { 0x07010003 },
+    { 0x06010003 },
+    { 0x05010003 },
+    { 0x04000003 },
+};
+
+union AnimationStep D_800FCA74[] = {
+    { 0x0B000003 },
+};
+
+union AnimationStep D_800FCA78[] = {
+    { 0x0C000003 },
+};
+
+union AnimationStep D_800FCA7C[] = {
+    { 0x0D000003 },
+};
+
+union AnimationStep D_800FCA80[] = {
+    { 0x0E000003 },
+};
+
+union AnimationStep D_800FCA84[] = {
+    { 0x0F000003 },
+};
+
+union AnimationStep* D_800FCA88[8] = {
+    D_800FCA24,
+    D_800FCA28,
+    D_800FCA5C,
+    D_800FCA74,
+    D_800FCA78,
+    D_800FCA7C,
+    D_800FCA80,
+    D_800FCA84,
+};
+
+u8 D_800FCAA8[8] = { 4, 5, 6, 7, 4, 5, 6, 7 };
+
+s16 D_800FCAB0 = (s16)0xFFD0;
+
+s16 D_800FCAB2 = (s16)0x000A;
+
+u8 D_800FCAB4[56] = { 0x03, 0x00, 0x30, 0x00, 0x0A, 0x00, 0x03, 0x00, 0xEA, 0xFF, 0x45, 0x00, 0x04, 0x00, 0x16, 0x00, 0x45, 0x00, 0x04, 0x00, 0xD8, 0xFF, 0xF0, 0xFF, 0x03, 0x00, 0x28, 0x00, 0xF0, 0xFF, 0x03, 0x00, 0xD8, 0xFF, 0x24, 0x00, 0x04, 0x00, 0x28, 0x00, 0x24, 0x00, 0x04, 0x00, 0xE6, 0xFF, 0xE4, 0xFF, 0x03, 0x00, 0x1A, 0x00, 0xE4, 0xFF, 0x03, 0x00 };
+
+void (*D_800FCAEC[])(struct MainObj*) = {
+    func_80055024,
+    func_80055164,
+    func_8005529C,
+};
+
+void (*D_800FCAF8[])() = {
+    func_8009216C,
+    func_800552C4,
+    func_800552D0,
+    func_80055604,
+    func_800556D4,
+    func_800557FC,
+    func_800558D4,
+};
+
+void (*D_800FCB14[])() = {
+    func_8005530C,
+    func_80055358,
+    func_800555B0,
+};
+
+void (*D_800FCB20[])() = {
+    func_80055640,
+    func_8005567C,
+};
+
+void (*D_800FCB28[])() = {
+    func_80055710,
+    func_80055758,
+    func_800557B0,
+};
+
+void (*D_800FCB34[])() = {
+    func_80055838,
+    func_80055880,
+};
+
+void (*D_800FCB3C[])() = {
+    func_80055910,
+    func_8005594C,
+    func_800559B4,
+};

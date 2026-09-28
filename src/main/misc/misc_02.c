@@ -1,6 +1,44 @@
 // MiscObj, misc_object_update_funcs[2]
-// 800C7EDC..800C85D0
+// 800C7DA4..800C85D0
 #include "common.h"
+
+void func_800C7DA4(s32 count, u8* variants, void* source, s32 x_velocity)
+{
+    struct BaseObj* source_obj;
+    struct MiscObj* obj;
+    s32 remaining;
+    u8* variant;
+    s32 velocity;
+
+    variant = variants;
+    remaining = count;
+    velocity = x_velocity;
+    source_obj = source;
+    if (remaining & 0xFF) {
+        do {
+            obj = find_free_misc_obj();
+            if (obj != NULL) {
+                obj->active = 0x41;
+                obj->id = 2;
+                obj->unk15 = get_random() & 0x40;
+                obj->state = 0;
+                obj->unk5 = 0;
+                obj->unk6 = 0;
+                if (velocity != -1) {
+                    obj->x_vel.val = velocity;
+                    obj->unk2 = 0;
+                } else {
+                    obj->x_vel.val = 0;
+                    obj->unk2 = 1;
+                }
+                obj->x_pos.val = source_obj->x_pos.val + D_8010DB08[get_random() & 7];
+                obj->y_pos.val = source_obj->y_pos.val + D_8010DB28[get_random() & 7];
+                obj->ext.unk.unk54 = *variant++;
+            }
+            remaining--;
+        } while (remaining & 0xFF);
+    }
+}
 
 void func_800C7EDC(struct MiscObj* arg0)
 {
@@ -131,3 +169,25 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C842C);
 
 s32 D_8010DAC8[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
 s32 D_8010DAE8[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
+
+s32 D_8010DB08[8] = {
+    0x1F0000,
+    0x190000,
+    0x150000,
+    0x120000,
+    -0x1F0000,
+    -0x190000,
+    -0x150000,
+    -0x120000,
+};
+
+s32 D_8010DB28[8] = {
+    0x1F0000,
+    0x190000,
+    0x150000,
+    0x120000,
+    -0x1F0000,
+    -0x190000,
+    -0x150000,
+    -0x120000,
+};

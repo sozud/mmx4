@@ -13,14 +13,14 @@
 #endif
 
 extern s32 D_8010EC00[];
-extern s32* D_8010E81C[];
+extern u32* D_8010E81C[];
 
 // TitleLogoUpdate state 0
 void func_800CD78C(struct MiscObj* arg0)
 {
     arg0->unk3C = SP_TITLE_FRAMES;
     arg0->unk40 = 0x600;
-    arg0->animation_table = &D_8010E81C;
+    arg0->animation_table = D_8010E81C;
     arg0->bg_offset = -1;
     arg0->unk15 = 0;
 

@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[35]
 // 8005EC58..8005F510
 #include "common.h"
+#include "func_tables.h"
 
 void func_8005EC58(struct MainObj* arg0)
 {
@@ -190,3 +191,123 @@ void func_8005F4E0(struct MainObj* arg0)
         arg0->unk15 = 0x40;
     }
 }
+
+struct Unk_unk68 D_800FE1B0 = { -16, -15, 29, 28 };
+
+struct Unk_unk68 D_800FE1B4 = { -12, -11, 22, 20 };
+
+struct Unk_unk68 D_800FE1B8 = { 0, 0, 14, 13 };
+
+struct Unk_unk68 D_800FE1BC = { -16, -2, 29, 15 };
+
+struct Unk_unk68 D_800FE1C0 = { -13, 0, 23, 11 };
+
+union AnimationStep D_800FE1C4[] = {
+    { 0x05010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x02010001 },
+    { 0x01010001 },
+    { 0x00FB0001 },
+};
+
+union AnimationStep D_800FE1DC[] = {
+    { 0x00010006 },
+    { 0x06010005 },
+    { 0x07010004 },
+    { 0x08010203 },
+    { 0x09010003 },
+    { 0x0A010003 },
+    { 0x0B010003 },
+    { 0x0C010003 },
+    { 0x0E010003 },
+    { 0x0D010004 },
+    { 0x0C010005 },
+    { 0x0E000101 },
+};
+
+union AnimationStep D_800FE20C[] = {
+    { 0x0E010001 },
+    { 0x14010002 },
+    { 0x15010003 },
+    { 0x1B010004 },
+    { 0x15010003 },
+    { 0x14010002 },
+    { 0x0E01000E },
+    { 0x0F010003 },
+    { 0x10010003 },
+    { 0x11010003 },
+    { 0x12010003 },
+    { 0x13010003 },
+    { 0x0E010002 },
+    { 0x0F010002 },
+    { 0x10010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010102 },
+    { 0x0E010001 },
+    { 0x0F010001 },
+    { 0x10010001 },
+    { 0x11010001 },
+    { 0x12010001 },
+    { 0x13FB0001 },
+};
+
+union AnimationStep D_800FE26C[] = {
+    { 0x16000101 },
+};
+
+union AnimationStep D_800FE270[] = {
+    { 0x17000101 },
+};
+
+union AnimationStep D_800FE274[] = {
+    { 0x18000101 },
+};
+
+union AnimationStep D_800FE278[] = {
+    { 0x19000101 },
+};
+
+union AnimationStep D_800FE27C[] = {
+    { 0x1A000101 },
+};
+
+union AnimationStep* D_800FE280[9] = {
+    D_800FE1C4,
+    D_800FE1DC,
+    D_800FE20C,
+    &D_800FE20C[18],
+    D_800FE26C,
+    D_800FE270,
+    D_800FE274,
+    D_800FE278,
+    D_800FE27C,
+};
+
+u8 D_800FE2A4[8] = { 4, 5, 6, 7, 8, 0, 0, 0 };
+
+void (*D_800FE2AC[3])() = {
+    func_8005ECA8,
+    func_8005EE2C,
+    func_8005EF40,
+};
+
+void (*D_800FE2B8[7])() = {
+    func_8009216C,
+    func_8005EF6C,
+    func_8005EF78,
+    func_8005EFB0,
+    func_8005F0F4,
+    func_8005F124,
+    func_8005F3D4,
+};
+
+void (*D_800FE2D4[4])() = {
+    func_8005F160,
+    func_8005F1A4,
+    func_8005F230,
+    func_8005F2F4,
+};
+
+struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };

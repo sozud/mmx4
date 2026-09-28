@@ -1,5 +1,5 @@
 // WeaponObj, weapon_object_update_funcs[6]
-// 800961B0..800969D8
+// 800961B0..80096E10
 #include "common.h"
 #include "scratchpad.h"
 
@@ -178,3 +178,110 @@ void func_80096994(struct WeaponObj* arg0, struct PlayerObj* arg1)
     arg1->unk99--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
+
+// WeaponObj, weapon_object_update_funcs[15]
+
+void func_800969D8(struct WeaponObj* arg0)
+{
+    s32 var_a1;
+
+    var_a1 = g_Player.unkC3 != 0;
+    if (g_Player.unkC4 != 0) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk93 != 6) {
+        var_a1 = 1;
+    }
+    if (g_Player.unk5C == 0) {
+        var_a1 = 1;
+    }
+    if (g_Player.unkBF != 0) {
+        var_a1 = 1;
+    }
+    if (var_a1 != 0) {
+        arg0->state = 3;
+    }
+    D_801089AC[arg0->state](arg0);
+}
+
+void func_80096A84(struct WeaponObj* arg0)
+{
+    s8 i;
+    struct QuadObj* quad;
+
+    i = 0;
+    arg0->ext.weapon_15.unk8D = 8;
+    arg0->ext.weapon_15.unk8C = 8;
+    arg0->ext.weapon_15.unk8E = 0xF0;
+    arg0->ext.weapon_15.unk8F = 6;
+
+    do {
+        quad = find_free_quad_obj();
+        if (quad != 0) {
+            quad->active = 1;
+            quad->id = 0xA;
+            quad->unk2 = i;
+            quad->unk5C = PLAYER_OBJECT(arg0);
+        }
+        i++;
+    } while (i < 4);
+
+    func_80096C8C(arg0, &g_Player);
+    func_8001540C(0, 0x1D, arg0);
+    arg0->unk5 = 0;
+    arg0->state = (u8)arg0->state + 1;
+}
+
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06", func_80096B54);
+
+void func_80096C8C(struct WeaponObj* self, struct PlayerObj* player)
+{
+    u8* angle = &self->ext.weapon_15.unk8C;
+
+    self->unk15 = player->unk15;
+    if (player->unk15 != 0) {
+        self->x_pos.i.hi = player->x_pos.u.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        angle[1] = angle[0];
+    } else {
+        self->x_pos.i.hi = player->x_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2];
+        angle[1] = 0x20 - angle[0];
+    }
+    self->y_pos.i.hi = player->y_pos.u.hi + D_8011B230.components[player->animation_step.fields.frame_index * 2 + 1];
+    func_8002B93C(MOVING_OBJECT(self), (angle[1] - 8) & 0x1F);
+    self->x_pos.val += self->x_vel.val * 104;
+    self->y_pos.val += self->y_vel.val * 104;
+}
+
+void func_80096DC0(struct WeaponObj* arg0)
+{
+    arg0->unk50 = 0;
+    func_80015930(0, 0x1D);
+    g_Player.unk99--;
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
+
+struct Unk_unk68 D_80108990[] = {
+    { -20, -20, 0x28, 0x28 },
+};
+
+struct Unk_unk68 D_80108994[] = {
+    { -8, -8, 0x10, 0x10 },
+};
+
+struct Unk_unk68 D_80108998[] = {
+    { -24, -24, 0x30, 0x30 },
+};
+
+void (*D_8010899C[])(struct WeaponObj*) = {
+    func_80096794,
+    (void (*)(struct WeaponObj*))func_80096834,
+    (void (*)(struct WeaponObj*))func_800968F8,
+    (void (*)(struct WeaponObj*))func_80096994,
+};
+
+void (*D_801089AC[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))func_80096A84,
+    (void (*)(struct WeaponObj*))func_80096B54,
+    (void (*)(struct WeaponObj*))func_80096DC0,
+    (void (*)(struct WeaponObj*))func_80096DC0,
+};

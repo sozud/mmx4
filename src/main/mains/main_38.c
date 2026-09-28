@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[38]
 // 80060A88..80061590
 #include "common.h"
+#include "func_tables.h"
 
 void func_80060A88(struct MainObj* arg0)
 {
@@ -321,3 +322,209 @@ void func_800614E8(struct VisualObj* arg0)
         obj->y_pos.val = arg0->y_pos.val;
     }
 }
+
+struct Unk_unk68 D_800FE734 = { -54, -9, 90, 25 };
+
+struct Unk_unk68 D_800FE738 = { -52, -11, 86, 25 };
+
+struct Unk_unk68 D_800FE73C = { -10, 8, 45, 11 };
+
+union AnimationStep D_800FE740[] = {
+    { 0x00000001 },
+};
+
+union AnimationStep D_800FE744[] = {
+    { 0x00010001 },
+    { 0x01010006 },
+    { 0x02010005 },
+    { 0x03010004 },
+    { 0x04010004 },
+    { 0x05010004 },
+    { 0x06010004 },
+    { 0x07FD0004 },
+};
+
+union AnimationStep D_800FE764[] = {
+    { 0x0C010002 },
+    { 0x0DFF0002 },
+};
+
+union AnimationStep D_800FE76C[] = {
+    { 0x0F01000A },
+    { 0x10010008 },
+    { 0x11010004 },
+    { 0x12010001 },
+    { 0x13010001 },
+    { 0x14010001 },
+    { 0x15FD0001 },
+};
+
+union AnimationStep D_800FE788[] = {
+    { 0x1601000A },
+    { 0x17010008 },
+    { 0x18010004 },
+    { 0x19010001 },
+    { 0x1A010001 },
+    { 0x1B010001 },
+    { 0x1CFD0001 },
+};
+
+union AnimationStep D_800FE7A4[] = {
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1F010002 },
+    { 0x20010003 },
+    { 0x21010004 },
+    { 0x22000005 },
+};
+
+union AnimationStep D_800FE7DC[] = {
+    { 0x22010005 },
+    { 0x23010005 },
+    { 0x2401000A },
+    { 0x25010005 },
+    { 0x2601000A },
+    { 0x27000005 },
+};
+
+union AnimationStep D_800FE7F4[] = {
+    { 0x28000001 },
+};
+
+union AnimationStep D_800FE7F8[] = {
+    { 0x29000001 },
+};
+
+union AnimationStep D_800FE7FC[] = {
+    { 0x2A000001 },
+};
+
+union AnimationStep D_800FE800[] = {
+    { 0x2B000001 },
+};
+
+union AnimationStep D_800FE804[] = {
+    { 0x14010001 },
+    { 0x13010001 },
+    { 0x12010001 },
+    { 0x11010004 },
+    { 0x10010008 },
+    { 0x0F00000A },
+};
+
+union AnimationStep D_800FE81C[] = {
+    { 0x1B010001 },
+    { 0x1A010001 },
+    { 0x19010001 },
+    { 0x18010004 },
+    { 0x17010008 },
+    { 0x1600000A },
+};
+
+union AnimationStep D_800FE834[] = {
+    { 0x2C000001 },
+};
+
+union AnimationStep D_800FE838[] = {
+    { 0x2D000001 },
+};
+
+union AnimationStep D_800FE83C[] = {
+    { 0x2E000001 },
+};
+
+union AnimationStep D_800FE840[] = {
+    { 0x2F000001 },
+};
+
+union AnimationStep D_800FE844[] = {
+    { 0x30000001 },
+};
+
+union AnimationStep D_800FE848[] = {
+    { 0x31000001 },
+};
+
+union AnimationStep D_800FE84C[] = {
+    { 0x08010003 },
+    { 0x09010004 },
+    { 0x0A010005 },
+    { 0x09010004 },
+    { 0x08FC0003 },
+};
+
+union AnimationStep D_800FE860[] = {
+    { 0x37010003 },
+    { 0x0B010003 },
+    { 0x37010003 },
+    { 0x32010003 },
+    { 0x37010003 },
+    { 0x33010003 },
+    { 0x37010003 },
+    { 0x34010003 },
+    { 0x37010003 },
+    { 0x35010003 },
+    { 0x37010003 },
+    { 0x36F60003 },
+};
+
+union AnimationStep* D_800FE890[21] = {
+    D_800FE740,
+    D_800FE744,
+    D_800FE764,
+    D_800FE76C,
+    D_800FE788,
+    D_800FE7A4,
+    D_800FE7DC,
+    D_800FE7F4,
+    D_800FE7F8,
+    D_800FE7FC,
+    D_800FE800,
+    D_800FE804,
+    D_800FE81C,
+    D_800FE834,
+    D_800FE838,
+    D_800FE83C,
+    D_800FE840,
+    D_800FE844,
+    D_800FE848,
+    D_800FE84C,
+    D_800FE860,
+};
+
+u8 D_800FE8E4[8] = { 13, 14, 15, 16, 17, 18, 0, 0 };
+
+void (*D_800FE8EC[])(struct MainObj*) = {
+    func_80060AC4,
+    func_80060BC4,
+    func_80060D3C,
+    func_80060DC8,
+};
+
+void (*D_800FE8FC[7])() = {
+    func_8009216C,
+    func_80060E08,
+    func_80060E14,
+    func_80060F5C,
+    func_8006104C,
+    func_8006114C,
+    func_8006128C,
+};
+
+void (*D_800FE918[2])() = { func_80060E50, func_80060E94 };
+
+void (*D_800FE920[2])() = { func_80060F98, func_80060FF8 };
+
+void (*D_800FE928[2])(struct MainObj*) = { func_80061088, func_800610F0 };
+
+void (*D_800FE930[3])(struct MainObj*) = { func_80061188, func_800611E0, func_80061240 };
+
+void (*D_800FE93C[2])() = { func_800612C8, func_80061310 };

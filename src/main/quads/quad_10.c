@@ -108,3 +108,12 @@ void func_800D6D48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
 }
 
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6DC4);
+
+void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {
+    func_800D6B9C,
+    func_800D6C48,
+    func_800D6CA0,
+    func_800D6D48,
+};
+
+u8 D_8010FCC8[4] = { 9, 6, 3, 0 };

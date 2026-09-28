@@ -1,20 +1,5 @@
 #include "common.h"
 
-extern u32 D_8011BC20[];
-extern u32 D_8011BC44[];
-extern u32 D_8011BC84[];
-extern u32 D_8011BCAC[];
-extern u32 D_8011BCBC[];
-extern u32 D_8011BCCC[];
-extern u32 D_8011BD14[];
-extern u32 D_8011BD5C[];
-extern u32 D_8011BD64[];
-extern u32 D_8011BD6C[];
-extern u32 D_8011BD74[];
-extern u32 D_8011BD7C[];
-extern u32 D_8011BD94[];
-extern u32 D_8011BDAC[];
-extern u32 D_8011BDC4[];
 extern u8 D_8013BA78[];
 
 #ifndef MMX4_PC
@@ -61,27 +46,6 @@ struct CdInterruptState {
     u8 ready;
     u8 command;
     u8 padding;
-};
-
-u32* D_8011C0F0[5] = {
-    D_8011BC20,
-    D_8011BC44,
-    D_8011BC84,
-    D_8011BCAC,
-    D_8011BCBC,
-};
-
-u32* D_8011C104[10] = {
-    D_8011BCCC,
-    D_8011BD14,
-    D_8011BD5C,
-    D_8011BD64,
-    D_8011BD6C,
-    D_8011BD74,
-    D_8011BD7C,
-    D_8011BD94,
-    D_8011BDAC,
-    D_8011BDC4,
 };
 
 u32 D_8011C12C = 0x1F801C00;

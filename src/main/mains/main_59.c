@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[59]
 // 80074E84..8007501C
 #include "common.h"
+#include "func_tables.h"
 
 void func_80074E84(struct MainObj* self)
 {
@@ -48,3 +49,11 @@ void func_80074FE0(struct MainObj* arg0)
 {
     D_801016A8[arg0->state](arg0);
 }
+
+struct Unk_unk68 D_801016A4 = { -16, -16, 31, 29 };
+
+void (*D_801016A8[3])() = {
+    func_80074E84,
+    func_80074F4C,
+    func_80074FC0,
+};

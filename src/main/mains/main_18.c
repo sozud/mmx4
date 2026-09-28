@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[18]
 // 80050708..8005284C
 #include "common.h"
+#include "func_tables.h"
 
 void ice_core_update(struct MainObj* self)
 {
@@ -823,3 +824,489 @@ void ice_core_face_player(struct AnimatedObj* self)
 
 // ice_core_end_attack
 INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800527F0);
+
+u16 D_800FBEDC[12] = {
+    0x0001,
+    0x0002,
+    0x0004,
+    0x0008,
+    0x0010,
+    0x0020,
+    0x0040,
+    0x0080,
+    0x0100,
+    0x0200,
+    0xF3F8,
+    0x1A0F,
+};
+
+struct Unk_unk68 D_800FBEF4 = { -18, -33, 38, 70 };
+
+struct Unk_unk68 D_800FBEF8 = { -16, -19, 34, 34 };
+
+struct Unk_unk68 D_800FBEFC = { -24, -66, 29, 111 };
+
+struct Unk_unk68 D_800FBF00 = { -26, -15, 33, 30 };
+
+struct Unk_unk68 D_800FBF04 = { -14, -9, 24, 19 };
+
+struct Unk_unk68 D_800FBF08 = { -16, -22, 27, 51 };
+
+struct Unk_unk68 D_800FBF0C = { 0, -17, 24, 39 };
+
+struct Unk_unk68 D_800FBF10 = { 0, -3, 24, 20 };
+
+union AnimationStep D_800FBF14[] = {
+    { 0x00010008 },
+    { 0x01010009 },
+    { 0x0201000A },
+    { 0x03FD0109 },
+};
+
+union AnimationStep D_800FBF24[] = {
+    { 0x00010002 },
+    { 0x04010004 },
+    { 0x00010001 },
+    { 0x05010002 },
+    { 0x0601021D },
+    { 0x06000101 },
+};
+
+union AnimationStep D_800FBF3C[] = {
+    { 0x00010012 },
+    { 0x0701000E },
+    { 0x04010010 },
+    { 0x07FD000E },
+};
+
+union AnimationStep D_800FBF4C[] = {
+    { 0x00010002 },
+    { 0x08010006 },
+    { 0x01010004 },
+    { 0x09010203 },
+    { 0x0A010002 },
+    { 0x0BFF0102 },
+};
+
+union AnimationStep D_800FBF64[] = {
+    { 0x06010003 },
+    { 0x0C010007 },
+    { 0x0D010206 },
+    { 0x0E010005 },
+    { 0x0D000101 },
+};
+
+union AnimationStep D_800FBF78[] = {
+    { 0x0D010001 },
+    { 0x0E010007 },
+    { 0x0D01001D },
+    { 0x0D000101 },
+};
+
+union AnimationStep D_800FBF88[] = {
+    { 0x0C010003 },
+    { 0x06010005 },
+    { 0x05010002 },
+    { 0x40010201 },
+    { 0x04010006 },
+    { 0x40000101 },
+};
+
+union AnimationStep D_800FBFA0[] = {
+    { 0x00010004 },
+    { 0x10010204 },
+    { 0x11010003 },
+    { 0x12010002 },
+    { 0x13010001 },
+    { 0x12010001 },
+    { 0x13010001 },
+    { 0x12010001 },
+    { 0x13010001 },
+    { 0x12010001 },
+    { 0x13010007 },
+    { 0x14010004 },
+    { 0x15010003 },
+    { 0x16010002 },
+    { 0x17010001 },
+    { 0x16010001 },
+    { 0x17010001 },
+    { 0x16010001 },
+    { 0x17010001 },
+    { 0x16010001 },
+    { 0x17000101 },
+};
+
+union AnimationStep D_800FBFF4[] = {
+    { 0x18010003 },
+    { 0x19010005 },
+    { 0x18010003 },
+    { 0x17010014 },
+    { 0x1A010005 },
+    { 0x1B010005 },
+    { 0x17010005 },
+    { 0x1A010004 },
+    { 0x1B010004 },
+    { 0x17010004 },
+    { 0x1A010003 },
+    { 0x1B010003 },
+    { 0x17010003 },
+    { 0x1A010001 },
+    { 0x1B010001 },
+    { 0x17010001 },
+    { 0x1C010201 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1C010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1C010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1C010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1C010001 },
+    { 0x1D010001 },
+    { 0x1E010001 },
+    { 0x1F010301 },
+    { 0x20010001 },
+    { 0x21010001 },
+    { 0x22010001 },
+    { 0x23010001 },
+    { 0x24010001 },
+    { 0x25010001 },
+    { 0x26010001 },
+    { 0x27010001 },
+    { 0x28010001 },
+    { 0x29010001 },
+    { 0x2A010001 },
+    { 0x2B010401 },
+    { 0x2C010001 },
+    { 0x2D010001 },
+    { 0x55010001 },
+    { 0x56010001 },
+    { 0x57010001 },
+    { 0x2B010001 },
+    { 0x2C010001 },
+    { 0x2D010001 },
+    { 0x55010001 },
+    { 0x56010001 },
+    { 0x57010001 },
+    { 0x58010001 },
+    { 0x59010001 },
+    { 0x5A010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5D010001 },
+    { 0x58010001 },
+    { 0x59010001 },
+    { 0x5A010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5D010001 },
+    { 0x58010001 },
+    { 0x59010001 },
+    { 0x5A010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5D010001 },
+    { 0x58010001 },
+    { 0x59010001 },
+    { 0x5A010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5D000101 },
+};
+
+union AnimationStep D_800FC130[] = {
+    { 0x0601000A },
+    { 0x05010001 },
+    { 0x40010001 },
+    { 0x04010006 },
+    { 0x40010201 },
+    { 0x3E010002 },
+    { 0x3F010304 },
+    { 0x3E010001 },
+    { 0x3E000101 },
+};
+
+union AnimationStep D_800FC154[] = {
+    { 0x13010008 },
+    { 0x2E010001 },
+    { 0x41010202 },
+    { 0x42010305 },
+    { 0x41010002 },
+    { 0x2E000101 },
+};
+
+union AnimationStep D_800FC16C[] = {
+    { 0x2E010005 },
+    { 0x3A010006 },
+    { 0x3B010207 },
+    { 0x3A010006 },
+    { 0x2E010005 },
+    { 0x3C010006 },
+    { 0x3D010007 },
+    { 0x3CF90006 },
+};
+
+union AnimationStep D_800FC18C[] = {
+    { 0x0B010004 },
+    { 0x0A010005 },
+    { 0x0F010007 },
+    { 0x09010205 },
+    { 0x02010004 },
+    { 0x01010003 },
+    { 0x0001000E },
+    { 0x00000101 },
+};
+
+union AnimationStep D_800FC1AC[] = {
+    { 0x2F010004 },
+    { 0x30010005 },
+    { 0x31010006 },
+    { 0x32010001 },
+    { 0x31010001 },
+    { 0x32010001 },
+    { 0x31010001 },
+    { 0x32010001 },
+    { 0x31010001 },
+    { 0x32000101 },
+};
+
+union AnimationStep D_800FC1D4[] = {
+    { 0x33010004 },
+    { 0x34010005 },
+    { 0x35010006 },
+    { 0x36010001 },
+    { 0x35010001 },
+    { 0x36010001 },
+    { 0x35010001 },
+    { 0x36010001 },
+    { 0x35010001 },
+    { 0x36000101 },
+};
+
+union AnimationStep D_800FC1FC[] = {
+    { 0x37010004 },
+    { 0x38010005 },
+    { 0x39010006 },
+    { 0x13010001 },
+    { 0x39010001 },
+    { 0x13010001 },
+    { 0x39010001 },
+    { 0x13010001 },
+    { 0x39010001 },
+    { 0x13010007 },
+    { 0x14010004 },
+    { 0x15010003 },
+    { 0x16010002 },
+    { 0x17010201 },
+    { 0x16010001 },
+    { 0x17010001 },
+    { 0x16010001 },
+    { 0x17010001 },
+    { 0x16010001 },
+    { 0x17000101 },
+};
+
+union AnimationStep D_800FC24C[] = {
+    { 0x3B000101 },
+};
+
+union AnimationStep D_800FC250[] = {
+    { 0x45000101 },
+};
+
+union AnimationStep D_800FC254[] = {
+    { 0x44000101 },
+};
+
+union AnimationStep D_800FC258[] = {
+    { 0x43000101 },
+};
+
+union AnimationStep D_800FC25C[] = {
+    { 0x4A000101 },
+};
+
+union AnimationStep D_800FC260[] = {
+    { 0x49000101 },
+};
+
+union AnimationStep D_800FC264[] = {
+    { 0x48000101 },
+};
+
+union AnimationStep D_800FC268[] = {
+    { 0x47000101 },
+};
+
+union AnimationStep D_800FC26C[] = {
+    { 0x46000101 },
+};
+
+union AnimationStep D_800FC270[] = {
+    { 0x4B000101 },
+};
+
+union AnimationStep D_800FC274[] = {
+    { 0x4C000101 },
+};
+
+union AnimationStep D_800FC278[] = {
+    { 0x4D000101 },
+};
+
+union AnimationStep D_800FC27C[] = {
+    { 0x4E000101 },
+};
+
+union AnimationStep D_800FC280[] = {
+    { 0x62010001 },
+    { 0x63010009 },
+    { 0x64010009 },
+    { 0x65010009 },
+    { 0x66010009 },
+    { 0x67010009 },
+    { 0x68010009 },
+    { 0x69010009 },
+    { 0x5E000101 },
+};
+
+union AnimationStep D_800FC2A4[] = {
+    { 0x5F000101 },
+};
+
+union AnimationStep D_800FC2A8[] = {
+    { 0x60000101 },
+};
+
+union AnimationStep D_800FC2AC[] = {
+    { 0x61000101 },
+};
+
+union AnimationStep D_800FC2B0[] = {
+    { 0x18000101 },
+};
+
+union AnimationStep* D_800FC2B4[34] = {
+    D_800FBF14,
+    D_800FBF24,
+    D_800FBF3C,
+    D_800FBF4C,
+    D_800FBF64,
+    D_800FBF78,
+    D_800FBF88,
+    D_800FBFA0,
+    D_800FBFF4,
+    D_800FC130,
+    D_800FC154,
+    D_800FC16C,
+    D_800FC18C,
+    D_800FC1AC,
+    D_800FC1D4,
+    D_800FC1FC,
+    D_800FC24C,
+    D_800FC250,
+    D_800FC254,
+    D_800FC258,
+    D_800FC25C,
+    D_800FC260,
+    D_800FC264,
+    D_800FC268,
+    D_800FC26C,
+    D_800FC270,
+    D_800FC274,
+    D_800FC278,
+    D_800FC27C,
+    D_800FC280,
+    D_800FC2A4,
+    D_800FC2A8,
+    D_800FC2AC,
+    D_800FC2B0,
+};
+
+u8 D_800FC33C[4] = { 25, 26, 27, 28 };
+
+u8 D_800FC340[4] = { 31, 32, 0, 0 };
+
+void (*ice_core_state_funcs[5])() = {
+    func_8005077C,
+    func_80050874,
+    ice_core_death_sink,
+    ice_core_death_release_camera,
+    ice_core_death_wait_player,
+};
+
+void (*ice_core_step_funcs[12])() = {
+    func_8009216C,
+    ice_core_resume_step,
+    ice_core_drift,
+    ice_core_bob,
+    ice_core_charge,
+    ice_core_stomp,
+    ice_core_fall,
+    ice_core_float,
+    ice_core_build,
+    ice_core_bounce,
+    ice_core_spray,
+    ice_core_intro,
+};
+
+void (*ice_core_drift_funcs[2])(struct MainObj*) = {
+    ice_core_drift_start,
+    func_80050D14,
+};
+
+void (*ice_core_bob_funcs[3])(struct MainObj*) = {
+    ice_core_bob_start,
+    ice_core_bob_move,
+    ice_core_bob_recover,
+};
+
+void (*ice_core_charge_funcs[6])(struct MainObj*) = {
+    ice_core_charge_face,
+    ice_core_charge_back_off,
+    ice_core_charge_slide,
+    ice_core_charge_start,
+    ice_core_charge_run,
+    ice_core_charge_recover,
+};
+
+void (*ice_core_stomp_funcs[6])(struct MainObj*) = {
+    ice_core_stomp_start,
+    ice_core_stomp_land,
+    ice_core_stomp_rise,
+    ice_core_stomp_drop,
+    ice_core_stomp_impact,
+    ice_core_stomp_recover,
+};
+
+void (*ice_core_build_funcs[4])(struct MainObj*) = {
+    ice_core_build_open,
+    func_800517D0,
+    ice_core_build_grow,
+    ice_core_build_wait,
+};
+
+void (*ice_core_bounce_funcs[4])(struct MainObj*) = {
+    ice_core_bounce_start,
+    ice_core_bounce_move,
+    ice_core_bounce_wait,
+    ice_core_bounce_reform,
+};
+
+void (*ice_core_spray_funcs[3])() = {
+    ice_core_spray_fire,
+    ice_core_spray_wait_event,
+    ice_core_spray_wait,
+};
+
+void (*ice_core_intro_funcs[5])() = {
+    func_80052218,
+    ice_core_intro_wait_player,
+    ice_core_intro_descend,
+    ice_core_intro_slow,
+    ice_core_intro_start_fight,
+};
