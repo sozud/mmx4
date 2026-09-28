@@ -1,6 +1,39 @@
 // MainObj, main_object_update_funcs[75]
-// 8008FB38..800919C4
+// 8008FA0C..800919C4
 #include "common.h"
+#include "func_tables.h"
+
+u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
+{
+    s16 temp_v1;
+    s16 temp_a0;
+
+    temp_v1 = self->x_pos.i.hi;
+    if ((temp_v1 - arg1 >= 0) ? (temp_v1 - arg1 < 3) : (arg1 - temp_v1 < 3)) {
+        temp_a0 = self->y_pos.i.hi;
+        if ((temp_a0 - arg2 >= 0) ? (temp_a0 - arg2 < 3) : (arg2 - temp_a0 < 3)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void general_pick_script(struct MainObj* self)
+{
+    s32 low_health = self->unk5C < 0x19;
+    const u8** scripts = general_scripts[low_health];
+    u8 roll = get_random();
+    u8 i = 0;
+    u8* weights = &general_script_weights[low_health * 2];
+    roll = (roll >> 2) & 0xF;
+    while (i < 2) {
+        if (roll < weights[i]) {
+            self->ext.main_75.script = scripts[i];
+            return;
+        }
+        i++;
+    }
+}
 
 void general_intro_wait_player(struct MainObj* self)
 {
@@ -654,6 +687,525 @@ void general_update(struct MainObj* self)
     self->unk1C.val = self->y_pos.val;
     general_state_funcs[self->state](self);
 }
+
+struct Unk_unk68 D_801059BC = { -43, -48, 82, -125 };
+
+struct Unk_unk68 D_801059C0 = { -28, -86, 38, 38 };
+
+struct Unk_unk68 D_801059C4[5] = {
+    { -34, -34, 57, 126 },
+    { 0, 74, 12, 7 },
+    { -14, -21, 30, 40 },
+    { -14, -21, 30, 40 },
+    { -16, 15, 12, 9 },
+};
+
+struct Unk_unk68 D_801059D8 = { 0, 18, 61, 9 };
+
+struct Unk_unk68 D_801059DC = { 0, 71, 40, 11 };
+
+union AnimationStep D_801059E0[] = {
+    { 0x00000001 },
+};
+
+union AnimationStep D_801059E4[] = {
+    { 0x00010002 },
+    { 0x00010002 },
+    { 0x02010002 },
+    { 0x03010002 },
+    { 0x04010014 },
+    { 0x03010002 },
+    { 0x07010002 },
+    { 0x07010028 },
+    { 0x09010002 },
+    { 0x09010002 },
+    { 0x09010002 },
+    { 0x09010028 },
+    { 0x0901011B },
+    { 0x09000001 },
+};
+
+union AnimationStep D_80105A1C[] = {
+    { 0x0C010002 },
+    { 0x0D010002 },
+    { 0x0E010002 },
+    { 0x0D010002 },
+    { 0x0E000014 },
+};
+
+u8 D_80105A30[8] = { 1, 0, 1, 9, 1, 0, 255, 9 };
+
+union AnimationStep D_80105A38[] = {
+    { 0x11010002 },
+    { 0x0E010001 },
+    { 0x0E000001 },
+};
+
+struct Unk_unk68 D_80105A44[3] = {
+    { 1, 0, 1, 15 },
+    { 1, 0, 1, 16 },
+    { 1, 0, -2, 17 },
+};
+
+struct Unk_unk68 D_80105A50[3] = {
+    { 1, 0, 1, 17 },
+    { 1, 0, 1, 14 },
+    { 1, 0, -2, 14 },
+};
+
+union AnimationStep D_80105A5C[] = {
+    { 0x0E000001 },
+};
+
+u8 D_80105A60[8] = { 1, 0, 1, 23, 1, 0, 255, 23 };
+
+union AnimationStep D_80105A68[] = {
+    { 0x19010002 },
+    { 0x19010002 },
+    { 0x1901001E },
+    { 0x19000102 },
+};
+
+union AnimationStep D_80105A78[] = {
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x03010101 },
+    { 0x04010002 },
+    { 0x07010002 },
+    { 0x09010002 },
+    { 0x09010002 },
+    { 0x09010013 },
+    { 0x09000001 },
+};
+
+union AnimationStep D_80105AD4[] = {
+    { 0x17010002 },
+    { 0x17010002 },
+    { 0x1E010102 },
+    { 0x1E000002 },
+};
+
+union AnimationStep D_80105AE4[] = {
+    { 0x20000001 },
+};
+
+union AnimationStep D_80105AE8[] = {
+    { 0x21000001 },
+};
+
+union AnimationStep D_80105AEC[] = {
+    { 0x21010002 },
+    { 0x22010002 },
+    { 0x21010002 },
+    { 0x22010002 },
+    { 0x21000014 },
+};
+
+struct Unk_unk68 D_80105B00[4] = {
+    { 1, 0, 1, 35 },
+    { 1, 0, 1, 36 },
+    { 1, 0, 1, 35 },
+    { 1, 0, -3, 37 },
+};
+
+struct Unk_unk68 D_80105B10[3] = {
+    { 1, 0, 1, 44 },
+    { 1, 0, 1, 45 },
+    { 1, 0, -2, 46 },
+};
+
+union AnimationStep D_80105B1C[] = {
+    { 0x22010003 },
+    { 0x2F010003 },
+    { 0x30010103 },
+    { 0x32000003 },
+};
+
+union AnimationStep D_80105B2C[] = {
+    { 0x31000001 },
+};
+
+union AnimationStep D_80105B30[] = {
+    { 0x31010002 },
+    { 0x32010002 },
+    { 0x31010002 },
+    { 0x32010002 },
+    { 0x31000014 },
+};
+
+struct Unk_unk68 D_80105B44[4] = {
+    { 1, 0, 1, 51 },
+    { 1, 0, 1, 52 },
+    { 1, 0, 1, 51 },
+    { 1, 0, -3, 53 },
+};
+
+struct Unk_unk68 D_80105B54[3] = {
+    { 1, 0, 1, 60 },
+    { 1, 0, 1, 61 },
+    { 1, 0, -2, 62 },
+};
+
+union AnimationStep D_80105B60[] = {
+    { 0x32010003 },
+    { 0x30010003 },
+    { 0x2F010103 },
+    { 0x22000003 },
+};
+
+union AnimationStep D_80105B70[] = {
+    { 0x1E010002 },
+    { 0x1E010002 },
+    { 0x17010002 },
+    { 0x17000002 },
+};
+
+union AnimationStep D_80105B80[] = {
+    { 0x3F010002 },
+    { 0x40010002 },
+    { 0x41010002 },
+    { 0x42010002 },
+    { 0x43010002 },
+    { 0x44010002 },
+    { 0x45010002 },
+    { 0x46000002 },
+};
+
+struct Unk_unk68 D_80105BA0[3] = {
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 72 },
+    { 1, 1, -2, 73 },
+};
+
+union AnimationStep D_80105BAC[] = {
+    { 0x46010002 },
+    { 0x45010002 },
+    { 0x44010002 },
+    { 0x43010002 },
+    { 0x42010002 },
+    { 0x41010002 },
+    { 0x40010002 },
+    { 0x3F000002 },
+};
+
+union AnimationStep D_80105BCC[] = {
+    { 0x4A010001 },
+    { 0x4B010001 },
+    { 0x4C010001 },
+    { 0x4D010001 },
+    { 0x4E010001 },
+    { 0x4F010001 },
+    { 0x50010001 },
+    { 0x51000001 },
+};
+
+struct Unk_unk68 D_80105BEC[3] = {
+    { 1, 0, 1, 81 },
+    { 1, 0, 1, 81 },
+    { 1, 1, -2, 81 },
+};
+
+union AnimationStep D_80105BF8[] = {
+    { 0x51010001 },
+    { 0x50010001 },
+    { 0x4F010001 },
+    { 0x4E010001 },
+    { 0x4D010001 },
+    { 0x4C010001 },
+    { 0x4B010001 },
+    { 0x4A000001 },
+};
+
+union AnimationStep D_80105C18[] = {
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54010001 },
+    { 0x52010001 },
+    { 0x53010001 },
+    { 0x54000001 },
+};
+
+struct Unk_unk68 D_80105C78[3] = {
+    { 1, 0, 1, 85 },
+    { 1, 0, 1, 86 },
+    { 1, 0, -2, 87 },
+};
+
+struct Unk_unk68 D_80105C84[4] = {
+    { 1, 0, 1, 88 },
+    { 1, 0, 1, 89 },
+    { 1, 0, 1, 90 },
+    { 1, 0, -2, 91 },
+};
+
+struct Unk_unk68 D_80105C94[16] = {
+    { 1, 0, 1, 92 },
+    { 1, 0, 1, 94 },
+    { 1, 0, 1, 93 },
+    { 1, 0, 1, 94 },
+    { 1, 0, 1, 92 },
+    { 1, 0, 1, 95 },
+    { 1, 0, 1, 93 },
+    { 1, 0, 1, 95 },
+    { 1, 0, 1, 92 },
+    { 1, 0, 1, 96 },
+    { 1, 0, 1, 93 },
+    { 1, 0, 1, 96 },
+    { 1, 0, 1, 92 },
+    { 1, 0, 1, 95 },
+    { 1, 0, 1, 93 },
+    { 1, 0, -15, 95 },
+};
+
+struct Unk_unk68 D_80105CD4[16] = {
+    { 1, 0, 1, 97 },
+    { 1, 0, 1, 99 },
+    { 1, 0, 1, 98 },
+    { 1, 0, 1, 99 },
+    { 1, 0, 1, 97 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 98 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 97 },
+    { 1, 0, 1, 101 },
+    { 1, 0, 1, 98 },
+    { 1, 0, 1, 99 },
+    { 1, 0, 1, 97 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 98 },
+    { 1, 0, -15, 100 },
+};
+
+struct Unk_unk68 D_80105D14[8] = {
+    { 1, 0, 1, 104 },
+    { 1, 0, 1, 105 },
+    { 1, 0, 1, 106 },
+    { 1, 0, 1, 107 },
+    { 1, 0, 1, 108 },
+    { 1, 0, 1, 109 },
+    { 1, 0, 1, 110 },
+    { 1, 0, -7, 111 },
+};
+
+union AnimationStep D_80105D34[] = {
+    { 0x19000001 },
+};
+
+union AnimationStep D_80105D38[] = {
+    { 0x71010002 },
+    { 0x72010002 },
+    { 0x73010002 },
+    { 0x72010002 },
+    { 0x73010002 },
+    { 0x72010002 },
+    { 0x73000002 },
+};
+
+union AnimationStep D_80105D54[] = {
+    { 0x74010001 },
+    { 0x75010001 },
+    { 0x76010001 },
+    { 0x77010001 },
+    { 0x78010001 },
+    { 0x79010001 },
+    { 0x7A010001 },
+    { 0x7B010001 },
+    { 0x7C010001 },
+    { 0x7D010001 },
+    { 0x7E010001 },
+    { 0x7F010001 },
+    { 0x80010001 },
+    { 0x81010001 },
+    { 0x82010001 },
+    { 0x83010001 },
+    { 0x84010001 },
+    { 0x85EF0001 },
+};
+
+union AnimationStep D_80105D9C[] = {
+    { 0x86000001 },
+};
+
+union AnimationStep D_80105DA0[] = {
+    { 0x87000001 },
+};
+
+union AnimationStep D_80105DA4[] = {
+    { 0x88000001 },
+};
+
+union AnimationStep D_80105DA8[] = {
+    { 0x89000001 },
+};
+
+union AnimationStep D_80105DAC[] = {
+    { 0x8A000001 },
+};
+
+union AnimationStep D_80105DB0[] = {
+    { 0x8B000001 },
+};
+
+union AnimationStep D_80105DB4[] = {
+    { 0x8C000001 },
+};
+
+void* general_animations[46] = {
+    D_801059E0,
+    D_801059E4,
+    D_80105A1C,
+    D_80105A30,
+    D_80105A38,
+    D_80105A44,
+    D_80105A50,
+    D_80105A5C,
+    D_80105A60,
+    D_80105A68,
+    D_80105A78,
+    D_80105AD4,
+    D_80105AE4,
+    D_80105AE8,
+    D_80105AEC,
+    D_80105B00,
+    D_80105B10,
+    D_80105B1C,
+    D_80105B2C,
+    D_80105B30,
+    D_80105B44,
+    D_80105B54,
+    D_80105B60,
+    D_80105B70,
+    D_80105B80,
+    D_80105BA0,
+    D_80105BAC,
+    D_80105BCC,
+    D_80105BEC,
+    D_80105BF8,
+    D_80105C18,
+    D_80105C78,
+    D_80105C84,
+    D_80105C94,
+    D_80105CD4,
+    D_80105D14,
+    D_80105D34,
+    D_80105D38,
+    D_80105D54,
+    D_80105D9C,
+    D_80105DA0,
+    D_80105DA4,
+    D_80105DA8,
+    D_80105DAC,
+    D_80105DB0,
+    D_80105DB4,
+};
+
+u8 D_80105E70[4] = { 3, 3, 255, 0 };
+
+union AnimationStep D_80105E74[] = {
+    { 0x0000FF04 },
+};
+
+u8 D_80105E78[4] = { 3, 5, 5, 255 };
+
+void* D_80105E7C[2] = {
+    D_80105E70,
+    D_80105E74,
+};
+
+void* D_80105E84[2] = {
+    D_80105E74,
+    D_80105E78,
+};
+
+void* general_scripts[2] = {
+    D_80105E7C,
+    D_80105E84,
+};
+
+u8 general_script_weights[4] = { 0x09, 0x10, 0x09, 0x10 };
+
+void (*general_intro_funcs[])(struct MainObj*) = {
+    general_intro_wait_player,
+    func_8008FBCC,
+    general_intro_lock_camera,
+    general_intro_enter,
+    general_intro_land,
+    general_intro_dialogue,
+    general_intro_fill_health,
+    general_intro_finish,
+};
+
+void (*general_fly_funcs[3])() = { general_fly_descend, general_fly_start, func_800905D4 };
+
+void (*general_punch_funcs[6])() = {
+    general_punch_rise,
+    general_punch_launch,
+    general_punch_wait,
+    general_punch_rings,
+    general_punch_wait_return,
+    general_punch_recover,
+};
+
+void (*general_orbs_funcs[4])() = { general_orbs_descend, general_orbs_fire, general_orbs_wait, general_orbs_recover };
+
+void (*general_slam_funcs[6])(struct MainObj*) = {
+    general_slam_windup,
+    general_slam_fall,
+    general_slam_land,
+    general_slam_rise,
+    general_slam_ascend,
+    general_slam_leave,
+};
+
+void (*general_step_funcs[7])() = {
+    func_8009216C,
+    general_resume_step,
+    func_8009027C,
+    general_fly,
+    general_punch,
+    general_orbs,
+    general_slam,
+};
+
+void (*general_death_funcs[5])() = {
+    general_death_start,
+    general_death_blink,
+    func_800915C4,
+    general_death_wait_explosion,
+    func_800917AC,
+};
 
 void (*general_state_funcs[])(struct MainObj*) = {
     general_intro,

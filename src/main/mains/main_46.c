@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[46]
 // 80066A48..80066DAC
 #include "common.h"
+#include "func_tables.h"
 
 void func_80066A48(struct MainObj* arg0)
 {
@@ -112,3 +113,22 @@ void func_80066CCC(struct MainObj* arg0)
         arg0->ext.main_46.owner->projectile_command = 0x80;
     }
 }
+
+u8 D_800FF994[4] = { 0xA1, 0x94, 0x2A, 0x23 };
+
+u8 D_800FF998[4] = { 0xA1, 0x9A, 0x24, 0x1C };
+
+char D_800FF99C[8] = "\t\n\t\n\t\n";
+
+void (*D_800FF9A4[])(struct MainObj*) = {
+    func_80066A84,
+    func_80066B00,
+    func_80066C40,
+};
+
+void (*D_800FF9B0[4])(struct MainObj*) = {
+    (void (*)(struct MainObj*))func_8009216C,
+    func_80066C64,
+    func_80066C74,
+    func_80066CCC,
+};

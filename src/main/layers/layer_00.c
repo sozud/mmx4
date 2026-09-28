@@ -274,6 +274,8 @@ u8 func_800D8E94(struct LayerObj* arg0)
     return 0;
 }
 
+s16 D_8010FF00[] = { 0x8D0, 0xD30, 0x13C0, 0x1A50 };
+
 void (*D_8010FF08[])(struct LayerObj*) = {
     func_800D8684,
     func_800D872C,

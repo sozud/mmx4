@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[74]
-// 8008D460..8008FB38
+// 8008D460..8008FA0C
 #include "common.h"
+#include "func_tables.h"
 
 void sigma_final_intro_lock_camera(struct MainObj* self)
 {
@@ -838,34 +839,536 @@ void sigma_final_update(struct MainObj* self)
     self->ext.main_74.lower_health = self->unk5C;
 }
 
-u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
-{
-    s16 temp_v1;
-    s16 temp_a0;
+struct Unk_unk68 D_8010535C = { -10, -81, 103, 70 };
 
-    temp_v1 = self->x_pos.i.hi;
-    if ((temp_v1 - arg1 >= 0) ? (temp_v1 - arg1 < 3) : (arg1 - temp_v1 < 3)) {
-        temp_a0 = self->y_pos.i.hi;
-        if ((temp_a0 - arg2 >= 0) ? (temp_a0 - arg2 < 3) : (arg2 - temp_a0 < 3)) {
-            return 1;
-        }
-    }
-    return 0;
-}
+struct Unk_unk68 D_80105360 = { -59, -31, 68, 74 };
 
-void general_pick_script(struct MainObj* self)
-{
-    s32 low_health = self->unk5C < 0x19;
-    const u8** scripts = general_scripts[low_health];
-    u8 roll = get_random();
-    u8 i = 0;
-    u8* weights = &general_script_weights[low_health * 2];
-    roll = (roll >> 2) & 0xF;
-    while (i < 2) {
-        if (roll < weights[i]) {
-            self->ext.main_75.script = scripts[i];
-            return;
-        }
-        i++;
-    }
-}
+struct Unk_unk68 D_80105364 = { 5, 5, 23, 21 };
+
+struct Unk_unk68 D_80105368 = { -4, -99, 38, 38 };
+
+struct Unk_unk68 D_8010536C = { 17, -51, 46, 46 };
+
+struct Unk_unk68 D_80105370 = { -67, -40, 71, 83 };
+
+struct Unk_unk68 D_80105374 = { 9, -1, 30, 27 };
+
+struct Unk_unk68 D_80105378[5] = {
+    { 22, 0, 1, 79 },
+    { 21, 0, 1, 80 },
+    { 22, 0, 1, 81 },
+    { 20, 0, 1, 80 },
+    { 1, 0, -4, 80 },
+};
+
+struct Unk_unk68 D_8010538C[5] = {
+    { 18, 0, 1, 5 },
+    { 17, 0, 1, 72 },
+    { 18, 0, 1, 5 },
+    { 17, 0, 1, 73 },
+    { 1, 0, -4, 73 },
+};
+
+struct Unk_unk68 D_801053A0[3] = {
+    { 2, 1, 1, 6 },
+    { 1, 1, 1, 7 },
+    { 1, 1, -2, 7 },
+};
+
+u8 D_801053AC[8] = { 8, 0, 1, 8, 1, 0, 255, 9 };
+
+u8 D_801053B4[8] = { 8, 1, 1, 7, 1, 1, 255, 6 };
+
+struct Unk_unk68 D_801053BC[5] = {
+    { 30, 0, 1, 5 },
+    { 10, 0, 1, 7 },
+    { 2, 0, 1, 8 },
+    { 30, 0, 1, 9 },
+    { 1, 0, -4, 5 },
+};
+
+struct Unk_unk68 D_801053D0[6] = {
+    { 30, 0, 1, 5 },
+    { 2, 0, 1, 8 },
+    { 7, 0, 1, 9 },
+    { 2, 1, 1, 6 },
+    { 1, 1, 1, 7 },
+    { 1, 1, -5, 7 },
+};
+
+union AnimationStep D_801053E8[] = {
+    { 0x0D000008 },
+};
+
+union AnimationStep D_801053EC[] = {
+    { 0x0E010008 },
+    { 0x0F010008 },
+    { 0x10010007 },
+    { 0x10000001 },
+};
+
+union AnimationStep D_801053FC[] = {
+    { 0x0C010008 },
+    { 0x0B010008 },
+    { 0x0A010007 },
+    { 0x0A000001 },
+};
+
+union AnimationStep D_8010540C[] = {
+    { 0x0D01001E },
+    { 0x11010001 },
+    { 0x12010001 },
+    { 0x13010006 },
+    { 0x1401001D },
+    { 0x14000001 },
+};
+
+union AnimationStep D_80105424[] = {
+    { 0x0D01001E },
+    { 0x42010001 },
+    { 0x43010001 },
+    { 0x44010106 },
+    { 0x4501001D },
+    { 0x45000001 },
+};
+
+union AnimationStep D_8010543C[] = {
+    { 0x0A000001 },
+};
+
+struct Unk_unk68 D_80105440[6] = {
+    { 6, 0, 1, 21 },
+    { 6, 0, 1, 22 },
+    { 6, 0, 1, 23 },
+    { 6, 0, 1, 24 },
+    { 5, 0, 1, 25 },
+    { 1, 0, -5, 25 },
+};
+
+struct Unk_unk68 D_80105458[4] = {
+    { 1, 0, 1, 26 },
+    { 1, 0, 1, 27 },
+    { 1, 0, 1, 28 },
+    { 1, 0, -3, 29 },
+};
+
+struct Unk_unk68 D_80105468[7] = {
+    { 3, 0, 1, 30 },
+    { 3, 0, 1, 31 },
+    { 3, 0, 1, 32 },
+    { 3, 0, 1, 33 },
+    { 3, 0, 1, 34 },
+    { 2, 0, 1, 35 },
+    { 1, 0, -6, 35 },
+};
+
+struct Unk_unk68 D_80105484[7] = {
+    { 3, 0, 1, 44 },
+    { 4, 0, 1, 45 },
+    { 5, 0, 1, 46 },
+    { 7, 0, 1, 47 },
+    { 7, 0, 1, 48 },
+    { 6, 0, 1, 49 },
+    { 1, 0, -3, 49 },
+};
+
+union AnimationStep D_801054A0[] = {
+    { 0x32010007 },
+    { 0x33010008 },
+    { 0x34010008 },
+    { 0x34000001 },
+};
+
+struct Unk_unk68 D_801054B0[5] = {
+    { 2, 0, 1, 36 },
+    { 2, 0, 1, 37 },
+    { 2, 0, 1, 38 },
+    { 1, 0, 1, 39 },
+    { 1, 0, -4, 39 },
+};
+
+struct Unk_unk68 D_801054C4[5] = {
+    { 2, 0, 1, 40 },
+    { 2, 0, 1, 41 },
+    { 2, 0, 1, 42 },
+    { 1, 0, 1, 43 },
+    { 1, 0, -4, 43 },
+};
+
+union AnimationStep D_801054D8[] = {
+    { 0x35000001 },
+};
+
+union AnimationStep D_801054DC[] = {
+    { 0x3A000001 },
+    { 0x63000001 },
+    { 0x64000001 },
+    { 0x65000001 },
+};
+
+struct Unk_unk68 D_801054EC[5] = {
+    { 3, 0, 1, 59 },
+    { 3, 0, 1, 60 },
+    { 3, 0, 1, 61 },
+    { 2, 0, 1, 62 },
+    { 1, 0, -4, 62 },
+};
+
+struct Unk_unk68 D_80105500[5] = {
+    { 2, 0, 1, 54 },
+    { 2, 0, 1, 55 },
+    { 2, 0, 1, 56 },
+    { 1, 0, 1, 57 },
+    { 1, 0, -4, 57 },
+};
+
+struct Unk_unk68 D_80105514[27] = {
+    { 2, 0, 1, 77 },
+    { 2, 0, 1, 78 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 79 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 79 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 79 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 79 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 22, 0, 1, 79 },
+    { 21, 0, 1, 80 },
+    { 22, 0, 1, 81 },
+    { 20, 0, 1, 80 },
+    { 1, 0, -4, 80 },
+};
+
+union AnimationStep D_80105580[] = {
+    { 0x4F010002 },
+    { 0x4D010002 },
+    { 0x4E010002 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4E010001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4E010001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4E010001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4E010001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4F000001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4F010001 },
+    { 0x4D010001 },
+    { 0x4F010001 },
+    { 0x4D000001 },
+};
+
+struct Unk_unk68 D_801055E0[27] = {
+    { 2, 0, 1, 70 },
+    { 2, 0, 1, 71 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 5 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 5 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 5 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 5 },
+    { 1, 0, 1, 70 },
+    { 1, 0, 1, 71 },
+    { 17, 0, 1, 5 },
+    { 18, 0, 1, 72 },
+    { 17, 0, 1, 5 },
+    { 17, 0, 1, 73 },
+    { 1, 0, -4, 73 },
+};
+
+union AnimationStep D_8010564C[] = {
+    { 0x05010002 },
+    { 0x46010002 },
+    { 0x47010002 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x47010001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x47010001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x47010001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x47010001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x05000001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x05010001 },
+    { 0x46010001 },
+    { 0x05010001 },
+    { 0x46000001 },
+};
+
+u8 D_801056AC[24] = { 30, 0, 1, 79, 6, 0, 1, 82, 1, 0, 1, 88, 20, 0, 1, 84, 1, 0, 1, 85, 1, 0, 255, 94 };
+
+u8 D_801056C4[32] = { 30, 0, 1, 79, 3, 0, 1, 82, 2, 0, 1, 88, 4, 0, 1, 84, 4, 0, 1, 90, 20, 0, 1, 86, 1, 0, 1, 87, 1, 0, 255, 95 };
+
+u8 D_801056E4[20] = { 30, 0, 1, 79, 6, 0, 1, 82, 20, 0, 1, 88, 1, 0, 1, 89, 1, 0, 255, 96 };
+
+u8 D_801056F8[28] = { 30, 0, 1, 79, 4, 0, 1, 82, 4, 0, 1, 88, 2, 0, 1, 84, 20, 0, 1, 90, 1, 0, 1, 91, 1, 0, 255, 97 };
+
+u8 D_80105714[36] = { 30, 0, 1, 79, 3, 0, 1, 82, 2, 0, 1, 88, 3, 0, 1, 84, 3, 0, 1, 90, 3, 0, 1, 86, 20, 0, 1, 92, 1, 0, 1, 93, 1, 0, 255, 98 };
+
+union AnimationStep D_80105738[] = {
+    { 0x5E010002 },
+    { 0x55010002 },
+    { 0x54010002 },
+    { 0x52010002 },
+    { 0x4F010001 },
+    { 0x4F000001 },
+};
+
+union AnimationStep D_80105750[] = {
+    { 0x5F010002 },
+    { 0x57010002 },
+    { 0x56010002 },
+    { 0x5A010002 },
+    { 0x54010002 },
+    { 0x58010002 },
+    { 0x52010002 },
+    { 0x4F010001 },
+    { 0x4F000001 },
+};
+
+union AnimationStep D_80105774[] = {
+    { 0x60010002 },
+    { 0x59010002 },
+    { 0x58010002 },
+    { 0x52010002 },
+    { 0x4F010001 },
+    { 0x4F000001 },
+};
+
+union AnimationStep D_8010578C[] = {
+    { 0x61010002 },
+    { 0x5B010002 },
+    { 0x5A010002 },
+    { 0x54010002 },
+    { 0x58010002 },
+    { 0x52010002 },
+    { 0x4F010001 },
+    { 0x4F000001 },
+};
+
+union AnimationStep D_801057AC[] = {
+    { 0x62010002 },
+    { 0x5D010002 },
+    { 0x5C010002 },
+    { 0x56010002 },
+    { 0x5A010002 },
+    { 0x54010002 },
+    { 0x58010002 },
+    { 0x52010002 },
+    { 0x4F010001 },
+    { 0x4F000001 },
+};
+
+union AnimationStep D_801057D4[] = {
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02010003 },
+    { 0x03010003 },
+    { 0x04010003 },
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02010003 },
+    { 0x03010003 },
+    { 0x04010003 },
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02010003 },
+    { 0x03010003 },
+    { 0x04010002 },
+    { 0x04000001 },
+};
+
+void* sigma_final_animations[39] = {
+    D_80105378,
+    D_8010538C,
+    D_801053A0,
+    D_801053AC,
+    D_801053B4,
+    D_801053BC,
+    D_801053D0,
+    D_801053E8,
+    D_801053EC,
+    D_801053FC,
+    D_8010540C,
+    D_80105424,
+    D_8010543C,
+    D_80105440,
+    D_80105458,
+    D_80105468,
+    D_80105484,
+    D_801054A0,
+    D_801054B0,
+    D_801054C4,
+    D_801054D8,
+    D_801054DC,
+    D_801054EC,
+    D_80105500,
+    D_80105514,
+    D_80105580,
+    D_801055E0,
+    D_8010564C,
+    D_801056AC,
+    D_801056C4,
+    D_801056E4,
+    D_801056F8,
+    D_80105714,
+    D_80105738,
+    D_80105750,
+    D_80105774,
+    D_8010578C,
+    D_801057AC,
+    D_801057D4,
+};
+
+void (*sigma_final_intro_funcs[5])() = {
+    sigma_final_intro_lock_camera,
+    sigma_final_intro_start_music,
+    sigma_final_intro_wait_load,
+    sigma_final_intro_load,
+    func_8008D5C8,
+};
+
+void (*sigma_final_appear_funcs[4])() = {
+    sigma_final_appear_start,
+    sigma_final_appear_pose,
+    sigma_final_appear_dialogue,
+    sigma_final_appear_fill_health,
+};
+
+u8 sigma_final_laser_animations[8] = { 0x1C, 0x21, 0x1F, 0x24, 0x1D, 0x22, 0x20, 0x25 };
+
+void (*sigma_final_laser_funcs[5])() = {
+    sigma_final_laser_start,
+    sigma_final_laser_aim,
+    sigma_final_laser_fire,
+    sigma_final_laser_wait,
+    sigma_final_laser_repeat,
+};
+
+void (*sigma_final_big_beam_funcs[5])() = {
+    sigma_final_big_beam_start,
+    sigma_final_big_beam_charge,
+    sigma_final_big_beam_fire,
+    sigma_final_big_beam_wait,
+    sigma_final_big_beam_recover,
+};
+
+void (*sigma_final_hide_upper_funcs[2])() = {
+    sigma_final_hide_upper_start,
+    sigma_final_hide_upper_wait,
+};
+
+void (*sigma_final_show_upper_funcs[2])() = {
+    sigma_final_show_upper_start,
+    sigma_final_show_upper_wait,
+};
+
+void (*sigma_final_hide_lower_funcs[2])() = {
+    sigma_final_hide_lower_start,
+    sigma_final_hide_lower_wait,
+};
+
+void (*sigma_final_show_lower_funcs[2])() = {
+    sigma_final_show_lower_start,
+    sigma_final_show_lower_wait,
+};
+
+void (*sigma_final_grab_funcs[4])(struct MainObj*) = {
+    sigma_final_grab_start,
+    func_8008E748,
+    sigma_final_grab_release,
+    sigma_final_grab_finish,
+};
+
+void (*sigma_final_spit_funcs[3])(struct MainObj*) = {
+    sigma_final_spit_open,
+    sigma_final_spit_wait,
+    sigma_final_spit_fire,
+};
+
+void (*sigma_final_wind_funcs[5])(struct MainObj*) = {
+    func_8008EC48,
+    sigma_final_wind_start,
+    sigma_final_wind_push,
+    sigma_final_wind_push_hard,
+    sigma_final_wind_finish,
+};
+
+void (*sigma_final_summon_funcs[2])() = {
+    sigma_final_summon_start,
+    sigma_final_summon_wait,
+};
+
+void (*sigma_final_step_funcs[14])() = {
+    func_8009216C,
+    sigma_final_idle,
+    func_8008DAE8,
+    sigma_final_appear,
+    sigma_final_show_upper,
+    sigma_final_hide_upper,
+    sigma_final_show_lower,
+    sigma_final_hide_lower,
+    sigma_final_summon,
+    sigma_final_laser,
+    sigma_final_big_beam,
+    sigma_final_spit,
+    sigma_final_wind,
+    sigma_final_grab,
+};
+
+void (*sigma_final_death_funcs[7])() = {
+    func_8008F3F4,
+    sigma_final_death_blink,
+    func_8008F578,
+    sigma_final_death_collapse,
+    sigma_final_death_wait_player,
+    sigma_final_death_explosion,
+    sigma_final_death_finish,
+};
+
+void (*sigma_final_state_funcs[3])(struct MainObj*) = {
+    sigma_final_intro,
+    func_8008F1A8,
+    sigma_final_death,
+};

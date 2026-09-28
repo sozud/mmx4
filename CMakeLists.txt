@@ -33,35 +33,6 @@ file(GLOB MMX4_PC_GAME_SOURCES CONFIGURE_DEPENDS
     src/main/weapons/*.c
 )
 
-file(GLOB MMX4_PC_FUNCTION_TABLE_SOURCES CONFIGURE_DEPENDS
-    src/main/function_tables/*.c)
-list(REMOVE_ITEM MMX4_PC_FUNCTION_TABLE_SOURCES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EC30.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EC38.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010ECD8.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EDDC.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EED8.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EEF4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF00.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF0C.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EF20.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EFC4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010EFD0.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F014.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F188.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F1A4.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F1E0.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F4AC.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F4BC.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F528.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F530.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F538.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F544.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F58C.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main/function_tables/D_8010F5BC.c
-)
-list(APPEND MMX4_PC_GAME_SOURCES ${MMX4_PC_FUNCTION_TABLE_SOURCES})
-
 add_executable(mmx4_pc
     src/pc/input.c
     src/pc/loading.c

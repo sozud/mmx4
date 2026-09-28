@@ -235,6 +235,49 @@ void func_8009216C(void* arg0)
     handlers.funcs[object->unk63](arg0);
 }
 
+union AnimationStep D_80105F40[16] = {
+    { 0x00010002 },
+    { 0x01010002 },
+    { 0x02010002 },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x05010002 },
+    { 0x06010002 },
+    { 0x07010002 },
+    { 0x08010002 },
+    { 0x09010002 },
+    { 0x0A010002 },
+    { 0x0B010002 },
+    { 0x0C010002 },
+    { 0x0D010002 },
+    { 0x0E010002 },
+    { 0x0FF10002 },
+};
+
+union AnimationStep D_80105F80[1] = { { 0x10000002 } };
+
+union AnimationStep D_80105F84[1] = { { 0x11000002 } };
+
+union AnimationStep D_80105F88[1] = { { 0x12000002 } };
+
+union AnimationStep D_80105F8C[1] = { { 0x13000002 } };
+
+union AnimationStep* D_80105F90[5] = {
+    D_80105F40,
+    D_80105F80,
+    D_80105F84,
+    D_80105F88,
+    D_80105F8C,
+};
+
+u8 D_80105FA4[4] = { 1, 2, 3, 4 };
+
+s8 D_80105FA8[4] = { -1, 0, 11, 11 };
+
+s8 D_80105FAC[4] = { -9, -6, 16, 15 };
+
+s8 D_80105FB0[4] = { -11, -8, 20, 18 };
+
 const struct Main76HandlerTable D_80010D7C = { {
     NULL,
     (void (*)(void*))func_80091E38,
@@ -294,3 +337,23 @@ void (*D_80105FB4[])(struct MainObj*) = {
     func_80091D1C,
     func_80091E18,
 };
+
+s32 D_80105FC0[2] = { FIXED(3), FIXED(10) };
+
+u8 D_80105FC8[13][3] = {
+    { 0x4F, 0x4F, 0x3F },
+    { 0x45, 0x3C, 0x46 },
+    { 0x35, 0x37, 0x36 },
+    { 0x2A, 0x2B, 0x30 },
+    { 0x34, 0x3A, 0x3D },
+    { 0x29, 0x33, 0x39 },
+    { 0x4B, 0x44, 0x4E },
+    { 0x41, 0x38, 0x2D },
+    { 0x2E, 0x31, 0x3B },
+    { 0x2F, 0x2C, 0x28 },
+    { 0x4D, 0x4C, 0x49 },
+    { 0x42, 0x43, 0x32 },
+    { 0x48, 0x4A, 0x40 },
+};
+
+u8 D_80105FEF_padding = 0;

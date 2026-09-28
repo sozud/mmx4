@@ -242,3 +242,31 @@ void func_80094F74(void)
         }
     }
 }
+
+struct Unk_unk68 D_801088E4[] = {
+    { -21, -24, 0x28, 0x30 },
+};
+
+void (*D_801088E8[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))func_80094B24,
+    (void (*)(struct WeaponObj*))func_80094C18,
+    (void (*)(struct WeaponObj*))func_80094EC8,
+    (void (*)(struct WeaponObj*))func_80094EC8,
+};
+
+void (*D_801088F8[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))func_80094D40,
+    (void (*)(struct WeaponObj*))func_80094DC0,
+    (void (*)(struct WeaponObj*))func_80094E50,
+};
+
+u8 D_80108904[] = {
+    0x35,
+    0x36,
+    0x37,
+    0x38,
+    0x37,
+    0x36,
+    0x00,
+    0x00,
+};

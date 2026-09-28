@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[55]
 // 8006EB40..8006FD50
 #include "common.h"
+#include "func_tables.h"
 
 INCLUDE_ASM("main/nonmatchings/mains/main_55", func_8006EB40);
 
@@ -237,3 +238,178 @@ s32 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
     }
     return var_v0;
 }
+
+struct Unk_unk68 D_801006B0 = { -19, -8, 54, 12 };
+
+struct Unk_unk68 D_801006B4 = { -28, -12, 63, 24 };
+
+s16 D_801006B8[16] = {
+    (s16)0x000F,
+    (s16)0xFFF2,
+    (s16)0x0007,
+    (s16)0x000E,
+    (s16)0xFFF2,
+    (s16)0xFFFF,
+    (s16)0xFFD8,
+    (s16)0xFFF5,
+    (s16)0xFFC6,
+    (s16)0x0003,
+    (s16)0xFFC0,
+    (s16)0xFFF0,
+    (s16)0xFFEB,
+    (s16)0xFFF2,
+    (s16)0xFFC8,
+    (s16)0x000F,
+};
+
+struct Unk_unk68 D_801006D8[16] = {
+    { 6, 0, 1, 0 },
+    { 5, 0, 1, 1 },
+    { 5, 0, 1, 2 },
+    { 5, 0, 1, 3 },
+    { 5, 0, 1, 4 },
+    { 6, 0, 1, 5 },
+    { 6, 0, 1, 6 },
+    { 6, 0, 1, 7 },
+    { 6, 0, 1, 4 },
+    { 5, 0, 1, 5 },
+    { 5, 0, 1, 2 },
+    { 5, 0, 1, 3 },
+    { 5, 0, 1, 0 },
+    { 6, 0, 1, 1 },
+    { 6, 0, 1, 8 },
+    { 6, 1, -15, 9 },
+};
+
+struct Unk_unk68 D_80100718[4] = {
+    { 2, 0, 1, 10 },
+    { 2, 0, 1, 11 },
+    { 2, 0, 1, 12 },
+    { 2, 0, -3, 13 },
+};
+
+struct Unk_unk68 D_80100728[10] = {
+    { 3, 0, 1, 14 },
+    { 6, 0, 1, 15 },
+    { 7, 0, 1, 16 },
+    { 2, 0, 1, 17 },
+    { 2, 0, 1, 18 },
+    { 8, 0, 1, 19 },
+    { 2, 0, 1, 20 },
+    { 2, 1, 1, 21 },
+    { 2, 0, 1, 20 },
+    { 6, 2, -4, 22 },
+};
+
+union AnimationStep D_80100750[] = {
+    { 0x11010002 },
+    { 0x17010008 },
+    { 0x0E010003 },
+    { 0x09000002 },
+};
+
+struct Unk_unk68 D_80100760[9] = {
+    { 6, 0, 1, 24 },
+    { 6, 0, 1, 25 },
+    { 4, 0, 1, 26 },
+    { 2, 0, 1, 27 },
+    { 2, 0, 1, 28 },
+    { 6, 0, 1, 29 },
+    { 6, 1, 1, 30 },
+    { 6, 0, 1, 31 },
+    { 6, 0, -2, 32 },
+};
+
+union AnimationStep D_80100784[] = {
+    { 0x21010002 },
+    { 0x22000002 },
+};
+
+struct Unk_unk68 D_8010078C[4] = {
+    { 2, 0, 1, 35 },
+    { 2, 0, 1, 36 },
+    { 2, 0, 1, 37 },
+    { 2, 0, -3, 38 },
+};
+
+struct Unk_unk68 D_8010079C[4] = {
+    { 2, 0, 1, 39 },
+    { 2, 0, 1, 40 },
+    { 2, 0, 1, 41 },
+    { 2, 0, -3, 42 },
+};
+
+union AnimationStep D_801007AC[] = {
+    { 0x2B010002 },
+    { 0x2C000002 },
+};
+
+union AnimationStep D_801007B4[] = {
+    { 0x2D010002 },
+    { 0x2E000002 },
+};
+
+union AnimationStep D_801007BC[] = {
+    { 0x2F000001 },
+};
+
+union AnimationStep D_801007C0[] = {
+    { 0x30000001 },
+};
+
+struct AnimationTable12 {
+    union AnimationStep* entries[12];
+    s32 count;
+};
+
+struct AnimationTable12 D_801007C4 = {
+    {
+        D_801006D8,
+        D_80100718,
+        D_80100728,
+        D_80100750,
+        D_80100760,
+        D_80100784,
+        D_8010078C,
+        D_8010079C,
+        D_801007AC,
+        D_801007B4,
+        D_801007BC,
+        D_801007C0,
+    },
+    0x00000052,
+};
+
+void (*D_801007F8[2])() = {
+    func_8006ED44,
+    func_8006EF28,
+};
+
+void (*D_80100800[4])(struct MainObj*) = {
+    func_8006F244,
+    func_8006F304,
+    func_8006F41C,
+    func_8006F494,
+};
+
+void (*D_80100810[2])(struct MainObj*) = {
+    func_8006F584,
+    func_8006F5F4,
+};
+
+void (*D_80100818[8])(struct MainObj*) = {
+    func_8009216C,
+    func_8006F0A0,
+    func_8006ECC4,
+    func_8006F0DC,
+    func_8006F504,
+    func_8006F7B4,
+    func_8006F83C,
+    func_8006F86C,
+};
+
+void (*D_80100838[3])() = {
+    func_8006EB40,
+    func_8006FA24,
+    func_8006FABC,
+};

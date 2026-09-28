@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[32]
 // 8005C824..8005D1F4
 #include "common.h"
+#include "func_tables.h"
 
 void func_8005C824(struct MainObj* arg0)
 {
@@ -219,3 +220,120 @@ void func_8005D148(struct MainObj* arg0)
         temp_v0->unk16 = 6;
     }
 }
+
+struct Unk_unk68 D_800FDC80 = { -11, -10, 21, 23 };
+
+struct Unk_unk68 D_800FDC84 = { -9, 13, 16, 19 };
+
+struct Unk_unk68 D_800FDC88[2] = {
+    { -11, -10, 20, 42 },
+    { -10, 27, 26, 3 },
+};
+
+s32 D_800FDC90[2] = { (s32)0xFFFD0000, (s32)0x00030000 };
+
+s32 D_800FDC98[2] = { (s32)0xFFFC8000, (s32)0x00038000 };
+
+union AnimationStep D_800FDCA0[] = {
+    { 0x00010003 },
+    { 0x01010003 },
+    { 0x02010004 },
+    { 0x03010003 },
+    { 0x04010003 },
+    { 0x05FB0005 },
+};
+
+union AnimationStep D_800FDCB8[] = {
+    { 0x06010002 },
+    { 0x07010002 },
+    { 0x03010002 },
+    { 0x08010003 },
+    { 0x09010003 },
+    { 0x0A000003 },
+};
+
+union AnimationStep D_800FDCD0[] = {
+    { 0x0B010002 },
+    { 0x0C010002 },
+    { 0x0B010002 },
+    { 0x0DFD0002 },
+};
+
+union AnimationStep D_800FDCE0[] = {
+    { 0x0E010005 },
+    { 0x0F010002 },
+    { 0x10010002 },
+    { 0x11010005 },
+    { 0x12010003 },
+    { 0x13FB0003 },
+};
+
+union AnimationStep D_800FDCF8[] = {
+    { 0x14000001 },
+};
+
+union AnimationStep D_800FDCFC[] = {
+    { 0x15000001 },
+};
+
+union AnimationStep D_800FDD00[] = {
+    { 0x16000001 },
+};
+
+union AnimationStep D_800FDD04[] = {
+    { 0x17000001 },
+};
+
+union AnimationStep* D_800FDD08[8] = {
+    D_800FDCA0,
+    D_800FDCB8,
+    D_800FDCD0,
+    D_800FDCE0,
+    D_800FDCF8,
+    D_800FDCFC,
+    D_800FDD00,
+    D_800FDD04,
+};
+
+u8 D_800FDD28[4] = { 0x04, 0x05, 0x06, 0x07 };
+
+void (*D_800FDD2C[3])() = {
+    func_8005C860,
+    func_8005C960,
+    func_8005CADC,
+};
+
+struct Unk_unk68* D_800FDD38[2] = {
+    &D_800FDC80,
+    &D_800FDC84,
+};
+
+void (*D_800FDD40[7])() = {
+    func_8009216C,
+    func_8005CAFC,
+    func_8005CB08,
+    func_8005CC6C,
+    func_8005CDB0,
+    func_8005CE80,
+    func_8005CF60,
+};
+
+void (*D_800FDD5C[2])() = {
+    func_8005CB54,
+    func_8005CB90,
+};
+
+void (*D_800FDD64[6])() = {
+    func_8005CCA8,
+    func_8005CCFC,
+    func_8005CDEC,
+    func_8005CE50,
+    func_8005CEBC,
+    func_8005CF30,
+};
+
+void (*D_800FDD7C[3])() = {
+    func_8005CF9C,
+    func_8005D0A0,
+    func_8005D0D8,
+};

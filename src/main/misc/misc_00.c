@@ -52,3 +52,9 @@ void func_800C7B80(struct MainObj* arg0, s8 arg1)
         misc->y_pos = arg0->y_pos;
     }
 }
+
+void (*D_8010D9EC[])(struct MiscObj*) = {
+    func_800C7AB0,
+    func_800C7B0C,
+    func_800C7B60,
+};

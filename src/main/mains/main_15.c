@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[15]
 // 8004D930..8004E890
 #include "common.h"
+#include "func_tables.h"
 
 void func_8004D930(struct MainObj* arg0)
 {
@@ -225,3 +226,149 @@ void func_8004E830(struct MainObj* arg0)
         CollisionRelated(PLAYER_OBJECT(arg0));
     }
 }
+
+struct Unk_unk68 D_800FBA4C = { 0, 1, 11, 12 };
+
+struct Unk_unk68 D_800FBA50 = { -11, -16, 21, 29 };
+
+struct Unk_unk68 D_800FBA54 = { -12, -4, 21, 18 };
+
+union AnimationStep D_800FBA58[] = {
+    { 0x00000001 },
+};
+
+union AnimationStep D_800FBA5C[] = {
+    { 0x01010008 },
+    { 0x02010008 },
+    { 0x03010008 },
+    { 0x04010003 },
+    { 0x05010005 },
+    { 0x06010008 },
+    { 0x07010008 },
+    { 0x08010008 },
+    { 0x09010003 },
+    { 0x0AF70005 },
+};
+
+union AnimationStep D_800FBA84[] = {
+    { 0x00010006 },
+    { 0x0B01000A },
+    { 0x0C010102 },
+    { 0x0D010002 },
+    { 0x0E010003 },
+    { 0x0E000001 },
+};
+
+union AnimationStep D_800FBA9C[] = {
+    { 0x0F010002 },
+    { 0x10FF0002 },
+};
+
+union AnimationStep D_800FBAA4[] = {
+    { 0x11010003 },
+    { 0x0B01000A },
+    { 0x12010002 },
+    { 0x00010003 },
+    { 0x12010002 },
+    { 0x12000001 },
+};
+
+union AnimationStep D_800FBABC[] = {
+    { 0x00010006 },
+    { 0x12010001 },
+    { 0x13010002 },
+    { 0x14010102 },
+    { 0x15010001 },
+    { 0x16010002 },
+    { 0x17010002 },
+    { 0x18010002 },
+    { 0x17010002 },
+    { 0x18000001 },
+};
+
+union AnimationStep D_800FBAE4[] = {
+    { 0x18010006 },
+    { 0x17010001 },
+    { 0x16010002 },
+    { 0x15010002 },
+    { 0x14010001 },
+    { 0x13010002 },
+    { 0x12010002 },
+    { 0x00010002 },
+    { 0x12010002 },
+    { 0x00000001 },
+};
+
+union AnimationStep D_800FBB0C[] = {
+    { 0x00010006 },
+    { 0x19010006 },
+    { 0x1A010008 },
+    { 0x1B010102 },
+    { 0x1C010002 },
+    { 0x1D010002 },
+    { 0x0001000A },
+    { 0x00000001 },
+};
+
+union AnimationStep D_800FBB2C[] = {
+    { 0x1E010002 },
+    { 0x1F010002 },
+    { 0x20FE0002 },
+};
+
+union AnimationStep D_800FBB38[] = {
+    { 0x21000001 },
+};
+
+union AnimationStep D_800FBB3C[] = {
+    { 0x22000001 },
+};
+
+union AnimationStep D_800FBB40[] = {
+    { 0x23000001 },
+};
+
+union AnimationStep D_800FBB44[] = {
+    { 0x24000001 },
+};
+
+union AnimationStep D_800FBB48[] = {
+    { 0x25000001 },
+};
+
+union AnimationStep* D_800FBB4C[14] = {
+    D_800FBA58,
+    D_800FBA5C,
+    D_800FBA84,
+    D_800FBA9C,
+    D_800FBAA4,
+    D_800FBABC,
+    D_800FBAE4,
+    D_800FBB0C,
+    D_800FBB2C,
+    D_800FBB38,
+    D_800FBB3C,
+    D_800FBB40,
+    D_800FBB44,
+    D_800FBB48,
+};
+
+u8 D_800FBB84[4] = { 9, 10, 11, 12 };
+
+void (*D_800FBB88[6])() = {
+    func_8009216C,
+    func_8004E218,
+    func_8004DF40,
+    func_8004DFEC,
+    func_8004E128,
+    func_8004DEA0,
+};
+
+void (*D_800FBBA0[6])(struct MainObj*) = {
+    func_8004E55C,
+    func_8004E6A4,
+    func_8004E810,
+    func_8004E300,
+    func_8004E490,
+    func_8004D930,
+};

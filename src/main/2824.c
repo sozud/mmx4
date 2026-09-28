@@ -350,3 +350,44 @@ void func_800129F0(s32 arg0)
         func_80012740(2, func_80012A3C);
     }
 }
+
+#ifdef VERSION_JP
+char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";
+#else
+char D_800EE40C[36] = "CAPCOM Aug 19 1997 19:54:17 CAPCOM";
+#endif
+
+u16 D_800EE430[16] = {
+    0x2000,
+    0x8000,
+    0x1000,
+    0x4000,
+    0x0080,
+    0x0010,
+    0x0002,
+    0x0040,
+    0x0020,
+    0x0008,
+    0x0004,
+    0,
+    0,
+    0,
+    0,
+    0,
+};
+
+RECT D_800EE450 = { 0, 0, 1024, 512 };
+
+s32 D_800EE458 = 0;
+
+void (*D_800EE45C[9])() = {
+    func_80012740,
+    func_800127C8,
+    func_800127FC,
+    func_80012854,
+    func_800128B8,
+    func_800128EC,
+    func_80012910,
+    func_80012934,
+    func_8001293C,
+};

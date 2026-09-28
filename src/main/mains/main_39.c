@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[39]
 // 80061590..80061DC0
 #include "common.h"
+#include "func_tables.h"
 
 void func_80061590(struct MainObj* arg0)
 {
@@ -74,3 +75,56 @@ void func_80061D90(struct MainObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     func_8002B694(ANIMATED_OBJECT(arg0));
 }
+
+s8 D_800FE944[4] = { -16, -7, 29, 29 };
+
+s8 D_800FE948[4] = { -12, -5, 22, 26 };
+
+s8 D_800FE94C[4] = { 0, 0, 16, 26 };
+
+union AnimationStep D_800FE950[] = {
+    { 0x00010001 },
+    { 0x01010001 },
+    { 0x02FE0001 },
+};
+
+union AnimationStep D_800FE95C[] = {
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x05010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x05000101 },
+};
+
+union AnimationStep D_800FE974[] = {
+    { 0x07010003 },
+    { 0x08010003 },
+    { 0x09010003 },
+    { 0x0A010003 },
+    { 0x0B010003 },
+    { 0x0C010003 },
+    { 0x0D010003 },
+    { 0x06F90003 },
+};
+
+union AnimationStep* D_800FE994[4] = {
+    D_800FE950,
+    D_800FE95C,
+    D_800FE974,
+    NULL,
+};
+
+void (*D_800FE9A4[])(struct MainObj*) = {
+    func_800615CC,
+    func_8006185C,
+    func_800618F4,
+};
+
+void (*D_800FE9B0[3])(struct MainObj*) = {
+    func_80061918,
+    func_80061AA8,
+    func_80061D90,
+};
+
+void (*D_800FE9BC[3])(struct MainObj*) = { func_80061AE4, func_80061B58, func_80061D18 };

@@ -50,3 +50,10 @@ void func_800C9368(struct MiscObj* arg0)
     arg0->ext.misc_6.timer = 0;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
+
+void (*D_8010DC60[4])(struct MiscObj*) = {
+    func_800C91EC,
+    func_800C92B8,
+    func_800C92E0,
+    func_800C9368,
+};

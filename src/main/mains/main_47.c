@@ -2,6 +2,9 @@
 // 80066DAC..80067350
 #include "common.h"
 
+extern u16 D_800FF9F0[3][2];
+#include "func_tables.h"
+
 void func_80066DAC(struct MainObj* arg0)
 {
     D_800FFA0C[arg0->state](arg0);
@@ -10,8 +13,6 @@ void func_80066DAC(struct MainObj* arg0)
 INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066DE8);
 
 INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066F1C);
-
-extern u16 D_800FF9F0[][2];
 
 void func_800671D8(struct MainObj* self)
 {
@@ -69,3 +70,26 @@ void func_800672EC(struct MainObj* arg0)
     }
     arg0->unk42 &= 0x7FFF;
 }
+
+s8 D_800FF9C0[3][16] = {
+    { -47, -72, 29, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { -31, -39, 17, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { -31, -6, 17, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+};
+
+u16 D_800FF9F0[3][2] = { { -30, -61 }, { -24, -26 }, { -23, 8 } };
+
+u8 D_800FF9FC[4] = { 1, 2, 4, 0 };
+
+u8 D_800FFA00[4] = { 0x10, 0x20, 0x40, 0 };
+
+u8 D_800FFA04[8] = { 11, 12, 11, 12, 11, 12, 0, 0 };
+
+void (*D_800FFA0C[])(struct MainObj*) = {
+    func_80066DE8,
+    func_80066F1C,
+    func_800671D8,
+    func_800672BC,
+};
+
+void (*D_800FFA1C[3])() = { func_8009216C, func_800672D8, func_800672EC };

@@ -384,3 +384,65 @@ void func_80069660(struct MainObj* arg0)
         func_80015D60(arg0, 7);
     }
 }
+
+u8 D_800FFB60[] = { 0xF3, 0xEF, 0x1A, 0x25 };
+
+u8 D_800FFB64[] = { 0xF3, 0xEF, 0x1A, 0x22 };
+
+u8 D_800FFB68[] = {
+    0x11,
+    0x12,
+    0x13,
+    0x14,
+    0x15,
+    0x00,
+    0x00,
+    0x00,
+};
+
+s16 main49_activation_distances[4] = { 128, 144, 160, 0 };
+
+void (*D_800FFB78[])(struct MainObj*) = {
+    func_80068548,
+    func_800688B8,
+    func_80068A10,
+    func_80068A68,
+};
+
+void (*D_800FFB88[])(struct MainObj*) = {
+    (void (*)(struct MainObj*))func_8009216C,
+    func_80068B3C,
+    func_80068B44,
+    func_8006917C,
+    func_800692AC,
+    func_800693AC,
+    func_80069414,
+    func_80068CB0,
+};
+
+void (*D_800FFBA8[])(struct MainObj*) = {
+    func_80068B80,
+    func_80068C2C,
+};
+
+void (*D_800FFBB0[])(struct MainObj*) = {
+    func_80068CEC,
+    func_80068D4C,
+};
+
+void (*D_800FFBB8[])(struct MainObj*) = {
+    func_800691B8,
+    func_80069248,
+};
+
+void (*D_800FFBC0[])(struct MainObj*) = {
+    func_800692E8,
+    func_80069330,
+};
+
+void (*D_800FFBC8[])(struct MainObj*) = {
+    func_80069450,
+    func_8006951C,
+    func_80069610,
+    func_80069660,
+};

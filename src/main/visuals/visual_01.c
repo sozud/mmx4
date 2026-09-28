@@ -57,3 +57,8 @@ void func_800AEE5C(struct VisualObj* arg0, struct PlayerObj* arg1)
     }
     arg0->y_pos.i.hi = arg1->y_pos.i.hi + D_8010A1B4[arg1->unk2].y;
 }
+
+struct VisualAttachmentOffset D_8010A1B4[2] = {
+    { 0x20, 0x0C },
+    { 0x24, 0x0E },
+};

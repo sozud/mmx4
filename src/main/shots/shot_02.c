@@ -9,6 +9,41 @@ struct Shot2Hitbox {
     u8 height;
 };
 
+void (*D_80108CB8[])(struct ShotObj*) = { func_80099D10 };
+
+u8 D_80108CBC[4] = { 0xFC, 0xFC, 7, 8 };
+
+s8 D_80108CC0[2][2] = { { -0x12, -2 }, { 0x12, -2 } };
+
+void (*D_80108CC4[])(struct ShotObj*) = {
+    func_80099D54,
+    func_80099E34,
+    func_80099F28,
+};
+
+u8 D_80108CD0[4] = { 0xF7, 0xF5, 0x12, 0x13 };
+
+u8 D_80108CD4[4] = { 0xF6, 0xE5, 0x12, 0x1D };
+
+u8 D_80108CD8[4] = { 0, 0xFE, 8, 7 };
+
+u8 D_80108CDC[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
+
+void (*D_80108CE4[])(struct ShotObj*) = {
+    func_80099F48,
+    func_8009A10C,
+    func_8009A338,
+    func_8009A264,
+};
+
+u8 D_80108CF4[4] = { 0x8C, 0xB8, 0x96, 0x87 };
+
+void (*D_80108CF8[])(struct ShotObj*) = {
+    func_8009A448,
+    func_8009A4F4,
+    func_8009A598,
+};
+
 struct Shot2Hitbox D_80108D04[7] = {
     { -7, -9, 0x0F, 0x10 },
     { -29, -16, 0x15, 0x0C },
@@ -65,15 +100,12 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099F48);
 
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A10C);
 
-extern u8 D_80108CD4;
-extern u8 D_80108CDC;
-
 void func_8009A264(struct ShotObj* arg0)
 {
     if (arg0->unk5 == 0) {
-        arg0->unk50.data = &D_80108CD4;
+        arg0->unk50.data = D_80108CD4;
         func_80015D60(arg0, 0x18);
-        func_800C7DA4(8, &D_80108CDC, arg0, -1);
+        func_800C7DA4(8, D_80108CDC[0], arg0, -1);
         arg0->unk60 = 3;
         arg0->unk5 = (u8)arg0->unk5 + 1;
     } else {

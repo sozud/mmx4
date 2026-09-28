@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[69]
 // 80085F08..80088BA0
 #include "common.h"
+#include "func_tables.h"
 
 void colonel_update(struct MainObj* self)
 {
@@ -1159,3 +1160,428 @@ void colonel_spawn_afterimages(struct MainObj* self)
         previous = visual_obj;
     }
 }
+
+u8 D_801044A0[8] = { 3, 6, 4, 5, 255, 0, 0, 0 };
+
+u8 D_801044A8[8] = { 3, 4, 4, 5, 255, 0, 0, 0 };
+
+u8 D_801044B0[8] = { 3, 6, 4, 5, 7, 5, 255, 0 };
+
+u8 D_801044B8[8] = { 3, 6, 4, 5, 255, 0, 0, 0 };
+
+u8 D_801044C0[8] = { 3, 6, 7, 5, 8, 255, 0, 0 };
+
+u8 D_801044C8[8] = { 3, 4, 4, 5, 7, 5, 255, 0 };
+
+u8* D_801044D0[2] = {
+    D_801044A0,
+    D_801044A8,
+};
+
+u8* D_801044D8[2] = {
+    D_801044B0,
+    D_801044B8,
+};
+
+void* D_801044E0[3] = {
+    D_801044C0,
+    D_801044C8,
+    D_801044D0,
+};
+
+void* D_801044EC[2] = {
+    D_801044E0,
+    D_801044D8,
+};
+
+u8 D_801044F4[4] = { 0x07, 0x10, 0x09, 0x10 };
+
+struct Unk_unk68 D_801044F8 = { -1, -2, 16, 30 };
+
+struct Unk_unk68 D_801044FC = { -12, -38, 28, 66 };
+
+struct Unk_unk68 D_80104500 = { -4, -30, 14, 58 };
+
+struct Unk_unk68 D_80104504 = { -22, -13, 40, 43 };
+
+struct Unk_unk68 D_80104508 = { -29, -22, 47, 52 };
+
+struct Unk_unk68 D_8010450C = { -22, -13, 40, 43 };
+
+struct Unk_unk68 D_80104510 = { -29, -22, 47, 52 };
+
+union AnimationStep D_80104514[] = {
+    { 0x00000018 },
+};
+
+union AnimationStep D_80104518[] = {
+    { 0x01010002 },
+    { 0x0201000A },
+    { 0x03010002 },
+    { 0x04010002 },
+    { 0x05010004 },
+    { 0x06010004 },
+    { 0x07010004 },
+    { 0x08010004 },
+    { 0x09010006 },
+    { 0x0A010003 },
+    { 0x0B000002 },
+};
+
+struct Unk_unk68 D_80104544[3] = {
+    { 1, 0, 1, 12 },
+    { 1, 0, 1, 13 },
+    { 1, 0, -2, 14 },
+};
+
+struct Unk_unk68 D_80104550[6] = {
+    { 3, 0, 1, 15 },
+    { 5, 0, 1, 16 },
+    { 1, 1, 1, 16 },
+    { 1, 0, 1, 17 },
+    { 1, 0, 1, 18 },
+    { 1, 0, -2, 19 },
+};
+
+union AnimationStep D_80104568[] = {
+    { 0x14010006 },
+    { 0x15010002 },
+    { 0x16010002 },
+    { 0x17010101 },
+    { 0x18010002 },
+    { 0x19000004 },
+};
+
+union AnimationStep D_80104580[] = {
+    { 0x1A010006 },
+    { 0x1B010002 },
+    { 0x1C010002 },
+    { 0x1D010101 },
+    { 0x1E010002 },
+    { 0x1F010003 },
+    { 0x1F000001 },
+};
+
+struct Unk_unk68 D_8010459C[4] = {
+    { 4, 0, 1, 32 },
+    { 2, 0, 1, 33 },
+    { 2, 0, 1, 34 },
+    { 2, 0, -3, 35 },
+};
+
+union AnimationStep D_801045AC[] = {
+    { 0x24010002 },
+    { 0x2501000A },
+    { 0x26010002 },
+    { 0x27010002 },
+    { 0x28010003 },
+    { 0x28010101 },
+    { 0x29010004 },
+    { 0x2A010004 },
+    { 0x2B010004 },
+    { 0x2C010006 },
+    { 0x2D010003 },
+    { 0x2E010002 },
+    { 0x2F010003 },
+    { 0x3001000C },
+    { 0x31010002 },
+    { 0x32010002 },
+    { 0x33000008 },
+};
+
+union AnimationStep D_801045F0[] = {
+    { 0x2F010003 },
+    { 0x3000000C },
+};
+
+union AnimationStep D_801045F8[] = {
+    { 0x34010002 },
+    { 0x3500000C },
+};
+
+union AnimationStep D_80104600[] = {
+    { 0x36000018 },
+};
+
+union AnimationStep D_80104604[] = {
+    { 0x3D010002 },
+    { 0x3E010101 },
+    { 0x3E010001 },
+    { 0x37010002 },
+    { 0x38010002 },
+    { 0x37010002 },
+    { 0x3E010002 },
+    { 0x3D000002 },
+};
+
+union AnimationStep D_80104624[] = {
+    { 0x3D010002 },
+    { 0x3E010002 },
+    { 0x37010101 },
+    { 0x37010001 },
+    { 0x38010002 },
+    { 0x39010002 },
+    { 0x38010002 },
+    { 0x37010002 },
+    { 0x3E010002 },
+    { 0x3D000002 },
+};
+
+union AnimationStep D_8010464C[] = {
+    { 0x3D010002 },
+    { 0x3E010002 },
+    { 0x37010002 },
+    { 0x38010101 },
+    { 0x38010001 },
+    { 0x39010002 },
+    { 0x3A010002 },
+    { 0x3B010002 },
+    { 0x3C010002 },
+    { 0x3B010002 },
+    { 0x3A010002 },
+    { 0x39010002 },
+    { 0x38010002 },
+    { 0x37010002 },
+    { 0x3E010002 },
+    { 0x3D000002 },
+};
+
+struct Unk_unk68 D_8010468C[3] = {
+    { 2, 0, 1, 64 },
+    { 2, 0, 1, 65 },
+    { 2, 0, -2, 66 },
+};
+
+struct Unk_unk68 D_80104698[4] = {
+    { 1, 0, 1, 67 },
+    { 1, 0, 1, 68 },
+    { 1, 0, 1, 69 },
+    { 1, 0, -3, 70 },
+};
+
+struct Unk_unk68 D_801046A8[4] = {
+    { 1, 0, 1, 71 },
+    { 1, 0, 1, 72 },
+    { 1, 0, 1, 73 },
+    { 1, 0, -3, 74 },
+};
+
+struct Unk_unk68 D_801046B8[8] = {
+    { 1, 0, 1, 75 },
+    { 1, 0, 1, 76 },
+    { 1, 0, 1, 77 },
+    { 1, 0, 1, 78 },
+    { 1, 0, 1, 79 },
+    { 1, 0, 1, 80 },
+    { 1, 0, 1, 81 },
+    { 1, 0, -7, 82 },
+};
+
+struct Unk_unk68 D_801046D8[3] = {
+    { 1, 0, 1, 83 },
+    { 1, 0, 1, 84 },
+    { 1, 0, -2, 85 },
+};
+
+u8 D_801046E4[8] = { 2, 0, 1, 86, 3, 0, 255, 87 };
+
+struct Unk_unk68 D_801046EC[16] = {
+    { 1, 0, 1, 88 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 89 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 90 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 91 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 92 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 93 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 94 },
+    { 1, 0, 1, 100 },
+    { 1, 0, 1, 95 },
+    { 1, 0, -15, 100 },
+};
+
+struct Unk_unk68 D_8010472C[4] = {
+    { 1, 0, 1, 96 },
+    { 1, 0, 1, 97 },
+    { 2, 0, 1, 98 },
+    { 3, 0, -3, 99 },
+};
+
+union AnimationStep D_8010473C[] = {
+    { 0x04010002 },
+    { 0x05010004 },
+    { 0x06010003 },
+    { 0x06010101 },
+    { 0x07010004 },
+    { 0x08010004 },
+    { 0x09010008 },
+    { 0x0A010006 },
+    { 0x0B010005 },
+    { 0x0B000001 },
+};
+
+union AnimationStep D_80104764[] = {
+    { 0x0F010003 },
+    { 0x10000006 },
+};
+
+union AnimationStep D_8010476C[] = {
+    { 0x65000003 },
+};
+
+void* D_80104770[25] = {
+    D_80104514,
+    D_80104518,
+    D_80104544,
+    D_80104550,
+    D_80104568,
+    D_80104580,
+    D_8010459C,
+    D_801045AC,
+    D_801045F0,
+    D_801045F8,
+    D_80104600,
+    D_80104604,
+    D_80104624,
+    D_8010464C,
+    D_8010468C,
+    D_80104698,
+    D_801046A8,
+    D_801046B8,
+    D_801046D8,
+    D_801046E4,
+    D_801046EC,
+    D_8010472C,
+    D_8010473C,
+    D_80104764,
+    D_8010476C,
+};
+
+void (*colonel_state_funcs[3])() = {
+    colonel_spawn,
+    func_80086124,
+    colonel_death,
+};
+
+void (*colonel_spawn_funcs[2])(struct MainObj*) = {
+    colonel_spawn_warning,
+    func_80086008,
+};
+
+void (*colonel_step_funcs[9])() = {
+    func_8009216C,
+    colonel_start_fight,
+    colonel_intro,
+    colonel_guard,
+    colonel_teleport_slash,
+    colonel_dash,
+    colonel_saber_waves,
+    colonel_flash_strike,
+    colonel_jump_slam,
+};
+
+void (*colonel_death_funcs[2])() = {
+    colonel_defeat,
+    colonel_retreat,
+};
+
+void (*colonel_defeat_funcs[7])() = {
+    colonel_defeat_start,
+    colonel_defeat_fall,
+    colonel_defeat_next,
+    colonel_defeat_dialogue,
+    colonel_defeat_wait_dialogue,
+    colonel_defeat_blink,
+    colonel_defeat_wait_explosion,
+};
+
+void (*colonel_retreat_funcs[8])(struct MainObj*) = {
+    colonel_retreat_start,
+    colonel_retreat_vanish,
+    func_80086860,
+    colonel_retreat_reappear,
+    colonel_retreat_wait_dialogue,
+    colonel_retreat_start_again,
+    colonel_retreat_vanish_again,
+    colonel_retreat_finish,
+};
+
+void (*colonel_intro_funcs[2])() = {
+    colonel_intro_port,
+    colonel_intro_hall,
+};
+
+void (*colonel_intro_port_funcs[6])() = {
+    func_80086C00,
+    colonel_intro_port_flash,
+    colonel_intro_port_blink_in,
+    colonel_intro_port_pose,
+    colonel_intro_port_voice,
+    colonel_intro_port_fill_health,
+};
+
+void (*colonel_intro_hall_funcs[9])() = {
+    colonel_intro_hall_wait_player,
+    colonel_intro_hall_portrait_player,
+    colonel_intro_hall_dialogue,
+    colonel_intro_hall_portrait_colonel,
+    colonel_intro_hall_wait,
+    colonel_intro_hall_blink_in,
+    colonel_intro_hall_flash,
+    colonel_intro_hall_effect,
+    colonel_intro_hall_fill_health,
+};
+
+void (*colonel_guard_funcs[4])(struct MainObj*) = {
+    colonel_guard_pick,
+    colonel_guard_watch,
+    colonel_guard_block,
+    colonel_guard_recover,
+};
+
+void (*colonel_teleport_slash_funcs[4])(struct MainObj*) = {
+    colonel_teleport_slash_vanish,
+    colonel_teleport_slash_shake,
+    func_800877A4,
+    colonel_teleport_slash_swing,
+};
+
+void (*colonel_dash_funcs[3])(struct MainObj*) = {
+    colonel_dash_start,
+    func_80087A00,
+    colonel_dash_brake,
+};
+
+void (*colonel_saber_waves_funcs[6])(struct MainObj*) = {
+    colonel_saber_waves_start,
+    colonel_saber_waves_fire,
+    colonel_saber_waves_fire_high,
+    colonel_saber_waves_fire_last,
+    colonel_saber_waves_recover,
+    colonel_saber_waves_wait,
+};
+
+void (*colonel_flash_strike_funcs[9])(struct MainObj*) = {
+    colonel_flash_strike_vanish,
+    colonel_flash_strike_shake,
+    colonel_flash_strike_reappear,
+    colonel_flash_strike_slide,
+    func_800881F8,
+    colonel_flash_strike_flash,
+    func_800883CC,
+    colonel_flash_strike_wait,
+    colonel_flash_strike_recover,
+};
+
+void (*colonel_jump_slam_funcs[6])(struct MainObj*) = {
+    colonel_jump_slam_jump,
+    colonel_jump_slam_rise,
+    colonel_jump_slam_land,
+    colonel_jump_slam_drop,
+    colonel_jump_slam_shockwave,
+    colonel_jump_slam_recover,
+};

@@ -63,3 +63,16 @@ void func_800C9190(struct MiscObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
+
+void (*D_8010DC3C[6])(struct MiscObj*) = {
+    func_800C8FE4,
+    func_800C903C,
+    func_800C90A0,
+    func_800C90C0,
+    func_800C90F8,
+    func_800C9190,
+};
+
+s8 D_8010DC54[8] = { -19, -14, 0x13, -14, 0x11, 0x10, -18, 0x0E };
+
+u32 D_8010DC5C = 0;

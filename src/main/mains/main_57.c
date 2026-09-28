@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[57]
 // 80072194..800743FC
 #include "common.h"
+#include "func_tables.h"
 
 extern u8** frost_walrus_scripts[];
 extern u8 frost_walrus_script_weights[][4];
@@ -925,3 +926,648 @@ void frost_walrus_set_floor_tiles(s32 self)
         list++;
     }
 }
+
+u8 D_80100E50[4] = { 3, 6, 4, 255 };
+
+u8 D_80100E54[4] = { 3, 6, 5, 255 };
+
+u8 D_80100E58[4] = { 6, 4, 7, 255 };
+
+u8 D_80100E5C[4] = { 6, 5, 7, 255 };
+
+u8 D_80100E60[8] = { 6, 8, 8, 5, 255, 0, 0, 0 };
+
+u8 D_80100E68[4] = { 6, 8, 4, 255 };
+
+u8 D_80100E6C[4] = { 6, 7, 4, 255 };
+
+u8 D_80100E70[8] = { 6, 7, 7, 5, 255, 0, 0, 0 };
+
+u8 frost_walrus_script_recover_high[4] = { 4, 11, -1, 0 };
+
+u8 frost_walrus_script_recover_low[4] = { 9, 11, -1, 0 };
+
+u8* D_80100E80[4] = {
+    D_80100E50,
+    D_80100E50,
+    D_80100E54,
+    D_80100E54,
+};
+
+u8* D_80100E90[4] = {
+    D_80100E58,
+    D_80100E58,
+    D_80100E5C,
+    D_80100E5C,
+};
+
+u8* D_80100EA0[4] = {
+    D_80100E60,
+    D_80100E68,
+    D_80100E6C,
+    D_80100E70,
+};
+
+u8** frost_walrus_scripts[3] = {
+    D_80100EA0,
+    D_80100E90,
+    D_80100E80,
+};
+
+u8 frost_walrus_script_weights[3][4] = {
+    { 0x02, 0x0A, 0x0E, 0x10 },
+    { 0x05, 0x07, 0x0C, 0x10 },
+    { 0x05, 0x07, 0x0C, 0x10 },
+};
+
+union AnimationStep D_80100EC8[] = {
+    { 0x00000001 },
+};
+
+union AnimationStep D_80100ECC[] = {
+    { 0x00010002 },
+    { 0x01010002 },
+    { 0x15010002 },
+    { 0x1601000A },
+    { 0x15010002 },
+    { 0x00010001 },
+    { 0x00010101 },
+    { 0x17010301 },
+    { 0x17010001 },
+    { 0x18010002 },
+    { 0x17010002 },
+    { 0x18010002 },
+    { 0x17010008 },
+    { 0x00010001 },
+    { 0x00010201 },
+    { 0x01010002 },
+    { 0x15010002 },
+    { 0x1601000A },
+    { 0x15010002 },
+    { 0x00010002 },
+    { 0x17010301 },
+    { 0x17010001 },
+    { 0x18010002 },
+    { 0x17010002 },
+    { 0x18010002 },
+    { 0x17000008 },
+};
+
+u8 D_80100F34[44] = { 2, 0, 1, 0, 2, 0, 1, 1, 2, 0, 1, 21, 16, 0, 1, 22, 2, 0, 1, 21, 1, 1, 1, 4, 3, 0, 1, 4, 4, 0, 1, 5, 1, 2, 1, 6, 7, 0, 1, 6, 2, 0, 255, 7 };
+
+union AnimationStep D_80100F60[] = {
+    { 0x05010002 },
+    { 0x04010002 },
+    { 0x00000002 },
+};
+
+struct Unk_unk68 D_80100F6C[9] = {
+    { 2, 0, 1, 0 },
+    { 2, 0, 1, 1 },
+    { 2, 0, 1, 2 },
+    { 18, 0, 1, 3 },
+    { 1, 0, 1, 2 },
+    { 1, 1, 1, 2 },
+    { 1, 2, 1, 25 },
+    { 1, 0, 1, 25 },
+    { 2, 0, -2, 26 },
+};
+
+union AnimationStep D_80100F90[] = {
+    { 0x04010002 },
+    { 0x05010006 },
+    { 0x04010002 },
+    { 0x00000002 },
+};
+
+struct Unk_unk68 D_80100FA0[28] = {
+    { 3, 0, 1, 62 },
+    { 3, 0, 1, 63 },
+    { 12, 0, 1, 64 },
+    { 3, 0, 1, 65 },
+    { 2, 0, 1, 66 },
+    { 2, 0, 1, 67 },
+    { 2, 0, 1, 66 },
+    { 2, 0, 1, 67 },
+    { 2, 0, 1, 66 },
+    { 2, 0, 1, 67 },
+    { 2, 0, 1, 66 },
+    { 1, 1, 1, 67 },
+    { 29, 2, 1, 67 },
+    { 3, 0, 1, 66 },
+    { 3, 0, 1, 68 },
+    { 3, 0, 1, 69 },
+    { 12, 0, 1, 70 },
+    { 3, 0, 1, 71 },
+    { 2, 0, 1, 60 },
+    { 2, 0, 1, 61 },
+    { 2, 0, 1, 60 },
+    { 2, 0, 1, 61 },
+    { 2, 0, 1, 60 },
+    { 2, 0, 1, 61 },
+    { 2, 0, 1, 60 },
+    { 1, 1, 1, 61 },
+    { 29, 2, 1, 61 },
+    { 3, 0, -27, 60 },
+};
+
+union AnimationStep D_80101010[] = {
+    { 0x00010002 },
+    { 0x01010002 },
+    { 0x34000002 },
+};
+
+union AnimationStep D_8010101C[] = {
+    { 0x2F010002 },
+    { 0x2E010002 },
+    { 0x2D01000C },
+    { 0x2C000002 },
+};
+
+union AnimationStep D_8010102C[] = {
+    { 0x33010002 },
+    { 0x32010002 },
+    { 0x31010002 },
+    { 0x2F010002 },
+    { 0x2E010002 },
+    { 0x2D01000C },
+    { 0x2C000002 },
+};
+
+union AnimationStep D_80101048[] = {
+    { 0x35000001 },
+};
+
+union AnimationStep D_8010104C[] = {
+    { 0x36010001 },
+    { 0x37010001 },
+    { 0x36010001 },
+    { 0x37010001 },
+    { 0x36010001 },
+    { 0x37010001 },
+    { 0x36000001 },
+};
+
+union AnimationStep D_80101068[] = {
+    { 0x38000001 },
+};
+
+union AnimationStep D_8010106C[] = {
+    { 0x39000001 },
+};
+
+union AnimationStep D_80101070[] = {
+    { 0x3A000001 },
+};
+
+union AnimationStep D_80101074[] = {
+    { 0x3B000001 },
+};
+
+union AnimationStep D_80101078[] = {
+    { 0x20010002 },
+    { 0x1F010002 },
+    { 0x1E010002 },
+    { 0x1D010002 },
+    { 0x3301001E },
+    { 0x6A010002 },
+    { 0x6A010002 },
+    { 0x6A000002 },
+};
+
+union AnimationStep D_80101098[] = {
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x0301001E },
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x00000002 },
+};
+
+union AnimationStep D_801010B8[] = {
+    { 0x08000001 },
+};
+
+struct Unk_unk68 D_801010BC[7] = {
+    { 3, 0, 1, 72 },
+    { 3, 0, 1, 73 },
+    { 3, 0, 1, 74 },
+    { 3, 0, 1, 75 },
+    { 3, 0, 1, 76 },
+    { 3, 0, 1, 77 },
+    { 3, 0, -6, 78 },
+};
+
+u8 D_801010D8[8] = { 2, 0, 1, 33, 2, 0, 255, 34 };
+
+union AnimationStep D_801010E0[] = {
+    { 0x23010002 },
+    { 0x24010002 },
+    { 0x25010002 },
+    { 0x26010002 },
+    { 0x27010002 },
+    { 0x28010002 },
+    { 0x29010002 },
+    { 0x2A010002 },
+    { 0x2B000002 },
+};
+
+struct Unk_unk68 D_80101104[8] = {
+    { 2, 0, 1, 20 },
+    { 2, 0, 1, 27 },
+    { 18, 0, 1, 28 },
+    { 1, 0, 1, 27 },
+    { 1, 1, 1, 27 },
+    { 1, 2, 1, 107 },
+    { 1, 0, 1, 107 },
+    { 2, 0, -2, 108 },
+};
+
+u8 D_80101124[12] = { 2, 0, 1, 20, 2, 0, 1, 10, 2, 0, 255, 11 };
+
+union AnimationStep D_80101130[] = {
+    { 0x6A010002 },
+    { 0x6A010002 },
+    { 0x20010002 },
+    { 0x1F010002 },
+    { 0x1E010002 },
+    { 0x1D010002 },
+    { 0x6A01001E },
+    { 0x6A010002 },
+    { 0x6A010002 },
+    { 0x6A000002 },
+};
+
+union AnimationStep D_80101158[] = {
+    { 0x14010002 },
+    { 0x1B010002 },
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x1C010002 },
+    { 0x0301001E },
+    { 0x02010002 },
+    { 0x01010002 },
+    { 0x00000002 },
+};
+
+struct Unk_unk68 D_80101180[6] = {
+    { 5, 0, 1, 0 },
+    { 5, 0, 1, 1 },
+    { 5, 0, 1, 0 },
+    { 5, 0, 1, 4 },
+    { 13, 0, 1, 5 },
+    { 2, 0, -5, 4 },
+};
+
+union AnimationStep D_80101198[] = {
+    { 0x09000001 },
+};
+
+union AnimationStep D_8010119C[] = {
+    { 0x0C000001 },
+};
+
+union AnimationStep D_801011A0[] = {
+    { 0x50010003 },
+    { 0x51010003 },
+    { 0x52010003 },
+    { 0x53010006 },
+    { 0x54010006 },
+    { 0x55010006 },
+    { 0x56010006 },
+    { 0x57010006 },
+    { 0x58010006 },
+    { 0x59000006 },
+};
+
+union AnimationStep D_801011C8[] = {
+    { 0x61010002 },
+    { 0x62010002 },
+    { 0x63010002 },
+    { 0x64010002 },
+    { 0x65000102 },
+};
+
+union AnimationStep D_801011DC[] = {
+    { 0x61010002 },
+    { 0x62010002 },
+    { 0x66010002 },
+    { 0x67010002 },
+    { 0x68000102 },
+};
+
+union AnimationStep D_801011F0[] = {
+    { 0x5A000001 },
+};
+
+union AnimationStep D_801011F4[] = {
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5B010001 },
+    { 0x5C010001 },
+    { 0x5B000001 },
+};
+
+union AnimationStep D_80101210[] = {
+    { 0x5D010001 },
+    { 0x5E010001 },
+    { 0x5D010001 },
+    { 0x5E010001 },
+    { 0x5D010001 },
+    { 0x5E010001 },
+    { 0x5D000001 },
+};
+
+union AnimationStep D_8010122C[] = {
+    { 0x5F000001 },
+};
+
+union AnimationStep D_80101230[] = {
+    { 0x60000001 },
+};
+
+u8 D_80101234[8] = { 1, 0, 0, 105, 1, 0, 255, 106 };
+
+struct Unk_unk68 D_8010123C[24] = {
+    { 3, 0, 1, 62 },
+    { 3, 0, 1, 63 },
+    { 6, 0, 1, 64 },
+    { 3, 0, 1, 65 },
+    { 1, 1, 1, 66 },
+    { 1, 0, 1, 66 },
+    { 2, 0, 1, 67 },
+    { 2, 0, 1, 66 },
+    { 2, 0, 1, 67 },
+    { 2, 0, 1, 66 },
+    { 6, 0, 1, 67 },
+    { 3, 0, 1, 66 },
+    { 3, 0, 1, 68 },
+    { 3, 0, 1, 69 },
+    { 6, 0, 1, 70 },
+    { 3, 0, 1, 71 },
+    { 1, 1, 1, 60 },
+    { 1, 0, 1, 60 },
+    { 2, 0, 1, 61 },
+    { 2, 0, 1, 60 },
+    { 2, 0, 1, 61 },
+    { 2, 0, 1, 60 },
+    { 6, 0, 1, 61 },
+    { 3, 0, -23, 60 },
+};
+
+void* frost_walrus_animations[39] = {
+    D_80100EC8,
+    D_80100ECC,
+    D_80100F34,
+    D_80100F60,
+    D_80100F6C,
+    D_80100F90,
+    D_80100FA0,
+    D_80101010,
+    D_8010101C,
+    D_8010102C,
+    D_80101048,
+    D_8010104C,
+    D_80101068,
+    D_8010106C,
+    D_80101070,
+    D_80101074,
+    D_80101078,
+    D_80101098,
+    D_801010B8,
+    D_801010BC,
+    D_801010D8,
+    D_801010E0,
+    D_80101104,
+    D_80101124,
+    D_80101130,
+    D_80101158,
+    D_80101180,
+    D_80101198,
+    D_8010119C,
+    D_801011A0,
+    D_801011C8,
+    D_801011DC,
+    D_801011F0,
+    D_801011F4,
+    D_80101210,
+    D_8010122C,
+    D_80101230,
+    D_80101234,
+    D_8010123C,
+};
+
+struct Unk_unk68 D_80101338 = { 0, 23, 46, 43 };
+
+struct Unk_unk68 D_8010133C = { -47, -39, 96, 110 };
+
+struct Unk_unk68 D_80101340 = { -67, -4, -120, 75 };
+
+struct Unk_unk68 D_80101344 = { -37, -28, 79, 98 };
+
+struct Unk_unk68 D_80101348 = { -55, -9, 112, 80 };
+
+s16 frost_walrus_burst_offsets[20][2] = {
+    { -78, -6 },
+    { -46, 2 },
+    { -23, 2 },
+    { -46, 13 },
+    { -43, 27 },
+    { 14, 13 },
+    { 17, 24 },
+    { 47, -6 },
+    { -87, -7 },
+    { -64, -7 },
+    { -52, -12 },
+    { -19, -12 },
+    { -52, 10 },
+    { -19, 10 },
+    { 31, -4 },
+    { 57, -4 },
+    { 20, 36 },
+    { 17, 2 },
+    { -49, 2 },
+    { -37, 33 },
+};
+
+u8 frost_walrus_burst_subtypes[32] = { 0x00, 0x01, 0x01, 0x03, 0x03, 0x02, 0x02, 0x00, 0x00, 0x00, 0x03, 0x02, 0x03, 0x02, 0x00, 0x00, 0x02, 0x02, 0x03, 0x03, 0x0C, 0x0D, 0x0E, 0x0F, 0x0D, 0x0F, 0x0C, 0x0E, 0x0D, 0x0F, 0x00, 0x00 };
+
+struct Unk_unk68 D_801013BC[3] = {
+    { 12, 13, 35, 15 },
+    { 35, 15, 36, 14 },
+    { 36, 15, 0, 0 },
+};
+
+u16 frost_walrus_floor_tiles[18] = {
+#ifdef VERSION_JP
+    0x0387,
+    0x055B,
+    0x038C,
+    0x0720,
+    0x0722,
+    0x0724,
+    0x06BB,
+    0x03A2,
+    0x03A6,
+    0x03AE,
+    0x03B1,
+    0x03B9,
+    0x03C0,
+    0x0388,
+    0x063A,
+    0x0388,
+#else
+    0x0388,
+    0x055D,
+    0x038D,
+    0x0722,
+    0x0724,
+    0x0726,
+    0x068D,
+    0x03A3,
+    0x03A7,
+    0x03AF,
+    0x03B2,
+    0x03BA,
+    0x03C2,
+    0x03C1,
+    0x0389,
+    0x063C,
+#endif
+    0x0000,
+    0x0000,
+};
+
+u16 frost_walrus_floor_tiles_rush[20] = {
+    0x0383,
+    0x03A0,
+    0x0390,
+    0x0392,
+    0x0394,
+    0x0396,
+    0x0380,
+    0x0562,
+    0x038D,
+    0x03C3,
+    0x03AC,
+    0x03AF,
+    0x03B2,
+    0x03B5,
+    0x0388,
+    0x038D,
+    0x0563,
+    0x03AC,
+    0x0000,
+    0x0000,
+};
+
+void (*frost_walrus_state_funcs[3])() = {
+    frost_walrus_start,
+    func_80072418,
+    frost_walrus_death,
+};
+
+void (*frost_walrus_start_funcs[2])(struct MainObj*) = {
+    frost_walrus_start_warning,
+    func_800722A0,
+};
+
+void (*frost_walrus_step_funcs[12])() = {
+    func_8009216C,
+    frost_walrus_reset,
+    frost_walrus_intro,
+    frost_walrus_think,
+    frost_walrus_charge,
+    frost_walrus_leap,
+    frost_walrus_walk,
+    frost_walrus_shards,
+    frost_walrus_breath,
+    frost_walrus_blizzard,
+    frost_walrus_stagger,
+    frost_walrus_regrow,
+};
+
+void (*frost_walrus_death_funcs[3])() = {
+    func_80072628,
+    frost_walrus_death_explode,
+    func_800727C0,
+};
+
+void (*frost_walrus_intro_funcs[6])(struct MainObj*) = {
+    frost_walrus_intro_walk,
+    frost_walrus_intro_approach,
+    frost_walrus_intro_roar,
+    func_80072A84,
+    frost_walrus_intro_start_health_bar,
+    frost_walrus_intro_fill_health,
+};
+
+void (*frost_walrus_think_funcs[2])() = {
+    frost_walrus_think_next,
+    frost_walrus_think_pause,
+};
+
+void (*frost_walrus_charge_funcs[6])(struct MainObj*) = {
+    frost_walrus_charge_start,
+    frost_walrus_charge_windup,
+    frost_walrus_charge_run,
+    frost_walrus_charge_slide,
+    frost_walrus_charge_recover,
+    frost_walrus_charge_finish,
+};
+
+void (*frost_walrus_leap_funcs[6])(struct MainObj*) = {
+    frost_walrus_leap_start,
+    frost_walrus_leap_windup,
+    frost_walrus_leap_jump,
+    frost_walrus_leap_air,
+    frost_walrus_leap_recover,
+    frost_walrus_leap_finish,
+};
+
+void (*frost_walrus_walk_funcs[2])() = {
+    frost_walrus_walk_start,
+    frost_walrus_walk_stomp,
+};
+
+void (*frost_walrus_shards_funcs[6])() = {
+    frost_walrus_shards_start,
+    frost_walrus_shards_count,
+    frost_walrus_shards_fire,
+    frost_walrus_shards_repeat,
+    frost_walrus_shards_finish,
+    frost_walrus_shards_wait,
+};
+
+void (*frost_walrus_breath_funcs[5])() = {
+    frost_walrus_breath_start,
+    frost_walrus_breath_blow,
+    frost_walrus_breath_wait,
+    frost_walrus_breath_launch,
+    frost_walrus_breath_finish,
+};
+
+void (*frost_walrus_blizzard_funcs[5])() = {
+    frost_walrus_blizzard_start,
+    frost_walrus_blizzard_blow,
+    frost_walrus_blizzard_wait,
+    frost_walrus_blizzard_finish,
+    frost_walrus_blizzard_idle,
+};
+
+void (*frost_walrus_stagger_funcs[4])() = {
+    func_80073E80,
+    frost_walrus_stagger_fall,
+    frost_walrus_stagger_slide,
+    frost_walrus_stagger_recover,
+};
+
+void (*frost_walrus_regrow_funcs[2])() = {
+    frost_walrus_regrow_start,
+    frost_walrus_regrow_finish,
+};

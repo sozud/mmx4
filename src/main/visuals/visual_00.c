@@ -74,3 +74,8 @@ void (*D_8010A1A0[])(struct VisualObj*, struct PlayerObj*) = {
     func_800AEBA8,
     func_800AEC48,
 };
+
+struct VisualAttachmentOffset D_8010A1AC[2] = {
+    { 0x0A, 0x11 },
+    { 0x0A, 0x19 },
+};
