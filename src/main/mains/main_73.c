@@ -61,7 +61,7 @@ void double_intro_fill_health(struct MainObj* self)
             self->unk7 = 0;
             self->unk61 = 0;
             self->ext.main_73.cycle_step = 0;
-            func_80036B18();
+            player_end_script_action();
             return;
         }
         func_80015DC8(ANIMATED_OBJECT(self));
@@ -497,7 +497,7 @@ void double_death_start(struct MainObj* self)
     } else {
         self->unk15 = 0;
     }
-    func_80036AE4(0x14, var_a1);
+    player_start_script_action(0x14, var_a1);
     self->unk5 = 1;
     self->unk2C = FIXED(0.2578125);
     self->unk28 = 0;

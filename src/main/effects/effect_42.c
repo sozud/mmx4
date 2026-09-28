@@ -26,7 +26,7 @@ void func_800BE30C(struct EffectObj* arg0)
 
 void func_800BE32C(struct EffectObj* arg0)
 {
-    if (g_Player.unkBC == 0) {
+    if (g_Player.update_delay == 0) {
         arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
         arg0->unk5++;
     }
@@ -75,7 +75,7 @@ void func_800BE4D4(struct EffectObj* arg0)
 
 void func_800BE510(struct EffectObj* arg0)
 {
-    if (g_Player.unkBC == 0) {
+    if (g_Player.update_delay == 0) {
         arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
         ZeroObjectState(OBJECT_HEADER(arg0));
     }

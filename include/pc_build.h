@@ -7,7 +7,7 @@ struct UnkObj* find_free_unk_obj(void);
 void func_80012024(void);
 void update_misc_objects(void);
 s32 func_8002D1F8(struct PlayerObj*, u8, s32);
-s32 func_800380F0(struct PlayerObj*, s8);
+s32 player_set_charge_flash(struct PlayerObj*, s8);
 s32 func_8001E850(u8*, u8);
 
 void _SsNoteOn(s16, s16, u8, u8);
@@ -17,6 +17,8 @@ void _SsContMainVol(s16, s16, u8);
 void _SsContRpn1(s16, s16, u8);
 
 void mmx4_pc_input_update(u8* pad_buffer);
+u16 mmx4_pc_player_poke_input(void);
+extern int mmx4_pc_hide_background;
 unsigned long mmx4_pc_frame_number(void);
 int mmx4_pc_write_state_screenshot(unsigned long transition,
     unsigned long frame_number, u32 game_state, u32 engine_state);

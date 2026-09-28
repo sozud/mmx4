@@ -12,7 +12,7 @@ void func_800D2420(struct MiscObj* arg0)
         if (g_Player.x_pos.i.hi >= 0x911) {
             arg0->unk6++;
             background_objects[0].unk26 = 0x8C0;
-            func_80036AE4(0x14, 0x40);
+            player_start_script_action(0x14, 0x40);
         }
     } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
         arg0->unk6 = 0;
@@ -161,7 +161,7 @@ void func_800D2970(struct MiscObj* arg0)
     timer = arg0->ext.misc_52.timer - 1;
     arg0->ext.misc_52.timer = timer;
     if (timer == 0) {
-        func_80036B18();
+        player_end_script_action();
         func_8002B108(OBJECT_HEADER(arg0));
     }
 }

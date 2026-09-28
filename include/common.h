@@ -338,7 +338,7 @@ struct BootTransitionDataRegion {
 } __attribute__((packed));
 
 extern struct MissionSelectData D_800F474C;
-extern union PlayerChargeData D_800F8BE0;
+extern union PlayerChargeData player_weapon_energy;
 
 union AnimationStep {
     u32 packed;
@@ -368,6 +368,84 @@ enum {
     PLAYER_CHARGE_NONE,
     PLAYER_CHARGE_PARTIAL,
     PLAYER_CHARGE_FULL,
+};
+
+enum PlayerState {
+    PLAYER_STATE_INIT,
+    PLAYER_STATE_NORMAL,
+    PLAYER_STATE_DEATH,
+    PLAYER_STATE_INACTIVE,
+};
+
+enum PlayerAction {
+    PLAYER_BEAM_IN,
+    PLAYER_BEAM_OUT,
+    PLAYER_IDLE,
+    PLAYER_WALK_START,
+    PLAYER_WALK,
+    PLAYER_SETTLE,
+    PLAYER_JUMP,
+    PLAYER_FALL,
+    PLAYER_LAND,
+    PLAYER_WALL_CLING,
+    PLAYER_WALL_JUMP,
+    PLAYER_WALL_SLIDE,
+    PLAYER_DASH,
+    PLAYER_AIR_DASH,
+    PLAYER_LADDER_TRANSITION,
+    PLAYER_LADDER_UP,
+    PLAYER_LADDER_DOWN,
+    PLAYER_HURT,
+    PLAYER_RIDE,
+    PLAYER_CAPSULE,
+    PLAYER_SCRIPT_WAIT,
+    PLAYER_SCRIPT_WALK,
+    PLAYER_SCRIPT_VANISH,
+    PLAYER_SCRIPT_JUMP,
+    PLAYER_SCRIPT_VICTORY,
+    PLAYER_STAGE_CLEAR,
+    PLAYER_LADDER_SHOOT = 0x20,
+    PLAYER_HOVER,
+    PLAYER_NOVA_STRIKE,
+    PLAYER_SOUL_BODY,
+    PLAYER_SOUL_BODY_CLONE,
+    PLAYER_SOUL_BODY_VANISH,
+    PLAYER_WEAPON_POSE,
+    PLAYER_RISING_FIRE,
+    PLAYER_RISING_FIRE_CHARGED,
+    PLAYER_ZERO_SABER = 0x30,
+    PLAYER_ZERO_JUMP_SLASH,
+    PLAYER_ZERO_FALL_SLASH,
+    PLAYER_ZERO_LADDER_SLASH,
+    PLAYER_ZERO_WALL_SLASH,
+    PLAYER_ZERO_RAIJINGEKI,
+    PLAYER_ZERO_HYOURETSUZAN,
+    PLAYER_ZERO_SPIN_JUMP_SLASH,
+    PLAYER_ZERO_SPIN_FALL_SLASH,
+    PLAYER_ZERO_RYUENJIN,
+    PLAYER_ZERO_RAKUHOUHA,
+    PLAYER_ZERO_SHIPPUUGA,
+};
+
+enum PlayerInput {
+    PLAYER_INPUT_RIGHT = 0x1,
+    PLAYER_INPUT_LEFT = 0x2,
+    PLAYER_INPUT_UP = 0x4,
+    PLAYER_INPUT_DOWN = 0x8,
+    PLAYER_INPUT_SHOOT = 0x10,
+    PLAYER_INPUT_SPECIAL = 0x20,
+    PLAYER_INPUT_GIGA = 0x40,
+    PLAYER_INPUT_JUMP = 0x80,
+    PLAYER_INPUT_DASH = 0x100,
+    PLAYER_INPUT_NEXT_WEAPON = 0x200,
+    PLAYER_INPUT_PREVIOUS_WEAPON = 0x400,
+};
+
+enum PlayerCollision {
+    PLAYER_COLLIDE_RIGHT = 0x1,
+    PLAYER_COLLIDE_LEFT = 0x2,
+    PLAYER_COLLIDE_CEILING = 0x4,
+    PLAYER_COLLIDE_GROUND = 0x8,
 };
 
 MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u32));
@@ -1521,23 +1599,23 @@ union PlayerUnk88 {
 struct PlayerObj {
     ANIMATED_OBJ_FIELDS
     s8 unk49;
-    s8 unk4A;
+    s8 wall_climbable;
     s8 pad4B[0x50 - 0x4B];
     void* unk50;
     const u32* unk54;
     void* unk58;
-    s8 unk5C;
-    s8 unk5D;
+    s8 hp;
+    s8 hud_hp;
     s8 unk5E;
     s8 unk5F;
     s8 unk60;
-    s8 unk61;
+    s8 invincibility_timer;
     s8 unk62;
-    s8 unk63;
+    s8 hurt_type;
     s8 unk64;
     s8 unk65;
     s8 unk66;
-    s8 unk67;
+    s8 air_state;
     struct Unk_unk68* unk68;
     s16 unk6C;
     s16 unk6E;
@@ -1550,8 +1628,8 @@ struct PlayerObj {
     s8 unk76;
     s8 unk77;
     s8 unk78;
-    s8 unk79;
-    s8 unk7A;
+    s8 touching_spikes;
+    s8 spike_immune;
     union {
         u32 history;
     struct {
@@ -1566,70 +1644,70 @@ struct PlayerObj {
     } bytes;
 } input;
     u16 pressed_input;
-    u16 unk82;
-    s8 unk84;
-    s8 unk85;
-    s8 unk86;
-    s8 unk87;
+    u16 double_tap_direction;
+    s8 dash_momentum;
+    s8 dash_timer;
+    s8 air_action;
+    s8 double_tap_dash;
     union PlayerUnk88 unk88;
     union PlayerUnk8A unk8A;
-    s8 unk8C;
+    s8 afterimage;
     u8 unk8D;
-    s8 unk8E;
-    s8 unk8F;
-    s8 unk90;
-    u8 unk91;
-    u8 unk92;
-    s8 unk93;
-    s8 unk94[2];
-    s8 unk96;
-    s8 unk97;
-    s8 unk98;
-    s8 unk99;
-    s8 unk9A;
+    s8 attacking;
+    s8 shot_fired;
+    s8 attack_ended;
+    u8 attack_pose_timer;
+    u8 shot_cooldown;
+    s8 weapon;
+    s8 shot_types[2];
+    s8 shot_type;
+    s8 last_shot_type;
+    s8 shot_count;
+    s8 special_shot_count;
+    s8 shot_cycle;
     PlayerChargeState charge_state[2];
-    u8 unk9D;
-    u8 unk9E;
-    s8 unk9F;
-    s8 unkA0;
-    s8 unkA1;
-    s8 unkA2;
+    u8 charge_timer;
+    u8 special_charge_timer;
+    s8 flash_delay;
+    s8 flash_phase;
+    s8 flash_palette;
+    s8 shot_palette_timer;
     s8 : 8;
-    s8 unkA4;
-    s8 unkA5;
-    s8 unkA6;
-    s8 unkA7;
-    s8 charge_levels[0x10];
-    u8 unkB8;
-    s8 unkB9;
-    s8 unkBA;
-    s8 unkBB;
-    s8 unkBC;
-    s8 unkBD;
-    s8 unkBE;
-    s8 unkBF;
-    s8 unkC0;
-    s8 unkC1;
-    s8 unkC2;
-    s8 unkC3;
-    s8 unkC4;
-    s8 unkC5;
+    s8 hurt_phase;
+    s8 hit_facing;
+    s8 stock_charge;
+    s8 armor_parts;
+    s8 weapon_energy[0x10];
+    u8 arm_type;
+    s8 boss_flags;
+    s8 stun_timer;
+    s8 combo;
+    s8 update_delay;
+    s8 update_delay_request;
+    s8 beam_in_delay;
+    s8 actions_reset;
+    s8 script_state;
+    s8 script_action;
+    s8 script_facing;
+    s8 input_locked;
+    s8 capsule_state;
+    s8 ride_state;
     s8 unkC6;
-    s8 unkC7;
+    s8 death_timer;
     struct MainObj* weapon_06_slots[3];
-    s8 unkD4;
-    u8 unkD5;
-    u8 unkD6;
-    s8 unkD7;
+    s8 ride_animation;
+    u8 hover_timer;
+    u8 hover_bob;
+    s8 voice_timer;
     s8 : 8;
-    s8 unkD9;
-    u16 unkDA;
-    union PlayerUnkDC unkDC;
-    s8 unkDE;
+    s8 is_clone;
+    u16 clone_timer;
+    union PlayerUnkDC clone_offset;
+    s8 controlling_clone;
     s8 unkDF;
-    s8 unkE0;
-    s8 unkE1;
-    u8 unkE2;
+    s8 nova_strike_active;
+    s8 nova_strike_timer;
+    u8 item_step;
     s8 : 8;
 }; // size 0xE4
 
@@ -2639,15 +2717,15 @@ struct RideArmorObj {
         MMX4_OFFSET_OF(struct RideArmorObj, ride_field) == MMX4_OFFSET_OF(struct PlayerObj, player_field))
 ASSERT_RIDE_ARMOR_FIELD(unk49, unk49);
 ASSERT_RIDE_ARMOR_FIELD(unk50, unk50);
-ASSERT_RIDE_ARMOR_FIELD(unk5C, unk5C);
+ASSERT_RIDE_ARMOR_FIELD(unk5C, hp);
 ASSERT_RIDE_ARMOR_FIELD(unk68, unk68);
 ASSERT_RIDE_ARMOR_FIELD(unk70, unk70);
-ASSERT_RIDE_ARMOR_FIELD(unk7A, unk7A);
+ASSERT_RIDE_ARMOR_FIELD(unk7A, spike_immune);
 ASSERT_RIDE_ARMOR_FIELD(unk7C, input);
 ASSERT_RIDE_ARMOR_FIELD(unk80, pressed_input);
 ASSERT_RIDE_ARMOR_FIELD(collision_flags, unk88);
 ASSERT_RIDE_ARMOR_FIELD(unk8A, unk8A);
-ASSERT_RIDE_ARMOR_FIELD(unk8E, unk8E);
+ASSERT_RIDE_ARMOR_FIELD(unk8E, attacking);
 #undef ASSERT_RIDE_ARMOR_FIELD
 #ifndef MMX4_PC
 MMX4_STATIC_ASSERT(psx_ride_armor_size, sizeof(struct RideArmorObj) == 0xB0);
@@ -3695,8 +3773,8 @@ struct RectPtrPair {
 
 extern struct QuadObj g_QuadObjects[0x20];
 extern struct ArchivePathData D_800EE54C;
-extern u8 D_800F8B30[];
-extern u8 D_800F8B34[][4];
+extern u8 player_leap_fall_animations[];
+extern u8 player_jump_voices[][4];
 extern u8 frost_walrus_script_recover_high[4];
 extern u8 frost_walrus_script_recover_low[4];
 extern u16 frost_walrus_floor_tiles[18];
@@ -3705,22 +3783,22 @@ extern s16 frost_walrus_burst_offsets[20][2];
 extern u8 frost_walrus_burst_subtypes[32];
 extern void* jet_stingray_animations[45];
 extern void* cyber_peacock_animations[38];
-extern struct Unk_unk68 D_800F8BC4;
-extern struct Unk_unk68 D_800F8BC8;
+extern struct Unk_unk68 player_x_collision_bounds;
+extern struct Unk_unk68 player_zero_collision_bounds;
 extern struct Unk_unk68 D_800F9124;
-extern s8 D_800F8BF8[];
-extern s8 D_800F8C10[];
-extern s8 D_800F8C28[];
-struct PlayerModeTiming {
-    u8 first;
-    u8 second;
+extern s8 player_shot_has_pose[];
+extern s8 player_shot_is_special_weapon[];
+extern s8 player_shot_is_charged_special[];
+struct PlayerShotTiming {
+    u8 pose_time;
+    u8 cooldown;
 };
-extern struct PlayerModeTiming D_800F8C4C[];
-extern s8 D_800F8CCC[];
-extern s8 D_800F8CE4[];
-extern s8 D_800F8CFC[];
-extern s8 D_800F8D14[];
-extern u8 D_800F8D44[];
+extern struct PlayerShotTiming player_shot_timings[];
+extern s8 player_shot_limits[];
+extern s8 player_shot_waits_for_specials[];
+extern s8 player_shot_counts_as_shot[];
+extern s8 player_shot_counts_as_special[];
+extern u8 player_ladder_shoot_animations[];
 extern struct VisualAttachmentOffset D_8010A1AC[2];
 extern struct VisualAttachmentOffset D_8010A1B4[2];
 extern struct VisualAttachmentInit D_8010A1BC[4];
@@ -3949,7 +4027,7 @@ extern struct Unk_unk68 D_800FEE30;
 extern struct Unk_unk68 D_800FEE34;
 extern struct Unk_unk68 D_80103F08;
 extern struct Unk_unk68 D_80103F0C;
-extern s8 D_800F8D78[16];
+extern s8 player_hover_bob[16];
 extern struct Unk_unk68 D_80108944[];
 extern struct Unk_unk68 D_80108948[];
 extern u8 D_800FD1D0[];
@@ -4169,7 +4247,7 @@ extern u16 D_80166C08;
 extern u16 D_80166C0A;
 extern s8 D_800F8BE9[];
 extern u8 D_800FB0EC[8];
-extern u8 D_800F8BA4[4][8];
+extern u8 player_death_orb_directions[4][8];
 extern u8 D_800FD594[];
 extern void (*dragonfly_step_funcs[])();
 #ifdef MMX4_PC
@@ -4508,9 +4586,9 @@ extern s16 D_800FFAD8[];
 #include "func_tables.h"
 
 s32 func_80034E2C();
-void func_80034F7C(struct PlayerObj*);
+void player_start_stage_clear(struct PlayerObj*);
 s16 func_8002BAA4(void);
-void func_80036470(s8);
+void player_damage(s8);
 void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
@@ -4527,11 +4605,11 @@ void func_8001B7C0(s16 x, s16 y, u8 arg2);
 void func_8001C210(void);
 void func_8001C30C(struct MemcardSaveSlot*);
 void func_8001C008(s32, s32);
-s32 func_800350A4(struct PlayerObj*, s32);
-void func_80035048(struct PlayerObj*);
-void func_8003443C(struct PlayerObj*);
-void func_80034150(struct PlayerObj*);
-void func_80035EA4(struct PlayerObj*);
+s32 player_set_animation(struct PlayerObj*, s32);
+void player_enter_beam_out(struct PlayerObj*);
+void player_enter_stand(struct PlayerObj*);
+void player_script_walk_to_mark(struct PlayerObj*);
+void player_set_collision_bounds(struct PlayerObj*);
 void func_80046AA4(struct MainObj* arg0);
 void func_8004D6FC(struct MainObj* arg0);
 void func_8004FBF4(struct MainObj*);
@@ -4541,21 +4619,21 @@ extern u8 D_800FB9F4[];
 extern char D_800FF99C[8];
 extern struct Unk_unk68 D_800FBBB8;
 extern u8 D_800FBD80[12];
-extern u16 D_800F8B50[2][4];
-extern u16 D_800F8B60[6];
-extern u16 D_800F8B6C[20];
-extern u16 D_800F8BCC[6];
-void func_80036534(struct PlayerObj*);
+extern u16 player_stage_3_entry_y[2][4];
+extern u16 player_stage_6_entry_y[6];
+extern u16 player_stage_12_entry_y[20];
+extern u16 player_dash_effect_offsets[6];
+void player_set_idle_animation(struct PlayerObj*);
 void func_800CEFC0(struct MiscObj*);
 void func_800CF0B0(struct MiscObj*);
-void func_8003516C(struct PlayerObj*, s32, s32);
-void func_80034BDC(struct PlayerObj*);
-void func_80034CB0(struct PlayerObj*);
-void func_80036088(struct PlayerObj*);
-void func_800363B8(struct PlayerObj*, u8);
-struct WeaponObj* func_80036DA0(s8, s8, s8, struct PlayerObj*);
+void player_set_animation_frame(struct PlayerObj*, s32, s32);
+void player_enter_ladder_grab(struct PlayerObj*);
+void player_enter_ladder_climb_on_top(struct PlayerObj*);
+void player_clear_dash_and_attack(struct PlayerObj*);
+void player_play_voice(struct PlayerObj*, u8);
+struct WeaponObj* player_spawn_weapon(s8, s8, s8, struct PlayerObj*);
 void func_80037484(struct PlayerObj*, s32);
-void func_80038748(struct PlayerObj*);
+void player_set_shoot_animation(struct PlayerObj*);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
 s32 func_8002B780(void);
 s32 func_8002938C();
@@ -4586,22 +4664,22 @@ void func_8004D84C(struct AnimatedObj*);
 void func_8004D6CC(struct AnimatedObj*);
 void func_80094154(struct WeaponObj*);
 void func_8001653C(void);
-s32 func_80033694(struct PlayerObj*);
+s32 player_check_dash_input(struct PlayerObj*);
 s32 func_80033FF0(struct PlayerObj*);
-void func_80034538(struct PlayerObj*);
-void func_80034668(struct PlayerObj*);
-void func_80034754(struct PlayerObj*);
-void func_800347D0(struct PlayerObj*);
-void func_8003484C(struct PlayerObj*);
-void func_8003490C(struct PlayerObj*);
-void func_80034968(struct PlayerObj*);
-void func_80034D64(struct PlayerObj*);
-void func_80036A94(struct PlayerObj*);
-void func_800366C0(struct PlayerObj*);
-void func_800367F8(struct PlayerObj*);
-void func_80036E98(struct PlayerObj*);
-s32 func_80039AC8(struct PlayerObj*);
-s32 func_8003A000(struct PlayerObj*);
+void player_enter_jump(struct PlayerObj*);
+void player_enter_land(struct PlayerObj*);
+void player_enter_dash(struct PlayerObj*);
+void player_enter_dash_end(struct PlayerObj*);
+void player_enter_air_dash(struct PlayerObj*);
+void player_enter_fall_shooting(struct PlayerObj*);
+void player_enter_wall_cling(struct PlayerObj*);
+void player_enter_ladder_up(struct PlayerObj*);
+void player_spawn_wall_slide_dust(struct PlayerObj*);
+void player_spawn_dash_spark(struct PlayerObj*);
+void player_spawn_dash_splash(struct PlayerObj*);
+void player_reset_weapon(struct PlayerObj*);
+s32 player_zero_check_ladder_slash(struct PlayerObj*);
+s32 player_zero_check_shippuuga(struct PlayerObj*);
 void func_80025188(s32, u8);
 void func_800253F0(struct MainObj*, s32);
 void func_80025588(s16, s16, s16, s16, s32);
@@ -4619,8 +4697,8 @@ void func_80028364(struct BackgroundObj*);
 void func_800283D0(struct BackgroundObj*);
 void func_800283F8(struct BackgroundObj*);
 void func_80028424(struct BackgroundObj*);
-s32 func_80039C34(struct PlayerObj*);
-s32 func_80039E5C(struct PlayerObj*);
+s32 player_zero_check_raijingeki(struct PlayerObj*);
+s32 player_zero_check_ryuenjin(struct PlayerObj*);
 s32 func_80039F28(struct Unk12*);
 void func_80012EB8();
 void func_8001D064();
@@ -4748,18 +4826,18 @@ void func_80097670(struct WeaponObj*);
 void func_800976DC(struct WeaponObj*);
 void func_80097B14(struct WeaponObj*);
 void func_80096C8C(struct WeaponObj*, struct PlayerObj*);
-void func_80036034(struct PlayerObj*);
-s32 func_80038D38(struct PlayerObj*);
-s32 func_80038D88(struct PlayerObj*);
-s32 func_800373DC(struct PlayerObj*);
+void player_clear_dash(struct PlayerObj*);
+s32 player_hover_check_end(struct PlayerObj*);
+s32 player_hover_steer(struct PlayerObj*);
+s32 player_check_shoot_ladder(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
 void func_8003D8A8(struct RideArmorObj*, s32, s32);
 s32 func_8003DCD8(struct RideArmorObj*);
 s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
-s32 func_8003B340(struct PlayerObj*);
+s32 player_zero_shippuuga_cancel(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);
-void func_80038E44(struct PlayerObj*, s32);
+void player_hover_set_direction(struct PlayerObj*, s32);
 void func_800921E8(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
@@ -4802,26 +4880,26 @@ s32 func_8002BB80(struct MainObj*, struct MainObj*);
 s32 func_8002C160(struct CollisionObj*, struct CollisionObj*);
 void func_8002C26C(struct CollisionObj*, struct CollisionObj*);
 void func_8002C2EC(struct CollisionObj*, struct CollisionObj*);
-s32 func_8003356C(struct PlayerObj*);
-s32 func_800339E0(struct PlayerObj*);
-s32 func_80033AC0(struct PlayerObj*);
-s32 func_80033B34(struct PlayerObj*);
-s32 func_80033B8C(struct PlayerObj*);
+s32 player_check_walk(struct PlayerObj*);
+s32 player_check_air_move(struct PlayerObj*);
+s32 player_check_wall(struct PlayerObj*);
+s32 player_check_wall_jump(struct PlayerObj*);
+s32 player_is_pushing_wall(struct PlayerObj*);
 void func_80033D54(struct PlayerObj*);
-s32 func_80033F5C(struct PlayerObj*);
-void func_800344A0(struct PlayerObj*);
-void func_8003470C(struct PlayerObj*);
-void func_80034AFC(struct PlayerObj*);
+s32 player_check_ladder_air(struct PlayerObj*);
+void player_enter_walk_start(struct PlayerObj*);
+void player_enter_land_or_fall(struct PlayerObj*);
+void player_enter_wall_slide(struct PlayerObj*);
 void func_80034B64(struct PlayerObj*);
-void func_800363EC(struct PlayerObj*);
+void player_check_low_hp_alarm(struct PlayerObj*);
 void func_80036F50(struct PlayerObj*);
-s32 func_80037338(struct PlayerObj*);
-s32 func_8003751C(struct PlayerObj*);
-s32 func_80037A98(struct PlayerObj*);
-s32 func_8003996C(struct PlayerObj*);
-s32 func_80039B44(struct PlayerObj*);
-s32 func_80039CC4(struct PlayerObj*);
-s32 func_80039D9C(struct PlayerObj*);
+s32 player_check_shoot_air(struct PlayerObj*);
+s32 player_check_hover(struct PlayerObj*);
+s32 player_has_weapon_energy(struct PlayerObj*);
+s32 player_zero_check_jump_slash(struct PlayerObj*);
+s32 player_zero_check_wall_slash(struct PlayerObj*);
+s32 player_zero_check_hyouretsuzan(struct PlayerObj*);
+s32 player_zero_check_double_jump(struct PlayerObj*);
 void func_8004FC50(struct AnimatedObj*);
 void func_800506D8(struct AnimatedObj*);
 void func_8006AE50(struct AnimatedObj*);

@@ -24,7 +24,7 @@ void func_800D09E4(struct MiscObj* arg0)
 void func_800D0A04(struct UnkObj* arg0)
 {
     if (g_Player.x_pos.i.hi >= 0xFE0) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         background_objects[g_Player.bg_offset].unk26 = 0xFD0;
         background_objects[g_Player.bg_offset].unk24 = 0xFD0;
         arg0->unk5 = 1;
@@ -34,7 +34,7 @@ void func_800D0A04(struct UnkObj* arg0)
 void func_800D0AA4(struct UnkObj* arg0)
 {
     if (background_objects[g_Player.bg_offset].x_pos.i.hi == 0xFD0) {
-        func_80036AE4(0x15, 0);
+        player_start_script_action(0x15, 0);
         arg0->ext.timer = 0x3C;
         arg0->unk5 = 2;
     }
@@ -76,7 +76,7 @@ void func_800D0BE4(struct UnkObj* arg0)
 {
     if (abc_object.unkC == 0) {
         background_objects[g_Player.bg_offset].unk24 = 0x11B0;
-        func_80036B18();
+        player_end_script_action();
         engine_obj.character_state.bytes[8] = 1;
         arg0->unk5 = 6;
     }

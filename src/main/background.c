@@ -41,7 +41,7 @@ void func_8002771C(void)
 void func_80027850(void)
 {
     struct BackgroundObj* bg_obj = &background_objects[0];
-    if ((bg_obj->unk44 != 0) && (g_Player.unkBC == 0)) {
+    if ((bg_obj->unk44 != 0) && (g_Player.update_delay == 0)) {
         D_800F3134[bg_obj->unk4](bg_obj);
         if (bg_obj->unk34 & 0x10) {
             func_80028A48(bg_obj);
@@ -187,7 +187,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
 
     if (arg0->unk1C < arg0->x_pos.i.hi) {
         arg0->x_pos.i.hi = arg0->unk1C;
-        if (engine_obj.stage != 5 || g_Player.unkC5 == 0) {
+        if (engine_obj.stage != 5 || g_Player.ride_state == 0) {
             temp_v1 = arg0->unk1C + 0x140;
             if (g_Player.x_pos.i.hi + 8 >= temp_v1) {
                 g_Player.x_pos.i.hi = arg0->unk1C + 0x138;
@@ -198,7 +198,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
     label:
         if (arg0->unk1E >= arg0->x_pos.i.hi) {
             arg0->x_pos.i.hi = arg0->unk1E;
-            if (engine_obj.stage != 5 || g_Player.unkC5 == 0) {
+            if (engine_obj.stage != 5 || g_Player.ride_state == 0) {
                 temp_v1 = arg0->unk1E;
                 if (g_Player.x_pos.i.hi - 8 < temp_v1) {
                     g_Player.x_pos.i.hi = temp_v1 + 8;
@@ -211,7 +211,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
         arg0->y_pos.i.hi = arg0->unk20;
         temp_v1 = arg0->unk20 + 0x100;
         if (g_Player.y_pos.i.hi - 8 >= temp_v1) {
-            g_Player.unk5C = -0x80;
+            g_Player.hp = -0x80;
         }
     } else {
         if (arg0->unk22 >= arg0->y_pos.i.hi) {
@@ -223,7 +223,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
 void func_80027D40(void)
 {
     struct BackgroundObj* ptr = &background_objects[1];
-    if (ptr->unk44 != 0 && g_Player.unkBC == 0) {
+    if (ptr->unk44 != 0 && g_Player.update_delay == 0) {
         ptr->unk14.val = ptr->x_pos.val;
         ptr->unk18.val = ptr->y_pos.val;
         D_800F3140[ptr->unk4](ptr);
@@ -388,7 +388,7 @@ void func_800281B0(struct BackgroundObj* arg0)
 void func_800281E8(void)
 {
     struct BackgroundObj* ptr = &background_objects[2];
-    if (ptr->unk44 != 0 && g_Player.unkBC == 0) {
+    if (ptr->unk44 != 0 && g_Player.update_delay == 0) {
         ptr->unk14.val = ptr->x_pos.val;
         ptr->unk18.val = ptr->y_pos.val;
         D_800F3164[ptr->unk4](ptr);

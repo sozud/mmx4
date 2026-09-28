@@ -5,7 +5,7 @@
 void func_800AEAC0(struct VisualObj* arg0)
 {
     struct PlayerObj* var_a1;
-    if (g_Player.unkDE == 0) {
+    if (g_Player.controlling_clone == 0) {
         var_a1 = &g_Player;
     } else {
         var_a1 = &g_Entity;

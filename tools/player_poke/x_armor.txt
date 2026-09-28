@@ -1,0 +1,32 @@
+hover hold=0-4:jump,16-17:jump frames=100 stride=4
+hover_move hold=0-4:jump,16-17:jump,20-60:right,60-90:left frames=110 stride=4
+hover_cancel hold=0-4:jump,16-17:jump,40-41:jump frames=80 stride=4
+air_dash hold=0-4:jump,12-13:dash frames=64 stride=3
+air_dash_hold hold=0-4:jump,12-40:dash,0-60:right frames=64 stride=3
+nova_strike hold=0-1:r2 frames=80 stride=3
+nova_strike_air hold=0-4:jump,12-13:r2 frames=80 stride=3
+charge_plasma hold=0-100:shoot frames=140 stride=6
+charge_stock set=arm_type:1 hold=0-160:shoot,170:shoot,180:shoot,190:shoot frames=210 stride=6
+charge_stock_release set=arm_type:1 hold=0-160:shoot frames=200 stride=6
+weapon_1 weapon=1 hold=0:shoot frames=60 stride=4
+weapon_2 weapon=2 hold=0:shoot frames=60 stride=4
+weapon_3 weapon=3 hold=0:shoot frames=60 stride=4
+weapon_4 weapon=4 hold=0:shoot frames=60 stride=4
+weapon_5 weapon=5 hold=0:shoot frames=60 stride=4
+weapon_6 weapon=6 hold=0:shoot frames=60 stride=4
+weapon_7 weapon=7 hold=0:shoot frames=60 stride=4
+weapon_8 weapon=8 hold=0:shoot frames=60 stride=4
+weapon_1_charged weapon=1 hold=0-100:shoot frames=160 stride=6
+weapon_2_charged weapon=2 hold=0-100:shoot frames=160 stride=6
+weapon_3_charged weapon=3 hold=0-100:shoot frames=160 stride=6
+weapon_4_charged weapon=4 hold=0-100:shoot frames=160 stride=6
+weapon_4_charged_air weapon=4 hold=0-100:shoot,92-110:jump frames=160 stride=6
+weapon_5_charged weapon=5 hold=0-100:shoot frames=200 stride=6
+weapon_5_charged_move weapon=5 hold=0-100:shoot,110-170:right,140-141:jump frames=240 stride=6
+weapon_6_charged weapon=6 hold=0-100:shoot frames=160 stride=6
+weapon_7_charged weapon=7 hold=0-100:shoot frames=160 stride=6
+weapon_8_charged weapon=8 hold=0-100:shoot frames=160 stride=6
+weapon_switch_next hold=0:r1,10:r1,20:r1,30:l1 frames=40 stride=2
+soul_body_control weapon=3 hold=0-100:shoot,110-200:right,150-151:jump frames=220 stride=6
+hover_steer hold=0-4:jump,16-17:jump,20-30:right,45-55:left frames=100 stride=3
+soul_body_clone weapon=3 track=entity hold=0-100:shoot,110-200:right,150-151:jump frames=380 stride=8

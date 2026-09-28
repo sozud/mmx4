@@ -12,7 +12,7 @@ void sigma_final_intro_lock_camera(struct MainObj* self)
     background_objects[0].unk24 = 0x480;
     background_objects[0].unk2A = 0x200;
     background_objects[0].unk28 = 0x200;
-    func_80036AE4(0x14, 0x40);
+    player_start_script_action(0x14, 0x40);
     self->ext.main_74.timer = 0x64;
     self->unk5++;
     func_80016FB4(3);
@@ -152,7 +152,7 @@ void sigma_final_appear_fill_health(struct MainObj* self)
         *D_8013B8A0 = 0xA;
         D_8013B8B0 = &D_80105368;
         MAIN_74_COLLISION_BOUNDS = &D_8010536C;
-        func_80036B18();
+        player_end_script_action();
     }
     func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
@@ -202,7 +202,7 @@ void sigma_final_laser_fire(struct PlayerObj* player)
         if (quad != 0) {
             quad->active = 1;
             quad->id = 0x10;
-            quad->unk2 = player->unk90;
+            quad->unk2 = player->attack_ended;
             quad->unk5C = player;
         }
         D_8013B8A8 = OBJECT_HEADER(quad);
@@ -211,7 +211,7 @@ void sigma_final_laser_fire(struct PlayerObj* player)
         if (shot != 0) {
             shot->active = 1;
             shot->id = 0x39;
-            shot->unk2 = player->unk90;
+            shot->unk2 = player->attack_ended;
             shot->unk7C = WEAPON_OBJECT(player);
         }
     }
@@ -504,7 +504,7 @@ void sigma_final_grab_release(struct MainObj* self)
 
     if (!found) {
         func_80015930(2, 0xB);
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         self->unk62 = 2;
         self->unk60 = 9;
         self->unk50 = &D_80105360;
@@ -762,7 +762,7 @@ void sigma_final_death_wait_player(struct MainObj* self)
 {
     u16 sound_id;
 
-    if (g_Player.unkC0 != -1) {
+    if (g_Player.script_state != -1) {
         func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
         return;
     }
@@ -800,11 +800,11 @@ void sigma_final_death_explosion(struct MainObj* self)
 void sigma_final_death_finish(struct MainObj* self)
 {
     if (D_8013B8A8->active == 0) {
-        func_80036B18();
+        player_end_script_action();
         engine_obj.character_state.fields.active = 1;
         background_objects[0].unk26 = 0x450;
         background_objects[0].unk24 = 0x480;
-        g_Player.unk7A = 0;
+        g_Player.spike_immune = 0;
         func_800DABE4(8U, 0, 0);
         ZeroObjectState(OBJECT_HEADER(self));
         return;

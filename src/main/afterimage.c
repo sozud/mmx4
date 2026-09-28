@@ -20,19 +20,19 @@ void func_800AE7DC(struct UnkObj* arg0)
 
 void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player)
 {
-    if (player->unk8C != 0) {
-        if (player->unk8C > 0) {
+    if (player->afterimage != 0) {
+        if (player->afterimage > 0) {
             arg0->on_screen = 1;
             func_800AEA58(arg0, player);
             return;
         }
-        player->unk8C = 0;
+        player->afterimage = 0;
     }
 }
 
 void func_800AE88C(struct UnkObj* arg0, struct PlayerObj* arg1)
 {
-    if (arg1->unk8C == 0) {
+    if (arg1->afterimage == 0) {
         arg0->on_screen = 0;
         arg0->state = 0;
         return;
@@ -49,7 +49,7 @@ void func_800AE8E4(struct UnkObj* arg0, struct PlayerObj* player)
         arg0->ext.afterimage.position_timer = 3;
         func_800AEAA0(arg0);
     }
-    if (player->unk8C < 0) {
+    if (player->afterimage < 0) {
         arg0->unk5++;
     }
 }
@@ -59,7 +59,7 @@ void func_800AE95C(struct UnkObj* self, struct PlayerObj* player)
     s16 timer;
     s16 next_timer;
 
-    if (player->unk8C > 0) {
+    if (player->afterimage > 0) {
         func_800AEA58(self, player);
         return;
     }
@@ -78,7 +78,7 @@ void func_800AE95C(struct UnkObj* self, struct PlayerObj* player)
 
 void func_800AE9D8(struct UnkObj* self, struct PlayerObj* player)
 {
-    if (player->unk8C > 0) {
+    if (player->afterimage > 0) {
         func_800AEA58(self, player);
         return;
     }
@@ -90,7 +90,7 @@ void func_800AE9D8(struct UnkObj* self, struct PlayerObj* player)
     self->on_screen = 0;
     self->state = 0;
     if (self->unk2 == 2) {
-        player->unk8C = 0;
+        player->afterimage = 0;
     }
 }
 

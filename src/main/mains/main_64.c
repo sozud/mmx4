@@ -11,7 +11,7 @@ void func_8007C3FC(struct MainObj* arg0)
     s32* archive;
     s32 offset;
 
-    if (g_Player.unkC4 != 0) {
+    if (g_Player.capsule_state != 0) {
         return;
     }
     switch (arg0->unk6) {
@@ -22,7 +22,7 @@ void func_8007C3FC(struct MainObj* arg0)
             effect->id = 0x18;
             arg0->ext.main_64.object = effect;
         }
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->unk6 = 1;
         arg0->unk7 = 0;
         break;
@@ -123,7 +123,7 @@ void func_8007C6E8(struct MainObj* arg0)
         arg0->unk6 = 0;
         arg0->unk7 = 0;
         arg0->unk61 = 0;
-        func_80036B18();
+        player_end_script_action();
         return;
     }
     if (arg0->animation_step.fields.event != 0) {
@@ -519,7 +519,7 @@ void cyber_peacock_death_start(struct MainObj* self)
     self->unk7E = 0x19;
     self->ext.main_64.flash_timer = 0x19;
     self->unk42 &= 0x7FFF;
-    func_80036AE4(0x14, g_Player.unk15);
+    player_start_script_action(0x14, g_Player.unk15);
     func_80015D60(self, 0x20);
     is_on_screen(BASE_OBJECT(self));
 }

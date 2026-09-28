@@ -186,7 +186,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A5F4);
 
 void func_8009A6B4(struct ShotObj* self)
 {
-    s8* player_state = &g_Player.unk5C;
+    s8* player_state = &g_Player.hp;
     s8 previous_state;
     u32* collision_state;
 
@@ -253,9 +253,9 @@ void func_8009A87C(struct ShotObj* arg0)
     func_80015DC8(ANIMATED_OBJECT(arg0));
     arg0->unk54 = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
     arg0->unk50.data = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
-    player_active = g_Player.unk5C;
+    player_active = g_Player.hp;
     func_8002D9BC(arg0);
-    if (player_active != g_Player.unk5C) {
+    if (player_active != g_Player.hp) {
         collision_state = (s32*)arg0->unk84.collision_state;
         if (*collision_state == 0x8000) {
             *collision_state = 0x8001;

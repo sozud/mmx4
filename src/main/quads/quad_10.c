@@ -7,19 +7,19 @@ void func_800D6AD8(struct QuadObj* arg0)
     struct PlayerObj* ptr = &g_Player;
     struct PlayerObj* temp_a2 = arg0->unk5C;
     s32 var_a1 = 0;
-    if (g_Player.unkC3 != 0) {
+    if (g_Player.input_locked != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unkC4 != 0) {
+    if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk93 != 6) {
+    if (g_Player.weapon != 6) {
         var_a1 = 1;
     }
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a1 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {
@@ -87,7 +87,7 @@ void func_800D6D48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     s32 index;
 
     state = &arg0->ext.quad_10;
-    player_state = (struct PlayerUnk8CFields*)&arg2->unk8C;
+    player_state = (struct PlayerUnk8CFields*)&arg2->afterimage;
     index = 0xF;
     do {
         cursor = (u8*)state + index;

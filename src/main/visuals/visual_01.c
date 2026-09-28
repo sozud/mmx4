@@ -10,7 +10,7 @@ void func_800AED18(struct VisualObj* arg0)
 
     obj = arg0;
     entity = &g_Entity;
-    if (g_Player.unkDE == 0) {
+    if (g_Player.controlling_clone == 0) {
         entity = &g_Player;
     }
     if (obj->state == 0) {
@@ -29,7 +29,7 @@ void func_800AED18(struct VisualObj* arg0)
         func_80015DC8(obj);
         func_800AEE5C(obj, entity);
         var_a0 = 0;
-        if (entity->unk84 > 0) {
+        if (entity->dash_momentum > 0) {
             if (entity->unk17 != 0x10) {
                 var_a0 = entity->unk17 != 0x80;
             }

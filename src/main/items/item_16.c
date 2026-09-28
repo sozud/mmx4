@@ -9,7 +9,7 @@ void func_800C3FEC(struct ItemObj* arg0)
     D_8010D100[arg0->state](arg0);
     func_8002E184(arg0);
     if (!(BASE_OBJECT(arg0->unk7C.object)->on_screen & 1)) {
-        if ((g_Player.unk4A != 0) || (arg0->unk76 != 0)) {
+        if ((g_Player.wall_climbable != 0) || (arg0->unk76 != 0)) {
             arg0->ext.owner->active = 1;
         }
     }

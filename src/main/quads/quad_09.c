@@ -9,25 +9,25 @@ void func_800D67DC(struct QuadObj* arg0)
     struct PlayerObj* ptr = &g_Player;
     struct PlayerObj* temp_a2 = arg0->unk5C;
     s32 var_a3 = 0;
-    if (g_Player.unkC3 != 0) {
+    if (g_Player.input_locked != 0) {
         var_a3 = 1;
     }
-    if (g_Player.unkC4 != 0) {
+    if (g_Player.capsule_state != 0) {
         var_a3 = 1;
     }
-    if (g_Player.unk93 != 6) {
+    if (g_Player.weapon != 6) {
         var_a3 = 1;
     }
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a3 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a3 = 1;
     }
     if (arg0->unk5C->active == 0) {
         var_a3 = 1;
     }
-    if (arg0->unk5C->unk5C == 0) {
+    if (arg0->unk5C->hp == 0) {
         var_a3 = 1;
     }
     if (var_a3 != 0) {

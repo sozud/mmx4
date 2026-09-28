@@ -16,7 +16,7 @@ void func_8003B3DC(struct RideArmorObj* arg0)
 
 void func_8003B458(void* arg0, s8 arg1)
 {
-    g_Player.unkD4 = arg1;
+    g_Player.ride_animation = arg1;
     g_Player.unk6 = 0;
 }
 
@@ -33,21 +33,21 @@ void func_8003B98C(struct PlayerObj* arg0)
     if (arg0->charge_state[0] == 0) {
         return;
     }
-    if ((u8)arg0->unk9A == 0) {
+    if ((u8)arg0->shot_cycle == 0) {
         return;
     }
 
-    timer = arg0->unk61;
+    timer = arg0->invincibility_timer;
     if (timer == 0) {
-        arg0->unk9A = 0;
-        arg0->unk85 = 0;
+        arg0->shot_cycle = 0;
+        arg0->dash_timer = 0;
         arg0->unk42 &= 0x7FFF;
         func_8003D254(VISUAL_OBJECT(arg0));
         return;
     }
 
     timer -= 1;
-    arg0->unk61 = timer;
+    arg0->invincibility_timer = timer;
     if (timer & 2) {
         arg0->unk42 |= 0x8000;
     } else {
@@ -64,8 +64,8 @@ void func_8003BA24(struct RideArmorObj* arg0)
             arg0->unk28 = 0;
             arg0->y_vel.val = 0;
             arg0->unk2C = FIXED(0.265625);
-            g_Player.unkC5 = 0;
-            func_80036AE4(0x17, 0x40);
+            g_Player.ride_state = 0;
+            player_start_script_action(0x17, 0x40);
         } else {
             if (arg0->unk70 & 8) {
                 arg0->y_vel.val = 0;
@@ -76,7 +76,7 @@ void func_8003BA24(struct RideArmorObj* arg0)
     } else {
         arg0->state = 3;
         arg0->unk5 = 0;
-        func_80036B18();
+        player_end_script_action();
     }
     CollisionRelated(PLAYER_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
@@ -431,7 +431,7 @@ void func_8003D39C(struct MainObj* arg0)
 
 void func_8003D3B4(struct PlayerObj* arg0)
 {
-    if (g_Player.unkC5 != 0 && arg0->charge_state[0] != PLAYER_CHARGE_NONE) {
+    if (g_Player.ride_state != 0 && arg0->charge_state[0] != PLAYER_CHARGE_NONE) {
         g_Player.x_pos = arg0->x_pos;
         g_Player.y_pos = arg0->y_pos;
     }

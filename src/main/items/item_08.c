@@ -139,7 +139,7 @@ void func_800C1B98(struct ItemObj* arg0, struct EngineObj* arg1,
         if (arg0->unk7C.timer == 0) {
             reset_main_and_shots();
         }
-        arg2->unkC4 = 1;
+        arg2->capsule_state = 1;
         background_objects[0].unk3E.half &= 0xF;
         arg0->unk5 = 1;
     }
@@ -147,7 +147,7 @@ void func_800C1B98(struct ItemObj* arg0, struct EngineObj* arg1,
 
 void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
 {
-    if (arg2->unkC4 < 0) {
+    if (arg2->capsule_state < 0) {
         arg1->unk10 = 1;
         arg1->unk12 = 1;
         func_8001540C(0, 0x10, arg0);
@@ -163,8 +163,8 @@ void func_800C1D90(struct ItemObj* arg0, struct EngineObj* arg1,
 {
     arg2->x_pos.val += 0xA400;
     if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
-        arg2->unkC4 = 0;
-        func_80035EA4(arg2);
+        arg2->capsule_state = 0;
+        player_set_collision_bounds(arg2);
         arg0->unk5 = 4;
         func_80015D60(arg0, 1);
         func_8001540C(0, 0x11, arg0);

@@ -3,7 +3,7 @@
 #include <libspu.h>
 
 void SelectACharacterUpdate(struct MiscObj*);
-void func_80035048(struct PlayerObj*);
+void player_enter_beam_out(struct PlayerObj*);
 void func_800580AC(struct MainObj*);
 u8 func_8005AB34(struct MainObj*);
 void func_8005ABC0(struct MainObj*, u8);
@@ -297,16 +297,16 @@ extern s32 D_8010DAE8[8];
 extern struct Item02AnimationStep* D_8010C61C[11];
 extern s8* D_8010C674[11];
 
-struct PlayerInitialStateData {
-    s32 unk20;
-    s32 unk28;
-    s32 unk24;
-    s32 unk2C;
+struct PlayerHurtVelocity {
+    s32 x_vel;
+    s32 x_accel;
+    s32 y_vel;
+    s32 gravity;
 };
 
-extern u8 D_800F8AD0[8];
-extern struct PlayerInitialStateData D_800F8AD8[5];
-extern u8 D_800F8B28[8];
+extern u8 player_hurt_animations[8];
+extern struct PlayerHurtVelocity player_hurt_velocities[5];
+extern u8 player_hurt_invincibility[8];
 extern union AnimationStep* D_800FE0FC[27];
 extern u8 D_800FFB5C[4];
 extern u8 D_800FFB60[];
@@ -1918,40 +1918,40 @@ void func_80036F50(struct PlayerObj* player)
     u16 input;
     s8 weapon;
 
-    if (player->unkC3 != 0 || player->unkD9 != 0 || player->unk99 != 0 || player->unkC5 != 0 || player->unkE0 != 0 || engine_obj.unk1C != 0)
+    if (player->input_locked != 0 || player->is_clone != 0 || player->special_shot_count != 0 || player->ride_state != 0 || player->nova_strike_active != 0 || engine_obj.unk1C != 0)
         return;
     input = player->pressed_input;
     if (((player->input.buttons.held & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
-        if (player->unk93 != 0) {
-            player->unk93 = 0;
-            func_800384DC(player);
+        if (player->weapon != 0) {
+            player->weapon = 0;
+            player_reset_charge(player);
             func_8001540C(0, 0xC, 0);
         }
         return;
     }
     if (!(input & 0x600))
         return;
-    weapon = player->unk93;
+    weapon = player->weapon;
     if (input & 0x200) {
         do {
             if (++weapon == 9) {
                 weapon = 0;
                 break;
             }
-        } while (!(weapon_masks[(u8)weapon] & player->unkB9));
+        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
     } else {
         do {
             if (--weapon < 0)
                 weapon = 8;
             if (weapon == 0)
                 break;
-        } while (!(weapon_masks[(u8)weapon] & player->unkB9));
+        } while (!(weapon_masks[(u8)weapon] & player->boss_flags));
     }
-    if (player->unk93 != weapon) {
-        player->unk93 = weapon;
-        func_800384DC(player);
+    if (player->weapon != weapon) {
+        player->weapon = weapon;
+        player_reset_charge(player);
         func_8001540C(0, 0xC, 0);
-        player->unkA6 = 0;
+        player->stock_charge = 0;
     }
 }
 
@@ -1963,7 +1963,7 @@ s32 func_8002DD04(struct MainObj* object)
         object->unk65 = 0;
         return 0;
     }
-    if (object->collision_data == D_80106070 && (g_Player.unk2 == 0 || !(g_Player.unkB9 & 0x40)))
+    if (object->collision_data == D_80106070 && (g_Player.unk2 == 0 || !(g_Player.boss_flags & 0x40)))
         return 0;
     if (object->unk5 != 0)
         object->unk42 &= 0x7FFF;
@@ -2069,6 +2069,9 @@ void func_80026AA0(s32 layer)
     s32 tile_y = (bg->y_pos.i.hi / 16) & 31;
     s32 screen_y = -(bg->y_pos.i.hi & 15);
     s32 row;
+
+    if (mmx4_pc_hide_background)
+        return;
 
     for (row = 0; row < 16; row++) {
         s32 current_tile_x = tile_x;
@@ -2318,9 +2321,9 @@ void func_800C00BC(struct ItemObj* arg0)
     u16 flag;
     s32 shift;
 
-    if (g_Player.unkC5 == 0) {
+    if (g_Player.ride_state == 0) {
         player = (struct CollisionObj*)&g_Player;
-        if (!(g_Player.unk5C & 0x7F)) {
+        if (!(g_Player.hp & 0x7F)) {
             return;
         }
     } else {
@@ -2483,21 +2486,21 @@ void func_80038568(struct PlayerObj* arg0, s32 arg1)
         return;
     }
     relative = arg1 + 0x70;
-    if (arg0->unk90 == 0) {
-        if (arg0->unk8E == 0 || arg0->unk17 == relative) {
+    if (arg0->attack_ended == 0) {
+        if (arg0->attacking == 0 || arg0->unk17 == relative) {
             return;
         }
         arg1 = relative;
     }
     duration = arg0->animation_step.fields.duration;
-    func_8003516C(arg0, arg1, arg0->animation_step.fields.event & 0x3F);
+    player_set_animation_frame(arg0, arg1, arg0->animation_step.fields.event & 0x3F);
     arg0->animation_step.fields.duration = duration;
 }
 
-s32 func_8003A000(struct PlayerObj*);
-void func_800347D0(struct PlayerObj*);
+s32 player_zero_check_shippuuga(struct PlayerObj*);
+void player_enter_dash_end(struct PlayerObj*);
 
-void func_8003B24C(struct PlayerObj*);
+void player_zero_shippuuga(struct PlayerObj*);
 
 void func_80036BF4(struct PlayerObj* arg0, s16 ground_y)
 {
@@ -3070,14 +3073,14 @@ void func_800C63BC(struct ItemObj* arg0)
 
     discard = g_Player.unk2 != 0;
     if (engine_obj.unk37 != 0) {
-        if (g_Player.unkA7 != 0)
+        if (g_Player.armor_parts != 0)
             discard = 1;
     } else {
-        if (D_8010D3D0[(u8)arg0->unk2] & g_Player.unkA7)
+        if (D_8010D3D0[(u8)arg0->unk2] & g_Player.armor_parts)
             discard = 1;
-        if (arg0->unk2 == 2 && g_Player.unkB8 == 2)
+        if (arg0->unk2 == 2 && g_Player.arm_type == 2)
             discard = 0;
-        if (arg0->unk2 == 3 && g_Player.unkB8 == 1)
+        if (arg0->unk2 == 3 && g_Player.arm_type == 1)
             discard = 0;
     }
 
@@ -3099,7 +3102,7 @@ void func_800C63BC(struct ItemObj* arg0)
     arg0->unk16 = 4;
     arg0->unk15 = 0;
     arg0->unk75 = 1;
-    g_Player.unkE2 = 0;
+    g_Player.item_step = 0;
     func_80015D60(ANIMATED_OBJECT(arg0), 0);
 
     do {
@@ -3295,57 +3298,57 @@ void func_800C1050(struct ItemObj* arg0)
     }
 }
 
-void func_80034C58(struct PlayerObj* arg0);
-void func_80034D20(struct PlayerObj* arg0);
+void player_enter_ladder_climb_off_top(struct PlayerObj* arg0);
+void player_enter_ladder_step_off_bottom(struct PlayerObj* arg0);
 
 s32 func_80033FF0(struct PlayerObj* arg0)
 {
     u8 attribute = func_8002D994(arg0);
 
     if (arg0->unk88.bytes.collision_flags & 8) {
-        func_80034D20(arg0);
+        player_enter_ladder_step_off_bottom(arg0);
         return 1;
     }
     if ((arg0->input.buttons.held & 4) && attribute == 0x21) {
-        func_80034C58(arg0);
+        player_enter_ladder_climb_off_top(arg0);
         return 1;
     }
     if ((u8)(attribute - 0x20) < 2 && !(arg0->pressed_input & 0x80))
         return 0;
-    func_800350A4(arg0, 0x1E);
+    player_set_animation(arg0, 0x1E);
     arg0->unk5 = 0xE;
     arg0->unk6 = 4;
     return 1;
 }
 
-void func_80037DB0(struct PlayerObj* arg0);
-void func_80037DFC(struct PlayerObj* arg0);
-void func_80037E4C(struct PlayerObj* arg0, s32 arg1);
-void func_80037EAC(struct PlayerObj* arg0, s32 arg1);
-void func_80037F78(struct PlayerObj* arg0);
-s32 func_800375B4(struct PlayerObj* arg0);
-void func_80037708(struct PlayerObj* arg0);
-void func_800387A8(struct PlayerObj* arg0);
+void player_enter_frost_tower_pose(struct PlayerObj* arg0);
+void player_enter_soul_body(struct PlayerObj* arg0);
+void player_enter_rising_fire(struct PlayerObj* arg0, s32 arg1);
+void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
+void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
+s32 player_check_nova_strike(struct PlayerObj* arg0);
+void player_update_shooting(struct PlayerObj* arg0);
+void player_enter_ladder_shoot(struct PlayerObj* arg0);
 
 void func_80037484(struct PlayerObj* arg0, s32 arg1)
 {
-    switch ((s8)(arg0->unk96 - 2)) {
+    switch ((s8)(arg0->shot_type - 2)) {
     case 0:
     case 9:
-        func_80037DB0(arg0);
+        player_enter_frost_tower_pose(arg0);
         break;
     case 10:
-        func_80037DFC(arg0);
+        player_enter_soul_body(arg0);
         break;
     case 2:
-        func_80037E4C(arg0, arg1);
+        player_enter_rising_fire(arg0, arg1);
         break;
     case 11:
-        func_80037EAC(arg0, arg1);
+        player_enter_rising_fire_charged(arg0, arg1);
         break;
     case 5:
     case 14:
-        func_80037F78(arg0);
+        player_enter_double_cyclone_pose(arg0);
         break;
     }
 }
@@ -4312,10 +4315,10 @@ void func_80050874(struct MainObj* arg0)
         ext->saved_unk5 = arg0->unk5;
         hit = func_8002DD04(arg0);
         if (hit < 0) {
-            g_Player.unk61 = 0x7F;
+            g_Player.invincibility_timer = 0x7F;
             func_8001540C(5, 2, NULL);
             func_800AF808(BASE_OBJECT(arg0));
-            g_Player.unk7A = 1;
+            g_Player.spike_immune = 1;
             func_800C813C(4, D_800FC33C, arg0);
             arg0->unk7C = 4;
             arg0->unk7E = 8;
@@ -4391,7 +4394,7 @@ void func_80052218(struct MainObj* arg0)
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk7C = 0x74;
-    func_80036AE4(0x15, 0);
+    player_start_script_action(0x15, 0);
     arg0->unk6 = 1;
 }
 
@@ -5616,7 +5619,7 @@ void func_800C6EDC(struct VisualObj* arg0)
         arg0->state++;
         decompress_player_gfx((struct GraphicsObj*)arg0, 0x140, 0x20);
     } else if (arg0->animation_step.fields.relative_step == 0) {
-        g_Player.unkE2 = 4;
+        g_Player.item_step = 4;
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     } else {
@@ -5624,22 +5627,22 @@ void func_800C6EDC(struct VisualObj* arg0)
         if (arg0->animation_step.fields.event != 0) {
             arg0->animation_step.fields.event = 0;
             if (engine_obj.unk37 != 0) {
-                g_Player.unkA7 = 0xF;
-                g_Player.unkB8 = 2;
+                g_Player.armor_parts = 0xF;
+                g_Player.arm_type = 2;
                 engine_obj.unk48 = 2;
             } else {
                 u8 bit = D_8010D3D0[arg0->unk2];
 
-                g_Player.unkA7 |= bit;
+                g_Player.armor_parts |= bit;
                 if (bit == 4) {
                     if (arg0->unk2 == 2)
-                        g_Player.unkB8 = 1;
+                        g_Player.arm_type = 1;
                     if (arg0->unk2 == 3)
-                        g_Player.unkB8 = 2;
-                    engine_obj.unk48 = g_Player.unkB8;
+                        g_Player.arm_type = 2;
+                    engine_obj.unk48 = g_Player.arm_type;
                 }
             }
-            engine_obj.unk47 = g_Player.unkA7;
+            engine_obj.unk47 = g_Player.armor_parts;
         }
     }
     func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
@@ -6304,11 +6307,11 @@ s32 func_8002D9BC(void* shot)
     u32 amount;
     u8 charge;
 
-    if (g_Player.unk7A != 0) {
+    if (g_Player.spike_immune != 0) {
         return 0;
     }
 
-    if (g_Player.unkC5 < 0) {
+    if (g_Player.ride_state < 0) {
         if (qux_object.unk5C & 0x80) {
             return 0;
         }
@@ -6328,60 +6331,60 @@ s32 func_8002D9BC(void* shot)
         return 1;
     }
 
-    if (g_Player.unk5C & 0x80) {
+    if (g_Player.hp & 0x80) {
         return 0;
     }
-    if (g_Player.unkA4 != 0) {
+    if (g_Player.hurt_phase != 0) {
         return 0;
     }
     if (!func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&g_Player))) {
         return 0;
     }
 
-    g_Player.unkBA = 0;
-    g_Player.unk63 = (u8)arg0->unk62;
+    g_Player.stun_timer = 0;
+    g_Player.hurt_type = (u8)arg0->unk62;
     switch (arg0->unk62) {
     case 0:
-        if (g_Player.unk2 == 0 && ((u8)g_Player.unkA7 & 2)) {
-            g_Player.unk63 = 4;
+        if (g_Player.unk2 == 0 && ((u8)g_Player.armor_parts & 2)) {
+            g_Player.hurt_type = 4;
         } else {
-            g_Player.unk63 = arg0->unk60 < 5 ? 1 : 2;
+            g_Player.hurt_type = arg0->unk60 < 5 ? 1 : 2;
         }
         break;
     case 3:
-        g_Player.unkBA = 1;
+        g_Player.stun_timer = 1;
         break;
     }
 
     damage = arg0->unk60;
     if (damage != 0) {
-        if ((u8)g_Player.unkA7 & 2) {
+        if ((u8)g_Player.armor_parts & 2) {
             amount = damage < 3 ? 1 : (u32)(((arg0->unk60 / 3) << 24) >> 23);
-            g_Player.unk5C = (u8)g_Player.unk5C - amount;
+            g_Player.hp = (u8)g_Player.hp - amount;
         } else {
-            g_Player.unk5C = (u8)g_Player.unk5C - (u8)damage;
+            g_Player.hp = (u8)g_Player.hp - (u8)damage;
         }
     }
-    g_Player.unk5C = g_Player.unk5C > 0 ? (s8)(g_Player.unk5C | 0x80) : (s8)-0x80;
+    g_Player.hp = g_Player.hp > 0 ? (s8)(g_Player.hp | 0x80) : (s8)-0x80;
 
     if (arg0->unk62 != 3) {
-        g_Player.unkA5 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0x40 : 0;
+        g_Player.hit_facing = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0x40 : 0;
     }
 
     result = 1;
     if (g_Player.unk2 == 0) {
-        if (!((u8)g_Player.unkA7 & 2)) {
+        if (!((u8)g_Player.armor_parts & 2)) {
             return 1;
         }
-    } else if (!((u8)g_Player.unkB9 & 0x20)) {
+    } else if (!((u8)g_Player.boss_flags & 0x20)) {
         return 1;
     }
 
-    if (g_Player.charge_levels[0] != 0x30) {
-        charge = (s8)g_Player.charge_levels[0] + 6;
-        g_Player.charge_levels[0] = charge;
+    if (g_Player.weapon_energy[0] != 0x30) {
+        charge = (s8)g_Player.weapon_energy[0] + 6;
+        g_Player.weapon_energy[0] = charge;
         if ((s8)charge >= 0x31) {
-            g_Player.charge_levels[0] = 0x30;
+            g_Player.weapon_energy[0] = 0x30;
         }
     }
     return result;
@@ -6529,7 +6532,7 @@ s32 func_8002DE30(struct MainObj* arg0, struct WeaponObj* arg1)
     }
     if (((s8)id >= 0x1A && (s8)id < 0x24)
         || ((s8)id >= 0x3D && (s8)id < 0x3F)) {
-        g_Player.unkBD = 1;
+        g_Player.update_delay_request = 1;
     }
     if (arg0->unk63 == -1) {
         func_8002DF7C(arg1, -1);
@@ -6779,13 +6782,13 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
         engine_step = 0;
     }
 
-    if (engine_obj.cur_character == 0 && g_Player.unk93 == 0) {
+    if (engine_obj.cur_character == 0 && g_Player.weapon == 0) {
         index = 1;
         selected = 0;
-        buttons = (u8)g_Player.unkB9;
+        buttons = (u8)g_Player.boss_flags;
         do {
             if (((buttons >> (index - 1)) & 1) != 0) {
-                if (player->charge_levels[index] < player->charge_levels[selected]) {
+                if (player->weapon_energy[index] < player->weapon_energy[selected]) {
                     selected = index;
                 }
             }
@@ -6793,33 +6796,33 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
         } while (index < 9);
 
         if (selected != 0) {
-            value = (u8)g_Player.charge_levels[0] + charge_step;
-            g_Player.charge_levels[0] = value;
+            value = (u8)g_Player.weapon_energy[0] + charge_step;
+            g_Player.weapon_energy[0] = value;
             if ((s8)value >= 0x31) {
-                g_Player.charge_levels[0] = 0x30;
+                g_Player.weapon_energy[0] = 0x30;
             }
         }
-        value = (u8)player->charge_levels[selected] + charge_step;
-        player->charge_levels[selected] = value;
+        value = (u8)player->weapon_energy[selected] + charge_step;
+        player->weapon_energy[selected] = value;
         if ((s8)value >= 0x31) {
-            player->charge_levels[selected] = 0x30;
+            player->weapon_energy[selected] = 0x30;
         }
     } else {
         u8 mask = engine_obj.cur_character == 0
-            ? (u8)((u8)g_Player.unkB9 >> (g_Player.unk93 - 1))
-            : (u8)g_Player.unkB9;
+            ? (u8)((u8)g_Player.boss_flags >> (g_Player.weapon - 1))
+            : (u8)g_Player.boss_flags;
 
         if ((mask & 1) != 0) {
-            current = player->charge_levels[g_Player.unk93];
+            current = player->weapon_energy[g_Player.weapon];
             if (current < 0x30) {
                 next = current + charge_step;
-                player->charge_levels[g_Player.unk93] = next;
+                player->weapon_energy[g_Player.weapon] = next;
                 if (next >= 0x31) {
-                    player->charge_levels[g_Player.unk93] = 0x30;
+                    player->weapon_energy[g_Player.weapon] = 0x30;
                 }
                 func_8001540C(0, 0x16, 0);
             } else {
-                player->charge_levels[g_Player.unk93] = 0x30;
+                player->weapon_energy[g_Player.weapon] = 0x30;
             }
         }
     }
@@ -6835,31 +6838,31 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
 
 void func_80033D54(struct PlayerObj* arg0)
 {
-    const struct PlayerInitialStateData* state;
+    const struct PlayerHurtVelocity* state;
     s32 index;
 
-    func_80035EA4(arg0);
-    arg0->unk5C = (u8)arg0->unk5C & 0x7F;
+    player_set_collision_bounds(arg0);
+    arg0->hp = (u8)arg0->hp & 0x7F;
     if (arg0->unk5 == 0x11) {
         return;
     }
 
-    arg0->unkA4 = 1;
-    func_80033D10(arg0);
-    index = arg0->unk63;
-    arg0->unk15 = (u8)arg0->unkA5;
-    func_800350A4(arg0, D_800F8AD0[index]);
-    state = &D_800F8AD8[index];
-    arg0->x_vel.val = state->unk20;
-    arg0->unk28 = state->unk28;
-    arg0->y_vel.val = state->unk24;
-    arg0->unk2C = state->unk2C;
+    arg0->hurt_phase = 1;
+    player_reset_actions(arg0);
+    index = arg0->hurt_type;
+    arg0->unk15 = (u8)arg0->hit_facing;
+    player_set_animation(arg0, player_hurt_animations[index]);
+    state = &player_hurt_velocities[index];
+    arg0->x_vel.val = state->x_vel;
+    arg0->unk28 = state->x_accel;
+    arg0->y_vel.val = state->y_vel;
+    arg0->unk2C = state->gravity;
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = -arg0->x_vel.val;
     }
-    arg0->unk61 = D_800F8B28[index];
+    arg0->invincibility_timer = player_hurt_invincibility[index];
     if ((u8)(index - 2) < 2) {
-        arg0->unk67 = 1;
+        arg0->air_state = 1;
     }
     func_8001540C(3, (get_random() & 1) ^ 1, arg0);
     arg0->unk5 = 0x11;
@@ -6885,7 +6888,7 @@ void func_8004A178(struct MainObj* arg0)
         timer = arg0->ext.main_10.timer - 1;
         arg0->ext.main_10.timer = timer;
         if (timer != 0
-            && !(arg0->ext.main_10.hold_state == 1 && g_Player.unkBA != 0)) {
+            && !(arg0->ext.main_10.hold_state == 1 && g_Player.stun_timer != 0)) {
             saved_x = arg0->x_pos.val;
             saved_y = arg0->y_pos.val;
             if (arg0->unk15 != 0) {
@@ -6902,7 +6905,7 @@ void func_8004A178(struct MainObj* arg0)
             arg0->unk20 = x_vel + (x_vel / 2);
             arg0->unk24 = y_vel + (y_vel / 2);
             func_8002B718(MOVING_OBJECT(arg0));
-            if (g_Player.unkBA != 0) {
+            if (g_Player.stun_timer != 0) {
                 func_80015D60(arg0, 3);
                 arg0->unk20 = 0;
                 arg0->unk24 = 0;
@@ -7083,14 +7086,14 @@ void func_80042950(struct MainObj* arg0)
     s32 flags;
 
     arg0->active = (u8)arg0->active | 4;
-    weapon = (u8)g_Player.unk93;
+    weapon = (u8)g_Player.weapon;
     flags = 0;
-    if (((s8)engine_obj.unk46 / 2) >= g_Player.unk5C) {
+    if (((s8)engine_obj.unk46 / 2) >= g_Player.hp) {
         flags = 1;
         ext[0] = 1;
     }
     if (engine_obj.cur_character == 0) {
-        if (weapon != 0 && g_Player.charge_levels[weapon] < 0x19) {
+        if (weapon != 0 && g_Player.weapon_energy[weapon] < 0x19) {
             flags |= 2;
             ext[0] = 3;
         }
@@ -7100,7 +7103,7 @@ void func_80042950(struct MainObj* arg0)
         return;
     }
     if ((flags & 0xFF) == 3) {
-        ext[0] = g_Player.charge_levels[weapon] >= g_Player.unk5C ? 1 : 3;
+        ext[0] = g_Player.weapon_energy[weapon] >= g_Player.hp ? 1 : 3;
     }
     arg0->state = (u8)arg0->state + 1;
 }
@@ -8106,24 +8109,24 @@ void func_80035C20(struct PlayerObj* arg0)
 {
     s32 i;
 
-    if ((arg0->unkC7 & 3) == 0) {
+    if ((arg0->death_timer & 3) == 0) {
         for (i = 0; i < 4; i++) {
-            func_80035D34((get_random() & 0x1F) | -0x80);
+            player_spawn_death_orb((get_random() & 0x1F) | -0x80);
         }
     }
 
     if (arg0->unkC6 == 3) {
-        arg0->unkC7 = 0x14;
+        arg0->death_timer = 0x14;
         arg0->unk5 = (u8)arg0->unk5 + 1;
-    } else if (arg0->unkC7 == 0) {
-        func_80035D84(arg0->unkC6);
+    } else if (arg0->death_timer == 0) {
+        player_spawn_death_orbs(arg0->unkC6);
         if (arg0->unkC6 == 2) {
-            func_80035D84(3);
+            player_spawn_death_orbs(3);
         }
-        arg0->unkC7 = 0x12;
+        arg0->death_timer = 0x12;
         arg0->unkC6++;
     } else {
-        arg0->unkC7--;
+        arg0->death_timer--;
     }
 }
 
@@ -8203,11 +8206,11 @@ void func_800200D4(struct EngineObj* arg0)
     } else if (arg0->unkF < 0) {
         arg0->unk1E = -1;
         func_8002B560(2, 0xE);
-        arg0->unk45 = g_Player.unk5C;
+        arg0->unk45 = g_Player.hp;
         for (i = 0; i < 0x10; i++) {
-            arg0->player_initial_data[i] = g_Player.charge_levels[i];
+            arg0->player_initial_data[i] = g_Player.weapon_energy[i];
         }
-        arg0->unk60 = g_Player.unk93;
+        arg0->unk60 = g_Player.weapon;
         if (arg0->stage != 0xC
             || (*(u16*)&arg0->stage == 0xC && arg0->checkpoint == 0xA)) {
             arg0->unk42 = 1;
@@ -8251,13 +8254,13 @@ void func_800BFBD0(struct ItemObj* arg0)
         }
 
         arg0->ext.item_2.unk81 = 2;
-        health = g_Player.unk5C;
+        health = g_Player.hp;
         status = health & 0x80;
         if ((health & 0x7F) >= engine_obj.unk46) {
             arg0->unk6 = 1;
-            g_Player.unk5C = (u8)engine_obj.unk46 | status;
+            g_Player.hp = (u8)engine_obj.unk46 | status;
         } else {
-            g_Player.unk5C = (health + 1) | status;
+            g_Player.hp = (health + 1) | status;
         }
         func_8001540C(0, 0xD, NULL);
 
@@ -8382,7 +8385,7 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
     }
     if (dx == bounds0->unk2 + bounds1->unk2 && dy < bounds0->unk3 + bounds1->unk3) {
         flags |= x0 < x1 ? 2 : 1;
-        arg1->unk4A = arg0->unk75;
+        arg1->wall_climbable = arg0->unk75;
     }
 
     if (slot == 0)
@@ -8409,11 +8412,11 @@ s8 func_800C1E7C(struct ItemObj* arg0)
     s16 player_x;
     s16 dx;
 
-    if (g_Player.unkA4 != 0 || g_Player.unk5 == 3 || g_Player.unk5 == 0xB)
+    if (g_Player.hurt_phase != 0 || g_Player.unk5 == 3 || g_Player.unk5 == 0xB)
         return 0;
-    if (g_Player.unk2 != 0 && g_Player.unk8E != 0)
+    if (g_Player.unk2 != 0 && g_Player.attacking != 0)
         return 0;
-    if (g_Player.unk7A != 0 || arg0->x_pos.i.hi < g_Player.x_pos.i.hi)
+    if (g_Player.spike_immune != 0 || arg0->x_pos.i.hi < g_Player.x_pos.i.hi)
         return 0;
 
     item_bounds = arg0->unk68;
@@ -8432,22 +8435,22 @@ s8 func_800C1E7C(struct ItemObj* arg0)
 
 void func_80032FA4(struct PlayerObj* arg0)
 {
-    if (arg0->unkC4 == 0) {
+    if (arg0->capsule_state == 0) {
         if (arg0->unk88.unsigned_bytes.collision_flags & 8) {
-            func_8003443C(arg0);
-            arg0->unk84 = 0;
+            player_enter_stand(arg0);
+            arg0->dash_momentum = 0;
         } else {
-            func_800350A4(arg0, 0xB);
+            player_set_animation(arg0, 0xB);
             arg0->unk2C = 0x4200;
             arg0->x_vel.val = 0;
             arg0->unk28 = 0;
             arg0->y_vel.val = 0;
-            arg0->unk67 = -1;
+            arg0->air_state = -1;
             arg0->unk6++;
-            arg0->unk84 = 0;
+            arg0->dash_momentum = 0;
         }
-        arg0->unk86 = 0;
-    } else if (arg0->unk67 == 0) {
+        arg0->air_action = 0;
+    } else if (arg0->air_state == 0) {
         func_80015DC8(ANIMATED_OBJECT(arg0));
     }
 }
@@ -8480,45 +8483,45 @@ s32 func_80034E2C(void)
     struct PlayerObj* player = &g_Player;
 
     player->unk6 = 0;
-    player->unk5 = player->unkC1;
-    func_80036088(player);
+    player->unk5 = player->script_action;
+    player_clear_dash_and_attack(player);
     switch ((u8)(player->unk5 - 0x14)) {
     case 0:
         if ((u8)(player->unk17 - 5) >= 2)
-            func_80036534(player);
-        player->unkC0 = -1;
-        player->unk15 = player->unkC2;
+            player_set_idle_animation(player);
+        player->script_state = -1;
+        player->unk15 = player->script_facing;
         break;
     case 1:
-        func_800350A4(player, 0x26);
+        player_set_animation(player, 0x26);
         player->y_vel.val = 0;
         player->unk28 = 0;
         player->unk2C = 0;
-        if (player->unkC2 == 0) {
-            func_80034150(player);
+        if (player->script_facing == 0) {
+            player_script_walk_to_mark(player);
             break;
         }
         player->unk15 = 0x40;
         break;
     case 2:
-        func_800350A4(player, 3);
-        player->unkC0 = -1;
-        player->unk15 = player->unkC2;
+        player_set_animation(player, 3);
+        player->script_state = -1;
+        player->unk15 = player->script_facing;
         break;
     case 3:
-        func_800350A4(player, 0xA);
-        func_80035EA4(player);
+        player_set_animation(player, 0xA);
+        player_set_collision_bounds(player);
         player->y_vel.val = 0x5D000;
         player->unk2C = 0x4200;
         player->x_vel.val = 0;
         player->unk28 = 0;
-        player->unk67 = 1;
-        player->unk15 = player->unkC2;
+        player->air_state = 1;
+        player->unk15 = player->script_facing;
         break;
     case 4:
-        func_800350A4(player, 0x6B);
-        func_80036E98(player);
-        player->unk15 = player->unkC2;
+        player_set_animation(player, 0x6B);
+        player_reset_weapon(player);
+        player->unk15 = player->script_facing;
         break;
     }
     return 0;
@@ -8527,7 +8530,7 @@ s32 func_80034E2C(void)
 void func_80033108(struct PlayerObj* arg0)
 {
     if (engine_obj.unkF != 0) {
-        func_80034F7C(arg0);
+        player_start_stage_clear(arg0);
         return;
     }
     arg0->x_vel.val = arg0->animation_step.fields.event == 0 ? 0x8000 : 0x20000;
@@ -8535,8 +8538,8 @@ void func_80033108(struct PlayerObj* arg0)
         arg0->x_vel.val = -arg0->x_vel.val;
     func_8002B718(MOVING_OBJECT(arg0));
     func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unkC2 == 0)
-        func_80034150(arg0);
+    if (arg0->script_facing == 0)
+        player_script_walk_to_mark(arg0);
 }
 
 void func_800AFF78(struct VisualObj* arg0)
@@ -8701,7 +8704,7 @@ void func_80047E58(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         return;
     }
     if (collision > 0) {
@@ -9026,7 +9029,7 @@ void func_8007FD24(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
         return;
     }
@@ -9673,42 +9676,42 @@ void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius,
 
 void func_800349F4(struct PlayerObj* arg0)
 {
-    func_80038524(arg0, 0xE);
+    player_set_animation_shooting(arg0, 0xE);
     func_8001540C(1, 3, BASE_OBJECT(arg0));
-    func_800363B8(arg0, 2);
-    arg0->unk67 = 1;
+    player_play_voice(arg0, 2);
+    arg0->air_state = 1;
     if (arg0->input.buttons.held & 0x100) {
-        arg0->unk84 = 1;
-        arg0->unk86 = 1;
-        arg0->unk8C = 1;
+        arg0->dash_momentum = 1;
+        arg0->air_action = 1;
+        arg0->afterimage = 1;
     } else {
-        func_80036034(arg0);
+        player_clear_dash(arg0);
     }
     if (arg0->unk88.bytes.collision_flags & 1) {
         arg0->unk15 = 0x40;
-        arg0->x_vel.val = arg0->unk84 != 0 ? FIXED(-4.125) : FIXED(-2);
+        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(-4.125) : FIXED(-2);
     } else {
         arg0->unk15 = 0;
-        arg0->x_vel.val = arg0->unk84 != 0 ? FIXED(4.125) : FIXED(2);
+        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(4.125) : FIXED(2);
     }
     arg0->y_vel.val = FIXED(5.625);
     arg0->unk28 = 0;
     arg0->unk2C = 0x4200;
     arg0->unk8A.bytes.low = 10;
-    func_8003698C(arg0);
+    player_spawn_wall_kick_spark(arg0);
     arg0->unk5 = 10;
     arg0->unk6 = 0;
 }
 
 void func_80034B64(struct PlayerObj* arg0)
 {
-    func_80038524(arg0, 0xB);
+    player_set_animation_shooting(arg0, 0xB);
     arg0->x_vel.val = (arg0->unk88.bytes.collision_flags & 1)
         ? FIXED(-2)
         : FIXED(2);
     arg0->unk2C = 0x4200;
     arg0->unk8A.bytes.low = 4;
-    arg0->unk67 = -1;
+    arg0->air_state = -1;
     arg0->unk5 = 0xB;
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
@@ -11119,7 +11122,7 @@ void func_80086124(struct MainObj* arg0)
         arg0->unk5 = ext->state.bytes.variant != 0 ? 1 : 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         is_on_screen(BASE_OBJECT(arg0));
         return;
     } else if (collision != 0 && collision != 0x7F) {
@@ -11136,7 +11139,7 @@ void func_80086860(struct MainObj* arg0)
         arg0->unk7C--;
         return;
     }
-    if (g_Player.unkC0 != -1)
+    if (g_Player.script_state != -1)
         return;
     arg0->unk7C = 0x20;
     arg0->unk20 = 0x200000;
@@ -12281,7 +12284,7 @@ void func_8009CCB4(struct ShotObj* arg0)
 MMX4_STATIC_ASSERT(ride_armor_tail_layout,
     MMX4_OFFSET_OF(struct RideArmorObj, saved_y_vel) - MMX4_OFFSET_OF(struct RideArmorObj, unk7C) == 0x9E - 0x7C);
 MMX4_STATIC_ASSERT(ride_armor_player_unk9A,
-    MMX4_OFFSET_OF(struct RideArmorObj, pad9A) == MMX4_OFFSET_OF(struct PlayerObj, unk9A));
+    MMX4_OFFSET_OF(struct RideArmorObj, pad9A) == MMX4_OFFSET_OF(struct PlayerObj, shot_cycle));
 
 extern union AnimationStep* D_800F8FC4[38];
 extern u8 D_800F905C[12];
@@ -12367,7 +12370,7 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->unk50 = NULL;
     arg0->unk68 = (struct Unk_unk68*)D_800F9068;
     arg0->unk58 = NULL;
-    arg0->unk5C = g_Player.unk5C;
+    arg0->unk5C = g_Player.hp;
     func_8002C808((struct PlayerObj*)arg0);
     arg0->unk7D = 0;
     arg0->unk7E = 0;
@@ -12377,7 +12380,7 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->unk7D = 0;
     arg0->unk80.bytes.unk81 = 0;
     arg0->unk80.bytes.unk80 = 0;
-    g_Player.unkC5 = 1;
+    g_Player.ride_state = 1;
     RIDE_U8(arg0, 0x9B) = 1;
     arg0->unk8E.value = 0;
     func_80015D60(arg0, 0);
@@ -12430,8 +12433,8 @@ void func_8003B7B4(struct RideArmorObj* arg0)
 {
     s8 health = arg0->unk5C;
 
-    if (health == 0 || g_Player.unk5C == 0) {
-        g_Player.unk5C = -0x80;
+    if (health == 0 || g_Player.hp == 0) {
+        g_Player.hp = -0x80;
         arg0->unk5C = -0x80;
         func_800C813C(0xB, D_800F905C, arg0);
         arg0->state = 3;
@@ -12441,7 +12444,7 @@ void func_8003B7B4(struct RideArmorObj* arg0)
         RIDE_U8(arg0, 0x9A) = 1;
         arg0->unk61 = 0x79;
         arg0->unk85 = 1;
-        g_Player.unk5C = arg0->unk5C & 0x7F;
+        g_Player.hp = arg0->unk5C & 0x7F;
     }
     if (background_objects[0].pad51[0] != 0) {
         RIDE_U8(arg0, 0x9B) = 0;
@@ -12790,7 +12793,7 @@ void func_8003D01C(struct RideArmorObj* arg0)
     if (edge <= 0 && !(arg0->unk70 & 1)) {
         arg0->x_pos.i.hi -= edge;
     } else if (edge < -8) {
-        g_Player.unk5C = -0x80;
+        g_Player.hp = -0x80;
         arg0->unk5C = -0x80;
     }
     edge = offset + bounds->unk2;
@@ -14780,7 +14783,7 @@ void func_8006398C(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
     } else if (result != 0 && result != 0x7F) {
         arg0->collision_data = D_801060F0;
         arg0->ext.main_43.flash_timer = 0x40;
@@ -14798,8 +14801,8 @@ void func_80063B20(struct MainObj* arg0)
     switch (arg0->unk7) {
     case 0:
         arg0->unk7 = 1;
-        arg0->unk7C = g_Player.unkBA != 0 ? 0x10 : 0x40;
-        if (g_Player.unkBA == 0) {
+        arg0->unk7C = g_Player.stun_timer != 0 ? 0x10 : 0x40;
+        if (g_Player.stun_timer == 0) {
             if ((get_random() & 7) < 5)
                 arg0->ext.main_43.unk94 = ((g_Player.x_pos.i.hi - (s16)web_spider_arena_x) / 40 + 4) & 7;
             else
@@ -14823,7 +14826,7 @@ void func_80063B20(struct MainObj* arg0)
             arg0->unk2C = 0;
         }
         threshold = 0x80;
-        if (g_Player.unkBA == 0 && (get_random() & 3) == 0)
+        if (g_Player.stun_timer == 0 && (get_random() & 3) == 0)
             threshold = 0x50;
         if (arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi >= threshold) {
             arg0->unk7 = 2;
@@ -14881,7 +14884,7 @@ void func_80064154(struct MainObj* arg0)
 
     if (arg0->ext.main_43.attack_cooldown == 0) {
         arg0->ext.main_43.unk94 = 0;
-        if (g_Player.unkBA != 0) {
+        if (g_Player.stun_timer != 0) {
             arg0->ext.main_43.unk94 = 1;
             arg0->unk5 = 5;
             arg0->unk6 = 0;
@@ -15116,12 +15119,12 @@ void func_8002FD70(struct BarObj* arg0)
     arg0->unk14 = 0;
     if (g_Player.unk2 == 0) {
         bytes[0x16] = 1;
-        bytes[0x17] = (g_Player.unkA7 & 2) ? 1 : 0;
+        bytes[0x17] = (g_Player.armor_parts & 2) ? 1 : 0;
         for (i = 2; i < 10; i++)
-            bytes[0x16 + i] = ((u8)g_Player.unkB9 >> (i - 2)) & 1;
+            bytes[0x16 + i] = ((u8)g_Player.boss_flags >> (i - 2)) & 1;
     } else {
         for (i = 0; i < 8; i++)
-            bytes[0x16 + D_800F48EC[i]] = ((u8)g_Player.unkB9 >> i) & 1;
+            bytes[0x16 + D_800F48EC[i]] = ((u8)g_Player.boss_flags >> i) & 1;
         bytes[0x1F] = 0;
         bytes[0x20] = 0;
     }
@@ -15142,7 +15145,7 @@ void func_8002FD70(struct BarObj* arg0)
     if (engine_obj.stage != 0)
         bytes[0x23] = ((u8)engine_obj.palette_flags >> (engine_obj.stage - 1)) & 1;
     bytes[0x24] = 1;
-    if (g_Player.unk2 != 0 || (engine_obj.stage == 5 && engine_obj.checkpoint == 0) || g_Player.unkC5 < 0) {
+    if (g_Player.unk2 != 0 || (engine_obj.stage == 5 && engine_obj.checkpoint == 0) || g_Player.ride_state < 0) {
         if (g_Player.unk2 == 0)
             arg0->unk2 = 1;
         for (i = 10; i < 15; i++) {
@@ -15153,14 +15156,14 @@ void func_8002FD70(struct BarObj* arg0)
         }
     } else {
         arg0->unk2 = 0;
-        if (g_Player.unk93 != 0)
-            arg0->unk14 = g_Player.unk93 + 1;
+        if (g_Player.weapon != 0)
+            arg0->unk14 = g_Player.weapon + 1;
     }
     bytes[0x25] = (engine_obj.unk5A & 0x8000) ? 1 : 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk30 = 0;
-    D_8013B818[0] = g_Player.unk93;
+    D_8013B818[0] = g_Player.weapon;
 }
 
 void func_800301BC(struct BarObj* arg0)
@@ -15176,9 +15179,9 @@ void func_800301BC(struct BarObj* arg0)
     case 0x40:
         if ((u8)original < 10) {
             if ((s8)original < 2)
-                g_Player.unk93 = 0;
+                g_Player.weapon = 0;
             else
-                g_Player.unk93 = original - 1;
+                g_Player.weapon = original - 1;
         }
         func_8001540C(0, 0x22, 0);
         goto done;
@@ -15466,19 +15469,19 @@ void func_80030A2C(struct BarObj* arg0)
         energy = engine_obj.unk5C[tank] & 0x7F;
         if (energy != 0) {
             engine_obj.unk5C[tank] = (energy - 1) | 0x80;
-            health = (g_Player.unk5C & 0x7F) + 1;
+            health = (g_Player.hp & 0x7F) + 1;
             if (engine_obj.unk46 < (s8)health)
                 health = engine_obj.unk46;
-            g_Player.unk5C = health;
+            g_Player.hp = health;
             if ((D_80141BD8.unk0 & 3) == 0)
                 func_8001540C(0, 0x17, 0);
             return;
         }
-        if (g_Player.unk5C != engine_obj.unk46) {
-            health = (g_Player.unk5C & 0x7F) + 1;
+        if (g_Player.hp != engine_obj.unk46) {
+            health = (g_Player.hp & 0x7F) + 1;
             if (engine_obj.unk46 < (s8)health)
                 health = engine_obj.unk46;
-            g_Player.unk5C = health;
+            g_Player.hp = health;
             if ((frame & 3) == 0)
                 func_8001540C(0, 0x17, 0);
             return;
@@ -15497,11 +15500,11 @@ void func_80030A2C(struct BarObj* arg0)
         return;
     }
     engine_obj.unk5C[tank] = (energy - 1) | 0x80;
-    player_health = g_Player.unk5C;
+    player_health = g_Player.hp;
     health = (player_health & 0x7F) + 1;
     if (engine_obj.unk46 < (s8)health)
         health = engine_obj.unk46;
-    g_Player.unk5C = health | (player_health & 0x80);
+    g_Player.hp = health | (player_health & 0x80);
     if ((D_80141BD8.unk0 & 3) == 0)
         func_8001540C(0, 0x17, 0);
 }
@@ -15516,11 +15519,11 @@ void func_80030C54(struct BarObj* arg0)
         return;
     if (arg0->unk2C != 0) {
         for (i = 0; i < 9; i++) {
-            if (g_Player.charge_levels[i] < 0x30) {
-                g_Player.charge_levels[i]++;
+            if (g_Player.weapon_energy[i] < 0x30) {
+                g_Player.weapon_energy[i]++;
                 refilled = 1;
             } else {
-                g_Player.charge_levels[i] = 0x30;
+                g_Player.weapon_energy[i] = 0x30;
             }
         }
         if (refilled == 0) {
@@ -15539,11 +15542,11 @@ void func_80030C54(struct BarObj* arg0)
             return;
         }
         for (i = 0; i < 9; i++) {
-            if (g_Player.charge_levels[i] < 0x30 && (s8)(g_Player.charge_levels[i] + 1) < 0x30) {
-                g_Player.charge_levels[i]++;
+            if (g_Player.weapon_energy[i] < 0x30 && (s8)(g_Player.weapon_energy[i] + 1) < 0x30) {
+                g_Player.weapon_energy[i]++;
                 refilled = 1;
             } else {
-                g_Player.charge_levels[i] = 0x30;
+                g_Player.weapon_energy[i] = 0x30;
             }
         }
         if (refilled == 0) {
@@ -15557,20 +15560,20 @@ void func_80030C54(struct BarObj* arg0)
         func_8001540C(0, 0x17, 0);
 }
 
-void func_800385EC(void);
+void player_cancel_released_charge(void);
 
 void func_80031064(struct BarObj* arg0)
 {
     if (arg0->unk30 == 0) {
         if (g_Player.unk2 == 0) {
-            func_800385EC();
-            if ((s8)D_8013B818[0] != g_Player.unk93) {
-                func_800384DC(&g_Player);
-                g_Player.unkA6 = 0;
+            player_cancel_released_charge();
+            if ((s8)D_8013B818[0] != g_Player.weapon) {
+                player_reset_charge(&g_Player);
+                g_Player.stock_charge = 0;
             }
-            func_80037104(&g_Player);
-            if ((s8)D_8013B818[0] != g_Player.unk93)
-                func_800371E4(&g_Player);
+            player_update_shot_types(&g_Player);
+            if ((s8)D_8013B818[0] != g_Player.weapon)
+                player_equip_weapon(&g_Player);
         }
         func_80021158();
         func_800129A4(8);
@@ -15707,13 +15710,13 @@ void func_800175AC(u8 index)
         clut = pause_menu_clut((D_80141BD8.unk0 & 0x10) ? layout->alternate_clut : layout->clut);
     } else if (engine_obj.cur_character == CHARACTER_X) {
         clut = pause_menu_clut(layout->clut);
-        if (g_Player.unk93 + 1 == layout->character || (g_Player.unk93 == 0 && layout->character == 0))
+        if (g_Player.weapon + 1 == layout->character || (g_Player.weapon == 0 && layout->character == 0))
             clut = pause_menu_clut(layout->alternate_clut);
     } else {
         clut = pause_menu_clut(index < 0x21 ? layout->alternate_clut : layout->clut);
     }
     if (engine_obj.cur_character == CHARACTER_X && layout->character == 1)
-        clut = pause_menu_clut(g_Player.charge_levels[0] < 0x30 ? layout->clut : layout->alternate_clut);
+        clut = pause_menu_clut(g_Player.weapon_energy[0] < 0x30 ? layout->clut : layout->alternate_clut);
     if (count == 0)
         return;
     while (count-- != 0) {
@@ -15777,7 +15780,7 @@ void func_800179BC(void)
         poly->y3 = row[7];
         if (i < 10) {
             if (i >= 2 || (i == 0) != (engine_obj.cur_character == CHARACTER_X)) {
-                amount = g_Player.charge_levels[i < 2 ? 0 : i - 1];
+                amount = g_Player.weapon_energy[i < 2 ? 0 : i - 1];
                 if (amount != 0) {
                     poly->x1 = row[0] + amount * 2 - 1;
                     poly->x3 = row[4] + amount * 2 - 1;
@@ -15787,15 +15790,15 @@ void func_800179BC(void)
                 }
             }
         } else if (i == 0xD) {
-            if (g_Player.unk5C > 0) {
+            if (g_Player.hp > 0) {
                 poly->x0 = 0x6E;
                 poly->y0 = 0xD2;
                 poly->x2 = 0x67;
                 poly->y2 = 0xD9;
                 poly->y1 = 0xD2;
-                poly->x1 = poly->x0 + (s8)g_Player.unk5C * 2;
+                poly->x1 = poly->x0 + (s8)g_Player.hp * 2;
                 poly->y3 = 0xD9;
-                poly->x3 = poly->x2 + (s8)g_Player.unk5C * 2;
+                poly->x3 = poly->x2 + (s8)g_Player.hp * 2;
             }
         } else if (i == 0xC) {
             poly->x1 = poly->x0 + (s8)engine_obj.unk5C[2];
@@ -15822,18 +15825,18 @@ void func_80037C28(struct PlayerObj* arg0)
     s32 count;
     s8 i;
 
-    if (arg0->unk96 == 8) {
+    if (arg0->shot_type == 8) {
         count = 2;
         func_8001540C(1, 9, arg0);
     } else {
         count = 8;
         func_8001540C(1, 0xA, arg0);
-        func_800363B8(arg0, 9);
+        player_play_voice(arg0, 9);
     }
     for (i = 0; i < count; i++)
-        func_80036DA0(1, arg0->unk96, i, NULL);
-    arg0->unk98 += count;
-    arg0->unk99 += count;
+        player_spawn_weapon(1, arg0->shot_type, i, NULL);
+    arg0->shot_count += count;
+    arg0->special_shot_count += count;
 }
 
 extern u32* D_8011C104[10];
@@ -15907,7 +15910,7 @@ void func_80097DD8(struct MiscObj* arg0)
     s32* player_gfx;
     s32* sprite_frames;
 
-    if (g_Player.unkC3 != 0 || g_Player.unkC4 != 0 || g_Player.unk93 != 8) {
+    if (g_Player.input_locked != 0 || g_Player.capsule_state != 0 || g_Player.weapon != 8) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -16531,23 +16534,23 @@ void func_8007FFFC(struct MainObj* arg0)
     if (magma_dragoon_arena_center[0] < g_Player.x_pos.i.hi) {
         arg0->unk15 = 0;
         arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_right - 0x30;
-        if (g_Player.unkC5 < 0)
+        if (g_Player.ride_state < 0)
             qux_object.unk15 = 0x40;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         scroll = 0x1490;
     } else {
         arg0->unk15 = 0x40;
         arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_left + 0x30;
-        if (g_Player.unkC5 < 0)
+        if (g_Player.ride_state < 0)
             qux_object.unk15 = 0;
-        func_80036AE4(0x14, 0);
+        player_start_script_action(0x14, 0);
         scroll = 0x13F0;
     }
     background_objects[0].unk26 = scroll;
     background_objects[0].unk24 = scroll;
     y = magma_dragoon_arena_floor[0];
     arg0->y_pos.i.hi = y;
-    if (g_Player.unkC5 < 0) {
+    if (g_Player.ride_state < 0) {
         qux_object.y_pos.i.hi = y;
         qux_object.x_pos.i.hi = magma_dragoon_arena_center[0];
     } else {
@@ -16693,7 +16696,7 @@ void func_800B2698(struct VisualObj* arg0)
     s32* sprite_frames;
     struct VisualSpawnOffset offset;
 
-    if (g_Player.unkC3 != 0 || g_Player.unkC4 != 0 || g_Player.unk93 != 7 || g_Player.unkBF != 0 || g_Player.unk5C == 0) {
+    if (g_Player.input_locked != 0 || g_Player.capsule_state != 0 || g_Player.weapon != 7 || g_Player.actions_reset != 0 || g_Player.hp == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -17090,7 +17093,7 @@ void func_8007D838(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
     } else if (hit > 0 && hit != 0x7F) {
         if (hit == 4 || hit == 0x24) {
             arg0->unk5 = 5;
@@ -17326,7 +17329,7 @@ void func_80075320(struct MainObj* arg0)
     if (arg0->unk5 != 0)
         arg0->ext.main_60.saved_unk5 = arg0->unk5;
     if (hit < 0) {
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         arg0->state = 2;
         arg0->unk5 = 0;
         arg0->unk6 = 0;
@@ -17468,7 +17471,7 @@ void storm_owl_choose_corner(struct MainObj* arg0);
 
 static void main_60_release(struct MainObj* arg0)
 {
-    g_Player.unkBA = 0;
+    g_Player.stun_timer = 0;
     arg0->unk60 = 6;
     arg0->unk68 = &D_801016C0;
     arg0->unk50 = &D_801016B8;
@@ -17511,7 +17514,7 @@ void func_80076364(struct MainObj* arg0)
         arg0->unk6 = 5;
         return;
     }
-    if (g_Player.unkBA != 0) {
+    if (g_Player.stun_timer != 0) {
         func_8001540C(2, 0xBA, arg0);
         distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
         if ((distance < 0 ? -distance : distance) < 8)
@@ -17861,16 +17864,16 @@ void func_80096584(struct WeaponObj* arg0, struct PlayerObj* arg1);
 
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
 {
-    s32 hidden = player->charge_levels[6] == 0;
+    s32 hidden = player->weapon_energy[6] == 0;
     u32 i;
 
-    if (!(player->unkA7 & 1) && player->charge_levels[6] < D_800F8BE0.charge.initial_thresholds[0])
+    if (!(player->armor_parts & 1) && player->weapon_energy[6] < player_weapon_energy.charge.initial_thresholds[0])
         hidden = 1;
-    if (player->unk99 >= 3)
+    if (player->special_shot_count >= 3)
         hidden = 1;
-    if (player->unkA4 > 0)
+    if (player->hurt_phase > 0)
         hidden = 1;
-    if (player->unk8E != 0 && (player->unk97 == 6 || player->unk97 == 0xF))
+    if (player->attacking != 0 && (player->last_shot_type == 6 || player->last_shot_type == 0xF))
         hidden = 1;
     if (hidden) {
         arg0->on_screen = 0;
@@ -17899,9 +17902,9 @@ void func_800961B0(struct WeaponObj* arg0)
 
     if (arg0->unk2 == 3) {
         reset = engine_obj.unkF != 0;
-        if (player->unk93 != 6)
+        if (player->weapon != 6)
             reset = 1;
-        if (player->unk5C == 0)
+        if (player->hp == 0)
             reset = 1;
         if (reset)
             ZeroObjectState(OBJECT_HEADER(arg0));
@@ -17912,8 +17915,8 @@ void func_800961B0(struct WeaponObj* arg0)
         return;
     }
     owner = (struct MainObj*)arg0->owner;
-    reset = player->unkC3 != 0;
-    if (player->unkC4 != 0 || player->unk93 != 6 || player->unkBF != 0 || player->unk5C == 0 || owner->active == 0 || owner->unk5C == 0)
+    reset = player->input_locked != 0;
+    if (player->capsule_state != 0 || player->weapon != 6 || player->actions_reset != 0 || player->hp == 0 || owner->active == 0 || owner->unk5C == 0)
         reset = 1;
     if (reset)
         arg0->state = 3;
@@ -18181,7 +18184,7 @@ void func_80071D30(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->state++;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         return;
     }
     if (hit != 0) {
@@ -18647,7 +18650,7 @@ void func_80072418(struct MainObj* arg0)
         arg0->unk5 = 0;
         arg0->unk6 = 0;
         arg0->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
         return;
     } else if (hit != 0) {
@@ -18671,8 +18674,8 @@ void func_80072418(struct MainObj* arg0)
 
 void func_80072628(struct MainObj* arg0)
 {
-    g_Player.unkBA = 0;
-    func_80036AE4(0x14, g_Player.unk15);
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
     arg0->unk5 = 1;
     arg0->unk42 &= 0x7FFF;
     func_80015D60(arg0, arg0->ext.main_57.tusks_broken != 0 ? 0x1C : 0x1B);
@@ -19032,7 +19035,7 @@ void func_800788E4(struct MainObj* arg0)
     if (flash == 0) {
         arg0->ext.main_61.hit_lock = 0;
         if (hit < 0) {
-            g_Player.unk7A = 1;
+            g_Player.spike_immune = 1;
             func_80015930(2, 0xA7);
             if (arg0->unk2 == 0) {
                 arg0->state = 2;
@@ -19714,7 +19717,7 @@ void func_8006BD1C(struct MainObj* arg0)
     if (flash == 0) {
         if (hit < 0) {
             func_8006E920(arg0, 0x38);
-            g_Player.unk7A = 1;
+            g_Player.spike_immune = 1;
             arg0->state = 2;
             arg0->unk5 = 0;
             return;
@@ -19978,7 +19981,7 @@ void func_8006CC3C(struct MainObj* arg0)
         arg0->unk62 = 0;
         arg0->unk50 = D_801001F8;
     }
-    if (M54_84(arg0) != 0 && g_Player.unkBA != 0) {
+    if (M54_84(arg0) != 0 && g_Player.stun_timer != 0) {
         func_8001540C(2, 0x86, arg0);
         g_Player.unk15 = arg0->unk15;
         if (arg0->unk15 == 0)
@@ -20604,7 +20607,7 @@ void func_80092B5C(struct WeaponObj* self)
     func_8002B718(MOVING_OBJECT(self));
     if (self->unk98 != 0) {
         self->unk98 = 0;
-        if (g_Player.unk98 < 4) {
+        if (g_Player.shot_count < 4) {
             child = find_free_weapon_obj();
             if (child != NULL) {
                 child->active = 0x21;
@@ -20614,7 +20617,7 @@ void func_80092B5C(struct WeaponObj* self)
                 child->x_pos = self->x_pos;
                 child->y_pos = self->y_pos;
                 child->unk15 = self->unk15;
-                g_Player.unk98++;
+                g_Player.shot_count++;
             }
         }
     }
@@ -21687,7 +21690,7 @@ void func_8008CD80(struct MainObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
     } else if (collision > 0 && collision != 0x7F) {
         self->collision_data = D_801060F0;
         ext->blink_delay = 0x40;
@@ -23236,7 +23239,7 @@ void func_8008BB6C(struct MainObj* self)
     struct Main73Ext* ext = &self->ext.main_73;
     struct EffectObj* effect;
 
-    if (g_Player.unkC4 == 0) {
+    if (g_Player.capsule_state == 0) {
         switch (self->unk6) {
         case 0:
             effect = find_free_effect_obj();
@@ -23245,7 +23248,7 @@ void func_8008BB6C(struct MainObj* self)
                 effect->id = 0x18;
                 ext->unk80.effect = effect;
             }
-            func_80036AE4(0x14, 0x40);
+            player_start_script_action(0x14, 0x40);
             self->unk6 = 1;
             self->unk7 = 0;
             break;
@@ -24529,9 +24532,9 @@ void func_8001FA24(struct EngineObj* arg0)
 
     flags = arg0->palette_flags | (1 << (arg0->character_state.bytes[0] - 1));
     arg0->palette_flags = flags;
-    if ((u8)g_Player.unkB9 != 0xFF && flags == 0xFF)
+    if ((u8)g_Player.boss_flags != 0xFF && flags == 0xFF)
         arg0->unk5F = 5;
-    g_Player.unkB9 |= 1 << (arg0->character_state.bytes[0] - 1);
+    g_Player.boss_flags |= 1 << (arg0->character_state.bytes[0] - 1);
     arg0->state = 9;
     arg0->unk1 = 0;
     arg0->unk2 = 0;
@@ -24842,7 +24845,7 @@ void func_8008FBCC(struct MainObj* self)
         shot->unk7C = (struct WeaponObj*)self;
         ext->thruster = shot;
     }
-    func_80036B18();
+    player_end_script_action();
 }
 
 extern s8 D_80109E04[3][4];
@@ -24995,7 +24998,7 @@ void func_80091218(struct MainObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         return;
     } else if (hit != 0) {
         s32 spawn = 0;
@@ -25287,7 +25290,7 @@ void func_8008502C(struct MainObj* self)
         self->state = 2;
         self->unk5 = 0;
         self->unk42 &= 0x7FFF;
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         return;
     }
     if (hit != 0) {
@@ -25612,8 +25615,8 @@ void func_8008F1A8(struct MainObj* self)
         self->unk42 &= 0x7FFF;
         if (D_8013B8B8[0] != 0) {
             ext->death_kind = 2;
-            func_80036AE4(0x14, g_Player.unk15);
-            g_Player.unk7A = 1;
+            player_start_script_action(0x14, g_Player.unk15);
+            g_Player.spike_immune = 1;
             engine_obj.unk1C = 1;
         } else {
             ext->death_kind = 1;
@@ -25897,30 +25900,30 @@ void func_800D3084(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-s32 func_80039E5C(struct PlayerObj*);
-void func_8003B044(struct PlayerObj*);
-void func_8003A9F0(struct PlayerObj*);
-void func_800361F8(struct PlayerObj*);
-extern u8 D_800F8DA4[4][2];
+s32 player_zero_check_ryuenjin(struct PlayerObj*);
+void player_zero_rakuhouha(struct PlayerObj*);
+void player_zero_raijingeki(struct PlayerObj*);
+void player_reset_palette(struct PlayerObj*);
+extern u8 player_zero_combo_sounds[4][2];
 
 s32 func_80039F28(struct Unk12* self)
 {
     struct PlayerObj* arg0 = (struct PlayerObj*)self;
 
-    if ((arg0->unkB9 & 0x20) && arg0->charge_levels[0] >= 0xC && (arg0->pressed_input & 0x40)
-        && arg0->unk8E == 0) {
-        func_80039C20(arg0);
-        func_800350A4(arg0, 0x67);
-        func_800363B8(arg0, 0xA);
-        arg0->unk61 = 0;
-        arg0->unkA4 = 0;
-        func_800361F8(arg0);
-        arg0->unk67 = 1;
-        arg0->unk7A = 1;
+    if ((arg0->boss_flags & 0x20) && arg0->weapon_energy[0] >= 0xC && (arg0->pressed_input & 0x40)
+        && arg0->attacking == 0) {
+        player_zero_begin_attack(arg0);
+        player_set_animation(arg0, 0x67);
+        player_play_voice(arg0, 0xA);
+        arg0->invincibility_timer = 0;
+        arg0->hurt_phase = 0;
+        player_reset_palette(arg0);
+        arg0->air_state = 1;
+        arg0->spike_immune = 1;
         arg0->unk5 = 0x3A;
         arg0->unk6 = 0;
-        arg0->charge_levels[0] -= 0xC;
-        func_8003B044(arg0);
+        arg0->weapon_energy[0] -= 0xC;
+        player_zero_rakuhouha(arg0);
         return 1;
     }
     return 0;
@@ -25930,34 +25933,34 @@ s32 func_8003A1DC(struct PlayerObj* arg0)
 {
     s8 combo;
 
-    if (arg0->unkC3 != 0) {
+    if (arg0->input_locked != 0) {
         return 0;
     }
     if (!(arg0->animation_step.fields.event & 0x20)) {
         return 0;
     }
     if (arg0->pressed_input & 0x10) {
-        combo = arg0->unkBB + 1;
-        arg0->unkBB = combo;
-        func_800350A4(arg0, combo + 0x58);
-        func_8001540C(1, D_800F8DA4[arg0->unkBB][0], arg0);
-        func_800363B8(arg0, D_800F8DA4[arg0->unkBB][1]);
-        func_8003B1E0(arg0, (s8)(arg0->unkBB + 0x18));
+        combo = arg0->combo + 1;
+        arg0->combo = combo;
+        player_set_animation(arg0, combo + 0x58);
+        func_8001540C(1, player_zero_combo_sounds[arg0->combo][0], arg0);
+        player_play_voice(arg0, player_zero_combo_sounds[arg0->combo][1]);
+        player_zero_spawn_saber(arg0, (s8)(arg0->combo + 0x18));
         return 1;
     }
-    arg0->unk8E = 0;
-    if (func_80039E5C(arg0) != 0) {
+    arg0->attacking = 0;
+    if (player_zero_check_ryuenjin(arg0) != 0) {
         return 1;
     }
-    arg0->unk8E = 1;
-    if (!(arg0->unkB9 & 1) || !(arg0->pressed_input & 0x20)) {
+    arg0->attacking = 1;
+    if (!(arg0->boss_flags & 1) || !(arg0->pressed_input & 0x20)) {
         return 0;
     }
-    func_800350A4(arg0, 0x60);
-    arg0->unkBB = 1;
+    player_set_animation(arg0, 0x60);
+    arg0->combo = 1;
     arg0->unk5 = 0x35;
     arg0->unk6 = 0;
-    func_8003A9F0(arg0);
+    player_zero_raijingeki(arg0);
     return 1;
 }
 
@@ -25984,7 +25987,7 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     index = (weapon->id - 0x18) * 2;
     animation = D_80108B44[index];
     palette = D_80108B44[index + 1];
-    if (palette == 3 && ((u8)player->unkB9 & 0x40)) {
+    if (palette == 3 && ((u8)player->boss_flags & 0x40)) {
         palette = 4;
     }
     if (weapon->id == 0x20 && weapon->unk2 != 0) {
@@ -25996,7 +25999,7 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     } else {
         func_80015D60(weapon, animation);
     }
-    func_800361B0(player, palette, 1);
+    player_copy_palette(player, palette, 1);
     need_palette_load |= 1;
     weapon->state++;
 }
@@ -26021,7 +26024,7 @@ void func_80080834(struct MainObj* self)
             self->collision_data = D_80107E84;
             self->unk5 = 4;
             self->unk6 = 0;
-        } else if (ext->crystal_released == 0 && g_Player.unk5C < 8) {
+        } else if (ext->crystal_released == 0 && g_Player.hp < 8) {
             func_80015D60(self, 0x20);
             self->collision_data = D_80107E84;
             self->unk5 = 5;
@@ -26063,7 +26066,7 @@ void func_80080834(struct MainObj* self)
     }
     if (hit < 0) {
         func_80015930(2, 0xE1);
-        g_Player.unk7A = 1;
+        g_Player.spike_immune = 1;
         self->state = 2;
         self->unk5 = 0;
         ext->partner->state = 3;

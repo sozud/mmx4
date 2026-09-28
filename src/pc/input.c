@@ -414,7 +414,7 @@ void mmx4_pc_input_update(u8* pad_buffer)
     if (mmx4_pc_replay_active())
         buttons = replay_input();
     else
-        buttons = scripted_input() | oracle_input() | keyboard_input();
+        buttons = scripted_input() | oracle_input() | keyboard_input() | mmx4_pc_player_poke_input();
     pad_buffer[0] = 0;
     pad_buffer[1] = 0x41;
     pad_buffer[2] = (u8)(~buttons >> 8);

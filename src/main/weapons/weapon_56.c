@@ -27,7 +27,7 @@ void func_800987A8(struct WeaponObj* arg0)
     struct PlayerObj* temp_v1;
 
     temp_v1 = arg0->owner;
-    temp_v1->unk98--;
+    temp_v1->shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 

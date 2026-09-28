@@ -319,7 +319,7 @@ void func_8001D364(struct GameInfo* arg0)
     func_80027850();
     func_80027D40();
     func_800281E8();
-    func_80035240();
+    player_spawn();
     func_80028DB4();
     func_80028F58();
     func_80023CE0();

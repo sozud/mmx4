@@ -30,7 +30,7 @@ void colonel_spawn_warning(struct MainObj* self)
         effect->active = 1;
         effect->id = 0x18;
         self->ext.main_69.effect = effect;
-        func_80036AE4(0x15, 0);
+        player_start_script_action(0x15, 0);
     }
     self->unk5++;
 }
@@ -63,7 +63,7 @@ void colonel_defeat_start(struct MainObj* self)
     }
     facing <<= 6;
     colonel_face_player(self);
-    func_80036AE4(0x14, facing);
+    player_start_script_action(0x14, facing);
     func_8002B560(0x25, 0x10);
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
@@ -184,7 +184,7 @@ void colonel_defeat_wait_explosion(struct MainObj* self)
         self->ext.main_69.state.word = 0;
         self->ext.main_69.unk90 = 0;
         self->ext.main_69.unk94 = 0;
-        func_80036B18();
+        player_end_script_action();
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = NULL;
         engine_obj.unkF = 1;
@@ -199,7 +199,7 @@ void colonel_retreat(struct MainObj* self)
 
 void colonel_retreat_start(struct MainObj* self)
 {
-    func_80036AE4(0x15, 0);
+    player_start_script_action(0x15, 0);
     func_80015D60(self, 6);
     self->unk7C = 0x20;
     self->unk20 = 0;
@@ -297,7 +297,7 @@ void colonel_retreat_vanish_again(struct MainObj* self)
 void colonel_retreat_finish(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        func_80036B18();
+        player_end_script_action();
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = 0;
         engine_obj.unkF = 1;
@@ -409,7 +409,7 @@ void colonel_intro_port_fill_health(struct MainObj* self)
             self->unk6 = 0;
             self->unk7 = 0;
             self->unk7E = 0;
-            func_80036B18();
+            player_end_script_action();
         }
     }
     is_on_screen(BASE_OBJECT(self));
@@ -430,7 +430,7 @@ void colonel_intro_hall_wait_player(struct MainObj* self)
     delta = g_Player.x_pos.i.hi - object_x;
     if ((delta >= 0) ? (delta < 0xB1)
                      : ((object_x - g_Player.x_pos.i.hi) < 0xB1)) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x2C0;
         background_objects[0].unk26 = 0x2A0;
         self->unk7C = 0x78;
@@ -555,7 +555,7 @@ void colonel_intro_hall_fill_health(struct MainObj* self)
             self->unk6 = 0;
             self->unk7 = 0;
             self->unk7E = 0;
-            func_80036B18();
+            player_end_script_action();
         }
     }
     is_on_screen(BASE_OBJECT(self));

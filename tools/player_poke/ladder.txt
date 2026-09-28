@@ -1,0 +1,8 @@
+ladder_climb_up dx=1808 dy=16 camera=1 hold=0-110:up frames=110 stride=4
+ladder_climb_down dx=1808 dy=-112 camera=1 hold=0-130:down frames=130 stride=4
+ladder_stop dx=1808 dy=16 camera=1 hold=0-24:up frames=48 stride=3
+ladder_turn dx=1808 dy=16 camera=1 hold=0-24:up,30-31:left,40-41:right frames=52 stride=3
+ladder_jump_off dx=1808 dy=16 camera=1 hold=0-24:up,30-31:jump frames=64 stride=3
+ladder_drop dx=1808 dy=16 camera=1 hold=0-24:up,30-60:down frames=64 stride=3
+ladder_shoot dx=1808 dy=16 camera=1 hold=0-24:up,30:shoot,44:shoot frames=64 stride=3
+ladder_charge dx=1808 dy=16 camera=1 hold=0-24:up,0-110:shoot frames=124 stride=6

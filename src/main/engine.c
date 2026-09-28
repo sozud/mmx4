@@ -225,7 +225,7 @@ void func_8001FC20(struct EngineObj* arg0)
     func_80027850();
     func_80027D40();
     func_800281E8();
-    func_80035240();
+    player_spawn();
     func_80028DB4();
     func_80028F58();
 
@@ -354,7 +354,7 @@ INCLUDE_ASM("main/nonmatchings/engine", func_800200D4);
 // D_800F241C state 2
 void func_80020368(struct EngineObj* arg0)
 {
-    func_80035EF0();
+    player_read_input();
     func_8002FCAC();
 }
 

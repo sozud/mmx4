@@ -206,7 +206,7 @@ void func_800B054C(struct VisualObj* arg0)
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
-    if (arg0->unk2 != 1 || g_Player.unkBC == 0) {
+    if (arg0->unk2 != 1 || g_Player.update_delay == 0) {
         func_80015DC8(ANIMATED_OBJECT(arg0));
     }
     func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);

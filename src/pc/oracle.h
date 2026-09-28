@@ -4,6 +4,7 @@
 void mmx4_oracle_capture_object_changes(unsigned long frame);
 void mmx4_pc_object_log_dump(void);
 void mmx4_pc_frame_end(void);
+void mmx4_pc_player_dump(long frame);
 void mmx4_pc_write_replay_frame(long frame);
 
 #endif

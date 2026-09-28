@@ -8,10 +8,10 @@ void func_800B2544(struct VisualObj* arg0)
     s32 var_a0;
 
     var_a0 = engine_obj.unkF != 0;
-    if (player->unk93 != 6) {
+    if (player->weapon != 6) {
         var_a0 = 1;
     }
-    if (player->unk5C == 0) {
+    if (player->hp == 0) {
         var_a0 = 1;
     }
     if (var_a0 != 0) {

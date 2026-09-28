@@ -62,7 +62,7 @@ void func_800C3364(struct ItemObj* arg0)
 void func_800C3438(struct ItemObj* arg0)
 {
     if (func_800C34F0(arg0) && (g_Player.unk70 & 8)) {
-        g_Player.unk5C = -0x80;
+        g_Player.hp = -0x80;
     }
 }
 

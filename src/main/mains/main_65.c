@@ -19,7 +19,7 @@ void magma_dragoon_intro_warning(struct MainObj* self)
     }
     self->unk15 = 0;
     self->unk6++;
-    func_80036AE4(0x14, 0x40);
+    player_start_script_action(0x14, 0x40);
     if (engine_obj.stage == 0xC) {
         background_objects[0].unk26 = 0x1B0;
         background_objects[0].unk24 = 0x1B0;
@@ -135,7 +135,7 @@ void func_8007E350(struct MainObj* arg0)
         arg0->unk5 = 3;
         arg0->unk6 = 0;
         arg0->unk54 = &D_80102A64;
-        func_80036B18();
+        player_end_script_action();
         if (engine_obj.stage == 0xC) {
             background_objects[0].unk26 = 0x110;
             background_objects[0].unk24 = 0x1B0;
@@ -634,7 +634,7 @@ void magma_dragoon_death_start(struct MainObj* self)
     self->unk5++;
     self->unk42 &= 0x7FFF;
     func_80015D60(self, 0xD);
-    func_80036AE4(0x14, g_Player.unk15);
+    player_start_script_action(0x14, g_Player.unk15);
     func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
 }
 

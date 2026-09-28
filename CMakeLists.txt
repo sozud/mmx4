@@ -40,6 +40,7 @@ add_executable(mmx4_pc
     src/pc/objectlog.c
     src/pc/oracle.c
     src/pc/placeholder.c
+    src/pc/playerdump.c
     src/pc/renderlog.c
     src/pc/screenshot.c
     src/pc/stubs.c
@@ -60,7 +61,7 @@ if(CMAKE_C_COMPILER_ID MATCHES "Clang")
         -Wno-error=incompatible-function-pointer-types)
 endif()
 target_include_directories(mmx4_pc PRIVATE include tools/psyz/psyz/include)
-target_link_libraries(mmx4_pc PRIVATE psyz)
+target_link_libraries(mmx4_pc PRIVATE psyz z)
 if(APPLE)
     target_link_options(mmx4_pc PRIVATE -Wl,-dead_strip)
 else()

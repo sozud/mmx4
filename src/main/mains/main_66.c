@@ -26,8 +26,8 @@ void iris_death_start(struct MainObj* self)
 {
     struct MainObj* other;
 
-    g_Player.unkBA = 0;
-    func_80036AE4(0x14, g_Player.unk15);
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
     self->unk5 = 1;
     other = self->ext.main_66.partner;
     self->unk42 &= 0x7FFF;
@@ -77,9 +77,9 @@ void iris_death_wait_explosion(struct MainObj* self)
     }
 
     if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
-        func_80036AE4(0x14, 0);
+        player_start_script_action(0x14, 0);
     } else {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
     }
     engine_obj.enable_boss = 0;
     engine_obj.boss_ptr = 0;
@@ -142,7 +142,7 @@ void iris_intro_wait_camera(struct MainObj* self)
 {
     func_80015DC8(ANIMATED_OBJECT(self));
     if (background_objects[0].x_pos.i.hi == 0x7F0) {
-        func_80036AE4(0x15, 0);
+        player_start_script_action(0x15, 0);
         self->unk6 = 2;
     }
 }
@@ -152,7 +152,7 @@ void iris_intro_warning(struct MainObj* self)
     struct EffectObj* effect;
 
     func_80015DC8(ANIMATED_OBJECT(self));
-    if (g_Player.unkC0 == -1) {
+    if (g_Player.script_state == -1) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
@@ -286,7 +286,7 @@ void iris_intro_fill_health(struct MainObj* self)
             func_8001540C(2, 0xE1, self);
             self->unk5 = 3;
             self->unk6 = 0;
-            func_80036B18();
+            player_end_script_action();
         }
     }
 }

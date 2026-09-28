@@ -64,7 +64,7 @@ void func_80065CD4(struct MainObj* self)
         self->unk7E = 1;
         self->state = 2;
         if (g_Player.unk5 == 2) {
-            func_80036AE4(0x14, 0x40);
+            player_start_script_action(0x14, 0x40);
             self->unk6 = 1;
         } else {
             self->unk6 = 0;
@@ -89,7 +89,7 @@ void func_80065DCC(struct MainObj* arg0)
         }
     }
     if ((arg0->unk6 == 0) && ((arg0->x_pos.i.hi + 0x69 >= g_Player.x_pos.i.hi) || (g_Player.x_pos.i.hi >= 0x1B36))) {
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         arg0->unk6 = 1;
     }
     func_8002E184(PLAYER_OBJECT(arg0));
@@ -149,7 +149,7 @@ void func_8006689C(struct MainObj* arg0)
     arg0->ext.main_45.projectile_command = 0xFF;
     arg0->unk5 = 1;
     arg0->unk6 = 0;
-    func_80036B18();
+    player_end_script_action();
 }
 
 void func_8006692C(struct MainObj* arg0)

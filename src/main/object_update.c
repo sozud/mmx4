@@ -11,9 +11,9 @@ void TitleUpdate2(struct QuadObj*);
 
 void func_80021158(void)
 {
-    func_80035EF0();
+    player_read_input();
     func_80021C14();
-    func_800311EC();
+    player_update();
     update_weapon_objects();
     update_main_objects();
     update_shot_objects();
@@ -38,10 +38,10 @@ void func_80021158(void)
 void update_main_objects(void)
 {
 #define current SP_CUR_MAIN_OBJ
-    if (!g_Player.unkBC) {
+    if (!g_Player.update_delay) {
         for (current = main_objects; current < &main_objects[COUNT(main_objects)]; current++) {
             if (current->active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk12 != 0 && !(current->active & 0x8))) {
+                if (g_Player.update_delay != 0 || (engine_obj.unk12 != 0 && !(current->active & 0x8))) {
                     if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -57,10 +57,10 @@ void update_main_objects(void)
 void update_weapon_objects(void)
 {
 #define current SP_CUR_WEAPON_OBJ
-    if (!g_Player.unkBC) {
+    if (!g_Player.update_delay) {
         for (current = weapon_objects; current < &weapon_objects[COUNT(weapon_objects)]; current++) {
             if (current->active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk11 != 0 && !(current->active & 0x8))) {
+                if (g_Player.update_delay != 0 || (engine_obj.unk11 != 0 && !(current->active & 0x8))) {
                     if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -76,10 +76,10 @@ void update_weapon_objects(void)
 void update_shot_objects(void)
 {
 #define current SP_CUR_SHOT_OBJ
-    if (!g_Player.unkBC) {
+    if (!g_Player.update_delay) {
         for (current = shot_objects; current < &shot_objects[COUNT(shot_objects)]; current++) {
             if (current->active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk13 != 0 && !(current->active & 0x8))) {
+                if (g_Player.update_delay != 0 || (engine_obj.unk13 != 0 && !(current->active & 0x8))) {
                     if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }
@@ -125,10 +125,10 @@ void update_effect_objects(void)
 void update_item_objects(void)
 {
 #define current SP_CUR_ITEM_OBJ
-    if (!g_Player.unkBC) {
+    if (!g_Player.update_delay) {
         for (current = item_objects; current < &item_objects[COUNT(item_objects)]; current++) {
             if (current->active) {
-                if (g_Player.unkBC != 0 || (engine_obj.unk16 != 0 && !(current->active & 0x8))) {
+                if (g_Player.update_delay != 0 || (engine_obj.unk16 != 0 && !(current->active & 0x8))) {
                     if (current->on_screen != 0) {
                         func_8002B3C0(current);
                     }

@@ -7,14 +7,14 @@ void func_8003D3F8(struct RideArmorObj* arg0)
 {
     u8 previous_input;
 
-    if (g_Player.unkC0 == 0) {
+    if (g_Player.script_state == 0) {
         arg0->collision_flags = g_Player.input.buttons.held;
         arg0->unk8A = g_Player.pressed_input;
     } else {
         arg0->collision_flags = 0;
         arg0->unk8A = 0;
     }
-    if (g_Player.unkBC != 0) {
+    if (g_Player.update_delay != 0) {
         func_8002B3C0(BASE_OBJECT(arg0));
         return;
     }
@@ -116,7 +116,7 @@ INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
 void func_8003DC1C(struct PlayerObj* arg0, s8 arg1)
 {
     if (arg0->unk8D == 0) {
-        g_Player.unkD4 = arg1;
+        g_Player.ride_animation = arg1;
         g_Player.unk6 = 0;
     }
 }
@@ -148,7 +148,7 @@ s32 func_8003DC8C(struct RideArmorObj* arg0)
         if (arg0->unk8A & 0x80) {
             return 1;
         }
-    } else if (g_Player.unk5C == -0x80) {
+    } else if (g_Player.hp == -0x80) {
         return 1;
     }
     return 0;
@@ -279,9 +279,9 @@ void func_8003DF9C(struct PlayerObj* arg0)
     struct BaseObj* base;
     s8 effect;
 
-    if ((arg0->unk8D == 0) && !(arg0->unk97 & 2) && (arg0->unk8A.packed & 0x100) && (func_8003DE08(MAIN_OBJECT(arg0)) == 0)) {
+    if ((arg0->unk8D == 0) && !(arg0->last_shot_type & 2) && (arg0->unk8A.packed & 0x100) && (func_8003DE08(MAIN_OBJECT(arg0)) == 0)) {
         base = BASE_OBJECT(arg0);
-        if (arg0->unk67 == 0) {
+        if (arg0->air_state == 0) {
             effect = 7;
         } else {
             effect = 0xF;
@@ -291,7 +291,7 @@ void func_8003DF9C(struct PlayerObj* arg0)
         }
 
         func_8003DC44(base, effect);
-        arg0->unk97 |= 8;
+        arg0->last_shot_type |= 8;
     }
 }
 
@@ -301,7 +301,7 @@ s32 func_8003E048(struct PlayerObj* arg0)
     s32 flags;
     s32 result;
 
-    if (!(arg0->unk97 & 8)) {
+    if (!(arg0->last_shot_type & 8)) {
         mask = 2;
         if (arg0->unk15 != 0) {
             mask = 1;
@@ -341,16 +341,16 @@ void func_8003E0D0(struct RideArmorObj* self)
         func_80015D60(self, 0x11);
     } else if (!(self->input_flags & 8)) {
         func_8003DC44(BASE_OBJECT(self), 0xC);
-    } else if (g_Player.unkC0 == 0 && engine_obj.unkF == 0
-        && (g_Player.unk2 == 0 || g_Player.unk8E == 0) && g_Player.unk7A == 0
-        && g_Player.unkE0 == 0 && !(self->unk94.halves[1] & 0x8200)
+    } else if (g_Player.script_state == 0 && engine_obj.unkF == 0
+        && (g_Player.unk2 == 0 || g_Player.attacking == 0) && g_Player.spike_immune == 0
+        && g_Player.nova_strike_active == 0 && !(self->unk94.halves[1] & 0x8200)
         && func_8002C160(COLLISION_OBJECT(&g_Player), COLLISION_OBJECT(self))
-        && engine_obj.unkF == 0 && g_Player.unk5C > 0 && g_Player.unkA4 == 0
-        && g_Player.unk79 == 0) {
+        && engine_obj.unkF == 0 && g_Player.hp > 0 && g_Player.hurt_phase == 0
+        && g_Player.touching_spikes == 0) {
         func_8003DC44(BASE_OBJECT(self), 0xA);
         func_80015D60(self, 0x12);
         self->unk94.bytes.unk97 |= 0x40;
-        g_Player.unkC5 = 1;
+        g_Player.ride_state = 1;
     }
 }
 
@@ -711,9 +711,9 @@ void func_8003EEF8(struct RideArmorObj* self)
                 self->y_vel.val = 0;
                 self->unk2C = 0;
             }
-            g_Player.unkC5 = 0;
+            g_Player.ride_state = 0;
             self->unk94.bytes.unk97 ^= 0x40;
-            func_80035EA4(&g_Player);
+            player_set_collision_bounds(&g_Player);
         }
         if (!(self->input_flags & 8)) {
             func_8003DC44(BASE_OBJECT(self), 0xC);
@@ -1222,17 +1222,17 @@ void func_800400C8(struct PlayerObj* self)
     switch (temp_v1) {
     case 1:
         self->unk8D = 2;
-        *(u8*)&self->unk8C = 0xFF;
-        g_Player.unkC5 = 0;
-        self->unk97 ^= 0x40;
-        func_80035EA4(&g_Player);
-        self->unk90 = 0x1E;
-        self->unk97 |= 4;
+        *(u8*)&self->afterimage = 0xFF;
+        g_Player.ride_state = 0;
+        self->last_shot_type ^= 0x40;
+        player_set_collision_bounds(&g_Player);
+        self->attack_ended = 0x1E;
+        self->last_shot_type |= 4;
         func_800C813C(7, D_800F9118, self);
         return;
     case 2:
-        temp_v0 = (u8)self->unk90 - 1;
-        self->unk90 = temp_v0;
+        temp_v0 = (u8)self->attack_ended - 1;
+        self->attack_ended = temp_v0;
         if (temp_v0 == 0) {
             self->state = 2;
             self->on_screen = 0;
@@ -1243,8 +1243,8 @@ void func_800400C8(struct PlayerObj* self)
         func_800AF878(BASE_OBJECT(self), 0, 0x1F, 0x1F);
         return;
     default:
-        if ((*(u8*)&self->unk8C == 0) && !(*(u8*)&self->unk97 & 0x80)) {
-            self->unk85 = 0;
+        if ((*(u8*)&self->afterimage == 0) && !(*(u8*)&self->last_shot_type & 0x80)) {
+            self->dash_timer = 0;
             self->unk42 &= 0x7FFF;
         }
         return;
@@ -1255,8 +1255,8 @@ void func_800401F8(struct PlayerObj* arg0)
 {
     u8 temp_v0;
 
-    if (arg0->unk97 & 0x40) {
-        temp_v0 = arg0->unk8C;
+    if (arg0->last_shot_type & 0x40) {
+        temp_v0 = arg0->afterimage;
         if (temp_v0 != 0) {
             if ((temp_v0 & 3) == 0) {
                 arg0->unk42 |= 0x8000;
@@ -1273,7 +1273,7 @@ void func_800402C4(struct PlayerObj* self)
 {
     s16 x_limit;
     s16 y_limit;
-    if (self->unk97 & 0x40) {
+    if (self->last_shot_type & 0x40) {
         x_limit = (u16)background_objects[self->bg_offset].unk1C + 0x140;
         if (self->x_pos.i.hi + 0x20 >= x_limit) {
             self->x_pos.i.hi = background_objects[self->bg_offset].unk1C + 0x120;
@@ -1285,8 +1285,8 @@ void func_800402C4(struct PlayerObj* self)
     y_limit = (u16)background_objects[self->bg_offset].unk20 + 0xF0;
     if (self->y_pos.i.hi - 0x20 >= y_limit) {
         self->state = 2;
-        if (self->unk97 & 0x40) {
-            g_Player.unk5C = -0x80;
+        if (self->last_shot_type & 0x40) {
+            g_Player.hp = -0x80;
         }
     }
 }

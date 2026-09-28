@@ -8,13 +8,13 @@ void func_80097EEC(struct WeaponObj* arg0)
     struct PlayerObj* ptr = &g_Player;
 
     var_a0 = 0;
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a0 = 1;
     }
-    if (g_Player.unkC3 != 0) {
+    if (g_Player.input_locked != 0) {
         var_a0 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a0 = 1;
     }
     if (arg0->unk84.word != g_Player.unk17) {

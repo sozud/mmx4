@@ -8,7 +8,7 @@ void func_800D2B9C(struct MiscObj* arg0)
 {
     if (g_Player.x_pos.i.hi >= 0x6E1) {
         arg0->unk5++;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x6B0;
         background_objects[0].unk26 = 0x6B0;
         arg0->ext.misc_53.timer = 0x50;

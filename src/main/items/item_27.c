@@ -86,7 +86,7 @@ void func_800C7578(struct ItemObj* self)
         g_Player.x_pos.i.hi = (s16)(u16)self->x_pos.i.hi;
         height = self->unk68->unk3;
         g_Player.y_pos.i.hi = ((u16)self->y_pos.i.hi - height) - g_Player.unk68->unk3;
-        func_80036AE4(0x14, g_Player.unk15);
+        player_start_script_action(0x14, g_Player.unk15);
         reset_main_and_shots();
         effect = find_free_misc_obj();
         if (effect != NULL) {
@@ -103,7 +103,7 @@ void func_800C7578(struct ItemObj* self)
 
 void func_800C7648(struct ItemObj* arg0)
 {
-    if (g_Player.unkC0 < 0) {
+    if (g_Player.script_state < 0) {
         arg0->tail_ext.unk1.unk84.timer = 0;
         background_objects[0].unk26 = background_objects[0].x_pos.i.hi;
         background_objects[0].unk24 = background_objects[0].x_pos.i.hi;
@@ -148,7 +148,7 @@ void func_800C7754(struct ItemObj* arg0)
 void func_800C77BC(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
-        func_80036AE4(0x16, g_Player.unk15);
+        player_start_script_action(0x16, g_Player.unk15);
         func_8001540C(5, 1, NULL);
         arg0->tail_ext.unk1.unk84.timer = 0x28;
         arg0->unk6 = (u8)arg0->unk6 + 1;
@@ -167,8 +167,8 @@ void func_800C785C(struct ItemObj* arg0)
 {
     u8 checkpoint;
 
-    if (g_Player.unkC0 < 0) {
-        func_80036B18();
+    if (g_Player.script_state < 0) {
+        player_end_script_action();
         checkpoint = (u8)arg0->unk2;
         engine_obj.unkF = -0x40;
         engine_obj.checkpoint = checkpoint & 0xF;

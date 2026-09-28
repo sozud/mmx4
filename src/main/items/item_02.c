@@ -86,7 +86,7 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
     u8 charge;
     s8 value;
 
-    player_health = g_Player.unk5C;
+    player_health = g_Player.hp;
     player_status = player_health & 0x80;
     if ((player_health & 0x7F) < engine_obj.unk46) {
         func_800C03BC(1);
@@ -100,15 +100,15 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
         arg0->state = 3;
     }
 
-    player_health = g_Player.unk5C;
+    player_health = g_Player.hp;
     if ((player_health & 0x7F) >= engine_obj.unk46) {
-        g_Player.unk5C = engine_obj.unk46 | player_status;
+        g_Player.hp = engine_obj.unk46 | player_status;
     }
 
-    charge = g_Player.charge_levels[0] + arg1;
-    g_Player.charge_levels[0] = charge;
+    charge = g_Player.weapon_energy[0] + arg1;
+    g_Player.weapon_energy[0] = charge;
     if ((s8)charge >= 0x31) {
-        g_Player.charge_levels[0] = 0x30;
+        g_Player.weapon_energy[0] = 0x30;
     }
 
     for (arg1 = 0; arg1 < 2; arg1++) {

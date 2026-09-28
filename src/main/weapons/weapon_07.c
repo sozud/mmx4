@@ -6,14 +6,14 @@ void func_80096E10(struct WeaponObj* arg0)
 {
     s32 disabled;
 
-    disabled = g_Player.unkC3 != 0;
-    if (g_Player.unkC4 != 0) {
+    disabled = g_Player.input_locked != 0;
+    if (g_Player.capsule_state != 0) {
         disabled = 1;
     }
-    if (g_Player.unk93 != 7) {
+    if (g_Player.weapon != 7) {
         disabled = 1;
     }
-    if (g_Player.unk96 == 0x10) {
+    if (g_Player.shot_type == 0x10) {
         disabled = 1;
     }
     if (disabled != 0) {
@@ -116,8 +116,8 @@ void func_800972C8(struct WeaponObj* arg0)
 void func_800972DC(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
-    g_Player.unk98--;
-    g_Player.unk99--;
+    g_Player.shot_count--;
+    g_Player.special_shot_count--;
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
@@ -137,17 +137,17 @@ void func_80097384(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.unkC3 != 0;
-    if (g_Player.unkC4 != 0) {
+    var_a1 = g_Player.input_locked != 0;
+    if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk93 != 7) {
+    if (g_Player.weapon != 7) {
         var_a1 = 1;
     }
-    if (g_Player.unkBF != 0) {
+    if (g_Player.actions_reset != 0) {
         var_a1 = 1;
     }
-    if (g_Player.unk5C == 0) {
+    if (g_Player.hp == 0) {
         var_a1 = 1;
     }
     if (var_a1 != 0) {
@@ -221,8 +221,8 @@ void func_80097804(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     if (arg0->unk2 == 0) {
-        g_Player.unk98--;
-        g_Player.unk99--;
+        g_Player.shot_count--;
+        g_Player.special_shot_count--;
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

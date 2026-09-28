@@ -110,7 +110,7 @@ void func_80092614(struct WeaponObj* arg0)
 
     owner = arg0->owner;
     arg0->unk50 = 0;
-    owner->unk98--;
+    owner->shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 

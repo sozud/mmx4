@@ -28,7 +28,7 @@ void func_800AF28C(struct VisualObj* arg0, struct VisualObj* arg1)
 
 void func_800AF388(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
-    if (arg1->unk5C == 0 || arg1->state == 3) {
+    if (arg1->hp == 0 || arg1->state == 3) {
         ZeroObjectState(arg0);
         return;
     }

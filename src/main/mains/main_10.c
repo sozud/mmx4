@@ -94,9 +94,9 @@ void dragonfly_run(struct MainObj* self)
     dragonfly_step_funcs[self->unk5](self);
     if (self->ext.main_10.hold_state != 0) {
         if (self->ext.main_10.can_grab != 0) {
-            held = &g_Player.unkBA;
+            held = &g_Player.stun_timer;
             if ((*held == 0) && (func_8002D9BC(self) != 0) && (*held != 0)) {
-                g_Player.unkA5 = self->unk15;
+                g_Player.hit_facing = self->unk15;
                 self->ext.main_10.hold_state = 3;
             }
         }
@@ -124,7 +124,7 @@ void dragonfly_finish(struct MainObj* self)
     self->unk62 = 0;
     func_80015930(2, 0xD);
     if (self->ext.main_10.hold_state == 3) {
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
     }
     self->ext.main_10.timer = 0;
     self->ext.main_10.turn_delay = 0;
@@ -317,7 +317,7 @@ void dragonfly_carry_rise(struct MainObj* self)
     struggle = self->ext.main_10.struggle + func_8002BAA4();
     self->ext.main_10.struggle = struggle;
     if (struggle >= 0x15) {
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         self->unk50 = D_800FAEF0;
         self->unk62 = 0;
         func_80015D60(self, 5);
@@ -363,7 +363,7 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     self->ext.main_10.struggle = struggle;
     if (struggle >= 0x15) {
         func_80015930(2, 0xE);
-        g_Player.unkBA = 0;
+        g_Player.stun_timer = 0;
         self->unk50 = NULL;
         self->unk62 = 0;
         func_80015D60(self, 5);
@@ -377,11 +377,11 @@ void dragonfly_carry_squeeze(struct MainObj* self)
         squeeze = self->ext.main_10.timer - 1;
         self->ext.main_10.timer = squeeze;
         if (squeeze == 9 || squeeze == 4) {
-            func_80036470(2);
+            player_damage(2);
         }
         if (self->ext.main_10.timer == 0) {
             func_80015930(2, 0xE);
-            g_Player.unkBA = 0;
+            g_Player.stun_timer = 0;
             self->unk62 = 0;
             func_80015D60(self, 5);
             self->unk24 = 0x20000;

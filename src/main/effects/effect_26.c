@@ -155,7 +155,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_26", func_800BB888);
 void func_800BB928(struct EffectObj* arg0)
 {
     if (!(arg0->active & 0x80)) {
-        func_80036B18();
+        player_end_script_action();
     }
     engine_obj.unk1C = 1;
     ZeroObjectState(OBJECT_HEADER(arg0));

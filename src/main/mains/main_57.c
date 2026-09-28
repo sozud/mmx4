@@ -12,7 +12,7 @@ void frost_walrus_update(struct MainObj* self)
 {
     frost_walrus_state_funcs[self->state](self);
     CollisionRelated(PLAYER_OBJECT(self));
-    if (!(g_Player.unk5C & 0x7F)) {
+    if (!(g_Player.hp & 0x7F)) {
         frost_walrus_set_floor_tiles(0x38);
     }
 }
@@ -30,7 +30,7 @@ void frost_walrus_start_warning(struct MainObj* self)
         effect->active = 1;
         effect->id = 0x18;
         self->ext.main_57.effect = effect;
-        func_80036AE4(0x14, 0x40);
+        player_start_script_action(0x14, 0x40);
         self->unk5++;
     }
 }
@@ -236,7 +236,7 @@ void frost_walrus_intro_fill_health(struct MainObj* self)
         self->unk5 = 3;
         self->unk6 = 0;
         self->unk7E = 0;
-        func_80036B18();
+        player_end_script_action();
     }
 }
 
