@@ -3890,9 +3890,6 @@ extern u8 ride_armor_missile_hit_box[4];
 extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
-#ifdef VERSION_JP
-extern s16 D_801419B2_jp;
-#endif
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
@@ -4051,7 +4048,7 @@ extern struct Unk_unk68 soul_body_hit_box[];
 extern struct Unk_unk68 ice_bird_charge_box[3];
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 dragonfly_terrain_box;
-extern u8 boss_music_tracks[13][3];
+extern u8 boss_voice_tracks[13][3];
 extern union AnimationStep D_80105FF0[32];
 extern struct Unk_unk68 D_80103EE4;
 extern struct Unk_unk68 D_80103EF0;
@@ -4539,6 +4536,107 @@ extern struct Prim D_800EE504[];
 extern struct RectPtrPair vram_rect_ptrs[];
 extern struct RectPtrPair* vram_rect_ptr;
 extern u8 D_800F30D4[16][2];
+enum XaArchive {
+#ifdef VERSION_JP
+    XA_ARCHIVE_BGM1 = 0x94,
+#else
+    XA_ARCHIVE_BGM1 = 0x95,
+#endif
+    XA_ARCHIVE_BGM2,
+    XA_ARCHIVE_BGM3,
+    XA_ARCHIVE_BGM4,
+    XA_ARCHIVE_BGM5,
+    XA_ARCHIVE_BOSS_INTRO,
+    XA_ARCHIVE_VOICE1,
+    XA_ARCHIVE_VOICE2,
+    XA_ARCHIVE_VOICE3,
+    XA_ARCHIVE_VOICE4,
+    XA_ARCHIVE_VOICE5,
+};
+
+enum XaTrack {
+    MUSIC_STAFF_ROLL = 0x00,
+    MUSIC_SIGMA_FINAL_BATTLE = 0x01,
+    MUSIC_SIGMA_BATTLE = 0x02,
+    MUSIC_STAGE_JUNGLE = 0x03,
+    MUSIC_STAGE_FINAL_WEAPON = 0x04,
+    MUSIC_STAGE_MILITARY_TRAIN = 0x05,
+    MUSIC_STAGE_BIO_LABORATORY = 0x06,
+    MUSIC_BOSS_BATTLE = 0x07,
+    MUSIC_BRIEFING = 0x08,
+    MUSIC_STAGE_SNOW_BASE_2 = 0x09,
+    MUSIC_STAGE_CYBER_SPACE = 0x0A,
+    MUSIC_REPLIFORCE_BATTLE = 0x0B,
+    MUSIC_STAGE_AIR_FORCE = 0x0C,
+    MUSIC_IRIS_BATTLE = 0x0D,
+    MUSIC_STAGE_SNOW_BASE = 0x0E,
+    MUSIC_DOUBLE_BATTLE = 0x0F,
+    MUSIC_STAGE_INTRO_X = 0x10,
+    MUSIC_STAGE_VOLCANO = 0x11,
+    MUSIC_STAGE_MARINE_BASE = 0x12,
+    MUSIC_STAGE_INTRO_ZERO = 0x13,
+    MUSIC_STAGE_SPACE_PORT = 0x14,
+    MUSIC_INTRO_BOSS_BATTLE = 0x15,
+    MUSIC_BRIEFING_LATE = 0x16,
+    MUSIC_WEAPON_GET = 0x17,
+    MUSIC_DIALOGUE_1 = 0x18,
+    MUSIC_DIALOGUE_2 = 0x19,
+    MUSIC_DIALOGUE_3 = 0x1A,
+    MUSIC_LIGHT_CAPSULE = 0x1B,
+    MUSIC_CHARACTER_SELECT = 0x1C,
+    MUSIC_TITLE = 0x20,
+    MUSIC_STAGE_CLEAR_ZERO = 0x21,
+    MUSIC_STAGE_CLEAR_X = 0x22,
+    VOICE_IRIS_3 = 0x28,
+    VOICE_CYBER_PEACOCK_1 = 0x29,
+    VOICE_MAGMA_DRAGOON_1 = 0x2A,
+    VOICE_MAGMA_DRAGOON_2 = 0x2B,
+    VOICE_IRIS_2 = 0x2C,
+    VOICE_SLASH_BEAST_3 = 0x2D,
+    VOICE_COLONEL_1 = 0x2E,
+    VOICE_IRIS_1 = 0x2F,
+    VOICE_MAGMA_DRAGOON_3 = 0x30,
+    VOICE_COLONEL_2 = 0x31,
+    VOICE_GENERAL_3 = 0x32,
+    VOICE_CYBER_PEACOCK_2 = 0x33,
+    VOICE_JET_STINGRAY_1 = 0x34,
+    VOICE_SPLIT_MUSHROOM_1 = 0x35,
+    VOICE_SPLIT_MUSHROOM_3 = 0x36,
+    VOICE_SPLIT_MUSHROOM_2 = 0x37,
+    VOICE_SLASH_BEAST_2 = 0x38,
+    VOICE_CYBER_PEACOCK_3 = 0x39,
+    VOICE_JET_STINGRAY_2 = 0x3A,
+    VOICE_COLONEL_3 = 0x3B,
+    VOICE_FROST_WALRUS_2 = 0x3C,
+    VOICE_JET_STINGRAY_3 = 0x3D,
+    VOICE_UNUSED_1 = 0x3E,
+    VOICE_WEB_SPIDER_2 = 0x3F,
+    VOICE_SIGMA_3 = 0x40,
+    VOICE_SLASH_BEAST_1 = 0x41,
+    VOICE_GENERAL_1 = 0x42,
+    VOICE_GENERAL_2 = 0x43,
+    VOICE_STORM_OWL_2 = 0x44,
+    VOICE_FROST_WALRUS_1 = 0x45,
+    VOICE_FROST_WALRUS_3 = 0x46,
+    VOICE_UNUSED_2 = 0x47,
+    VOICE_SIGMA_1 = 0x48,
+    VOICE_DOUBLE_3 = 0x49,
+    VOICE_SIGMA_2 = 0x4A,
+    VOICE_STORM_OWL_1 = 0x4B,
+    VOICE_DOUBLE_2 = 0x4C,
+    VOICE_DOUBLE_1 = 0x4D,
+    VOICE_STORM_OWL_3 = 0x4E,
+    VOICE_WEB_SPIDER_1 = 0x4F,
+    MUSIC_BOSS_INTRO_WEB_SPIDER = 0x50,
+    MUSIC_BOSS_INTRO_FROST_WALRUS = 0x51,
+    MUSIC_BOSS_INTRO_SPLIT_MUSHROOM = 0x52,
+    MUSIC_BOSS_INTRO_MAGMA_DRAGOON = 0x53,
+    MUSIC_BOSS_INTRO_JET_STINGRAY = 0x54,
+    MUSIC_BOSS_INTRO_CYBER_PEACOCK = 0x55,
+    MUSIC_BOSS_INTRO_STORM_OWL = 0x56,
+    MUSIC_BOSS_INTRO_SLASH_BEAST = 0x57,
+};
+
 struct XaSequenceParams {
     u8 sequence, volume;
 };
@@ -4838,7 +4936,7 @@ s32 player_zero_shippuuga_cancel(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);
 void player_hover_set_direction(struct PlayerObj*, s32);
-void play_boss_music(s32);
+void play_boss_voice(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
 struct VisualObj* jet_stingray_spawn_splash(struct MainObj*);

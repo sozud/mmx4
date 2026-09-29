@@ -128,7 +128,7 @@ void general_intro_dialogue(struct MainObj* self)
     } else if (abc_object.unkC == 0) {
         self->unk6 = 0;
         self->unk5++;
-        play_boss_music(0xB);
+        play_boss_voice(0xB);
         self->unk7C = 1;
     }
 }

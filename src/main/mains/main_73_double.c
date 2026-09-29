@@ -34,7 +34,7 @@ void double_intro_voice(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
-        play_boss_music(0xA);
+        play_boss_voice(0xA);
     }
     animate_object(ANIMATED_OBJECT(self));
 }

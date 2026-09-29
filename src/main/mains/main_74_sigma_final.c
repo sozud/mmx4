@@ -49,13 +49,8 @@ void sigma_final_intro_load(struct MainObj* self)
 // sigma_final_init
 INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008D5C8);
 
-#ifdef VERSION_JP
-extern void* D_8013B994_jp;
-#define MAIN_74_COLLISION_BOUNDS D_8013B994_jp
-#else
 extern void* D_8013B8B4;
 #define MAIN_74_COLLISION_BOUNDS D_8013B8B4
-#endif
 
 void sigma_final_set_target(struct MainObj* self, s32 arg1)
 {
@@ -125,7 +120,7 @@ void sigma_final_appear_dialogue(struct MainObj* self)
         sigma_final_set_target(self, 1);
         self->unk7E = 3;
         self->unk6++;
-        play_boss_music(0xC);
+        play_boss_voice(0xC);
     }
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);

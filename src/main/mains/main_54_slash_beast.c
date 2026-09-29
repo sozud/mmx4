@@ -479,7 +479,7 @@ void slash_beast_intro_wait_dialogue(struct MainObj* self)
         set_animation(self, 0x19);
         self->unk7E = 3;
         self->unk6 = 7;
-        play_boss_music(7);
+        play_boss_voice(7);
     }
 }
 

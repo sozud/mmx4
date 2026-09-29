@@ -156,7 +156,7 @@ void web_spider_intro_start_health_bar(struct MainObj* self)
     if (abc_object.unkC == 0) {
         self->unk5 = 8;
         engine_obj.enable_boss = 1;
-        play_boss_music(0);
+        play_boss_voice(0);
     }
 }
 

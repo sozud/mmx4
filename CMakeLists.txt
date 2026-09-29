@@ -15,6 +15,12 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 option(MMX4_PC_ASAN "Trap accesses to placeholder game data" ON)
+set(MMX4_PC_VERSION "us" CACHE STRING "Game version to build: us or jp")
+set_property(CACHE MMX4_PC_VERSION PROPERTY STRINGS us jp)
+if(NOT MMX4_PC_VERSION MATCHES "^(us|jp)$")
+    message(FATAL_ERROR "MMX4_PC_VERSION must be us or jp, got ${MMX4_PC_VERSION}")
+endif()
+string(TOUPPER "${MMX4_PC_VERSION}" MMX4_PC_VERSION_UPPER)
 
 add_subdirectory(tools/psyz/psyz tools/psyz-build)
 
@@ -48,7 +54,8 @@ add_executable(mmx4_pc
     ${MMX4_PC_GAME_SOURCES}
 )
 
-target_compile_definitions(mmx4_pc PRIVATE MMX4_PC=1 __psyz=1 SKIP_MDEC=1)
+target_compile_definitions(mmx4_pc PRIVATE MMX4_PC=1 __psyz=1 SKIP_MDEC=1
+    VERSION_${MMX4_PC_VERSION_UPPER}=1)
 target_compile_options(mmx4_pc PRIVATE -ffunction-sections -fdata-sections)
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(mmx4_pc PRIVATE

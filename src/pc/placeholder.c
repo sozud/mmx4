@@ -664,7 +664,7 @@ void func_80029A48(void)
     case 2:
         if (input == 0)
             break;
-        if (input & 0x840) {
+        if (input & (PADstart | PAD_CONFIRM)) {
             u16 expected = sequence[(u8)*index];
 
             if ((held & expected) == expected)
@@ -716,7 +716,7 @@ void func_80029BD8(void)
     case 3:
         if (input == 0)
             break;
-        if (input & 0x840) {
+        if (input & (PADstart | PAD_CONFIRM)) {
             u16 expected = sequence[(u8)*index];
 
             if ((held & expected) == expected)
@@ -823,7 +823,7 @@ void func_8002E994(struct EngineObj* arg0)
         func_8001540C(5, 0, 0);
     }
 
-    if (controller_state & (PADstart | PADRdown)) {
+    if (controller_state & (PADstart | PAD_CONFIRM)) {
         if (arg0->unk3 == 8) {
             if ((u8)arg0->unk5F < 7) {
                 arg0->stage = 0xA;
@@ -873,64 +873,64 @@ void func_8001663C(u8 selection, u8 volume)
     D_80139568 = 0;
     switch (selection >> 3) {
     case 0:
-        D_80139560 = 0x95;
+        D_80139560 = XA_ARCHIVE_BGM1;
         entry = D_800F19E0;
         if (selection == 0)
             D_80139568 = 1;
         break;
     case 1:
-        D_80139560 = 0x96;
+        D_80139560 = XA_ARCHIVE_BGM2;
         entry = D_800F19E4;
         index &= 7;
         break;
     case 2:
-        D_80139560 = 0x97;
+        D_80139560 = XA_ARCHIVE_BGM3;
         entry = D_800F19E8;
         index &= 7;
         break;
     case 3:
-        D_80139560 = 0x98;
+        D_80139560 = XA_ARCHIVE_BGM4;
         entry = D_800F19EC;
         index &= 7;
         break;
     case 4:
-        D_80139560 = 0x99;
+        D_80139560 = XA_ARCHIVE_BGM5;
         entry = D_800F19F0;
         index &= 7;
         D_80139568 = 1;
         break;
     case 5:
-        D_80139560 = 0x9B;
+        D_80139560 = XA_ARCHIVE_VOICE1;
         entry = D_800F19F4;
         index &= 7;
         D_80139568 = 1;
         break;
     case 6:
-        D_80139560 = 0x9C;
+        D_80139560 = XA_ARCHIVE_VOICE2;
         entry = D_800F19F8;
         index &= 7;
         D_80139568 = 1;
         break;
     case 7:
-        D_80139560 = 0x9D;
+        D_80139560 = XA_ARCHIVE_VOICE3;
         entry = D_800F19FC;
         index &= 7;
         D_80139568 = 1;
         break;
     case 8:
-        D_80139560 = 0x9E;
+        D_80139560 = XA_ARCHIVE_VOICE4;
         entry = D_800F1A00;
         index &= 7;
         D_80139568 = 1;
         break;
     case 9:
-        D_80139560 = 0x9F;
+        D_80139560 = XA_ARCHIVE_VOICE5;
         entry = D_800F1A04;
         index &= 7;
         D_80139568 = 1;
         break;
     case 10:
-        D_80139560 = 0x9A;
+        D_80139560 = XA_ARCHIVE_BOSS_INTRO;
         entry = D_800F1A08;
         index &= 7;
         D_80139568 = 1;
@@ -2287,6 +2287,14 @@ void func_8001E130(struct GameInfo* arg0)
         } while (i < 0x24);
         arg0->mode++;
 
+#ifdef VERSION_JP
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 1;
+            obj->id = 0x1D;
+            obj->unk2 = 0x22;
+        }
+#else
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 1;
@@ -2305,6 +2313,7 @@ void func_8001E130(struct GameInfo* arg0)
             obj->id = 0x13;
             obj->unk2 = 0x15;
         }
+#endif
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 1;
@@ -13655,7 +13664,7 @@ void func_800CE114(struct MiscObj* arg0)
 
 static int misc_32_cancelled(s8 mode)
 {
-    return (controller_state & 0x10) || ((controller_state & 0x800) && game_info.unk0 == mode);
+    return (controller_state & PAD_SELECTION_ALT) || ((controller_state & 0x800) && game_info.unk0 == mode);
 }
 
 void func_800CE1D4(struct MiscObj* arg0)
@@ -15176,7 +15185,7 @@ void func_800301BC(struct BarObj* arg0)
     s32 count;
 
     switch (controller_state) {
-    case 0x40:
+    case PAD_CONFIRM:
         if ((u8)original < 10) {
             if ((s8)original < 2)
                 g_Player.weapon = 0;
@@ -15294,7 +15303,7 @@ void func_800304E4(struct BarObj* arg0)
         arg0->state = 2;
         arg0->unk5 = 0;
         break;
-    case 0x40:
+    case PAD_CONFIRM:
         arg0->unk28 = 0;
         arg0->unk2C = 0;
         switch (arg0->unk14) {
@@ -15369,7 +15378,7 @@ void func_80030728(struct BarObj* arg0)
         goto done;
     }
     switch (controller_state) {
-    case 0x40:
+    case PAD_CONFIRM:
         if ((s8)original == 0xD) {
             arg0->state = 2;
             arg0->unk5 = 0;
@@ -22499,7 +22508,7 @@ void func_8008329C(struct MainObj* self)
     set_animation(self, 0);
     func_8001540C(2, 3, self);
     self->unk5++;
-    play_boss_music(0xC);
+    play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
 }
 
@@ -24357,7 +24366,7 @@ void func_8001F2BC(struct EngineObj* arg0)
     u8 index;
 
     func_800129A4(8);
-    func_8001663C(0x17, 0x70);
+    func_8001663C(MUSIC_WEAPON_GET, 0x70);
     arg0->unk2 = 0;
     arg0->unk1++;
     if (arg0->cur_character == 0) {
@@ -24428,9 +24437,11 @@ void func_800D0E48(struct MiscObj* self)
     case 7:
         func_800D0D68(self, 0x14);
         break;
+#ifndef VERSION_JP
     case 11:
         func_800D0D68(self, 0x15);
         break;
+#endif
     default:
         if (self->unk2 >= 0x12) {
             self->x_pos.i.hi += scripted_slider_offsets[self->unk2].x;
@@ -26455,3 +26466,130 @@ void func_800A73C4(struct ShotObj* self)
     self->state = 7;
     self->unk5 = 0;
 }
+
+extern s16 title_quad_shapes[][8];
+
+void func_800D7468(struct QuadObj* arg0)
+{
+    f32* xy_ptr;
+    s32 x_diff;
+    s32 y_diff;
+    s32 pos;
+    s16* ptr;
+    u8 angle;
+
+    xy_ptr = &arg0->unk14;
+    pos = 0;
+    do {
+        ptr = &title_quad_shapes[arg0->unk2][pos * 2];
+        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
+        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
+        angle = angle_from_delta(x_diff, y_diff);
+        if ((((arg0->ext.title_quad.unk3E[pos] ^ angle) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
+            xy_ptr[0].val = FIXED(ptr[0]);
+            xy_ptr[1].val = FIXED(ptr[1]);
+            arg0->ext.title_quad.unk3A[pos] = 1;
+        } else {
+            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
+            arg0->ext.title_quad.unk3A[pos] = 0;
+            if (pos == 3) {
+                arg0->ext.title_quad.unk42 = 0;
+            }
+        }
+        xy_ptr += 2;
+        arg0->ext.title_quad.unk3E[pos] = angle;
+        pos++;
+    } while (pos < 4);
+
+    arg0->ext.title_quad.unk38--;
+    if (arg0->ext.title_quad.unk38 == 0) {
+        ptr = title_quad_shapes[arg0->unk2];
+        arg0->unk14.i.hi = *ptr++;
+        arg0->unk18.i.hi = *ptr++;
+        arg0->unk1C.i.hi = *ptr++;
+        arg0->unk20.i.hi = *ptr++;
+        arg0->unk24.i.hi = *ptr++;
+        arg0->unk28.i.hi = *ptr++;
+        arg0->unk2C.i.hi = *ptr++;
+        arg0->unk30.i.hi = *ptr;
+        arg0->state = 4;
+        arg0->ext.title_quad.unk42 = 1;
+    }
+    quad_is_on_screen(arg0);
+}
+
+#ifdef VERSION_JP
+extern u16 title_quad_palette[][15];
+
+void title_quad_morph(struct QuadObj* arg0)
+{
+    f32* xy_ptr;
+    s32 x_diff;
+    s32 y_diff;
+    s32 pos;
+    s16* ptr;
+    u16* palette;
+    u16* var_v0;
+    u8 temp_v0;
+    u8 temp_v0_2;
+    u8 temp_v1;
+
+    xy_ptr = &arg0->unk14;
+    pos = 0;
+    do {
+        ptr = &title_quad_shapes[arg0->unk2 + 5][pos * 2];
+        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
+        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
+        temp_v0 = angle_from_delta(x_diff, y_diff);
+        if ((((arg0->ext.title_quad.unk3E[pos] ^ temp_v0) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
+            xy_ptr[0].val = FIXED(ptr[0]);
+            xy_ptr[1].val = FIXED(ptr[1]);
+            arg0->ext.title_quad.unk3A[pos] = 1;
+        } else {
+            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
+            arg0->ext.title_quad.unk3A[pos] = 0;
+            if (pos == 3) {
+                arg0->ext.title_quad.unk42 = 0;
+            }
+        }
+        xy_ptr += 2;
+        arg0->ext.title_quad.unk3E[pos] = temp_v0;
+        pos++;
+    } while (pos < 4);
+
+    if ((arg0->ext.title_quad.unk38 % 3) == 0) {
+        palette = title_quad_palette[arg0->unk2 - 2];
+        temp_v1 = arg0->ext.title_quad.unk43;
+        temp_v0_2 = temp_v1 + 1;
+        arg0->ext.title_quad.unk43 = temp_v0_2;
+        var_v0 = palette;
+        if (temp_v0_2 < 0xE) {
+            temp_v0_2 = temp_v1 + 2;
+            arg0->ext.title_quad.unk43 = temp_v0_2;
+            var_v0 = &palette[temp_v0_2];
+        } else {
+            var_v0 += 14;
+        }
+        arg0->unk34 = *var_v0;
+    }
+
+    arg0->ext.title_quad.unk38--;
+    if (arg0->ext.title_quad.unk38 == 0) {
+        ptr = title_quad_shapes[arg0->unk2 + 5];
+        arg0->unk14.i.hi = *(u16*)ptr++;
+        arg0->unk18.i.hi = *(u16*)ptr++;
+        arg0->unk1C.i.hi = *(u16*)ptr++;
+        arg0->unk20.i.hi = *(u16*)ptr++;
+        arg0->unk24.i.hi = *(u16*)ptr++;
+        arg0->unk28.i.hi = *(u16*)ptr++;
+        arg0->unk2C.i.hi = *(u16*)ptr++;
+        arg0->unk30.i.hi = *(u16*)ptr;
+        arg0->unk2 = 4;
+        arg0->state = 4;
+        arg0->ext.title_quad.unk38 = 3;
+    }
+    quad_is_on_screen(arg0);
+}
+#endif

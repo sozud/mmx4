@@ -387,7 +387,7 @@ void colonel_intro_port_voice(struct MainObj* self)
     if (abc_object.unkC == 0) {
         self->unk7E = 3;
         self->unk7++;
-        play_boss_music(8);
+        play_boss_voice(8);
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -500,7 +500,7 @@ void colonel_intro_hall_blink_in(struct MainObj* self)
         set_animation(self, 1);
         engine_obj.enable_boss = 1;
         self->unk7++;
-        play_boss_music(8);
+        play_boss_voice(8);
     }
 }
 

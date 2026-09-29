@@ -89,7 +89,7 @@ void light_capsule_wait_player(struct ItemObj* arg0)
                 arg0->unk15 = 0;
             }
             func_80016F0C();
-            func_8001663C(0x1B, 0x7F);
+            func_8001663C(MUSIC_LIGHT_CAPSULE, 0x7F);
             arg0->unk5++;
         }
     }

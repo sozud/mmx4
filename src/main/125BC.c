@@ -47,9 +47,15 @@ void func_80021DBC(s16* arg0, s16* arg1, s32 arg2)
 
 void func_80021E3C(void)
 {
+#ifdef MMX4_PC
+    engine_obj.cur_character = REPLAY_DATA[0x4F];
+    engine_obj.stage = REPLAY_DATA[0x18];
+    engine_obj.substage = REPLAY_DATA[0x19];
+#else
     engine_obj.cur_character = D_801F604F;
     engine_obj.stage = D_801F6018;
     engine_obj.substage = D_801F6019;
+#endif
 }
 
 #ifdef MMX4_PC
@@ -321,9 +327,6 @@ void func_8002328C(struct AbcObj*);
 
 #define CONFIG D_801397DC
 
-#ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/125BC", func_80022730);
-#else
 void func_80022730(struct AbcObj* arg0)
 {
     s32 charOffset;
@@ -779,7 +782,6 @@ void func_80022730(struct AbcObj* arg0)
         break;
     }
 }
-#endif
 
 #undef CONFIG
 
@@ -984,7 +986,7 @@ void func_80023698(struct EngineObj* arg0)
     arg0->unk2 = 0;
     arg0->unk1++;
 
-    func_8001663C(0, 0x7F);
+    func_8001663C(MUSIC_STAFF_ROLL, 0x7F);
     func_800129A4(8);
 }
 

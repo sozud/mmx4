@@ -129,7 +129,7 @@ void jet_stingray_intro_pose(struct MainObj* self)
         self->unk6 = 0;
         self->unk7C = 2;
         self->unk5 = (u8)self->unk5 + 1;
-        play_boss_music(4);
+        play_boss_voice(4);
     }
 }
 

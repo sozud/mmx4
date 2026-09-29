@@ -1912,9 +1912,9 @@ void player_start_stage_clear(struct PlayerObj* self)
         player_set_idle_animation(self);
         player_reset_weapon(self);
 
-        sound_id = 0x21;
+        sound_id = MUSIC_STAGE_CLEAR_ZERO;
         if (self->unk2 == 0) {
-            sound_id = 0x22;
+            sound_id = MUSIC_STAGE_CLEAR_X;
             sound_arg = 0x75;
         } else {
             sound_arg = 0x72;

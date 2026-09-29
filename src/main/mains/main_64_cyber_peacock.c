@@ -97,7 +97,7 @@ void cyber_peacock_intro_start_health_bar(struct MainObj* self)
         self->unk6++;
         set_animation(self, 1);
         engine_obj.enable_boss = 1;
-        play_boss_music(5);
+        play_boss_voice(5);
     }
 }
 

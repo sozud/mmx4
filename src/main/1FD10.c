@@ -100,7 +100,7 @@ void func_8002F828(struct EngineObj* arg0)
     if (D_80141BDC[0] == 0) {
         arg0->unk2++;
         arg0->unk4 = 0x10;
-        func_8001663C(D_8013B810 + 0x4F, 0x7F);
+        func_8001663C(D_8013B810 + (MUSIC_BOSS_INTRO_WEB_SPIDER - 1), 0x7F);
     }
 }
 
