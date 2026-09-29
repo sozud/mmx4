@@ -47,9 +47,15 @@ void func_80021DBC(s16* arg0, s16* arg1, s32 arg2)
 
 void func_80021E3C(void)
 {
+#ifdef MMX4_PC
+    engine_obj.cur_character = REPLAY_DATA[0x4F];
+    engine_obj.stage = REPLAY_DATA[0x18];
+    engine_obj.substage = REPLAY_DATA[0x19];
+#else
     engine_obj.cur_character = D_801F604F;
     engine_obj.stage = D_801F6018;
     engine_obj.substage = D_801F6019;
+#endif
 }
 
 #ifdef MMX4_PC

@@ -664,7 +664,7 @@ void func_80029A48(void)
     case 2:
         if (input == 0)
             break;
-        if (input & 0x840) {
+        if (input & (PADstart | PAD_CONFIRM)) {
             u16 expected = sequence[(u8)*index];
 
             if ((held & expected) == expected)
@@ -716,7 +716,7 @@ void func_80029BD8(void)
     case 3:
         if (input == 0)
             break;
-        if (input & 0x840) {
+        if (input & (PADstart | PAD_CONFIRM)) {
             u16 expected = sequence[(u8)*index];
 
             if ((held & expected) == expected)
@@ -823,7 +823,7 @@ void func_8002E994(struct EngineObj* arg0)
         func_8001540C(5, 0, 0);
     }
 
-    if (controller_state & (PADstart | PADRdown)) {
+    if (controller_state & (PADstart | PAD_CONFIRM)) {
         if (arg0->unk3 == 8) {
             if ((u8)arg0->unk5F < 7) {
                 arg0->stage = 0xA;
@@ -938,6 +938,9 @@ void func_8001663C(u8 selection, u8 volume)
     default:
         return;
     }
+#ifdef VERSION_JP
+    D_80139560--;
+#endif
 
     for (i = 0; i < index; i++) {
         if (*entry & 0x8000) {
@@ -13664,7 +13667,7 @@ void func_800CE114(struct MiscObj* arg0)
 
 static int misc_32_cancelled(s8 mode)
 {
-    return (controller_state & 0x10) || ((controller_state & 0x800) && game_info.unk0 == mode);
+    return (controller_state & PAD_SELECTION_ALT) || ((controller_state & 0x800) && game_info.unk0 == mode);
 }
 
 void func_800CE1D4(struct MiscObj* arg0)
@@ -15185,7 +15188,7 @@ void func_800301BC(struct BarObj* arg0)
     s32 count;
 
     switch (controller_state) {
-    case 0x40:
+    case PAD_CONFIRM:
         if ((u8)original < 10) {
             if ((s8)original < 2)
                 g_Player.weapon = 0;
@@ -15378,7 +15381,7 @@ void func_80030728(struct BarObj* arg0)
         goto done;
     }
     switch (controller_state) {
-    case 0x40:
+    case PAD_CONFIRM:
         if ((s8)original == 0xD) {
             arg0->state = 2;
             arg0->unk5 = 0;
