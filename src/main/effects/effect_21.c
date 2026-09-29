@@ -2,81 +2,84 @@
 // 800B9EC0..800BA57C
 #include "common.h"
 
+// crumble_sequencer_init
 INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800B9EC0);
 
+// crumble_sequencer_timed
 INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800B9F38);
 
+// crumble_sequencer_triggered
 INCLUDE_ASM("main/nonmatchings/effects/effect_21", func_800BA178);
 
-void func_800BA340(struct EffectObj* arg0)
+void crumble_sequencer_chain(struct EffectObj* self)
 {
     struct MiscObj* misc;
     struct ItemObj* item;
     struct Effect21SpawnRecord* record;
     u8 timer;
 
-    switch (arg0->unk5) {
+    switch (self->unk5) {
     case 0:
         if (g_Player.x_pos.i.hi >= 0xC60) {
-            arg0->unk5 = 1;
+            self->unk5 = 1;
         }
         break;
     case 1:
-        arg0->unk5 = 2;
-        arg0->ext.effect_21.cursor = D_8010BD68[arg0->ext.effect_21.index];
+        self->unk5 = 2;
+        self->ext.effect_21.cursor = crumble_sequencer_sequences[self->ext.effect_21.index];
         break;
     case 2:
-        timer = arg0->ext.effect_21.timer;
+        timer = self->ext.effect_21.timer;
         if (timer == 0) {
             misc = find_free_misc_obj();
             if (misc != NULL) {
                 misc->active = 0x41;
                 misc->id = 8;
-                misc->x_pos.i.hi = arg0->ext.effect_21.cursor->x;
-                misc->y_pos.i.hi = arg0->ext.effect_21.cursor->y;
-                misc->unk2 = arg0->ext.effect_21.cursor->object_id;
-                record = arg0->ext.effect_21.cursor;
-                arg0->ext.effect_21.timer = 1;
+                misc->x_pos.i.hi = self->ext.effect_21.cursor->x;
+                misc->y_pos.i.hi = self->ext.effect_21.cursor->y;
+                misc->unk2 = self->ext.effect_21.cursor->object_id;
+                record = self->ext.effect_21.cursor;
+                self->ext.effect_21.timer = 1;
                 if (record->flags & 0x80) {
                     item = find_free_item_obj();
                     if (item != NULL) {
                         item->active = 1;
                         item->id = 0x11;
-                        item->unk2 = arg0->ext.effect_21.index - 8;
+                        item->unk2 = self->ext.effect_21.index - 8;
                     }
-                    if (arg0->ext.effect_21.index == 0xD) {
-                        arg0->state++;
+                    if (self->ext.effect_21.index == 0xD) {
+                        self->state++;
                         return;
                     }
-                    arg0->ext.effect_21.index++;
-                    arg0->unk5 = 1;
+                    self->ext.effect_21.index++;
+                    self->unk5 = 1;
                     return;
                 }
-                arg0->ext.effect_21.cursor = record + 1;
+                self->ext.effect_21.cursor = record + 1;
             }
         } else {
-            arg0->ext.effect_21.timer = timer - 1;
+            self->ext.effect_21.timer = timer - 1;
         }
         break;
     }
 }
 
-void func_800BA4E4(struct EffectObj* arg0)
+void crumble_sequencer_main(struct EffectObj* self)
 {
-    D_8010BDF8[arg0->unk2](arg0);
+    crumble_sequencer_subtype_funcs[self->unk2](self);
 }
 
-void func_800BA520(struct EffectObj* arg0)
+void crumble_sequencer_despawn(struct EffectObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800BA540(struct EffectObj* arg0)
+void crumble_sequencer_update(struct EffectObj* self)
 {
-    D_8010BE10[arg0->state](arg0);
+    crumble_sequencer_state_funcs[self->state](self);
 }
 
-struct Effect21SpawnRecord D_8010B7EC[6] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_0[6] = {
     { 0x0300, 0x01B0, 0x00, 0x00 },
     { 0x0310, 0x01B0, 0x01, 0x01 },
     { 0x0320, 0x01B0, 0x02, 0x02 },
@@ -85,7 +88,7 @@ struct Effect21SpawnRecord D_8010B7EC[6] = {
     { 0x0350, 0x01B0, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B810[6] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_1[6] = {
     { 0x0330, 0x0210, 0x00, 0x00 },
     { 0x0340, 0x0210, 0x02, 0x02 },
     { 0x0350, 0x0210, 0x01, 0x01 },
@@ -94,35 +97,35 @@ struct Effect21SpawnRecord D_8010B810[6] = {
     { 0x0380, 0x0210, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B834[4] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_2[4] = {
     { 0x0650, 0x0270, 0x00, 0x00 },
     { 0x0660, 0x0270, 0x01, 0x16 },
     { 0x0670, 0x0270, 0x02, 0x17 },
     { 0x0680, 0x0270, 0x04, 0x98 },
 };
 
-struct Effect21SpawnRecord D_8010B84C[4] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_3[4] = {
     { 0x06D0, 0x0240, 0x00, 0x00 },
     { 0x06E0, 0x0240, 0x01, 0x01 },
     { 0x06F0, 0x0240, 0x02, 0x02 },
     { 0x0700, 0x0240, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B864[4] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_4[4] = {
     { 0x0690, 0x01D0, 0x00, 0x00 },
     { 0x06A0, 0x01D0, 0x01, 0x01 },
     { 0x06B0, 0x01D0, 0x02, 0x02 },
     { 0x06C0, 0x01D0, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B87C[4] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_5[4] = {
     { 0x0610, 0x0210, 0x00, 0x00 },
     { 0x0620, 0x0210, 0x01, 0x01 },
     { 0x0630, 0x0210, 0x02, 0x02 },
     { 0x0640, 0x0210, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B894[6] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_6[6] = {
     { 0x0570, 0x01E0, 0x00, 0x00 },
     { 0x0580, 0x01E0, 0x01, 0x01 },
     { 0x0590, 0x01E0, 0x02, 0x02 },
@@ -131,16 +134,16 @@ struct Effect21SpawnRecord D_8010B894[6] = {
     { 0x05C0, 0x01E0, 0x04, 0x84 },
 };
 
-struct Effect21SpawnRecord D_8010B8B8[5] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_7[5] = {
     { 0x05B0, 0x0170, 0x00, 0x00 },
     { 0x05C0, 0x0170, 0x02, 0x02 },
     { 0x05D0, 0x0170, 0x01, 0x01 },
     { 0x05E0, 0x0170, 0x02, 0x02 },
     { 0x05F0, 0x0170, 0x04, 0x84 },
 };
-u16 D_8010B8B8_padding = 0;
+u16 crumble_sequencer_sequence_7_padding = 0;
 
-struct Effect21SpawnRecord D_8010B8D8[35] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_8[35] = {
     { 0x0CE0, 0x0180, 0x06, 0x06 },
     { 0x0CF0, 0x0180, 0x0A, 0x0A },
     { 0x0D00, 0x0180, 0x0B, 0x0B },
@@ -177,9 +180,9 @@ struct Effect21SpawnRecord D_8010B8D8[35] = {
     { 0x0EF0, 0x01F0, 0x18, 0x0C },
     { 0x0F00, 0x0200, 0x04, 0x84 },
 };
-u16 D_8010B8D8_padding = 0;
+u16 crumble_sequencer_sequence_8_padding = 0;
 
-struct Effect21SpawnRecord D_8010B9AC[39] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_9[39] = {
     { 0x0EC0, 0x0250, 0x00, 0x00 },
     { 0x0ED0, 0x0250, 0x01, 0x01 },
     { 0x0EE0, 0x0250, 0x02, 0x02 },
@@ -220,9 +223,9 @@ struct Effect21SpawnRecord D_8010B9AC[39] = {
     { 0x1110, 0x0280, 0x02, 0x02 },
     { 0x1120, 0x0280, 0x04, 0x84 },
 };
-u16 D_8010B9AC_padding = 0;
+u16 crumble_sequencer_sequence_9_padding = 0;
 
-struct Effect21SpawnRecord D_8010BA98[25] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_10[25] = {
     { 0x1120, 0x02D0, 0x00, 0x00 },
     { 0x1130, 0x02D0, 0x02, 0x02 },
     { 0x1140, 0x02D0, 0x03, 0x03 },
@@ -249,9 +252,9 @@ struct Effect21SpawnRecord D_8010BA98[25] = {
     { 0x12C0, 0x0320, 0x02, 0x02 },
     { 0x12D0, 0x0320, 0x04, 0x84 },
 };
-u16 D_8010BA98_padding = 0;
+u16 crumble_sequencer_sequence_10_padding = 0;
 
-struct Effect21SpawnRecord D_8010BB30[33] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_11[33] = {
     { 0x1300, 0x02F0, 0x00, 0x00 },
     { 0x1310, 0x02F0, 0x01, 0x01 },
     { 0x1320, 0x02F0, 0x02, 0x02 },
@@ -286,9 +289,9 @@ struct Effect21SpawnRecord D_8010BB30[33] = {
     { 0x1520, 0x02C0, 0x03, 0x03 },
     { 0x1530, 0x02C0, 0x04, 0x84 },
 };
-u16 D_8010BB30_padding = 0;
+u16 crumble_sequencer_sequence_11_padding = 0;
 
-struct Effect21SpawnRecord D_8010BBF8[28] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_12[28] = {
     { 0x15B0, 0x0300, 0x04, 0x04 },
     { 0x15A0, 0x0300, 0x03, 0x03 },
     { 0x1590, 0x0300, 0x02, 0x02 },
@@ -319,7 +322,7 @@ struct Effect21SpawnRecord D_8010BBF8[28] = {
     { 0x1400, 0x03B0, 0x00, 0x80 },
 };
 
-struct Effect21SpawnRecord D_8010BCA0[25] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_13[25] = {
     { 0x1400, 0x0430, 0x04, 0x04 },
     { 0x13F0, 0x0430, 0x03, 0x03 },
     { 0x13E0, 0x0430, 0x02, 0x02 },
@@ -346,92 +349,92 @@ struct Effect21SpawnRecord D_8010BCA0[25] = {
     { 0x1290, 0x04A0, 0x02, 0x02 },
     { 0x1280, 0x04A0, 0x00, 0x80 },
 };
-u16 D_8010BCA0_padding = 0;
+u16 crumble_sequencer_sequence_13_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD38[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_14[1] = {
     { 0x03B0, 0x0270, 0x14, 0x99 },
 };
-u16 D_8010BD38_padding = 0;
+u16 crumble_sequencer_sequence_14_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD40[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_15[1] = {
     { 0x0480, 0x0250, 0x05, 0x95 },
 };
-u16 D_8010BD40_padding = 0;
+u16 crumble_sequencer_sequence_15_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD48[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_16[1] = {
     { 0x04F0, 0x0260, 0x05, 0x94 },
 };
-u16 D_8010BD48_padding = 0;
+u16 crumble_sequencer_sequence_16_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD50[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_17[1] = {
     { 0x06D0, 0x01D0, 0x05, 0x85 },
 };
-u16 D_8010BD50_padding = 0;
+u16 crumble_sequencer_sequence_17_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD58[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_18[1] = {
     { 0x0570, 0x0170, 0x05, 0x85 },
 };
-u16 D_8010BD58_padding = 0;
+u16 crumble_sequencer_sequence_18_padding = 0;
 
-struct Effect21SpawnRecord D_8010BD60[1] = {
+struct Effect21SpawnRecord crumble_sequencer_sequence_19[1] = {
     { 0x0510, 0x0150, 0x13, 0x93 },
 };
-u16 D_8010BD60_padding = 0;
+u16 crumble_sequencer_sequence_19_padding = 0;
 
-struct Effect21SpawnRecord* D_8010BD68[20] = {
-    D_8010B7EC,
-    D_8010B810,
-    D_8010B834,
-    D_8010B84C,
-    D_8010B864,
-    D_8010B87C,
-    D_8010B894,
-    D_8010B8B8,
-    D_8010B8D8,
-    D_8010B9AC,
-    D_8010BA98,
-    D_8010BB30,
-    D_8010BBF8,
-    D_8010BCA0,
-    D_8010BD38,
-    D_8010BD40,
-    D_8010BD48,
-    D_8010BD50,
-    D_8010BD58,
-    D_8010BD60,
+struct Effect21SpawnRecord* crumble_sequencer_sequences[20] = {
+    crumble_sequencer_sequence_0,
+    crumble_sequencer_sequence_1,
+    crumble_sequencer_sequence_2,
+    crumble_sequencer_sequence_3,
+    crumble_sequencer_sequence_4,
+    crumble_sequencer_sequence_5,
+    crumble_sequencer_sequence_6,
+    crumble_sequencer_sequence_7,
+    crumble_sequencer_sequence_8,
+    crumble_sequencer_sequence_9,
+    crumble_sequencer_sequence_10,
+    crumble_sequencer_sequence_11,
+    crumble_sequencer_sequence_12,
+    crumble_sequencer_sequence_13,
+    crumble_sequencer_sequence_14,
+    crumble_sequencer_sequence_15,
+    crumble_sequencer_sequence_16,
+    crumble_sequencer_sequence_17,
+    crumble_sequencer_sequence_18,
+    crumble_sequencer_sequence_19,
 };
 
-u8 D_8010BDB8[4] = { 0x00, 0x02, 0x06, 0x8E };
-u8 D_8010BDBC[4] = { 0x03, 0x06, 0x07, 0x92 };
-u8 D_8010BDC0[4] = { 0x01, 0x04, 0x0F, 0x91 };
-u8 D_8010BDC4[4] = { 0x05, 0x90, 0x00, 0x00 };
-u8 D_8010BDC8[4] = { 0x88, 0x00, 0x00, 0x00 };
-u8 D_8010BDCC[4] = { 0x09, 0x8C, 0x00, 0x00 };
-u8 D_8010BDD0[4] = { 0x0A, 0x8D, 0x00, 0x00 };
-u8 D_8010BDD4[4] = { 0x8B, 0x00, 0x00, 0x00 };
+u8 crumble_sequencer_group_0[4] = { 0x00, 0x02, 0x06, 0x8E };
+u8 crumble_sequencer_group_2[4] = { 0x03, 0x06, 0x07, 0x92 };
+u8 crumble_sequencer_group_4[4] = { 0x01, 0x04, 0x0F, 0x91 };
+u8 crumble_sequencer_group_6[4] = { 0x05, 0x90, 0x00, 0x00 };
+u8 crumble_sequencer_group_1[4] = { 0x88, 0x00, 0x00, 0x00 };
+u8 crumble_sequencer_group_3[4] = { 0x09, 0x8C, 0x00, 0x00 };
+u8 crumble_sequencer_group_5[4] = { 0x0A, 0x8D, 0x00, 0x00 };
+u8 crumble_sequencer_group_7[4] = { 0x8B, 0x00, 0x00, 0x00 };
 
-u8* D_8010BDD8[8] = {
-    D_8010BDB8,
-    D_8010BDC8,
-    D_8010BDBC,
-    D_8010BDCC,
-    D_8010BDC0,
-    D_8010BDD0,
-    D_8010BDC4,
-    D_8010BDD4,
+u8* crumble_sequencer_groups[8] = {
+    crumble_sequencer_group_0,
+    crumble_sequencer_group_1,
+    crumble_sequencer_group_2,
+    crumble_sequencer_group_3,
+    crumble_sequencer_group_4,
+    crumble_sequencer_group_5,
+    crumble_sequencer_group_6,
+    crumble_sequencer_group_7,
 };
 
-void (*D_8010BDF8[6])(struct EffectObj*) = {
+void (*crumble_sequencer_subtype_funcs[6])(struct EffectObj*) = {
     func_800B9F38,
     func_800BA178,
     func_800BA178,
-    func_800BA340,
+    crumble_sequencer_chain,
     func_800BA178,
     func_800BA178,
 };
 
-void (*D_8010BE10[])(struct EffectObj*) = {
+void (*crumble_sequencer_state_funcs[])(struct EffectObj*) = {
     func_800B9EC0,
-    func_800BA4E4,
-    func_800BA520,
+    crumble_sequencer_main,
+    crumble_sequencer_despawn,
 };

@@ -2,42 +2,44 @@
 // 800CF4B8..800CF790
 #include "common.h"
 
+// dragoon_flame_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF4B8);
 
-void func_800CF5F0(struct MiscObj* arg0)
+void dragoon_flame_burn(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state++;
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state++;
     }
 }
 
-void func_800CF640(struct MiscObj* arg0)
+void dragoon_flame_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// dragoon_flame_attach_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_38", func_800CF660);
 
-void func_800CF708(struct MiscObj* arg0)
+void dragoon_flame_attached(struct MiscObj* self)
 {
-    struct ObjectHeader* target = arg0->ext.pointer.unk50;
-    arg0->x_pos.val = target->x_pos.val;
-    arg0->y_pos.val = target->y_pos.val;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
+    struct ObjectHeader* target = self->ext.pointer.unk50;
+    self->x_pos.val = target->x_pos.val;
+    self->y_pos.val = target->y_pos.val;
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CF754(struct MiscObj* arg0)
+void dragoon_flame_update(struct MiscObj* self)
 {
-    D_8010EF0C[arg0->state](arg0);
+    dragoon_flame_state_funcs[self->state](self);
 }
 
-void (*D_8010EF0C[5])(struct MiscObj*) = {
+void (*dragoon_flame_state_funcs[5])(struct MiscObj*) = {
     func_800CF4B8,
-    func_800CF5F0,
-    func_800CF640,
+    dragoon_flame_burn,
+    dragoon_flame_despawn,
     func_800CF660,
-    func_800CF708,
+    dragoon_flame_attached,
 };

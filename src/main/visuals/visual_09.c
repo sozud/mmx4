@@ -2,16 +2,16 @@
 // 800B1354..800B14E8
 #include "common.h"
 
-void func_800B1354(struct VisualObj* arg0)
+void dust_puff_update(struct VisualObj* arg0)
 {
     if (arg0->state == 0) {
-        func_800B1394(arg0);
+        dust_puff_init(arg0);
     } else {
-        func_800B1450(arg0);
+        dust_puff_main(arg0);
     }
 }
 
-void func_800B1394(struct VisualObj* self)
+void dust_puff_init(struct VisualObj* self)
 {
     s32* sprite_frames;
     s32 offset;
@@ -20,7 +20,7 @@ void func_800B1394(struct VisualObj* self)
     sprite_frames = SP_SPRITE_FRAMES;
     self->unk38 = 0;
     offset = sprite_frames[2];
-    self->animation_table = D_8010A4C0;
+    self->animation_table = explosion_animations;
     self->unk3C = (u8*)sprite_frames + offset;
     self->bg_offset = g_Player.bg_offset;
     self->unk40 = 0;
@@ -32,18 +32,18 @@ void func_800B1394(struct VisualObj* self)
     if (self->unk7 == 0) {
         self->unk16 = 1;
     }
-    func_80015D60(self, self->unk5C.value);
+    set_animation(self, self->unk5C.value);
     self->state++;
     self->unk7 = get_random() & 1;
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800B1450(struct VisualObj* arg0)
+void dust_puff_main(struct VisualObj* arg0)
 {
     u8 temp_v1;
 
-    func_8002B718((struct MovingObj*)arg0);
-    func_80015DC8(arg0);
+    move_object((struct MovingObj*)arg0);
+    animate_object(arg0);
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->x_vel.val = 0;
         arg0->y_vel.val = 0;

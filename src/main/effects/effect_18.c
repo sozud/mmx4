@@ -2,24 +2,25 @@
 // 800B9690..800B9940
 #include "common.h"
 
-void func_800B9690(struct EffectObj* arg0)
+void world_flip_update(struct EffectObj* self)
 {
-    D_8010B7A8[arg0->state](arg0);
+    world_flip_state_funcs[self->state](self);
 }
 
-void func_800B96CC(struct EffectObj* arg0)
+void world_flip_init(struct EffectObj* self)
 {
-    arg0->state++;
+    self->state++;
 }
 
+// world_flip_trigger
 INCLUDE_ASM("main/nonmatchings/effects/effect_18", func_800B96E0);
 
-void func_800B97B0(struct EffectObj* arg0)
+void world_flip_despawn(struct EffectObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800B97D0(void)
+void world_flip_objects(void)
 {
     u32 i;
     struct MainObj* p1;
@@ -60,8 +61,8 @@ void func_800B97D0(void)
     }
 }
 
-void (*D_8010B7A8[])(struct EffectObj*) = {
-    func_800B96CC,
+void (*world_flip_state_funcs[])(struct EffectObj*) = {
+    world_flip_init,
     func_800B96E0,
-    func_800B97B0,
+    world_flip_despawn,
 };

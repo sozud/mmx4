@@ -3,88 +3,88 @@
 #include "common.h"
 
 // scaling X animation in logo graphics
-void TitleScalingXUpdate(struct EffectObj* arg0)
+void TitleScalingXUpdate(struct EffectObj* self)
 {
-    g_TitleScalingXUpdateFuncs[arg0->state](arg0);
+    g_TitleScalingXUpdateFuncs[self->state](self);
 }
 
 // g_TitleScalingXUpdateFuncs state 0
-void func_800B599C(struct EffectObj* arg0)
+void color_filter_init(struct EffectObj* self)
 {
     u16 color;
     struct Unk14* temp_v0;
     struct EffectObj* current;
     u8 i;
 
-    if (arg0->unk2 != -1) {
-        temp_v0 = D_8010B1F8[arg0->unk2];
-        arg0->ext.scaling_x.unk14 = temp_v0;
-        arg0->ext.scaling_x.unk18 = temp_v0->unk2;
+    if (self->unk2 != -1) {
+        temp_v0 = color_filter_scripts[self->unk2];
+        self->ext.scaling_x.unk14 = temp_v0;
+        self->ext.scaling_x.unk18 = temp_v0->unk2;
         for (i = 0; i < 4; i++) {
-            D_8013E188[i] = D_8010B23C[arg0->unk2][i];
+            D_8013E188[i] = color_filter_masks[self->unk2][i];
         }
-        g_FilterModeR = arg0->ext.scaling_x.unk14->unk3 & 1;
-        g_FilterModeG = arg0->ext.scaling_x.unk14->unk3 & 2;
-        g_FilterModeB = arg0->ext.scaling_x.unk14->unk3 & 4;
-        color = arg0->ext.scaling_x.unk14->unk0;
+        g_FilterModeR = self->ext.scaling_x.unk14->unk3 & 1;
+        g_FilterModeG = self->ext.scaling_x.unk14->unk3 & 2;
+        g_FilterModeB = self->ext.scaling_x.unk14->unk3 & 4;
+        color = self->ext.scaling_x.unk14->unk0;
         g_FilterAmountR = color & 0x1F;
         g_FilterAmountG = color & 0x3E0;
         g_FilterAmountB = color & 0x7C00;
-        arg0->state++;
+        self->state++;
         return;
     }
     g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
     g_FilterModeR = g_FilterModeG = g_FilterModeB = 0;
 
     for (current = &effect_objects[0]; current < &effect_objects[0x20]; current++) {
-        if (current->unk2 == 2 && current != arg0) {
-            func_8002B0C8(current);
+        if (current->unk2 == 2 && current != self) {
+            despawn_object(current);
         }
     }
-    func_8002B0C8(arg0);
+    despawn_object(self);
 }
 
 // g_TitleScalingXUpdateFuncs state 1
-void func_800B5B54(struct EffectObj* arg0)
+void color_filter_step(struct EffectObj* self)
 {
     u16 color;
-    if (arg0->ext.scaling_x.unk18-- == 0) {
-        arg0->ext.scaling_x.unk14++;
-        if (arg0->ext.scaling_x.unk14->unk0 == 0x8000) {
-            if (arg0->ext.scaling_x.unk14->unk3 == 1) {
-                func_8002B0C8(arg0);
+    if (self->ext.scaling_x.unk18-- == 0) {
+        self->ext.scaling_x.unk14++;
+        if (self->ext.scaling_x.unk14->unk0 == 0x8000) {
+            if (self->ext.scaling_x.unk14->unk3 == 1) {
+                despawn_object(self);
                 return;
             }
-            arg0->ext.scaling_x.unk14 = &arg0->ext.scaling_x.unk14[arg0->ext.scaling_x.unk14->unk2];
+            self->ext.scaling_x.unk14 = &self->ext.scaling_x.unk14[self->ext.scaling_x.unk14->unk2];
         }
-        color = arg0->ext.scaling_x.unk14->unk0;
-        arg0->ext.scaling_x.unk18 = arg0->ext.scaling_x.unk14->unk2;
+        color = self->ext.scaling_x.unk14->unk0;
+        self->ext.scaling_x.unk18 = self->ext.scaling_x.unk14->unk2;
         g_FilterAmountR = color & 0x1F;
         g_FilterAmountG = color & 0x3E0;
         g_FilterAmountB = color & 0x7C00;
-        g_FilterModeR = arg0->ext.scaling_x.unk14->unk3 & 1;
-        g_FilterModeG = arg0->ext.scaling_x.unk14->unk3 & 2;
-        g_FilterModeB = arg0->ext.scaling_x.unk14->unk3 & 4;
+        g_FilterModeR = self->ext.scaling_x.unk14->unk3 & 1;
+        g_FilterModeG = self->ext.scaling_x.unk14->unk3 & 2;
+        g_FilterModeB = self->ext.scaling_x.unk14->unk3 & 4;
         need_palette_load |= 5;
     }
 }
 
-void func_800B5C60(struct EffectObj* arg0)
+void copy_animated_palette(struct EffectObj* self)
 {
     s32* var_a1;
     s32* var_a2;
     u32 var_v1;
 
-    var_a2 = arg0->ext.palette_animation.source;
-    var_a1 = arg0->ext.palette_animation.destination;
-    for (var_v1 = 0; var_v1 < arg0->ext.palette_animation.palette_count * 8; var_v1++) {
+    var_a2 = self->ext.palette_animation.source;
+    var_a1 = self->ext.palette_animation.destination;
+    for (var_v1 = 0; var_v1 < self->ext.palette_animation.palette_count * 8; var_v1++) {
         *var_a1++ = *var_a2++;
     }
 
     need_palette_load |= 1;
 }
 
-struct Unk14 D_8010AFB4[13] = {
+struct Unk14 color_filter_script_0[13] = {
     { 0x0000, (s8)0x0C, 0x00 },
     { 0x0001, (s8)0x0C, 0x00 },
     { 0x0002, (s8)0x0C, 0x00 },
@@ -100,7 +100,7 @@ struct Unk14 D_8010AFB4[13] = {
     { 0x8000, (s8)0xF4, 0x00 },
 };
 
-struct Unk14 D_8010AFE8[21] = {
+struct Unk14 color_filter_script_1[21] = {
     { 0x0000, (s8)0x0C, 0x03 },
     { 0x0020, (s8)0x0C, 0x03 },
     { 0x0021, (s8)0x0C, 0x03 },
@@ -124,57 +124,57 @@ struct Unk14 D_8010AFE8[21] = {
     { 0x8000, (s8)0xEC, 0x00 },
 };
 
-struct Unk14 D_8010B03C[2] = {
+struct Unk14 color_filter_script_2[2] = {
     { 0x0421, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B044[2] = {
+struct Unk14 color_filter_script_3[2] = {
     { 0x0842, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B04C[2] = {
+struct Unk14 color_filter_script_4[2] = {
     { 0x0C63, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B054[2] = {
+struct Unk14 color_filter_script_5[2] = {
     { 0x1084, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B05C[2] = {
+struct Unk14 color_filter_script_6[2] = {
     { 0x14A5, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B064[2] = {
+struct Unk14 color_filter_script_7[2] = {
     { 0x18C6, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B06C[2] = {
+struct Unk14 color_filter_script_8[2] = {
     { 0x1CE7, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B074[2] = {
+struct Unk14 color_filter_script_9[2] = {
     { 0x2108, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B07C[2] = {
+struct Unk14 color_filter_script_10[2] = {
     { 0x2529, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B084[2] = {
+struct Unk14 color_filter_script_11[2] = {
     { 0x294A, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B08C[33] = {
+struct Unk14 color_filter_script_12[33] = {
     { 0x0000, (s8)0x01, 0x00 },
     { 0x0421, (s8)0x01, 0x00 },
     { 0x0842, (s8)0x01, 0x00 },
@@ -210,7 +210,7 @@ struct Unk14 D_8010B08C[33] = {
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B110[5] = {
+struct Unk14 color_filter_script_13[5] = {
     { 0x7FFF, (s8)0x01, 0x00 },
     { 0x4210, (s8)0x01, 0x00 },
     { 0x2108, (s8)0x01, 0x00 },
@@ -218,7 +218,7 @@ struct Unk14 D_8010B110[5] = {
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B124[17] = {
+struct Unk14 color_filter_script_14[17] = {
     { 0x0400, (s8)0x08, 0x06 },
     { 0x0420, (s8)0x08, 0x06 },
     { 0x0820, (s8)0x08, 0x06 },
@@ -238,13 +238,13 @@ struct Unk14 D_8010B124[17] = {
     { 0x8000, (s8)0xF0, 0x00 },
 };
 
-struct Unk14 D_8010B168[3] = {
+struct Unk14 color_filter_script_15[3] = {
     { 0x7FFF, (s8)0x00, 0x07 },
     { 0x7BFF, (s8)0x00, 0x07 },
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14 D_8010B174[33] = {
+struct Unk14 color_filter_script_16[33] = {
     { 0x7BFF, (s8)0x02, 0x07 },
     { 0x77DE, (s8)0x02, 0x07 },
     { 0x73BD, (s8)0x02, 0x07 },
@@ -280,27 +280,27 @@ struct Unk14 D_8010B174[33] = {
     { 0x8000, (s8)0xFF, 0x01 },
 };
 
-struct Unk14* D_8010B1F8[17] = {
-    D_8010AFB4,
-    D_8010AFE8,
-    D_8010B03C,
-    D_8010B044,
-    D_8010B04C,
-    D_8010B054,
-    D_8010B05C,
-    D_8010B064,
-    D_8010B06C,
-    D_8010B074,
-    D_8010B07C,
-    D_8010B084,
-    D_8010B08C,
-    D_8010B110,
-    D_8010B124,
-    D_8010B168,
-    D_8010B174,
+struct Unk14* color_filter_scripts[17] = {
+    color_filter_script_0,
+    color_filter_script_1,
+    color_filter_script_2,
+    color_filter_script_3,
+    color_filter_script_4,
+    color_filter_script_5,
+    color_filter_script_6,
+    color_filter_script_7,
+    color_filter_script_8,
+    color_filter_script_9,
+    color_filter_script_10,
+    color_filter_script_11,
+    color_filter_script_12,
+    color_filter_script_13,
+    color_filter_script_14,
+    color_filter_script_15,
+    color_filter_script_16,
 };
 
-s32 D_8010B23C[17][4] = {
+s32 color_filter_masks[17][4] = {
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0xFFFF0000u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0x00007F00u, (s32)0x00000000u },
     { (s32)0x00000000u, (s32)0x00000000u, (s32)0x0003FF80u, (s32)0x00000000u },
@@ -321,6 +321,6 @@ s32 D_8010B23C[17][4] = {
 };
 
 void (*g_TitleScalingXUpdateFuncs[])(struct EffectObj*) = {
-    func_800B599C,
-    func_800B5B54,
+    color_filter_init,
+    color_filter_step,
 };

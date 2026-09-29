@@ -3,267 +3,272 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_800586F0(struct MainObj* arg0)
+void dash_gunner_update(struct MainObj* self)
 {
-    D_800FD38C[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    dash_gunner_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
+// dash_gunner_init
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80058740);
 
+// dash_gunner_main
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80058AC8);
 
-void func_80058D50(struct MainObj* arg0)
+void dash_gunner_explode(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->state = 3;
-    } else if (--arg0->unk7E == 0) {
-        arg0->unk7E = 6;
-        func_800AF878(arg0, 1, 16, 16);
+    if (--self->unk7C == 0) {
+        self->state = 3;
+    } else if (--self->unk7E == 0) {
+        self->unk7E = 6;
+        func_800AF878(self, 1, 16, 16);
     }
 }
 
-void func_80058DBC(struct MainObj* arg0)
+void dash_gunner_despawn(struct MainObj* self)
 {
-    arg0->unk7A = 0;
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[5] = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->unk7A = 0;
+    self->ext.raw[0] = 0;
+    self->ext.raw[1] = 0;
+    self->ext.raw[2] = 0;
+    self->ext.raw[3] = 0;
+    self->ext.raw[5] = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_80058DF0(struct MainObj* arg0)
+void dash_gunner_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_27.saved_unk5;
+    self->unk5 = self->ext.main_27.saved_unk5;
 }
 
-void func_80058DFC(struct MainObj* arg0)
+void dash_gunner_run(struct MainObj* self)
 {
-    D_800FD3BC[arg0->unk6](arg0);
+    dash_gunner_run_funcs[self->unk6](self);
 }
 
-void func_80058E38(struct MainObj* arg0)
+void dash_gunner_run_move(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_27.unk8C == 0) {
-        func_80015D60(arg0, 3);
-        arg0->unk20 = 0;
-        func_80015930(2, 0x51);
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_27.unk8C == 0) {
+        set_animation(self, 3);
+        self->x_speed = 0;
+        stop_sound(2, 0x51);
+        self->unk5 = 5;
+        self->unk6 = 0;
         return;
     }
-    if (arg0->ext.main_27.unk90 != 0 && --arg0->ext.main_27.unk91 == 0) {
-        if (arg0->ext.main_27.unk90 == 2) {
-            arg0->ext.main_27.unk91 = 0x30;
-            if (--arg0->ext.main_27.unk92 == 0) {
-                arg0->ext.main_27.unk92 = 2;
-                func_80015D60(arg0, 3);
-                arg0->unk20 = 0;
-                func_80015930(2, 0x51);
-                arg0->unk5 = 5;
-                arg0->unk6 = 0;
+    if (self->ext.main_27.unk90 != 0 && --self->ext.main_27.unk91 == 0) {
+        if (self->ext.main_27.unk90 == 2) {
+            self->ext.main_27.unk91 = 0x30;
+            if (--self->ext.main_27.unk92 == 0) {
+                self->ext.main_27.unk92 = 2;
+                set_animation(self, 3);
+                self->x_speed = 0;
+                stop_sound(2, 0x51);
+                self->unk5 = 5;
+                self->unk6 = 0;
                 return;
             }
         } else {
-            arg0->ext.main_27.unk91 = 0x60;
+            self->ext.main_27.unk91 = 0x60;
         }
-        arg0->unk7C = 0x14;
-        arg0->unk24 = 0;
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+        self->unk7C = 0x14;
+        self->y_speed = 0;
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
-    if (arg0->unk15 == 0 ? (arg0->unk70 & 2) : (arg0->unk70 & 1)) {
-        arg0->unk7C = 0x14;
-        arg0->unk24 = 0;
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+    if (self->unk15 == 0 ? (self->collision_flags & 2) : (self->collision_flags & 1)) {
+        self->unk7C = 0x14;
+        self->y_speed = 0;
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
 }
 
-void func_80058F94(struct MainObj* arg0)
+void dash_gunner_wait_for_player(struct MainObj* self)
 {
     s8 next_state;
 
-    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= 0xBD) {
-        func_8001540C(2, 0x51, arg0);
-        arg0->unk7A = 0;
-        if (arg0->ext.main_27.unk80 == 0) {
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= 0xBD) {
+        func_8001540C(2, 0x51, self);
+        self->unk7A = 0;
+        if (self->ext.main_27.unk80 == 0) {
             next_state = 2;
         } else {
-            arg0->unk7C = 1;
+            self->unk7C = 1;
             next_state = 7;
         }
-        arg0->unk5 = next_state;
-        arg0->unk6 = 0;
+        self->unk5 = next_state;
+        self->unk6 = 0;
     }
 }
 
-void func_80059010(struct MainObj* arg0)
+void dash_gunner_turn(struct MainObj* self)
 {
-    D_800FD3C0[arg0->unk6](arg0);
+    dash_gunner_turn_funcs[self->unk6](self);
 }
 
-void func_8005904C(struct MainObj* arg0)
+void dash_gunner_turn_brake(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk20 == 0) {
-        arg0->unk28 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->x_speed == 0) {
+        self->x_accel = 0;
     }
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 2);
-        arg0->unk6 = 1;
+    if (--self->unk7C == 0) {
+        set_animation(self, 2);
+        self->unk6 = 1;
     }
 }
 
-void func_800590BC(struct MainObj* arg0)
+void dash_gunner_turn_flip(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk15 ^= 0x40;
-        func_80015D60(arg0, 1);
-        arg0->unk7C = 0x14;
-        if (arg0->ext.main_27.unk8A == 0) {
-            arg0->unk6 = 2;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk15 ^= 0x40;
+        set_animation(self, 1);
+        self->unk7C = 0x14;
+        if (self->ext.main_27.unk8A == 0) {
+            self->unk6 = 2;
         } else {
-            if (arg0->unk15 == 0) {
-                arg0->unk20 = FIXED(-4);
+            if (self->unk15 == 0) {
+                self->x_speed = FIXED(-4);
             } else {
-                arg0->unk20 = FIXED(4);
+                self->x_speed = FIXED(4);
             }
-            func_80015D60(arg0, 7);
-            arg0->unk5 = 7;
-            arg0->unk6 = 1;
+            set_animation(self, 7);
+            self->unk5 = 7;
+            self->unk6 = 1;
         }
     }
 }
 
+// dash_gunner_turn_end
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059154);
 
-void func_800591F0(struct MainObj* arg0)
+void dash_gunner_shoot(struct MainObj* self)
 {
-    D_800FD3CC[arg0->unk6](arg0);
+    dash_gunner_shoot_funcs[self->unk6](self);
 }
 
-void func_8005922C(struct MainObj* arg0)
+void dash_gunner_shoot_raise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->ext.main_27.unk8B = 1;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        self->ext.main_27.unk8B = 1;
     }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk7C = 4;
-        arg0->unk7E = 0x1E;
-        arg0->unk6 = 1;
+    if (self->animation_step.fields.event == 1) {
+        self->unk7C = 4;
+        self->unk7E = 0x1E;
+        self->unk6 = 1;
     }
 }
 
-void func_80059290(struct MainObj* arg0)
+void dash_gunner_shoot_aim(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7E == 0) {
-        if (arg0->unk15 == 0) {
-            arg0->x_pos.u.hi -= 6;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7E == 0) {
+        if (self->unk15 == 0) {
+            self->x_pos.u.hi -= 6;
         } else {
-            arg0->x_pos.u.hi += 6;
+            self->x_pos.u.hi += 6;
         }
-        arg0->ext.main_27.collision_direction = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-        if (arg0->unk15 == 0) {
-            arg0->x_pos.u.hi += 6;
+        self->ext.main_27.collision_direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        if (self->unk15 == 0) {
+            self->x_pos.u.hi += 6;
         } else {
-            arg0->x_pos.u.hi -= 6;
+            self->x_pos.u.hi -= 6;
         }
-        arg0->unk6 = 2;
+        self->unk6 = 2;
     }
 }
 
-void func_80059344(struct MainObj* arg0)
+void dash_gunner_shoot_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
     u8 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    direction = arg0->ext.main_27.collision_direction;
+    animate_object(ANIMATED_OBJECT(self));
+    direction = self->ext.main_27.collision_direction;
     if ((u32)(direction - 9) < 0xF) {
-        if (arg0->unk15 != 0) {
-            arg0->unk7C = 0xA;
-            arg0->unk6 = 3;
+        if (self->unk15 != 0) {
+            self->unk7C = 0xA;
+            self->unk6 = 3;
         }
-    } else if ((u32)(direction - 8) >= 0x11 && arg0->unk15 == 0) {
-        arg0->unk7C = 0xA;
-        arg0->unk6 = 3;
+    } else if ((u32)(direction - 8) >= 0x11 && self->unk15 == 0) {
+        self->unk7C = 0xA;
+        self->unk6 = 3;
     }
-    if (arg0->unk6 == 3) {
+    if (self->unk6 == 3) {
         return;
     }
-    func_80015D60(arg0, 4);
+    set_animation(self, 4);
     shot = find_free_shot_obj();
     if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0xE;
-        shot->unk2 = arg0->unk2;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->unk15 = arg0->unk15;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_27.collision_direction);
+        shot->unk2 = self->unk2;
+        shot->unk40 = self->unk40;
+        shot->unk42 = self->unk42;
+        shot->animation_table = (u32**)self->animation_table;
+        shot->unk3C = (void*)self->sprite_frames;
+        shot->unk15 = self->unk15;
+        shot->bg_offset = self->bg_offset;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
+        set_velocity_from_angle(MOVING_OBJECT(shot), self->ext.main_27.collision_direction);
         shot->state = 0;
         shot->x_vel.val *= 3;
         shot->y_vel.val *= 3;
     }
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0xA;
-        arg0->unk6 = 3;
+    if (--self->unk7C == 0) {
+        self->unk7C = 0xA;
+        self->unk6 = 3;
     } else {
-        arg0->unk7E = 0x14;
-        arg0->unk6 = 1;
+        self->unk7E = 0x14;
+        self->unk6 = 1;
     }
 }
 
-void func_800594D8(struct MainObj* arg0)
+void dash_gunner_shoot_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 6);
-        arg0->unk6 = 4;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        set_animation(self, 6);
+        self->unk6 = 4;
     }
 }
 
-void func_8005952C(struct MainObj* arg0)
+void dash_gunner_shoot_lower(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->ext.main_27.unk8B = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        self->ext.main_27.unk8B = 0;
     }
-    if (arg0->animation_step.fields.event == 1) {
-        func_80015D60(arg0, 1);
-        arg0->unk7C = 10;
-        arg0->unk6 = 5;
+    if (self->animation_step.fields.event == 1) {
+        set_animation(self, 1);
+        self->unk7C = 10;
+        self->unk6 = 5;
     }
 }
 
+// dash_gunner_shoot_end
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059590);
 
+// dash_gunner_hop
 INCLUDE_ASM("main/nonmatchings/mains/main_27", func_80059640);
 
-void func_80059978(struct MainObj* arg0)
+void dash_gunner_dash(struct MainObj* self)
 {
-    D_800FD3E4[arg0->unk6](arg0);
+    dash_gunner_dash_funcs[self->unk6](self);
 }
 
-void func_800599B4(struct MainObj* self)
+void dash_gunner_dash_start(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
     if (timer != 0) {
@@ -283,7 +288,7 @@ void func_800599B4(struct MainObj* self)
     goto common;
 
 action:
-    func_80015D60(self, 2);
+    set_animation(self, 2);
     self->unk5 = 4;
     self->unk6 = 1;
     self->unk7C = 1;
@@ -293,80 +298,80 @@ common:
     self->unk7C = 0x14;
     self->unk6 = 1;
     if (self->unk15 == 0) {
-        self->unk20 = FIXED(-4);
+        self->x_speed = FIXED(-4);
     } else {
-        self->unk20 = FIXED(4);
+        self->x_speed = FIXED(4);
     }
 }
 
-void func_80059A94(struct MainObj* arg0)
+void dash_gunner_dash_move(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->ext.main_27.unk8C != 1) {
-        arg0->ext.main_27.unk8C--;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->ext.main_27.unk8C != 1) {
+        self->ext.main_27.unk8C--;
     }
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 1);
-        arg0->unk28 = FIXED(-0.125);
-        arg0->unk6 = 2;
+    if (--self->unk7C == 0) {
+        set_animation(self, 1);
+        self->x_accel = FIXED(-0.125);
+        self->unk6 = 2;
     }
 }
 
-void func_80059B0C(struct MainObj* arg0)
+void dash_gunner_dash_brake(struct MainObj* self)
 {
-    if (arg0->ext.main_27.unk8C != 1) {
-        arg0->ext.main_27.unk8C--;
+    if (self->ext.main_27.unk8C != 1) {
+        self->ext.main_27.unk8C--;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk20 == 0) {
-        arg0->unk7C = 10;
-        arg0->unk28 = 0;
-        arg0->unk20 = 0;
-        arg0->ext.main_27.unk88 = 0;
-        arg0->unk6 = 3;
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->x_speed == 0) {
+        self->unk7C = 10;
+        self->x_accel = 0;
+        self->x_speed = 0;
+        self->ext.main_27.unk88 = 0;
+        self->unk6 = 3;
     }
 }
 
-void func_80059B7C(struct MainObj* arg0)
+void dash_gunner_dash_end(struct MainObj* self)
 {
     s16 timer;
 
-    if (arg0->ext.main_27.unk8C != 1) {
-        arg0->ext.main_27.unk8C--;
+    if (self->ext.main_27.unk8C != 1) {
+        self->ext.main_27.unk8C--;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->unk7C - 1;
-    arg0->unk7C = timer;
+    animate_object(ANIMATED_OBJECT(self));
+    timer = self->unk7C - 1;
+    self->unk7C = timer;
     if (timer == 0) {
-        arg0->ext.main_27.unk89 = 0;
-        arg0->ext.main_27.unk8A = 0;
-        if (arg0->unk15 == 0) {
-            if (g_Player.x_pos.i.hi > arg0->x_pos.i.hi) {
+        self->ext.main_27.unk89 = 0;
+        self->ext.main_27.unk8A = 0;
+        if (self->unk15 == 0) {
+            if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
                 timer = 0x14;
-                arg0->unk7C = timer;
+                self->unk7C = timer;
                 timer = 4;
-                arg0->unk28 = 0;
-                arg0->unk24 = 0;
+                self->x_accel = 0;
+                self->y_speed = 0;
             } else {
                 timer = 6;
             }
-        } else if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi) {
+        } else if (g_Player.x_pos.i.hi < self->x_pos.i.hi) {
             timer = 0x14;
-            arg0->unk7C = timer;
+            self->unk7C = timer;
             timer = 4;
-            arg0->unk28 = 0;
-            arg0->unk24 = 0;
+            self->x_accel = 0;
+            self->y_speed = 0;
         } else {
             timer = 6;
         }
-        arg0->unk5 = timer;
-        arg0->unk6 = 0;
+        self->unk5 = timer;
+        self->unk6 = 0;
     }
 }
 
-struct Unk_unk68 D_800FD200[10] = {
+struct Unk_unk68 dash_gunner_boxes[10] = {
     { -17, -16, 10, 34 },
     { -21, -26, 42, 16 },
     { -8, -2, 33, 6 },
@@ -379,14 +384,14 @@ struct Unk_unk68 D_800FD200[10] = {
     { 0, 7, 32, 39 },
 };
 
-union AnimationStep D_800FD228[] = {
+union AnimationStep dash_gunner_anim_0[] = {
     { 0x00010003 },
     { 0x01010003 },
     { 0x02010003 },
     { 0x03FD0003 },
 };
 
-union AnimationStep D_800FD238[] = {
+union AnimationStep dash_gunner_anim_1[] = {
     { 0x04010003 },
     { 0x05010003 },
     { 0x06010003 },
@@ -397,7 +402,7 @@ union AnimationStep D_800FD238[] = {
     { 0x0BF90103 },
 };
 
-union AnimationStep D_800FD258[] = {
+union AnimationStep dash_gunner_anim_2[] = {
     { 0x0C010002 },
     { 0x0D010002 },
     { 0x0E010002 },
@@ -407,7 +412,7 @@ union AnimationStep D_800FD258[] = {
     { 0x11000101 },
 };
 
-union AnimationStep D_800FD274[] = {
+union AnimationStep dash_gunner_anim_3[] = {
     { 0x12010002 },
     { 0x13010006 },
     { 0x14010003 },
@@ -422,7 +427,7 @@ union AnimationStep D_800FD274[] = {
     { 0x1A000101 },
 };
 
-union AnimationStep D_800FD2A4[] = {
+union AnimationStep dash_gunner_anim_4[] = {
     { 0x1B010002 },
     { 0x1C010002 },
     { 0x1D010002 },
@@ -430,7 +435,7 @@ union AnimationStep D_800FD2A4[] = {
     { 0x1A000101 },
 };
 
-union AnimationStep D_800FD2B8[] = {
+union AnimationStep dash_gunner_anim_5[] = {
     { 0x1F010003 },
     { 0x20010003 },
     { 0x21010003 },
@@ -439,7 +444,7 @@ union AnimationStep D_800FD2B8[] = {
     { 0x24FB0003 },
 };
 
-union AnimationStep D_800FD2D0[] = {
+union AnimationStep dash_gunner_anim_6[] = {
     { 0x1A010006 },
     { 0x17010002 },
     { 0x16010202 },
@@ -454,7 +459,7 @@ union AnimationStep D_800FD2D0[] = {
     { 0x27000101 },
 };
 
-union AnimationStep D_800FD300[] = {
+union AnimationStep dash_gunner_anim_7[] = {
     { 0x26010002 },
     { 0x27010002 },
     { 0x28010002 },
@@ -475,84 +480,84 @@ union AnimationStep D_800FD300[] = {
     { 0x37F10002 },
 };
 
-union AnimationStep D_800FD348[] = {
+union AnimationStep dash_gunner_anim_8[] = {
     { 0x38000101 },
 };
 
-union AnimationStep D_800FD34C[] = {
+union AnimationStep dash_gunner_anim_9[] = {
     { 0x39000101 },
 };
 
-union AnimationStep D_800FD350[] = {
+union AnimationStep dash_gunner_anim_10[] = {
     { 0x3A000101 },
 };
 
-union AnimationStep D_800FD354[] = {
+union AnimationStep dash_gunner_anim_11[] = {
     { 0x3B000101 },
 };
 
-union AnimationStep* D_800FD358[] = {
-    D_800FD228,
-    D_800FD238,
-    D_800FD258,
-    D_800FD274,
-    D_800FD2A4,
-    D_800FD2B8,
-    D_800FD2D0,
-    D_800FD300,
-    D_800FD348,
-    D_800FD34C,
-    D_800FD350,
-    D_800FD354,
+union AnimationStep* dash_gunner_animations[] = {
+    dash_gunner_anim_0,
+    dash_gunner_anim_1,
+    dash_gunner_anim_2,
+    dash_gunner_anim_3,
+    dash_gunner_anim_4,
+    dash_gunner_anim_5,
+    dash_gunner_anim_6,
+    dash_gunner_anim_7,
+    dash_gunner_anim_8,
+    dash_gunner_anim_9,
+    dash_gunner_anim_10,
+    dash_gunner_anim_11,
 };
 
-u8 D_800FD388[] = {
+u8 dash_gunner_debris[] = {
     0x08,
     0x09,
     0x0A,
     0x0B,
 };
 
-void (*D_800FD38C[])() = {
+void (*dash_gunner_state_funcs[])() = {
     func_80058740,
     func_80058AC8,
-    func_80058D50,
-    func_80058DBC,
+    dash_gunner_explode,
+    dash_gunner_despawn,
 };
 
-void (*D_800FD39C[])() = {
-    func_8009216C,
-    func_80058DF0,
-    func_80058DFC,
-    func_80058F94,
-    func_80059010,
-    func_800591F0,
+void (*dash_gunner_step_funcs[])() = {
+    enemy_hit_reaction,
+    dash_gunner_resume_step,
+    dash_gunner_run,
+    dash_gunner_wait_for_player,
+    dash_gunner_turn,
+    dash_gunner_shoot,
     func_80059640,
-    func_80059978,
+    dash_gunner_dash,
 };
 
-void (*D_800FD3BC[])() = {
-    func_80058E38,
+void (*dash_gunner_run_funcs[])() = {
+    dash_gunner_run_move,
 };
 
-void (*D_800FD3C0[])(struct MainObj*) = {
-    func_8005904C,
-    func_800590BC,
+void (*dash_gunner_turn_funcs[])(struct MainObj*) = {
+    dash_gunner_turn_brake,
+    dash_gunner_turn_flip,
     func_80059154,
 };
 
-void (*D_800FD3CC[])(struct MainObj*) = {
-    func_8005922C,
-    func_80059290,
-    func_80059344,
-    func_800594D8,
-    func_8005952C,
+void (*dash_gunner_shoot_funcs[])(struct MainObj*) = {
+    dash_gunner_shoot_raise,
+    dash_gunner_shoot_aim,
+    dash_gunner_shoot_fire,
+    dash_gunner_shoot_wait,
+    dash_gunner_shoot_lower,
     func_80059590,
 };
 
-void (*D_800FD3E4[])() = {
-    func_800599B4,
-    func_80059A94,
-    func_80059B0C,
-    func_80059B7C,
+void (*dash_gunner_dash_funcs[])() = {
+    dash_gunner_dash_start,
+    dash_gunner_dash_move,
+    dash_gunner_dash_brake,
+    dash_gunner_dash_end,
 };

@@ -2,67 +2,68 @@
 // 8009C0F0..8009C364
 #include "common.h"
 
-u8 D_80108ED8[4] = { 0xFD, 0xFD, 0x06, 0x06 };
+u8 turret_laser_hit_box[4] = { 0xFD, 0xFD, 0x06, 0x06 };
 
-void func_8009C0F0(struct ShotObj* arg0)
+void turret_laser_update(struct ShotObj* self)
 {
-    D_80108EDC[arg0->state](arg0);
+    turret_laser_state_funcs[self->state](self);
 }
 
+// turret_laser_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_15", func_8009C12C);
 
-void func_8009C238(struct ShotObj* arg0)
+void turret_laser_hit(struct ShotObj* self)
 {
-    func_8009216C(arg0);
+    enemy_hit_reaction(self);
 }
 
-void func_8009C258(struct ShotObj* arg)
+void turret_laser_idle(struct ShotObj* arg)
 {
 }
 
-void func_8009C260(struct ShotObj* arg0)
+void turret_laser_move(struct ShotObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002D9BC(arg0);
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    func_8002D9BC(self);
 }
 
-void func_8009C298(struct ShotObj* arg0)
+void turret_laser_main(struct ShotObj* self)
 {
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        arg0->unk5 = 0;
-        arg0->state++;
-        func_800AF808(BASE_OBJECT(arg0));
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        self->unk5 = 0;
+        self->state++;
+        spawn_explosion(BASE_OBJECT(self));
         return;
     }
 
-    D_80108EE8[arg0->unk5](arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0xA, 0xA) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0xA, 0xA);
+    turret_laser_step_funcs[self->unk5](self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0xA, 0xA) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0xA, 0xA);
         return;
     }
 
-    arg0->state++;
+    self->state++;
 }
 
-void func_8009C344(struct ShotObj* arg0)
+void turret_laser_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108EDC[])(struct ShotObj*) = {
+void (*turret_laser_state_funcs[])(struct ShotObj*) = {
     func_8009C12C,
-    func_8009C298,
-    func_8009C344,
+    turret_laser_main,
+    turret_laser_despawn,
 };
 
-void (*D_80108EE8[3])(struct ShotObj*) = {
-    func_8009C238,
-    func_8009C258,
-    func_8009C260,
+void (*turret_laser_step_funcs[3])(struct ShotObj*) = {
+    turret_laser_hit,
+    turret_laser_idle,
+    turret_laser_move,
 };
 
-u8 D_80108EF4[11][4] = {
+u8 turret_laser_beam_box_data[11][4] = {
     { 0xF3, 0xFD, 0x0A, 0x05 },
     { 0xE4, 0xFD, 0x1A, 0x05 },
     { 0xCC, 0xFD, 0x31, 0x05 },
@@ -76,19 +77,19 @@ u8 D_80108EF4[11][4] = {
     { 0xFD, 0xFE, 0x05, 0x34 },
 };
 
-u8 D_80108F20[4] = { 0xFD, 0xFE, 0x05, 0x50 };
+u8 turret_laser_full_beam_box[4] = { 0xFD, 0xFE, 0x05, 0x50 };
 
-u8* D_80108F24[12] = {
-    D_80108EF4[0],
-    D_80108EF4[1],
-    D_80108EF4[2],
-    D_80108EF4[3],
-    D_80108EF4[4],
-    D_80108EF4[5],
-    D_80108EF4[6],
-    D_80108EF4[7],
-    D_80108EF4[8],
-    D_80108EF4[9],
-    D_80108EF4[10],
-    D_80108F20,
+u8* turret_laser_beam_boxes[12] = {
+    turret_laser_beam_box_data[0],
+    turret_laser_beam_box_data[1],
+    turret_laser_beam_box_data[2],
+    turret_laser_beam_box_data[3],
+    turret_laser_beam_box_data[4],
+    turret_laser_beam_box_data[5],
+    turret_laser_beam_box_data[6],
+    turret_laser_beam_box_data[7],
+    turret_laser_beam_box_data[8],
+    turret_laser_beam_box_data[9],
+    turret_laser_beam_box_data[10],
+    turret_laser_full_beam_box,
 };

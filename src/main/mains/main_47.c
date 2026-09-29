@@ -2,19 +2,21 @@
 // 80066DAC..80067350
 #include "common.h"
 
-extern u16 D_800FF9F0[3][2];
+extern u16 train_boss_armor_smoke_offsets[3][2];
 #include "func_tables.h"
 
-void func_80066DAC(struct MainObj* arg0)
+void train_boss_armor_update(struct MainObj* self)
 {
-    D_800FFA0C[arg0->state](arg0);
+    train_boss_armor_state_funcs[self->state](self);
 }
 
+// train_boss_armor_init
 INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066DE8);
 
+// train_boss_armor_main
 INCLUDE_ASM("main/nonmatchings/mains/main_47", func_80066F1C);
 
-void func_800671D8(struct MainObj* self)
+void train_boss_armor_smoke(struct MainObj* self)
 {
     s16 timer7C;
     s16 timer7E;
@@ -34,50 +36,50 @@ void func_800671D8(struct MainObj* self)
     self->unk7E = timer7E;
     if (timer7E == 0) {
         tableIndex = self->unk2;
-        y = (u16)self->ext.main_47.unk80->x_pos.i.hi + D_800FF9F0[tableIndex][0];
-        x = (u16)self->y_pos.i.hi + D_800FF9F0[tableIndex][1];
+        y = (u16)self->ext.main_47.unk80->x_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][0];
+        x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][1];
         func_800B10E4(0x11, (s16)(y - 6), (s16)(x - 6),
             (s16)(y + 6), (s16)(x + 6), 1);
         self->unk7E = 10;
     }
 }
 
-void func_800672BC(struct MainObj* arg0)
+void train_boss_armor_clear(struct MainObj* self)
 {
-    arg0->ext.main_47.unk80 = 0;
-    arg0->ext.main_47.unk84 = 0;
-    arg0->ext.main_47.unk88 = 0;
-    arg0->ext.main_47.unk8C = 0;
-    arg0->ext.main_47.unk90 = 0;
-    arg0->ext.main_47.unk94 = 0;
+    self->ext.main_47.unk80 = 0;
+    self->ext.main_47.unk84 = 0;
+    self->ext.main_47.unk88 = 0;
+    self->ext.main_47.unk8C = 0;
+    self->ext.main_47.unk90 = 0;
+    self->ext.main_47.unk94 = 0;
 }
 
-void func_800672D8(struct MainObj* arg0)
+void train_boss_armor_start_idle(struct MainObj* self)
 {
-    arg0->unk5 = 2;
-    arg0->unk6 = 1;
+    self->unk5 = 2;
+    self->unk6 = 1;
 }
 
-void func_800672EC(struct MainObj* arg0)
+void train_boss_armor_arrive(struct MainObj* self)
 {
-    if (arg0->unk6 == 0) {
-        if (arg0->x_pos.i.hi >= 0x1AA1) {
-            arg0->unk6 = 1;
+    if (self->unk6 == 0) {
+        if (self->x_pos.i.hi >= 0x1AA1) {
+            self->unk6 = 1;
             return;
         }
-        func_8002B718(MOVING_OBJECT(arg0));
+        move_object(MOVING_OBJECT(self));
         return;
     }
-    arg0->unk42 &= 0x7FFF;
+    self->unk42 &= 0x7FFF;
 }
 
-s8 D_800FF9C0[3][16] = {
+s8 train_boss_armor_hurt_boxes[3][16] = {
     { -47, -72, 29, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { -31, -39, 17, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { -31, -6, 17, 28, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u16 D_800FF9F0[3][2] = { { -30, -61 }, { -24, -26 }, { -23, 8 } };
+u16 train_boss_armor_smoke_offsets[3][2] = { { -30, -61 }, { -24, -26 }, { -23, 8 } };
 
 u8 D_800FF9FC[4] = { 1, 2, 4, 0 };
 
@@ -85,11 +87,11 @@ u8 D_800FFA00[4] = { 0x10, 0x20, 0x40, 0 };
 
 u8 D_800FFA04[8] = { 11, 12, 11, 12, 11, 12, 0, 0 };
 
-void (*D_800FFA0C[])(struct MainObj*) = {
+void (*train_boss_armor_state_funcs[])(struct MainObj*) = {
     func_80066DE8,
     func_80066F1C,
-    func_800671D8,
-    func_800672BC,
+    train_boss_armor_smoke,
+    train_boss_armor_clear,
 };
 
-void (*D_800FFA1C[3])() = { func_8009216C, func_800672D8, func_800672EC };
+void (*train_boss_armor_step_funcs[3])() = { enemy_hit_reaction, train_boss_armor_start_idle, train_boss_armor_arrive };

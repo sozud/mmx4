@@ -2,85 +2,85 @@
 // 800DA05C..800DA298
 #include "common.h"
 
-s16 D_8010FF84[2] = { 0x8D0, 0 };
+s16 volcano_camera_section_positions[2] = { 0x8D0, 0 };
 
-void func_800DA05C(struct LayerObj* arg0)
+void volcano_camera_update(struct LayerObj* arg0)
 {
-    D_8010FF88[arg0->state](arg0);
+    volcano_camera_state_funcs[arg0->state](arg0);
 }
 
-void func_800DA098(struct LayerObj* arg0)
+void volcano_camera_init(struct LayerObj* arg0)
 {
     arg0->unk5 = 1;
     arg0->bg_offset = 2;
     arg0->state++;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x50;
-    func_800DA0EC(arg0);
+    volcano_camera_main(arg0);
 }
 
-void func_800DA0EC(struct LayerObj* arg0)
+void volcano_camera_main(struct LayerObj* arg0)
 {
     arg0->unk15 = arg0->bg_offset;
-    func_800DA230(arg0);
-    D_8010FF94[arg0->unk5](arg0);
+    volcano_camera_update_section(arg0);
+    volcano_camera_section_funcs[arg0->unk5](arg0);
 }
 
-void func_800DA140(struct LayerObj* arg0)
+void volcano_camera_despawn(struct LayerObj* arg0)
 {
-    func_8002B108(arg0);
+    despawn_object_permanently(arg0);
 }
 
-void func_800DA160(struct LayerObj* arg0)
+void volcano_camera_section_0(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800DA1A0(arg0);
+        volcano_camera_section_0_wait(arg0);
     } else {
-        func_800DA1B4(arg0);
+        volcano_camera_section_0_done(arg0);
     }
 }
 
-void func_800DA1A0(struct LayerObj* arg0)
+void volcano_camera_section_0_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800DA1B4(struct LayerObj* arg0)
+void volcano_camera_section_0_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
 
-void func_800DA1C4(struct LayerObj* arg0)
+void volcano_camera_section_1(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800DA204(arg0);
+        volcano_camera_section_1_wait(arg0);
     } else {
-        func_800DA218(arg0);
+        volcano_camera_section_1_done(arg0);
     }
 }
 
-void func_800DA204(struct LayerObj* arg0)
+void volcano_camera_section_1_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800DA218(struct LayerObj* arg0)
+void volcano_camera_section_1_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->unk6 = 0;
 }
 
-void func_800DA228(struct LayerObj* arg0)
+void volcano_camera_idle(struct LayerObj* arg0)
 {
 }
 
-void func_800DA230(struct LayerObj* arg0)
+void volcano_camera_update_section(struct LayerObj* arg0)
 {
     s8 index;
 
     for (index = 0; index < 1; index++) {
-        if (g_Player.x_pos.i.hi - D_8010FF84[index] < 0) {
+        if (g_Player.x_pos.i.hi - volcano_camera_section_positions[index] < 0) {
             break;
         }
     }
@@ -92,14 +92,14 @@ void func_800DA230(struct LayerObj* arg0)
     }
 }
 
-void (*D_8010FF88[])(struct LayerObj*) = {
-    func_800DA098,
-    func_800DA0EC,
-    func_800DA140,
+void (*volcano_camera_state_funcs[])(struct LayerObj*) = {
+    volcano_camera_init,
+    volcano_camera_main,
+    volcano_camera_despawn,
 };
 
-void (*D_8010FF94[])(struct LayerObj*) = {
-    func_800DA160,
-    func_800DA1C4,
-    func_800DA228,
+void (*volcano_camera_section_funcs[])(struct LayerObj*) = {
+    volcano_camera_section_0,
+    volcano_camera_section_1,
+    volcano_camera_idle,
 };

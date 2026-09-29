@@ -2,88 +2,88 @@
 // 800BDE68..800BE038
 #include "common.h"
 
-void func_800BDE68(struct EffectObj* arg0)
+void tile_strip_anim_update(struct EffectObj* self)
 {
-    D_8010C08C[arg0->state](arg0);
+    tile_strip_anim_state_funcs[self->state](self);
 }
 
-void func_800BDEA4(struct EffectObj* arg0)
+void tile_strip_anim_init(struct EffectObj* self)
 {
     u8* temp_v0;
 
-    arg0->ext.effect_39.unk14 = 1;
-    if (arg0->unk2 == 0) {
-        arg0->x_pos.i.hi = 0x940;
-        arg0->y_pos.i.hi = 0x2D0;
+    self->ext.effect_39.unk14 = 1;
+    if (self->unk2 == 0) {
+        self->x_pos.i.hi = 0x940;
+        self->y_pos.i.hi = 0x2D0;
     }
-    temp_v0 = D_8010C084[arg0->unk2];
-    arg0->ext.effect_39.palette_source.bytes = temp_v0;
-    arg0->ext.effect_39.palette.fields.timer = temp_v0[0];
-    arg0->ext.effect_39.palette.fields.unk1 = arg0->ext.effect_39.palette_source.bytes[1];
-    arg0->ext.effect_39.palette.fields.step = arg0->ext.effect_39.palette_source.bytes[2];
-    arg0->ext.effect_39.palette.fields.id = arg0->ext.effect_39.palette_source.bytes[3];
-    arg0->state = (u8)arg0->state + 1;
+    temp_v0 = tile_strip_anim_scripts[self->unk2];
+    self->ext.effect_39.palette_source.bytes = temp_v0;
+    self->ext.effect_39.palette.fields.timer = temp_v0[0];
+    self->ext.effect_39.palette.fields.unk1 = self->ext.effect_39.palette_source.bytes[1];
+    self->ext.effect_39.palette.fields.step = self->ext.effect_39.palette_source.bytes[2];
+    self->ext.effect_39.palette.fields.id = self->ext.effect_39.palette_source.bytes[3];
+    self->state = (u8)self->state + 1;
 }
 
-void func_800BDF20(struct EffectObj* arg0)
+void tile_strip_anim_main(struct EffectObj* self)
 {
-    func_800BDF40(arg0);
+    tile_strip_anim_step(self);
 }
 
-void func_800BDF40(struct EffectObj* arg0)
+void tile_strip_anim_step(struct EffectObj* self)
 {
     s8 temp_v0;
 
-    temp_v0 = arg0->ext.effect_39.palette.fields.timer - 1;
-    arg0->ext.effect_39.palette.fields.timer = temp_v0;
+    temp_v0 = self->ext.effect_39.palette.fields.timer - 1;
+    self->ext.effect_39.palette.fields.timer = temp_v0;
     if (temp_v0 != 0) {
         return;
     }
 
-    arg0->ext.effect_39.palette_source.words += arg0->ext.effect_39.palette.fields.step;
-    arg0->ext.effect_39.palette.packed = *arg0->ext.effect_39.palette_source.words;
+    self->ext.effect_39.palette_source.words += self->ext.effect_39.palette.fields.step;
+    self->ext.effect_39.palette.packed = *self->ext.effect_39.palette_source.words;
 
-    if (arg0->unk2 == 0) {
-        func_800BDFC8(arg0);
+    if (self->unk2 == 0) {
+        tile_strip_anim_refresh_row(self);
         return;
     }
 
-    func_800DA984(arg0->ext.effect_39.palette.fields.id,
-        arg0->x_pos.i.hi - 0x40, arg0->y_pos.i.hi - 0x20);
+    refresh_visible_tile_effect(self->ext.effect_39.palette.fields.id,
+        self->x_pos.i.hi - 0x40, self->y_pos.i.hi - 0x20);
 }
 
-void func_800BDFC8(struct EffectObj* arg0)
+void tile_strip_anim_refresh_row(struct EffectObj* self)
 {
     u16 x;
     s32 i;
 
-    x = arg0->x_pos.u.hi;
+    x = self->x_pos.u.hi;
     i = 0;
     do {
-        func_800DA984(arg0->ext.effect_39.palette.fields.id, (s16)x - 0x40,
-            arg0->y_pos.i.hi - 0x20);
+        refresh_visible_tile_effect(self->ext.effect_39.palette.fields.id, (s16)x - 0x40,
+            self->y_pos.i.hi - 0x20);
         x += 0x80;
         i += 1;
     } while (i < 0x1A);
 }
 
-u8 D_8010C064[4][4] = {
+u8 tile_strip_anim_script_0[4][4] = {
     { 8, 0, 1, 3 },
     { 8, 0, 1, 4 },
     { 8, 0, 1, 5 },
     { 8, 0, 0xFD, 6 },
 };
 
-u8 D_8010C074[4][4] = {
+u8 tile_strip_anim_script_1[4][4] = {
     { 8, 0, 1, 0 },
     { 8, 0, 1, 1 },
     { 8, 0, 1, 2 },
     { 8, 0, 0xFD, 3 },
 };
 
-u8* D_8010C084[2] = { D_8010C064[0], D_8010C074[0] };
+u8* tile_strip_anim_scripts[2] = { tile_strip_anim_script_0[0], tile_strip_anim_script_1[0] };
 
-void (*D_8010C08C[])(struct EffectObj*) = {
-    func_800BDEA4,
-    func_800BDF20,
+void (*tile_strip_anim_state_funcs[])(struct EffectObj*) = {
+    tile_strip_anim_init,
+    tile_strip_anim_main,
 };

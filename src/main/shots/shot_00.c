@@ -2,152 +2,153 @@
 // 800994A0..80099B30
 #include "common.h"
 
-u8 D_80108C44[4] = { 0xB4, 0x1B, 0x52, 0x31 };
-u8 D_80108C48[4] = { 0x9E, 0xAE, 0x2C, 0x72 };
-u8 D_80108C4C[4] = { 0x24, 0xF4, 0x32, 0x52 };
-u8 D_80108C50[4] = { 0x2B, 0x15, 0x29, 0x40 };
-u8 D_80108C54[4] = { 0xF3, 0xF3, 0x1A, 0x18 };
-u8 D_80108C58[4] = { 0xF3, 0xF3, 0x1A, 0x18 };
-u8 D_80108C5C[4] = { 0x20, 0xA7, 0x20, 0x10 };
-u8 D_80108C60[4] = { 0x00, 0x00, 0x00, 0x00 };
-u8 D_80108C64[4] = { 0x01, 0xFE, 0x09, 0x09 };
-u8 D_80108C68[4] = { 0xC1, 0x0B, 0x32, 0x40 };
-u8 D_80108C6C[4] = { 0x25, 0x08, 0x32, 0x40 };
-u8 D_80108C70[4] = { 0x1A, 0x95, 0x27, 0x23 };
+u8 dragon_shot_flame_box[4] = { 0xB4, 0x1B, 0x52, 0x31 };
+u8 dragon_shot_flame_hit_box[4] = { 0x9E, 0xAE, 0x2C, 0x72 };
+u8 dragon_shot_pulse_hit_box[4] = { 0x24, 0xF4, 0x32, 0x52 };
+u8 dragon_shot_pulse_box[4] = { 0x2B, 0x15, 0x29, 0x40 };
+u8 dragon_shot_bomb_box[4] = { 0xF3, 0xF3, 0x1A, 0x18 };
+u8 dragon_shot_burn_box[4] = { 0xF3, 0xF3, 0x1A, 0x18 };
+u8 dragon_shot_box_0[4] = { 0x20, 0xA7, 0x20, 0x10 };
+u8 dragon_shot_box_1[4] = { 0x00, 0x00, 0x00, 0x00 };
+u8 dragon_shot_box_2[4] = { 0x01, 0xFE, 0x09, 0x09 };
+u8 dragon_shot_box_3[4] = { 0xC1, 0x0B, 0x32, 0x40 };
+u8 dragon_shot_box_4[4] = { 0x25, 0x08, 0x32, 0x40 };
+u8 dragon_shot_box_5[4] = { 0x1A, 0x95, 0x27, 0x23 };
 
-void func_800994A0(struct ShotObj* arg0)
+void dragon_shot_update(struct ShotObj* self)
 {
-    D_80108C74[arg0->state](arg0);
+    dragon_shot_state_funcs[self->state](self);
 }
 
+// dragon_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_00", func_800994DC);
 
-void func_80099784(struct ShotObj* arg0)
+void dragon_shot_flame(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    arg0->x_pos.val = weapon->x_pos.val;
-    arg0->y_pos.val = weapon->y_pos.val;
-    arg0->unk42 = weapon->unk42;
-    func_80015DC8(arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x5A, 0x5A);
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->state = 4;
+    weapon = self->unk7C;
+    self->x_pos.val = weapon->x_pos.val;
+    self->y_pos.val = weapon->y_pos.val;
+    self->unk42 = weapon->unk42;
+    animate_object(self);
+    update_on_screen((struct BaseObj*)self, 0x5A, 0x5A);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->state = 4;
     }
-    func_8002D9BC(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50.data = D_80108C48;
-        func_8002D9BC(arg0);
-        arg0->unk50.data = D_80108C44;
+    func_8002D9BC(self);
+    if (self->animation_step.fields.event != 0) {
+        self->unk50.data = dragon_shot_flame_hit_box;
+        func_8002D9BC(self);
+        self->unk50.data = dragon_shot_flame_box;
     }
 }
 
-void func_8009982C(struct ShotObj* arg0)
+void dragon_shot_pulse(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    arg0->x_pos.val = weapon->x_pos.val;
-    arg0->y_pos.val = weapon->y_pos.val;
-    arg0->unk42 = weapon->unk42;
-    func_80015DC8(arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x5A, 0x5A);
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->state = 4;
+    weapon = self->unk7C;
+    self->x_pos.val = weapon->x_pos.val;
+    self->y_pos.val = weapon->y_pos.val;
+    self->unk42 = weapon->unk42;
+    animate_object(self);
+    update_on_screen((struct BaseObj*)self, 0x5A, 0x5A);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->state = 4;
     }
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50.data = D_80108C4C;
+    if (self->animation_step.fields.event != 0) {
+        self->unk50.data = dragon_shot_pulse_hit_box;
     } else {
-        arg0->unk50.data = D_80108C50;
+        self->unk50.data = dragon_shot_pulse_box;
     }
-    func_8002D9BC(arg0);
+    func_8002D9BC(self);
 }
 
-void func_800998D4(struct ShotObj* arg0)
+void dragon_shot_bomb_fall(struct ShotObj* self)
 {
     struct MiscObj* temp_v0;
 
-    func_8002B694(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x19, 0x19);
+    move_with_gravity(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
 
-    if (arg0->unk70 & 8) {
-        arg0->unk60 = 5;
-        arg0->unk68 = 0;
-        arg0->unk50.data = D_80108C58;
-        arg0->unk5 = arg0->unk5 + 1;
-        func_80015D60(arg0, 0xB);
+    if (self->unk70 & 8) {
+        self->unk60 = 5;
+        self->unk68 = 0;
+        self->unk50.data = dragon_shot_burn_box;
+        self->unk5 = self->unk5 + 1;
+        set_animation(self, 0xB);
 
-        if (!(arg0->unk70 & 3)) {
+        if (!(self->unk70 & 3)) {
             temp_v0 = find_free_misc_obj();
             if (temp_v0 != 0) {
                 temp_v0->active = 0x41;
                 temp_v0->id = 4;
                 temp_v0->unk2 = 0;
                 temp_v0->state = 0;
-                temp_v0->ext.pointer.unk50 = arg0->unk7C;
-                temp_v0->x_pos.val = arg0->x_pos.val + (get_random() & 3);
-                temp_v0->y_pos.val = arg0->y_pos.val + (get_random() & 3);
+                temp_v0->ext.pointer.unk50 = self->unk7C;
+                temp_v0->x_pos.val = self->x_pos.val + (get_random() & 3);
+                temp_v0->y_pos.val = self->y_pos.val + (get_random() & 3);
             }
         }
     }
 
-    func_8002D9BC(arg0);
+    func_8002D9BC(self);
 }
 
-void func_800999D0(struct ShotObj* arg0)
+void dragon_shot_bomb_burn(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002D9BC(arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x19, 0x19);
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->state = 4;
-        arg0->unk5 = 0;
+    animate_object(self);
+    func_8002D9BC(self);
+    update_on_screen((struct BaseObj*)self, 0x19, 0x19);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->state = 4;
+        self->unk5 = 0;
     }
 }
 
-void func_80099A28(struct ShotObj* arg0)
+void dragon_shot_bomb(struct ShotObj* self)
 {
-    if (arg0->unk5 == 0) {
-        func_800998D4(arg0);
+    if (self->unk5 == 0) {
+        dragon_shot_bomb_fall(self);
     } else {
-        func_800999D0(arg0);
+        dragon_shot_bomb_burn(self);
     }
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    CollisionRelated((struct PlayerObj*)arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated((struct PlayerObj*)self);
 }
 
-void func_80099A8C(struct ShotObj* arg0)
+void dragon_shot_follow_owner(struct ShotObj* self)
 {
     struct WeaponObj* owner;
 
-    owner = arg0->unk7C;
-    arg0->x_pos.val = owner->x_pos.val;
-    arg0->y_pos.val = owner->y_pos.val;
-    arg0->unk42 = owner->unk42;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x5A, 0x5A);
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->state = 4;
-        arg0->unk5 = 0;
+    owner = self->unk7C;
+    self->x_pos.val = owner->x_pos.val;
+    self->y_pos.val = owner->y_pos.val;
+    self->unk42 = owner->unk42;
+    animate_object(ANIMATED_OBJECT(self));
+    func_8002D9BC(self);
+    update_on_screen(BASE_OBJECT(self), 0x5A, 0x5A);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->state = 4;
+        self->unk5 = 0;
     }
 }
 
-void func_80099B0C(struct ShotObj* arg0)
+void dragon_shot_despawn(struct ShotObj* self)
 {
-    arg0->unk7C->unk54 = NULL;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->unk7C->unk54 = NULL;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108C74[])(struct ShotObj*) = {
+void (*dragon_shot_state_funcs[])(struct ShotObj*) = {
     func_800994DC,
-    func_80099784,
-    func_8009982C,
-    func_80099A28,
-    func_80099B0C,
-    func_80099A8C,
+    dragon_shot_flame,
+    dragon_shot_pulse,
+    dragon_shot_bomb,
+    dragon_shot_despawn,
+    dragon_shot_follow_owner,
 };

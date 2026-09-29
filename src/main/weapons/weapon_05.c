@@ -2,7 +2,7 @@
 // 800957B0..800961B0
 #include "common.h"
 
-void func_800957B0(struct WeaponObj* arg0)
+void ground_hunter_update(struct WeaponObj* arg0)
 {
     s32 shouldSetState;
 
@@ -20,55 +20,56 @@ void func_800957B0(struct WeaponObj* arg0)
         arg0->state = 3;
     }
 
-    D_80108958[arg0->state](arg0);
+    ground_hunter_state_funcs[arg0->state](arg0);
     CollisionRelated(PLAYER_OBJECT(arg0));
 }
 
+// ground_hunter_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095854);
 
-void func_8009596C(struct WeaponObj* arg0)
+void ground_hunter_main(struct WeaponObj* arg0)
 {
     if ((func_8002B1E8(BASE_OBJECT(arg0), 0x2C, 0x20) == 0) && (arg0->unk98 == 0)) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        D_80108968[arg0->unk5](arg0);
+        animate_object(ANIMATED_OBJECT(arg0));
+        ground_hunter_step_funcs[arg0->unk5](arg0);
         if (arg0->unk50 != 0) {
             if (arg0->unk17 == 2) {
-                arg0->unk50 = D_80108948;
+                arg0->unk50 = ground_hunter_rise_box;
                 return;
             }
-            arg0->unk50 = D_80108944;
+            arg0->unk50 = ground_hunter_crawl_box;
         }
     } else {
-        func_80095DA8(arg0);
+        ground_hunter_hide(arg0);
     }
 }
 
-void func_80095A28(struct WeaponObj* arg0)
+void ground_hunter_fly(struct WeaponObj* arg0)
 {
-    if (func_80095C38(arg0) == 0) {
+    if (ground_hunter_check_wall(arg0) == 0) {
         if (g_Player.input.buttons.held & 8) {
-            func_80095D18(arg0);
+            ground_hunter_start_rise(arg0);
         }
         if (arg0->unk70 & 8) {
-            func_80095CC0(arg0);
+            ground_hunter_start_crawl(arg0);
         }
-        func_8002B718(MOVING_OBJECT(arg0));
-        func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+        move_object(MOVING_OBJECT(arg0));
+        update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x20);
     }
 }
 
-void func_80095AAC(struct WeaponObj* arg0)
+void ground_hunter_rise(struct WeaponObj* arg0)
 {
-    if (func_80095C38(arg0) == 0) {
+    if (ground_hunter_check_wall(arg0) == 0) {
         if ((arg0->unk70 & 8) == 0) {
-            func_80095D18(arg0);
+            ground_hunter_start_rise(arg0);
         }
-        func_8002B718(MOVING_OBJECT(arg0));
-        func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+        move_object(MOVING_OBJECT(arg0));
+        update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x20);
     }
 }
 
-void func_80095B10(struct WeaponObj* arg0)
+void ground_hunter_crawl(struct WeaponObj* arg0)
 {
     s32 mask;
     u32 flags;
@@ -80,26 +81,26 @@ void func_80095B10(struct WeaponObj* arg0)
     flags = arg0->unk70;
     if (flags & 8) {
         if (mask & flags) {
-            func_80095D60(arg0);
+            ground_hunter_start_burst(arg0);
         } else {
-            func_80095CC0(arg0);
+            ground_hunter_start_crawl(arg0);
         }
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+    move_object(MOVING_OBJECT(arg0));
+    update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x20);
 }
 
-void func_80095B94(struct WeaponObj* arg0)
+void ground_hunter_burst(struct WeaponObj* arg0)
 {
-    func_80015DC8(arg0);
+    animate_object(arg0);
     if (arg0->animation_step.fields.relative_step == 0) {
-        func_80095DA8(arg0);
+        ground_hunter_hide(arg0);
         return;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+    update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x20);
 }
 
-void func_80095BE8(struct WeaponObj* arg0)
+void ground_hunter_despawn(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     arg0->unk68 = 0;
@@ -108,7 +109,7 @@ void func_80095BE8(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-s32 func_80095C38(struct WeaponObj* arg0)
+s32 ground_hunter_check_wall(struct WeaponObj* arg0)
 {
     s32 mask;
     u32 flags;
@@ -120,19 +121,19 @@ s32 func_80095C38(struct WeaponObj* arg0)
     flags = arg0->unk70;
     if (mask & flags) {
         if (flags & 8) {
-            func_80095D60(arg0);
+            ground_hunter_start_burst(arg0);
         } else {
-            func_80095D18(arg0);
+            ground_hunter_start_rise(arg0);
         }
-        func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x20);
+        update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x20);
         return 1;
     }
     return 0;
 }
 
-void func_80095CC0(struct WeaponObj* arg0)
+void ground_hunter_start_crawl(struct WeaponObj* arg0)
 {
-    func_80015D60(arg0, 1);
+    set_animation(arg0, 1);
     arg0->unk67 = 0;
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = FIXED(6);
@@ -143,18 +144,18 @@ void func_80095CC0(struct WeaponObj* arg0)
     arg0->unk5 = 1;
 }
 
-void func_80095D18(struct WeaponObj* arg0)
+void ground_hunter_start_rise(struct WeaponObj* arg0)
 {
-    func_80015D60(arg0, 2);
+    set_animation(arg0, 2);
     arg0->unk67 = 1;
     arg0->y_vel.val = -FIXED(6);
     arg0->x_vel.val = 0;
     arg0->unk5 = 2;
 }
 
-void func_80095D60(struct WeaponObj* arg0)
+void ground_hunter_start_burst(struct WeaponObj* arg0)
 {
-    func_80015D60(arg0, 6);
+    set_animation(arg0, 6);
     arg0->x_vel.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk50 = 0;
@@ -163,7 +164,7 @@ void func_80095D60(struct WeaponObj* arg0)
     arg0->unk5 = 0;
 }
 
-void func_80095DA8(struct WeaponObj* arg0)
+void ground_hunter_hide(struct WeaponObj* arg0)
 {
     arg0->on_screen = 0;
     arg0->state = 3;
@@ -173,7 +174,7 @@ void func_80095DA8(struct WeaponObj* arg0)
 
 // WeaponObj, weapon_object_update_funcs[14]
 
-void func_80095DC0(struct WeaponObj* arg0)
+void ground_hunter_charged_update(struct WeaponObj* arg0)
 {
     s32 should_reset = g_Player.input_locked != 0;
 
@@ -186,87 +187,89 @@ void func_80095DC0(struct WeaponObj* arg0)
     if (should_reset != 0) {
         arg0->state = 3;
     }
-    D_80108974[arg0->state](arg0);
+    ground_hunter_charged_state_funcs[arg0->state](arg0);
 }
 
+// ground_hunter_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80095E3C);
 
-void func_80095F9C(struct WeaponObj* arg0)
+void ground_hunter_charged_main(struct WeaponObj* arg0)
 {
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x2C, 0x18) == 0) {
-        func_80015DC8(arg0);
-        func_8002B718(MOVING_OBJECT(arg0));
-        D_80108984[arg0->unk5](arg0);
+        animate_object(arg0);
+        move_object(MOVING_OBJECT(arg0));
+        ground_hunter_charged_step_funcs[arg0->unk5](arg0);
         return;
     }
 
-    func_80095DA8(arg0);
+    ground_hunter_hide(arg0);
 }
 
-void func_80096018(struct WeaponObj* arg0)
+void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 {
     if (g_Player.input.buttons.held & 0xC) {
         arg0->ext.weapon_14.unk8D = 5;
         arg0->ext.weapon_14.unk8C = 0;
         arg0->unk5 = 1;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x18);
+    update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x18);
 }
 
+// ground_hunter_charged_fire
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_05", func_80096060);
 
-void func_80096170(struct WeaponObj* arg0)
+void ground_hunter_charged_shot_fly(struct WeaponObj* arg0)
 {
     if (arg0->unk98 != 0) {
-        func_80095DA8(arg0);
+        ground_hunter_hide(arg0);
         return;
     }
 
-    func_8002B318(BASE_OBJECT(arg0), 0x2C, 0x18);
+    update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x18);
 }
 
-struct Unk_unk68 D_80108944[] = {
+struct Unk_unk68 ground_hunter_crawl_box[] = {
     { -16, -8, 0x22, 0xE },
 };
 
-struct Unk_unk68 D_80108948[] = {
+struct Unk_unk68 ground_hunter_rise_box[] = {
     { -10, -16, 0x12, 0x1C },
 };
 
-struct Unk_unk68 D_8010894C[] = {
+struct Unk_unk68 ground_hunter_terrain_box[] = {
     { 0, 0, 8, 6 },
 };
 
-struct Unk_unk68 D_80108950[] = {
+struct Unk_unk68 ground_hunter_charged_hit_box[] = {
     { -24, -12, 0x3E, 0x18 },
 };
 
-struct Unk_unk68 D_80108954[] = {
+struct Unk_unk68 ground_hunter_charged_shot_box[] = {
     { -10, -16, 0x12, 0x22 },
 };
 
-void (*D_80108958[])(struct WeaponObj*) = {
+void (*ground_hunter_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_80095854,
-    (void (*)(struct WeaponObj*))func_8009596C,
-    (void (*)(struct WeaponObj*))func_80095B94,
-    (void (*)(struct WeaponObj*))func_80095BE8,
+    (void (*)(struct WeaponObj*))ground_hunter_main,
+    (void (*)(struct WeaponObj*))ground_hunter_burst,
+    (void (*)(struct WeaponObj*))ground_hunter_despawn,
 };
 
-void (*D_80108968[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80095A28,
-    (void (*)(struct WeaponObj*))func_80095AAC,
-    (void (*)(struct WeaponObj*))func_80095B10,
+void (*ground_hunter_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))ground_hunter_fly,
+    (void (*)(struct WeaponObj*))ground_hunter_rise,
+    (void (*)(struct WeaponObj*))ground_hunter_crawl,
 };
 
-void (*D_80108974[])(struct WeaponObj*) = {
+void (*ground_hunter_charged_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_80095E3C,
-    (void (*)(struct WeaponObj*))func_80095F9C,
-    (void (*)(struct WeaponObj*))func_80095B94,
-    (void (*)(struct WeaponObj*))func_80095BE8,
+    (void (*)(struct WeaponObj*))ground_hunter_charged_main,
+    (void (*)(struct WeaponObj*))ground_hunter_burst,
+    (void (*)(struct WeaponObj*))ground_hunter_despawn,
 };
 
-void (*D_80108984[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80096018,
+void (*ground_hunter_charged_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))ground_hunter_charged_wait_fire,
     (void (*)(struct WeaponObj*))func_80096060,
-    (void (*)(struct WeaponObj*))func_80096170,
+    (void (*)(struct WeaponObj*))ground_hunter_charged_shot_fly,
 };

@@ -13,7 +13,7 @@ struct Item03StageEntry {
     s16 height;
 };
 
-struct Item03StageEntry D_8010C740[22] = {
+struct Item03StageEntry falling_pillar_entries[22] = {
     { 0x0DE0, 0x0218, 0x03B0, 0x0E50, 0x0DF8, 0x000B, 0x0050, 0x0018 },
     { 0x0DE0, 0x0248, 0x03B0, 0x0E50, 0x0E08, 0x000C, 0x0050, 0x0018 },
     { 0x0DE0, 0x0278, 0x03B0, 0x0E50, 0x0E18, 0x0014, 0x0050, 0x0018 },
@@ -38,48 +38,50 @@ struct Item03StageEntry D_8010C740[22] = {
     { 0x0F60, 0x01E8, 0x03B0, 0x0EF0, 0x0EF8, 0x0012, 0x0050, 0x0018 },
 };
 
-u8 D_8010C8A0[4] = { 0x00, 0x08, 0x50, 0xF0 };
+u8 falling_pillar_box[4] = { 0x00, 0x08, 0x50, 0xF0 };
 
-void func_800C0404(struct ItemObj* arg0)
+void falling_pillar_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010C8A4[arg0->state](arg0);
+    falling_pillar_state_funcs[arg0->state](arg0);
 }
 
+// falling_pillar_init
 INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C044C);
 
-void func_800C0558(struct ItemObj* arg0)
+void falling_pillar_wait_player(struct ItemObj* arg0)
 {
     s8 index;
 
     index = arg0->unk2;
-    if (g_Player.y_pos.i.hi >= D_8010C740[index].velocity) {
+    if (g_Player.y_pos.i.hi >= falling_pillar_entries[index].velocity) {
         if (index == 0) {
             func_8001540C(5, 2, NULL);
         }
         arg0->unk7C.timer = 10;
         arg0->state++;
     }
-    func_8002B318(BASE_OBJECT(arg0), D_8010C740[arg0->unk2].width, D_8010C740[arg0->unk2].height);
+    update_on_screen(BASE_OBJECT(arg0), falling_pillar_entries[arg0->unk2].width, falling_pillar_entries[arg0->unk2].height);
 }
 
+// falling_pillar_fall
 INCLUDE_ASM("main/nonmatchings/items/item_03", func_800C05FC);
 
-void func_800C07B8(struct ItemObj* arg0)
+void falling_pillar_finish(struct ItemObj* arg0)
 {
     if (arg0->unk2 == 0) {
         func_8001540C(5, 0, NULL);
-        func_80028BAC(0x20, 2, 1);
+        start_screen_shake_y(0x20, 2, 1);
     }
     arg0->unk7C.timer = 0;
     arg0->ext.timer = 0;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void (*D_8010C8A4[])(struct ItemObj*) = {
+void (*falling_pillar_state_funcs[])(struct ItemObj*) = {
     func_800C044C,
-    func_800C0558,
+    falling_pillar_wait_player,
     func_800C05FC,
-    func_800C07B8,
+    falling_pillar_finish,
 };

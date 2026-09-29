@@ -3,104 +3,104 @@
 #include "common.h"
 
 // misc obj update #22
-void func_800CBA80(struct MiscObj* arg0)
+void dialogue_ui_update(struct MiscObj* self)
 {
     u8* ptr;
 
-    switch (arg0->unk2) {
+    switch (self->unk2) {
     case 0:
-        is_on_screen(arg0);
+        is_on_screen(self);
         return;
     case 1:
         if ((u8)controller_state == 0) {
-            if (--arg0->ext.unk.unk56.sht == 0) {
-                arg0->ext.unk.unk56.sht = 0x20;
-                arg0->ext.unk.unk54 ^= 1;
+            if (--self->ext.unk.unk56.sht == 0) {
+                self->ext.unk.unk56.sht = 0x20;
+                self->ext.unk.unk54 ^= 1;
             }
-            if (arg0->ext.unk.unk54) {
-                arg0->on_screen = 0;
+            if (self->ext.unk.unk54) {
+                self->on_screen = 0;
                 return;
             }
-            is_on_screen(arg0);
+            is_on_screen(self);
             return;
         }
-        ZeroObjectState(arg0);
+        ZeroObjectState(self);
         return;
     case 2:
         if (abc_object.unkC != 0) {
             if (abc_object.unkD == 0 || abc_object.unkD == 4) {
-                func_80015DC8(arg0);
+                animate_object(self);
             }
-            is_on_screen(arg0);
+            is_on_screen(self);
             return;
         }
-        ZeroObjectState(arg0);
+        ZeroObjectState(self);
         return;
     case 3:
-        ptr = abc_object.unkE + &arg0->ext.unk.unk50->unk0;
+        ptr = abc_object.unkE + &self->ext.unk.unk50->unk0;
         if (*ptr != 0 && (abc_object.unkC == 1)) {
-            if (arg0->ext.unk.unk55 == 0) {
-                func_80015D60(arg0, 1);
-                arg0->ext.unk.unk55 = 1;
+            if (self->ext.unk.unk55 == 0) {
+                set_animation(self, 1);
+                self->ext.unk.unk55 = 1;
             } else {
-                func_80015DC8(arg0);
-                if (arg0->animation_step.fields.event != 0) {
-                    arg0->ext.unk.unk55 = 0;
+                animate_object(self);
+                if (self->animation_step.fields.event != 0) {
+                    self->ext.unk.unk55 = 0;
                 }
             }
-        } else if (arg0->ext.unk.unk55 != 0) {
-            func_80015DC8(arg0);
-            if (arg0->animation_step.fields.event != 0) {
-                arg0->ext.unk.unk55 = 0;
-                func_80015D60(arg0, 0);
+        } else if (self->ext.unk.unk55 != 0) {
+            animate_object(self);
+            if (self->animation_step.fields.event != 0) {
+                self->ext.unk.unk55 = 0;
+                set_animation(self, 0);
             }
         } else {
-            func_80015D60(arg0, 0);
+            set_animation(self, 0);
         }
-        is_on_screen(arg0);
+        is_on_screen(self);
         return;
     case 4:
-        func_80015DC8(arg0);
-        is_on_screen(arg0);
+        animate_object(self);
+        is_on_screen(self);
         return;
     case 5:
-        ptr = abc_object.unkE + &arg0->ext.unk.unk50->unk0;
+        ptr = abc_object.unkE + &self->ext.unk.unk50->unk0;
         if ((*ptr == 0) && (abc_object.unkC == 1)) {
-            if (arg0->ext.unk.unk55 == 0) {
-                func_80015D60(arg0, arg0->ext.unk.unk54 + 1);
-                arg0->ext.unk.unk55 = 1;
+            if (self->ext.unk.unk55 == 0) {
+                set_animation(self, self->ext.unk.unk54 + 1);
+                self->ext.unk.unk55 = 1;
             } else {
-                func_80015DC8(arg0);
-                if (arg0->animation_step.fields.event != 0) {
-                    arg0->ext.unk.unk55 = 0;
+                animate_object(self);
+                if (self->animation_step.fields.event != 0) {
+                    self->ext.unk.unk55 = 0;
                 }
             }
-        } else if (arg0->ext.unk.unk55) {
-            func_80015DC8(arg0);
-            if (arg0->animation_step.fields.event != 0) {
-                arg0->ext.unk.unk55 = 0;
-                func_80015D60(arg0, arg0->ext.unk.unk54);
+        } else if (self->ext.unk.unk55) {
+            animate_object(self);
+            if (self->animation_step.fields.event != 0) {
+                self->ext.unk.unk55 = 0;
+                set_animation(self, self->ext.unk.unk54);
             }
         } else {
-            func_80015D60(arg0, arg0->ext.unk.unk54);
+            set_animation(self, self->ext.unk.unk54);
         }
-        is_on_screen(arg0);
+        is_on_screen(self);
         return;
     case 8:
-        if (arg0->unk5 == 0) {
-            func_80015DC8(arg0);
-            if (--arg0->ext.unk.unk56.byte == 0) {
-                arg0->unk5 = 1;
+        if (self->unk5 == 0) {
+            animate_object(self);
+            if (--self->ext.unk.unk56.byte == 0) {
+                self->unk5 = 1;
             }
-            if (arg0->unk6) {
-                arg0->x_pos.val = arg0->ext.unk.unk50->x_pos.val;
-                arg0->y_pos.val = arg0->ext.unk.unk50->y_pos.val;
+            if (self->unk6) {
+                self->x_pos.val = self->ext.unk.unk50->x_pos.val;
+                self->y_pos.val = self->ext.unk.unk50->y_pos.val;
             }
-            is_on_screen(arg0);
+            is_on_screen(self);
             return;
         }
-        arg0->on_screen = 0;
-        ZeroObjectState(arg0);
+        self->on_screen = 0;
+        ZeroObjectState(self);
         return;
     }
 }

@@ -2,7 +2,7 @@
 // 800AFF78..800B0890
 #include "common.h"
 
-s8 D_8010A2B8[58][2] = {
+s8 eregion_part_offsets_left[58][2] = {
     { -6, -78 },
     { -8, -76 },
     { -9, -75 },
@@ -63,7 +63,7 @@ s8 D_8010A2B8[58][2] = {
     { 0, 0 },
 };
 
-s8 D_8010A32C[58][2] = {
+s8 eregion_part_offsets_right[58][2] = {
     { 76, -67 },
     { 74, -65 },
     { 73, -64 },
@@ -124,7 +124,7 @@ s8 D_8010A32C[58][2] = {
     { 0, 0 },
 };
 
-s8 D_8010A3A0[58][2] = {
+s8 eregion_part_offsets_center[58][2] = {
     { -100, 0 },
     { -100, 0 },
     { -100, 0 },
@@ -185,19 +185,21 @@ s8 D_8010A3A0[58][2] = {
     { 0, 0 },
 };
 
-void (*D_8010A414[])(struct VisualObj*) = {
+void (*eregion_part_funcs[])(struct VisualObj*) = {
     func_800B0320,
-    func_800B054C,
-    func_800B0600,
-    func_800B06AC,
-    func_800B0804,
+    eregion_part_slash,
+    eregion_part_mouth,
+    eregion_part_legs,
+    eregion_part_mirror,
 };
 
+// eregion_part_update
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800AFF78);
 
+// eregion_part_init
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06", func_800B0320);
 
-void func_800B054C(struct VisualObj* arg0)
+void eregion_part_slash(struct VisualObj* arg0)
 {
     if (arg0->animation_step.fields.event == 2) {
         MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x20;
@@ -207,12 +209,12 @@ void func_800B054C(struct VisualObj* arg0)
         return;
     }
     if (arg0->unk2 != 1 || g_Player.update_delay == 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
-void func_800B0600(struct VisualObj* arg0)
+void eregion_part_mouth(struct VisualObj* arg0)
 {
     struct PlayerObj* player;
     s32 animation;
@@ -225,17 +227,17 @@ void func_800B0600(struct VisualObj* arg0)
     if (player->unk7 == 0) {
         animation = player->unk17 + 1;
         if (arg0->unk17 != animation) {
-            func_80015D60(arg0, animation);
+            set_animation(arg0, animation);
         } else {
-            func_80015DC8(ANIMATED_OBJECT(arg0));
+            animate_object(ANIMATED_OBJECT(arg0));
         }
     }
     if (arg0->unk50->unk7 >= 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
     }
 }
 
-void func_800B06AC(struct VisualObj* arg0)
+void eregion_part_legs(struct VisualObj* arg0)
 {
     s32 frame;
     s32 animation;
@@ -251,9 +253,9 @@ void func_800B06AC(struct VisualObj* arg0)
     } else {
         if (arg0->unk2 == 3) {
             if (arg0->unk17 != arg0->unk50->unk17) {
-                func_80015D60(ANIMATED_OBJECT(arg0), arg0->unk50->unk17);
+                set_animation(ANIMATED_OBJECT(arg0), arg0->unk50->unk17);
             } else {
-                func_80015DC8(ANIMATED_OBJECT(arg0));
+                animate_object(ANIMATED_OBJECT(arg0));
             }
         } else {
             frame = arg0->unk50->animation_step.fields.frame_index;
@@ -264,9 +266,9 @@ void func_800B06AC(struct VisualObj* arg0)
             }
             animation = arg0->unk50->unk17 + 1;
             if (arg0->unk17 != animation) {
-                func_80015D60(ANIMATED_OBJECT(arg0), animation);
+                set_animation(ANIMATED_OBJECT(arg0), animation);
             } else {
-                func_80015DC8(ANIMATED_OBJECT(arg0));
+                animate_object(ANIMATED_OBJECT(arg0));
             }
         }
         if (arg0->animation_step.fields.event != 0) {
@@ -279,10 +281,10 @@ void func_800B06AC(struct VisualObj* arg0)
             arg0->unk54 ^= 1;
         }
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 }
 
-void func_800B0804(struct VisualObj* arg0)
+void eregion_part_mirror(struct VisualObj* arg0)
 {
     struct PlayerObj* player;
     u8 frame;
@@ -294,9 +296,9 @@ void func_800B0804(struct VisualObj* arg0)
     }
     frame = player->animation_step.fields.frame_index;
     if (arg0->animation_step.fields.frame_index != frame) {
-        func_80015D90(ANIMATED_OBJECT(arg0), 0x19, frame);
+        set_animation_frame(ANIMATED_OBJECT(arg0), 0x19, frame);
     }
     if (arg0->unk50->unk7 >= 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x90, 0x90);
+        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
     }
 }

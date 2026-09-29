@@ -3,241 +3,247 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8004D930(struct MainObj* arg0)
+void shell_crawler_buried(struct MainObj* self)
 {
-    if (!(func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi,
-              arg0->y_pos.i.hi)
+    if (!(func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi,
+              self->y_pos.i.hi)
             & 0xFF)) {
-        arg0->state = 1;
-        arg0->unk5 = 1;
-        arg0->unk2 = 0;
-        arg0->unk54 = &D_800FBA50;
-        arg0->unk50 = &D_800FBA50;
+        self->state = 1;
+        self->unk5 = 1;
+        self->unk2 = 0;
+        self->hurt_box = &shell_crawler_body_box;
+        self->attack_box = &shell_crawler_body_box;
     }
 
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
-        if (arg0->unk2 == 2) {
-            func_8002B318(BASE_OBJECT(arg0), 0x25, 0x25);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        if (self->unk2 == 2) {
+            update_on_screen(BASE_OBJECT(self), 0x25, 0x25);
         }
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
+// shell_crawler_check_hop
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004D9CC);
 
+// shell_crawler_check_shell
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004DB10);
 
+// shell_crawler_check_shoot
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004DCB0);
 
-void func_8004DEA0(struct MainObj* arg0)
+void shell_crawler_hop(struct MainObj* self)
 {
     s8 state;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    state = arg0->unk6;
+    animate_object(ANIMATED_OBJECT(self));
+    state = self->unk6;
     if (state == 0) {
-        if (arg0->animation_step.fields.event != 0) {
-            arg0->unk6 = state + 1;
+        if (self->animation_step.fields.event != 0) {
+            self->unk6 = state + 1;
         }
     } else {
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        if (arg0->unk24 < 0) {
-            arg0->unk6++;
-            func_80015D60(arg0, 3);
-            arg0->unk5 = 2;
-            arg0->unk2C = FIXED(0.2578125);
-            arg0->unk6 = 0;
-            arg0->unk24 = 0;
-            arg0->unk28 = 0;
-            arg0->unk67 = -1;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (self->y_speed < 0) {
+            self->unk6++;
+            set_animation(self, 3);
+            self->unk5 = 2;
+            self->gravity = FIXED(0.2578125);
+            self->unk6 = 0;
+            self->y_speed = 0;
+            self->x_accel = 0;
+            self->air_state = -1;
         }
     }
 }
 
-void func_8004DF40(struct MainObj* arg0)
+void shell_crawler_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk6 == 0) {
-        arg0->collision_data = (const u16*)D_801069F4;
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        if (arg0->unk70 & 8) {
-            func_80015D60(arg0, 4);
-            arg0->unk24 = 0;
-            arg0->unk2C = 0;
-            arg0->unk20 = 0;
-            arg0->unk28 = 0;
-            arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->unk6 == 0) {
+        self->collision_data = (const u16*)D_801069F4;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (self->collision_flags & 8) {
+            set_animation(self, 4);
+            self->y_speed = 0;
+            self->gravity = 0;
+            self->x_speed = 0;
+            self->x_accel = 0;
+            self->unk6++;
         }
-    } else if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 1);
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
-        arg0->unk67 = 0;
+    } else if (self->animation_step.fields.relative_step == 0) {
+        set_animation(self, 1);
+        self->unk5 = 1;
+        self->unk6 = 0;
+        self->air_state = 0;
     }
 }
 
-void func_8004DFEC(struct MainObj* arg0)
+void shell_crawler_shell(struct MainObj* self)
 {
-    switch (arg0->unk6) {
+    switch (self->unk6) {
     case 0:
-        arg0->unk6++;
-        func_80015D60(arg0, 5);
-        arg0->unk7C = 0x3C;
+        self->unk6++;
+        set_animation(self, 5);
+        self->unk7C = 0x3C;
     case 1:
-        if (arg0->animation_step.fields.event != 0) {
-            arg0->collision_data = D_801060F0;
-            arg0->unk54 = &D_800FBA54;
-            arg0->unk50 = &D_800FBA54;
+        if (self->animation_step.fields.event != 0) {
+            self->collision_data = D_801060F0;
+            self->hurt_box = &shell_crawler_shell_box;
+            self->attack_box = &shell_crawler_shell_box;
         }
-        if (--arg0->unk7C == 0) {
-            arg0->unk6++;
-            func_80015D60(arg0, 6);
+        if (--self->unk7C == 0) {
+            self->unk6++;
+            set_animation(self, 6);
         }
         break;
     case 2:
-        if (arg0->animation_step.fields.relative_step == 0) {
-            func_80015D60(arg0, 1);
-            arg0->unk5 = 1;
-            arg0->collision_data = D_801069F4;
-            arg0->unk54 = &D_800FBA50;
-            arg0->unk50 = &D_800FBA50;
-            arg0->unk6 = 0;
-            arg0->ext.main_0.flags[0] = 0x78;
-            arg0->ext.main_0.background_relative &= 0xFE;
+        if (self->animation_step.fields.relative_step == 0) {
+            set_animation(self, 1);
+            self->unk5 = 1;
+            self->collision_data = D_801069F4;
+            self->hurt_box = &shell_crawler_body_box;
+            self->attack_box = &shell_crawler_body_box;
+            self->unk6 = 0;
+            self->ext.main_0.flags[0] = 0x78;
+            self->ext.main_0.background_relative &= 0xFE;
         }
         break;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8004E128(struct MainObj* arg0)
+void shell_crawler_shoot(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 8;
-            shot->x_pos.val = arg0->x_pos.val;
-            shot->y_pos.val = arg0->y_pos.val;
-            shot->unk3C = (void*)arg0->sprite_frames;
-            shot->unk40 = arg0->unk40;
-            shot->unk42 = arg0->unk42;
-            shot->bg_offset = (u8)arg0->bg_offset;
-            shot->animation_table = (u32**)arg0->animation_table;
-            shot->unk15 = arg0->unk15;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->unk3C = (void*)self->sprite_frames;
+            shot->unk40 = self->unk40;
+            shot->unk42 = self->unk42;
+            shot->bg_offset = (u8)self->bg_offset;
+            shot->animation_table = (u32**)self->animation_table;
+            shot->unk15 = self->unk15;
         }
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
-        func_80015D60(arg0, 1);
-        arg0->ext.main_0.flags[1] = 0x78;
-        arg0->ext.main_0.background_relative &= 0xFD;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
+        set_animation(self, 1);
+        self->ext.main_0.flags[1] = 0x78;
+        self->ext.main_0.background_relative &= 0xFD;
     }
 }
 
-void func_8004E218(struct MainObj* self)
+void shell_crawler_walk(struct MainObj* self)
 {
     s32 x_velocity;
 
     if (self->unk6 == 0) {
         self->collision_data = D_801069F4;
-        self->unk54 = &D_800FBA50;
-        self->unk50 = &D_800FBA50;
+        self->hurt_box = &shell_crawler_body_box;
+        self->attack_box = &shell_crawler_body_box;
         self->unk6++;
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         x_velocity = FIXED(-0.375);
         if (self->unk15 != 0) {
             x_velocity = FIXED(0.375);
         }
-        self->unk20 = x_velocity;
-        self->unk28 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->x_speed = x_velocity;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (self->unk15 != 0) {
-        if (self->unk70 & 1) {
+        if (self->collision_flags & 1) {
             self->unk15 = 0;
-            self->unk20 = -self->unk20;
+            self->x_speed = -self->x_speed;
         }
-    } else if (self->unk70 & 2) {
+    } else if (self->collision_flags & 2) {
         self->unk15 = 0x40;
-        self->unk20 = -self->unk20;
+        self->x_speed = -self->x_speed;
     }
 }
 
+// shell_crawler_frozen
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E300);
 
+// shell_crawler_thaw
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E490);
 
+// shell_crawler_init
 INCLUDE_ASM("main/nonmatchings/mains/main_15", func_8004E55C);
 
-void func_8004E6A4(struct MainObj* arg0)
+void shell_crawler_main(struct MainObj* self)
 {
     u16 x;
 
     if (ENGINE_STAGE_ID == 0x102 && engine_obj.character_state.bytes[0] != 0) {
-        x = arg0->x_pos.i.hi;
+        x = self->x_pos.i.hi;
         if ((u16)(x - 0xC0F) < 0x1E2 || (u16)(x - 0x100F) < 0x1E2
             || (u16)(x - 0x1315) < 0x1DC || (u16)(x - 0x1613) < 0x1BF) {
-            arg0->state = 3;
-            arg0->unk6 = 0;
+            self->state = 3;
+            self->unk6 = 0;
             return;
         }
     }
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(4, D_800FBB84, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0x12);
-        arg0->state++;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, shell_crawler_debris, self);
+        drop_item(BASE_OBJECT(self), 0x12);
+        self->state++;
         return;
     }
-    func_8004DB10(arg0);
-    func_8004D9CC(arg0);
-    func_8004DCB0(arg0);
-    D_800FBB88[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x25, 0x25);
+    func_8004DB10(self);
+    func_8004D9CC(self);
+    func_8004DCB0(self);
+    shell_crawler_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x25, 0x25);
     } else {
-        arg0->state++;
+        self->state++;
     }
 }
 
-void func_8004E810(struct MainObj* arg0)
+void shell_crawler_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8004E830(struct MainObj* arg0)
+void shell_crawler_update(struct MainObj* self)
 {
-    D_800FBBA0[arg0->state](arg0);
-    if (arg0->state != 5) {
-        CollisionRelated(PLAYER_OBJECT(arg0));
+    shell_crawler_state_funcs[self->state](self);
+    if (self->state != 5) {
+        CollisionRelated(PLAYER_OBJECT(self));
     }
 }
 
-struct Unk_unk68 D_800FBA4C = { 0, 1, 11, 12 };
+struct Unk_unk68 shell_crawler_terrain_box = { 0, 1, 11, 12 };
 
-struct Unk_unk68 D_800FBA50 = { -11, -16, 21, 29 };
+struct Unk_unk68 shell_crawler_body_box = { -11, -16, 21, 29 };
 
-struct Unk_unk68 D_800FBA54 = { -12, -4, 21, 18 };
+struct Unk_unk68 shell_crawler_shell_box = { -12, -4, 21, 18 };
 
-union AnimationStep D_800FBA58[] = {
+union AnimationStep shell_crawler_anim_0[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FBA5C[] = {
+union AnimationStep shell_crawler_anim_1[] = {
     { 0x01010008 },
     { 0x02010008 },
     { 0x03010008 },
@@ -250,7 +256,7 @@ union AnimationStep D_800FBA5C[] = {
     { 0x0AF70005 },
 };
 
-union AnimationStep D_800FBA84[] = {
+union AnimationStep shell_crawler_anim_2[] = {
     { 0x00010006 },
     { 0x0B01000A },
     { 0x0C010102 },
@@ -259,12 +265,12 @@ union AnimationStep D_800FBA84[] = {
     { 0x0E000001 },
 };
 
-union AnimationStep D_800FBA9C[] = {
+union AnimationStep shell_crawler_anim_3[] = {
     { 0x0F010002 },
     { 0x10FF0002 },
 };
 
-union AnimationStep D_800FBAA4[] = {
+union AnimationStep shell_crawler_anim_4[] = {
     { 0x11010003 },
     { 0x0B01000A },
     { 0x12010002 },
@@ -273,7 +279,7 @@ union AnimationStep D_800FBAA4[] = {
     { 0x12000001 },
 };
 
-union AnimationStep D_800FBABC[] = {
+union AnimationStep shell_crawler_anim_5[] = {
     { 0x00010006 },
     { 0x12010001 },
     { 0x13010002 },
@@ -286,7 +292,7 @@ union AnimationStep D_800FBABC[] = {
     { 0x18000001 },
 };
 
-union AnimationStep D_800FBAE4[] = {
+union AnimationStep shell_crawler_anim_6[] = {
     { 0x18010006 },
     { 0x17010001 },
     { 0x16010002 },
@@ -299,7 +305,7 @@ union AnimationStep D_800FBAE4[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FBB0C[] = {
+union AnimationStep shell_crawler_anim_7[] = {
     { 0x00010006 },
     { 0x19010006 },
     { 0x1A010008 },
@@ -310,65 +316,65 @@ union AnimationStep D_800FBB0C[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FBB2C[] = {
+union AnimationStep shell_crawler_anim_8[] = {
     { 0x1E010002 },
     { 0x1F010002 },
     { 0x20FE0002 },
 };
 
-union AnimationStep D_800FBB38[] = {
+union AnimationStep shell_crawler_anim_9[] = {
     { 0x21000001 },
 };
 
-union AnimationStep D_800FBB3C[] = {
+union AnimationStep shell_crawler_anim_10[] = {
     { 0x22000001 },
 };
 
-union AnimationStep D_800FBB40[] = {
+union AnimationStep shell_crawler_anim_11[] = {
     { 0x23000001 },
 };
 
-union AnimationStep D_800FBB44[] = {
+union AnimationStep shell_crawler_anim_12[] = {
     { 0x24000001 },
 };
 
-union AnimationStep D_800FBB48[] = {
+union AnimationStep shell_crawler_anim_13[] = {
     { 0x25000001 },
 };
 
-union AnimationStep* D_800FBB4C[14] = {
-    D_800FBA58,
-    D_800FBA5C,
-    D_800FBA84,
-    D_800FBA9C,
-    D_800FBAA4,
-    D_800FBABC,
-    D_800FBAE4,
-    D_800FBB0C,
-    D_800FBB2C,
-    D_800FBB38,
-    D_800FBB3C,
-    D_800FBB40,
-    D_800FBB44,
-    D_800FBB48,
+union AnimationStep* shell_crawler_animations[14] = {
+    shell_crawler_anim_0,
+    shell_crawler_anim_1,
+    shell_crawler_anim_2,
+    shell_crawler_anim_3,
+    shell_crawler_anim_4,
+    shell_crawler_anim_5,
+    shell_crawler_anim_6,
+    shell_crawler_anim_7,
+    shell_crawler_anim_8,
+    shell_crawler_anim_9,
+    shell_crawler_anim_10,
+    shell_crawler_anim_11,
+    shell_crawler_anim_12,
+    shell_crawler_anim_13,
 };
 
-u8 D_800FBB84[4] = { 9, 10, 11, 12 };
+u8 shell_crawler_debris[4] = { 9, 10, 11, 12 };
 
-void (*D_800FBB88[6])() = {
-    func_8009216C,
-    func_8004E218,
-    func_8004DF40,
-    func_8004DFEC,
-    func_8004E128,
-    func_8004DEA0,
+void (*shell_crawler_step_funcs[6])() = {
+    enemy_hit_reaction,
+    shell_crawler_walk,
+    shell_crawler_land,
+    shell_crawler_shell,
+    shell_crawler_shoot,
+    shell_crawler_hop,
 };
 
-void (*D_800FBBA0[6])(struct MainObj*) = {
+void (*shell_crawler_state_funcs[6])(struct MainObj*) = {
     func_8004E55C,
-    func_8004E6A4,
-    func_8004E810,
+    shell_crawler_main,
+    shell_crawler_despawn,
     func_8004E300,
     func_8004E490,
-    func_8004D930,
+    shell_crawler_buried,
 };

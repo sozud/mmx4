@@ -2,18 +2,18 @@
 // 800AFC9C..800AFF78
 #include "common.h"
 
-void (*D_8010A2A4[])(struct VisualObj*) = {
-    func_800AFD20,
-    func_800AFD6C,
+void (*object_afterimage_state_funcs[])(struct VisualObj*) = {
+    object_afterimage_wait,
+    object_afterimage_main,
 };
 
-void (*D_8010A2AC[])(struct VisualObj*) = {
-    func_800AFDA8,
-    func_800AFE20,
-    func_800AFEA4,
+void (*object_afterimage_step_funcs[])(struct VisualObj*) = {
+    object_afterimage_trail,
+    object_afterimage_linger,
+    object_afterimage_catch_up,
 };
 
-void func_800AFC9C(struct VisualObj* arg0)
+void object_afterimage_update(struct VisualObj* arg0)
 {
     u8 temp_a1;
     struct PlayerObj* owner;
@@ -29,10 +29,10 @@ void func_800AFC9C(struct VisualObj* arg0)
         arg0->state = 0;
         return;
     }
-    D_8010A2A4[arg0->state](arg0);
+    object_afterimage_state_funcs[arg0->state](arg0);
 }
 
-void func_800AFD20(struct VisualObj* arg0)
+void object_afterimage_wait(struct VisualObj* arg0)
 {
     s8 temp_v0;
     struct PlayerObj* owner;
@@ -42,19 +42,19 @@ void func_800AFD20(struct VisualObj* arg0)
     if (temp_v0 != 0) {
         if (temp_v0 > 0) {
             arg0->on_screen = 1;
-            func_800AFF28(arg0);
+            object_afterimage_start(arg0);
             return;
         }
         owner->pad4B[0] = 0;
     }
 }
 
-void func_800AFD6C(struct VisualObj* arg0)
+void object_afterimage_main(struct VisualObj* arg0)
 {
-    D_8010A2AC[arg0->unk5](arg0);
+    object_afterimage_step_funcs[arg0->unk5](arg0);
 }
 
-void func_800AFDA8(struct VisualObj* arg0)
+void object_afterimage_trail(struct VisualObj* arg0)
 {
     s16 temp_v0;
     struct PlayerObj* owner;
@@ -65,20 +65,20 @@ void func_800AFDA8(struct VisualObj* arg0)
         arg0->unk54 = temp_v0 - 1;
     } else {
         arg0->unk54 = 3;
-        func_800AFF08(arg0);
+        object_afterimage_follow(arg0);
     }
     if (owner->pad4B[0] < 0) {
         arg0->unk5++;
     }
 }
 
-void func_800AFE20(struct VisualObj* arg0)
+void object_afterimage_linger(struct VisualObj* arg0)
 {
     s16 temp_v0;
     s16 temp_v0_2;
 
     if (arg0->unk5C.owner->pad4B[0] > 0) {
-        func_800AFF28(arg0);
+        object_afterimage_start(arg0);
         return;
     }
 
@@ -87,20 +87,20 @@ void func_800AFE20(struct VisualObj* arg0)
         temp_v0_2 = temp_v0 - 1;
         arg0->unk56 = temp_v0_2;
         if (temp_v0_2 & 1) {
-            func_800AFF08(arg0);
+            object_afterimage_follow(arg0);
         }
     } else {
         arg0->unk5++;
     }
 }
 
-void func_800AFEA4(struct VisualObj* arg0)
+void object_afterimage_catch_up(struct VisualObj* arg0)
 {
     struct PlayerObj* owner;
 
     owner = arg0->unk5C.owner;
     if (arg0->unk58 != 0) {
-        func_800AFF08(arg0);
+        object_afterimage_follow(arg0);
         arg0->unk58--;
         return;
     }
@@ -112,7 +112,7 @@ void func_800AFEA4(struct VisualObj* arg0)
     }
 }
 
-void func_800AFF08(struct VisualObj* arg0)
+void object_afterimage_follow(struct VisualObj* arg0)
 {
     struct PlayerObj* parent;
 
@@ -121,7 +121,7 @@ void func_800AFF08(struct VisualObj* arg0)
     arg0->y_pos.val = parent->unk1C.val;
 }
 
-void func_800AFF28(struct VisualObj* arg0)
+void object_afterimage_start(struct VisualObj* arg0)
 {
     struct ObjectHeader* parent;
 

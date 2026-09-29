@@ -2,12 +2,12 @@
 // 800DA7C0..800DA878
 #include "common.h"
 
-void func_800DA7C0(struct LayerObj* arg0)
+void final_weapon_bg_cycle_update(struct LayerObj* arg0)
 {
-    D_8010FFC8[arg0->state](arg0);
+    final_weapon_bg_cycle_state_funcs[arg0->state](arg0);
 }
 
-void func_800DA7FC(struct LayerObj* arg0)
+void final_weapon_bg_cycle_init(struct LayerObj* arg0)
 {
     arg0->bg_offset = 0;
     arg0->unk15 = 0;
@@ -15,7 +15,7 @@ void func_800DA7FC(struct LayerObj* arg0)
     arg0->state++;
 }
 
-void func_800DA818(struct LayerObj* arg0)
+void final_weapon_bg_cycle_main(struct LayerObj* arg0)
 {
     struct BackgroundObj* background;
     u8 temp_v0;
@@ -38,7 +38,7 @@ void func_800DA818(struct LayerObj* arg0)
     }
 }
 
-void (*D_8010FFC8[])(struct LayerObj*) = {
-    func_800DA7FC,
-    func_800DA818,
+void (*final_weapon_bg_cycle_state_funcs[])(struct LayerObj*) = {
+    final_weapon_bg_cycle_init,
+    final_weapon_bg_cycle_main,
 };

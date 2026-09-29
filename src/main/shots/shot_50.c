@@ -2,15 +2,16 @@
 // 800AA2FC..800AA5E0
 #include "common.h"
 
-void (*D_80109BEC[])(struct ShotObj*) = {
-    func_800AA20C,
+void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
+    double_toss_land,
     func_800AA2FC,
-    func_800AA3A0,
+    double_bouncer_bounce,
 };
 
+// double_bouncer_launch
 INCLUDE_ASM("main/nonmatchings/shots/shot_50", func_800AA2FC);
 
-void func_800AA3A0(struct ShotObj* self)
+void double_bouncer_bounce(struct ShotObj* self)
 {
     s32 velocity;
 
@@ -44,50 +45,50 @@ void func_800AA3A0(struct ShotObj* self)
         }
     }
 
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_800AA488(struct ShotObj* arg0)
+void double_bouncer_main(struct ShotObj* self)
 {
-    extern u8 D_80109BB0[];
+    extern u8 double_ball_debris_0[];
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109BEC[arg0->unk5](arg0);
-    CollisionRelated(arg0);
-    if (arg0->unk7C->state == 2 || arg0->unk84.value != 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(4, D_80109BB0, arg0);
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    double_bouncer_step_funcs[self->unk5](self);
+    CollisionRelated(self);
+    if (self->unk7C->state == 2 || self->unk84.value != 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, double_ball_debris_0, self);
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(4, D_80109BB0, arg0);
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, double_ball_debris_0, self);
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
         return;
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->on_screen = 0;
+    self->state = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->on_screen = 0;
 }
 
-void func_800AA5A4(struct ShotObj* arg0)
+void double_bouncer_update(struct ShotObj* self)
 {
-    D_80109BF8[arg0->state](arg0);
+    double_bouncer_state_funcs[self->state](self);
 }
 
-void (*D_80109BF8[])(struct ShotObj*) = {
-    func_800AA148,
-    func_800AA488,
+void (*double_bouncer_state_funcs[])(struct ShotObj*) = {
+    double_toss_init,
+    double_bouncer_main,
     double_ball_despawn,
 };

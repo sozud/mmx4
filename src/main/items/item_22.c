@@ -16,29 +16,29 @@ struct Item22AnimationStep {
     u8 command;
 };
 
-u8 D_8010D25C[8] = { 0x3E, 0x3F, 0x43, 0x0B, 0x0C, 0, 0, 0 };
-u8 D_8010D264[8] = { 0x08, 0x09, 0x44, 0x41, 0x42, 0, 0, 0 };
-u8 D_8010D26C[8] = { 0x3E, 0x3F, 0x40, 0x41, 0x42, 0, 0, 0 };
-u8 D_8010D274[4] = { 0x45, 0x46, 0, 0 };
-u8 D_8010D278[4] = { 0x47, 0x48, 0, 0 };
-u8 D_8010D27C[4] = { 0x49, 0x4A, 0x4B, 0 };
-u8 D_8010D280[4] = { 0x4C, 0x4D, 0x4E, 0 };
+u8 layout_gate_row_0[8] = { 0x3E, 0x3F, 0x43, 0x0B, 0x0C, 0, 0, 0 };
+u8 layout_gate_row_1[8] = { 0x08, 0x09, 0x44, 0x41, 0x42, 0, 0, 0 };
+u8 layout_gate_row_2[8] = { 0x3E, 0x3F, 0x40, 0x41, 0x42, 0, 0, 0 };
+u8 layout_gate_row_3[4] = { 0x45, 0x46, 0, 0 };
+u8 layout_gate_row_4[4] = { 0x47, 0x48, 0, 0 };
+u8 layout_gate_row_5[4] = { 0x49, 0x4A, 0x4B, 0 };
+u8 layout_gate_row_6[4] = { 0x4C, 0x4D, 0x4E, 0 };
 
-struct Item22LayoutDescriptor D_8010D284[7] = {
-    { 4, 5, 0, D_8010D25C },
-    { 4, 5, 0, D_8010D264 },
-    { 4, 5, 0, D_8010D26C },
-    { 0x0B, 2, 0, D_8010D274 },
-    { 0x0D, 2, 0, D_8010D278 },
-    { 0x0F, 3, 0, D_8010D27C },
-    { 0x13, 3, 0, D_8010D280 },
+struct Item22LayoutDescriptor layout_gate_layouts[7] = {
+    { 4, 5, 0, layout_gate_row_0 },
+    { 4, 5, 0, layout_gate_row_1 },
+    { 4, 5, 0, layout_gate_row_2 },
+    { 0x0B, 2, 0, layout_gate_row_3 },
+    { 0x0D, 2, 0, layout_gate_row_4 },
+    { 0x0F, 3, 0, layout_gate_row_5 },
+    { 0x13, 3, 0, layout_gate_row_6 },
 };
 
-u8 D_8010D2BC[4] = { 0, 0, 8, 8 };
-u8 D_8010D2C0[4] = { 0xF8, 0xF8, 0x10, 0x10 };
-u8 D_8010D2C4[4] = { 3, 6, 4, 5 };
+u8 layout_gate_terrain_box[4] = { 0, 0, 8, 8 };
+u8 layout_gate_hurt_box[4] = { 0xF8, 0xF8, 0x10, 0x10 };
+u8 layout_gate_frames[4] = { 3, 6, 4, 5 };
 
-struct Item22AnimationStep D_8010D2C8[10] = {
+struct Item22AnimationStep layout_gate_anim_steps[10] = {
     { 1, 1, 0, 0 },
     { 1, 0, 0, 1 },
     { 1, 0, 0, 2 },
@@ -51,25 +51,25 @@ struct Item22AnimationStep D_8010D2C8[10] = {
     { 1, 0, 0, 9 },
 };
 
-struct Item22AnimationStep* D_8010D2F0[10] = {
-    &D_8010D2C8[0],
-    &D_8010D2C8[1],
-    &D_8010D2C8[2],
-    &D_8010D2C8[3],
-    &D_8010D2C8[4],
-    &D_8010D2C8[5],
-    &D_8010D2C8[6],
-    &D_8010D2C8[7],
-    &D_8010D2C8[8],
-    &D_8010D2C8[9],
+struct Item22AnimationStep* layout_gate_animations[10] = {
+    &layout_gate_anim_steps[0],
+    &layout_gate_anim_steps[1],
+    &layout_gate_anim_steps[2],
+    &layout_gate_anim_steps[3],
+    &layout_gate_anim_steps[4],
+    &layout_gate_anim_steps[5],
+    &layout_gate_anim_steps[6],
+    &layout_gate_anim_steps[7],
+    &layout_gate_anim_steps[8],
+    &layout_gate_anim_steps[9],
 };
 
-void func_800C5544(struct ItemObj* arg0)
+void layout_gate_update(struct ItemObj* arg0)
 {
-    D_8010D318[arg0->state](arg0);
+    layout_gate_state_funcs[arg0->state](arg0);
 }
 
-void func_800C5580(struct ItemObj* self)
+void layout_gate_init(struct ItemObj* self)
 {
     s32 rand_x;
     s32 rand_y;
@@ -79,7 +79,7 @@ void func_800C5580(struct ItemObj* self)
     s8 state;
     s8 bg_offset;
 
-    self->unk54 = D_8010D2C0;
+    self->unk54 = layout_gate_hurt_box;
     self->unk58 = (u8*)D_80108584;
     self->bg_offset = g_Player.bg_offset;
     self->unk5C = 3;
@@ -96,7 +96,7 @@ void func_800C5580(struct ItemObj* self)
     self->sprite_frames = archive + *(const s32*)((unsigned long)frame_index + (unsigned long)archive);
 
     bg_offset = g_Player.bg_offset;
-    self->animation_table = (u8**)D_8010D2F0;
+    self->animation_table = (u8**)layout_gate_animations;
     self->unk7C.timer = 0xC8;
     self->ext.packed = 0;
     self->state = state;
@@ -104,54 +104,55 @@ void func_800C5580(struct ItemObj* self)
     self->bg_offset = bg_offset;
 }
 
-void func_800C56B4(struct ItemObj* arg0)
+void layout_gate_main(struct ItemObj* arg0)
 {
-    D_8010D328[arg0->unk5](arg0);
+    layout_gate_step_funcs[arg0->unk5](arg0);
 }
 
-void func_800C56F0(struct ItemObj* arg0)
+void layout_gate_despawn(struct ItemObj* arg0)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(arg0));
 }
 
-void func_800C5710(struct ItemObj* arg0)
+void layout_gate_finish(struct ItemObj* arg0)
 {
     func_8002B560(0x25, arg0->unk2);
     g_FilterAmountR = 0;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
     need_palette_load |= 1;
-    func_8002B108(OBJECT_HEADER(arg0));
+    despawn_object_permanently(OBJECT_HEADER(arg0));
 }
 
-void func_800C5774(struct ItemObj* arg0)
+void layout_gate_wait_hit(struct ItemObj* arg0)
 {
     if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
         arg0->ext.item_22.collision_side = 1;
         arg0->unk5++;
-        func_800C5BCC(arg0);
+        layout_gate_spawn_alarm(arg0);
         return;
     }
     arg0->x_pos.i.hi += 0x1A0;
     if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
         arg0->unk5++;
-        func_800C5BCC(arg0);
+        layout_gate_spawn_alarm(arg0);
         arg0->ext.item_22.collision_side = 2;
     }
     arg0->x_pos.i.hi -= 0x1A0;
 }
 
+// layout_gate_open
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C580C);
 
-void func_800C5904(struct ItemObj* arg0)
+void layout_gate_apply_layout(struct ItemObj* arg0)
 {
     u8 start;
     u8 end;
     u8* data;
 
-    start = D_8010D284[arg0->unk2].start;
-    end = start + D_8010D284[arg0->unk2].length;
-    data = D_8010D284[arg0->unk2].data;
+    start = layout_gate_layouts[arg0->unk2].start;
+    end = start + layout_gate_layouts[arg0->unk2].length;
+    data = layout_gate_layouts[arg0->unk2].data;
     while (start < end) {
         D_80141BE8[layout_width + start] = *data++;
         start++;
@@ -159,9 +160,10 @@ void func_800C5904(struct ItemObj* arg0)
     background_objects[0].unk4C = 1;
 }
 
+// layout_gate_restore_layout
 INCLUDE_ASM("main/nonmatchings/items/item_22", func_800C5994);
 
-void func_800C5B5C(struct ItemObj* arg0)
+void layout_gate_check_layout(struct ItemObj* arg0)
 {
     arg0->tail_ext.unk1.unk84.bytes[0] = arg0->unk2;
 
@@ -179,7 +181,7 @@ void func_800C5B5C(struct ItemObj* arg0)
     }
 }
 
-void func_800C5BCC(struct ItemObj* arg0)
+void layout_gate_spawn_alarm(struct ItemObj* arg0)
 {
     struct EffectObj* effect;
     s32 y_pos;
@@ -199,16 +201,16 @@ void func_800C5BCC(struct ItemObj* arg0)
     }
 }
 
-void (*D_8010D318[])(struct ItemObj*) = {
-    func_800C5580,
-    func_800C56B4,
-    func_800C56F0,
-    func_800C5710,
+void (*layout_gate_state_funcs[])(struct ItemObj*) = {
+    layout_gate_init,
+    layout_gate_main,
+    layout_gate_despawn,
+    layout_gate_finish,
 };
 
-void (*D_8010D328[2])(struct ItemObj*) = {
-    func_800C5774,
+void (*layout_gate_step_funcs[2])(struct ItemObj*) = {
+    layout_gate_wait_hit,
     func_800C580C,
 };
 
-s32 D_8010D330[4] = { 0, 1, 2, 3 };
+s32 layout_gate_unused[4] = { 0, 1, 2, 3 };

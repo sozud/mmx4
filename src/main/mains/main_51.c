@@ -3,171 +3,174 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8006A450(struct MainObj* arg0);
+void fortress_cannon_fire_volley(struct MainObj* arg0);
 
-void func_80069A94(struct MainObj* arg0)
+void fortress_cannon_update(struct MainObj* self)
 {
-    D_800FFD84[arg0->state](arg0);
+    fortress_cannon_state_funcs[self->state](self);
 }
 
+// fortress_cannon_init
 INCLUDE_ASM("main/nonmatchings/mains/main_51", func_80069AD0);
 
+// fortress_cannon_main
 INCLUDE_ASM("main/nonmatchings/mains/main_51", func_80069BE4);
 
-void func_80069CE4(struct MainObj* arg0)
+void fortress_cannon_explode(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        func_800BF60C(BASE_OBJECT(arg0), 8);
-        arg0->state++;
-    } else if (--arg0->unk7E == 0) {
-        func_800AF878(BASE_OBJECT(arg0), 1, 0x20, 0x20);
-        arg0->unk7E = 5;
+    if (--self->unk7C == 0) {
+        drop_item(BASE_OBJECT(self), 8);
+        self->state++;
+    } else if (--self->unk7E == 0) {
+        func_800AF878(BASE_OBJECT(self), 1, 0x20, 0x20);
+        self->unk7E = 5;
     }
 }
 
-void func_80069D74(struct MainObj* arg0)
+void fortress_cannon_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_80069D94(struct MainObj* arg0)
+void fortress_cannon_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_51.saved_unk5;
+    self->unk5 = self->ext.main_51.saved_unk5;
 }
 
-void func_80069DA0(struct MainObj* arg0)
+void fortress_cannon_wait(struct MainObj* self)
 {
-    D_800FFDB0[arg0->unk6](arg0);
+    fortress_cannon_wait_funcs[self->unk6](self);
 }
 
-void func_80069DDC(struct MainObj* arg0)
+void fortress_cannon_wait_timer(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80069E28(struct MainObj* arg0)
+void fortress_cannon_fire(struct MainObj* self)
 {
-    D_800FFDB4[arg0->unk6](arg0);
+    fortress_cannon_fire_funcs[self->unk6](self);
 }
 
-void func_80069E64(struct MainObj* arg0)
+void fortress_cannon_fire_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (engine_obj.cur_character != (arg0->ext.main_51.unk84 & 1)) {
-        func_80015D60(arg0, 2);
+    animate_object(ANIMATED_OBJECT(self));
+    if (engine_obj.cur_character != (self->ext.main_51.unk84 & 1)) {
+        set_animation(self, 2);
     } else {
-        func_80015D60(arg0, 1);
+        set_animation(self, 1);
     }
-    func_8001540C(2, 0xA1, arg0);
-    if (arg0->unk2 == 0 && arg0->ext.main_51.unk84 == 2 && engine_obj.cur_character == 0) {
-        func_8006A388(arg0);
+    func_8001540C(2, 0xA1, self);
+    if (self->unk2 == 0 && self->ext.main_51.unk84 == 2 && engine_obj.cur_character == 0) {
+        fortress_cannon_fire_double_shot(self);
     } else {
-        func_8006A2BC(arg0);
+        fortress_cannon_fire_shot(self);
     }
-    arg0->unk7C = 0x4B;
-    arg0->unk6++;
+    self->unk7C = 0x4B;
+    self->unk6++;
 }
 
+// fortress_cannon_fire_wait
 INCLUDE_ASM("main/nonmatchings/mains/main_51", func_80069F28);
 
-void func_80069FDC(struct MainObj* arg0)
+void fortress_cannon_volley(struct MainObj* self)
 {
-    D_800FFDBC[arg0->unk6](arg0);
+    fortress_cannon_volley_funcs[self->unk6](self);
 }
 
-void func_8006A018(struct MainObj* arg0)
+void fortress_cannon_volley_raise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 5);
-        arg0->unk7C = 0x29;
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        set_animation(self, 5);
+        self->unk7C = 0x29;
+        self->unk6++;
     }
 }
 
-void func_8006A078(struct MainObj* arg0)
+void fortress_cannon_volley_fire(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        func_8001540C(2, 0xA2, arg0);
-        func_8006A450(arg0);
-        arg0->unk7C = 0x3C;
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        func_8001540C(2, 0xA2, self);
+        fortress_cannon_fire_volley(self);
+        self->unk7C = 0x3C;
+        self->unk6++;
     }
 }
 
-void func_8006A0E4(struct MainObj* arg0)
+void fortress_cannon_volley_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_8006A130(struct MainObj* arg0)
+void fortress_cannon_lower(struct MainObj* self)
 {
-    D_800FFDC8[arg0->unk6](arg0);
+    fortress_cannon_lower_funcs[self->unk6](self);
 }
 
-void func_8006A16C(struct MainObj* arg0)
+void fortress_cannon_lower_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 6);
-    arg0->unk7C = 0x1A;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 6);
+    self->unk7C = 0x1A;
+    self->unk6++;
 }
 
-void func_8006A1B4(struct MainObj* arg0)
+void fortress_cannon_lower_end(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk7C = 0x28U;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7C = 0x28U;
     }
 }
 
-void func_8006A208(struct MainObj* arg0)
+void fortress_cannon_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 0;
     } else {
-        func_8002B694(ANIMATED_OBJECT(arg0));
+        move_with_gravity(ANIMATED_OBJECT(self));
     }
 }
 
-void func_8006A26C(struct MainObj* arg0)
+void fortress_cannon_check_fall(struct MainObj* self)
 {
-    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
-        arg0->unk5 = 6;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 1;
+    if (self->air_state == 0 && !(self->collision_flags & 8)) {
+        self->unk5 = 6;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 1;
     }
 }
 
-void func_8006A2BC(struct MainObj* arg0)
+void fortress_cannon_fire_shot(struct MainObj* self)
 {
     struct MainObj* source;
     s8 side;
     struct ShotObj* shot;
 
-    source = arg0;
+    source = self;
     shot = find_free_shot_obj();
     if (shot != 0) {
         shot->active = 0x41;
@@ -179,7 +182,7 @@ void func_8006A2BC(struct MainObj* arg0)
         }
         shot->unk7C = (struct WeaponObj*)source;
         shot->unk42 = source->unk42;
-        shot->animation_table = (u32**)D_800FFD44;
+        shot->animation_table = (u32**)fortress_cannon_animations;
         shot->unk3C = source->sprite_frames;
         shot->unk40 = source->unk40;
         shot->unk15 = source->unk15;
@@ -188,13 +191,13 @@ void func_8006A2BC(struct MainObj* arg0)
     }
 }
 
-void func_8006A388(struct MainObj* arg0)
+void fortress_cannon_fire_double_shot(struct MainObj* self)
 {
     u8 i;
     struct MainObj* obj;
     struct ShotObj* shot;
 
-    obj = arg0;
+    obj = self;
     i = 0;
     do {
         shot = find_free_shot_obj();
@@ -208,7 +211,7 @@ void func_8006A388(struct MainObj* arg0)
             }
             shot->unk7C = (struct WeaponObj*)obj;
             shot->unk42 = obj->unk42;
-            shot->animation_table = (u32**)D_800FFD44;
+            shot->animation_table = (u32**)fortress_cannon_animations;
             shot->unk3C = obj->sprite_frames;
             shot->unk40 = obj->unk40;
             shot->unk15 = obj->unk15;
@@ -219,7 +222,7 @@ void func_8006A388(struct MainObj* arg0)
     } while (i < 2);
 }
 
-void func_8006A450(struct MainObj* arg0)
+void fortress_cannon_fire_volley(struct MainObj* self)
 {
     u8 i;
     struct ShotObj* shot;
@@ -231,13 +234,13 @@ void func_8006A450(struct MainObj* arg0)
             shot->active = 0x41;
             shot->id = 0x1D;
             shot->unk2 = i;
-            shot->unk7C = WEAPON_OBJECT(arg0);
-            shot->unk42 = arg0->unk42;
-            shot->animation_table = (u32**)D_800FFD44;
-            shot->unk3C = (u8*)arg0->sprite_frames;
-            shot->unk40 = arg0->unk40;
-            shot->unk15 = arg0->unk15;
-            shot->bg_offset = arg0->bg_offset;
+            shot->unk7C = WEAPON_OBJECT(self);
+            shot->unk42 = self->unk42;
+            shot->animation_table = (u32**)fortress_cannon_animations;
+            shot->unk3C = (u8*)self->sprite_frames;
+            shot->unk40 = self->unk40;
+            shot->unk15 = self->unk15;
+            shot->bg_offset = self->bg_offset;
             shot->unk16 = 4;
         }
         i++;
@@ -250,28 +253,28 @@ struct Unk_unk68 D_800FFC58 = { -27, -32, 58, 66 };
 
 struct Unk_unk68 D_800FFC5C = { 3, 0, 27, 32 };
 
-union AnimationStep D_800FFC60[] = {
+union AnimationStep fortress_cannon_anim_0[] = {
     { 0x00010015 },
     { 0x01010016 },
     { 0x00010015 },
     { 0x02FD0014 },
 };
 
-union AnimationStep D_800FFC70[] = {
+union AnimationStep fortress_cannon_anim_1[] = {
     { 0x00010001 },
     { 0x03010002 },
     { 0x04010004 },
     { 0x05000007 },
 };
 
-union AnimationStep D_800FFC80[] = {
+union AnimationStep fortress_cannon_anim_2[] = {
     { 0x00010001 },
     { 0x06010002 },
     { 0x07010004 },
     { 0x05000007 },
 };
 
-union AnimationStep D_800FFC90[] = {
+union AnimationStep fortress_cannon_anim_3[] = {
     { 0x08010004 },
     { 0x09010004 },
     { 0x0A010004 },
@@ -280,14 +283,14 @@ union AnimationStep D_800FFC90[] = {
     { 0x0D000008 },
 };
 
-union AnimationStep D_800FFCA8[] = {
+union AnimationStep fortress_cannon_anim_4[] = {
     { 0x0E010002 },
     { 0x0F010002 },
     { 0x10010002 },
     { 0x11FD0002 },
 };
 
-union AnimationStep D_800FFCB8[] = {
+union AnimationStep fortress_cannon_anim_5[] = {
     { 0x00010005 },
     { 0x12010006 },
     { 0x13010007 },
@@ -304,7 +307,7 @@ union AnimationStep D_800FFCB8[] = {
     { 0x1600000A },
 };
 
-union AnimationStep D_800FFCF0[] = {
+union AnimationStep fortress_cannon_anim_6[] = {
     { 0x16010004 },
     { 0x17010004 },
     { 0x18010004 },
@@ -314,34 +317,34 @@ union AnimationStep D_800FFCF0[] = {
     { 0x00000003 },
 };
 
-union AnimationStep D_800FFD0C[] = {
+union AnimationStep fortress_cannon_anim_7[] = {
     { 0x1C010001 },
     { 0x1D010001 },
     { 0x1E010001 },
     { 0x1FFD0001 },
 };
 
-union AnimationStep D_800FFD1C[] = {
+union AnimationStep fortress_cannon_anim_8[] = {
     { 0x20000001 },
 };
 
-union AnimationStep D_800FFD20[] = {
+union AnimationStep fortress_cannon_anim_9[] = {
     { 0x21000001 },
 };
 
-union AnimationStep D_800FFD24[] = {
+union AnimationStep fortress_cannon_anim_10[] = {
     { 0x22000001 },
 };
 
-union AnimationStep D_800FFD28[] = {
+union AnimationStep fortress_cannon_anim_11[] = {
     { 0x23000001 },
 };
 
-union AnimationStep D_800FFD2C[] = {
+union AnimationStep fortress_cannon_anim_12[] = {
     { 0x24000001 },
 };
 
-union AnimationStep D_800FFD30[] = {
+union AnimationStep fortress_cannon_anim_13[] = {
     { 0x25010003 },
     { 0x26010003 },
     { 0x27010003 },
@@ -349,58 +352,58 @@ union AnimationStep D_800FFD30[] = {
     { 0x29FC0003 },
 };
 
-union AnimationStep* D_800FFD44[14] = {
-    D_800FFC60,
-    D_800FFC70,
-    D_800FFC80,
-    D_800FFC90,
-    D_800FFCA8,
-    D_800FFCB8,
-    D_800FFCF0,
-    D_800FFD0C,
-    D_800FFD1C,
-    D_800FFD20,
-    D_800FFD24,
-    D_800FFD28,
-    D_800FFD2C,
-    D_800FFD30,
+union AnimationStep* fortress_cannon_animations[14] = {
+    fortress_cannon_anim_0,
+    fortress_cannon_anim_1,
+    fortress_cannon_anim_2,
+    fortress_cannon_anim_3,
+    fortress_cannon_anim_4,
+    fortress_cannon_anim_5,
+    fortress_cannon_anim_6,
+    fortress_cannon_anim_7,
+    fortress_cannon_anim_8,
+    fortress_cannon_anim_9,
+    fortress_cannon_anim_10,
+    fortress_cannon_anim_11,
+    fortress_cannon_anim_12,
+    fortress_cannon_anim_13,
 };
 
-u8 D_800FFD7C[8] = { 8, 9, 10, 11, 12, 0, 0, 0 };
+u8 fortress_cannon_debris[8] = { 8, 9, 10, 11, 12, 0, 0, 0 };
 
-void (*D_800FFD84[4])(struct MainObj*) = {
+void (*fortress_cannon_state_funcs[4])(struct MainObj*) = {
     func_80069AD0,
     func_80069BE4,
-    func_80069CE4,
-    func_80069D74,
+    fortress_cannon_explode,
+    fortress_cannon_despawn,
 };
 
-void (*D_800FFD94[7])(struct MainObj*) = {
-    func_8009216C,
-    func_80069D94,
-    func_80069DA0,
-    func_80069E28,
-    func_80069FDC,
-    func_8006A130,
-    func_8006A208,
+void (*fortress_cannon_step_funcs[7])(struct MainObj*) = {
+    enemy_hit_reaction,
+    fortress_cannon_resume_step,
+    fortress_cannon_wait,
+    fortress_cannon_fire,
+    fortress_cannon_volley,
+    fortress_cannon_lower,
+    fortress_cannon_fall,
 };
 
-void (*D_800FFDB0[1])(struct MainObj*) = {
-    func_80069DDC,
+void (*fortress_cannon_wait_funcs[1])(struct MainObj*) = {
+    fortress_cannon_wait_timer,
 };
 
-void (*D_800FFDB4[2])(struct MainObj*) = {
-    func_80069E64,
+void (*fortress_cannon_fire_funcs[2])(struct MainObj*) = {
+    fortress_cannon_fire_start,
     func_80069F28,
 };
 
-void (*D_800FFDBC[3])(struct MainObj*) = {
-    func_8006A018,
-    func_8006A078,
-    func_8006A0E4,
+void (*fortress_cannon_volley_funcs[3])(struct MainObj*) = {
+    fortress_cannon_volley_raise,
+    fortress_cannon_volley_fire,
+    fortress_cannon_volley_wait,
 };
 
-void (*D_800FFDC8[2])(struct MainObj*) = {
-    func_8006A16C,
-    func_8006A1B4,
+void (*fortress_cannon_lower_funcs[2])(struct MainObj*) = {
+    fortress_cannon_lower_start,
+    fortress_cannon_lower_end,
 };

@@ -18,7 +18,7 @@ void double_afterimage_update(struct MiscObj* self)
     double_afterimage_state_funcs[self->state](self);
 }
 
-u8 D_8010F1DC[4] = { 4, 12, 16, 31 };
+u8 double_afterimage_angles[4] = { 4, 12, 16, 31 };
 
 void (*double_afterimage_state_funcs[3])(struct MiscObj*) = {
     func_800D1990,

@@ -17,11 +17,11 @@ void double_aerial_drop(struct ShotObj* self)
     if (--self->timer == 0) {
         self->timer = 0x1D;
         self->unk5++;
-        func_80015D60(self, 0xF);
+        set_animation(self, 0xF);
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 // double_aerial_split
@@ -29,14 +29,14 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_49", func_800A9F30);
 
 void double_aerial_fly(struct ShotObj* self)
 {
-    func_8002B694((struct AnimatedObj*)self);
-    func_80015DC8(self);
+    move_with_gravity((struct AnimatedObj*)self);
+    animate_object(self);
 }
 
 void double_aerial_fly_alt(struct ShotObj* self)
 {
-    func_8002B694((struct AnimatedObj*)self);
-    func_80015DC8(self);
+    move_with_gravity((struct AnimatedObj*)self);
+    animate_object(self);
 }
 
 void double_aerial_run(struct ShotObj* self)
@@ -45,14 +45,14 @@ void double_aerial_run(struct ShotObj* self)
     self->unk1C.val = self->y_pos.val;
     double_aerial_funcs[self->unk5](self);
     if (self->unk7C->state == 2) {
-        func_800AF808(BASE_OBJECT(self));
+        spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         self->on_screen = 0;
         return;
     }
     func_8002D9BC(self);
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        func_800AF808(BASE_OBJECT(self));
+        spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         self->on_screen = 0;
         return;
@@ -72,7 +72,7 @@ void double_aerial_update(struct ShotObj* self)
     double_aerial_state_funcs[self->state](self);
 }
 
-void func_800AA148(struct ShotObj* self)
+void double_toss_init(struct ShotObj* self)
 {
     s32 x_vel;
 
@@ -94,7 +94,7 @@ void func_800AA148(struct ShotObj* self)
     self->unk60 = 4;
     self->unk61 = 0;
     self->y_pos.i.hi -= 0x10;
-    func_80015D60(self, 0x11);
+    set_animation(self, 0x11);
 
     x_vel = FIXED(-3);
     self->timer = 0x14;
@@ -107,30 +107,30 @@ void func_800AA148(struct ShotObj* self)
     self->unk2C = FIXED(0.34375);
 }
 
-void func_800AA20C(struct ShotObj* self)
+void double_toss_land(struct ShotObj* self)
 {
     if ((self->unk70 & 0xB) || --self->timer == 0) {
         self->unk5++;
         if (self->id == 0x32) {
-            func_80015D60(self, 0x18);
-            self->unk68 = (struct Unk_unk68*)D_80109B9C;
-            self->unk54 = D_80109B98;
-            self->unk50.data = D_80109B98;
+            set_animation(self, 0x18);
+            self->unk68 = (struct Unk_unk68*)double_ball_box_3;
+            self->unk54 = double_ball_box_2;
+            self->unk50.data = double_ball_box_2;
             self->unk60 = 4;
             return;
         }
-        func_80015D60(self, 0x15);
-        self->unk54 = D_80109BA0[0];
-        self->unk50.data = D_80109BA0[0];
+        set_animation(self, 0x15);
+        self->unk54 = double_ball_box_4[0];
+        self->unk50.data = double_ball_box_4[0];
         self->unk68 = NULL;
         self->unk60 = 3;
         return;
     }
     if (self->animation_step.fields.relative_step == 0) {
-        func_80015D60(self, 0x14);
+        set_animation(self, 0x14);
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void (*double_aerial_state_funcs[])(struct ShotObj*) = {

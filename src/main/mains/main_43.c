@@ -45,50 +45,51 @@ void web_spider_intro_warning(struct MainObj* self)
     }
 }
 
-void func_80063334(struct MainObj* arg0)
+void web_spider_intro_setup(struct MainObj* self)
 {
     s32* archive;
     s32 offset;
 
-    if (arg0->ext.main_43.effect->active == 0) {
-        arg0->unk5 = 2;
-        arg0->unk54 = &D_800FF5AC;
-        arg0->unk50 = &D_800FF5A8;
-        arg0->unk68 = NULL;
-        arg0->collision_data = D_801075F4;
-        arg0->bg_offset = g_Player.bg_offset;
+    if (self->ext.main_43.effect->active == 0) {
+        self->unk5 = 2;
+        self->hurt_box = &web_spider_hurt_box;
+        self->attack_box = &web_spider_attack_box;
+        self->terrain_box = NULL;
+        self->collision_data = D_801075F4;
+        self->bg_offset = g_Player.bg_offset;
         if (engine_obj.stage != 0xC) {
-            arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+            self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
         } else {
             archive = SP_MENU_FRAMES;
-            arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            self->unk40 = (D_801406A8[0] >> 7) + 0x160;
             offset = archive[4];
-            arg0->unk42 = 0x7888;
-            arg0->sprite_frames = (u8*)archive + offset;
+            self->unk42 = 0x7888;
+            self->sprite_frames = (u8*)archive + offset;
         }
-        arg0->animation_table = (const u8* const*)web_spider_animations;
-        arg0->unk16 = 4;
-        arg0->unk60 = 6;
-        arg0->unk61 = -0x80;
-        arg0->unk63 = 2;
-        arg0->unk7C = 7;
-        arg0->unk5C = 0;
-        arg0->unk62 = 0;
-        arg0->ext.main_43.flash_timer = 0;
-        arg0->ext.main_43.shot = NULL;
-        arg0->ext.main_43.hurt_collision = 0;
-        arg0->ext.main_43.big_web_done = 0;
+        self->animation_table = (const u8* const*)web_spider_animations;
+        self->unk16 = 4;
+        self->contact_damage = 6;
+        self->invincibility_timer = -0x80;
+        self->unk63 = 2;
+        self->unk7C = 7;
+        self->hp = 0;
+        self->unk62 = 0;
+        self->ext.main_43.flash_timer = 0;
+        self->ext.main_43.shot = NULL;
+        self->ext.main_43.hurt_collision = 0;
+        self->ext.main_43.big_web_done = 0;
         engine_obj.enable_boss = 0;
         engine_obj.unk25 = 1;
-        engine_obj.boss_ptr = arg0;
+        engine_obj.boss_ptr = self;
     }
 }
 
+// web_spider_intro_enter
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006346C);
 
 void web_spider_intro_spawn_thread(struct MainObj* self)
 {
-    func_800CA9EC(self, 8);
+    vent_spawn_mixed_puffs(self, 8);
     self->unk7C = 0x40;
     self->unk5 = 4;
     self->ext.main_43.shot = web_spider_spawn_thread(self, 0);
@@ -98,11 +99,11 @@ void web_spider_intro_wait(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->unk5 = 5;
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk24 = FIXED(-8);
-        self->unk2C = 0;
-        func_80015D60(self, 0);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = FIXED(-8);
+        self->gravity = 0;
+        set_animation(self, 0);
     }
 }
 
@@ -114,27 +115,27 @@ void web_spider_intro_descend(struct MainObj* self)
         if (self->y_pos.i.hi - background_objects[self->bg_offset].y_pos.i.hi >= 0x88) {
             self->unk6 = 1;
             self->unk7C = 0x1E;
-            self->unk24 = FIXED(1);
-            func_80015D60(self, 1);
+            self->y_speed = FIXED(1);
+            set_animation(self, 1);
         } else {
-            func_8002B694(ANIMATED_OBJECT(self));
+            move_with_gravity(ANIMATED_OBJECT(self));
         }
     } else {
-        func_8002B694(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
         timer = (u16)self->unk7C - 1;
         self->unk7C = timer;
         if (timer == 0) {
             self->unk5 = 6;
-            self->unk24 = 0;
-            self->unk2C = 0;
+            self->y_speed = 0;
+            self->gravity = 0;
             self->unk6 = 0;
             self->unk7 = 0;
             self->unk7C = 2;
         } else if (timer == 0xF) {
-            self->unk24 = FIXED(-1);
+            self->y_speed = FIXED(-1);
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void web_spider_intro_pose(struct MainObj* self)
@@ -146,7 +147,7 @@ void web_spider_intro_pose(struct MainObj* self)
             engine_obj.character_state.bytes[8] = 1;
         }
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -155,7 +156,7 @@ void web_spider_intro_start_health_bar(struct MainObj* self)
     if (abc_object.unkC == 0) {
         self->unk5 = 8;
         engine_obj.enable_boss = 1;
-        func_800921E8(0);
+        play_boss_music(0);
     }
 }
 
@@ -163,22 +164,22 @@ void web_spider_intro_fill_health(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if ((func_8009227C() == 0) && (self->animation_step.fields.relative_step == 0)) {
-        if (self->unk5C < 0x30) {
+    animate_object(ANIMATED_OBJECT(self));
+    if ((update_boss_music_delay() == 0) && (self->animation_step.fields.relative_step == 0)) {
+        if (self->hp < 0x30) {
             timer = (u16)self->unk7C - 1;
             self->unk7C = timer;
             if (timer == 0) {
                 func_8001540C(0, 0xE, 0);
                 self->unk7C = 2;
             }
-            self->unk5C = (u8)self->unk5C + 1;
+            self->hp = (u8)self->hp + 1;
             return;
         }
         self->unk5 = 9;
-        self->unk24 = FIXED(3.5);
+        self->y_speed = FIXED(3.5);
         player_end_script_action();
-        func_80015D60(self, 0x1F);
+        set_animation(self, 0x1F);
     }
 }
 
@@ -187,17 +188,18 @@ void web_spider_intro_climb(struct MainObj* self)
     if (self->on_screen == 0) {
         self->state = 1;
         self->unk5 = 2;
-        self->unk61 = 0;
+        self->invincibility_timer = 0;
         return;
     }
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         func_8001540C(2, 0x70, self);
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// web_spider_main
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_8006398C);
 
 void web_spider_drop(struct MainObj* self)
@@ -205,53 +207,54 @@ void web_spider_drop(struct MainObj* self)
     web_spider_drop_funcs[self->unk6](self);
 }
 
+// web_spider_drop_start
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80063B20);
 
-void func_80063DD8(struct MainObj* arg0)
+void web_spider_drop_climb(struct MainObj* self)
 {
-    switch (arg0->unk7) {
+    switch (self->unk7) {
     case 0:
-        if (arg0->unk7C == 0) {
+        if (self->unk7C == 0) {
             if ((get_random() & 0xF) != 0 && g_Player.stun_timer == 0) {
-                arg0->unk5 = 3;
-                arg0->unk6 = 0;
-                arg0->unk7 = 0;
-                if (arg0->x_pos.i.hi - g_Player.x_pos.i.hi >= 0) {
-                    arg0->unk15 = 0;
+                self->unk5 = 3;
+                self->unk6 = 0;
+                self->unk7 = 0;
+                if (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0) {
+                    self->unk15 = 0;
                 } else {
-                    arg0->unk15 = 0x40;
+                    self->unk15 = 0x40;
                 }
             } else {
-                arg0->unk24 = FIXED(3.5);
-                arg0->unk2C = 0;
-                arg0->unk7 = 1;
-                func_80015D60(arg0, 0x1F);
-                func_8001540C(2, 0x70, arg0);
+                self->y_speed = FIXED(3.5);
+                self->gravity = 0;
+                self->unk7 = 1;
+                set_animation(self, 0x1F);
+                func_8001540C(2, 0x70, self);
             }
         } else {
-            arg0->unk7C--;
+            self->unk7C--;
         }
         break;
     case 1:
-        if (arg0->on_screen == 0) {
-            arg0->unk7 = 2;
-            arg0->unk7C = 8;
-            if (arg0->ext.main_43.hurt_collision != 0) {
-                arg0->collision_data = D_801075F4;
-                arg0->ext.main_43.hurt_collision = 0;
+        if (self->on_screen == 0) {
+            self->unk7 = 2;
+            self->unk7C = 8;
+            if (self->ext.main_43.hurt_collision != 0) {
+                self->collision_data = D_801075F4;
+                self->ext.main_43.hurt_collision = 0;
             }
         }
-        if (arg0->animation_step.fields.event != 0) {
-            arg0->animation_step.fields.event = 0;
-            func_8001540C(2, 0x70, arg0);
+        if (self->animation_step.fields.event != 0) {
+            self->animation_step.fields.event = 0;
+            func_8001540C(2, 0x70, self);
         }
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B694(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
         break;
     case 2:
-        if (--arg0->unk7C == 0) {
-            arg0->unk6 = 0;
-            arg0->unk7 = 0;
+        if (--self->unk7C == 0) {
+            self->unk6 = 0;
+            self->unk7 = 0;
         }
         break;
     }
@@ -265,7 +268,7 @@ void web_spider_shoot(struct MainObj* self)
 void web_spider_shoot_start(struct MainObj* self)
 {
     self->unk6 = 1;
-    func_80015D60(self, 3);
+    set_animation(self, 3);
 }
 
 void web_spider_shoot_fire(struct AnimatedObj* self)
@@ -286,10 +289,10 @@ void web_spider_shoot_fire(struct AnimatedObj* self)
         self->unk2C = 0;
         self->unk6 = 1;
         self->unk7 = 1;
-        func_80015D60(self, 0x1F);
+        set_animation(self, 0x1F);
         func_8001540C(2, 0x70, self);
     }
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void web_spider_swing(struct MainObj* self)
@@ -308,6 +311,7 @@ void web_spider_swing_start(struct MainObj* self)
     web_spider_set_swing_animation(self);
 }
 
+// web_spider_swing_move
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80064154);
 
 void web_spider_swing_wait(struct MainObj* self)
@@ -326,13 +330,14 @@ void web_spider_attack(struct MainObj* self)
     }
 }
 
+// web_spider_attack_spiderlings
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800643B0);
 
 void web_spider_attack_web(struct MainObj* self)
 {
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        func_80015D60(self, 0xA);
+        set_animation(self, 0xA);
         if (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0) {
             self->unk15 = 0;
         } else {
@@ -354,14 +359,14 @@ void web_spider_attack_web(struct MainObj* self)
         self->unk5 = 4;
         self->unk6 = 1;
         self->unk7 = 0;
-        func_80015D60(self, self->ext.main_43.animation_id);
+        set_animation(self, self->ext.main_43.animation_id);
         web_spider_set_attack_cooldown(self);
         self->ext.main_43.attack_count++;
         if (self->ext.main_43.attack_count >= 3) {
             self->ext.main_43.attack_count = 0;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void web_spider_big_web(struct MainObj* self)
@@ -369,6 +374,7 @@ void web_spider_big_web(struct MainObj* self)
     web_spider_big_web_funcs[self->unk6](self);
 }
 
+// web_spider_big_web_start
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_800646EC);
 
 void web_spider_big_web_spin(struct MainObj* arg0)
@@ -380,7 +386,7 @@ void web_spider_big_web_spin(struct MainObj* arg0)
     switch (state) {
     case 0:
         self->unk7 = 1;
-        func_80015D60(self, 4);
+        set_animation(self, 4);
         break;
     case 1:
         if (self->animation_step.fields.relative_step == 0) {
@@ -392,7 +398,7 @@ void web_spider_big_web_spin(struct MainObj* arg0)
             self->animation_step.fields.event = 0;
             func_8001540C(2, 0x73, self);
         }
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         break;
     case 2:
         self->unk6 = 2;
@@ -407,19 +413,19 @@ void web_spider_big_web_center(struct MainObj* self)
     case 0:
         self->unk7 = 1;
         self->ext.main_43.shot->state = 2;
-        self->unk24 = FIXED(1);
-        self->unk2C = FIXED(0.5);
-        func_80015D60(self, 5);
+        self->y_speed = FIXED(1);
+        self->gravity = FIXED(0.5);
+        set_animation(self, 5);
         break;
     case 1:
         if (self->animation_step.fields.relative_step != 0) {
             if (self->animation_step.fields.event != 0) {
                 self->animation_step.fields.event = 0;
-                self->unk24 = 0;
-                self->unk2C = 0;
+                self->y_speed = 0;
+                self->gravity = 0;
             }
-            func_80015DC8(ANIMATED_OBJECT(self));
-            func_8002B694(ANIMATED_OBJECT(self));
+            animate_object(ANIMATED_OBJECT(self));
+            move_with_gravity(ANIMATED_OBJECT(self));
         } else {
             self->unk7 = 2;
         }
@@ -447,12 +453,12 @@ void web_spider_fall(struct MainObj* self)
 void web_spider_fall_start(struct MainObj* self)
 {
     self->unk6 = 1;
-    self->unk24 = FIXED(4);
-    self->unk20 = 0;
-    self->unk28 = 0;
-    self->unk2C = FIXED(0.25);
-    func_80015D60(self, 0xD);
-    self->unk68 = &D_800FF5B0;
+    self->y_speed = FIXED(4);
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->gravity = FIXED(0.25);
+    set_animation(self, 0xD);
+    self->terrain_box = &D_800FF5B0;
     self->collision_data = (const u16*)D_801060F0;
     self->ext.main_43.hurt_collision = 1;
 }
@@ -461,40 +467,40 @@ void web_spider_fall_slow(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6 = 2;
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.5);
-        func_80015D60(self, 0xE);
+        self->y_speed = 0;
+        self->gravity = FIXED(0.5);
+        set_animation(self, 0xE);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
-    func_8002B694(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void web_spider_fall_land(struct MainObj* self)
 {
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         self->unk6 = 3;
-        self->unk24 = 0;
-        self->unk2C = 0;
-        func_80015D60(self, 0xF);
-        self->unk68 = NULL;
+        self->y_speed = 0;
+        self->gravity = 0;
+        set_animation(self, 0xF);
+        self->terrain_box = NULL;
         func_8001540C(2, 0x74, self);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void web_spider_fall_crash(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6 = 4;
-        func_80015D60(self, 0x10);
+        set_animation(self, 0x10);
     } else if (self->animation_step.fields.event != 0) {
-        self->unk5C -= 4;
+        self->hp -= 4;
         self->animation_step.fields.event = 0;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void web_spider_fall_rethread(struct MainObj* self)
@@ -514,21 +520,21 @@ void web_spider_fall_rethread(struct MainObj* self)
     } else {
         shot = self->ext.main_43.shot;
         if (shot->unk5 == 0) {
-            self->unk24 = FIXED(3.5);
+            self->y_speed = FIXED(3.5);
             self->unk5 = 2;
-            self->unk2C = 0;
+            self->gravity = 0;
             self->unk6 = 1;
             self->unk7 = 1;
-            func_80015D60(self, 0x1F);
+            set_animation(self, 0x1F);
             shot->unk84.value = 0;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void web_spider_check_big_web(struct MainObj* self)
 {
-    if (self->ext.main_43.big_web_done == 0 && self->state < 2 && self->unk5 == 2 && (*(u32*)&self->state & 0xFFFF0000) == 0x02010000 && self->unk5C < 0x18) {
+    if (self->ext.main_43.big_web_done == 0 && self->state < 2 && self->unk5 == 2 && (*(u32*)&self->state & 0xFFFF0000) == 0x02010000 && self->hp < 0x18) {
         self->unk5 = 6;
         self->ext.main_43.big_web_done = 1;
         self->collision_data = (const u16*)D_801060F0;
@@ -638,17 +644,18 @@ void web_spider_spawn_web_shot(struct AnimatedObj* self, u8 arg1)
     }
 }
 
+// web_spider_aim_swing
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065168);
 
 void web_spider_set_move_timer(struct MainObj* self)
 {
-    self->unk7C = web_spider_move_timers[(self->unk5C & 0x7F) >> 3];
+    self->unk7C = web_spider_move_timers[(self->hp & 0x7F) >> 3];
 }
 
 void web_spider_set_attack_cooldown(struct MainObj* self)
 {
     if (self->ext.main_43.attack_cooldown == 0) {
-        self->ext.main_43.attack_cooldown = web_spider_attack_cooldowns[(self->unk5C & 0x7F) >> 3];
+        self->ext.main_43.attack_cooldown = web_spider_attack_cooldowns[(self->hp & 0x7F) >> 3];
     }
 }
 
@@ -658,7 +665,7 @@ void web_spider_set_swing_animation(struct MainObj* self)
     animation_id = web_spider_swing_animations[self->ext.main_43.animation_set]
                                               [self->ext.main_43.animation_index];
     self->ext.main_43.animation_id = animation_id;
-    func_80015D60(self, animation_id);
+    set_animation(self, animation_id);
 }
 
 void web_spider_death_start(struct MainObj* self)
@@ -669,7 +676,7 @@ void web_spider_death_start(struct MainObj* self)
     self->ext.main_43.flash_timer = 0x19;
     self->unk42 &= 0x7FFF;
     player_start_script_action(0x14, g_Player.unk15);
-    func_80015D60(self, 0x22);
+    set_animation(self, 0x22);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -729,6 +736,7 @@ void web_spider_death(struct MainObj* self)
     web_spider_death_funcs[self->unk5](self);
 }
 
+// spiderling_init
 INCLUDE_ASM("main/nonmatchings/mains/main_43", func_80065574);
 
 void spiderling_run(struct MainObj* self)
@@ -738,7 +746,7 @@ void spiderling_run(struct MainObj* self)
     spiderling_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
     if ((func_8002DD04(self) < 0) || (self->ext.main_43.effect->state == 2)) {
-        func_800AF808(BASE_OBJECT(self));
+        spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         return;
     }
@@ -748,22 +756,22 @@ void spiderling_run(struct MainObj* self)
 
 void spiderling_fall(struct MainObj* self)
 {
-    if (self->unk70 & 3) {
-        self->unk20 = 0;
-        self->unk28 = 0;
+    if (self->collision_flags & 3) {
+        self->x_speed = 0;
+        self->x_accel = 0;
     }
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         self->unk5 = 3;
         self->unk6 = 0;
-        self->unk20 = 0;
-        self->unk24 = 0;
-        self->unk28 = 0;
-        self->unk2C = 0;
-        func_80015D60(self, 0x1C);
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->gravity = 0;
+        set_animation(self, 0x1C);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void spiderling_crawl(struct MainObj* self)
@@ -771,49 +779,49 @@ void spiderling_crawl(struct MainObj* self)
     if (self->unk6 == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             if (self->x_pos.val - g_Player.x_pos.val < 0) {
-                self->unk20 = FIXED(1.5);
+                self->x_speed = FIXED(1.5);
                 self->unk15 = 0x40;
             } else {
-                self->unk20 = FIXED(-1.5);
+                self->x_speed = FIXED(-1.5);
                 self->unk15 = 0;
             }
             self->unk6 = 1;
-            func_80015D60(self, 0x1D);
+            set_animation(self, 0x1D);
         }
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         return;
     }
-    if (self->unk70 & 3) {
+    if (self->collision_flags & 3) {
         self->unk5 = 4;
         self->unk6 = 0;
         self->unk7 = 0;
-        self->unk20 = 0;
-        self->unk24 = 0;
-        self->unk28 = 0;
-        self->unk2C = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->gravity = 0;
         self->unk15 = 0;
-        if (self->unk70 & 1) {
+        if (self->collision_flags & 1) {
             self->unk15 = 0x40;
         }
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void spiderling_leave(struct MainObj* self)
 {
     if (self->unk6 == 0) {
-        self->unk24 = FIXED(1.5);
+        self->y_speed = FIXED(1.5);
         self->unk6 = 1;
-        func_80015D60(self, 0x1E);
+        set_animation(self, 0x1E);
         return;
     }
     if (self->on_screen == 0) {
         self->state = 2;
     }
-    func_80015DC8(self);
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(self);
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
 void spiderling_despawn(struct MainObj* self)
@@ -1323,11 +1331,11 @@ union AnimationStep* web_spider_animations[40] = {
     D_800FF18C,
 };
 
-u8 D_800FF5A4[4] = { 13, 14, 15, 16 };
+u8 web_spider_debris[4] = { 13, 14, 15, 16 };
 
-struct Unk_unk68 D_800FF5A8 = { -21, -21, 40, 34 };
+struct Unk_unk68 web_spider_attack_box = { -21, -21, 40, 34 };
 
-struct Unk_unk68 D_800FF5AC = { -23, -30, 44, 57 };
+struct Unk_unk68 web_spider_hurt_box = { -23, -30, 44, 57 };
 
 struct Unk_unk68 D_800FF5B0 = { 0, 0, 24, 19 };
 
@@ -1427,7 +1435,7 @@ void (*spiderling_state_funcs[3])() = {
 
 void (*web_spider_intro_funcs[10])(struct MainObj*) = {
     web_spider_intro_warning,
-    func_80063334,
+    web_spider_intro_setup,
     func_8006346C,
     web_spider_intro_spawn_thread,
     web_spider_intro_wait,
@@ -1441,7 +1449,7 @@ void (*web_spider_intro_funcs[10])(struct MainObj*) = {
 u8 D_800FF724[16] = { 0x07, 0x05, 0x06, 0x04, 0x02, 0x03, 0x01, 0x00, 0x01, 0x00, 0x03, 0x02, 0x05, 0x04, 0x07, 0x06 };
 
 void (*web_spider_step_funcs[7])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     web_spider_fall,
     web_spider_drop,
     web_spider_shoot,
@@ -1452,8 +1460,8 @@ void (*web_spider_step_funcs[7])() = {
 
 void (*web_spider_drop_funcs[3])() = {
     func_80063B20,
-    func_80063DD8,
-    func_80063DD8,
+    web_spider_drop_climb,
+    web_spider_drop_climb,
 };
 
 void (*web_spider_shoot_funcs[3])() = {
@@ -1506,8 +1514,8 @@ struct FixedPointPosition spiderling_velocities[8] = {
 };
 
 void (*spiderling_step_funcs[5])(struct MainObj*) = {
-    func_8009216C,
-    func_8009216C,
+    enemy_hit_reaction,
+    enemy_hit_reaction,
     spiderling_fall,
     spiderling_crawl,
     spiderling_leave,

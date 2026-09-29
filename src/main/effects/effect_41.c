@@ -2,54 +2,54 @@
 // 800BE184..800BE2C4
 #include "common.h"
 
-void func_800BE184(struct EffectObj* arg0)
+void tile_blink_anim_update(struct EffectObj* self)
 {
-    D_8010C0F8[arg0->state](arg0);
+    tile_blink_anim_state_funcs[self->state](self);
 }
 
-void func_800BE1C0(struct EffectObj* arg0)
+void tile_blink_anim_init(struct EffectObj* self)
 {
     u8* palette;
 
-    arg0->ext.effect_41.unk14 = 1;
-    palette = D_8010C0F4[0];
-    arg0->ext.effect_41.palette_source.bytes = palette;
-    arg0->ext.effect_41.palette.fields.timer = palette[0];
-    arg0->ext.effect_41.palette.fields.unk1 = arg0->ext.effect_41.palette_source.bytes[1];
-    arg0->ext.effect_41.palette.fields.step = arg0->ext.effect_41.palette_source.bytes[2];
-    arg0->ext.effect_41.palette.fields.id = arg0->ext.effect_41.palette_source.bytes[3];
-    arg0->state = (u8)arg0->state + 1;
+    self->ext.effect_41.unk14 = 1;
+    palette = tile_blink_anim_scripts[0];
+    self->ext.effect_41.palette_source.bytes = palette;
+    self->ext.effect_41.palette.fields.timer = palette[0];
+    self->ext.effect_41.palette.fields.unk1 = self->ext.effect_41.palette_source.bytes[1];
+    self->ext.effect_41.palette.fields.step = self->ext.effect_41.palette_source.bytes[2];
+    self->ext.effect_41.palette.fields.id = self->ext.effect_41.palette_source.bytes[3];
+    self->state = (u8)self->state + 1;
 }
 
-void func_800BE214(struct EffectObj* arg0)
+void tile_blink_anim_main(struct EffectObj* self)
 {
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_800BE25C(arg0);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        tile_blink_anim_step(self);
         return;
     }
 
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800BE25C(struct EffectObj* arg0)
+void tile_blink_anim_step(struct EffectObj* self)
 {
     s8 timer;
     s32* frame;
 
-    timer = arg0->ext.effect_41.palette.fields.timer - 1;
-    arg0->ext.effect_41.palette.fields.timer = timer;
+    timer = self->ext.effect_41.palette.fields.timer - 1;
+    self->ext.effect_41.palette.fields.timer = timer;
     if (timer != 0) {
         return;
     }
 
-    frame = arg0->ext.effect_41.palette_source.words + arg0->ext.effect_41.palette.fields.step;
-    arg0->ext.effect_41.palette_source.words = frame;
-    arg0->ext.effect_41.palette.packed = *frame;
-    func_800DA984(arg0->ext.effect_41.palette.fields.id,
-        arg0->x_pos.i.hi - 0x10, arg0->y_pos.i.hi - 0x10);
+    frame = self->ext.effect_41.palette_source.words + self->ext.effect_41.palette.fields.step;
+    self->ext.effect_41.palette_source.words = frame;
+    self->ext.effect_41.palette.packed = *frame;
+    refresh_visible_tile_effect(self->ext.effect_41.palette.fields.id,
+        self->x_pos.i.hi - 0x10, self->y_pos.i.hi - 0x10);
 }
 
-u8 D_8010C0DC[6][4] = {
+u8 tile_blink_anim_script_data[6][4] = {
     { 0x0E, 0, 1, 0 },
     { 0x0E, 0, 1, 1 },
     { 0x0E, 0, 1, 2 },
@@ -58,9 +58,9 @@ u8 D_8010C0DC[6][4] = {
     { 0x0E, 0, 0xFB, 5 },
 };
 
-u8* D_8010C0F4[1] = { D_8010C0DC[0] };
+u8* tile_blink_anim_scripts[1] = { tile_blink_anim_script_data[0] };
 
-void (*D_8010C0F8[])(struct EffectObj*) = {
-    func_800BE1C0,
-    func_800BE214,
+void (*tile_blink_anim_state_funcs[])(struct EffectObj*) = {
+    tile_blink_anim_init,
+    tile_blink_anim_main,
 };

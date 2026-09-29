@@ -2,7 +2,7 @@
 // 800AF6A0..800AFB50
 #include "common.h"
 
-u8 D_8010A1D4[] = {
+u8 small_effect_animations[] = {
     0x00,
     0x01,
     0x05,
@@ -21,7 +21,7 @@ u8 D_8010A1D4[] = {
     0x00,
 };
 
-struct Visual03Bounds D_8010A1E4[14] = {
+struct Visual03Bounds small_effect_bounds[14] = {
     { 0x20, 0x20 },
     { 0x20, 0x20 },
     { 0x20, 0x20 },
@@ -38,22 +38,22 @@ struct Visual03Bounds D_8010A1E4[14] = {
     { 0x20, 0x20 },
 };
 
-void func_800AF6A0(struct VisualObj* arg0)
+void small_effect_update(struct VisualObj* arg0)
 {
     switch (arg0->state) {
     case 0:
         arg0->on_screen = 1;
-        func_80015D60(arg0, D_8010A1D4[arg0->unk2]);
+        set_animation(arg0, small_effect_animations[arg0->unk2]);
         arg0->state++;
-        func_8002B318(BASE_OBJECT(arg0), D_8010A1E4[arg0->unk2].x,
-            D_8010A1E4[arg0->unk2].y);
+        update_on_screen(BASE_OBJECT(arg0), small_effect_bounds[arg0->unk2].x,
+            small_effect_bounds[arg0->unk2].y);
         break;
     case 1:
         if (func_8002B1E8(BASE_OBJECT(arg0),
-                D_8010A1E4[arg0->unk2].x,
-                D_8010A1E4[arg0->unk2].y)
+                small_effect_bounds[arg0->unk2].x,
+                small_effect_bounds[arg0->unk2].y)
             == 0) {
-            func_80015DC8(arg0);
+            animate_object(arg0);
             if ((arg0->unk2 == 9) && (arg0->animation_step.fields.event != 0)) {
                 arg0->animation_step.fields.event = 0;
                 g_Player.unkDF = 0;
@@ -64,8 +64,8 @@ void func_800AF6A0(struct VisualObj* arg0)
         } else {
             arg0->state = 2;
         }
-        func_8002B318(BASE_OBJECT(arg0), D_8010A1E4[arg0->unk2].x,
-            D_8010A1E4[arg0->unk2].y);
+        update_on_screen(BASE_OBJECT(arg0), small_effect_bounds[arg0->unk2].x,
+            small_effect_bounds[arg0->unk2].y);
         break;
     case 2:
         ZeroObjectState(OBJECT_HEADER(arg0));
@@ -73,21 +73,23 @@ void func_800AF6A0(struct VisualObj* arg0)
     }
 }
 
-void func_800AF808(struct BaseObj* arg0)
+void spawn_explosion(struct BaseObj* arg0)
 {
-    func_800AF828(arg0, 0);
+    spawn_explosion_variant(arg0, 0);
 }
 
-void func_800AF828(struct BaseObj* arg0, s8 arg1)
+void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1)
 {
-    func_800AFAB4(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (get_random() & 1) ^ 1);
+    spawn_explosion_at(arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi, (get_random() & 1) ^ 1);
 }
 
+// spawn_random_explosion
 INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF878);
 
+// spawn_explosion_in_box
 INCLUDE_ASM("main/nonmatchings/visuals/visual_03", func_800AF95C);
 
-struct VisualObj* func_800AFAB4(s8 arg0, s16 x, s16 y, u8 arg3)
+struct VisualObj* spawn_explosion_at(s8 arg0, s16 x, s16 y, u8 arg3)
 {
     struct VisualObj* temp_v0 = find_free_visual_obj();
     if (temp_v0 != NULL) {

@@ -2,14 +2,14 @@
 // 800C3880..800C3CF8
 #include "common.h"
 
-void func_800C3880(struct ItemObj* arg0)
+void big_elevator_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010D040[arg0->state](arg0);
+    big_elevator_state_funcs[arg0->state](arg0);
 }
 
-void func_800C38C8(struct ItemObj* self)
+void big_elevator_init(struct ItemObj* self)
 {
     s32 frame_index;
     s32 frame_offset;
@@ -25,7 +25,7 @@ void func_800C38C8(struct ItemObj* self)
     frame_offset = archive[frame_index];
     self->unk42 = 0x7947;
     self->animation_step.fields.frame_index = 0;
-    self->unk68 = &D_8010D060;
+    self->unk68 = &big_elevator_terrain_box;
     self->unk54 = NULL;
     self->unk58 = NULL;
     self->sprite_frames = (u8*)archive + frame_offset;
@@ -41,38 +41,38 @@ void func_800C38C8(struct ItemObj* self)
     self->state++;
 }
 
-void func_800C39AC(struct ItemObj* arg0)
+void big_elevator_main(struct ItemObj* arg0)
 {
-    D_8010D050[arg0->unk5](arg0);
-    func_8002E184(PLAYER_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0xC0, 0x80);
+    big_elevator_step_funcs[arg0->unk5](arg0);
+    collide_with_players(PLAYER_OBJECT(arg0));
+    update_on_screen(BASE_OBJECT(arg0), 0xC0, 0x80);
 }
 
-void func_800C3A0C(struct ItemObj* arg0)
+void big_elevator_next(struct ItemObj* arg0)
 {
     arg0->state++;
 }
 
-void func_800C3A20(struct ItemObj* arg0)
+void big_elevator_despawn(struct ItemObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800C3A40(struct ItemObj* arg0)
+void big_elevator_ride(struct ItemObj* arg0)
 {
-    D_8010D064[arg0->unk6](arg0);
+    big_elevator_ride_funcs[arg0->unk6](arg0);
 }
 
-void func_800C3A7C(struct ItemObj* arg0)
+void big_elevator_wait_player(struct ItemObj* arg0)
 {
     if (g_Player.unk5 != 0) {
         arg0->unk7C.timer = 0x4000;
-        func_80028BAC(0x20, 1, 1);
+        start_screen_shake_y(0x20, 1, 1);
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }
 }
 
-void func_800C3AD4(struct ItemObj* arg0)
+void big_elevator_rise(struct ItemObj* arg0)
 {
     if (background_objects[0].unk34 != 0) {
         return;
@@ -90,7 +90,7 @@ void func_800C3AD4(struct ItemObj* arg0)
     arg0->y_pos.val -= arg0->unk7C.timer;
 }
 
-void func_800C3B40(struct ItemObj* arg0)
+void big_elevator_arrive(struct ItemObj* arg0)
 {
     background_objects[0].unk28 = 0x2D0;
     background_objects[0].unk2A = 0x2D0;
@@ -100,9 +100,10 @@ void func_800C3B40(struct ItemObj* arg0)
     arg0->unk5++;
 }
 
+// big_elevator_transition
 INCLUDE_ASM("main/nonmatchings/items/item_14", func_800C3BA4);
 
-void func_800C3C9C(struct ItemObj* arg0)
+void big_elevator_restore_camera(struct ItemObj* arg0)
 {
     if (background_objects[0].unk34 == 0) {
         background_objects[0].unk22 = 0x100;
@@ -112,29 +113,29 @@ void func_800C3C9C(struct ItemObj* arg0)
     }
 }
 
-void func_800C3CE4(struct ItemObj* arg0)
+void big_elevator_finish(struct ItemObj* arg0)
 {
     background_objects[0].unk47 = 2;
 }
 
-void (*D_8010D040[])(struct ItemObj*) = {
-    func_800C38C8,
-    func_800C39AC,
-    func_800C3A0C,
-    func_800C3A20,
+void (*big_elevator_state_funcs[])(struct ItemObj*) = {
+    big_elevator_init,
+    big_elevator_main,
+    big_elevator_next,
+    big_elevator_despawn,
 };
 
-void (*D_8010D050[4])(struct ItemObj*) = {
-    func_800C3A40,
+void (*big_elevator_step_funcs[4])(struct ItemObj*) = {
+    big_elevator_ride,
     func_800C3BA4,
-    func_800C3C9C,
-    func_800C3CE4,
+    big_elevator_restore_camera,
+    big_elevator_finish,
 };
 
-struct Unk_unk68 D_8010D060 = { 0, 0xFD, 0x80, 0x20 };
+struct Unk_unk68 big_elevator_terrain_box = { 0, 0xFD, 0x80, 0x20 };
 
-void (*D_8010D064[3])(struct ItemObj*) = {
-    func_800C3A7C,
-    func_800C3AD4,
-    func_800C3B40,
+void (*big_elevator_ride_funcs[3])(struct ItemObj*) = {
+    big_elevator_wait_player,
+    big_elevator_rise,
+    big_elevator_arrive,
 };

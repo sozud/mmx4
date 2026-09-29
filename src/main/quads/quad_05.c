@@ -2,12 +2,12 @@
 // 800D553C..800D5934
 #include "common.h"
 
-void func_800D553C(struct QuadObj* arg0)
+void web_piece_quad_update(struct QuadObj* arg0)
 {
-    D_8010FAD4[arg0->state](arg0);
+    web_piece_quad_state_funcs[arg0->state](arg0);
 }
 
-void func_800D5578(struct QuadObj* arg0)
+void web_piece_quad_init(struct QuadObj* arg0)
 {
     arg0->unk36 = 4;
     arg0->unk34 = 0x7EC0;
@@ -17,11 +17,11 @@ void func_800D5578(struct QuadObj* arg0)
     arg0->bg_offset = 0;
     arg0->ext.quad_5.update_timer = 0;
     arg0->active |= 0x80;
-    arg0->ext.quad_5.data = D_8010FAB4[arg0->ext.quad_5.index];
-    func_800D56C8(arg0);
+    arg0->ext.quad_5.data = web_piece_quad_frame_table[arg0->ext.quad_5.index];
+    web_piece_quad_scale(arg0);
 }
 
-void func_800D55E4(struct QuadObj* arg0)
+void web_piece_quad_main(struct QuadObj* arg0)
 {
     u16 temp_v0;
     u16 temp_v1;
@@ -42,9 +42,9 @@ void func_800D55E4(struct QuadObj* arg0)
         }
     }
 
-    arg0->ext.quad_5.data = D_8010FAB4[arg0->ext.quad_5.index];
-    func_800D56C8(arg0);
-    if ((func_800D57A8(arg0) << 16) != 0) {
+    arg0->ext.quad_5.data = web_piece_quad_frame_table[arg0->ext.quad_5.index];
+    web_piece_quad_scale(arg0);
+    if ((web_piece_quad_is_visible(arg0) << 16) != 0) {
         arg0->on_screen = 1;
         return;
     }
@@ -54,12 +54,12 @@ void func_800D55E4(struct QuadObj* arg0)
     arg0->unk5 = 0;
 }
 
-void func_800D56A8(struct QuadObj* arg0)
+void web_piece_quad_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D56C8(struct QuadObj* arg0)
+void web_piece_quad_scale(struct QuadObj* arg0)
 {
     s32* p = arg0->ext.quad_5.data;
 
@@ -73,7 +73,7 @@ void func_800D56C8(struct QuadObj* arg0)
     arg0->unk30.val = p[1] * arg0->ext.quad_5.scale;
 }
 
-s32 func_800D57A8(struct QuadObj* arg0)
+s32 web_piece_quad_is_visible(struct QuadObj* arg0)
 {
     u16 x, y, x2, y2;
     u16 width, height;
@@ -102,7 +102,7 @@ s32 func_800D57A8(struct QuadObj* arg0)
     return result;
 }
 
-s32 D_8010F9B4[8][8] = {
+s32 web_piece_quad_frames[8][8] = {
     { 0, -0x800, 0x800, 0, 0, 0x800, -0x800, 0 },
     { 0, -0x800, 0x700, 0, 0, 0x800, -0x700, 0 },
     { 0, -0x800, 0x600, 0, 0, 0x800, -0x600, 0 },
@@ -113,19 +113,19 @@ s32 D_8010F9B4[8][8] = {
     { 0, -0x800, 0x100, 0, 0, 0x800, 0x100, 0 },
 };
 
-s32* D_8010FAB4[8] = {
-    D_8010F9B4[0],
-    D_8010F9B4[1],
-    D_8010F9B4[2],
-    D_8010F9B4[3],
-    D_8010F9B4[4],
-    D_8010F9B4[5],
-    D_8010F9B4[6],
-    D_8010F9B4[7],
+s32* web_piece_quad_frame_table[8] = {
+    web_piece_quad_frames[0],
+    web_piece_quad_frames[1],
+    web_piece_quad_frames[2],
+    web_piece_quad_frames[3],
+    web_piece_quad_frames[4],
+    web_piece_quad_frames[5],
+    web_piece_quad_frames[6],
+    web_piece_quad_frames[7],
 };
 
-void (*D_8010FAD4[])(struct QuadObj*) = {
-    func_800D5578,
-    func_800D55E4,
-    func_800D56A8,
+void (*web_piece_quad_state_funcs[])(struct QuadObj*) = {
+    web_piece_quad_init,
+    web_piece_quad_main,
+    web_piece_quad_despawn,
 };

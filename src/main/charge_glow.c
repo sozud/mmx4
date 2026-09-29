@@ -22,7 +22,7 @@ void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1)
 
     if (arg1->charge_state[0] == charge_state || arg1->charge_state[1] == charge_state) {
         arg0->on_screen = 1;
-        func_80015D60(arg0, arg0->unk2 + 8);
+        set_animation(arg0, arg0->unk2 + 8);
         arg0->state++;
     }
 }
@@ -33,11 +33,11 @@ void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1)
         arg0->on_screen = 0;
         arg0->state = 0;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     }
 }
 
-u8 D_8010A074[9][16] = {
+u8 x_water_wake_modes[9][16] = {
     { 0, 0, 1, 1, 0, 1, 1, 2, 2, 2, 0, 0, 1, 0, 0, 0 },
     { 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 2, 0, 2, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0 },
@@ -49,7 +49,7 @@ u8 D_8010A074[9][16] = {
     { 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
 };
 
-u8 D_8010A104[9][16] = {
+u8 zero_water_wake_modes[9][16] = {
     { 0, 0, 1, 1, 0, 1, 1, 2, 2, 2, 0, 0, 1, 0, 0, 0 },
     { 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
     { 0, 2, 0, 2, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0 },

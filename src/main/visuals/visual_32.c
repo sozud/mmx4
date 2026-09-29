@@ -2,10 +2,10 @@
 // 800B4E34..800B5570
 #include "common.h"
 
-u8 D_8010A714[4] = { 0xF, 6, 0x16, 0xF0 };
-u8 D_8010A718[4] = { 0xF8, 0x16, 2, 0xFF };
-u8 D_8010A71C[4] = { 0xD, 0xC, 0xD, 0xB };
-s32 D_8010A720[8] = {
+u8 sigma_fx_x_offsets[4] = { 0xF, 6, 0x16, 0xF0 };
+u8 sigma_fx_y_offsets[4] = { 0xF8, 0x16, 2, 0xFF };
+u8 sigma_fx_cloak_piece_animations[4] = { 0xD, 0xC, 0xD, 0xB };
+s32 sigma_fx_cloak_piece_x_vels[8] = {
     -0x50000,
     -0x42000,
     0x45000,
@@ -15,7 +15,7 @@ s32 D_8010A720[8] = {
     0x50000,
     0x22000,
 };
-s32 D_8010A740[8] = {
+s32 sigma_fx_cloak_piece_y_vels[8] = {
     -0x10000,
     0x8000,
     0xC000,
@@ -34,7 +34,7 @@ void sigma_fx_glow(struct VisualObj* self)
     if (self->unk50->state >= 3) {
         self->state = 2;
     }
-    func_80015DC8(self);
+    animate_object(self);
     is_on_screen(self);
 }
 
@@ -61,13 +61,13 @@ void sigma_cloak_piece_blink(struct VisualObj* self)
 void sigma_fx_cloak_piece(struct VisualObj* self)
 {
     sigma_cloak_piece_funcs[self->unk5](self);
-    func_80015DC8(self);
-    func_8002B718((struct MovingObj*)self);
+    animate_object(self);
+    move_object((struct MovingObj*)self);
 }
 
 void sigma_fx_oneshot(struct VisualObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->state = 2;
     }
@@ -88,7 +88,7 @@ void sigma_fx_electric(struct VisualObj* self)
     s8 state;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     state = self->unk5;
     if (state == 0) {
         if (self->animation_step.fields.relative_step == 0) {
@@ -120,7 +120,7 @@ void sigma_fx_electric(struct VisualObj* self)
 void sigma_fx_hit_glow(struct VisualObj* self)
 {
     struct PlayerObj* temp_s0 = self->unk50;
-    func_80015DC8(self);
+    animate_object(self);
     self->x_pos.val = temp_s0->x_pos.val;
     self->y_pos.val = temp_s0->y_pos.val;
     is_on_screen(self);

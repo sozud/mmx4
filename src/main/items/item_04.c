@@ -2,7 +2,7 @@
 // 800C081C..800C0E74
 #include "common.h"
 
-struct Item04Data D_8010C8B4 = {
+struct Item04Data destructible_core_data = {
     0x0CC0,
     { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
     {
@@ -59,25 +59,26 @@ struct Item04Data D_8010C8B4 = {
     },
 };
 
-u8 D_8010C8F4[4][4] = {
+u8 destructible_core_boxes[4][4] = {
     { 0xE8, 0xA8, 0x18, 0xA0 },
     { 0xE8, 0xD8, 0x18, 0x50 },
     { 0xE8, 0xD8, 0x18, 0x50 },
     { 0xE8, 0xD8, 0x18, 0x50 },
 };
 
-u8 D_8010C904[4] = { 0x0A, 0x0B, 0x0C, 0x0D };
+u8 destructible_core_debris[4] = { 0x0A, 0x0B, 0x0C, 0x0D };
 
-void func_800C081C(struct ItemObj* arg0)
+void destructible_core_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010C908[arg0->state](arg0);
+    destructible_core_state_funcs[arg0->state](arg0);
 }
 
+// destructible_core_init
 INCLUDE_ASM("main/nonmatchings/items/item_04", func_800C0864);
 
-void func_800C09C4(struct ItemObj* arg0)
+void destructible_core_main(struct ItemObj* arg0)
 {
     s32 temp_s1;
     s32 temp_v0;
@@ -88,7 +89,7 @@ void func_800C09C4(struct ItemObj* arg0)
     temp_s1 = func_8002DD04(MAIN_OBJECT(arg0));
     temp_a0 = arg0->unk5C;
     if (((temp_a0 < arg0->tail_ext.unk1.unk84.previous_value) && (temp_a0 != 0)) || (arg0->tail_ext.unk1.unk88 != 0)) {
-        func_800C0DFC(arg0);
+        destructible_core_flash_palette(arg0);
         arg0->tail_ext.unk1.unk88 ^= 1;
     }
 
@@ -111,7 +112,7 @@ void func_800C09C4(struct ItemObj* arg0)
     }
 
     if (temp_s1 < 0) {
-        func_800DABE4(D_8010C8B4.object_ids[arg0->unk2 * 0x10], 0, 0);
+        apply_tile_effect(destructible_core_data.object_ids[arg0->unk2 * 0x10], 0, 0);
         switch (arg0->unk2) {
         case 0:
             engine_obj.character_state.bytes[0] = 1;
@@ -151,7 +152,7 @@ void func_800C09C4(struct ItemObj* arg0)
     arg0->state = next_state;
 }
 
-void func_800C0C78(struct ItemObj* arg0)
+void destructible_core_destroyed(struct ItemObj* arg0)
 {
     s32 temp_v0;
     s32 var_v0;
@@ -172,30 +173,30 @@ void func_800C0C78(struct ItemObj* arg0)
             var_v0 = D_80141BD8.unk0 & 7;
         }
         if (var_v0 == 0) {
-            func_800C813C(4, D_8010C904, arg0);
+            spawn_debris(4, destructible_core_debris, arg0);
         }
         if ((D_80141BD8.unk0 & 0xF) == 0) {
             func_8001540C(
-                0, D_8010C918[get_random() & 3], (struct Unk6*)arg0);
+                0, destructible_core_explosion_sounds[get_random() & 3], (struct Unk6*)arg0);
         }
     } else {
         arg0->state++;
     }
 }
 
-void func_800C0D98(struct ItemObj* arg0)
+void destructible_core_finish(struct ItemObj* arg0)
 {
     if (arg0->unk2 == 0) {
         background_objects[0].unk1C = 0x11C0;
         background_objects[0].unk24 = 0x11C0;
     }
     if (arg0->tail_ext.unk1.unk88 != 0) {
-        func_800C0DFC(arg0);
+        destructible_core_flash_palette(arg0);
     }
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800C0DFC(struct ItemObj* arg0)
+void destructible_core_flash_palette(struct ItemObj* arg0)
 {
     s32* destination;
     s32* source;
@@ -215,11 +216,11 @@ void func_800C0DFC(struct ItemObj* arg0)
     need_palette_load |= 1;
 }
 
-void (*D_8010C908[])(struct ItemObj*) = {
+void (*destructible_core_state_funcs[])(struct ItemObj*) = {
     func_800C0864,
-    func_800C09C4,
-    func_800C0C78,
-    func_800C0D98,
+    destructible_core_main,
+    destructible_core_destroyed,
+    destructible_core_finish,
 };
 
-s32 D_8010C918[4] = { 0, 1, 2, 3 };
+s32 destructible_core_explosion_sounds[4] = { 0, 1, 2, 3 };

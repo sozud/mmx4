@@ -2,62 +2,64 @@
 // 8009FB60..8009FF10
 #include "common.h"
 
-void func_8009FB60(struct ShotObj* arg0)
+void cannon_shot_update(struct ShotObj* self)
 {
-    D_8010922C[arg0->state](arg0);
+    cannon_shot_state_funcs[self->state](self);
 }
 
+// cannon_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_30", func_8009FB9C);
 
+// cannon_shot_fly
 INCLUDE_ASM("main/nonmatchings/shots/shot_30", func_8009FD00);
 
-void func_8009FE38(struct ShotObj* arg0)
+void cannon_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009FE58(struct ShotObj* arg0)
+void cannon_shot_idle(struct ShotObj* self)
 {
 }
 
-void func_8009FE60(struct ShotObj* arg0)
+void cannon_shot_spawn_flash(struct ShotObj* self)
 {
     struct VisualObj* obj = find_free_visual_obj();
     if (obj != NULL) {
         obj->active = 0x41;
         obj->id = 0x10;
         obj->unk2 = 1;
-        obj->unk50 = (struct PlayerObj*)arg0;
-        obj->unk42 = arg0->unk42;
-        obj->animation_table = arg0->animation_table;
-        obj->unk3C = arg0->unk3C;
-        obj->unk40 = arg0->unk40;
-        obj->bg_offset = arg0->bg_offset;
+        obj->unk50 = (struct PlayerObj*)self;
+        obj->unk42 = self->unk42;
+        obj->animation_table = self->animation_table;
+        obj->unk3C = self->unk3C;
+        obj->unk40 = self->unk40;
+        obj->bg_offset = self->bg_offset;
         obj->unk16 = 3;
-        obj->unk15 = arg0->unk15;
-        obj->x_pos.val = arg0->x_pos.val;
-        obj->y_pos.val = arg0->y_pos.val;
+        obj->unk15 = self->unk15;
+        obj->x_pos.val = self->x_pos.val;
+        obj->y_pos.val = self->y_pos.val;
     }
 }
 
-void (*D_80109200[3])(struct ShotObj*) = {
+void (*cannon_missile_step_funcs[3])(struct ShotObj*) = {
     func_8009F89C,
-    func_8009F94C,
-    func_8009F9E0,
+    cannon_missile_slow,
+    cannon_missile_track,
 };
 
-u8 D_8010920C[4][4] = {
+u8 cannon_shot_boxes[4][4] = {
     { 0xF3, 0xFA, 0x17, 0x0A },
     { 0xF5, 0xFD, 0x1B, 0x0A },
     { 0xFF, 0xFF, 0x0A, 0x04 },
     { 0x02, 0x02, 0x0D, 0x04 },
 };
 
-s32 D_8010921C[4] = { -0x22000, 0x22000, -0x10000, 0x10000 };
+s32 cannon_shot_speeds[4] = { -0x22000, 0x22000, -0x10000, 0x10000 };
 
-void (*D_8010922C[])(struct ShotObj*) = {
+void (*cannon_shot_state_funcs[])(struct ShotObj*) = {
     func_8009FB9C,
     func_8009FD00,
-    func_8009FE38,
-    func_8009FE58,
+    cannon_shot_despawn,
+    cannon_shot_idle,
 };

@@ -2,10 +2,10 @@
 // 800D7734..800D7A4C
 #include "common.h"
 
-extern u8 D_8010FDEC[][4];
+extern u8 title_facet_vertex_indices[][4];
 extern union TitleScratch D_80169498;
 
-void func_800D7734(struct QuadObj* arg0)
+void title_facet_init(struct QuadObj* arg0)
 {
     u16* points;
     u16* vertex;
@@ -18,16 +18,16 @@ void func_800D7734(struct QuadObj* arg0)
     arg0->y_pos.i.hi = 0;
     arg0->active |= 0x80;
     points = &D_80169498.title.coordinates[0].u.hi;
-    vertex = &points[D_8010FDEC[arg0->unk2][0] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][0] * 4];
     arg0->unk14.i.hi = vertex[0];
     arg0->unk18.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][1] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][1] * 4];
     arg0->unk1C.i.hi = vertex[0];
     arg0->unk20.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][2] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][2] * 4];
     arg0->unk24.i.hi = vertex[0];
     arg0->unk28.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][3] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][3] * 4];
     state = arg0->state;
     x = vertex[0];
     state++;
@@ -41,22 +41,22 @@ void func_800D7734(struct QuadObj* arg0)
     arg0->on_screen = 1;
 }
 
-void func_800D784C(struct QuadObj* arg0)
+void title_facet_follow(struct QuadObj* arg0)
 {
     u16* points;
     u16* vertex;
 
     points = &D_80169498.title.coordinates[0].u.hi;
-    vertex = &points[D_8010FDEC[arg0->unk2][0] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][0] * 4];
     arg0->unk14.i.hi = vertex[0];
     arg0->unk18.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][1] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][1] * 4];
     arg0->unk1C.i.hi = vertex[0];
     arg0->unk20.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][2] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][2] * 4];
     arg0->unk24.i.hi = vertex[0];
     arg0->unk28.i.hi = vertex[2];
-    vertex = &points[D_8010FDEC[arg0->unk2][3] * 4];
+    vertex = &points[title_facet_vertex_indices[arg0->unk2][3] * 4];
     arg0->unk2C.i.hi = vertex[0];
     arg0->unk30.i.hi = vertex[2];
     if (game_info.unk6 == 0) {
@@ -66,7 +66,7 @@ void func_800D784C(struct QuadObj* arg0)
     arg0->on_screen = 1;
 }
 
-void func_800D7960(struct QuadObj* arg0)
+void title_facet_finish(struct QuadObj* arg0)
 {
     struct MiscObj* misc;
     if (--(arg0->ext.unk_ext.unk38) == 0) {
@@ -83,17 +83,17 @@ void func_800D7960(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 
-void func_800D79F0(struct QuadObj* arg0)
+void title_facet_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D7A10(struct QuadObj* arg0)
+void title_facet_update(struct QuadObj* arg0)
 {
-    D_8010FE10[arg0->state](arg0);
+    title_facet_state_funcs[arg0->state](arg0);
 }
 
-u8 D_8010FDEC[9][4] = {
+u8 title_facet_vertex_indices[9][4] = {
     { 0, 1, 5, 4 },
     { 2, 3, 6, 6 },
     { 4, 5, 15, 14 },
@@ -105,9 +105,9 @@ u8 D_8010FDEC[9][4] = {
     { 14, 17, 8, 7 },
 };
 
-void (*D_8010FE10[])(struct QuadObj*) = {
-    func_800D7734,
-    func_800D784C,
-    func_800D7960,
-    func_800D79F0,
+void (*title_facet_state_funcs[])(struct QuadObj*) = {
+    title_facet_init,
+    title_facet_follow,
+    title_facet_finish,
+    title_facet_despawn,
 };

@@ -2,9 +2,10 @@
 // 800A56E4..800A6374
 #include "common.h"
 
+// magma_fire_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A56E4);
 
-void func_800A5A04(struct ShotObj* arg0)
+void magma_fire_wave(struct ShotObj* arg0)
 {
     struct ShotObj* self = arg0;
 
@@ -14,218 +15,222 @@ void func_800A5A04(struct ShotObj* arg0)
         self->y_vel.val = -self->y_vel.val;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x100, 0x100) == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+        update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
     } else {
         self->unk5 = 0;
         self->state++;
     }
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// magma_fire_pillar_rise
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5AA4);
 
+// magma_fire_pillar_erupt
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5BA8);
 
-void func_800A5C90(struct ShotObj* arg0)
+void magma_fire_pillar_repeat(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
         return;
     }
-    if (--arg0->unk8A == 0) {
-        arg0->unk6 -= 2;
+    if (--self->unk8A == 0) {
+        self->unk6 -= 2;
         return;
     }
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->state++;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->state++;
 }
 
-void func_800A5D20(struct ShotObj* arg0)
+void magma_fire_pillar(struct ShotObj* self)
 {
-    D_80109914[arg0->unk6](arg0);
-    func_8002B318((struct BaseObj*)arg0, 0x30, 0x30);
+    magma_fire_pillar_funcs[self->unk6](self);
+    update_on_screen((struct BaseObj*)self, 0x30, 0x30);
 }
 
-void func_800A5D78(struct ShotObj* arg0)
+void magma_fire_breath_follow(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
-    func_8002D9BC(arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+    weapon = self->unk7C;
+    func_8002D9BC(self);
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
     if (weapon->unk5 != 7) {
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        arg0->state++;
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
     }
 }
 
-void func_800A5DEC(struct ShotObj* arg0)
+void magma_fire_breath_drop(struct ShotObj* self)
 {
-    func_8002D9BC(arg0);
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk50.data = 0;
-        arg0->unk6++;
-        func_80015D60(arg0, 0x20);
+    func_8002D9BC(self);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->unk70 & 8) {
+        self->unk50.data = 0;
+        self->unk6++;
+        set_animation(self, 0x20);
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
 }
 
+// magma_fire_breath_burn
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A5E60);
 
-void func_800A5F4C(struct ShotObj* arg0)
+void magma_fire_breath_rise(struct ShotObj* self)
 {
-    func_8002D9BC(arg0);
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(self);
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
-    if ((arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x78) {
-        arg0->y_vel.val = 0;
+    if ((self->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x78) {
+        self->y_vel.val = 0;
     }
 
-    if (--arg0->timer == 0) {
-        arg0->unk68 = NULL;
-        arg0->y_vel.val = FIXED(-4);
-        arg0->unk6++;
+    if (--self->timer == 0) {
+        self->unk68 = NULL;
+        self->y_vel.val = FIXED(-4);
+        self->unk6++;
     }
 
-    if (arg0->animation_step.fields.event == 1) {
-        func_8001540C(2, 6, arg0);
+    if (self->animation_step.fields.event == 1) {
+        func_8001540C(2, 6, self);
     }
-    if (arg0->animation_step.fields.event == 2) {
-        func_8001540C(2, 7, arg0);
+    if (self->animation_step.fields.event == 2) {
+        func_8001540C(2, 7, self);
     }
 
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x80);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x80);
 }
 
-void func_800A6028(struct ShotObj* arg0)
+void magma_fire_breath_exit(struct ShotObj* self)
 {
-    func_8002D9BC(arg0);
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x80);
-    if (arg0->on_screen == 0) {
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        arg0->state++;
+    func_8002D9BC(self);
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x80);
+    if (self->on_screen == 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
     }
 }
 
-void func_800A6094(struct ShotObj* arg0)
+void magma_fire_breath(struct ShotObj* self)
 {
-    D_80109920[arg0->unk6](arg0);
+    magma_fire_breath_funcs[self->unk6](self);
 }
 
+// magma_fire_spread
 INCLUDE_ASM("main/nonmatchings/shots/shot_41", func_800A60D0);
 
-void func_800A61CC(struct ShotObj* arg0)
+void magma_fire_burst(struct ShotObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        arg0->state++;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    func_8002D9BC(self);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
     }
 }
 
-void func_800A6238(struct ShotObj* arg0)
+void magma_fire_hit(struct ShotObj* self)
 {
-    func_8009216C(arg0);
+    enemy_hit_reaction(self);
 }
 
-void func_800A6258(struct ShotObj* arg0)
+void magma_fire_idle(struct ShotObj* self)
 {
 }
 
-void func_800A6260(struct ShotObj* arg0)
+void magma_fire_main(struct ShotObj* self)
 {
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        arg0->unk5 = 0;
-        arg0->state++;
-        func_800AF808(BASE_OBJECT(arg0));
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        self->unk5 = 0;
+        self->state++;
+        spawn_explosion(BASE_OBJECT(self));
     } else {
-        D_80109934[arg0->unk5](arg0);
+        magma_fire_step_funcs[self->unk5](self);
     }
 }
 
-void func_800A62D0(struct ShotObj* arg0)
+void magma_fire_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A62F0(struct ShotObj* arg0)
+void magma_fire_update(struct ShotObj* self)
 {
-    struct WeaponObj* temp_s0 = arg0->unk7C;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    CollisionRelated(arg0);
+    struct WeaponObj* temp_s0 = self->unk7C;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated(self);
     if (temp_s0->state == 2) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    D_80109950[arg0->state](arg0);
+    magma_fire_state_funcs[self->state](self);
 }
 
-u8 D_801098D0[4] = { 0xEE, 0xF3, 0x18, 0x19 };
+u8 magma_fire_wave_hit_box[4] = { 0xEE, 0xF3, 0x18, 0x19 };
 
-u8 D_801098D4[2][4] = {
+u8 magma_fire_pillar_hit_boxes[2][4] = {
     { 0xF7, 0xF2, 0x10, 0x18 },
     { 0xF7, 0xF7, 0x0F, 0x11 },
 };
 
-u8 D_801098DC[4] = { 0xF2, 0xF0, 0x1D, 0x1D };
+u8 magma_fire_breath_hit_box[4] = { 0xF2, 0xF0, 0x1D, 0x1D };
 
-u8 D_801098E0[4] = { 0xF6, 0xF6, 0x13, 0x13 };
+u8 magma_fire_ember_hit_box[4] = { 0xF6, 0xF6, 0x13, 0x13 };
 
-u8 D_801098E4[4] = { 0, 0, 0x0A, 9 };
+u8 magma_fire_ember_terrain_box[4] = { 0, 0, 0x0A, 9 };
 
-u8 D_801098E8[4] = { 0xEC, 0x85, 0x26, 0xFA };
+u8 magma_fire_column_hit_box[4] = { 0xEC, 0x85, 0x26, 0xFA };
 
-u8 D_801098EC[4] = { 0xF6, 0xF6, 0x13, 0x13 };
+u8 magma_fire_burst_hit_box[4] = { 0xF6, 0xF6, 0x13, 0x13 };
 
-u8 D_801098F0[4] = { 1, 0, 0x0A, 9 };
+u8 magma_fire_burst_terrain_box[4] = { 1, 0, 0x0A, 9 };
 
-s16 D_801098F4[8] = { 0, 8, -4, -0x0C, 4, -8, 0, 0x0C };
+s16 magma_fire_wave_offsets[8] = { 0, 8, -4, -0x0C, 4, -8, 0, 0x0C };
 
-u16 D_80109904[8] = { 0x90, 0xB0, 0x150, 0x1D0, 0xE0, 0x180, 0x1A0, 0x120 };
+u16 magma_fire_pillar_positions[8] = { 0x90, 0xB0, 0x150, 0x1D0, 0xE0, 0x180, 0x1A0, 0x120 };
 
-void (*D_80109914[3])(struct ShotObj*) = {
+void (*magma_fire_pillar_funcs[3])(struct ShotObj*) = {
     func_800A5AA4,
     func_800A5BA8,
-    func_800A5C90,
+    magma_fire_pillar_repeat,
 };
 
-void (*D_80109920[5])(struct ShotObj*) = {
-    func_800A5D78,
-    func_800A5DEC,
+void (*magma_fire_breath_funcs[5])(struct ShotObj*) = {
+    magma_fire_breath_follow,
+    magma_fire_breath_drop,
     func_800A5E60,
-    func_800A5F4C,
-    func_800A6028,
+    magma_fire_breath_rise,
+    magma_fire_breath_exit,
 };
 
-void (*D_80109934[7])(struct ShotObj*) = {
-    func_800A6238,
-    func_800A6258,
-    func_800A5A04,
-    func_800A5D20,
-    func_800A6094,
+void (*magma_fire_step_funcs[7])(struct ShotObj*) = {
+    magma_fire_hit,
+    magma_fire_idle,
+    magma_fire_wave,
+    magma_fire_pillar,
+    magma_fire_breath,
     func_800A60D0,
-    func_800A61CC,
+    magma_fire_burst,
 };
 
-void (*D_80109950[])(struct ShotObj*) = {
+void (*magma_fire_state_funcs[])(struct ShotObj*) = {
     func_800A56E4,
-    func_800A6260,
-    func_800A62D0,
+    magma_fire_main,
+    magma_fire_despawn,
 };

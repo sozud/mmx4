@@ -2,101 +2,101 @@
 // 800BAF60..800BB1F0
 #include "common.h"
 
-s16 D_8010BE8C[2] = { 0x0580, 0x0A40 };
+s16 bg_zone_controller_f_zone_bounds[2] = { 0x0580, 0x0A40 };
 
-void func_800BAF60(struct EffectObj* arg0)
+void bg_zone_controller_f_update(struct EffectObj* self)
 {
-    D_8010BE90[arg0->state](arg0);
+    bg_zone_controller_f_state_funcs[self->state](self);
 }
 
-void func_800BAF9C(struct EffectObj* arg0)
+void bg_zone_controller_f_init(struct EffectObj* self)
 {
-    arg0->unk5 = 2;
-    arg0->ext.effect_25.unk14 = 3;
-    arg0->state++;
-    func_800BAFD4(arg0);
+    self->unk5 = 2;
+    self->ext.effect_25.unk14 = 3;
+    self->state++;
+    bg_zone_controller_f_main(self);
 }
 
-void func_800BAFD4(struct EffectObj* arg0)
+void bg_zone_controller_f_main(struct EffectObj* self)
 {
-    arg0->ext.effect_25.unk15 = arg0->ext.effect_25.unk14;
-    func_800BB180(arg0);
-    D_8010BE98[arg0->unk5](arg0);
+    self->ext.effect_25.unk15 = self->ext.effect_25.unk14;
+    bg_zone_controller_f_update_zone(self);
+    bg_zone_controller_f_zone_funcs[self->unk5](self);
 }
 
-void func_800BB028(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_0(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800BB068(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_f_zone_0_enter(self);
     } else {
-        func_800BB088(arg0);
+        bg_zone_controller_f_zone_0_done(self);
     }
 }
 
-void func_800BB068(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_0_enter(struct EffectObj* self)
 {
     background_objects[0].unk2E = 0xC0;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800BB088(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_0_done(struct EffectObj* self)
 {
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
+    self->unk5 = 3;
+    self->unk6 = 0;
 }
 
-void func_800BB098(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_1(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800BB0D8(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_f_zone_1_enter(self);
     } else {
-        func_800BB0F8(arg0);
+        bg_zone_controller_f_zone_1_done(self);
     }
 }
 
-void func_800BB0D8(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_1_enter(struct EffectObj* self)
 {
     background_objects[0].unk2E = 0x80;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800BB0F8(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_1_done(struct EffectObj* self)
 {
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
+    self->unk5 = 3;
+    self->unk6 = 0;
 }
 
-void func_800BB108(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_2(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800BB148(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_f_zone_2_enter(self);
     } else {
-        func_800BB168(arg0);
+        bg_zone_controller_f_zone_2_done(self);
     }
 }
 
-void func_800BB148(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_2_enter(struct EffectObj* self)
 {
     background_objects[0].unk2E = 0xC0;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800BB168(struct EffectObj* arg0)
+void bg_zone_controller_f_zone_2_done(struct EffectObj* self)
 {
-    arg0->unk5 = 3;
-    arg0->unk6 = 0;
+    self->unk5 = 3;
+    self->unk6 = 0;
 }
 
-void func_800BB178(struct EffectObj* arg0)
+void bg_zone_controller_f_idle(struct EffectObj* self)
 {
 }
 
-void func_800BB180(struct EffectObj* arg0)
+void bg_zone_controller_f_update_zone(struct EffectObj* self)
 {
     s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
     while (1) {
-        if (player_x - D_8010BE8C[offset] < 0) {
+        if (player_x - bg_zone_controller_f_zone_bounds[offset] < 0) {
             break;
         }
         offset++;
@@ -104,21 +104,21 @@ void func_800BB180(struct EffectObj* arg0)
             break;
         }
     }
-    arg0->ext.effect_25.unk14 = offset;
-    if (offset != arg0->ext.effect_25.unk15) {
-        arg0->unk5 = offset;
-        arg0->unk6 = 0;
+    self->ext.effect_25.unk14 = offset;
+    if (offset != self->ext.effect_25.unk15) {
+        self->unk5 = offset;
+        self->unk6 = 0;
     }
 }
 
-void (*D_8010BE90[])(struct EffectObj*) = {
-    func_800BAF9C,
-    func_800BAFD4,
+void (*bg_zone_controller_f_state_funcs[])(struct EffectObj*) = {
+    bg_zone_controller_f_init,
+    bg_zone_controller_f_main,
 };
 
-void (*D_8010BE98[4])(struct EffectObj*) = {
-    func_800BB028,
-    func_800BB098,
-    func_800BB108,
-    func_800BB178,
+void (*bg_zone_controller_f_zone_funcs[4])(struct EffectObj*) = {
+    bg_zone_controller_f_zone_0,
+    bg_zone_controller_f_zone_1,
+    bg_zone_controller_f_zone_2,
+    bg_zone_controller_f_idle,
 };

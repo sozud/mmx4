@@ -2,7 +2,7 @@
 // 80092F08..80093CBC
 #include "common.h"
 
-void func_80092F08(struct WeaponObj* self)
+void lightning_web_update(struct WeaponObj* self)
 {
     s32 should_reset;
 
@@ -20,9 +20,9 @@ void func_80092F08(struct WeaponObj* self)
         self->state = 3;
     }
 
-    D_801087D4[self->state](self);
+    lightning_web_state_funcs[self->state](self);
     if (self->unk75 != 0) {
-        func_8002E184(PLAYER_OBJECT(self));
+        collide_with_players(PLAYER_OBJECT(self));
         if (self->unk72 & 4) {
             g_Player.unk71 &= 0xB;
         }
@@ -32,7 +32,7 @@ void func_80092F08(struct WeaponObj* self)
     }
 }
 
-void func_80093014(struct WeaponObj* arg0)
+void lightning_web_init(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s32* player_gfx;
@@ -44,7 +44,7 @@ void func_80093014(struct WeaponObj* arg0)
     arg0->on_screen = 1;
     arg0->unk64 = 1;
     player_gfx = SP_PLAYER_GFX;
-    arg0->unk50 = (const u8*)D_801087E8;
+    arg0->unk50 = (const u8*)lightning_web_shot_box;
     gfx_offset = player_gfx[2];
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk38 = (u8*)player_gfx + gfx_offset;
@@ -56,7 +56,7 @@ void func_80093014(struct WeaponObj* arg0)
     arg0->unk3C = (u8*)sprite_frames + frames_offset;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_1;
-    func_80092E2C((struct VisualObj*)arg0, player, arg0->id);
+    buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = FIXED(8);
     } else {
@@ -68,31 +68,31 @@ void func_80093014(struct WeaponObj* arg0)
     arg0->unk49 = 0;
     ext->lifetime = 0x69;
     ext->timer = 0x10;
-    func_80015D60(arg0, 0);
+    set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
     arg0->unk5 = 0;
     arg0->state++;
-    func_80093524(arg0);
+    lightning_web_draw(arg0);
 }
 
-void func_80093130(struct WeaponObj* arg0)
+void lightning_web_fly(struct WeaponObj* arg0)
 {
     u8 temp_v0;
 
     temp_v0 = arg0->ext.weapon_1.timer - 1;
     arg0->ext.weapon_1.timer = temp_v0;
     if (temp_v0 == 0) {
-        func_80015D60(arg0, 1);
+        set_animation(arg0, 1);
         arg0->unk16 = 3;
         arg0->state++;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B718(MOVING_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
+        move_object(MOVING_OBJECT(arg0));
     }
-    func_80093524(arg0);
+    lightning_web_draw(arg0);
 }
 
-void func_800931A8(struct WeaponObj* arg0)
+void lightning_web_main(struct WeaponObj* arg0)
 {
     s32 expired;
     u8 timer;
@@ -105,11 +105,11 @@ void func_800931A8(struct WeaponObj* arg0)
             expired = 1;
         }
         if (expired != 0) {
-            func_80093260(arg0);
+            lightning_web_start_vanish(arg0);
         } else {
-            D_801087EC[arg0->unk5](arg0);
+            lightning_web_step_funcs[arg0->unk5](arg0);
         }
-        func_80093524(arg0);
+        lightning_web_draw(arg0);
     } else {
         arg0->on_screen = 0;
         arg0->state = 3;
@@ -118,34 +118,34 @@ void func_800931A8(struct WeaponObj* arg0)
     }
 }
 
-void func_80093260(struct WeaponObj* arg0)
+void lightning_web_start_vanish(struct WeaponObj* arg0)
 {
-    func_80015D60(arg0, 3);
+    set_animation(arg0, 3);
     arg0->unk50 = 0;
     arg0->unk75 = 0;
     arg0->state = 4;
     arg0->unk5 = 0;
 }
 
-void func_800932A0(struct WeaponObj* arg0)
+void lightning_web_spread(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 2);
-        arg0->unk50 = (const u8*)D_801087FC;
-        arg0->unk68 = D_80108800;
+        set_animation(arg0, 2);
+        arg0->unk50 = (const u8*)lightning_web_net_box;
+        arg0->unk68 = lightning_web_terrain_box;
         arg0->ext.weapon_1.unk90 = 0;
         arg0->unk75 = 1;
         arg0->unk5++;
     }
 }
 
-void func_80093310(struct WeaponObj* arg0)
+void lightning_web_hang(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_800933A0(arg0, &arg0->ext.weapon_1.lifetime);
+    animate_object(ANIMATED_OBJECT(arg0));
+    lightning_web_buzz_sound(arg0, &arg0->ext.weapon_1.lifetime);
     if ((arg0->unk76 != 0) && ((arg0->unk72 & 3) != 0)) {
-        func_80015D60(arg0, 4);
+        set_animation(arg0, 4);
         if (arg0->unk72 & 1) {
             arg0->unk15 = 0x40;
         } else {
@@ -155,7 +155,7 @@ void func_80093310(struct WeaponObj* arg0)
     }
 }
 
-void func_800933A0(struct WeaponObj* arg0, u8* arg1)
+void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
 {
     if (arg1[4] == 0) {
         arg1[4] = 0xA;
@@ -165,24 +165,24 @@ void func_800933A0(struct WeaponObj* arg0, u8* arg1)
     arg1[4]--;
 }
 
-void func_800933EC(struct WeaponObj* arg0)
+void lightning_web_stuck(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->unk76 == 0) {
-        func_80015D60(arg0, 5);
+        set_animation(arg0, 5);
         arg0->unk5++;
     }
 }
 
-void func_8009343C(struct WeaponObj* arg0)
+void lightning_web_release(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
-        func_80093260(arg0);
+        lightning_web_start_vanish(arg0);
     }
 }
 
-void func_8009347C(struct WeaponObj* arg0)
+void lightning_web_despawn(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     arg0->unk75 = 0;
@@ -193,26 +193,26 @@ void func_8009347C(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800934D8(struct WeaponObj* arg0)
+void lightning_web_vanish(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->on_screen = 0;
         arg0->state = 3;
     } else {
-        func_80093524(arg0);
+        lightning_web_draw(arg0);
     }
 }
 
-void func_80093524(struct WeaponObj* arg0)
+void lightning_web_draw(struct WeaponObj* arg0)
 {
     decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
-    func_8002B318(BASE_OBJECT(arg0), 0x18, 0x28);
+    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x28);
 }
 
 // WeaponObj, weapon_object_update_funcs[10]
 
-void func_80093564(struct WeaponObj* arg0)
+void lightning_web_charged_update(struct WeaponObj* arg0)
 {
     s32 disabled;
 
@@ -227,13 +227,13 @@ void func_80093564(struct WeaponObj* arg0)
         arg0->state = 3;
     }
     if (arg0->unk2 == 0) {
-        D_80108804[arg0->state](arg0);
+        lightning_web_charged_state_funcs[arg0->state](arg0);
     } else {
-        D_80108818[arg0->state](arg0);
+        lightning_web_charged_part_state_funcs[arg0->state](arg0);
     }
 }
 
-void func_80093610(struct WeaponObj* arg0)
+void lightning_web_charged_init(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s32* player_gfx;
@@ -245,7 +245,7 @@ void func_80093610(struct WeaponObj* arg0)
     arg0->on_screen = 1;
     arg0->unk64 = 1;
     player_gfx = SP_PLAYER_GFX;
-    arg0->unk50 = (const u8*)D_801087C8;
+    arg0->unk50 = (const u8*)lightning_web_charged_shot_box;
     gfx_offset = player_gfx[2];
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk38 = (u8*)player_gfx + gfx_offset;
@@ -257,7 +257,7 @@ void func_80093610(struct WeaponObj* arg0)
     arg0->unk3C = (u8*)sprite_frames + frames_offset;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_10;
-    func_80092E2C((struct VisualObj*)arg0, player, arg0->id);
+    buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
     if (arg0->unk15 != 0) {
         arg0->x_vel.val = FIXED(8);
     } else {
@@ -269,38 +269,38 @@ void func_80093610(struct WeaponObj* arg0)
     arg0->unk2C = 0;
     ext->timer = 0x10;
     ext->unk8F = 0;
-    func_80015D60(arg0, 0);
+    set_animation(arg0, 0);
     func_8001540C(1, 8, arg0);
     arg0->unk5 = 0;
     arg0->state++;
-    func_80093C54(arg0);
+    lightning_web_charged_draw(arg0);
 }
 
-void func_8009372C(struct WeaponObj* arg0)
+void lightning_web_charged_main(struct WeaponObj* arg0)
 {
-    D_8010882C[arg0->unk5](arg0);
-    func_80093C54(arg0);
+    lightning_web_charged_step_funcs[arg0->unk5](arg0);
+    lightning_web_charged_draw(arg0);
 }
 
-void func_8009377C(struct WeaponObj* arg0)
+void lightning_web_charged_fly(struct WeaponObj* arg0)
 {
     if (arg0->ext.weapon_10.timer == 0) {
-        func_80015D60(arg0, 6);
+        set_animation(arg0, 6);
         arg0->unk15 = 0;
         arg0->unk5++;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     arg0->ext.weapon_10.timer--;
 }
 
-void func_800937EC(struct WeaponObj* arg0)
+void lightning_web_charged_spread(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 7);
-        arg0->unk50 = (const u8*)D_801087CC;
+        set_animation(arg0, 7);
+        arg0->unk50 = (const u8*)lightning_web_charged_net_box;
         arg0->unk64 = 2;
         arg0->ext.weapon_10.timer = 0x3C;
         arg0->ext.weapon_10.unk90 = 0;
@@ -308,12 +308,12 @@ void func_800937EC(struct WeaponObj* arg0)
     }
 }
 
-void func_80093858(struct WeaponObj* arg0)
+void lightning_web_charged_hold(struct WeaponObj* arg0)
 {
     u8 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_800933A0(arg0, &arg0->ext.weapon_10.timer);
+    animate_object(ANIMATED_OBJECT(arg0));
+    lightning_web_buzz_sound(arg0, &arg0->ext.weapon_10.timer);
     temp_v0 = arg0->ext.weapon_10.timer;
     if (temp_v0 == 0) {
         temp_v0 = 0x98;
@@ -325,25 +325,26 @@ void func_80093858(struct WeaponObj* arg0)
     }
 }
 
-void func_800938C0(struct WeaponObj* arg0)
+void lightning_web_charged_fade(struct WeaponObj* arg0)
 {
     u8* timer_ptr;
 
     timer_ptr = &arg0->ext.weapon_10.timer;
     if (arg0->ext.weapon_10.timer == 0) {
-        func_80015D60(arg0, 8);
+        set_animation(arg0, 8);
         arg0->unk50 = 0;
         arg0->state = 4;
     } else {
         arg0->ext.weapon_10.timer--;
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_800933A0(arg0, timer_ptr);
+        animate_object(ANIMATED_OBJECT(arg0));
+        lightning_web_buzz_sound(arg0, timer_ptr);
     }
 }
 
+// lightning_web_charged_part_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01", func_80093930);
 
-void func_800939F4(struct WeaponObj* arg0)
+void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner;
     u8 state;
@@ -359,31 +360,31 @@ void func_800939F4(struct WeaponObj* arg0)
         arg0->state = state;
         arg0->unk5 = 0;
         arg0->y_pos.val = y;
-        func_80093C54(arg0);
+        lightning_web_charged_draw(arg0);
     }
 }
 
-void func_80093A5C(struct WeaponObj* arg0)
+void lightning_web_charged_part_main(struct WeaponObj* arg0)
 {
-    D_8010883C[arg0->unk5](arg0);
-    func_80093C54(arg0);
+    lightning_web_charged_part_step_funcs[arg0->unk5](arg0);
+    lightning_web_charged_draw(arg0);
 }
 
-void func_80093AAC(struct WeaponObj* arg0)
+void lightning_web_charged_part_fly(struct WeaponObj* arg0)
 {
     u8* timer;
     u8 temp_v0;
 
     timer = &arg0->ext.weapon_10.timer;
     if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 7);
+        set_animation(arg0, 7);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     }
 
     temp_v0 = *timer;
     if (temp_v0 == 0) {
-        arg0->unk50 = (const u8*)D_801087D0;
+        arg0->unk50 = (const u8*)lightning_web_charged_part_box;
         arg0->unk64 = 1;
         *timer = 0x78;
         arg0->unk5++;
@@ -391,14 +392,14 @@ void func_80093AAC(struct WeaponObj* arg0)
     }
 
     *timer = temp_v0 - 1;
-    func_8002B718(MOVING_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
 }
 
-void func_80093B4C(struct WeaponObj* arg0)
+void lightning_web_charged_part_hold(struct WeaponObj* arg0)
 {
     u8 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     temp_v0 = arg0->ext.weapon_10.timer;
     if (temp_v0 == 0) {
         arg0->unk64 = 2;
@@ -409,34 +410,34 @@ void func_80093B4C(struct WeaponObj* arg0)
     arg0->ext.weapon_10.timer = temp_v0 - 1;
 }
 
-void func_80093BA8(struct WeaponObj* arg0)
+void lightning_web_charged_part_drift(struct WeaponObj* arg0)
 {
     u8 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     timer = arg0->ext.weapon_10.timer;
     if (timer == 0) {
-        func_80015D60(arg0, 8);
+        set_animation(arg0, 8);
         arg0->unk50 = 0;
         arg0->state = 4;
     } else {
         arg0->ext.weapon_10.timer = timer - 1;
-        func_8002B718(MOVING_OBJECT(arg0));
+        move_object(MOVING_OBJECT(arg0));
     }
 }
 
-void func_80093C08(struct WeaponObj* arg0)
+void lightning_web_charged_vanish(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->on_screen = 0;
         arg0->state = 3;
     } else {
-        func_80093C54(arg0);
+        lightning_web_charged_draw(arg0);
     }
 }
 
-void func_80093C54(struct WeaponObj* arg0)
+void lightning_web_charged_draw(struct WeaponObj* arg0)
 {
     if (arg0->unk2 == 0) {
         decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x30);
@@ -444,73 +445,73 @@ void func_80093C54(struct WeaponObj* arg0)
     if (arg0->unk2 == 1) {
         decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x40);
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x28, 0x28);
+    update_on_screen(BASE_OBJECT(arg0), 0x28, 0x28);
 }
 
-struct Unk_unk68 D_801087C8[] = {
+struct Unk_unk68 lightning_web_charged_shot_box[] = {
     { -8, -8, 0xE, 0xE },
 };
 
-struct Unk_unk68 D_801087CC[] = {
+struct Unk_unk68 lightning_web_charged_net_box[] = {
     { -22, -22, 0x2C, 0x2C },
 };
 
-struct Unk_unk68 D_801087D0[] = {
+struct Unk_unk68 lightning_web_charged_part_box[] = {
     { -22, -22, 0x2C, 0x2C },
 };
 
-void (*D_801087D4[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80093014,
-    (void (*)(struct WeaponObj*))func_80093130,
-    (void (*)(struct WeaponObj*))func_800931A8,
-    (void (*)(struct WeaponObj*))func_8009347C,
-    (void (*)(struct WeaponObj*))func_800934D8,
+void (*lightning_web_state_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))lightning_web_init,
+    (void (*)(struct WeaponObj*))lightning_web_fly,
+    (void (*)(struct WeaponObj*))lightning_web_main,
+    (void (*)(struct WeaponObj*))lightning_web_despawn,
+    (void (*)(struct WeaponObj*))lightning_web_vanish,
 };
 
-struct Unk_unk68 D_801087E8[] = {
+struct Unk_unk68 lightning_web_shot_box[] = {
     { -8, -8, 0xE, 0xE },
 };
 
-void (*D_801087EC[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_800932A0,
-    func_80093310,
-    (void (*)(struct WeaponObj*))func_800933EC,
-    (void (*)(struct WeaponObj*))func_8009343C,
+void (*lightning_web_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))lightning_web_spread,
+    lightning_web_hang,
+    (void (*)(struct WeaponObj*))lightning_web_stuck,
+    (void (*)(struct WeaponObj*))lightning_web_release,
 };
 
-struct Unk_unk68 D_801087FC[] = {
+struct Unk_unk68 lightning_web_net_box[] = {
     { -12, -22, 0x18, 0x2A },
 };
 
-struct Unk_unk68 D_80108800[] = {
+struct Unk_unk68 lightning_web_terrain_box[] = {
     { 0, 0, 8, 0x16 },
 };
 
-void (*D_80108804[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80093610,
-    (void (*)(struct WeaponObj*))func_8009372C,
-    (void (*)(struct WeaponObj*))func_8009347C,
-    (void (*)(struct WeaponObj*))func_8009347C,
-    (void (*)(struct WeaponObj*))func_80093C08,
+void (*lightning_web_charged_state_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))lightning_web_charged_init,
+    (void (*)(struct WeaponObj*))lightning_web_charged_main,
+    (void (*)(struct WeaponObj*))lightning_web_despawn,
+    (void (*)(struct WeaponObj*))lightning_web_despawn,
+    (void (*)(struct WeaponObj*))lightning_web_charged_vanish,
 };
 
-void (*D_80108818[])(struct WeaponObj*) = {
+void (*lightning_web_charged_part_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_80093930,
-    (void (*)(struct WeaponObj*))func_800939F4,
-    (void (*)(struct WeaponObj*))func_80093A5C,
-    (void (*)(struct WeaponObj*))func_8009347C,
-    (void (*)(struct WeaponObj*))func_80093C08,
+    (void (*)(struct WeaponObj*))lightning_web_charged_part_wait,
+    (void (*)(struct WeaponObj*))lightning_web_charged_part_main,
+    (void (*)(struct WeaponObj*))lightning_web_despawn,
+    (void (*)(struct WeaponObj*))lightning_web_charged_vanish,
 };
 
-void (*D_8010882C[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_8009377C,
-    (void (*)(struct WeaponObj*))func_800937EC,
-    (void (*)(struct WeaponObj*))func_80093858,
-    (void (*)(struct WeaponObj*))func_800938C0,
+void (*lightning_web_charged_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))lightning_web_charged_fly,
+    (void (*)(struct WeaponObj*))lightning_web_charged_spread,
+    (void (*)(struct WeaponObj*))lightning_web_charged_hold,
+    (void (*)(struct WeaponObj*))lightning_web_charged_fade,
 };
 
-void (*D_8010883C[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80093AAC,
-    (void (*)(struct WeaponObj*))func_80093B4C,
-    (void (*)(struct WeaponObj*))func_80093BA8,
+void (*lightning_web_charged_part_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))lightning_web_charged_part_fly,
+    (void (*)(struct WeaponObj*))lightning_web_charged_part_hold,
+    (void (*)(struct WeaponObj*))lightning_web_charged_part_drift,
 };

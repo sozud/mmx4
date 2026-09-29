@@ -2,12 +2,12 @@
 // 8009C364..8009C5F0
 #include "common.h"
 
-void func_8009C364(struct ShotObj* arg0)
+void linked_spark_update(struct ShotObj* self)
 {
-    D_80108F54[arg0->state](arg0);
+    linked_spark_state_funcs[self->state](self);
 }
 
-void func_8009C3A0(struct ShotObj* rawArg0)
+void linked_spark_init(struct ShotObj* rawArg0)
 {
     struct ShotObj* arg0 = rawArg0;
     s32 value;
@@ -40,25 +40,26 @@ void func_8009C3A0(struct ShotObj* rawArg0)
         break;
     }
 
-    func_80015D60(arg0, arg0->unk84.value);
+    set_animation(arg0, arg0->unk84.value);
 }
 
+// linked_spark_main
 INCLUDE_ASM("main/nonmatchings/shots/shot_16", func_8009C45C);
 
-void func_8009C588(struct ShotObj* arg0)
+void linked_spark_despawn(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
+    weapon = self->unk7C;
     if ((weapon->active != 0) && (weapon->id == 0x1D) && (weapon->unk2 >= 0)) {
         weapon->ext.weapon_29.unk90 = 0;
         weapon->unk80.bytes[1] &= 0xFE;
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108F54[])(struct ShotObj*) = {
-    func_8009C3A0,
+void (*linked_spark_state_funcs[])(struct ShotObj*) = {
+    linked_spark_init,
     func_8009C45C,
-    func_8009C588,
+    linked_spark_despawn,
 };

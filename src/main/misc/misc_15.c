@@ -2,9 +2,10 @@
 // 800CA86C..800CAC18
 #include "common.h"
 
+// vent_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_15", func_800CA86C);
 
-void func_800CA954(struct MiscObj* self)
+void vent_animate(struct MiscObj* self)
 {
     u8 value;
 
@@ -16,16 +17,16 @@ void func_800CA954(struct MiscObj* self)
             return;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA9B0(struct MiscObj* arg0)
+void vent_update(struct MiscObj* self)
 {
-    D_8010E678[arg0->state](arg0);
+    vent_state_funcs[self->state](self);
 }
 
-void func_800CA9EC(struct MiscObj* arg0, u8 count)
+void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
     u32 i;
@@ -38,8 +39,8 @@ void func_800CA9EC(struct MiscObj* arg0, u8 count)
         }
         slot->active = 0x41;
         slot->id = 0x10;
-        slot->x_pos.val = arg0->x_pos.val;
-        slot->y_pos.val = arg0->y_pos.val;
+        slot->x_pos.val = self->x_pos.val;
+        slot->y_pos.val = self->y_pos.val;
         slot->x_pos.i.hi += get_random() & 0x1F;
         slot->ext.misc_15.unk54 = (get_random() & 7) + (i << 3);
         slot->unk2 = get_random() & 1;
@@ -48,17 +49,17 @@ void func_800CA9EC(struct MiscObj* arg0, u8 count)
         } else {
             slot->unk2 = 1;
         }
-        slot->animation_table = arg0->animation_table;
-        slot->unk40 = arg0->unk40;
-        slot->unk3C = arg0->unk3C;
-        t = arg0->unk42;
+        slot->animation_table = self->animation_table;
+        slot->unk40 = self->unk40;
+        slot->unk3C = self->unk3C;
+        t = self->unk42;
         slot->unk16 = 3;
         slot->unk42 = t & 0x7FFF;
-        slot->unk15 = arg0->unk15;
+        slot->unk15 = self->unk15;
     }
 }
 
-void func_800CAB10(struct MiscObj* arg0, u8 count)
+void vent_spawn_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
     u32 i;
@@ -71,37 +72,37 @@ void func_800CAB10(struct MiscObj* arg0, u8 count)
         }
         slot->active = 0x41;
         slot->id = 0x10;
-        slot->x_pos.val = arg0->x_pos.val;
-        slot->y_pos.val = arg0->y_pos.val;
+        slot->x_pos.val = self->x_pos.val;
+        slot->y_pos.val = self->y_pos.val;
         slot->x_pos.i.hi += get_random() & 0x1F;
         slot->ext.misc_15.unk54 = (get_random() & 7) + (i << 3);
         slot->unk2 = 1;
-        slot->animation_table = arg0->animation_table;
-        slot->unk40 = arg0->unk40;
-        slot->unk3C = arg0->unk3C;
-        t = arg0->unk42;
+        slot->animation_table = self->animation_table;
+        slot->unk40 = self->unk40;
+        slot->unk3C = self->unk3C;
+        t = self->unk42;
         slot->unk16 = 3;
         slot->unk42 = t & 0x7FFF;
-        slot->unk15 = arg0->unk15;
+        slot->unk15 = self->unk15;
     }
 }
 
-union AnimationStep D_8010E654[4] = {
+union AnimationStep vent_anim_0[4] = {
     { .packed = 0x00010006 },
     { .packed = 0x01010006 },
     { .packed = 0x02010005 },
     { .packed = 0x02FD0001 },
 };
 
-union AnimationStep D_8010E664[3] = {
+union AnimationStep vent_anim_1[3] = {
     { .packed = 0x03000001 },
     { .packed = 0x05000001 },
     { .packed = 0x04000001 },
 };
 
-union AnimationStep* D_8010E670[2] = { D_8010E654, D_8010E664 };
+union AnimationStep* vent_animations[2] = { vent_anim_0, vent_anim_1 };
 
-void (*D_8010E678[2])(struct MiscObj*) = {
+void (*vent_state_funcs[2])(struct MiscObj*) = {
     func_800CA86C,
-    func_800CA954,
+    vent_animate,
 };

@@ -2,30 +2,30 @@
 // 800B2D48..800B2E98
 #include "common.h"
 
-void func_800B2D48(struct VisualObj* arg0)
+void web_flash_update(struct VisualObj* arg0)
 {
-    D_8010A5B0[arg0->state](arg0);
+    web_flash_state_funcs[arg0->state](arg0);
 }
 
-void func_800B2D84(struct VisualObj* arg0)
+void web_flash_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk16 = 4;
     if (arg0->unk2 == 0) {
-        func_80015D60(arg0, 0x11);
+        set_animation(arg0, 0x11);
     } else {
         arg0->unk54 = 0;
-        func_80015D60(arg0, 0x15);
+        set_animation(arg0, 0x15);
     }
 }
 
-void func_800B2DD0(struct VisualObj* arg0)
+void web_flash_main(struct VisualObj* arg0)
 {
     struct ShotObj* temp_v1;
     struct WeaponObj* temp_a0;
 
-    func_80015DC8(arg0);
+    animate_object(arg0);
     if (arg0->unk2 == 0) {
         temp_v1 = (struct ShotObj*)arg0->unk50;
         temp_a0 = temp_v1->unk7C;
@@ -46,7 +46,7 @@ void func_800B2DD0(struct VisualObj* arg0)
     }
 }
 
-void (*D_8010A5B0[])(struct VisualObj*) = {
-    func_800B2D84,
-    func_800B2DD0,
+void (*web_flash_state_funcs[])(struct VisualObj*) = {
+    web_flash_init,
+    web_flash_main,
 };

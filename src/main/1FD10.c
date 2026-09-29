@@ -130,7 +130,7 @@ void func_8002F92C(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
     if (--arg0->unk4 != 0) {
-        if (!(func_8002B780() & 1)) {
+        if (!(get_random_nonzero() & 1)) {
             obj = (struct BaseObj*)find_free_quad_obj();
             if (obj != NULL) {
                 obj->active = 1;

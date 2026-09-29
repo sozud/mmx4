@@ -2,14 +2,14 @@
 // 800C1390..800C16F0
 #include "common.h"
 
-void func_800C1390(struct ItemObj* arg0)
+void gate_core_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010CAA8[arg0->state](arg0);
+    gate_core_state_funcs[arg0->state](arg0);
 }
 
-void func_800C13D8(struct ItemObj* arg0)
+void gate_core_init(struct ItemObj* arg0)
 {
     u8 bg_offset;
     s32* archive;
@@ -23,8 +23,8 @@ void func_800C13D8(struct ItemObj* arg0)
     arg0->unk15 = 0;
     arg0->unk61 = 0;
     arg0->bg_offset = bg_offset;
-    arg0->unk68 = (struct Unk_unk68*)D_8010CACC[arg0->unk2];
-    arg0->unk54 = D_8010CAD4[arg0->unk2];
+    arg0->unk68 = (struct Unk_unk68*)gate_core_terrain_boxes[arg0->unk2];
+    arg0->unk54 = gate_core_hurt_boxes[arg0->unk2];
     arg0->unk58 = (u8*)D_80108504;
     arg0->x_vel.val = 0;
     arg0->y_vel.val = 0;
@@ -40,23 +40,23 @@ void func_800C13D8(struct ItemObj* arg0)
     } else {
         arg0->unk42 = 0x7946;
     }
-    arg0->animation_table = (const u8* const*)D_8010CAF4;
+    arg0->animation_table = (const u8* const*)gate_core_animations;
     arg0->state = (u8)arg0->state + 1;
 }
 
-void func_800C14F0(struct ItemObj* arg0)
+void gate_core_main(struct ItemObj* arg0)
 {
     s32 collision;
     u16 flags;
 
     is_on_screen(BASE_OBJECT(arg0));
-    func_8002E184(arg0);
+    collide_with_players(arg0);
     collision = func_8002DD04(MAIN_OBJECT(arg0));
     if (collision < 0) {
         engine_obj.character_state.fields.active = 1;
         arg0->on_screen = 0;
         arg0->unk7C.timer = 0x3C;
-        func_800C813C(0xB, D_8010CB08, arg0);
+        spawn_debris(0xB, gate_core_debris, arg0);
         arg0->state++;
         return;
     }
@@ -68,7 +68,7 @@ void func_800C14F0(struct ItemObj* arg0)
     arg0->unk42 = flags;
 }
 
-void func_800C1590(struct ItemObj* self)
+void gate_core_destroyed(struct ItemObj* self)
 {
     s32 timer;
 
@@ -79,7 +79,7 @@ void func_800C1590(struct ItemObj* self)
             func_800AF878(BASE_OBJECT(self), 1, 0x1F, 0x3F);
         }
         if (!(D_80141BD8.unk0 & 0xF)) {
-            func_8001540C(0, D_8010CB14[get_random() & 3][0], self);
+            func_8001540C(0, gate_core_explosion_sounds[get_random() & 3][0], self);
         }
     } else {
         engine_obj.enable_boss = 0;
@@ -88,26 +88,26 @@ void func_800C1590(struct ItemObj* self)
     }
 }
 
-void func_800C165C(struct ItemObj* arg0)
+void gate_core_exit(struct ItemObj* arg0)
 {
     player_start_script_action(0x15, 0x40);
     arg0->state++;
 }
 
-void func_800C169C(struct ItemObj* arg0)
+void gate_core_wait_exit(struct ItemObj* arg0)
 {
-    if (D_8010CB24[arg0->unk2] < g_Player.x_pos.i.hi) {
+    if (gate_core_exit_x[arg0->unk2] < g_Player.x_pos.i.hi) {
         engine_obj.unkF = 0x40;
-        func_8002B108(OBJECT_HEADER(arg0));
+        despawn_object_permanently(OBJECT_HEADER(arg0));
     }
 }
 
-void (*D_8010CAA8[])(struct ItemObj*) = {
-    func_800C13D8,
-    func_800C14F0,
-    func_800C1590,
-    func_800C165C,
-    func_800C169C,
+void (*gate_core_state_funcs[])(struct ItemObj*) = {
+    gate_core_init,
+    gate_core_main,
+    gate_core_destroyed,
+    gate_core_exit,
+    gate_core_wait_exit,
 };
 
 struct Item06AnimationStep {
@@ -117,15 +117,15 @@ struct Item06AnimationStep {
     u8 command;
 };
 
-u8 D_8010CABC[2][8] = {
+u8 gate_core_box_data[2][8] = {
     { 0x08, 0x00, 0x08, 0x38, 0x00, 0xC8, 0x08, 0x70 },
     { 0xF8, 0x00, 0x08, 0x38, 0x00, 0xC8, 0x08, 0x70 },
 };
 
-u8* D_8010CACC[2] = { D_8010CABC[0], D_8010CABC[1] };
-u8* D_8010CAD4[2] = { &D_8010CABC[0][4], &D_8010CABC[1][4] };
+u8* gate_core_terrain_boxes[2] = { gate_core_box_data[0], gate_core_box_data[1] };
+u8* gate_core_hurt_boxes[2] = { &gate_core_box_data[0][4], &gate_core_box_data[1][4] };
 
-struct Item06AnimationStep D_8010CADC[6] = {
+struct Item06AnimationStep gate_core_anim_steps[6] = {
     { 1, 0, 0, 0 },
     { 1, 0, 0, 1 },
     { 1, 0, 0, 2 },
@@ -134,25 +134,25 @@ struct Item06AnimationStep D_8010CADC[6] = {
     { 1, 0, 0, 5 },
 };
 
-struct Item06AnimationStep* D_8010CAF4[5] = {
-    &D_8010CADC[1],
-    &D_8010CADC[2],
-    &D_8010CADC[3],
-    &D_8010CADC[4],
-    &D_8010CADC[5],
+struct Item06AnimationStep* gate_core_animations[5] = {
+    &gate_core_anim_steps[1],
+    &gate_core_anim_steps[2],
+    &gate_core_anim_steps[3],
+    &gate_core_anim_steps[4],
+    &gate_core_anim_steps[5],
 };
 
-u8 D_8010CB08[3][4] = {
+u8 gate_core_debris[3][4] = {
     { 0, 1, 4, 3 },
     { 4, 2, 3, 2 },
     { 2, 3, 4, 0 },
 };
 
-u8 D_8010CB14[4][4] = { { 0 }, { 1 }, { 2 }, { 3 } };
-s16 D_8010CB24[2] = { 0x18C0, 0x18E8 };
-u16 D_8010CB28[2] = { 0x1028, 0x1028 };
+u8 gate_core_explosion_sounds[4][4] = { { 0 }, { 1 }, { 2 }, { 3 } };
+s16 gate_core_exit_x[2] = { 0x18C0, 0x18E8 };
+u16 rising_platform_start_y[2] = { 0x1028, 0x1028 };
 
-struct Item06AnimationStep D_8010CB2C[5] = {
+struct Item06AnimationStep rising_platform_anim_steps[5] = {
     { 1, 0, 0, 0 },
     { 1, 0, 0, 1 },
     { 1, 0, 0, 2 },
@@ -160,15 +160,15 @@ struct Item06AnimationStep D_8010CB2C[5] = {
     { 1, 0, 0, 4 },
 };
 
-struct Item06AnimationStep* D_8010CB40[5] = {
-    &D_8010CB2C[0],
-    &D_8010CB2C[1],
-    &D_8010CB2C[2],
-    &D_8010CB2C[3],
-    &D_8010CB2C[4],
+struct Item06AnimationStep* rising_platform_animations[5] = {
+    &rising_platform_anim_steps[0],
+    &rising_platform_anim_steps[1],
+    &rising_platform_anim_steps[2],
+    &rising_platform_anim_steps[3],
+    &rising_platform_anim_steps[4],
 };
 
-u8 D_8010CB54[2][4] = {
+u8 rising_platform_debris[2][4] = {
     { 1, 4, 3, 2 },
     { 3, 1, 2, 4 },
 };

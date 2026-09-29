@@ -3,12 +3,12 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80059C48(struct MainObj* arg0)
+void spawner_pod_update(struct MainObj* self)
 {
-    D_800FD5E8[arg0->state](arg0);
+    spawner_pod_state_funcs[self->state](self);
 }
 
-void func_80059C84(struct MainObj* arg0)
+void spawner_pod_init(struct MainObj* arg0)
 {
     volatile struct MainObj* self = arg0;
     s32 value8 = self->x_pos.val;
@@ -22,100 +22,102 @@ void func_80059C84(struct MainObj* arg0)
     self->on_screen = tableIndex;
     tableIndex = ((volatile u8*)self)[2];
     self->unk5 = 2;
-    self->unk5C = 3;
-    self->unk60 = 3;
-    self->animation_table = (const u8* const*)D_800FD554;
+    self->hp = 3;
+    self->contact_damage = 3;
+    self->animation_table = (const u8* const*)spawner_pod_animations;
     self->collision_data = D_80107074;
     self->unk16 = 5;
     valueE = self->y_pos.i.hi;
     self->unk6 = 0;
     self->unk7C = 0;
-    self->unk61 = 0;
+    self->invincibility_timer = 0;
     self->ext.main_28.unk85 = 0;
-    self->unk54 = 0;
-    self->unk50 = 0;
-    self->unk68 = 0;
-    self->unk67 = 0;
-    self->unk20 = 0;
-    self->unk24 = 0;
-    self->unk28 = 0;
-    self->unk2C = 0;
+    self->hurt_box = 0;
+    self->attack_box = 0;
+    self->terrain_box = 0;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
     tableIndex = (tableIndex << 1) & 0xFF;
     self->unk18.val = value8;
     self->unk1C.val = valueC;
     self->ext.main_28.unk86 = high8;
     self->ext.main_28.unk88 = valueE;
-    self->ext.main_28.unk84 = ((u8*)D_800FD5FC)[tableIndex];
-    self->unk15 = ((u8*)D_800FD5FC)[tableIndex + 1];
-    func_80015D60(arg0, arg0->ext.main_28.unk84);
+    self->ext.main_28.unk84 = ((u8*)spawner_pod_init_data)[tableIndex];
+    self->unk15 = ((u8*)spawner_pod_init_data)[tableIndex + 1];
+    set_animation(arg0, arg0->ext.main_28.unk84);
 }
 
-void func_80059D6C(struct MainObj* arg0)
+void spawner_pod_main(struct MainObj* self)
 {
-    struct MainObj* context = arg0->ext.main_28.context;
+    struct MainObj* context = self->ext.main_28.context;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->x_pos.val = context->x_pos.val;
-    arg0->y_pos.val = context->y_pos.val;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->x_pos.val = context->x_pos.val;
+    self->y_pos.val = context->y_pos.val;
 
-    D_800FD604[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        arg0->unk20 = 0;
-        arg0->unk24 = 0;
-        func_800C813C(2, D_800FD594, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0xC);
-        arg0->state = 2;
+    spawner_pod_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        self->x_speed = 0;
+        self->y_speed = 0;
+        spawn_debris(2, spawner_pod_debris, self);
+        drop_item(BASE_OBJECT(self), 0xC);
+        self->state = 2;
         return;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
 
-void func_80059E38(struct MainObj* arg0)
+void spawner_pod_idle(struct MainObj* self)
 {
 }
 
+// spawner_pod_step_2
 INCLUDE_ASM("main/nonmatchings/mains/main_28", func_80059E40);
 
+// spawner_pod_step_3
 INCLUDE_ASM("main/nonmatchings/mains/main_28", func_80059F60);
 
-void func_8005A3DC(struct MainObj* arg0)
+void spawner_pod_step_4(struct MainObj* self)
 {
 }
 
-void func_8005A3E4(struct MainObj* arg0)
+void spawner_pod_detach(struct MainObj* self)
 {
     struct MainObj* context;
 
-    context = arg0->ext.main_28.context;
-    if (context->active != 0 && context->ext.main_29.slots.children[arg0->ext.main_28.index] == arg0) {
+    context = self->ext.main_28.context;
+    if (context->active != 0 && context->ext.main_29.slots.children[self->ext.main_28.index] == self) {
         context->ext.main_29.unk94--;
-        context->ext.main_29.slots.children[arg0->ext.main_28.index] = NULL;
+        context->ext.main_29.slots.children[self->ext.main_28.index] = NULL;
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8005A460(struct MainObj* arg0)
+void spawner_pod_explode(struct MainObj* self)
 {
-    func_800AF808(BASE_OBJECT(arg0));
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    func_800C813C(2, D_800FD594, arg0);
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    spawn_explosion(BASE_OBJECT(self));
+    self->x_speed = 0;
+    self->y_speed = 0;
+    spawn_debris(2, spawner_pod_debris, self);
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8005A4AC(struct MainObj* arg0)
+void spawner_pod_remove(struct MainObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-union AnimationStep D_800FD3F4[] = {
+union AnimationStep spawner_pod_anim_0[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FD3F8[] = {
+union AnimationStep spawner_pod_anim_1[] = {
     { 0x01010003 },
     { 0x02010003 },
     { 0x00010003 },
@@ -123,7 +125,7 @@ union AnimationStep D_800FD3F8[] = {
     { 0x00000003 },
 };
 
-union AnimationStep D_800FD40C[] = {
+union AnimationStep spawner_pod_anim_2[] = {
     { 0x04010003 },
     { 0x05010003 },
     { 0x06010003 },
@@ -131,7 +133,7 @@ union AnimationStep D_800FD40C[] = {
     { 0x08FC0003 },
 };
 
-union AnimationStep D_800FD420[] = {
+union AnimationStep spawner_pod_anim_3[] = {
     { 0x00010002 },
     { 0x09010002 },
     { 0x0A010002 },
@@ -150,11 +152,11 @@ union AnimationStep D_800FD420[] = {
     { 0x09000002 },
 };
 
-union AnimationStep D_800FD460[] = {
+union AnimationStep spawner_pod_anim_8[] = {
     { 0x1F000001 },
 };
 
-union AnimationStep D_800FD464[] = {
+union AnimationStep spawner_pod_anim_9[] = {
     { 0x20010003 },
     { 0x21010003 },
     { 0x1F010003 },
@@ -162,7 +164,7 @@ union AnimationStep D_800FD464[] = {
     { 0x1F000003 },
 };
 
-union AnimationStep D_800FD478[] = {
+union AnimationStep spawner_pod_anim_10[] = {
     { 0x23010003 },
     { 0x24010003 },
     { 0x25010003 },
@@ -170,7 +172,7 @@ union AnimationStep D_800FD478[] = {
     { 0x27FC0003 },
 };
 
-union AnimationStep D_800FD48C[] = {
+union AnimationStep spawner_pod_anim_11[] = {
     { 0x1F010002 },
     { 0x28010002 },
     { 0x29010002 },
@@ -189,11 +191,11 @@ union AnimationStep D_800FD48C[] = {
     { 0x28000002 },
 };
 
-union AnimationStep D_800FD4CC[] = {
+union AnimationStep spawner_pod_anim_4[] = {
     { 0x0C000001 },
 };
 
-union AnimationStep D_800FD4D0[] = {
+union AnimationStep spawner_pod_anim_5[] = {
     { 0x0D010003 },
     { 0x0E010003 },
     { 0x0C010003 },
@@ -201,7 +203,7 @@ union AnimationStep D_800FD4D0[] = {
     { 0x0C000003 },
 };
 
-union AnimationStep D_800FD4E4[] = {
+union AnimationStep spawner_pod_anim_6[] = {
     { 0x10010003 },
     { 0x11010003 },
     { 0x12010003 },
@@ -209,7 +211,7 @@ union AnimationStep D_800FD4E4[] = {
     { 0x14FC0003 },
 };
 
-union AnimationStep D_800FD4F8[] = {
+union AnimationStep spawner_pod_anim_7[] = {
     { 0x0C010002 },
     { 0x15010002 },
     { 0x16010002 },
@@ -228,45 +230,45 @@ union AnimationStep D_800FD4F8[] = {
     { 0x15000002 },
 };
 
-union AnimationStep D_800FD538[] = {
+union AnimationStep spawner_pod_anim_12[] = {
     { 0x18010001 },
     { 0x19010001 },
     { 0x1A010001 },
     { 0x1BFD0001 },
 };
 
-union AnimationStep D_800FD548[] = {
+union AnimationStep spawner_pod_anim_13[] = {
     { 0x1C000001 },
 };
 
-union AnimationStep D_800FD54C[] = {
+union AnimationStep spawner_pod_anim_14[] = {
     { 0x1D000001 },
 };
 
-union AnimationStep D_800FD550[] = {
+union AnimationStep spawner_pod_anim_15[] = {
     { 0x1E000001 },
 };
 
-union AnimationStep* D_800FD554[] = {
-    D_800FD3F4,
-    D_800FD3F8,
-    D_800FD40C,
-    D_800FD420,
-    D_800FD4CC,
-    D_800FD4D0,
-    D_800FD4E4,
-    D_800FD4F8,
-    D_800FD460,
-    D_800FD464,
-    D_800FD478,
-    D_800FD48C,
-    D_800FD538,
-    D_800FD548,
-    D_800FD54C,
-    D_800FD550,
+union AnimationStep* spawner_pod_animations[] = {
+    spawner_pod_anim_0,
+    spawner_pod_anim_1,
+    spawner_pod_anim_2,
+    spawner_pod_anim_3,
+    spawner_pod_anim_4,
+    spawner_pod_anim_5,
+    spawner_pod_anim_6,
+    spawner_pod_anim_7,
+    spawner_pod_anim_8,
+    spawner_pod_anim_9,
+    spawner_pod_anim_10,
+    spawner_pod_anim_11,
+    spawner_pod_anim_12,
+    spawner_pod_anim_13,
+    spawner_pod_anim_14,
+    spawner_pod_anim_15,
 };
 
-u8 D_800FD594[] = {
+u8 spawner_pod_debris[] = {
     0x0D,
     0x0E,
     0x0F,
@@ -332,27 +334,27 @@ u8 D_800FD5C8[] = {
     0x14,
 };
 
-void (*D_800FD5E8[])(struct MainObj*) = {
-    func_80059C84,
-    func_80059D6C,
-    func_8005A3E4,
-    func_8005A460,
-    func_8005A4AC,
+void (*spawner_pod_state_funcs[])(struct MainObj*) = {
+    spawner_pod_init,
+    spawner_pod_main,
+    spawner_pod_detach,
+    spawner_pod_explode,
+    spawner_pod_remove,
 };
 
-struct Main28InitData D_800FD5FC[4] = {
+struct Main28InitData spawner_pod_init_data[4] = {
     { 5, 0x00 },
     { 5, 0x40 },
     { 1, 0x00 },
     { 9, 0x40 },
 };
 
-void (*D_800FD604[])(struct MainObj*) = {
-    func_8009216C,
-    func_80059E38,
+void (*spawner_pod_step_funcs[])(struct MainObj*) = {
+    enemy_hit_reaction,
+    spawner_pod_idle,
     func_80059E40,
     func_80059F60,
-    func_8005A3DC,
+    spawner_pod_step_4,
 };
 
 struct FixedPointPosition D_800FD618[4] = {

@@ -2,43 +2,43 @@
 // 800C7A68..800C7BF4
 #include "common.h"
 
-extern void (*D_8010D9EC[])(struct MiscObj*);
+extern void (*static_sprite_state_funcs[])(struct MiscObj*);
 
-void func_800C7A68(struct MiscObj* arg0)
+void static_sprite_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010D9EC[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    static_sprite_state_funcs[self->state](self);
 }
-void func_800C7AB0(struct MiscObj* arg0)
+void static_sprite_init(struct MiscObj* self)
 {
-    arg0->active = 1;
-    arg0->unk16 = 0x11;
-    arg0->unk40 = 0x1511;
-    arg0->animation_step.fields.frame_index = (u8)arg0->unk2;
+    self->active = 1;
+    self->unk16 = 0x11;
+    self->unk40 = 0x1511;
+    self->animation_step.fields.frame_index = (u8)self->unk2;
 
-    arg0->bg_offset = (u8)g_Player.bg_offset;
-    arg0->unk15 = 0;
+    self->bg_offset = (u8)g_Player.bg_offset;
+    self->unk15 = 0;
 
-    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x24 / 4];
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x24 / 4];
 
-    arg0->unk42 = 0x7904;
-    arg0->state++;
+    self->unk42 = 0x7904;
+    self->state++;
 }
-void func_800C7B0C(struct MiscObj* arg0)
+void static_sprite_main(struct MiscObj* self)
 {
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x30, 0x10);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x30, 0x10);
     } else {
-        arg0->state++;
+        self->state++;
     }
 }
-void func_800C7B60(struct MiscObj* arg0)
+void static_sprite_despawn(struct MiscObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800C7B80(struct MainObj* arg0, s8 arg1)
+void spawn_common_effect(struct MainObj* self, s8 arg1)
 {
     struct MiscObj* misc;
 
@@ -47,14 +47,14 @@ void func_800C7B80(struct MainObj* arg0, s8 arg1)
         misc->active = 0x41;
         misc->id = 1;
         misc->unk2 = arg1;
-        misc->unk15 = arg0->unk15;
-        misc->x_pos = arg0->x_pos;
-        misc->y_pos = arg0->y_pos;
+        misc->unk15 = self->unk15;
+        misc->x_pos = self->x_pos;
+        misc->y_pos = self->y_pos;
     }
 }
 
-void (*D_8010D9EC[])(struct MiscObj*) = {
-    func_800C7AB0,
-    func_800C7B0C,
-    func_800C7B60,
+void (*static_sprite_state_funcs[])(struct MiscObj*) = {
+    static_sprite_init,
+    static_sprite_main,
+    static_sprite_despawn,
 };

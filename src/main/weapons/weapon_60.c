@@ -2,16 +2,18 @@
 // 80098F4C..800992FC
 #include "common.h"
 
-void func_80098F4C(struct WeaponObj* arg0)
+void ride_armor_missile_update(struct WeaponObj* arg0)
 {
-    D_80108C00[arg0->state](arg0);
+    ride_armor_missile_state_funcs[arg0->state](arg0);
 }
 
+// ride_armor_missile_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_60", func_80098F88);
 
+// ride_armor_missile_main
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_60", func_80099118);
 
-void func_800992C4(struct WeaponObj* arg0)
+void ride_armor_missile_despawn(struct WeaponObj* arg0)
 {
     struct PlayerObj* temp_a2;
 
@@ -20,16 +22,16 @@ void func_800992C4(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-u8 D_80108BF0[4] = { 0xFC, 0xFD, 6, 5 };
+u8 ride_armor_missile_hit_box[4] = { 0xFC, 0xFD, 6, 5 };
 
-struct Weapon60SpawnOffset D_80108BF4[3] = {
+struct Weapon60SpawnOffset ride_armor_missile_offsets[3] = {
     { -0x28, 0 },
     { -0x28, 0 },
     { -0x28, 0 },
 };
 
-void (*D_80108C00[])(struct WeaponObj*) = {
+void (*ride_armor_missile_state_funcs[])(struct WeaponObj*) = {
     func_80098F88,
     func_80099118,
-    func_800992C4,
+    ride_armor_missile_despawn,
 };

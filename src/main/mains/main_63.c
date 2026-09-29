@@ -3,23 +3,26 @@
 #include "common.h"
 #include "func_tables.h"
 
+// hatch_turret_init
 INCLUDE_ASM("main/nonmatchings/mains/main_63", func_8007BFF4);
 
+// hatch_turret_spawn_shot
 INCLUDE_ASM("main/nonmatchings/mains/main_63", func_8007C090);
 
+// hatch_turret_main
 INCLUDE_ASM("main/nonmatchings/mains/main_63", func_8007C144);
 
-void func_8007C2B0(struct MainObj* arg0)
+void hatch_turret_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8007C2D0(struct MainObj* arg0)
+void hatch_turret_update(struct MainObj* self)
 {
-    D_80102480[arg0->state](arg0);
+    hatch_turret_state_funcs[self->state](self);
 }
 
-union AnimationStep D_80102268[] = {
+union AnimationStep hatch_turret_anim_0[] = {
     { 0x00010007 },
     { 0x01010007 },
     { 0x02010007 },
@@ -27,7 +30,7 @@ union AnimationStep D_80102268[] = {
     { 0x03000001 },
 };
 
-union AnimationStep D_8010227C[] = {
+union AnimationStep hatch_turret_anim_5[] = {
     { 0x03010007 },
     { 0x02010007 },
     { 0x01010007 },
@@ -35,7 +38,7 @@ union AnimationStep D_8010227C[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102290[] = {
+union AnimationStep hatch_turret_anim_1[] = {
     { 0x04010001 },
     { 0x03010001 },
     { 0x05010001 },
@@ -86,7 +89,7 @@ union AnimationStep D_80102290[] = {
     { 0x03000001 },
 };
 
-union AnimationStep D_80102350[] = {
+union AnimationStep hatch_turret_anim_2[] = {
     { 0x1C010001 },
     { 0x24010001 },
     { 0x1C010001 },
@@ -113,7 +116,7 @@ union AnimationStep D_80102350[] = {
     { 0x24000001 },
 };
 
-union AnimationStep D_801023B0[] = {
+union AnimationStep hatch_turret_anim_3[] = {
     { 0x1F010001 },
     { 0x24010001 },
     { 0x1F010001 },
@@ -140,7 +143,7 @@ union AnimationStep D_801023B0[] = {
     { 0x24000001 },
 };
 
-struct Unk_unk68 D_80102410[8] = {
+struct Unk_unk68 hatch_turret_anim_4[8] = {
     { 1, 0, 1, 32 },
     { 1, 0, 1, 36 },
     { 1, 0, 1, 33 },
@@ -151,52 +154,52 @@ struct Unk_unk68 D_80102410[8] = {
     { 1, 0, -7, 36 },
 };
 
-union AnimationStep D_80102430[] = {
+union AnimationStep hatch_turret_anim_6[] = {
     { 0x25000001 },
 };
 
-union AnimationStep D_80102434[] = {
+union AnimationStep hatch_turret_anim_7[] = {
     { 0x26000001 },
 };
 
-union AnimationStep D_80102438[] = {
+union AnimationStep hatch_turret_anim_8[] = {
     { 0x27000001 },
 };
 
-union AnimationStep D_8010243C[] = {
+union AnimationStep hatch_turret_anim_9[] = {
     { 0x28000001 },
 };
 
-union AnimationStep D_80102440[] = {
+union AnimationStep hatch_turret_anim_10[] = {
     { 0x29000001 },
 };
 
-union AnimationStep D_80102444[] = {
+union AnimationStep hatch_turret_anim_11[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep D_80102448[] = {
+union AnimationStep hatch_turret_anim_12[] = {
     { 0x2B000001 },
 };
 
-void* D_8010244C[13] = {
-    D_80102268,
-    D_80102290,
-    D_80102350,
-    D_801023B0,
-    D_80102410,
-    D_8010227C,
-    D_80102430,
-    D_80102434,
-    D_80102438,
-    D_8010243C,
-    D_80102440,
-    D_80102444,
-    D_80102448,
+void* hatch_turret_animations[13] = {
+    hatch_turret_anim_0,
+    hatch_turret_anim_1,
+    hatch_turret_anim_2,
+    hatch_turret_anim_3,
+    hatch_turret_anim_4,
+    hatch_turret_anim_5,
+    hatch_turret_anim_6,
+    hatch_turret_anim_7,
+    hatch_turret_anim_8,
+    hatch_turret_anim_9,
+    hatch_turret_anim_10,
+    hatch_turret_anim_11,
+    hatch_turret_anim_12,
 };
 
-void (*D_80102480[3])() = {
+void (*hatch_turret_state_funcs[3])() = {
     func_8007BFF4,
     func_8007C144,
-    func_8007C2B0,
+    hatch_turret_despawn,
 };

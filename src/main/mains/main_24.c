@@ -3,31 +3,32 @@
 #include "common.h"
 #include "func_tables.h"
 
-extern u8 D_800FCFA0[];
+extern u8 jet_drone_debris[];
 
-void func_80056788(struct MainObj* arg0)
+void jet_drone_update(struct MainObj* self)
 {
-    D_800FCFA8[arg0->state](arg0);
+    jet_drone_state_funcs[self->state](self);
 }
 
+// jet_drone_init
 INCLUDE_ASM("main/nonmatchings/mains/main_24", func_800567C4);
 
-void func_80056AC4(struct MainObj* self)
+void jet_drone_main(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    D_800FCFB4[self->unk5](self);
+    jet_drone_step_funcs[self->unk5](self);
 
     if (self->unk5 != 3) {
         func_8002D9BC(self);
         self->ext.main_24.saved_unk5 = self->unk5;
 
         if (func_8002DD04(self) < 0) {
-            func_800AF808(self);
-            func_800C813C(5, D_800FCFA0, self);
-            func_800BF60C(BASE_OBJECT(self), 0xC);
+            spawn_explosion(self);
+            spawn_debris(5, jet_drone_debris, self);
+            drop_item(BASE_OBJECT(self), 0xC);
         } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
-            func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
             return;
         }
 
@@ -35,183 +36,183 @@ void func_80056AC4(struct MainObj* self)
     }
 }
 
-void func_80056BA8(struct MainObj* arg0)
+void jet_drone_despawn(struct MainObj* self)
 {
-    arg0->unk7A = 0;
-    arg0->ext.main_24.unk80 = 0;
-    arg0->ext.main_24.saved_unk5 = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->unk7A = 0;
+    self->ext.main_24.unk80 = 0;
+    self->ext.main_24.saved_unk5 = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_80056BD0(struct MainObj* arg0)
+void jet_drone_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_24.saved_unk5;
+    self->unk5 = self->ext.main_24.saved_unk5;
 }
 
-void func_80056BDC(struct MainObj* arg0)
+void jet_drone_fly(struct MainObj* self)
 {
-    D_800FCFC4[arg0->unk6](arg0);
+    jet_drone_fly_funcs[self->unk6](self);
 }
 
-void func_80056C18(struct MainObj* arg0)
+void jet_drone_fly_dash(struct MainObj* self)
 {
     struct MiscObj* trail;
     u8 facing;
 
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (!(++arg0->ext.main_24.unk80 & 3)) {
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (!(++self->ext.main_24.unk80 & 3)) {
         trail = find_free_misc_obj();
         if (trail != NULL) {
             trail->active = 0x41;
             trail->id = 7;
             trail->unk2 = 0;
-            trail->unk40 = arg0->unk40;
-            trail->unk42 = arg0->unk42 & 0x7FFF;
-            trail->animation_table = (u32**)arg0->animation_table;
-            trail->unk3C = (void*)arg0->sprite_frames;
-            trail->bg_offset = arg0->bg_offset;
-            trail->x_pos.val = arg0->x_pos.val;
-            trail->y_pos.val = arg0->y_pos.val;
-            facing = arg0->unk15;
-            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->unk40 = self->unk40;
+            trail->unk42 = self->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)self->animation_table;
+            trail->unk3C = (void*)self->sprite_frames;
+            trail->bg_offset = self->bg_offset;
+            trail->x_pos.val = self->x_pos.val;
+            trail->y_pos.val = self->y_pos.val;
+            facing = self->unk15;
+            trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
             trail->unk15 = facing;
         }
     }
-    if (--arg0->unk7C == 0) {
-        func_80015D60(arg0, 1);
-        arg0->unk6 = 1;
+    if (--self->unk7C == 0) {
+        set_animation(self, 1);
+        self->unk6 = 1;
     }
 }
 
-void func_80056D20(struct MainObj* arg0)
+void jet_drone_fly_arc(struct MainObj* self)
 {
     s32 direction;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 == 0) {
-        direction = arg0->unk2 & 3;
-        arg0->unk2C = (direction < 2) ? FIXED(0.1875) : FIXED(-0.1875);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_speed == 0) {
+        direction = self->unk2 & 3;
+        self->gravity = (direction < 2) ? FIXED(0.1875) : FIXED(-0.1875);
     }
-    if (arg0->unk20 == 0) {
-        arg0->unk7C = 0xA;
-        arg0->unk28 >>= 2;
-        func_80015D60(arg0, 2);
-        arg0->unk6 = 2;
+    if (self->x_speed == 0) {
+        self->unk7C = 0xA;
+        self->x_accel >>= 2;
+        set_animation(self, 2);
+        self->unk6 = 2;
     }
 }
 
-void func_80056DB4(struct MainObj* arg0)
+void jet_drone_fly_turn(struct MainObj* self)
 {
     struct MiscObj* trail;
     u8 facing;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (!(++arg0->ext.main_24.unk80 & 3)) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (!(++self->ext.main_24.unk80 & 3)) {
         trail = find_free_misc_obj();
         if (trail != NULL) {
             trail->active = 0x41;
             trail->id = 7;
             trail->unk2 = 1;
-            trail->unk40 = arg0->unk40;
-            trail->unk42 = arg0->unk42 & 0x7FFF;
-            trail->animation_table = (u32**)arg0->animation_table;
-            trail->unk3C = (void*)arg0->sprite_frames;
-            trail->bg_offset = arg0->bg_offset;
-            trail->x_pos.val = arg0->x_pos.val;
-            trail->y_pos.val = arg0->y_pos.val;
-            facing = arg0->unk15;
-            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->unk40 = self->unk40;
+            trail->unk42 = self->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)self->animation_table;
+            trail->unk3C = (void*)self->sprite_frames;
+            trail->bg_offset = self->bg_offset;
+            trail->x_pos.val = self->x_pos.val;
+            trail->y_pos.val = self->y_pos.val;
+            facing = self->unk15;
+            trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
             trail->unk15 = facing ^ 0x40;
         }
     }
-    if (--arg0->unk7C == 0) {
-        arg0->unk2C = 0;
-        if ((arg0->unk2 & 3) < 2) {
-            arg0->unk24 = FIXED(-2);
+    if (--self->unk7C == 0) {
+        self->gravity = 0;
+        if ((self->unk2 & 3) < 2) {
+            self->y_speed = FIXED(-2);
         } else {
-            arg0->unk24 = FIXED(2);
+            self->y_speed = FIXED(2);
         }
-        arg0->unk7C = 1;
-        arg0->unk7E = 8;
-        arg0->unk6 = 3;
+        self->unk7C = 1;
+        self->unk7E = 8;
+        self->unk6 = 3;
     }
 }
 
-void func_80056EF4(struct MainObj* arg0)
+void jet_drone_fly_bomb(struct MainObj* self)
 {
     struct MiscObj* trail;
     struct ShotObj* shot;
     u8 facing;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (!(++arg0->ext.main_24.unk80 & 3)) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (!(++self->ext.main_24.unk80 & 3)) {
         trail = find_free_misc_obj();
         if (trail != NULL) {
             trail->active = 0x41;
             trail->id = 7;
             trail->unk2 = 1;
-            trail->unk40 = arg0->unk40;
-            trail->unk42 = arg0->unk42 & 0x7FFF;
-            trail->animation_table = (u32**)arg0->animation_table;
-            trail->unk3C = (void*)arg0->sprite_frames;
-            trail->bg_offset = arg0->bg_offset;
-            trail->x_pos.val = arg0->x_pos.val;
-            trail->y_pos.val = arg0->y_pos.val;
-            facing = arg0->unk15;
-            trail->ext.misc_7.position = &arg0->x_pos;
+            trail->unk40 = self->unk40;
+            trail->unk42 = self->unk42 & 0x7FFF;
+            trail->animation_table = (u32**)self->animation_table;
+            trail->unk3C = (void*)self->sprite_frames;
+            trail->bg_offset = self->bg_offset;
+            trail->x_pos.val = self->x_pos.val;
+            trail->y_pos.val = self->y_pos.val;
+            facing = self->unk15;
+            trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
             trail->unk15 = facing ^ 0x40;
         }
     }
-    if (--arg0->unk7E == 0) {
-        func_80015D60(arg0, 9);
+    if (--self->unk7E == 0) {
+        set_animation(self, 9);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0xD;
             shot->unk2 = 0;
-            shot->unk40 = arg0->unk40;
-            shot->unk42 = arg0->unk42;
-            shot->animation_table = (u32**)arg0->animation_table;
-            shot->unk3C = (void*)arg0->sprite_frames;
-            shot->bg_offset = arg0->bg_offset;
-            shot->x_pos.val = arg0->x_pos.val;
-            shot->y_pos.val = arg0->y_pos.val;
-            shot->unk15 = arg0->unk15;
+            shot->unk40 = self->unk40;
+            shot->unk42 = self->unk42;
+            shot->animation_table = (u32**)self->animation_table;
+            shot->unk3C = (void*)self->sprite_frames;
+            shot->bg_offset = self->bg_offset;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->unk15 = self->unk15;
             shot->state = 0;
         }
-        if (--arg0->unk7C == 0) {
-            arg0->unk7E = 0x7FFF;
+        if (--self->unk7C == 0) {
+            self->unk7E = 0x7FFF;
         } else {
-            arg0->unk7E = 8;
+            self->unk7E = 8;
         }
     }
 }
 
-void func_800570A4(struct MainObj* arg0)
+void jet_drone_wait_for_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xA1) {
-        func_8001540C(2, 0x50, arg0);
-        arg0->unk7A = 0;
-        arg0->unk5 = 2;
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xA1) {
+        func_8001540C(2, 0x50, self);
+        self->unk7A = 0;
+        self->unk5 = 2;
     }
 }
 
-struct Unk_unk68 D_800FCED4[] = {
+struct Unk_unk68 jet_drone_hurt_box[] = {
     { -11, -12, 22, 22 },
 };
 
-struct Unk_unk68 D_800FCED8[] = {
+struct Unk_unk68 jet_drone_terrain_box[] = {
     { -8, -11, 16, 20 },
 };
 
-union AnimationStep D_800FCEDC[] = {
+union AnimationStep jet_drone_anim_0[] = {
     { 0x00010006 },
     { 0x07010005 },
     { 0x06010004 },
@@ -223,7 +224,7 @@ union AnimationStep D_800FCEDC[] = {
     { 0x00F90106 },
 };
 
-union AnimationStep D_800FCF00[] = {
+union AnimationStep jet_drone_anim_1[] = {
     { 0x0C010003 },
     { 0x0D010005 },
     { 0x08010003 },
@@ -232,11 +233,11 @@ union AnimationStep D_800FCF00[] = {
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FCF18[] = {
+union AnimationStep jet_drone_anim_2[] = {
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FCF1C[] = {
+union AnimationStep jet_drone_anim_3[] = {
     { 0x11010002 },
     { 0x15010002 },
     { 0x13010002 },
@@ -247,34 +248,34 @@ union AnimationStep D_800FCF1C[] = {
     { 0x15F90002 },
 };
 
-union AnimationStep D_800FCF3C[] = {
+union AnimationStep jet_drone_anim_4[] = {
     { 0x17000101 },
 };
 
-union AnimationStep D_800FCF40[] = {
+union AnimationStep jet_drone_anim_5[] = {
     { 0x18000101 },
 };
 
-union AnimationStep D_800FCF44[] = {
+union AnimationStep jet_drone_anim_6[] = {
     { 0x19000101 },
 };
 
-union AnimationStep D_800FCF48[] = {
+union AnimationStep jet_drone_anim_7[] = {
     { 0x1A000101 },
 };
 
-union AnimationStep D_800FCF4C[] = {
+union AnimationStep jet_drone_anim_8[] = {
     { 0x1B000101 },
 };
 
-union AnimationStep D_800FCF50[] = {
+union AnimationStep jet_drone_anim_9[] = {
     { 0x0E010004 },
     { 0x0F010005 },
     { 0x0E010004 },
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FCF60[] = {
+union AnimationStep jet_drone_anim_10[] = {
     { 0x10010001 },
     { 0x1C010001 },
     { 0x1D010001 },
@@ -282,21 +283,21 @@ union AnimationStep D_800FCF60[] = {
     { 0x1E000101 },
 };
 
-union AnimationStep* D_800FCF74[] = {
-    D_800FCEDC,
-    D_800FCF00,
-    D_800FCF18,
-    D_800FCF1C,
-    D_800FCF3C,
-    D_800FCF40,
-    D_800FCF44,
-    D_800FCF48,
-    D_800FCF4C,
-    D_800FCF50,
-    D_800FCF60,
+union AnimationStep* jet_drone_animations[] = {
+    jet_drone_anim_0,
+    jet_drone_anim_1,
+    jet_drone_anim_2,
+    jet_drone_anim_3,
+    jet_drone_anim_4,
+    jet_drone_anim_5,
+    jet_drone_anim_6,
+    jet_drone_anim_7,
+    jet_drone_anim_8,
+    jet_drone_anim_9,
+    jet_drone_anim_10,
 };
 
-u8 D_800FCFA0[] = {
+u8 jet_drone_debris[] = {
     0x04,
     0x05,
     0x06,
@@ -307,22 +308,22 @@ u8 D_800FCFA0[] = {
     0x00,
 };
 
-void (*D_800FCFA8[])(struct MainObj*) = {
+void (*jet_drone_state_funcs[])(struct MainObj*) = {
     func_800567C4,
-    func_80056AC4,
-    func_80056BA8,
+    jet_drone_main,
+    jet_drone_despawn,
 };
 
-void (*D_800FCFB4[])(struct MainObj*) = {
-    (void (*)(struct MainObj*))func_8009216C,
-    func_80056BD0,
-    func_80056BDC,
-    func_800570A4,
+void (*jet_drone_step_funcs[])(struct MainObj*) = {
+    (void (*)(struct MainObj*))enemy_hit_reaction,
+    jet_drone_resume_step,
+    jet_drone_fly,
+    jet_drone_wait_for_player,
 };
 
-void (*D_800FCFC4[])() = {
-    func_80056C18,
-    func_80056D20,
-    func_80056DB4,
-    func_80056EF4,
+void (*jet_drone_fly_funcs[])() = {
+    jet_drone_fly_dash,
+    jet_drone_fly_arc,
+    jet_drone_fly_turn,
+    jet_drone_fly_bomb,
 };

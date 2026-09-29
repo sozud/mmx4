@@ -2,161 +2,162 @@
 // 8009D74C..8009DD40
 #include "common.h"
 
-u8 D_80109004[4] = { 0xF7, 0xF8, 0x11, 0x10 };
+u8 web_shot_hit_box[4] = { 0xF7, 0xF8, 0x11, 0x10 };
 
-void func_8009D74C(struct ShotObj* arg0)
+void web_shot_update(struct ShotObj* self)
 {
-    D_80109008[arg0->state](arg0);
+    web_shot_state_funcs[self->state](self);
 }
 
+// web_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_22", func_8009D788);
 
-void func_8009D85C(struct ShotObj* arg0)
+void web_shot_fly(struct ShotObj* self)
 {
-    if ((arg0->unk8C.word == 3) && (g_Player.stun_timer != 0)) {
-        arg0->unk5 = 2;
-        func_8009DA28(arg0);
+    if ((self->unk8C.word == 3) && (g_Player.stun_timer != 0)) {
+        self->unk5 = 2;
+        web_shot_catch(self);
         return;
     }
 
-    if (--arg0->timer == 0) {
-        arg0->timer = 0x28;
-        arg0->unk5++;
+    if (--self->timer == 0) {
+        self->timer = 0x28;
+        self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
-void func_8009D8F0(struct ShotObj* arg0)
+void web_shot_home(struct ShotObj* self)
 {
     s32 target;
     s32 direction;
 
-    if (arg0->unk8C.word == 3 && g_Player.stun_timer != 0) {
-        arg0->unk5 = 2;
-        func_8009DA28(arg0);
+    if (self->unk8C.word == 3 && g_Player.stun_timer != 0) {
+        self->unk5 = 2;
+        web_shot_catch(self);
         return;
     }
-    if (arg0->timer != 0) {
+    if (self->timer != 0) {
         if (!(D_80141BD8.unk0 & 3)) {
-            target = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-            direction = arg0->unk84.value;
+            target = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+            direction = self->unk84.value;
             if ((direction - (target & 0xFF)) & 0x1F) {
-                arg0->unk84.value = (u32)((target - direction) & 0x1F) < 0x10 ? direction + 1 : direction - 1;
-                arg0->unk84.value &= 0x1F;
-                func_8002B93C(MOVING_OBJECT(arg0), arg0->unk84.value);
-                arg0->x_vel.val *= 3;
-                arg0->y_vel.val *= 3;
+                self->unk84.value = (u32)((target - direction) & 0x1F) < 0x10 ? direction + 1 : direction - 1;
+                self->unk84.value &= 0x1F;
+                set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.value);
+                self->x_vel.val *= 3;
+                self->y_vel.val *= 3;
             }
         }
-        arg0->timer--;
+        self->timer--;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
-void func_8009DA08(struct ShotObj* arg0)
+void web_shot_pin_player(struct ShotObj* self)
 {
-    g_Player.x_pos.val = arg0->x_pos.val;
-    g_Player.y_pos.val = arg0->y_pos.val;
+    g_Player.x_pos.val = self->x_pos.val;
+    g_Player.y_pos.val = self->y_pos.val;
 }
 
-void func_8009DA28(struct ShotObj* arg0)
+void web_shot_catch(struct ShotObj* self)
 {
-    arg0->timer = 0x78;
-    arg0->unk2C = 0;
-    arg0->unk28 = 0;
-    arg0->y_vel.val = 0;
-    arg0->x_vel.val = 0;
-    arg0->unk5++;
-    func_8009DA08(arg0);
-    arg0->unk90.val = 0x30;
+    self->timer = 0x78;
+    self->unk2C = 0;
+    self->unk28 = 0;
+    self->y_vel.val = 0;
+    self->x_vel.val = 0;
+    self->unk5++;
+    web_shot_pin_player(self);
+    self->unk90.val = 0x30;
 }
 
-void func_8009DA7C(struct ShotObj* arg0)
+void web_shot_hold(struct ShotObj* self)
 {
     s16 temp_v1;
     s32 temp_v0;
 
-    func_8009DA08(arg0);
-    temp_v1 = arg0->timer - func_8002BAA4();
-    arg0->timer = temp_v1;
+    web_shot_pin_player(self);
+    temp_v1 = self->timer - func_8002BAA4();
+    self->timer = temp_v1;
     if (temp_v1 < 0) {
-        arg0->timer = 0x1E;
-        arg0->unk5++;
+        self->timer = 0x1E;
+        self->unk5++;
         g_Player.stun_timer = 0;
-        arg0->unk50.data = 0;
-        arg0->unk54 = 0;
+        self->unk50.data = 0;
+        self->unk54 = 0;
         return;
     }
-    arg0->timer = temp_v1 - 1;
-    temp_v0 = arg0->unk90.val - 1;
-    arg0->unk90.val = temp_v0;
+    self->timer = temp_v1 - 1;
+    temp_v0 = self->unk90.val - 1;
+    self->unk90.val = temp_v0;
     if (temp_v0 == 0) {
         player_damage(4);
-        arg0->unk90.val = 0x30;
+        self->unk90.val = 0x30;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8009DB1C(struct ShotObj* arg0)
+void web_shot_fade(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    temp_v0 = arg0->timer - 1;
-    arg0->timer = temp_v0;
+    temp_v0 = self->timer - 1;
+    self->timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->on_screen = 0;
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        self->on_screen = 0;
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
         return;
     }
     if (!(D_80141BD8.unk0 & 3)) {
-        arg0->on_screen = 0;
-        arg0->unk8A = 1;
+        self->on_screen = 0;
+        self->unk8A = 1;
     } else {
-        arg0->on_screen = 1;
-        arg0->unk8A = 0;
+        self->on_screen = 1;
+        self->unk8A = 0;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8009DB9C(struct ShotObj* arg0)
+void web_shot_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109014[arg0->unk5](arg0);
-    owner = arg0->unk7C;
-    if (owner->state == 1 && arg0->unk8C.word != 0 && g_Player.stun_timer == 0
-        && func_8002D9BC(arg0) != 0 && g_Player.stun_timer != 0) {
-        arg0->unk8C.word = 3;
-        arg0->x_pos.val = g_Player.x_pos.val;
-        arg0->y_pos.val = g_Player.y_pos.val;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    web_shot_step_funcs[self->unk5](self);
+    owner = self->unk7C;
+    if (owner->state == 1 && self->unk8C.word != 0 && g_Player.stun_timer == 0
+        && func_8002D9BC(self) != 0 && g_Player.stun_timer != 0) {
+        self->unk8C.word = 3;
+        self->x_pos.val = g_Player.x_pos.val;
+        self->y_pos.val = g_Player.y_pos.val;
     }
-    owner = arg0->unk7C;
-    if ((arg0->unk8C.word != 3 || g_Player.stun_timer == 0 || owner->state != 2)
-        && func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
-        if (arg0->unk8A == 0) {
-            func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+    owner = self->unk7C;
+    if ((self->unk8C.word != 3 || g_Player.stun_timer == 0 || owner->state != 2)
+        && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        if (self->unk8A == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         }
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_8009DCF4(struct ShotObj* arg0)
+void web_shot_despawn(struct ShotObj* self)
 {
-    if (arg0->unk8C.word == 3 && g_Player.stun_timer != 0) {
+    if (self->unk8C.word == 3 && g_Player.stun_timer != 0) {
         g_Player.stun_timer = 0;
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80109008[])(struct ShotObj*) = {
+void (*web_shot_state_funcs[])(struct ShotObj*) = {
     func_8009D788,
-    func_8009DB9C,
-    func_8009DCF4,
+    web_shot_main,
+    web_shot_despawn,
 };

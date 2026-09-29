@@ -38,22 +38,22 @@ void background_dragon_spawn_trail(struct PlayerObj* self, s8 arg1)
 void background_dragon_reset(struct MainObj* self)
 {
     self->unk5 = 0xC;
-    func_80015D60(self, 0);
+    set_animation(self, 0);
 }
 
-// background_dragon_run
+// background_dragon_main
 INCLUDE_ASM("main/nonmatchings/mains/main_00", func_80040838);
 
 // background_dragon_pick_step
 INCLUDE_ASM("main/nonmatchings/mains/main_00", func_80040ABC);
 
-// background_dragon_follow
+// background_dragon_hover
 INCLUDE_ASM("main/nonmatchings/mains/main_00", func_80040CCC);
 
 void background_dragon_wait_for_animation(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     if (self->animation_step.fields.relative_step < 0) {
         self->unk5 = 4;
     }
@@ -66,24 +66,24 @@ void background_dragon_fireball_begin(struct MainObj* self)
 
     x_pos_hi = self->x_pos.i.hi;
     if (x_pos_hi >= 0xC91) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         self->unk5 = 0xC;
         self->unk6 = 0;
-        func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+        update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     } else {
         if (x_pos_hi >= 0xC41) {
             self->unk15 = 0x40;
         }
         self->y_pos.val = FIXED(368);
         self->unk6++;
-        func_80015D60(self, 3);
+        set_animation(self, 3);
         x_velocity = FIXED(-1);
         if (self->unk15 != 0) {
             x_velocity = FIXED(1);
         }
-        self->unk20 = x_velocity;
-        self->unk24 = 0;
-        func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+        self->x_speed = x_velocity;
+        self->y_speed = 0;
+        update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     }
 }
 
@@ -93,8 +93,8 @@ void background_dragon_fireball_update(struct MainObj* self)
     struct MiscObj* misc_obj;
     s32 x_pos;
 
-    func_8002B718((struct MovingObj*)self);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object((struct MovingObj*)self);
+    animate_object(ANIMATED_OBJECT(self));
 
     if (self->animation_step.fields.event == 1) {
         shot_obj = find_free_shot_obj();
@@ -122,18 +122,18 @@ void background_dragon_fireball_update(struct MainObj* self)
         }
 
         self->animation_step.fields.event = 0;
-        self->unk20 = 0;
-        self->unk24 = FIXED(-0.25);
+        self->x_speed = 0;
+        self->y_speed = FIXED(-0.25);
         func_8001540C(2, 4, self);
     }
 
     if (self->animation_step.fields.relative_step < 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         self->unk5 = 0xC;
         self->unk6 = 0;
     }
 
-    func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+    update_on_screen((struct BaseObj*)self, 0x90, 0x90);
 }
 
 void background_dragon_fireball_begin(struct MainObj* self);
@@ -159,9 +159,9 @@ void background_dragon_projectile_attack_update(struct MainObj* self)
     u8 index;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 3) {
-        func_8002B718((struct MovingObj*)self);
+        move_object((struct MovingObj*)self);
     }
     if (self->animation_step.fields.event == 1) {
         shot = find_free_shot_obj();
@@ -179,8 +179,8 @@ void background_dragon_projectile_attack_update(struct MainObj* self)
         if (self->unk15 != 0) {
             value = FIXED(-3.75);
         }
-        self->unk20 = value;
-        self->unk24 = FIXED(-1);
+        self->x_speed = value;
+        self->y_speed = FIXED(-1);
         func_8001540C(2, 4, self);
     }
     if (self->animation_step.fields.event == 2) {
@@ -197,18 +197,18 @@ void background_dragon_projectile_attack_update(struct MainObj* self)
                 misc->unk2 = self->ext.main_0.index;
             }
             self->animation_step.fields.event = 0;
-            func_800DABE4(self->ext.main_0.index + 1, 0, 0);
+            apply_tile_effect(self->ext.main_0.index + 1, 0, 0);
             self->ext.main_0.flags[self->ext.main_0.index] = 1;
             engine_obj.character_state.bytes[self->ext.main_0.index + 1] = 1;
-            func_80028BAC(0x18, 3, 1);
+            start_screen_shake_y(0x18, 3, 1);
         }
     }
     if (self->animation_step.fields.relative_step < 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         self->unk5 = 0xC;
         self->unk6 = 0;
     }
-    func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+    update_on_screen((struct BaseObj*)self, 0x90, 0x90);
 }
 
 void func_80041060(struct MainObj* self);
@@ -227,8 +227,8 @@ void background_dragon_projectile_attack(struct MainObj* self)
 void background_dragon_multi_shot_begin(struct BaseObj* self)
 {
     self->unk6++;
-    func_80015D60(self, 7);
-    func_8002B318(self, 0x90, 0x90);
+    set_animation(self, 7);
+    update_on_screen(self, 0x90, 0x90);
 }
 
 void background_dragon_multi_shot_update(struct MainObj* self)
@@ -236,7 +236,7 @@ void background_dragon_multi_shot_update(struct MainObj* self)
     struct VisualObj* visual;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
@@ -265,11 +265,11 @@ void background_dragon_multi_shot_update(struct MainObj* self)
         func_8001540C(2, 9, self);
     }
     if (self->animation_step.fields.relative_step < 0) {
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         self->unk5 = 9;
         self->unk6 = 0;
     }
-    func_8002B318((struct BaseObj*)self, 0x90, 0x90);
+    update_on_screen((struct BaseObj*)self, 0x90, 0x90);
 }
 
 void background_dragon_multi_shot_update(struct MainObj* self);
@@ -286,12 +286,12 @@ void background_dragon_multi_shot(struct MainObj* self)
 void background_dragon_sequence_begin(struct MainObj* self)
 {
     self->unk15 = 0;
-    func_80015D60(self, 0);
+    set_animation(self, 0);
     self->unk6++;
-    func_8002B318(self, 0x90, 0x90);
+    update_on_screen(self, 0x90, 0x90);
 }
 
-// background_dragon_sequence_approach
+// background_dragon_swoop
 INCLUDE_ASM("main/nonmatchings/mains/main_00", func_800415B0);
 
 void background_dragon_sequence_bob(struct MainObj* self)
@@ -299,18 +299,18 @@ void background_dragon_sequence_bob(struct MainObj* self)
     s16 count;
 
     if (self->animation_step.fields.event == 0) {
-        self->unk24 = 0;
+        self->y_speed = 0;
     }
     if (self->animation_step.fields.event == 1) {
-        self->unk24 = FIXED(5.33333);
+        self->y_speed = FIXED(5.33333);
     }
     if (self->animation_step.fields.event == 2) {
-        self->unk24 = FIXED(-5.33333);
+        self->y_speed = FIXED(-5.33333);
     }
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step < 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         count = self->unk7E + 1;
         self->unk7E = count;
         if (count >= 3) {
@@ -329,7 +329,7 @@ void background_dragon_sequence_bob(struct MainObj* self)
         }
         self->unk6 = 0;
     }
-    func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+    update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 
 void background_dragon_sequence(struct MainObj* self)
@@ -358,41 +358,41 @@ void background_dragon_fly_to_route_start(struct MainObj* self)
 {
     s32 temp_a0;
 
-    func_8002B93C(
+    set_velocity_from_angle(
         MOVING_OBJECT(self),
-        func_8002B7B0(
-            OBJECT_HEADER(self), D_800F99C4[self->unk2 >> 1][0],
-            D_800F99C4[self->unk2 >> 1][1]));
+        angle_to_point(
+            OBJECT_HEADER(self), background_dragon_perch_points[self->unk2 >> 1][0],
+            background_dragon_perch_points[self->unk2 >> 1][1]));
 
-    self->unk20 *= 2;
-    self->unk24 *= 2;
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    self->x_speed *= 2;
+    self->y_speed *= 2;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
-    temp_a0 = self->x_pos.val - D_800F99C4[self->unk2 >> 1][0];
+    temp_a0 = self->x_pos.val - background_dragon_perch_points[self->unk2 >> 1][0];
     if (temp_a0 >= 0) {
         if (temp_a0 > 0x1FFFF) {
-            func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+            update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
             return;
         }
-    } else if (D_800F99C4[self->unk2 >> 1][0] - self->x_pos.val > 0x1FFFF) {
-        func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+    } else if (background_dragon_perch_points[self->unk2 >> 1][0] - self->x_pos.val > 0x1FFFF) {
+        update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
         return;
     }
 
-    temp_a0 = self->y_pos.val - D_800F99C4[self->unk2 >> 1][1];
+    temp_a0 = self->y_pos.val - background_dragon_perch_points[self->unk2 >> 1][1];
     if (temp_a0 >= 0) {
         if (temp_a0 > 0x1FFFF) {
-            func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+            update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
             return;
         }
-    } else if (D_800F99C4[self->unk2 >> 1][1] - self->y_pos.val > 0x1FFFF) {
-        func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+    } else if (background_dragon_perch_points[self->unk2 >> 1][1] - self->y_pos.val > 0x1FFFF) {
+        update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
         return;
     }
     self->unk5 = 1;
 
-    func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+    update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 
 void background_dragon_fly_offscreen(struct MainObj* self)
@@ -413,22 +413,22 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         break;
     }
 
-    func_8002B93C(
+    set_velocity_from_angle(
         MOVING_OBJECT(self),
-        func_8002B7B0(OBJECT_HEADER(self), target_x, target_y));
+        angle_to_point(OBJECT_HEADER(self), target_x, target_y));
 
     if (self->ext.main_0.exit_mode == 2) {
-        x_velocity = self->unk20 * 2;
-        y_velocity = self->unk24 * 2;
+        x_velocity = self->x_speed * 2;
+        y_velocity = self->y_speed * 2;
     } else {
-        x_velocity = self->unk20 * 4;
-        y_velocity = self->unk24 * 4;
+        x_velocity = self->x_speed * 4;
+        y_velocity = self->y_speed * 4;
     }
 
-    self->unk20 = x_velocity;
-    *(volatile s32*)&self->unk24 = y_velocity;
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    self->x_speed = x_velocity;
+    *(volatile s32*)&self->y_speed = y_velocity;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     if (self->on_screen == 0) {
         if (self->ext.main_0.exit_mode != 0) {
@@ -439,10 +439,10 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         self->unk16 = 0x12;
         self->unk5 = 7;
         self->bg_offset = -1;
-        self->x_pos.val = D_800F99D4[self->unk2].x;
-        self->y_pos.val = D_800F99D4[self->unk2].y;
+        self->x_pos.val = background_dragon_route_starts[self->unk2].x;
+        self->y_pos.val = background_dragon_route_starts[self->unk2].y;
         self->ext.main_0.background_relative = 0;
-        func_80015D60(self, 6);
+        set_animation(self, 6);
 
         if (self->unk2 >= 2 && self->unk2 <= 3) {
             self->unk15 = 0x40;
@@ -451,19 +451,19 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         }
     }
 
-    func_8002B318(BASE_OBJECT(self), 0x90, 0x90);
+    update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 
 void background_dragon_fly_to_staging_position(struct MainObj* self)
 {
-    func_8002B93C(
+    set_velocity_from_angle(
         MOVING_OBJECT(self),
-        func_8002B7B0(
+        angle_to_point(
             OBJECT_HEADER(self),
-            D_800F99D4[self->unk2].x,
-            D_800F99D4[self->unk2].y));
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+            background_dragon_route_starts[self->unk2].x,
+            background_dragon_route_starts[self->unk2].y));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     if (self->on_screen == 0) {
         if (self->ext.main_0.exit_mode != 0) {
@@ -480,7 +480,7 @@ void background_dragon_fly_to_staging_position(struct MainObj* self)
         }
     }
 
-    func_8002B318((struct BaseObj*)self, 0x70, 0x70);
+    update_on_screen((struct BaseObj*)self, 0x70, 0x70);
 }
 
 void background_dragon_attach_to_background(struct MainObj* self)
@@ -488,10 +488,10 @@ void background_dragon_attach_to_background(struct MainObj* self)
     s32 y_base;
     s32 y_offset;
 
-    func_80015D60(self, 0);
-    self->x_pos.val = background_objects[0].x_pos.val + D_800F99E4[self->unk2].x;
+    set_animation(self, 0);
+    self->x_pos.val = background_objects[0].x_pos.val + background_dragon_staging_offsets[self->unk2].x;
     y_base = background_objects[0].y_pos.val;
-    y_offset = D_800F99E4[self->unk2].y;
+    y_offset = background_dragon_staging_offsets[self->unk2].y;
     self->unk5 = 6;
     self->unk15 = 0;
     self->bg_offset = 0;
@@ -652,7 +652,7 @@ union AnimationStep D_800F985C[] = {
     { 0x30FF0201 },
 };
 
-u8 D_800F986C[128] = {
+u8 background_dragon_attack_map[128] = {
     0x06,
     0x06,
     0x06,
@@ -867,17 +867,17 @@ void (*background_dragon_step_funcs[13])(struct MainObj*) = {
 
 u16 D_800F99BC[4] = { 0x6A0, 0x8A0, 0xAA0, 0 };
 
-s32 D_800F99C4[][2] = {
+s32 background_dragon_perch_points[][2] = {
     { FIXED(40), FIXED(179) },
     { FIXED(280), FIXED(179) },
 };
 
-struct FixedPointPosition D_800F99D4[2] = {
+struct FixedPointPosition background_dragon_route_starts[2] = {
     { -0x800000, 0xB30000 },
     { -0x800000, 0x1700000 },
 };
 
-struct FixedPointPosition D_800F99E4[4] = {
+struct FixedPointPosition background_dragon_staging_offsets[4] = {
     { -0x800000, -0x800000 },
     { -0x800000, 0x1700000 },
     { 0x1C00000, -0x800000 },

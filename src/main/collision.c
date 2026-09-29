@@ -19,6 +19,7 @@ struct EffectSpawnData {
 };
 extern struct EffectSpawnData D_800F460C[64];
 
+// hitboxes_overlap
 INCLUDE_ASM("main/nonmatchings/collision", func_8002BB80);
 
 INCLUDE_ASM("main/nonmatchings/collision", func_8002BD58);
@@ -600,6 +601,7 @@ s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
     }
 }
 
+// get_tile_attribute
 INCLUDE_ASM("main/nonmatchings/collision", func_8002D724);
 
 INCLUDE_ASM("main/nonmatchings/collision", func_8002D7E4);
@@ -644,15 +646,17 @@ u8 func_8002D994(struct PlayerObj* arg0)
 }
 #endif
 
+// damage_player_on_contact
 INCLUDE_ASM("main/nonmatchings/collision", func_8002D9BC);
 
+// check_weapon_hits
 INCLUDE_ASM("main/nonmatchings/collision", func_8002DD04);
 
 INCLUDE_ASM("main/nonmatchings/collision", func_8002DE30);
 
 INCLUDE_ASM("main/nonmatchings/collision", func_8002DF7C);
 
-void func_8002E184(struct PlayerObj* arg0)
+void collide_with_players(struct PlayerObj* arg0)
 {
     if (arg0->unk68 != NULL) {
         func_8002E294(arg0, &g_Player);

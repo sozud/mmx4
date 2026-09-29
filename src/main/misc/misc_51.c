@@ -2,118 +2,119 @@
 // 800D1DC4..800D2190
 #include "common.h"
 
-void func_800D1DC4(struct MiscObj* arg0)
+void capsule_part_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010F4BC[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    capsule_part_state_funcs[self->state](self);
 }
 
-void func_800D1E0C(struct MiscObj* arg0)
+void capsule_part_init(struct MiscObj* self)
 {
     struct MainObj* source;
     const u8* const* animation_table;
 
-    source = arg0->ext.misc_51.source;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk15 = source->unk15;
-    arg0->unk40 = source->unk40;
-    arg0->unk42 = source->unk42;
-    arg0->unk3C = (void*)source->sprite_frames;
+    source = self->ext.misc_51.source;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk15 = source->unk15;
+    self->unk40 = source->unk40;
+    self->unk42 = source->unk42;
+    self->unk3C = (void*)source->sprite_frames;
     animation_table = source->animation_table;
-    arg0->unk6 = 0;
-    arg0->state++;
-    arg0->unk5 = arg0->unk2 >> 4;
-    arg0->animation_table = (u32**)animation_table;
-    arg0->unk2 &= 0xF;
-    func_800D1E9C(arg0);
+    self->unk6 = 0;
+    self->state++;
+    self->unk5 = self->unk2 >> 4;
+    self->animation_table = (u32**)animation_table;
+    self->unk2 &= 0xF;
+    capsule_part_main(self);
 }
 
-void func_800D1E9C(struct MiscObj* arg0)
+void capsule_part_main(struct MiscObj* self)
 {
     struct MainObj* source;
 
-    source = arg0->ext.misc_51.source;
-    D_8010F4C8[arg0->unk5](arg0);
+    source = self->ext.misc_51.source;
+    capsule_part_type_funcs[self->unk5](self);
     if (source->active != 0x41) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_800D1F04(struct MiscObj* arg0)
+void capsule_part_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800D1F24(struct MiscObj* arg0)
+void capsule_part_base(struct MiscObj* self)
 {
-    D_8010F4D8[arg0->unk6](arg0);
-    is_on_screen(BASE_OBJECT(arg0));
+    capsule_part_base_funcs[self->unk6](self);
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800D1F74(struct MiscObj* arg0)
+void capsule_part_base_open(struct MiscObj* self)
 {
-    arg0->unk16 = 2;
-    func_80015D60(arg0, 2);
-    arg0->unk6++;
+    self->unk16 = 2;
+    set_animation(self, 2);
+    self->unk6++;
 }
 
-void func_800D1FB8(struct MiscObj* arg0)
+void capsule_part_base_opening(struct MiscObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 5);
-        arg0->unk6++;
+    if (self->animation_step.fields.relative_step == 0) {
+        set_animation(self, 5);
+        self->unk6++;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
-void func_800D2010(struct MiscObj* arg0)
+void capsule_part_base_animate(struct MiscObj* self)
 {
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
-void func_800D2030(struct MiscObj* arg0)
+void capsule_part_glass(struct MiscObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk16 = 6;
-        func_80015D60(arg0, 3);
-        arg0->unk6++;
+    if (self->unk6 == 0) {
+        self->unk16 = 6;
+        set_animation(self, 3);
+        self->unk6++;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
+// capsule_part_beam
 INCLUDE_ASM("main/nonmatchings/misc/misc_51", func_800D2094);
 
-void func_800D212C(struct MiscObj* arg0)
+void capsule_part_light(struct MiscObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk16 = 1;
-        func_80015D60(arg0, 9);
-        arg0->unk6++;
+    if (self->unk6 == 0) {
+        self->unk16 = 1;
+        set_animation(self, 9);
+        self->unk6++;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void (*D_8010F4BC[3])(struct MiscObj*) = {
-    func_800D1E0C,
-    func_800D1E9C,
-    func_800D1F04,
+void (*capsule_part_state_funcs[3])(struct MiscObj*) = {
+    capsule_part_init,
+    capsule_part_main,
+    capsule_part_despawn,
 };
 
-void (*D_8010F4C8[4])(struct MiscObj*) = {
-    func_800D1F24,
-    func_800D2030,
+void (*capsule_part_type_funcs[4])(struct MiscObj*) = {
+    capsule_part_base,
+    capsule_part_glass,
     func_800D2094,
-    func_800D212C,
+    capsule_part_light,
 };
 
-void (*D_8010F4D8[3])(struct MiscObj*) = {
-    func_800D1F74,
-    func_800D1FB8,
-    func_800D2010,
+void (*capsule_part_base_funcs[3])(struct MiscObj*) = {
+    capsule_part_base_open,
+    capsule_part_base_opening,
+    capsule_part_base_animate,
 };

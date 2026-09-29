@@ -2,27 +2,28 @@
 // 800985F4..80098838
 #include "common.h"
 
-void func_800985F4(struct WeaponObj* arg0)
+void ride_chaser_shot_update(struct WeaponObj* arg0)
 {
-    D_80108B88[arg0->state](arg0);
+    ride_chaser_shot_state_funcs[arg0->state](arg0);
 }
 
+// ride_chaser_shot_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_56", func_80098630);
 
-void func_80098728(struct WeaponObj* arg0)
+void ride_chaser_shot_main(struct WeaponObj* arg0)
 {
-    func_800987DC(arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    ride_chaser_shot_follow_scroll(arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0 && arg0->unk98 == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(arg0), 0x10, 0x10);
         return;
     }
     arg0->state = 2;
     arg0->on_screen = 0;
 }
 
-void func_800987A8(struct WeaponObj* arg0)
+void ride_chaser_shot_despawn(struct WeaponObj* arg0)
 {
     struct PlayerObj* temp_v1;
 
@@ -31,7 +32,7 @@ void func_800987A8(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800987DC(struct WeaponObj* arg0)
+void ride_chaser_shot_follow_scroll(struct WeaponObj* arg0)
 {
     if (background_objects[0].unk4 == 1) {
         arg0->x_pos.u.hi += background_objects[0].x_pos.u.hi - background_objects[0].unk14.u.hi;
@@ -39,11 +40,11 @@ void func_800987DC(struct WeaponObj* arg0)
     }
 }
 
-struct Unk_unk68 D_80108B70[] = {
+struct Unk_unk68 ride_chaser_shot_hit_box[] = {
     { -9, -11, 0x1A, 0x14 },
 };
 
-u16 D_80108B74[] = {
+u16 ride_chaser_shot_offsets[] = {
     0xFFCC,
     0x0001,
     0xFFD1,
@@ -56,8 +57,8 @@ u16 D_80108B74[] = {
     0x0001,
 };
 
-void (*D_80108B88[])(struct WeaponObj*) = {
+void (*ride_chaser_shot_state_funcs[])(struct WeaponObj*) = {
     func_80098630,
-    func_80098728,
-    func_800987A8,
+    ride_chaser_shot_main,
+    ride_chaser_shot_despawn,
 };

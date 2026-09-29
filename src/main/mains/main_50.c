@@ -3,82 +3,84 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8006970C(struct MainObj* arg0)
+void train_crate_update(struct MainObj* self)
 {
-    D_800FFC3C[arg0->state](arg0);
+    train_crate_state_funcs[self->state](self);
 }
 
+// train_crate_init
 INCLUDE_ASM("main/nonmatchings/mains/main_50", func_80069748);
 
+// train_crate_main
 INCLUDE_ASM("main/nonmatchings/mains/main_50", func_800698D8);
 
-void func_80069A08(struct MainObj* arg0)
+void train_crate_explode(struct MainObj* self)
 {
-    if (++arg0->ext.main_50.timer != 0x30) {
+    if (++self->ext.main_50.timer != 0x30) {
         if (!(D_80141BD8.unk0 & 7)) {
-            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x18);
+            func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x18);
         }
     } else {
-        arg0->state = 3;
+        self->state = 3;
     }
 }
 
-void func_80069A6C(struct MainObj* arg0)
+void train_crate_despawn(struct MainObj* self)
 {
-    func_8002B108(arg0);
+    despawn_object_permanently(self);
 }
 
-void func_80069A8C(struct MainObj* arg0)
+void train_crate_idle(struct MainObj* self)
 {
 }
 
-u8 D_800FFBD8[4] = { 0xE0, 0xE0, 0x40, 0x50 };
+u8 train_crate_hurt_box[4] = { 0xE0, 0xE0, 0x40, 0x50 };
 
 u8 D_800FFBDC[8] = { 0, 1, 2, 1, 0, 2, 0, 0 };
 
-u8 D_800FFBE4[8] = { 7, 8, 9, 7, 9, 8, 0, 0 };
+u8 train_crate_debris[8] = { 7, 8, 9, 7, 9, 8, 0, 0 };
 
-union AnimationStep D_800FFBEC[1] = { { 0x00000101 } };
+union AnimationStep train_crate_anim_0[1] = { { 0x00000101 } };
 
-union AnimationStep D_800FFBF0[1] = { { 0x01000001 } };
+union AnimationStep train_crate_anim_1[1] = { { 0x01000001 } };
 
-union AnimationStep D_800FFBF4[1] = { { 0x02000001 } };
+union AnimationStep train_crate_anim_2[1] = { { 0x02000001 } };
 
-union AnimationStep D_800FFBF8[1] = { { 0x03000001 } };
+union AnimationStep train_crate_anim_3[1] = { { 0x03000001 } };
 
-union AnimationStep D_800FFBFC[1] = { { 0x04000001 } };
+union AnimationStep train_crate_anim_4[1] = { { 0x04000001 } };
 
-union AnimationStep D_800FFC00[1] = { { 0x05000001 } };
+union AnimationStep train_crate_anim_5[1] = { { 0x05000001 } };
 
-union AnimationStep D_800FFC04[1] = { { 0x06000001 } };
+union AnimationStep train_crate_anim_6[1] = { { 0x06000001 } };
 
-union AnimationStep D_800FFC08[1] = { { 0x07000001 } };
+union AnimationStep train_crate_anim_7[1] = { { 0x07000001 } };
 
-union AnimationStep D_800FFC0C[1] = { { 0x08000001 } };
+union AnimationStep train_crate_anim_8[1] = { { 0x08000001 } };
 
-union AnimationStep D_800FFC10[1] = { { 0x09000001 } };
+union AnimationStep train_crate_anim_9[1] = { { 0x09000001 } };
 
-union AnimationStep* D_800FFC14[10] = {
-    D_800FFBEC,
-    D_800FFBF0,
-    D_800FFBF4,
-    D_800FFBF8,
-    D_800FFBFC,
-    D_800FFC00,
-    D_800FFC04,
-    D_800FFC08,
-    D_800FFC0C,
-    D_800FFC10,
+union AnimationStep* train_crate_animations[10] = {
+    train_crate_anim_0,
+    train_crate_anim_1,
+    train_crate_anim_2,
+    train_crate_anim_3,
+    train_crate_anim_4,
+    train_crate_anim_5,
+    train_crate_anim_6,
+    train_crate_anim_7,
+    train_crate_anim_8,
+    train_crate_anim_9,
 };
 
-void (*D_800FFC3C[])(struct MainObj*) = {
+void (*train_crate_state_funcs[])(struct MainObj*) = {
     func_80069748,
     func_800698D8,
-    func_80069A08,
-    func_80069A6C,
+    train_crate_explode,
+    train_crate_despawn,
 };
 
-void (*D_800FFC4C[2])() = {
-    func_8009216C,
-    func_80069A8C,
+void (*train_crate_step_funcs[2])() = {
+    enemy_hit_reaction,
+    train_crate_idle,
 };

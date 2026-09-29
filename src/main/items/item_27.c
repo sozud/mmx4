@@ -9,46 +9,47 @@ struct Item26AnimationStep {
     u8 command;
 };
 
-extern struct Item26AnimationStep D_8010D6BC[];
-extern struct Item26AnimationStep D_8010D6C0[];
-extern struct Item26AnimationStep D_8010D750[];
-extern struct Item26AnimationStep D_8010D7E0[];
-extern struct Item26AnimationStep D_8010D7EC[];
-extern struct Item26AnimationStep D_8010D7F0[];
-extern struct Item26AnimationStep D_8010D810[];
-extern struct Item26AnimationStep D_8010D814[];
-extern struct Item26AnimationStep D_8010D8C8[];
-extern struct Item26AnimationStep D_8010D904[];
-extern struct Item26AnimationStep D_8010D94C[];
+extern struct Item26AnimationStep boss_teleporter_anim_0[];
+extern struct Item26AnimationStep boss_teleporter_anim_1[];
+extern struct Item26AnimationStep boss_teleporter_anim_2[];
+extern struct Item26AnimationStep boss_teleporter_anim_3[];
+extern struct Item26AnimationStep boss_teleporter_anim_4[];
+extern struct Item26AnimationStep boss_teleporter_anim_5[];
+extern struct Item26AnimationStep boss_teleporter_anim_6[];
+extern struct Item26AnimationStep boss_teleporter_anim_7[];
+extern struct Item26AnimationStep boss_teleporter_anim_8[];
+extern struct Item26AnimationStep boss_teleporter_anim_9[];
+extern struct Item26AnimationStep boss_teleporter_anim_10[];
 
-struct Item26AnimationStep* D_8010D964[11] = {
-    D_8010D6BC,
-    D_8010D6C0,
-    D_8010D750,
-    D_8010D7E0,
-    D_8010D7EC,
-    D_8010D7F0,
-    D_8010D810,
-    D_8010D814,
-    D_8010D8C8,
-    D_8010D904,
-    D_8010D94C,
+struct Item26AnimationStep* boss_teleporter_animations[11] = {
+    boss_teleporter_anim_0,
+    boss_teleporter_anim_1,
+    boss_teleporter_anim_2,
+    boss_teleporter_anim_3,
+    boss_teleporter_anim_4,
+    boss_teleporter_anim_5,
+    boss_teleporter_anim_6,
+    boss_teleporter_anim_7,
+    boss_teleporter_anim_8,
+    boss_teleporter_anim_9,
+    boss_teleporter_anim_10,
 };
 
-void func_800C7164(struct ItemObj* arg0)
+void boss_teleporter_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010D990[arg0->state](arg0);
-    func_8002E184(arg0);
+    boss_teleporter_state_funcs[arg0->state](arg0);
+    collide_with_players(arg0);
 }
 
+// boss_teleporter_init
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C71C0);
 
-void func_800C7460(struct ItemObj* arg0)
+void boss_teleporter_main(struct ItemObj* arg0)
 {
-    D_8010D9A4[arg0->unk5](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    boss_teleporter_step_funcs[arg0->unk5](arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
     if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
         is_on_screen(BASE_OBJECT(arg0));
         return;
@@ -56,28 +57,28 @@ void func_800C7460(struct ItemObj* arg0)
     arg0->state = 4;
 }
 
-void func_800C74D4(struct ItemObj* arg0)
+void boss_teleporter_close(struct ItemObj* arg0)
 {
     if (arg0->animation_step.fields.relative_step == 0) {
         arg0->state = 3;
         engine_obj.character_state.bytes[arg0->unk2 + 6] = 2;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     }
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-void func_800C7538(struct ItemObj* arg0)
+void boss_teleporter_idle(struct ItemObj* arg0)
 {
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-void func_800C7558(struct ItemObj* arg0)
+void boss_teleporter_despawn(struct ItemObj* arg0)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(arg0));
 }
 
-void func_800C7578(struct ItemObj* self)
+void boss_teleporter_wait_player(struct ItemObj* self)
 {
     struct MiscObj* effect;
     u8 height;
@@ -101,7 +102,7 @@ void func_800C7578(struct ItemObj* self)
     }
 }
 
-void func_800C7648(struct ItemObj* arg0)
+void boss_teleporter_wait_enter(struct ItemObj* arg0)
 {
     if (g_Player.script_state < 0) {
         arg0->tail_ext.unk1.unk84.timer = 0;
@@ -113,12 +114,12 @@ void func_800C7648(struct ItemObj* arg0)
     }
 }
 
-void func_800C76A4(struct ItemObj* arg0)
+void boss_teleporter_warp(struct ItemObj* arg0)
 {
-    D_8010D9DC[arg0->unk6](arg0);
+    boss_teleporter_warp_funcs[arg0->unk6](arg0);
 }
 
-void func_800C76E0(struct ItemObj* arg0)
+void boss_teleporter_warp_start(struct ItemObj* arg0)
 {
     struct MiscObj* misc;
 
@@ -135,17 +136,17 @@ void func_800C76E0(struct ItemObj* arg0)
     }
 }
 
-void func_800C7754(struct ItemObj* arg0)
+void boss_teleporter_warp_charge(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
-        func_80015D60(arg0, 4);
-        func_80015D60(arg0->unk7C.object, 8);
+        set_animation(arg0, 4);
+        set_animation(arg0->unk7C.object, 8);
         arg0->tail_ext.unk1.unk84.timer = 0x78;
         arg0->unk6 = (u8)arg0->unk6 + 1;
     }
 }
 
-void func_800C77BC(struct ItemObj* arg0)
+void boss_teleporter_warp_leave(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
         player_start_script_action(0x16, g_Player.unk15);
@@ -155,7 +156,7 @@ void func_800C77BC(struct ItemObj* arg0)
     }
 }
 
-void func_800C7830(struct ItemObj* arg0)
+void boss_teleporter_warp_finish(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.timer == 0) {
         arg0->unk5 = 3;
@@ -163,7 +164,7 @@ void func_800C7830(struct ItemObj* arg0)
     }
 }
 
-void func_800C785C(struct ItemObj* arg0)
+void boss_teleporter_arrive(struct ItemObj* arg0)
 {
     u8 checkpoint;
 
@@ -177,7 +178,7 @@ void func_800C785C(struct ItemObj* arg0)
     }
 }
 
-void func_800C78BC(struct ItemObj* self)
+void boss_teleporter_wait_bosses_cleared(struct ItemObj* self)
 {
     u8 slot;
     struct MiscObj* misc;
@@ -189,7 +190,7 @@ void func_800C78BC(struct ItemObj* self)
     }
 
     if (slot == 0x10) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         misc = find_free_misc_obj();
         if (misc != NULL) {
             misc->active = 0x41;
@@ -204,27 +205,28 @@ void func_800C78BC(struct ItemObj* self)
     }
 }
 
+// boss_teleporter_player_inside
 INCLUDE_ASM("main/nonmatchings/items/item_27", func_800C7970);
 
-void (*D_8010D990[])(struct ItemObj*) = {
+void (*boss_teleporter_state_funcs[])(struct ItemObj*) = {
     func_800C71C0,
-    func_800C7460,
-    func_800C74D4,
-    func_800C7538,
-    func_800C7558,
+    boss_teleporter_main,
+    boss_teleporter_close,
+    boss_teleporter_idle,
+    boss_teleporter_despawn,
 };
 
-void (*D_8010D9A4[])(struct ItemObj*) = {
-    func_800C7578,
-    func_800C7648,
-    func_800C76A4,
-    func_800C785C,
-    func_800C78BC,
+void (*boss_teleporter_step_funcs[])(struct ItemObj*) = {
+    boss_teleporter_wait_player,
+    boss_teleporter_wait_enter,
+    boss_teleporter_warp,
+    boss_teleporter_arrive,
+    boss_teleporter_wait_bosses_cleared,
 };
 
-u8 D_8010D9B8[4] = { 0, 0, 0x20, 8 };
+u8 boss_teleporter_box[4] = { 0, 0, 0x20, 8 };
 
-u8* D_8010D9BC[8] = {
+u8* boss_teleporter_boss_flags[8] = {
     &engine_obj.character_state.bytes[8],
     &engine_obj.character_state.bytes[9],
     &engine_obj.character_state.bytes[10],
@@ -235,9 +237,9 @@ u8* D_8010D9BC[8] = {
     &engine_obj.character_state.bytes[15],
 };
 
-void (*D_8010D9DC[])(struct ItemObj*) = {
-    func_800C76E0,
-    func_800C7754,
-    func_800C77BC,
-    func_800C7830,
+void (*boss_teleporter_warp_funcs[])(struct ItemObj*) = {
+    boss_teleporter_warp_start,
+    boss_teleporter_warp_charge,
+    boss_teleporter_warp_leave,
+    boss_teleporter_warp_finish,
 };

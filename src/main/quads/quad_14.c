@@ -2,12 +2,12 @@
 // 800D7A54..800D7CEC
 #include "common.h"
 
-void func_800D7A54(struct QuadObj* arg0)
+void colonel_beam_update(struct QuadObj* arg0)
 {
-    D_8010FE20[arg0->state](arg0);
+    colonel_beam_state_funcs[arg0->state](arg0);
 }
 
-void func_800D7A90(struct QuadObj* arg0)
+void colonel_beam_init(struct QuadObj* arg0)
 {
     arg0->active = -0x6D;
     arg0->bg_offset = (u8)g_Player.bg_offset;
@@ -15,24 +15,24 @@ void func_800D7A90(struct QuadObj* arg0)
     arg0->unk36 = 2;
     arg0->x_pos.i.hi = 0;
     arg0->y_pos.i.hi = 0;
-    func_800D7C70(arg0, (u8)arg0->unk2);
+    colonel_beam_place(arg0, (u8)arg0->unk2);
     arg0->unk5 = 0;
     arg0->state = (u8)arg0->state + 1;
 }
 
-void func_800D7AF8(struct QuadObj* arg0)
+void colonel_beam_main(struct QuadObj* arg0)
 {
-    D_8010FE2C[arg0->unk5](arg0);
+    colonel_beam_step_funcs[arg0->unk5](arg0);
     quad_is_on_screen(arg0);
     arg0->on_screen = 1;
 }
 
-void func_800D7B50(struct QuadObj* arg0)
+void colonel_beam_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D7B70(struct QuadObj* arg0)
+void colonel_beam_drop(struct QuadObj* arg0)
 {
     arg0->unk28.i.hi += 0x10;
     arg0->unk30.i.hi += 0x10;
@@ -41,7 +41,7 @@ void func_800D7B70(struct QuadObj* arg0)
     }
 }
 
-void func_800D7BBC(struct QuadObj* arg0)
+void colonel_beam_widen(struct QuadObj* arg0)
 {
     arg0->unk14.i.hi = arg0->unk14.i.hi + 3;
     arg0->unk1C.i.hi = arg0->unk1C.i.hi - 3;
@@ -57,14 +57,14 @@ void func_800D7BBC(struct QuadObj* arg0)
     }
 }
 
-void func_800D7C3C(struct QuadObj* arg0)
+void colonel_beam_wait(struct QuadObj* arg0)
 {
     if (arg0->unk5C->unk7 >= 8) {
         arg0->state++;
     }
 }
 
-void func_800D7C70(struct QuadObj* arg0, u8 arg1)
+void colonel_beam_place(struct QuadObj* arg0, u8 arg1)
 {
     if (arg1) {
         arg0->unk14.val = arg0->unk5C->x_pos.val + FIXED(-1);
@@ -80,14 +80,14 @@ void func_800D7C70(struct QuadObj* arg0, u8 arg1)
     arg0->unk30.val = arg0->unk28.val;
 }
 
-void (*D_8010FE20[])(struct QuadObj*) = {
-    func_800D7A90,
-    func_800D7AF8,
-    func_800D7B50,
+void (*colonel_beam_state_funcs[])(struct QuadObj*) = {
+    colonel_beam_init,
+    colonel_beam_main,
+    colonel_beam_despawn,
 };
 
-void (*D_8010FE2C[])(struct QuadObj*) = {
-    func_800D7B70,
-    func_800D7BBC,
-    func_800D7C3C,
+void (*colonel_beam_step_funcs[])(struct QuadObj*) = {
+    colonel_beam_drop,
+    colonel_beam_widen,
+    colonel_beam_wait,
 };

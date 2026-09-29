@@ -2,86 +2,88 @@
 // 800DA298..800DA7C0
 #include "common.h"
 
-void func_800DA298(struct LayerObj* arg0)
+void airship_bob_update(struct LayerObj* arg0)
 {
-    D_8010FFA0[arg0->state](arg0);
+    airship_bob_state_funcs[arg0->state](arg0);
 }
 
+// airship_bob_init
 INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA2D4);
 
+// airship_bob_main
 INCLUDE_ASM("main/nonmatchings/layers/layer_05", func_800DA358);
 
-void func_800DA478(struct LayerObj* arg0)
+void airship_bob_despawn(struct LayerObj* arg0)
 {
-    func_8002B108(arg0);
+    despawn_object_permanently(arg0);
 }
 
-void func_800DA498(struct LayerObj* arg0)
+void airship_bob_section_0(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800DA4D8(arg0);
+        airship_bob_section_0_wait(arg0);
     } else {
-        func_800DA4EC(arg0);
+        airship_bob_section_0_done(arg0);
     }
 }
 
-void func_800DA4D8(struct LayerObj* arg0)
+void airship_bob_section_0_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800DA4EC(struct LayerObj* arg0)
+void airship_bob_section_0_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
 
-void func_800DA4FC(struct LayerObj* arg0)
+void airship_bob_section_1(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800DA53C(arg0);
+        airship_bob_section_1_wait(arg0);
     } else {
-        func_800DA550(arg0);
+        airship_bob_section_1_done(arg0);
     }
 }
 
-void func_800DA53C(struct LayerObj* arg0)
+void airship_bob_section_1_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800DA550(struct LayerObj* arg0)
+void airship_bob_section_1_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
 
-void func_800DA560(struct LayerObj* arg0)
+void airship_bob_section_2(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800DA5A0(arg0);
+        airship_bob_section_2_wait(arg0);
     } else {
-        func_800DA5B4(arg0);
+        airship_bob_section_2_done(arg0);
     }
 }
 
-void func_800DA5A0(struct LayerObj* arg0)
+void airship_bob_section_2_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800DA5B4(struct LayerObj* arg0)
+void airship_bob_section_2_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
 
-void func_800DA5C4(struct LayerObj* arg0)
+void airship_bob_sway(struct LayerObj* arg0)
 {
-    D_8010FFC0[arg0->unk7](arg0);
+    airship_bob_sway_funcs[arg0->unk7](arg0);
 }
 
-void func_800DA600(struct LayerObj* arg0)
+void airship_bob_sway_up(struct LayerObj* arg0)
 {
     if (arg0->unk18.val < 0x5801) {
         if (arg0->unk18.val > 0) {
@@ -99,7 +101,7 @@ void func_800DA600(struct LayerObj* arg0)
     arg0->unk7++;
 }
 
-void func_800DA6A4(struct LayerObj* arg0)
+void airship_bob_sway_down(struct LayerObj* arg0)
 {
     if (arg0->unk18.val >= -0x5800) {
         if (arg0->unk18.val < 0) {
@@ -117,17 +119,17 @@ void func_800DA6A4(struct LayerObj* arg0)
     arg0->unk7--;
 }
 
-void func_800DA748(struct LayerObj* arg0)
+void airship_bob_idle(struct LayerObj* arg0)
 {
 }
 
-void func_800DA750(struct LayerObj* arg0)
+void airship_bob_update_section(struct LayerObj* arg0)
 {
     s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
 
     while (1) {
-        if (player_x - D_8010FFAC[offset] < 0) {
+        if (player_x - airship_bob_section_positions[offset] < 0) {
             break;
         }
         offset++;
@@ -142,22 +144,22 @@ void func_800DA750(struct LayerObj* arg0)
     }
 }
 
-void (*D_8010FFA0[])(struct LayerObj*) = {
+void (*airship_bob_state_funcs[])(struct LayerObj*) = {
     func_800DA2D4,
     func_800DA358,
-    func_800DA478,
+    airship_bob_despawn,
 };
 
-s16 D_8010FFAC[2] = { 0x6A0, 0x810 };
+s16 airship_bob_section_positions[2] = { 0x6A0, 0x810 };
 
-void (*D_8010FFB0[])(struct LayerObj*) = {
-    func_800DA498,
-    func_800DA4FC,
-    func_800DA560,
-    func_800DA748,
+void (*airship_bob_section_funcs[])(struct LayerObj*) = {
+    airship_bob_section_0,
+    airship_bob_section_1,
+    airship_bob_section_2,
+    airship_bob_idle,
 };
 
-void (*D_8010FFC0[])(struct LayerObj*) = {
-    func_800DA600,
-    func_800DA6A4,
+void (*airship_bob_sway_funcs[])(struct LayerObj*) = {
+    airship_bob_sway_up,
+    airship_bob_sway_down,
 };

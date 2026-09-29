@@ -2,11 +2,13 @@
 // 800CDE44..800CE114
 #include "common.h"
 
+// option_toggle_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_31", func_800CDE44);
 
+// option_toggle_appear
 INCLUDE_ASM("main/nonmatchings/misc/misc_31", func_800CDF4C);
 
-void func_800CE080(struct MiscObj* self)
+void option_toggle_refresh(struct MiscObj* self)
 {
     if (D_80171EA9 != self->ext.misc_31.animation) {
         self->animation_step.fields.frame_index = D_80171EA9 == 0 ? 0x57 : 0x56;
@@ -15,19 +17,19 @@ void func_800CE080(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CE0D8(struct MiscObj* arg0)
+void option_toggle_update(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    D_8010EC38[arg0->state](arg0);
+    self->on_screen = 0;
+    option_toggle_state_funcs[self->state](self);
 }
 
-void (*D_8010EC38[3])(struct MiscObj*) = {
+void (*option_toggle_state_funcs[3])(struct MiscObj*) = {
     func_800CDE44,
     func_800CDF4C,
-    func_800CE080,
+    option_toggle_refresh,
 };
 
-union AnimationStep D_8010EC44[36] = {
+union AnimationStep option_toggle_anim_0[36] = {
     { .packed = 0x3101000F },
     { .packed = 0x3201000D },
     { .packed = 0x3301000A },
@@ -66,4 +68,4 @@ union AnimationStep D_8010EC44[36] = {
     { .packed = 0x32DD000D },
 };
 
-u32* D_8010ECD4[1] = { (u32*)D_8010EC44 };
+u32* option_toggle_animations[1] = { (u32*)option_toggle_anim_0 };

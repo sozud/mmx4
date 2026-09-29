@@ -2,41 +2,44 @@
 // 8009F638..8009FB60
 #include "common.h"
 
-u8 D_801091D0[8] = { 0xF5, 0xFD, 0x1B, 0x0A, 2, 2, 0x0D, 4 };
-s32 D_801091D8[2] = { 0x5000, -0x5000 };
-s32 D_801091E0[4] = { 0x10000, -0x10000, -0x10000, 0x10000 };
+u8 cannon_missile_boxes[8] = { 0xF5, 0xFD, 0x1B, 0x0A, 2, 2, 0x0D, 4 };
+s32 cannon_missile_speeds[2] = { 0x5000, -0x5000 };
+s32 cannon_missile_accels[4] = { 0x10000, -0x10000, -0x10000, 0x10000 };
 
-void func_8009F638(struct ShotObj* arg0)
+void cannon_missile_update(struct ShotObj* self)
 {
-    D_801091F0[arg0->state](arg0);
+    cannon_missile_state_funcs[self->state](self);
 }
 
+// cannon_missile_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_29", func_8009F674);
 
+// cannon_missile_main
 INCLUDE_ASM("main/nonmatchings/shots/shot_29", func_8009F7C0);
 
+// cannon_missile_launch
 INCLUDE_ASM("main/nonmatchings/shots/shot_29", func_8009F89C);
 
-void func_8009F94C(struct ShotObj* arg0)
+void cannon_missile_slow(struct ShotObj* self)
 {
     u8 temp_v0;
 
-    temp_v0 = arg0->unk8C.shot_29.timer - 1;
-    arg0->unk8C.shot_29.timer = temp_v0;
-    if ((temp_v0 == 0) && (arg0->unk90.bytes[1] == 0)) {
-        arg0->unk28 = FIXED(0.1875);
-        arg0->unk90.bytes[1] = 1;
-        arg0->x_vel.val = 0;
-        arg0->y_vel.val = 0;
-        arg0->unk8C.shot_29.unk8D = 0x28;
-        arg0->unk5++;
+    temp_v0 = self->unk8C.shot_29.timer - 1;
+    self->unk8C.shot_29.timer = temp_v0;
+    if ((temp_v0 == 0) && (self->unk90.bytes[1] == 0)) {
+        self->unk28 = FIXED(0.1875);
+        self->unk90.bytes[1] = 1;
+        self->x_vel.val = 0;
+        self->y_vel.val = 0;
+        self->unk8C.shot_29.unk8D = 0x28;
+        self->unk5++;
     }
-    if ((arg0->unk2 != 0) && (arg0->unk8C.shot_29.timer < 0x15U) && (arg0->y_vel.val != 0)) {
-        arg0->y_vel.val = 0;
+    if ((self->unk2 != 0) && (self->unk8C.shot_29.timer < 0x15U) && (self->y_vel.val != 0)) {
+        self->y_vel.val = 0;
     }
 }
 
-void func_8009F9E0(struct ShotObj* arg0)
+void cannon_missile_track(struct ShotObj* self)
 {
     struct ShotObj* shot;
     u8 verticalTimer;
@@ -46,7 +49,7 @@ void func_8009F9E0(struct ShotObj* arg0)
     struct MiscObj* effect;
     s16 spawnX;
 
-    shot = arg0;
+    shot = self;
     verticalTimer = shot->unk8C.bytes[1];
     if (verticalTimer != 0) {
         shot->unk8C.bytes[1] = verticalTimer - 1;
@@ -97,18 +100,18 @@ vertical_done:
     }
 }
 
-void func_8009FB38(struct ShotObj* arg0)
+void cannon_missile_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009FB58(struct ShotObj* arg0)
+void cannon_missile_idle(struct ShotObj* self)
 {
 }
 
-void (*D_801091F0[])(struct ShotObj*) = {
+void (*cannon_missile_state_funcs[])(struct ShotObj*) = {
     func_8009F674,
     func_8009F7C0,
-    func_8009FB38,
-    func_8009FB58,
+    cannon_missile_despawn,
+    cannon_missile_idle,
 };

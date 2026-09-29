@@ -2,88 +2,89 @@
 // 800C9510..800C9D64
 #include "common.h"
 
-extern u8 D_8010E02C[];
-extern u8 D_8010E030[];
-extern u8 D_8010E040[];
-extern u8 D_8010E044[];
-extern u8 D_8010E050[];
-extern u8 D_8010E054[];
+extern u8 crumbling_tile_debris_0[];
+extern u8 crumbling_tile_debris_1[];
+extern u8 crumbling_tile_debris_5[];
+extern u8 crumbling_tile_debris_6[];
+extern u8 crumbling_tile_debris_9[];
+extern u8 crumbling_tile_debris_10[];
 
+// crumbling_tile_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_08", func_800C9510);
 
-void func_800C969C(struct MiscObj* arg0)
+void crumbling_tile_break_first(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        if (arg0->on_screen != 0) {
-            switch (arg0->unk2) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->on_screen != 0) {
+            switch (self->unk2) {
             case 0:
             case 1:
             case 2:
             case 3:
             case 4:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(0));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(8), FIXED(0));
                 break;
             case 5:
             case 20:
-                func_800C833C(3, D_8010E02C, arg0, FIXED(16), FIXED(16));
-                func_800C833C(3, D_8010E030, arg0, FIXED(48), FIXED(16));
-                func_800C833C(4, D_8010E040, arg0, FIXED(40), FIXED(48));
-                func_800C833C(4, D_8010E044, arg0, FIXED(40), FIXED(64));
+                spawn_debris_offset(3, crumbling_tile_debris_0, self, FIXED(16), FIXED(16));
+                spawn_debris_offset(3, crumbling_tile_debris_1, self, FIXED(48), FIXED(16));
+                spawn_debris_offset(4, crumbling_tile_debris_5, self, FIXED(40), FIXED(48));
+                spawn_debris_offset(4, crumbling_tile_debris_6, self, FIXED(40), FIXED(64));
                 break;
             case 6:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(8), FIXED(32));
                 break;
             case 7:
             case 8:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(-8), FIXED(32) + FIXED((arg0->unk2 - 7) * 8));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(-8), FIXED(32) + FIXED((self->unk2 - 7) * 8));
                 break;
             case 9:
             case 10:
             case 11:
             case 12:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(-8), FIXED(32) + FIXED((arg0->unk2 - 9) * 4));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(-8), FIXED(32) + FIXED((self->unk2 - 9) * 4));
                 break;
             case 13:
             case 14:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32) + FIXED((arg0->unk2 - 13) * 8));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(8), FIXED(32) + FIXED((self->unk2 - 13) * 8));
                 break;
             case 15:
             case 16:
             case 17:
             case 18:
-                func_800C833C(2, D_8010E02C, arg0, FIXED(8), FIXED(32) + FIXED((arg0->unk2 - 15) * 4));
+                spawn_debris_offset(2, crumbling_tile_debris_0, self, FIXED(8), FIXED(32) + FIXED((self->unk2 - 15) * 4));
                 break;
             case 19:
-                func_800C833C(4, D_8010E050, arg0, FIXED(16), FIXED(24));
-                func_800C833C(3, D_8010E054, arg0, FIXED(16), FIXED(56));
+                spawn_debris_offset(4, crumbling_tile_debris_9, self, FIXED(16), FIXED(24));
+                spawn_debris_offset(3, crumbling_tile_debris_10, self, FIXED(16), FIXED(56));
                 break;
             }
         }
-        if (arg0->unk15 != 0) {
-            arg0->x_pos.u.hi -= 0x10;
+        if (self->unk15 != 0) {
+            self->x_pos.u.hi -= 0x10;
         }
-        func_800DABE4(D_8010E058[arg0->unk2].variant, (s16)arg0->x_pos.u.hi, arg0->y_pos.i.hi);
-        arg0->state++;
+        apply_tile_effect(crumbling_tile_first_effects[self->unk2].variant, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
+        self->state++;
     }
 }
 
-void func_800C9914(struct MiscObj* arg0)
+void crumbling_tile_second_wait_anim(struct MiscObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->ext.misc_8.timer = 0xF;
-        arg0->unk5++;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->ext.misc_8.timer = 0xF;
+        self->unk5++;
     }
 }
 
-void func_800C993C(struct MiscObj* arg0)
+void crumbling_tile_second_delay(struct MiscObj* self)
 {
     s32 step;
     s32 specialStep;
 
-    if (arg0->ext.misc_8.timer == 0) {
-        arg0->unk5++;
-        step = arg0->unk2;
+    if (self->ext.misc_8.timer == 0) {
+        self->unk5++;
+        step = self->unk2;
 
         if (step < 0x16) {
             if (step < 0x13) {
@@ -98,17 +99,17 @@ void func_800C993C(struct MiscObj* arg0)
         if (step == specialStep) {
             return;
         }
-        func_80015D60(arg0, D_8010E090.entries[arg0->unk2].second);
+        set_animation(self, crumbling_tile_second_effects.entries[self->unk2].second);
     } else {
-        arg0->ext.misc_8.timer--;
+        self->ext.misc_8.timer--;
     }
 }
 
-void func_800C99CC(struct MiscObj* arg0)
+void crumbling_tile_break_second(struct MiscObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        if (arg0->on_screen != 0) {
-            switch (arg0->unk2) {
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->on_screen != 0) {
+            switch (self->unk2) {
             case 0:
             case 1:
             case 2:
@@ -117,75 +118,75 @@ void func_800C99CC(struct MiscObj* arg0)
             case 22:
             case 23:
             case 24:
-                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(8), FIXED(32));
                 break;
             case 5:
             case 20:
             case 21:
             case 25:
-                func_800C833C(4, D_8010E034, arg0, FIXED(16), FIXED(16));
-                func_800C833C(4, D_8010E038, arg0, FIXED(32), FIXED(16));
-                func_800C833C(3, D_8010E03C, arg0, FIXED(48), FIXED(16));
-                func_800C833C(3, D_8010E048, arg0, FIXED(40), FIXED(48));
-                func_800C833C(2, D_8010E04C, arg0, FIXED(40), FIXED(64));
+                spawn_debris_offset(4, crumbling_tile_debris_2, self, FIXED(16), FIXED(16));
+                spawn_debris_offset(4, crumbling_tile_debris_3, self, FIXED(32), FIXED(16));
+                spawn_debris_offset(3, crumbling_tile_debris_4, self, FIXED(48), FIXED(16));
+                spawn_debris_offset(3, crumbling_tile_debris_7, self, FIXED(40), FIXED(48));
+                spawn_debris_offset(2, crumbling_tile_debris_8, self, FIXED(40), FIXED(64));
                 break;
             case 6:
-                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(8), FIXED(32));
                 break;
             case 7:
             case 8:
-                func_800C833C(2, D_8010E038, arg0, FIXED(-8), FIXED((arg0->unk2 - 7) * 8) + FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(-8), FIXED((self->unk2 - 7) * 8) + FIXED(32));
                 break;
             case 9:
             case 10:
             case 11:
             case 12:
-                func_800C833C(2, D_8010E038, arg0, FIXED(-8), FIXED((arg0->unk2 - 9) * 4) + FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(-8), FIXED((self->unk2 - 9) * 4) + FIXED(32));
                 break;
             case 13:
             case 14:
-                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED((arg0->unk2 - 7) * 8) + FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(8), FIXED((self->unk2 - 7) * 8) + FIXED(32));
                 break;
             case 15:
             case 16:
             case 17:
             case 18:
-                func_800C833C(2, D_8010E038, arg0, FIXED(8), FIXED((arg0->unk2 - 9) * 4) + FIXED(32));
+                spawn_debris_offset(2, crumbling_tile_debris_3, self, FIXED(8), FIXED((self->unk2 - 9) * 4) + FIXED(32));
                 break;
             case 19:
-                func_800C833C(4, D_8010E034, arg0, FIXED(16), FIXED(24));
-                func_800C833C(4, D_8010E038, arg0, FIXED(16), FIXED(56));
+                spawn_debris_offset(4, crumbling_tile_debris_2, self, FIXED(16), FIXED(24));
+                spawn_debris_offset(4, crumbling_tile_debris_3, self, FIXED(16), FIXED(56));
                 break;
             }
         }
-        if (arg0->unk15 != 0) {
-            arg0->x_pos.u.hi -= 0x10;
+        if (self->unk15 != 0) {
+            self->x_pos.u.hi -= 0x10;
         }
-        func_800DABE4(D_8010E090.entries[arg0->unk2].third, (s16)arg0->x_pos.u.hi, arg0->y_pos.i.hi);
-        arg0->state++;
+        apply_tile_effect(crumbling_tile_second_effects.entries[self->unk2].third, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
+        self->state++;
     }
 }
 
-void func_800C9C64(struct MainObj* arg0)
+void crumbling_tile_second(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    D_8010E0E0[arg0->unk5](arg0);
+    animate_object(ANIMATED_OBJECT(self));
+    crumbling_tile_second_funcs[self->unk5](self);
 }
 
-void func_800C9CB0(struct MiscObj* arg0)
+void crumbling_tile_main(struct MiscObj* self)
 {
-    D_8010E0EC[arg0->ext.misc_8.alternate](arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+    crumbling_tile_main_funcs[self->ext.misc_8.alternate](self);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
 }
 
-void func_800C9D08(struct MiscObj* arg0)
+void crumbling_tile_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800C9D28(struct MiscObj* arg0)
+void crumbling_tile_update(struct MiscObj* self)
 {
-    D_8010E0F4[arg0->state](arg0);
+    crumbling_tile_state_funcs[self->state](self);
 }
 
 #define ANIM_STEP(value)  \
@@ -369,29 +370,29 @@ union AnimationStep* D_8010DF48[57] = {
     D_8010DF20,
 };
 
-u8 D_8010E02C[4] = { 0x1D, 0x1E, 0x1F, 0 };
+u8 crumbling_tile_debris_0[4] = { 0x1D, 0x1E, 0x1F, 0 };
 
-u8 D_8010E030[4] = { 0x20, 0x21, 5, 0 };
+u8 crumbling_tile_debris_1[4] = { 0x20, 0x21, 5, 0 };
 
-u8 D_8010E034[4] = { 9, 10, 11, 12 };
+u8 crumbling_tile_debris_2[4] = { 9, 10, 11, 12 };
 
-u8 D_8010E038[4] = { 15, 14, 13, 16 };
+u8 crumbling_tile_debris_3[4] = { 15, 14, 13, 16 };
 
-u8 D_8010E03C[4] = { 0x11, 0x12, 0x13, 0 };
+u8 crumbling_tile_debris_4[4] = { 0x11, 0x12, 0x13, 0 };
 
-u8 D_8010E040[4] = { 0x2D, 0x2A, 0x2B, 0x2F };
+u8 crumbling_tile_debris_5[4] = { 0x2D, 0x2A, 0x2B, 0x2F };
 
-u8 D_8010E044[4] = { 0x2E, 0x29, 0x2C, 0x2F };
+u8 crumbling_tile_debris_6[4] = { 0x2E, 0x29, 0x2C, 0x2F };
 
-u8 D_8010E048[4] = { '4', '5', '6', 0 };
+u8 crumbling_tile_debris_7[4] = { '4', '5', '6', 0 };
 
-u8 D_8010E04C[4] = { '7', '8', 0, 0 };
+u8 crumbling_tile_debris_8[4] = { '7', '8', 0, 0 };
 
-u8 D_8010E050[4] = { 1, 2, 3, 4 };
+u8 crumbling_tile_debris_9[4] = { 1, 2, 3, 4 };
 
-u8 D_8010E054[4] = { 5, 6, 7, 0 };
+u8 crumbling_tile_debris_10[4] = { 5, 6, 7, 0 };
 
-struct Misc08EffectDescriptor D_8010E058[28] = {
+struct Misc08EffectDescriptor crumbling_tile_first_effects[28] = {
     { 0x16, 0 },
     { 0x16, 1 },
     { 0x16, 2 },
@@ -422,49 +423,49 @@ struct Misc08EffectDescriptor D_8010E058[28] = {
     { 0, 0 },
 };
 
-struct Misc08EffectTripletTable D_8010E090 = { {
-                                                   { 0x22, 0x30, 0x15 },
-                                                   { 0x22, 0x30, 0x15 },
-                                                   { 0x22, 0x30, 0x15 },
-                                                   { 0x22, 0x30, 0x15 },
-                                                   { 0x22, 0x30, 0x15 },
-                                                   { 0x15, 0, 0x18 },
-                                                   { 0x23, 0x31, 0x16 },
-                                                   { 0x27, 0x30, 0x16 },
-                                                   { 0x28, 0x32, 0x16 },
-                                                   { 0x23, 0x30, 0x16 },
-                                                   { 0x24, 0x31, 0x16 },
-                                                   { 0x25, 0x32, 0x16 },
-                                                   { 0x26, 0x33, 0x16 },
-                                                   { 0x28, 0x32, 0x16 },
-                                                   { 0x27, 0x30, 0x16 },
-                                                   { 0x23, 0x30, 0x16 },
-                                                   { 0x24, 0x31, 0x16 },
-                                                   { 0x25, 0x32, 0x16 },
-                                                   { 0x26, 0x33, 0x16 },
-                                                   { 8, 0, 0x14 },
-                                                   { 0x15, 0, 0x19 },
-                                                   { 0x15, 0, 0x1A },
-                                                   { 0x22, 0x30, 0x1B },
-                                                   { 0x22, 0x30, 0x1C },
-                                                   { 0x22, 0x30, 0x1D },
-                                                   { 0x15, 0, 0x1F },
-                                               },
+struct Misc08EffectTripletTable crumbling_tile_second_effects = { {
+                                                                      { 0x22, 0x30, 0x15 },
+                                                                      { 0x22, 0x30, 0x15 },
+                                                                      { 0x22, 0x30, 0x15 },
+                                                                      { 0x22, 0x30, 0x15 },
+                                                                      { 0x22, 0x30, 0x15 },
+                                                                      { 0x15, 0, 0x18 },
+                                                                      { 0x23, 0x31, 0x16 },
+                                                                      { 0x27, 0x30, 0x16 },
+                                                                      { 0x28, 0x32, 0x16 },
+                                                                      { 0x23, 0x30, 0x16 },
+                                                                      { 0x24, 0x31, 0x16 },
+                                                                      { 0x25, 0x32, 0x16 },
+                                                                      { 0x26, 0x33, 0x16 },
+                                                                      { 0x28, 0x32, 0x16 },
+                                                                      { 0x27, 0x30, 0x16 },
+                                                                      { 0x23, 0x30, 0x16 },
+                                                                      { 0x24, 0x31, 0x16 },
+                                                                      { 0x25, 0x32, 0x16 },
+                                                                      { 0x26, 0x33, 0x16 },
+                                                                      { 8, 0, 0x14 },
+                                                                      { 0x15, 0, 0x19 },
+                                                                      { 0x15, 0, 0x1A },
+                                                                      { 0x22, 0x30, 0x1B },
+                                                                      { 0x22, 0x30, 0x1C },
+                                                                      { 0x22, 0x30, 0x1D },
+                                                                      { 0x15, 0, 0x1F },
+                                                                  },
     { 0, 0 } };
 
-void (*D_8010E0E0[3])(struct MiscObj*) = {
-    func_800C9914,
-    func_800C993C,
-    func_800C99CC,
+void (*crumbling_tile_second_funcs[3])(struct MiscObj*) = {
+    crumbling_tile_second_wait_anim,
+    crumbling_tile_second_delay,
+    crumbling_tile_break_second,
 };
 
-void (*D_8010E0EC[2])(struct MiscObj*) = {
-    func_800C969C,
-    func_800C9C64,
+void (*crumbling_tile_main_funcs[2])(struct MiscObj*) = {
+    crumbling_tile_break_first,
+    crumbling_tile_second,
 };
 
-void (*D_8010E0F4[3])(struct MiscObj*) = {
+void (*crumbling_tile_state_funcs[3])(struct MiscObj*) = {
     func_800C9510,
-    func_800C9CB0,
-    func_800C9D08,
+    crumbling_tile_main,
+    crumbling_tile_despawn,
 };

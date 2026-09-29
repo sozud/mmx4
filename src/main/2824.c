@@ -9,7 +9,7 @@ extern s32 mmx4_pc_canonical_load;
 // entrypoint
 void func_80012024(void)
 {
-    func_800DAE84();
+    tile_effect_nop();
     func_8001213C();
     while (1) {
 #ifdef MMX4_PC

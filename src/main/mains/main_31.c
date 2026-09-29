@@ -3,26 +3,28 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005B894(struct MainObj* arg0)
+void thorn_trap_update(struct MainObj* self)
 {
-    D_800FDC48[arg0->state](arg0);
+    thorn_trap_state_funcs[self->state](self);
 }
 
+// thorn_trap_init
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005B8D0);
 
-void func_8005BA24(struct MainObj* arg0)
+void thorn_trap_idle(struct MainObj* self)
 {
 }
 
+// thorn_trap_wait
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BA2C);
 
-void func_8005BB70(struct MainObj* self)
+void thorn_trap_open(struct MainObj* self)
 {
     s8 object_variant;
     s8 next_state;
 
     if (self->animation_step.fields.relative_step < 0) {
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         object_variant = self->unk2;
         if (object_variant < 6) {
             self->unk5 = 4;
@@ -31,111 +33,115 @@ void func_8005BB70(struct MainObj* self)
         if (object_variant < 0xC) {
             if (self->ext.main_0.flags[0] != 0) {
                 self->unk5 = 7;
-                func_80015D60(self, 7);
+                set_animation(self, 7);
                 return;
             }
             next_state = 6;
         } else {
             if (self->ext.main_0.flags[0] != 0) {
                 self->unk5 = 9;
-                func_80015D60(self, 4);
+                set_animation(self, 4);
                 return;
             }
             next_state = 8;
         }
         self->unk5 = next_state;
-        func_80015D60(self, 3);
+        set_animation(self, 3);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8005BC50(struct MainObj* arg0)
+void thorn_trap_windup(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step < 0) {
-        func_80015D60(arg0, 9);
-        arg0->unk5 = 5;
+    if (self->animation_step.fields.relative_step < 0) {
+        set_animation(self, 9);
+        self->unk5 = 5;
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8005BCA0(struct MainObj* arg0)
+void thorn_trap_strike(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk60 = 9;
-        arg0->unk50 = &D_800FD9F4;
-        func_8002D9BC(arg0);
-        arg0->unk50 = &D_800FD9F8;
-        func_8002D9BC(arg0);
-        arg0->unk50 = &D_800FD9FC;
-        func_8002D9BC(arg0);
-        arg0->unk50 = &D_800FDA00;
-        func_8002D9BC(arg0);
-        arg0->unk50 = &D_800FDA04;
-        func_8002D9BC(arg0);
-        arg0->unk50 = &D_800FDA08;
-        func_8002D9BC(arg0);
-        arg0->unk60 = 6;
-        arg0->unk50 = &D_800FD9F0;
+    if (self->animation_step.fields.event != 0) {
+        self->contact_damage = 9;
+        self->attack_box = &thorn_trap_strike_boxes;
+        func_8002D9BC(self);
+        self->attack_box = &D_800FD9F8;
+        func_8002D9BC(self);
+        self->attack_box = &D_800FD9FC;
+        func_8002D9BC(self);
+        self->attack_box = &D_800FDA00;
+        func_8002D9BC(self);
+        self->attack_box = &D_800FDA04;
+        func_8002D9BC(self);
+        self->attack_box = &D_800FDA08;
+        func_8002D9BC(self);
+        self->contact_damage = 6;
+        self->attack_box = &thorn_trap_attack_box;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8005BD6C(struct MainObj* arg0)
+void thorn_trap_extend(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk54 = (const u8*)&D_800FD9EC;
-        arg0->ext.main_0.flags[0] = 1;
-        arg0->animation_step.fields.event = 0;
+    if (self->animation_step.fields.event != 0) {
+        self->hurt_box = (const u8*)&thorn_trap_open_hurt_box;
+        self->ext.main_0.flags[0] = 1;
+        self->animation_step.fields.event = 0;
     }
-    if (arg0->animation_step.fields.relative_step < 0) {
-        func_80015D60(arg0, 7);
-        arg0->unk5 = 7;
+    if (self->animation_step.fields.relative_step < 0) {
+        set_animation(self, 7);
+        self->unk5 = 7;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// thorn_trap_extended
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BDE4);
 
-void func_8005BF48(struct MainObj* arg0)
+void thorn_trap_extend_high(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk54 = (const u8*)&D_800FD9EC;
-        arg0->ext.main_0.flags[0] = 1;
-        arg0->animation_step.fields.event = 0;
+    if (self->animation_step.fields.event != 0) {
+        self->hurt_box = (const u8*)&thorn_trap_open_hurt_box;
+        self->ext.main_0.flags[0] = 1;
+        self->animation_step.fields.event = 0;
     }
-    if (arg0->animation_step.fields.relative_step < 0) {
-        func_80015D60(arg0, 4);
-        arg0->unk5 = 9;
+    if (self->animation_step.fields.relative_step < 0) {
+        set_animation(self, 4);
+        self->unk5 = 9;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// thorn_trap_extended_high
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005BFC0);
 
+// thorn_trap_main
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005C0E4);
 
+// thorn_trap_break
 INCLUDE_ASM("main/nonmatchings/mains/main_31", func_8005C474);
 
-void func_8005C804(struct MainObj* arg0)
+void thorn_trap_despawn(struct MainObj* self)
 {
-    func_8002B108(OBJECT_HEADER(arg0));
+    despawn_object_permanently(OBJECT_HEADER(self));
 }
 
-struct Unk_unk68 D_800FD9EC[] = {
+struct Unk_unk68 thorn_trap_open_hurt_box[] = {
     { 58, -27, 0x18, 0x33 },
 };
 
-struct Unk_unk68 D_800FD9F0[] = {
+struct Unk_unk68 thorn_trap_attack_box[] = {
     { -105, -16, 0xC0, 0x1F },
 };
 
-struct Unk_unk68 D_800FD9F4[] = {
+struct Unk_unk68 thorn_trap_strike_boxes[] = {
     { -95, 15, 7, 0x15 },
 };
 
@@ -163,7 +169,7 @@ struct Unk_unk68 D_800FDA0C[] = {
     { -105, -15, 0xB3, 0x1C },
 };
 
-union AnimationStep D_800FDA10[] = {
+union AnimationStep thorn_trap_anim_0[] = {
     { 0x0D010001 },
     { 0x0DFF0001 },
     { 0x0101000D },
@@ -176,7 +182,7 @@ union AnimationStep D_800FDA10[] = {
     { 0x07F90001 },
 };
 
-union AnimationStep D_800FDA38[] = {
+union AnimationStep thorn_trap_anim_1[] = {
     { 0x02010004 },
     { 0x03010004 },
     { 0x04010004 },
@@ -186,7 +192,7 @@ union AnimationStep D_800FDA38[] = {
     { 0x07FA0001 },
 };
 
-union AnimationStep D_800FDA54[] = {
+union AnimationStep thorn_trap_anim_2[] = {
     { 0x02010004 },
     { 0x03010004 },
     { 0x04010004 },
@@ -198,7 +204,7 @@ union AnimationStep D_800FDA54[] = {
     { 0x00F80001 },
 };
 
-union AnimationStep D_800FDA78[] = {
+union AnimationStep thorn_trap_anim_3[] = {
     { 0x08010008 },
     { 0x09010008 },
     { 0x0A010108 },
@@ -212,7 +218,7 @@ union AnimationStep D_800FDA78[] = {
     { 0x0DFF0001 },
 };
 
-union AnimationStep D_800FDAA4[] = {
+union AnimationStep thorn_trap_anim_4[] = {
     { 0x0D010005 },
     { 0x10010005 },
     { 0x11010005 },
@@ -229,7 +235,7 @@ union AnimationStep D_800FDAA4[] = {
     { 0x0DF50001 },
 };
 
-union AnimationStep D_800FDADC[] = {
+union AnimationStep thorn_trap_anim_5[] = {
     { 0x14010004 },
     { 0x15010004 },
     { 0x16010004 },
@@ -241,7 +247,7 @@ union AnimationStep D_800FDADC[] = {
     { 0x1BF80001 },
 };
 
-union AnimationStep D_800FDB00[] = {
+union AnimationStep thorn_trap_anim_6[] = {
     { 0x1C010003 },
     { 0x1D010001 },
     { 0x1E010002 },
@@ -258,7 +264,7 @@ union AnimationStep D_800FDB00[] = {
     { 0x20000001 },
 };
 
-union AnimationStep D_800FDB38[] = {
+union AnimationStep thorn_trap_anim_7[] = {
     { 0x0D010005 },
     { 0x2E010006 },
     { 0x2F010007 },
@@ -273,7 +279,7 @@ union AnimationStep D_800FDB38[] = {
     { 0x0DF50001 },
 };
 
-union AnimationStep D_800FDB68[] = {
+union AnimationStep thorn_trap_anim_8[] = {
     { 0x21010002 },
     { 0x22010002 },
     { 0x23010002 },
@@ -283,7 +289,7 @@ union AnimationStep D_800FDB68[] = {
     { 0x26FA0001 },
 };
 
-union AnimationStep D_800FDB84[] = {
+union AnimationStep thorn_trap_anim_9[] = {
     { 0x00010001 },
     { 0x30010005 },
     { 0x31010004 },
@@ -291,7 +297,7 @@ union AnimationStep D_800FDB84[] = {
     { 0x32000101 },
 };
 
-union AnimationStep D_800FDB98[] = {
+union AnimationStep thorn_trap_anim_10[] = {
     { 0x32010001 },
     { 0x31010004 },
     { 0x30010005 },
@@ -299,68 +305,68 @@ union AnimationStep D_800FDB98[] = {
     { 0x31000001 },
 };
 
-union AnimationStep D_800FDBAC[] = {
+union AnimationStep thorn_trap_anim_11[] = {
     { 0x13000001 },
 };
 
-union AnimationStep D_800FDBB0[] = {
+union AnimationStep thorn_trap_anim_12[] = {
     { 0x27000001 },
 };
 
-union AnimationStep D_800FDBB4[] = {
+union AnimationStep thorn_trap_anim_13[] = {
     { 0x28000001 },
 };
 
-union AnimationStep D_800FDBB8[] = {
+union AnimationStep thorn_trap_anim_14[] = {
     { 0x29000001 },
 };
 
-union AnimationStep D_800FDBBC[] = {
+union AnimationStep thorn_trap_anim_15[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep D_800FDBC0[] = {
+union AnimationStep thorn_trap_anim_16[] = {
     { 0x2B000001 },
 };
 
-union AnimationStep D_800FDBC4[] = {
+union AnimationStep thorn_trap_anim_17[] = {
     { 0x33000001 },
 };
 
-union AnimationStep D_800FDBC8[] = {
+union AnimationStep thorn_trap_anim_18[] = {
     { 0x34000001 },
 };
 
-union AnimationStep D_800FDBCC[] = {
+union AnimationStep thorn_trap_anim_19[] = {
     { 0x35000001 },
 };
 
-union AnimationStep D_800FDBD0[] = {
+union AnimationStep thorn_trap_anim_20[] = {
     { 0x36000001 },
 };
 
-union AnimationStep* D_800FDBD4[] = {
-    D_800FDA10,
-    D_800FDA38,
-    D_800FDA54,
-    D_800FDA78,
-    D_800FDAA4,
-    D_800FDADC,
-    D_800FDB00,
-    D_800FDB38,
-    D_800FDB68,
-    D_800FDB84,
-    D_800FDB98,
-    D_800FDBAC,
-    D_800FDBB0,
-    D_800FDBB4,
-    D_800FDBB8,
-    D_800FDBBC,
-    D_800FDBC0,
-    D_800FDBC4,
-    D_800FDBC8,
-    D_800FDBCC,
-    D_800FDBD0,
+union AnimationStep* thorn_trap_animations[] = {
+    thorn_trap_anim_0,
+    thorn_trap_anim_1,
+    thorn_trap_anim_2,
+    thorn_trap_anim_3,
+    thorn_trap_anim_4,
+    thorn_trap_anim_5,
+    thorn_trap_anim_6,
+    thorn_trap_anim_7,
+    thorn_trap_anim_8,
+    thorn_trap_anim_9,
+    thorn_trap_anim_10,
+    thorn_trap_anim_11,
+    thorn_trap_anim_12,
+    thorn_trap_anim_13,
+    thorn_trap_anim_14,
+    thorn_trap_anim_15,
+    thorn_trap_anim_16,
+    thorn_trap_anim_17,
+    thorn_trap_anim_18,
+    thorn_trap_anim_19,
+    thorn_trap_anim_20,
 };
 
 u8 D_800FDC28[] = {
@@ -413,22 +419,22 @@ s8 D_800FDC40[8] = {
     0,
 };
 
-void (*D_800FDC48[])(struct MainObj*) = {
+void (*thorn_trap_state_funcs[])(struct MainObj*) = {
     func_8005B8D0,
     func_8005C0E4,
     func_8005C474,
-    func_8005C804,
+    thorn_trap_despawn,
 };
 
-void (*D_800FDC58[10])() = {
-    func_8009216C,
-    func_8005BA24,
+void (*thorn_trap_step_funcs[10])() = {
+    enemy_hit_reaction,
+    thorn_trap_idle,
     func_8005BA2C,
-    func_8005BB70,
-    func_8005BC50,
-    func_8005BCA0,
-    func_8005BD6C,
+    thorn_trap_open,
+    thorn_trap_windup,
+    thorn_trap_strike,
+    thorn_trap_extend,
     func_8005BDE4,
-    func_8005BF48,
+    thorn_trap_extend_high,
     func_8005BFC0,
 };

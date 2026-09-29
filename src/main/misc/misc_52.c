@@ -2,26 +2,27 @@
 // 800D2190..800D2A74
 #include "common.h"
 
-extern void (*D_8010F518[])(struct MiscObj*);
+extern void (*npc_cutscene_type_funcs[])(struct MiscObj*);
 
+// npc_cutscene_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D2190);
 
-void func_800D2420(struct MiscObj* arg0)
+void npc_cutscene_talk_wait_player(struct MiscObj* self)
 {
-    if (arg0->unk6 == 0) {
+    if (self->unk6 == 0) {
         if (g_Player.x_pos.i.hi >= 0x911) {
-            arg0->unk6++;
+            self->unk6++;
             background_objects[0].unk26 = 0x8C0;
             player_start_script_action(0x14, 0x40);
         }
     } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
-        arg0->unk6 = 0;
-        arg0->ext.misc_52.timer = 0x1E;
-        arg0->unk5++;
+        self->unk6 = 0;
+        self->ext.misc_52.timer = 0x1E;
+        self->unk5++;
     }
 }
 
-void func_800D24B4(struct MiscObj* self)
+void npc_cutscene_talk_line(struct MiscObj* self)
 {
     u8 timer = self->ext.misc_52.timer;
 
@@ -38,28 +39,28 @@ void func_800D24B4(struct MiscObj* self)
     }
 }
 
-void func_800D254C(struct MiscObj* arg0)
+void npc_cutscene_talk_wait_line(struct MiscObj* self)
 {
     if (abc_object.unkC == 0) {
-        arg0->state = 2;
-        arg0->unk6 = 0;
-        arg0->ext.misc_52.timer = 0x1E;
+        self->state = 2;
+        self->unk6 = 0;
+        self->ext.misc_52.timer = 0x1E;
         if (engine_obj.cur_character == 0) {
-            arg0->unk5 = 0;
+            self->unk5 = 0;
         } else {
-            arg0->unk5 = 1;
+            self->unk5 = 1;
         }
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800D25AC(struct MiscObj* arg0)
+void npc_cutscene_talk(struct MiscObj* self)
 {
-    D_8010F50C[arg0->unk5](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    npc_cutscene_talk_funcs[self->unk5](self);
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_800D25FC(struct MiscObj* obj)
+void npc_cutscene_reply(struct MiscObj* obj)
 {
     s8 state;
     u8 timer;
@@ -87,101 +88,102 @@ void func_800D25FC(struct MiscObj* obj)
             }
             break;
         }
-        func_80015DC8(ANIMATED_OBJECT(obj));
+        animate_object(ANIMATED_OBJECT(obj));
     }
     is_on_screen(BASE_OBJECT(obj));
 }
 
+// npc_cutscene_listen
 INCLUDE_ASM("main/nonmatchings/misc/misc_52", func_800D26F4);
 
-void func_800D2794(struct MiscObj* arg0)
+void npc_cutscene_main(struct MiscObj* self)
 {
-    D_8010F518[arg0->unk2](arg0);
+    npc_cutscene_type_funcs[self->unk2](self);
     if (D_80141BD8.unk0 % 10 == 0) {
         u8 unk56;
-        arg0->y_pos.i.hi += arg0->ext.misc_52.unk57;
-        unk56 = --arg0->ext.misc_52.unk56;
+        self->y_pos.i.hi += self->ext.misc_52.unk57;
+        unk56 = --self->ext.misc_52.unk56;
         if (unk56 == 0) {
-            arg0->ext.misc_52.unk56 = 7;
-            arg0->ext.misc_52.unk57 *= -1;
+            self->ext.misc_52.unk56 = 7;
+            self->ext.misc_52.unk57 *= -1;
         }
     }
 }
 
-void func_800D2854(struct MiscObj* arg0)
+void npc_cutscene_blink(struct MiscObj* self)
 {
     u8 timer;
 
-    timer = arg0->ext.misc_52.timer;
+    timer = self->ext.misc_52.timer;
     if (timer == 0) {
-        arg0->ext.misc_52.timer = 0x1E;
-        arg0->unk6++;
+        self->ext.misc_52.timer = 0x1E;
+        self->unk6++;
     } else {
-        arg0->ext.misc_52.timer = timer - 1;
+        self->ext.misc_52.timer = timer - 1;
     }
-    arg0->on_screen = 0;
+    self->on_screen = 0;
     if (D_80141BD8.unk0 & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800D28BC(struct MiscObj* arg0)
+void npc_cutscene_fade_out(struct MiscObj* self)
 {
-    u8 timer = arg0->ext.misc_52.timer;
-    arg0->on_screen = 0;
+    u8 timer = self->ext.misc_52.timer;
+    self->on_screen = 0;
     timer--;
-    arg0->ext.misc_52.timer = timer;
+    self->ext.misc_52.timer = timer;
     if (timer == 0) {
         engine_obj.unkF = 0x40;
     }
 }
 
-void func_800D28E8(struct MiscObj* arg0)
+void npc_cutscene_finish_fade(struct MiscObj* self)
 {
-    D_8010F528[arg0->unk6](arg0);
+    npc_cutscene_finish_fade_funcs[self->unk6](self);
 }
 
-void func_800D2924(struct MiscObj* arg0)
+void npc_cutscene_finish_wait(struct MiscObj* self)
 {
     u8 timer;
 
-    is_on_screen(BASE_OBJECT(arg0));
-    timer = arg0->ext.misc_52.timer - 1;
-    arg0->ext.misc_52.timer = timer;
+    is_on_screen(BASE_OBJECT(self));
+    timer = self->ext.misc_52.timer - 1;
+    self->ext.misc_52.timer = timer;
     if (timer == 0) {
         engine_obj.unkF = 0x40;
     }
 }
 
-void func_800D2970(struct MiscObj* arg0)
+void npc_cutscene_leave(struct MiscObj* self)
 {
     u8 timer;
 
-    arg0->on_screen = 0;
-    timer = arg0->ext.misc_52.timer - 1;
-    arg0->ext.misc_52.timer = timer;
+    self->on_screen = 0;
+    timer = self->ext.misc_52.timer - 1;
+    self->ext.misc_52.timer = timer;
     if (timer == 0) {
         player_end_script_action();
-        func_8002B108(OBJECT_HEADER(arg0));
+        despawn_object_permanently(OBJECT_HEADER(self));
     }
 }
 
-void func_800D29C0(struct MiscObj* arg0)
+void npc_cutscene_finish_leave(struct MiscObj* self)
 {
-    D_8010F530[arg0->unk6](arg0);
+    npc_cutscene_finish_leave_funcs[self->unk6](self);
 }
 
-void func_800D29FC(struct MiscObj* arg0)
+void npc_cutscene_finish(struct MiscObj* self)
 {
-    D_8010F538[arg0->unk5](arg0);
+    npc_cutscene_finish_funcs[self->unk5](self);
 }
 
-void func_800D2A38(struct MiscObj* arg0)
+void npc_cutscene_update(struct MiscObj* self)
 {
-    D_8010F544[arg0->state](arg0);
+    npc_cutscene_state_funcs[self->state](self);
 }
 
-union AnimationStep D_8010F4E4[5] = {
+union AnimationStep npc_cutscene_anim_0[5] = {
     { .packed = 0x0001003A },
     { .packed = 0x04010008 },
     { .packed = 0x05010021 },
@@ -189,34 +191,34 @@ union AnimationStep D_8010F4E4[5] = {
     { .packed = 0x00FC003A },
 };
 
-union AnimationStep D_8010F4F8[3] = {
+union AnimationStep npc_cutscene_anim_1[3] = {
     { .packed = 0x01010001 },
     { .packed = 0x02010001 },
     { .packed = 0x03FE0001 },
 };
 
-union AnimationStep* D_8010F504[2] = { D_8010F4E4, D_8010F4F8 };
+union AnimationStep* npc_cutscene_animations[2] = { npc_cutscene_anim_0, npc_cutscene_anim_1 };
 
-void (*D_8010F50C[3])(struct MiscObj*) = {
-    func_800D2420,
-    func_800D24B4,
-    func_800D254C,
+void (*npc_cutscene_talk_funcs[3])(struct MiscObj*) = {
+    npc_cutscene_talk_wait_player,
+    npc_cutscene_talk_line,
+    npc_cutscene_talk_wait_line,
 };
-void (*D_8010F518[4])(struct MiscObj*) = {
-    func_800D25AC,
-    func_800D25FC,
+void (*npc_cutscene_type_funcs[4])(struct MiscObj*) = {
+    npc_cutscene_talk,
+    npc_cutscene_reply,
     func_800D26F4,
     func_800D26F4,
 };
-void (*D_8010F528[2])(struct MiscObj*) = { func_800D2854, func_800D28BC };
-void (*D_8010F530[2])(struct MiscObj*) = { func_800D2854, func_800D2970 };
-void (*D_8010F538[3])(struct MiscObj*) = {
-    func_800D28E8,
-    func_800D2924,
-    func_800D29C0,
+void (*npc_cutscene_finish_fade_funcs[2])(struct MiscObj*) = { npc_cutscene_blink, npc_cutscene_fade_out };
+void (*npc_cutscene_finish_leave_funcs[2])(struct MiscObj*) = { npc_cutscene_blink, npc_cutscene_leave };
+void (*npc_cutscene_finish_funcs[3])(struct MiscObj*) = {
+    npc_cutscene_finish_fade,
+    npc_cutscene_finish_wait,
+    npc_cutscene_finish_leave,
 };
-void (*D_8010F544[3])(struct MiscObj*) = {
+void (*npc_cutscene_state_funcs[3])(struct MiscObj*) = {
     func_800D2190,
-    func_800D2794,
-    func_800D29FC,
+    npc_cutscene_main,
+    npc_cutscene_finish,
 };

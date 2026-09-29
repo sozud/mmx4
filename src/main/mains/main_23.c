@@ -3,154 +3,158 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80055E04(struct MainObj* arg0)
+void slope_skier_land(struct MainObj* self)
 {
     s8 step;
     u8 background_relative;
     u8 background_offset;
 
-    step = arg0->unk6;
+    step = self->unk6;
     if (step == 0) {
-        arg0->unk6 = step + 1;
-        func_80055C54(arg0);
-        background_relative = arg0->ext.main_23.unk80;
+        self->unk6 = step + 1;
+        slope_skier_read_slope(self);
+        background_relative = self->ext.main_23.unk80;
         background_offset = background_relative & 0x7F;
         if (background_relative & 0x80) {
-            arg0->unk15 ^= 0x40;
+            self->unk15 ^= 0x40;
         }
-        func_80015D60(arg0, background_offset + 0x12);
+        set_animation(self, background_offset + 0x12);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
     }
 }
 
-void func_80055E9C(struct MainObj* arg0)
+void slope_skier_fall(struct MainObj* self)
 {
     s8 step;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    step = arg0->unk6;
+    animate_object(ANIMATED_OBJECT(self));
+    step = self->unk6;
     if (step == 0) {
-        arg0->unk6 = step + 1;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk24 = 0;
-        arg0->unk67 = -1;
+        self->unk6 = step + 1;
+        self->gravity = FIXED(0.2578125);
+        self->y_speed = 0;
+        self->air_state = -1;
     }
-    if (arg0->unk70 & 8) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->unk67 = 0;
+    if (self->collision_flags & 8) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->air_state = 0;
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
+// slope_skier_jump_start
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80055F1C);
 
-void func_80055FD0(struct MainObj* arg0)
+void slope_skier_jump_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed < 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
 }
 
-void func_80056018(struct MainObj* arg0)
+void slope_skier_jump(struct MainObj* self)
 {
-    D_800FCE88[arg0->unk6](arg0);
+    slope_skier_jump_funcs[self->unk6](self);
 }
 
+// slope_skier_step_5
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_80056054);
 
-void func_80056230(struct MainObj* arg0)
+void slope_skier_slide_start(struct MainObj* self)
 {
     s32 velocity;
 
-    arg0->unk6++;
-    func_80055C54(arg0);
+    self->unk6++;
+    slope_skier_read_slope(self);
     velocity = FIXED(-4.5);
-    if (arg0->unk15 != 0) {
+    if (self->unk15 != 0) {
         velocity = FIXED(4.5);
     }
-    arg0->unk20 = velocity;
-    func_80015D60(arg0, (arg0->ext.main_23.unk80 & 0x7F) + 4);
-    func_8001540C(2, 0x3A, arg0);
+    self->x_speed = velocity;
+    set_animation(self, (self->ext.main_23.unk80 & 0x7F) + 4);
+    func_8001540C(2, 0x3A, self);
 }
 
+// slope_skier_slide_move
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_800562AC);
 
-void func_80056470(void)
+void slope_skier_slide_idle(void)
 {
 }
 
-void func_80056478(struct MainObj* arg0)
+void slope_skier_slide(struct MainObj* self)
 {
-    D_800FCEA0[arg0->unk6](arg0);
+    slope_skier_slide_funcs[self->unk6](self);
 }
 
+// slope_skier_init
 INCLUDE_ASM("main/nonmatchings/mains/main_23", func_800564B4);
 
-void func_800565EC(struct MainObj* arg0)
+void slope_skier_wait_for_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xC1) {
-        arg0->unk5 = 1;
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
+        self->unk5 = 1;
     }
 }
 
-void func_80056618(struct MainObj* arg0)
+void slope_skier_main(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (self->air_state == 0 && !(self->collision_flags & 8)) {
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(7, D_800FCE80, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0x16);
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(7, slope_skier_debris, self);
+        drop_item(BASE_OBJECT(self), 0x16);
     } else {
-        func_8002D9BC(arg0);
-        D_800FCEAC[arg0->unk5](arg0);
-        if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x40) == 0) {
-            func_8002B318(BASE_OBJECT(arg0), 0x30, 0x30);
+        func_8002D9BC(self);
+        slope_skier_step_funcs[self->unk5](self);
+        if (func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
             return;
         }
     }
-    arg0->state = (u8)arg0->state + 1;
+    self->state = (u8)self->state + 1;
 }
 
-void func_80056718(struct MainObj* arg0)
+void slope_skier_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_80056738(struct MainObj* arg0)
+void slope_skier_update(struct MainObj* self)
 {
-    D_800FCEC8[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    slope_skier_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
-struct Unk_unk68 D_800FCB48[] = {
+struct Unk_unk68 slope_skier_hurt_box[] = {
     { 0, 12, 16, 2 },
 };
 
-struct Unk_unk68 D_800FCB4C[2] = {
+struct Unk_unk68 slope_skier_terrain_box[2] = {
     { -11, -16, 21, 29 },
     { 3, 3, 3, 0 },
 };
 
-union AnimationStep D_800FCB54[] = {
+union AnimationStep slope_skier_anim_0[] = {
     { 0x06000001 },
 };
 
-union AnimationStep D_800FCB58[] = {
+union AnimationStep slope_skier_anim_1[] = {
     { 0x07010003 },
     { 0x08010003 },
     { 0x09010003 },
@@ -160,7 +164,7 @@ union AnimationStep D_800FCB58[] = {
     { 0x01000003 },
 };
 
-union AnimationStep D_800FCB74[] = {
+union AnimationStep slope_skier_anim_2[] = {
     { 0x07010003 },
     { 0x0D010003 },
     { 0x0E010003 },
@@ -170,7 +174,7 @@ union AnimationStep D_800FCB74[] = {
     { 0x03000003 },
 };
 
-union AnimationStep D_800FCB90[] = {
+union AnimationStep slope_skier_anim_3[] = {
     { 0x07010003 },
     { 0x12010003 },
     { 0x13010003 },
@@ -180,22 +184,22 @@ union AnimationStep D_800FCB90[] = {
     { 0x05000003 },
 };
 
-union AnimationStep D_800FCBAC[] = {
+union AnimationStep slope_skier_anim_4[] = {
     { 0x00010003 },
     { 0x01FF0003 },
 };
 
-union AnimationStep D_800FCBB4[] = {
+union AnimationStep slope_skier_anim_5[] = {
     { 0x02010003 },
     { 0x03FF0003 },
 };
 
-union AnimationStep D_800FCBBC[] = {
+union AnimationStep slope_skier_anim_6[] = {
     { 0x04010003 },
     { 0x05FF0003 },
 };
 
-union AnimationStep D_800FCBC4[] = {
+union AnimationStep slope_skier_anim_7[] = {
     { 0x08010003 },
     { 0x09010003 },
     { 0x0A01000F },
@@ -205,7 +209,7 @@ union AnimationStep D_800FCBC4[] = {
     { 0x0C000003 },
 };
 
-union AnimationStep D_800FCBE0[] = {
+union AnimationStep slope_skier_anim_8[] = {
     { 0x0D010003 },
     { 0x0E010003 },
     { 0x0F01000F },
@@ -215,7 +219,7 @@ union AnimationStep D_800FCBE0[] = {
     { 0x11000003 },
 };
 
-union AnimationStep D_800FCBFC[] = {
+union AnimationStep slope_skier_anim_9[] = {
     { 0x12010003 },
     { 0x13010003 },
     { 0x1401000F },
@@ -225,7 +229,7 @@ union AnimationStep D_800FCBFC[] = {
     { 0x16000003 },
 };
 
-union AnimationStep D_800FCC18[] = {
+union AnimationStep slope_skier_anim_13[] = {
     { 0x08010001 },
     { 0x09010001 },
     { 0x0A010002 },
@@ -233,7 +237,7 @@ union AnimationStep D_800FCC18[] = {
     { 0x08000001 },
 };
 
-union AnimationStep D_800FCC2C[] = {
+union AnimationStep slope_skier_anim_14[] = {
     { 0x0D010003 },
     { 0x0E010003 },
     { 0x0F01000C },
@@ -241,7 +245,7 @@ union AnimationStep D_800FCC2C[] = {
     { 0x08000003 },
 };
 
-union AnimationStep D_800FCC40[] = {
+union AnimationStep slope_skier_anim_15[] = {
     { 0x12010003 },
     { 0x13010003 },
     { 0x1401000C },
@@ -249,7 +253,7 @@ union AnimationStep D_800FCC40[] = {
     { 0x0D000003 },
 };
 
-union AnimationStep D_800FCC54[] = {
+union AnimationStep slope_skier_anim_16[] = {
     { 0x24010003 },
     { 0x25010009 },
     { 0x24010003 },
@@ -262,7 +266,7 @@ union AnimationStep D_800FCC54[] = {
     { 0x25000003 },
 };
 
-union AnimationStep D_800FCC7C[] = {
+union AnimationStep slope_skier_anim_17[] = {
     { 0x24010003 },
     { 0x25010009 },
     { 0x24010003 },
@@ -275,7 +279,7 @@ union AnimationStep D_800FCC7C[] = {
     { 0x25000003 },
 };
 
-union AnimationStep D_800FCCA4[] = {
+union AnimationStep slope_skier_anim_18[] = {
     { 0x1E010003 },
     { 0x1F01000F },
     { 0x1E010003 },
@@ -283,7 +287,7 @@ union AnimationStep D_800FCCA4[] = {
     { 0x01000101 },
 };
 
-union AnimationStep D_800FCCB8[] = {
+union AnimationStep slope_skier_anim_19[] = {
     { 0x20010003 },
     { 0x2101000F },
     { 0x22010003 },
@@ -291,7 +295,7 @@ union AnimationStep D_800FCCB8[] = {
     { 0x05000101 },
 };
 
-union AnimationStep D_800FCCCC[] = {
+union AnimationStep slope_skier_anim_20[] = {
     { 0x22010003 },
     { 0x2301000F },
     { 0x22010003 },
@@ -299,7 +303,7 @@ union AnimationStep D_800FCCCC[] = {
     { 0x05000101 },
 };
 
-union AnimationStep D_800FCCE0[] = {
+union AnimationStep slope_skier_anim_10[] = {
     { 0x08010003 },
     { 0x17010003 },
     { 0x18010203 },
@@ -315,7 +319,7 @@ union AnimationStep D_800FCCE0[] = {
     { 0x1D000103 },
 };
 
-union AnimationStep D_800FCD14[] = {
+union AnimationStep slope_skier_anim_11[] = {
     { 0x0D010003 },
     { 0x0E010003 },
     { 0x0F010009 },
@@ -334,7 +338,7 @@ union AnimationStep D_800FCD14[] = {
     { 0x1D000103 },
 };
 
-union AnimationStep D_800FCD54[] = {
+union AnimationStep slope_skier_anim_12[] = {
     { 0x12010003 },
     { 0x13010003 },
     { 0x14010009 },
@@ -353,7 +357,7 @@ union AnimationStep D_800FCD54[] = {
     { 0x1D000103 },
 };
 
-union AnimationStep D_800FCD94[] = {
+union AnimationStep slope_skier_anim_21[] = {
     { 0x29010002 },
     { 0x2A010002 },
     { 0x29010002 },
@@ -361,11 +365,11 @@ union AnimationStep D_800FCD94[] = {
     { 0x29FC0012 },
 };
 
-union AnimationStep D_800FCDA8[] = {
+union AnimationStep slope_skier_anim_22[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep D_800FCDAC[] = {
+union AnimationStep slope_skier_anim_23[] = {
     { 0x2E010002 },
     { 0x2F010002 },
     { 0x30010002 },
@@ -383,69 +387,69 @@ union AnimationStep D_800FCDAC[] = {
     { 0x3CFF0002 },
 };
 
-union AnimationStep D_800FCDE8[] = {
+union AnimationStep slope_skier_anim_24[] = {
     { 0x3D000001 },
 };
 
-union AnimationStep D_800FCDEC[] = {
+union AnimationStep slope_skier_anim_25[] = {
     { 0x3E000001 },
 };
 
-union AnimationStep D_800FCDF0[] = {
+union AnimationStep slope_skier_anim_26[] = {
     { 0x3F000001 },
 };
 
-union AnimationStep D_800FCDF4[] = {
+union AnimationStep slope_skier_anim_27[] = {
     { 0x40000001 },
 };
 
-union AnimationStep D_800FCDF8[] = {
+union AnimationStep slope_skier_anim_28[] = {
     { 0x41000001 },
 };
 
-union AnimationStep D_800FCDFC[] = {
+union AnimationStep slope_skier_anim_29[] = {
     { 0x42000001 },
 };
 
-union AnimationStep D_800FCE00[] = {
+union AnimationStep slope_skier_anim_30[] = {
     { 0x43000001 },
 };
 
-union AnimationStep* D_800FCE04[] = {
-    D_800FCB54,
-    D_800FCB58,
-    D_800FCB74,
-    D_800FCB90,
-    D_800FCBAC,
-    D_800FCBB4,
-    D_800FCBBC,
-    D_800FCBC4,
-    D_800FCBE0,
-    D_800FCBFC,
-    D_800FCCE0,
-    D_800FCD14,
-    D_800FCD54,
-    D_800FCC18,
-    D_800FCC2C,
-    D_800FCC40,
-    D_800FCC54,
-    D_800FCC7C,
-    D_800FCCA4,
-    D_800FCCB8,
-    D_800FCCCC,
-    D_800FCD94,
-    D_800FCDA8,
-    D_800FCDAC,
-    D_800FCDE8,
-    D_800FCDEC,
-    D_800FCDF0,
-    D_800FCDF4,
-    D_800FCDF8,
-    D_800FCDFC,
-    D_800FCE00,
+union AnimationStep* slope_skier_animations[] = {
+    slope_skier_anim_0,
+    slope_skier_anim_1,
+    slope_skier_anim_2,
+    slope_skier_anim_3,
+    slope_skier_anim_4,
+    slope_skier_anim_5,
+    slope_skier_anim_6,
+    slope_skier_anim_7,
+    slope_skier_anim_8,
+    slope_skier_anim_9,
+    slope_skier_anim_10,
+    slope_skier_anim_11,
+    slope_skier_anim_12,
+    slope_skier_anim_13,
+    slope_skier_anim_14,
+    slope_skier_anim_15,
+    slope_skier_anim_16,
+    slope_skier_anim_17,
+    slope_skier_anim_18,
+    slope_skier_anim_19,
+    slope_skier_anim_20,
+    slope_skier_anim_21,
+    slope_skier_anim_22,
+    slope_skier_anim_23,
+    slope_skier_anim_24,
+    slope_skier_anim_25,
+    slope_skier_anim_26,
+    slope_skier_anim_27,
+    slope_skier_anim_28,
+    slope_skier_anim_29,
+    slope_skier_anim_30,
 };
 
-u8 D_800FCE80[] = {
+u8 slope_skier_debris[] = {
     0x18,
     0x19,
     0x1A,
@@ -456,9 +460,9 @@ u8 D_800FCE80[] = {
     0x00,
 };
 
-void (*D_800FCE88[])() = {
+void (*slope_skier_jump_funcs[])() = {
     func_80055F1C,
-    func_80055FD0,
+    slope_skier_jump_rise,
 };
 
 struct VisualSpawnOffset D_800FCE90[5] = {
@@ -473,24 +477,24 @@ struct Unk_unk68 D_800FCE9C[] = {
     { -1, -6, 246, 0 },
 };
 
-void (*D_800FCEA0[])() = {
-    func_80056230,
+void (*slope_skier_slide_funcs[])() = {
+    slope_skier_slide_start,
     func_800562AC,
-    func_80056470,
+    slope_skier_slide_idle,
 };
 
-void (*D_800FCEAC[])() = {
-    func_8009216C,
-    func_80056478,
-    func_80055E9C,
-    func_80055E04,
-    func_80056018,
+void (*slope_skier_step_funcs[])() = {
+    enemy_hit_reaction,
+    slope_skier_slide,
+    slope_skier_fall,
+    slope_skier_land,
+    slope_skier_jump,
     func_80056054,
-    func_800565EC,
+    slope_skier_wait_for_player,
 };
 
-void (*D_800FCEC8[])() = {
+void (*slope_skier_state_funcs[])() = {
     func_800564B4,
-    func_80056618,
-    func_80056718,
+    slope_skier_main,
+    slope_skier_despawn,
 };

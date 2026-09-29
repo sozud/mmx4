@@ -2,54 +2,54 @@
 // 800CBD40..800CBECC
 #include "common.h"
 
-void func_800CBD40(struct MiscObj* arg0)
+void explosion_puff_update(struct MiscObj* self)
 {
-    if (arg0->state == 0) {
-        func_800CBD80(arg0);
+    if (self->state == 0) {
+        explosion_puff_init(self);
     } else {
-        func_800CBE34(arg0);
+        explosion_puff_animate(self);
     }
 }
 
-void func_800CBD80(struct MiscObj* arg0)
+void explosion_puff_init(struct MiscObj* self)
 {
-    arg0->on_screen = 1;
-    arg0->unk38 = 0;
-    arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
-    arg0->animation_table = D_8010A4C0;
-    arg0->unk40 = 0;
-    if (arg0->ext.unk.unk54 != 2) {
-        arg0->unk42 = 0x7805;
+    self->on_screen = 1;
+    self->unk38 = 0;
+    self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[2];
+    self->animation_table = explosion_animations;
+    self->unk40 = 0;
+    if (self->ext.unk.unk54 != 2) {
+        self->unk42 = 0x7805;
     } else {
-        arg0->unk42 = 0x7806;
+        self->unk42 = 0x7806;
     }
-    if (arg0->unk7 == 0) {
-        arg0->unk16 = 1;
+    if (self->unk7 == 0) {
+        self->unk16 = 1;
     }
-    func_80015D60(arg0, arg0->ext.unk.unk54);
-    arg0->state++;
-    arg0->unk7 = get_random() & 1;
-    is_on_screen(arg0);
+    set_animation(self, self->ext.unk.unk54);
+    self->state++;
+    self->unk7 = get_random() & 1;
+    is_on_screen(self);
 }
 
-void func_800CBE34(struct MiscObj* arg0)
+void explosion_puff_animate(struct MiscObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->x_vel.val = 0;
-        arg0->y_vel.val = 0;
-        arg0->ext.unk.unk54 = 0;
-        ZeroObjectState(arg0);
+    move_object((struct MovingObj*)self);
+    animate_object(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->x_vel.val = 0;
+        self->y_vel.val = 0;
+        self->ext.unk.unk54 = 0;
+        ZeroObjectState(self);
     } else {
-        arg0->on_screen = 0;
-        if (((arg0->ext.unk.unk54 & 3) && !(arg0->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == arg0->unk7) {
-            is_on_screen(arg0);
+        self->on_screen = 0;
+        if (((self->ext.unk.unk54 & 3) && !(self->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == self->unk7) {
+            is_on_screen(self);
         }
     }
 }
 
-u32 D_8010A440[7] = {
+u32 explosion_anim_0[7] = {
     0x12010002,
     0x13010002,
     0x14010002,
@@ -59,7 +59,7 @@ u32 D_8010A440[7] = {
     0x18000106,
 };
 
-u32 D_8010A45C[8] = {
+u32 explosion_anim_1[8] = {
     0x19010004,
     0x1A010004,
     0x1B010004,
@@ -70,7 +70,7 @@ u32 D_8010A45C[8] = {
     0x20000107,
 };
 
-u32 D_8010A47C[17] = {
+u32 explosion_anim_2[17] = {
     0x02010002,
     0x03010002,
     0x04010002,
@@ -90,8 +90,8 @@ u32 D_8010A47C[17] = {
     0x11000160,
 };
 
-u32* D_8010A4C0[3] = {
-    D_8010A440,
-    D_8010A45C,
-    D_8010A47C,
+u32* explosion_animations[3] = {
+    explosion_anim_0,
+    explosion_anim_1,
+    explosion_anim_2,
 };

@@ -2,34 +2,34 @@
 // 800B3074..800B322C
 #include "common.h"
 
-void func_800B3074(struct VisualObj* arg0)
+void missile_smoke_update(struct VisualObj* arg0)
 {
-    D_8010A5D4[arg0->state](arg0);
+    missile_smoke_state_funcs[arg0->state](arg0);
 }
 
-void func_800B30B0(struct VisualObj* arg0)
+void missile_smoke_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
     if (arg0->unk2 != 0x10) {
         arg0->unk15 = 0;
-        func_800B3100(arg0);
+        missile_smoke_main(arg0);
     } else {
         arg0->unk16 = 2;
-        func_80015D60(arg0, 0x25);
+        set_animation(arg0, 0x25);
     }
 }
 
-void func_800B3100(struct VisualObj* arg0)
+void missile_smoke_main(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0;
 
     if (arg0->unk2 != 0x10) {
         if (arg0->unk2 < 7) {
             if (arg0->unk2 == 0) {
-                func_80015D60(arg0, 0x21);
+                set_animation(arg0, 0x21);
             } else {
-                func_80015D60(arg0, ((arg0->unk2 - 1) >> 1) + 0x21);
+                set_animation(arg0, ((arg0->unk2 - 1) >> 1) + 0x21);
             }
             arg0->unk2++;
             is_on_screen(arg0);
@@ -43,7 +43,7 @@ void func_800B3100(struct VisualObj* arg0)
             arg0->unk15 = temp_a0->unk15;
             arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
             arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;
-            func_80015DC8(arg0);
+            animate_object(arg0);
             is_on_screen(arg0);
             return;
         }
@@ -52,15 +52,15 @@ void func_800B3100(struct VisualObj* arg0)
     }
 }
 
-void func_800B320C(struct VisualObj* arg0)
+void missile_smoke_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A5D4[])(struct VisualObj*) = {
-    func_800B30B0,
-    func_800B3100,
-    func_800B320C,
+void (*missile_smoke_state_funcs[])(struct VisualObj*) = {
+    missile_smoke_init,
+    missile_smoke_main,
+    missile_smoke_despawn,
 };
 
 u32 D_8010A5E0 = 0x33CD;

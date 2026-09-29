@@ -3,265 +3,268 @@
 #include "common.h"
 #include "func_tables.h"
 
-extern struct Unk_unk68 D_800F9B24[];
-extern struct Unk_unk68 D_800F9B34;
-extern u8 D_800F9C44[];
-extern u8 D_800F9C48[];
+extern struct Unk_unk68 item_carrier_hitboxes[];
+extern struct Unk_unk68 item_carrier_capsule_hurtbox;
+extern u8 item_carrier_debris[];
+extern u8 item_carrier_capsule_debris[];
 
-void func_80042914(struct MainObj* arg0)
+void item_carrier_update(struct MainObj* self)
 {
-    D_800F9C54[arg0->state](arg0);
+    item_carrier_state_funcs[self->state](self);
 }
 
+// item_carrier_check_needed
 INCLUDE_ASM("main/nonmatchings/mains/main_02", func_80042950);
 
+// item_carrier_init
 INCLUDE_ASM("main/nonmatchings/mains/main_02", func_80042A48);
 
+// item_carrier_main
 INCLUDE_ASM("main/nonmatchings/mains/main_02", func_80042AFC);
 
-void func_80042CB0(struct MainObj* arg0)
+void item_carrier_hide(struct MainObj* self)
 {
-    arg0->on_screen = 0;
-    arg0->state++;
+    self->on_screen = 0;
+    self->state++;
 }
 
-void func_80042CC4(struct MainObj* arg0)
+void item_carrier_despawn(struct MainObj* self)
 {
-    func_8002B108(OBJECT_HEADER(arg0));
+    despawn_object_permanently(OBJECT_HEADER(self));
 }
 
-void func_80042CE4(struct MainObj* arg0)
+void item_carrier_approach(struct MainObj* self)
 {
-    D_800F9C8C[arg0->unk6](arg0);
+    item_carrier_approach_funcs[self->unk6](self);
 }
 
-void func_80042D20(struct MainObj* arg0)
+void item_carrier_approach_start(struct MainObj* self)
 {
     s32 var_a1;
 
     var_a1 = -0x20000;
-    arg0->unk6++;
-    if (arg0->unk15 != 0) {
+    self->unk6++;
+    if (self->unk15 != 0) {
         var_a1 = 0x20000;
     }
-    arg0->unk20 = var_a1;
-    func_80015D60(arg0, 0);
+    self->x_speed = var_a1;
+    set_animation(self, 0);
 }
 
-void func_80042D60(struct MainObj* arg0)
+void item_carrier_approach_fly(struct MainObj* self)
 {
     s32 distance;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    distance = arg0->x_pos.val - g_Player.x_pos.val;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    distance = self->x_pos.val - g_Player.x_pos.val;
     if (distance < 0) {
-        distance = g_Player.x_pos.val - arg0->x_pos.val;
+        distance = g_Player.x_pos.val - self->x_pos.val;
     }
     if (distance <= FIXED(64)) {
-        arg0->unk20 = 0;
-        arg0->unk6++;
-        func_80015D60(arg0, 1);
+        self->x_speed = 0;
+        self->unk6++;
+        set_animation(self, 1);
     }
 }
 
-void func_80042DD8(struct MainObj* arg0)
+void item_carrier_approach_stop(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
     }
 }
 
-void func_80042E18(struct MainObj* arg0)
+void item_carrier_hover(struct MainObj* self)
 {
-    D_800F9C98[arg0->unk6](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    item_carrier_hover_funcs[self->unk6](self);
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
-void func_80042E70(struct MainObj* arg0)
+void item_carrier_hover_start(struct MainObj* self)
 {
-    arg0->unk7C = 0x12C;
-    arg0->unk7E = 0xA;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0x2000;
-    arg0->unk6++;
-    func_80015D60(arg0, 3);
+    self->unk7C = 0x12C;
+    self->unk7E = 0xA;
+    self->x_speed = 0;
+    self->y_speed = 0x2000;
+    self->unk6++;
+    set_animation(self, 3);
 }
 
-void func_80042EB8(struct MainObj* arg0)
+void item_carrier_hover_bob(struct MainObj* self)
 {
     s16 timer;
     s16 countdown;
 
-    timer = arg0->unk7E;
+    timer = self->unk7E;
     if (timer == 0) {
-        arg0->unk7E = 0x14;
-        arg0->unk24 = -arg0->unk24;
+        self->unk7E = 0x14;
+        self->y_speed = -self->y_speed;
     } else {
-        arg0->unk7E = timer - 1;
+        self->unk7E = timer - 1;
     }
-    countdown = arg0->unk7C - 1;
-    arg0->unk7C = countdown;
+    countdown = self->unk7C - 1;
+    self->unk7C = countdown;
     if ((countdown << 0x10) == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80042F18(struct MainObj* arg0)
+void item_carrier_hover_turn(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
-            arg0->unk15 = 0x40;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
+            self->unk15 = 0x40;
         } else {
-            arg0->unk15 = 0;
+            self->unk15 = 0;
         }
     }
 }
 
-void func_80042F80(struct MainObj* arg0)
+void item_carrier_drop(struct MainObj* self)
 {
-    D_800F9CA4[arg0->unk6](arg0);
+    item_carrier_drop_funcs[self->unk6](self);
 }
 
-void func_80042FBC(struct MainObj* arg0)
+void item_carrier_drop_start(struct MainObj* self)
 {
-    arg0->unk24 = 0x40000;
-    arg0->unk2C = 0x4200;
-    arg0->unk68 = D_800F9B24;
-    arg0->unk54 = &D_800F9B34;
-    arg0->unk20 = 0;
-    arg0->unk28 = 0;
-    arg0->unk50 = NULL;
-    arg0->unk67 = -1;
-    arg0->unk6++;
-    func_80015D60(arg0, 4);
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    if ((arg0->unk70 & 0xF) == 0xF) {
-        arg0->unk6 = 3;
-        arg0->unk67 = 0;
-        arg0->x_pos.val = arg0->unk18.val;
-        arg0->y_pos.val = arg0->unk1C.val;
+    self->y_speed = 0x40000;
+    self->gravity = 0x4200;
+    self->terrain_box = item_carrier_hitboxes;
+    self->hurt_box = &item_carrier_capsule_hurtbox;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->attack_box = NULL;
+    self->air_state = -1;
+    self->unk6++;
+    set_animation(self, 4);
+    CollisionRelated(PLAYER_OBJECT(self));
+    if ((self->collision_flags & 0xF) == 0xF) {
+        self->unk6 = 3;
+        self->air_state = 0;
+        self->x_pos.val = self->unk18.val;
+        self->y_pos.val = self->unk1C.val;
     }
 }
 
-void func_80043064(struct MainObj* arg0)
+void item_carrier_drop_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
-        arg0->unk24 = 0;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed < 0) {
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
+        self->unk6++;
     }
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(self));
 }
 
-void func_800430C0(struct MainObj* arg0)
+void item_carrier_drop_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk2C = 0;
-        arg0->unk67 = 0;
-        arg0->unk6++;
-        func_80015D60(arg0, 4);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->gravity = 0;
+        self->air_state = 0;
+        self->unk6++;
+        set_animation(self, 4);
     }
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(self));
 }
 
-void func_80043128(struct MainObj* arg0)
+void item_carrier_drop_landed(struct MainObj* self)
 {
 }
 
-void func_80043130(struct MainObj* arg0)
+void item_carrier_leave(struct MainObj* self)
 {
-    D_800F9CB4[arg0->unk6](arg0);
+    item_carrier_leave_funcs[self->unk6](self);
 }
 
-void func_8004316C(struct MainObj* arg0)
+void item_carrier_leave_start(struct MainObj* self)
 {
     s32 state;
-    state = arg0->y_pos.val > g_Player.y_pos.val;
+    state = self->y_pos.val > g_Player.y_pos.val;
     if (state) {
         state = 1;
     } else {
         state = 2;
     }
-    arg0->unk6 = state;
-    arg0->unk7 = 0;
+    self->unk6 = state;
+    self->unk7 = 0;
 }
 
-void func_80043198(struct MainObj* arg0)
+void item_carrier_leave_up(struct MainObj* self)
 {
-    if (arg0->unk7 == 0) {
-        arg0->unk7++;
-        arg0->unk20 = 0;
-        arg0->unk24 = FIXED(1);
+    if (self->unk7 == 0) {
+        self->unk7++;
+        self->x_speed = 0;
+        self->y_speed = FIXED(1);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B718(MOVING_OBJECT(arg0));
-        if (arg0->on_screen == 0) {
-            arg0->state++;
+        animate_object(ANIMATED_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+        if (self->on_screen == 0) {
+            self->state++;
         }
     }
 }
 
-void func_80043214(struct MainObj* arg0)
+void item_carrier_leave_side(struct MainObj* self)
 {
-    D_800F9CC0[arg0->unk7](arg0);
+    item_carrier_leave_side_funcs[self->unk7](self);
 }
 
-void func_80043250(struct MainObj* arg0)
+void item_carrier_leave_side_start(struct MainObj* self)
 {
-    arg0->unk24 = 0;
-    arg0->unk7++;
-    func_80015D60(arg0, 2);
+    self->y_speed = 0;
+    self->unk7++;
+    set_animation(self, 2);
 }
 
-void func_80043280(struct MainObj* arg0)
+void item_carrier_leave_side_turn(struct MainObj* self)
 {
     s32 velocity;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
     velocity = FIXED(-2);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk7++;
-        if (arg0->unk15 != 0) {
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk7++;
+        if (self->unk15 != 0) {
             velocity = FIXED(2);
         }
-        arg0->unk20 = velocity;
-        arg0->unk24 = FIXED(0.14453125);
-        func_80015D60(arg0, 0);
-        arg0->unk7C = 0x258;
+        self->x_speed = velocity;
+        self->y_speed = FIXED(0.14453125);
+        set_animation(self, 0);
+        self->unk7C = 0x258;
     }
 }
 
-void func_800432F0(struct MainObj* arg0)
+void item_carrier_leave_side_fly(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (arg0->on_screen == 0) {
-        arg0->state++;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->on_screen == 0) {
+        self->state++;
     }
 }
 
-struct Unk_unk68 D_800F9B20 = { -1, -15, 17, 23 };
+struct Unk_unk68 item_carrier_body_box = { -1, -15, 17, 23 };
 
-struct Unk_unk68 D_800F9B24[4] = {
+struct Unk_unk68 item_carrier_hitboxes[4] = {
     { 0, -1, 10, 13 },
     { -18, -9, 34, 17 },
     { -12, -38, 25, 31 },
     { -13, -38, 25, 44 },
 };
 
-struct Unk_unk68 D_800F9B34 = { -10, -19, 20, 32 };
+struct Unk_unk68 item_carrier_capsule_hurtbox = { -10, -19, 20, 32 };
 
-union AnimationStep D_800F9B38[] = {
+union AnimationStep item_carrier_anim_0[] = {
     { 0x00010005 },
     { 0x01010005 },
     { 0x02010005 },
@@ -270,7 +273,7 @@ union AnimationStep D_800F9B38[] = {
     { 0x03FB0005 },
 };
 
-union AnimationStep D_800F9B50[] = {
+union AnimationStep item_carrier_anim_1[] = {
     { 0x04010005 },
     { 0x05010005 },
     { 0x06010005 },
@@ -280,7 +283,7 @@ union AnimationStep D_800F9B50[] = {
     { 0x09000001 },
 };
 
-union AnimationStep D_800F9B6C[] = {
+union AnimationStep item_carrier_anim_2[] = {
     { 0x09010005 },
     { 0x08010005 },
     { 0x07010005 },
@@ -290,7 +293,7 @@ union AnimationStep D_800F9B6C[] = {
     { 0x04000001 },
 };
 
-union AnimationStep D_800F9B88[] = {
+union AnimationStep item_carrier_anim_3[] = {
     { 0x0A010005 },
     { 0x0B010005 },
     { 0x0C010005 },
@@ -299,7 +302,7 @@ union AnimationStep D_800F9B88[] = {
     { 0x0DFB0005 },
 };
 
-union AnimationStep D_800F9BA0[] = {
+union AnimationStep item_carrier_anim_4[] = {
     { 0x0E010002 },
     { 0x0F010002 },
     { 0x10010002 },
@@ -310,7 +313,7 @@ union AnimationStep D_800F9BA0[] = {
     { 0x15F90002 },
 };
 
-union AnimationStep D_800F9BC0[] = {
+union AnimationStep item_carrier_anim_5[] = {
     { 0x16010003 },
     { 0x17010003 },
     { 0x18010003 },
@@ -319,11 +322,11 @@ union AnimationStep D_800F9BC0[] = {
     { 0x1BFB0003 },
 };
 
-union AnimationStep D_800F9BD8[] = { { 0x1C000001 } };
+union AnimationStep item_carrier_anim_6[] = { { 0x1C000001 } };
 
-union AnimationStep D_800F9BDC[] = { { 0x1D000001 } };
+union AnimationStep item_carrier_anim_7[] = { { 0x1D000001 } };
 
-union AnimationStep D_800F9BE0[] = {
+union AnimationStep item_carrier_anim_8[] = {
     { 0x1E010002 },
     { 0x1F010002 },
     { 0x20010002 },
@@ -338,82 +341,82 @@ union AnimationStep D_800F9BE0[] = {
     { 0x29F50002 },
 };
 
-union AnimationStep D_800F9C10[] = { { 0x2A000001 } };
+union AnimationStep item_carrier_anim_9[] = { { 0x2A000001 } };
 
-union AnimationStep D_800F9C14[] = { { 0x2B000001 } };
+union AnimationStep item_carrier_anim_10[] = { { 0x2B000001 } };
 
-union AnimationStep* D_800F9C18[11] = {
-    D_800F9B38,
-    D_800F9B50,
-    D_800F9B6C,
-    D_800F9B88,
-    D_800F9BA0,
-    D_800F9BC0,
-    D_800F9BD8,
-    D_800F9BDC,
-    D_800F9BE0,
-    D_800F9C10,
-    D_800F9C14,
+union AnimationStep* item_carrier_animations[11] = {
+    item_carrier_anim_0,
+    item_carrier_anim_1,
+    item_carrier_anim_2,
+    item_carrier_anim_3,
+    item_carrier_anim_4,
+    item_carrier_anim_5,
+    item_carrier_anim_6,
+    item_carrier_anim_7,
+    item_carrier_anim_8,
+    item_carrier_anim_9,
+    item_carrier_anim_10,
 };
 
-u8 D_800F9C44[4] = { 5, 6, 7, 0 };
+u8 item_carrier_debris[4] = { 5, 6, 7, 0 };
 
-u8 D_800F9C48[12] = { 8, 9, 10, 0, 5, 6, 7, 8, 9, 10, 0, 0 };
+u8 item_carrier_capsule_debris[12] = { 8, 9, 10, 0, 5, 6, 7, 8, 9, 10, 0, 0 };
 
-void (*D_800F9C54[])(struct MainObj*) = {
+void (*item_carrier_state_funcs[])(struct MainObj*) = {
     func_80042950,
     func_80042A48,
     func_80042AFC,
-    func_80042CB0,
-    func_80042CC4,
+    item_carrier_hide,
+    item_carrier_despawn,
 };
 
-struct Unk_unk68* D_800F9C68[] = {
-    D_800F9B24 + 1,
-    D_800F9B24 + 2,
+struct Unk_unk68* item_carrier_part_hurtboxes[] = {
+    item_carrier_hitboxes + 1,
+    item_carrier_hitboxes + 2,
 };
 
-u8* D_800F9C70[] = {
-    D_800F9C44,
-    D_800F9C48 + 4,
+u8* item_carrier_part_debris[] = {
+    item_carrier_debris,
+    item_carrier_capsule_debris + 4,
 };
 
-u8 D_800F9C78[] = { 3, 6, 0, 0 };
+u8 item_carrier_part_debris_counts[] = { 3, 6, 0, 0 };
 
-void (*D_800F9C7C[])() = {
-    func_80042CE4,
-    func_80042E18,
-    func_80042F80,
-    func_80043130,
+void (*item_carrier_action_funcs[])() = {
+    item_carrier_approach,
+    item_carrier_hover,
+    item_carrier_drop,
+    item_carrier_leave,
 };
 
-void (*D_800F9C8C[])() = {
-    func_80042D20,
-    func_80042D60,
-    func_80042DD8,
+void (*item_carrier_approach_funcs[])() = {
+    item_carrier_approach_start,
+    item_carrier_approach_fly,
+    item_carrier_approach_stop,
 };
 
-void (*D_800F9C98[])() = {
-    func_80042E70,
-    func_80042EB8,
-    func_80042F18,
+void (*item_carrier_hover_funcs[])() = {
+    item_carrier_hover_start,
+    item_carrier_hover_bob,
+    item_carrier_hover_turn,
 };
 
-void (*D_800F9CA4[])() = {
-    func_80042FBC,
-    func_80043064,
-    func_800430C0,
-    func_80043128,
+void (*item_carrier_drop_funcs[])() = {
+    item_carrier_drop_start,
+    item_carrier_drop_rise,
+    item_carrier_drop_fall,
+    item_carrier_drop_landed,
 };
 
-void (*D_800F9CB4[])() = {
-    func_8004316C,
-    func_80043198,
-    func_80043214,
+void (*item_carrier_leave_funcs[])() = {
+    item_carrier_leave_start,
+    item_carrier_leave_up,
+    item_carrier_leave_side,
 };
 
-void (*D_800F9CC0[])() = {
-    func_80043250,
-    func_80043280,
-    func_800432F0,
+void (*item_carrier_leave_side_funcs[])() = {
+    item_carrier_leave_side_start,
+    item_carrier_leave_side_turn,
+    item_carrier_leave_side_fly,
 };

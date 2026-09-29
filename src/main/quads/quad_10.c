@@ -2,7 +2,7 @@
 // 800D6AD8..800D6F94
 #include "common.h"
 
-void func_800D6AD8(struct QuadObj* arg0)
+void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
     struct PlayerObj* temp_a2 = arg0->unk5C;
@@ -26,12 +26,13 @@ void func_800D6AD8(struct QuadObj* arg0)
         ZeroObjectState(arg0);
         return;
     }
-    D_8010FCB8[arg0->state](arg0, ptr, temp_a2);
+    aiming_laser_charged_beam_state_funcs[arg0->state](arg0, ptr, temp_a2);
 }
 
+// aiming_laser_charged_beam_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6B9C);
 
-void func_800D6C48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state;
     u8 value;
@@ -48,7 +49,7 @@ void func_800D6C48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     func_800D6DC4(arg0, arg1, arg2);
 }
 
-void func_800D6CA0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state = &arg0->ext.quad_10;
     u8* player_data = &arg2->unk8D - 1;
@@ -78,7 +79,7 @@ void func_800D6CA0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     func_800D6DC4(arg0, arg1, arg2);
 }
 
-void func_800D6D48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state;
     struct PlayerUnk8CFields* player_state;
@@ -107,13 +108,14 @@ void func_800D6D48(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     func_800D6DC4(arg0, arg1, arg2);
 }
 
+// aiming_laser_charged_beam_place
 INCLUDE_ASM("main/nonmatchings/quads/quad_10", func_800D6DC4);
 
-void (*D_8010FCB8[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {
+void (*aiming_laser_charged_beam_state_funcs[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*) = {
     func_800D6B9C,
-    func_800D6C48,
-    func_800D6CA0,
-    func_800D6D48,
+    aiming_laser_charged_beam_extend,
+    aiming_laser_charged_beam_sweep,
+    aiming_laser_charged_beam_retract,
 };
 
-u8 D_8010FCC8[4] = { 9, 6, 3, 0 };
+u8 aiming_laser_charged_beam_delays[4] = { 9, 6, 3, 0 };

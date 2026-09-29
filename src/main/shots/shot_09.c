@@ -2,9 +2,9 @@
 // 8009B07C..8009B3E8
 #include "common.h"
 
-u8 D_80108D94[4] = { 0xCB, 0xD0, 0x2C, 0x3A };
-u8 D_80108D98[4] = { 0xFB, 0xFC, 0x0D, 0x06 };
-s8 D_80108D9C[6][2] = {
+u8 trident_shot_flash_box[4] = { 0xCB, 0xD0, 0x2C, 0x3A };
+u8 trident_shot_hit_box[4] = { 0xFB, 0xFC, 0x0D, 0x06 };
+s8 trident_shot_muzzle_offsets[6][2] = {
     { 0, 0x18 },
     { -0x14, 0x14 },
     { -0x20, 0 },
@@ -13,74 +13,76 @@ s8 D_80108D9C[6][2] = {
     { 0, 0 },
 };
 
-void func_8009B07C(struct ShotObj* arg0)
+void trident_shot_update(struct ShotObj* self)
 {
-    D_80108DA8[arg0->state](arg0);
+    trident_shot_state_funcs[self->state](self);
 }
 
+// trident_shot_flash_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_09", func_8009B0B8);
 
-void func_8009B12C(struct ShotObj* arg0)
+void trident_shot_flash(struct ShotObj* self)
 {
     s32 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    temp_v0 = arg0->unk84.value - 1;
-    arg0->unk84.value = temp_v0;
+    animate_object(ANIMATED_OBJECT(self));
+    temp_v0 = self->unk84.value - 1;
+    self->unk84.value = temp_v0;
     if (temp_v0 != 0) {
-        if (*(u32*)arg0->unk7C != 0) {
-            func_8002D9BC(arg0);
-            func_8002DD04(MAIN_OBJECT(arg0));
-            if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
-                func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        if (*(u32*)self->unk7C != 0) {
+            func_8002D9BC(self);
+            func_8002DD04(MAIN_OBJECT(self));
+            if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+                update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
                 return;
             }
         }
     }
-    arg0->state = 2;
+    self->state = 2;
 }
 
-void func_8009B1C8(struct ShotObj* arg0)
+void trident_shot_flash_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// trident_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_09", func_8009B1E8);
 
-void func_8009B2F4(struct ShotObj* arg0)
+void trident_shot_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(arg0);
-        arg0->state = 5;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(self);
+        self->state = 5;
     } else {
-        arg0->unk42 &= 0x7FFF;
+        self->unk42 &= 0x7FFF;
     }
-    if (func_8002BB80(arg0, &g_Player) != 0) {
-        arg0->state = 5;
+    if (func_8002BB80(self, &g_Player) != 0) {
+        self->state = 5;
     }
     if (engine_obj.character_state.bytes[0] != 0) {
-        arg0->state = 5;
+        self->state = 5;
     }
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         return;
     }
-    arg0->state = 5;
+    self->state = 5;
 }
 
-void func_8009B3C8(struct ShotObj* arg0)
+void trident_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108DA8[])(struct ShotObj*) = {
+void (*trident_shot_state_funcs[])(struct ShotObj*) = {
     func_8009B0B8,
-    func_8009B12C,
-    func_8009B1C8,
+    trident_shot_flash,
+    trident_shot_flash_despawn,
     func_8009B1E8,
-    func_8009B2F4,
-    func_8009B3C8,
+    trident_shot_fly,
+    trident_shot_despawn,
 };

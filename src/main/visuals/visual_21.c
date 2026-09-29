@@ -2,7 +2,7 @@
 // 800B2E98..800B3074
 #include "common.h"
 
-void func_800B2E98(struct VisualObj* arg0)
+void wave_rider_jet_init(struct VisualObj* arg0)
 {
     struct VisualObj* temp_v1 = arg0->unk50;
     arg0->unk40 = temp_v1->unk40;
@@ -14,12 +14,12 @@ void func_800B2E98(struct VisualObj* arg0)
     arg0->x_pos.val = temp_v1->x_pos.val;
     arg0->y_pos.val = temp_v1->y_pos.val;
     arg0->unk16 = 6;
-    arg0->unk2 = D_8010A5B8[temp_v1->animation_step.fields.frame_index];
-    func_80015D60(arg0, arg0->unk2);
+    arg0->unk2 = wave_rider_jet_animations[temp_v1->animation_step.fields.frame_index];
+    set_animation(arg0, arg0->unk2);
     arg0->state++;
 }
 
-void func_800B2F60(struct VisualObj* arg0)
+void wave_rider_jet_main(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0;
 
@@ -27,31 +27,31 @@ void func_800B2F60(struct VisualObj* arg0)
     if (temp_a0->state == 0 || temp_a0->state == 2) {
         arg0->state = 2;
     } else {
-        if (arg0->unk2 != D_8010A5B8[temp_a0->animation_step.fields.frame_index]) {
-            arg0->unk2 = D_8010A5B8[temp_a0->animation_step.fields.frame_index];
-            func_80015D60(arg0, arg0->unk2);
+        if (arg0->unk2 != wave_rider_jet_animations[temp_a0->animation_step.fields.frame_index]) {
+            arg0->unk2 = wave_rider_jet_animations[temp_a0->animation_step.fields.frame_index];
+            set_animation(arg0, arg0->unk2);
         } else {
-            func_80015DC8(arg0);
+            animate_object(arg0);
         }
-        func_8002B318(arg0, 0x90, 0x90);
+        update_on_screen(arg0, 0x90, 0x90);
     }
 }
 
-void func_800B3000(struct VisualObj* arg0)
+void wave_rider_jet_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800B3020(struct VisualObj* arg0)
+void wave_rider_jet_update(struct VisualObj* arg0)
 {
     struct BaseObj* temp_v1 = arg0->unk50;
 
     arg0->x_pos.val = temp_v1->x_pos.val;
     arg0->y_pos.val = temp_v1->y_pos.val;
-    D_8010A5C8[arg0->state](arg0);
+    wave_rider_jet_state_funcs[arg0->state](arg0);
 }
 
-u8 D_8010A5B8[16] = {
+u8 wave_rider_jet_animations[16] = {
     6,
     7,
     8,
@@ -70,8 +70,8 @@ u8 D_8010A5B8[16] = {
     0,
 };
 
-void (*D_8010A5C8[])(struct VisualObj*) = {
-    func_800B2E98,
-    func_800B2F60,
-    func_800B3000,
+void (*wave_rider_jet_state_funcs[])(struct VisualObj*) = {
+    wave_rider_jet_init,
+    wave_rider_jet_main,
+    wave_rider_jet_despawn,
 };

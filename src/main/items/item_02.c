@@ -2,19 +2,20 @@
 // 800BF730..800C0404
 #include "common.h"
 
-void func_800BF730(struct ItemObj* arg0)
+void pickup_update(struct ItemObj* arg0)
 {
-    D_8010C730[arg0->state](arg0);
+    pickup_state_funcs[arg0->state](arg0);
 }
 
+// pickup_init
 INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BF76C);
 
-void func_800BFA00(struct ItemObj* arg0)
+void pickup_main(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     if (arg0->unk67 != 0) {
-        func_8002B694((struct AnimatedObj*)arg0);
+        move_with_gravity((struct AnimatedObj*)arg0);
         CollisionRelated((struct PlayerObj*)arg0);
         if (arg0->unk70 & 8) {
             if (arg0->unk6 == 0) {
@@ -38,7 +39,7 @@ void func_800BFA00(struct ItemObj* arg0)
             arg0->y_vel.val = 0;
             arg0->unk67 = 1;
         }
-        func_80015DC8(arg0);
+        animate_object(arg0);
     }
     if (arg0->backref == NULL) {
         if (--arg0->ext.item_2.unk82 == 0) {
@@ -49,7 +50,7 @@ void func_800BFA00(struct ItemObj* arg0)
     func_800C00BC(arg0);
     if (func_8002B160(arg0) != 0) {
         if (arg0->backref != NULL) {
-            func_8002B0C8(OBJECT_HEADER(arg0));
+            despawn_object(OBJECT_HEADER(arg0));
         } else {
             arg0->state = 3;
             arg0->unk5 = 0;
@@ -64,22 +65,24 @@ void func_800BFA00(struct ItemObj* arg0)
 
 extern void func_800BFBD0(struct ItemObj* arg0);
 
-void func_800BFB90(struct ItemObj* arg0)
+void pickup_collected(struct ItemObj* arg0)
 {
     arg0->on_screen = 0;
     func_800BFBD0(arg0);
 }
 
-void func_800BFBB0(struct ItemObj* arg0)
+void pickup_despawn(struct ItemObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+// pickup_refill
 INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFBD0);
 
+// pickup_collect_weapon_energy
 INCLUDE_ASM("main/nonmatchings/items/item_02", func_800BFCC0);
 
-void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
+void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 {
     s32 player_status;
     u8 player_health;
@@ -89,7 +92,7 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
     player_health = g_Player.hp;
     player_status = player_health & 0x80;
     if ((player_health & 0x7F) < engine_obj.unk46) {
-        func_800C03BC(1);
+        set_objects_frozen(1);
         arg0->ext.item_2.unk80 = arg1;
         arg0->ext.item_2.unk81 = 2;
         arg0->state = 2;
@@ -129,9 +132,10 @@ void func_800BFF0C(struct ItemObj* arg0, s8 arg1, s32 arg2)
         }
     }
 }
+// pickup_check_collect
 INCLUDE_ASM("main/nonmatchings/items/item_02", func_800C00BC);
 
-void func_800C03BC(s8 arg0)
+void set_objects_frozen(s8 arg0)
 {
     engine_obj.unk10 = arg0;
     engine_obj.unk11 = arg0;
@@ -143,9 +147,9 @@ void func_800C03BC(s8 arg0)
     engine_obj.unk17 = arg0;
 }
 
-void (*D_8010C730[])(struct ItemObj*) = {
+void (*pickup_state_funcs[])(struct ItemObj*) = {
     func_800BF76C,
-    func_800BFA00,
-    func_800BFB90,
-    func_800BFBB0,
+    pickup_main,
+    pickup_collected,
+    pickup_despawn,
 };

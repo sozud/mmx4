@@ -2,17 +2,17 @@
 // 8009CF38..8009D200
 #include "common.h"
 
-u8 D_80108FBC[4] = { 0x80, 0xF1, 0xBE, 0x26 };
-u8 D_80108FC0[4] = { 0x80, 0xF1, 0xFF, 0x26 };
-u8 D_80108FC4[4] = { 0x80, 0xFA, 0xBD, 0x14 };
-u8 D_80108FC8[4] = { 0x80, 0xFA, 0xFF, 0x14 };
+u8 cannon_blast_box_0[4] = { 0x80, 0xF1, 0xBE, 0x26 };
+u8 cannon_blast_box_1[4] = { 0x80, 0xF1, 0xFF, 0x26 };
+u8 cannon_blast_short_box[4] = { 0x80, 0xFA, 0xBD, 0x14 };
+u8 cannon_blast_long_box[4] = { 0x80, 0xFA, 0xFF, 0x14 };
 
-void func_8009CF38(struct ShotObj* arg0)
+void cannon_blast_update(struct ShotObj* self)
 {
-    D_80108FCC[arg0->state](arg0);
+    cannon_blast_state_funcs[self->state](self);
 }
 
-void func_8009CF74(struct ShotObj* raw_arg0)
+void cannon_blast_init(struct ShotObj* raw_arg0)
 {
     struct ShotObj* arg0;
     s16 var_v0;
@@ -30,32 +30,33 @@ void func_8009CF74(struct ShotObj* raw_arg0)
     arg0->state = (u8)arg0->state + 1;
     arg0->unk42 &= 0x7FFF;
     if (arg0->unk2 != 0) {
-        func_80015D60(arg0, 4);
-        arg0->unk50.data = D_80108FC8;
+        set_animation(arg0, 4);
+        arg0->unk50.data = cannon_blast_long_box;
         var_v0 = (u16)temp_s1->x_pos.i.hi - 0x177;
     } else {
-        func_80015D60(arg0, 3);
-        arg0->unk50.data = D_80108FC4;
+        set_animation(arg0, 3);
+        arg0->unk50.data = cannon_blast_short_box;
         var_v0 = (u16)temp_s1->x_pos.i.hi - 0x77;
     }
     arg0->x_pos.i.hi = var_v0;
     arg0->y_pos.i.hi = (s16)(u16)temp_s1->y_pos.i.hi;
 }
 
+// cannon_blast_active
 INCLUDE_ASM("main/nonmatchings/shots/shot_20", func_8009D048);
 
-void func_8009D1D8(struct ShotObj* arg0)
+void cannon_blast_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009D1F8(struct ShotObj* arg0)
+void cannon_blast_idle(struct ShotObj* self)
 {
 }
 
-void (*D_80108FCC[])(struct ShotObj*) = {
-    func_8009CF74,
+void (*cannon_blast_state_funcs[])(struct ShotObj*) = {
+    cannon_blast_init,
     func_8009D048,
-    func_8009D1D8,
-    func_8009D1F8,
+    cannon_blast_despawn,
+    cannon_blast_idle,
 };

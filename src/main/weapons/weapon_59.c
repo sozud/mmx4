@@ -2,19 +2,20 @@
 // 80098ABC..80098F4C
 #include "common.h"
 
-void func_80098ABC(struct WeaponObj* arg0)
+void ride_armor_shot_update(struct WeaponObj* arg0)
 {
-    D_80108BD8[arg0->state](arg0);
+    ride_armor_shot_state_funcs[arg0->state](arg0);
 }
 
+// ride_armor_shot_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098AF8);
 
-void func_80098C08(struct WeaponObj* arg0)
+void ride_armor_shot_main(struct WeaponObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     if ((func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) && (arg0->unk98 == 0)) {
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(arg0), 0x10, 0x10);
         return;
     }
     arg0->state = 2;
@@ -22,7 +23,7 @@ void func_80098C08(struct WeaponObj* arg0)
     arg0->unk50 = 0;
 }
 
-void func_80098C84(struct WeaponObj* arg0)
+void ride_armor_shot_despawn(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner = arg0->owner;
     u8 timer = owner->air_action;
@@ -32,19 +33,19 @@ void func_80098C84(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_80098CC0(struct WeaponObj* arg0)
+void enemy_ride_armor_shot_main(struct WeaponObj* arg0)
 {
     struct WeaponObj* self = arg0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     func_8002D9BC(self);
 
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        func_800AF808(self);
+        spawn_explosion(self);
         self->on_screen = 0;
     } else if (func_8002BB80(self, &g_Player) == 0 && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         return;
     } else {
         self->on_screen = 0;
@@ -53,30 +54,32 @@ void func_80098CC0(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_80098D64(struct ShotObj* arg0)
+void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 {
-    D_80108BE4[arg0->state](arg0);
+    enemy_ride_armor_shot_state_funcs[arg0->state](arg0);
 }
 
+// ride_armor_missile_find_target
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098DA0);
 
+// ride_armor_missile_spawn_smoke
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59", func_80098EA8);
 
-u8 D_80108BCC[4] = { 0xFC, 0xFD, 6, 5 };
+u8 ride_armor_shot_hit_box[4] = { 0xFC, 0xFD, 6, 5 };
 
-s16 D_80108BD0[2][2] = {
+s16 ride_armor_shot_offsets[2][2] = {
     { -0x2B, 0 },
     { -0x2C, 0x19 },
 };
 
-void (*D_80108BD8[])(struct WeaponObj*) = {
+void (*ride_armor_shot_state_funcs[])(struct WeaponObj*) = {
     func_80098AF8,
-    func_80098C08,
-    func_80098C84,
+    ride_armor_shot_main,
+    ride_armor_shot_despawn,
 };
 
-void (*D_80108BE4[])(struct WeaponObj*) = {
+void (*enemy_ride_armor_shot_state_funcs[])(struct WeaponObj*) = {
     func_80098AF8,
-    func_80098CC0,
-    func_80098C84,
+    enemy_ride_armor_shot_main,
+    ride_armor_shot_despawn,
 };

@@ -2,9 +2,10 @@
 // 800D1B44..800D1DC4
 #include "common.h"
 
+// cutscene_actor_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_50", func_800D1B44);
 
-void func_800D1CF8(struct MiscObj* self)
+void cutscene_actor_wait(struct MiscObj* self)
 {
     if (engine_obj.unk2 == 7) {
         self->state = 3;
@@ -13,24 +14,24 @@ void func_800D1CF8(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800D1D38(struct MiscObj* arg0)
+void cutscene_actor_hold(struct MiscObj* self)
 {
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800D1D58(struct MiscObj* arg0)
+void cutscene_actor_animate(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800D1D88(struct MiscObj* arg0)
+void cutscene_actor_update(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    D_8010F4AC[arg0->state](arg0);
+    self->on_screen = 0;
+    cutscene_actor_state_funcs[self->state](self);
 }
 
-union AnimationStep D_8010F1EC[18] = {
+union AnimationStep cutscene_actor_anim_0[18] = {
     { .packed = 0x1001001E },
     { .packed = 0x01010004 },
     { .packed = 0x02010004 },
@@ -51,7 +52,7 @@ union AnimationStep D_8010F1EC[18] = {
     { .packed = 0x2F000001 },
 };
 
-union AnimationStep D_8010F234[49] = {
+union AnimationStep cutscene_actor_anim_1[49] = {
     { .packed = 0x0001001E },
     { .packed = 0x01010002 },
     { .packed = 0x15010002 },
@@ -103,7 +104,7 @@ union AnimationStep D_8010F234[49] = {
     { .packed = 0x00000001 },
 };
 
-union AnimationStep D_8010F2F8[19] = {
+union AnimationStep cutscene_actor_anim_2[19] = {
     { .packed = 0x0201001E },
     { .packed = 0x00010004 },
     { .packed = 0x4D010018 },
@@ -125,7 +126,7 @@ union AnimationStep D_8010F2F8[19] = {
     { .packed = 0x02000001 },
 };
 
-union AnimationStep D_8010F344[30] = {
+union AnimationStep cutscene_actor_anim_3[30] = {
     { .packed = 0x0001001E },
     { .packed = 0x01010003 },
     { .packed = 0x20010003 },
@@ -158,7 +159,7 @@ union AnimationStep D_8010F344[30] = {
     { .packed = 0x5B000001 },
 };
 
-union AnimationStep D_8010F3BC[11] = {
+union AnimationStep cutscene_actor_anim_4[11] = {
     { .packed = 0x0101001E },
     { .packed = 0x08010008 },
     { .packed = 0x09010003 },
@@ -172,7 +173,7 @@ union AnimationStep D_8010F3BC[11] = {
     { .packed = 0x57000001 },
 };
 
-union AnimationStep D_8010F3E8[12] = {
+union AnimationStep cutscene_actor_anim_5[12] = {
     { .packed = 0x0001001E },
     { .packed = 0x35010007 },
     { .packed = 0x36010007 },
@@ -187,7 +188,7 @@ union AnimationStep D_8010F3E8[12] = {
     { .packed = 0x00000001 },
 };
 
-union AnimationStep D_8010F418[13] = {
+union AnimationStep cutscene_actor_anim_6[13] = {
     { .packed = 0x0601001E },
     { .packed = 0x5A010002 },
     { .packed = 0x5B010002 },
@@ -203,7 +204,7 @@ union AnimationStep D_8010F418[13] = {
     { .packed = 0x61000001 },
 };
 
-union AnimationStep D_8010F44C[16] = {
+union AnimationStep cutscene_actor_anim_7[16] = {
     { .packed = 0x7D01001E },
     { .packed = 0x7E010002 },
     { .packed = 0x7F01000A },
@@ -222,20 +223,20 @@ union AnimationStep D_8010F44C[16] = {
     { .packed = 0x84000001 },
 };
 
-union AnimationStep* D_8010F48C[8] = {
-    D_8010F1EC,
-    D_8010F234,
-    D_8010F2F8,
-    D_8010F344,
-    D_8010F3BC,
-    D_8010F3E8,
-    D_8010F418,
-    D_8010F44C,
+union AnimationStep* cutscene_actor_animations[8] = {
+    cutscene_actor_anim_0,
+    cutscene_actor_anim_1,
+    cutscene_actor_anim_2,
+    cutscene_actor_anim_3,
+    cutscene_actor_anim_4,
+    cutscene_actor_anim_5,
+    cutscene_actor_anim_6,
+    cutscene_actor_anim_7,
 };
 
-void (*D_8010F4AC[4])(struct MiscObj*) = {
+void (*cutscene_actor_state_funcs[4])(struct MiscObj*) = {
     func_800D1B44,
-    func_800D1CF8,
-    func_800D1D38,
-    func_800D1D58,
+    cutscene_actor_wait,
+    cutscene_actor_hold,
+    cutscene_actor_animate,
 };

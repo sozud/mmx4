@@ -2,12 +2,12 @@
 // 800A7AF0..800A8628
 #include "common.h"
 
-s16 D_80109A38[2][2] = {
+s16 colonel_wave_offsets[2][2] = {
     { 0x45, -0x12 },
     { 0x45, 0x10 },
 };
 
-s8 D_80109A40[14][4] = {
+s8 colonel_shot_boxes[14][4] = {
     { -1, -18, 15, 35 },
     { -4, -25, 19, 49 },
     { -1, 11, 10, 20 },
@@ -93,8 +93,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_45", func_800A7CE8);
 
 void colonel_wave_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718((struct MovingObj*)self);
+    animate_object(ANIMATED_OBJECT(self));
+    move_object((struct MovingObj*)self);
 }
 
 void colonel_streak(struct ShotObj* self)
@@ -108,7 +108,7 @@ void colonel_streak_start(struct ShotObj* arg)
 {
     struct ShotObj* self = arg;
 
-    func_80015D60(self, 0x10);
+    set_animation(self, 0x10);
     self->unk5C = 5;
     self->unk60 = 6;
     if (self->unk2 != 0) {
@@ -118,7 +118,7 @@ void colonel_streak_start(struct ShotObj* arg)
         self->x_vel.val = FIXED(-6);
         self->unk15 = 0;
     }
-    self->unk50.data = (u8*)&D_80109A40[9];
+    self->unk50.data = (u8*)&colonel_shot_boxes[9];
     self->timer = 5;
     self->unk8A = 0x32;
     self->y_vel.val = 0;
@@ -134,8 +134,8 @@ void colonel_streak_move(struct ShotObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
     if (--self->timer == 0) {
         shot = find_free_shot_obj();
@@ -171,13 +171,13 @@ void colonel_marker(struct ShotObj* self)
 
 void colonel_marker_start(struct ShotObj* self)
 {
-    func_80015D60(self, 0x11);
+    set_animation(self, 0x11);
     self->unk5C = 5;
     self->unk60 = 6;
     self->timer = 0;
     self->unk58.data = NULL;
     self->unk54 = NULL;
-    self->unk50.data = (const u8*)D_80109A40[11];
+    self->unk50.data = (const u8*)colonel_shot_boxes[11];
     self->unk6++;
 }
 
@@ -185,7 +185,7 @@ void colonel_marker_wait(struct ShotObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     shot = SHOT_OBJECT(self->unk7C);
     if (shot->state != 2) {
         return;
@@ -218,7 +218,7 @@ void colonel_bolt(struct ShotObj* self)
 
 void colonel_bolt_start(struct ShotObj* self)
 {
-    func_80015D60(self, 0xF);
+    set_animation(self, 0xF);
     self->unk5C = 5;
     self->unk60 = 9;
     self->y_vel.val = FIXED(8);
@@ -227,7 +227,7 @@ void colonel_bolt_start(struct ShotObj* self)
     self->unk2C = 0;
     self->unk58.data = NULL;
     self->unk54 = NULL;
-    self->unk50.data = (const u8*)D_80109A40[10];
+    self->unk50.data = (const u8*)colonel_shot_boxes[10];
     if (self->unk2 == 0) {
         func_8001540C(2, 0xD7, self);
     }
@@ -236,8 +236,8 @@ void colonel_bolt_start(struct ShotObj* self)
 
 void colonel_bolt_fall(struct ShotObj* self)
 {
-    func_80015DC8(self);
-    func_8002B718((struct MovingObj*)self);
+    animate_object(self);
+    move_object((struct MovingObj*)self);
 }
 
 void colonel_slash(struct ShotObj* self)
@@ -253,9 +253,9 @@ void colonel_slash_start(struct ShotObj* self)
     self->unk58.data = NULL;
     self->unk54 = NULL;
     if (self->unk2 == 0) {
-        self->unk50.data = (const u8*)D_80109A40[12];
+        self->unk50.data = (const u8*)colonel_shot_boxes[12];
     } else {
-        self->unk50.data = (const u8*)D_80109A40[13];
+        self->unk50.data = (const u8*)colonel_shot_boxes[13];
     }
     self->timer = 5;
     self->unk6++;
@@ -285,9 +285,9 @@ void colonel_shockwave_spread(struct ShotObj* self)
     struct ShotObj* object = self;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(object));
+    animate_object(ANIMATED_OBJECT(object));
     func_800A858C(object);
-    func_8002B718(MOVING_OBJECT(object));
+    move_object(MOVING_OBJECT(object));
 
     if ((object->animation_step.fields.event == 1) && (object->timer < 0x10)) {
         shot = find_free_shot_obj();

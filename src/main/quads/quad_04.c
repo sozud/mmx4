@@ -2,7 +2,7 @@
 // 800D526C..800D553C
 #include "common.h"
 
-void func_800D526C(struct QuadObj* arg0)
+void boss_death_shard_init(struct QuadObj* arg0)
 {
     s32 value;
 
@@ -11,16 +11,17 @@ void func_800D526C(struct QuadObj* arg0)
     arg0->bg_offset = 0;
     arg0->active |= 0x82;
     arg0->ext.quad_4.unk38 = arg0->unk2;
-    value = func_8002B780();
+    value = get_random_nonzero();
     arg0->unk14.val = 0;
     arg0->unk18.val = 0;
     arg0->state++;
     arg0->ext.quad_4.unk39 = value % 3;
 }
 
+// boss_death_shard_launch
 INCLUDE_ASM("main/nonmatchings/quads/quad_04", func_800D52F4);
 
-void func_800D54A0(struct QuadObj* arg0)
+void boss_death_shard_fly(struct QuadObj* arg0)
 {
     if (arg0->ext.quad_4.timer-- == 0) {
         arg0->state++;
@@ -28,17 +29,17 @@ void func_800D54A0(struct QuadObj* arg0)
     }
 }
 
-void func_800D54E0(struct QuadObj* arg0)
+void boss_death_shard_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800D5500(struct QuadObj* arg0)
+void boss_death_shard_update(struct QuadObj* arg0)
 {
-    D_8010F9A4[arg0->state](arg0);
+    boss_death_shard_state_funcs[arg0->state](arg0);
 }
 
-s16 D_8010F8A4[64][2] = {
+s16 boss_death_shard_shapes[64][2] = {
     { 0x0, 0x7F },
     { 0x19, 0x7A },
     { 0x31, 0x71 },
@@ -105,9 +106,9 @@ s16 D_8010F8A4[64][2] = {
     { 0x1, -0xFF },
 };
 
-void (*D_8010F9A4[])(struct QuadObj*) = {
-    func_800D526C,
+void (*boss_death_shard_state_funcs[])(struct QuadObj*) = {
+    boss_death_shard_init,
     func_800D52F4,
-    func_800D54A0,
-    func_800D54E0,
+    boss_death_shard_fly,
+    boss_death_shard_despawn,
 };

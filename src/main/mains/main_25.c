@@ -3,74 +3,77 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80057100(struct MainObj* arg0)
+void caterkiller_update(struct MainObj* self)
 {
-    D_800FD140[arg0->state](arg0);
-    if (arg0->ext.main_25.unk88 == 0) {
-        CollisionRelated(PLAYER_OBJECT(arg0));
+    caterkiller_state_funcs[self->state](self);
+    if (self->ext.main_25.unk88 == 0) {
+        CollisionRelated(PLAYER_OBJECT(self));
     }
 }
 
+// caterkiller_init
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057160);
 
+// caterkiller_main
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057308);
 
-void func_80057488(struct MainObj* arg0)
+void caterkiller_despawn(struct MainObj* self)
 {
-    arg0->ext.main_25.unk80 = 0;
-    arg0->ext.main_25.unk84 = 0;
-    arg0->ext.main_25.unk88 = 0;
-    arg0->ext.main_25.saved_unk5 = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->ext.main_25.unk80 = 0;
+    self->ext.main_25.unk84 = 0;
+    self->ext.main_25.unk88 = 0;
+    self->ext.main_25.saved_unk5 = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800574B4(struct MainObj* arg0)
+void caterkiller_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_25.saved_unk5;
+    self->unk5 = self->ext.main_25.saved_unk5;
 }
 
-void func_800574C0(struct MainObj* arg0)
+void caterkiller_crawl(struct MainObj* self)
 {
-    D_800FD168[arg0->unk6](arg0);
+    caterkiller_crawl_funcs[self->unk6](self);
 }
 
-void func_800574FC(struct MainObj* arg0)
+void caterkiller_crawl_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8005807C(arg0);
-    if (arg0->unk15 == 0) {
-        arg0->unk20 = FIXED(-1);
+    animate_object(ANIMATED_OBJECT(self));
+    caterkiller_face_player(self);
+    if (self->unk15 == 0) {
+        self->x_speed = FIXED(-1);
     } else {
-        arg0->unk20 = FIXED(1);
+        self->x_speed = FIXED(1);
     }
-    arg0->unk6 = 1;
+    self->unk6 = 1;
 }
 
+// caterkiller_crawl_move
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_8005754C);
 
-void func_800576F4(struct MainObj* self)
+void caterkiller_crawl_end(struct MainObj* self)
 {
     s32 distance;
     s32 player_y;
     s32 object_y;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->ext.main_25.unk84 = 1;
     }
     if (self->animation_step.fields.event == 1) {
         self->ext.main_25.unk84 = 0;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk20 != 0) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->x_speed != 0) {
         return;
     }
-    self->unk28 = 0;
+    self->x_accel = 0;
     player_y = g_Player.y_pos.i.hi;
     object_y = self->y_pos.i.hi;
     distance = player_y - object_y;
     if (distance >= 0 ? distance < 0x1A : object_y - player_y < 0x1A) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         self->unk5 = 3;
         self->unk6 = 0;
         self->ext.main_25.unk84 = 0;
@@ -78,215 +81,217 @@ void func_800576F4(struct MainObj* self)
     }
     if (self->unk15 == 0) {
         self->unk15 = 0x40;
-        self->unk20 = FIXED(1);
+        self->x_speed = FIXED(1);
     } else {
         self->unk15 = 0;
-        self->unk20 = FIXED(-1);
+        self->x_speed = FIXED(-1);
     }
     self->unk6 = 1;
 }
 
-void func_800577E8(struct MainObj* arg0)
+void caterkiller_lunge(struct MainObj* self)
 {
-    D_800FD174[arg0->unk6](arg0);
+    caterkiller_lunge_funcs[self->unk6](self);
 }
 
-void func_80057824(struct MainObj* arg0)
+void caterkiller_lunge_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8005807C(arg0);
-    if (arg0->unk15 == 0) {
-        arg0->unk20 = FIXED(-2);
+    animate_object(ANIMATED_OBJECT(self));
+    caterkiller_face_player(self);
+    if (self->unk15 == 0) {
+        self->x_speed = FIXED(-2);
     } else {
-        arg0->unk20 = FIXED(2);
+        self->x_speed = FIXED(2);
     }
-    arg0->unk6 = 1;
+    self->unk6 = 1;
 }
 
+// caterkiller_lunge_move
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057874);
 
-void func_80057978(struct MainObj* arg0)
+void caterkiller_lunge_end(struct MainObj* self)
 {
     s32 distance;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->ext.main_25.unk84 = 1;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        self->ext.main_25.unk84 = 1;
     }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->ext.main_25.unk84 = 0;
+    if (self->animation_step.fields.event == 1) {
+        self->ext.main_25.unk84 = 0;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk20 == 0) {
-        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->x_speed == 0) {
+        distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
         if (distance >= 0) {
             if (distance < 0x1A) {
-                arg0->unk6 = 0;
+                self->unk6 = 0;
             } else {
-                func_80015D60(arg0, 0);
-                arg0->unk5 = 2;
-                arg0->unk6 = 0;
-                arg0->ext.main_25.unk80 = 0x40;
-                arg0->ext.main_25.unk84 = 0;
+                set_animation(self, 0);
+                self->unk5 = 2;
+                self->unk6 = 0;
+                self->ext.main_25.unk80 = 0x40;
+                self->ext.main_25.unk84 = 0;
             }
         } else {
-            distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+            distance = self->y_pos.i.hi - g_Player.y_pos.i.hi;
             if (distance < 0x1A) {
-                arg0->unk6 = 0;
+                self->unk6 = 0;
             } else {
-                func_80015D60(arg0, 0);
-                arg0->unk5 = 2;
-                arg0->unk6 = 0;
-                arg0->ext.main_25.unk80 = 0x40;
-                arg0->ext.main_25.unk84 = 0;
+                set_animation(self, 0);
+                self->unk5 = 2;
+                self->unk6 = 0;
+                self->ext.main_25.unk80 = 0x40;
+                self->ext.main_25.unk84 = 0;
             }
         }
     }
 }
 
-void func_80057A44(struct MainObj* arg0)
+void caterkiller_fall(struct MainObj* self)
 {
-    D_800FD180[arg0->unk6](arg0);
+    caterkiller_fall_funcs[self->unk6](self);
 }
 
-void func_80057A80(struct MainObj* arg0)
+void caterkiller_fall_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk2C = FIXED(0.2578125);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        self->gravity = FIXED(0.2578125);
     }
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->ext.main_25.unk84 = 2;
-        func_80015D60(arg0, 4);
-        arg0->unk6 = 1;
+    if (self->animation_step.fields.event == 1) {
+        self->ext.main_25.unk84 = 2;
+        set_animation(self, 4);
+        self->unk6 = 1;
     }
 }
 
-void func_80057AE8(struct MainObj* self)
+void caterkiller_fall_drop(struct MainObj* self)
 {
     s16 tx;
     s16 ty;
     u8 hits;
 
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
-    tx = self->x_pos.u.hi + self->unk68->unk0;
-    ty = self->unk68->unk3 + (self->y_pos.u.hi + self->unk68->unk1) + 0x1B;
+    tx = self->x_pos.u.hi + self->terrain_box->unk0;
+    ty = self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1) + 0x1B;
 
     hits = func_8002D724(PLAYER_OBJECT(self), tx, ty);
-    tx -= self->unk68->unk2;
+    tx -= self->terrain_box->unk2;
     hits |= func_8002D724(PLAYER_OBJECT(self), tx, ty);
-    hits |= func_8002D724(PLAYER_OBJECT(self), tx + self->unk68->unk2 * 2, ty);
+    hits |= func_8002D724(PLAYER_OBJECT(self), tx + self->terrain_box->unk2 * 2, ty);
 
     if (hits != 0 && hits != 0x24) {
-        func_80015D60(self, 5);
-        self->unk2C = 0;
-        self->unk24 = 0;
+        set_animation(self, 5);
+        self->gravity = 0;
+        self->y_speed = 0;
         self->unk6 = 2;
     }
 }
 
+// caterkiller_fall_land
 INCLUDE_ASM("main/nonmatchings/mains/main_25", func_80057C00);
 
-void func_80057D58(struct MainObj* arg0)
+void caterkiller_climb(struct MainObj* self)
 {
-    D_800FD18C[arg0->unk6](arg0);
+    caterkiller_climb_funcs[self->unk6](self);
 }
 
-void func_80057D94(struct MainObj* arg0)
+void caterkiller_climb_start(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        func_80015D60((struct Unk19*)arg0, 3);
-        arg0->unk6 = 1;
+    animate_object((struct AnimatedObj*)self);
+    if (self->animation_step.fields.event != 0) {
+        set_animation((struct Unk19*)self, 3);
+        self->unk6 = 1;
     }
 }
 
-void func_80057DDC(struct MainObj* arg0)
+void caterkiller_climb_hop(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        func_80015D60(arg0, 4);
-        arg0->ext.main_25.unk84 = 2;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6 = 2;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        set_animation(self, 4);
+        self->ext.main_25.unk84 = 2;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 2;
     }
 }
 
-void func_80057E34(struct MainObj* arg0)
+void caterkiller_climb_rise(struct MainObj* self)
 {
     s16 tx;
     s16 ty;
     u8 r;
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    tx = arg0->x_pos.u.hi + arg0->unk68->unk0;
-    ty = (arg0->y_pos.u.hi + arg0->unk68->unk1) - arg0->unk68->unk3;
-    r = func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
-    tx -= arg0->unk68->unk2;
-    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
-    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx + arg0->unk68->unk2 * 2, ty);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    tx = self->x_pos.u.hi + self->terrain_box->unk0;
+    ty = (self->y_pos.u.hi + self->terrain_box->unk1) - self->terrain_box->unk3;
+    r = func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    tx -= self->terrain_box->unk2;
+    r = r | func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    r = r | func_8002D724(PLAYER_OBJECT(self), tx + self->terrain_box->unk2 * 2, ty);
     if (r != 0 && r != 0x24) {
-        arg0->unk6 = 3;
+        self->unk6 = 3;
     }
 }
 
-void func_80057F34(struct MainObj* arg0)
+void caterkiller_climb_cling(struct MainObj* self)
 {
     s16 tx;
     s16 ty;
     u8 r;
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    tx = arg0->x_pos.u.hi + arg0->unk68->unk0;
-    ty = (arg0->y_pos.u.hi + arg0->unk68->unk1) - arg0->unk68->unk3;
-    r = func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
-    tx -= arg0->unk68->unk2;
-    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx, ty);
-    r = r | func_8002D724(PLAYER_OBJECT(arg0), tx + arg0->unk68->unk2 * 2, ty);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    tx = self->x_pos.u.hi + self->terrain_box->unk0;
+    ty = (self->y_pos.u.hi + self->terrain_box->unk1) - self->terrain_box->unk3;
+    r = func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    tx -= self->terrain_box->unk2;
+    r = r | func_8002D724(PLAYER_OBJECT(self), tx, ty);
+    r = r | func_8002D724(PLAYER_OBJECT(self), tx + self->terrain_box->unk2 * 2, ty);
     if (r == 0 || r == 0x24) {
-        arg0->unk5 = 4;
-        arg0->ext.main_25.unk88 = 0;
-        arg0->unk6 = 1;
+        self->unk5 = 4;
+        self->ext.main_25.unk88 = 0;
+        self->unk6 = 1;
     }
 }
 
-void func_80058044(struct MainObj* arg0)
+void caterkiller_wait_above(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0x11) {
-        arg0->unk5 = 4;
-        arg0->y_pos.u.hi -= 0x18;
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0x11) {
+        self->unk5 = 4;
+        self->y_pos.u.hi -= 0x18;
     }
 }
 
-void func_8005807C(struct MainObj* arg0)
+void caterkiller_face_player(struct MainObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
-void func_800580AC(struct MainObj* arg0)
+void caterkiller_check_fall(struct MainObj* self)
 {
-    if ((arg0->unk5 != 4) && (arg0->unk5 != 6) && !(arg0->unk70 & 8)) {
-        func_80015D60(arg0, 3);
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
-        if (arg0->unk15 == 0) {
-            arg0->x_pos.u.hi -= 2;
+    if ((self->unk5 != 4) && (self->unk5 != 6) && !(self->collision_flags & 8)) {
+        set_animation(self, 3);
+        self->unk5 = 4;
+        self->unk6 = 0;
+        if (self->unk15 == 0) {
+            self->x_pos.u.hi -= 2;
         } else {
-            arg0->x_pos.u.hi += 2;
+            self->x_pos.u.hi += 2;
         }
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->ext.main_25.unk84 = 2;
-        arg0->unk20 = 0;
-        arg0->unk24 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 1;
+        self->gravity = FIXED(0.2578125);
+        self->ext.main_25.unk84 = 2;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 1;
     }
 }
 
@@ -391,7 +396,7 @@ struct Unk_unk68* D_800FD04C[] = {
     D_800FD000,
 };
 
-union AnimationStep D_800FD078[] = {
+union AnimationStep caterkiller_anim_0[] = {
     { 0x0001000C },
     { 0x0101020C },
     { 0x0201000C },
@@ -399,7 +404,7 @@ union AnimationStep D_800FD078[] = {
     { 0x04FC010C },
 };
 
-union AnimationStep D_800FD08C[] = {
+union AnimationStep caterkiller_anim_1[] = {
     { 0x00010006 },
     { 0x01010206 },
     { 0x02010006 },
@@ -407,7 +412,7 @@ union AnimationStep D_800FD08C[] = {
     { 0x04FC0106 },
 };
 
-union AnimationStep D_800FD0A0[] = {
+union AnimationStep caterkiller_anim_2[] = {
     { 0x05010003 },
     { 0x06010003 },
     { 0x07010003 },
@@ -418,7 +423,7 @@ union AnimationStep D_800FD0A0[] = {
     { 0x05000101 },
 };
 
-union AnimationStep D_800FD0C0[] = {
+union AnimationStep caterkiller_anim_3[] = {
     { 0x05010002 },
     { 0x09010201 },
     { 0x09010005 },
@@ -426,12 +431,12 @@ union AnimationStep D_800FD0C0[] = {
     { 0x0A000101 },
 };
 
-union AnimationStep D_800FD0D4[] = {
+union AnimationStep caterkiller_anim_4[] = {
     { 0x0B010006 },
     { 0x0CFF0106 },
 };
 
-union AnimationStep D_800FD0DC[] = {
+union AnimationStep caterkiller_anim_5[] = {
     { 0x0D010201 },
     { 0x0D010003 },
     { 0x0E010301 },
@@ -444,79 +449,79 @@ union AnimationStep D_800FD0DC[] = {
     { 0x11000101 },
 };
 
-union AnimationStep D_800FD104[] = {
+union AnimationStep caterkiller_anim_6[] = {
     { 0x12000101 },
 };
 
-union AnimationStep D_800FD108[] = {
+union AnimationStep caterkiller_anim_7[] = {
     { 0x13000101 },
 };
 
-union AnimationStep D_800FD10C[] = {
+union AnimationStep caterkiller_anim_8[] = {
     { 0x14000101 },
 };
 
-union AnimationStep D_800FD110[] = {
+union AnimationStep caterkiller_anim_9[] = {
     { 0x15000101 },
 };
 
-union AnimationStep* D_800FD114[] = {
-    D_800FD078,
-    D_800FD08C,
-    D_800FD0A0,
-    D_800FD0C0,
-    D_800FD0D4,
-    D_800FD0DC,
-    D_800FD104,
-    D_800FD108,
-    D_800FD10C,
-    D_800FD110,
+union AnimationStep* caterkiller_animations[] = {
+    caterkiller_anim_0,
+    caterkiller_anim_1,
+    caterkiller_anim_2,
+    caterkiller_anim_3,
+    caterkiller_anim_4,
+    caterkiller_anim_5,
+    caterkiller_anim_6,
+    caterkiller_anim_7,
+    caterkiller_anim_8,
+    caterkiller_anim_9,
 };
 
-u8 D_800FD13C[] = {
+u8 caterkiller_debris[] = {
     0x06,
     0x07,
     0x08,
     0x09,
 };
 
-void (*D_800FD140[])() = {
+void (*caterkiller_state_funcs[])() = {
     func_80057160,
     func_80057308,
-    func_80057488,
+    caterkiller_despawn,
 };
 
-void (*D_800FD14C[])() = {
-    func_8009216C,
-    func_800574B4,
-    func_800574C0,
-    func_800577E8,
-    func_80057A44,
-    func_80057D58,
-    func_80058044,
+void (*caterkiller_step_funcs[])() = {
+    enemy_hit_reaction,
+    caterkiller_resume_step,
+    caterkiller_crawl,
+    caterkiller_lunge,
+    caterkiller_fall,
+    caterkiller_climb,
+    caterkiller_wait_above,
 };
 
-void (*D_800FD168[])() = {
-    func_800574FC,
+void (*caterkiller_crawl_funcs[])() = {
+    caterkiller_crawl_start,
     func_8005754C,
-    func_800576F4,
+    caterkiller_crawl_end,
 };
 
-void (*D_800FD174[])() = {
-    func_80057824,
+void (*caterkiller_lunge_funcs[])() = {
+    caterkiller_lunge_start,
     func_80057874,
-    func_80057978,
+    caterkiller_lunge_end,
 };
 
-void (*D_800FD180[])() = {
-    func_80057A80,
-    func_80057AE8,
+void (*caterkiller_fall_funcs[])() = {
+    caterkiller_fall_start,
+    caterkiller_fall_drop,
     func_80057C00,
 };
 
-void (*D_800FD18C[])() = {
-    func_80057D94,
-    func_80057DDC,
-    func_80057E34,
-    func_80057F34,
+void (*caterkiller_climb_funcs[])() = {
+    caterkiller_climb_start,
+    caterkiller_climb_hop,
+    caterkiller_climb_rise,
+    caterkiller_climb_cling,
 };

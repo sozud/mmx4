@@ -3,139 +3,141 @@
 #include "common.h"
 #include "func_tables.h"
 
-void bulldozer_update(struct MainObj* arg0)
+void bulldozer_update(struct MainObj* self)
 {
-    bulldozer_state_funcs[arg0->state](arg0);
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    bulldozer_state_funcs[self->state](self);
+    CollisionRelated(PLAYER_OBJECT(self));
 }
 
+// bulldozer_init
 INCLUDE_ASM("main/nonmatchings/mains/main_06", func_80046B80);
 
+// bulldozer_main
 INCLUDE_ASM("main/nonmatchings/mains/main_06", func_80046C8C);
 
-void bulldozer_cleanup(struct MainObj* arg0)
+void bulldozer_cleanup(struct MainObj* self)
 {
-    arg0->ext.main_6.armor_broken = 0;
-    arg0->ext.main_6.ground_probe_distance = 0;
-    arg0->ext.main_6.armor_health = 0;
-    arg0->ext.main_6.core_health = 0;
-    arg0->ext.main_6.hitbox_toggle = 0;
-    arg0->ext.main_6.saved_step = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
-    func_80015930(2, 2);
+    self->ext.main_6.armor_broken = 0;
+    self->ext.main_6.ground_probe_distance = 0;
+    self->ext.main_6.armor_health = 0;
+    self->ext.main_6.core_health = 0;
+    self->ext.main_6.hitbox_toggle = 0;
+    self->ext.main_6.saved_step = 0;
+    despawn_object(OBJECT_HEADER(self));
+    stop_sound(2, 2);
 }
 
-void bulldozer_resume_step(struct MainObj* arg0)
+void bulldozer_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_6.saved_step;
+    self->unk5 = self->ext.main_6.saved_step;
 }
 
-void bulldozer_rev(struct MainObj* arg0)
+void bulldozer_rev(struct MainObj* self)
 {
-    bulldozer_rev_funcs[arg0->unk6](arg0);
+    bulldozer_rev_funcs[self->unk6](self);
 }
 
-void bulldozer_rev_begin(struct MainObj* arg0)
+void bulldozer_rev_begin(struct MainObj* self)
 {
-    if (arg0->ext.main_6.armor_broken == 0) {
-        arg0->ext.main_6.ground_probe_distance = 0x48;
-        func_80015D60(arg0, 0);
+    if (self->ext.main_6.armor_broken == 0) {
+        self->ext.main_6.ground_probe_distance = 0x48;
+        set_animation(self, 0);
     } else {
-        arg0->ext.main_6.ground_probe_distance = 8;
-        func_80015D60(arg0, 1);
+        self->ext.main_6.ground_probe_distance = 8;
+        set_animation(self, 1);
     }
-    arg0->unk7C = 0x28;
-    arg0->unk6 = 1;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8001540C(2, 2, arg0);
+    self->unk7C = 0x28;
+    self->unk6 = 1;
+    animate_object(ANIMATED_OBJECT(self));
+    func_8001540C(2, 2, self);
 }
 
-void func_80047140(struct MainObj* arg0)
+void bulldozer_rev_wait(struct MainObj* self)
 {
-    if (arg0->unk7C == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    if (self->unk7C == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
     } else {
-        arg0->unk7C--;
+        self->unk7C--;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void bulldozer_charge(struct MainObj* arg0)
+void bulldozer_charge(struct MainObj* self)
 {
-    bulldozer_charge_funcs[arg0->unk6](arg0);
+    bulldozer_charge_funcs[self->unk6](self);
 }
 
-void func_800471C4(struct MainObj* arg0)
+void bulldozer_charge_start(struct MainObj* self)
 {
-    if (arg0->unk15 & 0x40) {
-        if (arg0->ext.main_6.armor_broken != 0) {
-            arg0->unk20 = FIXED(2);
+    if (self->unk15 & 0x40) {
+        if (self->ext.main_6.armor_broken != 0) {
+            self->x_speed = FIXED(2);
         } else {
-            arg0->unk20 = FIXED(0.5);
+            self->x_speed = FIXED(0.5);
         }
     } else {
-        if (arg0->ext.main_6.armor_broken != 0) {
-            arg0->unk20 = FIXED(-2);
+        if (self->ext.main_6.armor_broken != 0) {
+            self->x_speed = FIXED(-2);
         } else {
-            arg0->unk20 = FIXED(-0.5);
+            self->x_speed = FIXED(-0.5);
         }
     }
-    arg0->unk6 = 1;
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    self->unk6 = 1;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_80047244(struct MainObj* arg0)
+void bulldozer_charge_move(struct MainObj* self)
 {
     s16 x;
     s16 y;
 
-    if (arg0->unk15 != 0) {
-        x = arg0->x_pos.u.hi + (s8)(u8)arg0->unk68->unk0 + arg0->ext.main_6.ground_probe_distance;
+    if (self->unk15 != 0) {
+        x = self->x_pos.u.hi + (s8)(u8)self->terrain_box->unk0 + self->ext.main_6.ground_probe_distance;
     } else {
-        x = (arg0->x_pos.u.hi - (s8)(u8)arg0->unk68->unk0) - arg0->ext.main_6.ground_probe_distance;
+        x = (self->x_pos.u.hi - (s8)(u8)self->terrain_box->unk0) - self->ext.main_6.ground_probe_distance;
     }
 
-    y = arg0->unk68->unk3 + (arg0->y_pos.u.hi + (s8)(u8)arg0->unk68->unk1);
-    if (func_8002D724(PLAYER_OBJECT(arg0), x, y) == 0x38) {
-        func_8002B718(MOVING_OBJECT(arg0));
+    y = self->terrain_box->unk3 + (self->y_pos.u.hi + (s8)(u8)self->terrain_box->unk1);
+    if (func_8002D724(PLAYER_OBJECT(self), x, y) == 0x38) {
+        move_object(MOVING_OBJECT(self));
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_80047314(struct MainObj* arg0)
+void bulldozer_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 0;
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
-void func_80047378(struct MainObj* arg0)
+void bulldozer_check_fall(struct MainObj* self)
 {
-    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
-        arg0->unk5 = 4;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 1;
+    if (self->air_state == 0 && !(self->collision_flags & 8)) {
+        self->unk5 = 4;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 1;
     }
 }
 
-struct Unk_unk68 D_800FA424 = { 1, -28, 47, 45 };
+struct Unk_unk68 bulldozer_terrain_box = { 1, -28, 47, 45 };
 
-struct Unk_unk68 D_800FA428[2] = {
+struct Unk_unk68 bulldozer_hurt_boxes[2] = {
     { -50, -69, 46, 86 },
     { -18, -18, 68, 34 },
 };
@@ -257,7 +259,7 @@ union AnimationStep* D_800FA4E8[] = {
     D_800FA4D8,
 };
 
-u8 D_800FA528[16] = {
+u8 bulldozer_debris[16] = {
     0x02,
     0x03,
     0x04,
@@ -282,20 +284,20 @@ void (*bulldozer_state_funcs[])() = {
     bulldozer_cleanup,
 };
 
-void (*D_800FA544[])() = {
-    func_8009216C,
+void (*bulldozer_step_funcs[])() = {
+    enemy_hit_reaction,
     bulldozer_resume_step,
     bulldozer_rev,
     bulldozer_charge,
-    func_80047314,
+    bulldozer_fall,
 };
 
 void (*bulldozer_rev_funcs[])() = {
     bulldozer_rev_begin,
-    func_80047140,
+    bulldozer_rev_wait,
 };
 
 void (*bulldozer_charge_funcs[])() = {
-    func_800471C4,
-    func_80047244,
+    bulldozer_charge_start,
+    bulldozer_charge_move,
 };

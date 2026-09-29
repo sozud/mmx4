@@ -2,22 +2,22 @@
 // 800B1AF8..800B1C5C
 #include "common.h"
 
-void func_800B1AF8(struct VisualObj* arg0)
+void ride_chaser_jet_update(struct VisualObj* arg0)
 {
-    D_8010A520[arg0->state](arg0);
+    ride_chaser_jet_state_funcs[arg0->state](arg0);
 }
 
-void func_800B1B34(struct VisualObj* arg0)
+void ride_chaser_jet_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk54 = 0xFF;
     arg0->unk56 = 0xFF;
     arg0->unk16 = 6;
-    func_80015D60(arg0, 0x15);
+    set_animation(arg0, 0x15);
 }
 
-void func_800B1B74(struct VisualObj* arg0)
+void ride_chaser_jet_main(struct VisualObj* arg0)
 {
     struct PlayerObj* player;
     s32 animation;
@@ -29,9 +29,9 @@ void func_800B1B74(struct VisualObj* arg0)
     if (player->state != 2) {
         frame = player->animation_step.fields.frame_index;
         previous_frame = arg0->unk56;
-        next_animation = D_8010A510[frame];
+        next_animation = ride_chaser_jet_animations[frame];
         if (frame != previous_frame && (animation = next_animation & 0xFF) != arg0->unk54) {
-            func_80015D90(ANIMATED_OBJECT(arg0), animation,
+            set_animation_frame(ANIMATED_OBJECT(arg0), animation,
                 arg0->animation_step.fields.event);
             frame = player->animation_step.fields.frame_index;
             arg0->unk54 = next_animation;
@@ -39,20 +39,20 @@ void func_800B1B74(struct VisualObj* arg0)
         }
         arg0->x_pos.i.hi = player->x_pos.i.hi;
         arg0->y_pos.i.hi = player->y_pos.i.hi;
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        animate_object(ANIMATED_OBJECT(arg0));
+        update_on_screen(BASE_OBJECT(arg0), 0x10, 0x10);
         return;
     }
     arg0->state = 2;
 }
 
-void func_800B1C3C(struct VisualObj* arg0)
+void ride_chaser_jet_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A520[])(struct VisualObj*) = {
-    func_800B1B34,
-    func_800B1B74,
-    func_800B1C3C,
+void (*ride_chaser_jet_state_funcs[])(struct VisualObj*) = {
+    ride_chaser_jet_init,
+    ride_chaser_jet_main,
+    ride_chaser_jet_despawn,
 };

@@ -3,89 +3,91 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005458C(struct MainObj* arg0)
+void ice_block_update(struct MainObj* self)
 {
-    D_800FC990[arg0->state](arg0);
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    CollisionRelated(PLAYER_OBJECT(arg0));
+    ice_block_state_funcs[self->state](self);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated(PLAYER_OBJECT(self));
 }
 
+// ice_block_init
 INCLUDE_ASM("main/nonmatchings/mains/main_20", func_800545EC);
 
-void func_80054710(struct MainObj* arg0)
+void ice_block_start_idle(struct MainObj* self)
 {
-    arg0->unk5 = 2;
-    func_80015D60(arg0, 0);
+    self->unk5 = 2;
+    set_animation(self, 0);
 }
 
-void func_80054738(struct MainObj* arg0)
+void ice_block_idle(struct MainObj* self)
 {
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
-void func_80054758(struct MainObj* arg0)
+void ice_block_main(struct MainObj* self)
 {
-    s32 collision = func_8002DD04(arg0);
+    s32 collision = func_8002DD04(self);
     s8 countdown;
 
-    if (arg0->unk2 == 0 && arg0->ext.main_20.unk80 != arg0->unk5C) {
-        countdown = arg0->ext.main_20.unk81--;
+    if (self->unk2 == 0 && self->ext.main_20.unk80 != self->hp) {
+        countdown = self->ext.main_20.unk81--;
         if (countdown != 1) {
             if (countdown == 2) {
-                func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10, 0);
+                func_800583B0(self, self->x_pos.i.hi, self->y_pos.i.hi - 0x10, 0);
             }
         } else {
-            func_800583B0(arg0, arg0->x_pos.i.hi, arg0->y_pos.i.hi - 0x10, 5);
-            arg0->unk5C = 1;
+            func_800583B0(self, self->x_pos.i.hi, self->y_pos.i.hi - 0x10, 5);
+            self->hp = 1;
         }
-        arg0->ext.main_20.unk80 = arg0->unk5C;
+        self->ext.main_20.unk80 = self->hp;
     }
     if (collision < 0) {
-        arg0->unk5 = 0;
-        arg0->state++;
-        arg0->unk42 &= 0x7FFF;
+        self->unk5 = 0;
+        self->state++;
+        self->unk42 &= 0x7FFF;
         return;
     }
-    D_800FC99C[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+    ice_block_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
     } else {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+        despawn_object(OBJECT_HEADER(self));
     }
 }
 
+// ice_block_break_start
 INCLUDE_ASM("main/nonmatchings/mains/main_20", func_800548B8);
 
-void func_80054B38(struct MainObj* arg0)
+void ice_block_break_crumble(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk50 = (const u8*)&D_800FC860;
+    if (self->animation_step.fields.event != 0) {
+        self->attack_box = (const u8*)&ice_block_crumble_attack_box;
     }
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->unk5++;
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk5++;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_80054B98(struct MainObj* arg0)
+void ice_block_break_remove(struct MainObj* self)
 {
-    arg0->unk7C = 1;
-    func_8002B108(OBJECT_HEADER(arg0));
+    self->unk7C = 1;
+    despawn_object_permanently(OBJECT_HEADER(self));
 }
 
-void func_80054BBC(struct MainObj* self)
+void ice_block_break(struct MainObj* self)
 {
-    D_800FC9A8[self->unk5](self);
+    ice_block_break_funcs[self->unk5](self);
     func_8002D9BC(self);
     if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
         if (self->unk7C == 0) {
-            func_8002B318(BASE_OBJECT(self), 0x50, 0x80);
+            update_on_screen(BASE_OBJECT(self), 0x50, 0x80);
         }
     } else {
-        func_8002B108(OBJECT_HEADER(self));
+        despawn_object_permanently(OBJECT_HEADER(self));
     }
 }
 
@@ -103,9 +105,9 @@ struct Unk_unk68 D_800FC858 = { -15, -16, 29, 32 };
 
 struct Unk_unk68 D_800FC85C = { -15, -48, 29, 96 };
 
-struct Unk_unk68 D_800FC860 = { 0, 0, 0, 0 };
+struct Unk_unk68 ice_block_crumble_attack_box = { 0, 0, 0, 0 };
 
-union AnimationStep D_800FC864[] = {
+union AnimationStep ice_block_anim_0[] = {
     { 0x0001000C },
     { 0x01010001 },
     { 0x02010001 },
@@ -121,7 +123,7 @@ union AnimationStep D_800FC864[] = {
     { 0x01F40001 },
 };
 
-union AnimationStep D_800FC898[] = {
+union AnimationStep ice_block_anim_1[] = {
     { 0x04010003 },
     { 0x05010002 },
     { 0x06010003 },
@@ -136,7 +138,7 @@ union AnimationStep D_800FC898[] = {
     { 0x08F60002 },
 };
 
-union AnimationStep D_800FC8C8[] = {
+union AnimationStep ice_block_anim_6[] = {
     { 0x10010003 },
     { 0x11010004 },
     { 0x12010003 },
@@ -151,7 +153,7 @@ union AnimationStep D_800FC8C8[] = {
     { 0x1AF50001 },
 };
 
-union AnimationStep D_800FC8F8[] = {
+union AnimationStep ice_block_anim_7[] = {
     { 0x1B010003 },
     { 0x1C010004 },
     { 0x1D010003 },
@@ -166,7 +168,7 @@ union AnimationStep D_800FC8F8[] = {
     { 0x25F50001 },
 };
 
-union AnimationStep D_800FC928[] = {
+union AnimationStep ice_block_anim_8[] = {
     { 0x26010003 },
     { 0x27010004 },
     { 0x28010003 },
@@ -181,50 +183,50 @@ union AnimationStep D_800FC928[] = {
     { 0x30F50001 },
 };
 
-union AnimationStep D_800FC958[] = {
+union AnimationStep ice_block_anim_2[] = {
     { 0x0C000001 },
 };
 
-union AnimationStep D_800FC95C[] = {
+union AnimationStep ice_block_anim_3[] = {
     { 0x0D000001 },
 };
 
-union AnimationStep D_800FC960[] = {
+union AnimationStep ice_block_anim_4[] = {
     { 0x0E000001 },
 };
 
-union AnimationStep D_800FC964[] = {
+union AnimationStep ice_block_anim_5[] = {
     { 0x0F000001 },
 };
 
-union AnimationStep* D_800FC968[9] = {
-    D_800FC864,
-    D_800FC898,
-    D_800FC958,
-    D_800FC95C,
-    D_800FC960,
-    D_800FC964,
-    D_800FC8C8,
-    D_800FC8F8,
-    D_800FC928,
+union AnimationStep* ice_block_animations[9] = {
+    ice_block_anim_0,
+    ice_block_anim_1,
+    ice_block_anim_2,
+    ice_block_anim_3,
+    ice_block_anim_4,
+    ice_block_anim_5,
+    ice_block_anim_6,
+    ice_block_anim_7,
+    ice_block_anim_8,
 };
 
-u8 D_800FC98C[4] = { 2, 3, 4, 5 };
+u8 ice_block_debris[4] = { 2, 3, 4, 5 };
 
-void (*D_800FC990[3])() = {
+void (*ice_block_state_funcs[3])() = {
     func_800545EC,
-    func_80054758,
-    func_80054BBC,
+    ice_block_main,
+    ice_block_break,
 };
 
-void (*D_800FC99C[3])() = {
-    func_8009216C,
-    func_80054710,
-    func_80054738,
+void (*ice_block_step_funcs[3])() = {
+    enemy_hit_reaction,
+    ice_block_start_idle,
+    ice_block_idle,
 };
 
-void (*D_800FC9A8[3])() = {
+void (*ice_block_break_funcs[3])() = {
     func_800548B8,
-    func_80054B38,
-    func_80054B98,
+    ice_block_break_crumble,
+    ice_block_break_remove,
 };

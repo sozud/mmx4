@@ -2,9 +2,9 @@
 // 8009A984..8009AD30
 #include "common.h"
 
-u8 D_80108D40[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
-u8 D_80108D48[4] = { 0, 0, 4, 4 };
-s8 D_80108D4C[16] = {
+u8 wall_crawler_shot_hit_boxes[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
+u8 wall_crawler_shot_terrain_box[4] = { 0, 0, 4, 4 };
+s8 wall_crawler_shot_spawn_offsets[16] = {
     -0x0D,
     0,
     0x0D,
@@ -23,57 +23,58 @@ s8 D_80108D4C[16] = {
     0x0C,
 };
 
-void func_8009A984(struct ShotObj* arg0)
+void wall_crawler_shot_update(struct ShotObj* self)
 {
-    if (arg0->unk84.value == 0) {
-        CollisionRelated(arg0);
+    if (self->unk84.value == 0) {
+        CollisionRelated(self);
     }
-    D_80108D5C[arg0->state](arg0);
+    wall_crawler_shot_state_funcs[self->state](self);
 }
 
+// wall_crawler_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_06", func_8009A9E4);
 
-void func_8009AC40(struct ShotObj* arg0)
+void wall_crawler_shot_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
     } else {
-        if (arg0->unk84.value == 0) {
-            if (func_8002BB80(arg0, &g_Player) != 0) {
-                arg0->state++;
+        if (self->unk84.value == 0) {
+            if (func_8002BB80(self, &g_Player) != 0) {
+                self->state++;
                 return;
             }
-            if (arg0->unk70 != 0) {
-                func_800AF808(BASE_OBJECT(arg0));
-                arg0->state++;
+            if (self->unk70 != 0) {
+                spawn_explosion(BASE_OBJECT(self));
+                self->state++;
                 return;
             }
         }
-        if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) != 0) {
-            arg0->state++;
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) != 0) {
+            self->state++;
             return;
         }
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         return;
     }
-    arg0->state++;
+    self->state++;
 }
 
-void func_8009AD08(struct ShotObj* arg0)
+void wall_crawler_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009AD28(struct ShotObj* arg0)
+void wall_crawler_shot_idle(struct ShotObj* self)
 {
 }
 
-void (*D_80108D5C[])(struct ShotObj*) = {
+void (*wall_crawler_shot_state_funcs[])(struct ShotObj*) = {
     func_8009A9E4,
-    func_8009AC40,
-    func_8009AD08,
-    func_8009AD28,
+    wall_crawler_shot_fly,
+    wall_crawler_shot_despawn,
+    wall_crawler_shot_idle,
 };

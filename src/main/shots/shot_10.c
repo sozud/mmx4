@@ -2,49 +2,50 @@
 // 8009B3E8..8009B67C
 #include "common.h"
 
-void func_8009B3E8(struct ShotObj* arg0)
+void dragon_spread_shot_update(struct ShotObj* self)
 {
-    D_80108E48[arg0->state](arg0);
+    dragon_spread_shot_state_funcs[self->state](self);
 }
 
+// dragon_spread_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_10", func_8009B424);
 
-void func_8009B594(struct ShotObj* arg0)
+void dragon_spread_shot_fly(struct ShotObj* arg0)
 {
     struct ShotObj* self = arg0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     func_8002D9BC(self);
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
         if (self->unk84.value >= 3) {
-            func_800AF808(BASE_OBJECT(self));
+            spawn_explosion(BASE_OBJECT(self));
         }
         self->state = (u8)self->state + 1;
         return;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
     } else {
         self->state = (u8)self->state + 1;
     }
     self->unk84.value += 1;
 }
 
-void func_8009B654(struct ShotObj* arg0)
+void dragon_spread_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009B674(struct ShotObj* arg)
+void dragon_spread_shot_idle(struct ShotObj* arg)
 {
 }
 
-u8 D_80108DC0[4] = { 0xFD, 0xFA, 0x08, 0x08 };
+u8 dragon_spread_shot_hit_box[4] = { 0xFD, 0xFA, 0x08, 0x08 };
 
-u8 D_80108DC4[4] = { 0xF7, 0xF6, 0x10, 0x13 };
+u8 dragon_spread_shot_large_hit_box[4] = { 0xF7, 0xF6, 0x10, 0x13 };
 
-u8 D_80108DC8[16][4] = {
+u8 dragon_spread_shot_anim_steps[16][4] = {
     { 1, 0, 0, 0 },
     { 1, 0, 0, 1 },
     { 1, 0, 0, 2 },
@@ -63,28 +64,28 @@ u8 D_80108DC8[16][4] = {
     { 1, 0, 0, 15 },
 };
 
-u8* D_80108E08[16] = {
-    D_80108DC8[0],
-    D_80108DC8[1],
-    D_80108DC8[2],
-    D_80108DC8[3],
-    D_80108DC8[4],
-    D_80108DC8[5],
-    D_80108DC8[6],
-    D_80108DC8[7],
-    D_80108DC8[8],
-    D_80108DC8[9],
-    D_80108DC8[10],
-    D_80108DC8[11],
-    D_80108DC8[12],
-    D_80108DC8[13],
-    D_80108DC8[14],
-    D_80108DC8[15],
+u8* dragon_spread_shot_animations[16] = {
+    dragon_spread_shot_anim_steps[0],
+    dragon_spread_shot_anim_steps[1],
+    dragon_spread_shot_anim_steps[2],
+    dragon_spread_shot_anim_steps[3],
+    dragon_spread_shot_anim_steps[4],
+    dragon_spread_shot_anim_steps[5],
+    dragon_spread_shot_anim_steps[6],
+    dragon_spread_shot_anim_steps[7],
+    dragon_spread_shot_anim_steps[8],
+    dragon_spread_shot_anim_steps[9],
+    dragon_spread_shot_anim_steps[10],
+    dragon_spread_shot_anim_steps[11],
+    dragon_spread_shot_anim_steps[12],
+    dragon_spread_shot_anim_steps[13],
+    dragon_spread_shot_anim_steps[14],
+    dragon_spread_shot_anim_steps[15],
 };
 
-void (*D_80108E48[])(struct ShotObj*) = {
+void (*dragon_spread_shot_state_funcs[])(struct ShotObj*) = {
     func_8009B424,
-    func_8009B594,
-    func_8009B654,
-    func_8009B674,
+    dragon_spread_shot_fly,
+    dragon_spread_shot_despawn,
+    dragon_spread_shot_idle,
 };

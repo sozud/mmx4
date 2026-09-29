@@ -20,7 +20,7 @@ u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
 
 void general_pick_script(struct MainObj* self)
 {
-    s32 low_health = self->unk5C < 0x19;
+    s32 low_health = self->hp < 0x19;
     const u8** scripts = general_scripts[low_health];
     u8 roll = get_random();
     u8 i = 0;
@@ -76,14 +76,14 @@ void general_intro_enter(struct MainObj* self)
 {
     if (self->unk6 == 0) {
         if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
-            func_80015D60(self, 1);
+            set_animation(self, 1);
             self->unk6++;
         }
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 0) {
             self->animation_step.fields.event = 0;
-            func_80015D60(self->ext.main_75.thruster, 2);
+            set_animation(self->ext.main_75.thruster, 2);
             self->ext.main_75.thruster->timer = 1;
             self->ext.main_75.thruster->unk84.shot_55.x = 0x18;
             self->ext.main_75.thruster->unk84.shot_55.y = 0;
@@ -91,15 +91,15 @@ void general_intro_enter(struct MainObj* self)
         if (self->animation_step.fields.relative_step == 0) {
             self->unk6 = 0;
             self->unk5++;
-            func_80015D60(self, 3);
-            func_80015D60(self->ext.main_75.thruster, 4);
+            set_animation(self, 3);
+            set_animation(self->ext.main_75.thruster, 4);
         }
     }
 }
 
 void general_intro_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_75.thruster->animation_step.fields.relative_step == 0) {
         self->unk5++;
         self->ext.main_75.object.shot->unk5++;
@@ -128,24 +128,24 @@ void general_intro_dialogue(struct MainObj* self)
     } else if (abc_object.unkC == 0) {
         self->unk6 = 0;
         self->unk5++;
-        func_800921E8(0xB);
+        play_boss_music(0xB);
         self->unk7C = 1;
     }
 }
 
 void general_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (func_8009227C() != 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (update_boss_music_delay() != 0) {
         return;
     }
 
-    if (self->unk5C < 0x30) {
+    if (self->hp < 0x30) {
         if (--self->unk7C == 0) {
             func_8001540C(0, 0xE, 0);
             self->unk7C = 2;
         }
-        self->unk5C++;
+        self->hp++;
     } else {
         self->unk5++;
         background_objects[0].unk26 = self->ext.main_75.background_unk1E;
@@ -169,7 +169,7 @@ void general_intro(struct MainObj* self)
 {
     general_intro_funcs[self->unk5](self);
     if (self->unk5 >= 2) {
-        func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+        update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
     }
 }
 
@@ -179,16 +179,16 @@ void general_rise(struct MainObj* self)
 
     if (self->unk7 == 0) {
         self->unk7++;
-        func_80015D60(self, 8);
-        func_80015D60(self->ext.main_75.thruster, 5);
+        set_animation(self, 8);
+        set_animation(self->ext.main_75.thruster, 5);
         self->ext.main_75.thruster->unk84.shot_55.x = 0x18;
         self->ext.main_75.thruster->unk84.shot_55.y = 4;
-        self->unk24 = FIXED(0.5);
+        self->y_speed = FIXED(0.5);
         self->unk7C = 0x3C;
-        self->unk68 = &D_801059D8;
+        self->terrain_box = &D_801059D8;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
-        func_8002B718(MOVING_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
         if (--self->unk7C == 0) {
             temp_unk6 = self->unk6;
             self->unk5 = 2;
@@ -205,10 +205,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_75", func_8009027C);
 void general_fly_descend(struct MainObj* self)
 {
     self->unk6++;
-    func_80015D60(self->ext.main_75.thruster, 6);
+    set_animation(self->ext.main_75.thruster, 6);
     func_8001540C(2, 2, self);
-    self->unk20 = 0;
-    self->unk24 = FIXED(-0.5);
+    self->x_speed = 0;
+    self->y_speed = FIXED(-0.5);
     self->ext.main_75.random_index = (get_random() & 0xFF) % 3U;
     self->unk7C = self->ext.main_75.random_index * 0x3C;
 }
@@ -220,23 +220,23 @@ void general_fly_start(struct MainObj* self)
     s32 var_v1;
     struct WeaponObj* weapon;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     temp_v0 = self->unk7C;
     if (temp_v0 == 0) {
         self->unk6++;
-        func_80015930(2, 2);
-        func_80015D60(self->ext.main_75.thruster, 5);
+        stop_sound(2, 2);
+        set_animation(self->ext.main_75.thruster, 5);
         func_8001540C(2, 1, self);
         var_v1 = FIXED(-2);
         if (self->unk15 != 0) {
             var_v1 = FIXED(2);
         }
-        self->unk68 = &D_801059D8;
-        self->unk20 = var_v1;
+        self->terrain_box = &D_801059D8;
+        self->x_speed = var_v1;
         weapon = (struct WeaponObj*)self->ext.main_75.thruster;
         var_a0 = 0x18;
-        self->unk24 = 0;
+        self->y_speed = 0;
         if (self->unk15 != 0) {
             var_a0 = -0x18;
         }
@@ -265,8 +265,8 @@ void general_punch_rise(struct MainObj* self)
     state = self->unk7;
     if (state == 0) {
         self->unk7++;
-        func_80015D60(self, 8);
-        func_80015D60(self->ext.main_75.thruster, 5);
+        set_animation(self, 8);
+        set_animation(self->ext.main_75.thruster, 5);
         func_8001540C(2, 1, self);
         shot = self->ext.main_75.thruster;
         x_offset = 0x18;
@@ -275,25 +275,25 @@ void general_punch_rise(struct MainObj* self)
         }
         shot->unk84.shot_55.x = x_offset;
         self->ext.main_75.thruster->unk84.shot_55.y = 4;
-        self->unk24 = FIXED(0.5);
+        self->y_speed = FIXED(0.5);
         self->unk7C = 0x3C;
-        self->unk68 = &D_801059D8;
+        self->terrain_box = &D_801059D8;
         self->ext.main_75.bob_step = 1;
-        self->unk20 = 0;
+        self->x_speed = 0;
         self->ext.main_75.bob_timer = 0xA;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
         self->unk7 = 0;
         self->unk6++;
-        func_80015D60(self, 0xB);
-        func_80015930(2U, 1U);
-        func_80015D60(self->ext.main_75.thruster, 7);
-        self->unk24 = 0;
+        set_animation(self, 0xB);
+        stop_sound(2U, 1U);
+        set_animation(self->ext.main_75.thruster, 7);
+        self->y_speed = 0;
     }
 }
 
@@ -303,7 +303,7 @@ void general_punch_launch(struct MainObj* self)
     struct ShotObj* second;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         first = find_free_shot_obj();
@@ -340,7 +340,7 @@ void general_punch_wait(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->unk6++;
-        func_80015D60(self, 0xC);
+        set_animation(self, 0xC);
         self->unk7C = 0x46;
         self->unk7E = 0;
     }
@@ -350,7 +350,7 @@ void general_punch_rings(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
@@ -373,13 +373,13 @@ void general_punch_wait_return(struct MainObj* self)
         self->unk6++;
         D_8013B8C0->state++;
         D_8013B8C4->state++;
-        func_80015D60(self, 0x17);
+        set_animation(self, 0x17);
     }
 }
 
 void general_punch_recover(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)self);
+    animate_object((struct AnimatedObj*)self);
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
@@ -409,12 +409,12 @@ void general_resume_step(struct MainObj* self)
 void general_orbs_descend(struct MainObj* self)
 {
     self->unk6++;
-    func_80015D60(self->ext.main_75.thruster, 6);
+    set_animation(self->ext.main_75.thruster, 6);
     func_8001540C(2, 2, NULL);
-    self->unk24 = FIXED(-0.5);
+    self->y_speed = FIXED(-0.5);
     self->unk7C = 0x64;
     self->ext.main_75.bob_step = 1;
-    self->unk20 = 0;
+    self->x_speed = 0;
     self->ext.main_75.orbs_ready = 0;
     self->ext.main_75.bob_timer = 0xA;
 }
@@ -423,11 +423,11 @@ void general_orbs_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_80015930(2, 2);
-        func_80015D60(self->ext.main_75.thruster, 7);
+        stop_sound(2, 2);
+        set_animation(self->ext.main_75.thruster, 7);
         self->unk6++;
         shot = find_free_shot_obj();
         if (shot != 0) {
@@ -455,7 +455,7 @@ void general_orbs_recover(struct MainObj* self)
         self->unk6 = 0;
         self->unk7 = 0;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void general_orbs(struct MainObj* self)
@@ -478,12 +478,12 @@ void general_slam_windup(struct MainObj* self)
     s16 var_a0;
     u8 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->unk7 == 0) {
         if (--self->unk7C == 0) {
             self->unk7++;
-            func_80015D60(self, 9);
-            func_80015D60(self->ext.main_75.thruster, 6);
+            set_animation(self, 9);
+            set_animation(self->ext.main_75.thruster, 6);
             func_8001540C(2, 2, 0);
             direction = self->unk15;
             shot = self->ext.main_75.thruster;
@@ -493,11 +493,11 @@ void general_slam_windup(struct MainObj* self)
             }
             shot->unk84.shot_55.x = var_a0;
             self->ext.main_75.thruster->unk84.shot_55.y = -0x10;
-            self->unk68 = &D_801059DC;
+            self->terrain_box = &D_801059DC;
         }
     } else if (self->animation_step.fields.event != 0) {
-        self->unk20 = 0;
-        self->unk24 = FIXED(-5);
+        self->x_speed = 0;
+        self->y_speed = FIXED(-5);
         self->unk7 = 0;
         self->unk6++;
     }
@@ -507,12 +507,12 @@ void general_slam_fall(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
-    if (self->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->collision_flags & 8) {
         self->unk6++;
-        func_80015930(2, 2);
-        func_80015D60(self, 0xA);
+        stop_sound(2, 2);
+        set_animation(self, 0xA);
         func_8001540C(2, 0, self);
         self->ext.main_75.thruster->timer = 0;
         shot = find_free_shot_obj();
@@ -522,13 +522,13 @@ void general_slam_fall(struct MainObj* self)
             shot->unk2 = 6;
             shot->unk7C = WEAPON_OBJECT(self);
         }
-        func_80028B68(0x14, 4, 2);
+        start_screen_shake_x(0x14, 4, 2);
     }
 }
 
 void general_slam_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->unk7C = 0x28;
         self->unk6++;
@@ -544,11 +544,11 @@ void general_slam_rise(struct MainObj* self)
 
     temp_v0 = self->unk7C;
     if (temp_v0 == 0) {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step == 0) {
             self->unk6++;
-            func_80015D60(self, 8);
-            func_80015D60(self->ext.main_75.thruster, 5);
+            set_animation(self, 8);
+            set_animation(self->ext.main_75.thruster, 5);
             func_8001540C(2, 1, self);
             self->ext.main_75.thruster->timer = 1;
             temp_unk15 = self->unk15;
@@ -559,10 +559,10 @@ void general_slam_rise(struct MainObj* self)
             }
             weapon_view->unk84.halves[0] = var_a0;
             self->ext.main_75.thruster->unk84.halves[1] = 4;
-            self->unk24 = FIXED(5);
+            self->y_speed = FIXED(5);
             self->unk7C = 0xF;
-            self->unk20 = 0;
-            self->unk68 = &D_801059D8;
+            self->x_speed = 0;
+            self->terrain_box = &D_801059D8;
         }
     } else {
         self->unk7C = temp_v0 - 1;
@@ -573,16 +573,16 @@ void general_slam_ascend(struct MainObj* self)
 {
     s32 velocity;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk6++;
         velocity = FIXED(-2);
         if (self->unk15 != 0) {
             velocity = FIXED(2);
         }
-        self->unk20 = velocity;
-        self->unk24 = 0;
+        self->x_speed = velocity;
+        self->y_speed = 0;
     }
 }
 
@@ -591,9 +591,9 @@ void general_slam_leave(struct MainObj* self)
     u8 flags;
     u8 reset;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
-    flags = self->unk70;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    flags = self->collision_flags;
     reset = 0;
     if (flags & 3) {
         if (self->unk15 != 0) {
@@ -605,7 +605,7 @@ void general_slam_leave(struct MainObj* self)
             self->unk5 = 2;
             self->unk6 = 0;
             self->unk7 = 0;
-            self->unk20 = 0;
+            self->x_speed = 0;
             self->unk15 ^= 0x40;
         }
     }
@@ -630,7 +630,7 @@ void general_death_start(struct MainObj* self)
     self->unk6 = 0;
     self->unk5++;
     self->unk42 &= 0x7FFF;
-    func_80015D60(self, 0x24);
+    set_animation(self, 0x24);
     self->ext.main_75.thruster->timer = 0;
     self->ext.main_75.bob_timer = 0xA;
     self->ext.main_75.bob_step = 1;
@@ -1190,7 +1190,7 @@ void (*general_slam_funcs[6])(struct MainObj*) = {
 };
 
 void (*general_step_funcs[7])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     general_resume_step,
     func_8009027C,
     general_fly,

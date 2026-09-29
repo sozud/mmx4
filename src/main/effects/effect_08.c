@@ -2,44 +2,44 @@
 // 800B7078..800B75C8
 #include "common.h"
 
-void func_800B7078(struct EffectObj* arg0)
+void bg_zone_controller_update(struct EffectObj* self)
 {
-    D_8010B4D8[arg0->state](arg0);
+    bg_zone_controller_state_funcs[self->state](self);
 }
 
-void func_800B70B4(struct EffectObj* arg0)
+void bg_zone_controller_init(struct EffectObj* self)
 {
-    arg0->unk5 = 4;
-    arg0->ext.unk_effect.unk14 = 5;
-    arg0->state++;
-    func_800B70EC(arg0);
+    self->unk5 = 4;
+    self->ext.unk_effect.unk14 = 5;
+    self->state++;
+    bg_zone_controller_main(self);
 }
 
-void func_800B70EC(struct EffectObj* arg0)
+void bg_zone_controller_main(struct EffectObj* self)
 {
-    arg0->ext.unk_effect.unk15 = arg0->ext.unk_effect.unk14;
-    func_800B7528(arg0);
-    D_8010B4E0[arg0->unk5](arg0);
+    self->ext.unk_effect.unk15 = self->ext.unk_effect.unk14;
+    bg_zone_controller_update_zone(self);
+    bg_zone_controller_zone_funcs[self->unk5](self);
 }
 
-void func_800B7140(struct EffectObj* arg0)
+void bg_zone_controller_zone_0(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800B7180(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_zone_0_enter(self);
     } else {
-        func_800B71A8(arg0);
+        bg_zone_controller_zone_0_scroll(self);
     }
 }
 
-void func_800B7180(struct EffectObj* arg0)
+void bg_zone_controller_zone_0_enter(struct EffectObj* self)
 {
-    arg0->unk6++;
+    self->unk6++;
     background_objects[0].unk4 = 2;
-    arg0->ext.effect_8.unk16 = 0;
-    arg0->ext.effect_8.unk18 = 0;
+    self->ext.effect_8.unk16 = 0;
+    self->ext.effect_8.unk18 = 0;
 }
 
-void func_800B71A8(struct EffectObj* arg0)
+void bg_zone_controller_zone_0_scroll(struct EffectObj* self)
 {
     s16 diff;
     s8 sum;
@@ -47,148 +47,148 @@ void func_800B71A8(struct EffectObj* arg0)
 
     if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
         diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
-        arg0->ext.effect_8.unk18 = diff;
+        self->ext.effect_8.unk18 = diff;
         if (diff >= 0) {
             if (diff >= 8) {
-                arg0->ext.effect_8.unk18 = 8;
+                self->ext.effect_8.unk18 = 8;
             }
         } else {
             if (diff < -8) {
-                arg0->ext.effect_8.unk18 = -8;
+                self->ext.effect_8.unk18 = -8;
             }
         }
-        sum = arg0->ext.effect_8.unk17 + arg0->ext.effect_8.unk18;
-        arg0->ext.effect_8.unk17 = sum;
+        sum = self->ext.effect_8.unk17 + self->ext.effect_8.unk18;
+        self->ext.effect_8.unk17 = sum;
         if (sum >= 0) {
             if (sum < 8) {
                 return;
             }
-            if (++arg0->ext.effect_8.unk16 >= 3) {
-                arg0->ext.effect_8.unk16 = 0;
+            if (++self->ext.effect_8.unk16 >= 3) {
+                self->ext.effect_8.unk16 = 0;
             }
         } else {
             if (sum >= -7) {
                 return;
             }
-            if (--arg0->ext.effect_8.unk16 < 0) {
-                arg0->ext.effect_8.unk16 = 2;
+            if (--self->ext.effect_8.unk16 < 0) {
+                self->ext.effect_8.unk16 = 2;
             }
         }
-        t = arg0->ext.effect_8.unk16;
+        t = self->ext.effect_8.unk16;
         background_objects[1].unk4C = 1;
         background_objects[1].x_pos.i.hi = t << 9;
-        arg0->ext.effect_8.unk17 = 0;
+        self->ext.effect_8.unk17 = 0;
     }
 }
 
-void func_800B72C4(struct EffectObj* arg0)
+void bg_zone_controller_zone_1(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800B7304(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_zone_1_enter(self);
     } else {
-        func_800B7318(arg0);
+        bg_zone_controller_zone_1_done(self);
     }
 }
 
-void func_800B7304(struct EffectObj* arg0)
+void bg_zone_controller_zone_1_enter(struct EffectObj* self)
 {
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800B7318(struct EffectObj* arg0)
+void bg_zone_controller_zone_1_done(struct EffectObj* self)
 {
-    arg0->unk5 = 5;
-    arg0->unk6 = 0;
+    self->unk5 = 5;
+    self->unk6 = 0;
 }
 
-void func_800B7328(struct EffectObj* arg0)
+void bg_zone_controller_zone_2(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800B7368(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_zone_2_enter(self);
     } else {
-        func_800B7394(arg0);
+        bg_zone_controller_zone_2_wait(self);
     }
 }
 
-void func_800B7368(struct EffectObj* arg0)
+void bg_zone_controller_zone_2_enter(struct EffectObj* self)
 {
     background_objects[1].unk4 = 1;
     background_objects[2].unk4 = 3;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800B7394(struct EffectObj* arg0)
+void bg_zone_controller_zone_2_wait(struct EffectObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0xDD0) {
         engine_obj.checkpoint = 2;
         engine_obj.unkF = -0x40;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_800B73D4(struct EffectObj* arg0)
+void bg_zone_controller_zone_3(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800B7414(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_zone_3_enter(self);
     } else {
-        func_800B7440(arg0);
+        bg_zone_controller_zone_3_wait(self);
     }
 }
 
-void func_800B7414(struct EffectObj* arg0)
+void bg_zone_controller_zone_3_enter(struct EffectObj* self)
 {
     background_objects[1].unk4 = 6;
     background_objects[2].unk4 = 1;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800B7440(struct EffectObj* arg0)
+void bg_zone_controller_zone_3_wait(struct EffectObj* self)
 {
     if (g_Player.x_pos.i.hi < 0x1709) {
         engine_obj.checkpoint = 3;
         engine_obj.unkF = -0x40;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_800B7480(struct EffectObj* arg0)
+void bg_zone_controller_zone_4(struct EffectObj* self)
 {
-    if (arg0->unk6 == 0) {
-        func_800B74C0(arg0);
+    if (self->unk6 == 0) {
+        bg_zone_controller_zone_4_enter(self);
     } else {
-        func_800B74EC(arg0);
+        bg_zone_controller_zone_4_wait(self);
     }
 }
 
-void func_800B74C0(struct EffectObj* arg0)
+void bg_zone_controller_zone_4_enter(struct EffectObj* self)
 {
     background_objects[1].unk4 = 1;
     background_objects[2].unk4 = 3;
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_800B74EC(struct EffectObj* arg0)
+void bg_zone_controller_zone_4_wait(struct EffectObj* self)
 {
     if (g_Player.x_pos.i.hi < 0x112D) {
         engine_obj.unkF = 0x40;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_800B7520(struct EffectObj* arg0)
+void bg_zone_controller_idle(struct EffectObj* self)
 {
 }
 
-void func_800B7528(struct EffectObj* self)
+void bg_zone_controller_update_zone(struct EffectObj* self)
 {
     s8 value;
 
     value = 0;
     for (;;) {
-        if ((g_Player.x_pos.i.hi - D_8010B4D0[value]) >= 0) {
+        if ((g_Player.x_pos.i.hi - bg_zone_controller_zone_bounds[value]) >= 0) {
             if ((value = value + 1) < 3) {
                 continue;
             }
@@ -205,18 +205,18 @@ void func_800B7528(struct EffectObj* self)
     }
 }
 
-s16 D_8010B4D0[4] = { 0x0760, 0x0808, 0x1700, 0 };
+s16 bg_zone_controller_zone_bounds[4] = { 0x0760, 0x0808, 0x1700, 0 };
 
-void (*D_8010B4D8[])(struct EffectObj*) = {
-    func_800B70B4,
-    func_800B70EC,
+void (*bg_zone_controller_state_funcs[])(struct EffectObj*) = {
+    bg_zone_controller_init,
+    bg_zone_controller_main,
 };
 
-void (*D_8010B4E0[6])(struct EffectObj*) = {
-    func_800B7140,
-    func_800B72C4,
-    func_800B7328,
-    func_800B73D4,
-    func_800B7480,
-    func_800B7520,
+void (*bg_zone_controller_zone_funcs[6])(struct EffectObj*) = {
+    bg_zone_controller_zone_0,
+    bg_zone_controller_zone_1,
+    bg_zone_controller_zone_2,
+    bg_zone_controller_zone_3,
+    bg_zone_controller_zone_4,
+    bg_zone_controller_idle,
 };

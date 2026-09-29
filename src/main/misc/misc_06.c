@@ -2,58 +2,59 @@
 // 800C91B0..800C938C
 #include "common.h"
 
-void func_800C91B0(struct MiscObj* arg0)
+void homing_point_update(struct MiscObj* self)
 {
-    D_8010DC60[arg0->state](arg0);
+    homing_point_state_funcs[self->state](self);
 }
 
+// homing_point_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_06", func_800C91EC);
 
-void func_800C92B8(struct MiscObj* arg0)
+void homing_point_wait(struct MiscObj* self)
 {
-    s8 timer = arg0->ext.misc_6.timer - 1;
-    arg0->ext.misc_6.timer = timer;
+    s8 timer = self->ext.misc_6.timer - 1;
+    self->ext.misc_6.timer = timer;
     if (timer == 0) {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800C92E0(struct MiscObj* arg0)
+void homing_point_move(struct MiscObj* self)
 {
     s16 x_center;
     s16 x_pos;
     s16 y_center;
     s16 y_pos;
 
-    func_8002B718(MOVING_OBJECT(arg0));
+    move_object(MOVING_OBJECT(self));
 
-    x_center = arg0->ext.misc_6.saved_position.position.x;
-    x_pos = arg0->x_pos.i.hi;
+    x_center = self->ext.misc_6.saved_position.position.x;
+    x_pos = self->x_pos.i.hi;
     if (x_pos >= x_center - 0x10) {
         if (x_pos <= x_center + 0x10) {
-            y_center = arg0->ext.misc_6.saved_position.position.y;
-            y_pos = arg0->y_pos.i.hi;
+            y_center = self->ext.misc_6.saved_position.position.y;
+            y_pos = self->y_pos.i.hi;
             if (y_pos >= y_center - 0x10) {
                 if (y_pos <= y_center + 0x10) {
-                    arg0->state = 3;
+                    self->state = 3;
                 }
             }
         }
     }
 
-    func_8002B318(BASE_OBJECT(arg0), 0x140, 0x140);
+    update_on_screen(BASE_OBJECT(self), 0x140, 0x140);
 }
 
-void func_800C9368(struct MiscObj* arg0)
+void homing_point_despawn(struct MiscObj* self)
 {
-    arg0->ext.misc_6.saved_position.packed = 0;
-    arg0->ext.misc_6.timer = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->ext.misc_6.saved_position.packed = 0;
+    self->ext.misc_6.timer = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010DC60[4])(struct MiscObj*) = {
+void (*homing_point_state_funcs[4])(struct MiscObj*) = {
     func_800C91EC,
-    func_800C92B8,
-    func_800C92E0,
-    func_800C9368,
+    homing_point_wait,
+    homing_point_move,
+    homing_point_despawn,
 };

@@ -3,45 +3,46 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005F510(struct MainObj* arg0)
+void latcher_update(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FE4A8[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    latcher_state_funcs[self->state](self);
 }
 
+// latcher_init
 INCLUDE_ASM("main/nonmatchings/mains/main_36", func_8005F558);
 
-extern void (*D_800FE4B4[])(struct MainObj*);
+extern void (*latcher_step_funcs[])(struct MainObj*);
 
-void func_8005F758(struct MainObj* arg0)
+void latcher_main(struct MainObj* self)
 {
-    D_800FE4B4[arg0->unk5](arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    latcher_step_funcs[self->unk5](self);
+    animate_object(ANIMATED_OBJECT(self));
 
-    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8D == 0) && (g_Player.stun_timer == 0) && (func_8002D9BC(arg0) != 0) && (g_Player.stun_timer != 0)) {
+    if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8D == 0) && (g_Player.stun_timer == 0) && (func_8002D9BC(self) != 0) && (g_Player.stun_timer != 0)) {
         SP_CUR_MAIN_OBJ->ext.main_36.unk8D = 1;
     }
 
-    SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5 = arg0->unk5;
-    func_8005FCD8(arg0);
+    SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5 = self->unk5;
+    latcher_check_hit(self);
 
-    if (func_8002B160(BASE_OBJECT(arg0)) == 1) {
-        arg0->state = 2;
+    if (func_8002B160(BASE_OBJECT(self)) == 1) {
+        self->state = 2;
     }
 }
 
-void func_8005F844(struct MainObj* arg0)
+void latcher_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8005F864(struct MainObj* arg0)
+void latcher_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5;
+    self->unk5 = SP_CUR_MAIN_OBJ->ext.main_36.saved_unk5;
 }
 
-void func_8005F87C(struct MainObj* arg0)
+void latcher_drift(struct MainObj* self)
 {
     struct MiscObj* misc;
 
@@ -52,65 +53,65 @@ void func_8005F87C(struct MainObj* arg0)
             misc->active = 0x41;
             misc->id = 0xB;
             misc->unk16 = 1;
-            misc->unk15 = arg0->unk15;
-            misc->unk40 = arg0->unk40;
-            misc->unk42 = arg0->unk42;
-            misc->unk3C = (void*)arg0->sprite_frames;
-            misc->animation_table = (u32**)D_800FE48C;
-            misc->x_pos.val = arg0->x_pos.val;
-            misc->y_pos.val = arg0->y_pos.val;
+            misc->unk15 = self->unk15;
+            misc->unk40 = self->unk40;
+            misc->unk42 = self->unk42;
+            misc->unk3C = (void*)self->sprite_frames;
+            misc->animation_table = (u32**)latcher_animations;
+            misc->x_pos.val = self->x_pos.val;
+            misc->y_pos.val = self->y_pos.val;
             misc->bg_offset = g_Player.bg_offset;
             misc->ext.misc_11.active = 0;
             SP_CUR_MAIN_OBJ->ext.main_36.unk84 = misc;
-            func_80015D60(misc, 0);
-            arg0->unk5 = 3;
-            arg0->unk6 = 0;
-            func_80015D60(arg0, 0);
+            set_animation(misc, 0);
+            self->unk5 = 3;
+            self->unk6 = 0;
+            set_animation(self, 0);
         }
     }
-    func_8002B718(MOVING_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
+    move_object(MOVING_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_8005F9A4(struct MainObj* arg0)
+void latcher_grab(struct MainObj* self)
 {
-    D_800FE4C4[arg0->unk6](arg0);
-    is_on_screen((struct BaseObj*)arg0);
+    latcher_grab_funcs[self->unk6](self);
+    is_on_screen((struct BaseObj*)self);
 }
 
-void func_8005F9F4(struct MainObj* arg0)
+void latcher_grab_home(struct MainObj* self)
 {
     s32 distance;
 
-    SP_CUR_MAIN_OBJ->ext.main_36.unk89 = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-    func_8002B93C(MOVING_OBJECT(arg0), SP_CUR_MAIN_OBJ->ext.main_36.unk89);
-    SP_CUR_MAIN_OBJ->ext.main_36.unk84->x_vel.val = arg0->unk20;
-    SP_CUR_MAIN_OBJ->ext.main_36.unk84->y_vel.val = arg0->unk24;
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(SP_CUR_MAIN_OBJ->ext.main_36.unk84));
-    distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    if (distance >= 0 ? distance < 2 : arg0->x_pos.i.hi - g_Player.x_pos.i.hi < 2) {
-        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
-        if (distance >= 0 ? distance < 2 : arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 2) {
-            func_80015D60(arg0, 3);
-            func_80015D60(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 3);
-            arg0->unk6++;
+    SP_CUR_MAIN_OBJ->ext.main_36.unk89 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    set_velocity_from_angle(MOVING_OBJECT(self), SP_CUR_MAIN_OBJ->ext.main_36.unk89);
+    SP_CUR_MAIN_OBJ->ext.main_36.unk84->x_vel.val = self->x_speed;
+    SP_CUR_MAIN_OBJ->ext.main_36.unk84->y_vel.val = self->y_speed;
+    move_object(MOVING_OBJECT(self));
+    move_object(MOVING_OBJECT(SP_CUR_MAIN_OBJ->ext.main_36.unk84));
+    distance = g_Player.x_pos.i.hi - self->x_pos.i.hi;
+    if (distance >= 0 ? distance < 2 : self->x_pos.i.hi - g_Player.x_pos.i.hi < 2) {
+        distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
+        if (distance >= 0 ? distance < 2 : self->y_pos.i.hi - g_Player.y_pos.i.hi < 2) {
+            set_animation(self, 3);
+            set_animation(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 3);
+            self->unk6++;
         }
     }
 }
 
-void func_8005FB38(struct MainObj* arg0)
+void latcher_grab_clamp(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
+    if (self->animation_step.fields.event != 0) {
         if (SP_CUR_MAIN_OBJ->ext.main_36.unk8C != 0) {
-            func_80015D60(arg0, 4);
-            func_80015D60(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 5);
+            set_animation(self, 4);
+            set_animation(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 5);
         }
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_8005FBBC(struct MainObj* self)
+void latcher_grab_drain(struct MainObj* self)
 {
     struct MainObj* current;
     u16 timer;
@@ -120,15 +121,15 @@ void func_8005FBBC(struct MainObj* self)
     current->ext.main_36.unk8A = timer;
     if (timer == 0) {
         self->unk62 = 0;
-        self->unk50 = NULL;
-        self->unk54 = NULL;
+        self->attack_box = NULL;
+        self->hurt_box = NULL;
         g_Player.stun_timer = 0;
         self->unk6++;
         current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_36.unk8C != 0) {
             current->ext.main_36.unk84->ext.misc_11.active = 1;
         }
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         return;
     }
     if (current->ext.main_36.unk8C != 0 && timer == 0x40) {
@@ -139,54 +140,54 @@ void func_8005FBBC(struct MainObj* self)
     }
 }
 
-void func_8005FCAC(struct MainObj* arg0)
+void latcher_grab_release(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
-        arg0->state++;
+    if (self->animation_step.fields.event != 0) {
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->state++;
     }
 }
 
-void func_8005FCD8(struct MainObj* arg0)
+void latcher_check_hit(struct MainObj* self)
 {
     s32 result;
 
-    result = func_8002DD04(arg0);
+    result = func_8002DD04(self);
     if (result == 0) {
         return;
     }
     if (result < 0) {
-        func_80015D60(arg0, 3);
-        arg0->unk5 = 3;
-        arg0->unk6 = 1;
-        arg0->unk50 = NULL;
-        arg0->unk54 = NULL;
+        set_animation(self, 3);
+        self->unk5 = 3;
+        self->unk6 = 1;
+        self->attack_box = NULL;
+        self->hurt_box = NULL;
         SP_CUR_MAIN_OBJ->ext.main_36.unk8A = 1;
         return;
     }
 
-    arg0->unk5C = 0x10;
-    if (arg0->unk5 == 3) {
+    self->hp = 0x10;
+    if (self->unk5 == 3) {
         return;
     }
 
-    if (g_Player.x_pos.i.hi <= arg0->x_pos.i.hi) {
-        arg0->unk20 += FIXED(0.28125);
-        if (arg0->unk20 == FIXED(0.28125)) {
-            func_80015D60(arg0, 1);
+    if (g_Player.x_pos.i.hi <= self->x_pos.i.hi) {
+        self->x_speed += FIXED(0.28125);
+        if (self->x_speed == FIXED(0.28125)) {
+            set_animation(self, 1);
         }
     } else {
-        arg0->unk20 -= FIXED(0.28125);
-        if (arg0->unk20 == FIXED(-0.28125)) {
-            func_80015D60(arg0, 2);
+        self->x_speed -= FIXED(0.28125);
+        if (self->x_speed == FIXED(-0.28125)) {
+            set_animation(self, 2);
         }
     }
 }
 
-struct Unk_unk68 D_800FE2E8 = { -14, -14, 28, 28 };
+struct Unk_unk68 latcher_hurt_box = { -14, -14, 28, 28 };
 
-union AnimationStep D_800FE2EC[] = {
+union AnimationStep latcher_anim_0[] = {
     { 0x00010002 },
     { 0x01010002 },
     { 0x02010002 },
@@ -197,7 +198,7 @@ union AnimationStep D_800FE2EC[] = {
     { 0x07F90002 },
 };
 
-union AnimationStep D_800FE30C[] = {
+union AnimationStep latcher_anim_1[] = {
     { 0x00010002 },
     { 0x08010002 },
     { 0x09010002 },
@@ -220,7 +221,7 @@ union AnimationStep D_800FE30C[] = {
     { 0x1AED0002 },
 };
 
-union AnimationStep D_800FE35C[] = {
+union AnimationStep latcher_anim_2[] = {
     { 0x00010002 },
     { 0x1A010002 },
     { 0x19010002 },
@@ -243,7 +244,7 @@ union AnimationStep D_800FE35C[] = {
     { 0x08ED0002 },
 };
 
-union AnimationStep D_800FE3AC[] = {
+union AnimationStep latcher_anim_3[] = {
     { 0x00010002 },
     { 0x1B010002 },
     { 0x1C010002 },
@@ -252,7 +253,7 @@ union AnimationStep D_800FE3AC[] = {
     { 0x1F000102 },
 };
 
-union AnimationStep D_800FE3C4[] = {
+union AnimationStep latcher_anim_4[] = {
     { 0x20010002 },
     { 0x24010002 },
     { 0x23010002 },
@@ -263,7 +264,7 @@ union AnimationStep D_800FE3C4[] = {
     { 0x27F90002 },
 };
 
-union AnimationStep D_800FE3E4[] = {
+union AnimationStep latcher_anim_5[] = {
     { 0x28010002 },
     { 0x3D010002 },
     { 0x24010002 },
@@ -282,7 +283,7 @@ union AnimationStep D_800FE3E4[] = {
     { 0x3DF10002 },
 };
 
-union AnimationStep D_800FE424[] = {
+union AnimationStep latcher_anim_6[] = {
     { 0x1F010002 },
     { 0x1E010002 },
     { 0x1D010002 },
@@ -311,32 +312,32 @@ union AnimationStep D_800FE424[] = {
     { 0x3D000102 },
 };
 
-union AnimationStep* D_800FE48C[7] = {
-    D_800FE2EC,
-    D_800FE30C,
-    D_800FE35C,
-    D_800FE3AC,
-    D_800FE3C4,
-    D_800FE3E4,
-    D_800FE424,
+union AnimationStep* latcher_animations[7] = {
+    latcher_anim_0,
+    latcher_anim_1,
+    latcher_anim_2,
+    latcher_anim_3,
+    latcher_anim_4,
+    latcher_anim_5,
+    latcher_anim_6,
 };
 
-void (*D_800FE4A8[3])() = {
+void (*latcher_state_funcs[3])() = {
     func_8005F558,
-    func_8005F758,
-    func_8005F844,
+    latcher_main,
+    latcher_despawn,
 };
 
-void (*D_800FE4B4[4])() = {
-    func_8009216C,
-    func_8005F864,
-    func_8005F87C,
-    func_8005F9A4,
+void (*latcher_step_funcs[4])() = {
+    enemy_hit_reaction,
+    latcher_resume_step,
+    latcher_drift,
+    latcher_grab,
 };
 
-void (*D_800FE4C4[4])() = {
-    func_8005F9F4,
-    func_8005FB38,
-    func_8005FBBC,
-    func_8005FCAC,
+void (*latcher_grab_funcs[4])() = {
+    latcher_grab_home,
+    latcher_grab_clamp,
+    latcher_grab_drain,
+    latcher_grab_release,
 };

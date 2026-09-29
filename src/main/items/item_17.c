@@ -7,48 +7,48 @@ struct Item17SpawnPosition {
     s16 y;
 };
 
-u8 D_8010D108[4][4] = {
+u8 crumble_trigger_boxes_0[4][4] = {
     { 0xB0, 0xE0, 0x10, 0x10 },
     { 0xD0, 0xF0, 0x10, 0x10 },
     { 0xF0, 0x00, 0x10, 0x10 },
     { 0x40, 0x10, 0x40, 0x10 },
 };
-u8 D_8010D118[4][4] = {
+u8 crumble_trigger_boxes_1[4][4] = {
     { 0xA0, 0xE0, 0x20, 0x10 },
     { 0xE0, 0xF0, 0x20, 0x10 },
     { 0x20, 0x00, 0x20, 0x10 },
     { 0x60, 0x20, 0x20, 0x10 },
 };
-u8 D_8010D128[4][4] = {
+u8 crumble_trigger_boxes_2[4][4] = {
     { 0xB0, 0xD0, 0x20, 0x10 },
     { 0xF0, 0xF0, 0x20, 0x10 },
     { 0x30, 0x10, 0x20, 0x10 },
     { 0x70, 0x30, 0x20, 0x10 },
 };
-u8 D_8010D138[4] = { 0, 0, 0x20, 0x10 };
-u8 D_8010D13C[4][4] = {
+u8 crumble_trigger_boxes_3[4] = { 0, 0, 0x20, 0x10 };
+u8 crumble_trigger_boxes_4[4][4] = {
     { 0x60, 0xD0, 0x20, 0x10 },
     { 0x20, 0xF0, 0x20, 0x10 },
     { 0xE0, 0x10, 0x20, 0x10 },
     { 0xA0, 0x30, 0x20, 0x10 },
 };
-u8 D_8010D14C[4][4] = {
+u8 crumble_trigger_boxes_5[4][4] = {
     { 0x60, 0xD0, 0x20, 0x10 },
     { 0x20, 0xF0, 0x20, 0x10 },
     { 0xE0, 0x00, 0x20, 0x10 },
     { 0xA0, 0x20, 0x20, 0x10 },
 };
 
-u8* D_8010D15C[6] = {
-    D_8010D108,
-    D_8010D118,
-    D_8010D128,
-    D_8010D138,
-    D_8010D13C,
-    D_8010D14C,
+u8* crumble_trigger_box_sets[6] = {
+    crumble_trigger_boxes_0,
+    crumble_trigger_boxes_1,
+    crumble_trigger_boxes_2,
+    crumble_trigger_boxes_3,
+    crumble_trigger_boxes_4,
+    crumble_trigger_boxes_5,
 };
 
-struct Item17SpawnPosition D_8010D174[6] = {
+struct Item17SpawnPosition crumble_trigger_positions[6] = {
     { 0x0D80, 0x01D0 },
     { 0x0FA0, 0x0290 },
     { 0x11C0, 0x0320 },
@@ -57,7 +57,7 @@ struct Item17SpawnPosition D_8010D174[6] = {
     { 0x1360, 0x0480 },
 };
 
-void func_800C413C(struct ItemObj* arg0)
+void crumble_trigger_init(struct ItemObj* arg0)
 {
     u8 state;
     u8 bg_offset;
@@ -74,12 +74,12 @@ void func_800C413C(struct ItemObj* arg0)
     arg0->unk15 = 0;
     arg0->on_screen = 0;
     arg0->bg_offset = bg_offset;
-    arg0->x_pos.val = D_8010D174[index].x << 16;
-    arg0->y_pos.val = D_8010D174[arg0->unk2].y << 16;
-    arg0->unk7C.object = D_8010D15C[arg0->unk2];
+    arg0->x_pos.val = crumble_trigger_positions[index].x << 16;
+    arg0->y_pos.val = crumble_trigger_positions[arg0->unk2].y << 16;
+    arg0->unk7C.object = crumble_trigger_box_sets[arg0->unk2];
 }
 
-void func_800C41C8(struct ItemObj* self)
+void crumble_trigger_wait_player(struct ItemObj* self)
 {
     u8 i;
     struct EffectObj* effect;
@@ -103,18 +103,18 @@ void func_800C41C8(struct ItemObj* self)
     }
 }
 
-void func_800C4290(struct ItemObj* arg0)
+void crumble_trigger_despawn(struct ItemObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800C42B0(struct ItemObj* arg0)
+void crumble_trigger_update(struct ItemObj* arg0)
 {
-    D_8010D18C[arg0->state](arg0);
+    crumble_trigger_state_funcs[arg0->state](arg0);
 }
 
-void (*D_8010D18C[])(struct ItemObj*) = {
-    func_800C413C,
-    func_800C41C8,
-    func_800C4290,
+void (*crumble_trigger_state_funcs[])(struct ItemObj*) = {
+    crumble_trigger_init,
+    crumble_trigger_wait_player,
+    crumble_trigger_despawn,
 };

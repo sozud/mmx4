@@ -2,22 +2,22 @@
 // 800CB00C..800CB634
 #include "common.h"
 
-extern const u32* D_8010E6A0[];
+extern const u32* ready_text_animations[];
 
 // megaman never appears in stage if nopped out
-void MegamanRelatedUpdate(struct MiscObj* arg0)
+void MegamanRelatedUpdate(struct MiscObj* self)
 {
-    g_MegamanRelatedUpdateFuncs[arg0->state](arg0);
+    g_MegamanRelatedUpdateFuncs[self->state](self);
 }
 
-extern u8 D_8010E6C8[];
-extern s16 D_8010E6D0[];
-extern s16 D_8010E6DC[];
-extern u8 D_8010E6E8[];
+extern u8 ready_text_palettes[];
+extern s16 ready_text_x_positions[];
+extern s16 ready_text_y_positions[];
+extern u8 ready_text_priorities[];
 extern u16 D_8013B940;
 
 // g_MegamanRelatedUpdateFuncs state 0
-void func_800CB048(struct MiscObj* arg0)
+void ready_text_init(struct MiscObj* self)
 {
     u16* pal_dst;
     u16* color;
@@ -25,34 +25,34 @@ void func_800CB048(struct MiscObj* arg0)
     u8 temp_v1;
 
     if (engine_obj.cur_character == CHARACTER_X) {
-        arg0->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk24];
+        self->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk24];
     } else {
-        arg0->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk10];
+        self->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk10];
     }
 
-    arg0->unk40 = 0x1E00;
-    arg0->animation_table = (u32**)D_8010E6A0;
-    arg0->state = 1;
-    arg0->bg_offset = -1;
-    temp_v1 = D_8010E6C8[arg0->unk2];
-    arg0->unk42 = (temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6); // see func_800AF28C & func_8003D4C8 for a similar pattern
-    arg0->x_pos.i.hi = D_8010E6D0[arg0->unk2];
-    arg0->y_pos.i.hi = D_8010E6DC[arg0->unk2];
-    arg0->unk16 = D_8010E6E8[arg0->unk2];
-    arg0->unk15 = 0;
-    arg0->x_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    arg0->ext.ready_text.unk54 = 0;
-    arg0->ext.ready_text.stay_up_timer = 0;
-    arg0->ext.ready_text.palette_pos = 0;
-    arg0->ext.ready_text.unk58 = 0;
-    arg0->ext.ready_text.palette_cycle_done = 0;
+    self->unk40 = 0x1E00;
+    self->animation_table = (u32**)ready_text_animations;
+    self->state = 1;
+    self->bg_offset = -1;
+    temp_v1 = ready_text_palettes[self->unk2];
+    self->unk42 = (temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
+    self->x_pos.i.hi = ready_text_x_positions[self->unk2];
+    self->y_pos.i.hi = ready_text_y_positions[self->unk2];
+    self->unk16 = ready_text_priorities[self->unk2];
+    self->unk15 = 0;
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->y_vel.val = 0;
+    self->unk2C = 0;
+    self->ext.ready_text.unk54 = 0;
+    self->ext.ready_text.stay_up_timer = 0;
+    self->ext.ready_text.palette_pos = 0;
+    self->ext.ready_text.unk58 = 0;
+    self->ext.ready_text.palette_cycle_done = 0;
 
-    if (arg0->unk2 < 2) {
+    if (self->unk2 < 2) {
         pal_pos = 0;
-        if (arg0->unk2 != 0) {
+        if (self->unk2 != 0) {
             pal_dst = &D_8013B940;
             color = SP_PALETTE + 0x100;
             do {
@@ -67,59 +67,59 @@ void func_800CB048(struct MiscObj* arg0)
             } while (pal_pos < 16);
             need_palette_load |= 1;
         }
-        func_80015D60(arg0, 0);
+        set_animation(self, 0);
     } else {
-        func_80015D60(arg0, arg0->unk2 - 1);
+        set_animation(self, self->unk2 - 1);
     }
 }
 
 // g_MegamanRelatedUpdateFuncs state 1
-void func_800CB1F0(struct MiscObj* arg0)
+void ready_text_main(struct MiscObj* self)
 {
-    D_8010E6FC[arg0->unk2](arg0); // the animation before ready appears but "READY" doesn't if nopped out
+    ready_text_part_funcs[self->unk2](self); // the animation before ready appears but "READY" doesn't if nopped out
 }
 
-// func_800CB22C state 0, 1
+// ready_text_word state 0, 1
 // animation leading up to "READY" shows up but "READY" never apprears
 // if nopped out
 // asm(".rept 18 ; nop ; .endr");
-void func_800CB22C(struct MiscObj* arg0)
+void ready_text_word(struct MiscObj* self)
 {
-    ReadyTextUpdateFuncs[arg0->unk5](arg0);
-    is_on_screen(arg0);
+    ReadyTextUpdateFuncs[self->unk5](self);
+    is_on_screen(self);
 }
 
-extern u8 D_8010E6B0[];
+extern u8 ready_text_palette_cycle[];
 
 // ReadyText State 0
-void func_800CB27C(struct MiscObj* arg0)
+void ready_text_appear(struct MiscObj* self)
 {
-    if (arg0->ext.ready_text.owner->ext.unk_effect.unk16 != 0) {
-        func_800CB5B4(arg0, NULL);
-        arg0->unk5 = 1;
-        arg0->ext.ready_text.unk54 = 8;
-        if (arg0->unk2 != 0) {
-            arg0->unk42 = 0x7840;
-            arg0->x_vel.val = FIXED(.25);
-            arg0->y_vel.val = FIXED(-.5); // set y velocity of shadow behind "READY"
+    if (self->ext.ready_text.owner->ext.unk_effect.unk16 != 0) {
+        ready_text_load_palette(self, NULL);
+        self->unk5 = 1;
+        self->ext.ready_text.unk54 = 8;
+        if (self->unk2 != 0) {
+            self->unk42 = 0x7840;
+            self->x_vel.val = FIXED(.25);
+            self->y_vel.val = FIXED(-.5); // set y velocity of shadow behind "READY"
             return;
         }
-        arg0->x_vel.val = FIXED(-.25);
-        arg0->y_vel.val = FIXED(.5); // set y velocity of blue "READY"
+        self->x_vel.val = FIXED(-.25);
+        self->y_vel.val = FIXED(.5); // set y velocity of blue "READY"
         func_8001540C(0, 0xA, 0);
         return;
     }
-    if ((arg0->unk2 == 0) && (arg0->ext.ready_text.palette_cycle_done == 0)) {
-        if (arg0->ext.ready_text.unk54 != 0) {
-            arg0->ext.ready_text.unk54--;
+    if ((self->unk2 == 0) && (self->ext.ready_text.palette_cycle_done == 0)) {
+        if (self->ext.ready_text.unk54 != 0) {
+            self->ext.ready_text.unk54--;
             return;
         }
         // cycle palette when "READY" first appears
-        func_800CB5B4(arg0, D_8010E6B0[arg0->ext.ready_text.palette_pos]);
-        arg0->ext.ready_text.palette_pos++;
-        if (arg0->ext.ready_text.palette_pos >= 14) {
-            arg0->ext.ready_text.palette_pos = 0;
-            arg0->ext.ready_text.palette_cycle_done = 1;
+        ready_text_load_palette(self, ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
+        self->ext.ready_text.palette_pos++;
+        if (self->ext.ready_text.palette_pos >= 14) {
+            self->ext.ready_text.palette_pos = 0;
+            self->ext.ready_text.palette_cycle_done = 1;
         }
     }
 }
@@ -127,38 +127,38 @@ void func_800CB27C(struct MiscObj* arg0)
 extern u16 D_8013B940;
 
 // ReadyText State 1
-void func_800CB394(struct MiscObj* arg0)
+void ready_text_bounce(struct MiscObj* self)
 {
     u16* pal_src;
     u16* pal_dst;
     u32 pal_pos;
 
-    if (arg0->ext.ready_text.stay_up_timer != 0) {
-        arg0->ext.ready_text.stay_up_timer--;
+    if (self->ext.ready_text.stay_up_timer != 0) {
+        self->ext.ready_text.stay_up_timer--;
         return;
     }
-    arg0->ext.ready_text.unk54--;
-    if (arg0->ext.ready_text.unk54 == 0) {
-        if (arg0->unk6 == 0) {
-            if (arg0->unk2 != 0) {
-                arg0->x_vel.val = FIXED(-.25);
-                arg0->y_vel.val = FIXED(.5);
+    self->ext.ready_text.unk54--;
+    if (self->ext.ready_text.unk54 == 0) {
+        if (self->unk6 == 0) {
+            if (self->unk2 != 0) {
+                self->x_vel.val = FIXED(-.25);
+                self->y_vel.val = FIXED(.5);
             } else {
-                arg0->x_vel.val = FIXED(.25);
-                arg0->y_vel.val = FIXED(-.50);
+                self->x_vel.val = FIXED(.25);
+                self->y_vel.val = FIXED(-.50);
             }
-            arg0->unk6 = 1;
-            arg0->ext.ready_text.unk54 = 8;
-            arg0->ext.ready_text.stay_up_timer = 30; // how long the "READY" text should be in the "up" position
+            self->unk6 = 1;
+            self->ext.ready_text.unk54 = 8;
+            self->ext.ready_text.stay_up_timer = 30; // how long the "READY" text should be in the "up" position
             return;
         }
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk42 = 0x7801;
-        if (arg0->unk2 != 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk42 = 0x7801;
+        if (self->unk2 != 0) {
             pal_src = &D_8013B940;
             pal_pos = 0;
-            arg0->x_vel.val = FIXED(-16);
+            self->x_vel.val = FIXED(-16);
             pal_dst = SP_PALETTE + 0x100;
             do {
                 *pal_dst++ = *pal_src++;
@@ -166,52 +166,52 @@ void func_800CB394(struct MiscObj* arg0)
             } while (pal_pos < 16);
             need_palette_load |= 1;
         } else {
-            arg0->x_vel.val = FIXED(16);
+            self->x_vel.val = FIXED(16);
         }
-        arg0->x_pos.i.hi = 160;
-        arg0->y_pos.i.hi = 120;
-        arg0->y_vel.val = 0;
+        self->x_pos.i.hi = 160;
+        self->y_pos.i.hi = 120;
+        self->y_vel.val = 0;
         engine_obj.unk1E = 1;
         return;
     }
-    func_8002B694((struct AnimatedObj*)arg0);
+    move_with_gravity((struct AnimatedObj*)self);
 }
 
 // ReadyText State 2
 // "READY" never disappears if nopped out
 // asm(".rept 26 ; nop ; .endr");
-void func_800CB4E4(struct MiscObj* arg0)
+void ready_text_leave(struct MiscObj* self)
 {
-    if (arg0->on_screen != 0) {
-        func_8002B694(arg0);
+    if (self->on_screen != 0) {
+        move_with_gravity(self);
         return;
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
+    self->state = 2;
+    self->unk5 = 0;
     if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
         engine_obj.unk1C = 0;
     }
 }
 
-// D_8010E6FC state 2
-void func_800CB554(struct MiscObj* arg0)
+// ready_text_part_funcs state 2
+void ready_text_blink(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
+    self->on_screen = 0;
     if (D_80141BD8.unk0 & 0x10) {
-        is_on_screen(arg0);
+        is_on_screen(self);
     }
 }
 
-// D_8010E6FC state 3, 4
-void func_800CB590(struct MiscObj* arg0)
+// ready_text_part_funcs state 3, 4
+void ready_text_show(struct MiscObj* self)
 {
-    arg0->on_screen = 1;
-    is_on_screen(arg0);
+    self->on_screen = 1;
+    is_on_screen(self);
 }
 
 // "READY" has wrong palette if nopped out
 // asm(".rept 22 ; nop ; .endr");
-void func_800CB5B4(s32 arg0, s32 arg1)
+void ready_text_load_palette(s32 arg0, s32 arg1)
 {
     u16* var_a0;
     u16* var_v1;
@@ -229,22 +229,22 @@ void func_800CB5B4(s32 arg0, s32 arg1)
 }
 
 // g_MegamanRelatedUpdateFuncs state 2
-void func_800CB614(struct MiscObj* arg0)
+void ready_text_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(arg0);
+    ZeroObjectState(self);
 }
 
-u32 D_8010E690[] = { 0x00000001 };
+u32 ready_text_anim_0[] = { 0x00000001 };
 
-u32 D_8010E694[] = { 0x03000001 };
+u32 ready_text_anim_1[] = { 0x03000001 };
 
-u32 D_8010E698[] = { 0x01000001 };
+u32 ready_text_anim_2[] = { 0x01000001 };
 
-u32 D_8010E69C[] = { 0x02000001 };
+u32 ready_text_anim_3[] = { 0x02000001 };
 
-const u32* D_8010E6A0[] = { D_8010E690, D_8010E694, D_8010E698, D_8010E69C };
+const u32* ready_text_animations[] = { ready_text_anim_0, ready_text_anim_1, ready_text_anim_2, ready_text_anim_3 };
 
-u8 D_8010E6B0[] = {
+u8 ready_text_palette_cycle[] = {
     0,
     1,
     2,
@@ -271,9 +271,9 @@ u8 D_8010E6B0[] = {
     1,
 };
 
-u8 D_8010E6C8[] = { 1, 1, 0x17, 0x15, 0x15, 0, 0, 0 };
+u8 ready_text_palettes[] = { 1, 1, 0x17, 0x15, 0x15, 0, 0, 0 };
 
-s16 D_8010E6D0[] = {
+s16 ready_text_x_positions[] = {
     160,
     160,
     96,
@@ -286,26 +286,26 @@ s16 D_8010E6D0[] = {
     0,
 };
 
-s16 D_8010E6DC[] = { 120, 120, 112, 192, 192, 0 };
+s16 ready_text_y_positions[] = { 120, 120, 112, 192, 192, 0 };
 
-u8 D_8010E6E8[] = { 0x11, 0x12, 0x10, 0x10, 0x10, 0, 0, 0 };
+u8 ready_text_priorities[] = { 0x11, 0x12, 0x10, 0x10, 0x10, 0, 0, 0 };
 
 void (*g_MegamanRelatedUpdateFuncs[3])(struct MiscObj*) = {
-    func_800CB048,
-    func_800CB1F0,
-    func_800CB614,
+    ready_text_init,
+    ready_text_main,
+    ready_text_despawn,
 };
 
-void (*D_8010E6FC[5])(struct MiscObj*) = {
-    func_800CB22C,
-    func_800CB22C,
-    func_800CB554,
-    func_800CB590,
-    func_800CB590,
+void (*ready_text_part_funcs[5])(struct MiscObj*) = {
+    ready_text_word,
+    ready_text_word,
+    ready_text_blink,
+    ready_text_show,
+    ready_text_show,
 };
 
 void (*ReadyTextUpdateFuncs[3])(struct MiscObj*) = {
-    func_800CB27C,
-    func_800CB394,
-    func_800CB4E4,
+    ready_text_appear,
+    ready_text_bounce,
+    ready_text_leave,
 };

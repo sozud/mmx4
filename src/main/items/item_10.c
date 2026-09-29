@@ -14,56 +14,56 @@ struct Item10Offset {
     s16 y;
 };
 
-struct Item10AnimationStep D_8010CCA0[4] = {
+struct Item10AnimationStep spark_machine_anim_0[4] = {
     { 3, 0, 1, 0 },
     { 3, 0, 1, 1 },
     { 3, 0, 1, 2 },
     { 3, 0, 253, 1 },
 };
 
-struct Item10AnimationStep D_8010CCB0[4] = {
+struct Item10AnimationStep spark_machine_anim_1[4] = {
     { 3, 0, 1, 3 },
     { 3, 0, 1, 4 },
     { 3, 0, 1, 5 },
     { 3, 0, 253, 4 },
 };
 
-struct Item10AnimationStep D_8010CCC0[4] = {
+struct Item10AnimationStep spark_machine_anim_2[4] = {
     { 3, 0, 1, 6 },
     { 3, 0, 1, 7 },
     { 3, 0, 1, 8 },
     { 3, 0, 253, 7 },
 };
 
-struct Item10AnimationStep D_8010CCD0[4] = {
+struct Item10AnimationStep spark_machine_anim_3[4] = {
     { 3, 0, 1, 9 },
     { 3, 0, 1, 10 },
     { 3, 0, 1, 11 },
     { 3, 0, 253, 10 },
 };
 
-struct Item10AnimationStep D_8010CCE0[4] = {
+struct Item10AnimationStep spark_machine_anim_4[4] = {
     { 3, 0, 1, 12 },
     { 3, 0, 1, 13 },
     { 3, 0, 1, 14 },
     { 3, 0, 253, 13 },
 };
 
-struct Item10AnimationStep D_8010CCF0[4] = {
+struct Item10AnimationStep spark_machine_anim_5[4] = {
     { 3, 0, 1, 15 },
     { 3, 0, 1, 16 },
     { 3, 0, 1, 17 },
     { 3, 0, 253, 16 },
 };
 
-struct Item10AnimationStep D_8010CD00[4] = {
+struct Item10AnimationStep spark_machine_anim_6[4] = {
     { 3, 0, 1, 18 },
     { 3, 0, 1, 19 },
     { 3, 0, 1, 20 },
     { 3, 0, 253, 19 },
 };
 
-struct Item10AnimationStep D_8010CD10[19] = {
+struct Item10AnimationStep spark_machine_anim_7[19] = {
     { 3, 0, 1, 21 },
     { 3, 0, 1, 22 },
     { 3, 0, 1, 23 },
@@ -85,7 +85,7 @@ struct Item10AnimationStep D_8010CD10[19] = {
     { 3, 0, 249, 39 },
 };
 
-struct Item10AnimationStep D_8010CD5C[12] = {
+struct Item10AnimationStep spark_machine_anim_8[12] = {
     { 2, 0, 1, 40 },
     { 2, 0, 1, 41 },
     { 2, 0, 1, 40 },
@@ -100,7 +100,7 @@ struct Item10AnimationStep D_8010CD5C[12] = {
     { 6, 1, 0, 44 },
 };
 
-struct Item10AnimationStep D_8010CD8C[11] = {
+struct Item10AnimationStep spark_machine_anim_9[11] = {
     { 3, 0, 1, 45 },
     { 3, 0, 1, 46 },
     { 3, 0, 1, 47 },
@@ -114,7 +114,7 @@ struct Item10AnimationStep D_8010CD8C[11] = {
     { 3, 1, 0, 62 },
 };
 
-struct Item10AnimationStep D_8010CDB8[7] = {
+struct Item10AnimationStep spark_machine_anim_10[7] = {
     { 3, 0, 1, 55 },
     { 3, 0, 1, 56 },
     { 3, 0, 1, 57 },
@@ -124,7 +124,7 @@ struct Item10AnimationStep D_8010CDB8[7] = {
     { 3, 0, 250, 61 },
 };
 
-struct Item10AnimationStep D_8010CDD4[7] = {
+struct Item10AnimationStep spark_machine_anim_11[7] = {
     { 3, 0, 1, 45 },
     { 3, 0, 1, 46 },
     { 3, 0, 1, 47 },
@@ -134,78 +134,80 @@ struct Item10AnimationStep D_8010CDD4[7] = {
     { 3, 0, 250, 51 },
 };
 
-struct Item10AnimationStep D_8010CDF0[2] = {
+struct Item10AnimationStep spark_machine_anim_12[2] = {
     { 3, 0, 1, 63 },
     { 3, 0, 255, 64 },
 };
 
-struct Item10AnimationStep D_8010CDF8[1] = {
+struct Item10AnimationStep spark_machine_anim_13[1] = {
     { 3, 0, 0, 65 },
 };
 
-struct Item10AnimationStep* D_8010CDFC[14] = {
-    D_8010CCA0,
-    D_8010CCB0,
-    D_8010CCC0,
-    D_8010CCD0,
-    D_8010CCE0,
-    D_8010CCF0,
-    D_8010CD00,
-    D_8010CD10,
-    D_8010CD5C,
-    D_8010CD8C,
-    D_8010CDB8,
-    D_8010CDD4,
-    D_8010CDF0,
-    D_8010CDF8,
+struct Item10AnimationStep* spark_machine_animations[14] = {
+    spark_machine_anim_0,
+    spark_machine_anim_1,
+    spark_machine_anim_2,
+    spark_machine_anim_3,
+    spark_machine_anim_4,
+    spark_machine_anim_5,
+    spark_machine_anim_6,
+    spark_machine_anim_7,
+    spark_machine_anim_8,
+    spark_machine_anim_9,
+    spark_machine_anim_10,
+    spark_machine_anim_11,
+    spark_machine_anim_12,
+    spark_machine_anim_13,
 };
 
-void func_800C24E0(struct ItemObj* arg0)
+void spark_machine_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010CE34[arg0->state](arg0);
+    spark_machine_state_funcs[arg0->state](arg0);
 }
 
+// spark_machine_init
 INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2528);
 
+// spark_machine_main
 INCLUDE_ASM("main/nonmatchings/items/item_10", func_800C2638);
 
-void func_800C27D8(struct ItemObj* arg0)
+void spark_machine_sparking(struct ItemObj* arg0)
 {
     if (--arg0->tail_ext.unk1.unk84.bytes[3] == 0) {
         arg0->state++;
     }
-    func_800C2918(arg0);
-    func_800C2A04(arg0);
-    func_800C2AF0(arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    spark_machine_spawn_spark_a(arg0);
+    spark_machine_spawn_spark_b(arg0);
+    spark_machine_spawn_spark_c(arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-void func_800C2850(struct ItemObj* arg0)
+void spark_machine_break(struct ItemObj* arg0)
 {
     arg0->ext.timer = 1;
     arg0->unk42 &= 0x7FFF;
-    func_800C813C(5, D_8010CE54, arg0);
-    func_800DABE4(
+    spawn_debris(5, spark_machine_debris, arg0);
+    apply_tile_effect(
         (u8)arg0->unk2,
         (s16)(arg0->x_pos.u.hi - 0x20),
         (s16)(arg0->y_pos.u.hi - 0x28));
-    func_80015D60(arg0, 0xC);
+    set_animation(arg0, 0xC);
     is_on_screen(BASE_OBJECT(arg0));
     arg0->state = (u8)arg0->state + 1;
 }
 
-void func_800C28E8(struct ItemObj* arg0)
+void spark_machine_broken(struct ItemObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-extern struct Item10Offset D_8010CE5C[5];
+extern struct Item10Offset spark_machine_spark_offsets[5];
 
-void func_800C2918(struct ItemObj* arg0)
+void spark_machine_spawn_spark_a(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.timer == 0) {
         struct MiscObj* obj = find_free_misc_obj();
@@ -216,8 +218,8 @@ void func_800C2918(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[get_random() & 3].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[get_random() & 3].y;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].y;
             obj->unk2 = 0;
             obj->ext.pointer.unk50 = arg0;
         }
@@ -227,7 +229,7 @@ void func_800C2918(struct ItemObj* arg0)
     arg0->tail_ext.unk2.timer--;
 }
 
-void func_800C2A04(struct ItemObj* arg0)
+void spark_machine_spawn_spark_b(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.previous_value == 0) {
         struct MiscObj* obj = find_free_misc_obj();
@@ -238,8 +240,8 @@ void func_800C2A04(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[(get_random() & 3)].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[(get_random() & 3)].y;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[(get_random() & 3)].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[(get_random() & 3)].y;
             obj->unk2 = 1;
             obj->ext.pointer.unk50 = arg0;
         }
@@ -249,7 +251,7 @@ void func_800C2A04(struct ItemObj* arg0)
     arg0->tail_ext.unk2.previous_value--;
 }
 
-void func_800C2AF0(struct ItemObj* arg0)
+void spark_machine_spawn_spark_c(struct ItemObj* arg0)
 {
     if (arg0->tail_ext.unk2.value == 0) {
         struct MiscObj* obj = find_free_misc_obj();
@@ -260,8 +262,8 @@ void func_800C2AF0(struct ItemObj* arg0)
             obj->state = 0;
             obj->unk5 = 0;
             obj->unk6 = 0;
-            obj->x_pos.u.hi = arg0->x_pos.u.hi + D_8010CE5C[get_random() & 3].x;
-            obj->y_pos.u.hi = arg0->y_pos.u.hi + D_8010CE5C[get_random() & 3].y;
+            obj->x_pos.u.hi = arg0->x_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].x;
+            obj->y_pos.u.hi = arg0->y_pos.u.hi + spark_machine_spark_offsets[get_random() & 3].y;
             obj->unk2 = 2;
             obj->ext.pointer.unk50 = arg0;
         }
@@ -271,20 +273,20 @@ void func_800C2AF0(struct ItemObj* arg0)
     arg0->tail_ext.unk2.value--;
 }
 
-void (*D_8010CE34[])(struct ItemObj*) = {
+void (*spark_machine_state_funcs[])(struct ItemObj*) = {
     func_800C2528,
     func_800C2638,
-    func_800C27D8,
-    func_800C2850,
-    func_800C28E8,
-    func_800C2918,
+    spark_machine_sparking,
+    spark_machine_break,
+    spark_machine_broken,
+    spark_machine_spawn_spark_a,
 };
 
-u8 D_8010CE4C[4] = { 0, 0xF8, 0x20, 0x18 };
-u8 D_8010CE50[4] = { 0xE0, 0xE8, 0x40, 0x30 };
-u8 D_8010CE54[8] = { 1, 2, 3, 4, 5, 0, 0, 0 };
+u8 spark_machine_terrain_box[4] = { 0, 0xF8, 0x20, 0x18 };
+u8 spark_machine_hit_box[4] = { 0xE0, 0xE8, 0x40, 0x30 };
+u8 spark_machine_debris[8] = { 1, 2, 3, 4, 5, 0, 0, 0 };
 
-struct Item10Offset D_8010CE5C[5] = {
+struct Item10Offset spark_machine_spark_offsets[5] = {
     { 0, 12 },
     { -16, -8 },
     { 16, -10 },

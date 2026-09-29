@@ -4,46 +4,46 @@
 
 // megaman never teleports in if nopped out
 // asm(".rept 13 ; nop ; .endr");
-void TeleportRelatedObjectUpdate(struct EffectObj* arg0)
+void TeleportRelatedObjectUpdate(struct EffectObj* self)
 {
-    D_8010BEC8[arg0->state](arg0);
+    teleport_intro_state_funcs[self->state](self);
 }
 
-// D_8010BEC8 state 0
-void func_800BB9F4(struct EffectObj* arg0)
+// teleport_intro_state_funcs state 0
+void teleport_intro_init(struct EffectObj* self)
 {
     if (D_80141BDC[0] == 0) {
-        arg0->ext.effect_27.unk14 = 0;
-        arg0->ext.effect_27.unk15 = 0;
-        arg0->ext.effect_27.unk16 = 0;
-        arg0->state = 1;
-        arg0->unk5 = 0;
+        self->ext.effect_27.unk14 = 0;
+        self->ext.effect_27.unk15 = 0;
+        self->ext.effect_27.unk16 = 0;
+        self->state = 1;
+        self->unk5 = 0;
     }
 }
 
-// D_8010BEC8 state 1
-void func_800BBA24(struct EffectObj* arg0)
+// teleport_intro_state_funcs state 1
+void teleport_intro_spawn_quads(struct EffectObj* self)
 {
     struct QuadObj* quad;
     u32 var_i;
 
-    switch (arg0->unk5) {
+    switch (self->unk5) {
     case 0:
         quad = find_free_quad_obj();
         if (quad != NULL) {
             quad->active = 0x81;
             quad->id = 7;
             quad->unk2 = 0;
-            quad->link.owner = arg0;
+            quad->link.owner = self;
         }
-        arg0->unk5 = 1;
-        arg0->ext.effect_27.unk14++;
+        self->unk5 = 1;
+        self->ext.effect_27.unk14++;
         return;
     case 1:
         var_i = 0;
         // spawn blue quads behind "READY"
-        if (arg0->ext.effect_27.unk14 == 0) {
-            arg0->ext.effect_27.unk14 = 0;
+        if (self->ext.effect_27.unk14 == 0) {
+            self->ext.effect_27.unk14 = 0;
             do {
                 quad = find_free_quad_obj();
                 if (quad != NULL) {
@@ -51,19 +51,19 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->id = 7;
                     quad->unk2 = 1;
                     quad->unk7 = var_i;
-                    quad->link.owner = arg0;
-                    arg0->ext.effect_27.unk14++;
+                    quad->link.owner = self;
+                    self->ext.effect_27.unk14++;
                 }
                 var_i += 1;
             } while (var_i < 0xA);
-            arg0->unk5 = 2;
+            self->unk5 = 2;
             return;
         }
         return;
     case 2:
         var_i = 0;
-        if (arg0->ext.effect_27.unk14 == 0) {
-            arg0->ext.effect_27.unk14 = 0;
+        if (self->ext.effect_27.unk14 == 0) {
+            self->ext.effect_27.unk14 = 0;
             do {
                 quad = find_free_quad_obj();
                 if (quad != NULL) {
@@ -71,32 +71,32 @@ void func_800BBA24(struct EffectObj* arg0)
                     quad->id = 7;
                     quad->unk2 = 2;
                     quad->unk7 = get_random() & 3;
-                    quad->link.owner = arg0;
-                    arg0->ext.effect_27.unk14++;
+                    quad->link.owner = self;
+                    self->ext.effect_27.unk14++;
                 }
                 var_i += 1;
             } while (var_i < 8);
-            arg0->unk5 = 3;
+            self->unk5 = 3;
             return;
         }
         break;
     case 3:
-        if (arg0->ext.effect_27.unk14 == 0) {
-            arg0->ext.effect_27.unk14 = 0;
-            arg0->ext.effect_27.unk16 = 1;
+        if (self->ext.effect_27.unk14 == 0) {
+            self->ext.effect_27.unk14 = 0;
+            self->ext.effect_27.unk16 = 1;
         }
         break;
     }
 }
 
-// D_8010BEC8 state 2
-void func_800BBBF4(struct EffectObj* arg0)
+// teleport_intro_state_funcs state 2
+void teleport_intro_despawn(struct EffectObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010BEC8[])(struct EffectObj*) = {
-    func_800BB9F4,
-    func_800BBA24,
-    func_800BBBF4,
+void (*teleport_intro_state_funcs[])(struct EffectObj*) = {
+    teleport_intro_init,
+    teleport_intro_spawn_quads,
+    teleport_intro_despawn,
 };

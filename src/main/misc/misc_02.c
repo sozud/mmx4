@@ -2,7 +2,7 @@
 // 800C7DA4..800C85D0
 #include "common.h"
 
-void func_800C7DA4(s32 count, u8* variants, void* source, s32 x_velocity)
+void spawn_rubble(s32 count, u8* variants, void* source, s32 x_velocity)
 {
     struct BaseObj* source_obj;
     struct MiscObj* obj;
@@ -31,8 +31,8 @@ void func_800C7DA4(s32 count, u8* variants, void* source, s32 x_velocity)
                     obj->x_vel.val = 0;
                     obj->unk2 = 1;
                 }
-                obj->x_pos.val = source_obj->x_pos.val + D_8010DB08[get_random() & 7];
-                obj->y_pos.val = source_obj->y_pos.val + D_8010DB28[get_random() & 7];
+                obj->x_pos.val = source_obj->x_pos.val + rubble_x_offsets[get_random() & 7];
+                obj->y_pos.val = source_obj->y_pos.val + rubble_y_offsets[get_random() & 7];
                 obj->ext.unk.unk54 = *variant++;
             }
             remaining--;
@@ -40,31 +40,32 @@ void func_800C7DA4(s32 count, u8* variants, void* source, s32 x_velocity)
     }
 }
 
-void func_800C7EDC(struct MiscObj* arg0)
+void rubble_update(struct MiscObj* self)
 {
-    if (arg0->state == 0) {
-        func_800C7F1C(arg0);
+    if (self->state == 0) {
+        func_800C7F1C(self);
     } else {
-        func_800C80D8(arg0);
+        rubble_fall(self);
     }
 }
 
+// rubble_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C7F1C);
 
-void func_800C80D8(struct MiscObj* arg0)
+void rubble_fall(struct MiscObj* self)
 {
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        arg0->on_screen ^= 1;
-        if (arg0->on_screen != 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        move_with_gravity(ANIMATED_OBJECT(self));
+        self->on_screen ^= 1;
+        if (self->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(self));
         }
     } else {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_800C813C(s32 arg0, void* arg1, void* arg2)
+void spawn_debris(s32 arg0, void* arg1, void* arg2)
 {
     s32 var_s1;
     u8 temp_v0_2;
@@ -98,7 +99,7 @@ void func_800C813C(s32 arg0, void* arg1, void* arg2)
     }
 }
 
-void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5)
+void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5)
 {
     s32 var_s1;
     u8* var_s3;
@@ -140,7 +141,7 @@ void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4,
     }
 }
 
-void func_800C833C(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)
+void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)
 {
     u8 i;
     u8* vars = variants;
@@ -165,12 +166,13 @@ void func_800C833C(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, 
     }
 }
 
+// spawn_animated_debris
 INCLUDE_ASM("main/nonmatchings/misc/misc_02", func_800C842C);
 
-s32 D_8010DAC8[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
-s32 D_8010DAE8[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
+s32 rubble_x_speeds[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
+s32 rubble_y_speeds[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
 
-s32 D_8010DB08[8] = {
+s32 rubble_x_offsets[8] = {
     0x1F0000,
     0x190000,
     0x150000,
@@ -181,7 +183,7 @@ s32 D_8010DB08[8] = {
     -0x120000,
 };
 
-s32 D_8010DB28[8] = {
+s32 rubble_y_offsets[8] = {
     0x1F0000,
     0x190000,
     0x150000,

@@ -8,7 +8,7 @@ struct Shot34Data {
     s8 trailing_data[4];
 };
 
-struct Shot34Data D_80109510 = {
+struct Shot34Data ray_trap_data = {
     {
         { -6, -10, 10, 18 },
         { -17, -10, 33, 18 },
@@ -25,61 +25,62 @@ struct Shot34Data D_80109510 = {
     { 18, 9, -18, 9 },
 };
 
-s32 D_80109538[4] = { 7, 6, 11, 15 };
+s32 ray_trap_wall_animations[4] = { 7, 6, 11, 15 };
 
-s32 D_80109548[4] = { 4, 5, 3, 2 };
+s32 ray_trap_floor_animations[4] = { 4, 5, 3, 2 };
 
-void (*D_80109558[])(struct ShotObj*) = {
+void (*ray_trap_ride_funcs[])(struct ShotObj*) = {
     func_800A19A8,
     func_800A1B1C,
     func_800A1BEC,
 };
 
-u8 D_80109564[4][4] = {
+u8 ray_trap_crawl_boxes[4][4] = {
     { 8, 8, 13, 17 },
     { 7, 7, 12, 16 },
     { 9, 9, 14, 18 },
     { 6, 6, 11, 15 },
 };
 
-void (*D_80109574[])(struct ShotObj*) = {
+void (*ray_trap_step_funcs[])(struct ShotObj*) = {
     NULL,
-    func_800A18F4,
-    func_800A1F7C,
+    ray_trap_fall,
+    ray_trap_chase,
     func_800A1CCC,
     func_800A1E3C,
-    func_800A1C90,
+    ray_trap_ride,
 };
 
+// ray_trap_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A16FC);
 
-void func_800A18A8(struct ShotObj* arg0)
+void ray_trap_check_airborne(struct ShotObj* self)
 {
-    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk67 = -1;
-        arg0->y_vel.val = 0;
-        arg0->unk28 = 0;
-        arg0->unk5 = 1;
-        arg0->unk6 = 0;
+    if (self->unk67 == 0 && !(self->unk70 & 8)) {
+        self->unk2C = FIXED(0.2578125);
+        self->unk67 = -1;
+        self->y_vel.val = 0;
+        self->unk28 = 0;
+        self->unk5 = 1;
+        self->unk6 = 0;
     }
 }
 
-void func_800A18F4(struct ShotObj* arg0)
+void ray_trap_fall(struct ShotObj* arg0)
 {
     struct ShotObj* self;
     s8 var_v0;
     u8 temp_v1;
 
     self = arg0;
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
     temp_v1 = self->unk70;
 
     if (temp_v1 & 8) {
         self->y_vel.val = 0;
         self->unk2C = 0;
-        func_80015D60(self, 9);
+        set_animation(self, 9);
         var_v0 = 4;
     } else if (temp_v1 & 3) {
         if (self->unk8C.bytes[3] == 0) {
@@ -91,7 +92,7 @@ void func_800A18F4(struct ShotObj* arg0)
         }
         self->y_vel.val = 0;
         self->unk2C = 0;
-        func_80015D60(self, 8);
+        set_animation(self, 8);
         var_v0 = 3;
     } else {
         return;
@@ -101,80 +102,86 @@ void func_800A18F4(struct ShotObj* arg0)
     self->unk6 = 1;
 }
 
+// ray_trap_ride_move
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A19A8);
 
+// ray_trap_ride_wait
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1B1C);
 
+// ray_trap_ride_return
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1BEC);
 
-void func_800A1C90(struct ShotObj* arg0)
+void ray_trap_ride(struct ShotObj* self)
 {
-    D_80109558[arg0->unk6](arg0);
+    ray_trap_ride_funcs[self->unk6](self);
 }
 
+// ray_trap_crawl_wall
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1CCC);
 
+// ray_trap_crawl_floor
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A1E3C);
 
-void func_800A1F7C(struct ShotObj* arg0)
+void ray_trap_chase(struct ShotObj* self)
 {
     s16 shot_x;
     s32 distance;
     u8 collision_flags;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
-    if (arg0->unk6 == 0) {
-        shot_x = arg0->x_pos.i.hi;
+    if (self->unk6 == 0) {
+        shot_x = self->x_pos.i.hi;
         distance = g_Player.x_pos.i.hi - shot_x;
         if (distance >= 0 ? distance < 8 : shot_x - g_Player.x_pos.i.hi < 8) {
-            arg0->x_vel.val = 0;
-            arg0->unk6++;
-            func_80015D60(arg0, 0x11);
+            self->x_vel.val = 0;
+            self->unk6++;
+            set_animation(self, 0x11);
             return;
         }
 
-        collision_flags = arg0->unk70;
+        collision_flags = self->unk70;
         if ((collision_flags & 3) && !(collision_flags & 8)) {
-            arg0->x_vel.val = 0;
-            arg0->unk6++;
-            arg0->unk15 ^= 0x40;
-            func_80015D60(arg0, 0x11);
+            self->x_vel.val = 0;
+            self->unk6++;
+            self->unk15 ^= 0x40;
+            set_animation(self, 0x11);
         }
-    } else if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
-        arg0->y_vel.val = FIXED(-3);
-        func_80015D60(arg0, 0x10);
-        arg0->unk68 = &D_80109510.bounds[2];
+    } else if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->y_vel.val = FIXED(-3);
+        set_animation(self, 0x10);
+        self->unk68 = &ray_trap_data.bounds[2];
     }
 }
 
+// ray_trap_main
 INCLUDE_ASM("main/nonmatchings/shots/shot_34", func_800A2098);
 
-void func_800A220C(struct ShotObj* arg0)
+void ray_trap_despawn(struct ShotObj* self)
 {
     struct MainObj* owner;
 
-    if (arg0->unk2 < 2) {
-        owner = MAIN_OBJECT(arg0->unk7C);
+    if (self->unk2 < 2) {
+        owner = MAIN_OBJECT(self->unk7C);
         owner->ext.main_55.unk85--;
-        owner->ext.main_55.unk88 &= ~(1 << arg0->unk8A);
+        owner->ext.main_55.unk88 &= ~(1 << self->unk8A);
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A2278(struct ShotObj* arg0)
+void ray_trap_update(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010958C[arg0->state](arg0);
-    CollisionRelated(arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    ray_trap_state_funcs[self->state](self);
+    CollisionRelated(self);
 }
 
-void (*D_8010958C[])(struct ShotObj*) = {
+void (*ray_trap_state_funcs[])(struct ShotObj*) = {
     func_800A16FC,
     func_800A2098,
-    func_800A220C,
+    ray_trap_despawn,
 };

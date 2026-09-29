@@ -2,6 +2,7 @@
 // 800B7EE8..800B8064
 #include "common.h"
 
+// sound_zone_update
 INCLUDE_ASM("main/nonmatchings/effects/effect_10", func_800B7EE8);
 
 struct Effect10Trigger {
@@ -13,26 +14,26 @@ struct Effect10Trigger {
     u8 pad;
 };
 
-struct Effect10Trigger D_8010B540[4] = {
+struct Effect10Trigger sound_zone_list_0[4] = {
     { 0x0000, 0x0700, 0x0000, 0x0200, 0, 0 },
     { 0x0670, 0x1500, 0x0000, 0x0600, 2, 0 },
     { 0x14A0, 0x1900, 0x0280, 0x0600, 1, 0 },
     { 0x1500, 0x1900, 0x0000, 0x03C0, 2, 0 },
 };
 
-struct Effect10Trigger D_8010B568[4] = {
+struct Effect10Trigger sound_zone_list_1[4] = {
     { 0x0520, 0x05F0, 0x0130, 0x0220, 1, 0 },
     { 0x0200, 0x05F0, 0x01E0, 0x0320, 1, 0 },
     { 0x0200, 0x03B0, 0x02E0, 0x03F0, 1, 0 },
     { 0x0700, 0x0930, 0x0280, 0x0600, 1, 0 },
 };
 
-struct Effect10Trigger* D_8010B590[2] = {
-    D_8010B540,
-    D_8010B568,
+struct Effect10Trigger* sound_zone_lists[2] = {
+    sound_zone_list_0,
+    sound_zone_list_1,
 };
 
-u16 D_8010B598[65] = {
+u16 sound_zone_data[65] = {
     0x0000,
     0x0312,
     0x0645,
@@ -100,4 +101,4 @@ u16 D_8010B598[65] = {
     0x8000,
 };
 
-u16 D_8010B61A = 0;
+u16 sound_zone_padding = 0;

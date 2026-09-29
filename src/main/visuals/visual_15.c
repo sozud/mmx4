@@ -2,21 +2,21 @@
 // 800B1D6C..800B1EA4
 #include "common.h"
 
-void func_800B1D6C(struct VisualObj* arg0)
+void ride_chaser_flash_update(struct VisualObj* arg0)
 {
-    D_8010A538[arg0->state](arg0);
+    ride_chaser_flash_state_funcs[arg0->state](arg0);
 }
 
-void func_800B1DA8(struct VisualObj* arg0)
+void ride_chaser_flash_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->unk54 = 3;
     arg0->unk16 = 2;
-    func_80015D60(arg0, 0x19);
+    set_animation(arg0, 0x19);
 }
 
-void func_800B1DE4(struct VisualObj* arg0)
+void ride_chaser_flash_main(struct VisualObj* arg0)
 {
     struct BaseObj* temp_s1 = arg0->unk50;
 
@@ -25,24 +25,24 @@ void func_800B1DE4(struct VisualObj* arg0)
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk54--;
     }
-    func_80015DC8(arg0);
+    animate_object(arg0);
     if (temp_s1->state == 2) {
         arg0->state = 2;
     } else {
         if (arg0->unk54 == 0) {
             arg0->state = 2;
         }
-        func_8002B318(arg0, 0x10, 0x10);
+        update_on_screen(arg0, 0x10, 0x10);
     }
 }
 
-void func_800B1E84(struct VisualObj* arg0)
+void ride_chaser_flash_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A538[])(struct VisualObj*) = {
-    func_800B1DA8,
-    func_800B1DE4,
-    func_800B1E84,
+void (*ride_chaser_flash_state_funcs[])(struct VisualObj*) = {
+    ride_chaser_flash_init,
+    ride_chaser_flash_main,
+    ride_chaser_flash_despawn,
 };

@@ -16,7 +16,7 @@ void double_ball_travel(struct ShotObj* self)
 
     temp_s2 = self->x_pos.val - ((s16)self->unk8C.half << 16);
     temp_s1 = self->y_pos.val - (self->unk8C.halves[1] << 16);
-    temp_a2 = func_8002B810(temp_s2, temp_s1);
+    temp_a2 = angle_from_delta(temp_s2, temp_s1);
     if ((s16)self->unk8A == 0) {
         temp_a0 = (u8)self->unk5;
         self->timer = 0x5A;
@@ -32,7 +32,7 @@ void double_ball_travel(struct ShotObj* self)
         self->unk8A = (u16)self->unk8A - 1;
     }
     self->unk84.value = temp_a2 & 0xFF;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_ball_hold(struct ShotObj* self)
@@ -43,10 +43,10 @@ void double_ball_hold(struct ShotObj* self)
     self->timer = timer;
     if (timer == 0) {
         self->unk5++;
-        func_80015D60(self, 0xD);
+        set_animation(self, 0xD);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_ball_burst(struct ShotObj* self)
@@ -57,7 +57,7 @@ void double_ball_burst(struct ShotObj* self)
         self->on_screen = 0;
         return;
     }
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void double_ball_run(struct ShotObj* self)
@@ -66,14 +66,14 @@ void double_ball_run(struct ShotObj* self)
     self->unk1C.val = self->y_pos.val;
     double_ball_funcs[self->unk5](self);
     if (self->unk7C->state == 2) {
-        func_800AF808(BASE_OBJECT(self));
+        spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         self->on_screen = 0;
         return;
     }
     func_8002D9BC(self);
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        func_800AF808(BASE_OBJECT(self));
+        spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
         self->on_screen = 0;
         return;
@@ -98,33 +98,33 @@ void double_ball_update(struct ShotObj* self)
     double_ball_state_funcs[self->state](self);
 }
 
-u8 D_80109B88[2][4] = {
+u8 double_ball_boxes[2][4] = {
     { 0xF0, 0xF2, 0x1F, 0x1B },
     { 0xFE, 0xFE, 0x10, 0x10 },
 };
 
-u8 D_80109B90[2][4] = {
+u8 double_ball_box_1[2][4] = {
     { 0xF3, 0xBD, 0x26, 0x87 },
     { 0, 8, 0x2E, 0x78 },
 };
 
-u8 D_80109B98[4] = { 0xF9, 0xFA, 0x0D, 0x0B };
+u8 double_ball_box_2[4] = { 0xF9, 0xFA, 0x0D, 0x0B };
 
-u8 D_80109B9C[4] = { 0, 0, 0x0E, 0x0E };
+u8 double_ball_box_3[4] = { 0, 0, 0x0E, 0x0E };
 
-u8 D_80109BA0[2][4] = {
+u8 double_ball_box_4[2][4] = {
     { 0xF8, 0xF8, 0x10, 0x10 },
     { 0, 0, 0x0E, 0x0E },
 };
 
-u8 D_80109BA8[2][4] = {
+u8 double_ball_box_5[2][4] = {
     { 0xFC, 0xF9, 7, 0x0A },
     { 0, 6, 3, 7 },
 };
 
-u8 D_80109BB0[4] = { 0x1A, 0x1B, 0x1A, 0x1B };
+u8 double_ball_debris_0[4] = { 0x1A, 0x1B, 0x1A, 0x1B };
 
-u8 D_80109BB4[4] = { 0x1C, 0x1D, 0x1C, 0x1D };
+u8 double_ball_debris_1[4] = { 0x1C, 0x1D, 0x1C, 0x1D };
 
 void (*double_ball_funcs[3])(struct ShotObj*) = {
     double_ball_travel,

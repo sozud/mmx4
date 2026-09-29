@@ -2,104 +2,107 @@
 // 800A6374..800A6960
 #include "common.h"
 
-void func_800A6374(struct ShotObj* arg0)
+void peacock_missile_update(struct ShotObj* self)
 {
-    D_80109998[arg0->state](arg0);
+    peacock_missile_state_funcs[self->state](self);
 }
 
+// peacock_missile_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A63B0);
 
+// peacock_missile_home
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A6510);
 
-void func_800A6600(struct ShotObj* arg0)
+void peacock_missile_explode_start(struct ShotObj* self)
 {
-    if (SHOT_OBJECT(arg0->backref)->state == 2) {
-        arg0->unk50.data = NULL;
+    if (SHOT_OBJECT(self->backref)->state == 2) {
+        self->unk50.data = NULL;
     } else {
-        arg0->unk50.data = D_80109964;
+        self->unk50.data = peacock_missile_explosion_box;
     }
-    arg0->unk8C.word = 1;
-    arg0->unk5 = 2;
-    arg0->timer = 0x3C;
-    arg0->unk60 = 6;
-    func_80015D60(arg0, 0x1F);
+    self->unk8C.word = 1;
+    self->unk5 = 2;
+    self->timer = 0x3C;
+    self->unk60 = 6;
+    set_animation(self, 0x1F);
 }
 
+// peacock_missile_spawn_explosion
 INCLUDE_ASM("main/nonmatchings/shots/shot_42", func_800A666C);
 
-void func_800A6794(struct ShotObj* arg0)
+void peacock_missile_explode(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = --arg0->timer;
+    timer = --self->timer;
     if (timer == 0) {
-        arg0->state = 2;
+        self->state = 2;
         return;
     }
     if (!(timer & 3)) {
-        func_800A666C(arg0, 0x10, 0x10);
+        func_800A666C(self, 0x10, 0x10);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-s32 func_800A67FC(struct ShotObj* arg0)
+s32 peacock_missile_hit_target(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
-    weapon = arg0->unk7C;
+    weapon = self->unk7C;
     if (weapon->active == 0) {
-        arg0->unk5 = 1;
+        self->unk5 = 1;
     } else if (weapon->id != 0x17) {
-        arg0->unk5 = 1;
-    } else if (func_8002C160(COLLISION_OBJECT(arg0), COLLISION_OBJECT(weapon)) != 0) {
+        self->unk5 = 1;
+    } else if (func_8002C160(COLLISION_OBJECT(self), COLLISION_OBJECT(weapon)) != 0) {
         return 1;
     }
     return 0;
 }
 
-void func_800A6860(struct ShotObj* arg0)
+void peacock_missile_main(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_801099A4[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    peacock_missile_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
 
-    if (arg0->unk8C.word == 0) {
-        if ((s8)func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-            func_800AF808(arg0);
-            arg0->unk5 = 1;
+    if (self->unk8C.word == 0) {
+        if ((s8)func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            spawn_explosion(self);
+            self->unk5 = 1;
             return;
         }
 
-        if (func_8002BB80(arg0, &g_Player) != 0 || func_800A67FC(arg0) != 0) {
-            arg0->unk5 = 1;
+        if (func_8002BB80(self, &g_Player) != 0 || peacock_missile_hit_target(self) != 0) {
+            self->unk5 = 1;
             return;
         }
 
-        if (arg0->unk90.val != 0) {
-            arg0->unk90.val--;
+        if (self->unk90.val != 0) {
+            self->unk90.val--;
         } else {
-            arg0->unk5 = 1;
+            self->unk5 = 1;
             return;
         }
     }
 
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A6940(struct ShotObj* arg0)
+void peacock_missile_despawn(struct ShotObj* self)
 {
-    arg0->on_screen = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->on_screen = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-u8 D_8010995C[4] = { 0xF8, 0xF8, 0x0F, 0x0E };
+u8 peacock_missile_hit_box[4] = { 0xF8, 0xF8, 0x0F, 0x0E };
 
-u8 D_80109960[4] = { 0, 0, 4, 4 };
+u8 peacock_missile_terrain_box[4] = { 0, 0, 4, 4 };
 
-u8 D_80109964[4] = { 0xF6, 0xF6, 0x13, 0x13 };
+u8 peacock_missile_explosion_box[4] = { 0xF6, 0xF6, 0x13, 0x13 };
 
-s16 D_80109968[8][2] = {
+s16 peacock_missile_launch_offsets[8][2] = {
     { -0x18, 0 },
     { -0x16, -0x12 },
     { -0x0B, -0x20 },
@@ -110,18 +113,18 @@ s16 D_80109968[8][2] = {
     { 0x33, 2 },
 };
 
-u8 D_80109988[8] = { 0x10, 0x0E, 0x0C, 0x0A, 6, 4, 2, 0 };
+u8 peacock_missile_turn_steps_ccw[8] = { 0x10, 0x0E, 0x0C, 0x0A, 6, 4, 2, 0 };
 
-u8 D_80109990[8] = { 0, 2, 4, 6, 0x0A, 0x0C, 0x0E, 0x10 };
+u8 peacock_missile_turn_steps_cw[8] = { 0, 2, 4, 6, 0x0A, 0x0C, 0x0E, 0x10 };
 
-void (*D_80109998[])(struct ShotObj*) = {
+void (*peacock_missile_state_funcs[])(struct ShotObj*) = {
     func_800A63B0,
-    func_800A6860,
-    func_800A6940,
+    peacock_missile_main,
+    peacock_missile_despawn,
 };
 
-void (*D_801099A4[3])(struct ShotObj*) = {
+void (*peacock_missile_step_funcs[3])(struct ShotObj*) = {
     func_800A6510,
-    func_800A6600,
-    func_800A6794,
+    peacock_missile_explode_start,
+    peacock_missile_explode,
 };

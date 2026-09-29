@@ -3,130 +3,131 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80062D60(struct MainObj* arg0)
+void homing_orb_update(struct MainObj* self)
 {
-    D_800FEF74[arg0->state](arg0);
+    homing_orb_state_funcs[self->state](self);
 }
 
+// homing_orb_init
 INCLUDE_ASM("main/nonmatchings/mains/main_42", func_80062D9C);
 
-void func_80062E70(struct MainObj* arg0)
+void homing_orb_start_idle(struct MainObj* self)
 {
-    func_80015D60(arg0, 0);
+    set_animation(self, 0);
 }
 
-void func_80062E90(struct MainObj* arg0)
+void homing_orb_wait(struct MainObj* self)
 {
     s16 temp_v0;
     s32 temp_a2;
     s32 temp_v0_2;
 
-    temp_v0 = (u16)arg0->unk7C - 1;
-    arg0->unk7C = temp_v0;
+    temp_v0 = (u16)self->unk7C - 1;
+    self->unk7C = temp_v0;
     if (temp_v0 == 0) {
-        arg0->unk7C = 0x5A;
-        func_8002B93C(
-            MOVING_OBJECT(arg0),
-            func_8002B7DC(
-                OBJECT_HEADER(arg0),
+        self->unk7C = 0x5A;
+        set_velocity_from_angle(
+            MOVING_OBJECT(self),
+            angle_to_object(
+                OBJECT_HEADER(self),
                 OBJECT_HEADER(&g_Player))
                 & 0xFF);
 
-        temp_v0_2 = arg0->unk20;
-        temp_a2 = arg0->unk24;
-        arg0->unk20 = 0;
-        arg0->unk24 = 0;
-        arg0->unk28 = -((s32)(temp_v0_2 * 0x2D) >> 8);
-        arg0->unk2C = -((s32)(temp_a2 * 0x2D) >> 8);
-        func_80015D60(arg0, 1);
-        arg0->unk5 = 3;
-        arg0->ext.main_42.unk84 = 0;
-        arg0->ext.main_42.background_relative += 1;
+        temp_v0_2 = self->x_speed;
+        temp_a2 = self->y_speed;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = -((s32)(temp_v0_2 * 0x2D) >> 8);
+        self->gravity = -((s32)(temp_a2 * 0x2D) >> 8);
+        set_animation(self, 1);
+        self->unk5 = 3;
+        self->ext.main_42.unk84 = 0;
+        self->ext.main_42.background_relative += 1;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_80062F60(struct MainObj* arg0)
+void homing_orb_lunge(struct MainObj* self)
 {
     struct MiscObj* misc;
 
-    if (--arg0->unk7C == 0x5A) {
-        arg0->unk28 = -arg0->unk28;
-        arg0->unk2C = -arg0->unk2C;
+    if (--self->unk7C == 0x5A) {
+        self->x_accel = -self->x_accel;
+        self->gravity = -self->gravity;
     }
-    if (--arg0->unk7C == 0) {
-        if (arg0->ext.main_42.background_relative < 5) {
-            arg0->unk7C = 0xB4;
-            arg0->unk28 = 0;
-            arg0->unk2C = 0;
-            arg0->unk20 = 0;
-            arg0->unk24 = 0;
-            func_80015D60(arg0, 0);
-            arg0->unk5 = 2;
+    if (--self->unk7C == 0) {
+        if (self->ext.main_42.background_relative < 5) {
+            self->unk7C = 0xB4;
+            self->x_accel = 0;
+            self->gravity = 0;
+            self->x_speed = 0;
+            self->y_speed = 0;
+            set_animation(self, 0);
+            self->unk5 = 2;
         } else {
-            arg0->unk20 = 0;
-            arg0->unk24 = FIXED(2);
-            func_80015D60(arg0, 3);
-            arg0->unk5 = 4;
-            arg0->ext.main_42.unk84 = NULL;
+            self->x_speed = 0;
+            self->y_speed = FIXED(2);
+            set_animation(self, 3);
+            self->unk5 = 4;
+            self->ext.main_42.unk84 = NULL;
         }
     }
-    if (!(arg0->unk7C & 3)) {
-        misc = func_8002AE90(arg0->ext.main_42.unk84, 0);
+    if (!(self->unk7C & 3)) {
+        misc = func_8002AE90(self->ext.main_42.unk84, 0);
         if (misc != NULL) {
             misc->active = 0x41;
             misc->id = 0xE;
-            misc->ext.pointer.unk50 = arg0;
-            misc->x_pos.val = arg0->x_pos.val;
-            misc->y_pos.val = arg0->y_pos.val;
-            misc->unk2 = arg0->animation_step.fields.event;
-            arg0->ext.main_42.unk84 = misc;
+            misc->ext.pointer.unk50 = self;
+            misc->x_pos.val = self->x_pos.val;
+            misc->y_pos.val = self->y_pos.val;
+            misc->unk2 = self->animation_step.fields.event;
+            self->ext.main_42.unk84 = misc;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
-void func_800630AC(struct MainObj* arg0)
+void homing_orb_leave(struct MainObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002B718(arg0);
+    animate_object(self);
+    move_object(self);
 }
 
-void func_800630DC(struct MainObj* self)
+void homing_orb_main(struct MainObj* self)
 {
-    extern u8 D_800FEF6C[];
-    extern void (*D_800FEF80[])(struct MainObj*);
+    extern u8 homing_orb_debris[];
+    extern void (*homing_orb_step_funcs[])(struct MainObj*);
 
     if (func_8002DD04(self) < 0) {
         self->unk5 = 0;
         self->state += 1;
         self->unk42 &= 0x7FFF;
-        func_800AF808(BASE_OBJECT(self));
-        func_800C813C(6, D_800FEF6C, self);
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(6, homing_orb_debris, self);
         return;
     }
 
-    D_800FEF80[self->unk5](self);
+    homing_orb_step_funcs[self->unk5](self);
     func_8002D9BC(self);
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
         return;
     }
 
-    func_8002B0C8(OBJECT_HEADER(self));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800631A8(struct MainObj* arg0)
+void homing_orb_despawn(struct MainObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-s8 D_800FEE64[4] = { -6, -6, 11, 11 };
+s8 homing_orb_hurt_box[4] = { -6, -6, 11, 11 };
 
-s8 D_800FEE68[4] = { -10, -9, 17, 17 };
+s8 homing_orb_attack_box[4] = { -10, -9, 17, 17 };
 
-union AnimationStep D_800FEE6C[] = {
+union AnimationStep homing_orb_anim_0[] = {
     { 0x00010003 },
     { 0x01010003 },
     { 0x02010003 },
@@ -135,7 +136,7 @@ union AnimationStep D_800FEE6C[] = {
     { 0x04FB0001 },
 };
 
-union AnimationStep D_800FEE84[] = {
+union AnimationStep homing_orb_anim_1[] = {
     { 0x00010003 },
     { 0x14010102 },
     { 0x15010202 },
@@ -154,7 +155,7 @@ union AnimationStep D_800FEE84[] = {
     { 0x04F10E01 },
 };
 
-union AnimationStep D_800FEEC4[] = {
+union AnimationStep homing_orb_anim_2[] = {
     { 0x05010002 },
     { 0x06010002 },
     { 0x07010002 },
@@ -173,7 +174,7 @@ union AnimationStep D_800FEEC4[] = {
     { 0x13F10001 },
 };
 
-union AnimationStep D_800FEF04[] = {
+union AnimationStep homing_orb_anim_3[] = {
     { 0x00010002 },
     { 0x01010102 },
     { 0x02010202 },
@@ -192,34 +193,34 @@ union AnimationStep D_800FEF04[] = {
     { 0x04F10E01 },
 };
 
-union AnimationStep D_800FEF44[] = { { 0x21000001 } };
+union AnimationStep homing_orb_anim_4[] = { { 0x21000001 } };
 
-union AnimationStep D_800FEF48[] = { { 0x22000001 } };
+union AnimationStep homing_orb_anim_5[] = { { 0x22000001 } };
 
-union AnimationStep D_800FEF4C[] = { { 0x23000001 } };
+union AnimationStep homing_orb_anim_6[] = { { 0x23000001 } };
 
-union AnimationStep* D_800FEF50[7] = {
-    D_800FEE6C,
-    D_800FEE84,
-    D_800FEEC4,
-    D_800FEF04,
-    D_800FEF44,
-    D_800FEF48,
-    D_800FEF4C,
+union AnimationStep* homing_orb_animations[7] = {
+    homing_orb_anim_0,
+    homing_orb_anim_1,
+    homing_orb_anim_2,
+    homing_orb_anim_3,
+    homing_orb_anim_4,
+    homing_orb_anim_5,
+    homing_orb_anim_6,
 };
 
-u8 D_800FEF6C[8] = { 4, 5, 6, 4, 5, 6, 0, 0 };
+u8 homing_orb_debris[8] = { 4, 5, 6, 4, 5, 6, 0, 0 };
 
-void (*D_800FEF74[])(struct MainObj*) = {
+void (*homing_orb_state_funcs[])(struct MainObj*) = {
     func_80062D9C,
-    func_800630DC,
-    func_800631A8,
+    homing_orb_main,
+    homing_orb_despawn,
 };
 
-void (*D_800FEF80[5])() = {
-    func_8009216C,
-    func_80062E70,
-    func_80062E90,
-    func_80062F60,
-    func_800630AC,
+void (*homing_orb_step_funcs[5])() = {
+    enemy_hit_reaction,
+    homing_orb_start_idle,
+    homing_orb_wait,
+    homing_orb_lunge,
+    homing_orb_leave,
 };

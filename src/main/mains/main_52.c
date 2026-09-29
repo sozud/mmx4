@@ -3,235 +3,238 @@
 #include "common.h"
 #include "func_tables.h"
 
-extern u8 D_800FFF9C[];
-extern void (*D_800FFFAC[])(struct MainObj*);
+extern u8 jump_shooter_debris[];
+extern void (*jump_shooter_step_funcs[])(struct MainObj*);
 
-void func_8006A50C(struct MainObj* arg0)
+void jump_shooter_update(struct MainObj* self)
 {
-    D_800FFFA0[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    jump_shooter_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
+// jump_shooter_init
 INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006A55C);
 
-void func_8006A638(struct MainObj* arg0)
+void jump_shooter_main(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FFFAC[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    arg0->ext.main_52.saved_unk5 = arg0->unk5;
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(arg0);
-        func_800C813C(3, &D_800FFF9C, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0);
-    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    jump_shooter_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    self->ext.main_52.saved_unk5 = self->unk5;
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(self);
+        spawn_debris(3, &jump_shooter_debris, self);
+        drop_item(BASE_OBJECT(self), 0);
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
         return;
     }
-    arg0->state = 2;
+    self->state = 2;
 }
 
-void func_8006A70C(struct MainObj* arg0)
+void jump_shooter_despawn(struct MainObj* self)
 {
-    arg0->ext.raw[0] = 0;
-    arg0->ext.raw[1] = 0;
-    arg0->ext.raw[2] = 0;
-    arg0->ext.raw[3] = 0;
-    arg0->ext.raw[4] = 0;
-    arg0->ext.raw[5] = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->ext.raw[0] = 0;
+    self->ext.raw[1] = 0;
+    self->ext.raw[2] = 0;
+    self->ext.raw[3] = 0;
+    self->ext.raw[4] = 0;
+    self->ext.raw[5] = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8006A740(struct MainObj* arg0)
+void jump_shooter_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_52.saved_unk5;
+    self->unk5 = self->ext.main_52.saved_unk5;
 }
 
-void func_8006A74C(struct MainObj* arg0)
+void jump_shooter_fire(struct MainObj* self)
 {
-    D_800FFFC0[arg0->unk6](arg0);
+    jump_shooter_fire_funcs[self->unk6](self);
 }
 
-void func_8006A788(struct MainObj* arg0)
+void jump_shooter_fire_aim(struct MainObj* self)
 {
-    func_8006AE50(ANIMATED_OBJECT(arg0));
-    func_8006AE80(arg0);
-    if (arg0->ext.main_52.unk80 == 0) {
-        func_80015D60(arg0, arg0->ext.main_52.unk88 + 0x12);
+    jump_shooter_face_player(ANIMATED_OBJECT(self));
+    func_8006AE80(self);
+    if (self->ext.main_52.unk80 == 0) {
+        set_animation(self, self->ext.main_52.unk88 + 0x12);
     } else {
-        func_80015D60(arg0, arg0->ext.main_52.unk88 + 0x17);
+        set_animation(self, self->ext.main_52.unk88 + 0x17);
     }
-    arg0->unk6 = 1;
+    self->unk6 = 1;
 }
 
-void func_8006A7F0(struct MainObj* arg0)
+void jump_shooter_fire_ready(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk6 = 2;
-        arg0->unk7C = 2;
-        arg0->unk7E = 0xC;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk6 = 2;
+        self->unk7C = 2;
+        self->unk7E = 0xC;
     }
 }
 
-void func_8006A83C(struct MainObj* arg0)
+void jump_shooter_fire_shots(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7E != 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7E != 0) {
         return;
     }
-    if (arg0->ext.main_52.unk80 == 0) {
-        func_80015D60(arg0, arg0->ext.main_52.unk88 + 2);
+    if (self->ext.main_52.unk80 == 0) {
+        set_animation(self, self->ext.main_52.unk88 + 2);
     } else {
-        func_80015D60(arg0, arg0->ext.main_52.unk88 + 7);
+        set_animation(self, self->ext.main_52.unk88 + 7);
     }
     shot = find_free_shot_obj();
     if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0x1B;
-        shot->unk2 = arg0->ext.main_52.unk88 + arg0->ext.main_52.unk80 * 5;
-        shot->unk40 = arg0->unk40;
-        shot->unk42 = arg0->unk42;
-        shot->animation_table = (u32**)arg0->animation_table;
-        shot->unk3C = (void*)arg0->sprite_frames;
-        shot->bg_offset = arg0->bg_offset;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
-        shot->unk15 = arg0->unk15;
-        func_8002B93C(MOVING_OBJECT(shot), arg0->ext.main_52.unk84);
+        shot->unk2 = self->ext.main_52.unk88 + self->ext.main_52.unk80 * 5;
+        shot->unk40 = self->unk40;
+        shot->unk42 = self->unk42;
+        shot->animation_table = (u32**)self->animation_table;
+        shot->unk3C = (void*)self->sprite_frames;
+        shot->bg_offset = self->bg_offset;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
+        shot->unk15 = self->unk15;
+        set_velocity_from_angle(MOVING_OBJECT(shot), self->ext.main_52.unk84);
         shot->state = 0;
     }
-    if (--arg0->unk7C == 0) {
-        arg0->unk7C = 0x1E;
-        arg0->unk6 = 3;
-        arg0->ext.main_52.unk8C = 0;
+    if (--self->unk7C == 0) {
+        self->unk7C = 0x1E;
+        self->unk6 = 3;
+        self->ext.main_52.unk8C = 0;
     } else {
-        arg0->unk7E = 0x10;
+        self->unk7E = 0x10;
     }
 }
 
-void func_8006A998(struct MainObj* arg0)
+void jump_shooter_fire_end(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->unk7C == 0) {
-        arg0->ext.main_52.unk8C = 0;
-        arg0->unk7C = 0x5A;
-        if (arg0->ext.main_52.unk80 == 0) {
-            arg0->unk5 = 3;
-            arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        self->ext.main_52.unk8C = 0;
+        self->unk7C = 0x5A;
+        if (self->ext.main_52.unk80 == 0) {
+            self->unk5 = 3;
+            self->unk6 = 0;
         } else {
-            arg0->unk2C = FIXED(0.25);
-            arg0->unk5 = 4;
-            arg0->unk20 = 0;
-            arg0->unk6 = 1;
+            self->gravity = FIXED(0.25);
+            self->unk5 = 4;
+            self->x_speed = 0;
+            self->unk6 = 1;
         }
     }
 }
 
-void func_8006AA18(struct MainObj* arg0)
+void jump_shooter_walk(struct MainObj* self)
 {
-    D_800FFFD0[arg0->unk6](arg0);
+    jump_shooter_walk_funcs[self->unk6](self);
 }
 
-void func_8006AA54(struct MainObj* arg0)
+void jump_shooter_walk_start(struct MainObj* self)
 {
-    func_8006AE50(ANIMATED_OBJECT(arg0));
-    if (arg0->unk15 == 0) {
-        arg0->unk20 = FIXED(-1.8);
+    jump_shooter_face_player(ANIMATED_OBJECT(self));
+    if (self->unk15 == 0) {
+        self->x_speed = FIXED(-1.8);
     } else {
-        arg0->unk20 = FIXED(1.8);
+        self->x_speed = FIXED(1.8);
     }
-    func_80015D60(arg0, 0);
-    arg0->unk6 = 1;
+    set_animation(self, 0);
+    self->unk6 = 1;
 }
 
+// jump_shooter_walk_move
 INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006AAB4);
 
-void func_8006AC8C(struct MainObj* arg0)
+void jump_shooter_jump(struct MainObj* self)
 {
-    D_800FFFD8[arg0->unk6](arg0);
+    jump_shooter_jump_funcs[self->unk6](self);
 }
 
-void func_8006ACC8(struct MainObj* arg0)
+void jump_shooter_jump_launch(struct MainObj* self)
 {
     s8 event;
     s32 variant;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    event = arg0->animation_step.fields.event;
+    animate_object(ANIMATED_OBJECT(self));
+    event = self->animation_step.fields.event;
     if (event == 2) {
-        variant = arg0->ext.main_52.unk8C;
-        arg0->ext.main_52.unk80 = 1;
-        arg0->unk24 = FIXED(6);
-        arg0->unk2C = FIXED(0.25);
+        variant = self->ext.main_52.unk8C;
+        self->ext.main_52.unk80 = 1;
+        self->y_speed = FIXED(6);
+        self->gravity = FIXED(0.25);
         if (variant == 0) {
-            if (arg0->unk15 != 0) {
-                arg0->unk20 = FIXED(1.8);
+            if (self->unk15 != 0) {
+                self->x_speed = FIXED(1.8);
             } else {
-                arg0->unk20 = FIXED(-1.8);
+                self->x_speed = FIXED(-1.8);
             }
         } else if (variant == 1) {
-            arg0->unk20 = 0;
+            self->x_speed = 0;
         } else if (variant == event) {
-            if (arg0->unk15 == 0) {
-                arg0->unk20 = FIXED(1.8);
+            if (self->unk15 == 0) {
+                self->x_speed = FIXED(1.8);
             } else {
-                arg0->unk20 = FIXED(-1.8);
+                self->x_speed = FIXED(-1.8);
             }
         }
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        arg0->unk6 = 1;
+        move_with_gravity(ANIMATED_OBJECT(self));
+        self->unk6 = 1;
     }
 }
 
-void func_8006AD84(struct MainObj* arg0)
+void jump_shooter_jump_air(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 == 0 && arg0->ext.main_52.unk8C != 0) {
-        arg0->unk2C = 0;
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_speed == 0 && self->ext.main_52.unk8C != 0) {
+        self->gravity = 0;
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
-    if (arg0->unk70 & 8) {
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        func_80015D60(arg0, 0x11);
-        arg0->unk6 = 2;
-    }
-}
-
-void func_8006AE0C(struct MainObj* arg0)
-{
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->ext.main_52.unk80 = 0;
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    if (self->collision_flags & 8) {
+        self->y_speed = 0;
+        self->gravity = 0;
+        set_animation(self, 0x11);
+        self->unk6 = 2;
     }
 }
 
-void func_8006AE50(struct AnimatedObj* arg0)
+void jump_shooter_jump_land(struct MainObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    animate_object(self);
+    if (self->animation_step.fields.event != 0) {
+        self->ext.main_52.unk80 = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
+    }
+}
+
+void jump_shooter_face_player(struct AnimatedObj* self)
+{
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
+// jump_shooter_aim_at_player
 INCLUDE_ASM("main/nonmatchings/mains/main_52", func_8006AE80);
 
-struct Unk_unk68 D_800FFDD0 = { -14, -19, 25, 33 };
+struct Unk_unk68 jump_shooter_hurt_box = { -14, -19, 25, 33 };
 
-struct Unk_unk68 D_800FFDD4 = { -10, -18, 16, 30 };
+struct Unk_unk68 jump_shooter_attack_box = { -10, -18, 16, 30 };
 
-struct Unk_unk68 D_800FFDD8 = { 0, 0, 6, 15 };
+struct Unk_unk68 jump_shooter_terrain_box = { 0, 0, 6, 15 };
 
-union AnimationStep D_800FFDDC[] = {
+union AnimationStep jump_shooter_anim_0[] = {
     { 0x0F010008 },
     { 0x10010008 },
     { 0x11010007 },
@@ -240,7 +243,7 @@ union AnimationStep D_800FFDDC[] = {
     { 0x14FB0107 },
 };
 
-union AnimationStep D_800FFDF4[] = {
+union AnimationStep jump_shooter_anim_1[] = {
     { 0x00010008 },
     { 0x01010006 },
     { 0x02010003 },
@@ -249,118 +252,118 @@ union AnimationStep D_800FFDF4[] = {
     { 0x04000106 },
 };
 
-union AnimationStep D_800FFE0C[] = {
+union AnimationStep jump_shooter_anim_2[] = {
     { 0x16010001 },
     { 0x15010006 },
     { 0x15000101 },
 };
 
-union AnimationStep D_800FFE18[] = {
+union AnimationStep jump_shooter_anim_3[] = {
     { 0x18010001 },
     { 0x17010006 },
     { 0x17000101 },
 };
 
-union AnimationStep D_800FFE24[] = {
+union AnimationStep jump_shooter_anim_4[] = {
     { 0x1A010001 },
     { 0x19010006 },
     { 0x19000101 },
 };
 
-union AnimationStep D_800FFE30[] = {
+union AnimationStep jump_shooter_anim_5[] = {
     { 0x1C010001 },
     { 0x1B010006 },
     { 0x1B000101 },
 };
 
-union AnimationStep D_800FFE3C[] = {
+union AnimationStep jump_shooter_anim_6[] = {
     { 0x1E010001 },
     { 0x1D010006 },
     { 0x1D000101 },
 };
 
-union AnimationStep D_800FFE48[] = {
+union AnimationStep jump_shooter_anim_7[] = {
     { 0x06010001 },
     { 0x05010006 },
     { 0x05000101 },
 };
 
-union AnimationStep D_800FFE54[] = {
+union AnimationStep jump_shooter_anim_8[] = {
     { 0x08010001 },
     { 0x07010006 },
     { 0x07000101 },
 };
 
-union AnimationStep D_800FFE60[] = {
+union AnimationStep jump_shooter_anim_9[] = {
     { 0x0A010001 },
     { 0x09010006 },
     { 0x09000101 },
 };
 
-union AnimationStep D_800FFE6C[] = {
+union AnimationStep jump_shooter_anim_10[] = {
     { 0x0C010001 },
     { 0x0B010006 },
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FFE78[] = {
+union AnimationStep jump_shooter_anim_11[] = {
     { 0x0E010001 },
     { 0x0D010006 },
     { 0x0D000101 },
 };
 
-union AnimationStep D_800FFE84[] = {
+union AnimationStep jump_shooter_anim_12[] = {
     { 0x1F010001 },
     { 0x20010001 },
     { 0x21FE0001 },
 };
 
-union AnimationStep D_800FFE90[] = {
+union AnimationStep jump_shooter_anim_13[] = {
     { 0x22000101 },
 };
 
-union AnimationStep D_800FFE94[] = {
+union AnimationStep jump_shooter_anim_14[] = {
     { 0x23000101 },
 };
 
-union AnimationStep D_800FFE98[] = {
+union AnimationStep jump_shooter_anim_15[] = {
     { 0x24000101 },
 };
 
-union AnimationStep D_800FFE9C[] = {
+union AnimationStep jump_shooter_anim_16[] = {
     { 0x25000101 },
 };
 
-union AnimationStep D_800FFEA0[] = {
+union AnimationStep jump_shooter_anim_17[] = {
     { 0x03010006 },
     { 0x01010005 },
     { 0x01000101 },
 };
 
-union AnimationStep D_800FFEAC[] = {
+union AnimationStep jump_shooter_anim_18[] = {
     { 0x17010002 },
     { 0x15010001 },
     { 0x15000101 },
 };
 
-union AnimationStep D_800FFEB8[] = {
+union AnimationStep jump_shooter_anim_19[] = {
     { 0x17000101 },
 };
 
-union AnimationStep D_800FFEBC[] = {
+union AnimationStep jump_shooter_anim_20[] = {
     { 0x17010002 },
     { 0x19010001 },
     { 0x19000101 },
 };
 
-union AnimationStep D_800FFEC8[] = {
+union AnimationStep jump_shooter_anim_21[] = {
     { 0x17010002 },
     { 0x19010002 },
     { 0x1B010001 },
     { 0x1B000101 },
 };
 
-union AnimationStep D_800FFED8[] = {
+union AnimationStep jump_shooter_anim_22[] = {
     { 0x17010002 },
     { 0x19010002 },
     { 0x1B010002 },
@@ -368,30 +371,30 @@ union AnimationStep D_800FFED8[] = {
     { 0x1D000101 },
 };
 
-union AnimationStep D_800FFEEC[] = {
+union AnimationStep jump_shooter_anim_23[] = {
     { 0x07010002 },
     { 0x05010001 },
     { 0x05000101 },
 };
 
-union AnimationStep D_800FFEF8[] = {
+union AnimationStep jump_shooter_anim_24[] = {
     { 0x07000101 },
 };
 
-union AnimationStep D_800FFEFC[] = {
+union AnimationStep jump_shooter_anim_25[] = {
     { 0x07010002 },
     { 0x09010001 },
     { 0x09000101 },
 };
 
-union AnimationStep D_800FFF08[] = {
+union AnimationStep jump_shooter_anim_26[] = {
     { 0x07010002 },
     { 0x09010002 },
     { 0x0B010001 },
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FFF18[] = {
+union AnimationStep jump_shooter_anim_27[] = {
     { 0x07010002 },
     { 0x09010002 },
     { 0x0B010002 },
@@ -399,67 +402,67 @@ union AnimationStep D_800FFF18[] = {
     { 0x0D000101 },
 };
 
-union AnimationStep* D_800FFF2C[28] = {
-    D_800FFDDC,
-    D_800FFDF4,
-    D_800FFE0C,
-    D_800FFE18,
-    D_800FFE24,
-    D_800FFE30,
-    D_800FFE3C,
-    D_800FFE48,
-    D_800FFE54,
-    D_800FFE60,
-    D_800FFE6C,
-    D_800FFE78,
-    D_800FFE84,
-    D_800FFE90,
-    D_800FFE94,
-    D_800FFE98,
-    D_800FFE9C,
-    D_800FFEA0,
-    D_800FFEAC,
-    D_800FFEB8,
-    D_800FFEBC,
-    D_800FFEC8,
-    D_800FFED8,
-    D_800FFEEC,
-    D_800FFEF8,
-    D_800FFEFC,
-    D_800FFF08,
-    D_800FFF18,
+union AnimationStep* jump_shooter_animations[28] = {
+    jump_shooter_anim_0,
+    jump_shooter_anim_1,
+    jump_shooter_anim_2,
+    jump_shooter_anim_3,
+    jump_shooter_anim_4,
+    jump_shooter_anim_5,
+    jump_shooter_anim_6,
+    jump_shooter_anim_7,
+    jump_shooter_anim_8,
+    jump_shooter_anim_9,
+    jump_shooter_anim_10,
+    jump_shooter_anim_11,
+    jump_shooter_anim_12,
+    jump_shooter_anim_13,
+    jump_shooter_anim_14,
+    jump_shooter_anim_15,
+    jump_shooter_anim_16,
+    jump_shooter_anim_17,
+    jump_shooter_anim_18,
+    jump_shooter_anim_19,
+    jump_shooter_anim_20,
+    jump_shooter_anim_21,
+    jump_shooter_anim_22,
+    jump_shooter_anim_23,
+    jump_shooter_anim_24,
+    jump_shooter_anim_25,
+    jump_shooter_anim_26,
+    jump_shooter_anim_27,
 };
 
-u8 D_800FFF9C[4] = { 13, 14, 15, 16 };
+u8 jump_shooter_debris[4] = { 13, 14, 15, 16 };
 
-void (*D_800FFFA0[3])() = {
+void (*jump_shooter_state_funcs[3])() = {
     func_8006A55C,
-    func_8006A638,
-    func_8006A70C,
+    jump_shooter_main,
+    jump_shooter_despawn,
 };
 
-void (*D_800FFFAC[5])() = {
-    func_8009216C,
-    func_8006A740,
-    func_8006A74C,
-    func_8006AA18,
-    func_8006AC8C,
+void (*jump_shooter_step_funcs[5])() = {
+    enemy_hit_reaction,
+    jump_shooter_resume_step,
+    jump_shooter_fire,
+    jump_shooter_walk,
+    jump_shooter_jump,
 };
 
-void (*D_800FFFC0[4])(struct MainObj*) = {
-    func_8006A788,
-    func_8006A7F0,
-    func_8006A83C,
-    func_8006A998,
+void (*jump_shooter_fire_funcs[4])(struct MainObj*) = {
+    jump_shooter_fire_aim,
+    jump_shooter_fire_ready,
+    jump_shooter_fire_shots,
+    jump_shooter_fire_end,
 };
 
-void (*D_800FFFD0[2])(struct MainObj*) = {
-    func_8006AA54,
+void (*jump_shooter_walk_funcs[2])(struct MainObj*) = {
+    jump_shooter_walk_start,
     func_8006AAB4,
 };
 
-void (*D_800FFFD8[3])(struct MainObj*) = {
-    func_8006ACC8,
-    func_8006AD84,
-    func_8006AE0C,
+void (*jump_shooter_jump_funcs[3])(struct MainObj*) = {
+    jump_shooter_jump_launch,
+    jump_shooter_jump_air,
+    jump_shooter_jump_land,
 };

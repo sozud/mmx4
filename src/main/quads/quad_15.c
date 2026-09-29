@@ -2,7 +2,7 @@
 // 800D7CEC..800D802C
 #include "common.h"
 
-void func_800D7CEC(struct QuadObj* arg0)
+void sigma_beam_init(struct QuadObj* arg0)
 {
     struct BaseObj* obj = arg0->unk5C;
     arg0->state++;
@@ -22,7 +22,7 @@ void func_800D7CEC(struct QuadObj* arg0)
     arg0->unk30.i.hi = 0;
 }
 
-void func_800D7D60(struct QuadObj* arg0)
+void sigma_beam_extend(struct QuadObj* arg0)
 {
     arg0->unk28.i.hi += 4;
     arg0->unk30.i.hi += 4;
@@ -32,7 +32,7 @@ void func_800D7D60(struct QuadObj* arg0)
     }
 }
 
-void func_800D7DA4(struct QuadObj* arg0)
+void sigma_beam_sweep(struct QuadObj* arg0)
 {
     struct ShotObj* obj;
     if (--arg0->ext.unk_ext4.unk3C == 0) {
@@ -53,11 +53,11 @@ void func_800D7DA4(struct QuadObj* arg0)
             obj->unk7C = arg0;
         }
     }
-    arg0->unk24.i.hi += D_8010FE38[arg0->unk2];
-    arg0->unk2C.i.hi += D_8010FE38[arg0->unk2];
+    arg0->unk24.i.hi += sigma_beam_sweep_speeds[arg0->unk2];
+    arg0->unk2C.i.hi += sigma_beam_sweep_speeds[arg0->unk2];
 }
 
-void func_800D7EA8(struct QuadObj* arg0)
+void sigma_beam_fade(struct QuadObj* arg0)
 {
     struct ShotObj* temp_v0;
 
@@ -83,35 +83,35 @@ void func_800D7EA8(struct QuadObj* arg0)
     }
 }
 
-void func_800D7F64(struct QuadObj* arg0)
+void sigma_beam_main(struct QuadObj* arg0)
 {
-    D_8010FE3C[arg0->unk5](arg0);
+    sigma_beam_step_funcs[arg0->unk5](arg0);
     quad_is_on_screen(arg0);
     if (arg0->unk5C->state == 2) {
         arg0->state = 2;
     }
 }
 
-void func_800D7FD0(struct QuadObj* arg0)
+void sigma_beam_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D7FF0(struct QuadObj* arg0)
+void sigma_beam_update(struct QuadObj* arg0)
 {
-    D_8010FE48[arg0->state](arg0);
+    sigma_beam_state_funcs[arg0->state](arg0);
 }
 
-s8 D_8010FE38[4] = { -6, -3, 6, 3 };
+s8 sigma_beam_sweep_speeds[4] = { -6, -3, 6, 3 };
 
-void (*D_8010FE3C[])(struct QuadObj*) = {
-    func_800D7D60,
-    func_800D7DA4,
-    func_800D7EA8,
+void (*sigma_beam_step_funcs[])(struct QuadObj*) = {
+    sigma_beam_extend,
+    sigma_beam_sweep,
+    sigma_beam_fade,
 };
 
-void (*D_8010FE48[])(struct QuadObj*) = {
-    func_800D7CEC,
-    func_800D7F64,
-    func_800D7FD0,
+void (*sigma_beam_state_funcs[])(struct QuadObj*) = {
+    sigma_beam_init,
+    sigma_beam_main,
+    sigma_beam_despawn,
 };

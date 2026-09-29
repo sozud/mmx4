@@ -3,47 +3,50 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005A4CC(struct MainObj* arg0)
+void pod_spawner_update(struct MainObj* self)
 {
-    if (arg0->unk2 >= 0) {
-        D_800FD838[arg0->state](arg0);
+    if (self->unk2 >= 0) {
+        pod_spawner_state_funcs[self->state](self);
     } else {
-        D_800FD848[arg0->state](arg0);
+        pod_spawner_copy_state_funcs[self->state](self);
     }
 }
 
+// pod_spawner_init
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A538);
 
-void func_8005A6C0(struct MainObj* arg0)
+void pod_spawner_main(struct MainObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FD858[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x68, 0x68) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x68, 0x68);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    pod_spawner_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x68, 0x68) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x68, 0x68);
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_8005A750(struct MainObj* arg0)
+void pod_spawner_idle(struct MainObj* self)
 {
 }
 
+// pod_spawner_spawn
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005A758);
 
-void func_8005AA0C(struct MainObj* arg0)
+void pod_spawner_wait(struct MainObj* self)
 {
 }
 
+// pod_spawner_step_4
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AA14);
 
-u8 func_8005AB34(struct MainObj* arg0)
+u8 pod_spawner_player_quadrant(struct MainObj* self)
 {
     s32 state;
 
-    state = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+    state = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     if ((u8)(state - 4) >= 24) {
         state = 1;
     }
@@ -59,9 +62,10 @@ u8 func_8005AB34(struct MainObj* arg0)
     return state;
 }
 
+// pod_spawner_find_slot
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005ABC0);
 
-void func_8005ACA0(struct MainObj* arg0)
+void pod_spawner_despawn(struct MainObj* self)
 {
     struct Main29Ext* context;
     struct Main29Record* record;
@@ -74,45 +78,49 @@ void func_8005ACA0(struct MainObj* arg0)
         record->unk4 = 2;
     }
     target->unk4 = 2;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
+// pod_spawner_state_3
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AD00);
 
-void func_8005AEB4(struct MainObj* arg0)
+void pod_spawner_copy_init(struct MainObj* self)
 {
-    struct MainObj* source = arg0->ext.main_29.source;
+    struct MainObj* source = self->ext.main_29.source;
 
-    arg0->state = 1;
-    arg0->unk5 = 2;
-    arg0->unk6 = 0;
-    arg0->on_screen = 1;
-    arg0->x_pos.val = source->x_pos.val;
-    arg0->y_pos.val = source->y_pos.val;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->animation_table = source->animation_table;
-    __builtin_memcpy(&arg0->animation_speed, &source->animation_speed, sizeof(u32));
-    arg0->sprite_frames = source->sprite_frames;
-    arg0->unk40 = source->unk40;
-    arg0->unk42 = source->unk42;
-    arg0->unk16 = 7;
-    arg0->unk7C = 0;
-    arg0->ext.main_29.unk94 = 0;
-    func_80015D60(arg0, 5);
+    self->state = 1;
+    self->unk5 = 2;
+    self->unk6 = 0;
+    self->on_screen = 1;
+    self->x_pos.val = source->x_pos.val;
+    self->y_pos.val = source->y_pos.val;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->animation_table = source->animation_table;
+    __builtin_memcpy(&self->animation_speed, &source->animation_speed, sizeof(u32));
+    self->sprite_frames = source->sprite_frames;
+    self->unk40 = source->unk40;
+    self->unk42 = source->unk42;
+    self->unk16 = 7;
+    self->unk7C = 0;
+    self->ext.main_29.unk94 = 0;
+    set_animation(self, 5);
 }
 
+// pod_spawner_copy_main
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005AF5C);
 
+// pod_spawner_copy_state_2
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005B24C);
 
+// pod_spawner_copy_state_3
 INCLUDE_ASM("main/nonmatchings/mains/main_29", func_8005B2C8);
 
-union AnimationStep D_800FD658[] = {
+union AnimationStep pod_spawner_anim_0[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FD65C[] = {
+union AnimationStep pod_spawner_anim_1[] = {
     { 0x00010002 },
     { 0x01010002 },
     { 0x02010002 },
@@ -126,7 +134,7 @@ union AnimationStep D_800FD65C[] = {
     { 0x00000002 },
 };
 
-union AnimationStep D_800FD688[] = {
+union AnimationStep pod_spawner_anim_2[] = {
     { 0x00010003 },
     { 0x06010003 },
     { 0x07010003 },
@@ -134,14 +142,14 @@ union AnimationStep D_800FD688[] = {
     { 0x09000003 },
 };
 
-union AnimationStep D_800FD69C[] = {
+union AnimationStep pod_spawner_anim_4[] = {
     { 0x08010003 },
     { 0x07010003 },
     { 0x06010003 },
     { 0x00000003 },
 };
 
-union AnimationStep D_800FD6AC[] = {
+union AnimationStep pod_spawner_anim_3[] = {
     { 0x0A010001 },
     { 0x14010001 },
     { 0x0B010001 },
@@ -152,7 +160,7 @@ union AnimationStep D_800FD6AC[] = {
     { 0x0E000001 },
 };
 
-union AnimationStep D_800FD6CC[] = {
+union AnimationStep pod_spawner_anim_5[] = {
     { 0x0F010001 },
     { 0x0E010001 },
     { 0x10010001 },
@@ -171,7 +179,7 @@ union AnimationStep D_800FD6CC[] = {
     { 0x0EF10001 },
 };
 
-union AnimationStep D_800FD70C[] = {
+union AnimationStep pod_spawner_anim_6[] = {
     { 0x20010102 },
     { 0x1F010202 },
     { 0x1E010302 },
@@ -180,7 +188,7 @@ union AnimationStep D_800FD70C[] = {
     { 0x1B000402 },
 };
 
-union AnimationStep D_800FD724[] = {
+union AnimationStep pod_spawner_anim_7[] = {
     { 0x15010002 },
     { 0x16010002 },
     { 0x17010002 },
@@ -191,7 +199,7 @@ union AnimationStep D_800FD724[] = {
     { 0x18F90002 },
 };
 
-union AnimationStep D_800FD744[] = {
+union AnimationStep pod_spawner_anim_8[] = {
     { 0x1B010002 },
     { 0x1C010002 },
     { 0x1D010002 },
@@ -200,7 +208,7 @@ union AnimationStep D_800FD744[] = {
     { 0x20000002 },
 };
 
-union AnimationStep D_800FD75C[] = {
+union AnimationStep pod_spawner_anim_9[] = {
     { 0x2C010502 },
     { 0x2B010602 },
     { 0x2A010702 },
@@ -209,7 +217,7 @@ union AnimationStep D_800FD75C[] = {
     { 0x27000802 },
 };
 
-union AnimationStep D_800FD774[] = {
+union AnimationStep pod_spawner_anim_10[] = {
     { 0x21010002 },
     { 0x22010002 },
     { 0x23010002 },
@@ -220,7 +228,7 @@ union AnimationStep D_800FD774[] = {
     { 0x24F90002 },
 };
 
-union AnimationStep D_800FD794[] = {
+union AnimationStep pod_spawner_anim_11[] = {
     { 0x27010002 },
     { 0x28010002 },
     { 0x29010002 },
@@ -229,7 +237,7 @@ union AnimationStep D_800FD794[] = {
     { 0x2C000002 },
 };
 
-union AnimationStep D_800FD7AC[] = {
+union AnimationStep pod_spawner_anim_12[] = {
     { 0x3A010902 },
     { 0x39010A02 },
     { 0x38010B02 },
@@ -238,7 +246,7 @@ union AnimationStep D_800FD7AC[] = {
     { 0x35000C02 },
 };
 
-union AnimationStep D_800FD7C4[] = {
+union AnimationStep pod_spawner_anim_13[] = {
     { 0x2F010002 },
     { 0x30010002 },
     { 0x31010002 },
@@ -249,34 +257,34 @@ union AnimationStep D_800FD7C4[] = {
     { 0x31F90002 },
 };
 
-union AnimationStep D_800FD7E4[] = {
+union AnimationStep pod_spawner_anim_14[] = {
     { 0x2D000001 },
 };
 
-union AnimationStep D_800FD7E8[] = {
+union AnimationStep pod_spawner_anim_15[] = {
     { 0x2E000001 },
 };
 
-union AnimationStep* D_800FD7EC[] = {
-    D_800FD658,
-    D_800FD65C,
-    D_800FD688,
-    D_800FD6AC,
-    D_800FD69C,
-    D_800FD6CC,
-    D_800FD70C,
-    D_800FD724,
-    D_800FD744,
-    D_800FD75C,
-    D_800FD774,
-    D_800FD794,
-    D_800FD7AC,
-    D_800FD7C4,
-    D_800FD7E4,
-    D_800FD7E8,
+union AnimationStep* pod_spawner_animations[] = {
+    pod_spawner_anim_0,
+    pod_spawner_anim_1,
+    pod_spawner_anim_2,
+    pod_spawner_anim_3,
+    pod_spawner_anim_4,
+    pod_spawner_anim_5,
+    pod_spawner_anim_6,
+    pod_spawner_anim_7,
+    pod_spawner_anim_8,
+    pod_spawner_anim_9,
+    pod_spawner_anim_10,
+    pod_spawner_anim_11,
+    pod_spawner_anim_12,
+    pod_spawner_anim_13,
+    pod_spawner_anim_14,
+    pod_spawner_anim_15,
 };
 
-u8 D_800FD82C[4] = { 0x0E, 0x0F, 0, 0 };
+u8 pod_spawner_debris[4] = { 0x0E, 0x0F, 0, 0 };
 
 struct Unk_unk68 D_800FD830[] = {
     { -20, -18, 0x27, 0x24 },
@@ -286,25 +294,25 @@ struct Unk_unk68 D_800FD834[] = {
     { -13, -14, 0x1A, 0x1B },
 };
 
-void (*D_800FD838[])() = {
+void (*pod_spawner_state_funcs[])() = {
     func_8005A538,
-    func_8005A6C0,
-    func_8005ACA0,
+    pod_spawner_main,
+    pod_spawner_despawn,
     func_8005AD00,
 };
 
-void (*D_800FD848[])(struct MainObj*) = {
-    func_8005AEB4,
+void (*pod_spawner_copy_state_funcs[])(struct MainObj*) = {
+    pod_spawner_copy_init,
     func_8005AF5C,
     func_8005B24C,
     func_8005B2C8,
 };
 
-void (*D_800FD858[])(struct MainObj*) = {
-    func_8009216C,
-    func_8005A750,
+void (*pod_spawner_step_funcs[])(struct MainObj*) = {
+    enemy_hit_reaction,
+    pod_spawner_idle,
     func_8005A758,
-    func_8005AA0C,
+    pod_spawner_wait,
     func_8005AA14,
 };
 

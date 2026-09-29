@@ -314,6 +314,7 @@ void func_80022138(void)
     }
 }
 
+// start_dialogue
 INCLUDE_ASM("main/nonmatchings/125BC", func_8002217C);
 
 void func_8002328C(struct AbcObj*);
@@ -421,7 +422,7 @@ void func_80022730(struct AbcObj* arg0)
                         .palette_shift_value
                         = 0;
 
-                    func_80015D60(
+                    set_animation(
                         obj,
                         (s32)(s8)obj->ext.title_logo
                             .palette_shift_speed);
@@ -488,7 +489,7 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
 
-                    func_80015D60(obj, 0);
+                    set_animation(obj, 0);
                 }
 
                 D_801397D0 = obj;
@@ -552,7 +553,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 += temp_v0;
                         obj->unk3C = (void*)temp_v1;
 
-                        func_80015D60(obj, 0);
+                        set_animation(obj, 0);
                     }
 
                     D_801397CC = obj;
@@ -611,7 +612,7 @@ void func_80022730(struct AbcObj* arg0)
                         temp_v1 += temp_v0;
                         obj->unk3C = (void*)temp_v1;
 
-                        func_80015D60(obj, 0);
+                        set_animation(obj, 0);
                     }
 
                     D_801397D4 = obj;
@@ -1097,7 +1098,7 @@ void func_80023B98(struct MiscObj* arg0)
 
     timer = arg0->ext.misc_11.active;
     if (timer == 0) {
-        func_80015DC8(arg0);
+        animate_object(arg0);
         if (arg0->animation_step.fields.relative_step == 0) {
             arg0->state = 2;
             arg0->ext.misc_11.active = get_random() & 0x1F;

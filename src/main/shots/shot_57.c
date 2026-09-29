@@ -2,7 +2,7 @@
 // 800AE450..800AE6B4
 #include "common.h"
 
-u16 D_80109F50[6][2] = {
+u16 sigma_beam_hitbox_offsets[6][2] = {
     { 0x4AE, 0x29C },
     { 0x49F, 0x279 },
     { 0x49D, 0x259 },
@@ -11,7 +11,7 @@ u16 D_80109F50[6][2] = {
     { 0x49D, 0x259 },
 };
 
-s16 D_80109F68[30][2] = {
+s16 sigma_beam_hitbox_box_data[30][2] = {
     { -7040, 16672 },
     { -5984, 14112 },
     { -4672, 11296 },
@@ -44,7 +44,7 @@ s16 D_80109F68[30][2] = {
     { -22144, -5832 },
 };
 
-u8 D_80109FE0[6][2] = {
+u8 sigma_beam_hitbox_ranges[6][2] = {
     { 22, 4 },
     { 15, 6 },
     { 7, 7 },
@@ -53,88 +53,89 @@ u8 D_80109FE0[6][2] = {
     { 27, 2 },
 };
 
-s16* D_80109FEC[30] = {
-    D_80109F68[0],
-    D_80109F68[1],
-    D_80109F68[2],
-    D_80109F68[3],
-    D_80109F68[4],
-    D_80109F68[5],
-    D_80109F68[6],
-    D_80109F68[7],
-    D_80109F68[8],
-    D_80109F68[9],
-    D_80109F68[10],
-    D_80109F68[11],
-    D_80109F68[12],
-    D_80109F68[13],
-    D_80109F68[14],
-    D_80109F68[15],
-    D_80109F68[16],
-    D_80109F68[17],
-    D_80109F68[18],
-    D_80109F68[19],
-    D_80109F68[20],
-    D_80109F68[21],
-    D_80109F68[22],
-    D_80109F68[23],
-    D_80109F68[24],
-    D_80109F68[25],
-    D_80109F68[26],
-    D_80109F68[27],
-    D_80109F68[28],
-    D_80109F68[29],
+s16* sigma_beam_hitbox_boxes[30] = {
+    sigma_beam_hitbox_box_data[0],
+    sigma_beam_hitbox_box_data[1],
+    sigma_beam_hitbox_box_data[2],
+    sigma_beam_hitbox_box_data[3],
+    sigma_beam_hitbox_box_data[4],
+    sigma_beam_hitbox_box_data[5],
+    sigma_beam_hitbox_box_data[6],
+    sigma_beam_hitbox_box_data[7],
+    sigma_beam_hitbox_box_data[8],
+    sigma_beam_hitbox_box_data[9],
+    sigma_beam_hitbox_box_data[10],
+    sigma_beam_hitbox_box_data[11],
+    sigma_beam_hitbox_box_data[12],
+    sigma_beam_hitbox_box_data[13],
+    sigma_beam_hitbox_box_data[14],
+    sigma_beam_hitbox_box_data[15],
+    sigma_beam_hitbox_box_data[16],
+    sigma_beam_hitbox_box_data[17],
+    sigma_beam_hitbox_box_data[18],
+    sigma_beam_hitbox_box_data[19],
+    sigma_beam_hitbox_box_data[20],
+    sigma_beam_hitbox_box_data[21],
+    sigma_beam_hitbox_box_data[22],
+    sigma_beam_hitbox_box_data[23],
+    sigma_beam_hitbox_box_data[24],
+    sigma_beam_hitbox_box_data[25],
+    sigma_beam_hitbox_box_data[26],
+    sigma_beam_hitbox_box_data[27],
+    sigma_beam_hitbox_box_data[28],
+    sigma_beam_hitbox_box_data[29],
 };
 
+// sigma_beam_hitbox_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_57", func_800AE450);
 
-void func_800AE4F0(struct ShotObj* arg0)
+void sigma_beam_hitbox_pulse(struct ShotObj* self)
 {
     u32 i;
     u32 start;
 
-    if (arg0->unk7C->unk95 != 0) {
-        start = arg0->unk8C.bytes[0];
-        for (i = 0; i < arg0->unk8C.bytes[1] + 1; i++) {
-            arg0->unk50.frames = D_80109FEC[start++];
-            func_8002D9BC(arg0);
+    if (self->unk7C->unk95 != 0) {
+        start = self->unk8C.bytes[0];
+        for (i = 0; i < self->unk8C.bytes[1] + 1; i++) {
+            self->unk50.frames = sigma_beam_hitbox_boxes[start++];
+            func_8002D9BC(self);
         }
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800AE594(struct ShotObj* arg0)
+void sigma_beam_hitbox_active(struct ShotObj* self)
 {
     u32 i;
     u32 start;
 
-    if (arg0->unk7C->unk95 != 0) {
-        start = arg0->unk8C.bytes[0];
-        for (i = 0; i < arg0->unk8C.bytes[1] + 1; i++) {
-            arg0->unk50.frames = D_80109FEC[start++];
-            func_8002D9BC(arg0);
+    if (self->unk7C->unk95 != 0) {
+        start = self->unk8C.bytes[0];
+        for (i = 0; i < self->unk8C.bytes[1] + 1; i++) {
+            self->unk50.frames = sigma_beam_hitbox_boxes[start++];
+            func_8002D9BC(self);
         }
         return;
     }
-    arg0->state = 3;
+    self->state = 3;
 }
 
-void func_800AE63C(struct ShotObj* arg0)
+void sigma_beam_hitbox_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800AE65C(struct ShotObj* arg0)
+void sigma_beam_hitbox_update(struct ShotObj* self)
 {
-    if (arg0->unk7C->unk94 != 0) {
-        arg0->state = 3;
+    if (self->unk7C->unk94 != 0) {
+        self->state = 3;
     }
-    D_8010A064[arg0->state](arg0);
+    sigma_beam_hitbox_state_funcs[self->state](self);
 }
 
-void (*D_8010A064[])(struct ShotObj*) = {
+void (*sigma_beam_hitbox_state_funcs[])(struct ShotObj*) = {
     func_800AE450,
-    func_800AE4F0,
-    func_800AE594,
-    func_800AE63C,
+    sigma_beam_hitbox_pulse,
+    sigma_beam_hitbox_active,
+    sigma_beam_hitbox_despawn,
 };

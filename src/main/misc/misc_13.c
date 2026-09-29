@@ -2,9 +2,10 @@
 // 800CA52C..800CA754
 #include "common.h"
 
+// stage_portrait_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_13", func_800CA52C);
 
-void func_800CA60C(struct MiscObj* self)
+void stage_portrait_select(struct MiscObj* self)
 {
     s32 temp_a0;
     s32 temp_v0;
@@ -24,7 +25,7 @@ void func_800CA60C(struct MiscObj* self)
                 animation = 8;
             }
         }
-        func_80015D90(ANIMATED_OBJECT(self), 0,
+        set_animation_frame(ANIMATED_OBJECT(self), 0,
             (s8)D_800F474C.stage_order[animation] - 1);
         stage = (s8)D_800F474C.stage_order[animation];
         temp_v0 = stage - 1;
@@ -44,18 +45,18 @@ void func_800CA60C(struct MiscObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA6F8(struct MiscObj* arg0)
+void stage_portrait_show(struct MiscObj* self)
 {
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA718(struct MiscObj* arg0)
+void stage_portrait_update(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    D_8010E640[arg0->state](arg0);
+    self->on_screen = 0;
+    stage_portrait_state_funcs[self->state](self);
 }
 
-union AnimationStep D_8010E60C[12] = {
+union AnimationStep stage_portrait_anim_0[12] = {
     { .packed = 0x0001001E },
     { .packed = 0x0101001E },
     { .packed = 0x0201001E },
@@ -70,10 +71,10 @@ union AnimationStep D_8010E60C[12] = {
     { .packed = 0x1001001E },
 };
 
-union AnimationStep* D_8010E63C[1] = { D_8010E60C };
+union AnimationStep* stage_portrait_animations[1] = { stage_portrait_anim_0 };
 
-void (*D_8010E640[3])(struct MiscObj*) = {
+void (*stage_portrait_state_funcs[3])(struct MiscObj*) = {
     func_800CA52C,
-    func_800CA60C,
-    func_800CA6F8,
+    stage_portrait_select,
+    stage_portrait_show,
 };

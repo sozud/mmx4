@@ -9,11 +9,11 @@ struct Item13AnimationStep {
     u8 command;
 };
 
-struct Item13AnimationStep D_8010D008[1] = {
+struct Item13AnimationStep trap_floor_anim_0[1] = {
     { 8, 0, 0, 0 },
 };
 
-struct Item13AnimationStep D_8010D00C[7] = {
+struct Item13AnimationStep trap_floor_anim_1[7] = {
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },
     { 2, 0, 1, 3 },
@@ -23,31 +23,32 @@ struct Item13AnimationStep D_8010D00C[7] = {
     { 0x21, 1, 0, 7 },
 };
 
-struct Item13AnimationStep* D_8010D028[2] = {
-    D_8010D008,
-    D_8010D00C,
+struct Item13AnimationStep* trap_floor_animations[2] = {
+    trap_floor_anim_0,
+    trap_floor_anim_1,
 };
 
-void func_800C351C(struct ItemObj* arg0)
+void trap_floor_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010D030[arg0->state](arg0);
+    trap_floor_state_funcs[arg0->state](arg0);
     is_on_screen(arg0);
 }
 
+// trap_floor_init
 INCLUDE_ASM("main/nonmatchings/items/item_13", func_800C3578);
 
-void func_800C369C(struct ItemObj* arg0)
+void trap_floor_main(struct ItemObj* arg0)
 {
     struct EngineObj* engine = &engine_obj;
     struct PlayerObj* player = &g_Player;
 
     if (arg0->unk5 == 0) {
-        func_800C36E8(arg0, engine, player);
+        trap_floor_wait_stand(arg0, engine, player);
         return;
     }
-    func_800C37C4(arg0, engine, player);
+    trap_floor_open(arg0, engine, player);
 }
 
 #ifdef MMX4_PC
@@ -57,7 +58,7 @@ void func_800C369C(struct ItemObj* arg0)
 #define ITEM13_PLAYER_EXTENT(bounds) ((bounds)->unk3 + (bounds)->unk1)
 #endif
 
-void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
+void trap_floor_wait_stand(struct ItemObj* self, struct EngineObj* engine,
     struct PlayerObj* player)
 {
     s16 y_diff;
@@ -76,7 +77,7 @@ void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
                 engine->unk13 = 1;
                 engine->unk14 = 1;
             }
-            func_80015D60(self, 1);
+            set_animation(self, 1);
             func_8001540C(5, 2, self);
             if (self->unk2 != 0) {
                 background_objects[0].unk28 = 0x100;
@@ -86,11 +87,11 @@ void func_800C36E8(struct ItemObj* self, struct EngineObj* engine,
     }
 }
 
-void func_800C37C4(struct ItemObj* arg0, struct EngineObj* arg1,
+void trap_floor_open(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
     if (arg0->animation_step.fields.event == 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     } else {
         if (arg1->unk10 != 0) {
             arg1->unk10 = 0;
@@ -104,25 +105,25 @@ void func_800C37C4(struct ItemObj* arg0, struct EngineObj* arg1,
     }
 }
 
-void func_800C3828(struct ItemObj* arg0)
+void trap_floor_opened(struct ItemObj* arg0)
 {
     u8 type;
 
-    func_8002E184(PLAYER_OBJECT(arg0));
+    collide_with_players(PLAYER_OBJECT(arg0));
 
     type = 7;
     if (engine_obj.substage != 0) {
         type = 0x10;
     }
 
-    func_800DABE4(type, (s16)(arg0->x_pos.u.hi - 0x10),
+    apply_tile_effect(type, (s16)(arg0->x_pos.u.hi - 0x10),
         arg0->y_pos.i.hi);
 }
 
-void (*D_8010D030[])(struct ItemObj*) = {
+void (*trap_floor_state_funcs[])(struct ItemObj*) = {
     func_800C3578,
-    func_800C369C,
-    func_800C3828,
+    trap_floor_main,
+    trap_floor_opened,
 };
 
-u8 D_8010D03C[4] = { 0, 8, 0x20, 0x10 };
+u8 trap_floor_terrain_box[4] = { 0, 8, 0x20, 0x10 };

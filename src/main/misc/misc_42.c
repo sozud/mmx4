@@ -2,18 +2,20 @@
 // 800CFE98..800D0374
 #include "common.h"
 
-void func_800CFE98(struct MiscObj* arg0)
+void menu_icon_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010EFD0[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    menu_icon_state_funcs[self->state](self);
 }
 
+// menu_icon_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_42", func_800CFEE0);
 
+// menu_icon_animate
 INCLUDE_ASM("main/nonmatchings/misc/misc_42", func_800D0118);
 
-void (*D_8010EFD0[2])(struct MiscObj*) = {
+void (*menu_icon_state_funcs[2])(struct MiscObj*) = {
     func_800CFEE0,
     func_800D0118,
 };

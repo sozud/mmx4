@@ -53,8 +53,10 @@ void storm_owl_start_wait_warning(struct MainObj* self)
     }
 }
 
+// storm_owl_start_init
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800751AC);
 
+// storm_owl_main
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075320);
 
 void storm_owl_death(struct MainObj* self)
@@ -64,16 +66,16 @@ void storm_owl_death(struct MainObj* self)
 
 void storm_owl_death_start(struct MainObj* self)
 {
-    func_80015930(2, 0xBC);
+    stop_sound(2, 0xBC);
     g_Player.stun_timer = 0;
     player_start_script_action(0x14, g_Player.unk15);
     self->unk5++;
     self->unk42 &= 0x7FFF;
-    func_80015D60(self, 0xB);
+    set_animation(self, 0xB);
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
-    self->unk61 = 0x19;
-    func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+    self->invincibility_timer = 0x19;
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
 }
 
 void storm_owl_death_explode(struct MainObj* self)
@@ -94,41 +96,41 @@ void storm_owl_death_explode(struct MainObj* self)
             self->ext.main_60.effect = effect;
         }
     }
-    func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        delay = self->unk61 - 5;
-        self->unk61 = delay;
+        delay = self->invincibility_timer - 5;
+        self->invincibility_timer = delay;
         if (delay >= 0x1A) {
-            self->unk61 = 0;
+            self->invincibility_timer = 0;
         }
-        next_delay = self->unk61;
-        if (self->unk61 < 5) {
+        next_delay = self->invincibility_timer;
+        if (self->invincibility_timer < 5) {
             next_delay = 5;
         }
         self->unk7E = next_delay;
     }
 }
 
-void func_800757F4(struct MainObj* arg0)
+void storm_owl_death_finish(struct MainObj* self)
 {
-    struct EffectObj* effect = arg0->ext.main_60.effect;
-    arg0->on_screen = 0;
+    struct EffectObj* effect = self->ext.main_60.effect;
+    self->on_screen = 0;
     if (effect->active != 0) {
         if (effect->unk7 == 0) {
-            if (arg0->unk7E-- == 0) {
-                arg0->unk7E = 5;
-                arg0->unk42 ^= 0x8000;
+            if (self->unk7E-- == 0) {
+                self->unk7E = 5;
+                self->unk42 ^= 0x8000;
             }
-            func_8002B318(BASE_OBJECT(arg0), 0x60, 0x60);
+            update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
     } else {
-        arg0->ext.raw[0] = 0;
-        arg0->ext.raw[1] = 0;
-        arg0->ext.raw[2] = 0;
-        arg0->ext.raw[3] = 0;
-        arg0->ext.raw[4] = 0;
-        arg0->ext.raw[5] = 0;
+        self->ext.raw[0] = 0;
+        self->ext.raw[1] = 0;
+        self->ext.raw[2] = 0;
+        self->ext.raw[3] = 0;
+        self->ext.raw[4] = 0;
+        self->ext.raw[5] = 0;
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = NULL;
         if (engine_obj.stage != 0xC) {
@@ -138,7 +140,7 @@ void func_800757F4(struct MainObj* arg0)
             engine_obj.character_state.bytes[engine_obj.checkpoint + 6] = 1;
             engine_obj.checkpoint += 9;
         }
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
@@ -152,15 +154,16 @@ void storm_owl_intro(struct MainObj* self)
     storm_owl_intro_funcs[self->unk6](self);
 }
 
+// storm_owl_intro_descend
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075944);
 
 void storm_owl_intro_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     CollisionRelated(PLAYER_OBJECT(self));
-    if (self->unk70 & 8) {
-        func_80015D60(self, 9);
+    if (self->collision_flags & 8) {
+        set_animation(self, 9);
         self->unk7C = 0x49;
         self->unk6++;
     }
@@ -170,12 +173,12 @@ void storm_owl_intro_roar(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
         func_8001540C(2, 0xBB, self);
-        func_80028BAC(0x18, 8, 1);
+        start_screen_shake_y(0x18, 8, 1);
         storm_owl_spawn_roar(ANIMATED_OBJECT(self));
         self->unk7C = 0x2F;
         self->unk6++;
@@ -186,7 +189,7 @@ void storm_owl_intro_pose(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -200,26 +203,26 @@ void storm_owl_intro_pose(struct MainObj* self)
 
 void storm_owl_intro_start_health_bar(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (abc_object.unkC == 0) {
         engine_obj.boss_ptr = self;
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
         self->unk7C = 3;
         self->unk6++;
-        func_800921E8(6);
+        play_boss_music(6);
     }
 }
 
 void storm_owl_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (func_8009227C() == 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (update_boss_music_delay() == 0) {
         if (--self->unk7C == 0) {
             func_8001540C(0, 0xE, 0);
             self->unk7C = 3;
         }
-        if ((s8)++self->unk5C == 0x30) {
+        if ((s8)++self->hp == 0x30) {
             player_end_script_action();
             storm_owl_choose_pattern(self);
             self->unk6++;
@@ -227,20 +230,21 @@ void storm_owl_intro_fill_health(struct MainObj* self)
     }
 }
 
+// storm_owl_intro_takeoff
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075C6C);
 
 void storm_owl_intro_rise(struct MainObj* self)
 {
     u8 index;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     index = (engine_obj.stage != 7) * 2;
     self->ext.main_60.corner = index;
     if (self->y_pos.i.hi < (s16)(background_objects[0].y_pos.i.hi + (u16)storm_owl_waypoints[index & 0xFF].y)) {
         self->unk5 = 3;
-        self->unk20 = 0;
-        self->unk24 = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
         self->unk6 = 2;
     }
 }
@@ -254,30 +258,32 @@ void storm_owl_patrol_start(struct MainObj* self)
 {
     s32 x_pos;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 1);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
     x_pos = self->x_pos.val;
     self->unk15 = (g_Player.x_pos.val >= x_pos) << 6;
     self->unk6++;
 }
 
+// storm_owl_patrol_fly
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80075E78);
 
 void storm_owl_patrol_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     if (self->ext.main_60.patrol_delay == 0) {
-        self->unk20 = storm_owl_waypoints[self->ext.main_60.corner].vx;
-        self->unk24 = storm_owl_waypoints[self->ext.main_60.corner].vy;
-        self->unk28 = FIXED(0.015625);
+        self->x_speed = storm_owl_waypoints[self->ext.main_60.corner].vx;
+        self->y_speed = storm_owl_waypoints[self->ext.main_60.corner].vy;
+        self->x_accel = FIXED(0.015625);
         self->unk6++;
-        self->unk15 = ((~self->unk20 >> 31) & 0x40);
+        self->unk15 = ((~self->x_speed >> 31) & 0x40);
     } else {
         self->ext.main_60.patrol_delay--;
     }
 }
 
+// storm_owl_patrol_fall
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_800760C4);
 
 void storm_owl_patrol_return(struct MainObj* self)
@@ -286,9 +292,9 @@ void storm_owl_patrol_return(struct MainObj* self)
     s16 x_pos;
     s32 distance;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    self->unk24 += FIXED(0.015625);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    self->y_speed += FIXED(0.015625);
 
     target_x = background_objects[0].x_pos.i.hi + (u16)storm_owl_waypoints[self->ext.main_60.corner].x;
     x_pos = self->x_pos.i.hi;
@@ -309,8 +315,8 @@ check_negative:
 
 reset:
     self->unk6 = 0;
-    self->unk20 = 0;
-    self->unk24 = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
     self->ext.main_60.patrol_delay = 0x14;
 }
 
@@ -321,32 +327,34 @@ void storm_owl_grab(struct MainObj* self)
 
 void storm_owl_grab_dive(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 7);
-    func_8002B93C(MOVING_OBJECT(self),
-        func_8002B7DC(OBJECT_HEADER(self),
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 7);
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        angle_to_object(OBJECT_HEADER(self),
             OBJECT_HEADER(&g_Player))
             & 0xFF);
 
-    self->unk20 *= 3;
-    self->unk24 *= 4;
+    self->x_speed *= 3;
+    self->y_speed *= 4;
     if (self->unk15 == 0) {
-        if (self->unk20 > 0) {
-            self->unk20 = 0;
+        if (self->x_speed > 0) {
+            self->x_speed = 0;
         }
-    } else if (self->unk20 < 0) {
-        self->unk20 = 0;
+    } else if (self->x_speed < 0) {
+        self->x_speed = 0;
     }
-    self->unk50 = &D_801016BC;
-    self->unk68 = &D_801016C4;
+    self->attack_box = &storm_owl_grab_attack_box;
+    self->terrain_box = &storm_owl_grab_terrain_box;
     self->unk62 = 3;
-    self->unk60 = 0;
+    self->contact_damage = 0;
     self->unk16 = 2;
     self->unk6++;
 }
 
+// storm_owl_grab_swoop
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076364);
 
+// storm_owl_grab_rise
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_8007651C);
 
 void storm_owl_grab_carry(struct MainObj* self)
@@ -354,12 +362,12 @@ void storm_owl_grab_carry(struct MainObj* self)
     s16 x_pos;
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     CollisionRelated(PLAYER_OBJECT(self));
-    if (self->unk70 & 4) {
-        self->unk24 = 0;
-        self->unk2C = 0;
+    if (self->collision_flags & 4) {
+        self->y_speed = 0;
+        self->gravity = 0;
     }
     if (self->unk15 == 0) {
         x_pos = (u16)self->x_pos.i.hi - 0xA;
@@ -371,56 +379,56 @@ void storm_owl_grab_carry(struct MainObj* self)
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(self, 8);
-        self->unk24 = FIXED(-4);
+        set_animation(self, 8);
+        self->y_speed = FIXED(-4);
         self->unk6++;
     }
 }
 
-void func_800766FC(struct MainObj* arg0)
+void storm_owl_grab_slam(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (g_Player.x_pos.i.hi <= background_objects[0].x_pos.i.hi + 0x10
         || g_Player.x_pos.i.hi >= background_objects[0].x_pos.i.hi + 0x130) {
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
     }
-    g_Player.x_pos.i.hi = arg0->x_pos.i.hi;
-    g_Player.y_pos.i.hi = arg0->y_pos.i.hi + 0x1C;
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        func_8001540C(2, 0xBB, arg0);
-        func_80028BAC(8, 4, 1);
+    g_Player.x_pos.i.hi = self->x_pos.i.hi;
+    g_Player.y_pos.i.hi = self->y_pos.i.hi + 0x1C;
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (self->collision_flags & 8) {
+        func_8001540C(2, 0xBB, self);
+        start_screen_shake_y(8, 4, 1);
         player_damage(9);
-        func_80015D60(arg0, 1);
-        if (arg0->unk15 == 0) {
-            arg0->unk20 = FIXED(-2);
+        set_animation(self, 1);
+        if (self->unk15 == 0) {
+            self->x_speed = FIXED(-2);
         } else {
-            arg0->unk20 = FIXED(2);
+            self->x_speed = FIXED(2);
         }
-        arg0->unk24 = FIXED(-1);
+        self->y_speed = FIXED(-1);
         g_Player.stun_timer = 0;
-        arg0->unk68 = &D_801016C0;
-        arg0->unk62 = 0;
-        arg0->unk50 = (const u8*)&D_801016B8;
-        arg0->unk6++;
+        self->terrain_box = &storm_owl_slam_terrain_box;
+        self->unk62 = 0;
+        self->attack_box = (const u8*)&storm_owl_attack_box;
+        self->unk6++;
     }
 }
 
 void storm_owl_grab_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
-    if (self->unk24 <= FIXED(2.99999)) {
-        self->unk24 += FIXED(0.125);
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->y_speed <= FIXED(2.99999)) {
+        self->y_speed += FIXED(0.125);
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         g_Player.stun_timer = 0;
-        self->unk60 = 6;
-        self->unk68 = &D_801016C0;
+        self->contact_damage = 6;
+        self->terrain_box = &storm_owl_slam_terrain_box;
         self->unk62 = 0;
-        self->unk50 = (const u8*)&D_801016B8;
+        self->attack_box = (const u8*)&storm_owl_attack_box;
         self->unk16 = 5;
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -440,7 +448,7 @@ void storm_owl_reenter_warp(struct MainObj* self)
     u8 variant;
     s32 player_x;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     variant = self->ext.main_60.corner;
     switch (variant) {
     case 0:
@@ -471,7 +479,7 @@ void storm_owl_reenter_wait(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_60.flash_mode == 1) {
         self->collision_data = (const u16*)D_801060F0;
     } else {
@@ -492,8 +500,8 @@ void storm_owl_feather(struct MainObj* self)
 
 void storm_owl_feather_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 3);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 3);
     self->unk15 = (self->x_pos.val <= g_Player.x_pos.val) << 6;
     self->unk7C = 0x1F;
     self->unk6++;
@@ -503,7 +511,7 @@ void storm_owl_feather_fire(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -516,27 +524,27 @@ void storm_owl_feather_fire(struct MainObj* self)
 
 void storm_owl_feather_takeoff(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     if (--self->unk7C == 0) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         storm_owl_choose_corner(self);
         if (self->ext.main_60.corner >> 1) {
-            self->unk20 = FIXED(2);
+            self->x_speed = FIXED(2);
             self->unk15 = 0x40;
         } else {
-            self->unk20 = FIXED(-2);
+            self->x_speed = FIXED(-2);
             self->unk15 = 0;
         }
-        self->unk24 = FIXED(3);
+        self->y_speed = FIXED(3);
         self->unk6++;
     }
 }
 
 void storm_owl_feather_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         self->unk5 = 5;
         self->unk6 = 0;
@@ -550,8 +558,8 @@ void storm_owl_feather_volley(struct MainObj* self)
 
 void storm_owl_feather_volley_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 3);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 3);
     self->unk7C = 0x1C;
     self->collision_data = (const u16*)D_80107B78;
     self->ext.main_60.shot_count = 0;
@@ -559,17 +567,18 @@ void storm_owl_feather_volley_start(struct MainObj* self)
     self->unk6++;
 }
 
+// storm_owl_feather_volley_spread
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80076D14);
 
 void storm_owl_feather_volley_aim(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         self->collision_data = (const u16*)D_80107B78;
         self->unk7C = 0x3C;
         self->unk6++;
@@ -578,7 +587,7 @@ void storm_owl_feather_volley_aim(struct MainObj* self)
 
 void storm_owl_feather_volley_release(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         func_8001540C(2, 0xB6, self);
         self->ext.main_60.feathers_holding = 1;
@@ -591,26 +600,26 @@ void storm_owl_feather_volley_wait(struct MainObj* self)
 {
     s32 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_60.feather_mask == 0) {
         self->ext.main_60.feathers_holding = 0;
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         direction = (self->x_pos.val >= g_Player.x_pos.val) << 6;
         self->unk15 = direction;
         if (direction == 0) {
-            self->unk20 = FIXED(-2);
+            self->x_speed = FIXED(-2);
         } else {
-            self->unk20 = FIXED(2);
+            self->x_speed = FIXED(2);
         }
-        self->unk24 = FIXED(3);
+        self->y_speed = FIXED(3);
         self->unk6++;
     }
 }
 
 void storm_owl_feather_volley_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -625,11 +634,11 @@ void storm_owl_cyclone(struct MainObj* self)
 
 void storm_owl_cyclone_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (!(self->ext.main_60.corner & 1)) {
-        func_80015D60(self, 4);
+        set_animation(self, 4);
     } else {
-        func_80015D60(self, 5);
+        set_animation(self, 5);
     }
     self->unk7C = 0x63;
     self->unk15 = ((self->ext.main_60.corner >> 1) == 0) << 6;
@@ -640,7 +649,7 @@ void storm_owl_cyclone_fire(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -661,7 +670,7 @@ void storm_owl_cyclone_finish(struct MainObj* self)
     s16 timer;
     s32 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -670,23 +679,23 @@ void storm_owl_cyclone_finish(struct MainObj* self)
             self->unk6 = 0;
             return;
         }
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         direction = (self->x_pos.val >= g_Player.x_pos.val) << 6;
         self->unk15 = direction;
         if (direction == 0) {
-            self->unk20 = FIXED(-2);
+            self->x_speed = FIXED(-2);
         } else {
-            self->unk20 = FIXED(2);
+            self->x_speed = FIXED(2);
         }
-        self->unk24 = FIXED(3);
+        self->y_speed = FIXED(3);
         self->unk6++;
     }
 }
 
 void storm_owl_cyclone_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -706,48 +715,48 @@ void storm_owl_storm_start(struct MainObj* self)
     s32 velocity_x;
     s32 velocity_y;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     threshold = (background_objects[0].x_pos.i.hi + 0xA0) << 16;
-    func_8002B93C(
+    set_velocity_from_angle(
         MOVING_OBJECT(self),
-        func_8002B7B0(OBJECT_HEADER(self), threshold,
+        angle_to_point(OBJECT_HEADER(self), threshold,
             (background_objects[0].y_pos.i.hi + 0x70) << 16)
             & 0xFF);
 
-    velocity_x = self->unk20;
-    velocity_y = self->unk24;
+    velocity_x = self->x_speed;
+    velocity_y = self->y_speed;
     velocity_x <<= 1;
     velocity_y <<= 1;
-    self->unk20 = velocity_x;
-    self->unk24 = velocity_y;
+    self->x_speed = velocity_x;
+    self->y_speed = velocity_y;
 
     if (velocity_y > 0) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
     } else {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
     }
     self->unk15 = (threshold >= self->x_pos.val) << 6;
     self->unk6++;
 }
 
-void func_80077318(struct MainObj* arg0)
+void storm_owl_storm_fly_to_center(struct MainObj* self)
 {
     s32 target_x = (background_objects[0].x_pos.i.hi + 0xA0) << 16;
     s32 target_y = (background_objects[0].y_pos.i.hi + 0x70) << 16;
     s32 x;
     s32 y;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002B93C(MOVING_OBJECT(arg0), func_8002B7B0(OBJECT_HEADER(arg0), target_x, target_y) & 0xFF);
-    arg0->unk20 *= 2;
-    x = arg0->x_pos.val;
-    arg0->unk24 *= 2;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    set_velocity_from_angle(MOVING_OBJECT(self), angle_to_point(OBJECT_HEADER(self), target_x, target_y) & 0xFF);
+    self->x_speed *= 2;
+    x = self->x_pos.val;
+    self->y_speed *= 2;
     if (x - target_x >= 0 ? x - target_x <= FIXED(3.99999) : target_x - x <= FIXED(3.99999)) {
-        y = arg0->y_pos.val;
+        y = self->y_pos.val;
         if (y - target_y >= 0 ? y - target_y <= FIXED(3.99999) : target_y - y <= FIXED(3.99999)) {
-            func_80015D60(arg0, 6);
-            arg0->unk6++;
+            set_animation(self, 6);
+            self->unk6++;
         }
     }
 }
@@ -764,7 +773,7 @@ void storm_owl_storm_begin(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -780,7 +789,7 @@ void storm_owl_storm_rain(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -793,13 +802,14 @@ void storm_owl_storm_rain(struct MainObj* self)
     }
 }
 
+// storm_owl_storm_flap
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80077580);
 
 void storm_owl_storm_rain_again(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -818,29 +828,29 @@ void storm_owl_storm_end(struct MainObj* self)
     s16 timer;
     s32 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015930(2, 0xBC);
-        func_80015D60(self, 1);
+        stop_sound(2, 0xBC);
+        set_animation(self, 1);
         self->ext.main_60.storm_active = 0;
         direction = (self->x_pos.val >= g_Player.x_pos.val) << 6;
         self->unk15 = direction;
         if (direction == 0) {
-            self->unk20 = FIXED(-2);
+            self->x_speed = FIXED(-2);
         } else {
-            self->unk20 = FIXED(2);
+            self->x_speed = FIXED(2);
         }
-        self->unk24 = FIXED(3);
+        self->y_speed = FIXED(3);
         self->unk6++;
     }
 }
 
 void storm_owl_storm_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -855,15 +865,15 @@ void storm_owl_hover(struct MainObj* self)
 
 void storm_owl_hover_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 0);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 0);
     self->unk7C = 0x5A;
     self->unk6++;
 }
 
 void storm_owl_hover_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
@@ -877,12 +887,12 @@ void storm_owl_stagger(struct MainObj* self)
 
 void storm_owl_stagger_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 0xC);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 0xC);
     g_Player.stun_timer = 0;
-    self->unk60 = 6;
-    self->unk68 = &D_801016C0;
-    self->unk50 = (const u8*)&D_801016B8;
+    self->contact_damage = 6;
+    self->terrain_box = &storm_owl_slam_terrain_box;
+    self->attack_box = (const u8*)&storm_owl_attack_box;
     self->unk16 = 5;
     self->unk62 = 0;
     if (self->collision_data == (const u16*)D_80107B78) {
@@ -893,7 +903,7 @@ void storm_owl_stagger_start(struct MainObj* self)
     self->ext.main_60.feathers_holding = 0;
     self->ext.main_60.feather_mask = 0;
     storm_owl_clear_shots();
-    func_80015930(2, 0xBC);
+    stop_sound(2, 0xBC);
     self->unk6++;
 }
 
@@ -902,26 +912,26 @@ void storm_owl_stagger_recover(struct MainObj* self)
     s32 x_vel;
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         x_vel = FIXED(2);
         self->collision_data = (const u16*)D_80107B78;
         if (self->unk15 == 0) {
             x_vel = FIXED(-2);
         }
-        self->unk20 = x_vel;
-        self->unk24 = FIXED(3);
+        self->x_speed = x_vel;
+        self->y_speed = FIXED(3);
         self->unk6++;
     }
 }
 
 void storm_owl_stagger_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if ((func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) && (self->ext.main_60.feather_mask == 0)) {
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -936,10 +946,10 @@ void storm_owl_ground_cyclone(struct MainObj* self)
 
 void storm_owl_ground_cyclone_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 1);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
     if (!(self->ext.main_60.corner & 1)) {
-        self->unk24 = FIXED(-3);
+        self->y_speed = FIXED(-3);
         self->unk6++;
     } else {
         self->unk7C = 0xA;
@@ -954,11 +964,11 @@ void storm_owl_ground_cyclone_start(struct MainObj* self)
 
 void storm_owl_ground_cyclone_drop(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     CollisionRelated(PLAYER_OBJECT(self));
-    if (self->unk70 & 8) {
-        func_80015D60(self, 9);
+    if (self->collision_flags & 8) {
+        set_animation(self, 9);
         self->unk7C = 0x1E;
         self->unk6++;
     }
@@ -967,7 +977,7 @@ void storm_owl_ground_cyclone_drop(struct MainObj* self)
 void storm_owl_ground_cyclone_land(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        func_80015D60(self, 3);
+        set_animation(self, 3);
         self->unk7C = 0x1E;
         self->unk6++;
     }
@@ -977,7 +987,7 @@ void storm_owl_ground_cyclone_fire(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -1006,20 +1016,20 @@ void storm_owl_ground_cyclone_takeoff(struct MainObj* self)
     if (timer != 0) {
         return;
     }
-    func_80015D60(self, 1);
+    set_animation(self, 1);
     x_vel = FIXED(2);
     if (self->unk15 == 0) {
         x_vel = FIXED(-2);
     }
-    self->unk20 = x_vel;
-    self->unk24 = FIXED(3);
+    self->x_speed = x_vel;
+    self->y_speed = FIXED(3);
     self->unk6++;
 }
 
 void storm_owl_ground_cyclone_leave(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         storm_owl_choose_corner(self);
         self->unk5 = 5;
@@ -1157,6 +1167,7 @@ void storm_owl_spawn_storm_charge(struct AnimatedObj* self)
     }
 }
 
+// storm_owl_spawn_storm_shot
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80078180);
 
 void storm_owl_spawn_hit_flash(struct PlayerObj* self)
@@ -1179,6 +1190,7 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
     }
 }
 
+// storm_owl_spawn_ground_cyclone
 INCLUDE_ASM("main/nonmatchings/mains/main_60", func_80078314);
 
 void storm_owl_choose_corner(struct MainObj* self)
@@ -1186,13 +1198,13 @@ void storm_owl_choose_corner(struct MainObj* self)
     s32 player_x = g_Player.x_pos.val;
 
     if (self->x_pos.val < player_x) {
-        if (func_8002B780() & 1) {
+        if (get_random_nonzero() & 1) {
             self->ext.main_60.corner = 0;
         } else {
             self->ext.main_60.corner = 1;
         }
     } else {
-        if (func_8002B780() & 1) {
+        if (get_random_nonzero() & 1) {
             self->ext.main_60.corner = 2;
         } else {
             self->ext.main_60.corner = 3;
@@ -1210,9 +1222,9 @@ void storm_owl_choose_pattern(struct MainObj* self)
     u32 rnd;
     u32 gr;
 
-    idx = self->unk5C - 1;
+    idx = self->hp - 1;
     if ((s32)idx < 0)
-        idx = self->unk5C + 0xE;
+        idx = self->hp + 0xE;
     idx >>= 4;
     idx &= 0xFF;
     table = ((u8**)storm_owl_patterns)[idx];
@@ -1249,17 +1261,17 @@ void storm_owl_clear_shots(void)
     }
 }
 
-struct Unk_unk68 D_801016B4 = { -14, -21, 30, 40 };
+struct Unk_unk68 storm_owl_hurt_box = { -14, -21, 30, 40 };
 
-struct Unk_unk68 D_801016B8 = { -14, -21, 30, 40 };
+struct Unk_unk68 storm_owl_attack_box = { -14, -21, 30, 40 };
 
-struct Unk_unk68 D_801016BC = { -16, 15, 12, 9 };
+struct Unk_unk68 storm_owl_grab_attack_box = { -16, 15, 12, 9 };
 
-struct Unk_unk68 D_801016C0 = { 5, 19, 11, 5 };
+struct Unk_unk68 storm_owl_slam_terrain_box = { 5, 19, 11, 5 };
 
-struct Unk_unk68 D_801016C4 = { 0, 27, 14, 25 };
+struct Unk_unk68 storm_owl_grab_terrain_box = { 0, 27, 14, 25 };
 
-struct Unk_unk68 D_801016C8[6] = {
+struct Unk_unk68 storm_owl_anim_0[6] = {
     { 6, 0, 1, 6 },
     { 4, 0, 1, 7 },
     { 4, 0, 1, 8 },
@@ -1268,7 +1280,7 @@ struct Unk_unk68 D_801016C8[6] = {
     { 4, 0, -5, 11 },
 };
 
-struct Unk_unk68 D_801016E0[6] = {
+struct Unk_unk68 storm_owl_anim_1[6] = {
     { 4, 0, 1, 0 },
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },
@@ -1277,13 +1289,13 @@ struct Unk_unk68 D_801016E0[6] = {
     { 2, 0, -5, 5 },
 };
 
-struct Unk_unk68 D_801016F8[3] = {
+struct Unk_unk68 storm_owl_anim_2[3] = {
     { 1, 0, 1, 16 },
     { 2, 0, 1, 17 },
     { 6, 0, -2, 18 },
 };
 
-struct Unk_unk68 D_80101704[6] = {
+struct Unk_unk68 storm_owl_anim_3[6] = {
     { 4, 0, 1, 19 },
     { 6, 0, 1, 20 },
     { 14, 0, 1, 21 },
@@ -1292,7 +1304,7 @@ struct Unk_unk68 D_80101704[6] = {
     { 33, 0, -5, 24 },
 };
 
-union AnimationStep D_8010171C[] = {
+union AnimationStep storm_owl_anim_4[] = {
     { 0x19010006 },
     { 0x1A010003 },
     { 0x1B01000A },
@@ -1302,7 +1314,7 @@ union AnimationStep D_8010171C[] = {
     { 0x1D000021 },
 };
 
-union AnimationStep D_80101738[] = {
+union AnimationStep storm_owl_anim_5[] = {
     { 0x1E010006 },
     { 0x1F010003 },
     { 0x2001000A },
@@ -1312,7 +1324,7 @@ union AnimationStep D_80101738[] = {
     { 0x24000021 },
 };
 
-union AnimationStep D_80101754[] = {
+union AnimationStep storm_owl_anim_6[] = {
     { 0x26010006 },
     { 0x25010008 },
     { 0x27010002 },
@@ -1320,11 +1332,11 @@ union AnimationStep D_80101754[] = {
     { 0x28000021 },
 };
 
-u8 D_80101768[8] = { 2, 0, 1, 12, 2, 0, 255, 13 };
+u8 storm_owl_anim_7[8] = { 2, 0, 1, 12, 2, 0, 255, 13 };
 
-u8 D_80101770[8] = { 2, 0, 1, 14, 2, 0, 255, 15 };
+u8 storm_owl_anim_8[8] = { 2, 0, 1, 14, 2, 0, 255, 15 };
 
-union AnimationStep D_80101778[] = {
+union AnimationStep storm_owl_anim_9[] = {
     { 0x06010006 },
     { 0x5A010002 },
     { 0x5B010002 },
@@ -1339,7 +1351,7 @@ union AnimationStep D_80101778[] = {
     { 0x6100002F },
 };
 
-union AnimationStep D_801017A8[] = {
+union AnimationStep storm_owl_anim_10[] = {
     { 0x62010002 },
     { 0x63010002 },
     { 0x64010002 },
@@ -1348,9 +1360,9 @@ union AnimationStep D_801017A8[] = {
     { 0x67000001 },
 };
 
-u8 D_801017C0[8] = { 2, 0, 1, 104, 2, 0, 255, 105 };
+u8 storm_owl_anim_11[8] = { 2, 0, 1, 104, 2, 0, 255, 105 };
 
-struct Unk_unk68 D_801017C8[5] = {
+struct Unk_unk68 storm_owl_anim_12[5] = {
     { 3, 0, 1, 104 },
     { 3, 0, 1, 106 },
     { 3, 0, 1, 107 },
@@ -1358,7 +1370,7 @@ struct Unk_unk68 D_801017C8[5] = {
     { 3, 0, -4, 109 },
 };
 
-struct Unk_unk68 D_801017DC[16] = {
+struct Unk_unk68 storm_owl_anim_13[16] = {
     { 1, 0, 1, 62 },
     { 1, 0, 1, 51 },
     { 1, 0, 1, 52 },
@@ -1377,7 +1389,7 @@ struct Unk_unk68 D_801017DC[16] = {
     { 1, 0, -15, 61 },
 };
 
-struct Unk_unk68 D_8010181C[19] = {
+struct Unk_unk68 storm_owl_anim_14[19] = {
     { 1, 0, 1, 63 },
     { 1, 0, 1, 64 },
     { 1, 0, 1, 69 },
@@ -1399,62 +1411,62 @@ struct Unk_unk68 D_8010181C[19] = {
     { 1, 0, -18, 73 },
 };
 
-union AnimationStep D_80101868[] = {
+union AnimationStep storm_owl_anim_15[] = {
     { 0x2E000001 },
 };
 
-union AnimationStep D_8010186C[] = {
+union AnimationStep storm_owl_anim_16[] = {
     { 0x2D000001 },
 };
 
-union AnimationStep D_80101870[] = {
+union AnimationStep storm_owl_anim_17[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep D_80101874[] = {
+union AnimationStep storm_owl_anim_18[] = {
     { 0x2C000001 },
 };
 
-union AnimationStep D_80101878[] = {
+union AnimationStep storm_owl_anim_19[] = {
     { 0x2B000001 },
 };
 
-union AnimationStep D_8010187C[] = {
+union AnimationStep storm_owl_anim_20[] = {
     { 0x6E010008 },
     { 0x6F010008 },
     { 0x70010008 },
     { 0x71000008 },
 };
 
-union AnimationStep D_8010188C[] = {
+union AnimationStep storm_owl_anim_21[] = {
     { 0x56010008 },
     { 0x57010008 },
     { 0x58010008 },
     { 0x59000008 },
 };
 
-union AnimationStep D_8010189C[] = {
+union AnimationStep storm_owl_anim_22[] = {
     { 0x4A010008 },
     { 0x4B010008 },
     { 0x4C010008 },
     { 0x4D000008 },
 };
 
-union AnimationStep D_801018AC[] = {
+union AnimationStep storm_owl_anim_23[] = {
     { 0x4E010008 },
     { 0x4F010008 },
     { 0x50010008 },
     { 0x51000008 },
 };
 
-union AnimationStep D_801018BC[] = {
+union AnimationStep storm_owl_anim_24[] = {
     { 0x52010008 },
     { 0x53010008 },
     { 0x54010008 },
     { 0x55000008 },
 };
 
-struct Unk_unk68 D_801018CC[9] = {
+struct Unk_unk68 storm_owl_anim_25[9] = {
     { 1, 0, 1, 69 },
     { 1, 0, 1, 68 },
     { 1, 0, 1, 67 },
@@ -1466,7 +1478,7 @@ struct Unk_unk68 D_801018CC[9] = {
     { 1, 0, -8, 73 },
 };
 
-struct Unk_unk68 D_801018F0[8] = {
+struct Unk_unk68 storm_owl_anim_26[8] = {
     { 2, 0, 1, -88 },
     { 2, 0, 1, -87 },
     { 2, 0, 1, -86 },
@@ -1477,7 +1489,7 @@ struct Unk_unk68 D_801018F0[8] = {
     { 2, 0, -7, -85 },
 };
 
-union AnimationStep D_80101910[] = {
+union AnimationStep storm_owl_anim_27[] = {
     { 0x90010002 },
     { 0x91010002 },
     { 0x92010002 },
@@ -1492,7 +1504,7 @@ union AnimationStep D_80101910[] = {
     { 0x9B000002 },
 };
 
-union AnimationStep D_80101940[] = {
+union AnimationStep storm_owl_anim_28[] = {
     { 0xA7010001 },
     { 0xA6010001 },
     { 0xA5010001 },
@@ -1507,7 +1519,7 @@ union AnimationStep D_80101940[] = {
     { 0x9C000001 },
 };
 
-union AnimationStep D_80101970[] = {
+union AnimationStep storm_owl_anim_29[] = {
     { 0x78010001 },
     { 0x79010001 },
     { 0x7A010001 },
@@ -1574,36 +1586,36 @@ union AnimationStep D_80101970[] = {
 };
 
 void* storm_owl_animations[30] = {
-    D_801016C8,
-    D_801016E0,
-    D_801016F8,
-    D_80101704,
-    D_8010171C,
-    D_80101738,
-    D_80101754,
-    D_80101768,
-    D_80101770,
-    D_80101778,
-    D_801017A8,
-    D_801017C0,
-    D_801017C8,
-    D_801017DC,
-    D_8010181C,
-    D_80101868,
-    D_8010186C,
-    D_80101870,
-    D_80101874,
-    D_80101878,
-    D_8010187C,
-    D_8010188C,
-    D_8010189C,
-    D_801018AC,
-    D_801018BC,
-    D_801018CC,
-    D_801018F0,
-    D_80101910,
-    D_80101940,
-    D_80101970,
+    storm_owl_anim_0,
+    storm_owl_anim_1,
+    storm_owl_anim_2,
+    storm_owl_anim_3,
+    storm_owl_anim_4,
+    storm_owl_anim_5,
+    storm_owl_anim_6,
+    storm_owl_anim_7,
+    storm_owl_anim_8,
+    storm_owl_anim_9,
+    storm_owl_anim_10,
+    storm_owl_anim_11,
+    storm_owl_anim_12,
+    storm_owl_anim_13,
+    storm_owl_anim_14,
+    storm_owl_anim_15,
+    storm_owl_anim_16,
+    storm_owl_anim_17,
+    storm_owl_anim_18,
+    storm_owl_anim_19,
+    storm_owl_anim_20,
+    storm_owl_anim_21,
+    storm_owl_anim_22,
+    storm_owl_anim_23,
+    storm_owl_anim_24,
+    storm_owl_anim_25,
+    storm_owl_anim_26,
+    storm_owl_anim_27,
+    storm_owl_anim_28,
+    storm_owl_anim_29,
 };
 
 Main60Waypoint storm_owl_waypoints[4] = {
@@ -1665,7 +1677,7 @@ void (*storm_owl_start_funcs[4])() = {
 };
 
 void (*storm_owl_step_funcs[13])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     storm_owl_resume_step,
     storm_owl_intro,
     storm_owl_patrol,
@@ -1683,7 +1695,7 @@ void (*storm_owl_step_funcs[13])() = {
 void (*storm_owl_death_funcs[3])() = {
     storm_owl_death_start,
     storm_owl_death_explode,
-    func_800757F4,
+    storm_owl_death_finish,
 };
 
 void (*storm_owl_intro_funcs[8])() = {
@@ -1710,7 +1722,7 @@ void (*storm_owl_grab_funcs[6])() = {
     func_80076364,
     func_8007651C,
     storm_owl_grab_carry,
-    func_800766FC,
+    storm_owl_grab_slam,
     storm_owl_grab_leave,
 };
 
@@ -1744,7 +1756,7 @@ void (*storm_owl_cyclone_funcs[4])() = {
 
 void (*storm_owl_storm_funcs[9])() = {
     storm_owl_storm_start,
-    func_80077318,
+    storm_owl_storm_fly_to_center,
     storm_owl_storm_charge,
     storm_owl_storm_begin,
     storm_owl_storm_rain,

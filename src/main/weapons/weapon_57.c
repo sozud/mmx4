@@ -2,25 +2,25 @@
 // 80098838..80098990
 #include "common.h"
 
-void func_80098838(struct WeaponObj* arg0)
+void ride_chaser_ram_update(struct WeaponObj* arg0)
 {
-    D_80108BA8[arg0->state](arg0);
+    ride_chaser_ram_state_funcs[arg0->state](arg0);
 }
 
-void func_80098874(struct WeaponObj* arg0)
+void ride_chaser_ram_init(struct WeaponObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk50 = D_80108BA4;
+    arg0->unk50 = ride_chaser_ram_hit_box;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
     arg0->unk54 = 0;
     arg0->unk5C = 1;
     arg0->unk60 = 3;
-    func_80015D60(arg0, 0xC);
+    set_animation(arg0, 0xC);
 }
 
-void func_800988C4(struct WeaponObj* arg0)
+void ride_chaser_ram_main(struct WeaponObj* arg0)
 {
     s8 temp_v1;
     struct PlayerObj* temp_a0;
@@ -33,8 +33,8 @@ void func_800988C4(struct WeaponObj* arg0)
             if (temp_a0->animation_step.fields.frame_index == 3) {
                 self->x_pos.val = temp_a0->x_pos.val;
                 self->y_pos.val = temp_a0->y_pos.val;
-                func_80015DC8(ANIMATED_OBJECT(self));
-                func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+                animate_object(ANIMATED_OBJECT(self));
+                update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
             }
             return;
         }
@@ -44,19 +44,19 @@ void func_800988C4(struct WeaponObj* arg0)
     self->on_screen = 0;
 }
 
-void func_80098970(struct WeaponObj* arg0)
+void ride_chaser_ram_despawn(struct WeaponObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-u8 D_80108B94[8] = { 2, 0x1E, 0, 4, 0, 0, 0, 0 };
+u8 ride_chaser_shot_angles[8] = { 2, 0x1E, 0, 4, 0, 0, 0, 0 };
 
-u8 D_80108B9C[8] = { 0x0F, 0x0E, 0x0D, 0x10, 0x0D, 0, 0, 0 };
+u8 ride_chaser_shot_animations[8] = { 0x0F, 0x0E, 0x0D, 0x10, 0x0D, 0, 0, 0 };
 
-u8 D_80108BA4[4] = { 0xCF, 0xEE, 0x3C, 0x37 };
+u8 ride_chaser_ram_hit_box[4] = { 0xCF, 0xEE, 0x3C, 0x37 };
 
-void (*D_80108BA8[])(struct WeaponObj*) = {
-    func_80098874,
-    func_800988C4,
-    func_80098970,
+void (*ride_chaser_ram_state_funcs[])(struct WeaponObj*) = {
+    ride_chaser_ram_init,
+    ride_chaser_ram_main,
+    ride_chaser_ram_despawn,
 };

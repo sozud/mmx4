@@ -2,29 +2,30 @@
 // 800B17CC..800B19BC
 #include "common.h"
 
-void func_800B17CC(struct VisualObj* arg0)
+void charge_ring_update(struct VisualObj* arg0)
 {
-    D_8010A4E0[arg0->state](arg0);
+    charge_ring_state_funcs[arg0->state](arg0);
 }
 
-void func_800B1808(struct VisualObj* arg0)
+void charge_ring_init(struct VisualObj* arg0)
 {
     arg0->unk15 = arg0->unk50->unk15;
-    func_80015D60(arg0, arg0->unk2);
+    set_animation(arg0, arg0->unk2);
     arg0->on_screen = 1;
     arg0->state++;
-    func_8002B318(arg0, 0x50, 0x50);
+    update_on_screen(arg0, 0x50, 0x50);
 }
 
+// charge_ring_main
 INCLUDE_ASM("main/nonmatchings/visuals/visual_11", func_800B1864);
 
-void func_800B199C(struct VisualObj* arg0)
+void charge_ring_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A4E0[])(struct VisualObj*) = {
-    func_800B1808,
+void (*charge_ring_state_funcs[])(struct VisualObj*) = {
+    charge_ring_init,
     func_800B1864,
-    func_800B199C,
+    charge_ring_despawn,
 };

@@ -2,39 +2,40 @@
 // 800CC460..800CC7BC
 #include "common.h"
 
-void func_800CC460(struct MiscObj* arg0)
+void sentry_flash_update(struct MiscObj* self)
 {
     struct ObjectHeader* owner;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    owner = OBJECT_HEADER(arg0->ext.unk.unk50);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    owner = OBJECT_HEADER(self->ext.unk.unk50);
     if (owner->active != 0x41) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     } else if (owner->id != 0x30) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     } else {
-        D_8010E94C[arg0->state](arg0);
+        sentry_flash_state_funcs[self->state](self);
     }
 }
 
+// sentry_flash_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_25", func_800CC4E0);
 
-void func_800CC738(struct MiscObj* arg0)
+void sentry_flash_animate(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x30, 0x10);
-        if (arg0->animation_step.fields.relative_step != 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x30, 0x10);
+        if (self->animation_step.fields.relative_step != 0) {
             return;
         }
     }
-    arg0->state++;
+    self->state++;
 }
 
-void func_800CC79C(struct MiscObj* arg0)
+void sentry_flash_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
 struct Misc25Velocity {
@@ -42,7 +43,7 @@ struct Misc25Velocity {
     s8 y;
 };
 
-struct Misc25Velocity D_8010E93C[8] = {
+struct Misc25Velocity sentry_flash_offsets[8] = {
     { -13, 0 },
     { 13, 0 },
     { -10, -12 },
@@ -53,8 +54,8 @@ struct Misc25Velocity D_8010E93C[8] = {
     { 10, 12 },
 };
 
-void (*D_8010E94C[3])(struct MiscObj*) = {
+void (*sentry_flash_state_funcs[3])(struct MiscObj*) = {
     func_800CC4E0,
-    func_800CC738,
-    func_800CC79C,
+    sentry_flash_animate,
+    sentry_flash_despawn,
 };

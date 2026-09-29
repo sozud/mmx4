@@ -2,7 +2,7 @@
 // 80094A78..800951C0
 #include "common.h"
 
-void func_80094A78(struct WeaponObj* arg0)
+void soul_body_update(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
@@ -22,15 +22,15 @@ void func_80094A78(struct WeaponObj* arg0)
     if (var_a1 != 0) {
         arg0->state = 3;
     }
-    D_801088E8[arg0->state](arg0);
+    soul_body_state_funcs[arg0->state](arg0);
 }
 
-void func_80094B24(struct WeaponObj* arg0)
+void soul_body_init(struct WeaponObj* arg0)
 {
     u32** animation_table;
 
     arg0->on_screen = 1;
-    arg0->unk50 = D_801088E4;
+    arg0->unk50 = soul_body_hit_box;
     arg0->unk64 = 1;
     arg0->unk38 = g_Player.unk38;
     arg0->unk3C = g_Player.unk3C;
@@ -50,10 +50,10 @@ void func_80094B24(struct WeaponObj* arg0)
     func_8001540C(1, 9, arg0);
     arg0->unk5 = 0;
     arg0->state = (u8)arg0->state + 1;
-    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x20);
+    update_on_screen(BASE_OBJECT(arg0), 0x80, 0x20);
 }
 
-void func_80094C18(struct WeaponObj* self)
+void soul_body_main(struct WeaponObj* self)
 {
     struct Weapon3Ext* ext = &self->ext.weapon_3;
     s8 palette_index;
@@ -62,10 +62,10 @@ void func_80094C18(struct WeaponObj* self)
     self->y_pos.val = g_Player.y_pos.val;
     self->animation_step.fields.frame_index = g_Player.animation_step.fields.frame_index;
     self->unk15 = g_Player.unk15;
-    D_801088F8[self->unk5](self);
+    soul_body_step_funcs[self->unk5](self);
 
     if (D_80141BD8.unk0 & 1) {
-        func_80094F14(D_80108904[ext->unk90]);
+        soul_body_load_palette(soul_body_palettes[ext->unk90]);
         palette_index = ext->unk90 + 1;
         ext->unk90 = palette_index;
         if (palette_index == 6) {
@@ -84,11 +84,11 @@ void func_80094C18(struct WeaponObj* self)
     }
 
     if (self->on_screen != 0) {
-        func_8002B318(BASE_OBJECT(self), 0x80, 0x20);
+        update_on_screen(BASE_OBJECT(self), 0x80, 0x20);
     }
 }
 
-void func_80094D40(struct WeaponObj* arg0)
+void soul_body_extend(struct WeaponObj* arg0)
 {
     u16* offset_ptr;
     s16 x_pos;
@@ -110,7 +110,7 @@ void func_80094D40(struct WeaponObj* arg0)
     *(s16*)offset_ptr = offset + 8;
 }
 
-void func_80094DC0(struct WeaponObj* arg0)
+void soul_body_hold(struct WeaponObj* arg0)
 {
     u16 temp_v0;
     u16* field_8c;
@@ -136,7 +136,7 @@ void func_80094DC0(struct WeaponObj* arg0)
     field_8c[1]--;
 }
 
-void func_80094E50(struct WeaponObj* arg0)
+void soul_body_retract(struct WeaponObj* arg0)
 {
     s16 temp_v0;
     s16 var_v0;
@@ -158,7 +158,7 @@ void func_80094E50(struct WeaponObj* arg0)
     }
 }
 
-void func_80094EC8(struct WeaponObj* arg0)
+void soul_body_despawn(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     g_Player.shot_count--;
@@ -166,7 +166,7 @@ void func_80094EC8(struct WeaponObj* arg0)
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
-void func_80094F14(s32 arg0)
+void soul_body_load_palette(s32 arg0)
 {
     u16* var_a0;
     u16* var_v1;
@@ -182,7 +182,7 @@ void func_80094F14(s32 arg0)
     need_palette_load |= 1;
 }
 
-void func_80094F74(void)
+void soul_body_clone_update(void)
 {
     s32 var_a0;
     struct BackgroundObj* obj;
@@ -243,24 +243,24 @@ void func_80094F74(void)
     }
 }
 
-struct Unk_unk68 D_801088E4[] = {
+struct Unk_unk68 soul_body_hit_box[] = {
     { -21, -24, 0x28, 0x30 },
 };
 
-void (*D_801088E8[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80094B24,
-    (void (*)(struct WeaponObj*))func_80094C18,
-    (void (*)(struct WeaponObj*))func_80094EC8,
-    (void (*)(struct WeaponObj*))func_80094EC8,
+void (*soul_body_state_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))soul_body_init,
+    (void (*)(struct WeaponObj*))soul_body_main,
+    (void (*)(struct WeaponObj*))soul_body_despawn,
+    (void (*)(struct WeaponObj*))soul_body_despawn,
 };
 
-void (*D_801088F8[])(struct WeaponObj*) = {
-    (void (*)(struct WeaponObj*))func_80094D40,
-    (void (*)(struct WeaponObj*))func_80094DC0,
-    (void (*)(struct WeaponObj*))func_80094E50,
+void (*soul_body_step_funcs[])(struct WeaponObj*) = {
+    (void (*)(struct WeaponObj*))soul_body_extend,
+    (void (*)(struct WeaponObj*))soul_body_hold,
+    (void (*)(struct WeaponObj*))soul_body_retract,
 };
 
-u8 D_80108904[] = {
+u8 soul_body_palettes[] = {
     0x35,
     0x36,
     0x37,

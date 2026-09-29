@@ -17,7 +17,7 @@ void func_8002FCEC(struct BarObj* arg0)
 
 void func_8002FD28(struct BarObj* arg0)
 {
-    func_80015930(0xFF, 0);
+    stop_sound(0xFF, 0);
     func_800129F0(8);
     func_80023D68();
     arg0->unk5 = 1;

@@ -2,30 +2,31 @@
 // 800CE340..800CE894
 #include "common.h"
 
-void func_800CE340(struct MiscObj* arg0)
+void cyberspace_warp_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010EDDC[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    cyberspace_warp_state_funcs[self->state](self);
 }
 
+// cyberspace_warp_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_33", func_800CE388);
 
-void func_800CE670(struct MiscObj* arg0)
+void cyberspace_warp_main(struct MiscObj* self)
 {
-    D_8010EDE8[arg0->unk5](arg0);
+    cyberspace_warp_main_funcs[self->unk5](self);
 }
 
-void func_800CE6AC(struct MiscObj* arg0)
+void cyberspace_warp_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800CE6CC(struct MiscObj* self)
+void cyberspace_warp_fade(struct MiscObj* self)
 {
     u16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->ext.misc_33.timer - 1;
     self->ext.misc_33.timer = timer;
     if (timer == 0) {
@@ -40,9 +41,9 @@ void func_800CE6CC(struct MiscObj* self)
     self->state++;
 }
 
-void func_800CE754(struct MiscObj* self)
+void cyberspace_warp_wait(struct MiscObj* self)
 {
-    D_8010EDF0[self->unk6](self);
+    cyberspace_warp_wait_funcs[self->unk6](self);
     if (*self->ext.misc_33.completion_flag == 0) {
         self->unk5 = 0;
         self->unk6 = 0;
@@ -50,21 +51,21 @@ void func_800CE754(struct MiscObj* self)
     }
 }
 
-void func_800CE7C8(struct MiscObj* self)
+void cyberspace_warp_wait_start(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     self->ext.misc_33.timer = 0x14;
     self->unk6 += 1;
     func_8001540C(2, 0xE8, self);
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CE81C(struct MiscObj* self)
+void cyberspace_warp_wait_blink(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.misc_33.timer != 0) {
         if ((self->on_screen ^= 1) != 0) {
-            func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
         }
         self->ext.misc_33.timer--;
     } else {
@@ -77,7 +78,7 @@ void func_800CE81C(struct MiscObj* self)
         .packed = (value) \
     }
 
-union AnimationStep D_8010ECE0[24] = {
+union AnimationStep cyberspace_warp_anim_0[24] = {
     STEP(0x00010003),
     STEP(0x01010003),
     STEP(0x03010003),
@@ -104,7 +105,7 @@ union AnimationStep D_8010ECE0[24] = {
     STEP(0x2D000003),
 };
 
-union AnimationStep D_8010ED40[24] = {
+union AnimationStep cyberspace_warp_anim_1[24] = {
     STEP(0x00010003),
     STEP(0x02010003),
     STEP(0x04010003),
@@ -131,16 +132,16 @@ union AnimationStep D_8010ED40[24] = {
     STEP(0x2E000003),
 };
 
-union AnimationStep D_8010EDA0[1] = { STEP(0x2F000008) };
-union AnimationStep D_8010EDA4[1] = { STEP(0x30000008) };
-union AnimationStep D_8010EDA8[1] = { STEP(0x31000008) };
+union AnimationStep cyberspace_warp_anim_2[1] = { STEP(0x2F000008) };
+union AnimationStep cyberspace_warp_anim_3[1] = { STEP(0x30000008) };
+union AnimationStep cyberspace_warp_anim_4[1] = { STEP(0x31000008) };
 
-union AnimationStep* D_8010EDAC[5] = {
-    D_8010ECE0,
-    D_8010ED40,
-    D_8010EDA0,
-    D_8010EDA4,
-    D_8010EDA8,
+union AnimationStep* cyberspace_warp_animations[5] = {
+    cyberspace_warp_anim_0,
+    cyberspace_warp_anim_1,
+    cyberspace_warp_anim_2,
+    cyberspace_warp_anim_3,
+    cyberspace_warp_anim_4,
 };
 
 #undef STEP
@@ -150,7 +151,7 @@ struct Misc33Position {
     s16 y;
 };
 
-struct Misc33Position D_8010EDC0[6] = {
+struct Misc33Position cyberspace_warp_positions[6] = {
     { 0x778, 0x60 },
     { 0x378, 0x360 },
     { 0x878, 0x260 },
@@ -159,20 +160,20 @@ struct Misc33Position D_8010EDC0[6] = {
     { 0x378, 0x360 },
 };
 
-struct Misc33Position D_8010EDD8 = { 0xFF0, 0x290 };
+struct Misc33Position cyberspace_warp_exit_position = { 0xFF0, 0x290 };
 
-void (*D_8010EDDC[3])(struct MiscObj*) = {
+void (*cyberspace_warp_state_funcs[3])(struct MiscObj*) = {
     func_800CE388,
-    func_800CE670,
-    func_800CE6AC,
+    cyberspace_warp_main,
+    cyberspace_warp_despawn,
 };
 
-void (*D_8010EDE8[2])(struct MiscObj*) = {
-    func_800CE6CC,
-    func_800CE754,
+void (*cyberspace_warp_main_funcs[2])(struct MiscObj*) = {
+    cyberspace_warp_fade,
+    cyberspace_warp_wait,
 };
 
-void (*D_8010EDF0[2])(struct MiscObj*) = {
-    func_800CE7C8,
-    func_800CE81C,
+void (*cyberspace_warp_wait_funcs[2])(struct MiscObj*) = {
+    cyberspace_warp_wait_start,
+    cyberspace_warp_wait_blink,
 };

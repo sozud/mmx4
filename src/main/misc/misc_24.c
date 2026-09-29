@@ -2,49 +2,51 @@
 // 800CBECC..800CC460
 #include "common.h"
 
-void func_800CBECC(struct MiscObj* arg0)
+void enemy_hatch_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010E90C[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    enemy_hatch_state_funcs[self->state](self);
 }
 
+// enemy_hatch_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CBF14);
 
-void func_800CC040(struct MiscObj* arg0)
+void enemy_hatch_main(struct MiscObj* self)
 {
-    D_8010E918[arg0->unk5](arg0);
-    if (func_8002B160(arg0) == 0) {
-        is_on_screen(arg0);
+    enemy_hatch_step_funcs[self->unk5](self);
+    if (func_8002B160(self) == 0) {
+        is_on_screen(self);
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800CC0AC(struct MiscObj* arg0)
+void enemy_hatch_wait(struct MiscObj* self)
 {
-    D_8010E924[arg0->unk6](arg0);
+    enemy_hatch_wait_funcs[self->unk6](self);
 }
 
-void func_800CC0E8(struct MiscObj* arg0)
+void enemy_hatch_wait_start(struct MiscObj* self)
 {
-    arg0->unk6++;
-    func_80015D60(arg0, 0);
+    self->unk6++;
+    set_animation(self, 0);
 }
 
+// enemy_hatch_wait_player
 INCLUDE_ASM("main/nonmatchings/misc/misc_24", func_800CC114);
 
-void func_800CC1F8(struct MiscObj* arg0)
+void enemy_hatch_release(struct MiscObj* self)
 {
-    D_8010E92C[arg0->unk6](arg0);
+    enemy_hatch_release_funcs[self->unk6](self);
 }
 
-void func_800CC234(struct MiscObj* self)
+void enemy_hatch_release_spawn(struct MiscObj* self)
 {
     struct MainObj* main;
 
-    func_80015D60(self, 1);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
+    animate_object(ANIMATED_OBJECT(self));
     main = find_free_main_obj();
     if (main != NULL) {
         main->active = 0x41;
@@ -68,48 +70,48 @@ void func_800CC234(struct MiscObj* self)
     }
 }
 
-void func_800CC304(struct MiscObj* arg0)
+void enemy_hatch_release_wait(struct MiscObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
+    animate_object((struct AnimatedObj*)self);
 
-    if (--arg0->ext.misc_24.timer == 0) {
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+    if (--self->ext.misc_24.timer == 0) {
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
 }
 
-void func_800CC350(struct MiscObj* arg0)
+void enemy_hatch_close(struct MiscObj* self)
 {
-    D_8010E934[arg0->unk6](arg0);
+    enemy_hatch_close_funcs[self->unk6](self);
 }
 
-void func_800CC38C(struct MiscObj* arg0)
+void enemy_hatch_close_start(struct MiscObj* self)
 {
-    arg0->unk6++;
-    func_80015D60(arg0, 3);
-    arg0->ext.misc_24.child_active = 0;
-    arg0->ext.misc_24.child->ext.misc_11.active = 1;
+    self->unk6++;
+    set_animation(self, 3);
+    self->ext.misc_24.child_active = 0;
+    self->ext.misc_24.child->ext.misc_11.active = 1;
 }
 
-void func_800CC3D4(struct MiscObj* arg0)
+void enemy_hatch_close_finish(struct MiscObj* self)
 {
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    animate_object(self);
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800CC418(struct MiscObj* arg0)
+void enemy_hatch_despawn(struct MiscObj* self)
 {
-    if (arg0->ext.misc_24.child_active != 0) {
-        ZeroObjectState(OBJECT_HEADER(arg0->ext.misc_24.child));
+    if (self->ext.misc_24.child_active != 0) {
+        ZeroObjectState(OBJECT_HEADER(self->ext.misc_24.child));
     }
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-union AnimationStep D_8010E83C[16] = {
+union AnimationStep enemy_hatch_anim_0[16] = {
     { .packed = 0x00010002 },
     { .packed = 0x01010002 },
     { .packed = 0x02010002 },
@@ -128,7 +130,7 @@ union AnimationStep D_8010E83C[16] = {
     { .packed = 0x0C000003 },
 };
 
-union AnimationStep D_8010E87C[8] = {
+union AnimationStep enemy_hatch_anim_1[8] = {
     { .packed = 0x0D010003 },
     { .packed = 0x0E010003 },
     { .packed = 0x0F010003 },
@@ -139,7 +141,7 @@ union AnimationStep D_8010E87C[8] = {
     { .packed = 0x14F90003 },
 };
 
-union AnimationStep D_8010E89C[8] = {
+union AnimationStep enemy_hatch_anim_2[8] = {
     { .packed = 0x15010003 },
     { .packed = 0x16010003 },
     { .packed = 0x17010003 },
@@ -150,7 +152,7 @@ union AnimationStep D_8010E89C[8] = {
     { .packed = 0x1CF90003 },
 };
 
-union AnimationStep D_8010E8BC[16] = {
+union AnimationStep enemy_hatch_anim_3[16] = {
     { .packed = 0x0C010003 },
     { .packed = 0x0B010004 },
     { .packed = 0x0A010004 },
@@ -169,36 +171,36 @@ union AnimationStep D_8010E8BC[16] = {
     { .packed = 0x00000001 },
 };
 
-union AnimationStep* D_8010E8FC[4] = {
-    D_8010E83C,
-    D_8010E87C,
-    D_8010E89C,
-    D_8010E8BC,
+union AnimationStep* enemy_hatch_animations[4] = {
+    enemy_hatch_anim_0,
+    enemy_hatch_anim_1,
+    enemy_hatch_anim_2,
+    enemy_hatch_anim_3,
 };
 
-void (*D_8010E90C[])(struct MiscObj*) = {
+void (*enemy_hatch_state_funcs[])(struct MiscObj*) = {
     func_800CBF14,
-    func_800CC040,
-    func_800CC418,
+    enemy_hatch_main,
+    enemy_hatch_despawn,
 };
 
-void (*D_8010E918[])(struct MiscObj*) = {
-    func_800CC0AC,
-    func_800CC1F8,
-    func_800CC350,
+void (*enemy_hatch_step_funcs[])(struct MiscObj*) = {
+    enemy_hatch_wait,
+    enemy_hatch_release,
+    enemy_hatch_close,
 };
 
-void (*D_8010E924[])(struct MiscObj*) = {
-    func_800CC0E8,
+void (*enemy_hatch_wait_funcs[])(struct MiscObj*) = {
+    enemy_hatch_wait_start,
     func_800CC114,
 };
 
-void (*D_8010E92C[])(struct MiscObj*) = {
-    func_800CC234,
-    func_800CC304,
+void (*enemy_hatch_release_funcs[])(struct MiscObj*) = {
+    enemy_hatch_release_spawn,
+    enemy_hatch_release_wait,
 };
 
-void (*D_8010E934[])(struct MiscObj*) = {
-    func_800CC38C,
-    func_800CC3D4,
+void (*enemy_hatch_close_funcs[])(struct MiscObj*) = {
+    enemy_hatch_close_start,
+    enemy_hatch_close_finish,
 };

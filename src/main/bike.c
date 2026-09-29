@@ -71,7 +71,7 @@ void func_8003BA24(struct RideArmorObj* arg0)
                 arg0->y_vel.val = 0;
                 arg0->unk2C = 0;
             }
-            func_8002B694(ANIMATED_OBJECT(arg0));
+            move_with_gravity(ANIMATED_OBJECT(arg0));
         }
     } else {
         arg0->state = 3;
@@ -84,7 +84,7 @@ void func_8003BA24(struct RideArmorObj* arg0)
 
 void func_8003BAE8(struct RideArmorObj* arg0)
 {
-    func_80015930(5, 0);
+    stop_sound(5, 0);
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
@@ -103,7 +103,7 @@ void func_8003BDA0(struct RideArmorObj* arg0)
         func_8003CB08(arg0);
     }
     func_8003C8F4(arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     func_8003CD38(arg0);
 }
 
@@ -116,7 +116,7 @@ void func_8003BE28(struct RideArmorObj* self)
     self->unk67 = 1;
     func_8003C6EC(self, 4);
     if ((*(u32*)&self->unk70 & 5) != 5) {
-        func_8002B694(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
         if (self->y_vel.val < 0) {
             self->unk5 = 4;
             self->unk6 = 0;
@@ -163,7 +163,7 @@ void func_8003C584(struct RideArmorObj* arg0)
             arg0->unk28 = 0;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
 }
 
 void func_8003C624(struct RideArmorObj* arg0)
@@ -179,7 +179,7 @@ void func_8003C624(struct RideArmorObj* arg0)
             background_objects[arg0->bg_offset].unk47 = 6;
         }
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(arg0));
 }
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003C6EC);
@@ -192,7 +192,7 @@ void func_8003C8F4(struct RideArmorObj* arg0)
             arg0->unk6 = 0;
             arg0->y_vel.val = FIXED(6.5);
             arg0->unk80.bytes.unk80 |= 2;
-            func_80015D60(arg0, 2);
+            set_animation(arg0, 2);
             func_8003B458(arg0, 0x45);
         } else {
             arg0->y_vel.val = FIXED(6.5);
@@ -310,15 +310,15 @@ void func_8003CD38(struct RideArmorObj* arg0)
                 arg0->x_vel.val = limit;
                 func_8003D39C(MAIN_OBJECT(arg0));
             } else {
-                func_8002B694(ANIMATED_OBJECT(arg0));
+                move_with_gravity(ANIMATED_OBJECT(arg0));
             }
         } else {
             limit = D_800F9078[arg0->unk7D];
             if (arg0->x_vel.val < limit) {
                 func_8003D338(ANIMATED_OBJECT(arg0));
-                func_8002B718(MOVING_OBJECT(arg0));
+                move_object(MOVING_OBJECT(arg0));
             } else {
-                func_8002B694(ANIMATED_OBJECT(arg0));
+                move_with_gravity(ANIMATED_OBJECT(arg0));
             }
         }
         break;
@@ -327,7 +327,7 @@ void func_8003CD38(struct RideArmorObj* arg0)
             limit = D_800F9080[arg0->unk7D];
             if (arg0->x_vel.val < limit) {
                 func_8003D338(ANIMATED_OBJECT(arg0));
-                func_8002B718(MOVING_OBJECT(arg0));
+                move_object(MOVING_OBJECT(arg0));
             } else {
                 arg0->x_vel.val = limit;
                 func_8003D39C(MAIN_OBJECT(arg0));
@@ -336,22 +336,22 @@ void func_8003CD38(struct RideArmorObj* arg0)
             limit = D_800F9088[arg0->unk7D];
             if (limit < arg0->x_vel.val) {
                 func_8003D338(ANIMATED_OBJECT(arg0));
-                func_8002B718(MOVING_OBJECT(arg0));
+                move_object(MOVING_OBJECT(arg0));
             } else {
-                func_8002B694(ANIMATED_OBJECT(arg0));
+                move_with_gravity(ANIMATED_OBJECT(arg0));
             }
         }
         break;
     default:
         if (arg0->unk7C == 0) {
-            func_8002B694(ANIMATED_OBJECT(arg0));
+            move_with_gravity(ANIMATED_OBJECT(arg0));
             limit = D_800F9090[arg0->unk7D];
             if (limit - arg0->x_vel.val >= 0) {
                 arg0->x_vel.val = limit;
             }
         } else {
             func_8003D338(ANIMATED_OBJECT(arg0));
-            func_8002B718(MOVING_OBJECT(arg0));
+            move_object(MOVING_OBJECT(arg0));
             limit = D_800F9098[arg0->unk7D];
             if (limit - arg0->x_vel.val < 0) {
                 arg0->x_vel.val = limit;
@@ -417,16 +417,16 @@ void func_8003D338(struct AnimatedObj* arg0)
 
 void func_8003D35C(struct MainObj* arg0)
 {
-    arg0->y_pos.val -= arg0->unk24;
-    arg0->unk24 -= arg0->unk2C;
-    if (arg0->unk24 < -FIXED(6.5)) {
-        arg0->unk24 = -FIXED(6.5);
+    arg0->y_pos.val -= arg0->y_speed;
+    arg0->y_speed -= arg0->gravity;
+    if (arg0->y_speed < -FIXED(6.5)) {
+        arg0->y_speed = -FIXED(6.5);
     }
 }
 
 void func_8003D39C(struct MainObj* arg0)
 {
-    arg0->x_pos.val += arg0->unk20;
+    arg0->x_pos.val += arg0->x_speed;
 }
 
 void func_8003D3B4(struct PlayerObj* arg0)

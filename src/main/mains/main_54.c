@@ -29,11 +29,11 @@ void slash_beast_death_start(struct MainObj* self)
     player_start_script_action(0x14, g_Player.unk15);
     self->unk5 = 1;
     self->unk42 &= 0x7FFF;
-    func_80015D60(self, 0x13);
+    set_animation(self, 0x13);
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
-    self->unk61 = 0x19;
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    self->invincibility_timer = 0x19;
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
 void slash_beast_death_blink(struct MainObj* self)
@@ -54,16 +54,16 @@ void slash_beast_death_blink(struct MainObj* self)
             self->ext.main_54.effect = effect;
         }
     }
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        delay = self->unk61 - 5;
-        self->unk61 = delay;
+        delay = self->invincibility_timer - 5;
+        self->invincibility_timer = delay;
         if (delay >= 0x1A) {
-            self->unk61 = 0;
+            self->invincibility_timer = 0;
         }
-        next_delay = self->unk61;
-        if (self->unk61 < 5) {
+        next_delay = self->invincibility_timer;
+        if (self->invincibility_timer < 5) {
             next_delay = 5;
         }
         self->unk7E = next_delay;
@@ -80,7 +80,7 @@ void slash_beast_death_finish(struct MainObj* self)
                 self->unk7E = 5;
                 self->unk42 ^= 0x8000;
             }
-            func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+            update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         }
     } else {
         self->ext.raw[0] = 0;
@@ -115,21 +115,21 @@ void slash_beast_crescent(struct MainObj* self)
 
 void slash_beast_crescent_jump(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk50 = &D_80100220;
-        self->unk54 = &D_80100224;
+        self->attack_box = &D_80100220;
+        self->hurt_box = &D_80100224;
     }
     if (self->animation_step.fields.event == 1) {
         if (self->unk15 != 0) {
-            self->unk20 = FIXED(3);
+            self->x_speed = FIXED(3);
         } else {
-            self->unk20 = FIXED(-3);
+            self->x_speed = FIXED(-3);
         }
-        self->unk28 = FIXED(-0.125);
-        self->unk24 = FIXED(3);
-        self->unk2C = FIXED(0.125);
-        func_80015D60(self, 9);
+        self->x_accel = FIXED(-0.125);
+        self->y_speed = FIXED(3);
+        self->gravity = FIXED(0.125);
+        set_animation(self, 9);
         func_8001540C(2, 0x81, self);
         self->unk6 = 1;
     }
@@ -140,24 +140,24 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006C378);
 
 void slash_beast_crescent_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         func_8001540C(2, 0x82, self);
-        func_80015D60(self, 0xA);
-        self->unk54 = (const u8*)D_801001FC;
-        self->unk50 = (const u8*)D_801001F8;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        set_animation(self, 0xA);
+        self->hurt_box = (const u8*)D_801001FC;
+        self->attack_box = (const u8*)D_801001F8;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk6 = 3;
     }
 }
 
 void slash_beast_crescent_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         slash_beast_face_player(self);
         self->unk5 = 3;
         self->unk6 = 0;
@@ -174,15 +174,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006C6AC);
 
 void slash_beast_crouch(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk54 = (const u8*)&D_80100204;
-        self->unk50 = (const u8*)&D_80100200;
+        self->hurt_box = (const u8*)&D_80100204;
+        self->attack_box = (const u8*)&D_80100200;
         func_8001540C(2, 0x87, self);
     }
     if (--self->unk7C == 0) {
-        self->unk54 = (const u8*)D_801001FC;
-        self->unk50 = (const u8*)D_801001F8;
+        self->hurt_box = (const u8*)D_801001FC;
+        self->attack_box = (const u8*)D_801001F8;
         self->unk6 = 0;
     }
 }
@@ -200,9 +200,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006CC3C);
 
 void slash_beast_jump_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         slash_beast_face_player(self);
         self->unk5 = 3;
         self->unk6 = 0;
@@ -219,28 +219,28 @@ void slash_beast_dash(struct MainObj* self)
 
 void slash_beast_dash_windup(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_80015D60(self, 0xD);
+        set_animation(self, 0xD);
         self->unk6 = 1;
     }
 }
 
 void slash_beast_dash_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->unk60 = 9;
-        func_80015D60(self, 0xE);
+        self->contact_damage = 9;
+        set_animation(self, 0xE);
         if (self->unk15 == 0) {
-            self->unk20 = FIXED(-1);
+            self->x_speed = FIXED(-1);
         } else {
-            self->unk20 = FIXED(1);
+            self->x_speed = FIXED(1);
         }
         self->ext.main_54.claw_hitbox = 1;
         self->ext.main_54.afterimage_timer = 1;
         func_8001540C(2, 0x83, self);
-        self->unk28 = FIXED(0.5);
+        self->x_accel = FIXED(0.5);
         self->unk6 = 2;
     }
 }
@@ -253,12 +253,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006D280);
 
 void slash_beast_dash_turn(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        self->unk60 = 9;
+        self->contact_damage = 9;
         self->ext.main_54.claw_hitbox = 1;
-        self->unk20 = -self->unk20;
-        func_80015D60(self, 0xE);
+        self->x_speed = -self->x_speed;
+        set_animation(self, 0xE);
         func_8001540C(2, 0x83, self);
         self->unk6 = 2;
     }
@@ -275,11 +275,11 @@ void slash_beast_grab(struct MainObj* self)
 void slash_beast_grab_check(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         self->unk16 = 6;
-        self->unk60 = 6;
-        self->unk54 = D_801001FC;
-        self->unk50 = D_801001F8;
+        self->contact_damage = 6;
+        self->hurt_box = D_801001FC;
+        self->attack_box = D_801001F8;
         self->unk5 = 4;
         self->unk62 = 0;
         self->ext.main_54.grab = 0;
@@ -298,12 +298,12 @@ void slash_beast_grab_check(struct MainObj* self)
     g_Player.y_pos.i.hi = self->y_pos.i.hi - 8;
     if (self->unk15 == 0) {
         g_Player.x_pos.i.hi = self->x_pos.i.hi - 0x23;
-        self->unk20 = FIXED(-6);
+        self->x_speed = FIXED(-6);
     } else {
         g_Player.x_pos.i.hi = self->x_pos.i.hi + 0x23;
-        self->unk20 = FIXED(6);
+        self->x_speed = FIXED(6);
     }
-    func_80015D60(self, 5);
+    set_animation(self, 5);
     self->unk16 = 1;
     self->unk7C = 0x30;
     self->unk6 = 1;
@@ -312,7 +312,7 @@ void slash_beast_grab_check(struct MainObj* self)
 void slash_beast_grab_windup(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        func_80015D60(self, 7);
+        set_animation(self, 7);
         self->unk6 = 2;
         self->ext.main_54.afterimage_timer = 1;
     }
@@ -324,25 +324,25 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006D888);
 void slash_beast_grab_throw(struct MainObj* self)
 {
     g_Player.x_pos.i.hi = self->x_pos.u.hi;
-    func_80028B68(0x1E, 8, 2);
-    func_80015D60(self, 2);
+    start_screen_shake_x(0x1E, 8, 2);
+    set_animation(self, 2);
     self->unk16 = 6;
-    self->unk54 = &D_8010020C;
-    self->unk50 = &D_80100208;
-    self->unk28 = 0;
+    self->hurt_box = &D_8010020C;
+    self->attack_box = &D_80100208;
+    self->x_accel = 0;
     if (self->unk15 != 0) {
-        self->unk20 = FIXED(-3.244140625);
+        self->x_speed = FIXED(-3.244140625);
     } else {
-        self->unk20 = FIXED(3.244140625);
+        self->x_speed = FIXED(3.244140625);
     }
-    self->unk2C = FIXED(0.21875);
-    self->unk24 = FIXED(6.5625);
-    func_8002B694(ANIMATED_OBJECT(self));
+    self->gravity = FIXED(0.21875);
+    self->y_speed = FIXED(6.5625);
+    move_with_gravity(ANIMATED_OBJECT(self));
     func_8001540C(2, 0x81, self);
     self->unk5 = 4;
     self->unk6 = 1;
     self->unk62 = 0;
-    self->unk60 = 9;
+    self->contact_damage = 9;
     self->ext.main_54.grab = 0;
     g_Player.stun_timer = 0;
 }
@@ -399,51 +399,51 @@ void slash_beast_intro_leap(struct MainObj* self)
         background_objects[0].unk24 = 0x24D0;
         background_objects[0].unk2A = 0xD0;
         background_objects[0].unk28 = 0xD0;
-        func_80015D60(self, 0x16);
-        self->unk2C = FIXED(0.125);
-        self->unk24 = FIXED(7.5);
-        self->unk20 = FIXED(1.875);
+        set_animation(self, 0x16);
+        self->gravity = FIXED(0.125);
+        self->y_speed = FIXED(7.5);
+        self->x_speed = FIXED(1.875);
         self->unk7E = 0;
         func_8001540C(2, 0x81, self);
         self->unk6 = 4;
     }
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
 void slash_beast_intro_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->x_pos.i.hi - background_objects[0].x_pos.i.hi >= 0xE0) {
-        self->unk20 = 0;
-        self->unk2C = FIXED(1);
+        self->x_speed = 0;
+        self->gravity = FIXED(1);
     }
-    if (self->unk24 == 0) {
-        self->unk68 = &D_8010024C;
-        func_80015D60(self, 0x17);
+    if (self->y_speed == 0) {
+        self->terrain_box = &D_8010024C;
+        set_animation(self, 0x17);
     }
-    if (self->unk24 < 0) {
+    if (self->y_speed < 0) {
         switch (self->unk7E) {
         case 0:
-            if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->unk68->unk0,
-                    self->unk68->unk3 + (self->y_pos.i.hi + self->unk68->unk1) + 0x40)
+            if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->terrain_box->unk0,
+                    self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1) + 0x40)
                 == 0x38) {
                 if (engine_obj.stage == 8) {
-                    func_800DABE4(8, 0x2580, 0x140);
+                    apply_tile_effect(8, 0x2580, 0x140);
                     func_8001540C(2, 0x80, self);
-                    func_800C813C(4, D_801005B0, self);
+                    spawn_debris(4, D_801005B0, self);
                 }
                 self->unk7E = 1;
             }
             break;
         case 1:
-            if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->unk68->unk0,
-                    self->unk68->unk3 + (self->y_pos.i.hi + self->unk68->unk1) + 0x10)
+            if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->terrain_box->unk0,
+                    self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1) + 0x10)
                 == 0x38) {
                 self->unk7E = 2;
-                func_80015D60(self, 3);
+                set_animation(self, 3);
                 if (engine_obj.stage == 0xC) {
                     func_8001540C(2, 0x82, self);
                 }
@@ -451,21 +451,21 @@ void slash_beast_intro_land(struct MainObj* self)
             break;
         }
     }
-    if (self->unk70 & 8) {
-        func_80028BAC(0x10, 4, 2);
+    if (self->collision_flags & 8) {
+        start_screen_shake_y(0x10, 4, 2);
         self->ext.main_54.active = 1;
         self->unk6 = 5;
     }
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
 void slash_beast_intro_pose(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         if (engine_obj.stage == 8) {
             self->unk15 = 0;
-            func_80015D60(self, 0x18);
+            set_animation(self, 0x18);
             func_8002217C(0x10, 0xFF, engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
@@ -476,16 +476,16 @@ void slash_beast_intro_pose(struct MainObj* self)
 void slash_beast_intro_wait_dialogue(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
-        func_80015D60(self, 0x19);
+        set_animation(self, 0x19);
         self->unk7E = 3;
         self->unk6 = 7;
-        func_800921E8(7);
+        play_boss_music(7);
     }
 }
 
 void slash_beast_intro_fill_health(struct MainObj* self)
 {
-    if (func_8009227C() == 0) {
+    if (update_boss_music_delay() == 0) {
         if (engine_obj.stage == 8) {
             s16* background_object = &background_objects[0].unk26;
 
@@ -499,7 +499,7 @@ void slash_beast_intro_fill_health(struct MainObj* self)
             self->unk7E = 3;
         }
 
-        if (++self->unk5C == 0x30) {
+        if (++self->hp == 0x30) {
             self->ext.main_54.pattern_set = 0;
             self->ext.main_54.fight_started = 1;
             slash_beast_pick_pattern(self);
@@ -521,24 +521,24 @@ INCLUDE_ASM("main/nonmatchings/mains/main_54", func_8006E450);
 
 void slash_beast_stagger_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         func_8001540C(2, 0x88, self);
-        self->unk20 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
-        func_80015D60(self, 0x12);
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        set_animation(self, 0x12);
         self->unk6 = 2;
     }
 }
 
 void slash_beast_stagger_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         slash_beast_face_player(self);
-        func_80015D60(self, 0xC);
+        set_animation(self, 0xC);
         self->unk7C = 0x14;
         self->unk7E = 1;
         self->unk5 = 6;
@@ -554,7 +554,7 @@ void slash_beast_high_leap(struct MainObj* self)
 
 void slash_beast_high_leap_jump(struct AnimatedObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (self->animation_step.fields.event != 0) {
         if (self->unk15 == 0) {
             self->x_vel.val = FIXED(-1.75);
@@ -564,58 +564,58 @@ void slash_beast_high_leap_jump(struct AnimatedObj* self)
         self->y_vel.val = FIXED(7.4375);
         self->unk28 = 0;
         self->unk2C = FIXED(0.21875);
-        func_8002B694(self);
+        move_with_gravity(self);
         func_8001540C(2, 0x81, self);
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         self->unk6 = 1;
     }
 }
 
 void slash_beast_high_leap_fall(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk24 == 0) {
-        self->unk2C = FIXED(2);
-        self->unk20 = 0;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_speed == 0) {
+        self->gravity = FIXED(2);
+        self->x_speed = 0;
         self->unk6 = 2;
-        func_80015D60(self, 0x17);
-        self->unk60 = 7;
-        self->unk50 = (const u8*)&D_80100210;
-        self->unk54 = (const u8*)&D_80100214;
+        set_animation(self, 0x17);
+        self->contact_damage = 7;
+        self->attack_box = (const u8*)&D_80100210;
+        self->hurt_box = (const u8*)&D_80100214;
     }
 }
 
 void slash_beast_high_leap_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if ((func_8002D724(
              PLAYER_OBJECT(self),
-             (s16)((u16)self->x_pos.i.hi + self->unk68->unk0),
-             (s16)(self->unk68->unk3 + ((u16)self->y_pos.i.hi + self->unk68->unk1) + 0x10))
+             (s16)((u16)self->x_pos.i.hi + self->terrain_box->unk0),
+             (s16)(self->terrain_box->unk3 + ((u16)self->y_pos.i.hi + self->terrain_box->unk1) + 0x10))
             & 0xFF)
         == 0x38) {
         func_8001540C(2, 0x88, self);
-        func_80028BAC(0x10, 4, 2);
-        func_80015D60(self, 3);
+        start_screen_shake_y(0x10, 4, 2);
+        set_animation(self, 3);
         self->unk6 = 3;
     }
 }
 
 void slash_beast_high_leap_recover(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
-        self->unk60 = 5;
-        self->unk24 = 0;
-        self->unk2C = 0;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->contact_damage = 5;
+        self->y_speed = 0;
+        self->gravity = 0;
     }
     if (self->animation_step.fields.event != 0) {
-        self->unk50 = (const u8*)D_801001F8;
-        self->unk54 = (const u8*)D_801001FC;
-        func_80015D60(self, 0);
+        self->attack_box = (const u8*)D_801001F8;
+        self->hurt_box = (const u8*)D_801001FC;
+        set_animation(self, 0);
         slash_beast_face_player(self);
         self->unk5 = 3;
         self->unk6 = 0;
@@ -1107,7 +1107,7 @@ void (*slash_beast_state_funcs[])(struct MainObj*) = {
 };
 
 void (*slash_beast_step_funcs[12])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     slash_beast_start_pattern,
     slash_beast_crescent,
     slash_beast_decide,

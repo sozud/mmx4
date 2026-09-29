@@ -2,68 +2,69 @@
 // 8009EB6C..8009EE68
 #include "common.h"
 
-void func_8009EB6C(struct ShotObj* arg0)
+void grenade_update(struct ShotObj* self)
 {
-    D_80109160[arg0->state](arg0);
+    grenade_state_funcs[self->state](self);
 }
 
+// grenade_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_25", func_8009EBA8);
 
-void func_8009ED70(struct ShotObj* arg0)
+void grenade_fly(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
-    func_8002B694(arg0);
-    func_8002D9BC(arg0);
+    animate_object(self);
+    move_with_gravity(self);
+    func_8002D9BC(self);
 
-    if (func_8002BB80(arg0, &g_Player) != 0) {
-        if (arg0->unk2 & 0x40) {
+    if (func_8002BB80(self, &g_Player) != 0) {
+        if (self->unk2 & 0x40) {
         label:
-            func_800AF808(arg0);
+            spawn_explosion(self);
         }
-    } else if (!(arg0->unk2 & 0x40) || (CollisionRelated(arg0), arg0->unk70 == 0)) {
-        if (func_8002B160(arg0) == 0) {
-            is_on_screen(arg0);
+    } else if (!(self->unk2 & 0x40) || (CollisionRelated(self), self->unk70 == 0)) {
+        if (func_8002B160(self) == 0) {
+            is_on_screen(self);
             return;
         }
     } else {
         goto label; // unfortunately seems to be necessary for a match
     }
 
-    arg0->state++;
+    self->state++;
 }
 
-void func_8009EE40(struct ShotObj* arg0)
+void grenade_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009EE60(struct ShotObj* arg0)
+void grenade_idle(struct ShotObj* self)
 {
 }
 
-void (*D_80109124[11])(struct ShotObj*) = {
-    func_8009216C,
-    func_8009E5A4,
-    func_8009E5B0,
-    func_8009E608,
-    func_8009E690,
-    func_8009E718,
-    func_8009E7B4,
-    func_8009E7EC,
+void (*train_boss_arm_step_funcs[11])(struct ShotObj*) = {
+    enemy_hit_reaction,
+    train_boss_arm_resume_step,
+    train_boss_arm_advance,
+    train_boss_arm_wait_signal,
+    train_boss_arm_windup,
+    train_boss_arm_punch,
+    train_boss_arm_hold,
+    train_boss_arm_retract,
     func_8009E8E0,
-    func_8009E9EC,
-    func_8009EAA4,
+    train_boss_arm_return,
+    train_boss_arm_wait_sync,
 };
 
-u8 D_80109150[4] = { 0xF9, 0xF9, 0x0C, 0x0C };
+u8 grenade_hit_box[4] = { 0xF9, 0xF9, 0x0C, 0x0C };
 
-u8 D_80109154[4] = { 0, 0, 4, 4 };
+u8 grenade_terrain_box[4] = { 0, 0, 4, 4 };
 
-s8 D_80109158[8] = { 0x21, -0x2A, 0x30, -0x15, 0x28, 7, 0, 0 };
+s8 grenade_spawn_offsets[8] = { 0x21, -0x2A, 0x30, -0x15, 0x28, 7, 0, 0 };
 
-void (*D_80109160[])(struct ShotObj*) = {
+void (*grenade_state_funcs[])(struct ShotObj*) = {
     func_8009EBA8,
-    func_8009ED70,
-    func_8009EE40,
-    func_8009EE60,
+    grenade_fly,
+    grenade_despawn,
+    grenade_idle,
 };

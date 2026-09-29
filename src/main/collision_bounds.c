@@ -2825,7 +2825,7 @@ struct Unk_unk68 D_80108684[] = {
     { 0, 15, 0xFF, 0 },
 };
 
-struct Unk_unk68 D_80108704[] = {
+struct Unk_unk68 lemon_hit_box[] = {
     { -10, -6, 0x12, 0xB },
 };
 
@@ -2836,7 +2836,7 @@ struct Unk_unk68 D_80108708[] = {
     { -34, -19, 0x40, 0x24 },
 };
 
-struct Unk_unk68 D_80108718[] = {
+struct Unk_unk68 stock_shot_hit_box[] = {
     { -24, -16, 0x30, 0x20 },
 };
 
@@ -2848,6 +2848,6 @@ struct Unk_unk68 D_80108720[] = {
     { -28, -28, 0x36, 0x36 },
 };
 
-struct Unk_unk68 D_80108724[] = {
+struct Unk_unk68 nova_strike_hit_box[] = {
     { -52, -34, 0x7C, 0x42 },
 };

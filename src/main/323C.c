@@ -1424,13 +1424,14 @@ void func_800153D4(u8 arg0)
     arg0 ? SsSetStereo() : SsSetMono();
 }
 
+// play_sound
 INCLUDE_ASM("main/nonmatchings/323C", func_8001540C);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_800154E8);
 
 INCLUDE_ASM("main/nonmatchings/323C", func_800157AC);
 
-void func_80015930(u8 arg0, u8 arg1)
+void stop_sound(u8 arg0, u8 arg1)
 {
     u8* entry;
     u8 var_s1;
@@ -1457,7 +1458,7 @@ void func_80015930(u8 arg0, u8 arg1)
 
 s32 SpuGetKeyStatus(s32);
 
-s32 func_80015A10(s32 arg0, struct MainObj* owner)
+s32 is_sound_finished(s32 arg0, struct MainObj* owner)
 {
     u8* entry = D_80141F50[2];
 
@@ -1553,7 +1554,7 @@ void func_80015C10(void)
     }
 }
 
-s32 func_80015D60(void* object, s32 animation)
+s32 set_animation(void* object, s32 animation)
 {
     struct AnimatedObj* arg0 = object;
 
@@ -1563,7 +1564,7 @@ s32 func_80015D60(void* object, s32 animation)
     __builtin_memcpy(&arg0->animation_step, arg0->animation_cursor, sizeof(arg0->animation_step));
 }
 
-void func_80015D90(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
+void set_animation_frame(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
 {
     arg0->animation_cursor = arg0->animation_table[arg1] + arg2;
     arg0->unk17 = arg1;
@@ -1571,7 +1572,7 @@ void func_80015D90(struct AnimatedObj* arg0, s32 arg1, s32 arg2)
     arg0->animation_step.packed = *arg0->animation_cursor;
 }
 
-void func_80015DC8(struct AnimatedObj* arg0)
+void animate_object(struct AnimatedObj* arg0)
 {
     if (--arg0->animation_step.fields.duration == 0) {
         arg0->animation_cursor = &arg0->animation_cursor[arg0->animation_step.fields.relative_step];

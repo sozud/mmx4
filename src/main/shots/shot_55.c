@@ -2,15 +2,15 @@
 // 800AC8C4..800ADF30
 #include "common.h"
 
-s8 D_80109E04[3][4] = {
+s8 general_shot_boxes[3][4] = {
     { 0, -2, 32, 16 },
     { 15, -13, 32, 24 },
     { -36, -16, 43, 33 },
 };
 
-u8 D_80109E10[8] = { 40, 41, 42, 43, 44, 45, 0, 0 };
+u8 general_shot_prop_debris[8] = { 40, 41, 42, 43, 44, 45, 0, 0 };
 
-s8 D_80109E18[3][4] = {
+s8 general_shot_attack_boxes[3][4] = {
     { -19, -3, 36, 4 },
     { -10, -9, 18, 16 },
     { -99, 53, -60, 38 },
@@ -18,7 +18,7 @@ s8 D_80109E18[3][4] = {
 
 s16 general_fist_rows[4] = { 0x208, 0x238, 0x268, 0x290 };
 
-u8 D_80109E2C[4] = { 2, 3, 0, 1 };
+u8 general_fist_row_order[4] = { 2, 3, 0, 1 };
 
 void (*general_fist_leader_funcs[])(struct ShotObj*) = {
     general_fist_wait_launch,
@@ -50,7 +50,7 @@ void (*general_fist_follower_funcs[])(struct ShotObj*) = {
     general_fist_leader,
 };
 
-s8 D_80109E90[4] = { -63, -40, 13, -40 };
+s8 general_ring_offsets[4] = { -63, -40, 13, -40 };
 
 void (*general_ring_funcs[])(struct ShotObj*) = {
     func_800AD6DC,
@@ -91,12 +91,12 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AC8C4);
 void general_shot_intro_prop(struct ShotObj* self)
 {
     if (self->unk5 == 0) {
-        func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+        update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
         return;
     }
 
     self->state++;
-    func_800C813C(6, D_80109E10, self);
+    spawn_debris(6, general_shot_prop_debris, self);
 }
 
 void general_shot_thruster(struct ShotObj* self)
@@ -108,8 +108,8 @@ void general_shot_thruster(struct ShotObj* self)
     self->y_pos.u.hi = weapon->y_pos.u.hi + self->unk84.halves[1];
     self->unk15 = weapon->unk15;
     if (self->timer != 0) {
-        func_80015DC8(self);
-        func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+        animate_object(self);
+        update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
     }
 }
 
@@ -117,7 +117,7 @@ void general_fist_wait_launch(struct ShotObj* self)
 {
     if (self->unk7C->unk6 == 3) {
         self->unk5++;
-        func_80015D60(self, 0x13);
+        set_animation(self, 0x13);
         func_8001540C(2, 6, self);
     }
 }
@@ -129,8 +129,8 @@ void general_fist_fly_to_row(struct ShotObj* self)
 {
     s32 velocity;
 
-    func_8002B93C(MOVING_OBJECT(self),
-        func_8002B7B0(OBJECT_HEADER(self), FIXED(3616), general_fist_rows[self->timer] << 16) & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        angle_to_point(OBJECT_HEADER(self), FIXED(3616), general_fist_rows[self->timer] << 16) & 0xFF);
     self->x_vel.val *= 4;
     self->y_vel.val *= 4;
     if (sigma_final_shot_at_position(self, 0xE20, general_fist_rows[self->timer]) & 0xFF) {
@@ -142,8 +142,8 @@ void general_fist_fly_to_row(struct ShotObj* self)
         }
         self->x_vel.val = velocity;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
 // general_fist_sweep
@@ -153,15 +153,15 @@ void general_fist_hold(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     temp_v0 = self->unk90.u.lo - 1;
     self->unk90.i.lo = temp_v0;
     if (temp_v0 == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
-            func_80015D60(self, 0x16);
+            set_animation(self, 0x16);
         } else {
-            func_80015D60(self, 0x11);
+            set_animation(self, 0x11);
         }
     }
 }
@@ -171,7 +171,7 @@ void general_fist_turn(struct ShotObj* self)
     s32 velocity;
     u8 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         velocity = FIXED(-1.5);
         self->animation_step.fields.event = 0;
@@ -185,9 +185,9 @@ void general_fist_turn(struct ShotObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
-            func_80015D60(self, 0xF);
+            set_animation(self, 0xF);
         } else {
-            func_80015D60(self, 0x14);
+            set_animation(self, 0x14);
         }
         func_8001540C(2, 5, self);
     }
@@ -199,8 +199,8 @@ void general_fist_approach(struct ShotObj* self)
     s16 target_x_pos;
     s32 delta;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
     x_pos = self->x_pos.i.hi;
     target_x_pos = self->unk7C->x_pos.i.hi;
@@ -216,15 +216,15 @@ void general_fist_pause(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     temp_v0 = self->unk90.u.lo - 1;
     self->unk90.i.lo = temp_v0;
     if (temp_v0 == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
-            func_80015D60(self, 0x11);
+            set_animation(self, 0x11);
         } else {
-            func_80015D60(self, 0x16);
+            set_animation(self, 0x16);
         }
     }
 }
@@ -236,7 +236,7 @@ void general_fist_sweep_turn(struct ShotObj* self)
     struct WeaponObj* owner;
     u8 direction;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         x_velocity = FIXED(-1.5);
         self->animation_step.fields.event = 0;
@@ -255,17 +255,17 @@ void general_fist_sweep_turn(struct ShotObj* self)
             if (self->unk2 == 3) {
                 owner = self->unk7C;
                 owner->unk6++;
-                func_80015D60(self, 0x15);
+                set_animation(self, 0x15);
                 return;
             }
-            func_80015D60(self, 0x10);
+            set_animation(self, 0x10);
             return;
         }
         self->unk5 = 3;
         if (self->unk2 == 3) {
-            func_80015D60(self, 0x14);
+            set_animation(self, 0x14);
         } else {
-            func_80015D60(self, 0xF);
+            set_animation(self, 0xF);
         }
         func_8001540C(2, 5, self);
     }
@@ -276,7 +276,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD338);
 
 void general_fist_docked(struct ShotObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (self->animation_step.fields.relative_step == 0) {
         self->timer = 0x80;
     }
@@ -291,17 +291,17 @@ void general_fist_follower_wait_launch(struct ShotObj* self)
 {
     if (self->unk8C.object->unk5 == 3) {
         self->unk5++;
-        func_80015D60(self, 0xE);
+        set_animation(self, 0xE);
         func_8001540C(2, 6, self);
     }
 }
 
 void general_fist_follower_launch(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
-        func_80015D60(self, 0xF);
+        set_animation(self, 0xF);
         func_8001540C(2, 5, self);
     }
 }
@@ -310,18 +310,18 @@ void general_fist_follower_fly_to_row(struct ShotObj* self)
 {
     s32 velocity;
 
-    func_8002B93C(
+    set_velocity_from_angle(
         MOVING_OBJECT(self),
-        func_8002B7B0(
+        angle_to_point(
             OBJECT_HEADER(self), FIXED(3616),
-            general_fist_rows[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]]
+            general_fist_rows[general_fist_row_order[SHOT_OBJECT(self->unk8C.object)->timer]]
                 << 16)
             & 0xFF);
     self->x_vel.val *= 4;
     self->y_vel.val *= 4;
     if (sigma_final_shot_at_position(
             self, 0xE20,
-            general_fist_rows[D_80109E2C[SHOT_OBJECT(self->unk8C.object)->timer]])
+            general_fist_rows[general_fist_row_order[SHOT_OBJECT(self->unk8C.object)->timer]])
         & 0xFF) {
         velocity = FIXED(-1.5);
         self->y_vel.val = 0;
@@ -331,8 +331,8 @@ void general_fist_follower_fly_to_row(struct ShotObj* self)
         }
         self->x_vel.val = velocity;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
 void general_fist_follower(struct ShotObj* self)
@@ -344,8 +344,8 @@ void general_shot_fist(struct ShotObj* self)
 {
     general_fist_follower_funcs[self->unk2 + 9](self);
     self->unk42 = self->unk7C->unk42;
-    func_8002E184(PLAYER_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+    collide_with_players(PLAYER_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
 // general_ring_init
@@ -353,8 +353,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55", func_800AD6DC);
 
 void general_ring_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B160(BASE_OBJECT(self)) == 1) {
         self->state = 2;
     }
@@ -363,45 +363,45 @@ void general_ring_fly(struct ShotObj* self)
 void general_shot_ring(struct ShotObj* self)
 {
     general_ring_funcs[self->unk5](self);
-    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+    update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
 void general_dust_start(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->timer = 0x19;
         self->unk5++;
         if (self->unk2 == 6) {
-            func_80015D60(self, 0x19);
+            set_animation(self, 0x19);
         } else {
-            func_80015D60(self, 0x1C);
+            set_animation(self, 0x1C);
         }
     }
 }
 
 void general_dust_burst(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        self->unk50.data = (u8*)&D_80109E18[2];
+        self->unk50.data = (u8*)&general_shot_attack_boxes[2];
         self->timer--;
     }
     if (self->timer == 0) {
         self->unk50.data = NULL;
         self->unk5++;
         if (self->unk2 == 6) {
-            func_80015D60(self, 0x1A);
+            set_animation(self, 0x1A);
         } else {
-            func_80015D60(self, 0x1D);
+            set_animation(self, 0x1D);
         }
     }
 }
 
 void general_dust_end(struct ShotObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (self->animation_step.fields.relative_step == 0) {
         self->state++;
     }
@@ -410,7 +410,7 @@ void general_dust_end(struct ShotObj* self)
 void general_shot_dust(struct ShotObj* self)
 {
     general_dust_funcs[self->unk5](self);
-    func_8002B318(BASE_OBJECT(self), 0xA0, 0xA0);
+    update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
 }
 
 void general_shot_hit_flash(struct ShotObj* self)
@@ -420,7 +420,7 @@ void general_shot_hit_flash(struct ShotObj* self)
     weapon = self->unk7C;
     self->x_pos.val = weapon->x_pos.val;
     self->y_pos.val = weapon->y_pos.val;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (MAIN_OBJECT(weapon)->ext.main_75.hit_active == 0) {
         self->state++;
     }
@@ -434,7 +434,7 @@ void general_shot_orb_launcher(struct ShotObj* self)
     struct WeaponObj* owner;
 
     if (self->unk5 == 0) {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step == 0) {
             i = 0;
             owner = self->unk7C;
@@ -465,16 +465,16 @@ void general_orb_spread(struct ShotObj* self)
     struct ShotObj* shot;
     struct WeaponObj* owner;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->unk8A != 0) {
-        func_8002B718(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
         self->unk8A = (u16)self->unk8A - 1;
         return;
     }
     owner = self->unk7C;
     self->unk5 = (u8)self->unk5 + 1;
-    func_80015D60(self, 0x20);
-    self->unk50.data = (u8*)D_80109E18;
+    set_animation(self, 0x20);
+    self->unk50.data = (u8*)general_shot_attack_boxes;
     if (self->timer < 2) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
@@ -496,7 +496,7 @@ void general_orb_wait(struct ShotObj* self)
     struct WeaponObj* weapon;
 
     weapon = self->unk7C;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (MAIN_OBJECT(weapon)->ext.main_75.orbs_ready != 0) {
         self->unk8A = 0x14;
         self->unk5++;
@@ -508,7 +508,7 @@ void general_orb_aim(struct ShotObj* self)
     s16 timer;
     s32 velocity;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk8A - 1;
     self->unk8A = timer;
     velocity = FIXED(-5);
@@ -525,8 +525,8 @@ void general_orb_aim(struct ShotObj* self)
 
 void general_orb_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (func_8002B1E8(BASE_OBJECT(self), 0x50, 0x30) == 1) {
         self->state = 2;
     }
