@@ -609,13 +609,7 @@ union AnimationStep* D_800F9E1C[] = {
     D_800F9E18,
 };
 
-#ifdef VERSION_JP
-u8 D_800F9F8C_jp[] = { 6, 7, 8, 9, 10, 11, 12, 0 };
-#endif
-
-#ifndef VERSION_JP
 u8 spike_marl_debris[] = { 6, 7, 8, 9, 10, 11, 12, 0 };
-#endif
 
 void (*spike_marl_state_funcs[])(struct MainObj*) = {
     func_80043390,

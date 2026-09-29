@@ -89,7 +89,7 @@ void train_boss_arm_main(struct ShotObj* self)
     self->unk84.bytes[1] = (u8)self->unk5;
     func_8002D9BC(self);
 #ifdef VERSION_JP
-    if (self->unk7C->x_pos.i.hi - 8 < D_801419B2_jp) {
+    if (self->unk7C->x_pos.i.hi - 8 < g_Player.x_pos.i.hi) {
 #endif
         result = func_8002DD04(MAIN_OBJECT(self));
 

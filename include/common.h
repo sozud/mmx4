@@ -3890,9 +3890,6 @@ extern u8 ride_armor_missile_hit_box[4];
 extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
-#ifdef VERSION_JP
-extern s16 D_801419B2_jp;
-#endif
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;

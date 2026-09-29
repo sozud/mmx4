@@ -158,7 +158,11 @@ int main(int argc, char** argv)
     int parse_result;
     mmx4_pc_canonical_load = canonical_load != NULL && canonical_load[0] != '\0' && canonical_load[0] != '0';
     if (disc == NULL)
+#ifdef VERSION_JP
+        disc = "disks/mmx4.jp.cue";
+#else
         disc = "disks/mmx4.us.cue";
+#endif
     parse_result = parse_args(argc, argv, &disc);
     if (parse_result != 0)
         return parse_result < 0 ? 2 : 0;

@@ -2287,6 +2287,14 @@ void func_8001E130(struct GameInfo* arg0)
         } while (i < 0x24);
         arg0->mode++;
 
+#ifdef VERSION_JP
+        obj = find_free_misc_obj();
+        if (obj != NULL) {
+            obj->active = 1;
+            obj->id = 0x1D;
+            obj->unk2 = 0x22;
+        }
+#else
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 1;
@@ -2305,6 +2313,7 @@ void func_8001E130(struct GameInfo* arg0)
             obj->id = 0x13;
             obj->unk2 = 0x15;
         }
+#endif
         obj = find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 1;
@@ -15294,7 +15303,7 @@ void func_800304E4(struct BarObj* arg0)
         arg0->state = 2;
         arg0->unk5 = 0;
         break;
-    case 0x40:
+    case PAD_CONFIRM:
         arg0->unk28 = 0;
         arg0->unk2C = 0;
         switch (arg0->unk14) {
@@ -24428,9 +24437,11 @@ void func_800D0E48(struct MiscObj* self)
     case 7:
         func_800D0D68(self, 0x14);
         break;
+#ifndef VERSION_JP
     case 11:
         func_800D0D68(self, 0x15);
         break;
+#endif
     default:
         if (self->unk2 >= 0x12) {
             self->x_pos.i.hi += scripted_slider_offsets[self->unk2].x;
@@ -26455,3 +26466,130 @@ void func_800A73C4(struct ShotObj* self)
     self->state = 7;
     self->unk5 = 0;
 }
+
+extern s16 title_quad_shapes[][8];
+
+void func_800D7468(struct QuadObj* arg0)
+{
+    f32* xy_ptr;
+    s32 x_diff;
+    s32 y_diff;
+    s32 pos;
+    s16* ptr;
+    u8 angle;
+
+    xy_ptr = &arg0->unk14;
+    pos = 0;
+    do {
+        ptr = &title_quad_shapes[arg0->unk2][pos * 2];
+        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
+        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
+        angle = angle_from_delta(x_diff, y_diff);
+        if ((((arg0->ext.title_quad.unk3E[pos] ^ angle) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
+            xy_ptr[0].val = FIXED(ptr[0]);
+            xy_ptr[1].val = FIXED(ptr[1]);
+            arg0->ext.title_quad.unk3A[pos] = 1;
+        } else {
+            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
+            arg0->ext.title_quad.unk3A[pos] = 0;
+            if (pos == 3) {
+                arg0->ext.title_quad.unk42 = 0;
+            }
+        }
+        xy_ptr += 2;
+        arg0->ext.title_quad.unk3E[pos] = angle;
+        pos++;
+    } while (pos < 4);
+
+    arg0->ext.title_quad.unk38--;
+    if (arg0->ext.title_quad.unk38 == 0) {
+        ptr = title_quad_shapes[arg0->unk2];
+        arg0->unk14.i.hi = *ptr++;
+        arg0->unk18.i.hi = *ptr++;
+        arg0->unk1C.i.hi = *ptr++;
+        arg0->unk20.i.hi = *ptr++;
+        arg0->unk24.i.hi = *ptr++;
+        arg0->unk28.i.hi = *ptr++;
+        arg0->unk2C.i.hi = *ptr++;
+        arg0->unk30.i.hi = *ptr;
+        arg0->state = 4;
+        arg0->ext.title_quad.unk42 = 1;
+    }
+    quad_is_on_screen(arg0);
+}
+
+#ifdef VERSION_JP
+extern u16 title_quad_palette[][15];
+
+void title_quad_morph(struct QuadObj* arg0)
+{
+    f32* xy_ptr;
+    s32 x_diff;
+    s32 y_diff;
+    s32 pos;
+    s16* ptr;
+    u16* palette;
+    u16* var_v0;
+    u8 temp_v0;
+    u8 temp_v0_2;
+    u8 temp_v1;
+
+    xy_ptr = &arg0->unk14;
+    pos = 0;
+    do {
+        ptr = &title_quad_shapes[arg0->unk2 + 5][pos * 2];
+        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
+        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
+        temp_v0 = angle_from_delta(x_diff, y_diff);
+        if ((((arg0->ext.title_quad.unk3E[pos] ^ temp_v0) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
+            xy_ptr[0].val = FIXED(ptr[0]);
+            xy_ptr[1].val = FIXED(ptr[1]);
+            arg0->ext.title_quad.unk3A[pos] = 1;
+        } else {
+            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
+            arg0->ext.title_quad.unk3A[pos] = 0;
+            if (pos == 3) {
+                arg0->ext.title_quad.unk42 = 0;
+            }
+        }
+        xy_ptr += 2;
+        arg0->ext.title_quad.unk3E[pos] = temp_v0;
+        pos++;
+    } while (pos < 4);
+
+    if ((arg0->ext.title_quad.unk38 % 3) == 0) {
+        palette = title_quad_palette[arg0->unk2 - 2];
+        temp_v1 = arg0->ext.title_quad.unk43;
+        temp_v0_2 = temp_v1 + 1;
+        arg0->ext.title_quad.unk43 = temp_v0_2;
+        var_v0 = palette;
+        if (temp_v0_2 < 0xE) {
+            temp_v0_2 = temp_v1 + 2;
+            arg0->ext.title_quad.unk43 = temp_v0_2;
+            var_v0 = &palette[temp_v0_2];
+        } else {
+            var_v0 += 14;
+        }
+        arg0->unk34 = *var_v0;
+    }
+
+    arg0->ext.title_quad.unk38--;
+    if (arg0->ext.title_quad.unk38 == 0) {
+        ptr = title_quad_shapes[arg0->unk2 + 5];
+        arg0->unk14.i.hi = *(u16*)ptr++;
+        arg0->unk18.i.hi = *(u16*)ptr++;
+        arg0->unk1C.i.hi = *(u16*)ptr++;
+        arg0->unk20.i.hi = *(u16*)ptr++;
+        arg0->unk24.i.hi = *(u16*)ptr++;
+        arg0->unk28.i.hi = *(u16*)ptr++;
+        arg0->unk2C.i.hi = *(u16*)ptr++;
+        arg0->unk30.i.hi = *(u16*)ptr;
+        arg0->unk2 = 4;
+        arg0->state = 4;
+        arg0->ext.title_quad.unk38 = 3;
+    }
+    quad_is_on_screen(arg0);
+}
+#endif

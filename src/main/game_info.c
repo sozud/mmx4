@@ -679,11 +679,7 @@ void func_8001DE20(struct GameInfo* arg0)
     }
 }
 
-#ifdef VERSION_JP
-extern s16 D_800F2368_jp[];
-#else
 extern s16 D_800F2204[];
-#endif
 
 #ifdef VERSION_JP
 void func_8001DF24_jp(struct GameInfo* arg0)
@@ -736,11 +732,7 @@ void func_8001DE54(struct GameInfo* arg0)
 #endif
             D_80139690 = OBJECT_HEADER(temp_v0);
         }
-#ifdef VERSION_JP
-        var_a1 = D_800F2368_jp;
-#else
         var_a1 = D_800F2204;
-#endif
         var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
@@ -1285,7 +1277,7 @@ void (*D_800F21B0[11])(struct GameInfo*) = {
 u8 D_800F21F8[4] = { 0x00, 0x01, 0x04, 0x07 };
 s16 D_800F21DC[2] = { 0x0809, 0x0000 };
 
-s16 D_800F2368_jp[12] = {
+s16 D_800F2204[36] = {
     -176,
     -220,
     308,
@@ -1298,24 +1290,12 @@ s16 D_800F2368_jp[12] = {
     -143,
     176,
     -154,
-};
-
-u8 D_800F2380_jp[] = {
-    0x97,
-    0x01,
-    0x50,
-    0xFF,
-    0xDA,
-    0xFD,
-    0xB5,
-    0x02,
-    0x71,
-    0xFF,
-    0x73,
-    0x02,
-};
-
-s16 D_800F2204[18] = {
+    407,
+    -176,
+    -550,
+    693,
+    -143,
+    627,
     -110,
     693,
     110,
@@ -1336,7 +1316,7 @@ s16 D_800F2204[18] = {
     429,
 };
 
-s16 D_800F23B0_jp[18] = {
+s16 D_800F224C[36] = {
     181,
     27,
     225,
@@ -1355,9 +1335,6 @@ s16 D_800F23B0_jp[18] = {
     110,
     184,
     104,
-};
-
-s16 D_800F224C[18] = {
     187,
     110,
     207,
