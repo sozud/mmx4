@@ -120,7 +120,7 @@ void sigma_final_appear_dialogue(struct MainObj* self)
         sigma_final_set_target(self, 1);
         self->unk7E = 3;
         self->unk6++;
-        play_boss_music(0xC);
+        play_boss_voice(0xC);
     }
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);

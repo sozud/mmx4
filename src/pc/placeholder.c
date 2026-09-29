@@ -873,64 +873,64 @@ void func_8001663C(u8 selection, u8 volume)
     D_80139568 = 0;
     switch (selection >> 3) {
     case 0:
-        D_80139560 = 0x95;
+        D_80139560 = XA_ARCHIVE_BGM1;
         entry = D_800F19E0;
         if (selection == 0)
             D_80139568 = 1;
         break;
     case 1:
-        D_80139560 = 0x96;
+        D_80139560 = XA_ARCHIVE_BGM2;
         entry = D_800F19E4;
         index &= 7;
         break;
     case 2:
-        D_80139560 = 0x97;
+        D_80139560 = XA_ARCHIVE_BGM3;
         entry = D_800F19E8;
         index &= 7;
         break;
     case 3:
-        D_80139560 = 0x98;
+        D_80139560 = XA_ARCHIVE_BGM4;
         entry = D_800F19EC;
         index &= 7;
         break;
     case 4:
-        D_80139560 = 0x99;
+        D_80139560 = XA_ARCHIVE_BGM5;
         entry = D_800F19F0;
         index &= 7;
         D_80139568 = 1;
         break;
     case 5:
-        D_80139560 = 0x9B;
+        D_80139560 = XA_ARCHIVE_VOICE1;
         entry = D_800F19F4;
         index &= 7;
         D_80139568 = 1;
         break;
     case 6:
-        D_80139560 = 0x9C;
+        D_80139560 = XA_ARCHIVE_VOICE2;
         entry = D_800F19F8;
         index &= 7;
         D_80139568 = 1;
         break;
     case 7:
-        D_80139560 = 0x9D;
+        D_80139560 = XA_ARCHIVE_VOICE3;
         entry = D_800F19FC;
         index &= 7;
         D_80139568 = 1;
         break;
     case 8:
-        D_80139560 = 0x9E;
+        D_80139560 = XA_ARCHIVE_VOICE4;
         entry = D_800F1A00;
         index &= 7;
         D_80139568 = 1;
         break;
     case 9:
-        D_80139560 = 0x9F;
+        D_80139560 = XA_ARCHIVE_VOICE5;
         entry = D_800F1A04;
         index &= 7;
         D_80139568 = 1;
         break;
     case 10:
-        D_80139560 = 0x9A;
+        D_80139560 = XA_ARCHIVE_BOSS_INTRO;
         entry = D_800F1A08;
         index &= 7;
         D_80139568 = 1;
@@ -938,9 +938,6 @@ void func_8001663C(u8 selection, u8 volume)
     default:
         return;
     }
-#ifdef VERSION_JP
-    D_80139560--;
-#endif
 
     for (i = 0; i < index; i++) {
         if (*entry & 0x8000) {
@@ -22511,7 +22508,7 @@ void func_8008329C(struct MainObj* self)
     set_animation(self, 0);
     func_8001540C(2, 3, self);
     self->unk5++;
-    play_boss_music(0xC);
+    play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
 }
 
@@ -24369,7 +24366,7 @@ void func_8001F2BC(struct EngineObj* arg0)
     u8 index;
 
     func_800129A4(8);
-    func_8001663C(0x17, 0x70);
+    func_8001663C(MUSIC_WEAPON_GET, 0x70);
     arg0->unk2 = 0;
     arg0->unk1++;
     if (arg0->cur_character == 0) {

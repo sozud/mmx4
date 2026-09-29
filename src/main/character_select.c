@@ -23,7 +23,7 @@ void character_select_state_0(struct EngineObj* arg0)
     background_objects[1].unk3 = 0;
     background_objects[2].unk3 = 1;
     need_palette_load |= 1;
-    func_8001663C(0x1C, 0x70);
+    func_8001663C(MUSIC_CHARACTER_SELECT, 0x70);
     arg0->unk37 = 0;
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;

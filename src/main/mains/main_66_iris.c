@@ -268,7 +268,7 @@ void iris_intro_voice(struct MainObj* self)
     if (self->animation_step.fields.event == 1) {
         self->unk6 = 0xB;
         self->unk7E = 3;
-        play_boss_music(9);
+        play_boss_voice(9);
     }
 }
 

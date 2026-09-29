@@ -1794,25 +1794,25 @@ void func_8001653C(void)
         if (engine_obj.stage == 0xB) {
             if (engine_obj.substage == 0) {
                 if (engine_obj.cur_character == 0) {
-                    track = 0xF;
+                    track = MUSIC_DOUBLE_BATTLE;
                     volume = 0x75;
                 } else {
-                    track = 0xD;
+                    track = MUSIC_IRIS_BATTLE;
                     volume = 0x7F;
                 }
             } else {
-                track = 0xB;
+                track = MUSIC_REPLIFORCE_BATTLE;
                 volume = 0x7F;
             }
         } else if (engine_obj.stage == 0xC) {
             if (engine_obj.substage == 0) {
-                track = 7;
+                track = MUSIC_BOSS_BATTLE;
                 volume = 0x70;
             } else if (D_80171EA8 == 0) {
-                track = 2;
+                track = MUSIC_SIGMA_BATTLE;
                 volume = 0x7F;
             } else {
-                track = 1;
+                track = MUSIC_SIGMA_FINAL_BATTLE;
                 volume = 0x75;
             }
         }
@@ -3294,40 +3294,40 @@ const u16* D_800F1A08 = &D_800F188C[154];
 
 struct XaSequenceData D_800F1A0C = {
     {
-        { { XA(0x10, 0x75), XA(0x13, 0x70) }, { XA(0x10, 0x75), XA(0x13, 0x70) } },
-        { { XA(0x03, 0x7F), XA(0x03, 0x7F) }, { XA(0x03, 0x7F), XA(0x03, 0x7F) } },
-        { { XA(0x0E, 0x7F), XA(0x0E, 0x7F) }, { XA(0x09, 0x7F), XA(0x09, 0x7F) } },
-        { { XA(0x06, 0x75), XA(0x06, 0x75) }, { XA(0x06, 0x75), XA(0x06, 0x75) } },
-        { { XA(0x11, 0x78), XA(0x11, 0x78) }, { XA(0x11, 0x78), XA(0x11, 0x78) } },
-        { { XA(0x12, 0x75), XA(0x12, 0x75) }, { XA(0x12, 0x75), XA(0x12, 0x75) } },
-        { { XA(0x0A, 0x7F), XA(0x0A, 0x7F) }, { XA(0x0A, 0x7F), XA(0x0A, 0x7F) } },
-        { { XA(0x0C, 0x7F), XA(0x0C, 0x7F) }, { XA(0x0C, 0x7F), XA(0x0C, 0x7F) } },
-        { { XA(0x05, 0x7F), XA(0x05, 0x7F) }, { XA(0x05, 0x7F), XA(0x05, 0x7F) } },
-        { { XA(0x03, 0x00), XA(0x03, 0x00) }, { XA(0x03, 0x00), XA(0x03, 0x00) } },
-        { { XA(0x14, 0x7F), XA(0x14, 0x7F) }, { XA(0x14, 0x7F), XA(0x14, 0x7F) } },
-        { { XA(0x04, 0x7F), XA(0x04, 0x7F) }, { XA(0x04, 0x7F), XA(0x04, 0x7F) } },
-        { { XA(0x04, 0x7F), XA(0x04, 0x7F) }, { XA(0x04, 0x7F), XA(0x04, 0x7F) } },
-        { { XA(0x03, 0x7F), XA(0x03, 0x7F) }, { XA(0x03, 0x7F), XA(0x03, 0x7F) } },
-        { { XA(0x03, 0x7F), XA(0x03, 0x7F) }, { XA(0x03, 0x7F), XA(0x03, 0x7F) } },
-        { { XA(0x03, 0x7F), XA(0x03, 0x7F) }, { XA(0x03, 0x7F), XA(0x03, 0x7F) } },
+        { { XA(MUSIC_STAGE_INTRO_X, 0x75), XA(MUSIC_STAGE_INTRO_ZERO, 0x70) }, { XA(MUSIC_STAGE_INTRO_X, 0x75), XA(MUSIC_STAGE_INTRO_ZERO, 0x70) } },
+        { { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) }, { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) } },
+        { { XA(MUSIC_STAGE_SNOW_BASE, 0x7F), XA(MUSIC_STAGE_SNOW_BASE, 0x7F) }, { XA(MUSIC_STAGE_SNOW_BASE_2, 0x7F), XA(MUSIC_STAGE_SNOW_BASE_2, 0x7F) } },
+        { { XA(MUSIC_STAGE_BIO_LABORATORY, 0x75), XA(MUSIC_STAGE_BIO_LABORATORY, 0x75) }, { XA(MUSIC_STAGE_BIO_LABORATORY, 0x75), XA(MUSIC_STAGE_BIO_LABORATORY, 0x75) } },
+        { { XA(MUSIC_STAGE_VOLCANO, 0x78), XA(MUSIC_STAGE_VOLCANO, 0x78) }, { XA(MUSIC_STAGE_VOLCANO, 0x78), XA(MUSIC_STAGE_VOLCANO, 0x78) } },
+        { { XA(MUSIC_STAGE_MARINE_BASE, 0x75), XA(MUSIC_STAGE_MARINE_BASE, 0x75) }, { XA(MUSIC_STAGE_MARINE_BASE, 0x75), XA(MUSIC_STAGE_MARINE_BASE, 0x75) } },
+        { { XA(MUSIC_STAGE_CYBER_SPACE, 0x7F), XA(MUSIC_STAGE_CYBER_SPACE, 0x7F) }, { XA(MUSIC_STAGE_CYBER_SPACE, 0x7F), XA(MUSIC_STAGE_CYBER_SPACE, 0x7F) } },
+        { { XA(MUSIC_STAGE_AIR_FORCE, 0x7F), XA(MUSIC_STAGE_AIR_FORCE, 0x7F) }, { XA(MUSIC_STAGE_AIR_FORCE, 0x7F), XA(MUSIC_STAGE_AIR_FORCE, 0x7F) } },
+        { { XA(MUSIC_STAGE_MILITARY_TRAIN, 0x7F), XA(MUSIC_STAGE_MILITARY_TRAIN, 0x7F) }, { XA(MUSIC_STAGE_MILITARY_TRAIN, 0x7F), XA(MUSIC_STAGE_MILITARY_TRAIN, 0x7F) } },
+        { { XA(MUSIC_STAGE_JUNGLE, 0x00), XA(MUSIC_STAGE_JUNGLE, 0x00) }, { XA(MUSIC_STAGE_JUNGLE, 0x00), XA(MUSIC_STAGE_JUNGLE, 0x00) } },
+        { { XA(MUSIC_STAGE_SPACE_PORT, 0x7F), XA(MUSIC_STAGE_SPACE_PORT, 0x7F) }, { XA(MUSIC_STAGE_SPACE_PORT, 0x7F), XA(MUSIC_STAGE_SPACE_PORT, 0x7F) } },
+        { { XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F), XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F) }, { XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F), XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F) } },
+        { { XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F), XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F) }, { XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F), XA(MUSIC_STAGE_FINAL_WEAPON, 0x7F) } },
+        { { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) }, { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) } },
+        { { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) }, { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) } },
+        { { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) }, { XA(MUSIC_STAGE_JUNGLE, 0x7F), XA(MUSIC_STAGE_JUNGLE, 0x7F) } },
     },
     {
-        XA(0x15, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
-        XA(0x0B, 0x7F),
-        XA(0x0B, 0x7F),
-        XA(0x0B, 0x7F),
-        XA(0x14, 0x7F),
-        XA(0x04, 0x75),
-        XA(0x07, 0x70),
-        XA(0x07, 0x70),
+        XA(MUSIC_INTRO_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_REPLIFORCE_BATTLE, 0x7F),
+        XA(MUSIC_REPLIFORCE_BATTLE, 0x7F),
+        XA(MUSIC_REPLIFORCE_BATTLE, 0x7F),
+        XA(MUSIC_STAGE_SPACE_PORT, 0x7F),
+        XA(MUSIC_STAGE_FINAL_WEAPON, 0x75),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
+        XA(MUSIC_BOSS_BATTLE, 0x70),
     },
 };
 

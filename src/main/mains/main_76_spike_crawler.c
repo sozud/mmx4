@@ -290,7 +290,7 @@ const struct Main76HandlerTable enemy_hit_reaction_funcs = { {
     (void (*)(void*))spike_crawler_hit_knockback,
 } };
 
-void play_boss_music(s32 arg0)
+void play_boss_voice(s32 arg0)
 {
     u32 object_id;
     u32 random_value;
@@ -305,7 +305,7 @@ void play_boss_music(s32 arg0)
 #ifdef VERSION_JP
         object_id = arg0 & 0xFF;
 #endif
-        func_8001663C(boss_music_tracks[object_id][random_value & 0xFF], 0x7F);
+        func_8001663C(boss_voice_tracks[object_id][random_value & 0xFF], 0x7F);
         value = 1;
 #ifndef VERSION_JP
     } else {
@@ -342,20 +342,20 @@ void (*spike_crawler_state_funcs[])(struct MainObj*) = {
 
 s32 spike_crawler_knockback_speeds[2] = { FIXED(3), FIXED(10) };
 
-u8 boss_music_tracks[13][3] = {
-    { 0x4F, 0x4F, 0x3F },
-    { 0x45, 0x3C, 0x46 },
-    { 0x35, 0x37, 0x36 },
-    { 0x2A, 0x2B, 0x30 },
-    { 0x34, 0x3A, 0x3D },
-    { 0x29, 0x33, 0x39 },
-    { 0x4B, 0x44, 0x4E },
-    { 0x41, 0x38, 0x2D },
-    { 0x2E, 0x31, 0x3B },
-    { 0x2F, 0x2C, 0x28 },
-    { 0x4D, 0x4C, 0x49 },
-    { 0x42, 0x43, 0x32 },
-    { 0x48, 0x4A, 0x40 },
+u8 boss_voice_tracks[13][3] = {
+    { VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_2 },
+    { VOICE_FROST_WALRUS_1, VOICE_FROST_WALRUS_2, VOICE_FROST_WALRUS_3 },
+    { VOICE_SPLIT_MUSHROOM_1, VOICE_SPLIT_MUSHROOM_2, VOICE_SPLIT_MUSHROOM_3 },
+    { VOICE_MAGMA_DRAGOON_1, VOICE_MAGMA_DRAGOON_2, VOICE_MAGMA_DRAGOON_3 },
+    { VOICE_JET_STINGRAY_1, VOICE_JET_STINGRAY_2, VOICE_JET_STINGRAY_3 },
+    { VOICE_CYBER_PEACOCK_1, VOICE_CYBER_PEACOCK_2, VOICE_CYBER_PEACOCK_3 },
+    { VOICE_STORM_OWL_1, VOICE_STORM_OWL_2, VOICE_STORM_OWL_3 },
+    { VOICE_SLASH_BEAST_1, VOICE_SLASH_BEAST_2, VOICE_SLASH_BEAST_3 },
+    { VOICE_COLONEL_1, VOICE_COLONEL_2, VOICE_COLONEL_3 },
+    { VOICE_IRIS_1, VOICE_IRIS_2, VOICE_IRIS_3 },
+    { VOICE_DOUBLE_1, VOICE_DOUBLE_2, VOICE_DOUBLE_3 },
+    { VOICE_GENERAL_1, VOICE_GENERAL_2, VOICE_GENERAL_3 },
+    { VOICE_SIGMA_1, VOICE_SIGMA_2, VOICE_SIGMA_3 },
 };
 
 u8 D_80105FEF_padding = 0;

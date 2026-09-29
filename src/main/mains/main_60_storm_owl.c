@@ -210,7 +210,7 @@ void storm_owl_intro_start_health_bar(struct MainObj* self)
         engine_obj.unk25 = 1;
         self->unk7C = 3;
         self->unk6++;
-        play_boss_music(6);
+        play_boss_voice(6);
     }
 }
 

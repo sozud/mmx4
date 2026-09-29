@@ -122,9 +122,9 @@ void func_8002E698(struct EngineObj* arg0)
     struct MiscObj* temp_v0_2;
 
     func_800129A4(8);
-    var_a0 = 8;
+    var_a0 = MUSIC_BRIEFING;
     if ((u8)arg0->unk5F >= 5) {
-        var_a0 = 0x16;
+        var_a0 = MUSIC_BRIEFING_LATE;
         var_a1 = 0x75;
     } else {
         var_a1 = 0x72;

@@ -986,7 +986,7 @@ void func_80023698(struct EngineObj* arg0)
     arg0->unk2 = 0;
     arg0->unk1++;
 
-    func_8001663C(0, 0x7F);
+    func_8001663C(MUSIC_STAFF_ROLL, 0x7F);
     func_800129A4(8);
 }
 

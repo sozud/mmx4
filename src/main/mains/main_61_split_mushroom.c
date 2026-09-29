@@ -187,7 +187,7 @@ void split_mushroom_intro_start_health_bar(struct MainObj* self)
         set_animation(self, 0);
         self->unk7E = 3;
         self->unk6 = 6;
-        play_boss_music(2);
+        play_boss_voice(2);
     }
 }
 

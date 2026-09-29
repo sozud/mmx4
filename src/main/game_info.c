@@ -648,7 +648,7 @@ void func_8001DCCC(struct GameInfo* arg0)
 void func_8001DDB0(struct GameInfo* arg0)
 {
     if (arg0->unk4 == 0) {
-        func_8001663C(0x20, 0x7F);
+        func_8001663C(MUSIC_TITLE, 0x7F);
         arg0->unk4 = 1;
     }
     if (D_80173C84 == 2) {

@@ -100,7 +100,7 @@ void magma_dragoon_intro_start_health_bar(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
         self->unk6++;
-        play_boss_music(3);
+        play_boss_voice(3);
     }
     move_with_gravity(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);

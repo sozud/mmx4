@@ -220,7 +220,7 @@ void frost_walrus_intro_start_health_bar(struct MainObj* self)
     if (abc_object.unkC == 0) {
         self->unk7E = 3;
         self->unk6++;
-        play_boss_music(1);
+        play_boss_voice(1);
     }
 }
 
