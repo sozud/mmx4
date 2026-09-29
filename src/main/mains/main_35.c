@@ -3,192 +3,194 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005EC58(struct MainObj* arg0)
+void wheel_charger_update(struct MainObj* self)
 {
-    D_800FE2AC[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    wheel_charger_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
+// wheel_charger_init
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005ECA8);
 
-void func_8005EE2C(struct MainObj* arg0)
+void wheel_charger_main(struct MainObj* self)
 {
-    func_8005F47C(arg0);
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FE2B8[arg0->unk5](arg0);
-    if (arg0->unk5 == 4) {
+    wheel_charger_check_fall(self);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    wheel_charger_step_funcs[self->unk5](self);
+    if (self->unk5 == 4) {
         return;
     }
     if (engine_obj.stage != 3 || g_Player.x_pos.i.hi < 0x9B7) {
-        func_8002D9BC(arg0);
+        func_8002D9BC(self);
     }
-    arg0->ext.main_35.saved_unk5 = arg0->unk5;
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(5, D_800FE2A4, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0xC);
-        arg0->state = 2;
-    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    self->ext.main_35.saved_unk5 = self->unk5;
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(5, wheel_charger_debris, self);
+        drop_item(BASE_OBJECT(self), 0xC);
+        self->state = 2;
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_8005EF40(struct MainObj* arg0)
+void wheel_charger_despawn(struct MainObj* self)
 {
-    arg0->unk7A = 0;
-    arg0->ext.main_35.unk80 = 0;
-    arg0->ext.main_35.sound_timer = 0;
-    arg0->ext.main_35.saved_unk5 = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->unk7A = 0;
+    self->ext.main_35.unk80 = 0;
+    self->ext.main_35.sound_timer = 0;
+    self->ext.main_35.saved_unk5 = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8005EF6C(struct MainObj* arg0)
+void wheel_charger_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_35.saved_unk5;
+    self->unk5 = self->ext.main_35.saved_unk5;
 }
 
-void func_8005EF78(struct MainObj* arg0)
+void wheel_charger_drop(struct MainObj* self)
 {
-    func_80015DC8(arg0);
-    arg0->unk24 = 0x60000;
-    func_8002B718((struct MovingObj*)arg0);
+    animate_object(self);
+    self->y_speed = 0x60000;
+    move_object((struct MovingObj*)self);
 }
 
+// wheel_charger_fall
 INCLUDE_ASM("main/nonmatchings/mains/main_35", func_8005EFB0);
 
-void func_8005F0F4(struct MainObj* arg0)
+void wheel_charger_wait_for_player(struct MainObj* self)
 {
-    if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= 0xB5) {
-        arg0->unk7A = 0;
-        arg0->unk5 = 2;
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= 0xB5) {
+        self->unk7A = 0;
+        self->unk5 = 2;
     }
 }
 
-void func_8005F124(struct MainObj* arg0)
+void wheel_charger_charge(struct MainObj* self)
 {
-    D_800FE2D4[arg0->unk6](arg0);
+    wheel_charger_charge_funcs[self->unk6](self);
 }
 
-void func_8005F160(struct MainObj* arg0)
+void wheel_charger_charge_ready(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk7C = 10;
-        arg0->unk6 = 1;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk7C = 10;
+        self->unk6 = 1;
     }
 }
 
-void func_8005F1A4(struct MainObj* arg0)
+void wheel_charger_charge_open(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event == 2) {
-        arg0->unk54 = (const u8*)&D_800FE1BC;
-        arg0->unk50 = (const u8*)&D_800FE1C0;
+    if (self->animation_step.fields.event == 2) {
+        self->hurt_box = (const u8*)&wheel_charger_open_hurt_box;
+        self->attack_box = (const u8*)&wheel_charger_open_attack_box;
     }
-    if (--arg0->unk7C == 0) {
-        func_8005F4E0(arg0);
-        func_80015D60(arg0, 2);
-        arg0->unk7E = 3;
-        arg0->unk6 = 2;
+    if (--self->unk7C == 0) {
+        wheel_charger_face_player(self);
+        set_animation(self, 2);
+        self->unk7E = 3;
+        self->unk6 = 2;
     }
 }
 
-void func_8005F230(struct MainObj* arg0)
+void wheel_charger_charge_spin(struct MainObj* self)
 {
     s16 timer;
     s32 velocity;
 
-    if (--arg0->ext.main_35.sound_timer == 0) {
-        func_8001540C(2, 0x58, arg0);
-        arg0->ext.main_35.sound_timer = 0x14;
+    if (--self->ext.main_35.sound_timer == 0) {
+        func_8001540C(2, 0x58, self);
+        self->ext.main_35.sound_timer = 0x14;
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = (u16)arg0->unk7E - 1;
-    arg0->unk7E = timer;
+    animate_object(ANIMATED_OBJECT(self));
+    timer = (u16)self->unk7E - 1;
+    self->unk7E = timer;
     if (timer == 0) {
-        func_800B0CA0(1, 2, arg0, 8, 1);
-        arg0->unk7E = 3;
+        func_800B0CA0(1, 2, self, 8, 1);
+        self->unk7E = 3;
     }
-    if (arg0->animation_step.fields.event != 0) {
-        velocity = arg0->unk15;
+    if (self->animation_step.fields.event != 0) {
+        velocity = self->unk15;
         if (velocity == 0) {
             velocity = FIXED(-4);
         } else {
             velocity = FIXED(4);
         }
-        arg0->unk20 = velocity;
+        self->x_speed = velocity;
         velocity = 3;
-        arg0->unk6 = velocity;
+        self->unk6 = velocity;
     }
 }
 
-void func_8005F2F4(struct MainObj* arg0)
+void wheel_charger_charge_roll(struct MainObj* self)
 {
     s32 value;
     s32 mask;
 
-    if (--arg0->ext.main_35.sound_timer == 0) {
-        func_8001540C(2, 0x58, arg0);
-        arg0->ext.main_35.sound_timer = 0x14;
+    if (--self->ext.main_35.sound_timer == 0) {
+        func_8001540C(2, 0x58, self);
+        self->ext.main_35.sound_timer = 0x14;
     }
 
-    if (--arg0->unk7E == 0) {
-        func_800B0CA0(1, 2, arg0, 8, 1);
-        arg0->unk7E = 2;
+    if (--self->unk7E == 0) {
+        func_800B0CA0(1, 2, self, 8, 1);
+        self->unk7E = 2;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
-    if (arg0->unk15 == 0) {
+    if (self->unk15 == 0) {
         mask = 0xA;
-        value = arg0->unk70 & 0xA;
+        value = self->collision_flags & 0xA;
     } else {
         mask = 9;
-        value = arg0->unk70 & 9;
+        value = self->collision_flags & 9;
     }
 
     if (value == mask) {
-        arg0->unk7C = 0x3C;
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
+        self->unk7C = 0x3C;
+        self->unk5 = 6;
+        self->unk6 = 0;
     }
 }
 
-void func_8005F3D4(struct MainObj* arg0)
+void wheel_charger_crash(struct MainObj* self)
 {
-    if (--arg0->unk7E == 0) {
-        func_800B0CA0(1, 2, arg0, 8, 1);
-        arg0->unk7E = 2;
+    if (--self->unk7E == 0) {
+        func_800B0CA0(1, 2, self, 8, 1);
+        self->unk7E = 2;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 
-    if (--arg0->unk7C == 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(5, D_800FE2A4, arg0);
-        arg0->state = 2;
-    }
-}
-
-void func_8005F47C(struct MainObj* arg0)
-{
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if ((u8)(arg0->unk5 - 3) >= 2 && !(arg0->unk70 & 8)) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->unk2C = FIXED(0.234375);
+    if (--self->unk7C == 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(5, wheel_charger_debris, self);
+        self->state = 2;
     }
 }
 
-void func_8005F4E0(struct MainObj* arg0)
+void wheel_charger_check_fall(struct MainObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if ((u8)(self->unk5 - 3) >= 2 && !(self->collision_flags & 8)) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->gravity = FIXED(0.234375);
+    }
+}
+
+void wheel_charger_face_player(struct MainObj* self)
+{
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
@@ -198,11 +200,11 @@ struct Unk_unk68 D_800FE1B4 = { -12, -11, 22, 20 };
 
 struct Unk_unk68 D_800FE1B8 = { 0, 0, 14, 13 };
 
-struct Unk_unk68 D_800FE1BC = { -16, -2, 29, 15 };
+struct Unk_unk68 wheel_charger_open_hurt_box = { -16, -2, 29, 15 };
 
-struct Unk_unk68 D_800FE1C0 = { -13, 0, 23, 11 };
+struct Unk_unk68 wheel_charger_open_attack_box = { -13, 0, 23, 11 };
 
-union AnimationStep D_800FE1C4[] = {
+union AnimationStep wheel_charger_anim_0[] = {
     { 0x05010001 },
     { 0x04010001 },
     { 0x03010001 },
@@ -211,7 +213,7 @@ union AnimationStep D_800FE1C4[] = {
     { 0x00FB0001 },
 };
 
-union AnimationStep D_800FE1DC[] = {
+union AnimationStep wheel_charger_anim_1[] = {
     { 0x00010006 },
     { 0x06010005 },
     { 0x07010004 },
@@ -226,7 +228,7 @@ union AnimationStep D_800FE1DC[] = {
     { 0x0E000101 },
 };
 
-union AnimationStep D_800FE20C[] = {
+union AnimationStep wheel_charger_anim_2[] = {
     { 0x0E010001 },
     { 0x14010002 },
     { 0x15010003 },
@@ -253,61 +255,61 @@ union AnimationStep D_800FE20C[] = {
     { 0x13FB0001 },
 };
 
-union AnimationStep D_800FE26C[] = {
+union AnimationStep wheel_charger_anim_4[] = {
     { 0x16000101 },
 };
 
-union AnimationStep D_800FE270[] = {
+union AnimationStep wheel_charger_anim_5[] = {
     { 0x17000101 },
 };
 
-union AnimationStep D_800FE274[] = {
+union AnimationStep wheel_charger_anim_6[] = {
     { 0x18000101 },
 };
 
-union AnimationStep D_800FE278[] = {
+union AnimationStep wheel_charger_anim_7[] = {
     { 0x19000101 },
 };
 
-union AnimationStep D_800FE27C[] = {
+union AnimationStep wheel_charger_anim_8[] = {
     { 0x1A000101 },
 };
 
-union AnimationStep* D_800FE280[9] = {
-    D_800FE1C4,
-    D_800FE1DC,
-    D_800FE20C,
-    &D_800FE20C[18],
-    D_800FE26C,
-    D_800FE270,
-    D_800FE274,
-    D_800FE278,
-    D_800FE27C,
+union AnimationStep* wheel_charger_animations[9] = {
+    wheel_charger_anim_0,
+    wheel_charger_anim_1,
+    wheel_charger_anim_2,
+    &wheel_charger_anim_2[18],
+    wheel_charger_anim_4,
+    wheel_charger_anim_5,
+    wheel_charger_anim_6,
+    wheel_charger_anim_7,
+    wheel_charger_anim_8,
 };
 
-u8 D_800FE2A4[8] = { 4, 5, 6, 7, 8, 0, 0, 0 };
+u8 wheel_charger_debris[8] = { 4, 5, 6, 7, 8, 0, 0, 0 };
 
-void (*D_800FE2AC[3])() = {
+void (*wheel_charger_state_funcs[3])() = {
     func_8005ECA8,
-    func_8005EE2C,
-    func_8005EF40,
+    wheel_charger_main,
+    wheel_charger_despawn,
 };
 
-void (*D_800FE2B8[7])() = {
-    func_8009216C,
-    func_8005EF6C,
-    func_8005EF78,
+void (*wheel_charger_step_funcs[7])() = {
+    enemy_hit_reaction,
+    wheel_charger_resume_step,
+    wheel_charger_drop,
     func_8005EFB0,
-    func_8005F0F4,
-    func_8005F124,
-    func_8005F3D4,
+    wheel_charger_wait_for_player,
+    wheel_charger_charge,
+    wheel_charger_crash,
 };
 
-void (*D_800FE2D4[4])() = {
-    func_8005F160,
-    func_8005F1A4,
-    func_8005F230,
-    func_8005F2F4,
+void (*wheel_charger_charge_funcs[4])() = {
+    wheel_charger_charge_ready,
+    wheel_charger_charge_open,
+    wheel_charger_charge_spin,
+    wheel_charger_charge_roll,
 };
 
 struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };

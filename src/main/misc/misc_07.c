@@ -2,33 +2,33 @@
 // 800C938C..800C9510
 #include "common.h"
 
-void func_800C938C(struct MiscObj* arg0)
+void attached_effect_update(struct MiscObj* self)
 {
-    D_8010DC70[arg0->state](arg0);
+    attached_effect_state_funcs[self->state](self);
 }
 
-void func_800C93C8(struct MiscObj* arg0)
+void attached_effect_init(struct MiscObj* self)
 {
     s16 x;
 
-    func_80015D60(arg0, 0xA);
-    arg0->x_pos.val = ((struct FixedPointPosition*)arg0->ext.misc_7.position)->x;
-    arg0->y_pos.val = ((struct FixedPointPosition*)arg0->ext.misc_7.position)->y;
-    if (arg0->unk2 != 0) {
-        if (arg0->unk15 != 0) {
-            x = arg0->x_pos.u.hi + 3;
+    set_animation(self, 0xA);
+    self->x_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->x;
+    self->y_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->y;
+    if (self->unk2 != 0) {
+        if (self->unk15 != 0) {
+            x = self->x_pos.u.hi + 3;
         } else {
-            x = arg0->x_pos.u.hi - 3;
+            x = self->x_pos.u.hi - 3;
         }
-        arg0->x_pos.i.hi = x;
+        self->x_pos.i.hi = x;
     }
-    arg0->state = 1;
+    self->state = 1;
 }
 
-void func_800C9450(struct MiscObj* self)
+void attached_effect_animate(struct MiscObj* self)
 {
     s16 x_pos;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     self->x_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->x;
     self->y_pos.val = ((struct FixedPointPosition*)self->ext.misc_7.position)->y;
     if (self->unk2 != 0) {
@@ -42,16 +42,16 @@ void func_800C9450(struct MiscObj* self)
     if (self->animation_step.fields.event != 0) {
         self->state = 2;
     }
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_800C94F0(struct MiscObj* arg0)
+void attached_effect_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010DC70[3])(struct MiscObj*) = {
-    func_800C93C8,
-    func_800C9450,
-    func_800C94F0,
+void (*attached_effect_state_funcs[3])(struct MiscObj*) = {
+    attached_effect_init,
+    attached_effect_animate,
+    attached_effect_despawn,
 };

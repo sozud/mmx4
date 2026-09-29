@@ -2,17 +2,17 @@
 // 8009F46C..8009F638
 #include "common.h"
 
-u8 D_801091C0[4] = { 0xDB, 0xF2, 0x1E, 0x37 };
+u8 melee_hitbox_box[4] = { 0xDB, 0xF2, 0x1E, 0x37 };
 
-void func_8009F46C(struct ShotObj* arg0)
+void melee_hitbox_update(struct ShotObj* self)
 {
-    struct BaseObj* unk7C = arg0->unk7C;
-    arg0->x_pos.val = unk7C->x_pos.val;
-    arg0->y_pos.val = unk7C->y_pos.val;
-    D_801091C4[arg0->state](arg0);
+    struct BaseObj* unk7C = self->unk7C;
+    self->x_pos.val = unk7C->x_pos.val;
+    self->y_pos.val = unk7C->y_pos.val;
+    melee_hitbox_state_funcs[self->state](self);
 }
 
-void func_8009F4C0(struct ShotObj* self)
+void melee_hitbox_init(struct ShotObj* self)
 {
     struct WeaponObj* owner = self->unk7C;
 
@@ -24,41 +24,41 @@ void func_8009F4C0(struct ShotObj* self)
     self->bg_offset = owner->bg_offset;
     self->x_pos.val = owner->x_pos.val;
     self->y_pos.val = owner->y_pos.val;
-    self->unk50.data = D_801091C0;
+    self->unk50.data = melee_hitbox_box;
     self->unk5C = 1;
     self->unk16 = 4;
     self->unk54 = NULL;
     self->unk60 = 6;
     self->unk68 = NULL;
     self->unk58.data = NULL;
-    func_80015D60(self, 0xB);
+    set_animation(self, 0xB);
     self->unk5 = 2;
     self->state++;
 }
 
-void func_8009F594(struct ShotObj* arg0)
+void melee_hitbox_active(struct ShotObj* self)
 {
     struct WeaponObj* temp_v1;
 
-    temp_v1 = arg0->unk7C;
+    temp_v1 = self->unk7C;
     if (temp_v1->state >= 2) {
-        arg0->state++;
+        self->state++;
         return;
     }
     if (temp_v1->animation_step.fields.frame_index == 3) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002D9BC(arg0);
-        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        animate_object(ANIMATED_OBJECT(self));
+        func_8002D9BC(self);
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
 
-void func_8009F618(struct ShotObj* arg0)
+void melee_hitbox_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_801091C4[])(struct ShotObj*) = {
-    func_8009F4C0,
-    func_8009F594,
-    func_8009F618,
+void (*melee_hitbox_state_funcs[])(struct ShotObj*) = {
+    melee_hitbox_init,
+    melee_hitbox_active,
+    melee_hitbox_despawn,
 };

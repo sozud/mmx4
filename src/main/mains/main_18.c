@@ -24,7 +24,7 @@ void ice_core_death_sink(struct MainObj* self)
     value = self->y_pos.i.hi + 1;
     self->y_pos.i.hi = value;
     if (value >= 0x931) {
-        func_800DABE4(0x17, 0, 0);
+        apply_tile_effect(0x17, 0, 0);
         engine_obj.enable_boss = 0;
         engine_obj.boss_ptr = NULL;
         self->state = 3;
@@ -50,7 +50,7 @@ void ice_core_death_sink(struct MainObj* self)
         }
     }
 
-    func_8002B318(BASE_OBJECT(self), 0x80, 0x80);
+    update_on_screen(BASE_OBJECT(self), 0x80, 0x80);
 }
 
 void ice_core_death_release_camera(struct MainObj* self)
@@ -70,7 +70,7 @@ void ice_core_death_wait_player(struct MainObj* self)
         self->ext.raw[4] = 0;
         self->ext.raw[5] = 0;
         engine_obj.unkF = 0x40;
-        func_8002B0C8(OBJECT_HEADER(self));
+        despawn_object(OBJECT_HEADER(self));
     }
 }
 
@@ -87,14 +87,14 @@ void ice_core_drift(struct MainObj* self)
 void ice_core_drift_start(struct MainObj* self)
 {
     if (self->unk15 == 0) {
-        self->unk20 = FIXED(-1.375);
+        self->x_speed = FIXED(-1.375);
     } else {
-        self->unk20 = FIXED(1.375);
+        self->x_speed = FIXED(1.375);
     }
-    self->unk28 = 0;
-    self->unk24 = 0;
-    self->unk2C = FIXED(-0.125);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = FIXED(-0.125);
+    animate_object(ANIMATED_OBJECT(self));
     self->unk6 = 1;
 }
 
@@ -109,54 +109,54 @@ void ice_core_bob(struct MainObj* self)
 void ice_core_bob_start(struct MainObj* self)
 {
     self->ext.main_18.state.runtime.unk84 = 1;
-    func_80015D60(self, 1);
+    set_animation(self, 1);
     self->unk7C = 1;
-    self->unk2C = FIXED(0.0625);
+    self->gravity = FIXED(0.0625);
     self->unk6 = 1;
-    self->unk20 = 0;
-    self->unk28 = 0;
-    self->unk24 = 0;
-    self->unk54 = (const u8*)&D_800FBF00;
-    self->unk50 = (const u8*)&D_800FBF00;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->hurt_box = (const u8*)&D_800FBF00;
+    self->attack_box = (const u8*)&D_800FBF00;
 }
 
 void ice_core_bob_move(struct MainObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->collision_data = (const u16*)D_801060F0;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk24 == FIXED(1.5)) {
-        self->unk2C = FIXED(0.0625);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed == FIXED(1.5)) {
+        self->gravity = FIXED(0.0625);
     }
-    if (self->unk24 == FIXED(-1.5)) {
+    if (self->y_speed == FIXED(-1.5)) {
         temp_v0 = (u16)self->unk7C - 1;
         self->unk7C = temp_v0;
         if (temp_v0 == 0) {
-            self->unk24 = 0;
-            self->unk2C = 0;
+            self->y_speed = 0;
+            self->gravity = 0;
             func_800527F0(self);
             return;
         }
-        self->unk2C = FIXED(-0.0625);
+        self->gravity = FIXED(-0.0625);
     }
 }
 
 void ice_core_bob_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->collision_data = (const u16*)D_80106B74;
-        self->unk54 = (const u8*)&D_800FBEF4;
-        self->unk50 = (const u8*)&D_800FBEF4;
+        self->hurt_box = (const u8*)&D_800FBEF4;
+        self->attack_box = (const u8*)&D_800FBEF4;
     }
     if (self->animation_step.fields.event == 1) {
         self->ext.main_18.state.runtime.unk84 = 0;
         self->ext.main_18.state.runtime.unk80 &= 0x3F;
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         func_800527F0(self);
     }
 }
@@ -170,8 +170,8 @@ void ice_core_charge_face(struct MainObj* self)
 {
     ice_core_face_player(ANIMATED_OBJECT(self));
     self->unk7C = 0x1C;
-    self->unk20 = 0;
-    self->unk24 = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
     self->unk6 = 1;
 }
 
@@ -179,29 +179,29 @@ void ice_core_charge_back_off(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         if (self->unk15 != 0) {
-            self->unk20 = FIXED(-3);
+            self->x_speed = FIXED(-3);
         } else {
-            self->unk20 = FIXED(3);
+            self->x_speed = FIXED(3);
         }
-        self->unk28 = FIXED(0.09375);
+        self->x_accel = FIXED(0.09375);
         self->unk7C = 0x14;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk6 = 2;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void ice_core_charge_slide(struct MainObj* self)
 {
-    if (!(self->unk70 & 3)) {
-        func_8002B694(ANIMATED_OBJECT(self));
-        if (self->unk20 == 0) {
-            self->unk20 = 0;
-            self->unk28 = 0;
+    if (!(self->collision_flags & 3)) {
+        move_with_gravity(ANIMATED_OBJECT(self));
+        if (self->x_speed == 0) {
+            self->x_speed = 0;
+            self->x_accel = 0;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk7C = 0x1C;
         self->unk6 = 3;
@@ -210,16 +210,16 @@ void ice_core_charge_slide(struct MainObj* self)
 
 void ice_core_charge_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         func_8001540C(2, 0x35, self);
-        self->unk60 = 6;
+        self->contact_damage = 6;
         self->ext.main_18.state.runtime.unk81 = 1;
-        func_80015D60(self, 3);
+        set_animation(self, 3);
         if (self->unk15 != 0) {
-            self->unk20 = FIXED(4);
+            self->x_speed = FIXED(4);
         } else {
-            self->unk20 = FIXED(-4);
+            self->x_speed = FIXED(-4);
         }
         self->unk6 = 4;
     }
@@ -229,41 +229,41 @@ void ice_core_charge_run(struct MainObj* self)
 {
     s32 blocked;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk54 = &D_800FBEFC;
-        self->unk50 = &D_800FBEFC;
+        self->hurt_box = &D_800FBEFC;
+        self->attack_box = &D_800FBEFC;
     }
     if (self->ext.main_18.state.runtime.unk83 >= 0xA) {
-        func_80015D60(self, 0xC);
+        set_animation(self, 0xC);
         self->unk6 = 5;
     }
     if (self->unk15 == 0) {
-        blocked = self->unk70 & 2;
+        blocked = self->collision_flags & 2;
     } else {
-        blocked = self->unk70 & 1;
+        blocked = self->collision_flags & 1;
     }
     if (blocked != 0) {
         func_8001540C(2, 0x37, self);
-        func_80028B68(0x10, 8, 2);
-        func_80015D60(self, 0xC);
+        start_screen_shake_x(0x10, 8, 2);
+        set_animation(self, 0xC);
         self->unk6 = 5;
     }
-    func_8002B718(MOVING_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
 void ice_core_charge_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     if (self->animation_step.fields.event == 2) {
-        self->unk60 = 4;
-        self->unk50 = (const u8*)&D_800FBEF4;
-        self->unk54 = (const u8*)&D_800FBEF4;
+        self->contact_damage = 4;
+        self->attack_box = (const u8*)&D_800FBEF4;
+        self->hurt_box = (const u8*)&D_800FBEF4;
     }
 
     if (self->animation_step.fields.event == 1) {
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         func_800527F0(self);
         self->ext.main_18.state.runtime.unk83 = 0;
         self->ext.main_18.state.runtime.unk81 = 0;
@@ -279,13 +279,13 @@ void ice_core_stomp(struct MainObj* self)
 void ice_core_stomp_start(struct MainObj* self)
 {
     self->ext.main_18.state.runtime.unk82 = 1;
-    self->unk50 = (const u8*)&D_800FBF00;
-    self->unk54 = (const u8*)&D_800FBF00;
+    self->attack_box = (const u8*)&D_800FBF00;
+    self->hurt_box = (const u8*)&D_800FBF00;
     ice_core_face_player(ANIMATED_OBJECT(self));
-    self->unk2C = FIXED(0.2578125);
-    self->unk20 = 0;
-    self->unk24 = 0;
-    self->unk28 = 0;
+    self->gravity = FIXED(0.2578125);
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
     self->unk7C = 0x5A;
     self->unk6 = 1;
 }
@@ -294,25 +294,25 @@ void ice_core_stomp_land(struct MainObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->collision_data = D_801060F0;
     }
     temp_v0 = (u16)self->unk7C - 1;
     self->unk7C = temp_v0;
     if (temp_v0 == 0) {
-        self->unk24 = FIXED(6);
+        self->y_speed = FIXED(6);
         self->unk7C = 0x50;
-        self->unk70 = 0;
-        self->unk2C = 0;
+        self->collision_flags = 0;
+        self->gravity = 0;
         self->unk6 = 2;
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    if ((self->y_pos.i.hi >= 0x8BA) && (self->unk2C != 0)) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if ((self->y_pos.i.hi >= 0x8BA) && (self->gravity != 0)) {
         self->y_pos.i.hi = 0x8BA;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         func_8001540C(2, 0x38, self);
     }
 }
@@ -322,10 +322,10 @@ void ice_core_stomp_rise(struct MainObj* self)
     s16 timer;
 
     if (self->unk7C >= 0x29) {
-        func_8002B718(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
 
@@ -337,7 +337,7 @@ void ice_core_stomp_rise(struct MainObj* self)
         if (self->x_pos.i.hi >= 0x18B6) {
             self->x_pos.i.hi = 0x18B5;
         }
-        self->unk24 = FIXED(-8);
+        self->y_speed = FIXED(-8);
         self->unk7C = 0xA;
         self->unk6 = 3;
     }
@@ -347,48 +347,48 @@ void ice_core_stomp_drop(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->ext.main_18.state.runtime.unk82 = 0;
-        self->unk68 = &D_800FBF0C;
+        self->terrain_box = &D_800FBF0C;
     }
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk50 = &D_800FBEF4;
-        self->unk54 = &D_800FBEF4;
+        self->attack_box = &D_800FBEF4;
+        self->hurt_box = &D_800FBEF4;
     }
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         func_8001540C(2, 0x37, self);
-        func_80028BAC(0x10, 8, 2);
+        start_screen_shake_y(0x10, 8, 2);
         self->ext.main_18.shed_timer = 0xA6;
-        func_80015D60(self, 5);
+        set_animation(self, 5);
         self->unk6 = 4;
     }
 }
 
 void ice_core_stomp_impact(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_80015D60((struct Unk19*)self, 6);
+        set_animation((struct Unk19*)self, 6);
         self->unk6 = 5;
     }
 }
 
 void ice_core_stomp_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         if (self->ext.main_18.ice_pieces == 0x8000) {
-            self->ext.main_18.state.runtime.unk85 = self->unk5C;
+            self->ext.main_18.state.runtime.unk85 = self->hp;
         }
         self->collision_data = (const u16*)D_80106B74;
-        self->unk50 = (const u8*)&D_800FBEF4;
-        self->unk54 = (const u8*)&D_800FBEF4;
+        self->attack_box = (const u8*)&D_800FBEF4;
+        self->hurt_box = (const u8*)&D_800FBEF4;
     }
     if (self->animation_step.fields.event == 1) {
         ice_core_face_player(ANIMATED_OBJECT(self));
-        func_80015D60(self, 2);
-        self->unk24 = FIXED(2);
-        self->unk2C = FIXED(0.0625);
+        set_animation(self, 2);
+        self->y_speed = FIXED(2);
+        self->gravity = FIXED(0.0625);
         self->unk5 = 6;
         self->unk6 = 0;
         self->ext.main_18.state.runtime.unk80 = 0;
@@ -402,13 +402,13 @@ void ice_core_build(struct MainObj* self)
 
 void ice_core_build_open(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk50 = (const u8*)&D_800FBF04;
-        self->unk54 = (const u8*)&D_800FBF04;
+        self->attack_box = (const u8*)&D_800FBF04;
+        self->hurt_box = (const u8*)&D_800FBF04;
     }
     if (self->animation_step.fields.event == 1) {
-        func_80015D60(self, 8);
+        set_animation(self, 8);
         self->unk6 = 1;
     }
 }
@@ -419,13 +419,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_18", func_800517D0);
 void ice_core_build_grow(struct MainObj* self)
 {
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (*(u8*)&self->unk7E == 0xFF && self->unk5C < 0x30) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, 0xE, NULL);
             self->ext.main_18.state.runtime.unk85 = 3;
         }
-        self->unk5C++;
+        self->hp++;
     }
     if (self->animation_step.fields.event == 3) {
         func_8001540C(2, 0x39, self);
@@ -433,16 +433,16 @@ void ice_core_build_grow(struct MainObj* self)
     if (self->animation_step.fields.event != 1) {
         return;
     }
-    self->unk61 = 0;
+    self->invincibility_timer = 0;
     if (self->ext.main_18.unk88 == 0) {
         self->ext.main_18.unk88 = 1;
-        func_80015D60(self, 0xB);
-        self->unk50 = &D_800FBEF8;
+        set_animation(self, 0xB);
+        self->attack_box = &D_800FBEF8;
         ice_core_face_player(ANIMATED_OBJECT(self));
     } else {
         self->ext.main_18.unk88 = 0;
-        func_80015D60(self, 0);
-        self->unk50 = &D_800FBEF4;
+        set_animation(self, 0);
+        self->attack_box = &D_800FBEF4;
     }
     self->unk6 = 3;
     self->unk7C = 0x1E;
@@ -451,14 +451,14 @@ void ice_core_build_grow(struct MainObj* self)
 void ice_core_build_wait(struct MainObj* self)
 {
 
-    if (*(u8*)&self->unk7E == 0xFF && self->unk5C < 0x30) {
+    if (*(u8*)&self->unk7E == 0xFF && self->hp < 0x30) {
         if (--self->ext.main_18.state.runtime.unk85 == 0) {
             func_8001540C(0, 0xE, NULL);
             self->ext.main_18.state.runtime.unk85 = 3;
         }
-        self->unk5C++;
+        self->hp++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         if (self->animation_step.fields.event != 0) {
             if (self->ext.main_18.unk88 == 0) {
@@ -470,7 +470,7 @@ void ice_core_build_wait(struct MainObj* self)
                     player_end_script_action();
                 }
             } else {
-                func_80015D60(self, 0x10);
+                set_animation(self, 0x10);
                 self->unk5 = 9;
                 self->unk6 = 0;
             }
@@ -489,18 +489,18 @@ void ice_core_bounce_start(struct MainObj* self)
 {
     self->ext.main_18.state.runtime.unk80 = 0x80;
     ice_core_face_player(ANIMATED_OBJECT(self));
-    self->unk68 = &D_800FBF10;
+    self->terrain_box = &D_800FBF10;
 
     if (self->unk15 == 0) {
-        self->unk20 = FIXED(-3.53554);
+        self->x_speed = FIXED(-3.53554);
     } else {
-        self->unk20 = FIXED(3.53554);
+        self->x_speed = FIXED(3.53554);
     }
 
     if (!(get_random() & 1)) {
-        self->unk24 = FIXED(-3.53554);
+        self->y_speed = FIXED(-3.53554);
     } else {
-        self->unk24 = FIXED(3.53554);
+        self->y_speed = FIXED(3.53554);
     }
 
     self->unk7C = 0xF0;
@@ -511,36 +511,36 @@ void ice_core_bounce_move(struct MainObj* self)
 {
     s32 hit;
 
-    if (self->unk20 < 0) {
-        if (self->unk70 & 2) {
-            func_800C813C(2, D_800FC340, self);
+    if (self->x_speed < 0) {
+        if (self->collision_flags & 2) {
+            spawn_debris(2, D_800FC340, self);
             func_8001540C(2, 0x37, self);
-            func_80028B68(8, 4, 2);
+            start_screen_shake_x(8, 4, 2);
             self->unk15 = 0x40;
-            self->unk20 = -self->unk20;
+            self->x_speed = -self->x_speed;
         }
-    } else if (self->unk70 & 1) {
-        func_800C813C(2, D_800FC340, self);
+    } else if (self->collision_flags & 1) {
+        spawn_debris(2, D_800FC340, self);
         func_8001540C(2, 0x37, self);
-        func_80028B68(8, 4, 2);
+        start_screen_shake_x(8, 4, 2);
         self->unk15 = 0;
-        self->unk20 = -self->unk20;
+        self->x_speed = -self->x_speed;
     }
 
-    if (self->unk24 < 0) {
-        hit = self->unk70 & 8;
+    if (self->y_speed < 0) {
+        hit = self->collision_flags & 8;
     } else {
-        hit = self->unk70 & 4;
+        hit = self->collision_flags & 4;
     }
     if (hit != 0) {
         func_8001540C(5, 2, NULL);
-        func_800C813C(2, D_800FC340, self);
+        spawn_debris(2, D_800FC340, self);
         func_8001540C(2, 0x37, self);
-        func_80028BAC(8, 4, 2);
-        self->unk24 = -self->unk24;
+        start_screen_shake_y(8, 4, 2);
+        self->y_speed = -self->y_speed;
     }
 
-    func_8002B718(MOVING_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (self->ext.main_18.state.runtime.unk86 != 2) {
         if (--self->unk7C == 0) {
             if ((u16)(self->y_pos.i.hi - 0x849) < 0x47 && (u16)(self->x_pos.i.hi - 0x17D1) < 0xEF) {
@@ -552,7 +552,7 @@ void ice_core_bounce_move(struct MainObj* self)
             self->unk7C = 1;
         }
     } else if (self->ext.main_18.state.runtime.unk87 != 0) {
-        func_80015D60(self, 0xF);
+        set_animation(self, 0xF);
         self->unk6 = 3;
     }
 }
@@ -567,13 +567,13 @@ void ice_core_bounce_wait(struct MainObj* self)
 
 void ice_core_bounce_reform(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        self->unk50 = (const u8*)&D_800FBF04;
-        self->unk54 = (const u8*)&D_800FBF04;
+        self->attack_box = (const u8*)&D_800FBF04;
+        self->hurt_box = (const u8*)&D_800FBF04;
     }
     if (self->animation_step.fields.event == 1) {
-        self->unk68 = &D_800FBF0C;
+        self->terrain_box = &D_800FBF0C;
         self->ext.main_18.state.runtime.unk86 = 0;
         self->unk5 = 8;
         self->unk6 = 0;
@@ -609,7 +609,7 @@ void ice_core_spray_fire(struct MainObj* self)
         shot->unk7C = (struct WeaponObj*)&self->state;
         shot->state = 0;
     }
-    func_80015D60(self, self->ext.main_18.state.runtime.unk86 + 0xD);
+    set_animation(self, self->ext.main_18.state.runtime.unk86 + 0xD);
     self->ext.main_18.state.runtime.unk86++;
     func_8001540C(2, 0x36, self);
     self->unk6 = 1;
@@ -617,7 +617,7 @@ void ice_core_spray_fire(struct MainObj* self)
 
 void ice_core_spray_wait_event(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->unk7C = 0x30;
         self->unk6 = 2;
@@ -649,20 +649,20 @@ void ice_core_intro_wait_player(struct MainObj* self)
 
 void ice_core_intro_descend(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        self->unk2C = FIXED(0.0078125);
+        self->gravity = FIXED(0.0078125);
         self->unk16 = 5;
-        self->unk24 = 0;
+        self->y_speed = 0;
         self->unk6 = 3;
     }
 }
 
 void ice_core_intro_slow(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk24 == FIXED(-0.75)) {
-        self->unk2C = FIXED(-0.015625);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed == FIXED(-0.75)) {
+        self->gravity = FIXED(-0.015625);
         self->unk7C = 0x64;
         self->unk6 = 4;
     }
@@ -670,14 +670,14 @@ void ice_core_intro_slow(struct MainObj* self)
 
 void ice_core_intro_start_fight(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 2;
         engine_obj.boss_ptr = self;
         self->ext.main_18.state.runtime.unk82 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk5 = 8;
         self->unk6 = 0;
     }
@@ -685,10 +685,10 @@ void ice_core_intro_start_fight(struct MainObj* self)
 
 void ice_core_fall(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk24 == 0) {
-        self->unk68 = &D_800FBF0C;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_speed == 0) {
+        self->terrain_box = &D_800FBF0C;
         self->unk5 = 2;
         self->unk6 = 0;
     }
@@ -696,10 +696,10 @@ void ice_core_fall(struct MainObj* self)
 
 void ice_core_float(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
-    if (self->unk2C == FIXED(0.0625)) {
+    if (self->gravity == FIXED(0.0625)) {
         if (self->ext.main_18.state.runtime.unk84 == 0) {
             if (self->y_pos.i.hi >= 0x891) {
                 goto landed;
@@ -723,7 +723,7 @@ void ice_core_float(struct MainObj* self)
     }
 
 landed:
-    self->unk68 = &D_800FBF0C;
+    self->terrain_box = &D_800FBF0C;
     self->unk5 = 2;
     self->unk6 = 0;
 }
@@ -738,7 +738,7 @@ void ice_core_pick_attack(struct MainObj* self)
         self->ext.main_18.state.runtime.unk80 = next_flags;
         if ((next_flags & 0x3F) < 3 && (get_random() & 3) >= 2) {
             ice_core_face_player(ANIMATED_OBJECT(self));
-            self->unk68 = &D_800FBF0C;
+            self->terrain_box = &D_800FBF0C;
             self->unk5 = 3;
             self->unk6 = 0;
             return;
@@ -746,14 +746,14 @@ void ice_core_pick_attack(struct MainObj* self)
         phase_value = *(u8*)&self->unk7E;
         switch (phase_value) {
         case 0:
-            self->unk68 = &D_800FBF0C;
+            self->terrain_box = &D_800FBF0C;
             self->unk5 = 4;
             self->unk6 = 0;
             *(u8*)&self->unk7E = 1;
             break;
         case 1:
-            self->unk68 = &D_800FBF0C;
-            func_80015D60(self, 4);
+            self->terrain_box = &D_800FBF0C;
+            set_animation(self, 4);
             self->unk5 = 5;
             self->unk6 = 0;
             *(u8*)&self->unk7E = 0;
@@ -764,15 +764,15 @@ void ice_core_pick_attack(struct MainObj* self)
 
 void ice_core_check_rebuild(struct MainObj* self)
 {
-    if (self->ext.main_18.state.runtime.unk81 == 0 && self->unk5C < self->ext.main_18.state.runtime.unk85 && self->ext.main_18.state.runtime.unk87 != 0 && self->ext.main_18.unk88 == 0) {
+    if (self->ext.main_18.state.runtime.unk81 == 0 && self->hp < self->ext.main_18.state.runtime.unk85 && self->ext.main_18.state.runtime.unk87 != 0 && self->ext.main_18.unk88 == 0) {
         self->ext.main_18.state.runtime.unk82 = 0;
         self->ext.main_18.state.runtime.unk85 = 0;
         self->ext.main_18.state.runtime.unk84 = 0;
-        func_80015D60(self, 7);
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        set_animation(self, 7);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk5 = 8;
         self->unk6 = 0;
     }
@@ -806,7 +806,7 @@ void ice_core_shed_ice(struct MainObj* self)
             value = flags ^ D_800FBEDC[random];
             self->ext.main_18.ice_pieces = value;
             if (value == 0x8000) {
-                self->ext.main_18.state.runtime.unk85 = self->unk5C;
+                self->ext.main_18.state.runtime.unk85 = self->hp;
             }
             self->ext.main_18.shed_timer = (self->ext.main_18.shed_timer - 0x20) | 0xC;
         }
@@ -1240,7 +1240,7 @@ void (*ice_core_state_funcs[5])() = {
 };
 
 void (*ice_core_step_funcs[12])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     ice_core_resume_step,
     ice_core_drift,
     ice_core_bob,

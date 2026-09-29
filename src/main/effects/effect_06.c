@@ -2,47 +2,47 @@
 // 800B6A0C..800B6B18
 #include "common.h"
 
-void func_800B6A0C(struct EffectObj* arg0)
+void checkpoint_trigger_update(struct EffectObj* self)
 {
-    D_8010B45C[arg0->state](arg0);
+    checkpoint_trigger_state_funcs[self->state](self);
 }
 
-void func_800B6A48(struct EffectObj* arg0)
+void checkpoint_trigger_init(struct EffectObj* self)
 {
-    arg0->ext.unk_effect.unk14 = 0;
-    arg0->state++;
-    if ((arg0->unk2 & 0xF) == engine_obj.checkpoint) {
-        func_8002B0C8(arg0);
+    self->ext.unk_effect.unk14 = 0;
+    self->state++;
+    if ((self->unk2 & 0xF) == engine_obj.checkpoint) {
+        despawn_object(self);
     }
 }
 
-void func_800B6A90(struct EffectObj* arg0)
+void checkpoint_trigger_wait(struct EffectObj* self)
 {
-    if (func_8002B160(arg0) == 0) {
-        if (arg0->unk2 & 0xF0) {
-            if (arg0->y_pos.i.hi <= g_Player.y_pos.i.hi) {
-                engine_obj.checkpoint = arg0->unk2 & 0xF;
-                func_8002B0C8(arg0);
+    if (func_8002B160(self) == 0) {
+        if (self->unk2 & 0xF0) {
+            if (self->y_pos.i.hi <= g_Player.y_pos.i.hi) {
+                engine_obj.checkpoint = self->unk2 & 0xF;
+                despawn_object(self);
             }
         } else {
-            if (arg0->x_pos.i.hi <= g_Player.x_pos.i.hi) {
-                engine_obj.checkpoint = arg0->unk2 & 0xF;
-                func_8002B0C8(arg0);
+            if (self->x_pos.i.hi <= g_Player.x_pos.i.hi) {
+                engine_obj.checkpoint = self->unk2 & 0xF;
+                despawn_object(self);
             }
         }
     } else {
-        func_8002B0C8(arg0);
+        despawn_object(self);
     }
 }
 
-void (*D_8010B450[2])(struct EffectObj*) = {
-    func_800B649C,
+void (*tile_scanner_state_funcs[2])(struct EffectObj*) = {
+    tile_scanner_init,
     func_800B64BC,
 };
 
-void (*D_8010B458[1])(struct EffectObj*) = { func_800B6660 };
+void (*tile_scanner_fill_funcs[1])(struct EffectObj*) = { func_800B6660 };
 
-void (*D_8010B45C[])(struct EffectObj*) = {
-    func_800B6A48,
-    func_800B6A90,
+void (*checkpoint_trigger_state_funcs[])(struct EffectObj*) = {
+    checkpoint_trigger_init,
+    checkpoint_trigger_wait,
 };

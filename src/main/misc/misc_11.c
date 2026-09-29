@@ -2,55 +2,55 @@
 // 800CA0C8..800CA228
 #include "common.h"
 
-void func_800CA0C8(struct MiscObj* arg0)
+void blink_marker_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010E580[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    blink_marker_state_funcs[self->state](self);
 }
 
-void func_800CA110(struct MiscObj* arg0)
+void blink_marker_init(struct MiscObj* self)
 {
     s8 variant;
 
-    variant = arg0->unk2;
+    variant = self->unk2;
     switch (variant) {
     case 1:
     case 2:
-        func_80015D60(arg0, variant + 1);
+        set_animation(self, variant + 1);
         break;
     case 3:
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
         break;
     }
-    arg0->ext.misc_11.active = 0;
-    arg0->state = (u8)arg0->state + 1;
+    self->ext.misc_11.active = 0;
+    self->state = (u8)self->state + 1;
 }
 
-void func_800CA188(struct MiscObj* arg0)
+void blink_marker_main(struct MiscObj* self)
 {
-    if (arg0->ext.misc_11.active != 0) {
-        arg0->state++;
+    if (self->ext.misc_11.active != 0) {
+        self->state++;
     }
-    if (arg0->unk2 == 0) {
-        arg0->on_screen ^= 1;
-        if (arg0->on_screen == 0) {
+    if (self->unk2 == 0) {
+        self->on_screen ^= 1;
+        if (self->on_screen == 0) {
             return;
         }
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA208(struct MiscObj* arg0)
+void blink_marker_despawn(struct MiscObj* self)
 {
-    arg0->ext.misc_11.active = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->ext.misc_11.active = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010E580[])(struct MiscObj*) = {
-    func_800CA110,
-    func_800CA188,
-    func_800CA208,
+void (*blink_marker_state_funcs[])(struct MiscObj*) = {
+    blink_marker_init,
+    blink_marker_main,
+    blink_marker_despawn,
 };

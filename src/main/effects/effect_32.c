@@ -2,45 +2,45 @@
 // 800BC518..800BC748
 #include "common.h"
 
-void func_800BC518(struct EffectObj* arg0)
+void proximity_door_update(struct EffectObj* self)
 {
-    D_8010BF90[arg0->state](arg0);
+    proximity_door_state_funcs[self->state](self);
 }
 
-void func_800BC554(struct EffectObj* arg0)
+void proximity_door_init(struct EffectObj* self)
 {
-    arg0->ext.effect_32.unk15 = 0;
-    arg0->state++;
+    self->ext.effect_32.unk15 = 0;
+    self->state++;
 }
 
-void func_800BC568(struct EffectObj* arg0)
+void proximity_door_main(struct EffectObj* self)
 {
-    func_800BC63C(arg0);
-    if (arg0->ext.effect_32.unk15 != 0) {
-        func_800BC5D4(arg0);
+    proximity_door_check_player(self);
+    if (self->ext.effect_32.unk15 != 0) {
+        proximity_door_step(self);
     }
-    if ((arg0->ext.effect_32.palette.fields.step == 0) && (func_8002B160(BASE_OBJECT(arg0)) == 1)) {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+    if ((self->ext.effect_32.palette.fields.step == 0) && (func_8002B160(BASE_OBJECT(self)) == 1)) {
+        despawn_object(OBJECT_HEADER(self));
     }
 }
 
-void func_800BC5D4(struct EffectObj* arg0)
+void proximity_door_step(struct EffectObj* self)
 {
     s32* entry;
     s8 timer;
 
-    timer = arg0->ext.effect_32.palette.fields.timer - 1;
-    arg0->ext.effect_32.palette.fields.timer = timer;
+    timer = self->ext.effect_32.palette.fields.timer - 1;
+    self->ext.effect_32.palette.fields.timer = timer;
     if (timer == 0) {
-        entry = arg0->ext.effect_32.palette_source.words + arg0->ext.effect_32.palette.fields.step;
-        arg0->ext.effect_32.palette_source.words = entry;
-        arg0->ext.effect_32.palette.packed = *entry;
-        func_800DABE4(arg0->ext.effect_32.palette.fields.id,
-            arg0->x_pos.i.hi - 0x30, arg0->y_pos.i.hi - 0x30);
+        entry = self->ext.effect_32.palette_source.words + self->ext.effect_32.palette.fields.step;
+        self->ext.effect_32.palette_source.words = entry;
+        self->ext.effect_32.palette.packed = *entry;
+        apply_tile_effect(self->ext.effect_32.palette.fields.id,
+            self->x_pos.i.hi - 0x30, self->y_pos.i.hi - 0x30);
     }
 }
 
-void func_800BC63C(struct EffectObj* self)
+void proximity_door_check_player(struct EffectObj* self)
 {
     s16 x_pos;
     s32 delta;
@@ -49,25 +49,25 @@ void func_800BC63C(struct EffectObj* self)
     delta = g_Player.x_pos.i.hi - x_pos;
     if (delta >= 0 ? delta < 0x30 : (x_pos - g_Player.x_pos.i.hi) < 0x30) {
         if (self->ext.effect_32.unk15 != 1 && self->ext.effect_32.palette.fields.step == 0) {
-            func_800BC6FC(self, 0);
+            proximity_door_start_script(self, 0);
             self->ext.effect_32.unk15 = 1;
         }
     } else if (self->ext.effect_32.unk15 == 1 && self->ext.effect_32.palette.fields.step == 0) {
-        func_800BC6FC(self, 1);
+        proximity_door_start_script(self, 1);
         self->ext.effect_32.unk15 = -1;
     }
 }
 
-void func_800BC6FC(struct EffectObj* arg0, s32 arg1)
+void proximity_door_start_script(struct EffectObj* self, s32 arg1)
 {
-    arg0->ext.effect_32.palette_source.bytes = D_8010BF88[arg1 & 0xFF];
-    arg0->ext.effect_32.palette.fields.timer = arg0->ext.effect_32.palette_source.bytes[0];
-    arg0->ext.effect_32.palette.fields.unk1 = arg0->ext.effect_32.palette_source.bytes[1];
-    arg0->ext.effect_32.palette.fields.step = arg0->ext.effect_32.palette_source.bytes[2];
-    arg0->ext.effect_32.palette.fields.id = arg0->ext.effect_32.palette_source.bytes[3];
+    self->ext.effect_32.palette_source.bytes = tile_anim_trigger_scripts[arg1 & 0xFF];
+    self->ext.effect_32.palette.fields.timer = self->ext.effect_32.palette_source.bytes[0];
+    self->ext.effect_32.palette.fields.unk1 = self->ext.effect_32.palette_source.bytes[1];
+    self->ext.effect_32.palette.fields.step = self->ext.effect_32.palette_source.bytes[2];
+    self->ext.effect_32.palette.fields.id = self->ext.effect_32.palette_source.bytes[3];
 }
 
-void (*D_8010BF90[])(struct EffectObj*) = {
-    func_800BC554,
-    func_800BC568,
+void (*proximity_door_state_funcs[])(struct EffectObj*) = {
+    proximity_door_init,
+    proximity_door_main,
 };

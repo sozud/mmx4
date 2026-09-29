@@ -2,29 +2,29 @@
 // 800C3224..800C351C
 #include "common.h"
 
-void func_800C3224(struct ItemObj* arg0)
+void crusher_wall_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010CFE0[arg0->state](arg0);
+    crusher_wall_state_funcs[arg0->state](arg0);
     arg0->x_pos.val -= arg0->ext.packed;
-    func_8002E184(arg0);
+    collide_with_players(arg0);
     if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x30, 0);
+        update_on_screen(BASE_OBJECT(arg0), 0x30, 0);
     } else {
         arg0->state = 3;
     }
 }
 
-void func_800C32BC(struct ItemObj* self)
+void crusher_wall_init(struct ItemObj* self)
 {
     self->active = 1;
-    self->x_pos.i.hi = D_8010D000[self->unk2];
+    self->x_pos.i.hi = crusher_wall_x_positions[self->unk2];
     self->y_pos.i.hi = 0x1A8;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->bg_offset = g_Player.bg_offset;
-    self->unk68 = (struct Unk_unk68*)D_8010CFFC;
+    self->unk68 = (struct Unk_unk68*)crusher_wall_terrain_box;
     self->unk40 = 0x1500;
     self->animation_step.fields.frame_index = 0;
     self->unk16 = 6;
@@ -39,11 +39,11 @@ void func_800C32BC(struct ItemObj* self)
     self->ext.item_12.x_offset = 0x400;
 }
 
-void func_800C3364(struct ItemObj* arg0)
+void crusher_wall_rumble(struct ItemObj* arg0)
 {
     u16 timer;
 
-    D_8010CFF0[arg0->unk5](arg0);
+    crusher_wall_speed_funcs[arg0->unk5](arg0);
     timer = arg0->unk7C.timer16 - 1;
     arg0->unk7C.timer16 = timer;
     if (timer != 0) {
@@ -52,26 +52,26 @@ void func_800C3364(struct ItemObj* arg0)
             func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
             func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
             arg0->y_pos.u.hi -= 0x10;
-            func_80028BAC(8, 4, 1);
+            start_screen_shake_y(8, 4, 1);
         }
     } else {
         arg0->state = 2;
     }
 }
 
-void func_800C3438(struct ItemObj* arg0)
+void crusher_wall_crush(struct ItemObj* arg0)
 {
-    if (func_800C34F0(arg0) && (g_Player.unk70 & 8)) {
+    if (crusher_wall_player_near(arg0) && (g_Player.unk70 & 8)) {
         g_Player.hp = -0x80;
     }
 }
 
-void func_800C3484(struct ItemObj* arg0)
+void crusher_wall_despawn(struct ItemObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800C34A4(struct ItemObj* arg0)
+void crusher_wall_accelerate(struct ItemObj* arg0)
 {
     if (arg0->unk2 == 0) {
         arg0->ext.item_12.x_offset += 0x100;
@@ -80,16 +80,16 @@ void func_800C34A4(struct ItemObj* arg0)
     }
 }
 
-void func_800C34D4(struct ItemObj* arg0)
+void crusher_wall_hold(struct ItemObj* arg0)
 {
     arg0->unk5++;
 }
 
-void func_800C34E8(struct ItemObj* arg0)
+void crusher_wall_idle(struct ItemObj* arg0)
 {
 }
 
-u8 func_800C34F0(struct MainObj* arg0)
+u8 crusher_wall_player_near(struct MainObj* arg0)
 {
     s32 player_x;
     s32 object_x;
@@ -101,18 +101,18 @@ u8 func_800C34F0(struct MainObj* arg0)
     return 0;
 }
 
-void (*D_8010CFE0[])(struct ItemObj*) = {
-    func_800C32BC,
-    func_800C3364,
-    func_800C3438,
-    func_800C3484,
+void (*crusher_wall_state_funcs[])(struct ItemObj*) = {
+    crusher_wall_init,
+    crusher_wall_rumble,
+    crusher_wall_crush,
+    crusher_wall_despawn,
 };
 
-void (*D_8010CFF0[])(struct ItemObj*) = {
-    func_800C34A4,
-    func_800C34D4,
-    func_800C34E8,
+void (*crusher_wall_speed_funcs[])(struct ItemObj*) = {
+    crusher_wall_accelerate,
+    crusher_wall_hold,
+    crusher_wall_idle,
 };
 
-u8 D_8010CFFC[4] = { 0, 0, 0x30, 0x38 };
-u16 D_8010D000[4] = { 0x0900, 0x0D60, 0x13F0, 0x1A80 };
+u8 crusher_wall_terrain_box[4] = { 0, 0, 0x30, 0x38 };
+u16 crusher_wall_x_positions[4] = { 0x0900, 0x0D60, 0x13F0, 0x1A80 };

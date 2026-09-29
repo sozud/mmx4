@@ -2,15 +2,15 @@
 // 800D3928..800D3964
 #include "common.h"
 
-void func_800D3928(struct UnkObj* arg0)
+void menu_text_update(struct UnkObj* arg0)
 {
     arg0->on_screen = 0;
-    D_8010F5E8[arg0->state](arg0);
+    menu_text_state_funcs[arg0->state](arg0);
 }
 
-void (*D_8010F5E8[4])(struct UnkObj*) = {
-    func_800D36AC,
-    func_800D3700,
+void (*menu_text_state_funcs[4])(struct UnkObj*) = {
+    menu_text_init,
+    menu_text_highlight,
     func_800D3798,
-    func_800D38A0,
+    menu_text_cursor,
 };

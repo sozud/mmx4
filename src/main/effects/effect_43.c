@@ -2,26 +2,26 @@
 // 800BE57C..800BE83C
 #include "common.h"
 
-void func_800BE57C(struct EffectObj* arg0)
+void sigma_collapse_init(struct EffectObj* self)
 {
-    if (arg0->unk2 == 0) {
-        arg0->state = 1;
+    if (self->unk2 == 0) {
+        self->state = 1;
     } else {
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800BE598(struct EffectObj* arg0)
+void sigma_collapse_debris_start(struct EffectObj* self)
 {
     u32 direction;
 
-    arg0->ext.effect_9.transition_timer = 1;
+    self->ext.effect_9.transition_timer = 1;
     direction = D_801406A8[func_8002938C(0xA4)] >> 7;
-    arg0->unk5++;
-    arg0->ext.effect_9.direction = direction;
+    self->unk5++;
+    self->ext.effect_9.direction = direction;
 }
 
-void func_800BE5F4(struct EffectObj* self)
+void sigma_collapse_debris_drop(struct EffectObj* self)
 {
     struct MiscObj* misc;
     u16 timer;
@@ -38,7 +38,7 @@ void func_800BE5F4(struct EffectObj* self)
                 misc->unk40 = self->ext.effect_16.saved_background_2A;
             }
             func_8001540C(5, 0, NULL);
-            func_80028BAC(5, 2, 1);
+            start_screen_shake_y(5, 2, 1);
             self->ext.effect_9.transition_timer = 5;
         }
     } else {
@@ -46,54 +46,54 @@ void func_800BE5F4(struct EffectObj* self)
     }
 }
 
-void func_800BE6D8(struct EffectObj* arg0)
+void sigma_collapse_debris(struct EffectObj* self)
 {
-    D_8010C120[arg0->unk5](arg0);
+    sigma_collapse_debris_funcs[self->unk5](self);
 }
 
-void func_800BE714(struct EffectObj* arg0)
+void sigma_collapse_rumble_start(struct EffectObj* self)
 {
-    arg0->ext.effect_43.unk14 = 1;
-    arg0->ext.effect_43.unk16 = 1;
-    arg0->unk5++;
+    self->ext.effect_43.unk14 = 1;
+    self->ext.effect_43.unk16 = 1;
+    self->unk5++;
 }
 
-void func_800BE730(struct EffectObj* arg0)
+void sigma_collapse_rumble_shake(struct EffectObj* self)
 {
-    if (--arg0->ext.effect_43.unk14 == 0) {
+    if (--self->ext.effect_43.unk14 == 0) {
         func_8001540C(5, 0, NULL);
-        func_80028B68(0xA, 2, 1);
-        arg0->ext.effect_43.unk14 = 0xA;
+        start_screen_shake_x(0xA, 2, 1);
+        self->ext.effect_43.unk14 = 0xA;
     }
 
-    if (--arg0->ext.effect_43.unk16 == 0) {
+    if (--self->ext.effect_43.unk16 == 0) {
         func_8001540C(0, 0x13, NULL);
-        arg0->ext.effect_43.unk16 = 0x28;
+        self->ext.effect_43.unk16 = 0x28;
     }
 }
 
-void func_800BE7C4(struct EffectObj* arg0)
+void sigma_collapse_rumble(struct EffectObj* self)
 {
-    D_8010C128[arg0->unk5](arg0);
+    sigma_collapse_rumble_funcs[self->unk5](self);
 }
 
-void func_800BE800(struct EffectObj* arg0)
+void sigma_collapse_update(struct EffectObj* self)
 {
-    D_8010C130[arg0->state](arg0);
+    sigma_collapse_state_funcs[self->state](self);
 }
 
-void (*D_8010C120[2])(struct EffectObj*) = {
-    func_800BE598,
-    func_800BE5F4,
+void (*sigma_collapse_debris_funcs[2])(struct EffectObj*) = {
+    sigma_collapse_debris_start,
+    sigma_collapse_debris_drop,
 };
 
-void (*D_8010C128[2])(struct EffectObj*) = {
-    func_800BE714,
-    func_800BE730,
+void (*sigma_collapse_rumble_funcs[2])(struct EffectObj*) = {
+    sigma_collapse_rumble_start,
+    sigma_collapse_rumble_shake,
 };
 
-void (*D_8010C130[])(struct EffectObj*) = {
-    func_800BE57C,
-    func_800BE6D8,
-    func_800BE7C4,
+void (*sigma_collapse_state_funcs[])(struct EffectObj*) = {
+    sigma_collapse_init,
+    sigma_collapse_debris,
+    sigma_collapse_rumble,
 };

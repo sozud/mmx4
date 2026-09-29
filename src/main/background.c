@@ -6,7 +6,7 @@ void func_80027E28(struct BackgroundObj* arg0);
 void func_80027EE8(struct BackgroundObj* arg0);
 void func_800282D0(struct BackgroundObj* arg0);
 void func_80028450(struct BackgroundObj* arg0);
-void func_80028AD8(struct BackgroundObj* arg0);
+void update_screen_shake_y(struct BackgroundObj* arg0);
 
 void func_8002771C(void)
 {
@@ -44,10 +44,10 @@ void func_80027850(void)
     if ((bg_obj->unk44 != 0) && (g_Player.update_delay == 0)) {
         D_800F3134[bg_obj->unk4](bg_obj);
         if (bg_obj->unk34 & 0x10) {
-            func_80028A48(bg_obj);
+            update_screen_shake_x(bg_obj);
         }
         if (bg_obj->unk34 & 1) {
-            func_80028AD8(bg_obj);
+            update_screen_shake_y(bg_obj);
         }
         func_80028690(bg_obj);
     }
@@ -551,7 +551,7 @@ void func_80028658(struct BackgroundObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/background", func_80028690);
 
-void func_80028A48(struct BackgroundObj* arg0)
+void update_screen_shake_x(struct BackgroundObj* arg0)
 {
     if (--arg0->unk36 == 0) {
         arg0->unk34 &= ~0x10;
@@ -566,7 +566,7 @@ void func_80028A48(struct BackgroundObj* arg0)
     }
 }
 
-void func_80028AD8(struct BackgroundObj* arg0)
+void update_screen_shake_y(struct BackgroundObj* arg0)
 {
     if (--arg0->unk37 == 0) {
         arg0->unk34 &= 0xFFFE;

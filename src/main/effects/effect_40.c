@@ -2,51 +2,51 @@
 // 800BE038..800BE184
 #include "common.h"
 
-void func_800BE038(struct EffectObj* arg0)
+void tile_loop_anim_update(struct EffectObj* self)
 {
-    D_8010C0D4[arg0->state](arg0);
+    tile_loop_anim_state_funcs[self->state](self);
 }
 
-void func_800BE074(struct EffectObj* arg0)
+void tile_loop_anim_init(struct EffectObj* self)
 {
     u8* temp_v0;
 
-    arg0->ext.effect_40.unk14 = 1;
-    arg0->y_pos.i.hi = 0x210;
-    temp_v0 = D_8010C0CC[arg0->unk2];
-    arg0->ext.effect_40.palette_source.bytes = temp_v0;
-    arg0->ext.effect_40.palette.fields.timer = *temp_v0;
-    arg0->ext.effect_40.palette.fields.unk1 = arg0->ext.effect_40.palette_source.bytes[1];
-    arg0->ext.effect_40.palette.fields.step = arg0->ext.effect_40.palette_source.bytes[2];
-    arg0->ext.effect_40.palette.fields.id = arg0->ext.effect_40.palette_source.bytes[3];
-    arg0->state = (u8)arg0->state + 1;
+    self->ext.effect_40.unk14 = 1;
+    self->y_pos.i.hi = 0x210;
+    temp_v0 = tile_loop_anim_scripts[self->unk2];
+    self->ext.effect_40.palette_source.bytes = temp_v0;
+    self->ext.effect_40.palette.fields.timer = *temp_v0;
+    self->ext.effect_40.palette.fields.unk1 = self->ext.effect_40.palette_source.bytes[1];
+    self->ext.effect_40.palette.fields.step = self->ext.effect_40.palette_source.bytes[2];
+    self->ext.effect_40.palette.fields.id = self->ext.effect_40.palette_source.bytes[3];
+    self->state = (u8)self->state + 1;
 }
 
-void func_800BE0FC(struct EffectObj* arg0);
+void tile_loop_anim_step(struct EffectObj* arg0);
 
-void func_800BE0DC(struct EffectObj* arg0)
+void tile_loop_anim_main(struct EffectObj* self)
 {
-    func_800BE0FC(arg0);
+    tile_loop_anim_step(self);
 }
 
-void func_800BE0FC(struct EffectObj* arg0)
+void tile_loop_anim_step(struct EffectObj* self)
 {
     s8 timer;
     s32* palette_source;
 
-    timer = arg0->ext.effect_40.palette.fields.timer - 1;
-    arg0->ext.effect_40.palette.fields.timer = timer;
+    timer = self->ext.effect_40.palette.fields.timer - 1;
+    self->ext.effect_40.palette.fields.timer = timer;
     if (timer == 0) {
-        palette_source = arg0->ext.effect_40.palette_source.words + arg0->ext.effect_40.palette.fields.step;
-        arg0->ext.effect_40.palette_source.words = palette_source;
-        arg0->ext.effect_40.palette.packed = *palette_source;
-        func_800DABE4(arg0->ext.effect_40.palette.fields.id,
-            arg0->x_pos.i.hi - D_8010C0C4[arg0->unk2][0],
-            arg0->y_pos.i.hi - D_8010C0C4[arg0->unk2][1]);
+        palette_source = self->ext.effect_40.palette_source.words + self->ext.effect_40.palette.fields.step;
+        self->ext.effect_40.palette_source.words = palette_source;
+        self->ext.effect_40.palette.packed = *palette_source;
+        apply_tile_effect(self->ext.effect_40.palette.fields.id,
+            self->x_pos.i.hi - tile_loop_anim_offsets[self->unk2][0],
+            self->y_pos.i.hi - tile_loop_anim_offsets[self->unk2][1]);
     }
 }
 
-u8 D_8010C094[6][4] = {
+u8 tile_loop_anim_script_0[6][4] = {
     { 9, 0, 1, 0 },
     { 9, 0, 1, 1 },
     { 9, 0, 1, 2 },
@@ -55,7 +55,7 @@ u8 D_8010C094[6][4] = {
     { 9, 0, 0xFB, 5 },
 };
 
-u8 D_8010C0AC[6][4] = {
+u8 tile_loop_anim_script_1[6][4] = {
     { 0x40, 0, 1, 6 },
     { 9, 0, 1, 7 },
     { 9, 0, 1, 8 },
@@ -64,14 +64,14 @@ u8 D_8010C0AC[6][4] = {
     { 9, 0, 0xFB, 0x0B },
 };
 
-s16 D_8010C0C4[2][2] = {
+s16 tile_loop_anim_offsets[2][2] = {
     { 0x30, 0x20 },
     { 0x40, 0x30 },
 };
 
-u8* D_8010C0CC[2] = { D_8010C094[0], D_8010C0AC[0] };
+u8* tile_loop_anim_scripts[2] = { tile_loop_anim_script_0[0], tile_loop_anim_script_1[0] };
 
-void (*D_8010C0D4[])(struct EffectObj*) = {
-    func_800BE074,
-    func_800BE0DC,
+void (*tile_loop_anim_state_funcs[])(struct EffectObj*) = {
+    tile_loop_anim_init,
+    tile_loop_anim_main,
 };

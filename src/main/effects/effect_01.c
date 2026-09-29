@@ -2,30 +2,30 @@
 // 800B58A0..800B5960
 #include "common.h"
 
-void func_800B58A0(struct EffectObj* arg0)
+void tile_animator_update(struct EffectObj* self)
 {
-    D_8010AFAC[arg0->state](arg0);
+    tile_animator_state_funcs[self->state](self);
 }
 
-void func_800B58DC(struct EffectObj* arg0)
+void tile_animator_init(struct EffectObj* self)
 {
-    arg0->unk6 = 0;
-    arg0->unk5 = 0;
-    arg0->state++;
+    self->unk6 = 0;
+    self->unk5 = 0;
+    self->state++;
 }
 
-void func_800B58F4(struct EffectObj* arg0, s32 arg1, s32 arg2)
+void tile_animator_step(struct EffectObj* self, s32 arg1, s32 arg2)
 {
-    if (++arg0->unk5 == 3) {
-        arg0->unk5 = 0;
-        if (++arg0->unk6 >= 5) {
-            arg0->unk6 = 0;
+    if (++self->unk5 == 3) {
+        self->unk5 = 0;
+        if (++self->unk6 >= 5) {
+            self->unk6 = 0;
         }
     }
-    func_800DA984((u8)arg0->unk6, arg1, arg2);
+    refresh_visible_tile_effect((u8)self->unk6, arg1, arg2);
 }
 
-void (*D_8010AFAC[])(struct EffectObj*) = {
-    func_800B58DC,
-    func_800B58F4,
+void (*tile_animator_state_funcs[])(struct EffectObj*) = {
+    tile_animator_init,
+    tile_animator_step,
 };

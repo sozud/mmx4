@@ -3,146 +3,148 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80067350(struct MainObj* arg0)
+void sentry_drone_update(struct MainObj* self)
 {
-    D_800FFAE8[arg0->state](arg0);
+    sentry_drone_state_funcs[self->state](self);
 }
 
+// sentry_drone_init
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_8006738C);
 
-extern u8 D_800FFAE0[];
-extern void (*D_800FFAF8[])();
+extern u8 sentry_drone_debris[];
+extern void (*sentry_drone_step_funcs[])();
 
-void func_80067550(struct MainObj* arg0)
+void sentry_drone_main(struct MainObj* self)
 {
     s8 nextState;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = arg0->unk5;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = self->unk5;
 
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(5, D_800FFAE0, arg0);
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(5, sentry_drone_debris, self);
         nextState = 2;
     } else {
-        func_80068138(arg0);
-        D_800FFAF8[arg0->unk5](arg0);
-        func_8002D9BC(arg0);
-        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+        sentry_drone_check_player_near(self);
+        sentry_drone_step_funcs[self->unk5](self);
+        func_8002D9BC(self);
+        if (func_8002B160(BASE_OBJECT(self)) == 0) {
+            is_on_screen(BASE_OBJECT(self));
             return;
         }
-        nextState = (u8)arg0->state + 1;
+        nextState = (u8)self->state + 1;
     }
 
-    arg0->state = nextState;
+    self->state = nextState;
 }
 
-void func_80067628(struct MainObj* arg0)
+void sentry_drone_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5;
+    self->unk5 = SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5;
 }
 
-void func_80067640(struct MainObj* arg0)
+void sentry_drone_drift(struct MainObj* self)
 {
-    D_800FFB14[arg0->unk6](arg0);
+    sentry_drone_drift_funcs[self->unk6](self);
 }
 
-void func_8006767C(struct MainObj* arg0)
+void sentry_drone_drift_start(struct MainObj* self)
 {
     s32 direction = -FIXED(0.5);
-    arg0->unk67 = 1;
-    arg0->unk6++;
-    if (arg0->unk15 != 0) {
+    self->air_state = 1;
+    self->unk6++;
+    if (self->unk15 != 0) {
         direction = FIXED(0.5);
     }
-    arg0->unk20 = direction;
-    arg0->unk28 = 0;
-    arg0->unk24 = 0;
-    arg0->unk2C = 0;
+    self->x_speed = direction;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x30;
-    func_80015D60(arg0, 0);
+    set_animation(self, 0);
 }
 
-void func_800676E0(struct MainObj* arg0)
+void sentry_drone_drift_move(struct MainObj* self)
 {
     s8 timer;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = --SP_CUR_MAIN_OBJ->ext.main_48.unk80;
     if (timer == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80067740(struct MainObj* arg0)
+void sentry_drone_dash(struct MainObj* self)
 {
-    D_800FFB1C[arg0->unk6](arg0);
+    sentry_drone_dash_funcs[self->unk6](self);
 }
 
-void func_8006777C(struct MainObj* arg0)
+void sentry_drone_dash_start(struct MainObj* self)
 {
     s32 velocity;
-    arg0->unk67 = 0;
-    arg0->unk6++;
-    if ((arg0->unk2 & 0xF) == 2) {
-        arg0->unk20 = 0;
+    self->air_state = 0;
+    self->unk6++;
+    if ((self->unk2 & 0xF) == 2) {
+        self->x_speed = 0;
     } else {
         velocity = -FIXED(4);
-        if (arg0->unk15 != 0) {
+        if (self->unk15 != 0) {
             velocity = FIXED(4);
         }
-        arg0->unk20 = velocity;
+        self->x_speed = velocity;
     }
-    arg0->unk28 = 0;
-    arg0->unk24 = 0;
-    arg0->unk2C = 0;
-    func_80015D60(arg0, 0);
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    set_animation(self, 0);
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x3C;
 }
 
-void func_800677F8(struct MainObj* arg0)
+void sentry_drone_dash_move(struct MainObj* self)
 {
     s8 timer;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = --SP_CUR_MAIN_OBJ->ext.main_48.unk80;
     if (timer == 0) {
-        arg0->unk67 = -1;
-        arg0->unk5 = 6;
-        arg0->unk6 = 0;
+        self->air_state = -1;
+        self->unk5 = 6;
+        self->unk6 = 0;
     }
 }
 
-void func_80067860(struct MainObj* arg0)
+void sentry_drone_burst(struct MainObj* self)
 {
-    D_800FFB24[arg0->unk6](arg0);
-    func_80015DC8(arg0);
+    sentry_drone_burst_funcs[self->unk6](self);
+    animate_object(self);
 }
 
-void func_800678B0(struct MainObj* arg0)
+void sentry_drone_burst_start(struct MainObj* self)
 {
-    arg0->unk20 = 0;
-    arg0->unk28 = 0;
-    arg0->unk24 = 0;
-    arg0->unk2C = 0;
-    arg0->unk6++;
-    func_80015D60(arg0, 1);
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    self->unk6++;
+    set_animation(self, 1);
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
 }
 
+// sentry_drone_burst_aim
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800678F8);
 
-void func_80067A80(struct MainObj* arg0)
+void sentry_drone_burst_wait(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk6++;
+    if (self->animation_step.fields.event != 0) {
+        self->unk6++;
     }
 }
 
-void func_80067AA8(struct MainObj* arg0)
+void sentry_drone_burst_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
     struct MiscObj* misc;
@@ -151,193 +153,196 @@ void func_80067AA8(struct MainObj* arg0)
     if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0x1A;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
         shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
-        shot->unk7C = arg0;
+        shot->unk7C = self;
         shot->unk84.value = 0;
-        func_8002B93C(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
+        set_velocity_from_angle(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
         SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 8;
-        arg0->unk6++;
+        self->unk6++;
         SP_CUR_MAIN_OBJ->ext.main_48.unk82++;
     }
     misc = find_free_misc_obj();
     if (misc != NULL) {
         misc->active = 0x41;
         misc->id = 0x19;
-        misc->x_pos.val = arg0->x_pos.val;
-        misc->y_pos.val = arg0->y_pos.val;
+        misc->x_pos.val = self->x_pos.val;
+        misc->y_pos.val = self->y_pos.val;
         misc->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
-        misc->ext.pointer.unk50 = arg0;
+        misc->ext.pointer.unk50 = self;
     }
 }
 
-void func_80067BB0(struct MainObj* arg0)
+void sentry_drone_burst_repeat(struct MainObj* self)
 {
     struct MainObj* work = SP_CUR_MAIN_OBJ;
     s8 timer;
     if (work->ext.main_48.unk82 >= 3) {
-        arg0->unk6++;
+        self->unk6++;
         SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
         SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
     } else {
         timer = work->ext.main_48.unk80 - 1;
         work->ext.main_48.unk80 = timer;
         if (timer == 0) {
-            arg0->unk6--;
+            self->unk6--;
         }
     }
 }
 
-void func_80067C34(struct MainObj* arg0)
+void sentry_drone_burst_end(struct MainObj* self)
 {
     struct MainObj* work = SP_CUR_MAIN_OBJ;
     s8 state = work->ext.main_48.unk80;
 
     if (state == 0) {
         if (++work->ext.main_48.unk83 >= 2) {
-            arg0->unk5 = 5;
-            arg0->unk6 = 0;
+            self->unk5 = 5;
+            self->unk6 = 0;
             SP_CUR_MAIN_OBJ->ext.main_48.unk83 = 0;
         } else {
-            arg0->unk5 = 3;
-            arg0->unk6 = 0;
+            self->unk5 = 3;
+            self->unk6 = 0;
         }
     } else {
         work->ext.main_48.unk80 = state - 1;
     }
 }
 
-void func_80067CB0(struct MainObj* arg0)
+void sentry_drone_spread(struct MainObj* self)
 {
-    D_800FFB3C[arg0->unk6](arg0);
-    func_80015DC8(arg0);
+    sentry_drone_spread_funcs[self->unk6](self);
+    animate_object(self);
 }
 
-void func_80067D00(struct MainObj* arg0)
+void sentry_drone_spread_start(struct MainObj* self)
 {
-    arg0->unk20 = 0;
-    arg0->unk28 = 0;
-    arg0->unk24 = 0;
-    arg0->unk2C = 0;
-    arg0->unk6++;
-    func_80015D60(arg0, 1);
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    self->unk6++;
+    set_animation(self, 1);
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
     SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
-    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi > 0) {
-        arg0->unk15 = 0x40;
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0) {
+        self->unk15 = 0x40;
     }
-    SP_CUR_MAIN_OBJ->ext.main_48.collision_result = func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
-    func_800681C4(arg0);
+    SP_CUR_MAIN_OBJ->ext.main_48.collision_result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    func_800681C4(self);
 }
 
+// sentry_drone_spread_aim
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80067DAC);
 
-void func_80067EE4(struct MainObj* arg0)
+void sentry_drone_spread_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
     struct MiscObj* misc;
 
-    if (arg0->animation_step.fields.event == 0) {
+    if (self->animation_step.fields.event == 0) {
         return;
     }
     shot = find_free_shot_obj();
     if (shot != NULL) {
         shot->active = 0x41;
         shot->id = 0x1A;
-        shot->x_pos.val = arg0->x_pos.val;
-        shot->y_pos.val = arg0->y_pos.val;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
         shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
-        shot->unk7C = arg0;
+        shot->unk7C = self;
         shot->unk84.value = 0;
-        func_8002B93C(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
+        set_velocity_from_angle(MOVING_OBJECT(shot), (s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE);
         SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 8;
-        arg0->unk6++;
+        self->unk6++;
         SP_CUR_MAIN_OBJ->ext.main_48.unk82++;
     }
     misc = find_free_misc_obj();
     if (misc != NULL) {
         misc->active = 0x41;
         misc->id = 0x19;
-        misc->x_pos.val = arg0->x_pos.val;
-        misc->y_pos.val = arg0->y_pos.val;
+        misc->x_pos.val = self->x_pos.val;
+        misc->y_pos.val = self->y_pos.val;
         misc->unk2 = SP_CUR_MAIN_OBJ->ext.main_48.collision_result;
-        misc->ext.pointer.unk50 = arg0;
+        misc->ext.pointer.unk50 = self;
     }
 }
 
-void func_80068000(struct MainObj* arg0)
+void sentry_drone_spread_repeat(struct MainObj* self)
 {
     if (SP_CUR_MAIN_OBJ->ext.main_48.unk82 < 9) {
-        func_80068340(arg0);
-        arg0->unk6 -= 2;
+        func_80068340(self);
+        self->unk6 -= 2;
     } else {
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_80068060(struct MainObj* arg0)
+void sentry_drone_spread_pause(struct MainObj* self)
 {
-    arg0->unk6++;
+    self->unk6++;
 }
 
-void func_80068074(struct WeaponObj* arg0)
+void sentry_drone_spread_end(struct WeaponObj* self)
 {
-    arg0->unk67 = -1;
-    arg0->unk5 = 6;
-    arg0->unk6 = 0;
+    self->unk67 = -1;
+    self->unk5 = 6;
+    self->unk6 = 0;
 }
 
-void func_8006808C(struct MainObj* arg0)
+void sentry_drone_drop(struct MainObj* self)
 {
-    D_800FFB54[arg0->unk6](arg0);
+    sentry_drone_drop_funcs[self->unk6](self);
 }
 
-void func_800680C8(struct MainObj* arg0)
+void sentry_drone_drop_start(struct MainObj* self)
 {
-    arg0->unk20 = 0;
-    arg0->unk28 = 0;
-    arg0->unk24 = FIXED(2);
-    arg0->unk2C = 0;
-    arg0->unk6++;
-    func_80015D60(arg0, 1);
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = FIXED(2);
+    self->gravity = 0;
+    self->unk6++;
+    set_animation(self, 1);
 }
 
-void func_80068108(struct MainObj* arg0)
+void sentry_drone_drop_move(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
-void func_80068138(struct MainObj* arg0)
+void sentry_drone_check_player_near(struct MainObj* self)
 {
     s32 distance;
     s32 max_distance;
     s8 state;
 
-    if ((arg0->unk67 == 0) && ((state = arg0->unk5) != 4) && (state != 5)) {
-        max_distance = D_800FFAD8[(s8)SP_CUR_MAIN_OBJ->ext.main_0.index];
-        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if ((self->air_state == 0) && ((state = self->unk5) != 4) && (state != 5)) {
+        max_distance = sentry_drone_activation_distances[(s8)SP_CUR_MAIN_OBJ->ext.main_0.index];
+        distance = g_Player.x_pos.i.hi - self->x_pos.i.hi;
         if (distance >= 0) {
             if (max_distance >= distance) {
                 goto activate;
             }
             return;
         }
-        if (max_distance < (arg0->x_pos.i.hi - g_Player.x_pos.i.hi)) {
+        if (max_distance < (self->x_pos.i.hi - g_Player.x_pos.i.hi)) {
             return;
         }
     activate:
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
 }
 
+// sentry_drone_aim
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_800681C4);
 
+// sentry_drone_rotate_aim
 INCLUDE_ASM("main/nonmatchings/mains/main_48", func_80068340);
 
-void func_80068404(struct ObjectHeader* arg0)
+void sentry_drone_despawn(struct ObjectHeader* self)
 {
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0;
     SP_CUR_MAIN_OBJ->ext.main_48.unk81 = 0;
@@ -349,42 +354,42 @@ void func_80068404(struct ObjectHeader* arg0)
     SP_CUR_MAIN_OBJ->ext.main_48.unk87 = 0;
     SP_CUR_MAIN_OBJ->ext.main_48.unk88 = 0;
 
-    if (arg0->unk2 & 0x80) {
-        ZeroObjectState(arg0);
+    if (self->unk2 & 0x80) {
+        ZeroObjectState(self);
     } else {
-        func_8002B0C8(arg0);
+        despawn_object(self);
     }
 }
 
-void func_800684BC(struct MainObj* arg0)
+void sentry_drone_wait_for_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi >= 0xB0) {
-        arg0->unk15 = 0x40;
-        arg0->state = 1;
-        arg0->unk5 = 3;
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xB0) {
+        self->unk15 = 0x40;
+        self->state = 1;
+        self->unk5 = 3;
     }
 }
 
-union AnimationStep D_800FFA28[] = { { 0x00010001 }, { 0x01FF0001 } };
+union AnimationStep sentry_drone_anim_0[] = { { 0x00010001 }, { 0x01FF0001 } };
 
-union AnimationStep D_800FFA30[] = { { 0x02010001 }, { 0x03FF0101 } };
+union AnimationStep sentry_drone_anim_1[] = { { 0x02010001 }, { 0x03FF0101 } };
 
-union AnimationStep D_800FFA38[] = { { 0x0A010001 }, { 0x0BFF0101 } };
+union AnimationStep sentry_drone_anim_2[] = { { 0x0A010001 }, { 0x0BFF0101 } };
 
-union AnimationStep D_800FFA40[] = { { 0x0E010001 }, { 0x0FFF0101 } };
+union AnimationStep sentry_drone_anim_3[] = { { 0x0E010001 }, { 0x0FFF0101 } };
 
-union AnimationStep D_800FFA48[] = { { 0x04010001 }, { 0x05FF0101 } };
+union AnimationStep sentry_drone_anim_4[] = { { 0x04010001 }, { 0x05FF0101 } };
 
-union AnimationStep D_800FFA50[] = { { 0x0C010001 }, { 0x0DFF0101 } };
+union AnimationStep sentry_drone_anim_5[] = { { 0x0C010001 }, { 0x0DFF0101 } };
 
-union AnimationStep D_800FFA58[] = {
+union AnimationStep sentry_drone_anim_6[] = {
     { 0x10010002 },
     { 0x11010002 },
     { 0x12010002 },
     { 0x13FD0002 },
 };
 
-union AnimationStep D_800FFA68[] = {
+union AnimationStep sentry_drone_anim_7[] = {
     { 0x14010001 },
     { 0x15010001 },
     { 0x16010001 },
@@ -394,30 +399,30 @@ union AnimationStep D_800FFA68[] = {
     { 0x1A000005 },
 };
 
-union AnimationStep D_800FFA84[] = { { 0x1B000001 } };
+union AnimationStep sentry_drone_anim_8[] = { { 0x1B000001 } };
 
-union AnimationStep D_800FFA88[] = { { 0x1C000001 } };
+union AnimationStep sentry_drone_anim_9[] = { { 0x1C000001 } };
 
-union AnimationStep D_800FFA8C[] = { { 0x1D000001 } };
+union AnimationStep sentry_drone_anim_10[] = { { 0x1D000001 } };
 
-union AnimationStep D_800FFA90[] = { { 0x1E000001 } };
+union AnimationStep sentry_drone_anim_11[] = { { 0x1E000001 } };
 
-union AnimationStep D_800FFA94[] = { { 0x1F000001 } };
+union AnimationStep sentry_drone_anim_12[] = { { 0x1F000001 } };
 
-union AnimationStep* D_800FFA98[13] = {
-    D_800FFA28,
-    D_800FFA30,
-    D_800FFA38,
-    D_800FFA40,
-    D_800FFA48,
-    D_800FFA50,
-    D_800FFA58,
-    D_800FFA68,
-    D_800FFA84,
-    D_800FFA88,
-    D_800FFA8C,
-    D_800FFA90,
-    D_800FFA94,
+union AnimationStep* sentry_drone_animations[13] = {
+    sentry_drone_anim_0,
+    sentry_drone_anim_1,
+    sentry_drone_anim_2,
+    sentry_drone_anim_3,
+    sentry_drone_anim_4,
+    sentry_drone_anim_5,
+    sentry_drone_anim_6,
+    sentry_drone_anim_7,
+    sentry_drone_anim_8,
+    sentry_drone_anim_9,
+    sentry_drone_anim_10,
+    sentry_drone_anim_11,
+    sentry_drone_anim_12,
 };
 
 s8 D_800FFACC[4] = { -9, -9, 23, 18 };
@@ -426,49 +431,49 @@ u8 D_800FFAD0[4] = { 0, 7, 13, 24 };
 
 u8 D_800FFAD4[4] = { 0, 0, 11, 11 };
 
-s16 D_800FFAD8[4] = { 0x40, 0x50, 0x60, 0x70 };
+s16 sentry_drone_activation_distances[4] = { 0x40, 0x50, 0x60, 0x70 };
 
-u8 D_800FFAE0[8] = { 8, 9, 10, 11, 12 };
+u8 sentry_drone_debris[8] = { 8, 9, 10, 11, 12 };
 
-void (*D_800FFAE8[])(struct MainObj*) = {
+void (*sentry_drone_state_funcs[])(struct MainObj*) = {
     func_8006738C,
-    func_80067550,
-    func_80068404,
-    func_800684BC,
+    sentry_drone_main,
+    sentry_drone_despawn,
+    sentry_drone_wait_for_player,
 };
 
-void (*D_800FFAF8[7])() = {
-    func_8009216C,
-    func_80067628,
-    func_80067640,
-    func_80067740,
-    func_80067860,
-    func_80067CB0,
-    func_8006808C,
+void (*sentry_drone_step_funcs[7])() = {
+    enemy_hit_reaction,
+    sentry_drone_resume_step,
+    sentry_drone_drift,
+    sentry_drone_dash,
+    sentry_drone_burst,
+    sentry_drone_spread,
+    sentry_drone_drop,
 };
 
-void (*D_800FFB14[2])(struct MainObj*) = { func_8006767C, func_800676E0 };
+void (*sentry_drone_drift_funcs[2])(struct MainObj*) = { sentry_drone_drift_start, sentry_drone_drift_move };
 
-void (*D_800FFB1C[2])(struct MainObj*) = { func_8006777C, func_800677F8 };
+void (*sentry_drone_dash_funcs[2])(struct MainObj*) = { sentry_drone_dash_start, sentry_drone_dash_move };
 
-void (*D_800FFB24[6])(struct MainObj*) = {
-    func_800678B0,
+void (*sentry_drone_burst_funcs[6])(struct MainObj*) = {
+    sentry_drone_burst_start,
     func_800678F8,
-    func_80067A80,
-    func_80067AA8,
-    func_80067BB0,
-    func_80067C34,
+    sentry_drone_burst_wait,
+    sentry_drone_burst_fire,
+    sentry_drone_burst_repeat,
+    sentry_drone_burst_end,
 };
 
-void (*D_800FFB3C[6])(struct MainObj*) = {
-    func_80067D00,
+void (*sentry_drone_spread_funcs[6])(struct MainObj*) = {
+    sentry_drone_spread_start,
     func_80067DAC,
-    func_80067EE4,
-    func_80068000,
-    func_80068060,
-    func_80068074,
+    sentry_drone_spread_fire,
+    sentry_drone_spread_repeat,
+    sentry_drone_spread_pause,
+    sentry_drone_spread_end,
 };
 
-void (*D_800FFB54[2])() = { func_800680C8, func_80068108 };
+void (*sentry_drone_drop_funcs[2])() = { sentry_drone_drop_start, sentry_drone_drop_move };
 
 u8 D_800FFB5C[4] = { 0, 0, 13, 21 };

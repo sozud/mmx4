@@ -7,47 +7,49 @@ struct Item19SpawnPosition {
     u16 y;
 };
 
-struct Item19SpawnPosition D_8010D1D8[4] = {
+struct Item19SpawnPosition data_capsule_positions[4] = {
     { 0x07B0, 0x022C },
     { 0x07B0, 0x03A0 },
     { 0x07B0, 0x0458 },
     { 0x07B0, 0x05D8 },
 };
 
-u8 D_8010D1E8[4] = { 0, 0xFE, 0x29, 8 };
-u8 D_8010D1EC[4] = { 0, 4, 0x29, 0x0B };
-u8 D_8010D1F0[4] = { 0, 4, 0x29, 0x0B };
+u8 data_capsule_box_0[4] = { 0, 0xFE, 0x29, 8 };
+u8 data_capsule_box_1[4] = { 0, 4, 0x29, 0x0B };
+u8 data_capsule_box_2[4] = { 0, 4, 0x29, 0x0B };
 
-void (*D_8010D1F4[])(struct ItemObj*) = {
+void (*data_capsule_state_funcs[])(struct ItemObj*) = {
     func_800C4778,
     func_800C49BC,
-    func_800C4BE4,
+    data_capsule_idle,
 };
 
-void (*D_8010D200[])(struct ItemObj*) = {
-    func_800C4BEC,
-    func_800C4C64,
-    func_800C4BE4,
+void (*data_capsule_attached_funcs[])(struct ItemObj*) = {
+    data_capsule_attached_init,
+    data_capsule_attached_follow,
+    data_capsule_idle,
 };
 
-void func_800C470C(struct ItemObj* arg0)
+void data_capsule_update(struct ItemObj* arg0)
 {
     if (arg0->unk2 >= 0) {
-        D_8010D1F4[arg0->state](arg0);
+        data_capsule_state_funcs[arg0->state](arg0);
     } else {
-        D_8010D200[arg0->state](arg0);
+        data_capsule_attached_funcs[arg0->state](arg0);
     }
 }
 
+// data_capsule_init
 INCLUDE_ASM("main/nonmatchings/items/item_19", func_800C4778);
 
+// data_capsule_main
 INCLUDE_ASM("main/nonmatchings/items/item_19", func_800C49BC);
 
-void func_800C4BE4(struct ItemObj* arg0)
+void data_capsule_idle(struct ItemObj* arg0)
 {
 }
 
-void func_800C4BEC(struct ItemObj* arg0)
+void data_capsule_attached_init(struct ItemObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
@@ -67,10 +69,10 @@ void func_800C4BEC(struct ItemObj* arg0)
     arg0->unk16 = 4;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    func_80015D60(arg0, 1);
+    set_animation(arg0, 1);
 }
 
-void func_800C4C64(struct ItemObj* arg0)
+void data_capsule_attached_follow(struct ItemObj* arg0)
 {
     struct MainObj* owner;
 
@@ -80,7 +82,7 @@ void func_800C4C64(struct ItemObj* arg0)
     arg0->x_pos.val = owner->x_pos.val;
     arg0->y_pos.val = owner->y_pos.val;
     if (owner->unk5 == 5) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
         is_on_screen(BASE_OBJECT(arg0));
         return;
     }

@@ -3,223 +3,227 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80054FE8(struct MainObj* arg0)
+void bee_hive_update(struct MainObj* self)
 {
-    D_800FCAEC[arg0->state](arg0);
+    bee_hive_state_funcs[self->state](self);
 }
 
+// bee_hive_init
 INCLUDE_ASM("main/nonmatchings/mains/main_22", func_80055024);
 
+// bee_hive_main
 INCLUDE_ASM("main/nonmatchings/mains/main_22", func_80055164);
 
-void func_8005529C(struct MainObj* arg0)
+void bee_hive_despawn(struct MainObj* self)
 {
-    arg0->ext.main_22.saved_unk5 = 0;
-    arg0->ext.main_22.unk84 = 0;
-    arg0->ext.main_22.parts_mask = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->ext.main_22.saved_unk5 = 0;
+    self->ext.main_22.unk84 = 0;
+    self->ext.main_22.parts_mask = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800552C4(struct MainObj* arg0)
+void bee_hive_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_22.saved_unk5;
+    self->unk5 = self->ext.main_22.saved_unk5;
 }
 
-void func_800552D0(struct MainObj* arg0)
+void bee_hive_open(struct MainObj* self)
 {
-    D_800FCB14[arg0->unk6](arg0);
+    bee_hive_open_funcs[self->unk6](self);
 }
 
-void func_8005530C(struct MainObj* arg0)
+void bee_hive_open_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 1);
-    arg0->ext.main_22.unk84 = 8;
-    arg0->ext.main_22.unk90 = 0;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
+    self->ext.main_22.unk84 = 8;
+    self->ext.main_22.unk90 = 0;
+    self->unk6++;
 }
 
+// bee_hive_open_move
 INCLUDE_ASM("main/nonmatchings/mains/main_22", func_80055358);
 
-void func_800555B0(struct MainObj* arg0)
+void bee_hive_open_end(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_22.unk84 == 0) {
-        func_80015D60(arg0, 0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_22.unk84 == 0) {
+        set_animation(self, 0);
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_80055604(struct MainObj* arg0)
+void bee_hive_wait(struct MainObj* self)
 {
-    D_800FCB20[arg0->unk6](arg0);
+    bee_hive_wait_funcs[self->unk6](self);
 }
 
-void func_80055640(struct MainObj* arg0)
+void bee_hive_wait_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->ext.main_22.unk84 = 0x28;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    self->ext.main_22.unk84 = 0x28;
+    self->unk6++;
 }
 
-void func_8005567C(struct MainObj* arg0)
+void bee_hive_wait_watch(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_22.unk84 != 0) {
-        arg0->ext.main_22.unk84 = 0x28;
-        if (arg0->ext.main_22.unk8C != 0) {
-            arg0->unk5 = 4;
-            arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_22.unk84 != 0) {
+        self->ext.main_22.unk84 = 0x28;
+        if (self->ext.main_22.unk8C != 0) {
+            self->unk5 = 4;
+            self->unk6 = 0;
         }
     }
 }
 
-void func_800556D4(struct MainObj* arg0)
+void bee_hive_release(struct MainObj* self)
 {
-    D_800FCB28[arg0->unk6](arg0);
+    bee_hive_release_funcs[self->unk6](self);
 }
 
-void func_80055710(struct MainObj* arg0)
+void bee_hive_release_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 1);
-    arg0->ext.main_22.unk84 = 0x31;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
+    self->ext.main_22.unk84 = 0x31;
+    self->unk6++;
 }
 
 void func_800559BC(struct MainObj*);
 
-void func_80055758(struct MainObj* arg0)
+void bee_hive_release_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_22.unk84 == 0) {
-        func_800559BC(arg0);
-        arg0->ext.main_22.unk84 = 0x1E;
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_22.unk84 == 0) {
+        func_800559BC(self);
+        self->ext.main_22.unk84 = 0x1E;
+        self->unk6++;
     }
 }
 
-void func_800557B0(struct MainObj* arg0)
+void bee_hive_release_pause(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_22.unk84 == 0) {
-        arg0->unk6 = 0;
-        arg0->unk5++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_22.unk84 == 0) {
+        self->unk6 = 0;
+        self->unk5++;
     }
 }
 
-void func_800557FC(struct MainObj* arg0)
+void bee_hive_shake(struct MainObj* self)
 {
-    D_800FCB34[arg0->unk6](arg0);
+    bee_hive_shake_funcs[self->unk6](self);
 }
 
-void func_80055838(struct MainObj* arg0)
+void bee_hive_shake_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 2);
-    arg0->ext.main_22.unk84 = 0x12;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 2);
+    self->ext.main_22.unk84 = 0x12;
+    self->unk6++;
 }
 
-void func_80055880(struct MainObj* arg0)
+void bee_hive_shake_end(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_22.unk84 == 0) {
-        func_80015D60(arg0, 0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_22.unk84 == 0) {
+        set_animation(self, 0);
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_800558D4(struct MainObj* arg0)
+void bee_hive_explode(struct MainObj* self)
 {
-    D_800FCB3C[arg0->unk6](arg0);
+    bee_hive_explode_funcs[self->unk6](self);
 }
 
-void func_80055910(struct MainObj* arg0)
+void bee_hive_explode_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->ext.main_22.unk84 = 0x28;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    self->ext.main_22.unk84 = 0x28;
+    self->unk6++;
 }
 
-void func_8005594C(struct MainObj* arg0)
+void bee_hive_explode_smoke(struct MainObj* self)
 {
-    if (--arg0->ext.main_22.unk84 != 0) {
+    if (--self->ext.main_22.unk84 != 0) {
         if ((D_80141BD8.unk0 & 3) == 0) {
-            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x30);
+            func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x30);
         }
     } else {
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_800559B4(void)
+void bee_hive_explode_done(void)
 {
 }
 
+// bee_hive_spawn_bees
 INCLUDE_ASM("main/nonmatchings/mains/main_22", func_800559BC);
 
-void func_80055C54(struct MainObj* arg0)
+void slope_skier_read_slope(struct MainObj* self)
 {
     struct Unk_unk68* collision;
     s16 x_pos;
     s32 y_pos;
     u8 result;
 
-    arg0->ext.main_23.unk81 = arg0->ext.main_23.unk80;
-    x_pos = arg0->x_pos.i.hi;
-    collision = arg0->unk68;
+    self->ext.main_23.unk81 = self->ext.main_23.unk80;
+    x_pos = self->x_pos.i.hi;
+    collision = self->terrain_box;
     y_pos = (s16)(collision->unk3
-        + ((u16)arg0->y_pos.i.hi + (s8)(u8)collision->unk1) + 1);
+        + ((u16)self->y_pos.i.hi + (s8)(u8)collision->unk1) + 1);
 
-    result = func_8002D724(PLAYER_OBJECT(arg0), x_pos, y_pos);
+    result = func_8002D724(PLAYER_OBJECT(self), x_pos, y_pos);
     if (result == 0) {
         result = ((s32(*)(struct PlayerObj*, s16, s32))func_8002D724)(
-            PLAYER_OBJECT(arg0), x_pos, y_pos + 0x10);
+            PLAYER_OBJECT(self), x_pos, y_pos + 0x10);
         if (result == 0) {
-            arg0->ext.main_23.unk80 = 3;
+            self->ext.main_23.unk80 = 3;
             return;
         }
     }
 
     if (result >= 0x11 && result <= 0x1E) {
         if (result >= 0x19) {
-            arg0->ext.main_23.unk80 = 2;
+            self->ext.main_23.unk80 = 2;
             if (result >= 0x1B) {
-                if (arg0->unk15 == 0)
-                    arg0->ext.main_23.unk80 = 0x82;
-            } else if (arg0->unk15 != 0) {
-                arg0->ext.main_23.unk80 = 0x82;
+                if (self->unk15 == 0)
+                    self->ext.main_23.unk80 = 0x82;
+            } else if (self->unk15 != 0) {
+                self->ext.main_23.unk80 = 0x82;
             }
         } else {
-            arg0->ext.main_23.unk80 = 1;
+            self->ext.main_23.unk80 = 1;
             if (result >= 0x15) {
-                if (arg0->unk15 == 0)
-                    arg0->ext.main_23.unk80 = 0x81;
-            } else if (arg0->unk15 != 0) {
-                arg0->ext.main_23.unk80 = 0x81;
+                if (self->unk15 == 0)
+                    self->ext.main_23.unk80 = 0x81;
+            } else if (self->unk15 != 0) {
+                self->ext.main_23.unk80 = 0x81;
             }
         }
     } else if (result == 0x3E) {
-        if (arg0->on_screen != 0) {
-            func_800AF808(BASE_OBJECT(arg0));
-            func_800C813C(7, D_800FCE80, arg0);
-            arg0->state = (u8)arg0->state + 1;
+        if (self->on_screen != 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            spawn_debris(7, slope_skier_debris, self);
+            self->state = (u8)self->state + 1;
         }
     } else if (result != 0x10) {
-        arg0->ext.main_23.unk80 = 0;
+        self->ext.main_23.unk80 = 0;
     }
 }
 
-struct Unk_unk68 D_800FCA20 = { -19, -48, 37, 92 };
+struct Unk_unk68 bee_hive_hurt_box = { -19, -48, 37, 92 };
 
-union AnimationStep D_800FCA24[] = {
+union AnimationStep bee_hive_anim_0[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_800FCA28[] = {
+union AnimationStep bee_hive_anim_1[] = {
     { 0x01010003 },
     { 0x02010004 },
     { 0x03010005 },
@@ -235,7 +239,7 @@ union AnimationStep D_800FCA28[] = {
     { 0x0A000001 },
 };
 
-union AnimationStep D_800FCA5C[] = {
+union AnimationStep bee_hive_anim_2[] = {
     { 0x09010003 },
     { 0x08010003 },
     { 0x07010003 },
@@ -244,38 +248,38 @@ union AnimationStep D_800FCA5C[] = {
     { 0x04000003 },
 };
 
-union AnimationStep D_800FCA74[] = {
+union AnimationStep bee_hive_anim_3[] = {
     { 0x0B000003 },
 };
 
-union AnimationStep D_800FCA78[] = {
+union AnimationStep bee_hive_anim_4[] = {
     { 0x0C000003 },
 };
 
-union AnimationStep D_800FCA7C[] = {
+union AnimationStep bee_hive_anim_5[] = {
     { 0x0D000003 },
 };
 
-union AnimationStep D_800FCA80[] = {
+union AnimationStep bee_hive_anim_6[] = {
     { 0x0E000003 },
 };
 
-union AnimationStep D_800FCA84[] = {
+union AnimationStep bee_hive_anim_7[] = {
     { 0x0F000003 },
 };
 
-union AnimationStep* D_800FCA88[8] = {
-    D_800FCA24,
-    D_800FCA28,
-    D_800FCA5C,
-    D_800FCA74,
-    D_800FCA78,
-    D_800FCA7C,
-    D_800FCA80,
-    D_800FCA84,
+union AnimationStep* bee_hive_animations[8] = {
+    bee_hive_anim_0,
+    bee_hive_anim_1,
+    bee_hive_anim_2,
+    bee_hive_anim_3,
+    bee_hive_anim_4,
+    bee_hive_anim_5,
+    bee_hive_anim_6,
+    bee_hive_anim_7,
 };
 
-u8 D_800FCAA8[8] = { 4, 5, 6, 7, 4, 5, 6, 7 };
+u8 bee_hive_debris[8] = { 4, 5, 6, 7, 4, 5, 6, 7 };
 
 s16 D_800FCAB0 = (s16)0xFFD0;
 
@@ -283,46 +287,46 @@ s16 D_800FCAB2 = (s16)0x000A;
 
 u8 D_800FCAB4[56] = { 0x03, 0x00, 0x30, 0x00, 0x0A, 0x00, 0x03, 0x00, 0xEA, 0xFF, 0x45, 0x00, 0x04, 0x00, 0x16, 0x00, 0x45, 0x00, 0x04, 0x00, 0xD8, 0xFF, 0xF0, 0xFF, 0x03, 0x00, 0x28, 0x00, 0xF0, 0xFF, 0x03, 0x00, 0xD8, 0xFF, 0x24, 0x00, 0x04, 0x00, 0x28, 0x00, 0x24, 0x00, 0x04, 0x00, 0xE6, 0xFF, 0xE4, 0xFF, 0x03, 0x00, 0x1A, 0x00, 0xE4, 0xFF, 0x03, 0x00 };
 
-void (*D_800FCAEC[])(struct MainObj*) = {
+void (*bee_hive_state_funcs[])(struct MainObj*) = {
     func_80055024,
     func_80055164,
-    func_8005529C,
+    bee_hive_despawn,
 };
 
-void (*D_800FCAF8[])() = {
-    func_8009216C,
-    func_800552C4,
-    func_800552D0,
-    func_80055604,
-    func_800556D4,
-    func_800557FC,
-    func_800558D4,
+void (*bee_hive_step_funcs[])() = {
+    enemy_hit_reaction,
+    bee_hive_resume_step,
+    bee_hive_open,
+    bee_hive_wait,
+    bee_hive_release,
+    bee_hive_shake,
+    bee_hive_explode,
 };
 
-void (*D_800FCB14[])() = {
-    func_8005530C,
+void (*bee_hive_open_funcs[])() = {
+    bee_hive_open_start,
     func_80055358,
-    func_800555B0,
+    bee_hive_open_end,
 };
 
-void (*D_800FCB20[])() = {
-    func_80055640,
-    func_8005567C,
+void (*bee_hive_wait_funcs[])() = {
+    bee_hive_wait_start,
+    bee_hive_wait_watch,
 };
 
-void (*D_800FCB28[])() = {
-    func_80055710,
-    func_80055758,
-    func_800557B0,
+void (*bee_hive_release_funcs[])() = {
+    bee_hive_release_start,
+    bee_hive_release_wait,
+    bee_hive_release_pause,
 };
 
-void (*D_800FCB34[])() = {
-    func_80055838,
-    func_80055880,
+void (*bee_hive_shake_funcs[])() = {
+    bee_hive_shake_start,
+    bee_hive_shake_end,
 };
 
-void (*D_800FCB3C[])() = {
-    func_80055910,
-    func_8005594C,
-    func_800559B4,
+void (*bee_hive_explode_funcs[])() = {
+    bee_hive_explode_start,
+    bee_hive_explode_smoke,
+    bee_hive_explode_done,
 };

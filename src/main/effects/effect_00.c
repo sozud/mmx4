@@ -7,27 +7,28 @@ struct Effect00BackgroundUpdate {
     u16 value;
 };
 
-void func_800B56F4(struct EffectObj* arg0)
+void camera_trigger_update(struct EffectObj* self)
 {
-    D_8010A798[arg0->state](arg0);
+    camera_trigger_state_funcs[self->state](self);
 }
 
-void func_800B5730(struct EffectObj* arg0)
+void camera_trigger_init(struct EffectObj* self)
 {
-    arg0->ext.unk_effect.unk14 = 0;
-    arg0->state++;
-    arg0->ext.unk_effect.unk18 = *(D_8010AE0C[((engine_obj.stage * 2) + engine_obj.substage)] + arg0->unk2);
-    func_800B5798(arg0);
+    self->ext.unk_effect.unk14 = 0;
+    self->state++;
+    self->ext.unk_effect.unk18 = *(camera_trigger_stage_scripts[((engine_obj.stage * 2) + engine_obj.substage)] + self->unk2);
+    func_800B5798(self);
 }
 
+// camera_trigger_main
 INCLUDE_ASM("main/nonmatchings/effects/effect_00", func_800B5798);
 
-void (*D_8010A798[])(struct EffectObj*) = {
-    func_800B5730,
+void (*camera_trigger_state_funcs[])(struct EffectObj*) = {
+    camera_trigger_init,
     func_800B5798,
 };
 
-u16 D_8010A7A0[8] = {
+u16 camera_trigger_script_s00_0_0[8] = {
     0x0EFF,
     0x0EF0,
     0x01C0,
@@ -38,7 +39,7 @@ u16 D_8010A7A0[8] = {
     0x0000,
 };
 
-u16 D_8010A7B0[8] = {
+u16 camera_trigger_script_s00_0_1[8] = {
     0x0F10,
     0x0F00,
     0x01C0,
@@ -49,7 +50,7 @@ u16 D_8010A7B0[8] = {
     0x0000,
 };
 
-u16 D_8010A7C0[8] = {
+u16 camera_trigger_script_s00_0_2[8] = {
     0x10FF,
     0x10F0,
     0x0260,
@@ -60,7 +61,7 @@ u16 D_8010A7C0[8] = {
     0x0000,
 };
 
-u16 D_8010A7D0[6] = {
+u16 camera_trigger_script_s00_0_3[6] = {
     0x1110,
     0x1100,
     0x0260,
@@ -69,7 +70,7 @@ u16 D_8010A7D0[6] = {
     0x0000,
 };
 
-u16 D_8010A7DC[6] = {
+u16 camera_trigger_script_s00_0_4[6] = {
     0x0BD0,
     0x0BC0,
     0x01B0,
@@ -78,7 +79,7 @@ u16 D_8010A7DC[6] = {
     0x0000,
 };
 
-u16 D_8010A7E8[6] = {
+u16 camera_trigger_script_s00_0_5[6] = {
     0x11C0,
     0x11B0,
     0x0260,
@@ -87,16 +88,16 @@ u16 D_8010A7E8[6] = {
     0x0000,
 };
 
-u16* D_8010A7F4[6] = {
-    D_8010A7A0,
-    D_8010A7B0,
-    D_8010A7C0,
-    D_8010A7D0,
-    D_8010A7DC,
-    D_8010A7E8,
+u16* camera_trigger_scripts_s00_0[6] = {
+    camera_trigger_script_s00_0_0,
+    camera_trigger_script_s00_0_1,
+    camera_trigger_script_s00_0_2,
+    camera_trigger_script_s00_0_3,
+    camera_trigger_script_s00_0_4,
+    camera_trigger_script_s00_0_5,
 };
 
-u16 D_8010A80C[6] = {
+u16 camera_trigger_script_s00_1_0[6] = {
     0x0EA0,
     0x0E20,
     0x01E0,
@@ -105,7 +106,7 @@ u16 D_8010A80C[6] = {
     0x0000,
 };
 
-u16 D_8010A818[6] = {
+u16 camera_trigger_script_s00_1_1[6] = {
     0x0EA0,
     0x0E20,
     0x01CF,
@@ -114,7 +115,7 @@ u16 D_8010A818[6] = {
     0x0000,
 };
 
-u16 D_8010A824[6] = {
+u16 camera_trigger_script_s00_1_2[6] = {
     0x114C,
     0x113C,
     0x01F0,
@@ -123,7 +124,7 @@ u16 D_8010A824[6] = {
     0x0000,
 };
 
-u16 D_8010A830[6] = {
+u16 camera_trigger_script_s00_1_3[6] = {
     0x0F10,
     0x0EA0,
     0x01E0,
@@ -132,7 +133,7 @@ u16 D_8010A830[6] = {
     0x0000,
 };
 
-u16 D_8010A83C[6] = {
+u16 camera_trigger_script_s00_1_4[6] = {
     0x0F10,
     0x0EA0,
     0x01CF,
@@ -141,15 +142,15 @@ u16 D_8010A83C[6] = {
     0x0000,
 };
 
-u16* D_8010A848[5] = {
-    D_8010A80C,
-    D_8010A818,
-    D_8010A824,
-    D_8010A830,
-    D_8010A83C,
+u16* camera_trigger_scripts_s00_1[5] = {
+    camera_trigger_script_s00_1_0,
+    camera_trigger_script_s00_1_1,
+    camera_trigger_script_s00_1_2,
+    camera_trigger_script_s00_1_3,
+    camera_trigger_script_s00_1_4,
 };
 
-u16 D_8010A85C[6] = {
+u16 camera_trigger_script_s01_0_0[6] = {
     0x01C0,
     0x01A0,
     0x0190,
@@ -158,7 +159,7 @@ u16 D_8010A85C[6] = {
     0x0000,
 };
 
-u16 D_8010A868[6] = {
+u16 camera_trigger_script_s01_0_1[6] = {
     0x01D0,
     0x01C0,
     0x01B0,
@@ -167,7 +168,7 @@ u16 D_8010A868[6] = {
     0x0000,
 };
 
-u16 D_8010A874[6] = {
+u16 camera_trigger_script_s01_0_2[6] = {
     0x0850,
     0x0770,
     0x0220,
@@ -176,7 +177,7 @@ u16 D_8010A874[6] = {
     0x0000,
 };
 
-u16 D_8010A880[8] = {
+u16 camera_trigger_script_s01_0_3[8] = {
     0x0850,
     0x0710,
     0x0580,
@@ -187,7 +188,7 @@ u16 D_8010A880[8] = {
     0x0000,
 };
 
-u16 D_8010A890[8] = {
+u16 camera_trigger_script_s01_0_4[8] = {
     0x15C0,
     0x15B0,
     0x0580,
@@ -198,7 +199,7 @@ u16 D_8010A890[8] = {
     0x0000,
 };
 
-u16 D_8010A8A0[8] = {
+u16 camera_trigger_script_s01_0_5[8] = {
     0x1680,
     0x1650,
     0x01B0,
@@ -209,7 +210,7 @@ u16 D_8010A8A0[8] = {
     0x0000,
 };
 
-u16 D_8010A8B0[6] = {
+u16 camera_trigger_script_s01_0_6[6] = {
     0x17A0,
     0x1790,
     0x01B0,
@@ -218,7 +219,7 @@ u16 D_8010A8B0[6] = {
     0x0000,
 };
 
-u16 D_8010A8BC[8] = {
+u16 camera_trigger_script_s01_0_7[8] = {
     0x15B0,
     0x15A0,
     0x0580,
@@ -229,7 +230,7 @@ u16 D_8010A8BC[8] = {
     0x0000,
 };
 
-u16 D_8010A8CC[8] = {
+u16 camera_trigger_script_s01_0_8[8] = {
     0x1670,
     0x1660,
     0x01C0,
@@ -240,7 +241,7 @@ u16 D_8010A8CC[8] = {
     0x0000,
 };
 
-u16 D_8010A8DC[8] = {
+u16 camera_trigger_script_s01_0_9[8] = {
     0x0850,
     0x0840,
     0x04B0,
@@ -251,7 +252,7 @@ u16 D_8010A8DC[8] = {
     0x0000,
 };
 
-u16 D_8010A8EC[8] = {
+u16 camera_trigger_script_s01_0_10[8] = {
     0x0840,
     0x0830,
     0x04B0,
@@ -262,21 +263,21 @@ u16 D_8010A8EC[8] = {
     0x0000,
 };
 
-u16* D_8010A8FC[11] = {
-    D_8010A85C,
-    D_8010A868,
-    D_8010A874,
-    D_8010A880,
-    D_8010A890,
-    D_8010A8A0,
-    D_8010A8B0,
-    D_8010A8BC,
-    D_8010A8CC,
-    D_8010A8DC,
-    D_8010A8EC,
+u16* camera_trigger_scripts_s01_0[11] = {
+    camera_trigger_script_s01_0_0,
+    camera_trigger_script_s01_0_1,
+    camera_trigger_script_s01_0_2,
+    camera_trigger_script_s01_0_3,
+    camera_trigger_script_s01_0_4,
+    camera_trigger_script_s01_0_5,
+    camera_trigger_script_s01_0_6,
+    camera_trigger_script_s01_0_7,
+    camera_trigger_script_s01_0_8,
+    camera_trigger_script_s01_0_9,
+    camera_trigger_script_s01_0_10,
 };
 
-u16 D_8010A928[8] = {
+u16 camera_trigger_script_s01_1_0[8] = {
     0x05E0,
     0x0560,
     0x01E0,
@@ -287,7 +288,7 @@ u16 D_8010A928[8] = {
     0x0000,
 };
 
-u16 D_8010A938[8] = {
+u16 camera_trigger_script_s01_1_1[8] = {
     0x05E0,
     0x0560,
     0x01F0,
@@ -298,7 +299,7 @@ u16 D_8010A938[8] = {
     0x0000,
 };
 
-u16 D_8010A948[8] = {
+u16 camera_trigger_script_s01_1_2[8] = {
     0x02E0,
     0x0200,
     0x02F0,
@@ -309,7 +310,7 @@ u16 D_8010A948[8] = {
     0x0000,
 };
 
-u16 D_8010A958[8] = {
+u16 camera_trigger_script_s01_1_3[8] = {
     0x02E0,
     0x0200,
     0x0300,
@@ -320,7 +321,7 @@ u16 D_8010A958[8] = {
     0x0000,
 };
 
-u16 D_8010A968[6] = {
+u16 camera_trigger_script_s01_1_4[6] = {
     0x0720,
     0x0710,
     0x0370,
@@ -329,7 +330,7 @@ u16 D_8010A968[6] = {
     0x0000,
 };
 
-u16 D_8010A974[6] = {
+u16 camera_trigger_script_s01_1_5[6] = {
     0x0730,
     0x0720,
     0x0370,
@@ -338,7 +339,7 @@ u16 D_8010A974[6] = {
     0x0000,
 };
 
-u16 D_8010A980[8] = {
+u16 camera_trigger_script_s01_1_6[8] = {
     0x07A0,
     0x0770,
     0x0500,
@@ -349,7 +350,7 @@ u16 D_8010A980[8] = {
     0x0000,
 };
 
-u16 D_8010A990[8] = {
+u16 camera_trigger_script_s01_1_7[8] = {
     0x0D90,
     0x0D80,
     0x05D0,
@@ -360,7 +361,7 @@ u16 D_8010A990[8] = {
     0x0000,
 };
 
-u16 D_8010A9A0[8] = {
+u16 camera_trigger_script_s01_1_8[8] = {
     0x07A0,
     0x0770,
     0x04F0,
@@ -371,7 +372,7 @@ u16 D_8010A9A0[8] = {
     0x0000,
 };
 
-u16 D_8010A9B0[8] = {
+u16 camera_trigger_script_s01_1_9[8] = {
     0x1190,
     0x1180,
     0x05C0,
@@ -382,20 +383,20 @@ u16 D_8010A9B0[8] = {
     0x0000,
 };
 
-u16* D_8010A9C0[10] = {
-    D_8010A928,
-    D_8010A938,
-    D_8010A948,
-    D_8010A958,
-    D_8010A968,
-    D_8010A974,
-    D_8010A980,
-    D_8010A990,
-    D_8010A9A0,
-    D_8010A9B0,
+u16* camera_trigger_scripts_s01_1[10] = {
+    camera_trigger_script_s01_1_0,
+    camera_trigger_script_s01_1_1,
+    camera_trigger_script_s01_1_2,
+    camera_trigger_script_s01_1_3,
+    camera_trigger_script_s01_1_4,
+    camera_trigger_script_s01_1_5,
+    camera_trigger_script_s01_1_6,
+    camera_trigger_script_s01_1_7,
+    camera_trigger_script_s01_1_8,
+    camera_trigger_script_s01_1_9,
 };
 
-u16 D_8010A9E8[8] = {
+u16 camera_trigger_script_s02_0_0[8] = {
     0x1798,
     0x1790,
     0x08C0,
@@ -406,7 +407,7 @@ u16 D_8010A9E8[8] = {
     0x0000,
 };
 
-u16 D_8010A9F8[6] = {
+u16 camera_trigger_script_s02_0_1[6] = {
     0x1570,
     0x1568,
     0x0550,
@@ -415,7 +416,7 @@ u16 D_8010A9F8[6] = {
     0x0000,
 };
 
-u16 D_8010AA04[6] = {
+u16 camera_trigger_script_s02_0_2[6] = {
     0x1568,
     0x1560,
     0x0550,
@@ -424,13 +425,13 @@ u16 D_8010AA04[6] = {
     0x0000,
 };
 
-u16* D_8010AA10[3] = {
-    D_8010A9E8,
-    D_8010A9F8,
-    D_8010AA04,
+u16* camera_trigger_scripts_s02_0[3] = {
+    camera_trigger_script_s02_0_0,
+    camera_trigger_script_s02_0_1,
+    camera_trigger_script_s02_0_2,
 };
 
-u16 D_8010AA1C[6] = {
+u16 camera_trigger_script_s02_1_0[6] = {
     0x04C0,
     0x0460,
     0x0120,
@@ -439,7 +440,7 @@ u16 D_8010AA1C[6] = {
     0x0000,
 };
 
-u16 D_8010AA28[6] = {
+u16 camera_trigger_script_s02_1_1[6] = {
     0x04C0,
     0x0460,
     0x0130,
@@ -448,7 +449,7 @@ u16 D_8010AA28[6] = {
     0x0000,
 };
 
-u16 D_8010AA34[8] = {
+u16 camera_trigger_script_s02_1_2[8] = {
     0x0A50,
     0x0A40,
     0x0160,
@@ -459,7 +460,7 @@ u16 D_8010AA34[8] = {
     0x0000,
 };
 
-u16 D_8010AA44[8] = {
+u16 camera_trigger_script_s02_1_3[8] = {
     0x0A60,
     0x0A50,
     0x0160,
@@ -470,7 +471,7 @@ u16 D_8010AA44[8] = {
     0x0000,
 };
 
-u16 D_8010AA54[6] = {
+u16 camera_trigger_script_s02_1_4[6] = {
     0x0BD0,
     0x0BC0,
     0x01C0,
@@ -479,7 +480,7 @@ u16 D_8010AA54[6] = {
     0x0000,
 };
 
-u16 D_8010AA60[6] = {
+u16 camera_trigger_script_s02_1_5[6] = {
     0x0390,
     0x0380,
     0x0080,
@@ -488,7 +489,7 @@ u16 D_8010AA60[6] = {
     0x0000,
 };
 
-u16 D_8010AA6C[6] = {
+u16 camera_trigger_script_s02_1_6[6] = {
     0x03A0,
     0x0390,
     0x0080,
@@ -497,17 +498,17 @@ u16 D_8010AA6C[6] = {
     0x0000,
 };
 
-u16* D_8010AA78[7] = {
-    D_8010AA1C,
-    D_8010AA28,
-    D_8010AA34,
-    D_8010AA44,
-    D_8010AA54,
-    D_8010AA60,
-    D_8010AA6C,
+u16* camera_trigger_scripts_s02_1[7] = {
+    camera_trigger_script_s02_1_0,
+    camera_trigger_script_s02_1_1,
+    camera_trigger_script_s02_1_2,
+    camera_trigger_script_s02_1_3,
+    camera_trigger_script_s02_1_4,
+    camera_trigger_script_s02_1_5,
+    camera_trigger_script_s02_1_6,
 };
 
-u16 D_8010AA94[6] = {
+u16 camera_trigger_script_s03_0_0[6] = {
     0x0780,
     0x0770,
     0x0100,
@@ -516,7 +517,7 @@ u16 D_8010AA94[6] = {
     0x0000,
 };
 
-u16 D_8010AAA0[6] = {
+u16 camera_trigger_script_s03_0_1[6] = {
     0x0770,
     0x0760,
     0x0100,
@@ -525,7 +526,7 @@ u16 D_8010AAA0[6] = {
     0x0000,
 };
 
-u16 D_8010AAAC[8] = {
+u16 camera_trigger_script_s03_0_2[8] = {
     0x1320,
     0x1310,
     0x0300,
@@ -536,13 +537,13 @@ u16 D_8010AAAC[8] = {
     0x0000,
 };
 
-u16* D_8010AABC[3] = {
-    D_8010AA94,
-    D_8010AAA0,
-    D_8010AAAC,
+u16* camera_trigger_scripts_s03_0[3] = {
+    camera_trigger_script_s03_0_0,
+    camera_trigger_script_s03_0_1,
+    camera_trigger_script_s03_0_2,
 };
 
-u16 D_8010AAC8[6] = {
+u16 camera_trigger_script_s03_1_0[6] = {
     0x1820,
     0x17E0,
     0x01CA,
@@ -551,11 +552,11 @@ u16 D_8010AAC8[6] = {
     0x0000,
 };
 
-u16* D_8010AAD4[1] = {
-    D_8010AAC8,
+u16* camera_trigger_scripts_s03_1[1] = {
+    camera_trigger_script_s03_1_0,
 };
 
-u16 D_8010AAD8[6] = {
+u16 camera_trigger_script_s04_0_0[6] = {
     0x0450,
     0x0440,
     0x03C0,
@@ -564,7 +565,7 @@ u16 D_8010AAD8[6] = {
     0x0000,
 };
 
-u16 D_8010AAE4[6] = {
+u16 camera_trigger_script_s04_0_1[6] = {
     0x0440,
     0x0430,
     0x03C0,
@@ -573,7 +574,7 @@ u16 D_8010AAE4[6] = {
     0x0000,
 };
 
-u16 D_8010AAF0[6] = {
+u16 camera_trigger_script_s04_0_2[6] = {
     0x1540,
     0x1530,
     0x03C0,
@@ -582,7 +583,7 @@ u16 D_8010AAF0[6] = {
     0x0000,
 };
 
-u16 D_8010AAFC[6] = {
+u16 camera_trigger_script_s04_0_3[6] = {
     0x1530,
     0x1520,
     0x03C0,
@@ -591,7 +592,7 @@ u16 D_8010AAFC[6] = {
     0x0000,
 };
 
-u16 D_8010AB08[6] = {
+u16 camera_trigger_script_s04_0_4[6] = {
     0x1778,
     0x1770,
     0x02B0,
@@ -600,7 +601,7 @@ u16 D_8010AB08[6] = {
     0x0000,
 };
 
-u16 D_8010AB14[6] = {
+u16 camera_trigger_script_s04_0_5[6] = {
     0x1770,
     0x1768,
     0x02B0,
@@ -609,16 +610,16 @@ u16 D_8010AB14[6] = {
     0x0000,
 };
 
-u16* D_8010AB20[6] = {
-    D_8010AAD8,
-    D_8010AAE4,
-    D_8010AAF0,
-    D_8010AAFC,
-    D_8010AB08,
-    D_8010AB14,
+u16* camera_trigger_scripts_s04_0[6] = {
+    camera_trigger_script_s04_0_0,
+    camera_trigger_script_s04_0_1,
+    camera_trigger_script_s04_0_2,
+    camera_trigger_script_s04_0_3,
+    camera_trigger_script_s04_0_4,
+    camera_trigger_script_s04_0_5,
 };
 
-u16 D_8010AB38[6] = {
+u16 camera_trigger_script_s04_1_0[6] = {
     0x05B0,
     0x05A0,
     0x02C0,
@@ -627,7 +628,7 @@ u16 D_8010AB38[6] = {
     0x0000,
 };
 
-u16 D_8010AB44[6] = {
+u16 camera_trigger_script_s04_1_1[6] = {
     0x05C0,
     0x05B0,
     0x02C0,
@@ -636,7 +637,7 @@ u16 D_8010AB44[6] = {
     0x0000,
 };
 
-u16 D_8010AB50[8] = {
+u16 camera_trigger_script_s04_1_2[8] = {
     0x0BB0,
     0x0BA0,
     0x02C0,
@@ -647,7 +648,7 @@ u16 D_8010AB50[8] = {
     0x0000,
 };
 
-u16 D_8010AB60[6] = {
+u16 camera_trigger_script_s04_1_3[6] = {
     0x0BA0,
     0x0B90,
     0x02C0,
@@ -656,7 +657,7 @@ u16 D_8010AB60[6] = {
     0x0000,
 };
 
-u16 D_8010AB6C[8] = {
+u16 camera_trigger_script_s04_1_4[8] = {
     0x14C0,
     0x1470,
     0x0208,
@@ -667,7 +668,7 @@ u16 D_8010AB6C[8] = {
     0x0000,
 };
 
-u16 D_8010AB7C[8] = {
+u16 camera_trigger_script_s04_1_5[8] = {
     0x11C0,
     0x11B0,
     0x02C0,
@@ -678,7 +679,7 @@ u16 D_8010AB7C[8] = {
     0x0000,
 };
 
-u16 D_8010AB8C[8] = {
+u16 camera_trigger_script_s04_1_6[8] = {
     0x11B0,
     0x11A0,
     0x02C0,
@@ -689,7 +690,7 @@ u16 D_8010AB8C[8] = {
     0x0000,
 };
 
-u16 D_8010AB9C[6] = {
+u16 camera_trigger_script_s04_1_7[6] = {
     0x0600,
     0x05F0,
     0x02C0,
@@ -698,18 +699,18 @@ u16 D_8010AB9C[6] = {
     0x0000,
 };
 
-u16* D_8010ABA8[8] = {
-    D_8010AB38,
-    D_8010AB44,
-    D_8010AB50,
-    D_8010AB60,
-    D_8010AB6C,
-    D_8010AB7C,
-    D_8010AB8C,
-    D_8010AB9C,
+u16* camera_trigger_scripts_s04_1[8] = {
+    camera_trigger_script_s04_1_0,
+    camera_trigger_script_s04_1_1,
+    camera_trigger_script_s04_1_2,
+    camera_trigger_script_s04_1_3,
+    camera_trigger_script_s04_1_4,
+    camera_trigger_script_s04_1_5,
+    camera_trigger_script_s04_1_6,
+    camera_trigger_script_s04_1_7,
 };
 
-u16 D_8010ABC8[6] = {
+u16 camera_trigger_script_s05_1_0[6] = {
     0x4280,
     0x4270,
     0x00B0,
@@ -718,11 +719,11 @@ u16 D_8010ABC8[6] = {
     0x0000,
 };
 
-u16* D_8010ABD4[1] = {
-    D_8010ABC8,
+u16* camera_trigger_scripts_s05_1[1] = {
+    camera_trigger_script_s05_1_0,
 };
 
-u16 D_8010ABD8[6] = {
+u16 camera_trigger_script_s06_1_0[6] = {
     0x0780,
     0x0770,
     0x0380,
@@ -731,7 +732,7 @@ u16 D_8010ABD8[6] = {
     0x0000,
 };
 
-u16 D_8010ABE4[6] = {
+u16 camera_trigger_script_s06_1_1[6] = {
     0x0770,
     0x0760,
     0x0380,
@@ -740,7 +741,7 @@ u16 D_8010ABE4[6] = {
     0x0000,
 };
 
-u16 D_8010ABF0[6] = {
+u16 camera_trigger_script_s06_1_2[6] = {
     0x0780,
     0x0770,
     0x04C0,
@@ -749,7 +750,7 @@ u16 D_8010ABF0[6] = {
     0x0000,
 };
 
-u16 D_8010ABFC[6] = {
+u16 camera_trigger_script_s06_1_3[6] = {
     0x0770,
     0x0760,
     0x04C0,
@@ -758,14 +759,14 @@ u16 D_8010ABFC[6] = {
     0x0000,
 };
 
-u16* D_8010AC08[4] = {
-    D_8010ABD8,
-    D_8010ABE4,
-    D_8010ABF0,
-    D_8010ABFC,
+u16* camera_trigger_scripts_s06_1[4] = {
+    camera_trigger_script_s06_1_0,
+    camera_trigger_script_s06_1_1,
+    camera_trigger_script_s06_1_2,
+    camera_trigger_script_s06_1_3,
 };
 
-u16 D_8010AC18[6] = {
+u16 camera_trigger_script_s07_0_0[6] = {
     0x0757,
     0x0500,
     0x0102,
@@ -774,7 +775,7 @@ u16 D_8010AC18[6] = {
     0x0000,
 };
 
-u16 D_8010AC24[6] = {
+u16 camera_trigger_script_s07_0_1[6] = {
     0x0757,
     0x0500,
     0x0110,
@@ -783,7 +784,7 @@ u16 D_8010AC24[6] = {
     0x0000,
 };
 
-u16 D_8010AC30[6] = {
+u16 camera_trigger_script_s07_0_2[6] = {
     0x07E0,
     0x07D0,
     0x0150,
@@ -792,13 +793,13 @@ u16 D_8010AC30[6] = {
     0x0000,
 };
 
-u16* D_8010AC3C[3] = {
-    D_8010AC18,
-    D_8010AC24,
-    D_8010AC30,
+u16* camera_trigger_scripts_s07_0[3] = {
+    camera_trigger_script_s07_0_0,
+    camera_trigger_script_s07_0_1,
+    camera_trigger_script_s07_0_2,
 };
 
-u16 D_8010AC48[8] = {
+u16 camera_trigger_script_s07_1_0[8] = {
     0x0B60,
     0x0AC0,
     0x02B8,
@@ -809,7 +810,7 @@ u16 D_8010AC48[8] = {
     0x0000,
 };
 
-u16 D_8010AC58[6] = {
+u16 camera_trigger_script_s07_1_1[6] = {
     0x0B60,
     0x0AC0,
     0x02D0,
@@ -818,7 +819,7 @@ u16 D_8010AC58[6] = {
     0x0000,
 };
 
-u16 D_8010AC64[6] = {
+u16 camera_trigger_script_s07_1_2[6] = {
     0x09E0,
     0x09D0,
     0x02D0,
@@ -827,7 +828,7 @@ u16 D_8010AC64[6] = {
     0x0000,
 };
 
-u16 D_8010AC70[6] = {
+u16 camera_trigger_script_s07_1_3[6] = {
     0x0A60,
     0x0A50,
     0x02D0,
@@ -836,7 +837,7 @@ u16 D_8010AC70[6] = {
     0x0000,
 };
 
-u16 D_8010AC7C[6] = {
+u16 camera_trigger_script_s07_1_4[6] = {
     0x0A80,
     0x0A70,
     0x02D0,
@@ -845,7 +846,7 @@ u16 D_8010AC7C[6] = {
     0x0000,
 };
 
-u16 D_8010AC88[6] = {
+u16 camera_trigger_script_s07_1_5[6] = {
     0x0800,
     0x07A0,
     0x0320,
@@ -854,7 +855,7 @@ u16 D_8010AC88[6] = {
     0x0000,
 };
 
-u16 D_8010AC94[6] = {
+u16 camera_trigger_script_s07_1_6[6] = {
     0x0800,
     0x07A0,
     0x0330,
@@ -863,7 +864,7 @@ u16 D_8010AC94[6] = {
     0x0000,
 };
 
-u16 D_8010ACA0[8] = {
+u16 camera_trigger_script_s07_1_7[8] = {
     0x0AB0,
     0x0AA0,
     0x03D0,
@@ -874,18 +875,18 @@ u16 D_8010ACA0[8] = {
     0x0000,
 };
 
-u16* D_8010ACB0[8] = {
-    D_8010AC48,
-    D_8010AC58,
-    D_8010AC64,
-    D_8010AC70,
-    D_8010AC7C,
-    D_8010AC88,
-    D_8010AC94,
-    D_8010ACA0,
+u16* camera_trigger_scripts_s07_1[8] = {
+    camera_trigger_script_s07_1_0,
+    camera_trigger_script_s07_1_1,
+    camera_trigger_script_s07_1_2,
+    camera_trigger_script_s07_1_3,
+    camera_trigger_script_s07_1_4,
+    camera_trigger_script_s07_1_5,
+    camera_trigger_script_s07_1_6,
+    camera_trigger_script_s07_1_7,
 };
 
-u16 D_8010ACD0[6] = {
+u16 camera_trigger_script_s10_0_0[6] = {
     0x0F70,
     0x0F60,
     0x08C0,
@@ -894,7 +895,7 @@ u16 D_8010ACD0[6] = {
     0x0000,
 };
 
-u16 D_8010ACDC[6] = {
+u16 camera_trigger_script_s10_0_1[6] = {
     0x0F60,
     0x0F50,
     0x08C0,
@@ -903,7 +904,7 @@ u16 D_8010ACDC[6] = {
     0x0000,
 };
 
-u16 D_8010ACE8[6] = {
+u16 camera_trigger_script_s10_0_2[6] = {
     0x0FF0,
     0x0ED0,
     0x0850,
@@ -912,7 +913,7 @@ u16 D_8010ACE8[6] = {
     0x0000,
 };
 
-u16 D_8010ACF4[6] = {
+u16 camera_trigger_script_s10_0_3[6] = {
     0x0FF0,
     0x0ED0,
     0x0860,
@@ -921,7 +922,7 @@ u16 D_8010ACF4[6] = {
     0x0000,
 };
 
-u16 D_8010AD00[8] = {
+u16 camera_trigger_script_s10_0_4[8] = {
     0x0F70,
     0x0F40,
     0x03A0,
@@ -932,7 +933,7 @@ u16 D_8010AD00[8] = {
     0x0000,
 };
 
-u16 D_8010AD10[8] = {
+u16 camera_trigger_script_s10_0_5[8] = {
     0x0F70,
     0x0F40,
     0x03B0,
@@ -943,16 +944,16 @@ u16 D_8010AD10[8] = {
     0x0000,
 };
 
-u16* D_8010AD20[6] = {
-    D_8010ACD0,
-    D_8010ACDC,
-    D_8010ACE8,
-    D_8010ACF4,
-    D_8010AD00,
-    D_8010AD10,
+u16* camera_trigger_scripts_s10_0[6] = {
+    camera_trigger_script_s10_0_0,
+    camera_trigger_script_s10_0_1,
+    camera_trigger_script_s10_0_2,
+    camera_trigger_script_s10_0_3,
+    camera_trigger_script_s10_0_4,
+    camera_trigger_script_s10_0_5,
 };
 
-u16 D_8010AD38[6] = {
+u16 camera_trigger_script_s11_1_0[6] = {
     0x0280,
     0x0270,
     0x0150,
@@ -961,7 +962,7 @@ u16 D_8010AD38[6] = {
     0x0000,
 };
 
-u16 D_8010AD44[6] = {
+u16 camera_trigger_script_s11_1_1[6] = {
     0x0270,
     0x0260,
     0x0150,
@@ -970,7 +971,7 @@ u16 D_8010AD44[6] = {
     0x0000,
 };
 
-u16 D_8010AD50[6] = {
+u16 camera_trigger_script_s11_1_2[6] = {
     0x02B0,
     0x02A0,
     0x02D0,
@@ -979,7 +980,7 @@ u16 D_8010AD50[6] = {
     0x0000,
 };
 
-u16 D_8010AD5C[6] = {
+u16 camera_trigger_script_s11_1_3[6] = {
     0x02A0,
     0x0290,
     0x02D0,
@@ -988,7 +989,7 @@ u16 D_8010AD5C[6] = {
     0x0000,
 };
 
-u16 D_8010AD68[6] = {
+u16 camera_trigger_script_s11_1_4[6] = {
     0x03A0,
     0x0370,
     0x01D0,
@@ -997,7 +998,7 @@ u16 D_8010AD68[6] = {
     0x0000,
 };
 
-u16 D_8010AD74[6] = {
+u16 camera_trigger_script_s11_1_5[6] = {
     0x03A0,
     0x0370,
     0x01E0,
@@ -1006,7 +1007,7 @@ u16 D_8010AD74[6] = {
     0x0000,
 };
 
-u16 D_8010AD80[8] = {
+u16 camera_trigger_script_s11_1_6[8] = {
     0x03F0,
     0x03E0,
     0x01D0,
@@ -1017,7 +1018,7 @@ u16 D_8010AD80[8] = {
     0x0000,
 };
 
-u16 D_8010AD90[8] = {
+u16 camera_trigger_script_s11_1_7[8] = {
     0x03E0,
     0x03D0,
     0x01D0,
@@ -1028,7 +1029,7 @@ u16 D_8010AD90[8] = {
     0x0000,
 };
 
-u16 D_8010ADA0[8] = {
+u16 camera_trigger_script_s11_1_8[8] = {
     0x0480,
     0x0440,
     0x01DB,
@@ -1039,7 +1040,7 @@ u16 D_8010ADA0[8] = {
     0x0000,
 };
 
-u16 D_8010ADB0[8] = {
+u16 camera_trigger_script_s11_1_9[8] = {
     0x0480,
     0x0440,
     0x01EB,
@@ -1050,7 +1051,7 @@ u16 D_8010ADB0[8] = {
     0x0000,
 };
 
-u16 D_8010ADC0[6] = {
+u16 camera_trigger_script_s11_1_10[6] = {
     0x0C10,
     0x0C00,
     0x01D0,
@@ -1059,21 +1060,21 @@ u16 D_8010ADC0[6] = {
     0x0000,
 };
 
-u16* D_8010ADCC[11] = {
-    D_8010AD38,
-    D_8010AD44,
-    D_8010AD50,
-    D_8010AD5C,
-    D_8010AD68,
-    D_8010AD74,
-    D_8010AD80,
-    D_8010AD90,
-    D_8010ADA0,
-    D_8010ADB0,
-    D_8010ADC0,
+u16* camera_trigger_scripts_s11_1[11] = {
+    camera_trigger_script_s11_1_0,
+    camera_trigger_script_s11_1_1,
+    camera_trigger_script_s11_1_2,
+    camera_trigger_script_s11_1_3,
+    camera_trigger_script_s11_1_4,
+    camera_trigger_script_s11_1_5,
+    camera_trigger_script_s11_1_6,
+    camera_trigger_script_s11_1_7,
+    camera_trigger_script_s11_1_8,
+    camera_trigger_script_s11_1_9,
+    camera_trigger_script_s11_1_10,
 };
 
-u16 D_8010ADF8[8] = {
+u16 camera_trigger_script_s12_0_0[8] = {
     0x0770,
     0x0720,
     0x00D0,
@@ -1084,40 +1085,40 @@ u16 D_8010ADF8[8] = {
     0x0000,
 };
 
-u16* D_8010AE08[1] = {
-    D_8010ADF8,
+u16* camera_trigger_scripts_s12_0[1] = {
+    camera_trigger_script_s12_0_0,
 };
 
-u16** D_8010AE0C[26] = {
-    D_8010A7F4,
-    D_8010A848,
-    D_8010A8FC,
-    D_8010A9C0,
-    D_8010AA10,
-    D_8010AA78,
-    D_8010AABC,
-    D_8010AAD4,
-    D_8010AB20,
-    D_8010ABA8,
+u16** camera_trigger_stage_scripts[26] = {
+    camera_trigger_scripts_s00_0,
+    camera_trigger_scripts_s00_1,
+    camera_trigger_scripts_s01_0,
+    camera_trigger_scripts_s01_1,
+    camera_trigger_scripts_s02_0,
+    camera_trigger_scripts_s02_1,
+    camera_trigger_scripts_s03_0,
+    camera_trigger_scripts_s03_1,
+    camera_trigger_scripts_s04_0,
+    camera_trigger_scripts_s04_1,
     NULL,
-    D_8010ABD4,
+    camera_trigger_scripts_s05_1,
     NULL,
-    D_8010AC08,
-    D_8010AC3C,
-    D_8010ACB0,
-    NULL,
-    NULL,
+    camera_trigger_scripts_s06_1,
+    camera_trigger_scripts_s07_0,
+    camera_trigger_scripts_s07_1,
     NULL,
     NULL,
-    D_8010AD20,
     NULL,
     NULL,
-    D_8010ADCC,
-    D_8010AE08,
+    camera_trigger_scripts_s10_0,
+    NULL,
+    NULL,
+    camera_trigger_scripts_s11_1,
+    camera_trigger_scripts_s12_0,
     NULL,
 };
 
-struct Effect00BackgroundUpdate D_8010AE74[74] = {
+struct Effect00BackgroundUpdate camera_trigger_bound_values[74] = {
     { 2, 0x100 },
     { 3, 0x100 },
     { 3, 0x168 },
@@ -1194,7 +1195,7 @@ struct Effect00BackgroundUpdate D_8010AE74[74] = {
     { 3, 0 },
 };
 
-u16* D_8010AF9C[4] = {
+u16* camera_trigger_bound_fields[4] = {
     &background_objects[0].unk26,
     &background_objects[0].unk24,
     &background_objects[0].unk2A,

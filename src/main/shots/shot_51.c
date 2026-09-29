@@ -2,67 +2,69 @@
 // 800AA5E0..800AAAD4
 #include "common.h"
 
-void (*D_80109C04[])(struct ShotObj*) = {
-    func_800AA20C,
+void (*double_mine_step_funcs[])(struct ShotObj*) = {
+    double_toss_land,
     func_800AA5E0,
     func_800AA68C,
-    func_800AA730,
-    func_800AA7B4,
-    func_800AA85C,
-    func_800AA954,
+    double_mine_dash_start,
+    double_mine_dash,
+    double_mine_fire,
+    double_mine_cooldown,
 };
 
+// double_mine_wait
 INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA5E0);
 
+// double_mine_arm
 INCLUDE_ASM("main/nonmatchings/shots/shot_51", func_800AA68C);
 
-void func_800AA730(struct ShotObj* arg0)
+void double_mine_dash_start(struct ShotObj* self)
 {
     s32 angle;
     u16 player_x;
 
-    arg0->timer = 0x3C;
-    arg0->unk5++;
+    self->timer = 0x3C;
+    self->unk5++;
     player_x = g_Player.x_pos.u.hi;
-    arg0->unk8C.half = player_x;
-    angle = func_8002B810(arg0->x_pos.val - (player_x << 16), 0);
-    arg0->unk84.value = angle;
+    self->unk8C.half = player_x;
+    angle = angle_from_delta(self->x_pos.val - (player_x << 16), 0);
+    self->unk84.value = angle;
     if (angle & 0x10) {
-        arg0->x_vel.val = FIXED(-8);
+        self->x_vel.val = FIXED(-8);
     } else {
-        arg0->x_vel.val = FIXED(8);
+        self->x_vel.val = FIXED(8);
     }
-    arg0->y_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    func_80015DC8(arg0);
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    animate_object(self);
 }
 
-void func_800AA7B4(struct ShotObj* arg0)
+void double_mine_dash(struct ShotObj* self)
 {
     s32 angle;
 
-    angle = func_8002B810(arg0->x_pos.val - (arg0->unk8C.halves[0] << 16), 0);
-    if ((angle ^ arg0->unk84.value) & 0x10) {
-        arg0->unk5++;
-        arg0->x_pos.val = arg0->unk8C.halves[0] << 16;
-        arg0->y_pos.val = arg0->unk8C.halves[1] << 16;
-        func_80015D60(arg0, 0x16);
+    angle = angle_from_delta(self->x_pos.val - (self->unk8C.halves[0] << 16), 0);
+    if ((angle ^ self->unk84.value) & 0x10) {
+        self->unk5++;
+        self->x_pos.val = self->unk8C.halves[0] << 16;
+        self->y_pos.val = self->unk8C.halves[1] << 16;
+        set_animation(self, 0x16);
     } else {
-        func_8002B694(ANIMATED_OBJECT(arg0));
+        move_with_gravity(ANIMATED_OBJECT(self));
     }
-    arg0->unk84.value = angle & 0xFF;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    self->unk84.value = angle & 0xFF;
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_800AA85C(struct ShotObj* self)
+void double_mine_fire(struct ShotObj* self)
 {
     struct ShotObj* shot;
 
     if (self->animation_step.fields.relative_step == 0) {
         self->timer = 0x3C;
         self->unk5++;
-        func_80015D90(ANIMATED_OBJECT(self), 0x15, 7);
+        set_animation_frame(ANIMATED_OBJECT(self), 0x15, 7);
         return;
     }
 
@@ -85,57 +87,57 @@ void func_800AA85C(struct ShotObj* self)
         }
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_800AA954(struct ShotObj* arg0)
+void double_mine_cooldown(struct ShotObj* self)
 {
-    arg0->timer--;
-    if (arg0->timer == 0) {
-        arg0->unk5 = 3;
+    self->timer--;
+    if (self->timer == 0) {
+        self->unk5 = 3;
     }
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
-void func_800AA994(struct ShotObj* arg0)
+void double_mine_main(struct ShotObj* self)
 {
-    extern u8 D_80109BB4[];
+    extern u8 double_ball_debris_1[];
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109C04[arg0->unk5](arg0);
-    if (arg0->unk7C->state == 2) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(4, D_80109BB4, arg0);
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    double_mine_step_funcs[self->unk5](self);
+    if (self->unk7C->state == 2) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, double_ball_debris_1, self);
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(4, D_80109BB4, arg0);
-        arg0->state = 2;
-        arg0->on_screen = 0;
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, double_ball_debris_1, self);
+        self->state = 2;
+        self->on_screen = 0;
         return;
     }
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
         return;
     }
-    arg0->state = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->on_screen = 0;
+    self->state = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->on_screen = 0;
 }
 
-void func_800AAA98(struct ShotObj* arg0)
+void double_mine_update(struct ShotObj* self)
 {
-    D_80109C20[arg0->state](arg0);
+    double_mine_state_funcs[self->state](self);
 }
 
-void (*D_80109C20[])(struct ShotObj*) = {
-    func_800AA148,
-    func_800AA994,
+void (*double_mine_state_funcs[])(struct ShotObj*) = {
+    double_toss_init,
+    double_mine_main,
     double_ball_despawn,
 };

@@ -23,7 +23,7 @@ struct Item05StageConfig {
     u16 y;
 };
 
-struct Item05AnimationStep D_8010C928[11] = {
+struct Item05AnimationStep moving_lift_anim_0[11] = {
     { 3, 0, 1, 0 },
     { 3, 0, 1, 1 },
     { 3, 0, 1, 2 },
@@ -37,7 +37,7 @@ struct Item05AnimationStep D_8010C928[11] = {
     { 3, 0, 0xF6, 10 },
 };
 
-struct Item05AnimationStep D_8010C954[8] = {
+struct Item05AnimationStep moving_lift_anim_1[8] = {
     { 3, 0, 1, 11 },
     { 3, 0, 1, 12 },
     { 3, 0, 1, 13 },
@@ -48,7 +48,7 @@ struct Item05AnimationStep D_8010C954[8] = {
     { 3, 0, 0xF9, 18 },
 };
 
-struct Item05AnimationStep D_8010C974[8] = {
+struct Item05AnimationStep moving_lift_anim_2[8] = {
     { 4, 0, 1, 19 },
     { 4, 0, 1, 20 },
     { 4, 0, 1, 21 },
@@ -59,7 +59,7 @@ struct Item05AnimationStep D_8010C974[8] = {
     { 4, 0, 0xF9, 20 },
 };
 
-struct Item05AnimationStep D_8010C994[8] = {
+struct Item05AnimationStep moving_lift_anim_3[8] = {
     { 3, 0, 1, 24 },
     { 3, 0, 1, 25 },
     { 3, 0, 1, 26 },
@@ -70,14 +70,14 @@ struct Item05AnimationStep D_8010C994[8] = {
     { 3, 0, 0xF9, 31 },
 };
 
-struct Item05AnimationStep* D_8010C9B4[4] = {
-    D_8010C928,
-    D_8010C954,
-    D_8010C974,
-    D_8010C994,
+struct Item05AnimationStep* moving_lift_animations[4] = {
+    moving_lift_anim_0,
+    moving_lift_anim_1,
+    moving_lift_anim_2,
+    moving_lift_anim_3,
 };
 
-struct Item05MotionConfig D_8010C9C4[9] = {
+struct Item05MotionConfig moving_lift_motion[9] = {
     { 0, -0x10000, 0x100, 0 },
     { 0, -0x10000, 0x100, 0 },
     { 0, -0x10000, 0x100, 0 },
@@ -89,7 +89,7 @@ struct Item05MotionConfig D_8010C9C4[9] = {
     { 1, -0x10000, 0x100, 0 },
 };
 
-struct Item05StageConfig D_8010CA30[9] = {
+struct Item05StageConfig moving_lift_placements[9] = {
     { 0x0541, 0, 0x10A0, 0x04E0 },
     { 0x0541, 1, 0x1110, 0x04C0 },
     { 0x0541, 2, 0x1178, 0x04A0 },
@@ -101,7 +101,7 @@ struct Item05StageConfig D_8010CA30[9] = {
     { 0x0541, 8, 0x1478, 0x0350 },
 };
 
-u8 D_8010CA78[9][4] = {
+u8 moving_lift_boxes[9][4] = {
     { 0, 4, 0x20, 0x0A },
     { 0, 4, 0x20, 0x0A },
     { 0, 4, 0x20, 0x0A },
@@ -113,23 +113,25 @@ u8 D_8010CA78[9][4] = {
     { 0, 0, 0x10, 0x20 },
 };
 
-void func_800C0E74(struct ItemObj* arg0)
+void moving_lift_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010CA9C[arg0->state](arg0);
+    moving_lift_state_funcs[arg0->state](arg0);
 }
 
+// moving_lift_init
 INCLUDE_ASM("main/nonmatchings/items/item_05", func_800C0EBC);
 
+// moving_lift_move
 INCLUDE_ASM("main/nonmatchings/items/item_05", func_800C1050);
 
-void func_800C1224(struct ItemObj* arg0)
+void moving_lift_despawn(struct ItemObj* arg0)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(arg0));
 }
 
-void func_800C1244(struct ItemObj* arg0)
+void moving_lift_spawn_effect(struct ItemObj* arg0)
 {
     struct VisualObj* visualObj;
 
@@ -138,7 +140,7 @@ void func_800C1244(struct ItemObj* arg0)
         visualObj->active = 0x41;
         visualObj->unk50 = PLAYER_OBJECT(arg0);
         visualObj->id = 0xE;
-        if (((u8*)D_8010C9C4)[arg0->unk2 * sizeof(struct Item05MotionConfig)] == 0) {
+        if (((u8*)moving_lift_motion)[arg0->unk2 * sizeof(struct Item05MotionConfig)] == 0) {
             visualObj->unk2 = 1;
         } else {
             visualObj->unk2 = 3;
@@ -157,7 +159,7 @@ void func_800C1244(struct ItemObj* arg0)
     }
 }
 
-void func_800C1318(void)
+void moving_lift_spawn_all(void)
 {
     s8 index;
     struct ItemObj* item;
@@ -178,8 +180,8 @@ void func_800C1318(void)
     } while ((u8)index < 9U);
 }
 
-void (*D_8010CA9C[])(struct ItemObj*) = {
+void (*moving_lift_state_funcs[])(struct ItemObj*) = {
     func_800C0EBC,
     func_800C1050,
-    func_800C1224,
+    moving_lift_despawn,
 };

@@ -2,11 +2,11 @@
 // 800BC4D8..800BC518
 #include "common.h"
 
-void func_800BC4D8(struct EffectObj* arg0)
+void floor_trap_update(struct EffectObj* self)
 {
-    if (arg0->state == 0) {
-        func_800BC370(arg0);
+    if (self->state == 0) {
+        floor_trap_wait(self);
     } else {
-        func_800BC3E8(arg0);
+        floor_trap_explode(self);
     }
 }

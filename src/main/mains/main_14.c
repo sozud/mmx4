@@ -3,188 +3,188 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8004CF24(struct MainObj* arg0)
+void ice_bird_update(struct MainObj* self)
 {
-    D_800FB9FC[arg0->state](arg0);
+    ice_bird_state_funcs[self->state](self);
 }
 
-void func_8004CF60(struct MainObj* arg0)
+void ice_bird_init(struct MainObj* self)
 {
     u8 bg_offset;
     s32 x_pos;
     s32 y_pos;
 
-    arg0->active = 0x41;
-    arg0->unk5C = 0xE;
-    arg0->unk60 = 3;
-    arg0->unk61 = 0;
+    self->active = 0x41;
+    self->hp = 0xE;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
 
     bg_offset = g_Player.bg_offset;
-    x_pos = arg0->x_pos.val;
-    y_pos = arg0->y_pos.val;
+    x_pos = self->x_pos.val;
+    y_pos = self->y_pos.val;
 
-    arg0->collision_data = D_80106974;
-    arg0->animation_table = (const u8* const*)D_800FB9AC;
-    arg0->unk16 = 5;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk67 = 0;
-    arg0->unk68 = 0;
-    arg0->unk54 = &D_800FB88C;
-    arg0->unk50 = &D_800FB88C;
-    arg0->bg_offset = bg_offset;
-    arg0->unk18.val = x_pos;
-    arg0->unk1C.val = y_pos;
-    func_8004D6CC(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 0);
-    arg0->ext.main_14.unk80 = 0;
-    arg0->ext.main_14.unk84 = 0;
-    arg0->ext.main_14.visual_variant = 0;
-    arg0->ext.main_14.unk8C = 0;
-    arg0->ext.main_14.saved_unk5 = 0;
-    arg0->ext.main_14.unk94 = 0;
-    arg0->unk5 = 2;
-    arg0->unk6 = 0;
-    arg0->state++;
+    self->collision_data = D_80106974;
+    self->animation_table = (const u8* const*)ice_bird_animations;
+    self->unk16 = 5;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->terrain_box = 0;
+    self->hurt_box = &ice_bird_body_box;
+    self->attack_box = &ice_bird_body_box;
+    self->bg_offset = bg_offset;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
+    ice_bird_face_player(ANIMATED_OBJECT(self));
+    set_animation(self, 0);
+    self->ext.main_14.unk80 = 0;
+    self->ext.main_14.unk84 = 0;
+    self->ext.main_14.visual_variant = 0;
+    self->ext.main_14.unk8C = 0;
+    self->ext.main_14.saved_unk5 = 0;
+    self->ext.main_14.unk94 = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
+    self->state++;
 }
 
-void func_8004D044(struct MainObj* arg0)
+void ice_bird_main(struct MainObj* self)
 {
     s32 collision;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_800FBA08[arg0->unk5](arg0);
-    func_8004D6FC(arg0);
-    func_8002D9BC(arg0);
-    collision = func_8002DD04(arg0);
-    if (arg0->unk5 != 0) {
-        arg0->ext.main_14.saved_unk5 = arg0->unk5;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    ice_bird_step_funcs[self->unk5](self);
+    func_8004D6FC(self);
+    func_8002D9BC(self);
+    collision = func_8002DD04(self);
+    if (self->unk5 != 0) {
+        self->ext.main_14.saved_unk5 = self->unk5;
     }
     if (collision < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(6, D_800FB9F4, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 8);
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(6, ice_bird_debris, self);
+        drop_item(BASE_OBJECT(self), 8);
     } else {
-        if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
-            func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
             return;
         }
-        if (arg0->x_pos.val > g_Player.x_pos.val && arg0->ext.main_14.unk8C == 0) {
-            arg0->ext.main_14.unk94 = 1;
+        if (self->x_pos.val > g_Player.x_pos.val && self->ext.main_14.unk8C == 0) {
+            self->ext.main_14.unk94 = 1;
         }
     }
-    arg0->state = 2;
+    self->state = 2;
 }
 
-void func_8004D160(struct MainObj* arg0)
+void ice_bird_despawn(struct MainObj* self)
 {
-    arg0->ext.main_14.unk80 = 0;
-    arg0->ext.main_14.unk84 = 0;
+    self->ext.main_14.unk80 = 0;
+    self->ext.main_14.unk84 = 0;
     engine_obj.character_state.bytes[0] = 0;
-    func_80015930(2, 0x40);
-    if (arg0->ext.main_14.unk94 != 0) {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+    stop_sound(2, 0x40);
+    if (self->ext.main_14.unk94 != 0) {
+        despawn_object(OBJECT_HEADER(self));
         return;
     }
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8004D1C8(struct MainObj* arg0)
+void ice_bird_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_14.saved_unk5;
+    self->unk5 = self->ext.main_14.saved_unk5;
 }
 
-void func_8004D1D4(struct MainObj* arg0)
+void ice_bird_fly_in(struct MainObj* self)
 {
-    D_800FBA20[arg0->unk6](arg0);
+    ice_bird_fly_in_funcs[self->unk6](self);
 }
 
-void func_8004D210(struct MainObj* arg0)
+void ice_bird_fly_in_start(struct MainObj* self)
 {
     s32* velocity;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8004D784(arg0, 3);
-    func_8001540C(2, 0x40, arg0);
+    animate_object(ANIMATED_OBJECT(self));
+    ice_bird_spawn_charge_ring(self, 3);
+    func_8001540C(2, 0x40, self);
 
-    velocity = D_800FB89C;
-    arg0->ext.main_14.unk80 = 0x20;
-    arg0->ext.main_14.unk84 = 1;
-    if (arg0->unk15 & 0x40) {
+    velocity = ice_bird_fly_speeds;
+    self->ext.main_14.unk80 = 0x20;
+    self->ext.main_14.unk84 = 1;
+    if (self->unk15 & 0x40) {
         velocity++;
     }
-    arg0->unk20 = *velocity;
-    arg0->unk6++;
+    self->x_speed = *velocity;
+    self->unk6++;
 }
 
-void func_8004D290(struct MainObj* arg0)
+void ice_bird_fly_in_move(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    if (--arg0->ext.main_14.unk80 == 0) {
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (--self->ext.main_14.unk80 == 0) {
+        self->unk5 = 3;
+        self->unk6 = 0;
     }
 }
 
-void func_8004D2E0(struct MainObj* arg0)
+void ice_bird_charge(struct MainObj* self)
 {
-    D_800FBA28[arg0->unk6](arg0);
+    ice_bird_charge_funcs[self->unk6](self);
 }
 
-void func_8004D31C(struct MainObj* arg0)
+void ice_bird_charge_start(struct MainObj* self)
 {
-    func_80015D60(arg0, 1);
-    arg0->ext.main_14.unk80 = 0x2E;
-    arg0->unk20 = 0;
-    arg0->unk54 = (const u8*)D_800FB890;
-    arg0->unk50 = (const u8*)D_800FB890;
-    arg0->unk6++;
+    set_animation(self, 1);
+    self->ext.main_14.unk80 = 0x2E;
+    self->x_speed = 0;
+    self->hurt_box = (const u8*)ice_bird_charge_box;
+    self->attack_box = (const u8*)ice_bird_charge_box;
+    self->unk6++;
 }
 
-void func_8004D370(struct MainObj* arg0)
+void ice_bird_charge_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_14.unk80 == 0) {
-        func_80015D60(arg0, 2);
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_14.unk80 == 0) {
+        set_animation(self, 2);
+        self->unk6++;
     }
 }
 
-void func_8004D3C8(struct MainObj* arg0)
+void ice_bird_charge_ring(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.main_14.visual_variant == 7) {
-        arg0->unk5 = 4;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->ext.main_14.visual_variant == 7) {
+        self->unk5 = 4;
+        self->unk6 = 0;
     }
 }
 
-void func_8004D408(struct MainObj* arg0)
+void ice_bird_blast(struct MainObj* self)
 {
-    D_800FBA34[arg0->unk6](arg0);
+    ice_bird_blast_funcs[self->unk6](self);
 }
 
-void func_8004D444(struct MainObj* arg0)
+void ice_bird_blast_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->ext.main_14.unk80 = 0xC;
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    self->ext.main_14.unk80 = 0xC;
+    self->unk6++;
 }
 
-void func_8004D480(struct MainObj* arg0)
+void ice_bird_blast_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (--arg0->ext.main_14.unk80 == 0) {
-        arg0->ext.main_14.visual_variant = 0xFF;
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->ext.main_14.unk80 == 0) {
+        self->ext.main_14.visual_variant = 0xFF;
+        self->unk6++;
     }
 }
 
-void func_8004D4D0(struct MainObj* arg0)
+void ice_bird_blast_release(struct MainObj* self)
 {
     struct EffectObj* effect;
 
@@ -192,78 +192,79 @@ void func_8004D4D0(struct MainObj* arg0)
     if (effect != 0) {
         effect->active = 1;
         effect->id = 0x11;
-        effect->unk2 = arg0->unk2;
+        effect->unk2 = self->unk2;
         effect->on_screen = 0;
         effect->state = 0;
         effect->unk5 = 0;
         effect->unk6 = 0;
         effect->unk7 = 0;
-        effect->x_pos.val = arg0->x_pos.val;
-        effect->y_pos.val = arg0->y_pos.val;
-        effect->ext.effect_17.source = ANIMATED_OBJECT(arg0);
+        effect->x_pos.val = self->x_pos.val;
+        effect->y_pos.val = self->y_pos.val;
+        effect->ext.effect_17.source = ANIMATED_OBJECT(self);
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015930(2, 0x40);
-    func_8001540C(2, 0x41, arg0);
-    func_8004D84C(ANIMATED_OBJECT(arg0));
-    arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    stop_sound(2, 0x40);
+    func_8001540C(2, 0x41, self);
+    ice_bird_spawn_ice_shards(ANIMATED_OBJECT(self));
+    self->unk6++;
 }
 
-void func_8004D580(struct MainObj* arg0)
+void ice_bird_blast_finish(struct MainObj* self)
 {
-    arg0->ext.main_14.unk8C = 1;
-    func_8001540C(5, 4, arg0);
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 0);
-    arg0->unk6 = 0;
-    arg0->unk5++;
+    self->ext.main_14.unk8C = 1;
+    func_8001540C(5, 4, self);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 0);
+    self->unk6 = 0;
+    self->unk5++;
 }
 
-void func_8004D5E0(struct MainObj* arg0)
+void ice_bird_leave(struct MainObj* self)
 {
-    D_800FBA44[arg0->unk6](arg0);
+    ice_bird_leave_funcs[self->unk6](self);
 }
 
-void func_8004D61C(struct MainObj* self)
+void ice_bird_leave_start(struct MainObj* self)
 {
     s32* table;
     s32 velocity;
 
-    func_80015D60(self, 0);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    set_animation(self, 0);
+    animate_object(ANIMATED_OBJECT(self));
 
-    table = D_800FB89C;
+    table = ice_bird_fly_speeds;
     if (self->unk15 & 0x40) {
         table++;
     }
 
     velocity = *table;
-    self->unk54 = (const u8*)&D_800FB88C;
-    self->unk50 = (const u8*)&D_800FB88C;
-    self->unk20 = velocity;
+    self->hurt_box = (const u8*)&ice_bird_body_box;
+    self->attack_box = (const u8*)&ice_bird_body_box;
+    self->x_speed = velocity;
     engine_obj.character_state.bytes[0] = 0;
     self->unk6++;
 }
 
-void func_8004D69C(struct MainObj* arg0)
+void ice_bird_leave_fly(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
-void func_8004D6CC(struct AnimatedObj* arg0)
+void ice_bird_face_player(struct AnimatedObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
+// ice_bird_check_player_ahead
 INCLUDE_ASM("main/nonmatchings/mains/main_14", func_8004D6FC);
 
-void func_8004D784(struct MainObj* arg0, s8 arg1)
+void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
 {
     struct VisualObj* temp_v0;
 
@@ -271,24 +272,24 @@ void func_8004D784(struct MainObj* arg0, s8 arg1)
     if (temp_v0 != 0) {
         temp_v0->active = 0x41;
         temp_v0->id = 0xB;
-        temp_v0->unk50 = PLAYER_OBJECT(arg0);
+        temp_v0->unk50 = PLAYER_OBJECT(self);
         temp_v0->unk2 = arg1;
-        arg0->ext.main_14.visual_variant = arg1;
+        self->ext.main_14.visual_variant = arg1;
         temp_v0->state = 0;
         temp_v0->unk5 = 0;
         temp_v0->unk6 = 0;
         temp_v0->unk38 = 0;
-        temp_v0->unk3C = ANIMATED_OBJECT(arg0)->unk3C;
-        temp_v0->animation_table = ANIMATED_OBJECT(arg0)->animation_table;
-        temp_v0->unk40 = arg0->unk40;
-        temp_v0->unk42 = arg0->unk42;
+        temp_v0->unk3C = ANIMATED_OBJECT(self)->unk3C;
+        temp_v0->animation_table = ANIMATED_OBJECT(self)->animation_table;
+        temp_v0->unk40 = self->unk40;
+        temp_v0->unk42 = self->unk42;
         temp_v0->unk16 = 4;
-        temp_v0->x_pos.val = arg0->x_pos.val;
-        temp_v0->y_pos.val = arg0->y_pos.val;
+        temp_v0->x_pos.val = self->x_pos.val;
+        temp_v0->y_pos.val = self->y_pos.val;
     }
 }
 
-void func_8004D84C(struct AnimatedObj* arg0)
+void ice_bird_spawn_ice_shards(struct AnimatedObj* self)
 {
     struct VisualObj* visual_obj;
     u32 i;
@@ -302,39 +303,39 @@ void func_8004D84C(struct AnimatedObj* arg0)
             }
 
             visual_obj->active = 0x41;
-            visual_obj->unk50 = PLAYER_OBJECT(arg0);
+            visual_obj->unk50 = PLAYER_OBJECT(self);
             visual_obj->id = 8;
             visual_obj->unk2 = i;
             visual_obj->state = 0;
             visual_obj->unk5 = 0;
             visual_obj->unk6 = 0;
-            visual_obj->bg_offset = arg0->bg_offset;
+            visual_obj->bg_offset = self->bg_offset;
             visual_obj->unk38 = 0;
-            visual_obj->unk3C = arg0->unk3C;
-            visual_obj->animation_table = arg0->animation_table;
-            visual_obj->unk40 = arg0->unk40;
-            visual_obj->unk42 = arg0->unk42;
+            visual_obj->unk3C = self->unk3C;
+            visual_obj->animation_table = self->animation_table;
+            visual_obj->unk40 = self->unk40;
+            visual_obj->unk42 = self->unk42;
             visual_obj->unk16 = 6;
-            visual_obj->x_pos.val = arg0->x_pos.val;
-            visual_obj->y_pos.val = arg0->y_pos.val;
+            visual_obj->x_pos.val = self->x_pos.val;
+            visual_obj->y_pos.val = self->y_pos.val;
         }
     }
 }
 
-struct Unk_unk68 D_800FB88C = { -10, -15, 32, 25 };
+struct Unk_unk68 ice_bird_body_box = { -10, -15, 32, 25 };
 
-struct Unk_unk68 D_800FB890[3] = {
+struct Unk_unk68 ice_bird_charge_box[3] = {
     { -9, -25, 28, 48 },
     { -27, -25, 33, 52 },
     { -10, 27, 26, 3 },
 };
 
-s32 D_800FB89C[] = {
+s32 ice_bird_fly_speeds[] = {
     (s32)0xFFFE0000,
     (s32)0x00020000,
 };
 
-union AnimationStep D_800FB8A4[] = {
+union AnimationStep ice_bird_anim_0[] = {
     { 0x00010005 },
     { 0x01010004 },
     { 0x02010003 },
@@ -345,7 +346,7 @@ union AnimationStep D_800FB8A4[] = {
     { 0x01F90004 },
 };
 
-union AnimationStep D_800FB8C4[] = {
+union AnimationStep ice_bird_anim_1[] = {
     { 0x06010002 },
     { 0x07010002 },
     { 0x08010002 },
@@ -361,42 +362,42 @@ union AnimationStep D_800FB8C4[] = {
     { 0x0E000003 },
 };
 
-union AnimationStep D_800FB8F8[] = {
+union AnimationStep ice_bird_anim_2[] = {
     { 0x0F010001 },
     { 0x0E010001 },
     { 0x11010001 },
     { 0x12FD0001 },
 };
 
-union AnimationStep D_800FB908[] = {
+union AnimationStep ice_bird_anim_3[] = {
     { 0x13010006 },
     { 0x14010006 },
     { 0x15010006 },
     { 0x16FD0006 },
 };
 
-union AnimationStep D_800FB918[] = {
+union AnimationStep ice_bird_anim_4[] = {
     { 0x17010004 },
     { 0x18010004 },
     { 0x19010004 },
     { 0x1AFD0004 },
 };
 
-union AnimationStep D_800FB928[] = {
+union AnimationStep ice_bird_anim_5[] = {
     { 0x1B010002 },
     { 0x1C010002 },
     { 0x1D010002 },
     { 0x1EFD0002 },
 };
 
-union AnimationStep D_800FB938[] = {
+union AnimationStep ice_bird_anim_6[] = {
     { 0x1F010001 },
     { 0x20010001 },
     { 0x21010001 },
     { 0x22FD0001 },
 };
 
-union AnimationStep D_800FB948[] = {
+union AnimationStep ice_bird_anim_7[] = {
     { 0x28010003 },
     { 0x23010003 },
     { 0x24010002 },
@@ -408,74 +409,74 @@ union AnimationStep D_800FB948[] = {
     { 0x3B000002 },
 };
 
-union AnimationStep D_800FB96C[] = {
+union AnimationStep ice_bird_anim_8[] = {
     { 0x29000001 },
 };
 
-union AnimationStep D_800FB970[] = {
+union AnimationStep ice_bird_anim_9[] = {
     { 0x2A000001 },
 };
 
-union AnimationStep D_800FB974[] = {
+union AnimationStep ice_bird_anim_10[] = {
     { 0x2B000001 },
 };
 
-union AnimationStep D_800FB978[] = {
+union AnimationStep ice_bird_anim_11[] = {
     { 0x2C000001 },
 };
 
-union AnimationStep D_800FB97C[] = {
+union AnimationStep ice_bird_anim_12[] = {
     { 0x2D000001 },
 };
 
-union AnimationStep D_800FB980[] = {
+union AnimationStep ice_bird_anim_13[] = {
     { 0x2E000001 },
 };
 
-union AnimationStep D_800FB984[] = {
+union AnimationStep ice_bird_anim_14[] = {
     { 0x2F010005 },
     { 0x30010004 },
     { 0x31010003 },
     { 0x32FD0004 },
 };
 
-union AnimationStep D_800FB994[] = {
+union AnimationStep ice_bird_anim_15[] = {
     { 0x33000001 },
 };
 
-union AnimationStep D_800FB998[] = {
+union AnimationStep ice_bird_anim_16[] = {
     { 0x34000001 },
 };
 
-union AnimationStep D_800FB99C[] = {
+union AnimationStep ice_bird_anim_17[] = {
     { 0x35010005 },
     { 0x36010005 },
     { 0x37010005 },
     { 0x38FD0005 },
 };
 
-union AnimationStep* D_800FB9AC[] = {
-    D_800FB8A4,
-    D_800FB8C4,
-    D_800FB8F8,
-    D_800FB908,
-    D_800FB918,
-    D_800FB928,
-    D_800FB938,
-    D_800FB948,
-    D_800FB96C,
-    D_800FB970,
-    D_800FB974,
-    D_800FB978,
-    D_800FB97C,
-    D_800FB980,
-    D_800FB984,
-    D_800FB994,
-    D_800FB998,
-    D_800FB99C,
+union AnimationStep* ice_bird_animations[] = {
+    ice_bird_anim_0,
+    ice_bird_anim_1,
+    ice_bird_anim_2,
+    ice_bird_anim_3,
+    ice_bird_anim_4,
+    ice_bird_anim_5,
+    ice_bird_anim_6,
+    ice_bird_anim_7,
+    ice_bird_anim_8,
+    ice_bird_anim_9,
+    ice_bird_anim_10,
+    ice_bird_anim_11,
+    ice_bird_anim_12,
+    ice_bird_anim_13,
+    ice_bird_anim_14,
+    ice_bird_anim_15,
+    ice_bird_anim_16,
+    ice_bird_anim_17,
 };
 
-u8 D_800FB9F4[] = {
+u8 ice_bird_debris[] = {
     0x08,
     0x09,
     0x0A,
@@ -486,40 +487,40 @@ u8 D_800FB9F4[] = {
     0x00,
 };
 
-void (*D_800FB9FC[])(struct MainObj*) = {
-    func_8004CF60,
-    func_8004D044,
-    func_8004D160,
+void (*ice_bird_state_funcs[])(struct MainObj*) = {
+    ice_bird_init,
+    ice_bird_main,
+    ice_bird_despawn,
 };
 
-void (*D_800FBA08[6])() = {
-    func_8009216C,
-    func_8004D1C8,
-    func_8004D1D4,
-    func_8004D2E0,
-    func_8004D408,
-    func_8004D5E0,
+void (*ice_bird_step_funcs[6])() = {
+    enemy_hit_reaction,
+    ice_bird_resume_step,
+    ice_bird_fly_in,
+    ice_bird_charge,
+    ice_bird_blast,
+    ice_bird_leave,
 };
 
-void (*D_800FBA20[2])() = {
-    func_8004D210,
-    func_8004D290,
+void (*ice_bird_fly_in_funcs[2])() = {
+    ice_bird_fly_in_start,
+    ice_bird_fly_in_move,
 };
 
-void (*D_800FBA28[3])() = {
-    func_8004D31C,
-    func_8004D370,
-    func_8004D3C8,
+void (*ice_bird_charge_funcs[3])() = {
+    ice_bird_charge_start,
+    ice_bird_charge_wait,
+    ice_bird_charge_ring,
 };
 
-void (*D_800FBA34[4])(struct MainObj*) = {
-    func_8004D444,
-    func_8004D480,
-    func_8004D4D0,
-    func_8004D580,
+void (*ice_bird_blast_funcs[4])(struct MainObj*) = {
+    ice_bird_blast_start,
+    ice_bird_blast_wait,
+    ice_bird_blast_release,
+    ice_bird_blast_finish,
 };
 
-void (*D_800FBA44[2])() = {
-    func_8004D61C,
-    func_8004D69C,
+void (*ice_bird_leave_funcs[2])() = {
+    ice_bird_leave_start,
+    ice_bird_leave_fly,
 };

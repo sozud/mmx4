@@ -2,48 +2,48 @@
 // 800B19BC..800B1AF8
 #include "common.h"
 
-void func_800B19BC(struct VisualObj* arg0)
+void ride_dust_update(struct VisualObj* arg0)
 {
-    D_8010A4EC[arg0->state](arg0);
+    ride_dust_state_funcs[arg0->state](arg0);
 }
 
-void func_800B19F8(struct VisualObj* arg0)
+void ride_dust_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk16 = D_8010A504[arg0->unk2];
-    func_80015D60(arg0, D_8010A4F8[arg0->unk2]);
+    arg0->unk16 = ride_dust_layers[arg0->unk2];
+    set_animation(arg0, ride_dust_animations[arg0->unk2]);
 }
 
-void func_800B1A48(struct VisualObj* arg0)
+void ride_dust_main(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0 = arg0->unk50;
     if (temp_a0->state != 2) {
         if (arg0->animation_step.fields.relative_step >= 0) {
             arg0->x_pos.i.hi = temp_a0->x_pos.i.hi;
             arg0->y_pos.i.hi = temp_a0->y_pos.i.hi;
-            func_80015DC8(arg0);
+            animate_object(arg0);
         } else {
             arg0->state = 2;
         }
-        func_8002B318(arg0, 0x10, 0x10);
+        update_on_screen(arg0, 0x10, 0x10);
     } else {
         arg0->state = 2;
     }
 }
 
-void func_800B1AD8(struct VisualObj* arg0)
+void ride_dust_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A4EC[])(struct VisualObj*) = {
-    func_800B19F8,
-    func_800B1A48,
-    func_800B1AD8,
+void (*ride_dust_state_funcs[])(struct VisualObj*) = {
+    ride_dust_init,
+    ride_dust_main,
+    ride_dust_despawn,
 };
 
-u8 D_8010A4F8[12] = {
+u8 ride_dust_animations[12] = {
     0x13,
     0x12,
     0x11,
@@ -57,8 +57,8 @@ u8 D_8010A4F8[12] = {
     0,
     0,
 };
-u8 D_8010A504[12] = { 0, 0, 0, 0, 0, 4, 4, 4, 2, 0, 0, 0 };
-u8 D_8010A510[16] = {
+u8 ride_dust_layers[12] = { 0, 0, 0, 0, 0, 4, 4, 4, 2, 0, 0, 0 };
+u8 ride_chaser_jet_animations[16] = {
     0x15,
     0x16,
     0x17,

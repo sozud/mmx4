@@ -2,7 +2,7 @@
 // 800D4948..800D514C
 #include "common.h"
 
-s16 D_8010F728[8][2] = {
+s16 stage_select_flyout_targets[8][2] = {
     { 0x28, 0x10 },
     { 0x78, 0x10 },
     { 0xC8, 0x10 },
@@ -13,12 +13,12 @@ s16 D_8010F728[8][2] = {
     { 0x118, 0xE0 },
 };
 
-void func_800D4948(struct QuadObj* arg0)
+void stage_select_flyout_update(struct QuadObj* arg0)
 {
-    D_8010F748[arg0->state](arg0);
+    stage_select_flyout_state_funcs[arg0->state](arg0);
 }
 
-void func_800D4984(struct QuadObj* arg0)
+void stage_select_flyout_scale(struct QuadObj* arg0)
 {
     s32* p = arg0->ext.quad_2.vertices;
 
@@ -32,28 +32,29 @@ void func_800D4984(struct QuadObj* arg0)
     arg0->unk30.val = p[1] * arg0->ext.quad_2.y_scale.value;
 }
 
-void func_800D4A64(struct QuadObj* self)
+void stage_select_flyout_init(struct QuadObj* self)
 {
     self->unk36 = 0x10;
     self->unk34 = 0x771;
     self->bg_offset = -1;
     self->x_pos.val = FIXED(160);
     self->y_pos.val = FIXED(128);
-    self->ext.quad_2.vertices = &D_8010F754[0][0];
+    self->ext.quad_2.vertices = &stage_select_flyout_vertices[0][0];
     self->ext.quad_2.x_scale.value = 0x100;
     self->ext.quad_2.y_scale.value = 0x100;
     self->active |= 0x90;
-    func_800D4984(self);
-    self->ext.quad_2.direction[0] = func_8002B810(
-        self->x_pos.val - (D_8010F728[self->unk2][0] << 16),
-        self->y_pos.val - (D_8010F728[self->unk2][1] << 16));
+    stage_select_flyout_scale(self);
+    self->ext.quad_2.direction[0] = angle_from_delta(
+        self->x_pos.val - (stage_select_flyout_targets[self->unk2][0] << 16),
+        self->y_pos.val - (stage_select_flyout_targets[self->unk2][1] << 16));
     quad_is_on_screen(self);
     self->state++;
 }
 
+// stage_select_flyout_main
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4B30);
 
-void func_800D4C14(struct QuadObj* arg0)
+void stage_select_flyout_wait(struct QuadObj* arg0)
 {
     if (arg0->unk7 == 0) {
         arg0->state = 0;
@@ -63,9 +64,10 @@ void func_800D4C14(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 
+// boss_warning_quad_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D4C50);
 
-void func_800D4DE0(struct QuadObj* arg0)
+void boss_warning_quad_open(struct QuadObj* arg0)
 {
     u8 integer = arg0->ext.quad_2.x_scale.bytes.integer;
 
@@ -77,20 +79,20 @@ void func_800D4DE0(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->unk14.val += D_8010F774[arg0->unk2].speed[0] << 16;
-            arg0->unk1C.val += D_8010F774[arg0->unk2].speed[0] << 16;
-            arg0->unk24.val += D_8010F774[arg0->unk2].speed[2] << 16;
-            arg0->unk2C.val += D_8010F774[arg0->unk2].speed[2] << 16;
+            arg0->unk14.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
+            arg0->unk1C.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
+            arg0->unk24.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
+            arg0->unk2C.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
         } else {
-            arg0->unk24.u.hi += D_8010F774[arg0->unk2].speed[0] * 2;
-            arg0->unk2C.u.hi += D_8010F774[arg0->unk2].speed[2] * 2;
-            arg0->unk28.u.hi += D_8010F774[arg0->unk2].speed[1] * 2;
-            arg0->unk30.u.hi += D_8010F774[arg0->unk2].speed[3] * 2;
+            arg0->unk24.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
+            arg0->unk2C.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
+            arg0->unk28.u.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
+            arg0->unk30.u.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
         }
     }
 }
 
-void func_800D4F84(struct QuadObj* arg0)
+void boss_warning_quad_hold(struct QuadObj* arg0)
 {
     if (arg0->unk2 == 0x15) {
         arg0->ext.quad_2.x_scale.bytes.integer = 0xF;
@@ -99,7 +101,7 @@ void func_800D4F84(struct QuadObj* arg0)
     }
 }
 
-void func_800D4FA0(struct QuadObj* arg0)
+void boss_warning_quad_close(struct QuadObj* arg0)
 {
     u8 integer = arg0->ext.quad_2.x_scale.bytes.integer;
 
@@ -111,35 +113,36 @@ void func_800D4FA0(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->unk14.val += D_8010F774[arg0->unk2].speed[2] << 16;
-            arg0->unk1C.val += D_8010F774[arg0->unk2].speed[2] << 16;
-            arg0->unk24.val += D_8010F774[arg0->unk2].speed[0] << 16;
-            arg0->unk2C.val += D_8010F774[arg0->unk2].speed[0] << 16;
+            arg0->unk14.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
+            arg0->unk1C.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
+            arg0->unk24.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
+            arg0->unk2C.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
         } else {
-            arg0->unk1C.u.hi += D_8010F774[arg0->unk2].speed[0] * 2;
-            arg0->unk14.u.hi += D_8010F774[arg0->unk2].speed[2] * 2;
-            arg0->unk20.u.hi += D_8010F774[arg0->unk2].speed[1] * 2;
-            arg0->unk18.u.hi += D_8010F774[arg0->unk2].speed[3] * 2;
+            arg0->unk1C.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
+            arg0->unk14.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
+            arg0->unk20.u.hi += boss_warning_quad_motions[arg0->unk2].speed[1] * 2;
+            arg0->unk18.u.hi += boss_warning_quad_motions[arg0->unk2].speed[3] * 2;
         }
     }
 }
 
+// boss_warning_quad_main
 INCLUDE_ASM("main/nonmatchings/quads/quad_02", func_800D5144);
 
-void (*D_8010F748[])(struct QuadObj*) = {
-    func_800D4A64,
+void (*stage_select_flyout_state_funcs[])(struct QuadObj*) = {
+    stage_select_flyout_init,
     func_800D4B30,
-    func_800D4C14,
+    stage_select_flyout_wait,
 };
 
-s32 D_8010F754[4][2] = {
+s32 stage_select_flyout_vertices[4][2] = {
     { -0xF00, -0x700 },
     { 0xF00, -0x700 },
     { 0xF00, 0x700 },
     { -0xF00, 0x700 },
 };
 
-struct QuadMotionData D_8010F774[22] = {
+struct QuadMotionData boss_warning_quad_motions[22] = {
     { { 0x20, 0x30, 0x2C, 0x30 }, { 2, 12, 2, 12 } },
     { { 0x30, 0x60, 0x34, 0x60 }, { 2, -12, 2, -12 } },
     { { 0x38, 0x30, 0x44, 0x30 }, { 2, 12, 2, 12 } },

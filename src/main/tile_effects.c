@@ -5851,7 +5851,7 @@ struct TileEffectRecord* D_80119364[9] = {
     D_80118FC8,
 };
 
-struct TileEffectRecord** D_80119388[26] = {
+struct TileEffectRecord** tile_effect_tables[26] = {
     D_80118FF0,
     D_80119000,
     D_80118FF0,

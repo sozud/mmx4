@@ -2,40 +2,41 @@
 // 800AAAD4..800AAC98
 #include "common.h"
 
-void func_800AAAD4(struct ShotObj* arg0)
+void double_mine_shot_init(struct ShotObj* self)
 {
-    arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->unk16 = 3;
-    arg0->unk54 = D_80109BA8[0];
-    arg0->unk50.data = D_80109BA8[0];
-    arg0->unk58.collision_bounds = D_801060F0;
-    arg0->unk5C = 2;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->unk7 = 0;
-    arg0->timer = 0;
-    arg0->unk8A = 0;
-    arg0->bg_offset = 0;
-    arg0->unk68 = NULL;
-    arg0->unk60 = 4;
-    arg0->unk61 = 0;
-    func_80015D60(arg0, 0x17);
-    arg0->x_vel.val = 0;
-    arg0->y_vel.val = FIXED(-4);
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk16 = 3;
+    self->unk54 = double_ball_box_5[0];
+    self->unk50.data = double_ball_box_5[0];
+    self->unk58.collision_bounds = D_801060F0;
+    self->unk5C = 2;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->timer = 0;
+    self->unk8A = 0;
+    self->bg_offset = 0;
+    self->unk68 = NULL;
+    self->unk60 = 4;
+    self->unk61 = 0;
+    set_animation(self, 0x17);
+    self->x_vel.val = 0;
+    self->y_vel.val = FIXED(-4);
+    self->unk28 = 0;
+    self->unk2C = 0;
 }
 
+// double_mine_shot_fly
 INCLUDE_ASM("main/nonmatchings/shots/shot_52", func_800AAB74);
 
-void func_800AAC5C(struct ShotObj* arg0)
+void double_mine_shot_update(struct ShotObj* self)
 {
-    D_80109C2C[arg0->state](arg0);
+    double_mine_shot_state_funcs[self->state](self);
 }
 
-void (*D_80109C2C[])(struct ShotObj*) = {
-    func_800AAAD4,
+void (*double_mine_shot_state_funcs[])(struct ShotObj*) = {
+    double_mine_shot_init,
     func_800AAB74,
     double_ball_despawn,
 };

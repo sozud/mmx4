@@ -2,100 +2,102 @@
 // 800A22D4..800A3924
 #include "common.h"
 
-void func_800A22D4(struct ShotObj* arg0)
+void walrus_ice_update(struct ShotObj* self)
 {
-    D_801096F4[arg0->state](arg0);
+    walrus_ice_state_funcs[self->state](self);
 }
 
-void func_800A2310(struct ShotObj* arg0)
+void walrus_ice_init(struct ShotObj* self)
 {
     struct WeaponObj* temp_v1;
 
-    arg0->unk58.data = (u8*)D_80105FF0;
-    arg0->unk67 = 0;
-    arg0->state = (u8)arg0->state + 1 + ((s8)arg0->unk2 >> 4);
-    arg0->unk2 = (u8)arg0->unk2 & 0xF;
-    if (arg0->state < 4) {
-        temp_v1 = arg0->unk7C;
-        arg0->unk3C = temp_v1->unk3C;
-        arg0->unk40 = temp_v1->unk40;
-        arg0->unk42 = temp_v1->unk42 & 0x7FFF;
-        arg0->bg_offset = (s8)(u8)temp_v1->bg_offset;
-        arg0->animation_table = temp_v1->animation_table;
-        arg0->unk15 = temp_v1->unk15;
+    self->unk58.data = (u8*)D_80105FF0;
+    self->unk67 = 0;
+    self->state = (u8)self->state + 1 + ((s8)self->unk2 >> 4);
+    self->unk2 = (u8)self->unk2 & 0xF;
+    if (self->state < 4) {
+        temp_v1 = self->unk7C;
+        self->unk3C = temp_v1->unk3C;
+        self->unk40 = temp_v1->unk40;
+        self->unk42 = temp_v1->unk42 & 0x7FFF;
+        self->bg_offset = (s8)(u8)temp_v1->bg_offset;
+        self->animation_table = temp_v1->animation_table;
+        self->unk15 = temp_v1->unk15;
     }
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
+    self->unk5 = 0;
+    self->unk6 = 0;
 }
 
-void func_800A23B4(struct ShotObj* arg0)
+void walrus_ice_break(struct ShotObj* self)
 {
-    arg0->state = 7;
+    self->state = 7;
 }
 
-void func_800A23C0(struct ShotObj* arg0)
+void walrus_ice_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A23E0(struct ShotObj* arg0)
+void walrus_ice_icicle(struct ShotObj* self)
 {
-    D_80109714[arg0->unk5](arg0);
+    walrus_ice_icicle_funcs[self->unk5](self);
 }
 
+// walrus_ice_icicle_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A241C);
 
-void func_800A24F0(struct ShotObj* arg0)
+void walrus_ice_icicle_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
     s32 collision;
     u16 flags;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010971C[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    if (arg0->unk6 != 0) {
-        collision = func_8002DD04(MAIN_OBJECT(arg0));
-        owner = arg0->unk7C;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_icicle_step_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    if (self->unk6 != 0) {
+        collision = func_8002DD04(MAIN_OBJECT(self));
+        owner = self->unk7C;
         if (collision < 0 || owner->state == 2) {
-            func_8001540C(2, 0x98, arg0);
-            func_800C813C(4, D_801096DC, arg0);
-            arg0->state = 6;
-            arg0->unk5 = 0;
-            arg0->unk6 = 0;
-            ZeroObjectState(OBJECT_HEADER(arg0));
+            func_8001540C(2, 0x98, self);
+            spawn_debris(4, walrus_ice_debris, self);
+            self->state = 6;
+            self->unk5 = 0;
+            self->unk6 = 0;
+            ZeroObjectState(OBJECT_HEADER(self));
         }
         if (collision > 0) {
-            flags = arg0->unk42 | 0x8000;
+            flags = self->unk42 | 0x8000;
         } else {
-            flags = arg0->unk42 & 0x7FFF;
+            flags = self->unk42 & 0x7FFF;
         }
-        arg0->unk42 = flags;
+        self->unk42 = flags;
     }
 }
 
+// walrus_ice_icicle_form
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A25EC);
 
-void func_800A2748(struct ShotObj* arg0)
+void walrus_ice_icicle_rise(struct ShotObj* self)
 {
-    func_8002B718(MOVING_OBJECT(arg0));
-    if ((u8)arg0->unk2 & 1) {
-        is_on_screen(BASE_OBJECT(arg0));
+    move_object(MOVING_OBJECT(self));
+    if ((u8)self->unk2 & 1) {
+        is_on_screen(BASE_OBJECT(self));
     }
-    if (background_objects[0].y_pos.i.hi - 0x30 >= arg0->y_pos.i.hi) {
-        arg0->unk54 = (const u8*)&D_801096B8;
-        arg0->unk50.data = (const u8*)&D_801096BC;
-        func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
-        arg0->y_vel.val = FIXED(-0.5);
-        arg0->unk2C = FIXED(0.09375);
-        arg0->timer = 0xF0;
-        arg0->unk16 = 2;
-        arg0->unk6++;
+    if (background_objects[0].y_pos.i.hi - 0x30 >= self->y_pos.i.hi) {
+        self->unk54 = (const u8*)&walrus_ice_icicle_hurt_box;
+        self->unk50.data = (const u8*)&walrus_ice_icicle_attack_box;
+        set_animation(ANIMATED_OBJECT(self), 0xA);
+        self->y_vel.val = FIXED(-0.5);
+        self->unk2C = FIXED(0.09375);
+        self->timer = 0xF0;
+        self->unk16 = 2;
+        self->unk6++;
     }
 }
 
-void func_800A27F4(struct ShotObj* arg0)
+void walrus_ice_icicle_wait_drop(struct ShotObj* self)
 {
     s16 timer;
     struct MainObj* owner;
@@ -105,163 +107,164 @@ void func_800A27F4(struct ShotObj* arg0)
     u16 background_x;
     u16 offset;
 
-    owner = MAIN_OBJECT(arg0->unk7C);
+    owner = MAIN_OBJECT(self->unk7C);
     if (owner->unk6 != 5) {
-        timer = (u16)arg0->timer - 1;
-        arg0->timer = timer;
+        timer = (u16)self->timer - 1;
+        self->timer = timer;
         if (timer != 0) {
             return;
         }
     }
 
-    next_state = arg0->unk6 + 1;
-    index = arg0->unk2;
+    next_state = self->unk6 + 1;
+    index = self->unk2;
     table = (u16*)owner->ext.main_57.rect;
     background_x = background_objects[0].unk1E;
     offset = table[index];
 
-    arg0->timer = 15;
-    arg0->unk6 = next_state;
-    arg0->x_pos.i.hi = background_x + (offset + 0x10);
+    self->timer = 15;
+    self->unk6 = next_state;
+    self->x_pos.i.hi = background_x + (offset + 0x10);
 }
 
-void func_800A2870(struct ShotObj* arg0)
+void walrus_ice_icicle_fall(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    temp_v0 = arg0->timer;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    temp_v0 = self->timer;
     if (temp_v0 != 0) {
-        arg0->timer = temp_v0 - 1;
+        self->timer = temp_v0 - 1;
         return;
     }
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        func_80015D60(ANIMATED_OBJECT(arg0), 0xB);
-        func_800C813C(4, D_801096DC, arg0);
-        func_8001540C(2, 0x9A, arg0);
-        func_80028BAC(0x10, 3, 1);
-        arg0->timer = 0x100;
-        arg0->unk6++;
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (self->unk70 & 8) {
+        set_animation(ANIMATED_OBJECT(self), 0xB);
+        spawn_debris(4, walrus_ice_debris, self);
+        func_8001540C(2, 0x9A, self);
+        start_screen_shake_y(0x10, 3, 1);
+        self->timer = 0x100;
+        self->unk6++;
     }
 }
 
-void func_800A2928(struct ShotObj* arg0)
+void walrus_ice_icicle_stuck(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(arg0->unk7C)) != 0) {
-        func_8001540C(2, 0x98, arg0);
-        func_800C813C(4, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(self->unk7C)) != 0) {
+        func_8001540C(2, 0x98, self);
+        spawn_debris(4, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    temp_v0 = (u16)arg0->timer - 1;
-    arg0->timer = temp_v0;
+    temp_v0 = (u16)self->timer - 1;
+    self->timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->timer = 0x32;
-        arg0->unk6++;
+        self->timer = 0x32;
+        self->unk6++;
     }
 }
 
-void func_800A29C8(struct ShotObj* arg0)
+void walrus_ice_icicle_blink(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        func_8001540C(2, 0x98, arg0);
-        func_800C813C(4, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        func_8001540C(2, 0x98, self);
+        spawn_debris(4, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     } else {
-        arg0->on_screen ^= 1;
-        if (arg0->on_screen != 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+        self->on_screen ^= 1;
+        if (self->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(self));
         }
     }
 }
 
-void func_800A2A58(struct ShotObj* arg0)
+void walrus_ice_ball(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109734[arg0->unk5](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_ball_funcs[self->unk5](self);
 }
 
+// walrus_ice_ball_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A2AA0);
 
-void func_800A2B8C(struct ShotObj* arg0)
+void walrus_ice_ball_main(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
     s32 collision_result;
     u16 flags;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010973C[arg0->unk6](arg0);
-    func_8002D9BC(arg0);
-    collision_result = func_8002DD04(MAIN_OBJECT(arg0));
-    weapon = arg0->unk7C;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_ball_step_funcs[self->unk6](self);
+    func_8002D9BC(self);
+    collision_result = func_8002DD04(MAIN_OBJECT(self));
+    weapon = self->unk7C;
     if ((collision_result < 0) || (weapon->unk5 != 8)) {
-        func_8001540C(2, 0x97, arg0);
-        func_800C813C(4, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        func_8001540C(2, 0x97, self);
+        spawn_debris(4, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
     if (collision_result > 0) {
-        flags = arg0->unk42 | 0x8000;
+        flags = self->unk42 | 0x8000;
     } else {
-        flags = arg0->unk42 & 0x7FFF;
+        flags = self->unk42 & 0x7FFF;
     }
-    arg0->unk42 = flags;
+    self->unk42 = flags;
 }
 
-void func_800A2C70(struct ShotObj* arg0)
+void walrus_ice_ball_blink(struct ShotObj* self)
 {
     s16 timer;
     s8 on_screen;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        func_8001540C(2, 0x96, arg0);
-        arg0->unk6++;
+        func_8001540C(2, 0x96, self);
+        self->unk6++;
         return;
     }
 
-    on_screen = arg0->on_screen ^ 1;
-    arg0->on_screen = on_screen;
+    on_screen = self->on_screen ^ 1;
+    self->on_screen = on_screen;
     if (on_screen != 0) {
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800A2CEC(struct ShotObj* arg0)
+void walrus_ice_ball_grow(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk54 = (const u8*)&D_801096C0;
-        arg0->unk50.data = (const u8*)&D_801096C4;
-        arg0->unk8C.word = 0;
-        arg0->unk6++;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        self->unk54 = (const u8*)&walrus_ice_ball_hurt_box;
+        self->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
+        self->unk8C.word = 0;
+        self->unk6++;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A2D54(struct ShotObj* arg0)
+void walrus_ice_ball_burst(struct ShotObj* self)
 {
     s32 i;
     struct ShotObj* shot;
 
-    if (arg0->unk8C.word != 0) {
+    if (self->unk8C.word != 0) {
         i = 0;
         do {
             shot = find_free_shot_obj();
@@ -269,47 +272,47 @@ void func_800A2D54(struct ShotObj* arg0)
                 shot->active = 0x41;
                 shot->id = 0x23;
                 shot->unk2 = i + 0x40;
-                shot->x_pos.val = arg0->x_pos.val;
-                shot->y_pos.val = arg0->y_pos.val + FIXED(4);
-                shot->unk3C = arg0->unk3C;
-                shot->unk40 = arg0->unk40;
-                shot->unk42 = arg0->unk42 & 0x7FFF;
-                shot->bg_offset = (u8)arg0->bg_offset;
-                shot->animation_table = arg0->animation_table;
-                shot->unk15 = arg0->unk15;
-                shot->unk7C = arg0->unk7C;
+                shot->x_pos.val = self->x_pos.val;
+                shot->y_pos.val = self->y_pos.val + FIXED(4);
+                shot->unk3C = self->unk3C;
+                shot->unk40 = self->unk40;
+                shot->unk42 = self->unk42 & 0x7FFF;
+                shot->bg_offset = (u8)self->bg_offset;
+                shot->animation_table = self->animation_table;
+                shot->unk15 = self->unk15;
+                shot->unk7C = self->unk7C;
             }
             i++;
         } while ((u8)i < 9);
-        func_8001540C(2, 0x97, arg0);
-        arg0->unk8C.word = 0;
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        func_8001540C(2, 0x97, self);
+        self->unk8C.word = 0;
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A2E6C(struct ShotObj* arg0)
+void walrus_ice_shard(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109748[arg0->unk5](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_shard_funcs[self->unk5](self);
 }
 
-void func_800A2EB4(struct ShotObj* arg0)
+void walrus_ice_shard_init(struct ShotObj* self)
 {
-    arg0->unk68 = &D_801096B0;
-    arg0->unk54 = (const u8*)&D_801096C8;
-    arg0->unk50.data = (const u8*)&D_801096CC;
-    arg0->unk5C = 3;
-    arg0->unk60 = 6;
-    arg0->unk16 = 4;
-    func_80015D60(arg0, 0x20);
-    arg0->unk5++;
+    self->unk68 = &walrus_ice_shard_terrain_box;
+    self->unk54 = (const u8*)&walrus_ice_shard_hurt_box;
+    self->unk50.data = (const u8*)&walrus_ice_shard_attack_box;
+    self->unk5C = 3;
+    self->unk60 = 6;
+    self->unk16 = 4;
+    set_animation(self, 0x20);
+    self->unk5++;
 }
 
-void func_800A2F2C(struct ShotObj* self)
+void walrus_ice_shard_main(struct ShotObj* self)
 {
     struct MainObj* owner;
     s32 collision;
@@ -317,13 +320,13 @@ void func_800A2F2C(struct ShotObj* self)
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    D_80109750[self->unk6](self);
+    walrus_ice_shard_step_funcs[self->unk6](self);
     func_8002D9BC(self);
     collision = func_8002DD04(MAIN_OBJECT(self));
     owner = self->unk7C;
     if (collision < 0 || owner->state == 2) {
         func_8001540C(2, 0x98, self);
-        func_800C813C(4, D_801096DC, self);
+        spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
         self->unk6 = 0;
@@ -336,95 +339,96 @@ void func_800A2F2C(struct ShotObj* self)
     self->unk42 = flags;
 }
 
-void func_800A3010(struct ShotObj* arg0)
+void walrus_ice_shard_launch(struct ShotObj* self)
 {
-    func_8002B93C(MOVING_OBJECT(arg0), arg0->unk2 + 0xC);
-    arg0->x_vel.val *= 4;
-    if (arg0->unk15 == 0x40) {
-        arg0->x_vel.val = -arg0->x_vel.val;
+    set_velocity_from_angle(MOVING_OBJECT(self), self->unk2 + 0xC);
+    self->x_vel.val *= 4;
+    if (self->unk15 == 0x40) {
+        self->x_vel.val = -self->x_vel.val;
     }
-    arg0->y_vel.val *= 4;
-    arg0->unk6++;
+    self->y_vel.val *= 4;
+    self->unk6++;
 }
 
-void func_800A3078(struct ShotObj* arg0)
+void walrus_ice_shard_fly(struct ShotObj* self)
 {
     u8 flags;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    if (func_8002B160(BASE_OBJECT(arg0)) == 1) {
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (func_8002B160(BASE_OBJECT(self)) == 1) {
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     } else {
-        flags = arg0->unk70;
+        flags = self->unk70;
         if (flags & 2) {
-            func_8001540C(2, 0x9A, arg0);
-            func_80015D60(arg0, 0x22);
+            func_8001540C(2, 0x9A, self);
+            set_animation(self, 0x22);
         } else if (flags & 1) {
-            func_8001540C(2, 0x9A, arg0);
-            func_80015D60(arg0, 0x22);
-            arg0->unk15 = 0x40;
+            func_8001540C(2, 0x9A, self);
+            set_animation(self, 0x22);
+            self->unk15 = 0x40;
         } else if (flags & 8) {
-            func_8001540C(2, 0x9A, arg0);
-            func_80015D60(arg0, 0x21);
+            func_8001540C(2, 0x9A, self);
+            set_animation(self, 0x21);
         } else {
-            is_on_screen(BASE_OBJECT(arg0));
+            is_on_screen(BASE_OBJECT(self));
             return;
         }
-        arg0->timer = 0x100;
-        arg0->unk6++;
+        self->timer = 0x100;
+        self->unk6++;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A3170(struct ShotObj* arg0)
+void walrus_ice_shard_stuck(struct ShotObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    temp_v0 = arg0->timer - 1;
-    arg0->timer = temp_v0;
+    animate_object(ANIMATED_OBJECT(self));
+    temp_v0 = self->timer - 1;
+    self->timer = temp_v0;
     if (temp_v0 == 0) {
-        arg0->timer = 0x32;
-        arg0->unk6++;
+        self->timer = 0x32;
+        self->unk6++;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A31CC(struct ShotObj* arg0)
+void walrus_ice_shard_blink(struct ShotObj* self)
 {
     s16 timer;
 
-    timer = arg0->timer - 1;
-    arg0->timer = timer;
+    timer = self->timer - 1;
+    self->timer = timer;
     if (timer == 0) {
-        func_8001540C(2, 0x98, arg0);
-        func_800C813C(4, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        func_8001540C(2, 0x98, self);
+        spawn_debris(4, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     } else {
-        arg0->on_screen ^= 1;
-        if (arg0->on_screen != 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+        self->on_screen ^= 1;
+        if (self->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(self));
         }
     }
 }
 
-void func_800A325C(struct ShotObj* arg0)
+void walrus_ice_chunk(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109760[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_chunk_funcs[self->unk5](self);
+    func_8002D9BC(self);
 }
 
+// walrus_ice_chunk_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A32B8);
 
-void func_800A33A0(struct ShotObj* self)
+void walrus_ice_chunk_main(struct ShotObj* self)
 {
     struct ShotObj* owner;
     s32 collision;
@@ -432,13 +436,13 @@ void func_800A33A0(struct ShotObj* self)
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    D_80109768[self->unk6](self);
+    walrus_ice_chunk_step_funcs[self->unk6](self);
     func_8002D9BC(self);
     collision = func_8002DD04(MAIN_OBJECT(self));
     owner = SHOT_OBJECT(self->unk7C);
     if (collision < 0 || owner->state == 2) {
         func_8001540C(2, 0x97, self);
-        func_800C813C(4, D_801096DC, self);
+        spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
         self->unk6 = 0;
@@ -452,19 +456,20 @@ void func_800A33A0(struct ShotObj* self)
     CollisionRelated(self);
 }
 
+// walrus_ice_chunk_launch
 INCLUDE_ASM("main/nonmatchings/shots/shot_35", func_800A348C);
 
-void func_800A3520(struct ShotObj* obj)
+void walrus_ice_chunk_fall(struct ShotObj* obj)
 {
     struct ShotObj* shot;
     u8 i;
 
-    func_80015DC8(ANIMATED_OBJECT(obj));
-    func_8002B694(ANIMATED_OBJECT(obj));
+    animate_object(ANIMATED_OBJECT(obj));
+    move_with_gravity(ANIMATED_OBJECT(obj));
     is_on_screen(BASE_OBJECT(obj));
     if (obj->unk70 & 8) {
         func_8001540C(2, 0x97, obj);
-        func_800C813C(0xA, D_801096E8, obj);
+        spawn_debris(0xA, walrus_ice_chunk_debris, obj);
         i = 0;
         do {
             shot = find_free_shot_obj();
@@ -488,42 +493,42 @@ void func_800A3520(struct ShotObj* obj)
     }
 }
 
-void func_800A3658(struct ShotObj* arg0)
+void walrus_ice_chunk_break(struct ShotObj* self)
 {
-    arg0->state = 6;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
+    self->state = 6;
+    self->unk5 = 0;
+    self->unk6 = 0;
 }
 
-void func_800A366C(struct ShotObj* arg0)
+void walrus_ice_lob(struct ShotObj* self)
 {
     struct BaseObj* target;
     s32 collision;
     u16 flags;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_80109774[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    collision = func_8002DD04(MAIN_OBJECT(arg0));
-    target = BASE_OBJECT(arg0->unk7C);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    walrus_ice_lob_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    collision = func_8002DD04(MAIN_OBJECT(self));
+    target = BASE_OBJECT(self->unk7C);
     if (collision < 0 || target->state == 2) {
-        func_8001540C(2, 0x98, arg0);
-        func_800C813C(4, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+        func_8001540C(2, 0x98, self);
+        spawn_debris(4, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
     if (collision > 0) {
-        flags = arg0->unk42 | 0x8000;
+        flags = self->unk42 | 0x8000;
     } else {
-        flags = arg0->unk42 & 0x7FFF;
+        flags = self->unk42 & 0x7FFF;
     }
-    arg0->unk42 = flags;
-    is_on_screen(BASE_OBJECT(arg0));
+    self->unk42 = flags;
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800A3758(struct ShotObj* object)
+void walrus_ice_lob_init(struct ShotObj* object)
 {
     struct ShotObj* arg0;
     s8 index;
@@ -531,53 +536,53 @@ void func_800A3758(struct ShotObj* object)
     arg0 = (struct ShotObj*)object;
     index = arg0->unk2;
     if (index < 3) {
-        arg0->x_vel.val = D_801096D0[index];
+        arg0->x_vel.val = walrus_ice_lob_speeds[index];
     } else {
-        arg0->x_vel.val = -D_801096D0[index - 3];
+        arg0->x_vel.val = -walrus_ice_lob_speeds[index - 3];
     }
     arg0->y_vel.val = FIXED(6.5);
     arg0->unk2C = FIXED(0.2578125);
     arg0->unk5C = 5;
     arg0->unk60 = 6;
-    arg0->unk68 = &D_801096AC;
-    arg0->unk54 = (const u8*)&D_801096B8;
-    arg0->unk50.data = (const u8*)&D_801096BC;
+    arg0->unk68 = &walrus_ice_lob_terrain_box;
+    arg0->unk54 = (const u8*)&walrus_ice_icicle_hurt_box;
+    arg0->unk50.data = (const u8*)&walrus_ice_icicle_attack_box;
     arg0->unk28 = 0;
     arg0->unk16 = 2;
-    func_80015D60(arg0, 0xA);
+    set_animation(arg0, 0xA);
     arg0->unk5++;
 }
 
-void func_800A382C(struct ShotObj* arg0)
+void walrus_ice_lob_fall(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    CollisionRelated(PLAYER_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
-        func_8001540C(2, 0x98, arg0);
-        func_800C813C(5, D_801096DC, arg0);
-        arg0->state = 6;
-        arg0->unk5 = 0;
-        arg0->unk6 = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (self->unk70 & 8) {
+        func_8001540C(2, 0x98, self);
+        spawn_debris(5, walrus_ice_debris, self);
+        self->state = 6;
+        self->unk5 = 0;
+        self->unk6 = 0;
     }
 }
 
-void func_800A38B0(struct ShotObj* arg0)
+void walrus_ice_choose_drop_pattern(struct ShotObj* self)
 {
     RECT** table;
     struct MainObj* owner;
 
-    owner = MAIN_OBJECT(arg0->unk7C);
-    if (arg0->unk7 == 4) {
-        table = D_80109698;
+    owner = MAIN_OBJECT(self->unk7C);
+    if (self->unk7 == 4) {
+        table = walrus_ice_drop_patterns_a;
     } else {
-        table = D_8010969C;
+        table = walrus_ice_drop_patterns_b;
     }
     owner->ext.main_57.rect = table[get_random() & 7];
 }
 
-RECT D_80109598[8] = {
+RECT walrus_ice_drop_pattern_data_a[8] = {
     { 0x30, 0x90, 0xF0, 0x150 },
     { 0x30, 0x70, 0xB0, 0xF0 },
     { 0x70, 0xD0, 0x130, 0x190 },
@@ -588,7 +593,7 @@ RECT D_80109598[8] = {
     { 0x130, 0x150, 0x170, 0x190 },
 };
 
-RECT D_801095D8[8][2] = {
+RECT walrus_ice_drop_pattern_data_b[8][2] = {
     { { 0x30, 0x70, 0xB0, 0xF0 }, { 0x130, 0x170, 0x190, 0x1B0 } },
     { { 0x30, 0x50, 0x70, 0xB0 }, { 0xF0, 0x130, 0x170, 0x1B0 } },
     { { 0x30, 0x50, 0x70, 0xD0 }, { 0xF0, 0x110, 0x170, 0x190 } },
@@ -599,118 +604,118 @@ RECT D_801095D8[8][2] = {
     { { 0x50, 0x70, 0xB0, 0xD0 }, { 0x110, 0x130, 0x170, 0x190 } },
 };
 
-RECT* D_80109658[8] = {
-    &D_80109598[0],
-    &D_80109598[1],
-    &D_80109598[2],
-    &D_80109598[3],
-    &D_80109598[4],
-    &D_80109598[5],
-    &D_80109598[6],
-    &D_80109598[7],
+RECT* walrus_ice_drop_pattern_list_a[8] = {
+    &walrus_ice_drop_pattern_data_a[0],
+    &walrus_ice_drop_pattern_data_a[1],
+    &walrus_ice_drop_pattern_data_a[2],
+    &walrus_ice_drop_pattern_data_a[3],
+    &walrus_ice_drop_pattern_data_a[4],
+    &walrus_ice_drop_pattern_data_a[5],
+    &walrus_ice_drop_pattern_data_a[6],
+    &walrus_ice_drop_pattern_data_a[7],
 };
 
-RECT* D_80109678[8] = {
-    D_801095D8[0],
-    D_801095D8[1],
-    D_801095D8[2],
-    D_801095D8[3],
-    D_801095D8[4],
-    D_801095D8[5],
-    D_801095D8[6],
-    D_801095D8[7],
+RECT* walrus_ice_drop_pattern_list_b[8] = {
+    walrus_ice_drop_pattern_data_b[0],
+    walrus_ice_drop_pattern_data_b[1],
+    walrus_ice_drop_pattern_data_b[2],
+    walrus_ice_drop_pattern_data_b[3],
+    walrus_ice_drop_pattern_data_b[4],
+    walrus_ice_drop_pattern_data_b[5],
+    walrus_ice_drop_pattern_data_b[6],
+    walrus_ice_drop_pattern_data_b[7],
 };
 
-RECT** D_80109698 = D_80109658;
-RECT** D_8010969C = D_80109678;
+RECT** walrus_ice_drop_patterns_a = walrus_ice_drop_pattern_list_a;
+RECT** walrus_ice_drop_patterns_b = walrus_ice_drop_pattern_list_b;
 
-s16 D_801096A0[2][2] = {
+s16 walrus_ice_icicle_offsets[2][2] = {
     { -19, -31 },
     { 36, -31 },
 };
 
-struct Unk_unk68 D_801096A8 = { -39, 21, 27, 30 };
-struct Unk_unk68 D_801096AC = { 0, 10, 9, 3 };
-struct Unk_unk68 D_801096B0 = { 0, 0, 6, 6 };
-struct Unk_unk68 D_801096B4 = { 0, -4, 10, 7 };
-struct Unk_unk68 D_801096B8 = { -12, -32, 23, 63 };
-struct Unk_unk68 D_801096BC = { -4, -20, 9, 30 };
-struct Unk_unk68 D_801096C0 = { -37, -56, 73, 118 };
-struct Unk_unk68 D_801096C4 = { -28, -48, 55, 88 };
-struct Unk_unk68 D_801096C8 = { -13, -12, 23, 23 };
-struct Unk_unk68 D_801096CC = { -5, -8, 9, 15 };
+struct Unk_unk68 walrus_ice_chunk_terrain_box = { -39, 21, 27, 30 };
+struct Unk_unk68 walrus_ice_lob_terrain_box = { 0, 10, 9, 3 };
+struct Unk_unk68 walrus_ice_shard_terrain_box = { 0, 0, 6, 6 };
+struct Unk_unk68 walrus_ice_ball_terrain_box = { 0, -4, 10, 7 };
+struct Unk_unk68 walrus_ice_icicle_hurt_box = { -12, -32, 23, 63 };
+struct Unk_unk68 walrus_ice_icicle_attack_box = { -4, -20, 9, 30 };
+struct Unk_unk68 walrus_ice_ball_hurt_box = { -37, -56, 73, 118 };
+struct Unk_unk68 walrus_ice_ball_attack_box = { -28, -48, 55, 88 };
+struct Unk_unk68 walrus_ice_shard_hurt_box = { -13, -12, 23, 23 };
+struct Unk_unk68 walrus_ice_shard_attack_box = { -5, -8, 9, 15 };
 
-s32 D_801096D0[3] = { 0x30000, 0x20000, 0x10000 };
+s32 walrus_ice_lob_speeds[3] = { 0x30000, 0x20000, 0x10000 };
 
-u8 D_801096DC[12] = { 12, 13, 14, 15, 13, 15, 12, 14, 13, 15, 0, 0 };
+u8 walrus_ice_debris[12] = { 12, 13, 14, 15, 13, 15, 12, 14, 13, 15, 0, 0 };
 
-u8 D_801096E8[12] = { 12, 13, 35, 15, 35, 15, 36, 14, 36, 15, 0, 0 };
+u8 walrus_ice_chunk_debris[12] = { 12, 13, 35, 15, 35, 15, 36, 14, 36, 15, 0, 0 };
 
-void (*D_801096F4[])(struct ShotObj*) = {
-    func_800A2310,
-    func_800A23E0,
-    func_800A2A58,
-    func_800A325C,
-    func_800A366C,
-    func_800A2E6C,
-    func_800A23B4,
-    func_800A23C0,
+void (*walrus_ice_state_funcs[])(struct ShotObj*) = {
+    walrus_ice_init,
+    walrus_ice_icicle,
+    walrus_ice_ball,
+    walrus_ice_chunk,
+    walrus_ice_lob,
+    walrus_ice_shard,
+    walrus_ice_break,
+    walrus_ice_despawn,
 };
 
-void (*D_80109714[])(struct ShotObj*) = {
+void (*walrus_ice_icicle_funcs[])(struct ShotObj*) = {
     func_800A241C,
-    func_800A24F0,
+    walrus_ice_icicle_main,
 };
 
-void (*D_8010971C[])(struct ShotObj*) = {
+void (*walrus_ice_icicle_step_funcs[])(struct ShotObj*) = {
     func_800A25EC,
-    func_800A2748,
-    func_800A27F4,
-    func_800A2870,
-    func_800A2928,
-    func_800A29C8,
+    walrus_ice_icicle_rise,
+    walrus_ice_icicle_wait_drop,
+    walrus_ice_icicle_fall,
+    walrus_ice_icicle_stuck,
+    walrus_ice_icicle_blink,
 };
 
-void (*D_80109734[])(struct ShotObj*) = {
+void (*walrus_ice_ball_funcs[])(struct ShotObj*) = {
     func_800A2AA0,
-    func_800A2B8C,
+    walrus_ice_ball_main,
 };
 
-void (*D_8010973C[])(struct ShotObj*) = {
-    func_800A2C70,
-    func_800A2CEC,
-    func_800A2D54,
+void (*walrus_ice_ball_step_funcs[])(struct ShotObj*) = {
+    walrus_ice_ball_blink,
+    walrus_ice_ball_grow,
+    walrus_ice_ball_burst,
 };
 
-void (*D_80109748[])(struct ShotObj*) = {
-    func_800A2EB4,
-    func_800A2F2C,
+void (*walrus_ice_shard_funcs[])(struct ShotObj*) = {
+    walrus_ice_shard_init,
+    walrus_ice_shard_main,
 };
 
-void (*D_80109750[])(struct ShotObj*) = {
-    func_800A3010,
-    func_800A3078,
-    func_800A3170,
-    func_800A31CC,
+void (*walrus_ice_shard_step_funcs[])(struct ShotObj*) = {
+    walrus_ice_shard_launch,
+    walrus_ice_shard_fly,
+    walrus_ice_shard_stuck,
+    walrus_ice_shard_blink,
 };
 
-void (*D_80109760[])(struct ShotObj*) = {
+void (*walrus_ice_chunk_funcs[])(struct ShotObj*) = {
     func_800A32B8,
-    func_800A33A0,
+    walrus_ice_chunk_main,
 };
 
-void (*D_80109768[])(struct ShotObj*) = {
+void (*walrus_ice_chunk_step_funcs[])(struct ShotObj*) = {
     func_800A348C,
-    func_800A3520,
-    func_800A3658,
+    walrus_ice_chunk_fall,
+    walrus_ice_chunk_break,
 };
 
-void (*D_80109774[])(struct ShotObj*) = {
-    func_800A3758,
-    func_800A382C,
+void (*walrus_ice_lob_funcs[])(struct ShotObj*) = {
+    walrus_ice_lob_init,
+    walrus_ice_lob_fall,
 };
 
-s16 D_8010977C[4][2] = {
+s16 drone_beam_boxes[4][2] = {
     { -0x1280, 0x2AFF },
     { -0x1280, 0x2AFF },
     { -0xA80, 0x19FF },

@@ -32,11 +32,11 @@ void iris_death_start(struct MainObj* self)
     other = self->ext.main_66.partner;
     self->unk42 &= 0x7FFF;
     other->unk42 &= 0x7FFF;
-    func_80015D60(self->ext.main_66.partner, 8);
+    set_animation(self->ext.main_66.partner, 8);
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
-    self->unk61 = 0x19;
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    self->invincibility_timer = 0x19;
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
 // iris_death_blink
@@ -60,7 +60,7 @@ void iris_death_wait_explosion(struct MainObj* self)
                 self->unk7E = 5;
                 self->unk42 ^= 0x8000;
             }
-            func_8002B318(BASE_OBJECT(self->ext.main_66.partner), 0x60, 0x60);
+            update_on_screen(BASE_OBJECT(self->ext.main_66.partner), 0x60, 0x60);
         } else {
             linked = self->ext.main_66.partner;
             if (linked->active != 0) {
@@ -70,9 +70,9 @@ void iris_death_wait_explosion(struct MainObj* self)
             self->x_pos.i.hi = self->ext.main_66.partner->x_pos.i.hi;
             self->y_pos.i.hi = 0x1CA;
             self->unk16 = 0;
-            func_80015D60(self, 0x23);
+            set_animation(self, 0x23);
         }
-        func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+        update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
         return;
     }
 
@@ -83,7 +83,7 @@ void iris_death_wait_explosion(struct MainObj* self)
     }
     engine_obj.enable_boss = 0;
     engine_obj.boss_ptr = 0;
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     self->unk7C = 0x3C;
     self->unk5 = 3;
 }
@@ -93,13 +93,13 @@ void iris_death_finish(struct MainObj* self)
     if (--self->unk7C == 0) {
         engine_obj.unkF = 0x40;
     }
-    func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
 void iris_despawn(struct MainObj* self)
 {
     if (self->unk5 == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x60, 0x60);
+        update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     } else {
         self->on_screen = 0;
         ZeroObjectState(OBJECT_HEADER(self));
@@ -111,11 +111,11 @@ void iris_robot_decide(struct MainObj* self)
     s8 state;
 
     if ((self->ext.main_66.crystal_released == 0) && (--self->ext.main_66.release_countdown == 0)) {
-        func_80015D60(self, 0x20);
+        set_animation(self, 0x20);
         self->collision_data = (const u16*)D_80107E84;
         state = 5;
     } else {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         func_8001540C(2, 0xE1, self);
         state = 3;
     }
@@ -130,7 +130,7 @@ void iris_intro(struct MainObj* self)
 
 void iris_intro_wait_player(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (g_Player.x_pos.i.hi >= 0x80B) {
         background_objects[0].unk26 = 0x7F0;
         background_objects[0].unk24 = 0x830;
@@ -140,7 +140,7 @@ void iris_intro_wait_player(struct MainObj* self)
 
 void iris_intro_wait_camera(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (background_objects[0].x_pos.i.hi == 0x7F0) {
         player_start_script_action(0x15, 0);
         self->unk6 = 2;
@@ -151,7 +151,7 @@ void iris_intro_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (g_Player.script_state == -1) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -165,7 +165,7 @@ void iris_intro_warning(struct MainObj* self)
 
 void iris_intro_wait_warning(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_66.effect->active == 0) {
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
@@ -180,7 +180,7 @@ void iris_intro_dialogue(struct MainObj* self)
     s8* state;
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
@@ -193,7 +193,7 @@ void iris_intro_dialogue(struct MainObj* self)
 
 void iris_intro_wait_dialogue(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (abc_object.unkC == 0) {
         self->unk7C = 0x28;
         self->unk6 = 6;
@@ -204,9 +204,9 @@ void iris_intro_toss_crystal(struct MainObj* self)
 {
     struct MiscObj* obj;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_80015D60(self, 0xA);
+        set_animation(self, 0xA);
         obj = find_free_misc_obj();
         if (obj != 0) {
             obj->active = 0x41;
@@ -229,18 +229,18 @@ void iris_intro_toss_crystal(struct MainObj* self)
 
 void iris_intro_wait_transform(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void iris_intro_transform(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(self, 0x1F);
+        set_animation(self, 0x1F);
         self->unk7C = 0xC8;
         self->unk6 = 9;
     }
@@ -250,39 +250,39 @@ void iris_intro_pose(struct MainObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         self->unk6 = 0xA;
     }
 }
 
 void iris_intro_voice(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         func_8001540C(2, 0xDF, self);
     }
     if (self->animation_step.fields.event == 1) {
         self->unk6 = 0xB;
         self->unk7E = 3;
-        func_800921E8(9);
+        play_boss_music(9);
     }
 }
 
 void iris_intro_fill_health(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (func_8009227C() == 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (update_boss_music_delay() == 0) {
         if (--self->unk7E == 0) {
             func_8001540C(0, 0xE, 0);
             self->unk7E = 3;
         }
-        if (++self->unk5C == 0x30) {
+        if (++self->hp == 0x30) {
             self->ext.main_66.active = 1;
-            func_80015D60(self, 1);
+            set_animation(self, 1);
             func_8001540C(2, 0xE1, self);
             self->unk5 = 3;
             self->unk6 = 0;
@@ -306,11 +306,11 @@ void iris_robot_dash(struct MainObj* self)
 
 void iris_robot_dash_land(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
-        func_80015D60(self, 3);
-        self->unk24 = 0;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        set_animation(self, 3);
+        self->y_speed = 0;
         self->unk6 = 1;
     }
 }
@@ -322,15 +322,15 @@ void iris_robot_dash_run(struct MainObj* self)
 {
     s32 flags;
 
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->unk15 == 0) {
-        flags = self->unk70 & 1;
+        flags = self->collision_flags & 1;
     } else {
-        flags = self->unk70 & 2;
+        flags = self->collision_flags & 2;
     }
     if (flags != 0) {
-        func_80015D60(self, 5);
+        set_animation(self, 5);
         self->unk6 = 3;
     }
 }
@@ -340,12 +340,12 @@ void iris_robot_dash_laser(struct MainObj* self)
     s32 i;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         func_8001540C(2, 0xE2, self);
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         i = 0;
-        self->unk20 = 0;
+        self->x_speed = 0;
         self->unk7C = 0xB4;
         do {
             shot = find_free_shot_obj();
@@ -384,12 +384,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66", func_80081BA0);
 
 void iris_robot_release_crystal_wait(struct MainObj* self)
 {
-    if (self->unk5C >= 0x18) {
+    if (self->hp >= 0x18) {
         self->ext.main_66.hover_timer = 0xF0;
     } else {
         self->ext.main_66.hover_timer = 0xB4;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void iris_robot_release_crystal_finish(struct MainObj* self)
@@ -401,16 +401,16 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
     s32 i;
 
     if (self->unk7C >= 0x11) {
-        func_8002B718(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
-        self->unk24 = 0;
+        self->y_speed = 0;
         self->ext.main_66.partner->ext.main_66.crystal_released = 1;
-        func_80015D60(self->ext.main_66.partner, 1);
+        set_animation(self->ext.main_66.partner, 1);
         self->ext.main_66.partner->collision_data = D_80107DFC;
         func_8001540C(2, 0xE1, self);
 
@@ -441,11 +441,11 @@ void iris_crystal_drop(struct MainObj* self)
 
 void iris_crystal_drop_fall(struct MainObj* self)
 {
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->y_pos.i.hi >= 0x1DD) {
         self->y_pos.i.hi = 0x1DC;
-        self->unk24 = 0;
+        self->y_speed = 0;
         self->unk6 = 1;
     }
 }
@@ -454,12 +454,12 @@ void iris_crystal_drop_chase(struct MainObj* self)
 {
     s16 x_pos;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (!(D_80141BD8.unk0 & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
-            self->unk20 = FIXED(4);
+            self->x_speed = FIXED(4);
         } else {
-            self->unk20 = FIXED(-4);
+            self->x_speed = FIXED(-4);
         }
     }
 
@@ -467,10 +467,10 @@ void iris_crystal_drop_chase(struct MainObj* self)
     if (x_pos - g_Player.x_pos.i.hi >= 0) {
         if (x_pos - g_Player.x_pos.i.hi < 3) {
         } else {
-            func_8002B718(MOVING_OBJECT(self));
+            move_object(MOVING_OBJECT(self));
         }
     } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
-        func_8002B718(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
     }
 
     if (self->ext.main_66.partner->unk6 == 4) {
@@ -483,12 +483,12 @@ void iris_crystal_drop_aim(struct MainObj* self)
 {
     s16 x_pos;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (!(D_80141BD8.unk0 & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
-            self->unk20 = FIXED(4);
+            self->x_speed = FIXED(4);
         } else {
-            self->unk20 = FIXED(-4);
+            self->x_speed = FIXED(-4);
         }
     }
 
@@ -496,15 +496,15 @@ void iris_crystal_drop_aim(struct MainObj* self)
     if (x_pos - g_Player.x_pos.i.hi >= 0) {
         if (x_pos - g_Player.x_pos.i.hi < 3) {
         } else {
-            func_8002B718(MOVING_OBJECT(self));
+            move_object(MOVING_OBJECT(self));
         }
     } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
-        func_8002B718(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
     }
 
     if (--self->unk7C == 0) {
         func_8001540C(2, 0xE2, self);
-        func_80015D60(self, 0x11);
+        set_animation(self, 0x11);
         self->unk7C = 0x3C;
         self->unk6 = 3;
     }
@@ -516,7 +516,7 @@ void iris_crystal_drop_fire(struct MainObj* self)
     u32 timer;
     u8 facing;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = (u16)self->unk7C - 1;
     self->unk7C = timer;
     if ((timer << 16) == 0) {
@@ -551,7 +551,7 @@ void iris_crystal_drop_return(struct MainObj* self)
     u16* dst_x;
     s32 i;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     self->unk7C--;
     i = 0;
     if (self->unk7C == 0) {
@@ -564,7 +564,7 @@ void iris_crystal_drop_return(struct MainObj* self)
         } while (i < 0xF);
         self->ext.main_66.trail_write = 0xF;
         self->ext.main_66.trail_read = 0;
-        func_80015D60(self, 0x10);
+        set_animation(self, 0x10);
         self->unk5 = 6;
         self->unk6 = 0;
     }
@@ -1092,7 +1092,7 @@ void (*iris_state_funcs[4])() = {
 };
 
 void (*iris_step_funcs[8])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     iris_robot_decide,
     iris_intro,
     iris_robot_hover,

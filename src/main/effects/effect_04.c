@@ -2,14 +2,14 @@
 // 800B5EB0..800B60BC
 #include "common.h"
 
-void func_800B5EB0(struct EffectObj* arg0)
+void stage_music_init(struct EffectObj* self)
 {
-    arg0->ext.effect_4.unk16 = -1;
-    arg0->ext.effect_4.timer = 0x64;
-    arg0->state++;
+    self->ext.effect_4.unk16 = -1;
+    self->ext.effect_4.timer = 0x64;
+    self->state++;
     func_80016FB4(3);
 }
-u8 D_8010B434[16] = {
+u8 stage_music_tracks[16] = {
 #ifdef VERSION_JP
     0x75,
     0x76,
@@ -47,55 +47,55 @@ u8 D_8010B434[16] = {
 #endif
 };
 
-void func_800B5EEC(struct EffectObj* arg0)
+void stage_music_load(struct EffectObj* self)
 {
-    switch (arg0->unk5) {
+    switch (self->unk5) {
     case 0:
         if (D_80173C84 != 0) {
             break;
         }
         if (ENGINE_STAGE_ID == 0x000A) {
             if (D_80171EA8 == 0) {
-                arg0->unk5 = 1;
+                self->unk5 = 1;
             } else {
-                arg0->unk5 = 3;
+                self->unk5 = 3;
             }
         } else if (ENGINE_STAGE_ID == 0x010C || D_80171EA8 != 0) {
-            arg0->unk5 = 3;
+            self->unk5 = 3;
         } else if (engine_obj.substage != 0) {
-            arg0->unk5++;
+            self->unk5++;
         } else {
-            arg0->unk5 = 3;
+            self->unk5 = 3;
         }
         break;
     case 1:
         D_80171EA8 = 1;
-        func_80013AD8(D_8010B434[engine_obj.stage], 4, D_80141F38);
-        arg0->unk5++;
+        func_80013AD8(stage_music_tracks[engine_obj.stage], 4, D_80141F38);
+        self->unk5++;
         break;
     case 2:
         if (D_801406AC == 2 && D_8013BD40 == 0) {
-            arg0->unk5++;
+            self->unk5++;
         }
         break;
     case 3:
-        arg0->state++;
+        self->state++;
         break;
     }
 }
 
-void func_800B6060(struct EffectObj* arg0)
+void stage_music_despawn(struct EffectObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800B6080(struct EffectObj* arg0)
+void stage_music_update(struct EffectObj* self)
 {
-    D_8010B444[arg0->state](arg0);
+    stage_music_state_funcs[self->state](self);
 }
 
-void (*D_8010B444[])(struct EffectObj*) = {
-    func_800B5EB0,
-    func_800B5EEC,
-    func_800B6060,
+void (*stage_music_state_funcs[])(struct EffectObj*) = {
+    stage_music_init,
+    stage_music_load,
+    stage_music_despawn,
 };

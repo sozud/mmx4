@@ -9,7 +9,7 @@ struct Item08AnimationStep {
     u8 command;
 };
 
-struct Item08AnimationStep D_8010CB68[30] = {
+struct Item08AnimationStep boss_door_open_steps[30] = {
     { 1, 0, 1, 0 },
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },
@@ -42,7 +42,7 @@ struct Item08AnimationStep D_8010CB68[30] = {
     { 4, 2, 0, 12 },
 };
 
-struct Item08AnimationStep D_8010CBE0[30] = {
+struct Item08AnimationStep boss_door_close_steps[30] = {
     { 4, 0, 1, 12 },
     { 4, 0, 1, 11 },
     { 4, 1, 1, 10 },
@@ -75,22 +75,22 @@ struct Item08AnimationStep D_8010CBE0[30] = {
     { 2, 2, 0, 0 },
 };
 
-struct Unk_unk68 D_8010CC58 = { 0, 0, 0x10, 0x20 };
+struct Unk_unk68 boss_door_terrain_box = { 0, 0, 0x10, 0x20 };
 
-struct Item08AnimationStep* D_8010CC5C[2] = {
-    D_8010CB68,
-    D_8010CBE0,
+struct Item08AnimationStep* boss_door_animations[2] = {
+    boss_door_open_steps,
+    boss_door_close_steps,
 };
 
-void func_800C1994(struct ItemObj* arg0)
+void boss_door_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010CC64[arg0->state](arg0);
+    boss_door_state_funcs[arg0->state](arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-void func_800C19F0(struct ItemObj* arg0)
+void boss_door_init(struct ItemObj* arg0)
 {
     s32 column;
     s32 row;
@@ -105,7 +105,7 @@ void func_800C19F0(struct ItemObj* arg0)
     row = func_8002938C(0x80);
     x = column * 4 + 0x18;
     arg0->unk42 = (x % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
-    arg0->animation_table = (const u8* const*)D_8010CC5C;
+    arg0->animation_table = (const u8* const*)boss_door_animations;
     bg_offset = g_Player.bg_offset;
     arg0->unk7C.timer = (u8)arg0->unk2 & 0x10;
     arg0->unk15 = 0;
@@ -118,23 +118,23 @@ void func_800C19F0(struct ItemObj* arg0)
         arg0->unk68 = NULL;
     } else {
         arg0->state = 1;
-        arg0->unk68 = &D_8010CC58;
+        arg0->unk68 = &boss_door_terrain_box;
     }
     arg0->unk5 = 0;
     arg0->unk2 &= 0xF;
-    func_80015D60(ANIMATED_OBJECT(arg0), 0);
+    set_animation(ANIMATED_OBJECT(arg0), 0);
 }
 
-void func_800C1B54(struct ItemObj* arg0)
+void boss_door_main(struct ItemObj* arg0)
 {
-    D_8010CC70[arg0->unk5](arg0, &engine_obj, &g_Player);
+    boss_door_step_funcs[arg0->unk5](arg0, &engine_obj, &g_Player);
 }
 
-void func_800C1B98(struct ItemObj* arg0, struct EngineObj* arg1,
+void boss_door_wait_player(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
-    func_8002E184(PLAYER_OBJECT(arg0));
-    func_800C204C(arg0);
+    collide_with_players(PLAYER_OBJECT(arg0));
+    boss_door_block_player(arg0);
     if (func_800C1E7C(arg0)) {
         if (arg0->unk7C.timer == 0) {
             reset_main_and_shots();
@@ -145,7 +145,7 @@ void func_800C1B98(struct ItemObj* arg0, struct EngineObj* arg1,
     }
 }
 
-void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
+void boss_door_open(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2)
 {
     if (arg2->capsule_state < 0) {
         arg1->unk10 = 1;
@@ -156,9 +156,10 @@ void func_800C1C24(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerOb
     }
 }
 
+// boss_door_opening
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1C88);
 
-void func_800C1D90(struct ItemObj* arg0, struct EngineObj* arg1,
+void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
     arg2->x_pos.val += 0xA400;
@@ -166,16 +167,16 @@ void func_800C1D90(struct ItemObj* arg0, struct EngineObj* arg1,
         arg2->capsule_state = 0;
         player_set_collision_bounds(arg2);
         arg0->unk5 = 4;
-        func_80015D60(arg0, 1);
+        set_animation(arg0, 1);
         func_8001540C(0, 0x11, arg0);
     }
 }
 
-void func_800C1E10(struct ItemObj* arg0, struct EngineObj* arg1,
+void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
     if (arg0->animation_step.fields.event < 2) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.event == 1) {
             func_8001540C(0, 0x10, arg0);
             arg0->animation_step.fields.event = 0;
@@ -186,20 +187,21 @@ void func_800C1E10(struct ItemObj* arg0, struct EngineObj* arg1,
     }
 }
 
+// boss_door_player_touching
 INCLUDE_ASM("main/nonmatchings/items/item_08", func_800C1E7C);
 
-void func_800C1FE4(struct ItemObj* arg0)
+void boss_door_locked(struct ItemObj* arg0)
 {
-    func_8002E184(PLAYER_OBJECT(arg0));
-    func_800C204C(arg0);
+    collide_with_players(PLAYER_OBJECT(arg0));
+    boss_door_block_player(arg0);
     if (arg0->ext.packed != 0 && engine_obj.character_state.fields.active != 0) {
         arg0->state = 1;
         arg0->unk5 = 0;
-        arg0->unk68 = &D_8010CC58;
+        arg0->unk68 = &boss_door_terrain_box;
     }
 }
 
-void func_800C204C(struct ItemObj* arg0)
+void boss_door_block_player(struct ItemObj* arg0)
 {
     volatile struct PlayerObj* player = &g_Player;
 
@@ -211,16 +213,16 @@ void func_800C204C(struct ItemObj* arg0)
     }
 }
 
-void (*D_8010CC64[])(struct ItemObj*) = {
-    func_800C19F0,
-    func_800C1B54,
-    func_800C1FE4,
+void (*boss_door_state_funcs[])(struct ItemObj*) = {
+    boss_door_init,
+    boss_door_main,
+    boss_door_locked,
 };
 
-Item08StateFunc D_8010CC70[5] = {
-    func_800C1B98,
-    func_800C1C24,
+Item08StateFunc boss_door_step_funcs[5] = {
+    boss_door_wait_player,
+    boss_door_open,
     func_800C1C88,
-    func_800C1D90,
-    func_800C1E10,
+    boss_door_walk_through,
+    boss_door_close,
 };

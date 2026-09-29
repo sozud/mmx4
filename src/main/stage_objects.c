@@ -83,7 +83,7 @@ extern struct Checkpoint** D_800F42B4[32];
 extern struct StageObjectMarginData D_800F4334;
 extern struct ObjectHeader* (*g_MakeObjectFuncs[8])();
 
-void func_80028B68(s8 arg0, s8 arg1, s8 arg2)
+void start_screen_shake_x(s8 arg0, s8 arg1, s8 arg2)
 {
     background_objects[0].unk36 = arg0;
     background_objects[0].unk45 = arg1;
@@ -93,7 +93,7 @@ void func_80028B68(s8 arg0, s8 arg1, s8 arg2)
     background_objects[0].unk34 |= 0x10;
 }
 
-void func_80028BAC(s8 arg0, s8 arg1, s8 arg2)
+void start_screen_shake_y(s8 arg0, s8 arg1, s8 arg2)
 {
     background_objects[0].unk37 = arg0;
     background_objects[0].unk46 = arg1;
@@ -207,6 +207,7 @@ void func_800292D0(struct StageObjectRecord* arg0)
     }
 }
 
+// find_stage_main_index
 INCLUDE_ASM("main/nonmatchings/stage_objects", func_8002938C);
 
 extern struct ObjectHeader* (*g_MakeObjectFuncs[8])();

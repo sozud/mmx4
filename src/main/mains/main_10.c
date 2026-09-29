@@ -9,25 +9,25 @@ void dragonfly_update(struct MainObj* self)
 
 void dragonfly_init(struct MainObj* self)
 {
-    self->unk5C = 6;
-    self->unk60 = 3;
-    self->unk61 = 0;
+    self->hp = 6;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
     self->collision_data = D_80106770;
     self->bg_offset = g_Player.bg_offset;
     self->unk16 = 6;
     self->animation_table = dragonfly_animations;
-    self->unk68 = &D_800FAEFC;
-    self->unk20 = 0;
-    self->unk24 = 0;
-    self->unk28 = 0;
-    self->unk2C = 0;
-    self->unk67 = 0;
-    self->unk54 = D_800FAEF0;
-    self->unk50 = D_800FAEF0;
+    self->terrain_box = &dragonfly_terrain_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->hurt_box = dragonfly_body_boxes;
+    self->attack_box = dragonfly_body_boxes;
     self->unk62 = 0;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    func_80015D60(self, 0);
+    set_animation(self, 0);
 
     switch (self->unk2) {
     case 0:
@@ -64,7 +64,7 @@ void dragonfly_init(struct MainObj* self)
     case 11:
     case 12:
         self->unk7A = 1;
-        self->unk2C = -0x600;
+        self->gravity = -0x600;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 0;
         break;
@@ -73,7 +73,7 @@ void dragonfly_init(struct MainObj* self)
     case 13:
     case 14:
         self->unk7A = 1;
-        self->unk2C = 0x600;
+        self->gravity = 0x600;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 0;
         break;
@@ -102,12 +102,12 @@ void dragonfly_run(struct MainObj* self)
         }
         self->ext.main_10.saved_unk5 = self->unk5;
         if (func_8002DD04(self) < 0) {
-            func_800AF808(self);
-            func_800C813C(6, &D_800FB0EC, self);
-            func_800BF60C(self, 0x11);
+            spawn_explosion(self);
+            spawn_debris(6, &dragonfly_debris, self);
+            drop_item(self, 0x11);
             self->state = 2;
         } else if (func_8002B1E8(self, 0x40, 0x40) == 0) {
-            func_8002B318(self, 0x20, 0x20);
+            update_on_screen(self, 0x20, 0x20);
             if (--self->unk7C == 0) {
                 func_8001540C(2, 0xD, self);
                 self->unk7C = 0x3C;
@@ -122,7 +122,7 @@ void dragonfly_finish(struct MainObj* self)
 {
     self->unk7A = 0;
     self->unk62 = 0;
-    func_80015930(2, 0xD);
+    stop_sound(2, 0xD);
     if (self->ext.main_10.hold_state == 3) {
         g_Player.stun_timer = 0;
     }
@@ -138,10 +138,10 @@ void dragonfly_finish(struct MainObj* self)
 void dragonfly_despawn(struct MainObj* self)
 {
     if (self->unk2 < 3) {
-        func_8002B0C8(OBJECT_HEADER(self));
+        despawn_object(OBJECT_HEADER(self));
         return;
     }
-    func_8002B108(OBJECT_HEADER(self));
+    despawn_object_permanently(OBJECT_HEADER(self));
 }
 
 void dragonfly_resume_step(struct MainObj* self)
@@ -181,9 +181,9 @@ void dragonfly_wait(struct MainObj* self)
             self->unk7A = 0;
             self->unk15 = 0x40;
             if (!(self->unk2 & 1)) {
-                self->unk20 = FIXED(8);
+                self->x_speed = FIXED(8);
             } else {
-                self->unk20 = FIXED(6);
+                self->x_speed = FIXED(6);
             }
             self->unk5 = 6;
         }
@@ -198,9 +198,9 @@ void dragonfly_wait(struct MainObj* self)
         self->unk15 = 0;
         self->ext.main_10.hold_state = 1;
         if (!(self->unk2 & 1)) {
-            self->unk20 = FIXED(-8);
+            self->x_speed = FIXED(-8);
         } else {
-            self->unk20 = FIXED(-6);
+            self->x_speed = FIXED(-6);
         }
         self->unk5 = 6;
     }
@@ -208,22 +208,23 @@ void dragonfly_wait(struct MainObj* self)
 
 void dragonfly_hunt(struct MainObj* self)
 {
-    D_800FB120[self->unk6](self);
+    dragonfly_hunt_funcs[self->unk6](self);
 }
 
-void func_80049E24(struct MainObj* arg0)
+void dragonfly_hunt_start(struct MainObj* self)
 {
-    s32 velocity = arg0->unk15;
+    s32 velocity = self->unk15;
     if (velocity != 0) {
         velocity = FIXED(4);
     } else {
         velocity = FIXED(-4);
     }
-    arg0->unk20 = velocity;
-    arg0->ext.main_10.timer = 0xB4;
-    arg0->unk6 = 1;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    self->x_speed = velocity;
+    self->ext.main_10.timer = 0xB4;
+    self->unk6 = 1;
+    animate_object(ANIMATED_OBJECT(self));
 }
+// dragonfly_hunt_fly
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_80049E68);
 
 void dragonfly_hunt_hover(struct MainObj* self)
@@ -237,45 +238,45 @@ void dragonfly_hunt_hover(struct MainObj* self)
     if (--self->ext.main_10.timer == 0) {
         if (get_random() & 1) {
             dragonfly_face_player(self);
-            func_80015D60(self, 1);
+            set_animation(self, 1);
             self->unk5 = 4;
             self->unk6 = 0;
             return;
         }
 
         if (g_Player.y_pos.i.hi - 0x18 < self->y_pos.i.hi) {
-            self->unk24 = FIXED(3);
+            self->y_speed = FIXED(3);
         } else {
-            self->unk24 = FIXED(-3);
+            self->y_speed = FIXED(-3);
         }
         self->unk6 = 3;
     }
 
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void dragonfly_hunt_close(struct MainObj* self)
 {
-    func_8002B718((struct MovingObj*)self);
+    move_object((struct MovingObj*)self);
     if (self->ext.main_10.turn_delay == 0) {
         dragonfly_face_player(self);
     } else {
         self->ext.main_10.turn_delay--;
     }
-    if (self->unk24 < 0
+    if (self->y_speed < 0
             ? (g_Player.y_pos.i.hi - 0x18) < self->y_pos.i.hi
             : self->x_pos.i.hi < (g_Player.x_pos.i.hi - 0x18)) {
         dragonfly_face_player(self);
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         self->unk5 = 4;
         self->unk6 = 0;
     }
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void dragonfly_carry(struct MainObj* self)
 {
-    D_800FB130[self->unk6](self);
+    dragonfly_carry_funcs[self->unk6](self);
     CollisionRelated((struct PlayerObj*)self);
 }
 
@@ -283,30 +284,31 @@ void dragonfly_carry_grab(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
         dragonfly_face_player(self);
-        self->unk50 = D_800FAEF8;
+        self->attack_box = dragonfly_grab_box;
         self->unk62 = 3;
-        self->unk60 = 0;
-        func_80015D60(self, 2);
+        self->contact_damage = 0;
+        set_animation(self, 2);
         self->unk6 = 1;
         self->ext.main_10.timer = 0xB4;
         return;
     }
 
-    func_80015DC8(self);
+    animate_object(self);
 }
 
+// dragonfly_carry_hold
 INCLUDE_ASM("main/nonmatchings/mains/main_10", func_8004A178);
 
 void dragonfly_carry_lift(struct MainObj* self)
 {
     dragonfly_hold_player(self);
     if (self->animation_step.fields.event != 0) {
-        self->unk24 = FIXED(1.5);
+        self->y_speed = FIXED(1.5);
         self->ext.main_10.timer = 0x32;
         self->ext.main_10.struggle = 0;
         self->unk6 = 3;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 void dragonfly_carry_rise(struct MainObj* self)
 {
@@ -318,11 +320,11 @@ void dragonfly_carry_rise(struct MainObj* self)
     self->ext.main_10.struggle = struggle;
     if (struggle >= 0x15) {
         g_Player.stun_timer = 0;
-        self->unk50 = D_800FAEF0;
+        self->attack_box = dragonfly_body_boxes;
         self->unk62 = 0;
-        func_80015D60(self, 5);
-        self->unk24 = 0x20000;
-        self->unk50 = NULL;
+        set_animation(self, 5);
+        self->y_speed = 0x20000;
+        self->attack_box = NULL;
         self->unk5 = 5;
         self->unk6 = 0;
         return;
@@ -331,17 +333,17 @@ void dragonfly_carry_rise(struct MainObj* self)
     timer = self->ext.main_10.timer - 1;
     self->ext.main_10.timer = timer;
     if (timer == 0) {
-        func_80015D60(self, 4);
+        set_animation(self, 4);
         self->ext.main_10.timer = 0xA;
         self->unk7E = 1;
-        self->unk24 = 0;
+        self->y_speed = 0;
         self->unk6 = 4;
     } else {
-        func_80015DC8(self);
+        animate_object(self);
     }
 
-    if (!(func_8004A690(self) & 0xFF)) {
-        func_8002B718(MOVING_OBJECT(self));
+    if (!(dragonfly_tile_above(self) & 0xFF)) {
+        move_object(MOVING_OBJECT(self));
     }
 }
 
@@ -362,12 +364,12 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     struggle = self->ext.main_10.struggle + func_8002BAA4();
     self->ext.main_10.struggle = struggle;
     if (struggle >= 0x15) {
-        func_80015930(2, 0xE);
+        stop_sound(2, 0xE);
         g_Player.stun_timer = 0;
-        self->unk50 = NULL;
+        self->attack_box = NULL;
         self->unk62 = 0;
-        func_80015D60(self, 5);
-        self->unk24 = 0x20000;
+        set_animation(self, 5);
+        self->y_speed = 0x20000;
         self->unk5 = 5;
         self->unk6 = 0;
         return;
@@ -380,25 +382,25 @@ void dragonfly_carry_squeeze(struct MainObj* self)
             player_damage(2);
         }
         if (self->ext.main_10.timer == 0) {
-            func_80015930(2, 0xE);
+            stop_sound(2, 0xE);
             g_Player.stun_timer = 0;
             self->unk62 = 0;
-            func_80015D60(self, 5);
-            self->unk24 = 0x20000;
-            self->unk50 = NULL;
+            set_animation(self, 5);
+            self->y_speed = 0x20000;
+            self->attack_box = NULL;
             self->unk5 = 5;
             self->unk6 = 0;
             return;
         }
     }
 
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void dragonfly_flee(struct MainObj* self)
 {
-    func_8002B718((struct MovingObj*)self);
-    func_80015DC8(self);
+    move_object((struct MovingObj*)self);
+    animate_object(self);
 }
 
 void dragonfly_face_player(struct MainObj* self)
@@ -424,32 +426,32 @@ void dragonfly_hold_player(struct MainObj* self)
     }
 }
 
-u8 func_8004A690(struct MainObj* arg0)
+u8 dragonfly_tile_above(struct MainObj* self)
 {
     struct Unk_unk68* offsets;
     s16 x, y;
 
-    offsets = arg0->unk68;
-    x = arg0->x_pos.i.hi + offsets->unk0;
-    y = arg0->y_pos.i.hi - offsets->unk1;
+    offsets = self->terrain_box;
+    x = self->x_pos.i.hi + offsets->unk0;
+    y = self->y_pos.i.hi - offsets->unk1;
 
     return func_8002D724(
-               PLAYER_OBJECT(arg0),
+               PLAYER_OBJECT(self),
                x,
                y)
         & 0xFF;
 }
 void dragonfly_fly_past(struct MainObj* self)
 {
-    func_8002B694((struct AnimatedObj*)self);
-    func_80015DC8(self);
+    move_with_gravity((struct AnimatedObj*)self);
+    animate_object(self);
 }
 
-u8 D_800FAEF0[8] = { 0xEE, 0xEC, 0x2A, 0x24, 0xD7, 0xEA, 0x3F, 0x35 };
+u8 dragonfly_body_boxes[8] = { 0xEE, 0xEC, 0x2A, 0x24, 0xD7, 0xEA, 0x3F, 0x35 };
 
-u8 D_800FAEF8[4] = { 0xDB, 0x09, 0x20, 0x17 };
+u8 dragonfly_grab_box[4] = { 0xDB, 0x09, 0x20, 0x17 };
 
-struct Unk_unk68 D_800FAEFC = { -24, 3, 0x0A, 0x02 };
+struct Unk_unk68 dragonfly_terrain_box = { -24, 3, 0x0A, 0x02 };
 
 u8 dragonfly_anim_0[0xC] = {
     0x01,
@@ -911,7 +913,7 @@ const u8* dragonfly_animations[12] = {
     dragonfly_anim_11,
 };
 
-u8 D_800FB0EC[8] = { 6, 7, 8, 9, 10, 11, 0, 0 };
+u8 dragonfly_debris[8] = { 6, 7, 8, 9, 10, 11, 0, 0 };
 
 void (*dragonfly_state_funcs[])(struct MainObj*) = {
     dragonfly_init,
@@ -921,7 +923,7 @@ void (*dragonfly_state_funcs[])(struct MainObj*) = {
 };
 
 void (*dragonfly_step_funcs[])(struct MainObj*) = {
-    func_8009216C,
+    enemy_hit_reaction,
     dragonfly_resume_step,
     dragonfly_wait,
     dragonfly_hunt,
@@ -930,14 +932,14 @@ void (*dragonfly_step_funcs[])(struct MainObj*) = {
     dragonfly_fly_past,
 };
 
-void (*D_800FB120[])(struct MainObj*) = {
-    func_80049E24,
+void (*dragonfly_hunt_funcs[])(struct MainObj*) = {
+    dragonfly_hunt_start,
     func_80049E68,
     dragonfly_hunt_hover,
     dragonfly_hunt_close,
 };
 
-void (*D_800FB130[])(struct MainObj*) = {
+void (*dragonfly_carry_funcs[])(struct MainObj*) = {
     dragonfly_carry_grab,
     func_8004A178,
     dragonfly_carry_lift,

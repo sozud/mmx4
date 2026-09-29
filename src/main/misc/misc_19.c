@@ -2,80 +2,80 @@
 // 800CB634..800CB884
 #include "common.h"
 
-extern struct TitleObjectInit D_8010E71C[];
-extern u32* D_8010E81C[];
+extern struct TitleObjectInit title_object_inits[];
+extern u32* title_animations[];
 
 // g_TitleUpdateFuncs state 0
-void func_800CB634(struct MiscObj* arg0)
+void title_init(struct MiscObj* self)
 {
-    u8 temp_a1 = arg0->unk2;
+    u8 temp_a1 = self->unk2;
     u8 temp_v1;
 
-    arg0->animation_table = D_8010E81C;
-    arg0->bg_offset = -1;
-    arg0->unk15 = 0;
-    arg0->unk16 = 3;
-    arg0->state++;
+    self->animation_table = title_animations;
+    self->bg_offset = -1;
+    self->unk15 = 0;
+    self->unk16 = 3;
+    self->state++;
 
-    arg0->unk40 = 0x600;
-    arg0->unk3C = SP_TITLE_FRAMES;
-    temp_v1 = D_8010E71C[temp_a1].flags;
-    arg0->unk42 = ((temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6));
+    self->unk40 = 0x600;
+    self->unk3C = SP_TITLE_FRAMES;
+    temp_v1 = title_object_inits[temp_a1].flags;
+    self->unk42 = ((temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6));
     // for unk2 == 0, setting position of "MEGAMAN" text
     // for unk2 == 1, didn't notice a difference
     // for unk2 == 2, setting position of greyed out "GAME START" text
-    arg0->x_pos.val = FIXED(D_8010E71C[temp_a1].x);
-    arg0->y_pos.val = FIXED(D_8010E71C[temp_a1].y);
-    arg0->animation_step.fields.frame_index = D_8010E71C[temp_a1].sprite;
-    is_on_screen(arg0);
+    self->x_pos.val = FIXED(title_object_inits[temp_a1].x);
+    self->y_pos.val = FIXED(title_object_inits[temp_a1].y);
+    self->animation_step.fields.frame_index = title_object_inits[temp_a1].sprite;
+    is_on_screen(self);
 }
 
 // g_TitleUpdateFuncs state 1
-void func_800CB708(struct MiscObj* arg0)
+void title_draw(struct MiscObj* self)
 {
     u8 temp_v1;
 
-    if (arg0->unk2 == 0xF) {
-        arg0->unk16 = 2;
-        arg0->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
+    if (self->unk2 == 0xF) {
+        self->unk16 = 2;
+        self->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
         if (game_info.unk2 != 1) {
             if (!((game_info.unk2 < 2) && (game_info.unk2 == 0)))
                 goto use_default_frame;
-            arg0->animation_step.fields.frame_index = D_8010E71C[2].sprite;
+            self->animation_step.fields.frame_index = title_object_inits[2].sprite;
         } else {
-            arg0->animation_step.fields.frame_index = D_8010E71C[13].sprite;
+            self->animation_step.fields.frame_index = title_object_inits[13].sprite;
         }
         goto frame_selected;
     use_default_frame:
-        arg0->animation_step.fields.frame_index = D_8010E71C[14].sprite;
+        self->animation_step.fields.frame_index = title_object_inits[14].sprite;
     frame_selected:;
     }
 
-    temp_v1 = arg0->unk2;
+    temp_v1 = self->unk2;
     if (((temp_v1 >= 4) && (temp_v1 < 6)) || ((s8)temp_v1 == 6)) {
-        arg0->on_screen = 0;
+        self->on_screen = 0;
         if ((D_80141BD8.unk0 & 0x10) == 0) {
             return;
         }
     } else {
-        arg0->on_screen = 1;
+        self->on_screen = 1;
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
 // g_TitleUpdateFuncs state 2
-void func_800CB828(struct MiscObj* arg0)
+void title_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(arg0);
+    ZeroObjectState(self);
 }
 
 // title object. Includes the logo and the menu graphics
-void TitleUpdate(struct MiscObj* arg0)
+void TitleUpdate(struct MiscObj* self)
 {
-    g_TitleUpdateFuncs[arg0->state](arg0);
+    g_TitleUpdateFuncs[self->state](self);
 }
 
-struct TitleObjectInit D_8010E71C[] = {
+struct TitleObjectInit title_object_inits[] = {
 #ifdef VERSION_JP
     { 120, 72, 0, 0 },
     { 216, 72, 1, 4 },
@@ -119,7 +119,7 @@ struct TitleObjectInit D_8010E71C[] = {
 #endif
 };
 
-u32 D_8010E7A0[] = {
+u32 title_anim_0[] = {
     0x0A010002,
     0x0B010002,
     0x0C010002,
@@ -145,7 +145,7 @@ u32 D_8010E7A0[] = {
     0x11000F02,
 };
 
-u32 D_8010E7FC[] = {
+u32 title_anim_1[] = {
     0x12010001,
     0x13010002,
     0x14010001,
@@ -156,10 +156,10 @@ u32 D_8010E7FC[] = {
     0x19000003,
 };
 
-u32* D_8010E81C[] = { D_8010E7A0, D_8010E7FC };
+u32* title_animations[] = { title_anim_0, title_anim_1 };
 
 void (*g_TitleUpdateFuncs[3])(struct MiscObj*) = {
-    func_800CB634,
-    func_800CB708,
-    func_800CB828,
+    title_init,
+    title_draw,
+    title_despawn,
 };

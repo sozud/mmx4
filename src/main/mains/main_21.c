@@ -3,141 +3,142 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80054C50(struct MainObj* arg0)
+void falling_icicle_update(struct MainObj* self)
 {
-    D_800FC9FC[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
-    func_80015DC8(arg0);
+    falling_icicle_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
+    animate_object(self);
 }
 
-void func_80054CA8(struct MainObj* arg0)
+void falling_icicle_init(struct MainObj* arg0)
 {
     struct MainObj* self;
     u8 bg_offset;
 
     self = arg0;
-    self->unk60 = 1;
-    self->unk61 = 0;
+    self->contact_damage = 1;
+    self->invincibility_timer = 0;
     bg_offset = g_Player.bg_offset;
-    self->animation_table = (const u8* const*)D_800FC9DC;
+    self->animation_table = (const u8* const*)falling_icicle_animations;
     self->unk16 = 6;
-    self->unk54 = &D_800FC9F4;
-    self->unk50 = &D_800FC9F4;
-    self->unk68 = &D_800FC9F8;
+    self->hurt_box = &falling_icicle_body_box;
+    self->attack_box = &falling_icicle_body_box;
+    self->terrain_box = &falling_icicle_terrain_box;
     self->collision_data = D_80108504;
     self->ext.main_21.timer_80 = 0x1E;
-    self->unk20 = 0;
-    self->unk24 = 0;
-    self->unk28 = 0;
-    self->unk2C = 0;
-    self->unk67 = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
     self->unk15 = 0;
-    self->unk5C = 3;
+    self->hp = 3;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->bg_offset = bg_offset;
     self->ext.main_21.timer_82 = self->unk2 * 0x14;
-    func_80015D60(arg0, 0);
+    set_animation(arg0, 0);
     self->state = 1;
     self->unk5 = 2;
 }
 
+// falling_icicle_main
 INCLUDE_ASM("main/nonmatchings/mains/main_21", func_80054D8C);
 
-void func_80054EF8(struct MainObj* arg0)
+void falling_icicle_shatter(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->state = 3;
+    if (self->animation_step.fields.event == 1) {
+        self->state = 3;
     }
 }
 
-void func_80054F14(struct MainObj* arg0)
+void falling_icicle_despawn(struct MainObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_80054F34(struct MainObj* arg0)
+void falling_icicle_wait(struct MainObj* self)
 {
-    if (arg0->ext.main_21.timer_80 == 0) {
-        if (arg0->ext.main_21.timer_82 == 0) {
-            arg0->unk5 = 3;
-            func_80015D60(arg0, 0);
+    if (self->ext.main_21.timer_80 == 0) {
+        if (self->ext.main_21.timer_82 == 0) {
+            self->unk5 = 3;
+            set_animation(self, 0);
             return;
         }
-        arg0->ext.main_21.timer_82--;
+        self->ext.main_21.timer_82--;
         return;
     }
-    arg0->ext.main_21.timer_80--;
+    self->ext.main_21.timer_80--;
 }
 
-void func_80054F98(struct MainObj* arg0)
+void falling_icicle_release(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk2C = 0x5000;
-        arg0->unk5 = 4;
+    if (self->animation_step.fields.event == 1) {
+        self->gravity = 0x5000;
+        self->unk5 = 4;
     }
 }
 
-void func_80054FBC(struct MainObj* arg0)
+void falling_icicle_fall(struct MainObj* self)
 {
-    func_8002B694((struct AnimatedObj*)arg0);
+    move_with_gravity((struct AnimatedObj*)self);
 }
 
-void func_80054FDC(struct MainObj* arg0)
+void falling_icicle_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_21.saved_unk5;
+    self->unk5 = self->ext.main_21.saved_unk5;
 }
 
-union AnimationStep D_800FC9B4[] = {
+union AnimationStep falling_icicle_anim_0[] = {
     { 0x01010003 },
     { 0x02010005 },
     { 0x03010003 },
     { 0x00000150 },
 };
 
-union AnimationStep D_800FC9C4[] = {
+union AnimationStep falling_icicle_anim_1[] = {
     { 0x04000001 },
 };
 
-union AnimationStep D_800FC9C8[] = {
+union AnimationStep falling_icicle_anim_2[] = {
     { 0x05000001 },
 };
 
-union AnimationStep D_800FC9CC[] = {
+union AnimationStep falling_icicle_anim_3[] = {
     { 0x06000001 },
 };
 
-union AnimationStep D_800FC9D0[] = {
+union AnimationStep falling_icicle_anim_4[] = {
     { 0x07010006 },
     { 0x08010006 },
     { 0x09000106 },
 };
 
-union AnimationStep* D_800FC9DC[5] = {
-    D_800FC9B4,
-    D_800FC9C4,
-    D_800FC9C8,
-    D_800FC9CC,
-    D_800FC9D0,
+union AnimationStep* falling_icicle_animations[5] = {
+    falling_icicle_anim_0,
+    falling_icicle_anim_1,
+    falling_icicle_anim_2,
+    falling_icicle_anim_3,
+    falling_icicle_anim_4,
 };
 
-u8 D_800FC9F0[4] = { 1, 2, 3, 0 };
+u8 falling_icicle_debris[4] = { 1, 2, 3, 0 };
 
-struct Unk_unk68 D_800FC9F4 = { -8, -16, 16, 32 };
+struct Unk_unk68 falling_icicle_body_box = { -8, -16, 16, 32 };
 
-struct Unk_unk68 D_800FC9F8 = { 0, 0, 8, 16 };
+struct Unk_unk68 falling_icicle_terrain_box = { 0, 0, 8, 16 };
 
-void (*D_800FC9FC[4])(struct MainObj*) = {
-    func_80054CA8,
+void (*falling_icicle_state_funcs[4])(struct MainObj*) = {
+    falling_icicle_init,
     func_80054D8C,
-    func_80054EF8,
-    func_80054F14,
+    falling_icicle_shatter,
+    falling_icicle_despawn,
 };
 
-void (*D_800FCA0C[5])() = {
-    func_8009216C,
-    func_80054FDC,
-    func_80054F34,
-    func_80054F98,
-    func_80054FBC,
+void (*falling_icicle_step_funcs[5])() = {
+    enemy_hit_reaction,
+    falling_icicle_resume_step,
+    falling_icicle_wait,
+    falling_icicle_release,
+    falling_icicle_fall,
 };

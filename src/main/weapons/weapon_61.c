@@ -2,12 +2,12 @@
 // 800992FC..800994A0
 #include "common.h"
 
-void func_800992FC(struct WeaponObj* arg0)
+void ride_armor_punch_update(struct WeaponObj* arg0)
 {
-    D_80108C38[arg0->state](arg0);
+    ride_armor_punch_state_funcs[arg0->state](arg0);
 }
 
-void func_80099338(struct WeaponObj* arg0)
+void ride_armor_punch_init(struct WeaponObj* arg0)
 {
     arg0->state = 1;
     arg0->unk64 = 1;
@@ -19,10 +19,10 @@ void func_80099338(struct WeaponObj* arg0)
     arg0->unk54 = 0;
     arg0->unk50 = 0;
     arg0->unk88.half = 6;
-    func_80099388(arg0);
+    ride_armor_punch_main(arg0);
 }
 
-void func_80099388(struct WeaponObj* self)
+void ride_armor_punch_main(struct WeaponObj* self)
 {
     s8 index;
     s8 event;
@@ -42,24 +42,24 @@ void func_80099388(struct WeaponObj* self)
         }
     }
     index = self->unk2;
-    if ((D_80108C28[index] == owner->unk17) && (D_80108C30[index] == owner->unk5) && (owner->state == 1)) {
+    if ((ride_armor_punch_animations[index] == owner->unk17) && (ride_armor_punch_steps[index] == owner->unk5) && (owner->state == 1)) {
         event = self->animation_step.fields.event;
         if (event == 0) {
             self->unk50 = NULL;
             return;
         }
-        self->unk50 = &D_80108C0C[event];
+        self->unk50 = &ride_armor_punch_hit_boxes[event];
         return;
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_80099480(struct WeaponObj* arg0)
+void ride_armor_punch_despawn(struct WeaponObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-u8 D_80108C0C[7][4] = {
+u8 ride_armor_punch_hit_boxes[7][4] = {
     { 0xFC, 0xFD, 6, 5 },
     { 0xC0, 0xF9, 0x38, 0x1A },
     { 0xB9, 0xCD, 0x31, 0x40 },
@@ -69,12 +69,12 @@ u8 D_80108C0C[7][4] = {
     { 0x96, 0xF1, 0x72, 0x29 },
 };
 
-u8 D_80108C28[8] = { 8, 9, 0x0A, 0x0B, 0x0F, 0, 0, 0 };
+u8 ride_armor_punch_animations[8] = { 8, 9, 0x0A, 0x0B, 0x0F, 0, 0, 0 };
 
-u8 D_80108C30[8] = { 3, 9, 3, 6, 0x0D, 0, 0, 0 };
+u8 ride_armor_punch_steps[8] = { 3, 9, 3, 6, 0x0D, 0, 0, 0 };
 
-void (*D_80108C38[])(struct WeaponObj*) = {
-    func_80099338,
-    func_80099388,
-    func_80099480,
+void (*ride_armor_punch_state_funcs[])(struct WeaponObj*) = {
+    ride_armor_punch_init,
+    ride_armor_punch_main,
+    ride_armor_punch_despawn,
 };

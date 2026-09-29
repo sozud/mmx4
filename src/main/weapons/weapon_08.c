@@ -2,7 +2,7 @@
 // 80097860..80097EEC
 #include "common.h"
 
-void func_80097860(struct WeaponObj* arg0)
+void twin_slasher_update(struct WeaponObj* arg0)
 {
     s32 should_reset = g_Player.input_locked != 0;
 
@@ -15,28 +15,29 @@ void func_80097860(struct WeaponObj* arg0)
     if (should_reset != 0) {
         arg0->state = 3;
     }
-    D_80108A24[arg0->state](arg0);
+    twin_slasher_state_funcs[arg0->state](arg0);
 }
 
+// twin_slasher_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08", func_800978DC);
 
-void func_80097A24(struct WeaponObj* arg0)
+void twin_slasher_main(struct WeaponObj* arg0)
 {
     if ((func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) && (arg0->unk98 == 0)) {
         if (arg0->ext.weapon_8.timer != 0) {
             arg0->ext.weapon_8.timer--;
-            func_80015DC8(ANIMATED_OBJECT(arg0));
-            func_8002B718(MOVING_OBJECT(arg0));
-            arg0->unk50 = (const u8*)&D_801089FC[arg0->animation_step.fields.event];
-            func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+            animate_object(ANIMATED_OBJECT(arg0));
+            move_object(MOVING_OBJECT(arg0));
+            arg0->unk50 = (const u8*)&twin_slasher_hit_boxes[arg0->animation_step.fields.event];
+            update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
             return;
         }
     }
 
-    func_80097B14(arg0);
+    twin_slasher_hide(arg0);
 }
 
-void func_80097AC8(struct WeaponObj* arg0)
+void twin_slasher_despawn(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
     g_Player.shot_count--;
@@ -44,7 +45,7 @@ void func_80097AC8(struct WeaponObj* arg0)
     ZeroObjectState((struct ObjectHeader*)arg0);
 }
 
-void func_80097B14(struct WeaponObj* arg0)
+void twin_slasher_hide(struct WeaponObj* arg0)
 {
     arg0->on_screen = 0;
     arg0->state = 3;
@@ -53,7 +54,7 @@ void func_80097B14(struct WeaponObj* arg0)
 
 // WeaponObj, weapon_object_update_funcs[17]
 
-void func_80097B28(struct WeaponObj* arg0)
+void twin_slasher_charged_update(struct WeaponObj* arg0)
 {
     s32 should_reset = g_Player.input_locked != 0;
 
@@ -66,12 +67,13 @@ void func_80097B28(struct WeaponObj* arg0)
     if (should_reset != 0) {
         arg0->state = 3;
     }
-    D_80108A34[arg0->state](arg0);
+    twin_slasher_charged_state_funcs[arg0->state](arg0);
 }
 
+// twin_slasher_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08", func_80097BA4);
 
-void func_80097CF4(struct WeaponObj* arg0)
+void twin_slasher_charged_main(struct WeaponObj* arg0)
 {
     struct MiscObj* misc_obj;
     u8 timer;
@@ -93,17 +95,18 @@ void func_80097CF4(struct WeaponObj* arg0)
         } else {
             arg0->ext.weapon_17.timer = timer - 1;
         }
-        func_80015DC8((struct AnimatedObj*)arg0);
-        func_8002B718((struct MovingObj*)arg0);
-        func_8002B318((struct BaseObj*)arg0, 0x20, 0x20);
+        animate_object((struct AnimatedObj*)arg0);
+        move_object((struct MovingObj*)arg0);
+        update_on_screen((struct BaseObj*)arg0, 0x20, 0x20);
         return;
     }
-    func_80097B14(arg0);
+    twin_slasher_hide(arg0);
 }
 
+// twin_slasher_trail_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08", func_80097DD8);
 
-struct Unk_unk68 D_801089FC[] = {
+struct Unk_unk68 twin_slasher_hit_boxes[] = {
     { -8, -12, 0x14, 0x18 },
     { -12, -16, 0x1C, 0x22 },
     { -14, -20, 0x26, 0x2C },
@@ -112,28 +115,28 @@ struct Unk_unk68 D_801089FC[] = {
     { -14, -26, 0x26, 0x2C },
 };
 
-struct Unk_unk68 D_80108A14[] = {
+struct Unk_unk68 twin_slasher_charged_hit_boxes[] = {
     { -16, -16, 0x26, 0x26 },
     { -16, -18, 0x26, 0x26 },
     { -16, -20, 0x26, 0x26 },
     { -16, -22, 0x26, 0x26 },
 };
 
-void (*D_80108A24[])(struct WeaponObj*) = {
+void (*twin_slasher_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_800978DC,
-    (void (*)(struct WeaponObj*))func_80097A24,
-    (void (*)(struct WeaponObj*))func_80097AC8,
-    (void (*)(struct WeaponObj*))func_80097AC8,
+    (void (*)(struct WeaponObj*))twin_slasher_main,
+    (void (*)(struct WeaponObj*))twin_slasher_despawn,
+    (void (*)(struct WeaponObj*))twin_slasher_despawn,
 };
 
-void (*D_80108A34[])(struct WeaponObj*) = {
+void (*twin_slasher_charged_state_funcs[])(struct WeaponObj*) = {
     (void (*)(struct WeaponObj*))func_80097BA4,
-    (void (*)(struct WeaponObj*))func_80097CF4,
-    (void (*)(struct WeaponObj*))func_80097AC8,
-    (void (*)(struct WeaponObj*))func_80097AC8,
+    (void (*)(struct WeaponObj*))twin_slasher_charged_main,
+    (void (*)(struct WeaponObj*))twin_slasher_despawn,
+    (void (*)(struct WeaponObj*))twin_slasher_despawn,
 };
 
-u8 D_80108A44[] = {
+u8 twin_slasher_charged_angles[] = {
     0x04,
     0x03,
     0x02,

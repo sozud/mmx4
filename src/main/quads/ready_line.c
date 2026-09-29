@@ -2,7 +2,7 @@
 // 800D5C54..800D67A0
 #include "common.h"
 
-u16 D_8010FAEC[8] = {
+u16 ready_line_sweep_vertices[8] = {
     0x0000,
     0x0000,
     0x0140,
@@ -12,7 +12,7 @@ u16 D_8010FAEC[8] = {
     0x0000,
     0x0004,
 };
-s16 D_8010FAFC[10] = {
+s16 ready_line_shutter_columns[10] = {
     0x0000,
     0x0040,
     0x0080,
@@ -24,7 +24,7 @@ s16 D_8010FAFC[10] = {
     0x00C0,
     0x0100,
 };
-s16 D_8010FB10[10][4][2] = {
+s16 ready_line_shutter_open_vertices[10][4][2] = {
     0x0040,
     0x0078,
     0x0060,
@@ -106,7 +106,7 @@ s16 D_8010FB10[10][4][2] = {
     0x0100,
     0x00F0,
 };
-s16 D_8010FBB0[10][4][2] = {
+s16 ready_line_shutter_close_vertices[10][4][2] = {
     0x0040,
     0x0078,
     0x0060,
@@ -188,7 +188,7 @@ s16 D_8010FBB0[10][4][2] = {
     0x00E0,
     0x0078,
 };
-s16 D_8010FC50[3][4][2] = {
+s16 ready_line_streak_vertices[3][4][2] = {
     0x0000,
     0x0000,
     0x00B0,
@@ -214,19 +214,19 @@ s16 D_8010FC50[3][4][2] = {
     0x0000,
     0x0001,
 };
-u16 D_8010FC80 = 0;
+u16 ready_line_shutter_repeats = 0;
 
-void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
+void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
 
 // QuadObj #7
 // megaman never appears in intro stage if nopped out
-void func_800D5C54(struct QuadObj* arg0)
+void ready_line_update(struct QuadObj* arg0)
 {
-    D_8010FC84[arg0->state](arg0);
+    ready_line_state_funcs[arg0->state](arg0);
 }
 
-// D_8010FC84 state 0
-void func_800D5C90(struct QuadObj* arg0)
+// ready_line_state_funcs state 0
+void ready_line_init(struct QuadObj* arg0)
 {
     arg0->active |= 0x92;
     if (arg0->unk2 == 0) {
@@ -249,18 +249,18 @@ void func_800D5C90(struct QuadObj* arg0)
     arg0->unk30.val = 0;
 }
 
-// D_8010FC84 state 1
+// ready_line_state_funcs state 1
 // "READY" never appears if noppped out
 //  asm(".rept 20 ; nop ; .endr");
-void func_800D5CF8(struct QuadObj* arg0)
+void ready_line_main(struct QuadObj* arg0)
 {
-    D_8010FC90[arg0->unk2](arg0);
+    ready_line_type_funcs[arg0->unk2](arg0);
     arg0->on_screen = 1;
     func_8002B458(arg0);
 }
 
-// D_8010FC90 state 0
-void func_800D5D50(struct QuadObj* arg0)
+// ready_line_type_funcs state 0
+void ready_line_sweep(struct QuadObj* arg0)
 {
     u16* verts;
     struct EffectObj* temp_s1;
@@ -272,7 +272,7 @@ void func_800D5D50(struct QuadObj* arg0)
         // ready text appears
         arg0->x_pos.i.hi = -320;
         arg0->y_pos.i.hi = 112;
-        verts = D_8010FAEC;
+        verts = ready_line_sweep_vertices;
         arg0->unk14.i.hi = *verts++;
         arg0->unk18.i.hi = *verts++;
         arg0->unk1C.i.hi = *verts++;
@@ -285,7 +285,7 @@ void func_800D5D50(struct QuadObj* arg0)
         arg0->ext.ready_line.y_vel.val = 0;
         arg0->ext.ready_line.x_accel.val = 0;
         arg0->ext.ready_line.y_accel.val = 0;
-        func_800D6494(arg0);
+        ready_line_move(arg0);
         return;
     case 1:
         temp_s1 = arg0->link.owner;
@@ -312,7 +312,7 @@ void func_800D5D50(struct QuadObj* arg0)
             arg0->unk5 = 2;
             return;
         }
-        func_800D6494(arg0);
+        ready_line_move(arg0);
         return;
     case 2:
         temp_s1 = arg0->link.owner;
@@ -323,8 +323,8 @@ void func_800D5D50(struct QuadObj* arg0)
     }
 }
 
-// D_8010FC90 state 1
-void func_800D5F1C(struct QuadObj* arg0)
+// ready_line_type_funcs state 1
+void ready_line_shutter(struct QuadObj* arg0)
 {
     u16* verts;
     u16* temp_v1_2;
@@ -336,7 +336,7 @@ void func_800D5F1C(struct QuadObj* arg0)
     case 0:
         arg0->unk5 = 1;
         arg0->x_pos.i.hi = 0;
-        temp_v1_2 = &D_8010FAFC[arg0->unk7];
+        temp_v1_2 = &ready_line_shutter_columns[arg0->unk7];
         arg0->unk14.i.hi = *temp_v1_2;
         arg0->unk2C.i.hi = *temp_v1_2;
         arg0->unk1C.i.hi = *temp_v1_2 + 63;
@@ -364,11 +364,11 @@ void func_800D5F1C(struct QuadObj* arg0)
     case 1:
         var_s1 = 0;
         do {
-            func_800D64D8(arg0, arg0->unk7 & 0xFF, var_s1 & 0xFF, &D_8010FB10[arg0->unk7][var_s1]);
+            ready_line_converge_vertex(arg0, arg0->unk7 & 0xFF, var_s1 & 0xFF, &ready_line_shutter_open_vertices[arg0->unk7][var_s1]);
             var_s1 += 1;
         } while (var_s1 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
-            verts = &D_8010FB10[arg0->unk7][0];
+            verts = &ready_line_shutter_open_vertices[arg0->unk7][0];
             arg0->unk14.i.hi = *verts++;
             arg0->unk18.i.hi = *verts++;
             arg0->unk1C.i.hi = *verts++;
@@ -391,11 +391,11 @@ void func_800D5F1C(struct QuadObj* arg0)
     case 2:
         var_s1_2 = 0;
         do {
-            func_800D64D8(arg0, arg0->unk7 & 0xFF, var_s1_2 & 0xFF, &D_8010FBB0[arg0->unk7][var_s1_2]);
+            ready_line_converge_vertex(arg0, arg0->unk7 & 0xFF, var_s1_2 & 0xFF, &ready_line_shutter_close_vertices[arg0->unk7][var_s1_2]);
             var_s1_2 += 1;
         } while (var_s1_2 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
-            verts = &D_8010FBB0[arg0->unk7][0];
+            verts = &ready_line_shutter_close_vertices[arg0->unk7][0];
             arg0->unk14.i.hi = *verts++;
             arg0->unk18.i.hi = *verts++;
             arg0->unk1C.i.hi = *verts++;
@@ -412,8 +412,8 @@ void func_800D5F1C(struct QuadObj* arg0)
             arg0->runtime.legacy.unk4E = 0;
             arg0->runtime.legacy.unk4F = 0;
             arg0->runtime.legacy.unk50 = 16;
-            if (D_8010FC80 != 0) {
-                D_8010FC80 -= 1;
+            if (ready_line_shutter_repeats != 0) {
+                ready_line_shutter_repeats -= 1;
                 return;
             }
         }
@@ -426,10 +426,10 @@ void func_800D5F1C(struct QuadObj* arg0)
     }
 }
 
-extern u8 D_8010FC9C[];
+extern u8 ready_line_streak_shapes[];
 
-// D_8010FC90 state 2
-void func_800D6260(struct QuadObj* arg0)
+// ready_line_type_funcs state 2
+void ready_line_streak(struct QuadObj* arg0)
 {
     s32 var_s1;
     struct EffectObj* temp_v0_9;
@@ -439,7 +439,7 @@ void func_800D6260(struct QuadObj* arg0)
     switch (arg0->unk5) {
     case 0:
         arg0->unk5 = 1;
-        verts = &D_8010FC50[D_8010FC9C[get_random() & 0xF]][0];
+        verts = &ready_line_streak_vertices[ready_line_streak_shapes[get_random() & 0xF]][0];
         arg0->unk14.i.hi = *verts++;
         arg0->unk18.i.hi = *verts++;
         arg0->unk1C.i.hi = *verts++;
@@ -478,7 +478,7 @@ void func_800D6260(struct QuadObj* arg0)
         }
         if (arg0->runtime.legacy.unk48 == 0) {
             if (arg0->x_pos.i.hi < 320) {
-                func_800D6494(arg0);
+                ready_line_move(arg0);
                 return;
             }
             goto block_18;
@@ -488,7 +488,7 @@ void func_800D6260(struct QuadObj* arg0)
             arg0->unk5 = 2;
             return;
         }
-        func_800D6494(arg0);
+        ready_line_move(arg0);
         return;
     case 2:
         temp_v0_9 = arg0->link.owner;
@@ -499,7 +499,7 @@ void func_800D6260(struct QuadObj* arg0)
     }
 }
 
-void func_800D6494(struct QuadObj* arg0)
+void ready_line_move(struct QuadObj* arg0)
 {
     arg0->x_pos.val += arg0->ext.ready_line.x_vel.val;
     arg0->y_pos.val += arg0->ext.ready_line.y_vel.val;
@@ -507,7 +507,7 @@ void func_800D6494(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
-void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2])
+void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2])
 {
     f32* vertex;
     s32 temp_s2;
@@ -523,7 +523,7 @@ void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]
     }
     temp_s2 = vertex[0].val - (target[0] << 0x10);
     temp_s3 = vertex[1].val - (target[1] << 0x10);
-    quadrant = func_8002B810(temp_s2, temp_s3);
+    quadrant = angle_from_delta(temp_s2, temp_s3);
     if (((((arg0->runtime.ready_line.directions[vertex_index & 0xFF] ^ quadrant) & 0x10) != 0) || (arg0->runtime.ready_line.crossed[vertex_index & 0xFF] != 0)) && (arg0->runtime.ready_line.converging == 0)) {
         arg0->x_pos.i.lo = 0;
         arg0->y_pos.i.lo = 0;
@@ -539,17 +539,17 @@ void func_800D64D8(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]
     arg0->runtime.ready_line.directions[vertex_index & 0xFF] = quadrant;
 }
 
-// D_8010FC84 state 2
-void func_800D666C(struct QuadObj* arg0)
+// ready_line_state_funcs state 2
+void ready_line_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D668C(void)
+void ready_line_nop(void)
 {
 }
 
-void func_800D6694(struct QuadObj* arg0)
+void flash_band_init(struct QuadObj* arg0)
 {
     arg0->unk34 = 3;
     arg0->ext.ready_line.x_vel.val = FIXED(4);
@@ -568,7 +568,7 @@ void func_800D6694(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 
-void func_800D6700(struct QuadObj* arg0)
+void flash_band_widen(struct QuadObj* arg0)
 {
     arg0->unk14.val += arg0->ext.ready_line.x_vel.val;
     arg0->unk2C.val -= arg0->ext.ready_line.x_vel.val;
@@ -579,21 +579,21 @@ void func_800D6700(struct QuadObj* arg0)
     }
 }
 
-void func_800D6780(struct QuadObj* arg0)
+void flash_band_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010FC84[])(struct QuadObj*) = {
-    func_800D5C90,
-    func_800D5CF8,
-    func_800D666C,
+void (*ready_line_state_funcs[])(struct QuadObj*) = {
+    ready_line_init,
+    ready_line_main,
+    ready_line_despawn,
 };
 
-void (*D_8010FC90[])(struct QuadObj*) = {
-    func_800D5D50,
-    func_800D5F1C,
-    func_800D6260,
+void (*ready_line_type_funcs[])(struct QuadObj*) = {
+    ready_line_sweep,
+    ready_line_shutter,
+    ready_line_streak,
 };
 
-u8 D_8010FC9C[16] = { 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0 };
+u8 ready_line_streak_shapes[16] = { 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, 0 };

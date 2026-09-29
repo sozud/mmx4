@@ -34,37 +34,37 @@ void double_intro_voice(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
-        func_800921E8(0xA);
+        play_boss_music(0xA);
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_intro_fill_health(struct MainObj* self)
 {
     s16 temp_v0;
 
-    if (func_8009227C() == 0) {
+    if (update_boss_music_delay() == 0) {
         if (self->animation_step.fields.relative_step == 0) {
-            if (self->unk5C < 0x30) {
+            if (self->hp < 0x30) {
                 temp_v0 = self->unk7C - 1;
                 self->unk7C = temp_v0;
                 if (temp_v0 == 0) {
                     func_8001540C(0, 0xE, 0);
                     self->unk7C = 2;
                 }
-                self->unk5C++;
+                self->hp++;
                 return;
             }
             self->state = 1;
             self->unk5 = 2;
             self->unk6 = 0;
             self->unk7 = 0;
-            self->unk61 = 0;
+            self->invincibility_timer = 0;
             self->ext.main_73.cycle_step = 0;
             player_end_script_action();
             return;
         }
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -81,8 +81,8 @@ void double_intro(struct MainObj* self)
 
 void double_face_player(struct MainObj* self)
 {
-    if (self->unk70 & 3) {
-        if (self->unk70 & 1) {
+    if (self->collision_flags & 3) {
+        if (self->collision_flags & 1) {
             self->unk15 = 0;
         } else {
             self->unk15 = 0x40;
@@ -144,7 +144,7 @@ void double_wait_start(struct MainObj* self)
     self->unk7C = 0x3C;
     self->unk6++;
     double_face_player(self);
-    func_80015D60(self, 1);
+    set_animation(self, 1);
 }
 
 // double_pick_attack
@@ -158,7 +158,7 @@ void double_wait(struct MainObj* self)
 void double_energy_ball_windup(struct MainObj* self)
 {
     self->unk6++;
-    func_80015D60(self, 3);
+    set_animation(self, 3);
     func_8001540C(2, 0xF4, NULL);
 }
 
@@ -179,7 +179,7 @@ void double_energy_ball_throw(struct MainObj* self)
         func_8001540C(2, 0xF5, 0);
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_energy_ball_recover(struct MainObj* self)
@@ -194,7 +194,7 @@ void double_energy_ball_recover(struct MainObj* self)
         return;
     }
     self->unk7C = timer - 1;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_energy_ball(struct MainObj* self)
@@ -204,19 +204,19 @@ void double_energy_ball(struct MainObj* self)
 
 void double_dive_leap(struct MainObj* self)
 {
-    self->unk24 = FIXED(8);
-    self->unk28 = 0;
-    self->unk20 = 0;
-    self->unk2C = 0;
-    self->unk60 = 9;
+    self->y_speed = FIXED(8);
+    self->x_accel = 0;
+    self->x_speed = 0;
+    self->gravity = 0;
+    self->contact_damage = 9;
     self->unk6++;
-    func_80015D60(self, 4);
+    set_animation(self, 4);
     func_8001540C(2, 0xF6, NULL);
 }
 
 void double_dive_rise(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)self);
+    animate_object((struct AnimatedObj*)self);
     if (self->animation_step.fields.event != 0) {
         self->unk6++;
     }
@@ -224,14 +224,14 @@ void double_dive_rise(struct MainObj* self)
 
 void double_dive_climb(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 4) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 4) {
         self->unk6 += 1;
-        func_80015D60(self, 5);
+        set_animation(self, 5);
         func_8001540C(2, 0xF7, NULL);
     } else {
-        func_8002B694(ANIMATED_OBJECT(self));
-        func_80015DC8(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -240,11 +240,11 @@ void double_dive_aim(struct MainObj* self)
     u32 animation;
 
     if (self->animation_step.fields.relative_step < 0) {
-        self->unk54 = &D_80105270;
+        self->hurt_box = &double_dive_hurt_box;
         self->animation_step.fields.event = 0;
-        self->unk50 = &D_8010526C;
+        self->attack_box = &double_dive_attack_box;
         self->unk6++;
-        animation = func_8002B7DC(
+        animation = angle_to_object(
                         OBJECT_HEADER(self), OBJECT_HEADER(&g_Player))
             | 0x10;
         if ((animation & 0xFF) < 0x14U) {
@@ -253,19 +253,19 @@ void double_dive_aim(struct MainObj* self)
         if ((animation & 0xFF) >= 0x1DU) {
             animation = 0x1C;
         }
-        func_8002B93C(MOVING_OBJECT(self), animation & 0xFF);
-        self->unk2C = 0;
-        self->unk28 = 0;
-        self->unk20 *= 8;
-        self->unk24 *= 8;
+        set_velocity_from_angle(MOVING_OBJECT(self), animation & 0xFF);
+        self->gravity = 0;
+        self->x_accel = 0;
+        self->x_speed *= 8;
+        self->y_speed *= 8;
         if ((self->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
             self->unk15 = 0x40;
         } else {
             self->unk15 = 0;
         }
-        func_8002B694(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_dive_fall(struct MainObj* self)
@@ -273,13 +273,13 @@ void double_dive_fall(struct MainObj* self)
     s32 flags;
     s32 mask;
 
-    flags = self->unk70;
+    flags = self->collision_flags;
     if (flags & 8) {
         self->unk7C = 0x1E;
         self->unk6++;
-        func_80015D60(self, 6);
-        self->unk54 = &D_80105264;
-        self->unk50 = &D_80105260;
+        set_animation(self, 6);
+        self->hurt_box = &double_hurt_box;
+        self->attack_box = &double_attack_box;
         func_8001540C(2, 0xF1, 0);
         return;
     }
@@ -289,11 +289,11 @@ void double_dive_fall(struct MainObj* self)
         mask = 2;
     }
     if (mask & flags) {
-        self->unk20 = 0;
-        self->unk28 = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 // double_dive_slide
@@ -301,17 +301,17 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73", func_8008C664);
 
 void double_dive_hit_wall(struct MainObj* self)
 {
-    if (self->unk70 & 3) {
+    if (self->collision_flags & 3) {
         self->unk7C = 0x1E;
         self->unk6++;
-        func_80028B68(8, 4, 2);
-        func_80015D60(self, 8);
-        self->unk54 = (const u8*)&D_80105264;
-        self->unk50 = (const u8*)&D_80105260;
+        start_screen_shake_x(8, 4, 2);
+        set_animation(self, 8);
+        self->hurt_box = (const u8*)&double_hurt_box;
+        self->attack_box = (const u8*)&double_attack_box;
         func_8001540C(2, 0xF7, 0);
     } else {
-        func_8002B694(ANIMATED_OBJECT(self));
-        func_80015DC8(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -320,30 +320,30 @@ void double_dive_stun(struct MainObj* self)
     s16 timer = self->unk7C;
 
     if (timer == 0) {
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
-        self->unk28 = 0;
-        self->unk20 = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
+        self->x_accel = 0;
+        self->x_speed = 0;
         self->unk6++;
         return;
     }
     self->unk7C = timer - 1;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_dive_land(struct MainObj* self)
 {
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         self->unk5 = 2;
         self->unk6 = 1;
         self->unk7C = 0;
-        self->unk60 = 6;
+        self->contact_damage = 6;
         double_face_player(self);
         func_8001540C(2, 0xF1, NULL);
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_dive(struct MainObj* self)
@@ -353,27 +353,27 @@ void double_dive(struct MainObj* self)
 
 void double_aerial_shot_jump(struct MainObj* self)
 {
-    self->unk24 = FIXED(5);
-    self->unk28 = 0;
-    self->unk20 = 0;
-    self->unk2C = FIXED(0.2578125);
+    self->y_speed = FIXED(5);
+    self->x_accel = 0;
+    self->x_speed = 0;
+    self->gravity = FIXED(0.2578125);
     self->ext.main_73.shot_count = 0;
     self->unk6++;
-    func_80015D60(self, 2);
+    set_animation(self, 2);
 }
 
 void double_aerial_shot_fire(struct MainObj* self)
 {
-    if (self->unk24 < 0) {
+    if (self->y_speed < 0) {
         self->unk7C = 0x32;
         self->unk6++;
-        func_80015D60(self, 9);
+        set_animation(self, 9);
         double_spawn_shot(self, 1, 0);
         self->ext.main_73.shot_count++;
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_aerial_shot_hang(struct MainObj* self)
@@ -382,27 +382,27 @@ void double_aerial_shot_hang(struct MainObj* self)
 
     timer = self->unk7C;
     if (timer == 0) {
-        func_80015D60(self, 0xA);
+        set_animation(self, 0xA);
         if (self->ext.main_73.shot_count < 2) {
             self->unk7C = 0x14;
-            self->unk20 = 0;
-            self->unk28 = 0;
-            self->unk24 = 0;
-            self->unk2C = FIXED(0.2578125);
+            self->x_speed = 0;
+            self->x_accel = 0;
+            self->y_speed = 0;
+            self->gravity = FIXED(0.2578125);
             self->unk6 += 1;
-            func_80015D60(self, 2);
+            set_animation(self, 2);
             self->ext.main_73.effect.position.x = self->x_pos.u.hi;
             self->ext.main_73.effect.position.y = self->y_pos.u.hi + 0x28;
             return;
         }
         self->unk7C = 0x1E;
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->unk6 += 3;
         return;
     }
     self->unk7C = timer - 1;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_aerial_shot_fire_again(struct MainObj* arg)
@@ -416,7 +416,7 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
         self->unk6 = 2;
         *(volatile u16*)&self->unk7C = 0;
         self->unk7C = 0x32;
-        func_80015D60(self, 9);
+        set_animation(self, 9);
         double_spawn_shot(self, 1, 1);
         self->ext.main_73.shot_count++;
         return;
@@ -424,15 +424,15 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
 
     targetY = (s16)self->ext.main_5.part_index;
     if (self->y_pos.i.hi < targetY) {
-        if (self->unk24 < FIXED(-4)) {
-            self->unk24 = FIXED(-4);
-            self->unk2C = 0;
+        if (self->y_speed < FIXED(-4)) {
+            self->y_speed = FIXED(-4);
+            self->gravity = 0;
         }
-        func_8002B694(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
     } else {
         self->y_pos.i.hi = targetY;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 // double_aerial_shot_wait
@@ -442,24 +442,24 @@ void double_aerial_shot_drop(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->unk6++;
-        func_80015D60(self, 2);
+        set_animation(self, 2);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
 void double_aerial_shot_land(struct MainObj* self)
 {
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         self->unk5 = 2;
         self->unk6 = 1;
         self->unk7C = 0;
         double_face_player(self);
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void double_aerial_shot(struct MainObj* self)
@@ -499,28 +499,28 @@ void double_death_start(struct MainObj* self)
     }
     player_start_script_action(0x14, var_a1);
     self->unk5 = 1;
-    self->unk2C = FIXED(0.2578125);
-    self->unk28 = 0;
-    self->unk20 = 0;
-    self->unk24 = 0;
+    self->gravity = FIXED(0.2578125);
+    self->x_accel = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
     self->unk7C = 0x10;
     self->unk7E = 0x10;
     self->unk42 &= 0x7FFF;
-    func_80015D60(self, 0xB);
+    set_animation(self, 0xB);
     is_on_screen(BASE_OBJECT(self));
 }
 
 void double_death_fall(struct MainObj* self)
 {
     double_death_flicker(self);
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         self->unk5 = 2;
-        self->unk2C = 0;
-        self->unk24 = 0;
-        func_80015D60(self, 0);
+        self->gravity = 0;
+        self->y_speed = 0;
+        set_animation(self, 0);
         self->unk7E = 0x3C;
-        func_80015D60(self, 0x1E);
+        set_animation(self, 0x1E);
     }
     CollisionRelated(PLAYER_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
@@ -616,7 +616,7 @@ void double_update(struct MainObj* self)
     double_state_funcs[self->state](self);
 }
 
-s32 func_8008D3B8(struct MainObj* self, s8 arg1)
+s32 sigma_spawn_sequencer(struct MainObj* self, s8 arg1)
 {
     struct EffectObj* effect;
 
@@ -627,11 +627,11 @@ s32 func_8008D3B8(struct MainObj* self, s8 arg1)
         effect->id = 0x2A;
         effect->unk2 = 0;
         effect->ext.effect_42.owner.main = self;
-        D_8013B8AC = effect;
+        sigma_sequencer = effect;
     }
 }
 
-void func_8008D410(struct MainObj* self)
+void sigma_emit_explosions(struct MainObj* self)
 {
     if (--self->ext.main_74.unk97 == 0) {
         self->ext.main_74.unk97 = 4;
@@ -639,7 +639,7 @@ void func_8008D410(struct MainObj* self)
     }
 }
 
-union AnimationStep D_80104F54[] = {
+union AnimationStep double_anim_0[] = {
     { 0x00010008 },
     { 0x01010003 },
     { 0x02010006 },
@@ -674,14 +674,14 @@ union AnimationStep D_80104F54[] = {
     { 0x0A000001 },
 };
 
-struct Unk_unk68 D_80104FD4[4] = {
+struct Unk_unk68 double_anim_1[4] = {
     { 12, 0, 1, 12 },
     { 10, 0, 1, 13 },
     { 12, 0, 1, 14 },
     { 10, 0, -3, 13 },
 };
 
-struct Unk_unk68 D_80104FE4[6] = {
+struct Unk_unk68 double_anim_2[6] = {
     { 3, 0, 1, 15 },
     { 6, 0, 1, 16 },
     { 12, 0, 1, 19 },
@@ -690,7 +690,7 @@ struct Unk_unk68 D_80104FE4[6] = {
     { 10, 0, -3, 20 },
 };
 
-union AnimationStep D_80104FFC[] = {
+union AnimationStep double_anim_3[] = {
     { 0x0F010003 },
     { 0x10010005 },
     { 0x16010004 },
@@ -702,9 +702,9 @@ union AnimationStep D_80104FFC[] = {
     { 0x1B00000C },
 };
 
-u8 D_80105020[16] = { 3, 0, 1, 15, 6, 0, 1, 16, 2, 1, 1, 17, 2, 0, 255, 18 };
+u8 double_anim_4[16] = { 3, 0, 1, 15, 6, 0, 1, 16, 2, 1, 1, 17, 2, 0, 255, 18 };
 
-struct Unk_unk68 D_80105030[7] = {
+struct Unk_unk68 double_anim_5[7] = {
     { 4, 0, 1, 28 },
     { 12, 0, 1, 29 },
     { 2, 0, 1, 30 },
@@ -714,12 +714,12 @@ struct Unk_unk68 D_80105030[7] = {
     { 1, 0, -2, 34 },
 };
 
-union AnimationStep D_8010504C[] = {
+union AnimationStep double_anim_6[] = {
     { 0x23010004 },
     { 0x2400000C },
 };
 
-struct Unk_unk68 D_80105054[5] = {
+struct Unk_unk68 double_anim_7[5] = {
     { 2, 0, 1, 37 },
     { 2, 1, 1, 38 },
     { 1, 0, 1, 39 },
@@ -727,14 +727,14 @@ struct Unk_unk68 D_80105054[5] = {
     { 1, 0, -2, 41 },
 };
 
-union AnimationStep D_80105068[] = {
+union AnimationStep double_anim_8[] = {
     { 0x2A010002 },
     { 0x13000003 },
 };
 
-u8 D_80105070[8] = { 2, 0, 1, 43, 2, 0, 255, 44 };
+u8 double_anim_9[8] = { 2, 0, 1, 43, 2, 0, 255, 44 };
 
-union AnimationStep D_80105078[] = {
+union AnimationStep double_anim_10[] = {
     { 0x2D010002 },
     { 0x2E010002 },
     { 0x2D010002 },
@@ -748,7 +748,7 @@ union AnimationStep D_80105078[] = {
     { 0x2D000012 },
 };
 
-union AnimationStep D_801050A4[] = {
+union AnimationStep double_anim_11[] = {
     { 0x32010004 },
     { 0x31010003 },
     { 0x30010002 },
@@ -759,25 +759,25 @@ union AnimationStep D_801050A4[] = {
     { 0x2F000008 },
 };
 
-struct Unk_unk68 D_801050C4[4] = {
+struct Unk_unk68 double_anim_12[4] = {
     { 1, 0, 1, 51 },
     { 1, 0, 1, 52 },
     { 1, 0, 1, 53 },
     { 1, 0, -3, 54 },
 };
 
-union AnimationStep D_801050D4[] = {
+union AnimationStep double_anim_13[] = {
     { 0x37010001 },
     { 0x38010002 },
     { 0x39010003 },
     { 0x3A000004 },
 };
 
-u8 D_801050E4[8] = { 2, 0, 1, 59, 2, 0, 255, 60 };
+u8 double_anim_14[8] = { 2, 0, 1, 59, 2, 0, 255, 60 };
 
-u8 D_801050EC[8] = { 2, 0, 1, 61, 2, 0, 255, 62 };
+u8 double_anim_15[8] = { 2, 0, 1, 61, 2, 0, 255, 62 };
 
-struct Unk_unk68 D_801050F4[5] = {
+struct Unk_unk68 double_anim_16[5] = {
     { 2, 0, 1, 63 },
     { 2, 0, 1, 64 },
     { 1, 0, 1, 65 },
@@ -785,7 +785,7 @@ struct Unk_unk68 D_801050F4[5] = {
     { 1, 0, -2, 67 },
 };
 
-union AnimationStep D_80105108[] = {
+union AnimationStep double_anim_17[] = {
     { 0x44010002 },
     { 0x45010003 },
     { 0x46010003 },
@@ -803,11 +803,11 @@ union AnimationStep D_80105108[] = {
     { 0x46000018 },
 };
 
-u8 D_80105144[8] = { 3, 0, 1, 73, 3, 0, 255, 74 };
+u8 double_anim_18[8] = { 3, 0, 1, 73, 3, 0, 255, 74 };
 
-u8 D_8010514C[8] = { 3, 0, 1, 75, 3, 0, 255, 76 };
+u8 double_anim_19[8] = { 3, 0, 1, 75, 3, 0, 255, 76 };
 
-struct Unk_unk68 D_80105154[8] = {
+struct Unk_unk68 double_anim_20[8] = {
     { 4, 0, 1, 70 },
     { 4, 0, 1, 77 },
     { 6, 0, 1, 78 },
@@ -818,7 +818,7 @@ struct Unk_unk68 D_80105154[8] = {
     { 4, 0, -7, 79 },
 };
 
-union AnimationStep D_80105174[] = {
+union AnimationStep double_anim_21[] = {
     { 0x51010006 },
     { 0x52010004 },
     { 0x53010003 },
@@ -826,7 +826,7 @@ union AnimationStep D_80105174[] = {
     { 0x58000012 },
 };
 
-union AnimationStep D_80105188[] = {
+union AnimationStep double_anim_22[] = {
     { 0x58010002 },
     { 0x59010001 },
     { 0x5A010001 },
@@ -837,112 +837,112 @@ union AnimationStep D_80105188[] = {
     { 0x5F000002 },
 };
 
-struct Unk_unk68 D_801051A8[3] = {
+struct Unk_unk68 double_anim_23[3] = {
     { 1, 0, 1, 96 },
     { 1, 0, 1, 97 },
     { 1, 0, -2, 98 },
 };
 
-union AnimationStep D_801051B4[] = {
+union AnimationStep double_anim_24[] = {
     { 0x55010005 },
     { 0x56010004 },
     { 0x57010003 },
     { 0x6300000C },
 };
 
-struct Unk_unk68 D_801051C4[3] = {
+struct Unk_unk68 double_anim_25[3] = {
     { 1, 0, 1, 99 },
     { 1, 0, 1, 100 },
     { 1, 0, -2, 101 },
 };
 
-union AnimationStep D_801051D0[] = {
+union AnimationStep double_anim_26[] = {
     { 0x66000002 },
 };
 
-union AnimationStep D_801051D4[] = {
+union AnimationStep double_anim_27[] = {
     { 0x67000002 },
 };
 
-union AnimationStep D_801051D8[] = {
+union AnimationStep double_anim_28[] = {
     { 0x68000002 },
 };
 
-union AnimationStep D_801051DC[] = {
+union AnimationStep double_anim_29[] = {
     { 0x69000002 },
 };
 
-union AnimationStep D_801051E0[] = {
+union AnimationStep double_anim_30[] = {
     { 0x6A000002 },
 };
 
-void* D_801051E4[31] = {
-    D_80104F54,
-    D_80104FD4,
-    D_80104FE4,
-    D_80104FFC,
-    D_80105020,
-    D_80105030,
-    D_8010504C,
-    D_80105054,
-    D_80105068,
-    D_80105070,
-    D_80105078,
-    D_801050A4,
-    D_801050C4,
-    D_801050D4,
-    D_801050E4,
-    D_801050EC,
-    D_801050F4,
-    D_80105108,
-    D_80105144,
-    D_8010514C,
-    D_80105154,
-    D_80105174,
-    D_80105188,
-    D_801051A8,
-    D_801051B4,
-    D_801051C4,
-    D_801051D0,
-    D_801051D4,
-    D_801051D8,
-    D_801051DC,
-    D_801051E0,
+void* double_animations[31] = {
+    double_anim_0,
+    double_anim_1,
+    double_anim_2,
+    double_anim_3,
+    double_anim_4,
+    double_anim_5,
+    double_anim_6,
+    double_anim_7,
+    double_anim_8,
+    double_anim_9,
+    double_anim_10,
+    double_anim_11,
+    double_anim_12,
+    double_anim_13,
+    double_anim_14,
+    double_anim_15,
+    double_anim_16,
+    double_anim_17,
+    double_anim_18,
+    double_anim_19,
+    double_anim_20,
+    double_anim_21,
+    double_anim_22,
+    double_anim_23,
+    double_anim_24,
+    double_anim_25,
+    double_anim_26,
+    double_anim_27,
+    double_anim_28,
+    double_anim_29,
+    double_anim_30,
 };
 
-struct Unk_unk68 D_80105260 = { -9, -36, 29, 54 };
+struct Unk_unk68 double_attack_box = { -9, -36, 29, 54 };
 
-struct Unk_unk68 D_80105264 = { -14, -41, 35, 59 };
+struct Unk_unk68 double_hurt_box = { -14, -41, 35, 59 };
 
-struct Unk_unk68 D_80105268 = { 0, 0, 19, 19 };
+struct Unk_unk68 double_terrain_box = { 0, 0, 19, 19 };
 
-struct Unk_unk68 D_8010526C = { -5, -23, 20, 84 };
+struct Unk_unk68 double_dive_attack_box = { -5, -23, 20, 84 };
 
-struct Unk_unk68 D_80105270 = { -14, -53, 32, 79 };
+struct Unk_unk68 double_dive_hurt_box = { -14, -53, 32, 79 };
 
-struct Unk_unk68 D_80105274 = { -57, -11, 90, 23 };
+struct Unk_unk68 double_slide_attack_box = { -57, -11, 90, 23 };
 
-struct Unk_unk68 D_80105278 = { -27, -8, 85, 30 };
+struct Unk_unk68 double_slide_hurt_box = { -27, -8, 85, 30 };
 
-u8 D_8010527C[8] = { 2, 3, 2, 4, 255, 0, 0, 0 };
+u8 double_script_0_0[8] = { 2, 3, 2, 4, 255, 0, 0, 0 };
 
-u8 D_80105284[8] = { 2, 4, 2, 4, 255, 0, 0, 0 };
+u8 double_script_0_1[8] = { 2, 4, 2, 4, 255, 0, 0, 0 };
 
-u8 D_8010528C[8] = { 2, 3, 3, 2, 4, 255, 0, 0 };
+u8 double_script_1_0[8] = { 2, 3, 3, 2, 4, 255, 0, 0 };
 
-union AnimationStep D_80105294[] = {
+union AnimationStep double_script_1_1[] = {
     { 0x04020402 },
     { 0x0000FF05 },
 };
 
-u8* D_8010529C[2] = {
-    D_8010527C,
-    D_80105284,
+u8* double_script_table_0[2] = {
+    double_script_0_0,
+    double_script_0_1,
 };
 
-void* D_801052A4[2] = {
-    D_8010528C,
-    D_80105294,
+void* double_script_table_1[2] = {
+    double_script_1_0,
+    double_script_1_1,
 };
 
 void (*double_intro_talk_funcs[4])(struct MainObj*) = {
@@ -992,8 +992,8 @@ void (*double_aerial_shot_funcs[7])() = {
 };
 
 void (*double_step_funcs[6])() = {
-    func_8009216C,
-    func_8009216C,
+    enemy_hit_reaction,
+    enemy_hit_reaction,
     double_wait,
     double_energy_ball,
     double_dive,

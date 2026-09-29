@@ -3,35 +3,36 @@
 #include "common.h"
 
 void func_800C8610(struct MiscObj* arg0);
-void func_800C8708(struct MiscObj* arg0);
+void debris_fall(struct MiscObj* arg0);
 
-void func_800C85D0(struct MiscObj* arg0)
+void debris_update(struct MiscObj* self)
 {
-    if (arg0->state == 0) {
-        func_800C8610(arg0);
+    if (self->state == 0) {
+        func_800C8610(self);
     } else {
-        func_800C8708(arg0);
+        debris_fall(self);
     }
 }
 
+// debris_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_03", func_800C8610);
 
-void func_800C8708(struct MiscObj* arg0)
+void debris_fall(struct MiscObj* self)
 {
     u8 temp_v0;
 
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_8002B694((struct AnimatedObj*)arg0);
-        func_80015DC8(arg0);
-        temp_v0 = arg0->on_screen ^ 1;
-        arg0->on_screen = temp_v0;
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        move_with_gravity((struct AnimatedObj*)self);
+        animate_object(self);
+        temp_v0 = self->on_screen ^ 1;
+        self->on_screen = temp_v0;
         if (temp_v0 != 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+            is_on_screen(BASE_OBJECT(self));
         }
     } else {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-s32 D_8010DB48[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
-s32 D_8010DB68[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };
+s32 debris_x_speeds[8] = { -0x30000, -0x20000, 0x18000, 0x28000, -0x38000, -0x28000, 0x20000, 0x30000 };
+s32 debris_y_speeds[8] = { 0x38000, 0x48000, 0x60000, 0x30000, 0x40000, 0x50000, 0x58000, 0x28000 };

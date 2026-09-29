@@ -2,18 +2,21 @@
 // 800D41B0..800D4948
 #include "common.h"
 
-void func_800D41B0(struct QuadObj* arg0)
+void stage_select_panel_update(struct QuadObj* arg0)
 {
-    D_8010F71C[arg0->state](arg0);
+    stage_select_panel_state_funcs[arg0->state](arg0);
 }
 
+// quad_move_toward
 INCLUDE_ASM("main/nonmatchings/quads/quad_01", func_800D41EC);
 
+// stage_select_panel_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_01", func_800D4334);
 
+// stage_select_panel_main
 INCLUDE_ASM("main/nonmatchings/quads/quad_01", func_800D43F4);
 
-void func_800D46D4(struct QuadObj* arg0)
+void stage_select_panel_idle(struct QuadObj* arg0)
 {
     quad_is_on_screen(arg0);
 }
@@ -73,7 +76,7 @@ void quad_is_on_screen(struct QuadObj* arg0)
     }
 }
 
-s16 D_8010F69C[8][8] = {
+s16 stage_select_panel_shapes[8][8] = {
     { 8, 16, 80, 16, 93, 78, 33, 78 },
     { 85, 16, 157, 16, 158, 78, 98, 78 },
     { 162, 16, 234, 16, 222, 78, 162, 78 },
@@ -84,8 +87,8 @@ s16 D_8010F69C[8][8] = {
     { 226, 161, 286, 161, 311, 223, 239, 223 },
 };
 
-void (*D_8010F71C[])(struct QuadObj*) = {
+void (*stage_select_panel_state_funcs[])(struct QuadObj*) = {
     func_800D4334,
     func_800D43F4,
-    func_800D46D4,
+    stage_select_panel_idle,
 };

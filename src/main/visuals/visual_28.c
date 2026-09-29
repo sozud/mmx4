@@ -2,12 +2,12 @@
 // 800B3E7C..800B41CC
 #include "common.h"
 
-void func_800B3E7C(struct VisualObj* arg0)
+void storm_owl_fx_update(struct VisualObj* arg0)
 {
-    D_8010A6A0[arg0->state](arg0);
+    storm_owl_fx_state_funcs[arg0->state](arg0);
 }
 
-void func_800B3EB8(struct VisualObj* obj)
+void storm_owl_fx_init(struct VisualObj* obj)
 {
     u16 flags;
     u8 player_direction;
@@ -24,11 +24,11 @@ void func_800B3EB8(struct VisualObj* obj)
 
     switch (type) {
     case 0:
-        func_80015D60(obj, 0xA);
+        set_animation(obj, 0xA);
         obj->unk54 = 9;
         break;
     case 1:
-        func_80015D60(obj, 0x1A);
+        set_animation(obj, 0x1A);
         mode = obj->unk5C.fields.mode;
         switch (mode) {
         case 0:
@@ -40,11 +40,11 @@ void func_800B3EB8(struct VisualObj* obj)
         }
         break;
     case 2:
-        func_80015D60(obj, 0x19);
+        set_animation(obj, 0x19);
         owner->ext.main_60.storm_active = 2;
         break;
     case 3:
-        func_80015D60(obj, 0xE);
+        set_animation(obj, 0xE);
         break;
     }
 
@@ -52,11 +52,11 @@ void func_800B3EB8(struct VisualObj* obj)
     obj->state++;
 }
 
-void func_800B3FD4(struct VisualObj* arg0)
+void storm_owl_fx_main(struct VisualObj* arg0)
 {
     struct MainObj* owner = MAIN_OBJECT(arg0->unk50);
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->unk2 >= 2) {
         if (arg0->unk2 == 2) {
             if (owner->ext.main_60.storm_active == 0) {
@@ -77,17 +77,17 @@ void func_800B3FD4(struct VisualObj* arg0)
         } else {
             switch (arg0->unk5C.value) {
             case 0:
-                func_80015D60(arg0, 0x1B);
+                set_animation(arg0, 0x1B);
                 arg0->unk54 = 0xC;
                 arg0->unk5C.value++;
                 break;
             case 1:
-                func_80015D60(arg0, 0x1D);
+                set_animation(arg0, 0x1D);
                 arg0->unk54 = 0x3E;
                 arg0->unk5C.value++;
                 break;
             case 2:
-                func_80015D60(arg0, 0x1C);
+                set_animation(arg0, 0x1C);
                 arg0->unk54 = 0xC;
                 arg0->unk5C.value++;
                 break;
@@ -102,19 +102,19 @@ void func_800B3FD4(struct VisualObj* arg0)
         return;
     }
     if (arg0->unk2 == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+        update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
     } else {
-        func_8002B318(BASE_OBJECT(arg0), 0x20, 0x80);
+        update_on_screen(BASE_OBJECT(arg0), 0x20, 0x80);
     }
 }
 
-void func_800B41AC(struct VisualObj* arg0)
+void storm_owl_fx_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void (*D_8010A6A0[])(struct VisualObj*) = {
-    func_800B3EB8,
-    func_800B3FD4,
-    func_800B41AC,
+void (*storm_owl_fx_state_funcs[])(struct VisualObj*) = {
+    storm_owl_fx_init,
+    storm_owl_fx_main,
+    storm_owl_fx_despawn,
 };

@@ -2,7 +2,7 @@
 // 800AAC98..800ABE08
 #include "common.h"
 
-s8 D_80109C38[3][4] = {
+s8 sigma_head_boxes[3][4] = {
     { -34, -40, 67, 79 },
     { -54, -19, 20, 25 },
     { 0, 4, 26, 35 },
@@ -96,7 +96,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AAC98);
 
 void sigma_head_resume(struct ShotObj* self)
 {
-    func_8009216C(self);
+    enemy_hit_reaction(self);
 }
 
 void sigma_head_idle(struct ShotObj* self)
@@ -112,14 +112,14 @@ void sigma_head_move_start(struct ShotObj* self)
     self->unk5C = 0x30;
     self->x_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][0];
     self->y_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][1];
-    direction = func_8002B7B0(OBJECT_HEADER(self),
+    direction = angle_to_point(OBJECT_HEADER(self),
         sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16,
         sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16);
     self->unk8C.bytes[1] = direction;
-    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
-    func_80015D60(self, 7);
+    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
+    set_animation(self, 7);
     self->unk8C.byte = 1;
-    self->unk68 = (struct Unk_unk68*)D_80109C38[2];
+    self->unk68 = (struct Unk_unk68*)sigma_head_boxes[2];
     self->x_vel.val *= 3;
     self->y_vel.val *= 3;
     self->unk6++;
@@ -130,8 +130,8 @@ void sigma_head_move(struct ShotObj* self)
     u8 index;
     s8 variant;
 
-    func_8002B718(MOVING_OBJECT(self));
-    if ((func_8002B7B0(OBJECT_HEADER(self),
+    move_object(MOVING_OBJECT(self));
+    if ((angle_to_point(OBJECT_HEADER(self),
              sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16,
              sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16)
             ^ (s8)self->unk8C.bytes[1])
@@ -158,7 +158,7 @@ void sigma_head_move(struct ShotObj* self)
 void sigma_head_move_to_formation(struct ShotObj* self)
 {
     sigma_head_move_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x80, 0x80);
+    update_on_screen((struct BaseObj*)self, 0x80, 0x80);
 }
 
 // sigma_head_wait
@@ -166,7 +166,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_53", func_800AB050);
 
 void sigma_head_fire_wall_start(struct ShotObj* self)
 {
-    func_80015D60(self, 8);
+    set_animation(self, 8);
     self->timer = 0x3C;
     self->unk8A = 4;
     self->unk6++;
@@ -214,7 +214,7 @@ void sigma_head_fire_wall_shoot(struct ShotObj* self)
 void sigma_head_fire_wall(struct ShotObj* self)
 {
     sigma_head_fire_wall_funcs[self->unk6](self);
-    func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
 void sigma_head_lightning_start(struct ShotObj* self)
@@ -269,12 +269,12 @@ void sigma_head_lightning_shoot(struct ShotObj* self)
 void sigma_head_lightning(struct ShotObj* self)
 {
     sigma_head_lightning_funcs[self->unk6](self);
-    func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
 void sigma_head_freeze_start(struct ShotObj* self)
 {
-    func_80015D60(self, 9);
+    set_animation(self, 9);
     self->timer = 1;
     self->x_vel.val = FIXED(-1);
     self->y_vel.val = 0;
@@ -286,7 +286,7 @@ void sigma_head_freeze_open(struct ShotObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
     }
-    func_80015DC8(self);
+    animate_object(self);
 }
 
 void sigma_head_freeze_drop(struct ShotObj* self)
@@ -311,7 +311,7 @@ void sigma_head_freeze_drop(struct ShotObj* self)
         }
         self->timer = 6;
     }
-    func_8002B718(MOVING_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (self->x_pos.i.hi < 0x4D8) {
         self->unk5 = 3;
         self->unk6 = 0;
@@ -322,12 +322,12 @@ void sigma_head_freeze_drop(struct ShotObj* self)
 void sigma_head_freeze(struct ShotObj* self)
 {
     sigma_head_freeze_funcs[self->unk6](self);
-    func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
 void sigma_head_chomp_start(struct ShotObj* self)
 {
-    func_80015D60(self, 0xB);
+    set_animation(self, 0xB);
     func_8001540C(2, 4, self);
     self->unk6++;
 }
@@ -341,21 +341,21 @@ void sigma_head_chomp_wait(struct ShotObj* self)
 
     if (self->animation_step.fields.event == 1) {
         self->animation_step.fields.event = 0;
-        self->unk50.data = (const u8*)D_80109C38[1];
+        self->unk50.data = (const u8*)sigma_head_boxes[1];
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void sigma_head_chomp(struct ShotObj* self)
 {
     sigma_head_chomp_funcs[self->unk6](self);
-    func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
 void sigma_head_shift_start(struct ShotObj* self)
 {
-    func_80015D60(self, 9);
+    set_animation(self, 9);
     self->x_vel.val = FIXED(2);
     self->y_vel.val = 0;
     self->unk28 = self->x_pos.val + FIXED(112);
@@ -366,8 +366,8 @@ void sigma_head_shift_move(struct ShotObj* self)
 {
     s32 limit;
 
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(self);
+    move_object(MOVING_OBJECT(self));
+    animate_object(self);
     limit = self->unk28;
     if (limit < self->x_pos.val) {
         self->x_pos.val = limit;
@@ -379,7 +379,7 @@ void sigma_head_shift_move(struct ShotObj* self)
 void sigma_head_shift(struct ShotObj* self)
 {
     sigma_head_shift_funcs[self->unk6](self);
-    func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
 
 void sigma_head_vanish_start(struct ShotObj* self)
@@ -418,7 +418,7 @@ void sigma_head_vanish_blink(struct ShotObj* self)
         self->unk8C.byte ^= 1;
     }
     if ((u8)self->unk8C.byte != 0) {
-        func_8002B318(BASE_OBJECT(self), 0x50, 0x50);
+        update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
     }
 }
 
@@ -436,12 +436,12 @@ void sigma_head_run(struct ShotObj* self)
         self->unk5 = 3;
         self->unk6 = 0;
         self->unk50.data = NULL;
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi, -1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
         self->x_pos.i.hi = 0;
         self->y_pos.i.hi = 0;
         self->unk5C = 0x30;
@@ -449,7 +449,7 @@ void sigma_head_run(struct ShotObj* self)
     }
     sigma_head_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-    func_8002E184(PLAYER_OBJECT(self));
+    collide_with_players(PLAYER_OBJECT(self));
 }
 
 void sigma_head_despawn(struct ShotObj* self)
@@ -463,12 +463,12 @@ void sigma_head_update(struct ShotObj* self)
     if (temp_s1->unk94 == 2) {
         self->state = 2;
         self->unk5 = 0;
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 0, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 0, -1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 0, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 0, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
     }
     if (temp_s1->unk94 == 1) {
         self->unk8C.byte = 0;
@@ -478,12 +478,12 @@ void sigma_head_update(struct ShotObj* self)
         self->unk7 = 1;
         self->unk50.data = NULL;
         temp_s1->ext.weapon_6.direction = 0;
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 0, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 0, -1);
-        func_800AFAB4(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
-        func_800AFAB4(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 20, 0);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 20, 1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi + 0, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi + 0, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi + 15, self->y_pos.i.hi - 20, -1);
+        spawn_explosion_at(0, self->x_pos.i.hi - 15, self->y_pos.i.hi - 20, -1);
         self->x_pos.i.hi = 0;
         self->y_pos.i.hi = 0;
         self->unk5C = 0x30;

@@ -9,7 +9,7 @@
 #endif
 #include "common.h"
 
-void func_800B2AD0(struct VisualObj* arg0)
+void hover_jet_update(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s8 var_s1;
@@ -45,10 +45,10 @@ void func_800B2AD0(struct VisualObj* arg0)
         return;
     }
     if (var_s1 != arg0->unk2) {
-        func_80015D60(arg0, var_s1 + 0x20);
+        set_animation(arg0, var_s1 + 0x20);
         arg0->unk2 = var_s1;
     } else {
-        func_80015DC8(arg0);
+        animate_object(arg0);
     }
 
     arg0->unk15 = player->unk15;
@@ -60,10 +60,10 @@ void func_800B2AD0(struct VisualObj* arg0)
     } else {
         arg0->unk5C.value--;
     }
-    func_8002B318(arg0, 0x28, 0x28);
+    update_on_screen(arg0, 0x28, 0x28);
 }
 
-void func_800B2C8C(struct MiscObj* arg0)
+void stock_charge_meter_update(struct MiscObj* arg0)
 {
     u8 playerUnkA6;
 

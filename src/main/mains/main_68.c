@@ -30,17 +30,17 @@ void sigma_intro_fill_health(struct MainObj* self)
 {
     s16 temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->unk7E == 0) {
-        if (self->unk5C < 0x30) {
-            if (func_8009227C() == 0) {
+        if (self->hp < 0x30) {
+            if (update_boss_music_delay() == 0) {
                 temp_v0 = self->unk7C - 1;
                 self->unk7C = temp_v0;
                 if (temp_v0 == 0) {
                     func_8001540C(0, 0xE, 0);
                     self->unk7C = 2;
                 }
-                self->unk5C++;
+                self->hp++;
             }
         } else {
             self->unk7C = 0x1E;
@@ -112,15 +112,15 @@ void sigma_cloak_teleport_appear(struct MainObj* self)
     } else {
         self->unk15 = 0x40;
     }
-    func_80015D60(self, 0);
-    func_80015D60(self->ext.main_68.scythe, 5);
+    set_animation(self, 0);
+    set_animation(self->ext.main_68.scythe, 5);
     func_8001540C(2, 3, self);
 }
 
 void sigma_cloak_teleport_fade_in(struct MainObj* self)
 {
-    self->unk54 = (const u8*)&D_80103EE8;
-    self->unk50 = (const u8*)&D_80103EE4;
+    self->hurt_box = (const u8*)&D_80103EE8;
+    self->attack_box = (const u8*)&D_80103EE4;
     if (self->unk7C == 0) {
         self->unk7C = 0x28;
         self->unk6++;
@@ -156,8 +156,8 @@ void sigma_cloak_teleport_fade_out(struct MainObj* self)
     self->unk7C = timer;
     if (timer == 0) {
         self->unk7C = 0x78;
-        self->unk54 = NULL;
-        self->unk50 = NULL;
+        self->hurt_box = NULL;
+        self->attack_box = NULL;
         self->unk6++;
     }
     self->on_screen = 0;
@@ -182,7 +182,7 @@ void sigma_cloak_teleport_finish(struct MainObj* self)
 void sigma_cloak_teleport(struct MainObj* self)
 {
     sigma_cloak_teleport_funcs[self->unk6](self);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (D_80141BD8.unk0 % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
@@ -206,8 +206,8 @@ void sigma_cloak_dash_appear(struct MainObj* self)
     self->y_pos.i.hi = 0x150;
     self->unk7C = 0xA;
     self->unk6++;
-    func_80015D60(self, 0);
-    func_80015D60(self->ext.main_68.scythe, 5);
+    set_animation(self, 0);
+    set_animation(self->ext.main_68.scythe, 5);
     func_8001540C(2, 3, self);
 }
 
@@ -220,7 +220,7 @@ void sigma_cloak_dash_fade_in(struct MainObj* self)
         self->unk7C = 0x28;
         self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     self->on_screen = 0;
     if (self->unk7C & 1) {
         is_on_screen(BASE_OBJECT(self));
@@ -234,15 +234,15 @@ void sigma_cloak_dash_run(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
-    if (self->unk70 & 3) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->collision_flags & 3) {
         self->unk7C = 0xA;
-        self->unk68 = NULL;
+        self->terrain_box = NULL;
         self->unk6++;
         func_8001540C(2, 3, self);
         self->unk4B = -1;
-        self->ext.main_68.scythe->unk50 = NULL;
+        self->ext.main_68.scythe->attack_box = NULL;
     }
     CollisionRelated(PLAYER_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
@@ -256,8 +256,8 @@ void sigma_cloak_dash_fade_out(struct MainObj* self)
     self->unk7C = timer;
     if (timer == 0) {
         self->unk7C = 0x78;
-        self->unk54 = 0;
-        self->unk50 = 0;
+        self->hurt_box = 0;
+        self->attack_box = 0;
         self->unk6++;
         self->x_pos.i.hi = background_objects[0].x_pos.u.hi - 0x100;
     }
@@ -291,33 +291,33 @@ void sigma_scythe_spin_jump(struct MainObj* self)
         self->unk7 = state + 1;
         x_pos = self->x_pos.val;
         self->unk15 = (g_Player.x_pos.val >= x_pos) << 6;
-        func_80015D60(self, 0x16);
+        set_animation(self, 0x16);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk50 = &D_80103F08;
+        self->attack_box = &D_80103F08;
         self->unk7 = 0;
-        self->unk54 = &D_80103F0C;
+        self->hurt_box = &D_80103F0C;
         self->unk6++;
-        func_80015D60(self, 0x17);
+        set_animation(self, 0x17);
         func_8001540C(2, 0, self);
     }
 }
 
 void sigma_scythe_spin_rise(struct MainObj* self)
 {
-    func_8002B93C(MOVING_OBJECT(self),
-        func_8002B7B0(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
-    self->unk20 *= 4;
-    self->unk24 *= 4;
-    if (func_8008318C(self, FIXED(1232), FIXED(336)) & 0xFF) {
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        angle_to_point(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
+    self->x_speed *= 4;
+    self->y_speed *= 4;
+    if (gunship_is_within(self, FIXED(1232), FIXED(336)) & 0xFF) {
         self->unk7C = 0x28;
         self->unk6++;
     }
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void sigma_scythe_spin_throw(struct MainObj* self)
@@ -331,10 +331,10 @@ void sigma_scythe_spin_throw(struct MainObj* self)
         self->unk7C = timer;
         if (timer == 0) {
             self->unk7++;
-            func_80015D60(self, 0x1A);
+            set_animation(self, 0x1A);
         }
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 0) {
             self->animation_step.fields.event = 0;
             shot = find_free_shot_obj();
@@ -356,34 +356,34 @@ void sigma_scythe_spin_throw(struct MainObj* self)
 void sigma_scythe_spin_wait(struct MainObj* self)
 {
     if (self->ext.main_68.scythe->active == 0) {
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->unk6++;
-        func_80015D60(self, 0x18);
-        func_80015930(2, 5);
+        set_animation(self, 0x18);
+        stop_sound(2, 5);
         func_8001540C(2, 8, self);
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void sigma_scythe_spin_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
-        self->unk50 = (const u8*)&D_80103F00;
-        self->unk54 = (const u8*)&D_80103F04;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->attack_box = (const u8*)&D_80103F00;
+        self->hurt_box = (const u8*)&D_80103F04;
         self->unk6++;
-        func_80015D60(self, 0x19);
+        set_animation(self, 0x19);
         func_8001540C(2, 1, self);
     }
 }
 
 void sigma_scythe_spin_recover(struct MainObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
@@ -402,34 +402,34 @@ void sigma_scythe_plant_jump(struct MainObj* self)
         self->ext.main_68.next_attack = 0;
         self->unk15 = (self->x_pos.val <= g_Player.x_pos.val) << 6;
         self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
-        func_80015D60(self, 0x16);
+        set_animation(self, 0x16);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk24 = FIXED(6.5);
-        self->unk2C = FIXED(0.2578125);
-        self->unk50 = &D_80103F08;
+        self->y_speed = FIXED(6.5);
+        self->gravity = FIXED(0.2578125);
+        self->attack_box = &D_80103F08;
         self->unk7 = 0;
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk54 = &D_80103F0C;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->hurt_box = &D_80103F0C;
         self->unk6++;
-        func_80015D60(self, 0x17);
+        set_animation(self, 0x17);
         func_8001540C(2, 0, self);
     }
 }
 
 void sigma_scythe_plant_apex(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk24 < 0) {
-        self->unk24 = 0;
-        self->unk2C = 0;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_speed < 0) {
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk6++;
-        func_80015D60(self, 0x1A);
+        set_animation(self, 0x1A);
     }
 }
 
@@ -437,7 +437,7 @@ void sigma_scythe_plant_throw(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         shot = find_free_shot_obj();
@@ -450,22 +450,22 @@ void sigma_scythe_plant_throw(struct MainObj* self)
         }
     }
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->unk6++;
-        func_80015D60(self, 0x13);
+        set_animation(self, 0x13);
     }
 }
 
 void sigma_scythe_plant_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
-        self->unk50 = (const u8*)&D_80103F00;
-        self->unk54 = (const u8*)&D_80103F04;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->attack_box = (const u8*)&D_80103F00;
+        self->hurt_box = (const u8*)&D_80103F04;
         self->unk6++;
-        func_80015D60(self, 0x14);
+        set_animation(self, 0x14);
         func_8001540C(2, 1, self);
     }
 }
@@ -476,12 +476,12 @@ void sigma_scythe_plant_wait(struct MainObj* self)
     u8 index;
     u8 state;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     step = self->unk7;
     if (step == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             self->unk7 = step + 1;
-            func_80015D60(self, 0x10);
+            set_animation(self, 0x10);
         }
     } else {
         index = self->ext.main_68.next_attack;
@@ -506,7 +506,7 @@ void sigma_cloak_pick_attack(struct MainObj* self)
     self->unk5 = sigma_cloak_pattern[self->ext.main_68.next_attack];
     index = self->ext.main_68.next_attack + 1;
     self->ext.main_68.next_attack = index;
-    self->unk54 = (const u8*)&D_80103EF4;
+    self->hurt_box = (const u8*)&D_80103EF4;
     self->unk6 = 0;
     self->unk7 = 0;
     if (index == 3) {
@@ -519,7 +519,7 @@ void sigma_darts_start(struct MainObj* self)
     self->unk6++;
     self->unk15 = (self->x_pos.val <= g_Player.x_pos.val) << 6;
     self->ext.main_68.count = 0;
-    func_80015D60(self, 0x1B);
+    set_animation(self, 0x1B);
 }
 
 void sigma_darts_spawn(struct MainObj* self)
@@ -527,7 +527,7 @@ void sigma_darts_spawn(struct MainObj* self)
     u8 var_s1;
     struct ShotObj* temp_v0;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     var_s1 = 0;
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
@@ -550,17 +550,17 @@ void sigma_darts_spawn(struct MainObj* self)
 
 void sigma_darts_pose(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->unk7C = 0x5A;
         self->unk6++;
-        func_80015D60(self, 0x2B);
+        set_animation(self, 0x2B);
     }
 }
 
 void sigma_darts_wait(struct MainObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (--self->unk7C == 0) {
         self->unk5 = 5;
         self->unk6 = 0;
@@ -580,17 +580,17 @@ void sigma_scythe_retrieve_jump(struct MainObj* self)
 
         self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
         self->unk15 = (self->x_pos.val < other_x) << 6;
-        func_80015D60(self, 0x11);
+        set_animation(self, 0x11);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk50 = &D_80103F08;
+        self->attack_box = &D_80103F08;
         self->unk7 = 0;
-        self->unk54 = &D_80103F0C;
+        self->hurt_box = &D_80103F0C;
         self->unk6 = (u8)self->unk6 + 1;
-        func_80015D60(self, 0x12);
+        set_animation(self, 0x12);
         func_8001540C(2, 0, self);
     }
 }
@@ -599,13 +599,13 @@ void sigma_scythe_retrieve_rise(struct MainObj* self)
 {
     struct ObjectHeader* temp_v1;
 
-    func_8002B93C(MOVING_OBJECT(self),
-        func_8002B7B0(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
-    self->unk20 *= 4;
-    self->unk24 *= 4;
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (func_8008318C(self, FIXED(1232), FIXED(336)) & 0xFF) {
+    set_velocity_from_angle(MOVING_OBJECT(self),
+        angle_to_point(OBJECT_HEADER(self), FIXED(1232), FIXED(336)) & 0xFF);
+    self->x_speed *= 4;
+    self->y_speed *= 4;
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (gunship_is_within(self, FIXED(1232), FIXED(336)) & 0xFF) {
         temp_v1 = OBJECT_HEADER(self->ext.main_68.scythe);
         self->unk6++;
         temp_v1->unk5++;
@@ -614,34 +614,34 @@ void sigma_scythe_retrieve_rise(struct MainObj* self)
 
 void sigma_scythe_retrieve_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_68.scythe == NULL) {
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->unk6++;
-        func_80015D60(self, 0x18);
-        func_80015930(2, 5);
+        set_animation(self, 0x18);
+        stop_sound(2, 5);
         func_8001540C(2, 8, self);
     }
 }
 
 void sigma_scythe_retrieve_land(struct MainObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
-        self->unk50 = (const u8*)&D_80103F00;
-        self->unk54 = (const u8*)&D_80103F04;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
+        self->attack_box = (const u8*)&D_80103F00;
+        self->hurt_box = (const u8*)&D_80103F04;
         self->unk6++;
-        func_80015D60(self, 0x19);
+        set_animation(self, 0x19);
     }
 }
 
 void sigma_scythe_retrieve_recover(struct MainObj* self)
 {
-    func_80015DC8(self);
+    animate_object(self);
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 6;
         self->unk6 = 0;
@@ -657,14 +657,14 @@ void sigma_scythe_retrieve(struct MainObj* self)
 void sigma_land_pause(struct MainObj* self)
 {
     if (self->unk6 == 0) {
-        self->unk50 = (const u8*)&D_80103F00;
-        self->unk54 = (const u8*)&D_80103F04;
+        self->attack_box = (const u8*)&D_80103F00;
+        self->hurt_box = (const u8*)&D_80103F04;
         self->unk6++;
-        func_80015D60(self, 0x15);
+        set_animation(self, 0x15);
         self->unk7C = 0x28;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
@@ -680,7 +680,7 @@ void sigma_eye_laser_fire(struct MainObj* self)
     struct QuadObj* quad;
     s8 quad_type;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         func_8001540C(2, 9, self);
@@ -710,15 +710,15 @@ void sigma_eye_laser_fire(struct MainObj* self)
 
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
-        func_80015D60(self, 0x1D);
+        set_animation(self, 0x1D);
     }
 }
 
 void sigma_eye_laser_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (*(s8*)self->ext.main_68.effect == 0) {
-        func_80015930(2, 9);
+        stop_sound(2, 9);
         self->unk5 = 5;
         self->unk6 = 0;
         self->unk7 = 0;
@@ -741,7 +741,7 @@ void sigma_pose(struct MainObj* self)
     if (self->unk7 == 0) {
         self->unk7++;
         self->unk7C = 0x78;
-        func_80015D60(self, 0x29);
+        set_animation(self, 0x29);
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -749,7 +749,7 @@ void sigma_pose(struct MainObj* self)
             visual->unk2 = 5;
         }
     } else {
-        func_80015DC8(self);
+        animate_object(self);
         self->unk7C--;
     }
 }
@@ -767,15 +767,15 @@ void sigma_fight(struct BarObj* self)
 
 void sigma_death_start(struct MainObj* self)
 {
-    func_80015930(2, 5);
-    func_80015930(2, 9);
+    stop_sound(2, 5);
+    stop_sound(2, 9);
     player_start_script_action(0x15, 0);
     engine_obj.unk1C = 1;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_68.blink_delay = 0x19;
     self->unk5++;
-    func_80015D60(self, 0x29);
+    set_animation(self, 0x29);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -835,7 +835,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085460);
 void sigma_death_finish(struct MainObj* self)
 {
     if (background_objects[0].y_pos.i.hi == background_objects[0].unk20) {
-        func_800DABE4(7, 0, 0);
+        apply_tile_effect(7, 0, 0);
         background_objects[0].unk2A = background_objects[0].unk28;
         background_objects[0].unk24 += 0x280;
         player_end_script_action();
@@ -854,11 +854,11 @@ void sigma_cloak_stagger_start(struct MainObj* self)
     self->unk4B = -1;
     self->unk7C = 0x40;
     self->unk7E = 4;
-    self->unk54 = NULL;
+    self->hurt_box = NULL;
     self->unk42 &= 0x7FFF;
     self->unk5++;
-    func_80015D60(self, 8);
-    func_80015D60(self->ext.main_68.scythe, 9);
+    set_animation(self, 8);
+    set_animation(self->ext.main_68.scythe, 9);
     func_8001540C(2, 4, self);
     is_on_screen(BASE_OBJECT(self));
 }
@@ -922,7 +922,7 @@ void sigma_cloak_stagger_finish(struct MainObj* self)
 void sigma_cloak_stagger(struct MainObj* self)
 {
     sigma_cloak_stagger_funcs[self->unk5](self);
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (D_80141BD8.unk0 % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
@@ -939,18 +939,18 @@ void sigma_reveal_start(struct MainObj* self)
     u8 state = self->unk5;
 
     self->unk4B = -1;
-    self->unk68 = &D_80103EF0;
-    self->unk24 = FIXED(-1);
-    self->unk54 = 0;
+    self->terrain_box = &D_80103EF0;
+    self->y_speed = FIXED(-1);
+    self->hurt_box = 0;
     self->ext.main_68.count = 0;
-    self->unk20 = 0;
+    self->x_speed = 0;
     state++;
     self->unk42 &= 0x7FFF;
     self->unk5 = state;
     self->unk15 = (g_Player.x_pos.i.hi >= self->x_pos.i.hi) << 6;
-    func_80015D60(self, 8);
+    set_animation(self, 8);
     func_8001540C(2, 0xE, self);
-    func_80015D60(self->ext.main_68.scythe, 9);
+    set_animation(self->ext.main_68.scythe, 9);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -967,12 +967,12 @@ void sigma_reveal_fall(struct MainObj* self)
             temp_v0->unk50 = PLAYER_OBJECT(self);
         }
     }
-    if (self->unk70 & 8) {
+    if (self->collision_flags & 8) {
         self->unk7C = 0x78;
         self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -981,10 +981,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68", func_80085A44);
 
 void sigma_reveal_wait_cloak(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_68.count == 0) {
         self->unk5++;
-        func_80015D60(self, 0xF);
+        set_animation(self, 0xF);
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -993,7 +993,7 @@ void sigma_reveal_dialogue(struct MainObj* self)
 {
     u16 sound_id;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             self->unk15 = (g_Player.x_pos.i.hi >= self->x_pos.i.hi) << 6;
@@ -1019,14 +1019,14 @@ void sigma_reveal_fill_health(struct MainObj* self)
 {
     u16 temp_v0;
 
-    if (self->unk5C < 0x30) {
+    if (self->hp < 0x30) {
         temp_v0 = self->unk7C - 1;
         self->unk7C = temp_v0;
         if ((temp_v0 << 0x10) == 0) {
             func_8001540C(0, 0xE, 0);
             self->unk7C = 2;
         }
-        self->unk5C = (s8)((u8)self->unk5C + 1);
+        self->hp = (s8)((u8)self->hp + 1);
     } else {
         self->unk7C = 0x5A;
         self->unk5 = (s8)((u8)self->unk5 + 1);
@@ -1044,8 +1044,8 @@ void sigma_reveal_finish(struct MainObj* self)
     if (temp_v0 == 0) {
         temp_v1 = 1;
         self->collision_data = (const u16*)D_80108004;
-        self->unk50 = (const u8*)&D_80103F00;
-        self->unk54 = (const u8*)&D_80103F04;
+        self->attack_box = (const u8*)&D_80103F00;
+        self->hurt_box = (const u8*)&D_80103F04;
         self->unk2 = temp_v1;
         self->state = temp_v1;
         self->unk5 = 2;
@@ -1544,7 +1544,7 @@ void (*sigma_eye_laser_funcs[3])(struct MainObj*) = {
 };
 
 void (*sigma_cloak_step_funcs[5])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     sigma_idle,
     sigma_cloak_pick_attack,
     sigma_cloak_teleport,
@@ -1552,7 +1552,7 @@ void (*sigma_cloak_step_funcs[5])() = {
 };
 
 void (*sigma_step_funcs[9])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     sigma_idle,
     sigma_scythe_spin,
     sigma_scythe_plant,

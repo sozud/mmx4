@@ -3,137 +3,139 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8004C734(struct MainObj* arg0)
+void heavy_mech_update(struct MainObj* self)
 {
-    D_800FB858[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    heavy_mech_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
-void func_8004C784(struct MainObj* arg0)
+void heavy_mech_init(struct MainObj* self)
 {
-    arg0->unk5C = 0x10;
-    arg0->unk60 = 3;
-    arg0->unk61 = 0;
-    arg0->collision_data = D_801068F0;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->animation_table = (const u8* const*)D_800FB804;
-    arg0->unk16 = 6;
-    arg0->unk68 = &D_800FB704;
-    arg0->unk54 = &D_800FB6FC;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk67 = 0;
-    arg0->unk50 = &D_800FB700;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    func_8004CEF4(ANIMATED_OBJECT(arg0));
-    func_80015D60(arg0, 0);
-    arg0->ext.main_13.unk80 = 0x8000;
-    arg0->state = 1;
-    arg0->ext.main_13.unk84 = 0;
-    arg0->unk5 = 2;
-    arg0->unk6 = 0;
+    self->hp = 0x10;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
+    self->collision_data = D_801068F0;
+    self->bg_offset = g_Player.bg_offset;
+    self->animation_table = (const u8* const*)heavy_mech_animations;
+    self->unk16 = 6;
+    self->terrain_box = &heavy_mech_terrain_box;
+    self->hurt_box = &heavy_mech_hurt_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->attack_box = &heavy_mech_attack_box;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    heavy_mech_face_player(ANIMATED_OBJECT(self));
+    set_animation(self, 0);
+    self->ext.main_13.unk80 = 0x8000;
+    self->state = 1;
+    self->ext.main_13.unk84 = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
 }
 
+// heavy_mech_main
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004C860);
 
-void func_8004C97C(struct MainObj* arg0)
+void heavy_mech_explode(struct MainObj* self)
 {
-    if (--arg0->unk7C == 0) {
-        arg0->state = 3;
-    } else if (--arg0->unk7E == 0) {
-        arg0->unk7E = 6;
-        func_800AF878(arg0, 1, 24, 32);
+    if (--self->unk7C == 0) {
+        self->state = 3;
+    } else if (--self->unk7E == 0) {
+        self->unk7E = 6;
+        func_800AF878(self, 1, 24, 32);
     }
 }
 
-void func_8004C9E8(struct MainObj* arg0)
+void heavy_mech_despawn(struct MainObj* self)
 {
-    arg0->ext.main_13.unk80 = 0;
-    arg0->ext.main_13.unk84 = 0;
-    arg0->ext.main_13.unk88 = 0;
-    arg0->ext.main_13.saved_unk5 = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->ext.main_13.unk80 = 0;
+    self->ext.main_13.unk84 = 0;
+    self->ext.main_13.unk88 = 0;
+    self->ext.main_13.saved_unk5 = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8004CA14(struct MainObj* arg0)
+void heavy_mech_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = arg0->ext.main_13.saved_unk5;
+    self->unk5 = self->ext.main_13.saved_unk5;
 }
 
-void func_8004CA20(struct MainObj* arg0)
+void heavy_mech_idle(struct MainObj* self)
 {
-    D_800FB880[arg0->unk6](arg0);
+    heavy_mech_idle_funcs[self->unk6](self);
 }
 
-void func_8004CA5C(struct MainObj* arg0)
+void heavy_mech_idle_start(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->unk7C = 0x3C;
-    arg0->unk6 = 1;
+    animate_object(ANIMATED_OBJECT(self));
+    self->unk7C = 0x3C;
+    self->unk6 = 1;
 }
 
+// heavy_mech_idle_wait
 INCLUDE_ASM("main/nonmatchings/mains/main_13", func_8004CA94);
 
-void func_8004CBD4(struct MainObj* arg0)
+void heavy_mech_fall(struct MainObj* self)
 {
-    if (arg0->unk70 & 8) {
-        if (arg0->ext.main_13.unk80 == 0x8000) {
-            func_8004CEF4(ANIMATED_OBJECT(arg0));
+    if (self->collision_flags & 8) {
+        if (self->ext.main_13.unk80 == 0x8000) {
+            heavy_mech_face_player(ANIMATED_OBJECT(self));
         }
-        func_80015D60(arg0, 0);
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 0;
+        set_animation(self, 0);
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 0;
     } else {
-        func_8002B694(ANIMATED_OBJECT(arg0));
+        move_with_gravity(ANIMATED_OBJECT(self));
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8004CC64(struct MainObj* arg0)
+void heavy_mech_throw(struct MainObj* self)
 {
-    D_800FB888[arg0->unk6](arg0);
+    heavy_mech_throw_funcs[self->unk6](self);
 }
 
-void func_8004CCA0(struct MainObj* arg0)
+void heavy_mech_throw_anim(struct MainObj* self)
 {
     struct ShotObj* shot;
     s8 event;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    event = arg0->animation_step.fields.event;
+    animate_object(ANIMATED_OBJECT(self));
+    event = self->animation_step.fields.event;
     switch (event) {
     case 1:
-        func_80015D60(arg0, 0);
-        arg0->ext.main_13.unk88 = 0;
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+        set_animation(self, 0);
+        self->ext.main_13.unk88 = 0;
+        self->unk5 = 2;
+        self->unk6 = 0;
         break;
     case 2:
-        func_8001540C(2, 0x31, arg0);
-        if (arg0->animation_step.fields.event != 0) {
+        func_8001540C(2, 0x31, self);
+        if (self->animation_step.fields.event != 0) {
             shot = find_free_shot_obj();
             if (shot != NULL) {
                 shot->active = 0x41;
                 shot->id = 5;
                 shot->unk2 = 0;
-                shot->unk40 = arg0->unk40;
-                shot->unk42 = arg0->unk42;
-                shot->animation_table = (u32**)arg0->animation_table;
-                shot->unk3C = (void*)arg0->sprite_frames;
-                shot->unk15 = arg0->unk15;
-                shot->bg_offset = arg0->bg_offset;
-                shot->x_pos.val = arg0->x_pos.val;
-                shot->y_pos.val = arg0->y_pos.val;
-                shot->unk84.collision_state = &arg0->ext.main_13.unk80;
-                if (arg0->ext.main_13.unk88 == event) {
+                shot->unk40 = self->unk40;
+                shot->unk42 = self->unk42;
+                shot->animation_table = (u32**)self->animation_table;
+                shot->unk3C = (void*)self->sprite_frames;
+                shot->unk15 = self->unk15;
+                shot->bg_offset = self->bg_offset;
+                shot->x_pos.val = self->x_pos.val;
+                shot->y_pos.val = self->y_pos.val;
+                shot->unk84.collision_state = &self->ext.main_13.unk80;
+                if (self->ext.main_13.unk88 == event) {
                     shot->state = 3;
                 }
             }
@@ -142,59 +144,59 @@ void func_8004CCA0(struct MainObj* arg0)
     }
 }
 
-void func_8004CDC8(struct MainObj* arg0)
+void heavy_mech_stomp(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.event == 2) {
-        func_80028B68(8, 4, 1);
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 2) {
+        start_screen_shake_x(8, 4, 1);
     }
-    if (arg0->animation_step.fields.event == 1) {
-        if (arg0->ext.main_13.unk80 == 0x8000) {
-            func_80015D60(arg0, 0);
+    if (self->animation_step.fields.event == 1) {
+        if (self->ext.main_13.unk80 == 0x8000) {
+            set_animation(self, 0);
         }
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
 }
 
-void func_8004CE48(struct MainObj* arg0)
+void heavy_mech_check_fall(struct MainObj* self)
 {
-    if (arg0->unk67 == 0 && !(arg0->unk70 & 8)) {
-        arg0->unk5 = 3;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = 1;
+    if (self->air_state == 0 && !(self->collision_flags & 8)) {
+        self->unk5 = 3;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 1;
     }
 }
 
-void func_8004CE94(struct MainObj* arg0)
+void heavy_mech_check_catch(struct MainObj* self)
 {
-    if (arg0->unk5 != 5 && arg0->ext.main_13.unk80 == 0x8001) {
-        func_80015D60(arg0, 3);
-        arg0->ext.main_13.unk80 = 0x8000;
-        arg0->unk5 = 5;
-        arg0->unk6 = 0;
+    if (self->unk5 != 5 && self->ext.main_13.unk80 == 0x8001) {
+        set_animation(self, 3);
+        self->ext.main_13.unk80 = 0x8000;
+        self->unk5 = 5;
+        self->unk6 = 0;
     }
 }
 
-void func_8004CEF4(struct AnimatedObj* arg0)
+void heavy_mech_face_player(struct AnimatedObj* self)
 {
-    if (arg0->x_pos.val > g_Player.x_pos.val) {
-        arg0->unk15 = 0;
+    if (self->x_pos.val > g_Player.x_pos.val) {
+        self->unk15 = 0;
     } else {
-        arg0->unk15 = 0x40;
+        self->unk15 = 0x40;
     }
 }
 
-struct Unk_unk68 D_800FB6FC = { -21, -23, 39, 50 };
+struct Unk_unk68 heavy_mech_hurt_box = { -21, -23, 39, 50 };
 
-struct Unk_unk68 D_800FB700 = { -18, -21, 33, 46 };
+struct Unk_unk68 heavy_mech_attack_box = { -18, -21, 33, 46 };
 
-struct Unk_unk68 D_800FB704 = { 0, 27, 26, 3 };
+struct Unk_unk68 heavy_mech_terrain_box = { 0, 27, 26, 3 };
 
-union AnimationStep D_800FB708[] = {
+union AnimationStep heavy_mech_anim_0[] = {
     { 0x0001000C },
     { 0x0101000C },
     { 0x0201000C },
@@ -213,7 +215,7 @@ union AnimationStep D_800FB708[] = {
     { 0x03F1010C },
 };
 
-union AnimationStep D_800FB748[] = {
+union AnimationStep heavy_mech_anim_1[] = {
     { 0x0601000A },
     { 0x07010006 },
     { 0x0801000E },
@@ -225,7 +227,7 @@ union AnimationStep D_800FB748[] = {
     { 0x0B000101 },
 };
 
-union AnimationStep D_800FB76C[] = {
+union AnimationStep heavy_mech_anim_2[] = {
     { 0x0601000A },
     { 0x0E010008 },
     { 0x0F010010 },
@@ -237,7 +239,7 @@ union AnimationStep D_800FB76C[] = {
     { 0x13000101 },
 };
 
-union AnimationStep D_800FB790[] = {
+union AnimationStep heavy_mech_anim_3[] = {
     { 0x1B010010 },
     { 0x1C010212 },
     { 0x1B01000C },
@@ -249,7 +251,7 @@ union AnimationStep D_800FB790[] = {
     { 0x1A000101 },
 };
 
-union AnimationStep D_800FB7B4[] = {
+union AnimationStep heavy_mech_anim_4[] = {
     { 0x14010003 },
     { 0x15010010 },
     { 0x16010004 },
@@ -259,80 +261,80 @@ union AnimationStep D_800FB7B4[] = {
     { 0x19000101 },
 };
 
-union AnimationStep D_800FB7D0[] = {
+union AnimationStep heavy_mech_anim_5[] = {
     { 0x0C000101 },
 };
 
-union AnimationStep D_800FB7D4[] = {
+union AnimationStep heavy_mech_anim_6[] = {
     { 0x1D000101 },
 };
 
-union AnimationStep D_800FB7D8[] = {
+union AnimationStep heavy_mech_anim_7[] = {
     { 0x1E000101 },
 };
 
-union AnimationStep D_800FB7DC[] = {
+union AnimationStep heavy_mech_anim_8[] = {
     { 0x1F000101 },
 };
 
-union AnimationStep D_800FB7E0[] = {
+union AnimationStep heavy_mech_anim_9[] = {
     { 0x20000101 },
 };
 
-union AnimationStep D_800FB7E4[] = {
+union AnimationStep heavy_mech_anim_10[] = {
     { 0x21000101 },
 };
 
-union AnimationStep D_800FB7E8[] = {
+union AnimationStep heavy_mech_anim_11[] = {
     { 0x22000101 },
 };
 
-union AnimationStep D_800FB7EC[] = {
+union AnimationStep heavy_mech_anim_12[] = {
     { 0x24000101 },
 };
 
-union AnimationStep D_800FB7F0[] = {
+union AnimationStep heavy_mech_anim_13[] = {
     { 0x25000101 },
 };
 
-union AnimationStep D_800FB7F4[] = {
+union AnimationStep heavy_mech_anim_14[] = {
     { 0x26000101 },
 };
 
-union AnimationStep D_800FB7F8[] = {
+union AnimationStep heavy_mech_anim_15[] = {
     { 0x23000101 },
 };
 
-union AnimationStep D_800FB7FC[] = {
+union AnimationStep heavy_mech_anim_16[] = {
     { 0x27000101 },
 };
 
-union AnimationStep D_800FB800[] = {
+union AnimationStep heavy_mech_anim_17[] = {
     { 0x28000101 },
 };
 
-union AnimationStep* D_800FB804[] = {
-    D_800FB708,
-    D_800FB748,
-    D_800FB76C,
-    D_800FB790,
-    D_800FB7B4,
-    D_800FB7D0,
-    D_800FB7D4,
-    D_800FB7D8,
-    D_800FB7DC,
-    D_800FB7E0,
-    D_800FB7E4,
-    D_800FB7E8,
-    D_800FB7EC,
-    D_800FB7F0,
-    D_800FB7F4,
-    D_800FB7F8,
-    D_800FB7FC,
-    D_800FB800,
+union AnimationStep* heavy_mech_animations[] = {
+    heavy_mech_anim_0,
+    heavy_mech_anim_1,
+    heavy_mech_anim_2,
+    heavy_mech_anim_3,
+    heavy_mech_anim_4,
+    heavy_mech_anim_5,
+    heavy_mech_anim_6,
+    heavy_mech_anim_7,
+    heavy_mech_anim_8,
+    heavy_mech_anim_9,
+    heavy_mech_anim_10,
+    heavy_mech_anim_11,
+    heavy_mech_anim_12,
+    heavy_mech_anim_13,
+    heavy_mech_anim_14,
+    heavy_mech_anim_15,
+    heavy_mech_anim_16,
+    heavy_mech_anim_17,
 };
 
-u8 D_800FB84C[] = {
+u8 heavy_mech_debris[] = {
     0x06,
     0x07,
     0x08,
@@ -347,27 +349,27 @@ u8 D_800FB84C[] = {
     0x00,
 };
 
-void (*D_800FB858[])() = {
-    func_8004C784,
+void (*heavy_mech_state_funcs[])() = {
+    heavy_mech_init,
     func_8004C860,
-    func_8004C97C,
-    func_8004C9E8,
+    heavy_mech_explode,
+    heavy_mech_despawn,
 };
 
-void (*D_800FB868[])() = {
-    func_8009216C,
-    func_8004CA14,
-    func_8004CA20,
-    func_8004CBD4,
-    func_8004CC64,
-    func_8004CDC8,
+void (*heavy_mech_step_funcs[])() = {
+    enemy_hit_reaction,
+    heavy_mech_resume_step,
+    heavy_mech_idle,
+    heavy_mech_fall,
+    heavy_mech_throw,
+    heavy_mech_stomp,
 };
 
-void (*D_800FB880[])() = {
-    func_8004CA5C,
+void (*heavy_mech_idle_funcs[])() = {
+    heavy_mech_idle_start,
     func_8004CA94,
 };
 
-void (*D_800FB888[])() = {
-    func_8004CCA0,
+void (*heavy_mech_throw_funcs[])() = {
+    heavy_mech_throw_anim,
 };

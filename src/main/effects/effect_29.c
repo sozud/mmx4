@@ -2,61 +2,61 @@
 // 800BC144..800BC2E0
 #include "common.h"
 
-void func_800BC144(struct EffectObj* arg0)
+void tile_anim_trigger_update(struct EffectObj* self)
 {
-    D_8010BF30[arg0->state](arg0);
+    tile_anim_trigger_state_funcs[self->state](self);
 }
 
-void func_800BC180(struct EffectObj* arg0)
+void tile_anim_trigger_init(struct EffectObj* self)
 {
     struct Effect28AnimationStep* temp_v0;
     u8 temp_v1;
 
-    arg0->ext.effect_29.unk14 = 2;
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        temp_v0 = D_8010BF24[arg0->unk2];
-        arg0->ext.effect_29.palette_source.animation = temp_v0;
-        arg0->ext.effect_29.palette.fields.timer = temp_v0->timer;
-        arg0->ext.effect_29.palette.fields.unk1 = arg0->ext.effect_29.palette_source.animation->unused;
-        arg0->ext.effect_29.palette.fields.step = arg0->ext.effect_29.palette_source.animation->frame_step;
-        temp_v1 = arg0->ext.effect_29.palette_source.animation->frame;
-        arg0->state = (u8)arg0->state + 1;
-        arg0->ext.effect_29.palette.fields.id = temp_v1;
+    self->ext.effect_29.unk14 = 2;
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        temp_v0 = tile_anim_scripts[self->unk2];
+        self->ext.effect_29.palette_source.animation = temp_v0;
+        self->ext.effect_29.palette.fields.timer = temp_v0->timer;
+        self->ext.effect_29.palette.fields.unk1 = self->ext.effect_29.palette_source.animation->unused;
+        self->ext.effect_29.palette.fields.step = self->ext.effect_29.palette_source.animation->frame_step;
+        temp_v1 = self->ext.effect_29.palette_source.animation->frame;
+        self->state = (u8)self->state + 1;
+        self->ext.effect_29.palette.fields.id = temp_v1;
     }
 }
 
-void func_800BC210(struct EffectObj* arg0)
+void tile_anim_trigger_main(struct EffectObj* self)
 {
-    if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-        func_800BC258(arg0);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        tile_anim_trigger_step(self);
         return;
     }
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_800BC258(struct EffectObj* arg0)
+void tile_anim_trigger_step(struct EffectObj* self)
 {
     s8 timer;
     s32* source;
 
-    timer = arg0->ext.effect_29.palette.fields.timer - 1;
-    arg0->ext.effect_29.palette.fields.timer = timer;
+    timer = self->ext.effect_29.palette.fields.timer - 1;
+    self->ext.effect_29.palette.fields.timer = timer;
     if (timer == 0) {
-        source = arg0->ext.effect_29.palette_source.words + arg0->ext.effect_29.palette.fields.step;
-        arg0->ext.effect_29.palette_source.words = source;
-        arg0->ext.effect_29.palette.packed = *source;
-        func_800DA984(arg0->ext.effect_29.palette.fields.id,
-            arg0->x_pos.i.hi - D_8010BF38[arg0->unk2][0],
-            arg0->y_pos.i.hi - D_8010BF38[arg0->unk2][1]);
+        source = self->ext.effect_29.palette_source.words + self->ext.effect_29.palette.fields.step;
+        self->ext.effect_29.palette_source.words = source;
+        self->ext.effect_29.palette.packed = *source;
+        refresh_visible_tile_effect(self->ext.effect_29.palette.fields.id,
+            self->x_pos.i.hi - tile_anim_trigger_offsets[self->unk2][0],
+            self->y_pos.i.hi - tile_anim_trigger_offsets[self->unk2][1]);
     }
 }
 
-void (*D_8010BF30[])(struct EffectObj*) = {
-    func_800BC180,
-    func_800BC210,
+void (*tile_anim_trigger_state_funcs[])(struct EffectObj*) = {
+    tile_anim_trigger_init,
+    tile_anim_trigger_main,
 };
 
-u8 D_8010BF38[4][2] = {
+u8 tile_anim_trigger_offsets[4][2] = {
     { 0x28, 0x18 },
     { 0x40, 0x20 },
     { 0x10, 0x40 },
@@ -70,7 +70,7 @@ struct Effect29AnimationStep {
     u8 position;
 };
 
-struct Effect29AnimationStep D_8010BF40[9] = {
+struct Effect29AnimationStep tile_anim_trigger_open_steps[9] = {
     { 2, 0, 1, 0 },
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },
@@ -82,7 +82,7 @@ struct Effect29AnimationStep D_8010BF40[9] = {
     { 2, 0, 0, 8 },
 };
 
-struct Effect29AnimationStep D_8010BF64[9] = {
+struct Effect29AnimationStep tile_anim_trigger_close_steps[9] = {
     { 2, 0, 1, 8 },
     { 2, 0, 1, 7 },
     { 2, 0, 1, 6 },
@@ -94,7 +94,7 @@ struct Effect29AnimationStep D_8010BF64[9] = {
     { 2, 0, 0, 0 },
 };
 
-u8* D_8010BF88[2] = {
-    (u8*)D_8010BF40,
-    (u8*)D_8010BF64,
+u8* tile_anim_trigger_scripts[2] = {
+    (u8*)tile_anim_trigger_open_steps,
+    (u8*)tile_anim_trigger_close_steps,
 };

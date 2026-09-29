@@ -3,76 +3,86 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8004A718(struct MainObj* arg0)
+void wall_crawler_update(struct MainObj* self)
 {
-    D_800FB51C[arg0->state](arg0);
-    if ((arg0->unk2 == 0) || (engine_obj.character_state.fields.active == 1)) {
-        CollisionRelated(PLAYER_OBJECT(arg0));
+    wall_crawler_state_funcs[self->state](self);
+    if ((self->unk2 == 0) || (engine_obj.character_state.fields.active == 1)) {
+        CollisionRelated(PLAYER_OBJECT(self));
     }
 }
 
+// wall_crawler_init
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004A78C);
 
+// wall_crawler_attach
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004A9F4);
 
+// wall_crawler_main
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AB6C);
 
-void func_8004ACDC(struct MainObj* arg0)
+void wall_crawler_next_state(struct MainObj* self)
 {
-    arg0->state++;
+    self->state++;
 }
 
-void func_8004ACF0(struct MainObj* arg0)
+void wall_crawler_despawn(struct MainObj* self)
 {
-    arg0->state = 0;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->state = 0;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    despawn_object(OBJECT_HEADER(self));
 }
 
+// wall_crawler_step_7
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AD18);
 
-void func_8004ADE8(struct MainObj* arg0)
+void wall_crawler_resume_step(struct MainObj* self)
 {
-    arg0->unk5 = SP_CUR_MAIN_OBJ->ext.main_11.saved_unk5;
+    self->unk5 = SP_CUR_MAIN_OBJ->ext.main_11.saved_unk5;
 }
 
-void func_8004AE00(struct MainObj* arg0)
+void wall_crawler_drop(struct MainObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
+    move_object((struct MovingObj*)self);
 }
 
+// wall_crawler_crawl
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004AE20);
 
-void func_8004B040(struct MainObj* arg0)
+void wall_crawler_turn(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.event == 1) {
-        arg0->unk15 ^= 0x40;
-        func_80015D60(arg0, 0);
-        if (arg0->unk2 == 0) {
-            arg0->unk5 = 2;
+    if (self->animation_step.fields.event == 1) {
+        self->unk15 ^= 0x40;
+        set_animation(self, 0);
+        if (self->unk2 == 0) {
+            self->unk5 = 2;
         } else {
-            arg0->unk5 = 4;
+            self->unk5 = 4;
         }
     }
 }
 
+// wall_crawler_step_4
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B0A0);
 
-void func_8004B280(struct MainObj* arg0)
+void wall_crawler_corner(struct MainObj* self)
 {
-    D_800FB550[arg0->unk6](arg0);
+    wall_crawler_corner_funcs[self->unk6](self);
 }
 
+// wall_crawler_corner_0
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B2BC);
 
+// wall_crawler_corner_1
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B418);
 
+// wall_crawler_corner_2
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B514);
 
+// wall_crawler_corner_3
 INCLUDE_ASM("main/nonmatchings/mains/main_11", func_8004B668);
 
-void func_8004B748(struct MainObj* self)
+void wall_crawler_corner_end(struct MainObj* self)
 {
     u8 flags;
 
@@ -84,29 +94,29 @@ void func_8004B748(struct MainObj* self)
             } else {
                 self->unk15 = 0;
             }
-            func_80015D60(self, 0);
+            set_animation(self, 0);
         } else {
-            func_80015D60(self, 1);
+            set_animation(self, 1);
         }
         self->unk5 = 2;
     } else {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 4;
-        self->unk24 = FIXED(3);
-        self->unk20 = 0;
+        self->y_speed = FIXED(3);
+        self->x_speed = 0;
         self->unk5 = 6;
     }
     self->unk6 = 0;
 }
 
-void func_8004B808(struct MainObj* arg0)
+void wall_crawler_update_surface(struct MainObj* self)
 {
     struct MainObj* current;
     u8 flags;
 
     current = SP_CUR_MAIN_OBJ;
     if (current->ext.main_11.unk80 & 3) {
-        flags = arg0->unk70;
+        flags = self->collision_flags;
         if (flags & 4) {
             if (flags & 8) {
                 if (flags & 2) {
@@ -123,7 +133,7 @@ void func_8004B808(struct MainObj* arg0)
             current->ext.main_11.unk80 = 4;
         }
     } else {
-        flags = arg0->unk70;
+        flags = self->collision_flags;
         if (flags & 2) {
             if (flags & 1) {
                 if (flags & 4) {
@@ -142,7 +152,7 @@ void func_8004B808(struct MainObj* arg0)
     }
 }
 
-union AnimationStep D_800FB144[] = {
+union AnimationStep wall_crawler_anim_0[] = {
     { 0x00010001 },
     { 0x01010002 },
     { 0x2F010003 },
@@ -154,12 +164,12 @@ union AnimationStep D_800FB144[] = {
     { 0x00F80001 },
 };
 
-union AnimationStep D_800FB168[] = {
+union AnimationStep wall_crawler_anim_1[] = {
     { 0x02010001 },
     { 0x03FF0001 },
 };
 
-union AnimationStep D_800FB170[] = {
+union AnimationStep wall_crawler_anim_2[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -195,7 +205,7 @@ union AnimationStep D_800FB170[] = {
     { 0x02000001 },
 };
 
-union AnimationStep D_800FB1F4[] = {
+union AnimationStep wall_crawler_anim_3[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -216,7 +226,7 @@ union AnimationStep D_800FB1F4[] = {
     { 0x0BFF0101 },
 };
 
-union AnimationStep D_800FB23C[] = {
+union AnimationStep wall_crawler_anim_4[] = {
     { 0x0B010001 },
     { 0x0A010001 },
     { 0x0B010001 },
@@ -237,7 +247,7 @@ union AnimationStep D_800FB23C[] = {
     { 0x02FF0101 },
 };
 
-union AnimationStep D_800FB284[] = {
+union AnimationStep wall_crawler_anim_5[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -258,7 +268,7 @@ union AnimationStep D_800FB284[] = {
     { 0x0FFF0101 },
 };
 
-union AnimationStep D_800FB2CC[] = {
+union AnimationStep wall_crawler_anim_6[] = {
     { 0x0F010001 },
     { 0x0E010001 },
     { 0x0F010001 },
@@ -279,7 +289,7 @@ union AnimationStep D_800FB2CC[] = {
     { 0x02FF0101 },
 };
 
-union AnimationStep D_800FB314[] = {
+union AnimationStep wall_crawler_anim_7[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -292,7 +302,7 @@ union AnimationStep D_800FB314[] = {
     { 0x05FF0101 },
 };
 
-union AnimationStep D_800FB33C[] = {
+union AnimationStep wall_crawler_anim_8[] = {
     { 0x05010001 },
     { 0x04010001 },
     { 0x05010001 },
@@ -305,7 +315,7 @@ union AnimationStep D_800FB33C[] = {
     { 0x02FF0101 },
 };
 
-union AnimationStep D_800FB364[] = {
+union AnimationStep wall_crawler_anim_9[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -318,7 +328,7 @@ union AnimationStep D_800FB364[] = {
     { 0x0DFF0101 },
 };
 
-union AnimationStep D_800FB38C[] = {
+union AnimationStep wall_crawler_anim_10[] = {
     { 0x0C010001 },
     { 0x0D010001 },
     { 0x0C010001 },
@@ -331,34 +341,34 @@ union AnimationStep D_800FB38C[] = {
     { 0x02FF0101 },
 };
 
-union AnimationStep D_800FB3B4[] = {
+union AnimationStep wall_crawler_anim_11[] = {
     { 0x10010001 },
     { 0x11010001 },
     { 0x12010001 },
     { 0x13FD0001 },
 };
 
-union AnimationStep D_800FB3C4[] = {
+union AnimationStep wall_crawler_anim_12[] = {
     { 0x1F000001 },
 };
 
-union AnimationStep D_800FB3C8[] = {
+union AnimationStep wall_crawler_anim_13[] = {
     { 0x20000001 },
 };
 
-union AnimationStep D_800FB3CC[] = {
+union AnimationStep wall_crawler_anim_14[] = {
     { 0x21000001 },
 };
 
-union AnimationStep D_800FB3D0[] = {
+union AnimationStep wall_crawler_anim_15[] = {
     { 0x22000001 },
 };
 
-union AnimationStep D_800FB3D4[] = {
+union AnimationStep wall_crawler_anim_16[] = {
     { 0x23000001 },
 };
 
-union AnimationStep D_800FB3D8[] = {
+union AnimationStep wall_crawler_anim_17[] = {
     { 0x02010001 },
     { 0x03010001 },
     { 0x02010001 },
@@ -371,7 +381,7 @@ union AnimationStep D_800FB3D8[] = {
     { 0x03FF0101 },
 };
 
-union AnimationStep D_800FB400[] = {
+union AnimationStep wall_crawler_anim_18[] = {
     { 0x04010001 },
     { 0x05010001 },
     { 0x04010001 },
@@ -384,7 +394,7 @@ union AnimationStep D_800FB400[] = {
     { 0x05FF0101 },
 };
 
-union AnimationStep D_800FB428[] = {
+union AnimationStep wall_crawler_anim_19[] = {
     { 0x0A010001 },
     { 0x0B010001 },
     { 0x0A010001 },
@@ -397,7 +407,7 @@ union AnimationStep D_800FB428[] = {
     { 0x0BFF0101 },
 };
 
-union AnimationStep D_800FB450[] = {
+union AnimationStep wall_crawler_anim_20[] = {
     { 0x0C010001 },
     { 0x0D010001 },
     { 0x0C010001 },
@@ -410,7 +420,7 @@ union AnimationStep D_800FB450[] = {
     { 0x0DFF0101 },
 };
 
-union AnimationStep D_800FB478[] = {
+union AnimationStep wall_crawler_anim_21[] = {
     { 0x0E010001 },
     { 0x0F010001 },
     { 0x0E010001 },
@@ -423,48 +433,48 @@ union AnimationStep D_800FB478[] = {
     { 0x0FFF0101 },
 };
 
-union AnimationStep D_800FB4A0[] = {
+union AnimationStep wall_crawler_anim_22[] = {
     { 0x2E000001 },
 };
 
-union AnimationStep D_800FB4A4[] = {
+union AnimationStep wall_crawler_anim_23[] = {
     { 0x34000001 },
 };
 
-union AnimationStep D_800FB4A8[] = {
+union AnimationStep wall_crawler_anim_24[] = {
     { 0x32010001 },
     { 0x33000001 },
 };
 
-union AnimationStep* D_800FB4B0[] = {
-    D_800FB144,
-    D_800FB168,
-    D_800FB170,
-    D_800FB1F4,
-    D_800FB23C,
-    D_800FB284,
-    D_800FB2CC,
-    D_800FB314,
-    D_800FB33C,
-    D_800FB364,
-    D_800FB38C,
-    D_800FB3B4,
-    D_800FB3C4,
-    D_800FB3C8,
-    D_800FB3CC,
-    D_800FB3D0,
-    D_800FB3D4,
-    D_800FB3D8,
-    D_800FB400,
-    D_800FB428,
-    D_800FB450,
-    D_800FB478,
-    D_800FB4A0,
-    D_800FB4A4,
-    D_800FB4A8,
+union AnimationStep* wall_crawler_animations[] = {
+    wall_crawler_anim_0,
+    wall_crawler_anim_1,
+    wall_crawler_anim_2,
+    wall_crawler_anim_3,
+    wall_crawler_anim_4,
+    wall_crawler_anim_5,
+    wall_crawler_anim_6,
+    wall_crawler_anim_7,
+    wall_crawler_anim_8,
+    wall_crawler_anim_9,
+    wall_crawler_anim_10,
+    wall_crawler_anim_11,
+    wall_crawler_anim_12,
+    wall_crawler_anim_13,
+    wall_crawler_anim_14,
+    wall_crawler_anim_15,
+    wall_crawler_anim_16,
+    wall_crawler_anim_17,
+    wall_crawler_anim_18,
+    wall_crawler_anim_19,
+    wall_crawler_anim_20,
+    wall_crawler_anim_21,
+    wall_crawler_anim_22,
+    wall_crawler_anim_23,
+    wall_crawler_anim_24,
 };
 
-u8 D_800FB514[] = {
+u8 wall_crawler_debris[] = {
     0x0C,
     0x0D,
     0x0E,
@@ -475,34 +485,34 @@ u8 D_800FB514[] = {
     0x00,
 };
 
-void (*D_800FB51C[])(struct MainObj*) = {
+void (*wall_crawler_state_funcs[])(struct MainObj*) = {
     func_8004A78C,
     func_8004A9F4,
     func_8004AB6C,
-    func_8004ACDC,
-    func_8004ACF0,
+    wall_crawler_next_state,
+    wall_crawler_despawn,
 };
 
-void (*D_800FB530[])() = {
-    func_8009216C,
-    func_8004ADE8,
+void (*wall_crawler_step_funcs[])() = {
+    enemy_hit_reaction,
+    wall_crawler_resume_step,
     func_8004AE20,
-    func_8004B040,
+    wall_crawler_turn,
     func_8004B0A0,
-    func_8004B280,
-    func_8004AE00,
+    wall_crawler_corner,
+    wall_crawler_drop,
     func_8004AD18,
 };
 
-void (*D_800FB550[])() = {
+void (*wall_crawler_corner_funcs[])() = {
     func_8004B2BC,
     func_8004B418,
     func_8004B514,
     func_8004B668,
-    func_8004B748,
+    wall_crawler_corner_end,
 };
 
-struct Unk_unk68 D_800FB564 = { -9, -9, 23, 18 };
+struct Unk_unk68 wall_crawler_terrain_box = { -9, -9, 23, 18 };
 
 struct Unk_unk68 D_800FB568 = { 0, 7, 13, 24 };
 

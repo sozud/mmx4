@@ -2,64 +2,70 @@
 // 800A03B8..800A16FC
 #include "common.h"
 
-void func_800A03B8(struct ShotObj* arg0)
+void falling_rock_update(struct ShotObj* self)
 {
-    D_801094EC[arg0->state](arg0);
+    falling_rock_state_funcs[self->state](self);
 }
 
+// falling_rock_a_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A03F4);
 
+// falling_rock_a_fall
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A068C);
 
-void func_800A0A18(struct ShotObj* arg0)
+void falling_rock_a_despawn(struct ShotObj* self)
 {
-    arg0->unk62 = 0;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    self->unk62 = 0;
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// falling_rock_b_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0A38);
 
+// falling_rock_b_fall
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0C4C);
 
-void func_800A0FC8(struct ShotObj* arg0)
+void falling_rock_b_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// falling_rock_c_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A0FE8);
 
+// falling_rock_c_fall
 INCLUDE_ASM("main/nonmatchings/shots/shot_33", func_800A12EC);
 
-void func_800A16DC(struct ShotObj* arg0)
+void falling_rock_c_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-struct Unk_unk68 D_80109268[] = {
+struct Unk_unk68 falling_rock_box_0[] = {
     { -20, -23, 0x23, 0x22 },
 };
 
-struct Unk_unk68 D_8010926C[] = {
+struct Unk_unk68 falling_rock_box_1[] = {
     { -17, -20, 0x23, 0x26 },
 };
 
-struct Unk_unk68 D_80109270[] = {
+struct Unk_unk68 falling_rock_box_2[] = {
     { -17, -18, 0x23, 0x26 },
 };
 
-struct Unk_unk68 D_80109274[] = {
+struct Unk_unk68 falling_rock_box_3[] = {
     { -3, -6, 0x12, 0x12 },
 };
 
-struct Unk_unk68 D_80109278[] = {
+struct Unk_unk68 falling_rock_box_4[] = {
     { 0, -1, 0x14, 0x13 },
 };
 
-struct Unk_unk68 D_8010927C[] = {
+struct Unk_unk68 falling_rock_box_5[] = {
     { 0, -1, 0x14, 0x13 },
 };
 
-u8 D_80109280[] = {
+u8 falling_rock_debris_0[] = {
     0x03,
     0x04,
     0x05,
@@ -70,7 +76,7 @@ u8 D_80109280[] = {
     0x00,
 };
 
-u8 D_80109288[] = {
+u8 falling_rock_debris_1[] = {
     0x09,
     0x0A,
     0x0B,
@@ -81,7 +87,7 @@ u8 D_80109288[] = {
     0x00,
 };
 
-u8 D_80109290[] = {
+u8 falling_rock_debris_2[] = {
     0x02,
     0x03,
     0x04,
@@ -92,7 +98,7 @@ u8 D_80109290[] = {
     0x00,
 };
 
-u8 D_80109298[] = {
+u8 falling_rock_debris_3[] = {
     0x08,
     0x09,
     0x0A,
@@ -103,7 +109,7 @@ u8 D_80109298[] = {
     0x00,
 };
 
-u8 D_801092A0[] = {
+u8 falling_rock_debris_4[] = {
     0x04,
     0x05,
     0x06,
@@ -114,7 +120,7 @@ u8 D_801092A0[] = {
     0x00,
 };
 
-u8 D_801092A8[] = {
+u8 falling_rock_debris_5[] = {
     0x0A,
     0x0B,
     0x0C,
@@ -125,7 +131,7 @@ u8 D_801092A8[] = {
     0x00,
 };
 
-u8 D_801092B0[] = {
+u8 falling_rock_debris_6[] = {
     0x00,
     0x01,
     0x02,
@@ -204,7 +210,7 @@ union AnimationStep D_8010931C[] = {
     { 0x18000101 },
 };
 
-union AnimationStep* D_80109320[] = {
+union AnimationStep* falling_rock_a_animations[] = {
     D_801092B8,
     D_801092C8,
     D_801092E4,
@@ -284,7 +290,7 @@ union AnimationStep D_801093B4[] = {
     { 0x17000101 },
 };
 
-union AnimationStep* D_801093B8[] = {
+union AnimationStep* falling_rock_b_animations[] = {
     D_80109358,
     D_8010936C,
     D_8010938C,
@@ -380,7 +386,7 @@ union AnimationStep D_80109474[] = {
     { 0x22000101 },
 };
 
-union AnimationStep* D_80109478[] = {
+union AnimationStep* falling_rock_c_animations[] = {
     D_801093EC,
     D_801093FC,
     D_8010941C,
@@ -426,7 +432,7 @@ union AnimationStep D_801094CC[] = {
     { 0x06000101 },
 };
 
-union AnimationStep* D_801094D0[] = {
+union AnimationStep* falling_rock_d_animations[] = {
     D_801094B4,
     D_801094B8,
     D_801094BC,
@@ -436,14 +442,14 @@ union AnimationStep* D_801094D0[] = {
     D_801094CC,
 };
 
-void (*D_801094EC[])(struct ShotObj*) = {
+void (*falling_rock_state_funcs[])(struct ShotObj*) = {
     func_800A03F4,
     func_800A068C,
-    func_800A0A18,
+    falling_rock_a_despawn,
     func_800A0A38,
     func_800A0C4C,
-    func_800A0FC8,
+    falling_rock_b_despawn,
     func_800A0FE8,
     func_800A12EC,
-    func_800A16DC,
+    falling_rock_c_despawn,
 };

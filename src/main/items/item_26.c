@@ -2,7 +2,7 @@
 // 800C62DC..800C7164
 #include "common.h"
 
-void func_800C62DC(struct ItemObj* self)
+void light_capsule_update(struct ItemObj* self)
 {
     struct MainObj* linked_object;
 
@@ -13,7 +13,7 @@ void func_800C62DC(struct ItemObj* self)
             func_800C63BC(self);
             return;
         }
-        func_800C6680(self);
+        light_capsule_main(self);
         return;
     }
     linked_object = self->unk7C.object;
@@ -22,18 +22,19 @@ void func_800C62DC(struct ItemObj* self)
         return;
     }
     if (self->state == 0) {
-        self->unk68 = &D_8010D3CC;
+        self->unk68 = &light_capsule_platform_box;
         self->unk75 = 1;
         self->x_pos.i.hi = linked_object->x_pos.i.hi;
         self->y_pos.i.hi = linked_object->y_pos.i.hi - 0x4E;
         self->state++;
     }
-    func_8002E184(self);
+    collide_with_players(self);
 }
 
+// light_capsule_init
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C63BC);
 
-void func_800C661C(struct ItemObj* arg0, s8 arg1, s8 arg2)
+void light_capsule_spawn_visual(struct ItemObj* arg0, s8 arg1, s8 arg2)
 {
     struct VisualObj* visualObj;
 
@@ -47,19 +48,19 @@ void func_800C661C(struct ItemObj* arg0, s8 arg1, s8 arg2)
     }
 }
 
-void func_800C6680(struct ItemObj* arg0)
+void light_capsule_main(struct ItemObj* arg0)
 {
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x88, 0x88) == 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        D_8010D3E0[arg0->unk5](arg0);
-        func_8002E184(PLAYER_OBJECT(arg0));
-        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+        animate_object(ANIMATED_OBJECT(arg0));
+        light_capsule_step_funcs[arg0->unk5](arg0);
+        collide_with_players(PLAYER_OBJECT(arg0));
+        update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
         return;
     }
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(arg0));
 }
 
-void func_800C670C(struct ItemObj* arg0)
+void light_capsule_wait_player(struct ItemObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s16 dx;
@@ -79,7 +80,7 @@ void func_800C670C(struct ItemObj* arg0)
             close = dy < 0x69;
         }
         if (close) {
-            func_80015D60(ANIMATED_OBJECT(arg0), 0xA);
+            set_animation(ANIMATED_OBJECT(arg0), 0xA);
             if (player->x_pos.val - arg0->x_pos.val > 0) {
                 player_start_script_action(0x14, 0);
                 arg0->unk15 = 0x40;
@@ -94,36 +95,36 @@ void func_800C670C(struct ItemObj* arg0)
     }
 }
 
-void func_800C6814(struct ItemObj* arg0)
+void light_capsule_start_dialogue(struct ItemObj* arg0)
 {
     if (arg0->animation_step.fields.event != 0) {
         arg0->animation_step.fields.event = 0;
         if (engine_obj.unk37 != 0) {
             func_8002217C(0x35, 0xFF, 0);
         } else {
-            func_8002217C(D_8010D40C[arg0->unk2], 0xFF, 0);
+            func_8002217C(light_capsule_dialogue_ids[arg0->unk2], 0xFF, 0);
         }
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }
 }
 
-void func_800C6894(struct ItemObj* arg0)
+void light_capsule_wait_dialogue_open(struct ItemObj* arg0)
 {
     if (abc_object.unkC == 1) {
-        func_80015D60(arg0, 0xB);
+        set_animation(arg0, 0xB);
         arg0->unk5++;
     }
 }
 
-void func_800C68E0(struct ItemObj* arg0)
+void light_capsule_wait_dialogue_close(struct ItemObj* arg0)
 {
     if (abc_object.unkC == 0) {
-        func_80015D60(arg0, 0xC);
+        set_animation(arg0, 0xC);
         arg0->unk5++;
     }
 }
 
-void func_800C6928(struct ItemObj* arg0)
+void light_capsule_end_dialogue(struct ItemObj* arg0)
 {
     if (ANIMATED_OBJECT(arg0)->animation_step.fields.event != 0) {
         player_end_script_action();
@@ -133,14 +134,14 @@ void func_800C6928(struct ItemObj* arg0)
     }
 }
 
-void func_800C6984(struct ItemObj* arg0)
+void light_capsule_wait_enter(struct ItemObj* arg0)
 {
     s32 x_pos;
 
     if ((u8)arg0->unk72 & 8) {
-        func_80015D60(arg0, 1);
+        set_animation(arg0, 1);
         player_start_script_action(0x18, g_Player.unk15);
-        func_800C661C(arg0, 0x24, 0);
+        light_capsule_spawn_visual(arg0, 0x24, 0);
         x_pos = arg0->x_pos.val;
         g_Player.item_step = 1;
         g_Player.x_pos.val = x_pos;
@@ -148,94 +149,94 @@ void func_800C6984(struct ItemObj* arg0)
     }
 }
 
-void func_800C6A0C(struct ItemObj* arg0)
+void light_capsule_wait_scan(struct ItemObj* arg0)
 {
     if (g_Player.item_step == 2) {
-        func_800C661C(arg0, 0x25, 0);
-        func_800C661C(arg0, 0x25, 1);
-        func_800C661C(arg0, 0x25, 2);
+        light_capsule_spawn_visual(arg0, 0x25, 0);
+        light_capsule_spawn_visual(arg0, 0x25, 1);
+        light_capsule_spawn_visual(arg0, 0x25, 2);
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }
 }
 
-void func_800C6A7C(struct ItemObj* arg0)
+void light_capsule_wait_beams(struct ItemObj* arg0)
 {
     if (g_Player.item_step == 3) {
-        func_80015D60(arg0, 2);
+        set_animation(arg0, 2);
         arg0->unk7C.item_26_value = 0x14;
         arg0->unk5++;
     }
 }
 
-void func_800C6ACC(struct ItemObj* arg0)
+void light_capsule_grant_part(struct ItemObj* arg0)
 {
     s32 timer;
 
     timer = arg0->unk7C.timer;
     if (timer == 0) {
-        func_80015D60(arg0, 1);
-        func_800C661C(arg0, 0x26, arg0->unk2);
+        set_animation(arg0, 1);
+        light_capsule_spawn_visual(arg0, 0x26, arg0->unk2);
         arg0->unk5 = (u8)arg0->unk5 + 1;
         return;
     }
     arg0->unk7C.timer = timer - 1;
 }
 
-void func_800C6B30(struct ItemObj* arg0)
+void light_capsule_wait_done(struct ItemObj* arg0)
 {
     if (g_Player.item_step == 4) {
-        func_80015D60(arg0, 13);
+        set_animation(arg0, 13);
         arg0->unk5++;
     }
 }
 
-void func_800C6B7C(struct ItemObj* arg0)
+void light_capsule_idle(struct ItemObj* arg0)
 {
 }
 
-void func_800C6B84(struct VisualObj* arg0)
+void capsule_glass_update(struct VisualObj* arg0)
 {
     struct PlayerObj* owner = arg0->unk50;
 
     if (owner->active == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     } else if (arg0->state == 0) {
-        func_800C6DD4(arg0, owner);
-        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+        capsule_visual_init(arg0, owner);
+        update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
     } else if (g_Player.item_step == 1) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+        animate_object(ANIMATED_OBJECT(arg0));
+        update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
     }
 }
 
-void func_800C6C2C(struct VisualObj* arg0)
+void capsule_scan_update(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a1 = arg0->unk50;
     if (arg0->state == 0) {
-        func_800C6DD4(arg0, temp_a1);
+        capsule_visual_init(arg0, temp_a1);
         arg0->unk54 = 0x78;
         func_8001540C(2, 0x23, 0);
     } else if (arg0->unk54 == 0) {
         g_Player.item_step = 2;
-        func_80015930(2, 0x23);
+        stop_sound(2, 0x23);
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
         arg0->unk54--;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x88, 0x88);
+    update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
 }
 
-void func_800C6CE4(struct VisualObj* self)
+void capsule_beam_update(struct VisualObj* self)
 {
     struct PlayerObj* owner;
 
     owner = self->unk50;
     if (self->state == 0) {
-        func_800C6DD4(self, owner);
+        capsule_visual_init(self, owner);
         if (self->unk2 == 1) {
             self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x58;
         }
@@ -249,15 +250,15 @@ void func_800C6CE4(struct VisualObj* self)
         ZeroObjectState(OBJECT_HEADER(self));
         return;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.frame_index == 0x24) {
             g_Player.item_step = 3;
         }
     }
-    func_8002B318(BASE_OBJECT(self), 0x88, 0x88);
+    update_on_screen(BASE_OBJECT(self), 0x88, 0x88);
 }
 
-void func_800C6DD4(struct VisualObj* arg0, struct PlayerObj* arg1)
+void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     arg0->on_screen = 1;
     arg0->unk3C = arg1->unk3C;
@@ -270,18 +271,18 @@ void func_800C6DD4(struct VisualObj* arg0, struct PlayerObj* arg1)
     switch (arg0->id) {
     case 35:
         arg0->unk16 = 3;
-        func_80015D60(arg0, arg0->unk2);
+        set_animation(arg0, arg0->unk2);
         break;
     case 36:
         arg0->unk16 = 1;
-        func_80015D60(arg0, 7);
+        set_animation(arg0, 7);
         break;
     case 37:
         arg0->unk16 = 0;
         if (arg0->unk2 == 0) {
-            func_80015D60(arg0, 8);
+            set_animation(arg0, 8);
         } else {
-            func_80015D60(arg0, 9);
+            set_animation(arg0, 9);
         }
         break;
     }
@@ -289,6 +290,7 @@ void func_800C6DD4(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->state++;
 }
 
+// capsule_part_update
 INCLUDE_ASM("main/nonmatchings/items/item_26", func_800C6EDC);
 
 struct Item26AnimationStep {
@@ -298,29 +300,29 @@ struct Item26AnimationStep {
     u8 command;
 };
 
-u8 D_8010D3C8[4] = { 0, 0, 0x10, 0x0C };
-struct Unk_unk68 D_8010D3CC = { 0, 0, 0x20, 0x0C };
-u8 D_8010D3D0[8] = { 1, 2, 4, 4, 8, 0, 0, 0 };
-u8 D_8010D3D8[8] = { 3, 4, 5, 5, 6, 0, 0, 0 };
+u8 light_capsule_terrain_box[4] = { 0, 0, 0x10, 0x0C };
+struct Unk_unk68 light_capsule_platform_box = { 0, 0, 0x20, 0x0C };
+u8 light_capsule_part_bits[8] = { 1, 2, 4, 4, 8, 0, 0, 0 };
+u8 light_capsule_part_visuals[8] = { 3, 4, 5, 5, 6, 0, 0, 0 };
 
-void (*D_8010D3E0[])(struct ItemObj*) = {
-    func_800C670C,
-    func_800C6814,
-    func_800C6894,
-    func_800C68E0,
-    func_800C6928,
-    func_800C6984,
-    func_800C6A0C,
-    func_800C6A7C,
-    func_800C6ACC,
-    func_800C6B30,
-    func_800C6B7C,
+void (*light_capsule_step_funcs[])(struct ItemObj*) = {
+    light_capsule_wait_player,
+    light_capsule_start_dialogue,
+    light_capsule_wait_dialogue_open,
+    light_capsule_wait_dialogue_close,
+    light_capsule_end_dialogue,
+    light_capsule_wait_enter,
+    light_capsule_wait_scan,
+    light_capsule_wait_beams,
+    light_capsule_grant_part,
+    light_capsule_wait_done,
+    light_capsule_idle,
 };
 
-u8 D_8010D40C[8] = { 0x1A, 0x1B, 0x1D, 0x1C, 0x19, 0, 0, 0 };
-u8 D_8010D414[8] = { 0, 1, 2, 2, 3, 0, 0, 0 };
+u8 light_capsule_dialogue_ids[8] = { 0x1A, 0x1B, 0x1D, 0x1C, 0x19, 0, 0, 0 };
+u8 light_capsule_part_animations[8] = { 0, 1, 2, 2, 3, 0, 0, 0 };
 
-struct Item26AnimationStep D_8010D41C[6] = {
+struct Item26AnimationStep light_capsule_anim_0[6] = {
     { 96, 0, 0, 0 },
     { 8, 0, 1, 0 },
     { 3, 0, 1, 8 },
@@ -329,49 +331,49 @@ struct Item26AnimationStep D_8010D41C[6] = {
     { 96, 0, 0, 1 },
 };
 
-struct Item26AnimationStep D_8010D434[2] = {
+struct Item26AnimationStep light_capsule_anim_1[2] = {
     { 2, 0, 1, 28 },
     { 2, 0, 255, 1 },
 };
 
-struct Item26AnimationStep D_8010D43C[2] = {
+struct Item26AnimationStep light_capsule_anim_2[2] = {
     { 2, 0, 1, 29 },
     { 2, 0, 255, 28 },
 };
 
-struct Item26AnimationStep D_8010D444[1] = {
+struct Item26AnimationStep light_capsule_anim_13[1] = {
     { 96, 0, 0, 1 },
 };
 
-struct Item26AnimationStep D_8010D448[4] = {
+struct Item26AnimationStep light_capsule_anim_3[4] = {
     { 8, 0, 1, 2 },
     { 10, 0, 1, 3 },
     { 12, 0, 1, 2 },
     { 20, 0, 253, 4 },
 };
 
-struct Item26AnimationStep D_8010D458[4] = {
+struct Item26AnimationStep light_capsule_anim_4[4] = {
     { 8, 0, 1, 12 },
     { 10, 0, 1, 13 },
     { 12, 0, 1, 12 },
     { 20, 0, 253, 14 },
 };
 
-struct Item26AnimationStep D_8010D468[4] = {
+struct Item26AnimationStep light_capsule_anim_5[4] = {
     { 8, 0, 1, 18 },
     { 10, 0, 1, 19 },
     { 12, 0, 1, 18 },
     { 20, 0, 253, 20 },
 };
 
-struct Item26AnimationStep D_8010D478[4] = {
+struct Item26AnimationStep light_capsule_anim_6[4] = {
     { 8, 0, 1, 15 },
     { 10, 0, 1, 16 },
     { 12, 0, 1, 15 },
     { 20, 0, 253, 17 },
 };
 
-struct Item26AnimationStep D_8010D488[6] = {
+struct Item26AnimationStep light_capsule_anim_7[6] = {
     { 2, 0, 1, 27 },
     { 2, 0, 1, 26 },
     { 2, 0, 1, 25 },
@@ -380,7 +382,7 @@ struct Item26AnimationStep D_8010D488[6] = {
     { 2, 0, 251, 22 },
 };
 
-struct Item26AnimationStep D_8010D4A0[15] = {
+struct Item26AnimationStep light_capsule_anim_8[15] = {
     { 1, 0, 1, 30 },
     { 1, 0, 1, 31 },
     { 1, 0, 1, 32 },
@@ -398,7 +400,7 @@ struct Item26AnimationStep D_8010D4A0[15] = {
     { 96, 0, 0, 43 },
 };
 
-struct Item26AnimationStep D_8010D4DC[15] = {
+struct Item26AnimationStep light_capsule_anim_9[15] = {
     { 1, 0, 1, 44 },
     { 1, 0, 1, 45 },
     { 1, 0, 1, 46 },
@@ -416,7 +418,7 @@ struct Item26AnimationStep D_8010D4DC[15] = {
     { 96, 0, 0, 57 },
 };
 
-struct Item26AnimationStep D_8010D518[38] = {
+struct Item26AnimationStep light_capsule_anim_10[38] = {
     { 2, 0, 1, 1 },
     { 2, 0, 1, 0 },
     { 2, 0, 1, 1 },
@@ -457,7 +459,7 @@ struct Item26AnimationStep D_8010D518[38] = {
     { 2, 0, 255, 0 },
 };
 
-struct Item26AnimationStep D_8010D5B0[14] = {
+struct Item26AnimationStep light_capsule_anim_11[14] = {
     { 1, 0, 1, 7 },
     { 1, 0, 1, 0 },
     { 1, 0, 1, 7 },
@@ -474,7 +476,7 @@ struct Item26AnimationStep D_8010D5B0[14] = {
     { 1, 0, 243, 0 },
 };
 
-struct Item26AnimationStep D_8010D5E8[39] = {
+struct Item26AnimationStep light_capsule_anim_12[39] = {
     { 2, 0, 1, 21 },
     { 2, 0, 1, 0 },
     { 2, 0, 1, 21 },
@@ -516,28 +518,28 @@ struct Item26AnimationStep D_8010D5E8[39] = {
     { 96, 0, 0, 1 },
 };
 
-struct Item26AnimationStep* D_8010D684[14] = {
-    D_8010D41C,
-    D_8010D434,
-    D_8010D43C,
-    D_8010D448,
-    D_8010D458,
-    D_8010D468,
-    D_8010D478,
-    D_8010D488,
-    D_8010D4A0,
-    D_8010D4DC,
-    D_8010D518,
-    D_8010D5B0,
-    D_8010D5E8,
-    D_8010D444,
+struct Item26AnimationStep* light_capsule_animations[14] = {
+    light_capsule_anim_0,
+    light_capsule_anim_1,
+    light_capsule_anim_2,
+    light_capsule_anim_3,
+    light_capsule_anim_4,
+    light_capsule_anim_5,
+    light_capsule_anim_6,
+    light_capsule_anim_7,
+    light_capsule_anim_8,
+    light_capsule_anim_9,
+    light_capsule_anim_10,
+    light_capsule_anim_11,
+    light_capsule_anim_12,
+    light_capsule_anim_13,
 };
 
-struct Item26AnimationStep D_8010D6BC[1] = {
+struct Item26AnimationStep boss_teleporter_anim_0[1] = {
     { 1, 0, 0, 0 },
 };
 
-struct Item26AnimationStep D_8010D6C0[36] = {
+struct Item26AnimationStep boss_teleporter_anim_1[36] = {
     { 4, 0, 1, 0 },
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },
@@ -576,7 +578,7 @@ struct Item26AnimationStep D_8010D6C0[36] = {
     { 2, 0, 221, 34 },
 };
 
-struct Item26AnimationStep D_8010D750[36] = {
+struct Item26AnimationStep boss_teleporter_anim_2[36] = {
     { 4, 0, 1, 111 },
     { 2, 0, 1, 35 },
     { 2, 0, 1, 36 },
@@ -615,17 +617,17 @@ struct Item26AnimationStep D_8010D750[36] = {
     { 2, 0, 221, 68 },
 };
 
-struct Item26AnimationStep D_8010D7E0[3] = {
+struct Item26AnimationStep boss_teleporter_anim_3[3] = {
     { 3, 0, 1, 70 },
     { 3, 0, 1, 71 },
     { 30, 0, 0, 72 },
 };
 
-struct Item26AnimationStep D_8010D7EC[1] = {
+struct Item26AnimationStep boss_teleporter_anim_4[1] = {
     { 8, 0, 0, 73 },
 };
 
-struct Item26AnimationStep D_8010D7F0[8] = {
+struct Item26AnimationStep boss_teleporter_anim_5[8] = {
     { 1, 0, 1, 74 },
     { 1, 0, 1, 111 },
     { 1, 0, 1, 76 },
@@ -636,11 +638,11 @@ struct Item26AnimationStep D_8010D7F0[8] = {
     { 1, 0, 249, 111 },
 };
 
-struct Item26AnimationStep D_8010D810[1] = {
+struct Item26AnimationStep boss_teleporter_anim_6[1] = {
     { 8, 0, 0, 78 },
 };
 
-struct Item26AnimationStep D_8010D814[45] = {
+struct Item26AnimationStep boss_teleporter_anim_7[45] = {
     { 2, 0, 1, 79 },
     { 2, 0, 1, 80 },
     { 2, 0, 1, 81 },
@@ -688,7 +690,7 @@ struct Item26AnimationStep D_8010D814[45] = {
     { 1, 0, 212, 93 },
 };
 
-struct Item26AnimationStep D_8010D8C8[15] = {
+struct Item26AnimationStep boss_teleporter_anim_8[15] = {
     { 1, 0, 1, 94 },
     { 1, 0, 1, 95 },
     { 1, 0, 1, 96 },
@@ -706,7 +708,7 @@ struct Item26AnimationStep D_8010D8C8[15] = {
     { 1, 0, 0, 108 },
 };
 
-struct Item26AnimationStep D_8010D904[18] = {
+struct Item26AnimationStep boss_teleporter_anim_9[18] = {
     { 2, 0, 1, 76 },
     { 2, 0, 1, 77 },
     { 2, 0, 1, 111 },
@@ -727,7 +729,7 @@ struct Item26AnimationStep D_8010D904[18] = {
     { 3, 0, 0, 111 },
 };
 
-struct Item26AnimationStep D_8010D94C[6] = {
+struct Item26AnimationStep boss_teleporter_anim_10[6] = {
     { 45, 0, 1, 73 },
     { 7, 0, 1, 109 },
     { 8, 0, 1, 110 },

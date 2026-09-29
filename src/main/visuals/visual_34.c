@@ -2,12 +2,12 @@
 // 800B5570..800B56F4
 #include "common.h"
 
-void func_800B5570(struct VisualObj* arg0)
+void split_mushroom_fx_update(struct VisualObj* arg0)
 {
-    D_8010A790[arg0->state](arg0);
+    split_mushroom_fx_state_funcs[arg0->state](arg0);
 }
 
-void func_800B55AC(struct VisualObj* arg0)
+void split_mushroom_fx_main(struct VisualObj* arg0)
 {
     if (arg0->unk50->state >= 2) {
         arg0->on_screen = 0;
@@ -25,7 +25,7 @@ void func_800B55AC(struct VisualObj* arg0)
             }
             arg0->y_pos.i.hi += 1;
             arg0->unk5C.value ^= 0x20;
-            func_80015DC8(arg0);
+            animate_object(arg0);
         }
     } else {
         if (--arg0->unk5C.value == 0) {
@@ -33,17 +33,17 @@ void func_800B55AC(struct VisualObj* arg0)
         }
         arg0->x_pos.val = arg0->unk50->x_pos.val;
         arg0->y_pos.val = arg0->unk50->y_pos.val;
-        func_80015DC8(arg0);
+        animate_object(arg0);
     }
-    func_8002B318(arg0, 0x20, 0x20);
+    update_on_screen(arg0, 0x20, 0x20);
 }
 
-void func_800B56D4(struct VisualObj* arg0)
+void split_mushroom_fx_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A790[])(struct VisualObj*) = {
-    func_800B55AC,
-    func_800B56D4,
+void (*split_mushroom_fx_state_funcs[])(struct VisualObj*) = {
+    split_mushroom_fx_main,
+    split_mushroom_fx_despawn,
 };

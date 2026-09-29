@@ -2,77 +2,77 @@
 // 800C8FA8..800C91B0
 #include "common.h"
 
-void func_800C8FA8(struct MiscObj* arg0)
+void pod_effect_update(struct MiscObj* self)
 {
-    D_8010DC3C[arg0->state](arg0);
+    pod_effect_state_funcs[self->state](self);
 }
 
-void func_800C8FE4(struct MiscObj* arg0)
+void pod_effect_launch_init(struct MiscObj* self)
 {
-    func_80015D60(arg0, 0xF);
-    arg0->y_vel.val = FIXED(8.25);
-    arg0->x_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = FIXED(0.375);
-    func_8002B718(MOVING_OBJECT(arg0));
-    arg0->state = 1;
+    set_animation(self, 0xF);
+    self->y_vel.val = FIXED(8.25);
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = FIXED(0.375);
+    move_object(MOVING_OBJECT(self));
+    self->state = 1;
 }
 
-void func_800C903C(struct MiscObj* arg0)
+void pod_effect_launch(struct MiscObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->y_vel.val == 0 || *(s32*)arg0->ext.misc_5.owner == 0) {
-        arg0->state = 2;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->y_vel.val == 0 || *(s32*)self->ext.misc_5.owner == 0) {
+        self->state = 2;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800C90A0(struct MiscObj* arg0)
+void pod_effect_launch_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800C90C0(struct MiscObj* arg0)
+void pod_effect_init(struct MiscObj* self)
 {
-    func_80015D60(arg0, arg0->ext.misc_5.animation);
-    arg0->state = 4;
+    set_animation(self, self->ext.misc_5.animation);
+    self->state = 4;
 }
 
-void func_800C90F8(struct MiscObj* arg0)
+void pod_effect_animate(struct MiscObj* self)
 {
     struct MainObj* owner;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->unk2 == 0) {
-        if (arg0->animation_step.fields.event != 0) {
-            arg0->state = 5;
-        } else if (arg0->animation_step.fields.relative_step < 0) {
-            arg0->state = 5;
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->unk2 == 0) {
+        if (self->animation_step.fields.event != 0) {
+            self->state = 5;
+        } else if (self->animation_step.fields.relative_step < 0) {
+            self->state = 5;
         }
     } else {
-        owner = arg0->ext.misc_5.owner;
-        if ((owner->unk67 != 0) || (owner->state >= 2)) {
-            arg0->state = 5;
+        owner = self->ext.misc_5.owner;
+        if ((owner->air_state != 0) || (owner->state >= 2)) {
+            self->state = 5;
         }
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800C9190(struct MiscObj* arg0)
+void pod_effect_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010DC3C[6])(struct MiscObj*) = {
-    func_800C8FE4,
-    func_800C903C,
-    func_800C90A0,
-    func_800C90C0,
-    func_800C90F8,
-    func_800C9190,
+void (*pod_effect_state_funcs[6])(struct MiscObj*) = {
+    pod_effect_launch_init,
+    pod_effect_launch,
+    pod_effect_launch_despawn,
+    pod_effect_init,
+    pod_effect_animate,
+    pod_effect_despawn,
 };
 
-s8 D_8010DC54[8] = { -19, -14, 0x13, -14, 0x11, 0x10, -18, 0x0E };
+s8 pod_effect_offsets[8] = { -19, -14, 0x13, -14, 0x11, 0x10, -18, 0x0E };
 
-u32 D_8010DC5C = 0;
+u32 pod_effect_unused = 0;

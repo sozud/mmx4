@@ -2,9 +2,10 @@
 // 800D5934..800D5C54
 #include "common.h"
 
+// light_ray_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_06", func_800D5934);
 
-void func_800D5AB0(struct QuadObj* arg0)
+void light_ray_main(struct QuadObj* arg0)
 {
     if (++arg0->ext.ready_line.x_vel.bytes[2] == 0) {
         arg0->ext.ready_line.x_vel.bytes[2] = 0xFE;
@@ -33,18 +34,18 @@ void func_800D5AB0(struct QuadObj* arg0)
     }
 }
 
-void func_800D5BF8(struct QuadObj* arg0)
+void light_ray_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void func_800D5C18(struct QuadObj* arg0)
+void light_ray_update(struct QuadObj* arg0)
 {
-    D_8010FAE0[arg0->state](arg0);
+    light_ray_state_funcs[arg0->state](arg0);
 }
 
-void (*D_8010FAE0[])(struct QuadObj*) = {
+void (*light_ray_state_funcs[])(struct QuadObj*) = {
     func_800D5934,
-    func_800D5AB0,
-    func_800D5BF8,
+    light_ray_main,
+    light_ray_despawn,
 };

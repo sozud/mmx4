@@ -192,10 +192,10 @@ struct MainObj* find_free_main_obj(void)
     struct MainObj* var_v1;
     for (var_v1 = &main_objects[0]; var_v1 < &main_objects[0x30]; var_v1++) {
         if (!var_v1->active) {
-            var_v1->unk50 = 0;
-            var_v1->unk54 = 0;
-            var_v1->unk68 = 0;
-            var_v1->unk61 = 0;
+            var_v1->attack_box = 0;
+            var_v1->hurt_box = 0;
+            var_v1->terrain_box = 0;
+            var_v1->invincibility_timer = 0;
             var_v1->unk64 = 0;
             var_v1->unk65 = 0;
             var_v1->unk66 = 0;
@@ -444,7 +444,7 @@ struct UnkObj* find_free_unk_obj()
     return NULL;
 }
 
-void func_8002B0C8(struct ObjectHeader* arg0)
+void despawn_object(struct ObjectHeader* arg0)
 {
     if (arg0->backref != NULL) {
         *(u8*)arg0->backref &= 0x70;
@@ -452,7 +452,7 @@ void func_8002B0C8(struct ObjectHeader* arg0)
     ZeroObjectState(arg0);
 }
 
-void func_8002B108(struct ObjectHeader* arg0)
+void despawn_object_permanently(struct ObjectHeader* arg0)
 {
     if (arg0->backref != NULL) {
         *(u8*)arg0->backref = 0x80;
@@ -472,8 +472,10 @@ void ZeroObjectState(struct ObjectHeader* arg0)
     arg0->unk7 = 0;
 }
 
+// is_far_off_screen
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B160);
 
+// is_off_screen
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B1E8);
 
 void is_on_screen(struct BaseObj* arg0)
@@ -495,7 +497,7 @@ void is_on_screen(struct BaseObj* arg0)
     }
 }
 
-void func_8002B318(struct BaseObj* arg0, s32 arg1, s32 arg2)
+void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
 {
     u16 x_pos, y_pos, y_pos_2;
     u16 x_diff, y_diff;
@@ -575,9 +577,10 @@ struct EffectObj* func_8002B468(s8 id, s8 arg1)
     }
 }
 
+// delete_effects
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B560);
 
-void func_8002B694(struct AnimatedObj* arg0)
+void move_with_gravity(struct AnimatedObj* arg0)
 {
     arg0->x_pos.val += arg0->x_vel.val;
     arg0->y_pos.val -= arg0->y_vel.val;
@@ -594,7 +597,7 @@ void func_8002B694(struct AnimatedObj* arg0)
     }
 }
 
-void func_8002B718(struct MovingObj* arg0)
+void move_object(struct MovingObj* arg0)
 {
     arg0->x_pos.val += arg0->x_vel.val;
     arg0->y_pos.val -= arg0->y_vel.val;
@@ -614,7 +617,7 @@ u8 get_random()
     return cur_random;
 }
 
-s32 func_8002B780(void)
+s32 get_random_nonzero(void)
 {
     s32 random_value;
     s32 result;
@@ -627,19 +630,19 @@ s32 func_8002B780(void)
     return result;
 }
 
-s32 func_8002B7B0(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
+s32 angle_to_point(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
 {
-    return func_8002B810(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2) & 0xFF;
+    return angle_from_delta(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2) & 0xFF;
 }
 
-s32 func_8002B7DC(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
+s32 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
 {
-    return func_8002B810(arg0->x_pos.val - arg1->x_pos.val,
+    return angle_from_delta(arg0->x_pos.val - arg1->x_pos.val,
                arg0->y_pos.val - arg1->y_pos.val)
         & 0xFF;
 }
 
-s32 func_8002B810(s32 arg0, s32 arg1)
+s32 angle_from_delta(s32 arg0, s32 arg1)
 {
     extern u32 D_800F45E4[];
     s32 temp_lo;
@@ -701,7 +704,7 @@ extern s32 D_800F459C[];
 
 extern s32 D_800F45C0[];
 
-void func_8002B93C(struct MovingObj* arg0, s32 arg1)
+void set_velocity_from_angle(struct MovingObj* arg0, s32 arg1)
 {
     u8 angle;
     s16 var_a2, var_v0;
@@ -769,7 +772,7 @@ s16 func_8002BAA4(void)
     return count;
 }
 
-s16 func_8002BAD0(s16 arg0, s16 arg1, s16 arg2)
+s16 get_layout_screen(s16 arg0, s16 arg1, s16 arg2)
 {
     struct BackgroundObj* temp_v1 = &background_objects[arg0];
     s16 var_x, var_y;

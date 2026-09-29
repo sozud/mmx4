@@ -5,16 +5,16 @@
 // white quad that turns into "MEGAMAN" on title screen
 
 // TitleUpdate2 state 0
-extern s16 D_8010FCCC[][8];
-extern u16 D_8010FD94[];
+extern s16 title_quad_shapes[][8];
+extern u16 title_quad_palette[];
 #ifdef VERSION_JP
 extern s16 D_8010FE78_jp[];
-extern u16 D_8010FD7C[];
+extern u16 title_quad_morph_targets[];
 #else
-extern s16 D_8010FD7C[][2];
+extern s16 title_quad_morph_targets[][2];
 #endif
 
-void func_800D6F94(struct QuadObj* arg0)
+void title_quad_init(struct QuadObj* arg0)
 {
     struct QuadObj* entity = arg0;
     u16* ptr;
@@ -28,7 +28,7 @@ void func_800D6F94(struct QuadObj* arg0)
     entity->y_pos.i.hi = 0;
     entity->active |= 0x80;
 
-    ptr = D_8010FCCC[entity->unk2];
+    ptr = title_quad_shapes[entity->unk2];
     entity->unk14.i.hi = *ptr++;
     entity->unk18.i.hi = *ptr++;
     entity->unk1C.i.hi = *ptr++;
@@ -43,7 +43,7 @@ void func_800D6F94(struct QuadObj* arg0)
     case 0:
     case 1:
     case 9: {
-        u16 color = D_8010FD7C[11];
+        u16 color = title_quad_morph_targets[11];
 
         entity->unk36 = 0x11;
         entity->ext.title_quad.unk38 = 0x3C;
@@ -56,7 +56,7 @@ void func_800D6F94(struct QuadObj* arg0)
     case 2:
     case 3:
     case 4: {
-        u16 color = D_8010FD94[0];
+        u16 color = title_quad_palette[0];
 
         entity->unk36 = 0x10;
         entity->state = 3;
@@ -71,7 +71,7 @@ void func_800D6F94(struct QuadObj* arg0)
     }
 
     case 5: {
-        u16 color = D_8010FD7C[11];
+        u16 color = title_quad_morph_targets[11];
 
         entity->unk36 = 0x12;
         entity->state = 4;
@@ -82,7 +82,7 @@ void func_800D6F94(struct QuadObj* arg0)
     }
     }
 #else
-    temp = D_8010FD94[0];
+    temp = title_quad_palette[0];
     entity->unk36 = 0x10;
     entity->state = 3;
     entity->ext.title_quad.unk38 = 0x14;
@@ -93,7 +93,7 @@ void func_800D6F94(struct QuadObj* arg0)
 
 // TitleUpdate2 state 1
 #ifndef VERSION_JP
-void func_800D7058(struct QuadObj* self)
+void title_quad_split(struct QuadObj* self)
 {
     s32 velocity;
 
@@ -126,7 +126,7 @@ void func_800D7058(struct QuadObj* self)
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7154_jp);
 #else
-void func_800D7100(struct QuadObj* arg0)
+void title_quad_delay(struct QuadObj* arg0)
 {
     // seems to be a timer before the white Quad appears
     if (arg0->ext.title_quad.unk38 != 0) {
@@ -157,7 +157,7 @@ INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D71FC_jp);
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7250_jp);
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7340_jp);
 #else
-void func_800D7194(struct QuadObj* arg0)
+void title_quad_morph(struct QuadObj* arg0)
 {
     f32* xy_ptr;
     s32 x_diff;
@@ -173,10 +173,10 @@ void func_800D7194(struct QuadObj* arg0)
     xy_ptr = &arg0->unk14;
     pos = 0;
     do {
-        ptr = &D_8010FD7C[pos][0];
+        ptr = &title_quad_morph_targets[pos][0];
         x_diff = xy_ptr[0].val - FIXED(ptr[0]);
         y_diff = xy_ptr[1].val - FIXED(ptr[1]);
-        temp_v0 = func_8002B810(x_diff, y_diff);
+        temp_v0 = angle_from_delta(x_diff, y_diff);
         if ((((arg0->ext.title_quad.unk3E[pos] ^ temp_v0) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
             xy_ptr[0].val = FIXED(ptr[0]);
             xy_ptr[1].val = FIXED(ptr[1]);
@@ -195,7 +195,7 @@ void func_800D7194(struct QuadObj* arg0)
     } while (pos < 4);
 
     if ((arg0->ext.title_quad.unk38 % 3) == 0) {
-        palette = D_8010FD94;
+        palette = title_quad_palette;
         temp_v1 = arg0->ext.title_quad.unk43;
         temp_v0_2 = temp_v1 + 1;
         arg0->ext.title_quad.unk43 = temp_v0_2;
@@ -212,7 +212,7 @@ void func_800D7194(struct QuadObj* arg0)
     arg0->ext.title_quad.unk38--;
     if (arg0->ext.title_quad.unk38 == 0) {
         arg0->state = 2;
-        ptr = D_8010FD7C[0];
+        ptr = title_quad_morph_targets[0];
         arg0->unk14.i.hi = *(u16*)ptr++;
         arg0->unk18.i.hi = *(u16*)ptr++;
         arg0->unk1C.i.hi = *(u16*)ptr++;
@@ -229,10 +229,11 @@ void func_800D7194(struct QuadObj* arg0)
 #endif
 
 // TitleUpdate2 state 6
+// title_quad_flash
 INCLUDE_ASM("main/nonmatchings/quads/title_quad", func_800D7468);
 
 // TitleUpdate2 state 2
-void func_800D76D8(struct QuadObj* arg0)
+void title_quad_despawn(struct QuadObj* arg0)
 {
     ZeroObjectState(arg0);
 }
@@ -249,7 +250,7 @@ extern void func_800D71FC_jp();
 extern void func_800D7250_jp();
 extern void func_800D7340_jp();
 
-s16 D_8010FCCC[3][8] = {
+s16 title_quad_shapes[3][8] = {
     { 0, 0, 319, 0, 319, 120, 0, 120 },
     { 80, 192, 319, 121, 319, 240, 80, 240 },
     { 330, 120, 80, 191, 81, 192, 331, 121 },
@@ -278,8 +279,8 @@ s16 D_8010FE48_jp[3][8] = {
 
 s16 D_8010FE78_jp[6] = { 80, 240, 0, 20, 40, 0 };
 
-u16 D_8010FD94[4] = { 0x83E0, 0x8BC2, 0x93C4, 0x9BC6 };
-u16 D_8010FD7C[26] = {
+u16 title_quad_palette[4] = { 0x83E0, 0x8BC2, 0x93C4, 0x9BC6 };
+u16 title_quad_morph_targets[26] = {
     0xA3C8,
     0xAFCB,
     0xB7CD,
@@ -309,16 +310,16 @@ u16 D_8010FD7C[26] = {
 };
 
 void (*g_TitleUpdate2Funcs[])(struct QuadObj*) = {
-    func_800D6F94,
+    title_quad_init,
     func_800D7154_jp,
-    func_800D76D8,
+    title_quad_despawn,
     func_800D71FC_jp,
     func_800D7250_jp,
     func_800D7340_jp,
     func_800D7468,
 };
 #else
-s16 D_8010FCCC[11][8] = {
+s16 title_quad_shapes[11][8] = {
     { 0, 0, 319, 0, 319, 120, 0, 120 },
     { 80, 192, 319, 121, 319, 240, 80, 240 },
     { 330, 120, 80, 191, 81, 192, 331, 121 },
@@ -332,7 +333,7 @@ s16 D_8010FCCC[11][8] = {
     { 319, 0, 319, 239, 0, 239, 0, 0 },
 };
 
-s16 D_8010FD7C[6][2] = {
+s16 title_quad_morph_targets[6][2] = {
     { 23, 72 },
     { 216, 65 },
     { 216, 67 },
@@ -341,7 +342,7 @@ s16 D_8010FD7C[6][2] = {
     { 40, 0 },
 };
 
-u16 D_8010FD94[30] = {
+u16 title_quad_palette[30] = {
     0x8421,
     0x8C63,
     0x94A5,
@@ -377,12 +378,12 @@ u16 D_8010FD94[30] = {
 void TitleSetWhiteQuadSpeed(struct QuadObj*);
 
 void (*g_TitleUpdate2Funcs[])(struct QuadObj*) = {
-    func_800D6F94,
-    func_800D7058,
-    func_800D76D8,
-    func_800D7100,
+    title_quad_init,
+    title_quad_split,
+    title_quad_despawn,
+    title_quad_delay,
     TitleSetWhiteQuadSpeed,
-    func_800D7194,
+    title_quad_morph,
     func_800D7468,
 };
 #endif

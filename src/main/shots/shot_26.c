@@ -2,9 +2,9 @@
 // 8009EE68..8009F240
 #include "common.h"
 
-u8 D_80109170[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
-u8 D_80109178[4] = { 0, 0, 4, 4 };
-s8 D_8010917C[16] = {
+u8 sentry_shot_hit_boxes[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
+u8 sentry_shot_terrain_box[4] = { 0, 0, 4, 4 };
+s8 sentry_shot_spawn_offsets[16] = {
     -0x0D,
     0,
     0x0D,
@@ -23,55 +23,56 @@ s8 D_8010917C[16] = {
     0x0C,
 };
 
-void func_8009EE68(struct ShotObj* arg0)
+void sentry_shot_update(struct ShotObj* self)
 {
-    if (arg0->unk84.value == 0) {
-        CollisionRelated(arg0);
+    if (self->unk84.value == 0) {
+        CollisionRelated(self);
     }
-    D_8010918C[arg0->state](arg0);
+    sentry_shot_state_funcs[self->state](self);
 }
 
+// sentry_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_26", func_8009EEC8);
 
-void func_8009F160(struct ShotObj* arg0)
+void sentry_shot_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
     } else {
-        if (func_8002BB80(arg0, &g_Player) != 0) {
-            arg0->state++;
+        if (func_8002BB80(self, &g_Player) != 0) {
+            self->state++;
             return;
         }
-        if (arg0->unk70 != 0) {
-            func_800AF808(BASE_OBJECT(arg0));
-            arg0->state++;
+        if (self->unk70 != 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            self->state++;
             return;
         }
-        if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) != 0) {
-            arg0->state++;
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) != 0) {
+            self->state++;
             return;
         }
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         return;
     }
-    arg0->state++;
+    self->state++;
 }
 
-void func_8009F218(struct ShotObj* arg0)
+void sentry_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009F238(struct ShotObj* arg0)
+void sentry_shot_idle(struct ShotObj* self)
 {
 }
 
-void (*D_8010918C[])(struct ShotObj*) = {
+void (*sentry_shot_state_funcs[])(struct ShotObj*) = {
     func_8009EEC8,
-    func_8009F160,
-    func_8009F218,
-    func_8009F238,
+    sentry_shot_fly,
+    sentry_shot_despawn,
+    sentry_shot_idle,
 };

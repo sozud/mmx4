@@ -2,60 +2,61 @@
 // 8009CC64..8009CF38
 #include "common.h"
 
-u8 D_80108F9C[4] = { 0, 0, 4, 4 };
-u8 D_80108FA0[8] = { 3, 5, 4, 6, 4, 6, 3, 5 };
-s8 D_80108FA8[4] = { 0, 0, 0, 0 };
+u8 trooper_bomb_terrain_box[4] = { 0, 0, 4, 4 };
+u8 trooper_bomb_debris[8] = { 3, 5, 4, 6, 4, 6, 3, 5 };
+s8 trooper_bomb_offsets[4] = { 0, 0, 0, 0 };
 
-void func_8009CC64(struct ShotObj* arg0)
+void trooper_bomb_update(struct ShotObj* self)
 {
-    D_80108FAC[arg0->state](arg0);
-    CollisionRelated(arg0);
+    trooper_bomb_state_funcs[self->state](self);
+    CollisionRelated(self);
 }
 
+// trooper_bomb_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_19", func_8009CCB4);
 
-void func_8009CD80(struct ShotObj* arg0)
+void trooper_bomb_fall(struct ShotObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 != 0) {
-        arg0->unk84.value = 0x40;
-        arg0->on_screen = 0;
-        arg0->state++;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->unk70 != 0) {
+        self->unk84.value = 0x40;
+        self->on_screen = 0;
+        self->state++;
         return;
     }
-    func_8002B318(BASE_OBJECT(arg0), 0x20, 0x20);
+    update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
 
-void func_8009CDE0(struct ShotObj* arg0)
+void trooper_bomb_explode(struct ShotObj* self)
 {
-    if (--arg0->unk84.value != 0) {
-        if (arg0->unk84.value == 0x20) {
-            arg0->unk7C->unk1C.bytes[0] = 1;
+    if (--self->unk84.value != 0) {
+        if (self->unk84.value == 0x20) {
+            self->unk7C->unk1C.bytes[0] = 1;
         }
         if (!(D_80141BD8.unk0 & 7)) {
-            if (arg0->unk84.value >= 0x34) {
-                func_800C842C(8, D_80108FA0, arg0, 0x28, D_800FFC14);
-                arg0->x_pos.i.hi += 0x20;
-                func_800C842C(8, D_80108FA0, arg0, 0x28, D_800FFC14);
-                arg0->x_pos.i.hi -= 0x20;
+            if (self->unk84.value >= 0x34) {
+                func_800C842C(8, trooper_bomb_debris, self, 0x28, train_crate_animations);
+                self->x_pos.i.hi += 0x20;
+                func_800C842C(8, trooper_bomb_debris, self, 0x28, train_crate_animations);
+                self->x_pos.i.hi -= 0x20;
             }
-            func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
-            func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
-            func_80028BAC(8, 4, 1);
+            func_800AF878(BASE_OBJECT(self), 1, 0x30, 0x20);
+            func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x10);
+            start_screen_shake_y(8, 4, 1);
         }
     } else {
-        arg0->state++;
+        self->state++;
     }
 }
 
-void func_8009CF18(struct ShotObj* arg0)
+void trooper_bomb_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108FAC[])(struct ShotObj*) = {
+void (*trooper_bomb_state_funcs[])(struct ShotObj*) = {
     func_8009CCB4,
-    func_8009CD80,
-    func_8009CDE0,
-    func_8009CF18,
+    trooper_bomb_fall,
+    trooper_bomb_explode,
+    trooper_bomb_despawn,
 };

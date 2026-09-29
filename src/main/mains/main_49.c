@@ -2,180 +2,183 @@
 // 800684F8..8006970C
 #include "common.h"
 
-extern u8 D_800FFB64[];
+extern u8 train_soldier_guard_attack_box[];
 extern s16 main49_activation_distances[4];
 
-void func_800684F8(struct MainObj* arg0)
+void train_soldier_update(struct MainObj* self)
 {
-    D_800FFB78[arg0->state](arg0);
-    CollisionRelated((struct PlayerObj*)arg0);
+    train_soldier_state_funcs[self->state](self);
+    CollisionRelated((struct PlayerObj*)self);
 }
 
+// train_soldier_init
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068548);
 
-void func_800688B8(struct MainObj* arg0)
+void train_soldier_main(struct MainObj* self)
 {
     u8 temp_v1;
 
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    if (func_8002DD04(arg0) < 0) {
-        func_800AF808(BASE_OBJECT(arg0));
-        func_800C813C(5, D_800FFB68, arg0);
-        func_800BF60C(BASE_OBJECT(arg0), 0x12);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(5, train_soldier_debris, self);
+        drop_item(BASE_OBJECT(self), 0x12);
         goto block_12;
     }
     temp_v1 = SP_CUR_MAIN_OBJ->ext.main_49.unk85;
     if (temp_v1 != 2 && temp_v1 < 6U) {
-        func_80068F88(arg0);
+        train_soldier_check_guard(self);
     }
-    func_80068D6C(arg0);
+    func_80068D6C(self);
     if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0) {
-        func_80069000(arg0);
+        train_soldier_check_shoot(self);
     }
-    D_800FFB88[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
+    train_soldier_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
     if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0) {
-        if (func_8002B160(BASE_OBJECT(arg0)) == 0) {
-            is_on_screen(BASE_OBJECT(arg0));
+        if (func_8002B160(BASE_OBJECT(self)) == 0) {
+            is_on_screen(BASE_OBJECT(self));
         } else {
-            arg0->state = 2;
+            self->state = 2;
         }
-    } else if (func_8002B1E8(BASE_OBJECT(arg0), 0x70, 0) != 0) {
-        arg0->state = 2;
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x70, 0) != 0) {
+        self->state = 2;
     } else {
-        is_on_screen(BASE_OBJECT(arg0));
+        is_on_screen(BASE_OBJECT(self));
     }
     return;
 block_12:
-    arg0->state = 2;
+    self->state = 2;
 }
 
-void func_80068A10(struct MainObj* arg0)
+void train_soldier_despawn(struct MainObj* self)
 {
-    if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0 || arg0->unk2 == 9) {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0 || self->unk2 == 9) {
+        despawn_object(OBJECT_HEADER(self));
     } else {
-        func_8002B108(OBJECT_HEADER(arg0));
+        despawn_object_permanently(OBJECT_HEADER(self));
     }
 }
 
-void func_80068A68(struct MainObj* arg0)
+void train_soldier_wait_for_player(struct MainObj* self)
 {
     s8 temp_a2;
     s16 threshold;
     u8 temp_v0;
     u8* temp_v1;
 
-    if (arg0->unk6 == 0) {
-        temp_a2 = arg0->unk2;
+    if (self->unk6 == 0) {
+        temp_a2 = self->unk2;
         threshold = main49_activation_distances[temp_a2 - 6];
-        if ((g_Player.x_pos.i.hi - arg0->x_pos.i.hi) >= threshold) {
+        if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= threshold) {
             temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
             temp_v1[0x81] = (u8)((temp_a2 - 6) * 0x10);
-            arg0->unk6 = (u8)arg0->unk6 + 1;
+            self->unk6 = (u8)self->unk6 + 1;
         }
     } else {
         temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
         temp_v0 = temp_v1[0x81];
         if (temp_v0 == 0) {
-            arg0->state = 1;
-            arg0->unk5 = 2;
-            arg0->unk6 = 0;
-            arg0->unk7A = 0;
-            if (g_Player.x_pos.val < arg0->x_pos.val) {
-                arg0->unk15 = 0;
+            self->state = 1;
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->unk7A = 0;
+            if (g_Player.x_pos.val < self->x_pos.val) {
+                self->unk15 = 0;
                 return;
             }
-            arg0->unk15 = 0x40;
+            self->unk15 = 0x40;
             return;
         }
         temp_v1[0x81] = temp_v0 - 1;
     }
 }
 
-void func_80068B3C(struct MainObj* arg0)
+void train_soldier_idle(struct MainObj* self)
 {
 }
 
-void func_80068B44(struct MainObj* arg0)
+void train_soldier_walk(struct MainObj* self)
 {
-    D_800FFBA8[arg0->unk6](arg0);
+    train_soldier_walk_funcs[self->unk6](self);
 }
 
+// train_soldier_walk_start
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068B80);
 
-void func_80068C2C(struct MainObj* self)
+void train_soldier_walk_move(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
     if (self->unk15 != 0) {
-        if (self->unk70 & 1) {
+        if (self->collision_flags & 1) {
             self->unk15 = 0;
-            self->unk20 = -self->unk20;
+            self->x_speed = -self->x_speed;
         }
-    } else if (self->unk70 & 2) {
+    } else if (self->collision_flags & 2) {
         self->unk15 = 0x40;
-        self->unk20 = -self->unk20;
+        self->x_speed = -self->x_speed;
     }
 }
 
-void func_80068CB0(struct MainObj* arg0)
+void train_soldier_guard(struct MainObj* self)
 {
-    D_800FFBB0[arg0->unk6](arg0);
+    train_soldier_guard_funcs[self->unk6](self);
 }
 
 extern u32 D_801076F8[];
-extern u8 D_800FFB60[];
+extern u8 train_soldier_guard_hurt_box[];
 
-void func_80068CEC(struct MainObj* arg0)
+void train_soldier_guard_start(struct MainObj* self)
 {
-    arg0->collision_data = (const u16*)D_801076F8;
-    arg0->unk54 = D_800FFB60;
-    arg0->unk50 = D_800FFB64;
-    arg0->unk20 = 0;
-    arg0->unk28 = 0;
-    arg0->unk24 = 0;
-    arg0->unk2C = 0;
-    arg0->unk6++;
-    func_80015D60(arg0, 8);
+    self->collision_data = (const u16*)D_801076F8;
+    self->hurt_box = train_soldier_guard_hurt_box;
+    self->attack_box = train_soldier_guard_attack_box;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    self->unk6++;
+    set_animation(self, 8);
 }
 
-void func_80068D4C(struct MainObj* arg0)
+void train_soldier_guard_hold(struct MainObj* self)
 {
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
+// train_soldier_check_jump
 INCLUDE_ASM("main/nonmatchings/mains/main_49", func_80068D6C);
 
-void func_80068F88(struct MainObj* arg0)
+void train_soldier_check_guard(struct MainObj* self)
 {
     u8 timer;
 
-    if (arg0->unk5 == 2) {
+    if (self->unk5 == 2) {
         timer = SP_CUR_MAIN_OBJ->ext.main_49.index + 1;
         SP_CUR_MAIN_OBJ->ext.main_49.index = timer;
         if ((timer & 0xFF) == 0x5A) {
-            arg0->unk5 = 5;
-            arg0->unk6 = 0;
+            self->unk5 = 5;
+            self->unk6 = 0;
             SP_CUR_MAIN_OBJ->ext.main_49.index = 0;
-            arg0->unk24 = 0;
-            arg0->unk2C = 0;
-            arg0->unk20 = 0;
-            func_80015D60(arg0, 7);
+            self->y_speed = 0;
+            self->gravity = 0;
+            self->x_speed = 0;
+            set_animation(self, 7);
         }
     }
 }
 
-void func_80069000(struct MainObj* arg0)
+void train_soldier_check_shoot(struct MainObj* arg0)
 {
     s16 distance;
     s32 y_distance;
     struct MainObj* self;
     struct MainObj* current;
 
-    if ((arg0->unk67 == 0) && (arg0->unk5 != 6)) {
+    if ((arg0->air_state == 0) && (arg0->unk5 != 6)) {
         self = SP_CUR_MAIN_OBJ;
         if (self->ext.main_49.unk83 != 0) {
             self->ext.main_49.unk83--;
@@ -209,171 +212,171 @@ void func_80069000(struct MainObj* arg0)
                 }
             }
 
-            func_80015D60(arg0, 0xA);
+            set_animation(arg0, 0xA);
             arg0->unk5 = 6;
             arg0->unk6 = 0;
         }
     }
 }
 
-void func_8006917C(struct MainObj* arg0)
+void train_soldier_fall(struct MainObj* self)
 {
-    D_800FFBB8[arg0->unk6](arg0);
+    train_soldier_fall_funcs[self->unk6](self);
 }
 
-void func_800691B8(struct MainObj* arg0)
+void train_soldier_fall_drop(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         if (SP_CUR_MAIN_OBJ->ext.main_49.unk80 == 4) {
-            func_80015D60(arg0, 0x17);
+            set_animation(self, 0x17);
         } else {
-            func_80015D60(arg0, 0x18);
+            set_animation(self, 0x18);
         }
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk6++;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->unk6++;
     }
 }
 
-void func_80069248(struct MainObj* arg0)
+void train_soldier_fall_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
         if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2) {
-            arg0->unk5 = 7;
+            self->unk5 = 7;
         } else {
-            arg0->unk5 = 2;
+            self->unk5 = 2;
         }
-        arg0->unk6 = 0;
-        arg0->unk67 = 0;
+        self->unk6 = 0;
+        self->air_state = 0;
     }
 }
 
-void func_800692AC(struct MainObj* arg0)
+void train_soldier_jump(struct MainObj* self)
 {
-    D_800FFBC0[arg0->unk6](arg0);
+    train_soldier_jump_funcs[self->unk6](self);
 }
 
-void func_800692E8(struct MainObj* arg0)
+void train_soldier_jump_crouch(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->unk6++;
+    animate_object((struct AnimatedObj*)self);
+    if (self->animation_step.fields.event != 0) {
+        self->unk6++;
     }
 }
 
-void func_80069330(struct MainObj* arg0)
+void train_soldier_jump_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->unk24 < 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed < 0) {
         SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 4;
-        func_80015D60(arg0, 9);
-        arg0->unk5 = 3;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk28 = 0;
-        arg0->unk67 = -1;
+        set_animation(self, 9);
+        self->unk5 = 3;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->air_state = -1;
     }
 }
 
-void func_800693AC(struct MainObj* arg0)
+void train_soldier_rest(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
     if (++SP_CUR_MAIN_OBJ->ext.main_49.index == 0x3C) {
-        func_80015D60(arg0, 1);
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
+        set_animation(self, 1);
+        self->unk5 = 2;
+        self->unk6 = 0;
     }
 }
 
-void func_80069414(struct MainObj* arg0)
+void train_soldier_shoot(struct MainObj* self)
 {
-    D_800FFBC8[arg0->unk6](arg0);
+    train_soldier_shoot_funcs[self->unk6](self);
 }
 
-void func_80069450(struct MainObj* arg0)
+void train_soldier_shoot_aim(struct MainObj* self)
 {
     u8 flags;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
         flags = SP_CUR_MAIN_OBJ->ext.main_49.unk82;
         if (flags & 0x80) {
             switch (flags & 3) {
             case 0:
-                func_80015D60(arg0, 0xD);
+                set_animation(self, 0xD);
                 break;
             case 1:
-                func_80015D60(arg0, 0xC);
+                set_animation(self, 0xC);
                 break;
             case 2:
-                func_80015D60(arg0, 0xE);
+                set_animation(self, 0xE);
                 break;
             }
         } else {
-            func_80015D60(arg0, 0x1A);
+            set_animation(self, 0x1A);
         }
-        arg0->unk6++;
+        self->unk6++;
     }
 }
 
-void func_8006951C(struct MainObj* arg0)
+void train_soldier_shoot_fire(struct MainObj* self)
 {
     s8 event;
     struct ShotObj* shot;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    event = arg0->animation_step.fields.event;
+    animate_object(ANIMATED_OBJECT(self));
+    event = self->animation_step.fields.event;
     if (event != 0) {
         if (event == 3) {
-            func_8001540C(2, 0x66, arg0);
+            func_8001540C(2, 0x66, self);
         }
-        arg0->unk6++;
+        self->unk6++;
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0x19;
             shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_49.unk82;
-            shot->x_pos.val = arg0->x_pos.val;
-            shot->y_pos.val = arg0->y_pos.val;
-            shot->unk3C = (void*)arg0->sprite_frames;
-            shot->unk40 = arg0->unk40;
-            shot->unk42 = arg0->unk42 & 0x7FFF;
-            shot->bg_offset = arg0->bg_offset;
-            shot->animation_table = (u32**)arg0->animation_table;
-            shot->unk15 = arg0->unk15;
+            shot->x_pos.val = self->x_pos.val;
+            shot->y_pos.val = self->y_pos.val;
+            shot->unk3C = (void*)self->sprite_frames;
+            shot->unk40 = self->unk40;
+            shot->unk42 = self->unk42 & 0x7FFF;
+            shot->bg_offset = self->bg_offset;
+            shot->animation_table = (u32**)self->animation_table;
+            shot->unk15 = self->unk15;
         }
     }
 }
 
-void func_80069610(struct MainObj* arg0)
+void train_soldier_shoot_recoil(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)arg0);
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_80015D60(arg0, 11);
-        arg0->unk6++;
+    animate_object((struct AnimatedObj*)self);
+    if (self->animation_step.fields.relative_step == 0) {
+        set_animation(self, 11);
+        self->unk6++;
     }
 }
 
-void func_80069660(struct MainObj* arg0)
+void train_soldier_shoot_end(struct MainObj* self)
 {
     struct MainObj* main;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    if (arg0->animation_step.fields.relative_step == 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step == 0) {
         if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2) {
-            arg0->unk5 = 7;
+            self->unk5 = 7;
         } else {
-            arg0->unk5 = 5;
+            self->unk5 = 5;
         }
-        arg0->unk6 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = 0;
-        arg0->unk20 = 0;
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_speed = 0;
         SP_CUR_MAIN_OBJ->ext.main_49.index = 0;
         main = SP_CUR_MAIN_OBJ;
         if (main->ext.main_49.unk85 == 2) {
@@ -381,15 +384,15 @@ void func_80069660(struct MainObj* arg0)
         } else {
             main->ext.main_49.unk83 = 0xB4;
         }
-        func_80015D60(arg0, 7);
+        set_animation(self, 7);
     }
 }
 
-u8 D_800FFB60[] = { 0xF3, 0xEF, 0x1A, 0x25 };
+u8 train_soldier_guard_hurt_box[] = { 0xF3, 0xEF, 0x1A, 0x25 };
 
-u8 D_800FFB64[] = { 0xF3, 0xEF, 0x1A, 0x22 };
+u8 train_soldier_guard_attack_box[] = { 0xF3, 0xEF, 0x1A, 0x22 };
 
-u8 D_800FFB68[] = {
+u8 train_soldier_debris[] = {
     0x11,
     0x12,
     0x13,
@@ -402,47 +405,47 @@ u8 D_800FFB68[] = {
 
 s16 main49_activation_distances[4] = { 128, 144, 160, 0 };
 
-void (*D_800FFB78[])(struct MainObj*) = {
+void (*train_soldier_state_funcs[])(struct MainObj*) = {
     func_80068548,
-    func_800688B8,
-    func_80068A10,
-    func_80068A68,
+    train_soldier_main,
+    train_soldier_despawn,
+    train_soldier_wait_for_player,
 };
 
-void (*D_800FFB88[])(struct MainObj*) = {
-    (void (*)(struct MainObj*))func_8009216C,
-    func_80068B3C,
-    func_80068B44,
-    func_8006917C,
-    func_800692AC,
-    func_800693AC,
-    func_80069414,
-    func_80068CB0,
+void (*train_soldier_step_funcs[])(struct MainObj*) = {
+    (void (*)(struct MainObj*))enemy_hit_reaction,
+    train_soldier_idle,
+    train_soldier_walk,
+    train_soldier_fall,
+    train_soldier_jump,
+    train_soldier_rest,
+    train_soldier_shoot,
+    train_soldier_guard,
 };
 
-void (*D_800FFBA8[])(struct MainObj*) = {
+void (*train_soldier_walk_funcs[])(struct MainObj*) = {
     func_80068B80,
-    func_80068C2C,
+    train_soldier_walk_move,
 };
 
-void (*D_800FFBB0[])(struct MainObj*) = {
-    func_80068CEC,
-    func_80068D4C,
+void (*train_soldier_guard_funcs[])(struct MainObj*) = {
+    train_soldier_guard_start,
+    train_soldier_guard_hold,
 };
 
-void (*D_800FFBB8[])(struct MainObj*) = {
-    func_800691B8,
-    func_80069248,
+void (*train_soldier_fall_funcs[])(struct MainObj*) = {
+    train_soldier_fall_drop,
+    train_soldier_fall_land,
 };
 
-void (*D_800FFBC0[])(struct MainObj*) = {
-    func_800692E8,
-    func_80069330,
+void (*train_soldier_jump_funcs[])(struct MainObj*) = {
+    train_soldier_jump_crouch,
+    train_soldier_jump_rise,
 };
 
-void (*D_800FFBC8[])(struct MainObj*) = {
-    func_80069450,
-    func_8006951C,
-    func_80069610,
-    func_80069660,
+void (*train_soldier_shoot_funcs[])(struct MainObj*) = {
+    train_soldier_shoot_aim,
+    train_soldier_shoot_fire,
+    train_soldier_shoot_recoil,
+    train_soldier_shoot_end,
 };

@@ -7,7 +7,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_55", func_800D3084);
 
 void sigma_final_fx_charge(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->state = 2;
@@ -16,8 +16,8 @@ void sigma_final_fx_charge(struct MiscObj* self)
 
 void sigma_final_fx_gust(struct MiscObj* self)
 {
-    func_8002B694((struct AnimatedObj*)self);
-    func_80015DC8(self);
+    move_with_gravity((struct AnimatedObj*)self);
+    animate_object(self);
     is_on_screen(self);
     if (func_8002B160(self) != 0) {
         self->state = 2;
@@ -28,7 +28,7 @@ void sigma_final_fx_follow(struct MiscObj* self)
 {
     self->x_pos.u.hi = self->ext.misc_55.owner->x_pos.u.hi;
     self->y_pos.u.hi = self->ext.misc_55.owner->y_pos.u.hi;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
     if (self->ext.misc_55.owner->state == 2) {
         self->state = 2;

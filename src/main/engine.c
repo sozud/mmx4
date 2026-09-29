@@ -342,7 +342,7 @@ void func_80020060(struct EngineObj* arg0)
         func_80023D68();
     } else {
         func_800200D4(arg0);
-        func_80015930(0xFF, 0);
+        stop_sound(0xFF, 0);
         if (arg0->unk42 == 0) {
             func_80016F0C();
         }

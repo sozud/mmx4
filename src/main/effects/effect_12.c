@@ -2,41 +2,43 @@
 // 800B806C..800B84DC
 #include "common.h"
 
-u8 D_8010B61C[8] = { 12, 25, 12, 12, 12, 12, 12, 12 };
-u8 D_8010B624[8] = { 2, 1, 2, 2, 2, 2, 2, 2 };
+u8 enemy_spawner_child_ids[8] = { 12, 25, 12, 12, 12, 12, 12, 12 };
+u8 enemy_spawner_child_subtypes[8] = { 2, 1, 2, 2, 2, 2, 2, 2 };
 
-void func_800B806C(struct EffectObj* arg0)
+void enemy_spawner_update(struct EffectObj* self)
 {
-    D_8010B62C[arg0->state](arg0);
+    enemy_spawner_state_funcs[self->state](self);
 }
 
-void func_800B80A8(struct EffectObj* arg0)
+void enemy_spawner_init(struct EffectObj* self)
 {
-    arg0->ext.effect_12.timer = 0x60;
-    arg0->ext.effect_12.children[0] = NULL;
-    arg0->ext.effect_12.children[1] = NULL;
-    arg0->ext.effect_12.children[2] = NULL;
-    arg0->ext.effect_12.children[3] = NULL;
-    arg0->ext.effect_12.cooldown = 0;
-    arg0->ext.effect_12.spawned = 0;
-    arg0->ext.effect_12.child_count = (u8)arg0->unk2 >> 4;
-    arg0->ext.effect_12.child_id = D_8010B61C[(u8)arg0->unk2 & 0xF];
-    arg0->ext.effect_12.child_subtype = D_8010B624[(u8)arg0->unk2 & 0xF];
-    arg0->state = 1;
-    arg0->unk5 = 0;
+    self->ext.effect_12.timer = 0x60;
+    self->ext.effect_12.children[0] = NULL;
+    self->ext.effect_12.children[1] = NULL;
+    self->ext.effect_12.children[2] = NULL;
+    self->ext.effect_12.children[3] = NULL;
+    self->ext.effect_12.cooldown = 0;
+    self->ext.effect_12.spawned = 0;
+    self->ext.effect_12.child_count = (u8)self->unk2 >> 4;
+    self->ext.effect_12.child_id = enemy_spawner_child_ids[(u8)self->unk2 & 0xF];
+    self->ext.effect_12.child_subtype = enemy_spawner_child_subtypes[(u8)self->unk2 & 0xF];
+    self->state = 1;
+    self->unk5 = 0;
 }
 
+// enemy_spawner_spawn
 INCLUDE_ASM("main/nonmatchings/effects/effect_12", func_800B8114);
 
-void func_800B8470(struct EffectObj* arg0)
+void enemy_spawner_despawn(struct EffectObj* self)
 {
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
+// enemy_spawner_count_children
 INCLUDE_ASM("main/nonmatchings/effects/effect_12", func_800B8490);
 
-void (*D_8010B62C[])(struct EffectObj*) = {
-    func_800B80A8,
+void (*enemy_spawner_state_funcs[])(struct EffectObj*) = {
+    enemy_spawner_init,
     func_800B8114,
-    func_800B8470,
+    enemy_spawner_despawn,
 };

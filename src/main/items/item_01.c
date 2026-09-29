@@ -2,16 +2,17 @@
 // 800BEBB4..800BF730
 #include "common.h"
 
-void func_800BEBB4(struct ItemObj* arg0)
+void stage_block_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    D_8010C2F0[arg0->state](arg0);
+    stage_block_state_funcs[arg0->state](arg0);
 }
 
+// stage_block_init
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEBFC);
 
-void func_800BED6C(struct ItemObj* arg0)
+void stage_block_main(struct ItemObj* arg0)
 {
     s32 collision;
     s8 index;
@@ -19,20 +20,20 @@ void func_800BED6C(struct ItemObj* arg0)
     if (arg0->unk2 == 13) {
         arg0->unk76 = -1;
     }
-    D_8010C300[arg0->unk5](arg0);
-    func_8002B318(BASE_OBJECT(arg0), D_8010C250[arg0->unk2].width, D_8010C250[arg0->unk2].height);
-    func_8002E184(PLAYER_OBJECT(arg0));
+    stage_block_step_funcs[arg0->unk5](arg0);
+    update_on_screen(BASE_OBJECT(arg0), stage_block_bounds[arg0->unk2].width, stage_block_bounds[arg0->unk2].height);
+    collide_with_players(PLAYER_OBJECT(arg0));
     index = arg0->unk2;
-    if (!((u8)D_8010C160[index].flags_and_palette & 0x80) && (index != 12 || arg0->unk5 == 3)) {
+    if (!((u8)stage_block_entries[index].flags_and_palette & 0x80) && (index != 12 || arg0->unk5 == 3)) {
         collision = func_8002DD04(MAIN_OBJECT(arg0));
         if (collision < 0) {
             if (arg0->unk2 == 12) {
-                func_800DABE4((u8)D_8010C160[12].sound_id, 0, 0);
+                apply_tile_effect((u8)stage_block_entries[12].sound_id, 0, 0);
             }
             arg0->on_screen = 0;
             arg0->unk7C.timer = 60;
             arg0->state++;
-            func_800C7DA4(15, D_8010C2C8, arg0, 0);
+            spawn_rubble(15, stage_block_debris, arg0, 0);
             return;
         }
         if (collision > 0) {
@@ -43,12 +44,12 @@ void func_800BED6C(struct ItemObj* arg0)
     }
 }
 
-void func_800BEED4(struct ItemObj* self)
+void stage_block_wait_trigger(struct ItemObj* self)
 {
     s8 index;
 
     index = self->unk2;
-    if (g_Player.x_pos.i.hi < D_8010C160[index].left) {
+    if (g_Player.x_pos.i.hi < stage_block_entries[index].left) {
         return;
     }
     if (index == 9) {
@@ -57,7 +58,7 @@ void func_800BEED4(struct ItemObj* self)
     if (self->unk2 == 0xD) {
         func_8001540C(5, 0, NULL);
     }
-    func_80028B68(0x18, 3, 1);
+    start_screen_shake_x(0x18, 3, 1);
     self->ext.timer = 1;
     self->unk5 = (u8)self->unk5 + 1;
     if (self->unk2 == 0xD) {
@@ -66,27 +67,29 @@ void func_800BEED4(struct ItemObj* self)
     }
 }
 
+// stage_block_fall
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BEFCC);
 
+// stage_block_land
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF1FC);
 
-void func_800BF508(struct ItemObj* self)
+void stage_block_stop(struct ItemObj* self)
 {
     if ((self->unk2 == 5) || (self->unk2 == 0xD)) {
         self->state = 3;
     }
 }
 
-extern u32 D_8010C310[4];
+extern u32 stage_block_explosion_sounds[4];
 
-void func_800BF530(struct ItemObj* arg0)
+void stage_block_destroyed(struct ItemObj* arg0)
 {
     if (--arg0->unk7C.timer != 0) {
         if ((D_80141BD8.unk0 & 7) == 0) {
             func_800AF878(BASE_OBJECT(arg0), 1, 0x1F, 0x1F);
         }
         if ((D_80141BD8.unk0 & 0xF) == 0) {
-            func_8001540C(0, D_8010C310[get_random() & 3], arg0);
+            func_8001540C(0, stage_block_explosion_sounds[get_random() & 3], arg0);
         }
     } else {
         arg0->unk5 = 0;
@@ -94,19 +97,20 @@ void func_800BF530(struct ItemObj* arg0)
     }
 }
 
-void func_800BF5EC(struct ItemObj* arg0)
+void stage_block_despawn(struct ItemObj* arg0)
 {
-    func_8002B108(OBJECT_HEADER(arg0));
+    despawn_object_permanently(OBJECT_HEADER(arg0));
 }
 
-void func_800BF60C(struct BaseObj* arg0, s8 arg1)
+void drop_item(struct BaseObj* arg0, s8 arg1)
 {
     func_800BF638(arg0, arg1, arg0->x_pos.i.hi, arg0->y_pos.i.hi);
 }
 
+// drop_item_at
 INCLUDE_ASM("main/nonmatchings/items/item_01", func_800BF638);
 
-struct Item01StageEntry D_8010C160[15] = {
+struct Item01StageEntry stage_block_entries[15] = {
     { 0x0240, 0x00E0, 0x0200, 0x0100, 0x0100, 0x0040, 0x0C00, 0x0000 },
     { 0x02F0, 0x00D8, 0x0250, 0x0130, 0x0130, 0x0081, 0x2C00, 0x0021 },
     { 0x0390, 0x00E0, 0x02F0, 0x01B0, 0x01B0, 0x0082, 0x1F00, 0x0000 },
@@ -124,7 +128,7 @@ struct Item01StageEntry D_8010C160[15] = {
     { 0x02F0, 0x0130, 0x0250, 0x0188, 0x0188, 0x0053, 0x2C00, 0x0000 },
 };
 
-struct Item01SpriteBounds D_8010C250[15] = {
+struct Item01SpriteBounds stage_block_bounds[15] = {
     { 0x00, 0x00, 0x40, 0x20 },
     { 0x00, 0xF8, 0x30, 0x48 },
     { 0x00, 0x08, 0x30, 0x40 },
@@ -142,7 +146,7 @@ struct Item01SpriteBounds D_8010C250[15] = {
     { 0x00, 0x00, 0x30, 0x38 },
 };
 
-u8 D_8010C28C[60] = {
+u8 stage_block_boxes[60] = {
     0xC0,
     0xE0,
     0x80,
@@ -205,7 +209,7 @@ u8 D_8010C28C[60] = {
     0x50,
 };
 
-u8 D_8010C2C8[16] = {
+u8 stage_block_debris[16] = {
     0x00,
     0x01,
     0x02,
@@ -229,7 +233,7 @@ struct Item01DebrisPosition {
     s16 y;
 };
 
-struct Item01DebrisPosition D_8010C2D8[6] = {
+struct Item01DebrisPosition stage_block_spawn_positions[6] = {
     { 0x02BF, 0x014C },
     { 0x0C5F, 0x0127 },
     { 0x0C5F, 0x017B },
@@ -238,21 +242,21 @@ struct Item01DebrisPosition D_8010C2D8[6] = {
     { 0x0D5F, 0x01A7 },
 };
 
-void (*D_8010C2F0[])(struct ItemObj*) = {
+void (*stage_block_state_funcs[])(struct ItemObj*) = {
     func_800BEBFC,
-    func_800BED6C,
-    func_800BF530,
-    func_800BF5EC,
+    stage_block_main,
+    stage_block_destroyed,
+    stage_block_despawn,
 };
 
-void (*D_8010C300[4])(struct ItemObj*) = {
-    func_800BEED4,
+void (*stage_block_step_funcs[4])(struct ItemObj*) = {
+    stage_block_wait_trigger,
     func_800BEFCC,
     func_800BF1FC,
-    func_800BF508,
+    stage_block_stop,
 };
 
-u32 D_8010C310[4] = { 0, 1, 2, 3 };
+u32 stage_block_explosion_sounds[4] = { 0, 1, 2, 3 };
 
 struct Item02AnimationStep {
     u8 duration;
@@ -261,7 +265,7 @@ struct Item02AnimationStep {
     u8 command;
 };
 
-struct Item02AnimationStep D_8010C320[17] = {
+struct Item02AnimationStep pickup_anim_1[17] = {
     { 0x03, 0x00, 0x01, 0x00 },
     { 0x02, 0x00, 0x01, 0x01 },
     { 0x01, 0x00, 0x01, 0x02 },
@@ -281,7 +285,7 @@ struct Item02AnimationStep D_8010C320[17] = {
     { 0x07, 0x00, 0xFD, 0x08 },
 };
 
-struct Item02AnimationStep D_8010C364[20] = {
+struct Item02AnimationStep pickup_anim_3[20] = {
     { 0x06, 0x00, 0x01, 0x0A },
     { 0x06, 0x00, 0x01, 0x0B },
     { 0x06, 0x00, 0x01, 0x0C },
@@ -304,7 +308,7 @@ struct Item02AnimationStep D_8010C364[20] = {
     { 0x03, 0x00, 0xF5, 0x0F },
 };
 
-struct Item02AnimationStep D_8010C3B4[9] = {
+struct Item02AnimationStep pickup_anim_0[9] = {
     { 0x06, 0x00, 0x01, 0x1B },
     { 0x05, 0x00, 0x01, 0x1C },
     { 0x05, 0x00, 0x01, 0x1B },
@@ -316,7 +320,7 @@ struct Item02AnimationStep D_8010C3B4[9] = {
     { 0x07, 0x00, 0xFD, 0x21 },
 };
 
-struct Item02AnimationStep D_8010C3D8[14] = {
+struct Item02AnimationStep pickup_anim_2[14] = {
     { 0x08, 0x00, 0x01, 0x22 },
     { 0x07, 0x00, 0x01, 0x23 },
     { 0x06, 0x00, 0x01, 0x24 },
@@ -333,7 +337,7 @@ struct Item02AnimationStep D_8010C3D8[14] = {
     { 0x07, 0x00, 0xFB, 0x27 },
 };
 
-struct Item02AnimationStep D_8010C410[15] = {
+struct Item02AnimationStep pickup_anim_6[15] = {
     { 0x04, 0x00, 0x01, 0x2E },
     { 0x04, 0x00, 0x01, 0x2F },
     { 0x04, 0x00, 0x01, 0x30 },
@@ -351,7 +355,7 @@ struct Item02AnimationStep D_8010C410[15] = {
     { 0x04, 0x00, 0xF2, 0x3C },
 };
 
-struct Item02AnimationStep D_8010C44C[12] = {
+struct Item02AnimationStep pickup_anim_5[12] = {
     { 0x06, 0x00, 0x01, 0x3D },
     { 0x06, 0x00, 0x01, 0x3E },
     { 0x06, 0x00, 0x01, 0x3F },
@@ -366,7 +370,7 @@ struct Item02AnimationStep D_8010C44C[12] = {
     { 0x06, 0x00, 0xF5, 0x48 },
 };
 
-struct Item02AnimationStep D_8010C47C[16] = {
+struct Item02AnimationStep pickup_anim_7[16] = {
     { 0x06, 0x00, 0x01, 0x49 },
     { 0x06, 0x00, 0x01, 0x4A },
     { 0x06, 0x00, 0x01, 0x4B },
@@ -385,7 +389,7 @@ struct Item02AnimationStep D_8010C47C[16] = {
     { 0x06, 0x00, 0xF1, 0x58 },
 };
 
-struct Item02AnimationStep D_8010C4BC[18] = {
+struct Item02AnimationStep pickup_anim_4[18] = {
     { 0x06, 0x00, 0x01, 0x60 },
     { 0x05, 0x00, 0x01, 0x61 },
     { 0x04, 0x00, 0x01, 0x62 },
@@ -406,7 +410,7 @@ struct Item02AnimationStep D_8010C4BC[18] = {
     { 0x05, 0x00, 0xEF, 0x61 },
 };
 
-struct Item02AnimationStep D_8010C504[33] = {
+struct Item02AnimationStep pickup_anim_8[33] = {
     { 0x03, 0x00, 0x01, 0x63 },
     { 0x04, 0x00, 0x01, 0x64 },
     { 0x05, 0x00, 0x01, 0x65 },
@@ -442,7 +446,7 @@ struct Item02AnimationStep D_8010C504[33] = {
     { 0x04, 0x00, 0xE0, 0x64 },
 };
 
-struct Item02AnimationStep D_8010C588[33] = {
+struct Item02AnimationStep pickup_anim_9[33] = {
     { 0x03, 0x00, 0x01, 0x6B },
     { 0x04, 0x00, 0x01, 0x6C },
     { 0x05, 0x00, 0x01, 0x6D },
@@ -478,54 +482,54 @@ struct Item02AnimationStep D_8010C588[33] = {
     { 0x04, 0x00, 0xE0, 0x6C },
 };
 
-struct Item02AnimationStep D_8010C60C[4] = {
+struct Item02AnimationStep pickup_anim_10[4] = {
     { 0x05, 0x00, 0x01, 0x73 },
     { 0x05, 0x00, 0x01, 0x74 },
     { 0x05, 0x00, 0x01, 0x75 },
     { 0x05, 0x00, 0xFD, 0x76 },
 };
 
-struct Item02AnimationStep* D_8010C61C[11] = {
-    D_8010C3B4,
-    D_8010C320,
-    D_8010C3D8,
-    D_8010C364,
-    D_8010C4BC,
-    D_8010C44C,
-    D_8010C410,
-    D_8010C47C,
-    D_8010C504,
-    D_8010C588,
-    D_8010C60C,
+struct Item02AnimationStep* pickup_animations[11] = {
+    pickup_anim_0,
+    pickup_anim_1,
+    pickup_anim_2,
+    pickup_anim_3,
+    pickup_anim_4,
+    pickup_anim_5,
+    pickup_anim_6,
+    pickup_anim_7,
+    pickup_anim_8,
+    pickup_anim_9,
+    pickup_anim_10,
 };
 
-s8 D_8010C648[4] = { -1, -4, 6, 4 };
-s8 D_8010C64C[4] = { -2, -2, 12, 7 };
-s8 D_8010C650[4] = { -1, -2, 6, 5 };
-s8 D_8010C654[4] = { -1, -1, 9, 8 };
-s8 D_8010C658[4] = { 0, 0, 13, 13 };
-s8 D_8010C65C[4] = { 0, 0, 10, 16 };
-s8 D_8010C660[4] = { 1, 0, 10, 10 };
-s8 D_8010C664[4] = { 0, 0, 10, 10 };
-s8 D_8010C668[4] = { 0, 0, 13, 13 };
-s8 D_8010C66C[4] = { 0, 0, 13, 13 };
-s8 D_8010C670[4] = { 0, 0, 12, 11 };
+s8 pickup_hit_box_0[4] = { -1, -4, 6, 4 };
+s8 pickup_hit_box_1[4] = { -2, -2, 12, 7 };
+s8 pickup_hit_box_2[4] = { -1, -2, 6, 5 };
+s8 pickup_hit_box_3[4] = { -1, -1, 9, 8 };
+s8 pickup_hit_box_4[4] = { 0, 0, 13, 13 };
+s8 pickup_hit_box_5[4] = { 0, 0, 10, 16 };
+s8 pickup_hit_box_6[4] = { 1, 0, 10, 10 };
+s8 pickup_hit_box_7[4] = { 0, 0, 10, 10 };
+s8 pickup_hit_box_8[4] = { 0, 0, 13, 13 };
+s8 pickup_hit_box_9[4] = { 0, 0, 13, 13 };
+s8 pickup_hit_box_10[4] = { 0, 0, 12, 11 };
 
-s8* D_8010C674[11] = {
-    D_8010C648,
-    D_8010C64C,
-    D_8010C650,
-    D_8010C654,
-    D_8010C658,
-    D_8010C65C,
-    D_8010C660,
-    D_8010C664,
-    D_8010C668,
-    D_8010C66C,
-    D_8010C670,
+s8* pickup_hit_boxes[11] = {
+    pickup_hit_box_0,
+    pickup_hit_box_1,
+    pickup_hit_box_2,
+    pickup_hit_box_3,
+    pickup_hit_box_4,
+    pickup_hit_box_5,
+    pickup_hit_box_6,
+    pickup_hit_box_7,
+    pickup_hit_box_8,
+    pickup_hit_box_9,
+    pickup_hit_box_10,
 };
 
-u8 D_8010C6A0[24][6] = {
+u8 drop_item_table[24][6] = {
     { 0xFF, 0x01, 0x00, 0x00, 0x00, 0x00 },
     { 0x01, 0xFF, 0x00, 0x00, 0x00, 0x00 },
     { 0x01, 0x00, 0xFF, 0x00, 0x00, 0x00 },

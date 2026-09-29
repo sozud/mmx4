@@ -2,20 +2,20 @@
 // 800B84DC..800B89B4
 #include "common.h"
 
-void func_800B84DC(struct EffectObj* arg0)
+void edge_spawner_update(struct EffectObj* self)
 {
-    D_8010B638[arg0->state](arg0);
+    edge_spawner_state_funcs[self->state](self);
 }
 
-void func_800B8518(struct EffectObj* arg0)
+void edge_spawner_init(struct EffectObj* self)
 {
-    arg0->ext.unk_effect.unk14 = 0;
-    func_800B8630(arg0);
-    arg0->ext.unk_effect.unk15 = 0;
-    arg0->state++;
+    self->ext.unk_effect.unk14 = 0;
+    func_800B8630(self);
+    self->ext.unk_effect.unk15 = 0;
+    self->state++;
 }
 
-void func_800B8554(struct EffectObj* self)
+void edge_spawner_main(struct EffectObj* self)
 {
     s16 pos;
 
@@ -33,24 +33,27 @@ void func_800B8554(struct EffectObj* self)
     }
 }
 
-void func_800B8610(struct EffectObj* arg0)
+void edge_spawner_despawn(struct EffectObj* self)
 {
-    func_8002B108(OBJECT_HEADER(arg0));
+    despawn_object_permanently(OBJECT_HEADER(self));
 }
 
+// edge_spawner_spawn_enemy
 INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B8630);
 
+// edge_spawner_try_spawn
 INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B875C);
 
+// edge_spawner_spawn_items
 INCLUDE_ASM("main/nonmatchings/effects/effect_13", func_800B887C);
 
-void (*D_8010B638[])(struct EffectObj*) = {
-    func_800B8518,
-    func_800B8554,
-    func_800B8610,
+void (*edge_spawner_state_funcs[])(struct EffectObj*) = {
+    edge_spawner_init,
+    edge_spawner_main,
+    edge_spawner_despawn,
 };
 
-struct Effect14ItemSpawn D_8010B644[19] = {
+struct Effect14ItemSpawn edge_spawner_items[19] = {
     { 0, 0x1, 0x1550, 0x5b0 },
     { 0, 0x1, 0x1510, 0x5d0 },
     { 0, 0x1, 0x15a0, 0x600 },
@@ -72,4 +75,4 @@ struct Effect14ItemSpawn D_8010B644[19] = {
     { 0, 0xff, 0x0, 0x0 },
 };
 
-u16 D_8010B6B6 = 0;
+u16 edge_spawner_padding = 0;

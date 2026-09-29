@@ -5,62 +5,62 @@
 // megaman standing in the briefing room. doesn't show
 // up if nopped out
 // asm(".rept 13 ; nop ; .endr");
-void MegamanInBriefingRoomUpdate(struct MiscObj* arg0)
+void MegamanInBriefingRoomUpdate(struct MiscObj* self)
 {
-    g_MegamanInBriefingRoomUpdateFuncs[arg0->state](arg0);
+    g_MegamanInBriefingRoomUpdateFuncs[self->state](self);
 }
 
 // g_MegamanInBriefingRoomUpdateFuncs state 0
-void func_800C9EE8(struct MiscObj* arg0)
+void briefing_character_init(struct MiscObj* self)
 {
-    if (arg0->unk2 == 0) {
-        arg0->unk42 = 0x7883;
-        arg0->unk40 = D_801406A8[2] >> 7;
-        arg0->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
+    if (self->unk2 == 0) {
+        self->unk42 = 0x7883;
+        self->unk40 = D_801406A8[2] >> 7;
+        self->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
         if (engine_obj.cur_character != CHARACTER_X) {
-            arg0->animation_table = &D_8010E538;
+            self->animation_table = &briefing_zero_animations;
         } else {
-            arg0->animation_table = &D_8010E514;
+            self->animation_table = &briefing_x_animations;
         }
-        arg0->x_pos.val = FIXED(42);
-        arg0->y_pos.val = FIXED(416);
+        self->x_pos.val = FIXED(42);
+        self->y_pos.val = FIXED(416);
     } else {
-        arg0->unk42 = 0x7885;
-        arg0->unk40 = D_801406A8[3] >> 7;
-        arg0->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[3];
+        self->unk42 = 0x7885;
+        self->unk40 = D_801406A8[3] >> 7;
+        self->unk3C = (s8*)SP_MENU_FRAMES + SP_MENU_FRAMES[3];
         if (engine_obj.cur_character != CHARACTER_X) {
-            arg0->animation_table = &D_8010E55C;
+            self->animation_table = &briefing_zero_partner_animations;
         } else {
-            arg0->animation_table = &D_8010E4EC;
+            self->animation_table = &briefing_x_partner_animations;
         }
-        arg0->x_pos.val = FIXED(282);
-        arg0->y_pos.val = FIXED(432);
+        self->x_pos.val = FIXED(282);
+        self->y_pos.val = FIXED(432);
     }
-    arg0->bg_offset = 0;
-    arg0->unk15 = 0;
-    arg0->unk16 = 3;
-    arg0->state++;
-    func_80015D60(arg0, 0);
-    is_on_screen(arg0);
+    self->bg_offset = 0;
+    self->unk15 = 0;
+    self->unk16 = 3;
+    self->state++;
+    set_animation(self, 0);
+    is_on_screen(self);
 }
 
 // g_MegamanInBriefingRoomUpdateFuncs state 1
 // X doesn't appear in briefing room if nopped out
 // asm(".rept 36 ; nop ; .endr");
-void func_800CA030(struct MiscObj* arg0)
+void briefing_character_animate(struct MiscObj* self)
 {
-    if (arg0->unk2 == 0) {
+    if (self->unk2 == 0) {
         if (!(engine_obj.unk40 & 0x10)) {
-            func_80015DC8(arg0);
+            animate_object(self);
         } else {
-            func_80015D60(arg0, engine_obj.unk40 & 0xF);
+            set_animation(self, engine_obj.unk40 & 0xF);
         }
     } else if (!(engine_obj.unk40 & 0x20)) {
-        func_80015DC8(arg0);
+        animate_object(self);
     } else {
-        func_80015D60(arg0, engine_obj.unk40 & 0xF);
+        set_animation(self, engine_obj.unk40 & 0xF);
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
 u32 D_8010E100[] = {
@@ -400,7 +400,7 @@ u32 D_8010E4E8[] = {
     0x05000001,
 };
 
-u32* D_8010E4EC[] = {
+u32* briefing_x_partner_animations[] = {
     D_8010E100,
     D_8010E228,
     D_8010E138,
@@ -413,7 +413,7 @@ u32* D_8010E4EC[] = {
     D_8010E234,
 };
 
-u32* D_8010E514[] = {
+u32* briefing_x_animations[] = {
     D_8010E248,
     D_8010E338,
     D_8010E280,
@@ -425,7 +425,7 @@ u32* D_8010E514[] = {
     D_8010E334,
 };
 
-u32* D_8010E538[] = {
+u32* briefing_zero_animations[] = {
     D_8010E344,
     D_8010E470,
     D_8010E478,
@@ -437,7 +437,7 @@ u32* D_8010E538[] = {
     D_8010E46C,
 };
 
-u32* D_8010E55C[] = {
+u32* briefing_zero_partner_animations[] = {
     D_8010E484,
     D_8010E484,
     D_8010E4D0,
@@ -448,6 +448,6 @@ u32* D_8010E55C[] = {
 };
 
 void (*g_MegamanInBriefingRoomUpdateFuncs[])(struct MiscObj*) = {
-    func_800C9EE8,
-    func_800CA030,
+    briefing_character_init,
+    briefing_character_animate,
 };

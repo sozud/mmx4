@@ -10,7 +10,7 @@ void iris_intro_crystal_update(struct MiscObj* self)
 void iris_intro_crystal_run(struct MiscObj* self)
 {
     iris_intro_crystal_step_funcs[self->unk5](self);
-    func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+    update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
 
 void iris_intro_crystal_despawn(struct MiscObj* self)
@@ -25,7 +25,7 @@ void iris_intro_crystal_start(struct MiscObj* self)
     self->unk16 = 0;
     self->x_vel.val = 0;
     self->ext.misc_39.timer = 0xD6;
-    func_80015D60(self, 0xB);
+    set_animation(self, 0xB);
     self->unk5 = 1;
 }
 
@@ -33,8 +33,8 @@ void iris_intro_crystal_rise(struct MiscObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = self->ext.misc_39.timer - 1;
     self->ext.misc_39.timer = timer;
     if (timer == 0) {
@@ -47,12 +47,12 @@ void iris_intro_crystal_charge(struct MiscObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->ext.misc_39.timer - 1;
     self->ext.misc_39.timer = timer;
     if (timer == 0) {
-        func_80015D60(self, 0xC);
-        func_80015D60(self->ext.misc_39.related, 0x21);
+        set_animation(self, 0xC);
+        set_animation(self->ext.misc_39.related, 0x21);
         self->unk5 = 3;
     }
 }
@@ -64,7 +64,7 @@ void iris_intro_crystal_wait(struct MiscObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->ext.misc_39.timer - 1;
     self->ext.misc_39.timer = timer;
     if (timer == 0) {
@@ -78,8 +78,8 @@ void iris_intro_crystal_leave(struct MiscObj* self)
 {
     s16 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = self->ext.misc_39.timer - 1;
     self->ext.misc_39.timer = timer;
     if (timer == 0) {

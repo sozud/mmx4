@@ -2,44 +2,46 @@
 // 800CA228..800CA52C
 #include "common.h"
 
+// stage_icon_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA228);
 
-void func_800CA3C0(struct MiscObj* arg0)
+void stage_icon_highlight(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    if (engine_obj.unk3 == arg0->unk2) {
-        arg0->unk42 = 0x780A;
-        is_on_screen(BASE_OBJECT(arg0));
+    self->on_screen = 0;
+    if (engine_obj.unk3 == self->unk2) {
+        self->unk42 = 0x780A;
+        is_on_screen(BASE_OBJECT(self));
     } else {
-        arg0->unk42 = 0x7809;
+        self->unk42 = 0x7809;
     }
 }
 
+// stage_icon_follow_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_12", func_800CA40C);
 
-void func_800CA46C(struct MiscObj* arg0)
+void stage_icon_follow(struct MiscObj* self)
 {
-    if (arg0->ext.misc_24.main->active == 0) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+    if (self->ext.misc_24.main->active == 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
         return;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA4B4(struct MiscObj* arg0)
+void stage_icon_show_selected(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    if (engine_obj.unk3 == arg0->unk2) {
-        is_on_screen(BASE_OBJECT(arg0));
+    self->on_screen = 0;
+    if (engine_obj.unk3 == self->unk2) {
+        is_on_screen(BASE_OBJECT(self));
     }
 }
 
-void func_800CA4F0(struct MiscObj* arg0)
+void stage_icon_update(struct MiscObj* self)
 {
-    D_8010E5F8[arg0->state](arg0);
+    stage_icon_state_funcs[self->state](self);
 }
 
-union AnimationStep D_8010E58C[9] = {
+union AnimationStep stage_icon_anim_0[9] = {
     { .packed = 0x0001001E },
     { .packed = 0x0101001E },
     { .packed = 0x0201001E },
@@ -51,7 +53,7 @@ union AnimationStep D_8010E58C[9] = {
     { .packed = 0x1000001E },
 };
 
-union AnimationStep D_8010E5B0[8] = {
+union AnimationStep stage_icon_anim_1[8] = {
     { .packed = 0x0801001E },
     { .packed = 0x0901001E },
     { .packed = 0x0A01001E },
@@ -62,14 +64,14 @@ union AnimationStep D_8010E5B0[8] = {
     { .packed = 0x0FF9001E },
 };
 
-union AnimationStep* D_8010E5D0[2] = { D_8010E58C, D_8010E5B0 };
+union AnimationStep* stage_icon_animations[2] = { stage_icon_anim_0, stage_icon_anim_1 };
 
 struct Misc12Position {
     s16 x;
     s16 y;
 };
 
-struct Misc12Position D_8010E5D8[8] = {
+struct Misc12Position stage_icon_positions[8] = {
     { 8, 0x120 },
     { 0x55, 0x120 },
     { 0xA2, 0x120 },
@@ -80,10 +82,10 @@ struct Misc12Position D_8010E5D8[8] = {
     { 0xE2, 0x1B0 },
 };
 
-void (*D_8010E5F8[5])(struct MiscObj*) = {
+void (*stage_icon_state_funcs[5])(struct MiscObj*) = {
     func_800CA228,
-    func_800CA3C0,
+    stage_icon_highlight,
     func_800CA40C,
-    func_800CA46C,
-    func_800CA4B4,
+    stage_icon_follow,
+    stage_icon_show_selected,
 };

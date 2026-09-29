@@ -3,7 +3,7 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_80074E84(struct MainObj* self)
+void timed_explosion_wait(struct MainObj* self)
 {
     s32* sprite_archive;
     s32 offset;
@@ -12,13 +12,13 @@ void func_80074E84(struct MainObj* self)
         sprite_archive = SP_SPRITE_FRAMES;
         *(s32*)&self->animation_speed = 0;
         offset = sprite_archive[2];
-        self->animation_table = (const u8* const*)D_8010A4C0;
+        self->animation_table = (const u8* const*)explosion_animations;
         self->unk42 = 0x788F;
         self->unk40 = 0;
-        self->unk54 = 0;
-        self->unk50 = &D_801016A4;
+        self->hurt_box = 0;
+        self->attack_box = &timed_explosion_attack_box;
         self->sprite_frames = (u8*)sprite_archive + offset;
-        func_80015D60(self, 2);
+        set_animation(self, 2);
 
         if (get_random() & 1) {
             func_8001540C(0, 0, self);
@@ -26,34 +26,34 @@ void func_80074E84(struct MainObj* self)
             func_8001540C(0, 1, self);
         }
         self->state++;
-        func_8002B318(BASE_OBJECT(self), 0x18, 0x18);
+        update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
     }
 }
 
-void func_80074F4C(struct MainObj* arg0)
+void timed_explosion_explode(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    func_8002B318(BASE_OBJECT(arg0), 0x18, 0x18);
-    if ((arg0->animation_step.fields.relative_step < 0) || (func_8002B1E8(BASE_OBJECT(arg0), 0x18, 0x18) != 0)) {
-        arg0->state++;
+    animate_object(ANIMATED_OBJECT(self));
+    func_8002D9BC(self);
+    update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
+    if ((self->animation_step.fields.relative_step < 0) || (func_8002B1E8(BASE_OBJECT(self), 0x18, 0x18) != 0)) {
+        self->state++;
     }
 }
 
-void func_80074FC0(struct MainObj* arg0)
+void timed_explosion_despawn(struct MainObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_80074FE0(struct MainObj* arg0)
+void timed_explosion_update(struct MainObj* self)
 {
-    D_801016A8[arg0->state](arg0);
+    timed_explosion_state_funcs[self->state](self);
 }
 
-struct Unk_unk68 D_801016A4 = { -16, -16, 31, 29 };
+struct Unk_unk68 timed_explosion_attack_box = { -16, -16, 31, 29 };
 
-void (*D_801016A8[3])() = {
-    func_80074E84,
-    func_80074F4C,
-    func_80074FC0,
+void (*timed_explosion_state_funcs[3])() = {
+    timed_explosion_wait,
+    timed_explosion_explode,
+    timed_explosion_despawn,
 };

@@ -2,7 +2,7 @@
 // 800AED18..800AEED8
 #include "common.h"
 
-void func_800AED18(struct VisualObj* arg0)
+void dash_dust_update(struct VisualObj* arg0)
 {
     struct VisualObj* obj;
     s32 var_a0;
@@ -22,12 +22,12 @@ void func_800AED18(struct VisualObj* arg0)
         obj->unk40 = 0;
         obj->unk16 = 3;
 
-        func_800AEE5C(obj, entity);
-        func_80015D60(obj, 2);
+        dash_dust_attach(obj, entity);
+        set_animation(obj, 2);
         obj->state = (u8)obj->state + 1;
     } else {
-        func_80015DC8(obj);
-        func_800AEE5C(obj, entity);
+        animate_object(obj);
+        dash_dust_attach(obj, entity);
         var_a0 = 0;
         if (entity->dash_momentum > 0) {
             if (entity->unk17 != 0x10) {
@@ -47,18 +47,18 @@ void func_800AED18(struct VisualObj* arg0)
     is_on_screen(obj);
 }
 
-void func_800AEE5C(struct VisualObj* arg0, struct PlayerObj* arg1)
+void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1)
 {
     arg0->unk15 = arg1->unk15;
     if (arg0->unk15 == 0) {
-        arg0->x_pos.i.hi = arg1->x_pos.i.hi + D_8010A1B4[arg1->unk2].x;
+        arg0->x_pos.i.hi = arg1->x_pos.i.hi + dash_dust_offsets[arg1->unk2].x;
     } else {
-        arg0->x_pos.i.hi = arg1->x_pos.i.hi - D_8010A1B4[arg1->unk2].x;
+        arg0->x_pos.i.hi = arg1->x_pos.i.hi - dash_dust_offsets[arg1->unk2].x;
     }
-    arg0->y_pos.i.hi = arg1->y_pos.i.hi + D_8010A1B4[arg1->unk2].y;
+    arg0->y_pos.i.hi = arg1->y_pos.i.hi + dash_dust_offsets[arg1->unk2].y;
 }
 
-struct VisualAttachmentOffset D_8010A1B4[2] = {
+struct VisualAttachmentOffset dash_dust_offsets[2] = {
     { 0x20, 0x0C },
     { 0x24, 0x0E },
 };

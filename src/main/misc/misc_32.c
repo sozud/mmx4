@@ -2,17 +2,19 @@
 // 800CE114..800CE340
 #include "common.h"
 
+// option_sprite_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_32", func_800CE114);
 
+// option_sprite_animate
 INCLUDE_ASM("main/nonmatchings/misc/misc_32", func_800CE1D4);
 
-void func_800CE304(struct MiscObj* arg0)
+void option_sprite_update(struct MiscObj* self)
 {
-    arg0->on_screen = 0;
-    D_8010ECD8[arg0->state](arg0);
+    self->on_screen = 0;
+    option_sprite_state_funcs[self->state](self);
 }
 
-void (*D_8010ECD8[2])(struct MiscObj*) = {
+void (*option_sprite_state_funcs[2])(struct MiscObj*) = {
     func_800CE114,
     func_800CE1D4,
 };

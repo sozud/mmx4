@@ -1469,55 +1469,55 @@ union MainObjExt {
 MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
 #endif
 
-#define MAIN_OBJ_TAIL_FIELDS                        \
-    s32 unk20;                                  \
-    s32 unk24;                                  \
-    s32 unk28;                                  \
-    s32 unk2C;                                  \
-    const u8* const* animation_table;            \
-    const u8* animation_cursor;                  \
-    s16 animation_speed;                         \
-    u8 pad3A[2];                                 \
-    const u8* sprite_frames;                     \
-    u16 unk40;                                   \
-    u16 unk42;                                   \
-    union AnimationStep animation_step;          \
-    u8 previous_animation_index;                 \
-    s8 pad49[2];                                 \
-    s8 unk4B;                                    \
-    s8 pad4C[4];                                 \
-    const void* unk50;                           \
-    const void* unk54;                           \
-    const void* collision_data;                  \
-    s8 unk5C;                                    \
-    s8 unk5D;                                    \
-    s8 unk5E;                                    \
-    s8 unk5F;                                    \
-    s8 unk60;                                    \
-    s8 unk61;                                    \
-    s8 unk62;                                    \
-    s8 unk63;                                    \
-    s8 unk64;                                    \
-    s8 unk65;                                    \
-    s8 unk66;                                    \
-    s8 unk67;                                    \
-    struct Unk_unk68* unk68;                     \
-    s16 unk6C;                                   \
-    s16 unk6E;                                   \
-    u8 unk70;                                    \
-    s8 : 8;                                      \
-    s8 unk72;                                    \
-    s8 unk73;                                    \
-    s8 unk74;                                    \
-    s8 unk75;                                    \
-    s8 unk76;                                    \
-    s8 unk77;                                    \
-    s8 unk78;                                    \
-    s8 unk79;                                    \
-    s8 unk7A;                                    \
-    u8 unk7B;                                    \
-    s16 unk7C;                                   \
-    s16 unk7E;                                   \
+#define MAIN_OBJ_TAIL_FIELDS            \
+    s32 x_speed;                        \
+    s32 y_speed;                        \
+    s32 x_accel;                        \
+    s32 gravity;                        \
+    const u8* const* animation_table;   \
+    const u8* animation_cursor;         \
+    s16 animation_speed;                \
+    u8 pad3A[2];                        \
+    const u8* sprite_frames;            \
+    u16 unk40;                          \
+    u16 unk42;                          \
+    union AnimationStep animation_step; \
+    u8 previous_animation_index;        \
+    s8 pad49[2];                        \
+    s8 unk4B;                           \
+    s8 pad4C[4];                        \
+    const void* attack_box;             \
+    const void* hurt_box;               \
+    const void* collision_data;         \
+    s8 hp;                              \
+    s8 unk5D;                           \
+    s8 unk5E;                           \
+    s8 unk5F;                           \
+    s8 contact_damage;                  \
+    s8 invincibility_timer;             \
+    s8 unk62;                           \
+    s8 unk63;                           \
+    s8 unk64;                           \
+    s8 unk65;                           \
+    s8 unk66;                           \
+    s8 air_state;                       \
+    struct Unk_unk68* terrain_box;      \
+    s16 unk6C;                          \
+    s16 unk6E;                          \
+    u8 collision_flags;                 \
+    s8 : 8;                             \
+    s8 unk72;                           \
+    s8 unk73;                           \
+    s8 unk74;                           \
+    s8 unk75;                           \
+    s8 unk76;                           \
+    s8 unk77;                           \
+    s8 unk78;                           \
+    s8 unk79;                           \
+    s8 unk7A;                           \
+    u8 unk7B;                           \
+    s16 unk7C;                          \
+    s16 unk7E;                          \
     union MainObjExt ext;
 
 struct MainObj {
@@ -1712,13 +1712,13 @@ struct PlayerObj {
 }; // size 0xE4
 
 MMX4_STATIC_ASSERT(player_unk68_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
+    MMX4_OFFSET_OF(struct PlayerObj, unk68) == MMX4_OFFSET_OF(struct MainObj, terrain_box));
 MMX4_STATIC_ASSERT(player_unk6C_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk6C) == MMX4_OFFSET_OF(struct MainObj, unk6C));
 MMX4_STATIC_ASSERT(player_unk6E_offset,
     MMX4_OFFSET_OF(struct PlayerObj, unk6E) == MMX4_OFFSET_OF(struct MainObj, unk6E));
 MMX4_STATIC_ASSERT(player_unk70_offset,
-    MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct MainObj, unk70));
+    MMX4_OFFSET_OF(struct PlayerObj, unk70) == MMX4_OFFSET_OF(struct MainObj, collision_flags));
 MMX4_STATIC_ASSERT(player_held_input_offset,
     MMX4_OFFSET_OF(struct PlayerObj, input.buttons.held) == MMX4_OFFSET_OF(struct PlayerObj, input));
 MMX4_STATIC_ASSERT(player_previous_input_offset,
@@ -1862,11 +1862,11 @@ struct ShotObj {
 }; // size 0x9C
 
 MMX4_STATIC_ASSERT(shot_unk54_offset,
-    MMX4_OFFSET_OF(struct ShotObj, unk54) == MMX4_OFFSET_OF(struct MainObj, unk54));
+    MMX4_OFFSET_OF(struct ShotObj, unk54) == MMX4_OFFSET_OF(struct MainObj, hurt_box));
 MMX4_STATIC_ASSERT(shot_unk58_offset,
     MMX4_OFFSET_OF(struct ShotObj, unk58) == MMX4_OFFSET_OF(struct MainObj, collision_data));
 MMX4_STATIC_ASSERT(shot_unk68_offset,
-    MMX4_OFFSET_OF(struct ShotObj, unk68) == MMX4_OFFSET_OF(struct MainObj, unk68));
+    MMX4_OFFSET_OF(struct ShotObj, unk68) == MMX4_OFFSET_OF(struct MainObj, terrain_box));
 
 struct Weapon1Ext {
     u8 lifetime;
@@ -2078,9 +2078,9 @@ struct WeaponObj {
 }; // size 0x9C
 
 MMX4_STATIC_ASSERT(weapon_unk54_offset,
-    MMX4_OFFSET_OF(struct WeaponObj, unk54) == MMX4_OFFSET_OF(struct MainObj, unk54));
+    MMX4_OFFSET_OF(struct WeaponObj, unk54) == MMX4_OFFSET_OF(struct MainObj, hurt_box));
 MMX4_STATIC_ASSERT(weapon_unk54_width,
-    sizeof(((struct WeaponObj*)0)->unk54) == sizeof(((struct MainObj*)0)->unk54));
+    sizeof(((struct WeaponObj*)0)->unk54) == sizeof(((struct MainObj*)0)->hurt_box));
 
 #ifndef MMX4_PC
 MMX4_STATIC_ASSERT(psx_weapon_owner_offset,
@@ -2172,7 +2172,7 @@ struct Item01StageEntry {
     u16 sound_id;
 };
 
-extern struct Item01StageEntry D_8010C160[15];
+extern struct Item01StageEntry stage_block_entries[15];
 
 struct Item01SpriteBounds {
     u8 x_offset;
@@ -2181,8 +2181,8 @@ struct Item01SpriteBounds {
     u8 height;
 };
 
-extern struct Item01SpriteBounds D_8010C250[15];
-extern u8 D_8010C2C8[16];
+extern struct Item01SpriteBounds stage_block_bounds[15];
+extern u8 stage_block_debris[16];
 
 union ItemUnk84 {
     u16 timer;
@@ -2386,24 +2386,24 @@ struct Misc08EffectDescriptor {
     u8 variant;
 };
 
-extern struct Misc08EffectTripletTable D_8010E090;
-extern u8 D_8010E02C[];
-extern u8 D_8010E030[];
-extern u8 D_8010E034[];
-extern u8 D_8010E038[];
-extern u8 D_8010E03C[];
-extern u8 D_8010E040[];
-extern u8 D_8010E044[];
-extern u8 D_8010E048[];
-extern u8 D_8010E04C[];
-extern u8 D_8010E050[];
-extern u8 D_8010E054[];
-extern struct Misc08EffectDescriptor D_8010E058[];
+extern struct Misc08EffectTripletTable crumbling_tile_second_effects;
+extern u8 crumbling_tile_debris_0[];
+extern u8 crumbling_tile_debris_1[];
+extern u8 crumbling_tile_debris_2[];
+extern u8 crumbling_tile_debris_3[];
+extern u8 crumbling_tile_debris_4[];
+extern u8 crumbling_tile_debris_5[];
+extern u8 crumbling_tile_debris_6[];
+extern u8 crumbling_tile_debris_7[];
+extern u8 crumbling_tile_debris_8[];
+extern u8 crumbling_tile_debris_9[];
+extern u8 crumbling_tile_debris_10[];
+extern struct Misc08EffectDescriptor crumbling_tile_first_effects[];
 extern u8 D_80104A3C[];
 extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 void func_80012E18(u8* arg0, u8* arg1);
-void func_800C8214(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5);
-void func_800C833C(u8 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4);
+void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5);
+void spawn_debris_offset(u8 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4);
 struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
 
 struct TitleLogoExt {
@@ -2940,7 +2940,7 @@ extern u8 jet_stingray_bubble_index;
 extern u8 web_spider_move_timers[];
 extern u8 web_spider_attack_cooldowns[4];
 extern const u8* web_spider_swing_animations[];
-extern s8 D_800FEA5C[];
+extern s8 breakable_terrain_effect_offsets[];
 extern struct Unk_unk68 D_800FF5B0;
 extern u16 web_spider_arena_x;
 extern u16 web_spider_arena_y;
@@ -2952,60 +2952,60 @@ struct Effect14ItemSpawn {
     u16 x;
     u16 y;
 };
-extern struct Effect14ItemSpawn D_8010B644[19];
+extern struct Effect14ItemSpawn edge_spawner_items[19];
 extern struct Unk_unk68 D_80108584[];
-extern u8 D_8010CB54[2][4];
+extern u8 rising_platform_debris[2][4];
 extern u8 web_spider_swing_sets[];
-extern u8 D_800FF994[];
-extern u8 D_800FF998[];
+extern u8 train_boss_turret_hurt_box[];
+extern u8 train_boss_turret_attack_box[];
 extern struct Unk_unk68 D_80106670[];
-extern u8 D_80104CDC[];
+extern u8 ride_armor_pilot_hurt_box[];
 extern union AnimationStep D_801001F8[];
 extern union AnimationStep D_801001FC[];
-extern union AnimationStep* D_80105F90[5];
+extern union AnimationStep* spike_crawler_animations[5];
 extern void* general_scripts[2];
 extern u8 general_script_weights[4];
-extern s8 D_80105FA8[4];
-extern s8 D_80105FAC[4];
-extern s8 D_80105FB0[4];
+extern s8 spike_crawler_terrain_box[4];
+extern s8 spike_crawler_attack_box[4];
+extern s8 spike_crawler_hurt_box[4];
 extern struct Unk_unk68 D_80108484[];
 extern struct Unk_unk68 D_80100200;
 extern struct Unk_unk68 D_80100204;
 extern struct Unk_unk68 D_80100210;
 extern struct Unk_unk68 D_80100214;
-extern struct Unk_unk68 D_80100844;
-extern struct Unk_unk68 D_80100848;
-extern u8 D_80104CE0[];
-extern struct Unk_unk68 D_80104CEC;
-extern struct Item04Data D_8010C8B4;
-extern u8 D_8010C904[];
-extern s32 D_8010C918[4];
-extern u8 D_800FB67C[];
-extern struct Unk_unk68 D_800FFFE8;
-extern struct Unk_unk68 D_800FFFEC[2];
-extern u8 D_801001B8[8];
-extern u8 D_801001C0[8];
+extern struct Unk_unk68 jet_stingray_swim_attack_box;
+extern struct Unk_unk68 jet_stingray_swim_hurt_box;
+extern u8 ride_armor_pilot_attack_box[];
+extern struct Unk_unk68 ride_armor_pilot_punch_box;
+extern struct Item04Data destructible_core_data;
+extern u8 destructible_core_debris[];
+extern s32 destructible_core_explosion_sounds[4];
+extern u8 hover_sentry_debris[];
+extern struct Unk_unk68 wave_rider_body_hurt_box;
+extern struct Unk_unk68 wave_rider_rider_hurt_box[2];
+extern u8 wave_rider_debris[8];
+extern u8 wave_rider_rider_debris[8];
 extern struct Unk_unk68 D_8010024C;
 extern u8 D_801005B0[4];
-extern u8 D_800FBB84[4];
-extern u8 D_800FDD28[4];
+extern u8 shell_crawler_debris[4];
+extern u8 bomb_bat_debris[4];
 extern u16 D_800FDDA0[14];
 extern u8 D_800FDF40[12];
-extern struct Unk_unk68* D_800FDD38[2];
-extern u8 D_800FE8E4[8];
-extern u8 D_801097F4[4];
-extern u8 D_80109804[8];
-extern s32 D_80109818[4];
-extern s32 D_80109828[4];
-extern s16 D_80109898[4];
-extern u8 D_801098A0[8];
-extern u8 D_801098A8[16];
+extern struct Unk_unk68* bomb_bat_hurt_boxes[2];
+extern u8 train_cannon_debris[8];
+extern u8 mushroom_shot_spore_hit_box[4];
+extern u8 mushroom_shot_spore_offsets[8];
+extern s32 mushroom_shot_spore_x_speeds[4];
+extern s32 mushroom_shot_spore_x_accels[4];
+extern s16 hatch_blast_tile_x[4];
+extern u8 hatch_blast_debris[8];
+extern u8 hatch_blast_break_debris[16];
 extern struct Unk_unk68 D_80106270[32];
-extern u8 D_8010D198[4];
-extern u8* D_8010D1BC[4];
+extern u8 breakable_boulder_hit_box[4];
+extern u8* breakable_boulder_debris[4];
 extern union AnimationStep* D_8010DF48[57];
-extern s32 D_8010DB08[8];
-extern s32 D_8010DB28[8];
+extern s32 rubble_x_offsets[8];
+extern s32 rubble_y_offsets[8];
 extern struct BgDrawRelated D_8015D9D0[];
 extern struct MainPrimitiveBuffer temp1[];
 extern struct SecondaryPrimitiveBuffer temp2[];
@@ -3128,7 +3128,7 @@ struct QuadMotionData {
     s8 speed[4];
 };
 
-extern struct QuadMotionData D_8010F774[22];
+extern struct QuadMotionData boss_warning_quad_motions[22];
 extern u8 D_8013B960[0x10];
 
 struct QuadUnkExt3 {
@@ -3524,7 +3524,7 @@ struct Effect21Ext {
     u8 was_inside;
 };
 
-extern struct Effect21SpawnRecord* D_8010BD68[20];
+extern struct Effect21SpawnRecord* crumble_sequencer_sequences[20];
 
 struct Effect5Ext {
     s32 unk14;
@@ -3799,22 +3799,22 @@ extern s8 player_shot_waits_for_specials[];
 extern s8 player_shot_counts_as_shot[];
 extern s8 player_shot_counts_as_special[];
 extern u8 player_ladder_shoot_animations[];
-extern struct VisualAttachmentOffset D_8010A1AC[2];
-extern struct VisualAttachmentOffset D_8010A1B4[2];
-extern struct VisualAttachmentInit D_8010A1BC[4];
-extern u8 D_80108C44[4];
-extern u8 D_80108C48[4];
-extern u8 D_80108C4C[4];
-extern u8 D_80108C50[4];
-extern u8 D_80108C58[4];
-extern u8 D_8010A1D4[];
+extern struct VisualAttachmentOffset wall_slide_dust_offsets[2];
+extern struct VisualAttachmentOffset dash_dust_offsets[2];
+extern struct VisualAttachmentInit charge_muzzle_flash_types[4];
+extern u8 dragon_shot_flame_box[4];
+extern u8 dragon_shot_flame_hit_box[4];
+extern u8 dragon_shot_pulse_hit_box[4];
+extern u8 dragon_shot_pulse_box[4];
+extern u8 dragon_shot_burn_box[4];
+extern u8 small_effect_animations[];
 struct Visual03Bounds {
     s32 x;
     s32 y;
 };
-extern struct Visual03Bounds D_8010A1E4[];
+extern struct Visual03Bounds small_effect_bounds[];
 
-extern u16 D_80108768[48];
+extern u16 buster_muzzle_offsets[48];
 
 struct PlayerFrameOffset {
     s8 x;
@@ -3825,25 +3825,25 @@ union PlayerFrameOffsetData {
     s8 components[512];
 };
 extern union PlayerFrameOffsetData D_8011B230;
-extern u32* D_8010A4C0[3];
-extern u8 D_8010A4F8[];
-extern u8 D_8010A504[];
-extern u16 D_8010A588[];
-extern u8 D_8010A590[4];
-extern u8 D_8010A594[4];
-extern s16 D_8010A598[4];
-extern struct VisualBounds D_8010A5A0[4];
-extern u8 D_8010A5B8[];
-extern u16** D_8010AE0C[26];
-extern u32* D_8010E4EC[];
-extern u32* D_8010E514[];
-extern u32* D_8010E538[];
-extern u32* D_8010E55C[];
-extern u32* D_8010ECD4[];
-extern s8 D_8010FE38[];
-extern u8 D_8010FED4[];
-extern s16 D_8010FF00[4];
-extern s32* D_8010FAB4[8];
+extern u32* explosion_animations[3];
+extern u8 ride_dust_animations[];
+extern u8 ride_dust_layers[];
+extern u16 weapon_overlay_palettes[];
+extern u8 weapon_overlay_layers[4];
+extern u8 weapon_overlay_animations[4];
+extern s16 weapon_overlay_gfx_rows[4];
+extern struct VisualBounds weapon_overlay_bounds[4];
+extern u8 wave_rider_jet_animations[];
+extern u16** camera_trigger_stage_scripts[26];
+extern u32* briefing_x_partner_animations[];
+extern u32* briefing_x_animations[];
+extern u32* briefing_zero_animations[];
+extern u32* briefing_zero_partner_animations[];
+extern u32* option_toggle_animations[];
+extern s8 sigma_beam_sweep_speeds[];
+extern u8 sigma_laser_flash_colors[];
+extern s16 train_scroll_lock_positions[4];
+extern s32* web_piece_quad_frame_table[8];
 extern u8 D_801193F0[];
 extern u32 D_801194F0[];
 extern u8 D_8011A030[];
@@ -3855,16 +3855,16 @@ extern u32* D_8011BF40[54];
 extern u32* D_8011C070[9];
 extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
-extern union AnimationStep* D_800FE890[21];
-extern union AnimationStep* D_800FFC14[10];
-extern union AnimationStep* D_800FE48C[7];
-extern union AnimationStep* D_8010F008[3];
+extern union AnimationStep* train_cannon_animations[21];
+extern union AnimationStep* train_crate_animations[10];
+extern union AnimationStep* latcher_animations[7];
+extern union AnimationStep* intro_messenger_animations[3];
 extern union AnimationStep* web_spider_animations[40];
-extern struct Unk_unk68 D_800FF5A8;
-extern struct Unk_unk68 D_800FF5AC;
-extern void* D_80101624[12];
+extern struct Unk_unk68 web_spider_attack_box;
+extern struct Unk_unk68 web_spider_hurt_box;
+extern void* beam_drone_animations[12];
 extern void* storm_owl_animations[30];
-extern void* D_80103E08[29];
+extern void* gunship_animations[29];
 #ifdef MMX4_PC
 extern struct MainBssState main_bss_state;
 #define D_80141BD8 (main_bss_state.flags)
@@ -3879,15 +3879,15 @@ extern u8 D_80141BDF[];
 extern u8 D_80141BE0;
 #endif
 extern struct Unk5 D_800F0E18[];
-extern struct Unk_unk68 D_8010084C;
-extern struct Unk_unk68 D_80100850;
-extern struct Unk_unk68 D_80100884;
+extern struct Unk_unk68 jet_stingray_land_attack_box;
+extern struct Unk_unk68 jet_stingray_land_hurt_box;
+extern struct Unk_unk68 jet_stingray_terrain_box;
 extern struct Unk_unk68 D_801072F4[];
 extern union AnimationStep* spike_sled_animations[23];
 extern struct Unk_unk68 D_800FDD88;
 extern struct Unk_unk68 D_800FDD8C;
-extern u8 D_80108BF0[4];
-extern struct Weapon60SpawnOffset D_80108BF4[3];
+extern u8 ride_armor_missile_hit_box[4];
+extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
 extern s32 D_80137CC0;
 extern s8 D_801419B3;
 #ifdef VERSION_JP
@@ -3897,15 +3897,15 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
-extern struct EffectObj* D_8013B8E8[22];
-extern u8* D_8010BE5C[2];
-extern struct Effect28AnimationStep* D_8010BF24[3];
-extern s16 D_8010BFA8[10];
-extern u8 D_8010BFBC[12];
-extern s16 D_8010BFC8[10];
-extern u8* D_8010C084[2];
-extern u8* D_8010C0CC[2];
-extern u8* D_8010C0F4[1];
+extern struct EffectObj* boss_warning_tiles[22];
+extern u8* tile_flicker_scripts[2];
+extern struct Effect28AnimationStep* tile_anim_scripts[3];
+extern s16 rock_drop_sequence_delays[10];
+extern u8 rock_drop_sequence_subtypes[12];
+extern s16 rock_drop_sequence_x_positions[10];
+extern u8* tile_strip_anim_scripts[2];
+extern u8* tile_loop_anim_scripts[2];
+extern u8* tile_blink_anim_scripts[1];
 extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
@@ -3961,37 +3961,37 @@ extern u8 D_800F2490[];
 extern struct BackgroundCameraModePair D_800F32D4[16][2];
 extern u16 D_80106770[64];
 extern struct Unk_unk68 D_801068F0[33];
-extern s32 D_800FA108[2];
-extern s32 D_800FA110[2];
-extern s32 D_800FA118[2];
-extern s32 D_800FB89C[2];
-extern s32 D_800FA120[2];
-extern u8 D_800FA6E8[8];
+extern s32 robot_bee_approach_speeds[2];
+extern s32 robot_bee_charge_speeds[2];
+extern s32 robot_bee_sting_speeds[2];
+extern s32 ice_bird_fly_speeds[2];
+extern s32 robot_bee_lunge_speeds[2];
+extern u8 ambush_gunner_emerge_particles[8];
 extern u32 D_800FA72C;
 extern u32 D_800FA730;
-extern u8 D_800FAEF0[8];
-extern u8 D_800FAEF8[4];
-extern struct Unk_unk68 D_800FB6FC;
-extern struct Unk_unk68 D_800FB700;
-extern struct Unk_unk68 D_800FB704;
-extern union AnimationStep* D_800FB804[18];
-extern struct Unk_unk68 D_800FBBBC;
-extern struct Unk_unk68 D_800FBBC0;
-extern struct Unk_unk68 D_800FBBC4;
-extern struct Unk_unk68 D_800FBA50;
-extern struct Unk_unk68 D_800FBA54;
+extern u8 dragonfly_body_boxes[8];
+extern u8 dragonfly_grab_box[4];
+extern struct Unk_unk68 heavy_mech_hurt_box;
+extern struct Unk_unk68 heavy_mech_attack_box;
+extern struct Unk_unk68 heavy_mech_terrain_box;
+extern union AnimationStep* heavy_mech_animations[18];
+extern struct Unk_unk68 trident_mech_hurt_box;
+extern struct Unk_unk68 trident_mech_attack_box;
+extern struct Unk_unk68 trident_mech_charge_attack_box;
+extern struct Unk_unk68 shell_crawler_body_box;
+extern struct Unk_unk68 shell_crawler_shell_box;
 extern struct Unk_unk68 D_800FBEF4;
 extern struct Unk_unk68 D_800FBEF8;
 extern u8 D_800FC340[4];
 extern struct Unk_unk68 D_800FBEFC;
-extern struct Unk_unk68 D_800FBE00;
-extern struct Unk_unk68 D_800FBE04;
-extern struct Unk_unk68 D_800FBE08;
-extern union AnimationStep* D_800FBE94[];
-extern struct Unk_unk68 D_800FBE0C;
-extern struct Unk_unk68 D_800FBE10;
-extern struct Unk_unk68 D_800FBE14;
-extern u8 D_800FBEB0[4];
+extern struct Unk_unk68 snowman_bomb_hurt_box;
+extern struct Unk_unk68 snowman_bomb_attack_box;
+extern struct Unk_unk68 snowman_bomb_terrain_box;
+extern union AnimationStep* snowman_bomb_animations[];
+extern struct Unk_unk68 snowman_bomb_blast_hurt_box;
+extern struct Unk_unk68 snowman_bomb_blast_attack_box;
+extern struct Unk_unk68 snowman_bomb_blast_terrain_box;
+extern u8 snowman_bomb_debris[4];
 extern s32 D_800F9070[2];
 extern s32 D_800F9078[2];
 extern s32 D_800F9080[2];
@@ -4003,55 +4003,55 @@ extern struct Unk_unk68 D_800FBF00;
 extern struct Unk_unk68 D_800FBF04;
 extern struct Unk_unk68 D_800FBF0C;
 extern struct Unk_unk68 D_800FBF10;
-extern struct Unk_unk68 D_800FC860;
-extern struct Unk_unk68* D_800FC754[4];
-extern struct Unk_unk68* D_800FC764[4];
-extern struct Unk_unk68* D_800FC774[4];
-extern s16 D_800FC814[8];
-extern s16 D_800FC824[8];
-extern u8 D_800FC834[8];
-extern u8 D_800FC83C[8];
-extern u8 D_800FCE80[];
-extern u8 D_800FD9BC[];
-extern void (*D_800FD9E0[])(struct MainObj*);
-extern struct Unk_unk68 D_800FD9EC[];
-extern struct Unk_unk68 D_800FDC80;
-extern s32 D_800FDC90[2];
-extern struct Unk_unk68 D_800FDFB8;
-extern u16 D_800FDFBC[];
-extern void (*D_800FE174[])(struct MainObj*);
-extern struct Unk_unk68 D_800FE1BC;
-extern struct Unk_unk68 D_800FE1C0;
-extern union AnimationStep* D_800FEDE0[19];
-extern struct Unk_unk68 D_800FEE30;
-extern struct Unk_unk68 D_800FEE34;
+extern struct Unk_unk68 ice_block_crumble_attack_box;
+extern struct Unk_unk68* surface_hopper_launch_hurt_boxes[4];
+extern struct Unk_unk68* surface_hopper_launch_attack_boxes[4];
+extern struct Unk_unk68* surface_hopper_launch_terrain_boxes[4];
+extern s16 surface_hopper_launch_x_speeds[8];
+extern s16 surface_hopper_launch_y_speeds[8];
+extern u8 surface_hopper_launch_facings[8];
+extern u8 surface_hopper_launch_animations[8];
+extern u8 slope_skier_debris[];
+extern u8 regen_turret_debris[];
+extern void (*regen_turret_rebuild_funcs[])(struct MainObj*);
+extern struct Unk_unk68 thorn_trap_open_hurt_box[];
+extern struct Unk_unk68 bomb_bat_body_box;
+extern s32 bomb_bat_fly_speeds[2];
+extern struct Unk_unk68 highway_trooper_terrain_box;
+extern u16 highway_trooper_stop_x[];
+extern void (*highway_trooper_step_funcs[])(struct MainObj*);
+extern struct Unk_unk68 wheel_charger_open_hurt_box;
+extern struct Unk_unk68 wheel_charger_open_attack_box;
+extern union AnimationStep* data_hopper_animations[19];
+extern struct Unk_unk68 data_hopper_terrain_box;
+extern struct Unk_unk68 data_hopper_attack_box;
 extern struct Unk_unk68 D_80103F08;
 extern struct Unk_unk68 D_80103F0C;
 extern s8 player_hover_bob[16];
-extern struct Unk_unk68 D_80108944[];
-extern struct Unk_unk68 D_80108948[];
-extern u8 D_800FD1D0[];
-extern void (*D_800FD1F4[])(struct BaseObj*);
-extern void (*D_800FD858[])(struct MainObj*);
-extern struct Unk_unk68 D_800FB88C;
-extern union AnimationStep* D_800FB9AC[];
+extern struct Unk_unk68 ground_hunter_crawl_box[];
+extern struct Unk_unk68 ground_hunter_rise_box[];
+extern u8 ice_wall_debris[];
+extern void (*ice_wall_break_funcs[])(struct BaseObj*);
+extern void (*pod_spawner_step_funcs[])(struct MainObj*);
+extern struct Unk_unk68 ice_bird_body_box;
+extern union AnimationStep* ice_bird_animations[];
 extern struct Unk_unk68 D_80106974[];
-extern union AnimationStep* D_800FC9DC[];
-extern struct Unk_unk68 D_800FC9F4;
-extern struct Unk_unk68 D_800FC9F8;
-extern struct Unk_unk68* D_800FC73C[2];
-extern u8 D_800FCFA0[];
-extern union AnimationStep* D_800FD554[];
-extern struct Main28InitData D_800FD5FC[];
+extern union AnimationStep* falling_icicle_animations[];
+extern struct Unk_unk68 falling_icicle_body_box;
+extern struct Unk_unk68 falling_icicle_terrain_box;
+extern struct Unk_unk68* surface_hopper_attach_terrain_boxes[2];
+extern u8 jet_drone_debris[];
+extern union AnimationStep* spawner_pod_animations[];
+extern struct Main28InitData spawner_pod_init_data[];
 extern struct Unk_unk68 D_80106AF4[];
 extern struct Unk_unk68 D_80107074[];
 extern struct Unk_unk68 D_80108504[];
-extern struct Unk_unk68 D_80108850[];
-extern struct Unk_unk68 D_801088E4[];
-extern struct Unk_unk68 D_800FB890[3];
+extern struct Unk_unk68 frost_tower_charged_part_box[];
+extern struct Unk_unk68 soul_body_hit_box[];
+extern struct Unk_unk68 ice_bird_charge_box[3];
 extern struct Unk_unk68 D_80106B74[];
-extern struct Unk_unk68 D_800FAEFC;
-extern u8 D_80105FC8[13][3];
+extern struct Unk_unk68 dragonfly_terrain_box;
+extern u8 boss_music_tracks[13][3];
 extern union AnimationStep D_80105FF0[32];
 extern struct Unk_unk68 D_80103EE4;
 extern struct Unk_unk68 D_80103EF0;
@@ -4066,18 +4066,18 @@ extern struct Unk_unk68 D_80104510;
 extern struct Unk_unk68 D_80108084[];
 extern struct Unk_unk68 D_80108104[];
 extern struct Unk_unk68 D_801049AC;
-extern void* D_80104E7C[];
-extern struct Unk_unk68 D_80104F00;
-extern struct Unk_unk68 D_80104F04;
+extern void* unused_ride_armor_animations[];
+extern struct Unk_unk68 unused_ride_armor_hit_box;
+extern struct Unk_unk68 unused_ride_armor_terrain_box;
 extern struct Unk_unk68 D_80108184[];
 extern u8 sigma_scythe_plant_next[4];
 extern u8 sigma_cloak_pattern[4];
-extern struct Unk_unk68 D_80103E7C[];
+extern struct Unk_unk68 gunship_debris[];
 extern struct Unk_unk68 D_801074F4[];
 extern struct Unk_unk68 D_80107778[];
 extern struct Unk_unk68 D_80107E84[];
 extern struct Unk_unk68 D_80107F04[];
-extern struct Unk_unk68 D_8010884C[];
+extern struct Unk_unk68 frost_tower_terrain_box[];
 extern struct Unk_unk68 D_80105374;
 extern struct Unk_unk68 D_801044FC;
 extern struct Unk_unk68 D_80104500;
@@ -4094,126 +4094,126 @@ extern struct Unk_unk68 D_80107DFC[];
 extern struct Unk_unk68 D_801079F8[];
 extern struct Unk_unk68 D_80107A78[];
 extern struct Unk_unk68 D_80107B78[];
-extern struct Unk_unk68 D_801013BC[3];
+extern struct Unk_unk68 frost_walrus_breath_debris[3];
 extern s32 split_mushroom_walk_speeds[3];
-extern struct Unk_unk68 D_80101CA8;
-extern struct Unk_unk68 D_801016B8;
-extern struct Unk_unk68 D_801016C0;
-extern struct Unk_unk68 D_80102948;
-extern struct Unk_unk68 D_80102950;
-extern struct Unk_unk68 D_80102954;
-extern struct Unk_unk68 D_80102958;
-extern struct Unk_unk68 D_8010295C;
-extern struct Unk_unk68 D_80102960;
-extern struct Unk_unk68 D_80102964;
-extern struct Unk_unk68 D_80108724[];
-extern struct Unk_unk68 D_80102A60;
-extern struct Unk_unk68 D_80102A64;
-extern struct Unk_unk68 D_80102A68;
-extern struct Unk_unk68 D_80102A6C;
-extern struct Unk_unk68 D_80102A70;
-extern struct Unk_unk68 D_80102A74;
-extern struct Unk_unk68 D_8010133C;
-extern struct Unk_unk68 D_80101340;
-extern struct Unk_unk68 D_80101344;
-extern struct Unk_unk68 D_80101348;
+extern struct Unk_unk68 split_mushroom_terrain_box;
+extern struct Unk_unk68 storm_owl_attack_box;
+extern struct Unk_unk68 storm_owl_slam_terrain_box;
+extern struct Unk_unk68 cyber_peacock_hit_box;
+extern struct Unk_unk68 cyber_peacock_rising_kick_attack_box;
+extern struct Unk_unk68 cyber_peacock_rising_kick_hurt_box;
+extern struct Unk_unk68 cyber_peacock_slash_attack_box;
+extern struct Unk_unk68 cyber_peacock_slash_hurt_box;
+extern struct Unk_unk68 cyber_peacock_slash_swing_attack_box;
+extern struct Unk_unk68 cyber_peacock_slash_swing_hurt_box;
+extern struct Unk_unk68 nova_strike_hit_box[];
+extern struct Unk_unk68 magma_dragoon_terrain_box;
+extern struct Unk_unk68 magma_dragoon_hurt_box;
+extern struct Unk_unk68 magma_dragoon_crouch_hurt_box;
+extern struct Unk_unk68 magma_dragoon_attack_box;
+extern struct Unk_unk68 magma_dragoon_leap_attack_box;
+extern struct Unk_unk68 magma_dragoon_punch_attack_box;
+extern struct Unk_unk68 frost_walrus_hurt_box;
+extern struct Unk_unk68 frost_walrus_charge_hurt_box;
+extern struct Unk_unk68 frost_walrus_attack_box;
+extern struct Unk_unk68 frost_walrus_charge_attack_box;
 extern u16 D_80106470[];
-extern struct Unk_unk68 D_800F9CD0;
-extern struct Unk_unk68 D_800F9CD4;
-extern struct Unk_unk68 D_800F9CD8;
-extern struct Unk_unk68 D_800F9CDC;
+extern struct Unk_unk68 spike_marl_walk_attack_box;
+extern struct Unk_unk68 spike_marl_walk_hurt_box;
+extern struct Unk_unk68 spike_marl_curl_attack_box;
+extern struct Unk_unk68 spike_marl_curl_hurt_box;
 extern struct Unk_unk68 D_801061F0[32];
 extern struct Unk_unk68 D_801069F4[];
-extern struct Unk_unk68 D_801087D0[];
+extern struct Unk_unk68 lightning_web_charged_part_box[];
 extern struct Unk_unk68 D_80108004[];
-extern struct Unk_unk68 D_80100D38[2];
-extern struct Unk_unk68 D_80105260;
-extern struct Unk_unk68 D_80105264;
+extern struct Unk_unk68 jet_stingray_debris[2];
+extern struct Unk_unk68 double_attack_box;
+extern struct Unk_unk68 double_hurt_box;
 extern struct Unk_unk68 D_801049B0[2];
-extern u8 D_800FC7B4[4];
-extern s8 D_800FF898[4];
-extern u8 D_800FF89C[20];
-extern union AnimationStep* D_800FF918[19];
+extern u8 surface_hopper_appear_animations[4];
+extern s8 train_boss_terrain_box[4];
+extern u8 train_boss_attack_timers[20];
+extern union AnimationStep* train_boss_animations[19];
 extern struct Unk_unk68 D_80107678[];
-extern struct Unk_unk68 D_80100854;
-extern struct Unk_unk68 D_80100858;
-extern struct Unk_unk68 D_80102124;
-extern struct Unk_unk68 D_8010212C;
-extern struct Unk_unk68* D_80102130[9];
-extern struct Unk_unk68* D_80102154[9];
-extern struct Unk_unk68 D_801034B4;
-extern struct Unk_unk68 D_8010526C;
-extern struct Unk_unk68 D_80105270;
-extern u8 D_80108C0C[7][4];
-extern u8 D_80108C28[8];
-extern u8 D_80108C30[8];
-extern u8 D_8010CFFC[4];
-extern u16 D_8010D000[4];
-extern u8 D_800FE2A4[8];
-extern u8 D_800FE6D8[12];
-extern struct Unk_unk68 D_800FE734;
-extern struct Unk_unk68 D_800FE738;
-extern struct Unk_unk68 D_800FE73C;
-extern struct Unk_unk68 D_800FF80C;
-extern struct Unk_unk68 D_800FF810;
+extern struct Unk_unk68 jet_stingray_dash_attack_box;
+extern struct Unk_unk68 jet_stingray_dash_hurt_box;
+extern struct Unk_unk68 flame_jet_hurt_box_7;
+extern struct Unk_unk68 flame_jet_vent_box;
+extern struct Unk_unk68* flame_jet_hurt_boxes[9];
+extern struct Unk_unk68* flame_jet_attack_boxes[9];
+extern struct Unk_unk68 magma_dragoon_fire_volley_debris;
+extern struct Unk_unk68 double_dive_attack_box;
+extern struct Unk_unk68 double_dive_hurt_box;
+extern u8 ride_armor_punch_hit_boxes[7][4];
+extern u8 ride_armor_punch_animations[8];
+extern u8 ride_armor_punch_steps[8];
+extern u8 crusher_wall_terrain_box[4];
+extern u16 crusher_wall_x_positions[4];
+extern u8 wheel_charger_debris[8];
+extern u8 rocket_spiker_exhaust_variants[12];
+extern struct Unk_unk68 train_cannon_hurt_box;
+extern struct Unk_unk68 train_cannon_attack_box;
+extern struct Unk_unk68 train_cannon_terrain_box;
+extern struct Unk_unk68 anchored_mine_hurt_box;
+extern struct Unk_unk68 anchored_mine_attack_box;
 extern struct Unk_unk68 D_800FFC54;
 extern struct Unk_unk68 D_800FFC58;
 extern struct Unk_unk68 D_800FFC5C;
-extern union AnimationStep* D_800FF874[2];
+extern union AnimationStep* anchored_mine_animations[2];
 extern u8** slash_beast_patterns[3];
 extern u8 slash_beast_pattern_weights[12];
-extern union AnimationStep* D_800FFD44[14];
-extern u8 D_80109028[4];
-extern u8 D_8010902C[32][4];
-extern u8 D_801090C4[4];
-extern u8 D_801090C8[4];
-extern u8 D_801090CC[2][4];
-extern u16 D_801090E8[3][2];
-extern u8 D_80109104[8];
-extern struct Unk_unk68 D_80109894;
-extern u8 D_80109BA8[2][4];
-extern u8 D_8010BF38[4][2];
-extern s16 D_8010C0C4[2][2];
-extern u16 D_8010BFE8[16];
-extern u8 D_8010C158[8];
-extern s16 D_8010CB24[2];
-extern s16 D_8010B4D0[4];
-extern u8 D_80108BA4[];
-extern struct Unk_unk68 D_80108704[];
-extern struct Unk_unk68 D_80108718[];
-extern struct Unk_unk68 D_801087C8[];
-extern struct Unk_unk68 D_801087E8[];
-extern struct Unk_unk68 D_801087CC[];
-extern struct Unk_unk68 D_801087FC[];
-extern struct Unk_unk68 D_80108800[];
-extern struct Unk_unk68 D_80108994[];
-extern struct Unk_unk68 D_801089FC[];
-extern struct Unk_unk68 D_80108A50[];
-extern u8 D_8010889C[];
+extern union AnimationStep* fortress_cannon_animations[14];
+extern u8 web_thread_hit_box[4];
+extern u8 web_thread_collision[32][4];
+extern u8 train_boss_bullet_hit_box[4];
+extern u8 train_boss_arm_attack_box[4];
+extern u8 train_boss_arm_hurt_boxes[2][4];
+extern u16 train_boss_arm_debris_positions[3][2];
+extern u8 train_boss_arm_debris[8];
+extern struct Unk_unk68 hatch_blast_terrain_box;
+extern u8 double_ball_box_5[2][4];
+extern u8 tile_anim_trigger_offsets[4][2];
+extern s16 tile_loop_anim_offsets[2][2];
+extern u16 palette_pulse_palette[16];
+extern u8 breakable_wall_debris[8];
+extern s16 gate_core_exit_x[2];
+extern s16 bg_zone_controller_zone_bounds[4];
+extern u8 ride_chaser_ram_hit_box[];
+extern struct Unk_unk68 lemon_hit_box[];
+extern struct Unk_unk68 stock_shot_hit_box[];
+extern struct Unk_unk68 lightning_web_charged_shot_box[];
+extern struct Unk_unk68 lightning_web_shot_box[];
+extern struct Unk_unk68 lightning_web_charged_net_box[];
+extern struct Unk_unk68 lightning_web_net_box[];
+extern struct Unk_unk68 lightning_web_terrain_box[];
+extern struct Unk_unk68 aiming_laser_marker_box[];
+extern struct Unk_unk68 twin_slasher_hit_boxes[];
+extern struct Unk_unk68 zero_saber_hit_boxes[];
+extern u8 frost_sparkle_animations[];
 extern u32* D_8011C018[22];
-extern s16 D_801090D4[3][2];
-extern s16 D_8010977C[4][2];
-extern s16 D_801090E0[4];
-extern u8 D_801090FC[4];
-extern u8 D_80109B98[4];
-extern u8 D_80109B9C[4];
-extern u8 D_80109BA0[2][4];
-extern u8 D_801090F4[4];
-extern u8 D_80109100[4];
-extern struct Unk_unk68 D_801096B0;
-extern struct Unk_unk68 D_801096C0;
-extern struct Unk_unk68 D_801096C4;
-extern struct Unk_unk68 D_801096C8;
-extern struct Unk_unk68 D_801096CC;
-extern u8 D_801096DC[12];
-extern RECT** D_80109698;
-extern RECT** D_8010969C;
-extern u8 D_80109890[4];
-extern u8 D_80109964[4];
-extern u8 D_801099DC[4];
-extern u8 D_801099E0[4];
-extern u8 D_801099E4[4];
-extern u8 D_80109DA4[4];
+extern s16 train_boss_arm_offsets[3][2];
+extern s16 drone_beam_boxes[4][2];
+extern s16 train_boss_arm_reach[4];
+extern u8 train_boss_arm_extended_clear_masks[4];
+extern u8 double_ball_box_2[4];
+extern u8 double_ball_box_3[4];
+extern u8 double_ball_box_4[2][4];
+extern u8 train_boss_arm_extended_bits[4];
+extern u8 train_boss_arm_active_clear_masks[4];
+extern struct Unk_unk68 walrus_ice_shard_terrain_box;
+extern struct Unk_unk68 walrus_ice_ball_hurt_box;
+extern struct Unk_unk68 walrus_ice_ball_attack_box;
+extern struct Unk_unk68 walrus_ice_shard_hurt_box;
+extern struct Unk_unk68 walrus_ice_shard_attack_box;
+extern u8 walrus_ice_debris[12];
+extern RECT** walrus_ice_drop_patterns_a;
+extern RECT** walrus_ice_drop_patterns_b;
+extern u8 hatch_blast_hit_box[4];
+extern u8 peacock_missile_explosion_box[4];
+extern u8 iris_drone_explode_box[4];
+extern u8 iris_laser_box[4];
+extern u8 iris_pillar_box[4];
+extern u8 sigma_spike_box[4];
 extern struct ObjectHeader* D_8013B8A8;
 extern u16 D_8013B858[0x10];
 extern s16 D_8013B878[0x10];
@@ -4221,10 +4221,10 @@ extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];
 extern struct ShotObj* D_8013B8C0;
 extern struct ShotObj* D_8013B8C4;
-extern u8 D_8010D07C[4][16];
-extern u8 D_8010D0BC[4][16];
-extern struct Unk_unk68 D_8010D0FC;
-extern struct Unk_unk68 D_8010D3CC;
+extern u8 rising_slab_crush_boxes[4][16];
+extern u8 rising_slab_terrain_boxes[4][16];
+extern struct Unk_unk68 sliding_floor_terrain_box;
+extern struct Unk_unk68 light_capsule_platform_box;
 extern struct FixedMatrix2 D_800F2ADC[16];
 extern s32 D_800EE458;
 extern void (*D_8012F490)(void);
@@ -4246,12 +4246,12 @@ extern u8 layout_height;
 extern u16 D_80166C08;
 extern u16 D_80166C0A;
 extern s8 D_800F8BE9[];
-extern u8 D_800FB0EC[8];
+extern u8 dragonfly_debris[8];
 extern u8 player_death_orb_directions[4][8];
-extern u8 D_800FD594[];
+extern u8 spawner_pod_debris[];
 extern void (*dragonfly_step_funcs[])();
 #ifdef MMX4_PC
-#define D_8010B465 (((u8*)D_8010B464)[1])
+#define D_8010B465 (((u8*)search_light_spawners)[1])
 #else
 extern u8 D_8010B465;
 #endif
@@ -4327,8 +4327,8 @@ extern volatile s32 D_80139634;
 extern struct ObjectHeader* D_80139690;
 extern void (*D_800F43A8[1])(s32);
 extern void (*g_TitleScalingXUpdateFuncs[])();
-extern void (*D_8010B4C4[])();
-extern void (*D_8010BEC8[])();
+extern void (*search_light_maker_state_funcs[])();
+extern void (*teleport_intro_state_funcs[])();
 extern s8 D_801F6018;
 extern s8 D_801F6019;
 extern s8 D_801F604F;
@@ -4348,11 +4348,11 @@ extern s16 D_8016DEA4;
 extern struct GameThread* D_801F8300;
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
 extern void (*g_TitleUpdateFuncs[])();
-extern void (*D_8010EB84[4])();
+extern void (*select_char_portrait_funcs[4])();
 extern void (*g_SelectACharacterUpdateFuncs[3])();
 extern struct MainObj main_objects[0x30]; // D_8013BED0
 extern void (*g_SearchLightUpdateFuncs[3])(struct QuadObj*);
-extern void (*D_8010FC84[])();
+extern void (*ready_line_state_funcs[])();
 extern void (*g_TitleUpdate2Funcs[])();
 extern u8 D_8013B7D0;
 extern u8 D_8013B7D8;
@@ -4375,7 +4375,7 @@ extern s16 magma_dragoon_arena_ceiling[4];
 extern s8 D_8013B810;
 extern u8 D_8013B814;
 extern u8 D_8013B8A0[];
-extern struct EffectObj* D_8013B8AC;
+extern struct EffectObj* sigma_sequencer;
 extern struct AbcObj abc_object;
 extern struct BarObj bar_object;
 extern struct BazObj baz_objects[2];
@@ -4396,30 +4396,30 @@ extern void (*ReadyTextUpdateFuncs[3])();
 extern u8* D_80137DC4;
 extern s32 D_80137DD0;
 extern u32* D_801406A8;
-extern struct SearchLightInit D_8010F600[6];
-extern s32 D_8010F66C[3];
-extern struct SearchLightColorLookup D_8010F684;
-extern struct SearchLightIntensityLookup D_8010F68C;
-extern u32* D_8010EAC8[7];
-extern u32* D_8010EAE4[6];
-extern u32* D_8010EAFC[10];
-extern u8 D_8010EB24[16];
-extern u8 D_8010EB34[16];
-extern u8 D_8010EB44[16];
-extern struct CharacterSelectPosition D_8010EB54[9];
-extern struct CharacterSelectPosition D_8010EB78[3];
+extern struct SearchLightInit search_light_shapes[6];
+extern s32 search_light_speeds[3];
+extern struct SearchLightColorLookup search_light_colors;
+extern struct SearchLightIntensityLookup search_light_blend_modes;
+extern u32* select_char_x_animations[7];
+extern u32* select_char_zero_animations[6];
+extern u32* select_char_menu_animations[10];
+extern u8 select_char_initial_animations[16];
+extern u8 select_char_palettes[16];
+extern u8 select_char_priorities[16];
+extern struct CharacterSelectPosition select_char_positions[9];
+extern struct CharacterSelectPosition select_char_text_positions[3];
 extern u8 D_801406AC;
 extern s32 D_80142F70;
 extern u8* D_8015D9C8;
 extern u8 D_800EE47E[];
 extern u32 D_80141F38;
 extern union AnimationStep D_800F8DC8[];
-extern struct Unk_unk68 D_800F9A04;
-extern struct Unk_unk68 D_800F9A08;
-extern union AnimationStep* D_800F9AB8[];
+extern struct Unk_unk68 armored_walker_terrain_box;
+extern struct Unk_unk68 armored_walker_hit_box;
+extern union AnimationStep* armored_walker_animations[];
 extern struct Unk_unk68 D_80106370[];
-extern struct Unk_unk68 D_800FD9F0[];
-extern struct Unk_unk68 D_800FD9F4[];
+extern struct Unk_unk68 thorn_trap_attack_box[];
+extern struct Unk_unk68 thorn_trap_strike_boxes[];
 extern struct Unk_unk68 D_800FD9F8[];
 extern struct Unk_unk68 D_800FD9FC[];
 extern struct Unk_unk68 D_800FDA00[];
@@ -4498,22 +4498,22 @@ extern s32 D_80139684;
 extern s32 D_80139688;
 extern u8 D_800F1E90[];
 extern u8 D_800F1EAC[];
-extern u8 D_800F9AE4[8];
+extern u8 armored_walker_debris[8];
 extern u8* D_80173C80;
 extern u8 D_80173C84;
-extern void (*D_8010EBB4[16])();
-extern void (*D_8010EB98[])();
-extern void (*D_8010EBA0[])();
+extern void (*select_char_subtype_funcs[16])();
+extern void (*select_char_scroll_text_funcs[])();
+extern void (*select_char_selector_funcs[])();
 extern u8 need_palette_load;
-extern void (*D_8010EBA8[])();
+extern void (*select_char_character_funcs[])();
 extern u8 D_801721B8;
 extern s8 D_801721F7;
-extern void (*D_8010FC90[])();
-extern struct Unk14* D_8010B1F8[];
-extern s32 D_8010B23C[][4];
+extern void (*ready_line_type_funcs[])();
+extern struct Unk14* color_filter_scripts[];
+extern s32 color_filter_masks[][4];
 extern s32 D_8013E188[4];
-extern struct Unk_unk68 D_80104F08[2];
-extern void (*D_80104F10[])(struct MainObj*);
+extern struct Unk_unk68 unused_ride_armor_debris[2];
+extern void (*unused_ride_armor_step_funcs[])(struct MainObj*);
 // extern s32 D_8013E18C;
 // extern s32 D_8013E190;
 // extern s32 D_8013E194;
@@ -4555,33 +4555,33 @@ extern u8* cur_draw_info_drawenv;
 
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
-void func_8009ED70(struct ShotObj*);
+void grenade_fly(struct ShotObj*);
 s32 func_8002DD04(struct MainObj*);
-void func_8004C6C4(struct MainObj*);
+void hover_sentry_check_player_near(struct MainObj*);
 u8 func_8003CF24(struct RideArmorObj*);
 void func_8003D338(struct AnimatedObj*);
 void func_8003D39C(struct MainObj*);
-void func_80050690(struct MainObj*);
-void func_800BC63C(struct EffectObj*);
-void func_800BC6FC(struct EffectObj*, s32);
+void snowman_bomb_check_fall(struct MainObj*);
+void proximity_door_check_player(struct EffectObj*);
+void proximity_door_start_script(struct EffectObj*, s32);
 void func_800C63BC(struct ItemObj*);
-void func_800C6680(struct ItemObj*);
-void func_80089B58(struct VisualObj*, u8);
-void func_800BDBD4(void);
+void light_capsule_main(struct ItemObj*);
+void ride_armor_pilot_spawn_dust(struct VisualObj*, u8);
+void cyberspace_trial_delete_unused_items(void);
 extern union CdSectorBuffer D_8012F4B4;
 extern RECT D_80137CFC;
 extern s32 D_80137D08[];
-extern s32 D_800F99C4[][2];
-extern struct FixedPointPosition D_800F99D4[];
-extern struct FixedPointPosition D_800F99E4[];
-extern u32* D_8010DBC0[];
-extern u8 D_8010DBF8[];
-extern u8 D_8010A074[9][16];
-extern u8 D_8010A104[9][16];
+extern s32 background_dragon_perch_points[][2];
+extern struct FixedPointPosition background_dragon_route_starts[];
+extern struct FixedPointPosition background_dragon_staging_offsets[];
+extern u32* dragon_rubble_animations[];
+extern u8 dragon_rubble_debris[];
+extern u8 x_water_wake_modes[9][16];
+extern u8 zero_water_wake_modes[9][16];
 extern u8 cyber_peacock_attacks[32];
 extern u8 cyber_peacock_attacks_low_health[32];
-extern u8 D_80109E10[];
-extern s16 D_800FFAD8[];
+extern u8 general_shot_prop_debris[];
+extern s16 sentry_drone_activation_distances[];
 
 #include "func_tables.h"
 
@@ -4593,7 +4593,7 @@ void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
 s32 func_8001540C(s32, s32, void*);
-s32 func_80015A10(s32, struct MainObj*);
+s32 is_sound_finished(s32, struct MainObj*);
 void func_8001B644(u8*);
 s32 func_8001CB24(u8* buffer, s32 device_num, s32 size);
 void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern);
@@ -4610,22 +4610,22 @@ void player_enter_beam_out(struct PlayerObj*);
 void player_enter_stand(struct PlayerObj*);
 void player_script_walk_to_mark(struct PlayerObj*);
 void player_set_collision_bounds(struct PlayerObj*);
-void func_80046AA4(struct MainObj* arg0);
+void robot_bee_check_dive(struct MainObj* arg0);
 void func_8004D6FC(struct MainObj* arg0);
-void func_8004FBF4(struct MainObj*);
-extern u8 D_800FA340[];
-extern u8 D_800FA6E0[];
-extern u8 D_800FB9F4[];
-extern char D_800FF99C[8];
-extern struct Unk_unk68 D_800FBBB8;
-extern u8 D_800FBD80[12];
+void trident_mech_check_fall(struct MainObj*);
+extern u8 robot_bee_debris[];
+extern u8 ambush_gunner_debris[];
+extern u8 ice_bird_debris[];
+extern char train_boss_turret_debris[8];
+extern struct Unk_unk68 trident_mech_stunned_hurt_box;
+extern u8 trident_mech_debris[12];
 extern u16 player_stage_3_entry_y[2][4];
 extern u16 player_stage_6_entry_y[6];
 extern u16 player_stage_12_entry_y[20];
 extern u16 player_dash_effect_offsets[6];
 void player_set_idle_animation(struct PlayerObj*);
 void func_800CEFC0(struct MiscObj*);
-void func_800CF0B0(struct MiscObj*);
+void cyberspace_guide_update_blink(struct MiscObj*);
 void player_set_animation_frame(struct PlayerObj*, s32, s32);
 void player_enter_ladder_grab(struct PlayerObj*);
 void player_enter_ladder_climb_on_top(struct PlayerObj*);
@@ -4635,9 +4635,9 @@ struct WeaponObj* player_spawn_weapon(s8, s8, s8, struct PlayerObj*);
 void func_80037484(struct PlayerObj*, s32);
 void player_set_shoot_animation(struct PlayerObj*);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
-s32 func_8002B780(void);
+s32 get_random_nonzero(void);
 s32 func_8002938C();
-void func_8002B318(struct BaseObj*, s32, s32);
+void update_on_screen(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
 void func_800127FC(void);
 void func_800129A4(s8);
@@ -4648,21 +4648,21 @@ void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
-void func_80028B68(s8, s8, s8);
+void start_screen_shake_x(s8, s8, s8);
 void func_800292D0(struct StageObjectRecord*);
 struct ObjectHeader* MakeObject(u8);
-s32 func_8002B7DC(struct ObjectHeader*, struct ObjectHeader*);
-void func_80094F74(void);
+s32 angle_to_object(struct ObjectHeader*, struct ObjectHeader*);
+void soul_body_clone_update(void);
 void func_80015284(void);
 void func_8001C3E8(void);
 void reset_game_engine(void);
 void func_8001DC30(void);
-s32 func_80015D60(void*, s32);
-void func_80015D90(struct AnimatedObj*, s32, s32);
-void func_80015DC8(struct AnimatedObj*);
-void func_8004D84C(struct AnimatedObj*);
-void func_8004D6CC(struct AnimatedObj*);
-void func_80094154(struct WeaponObj*);
+s32 set_animation(void*, s32);
+void set_animation_frame(struct AnimatedObj*, s32, s32);
+void animate_object(struct AnimatedObj*);
+void ice_bird_spawn_ice_shards(struct AnimatedObj*);
+void ice_bird_face_player(struct AnimatedObj*);
+void frost_tower_hide(struct WeaponObj*);
 void func_8001653C(void);
 s32 player_check_dash_input(struct PlayerObj*);
 s32 func_80033FF0(struct PlayerObj*);
@@ -4710,24 +4710,24 @@ void func_80023D68();
 void func_8002A484();
 void func_80023D68();
 void func_8002A484();
-void func_800B6D1C(s32, s8, s8);
-void func_800B6EB4(s16, s16, s16, s16, s32);
-s8 func_800B6FF4(s32, s8);
+void search_light_maker_spawn_edges(s32, s8, s8);
+void search_light_maker_spawn_in_rect(s16, s16, s16, s16, s32);
+s8 search_light_maker_scroll_dirs(s32, s8);
 void ZeroObjectState(struct ObjectHeader* arg0);
 void init_objects();
 void func_80026648();
-s16 func_8002BAD0(s16, s16, s16);
-u8 func_800D8E94(struct LayerObj*);
-u8 func_800D9B08(struct LayerObj*);
-void func_800DA984(s32 arg0, s32 arg1, s32 arg2);
+s16 get_layout_screen(s16, s16, s16);
+u8 train_scroll_player_at_lock(struct LayerObj*);
+u8 train_tunnel_player_at_lock(struct LayerObj*);
+void refresh_visible_tile_effect(s32 arg0, s32 arg1, s32 arg2);
 s32 func_800E5FF4(s32, s32, u8*);
 void func_800AE6B4(struct BazObj*);
-struct VisualObj* func_800AFAB4(s8, s16, s16, u8);
+struct VisualObj* spawn_explosion_at(s8, s16, s16, u8);
 void func_80027FA8();
 void func_8002F048();
 void quad_is_on_screen(struct QuadObj*);
-s32 func_800D4024(struct QuadObj*);
-void func_80015930(u8, u8);
+s32 search_light_is_visible(struct QuadObj*);
+void stop_sound(u8, u8);
 void func_80016F0C();
 void func_80023D30();
 void func_8002AB20();
@@ -4735,21 +4735,21 @@ void func_8001D230();
 void func_8001FB50();
 void func_8002217C(u16, u8, u8);
 void func_80022730(struct AbcObj*);
-void func_8002B718(struct MovingObj*);
-s32 func_8002B7B0(struct ObjectHeader*, s32, s32);
-void func_8002B93C(struct MovingObj*, s32);
+void move_object(struct MovingObj*);
+s32 angle_to_point(struct ObjectHeader*, s32, s32);
+void set_velocity_from_angle(struct MovingObj*, s32);
 void func_8002B9F0(s32 *arg0, s32 *arg1, u8 arg2);
-void func_80028A48(struct BackgroundObj *arg0);
-void func_80028BAC(s8, s8, s8);
-void func_800DABE4(u8, s32, s32);
+void update_screen_shake_x(struct BackgroundObj *arg0);
+void start_screen_shake_y(s8, s8, s8);
+void apply_tile_effect(u8, s32, s32);
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
 s32 func_8002D9BC(void*);
-void func_800BF60C(struct BaseObj*, s8);
+void drop_item(struct BaseObj*, s8);
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-void func_800C7DA4(s32, u8*, void*, s32);
-void func_8004D784(struct MainObj*, s8);
-void func_800C813C(s32, void*, void*);
+void spawn_rubble(s32, u8*, void*, s32);
+void ice_bird_spawn_charge_ring(struct MainObj*, s8);
+void spawn_debris(s32, void*, void*);
 extern u8 D_800F9118[8];
 struct MenuTextureData {
     u32 texture[96];
@@ -4761,12 +4761,12 @@ struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
 void ice_core_face_player(struct AnimatedObj*);
 void drone_pod_random_explosion(struct MainObj*);
 void drone_pod_alarm_flash(struct MainObj*);
-void func_8005D148(struct MainObj*);
+void bomb_bat_drop_bomb(struct MainObj*);
 void storm_owl_spawn_storm_charge(struct AnimatedObj*);
 void magma_dragoon_spawn_flames(struct AnimatedObj*, u32);
-s32 func_8009227C(void);
-void func_800CA9EC(struct MiscObj*, u8);
-void func_800CAB10(struct MiscObj*, u8);
+s32 update_boss_music_delay(void);
+void vent_spawn_mixed_puffs(struct MiscObj*, u8);
+void vent_spawn_puffs(struct MiscObj*, u8);
 void is_on_screen(struct BaseObj*);
 s32 func_8002CF98(struct PlayerObj*, u8, s16, s16);
 s32 func_8002D32C(struct PlayerObj*, s16, s32);
@@ -4794,38 +4794,38 @@ s8 func_800136B0();
 void func_800137F0();
 void MyCdReadyCallback(u8 status, u8* result);
 void func_80018000(s32);
-void func_8002B0C8(struct ObjectHeader* arg0);
-void func_8002B108(struct ObjectHeader* arg0);
+void despawn_object(struct ObjectHeader* arg0);
+void despawn_object_permanently(struct ObjectHeader* arg0);
 void func_8002B560(s8, s8);
-void func_8002B694(struct AnimatedObj* arg0);
+void move_with_gravity(struct AnimatedObj* arg0);
 #ifdef MMX4_PC
 void func_8002C36C(struct PlayerObj*, struct PlayerObj*, s32);
 s32 func_8002D490(struct PlayerObj*);
 void func_8002E294(struct PlayerObj*, struct PlayerObj*);
 void func_8002E380(struct MovingObj*, struct MovingObj*, u8);
 #endif
-void func_80055C54(struct MainObj*);
-void func_8005807C(struct MainObj*);
+void slope_skier_read_slope(struct MainObj*);
+void caterkiller_face_player(struct MainObj*);
 void func_800583B0(struct MainObj*, s16, s16, s32);
 void func_800AF878(struct BaseObj*, s32, s32, s32);
 void func_800C842C(s32, u8*, void*, s32, void*);
-void func_800BDDE8(s32, s32);
-void func_8005F4E0(struct MainObj*);
-void func_8006135C(struct PlayerObj*);
-void func_80061424(struct MainObj*);
-void func_800614E8(struct VisualObj*);
+void delete_items(s32, s32);
+void wheel_charger_face_player(struct MainObj*);
+void train_cannon_fire_blast(struct PlayerObj*);
+void train_cannon_fire_volley(struct MainObj*);
+void train_cannon_spawn_charge_glow(struct VisualObj*);
 void func_800681C4(struct MainObj*);
 void func_80068340(struct MainObj*);
 void func_8006AE80(struct MainObj*);
 void slash_beast_face_player(struct MainObj*);
-void func_80062240(struct MainObj*);
+void breakable_terrain_spawn_rubble(struct MainObj*);
 void web_spider_set_move_timer(struct MainObj*);
 void web_spider_set_swing_animation(struct MainObj*);
 void func_800204CC(s8*, s32);
 void func_80097670(struct WeaponObj*);
-void func_800976DC(struct WeaponObj*);
-void func_80097B14(struct WeaponObj*);
-void func_80096C8C(struct WeaponObj*, struct PlayerObj*);
+void double_cyclone_charged_fly(struct WeaponObj*);
+void twin_slasher_hide(struct WeaponObj*);
+void aiming_laser_charged_aim(struct WeaponObj*, struct PlayerObj*);
 void player_clear_dash(struct PlayerObj*);
 s32 player_hover_check_end(struct PlayerObj*);
 s32 player_hover_steer(struct PlayerObj*);
@@ -4838,12 +4838,12 @@ s32 player_zero_shippuuga_cancel(struct PlayerObj*);
 void func_8003D254(struct VisualObj*);
 void func_8003D6EC(struct AnimatedObj*, s32);
 void player_hover_set_direction(struct PlayerObj*, s32);
-void func_800921E8(s32);
+void play_boss_music(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
 void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
 struct VisualObj* jet_stingray_spawn_splash(struct MainObj*);
 s32 jet_stingray_check_surface(struct PlayerObj*, s32, s32);
-void func_800BBFCC(struct EffectObj*);
+void fortress_collapse_spawn_random_explosion(struct EffectObj*);
 
 enum SelectedPlayer {
     CHARACTER_X,
@@ -4900,31 +4900,31 @@ s32 player_zero_check_jump_slash(struct PlayerObj*);
 s32 player_zero_check_wall_slash(struct PlayerObj*);
 s32 player_zero_check_hyouretsuzan(struct PlayerObj*);
 s32 player_zero_check_double_jump(struct PlayerObj*);
-void func_8004FC50(struct AnimatedObj*);
-void func_800506D8(struct AnimatedObj*);
-void func_8006AE50(struct AnimatedObj*);
+void trident_mech_face_player(struct AnimatedObj*);
+void snowman_bomb_face_player(struct AnimatedObj*);
+void jump_shooter_face_player(struct AnimatedObj*);
 void func_8006B2A4(struct MainObj*);
 void func_8006B398(struct MainObj*);
 void func_8006E920(struct MainObj*, s32);
 void colonel_face_center(struct BaseObj*);
 void func_800889DC(struct MainObj*);
-void func_80092E2C(struct VisualObj*, struct PlayerObj*, s32);
-void func_80093524(struct WeaponObj*);
+void buster_shot_place_at_muzzle(struct VisualObj*, struct PlayerObj*, s32);
+void lightning_web_draw(struct WeaponObj*);
 void iris_drone_move(struct ShotObj*);
 void func_800AFB90(struct VisualObj*);
-void func_800BC3E8(struct EffectObj*);
-void func_800427C0(struct MainObj*);
-void func_80042824(struct MainObj*);
-void func_80042884(struct MainObj*);
-void func_800BD024(struct EffectObj*);
+void floor_trap_explode(struct EffectObj*);
+void armored_walker_check_fall(struct MainObj*);
+void armored_walker_check_behind(struct MainObj*);
+void armored_walker_check_wall(struct MainObj*);
+void palette_pulse_init(struct EffectObj*);
 void func_800BD080(struct EffectObj*);
-void func_800BDB10(struct EffectObj*);
+void cyberspace_trial_spawn_rank_warp(struct EffectObj*);
 void func_800D9B48(struct LayerObj*);
 void func_800DCF40(void);
 void func_800E0CEC(void);
 void func_800E0D0C(void);
 void func_800E9040(void);
-void func_800D18C0(struct UnkObj*);
+void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 
 #include "game_prototypes.h"
 #endif

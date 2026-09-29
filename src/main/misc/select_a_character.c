@@ -18,203 +18,203 @@ enum SubTypes {
 };
 
 // SelectACharacterUpdate state 0
-void func_800CCA34(struct MiscObj* arg0)
+void select_char_init(struct MiscObj* self)
 {
     s8 temp_v0;
     s8 temp_v1_2;
     u8 temp_a1;
 
-    temp_v0 = arg0->unk2 - 7;
+    temp_v0 = self->unk2 - 7;
     switch (temp_v0) {
     case 0:
     case 2:
     case 3:
-        arg0->unk40 = D_801406A8[2] >> 7;
-        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
-        arg0->unk42 = 0x7840;
-        arg0->animation_table = D_8010EAC8;
-        arg0->unk15 = 0x40;
+        self->unk40 = D_801406A8[2] >> 7;
+        self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
+        self->unk42 = 0x7840;
+        self->animation_table = select_char_x_animations;
+        self->unk15 = 0x40;
         break;
     case 1:
     case 4:
-        arg0->unk40 = D_801406A8[0] >> 7;
-        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
-        arg0->unk42 = 0x7800;
-        arg0->animation_table = D_8010EAE4;
-        arg0->unk15 = 0;
+        self->unk40 = D_801406A8[0] >> 7;
+        self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
+        self->unk42 = 0x7800;
+        self->animation_table = select_char_zero_animations;
+        self->unk15 = 0;
         break;
     default:
-        arg0->unk40 = D_801406A8[1] >> 7;
-        arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
-        temp_a1 = D_8010EB34[arg0->unk2];
-        arg0->unk42 = (((temp_a1 * 4) + 4) % 16) | ((((temp_a1 + 1) / 4) + 0x1E0) << 6);
-        arg0->animation_table = D_8010EAFC;
+        self->unk40 = D_801406A8[1] >> 7;
+        self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
+        temp_a1 = select_char_palettes[self->unk2];
+        self->unk42 = (((temp_a1 * 4) + 4) % 16) | ((((temp_a1 + 1) / 4) + 0x1E0) << 6);
+        self->animation_table = select_char_menu_animations;
         break;
     }
     temp_v1_2 = 2;
-    if (arg0->unk2 < 9) {
-        arg0->x_pos.val = FIXED(D_8010EB54[arg0->unk2].x);
-        arg0->y_pos.val = FIXED(D_8010EB54[arg0->unk2].y);
+    if (self->unk2 < 9) {
+        self->x_pos.val = FIXED(select_char_positions[self->unk2].x);
+        self->y_pos.val = FIXED(select_char_positions[self->unk2].y);
     }
-    if (arg0->unk2 >= 0xC) {
-        s32 temp = arg0->unk2 - 0xC;
-        arg0->x_pos.val = FIXED(D_8010EB78[temp].x);
-        arg0->y_pos.val = FIXED(D_8010EB78[(arg0->unk2 - 0xC)].y);
+    if (self->unk2 >= 0xC) {
+        s32 temp = self->unk2 - 0xC;
+        self->x_pos.val = FIXED(select_char_text_positions[temp].x);
+        self->y_pos.val = FIXED(select_char_text_positions[(self->unk2 - 0xC)].y);
     }
-    arg0->unk16 = D_8010EB44[arg0->unk2];
-    func_80015D60(arg0, D_8010EB24[arg0->unk2]);
-    arg0->bg_offset = -1;
-    arg0->x_vel.val = 0;
-    arg0->y_vel.val = 0;
-    arg0->ext.title_logo.palette_shift_speed = 0;
-    arg0->ext.title_logo.unk57 = 0;
-    arg0->unk6 = 0;
-    arg0->unk7 = 0;
-    arg0->state++;
-    arg0->unk5 = arg0->unk2;
+    self->unk16 = select_char_priorities[self->unk2];
+    set_animation(self, select_char_initial_animations[self->unk2]);
+    self->bg_offset = -1;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->ext.title_logo.palette_shift_speed = 0;
+    self->ext.title_logo.unk57 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->state++;
+    self->unk5 = self->unk2;
 }
 
-// D_8010EB84 state 0
-void func_800CCCA0(struct MiscObj* arg0)
+// select_char_portrait_funcs state 0
+void select_char_portrait_slide_in(struct MiscObj* self)
 {
     // set speeds of portraits when "select a character"
     // screen first starts and portraits come in
-    if (arg0->unk2 == X_PORTRAIT) {
-        arg0->x_vel.val = FIXED(16); // speed of X portrait
+    if (self->unk2 == X_PORTRAIT) {
+        self->x_vel.val = FIXED(16); // speed of X portrait
     } else {
-        arg0->x_vel.val = FIXED(-16); // speed of Zero portrait
+        self->x_vel.val = FIXED(-16); // speed of Zero portrait
     }
-    if (((arg0->unk2 == X_PORTRAIT) && (arg0->x_pos.i.hi == 96)) || ((arg0->unk2 == ZERO_PORTRAIT) && (arg0->x_pos.i.hi == 224))) {
-        engine_obj.character_state.bytes[2] |= 1 << arg0->unk2;
-        arg0->unk6++;
+    if (((self->unk2 == X_PORTRAIT) && (self->x_pos.i.hi == 96)) || ((self->unk2 == ZERO_PORTRAIT) && (self->x_pos.i.hi == 224))) {
+        engine_obj.character_state.bytes[2] |= 1 << self->unk2;
+        self->unk6++;
         return;
     }
-    func_8002B718((struct MovingObj*)arg0);
+    move_object((struct MovingObj*)self);
 }
 
-// D_8010EB84 state 1
-void func_800CCD48(struct MiscObj* arg0)
+// select_char_portrait_funcs state 1
+void select_char_portrait_wait_select(struct MiscObj* self)
 {
     if (engine_obj.character_state.bytes[1] & 0x80) {
-        arg0->unk6++;
+        self->unk6++;
         // sets how fast the X and Zero portraits move
         // to the left and right after selecting a character
-        if (arg0->unk2 != X_PORTRAIT) {
-            arg0->x_vel.val = FIXED(16);
+        if (self->unk2 != X_PORTRAIT) {
+            self->x_vel.val = FIXED(16);
         } else {
-            arg0->x_vel.val = FIXED(-16);
+            self->x_vel.val = FIXED(-16);
         }
     }
 }
 
-// D_8010EB84 state 2
-void func_800CCD8C(struct MiscObj* arg0)
+// select_char_portrait_funcs state 2
+void select_char_portrait_slide_out(struct MiscObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    if (arg0->on_screen == 0) {
-        arg0->state++;
+    move_object((struct MovingObj*)self);
+    if (self->on_screen == 0) {
+        self->state++;
     }
 }
 
-// D_8010EB84 state 3
-void func_800CCDD4(struct MiscObj* arg0)
+// select_char_portrait_funcs state 3
+void select_char_portrait_bounce(struct MiscObj* self)
 {
-    switch (arg0->unk7) {
+    switch (self->unk7) {
     case 0:
-        arg0->x_vel.val = FIXED(16);
+        self->x_vel.val = FIXED(16);
         /* fallthrough */
     case 1:
-        func_8002B718((struct MovingObj*)arg0);
-        if (arg0->on_screen == 0) {
-            arg0->ext.sel_char.blast_timer = 20;
-            arg0->unk7++;
+        move_object((struct MovingObj*)self);
+        if (self->on_screen == 0) {
+            self->ext.sel_char.blast_timer = 20;
+            self->unk7++;
             return;
         }
         return;
     case 2:
-        if (--arg0->ext.sel_char.blast_timer == 0) {
-            arg0->x_vel.val = FIXED(-16);
-            arg0->unk7++;
+        if (--self->ext.sel_char.blast_timer == 0) {
+            self->x_vel.val = FIXED(-16);
+            self->unk7++;
             return;
         }
         break;
     case 3:
-        func_8002B718((struct MovingObj*)arg0);
-        if (arg0->x_pos.i.hi == 0xE0) {
-            arg0->unk6 = 1;
-            arg0->unk7 = 0;
+        move_object((struct MovingObj*)self);
+        if (self->x_pos.i.hi == 0xE0) {
+            self->unk6 = 1;
+            self->unk7 = 0;
         }
         break;
     }
 }
 
-// D_8010EBB4 state 0, 1
-void func_800CCEB4(struct MiscObj* arg0)
+// select_char_subtype_funcs state 0, 1
+void select_char_portrait(struct MiscObj* self)
 {
-    D_8010EB84[arg0->unk6](arg0);
+    select_char_portrait_funcs[self->unk6](self);
 }
 
-// D_8010EB98 state 0
-void func_800CCEF0(struct MiscObj* arg0)
+// select_char_scroll_text_funcs state 0
+void select_char_scroll_text_init(struct MiscObj* self)
 {
-    switch (arg0->unk2) {
+    switch (self->unk2) {
     case PLAYER_SELECT_UPPER:
         // set velocity of upper "PLAYER SELECT" text
-        arg0->x_vel.val = FIXED(-2) | FIXED(.5);
+        self->x_vel.val = FIXED(-2) | FIXED(.5);
         break;
     case PLAYER_SELECT_LOWER:
         // lower player select text
-        arg0->x_vel.val = FIXED(1) | FIXED(.5);
+        self->x_vel.val = FIXED(1) | FIXED(.5);
         break;
     case 12:
     case 14:
-        arg0->x_vel.val = FIXED(4);
+        self->x_vel.val = FIXED(4);
         break;
     case 13:
-        arg0->x_vel.val = FIXED(-4);
+        self->x_vel.val = FIXED(-4);
         break;
     default:
-        arg0->x_vel.val = FIXED(0);
+        self->x_vel.val = FIXED(0);
         break;
     }
-    arg0->unk6++;
+    self->unk6++;
 }
 
 const u32 padding = 0;
 
-// D_8010EB98 state 1
-void func_800CCF70(struct MiscObj* arg0)
+// select_char_scroll_text_funcs state 1
+void select_char_scroll_text_move(struct MiscObj* self)
 {
-    func_8002B718((struct MovingObj*)arg0);
-    switch (arg0->unk2) {
+    move_object((struct MovingObj*)self);
+    switch (self->unk2) {
     case PLAYER_SELECT_UPPER:
         // when top "PLAYER SELECT" goes off to the left,
         // wrap it around
-        if (arg0->x_pos.i.hi < -112) {
-            arg0->x_pos.i.hi = 432;
+        if (self->x_pos.i.hi < -112) {
+            self->x_pos.i.hi = 432;
         }
         break;
     case PLAYER_SELECT_LOWER:
         // when bottom "PLAYER SELECT" goes off to the right,
         // wrap it around
-        if (arg0->x_pos.i.hi >= 433) {
-            arg0->x_pos.i.hi = -112;
+        if (self->x_pos.i.hi >= 433) {
+            self->x_pos.i.hi = -112;
             return;
         }
         break;
     case 12:
-        if (arg0->x_pos.i.hi == 126) {
-            arg0->x_vel.val = 0;
+        if (self->x_pos.i.hi == 126) {
+            self->x_vel.val = 0;
         }
         break;
     case 13:
-        if (arg0->x_pos.i.hi == 160) {
-            arg0->x_vel.val = 0;
+        if (self->x_pos.i.hi == 160) {
+            self->x_vel.val = 0;
         }
         break;
     case 14:
-        if (arg0->x_pos.i.hi == 278) {
-            arg0->x_vel.val = 0;
+        if (self->x_pos.i.hi == 278) {
+            self->x_vel.val = 0;
         }
         break;
     }
@@ -222,71 +222,71 @@ void func_800CCF70(struct MiscObj* arg0)
 
 // scrolling text doesn't appear if nopped out
 // asm(".rept 26 ; nop ; .endr");
-// D_8010EBB4 state 2,3,4,5,12,13,14
-void func_800CD034(struct MiscObj* arg0)
+// select_char_subtype_funcs state 2,3,4,5,12,13,14
+void select_char_scroll_text(struct MiscObj* self)
 {
-    D_8010EB98[arg0->unk6](arg0);
+    select_char_scroll_text_funcs[self->unk6](self);
     if (engine_obj.character_state.bytes[1] & 0x80) {
-        arg0->state++;
+        self->state++;
     }
 }
 
-// D_8010EBA0 state 0
-void func_800CD0A4(struct MiscObj* arg0)
+// select_char_selector_funcs state 0
+void select_char_selector_move(struct MiscObj* self)
 {
     s16 x_pos;
 
     if (engine_obj.cur_character != CHARACTER_X) {
-        func_80015D60(arg0, 9);
+        set_animation(self, 9);
         x_pos = 224; // zero is selected, move selector graphic to right
     } else {
-        func_80015D60(arg0, 8);
+        set_animation(self, 8);
         x_pos = 96; // X is selected, move selector graphic to left
     }
-    arg0->x_pos.i.hi = x_pos;
-    arg0->y_pos.i.hi = 120; // set y pos of green selector
+    self->x_pos.i.hi = x_pos;
+    self->y_pos.i.hi = 120; // set y pos of green selector
     do {
     } while (0);
-    arg0->unk6++;
+    self->unk6++;
 }
 
-// D_8010EBA0 state 1
-void func_800CD110(struct MiscObj* arg0)
+// select_char_selector_funcs state 1
+void select_char_selector_animate(struct MiscObj* self)
 {
-    func_80015DC8(arg0);
-    if (engine_obj.cur_character != arg0->ext.sel_char.cur_character_selected) {
-        arg0->unk6 = 0;
+    animate_object(self);
+    if (engine_obj.cur_character != self->ext.sel_char.cur_character_selected) {
+        self->unk6 = 0;
         func_8001540C(5, 0, NULL);
     }
-    arg0->ext.sel_char.cur_character_selected = engine_obj.cur_character;
+    self->ext.sel_char.cur_character_selected = engine_obj.cur_character;
 }
 
-// D_8010EBB4 state 6
+// select_char_subtype_funcs state 6
 // green selector graphic around X doesn't animate if nopped out
 // asm(".rept 26 ; nop ; .endr");
-void func_800CD178(struct MiscObj* arg0)
+void select_char_selector(struct MiscObj* self)
 {
-    D_8010EBA0[arg0->unk6](arg0);
+    select_char_selector_funcs[self->unk6](self);
     if (engine_obj.character_state.bytes[1] & 0x80) {
-        arg0->state++;
+        self->state++;
     }
 }
 
-// D_8010EBA8 state 0
-void func_800CD1E8(struct MiscObj* arg0)
+// select_char_character_funcs state 0
+void select_char_character_idle(struct MiscObj* self)
 {
     struct MiscObj* obj;
 
     if (engine_obj.character_state.bytes[0] != 0) {
-        arg0->unk5 = 0xF;
-        arg0->unk6 = 0;
+        self->unk5 = 0xF;
+        self->unk6 = 0;
         return;
     }
-    if (engine_obj.cur_character == (arg0->unk2 - 7)) {
-        if (arg0->ext.sel_char.blast_timer == 0) {
-            arg0->unk6++;
-            func_80015D60(arg0, 1);
-            if (arg0->unk2 == X_CHARACTER) {
+    if (engine_obj.cur_character == (self->unk2 - 7)) {
+        if (self->ext.sel_char.blast_timer == 0) {
+            self->unk6++;
+            set_animation(self, 1);
+            if (self->unk2 == X_CHARACTER) {
                 obj = find_free_misc_obj();
                 // create "blast" right before charged shot comes out
                 // still id 0x1C but different unk2
@@ -294,156 +294,156 @@ void func_800CD1E8(struct MiscObj* arg0)
                     obj->active = 0x41;
                     obj->id = 0x1C;
                     obj->unk2 = 0xA;
-                    obj->x_pos.i.hi = arg0->x_pos.i.hi;
-                    obj->y_pos.i.hi = arg0->y_pos.i.hi;
+                    obj->x_pos.i.hi = self->x_pos.i.hi;
+                    obj->y_pos.i.hi = self->y_pos.i.hi;
                 }
             }
         } else {
-            arg0->ext.sel_char.blast_timer--;
+            self->ext.sel_char.blast_timer--;
         }
     }
 }
 
-// D_8010EBA8 state 1
-void func_800CD2BC(struct MiscObj* arg0)
+// select_char_character_funcs state 1
+void select_char_character_shoot(struct MiscObj* self)
 {
     struct BaseObj* obj;
 
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
+    animate_object(self);
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
         obj = (struct BaseObj*)find_free_misc_obj();
         if (obj != NULL) {
             obj->active = 0x41;
             obj->id = 0x1C;
             obj->unk2 = 0xB;
-            obj->x_pos.i.hi = arg0->x_pos.i.hi;
-            obj->y_pos.i.hi = arg0->y_pos.i.hi;
+            obj->x_pos.i.hi = self->x_pos.i.hi;
+            obj->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
 
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->unk6 = 0;
-        arg0->ext.sel_char.blast_timer = (arg0->ext.sel_char.unk54 & 1) ? 0x96 : 0x5A;
-        arg0->ext.sel_char.unk54++;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk6 = 0;
+        self->ext.sel_char.blast_timer = (self->ext.sel_char.unk54 & 1) ? 0x96 : 0x5A;
+        self->ext.sel_char.unk54++;
         if (engine_obj.character_state.bytes[0] != 0) {
-            arg0->unk5 = 0xF;
+            self->unk5 = 0xF;
         }
-        func_80015D60(arg0, 0);
+        set_animation(self, 0);
     }
 }
 
-// D_8010EBB4 state 7,8
-void func_800CD390(struct MiscObj* arg0)
+// select_char_subtype_funcs state 7,8
+void select_char_character(struct MiscObj* self)
 {
-    D_8010EBA8[arg0->unk6](arg0);
-    if ((engine_obj.cur_character != (arg0->unk2 - 7)) && (arg0->animation_step.fields.relative_step == 0)) {
-        arg0->unk6 = 0;
-        arg0->ext.sel_char.blast_timer = 0;
+    select_char_character_funcs[self->unk6](self);
+    if ((engine_obj.cur_character != (self->unk2 - 7)) && (self->animation_step.fields.relative_step == 0)) {
+        self->unk6 = 0;
+        self->ext.sel_char.blast_timer = 0;
     }
 }
 
-// D_8010EBB4 state 9
-void func_800CD408(struct MiscObj* arg0)
+// select_char_subtype_funcs state 9
+void select_char_charged_shot_fly(struct MiscObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk6++;
+    if (self->unk6 == 0) {
+        self->unk6++;
         // set speed and position of X's charged shot
-        arg0->x_vel.val = FIXED(10);
-        arg0->x_pos.i.hi += 3;
-        arg0->y_pos.i.hi -= 7;
+        self->x_vel.val = FIXED(10);
+        self->x_pos.i.hi += 3;
+        self->y_pos.i.hi -= 7;
     }
-    func_80015DC8(arg0);
-    func_8002B718((struct MovingObj*)arg0);
-    if (arg0->x_pos.i.hi >= 161) {
-        arg0->state++;
+    animate_object(self);
+    move_object((struct MovingObj*)self);
+    if (self->x_pos.i.hi >= 161) {
+        self->state++;
     }
 }
 
-// D_8010EBB4 state 10, 11
-void func_800CD498(struct MiscObj* arg0)
+// select_char_subtype_funcs state 10, 11
+void select_char_shot_burst(struct MiscObj* self)
 {
     struct MiscObj* temp_v0;
 
-    func_80015DC8(arg0);
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
+    animate_object(self);
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
         temp_v0 = find_free_misc_obj();
         // create X charged shot object
         if (temp_v0 != NULL) {
             temp_v0->active = 0x41;
             temp_v0->id = 0x1C;
             temp_v0->unk2 = 9;
-            temp_v0->x_pos.i.hi = arg0->x_pos.i.hi;
-            temp_v0->y_pos.i.hi = arg0->y_pos.i.hi;
+            temp_v0->x_pos.i.hi = self->x_pos.i.hi;
+            temp_v0->y_pos.i.hi = self->y_pos.i.hi;
         }
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state++;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state++;
     }
 }
 
-// D_8010EBB4 state 15
-void func_800CD530(struct MiscObj* arg0)
+// select_char_subtype_funcs state 15
+void select_char_character_exit(struct MiscObj* self)
 {
-    switch (arg0->unk6) {
+    switch (self->unk6) {
     case 0:
-        arg0->unk6++;
-        if (engine_obj.cur_character == (arg0->unk2 - 7)) {
-            func_80015D60(arg0, 3);
+        self->unk6++;
+        if (engine_obj.cur_character == (self->unk2 - 7)) {
+            set_animation(self, 3);
         } else {
-            func_80015D60(arg0, 0);
+            set_animation(self, 0);
         }
         break;
     case 1:
-        func_80015DC8(arg0);
-        if (arg0->animation_step.fields.relative_step == 0) {
-            set_engine_flags(engine_flags | (1 << (arg0->unk2 - 7)));
+        animate_object(self);
+        if (self->animation_step.fields.relative_step == 0) {
+            set_engine_flags(engine_flags | (1 << (self->unk2 - 7)));
         }
         if ((s8)engine_flags & 0x80) {
-            arg0->unk6 = (u8)arg0->unk6 + 1;
-            func_80015D60(arg0, 4);
+            self->unk6 = (u8)self->unk6 + 1;
+            set_animation(self, 4);
         }
         break;
     case 2:
-        func_80015DC8(arg0);
-        if (arg0->animation_step.fields.relative_step == 0) {
-            arg0->unk6 = (u8)arg0->unk6 + 1;
-            func_80015D60(arg0, 5);
-            arg0->y_vel.val = 0x80000;
+        animate_object(self);
+        if (self->animation_step.fields.relative_step == 0) {
+            self->unk6 = (u8)self->unk6 + 1;
+            set_animation(self, 5);
+            self->y_vel.val = 0x80000;
         }
         break;
     case 3:
-        func_80015DC8(arg0);
-        func_8002B718((struct MovingObj*)arg0);
-        if (arg0->on_screen == 0) {
-            set_engine_flags(engine_flags & ~(1 << (arg0->unk2 - 7)));
-            arg0->state = (u8)arg0->state + 1;
+        animate_object(self);
+        move_object((struct MovingObj*)self);
+        if (self->on_screen == 0) {
+            set_engine_flags(engine_flags & ~(1 << (self->unk2 - 7)));
+            self->state = (u8)self->state + 1;
         }
         break;
     }
 }
 
 // SelectACharacterUpdate state 1
-void func_800CD6D8(struct MiscObj* arg0)
+void select_char_main(struct MiscObj* self)
 {
-    D_8010EBB4[arg0->unk5](arg0);
-    func_8002B318(arg0, 0x80, 0x30);
+    select_char_subtype_funcs[self->unk5](self);
+    update_on_screen(self, 0x80, 0x30);
 }
 
 // SelectACharacterUpdate state 2
-void func_800CD730(struct MiscObj* arg0)
+void select_char_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(arg0);
+    ZeroObjectState(self);
 }
 
 // select a character menu never appears if nopped out
-void SelectACharacterUpdate(struct MiscObj* arg0)
+void SelectACharacterUpdate(struct MiscObj* self)
 {
-    g_SelectACharacterUpdateFuncs[arg0->state](arg0);
+    g_SelectACharacterUpdateFuncs[self->state](self);
 }
 
-u32 D_8010E968[88] = {
+u32 select_char_animation_data[88] = {
     0x00000008,
     0x01010001,
     0x02010001,
@@ -534,40 +534,40 @@ u32 D_8010E968[88] = {
     0x0dfd0003,
 };
 
-u32* D_8010EAC8[7] = {
-    D_8010E968 + 0x00 / 4,
-    D_8010E968 + 0x04 / 4,
-    D_8010E968 + 0x24 / 4,
-    D_8010E968 + 0x4c / 4,
-    D_8010E968 + 0x54 / 4,
-    D_8010E968 + 0x68 / 4,
-    D_8010E968 + 0x40 / 4,
+u32* select_char_x_animations[7] = {
+    select_char_animation_data + 0x00 / 4,
+    select_char_animation_data + 0x04 / 4,
+    select_char_animation_data + 0x24 / 4,
+    select_char_animation_data + 0x4c / 4,
+    select_char_animation_data + 0x54 / 4,
+    select_char_animation_data + 0x68 / 4,
+    select_char_animation_data + 0x40 / 4,
 };
-u32* D_8010EAE4[6] = {
-    D_8010E968 + 0x6c / 4,
-    D_8010E968 + 0x70 / 4,
-    D_8010E968 + 0xb8 / 4,
-    D_8010E968 + 0xdc / 4,
-    D_8010E968 + 0x100 / 4,
-    D_8010E968 + 0x118 / 4,
+u32* select_char_zero_animations[6] = {
+    select_char_animation_data + 0x6c / 4,
+    select_char_animation_data + 0x70 / 4,
+    select_char_animation_data + 0xb8 / 4,
+    select_char_animation_data + 0xdc / 4,
+    select_char_animation_data + 0x100 / 4,
+    select_char_animation_data + 0x118 / 4,
 };
-u32* D_8010EAFC[10] = {
-    D_8010E968 + 0x120 / 4,
-    D_8010E968 + 0x124 / 4,
-    D_8010E968 + 0x128 / 4,
-    D_8010E968 + 0x12c / 4,
-    D_8010E968 + 0x130 / 4,
-    D_8010E968 + 0x134 / 4,
-    D_8010E968 + 0x138 / 4,
-    D_8010E968 + 0x13c / 4,
-    D_8010E968 + 0x140 / 4,
-    D_8010E968 + 0x150 / 4,
+u32* select_char_menu_animations[10] = {
+    select_char_animation_data + 0x120 / 4,
+    select_char_animation_data + 0x124 / 4,
+    select_char_animation_data + 0x128 / 4,
+    select_char_animation_data + 0x12c / 4,
+    select_char_animation_data + 0x130 / 4,
+    select_char_animation_data + 0x134 / 4,
+    select_char_animation_data + 0x138 / 4,
+    select_char_animation_data + 0x13c / 4,
+    select_char_animation_data + 0x140 / 4,
+    select_char_animation_data + 0x150 / 4,
 };
 
-u8 D_8010EB24[16] = { 0, 1, 2, 2, 3, 4, 8, 0, 0, 6, 2, 2, 5, 7, 6, 0 };
-u8 D_8010EB34[16] = { 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 0 };
-u8 D_8010EB44[16] = { 5, 5, 5, 5, 2, 2, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0 };
-struct CharacterSelectPosition D_8010EB54[9] = {
+u8 select_char_initial_animations[16] = { 0, 1, 2, 2, 3, 4, 8, 0, 0, 6, 2, 2, 5, 7, 6, 0 };
+u8 select_char_palettes[16] = { 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 1, 1, 0 };
+u8 select_char_priorities[16] = { 5, 5, 5, 5, 2, 2, 4, 3, 3, 3, 3, 3, 0, 0, 0, 0 };
+struct CharacterSelectPosition select_char_positions[9] = {
     { -112, 120 },
     { 432, 120 },
     { 432, 21 },
@@ -578,61 +578,61 @@ struct CharacterSelectPosition D_8010EB54[9] = {
     { 32, 160 },
     { 288, 160 },
 };
-struct CharacterSelectPosition D_8010EB78[3] = {
+struct CharacterSelectPosition select_char_text_positions[3] = {
     { -192, 56 },
     { -40, 56 },
     { 432, 56 },
 };
 
-void (*D_8010EB84[])(struct MiscObj*) = {
-    func_800CCCA0,
-    func_800CCD48,
-    func_800CCD8C,
-    func_800CCDD4,
+void (*select_char_portrait_funcs[])(struct MiscObj*) = {
+    select_char_portrait_slide_in,
+    select_char_portrait_wait_select,
+    select_char_portrait_slide_out,
+    select_char_portrait_bounce,
 };
 
 // unreferenced
-u32 D_8010EB94 = 0x0000A07E;
+u32 select_char_unused_0 = 0x0000A07E;
 
-void (*D_8010EB98[])(struct MiscObj*) = {
-    func_800CCEF0,
-    func_800CCF70,
+void (*select_char_scroll_text_funcs[])(struct MiscObj*) = {
+    select_char_scroll_text_init,
+    select_char_scroll_text_move,
 };
 
-void (*D_8010EBA0[])(struct MiscObj*) = {
-    func_800CD0A4,
-    func_800CD110,
+void (*select_char_selector_funcs[])(struct MiscObj*) = {
+    select_char_selector_move,
+    select_char_selector_animate,
 };
 
-void (*D_8010EBA8[])(struct MiscObj*) = {
-    func_800CD1E8,
-    func_800CD2BC,
+void (*select_char_character_funcs[])(struct MiscObj*) = {
+    select_char_character_idle,
+    select_char_character_shoot,
 };
 
 // unreferenced
-u32 D_8010EBB0 = 0xFFFE0002;
+u32 select_char_unused_1 = 0xFFFE0002;
 
-void (*D_8010EBB4[])(struct MiscObj*) = {
-    func_800CCEB4,
-    func_800CCEB4,
-    func_800CD034,
-    func_800CD034,
-    func_800CD034,
-    func_800CD034,
-    func_800CD178,
-    func_800CD390,
-    func_800CD390,
-    func_800CD408,
-    func_800CD498,
-    func_800CD498,
-    func_800CD034,
-    func_800CD034,
-    func_800CD034,
-    func_800CD530,
+void (*select_char_subtype_funcs[])(struct MiscObj*) = {
+    select_char_portrait,
+    select_char_portrait,
+    select_char_scroll_text,
+    select_char_scroll_text,
+    select_char_scroll_text,
+    select_char_scroll_text,
+    select_char_selector,
+    select_char_character,
+    select_char_character,
+    select_char_charged_shot_fly,
+    select_char_shot_burst,
+    select_char_shot_burst,
+    select_char_scroll_text,
+    select_char_scroll_text,
+    select_char_scroll_text,
+    select_char_character_exit,
 };
 
 void (*g_SelectACharacterUpdateFuncs[])(struct MiscObj*) = {
-    func_800CCA34,
-    func_800CD6D8,
-    func_800CD730,
+    select_char_init,
+    select_char_main,
+    select_char_despawn,
 };

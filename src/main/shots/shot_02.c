@@ -9,42 +9,42 @@ struct Shot2Hitbox {
     u8 height;
 };
 
-void (*D_80108CB8[])(struct ShotObj*) = { func_80099D10 };
+void (*gunner_shot_unused_funcs[])(struct ShotObj*) = { gunner_shot_unused };
 
-u8 D_80108CBC[4] = { 0xFC, 0xFC, 7, 8 };
+u8 gunner_shot_hit_box[4] = { 0xFC, 0xFC, 7, 8 };
 
-s8 D_80108CC0[2][2] = { { -0x12, -2 }, { 0x12, -2 } };
+s8 gunner_shot_spawn_offsets[2][2] = { { -0x12, -2 }, { 0x12, -2 } };
 
-void (*D_80108CC4[])(struct ShotObj*) = {
+void (*gunner_shot_state_funcs[])(struct ShotObj*) = {
     func_80099D54,
-    func_80099E34,
-    func_80099F28,
+    gunner_shot_fly,
+    gunner_shot_despawn,
 };
 
-u8 D_80108CD0[4] = { 0xF7, 0xF5, 0x12, 0x13 };
+u8 eregion_fireball_hit_box[4] = { 0xF7, 0xF5, 0x12, 0x13 };
 
-u8 D_80108CD4[4] = { 0xF6, 0xE5, 0x12, 0x1D };
+u8 eregion_fireball_explode_box[4] = { 0xF6, 0xE5, 0x12, 0x1D };
 
-u8 D_80108CD8[4] = { 0, 0xFE, 8, 7 };
+u8 eregion_fireball_terrain_box[4] = { 0, 0xFE, 8, 7 };
 
-u8 D_80108CDC[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
+u8 eregion_fireball_debris[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
 
-void (*D_80108CE4[])(struct ShotObj*) = {
+void (*eregion_fireball_state_funcs[])(struct ShotObj*) = {
     func_80099F48,
     func_8009A10C,
-    func_8009A338,
-    func_8009A264,
+    eregion_fireball_despawn,
+    eregion_fireball_explode,
 };
 
-u8 D_80108CF4[4] = { 0x8C, 0xB8, 0x96, 0x87 };
+u8 eregion_wing_slash_hit_box[4] = { 0x8C, 0xB8, 0x96, 0x87 };
 
-void (*D_80108CF8[])(struct ShotObj*) = {
+void (*eregion_wing_slash_state_funcs[])(struct ShotObj*) = {
     func_8009A448,
-    func_8009A4F4,
-    func_8009A598,
+    eregion_wing_slash_active,
+    eregion_wing_slash_despawn,
 };
 
-struct Shot2Hitbox D_80108D04[7] = {
+struct Shot2Hitbox mech_boulder_shockwave_boxes[7] = {
     { -7, -9, 0x0F, 0x10 },
     { -29, -16, 0x15, 0x0C },
     { -81, -29, 0x2D, 0x16 },
@@ -53,23 +53,24 @@ struct Shot2Hitbox D_80108D04[7] = {
     { 0, 0, 0, 0 },
     { 0, 0, 0, 0 },
 };
-u8 D_80108D20[8] = { 0x0F, 0x10, 0x11, 0x0F, 0x10, 0x11, 0, 0 };
+u8 mech_boulder_debris[8] = { 0x0F, 0x10, 0x11, 0x0F, 0x10, 0x11, 0, 0 };
 
-void func_80099D10(struct ShotObj* arg0)
+void gunner_shot_unused(struct ShotObj* self)
 {
 }
 
-void func_80099D18(struct ShotObj* arg0)
+void gunner_shot_update(struct ShotObj* self)
 {
-    D_80108CC4[arg0->state](arg0);
+    gunner_shot_state_funcs[self->state](self);
 }
 
+// gunner_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099D54);
 
-void func_80099E34(struct ShotObj* self)
+void gunner_shot_fly(struct ShotObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 
     if (engine_obj.stage == 0 && engine_obj.substage != 0 && self->x_pos.i.hi >= 0xF41) {
         self->on_screen = 0;
@@ -80,118 +81,122 @@ void func_80099E34(struct ShotObj* self)
     func_8002D9BC(self);
     if (func_8002BB80(self, &g_Player) == 0) {
         if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-            func_800AF808(self);
+            spawn_explosion(self);
             self->state = 2;
         }
         if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-            func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
             return;
         }
     }
     self->state = 2;
 }
 
-void func_80099F28(struct ShotObj* arg0)
+void gunner_shot_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
+// eregion_fireball_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_80099F48);
 
+// eregion_fireball_fly
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A10C);
 
-void func_8009A264(struct ShotObj* arg0)
+void eregion_fireball_explode(struct ShotObj* self)
 {
-    if (arg0->unk5 == 0) {
-        arg0->unk50.data = D_80108CD4;
-        func_80015D60(arg0, 0x18);
-        func_800C7DA4(8, D_80108CDC[0], arg0, -1);
-        arg0->unk60 = 3;
-        arg0->unk5 = (u8)arg0->unk5 + 1;
+    if (self->unk5 == 0) {
+        self->unk50.data = eregion_fireball_explode_box;
+        set_animation(self, 0x18);
+        spawn_rubble(8, eregion_fireball_debris[0], self, -1);
+        self->unk60 = 3;
+        self->unk5 = (u8)self->unk5 + 1;
     } else {
-        func_8002D9BC(arg0);
-        func_80015DC8((struct AnimatedObj*)arg0);
-        if (arg0->animation_step.fields.relative_step < 0) {
-            arg0->state = 2;
-            arg0->unk5 = 0;
+        func_8002D9BC(self);
+        animate_object((struct AnimatedObj*)self);
+        if (self->animation_step.fields.relative_step < 0) {
+            self->state = 2;
+            self->unk5 = 0;
         }
     }
 
-    if (func_8002B1E8((struct BaseObj*)arg0, 0x19, 0x19) == 0) {
-        func_8002B318((struct BaseObj*)arg0, 0x19, 0x19);
+    if (func_8002B1E8((struct BaseObj*)self, 0x19, 0x19) == 0) {
+        update_on_screen((struct BaseObj*)self, 0x19, 0x19);
         return;
     }
-    arg0->state = 2;
+    self->state = 2;
 }
 
-void func_8009A338(struct ShotObj* arg0)
+void eregion_fireball_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009A358(struct ShotObj* arg0)
+void eregion_fireball_update(struct ShotObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    CollisionRelated(arg0);
-    D_80108CE4[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated(self);
+    eregion_fireball_state_funcs[self->state](self);
 }
 
-void func_8009A3B4(struct ShotObj* arg0)
+void eregion_wing_slash_update(struct ShotObj* self)
 {
-    if (arg0->unk7C->unk15 == 0) {
-        arg0->x_pos.val = arg0->unk7C->x_pos.val + FIXED(-75);
+    if (self->unk7C->unk15 == 0) {
+        self->x_pos.val = self->unk7C->x_pos.val + FIXED(-75);
     } else {
-        arg0->x_pos.val = arg0->unk7C->x_pos.val + FIXED(75);
+        self->x_pos.val = self->unk7C->x_pos.val + FIXED(75);
     }
-    arg0->y_pos.val = arg0->unk7C->y_pos.val + FIXED(2);
-    arg0->unk42 = arg0->unk7C->unk42;
-    arg0->on_screen = 0;
-    D_80108CF8[arg0->state](arg0);
+    self->y_pos.val = self->unk7C->y_pos.val + FIXED(2);
+    self->unk42 = self->unk7C->unk42;
+    self->on_screen = 0;
+    eregion_wing_slash_state_funcs[self->state](self);
 }
 
+// eregion_wing_slash_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A448);
 
-void func_8009A4F4(struct ShotObj* arg0)
+void eregion_wing_slash_active(struct ShotObj* self)
 {
-    if (arg0->animation_step.fields.event < 0) {
-        if (func_8002D9BC(arg0) == 1) {
-            MAIN_OBJECT(arg0->unk7C)->ext.main_8.queued_sound = 0x1C;
+    if (self->animation_step.fields.event < 0) {
+        if (func_8002D9BC(self) == 1) {
+            MAIN_OBJECT(self->unk7C)->ext.main_8.queued_sound = 0x1C;
         }
     }
 
-    func_8002B318(BASE_OBJECT(arg0), 0x19, 0x19);
+    update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
 
-    if (*(u16*)&arg0->unk7C->state == 0x501) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
-        if (arg0->animation_step.fields.event != 1) {
+    if (*(u16*)&self->unk7C->state == 0x501) {
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.event != 1) {
             return;
         }
     }
 
-    arg0->state++;
+    self->state++;
 }
 
-void func_8009A598(struct ShotObj* arg0)
+void eregion_wing_slash_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009A5B8(struct ShotObj* arg0)
+void mech_boulder_update(struct ShotObj* self)
 {
-    D_80108D28[arg0->state](arg0);
+    mech_boulder_state_funcs[self->state](self);
 }
 
+// mech_boulder_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_02", func_8009A5F4);
 
-void func_8009A6B4(struct ShotObj* self)
+void mech_boulder_fall(struct ShotObj* self)
 {
     s8* player_state = &g_Player.hp;
     s8 previous_state;
     u32* collision_state;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
     previous_state = *player_state;
     func_8002D9BC(self);
     if (previous_state != *player_state) {
@@ -202,82 +207,82 @@ void func_8009A6B4(struct ShotObj* self)
     }
 
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        func_800C813C(6, D_80108D20, self);
+        spawn_debris(6, mech_boulder_debris, self);
         self->state = 2;
     } else {
         self->unk42 &= 0x7FFF;
     }
 
     if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
-        func_800C813C(6, D_80108D20, self);
+        spawn_debris(6, mech_boulder_debris, self);
         self->state = 2;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
-        func_8002B318(BASE_OBJECT(self), 0x10, 0x10);
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
     } else {
         self->state = 2;
     }
 }
 
-void func_8009A7D8(struct ShotObj* arg0)
+void mech_boulder_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_8009A7F8(struct ShotObj* arg0)
+void mech_boulder_shockwave_start(struct ShotObj* self)
 {
     s16 x_pos;
 
-    arg0->state = 4;
-    arg0->on_screen = 1;
-    arg0->unk16 = 0;
-    arg0->unk68 = NULL;
-    arg0->unk42 &= 0x7FFF;
-    if (arg0->unk15 == 0) {
-        x_pos = (u16)arg0->x_pos.i.hi - 0x19;
+    self->state = 4;
+    self->on_screen = 1;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk42 &= 0x7FFF;
+    if (self->unk15 == 0) {
+        x_pos = (u16)self->x_pos.i.hi - 0x19;
     } else {
-        x_pos = (u16)arg0->x_pos.i.hi + 0x19;
+        x_pos = (u16)self->x_pos.i.hi + 0x19;
     }
-    arg0->x_pos.i.hi = x_pos;
-    arg0->unk5C = 1;
-    arg0->unk60 = 2;
-    arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x21;
-    func_80015D60(arg0, 4);
+    self->x_pos.i.hi = x_pos;
+    self->unk5C = 1;
+    self->unk60 = 2;
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x21;
+    set_animation(self, 4);
 }
 
-void func_8009A87C(struct ShotObj* arg0)
+void mech_boulder_shockwave(struct ShotObj* self)
 {
     s32* collision_state;
     s8 player_active;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    arg0->unk54 = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
-    arg0->unk50.data = (u8*)&D_80108D04[arg0->animation_step.fields.frame_index - 19];
+    animate_object(ANIMATED_OBJECT(self));
+    self->unk54 = (u8*)&mech_boulder_shockwave_boxes[self->animation_step.fields.frame_index - 19];
+    self->unk50.data = (u8*)&mech_boulder_shockwave_boxes[self->animation_step.fields.frame_index - 19];
     player_active = g_Player.hp;
-    func_8002D9BC(arg0);
+    func_8002D9BC(self);
     if (player_active != g_Player.hp) {
-        collision_state = (s32*)arg0->unk84.collision_state;
+        collision_state = (s32*)self->unk84.collision_state;
         if (*collision_state == 0x8000) {
             *collision_state = 0x8001;
         }
     }
-    if ((func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) && (arg0->animation_step.fields.event == 0)) {
-        func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+    if ((func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) && (self->animation_step.fields.event == 0)) {
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         return;
     }
-    arg0->state = 5;
+    self->state = 5;
 }
 
-void func_8009A964(struct ShotObj* arg0)
+void mech_boulder_shockwave_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80108D28[])(struct ShotObj*) = {
+void (*mech_boulder_state_funcs[])(struct ShotObj*) = {
     func_8009A5F4,
-    func_8009A6B4,
-    func_8009A7D8,
-    func_8009A7F8,
-    func_8009A87C,
-    func_8009A964,
+    mech_boulder_fall,
+    mech_boulder_despawn,
+    mech_boulder_shockwave_start,
+    mech_boulder_shockwave,
+    mech_boulder_shockwave_despawn,
 };

@@ -2,7 +2,7 @@
 // 800A8628..800A9964
 #include "common.h"
 
-s8 D_80109ACC[10][4] = {
+s8 sigma_shot_boxes[10][4] = {
     { 0, -1, 10, 10 },
     { -7, -8, 13, 14 },
     { -6, -7, 11, 12 },
@@ -15,7 +15,7 @@ s8 D_80109ACC[10][4] = {
     { -128, -18, -116, 25 },
 };
 
-u8 D_80109AF4[20] = {
+u8 sigma_shot_debris[20] = {
     0x27,
     0x28,
     0x27,
@@ -38,9 +38,9 @@ u8 D_80109AF4[20] = {
     0x0B,
 };
 
-u8 D_80109B08[4] = { 0xDD, 0xF1, 0x0F, 0x23 };
+u8 sigma_shot_init_box[4] = { 0xDD, 0xF1, 0x0F, 0x23 };
 
-s8 D_80109B0C[4][2] = {
+s8 sigma_bolt_offsets[4][2] = {
     { 0x20, -0x20 },
     { 0x10, -0x10 },
     { 0x20, 0 },
@@ -102,9 +102,9 @@ void sigma_shot_cloak_scythe(struct ShotObj* self)
 
     shot = self;
     weapon = shot->unk7C;
-    func_80015DC8(ANIMATED_OBJECT(shot));
+    animate_object(ANIMATED_OBJECT(shot));
     if (shot->animation_step.fields.event != 0) {
-        shot->unk50.data = (u8*)D_80109ACC[4];
+        shot->unk50.data = (u8*)sigma_shot_boxes[4];
     } else {
         shot->unk50.data = 0;
     }
@@ -128,18 +128,18 @@ void sigma_bolt_gather(struct ShotObj* self)
 
     weapon = self->unk7C;
     if (self->unk2 == 1) {
-        x = weapon->x_pos.val + (D_80109B0C[0][self->unk99] << 16);
-        y = weapon->y_pos.val + (D_80109B0C[2][self->pad9A[0]] << 16);
+        x = weapon->x_pos.val + (sigma_bolt_offsets[0][self->unk99] << 16);
+        y = weapon->y_pos.val + (sigma_bolt_offsets[2][self->pad9A[0]] << 16);
     } else {
-        y = weapon->y_pos.val + (D_80109B0C[3][1] << 16);
-        x = weapon->x_pos.val + (D_80109B0C[1][self->unk99] << 16);
+        y = weapon->y_pos.val + (sigma_bolt_offsets[3][1] << 16);
+        x = weapon->x_pos.val + (sigma_bolt_offsets[1][self->unk99] << 16);
     }
-    collision = func_8002B7B0(OBJECT_HEADER(self), x, y);
+    collision = angle_to_point(OBJECT_HEADER(self), x, y);
     if (sigma_shot_at_position(self, x, y) & 0xFF) {
         self->timer = 0x14;
         self->unk5 = (u8)self->unk5 + 1;
     }
-    func_8002B93C(MOVING_OBJECT(self), collision & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), collision & 0xFF);
 }
 
 void sigma_bolt_launch(struct ShotObj* self)
@@ -150,7 +150,7 @@ void sigma_bolt_launch(struct ShotObj* self)
     s8 frame;
 
     shot = self;
-    func_80015DC8(ANIMATED_OBJECT(shot));
+    animate_object(ANIMATED_OBJECT(shot));
     timer = (u16)shot->timer - 1;
     shot->timer = timer;
     if (timer == 0) {
@@ -213,8 +213,8 @@ void sigma_shot_bolt(struct ShotObj* self)
     if (func_8002DD04(MAIN_OBJECT(self)) != 0) {
         self->state = 2;
     }
-    func_80015DC8(self);
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(self);
+    move_object(MOVING_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7C->state == 4) {
         self->state = 2;
@@ -229,7 +229,7 @@ void sigma_planted_scythe_stuck(struct ShotObj* self)
     struct VisualObj* visual;
 
     MAIN_OBJECT(self->unk7C)->ext.main_68.next_attack = self->unk95 - 2;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->timer == 0) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
@@ -258,7 +258,7 @@ void sigma_planted_scythe_recall(struct ShotObj* self)
     }
     self->unk90.i.lo = target_x;
     self->unk90.u.hi = weapon->y_pos.u.hi - 0x15;
-    func_80015D60(self, 0x1E);
+    set_animation(self, 0x1E);
     func_8001540C(2, 5, self);
 }
 
@@ -268,13 +268,13 @@ void sigma_planted_scythe_return(struct ShotObj* self)
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    direction = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(owner));
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(owner));
     self->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
     self->x_vel.val *= 6;
     self->y_vel.val *= 6;
-    func_8002B718(MOVING_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (sigma_shot_at_position(self, owner->x_pos.val, owner->y_pos.val) & 0xFF) {
         self->state = 2;
         MAIN_OBJECT(owner)->ext.main_68.scythe = NULL;
@@ -292,8 +292,8 @@ void sigma_shot_planted_scythe(struct ShotObj* self)
 
 void sigma_shot_drift(struct ShotObj* self)
 {
-    func_80015DC8(self);
-    func_8002B718((struct MovingObj*)self);
+    animate_object(self);
+    move_object((struct MovingObj*)self);
     is_on_screen((struct BaseObj*)self);
 }
 
@@ -301,13 +301,13 @@ void sigma_dart_spread(struct ShotObj* self)
 {
     s8 direction;
 
-    direction = func_8002B7B0(OBJECT_HEADER(self),
+    direction = angle_to_point(OBJECT_HEADER(self),
         self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
     self->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
     self->x_vel.val *= 3;
     self->y_vel.val *= 3;
-    func_8002B718(MOVING_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     if (sigma_shot_at_position(self,
             self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10)
         & 0xFF) {
@@ -330,10 +330,10 @@ void sigma_dart_strike(struct ShotObj* self)
 {
     s8 direction;
 
-    direction = func_8002B7B0(OBJECT_HEADER(self),
+    direction = angle_to_point(OBJECT_HEADER(self),
         self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
     self->pad94 = direction;
-    func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
     self->x_vel.val *= 6;
     self->y_vel.val *= 6;
     if ((sigma_shot_at_position(self,
@@ -343,8 +343,8 @@ void sigma_dart_strike(struct ShotObj* self)
         self->timer = 0xF0;
         self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
 }
 
 void sigma_dart_aim(struct ShotObj* self)
@@ -356,20 +356,20 @@ void sigma_dart_aim(struct ShotObj* self)
     self->timer = timer;
     if (timer == 0) {
         self->unk5++;
-        direction = func_8002B7DC(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
         self->pad94 = direction;
-        func_8002B93C(MOVING_OBJECT(self), direction & 0xFF);
+        set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
         self->x_vel.val *= 6;
         self->y_vel.val *= 6;
         func_8001540C(2, 0xB, self);
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void sigma_dart_fly(struct ShotObj* self)
 {
-    func_80015DC8(self);
-    func_8002B718((struct MovingObj*)self);
+    animate_object(self);
+    move_object((struct MovingObj*)self);
 }
 
 void sigma_shot_dart(struct ShotObj* self)
@@ -390,14 +390,14 @@ void sigma_shot_cloak_fire(struct ShotObj* self)
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->state = 2;
     }
     self->x_pos.u.hi = owner->x_pos.u.hi + owner->y_vel.u.hi;
     self->y_pos.u.hi = owner->y_pos.u.hi + owner->unk28.u.hi;
     if (!(D_80141BD8.unk0 & 7)) {
-        func_800C813C(6, D_80109AF4, self);
+        spawn_debris(6, sigma_shot_debris, self);
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -406,19 +406,19 @@ void sigma_shot_dropped_scythe(struct ShotObj* self)
 {
     switch (self->unk5) {
     case 0:
-        func_80015DC8(ANIMATED_OBJECT(self));
-        func_8002B694(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
         if (self->y_vel.val < 0) {
             self->y_vel.val = 0;
             self->unk5++;
         }
         break;
     case 1:
-        func_80015DC8(ANIMATED_OBJECT(self));
-        func_8002B694(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
         if (self->unk70 & 8) {
             self->unk5++;
-            func_80015D60(self, 0x20);
+            set_animation(self, 0x20);
             func_8001540C(2, 6, self);
         }
         break;
@@ -434,7 +434,7 @@ void sigma_shot_flash(struct ShotObj* self)
     weapon = self->unk7C;
     self->x_pos.u.hi = weapon->x_pos.u.hi;
     self->y_pos.u.hi = weapon->y_pos.u.hi;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
         self->state = 2;
     }

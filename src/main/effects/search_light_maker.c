@@ -2,54 +2,54 @@
 // 800B6B18..800B7078
 #include "common.h"
 
-extern struct SearchLightSpawner D_8010B464[];
+extern struct SearchLightSpawner search_light_spawners[];
 
 // search lights don't appear in level if nopped out
 // effect_obj 0x07
-void func_800B6B18(struct EffectObj* arg0)
+void search_light_maker_update(struct EffectObj* self)
 {
     // asm(".rept 13 ; nop ; .endr");
-    D_8010B4C4[arg0->state](arg0);
+    search_light_maker_state_funcs[self->state](self);
 }
 
-// D_8010B4C4 state 0
-void func_800B6B54(struct EffectObj* arg0)
+// search_light_maker_state_funcs state 0
+void search_light_maker_init(struct EffectObj* self)
 {
     s32 var_v0;
     struct SearchLightSpawner* var_v1;
 
-    arg0->state = 1;
+    self->state = 1;
 
-    var_v1 = &D_8010B464;
+    var_v1 = &search_light_spawners;
     for (var_v0 = 11; var_v0 >= 0; var_v0--) {
         var_v1->active = 0;
         var_v1 += 1;
     }
 
-    func_800B6EB4((background_objects[0].x_pos.i.hi - 48), (background_objects[0].x_pos.i.hi + 368), (background_objects[0].y_pos.i.hi - 48), (background_objects[0].y_pos.i.hi + 288), arg0);
-    func_800B6EB4((background_objects[1].x_pos.i.hi - 48), (background_objects[1].x_pos.i.hi + 368), (background_objects[1].y_pos.i.hi - 48), (background_objects[1].y_pos.i.hi + 288), arg0);
-    func_800B6EB4((background_objects[2].x_pos.i.hi - 48), (background_objects[2].x_pos.i.hi + 368), (background_objects[2].y_pos.i.hi - 48), (background_objects[2].y_pos.i.hi + 288), arg0);
+    search_light_maker_spawn_in_rect((background_objects[0].x_pos.i.hi - 48), (background_objects[0].x_pos.i.hi + 368), (background_objects[0].y_pos.i.hi - 48), (background_objects[0].y_pos.i.hi + 288), self);
+    search_light_maker_spawn_in_rect((background_objects[1].x_pos.i.hi - 48), (background_objects[1].x_pos.i.hi + 368), (background_objects[1].y_pos.i.hi - 48), (background_objects[1].y_pos.i.hi + 288), self);
+    search_light_maker_spawn_in_rect((background_objects[2].x_pos.i.hi - 48), (background_objects[2].x_pos.i.hi + 368), (background_objects[2].y_pos.i.hi - 48), (background_objects[2].y_pos.i.hi + 288), self);
 }
 
-// D_8010B4C4 state 1
-void func_800B6C74(struct EffectObj* arg0)
+// search_light_maker_state_funcs state 1
+void search_light_maker_main(struct EffectObj* self)
 {
-    func_800B6C9C(arg0);
+    search_light_maker_spawn_scrolled(self);
 }
 
-// D_8010B4C4 state 2
-void func_800B6C94(struct EffectObj* arg0)
+// search_light_maker_state_funcs state 2
+void search_light_maker_idle(struct EffectObj* self)
 {
 }
 
-void func_800B6C9C(struct EffectObj* arg0)
+void search_light_maker_spawn_scrolled(struct EffectObj* self)
 {
-    func_800B6D1C(arg0, 0, func_800B6FF4(arg0, 0));
-    func_800B6D1C(arg0, 1, func_800B6FF4(arg0, 1));
-    func_800B6D1C(arg0, 2, func_800B6FF4(arg0, 2));
+    search_light_maker_spawn_edges(self, 0, search_light_maker_scroll_dirs(self, 0));
+    search_light_maker_spawn_edges(self, 1, search_light_maker_scroll_dirs(self, 1));
+    search_light_maker_spawn_edges(self, 2, search_light_maker_scroll_dirs(self, 2));
 }
 
-void func_800B6D1C(s32 arg0, s8 arg1, s8 arg2)
+void search_light_maker_spawn_edges(s32 arg0, s8 arg1, s8 arg2)
 {
     s8 temp;
     u16 a1, a3;
@@ -60,25 +60,25 @@ void func_800B6D1C(s32 arg0, s8 arg1, s8 arg2)
         if (arg2 & 1) {
             a1 = temp_s0->x_pos.i.hi;
             a3 = temp_s0->y_pos.i.hi;
-            func_800B6EB4(a1 + 0x130, a1 + 0x190, a3 - 0x50, a3 + 0x140, arg0);
+            search_light_maker_spawn_in_rect(a1 + 0x130, a1 + 0x190, a3 - 0x50, a3 + 0x140, arg0);
         }
         temp = arg2 & 2;
         if (temp != 0) {
             a1 = temp_s0->x_pos.i.hi;
             a3 = temp_s0->y_pos.i.hi;
-            func_800B6EB4(a1 - 0x50, a1 - 0x10, a3 - 0x50, a3 + 0x140, arg0);
+            search_light_maker_spawn_in_rect(a1 - 0x50, a1 - 0x10, a3 - 0x50, a3 + 0x140, arg0);
         }
         temp = arg2 & 4;
         if (temp != 0) {
             a1 = temp_s0->x_pos.i.hi;
             a3 = temp_s0->y_pos.i.hi;
-            func_800B6EB4(a1 - 0x50, a1 + 0x190, a3 + 0x100, a3 + 0x140, arg0);
+            search_light_maker_spawn_in_rect(a1 - 0x50, a1 + 0x190, a3 + 0x100, a3 + 0x140, arg0);
         }
         temp = arg2 & 8;
         if (temp != 0) {
             a1 = temp_s0->x_pos.i.hi;
             a3 = temp_s0->y_pos.i.hi;
-            func_800B6EB4(a1 - 0x50, a1 + 0x190, a3 - 0x50, a3 - 0x10, arg0);
+            search_light_maker_spawn_in_rect(a1 - 0x50, a1 + 0x190, a3 - 0x50, a3 - 0x10, arg0);
         }
     }
 }
@@ -92,9 +92,9 @@ struct Initializer {
     s16 value2;
 };
 
-void func_800B6EB4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
+void search_light_maker_spawn_in_rect(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
-    struct Initializer* current = (struct Initializer*)D_8010B464;
+    struct Initializer* current = (struct Initializer*)search_light_spawners;
     struct QuadObj* result;
 
     if (D_8010B465 != 0xFF) {
@@ -117,7 +117,7 @@ void func_800B6EB4(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     }
 }
 
-s8 func_800B6FF4(s32 arg0, s8 arg1)
+s8 search_light_maker_scroll_dirs(s32 arg0, s8 arg1)
 {
     struct BackgroundObj* ptr = &background_objects[arg1];
     s8 result = 0;
@@ -141,7 +141,7 @@ s8 func_800B6FF4(s32 arg0, s8 arg1)
     return result;
 }
 
-struct SearchLightSpawner D_8010B464[12] = {
+struct SearchLightSpawner search_light_spawners[12] = {
     { 0, 0, 0, 0, 1072, 512 },
     { 0, 0, 0, 0, 2457, 512 },
     { 0, 2, 0, 2, 0, 512 },
@@ -156,8 +156,8 @@ struct SearchLightSpawner D_8010B464[12] = {
     { 0, 0xff, 0, 0, 0, 0 },
 };
 
-void (*D_8010B4C4[])(struct EffectObj*) = {
-    func_800B6B54,
-    func_800B6C74,
-    func_800B6C94,
+void (*search_light_maker_state_funcs[])(struct EffectObj*) = {
+    search_light_maker_init,
+    search_light_maker_main,
+    search_light_maker_idle,
 };

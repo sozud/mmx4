@@ -2,28 +2,29 @@
 // 800B2090..800B2544
 #include "common.h"
 
-s16 D_8010A550[4][2] = {
+s16 web_piece_positions_a[4][2] = {
     { 0x12C0, 0x538 },
     { 0x12F8, 0x568 },
     { 0x1288, 0x568 },
     { 0x12C0, 0x598 },
 };
 
-s16 D_8010A560[4][2] = {
+s16 web_piece_positions_b[4][2] = {
     { 0x10C0, 0x638 },
     { 0x10F8, 0x668 },
     { 0x1088, 0x668 },
     { 0x10C0, 0x698 },
 };
 
-void func_800B2090(struct VisualObj* arg0)
+void web_piece_update(struct VisualObj* arg0)
 {
-    D_8010A570[arg0->state](arg0);
+    web_piece_state_funcs[arg0->state](arg0);
 }
 
+// web_piece_init
 INCLUDE_ASM("main/nonmatchings/visuals/visual_17", func_800B20CC);
 
-void func_800B2200(struct VisualObj* arg0)
+void web_piece_main(struct VisualObj* arg0)
 {
     struct MainObj* owner;
 
@@ -31,32 +32,33 @@ void func_800B2200(struct VisualObj* arg0)
         owner = MAIN_OBJECT(arg0->unk50);
         arg0->x_pos.val = owner->x_pos.val;
         arg0->y_pos.val = owner->y_pos.val;
-        func_80015DC8(arg0);
+        animate_object(arg0);
         if (owner->ext.main_43.flash_timer == 0) {
             ZeroObjectState(arg0);
         } else {
-            func_8002B318(arg0, 0x10, 0x10);
+            update_on_screen(arg0, 0x10, 0x10);
         }
     } else {
-        D_8010A57C[arg0->unk5](arg0);
+        web_piece_step_funcs[arg0->unk5](arg0);
     }
 }
 
+// web_piece_attach
 INCLUDE_ASM("main/nonmatchings/visuals/visual_17", func_800B22B4);
 
-void func_800B23DC(struct VisualObj* arg0)
+void web_piece_hang(struct VisualObj* arg0)
 {
     if (arg0->unk50->state >= 2) {
         arg0->state = 2;
         arg0->unk5 = 0;
         arg0->unk6 = 0;
     } else {
-        func_80015DC8(arg0);
+        animate_object(arg0);
     }
-    func_8002B318(arg0, 0x10, 0x10);
+    update_on_screen(arg0, 0x10, 0x10);
 }
 
-void func_800B2444(struct VisualObj* arg0)
+void web_piece_fall(struct VisualObj* arg0)
 {
     switch (arg0->unk5) {
     case 0:
@@ -66,8 +68,8 @@ void func_800B2444(struct VisualObj* arg0)
         arg0->unk28 = 0;
         arg0->unk2C = 0;
         arg0->unk5 = 1;
-        func_80015DC8(arg0);
-        func_8002B318(arg0, 0x10, 0x10);
+        animate_object(arg0);
+        update_on_screen(arg0, 0x10, 0x10);
         break;
     case 1:
         if (--arg0->unk54 == 0) {
@@ -76,9 +78,9 @@ void func_800B2444(struct VisualObj* arg0)
         if (!(arg0->unk54 & 7)) {
             func_800AF878(arg0, 0, 0xF, 0xF);
         }
-        func_8002B694(arg0);
-        func_80015DC8(arg0);
-        func_8002B318(arg0, 0x10, 0x10);
+        move_with_gravity(arg0);
+        animate_object(arg0);
+        update_on_screen(arg0, 0x10, 0x10);
         break;
     case 2:
         ZeroObjectState(arg0);
@@ -86,13 +88,13 @@ void func_800B2444(struct VisualObj* arg0)
     }
 }
 
-void (*D_8010A570[])(struct VisualObj*) = {
+void (*web_piece_state_funcs[])(struct VisualObj*) = {
     func_800B20CC,
-    func_800B2200,
-    func_800B2444,
+    web_piece_main,
+    web_piece_fall,
 };
 
-void (*D_8010A57C[])(struct VisualObj*) = {
+void (*web_piece_step_funcs[])(struct VisualObj*) = {
     func_800B22B4,
-    func_800B23DC,
+    web_piece_hang,
 };

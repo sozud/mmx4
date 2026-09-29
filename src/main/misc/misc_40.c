@@ -2,70 +2,72 @@
 // 800CFB70..800CFE98
 #include "common.h"
 
+// ambient_bubble_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFB70);
 
+// ambient_bubble_wait
 INCLUDE_ASM("main/nonmatchings/misc/misc_40", func_800CFC6C);
 
-void func_800CFD38(struct MiscObj* self)
+void ambient_bubble_float(struct MiscObj* self)
 {
     s8 subtype;
 
     subtype = self->unk2;
-    if (self->y_vel.val < D_8010EFA4[subtype]) {
-        self->unk2C = -D_8010EF94[subtype];
-        func_80015D60(self, 2);
+    if (self->y_vel.val < ambient_bubble_max_speeds[subtype]) {
+        self->unk2C = -ambient_bubble_accels[subtype];
+        set_animation(self, 2);
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         is_on_screen(BASE_OBJECT(self));
         return;
     }
     self->unk5 = 0;
-    self->ext.misc_24.timer = D_8010EFB4[self->unk2] + (get_random() & 0x3F);
+    self->ext.misc_24.timer = ambient_bubble_respawn_delays[self->unk2] + (get_random() & 0x3F);
 }
 
-void func_800CFE00(struct MiscObj* arg0)
+void ambient_bubble_main(struct MiscObj* self)
 {
-    D_8010EFBC[arg0->unk5](arg0);
+    ambient_bubble_step_funcs[self->unk5](self);
 }
 
-void func_800CFE3C(struct MiscObj* arg0)
+void ambient_bubble_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800CFE5C(struct MiscObj* arg0)
+void ambient_bubble_update(struct MiscObj* self)
 {
-    D_8010EFC4[arg0->state](arg0);
+    ambient_bubble_state_funcs[self->state](self);
 }
 
-union AnimationStep D_8010EF40[4] = {
+union AnimationStep ambient_bubble_anim_0[4] = {
     { .packed = 0x0001000E },
     { .packed = 0x0101000E },
     { .packed = 0x0201000E },
     { .packed = 0x01FD000E },
 };
 
-union AnimationStep D_8010EF50[3] = {
+union AnimationStep ambient_bubble_anim_1[3] = {
     { .packed = 0x0001000E },
     { .packed = 0x0101000E },
     { .packed = 0x0200000E },
 };
 
-union AnimationStep D_8010EF5C[3] = {
+union AnimationStep ambient_bubble_anim_2[3] = {
     { .packed = 0x0201000E },
     { .packed = 0x0101000E },
     { .packed = 0x0000000E },
 };
 
-union AnimationStep* D_8010EF68[3] = {
-    D_8010EF40,
-    D_8010EF50,
-    D_8010EF5C,
+union AnimationStep* ambient_bubble_animations[3] = {
+    ambient_bubble_anim_0,
+    ambient_bubble_anim_1,
+    ambient_bubble_anim_2,
 };
 
-u16 D_8010EF74[8] = {
+u16 ambient_bubble_positions[8] = {
     0x90,
     0x70,
     0xB0,
@@ -76,36 +78,36 @@ u16 D_8010EF74[8] = {
     0xE0,
 };
 
-s32 D_8010EF84[4] = {
+s32 ambient_bubble_speeds[4] = {
     -0x18000,
     -0x28000,
     -0x38000,
     -0x48000,
 };
 
-s32 D_8010EF94[4] = {
+s32 ambient_bubble_accels[4] = {
     0x1000,
     0x1000,
     0x1000,
     0x1000,
 };
 
-s32 D_8010EFA4[4] = {
+s32 ambient_bubble_max_speeds[4] = {
     -0x18000,
     -0x10000,
     -0x8000,
     -0x4000,
 };
 
-u16 D_8010EFB4[4] = { 0xB4, 0x12C, 0x168, 0 };
+u16 ambient_bubble_respawn_delays[4] = { 0xB4, 0x12C, 0x168, 0 };
 
-void (*D_8010EFBC[2])(struct MiscObj*) = {
+void (*ambient_bubble_step_funcs[2])(struct MiscObj*) = {
     func_800CFC6C,
-    func_800CFD38,
+    ambient_bubble_float,
 };
 
-void (*D_8010EFC4[3])(struct MiscObj*) = {
+void (*ambient_bubble_state_funcs[3])(struct MiscObj*) = {
     func_800CFB70,
-    func_800CFE00,
-    func_800CFE3C,
+    ambient_bubble_main,
+    ambient_bubble_despawn,
 };

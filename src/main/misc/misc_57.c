@@ -2,123 +2,125 @@
 // 800D3388..800D3928
 #include "common.h"
 
+// falling_piece_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3388);
 
-void func_800D34AC(struct MiscObj* arg0)
+void falling_piece_fall(struct MiscObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    is_on_screen(BASE_OBJECT(arg0));
-    if (func_8002B160(arg0) != 0) {
-        arg0->state = 2;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+    if (func_8002B160(self) != 0) {
+        self->state = 2;
     }
 }
 
-void func_800D34F0(struct MiscObj* arg0)
+void falling_piece_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800D3510(struct MiscObj* arg0)
+void falling_piece_update(struct MiscObj* self)
 {
-    D_8010F5BC[arg0->state](arg0);
+    falling_piece_state_funcs[self->state](self);
 }
 
-void func_800D354C(struct UnkObj* arg0)
+void menu_text_init_label(struct UnkObj* self)
 {
     s32* addr_801F3000 = (s32*)0x801F3000;
     s32 temp_v1;
 
-    arg0->unk40 = 0x1F00;
+    self->unk40 = 0x1F00;
     temp_v1 = *addr_801F3000;
-    arg0->bg_offset = -1;
-    arg0->unk3C = temp_v1 + (s32)addr_801F3000;
-    arg0->unk15 = 0;
-    if (arg0->y_pos.i.hi == 0x10) {
-        arg0->unk42 = 0x7802;
+    self->bg_offset = -1;
+    self->unk3C = temp_v1 + (s32)addr_801F3000;
+    self->unk15 = 0;
+    if (self->y_pos.i.hi == 0x10) {
+        self->unk42 = 0x7802;
     } else {
-        arg0->unk42 = 0x7800;
+        self->unk42 = 0x7800;
     }
-    arg0->x_pos.i.hi = 0xA0;
-    arg0->unk16 = 0;
-    arg0->animation_step.fields.frame_index = arg0->unk2;
-    arg0->state++;
-    if (arg0->unk2 < 9) {
-        arg0->state++;
+    self->x_pos.i.hi = 0xA0;
+    self->unk16 = 0;
+    self->animation_step.fields.frame_index = self->unk2;
+    self->state++;
+    if (self->unk2 < 9) {
+        self->state++;
     }
 }
 
-void func_800D35D0(struct UnkObj* arg0)
+void menu_text_init_cursor(struct UnkObj* self)
 {
     s32* addr_801F3000 = (s32*)0x801F3000;
     s32* addr_801F3008 = (s32*)0x801F3008;
     u32 temp_v1;
 
-    arg0->unk40 = 0x1E00;
-    arg0->animation_table = D_8010ECD4;
+    self->unk40 = 0x1E00;
+    self->animation_table = option_toggle_animations;
     temp_v1 = *addr_801F3008;
-    arg0->bg_offset = -1;
-    arg0->unk3C = temp_v1 + (s32)addr_801F3000;
-    arg0->unk15 = 0;
-    if (arg0->unk2 == -1) {
-        arg0->unk42 = 0x7806;
-        arg0->y_pos.i.hi = arg0->link.data[D_80141BDF[0] * 2] + 8;
-        arg0->ext.unk_0.selection_index = D_80141BDF[0];
-        func_80015D60(arg0, 0);
+    self->bg_offset = -1;
+    self->unk3C = temp_v1 + (s32)addr_801F3000;
+    self->unk15 = 0;
+    if (self->unk2 == -1) {
+        self->unk42 = 0x7806;
+        self->y_pos.i.hi = self->link.data[D_80141BDF[0] * 2] + 8;
+        self->ext.unk_0.selection_index = D_80141BDF[0];
+        set_animation(self, 0);
     } else {
-        arg0->unk42 = 0x784B;
-        arg0->x_pos.i.hi = 0x60;
-        arg0->y_pos.i.hi = 0xD0;
-        arg0->animation_step.fields.frame_index = 0x29;
+        self->unk42 = 0x784B;
+        self->x_pos.i.hi = 0x60;
+        self->y_pos.i.hi = 0xD0;
+        self->animation_step.fields.frame_index = 0x29;
     }
-    arg0->unk16 = 0;
-    arg0->state = 3;
+    self->unk16 = 0;
+    self->state = 3;
 }
 
-void func_800D36AC(struct UnkObj* arg0)
+void menu_text_init(struct UnkObj* self)
 {
-    if (arg0->unk2 < 0) {
-        func_800D35D0(arg0);
+    if (self->unk2 < 0) {
+        menu_text_init_cursor(self);
     } else {
-        func_800D354C(arg0);
+        menu_text_init_label(self);
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
-void func_800D3700(struct UnkObj* arg0)
+void menu_text_highlight(struct UnkObj* self)
 {
     s8 temp_v1; // probably fake
 
-    if (arg0->y_pos.i.hi != 0x10) {
-        if (arg0->unk7 == D_80141BDF[0]) {
-            arg0->unk42 = 0x7803;
+    if (self->y_pos.i.hi != 0x10) {
+        if (self->unk7 == D_80141BDF[0]) {
+            self->unk42 = 0x7803;
         } else {
-            arg0->unk42 = 0x7800;
+            self->unk42 = 0x7800;
         }
     }
     if ((D_80141BE0 == 0) && (engine_obj.cur_character != CHARACTER_X)) {
-        temp_v1 = arg0->unk7;
-        if ((arg0->unk7 < 7) && (temp_v1 >= 5)) {
-            arg0->unk42 = 0x7804;
+        temp_v1 = self->unk7;
+        if ((self->unk7 < 7) && (temp_v1 >= 5)) {
+            self->unk42 = 0x7804;
         }
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
+// menu_text_blink
 INCLUDE_ASM("main/nonmatchings/misc/misc_57", func_800D3798);
 
-void func_800D38A0(struct UnkObj* arg0)
+void menu_text_cursor(struct UnkObj* self)
 {
-    if (arg0->unk2 == -1) {
-        if (arg0->ext.unk_0.selection_index != D_80141BDF[0]) {
-            arg0->y_pos.i.hi = arg0->link.data[D_80141BDF[0] * 2] + 8;
-            arg0->ext.unk_0.selection_index = D_80141BDF[0];
+    if (self->unk2 == -1) {
+        if (self->ext.unk_0.selection_index != D_80141BDF[0]) {
+            self->y_pos.i.hi = self->link.data[D_80141BDF[0] * 2] + 8;
+            self->ext.unk_0.selection_index = D_80141BDF[0];
         }
-        func_80015DC8(arg0);
+        animate_object(self);
     }
-    is_on_screen(arg0);
+    is_on_screen(self);
 }
 
-union AnimationStep D_8010F5A0[6] = {
+union AnimationStep menu_text_anim_0[6] = {
     { .packed = 0x00010001 },
     { .packed = 0x01010001 },
     { .packed = 0x02010001 },
@@ -126,13 +128,13 @@ union AnimationStep D_8010F5A0[6] = {
     { .packed = 0x04010001 },
     { .packed = 0x05000001 },
 };
-union AnimationStep* D_8010F5B8[1] = { D_8010F5A0 };
+union AnimationStep* menu_text_animations[1] = { menu_text_anim_0 };
 
-void (*D_8010F5BC[3])(struct MiscObj*) = {
+void (*falling_piece_state_funcs[3])(struct MiscObj*) = {
     func_800D3388,
-    func_800D34AC,
-    func_800D34F0,
+    falling_piece_fall,
+    falling_piece_despawn,
 };
 
-u16 D_8010F5C8[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0 };
-u16 D_8010F5D8[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };
+u16 menu_button_bits_a[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0 };
+u16 menu_button_bits_b[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };

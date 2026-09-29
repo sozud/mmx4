@@ -2,12 +2,12 @@
 // 800CC908..800CCA34
 #include "common.h"
 
-void func_800CC908(struct MiscObj* arg0)
+void owner_aura_update(struct MiscObj* self)
 {
-    D_8010E960[arg0->state](arg0);
+    owner_aura_state_funcs[self->state](self);
 }
 
-void func_800CC944(struct MiscObj* self)
+void owner_aura_follow(struct MiscObj* self)
 {
     s8 timer;
     s8 owner_state;
@@ -16,7 +16,7 @@ void func_800CC944(struct MiscObj* self)
     self->y_pos.val = self->ext.misc_5.owner->y_pos.val;
     self->unk15 = self->ext.misc_5.owner->unk15;
     self->unk42 = self->ext.misc_5.owner->unk42;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     owner_state = self->ext.misc_5.owner->state;
     if (owner_state == 2 || owner_state == 5 || owner_state == 8) {
         self->state = 1;
@@ -30,15 +30,15 @@ void func_800CC944(struct MiscObj* self)
             return;
         }
     }
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_800CCA14(struct MiscObj* arg0)
+void owner_aura_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_8010E960[])(struct MiscObj*) = {
-    func_800CC944,
-    func_800CCA14,
+void (*owner_aura_state_funcs[])(struct MiscObj*) = {
+    owner_aura_follow,
+    owner_aura_despawn,
 };

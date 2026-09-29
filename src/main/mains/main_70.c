@@ -15,7 +15,7 @@ void drone_pod_update(struct MainObj* self)
 void drone_pod_intro(struct MainObj* self)
 {
     drone_pod_intro_funcs[self->unk5](self);
-    func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+    update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
 }
 
 // drone_pod_init
@@ -25,7 +25,7 @@ void drone_pod_intro_wait_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0x8E9) {
         player_start_script_action(0x14, 0x40);
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         self->unk5++;
     }
 }
@@ -33,7 +33,7 @@ void drone_pod_intro_wait_player(struct MainObj* self)
 void drone_pod_intro_open(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
         engine_obj.boss_ptr = self;
@@ -41,7 +41,7 @@ void drone_pod_intro_open(struct MainObj* self)
         self->unk5++;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void drone_pod_intro_fill_health(struct MainObj* self)
@@ -49,15 +49,15 @@ void drone_pod_intro_fill_health(struct MainObj* self)
     s16 timer;
     u8 count;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     timer = self->unk7C - 1;
     self->unk7C = timer;
     if (timer == 0) {
         func_8001540C(0, 0xE, NULL);
         self->unk7C = 3;
     }
-    count = self->unk5C + 1;
-    self->unk5C = count;
+    count = self->hp + 1;
+    self->hp = count;
     if ((s8)count == 0x30) {
         player_end_script_action();
         self->unk5 = 3;
@@ -74,7 +74,7 @@ void drone_pod_death(struct MainObj* self)
 {
     drone_pod_death_funcs[self->unk5](self);
     if ((self->unk5 < 3) && (self->state != 0)) {
-        func_8002B318(BASE_OBJECT(self), 0x20, 0x20);
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
 
@@ -141,10 +141,10 @@ void drone_pod_death_alarm(struct MainObj* self)
 
 void drone_pod_death_break_wall(struct MainObj* self)
 {
-    func_800C813C(4, &D_801049AC, self);
+    spawn_debris(4, &D_801049AC, self);
     background_objects[0].unk1C = 0xA00;
     background_objects[0].unk24 = 0xA00;
-    func_800DABE4(0, 0x9E0, 0x350);
+    apply_tile_effect(0, 0x9E0, 0x350);
     engine_obj.character_state.bytes[0] = 0;
     self->unk7C = 0x5A;
     self->on_screen = 0;
@@ -164,7 +164,7 @@ void drone_pod_death_debris(struct MainObj* self)
     }
     if ((D_80141BD8.unk0 & 7) == 0) {
         self->y_pos.i.hi = (get_random() & 0x7F) + 0x360;
-        func_800C813C(5, &D_801049B0, self);
+        spawn_debris(5, &D_801049B0, self);
     }
     timer = self->unk7E - 1;
     self->unk7E = timer;
@@ -191,9 +191,9 @@ void drone_pod_rest(struct MainObj* self)
 
 void drone_pod_rest_wait(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         self->unk7C = 0x18;
         self->unk6++;
     }
@@ -201,7 +201,7 @@ void drone_pod_rest_wait(struct MainObj* self)
 
 void drone_pod_rest_open(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->collision_data = (const u16*)D_80108104;
         self->unk5 = 3;
@@ -216,17 +216,17 @@ void drone_pod_launch(struct MainObj* self)
 
 void drone_pod_launch_prepare(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 2);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 2);
     self->unk7C = 0x27;
     self->unk6++;
 }
 
 void drone_pod_launch_fire(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_80015D60(self, 0xD);
+        set_animation(self, 0xD);
         func_80089588(self);
         self->unk7C = 0x18;
         self->unk6++;
@@ -235,7 +235,7 @@ void drone_pod_launch_fire(struct MainObj* self)
 
 void drone_pod_launch_close(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->collision_data = (const u16*)D_801060F0;
         self->unk5 = 2;
@@ -251,7 +251,7 @@ void drone_pod_random_explosion(struct MainObj* self)
 {
     s16 x = background_objects[0].x_pos.i.hi;
     s16 y = background_objects[0].y_pos.i.hi;
-    self->ext.main_70.unk85 = func_8002B780() % 4;
+    self->ext.main_70.unk85 = get_random_nonzero() % 4;
     switch (self->ext.main_70.unk85) {
     case 0:
         break;
@@ -265,9 +265,9 @@ void drone_pod_random_explosion(struct MainObj* self)
         y += 0x78;
         break;
     }
-    x += func_8002B780() % 0xA0;
-    y += func_8002B780() % 0x78;
-    func_800AFAB4(0, x, y, 0xFF);
+    x += get_random_nonzero() % 0xA0;
+    y += get_random_nonzero() % 0x78;
+    spawn_explosion_at(0, x, y, 0xFF);
     if ((D_80141BD8.unk0 & 3) == 0) {
         func_8001540C(0, D_80104A3C[(get_random() & 3) * 4], NULL);
     }
@@ -450,7 +450,7 @@ void (*drone_pod_intro_funcs[4])() = {
 };
 
 void (*drone_pod_step_funcs[4])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     drone_pod_resume_step,
     drone_pod_rest,
     drone_pod_launch,

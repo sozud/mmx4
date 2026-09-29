@@ -2,18 +2,18 @@
 // 800B35B8..800B3D3C
 #include "common.h"
 
-s32 D_8010A5FC[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
-s32 D_8010A60C[4] = { 0x18000, 0x28000, 0x8000, 0x30000 };
-s32 D_8010A61C[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
-s32 D_8010A62C[4] = { -0x18000, -0x28000, -0x8000, -0x30000 };
-s16 D_8010A63C[8] = { -9, 0x13, -0x26, -0x16, 0x2B, -0xA, 0x1C, 0x26 };
+s32 frost_walrus_fx_blizzard_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
+s32 frost_walrus_fx_blizzard_y_vels[4] = { 0x18000, 0x28000, 0x8000, 0x30000 };
+s32 frost_walrus_fx_breath_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
+s32 frost_walrus_fx_breath_y_vels[4] = { -0x18000, -0x28000, -0x8000, -0x30000 };
+s16 frost_walrus_fx_sparkle_offsets[8] = { -9, 0x13, -0x26, -0x16, 0x2B, -0xA, 0x1C, 0x26 };
 
-void func_800B35B8(struct VisualObj* arg0)
+void frost_walrus_fx_update(struct VisualObj* arg0)
 {
-    D_8010A64C[arg0->state](arg0);
+    frost_walrus_fx_state_funcs[arg0->state](arg0);
 }
 
-void func_800B35F4(struct VisualObj* self)
+void frost_walrus_fx_init(struct VisualObj* self)
 {
     u8 background;
     s32 state;
@@ -37,24 +37,24 @@ void func_800B35F4(struct VisualObj* self)
     self->bg_offset = (s8)background;
     self->unk5 = (s8)state;
     if (state == 2) {
-        func_80015D60(self, 0x18);
+        set_animation(self, 0x18);
     } else {
-        func_80015D60(self, 0x1D);
+        set_animation(self, 0x1D);
     }
     self->unk2 = (u8)self->unk2 & 0xF;
 }
 
-void func_800B36F0(struct VisualObj* arg0)
+void frost_walrus_fx_main(struct VisualObj* arg0)
 {
-    D_8010A654[arg0->unk5](arg0);
+    frost_walrus_fx_mode_funcs[arg0->unk5](arg0);
 }
 
-void func_800B372C(struct VisualObj* arg0)
+void frost_walrus_fx_burst(struct VisualObj* arg0)
 {
-    D_8010A66C[arg0->unk6](arg0);
+    frost_walrus_fx_burst_funcs[arg0->unk6](arg0);
 }
 
-void func_800B3768(struct VisualObj* arg0)
+void frost_walrus_fx_burst_start(struct VisualObj* arg0)
 {
     arg0->unk15 = 0;
     switch (arg0->unk2) {
@@ -78,110 +78,111 @@ void func_800B3768(struct VisualObj* arg0)
     arg0->unk6++;
 }
 
-void func_800B37F8(struct VisualObj* arg0)
+void frost_walrus_fx_burst_move(struct VisualObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     }
 }
 
-void func_800B3848(struct VisualObj* arg0)
+void frost_walrus_fx_breath(struct VisualObj* arg0)
 {
-    D_8010A674[arg0->unk6](arg0);
+    frost_walrus_fx_breath_funcs[arg0->unk6](arg0);
 }
 
-void func_800B3884(struct VisualObj* arg0)
+void frost_walrus_fx_breath_start(struct VisualObj* arg0)
 {
     if (arg0->unk15 != 0) {
-        arg0->x_vel.val = D_8010A61C[get_random() & 3];
+        arg0->x_vel.val = frost_walrus_fx_breath_x_vels[get_random() & 3];
     } else {
-        arg0->x_vel.val = -D_8010A61C[get_random() & 3];
+        arg0->x_vel.val = -frost_walrus_fx_breath_x_vels[get_random() & 3];
     }
-    arg0->y_vel.val = D_8010A62C[get_random() & 3];
+    arg0->y_vel.val = frost_walrus_fx_breath_y_vels[get_random() & 3];
     arg0->unk6++;
 }
 
-void func_800B392C(struct VisualObj* arg0)
+void frost_walrus_fx_breath_move(struct VisualObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     }
 }
 
-void func_800B397C(struct VisualObj* arg0)
+void frost_walrus_fx_blizzard(struct VisualObj* arg0)
 {
-    D_8010A67C[arg0->unk6](arg0);
+    frost_walrus_fx_blizzard_funcs[arg0->unk6](arg0);
 }
 
-void func_800B39B8(struct VisualObj* arg0)
+void frost_walrus_fx_blizzard_start(struct VisualObj* arg0)
 {
     if (arg0->unk15 != 0) {
-        arg0->x_vel.val = D_8010A5FC[get_random() & 3];
+        arg0->x_vel.val = frost_walrus_fx_blizzard_x_vels[get_random() & 3];
     } else {
-        arg0->x_vel.val = -D_8010A5FC[get_random() & 3];
+        arg0->x_vel.val = -frost_walrus_fx_blizzard_x_vels[get_random() & 3];
     }
-    arg0->y_vel.val = D_8010A60C[get_random() & 3];
+    arg0->y_vel.val = frost_walrus_fx_blizzard_y_vels[get_random() & 3];
     arg0->unk6++;
 }
 
-void func_800B3A60(struct VisualObj* arg0)
+void frost_walrus_fx_blizzard_move(struct VisualObj* arg0)
 {
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
     if (arg0->animation_step.fields.relative_step == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
     }
 }
 
-void func_800B3AB0(struct VisualObj* arg0)
+void frost_walrus_fx_regrow(struct VisualObj* arg0)
 {
     arg0->unk42 = arg0->unk50->unk42;
     is_on_screen(BASE_OBJECT(arg0));
     if (g_Player.update_delay == 0) {
-        func_80015DC8(arg0);
+        animate_object(arg0);
         if (arg0->animation_step.fields.relative_step == 0) {
             ZeroObjectState(OBJECT_HEADER(arg0));
         }
     }
 }
 
-void func_800B3B1C(struct VisualObj* arg0)
+void frost_walrus_fx_sparkle(struct VisualObj* arg0)
 {
-    D_8010A684[arg0->unk6](arg0);
+    frost_walrus_fx_sparkle_funcs[arg0->unk6](arg0);
 }
 
-void func_800B3B58(struct VisualObj* arg0)
+void frost_walrus_fx_sparkle_start(struct VisualObj* arg0)
 {
-    func_80015D60(arg0, 0x13);
+    set_animation(arg0, 0x13);
     arg0->unk6++;
 }
 
+// frost_walrus_fx_sparkle_move
 INCLUDE_ASM("main/nonmatchings/visuals/visual_24", func_800B3B94);
 
-void func_800B3C34(struct VisualObj* arg0)
+void frost_walrus_fx_stagger(struct VisualObj* arg0)
 {
-    D_8010A68C[arg0->unk6](arg0);
+    frost_walrus_fx_stagger_funcs[arg0->unk6](arg0);
     arg0->unk42 = arg0->unk50->unk42;
 }
 
-void func_800B3C90(struct VisualObj* arg0)
+void frost_walrus_fx_stagger_start(struct VisualObj* arg0)
 {
-    func_80015D60(arg0, 0x15);
+    set_animation(arg0, 0x15);
     arg0->unk6++;
 }
 
-void func_800B3CCC(struct VisualObj* arg0)
+void frost_walrus_fx_stagger_follow(struct VisualObj* arg0)
 {
     struct PlayerObj* source;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
     source = arg0->unk50;
     arg0->x_pos.val = source->x_pos.val;
     arg0->y_pos.val = source->y_pos.val;
@@ -192,22 +193,22 @@ void func_800B3CCC(struct VisualObj* arg0)
     }
 }
 
-void (*D_8010A64C[])(struct VisualObj*) = {
-    func_800B35F4,
-    func_800B36F0,
+void (*frost_walrus_fx_state_funcs[])(struct VisualObj*) = {
+    frost_walrus_fx_init,
+    frost_walrus_fx_main,
 };
 
-void (*D_8010A654[])(struct VisualObj*) = {
-    func_800B372C,
-    func_800B3848,
-    func_800B3AB0,
-    func_800B397C,
-    func_800B3B1C,
-    func_800B3C34,
+void (*frost_walrus_fx_mode_funcs[])(struct VisualObj*) = {
+    frost_walrus_fx_burst,
+    frost_walrus_fx_breath,
+    frost_walrus_fx_regrow,
+    frost_walrus_fx_blizzard,
+    frost_walrus_fx_sparkle,
+    frost_walrus_fx_stagger,
 };
 
-void (*D_8010A66C[])(struct VisualObj*) = { func_800B3768, func_800B37F8 };
-void (*D_8010A674[])(struct VisualObj*) = { func_800B3884, func_800B392C };
-void (*D_8010A67C[])(struct VisualObj*) = { func_800B39B8, func_800B3A60 };
-void (*D_8010A684[])(struct VisualObj*) = { func_800B3B58, func_800B3B94 };
-void (*D_8010A68C[])(struct VisualObj*) = { func_800B3C90, func_800B3CCC };
+void (*frost_walrus_fx_burst_funcs[])(struct VisualObj*) = { frost_walrus_fx_burst_start, frost_walrus_fx_burst_move };
+void (*frost_walrus_fx_breath_funcs[])(struct VisualObj*) = { frost_walrus_fx_breath_start, frost_walrus_fx_breath_move };
+void (*frost_walrus_fx_blizzard_funcs[])(struct VisualObj*) = { frost_walrus_fx_blizzard_start, frost_walrus_fx_blizzard_move };
+void (*frost_walrus_fx_sparkle_funcs[])(struct VisualObj*) = { frost_walrus_fx_sparkle_start, func_800B3B94 };
+void (*frost_walrus_fx_stagger_funcs[])(struct VisualObj*) = { frost_walrus_fx_stagger_start, frost_walrus_fx_stagger_follow };

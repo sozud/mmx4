@@ -2,12 +2,12 @@
 // 800B4B64..800B4E34
 #include "common.h"
 
-void func_800B4B64(struct VisualObj* arg0)
+void gunship_exhaust_update(struct VisualObj* arg0)
 {
-    D_8010A704[arg0->state](arg0);
+    gunship_exhaust_state_funcs[arg0->state](arg0);
 }
 
-void func_800B4BA0(struct VisualObj* self)
+void gunship_exhaust_init(struct VisualObj* self)
 {
     s16 timer;
     s16 flags;
@@ -21,9 +21,9 @@ void func_800B4BA0(struct VisualObj* self)
     self->on_screen = 1;
     self->unk15 = type;
     if (get_random() & 1) {
-        func_80015D60(self, 0x15);
+        set_animation(self, 0x15);
     } else {
-        func_80015D60(self, 0x16);
+        set_animation(self, 0x16);
     }
     type = self->unk2;
     switch (type) {
@@ -49,7 +49,7 @@ void func_800B4BA0(struct VisualObj* self)
     self->state++;
 }
 
-void func_800B4CC8(struct VisualObj* arg0)
+void gunship_exhaust_delay(struct VisualObj* arg0)
 {
     if (arg0->unk56 == 0) {
         arg0->state++;
@@ -58,14 +58,14 @@ void func_800B4CC8(struct VisualObj* arg0)
     }
 }
 
-void func_800B4D00(struct VisualObj* self)
+void gunship_exhaust_main(struct VisualObj* self)
 {
     s16 timer;
     s16 x;
     s8 type;
     struct PlayerObj* player = self->unk50;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     type = self->unk2;
     switch (type) {
     case 0:
@@ -91,17 +91,17 @@ update_timer:
     if (timer == 0 || player->active == 0) {
         self->state++;
     }
-    func_8002B318(BASE_OBJECT(self), 0x30, 0x30);
+    update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
 }
 
-void func_800B4E14(struct VisualObj* arg0)
+void gunship_exhaust_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A704[])(struct VisualObj*) = {
-    func_800B4BA0,
-    func_800B4CC8,
-    func_800B4D00,
-    func_800B4E14,
+void (*gunship_exhaust_state_funcs[])(struct VisualObj*) = {
+    gunship_exhaust_init,
+    gunship_exhaust_delay,
+    gunship_exhaust_main,
+    gunship_exhaust_despawn,
 };

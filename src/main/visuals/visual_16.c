@@ -2,12 +2,12 @@
 // 800B1EA4..800B2090
 #include "common.h"
 
-void func_800B1EA4(struct VisualObj* arg0)
+void enemy_charge_glow_update(struct VisualObj* arg0)
 {
-    D_8010A544[arg0->state](arg0);
+    enemy_charge_glow_state_funcs[arg0->state](arg0);
 }
 
-void func_800B1EE0(struct VisualObj* arg0)
+void enemy_charge_glow_init(struct VisualObj* arg0)
 {
     struct PlayerObj* owner;
 
@@ -15,28 +15,29 @@ void func_800B1EE0(struct VisualObj* arg0)
         owner = arg0->unk50;
         arg0->unk15 = owner->unk15;
         if (owner->id == 0x26) {
-            func_80015D60(arg0, 0x14);
+            set_animation(arg0, 0x14);
         } else {
-            func_80015D60(arg0, 8);
+            set_animation(arg0, 8);
         }
     } else {
         arg0->unk15 = arg0->unk50->unk15;
-        func_80015D60(arg0, 0xD);
+        set_animation(arg0, 0xD);
     }
     arg0->on_screen = 1;
     arg0->state = 1;
     arg0->unk42 &= 0x7FFF;
 }
 
+// enemy_charge_glow_main
 INCLUDE_ASM("main/nonmatchings/visuals/visual_16", func_800B1F78);
 
-void func_800B2070(struct VisualObj* arg0)
+void enemy_charge_glow_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(arg0);
 }
 
-void (*D_8010A544[])(struct VisualObj*) = {
-    func_800B1EE0,
+void (*enemy_charge_glow_state_funcs[])(struct VisualObj*) = {
+    enemy_charge_glow_init,
     func_800B1F78,
-    func_800B2070,
+    enemy_charge_glow_despawn,
 };

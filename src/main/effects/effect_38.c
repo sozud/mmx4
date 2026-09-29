@@ -2,42 +2,42 @@
 // 800BD654..800BDE68
 #include "common.h"
 
-void func_800BD654(struct EffectObj* arg0)
+void cyberspace_trial_update(struct EffectObj* self)
 {
-    D_8010C048[arg0->state](arg0);
+    cyberspace_trial_state_funcs[self->state](self);
 }
 
-void func_800BD690(struct EffectObj* arg0)
+void cyberspace_trial_init(struct EffectObj* self)
 {
     s8 next_state;
 
     if (engine_obj.substage == 0) {
-        arg0->unk2 = (u8)engine_obj.checkpoint;
-        func_800BDBD4();
+        self->unk2 = (u8)engine_obj.checkpoint;
+        cyberspace_trial_delete_unused_items();
     } else if (engine_obj.checkpoint != 0) {
         next_state = 6;
         goto write_state;
     } else {
-        arg0->unk2 = 6;
+        self->unk2 = 6;
     }
 
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->ext.effect_38.timer = 0;
-    next_state = (u8)arg0->state + 1;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->ext.effect_38.timer = 0;
+    next_state = (u8)self->state + 1;
 
 write_state:
-    arg0->state = next_state;
+    self->state = next_state;
 }
 
-void func_800BD708(struct EffectObj* self)
+void cyberspace_trial_wait_start(struct EffectObj* self)
 {
     s8 subtype;
 
     subtype = self->unk2;
-    if (g_Player.x_pos.i.hi >= D_8010C02C[subtype * 2]) {
+    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2]) {
         if (!(subtype & 1) && engine_obj.substage == 0) {
-            func_800BDA4C(self);
+            cyberspace_trial_spawn_guide(self);
             engine_obj.unk10 = 1;
             engine_obj.unk12 = 1;
             engine_obj.unk11 = 1;
@@ -47,15 +47,15 @@ void func_800BD708(struct EffectObj* self)
     }
 }
 
-void func_800BD7B0(struct EffectObj* self)
+void cyberspace_trial_wait_goal(struct EffectObj* self)
 {
     s8 subtype;
 
-    func_800BDBD4();
+    cyberspace_trial_delete_unused_items();
     subtype = self->unk2;
-    if (g_Player.x_pos.i.hi >= D_8010C02C[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
+    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
         player_start_script_action(0x14, 0x40);
-        func_800BDD08(self);
+        cyberspace_trial_clear_objects(self);
         if ((engine_obj.checkpoint & 1) || engine_obj.substage != 0) {
             self->ext.effect_38.active = 1;
             self->ext.effect_38.timer = 0xA;
@@ -67,31 +67,31 @@ void func_800BD7B0(struct EffectObj* self)
     }
 }
 
-void func_800BD890(struct EffectObj* arg0)
+void cyberspace_trial_delay(struct EffectObj* self)
 {
-    arg0->ext.effect_38.timer--;
-    if (arg0->ext.effect_38.timer == 0) {
-        arg0->ext.effect_38.timer = 0x64;
-        arg0->state++;
+    self->ext.effect_38.timer--;
+    if (self->ext.effect_38.timer == 0) {
+        self->ext.effect_38.timer = 0x64;
+        self->state++;
     }
 }
 
-void func_800BD8C4(struct EffectObj* arg0)
+void cyberspace_trial_wait_rank(struct EffectObj* self)
 {
-    if (--arg0->ext.effect_38.timer == 0 && arg0->ext.effect_38.active != 0) {
+    if (--self->ext.effect_38.timer == 0 && self->ext.effect_38.active != 0) {
         player_start_script_action(0x15, 0x40);
-        func_800BDB10(arg0);
-        arg0->ext.effect_38.timer = 0x64;
-        arg0->state++;
+        cyberspace_trial_spawn_rank_warp(self);
+        self->ext.effect_38.timer = 0x64;
+        self->state++;
     }
 }
 
-void func_800BD938(struct EffectObj* self)
+void cyberspace_trial_advance(struct EffectObj* self)
 {
     u8 timer;
 
     if (self->ext.effect_38.timer == 0x50) {
-        func_800BDA94(self);
+        cyberspace_trial_spawn_warps(self);
     }
 
     timer = self->ext.effect_38.timer - 1;
@@ -122,23 +122,23 @@ void func_800BD938(struct EffectObj* self)
     self->state++;
 }
 
-void func_800BDA2C(struct EffectObj* arg0)
+void cyberspace_trial_despawn(struct EffectObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800BDA4C(struct EffectObj* arg0)
+void cyberspace_trial_spawn_guide(struct EffectObj* self)
 {
     struct MiscObj* obj = find_free_misc_obj();
     if (obj != NULL) {
         obj->active = 0x41;
         obj->id = 0x22;
-        obj->ext.pointer.unk50 = arg0;
+        obj->ext.pointer.unk50 = self;
         obj->unk2 = 0;
     }
 }
 
-void func_800BDA94(void* arg0)
+void cyberspace_trial_spawn_warps(void* arg0)
 {
     s8 var_s0;
     struct MiscObj* temp_v0;
@@ -156,7 +156,7 @@ void func_800BDA94(void* arg0)
     } while (var_s0 < 2U);
 }
 
-void func_800BDB10(struct EffectObj* self)
+void cyberspace_trial_spawn_rank_warp(struct EffectObj* self)
 {
     struct MiscObj* misc;
     s8 state;
@@ -189,43 +189,43 @@ void func_800BDB10(struct EffectObj* self)
     misc->unk2 = state;
 }
 
-void func_800BDBD4(void)
+void cyberspace_trial_delete_unused_items(void)
 {
     switch (engine_obj.checkpoint) {
     case 1:
         if (engine_obj.cur_character == 0) {
-            func_800BDDE8(2, 4);
-            func_800BDDE8(2, 0xF);
-            func_800BDDE8(0x1A, 0);
+            delete_items(2, 4);
+            delete_items(2, 0xF);
+            delete_items(0x1A, 0);
         } else {
-            func_800BDDE8(2, 0xC);
-            func_800BDDE8(2, 0xF);
+            delete_items(2, 0xC);
+            delete_items(2, 0xF);
         }
         break;
     case 3:
         if (engine_obj.cur_character == 0) {
-            func_800BDDE8(2, 4);
-            func_800BDDE8(2, 0xC);
-            func_800BDDE8(0x1A, 0);
+            delete_items(2, 4);
+            delete_items(2, 0xC);
+            delete_items(0x1A, 0);
         } else {
-            func_800BDDE8(2, 4);
-            func_800BDDE8(2, 0xF);
+            delete_items(2, 4);
+            delete_items(2, 0xF);
         }
         break;
     case 5:
         if (engine_obj.cur_character == 0) {
-            func_800BDDE8(2, 4);
-            func_800BDDE8(2, 0xC);
-            func_800BDDE8(2, 0xF);
+            delete_items(2, 4);
+            delete_items(2, 0xC);
+            delete_items(2, 0xF);
         } else {
-            func_800BDDE8(2, 4);
-            func_800BDDE8(2, 0xC);
+            delete_items(2, 4);
+            delete_items(2, 0xC);
         }
         break;
     }
 }
 
-void func_800BDD08(struct EffectObj* self)
+void cyberspace_trial_clear_objects(struct EffectObj* self)
 {
     u32 i;
     s32 count;
@@ -259,7 +259,7 @@ void func_800BDD08(struct EffectObj* self)
     }
 }
 
-void func_800BDDE8(s32 arg0, s32 arg1)
+void delete_items(s32 arg0, s32 arg1)
 {
     s8 clear_value = 0;
     u32 i = 0;
@@ -279,7 +279,7 @@ void func_800BDDE8(s32 arg0, s32 arg1)
     }
 }
 
-u16 D_8010C02C[14] = {
+u16 cyberspace_trial_trigger_x[14] = {
     0x0190,
     0x0700,
     0,
@@ -296,12 +296,12 @@ u16 D_8010C02C[14] = {
     0x0F78,
 };
 
-void (*D_8010C048[])(struct EffectObj*) = {
-    func_800BD690,
-    func_800BD708,
-    func_800BD7B0,
-    func_800BD890,
-    func_800BD8C4,
-    func_800BD938,
-    func_800BDA2C,
+void (*cyberspace_trial_state_funcs[])(struct EffectObj*) = {
+    cyberspace_trial_init,
+    cyberspace_trial_wait_start,
+    cyberspace_trial_wait_goal,
+    cyberspace_trial_delay,
+    cyberspace_trial_wait_rank,
+    cyberspace_trial_advance,
+    cyberspace_trial_despawn,
 };

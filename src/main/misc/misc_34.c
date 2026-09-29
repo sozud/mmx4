@@ -2,20 +2,21 @@
 // 800CE894..800CF144
 #include "common.h"
 
-void func_800CE894(struct MiscObj* arg0)
+void cyberspace_guide_update(struct MiscObj* self)
 {
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
-    D_8010EED8[arg0->state](arg0);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    cyberspace_guide_state_funcs[self->state](self);
 }
 
+// cyberspace_guide_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CE8DC);
 
-void func_800CEA40(struct MiscObj* self)
+void cyberspace_guide_main(struct MiscObj* self)
 {
-    D_8010EEE4[self->unk5](self);
+    cyberspace_guide_step_funcs[self->unk5](self);
     func_800CEFC0(self);
-    func_800CF0B0(self);
+    cyberspace_guide_update_blink(self);
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         is_on_screen(BASE_OBJECT(self));
     } else {
@@ -23,27 +24,27 @@ void func_800CEA40(struct MiscObj* self)
     }
 }
 
-void func_800CEAC8(struct MiscObj* arg0)
+void cyberspace_guide_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800CEAE8(struct MiscObj* arg0)
+void cyberspace_guide_appear(struct MiscObj* self)
 {
     u8 timer;
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    timer = arg0->ext.unk.unk54 - 1;
-    arg0->ext.unk.unk54 = timer;
+    animate_object(ANIMATED_OBJECT(self));
+    timer = self->ext.unk.unk54 - 1;
+    self->ext.unk.unk54 = timer;
     if (timer == 0) {
-        arg0->ext.unk.unk54 = 0x24;
-        arg0->unk5 = 1;
-        func_80015D60(arg0, 2);
+        self->ext.unk.unk54 = 0x24;
+        self->unk5 = 1;
+        set_animation(self, 2);
     }
 }
 
-void func_800CEB44(struct MiscObj* self)
+void cyberspace_guide_start_timer(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (--self->ext.misc_34.timer == 0) {
         engine_obj.unk10 = 0;
         engine_obj.unk12 = 0;
@@ -51,21 +52,22 @@ void func_800CEB44(struct MiscObj* self)
         engine_obj.unk13 = 0;
         self->unk5 = 2;
         self->ext.misc_34.enabled = 1;
-        func_80015D60(self, 1);
+        set_animation(self, 1);
     }
 }
 
+// cyberspace_guide_follow
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEBC0);
 
-void func_800CEE30(struct MiscObj* arg0)
+void cyberspace_guide_leave(struct MiscObj* self)
 {
-    D_8010EEF4[arg0->unk6](arg0);
+    cyberspace_guide_leave_funcs[self->unk6](self);
 }
 
-void func_800CEE6C(struct MiscObj* self)
+void cyberspace_guide_leave_start(struct MiscObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_80015D60(self, 4);
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 4);
     self->y_vel.val = FIXED(1);
     self->ext.misc_34.enabled = 0;
     self->x_vel.val = 0;
@@ -73,12 +75,12 @@ void func_800CEE6C(struct MiscObj* self)
     self->unk6++;
 }
 
-void func_800CEEC4(struct MiscObj* self)
+void cyberspace_guide_leave_drift(struct MiscObj* self)
 {
     u8 timer;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B718(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
     timer = self->ext.misc_34.timer - 1;
     self->ext.misc_34.timer = timer;
     if (timer == 0) {
@@ -90,12 +92,12 @@ void func_800CEEC4(struct MiscObj* self)
     }
 }
 
-void func_800CEF34(struct MiscObj* self)
+void cyberspace_guide_leave_finish(struct MiscObj* self)
 {
     u8 timer;
     struct EffectObj* related;
 
-    func_8002B694(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
     timer = self->ext.misc_34.timer - 1;
     self->ext.misc_34.timer = timer;
     if (timer == 0) {
@@ -112,18 +114,19 @@ void func_800CEF34(struct MiscObj* self)
     }
 }
 
+// cyberspace_guide_update_position
 INCLUDE_ASM("main/nonmatchings/misc/misc_34", func_800CEFC0);
 
-void func_800CF0B0(struct MiscObj* self)
+void cyberspace_guide_update_blink(struct MiscObj* self)
 {
     if ((self->unk17 != 1) && (self->unk17 != 4)) {
         if (--self->ext.misc_34.unk5A == 0) {
             if (self->unk17 == 2) {
-                func_80015D60(self, 3);
+                set_animation(self, 3);
                 self->ext.misc_34.enabled = 0;
                 self->ext.misc_34.unk5A = 0x24;
             } else {
-                func_80015D60(self, 1);
+                set_animation(self, 1);
                 self->ext.misc_34.enabled = 1;
             }
         }
@@ -135,7 +138,7 @@ void func_800CF0B0(struct MiscObj* self)
         .packed = (value) \
     }
 
-union AnimationStep D_8010EDF8[6] = {
+union AnimationStep cyberspace_guide_anim_0[6] = {
     STEP(0x1B010006),
     STEP(0x1C010006),
     STEP(0x1D010006),
@@ -144,7 +147,7 @@ union AnimationStep D_8010EDF8[6] = {
     STEP(0x02000006),
 };
 
-union AnimationStep D_8010EE10[24] = {
+union AnimationStep cyberspace_guide_anim_1[24] = {
     STEP(0x03010006),
     STEP(0x04010006),
     STEP(0x05010006),
@@ -171,7 +174,7 @@ union AnimationStep D_8010EE10[24] = {
     STEP(0x17E90003),
 };
 
-union AnimationStep D_8010EE70[6] = {
+union AnimationStep cyberspace_guide_anim_2[6] = {
     STEP(0x1E010003),
     STEP(0x1F010003),
     STEP(0x20010003),
@@ -180,7 +183,7 @@ union AnimationStep D_8010EE70[6] = {
     STEP(0x23FB0003),
 };
 
-union AnimationStep D_8010EE88[6] = {
+union AnimationStep cyberspace_guide_anim_3[6] = {
     STEP(0x24010003),
     STEP(0x25010003),
     STEP(0x26010003),
@@ -189,7 +192,7 @@ union AnimationStep D_8010EE88[6] = {
     STEP(0x29FB0003),
 };
 
-union AnimationStep D_8010EEA0[6] = {
+union AnimationStep cyberspace_guide_anim_4[6] = {
     STEP(0x02010006),
     STEP(0x01010006),
     STEP(0x00010006),
@@ -198,17 +201,17 @@ union AnimationStep D_8010EEA0[6] = {
     STEP(0x1B000006),
 };
 
-union AnimationStep* D_8010EEB8[5] = {
-    D_8010EDF8,
-    D_8010EE10,
-    D_8010EE70,
-    D_8010EE88,
-    D_8010EEA0,
+union AnimationStep* cyberspace_guide_animations[5] = {
+    cyberspace_guide_anim_0,
+    cyberspace_guide_anim_1,
+    cyberspace_guide_anim_2,
+    cyberspace_guide_anim_3,
+    cyberspace_guide_anim_4,
 };
 
 #undef STEP
 
-u8 D_8010EECC[12] = {
+u8 cyberspace_guide_offsets[12] = {
     0x0F,
     0x0F,
     0,
@@ -223,21 +226,21 @@ u8 D_8010EECC[12] = {
     0,
 };
 
-void (*D_8010EED8[3])(struct MiscObj*) = {
+void (*cyberspace_guide_state_funcs[3])(struct MiscObj*) = {
     func_800CE8DC,
-    func_800CEA40,
-    func_800CEAC8,
+    cyberspace_guide_main,
+    cyberspace_guide_despawn,
 };
 
-void (*D_8010EEE4[4])(struct MiscObj*) = {
-    func_800CEAE8,
-    func_800CEB44,
+void (*cyberspace_guide_step_funcs[4])(struct MiscObj*) = {
+    cyberspace_guide_appear,
+    cyberspace_guide_start_timer,
     func_800CEBC0,
-    func_800CEE30,
+    cyberspace_guide_leave,
 };
 
-void (*D_8010EEF4[3])(struct MiscObj*) = {
-    func_800CEE6C,
-    func_800CEEC4,
-    func_800CEF34,
+void (*cyberspace_guide_leave_funcs[3])(struct MiscObj*) = {
+    cyberspace_guide_leave_start,
+    cyberspace_guide_leave_drift,
+    cyberspace_guide_leave_finish,
 };

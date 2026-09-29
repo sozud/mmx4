@@ -3,126 +3,127 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8005B3FC(struct MainObj* arg0)
+void regen_turret_update(struct MainObj* self)
 {
-    D_800FD9C4[arg0->state](arg0);
+    regen_turret_state_funcs[self->state](self);
 }
 
+// regen_turret_init
 INCLUDE_ASM("main/nonmatchings/mains/main_30", func_8005B438);
 
-void func_8005B504(struct MainObj* arg0)
+void regen_turret_start_idle(struct MainObj* self)
 {
-    arg0->unk5 = 2;
-    func_80015D60(arg0, 10);
+    self->unk5 = 2;
+    set_animation(self, 10);
 }
 
-void func_8005B52C(struct MainObj* arg0)
+void regen_turret_idle(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->unk5++;
-        func_80015D60(arg0, 1);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk5++;
+        set_animation(self, 1);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
-void func_8005B578(struct MainObj* arg0)
+void regen_turret_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->unk5--;
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk5--;
 
-        if (arg0->unk15 == 0
-                ? arg0->x_pos.i.hi < g_Player.x_pos.i.hi
-                : arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
+        if (self->unk15 == 0
+                ? self->x_pos.i.hi < g_Player.x_pos.i.hi
+                : self->x_pos.i.hi > g_Player.x_pos.i.hi) {
             shot = find_free_shot_obj();
             if (shot != NULL) {
                 shot->active = 0x41;
                 shot->id = 0xF;
-                shot->unk7C = WEAPON_OBJECT(arg0);
+                shot->unk7C = WEAPON_OBJECT(self);
                 shot->state = 0;
                 shot->unk5 = 0;
                 shot->unk6 = 0;
             }
         }
 
-        func_80015D60(arg0, 0xA);
+        set_animation(self, 0xA);
         return;
     }
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8005B64C(struct MainObj* arg0)
+void regen_turret_main(struct MainObj* self)
 {
-    if (func_8002DD04(arg0) < 0) {
-        arg0->unk5 = 0;
-        arg0->active |= 4;
-        arg0->state++;
-        arg0->unk42 &= 0x7FFF;
+    if (func_8002DD04(self) < 0) {
+        self->unk5 = 0;
+        self->active |= 4;
+        self->state++;
+        self->unk42 &= 0x7FFF;
         return;
     }
 
-    D_800FD9D0[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+    regen_turret_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
         return;
     }
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8005B708(struct MainObj* arg0)
+void regen_turret_rebuild_break(struct MainObj* self)
 {
-    arg0->unk5++;
-    func_800AF808(BASE_OBJECT(arg0));
-    func_800C813C(5, D_800FD9BC, arg0);
-    func_80015D60(arg0, 2);
+    self->unk5++;
+    spawn_explosion(BASE_OBJECT(self));
+    spawn_debris(5, regen_turret_debris, self);
+    set_animation(self, 2);
 }
 
-void func_8005B760(struct MainObj* arg0)
+void regen_turret_rebuild_wait(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->unk5++;
-        func_80015D60(arg0, 3);
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk5++;
+        set_animation(self, 3);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
-void func_8005B7AC(struct MainObj* arg0)
+void regen_turret_rebuild_finish(struct MainObj* self)
 {
-    if (arg0->animation_step.fields.relative_step < 0) {
-        arg0->state = 1;
-        arg0->unk5 = 2;
-        arg0->unk5C = 6;
-        func_80015D60(arg0, 0);
-        arg0->active &= ~4;
+    if (self->animation_step.fields.relative_step < 0) {
+        self->state = 1;
+        self->unk5 = 2;
+        self->hp = 6;
+        set_animation(self, 0);
+        self->active &= ~4;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
-void func_8005B818(struct MainObj* arg0)
+void regen_turret_rebuild(struct MainObj* self)
 {
-    D_800FD9E0[arg0->unk5](arg0);
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) == 0) {
-        func_8002B318(BASE_OBJECT(arg0), 0x50, 0x50);
+    regen_turret_rebuild_funcs[self->unk5](self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
     } else {
-        func_8002B0C8(OBJECT_HEADER(arg0));
+        despawn_object(OBJECT_HEADER(self));
     }
 }
 
-struct Unk_unk68 D_800FD8AC[] = {
+struct Unk_unk68 regen_turret_hurt_box[] = {
     { -22, -13, 0x14, 0x19 },
 };
 
-struct Unk_unk68 D_800FD8B0[] = {
+struct Unk_unk68 regen_turret_terrain_box[] = {
     { -27, -20, 0x1A, 0x28 },
 };
 
-union AnimationStep D_800FD8B4[] = {
+union AnimationStep regen_turret_anim_0[] = {
     { 0x00010008 },
     { 0x01010008 },
     { 0x02010008 },
@@ -137,7 +138,7 @@ union AnimationStep D_800FD8B4[] = {
     { 0x06FF0001 },
 };
 
-union AnimationStep D_800FD8E4[] = {
+union AnimationStep regen_turret_anim_1[] = {
     { 0x06010005 },
     { 0x09010006 },
     { 0x0A010008 },
@@ -146,12 +147,12 @@ union AnimationStep D_800FD8E4[] = {
     { 0x06FB0001 },
 };
 
-union AnimationStep D_800FD8FC[] = {
+union AnimationStep regen_turret_anim_2[] = {
     { 0x0B010077 },
     { 0x0BFF0001 },
 };
 
-union AnimationStep D_800FD904[] = {
+union AnimationStep regen_turret_anim_3[] = {
     { 0x0B010004 },
     { 0x0C010005 },
     { 0x0D010007 },
@@ -175,7 +176,7 @@ union AnimationStep D_800FD904[] = {
     { 0x00EC0001 },
 };
 
-union AnimationStep D_800FD958[] = {
+union AnimationStep regen_turret_anim_4[] = {
     { 0x15010002 },
     { 0x16010002 },
     { 0x17010002 },
@@ -185,46 +186,46 @@ union AnimationStep D_800FD958[] = {
     { 0x1AFA0001 },
 };
 
-union AnimationStep D_800FD974[] = {
+union AnimationStep regen_turret_anim_10[] = {
     { 0x06010077 },
     { 0x06FF0001 },
 };
 
-union AnimationStep D_800FD97C[] = {
+union AnimationStep regen_turret_anim_5[] = {
     { 0x1B000001 },
 };
 
-union AnimationStep D_800FD980[] = {
+union AnimationStep regen_turret_anim_6[] = {
     { 0x1C000001 },
 };
 
-union AnimationStep D_800FD984[] = {
+union AnimationStep regen_turret_anim_7[] = {
     { 0x1D000001 },
 };
 
-union AnimationStep D_800FD988[] = {
+union AnimationStep regen_turret_anim_8[] = {
     { 0x1E000001 },
 };
 
-union AnimationStep D_800FD98C[] = {
+union AnimationStep regen_turret_anim_9[] = {
     { 0x1F000001 },
 };
 
-union AnimationStep* D_800FD990[] = {
-    D_800FD8B4,
-    D_800FD8E4,
-    D_800FD8FC,
-    D_800FD904,
-    D_800FD958,
-    D_800FD97C,
-    D_800FD980,
-    D_800FD984,
-    D_800FD988,
-    D_800FD98C,
-    D_800FD974,
+union AnimationStep* regen_turret_animations[] = {
+    regen_turret_anim_0,
+    regen_turret_anim_1,
+    regen_turret_anim_2,
+    regen_turret_anim_3,
+    regen_turret_anim_4,
+    regen_turret_anim_5,
+    regen_turret_anim_6,
+    regen_turret_anim_7,
+    regen_turret_anim_8,
+    regen_turret_anim_9,
+    regen_turret_anim_10,
 };
 
-u8 D_800FD9BC[] = {
+u8 regen_turret_debris[] = {
     0x05,
     0x06,
     0x07,
@@ -235,21 +236,21 @@ u8 D_800FD9BC[] = {
     0x00,
 };
 
-void (*D_800FD9C4[])(struct MainObj*) = {
+void (*regen_turret_state_funcs[])(struct MainObj*) = {
     func_8005B438,
-    func_8005B64C,
-    func_8005B818,
+    regen_turret_main,
+    regen_turret_rebuild,
 };
 
-void (*D_800FD9D0[])(struct MainObj*) = {
-    func_8009216C,
-    func_8005B504,
-    func_8005B52C,
-    func_8005B578,
+void (*regen_turret_step_funcs[])(struct MainObj*) = {
+    enemy_hit_reaction,
+    regen_turret_start_idle,
+    regen_turret_idle,
+    regen_turret_fire,
 };
 
-void (*D_800FD9E0[])(struct MainObj*) = {
-    func_8005B708,
-    func_8005B760,
-    func_8005B7AC,
+void (*regen_turret_rebuild_funcs[])(struct MainObj*) = {
+    regen_turret_rebuild_break,
+    regen_turret_rebuild_wait,
+    regen_turret_rebuild_finish,
 };

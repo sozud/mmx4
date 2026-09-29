@@ -2,26 +2,26 @@
 // 800BCE48..800BD1A4
 #include "common.h"
 
-void func_800BCE48(struct EffectObj* arg0)
+void rock_drop_sequence_update(struct EffectObj* self)
 {
-    D_8010BFDC[arg0->state](arg0);
+    rock_drop_sequence_state_funcs[self->state](self);
 }
 
-void func_800BCE84(struct EffectObj* arg0)
+void rock_drop_sequence_wait_player(struct EffectObj* self)
 {
     if (engine_obj.checkpoint != 0) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
         return;
     }
 
     if (g_Player.x_pos.i.hi >= 0x241) {
-        arg0->ext.effect_34.unk14 = 0;
-        arg0->ext.effect_34.timer = D_8010BFA8[0];
-        arg0->state = 1;
+        self->ext.effect_34.unk14 = 0;
+        self->ext.effect_34.timer = rock_drop_sequence_delays[0];
+        self->state = 1;
     }
 }
 
-void func_800BCEE4(struct EffectObj* self)
+void rock_drop_sequence_spawn(struct EffectObj* self)
 {
     struct EffectObj* effect;
     u8 index;
@@ -34,8 +34,8 @@ void func_800BCEE4(struct EffectObj* self)
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x21;
-            effect->unk2 = D_8010BFBC[self->ext.effect_34.unk14];
-            effect->x_pos.u.hi = D_8010BFC8[self->ext.effect_34.unk14];
+            effect->unk2 = rock_drop_sequence_subtypes[self->ext.effect_34.unk14];
+            effect->x_pos.u.hi = rock_drop_sequence_x_positions[self->ext.effect_34.unk14];
             effect->y_pos.u.hi = 0x270;
             effect->backref = NULL;
             effect->state = 0;
@@ -43,33 +43,33 @@ void func_800BCEE4(struct EffectObj* self)
 
         index = self->ext.effect_34.unk14 + 1;
         self->ext.effect_34.unk14 = index;
-        timer = D_8010BFA8[index];
+        timer = rock_drop_sequence_delays[index];
         self->ext.effect_34.timer = timer;
         if (timer == 0) {
             self->state = 2;
         }
     } else if (self->ext.effect_34.unk14 == 1 && !(background_objects[g_Player.bg_offset].unk34 & 0x10)) {
-        func_80028B68(8, 4, 2);
+        start_screen_shake_x(8, 4, 2);
     }
 }
 
-void func_800BD01C(struct EffectObj* arg0)
+void rock_drop_sequence_idle(struct EffectObj* self)
 {
 }
 
-void func_800BD024(struct EffectObj* arg0)
+void palette_pulse_init(struct EffectObj* self)
 {
     u16* src;
     u16* dst;
     u32 count;
 
-    src = D_8010BFE8;
+    src = palette_pulse_palette;
     count = 0;
-    arg0->ext.unk_effect.unk14 = 1;
-    arg0->ext.unk_effect.unk15 = 0;
-    arg0->state++;
+    self->ext.unk_effect.unk14 = 1;
+    self->ext.unk_effect.unk15 = 0;
+    self->state++;
     dst = SP_PALETTE;
-    arg0->ext.effect_4.unk16 = 0x20;
+    self->ext.effect_4.unk16 = 0x20;
     dst += 0x5E0 / 2;
     do {
         *dst++ = *src++;
@@ -77,16 +77,17 @@ void func_800BD024(struct EffectObj* arg0)
     } while (count < 0x10U);
 }
 
+// palette_pulse_step
 INCLUDE_ASM("main/nonmatchings/effects/effect_34", func_800BD080);
 
-s16 D_8010BFA8[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };
+s16 rock_drop_sequence_delays[10] = { 2, 2, 2, 0x46, 0x64, 0x46, 0x46, 0x46, 0x46, 0 };
 
-u8 D_8010BFBC[12] = { 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0, 0, 0 };
+u8 rock_drop_sequence_subtypes[12] = { 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0x24, 0, 0, 0 };
 
-s16 D_8010BFC8[10] = { 0xC0, 0x140, 0x2A0, 0x1C0, 0x240, 0x300, 0x380, 0x410, 0x4C0, 0 };
+s16 rock_drop_sequence_x_positions[10] = { 0xC0, 0x140, 0x2A0, 0x1C0, 0x240, 0x300, 0x380, 0x410, 0x4C0, 0 };
 
-void (*D_8010BFDC[])(struct EffectObj*) = {
-    func_800BCE84,
-    func_800BCEE4,
-    func_800BD01C,
+void (*rock_drop_sequence_state_funcs[])(struct EffectObj*) = {
+    rock_drop_sequence_wait_player,
+    rock_drop_sequence_spawn,
+    rock_drop_sequence_idle,
 };

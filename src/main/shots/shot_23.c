@@ -2,88 +2,88 @@
 // 8009DD40..8009E0B8
 #include "common.h"
 
-void func_8009DD40(struct ShotObj* arg0)
+void web_thread_update(struct ShotObj* self)
 {
-    D_801090AC[arg0->state](arg0);
+    web_thread_state_funcs[self->state](self);
 }
 
-void func_8009DD7C(struct ShotObj* arg0)
+void web_thread_init(struct ShotObj* self)
 {
-    arg0->state = 1;
-    arg0->on_screen = 1;
-    arg0->unk16 = 5;
-    arg0->timer = -0x32;
-    if (arg0->unk2 != 0) {
-        arg0->unk5 = 2;
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk16 = 5;
+    self->timer = -0x32;
+    if (self->unk2 != 0) {
+        self->unk5 = 2;
     } else {
-        arg0->unk5 = 0;
-        arg0->unk84.value = 0;
+        self->unk5 = 0;
+        self->unk84.value = 0;
     }
-    arg0->unk54 = D_80109028;
-    arg0->unk50.data = D_80109028;
-    arg0->unk58.data = D_8010902C[0];
-    arg0->unk68 = NULL;
-    arg0->unk5C = 3;
-    arg0->unk60 = 3;
-    arg0->unk61 = 0;
-    func_80015D60(arg0, 0x13);
+    self->unk54 = web_thread_hit_box;
+    self->unk50.data = web_thread_hit_box;
+    self->unk58.data = web_thread_collision[0];
+    self->unk68 = NULL;
+    self->unk5C = 3;
+    self->unk60 = 3;
+    self->unk61 = 0;
+    set_animation(self, 0x13);
 }
 
-void func_8009DE04(struct ShotObj* arg0)
+void web_thread_main(struct ShotObj* self)
 {
-    struct MainObj* owner = MAIN_OBJECT(arg0->unk7C);
+    struct MainObj* owner = MAIN_OBJECT(self->unk7C);
     s32 hit;
 
-    arg0->x_pos.val = owner->x_pos.val + arg0->unk84.value;
-    arg0->y_pos.val = owner->y_pos.val;
-    arg0->y_pos.i.hi += arg0->timer;
+    self->x_pos.val = owner->x_pos.val + self->unk84.value;
+    self->y_pos.val = owner->y_pos.val;
+    self->y_pos.i.hi += self->timer;
     if (owner->ext.main_43.flash_timer != 0) {
-        arg0->unk61 = 1;
+        self->unk61 = 1;
     }
     if (owner->state == 2) {
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        ZeroObjectState(OBJECT_HEADER(self));
         return;
     }
-    D_801090B8[arg0->unk5](arg0);
-    func_8002D9BC(arg0);
+    web_thread_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
     hit = 0;
     if (owner->ext.main_43.hurt_collision == 0 && owner->ext.main_43.big_web_done == 0) {
-        hit = func_8002DD04(MAIN_OBJECT(arg0));
+        hit = func_8002DD04(MAIN_OBJECT(self));
     }
-    if (arg0->unk61 != 0) {
-        arg0->unk61--;
+    if (self->unk61 != 0) {
+        self->unk61--;
     } else if (hit != 0) {
-        arg0->unk5 = 1;
-        func_80015D60(arg0, 0x14);
+        self->unk5 = 1;
+        set_animation(self, 0x14);
         owner->unk5 = 1;
         owner->unk6 = 0;
-        arg0->unk61 = 0x1E;
+        self->unk61 = 0x1E;
     }
-    is_on_screen(BASE_OBJECT(arg0));
+    is_on_screen(BASE_OBJECT(self));
 }
 
-void func_8009DF40(struct ShotObj* arg0)
+void web_thread_idle(struct ShotObj* self)
 {
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
-void func_8009DF60(struct ShotObj* arg0)
+void web_thread_snap(struct ShotObj* self)
 {
-    if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
-        arg0->unk7C->unk80.word = 0;
+    if (self->animation_step.fields.relative_step == 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk7C->unk80.word = 0;
     }
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
-void func_8009DFA0(struct ShotObj* self)
+void web_thread_pulse(struct ShotObj* self)
 {
     struct VisualObj* visual;
 
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        func_80015D60(self, 0x12);
+        set_animation(self, 0x12);
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = (s8)(u8)self->active;
@@ -104,28 +104,28 @@ void func_8009DFA0(struct ShotObj* self)
             self->unk5 = 0;
             self->unk6 = 0;
             self->unk2 = 0;
-            func_80015D60(self, 0x13);
+            set_animation(self, 0x13);
         }
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
-void func_8009E098(struct ShotObj* arg0)
+void web_thread_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*D_80109014[5])(struct ShotObj*) = {
-    func_8009D85C,
-    func_8009D8F0,
-    func_8009DA28,
-    func_8009DA7C,
-    func_8009DB1C,
+void (*web_shot_step_funcs[5])(struct ShotObj*) = {
+    web_shot_fly,
+    web_shot_home,
+    web_shot_catch,
+    web_shot_hold,
+    web_shot_fade,
 };
 
-u8 D_80109028[4] = { 0xFC, 0x82, 0x07, 0x9B };
+u8 web_thread_hit_box[4] = { 0xFC, 0x82, 0x07, 0x9B };
 
-u8 D_8010902C[32][4] = {
+u8 web_thread_collision[32][4] = {
     { 2, 1, 2, 0 },
     { 2, 0, 2, 2 },
     { 2, 0, 2, 0 },
@@ -160,14 +160,14 @@ u8 D_8010902C[32][4] = {
     { 2, 0, 2, 0 },
 };
 
-void (*D_801090AC[])(struct ShotObj*) = {
-    func_8009DD7C,
-    func_8009DE04,
-    func_8009E098,
+void (*web_thread_state_funcs[])(struct ShotObj*) = {
+    web_thread_init,
+    web_thread_main,
+    web_thread_despawn,
 };
 
-void (*D_801090B8[3])(struct ShotObj*) = {
-    func_8009DF40,
-    func_8009DF60,
-    func_8009DFA0,
+void (*web_thread_step_funcs[3])(struct ShotObj*) = {
+    web_thread_idle,
+    web_thread_snap,
+    web_thread_pulse,
 };

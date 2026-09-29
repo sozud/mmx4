@@ -2,91 +2,91 @@
 // 800D8ED4..800D9218
 #include "common.h"
 
-void func_800D9008(struct LayerObj* arg0);
-void func_800D9138(struct LayerObj* arg0);
+void jungle_parallax_section_0_scroll(struct LayerObj* arg0);
+void jungle_parallax_section_2_scroll(struct LayerObj* arg0);
 
-void func_800D8ED4(struct LayerObj* arg0)
+void jungle_parallax_update(struct LayerObj* arg0)
 {
-    D_8010FF40[arg0->state](arg0);
+    jungle_parallax_state_funcs[arg0->state](arg0);
 }
 
-void func_800D8F10(struct LayerObj* arg0)
+void jungle_parallax_init(struct LayerObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->bg_offset = 3;
     arg0->state++;
-    func_800D8F48(arg0);
+    jungle_parallax_main(arg0);
 }
 
-void func_800D8F48(struct LayerObj* arg0)
+void jungle_parallax_main(struct LayerObj* arg0)
 {
     arg0->unk15 = arg0->bg_offset;
-    func_800D91A8(arg0);
-    D_8010FF48[arg0->unk5](arg0);
+    jungle_parallax_update_section(arg0);
+    jungle_parallax_section_funcs[arg0->unk5](arg0);
 }
 
-void func_800D8F9C(struct LayerObj* arg0)
+void jungle_parallax_section_0(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D8FDC(arg0);
+        jungle_parallax_section_0_setup(arg0);
     } else {
-        func_800D9008(arg0);
+        jungle_parallax_section_0_scroll(arg0);
     }
 }
 
-void func_800D8FDC(struct LayerObj* arg0)
+void jungle_parallax_section_0_setup(struct LayerObj* arg0)
 {
     background_objects[1].unk4 = 5;
     background_objects[1].unk40 = 0x28;
     arg0->unk6++;
 }
 
-void func_800D9008(struct LayerObj* arg0)
+void jungle_parallax_section_0_scroll(struct LayerObj* arg0)
 {
     volatile f32* camera_x = &background_objects[0].x_pos;
     background_objects[1].x_pos.i.hi = background_objects[1].unk40 + (camera_x->i.hi + (camera_x->i.hi >> 1));
     background_objects[1].y_pos.i.hi = background_objects[0].y_pos.i.hi;
 }
 
-void func_800D9050(struct LayerObj* arg0)
+void jungle_parallax_section_1(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D9090(arg0);
+        jungle_parallax_section_1_setup(arg0);
     } else {
-        func_800D90BC(arg0);
+        jungle_parallax_section_1_done(arg0);
     }
 }
 
-void func_800D9090(struct LayerObj* arg0)
+void jungle_parallax_section_1_setup(struct LayerObj* arg0)
 {
     background_objects[1].unk4 = 2;
     background_objects[1].unk40 = 0x200;
     arg0->unk6++;
 }
 
-void func_800D90BC(struct LayerObj* arg0)
+void jungle_parallax_section_1_done(struct LayerObj* arg0)
 {
     arg0->unk5 = 3;
     arg0->unk6 = 0;
 }
 
-void func_800D90CC(struct LayerObj* arg0)
+void jungle_parallax_section_2(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D910C(arg0);
+        jungle_parallax_section_2_setup(arg0);
     } else {
-        func_800D9138(arg0);
+        jungle_parallax_section_2_scroll(arg0);
     }
 }
 
-void func_800D910C(struct LayerObj* arg0)
+void jungle_parallax_section_2_setup(struct LayerObj* arg0)
 {
     background_objects[1].unk4 = 5;
     background_objects[1].unk40 = 0xB60;
     arg0->unk6++;
 }
 
-void func_800D9138(struct LayerObj* arg0)
+void jungle_parallax_section_2_scroll(struct LayerObj* arg0)
 {
     s16 value;
     value = background_objects[0].x_pos.i.hi - 0x960;
@@ -97,11 +97,11 @@ void func_800D9138(struct LayerObj* arg0)
     background_objects[1].y_pos.i.hi = background_objects[1].unk42 + (background_objects[0].y_pos.i.hi - (value >> 2));
 }
 
-void func_800D91A0(struct LayerObj* arg0)
+void jungle_parallax_idle(struct LayerObj* arg0)
 {
 }
 
-void func_800D91A8(struct LayerObj* arg0)
+void jungle_parallax_update_section(struct LayerObj* arg0)
 {
     u32 var_v1;
 
@@ -120,14 +120,14 @@ void func_800D91A8(struct LayerObj* arg0)
     }
 }
 
-void (*D_8010FF40[])(struct LayerObj*) = {
-    func_800D8F10,
-    func_800D8F48,
+void (*jungle_parallax_state_funcs[])(struct LayerObj*) = {
+    jungle_parallax_init,
+    jungle_parallax_main,
 };
 
-void (*D_8010FF48[])(struct LayerObj*) = {
-    func_800D8F9C,
-    func_800D9050,
-    func_800D90CC,
-    func_800D91A0,
+void (*jungle_parallax_section_funcs[])(struct LayerObj*) = {
+    jungle_parallax_section_0,
+    jungle_parallax_section_1,
+    jungle_parallax_section_2,
+    jungle_parallax_idle,
 };

@@ -2,7 +2,7 @@
 // 800BD1E4..800BD384
 #include "common.h"
 
-void func_800BD1E4(struct EffectObj* arg0)
+void stage_exit_fade_init(struct EffectObj* self)
 {
     struct EffectObj* spawned;
 
@@ -11,28 +11,28 @@ void func_800BD1E4(struct EffectObj* arg0)
         spawned->active = 1;
         spawned->id = 2;
         spawned->unk2 = 0xC;
-        arg0->ext.effect_36.spawned_effect = spawned;
-        arg0->state = 1;
+        self->ext.effect_36.spawned_effect = spawned;
+        self->state = 1;
     }
-    arg0->ext.effect_36.timer = 0x1E;
+    self->ext.effect_36.timer = 0x1E;
 }
 
-void func_800BD23C(struct EffectObj* arg0)
+void stage_exit_fade_wait_filter(struct EffectObj* self)
 {
-    struct EffectObj* spawned = arg0->ext.effect_36.spawned_effect;
+    struct EffectObj* spawned = self->ext.effect_36.spawned_effect;
     if ((spawned->active == 0) || (spawned->id != 2)) {
-        arg0->state = 2;
+        self->state = 2;
         g_Player.invincibility_timer = 0x78;
     }
 }
 
-void func_800BD280(struct EffectObj* arg0)
+void stage_exit_fade_whiteout(struct EffectObj* self)
 {
     u32 i;
 
     g_Player.invincibility_timer = 0x78;
-    if (--arg0->ext.effect_36.timer == 0) {
-        arg0->state = 3;
+    if (--self->ext.effect_36.timer == 0) {
+        self->state = 3;
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = -1;
         }
@@ -45,18 +45,18 @@ void func_800BD280(struct EffectObj* arg0)
     }
 }
 
-void func_800BD31C(struct EffectObj* arg0)
+void stage_exit_fade_finish(struct EffectObj* self)
 {
     engine_obj.unkF = 0x40;
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800BD348(struct EffectObj* arg0)
+void stage_exit_fade_update(struct EffectObj* self)
 {
-    D_8010C008[arg0->state](arg0);
+    stage_exit_fade_state_funcs[self->state](self);
 }
 
-u16 D_8010BFE8[16] = {
+u16 palette_pulse_palette[16] = {
     0,
     0xFFFF,
     0xAB3F,
@@ -75,9 +75,9 @@ u16 D_8010BFE8[16] = {
     0x84D4,
 };
 
-void (*D_8010C008[])(struct EffectObj*) = {
-    func_800BD1E4,
-    func_800BD23C,
-    func_800BD280,
-    func_800BD31C,
+void (*stage_exit_fade_state_funcs[])(struct EffectObj*) = {
+    stage_exit_fade_init,
+    stage_exit_fade_wait_filter,
+    stage_exit_fade_whiteout,
+    stage_exit_fade_finish,
 };

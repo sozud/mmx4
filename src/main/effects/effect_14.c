@@ -2,18 +2,18 @@
 // 800B89B4..800B8AF8
 #include "common.h"
 
-void func_800B89B4(struct EffectObj* arg0)
+void item_scatter_init(struct EffectObj* self)
 {
-    arg0->ext.effect_14.unk16 = 0;
-    arg0->ext.effect_14.unk14 = 0;
-    arg0->state++;
+    self->ext.effect_14.unk16 = 0;
+    self->ext.effect_14.unk14 = 0;
+    self->state++;
 }
 
-void func_800B89CC(struct EffectObj* self)
+void item_scatter_spawn(struct EffectObj* self)
 {
     struct Effect14ItemSpawn* entry;
     struct ItemObj* item;
-    entry = D_8010B644;
+    entry = edge_spawner_items;
 
     if (entry->id != 0xFF) {
         do {
@@ -31,18 +31,18 @@ void func_800B89CC(struct EffectObj* self)
     self->state++;
 }
 
-void func_800B8A9C(struct EffectObj* arg0)
+void item_scatter_despawn(struct EffectObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800B8ABC(struct EffectObj* arg0)
+void item_scatter_update(struct EffectObj* self)
 {
-    D_8010B6B8[arg0->state](arg0);
+    item_scatter_state_funcs[self->state](self);
 }
 
-void (*D_8010B6B8[])(struct EffectObj*) = {
-    func_800B89B4,
-    func_800B89CC,
-    func_800B8A9C,
+void (*item_scatter_state_funcs[])(struct EffectObj*) = {
+    item_scatter_init,
+    item_scatter_spawn,
+    item_scatter_despawn,
 };

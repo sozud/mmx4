@@ -3,6 +3,7 @@
 #include "common.h"
 #include "func_tables.h"
 
+// magma_dragoon_init
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007DD98);
 
 void magma_dragoon_intro_warning(struct MainObj* self)
@@ -36,13 +37,13 @@ void magma_dragoon_intro_warning(struct MainObj* self)
 void magma_dragoon_intro_leap(struct MainObj* self)
 {
     if (self->ext.main_65.object->active == 0) {
-        self->unk24 = FIXED(2);
-        self->unk20 = 0;
-        self->unk28 = FIXED(0.0078125);
+        self->y_speed = FIXED(2);
+        self->x_speed = 0;
+        self->x_accel = FIXED(0.0078125);
         self->unk6++;
-        func_80015D60(self, 0xF);
+        set_animation(self, 0xF);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 0);
-        self->unk67 = 1;
+        self->air_state = 1;
         self->unk7E = 0x14;
     }
 }
@@ -50,39 +51,39 @@ void magma_dragoon_intro_leap(struct MainObj* self)
 void magma_dragoon_intro_descend(struct MainObj* self)
 {
     if ((self->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x20) {
-        self->unk20 = FIXED(-2);
-        self->unk24 = FIXED(-2);
-        self->unk2C = FIXED(0.1875);
-        self->unk28 = 0;
-        self->unk68 = &D_80102A60;
+        self->x_speed = FIXED(-2);
+        self->y_speed = FIXED(-2);
+        self->gravity = FIXED(0.1875);
+        self->x_accel = 0;
+        self->terrain_box = &magma_dragoon_terrain_box;
         self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_intro_land(struct MainObj* self)
 {
-    if (self->unk70 & 8) {
-        func_80015D60(self, 0x10);
-        self->unk67 = 0;
+    if (self->collision_flags & 8) {
+        set_animation(self, 0x10);
+        self->air_state = 0;
         func_8001540C(2, 2, self);
-        self->unk20 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk6++;
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_intro_pose(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
-        func_80015D60(self, 0x11);
+        set_animation(self, 0x11);
         self->unk6++;
         if (engine_obj.stage == 4) {
             ((void (*)(u16, u8, s8))func_8002217C)(
@@ -90,51 +91,51 @@ void magma_dragoon_intro_pose(struct MainObj* self)
             engine_obj.character_state.bytes[8] = 1;
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_intro_start_health_bar(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
         self->unk6++;
-        func_800921E8(3);
+        play_boss_music(3);
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_intro_ready(struct MainObj* self)
 {
-    if (self->animation_step.fields.relative_step == 0 && func_8009227C() == 0) {
-        func_80015D60(self, 0x12);
+    if (self->animation_step.fields.relative_step == 0 && update_boss_music_delay() == 0) {
+        set_animation(self, 0x12);
         engine_obj.enable_boss = 1;
         self->unk7E = 3;
-        self->unk20 = 0;
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
         self->unk6++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
-void func_8007E350(struct MainObj* arg0)
+void magma_dragoon_intro_fill_health(struct MainObj* self)
 {
-    if (arg0->unk5C < 0x30) {
-        if (--arg0->unk7E == 0) {
+    if (self->hp < 0x30) {
+        if (--self->unk7E == 0) {
             func_8001540C(0, 0xE, 0);
-            arg0->unk7E = 3;
+            self->unk7E = 3;
         }
-        arg0->unk5C++;
-        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+        self->hp++;
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     } else {
-        func_80015D60(arg0, 0);
-        arg0->unk5 = 3;
-        arg0->unk6 = 0;
-        arg0->unk54 = &D_80102A64;
+        set_animation(self, 0);
+        self->unk5 = 3;
+        self->unk6 = 0;
+        self->hurt_box = &magma_dragoon_hurt_box;
         player_end_script_action();
         if (engine_obj.stage == 0xC) {
             background_objects[0].unk26 = 0x110;
@@ -144,7 +145,7 @@ void func_8007E350(struct MainObj* arg0)
             background_objects[0].unk24 = 0x1490;
         }
         background_objects[0].unk48 = 4;
-        func_8002B318(BASE_OBJECT(arg0), 0x40, 0x40);
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
 
@@ -162,6 +163,7 @@ void magma_dragoon_face_player(struct MainObj* self)
     }
 }
 
+// magma_dragoon_think
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E4C8);
 
 void magma_dragoon_dive_kick_jump(struct MainObj* self)
@@ -169,19 +171,19 @@ void magma_dragoon_dive_kick_jump(struct MainObj* self)
     s32 var_a0;
 
     magma_dragoon_face_player(self);
-    func_80015D60(self, 3);
+    set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
-    self->unk67 = 1;
+    self->air_state = 1;
     func_8001540C(2, 0, self);
     var_a0 = FIXED(-0.75);
     self->unk6 = (u8)self->unk6 + 1;
     if (self->unk15 != 0) {
         var_a0 = FIXED(0.75);
     }
-    self->unk24 = FIXED(4);
-    self->unk28 = FIXED(0.03125);
-    self->unk20 = var_a0;
-    self->unk2C = FIXED(-0.03125);
+    self->y_speed = FIXED(4);
+    self->x_accel = FIXED(0.03125);
+    self->x_speed = var_a0;
+    self->gravity = FIXED(-0.03125);
     self->ext.main_65.jump_start_y = (u16)self->y_pos.i.hi;
 }
 
@@ -189,46 +191,49 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
 {
     if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) >= 0x51) {
         self->unk6++;
-        func_80015D60(self, 4);
+        set_animation(self, 4);
         func_8001540C(2, 1, self);
-        self->unk60 = 6;
-        self->unk24 = FIXED(-6);
-        self->unk28 = 0;
-        self->unk2C = 0;
+        self->contact_damage = 6;
+        self->y_speed = FIXED(-6);
+        self->x_accel = 0;
+        self->gravity = 0;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// magma_dragoon_dive_kick_dive
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E6F8);
 
+// magma_dragoon_dive_kick_land
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E848);
 
 void magma_dragoon_dive_kick(struct MainObj* self)
 {
     magma_dragoon_dive_kick_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_flame_burst_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
-    func_80015D60(ANIMATED_OBJECT(self), 0xB);
+    set_animation(ANIMATED_OBJECT(self), 0xB);
     self->unk6++;
 }
 
+// magma_dragoon_flame_burst_fire
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007E95C);
 
 void magma_dragoon_flame_burst(struct MainObj* self)
 {
     magma_dragoon_flame_burst_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_fire_volley_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
-    func_80015D60(self, 0xC);
+    set_animation(self, 0xC);
     func_8001540C(2, 3, self);
     self->unk6++;
 }
@@ -239,14 +244,14 @@ void magma_dragoon_fire_volley_fire(struct MainObj* self)
     s8 shot_index;
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     event = self->animation_step.fields.event;
     if (event != 0) {
         if (event == 0xA) {
             self->unk7C = 0xF0;
             self->unk6 = (u8)self->unk6 + 1;
         }
-        func_800C813C(4, &D_801034B4, self);
+        spawn_debris(4, &magma_dragoon_fire_volley_debris, self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -272,7 +277,7 @@ void magma_dragoon_fire_volley_fire(struct MainObj* self)
 
 void magma_dragoon_fire_volley_wait(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)self);
+    animate_object((struct AnimatedObj*)self);
     if (--self->unk7C == 0) {
         self->unk5 = 9;
         self->unk6 = 0;
@@ -282,7 +287,7 @@ void magma_dragoon_fire_volley_wait(struct MainObj* self)
 void magma_dragoon_fire_volley(struct MainObj* self)
 {
     magma_dragoon_fire_volley_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_breath_start(struct MainObj* self)
@@ -292,7 +297,7 @@ void magma_dragoon_breath_start(struct MainObj* self)
     } else {
         self->unk15 = 0x40;
     }
-    func_80015D60(self, 0xA);
+    set_animation(self, 0xA);
     func_8001540C(2, 3, self);
     self->unk6++;
 }
@@ -301,7 +306,7 @@ void magma_dragoon_breath_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
         shot = find_free_shot_obj();
         if (shot != 0) {
@@ -324,14 +329,14 @@ void magma_dragoon_breath_fire(struct MainObj* self)
         } else {
             self->unk5 = 3;
         }
-        func_80015D60(self, 0);
+        set_animation(self, 0);
     }
 }
 
 void magma_dragoon_breath(struct MainObj* self)
 {
     magma_dragoon_breath_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_leap_center_start(struct MainObj* self)
@@ -343,59 +348,59 @@ void magma_dragoon_leap_center_start(struct MainObj* self)
     } else {
         self->unk15 = 0x40;
     }
-    func_80015D60(self, 3);
+    set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
-    self->unk67 = 1;
+    self->air_state = 1;
     func_8001540C(2, 0, self);
     var_v1 = FIXED(-5);
     if (self->unk15 != 0) {
         var_v1 = FIXED(5);
     }
-    self->unk24 = FIXED(3);
-    self->unk2C = FIXED(-0.03125);
-    self->unk20 = var_v1;
-    self->unk28 = 0;
-    self->unk50 = (const u8*)&D_80102A70;
+    self->y_speed = FIXED(3);
+    self->gravity = FIXED(-0.03125);
+    self->x_speed = var_v1;
+    self->x_accel = 0;
+    self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
 
 void magma_dragoon_leap_center_glide(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 
     if (self->y_pos.i.hi < magma_dragoon_arena_ceiling[0]) {
         self->y_pos.i.hi = magma_dragoon_arena_ceiling[0];
-        self->unk24 = 0;
-        self->unk2C = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
     }
 
     if (self->unk15 == 0
             ? self->x_pos.i.hi < (*magma_dragoon_arena_center - 0x10)
             : (*magma_dragoon_arena_center + 0x10) < self->x_pos.i.hi) {
-        self->unk2C = FIXED(0.12109375);
+        self->gravity = FIXED(0.12109375);
         self->unk6++;
     }
 }
 
 void magma_dragoon_leap_center_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         self->unk6++;
-        func_80015D60(self, 6);
+        set_animation(self, 6);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
-        self->unk67 = 0;
+        self->air_state = 0;
         func_8001540C(2, 2, self);
     }
 }
 
 void magma_dragoon_leap_center_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->unk50 = (const u8*)&D_80102A6C;
+        self->attack_box = (const u8*)&magma_dragoon_attack_box;
         self->unk6 = 0;
         self->unk5 = 7;
     }
@@ -404,20 +409,20 @@ void magma_dragoon_leap_center_recover(struct MainObj* self)
 void magma_dragoon_leap_center(struct MainObj* self)
 {
     magma_dragoon_leap_center_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_leap_wall_start(struct MainObj* self)
 {
     self->ext.main_65.leap_frames = 0x40;
     magma_dragoon_face_player(self);
-    self->unk24 = FIXED(6);
-    self->unk2C = FIXED(0.1875);
-    self->unk28 = 0;
-    self->unk50 = (const u8*)&D_80102A70;
-    func_80015D60(self, 3);
+    self->y_speed = FIXED(6);
+    self->gravity = FIXED(0.1875);
+    self->x_accel = 0;
+    self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
+    set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
-    self->unk67 = 1;
+    self->air_state = 1;
     func_8001540C(2, 0, self);
     if (self->x_pos.i.hi < magma_dragoon_arena_center[0]) {
         self->ext.main_65.leap_to_right = 1;
@@ -427,6 +432,7 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
     self->unk6++;
 }
 
+// magma_dragoon_leap_wall_air
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F174);
 
 void magma_dragoon_leap_wall_finish(struct MainObj* self)
@@ -436,114 +442,117 @@ void magma_dragoon_leap_wall_finish(struct MainObj* self)
             self->unk5 = 5;
         } else {
             self->unk5 = 3;
-            func_80015D60(self, 0);
+            set_animation(self, 0);
         }
         self->unk6 = 0;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void magma_dragoon_leap_wall(struct MainObj* self)
 {
     magma_dragoon_leap_wall_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_fireball_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
-    func_80015D60(self, 8);
-    self->unk50 = (const u8*)&D_80102A70;
+    set_animation(self, 8);
+    self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
 
+// magma_dragoon_fireball_fire
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F404);
 
 void magma_dragoon_fireball(struct MainObj* self)
 {
     magma_dragoon_fireball_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_fireball_low_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
-    func_80015D60(self, 9);
-    self->unk50 = (const u8*)&D_80102A70;
+    set_animation(self, 9);
+    self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
 
+// magma_dragoon_fireball_low_fire
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F5B0);
 
 void magma_dragoon_fireball_low(struct MainObj* self)
 {
     magma_dragoon_fireball_low_funcs[self->unk6](self);
     if ((u32)(self->animation_step.fields.frame_index - 0x19) < 2U) {
-        self->unk54 = (const u8*)&D_80102A68;
+        self->hurt_box = (const u8*)&magma_dragoon_crouch_hurt_box;
     } else {
-        self->unk54 = (const u8*)&D_80102A64;
+        self->hurt_box = (const u8*)&magma_dragoon_hurt_box;
     }
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_rising_punch_start(struct MainObj* self)
 {
-    self->unk60 = 8;
+    self->contact_damage = 8;
     magma_dragoon_face_player(self);
-    func_80015D60(self, 5);
+    set_animation(self, 5);
     func_8001540C(2, 5, self);
-    self->unk50 = (const u8*)&D_80102A70;
+    self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
 
+// magma_dragoon_rising_punch_charge
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007F780);
 
 void magma_dragoon_rising_punch_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
 
     if (self->animation_step.fields.event == 2) {
-        self->unk50 = (const u8*)&D_80102A74;
+        self->attack_box = (const u8*)&magma_dragoon_punch_attack_box;
     }
 
     if (self->unk15 != 0) {
-        if (self->unk20 < 0) {
+        if (self->x_speed < 0) {
             goto reset_velocity;
         }
-    } else if (self->unk20 >= 0) {
+    } else if (self->x_speed >= 0) {
     reset_velocity:
-        self->unk20 = 0;
-        self->unk28 = 0;
+        self->x_speed = 0;
+        self->x_accel = 0;
     }
 
-    if (self->unk24 < 0) {
-        self->unk20 = 0;
-        self->unk28 = 0;
+    if (self->y_speed < 0) {
+        self->x_speed = 0;
+        self->x_accel = 0;
         self->unk6++;
-        func_80015D60(self, 7);
-        self->unk50 = (const u8*)&D_80102A6C;
+        set_animation(self, 7);
+        self->attack_box = (const u8*)&magma_dragoon_attack_box;
     }
 }
 
 void magma_dragoon_rising_punch_land(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         self->unk6++;
-        func_80015D60(self, 6);
-        self->unk50 = (const u8*)&D_80102A6C;
-        self->unk60 = 4;
+        set_animation(self, 6);
+        self->attack_box = (const u8*)&magma_dragoon_attack_box;
+        self->contact_damage = 4;
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
-        self->unk67 = 0;
+        self->air_state = 0;
         func_8001540C(2, 2, self);
     }
 }
 
 void magma_dragoon_rising_punch_recover(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step != 0) {
         return;
     }
@@ -559,16 +568,17 @@ void magma_dragoon_rising_punch_recover(struct MainObj* self)
 void magma_dragoon_rising_punch(struct MainObj* self)
 {
     magma_dragoon_rising_punch_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
+// magma_dragoon_stagger_start
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FAA4);
 
 void magma_dragoon_stagger_rise(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk24 < 0) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed < 0) {
         self->unk6++;
     }
 }
@@ -577,25 +587,25 @@ void magma_dragoon_stagger_burn(struct MainObj* self)
 {
     struct MainObj* child;
 
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
     child = self->ext.main_65.object;
     if (child->animation_step.fields.relative_step < 0) {
         child->state = 2;
-        self->unk24 = 0;
-        self->unk2C = FIXED(0.2578125);
-        self->unk20 = 0;
-        self->unk28 = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
+        self->x_speed = 0;
+        self->x_accel = 0;
         self->unk6++;
     }
 }
 
 void magma_dragoon_stagger_fall(struct MainObj* self)
 {
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B694(ANIMATED_OBJECT(self));
-    if (self->unk70 & 8) {
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->collision_flags & 8) {
         self->unk6++;
-        func_80015D60(self, 0);
+        set_animation(self, 0);
         if (self->ext.main_65.flash_timer & 1) {
             self->ext.main_65.flash_timer = 0x3D;
         } else {
@@ -607,7 +617,7 @@ void magma_dragoon_stagger_fall(struct MainObj* self)
 
 void magma_dragoon_stagger_recover(struct MainObj* self)
 {
-    func_80015DC8((struct AnimatedObj*)self);
+    animate_object((struct AnimatedObj*)self);
     if (--self->unk7C == 0) {
         self->unk5 = 9;
         self->unk6 = 0;
@@ -617,29 +627,32 @@ void magma_dragoon_stagger_recover(struct MainObj* self)
 void magma_dragoon_stagger(struct MainObj* self)
 {
     magma_dragoon_stagger_funcs[self->unk6](self);
-    func_8002B318((struct BaseObj*)self, 0x40, 0x40);
+    update_on_screen((struct BaseObj*)self, 0x40, 0x40);
 }
 
 void magma_dragoon_hold(struct MainObj* self)
 {
 }
 
+// magma_dragoon_main
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FD24);
 
 void magma_dragoon_death_start(struct MainObj* self)
 {
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
-    self->unk61 = 0x19;
+    self->invincibility_timer = 0x19;
     self->unk5++;
     self->unk42 &= 0x7FFF;
-    func_80015D60(self, 0xD);
+    set_animation(self, 0xD);
     player_start_script_action(0x14, g_Player.unk15);
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
+// magma_dragoon_death_flash
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FF00);
 
+// magma_dragoon_death_begin_explosion
 INCLUDE_ASM("main/nonmatchings/mains/main_65", func_8007FFFC);
 
 void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2)
@@ -652,19 +665,19 @@ void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2
         ((void (*)(u16, u8, s32))func_8002217C)(0xC, 0xFF, arg2);
 #endif
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 void magma_dragoon_death_wait_dialog(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
-        func_80015D60(self, 0x13);
+        set_animation(self, 0x13);
         self->unk7C = 0x50;
         self->unk5++;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
-    func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
 #ifdef MMX4_PC
@@ -672,11 +685,11 @@ void magma_dragoon_death_wait_dialog(struct MainObj* self)
     do {                                                                 \
         s32 smoke_x = (self)->x_pos.i.hi + (get_random() & 0x3F) - 0x20; \
         s32 smoke_y = (self)->y_pos.i.hi + (get_random() & 0x1F);        \
-        func_800AFAB4(0, smoke_x, smoke_y, kind);                        \
+        spawn_explosion_at(0, smoke_x, smoke_y, kind);                   \
     } while (0)
 #else
-#define MAGMA_DRAGOON_SMOKE(self, kind)                                 \
-    func_800AFAB4(0, (self)->x_pos.i.hi + (get_random() & 0x3F) - 0x20, \
+#define MAGMA_DRAGOON_SMOKE(self, kind)                                      \
+    spawn_explosion_at(0, (self)->x_pos.i.hi + (get_random() & 0x3F) - 0x20, \
         (self)->y_pos.i.hi + (get_random() & 0x1F), kind)
 #endif
 
@@ -696,7 +709,7 @@ void magma_dragoon_death_smoke(struct MainObj* self)
     }
 
     if ((self->unk7C & 3) != 0) {
-        func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
 
@@ -717,7 +730,7 @@ void magma_dragoon_death_vanish(struct MainObj* self)
     }
 
     if ((self->unk7C & 1) != 0) {
-        func_8002B318(BASE_OBJECT(self), 0x40, 0x40);
+        update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }
 
@@ -742,25 +755,25 @@ void magma_dragoon_update(struct MainObj* self)
     magma_dragoon_state_funcs[self->state](self);
 }
 
-struct Unk_unk68 D_80102A60 = { -1, 22, 13, 17 };
+struct Unk_unk68 magma_dragoon_terrain_box = { -1, 22, 13, 17 };
 
-struct Unk_unk68 D_80102A64 = { -16, -28, 31, 67 };
+struct Unk_unk68 magma_dragoon_hurt_box = { -16, -28, 31, 67 };
 
-struct Unk_unk68 D_80102A68 = { -13, 18, 41, 21 };
+struct Unk_unk68 magma_dragoon_crouch_hurt_box = { -13, 18, 41, 21 };
 
-struct Unk_unk68 D_80102A6C = { -10, -19, 16, 58 };
+struct Unk_unk68 magma_dragoon_attack_box = { -10, -19, 16, 58 };
 
-struct Unk_unk68 D_80102A70 = { -2, -20, 19, 44 };
+struct Unk_unk68 magma_dragoon_leap_attack_box = { -2, -20, 19, 44 };
 
-struct Unk_unk68 D_80102A74 = { -32, -54, 38, 76 };
+struct Unk_unk68 magma_dragoon_punch_attack_box = { -32, -54, 38, 76 };
 
-struct Unk_unk68 D_80102A78 = { -41, -12, 22, 45 };
+struct Unk_unk68 magma_dragoon_dive_kick_attack_box = { -41, -12, 22, 45 };
 
-union AnimationStep D_80102A7C[] = {
+union AnimationStep magma_dragoon_anim_0[] = {
     { 0x00000001 },
 };
 
-struct Unk_unk68 D_80102A80[32] = {
+struct Unk_unk68 magma_dragoon_anim_1[32] = {
     { 3, 0, 1, 0 },
     { 3, 0, 1, 1 },
     { 2, 0, 1, 2 },
@@ -795,7 +808,7 @@ struct Unk_unk68 D_80102A80[32] = {
     { 1, 0, -15, 8 },
 };
 
-union AnimationStep D_80102B00[] = {
+union AnimationStep magma_dragoon_anim_2[] = {
     { 0x02010002 },
     { 0x04010002 },
     { 0x05010006 },
@@ -807,11 +820,11 @@ union AnimationStep D_80102B00[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102B24[] = {
+union AnimationStep magma_dragoon_anim_3[] = {
     { 0x0A000001 },
 };
 
-struct Unk_unk68 D_80102B28[18] = {
+struct Unk_unk68 magma_dragoon_anim_4[18] = {
     { 2, 0, 1, -60 },
     { 2, 0, 1, -59 },
     { 2, 0, 1, -60 },
@@ -832,7 +845,7 @@ struct Unk_unk68 D_80102B28[18] = {
     { 1, 1, -11, -86 },
 };
 
-struct Unk_unk68 D_80102B70[19] = {
+struct Unk_unk68 magma_dragoon_anim_5[19] = {
     { 2, 0, 1, 13 },
     { 2, 0, 1, 14 },
     { 2, 0, 1, 13 },
@@ -854,11 +867,11 @@ struct Unk_unk68 D_80102B70[19] = {
     { 1, 2, -11, 65 },
 };
 
-union AnimationStep D_80102BBC[] = {
+union AnimationStep magma_dragoon_anim_7[] = {
     { 0x0B000001 },
 };
 
-union AnimationStep D_80102BC0[] = {
+union AnimationStep magma_dragoon_anim_8[] = {
     { 0x15010001 },
     { 0x16010001 },
     { 0x15010001 },
@@ -885,7 +898,7 @@ union AnimationStep D_80102BC0[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102C20[] = {
+union AnimationStep magma_dragoon_anim_9[] = {
     { 0x17010001 },
     { 0x18010001 },
     { 0x17010001 },
@@ -912,7 +925,7 @@ union AnimationStep D_80102C20[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102C80[] = {
+union AnimationStep magma_dragoon_anim_10[] = {
     { 0x00010002 },
     { 0x01010002 },
     { 0x1B010002 },
@@ -925,7 +938,7 @@ union AnimationStep D_80102C80[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102CA8[] = {
+union AnimationStep magma_dragoon_anim_11[] = {
     { 0x00010003 },
     { 0x01010003 },
     { 0x20010003 },
@@ -985,7 +998,7 @@ union AnimationStep D_80102CA8[] = {
     { 0x00000001 },
 };
 
-u32 D_80102D8C[55] = {
+u32 magma_dragoon_anim_12[55] = {
     0x00010003,
     0x01010003,
     0x20010003,
@@ -1043,11 +1056,11 @@ u32 D_80102D8C[55] = {
     0x2CF70001,
 };
 
-union AnimationStep D_80102E68[] = {
+union AnimationStep magma_dragoon_anim_13[] = {
     { 0x2D000001 },
 };
 
-struct Unk_unk68 D_80102E6C[12] = {
+struct Unk_unk68 magma_dragoon_anim_14[12] = {
     { 1, 0, 1, 46 },
     { 1, 0, 1, 47 },
     { 1, 0, 1, 48 },
@@ -1062,13 +1075,13 @@ struct Unk_unk68 D_80102E6C[12] = {
     { 1, 0, -11, 57 },
 };
 
-struct Unk_unk68 D_80102E9C[3] = {
+struct Unk_unk68 magma_dragoon_anim_15[3] = {
     { 2, 0, 1, 6 },
     { 1, 0, 1, 86 },
     { 1, 0, -2, 86 },
 };
 
-union AnimationStep D_80102EA8[] = {
+union AnimationStep magma_dragoon_anim_16[] = {
     { 0x54010002 },
     { 0x55010002 },
     { 0x52010002 },
@@ -1116,11 +1129,11 @@ union AnimationStep D_80102EA8[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_80102F5C[] = {
+union AnimationStep magma_dragoon_anim_17[] = {
     { 0x5B000001 },
 };
 
-union AnimationStep D_80102F60[] = {
+union AnimationStep magma_dragoon_anim_18[] = {
     { 0x0D010002 },
     { 0x0E010001 },
     { 0x0D010002 },
@@ -1149,13 +1162,13 @@ union AnimationStep D_80102F60[] = {
     { 0x0D000001 },
 };
 
-struct Unk_unk68 D_80102FC8[3] = {
+struct Unk_unk68 magma_dragoon_anim_19[3] = {
     { 2, 0, 1, 92 },
     { 1, 0, 1, 93 },
     { 1, 0, -2, 93 },
 };
 
-struct Unk_unk68 D_80102FD4[12] = {
+struct Unk_unk68 magma_dragoon_anim_20[12] = {
     { 50, 0, 1, 92 },
     { 6, 0, 1, 94 },
     { 6, 0, 1, 95 },
@@ -1170,7 +1183,7 @@ struct Unk_unk68 D_80102FD4[12] = {
     { 1, 0, -6, 96 },
 };
 
-struct Unk_unk68 D_80103004[29] = {
+struct Unk_unk68 magma_dragoon_anim_21[29] = {
     { 1, 0, 1, 100 },
     { 1, 0, 1, 101 },
     { 1, 0, 1, 102 },
@@ -1202,9 +1215,9 @@ struct Unk_unk68 D_80103004[29] = {
     { 1, 0, -28, 118 },
 };
 
-u8 D_80103078[172] = { 50, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 1, 0, 1, 97, 1, 0, 255, 92 };
+u8 magma_dragoon_anim_22[172] = { 50, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 1, 0, 1, 97, 1, 0, 255, 92 };
 
-union AnimationStep D_80103124[] = {
+union AnimationStep magma_dragoon_anim_24[] = {
     { 0x42010001 },
     { 0x43010001 },
     { 0x44010001 },
@@ -1218,7 +1231,7 @@ union AnimationStep D_80103124[] = {
     { 0x51000001 },
 };
 
-union AnimationStep D_80103150[] = {
+union AnimationStep magma_dragoon_anim_23[] = {
     { 0x63010001 },
     { 0x63010001 },
     { 0x63010001 },
@@ -1232,7 +1245,7 @@ union AnimationStep D_80103150[] = {
     { 0x4B000001 },
 };
 
-struct Unk_unk68 D_8010317C[18] = {
+struct Unk_unk68 magma_dragoon_anim_25[18] = {
     { 1, 0, 1, 119 },
     { 1, 0, 1, 118 },
     { 1, 0, 1, 120 },
@@ -1253,7 +1266,7 @@ struct Unk_unk68 D_8010317C[18] = {
     { 1, 0, -13, 118 },
 };
 
-union AnimationStep D_801031C4[] = {
+union AnimationStep magma_dragoon_anim_26[] = {
     { 0x80010001 },
     { 0x76010001 },
     { 0x81010001 },
@@ -1264,7 +1277,7 @@ union AnimationStep D_801031C4[] = {
     { 0x76000001 },
 };
 
-union AnimationStep D_801031E4[] = {
+union AnimationStep magma_dragoon_anim_27[] = {
     { 0x84010002 },
     { 0x85010002 },
     { 0x86010002 },
@@ -1278,7 +1291,7 @@ union AnimationStep D_801031E4[] = {
     { 0x8D000001 },
 };
 
-struct Unk_unk68 D_80103210[11] = {
+struct Unk_unk68 magma_dragoon_anim_28[11] = {
     { 2, 0, 1, -114 },
     { 2, 0, 1, -113 },
     { 2, 0, 1, -112 },
@@ -1292,7 +1305,7 @@ struct Unk_unk68 D_80103210[11] = {
     { 1, 0, -7, -107 },
 };
 
-struct Unk_unk68 D_8010323C[11] = {
+struct Unk_unk68 magma_dragoon_anim_29[11] = {
     { 2, 0, 1, -106 },
     { 2, 0, 1, -105 },
     { 2, 0, 1, -104 },
@@ -1306,7 +1319,7 @@ struct Unk_unk68 D_8010323C[11] = {
     { 1, 0, -7, -99 },
 };
 
-struct Unk_unk68 D_80103268[8] = {
+struct Unk_unk68 magma_dragoon_anim_30[8] = {
     { 2, 0, 1, -98 },
     { 1, 0, 1, -97 },
     { 2, 0, 1, -96 },
@@ -1317,7 +1330,7 @@ struct Unk_unk68 D_80103268[8] = {
     { 1, 0, -7, -94 },
 };
 
-struct Unk_unk68 D_80103288[5] = {
+struct Unk_unk68 magma_dragoon_anim_31[5] = {
     { 2, 0, 1, -85 },
     { 1, 0, 1, 118 },
     { 1, 0, 1, -85 },
@@ -1325,7 +1338,7 @@ struct Unk_unk68 D_80103288[5] = {
     { 1, 0, -2, -83 },
 };
 
-union AnimationStep D_8010329C[] = {
+union AnimationStep magma_dragoon_anim_32[] = {
     { 0xAE010001 },
     { 0xAF010002 },
     { 0xB0010002 },
@@ -1336,7 +1349,7 @@ union AnimationStep D_8010329C[] = {
     { 0xB5000001 },
 };
 
-union AnimationStep D_801032BC[] = {
+union AnimationStep magma_dragoon_anim_33[] = {
     { 0xB6010001 },
     { 0xB7010001 },
     { 0xB8010002 },
@@ -1353,7 +1366,7 @@ union AnimationStep D_801032BC[] = {
     { 0xC3000001 },
 };
 
-union AnimationStep D_801032F4[] = {
+union AnimationStep magma_dragoon_anim_34[] = {
     { 0xC6010001 },
     { 0xC7010001 },
     { 0xC8010001 },
@@ -1361,7 +1374,7 @@ union AnimationStep D_801032F4[] = {
     { 0xCA000001 },
 };
 
-struct Unk_unk68 D_80103308[31] = {
+struct Unk_unk68 magma_dragoon_anim_35[31] = {
     { 1, 0, 1, -53 },
     { 1, 0, 1, -52 },
     { 1, 0, 1, -51 },
@@ -1395,7 +1408,7 @@ struct Unk_unk68 D_80103308[31] = {
     { 1, 0, -30, -46 },
 };
 
-union AnimationStep D_80103384[] = {
+union AnimationStep magma_dragoon_anim_6[] = {
     { 0x03010002 },
     { 0x07010001 },
     { 0x04010002 },
@@ -1408,7 +1421,7 @@ union AnimationStep D_80103384[] = {
     { 0x00000001 },
 };
 
-union AnimationStep D_801033AC[] = {
+union AnimationStep magma_dragoon_anim_36[] = {
     { 0xD3010001 },
     { 0x76010001 },
     { 0xD4010001 },
@@ -1427,7 +1440,7 @@ union AnimationStep D_801033AC[] = {
     { 0x76000001 },
 };
 
-union AnimationStep D_801033EC[] = {
+union AnimationStep magma_dragoon_anim_37[] = {
     { 0xDB010001 },
     { 0x76010001 },
     { 0xDC010001 },
@@ -1443,47 +1456,47 @@ union AnimationStep D_801033EC[] = {
 };
 
 void* magma_dragoon_animations[38] = {
-    D_80102A7C,
-    D_80102A80,
-    D_80102B00,
-    D_80102B24,
-    D_80102B28,
-    D_80102B70,
-    D_80103384,
-    D_80102BBC,
-    D_80102BC0,
-    D_80102C20,
-    D_80102C80,
-    D_80102CA8,
-    D_80102D8C,
-    D_80102E68,
-    D_80102E6C,
-    D_80102E9C,
-    D_80102EA8,
-    D_80102F5C,
-    D_80102F60,
-    D_80102FC8,
-    D_80102FD4,
-    D_80103004,
-    D_80103078,
-    D_80103150,
-    D_80103124,
-    D_8010317C,
-    D_801031C4,
-    D_801031E4,
-    D_80103210,
-    D_8010323C,
-    D_80103268,
-    D_80103288,
-    D_8010329C,
-    D_801032BC,
-    D_801032F4,
-    D_80103308,
-    D_801033AC,
-    D_801033EC,
+    magma_dragoon_anim_0,
+    magma_dragoon_anim_1,
+    magma_dragoon_anim_2,
+    magma_dragoon_anim_3,
+    magma_dragoon_anim_4,
+    magma_dragoon_anim_5,
+    magma_dragoon_anim_6,
+    magma_dragoon_anim_7,
+    magma_dragoon_anim_8,
+    magma_dragoon_anim_9,
+    magma_dragoon_anim_10,
+    magma_dragoon_anim_11,
+    magma_dragoon_anim_12,
+    magma_dragoon_anim_13,
+    magma_dragoon_anim_14,
+    magma_dragoon_anim_15,
+    magma_dragoon_anim_16,
+    magma_dragoon_anim_17,
+    magma_dragoon_anim_18,
+    magma_dragoon_anim_19,
+    magma_dragoon_anim_20,
+    magma_dragoon_anim_21,
+    magma_dragoon_anim_22,
+    magma_dragoon_anim_23,
+    magma_dragoon_anim_24,
+    magma_dragoon_anim_25,
+    magma_dragoon_anim_26,
+    magma_dragoon_anim_27,
+    magma_dragoon_anim_28,
+    magma_dragoon_anim_29,
+    magma_dragoon_anim_30,
+    magma_dragoon_anim_31,
+    magma_dragoon_anim_32,
+    magma_dragoon_anim_33,
+    magma_dragoon_anim_34,
+    magma_dragoon_anim_35,
+    magma_dragoon_anim_36,
+    magma_dragoon_anim_37,
 };
 
-struct Unk_unk68 D_801034B4 = { 36, 37, 36, 37 };
+struct Unk_unk68 magma_dragoon_fire_volley_debris = { 36, 37, 36, 37 };
 
 void (*magma_dragoon_intro_funcs[8])() = {
     magma_dragoon_intro_warning,
@@ -1493,7 +1506,7 @@ void (*magma_dragoon_intro_funcs[8])() = {
     magma_dragoon_intro_pose,
     magma_dragoon_intro_start_health_bar,
     magma_dragoon_intro_ready,
-    func_8007E350,
+    magma_dragoon_intro_fill_health,
 };
 
 void (*magma_dragoon_dive_kick_funcs[4])() = {
@@ -1559,7 +1572,7 @@ void (*magma_dragoon_stagger_funcs[5])() = {
 };
 
 void (*magma_dragoon_step_funcs[14])() = {
-    func_8009216C,
+    enemy_hit_reaction,
     magma_dragoon_hold,
     magma_dragoon_intro,
     func_8007E4C8,

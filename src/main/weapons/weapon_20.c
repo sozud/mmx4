@@ -1,29 +1,31 @@
 #include "common.h"
 
-void func_800929A0(struct WeaponObj* arg0)
+void plasma_shot_update(struct WeaponObj* arg0)
 {
-    D_80108758[arg0->state](arg0);
+    plasma_shot_state_funcs[arg0->state](arg0);
 }
 
+// plasma_shot_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20", func_800929DC);
 
-void func_80092AE4(struct WeaponObj* arg0)
+void plasma_shot_main(struct WeaponObj* arg0)
 {
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x2A, 0x22) == 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->id == 0x14) {
             func_80092B5C(arg0);
             return;
         }
-        func_80092C2C(arg0);
+        plasma_orb_linger(arg0);
         return;
     }
-    func_80092600(arg0);
+    buster_shot_hide(arg0);
 }
 
+// plasma_shot_move
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20", func_80092B5C);
 
-void func_80092C2C(struct WeaponObj* arg0)
+void plasma_orb_linger(struct WeaponObj* arg0)
 {
     u8 timer;
     u8 sub_timer;
@@ -31,7 +33,7 @@ void func_80092C2C(struct WeaponObj* arg0)
     if (arg0->unk5 == 0) {
         timer = arg0->ext.weapon_20.lifetime;
         if (timer == 0) {
-            func_80015D60(arg0, 0x1F);
+            set_animation(arg0, 0x1F);
             arg0->unk50 = 0;
             arg0->unk5 = 1;
         } else {
@@ -45,14 +47,14 @@ void func_80092C2C(struct WeaponObj* arg0)
             }
         }
     } else if (arg0->animation_step.fields.relative_step == 0) {
-        func_80092600(arg0);
+        buster_shot_hide(arg0);
         return;
     }
 
-    func_8002B318(BASE_OBJECT(arg0), 0x2A, 0x22);
+    update_on_screen(BASE_OBJECT(arg0), 0x2A, 0x22);
 }
 
-void func_80092CEC(struct WeaponObj* arg0)
+void buster_shot_follow_muzzle(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner;
 
@@ -65,14 +67,14 @@ void func_80092CEC(struct WeaponObj* arg0)
             arg0->unk84.word = 1;
         }
         if (arg0->unk84.word == 0) {
-            func_80092E2C(VISUAL_OBJECT(arg0), owner, arg0->id);
+            buster_shot_place_at_muzzle(VISUAL_OBJECT(arg0), owner, arg0->id);
         }
     }
 }
 
-void (*D_80108758[])(struct WeaponObj*) = {
+void (*plasma_shot_state_funcs[])(struct WeaponObj*) = {
     func_800929DC,
-    func_80092AE4,
-    func_800927B4,
-    func_800927B4,
+    plasma_shot_main,
+    player_shot_despawn,
+    player_shot_despawn,
 };

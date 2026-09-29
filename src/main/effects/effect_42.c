@@ -2,39 +2,40 @@
 // 800BE2C4..800BE57C
 #include "common.h"
 
-void func_800BE2C4(struct EffectObj* arg0)
+void sigma_sequencer_fx_init(struct EffectObj* self)
 {
-    arg0->ext.effect_42.owner.main->ext.main_73_parts.unk8E = 0;
-    switch (arg0->ext.effect_42.owner.main->ext.main_73_parts.object_id) {
+    self->ext.effect_42.owner.main->ext.main_73_parts.unk8E = 0;
+    switch (self->ext.effect_42.owner.main->ext.main_73_parts.object_id) {
     case 0:
     case 1:
     case 2:
-        arg0->state = 1;
+        self->state = 1;
         break;
     default:
-        arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 1;
-        arg0->state = 2;
+        self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 1;
+        self->state = 2;
         break;
     }
 }
 
-void func_800BE30C(struct EffectObj* arg0)
+void sigma_sequencer_fx_start(struct EffectObj* self)
 {
-    arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 1;
-    arg0->unk5++;
+    self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 1;
+    self->unk5++;
 }
 
-void func_800BE32C(struct EffectObj* arg0)
+void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 {
     if (g_Player.update_delay == 0) {
-        arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
-        arg0->unk5++;
+        self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
+        self->unk5++;
     }
 }
 
+// sigma_sequencer_fx_summon
 INCLUDE_ASM("main/nonmatchings/effects/effect_42", func_800BE364);
 
-void func_800BE434(struct EffectObj* arg0)
+void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
 {
     s32 count;
     s32 match;
@@ -44,58 +45,58 @@ void func_800BE434(struct EffectObj* arg0)
     i = 0;
     match = 3;
     do {
-        if (arg0->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == match) {
+        if (self->ext.effect_42.owner.main->ext.main_73_parts.parts[i]->unk5 == match) {
             count += 1;
         }
         i += 1;
     } while (i < 3U);
     if (count == 3) {
-        arg0->unk5 = (u8)arg0->unk5 + 1;
-        arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
-        arg0->ext.effect_42.timer = 0xC8;
+        self->unk5 = (u8)self->unk5 + 1;
+        self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 3;
+        self->ext.effect_42.timer = 0xC8;
     }
 }
 
-void func_800BE4A8(struct EffectObj* arg0)
+void sigma_sequencer_fx_hold(struct EffectObj* self)
 {
     u8 timer;
 
-    timer = arg0->ext.effect_42.timer - 1;
-    arg0->ext.effect_42.timer = timer;
+    timer = self->ext.effect_42.timer - 1;
+    self->ext.effect_42.timer = timer;
     if (timer == 0) {
-        arg0->state = 2;
-        arg0->unk5 = 0;
+        self->state = 2;
+        self->unk5 = 0;
     }
 }
 
-void func_800BE4D4(struct EffectObj* arg0)
+void sigma_sequencer_fx_main(struct EffectObj* self)
 {
-    D_8010C100[arg0->unk5](arg0);
+    sigma_sequencer_fx_step_funcs[self->unk5](self);
 }
 
-void func_800BE510(struct EffectObj* arg0)
+void sigma_sequencer_fx_finish(struct EffectObj* self)
 {
     if (g_Player.update_delay == 0) {
-        arg0->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
-        ZeroObjectState(OBJECT_HEADER(arg0));
+        self->ext.effect_42.owner.main->ext.main_73_parts.effect_state = 0;
+        ZeroObjectState(OBJECT_HEADER(self));
     }
 }
 
-void func_800BE540(struct EffectObj* arg0)
+void sigma_sequencer_fx_update(struct EffectObj* self)
 {
-    D_8010C114[arg0->state](arg0);
+    sigma_sequencer_fx_state_funcs[self->state](self);
 }
 
-void (*D_8010C100[5])(struct EffectObj*) = {
-    func_800BE30C,
-    func_800BE32C,
+void (*sigma_sequencer_fx_step_funcs[5])(struct EffectObj*) = {
+    sigma_sequencer_fx_start,
+    sigma_sequencer_fx_wait_player,
     func_800BE364,
-    func_800BE434,
-    func_800BE4A8,
+    sigma_sequencer_fx_wait_parts,
+    sigma_sequencer_fx_hold,
 };
 
-void (*D_8010C114[])(struct EffectObj*) = {
-    func_800BE2C4,
-    func_800BE4D4,
-    func_800BE510,
+void (*sigma_sequencer_fx_state_funcs[])(struct EffectObj*) = {
+    sigma_sequencer_fx_init,
+    sigma_sequencer_fx_main,
+    sigma_sequencer_fx_finish,
 };

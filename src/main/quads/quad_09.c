@@ -4,7 +4,7 @@
 
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target);
 
-void func_800D67DC(struct QuadObj* arg0)
+void aiming_laser_beam_update(struct QuadObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;
     struct PlayerObj* temp_a2 = arg0->unk5C;
@@ -35,13 +35,13 @@ void func_800D67DC(struct QuadObj* arg0)
         return;
     }
     if (arg0->state == 0) {
-        func_800D68D0(arg0, ptr, temp_a2);
+        aiming_laser_beam_init(arg0, ptr, temp_a2);
         return;
     }
-    func_800D6944(arg0, ptr, temp_a2);
+    aiming_laser_beam_main(arg0, ptr, temp_a2);
 }
 
-void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     arg0->active = -0x7D;
     arg0->on_screen = 1;
@@ -53,7 +53,7 @@ void func_800D68D0(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     arg0->state++;
 }
 
-void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
+void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     if (arg0->ext.unk_ext3.unk38 == 0) {
         ZeroObjectState(arg0);
@@ -66,4 +66,5 @@ void func_800D6944(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerOb
     func_800D69A8(arg0, arg1, arg2);
 }
 
+// aiming_laser_beam_place
 INCLUDE_ASM("main/nonmatchings/quads/quad_09", func_800D69A8);

@@ -2,35 +2,37 @@
 // 800BC748..800BCE48
 #include "common.h"
 
-void func_800BC748(struct EffectObj* arg0)
+void rock_dropper_update(struct EffectObj* self)
 {
-    D_8010BF98[arg0->state](arg0);
+    rock_dropper_state_funcs[self->state](self);
 }
 
+// rock_dropper_init
 INCLUDE_ASM("main/nonmatchings/effects/effect_33", func_800BC784);
 
+// rock_dropper_drop
 INCLUDE_ASM("main/nonmatchings/effects/effect_33", func_800BC92C);
 
-void func_800BCD84(struct EffectObj* self)
+void rock_dropper_despawn(struct EffectObj* self)
 {
     switch (self->unk2 & 0xF0) {
     case 0:
         if (self->backref != NULL) {
-            func_8002B108(OBJECT_HEADER(self));
+            despawn_object_permanently(OBJECT_HEADER(self));
         } else {
             ZeroObjectState(OBJECT_HEADER(self));
         }
         break;
     case 0x10:
         if (self->backref != NULL) {
-            func_8002B108(OBJECT_HEADER(self));
+            despawn_object_permanently(OBJECT_HEADER(self));
         } else {
             ZeroObjectState(OBJECT_HEADER(self));
         }
         break;
     case 0x20:
         if (self->backref != NULL) {
-            func_8002B0C8(OBJECT_HEADER(self));
+            despawn_object(OBJECT_HEADER(self));
         } else {
             ZeroObjectState(OBJECT_HEADER(self));
         }
@@ -38,13 +40,13 @@ void func_800BCD84(struct EffectObj* self)
     }
 }
 
-void func_800BCE40(struct EffectObj* arg0)
+void rock_dropper_idle(struct EffectObj* self)
 {
 }
 
-void (*D_8010BF98[])(struct EffectObj*) = {
+void (*rock_dropper_state_funcs[])(struct EffectObj*) = {
     func_800BC784,
     func_800BC92C,
-    func_800BCD84,
-    func_800BCE40,
+    rock_dropper_despawn,
+    rock_dropper_idle,
 };

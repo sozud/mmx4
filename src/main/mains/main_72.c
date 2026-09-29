@@ -3,79 +3,79 @@
 #include "common.h"
 #include "func_tables.h"
 
-void func_8008ADFC(struct MainObj* arg0)
+void unused_ride_armor_init(struct MainObj* self)
 {
     s32 x_pos;
     s32 y_pos;
 
-    x_pos = arg0->x_pos.val;
-    y_pos = arg0->y_pos.val;
-    arg0->state = 1;
-    arg0->unk5 = 2;
-    arg0->unk5C = 0x18;
-    arg0->unk60 = 6;
-    arg0->animation_table = (const u8* const*)D_80104E7C;
-    arg0->unk54 = (const u8*)&D_80104F00;
-    arg0->unk50 = (const u8*)&D_80104F00;
-    arg0->unk68 = &D_80104F04;
-    arg0->collision_data = (const u16*)D_80108184;
-    arg0->unk6 = 0;
-    arg0->unk7 = 0;
-    arg0->unk7C = 0;
-    arg0->on_screen = 0;
-    arg0->unk61 = 0;
-    arg0->unk67 = 0;
-    arg0->unk20 = 0;
-    arg0->unk24 = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk16 = 5;
-    arg0->unk18.val = x_pos;
-    arg0->unk1C.val = y_pos;
+    x_pos = self->x_pos.val;
+    y_pos = self->y_pos.val;
+    self->state = 1;
+    self->unk5 = 2;
+    self->hp = 0x18;
+    self->contact_damage = 6;
+    self->animation_table = (const u8* const*)unused_ride_armor_animations;
+    self->hurt_box = (const u8*)&unused_ride_armor_hit_box;
+    self->attack_box = (const u8*)&unused_ride_armor_hit_box;
+    self->terrain_box = &unused_ride_armor_terrain_box;
+    self->collision_data = (const u16*)D_80108184;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->unk7C = 0;
+    self->on_screen = 0;
+    self->invincibility_timer = 0;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk16 = 5;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
 }
 
-void func_8008AE94(struct MainObj* arg0)
+void unused_ride_armor_face_player(struct MainObj* self)
 {
-    if ((arg0->x_pos.val - g_Player.x_pos.val) < 0) {
-        arg0->unk15 = 0x40;
+    if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
+        self->unk15 = 0x40;
         return;
     }
 
-    arg0->unk15 = 0;
+    self->unk15 = 0;
 }
 
-void func_8008AEC4(struct BaseObj* arg0, s8 arg1)
+void unused_ride_armor_set_step(struct BaseObj* self, s8 arg1)
 {
-    arg0->unk5 = arg1;
-    arg0->unk6 = 0;
+    self->unk5 = arg1;
+    self->unk6 = 0;
 }
 
-void func_8008AED0(struct MainObj* arg0)
+void unused_ride_armor_apply_x_speed(struct MainObj* self)
 {
-    arg0->x_pos.val += arg0->unk20;
+    self->x_pos.val += self->x_speed;
 }
 
-void func_8008AEE8(struct MainObj* arg0)
+void unused_ride_armor_set_walk_speed(struct MainObj* self)
 {
-    if (arg0->unk15 != 0) {
-        arg0->unk20 = FIXED(1.375);
+    if (self->unk15 != 0) {
+        self->x_speed = FIXED(1.375);
     } else {
-        arg0->unk20 = FIXED(-1.375);
+        self->x_speed = FIXED(-1.375);
     }
 }
 
-void func_8008AF10(struct MainObj* arg0)
+void unused_ride_armor_set_jump_speed(struct MainObj* self)
 {
     s32 value;
 
-    value = arg0->ext.main_72.unk84 << 8;
-    if (arg0->unk15 == 0) {
+    value = self->ext.main_72.unk84 << 8;
+    if (self->unk15 == 0) {
         value = -value;
     }
-    arg0->unk20 = value;
+    self->x_speed = value;
 }
 
-void func_8008AF30(struct MainObj* arg0, s32 arg1)
+void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 {
     s32 v;
     struct ShotObj* obj = find_free_shot_obj();
@@ -83,169 +83,173 @@ void func_8008AF30(struct MainObj* arg0, s32 arg1)
         obj->active = 0x41;
         obj->id = 0x2F;
         obj->unk2 = arg1;
-        obj->x_pos.i.hi = arg0->x_pos.i.hi;
-        obj->y_pos.i.hi = arg0->y_pos.i.hi;
-        obj->animation_table = arg0->animation_table;
-        obj->unk40 = arg0->unk40;
-        obj->unk3C = arg0->sprite_frames;
+        obj->x_pos.i.hi = self->x_pos.i.hi;
+        obj->y_pos.i.hi = self->y_pos.i.hi;
+        obj->animation_table = self->animation_table;
+        obj->unk40 = self->unk40;
+        obj->unk3C = self->sprite_frames;
         v = (u8)func_8002938C(0x48);
         obj->unk42 = SOME_COORDINATE_CONVERSION(v);
-        obj->unk16 = arg0->unk16;
-        obj->unk7C = arg0;
-        obj->unk15 = arg0->unk15;
+        obj->unk16 = self->unk16;
+        obj->unk7C = self;
+        obj->unk15 = self->unk15;
     }
 }
 
+// unused_ride_armor_idle
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B020);
 
+// unused_ride_armor_walk
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B188);
 
-void func_8008B270(struct MainObj* arg0)
+void unused_ride_armor_shoot(struct MainObj* self)
 {
     s8 state;
     u8 timer1;
     u8 timer2;
 
-    state = arg0->unk6;
+    state = self->unk6;
     if (state == 0) {
-        arg0->unk6++;
-        func_80015D60(arg0, 8);
-        arg0->ext.main_72.lifetime = 0x40;
-        arg0->ext.main_72.spawn_timer = 0x10;
-        func_8008AE94(arg0);
-        func_8001540C(2, 0x4C, arg0);
+        self->unk6++;
+        set_animation(self, 8);
+        self->ext.main_72.lifetime = 0x40;
+        self->ext.main_72.spawn_timer = 0x10;
+        unused_ride_armor_face_player(self);
+        func_8001540C(2, 0x4C, self);
     }
 
-    timer1 = arg0->ext.main_72.lifetime - 1;
-    arg0->ext.main_72.lifetime = timer1;
+    timer1 = self->ext.main_72.lifetime - 1;
+    self->ext.main_72.lifetime = timer1;
     if (timer1 != 0) {
-        timer2 = arg0->ext.main_72.spawn_timer - 1;
-        arg0->ext.main_72.spawn_timer = timer2;
+        timer2 = self->ext.main_72.spawn_timer - 1;
+        self->ext.main_72.spawn_timer = timer2;
         if (timer2 == 0) {
-            func_8008AF30(arg0, 0);
-            arg0->ext.main_72.spawn_timer = 0x10;
+            unused_ride_armor_spawn_shot(self, 0);
+            self->ext.main_72.spawn_timer = 0x10;
         }
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     } else {
-        func_8008AEC4(BASE_OBJECT(arg0), 2);
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
 
-void func_8008B33C(struct MainObj* self)
+void unused_ride_armor_jump(struct MainObj* self)
 {
     s8 state;
 
     state = self->unk6;
     if (state == 0) {
         self->unk6 = state + 1;
-        func_8008AE94(self);
-        self->unk24 = FIXED(5.5);
-        self->unk2C = FIXED(0.2578125);
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk67 = 1;
-        func_80015D60(self, 2);
-        self->unk70 &= 0xF7;
+        unused_ride_armor_face_player(self);
+        self->y_speed = FIXED(5.5);
+        self->gravity = FIXED(0.2578125);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->air_state = 1;
+        set_animation(self, 2);
+        self->collision_flags &= 0xF7;
         func_8001540C(2, 0x48, self);
     }
-    self->unk20 = 0;
-    func_8008AF10(self);
-    if (!(self->unk70 & 4) && self->unk24 >= 0 && self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
-        func_8002B694(ANIMATED_OBJECT(self));
+    self->x_speed = 0;
+    unused_ride_armor_set_jump_speed(self);
+    if (!(self->collision_flags & 4) && self->y_speed >= 0 && self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0) {
+        move_with_gravity(ANIMATED_OBJECT(self));
         return;
     }
-    func_8008AEC4(BASE_OBJECT(self), 2);
+    unused_ride_armor_set_step(BASE_OBJECT(self), 2);
 }
 
-void func_8008B42C(struct MainObj* arg0)
+void unused_ride_armor_land(struct MainObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk6++;
-        arg0->unk67 = 0;
-        func_80015D60(arg0, 4);
-        arg0->unk70 |= 8;
-        func_8001540C(2, 0x45, arg0);
+    if (self->unk6 == 0) {
+        self->unk6++;
+        self->air_state = 0;
+        set_animation(self, 4);
+        self->collision_flags |= 8;
+        func_8001540C(2, 0x45, self);
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        func_8008AEC4(BASE_OBJECT(arg0), 7);
+    if (self->animation_step.fields.relative_step == 0) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 7);
         return;
     }
-    func_80015DC8(arg0);
+    animate_object(self);
 }
 
+// unused_ride_armor_dash
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B4B8);
 
-void func_8008B5C0(struct MainObj* arg0)
+void unused_ride_armor_fall(struct MainObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk6 = 1;
-        arg0->unk20 = 0;
-        arg0->unk28 = 0;
-        arg0->unk24 = 0;
-        arg0->unk2C = FIXED(0.2578125);
-        arg0->unk67 = 1;
-        func_80015D60(arg0, 3);
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
+        self->air_state = 1;
+        set_animation(self, 3);
     }
-    if (arg0->unk70 & 8) {
-        func_8008AEC4(BASE_OBJECT(arg0), 5);
+    if (self->collision_flags & 8) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 5);
         return;
     }
-    if ((arg0->y_pos.i.hi - g_Player.y_pos.i.hi) >= -0x30) {
-        func_8008AEC4(BASE_OBJECT(arg0), 2);
+    if ((self->y_pos.i.hi - g_Player.y_pos.i.hi) >= -0x30) {
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
         return;
     }
-    arg0->unk20 = 0;
-    func_8008AF10(arg0);
-    if (arg0->unk24 < FIXED(-5.875)) {
-        arg0->unk24 = FIXED(-5.875);
+    self->x_speed = 0;
+    unused_ride_armor_set_jump_speed(self);
+    if (self->y_speed < FIXED(-5.875)) {
+        self->y_speed = FIXED(-5.875);
     }
-    func_8002B694(ANIMATED_OBJECT(arg0));
+    move_with_gravity(ANIMATED_OBJECT(self));
 }
 
+// unused_ride_armor_jump_shoot
 INCLUDE_ASM("main/nonmatchings/mains/main_72", func_8008B69C);
 
-void func_8008B7D4(struct MainObj* arg0)
+void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
-    if (arg0->unk6 == 0) {
-        arg0->unk6++;
-        func_80015D60(arg0, 9);
-        arg0->ext.main_72.lifetime = 0x80;
-        arg0->ext.main_72.spawn_timer = 0x30;
-        func_8008AE94(arg0);
-        func_8001540C(2, 0x4C, arg0);
+    if (self->unk6 == 0) {
+        self->unk6++;
+        set_animation(self, 9);
+        self->ext.main_72.lifetime = 0x80;
+        self->ext.main_72.spawn_timer = 0x30;
+        unused_ride_armor_face_player(self);
+        func_8001540C(2, 0x4C, self);
     }
 
-    if (--arg0->ext.main_72.lifetime != 0) {
-        if ((--arg0->ext.main_72.spawn_timer & 0xF) != 0) {
-            func_8008AF30(arg0, 1);
+    if (--self->ext.main_72.lifetime != 0) {
+        if ((--self->ext.main_72.spawn_timer & 0xF) != 0) {
+            unused_ride_armor_spawn_shot(self, 1);
         }
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(self));
     } else {
-        func_8008AEC4(BASE_OBJECT(arg0), 2);
+        unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
 
-void func_8008B898(struct MainObj* arg0)
+void unused_ride_armor_reset(struct MainObj* self)
 {
-    func_8008AEC4(BASE_OBJECT(arg0), 2);
+    unused_ride_armor_set_step(BASE_OBJECT(self), 2);
 }
 
-void func_8008B8B8(struct MainObj* self)
+void unused_ride_armor_main(struct MainObj* self)
 {
     s32 result;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    D_80104F10[self->unk5](self);
+    unused_ride_armor_step_funcs[self->unk5](self);
     CollisionRelated(PLAYER_OBJECT(self));
     func_8002D9BC(self);
     result = func_8002DD04(self);
     if (result < 0) {
-        func_800C813C(7, D_80104F08, self);
+        spawn_debris(7, unused_ride_armor_debris, self);
         self->state = 2;
         self->unk5 = 0;
     } else if (result != 0) {
-        func_80089B58(VISUAL_OBJECT(self), 8);
+        ride_armor_pilot_spawn_dust(VISUAL_OBJECT(self), 8);
     }
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         is_on_screen(BASE_OBJECT(self));
@@ -255,31 +259,31 @@ void func_8008B8B8(struct MainObj* self)
     self->unk5 = 0;
 }
 
-void func_8008B984(struct MainObj* arg0)
+void unused_ride_armor_despawn_remove(struct MainObj* self)
 {
-    arg0->unk42 &= 0x7FFF;
-    func_8002B0C8(OBJECT_HEADER(arg0));
+    self->unk42 &= 0x7FFF;
+    despawn_object(OBJECT_HEADER(self));
 }
 
-void func_8008B9B0(void)
-{
-}
-
-void func_8008B9B8(void)
+void unused_ride_armor_despawn_idle(void)
 {
 }
 
-void func_8008B9C0(struct MainObj* arg0)
+void unused_ride_armor_despawn_idle2(void)
 {
-    D_80104F3C[arg0->unk5](arg0);
 }
 
-void func_8008B9FC(struct MainObj* arg0)
+void unused_ride_armor_despawn(struct MainObj* self)
 {
-    D_80104F48[arg0->state](arg0);
+    unused_ride_armor_despawn_funcs[self->unk5](self);
 }
 
-struct Unk_unk68 D_80104D40[5] = {
+void unused_ride_armor_update(struct MainObj* self)
+{
+    unused_ride_armor_state_funcs[self->state](self);
+}
+
+struct Unk_unk68 unused_ride_armor_anim_0[5] = {
     { 100, 0, 1, 0 },
     { 7, 0, 1, 11 },
     { 1, 1, 1, 12 },
@@ -287,7 +291,7 @@ struct Unk_unk68 D_80104D40[5] = {
     { 8, 0, -4, 11 },
 };
 
-struct Unk_unk68 D_80104D54[9] = {
+struct Unk_unk68 unused_ride_armor_anim_1[9] = {
     { 6, 0, 1, 0 },
     { 6, 0, 1, 1 },
     { 6, 1, 1, 2 },
@@ -299,31 +303,31 @@ struct Unk_unk68 D_80104D54[9] = {
     { 6, 0, -8, 8 },
 };
 
-union AnimationStep D_80104D78[] = {
+union AnimationStep unused_ride_armor_anim_2[] = {
     { 0x09000006 },
 };
 
-union AnimationStep D_80104D7C[] = {
+union AnimationStep unused_ride_armor_anim_3[] = {
     { 0x0A000006 },
 };
 
-union AnimationStep D_80104D80[] = {
+union AnimationStep unused_ride_armor_anim_4[] = {
     { 0x0B010002 },
     { 0x0C010008 },
     { 0x0B010007 },
     { 0x00000008 },
 };
 
-union AnimationStep D_80104D90[] = {
+union AnimationStep unused_ride_armor_anim_5[] = {
     { 0x0D010004 },
     { 0x0E000008 },
 };
 
-union AnimationStep D_80104D98[] = {
+union AnimationStep unused_ride_armor_anim_6[] = {
     { 0x0D000004 },
 };
 
-union AnimationStep D_80104D9C[] = {
+union AnimationStep unused_ride_armor_anim_7[] = {
     { 0x10010002 },
     { 0x20010003 },
     { 0x11010001 },
@@ -334,31 +338,31 @@ union AnimationStep D_80104D9C[] = {
     { 0x20000013 },
 };
 
-struct Unk_unk68 D_80104DBC[4] = {
+struct Unk_unk68 unused_ride_armor_anim_8[4] = {
     { 1, 0, 1, 21 },
     { 1, 0, 1, 22 },
     { 1, 0, 1, 23 },
     { 1, 0, -3, 24 },
 };
 
-struct Unk_unk68 D_80104DCC[4] = {
+struct Unk_unk68 unused_ride_armor_anim_9[4] = {
     { 1, 0, 1, 25 },
     { 1, 0, 1, 26 },
     { 1, 0, 1, 27 },
     { 1, 0, -3, 28 },
 };
 
-union AnimationStep D_80104DDC[] = {
+union AnimationStep unused_ride_armor_anim_10[] = {
     { 0x0F000001 },
 };
 
-union AnimationStep D_80104DE0[] = {
+union AnimationStep unused_ride_armor_anim_11[] = {
     { 0x25010005 },
     { 0x26010008 },
     { 0x25000006 },
 };
 
-union AnimationStep D_80104DEC[] = {
+union AnimationStep unused_ride_armor_anim_15[] = {
     { 0x27010005 },
     { 0x28010005 },
     { 0x29010005 },
@@ -370,7 +374,7 @@ union AnimationStep D_80104DEC[] = {
     { 0x2F000005 },
 };
 
-struct Unk_unk68 D_80104E10[12] = {
+struct Unk_unk68 unused_ride_armor_anim_14[12] = {
     { 2, 0, 1, 48 },
     { 2, 0, 1, 49 },
     { 2, 0, 1, 50 },
@@ -385,115 +389,115 @@ struct Unk_unk68 D_80104E10[12] = {
     { 1, 0, -11, 53 },
 };
 
-union AnimationStep D_80104E40[] = {
+union AnimationStep unused_ride_armor_anim_24[] = {
     { 0x36000002 },
 };
 
-union AnimationStep D_80104E44[] = {
+union AnimationStep unused_ride_armor_anim_25[] = {
     { 0x37000002 },
 };
 
-union AnimationStep D_80104E48[] = {
+union AnimationStep unused_ride_armor_anim_26[] = {
     { 0x38000002 },
 };
 
-union AnimationStep D_80104E4C[] = {
+union AnimationStep unused_ride_armor_anim_27[] = {
     { 0x39000002 },
 };
 
-union AnimationStep D_80104E50[] = {
+union AnimationStep unused_ride_armor_anim_28[] = {
     { 0x3A000002 },
 };
 
-union AnimationStep D_80104E54[] = {
+union AnimationStep unused_ride_armor_anim_29[] = {
     { 0x3B000002 },
 };
 
-union AnimationStep D_80104E58[] = {
+union AnimationStep unused_ride_armor_anim_30[] = {
     { 0x3C000002 },
 };
 
-struct Unk_unk68 D_80104E5C[4] = {
+struct Unk_unk68 unused_ride_armor_anim_12[4] = {
     { 2, 0, 1, 61 },
     { 2, 0, 1, 62 },
     { 2, 0, 1, 63 },
     { 2, 0, -3, 64 },
 };
 
-struct Unk_unk68 D_80104E6C[4] = {
+struct Unk_unk68 unused_ride_armor_anim_13[4] = {
     { 2, 0, 1, 65 },
     { 2, 0, 1, 66 },
     { 2, 0, 1, 67 },
     { 2, 0, -3, 68 },
 };
 
-void* D_80104E7C[33] = {
-    D_80104D40,
-    D_80104D54,
-    D_80104D78,
-    D_80104D7C,
-    D_80104D80,
-    D_80104D90,
-    D_80104D98,
-    D_80104D9C,
-    D_80104DBC,
-    D_80104DCC,
-    D_80104DDC,
-    D_80104DE0,
-    D_80104E5C,
-    D_80104E6C,
-    D_80104E10,
-    D_80104DEC,
-    D_80104E10,
-    D_80104DEC,
-    D_80104E10,
-    D_80104DEC,
-    D_80104DEC,
-    D_80104E10,
-    D_80104E10,
-    D_80104E10,
-    D_80104E40,
-    D_80104E44,
-    D_80104E48,
-    D_80104E4C,
-    D_80104E50,
-    D_80104E54,
-    D_80104E58,
-    D_80104E5C,
-    D_80104E6C,
+void* unused_ride_armor_animations[33] = {
+    unused_ride_armor_anim_0,
+    unused_ride_armor_anim_1,
+    unused_ride_armor_anim_2,
+    unused_ride_armor_anim_3,
+    unused_ride_armor_anim_4,
+    unused_ride_armor_anim_5,
+    unused_ride_armor_anim_6,
+    unused_ride_armor_anim_7,
+    unused_ride_armor_anim_8,
+    unused_ride_armor_anim_9,
+    unused_ride_armor_anim_10,
+    unused_ride_armor_anim_11,
+    unused_ride_armor_anim_12,
+    unused_ride_armor_anim_13,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_15,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_15,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_15,
+    unused_ride_armor_anim_15,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_14,
+    unused_ride_armor_anim_24,
+    unused_ride_armor_anim_25,
+    unused_ride_armor_anim_26,
+    unused_ride_armor_anim_27,
+    unused_ride_armor_anim_28,
+    unused_ride_armor_anim_29,
+    unused_ride_armor_anim_30,
+    unused_ride_armor_anim_12,
+    unused_ride_armor_anim_13,
 };
 
-struct Unk_unk68 D_80104F00 = { -14, -18, 28, 52 };
+struct Unk_unk68 unused_ride_armor_hit_box = { -14, -18, 28, 52 };
 
-struct Unk_unk68 D_80104F04 = { 0, -1, 15, 33 };
+struct Unk_unk68 unused_ride_armor_terrain_box = { 0, -1, 15, 33 };
 
-struct Unk_unk68 D_80104F08[2] = {
+struct Unk_unk68 unused_ride_armor_debris[2] = {
     { 24, 25, 26, 27 },
     { 28, 29, 30, 0 },
 };
 
-void (*D_80104F10[11])(struct MainObj*) = {
-    func_8009216C,
-    func_8008B898,
+void (*unused_ride_armor_step_funcs[11])(struct MainObj*) = {
+    enemy_hit_reaction,
+    unused_ride_armor_reset,
     func_8008B020,
     func_8008B188,
-    func_8008B5C0,
-    func_8008B42C,
+    unused_ride_armor_fall,
+    unused_ride_armor_land,
     func_8008B4B8,
-    func_8008B33C,
-    func_8008B270,
+    unused_ride_armor_jump,
+    unused_ride_armor_shoot,
     func_8008B69C,
-    func_8008B7D4,
+    unused_ride_armor_rapid_fire,
 };
 
-void (*D_80104F3C[3])() = {
-    func_8008B984,
-    func_8008B9B0,
-    func_8008B9B8,
+void (*unused_ride_armor_despawn_funcs[3])() = {
+    unused_ride_armor_despawn_remove,
+    unused_ride_armor_despawn_idle,
+    unused_ride_armor_despawn_idle2,
 };
 
-void (*D_80104F48[3])() = {
-    func_8008ADFC,
-    func_8008B8B8,
-    func_8008B9C0,
+void (*unused_ride_armor_state_funcs[3])() = {
+    unused_ride_armor_init,
+    unused_ride_armor_main,
+    unused_ride_armor_despawn,
 };

@@ -2,12 +2,12 @@
 // 800B41CC..800B4610
 #include "common.h"
 
-void func_800B41CC(struct VisualObj* arg0)
+void peacock_target_update(struct VisualObj* arg0)
 {
-    D_8010A6AC[arg0->state](arg0);
+    peacock_target_state_funcs[arg0->state](arg0);
 }
 
-void func_800B4208(struct VisualObj* arg0)
+void peacock_target_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
@@ -19,11 +19,11 @@ void func_800B4208(struct VisualObj* arg0)
     arg0->unk28 = 0;
     arg0->y_vel.val = 0;
     arg0->x_vel.val = 0;
-    func_80015D60(arg0, 0xA);
+    set_animation(arg0, 0xA);
     is_on_screen(BASE_OBJECT(arg0));
 }
 
-void func_800B4274(struct VisualObj* arg0)
+void peacock_target_track(struct VisualObj* arg0)
 {
     u16 x_distance;
     u16 y_distance;
@@ -33,7 +33,7 @@ void func_800B4274(struct VisualObj* arg0)
             arg0->unk56 = 1;
             x_distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
             y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
-            func_8002B93C(MOVING_OBJECT(arg0), (u8)func_8002B7DC(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
+            set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
             // pursuit/homing missile?
             if (x_distance >= 17 || y_distance >= 17) {
                 arg0->x_vel.val *= 4;
@@ -52,22 +52,22 @@ void func_800B4274(struct VisualObj* arg0)
                 arg0->y_pos.val = g_Player.y_pos.val;
             }
         }
-        func_8002B694(ANIMATED_OBJECT(arg0));
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
     } else {
         arg0->unk5++;
-        func_80015D60(arg0, 0xB);
+        set_animation(arg0, 0xB);
     }
 }
 
-void func_800B4450(struct VisualObj* arg0)
+void peacock_target_lock(struct VisualObj* arg0)
 {
     arg0->unk5++;
     arg0->unk50->input.buttons.held = 0;
-    func_80015DC8(arg0);
+    animate_object(arg0);
 }
 
-void func_800B4480(struct VisualObj* arg0)
+void peacock_target_fire(struct VisualObj* arg0)
 {
     struct ShotObj* shot;
 
@@ -89,38 +89,38 @@ void func_800B4480(struct VisualObj* arg0)
             shot->unk7C = WEAPON_OBJECT(arg0);
         }
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
 }
 
-void func_800B4558(struct VisualObj* arg0)
+void peacock_target_hold(struct VisualObj* arg0)
 {
-    func_80015DC8(arg0);
+    animate_object(arg0);
 }
 
-void func_800B4578(struct VisualObj* arg0)
+void peacock_target_despawn(struct VisualObj* arg0)
 {
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-void func_800B4598(struct VisualObj* arg0)
+void peacock_target_main(struct VisualObj* arg0)
 {
     if (arg0->unk50->state != 1) {
         ZeroObjectState(arg0);
     } else {
-        D_8010A6B8[arg0->unk5](arg0);
+        peacock_target_step_funcs[arg0->unk5](arg0);
         is_on_screen(arg0);
     }
 }
 
-void (*D_8010A6AC[])(struct VisualObj*) = {
-    func_800B4208,
-    func_800B4598,
-    func_800B4578,
+void (*peacock_target_state_funcs[])(struct VisualObj*) = {
+    peacock_target_init,
+    peacock_target_main,
+    peacock_target_despawn,
 };
 
-void (*D_8010A6B8[])(struct VisualObj*) = {
-    func_800B4274,
-    func_800B4450,
-    func_800B4480,
-    func_800B4558,
+void (*peacock_target_step_funcs[])(struct VisualObj*) = {
+    peacock_target_track,
+    peacock_target_lock,
+    peacock_target_fire,
+    peacock_target_hold,
 };

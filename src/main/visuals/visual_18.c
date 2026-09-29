@@ -2,7 +2,7 @@
 // 800B2544..800B2698
 #include "common.h"
 
-void func_800B2544(struct VisualObj* arg0)
+void aiming_laser_scope_update(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
     s32 var_a0;
@@ -28,14 +28,14 @@ void func_800B2544(struct VisualObj* arg0)
         arg0->unk42 = 0x7801;
         arg0->unk16 = 0x12;
         arg0->unk49 = 0;
-        func_80015D60(arg0, 0);
+        set_animation(arg0, 0);
         arg0->state++;
         decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
     } else {
-        func_80015DC8(arg0);
+        animate_object(arg0);
     }
     arg0->x_pos.val = player->x_pos.val;
     arg0->y_pos.val = player->y_pos.val;
     arg0->unk15 = player->unk15;
-    func_8002B318(arg0, 0x68, 0x48);
+    update_on_screen(arg0, 0x68, 0x48);
 }

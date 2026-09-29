@@ -2,88 +2,89 @@
 // 800A428C..800A47C4
 #include "common.h"
 
-u8 D_801097DC[4] = { 0xFC, 0xFC, 0x08, 0x08 };
-u8 D_801097E0[4] = { 0xF0, 0x92, 0x1F, 0xD4 };
+u8 owl_cyclone_hit_box[4] = { 0xFC, 0xFC, 0x08, 0x08 };
+u8 owl_cyclone_column_box[4] = { 0xF0, 0x92, 0x1F, 0xD4 };
 
-void func_800A428C(struct ShotObj* arg0)
+void owl_cyclone_update(struct ShotObj* self)
 {
-    D_801097E4[arg0->state](arg0);
+    owl_cyclone_state_funcs[self->state](self);
 }
 
+// owl_cyclone_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_38", func_800A42C8);
 
-void func_800A4518(struct ShotObj* arg0)
+void owl_cyclone_fly(struct ShotObj* self)
 {
-    struct WeaponObj* owner = arg0->unk7C;
+    struct WeaponObj* owner = self->unk7C;
 
-    func_80015DC8(ANIMATED_OBJECT(arg0));
-    func_8002B718(MOVING_OBJECT(arg0));
-    func_8002D9BC(arg0);
-    if (arg0->unk2 < 5) {
-        func_800A46FC(arg0);
-        if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
-            func_800AF808(BASE_OBJECT(arg0));
-            arg0->state++;
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    func_8002D9BC(self);
+    if (self->unk2 < 5) {
+        owl_cyclone_spawn_trail(self);
+        if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            self->state++;
             return;
         }
     } else {
         if (owner->state == 2) {
-            arg0->state++;
+            self->state++;
             return;
         }
-        if (--arg0->timer == 0) {
-            switch (arg0->unk84.value) {
+        if (--self->timer == 0) {
+            switch (self->unk84.value) {
             case 0:
-                arg0->unk84.value = 1;
-                arg0->timer = 0x2D;
-                arg0->y_vel.val = 0;
+                self->unk84.value = 1;
+                self->timer = 0x2D;
+                self->y_vel.val = 0;
                 break;
             case 1:
-                arg0->timer = 0xC;
-                arg0->unk84.value = 2;
-                arg0->y_vel.val = FIXED(21);
+                self->timer = 0xC;
+                self->unk84.value = 2;
+                self->y_vel.val = FIXED(21);
                 break;
             case 2:
-                arg0->unk84.value = 3;
-                arg0->timer = 0x3E;
-                arg0->y_vel.val = 0;
+                self->unk84.value = 3;
+                self->timer = 0x3E;
+                self->y_vel.val = 0;
                 break;
             case 3:
-                arg0->unk84.value = 4;
-                arg0->y_vel.val = FIXED(21);
-                arg0->timer = 0xC;
+                self->unk84.value = 4;
+                self->y_vel.val = FIXED(21);
+                self->timer = 0xC;
                 break;
             }
         }
     }
     if (owner->active == 0) {
-        arg0->state++;
+        self->state++;
     }
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, arg0->unk2 < 5 ? 0x20 : 0x80) == 0) {
-        if (arg0->unk2 < 5) {
-            func_8002B318(BASE_OBJECT(arg0), 0x10, 0x10);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, self->unk2 < 5 ? 0x20 : 0x80) == 0) {
+        if (self->unk2 < 5) {
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         }
     } else {
-        arg0->state++;
+        self->state++;
     }
 }
 
-void func_800A46D4(struct ShotObj* arg0)
+void owl_cyclone_despawn(struct ShotObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800A46F4(struct ShotObj* arg0)
+void owl_cyclone_idle(struct ShotObj* self)
 {
 }
 
-void func_800A46FC(struct ShotObj* arg0)
+void owl_cyclone_spawn_trail(struct ShotObj* self)
 {
     struct ShotObj* shot;
     struct MiscObj* misc;
     s32 timer;
 
-    shot = arg0;
+    shot = self;
     timer = shot->unk84.value;
     if (timer == 0) {
         misc = find_free_misc_obj();
@@ -108,9 +109,9 @@ void func_800A46FC(struct ShotObj* arg0)
     shot->unk84.value = timer;
 }
 
-void (*D_801097E4[])(struct ShotObj*) = {
+void (*owl_cyclone_state_funcs[])(struct ShotObj*) = {
     func_800A42C8,
-    func_800A4518,
-    func_800A46D4,
-    func_800A46F4,
+    owl_cyclone_fly,
+    owl_cyclone_despawn,
+    owl_cyclone_idle,
 };

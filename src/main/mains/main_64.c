@@ -3,9 +3,10 @@
 #include "common.h"
 #include "func_tables.h"
 
+// cyber_peacock_intro_init
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007C30C);
 
-void func_8007C3FC(struct MainObj* arg0)
+void cyber_peacock_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
     s32* archive;
@@ -14,51 +15,51 @@ void func_8007C3FC(struct MainObj* arg0)
     if (g_Player.capsule_state != 0) {
         return;
     }
-    switch (arg0->unk6) {
+    switch (self->unk6) {
     case 0:
         effect = find_free_effect_obj();
         if (effect != NULL) {
             effect->active = 1;
             effect->id = 0x18;
-            arg0->ext.main_64.object = effect;
+            self->ext.main_64.object = effect;
         }
         player_start_script_action(0x14, 0x40);
-        arg0->unk6 = 1;
-        arg0->unk7 = 0;
+        self->unk6 = 1;
+        self->unk7 = 0;
         break;
     case 1:
-        effect = arg0->ext.main_64.object;
+        effect = self->ext.main_64.object;
         if (effect->active != 0) {
             break;
         }
-        arg0->unk6 = 2;
-        arg0->bg_offset = g_Player.bg_offset;
+        self->unk6 = 2;
+        self->bg_offset = g_Player.bg_offset;
         if (engine_obj.stage != 0xC) {
-            arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+            self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
         } else {
             archive = SP_MENU_FRAMES;
-            arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            self->unk40 = (D_801406A8[0] >> 7) + 0x160;
             offset = archive[4];
-            arg0->unk42 = 0x7888;
-            arg0->sprite_frames = (u8*)archive + offset;
+            self->unk42 = 0x7888;
+            self->sprite_frames = (u8*)archive + offset;
         }
-        arg0->animation_table = (const u8* const*)cyber_peacock_animations;
-        arg0->unk16 = 4;
-        arg0->unk60 = 5;
-        arg0->unk61 = -0x80;
-        arg0->unk63 = 2;
-        arg0->unk5C = 0;
-        arg0->unk62 = 0;
-        arg0->unk7C = 0x20;
+        self->animation_table = (const u8* const*)cyber_peacock_animations;
+        self->unk16 = 4;
+        self->contact_damage = 5;
+        self->invincibility_timer = -0x80;
+        self->unk63 = 2;
+        self->hp = 0;
+        self->unk62 = 0;
+        self->unk7C = 0x20;
         engine_obj.enable_boss = 0;
         engine_obj.unk25 = 0;
-        engine_obj.boss_ptr = arg0;
+        engine_obj.boss_ptr = self;
         break;
     case 2:
-        if (--arg0->unk7C == 0) {
-            arg0->unk5 = 2;
-            arg0->unk6 = 0;
-            arg0->unk7 = 0;
+        if (--self->unk7C == 0) {
+            self->unk5 = 2;
+            self->unk6 = 0;
+            self->unk7 = 0;
         }
         break;
     }
@@ -68,7 +69,7 @@ void cyber_peacock_intro_appear_start(struct MainObj* self)
 {
     self->on_screen = 1;
     self->unk6++;
-    func_80015D60(self, 0);
+    set_animation(self, 0);
 }
 
 void cyber_peacock_intro_pose(struct MainObj* self)
@@ -86,7 +87,7 @@ void cyber_peacock_intro_pose(struct MainObj* self)
             self->animation_step.fields.event = 0;
             func_8001540C(2, 0xC1, self);
         }
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -94,43 +95,43 @@ void cyber_peacock_intro_start_health_bar(struct MainObj* self)
 {
     if (abc_object.unkC == 0) {
         self->unk6++;
-        func_80015D60(self, 1);
+        set_animation(self, 1);
         engine_obj.enable_boss = 1;
-        func_800921E8(5);
+        play_boss_music(5);
     }
 }
 
-void func_8007C6E8(struct MainObj* arg0)
+void cyber_peacock_intro_fill_health(struct MainObj* self)
 {
     s8 health;
 
-    if (func_8009227C() != 0) {
+    if (update_boss_music_delay() != 0) {
         return;
     }
-    if (arg0->animation_step.fields.relative_step == 0) {
-        health = arg0->unk5C;
+    if (self->animation_step.fields.relative_step == 0) {
+        health = self->hp;
         if (health < 0x30) {
-            if (--arg0->unk7C == 0) {
+            if (--self->unk7C == 0) {
                 func_8001540C(0, 0xE, 0);
-                arg0->unk7C = 2;
+                self->unk7C = 2;
             }
-            arg0->unk5C++;
+            self->hp++;
             return;
         }
-        arg0->state = 1;
-        arg0->ext.main_64.saved_health = health;
-        arg0->unk5 = 2;
-        arg0->unk6 = 0;
-        arg0->unk7 = 0;
-        arg0->unk61 = 0;
+        self->state = 1;
+        self->ext.main_64.saved_health = health;
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->invincibility_timer = 0;
         player_end_script_action();
         return;
     }
-    if (arg0->animation_step.fields.event != 0) {
-        arg0->animation_step.fields.event = 0;
-        func_8001540C(2, 0xC2, arg0);
+    if (self->animation_step.fields.event != 0) {
+        self->animation_step.fields.event = 0;
+        func_8001540C(2, 0xC2, self);
     }
-    func_80015DC8(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_intro_appear(struct MainObj* self)
@@ -157,7 +158,7 @@ u8 cyber_peacock_choose_attack(struct MainObj* self)
 {
     if (self->ext.main_64.skip_attack == 0) {
         if (self->ext.main_64.force_laser == 0) {
-            if (self->unk5C < 0x18) {
+            if (self->hp < 0x18) {
                 return cyber_peacock_attacks_low_health[get_random() & 0x1F];
             }
             return cyber_peacock_attacks[get_random() & 0x1F];
@@ -169,12 +170,12 @@ u8 cyber_peacock_choose_attack(struct MainObj* self)
 
 void cyber_peacock_start_teleport(struct MainObj* self)
 {
-    self->unk20 = 0;
-    self->unk28 = FIXED(1);
-    self->unk24 = 0;
-    self->unk2C = 0;
-    self->unk54 = NULL;
-    self->unk50 = NULL;
+    self->x_speed = 0;
+    self->x_accel = FIXED(1);
+    self->y_speed = 0;
+    self->gravity = 0;
+    self->hurt_box = NULL;
+    self->attack_box = NULL;
     self->ext.main_64.target_x = self->x_pos.u.hi;
     self->ext.main_64.target_y = self->y_pos.u.hi;
     func_8001540C(2, 0xC6, self);
@@ -185,7 +186,7 @@ void cyber_peacock_teleport_start(struct MainObj* self)
     cyber_peacock_start_teleport(self);
     self->unk7 = 0;
     self->unk6++;
-    func_80015D60(self, 2);
+    set_animation(self, 2);
     self->ext.main_64.skip_attack = 0;
 }
 
@@ -198,21 +199,22 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
         self->unk7 = 0;
         self->unk7C = 0x50;
         self->unk6++;
-        func_80015D60(self, 0x22);
-        self->unk60 = 5;
+        set_animation(self, 0x22);
+        self->contact_damage = 5;
         return;
     }
-    temp_v1 = self->unk20 + self->unk28;
-    self->unk20 = temp_v1;
+    temp_v1 = self->x_speed + self->x_accel;
+    self->x_speed = temp_v1;
     if (D_80141BD8.unk0 & 1) {
         var_v0 = ((s16)self->ext.main_64.target_x << 0x10) + temp_v1;
     } else {
         var_v0 = ((s16)self->ext.main_64.target_x << 0x10) - temp_v1;
     }
     self->x_pos.val = var_v0;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
+// cyber_peacock_teleport_choose
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007CA68);
 
 void cyber_peacock_teleport_appear(struct MainObj* self)
@@ -222,24 +224,24 @@ void cyber_peacock_teleport_appear(struct MainObj* self)
 
     if (self->animation_step.fields.relative_step == 0) {
         self->unk7C = 0x14;
-        self->unk54 = (const u8*)&D_80102948;
-        self->unk50 = (const u8*)&D_80102948;
+        self->hurt_box = (const u8*)&cyber_peacock_hit_box;
+        self->attack_box = (const u8*)&cyber_peacock_hit_box;
         self->unk7 = 0;
-        self->unk60 = 5;
+        self->contact_damage = 5;
         self->unk6++;
         func_8001540C(2, 0xC6, self);
         return;
     }
 
-    temp_v1 = self->unk20 - self->unk28;
-    self->unk20 = temp_v1;
+    temp_v1 = self->x_speed - self->x_accel;
+    self->x_speed = temp_v1;
     if (D_80141BD8.unk0 & 1) {
         var_v0 = ((s16)self->ext.main_64.target_x << 0x10) + temp_v1;
     } else {
         var_v0 = ((s16)self->ext.main_64.target_x << 0x10) - temp_v1;
     }
     self->x_pos.val = var_v0;
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_teleport_wait(struct MainObj* self)
@@ -254,7 +256,7 @@ void cyber_peacock_teleport_wait(struct MainObj* self)
         self->ext.main_64.hit_count = 0;
         self->unk5 = self->ext.main_64.next_step;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -266,35 +268,35 @@ void cyber_peacock_teleport(struct MainObj* self)
 void cyber_peacock_rising_kick_start(struct MainObj* self)
 {
     self->unk6++;
-    func_80015D60(self, 4);
-    self->unk54 = (const u8*)&D_80102954;
-    self->unk50 = (const u8*)&D_80102950;
-    self->unk60 = 6;
+    set_animation(self, 4);
+    self->hurt_box = (const u8*)&cyber_peacock_rising_kick_hurt_box;
+    self->attack_box = (const u8*)&cyber_peacock_rising_kick_attack_box;
+    self->contact_damage = 6;
 }
 
 void cyber_peacock_rising_kick_jump(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
-        self->unk67 = 1;
-        self->unk24 = FIXED(8);
-        self->unk20 = 0;
-        self->unk28 = 0;
-        self->unk2C = FIXED(0.34375);
+        self->air_state = 1;
+        self->y_speed = FIXED(8);
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->gravity = FIXED(0.34375);
         self->unk6++;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_rising_kick_rise(struct MainObj* self)
 {
-    if (self->unk24 < 0) {
+    if (self->y_speed < 0) {
         self->unk6++;
-        func_80015D60(self, 5);
+        set_animation(self, 5);
         return;
     }
-    func_8002B694(ANIMATED_OBJECT(self));
-    func_80015DC8(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_rising_kick_finish(struct MainObj* self)
@@ -303,12 +305,12 @@ void cyber_peacock_rising_kick_finish(struct MainObj* self)
         self->unk5 = 2;
         self->unk6 = 1;
         cyber_peacock_start_teleport(self);
-        self->unk20 = FIXED(22);
-        self->unk67 = 0;
-        func_80015D60(self, 0x22);
-        self->unk60 = 5;
+        self->x_speed = FIXED(22);
+        self->air_state = 0;
+        set_animation(self, 0x22);
+        self->contact_damage = 5;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -321,11 +323,11 @@ void cyber_peacock_slash_start(struct MainObj* self)
 {
     self->unk7C = 0;
     self->unk6++;
-    func_80015D60(self, 6);
+    set_animation(self, 6);
     func_8001540C(2, 0xC9, self);
-    self->unk54 = (const u8*)&D_8010295C;
-    self->unk50 = (const u8*)&D_80102958;
-    self->unk60 = 9;
+    self->hurt_box = (const u8*)&cyber_peacock_slash_hurt_box;
+    self->attack_box = (const u8*)&cyber_peacock_slash_attack_box;
+    self->contact_damage = 9;
 }
 
 void cyber_peacock_slash_swing(struct MainObj* self)
@@ -337,17 +339,17 @@ void cyber_peacock_slash_swing(struct MainObj* self)
         self->unk7C = counter;
         if ((s16)counter >= 4) {
             self->unk6 += 1;
-            func_80015D60(self, 7);
-            self->unk54 = (const u8*)&D_8010295C;
-            self->unk50 = (const u8*)&D_80102958;
+            set_animation(self, 7);
+            self->hurt_box = (const u8*)&cyber_peacock_slash_hurt_box;
+            self->attack_box = (const u8*)&cyber_peacock_slash_attack_box;
             return;
         }
     } else if (self->animation_step.fields.event != 0) {
-        self->unk54 = (const u8*)&D_80102964;
+        self->hurt_box = (const u8*)&cyber_peacock_slash_swing_hurt_box;
         self->animation_step.fields.event = 0;
-        self->unk50 = (const u8*)&D_80102960;
+        self->attack_box = (const u8*)&cyber_peacock_slash_swing_attack_box;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_slash_finish(struct MainObj* self)
@@ -356,12 +358,12 @@ void cyber_peacock_slash_finish(struct MainObj* self)
         self->unk5 = 2;
         self->unk6 = 1;
         cyber_peacock_start_teleport(self);
-        self->unk20 = FIXED(22);
-        func_80015D60(self, 0x22);
-        self->unk60 = 5;
+        self->x_speed = FIXED(22);
+        set_animation(self, 0x22);
+        self->contact_damage = 5;
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_slash(struct MainObj* self)
@@ -369,29 +371,29 @@ void cyber_peacock_slash(struct MainObj* self)
     cyber_peacock_slash_funcs[self->unk6](self);
 }
 
-void func_8007D174(struct MainObj* arg0)
+void cyber_peacock_spawn_laser_target(struct MainObj* self)
 {
     u8 unk15;
     s8 active;
 
     struct ItemObj* item = find_free_item_obj();
     if (item != NULL) {
-        active = arg0->active;
+        active = self->active;
         item->id = 0x17;
         item->active = active;
-        item->unk2 = arg0->ext.main_64.shot_count;
-        item->x_pos.val = arg0->x_pos.val;
-        item->y_pos.val = arg0->y_pos.val;
-        item->animation_table = (void*)arg0->animation_table;
-        item->unk40 = arg0->unk40;
-        item->sprite_frames = (void*)arg0->sprite_frames;
-        item->unk42 = arg0->unk42 & 0x7FFF;
-        item->unk16 = arg0->unk16;
-        unk15 = arg0->unk15;
-        item->backref = (void*)arg0;
+        item->unk2 = self->ext.main_64.shot_count;
+        item->x_pos.val = self->x_pos.val;
+        item->y_pos.val = self->y_pos.val;
+        item->animation_table = (void*)self->animation_table;
+        item->unk40 = self->unk40;
+        item->sprite_frames = (void*)self->sprite_frames;
+        item->unk42 = self->unk42 & 0x7FFF;
+        item->unk16 = self->unk16;
+        unk15 = self->unk15;
+        item->backref = (void*)self;
         item->unk15 = unk15;
-        arg0->ext.main_64.object = item;
-        func_8001540C(2, 0xC4, arg0);
+        self->ext.main_64.object = item;
+        func_8001540C(2, 0xC4, self);
     }
 }
 
@@ -422,7 +424,7 @@ void cyber_peacock_aiming_laser_start(struct MainObj* self)
 {
     self->ext.main_64.shot_count = 0;
     self->unk6++;
-    func_80015D60(self, 0x25);
+    set_animation(self, 0x25);
 }
 
 void cyber_peacock_aiming_laser_raise(struct MainObj* self)
@@ -430,9 +432,9 @@ void cyber_peacock_aiming_laser_raise(struct MainObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         self->unk7C = 0x1E;
         self->unk6++;
-        func_80015D60(self, 9);
+        set_animation(self, 9);
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -440,11 +442,11 @@ void cyber_peacock_aiming_laser_target(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
-        func_8007D174(self);
-        func_80015D60(self, 0x24);
+        cyber_peacock_spawn_laser_target(self);
+        set_animation(self, 0x24);
         self->unk7C = 0x1E;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -452,7 +454,7 @@ void cyber_peacock_aiming_laser_wait(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->unk6++;
-        func_80015D60(self, 0xC);
+        set_animation(self, 0xC);
     }
 }
 
@@ -463,7 +465,7 @@ void cyber_peacock_aiming_laser_fire(struct MainObj* self)
         cyber_peacock_spawn_missile(self);
         return;
     }
-    func_80015DC8(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
 }
 
 void cyber_peacock_aiming_laser_next(struct MainObj* self)
@@ -472,12 +474,12 @@ void cyber_peacock_aiming_laser_next(struct MainObj* self)
     if (self->ext.main_64.shot_count >= 8) {
         self->unk7C = 0x3C;
         self->unk6++;
-        func_80015D60(self, 2);
+        set_animation(self, 2);
         return;
     }
     self->unk7C = 0x5A;
     self->unk6 = 3;
-    func_80015D90(ANIMATED_OBJECT(self), 9, 3);
+    set_animation_frame(ANIMATED_OBJECT(self), 9, 3);
 }
 
 void cyber_peacock_aiming_laser_finish(struct MainObj* self)
@@ -488,11 +490,11 @@ void cyber_peacock_aiming_laser_finish(struct MainObj* self)
         self->unk2 = 0;
         self->unk6 = 1;
         cyber_peacock_start_teleport(self);
-        self->unk20 = FIXED(22);
-        func_80015D60(self, 0x22);
-        self->unk60 = 5;
+        self->x_speed = FIXED(22);
+        set_animation(self, 0x22);
+        self->contact_damage = 5;
     } else {
-        func_80015DC8(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
     }
 }
 
@@ -506,10 +508,13 @@ void cyber_peacock_attack(struct MainObj* self)
     cyber_peacock_attack_funcs[self->unk2](self);
 }
 
+// cyber_peacock_hit_vanish
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D5D0);
 
+// cyber_peacock_guard_vanish
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D710);
 
+// cyber_peacock_main
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007D838);
 
 void cyber_peacock_death_start(struct MainObj* self)
@@ -520,7 +525,7 @@ void cyber_peacock_death_start(struct MainObj* self)
     self->ext.main_64.flash_timer = 0x19;
     self->unk42 &= 0x7FFF;
     player_start_script_action(0x14, g_Player.unk15);
-    func_80015D60(self, 0x20);
+    set_animation(self, 0x20);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -616,9 +621,10 @@ void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
     }
 }
 
+// cyber_peacock_is_player_near_random
 INCLUDE_ASM("main/nonmatchings/mains/main_64", func_8007DD0C);
 
-union AnimationStep D_8010248C[] = {
+union AnimationStep cyber_peacock_anim_0[] = {
     { 0x06010002 },
     { 0x07010002 },
     { 0x06010002 },
@@ -670,7 +676,7 @@ union AnimationStep D_8010248C[] = {
     { 0x01000001 },
 };
 
-union AnimationStep D_80102550[] = {
+union AnimationStep cyber_peacock_anim_1[] = {
     { 0x01010003 },
     { 0x02010003 },
     { 0x0301000A },
@@ -683,7 +689,7 @@ union AnimationStep D_80102550[] = {
     { 0x2E000003 },
 };
 
-union AnimationStep D_80102578[] = {
+union AnimationStep cyber_peacock_anim_2[] = {
     { 0x00010002 },
     { 0x25010002 },
     { 0x00010002 },
@@ -698,7 +704,7 @@ union AnimationStep D_80102578[] = {
     { 0x26000002 },
 };
 
-union AnimationStep D_801025A8[] = {
+union AnimationStep cyber_peacock_anim_3[] = {
     { 0x27010002 },
     { 0x26010002 },
     { 0x27010002 },
@@ -713,7 +719,7 @@ union AnimationStep D_801025A8[] = {
     { 0x00000002 },
 };
 
-union AnimationStep D_801025D8[] = {
+union AnimationStep cyber_peacock_anim_35[] = {
     { 0x27010002 },
     { 0x26010002 },
     { 0x27010002 },
@@ -731,7 +737,7 @@ union AnimationStep D_801025D8[] = {
     { 0x2B000006 },
 };
 
-struct Unk_unk68 D_80102614[8] = {
+struct Unk_unk68 cyber_peacock_anim_4[8] = {
     { 3, 0, 1, 40 },
     { 2, 0, 1, 41 },
     { 2, 0, 1, 42 },
@@ -742,7 +748,7 @@ struct Unk_unk68 D_80102614[8] = {
     { 1, 0, -3, 50 },
 };
 
-union AnimationStep D_80102634[] = {
+union AnimationStep cyber_peacock_anim_5[] = {
     { 0x2F010001 },
     { 0x33010001 },
     { 0x34010001 },
@@ -754,7 +760,7 @@ union AnimationStep D_80102634[] = {
     { 0x34000001 },
 };
 
-struct Unk_unk68 D_80102658[18] = {
+struct Unk_unk68 cyber_peacock_anim_6[18] = {
     { 6, 0, 1, 0 },
     { 4, 0, 1, 53 },
     { 4, 0, 1, 54 },
@@ -775,7 +781,7 @@ struct Unk_unk68 D_80102658[18] = {
     { 1, 0, -2, 58 },
 };
 
-union AnimationStep D_801026A0[] = {
+union AnimationStep cyber_peacock_anim_7[] = {
     { 0x3D010001 },
     { 0x3F010002 },
     { 0x40010003 },
@@ -794,7 +800,7 @@ union AnimationStep D_801026A0[] = {
     { 0x39000001 },
 };
 
-union AnimationStep D_801026E0[] = {
+union AnimationStep cyber_peacock_anim_8[] = {
     { 0x27010002 },
     { 0x26010002 },
     { 0x27010002 },
@@ -809,13 +815,13 @@ union AnimationStep D_801026E0[] = {
     { 0x44000002 },
 };
 
-union AnimationStep D_80102710[] = {
+union AnimationStep cyber_peacock_anim_37[] = {
     { 0x45010003 },
     { 0x46010012 },
     { 0x00000014 },
 };
 
-union AnimationStep D_8010271C[] = {
+union AnimationStep cyber_peacock_anim_9[] = {
     { 0x00010008 },
     { 0x47010008 },
     { 0x48010008 },
@@ -840,16 +846,16 @@ union AnimationStep D_8010271C[] = {
     { 0x54000014 },
 };
 
-u8 D_80102774[8] = { 1, 0, 1, 88, 1, 0, 255, 89 };
+u8 cyber_peacock_anim_10[8] = { 1, 0, 1, 88, 1, 0, 255, 89 };
 
-struct Unk_unk68 D_8010277C[4] = {
+struct Unk_unk68 cyber_peacock_anim_11[4] = {
     { 2, 0, 1, 88 },
     { 2, 0, 1, 90 },
     { 2, 0, 1, 91 },
     { 2, 0, -3, 92 },
 };
 
-union AnimationStep D_8010278C[] = {
+union AnimationStep cyber_peacock_anim_12[] = {
     { 0x55010008 },
     { 0x56010002 },
     { 0x57010001 },
@@ -858,43 +864,43 @@ union AnimationStep D_8010278C[] = {
     { 0x9200001E },
 };
 
-union AnimationStep D_801027A4[] = {
+union AnimationStep cyber_peacock_anim_36[] = {
     { 0x55000001 },
 };
 
-u8 D_801027A8[8] = { 2, 0, 1, 109, 2, 0, 255, 110 };
+u8 cyber_peacock_anim_13[8] = { 2, 0, 1, 109, 2, 0, 255, 110 };
 
-u8 D_801027B0[8] = { 2, 0, 1, 111, 2, 0, 255, 112 };
+u8 cyber_peacock_anim_14[8] = { 2, 0, 1, 111, 2, 0, 255, 112 };
 
-u8 D_801027B8[8] = { 2, 0, 1, 113, 2, 0, 255, 114 };
+u8 cyber_peacock_anim_15[8] = { 2, 0, 1, 113, 2, 0, 255, 114 };
 
-u8 D_801027C0[8] = { 2, 0, 1, 115, 2, 0, 255, 116 };
+u8 cyber_peacock_anim_16[8] = { 2, 0, 1, 115, 2, 0, 255, 116 };
 
-u8 D_801027C8[8] = { 2, 0, 1, 117, 2, 0, 255, 118 };
+u8 cyber_peacock_anim_17[8] = { 2, 0, 1, 117, 2, 0, 255, 118 };
 
-u8 D_801027D0[8] = { 2, 0, 1, 119, 2, 0, 255, 120 };
+u8 cyber_peacock_anim_18[8] = { 2, 0, 1, 119, 2, 0, 255, 120 };
 
-u8 D_801027D8[8] = { 2, 0, 1, 121, 2, 0, 255, 122 };
+u8 cyber_peacock_anim_19[8] = { 2, 0, 1, 121, 2, 0, 255, 122 };
 
-u8 D_801027E0[8] = { 2, 0, 1, 123, 2, 0, 255, 124 };
+u8 cyber_peacock_anim_20[8] = { 2, 0, 1, 123, 2, 0, 255, 124 };
 
-u8 D_801027E8[8] = { 2, 0, 1, 93, 2, 0, 255, 94 };
+u8 cyber_peacock_anim_21[8] = { 2, 0, 1, 93, 2, 0, 255, 94 };
 
-u8 D_801027F0[8] = { 2, 0, 1, 95, 2, 0, 255, 96 };
+u8 cyber_peacock_anim_22[8] = { 2, 0, 1, 95, 2, 0, 255, 96 };
 
-u8 D_801027F8[8] = { 2, 0, 1, 97, 2, 0, 255, 98 };
+u8 cyber_peacock_anim_23[8] = { 2, 0, 1, 97, 2, 0, 255, 98 };
 
-u8 D_80102800[8] = { 2, 0, 1, 99, 2, 0, 255, 100 };
+u8 cyber_peacock_anim_24[8] = { 2, 0, 1, 99, 2, 0, 255, 100 };
 
-u8 D_80102808[8] = { 2, 0, 1, 101, 2, 0, 255, 102 };
+u8 cyber_peacock_anim_25[8] = { 2, 0, 1, 101, 2, 0, 255, 102 };
 
-u8 D_80102810[8] = { 2, 0, 1, 103, 2, 0, 255, 104 };
+u8 cyber_peacock_anim_26[8] = { 2, 0, 1, 103, 2, 0, 255, 104 };
 
-u8 D_80102818[8] = { 2, 0, 1, 105, 2, 0, 255, 106 };
+u8 cyber_peacock_anim_27[8] = { 2, 0, 1, 105, 2, 0, 255, 106 };
 
-u8 D_80102820[8] = { 2, 0, 1, 107, 2, 0, 255, 108 };
+u8 cyber_peacock_anim_28[8] = { 2, 0, 1, 107, 2, 0, 255, 108 };
 
-union AnimationStep D_80102828[] = {
+union AnimationStep cyber_peacock_anim_29[] = {
     { 0x7D010001 },
     { 0x7E010002 },
     { 0x7F010003 },
@@ -902,19 +908,19 @@ union AnimationStep D_80102828[] = {
     { 0x81000004 },
 };
 
-struct Unk_unk68 D_8010283C[3] = {
+struct Unk_unk68 cyber_peacock_anim_30[3] = {
     { 2, 0, 1, -123 },
     { 1, 0, 1, -122 },
     { 1, 0, -2, -112 },
 };
 
-struct Unk_unk68 D_80102848[3] = {
+struct Unk_unk68 cyber_peacock_anim_31[3] = {
     { 1, 0, 1, -126 },
     { 2, 0, 1, -125 },
     { 2, 0, -2, -124 },
 };
 
-union AnimationStep D_80102854[] = {
+union AnimationStep cyber_peacock_anim_32[] = {
     { 0x87010002 },
     { 0x88010002 },
     { 0x87010002 },
@@ -929,7 +935,7 @@ union AnimationStep D_80102854[] = {
     { 0x88000002 },
 };
 
-struct Unk_unk68 D_80102884[10] = {
+struct Unk_unk68 cyber_peacock_anim_33[10] = {
     { 4, 0, 1, -121 },
     { 4, 0, 1, -119 },
     { 4, 0, 1, -118 },
@@ -942,77 +948,77 @@ struct Unk_unk68 D_80102884[10] = {
     { 4, 0, -9, -116 },
 };
 
-union AnimationStep D_801028AC[] = {
+union AnimationStep cyber_peacock_anim_34[] = {
     { 0x34000004 },
 };
 
 void* cyber_peacock_animations[38] = {
-    D_8010248C,
-    D_80102550,
-    D_80102578,
-    D_801025A8,
-    D_80102614,
-    D_80102634,
-    D_80102658,
-    D_801026A0,
-    D_801026E0,
-    D_8010271C,
-    D_80102774,
-    D_8010277C,
-    D_8010278C,
-    D_801027A8,
-    D_801027B0,
-    D_801027B8,
-    D_801027C0,
-    D_801027C8,
-    D_801027D0,
-    D_801027D8,
-    D_801027E0,
-    D_801027E8,
-    D_801027F0,
-    D_801027F8,
-    D_80102800,
-    D_80102808,
-    D_80102810,
-    D_80102818,
-    D_80102820,
-    D_80102828,
-    D_8010283C,
-    D_80102848,
-    D_80102854,
-    D_80102884,
-    D_801028AC,
-    D_801025D8,
-    D_801027A4,
-    D_80102710,
+    cyber_peacock_anim_0,
+    cyber_peacock_anim_1,
+    cyber_peacock_anim_2,
+    cyber_peacock_anim_3,
+    cyber_peacock_anim_4,
+    cyber_peacock_anim_5,
+    cyber_peacock_anim_6,
+    cyber_peacock_anim_7,
+    cyber_peacock_anim_8,
+    cyber_peacock_anim_9,
+    cyber_peacock_anim_10,
+    cyber_peacock_anim_11,
+    cyber_peacock_anim_12,
+    cyber_peacock_anim_13,
+    cyber_peacock_anim_14,
+    cyber_peacock_anim_15,
+    cyber_peacock_anim_16,
+    cyber_peacock_anim_17,
+    cyber_peacock_anim_18,
+    cyber_peacock_anim_19,
+    cyber_peacock_anim_20,
+    cyber_peacock_anim_21,
+    cyber_peacock_anim_22,
+    cyber_peacock_anim_23,
+    cyber_peacock_anim_24,
+    cyber_peacock_anim_25,
+    cyber_peacock_anim_26,
+    cyber_peacock_anim_27,
+    cyber_peacock_anim_28,
+    cyber_peacock_anim_29,
+    cyber_peacock_anim_30,
+    cyber_peacock_anim_31,
+    cyber_peacock_anim_32,
+    cyber_peacock_anim_33,
+    cyber_peacock_anim_34,
+    cyber_peacock_anim_35,
+    cyber_peacock_anim_36,
+    cyber_peacock_anim_37,
 };
 
-struct Unk_unk68 D_80102948 = { -6, -27, 17, 64 };
+struct Unk_unk68 cyber_peacock_hit_box = { -6, -27, 17, 64 };
 
-struct Unk_unk68 D_8010294C = { -11, -27, 27, 70 };
+struct Unk_unk68 cyber_peacock_intro_hurt_box = { -11, -27, 27, 70 };
 
-struct Unk_unk68 D_80102950 = { -30, -35, 56, 64 };
+struct Unk_unk68 cyber_peacock_rising_kick_attack_box = { -30, -35, 56, 64 };
 
-struct Unk_unk68 D_80102954 = { -18, -37, 32, 71 };
+struct Unk_unk68 cyber_peacock_rising_kick_hurt_box = { -18, -37, 32, 71 };
 
-struct Unk_unk68 D_80102958 = { -12, -9, 28, 52 };
+struct Unk_unk68 cyber_peacock_slash_attack_box = { -12, -9, 28, 52 };
 
-struct Unk_unk68 D_8010295C = { -32, -12, 44, 55 };
+struct Unk_unk68 cyber_peacock_slash_hurt_box = { -32, -12, 44, 55 };
 
-struct Unk_unk68 D_80102960 = { -87, -50, -61, 92 };
+struct Unk_unk68 cyber_peacock_slash_swing_attack_box = { -87, -50, -61, 92 };
 
-struct Unk_unk68 D_80102964 = { -32, -12, 44, 55 };
+struct Unk_unk68 cyber_peacock_slash_swing_hurt_box = { -32, -12, 44, 55 };
 
 void (*cyber_peacock_intro_appear_funcs[4])() = {
     cyber_peacock_intro_appear_start,
     cyber_peacock_intro_pose,
     cyber_peacock_intro_start_health_bar,
-    func_8007C6E8,
+    cyber_peacock_intro_fill_health,
 };
 
 void (*cyber_peacock_intro_funcs[3])() = {
     func_8007C30C,
-    func_8007C3FC,
+    cyber_peacock_intro_wait_player,
     cyber_peacock_intro_appear,
 };
 
@@ -1063,8 +1069,8 @@ void (*cyber_peacock_attack_funcs[4])() = {
 };
 
 void (*cyber_peacock_step_funcs[6])() = {
-    func_8009216C,
-    func_8009216C,
+    enemy_hit_reaction,
+    enemy_hit_reaction,
     cyber_peacock_teleport,
     cyber_peacock_attack,
     func_8007D5D0,

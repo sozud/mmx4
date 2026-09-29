@@ -6,48 +6,49 @@
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E7C_jp);
 #endif
 
+// scripted_slider_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D0E48);
 
-void func_800D1060(struct MiscObj* arg0)
+void scripted_slider_slide(struct MiscObj* self)
 {
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.misc_45.direction == 0) {
-        if (arg0->x_pos.i.hi > arg0->ext.misc_45.target_x) {
-            arg0->unk28 = FIXED(1);
-            arg0->unk5++;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->ext.misc_45.direction == 0) {
+        if (self->x_pos.i.hi > self->ext.misc_45.target_x) {
+            self->unk28 = FIXED(1);
+            self->unk5++;
         }
-    } else if (arg0->x_pos.i.hi < arg0->ext.misc_45.target_x) {
-        arg0->unk28 = -FIXED(1);
-        arg0->unk5++;
+    } else if (self->x_pos.i.hi < self->ext.misc_45.target_x) {
+        self->unk28 = -FIXED(1);
+        self->unk5++;
     }
 }
 
-void func_800D10E4(struct MiscObj* arg0)
+void scripted_slider_brake(struct MiscObj* self)
 {
     volatile u8 stack_pad[0x10];
     s32 var_v0;
     s32 var_v1;
     s32 var_a0;
 
-    func_8002B694(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.misc_45.direction == 0) {
-        var_v1 = arg0->ext.misc_45.target_x;
-        var_v0 = arg0->x_pos.i.hi;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->ext.misc_45.direction == 0) {
+        var_v1 = self->ext.misc_45.target_x;
+        var_v0 = self->x_pos.i.hi;
         var_a0 = var_v1;
     } else {
-        var_v0 = arg0->ext.misc_45.target_x;
-        var_v1 = arg0->x_pos.i.hi;
+        var_v0 = self->ext.misc_45.target_x;
+        var_v1 = self->x_pos.i.hi;
         var_a0 = var_v0;
     }
     if (var_v0 < var_v1) {
-        arg0->x_pos.i.hi = var_a0;
-        arg0->unk28 = 0;
-        arg0->x_vel.val = 0;
-        arg0->unk5++;
+        self->x_pos.i.hi = var_a0;
+        self->unk28 = 0;
+        self->x_vel.val = 0;
+        self->unk5++;
     }
 }
 
-void func_800D115C(void)
+void scripted_slider_idle(void)
 {
 }
 
@@ -58,40 +59,41 @@ struct Misc45PositionData {
     s16 height;
 };
 
-extern struct Misc45PositionData D_8010F0C4[];
+extern struct Misc45PositionData scripted_slider_offsets[];
 
-void func_800D1164(struct MiscObj* self)
+void scripted_slider_follow_owner(struct MiscObj* self)
 {
     s32 index;
     struct MainObj* source;
 
     index = self->unk2;
     source = self->ext.misc_45.owner;
-    self->x_pos.u.hi = source->x_pos.u.hi + D_8010F0C4[index].x;
-    self->y_pos.u.hi = source->y_pos.u.hi + D_8010F0C4[self->unk2].y;
+    self->x_pos.u.hi = source->x_pos.u.hi + scripted_slider_offsets[index].x;
+    self->y_pos.u.hi = source->y_pos.u.hi + scripted_slider_offsets[self->unk2].y;
 }
 
+// scripted_slider_step_4
 INCLUDE_ASM("main/nonmatchings/misc/misc_45", func_800D11B0);
 
-void func_800D11CC(struct MiscObj* arg0)
+void scripted_slider_main(struct MiscObj* self)
 {
     if (engine_flags != 0) {
-        D_8010F174[arg0->unk5](arg0);
-        arg0->on_screen = 1;
+        scripted_slider_step_funcs[self->unk5](self);
+        self->on_screen = 1;
     }
 }
 
-void func_800D1228(struct MiscObj* arg0)
+void scripted_slider_despawn(struct MiscObj* self)
 {
-    ZeroObjectState(OBJECT_HEADER(arg0));
+    ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_800D1248(struct MiscObj* arg0)
+void scripted_slider_update(struct MiscObj* self)
 {
-    D_8010F188[arg0->state](arg0);
+    scripted_slider_state_funcs[self->state](self);
 }
 
-struct Misc45PositionData D_8010F0C4[] = {
+struct Misc45PositionData scripted_slider_offsets[] = {
     { -120, 176, 184, 160 },
     { 424, 208, 99, 123 },
     { 448, 208, 136, 160 },
@@ -122,16 +124,16 @@ struct Misc45PositionData D_8010F0C4[] = {
 #endif
 };
 
-void (*D_8010F174[5])(struct MiscObj*) = {
-    func_800D1060,
-    func_800D10E4,
-    func_800D115C,
-    func_800D1164,
+void (*scripted_slider_step_funcs[5])(struct MiscObj*) = {
+    scripted_slider_slide,
+    scripted_slider_brake,
+    scripted_slider_idle,
+    scripted_slider_follow_owner,
     func_800D11B0,
 };
 
-void (*D_8010F188[3])(struct MiscObj*) = {
+void (*scripted_slider_state_funcs[3])(struct MiscObj*) = {
     func_800D0E48,
-    func_800D11CC,
-    func_800D1228,
+    scripted_slider_main,
+    scripted_slider_despawn,
 };

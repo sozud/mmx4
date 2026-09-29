@@ -2,7 +2,7 @@
 // 800CA754..800CA86C
 #include "common.h"
 
-void func_800CA754(register struct MiscObj* self)
+void frame_ghost_init(register struct MiscObj* self)
 {
     struct MiscObj* source;
     u8 state;
@@ -19,12 +19,12 @@ void func_800CA754(register struct MiscObj* self)
     self->unk16 = 7;
     self->state = state;
     self->bg_offset = bg_offset;
-    func_80015D90(ANIMATED_OBJECT(self), 2, self->unk2);
+    set_animation_frame(ANIMATED_OBJECT(self), 2, self->unk2);
     self->unk7 = 0xA;
     is_on_screen(BASE_OBJECT(self));
 }
 
-void func_800CA7E4(struct MiscObj* self)
+void frame_ghost_fade(struct MiscObj* self)
 {
     if (--self->unk7 == 0) {
         ZeroObjectState(OBJECT_HEADER(self));
@@ -33,12 +33,12 @@ void func_800CA7E4(struct MiscObj* self)
     }
 }
 
-void func_800CA830(struct MiscObj* arg0)
+void frame_ghost_update(struct MiscObj* self)
 {
-    D_8010E64C[arg0->state](arg0);
+    frame_ghost_state_funcs[self->state](self);
 }
 
-void (*D_8010E64C[2])(struct MiscObj*) = {
-    func_800CA754,
-    func_800CA7E4,
+void (*frame_ghost_state_funcs[2])(struct MiscObj*) = {
+    frame_ghost_init,
+    frame_ghost_fade,
 };

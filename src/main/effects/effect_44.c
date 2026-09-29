@@ -2,32 +2,32 @@
 // 800BE83C..800BE9A0
 #include "common.h"
 
-void func_800BE83C(struct EffectObj* arg0)
+void stage_dialogue_trigger_update(struct EffectObj* self)
 {
-    D_8010C13C[arg0->state](arg0);
+    stage_dialogue_trigger_state_funcs[self->state](self);
 }
 
-void func_800BE878(struct EffectObj* arg0)
+void stage_dialogue_trigger_wait(struct EffectObj* self)
 {
     if (engine_obj.character_state.bytes[9] != 0) {
-        func_8002B108(OBJECT_HEADER(arg0));
+        despawn_object_permanently(OBJECT_HEADER(self));
         return;
     }
 
     if (engine_obj.unk1C == 0) {
         player_start_script_action(0x14, 0x40);
-        arg0->ext.unk_effect.unk14 = 0x30;
-        arg0->state = 1;
+        self->ext.unk_effect.unk14 = 0x30;
+        self->state = 1;
     }
 }
 
-void func_800BE8E4(struct EffectObj* arg0)
+void stage_dialogue_trigger_talk(struct EffectObj* self)
 {
     u16 sound_id;
     s8 timer;
 
-    timer = arg0->ext.unk_effect.unk14 - 1;
-    arg0->ext.unk_effect.unk14 = timer;
+    timer = self->ext.unk_effect.unk14 - 1;
+    self->ext.unk_effect.unk14 = timer;
     if (timer == 0) {
         sound_id = 0x2F;
         if (engine_obj.cur_character == 0) {
@@ -35,20 +35,20 @@ void func_800BE8E4(struct EffectObj* arg0)
         }
         func_8002217C(sound_id, 9, engine_obj.character_state.bytes[9]);
         engine_obj.character_state.bytes[9] = 1;
-        arg0->state = 2;
+        self->state = 2;
     }
 }
 
-void func_800BE960(struct EffectObj* arg0)
+void stage_dialogue_trigger_finish(struct EffectObj* self)
 {
     if (abc_object.unkC == 0) {
         player_end_script_action();
-        func_8002B108(arg0);
+        despawn_object_permanently(self);
     }
 }
 
-void (*D_8010C13C[])(struct EffectObj*) = {
-    func_800BE878,
-    func_800BE8E4,
-    func_800BE960,
+void (*stage_dialogue_trigger_state_funcs[])(struct EffectObj*) = {
+    stage_dialogue_trigger_wait,
+    stage_dialogue_trigger_talk,
+    stage_dialogue_trigger_finish,
 };

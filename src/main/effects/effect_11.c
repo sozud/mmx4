@@ -2,6 +2,6 @@
 // 800B8064..800B806C
 #include "common.h"
 
-void func_800B8064(struct EffectObj* arg0)
+void null_effect_update(struct EffectObj* self)
 {
 }

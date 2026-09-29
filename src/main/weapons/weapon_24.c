@@ -2,7 +2,7 @@
 // 80097EEC..800985F4
 #include "common.h"
 
-void func_80097EEC(struct WeaponObj* arg0)
+void zero_saber_update(struct WeaponObj* arg0)
 {
     s32 var_a0;
     struct PlayerObj* ptr = &g_Player;
@@ -26,21 +26,22 @@ void func_80097EEC(struct WeaponObj* arg0)
     }
 
     if (arg0->state != 0) {
-        func_80015DC8(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.relative_step == 0) {
             ZeroObjectState(OBJECT_HEADER(arg0));
         } else {
-            func_80098138(arg0, ptr);
+            zero_saber_follow(arg0, ptr);
         }
     } else {
         func_80097FC4(arg0, ptr);
-        func_80098138(arg0, ptr);
+        zero_saber_follow(arg0, ptr);
     }
 }
 
+// zero_saber_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80097FC4);
 
-void func_80098138(struct WeaponObj* arg0, struct PlayerObj* arg1)
+void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     u8 id;
     u8 value;
@@ -51,7 +52,7 @@ void func_80098138(struct WeaponObj* arg0, struct PlayerObj* arg1)
     if (arg0->animation_step.fields.event == 0) {
         arg0->unk50 = 0;
     } else {
-        arg0->unk50 = (u8*)&D_80108A50[arg0->animation_step.fields.event];
+        arg0->unk50 = (u8*)&zero_saber_hit_boxes[arg0->animation_step.fields.event];
     }
     id = arg0->id;
     if (id - 0x18 < 2U) {
@@ -60,22 +61,25 @@ void func_80098138(struct WeaponObj* arg0, struct PlayerObj* arg1)
         value = arg0->animation_step.fields.event;
     }
     arg0->unk64 = value;
-    func_8002B318(BASE_OBJECT(arg0), 0x80, 0x80);
+    update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
 
 // WeaponObj, weapon_object_update_funcs[36]
 
+// rakuhouha_orb_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_800981CC);
 
+// rising_flame_trail_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80098338);
 
+// ryuenjin_flame_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24", func_80098474);
 
-struct Unk_unk68 D_80108A4C[] = {
+struct Unk_unk68 rakuhouha_orb_box[] = {
     { -26, -26, 0x34, 0x34 },
 };
 
-struct Unk_unk68 D_80108A50[] = {
+struct Unk_unk68 zero_saber_hit_boxes[] = {
     { 0, 0, 0, 0 },
     { -23, -43, 0x1F, 0x1F },
     { -57, -43, 0x33, 0x36 },
@@ -139,7 +143,7 @@ struct Unk_unk68 D_80108A50[] = {
     { -64, -76, 0x3E, 0x54 },
 };
 
-u8 D_80108B44[24] = {
+u8 zero_saber_animations[24] = {
     0x70,
     0x03,
     0x71,
@@ -166,14 +170,14 @@ u8 D_80108B44[24] = {
     0x08,
 };
 
-u8 D_80108B5C[] = {
+u8 ryuenjin_flame_animations[] = {
     0x13,
     0x14,
     0x15,
     0x14,
 };
 
-u16 D_80108B60[8] = {
+u16 ryuenjin_flame_offsets[8] = {
     0xFFCE,
     0xFFFA,
     0xFFE0,

@@ -2,81 +2,82 @@
 // 800D9218..800D9C84
 #include "common.h"
 
-s16 D_8010FF58[4] = { 0x16B0, 0x1DE0, 0x2700, 0x2710 };
+s16 train_tunnel_lock_positions[4] = { 0x16B0, 0x1DE0, 0x2700, 0x2710 };
 
-void func_800D9218(struct LayerObj* arg0)
+void train_tunnel_update(struct LayerObj* arg0)
 {
-    D_8010FF60[arg0->state](arg0);
+    train_tunnel_state_funcs[arg0->state](arg0);
     func_800D9B48(arg0);
 }
 
+// train_tunnel_init
 INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9268);
 
-void func_800D9330(struct LayerObj* arg0)
+void train_tunnel_main(struct LayerObj* arg0)
 {
     f32* bg1_x = &background_objects[1].x_pos;
 
     arg0->unk15 = (u8)arg0->bg_offset;
-    func_800D993C(arg0);
-    D_8010FF6C[arg0->unk5](arg0);
+    train_tunnel_update_section(arg0);
+    train_tunnel_section_funcs[arg0->unk5](arg0);
     bg1_x->val += arg0->unk18.val;
     background_objects[2].x_pos.val += arg0->unk18.val >> 1;
     switch (arg0->unk17) {
     case 1:
-        func_800D99B0(arg0);
+        train_tunnel_shake_running(arg0);
         break;
     case 2:
-        func_800D9A04(arg0);
+        train_tunnel_shake_braking(arg0);
         break;
     }
-    func_800D9A58(arg0);
+    train_tunnel_spawn_scroll_prop(arg0);
 }
 
-void func_800D93FC(struct LayerObj* arg0)
+void train_tunnel_despawn(struct LayerObj* arg0)
 {
-    func_8002B108(arg0);
+    despawn_object_permanently(arg0);
 }
 
-void func_800D941C(struct LayerObj* arg0)
+void train_tunnel_section_0(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D945C(arg0);
+        train_tunnel_section_0_wait(arg0);
     } else {
-        func_800D9470(arg0);
+        train_tunnel_section_0_skip(arg0);
     }
 }
 
-void func_800D945C(struct LayerObj* arg0)
+void train_tunnel_section_0_wait(struct LayerObj* arg0)
 {
     arg0->unk6++;
 }
 
-void func_800D9470(struct LayerObj* arg0)
+void train_tunnel_section_0_skip(struct LayerObj* arg0)
 {
     arg0->unk5 = 5;
     arg0->unk6 = 0;
 }
 
-void func_800D9480(struct LayerObj* arg0)
+void train_tunnel_section_1(struct LayerObj* arg0)
 {
     switch (arg0->unk6) {
     case 0:
-        func_800D94FC(arg0);
+        train_tunnel_wait_stop_point(arg0);
         return;
     case 1:
-        func_800D95F4(arg0);
+        train_tunnel_start_braking(arg0);
         return;
     case 2:
-        func_800D964C(arg0);
+        train_tunnel_brake(arg0);
         return;
     }
 }
 
-void func_800D94FC(struct LayerObj* arg0)
+void train_tunnel_wait_stop_point(struct LayerObj* arg0)
 {
     switch (arg0->unk7) {
     case 0:
-        if (func_800D9B08(arg0)) {
+        if (train_tunnel_player_at_lock(arg0)) {
             background_objects[0].unk24 = 0x16B0;
             background_objects[0].unk26 = 0x16B0;
             player_start_script_action(0x14, 0x40);
@@ -85,13 +86,13 @@ void func_800D94FC(struct LayerObj* arg0)
         }
         return;
     case 1:
-        if (func_8002BAD0(1, 0x40, 0x40) == 0x1E) {
+        if (get_layout_screen(1, 0x40, 0x40) == 0x1E) {
             arg0->unk7 = 2;
             return;
         }
         break;
     case 2:
-        if (func_8002BAD0(1, 0x40, 0x40) == 0x18) {
+        if (get_layout_screen(1, 0x40, 0x40) == 0x18) {
             arg0->unk7 = 0;
             arg0->unk6++;
         }
@@ -99,7 +100,7 @@ void func_800D94FC(struct LayerObj* arg0)
     }
 }
 
-void func_800D95F4(struct LayerObj* arg0)
+void train_tunnel_start_braking(struct LayerObj* arg0)
 {
     arg0->unk17 = 2;
     engine_obj.character_state.bytes[0] = 1;
@@ -108,7 +109,7 @@ void func_800D95F4(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
-void func_800D964C(struct LayerObj* arg0)
+void train_tunnel_brake(struct LayerObj* arg0)
 {
     s32 temp_v1;
 
@@ -132,16 +133,16 @@ void func_800D964C(struct LayerObj* arg0)
     }
 }
 
-void func_800D9728(struct LayerObj* arg0)
+void train_tunnel_section_2(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D9768(arg0);
+        train_tunnel_start_departure(arg0);
     } else {
-        func_800D97F4(arg0);
+        train_tunnel_accelerate(arg0);
     }
 }
 
-void func_800D9768(struct LayerObj* arg0)
+void train_tunnel_start_departure(struct LayerObj* arg0)
 {
     if (engine_obj.checkpoint != 3) {
         background_objects[0].unk26 = 0x1DE0;
@@ -158,7 +159,7 @@ void func_800D9768(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
-void func_800D97F4(struct LayerObj* arg0)
+void train_tunnel_accelerate(struct LayerObj* arg0)
 {
     if (background_objects[0].x_pos.i.hi == background_objects[0].unk26 && g_Player.script_state < 0) {
         player_end_script_action();
@@ -171,59 +172,59 @@ void func_800D97F4(struct LayerObj* arg0)
     }
 }
 
-void func_800D986C(struct LayerObj* arg0)
+void train_tunnel_section_3(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D98AC(arg0);
+        train_tunnel_section_3_wait(arg0);
     } else {
-        func_800D98C0(arg0);
+        train_tunnel_section_3_skip(arg0);
     }
 }
 
-void func_800D98AC(struct LayerObj* arg0)
+void train_tunnel_section_3_wait(struct LayerObj* arg0)
 {
     arg0->unk7 = 0;
     arg0->unk6++;
 }
 
-void func_800D98C0(struct LayerObj* arg0)
+void train_tunnel_section_3_skip(struct LayerObj* arg0)
 {
     arg0->unk5 = 5;
     arg0->unk6 = 0;
 }
 
-void func_800D98D0(struct LayerObj* arg0)
+void train_tunnel_section_4(struct LayerObj* arg0)
 {
     if (arg0->unk6 == 0) {
-        func_800D9910(arg0);
+        train_tunnel_section_4_wait(arg0);
     } else {
-        func_800D9924(arg0);
+        train_tunnel_section_4_skip(arg0);
     }
 }
 
-void func_800D9910(struct LayerObj* arg0)
+void train_tunnel_section_4_wait(struct LayerObj* arg0)
 {
     arg0->unk7 = 0;
     arg0->unk6++;
 }
 
-void func_800D9924(struct LayerObj* arg0)
+void train_tunnel_section_4_skip(struct LayerObj* arg0)
 {
     arg0->unk5 = 5;
     arg0->unk6 = 0;
 }
 
-void func_800D9934(struct LayerObj* arg0)
+void train_tunnel_idle(struct LayerObj* arg0)
 {
 }
 
-void func_800D993C(struct LayerObj* arg0)
+void train_tunnel_update_section(struct LayerObj* arg0)
 {
     s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
 
     while (1) {
-        if (player_x - D_8010FF58[offset] < 0) {
+        if (player_x - train_tunnel_lock_positions[offset] < 0) {
             break;
         }
         offset++;
@@ -239,30 +240,30 @@ void func_800D993C(struct LayerObj* arg0)
     }
 }
 
-void func_800D99B0(struct LayerObj* arg0)
+void train_tunnel_shake_running(struct LayerObj* arg0)
 {
     if (--arg0->unk16 == 0) {
-        func_80028BAC(0x30, 2, 1);
+        start_screen_shake_y(0x30, 2, 1);
         arg0->unk16 = 0x78;
     }
 }
 
-void func_800D9A04(struct LayerObj* arg0)
+void train_tunnel_shake_braking(struct LayerObj* arg0)
 {
     if (--arg0->unk16 == 0) {
-        func_80028BAC(0x10, 1, 1);
+        start_screen_shake_y(0x10, 1, 1);
         arg0->unk16 = 0x1E;
     }
 }
 
-void func_800D9A58(struct LayerObj* arg0)
+void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
 {
     struct MiscObj* misc;
     u8 state = arg0->private_state.value.bytes[0];
 
     if (state != 1) {
         if (state == 0) {
-            if ((s16)func_8002BAD0(1, 0, 0x40) == 0x18) {
+            if ((s16)get_layout_screen(1, 0, 0x40) == 0x18) {
                 misc = find_free_misc_obj();
                 if (misc != 0) {
                     misc->active = 0x41;
@@ -271,15 +272,15 @@ void func_800D9A58(struct LayerObj* arg0)
                     arg0->private_state.value.bytes[0] = 1;
                 }
             }
-        } else if ((s16)func_8002BAD0(1, 0, 0x40) != 0x18) {
+        } else if ((s16)get_layout_screen(1, 0, 0x40) != 0x18) {
             arg0->private_state.value.bytes[0] = 0;
         }
     }
 }
 
-u8 func_800D9B08(struct LayerObj* arg0)
+u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 {
-    s32 left = D_8010FF58[(u8)arg0->bg_offset - 1];
+    s32 left = train_tunnel_lock_positions[(u8)arg0->bg_offset - 1];
     s32 x = g_Player.x_pos.i.hi;
     if (x >= left && x <= left + 0x10) {
         return 1;
@@ -287,19 +288,20 @@ u8 func_800D9B08(struct LayerObj* arg0)
     return 0;
 }
 
+// train_tunnel_update_lights
 INCLUDE_ASM("main/nonmatchings/layers/layer_02", func_800D9B48);
 
-void (*D_8010FF60[])(struct LayerObj*) = {
+void (*train_tunnel_state_funcs[])(struct LayerObj*) = {
     func_800D9268,
-    func_800D9330,
-    func_800D93FC,
+    train_tunnel_main,
+    train_tunnel_despawn,
 };
 
-void (*D_8010FF6C[])(struct LayerObj*) = {
-    func_800D941C,
-    func_800D9480,
-    func_800D9728,
-    func_800D986C,
-    func_800D98D0,
-    func_800D9934,
+void (*train_tunnel_section_funcs[])(struct LayerObj*) = {
+    train_tunnel_section_0,
+    train_tunnel_section_1,
+    train_tunnel_section_2,
+    train_tunnel_section_3,
+    train_tunnel_section_4,
+    train_tunnel_idle,
 };

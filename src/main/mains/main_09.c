@@ -2,6 +2,6 @@
 // 800498C0..800498C8
 #include "common.h"
 
-void func_800498C0(struct MainObj* arg0)
+void unused_main_09_update(struct MainObj* self)
 {
 }

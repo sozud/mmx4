@@ -239,7 +239,7 @@ void func_8001D134(void)
 {
     func_80023D30();
     func_80016F0C();
-    func_80015930(0xFF, 0);
+    stop_sound(0xFF, 0);
     reset_objects();
     func_8002AB20();
 }
@@ -457,7 +457,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
 
     D_80141BDE[0] = 0;
     func_80016F0C();
-    func_80015930(0xFF, 0);
+    stop_sound(0xFF, 0);
     g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
     D_8013E188[0] = 0;
     D_8013E188[1] = 0;

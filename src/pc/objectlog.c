@@ -162,7 +162,7 @@ static void log_objects(long frame, u32 game, u32 engine)
             offsetof(struct PlayerObj, previous_animation_index) },
         { "main", main_objects, COUNT(main_objects), sizeof(main_objects[0]),
             offsetof(struct MainObj, bg_offset),
-            offsetof(struct MainObj, unk20), offsetof(struct MainObj, unk24),
+            offsetof(struct MainObj, x_speed), offsetof(struct MainObj, y_speed),
             offsetof(struct MainObj, unk40), offsetof(struct MainObj, unk42),
             offsetof(struct MainObj, animation_step),
             offsetof(struct MainObj, previous_animation_index) },
