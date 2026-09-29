@@ -26,8 +26,11 @@ concurrency:
 
 jobs:
   build-linux:
-    name: Build Linux port
+    name: Build Linux port (${{ matrix.version }})
     if: github.event_name != 'pull_request_target'
+    strategy:
+      matrix:
+        version: [us, jp]
     runs-on: ubuntu-latest
     steps:
       - name: Clone main repo
@@ -44,7 +47,7 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxtst-dev
       - name: Configure
-        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DMMX4_PC_VERSION=${{ matrix.version }}
       - name: Build
         run: cmake --build build-linux --parallel
       - name: Check replay format validation
