@@ -774,7 +774,33 @@ void magma_dragoon_death_start(struct MainObj* self)
 }
 
 // magma_dragoon_death_flash
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FF00);
+void func_8007FF00(struct MainObj* arg0)
+{
+    struct EffectObj* effect;
+
+    if (--arg0->unk7C == 0) {
+        arg0->unk5++;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = -0x7F;
+            effect->id = 0x1A;
+            effect->x_pos.u.hi = arg0->x_pos.u.hi;
+            effect->y_pos.u.hi = arg0->y_pos.u.hi;
+            arg0->ext.main_65.object = effect;
+        }
+    }
+
+    if (arg0->unk7E-- == 0) {
+        arg0->unk42 ^= 0x8000;
+        arg0->invincibility_timer -= 5;
+        if (arg0->invincibility_timer >= 0x1A) {
+            arg0->invincibility_timer = 0;
+        }
+        arg0->unk7E = (s8)(arg0->invincibility_timer < 5 ? 5 : arg0->invincibility_timer);
+    }
+
+    update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
+}
 
 // magma_dragoon_death_begin_explosion
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FFFC);

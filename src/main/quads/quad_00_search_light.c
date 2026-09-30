@@ -21,14 +21,14 @@ void search_light_init(struct QuadObj* arg0)
     temp_v0 = &search_light_shapes[arg0->unk2];
     arg0->state = 1;
     arg0->unk34 = temp_a0;
-    arg0->unk14.i.hi = temp_v0->vertices[0];
-    arg0->unk18.i.hi = temp_v0->vertices[1];
-    arg0->unk1C.i.hi = temp_v0->vertices[2];
-    arg0->unk20.i.hi = temp_v0->vertices[3];
-    arg0->unk24.i.hi = temp_v0->vertices[4];
-    arg0->unk28.i.hi = temp_v0->vertices[5];
-    arg0->unk2C.i.hi = temp_v0->vertices[6];
-    arg0->unk30.i.hi = temp_v0->vertices[7];
+    arg0->vertices[0].x.i.hi = temp_v0->vertices[0];
+    arg0->vertices[0].y.i.hi = temp_v0->vertices[1];
+    arg0->vertices[1].x.i.hi = temp_v0->vertices[2];
+    arg0->vertices[1].y.i.hi = temp_v0->vertices[3];
+    arg0->vertices[2].x.i.hi = temp_v0->vertices[4];
+    arg0->vertices[2].y.i.hi = temp_v0->vertices[5];
+    arg0->vertices[3].x.i.hi = temp_v0->vertices[6];
+    arg0->vertices[3].y.i.hi = temp_v0->vertices[7];
     arg0->runtime.search_light.extent = temp_v0->extent;
     arg0->runtime.search_light.x_accumulator = 0;
     arg0->runtime.search_light.y_accumulator = 0;
@@ -75,15 +75,15 @@ s32 search_light_is_visible(struct QuadObj* arg0)
     visible = 0;
     x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
     y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
-    width = ABS(arg0->unk1C.i.hi, arg0->unk14.i.hi);
-    height = ABS(arg0->unk30.i.hi, arg0->unk18.i.hi);
+    width = ABS(arg0->vertices[1].x.i.hi, arg0->vertices[0].x.i.hi);
+    height = ABS(arg0->vertices[3].y.i.hi, arg0->vertices[0].y.i.hi);
     if (ON_SCREEN_X(x, width)) {
         if (ON_SCREEN_Y(y, height)) {
             visible = 1;
         }
     }
-    x_p = arg0->x_pos.u.hi + arg0->unk14.u.hi;
-    y_p = arg0->y_pos.u.hi + arg0->unk18.u.hi;
+    x_p = arg0->x_pos.u.hi + arg0->vertices[0].x.u.hi;
+    y_p = arg0->y_pos.u.hi + arg0->vertices[0].y.u.hi;
     x2 = x_p + (u16)(width >> 1) - background_objects[arg0->bg_offset].x_pos.u.hi;
     y2 = y_p + (u16)(height >> 1) - background_objects[arg0->bg_offset].y_pos.u.hi;
     if (ON_SCREEN_X(x2, width)) {

@@ -28,11 +28,11 @@ void quad_is_on_screen(struct QuadObj* arg0)
     arg0->on_screen = 0;
 
     if (arg0->bg_offset < 0) {
-        w = arg0->unk14.i.hi + arg0->x_pos.i.hi;
-        h = arg0->unk18.i.hi + arg0->y_pos.i.hi;
+        w = arg0->vertices[0].x.i.hi + arg0->x_pos.i.hi;
+        h = arg0->vertices[0].y.i.hi + arg0->y_pos.i.hi;
     } else {
-        w = (arg0->unk14.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
-        h = (arg0->unk18.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
+        w = (arg0->vertices[0].x.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
+        h = (arg0->vertices[0].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
         arg0->on_screen = 1;
@@ -40,11 +40,11 @@ void quad_is_on_screen(struct QuadObj* arg0)
     }
 
     if (arg0->bg_offset < 0) {
-        w = arg0->unk1C.i.hi + arg0->x_pos.i.hi;
-        h = arg0->unk20.i.hi + arg0->y_pos.i.hi;
+        w = arg0->vertices[1].x.i.hi + arg0->x_pos.i.hi;
+        h = arg0->vertices[1].y.i.hi + arg0->y_pos.i.hi;
     } else {
-        w = (arg0->unk1C.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
-        h = (arg0->unk20.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
+        w = (arg0->vertices[1].x.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
+        h = (arg0->vertices[1].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
         arg0->on_screen = 1;
@@ -52,11 +52,11 @@ void quad_is_on_screen(struct QuadObj* arg0)
     }
 
     if (arg0->bg_offset < 0) {
-        w = arg0->unk24.i.hi + arg0->x_pos.i.hi;
-        h = arg0->unk28.i.hi + arg0->y_pos.i.hi;
+        w = arg0->vertices[2].x.i.hi + arg0->x_pos.i.hi;
+        h = arg0->vertices[2].y.i.hi + arg0->y_pos.i.hi;
     } else {
-        w = (arg0->unk24.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
-        h = (arg0->unk28.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
+        w = (arg0->vertices[2].x.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
+        h = (arg0->vertices[2].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
         arg0->on_screen = 1;
@@ -64,11 +64,11 @@ void quad_is_on_screen(struct QuadObj* arg0)
     }
 
     if (arg0->bg_offset < 0) {
-        w = arg0->unk2C.i.hi + arg0->x_pos.i.hi;
-        h = arg0->unk30.i.hi + arg0->y_pos.i.hi;
+        w = arg0->vertices[3].x.i.hi + arg0->x_pos.i.hi;
+        h = arg0->vertices[3].y.i.hi + arg0->y_pos.i.hi;
     } else {
-        w = (arg0->unk2C.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
-        h = (arg0->unk30.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
+        w = (arg0->vertices[3].x.i.hi + arg0->x_pos.i.hi) - background_objects[arg0->bg_offset].x_pos.i.hi;
+        h = (arg0->vertices[3].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
         arg0->on_screen = 1;

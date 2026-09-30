@@ -72,20 +72,19 @@ void func_800194C8(struct EngineObj* engine)
     D_801721BC = (struct MemcardSaveSlot*)(D_8015D9C8 + 0x200);
     func_80012E18(D_8015D9C8, D_8015D9C8 + 0x1FFC);
     for (i = 0; i < 2; i++) {
-        D_801721B4[i] = func_8001CDE4(i);
+        *(&D_801721B4 + i) = func_8001CDE4(i);
     }
     *D_80141BDF = 0;
     func_8001E980(0);
     D_801721B9 = 1;
-    z = 0;
-    if (D_801721B4[z] == 0 || D_801721B4[1] == 0) {
+    if (D_801721B4 == 0 || D_801721B5 == 0) {
         engine->unk1 = 1;
         engine->unk2 = 0;
         func_8001B644(D_800F1DEC);
-        if (D_801721B4[0] == 0) {
+        if (D_801721B4 == 0) {
             func_8001B718(0x70, 0xBU, 0U);
         }
-        if (D_801721B4[1] == 0) {
+        if (D_801721B5 == 0) {
             func_8001B718(0x90, 0xCU, 1U);
         }
         func_8001C008(2, 0);
@@ -96,7 +95,90 @@ void func_800194C8(struct EngineObj* engine)
     func_8001B644(D_800F1DFC);
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001961C);
+void func_8001961C(struct EngineObj* engine)
+{
+    u16* controller;
+    u8* cursor;
+    u8* character;
+    u8 current;
+
+    if (controller_state & PADLup) {
+        if (D_80141BDF[0] == 0) {
+            D_80141BDF[0] = 2;
+        } else if (D_80141BDF[0] == 1) {
+            if (D_801721B4 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else if (D_801721B5 != 0) {
+            if (D_801721B4 == 0) {
+                D_80141BDF[0] = 0;
+            } else {
+                D_80141BDF[0] = 2;
+            }
+        } else {
+            D_80141BDF[0] = 1;
+        }
+    }
+
+    if (controller_state & PADLdown) {
+        if (D_80141BDF[0] == 0) {
+            if (D_801721B5 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 1;
+            }
+        } else if (D_80141BDF[0] == 2) {
+            if (D_801721B4 != 0) {
+                if (D_801721B5 != 0) {
+                    D_80141BDF[0] = 2;
+                } else {
+                    D_80141BDF[0] = 1;
+                }
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else {
+            D_80141BDF[0] = 2;
+        }
+    }
+
+    controller = &controller_state;
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        func_8001540C(0, 0x22, NULL);
+        if (*controller & PAD_SELECTION_ALT) {
+            D_80141BDF[0] = 2;
+        }
+        cursor = D_80141BDF;
+        current = *cursor;
+        switch (current) {
+        case 0:
+        case 1:
+            character = &D_801721B6;
+            *character = current;
+            engine->unk1++;
+            reset_objects();
+            func_8001B718(0x40, (*character + 0xB) & 0xFF, 0xFF);
+            func_8001B644(D_800F1E0C);
+            D_801721BA = 2;
+            break;
+        case 2:
+            reset_objects();
+            if (engine->unk4 == 8) {
+                engine->unk8 = func_8001E850(D_800F2328, 1);
+                engine->state = 8;
+                *cursor = 2;
+            } else {
+                engine->unk8 = func_8001E850(D_800F2300, 1);
+                engine->state = 9;
+                *cursor = 0;
+            }
+            engine->unk1 = 1;
+            break;
+        }
+    }
+}
 
 void func_8001989C(struct EngineObj* arg0)
 {
@@ -151,10 +233,10 @@ void func_8001989C(struct EngineObj* arg0)
         return;
     case 0:
         arg0->unk1 = (u8)arg0->unk1 + 2;
-        func_8001CC5C(D_801721B6, &D_80173AE0, D_80010058);
-        if (D_80173AE0.total_size == 0x1E000) {
-            func_8001CC5C(D_801721B6, &D_80173AE0, D_8001005C);
-            if (D_80173AE0.count == 0) {
+        func_8001CC5C(D_801721B6, D_80173AE0_LIST, D_80010058);
+        if (D_80173C2C == 0x1E000) {
+            func_8001CC5C(D_801721B6, D_80173AE0_LIST, D_8001005C);
+            if (D_80173C2A == 0) {
                 arg0->unk1 = 0xB;
                 D_801721B8 = 3;
                 D_80141BDF[0] = 0;
@@ -164,8 +246,8 @@ void func_8001989C(struct EngineObj* arg0)
             }
             func_8001CB24(D_801721B0, D_801721B6, 0x2000);
         } else {
-            func_8001CC5C(D_801721B6, &D_80173AE0, D_8001005C);
-            if (D_80173AE0.count != 0) {
+            func_8001CC5C(D_801721B6, D_80173AE0_LIST, D_8001005C);
+            if (D_80173C2A != 0) {
                 func_8001CB24(D_801721B0, D_801721B6, 0x2000);
             } else {
                 D_801721BC[0].character = 0xFF;
@@ -266,7 +348,7 @@ void func_80019D04(struct EngineObj* arg0)
         func_8001B644(D_800F1ED0);
         func_8001B7C0(0xD0, 0x88, 0);
         func_8001C008(3, 3);
-        D_80173AE0.count = 0;
+        D_80173C2A = 0;
         D_801721BA = 2;
     } else {
         reset_objects();
@@ -281,7 +363,83 @@ void func_80019D04(struct EngineObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_80019EF0);
+void func_80019EF0(struct EngineObj* engine)
+{
+    u16* controller;
+    u8 i;
+    u8 j;
+
+    if (controller_state & PADLup) {
+        u8* cursor = D_80141BDF;
+        u8 current = *cursor;
+
+        if (current == 0) {
+            struct MemcardSaveSlot** slot;
+
+            for (i = 0, slot = &D_801721BC; i < 3; i++) {
+                (*slot)++;
+            }
+            D_80141BDF[0] = 3;
+        } else {
+            struct MemcardSaveSlot** slot = &D_801721BC;
+
+            *cursor = current - 1;
+            (*slot)--;
+        }
+        if (D_80141BDF[0] != 3) {
+            func_8001B7C0(0xD0, 0x88, 0);
+        }
+    }
+
+    if (controller_state & PADLdown) {
+        u8* cursor = D_80141BDF;
+        u8 current = *cursor;
+
+        if (current == 3) {
+            struct MemcardSaveSlot** slot;
+
+            for (j = 0, slot = &D_801721BC; j < 3; j++) {
+                (*slot)--;
+            }
+            D_80141BDF[0] = 0;
+        } else {
+            struct MemcardSaveSlot** slot = &D_801721BC;
+
+            *cursor = current + 1;
+            (*slot)++;
+        }
+        if (D_80141BDF[0] != 3) {
+            func_8001B7C0(0xD0, 0x88, 0);
+        }
+    }
+
+    controller = &controller_state;
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        u8 current;
+
+        func_8001540C(0, 0x22, 0);
+        current = D_80141BDF[0];
+        if (current == 3 || (*controller & PAD_SELECTION_ALT)) {
+            engine->unk1 = 0;
+            D_80141BDF[0] = 0;
+            return;
+        }
+        D_801721B7 = current;
+        D_80141BDF[0] = 0;
+        reset_objects();
+        if (D_801721BC->character != 0xFF) {
+            engine->unk1++;
+            func_8001B718(0x40, 0x36, 0xFF);
+        } else {
+            engine->unk1 += 2;
+            func_8001B718(0x40, 0x37, 0xFF);
+        }
+        func_8001B718(0x30, (D_801721B7 + D_801721B6 * 3 + 0x1A) & 0xFF, 0xFF);
+        func_8001B644(D_800F1E68);
+        func_8001B7C0(0xD0, 0x88, 0);
+        func_8001C008(0, 1);
+    }
+}
 
 void func_8001A178(struct EngineObj* arg0)
 {
@@ -450,9 +608,129 @@ void func_8001A9EC(struct EngineObj* arg0)
     init_objects();
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001AA98);
+void func_8001AA98(struct EngineObj* arg0)
+{
+    struct EngineObj* engine = arg0;
+    u8* buffer;
+    u8 i;
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001ABDC);
+    reset_objects();
+    buffer = D_8015D9C8;
+    D_801721B0 = buffer;
+    D_801721BC = (struct MemcardSaveSlot*)(buffer + 0x200);
+    func_80012E18(buffer, buffer + 0x1FFC);
+    for (i = 0; i < 2; ++i) {
+        *(&D_801721B4 + i) = func_8001CDE4(i);
+    }
+    D_80141BDF[0] = 0;
+    engine->unk1 = 1;
+    engine->unk2 = 0;
+    func_8001E980(0);
+    D_801721B9 = 0;
+    if (D_801721B4 != 0) {
+        if (D_801721B5 != 0) {
+            goto load_save;
+        }
+    } else {
+        func_8001B718(0x70, 0x0B, 0);
+    }
+    if (D_801721B5 == 0) {
+        func_8001B718(0x90, 0x0C, 1);
+    }
+    func_8001B644(D_800F1EF0);
+    func_8001C008(2, 0);
+    return;
+load_save:
+    engine->unk1 = 6;
+    D_801721B8 = 0;
+    func_8001B644(D_800F1F00);
+}
+
+void func_8001ABDC(struct EngineObj* engine)
+{
+    u16* controller;
+    u8* cursor;
+    u8* character;
+
+    if (controller_state & PADLup) {
+        if (D_80141BDF[0] == 0) {
+            D_80141BDF[0] = 2;
+        } else if (D_80141BDF[0] == 1) {
+            if (D_801721B4 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else if (D_801721B5 != 0) {
+            if (D_801721B4 == 0) {
+                D_80141BDF[0] = 0;
+            } else {
+                D_80141BDF[0] = 2;
+            }
+        } else {
+            D_80141BDF[0] = 1;
+        }
+    }
+
+    if (controller_state & PADLdown) {
+        if (D_80141BDF[0] == 0) {
+            if (D_801721B5 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 1;
+            }
+        } else if (D_80141BDF[0] == 2) {
+            if (D_801721B4 != 0) {
+                if (D_801721B5 != 0) {
+                    D_80141BDF[0] = 2;
+                } else {
+                    D_80141BDF[0] = 1;
+                }
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else {
+            D_80141BDF[0] = 2;
+        }
+    }
+
+    controller = &controller_state;
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        func_8001540C(0, 0x22, NULL);
+        if (*controller & PAD_SELECTION_ALT) {
+            D_80141BDF[0] = 2;
+        }
+        cursor = D_80141BDF;
+        switch (*cursor) {
+        case 0:
+        case 1:
+            engine->unk1++;
+            character = &D_801721B6;
+            *character = *cursor;
+            reset_objects();
+            *cursor = 0;
+            func_8001B718(0x40, (*character + 0xB) & 0xFF, 0xFF);
+            func_8001B644(D_800F1E0C);
+            D_801721BA = 2;
+            break;
+        case 2:
+            reset_objects();
+            game_info.unk0 = 7;
+            game_info.unk2 = 0;
+            game_info.unk3 = 0;
+            if (D_800F1D90.save.character != 0xFF) {
+                game_info.unk8 = func_8001E850(D_800F22D0, 0);
+                game_info.mode = 1;
+                *cursor = 1;
+                return;
+            }
+            game_info.unk8 = func_8001E850(D_800F22E0, 0);
+            game_info.mode = 3;
+            *cursor = 0;
+            break;
+        }
+    }
+}
 
 void func_8001AE8C(struct EngineObj* arg0)
 {
@@ -512,8 +790,8 @@ void func_8001AE8C(struct EngineObj* arg0)
         break;
     case 0:
         arg0->unk1++;
-        func_8001CC5C(D_801721B6, &D_80173AE0, D_8001005C);
-        if (D_80173AE0.count != 0) {
+        func_8001CC5C(D_801721B6, D_80173AE0_LIST, D_8001005C);
+        if (D_80173C2A != 0) {
             if (func_8001CB24(D_801721B0, D_801721B6, 0x2000) != 0) {
                 reset_objects();
                 D_801721B8 = 2;

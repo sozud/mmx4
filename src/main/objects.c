@@ -469,7 +469,24 @@ void ZeroObjectState(struct ObjectHeader* arg0)
 }
 
 // is_far_off_screen
-INCLUDE_ASM("main/nonmatchings/objects", func_8002B160);
+s32 func_8002B160(struct BaseObj* arg0)
+{
+    struct BaseObj* self = arg0;
+    s32 x;
+    s32 y;
+
+    if (self->bg_offset < 0) {
+        x = self->x_pos.u.hi;
+        y = self->y_pos.u.hi;
+    } else {
+        x = self->x_pos.u.hi - background_objects[self->bg_offset].x_pos.u.hi;
+        y = self->y_pos.u.hi - background_objects[self->bg_offset].y_pos.u.hi;
+    }
+    if ((u32)((x + 0x40) & 0xFFFF) < 0x1C0U && (u32)(u16)(y + 0x40) < 0x170U) {
+        return 0;
+    }
+    return 1;
+}
 
 // is_off_screen
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B1E8);

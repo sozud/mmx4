@@ -34,6 +34,8 @@ __asm__(".include \"macro.inc\"\n");
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
 #define SOME_COORDINATE_CONVERSION(v) ((((v) * 4) + 24) % 16 | ((((v) + 6) / 4) + 480) * 64)
+#define SOME_COORDINATE_CONVERSION_XY(x,y) ((((x) * 4) + 24) % 16 | ((((y) + 6) / 4) + 480) * 64)
+#define WITHIN_BOUNDS(lo, v, hi) ((lo) < (v) && (v) < (hi))
 #define POS_BOUNDS_CHECK_FAIL_RET0(a, b)         \
     if (a - b >= 0) {                            \
         if (a - b <= 0x2FFFF) {                  \
@@ -2946,13 +2948,13 @@ extern u16 web_spider_arena_x;
 extern u16 web_spider_arena_y;
 extern struct Unk_unk68 D_801075F4[];
 
-struct Effect14ItemSpawn {
+struct Effect1314ItemSpawn {
     u8 reserved;
     u8 id;
-    u16 x;
-    u16 y;
+    s16 x;
+    s16 y;
 };
-extern struct Effect14ItemSpawn edge_spawner_items[19];
+extern struct Effect1314ItemSpawn edge_spawner_items[19];
 extern struct Unk_unk68 D_80108584[];
 extern u8 rising_platform_debris[2][4];
 extern u8 web_spider_swing_sets[];
@@ -3232,16 +3234,14 @@ union QuadLink {
     u16 direction;
 };
 
+struct QuadVertex {
+    f32 x;
+    f32 y;
+};
+
 struct QuadObj {
     OBJECT_HEADER_FIELDS
-    f32 unk14;
-    f32 unk18;
-    f32 unk1C;
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
+    struct QuadVertex vertices[4];
     u16 unk34;
     s8 unk36;
     s8 bg_offset;
@@ -3689,7 +3689,7 @@ ASSERT_OBJECT_HEADER(MiscObj, bg_offset);
 ASSERT_OBJECT_HEADER(BazObj, bg_offset);
 ASSERT_OBJECT_HEADER(RideArmorObj, bg_offset);
 ASSERT_OBJECT_HEADER(MainObj, bg_offset);
-ASSERT_OBJECT_HEADER(QuadObj, unk14);
+ASSERT_OBJECT_HEADER(QuadObj, vertices);
 ASSERT_OBJECT_HEADER(EffectObj, ext);
 
 #undef ASSERT_OBJECT_HEADER
@@ -3908,7 +3908,8 @@ extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
 extern u8* D_801721B0;
-extern u8 D_801721B4[2];
+extern u8 D_801721B4;
+extern u8 D_801721B5;
 extern u8 D_801721B6;
 extern u8 D_801721B7;
 extern u8 D_801721B9;
@@ -3928,7 +3929,10 @@ struct MemcardFileList {
     s32 sizes[15]; // 0x150
 };
 
-extern struct MemcardFileList D_80173AE0;
+extern u8 D_80173AE0[0x14A];
+extern u8 D_80173C2A;
+extern s32 D_80173C2C;
+#define D_80173AE0_LIST ((struct MemcardFileList*)D_80173AE0)
 
 extern u8 D_800F2180[];
 extern u8 D_800F21A0[];
@@ -4199,6 +4203,20 @@ extern u8 train_boss_arm_extended_bits[4];
 extern u8 train_boss_arm_active_clear_masks[4];
 extern struct Unk_unk68 walrus_ice_shard_terrain_box;
 extern struct Unk_unk68 walrus_ice_ball_hurt_box;
+extern u8 trap_floor_terrain_box[4];
+extern u8 teleporter_terrain_box[4];
+extern struct Unk_unk68 gunship_hurt_box;
+extern struct Unk_unk68 gunship_terrain_box;
+struct Misc25Velocity {
+    s8 x;
+    s8 y;
+};
+extern struct Misc25Velocity sentry_flash_offsets[8];
+void func_8007C090(struct WeaponObj* weapon);
+extern s16 sigma_laser_sweep_offsets[14][2];
+extern s16 sigma_laser_end_offsets[8][2];
+extern struct Unk_unk68 walrus_ice_ball_attack_box;
+
 extern struct Unk_unk68 walrus_ice_ball_attack_box;
 extern struct Unk_unk68 walrus_ice_shard_hurt_box;
 extern struct Unk_unk68 walrus_ice_shard_attack_box;
@@ -4746,6 +4764,17 @@ void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
+struct Item03StageEntry {
+    u16 x;
+    u16 y;
+    u16 velocity;
+    u16 right;
+    u16 trigger_x;
+    u16 object_id;
+    s16 width;
+    s16 height;
+};
+extern struct Item03StageEntry falling_pillar_entries[22];
 void start_screen_shake_x(s8, s8, s8);
 void func_800292D0(struct StageObjectRecord*);
 struct ObjectHeader* MakeObject(u8);
@@ -4797,7 +4826,7 @@ void func_800283F8(struct BackgroundObj*);
 void func_80028424(struct BackgroundObj*);
 s32 player_zero_check_raijingeki(struct PlayerObj*);
 s32 player_zero_check_ryuenjin(struct PlayerObj*);
-s32 func_80039F28(struct Unk12*);
+s32 func_80039F28(struct PlayerObj*);
 void func_80012EB8();
 void func_8001D064();
 void func_8001D134();

@@ -185,7 +185,33 @@ void walrus_ice_ball(struct ShotObj* self)
 }
 
 // walrus_ice_ball_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A2AA0);
+void func_800A2AA0(struct ShotObj* shot)
+{
+    struct WeaponObj* weapon = shot->unk7C;
+
+    shot->x_vel.val = 0;
+    shot->y_vel.val = FIXED(3.5);
+    shot->unk28 = 0;
+    shot->unk2C = 0;
+    shot->x_pos.val = weapon->x_pos.val;
+    shot->y_pos.val = weapon->y_pos.val;
+    shot->unk5C = 0x20;
+    shot->unk60 = 9;
+    shot->unk68 = &walrus_ice_chunk_terrain_box;
+    shot->unk54 = (u8*)&walrus_ice_ball_hurt_box;
+    shot->unk58.data = (u8*)D_801060F0;
+    shot->unk50.data = (u8*)&walrus_ice_ball_attack_box;
+    shot->timer = 0x60;
+    shot->unk16 = 2;
+    set_animation(shot, 0x1F);
+    if (shot->unk15 != 0) {
+        shot->x_pos.i.hi += 0x50;
+    } else {
+        shot->x_pos.i.hi -= 0x50;
+    }
+    shot->y_pos.i.hi += 0x10;
+    shot->unk5++;
+}
 
 void walrus_ice_ball_main(struct ShotObj* self)
 {
@@ -403,7 +429,34 @@ void walrus_ice_chunk(struct ShotObj* self)
 }
 
 // walrus_ice_chunk_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A32B8);
+void func_800A32B8(struct ShotObj* shot)
+{
+    struct WeaponObj* owner;
+
+    owner = shot->unk7C;
+    shot->x_vel.val = 0;
+    shot->y_vel.val = 0;
+    shot->unk28 = 0;
+    shot->unk2C = FIXED(9.0 / 32);
+    shot->x_pos.val = owner->x_pos.val;
+    shot->y_pos.val = owner->y_pos.val;
+    shot->unk68 = (const u8*)&walrus_ice_chunk_terrain_box;
+    shot->unk54 = (u8*)&walrus_ice_ball_hurt_box;
+    shot->unk58.data = (u8*)D_801060F0;
+    shot->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
+    shot->timer = 0x60;
+    shot->unk16 = 4;
+    shot->unk5C = 0x20;
+    shot->unk60 = 9;
+    set_animation(shot, 0x1E);
+    if (shot->unk15 != 0) {
+        shot->x_pos.i.hi += 0x90;
+    } else {
+        shot->x_pos.i.hi -= 0x90;
+    }
+    shot->y_pos.i.hi -= 0x30;
+    shot->unk5++;
+}
 
 void walrus_ice_chunk_main(struct ShotObj* self)
 {

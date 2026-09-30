@@ -45,7 +45,30 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B8630);
 INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);
 
 // edge_spawner_spawn_items
-INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B887C);
+void func_800B887C(s16 x_min, s16 x_max, s16 y_min, s16 y_max)
+{
+    struct Effect1314ItemSpawn* entry;
+    struct ItemObj* item;
+
+    for (entry = edge_spawner_items; entry->id != 0xFF; entry++) {
+        if (entry->reserved == 0) {
+            if (WITHIN_BOUNDS(x_min, entry->x, x_max)) {
+                if (WITHIN_BOUNDS(y_min, entry->y, y_max)) {
+                    item = find_free_item_obj();
+                    if (item != NULL) {
+                        item->active = 0x41;
+                        item->id = 7;
+                        item->unk2 = entry->id;
+                        item->x_pos.val = FIXED(entry->x);
+                        item->y_pos.val = FIXED(entry->y);
+                        item->backref = entry;
+                        entry->reserved = 1;
+                    }
+                }
+            }
+        }
+    }
+}
 
 void (*edge_spawner_state_funcs[])(struct EffectObj*) = {
     edge_spawner_init,
@@ -53,7 +76,7 @@ void (*edge_spawner_state_funcs[])(struct EffectObj*) = {
     edge_spawner_despawn,
 };
 
-struct Effect14ItemSpawn edge_spawner_items[19] = {
+struct Effect1314ItemSpawn edge_spawner_items[19] = {
     { 0, 0x1, 0x1550, 0x5b0 },
     { 0, 0x1, 0x1510, 0x5d0 },
     { 0, 0x1, 0x15a0, 0x600 },

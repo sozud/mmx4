@@ -2,17 +2,6 @@
 // 800C0404..800C081C
 #include "common.h"
 
-struct Item03StageEntry {
-    u16 x;
-    u16 y;
-    u16 velocity;
-    u16 right;
-    u16 trigger_x;
-    u16 object_id;
-    s16 width;
-    s16 height;
-};
-
 struct Item03StageEntry falling_pillar_entries[22] = {
     { 0x0DE0, 0x0218, 0x03B0, 0x0E50, 0x0DF8, 0x000B, 0x0050, 0x0018 },
     { 0x0DE0, 0x0248, 0x03B0, 0x0E50, 0x0E08, 0x000C, 0x0050, 0x0018 },
@@ -66,7 +55,40 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
 }
 
 // falling_pillar_fall
-INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C05FC);
+void func_800C05FC(struct ItemObj* pillar)
+{
+    s32 in_range;
+    u16 right;
+
+    if (pillar->unk2 < 0xA || pillar->unk2 == 0x14) {
+        if (pillar->x_pos.i.hi >= falling_pillar_entries[pillar->unk2].trigger_x && pillar->ext.packed == 0) {
+            apply_tile_effect(pillar->unk2 + 0xB, 0, 0);
+            pillar->ext.packed = 1;
+        }
+        right = falling_pillar_entries[pillar->unk2].right;
+        in_range = pillar->x_pos.i.hi < right;
+    } else {
+        if (pillar->x_pos.i.hi <= falling_pillar_entries[pillar->unk2].trigger_x && pillar->ext.packed == 0) {
+            apply_tile_effect(pillar->unk2 + 0xB, 0, 0);
+            pillar->ext.packed = 1;
+        }
+        right = falling_pillar_entries[pillar->unk2].right;
+        in_range = pillar->x_pos.i.hi > right;
+    }
+    if (in_range == 0) {
+        pillar->x_pos.i.hi = right;
+        pillar->state++;
+    }
+    if (--pillar->unk7C.timer == 0 && pillar->unk2 == 0) {
+        pillar->unk7C.timer = 0x28;
+        start_screen_shake_x(0x20, 3, 1);
+    }
+    move_object(MOVING_OBJECT(pillar));
+    if (pillar->unk2 == 4 || pillar->unk2 == 0xE) {
+        collide_with_players(pillar);
+    }
+    update_on_screen(BASE_OBJECT(pillar), falling_pillar_entries[pillar->unk2].width, falling_pillar_entries[pillar->unk2].height);
+}
 
 void falling_pillar_finish(struct ItemObj* arg0)
 {

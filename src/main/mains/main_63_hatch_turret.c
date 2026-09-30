@@ -7,7 +7,27 @@
 INCLUDE_ASM("main/nonmatchings/mains/main_63_hatch_turret", func_8007BFF4);
 
 // hatch_turret_spawn_shot
-INCLUDE_ASM("main/nonmatchings/mains/main_63_hatch_turret", func_8007C090);
+void func_8007C090(struct WeaponObj* weapon)
+{
+    struct ShotObj* shot;
+
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = weapon->active;
+        shot->id = 0x28;
+        shot->unk2 = weapon->unk2;
+        shot->x_pos.val = weapon->x_pos.val;
+        shot->y_pos.val = weapon->y_pos.val;
+        shot->animation_table = weapon->animation_table;
+        shot->unk40 = weapon->unk40;
+        shot->unk3C = weapon->unk3C;
+        shot->unk42 = weapon->unk42;
+        shot->unk16 = weapon->unk16;
+        shot->unk7C = weapon;
+        shot->unk15 = weapon->unk15;
+        weapon->unk7 = 1;
+    }
+}
 
 // hatch_turret_main
 INCLUDE_ASM("main/nonmatchings/mains/main_63_hatch_turret", func_8007C144);

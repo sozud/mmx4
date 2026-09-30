@@ -14,7 +14,40 @@ void sigma_laser_wait(struct QuadObj* arg0)
 }
 
 // sigma_laser_charge
-INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D8180);
+void func_800D8180(struct QuadObj* quad)
+{
+    struct PlayerObj* player = quad->unk5C;
+    s32* out;
+    s16* to;
+    s16* from;
+    s16 base;
+    s32 delta;
+    u32 i;
+
+    if (--quad->ext.unk38 != 0) {
+        out = &quad->vertices[2].x.val;
+        to = &sigma_laser_end_offsets[quad->unk2 * 2][0];
+        from = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
+        for (i = 0; i < 4; i++) {
+            base = *from;
+            delta = (((s32)(*to - base)) << 16) >> 3;
+            delta *= 8 - quad->ext.unk38;
+            *out = delta + FIXED(base);
+            to++;
+            from++;
+            out++;
+        }
+        return;
+    }
+    to = &sigma_laser_end_offsets[quad->unk2 * 2][0];
+    quad->vertices[2].x.val = FIXED(*to++);
+    quad->vertices[2].y.val = FIXED(*to++);
+    quad->vertices[3].x.val = FIXED(*to++);
+    quad->vertices[3].y.val = FIXED(*to);
+    quad->ext.unk38 = 0x2F;
+    player->shot_types[1] = 1;
+    quad->unk5++;
+}
 
 void sigma_laser_flash(struct QuadObj* arg0)
 {
@@ -31,7 +64,38 @@ void sigma_laser_flash(struct QuadObj* arg0)
 }
 
 // sigma_laser_fire
-INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D82E8);
+void func_800D82E8(struct QuadObj* quad)
+{
+    s32* out;
+    s16* to;
+    s16* from;
+    s16 base;
+    s32 delta;
+    u32 i;
+
+    if (--quad->ext.unk38 != 0) {
+        out = &quad->vertices[2].x.val;
+        to = &sigma_laser_end_offsets[quad->unk2 * 2][0];
+        from = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
+        for (i = 0; i < 4; i++) {
+            base = *from;
+            delta = (((s32)(*to - base)) << 16) >> 4;
+            delta *= quad->ext.unk38;
+            *out = delta + FIXED(base);
+            to++;
+            from++;
+            out++;
+        }
+        return;
+    }
+    to = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
+    quad->vertices[2].x.val = FIXED(*to++);
+    quad->vertices[2].y.val = FIXED(*to++);
+    quad->vertices[3].x.val = FIXED(*to++);
+    quad->vertices[3].y.val = FIXED(*to);
+    quad->state = 2;
+    quad->unk5 = 0;
+}
 
 void sigma_laser_main(struct QuadObj* arg0)
 {

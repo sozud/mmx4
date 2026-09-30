@@ -28,14 +28,14 @@ void title_quad_init(struct QuadObj* arg0)
     entity->active |= 0x80;
 
     ptr = title_quad_shapes[entity->unk2];
-    entity->unk14.i.hi = *ptr++;
-    entity->unk18.i.hi = *ptr++;
-    entity->unk1C.i.hi = *ptr++;
-    entity->unk20.i.hi = *ptr++;
-    entity->unk24.i.hi = *ptr++;
-    entity->unk28.i.hi = *ptr++;
-    entity->unk2C.i.hi = *ptr++;
-    entity->unk30.i.hi = *ptr;
+    entity->vertices[0].x.i.hi = *ptr++;
+    entity->vertices[0].y.i.hi = *ptr++;
+    entity->vertices[1].x.i.hi = *ptr++;
+    entity->vertices[1].y.i.hi = *ptr++;
+    entity->vertices[2].x.i.hi = *ptr++;
+    entity->vertices[2].y.i.hi = *ptr++;
+    entity->vertices[3].x.i.hi = *ptr++;
+    entity->vertices[3].y.i.hi = *ptr;
 
 #ifdef VERSION_JP
     switch (entity->unk2) {
@@ -60,10 +60,10 @@ void title_quad_init(struct QuadObj* arg0)
         entity->unk36 = 0x10;
         entity->state = 3;
         entity->unk34 = color;
-        entity->unk1C = entity->unk14;
-        entity->unk20 = entity->unk18;
-        entity->unk24 = entity->unk2C;
-        entity->unk28 = entity->unk30;
+        entity->vertices[1].x = entity->vertices[0].x;
+        entity->vertices[1].y = entity->vertices[0].y;
+        entity->vertices[2].x = entity->vertices[3].x;
+        entity->vertices[2].y = entity->vertices[3].y;
         entity->ext.title_quad.unk38 = title_quad_delays[entity->unk2 - 2];
         entity->ext.title_quad.unk43 = 0;
         break;
@@ -100,17 +100,17 @@ void title_quad_split(struct QuadObj* self)
     }
 
     if (self->unk2 == 0) {
-        self->unk28.val += FIXED(-8);
-        self->unk30.val += FIXED(-8);
-        if (self->unk28.i.hi < self->unk20.i.hi) {
+        self->vertices[2].y.val += FIXED(-8);
+        self->vertices[3].y.val += FIXED(-8);
+        if (self->vertices[2].y.i.hi < self->vertices[1].y.i.hi) {
             self->state = 2;
             return;
         }
     } else {
         velocity = FIXED(8);
-        self->unk18.val += velocity;
-        self->unk20.val += velocity;
-        if (self->unk20.i.hi > self->unk28.i.hi) {
+        self->vertices[0].y.val += velocity;
+        self->vertices[1].y.val += velocity;
+        if (self->vertices[1].y.i.hi > self->vertices[2].y.i.hi) {
             self->state = 2;
             return;
         }
@@ -146,14 +146,14 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
             arg0->state = 2;
         } else {
             ptr = title_quad_shapes[arg0->unk2 + 3];
-            arg0->unk14.i.hi = *ptr++;
-            arg0->unk18.i.hi = *ptr++;
-            arg0->unk1C.i.hi = *ptr++;
-            arg0->unk20.i.hi = *ptr++;
-            arg0->unk24.i.hi = *ptr++;
-            arg0->unk28.i.hi = *ptr++;
-            arg0->unk2C.i.hi = *ptr++;
-            arg0->unk30.i.hi = *ptr;
+            arg0->vertices[0].x.i.hi = *ptr++;
+            arg0->vertices[0].y.i.hi = *ptr++;
+            arg0->vertices[1].x.i.hi = *ptr++;
+            arg0->vertices[1].y.i.hi = *ptr++;
+            arg0->vertices[2].x.i.hi = *ptr++;
+            arg0->vertices[2].y.i.hi = *ptr++;
+            arg0->vertices[3].x.i.hi = *ptr++;
+            arg0->vertices[3].y.i.hi = *ptr;
             if (arg0->unk2 == 2) {
                 arg0->unk34 = title_quad_palette[0][0];
                 arg0->unk36 = 0x11;
@@ -192,7 +192,7 @@ void title_quad_morph(struct QuadObj* arg0)
     u8 temp_v0_2;
     u8 temp_v1;
 
-    xy_ptr = &arg0->unk14;
+    xy_ptr = &arg0->vertices[0].x;
     pos = 0;
     do {
         ptr = &title_quad_morph_targets[pos][0];
@@ -235,14 +235,14 @@ void title_quad_morph(struct QuadObj* arg0)
     if (arg0->ext.title_quad.unk38 == 0) {
         arg0->state = 2;
         ptr = title_quad_morph_targets[0];
-        arg0->unk14.i.hi = *(u16*)ptr++;
-        arg0->unk18.i.hi = *(u16*)ptr++;
-        arg0->unk1C.i.hi = *(u16*)ptr++;
-        arg0->unk20.i.hi = *(u16*)ptr++;
-        arg0->unk24.i.hi = *(u16*)ptr++;
-        arg0->unk28.i.hi = *(u16*)ptr++;
-        arg0->unk2C.i.hi = *(u16*)ptr++;
-        arg0->unk30.i.hi = *(u16*)ptr;
+        arg0->vertices[0].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[0].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[1].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[1].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[2].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[2].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[3].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[3].y.i.hi = *(u16*)ptr;
         arg0->unk2 = 4;
         arg0->ext.title_quad.unk38 = 3;
     }
@@ -252,7 +252,51 @@ void title_quad_morph(struct QuadObj* arg0)
 
 // TitleUpdate2 state 6
 // title_quad_flash
-INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", func_800D7468);
+void func_800D7468(struct QuadObj* quad)
+{
+    struct QuadVertex* vertex;
+    s16* point;
+    s32 dx;
+    s32 dy;
+    s32 i;
+    u8 hit;
+
+    vertex = quad->vertices;
+    for (i = 0; i < 4; i++) {
+        point = &title_quad_shapes[quad->unk2][i * 2];
+        dx = vertex->x.val - FIXED(point[0]);
+        dy = vertex->y.val - FIXED(point[1]);
+        hit = angle_from_delta(dx, dy);
+        if ((((quad->ext.title_quad.unk3E[i] ^ hit) & 0x10) || quad->ext.title_quad.unk3A[i] != 0) && quad->ext.title_quad.unk42 == 0) {
+            vertex->x.val = FIXED(point[0]);
+            vertex->y.val = FIXED(point[1]);
+            quad->ext.title_quad.unk3A[i] = 1;
+        } else {
+            vertex->x.val -= dx / quad->ext.title_quad.unk38;
+            vertex->y.val -= dy / quad->ext.title_quad.unk38;
+            quad->ext.title_quad.unk3A[i] = 0;
+            if (i == 3) {
+                quad->ext.title_quad.unk42 = 0;
+            }
+        }
+        vertex++;
+        quad->ext.title_quad.unk3E[i] = hit;
+    }
+    if (--quad->ext.title_quad.unk38 == 0) {
+        point = title_quad_shapes[quad->unk2];
+        quad->vertices[0].x.i.hi = *point++;
+        quad->vertices[0].y.i.hi = *point++;
+        quad->vertices[1].x.i.hi = *point++;
+        quad->vertices[1].y.i.hi = *point++;
+        quad->vertices[2].x.i.hi = *point++;
+        quad->vertices[2].y.i.hi = *point++;
+        quad->vertices[3].x.i.hi = *point++;
+        quad->vertices[3].y.i.hi = *point;
+        quad->state = 4;
+        quad->ext.title_quad.unk42 = 1;
+    }
+    quad_is_on_screen(quad);
+}
 
 // TitleUpdate2 state 2
 void title_quad_despawn(struct QuadObj* arg0)

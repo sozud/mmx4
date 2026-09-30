@@ -388,17 +388,6 @@ extern s32 D_800F45C0[];
 extern u8 boss_warning_quad_blink_levels[16];
 void stage_select_flyout_scale(struct QuadObj*);
 extern u8 stage_block_boxes[60];
-struct PcItem03StageEntry {
-    u16 x;
-    u16 y;
-    u16 velocity;
-    u16 right;
-    u16 trigger_x;
-    u16 object_id;
-    s16 width;
-    s16 height;
-};
-extern struct PcItem03StageEntry falling_pillar_entries[22];
 struct PcItem01DebrisPosition {
     s16 x;
     s16 y;
@@ -1284,11 +1273,11 @@ void func_800D3C58(struct QuadObj* arg0)
         y_accum += arg0->ext.search_light.vertical_velocity;
         arg0->ext.search_light.velocity += arg0->ext.search_light.acceleration;
         arg0->ext.search_light.vertical_velocity += arg0->ext.search_light.vertical_acceleration;
-        arg0->unk14.val += arg0->ext.search_light.velocity;
-        arg0->unk1C.val += arg0->ext.search_light.velocity;
+        arg0->vertices[0].x.val += arg0->ext.search_light.velocity;
+        arg0->vertices[1].x.val += arg0->ext.search_light.velocity;
         switch (arg0->unk5) {
         case 0:
-            if ((!direction && arg0->unk14.i.hi >= (s16)(arg0->runtime.search_light.extent + origin - 0x20)) || (direction && arg0->unk14.i.hi <= (s16)(origin + 0x20 - arg0->runtime.search_light.extent))) {
+            if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(arg0->runtime.search_light.extent + origin - 0x20)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(origin + 0x20 - arg0->runtime.search_light.extent))) {
                 arg0->unk5 = 1;
                 arg0->ext.search_light.acceleration = direction
                     ? search_light_accels[(u8)arg0->unk2 >> 1]
@@ -1301,14 +1290,14 @@ void func_800D3C58(struct QuadObj* arg0)
                     arg0->ext.search_light.velocity = 0x8000;
                     arg0->ext.search_light.acceleration = 0;
                 }
-                if (arg0->unk14.i.hi >= (s16)(origin + arg0->runtime.search_light.extent)) {
+                if (arg0->vertices[0].x.i.hi >= (s16)(origin + arg0->runtime.search_light.extent)) {
                     arg0->unk5 = 2;
                     arg0->ext.search_light.velocity = 0;
                     arg0->ext.search_light.acceleration = 0;
-                    arg0->unk14.val = 0;
-                    arg0->unk1C.val = 0;
-                    arg0->unk14.i.hi = origin + arg0->runtime.search_light.extent;
-                    arg0->unk1C.i.hi = span + origin + arg0->runtime.search_light.extent;
+                    arg0->vertices[0].x.val = 0;
+                    arg0->vertices[1].x.val = 0;
+                    arg0->vertices[0].x.i.hi = origin + arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + origin + arg0->runtime.search_light.extent;
                     arg0->runtime.search_light.pause_timer = get_random() & 7;
                     direction ^= 1;
                 }
@@ -1317,14 +1306,14 @@ void func_800D3C58(struct QuadObj* arg0)
                     arg0->ext.search_light.velocity = -0x8000;
                     arg0->ext.search_light.acceleration = 0;
                 }
-                if (arg0->unk14.i.hi <= (s16)(origin - arg0->runtime.search_light.extent)) {
+                if (arg0->vertices[0].x.i.hi <= (s16)(origin - arg0->runtime.search_light.extent)) {
                     arg0->unk5 = 2;
                     arg0->ext.search_light.velocity = 0;
                     arg0->ext.search_light.acceleration = 0;
-                    arg0->unk14.val = 0;
-                    arg0->unk1C.val = 0;
-                    arg0->unk14.i.hi = origin - arg0->runtime.search_light.extent;
-                    arg0->unk1C.i.hi = span + origin - arg0->runtime.search_light.extent;
+                    arg0->vertices[0].x.val = 0;
+                    arg0->vertices[1].x.val = 0;
+                    arg0->vertices[0].x.i.hi = origin - arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + origin - arg0->runtime.search_light.extent;
                     arg0->runtime.search_light.pause_timer = get_random() & 7;
                     direction ^= 1;
                 }
@@ -1338,7 +1327,7 @@ void func_800D3C58(struct QuadObj* arg0)
             arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
             break;
         case 3:
-            if ((!direction && arg0->unk14.i.hi >= (s16)(origin + 0x20 - arg0->runtime.search_light.extent)) || (direction && arg0->unk14.i.hi <= (s16)(arg0->runtime.search_light.extent + origin - 0x20))) {
+            if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(origin + 0x20 - arg0->runtime.search_light.extent)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(arg0->runtime.search_light.extent + origin - 0x20))) {
                 arg0->ext.search_light.acceleration = 0;
                 arg0->unk5 = 0;
                 arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
@@ -1772,10 +1761,10 @@ void func_80024920(struct QuadObj* arg0)
     setPolyF4(primitive);
     setSemiTrans(primitive, (arg0->active & 0x10) != 0);
     setXY4(primitive,
-        x + arg0->unk14.i.hi, y + arg0->unk18.i.hi,
-        x + arg0->unk1C.i.hi, y + arg0->unk20.i.hi,
-        x + arg0->unk2C.i.hi, y + arg0->unk30.i.hi,
-        x + arg0->unk24.i.hi, y + arg0->unk28.i.hi);
+        x + arg0->vertices[0].x.i.hi, y + arg0->vertices[0].y.i.hi,
+        x + arg0->vertices[1].x.i.hi, y + arg0->vertices[1].y.i.hi,
+        x + arg0->vertices[3].x.i.hi, y + arg0->vertices[3].y.i.hi,
+        x + arg0->vertices[2].x.i.hi, y + arg0->vertices[2].y.i.hi);
 
     red = arg0->unk34 & 0x1F;
     green = (arg0->unk34 >> 5) & 0x1F;
@@ -1827,10 +1816,10 @@ void func_80024B9C(struct QuadObj* arg0)
     setPolyG4(primitive);
     setSemiTrans(primitive, (arg0->active & 0x10) != 0);
     setXY4(primitive,
-        x + arg0->unk14.i.hi, y + arg0->unk18.i.hi,
-        x + arg0->unk1C.i.hi, y + arg0->unk20.i.hi,
-        x + arg0->unk2C.i.hi, y + arg0->unk30.i.hi,
-        x + arg0->unk24.i.hi, y + arg0->unk28.i.hi);
+        x + arg0->vertices[0].x.i.hi, y + arg0->vertices[0].y.i.hi,
+        x + arg0->vertices[1].x.i.hi, y + arg0->vertices[1].y.i.hi,
+        x + arg0->vertices[3].x.i.hi, y + arg0->vertices[3].y.i.hi,
+        x + arg0->vertices[2].x.i.hi, y + arg0->vertices[2].y.i.hi);
     setRGB0(primitive, color[0], color[1], color[2]);
     setRGB1(primitive, color[3], color[4], color[5]);
     setRGB2(primitive, color[6], color[7], color[8]);
@@ -5125,30 +5114,6 @@ void func_800567C4(struct MainObj* arg0)
 extern void* teleporter_animations[5];
 extern u8 teleporter_terrain_box[4];
 
-void func_800C2C3C(struct ItemObj* arg0)
-{
-    s32 resource;
-    s32 row;
-
-    arg0->active = 0x41;
-    arg0->unk16 = 6;
-    arg0->unk15 = 0;
-    arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
-    resource = func_8002938C(0x88);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    resource = func_8002938C(0x88);
-    row = func_8002938C(0x88);
-    arg0->unk42 = ((resource * 4 + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
-    arg0->animation_table = (const u8* const*)teleporter_animations;
-    arg0->unk67 = 0;
-    arg0->unk75 = 0;
-    arg0->unk68 = (struct Unk_unk68*)teleporter_terrain_box;
-    set_animation(ANIMATED_OBJECT(arg0), 0);
-    arg0->state = (arg0->unk2 & 0x80) ? 3 : 1;
-    arg0->unk5 = 0;
-    arg0->unk6 = 0;
-}
-
 extern union AnimationStep* regen_turret_animations[];
 extern struct Unk_unk68 regen_turret_hurt_box[];
 extern struct Unk_unk68 regen_turret_terrain_box[];
@@ -5186,7 +5151,6 @@ extern struct Unk_unk68 D_800FE4E0;
 extern struct Unk_unk68 D_800FE4E4;
 extern struct Unk_unk68 D_80107474[];
 void rocket_spiker_face_player(struct AnimatedObj* arg0);
-void func_800B10E4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 
 void func_8005FE1C(struct MainObj* arg0)
 {
@@ -5294,19 +5258,6 @@ static void main_37_debris(struct MainObj* arg0)
     }
 }
 
-void func_800606D8(struct MainObj* arg0)
-{
-    animate_object(ANIMATED_OBJECT(arg0));
-    main_37_rumble(arg0);
-    if (--arg0->unk7C == 0) {
-        spawn_explosion_at(2, MAIN_37_S16(arg0, 0x84) + 0x18, MAIN_37_S16(arg0, 0x86) + 0x20, 1);
-        apply_tile_effect((MAIN_37_U8(arg0, 0x81) & 1) + 5, MAIN_37_S16(arg0, 0x84), MAIN_37_S16(arg0, 0x86));
-        arg0->unk7C = 0x20;
-        arg0->unk6 = 2;
-    }
-    main_37_debris(arg0);
-}
-
 void func_800608CC(struct MainObj* arg0)
 {
     s32 velocity;
@@ -5363,30 +5314,6 @@ void func_8009C12C(struct ShotObj* arg0)
 
 extern void* trap_floor_animations[2];
 extern u8 trap_floor_terrain_box[];
-
-void func_800C3578(struct ItemObj* arg0)
-{
-    s32 resource;
-    s32 row;
-
-    arg0->active = 0x49;
-    arg0->unk16 = 7;
-    arg0->unk40 = D_801406A8[func_8002938C(0x81)] >> 7;
-    resource = func_8002938C(0x81);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    resource = func_8002938C(0x81);
-    row = func_8002938C(0x81);
-    arg0->unk42 = ((resource * 4 + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
-    arg0->animation_table = (const u8* const*)trap_floor_animations;
-    arg0->unk68 = (struct Unk_unk68*)trap_floor_terrain_box;
-    arg0->unk15 = 0;
-    arg0->unk67 = 0;
-    arg0->unk75 = 1;
-    arg0->state = 1;
-    arg0->unk5 = 0;
-    arg0->bg_offset = g_Player.bg_offset;
-    set_animation(ANIMATED_OBJECT(arg0), 0);
-}
 
 extern struct Unk_unk68 D_801072F4[];
 extern union AnimationStep* spike_sled_animations[23];
@@ -6442,24 +6369,6 @@ void func_80043C0C(struct MainObj* arg0)
     }
     move_with_gravity(ANIMATED_OBJECT(arg0));
     animate_object(ANIMATED_OBJECT(arg0));
-}
-
-s32 func_8002B160(struct BaseObj* arg0)
-{
-    s32 x;
-    s32 y;
-
-    if (arg0->bg_offset < 0) {
-        x = arg0->x_pos.u.hi;
-        y = arg0->y_pos.u.hi;
-    } else {
-        x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
-        y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
-    }
-    if ((u32)((x + 0x40) & 0xFFFF) < 0x1C0 && (u32)((y + 0x40) & 0xFFFF) < 0x170) {
-        return 0;
-    }
-    return 1;
 }
 
 void func_8002DF7C(struct WeaponObj* arg0, s32 arg1)
@@ -7862,69 +7771,6 @@ void func_800B5798(struct EffectObj* arg0)
     }
 }
 
-void func_800B10E4(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4,
-    s32 arg5)
-{
-    s16 x_min = (s16)arg1;
-    s16 y_min = (s16)arg2;
-    s16 x_delta = (s16)((s16)arg3 - x_min);
-    s16 y_delta = (s16)((s16)arg4 - y_min);
-    s16 midpoint = x_min + x_delta / 2;
-    s16 count = (s16)arg5;
-    s16 i;
-
-    for (i = 0; i < count; i++) {
-        struct VisualObj* visual = find_free_visual_obj();
-        u32 random_x;
-        u32 random_y;
-        u32 high;
-
-        if (visual == NULL) {
-            continue;
-        }
-
-        visual->active = 0x21;
-        visual->id = 9;
-        visual->unk2 = 0;
-
-        high = (get_random() & 0xFF) << 8;
-        random_x = (get_random() & 0xFF) + high + 1;
-        high = (get_random() & 0xFF) << 8;
-        random_y = (get_random() & 0xFF) + high + 1;
-
-        visual->x_pos.i.hi
-            = x_delta == 0 ? x_min
-                           : x_min + ((s32)(u16)random_x % x_delta);
-        visual->y_pos.i.hi
-            = y_delta == 0 ? y_min
-                           : y_min + ((s32)(u16)random_y % y_delta);
-        visual->x_pos.i.lo = 0;
-        visual->y_pos.i.lo = 0;
-
-        switch ((u8)arg0 & 3) {
-        case 1:
-            visual->x_vel.val = 0;
-            visual->y_vel.val = 0x10000;
-            break;
-        case 2:
-            visual->x_vel.val
-                = visual->x_pos.i.hi < midpoint ? -0x18000 : 0x18000;
-            visual->y_vel.val = 0;
-            break;
-        default:
-            visual->x_vel.val = 0;
-            visual->y_vel.val = 0;
-            break;
-        }
-
-        visual->unk15 = 0;
-        visual->state = 0;
-        visual->unk5 = 0;
-        visual->unk6 = 0;
-        visual->unk5C.value = (u8)arg0 >> 4;
-    }
-}
-
 void func_80042A48(struct MainObj* arg0)
 {
     arg0->unk5 = 0;
@@ -8854,14 +8700,14 @@ void func_800D4C50(struct QuadObj* arg0)
     arg0->y_pos.val = 0;
     arg0->ext.quad_2.x_scale.bytes.fraction = 0;
     arg0->state++;
-    arg0->unk14.val = (s32)vertices[0] << 16;
-    arg0->unk18.val = (s32)vertices[1] << 16;
-    arg0->unk1C.val = (s32)vertices[2] << 16;
-    arg0->unk20.val = (s32)vertices[3] << 16;
-    arg0->unk24.val = (s32)vertices[2] << 16;
-    arg0->unk28.val = (s32)vertices[3] << 16;
-    arg0->unk2C.val = (s32)vertices[0] << 16;
-    arg0->unk30.val = (s32)vertices[1] << 16;
+    arg0->vertices[0].x.val = (s32)vertices[0] << 16;
+    arg0->vertices[0].y.val = (s32)vertices[1] << 16;
+    arg0->vertices[1].x.val = (s32)vertices[2] << 16;
+    arg0->vertices[1].y.val = (s32)vertices[3] << 16;
+    arg0->vertices[2].x.val = (s32)vertices[2] << 16;
+    arg0->vertices[2].y.val = (s32)vertices[3] << 16;
+    arg0->vertices[3].x.val = (s32)vertices[0] << 16;
+    arg0->vertices[3].y.val = (s32)vertices[1] << 16;
     arg0->ext.quad_2.x_scale.bytes.integer = index == 0x15 ? 0xF : 2;
     arg0->ext.quad_2.y_scale.bytes.fraction = 0;
     if (index == 0)
@@ -9730,7 +9576,7 @@ void func_80034B64(struct PlayerObj* arg0)
 void func_800C044C(struct ItemObj* arg0)
 {
     u8 index = (u8)arg0->unk2;
-    const struct PcItem03StageEntry* entry = &falling_pillar_entries[index];
+    const struct Item03StageEntry* entry = &falling_pillar_entries[index];
 
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
@@ -10881,41 +10727,6 @@ extern u8 fortress_cannon_debris[8];
 extern void (*fortress_cannon_step_funcs[7])(struct MainObj*);
 void fortress_cannon_check_fall(struct MainObj*);
 
-void func_80069AD0(struct MainObj* arg0)
-{
-    struct Main51Ext* ext = &arg0->ext.main_51;
-
-    arg0->active = 0x41;
-    arg0->hp = 0x1E;
-    arg0->contact_damage = 4;
-    arg0->invincibility_timer = 0;
-    arg0->collision_data = D_80107778;
-    arg0->animation_table = (const u8* const*)fortress_cannon_animations;
-    arg0->unk16 = 5;
-    arg0->terrain_box = &D_800FFC5C;
-    arg0->hurt_box = &D_800FFC54;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->x_speed = 0;
-    arg0->y_speed = 0;
-    arg0->x_accel = 0;
-    arg0->gravity = 0;
-    arg0->air_state = 0;
-    arg0->attack_box = &D_800FFC58;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
-    set_animation(arg0, 0);
-    arg0->unk5 = 2;
-    ext->unk80 = 0;
-    ext->unk84 = 0;
-    memset(ext->pad88, 0, sizeof(ext->pad88));
-    ext->unk90 = 0;
-    ext->saved_unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->unk7C = 0x28;
-    arg0->state++;
-}
-
 void func_80069BE4(struct MainObj* arg0)
 {
     s32 collision;
@@ -11793,46 +11604,6 @@ extern struct Unk_unk68 gunship_terrain_box;
 extern void (*gunship_step_funcs[7])();
 void gunship_bob(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
-
-void func_80082470(struct MainObj* arg0)
-{
-    struct Main67Ext* ext = &arg0->ext.main_67;
-
-    arg0->active = 0x41;
-    arg0->hp = 0x1E;
-    arg0->contact_damage = 0;
-    arg0->invincibility_timer = 0;
-    arg0->collision_data = D_80107F04;
-    arg0->animation_table = (const u8* const*)gunship_animations;
-    arg0->unk16 = 6;
-    arg0->terrain_box = &gunship_terrain_box;
-    arg0->hurt_box = &gunship_hurt_box;
-    arg0->x_speed = 0;
-    arg0->y_speed = 0;
-    arg0->x_accel = 0;
-    arg0->gravity = 0;
-    arg0->air_state = 0;
-    arg0->attack_box = NULL;
-    arg0->unk15 = 0;
-    arg0->unk75 = 1;
-    arg0->unk1C.val = arg0->y_pos.val;
-    arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk18.val = arg0->x_pos.val;
-    set_animation(arg0, 0);
-    ext->vertical_speed = -0x5800;
-    arg0->unk5 = 2;
-    ext->delay = 0;
-    ext->direction = 0;
-    ext->unk89 = 0;
-    ext->unk8A = 0;
-    memset(ext->pad8B, 0, sizeof(ext->pad8B));
-    ext->unk8D = 0;
-    memset(ext->pad8E, 0, sizeof(ext->pad8E));
-    ext->saved_unk5 = 0;
-    arg0->unk6 = 0;
-    arg0->unk7C = 0x28;
-    arg0->state++;
-}
 
 void func_80082574(struct MainObj* arg0)
 {
@@ -13281,63 +13052,6 @@ static s32 main_48_direction_pair(s8 direction, u8 facing)
     }
 }
 
-void func_8009EEC8(struct ShotObj* arg0)
-{
-    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
-    s32 pair;
-
-    arg0->unk68 = (struct Unk_unk68*)sentry_shot_terrain_box;
-    arg0->unk54 = sentry_shot_hit_boxes;
-    arg0->unk50.data = sentry_shot_hit_boxes;
-    arg0->unk58.animation_steps = D_80105FF0;
-    arg0->on_screen = 1;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk67 = 0;
-    arg0->unk16 = 1;
-    arg0->state++;
-    arg0->unk40 = owner->unk40;
-    arg0->unk42 = owner->unk42 & 0x7FFF;
-    arg0->animation_table = (u32**)owner->animation_table;
-    arg0->unk3C = (void*)owner->sprite_frames;
-    arg0->unk15 = owner->unk15;
-    arg0->bg_offset = owner->bg_offset;
-    arg0->unk60 = 3;
-    arg0->unk5C = 1;
-    arg0->x_vel.val <<= 1;
-    arg0->y_vel.val <<= 1;
-    pair = main_48_direction_pair(arg0->unk2, arg0->unk15);
-    arg0->x_pos.i.hi += sentry_shot_spawn_offsets[pair * 2];
-    arg0->y_pos.i.hi += sentry_shot_spawn_offsets[pair * 2 + 1];
-    set_animation(arg0, 6);
-}
-
-extern s8 sentry_flash_offsets[16];
-
-void func_800CC4E0(struct MiscObj* arg0)
-{
-    struct MainObj* owner = (struct MainObj*)arg0->ext.unk.unk50;
-    s32 pair;
-
-    arg0->on_screen = 1;
-    arg0->x_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk2C = 0;
-    arg0->unk16 = 0;
-    arg0->unk40 = owner->unk40;
-    arg0->unk42 = owner->unk42 & 0x7FFF;
-    arg0->animation_table = (u32**)owner->animation_table;
-    arg0->unk3C = (void*)owner->sprite_frames;
-    arg0->unk15 = owner->unk15;
-    arg0->bg_offset = owner->bg_offset;
-    set_animation(arg0, 7);
-    pair = main_48_direction_pair(arg0->unk2, arg0->unk15);
-    arg0->x_pos.i.hi += sentry_flash_offsets[pair * 2];
-    arg0->y_pos.i.hi += sentry_flash_offsets[pair * 2 + 1];
-    arg0->state++;
-}
-
 extern union AnimationStep* ice_block_animations[9];
 extern struct Unk_unk68 D_80106C74[];
 extern struct Unk_unk68 D_800FC844;
@@ -14478,28 +14192,6 @@ void func_8007BFF4(struct MainObj* arg0)
     set_animation(arg0, 0);
 }
 
-void func_8007C090(struct MainObj* arg0)
-{
-    struct ShotObj* shot = find_free_shot_obj();
-
-    if (shot == NULL) {
-        return;
-    }
-    shot->id = 0x28;
-    shot->active = arg0->active;
-    shot->unk2 = arg0->unk2;
-    shot->x_pos.val = arg0->x_pos.val;
-    shot->y_pos.val = arg0->y_pos.val;
-    shot->animation_table = (u32**)arg0->animation_table;
-    shot->unk40 = arg0->unk40;
-    shot->unk3C = (void*)arg0->sprite_frames;
-    shot->unk42 = arg0->unk42;
-    shot->unk7C = (struct WeaponObj*)arg0;
-    shot->unk16 = arg0->unk16;
-    shot->unk15 = arg0->unk15;
-    arg0->unk7 = 1;
-}
-
 void func_8007C144(struct MainObj* arg0)
 {
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0) {
@@ -14531,7 +14223,7 @@ void func_8007C144(struct MainObj* arg0)
         }
         arg0->unk5 = 3;
         func_8001540C(2, 0x79, arg0);
-        func_8007C090(arg0);
+        func_8007C090(WEAPON_OBJECT(arg0));
         break;
     case 3:
         if (arg0->unk7 == 0) {
@@ -16122,12 +15814,12 @@ void func_800D52F4(struct QuadObj* arg0)
     const s16* inner = boss_death_shard_shapes[arg0->ext.quad_4.unk39 * 16 + (angle & 0xF)];
     s32 sign = (angle & 0x1F) >= 0x10 ? -1 : 1;
 
-    arg0->unk1C.val = sign * (outer[0] << 16);
-    arg0->unk20.val = sign * (outer[1] << 16);
-    arg0->unk24.val = sign * (inner[0] << 16);
-    arg0->unk28.val = sign * (inner[1] << 16);
-    arg0->unk2C.val = 0;
-    arg0->unk30.val = 0;
+    arg0->vertices[1].x.val = sign * (outer[0] << 16);
+    arg0->vertices[1].y.val = sign * (outer[1] << 16);
+    arg0->vertices[2].x.val = sign * (inner[0] << 16);
+    arg0->vertices[2].y.val = sign * (inner[1] << 16);
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
     arg0->state++;
     arg0->ext.quad_4.timer = get_random_nonzero() % 7;
     quad_is_on_screen(arg0);
@@ -16182,14 +15874,14 @@ void func_800D5934(struct QuadObj* arg0)
     }
     QUAD6_X_SPEED(arg0) = (s32)((u32)(D_800F459C[index] * y_sign) << 4) >> 4;
     QUAD6_Y_SPEED(arg0) = (s32)((u32)(D_800F45C0[index] * x_sign) << 4) >> 4;
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
-    arg0->unk1C.val = 0;
-    arg0->unk20.val = 0;
-    arg0->unk24.val = 0;
-    arg0->unk28.val = 0;
-    arg0->unk2C.val = 0;
-    arg0->unk30.val = 0;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
+    arg0->vertices[1].x.val = 0;
+    arg0->vertices[1].y.val = 0;
+    arg0->vertices[2].x.val = 0;
+    arg0->vertices[2].y.val = 0;
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
     QUAD6_AGE(arg0) = 0;
     arg0->state++;
     QUAD6_X_ACCEL(arg0) = QUAD6_X_SPEED(arg0);
@@ -16475,34 +16167,6 @@ void func_8007FAA4(struct MainObj* arg0)
         arg0->ext.main_65.object = (struct MainObj*)misc;
     }
     arg0->unk6++;
-}
-
-void func_8007FF00(struct MainObj* arg0)
-{
-    struct EffectObj* effect;
-    u16 flash;
-
-    if (--arg0->unk7C == 0) {
-        arg0->unk5++;
-        effect = find_free_effect_obj();
-        if (effect != NULL) {
-            effect->active = -0x7F;
-            effect->id = 0x1A;
-            effect->x_pos.i.hi = arg0->x_pos.i.hi;
-            effect->y_pos.i.hi = arg0->y_pos.i.hi;
-            arg0->ext.main_65.object = (struct MainObj*)effect;
-        }
-    }
-    flash = arg0->unk7E;
-    arg0->unk7E = flash - 1;
-    if (flash == 0) {
-        arg0->unk42 ^= 0x8000;
-        arg0->invincibility_timer -= 5;
-        if (arg0->invincibility_timer >= 0x1A)
-            arg0->invincibility_timer = 0;
-        arg0->unk7E = arg0->invincibility_timer < 5 ? 5 : arg0->invincibility_timer;
-    }
-    update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
 }
 
 void func_8007FFFC(struct MainObj* arg0)
@@ -17954,29 +17618,29 @@ void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct Player
     near_x = target->x_pos.i.hi - (x + 6);
     far_x = target->x_pos.i.hi - (x - 6);
     arg0->x_pos.i.hi = x;
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
     y = player->y_pos.i.hi + offsets[1];
     arg0->y_pos.i.hi = y;
     near_y = target->y_pos.i.hi - (y + 6);
     far_y = target->y_pos.i.hi - (y - 6);
     if (dx < 0) {
-        arg0->unk1C.i.hi = far_x;
-        arg0->unk24.i.hi = near_x;
-        arg0->unk2C.i.hi = near_x;
+        arg0->vertices[1].x.i.hi = far_x;
+        arg0->vertices[2].x.i.hi = near_x;
+        arg0->vertices[3].x.i.hi = near_x;
     } else {
-        arg0->unk1C.i.hi = near_x;
-        arg0->unk24.i.hi = far_x;
-        arg0->unk2C.i.hi = far_x;
+        arg0->vertices[1].x.i.hi = near_x;
+        arg0->vertices[2].x.i.hi = far_x;
+        arg0->vertices[3].x.i.hi = far_x;
     }
     if (dy < 0) {
-        arg0->unk20.i.hi = near_y;
-        arg0->unk28.i.hi = near_y;
-        arg0->unk30.i.hi = far_y;
+        arg0->vertices[1].y.i.hi = near_y;
+        arg0->vertices[2].y.i.hi = near_y;
+        arg0->vertices[3].y.i.hi = far_y;
     } else {
-        arg0->unk20.i.hi = far_y;
-        arg0->unk28.i.hi = far_y;
-        arg0->unk30.i.hi = near_y;
+        arg0->vertices[1].y.i.hi = far_y;
+        arg0->vertices[2].y.i.hi = far_y;
+        arg0->vertices[3].y.i.hi = near_y;
     }
 }
 
@@ -18873,62 +18537,6 @@ void func_800A25EC(struct ShotObj* arg0)
             visual->y_pos.i.hi = owner->y_pos.i.hi - 0x1F;
         }
     }
-}
-
-void func_800A2AA0(struct ShotObj* arg0)
-{
-    struct WeaponObj* owner = arg0->unk7C;
-
-    arg0->x_vel.val = 0;
-    arg0->y_vel.val = 0x38000;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->x_pos.val = owner->x_pos.val;
-    arg0->unk5C = 0x20;
-    arg0->unk60 = 9;
-    arg0->unk68 = &walrus_ice_chunk_terrain_box;
-    arg0->unk54 = (const u8*)&walrus_ice_ball_hurt_box;
-    arg0->unk58.data = (u8*)D_801060F0;
-    arg0->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
-    arg0->timer = 0x60;
-    arg0->unk16 = 2;
-    arg0->y_pos.val = owner->y_pos.val;
-    set_animation(arg0, 0x1F);
-    if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi += 0x50;
-    } else {
-        arg0->x_pos.i.hi -= 0x50;
-    }
-    arg0->y_pos.i.hi += 0x10;
-    arg0->unk5++;
-}
-
-void func_800A32B8(struct ShotObj* arg0)
-{
-    struct WeaponObj* owner = arg0->unk7C;
-
-    arg0->x_vel.val = 0;
-    arg0->y_vel.val = 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0x4800;
-    arg0->x_pos.val = owner->x_pos.val;
-    arg0->unk68 = &walrus_ice_chunk_terrain_box;
-    arg0->unk54 = (const u8*)&walrus_ice_ball_hurt_box;
-    arg0->unk58.data = (u8*)D_801060F0;
-    arg0->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
-    arg0->timer = 0x60;
-    arg0->unk16 = 4;
-    arg0->unk5C = 0x20;
-    arg0->unk60 = 9;
-    arg0->y_pos.val = owner->y_pos.val;
-    set_animation(arg0, 0x1E);
-    if (arg0->unk15 != 0) {
-        arg0->x_pos.i.hi += 0x90;
-    } else {
-        arg0->x_pos.i.hi -= 0x90;
-    }
-    arg0->y_pos.i.hi -= 0x30;
-    arg0->unk5++;
 }
 
 void func_800A348C(struct ShotObj* arg0)
@@ -22809,63 +22417,6 @@ void func_8008A778(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-void func_8009A9E4(struct ShotObj* self)
-{
-    s32 variant = (self->unk2 & 0xFE) - 2;
-    s32 offset;
-
-    self->unk68 = (struct Unk_unk68*)wall_crawler_shot_terrain_box;
-    self->unk54 = wall_crawler_shot_hit_boxes;
-    self->unk50.data = wall_crawler_shot_hit_boxes;
-    self->unk58.animation_steps = D_80105FF0;
-    self->on_screen = 1;
-    self->unk5C = 1;
-    self->unk60 = 2;
-    self->state++;
-    self->unk28 = 0;
-    self->unk2C = 0;
-    self->unk67 = 0;
-    self->unk16 = 0;
-    self->unk42 &= 0x7FFF;
-    self->x_vel.val *= 3;
-    self->y_vel.val *= 3;
-
-    switch (variant) {
-    case 0:
-    case 2:
-    case 4:
-        offset = 6;
-        break;
-    case 6:
-        offset = 8;
-        break;
-    case 8:
-    case 10:
-    case 12:
-        offset = 4;
-        break;
-    case 16:
-    case 18:
-    case 20:
-        offset = 12;
-        break;
-    case 22:
-        offset = 10;
-        break;
-    case 24:
-    case 26:
-    case 28:
-        offset = 14;
-        break;
-    default:
-        offset = self->unk15 & 0x40 ? 2 : 0;
-        break;
-    }
-    self->x_pos.u.hi += wall_crawler_shot_spawn_offsets[offset];
-    self->y_pos.u.hi += wall_crawler_shot_spawn_offsets[offset + 1];
-    set_animation(self, 0xB);
-}
-
 void func_80062AEC(struct MainObj* self)
 {
     for (s32 i = 0; i < 0x20; i++) {
@@ -23864,10 +23415,10 @@ void func_800A8628(struct ShotObj* self)
         self->unk42 = owner->unk42;
         self->unk15 = owner->unk15 ^ 0x40;
         self->bg_offset = owner->bg_offset;
-        self->x_pos.i.hi = quad->x_pos.i.hi + quad->unk24.i.hi + 4;
+        self->x_pos.i.hi = quad->x_pos.i.hi + quad->vertices[2].x.i.hi + 4;
         self->unk50.data = (u8*)sigma_shot_boxes[9];
         self->unk60 = 9;
-        self->y_pos.i.hi = quad->y_pos.i.hi + quad->unk28.i.hi - 8;
+        self->y_pos.i.hi = quad->y_pos.i.hi + quad->vertices[2].y.i.hi - 8;
         set_animation(self, 0x26);
         func_8001540C(2, 0xC, self);
         break;
@@ -24585,15 +24136,15 @@ void func_800D4334(struct QuadObj* self)
 {
     self->unk36 = 0x13;
     self->bg_offset = -1;
-    self->unk28.val = 0x900000;
-    self->unk30.val = 0x900000;
-    self->unk18.val = 0x900000;
-    self->unk20.val = 0x900000;
+    self->vertices[2].y.val = 0x900000;
+    self->vertices[3].y.val = 0x900000;
+    self->vertices[0].y.val = 0x900000;
+    self->vertices[1].y.val = 0x900000;
     self->ext.quad_1.steps = 0x1E;
-    self->unk24.val = 0xA00000;
-    self->unk2C.val = 0xA00000;
-    self->unk14.val = 0xA00000;
-    self->unk1C.val = 0xA00000;
+    self->vertices[2].x.val = 0xA00000;
+    self->vertices[3].x.val = 0xA00000;
+    self->vertices[0].x.val = 0xA00000;
+    self->vertices[1].x.val = 0xA00000;
     self->unk34 = 0;
     self->x_pos.val = 0;
     self->y_pos.val = 0;
@@ -24630,8 +24181,8 @@ void func_800D43F4(struct QuadObj* self)
         quad_is_on_screen(self);
         return;
     }
-    vertex_x = &self->unk14;
-    vertex_y = &self->unk18;
+    vertex_x = &self->vertices[0].x;
+    vertex_y = &self->vertices[0].y;
     for (i = 0; i < 4; i++) {
         target = &stage_select_panel_shapes[self->unk2][i * 2];
         dx = vertex_x->val - (target[0] << 16);
@@ -24672,15 +24223,15 @@ void func_800D43F4(struct QuadObj* self)
             misc->unk2 = self->unk2 | 0x80;
         }
         target = stage_select_panel_shapes[self->unk2];
-        self->unk14.i.hi = target[0];
-        self->unk18.i.hi = target[1];
-        self->unk1C.i.hi = target[2];
-        self->unk20.i.hi = target[3];
-        self->unk24.i.hi = target[4];
-        self->unk28.i.hi = target[5];
-        self->unk2C.i.hi = target[6];
+        self->vertices[0].x.i.hi = target[0];
+        self->vertices[0].y.i.hi = target[1];
+        self->vertices[1].x.i.hi = target[2];
+        self->vertices[1].y.i.hi = target[3];
+        self->vertices[2].x.i.hi = target[4];
+        self->vertices[2].y.i.hi = target[5];
+        self->vertices[3].x.i.hi = target[6];
         self->state = 2;
-        self->unk30.i.hi = target[7];
+        self->vertices[3].y.i.hi = target[7];
     }
     quad_is_on_screen(self);
 }
@@ -25917,29 +25468,6 @@ void player_zero_raijingeki(struct PlayerObj*);
 void player_reset_palette(struct PlayerObj*);
 extern u8 player_zero_combo_sounds[4][2];
 
-s32 func_80039F28(struct Unk12* self)
-{
-    struct PlayerObj* arg0 = (struct PlayerObj*)self;
-
-    if ((arg0->boss_flags & 0x20) && arg0->weapon_energy[0] >= 0xC && (arg0->pressed_input & 0x40)
-        && arg0->attacking == 0) {
-        player_zero_begin_attack(arg0);
-        player_set_animation(arg0, 0x67);
-        player_play_voice(arg0, 0xA);
-        arg0->invincibility_timer = 0;
-        arg0->hurt_phase = 0;
-        player_reset_palette(arg0);
-        arg0->air_state = 1;
-        arg0->spike_immune = 1;
-        arg0->unk5 = 0x3A;
-        arg0->unk6 = 0;
-        arg0->weapon_energy[0] -= 0xC;
-        player_zero_rakuhouha(arg0);
-        return 1;
-    }
-    return 0;
-}
-
 s32 func_8003A1DC(struct PlayerObj* arg0)
 {
     s8 combo;
@@ -26469,56 +25997,6 @@ void func_800A73C4(struct ShotObj* self)
 
 extern s16 title_quad_shapes[][8];
 
-void func_800D7468(struct QuadObj* arg0)
-{
-    f32* xy_ptr;
-    s32 x_diff;
-    s32 y_diff;
-    s32 pos;
-    s16* ptr;
-    u8 angle;
-
-    xy_ptr = &arg0->unk14;
-    pos = 0;
-    do {
-        ptr = &title_quad_shapes[arg0->unk2][pos * 2];
-        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
-        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
-        angle = angle_from_delta(x_diff, y_diff);
-        if ((((arg0->ext.title_quad.unk3E[pos] ^ angle) & 0x10) || (arg0->ext.title_quad.unk3A[pos] != 0)) && (arg0->ext.title_quad.unk42 == 0)) {
-            xy_ptr[0].val = FIXED(ptr[0]);
-            xy_ptr[1].val = FIXED(ptr[1]);
-            arg0->ext.title_quad.unk3A[pos] = 1;
-        } else {
-            xy_ptr[0].val -= x_diff / arg0->ext.title_quad.unk38;
-            xy_ptr[1].val -= y_diff / arg0->ext.title_quad.unk38;
-            arg0->ext.title_quad.unk3A[pos] = 0;
-            if (pos == 3) {
-                arg0->ext.title_quad.unk42 = 0;
-            }
-        }
-        xy_ptr += 2;
-        arg0->ext.title_quad.unk3E[pos] = angle;
-        pos++;
-    } while (pos < 4);
-
-    arg0->ext.title_quad.unk38--;
-    if (arg0->ext.title_quad.unk38 == 0) {
-        ptr = title_quad_shapes[arg0->unk2];
-        arg0->unk14.i.hi = *ptr++;
-        arg0->unk18.i.hi = *ptr++;
-        arg0->unk1C.i.hi = *ptr++;
-        arg0->unk20.i.hi = *ptr++;
-        arg0->unk24.i.hi = *ptr++;
-        arg0->unk28.i.hi = *ptr++;
-        arg0->unk2C.i.hi = *ptr++;
-        arg0->unk30.i.hi = *ptr;
-        arg0->state = 4;
-        arg0->ext.title_quad.unk42 = 1;
-    }
-    quad_is_on_screen(arg0);
-}
-
 #ifdef VERSION_JP
 extern u16 title_quad_palette[][15];
 
@@ -26535,7 +26013,7 @@ void title_quad_morph(struct QuadObj* arg0)
     u8 temp_v0_2;
     u8 temp_v1;
 
-    xy_ptr = &arg0->unk14;
+    xy_ptr = &arg0->vertices[0].x;
     pos = 0;
     do {
         ptr = &title_quad_shapes[arg0->unk2 + 5][pos * 2];
@@ -26578,14 +26056,14 @@ void title_quad_morph(struct QuadObj* arg0)
     arg0->ext.title_quad.unk38--;
     if (arg0->ext.title_quad.unk38 == 0) {
         ptr = title_quad_shapes[arg0->unk2 + 5];
-        arg0->unk14.i.hi = *(u16*)ptr++;
-        arg0->unk18.i.hi = *(u16*)ptr++;
-        arg0->unk1C.i.hi = *(u16*)ptr++;
-        arg0->unk20.i.hi = *(u16*)ptr++;
-        arg0->unk24.i.hi = *(u16*)ptr++;
-        arg0->unk28.i.hi = *(u16*)ptr++;
-        arg0->unk2C.i.hi = *(u16*)ptr++;
-        arg0->unk30.i.hi = *(u16*)ptr;
+        arg0->vertices[0].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[0].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[1].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[1].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[2].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[2].y.i.hi = *(u16*)ptr++;
+        arg0->vertices[3].x.i.hi = *(u16*)ptr++;
+        arg0->vertices[3].y.i.hi = *(u16*)ptr;
         arg0->unk2 = 4;
         arg0->state = 4;
         arg0->ext.title_quad.unk38 = 3;

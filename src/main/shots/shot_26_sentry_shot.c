@@ -32,7 +32,73 @@ void sentry_shot_update(struct ShotObj* self)
 }
 
 // sentry_shot_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_26_sentry_shot", func_8009EEC8);
+void func_8009EEC8(struct ShotObj* shot)
+{
+    shot->on_screen = 1;
+    shot->unk68 = (struct Unk_unk68*)sentry_shot_terrain_box;
+    shot->unk54 = sentry_shot_hit_boxes;
+    shot->unk50.data = sentry_shot_hit_boxes;
+    shot->unk58.data = (u8*)D_80105FF0;
+    shot->unk28 = 0;
+    shot->unk2C = 0;
+    shot->unk67 = 0;
+    shot->unk16 = 1;
+    shot->state++;
+    shot->unk40 = shot->unk7C->unk40;
+    shot->unk42 = shot->unk7C->unk42 & 0x7FFF;
+    shot->animation_table = shot->unk7C->animation_table;
+    shot->unk3C = shot->unk7C->unk3C;
+    shot->unk15 = shot->unk7C->unk15;
+    shot->bg_offset = shot->unk7C->bg_offset;
+    shot->unk60 = 3;
+    shot->unk5C = 1;
+    shot->x_vel.val *= 2;
+    shot->y_vel.val *= 2;
+    switch (shot->unk2 & 0xFE) {
+    case 2:
+    case 4:
+    case 6:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[6];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[7];
+        break;
+    case 10:
+    case 12:
+    case 14:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[4];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[5];
+        break;
+    case 8:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[8];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[9];
+        break;
+    case 18:
+    case 20:
+    case 22:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[12];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[13];
+        break;
+    case 26:
+    case 28:
+    case 30:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[14];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[15];
+        break;
+    case 24:
+        shot->x_pos.i.hi += sentry_shot_spawn_offsets[10];
+        shot->y_pos.i.hi += sentry_shot_spawn_offsets[11];
+        break;
+    default:
+        if (shot->unk15 & 0x40) {
+            shot->x_pos.i.hi += sentry_shot_spawn_offsets[2];
+            shot->y_pos.i.hi += sentry_shot_spawn_offsets[3];
+        } else {
+            shot->x_pos.i.hi += sentry_shot_spawn_offsets[0];
+            shot->y_pos.i.hi += sentry_shot_spawn_offsets[1];
+        }
+        break;
+    }
+    set_animation(shot, 6);
+}
 
 void sentry_shot_fly(struct ShotObj* self)
 {

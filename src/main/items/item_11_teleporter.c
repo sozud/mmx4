@@ -115,7 +115,34 @@ void teleporter_update(struct ItemObj* arg0)
 }
 
 // teleporter_init
-INCLUDE_ASM("main/nonmatchings/items/item_11_teleporter", func_800C2C3C);
+void func_800C2C3C(struct ItemObj* arg0)
+{
+    s32 resource;
+    s32 row;
+
+    arg0->active = 0x41;
+    arg0->unk16 = 6;
+    arg0->unk15 = 0;
+    arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
+    resource = func_8002938C(0x88);
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    resource = func_8002938C(0x88);
+    row = func_8002938C(0x88);
+    arg0->unk42 = SOME_COORDINATE_CONVERSION_XY(resource, row);
+
+    arg0->animation_table = (const u8* const*)teleporter_animations;
+    arg0->unk67 = 0;
+    arg0->unk75 = 0;
+    arg0->unk68 = (struct Unk_unk68*)teleporter_terrain_box;
+    set_animation(ANIMATED_OBJECT(arg0), 0);
+    if (arg0->unk2 & 0x80) {
+        arg0->state = 3;
+    } else {
+        arg0->state = 1;
+    }
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+}
 
 void teleporter_main(struct ItemObj* arg0)
 {
