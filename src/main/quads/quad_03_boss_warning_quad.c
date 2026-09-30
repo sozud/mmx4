@@ -50,10 +50,10 @@ void boss_warning_quad_open(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->vertices[0].x.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
-            arg0->vertices[1].x.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
-            arg0->vertices[2].x.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
-            arg0->vertices[3].x.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
+            arg0->vertices[0].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
+            arg0->vertices[1].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
+            arg0->vertices[2].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
+            arg0->vertices[3].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
         } else {
             arg0->vertices[2].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
             arg0->vertices[3].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;
@@ -84,10 +84,10 @@ void boss_warning_quad_close(struct QuadObj* arg0)
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
         if (arg0->unk2 == 0x15) {
-            arg0->vertices[0].x.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
-            arg0->vertices[1].x.val += boss_warning_quad_motions[arg0->unk2].speed[2] << 16;
-            arg0->vertices[2].x.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
-            arg0->vertices[3].x.val += boss_warning_quad_motions[arg0->unk2].speed[0] << 16;
+            arg0->vertices[0].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
+            arg0->vertices[1].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[2]);
+            arg0->vertices[2].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
+            arg0->vertices[3].x.val += FIXED(boss_warning_quad_motions[arg0->unk2].speed[0]);
         } else {
             arg0->vertices[1].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[0] * 2;
             arg0->vertices[0].x.u.hi += boss_warning_quad_motions[arg0->unk2].speed[2] * 2;

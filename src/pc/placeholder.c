@@ -388,17 +388,6 @@ extern s32 D_800F45C0[];
 extern u8 boss_warning_quad_blink_levels[16];
 void stage_select_flyout_scale(struct QuadObj*);
 extern u8 stage_block_boxes[60];
-struct PcItem03StageEntry {
-    u16 x;
-    u16 y;
-    u16 velocity;
-    u16 right;
-    u16 trigger_x;
-    u16 object_id;
-    s16 width;
-    s16 height;
-};
-extern struct PcItem03StageEntry falling_pillar_entries[22];
 struct PcItem01DebrisPosition {
     s16 x;
     s16 y;
@@ -9587,7 +9576,7 @@ void func_80034B64(struct PlayerObj* arg0)
 void func_800C044C(struct ItemObj* arg0)
 {
     u8 index = (u8)arg0->unk2;
-    const struct PcItem03StageEntry* entry = &falling_pillar_entries[index];
+    const struct Item03StageEntry* entry = &falling_pillar_entries[index];
 
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;

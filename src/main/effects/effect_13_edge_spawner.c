@@ -59,8 +59,8 @@ void func_800B887C(s16 x_min, s16 x_max, s16 y_min, s16 y_max)
                         item->active = 0x41;
                         item->id = 7;
                         item->unk2 = entry->id;
-                        item->x_pos.val = entry->x << 16;
-                        item->y_pos.val = entry->y << 16;
+                        item->x_pos.val = FIXED(entry->x);
+                        item->y_pos.val = FIXED(entry->y);
                         item->backref = entry;
                         entry->reserved = 1;
                     }

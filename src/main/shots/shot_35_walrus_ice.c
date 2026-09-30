@@ -190,7 +190,7 @@ void func_800A2AA0(struct ShotObj* shot)
     struct WeaponObj* weapon = shot->unk7C;
 
     shot->x_vel.val = 0;
-    shot->y_vel.val = 0x38000;
+    shot->y_vel.val = FIXED(3.5);
     shot->unk28 = 0;
     shot->unk2C = 0;
     shot->x_pos.val = weapon->x_pos.val;
@@ -437,7 +437,7 @@ void func_800A32B8(struct ShotObj* shot)
     shot->x_vel.val = 0;
     shot->y_vel.val = 0;
     shot->unk28 = 0;
-    shot->unk2C = 0x4800;
+    shot->unk2C = FIXED(9.0 / 32);
     shot->x_pos.val = owner->x_pos.val;
     shot->y_pos.val = owner->y_pos.val;
     shot->unk68 = (const u8*)&walrus_ice_chunk_terrain_box;

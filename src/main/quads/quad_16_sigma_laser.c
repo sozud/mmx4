@@ -32,7 +32,7 @@ void func_800D8180(struct QuadObj* quad)
             base = *from;
             delta = (((s32)(*to - base)) << 16) >> 3;
             delta *= 8 - quad->ext.unk38;
-            *out = delta + (base << 16);
+            *out = delta + FIXED(base);
             to++;
             from++;
             out++;
@@ -40,10 +40,10 @@ void func_800D8180(struct QuadObj* quad)
         return;
     }
     to = &sigma_laser_end_offsets[quad->unk2 * 2][0];
-    quad->vertices[2].x.val = *to++ << 16;
-    quad->vertices[2].y.val = *to++ << 16;
-    quad->vertices[3].x.val = *to++ << 16;
-    quad->vertices[3].y.val = *to << 16;
+    quad->vertices[2].x.val = FIXED(*to++);
+    quad->vertices[2].y.val = FIXED(*to++);
+    quad->vertices[3].x.val = FIXED(*to++);
+    quad->vertices[3].y.val = FIXED(*to);
     quad->ext.unk38 = 0x2F;
     player->shot_types[1] = 1;
     quad->unk5++;
@@ -81,7 +81,7 @@ void func_800D82E8(struct QuadObj* quad)
             base = *from;
             delta = (((s32)(*to - base)) << 16) >> 4;
             delta *= quad->ext.unk38;
-            *out = delta + (base << 16);
+            *out = delta + FIXED(base);
             to++;
             from++;
             out++;
@@ -89,10 +89,10 @@ void func_800D82E8(struct QuadObj* quad)
         return;
     }
     to = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
-    quad->vertices[2].x.val = *to++ << 16;
-    quad->vertices[2].y.val = *to++ << 16;
-    quad->vertices[3].x.val = *to++ << 16;
-    quad->vertices[3].y.val = *to << 16;
+    quad->vertices[2].x.val = FIXED(*to++);
+    quad->vertices[2].y.val = FIXED(*to++);
+    quad->vertices[3].x.val = FIXED(*to++);
+    quad->vertices[3].y.val = FIXED(*to);
     quad->state = 2;
     quad->unk5 = 0;
 }

@@ -19,10 +19,10 @@ void light_ray_main(struct QuadObj* arg0)
     arg0->ext.ready_line.x_accel.val += arg0->runtime.quad_06.acceleration;
     arg0->ext.ready_line.y_accel.val += arg0->runtime.quad_06.base_speed;
     arg0->runtime.quad_06.x_accumulator += (s32)arg0->link.owner;
-    arg0->vertices[1].x.val = arg0->vertices[0].x.val + 0x10000;
-    arg0->vertices[1].y.val = arg0->vertices[0].y.val + 0x10000;
-    arg0->vertices[3].x.val = arg0->vertices[2].x.val - 0x10000;
-    arg0->vertices[3].y.val = arg0->vertices[2].y.val - 0x10000;
+    arg0->vertices[1].x.val = arg0->vertices[0].x.val + FIXED(1);
+    arg0->vertices[1].y.val = arg0->vertices[0].y.val + FIXED(1);
+    arg0->vertices[3].x.val = arg0->vertices[2].x.val - FIXED(1);
+    arg0->vertices[3].y.val = arg0->vertices[2].y.val - FIXED(1);
 
     if (arg0->ext.ready_line.x_vel.bytes[1] != 0) {
         arg0->ext.ready_line.x_vel.bytes[1]--;

@@ -264,12 +264,12 @@ void func_800D7468(struct QuadObj* quad)
     vertex = quad->vertices;
     for (i = 0; i < 4; i++) {
         point = &title_quad_shapes[quad->unk2][i * 2];
-        dx = vertex->x.val - (point[0] << 16);
-        dy = vertex->y.val - (point[1] << 16);
+        dx = vertex->x.val - FIXED(point[0]);
+        dy = vertex->y.val - FIXED(point[1]);
         hit = angle_from_delta(dx, dy);
         if ((((quad->ext.title_quad.unk3E[i] ^ hit) & 0x10) || quad->ext.title_quad.unk3A[i] != 0) && quad->ext.title_quad.unk42 == 0) {
-            vertex->x.val = point[0] << 16;
-            vertex->y.val = point[1] << 16;
+            vertex->x.val = FIXED(point[0]);
+            vertex->y.val = FIXED(point[1]);
             quad->ext.title_quad.unk3A[i] = 1;
         } else {
             vertex->x.val -= dx / quad->ext.title_quad.unk38;

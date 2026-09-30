@@ -95,7 +95,90 @@ void func_800194C8(struct EngineObj* engine)
     func_8001B644(D_800F1DFC);
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001961C);
+void func_8001961C(struct EngineObj* engine)
+{
+    u16* controller;
+    u8* cursor;
+    u8* character;
+    u8 current;
+
+    if (controller_state & PADLup) {
+        if (D_80141BDF[0] == 0) {
+            D_80141BDF[0] = 2;
+        } else if (D_80141BDF[0] == 1) {
+            if (D_801721B4 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else if (D_801721B5 != 0) {
+            if (D_801721B4 == 0) {
+                D_80141BDF[0] = 0;
+            } else {
+                D_80141BDF[0] = 2;
+            }
+        } else {
+            D_80141BDF[0] = 1;
+        }
+    }
+
+    if (controller_state & PADLdown) {
+        if (D_80141BDF[0] == 0) {
+            if (D_801721B5 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 1;
+            }
+        } else if (D_80141BDF[0] == 2) {
+            if (D_801721B4 != 0) {
+                if (D_801721B5 != 0) {
+                    D_80141BDF[0] = 2;
+                } else {
+                    D_80141BDF[0] = 1;
+                }
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else {
+            D_80141BDF[0] = 2;
+        }
+    }
+
+    controller = &controller_state;
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        func_8001540C(0, 0x22, NULL);
+        if (*controller & PAD_SELECTION_ALT) {
+            D_80141BDF[0] = 2;
+        }
+        cursor = D_80141BDF;
+        current = *cursor;
+        switch (current) {
+        case 0:
+        case 1:
+            character = &D_801721B6;
+            *character = current;
+            engine->unk1++;
+            reset_objects();
+            func_8001B718(0x40, (*character + 0xB) & 0xFF, 0xFF);
+            func_8001B644(D_800F1E0C);
+            D_801721BA = 2;
+            break;
+        case 2:
+            reset_objects();
+            if (engine->unk4 == 8) {
+                engine->unk8 = func_8001E850(D_800F2328, 1);
+                engine->state = 8;
+                *cursor = 2;
+            } else {
+                engine->unk8 = func_8001E850(D_800F2300, 1);
+                engine->state = 9;
+                *cursor = 0;
+            }
+            engine->unk1 = 1;
+            break;
+        }
+    }
+}
 
 void func_8001989C(struct EngineObj* arg0)
 {
@@ -563,7 +646,91 @@ load_save:
     func_8001B644(D_800F1F00);
 }
 
-INCLUDE_ASM("main/nonmatchings/menu", func_8001ABDC);
+void func_8001ABDC(struct EngineObj* engine)
+{
+    u16* controller;
+    u8* cursor;
+    u8* character;
+
+    if (controller_state & PADLup) {
+        if (D_80141BDF[0] == 0) {
+            D_80141BDF[0] = 2;
+        } else if (D_80141BDF[0] == 1) {
+            if (D_801721B4 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else if (D_801721B5 != 0) {
+            if (D_801721B4 == 0) {
+                D_80141BDF[0] = 0;
+            } else {
+                D_80141BDF[0] = 2;
+            }
+        } else {
+            D_80141BDF[0] = 1;
+        }
+    }
+
+    if (controller_state & PADLdown) {
+        if (D_80141BDF[0] == 0) {
+            if (D_801721B5 != 0) {
+                D_80141BDF[0] = 2;
+            } else {
+                D_80141BDF[0] = 1;
+            }
+        } else if (D_80141BDF[0] == 2) {
+            if (D_801721B4 != 0) {
+                if (D_801721B5 != 0) {
+                    D_80141BDF[0] = 2;
+                } else {
+                    D_80141BDF[0] = 1;
+                }
+            } else {
+                D_80141BDF[0] = 0;
+            }
+        } else {
+            D_80141BDF[0] = 2;
+        }
+    }
+
+    controller = &controller_state;
+    if (*controller & PAD_SELECTION_BUTTONS) {
+        func_8001540C(0, 0x22, NULL);
+        if (*controller & PAD_SELECTION_ALT) {
+            D_80141BDF[0] = 2;
+        }
+        cursor = D_80141BDF;
+        switch (*cursor) {
+        case 0:
+        case 1:
+            engine->unk1++;
+            character = &D_801721B6;
+            *character = *cursor;
+            reset_objects();
+            *cursor = 0;
+            func_8001B718(0x40, (*character + 0xB) & 0xFF, 0xFF);
+            func_8001B644(D_800F1E0C);
+            D_801721BA = 2;
+            break;
+        case 2:
+            reset_objects();
+            game_info.unk0 = 7;
+            game_info.unk2 = 0;
+            game_info.unk3 = 0;
+            if (D_800F1D90.save.character != 0xFF) {
+                game_info.unk8 = func_8001E850(D_800F22D0, 0);
+                game_info.mode = 1;
+                *cursor = 1;
+                return;
+            }
+            game_info.unk8 = func_8001E850(D_800F22E0, 0);
+            game_info.mode = 3;
+            *cursor = 0;
+            break;
+        }
+    }
+}
 
 void func_8001AE8C(struct EngineObj* arg0)
 {

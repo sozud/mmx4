@@ -90,14 +90,14 @@ void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_
         switch (kind & 3) {
         case 1:
             visual->x_vel.val = 0;
-            visual->y_vel.val = 0x10000;
+            visual->y_vel.val = FIXED(1);
             break;
         case 2:
             if (visual->x_pos.i.hi < midpoint) {
-                visual->x_vel.val = -0x18000;
+                visual->x_vel.val = -FIXED(1.5);
                 visual->y_vel.val = 0;
             } else {
-                visual->x_vel.val = 0x18000;
+                visual->x_vel.val = FIXED(1.5);
                 visual->y_vel.val = 0;
             }
             break;

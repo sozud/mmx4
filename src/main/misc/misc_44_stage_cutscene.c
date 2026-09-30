@@ -88,7 +88,35 @@ void stage_cutscene_idle(struct UnkObj* self)
 }
 
 // stage_cutscene_animate
-INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0C68);
+void func_800D0C68(struct MiscObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    switch ((s8)self->ext.misc_8.timer) {
+    case 0:
+        if (self->x_pos.i.hi + 0x10 < g_Player.x_pos.i.hi) {
+            set_animation(self, 1);
+            self->ext.misc_8.timer = 1;
+        }
+        break;
+    case 1:
+        if (self->animation_step.fields.event != 0) {
+            if (self->x_pos.i.hi + 0x10 < g_Player.x_pos.i.hi) {
+                set_animation(self, 2);
+                self->ext.misc_8.timer = 2;
+            } else {
+                set_animation(self, 0);
+                self->ext.misc_8.timer = 0;
+            }
+        }
+        break;
+    case 2:
+        if (self->x_pos.i.hi + 0x10 >= g_Player.x_pos.i.hi) {
+            set_animation(self, 1);
+            self->ext.misc_8.timer = 1;
+        }
+        break;
+    }
+}
 
 // stage_cutscene_spawn_part
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);

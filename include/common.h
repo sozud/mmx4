@@ -4764,6 +4764,17 @@ void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
 void func_800261B4(s32, u32, u8*);
 void func_80028FEC(s16, s16, s16, s16, u8);
+struct Item03StageEntry {
+    u16 x;
+    u16 y;
+    u16 velocity;
+    u16 right;
+    u16 trigger_x;
+    u16 object_id;
+    s16 width;
+    s16 height;
+};
+extern struct Item03StageEntry falling_pillar_entries[22];
 void start_screen_shake_x(s8, s8, s8);
 void func_800292D0(struct StageObjectRecord*);
 struct ObjectHeader* MakeObject(u8);

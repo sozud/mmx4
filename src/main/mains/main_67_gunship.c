@@ -36,7 +36,7 @@ void func_80082470(struct MainObj* obj)
     set_animation(obj, 0);
     /* volatile: the clear and the real value are both stored to this word */
     *(volatile u32*)&obj->ext.main_67.vertical_speed = 0;
-    obj->ext.main_67.vertical_speed = -0x5800;
+    obj->ext.main_67.vertical_speed = FIXED(-11.0 / 32);
     obj->unk5 = 2;
     obj->ext.raw[1] = 0;
     obj->ext.raw[2] = 0;
