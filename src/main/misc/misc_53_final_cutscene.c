@@ -18,7 +18,6 @@ void final_cutscene_wait_player(struct MiscObj* self)
 
 void final_cutscene_approach(struct MiscObj* self)
 {
-    s16 timer;
 
     if (background_objects[0].x_pos.i.hi != background_objects[0].unk26) {
         return;
@@ -26,9 +25,7 @@ void final_cutscene_approach(struct MiscObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    timer = self->ext.misc_53.timer - 1;
-    self->ext.misc_53.timer = timer;
-    if (timer != 0) {
+    if (--self->ext.misc_53.timer != 0) {
         return;
     }
 
@@ -76,11 +73,8 @@ void final_cutscene_start_effect(struct MiscObj* self)
 void final_cutscene_wait_effect(struct MiscObj* self)
 {
     struct EffectObj* effect;
-    s16 timer;
 
-    timer = self->ext.misc_53.timer - 1;
-    self->ext.misc_53.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_53.timer == 0) {
         self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {

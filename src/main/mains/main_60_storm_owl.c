@@ -21,7 +21,7 @@ void storm_owl_start(struct MainObj* self)
 void storm_owl_start_wait_player(struct MainObj* self)
 {
     if (engine_obj.stage == 7) {
-        if (g_Player.x_pos.i.hi >= 0x9E1) {
+        if (g_Player.x_pos.i.hi > 0x9E0) {
             return;
         }
         player_start_script_action(0x14, 0);
@@ -101,7 +101,7 @@ void storm_owl_death_explode(struct MainObj* self)
         self->unk42 ^= 0x8000;
         delay = self->invincibility_timer - 5;
         self->invincibility_timer = delay;
-        if (delay >= 0x1A) {
+        if (delay > 0x19) {
             self->invincibility_timer = 0;
         }
         next_delay = self->invincibility_timer;
@@ -171,12 +171,9 @@ void storm_owl_intro_land(struct MainObj* self)
 
 void storm_owl_intro_roar(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         func_8001540C(2, 0xBB, self);
         start_screen_shake_y(0x18, 8, 1);
         storm_owl_spawn_roar(ANIMATED_OBJECT(self));
@@ -187,12 +184,9 @@ void storm_owl_intro_roar(struct MainObj* self)
 
 void storm_owl_intro_pose(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         if (engine_obj.stage == 7) {
             func_8002217C(0xF, 0xFF, engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
@@ -276,8 +270,8 @@ void storm_owl_patrol_wait(struct MainObj* self)
         self->x_speed = storm_owl_waypoints[self->ext.main_60.corner].vx;
         self->y_speed = storm_owl_waypoints[self->ext.main_60.corner].vy;
         self->x_accel = FIXED(0.015625);
-        self->unk6++;
         self->unk15 = ((~self->x_speed >> 31) & 0x40);
+        self->unk6++;
     } else {
         self->ext.main_60.patrol_delay--;
     }
@@ -302,7 +296,7 @@ void storm_owl_patrol_return(struct MainObj* self)
     if (distance < 0) {
         goto check_negative;
     }
-    if (distance < 0x21) {
+    if (distance <= 0x20) {
         goto reset;
     }
     return;
@@ -376,8 +370,7 @@ void storm_owl_grab_carry(struct MainObj* self)
     }
     g_Player.x_pos.i.hi = x_pos;
     g_Player.y_pos.i.hi = (u16)self->y_pos.i.hi + 0x1E;
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         set_animation(self, 8);
         self->y_speed = FIXED(-4);
@@ -409,8 +402,8 @@ void storm_owl_grab_slam(struct MainObj* self)
         }
         self->y_speed = FIXED(-1);
         g_Player.stun_timer = 0;
-        self->terrain_box = &storm_owl_slam_terrain_box;
         self->unk62 = 0;
+        self->terrain_box = &storm_owl_slam_terrain_box;
         self->attack_box = (const u8*)&storm_owl_attack_box;
         self->unk6++;
     }
@@ -425,9 +418,9 @@ void storm_owl_grab_leave(struct MainObj* self)
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
         g_Player.stun_timer = 0;
+        self->unk62 = 0;
         self->contact_damage = 6;
         self->terrain_box = &storm_owl_slam_terrain_box;
-        self->unk62 = 0;
         self->attack_box = (const u8*)&storm_owl_attack_box;
         self->unk16 = 5;
         storm_owl_choose_corner(self);
@@ -446,7 +439,6 @@ void storm_owl_reenter_warp(struct MainObj* self)
     u16 background_x = background_objects[0].x_pos.u.hi;
     u16 background_y = background_objects[0].y_pos.u.hi;
     u8 variant;
-    s32 player_x;
 
     animate_object(ANIMATED_OBJECT(self));
     variant = self->ext.main_60.corner;
@@ -468,16 +460,14 @@ void storm_owl_reenter_warp(struct MainObj* self)
         self->y_pos.i.hi = background_y + 0xC8;
         break;
     }
-    player_x = g_Player.x_pos.val;
+    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
     self->unk7C = 0x3C;
     self->active = 0x41;
-    self->unk15 = (player_x >= self->x_pos.val) << 6;
     self->unk6++;
 }
 
 void storm_owl_reenter_wait(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->ext.main_60.flash_mode == 1) {
@@ -485,9 +475,7 @@ void storm_owl_reenter_wait(struct MainObj* self)
     } else {
         self->collision_data = (const u16*)D_80107B78;
     }
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
     }
@@ -509,12 +497,9 @@ void storm_owl_feather_start(struct MainObj* self)
 
 void storm_owl_feather_fire(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         storm_owl_spawn_feather(self);
         func_8001540C(2, 0xB6, self);
         self->unk7C = 0x1C;
@@ -572,12 +557,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076D14);
 
 void storm_owl_feather_volley_aim(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 6);
         self->collision_data = (const u16*)D_80107B78;
         self->unk7C = 0x3C;
@@ -635,7 +617,7 @@ void storm_owl_cyclone(struct MainObj* self)
 void storm_owl_cyclone_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (!(self->ext.main_60.corner & 1)) {
+    if (!(self->ext.main_60.corner % 2)) {
         set_animation(self, 4);
     } else {
         set_animation(self, 5);
@@ -650,8 +632,7 @@ void storm_owl_cyclone_fire(struct MainObj* self)
     s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         func_8001540C(2, 0xB9, self);
         storm_owl_spawn_cyclones(self);
@@ -659,7 +640,7 @@ void storm_owl_cyclone_fire(struct MainObj* self)
         self->unk6++;
         return;
     }
-    if ((timer < 0x29) && (((timer - 0x3B) % 20) == 0)) {
+    if ((timer <= 0x28) && (((timer - 0x3B) % 20) == 0)) {
         storm_owl_spawn_cyclones(self);
         func_8001540C(2, 0xB9, self);
     }
@@ -667,13 +648,10 @@ void storm_owl_cyclone_fire(struct MainObj* self)
 
 void storm_owl_cyclone_finish(struct MainObj* self)
 {
-    s16 timer;
     s32 direction;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         if (self->ext.main_60.pattern[0] == 3) {
             self->unk5 = 0xA;
             self->unk6 = 0;
@@ -749,8 +727,8 @@ void storm_owl_storm_fly_to_center(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     set_velocity_from_angle(MOVING_OBJECT(self), angle_to_point(OBJECT_HEADER(self), target_x, target_y) & 0xFF);
-    self->x_speed *= 2;
     x = self->x_pos.val;
+    self->x_speed *= 2;
     self->y_speed *= 2;
     if (x - target_x >= 0 ? x - target_x <= FIXED(3.99999) : target_x - x <= FIXED(3.99999)) {
         y = self->y_pos.val;
@@ -771,12 +749,9 @@ void storm_owl_storm_charge(struct MainObj* self)
 
 void storm_owl_storm_begin(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         func_8001540C(2, 0xBC, self);
         self->ext.main_60.storm_active = 1;
         self->ext.main_60.storm_timer = 0x10;
@@ -787,12 +762,9 @@ void storm_owl_storm_begin(struct MainObj* self)
 
 void storm_owl_storm_rain(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         if (--self->ext.main_60.storm_timer == 0) {
             self->unk7C = 0x3C;
             self->unk6++;
@@ -807,12 +779,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80077580);
 
 void storm_owl_storm_rain_again(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->ext.main_60.storm_timer++;
         if (self->ext.main_60.storm_timer >= 0x10) {
             self->unk7C = 0x3C;
@@ -825,13 +794,10 @@ void storm_owl_storm_rain_again(struct MainObj* self)
 
 void storm_owl_storm_end(struct MainObj* self)
 {
-    s16 timer;
     s32 direction;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         stop_sound(2, 0xBC);
         set_animation(self, 1);
         self->ext.main_60.storm_active = 0;
@@ -890,11 +856,11 @@ void storm_owl_stagger_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 0xC);
     g_Player.stun_timer = 0;
+    self->unk62 = 0;
     self->contact_damage = 6;
     self->terrain_box = &storm_owl_slam_terrain_box;
     self->attack_box = (const u8*)&storm_owl_attack_box;
     self->unk16 = 5;
-    self->unk62 = 0;
     if (self->collision_data == (const u16*)D_80107B78) {
         self->unk7C = 0x28;
     } else {
@@ -910,12 +876,9 @@ void storm_owl_stagger_start(struct MainObj* self)
 void storm_owl_stagger_recover(struct MainObj* self)
 {
     s32 x_vel;
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 1);
         x_vel = FIXED(2);
         self->collision_data = (const u16*)D_80107B78;
@@ -949,13 +912,13 @@ void storm_owl_ground_cyclone_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
     if (!(self->ext.main_60.corner & 1)) {
-        self->y_speed = FIXED(-3);
         self->unk6++;
+        self->y_speed = FIXED(-3);
     } else {
         self->unk7C = 0xA;
         self->unk6 += 2;
     }
-    if (self->ext.main_60.corner < 2) {
+    if (self->ext.main_60.corner <= 1) {
         self->unk15 = 0x40;
     } else {
         self->unk15 = 0;
@@ -985,12 +948,9 @@ void storm_owl_ground_cyclone_land(struct MainObj* self)
 
 void storm_owl_ground_cyclone_fire(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk7C = 0xA;
         func_8001540C(2, 0xB4, self);
         func_80078314(self);
@@ -1009,11 +969,8 @@ void storm_owl_ground_cyclone_wait(struct MainObj* self)
 void storm_owl_ground_cyclone_takeoff(struct MainObj* self)
 {
     s32 x_vel;
-    s16 timer;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer != 0) {
+    if (--self->unk7C != 0) {
         return;
     }
     set_animation(self, 1);
@@ -1127,7 +1084,7 @@ void storm_owl_spawn_cyclones(struct MainObj* arg0)
 
     self = arg0;
     i = 0;
-    variant = ((self->ext.main_60.corner & 1) == 0) * 2;
+    variant = ((self->ext.main_60.corner % 2) == 0) * 2;
     do {
         shot = find_free_shot_obj();
         if (shot != 0) {
@@ -1251,7 +1208,7 @@ void storm_owl_clear_shots(void)
 
     clear_value = 0;
     for (i = 0; i < 0x20; i++) {
-        if ((shot_objects[i].id == 0x25) || ((shot_objects[i].unk2 != 0) && (shot_objects[i].unk2 < 5))) {
+        if ((shot_objects[i].id == 0x25) || ((shot_objects[i].unk2 != 0) && (shot_objects[i].unk2 <= 4))) {
             dst = (u8*)&shot_objects[i];
             j = sizeof(shot_objects[i]) - 1;
             do {

@@ -16,8 +16,8 @@ void lemon_init(struct WeaponObj* arg0)
     arg0->unk50 = (const u8*)lemon_hit_box;
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     arg0->animation_table = D_8011BF40;
-    arg0->unk42 = 0x7802;
     arg0->unk40 = 0;
+    arg0->unk42 = 0x7802;
     arg0->unk16 = 0;
     owner = arg0->owner;
     arg0->unk15 = owner->unk15;
@@ -80,9 +80,9 @@ void lemon_deflect(struct WeaponObj* arg0)
         arg0->y_vel.val = -(FIXED(4.05) - 1);
     }
 
+    arg0->unk15 ^= 0x40;
     arg0->state = 2;
     arg0->unk5 = 0;
-    arg0->unk15 ^= 0x40;
     update_on_screen(BASE_OBJECT(arg0), 0xC, 8);
 }
 

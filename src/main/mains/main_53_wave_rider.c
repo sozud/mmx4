@@ -110,10 +110,10 @@ void wave_rider_main(struct MainObj* self)
 {
     s32 destroyed;
 
-    self->hurt_box = &wave_rider_body_hurt_box;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->unk65 = self->ext.main_53.unk82;
+    self->hurt_box = &wave_rider_body_hurt_box;
     destroyed = func_8002DD04(self) < 0;
     if (!destroyed) {
         self->hurt_box = wave_rider_rider_hurt_box;

@@ -110,12 +110,9 @@ void post_boss_cutscene_shake_start(struct UnkObj* self)
 
 void post_boss_cutscene_shake(struct UnkObj* self)
 {
-    s8 timer;
     s32 delta;
 
-    timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         self->ext.timer = 0x3C;
         self->on_screen = 0;
         self->unk5 = 8;

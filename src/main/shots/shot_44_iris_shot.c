@@ -47,22 +47,19 @@ void iris_drone_despawn(struct ShotObj* self)
 
 void iris_laser_init(struct ShotObj* self)
 {
-    s16 x_pos;
-
     self->on_screen = 1;
-    self->unk61 = 1;
     self->unk58.data = NULL;
+    self->unk61 = 1;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
     self->unk28 = 0;
     self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
-        x_pos = self->x_pos.i.hi - 0xA5;
+        self->x_pos.i.hi = self->x_pos.i.hi - 0xA5;
     } else {
-        x_pos = self->x_pos.i.hi + 0xA5;
+        self->x_pos.i.hi = self->x_pos.i.hi + 0xA5;
     }
-    self->x_pos.i.hi = x_pos;
     self->y_pos.i.hi -= 5;
     if (self->unk2 == 0) {
         self->unk16 = 0;
@@ -70,10 +67,10 @@ void iris_laser_init(struct ShotObj* self)
         self->unk16 = 1;
     }
     self->timer = 0x3C;
-    self->unk5C = 1;
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk50.data = NULL;
+    self->unk5C = 1;
     self->unk60 = 8;
     set_animation(self, self->unk2 + 0x17);
     self->state = 4;
@@ -124,9 +121,9 @@ void iris_drone_launch(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (--self->timer == 0) {
-        self->unk5 = 1;
         self->unk28 = -(self->x_vel.val >> 4);
         self->unk2C = self->y_vel.val >> 4;
+        self->unk5 = 1;
     }
 }
 
@@ -135,8 +132,8 @@ void iris_drone_brake(struct ShotObj* self)
     iris_drone_move(self);
     animate_object(ANIMATED_OBJECT(self));
 
-    if (abs(self->x_vel.val) <= 0xFFFF) {
-        if (abs(self->y_vel.val) <= 0xFFFF) {
+    if (abs(self->x_vel.val) < 0x10000) {
+        if (abs(self->y_vel.val) < 0x10000) {
             self->unk5 = 2;
             self->unk61 = 0;
             self->x_vel.val = 0;
@@ -150,12 +147,9 @@ void iris_drone_brake(struct ShotObj* self)
 
 void iris_drone_hover(struct ShotObj* self)
 {
-    s16 temp_v0;
 
     animate_object(ANIMATED_OBJECT(self));
-    temp_v0 = self->timer - 1;
-    self->timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->timer == 0) {
         self->unk5 = 3;
         if (self->unk2 == 0) {
             self->timer = 0x78;
@@ -211,15 +205,12 @@ void iris_laser_charge(struct ShotObj* self)
 
 void iris_laser_fire(struct ShotObj* self)
 {
-    s16 temp_v0;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->unk50.data = iris_laser_box;
     }
-    temp_v0 = self->timer - 1;
-    self->timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->timer == 0) {
         self->unk50.data = NULL;
         set_animation(self, (self->unk2 * 4) + 0x1A);
         self->unk5 = 2;

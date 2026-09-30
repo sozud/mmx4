@@ -72,8 +72,8 @@ void pod_spawner_despawn(struct MainObj* self)
     struct Main29Record* target;
 
     context = &SP_CUR_MAIN_OBJ->ext.main_29;
-    record = context->slots.controller.record;
     target = context->slots.controller.target;
+    record = context->slots.controller.record;
     if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
         record->unk4 = 2;
     }

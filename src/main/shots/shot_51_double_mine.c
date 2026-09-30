@@ -62,8 +62,8 @@ void double_mine_fire(struct ShotObj* self)
     struct ShotObj* shot;
 
     if (self->animation_step.fields.relative_step == 0) {
-        self->timer = 0x3C;
         self->unk5++;
+        self->timer = 0x3C;
         set_animation_frame(ANIMATED_OBJECT(self), 0x15, 7);
         return;
     }

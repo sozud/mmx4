@@ -28,7 +28,7 @@ void edge_spawner_main(struct EffectObj* self)
         }
     }
 
-    if (self->ext.unk_effect.unk15 >= 0x1F) {
+    if (self->ext.unk_effect.unk15 > 0x1E) {
         self->state++;
     }
 }

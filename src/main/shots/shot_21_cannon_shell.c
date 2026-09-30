@@ -20,7 +20,6 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
 void cannon_shell_fly(struct ShotObj* self)
 {
     struct MiscObj* misc;
-    s16 y;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -51,12 +50,11 @@ void cannon_shell_fly(struct ShotObj* self)
             misc->unk15 = get_random() & 0x40;
             misc->ext.unk.unk54 = 0;
             misc->x_pos.i.hi = self->x_pos.i.hi;
-            y = self->y_pos.i.hi;
-            misc->unk7 = 1;
+            misc->y_pos.i.hi = self->y_pos.i.hi;
             misc->x_vel.val = 0;
             misc->y_vel.val = 0;
+            misc->unk7 = 1;
             misc->unk16 = 7;
-            misc->y_pos.i.hi = y;
         }
         self->unk7 = 1;
     } else {

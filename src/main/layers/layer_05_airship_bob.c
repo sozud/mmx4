@@ -85,7 +85,7 @@ void airship_bob_sway(struct LayerObj* arg0)
 
 void airship_bob_sway_up(struct LayerObj* arg0)
 {
-    if (arg0->unk18.val < 0x5801) {
+    if (arg0->unk18.val <= 0x5800) {
         if (arg0->unk18.val > 0) {
             if (arg0->private_state.value.val != 0) {
                 arg0->private_state.value.val--;
@@ -125,8 +125,8 @@ void airship_bob_idle(struct LayerObj* arg0)
 
 void airship_bob_update_section(struct LayerObj* arg0)
 {
-    s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
+    s16 player_x = g_Player.x_pos.i.hi;
 
     while (1) {
         if (player_x - airship_bob_section_positions[offset] < 0) {

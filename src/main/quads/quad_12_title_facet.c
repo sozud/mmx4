@@ -10,13 +10,12 @@ void title_facet_init(struct QuadObj* arg0)
     u16* points;
     u16* vertex;
     u16 x;
-    u16 y;
     u8 state;
 
+    arg0->active |= 0x80;
     arg0->bg_offset = -1;
     arg0->x_pos.i.hi = 0;
     arg0->y_pos.i.hi = 0;
-    arg0->active |= 0x80;
     points = &D_80169498.title.coordinates[0].u.hi;
     vertex = &points[title_facet_vertex_indices[arg0->unk2][0] * 4];
     arg0->unk14.i.hi = vertex[0];
@@ -32,11 +31,10 @@ void title_facet_init(struct QuadObj* arg0)
     x = vertex[0];
     state++;
     arg0->unk2C.i.hi = x;
-    y = vertex[2];
+    arg0->unk30.i.hi = vertex[2];
     arg0->unk36 = 0x11;
     arg0->ext.unk_ext.unk38 = 0x3C;
     arg0->state = state;
-    arg0->unk30.i.hi = y;
     arg0->unk34 = 0x7FFF;
     arg0->on_screen = 1;
 }

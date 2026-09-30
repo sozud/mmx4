@@ -34,6 +34,7 @@ void stage_select_flyout_scale(struct QuadObj* arg0)
 
 void stage_select_flyout_init(struct QuadObj* self)
 {
+    self->active |= 0x90;
     self->unk36 = 0x10;
     self->unk34 = 0x771;
     self->bg_offset = -1;
@@ -42,7 +43,6 @@ void stage_select_flyout_init(struct QuadObj* self)
     self->ext.quad_2.vertices = &stage_select_flyout_vertices[0][0];
     self->ext.quad_2.x_scale.value = 0x100;
     self->ext.quad_2.y_scale.value = 0x100;
-    self->active |= 0x90;
     stage_select_flyout_scale(self);
     self->ext.quad_2.direction[0] = angle_from_delta(
         self->x_pos.val - (stage_select_flyout_targets[self->unk2][0] << 16),

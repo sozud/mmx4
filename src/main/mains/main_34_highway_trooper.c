@@ -91,14 +91,12 @@ void highway_trooper_attack_ready_jump(struct MainObj* self)
 
 void highway_trooper_attack_jump(struct MainObj* self)
 {
-    s32 value20;
     s32 value24;
 
-    value20 = FIXED(-0.9375);
+    self->x_speed = FIXED(-0.9375);
     value24 = FIXED(1.75);
     self->y_speed = value24;
     self->gravity = FIXED(0.5);
-    self->x_speed = value20;
     self->air_state = 1;
     move_with_gravity(ANIMATED_OBJECT(self));
     self->unk6++;
@@ -106,19 +104,13 @@ void highway_trooper_attack_jump(struct MainObj* self)
 
 void highway_trooper_attack_land(struct MainObj* self)
 {
-    s8 step;
-    u8 count;
-
     if (self->collision_flags & 8) {
         self->air_state = 0;
-        count = SP_CUR_MAIN_OBJ->ext.main_34.unk82 + 1;
-        SP_CUR_MAIN_OBJ->ext.main_34.unk82 = count;
-        if (count == 3) {
-            step = self->unk6 + 1;
+        if (++SP_CUR_MAIN_OBJ->ext.main_34.unk82 == 3) {
+            self->unk6 = self->unk6 + 1;
         } else {
-            step = self->unk6 - 1;
+            self->unk6 = self->unk6 - 1;
         }
-        self->unk6 = step;
     }
     move_with_gravity(ANIMATED_OBJECT(self));
 }

@@ -39,9 +39,9 @@ void func_8001F3D4(struct MainObj* obj)
     u32 i;
 
     *(s16*)&obj->state = 6;
-    background_index = ((s8*)&obj->unk42)[1];
     obj->on_screen = 0;
     obj->unk2++;
+    background_index = ((s8*)&obj->unk42)[1];
     if (background_index == 0) {
         background_objects[0].x_pos.val = FIXED(512);
     } else {

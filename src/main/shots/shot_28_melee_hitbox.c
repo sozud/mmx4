@@ -41,7 +41,7 @@ void melee_hitbox_active(struct ShotObj* self)
     struct WeaponObj* temp_v1;
 
     temp_v1 = self->unk7C;
-    if (temp_v1->state >= 2) {
+    if (temp_v1->state > 1) {
         self->state++;
         return;
     }

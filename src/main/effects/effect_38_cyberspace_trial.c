@@ -36,7 +36,7 @@ void cyberspace_trial_wait_start(struct EffectObj* self)
 
     subtype = self->unk2;
     if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2]) {
-        if (!(subtype & 1) && engine_obj.substage == 0) {
+        if (!(subtype % 2) && engine_obj.substage == 0) {
             cyberspace_trial_spawn_guide(self);
             engine_obj.unk10 = 1;
             engine_obj.unk12 = 1;
@@ -56,7 +56,7 @@ void cyberspace_trial_wait_goal(struct EffectObj* self)
     if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
         player_start_script_action(0x14, 0x40);
         cyberspace_trial_clear_objects(self);
-        if ((engine_obj.checkpoint & 1) || engine_obj.substage != 0) {
+        if ((engine_obj.checkpoint % 2) || engine_obj.substage != 0) {
             self->ext.effect_38.active = 1;
             self->ext.effect_38.timer = 0xA;
             self->state += 2;
@@ -114,7 +114,7 @@ void cyberspace_trial_advance(struct EffectObj* self)
         break;
     }
 
-    if (engine_obj.checkpoint < 6) {
+    if (engine_obj.checkpoint <= 5) {
         engine_obj.unkF = -0x40;
     } else {
         engine_obj.unkF = 0x40;
@@ -159,10 +159,9 @@ void cyberspace_trial_spawn_warps(void* arg0)
 void cyberspace_trial_spawn_rank_warp(struct EffectObj* self)
 {
     struct MiscObj* misc;
-    s8 state;
     u8 subtype;
 
-    if (self->ext.effect_38.active == 0 || (self->unk2 & 1) != 0 || engine_obj.substage != 0) {
+    if (self->ext.effect_38.active == 0 || (self->unk2 % 2) != 0 || engine_obj.substage != 0) {
         return;
     }
     misc = find_free_misc_obj();
@@ -175,18 +174,17 @@ void cyberspace_trial_spawn_rank_warp(struct EffectObj* self)
     subtype = self->ext.effect_38.variant;
     switch (subtype) {
     case 0:
-        state = 2;
+        misc->unk2 = 2;
         break;
     case 1:
-        state = 3;
+        misc->unk2 = 3;
         break;
     case 2:
-        state = 4;
+        misc->unk2 = 4;
         break;
     default:
         return;
     }
-    misc->unk2 = state;
 }
 
 void cyberspace_trial_delete_unused_items(void)

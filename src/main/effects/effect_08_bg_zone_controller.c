@@ -48,7 +48,7 @@ void bg_zone_controller_zone_0_scroll(struct EffectObj* self)
     if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
         diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
         self->ext.effect_8.unk18 = diff;
-        if (diff >= 0) {
+        if (diff > -1) {
             if (diff >= 8) {
                 self->ext.effect_8.unk18 = 8;
             }
@@ -63,11 +63,11 @@ void bg_zone_controller_zone_0_scroll(struct EffectObj* self)
             if (sum < 8) {
                 return;
             }
-            if (++self->ext.effect_8.unk16 >= 3) {
+            if (++self->ext.effect_8.unk16 > 2) {
                 self->ext.effect_8.unk16 = 0;
             }
         } else {
-            if (sum >= -7) {
+            if (sum > -8) {
                 return;
             }
             if (--self->ext.effect_8.unk16 < 0) {
@@ -145,7 +145,7 @@ void bg_zone_controller_zone_3_enter(struct EffectObj* self)
 
 void bg_zone_controller_zone_3_wait(struct EffectObj* self)
 {
-    if (g_Player.x_pos.i.hi < 0x1709) {
+    if (g_Player.x_pos.i.hi <= 0x1708) {
         engine_obj.checkpoint = 3;
         engine_obj.unkF = -0x40;
         self->unk5 = 5;
@@ -171,7 +171,7 @@ void bg_zone_controller_zone_4_enter(struct EffectObj* self)
 
 void bg_zone_controller_zone_4_wait(struct EffectObj* self)
 {
-    if (g_Player.x_pos.i.hi < 0x112D) {
+    if (g_Player.x_pos.i.hi <= 0x112C) {
         engine_obj.unkF = 0x40;
         self->unk5 = 5;
         self->unk6 = 0;

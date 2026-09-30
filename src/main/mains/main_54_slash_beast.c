@@ -59,7 +59,7 @@ void slash_beast_death_blink(struct MainObj* self)
         self->unk42 ^= 0x8000;
         delay = self->invincibility_timer - 5;
         self->invincibility_timer = delay;
-        if (delay >= 0x1A) {
+        if (delay > 0x19) {
             self->invincibility_timer = 0;
         }
         next_delay = self->invincibility_timer;
@@ -121,10 +121,10 @@ void slash_beast_crescent_jump(struct MainObj* self)
         self->hurt_box = &D_80100224;
     }
     if (self->animation_step.fields.event == 1) {
-        if (self->unk15 != 0) {
-            self->x_speed = FIXED(3);
-        } else {
+        if (self->unk15 == 0) {
             self->x_speed = FIXED(-3);
+        } else {
+            self->x_speed = FIXED(3);
         }
         self->x_accel = FIXED(-0.125);
         self->y_speed = FIXED(3);
@@ -278,10 +278,10 @@ void slash_beast_grab_check(struct MainObj* self)
         set_animation(self, 6);
         self->unk16 = 6;
         self->contact_damage = 6;
+        self->unk62 = 0;
         self->hurt_box = D_801001FC;
         self->attack_box = D_801001F8;
         self->unk5 = 4;
-        self->unk62 = 0;
         self->ext.main_54.grab = 0;
         self->unk6 = 2;
     }
@@ -289,7 +289,7 @@ void slash_beast_grab_check(struct MainObj* self)
         return;
     }
     func_8001540C(2, 0x86, self);
-    if (self->x_pos.i.hi - background_objects[0].x_pos.i.hi >= 0xA1) {
+    if (self->x_pos.i.hi - background_objects[0].x_pos.i.hi > 0xA0) {
         self->unk15 = 0;
     } else {
         self->unk15 = 0x40;
@@ -392,8 +392,7 @@ void slash_beast_intro_leap(struct MainObj* self)
 {
     s16 timer;
 
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         background_objects[0].unk26 = 0x24C0;
         background_objects[0].unk24 = 0x24D0;
@@ -504,8 +503,8 @@ void slash_beast_intro_fill_health(struct MainObj* self)
             self->ext.main_54.fight_started = 1;
             slash_beast_pick_pattern(self);
             self->unk5 = 3;
-            self->unk6 = 0;
             self->ext.main_54.pattern--;
+            self->unk6 = 0;
             player_end_script_action();
         }
     }
@@ -561,8 +560,8 @@ void slash_beast_high_leap_jump(struct AnimatedObj* self)
         } else {
             self->x_vel.val = FIXED(1.75);
         }
-        self->y_vel.val = FIXED(7.4375);
         self->unk28 = 0;
+        self->y_vel.val = FIXED(7.4375);
         self->unk2C = FIXED(0.21875);
         move_with_gravity(self);
         func_8001540C(2, 0x81, self);
@@ -649,8 +648,8 @@ void slash_beast_pick_pattern(struct MainObj* self)
     index = self->ext.main_54.pattern_set;
     thresholds = slash_beast_pattern_weights;
     base = slash_beast_patterns[index][0];
-    thresholds += (index << 1) + index;
     current = base;
+    thresholds += (index << 1) + index;
 
     for (; i < 3; i++) {
         if (random < *thresholds) {

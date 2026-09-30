@@ -12,8 +12,6 @@ void drop_pillar_update(struct ItemObj* arg0)
 void drop_pillar_init(struct ItemObj* arg0)
 {
     arg0->unk16 = 6;
-    arg0->x_pos.i.hi = 0x24B0;
-    arg0->y_pos.i.hi = 0xC0;
     arg0->animation_table = NULL;
     arg0->unk5C = 0;
     arg0->unk61 = 0;
@@ -21,6 +19,8 @@ void drop_pillar_init(struct ItemObj* arg0)
     arg0->unk50 = 0;
     arg0->unk54 = 0;
     arg0->unk58 = 0;
+    arg0->x_pos.i.hi = 0x24B0;
+    arg0->y_pos.i.hi = 0xC0;
     arg0->x_vel.val = 0;
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;

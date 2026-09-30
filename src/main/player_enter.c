@@ -179,11 +179,11 @@ void player_enter_idle(struct PlayerObj* self)
         self->unk6 = 0;
         if ((self->unk2 == 0) && (self->attacking != 0)) {
             frame = self->attack_pose_timer < 9;
-            if (self->attack_pose_timer < 5) {
+            if (self->attack_pose_timer <= 4) {
                 frame = 2;
             }
             player_set_animation_frame(self, 0x5E, frame);
-            if (self->attack_pose_timer >= 9) {
+            if (self->attack_pose_timer > 8) {
                 self->animation_step.fields.duration = self->attack_pose_timer - 8;
             }
         } else {
@@ -229,10 +229,10 @@ void player_enter_walk(struct PlayerObj* self)
 
 void player_enter_jump(struct PlayerObj* self)
 {
-    self->y_vel.val = FIXED(5.8125);
     self->air_state = 1;
     self->x_vel.val = 0;
     self->unk28 = 0;
+    self->y_vel.val = FIXED(5.8125);
     self->unk2C = 0x4200;
     if ((self->dash_momentum != 0) || ((self->input.buttons.held & PLAYER_INPUT_DASH) != 0)) {
         self->dash_momentum = 1;
@@ -250,10 +250,10 @@ void player_enter_jump(struct PlayerObj* self)
 void player_enter_fall(struct PlayerObj* self)
 {
     player_set_animation_shooting(self, 0xB);
-    self->unk2C = 0x4200;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
+    self->unk2C = 0x4200;
     self->air_state = -1;
     if (self->dash_momentum != 0) {
         self->dash_momentum = 0;
@@ -296,9 +296,9 @@ void player_enter_dash(struct PlayerObj* self)
     }
     player_set_animation_shooting(self, 0x10);
     self->unk28 = FIXED(-0.1875);
-    self->dash_timer = 0x1E;
     self->y_vel.val = 0;
     self->unk2C = 0;
+    self->dash_timer = 0x1E;
     self->unk5 = PLAYER_DASH;
     self->unk6 = 0;
 }
@@ -313,9 +313,9 @@ void player_enter_dash_end(struct PlayerObj* self)
         self->x_vel.val = FIXED(-4.125);
     }
     self->unk28 = FIXED(-0.1875);
-    self->afterimage = -1;
     self->dash_momentum = 0;
     self->air_action = 0;
+    self->afterimage = -1;
     self->unk6 = 2;
 }
 
@@ -323,10 +323,10 @@ void player_enter_air_dash(struct PlayerObj* self)
 {
     player_set_animation(self, 0x12);
     self->unk28 = FIXED(-0.1875);
-    self->dash_momentum = -1;
-    self->dash_timer = 0x12;
     self->y_vel.val = 0;
     self->unk2C = 0;
+    self->dash_momentum = -1;
+    self->dash_timer = 0x12;
     self->air_action = 3;
     player_clear_attack(self);
     self->unk5 = PLAYER_AIR_DASH;
@@ -336,24 +336,24 @@ void player_enter_air_dash(struct PlayerObj* self)
 void player_enter_air_dash_end(struct PlayerObj* self)
 {
     player_set_animation(self, 0x13);
-    self->unk2C = FIXED(0.2578125);
-    self->air_state = -1;
-    self->afterimage = -1;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
+    self->unk2C = FIXED(0.2578125);
+    self->air_state = -1;
     self->dash_momentum = 0;
+    self->afterimage = -1;
     self->unk6 = 2;
 }
 
 void player_enter_fall_shooting(struct PlayerObj* self)
 {
     player_set_animation(self, 0x84);
-    self->unk2C = FIXED(0.2578125);
-    self->air_state = -1;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
+    self->unk2C = FIXED(0.2578125);
+    self->air_state = -1;
     self->dash_momentum = 0;
     self->afterimage = 0;
     self->unk5 = PLAYER_FALL;
@@ -402,11 +402,11 @@ INCLUDE_ASM("main/nonmatchings/player_enter", func_80034B64);
 void player_enter_ladder_grab(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1B);
-    self->y_vel.val = FIXED(1);
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
     self->x_vel.val = 0;
     self->unk28 = 0;
+    self->y_vel.val = FIXED(1);
     self->unk2C = 0;
     self->air_state = 1;
     self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
@@ -451,13 +451,13 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self)
 
 void player_enter_ladder_up(struct PlayerObj* self)
 {
+    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = FIXED(1.5);
     self->unk2C = 0;
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     player_clear_dash(self);
     self->unk5 = PLAYER_LADDER_UP;
     self->unk6 = 0;
@@ -465,13 +465,13 @@ void player_enter_ladder_up(struct PlayerObj* self)
 
 void player_enter_ladder_down(struct PlayerObj* self)
 {
+    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = FIXED(-1.5);
     self->unk2C = 0;
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     player_clear_dash(self);
     self->unk5 = PLAYER_LADDER_DOWN;
     self->unk6 = 0;
@@ -524,9 +524,9 @@ void player_start_stage_clear(struct PlayerObj* self)
 void player_enter_beam_out(struct PlayerObj* self)
 {
     func_8001540C(1, 0xB, self);
-    self->y_vel.val = FIXED(8);
     self->x_vel.val = 0;
     self->unk28 = 0;
+    self->y_vel.val = FIXED(8);
     self->unk2C = 0;
     self->unk68 = 0;
     self->air_state = 1;

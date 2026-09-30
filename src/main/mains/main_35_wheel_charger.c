@@ -21,7 +21,7 @@ void wheel_charger_main(struct MainObj* self)
     if (self->unk5 == 4) {
         return;
     }
-    if (engine_obj.stage != 3 || g_Player.x_pos.i.hi < 0x9B7) {
+    if (engine_obj.stage != 3 || g_Player.x_pos.i.hi <= 0x9B6) {
         func_8002D9BC(self);
     }
     self->ext.main_35.saved_unk5 = self->unk5;
@@ -63,7 +63,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005EFB0);
 
 void wheel_charger_wait_for_player(struct MainObj* self)
 {
-    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= 0xB5) {
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) > 0xB4) {
         self->unk7A = 0;
         self->unk5 = 2;
     }
@@ -107,8 +107,7 @@ void wheel_charger_charge_spin(struct MainObj* self)
         self->ext.main_35.sound_timer = 0x14;
     }
     animate_object(ANIMATED_OBJECT(self));
-    timer = (u16)self->unk7E - 1;
-    self->unk7E = timer;
+    timer = --self->unk7E;
     if (timer == 0) {
         func_800B0CA0(1, 2, self, 8, 1);
         self->unk7E = 3;
@@ -148,8 +147,8 @@ void wheel_charger_charge_roll(struct MainObj* self)
         mask = 0xA;
         value = self->collision_flags & 0xA;
     } else {
-        mask = 9;
         value = self->collision_flags & 9;
+        mask = 9;
     }
 
     if (value == mask) {

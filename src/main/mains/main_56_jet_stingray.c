@@ -158,11 +158,10 @@ void jet_stingray_intro_warning(struct MainObj* self)
         }
         break;
     case 2:
-        countdown = (u16)self->unk7C - 1;
-        self->unk7C = countdown;
+        countdown = --self->unk7C;
         if (countdown == 0) {
-            self->unk6 = 0;
             self->unk5 = (u8)self->unk5 + 1;
+            self->unk6 = 0;
             set_animation(self, 0x1D);
         }
         break;
@@ -177,9 +176,9 @@ void jet_stingray_intro_emerge(struct MainObj* self)
     self->on_screen = 1;
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
+        self->unk5 = (u8)self->unk5 + 1;
         self->unk7C = 0x1E;
         self->y_speed = FIXED(1);
-        self->unk5 = (u8)self->unk5 + 1;
         set_animation(self, 0x26);
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 1;
@@ -201,8 +200,8 @@ void jet_stingray_intro_rise(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
-        self->y_speed = 0;
         self->unk5++;
+        self->y_speed = 0;
         set_animation(self, 0x27);
     }
 }
@@ -222,23 +221,20 @@ void jet_stingray_intro_pose(struct MainObj* self)
         }
     } else if (abc_object.unkC == 0) {
         self->unk6 = 0;
-        self->unk7C = 2;
         self->unk5 = (u8)self->unk5 + 1;
+        self->unk7C = 2;
         play_boss_voice(4);
     }
 }
 
 void jet_stingray_intro_fill_health(struct MainObj* self)
 {
-    s16 temp_v0;
 
     self->on_screen = 1;
     animate_object(ANIMATED_OBJECT(self));
     if ((update_boss_music_delay() == 0) && (self->animation_step.fields.relative_step == 0)) {
         if (self->hp < 0x30) {
-            temp_v0 = self->unk7C - 1;
-            self->unk7C = temp_v0;
-            if (temp_v0 == 0) {
+            if (--self->unk7C == 0) {
                 func_8001540C(0, 0xE, 0);
                 self->unk7C = 2;
             }
@@ -256,8 +252,8 @@ void jet_stingray_intro_finish(struct MainObj* self)
     if (--self->unk7C == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
-        self->unk7 = 0;
         self->state++;
+        self->unk7 = 0;
         player_end_script_action();
     }
 }
@@ -312,13 +308,13 @@ void jet_stingray_choose_pattern(struct MainObj* self)
 
 void jet_stingray_swim_start(struct MainObj* self)
 {
+    self->unk6++;
     self->contact_damage = 6;
     self->attack_box = (const u8*)&jet_stingray_swim_attack_box;
     self->hurt_box = (const u8*)&jet_stingray_swim_hurt_box;
     self->air_state = 1;
     self->terrain_box = NULL;
     self->collision_flags = 0;
-    self->unk6++;
     self->ext.main_56.flags &= ~2;
     set_animation(self, 1);
 }
@@ -328,19 +324,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
 
 void jet_stingray_swim_next(struct MainObj* self)
 {
-    u8 value;
-
     if (self->unk7C == 0) {
         if (self->ext.main_56.pattern == NULL) {
             jet_stingray_choose_pattern(self);
         } else if (*self->ext.main_56.pattern == 0xFF) {
             jet_stingray_choose_pattern(self);
         }
-        value = *self->ext.main_56.pattern;
+        self->unk5 = (*self->ext.main_56.pattern);
         self->unk6 = 0;
         self->unk7 = 0;
         self->ext.main_56.pattern++;
-        self->unk5 = value;
     } else {
         self->unk7C--;
     }
@@ -370,9 +363,9 @@ void jet_stingray_land(struct MainObj* self)
         /* fall through */
     case 1:
         if (self->collision_flags & 8) {
+            self->unk6 = (u8)self->unk6 + 1;
             self->air_state = 0;
             self->y_speed = 0;
-            self->unk6 = (u8)self->unk6 + 1;
             set_animation(self, 0);
             self->unk7C = 0x28;
             self->attack_box = &jet_stingray_land_attack_box;
@@ -467,12 +460,12 @@ void jet_stingray_vortex(struct MainObj* self)
 void jet_stingray_ambush_exit(struct MainObj* self)
 {
     if (self->unk7 == 0) {
+        self->ext.main_56.flags &= 0xFC;
         self->contact_damage = 9;
         self->attack_box = &jet_stingray_ambush_attack_box;
         self->hurt_box = &jet_stingray_ambush_hurt_box;
         self->y_speed = FIXED(9);
         self->x_speed = 0;
-        self->ext.main_56.flags &= 0xFC;
         self->unk7++;
         set_animation(self, 7);
         func_8001540C(2, 0xAF, self);
@@ -551,10 +544,10 @@ void jet_stingray_ambush_return(struct MainObj* self)
     if (--self->unk7C != 0) {
         return;
     }
-    bg_idx = self->bg_offset;
     self->unk5 = 2;
     self->unk6 = 0;
     self->unk7 = 0;
+    bg_idx = self->bg_offset;
     if (self->x_pos.i.hi < background_objects[bg_idx].x_pos.i.hi + 0xA0) {
         self->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x40;
     } else {
@@ -589,8 +582,7 @@ void jet_stingray_dash_charge(struct MainObj* self)
     s32 x_velocity;
 
     if (self->unk7 == 0) {
-        timer = (u16)self->unk7C - 1;
-        self->unk7C = timer;
+        timer = --self->unk7C;
         x_velocity = FIXED(-6);
         if (timer == 0) {
             self->unk7 = (u8)self->unk7 + 1;
@@ -659,9 +651,9 @@ void jet_stingray_leap_start(struct MainObj* self)
         value = 0x50000;
     }
 
-    self->y_speed = FIXED(-9.5);
     self->x_speed = value;
     self->x_accel = 0;
+    self->y_speed = FIXED(-9.5);
     self->gravity = FIXED(-0.2578125);
     self->ext.main_56.flags &= 0xFD;
 
@@ -672,8 +664,8 @@ void jet_stingray_leap_start(struct MainObj* self)
 void jet_stingray_leap_fall(struct MainObj* self)
 {
     if (self->y_speed > 0) {
-        self->gravity = -FIXED(0.8125);
         self->y_speed = 0;
+        self->gravity = -FIXED(0.8125);
         self->unk6++;
         self->ext.main_56.flags &= ~2;
     }
@@ -777,10 +769,10 @@ void jet_stingray_stagger_wait(struct MainObj* self)
             self->unk7C = 0x78;
         }
     } else if (--self->unk7C == 0) {
-        self->unk7C = 0xA;
         self->unk7 = 0;
-        self->ext.main_56.unk89.value = 5;
+        self->unk7C = 0xA;
         self->unk6++;
+        self->ext.main_56.unk89.value = 5;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -790,8 +782,7 @@ void jet_stingray_stagger_shake(struct MainObj* self)
     s16 timer;
     s8 step;
 
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer != 0) {
         step = self->ext.main_56.unk89.value;
         self->x_pos.i.hi = self->x_pos.u.hi + step;
@@ -808,9 +799,9 @@ void jet_stingray_stagger_shake(struct MainObj* self)
 void jet_stingray_stagger_flee(struct MainObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
+        self->unk6++;
         self->y_speed = FIXED(8);
         self->x_speed = 0;
-        self->unk6++;
         set_animation(self, 7);
         func_8001540C(2, 0xAF, self);
     }
@@ -850,10 +841,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071D30);
 void jet_stingray_death_start(struct MainObj* self)
 {
     player_start_script_action(0x14, g_Player.unk15);
+    self->unk5++;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_56.unk89.value = 0x19;
-    self->unk5++;
     set_animation_frame(ANIMATED_OBJECT(self), 0x16, 0);
     is_on_screen(BASE_OBJECT(self));
 }
@@ -876,9 +867,9 @@ void jet_stingray_death_explode(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
         self->ext.main_56.unk89.value -= 5;
         var_a0 = self->ext.main_56.unk89.value;
-        self->unk42 ^= 0x8000;
         if (var_a0 < 5) {
             var_a0 = 5;
         }

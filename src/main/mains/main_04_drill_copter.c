@@ -59,7 +59,7 @@ void drill_copter_approach_fly(struct MainObj* self)
     if (distance < 0) {
         distance = g_Player.x_pos.val - self->x_pos.val;
     }
-    if (distance <= 0x4FFFF) {
+    if (distance < 0x50000) {
         self->unk5 = 2;
         self->unk6 = 0;
     }
@@ -100,7 +100,7 @@ void drill_copter_sway_move(struct MainObj* self)
         self->x_speed = -self->x_speed;
         object_x_2 = self->x_pos.val;
         distance_2 = object_x_2 - g_Player.x_pos.val;
-        if (distance_2 < 0) {
+        if (distance_2 <= -1) {
             distance_2 = g_Player.x_pos.val - object_x_2;
         }
         if (distance_2 > FIXED(64)) {
@@ -133,11 +133,11 @@ void drill_copter_drop_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
+        self->unk6++;
         self->x_speed = 0;
         self->x_accel = 0;
         self->y_speed = 0;
         self->gravity = FIXED(0.1875);
-        self->unk6++;
     }
 }
 
@@ -146,10 +146,10 @@ void drill_copter_drop_fall(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->collision_flags & 8) {
+        self->unk6++;
         self->y_speed = 0;
         self->gravity = 0;
         self->air_state = 0;
-        self->unk6++;
         set_animation(self, 5);
         func_8001540C(2, 9, self);
     }
@@ -186,11 +186,11 @@ void drill_copter_rise_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
+        self->unk6++;
         self->x_speed = 0;
         self->x_accel = 0;
         self->y_speed = FIXED(3);
         self->gravity = 0;
-        self->unk6++;
     }
 }
 

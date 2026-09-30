@@ -96,8 +96,7 @@ void func_80012454(void)
 
     if ((D_8013BD44 != 0) && (D_80141BDC[0] == 0)) {
         if ((D_80166C08 & 0x900) == 0x900) {
-            temp_v0 = D_80141BD2 - 1;
-            D_80141BD2 = temp_v0;
+            temp_v0 = --D_80141BD2;
             if ((temp_v0 << 0x10) == 0) {
                 if ((engine_obj.stage != 0) && (engine_obj.unk5F >= 3U)) {
                     func_8001C3E8();
@@ -213,7 +212,7 @@ void func_80012600(void)
             }
             break;
         }
-        temp_v0 = *(void**)0x801F8300 + 0x80;
+        temp_v0 = (u8*)*(void**)0x801F8300 + 0x80;
         *(void**)0x801F8300 = temp_v0;
     } while ((u32)temp_v0 <= 0x801F82FFU);
 #endif
@@ -286,8 +285,8 @@ void func_800128B8(void (*arg0)(void))
 #ifdef MMX4_PC
     mmx4_pc_thread_replace(arg0);
 #else
-    D_8012F490 = arg0;
     D_800EE458 = 1;
+    D_8012F490 = arg0;
     ChangeTh(0xFF000000);
 #endif
 }

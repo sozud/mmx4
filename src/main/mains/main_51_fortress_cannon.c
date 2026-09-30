@@ -155,9 +155,9 @@ void fortress_cannon_check_fall(struct MainObj* self)
 {
     if (self->air_state == 0 && !(self->collision_flags & 8)) {
         self->unk5 = 6;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_speed = 0;
         self->x_accel = 0;
         self->air_state = 1;

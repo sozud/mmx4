@@ -108,7 +108,7 @@ void func_80027A5C(struct BackgroundObj* a0)
     v1 = g_Player.y_pos.i.hi - a0->y_pos.i.hi;
     v0 = v1 - a0->unk2C;
 
-    if (v0 >= 0) {
+    if (v0 > -1) {
         v0 = v1 - a0->unk2E;
 
         if (v0 <= 0) {
@@ -126,7 +126,7 @@ void func_80027AAC(struct BackgroundObj* a0)
     v1 = g_Player.x_pos.i.hi - a0->x_pos.i.hi;
     v0 = v1 - a0->unk30;
 
-    if (v0 >= 0) {
+    if (v0 > -1) {
         v0 = v1 - a0->unk32;
 
         if (v0 <= 0) {

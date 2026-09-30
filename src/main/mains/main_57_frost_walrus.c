@@ -78,7 +78,7 @@ void frost_walrus_death_explode(struct MainObj* self)
         self->unk42 ^= 0x8000;
         delay = self->invincibility_timer - 5;
         self->invincibility_timer = delay;
-        if (delay >= 0x1A) {
+        if (delay > 0x19) {
             self->invincibility_timer = 0;
         }
         next_delay = self->invincibility_timer;
@@ -163,7 +163,7 @@ void frost_walrus_intro_approach(struct MainObj* self)
         return;
     }
 
-    if (g_Player.x_pos.i.hi - temp_a0 < 0xC1) {
+    if (g_Player.x_pos.i.hi - temp_a0 <= 0xC0) {
     update:
         self->x_speed = 0;
         set_animation(self, 1);
@@ -297,8 +297,8 @@ void frost_walrus_charge_start(struct MainObj* self)
         if (self->unk15 != 0) {
             var_v1 = 0x18000;
         }
-        self->hurt_box = (u8*)&frost_walrus_charge_hurt_box;
         self->x_speed = var_v1;
+        self->hurt_box = (u8*)&frost_walrus_charge_hurt_box;
         self->attack_box = (u8*)&frost_walrus_charge_attack_box;
         func_8001540C(2, 0x93, self);
         self->unk6 = 3;
@@ -510,7 +510,6 @@ void frost_walrus_walk_start(struct MainObj* self)
 
 void frost_walrus_walk_stomp(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
@@ -520,9 +519,7 @@ void frost_walrus_walk_stomp(struct MainObj* self)
     if (self->animation_step.fields.event != 2) {
         move_object(MOVING_OBJECT(self));
     }
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer <= 0) {
+    if (--self->unk7C <= 0) {
         self->unk5 = 3;
         self->unk6 = 0;
     }

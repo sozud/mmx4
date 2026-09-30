@@ -14,7 +14,6 @@ void armored_walker_init(struct MainObj* self)
     u8 state;
     s32 y_pos;
     s32 x_pos;
-    u8 bg_offset;
 
     state = (u8)self->state;
     self->unk5 = 2;
@@ -24,10 +23,9 @@ void armored_walker_init(struct MainObj* self)
     state += 1;
     self->state = state;
     x_pos = self->x_pos.val;
-    bg_offset = (u8)g_Player.bg_offset;
+    self->bg_offset = (s8)((u8)g_Player.bg_offset);
     self->unk1C.val = y_pos;
     self->unk18.val = x_pos;
-    self->bg_offset = (s8)bg_offset;
     self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
     self->animation_table = (u32**)armored_walker_animations;
     self->unk16 = 6;
@@ -79,10 +77,10 @@ void armored_walker_despawn(struct MainObj* self)
 
 void armored_walker_pick_step(struct MainObj* self)
 {
-    if (self->air_state == 0) {
-        self->unk5 = 2;
-    } else {
+    if (self->air_state != 0) {
         self->unk5 = 6;
+    } else {
+        self->unk5 = 2;
     }
 }
 
@@ -132,7 +130,7 @@ void armored_walker_land(struct MainObj* self)
         if (self->unk15 != 0) {
             turn = distance > 0;
         } else {
-            turn = distance < 1;
+            turn = distance <= 0;
         }
         if (turn) {
             set_animation(self, 2);

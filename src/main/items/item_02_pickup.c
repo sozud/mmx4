@@ -34,9 +34,9 @@ void pickup_main(struct ItemObj* arg0)
     } else {
         CollisionRelated((struct PlayerObj*)arg0);
         if (!(arg0->unk70 & 8)) {
-            arg0->unk2C = 0x8000;
             arg0->unk6 = 0;
             arg0->y_vel.val = 0;
+            arg0->unk2C = 0x8000;
             arg0->unk67 = 1;
         }
         animate_object(arg0);
@@ -110,7 +110,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 
     charge = g_Player.weapon_energy[0] + arg1;
     g_Player.weapon_energy[0] = charge;
-    if ((s8)charge >= 0x31) {
+    if ((s8)charge > 0x30) {
         g_Player.weapon_energy[0] = 0x30;
     }
 

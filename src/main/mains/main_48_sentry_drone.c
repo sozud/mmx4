@@ -16,8 +16,6 @@ extern void (*sentry_drone_step_funcs[])();
 
 void sentry_drone_main(struct MainObj* self)
 {
-    s8 nextState;
-
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = self->unk5;
@@ -25,7 +23,7 @@ void sentry_drone_main(struct MainObj* self)
     if (func_8002DD04(self) < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, sentry_drone_debris, self);
-        nextState = 2;
+        self->state = 2;
     } else {
         sentry_drone_check_player_near(self);
         sentry_drone_step_funcs[self->unk5](self);
@@ -34,10 +32,8 @@ void sentry_drone_main(struct MainObj* self)
             is_on_screen(BASE_OBJECT(self));
             return;
         }
-        nextState = (u8)self->state + 1;
+        self->state = (u8)self->state + 1;
     }
-
-    self->state = nextState;
 }
 
 void sentry_drone_resume_step(struct MainObj* self)
@@ -125,11 +121,11 @@ void sentry_drone_burst(struct MainObj* self)
 
 void sentry_drone_burst_start(struct MainObj* self)
 {
+    self->unk6++;
     self->x_speed = 0;
     self->x_accel = 0;
     self->y_speed = 0;
     self->gravity = 0;
-    self->unk6++;
     set_animation(self, 1);
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
 }
@@ -177,15 +173,12 @@ void sentry_drone_burst_fire(struct MainObj* self)
 void sentry_drone_burst_repeat(struct MainObj* self)
 {
     struct MainObj* work = SP_CUR_MAIN_OBJ;
-    s8 timer;
     if (work->ext.main_48.unk82 >= 3) {
         self->unk6++;
         SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
         SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
     } else {
-        timer = work->ext.main_48.unk80 - 1;
-        work->ext.main_48.unk80 = timer;
-        if (timer == 0) {
+        if (--work->ext.main_48.unk80 == 0) {
             self->unk6--;
         }
     }
@@ -218,11 +211,11 @@ void sentry_drone_spread(struct MainObj* self)
 
 void sentry_drone_spread_start(struct MainObj* self)
 {
+    self->unk6++;
     self->x_speed = 0;
     self->x_accel = 0;
     self->y_speed = 0;
     self->gravity = 0;
-    self->unk6++;
     set_animation(self, 1);
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
     SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
@@ -298,11 +291,11 @@ void sentry_drone_drop(struct MainObj* self)
 
 void sentry_drone_drop_start(struct MainObj* self)
 {
+    self->unk6++;
     self->x_speed = 0;
     self->x_accel = 0;
     self->y_speed = FIXED(2);
     self->gravity = 0;
-    self->unk6++;
     set_animation(self, 1);
 }
 

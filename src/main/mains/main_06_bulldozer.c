@@ -71,16 +71,16 @@ void bulldozer_charge(struct MainObj* self)
 void bulldozer_charge_start(struct MainObj* self)
 {
     if (self->unk15 & 0x40) {
-        if (self->ext.main_6.armor_broken != 0) {
-            self->x_speed = FIXED(2);
-        } else {
+        if (self->ext.main_6.armor_broken == 0) {
             self->x_speed = FIXED(0.5);
+        } else {
+            self->x_speed = FIXED(2);
         }
     } else {
-        if (self->ext.main_6.armor_broken != 0) {
-            self->x_speed = FIXED(-2);
-        } else {
+        if (self->ext.main_6.armor_broken == 0) {
             self->x_speed = FIXED(-0.5);
+        } else {
+            self->x_speed = FIXED(-2);
         }
     }
     self->unk6 = 1;

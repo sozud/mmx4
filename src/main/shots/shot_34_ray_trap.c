@@ -69,7 +69,6 @@ void ray_trap_check_airborne(struct ShotObj* self)
 void ray_trap_fall(struct ShotObj* arg0)
 {
     struct ShotObj* self;
-    s8 var_v0;
     u8 temp_v1;
 
     self = arg0;
@@ -81,7 +80,7 @@ void ray_trap_fall(struct ShotObj* arg0)
         self->y_vel.val = 0;
         self->unk2C = 0;
         set_animation(self, 9);
-        var_v0 = 4;
+        self->unk5 = 4;
     } else if (temp_v1 & 3) {
         if (self->unk8C.bytes[3] == 0) {
             self->unk5 = 4;
@@ -93,12 +92,11 @@ void ray_trap_fall(struct ShotObj* arg0)
         self->y_vel.val = 0;
         self->unk2C = 0;
         set_animation(self, 8);
-        var_v0 = 3;
+        self->unk5 = 3;
     } else {
         return;
     }
 
-    self->unk5 = var_v0;
     self->unk6 = 1;
 }
 
@@ -135,16 +133,16 @@ void ray_trap_chase(struct ShotObj* self)
         shot_x = self->x_pos.i.hi;
         distance = g_Player.x_pos.i.hi - shot_x;
         if (distance >= 0 ? distance < 8 : shot_x - g_Player.x_pos.i.hi < 8) {
-            self->x_vel.val = 0;
             self->unk6++;
+            self->x_vel.val = 0;
             set_animation(self, 0x11);
             return;
         }
 
         collision_flags = self->unk70;
         if ((collision_flags & 3) && !(collision_flags & 8)) {
-            self->x_vel.val = 0;
             self->unk6++;
+            self->x_vel.val = 0;
             self->unk15 ^= 0x40;
             set_animation(self, 0x11);
         }

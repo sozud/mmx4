@@ -131,8 +131,8 @@ void sigma_bolt_gather(struct ShotObj* self)
         x = weapon->x_pos.val + (sigma_bolt_offsets[0][self->unk99] << 16);
         y = weapon->y_pos.val + (sigma_bolt_offsets[2][self->pad9A[0]] << 16);
     } else {
-        y = weapon->y_pos.val + (sigma_bolt_offsets[3][1] << 16);
         x = weapon->x_pos.val + (sigma_bolt_offsets[1][self->unk99] << 16);
+        y = weapon->y_pos.val + (sigma_bolt_offsets[3][1] << 16);
     }
     collision = angle_to_point(OBJECT_HEADER(self), x, y);
     if (sigma_shot_at_position(self, x, y) & 0xFF) {
@@ -151,8 +151,7 @@ void sigma_bolt_launch(struct ShotObj* self)
 
     shot = self;
     animate_object(ANIMATED_OBJECT(shot));
-    timer = (u16)shot->timer - 1;
-    shot->timer = timer;
+    timer = --shot->timer;
     if (timer == 0) {
         if (shot->unk2 == 1) {
             velocity = FIXED(5);
@@ -248,8 +247,8 @@ void sigma_planted_scythe_recall(struct ShotObj* self)
     s32 target_x;
     struct WeaponObj* weapon;
 
-    weapon = self->unk7C;
     self->unk5++;
+    weapon = self->unk7C;
     x = weapon->x_pos.i.hi;
     if (weapon->unk15 == 0) {
         target_x = x - 0x21;
@@ -349,12 +348,9 @@ void sigma_dart_strike(struct ShotObj* self)
 
 void sigma_dart_aim(struct ShotObj* self)
 {
-    s16 timer;
     s8 direction;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         self->unk5++;
         direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
         self->pad94 = direction;
@@ -396,7 +392,7 @@ void sigma_shot_cloak_fire(struct ShotObj* self)
     }
     self->x_pos.u.hi = owner->x_pos.u.hi + owner->y_vel.u.hi;
     self->y_pos.u.hi = owner->y_pos.u.hi + owner->unk28.u.hi;
-    if (!(D_80141BD8.unk0 & 7)) {
+    if (!(D_80141BD8.unk0 % 8)) {
         spawn_debris(6, sigma_shot_debris, self);
     }
     is_on_screen(BASE_OBJECT(self));

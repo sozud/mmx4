@@ -6,18 +6,16 @@
 void timed_explosion_wait(struct MainObj* self)
 {
     s32* sprite_archive;
-    s32 offset;
 
     if (--self->unk7C == 0) {
         sprite_archive = SP_SPRITE_FRAMES;
         *(s32*)&self->animation_speed = 0;
-        offset = sprite_archive[2];
+        self->sprite_frames = (u8*)sprite_archive + sprite_archive[2];
         self->animation_table = (const u8* const*)explosion_animations;
-        self->unk42 = 0x788F;
         self->unk40 = 0;
+        self->unk42 = 0x788F;
         self->hurt_box = 0;
         self->attack_box = &timed_explosion_attack_box;
-        self->sprite_frames = (u8*)sprite_archive + offset;
         set_animation(self, 2);
 
         if (get_random() & 1) {

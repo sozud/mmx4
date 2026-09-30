@@ -78,8 +78,8 @@ void storm_owl_fx_main(struct VisualObj* arg0)
             switch (arg0->unk5C.value) {
             case 0:
                 set_animation(arg0, 0x1B);
-                arg0->unk54 = 0xC;
                 arg0->unk5C.value++;
+                arg0->unk54 = 0xC;
                 break;
             case 1:
                 set_animation(arg0, 0x1D);
@@ -88,8 +88,8 @@ void storm_owl_fx_main(struct VisualObj* arg0)
                 break;
             case 2:
                 set_animation(arg0, 0x1C);
-                arg0->unk54 = 0xC;
                 arg0->unk5C.value++;
+                arg0->unk54 = 0xC;
                 break;
             default:
                 arg0->state++;

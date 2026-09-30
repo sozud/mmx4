@@ -1560,10 +1560,10 @@ void func_80017340(void)
         }
     }
 
-    if (engine_obj.cur_character == CHARACTER_X) {
-        start = 2;
-    } else {
+    if (engine_obj.cur_character != CHARACTER_X) {
         start = 0;
+    } else {
+        start = 2;
     }
 
     while (start < end) {
@@ -1590,7 +1590,7 @@ void func_80017340(void)
     }
     func_800175AC(0x1E);
     func_800175AC(0x20);
-    if (engine_obj.stage > 0 && engine_obj.stage < 9) {
+    if (engine_obj.stage >= 1 && engine_obj.stage <= 8) {
         if (engine_obj.cur_character == CHARACTER_X) {
             var_v0 = bar_object.unk16[engine_obj.stage + 1];
         } else {

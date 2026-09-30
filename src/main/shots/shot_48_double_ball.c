@@ -37,11 +37,8 @@ void double_ball_travel(struct ShotObj* self)
 
 void double_ball_hold(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         self->unk5++;
         set_animation(self, 0xD);
         return;

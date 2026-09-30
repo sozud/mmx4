@@ -26,8 +26,8 @@ void floor_trap_wait(struct EffectObj* self)
 
     self->x_pos.val &= 0xFFF00000;
     self->y_pos.val &= 0xFFF00000;
-    temp_a0 = self->x_pos.i.hi;
     temp_v1 = qux_object.x_pos.i.hi;
+    temp_a0 = self->x_pos.i.hi;
     if (temp_v1 >= temp_a0 + 0x18 && temp_a0 + 0x30 >= temp_v1 && qux_object.y_pos.i.hi == self->y_pos.i.hi - 0x1A) {
         self->unk5 = 3;
         self->state++;

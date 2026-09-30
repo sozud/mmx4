@@ -81,10 +81,10 @@ void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)
         s16 x = (u16)record->x + origin_x;
         s16 y = (u16)record->y + origin_y;
         u8 index = record->layer; /* Reused as the tile index below. */
+        s16 bg_x = background_objects[index].x_pos.u.hi;
         u8 horizontal = record->packed_count;
         u32 tile_count = horizontal >> 1;
         s32 byte_mask = 0xFF;
-        s16 bg_x = background_objects[index].x_pos.u.hi;
         s16 bg_y = background_objects[index].y_pos.u.hi;
 
         horizontal &= 1; /* Low bit selects horizontal (1) or vertical (0). */

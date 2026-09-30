@@ -199,7 +199,7 @@ void spike_sled_fall(struct MainObj* self)
             }
         }
 
-        if (self->y_pos.i.hi >= 0x2E9) {
+        if (self->y_pos.i.hi > 0x2E8) {
             self->y_pos.i.hi = 0x2E8;
             self->y_speed = 0;
             self->gravity = 0;
@@ -229,10 +229,10 @@ void spike_sled_charge_start(struct MainObj* self)
         func_8001540C(2, 0x52, self);
     }
     if (self->animation_step.fields.event == 1) {
-        if (self->unk15 != 0) {
-            self->x_speed = FIXED(4);
-        } else {
+        if (self->unk15 == 0) {
             self->x_speed = FIXED(-4);
+        } else {
+            self->x_speed = FIXED(4);
         }
         set_animation(self, 3);
         self->unk7C = 0xB4;
@@ -265,16 +265,16 @@ void spike_sled_charge_approach(struct MainObj* self)
         self->unk7C = 0x1E;
         self->unk6 = 4;
     } else if (distance < 6) {
-        if (self->unk15 != 0) {
-            self->x_speed = FIXED(1);
-        } else {
+        if (self->unk15 == 0) {
             self->x_speed = FIXED(-1);
+        } else {
+            self->x_speed = FIXED(1);
         }
     } else if (distance < 0x18) {
-        if (self->unk15 != 0) {
-            self->x_speed = FIXED(2);
-        } else {
+        if (self->unk15 == 0) {
             self->x_speed = FIXED(-2);
+        } else {
+            self->x_speed = FIXED(2);
         }
     }
 
@@ -309,7 +309,6 @@ void spike_sled_bomb_rise(struct MainObj* self)
 {
     s32 variant;
     s32 should_transition;
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -348,9 +347,7 @@ transition_check:
     }
 
 timer_update:
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->gravity = FIXED(0.2578125);
         self->ext.main_33.unk84 = 0;
         self->unk5 = 3;

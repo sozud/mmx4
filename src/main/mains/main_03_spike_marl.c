@@ -118,8 +118,8 @@ void spike_marl_turn_flip(struct PlayerObj* self)
         self->unk28 = 0;
         self->unk15 ^= 0x40;
         set_animation(self, 1);
-        self->unk5 = 2;
         self->x_vel.val = 0;
+        self->unk5 = 2;
         self->unk6 = 0;
         self->input.buttons.held = 0x14;
     }
@@ -143,8 +143,8 @@ void spike_marl_curl_update(struct MainObj* self)
     switch (self->animation_step.fields.event) {
     case 1:
         self->contact_damage = 4;
-        self->unk7C = 0xF;
         self->x_speed = 0;
+        self->unk7C = 0xF;
         self->unk5 = 5;
         self->unk6 = 0;
         break;
@@ -247,9 +247,9 @@ void spike_marl_uncurl_begin(struct MainObj* self)
 {
     set_animation(self, 4);
     animate_object(ANIMATED_OBJECT(self));
-    self->ext.main_3.player_ahead = 1;
     self->ext.main_3.alerted = 0;
     self->ext.main_3.roll_timer = 0;
+    self->ext.main_3.player_ahead = 1;
     self->ext.main_3.turn_timer = 0;
     self->unk6 = 1;
 }
@@ -384,9 +384,9 @@ void spike_marl_begin_fall(struct MainObj* self)
             self->x_speed = 0;
         }
         self->unk5 = 6;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
         self->air_state = 1;
     }

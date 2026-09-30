@@ -560,7 +560,6 @@ s32 player_check_script(struct PlayerObj* self)
 void player_script_walk_to_mark(struct PlayerObj* self)
 {
     s16 distance;
-    u16 camera_x;
     s32 arrived;
 
     distance = (self->x_pos.u.hi - 0x40) - background_objects[self->bg_offset].x_pos.u.hi;
@@ -568,7 +567,7 @@ void player_script_walk_to_mark(struct PlayerObj* self)
     if (distance != 0) {
         if (distance > 0) {
             self->unk15 = 0;
-            arrived = distance < 3;
+            arrived = distance <= 2;
         } else {
             self->unk15 = 0x40;
             if (distance >= -2) {
@@ -580,11 +579,10 @@ void player_script_walk_to_mark(struct PlayerObj* self)
     }
     if (arrived != 0) {
         player_set_idle_animation(self);
-        camera_x = background_objects[self->bg_offset].x_pos.u.hi;
+        self->x_pos.i.hi = background_objects[self->bg_offset].x_pos.u.hi + 0x40;
         self->script_state = -1;
         self->unk15 = 0x40;
         self->unk5 = PLAYER_SCRIPT_WAIT;
-        self->x_pos.i.hi = camera_x + 0x40;
     }
 }
 
@@ -615,9 +613,9 @@ s32 player_leap_check_peak(struct PlayerObj* self)
             }
         }
 
-        self->air_state = -1;
         self->x_vel.val = 0;
         self->unk28 = 0;
+        self->air_state = -1;
         self->unk6 = 3;
         return 1;
     } else {

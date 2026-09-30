@@ -23,8 +23,7 @@ void owner_aura_follow(struct MiscObj* self)
         return;
     }
     if (self->unk6 == 0) {
-        timer = (u8)self->unk7 + 1;
-        self->unk7 = timer;
+        timer = ++self->unk7;
         if (timer & 1) {
             self->on_screen = 0;
             return;

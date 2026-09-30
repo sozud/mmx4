@@ -86,9 +86,9 @@ void func_8002F7A8(struct EngineObj* arg0)
     if (obj != NULL) {
         obj->active = 0x41;
         obj->id = 0x32;
+        obj->unk2 = D_8013B810;
         obj->x_pos.i.hi = 0x100;
         obj->y_pos.i.hi = 0x70;
-        obj->unk2 = D_8013B810;
     }
     background_objects[2].unk4C = 1;
     func_800129A4(8);
@@ -130,7 +130,7 @@ void func_8002F92C(struct EngineObj* arg0)
 {
     struct BaseObj* obj;
     if (--arg0->unk4 != 0) {
-        if (!(get_random_nonzero() & 1)) {
+        if (!(get_random_nonzero() % 2)) {
             obj = (struct BaseObj*)find_free_quad_obj();
             if (obj != NULL) {
                 obj->active = 1;
@@ -198,10 +198,10 @@ void func_8002FB54(struct EngineObj* arg0)
         func_8001D134();
         arg0->stage = D_8013B810;
         arg0->substage = D_8013B814;
+        arg0->state++;
         arg0->unk1 = 0;
         arg0->unk2 = 0;
         arg0->unk3 = 0;
-        arg0->state++;
     } else {
         background_objects[0].x_pos.val += FIXED(-6);
     }

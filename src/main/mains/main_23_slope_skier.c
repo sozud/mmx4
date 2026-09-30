@@ -76,7 +76,7 @@ void slope_skier_read_slope(struct MainObj* self)
         }
     }
 
-    if (result >= 0x11 && result <= 0x1E) {
+    if (result > 0x10 && result <= 0x1E) {
         if (result >= 0x19) {
             self->ext.main_23.unk80 = 2;
             if (result >= 0x1B) {
@@ -204,7 +204,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800564B4);
 
 void slope_skier_wait_for_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
         self->unk5 = 1;
     }
 }

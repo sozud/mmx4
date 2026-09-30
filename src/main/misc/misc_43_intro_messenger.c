@@ -17,11 +17,11 @@ void intro_messenger_init(struct MiscObj* self)
     s32 column;
     s32 row;
 
-    self->y_vel.val = FIXED(10);
+    self->bg_offset = bg_offset;
     self->x_vel.val = 0;
+    self->y_vel.val = FIXED(10);
     self->unk28 = 0;
     self->unk2C = FIXED(0.125);
-    self->bg_offset = bg_offset;
     self->unk40 = D_801406A8[func_8002938C(0x45)] >> 7;
     column = func_8002938C(0x45);
     row = func_8002938C(0x45);

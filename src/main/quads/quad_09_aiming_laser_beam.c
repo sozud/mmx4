@@ -46,9 +46,9 @@ void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct
     arg0->active = -0x7D;
     arg0->on_screen = 1;
     arg0->bg_offset = arg1->bg_offset;
+    arg0->unk34 = arg0->unk2 + 0xD;
     arg0->unk36 = 1;
     arg0->ext.unk_ext3.unk38 = 0x3C;
-    arg0->unk34 = arg0->unk2 + 0xD;
     func_800D69A8(arg0, arg1, arg2);
     arg0->state++;
 }

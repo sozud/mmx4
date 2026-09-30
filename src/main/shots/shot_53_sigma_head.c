@@ -233,8 +233,7 @@ void sigma_head_lightning_shoot(struct ShotObj* self)
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    timer = (u16)self->timer - 1;
-    self->timer = timer;
+    timer = --self->timer;
     if (timer == 0) {
         func_8001540C(2, 8, self);
         shot = find_free_shot_obj();
@@ -256,8 +255,7 @@ void sigma_head_lightning_shoot(struct ShotObj* self)
             misc->ext.misc_55.owner = MAIN_OBJECT(shot);
         }
         self->timer = 0x1E;
-        count = (u16)self->unk8A - 1;
-        self->unk8A = count;
+        count = --self->unk8A;
         if (count == 0) {
             self->unk5 = 3;
             self->unk6 = 0;
@@ -275,10 +273,10 @@ void sigma_head_lightning(struct ShotObj* self)
 void sigma_head_freeze_start(struct ShotObj* self)
 {
     set_animation(self, 9);
+    self->unk6++;
     self->timer = 1;
     self->x_vel.val = FIXED(-1);
     self->y_vel.val = 0;
-    self->unk6++;
 }
 
 void sigma_head_freeze_open(struct ShotObj* self)
@@ -291,14 +289,11 @@ void sigma_head_freeze_open(struct ShotObj* self)
 
 void sigma_head_freeze_drop(struct ShotObj* self)
 {
-    s16 timer;
     struct ShotObj* shot;
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         func_8001540C(2, 7, self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
@@ -384,21 +379,17 @@ void sigma_head_shift(struct ShotObj* self)
 
 void sigma_head_vanish_start(struct ShotObj* self)
 {
+    self->unk50.data = NULL;
     self->timer = 0x32;
     self->unk8A = 2;
-    self->unk50.data = NULL;
     self->unk8C.byte = 1;
     self->unk6++;
 }
 
 void sigma_head_vanish_blink(struct ShotObj* self)
 {
-    s16 timer;
-    s16 blink_timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
         self->unk68 = NULL;
@@ -411,9 +402,7 @@ void sigma_head_vanish_blink(struct ShotObj* self)
         return;
     }
 
-    blink_timer = self->unk8A - 1;
-    self->unk8A = blink_timer;
-    if (blink_timer == 0) {
+    if (--self->unk8A == 0) {
         self->unk8A = 2;
         self->unk8C.byte ^= 1;
     }

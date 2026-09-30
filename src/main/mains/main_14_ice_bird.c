@@ -10,33 +10,26 @@ void ice_bird_update(struct MainObj* self)
 
 void ice_bird_init(struct MainObj* self)
 {
-    u8 bg_offset;
-    s32 x_pos;
-    s32 y_pos;
-
     self->active = 0x41;
     self->hp = 0xE;
     self->contact_damage = 3;
     self->invincibility_timer = 0;
 
-    bg_offset = g_Player.bg_offset;
-    x_pos = self->x_pos.val;
-    y_pos = self->y_pos.val;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
 
     self->collision_data = D_80106974;
     self->animation_table = (const u8* const*)ice_bird_animations;
-    self->unk16 = 5;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->unk16 = 5;
     self->terrain_box = 0;
     self->hurt_box = &ice_bird_body_box;
     self->attack_box = &ice_bird_body_box;
-    self->bg_offset = bg_offset;
-    self->unk18.val = x_pos;
-    self->unk1C.val = y_pos;
     ice_bird_face_player(ANIMATED_OBJECT(self));
     set_animation(self, 0);
     self->ext.main_14.unk80 = 0;
@@ -138,8 +131,8 @@ void ice_bird_charge(struct MainObj* self)
 void ice_bird_charge_start(struct MainObj* self)
 {
     set_animation(self, 1);
-    self->ext.main_14.unk80 = 0x2E;
     self->x_speed = 0;
+    self->ext.main_14.unk80 = 0x2E;
     self->hurt_box = (const u8*)ice_bird_charge_box;
     self->attack_box = (const u8*)ice_bird_charge_box;
     self->unk6++;
@@ -228,7 +221,6 @@ void ice_bird_leave(struct MainObj* self)
 void ice_bird_leave_start(struct MainObj* self)
 {
     s32* table;
-    s32 velocity;
 
     set_animation(self, 0);
     animate_object(ANIMATED_OBJECT(self));
@@ -238,10 +230,9 @@ void ice_bird_leave_start(struct MainObj* self)
         table++;
     }
 
-    velocity = *table;
+    self->x_speed = (*table);
     self->hurt_box = (const u8*)&ice_bird_body_box;
     self->attack_box = (const u8*)&ice_bird_body_box;
-    self->x_speed = velocity;
     engine_obj.character_state.bytes[0] = 0;
     self->unk6++;
 }
@@ -302,8 +293,8 @@ void ice_bird_spawn_ice_shards(struct AnimatedObj* self)
                 return;
             }
 
-            visual_obj->active = 0x41;
             visual_obj->unk50 = PLAYER_OBJECT(self);
+            visual_obj->active = 0x41;
             visual_obj->id = 8;
             visual_obj->unk2 = i;
             visual_obj->state = 0;

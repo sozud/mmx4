@@ -17,17 +17,17 @@ void dust_puff_init(struct VisualObj* self)
     s32 offset;
 
     self->on_screen = 1;
-    sprite_frames = SP_SPRITE_FRAMES;
     self->unk38 = 0;
+    sprite_frames = SP_SPRITE_FRAMES;
     offset = sprite_frames[2];
-    self->animation_table = explosion_animations;
     self->unk3C = (u8*)sprite_frames + offset;
+    self->animation_table = explosion_animations;
     self->bg_offset = g_Player.bg_offset;
     self->unk40 = 0;
-    if (self->unk5C.value == 2) {
-        self->unk42 = 0x7806;
-    } else {
+    if (self->unk5C.value != 2) {
         self->unk42 = 0x7805;
+    } else {
+        self->unk42 = 0x7806;
     }
     if (self->unk7 == 0) {
         self->unk16 = 1;
@@ -51,8 +51,8 @@ void dust_puff_main(struct VisualObj* arg0)
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
-    temp_v1 = (u8)arg0->unk5C.value;
     arg0->on_screen = 0;
+    temp_v1 = (u8)arg0->unk5C.value;
     if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((D_80141BD8.unk0 & 1) == arg0->unk7)) {
         is_on_screen((struct BaseObj*)arg0);
     }

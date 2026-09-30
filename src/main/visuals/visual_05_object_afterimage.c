@@ -21,9 +21,9 @@ void object_afterimage_update(struct VisualObj* arg0)
     owner = arg0->unk5C.owner;
     arg0->animation_step.fields.frame_index = owner->animation_step.fields.frame_index;
     temp_a1 = owner->unk15;
+    arg0->unk15 = temp_a1;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk15 = temp_a1;
     if (owner->pad4B[0] == 0) {
         arg0->on_screen = 0;
         arg0->state = 0;
@@ -127,8 +127,8 @@ void object_afterimage_start(struct VisualObj* arg0)
 
     arg0->unk54 = 3;
     arg0->unk56 = 8;
-    arg0->unk58 = (5 - arg0->unk2) * 2;
     parent = *(struct ObjectHeader**)&arg0->unk5C;
+    arg0->unk58 = (5 - arg0->unk2) * 2;
     arg0->x_pos.val = parent->x_pos.val;
     arg0->y_pos.val = parent->y_pos.val;
     arg0->unk5 = 0;

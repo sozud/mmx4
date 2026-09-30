@@ -79,11 +79,11 @@ void peacock_missile_main(struct ShotObj* self)
             return;
         }
 
-        if (self->unk90.val != 0) {
-            self->unk90.val--;
-        } else {
+        if (self->unk90.val == 0) {
             self->unk5 = 1;
             return;
+        } else {
+            self->unk90.val--;
         }
     }
 

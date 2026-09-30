@@ -98,8 +98,8 @@ void func_80012A3C(void)
             var_v0 = 0xE1000045;
         }
 
-        temp_s1->code[0] = var_v0;
         catPrim(temp_s1, temp_s0);
+        temp_s1->code[0] = var_v0;
         addPrims(&cur_draw_info->ordering_table.fade, temp_s1, temp_s0);
 
         if (dea0->unk0 == 0) {

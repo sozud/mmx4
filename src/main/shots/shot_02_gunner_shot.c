@@ -231,19 +231,16 @@ void mech_boulder_despawn(struct ShotObj* self)
 
 void mech_boulder_shockwave_start(struct ShotObj* self)
 {
-    s16 x_pos;
-
     self->state = 4;
     self->on_screen = 1;
     self->unk16 = 0;
     self->unk68 = NULL;
     self->unk42 &= 0x7FFF;
     if (self->unk15 == 0) {
-        x_pos = (u16)self->x_pos.i.hi - 0x19;
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x19;
     } else {
-        x_pos = (u16)self->x_pos.i.hi + 0x19;
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x19;
     }
-    self->x_pos.i.hi = x_pos;
     self->unk5C = 1;
     self->unk60 = 2;
     self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x21;

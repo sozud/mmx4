@@ -12,9 +12,9 @@ void web_piece_quad_init(struct QuadObj* arg0)
     arg0->unk36 = 4;
     arg0->unk34 = 0x7EC0;
     arg0->state = 1;
+    arg0->bg_offset = 0;
     arg0->ext.quad_5.scale = 0x100;
     arg0->ext.quad_5.index = 0;
-    arg0->bg_offset = 0;
     arg0->ext.quad_5.update_timer = 0;
     arg0->active |= 0x80;
     arg0->ext.quad_5.data = web_piece_quad_frame_table[arg0->ext.quad_5.index];
@@ -34,9 +34,9 @@ void web_piece_quad_main(struct QuadObj* arg0)
         temp_v0 = arg0->ext.quad_5.scale;
         arg0->ext.quad_5.update_timer = 0;
         temp_v1 = (temp_v1 + 1) & 7;
+        arg0->ext.quad_5.index = temp_v1;
         temp_v0 += 0x40;
         arg0->ext.quad_5.scale = temp_v0;
-        arg0->ext.quad_5.index = temp_v1;
         if ((u32)temp_v0 >= 0x501U) {
             arg0->ext.quad_5.scale = 0x100;
         }

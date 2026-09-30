@@ -347,17 +347,17 @@ void func_8002EF14(struct EngineObj* arg0)
         break;
     case 3:
         arg0->unk5F = 9;
-        arg0->unk1 = 7;
         arg0->unkE = 0;
+        arg0->unk1 = 7;
         arg0->stage = 0xB;
         arg0->substage = 0;
         func_800129F0(8);
         arg0->unk2 = 0;
         return;
     case 4:
+        arg0->unkE = 0;
         arg0->stage = 9;
         arg0->unk1 = 7;
-        arg0->unkE = 0;
         arg0->unk5F = 4;
         /* fallthrough */
     default:

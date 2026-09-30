@@ -92,8 +92,8 @@ void snowman_bomb_turn(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         snowman_bomb_face_player(ANIMATED_OBJECT(self));
         self->unk5 = 2;
-        self->ext.main_17.unk80 = 4;
         self->unk6 = 0;
+        self->ext.main_17.unk80 = 4;
         self->ext.main_17.unk84 = 3;
         set_animation(self, 0);
     }
@@ -143,7 +143,7 @@ void snowman_bomb_fall(struct MainObj* self)
             self->x_speed = 0;
             self->x_accel = 0;
             self->air_state = 0;
-            if (distance >= 0 ? distance > 0x7FFFF : current_y - target_y > 0x7FFFF) {
+            if (distance >= 0 ? distance > 0x7FFFF : current_y - target_y >= 0x80000) {
                 self->ext.main_17.unk80 = 4;
                 self->ext.main_17.unk84 = 3;
                 self->ext.main_17.unk88 = 0xC;
@@ -172,9 +172,9 @@ void snowman_bomb_check_fall(struct MainObj* self)
 {
     if (self->air_state == 0 && !(self->collision_flags & 8)) {
         self->unk5 = 5;
-        self->gravity = 0x4200;
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = 0x4200;
         self->air_state = 1;
     }
 }

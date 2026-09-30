@@ -11,10 +11,10 @@ void ride_chaser_ram_init(struct WeaponObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk50 = ride_chaser_ram_hit_box;
     arg0->unk16 = 0;
     arg0->unk68 = NULL;
     arg0->unk54 = 0;
+    arg0->unk50 = ride_chaser_ram_hit_box;
     arg0->unk5C = 1;
     arg0->unk60 = 3;
     set_animation(arg0, 0xC);

@@ -11,9 +11,9 @@ void train_boss_update(struct MainObj* self)
 void train_boss_init(struct MainObj* self)
 {
     self->active |= 4;
-    self->contact_damage = 2;
     self->on_screen = 0;
     self->hp = 0;
+    self->contact_damage = 2;
     self->invincibility_timer = 1;
     self->collision_data = D_80107678;
     self->bg_offset = g_Player.bg_offset;
@@ -78,8 +78,7 @@ void train_boss_defeated(struct MainObj* self)
     s16 timer;
 
     func_80066970();
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         if (get_layout_screen(1, -0x20, 0x80) == 0x1C) {
             self->state = 3;

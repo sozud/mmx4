@@ -32,8 +32,8 @@ void menu_text_init_label(struct UnkObj* self)
     self->unk40 = 0x1F00;
     temp_v1 = *addr_801F3000;
     self->bg_offset = -1;
-    self->unk3C = temp_v1 + (s32)addr_801F3000;
     self->unk15 = 0;
+    self->unk3C = temp_v1 + (s32)addr_801F3000;
     if (self->y_pos.i.hi == 0x10) {
         self->unk42 = 0x7802;
     } else {
@@ -57,9 +57,9 @@ void menu_text_init_cursor(struct UnkObj* self)
     self->unk40 = 0x1E00;
     self->animation_table = option_toggle_animations;
     temp_v1 = *addr_801F3008;
-    self->bg_offset = -1;
     self->unk3C = temp_v1 + (s32)addr_801F3000;
     self->unk15 = 0;
+    self->bg_offset = -1;
     if (self->unk2 == -1) {
         self->unk42 = 0x7806;
         self->y_pos.i.hi = self->link.data[D_80141BDF[0] * 2] + 8;

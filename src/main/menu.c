@@ -271,10 +271,10 @@ void func_80019D04(struct EngineObj* arg0)
     } else {
         reset_objects();
         D_801721B8 = 4;
-        if (D_801721B9 == 0) {
-            arg0->unk1 = 6;
-        } else {
+        if (D_801721B9 != 0) {
             arg0->unk1 = 0xB;
+        } else {
+            arg0->unk1 = 6;
         }
         arg0->unk2 = 0;
         func_8001B644(D_800F1EE0);
@@ -383,8 +383,6 @@ void func_8001A7D4(struct EngineObj* arg0)
 
 void func_8001A860(struct EngineObj* arg0)
 {
-    s8 next_state;
-
     reset_objects();
     arg0->unk1 = 3;
     arg0->unk2 = 0;
@@ -392,16 +390,15 @@ void func_8001A860(struct EngineObj* arg0)
     D_80141BDF[0] = 0;
     if (arg0->unk4 == 8) {
         arg0->unk8 = func_8001E850(D_800F2338.scripts[0], 1);
-        next_state = 8;
+        arg0->state = 8;
     } else {
 #ifdef VERSION_JP
         arg0->unk8 = func_8001E850(D_800F2474_jp, 1);
 #else
         arg0->unk8 = func_8001E850(D_800F2310, 1);
 #endif
-        next_state = 9;
+        arg0->state = 9;
     }
-    arg0->state = next_state;
 }
 
 void func_8001A8E8(struct EngineObj* arg0)
@@ -565,8 +562,8 @@ void func_8001B10C(struct EngineObj* arg0)
         } else {
             struct MemcardSaveSlot** slot = &D_801721BC;
 
-            *cursor = current - 1;
             (*slot)--;
+            *cursor = current - 1;
         }
         if (D_80141BDF[0] != 3) {
             func_8001B7C0(0xD0, 0x88, 0);
@@ -590,8 +587,8 @@ void func_8001B10C(struct EngineObj* arg0)
         } else {
             struct MemcardSaveSlot** slot = &D_801721BC;
 
-            *cursor = current + 1;
             (*slot)++;
+            *cursor = current + 1;
         }
         if (D_80141BDF[0] != 3) {
             func_8001B7C0(0xD0, 0x88, 0);
@@ -612,9 +609,9 @@ void func_8001B10C(struct EngineObj* arg0)
 
         func_8001540C(0, 0x22, 0);
         selected = D_80141BDF[0];
-        D_80141BDF[0] = 0;
         character = &D_801721B7;
         *character = selected;
+        D_80141BDF[0] = 0;
         reset_objects();
         arg0->unk1 = (u8)arg0->unk1 + 1;
         func_8001B718(0x30, (*character + D_801721B6 * 3 + 0x1A) & 0xFF, 0xFF);
@@ -700,7 +697,6 @@ void func_8001B644(u8* arg0)
 {
     struct MiscObj* obj;
     u8* data;
-    u8 engine_state;
 
     data = arg0;
     while (*data != 0xFF) {
@@ -716,9 +712,8 @@ void func_8001B644(u8* arg0)
                 obj->ext.misc_42.unk54 = engine_obj.unk1;
                 obj->ext.misc_42.unk55 = 1;
             } else {
-                engine_state = (u8)engine_obj.unk2;
+                obj->ext.misc_42.unk54 = ((u8)engine_obj.unk2);
                 obj->ext.misc_42.unk55 = 2;
-                obj->ext.misc_42.unk54 = engine_state;
             }
             obj->ext.misc_42.unk56 = *data++;
         }
@@ -728,7 +723,6 @@ void func_8001B644(u8* arg0)
 void func_8001B718(s16 arg0, u8 arg1, u8 arg2)
 {
     struct MiscObj* obj;
-    u8 engine_state;
 
     obj = find_free_misc_obj();
     if (obj != 0) {
@@ -742,9 +736,8 @@ void func_8001B718(s16 arg0, u8 arg1, u8 arg2)
             obj->ext.misc_42.unk54 = engine_obj.unk1;
             obj->ext.misc_42.unk55 = 1;
         } else {
-            engine_state = (u8)engine_obj.unk2;
+            obj->ext.misc_42.unk54 = ((u8)engine_obj.unk2);
             obj->ext.misc_42.unk55 = 2;
-            obj->ext.misc_42.unk54 = engine_state;
         }
         obj->ext.misc_42.unk56 = arg2;
     }

@@ -148,8 +148,8 @@ void ground_hunter_start_rise(struct WeaponObj* arg0)
 {
     set_animation(arg0, 2);
     arg0->unk67 = 1;
-    arg0->y_vel.val = -FIXED(6);
     arg0->x_vel.val = 0;
+    arg0->y_vel.val = -FIXED(6);
     arg0->unk5 = 2;
 }
 
@@ -208,8 +208,8 @@ void ground_hunter_charged_main(struct WeaponObj* arg0)
 void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 {
     if (g_Player.input.buttons.held & 0xC) {
-        arg0->ext.weapon_14.unk8D = 5;
         arg0->ext.weapon_14.unk8C = 0;
+        arg0->ext.weapon_14.unk8D = 5;
         arg0->unk5 = 1;
     }
     update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x18);

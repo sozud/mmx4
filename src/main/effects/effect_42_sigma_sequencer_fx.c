@@ -59,11 +59,8 @@ void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
 
 void sigma_sequencer_fx_hold(struct EffectObj* self)
 {
-    u8 timer;
 
-    timer = self->ext.effect_42.timer - 1;
-    self->ext.effect_42.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.effect_42.timer == 0) {
         self->state = 2;
         self->unk5 = 0;
     }

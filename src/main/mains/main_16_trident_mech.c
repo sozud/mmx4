@@ -137,7 +137,6 @@ void trident_mech_jump(struct MainObj* self)
 void trident_mech_jump_launch_pod(struct MainObj* self)
 {
     struct MiscObj* misc;
-    u8 temp_v1;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
@@ -152,10 +151,9 @@ void trident_mech_jump_launch_pod(struct MainObj* self)
             misc->bg_offset = self->bg_offset;
             misc->x_pos.val = self->x_pos.val;
             misc->y_pos.val = self->y_pos.val;
-            temp_v1 = self->unk15;
+            misc->unk15 = self->unk15;
             misc->ext.misc_7.position = &self->ext.main_16.unk90;
             misc->state = 0;
-            misc->unk15 = temp_v1;
         }
         func_8004FD38(self, 5);
         set_animation(self, 2);
@@ -394,19 +392,19 @@ void trident_mech_double_shot_second(struct MainObj* self)
         shot->x_pos.val = self->x_pos.val;
         shot->y_pos.val = self->y_pos.val;
         shot->unk15 = self->unk15;
-        if (self->unk15 != 0) {
-            shot->x_vel.val = FIXED(1);
-        } else {
+        if (self->unk15 == 0) {
             shot->x_vel.val = FIXED(-1);
+        } else {
+            shot->x_vel.val = FIXED(1);
         }
         shot->y_vel.val = 0;
         shot->state = 3;
     }
-    if (self->unk2 < 4) {
-        self->unk7C = 0x14;
-    } else {
+    if (self->unk2 >= 4) {
         trident_mech_face_player(ANIMATED_OBJECT(self));
         self->unk7C = 0x3C;
+    } else {
+        self->unk7C = 0x14;
     }
     self->unk6 = 2;
 }
@@ -436,11 +434,9 @@ void trident_mech_double_shot_recover(struct MainObj* self)
 void trident_mech_throw_pod(struct MainObj* self)
 {
     s16 timer;
-    u8 facing;
     struct MiscObj* misc;
 
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         misc = find_free_misc_obj();
         if (misc != NULL) {
@@ -455,10 +451,9 @@ void trident_mech_throw_pod(struct MainObj* self)
             misc->bg_offset = (s8)(u8)self->bg_offset;
             misc->x_pos.val = self->x_pos.val;
             misc->y_pos.val = self->y_pos.val;
-            facing = self->unk15;
+            misc->unk15 = self->unk15;
             misc->ext.misc_5.animation = 0x14;
             misc->state = 3;
-            misc->unk15 = facing;
         }
         self->ext.main_16.unk90 = 1;
         self->ext.main_16.unk80 = 0;
@@ -469,7 +464,7 @@ void trident_mech_throw_pod(struct MainObj* self)
 
 void trident_mech_wait_behind(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0x11) {
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0x10) {
         self->unk5 = 2;
         self->y_pos.u.hi -= 0x28;
     }
@@ -482,9 +477,9 @@ void trident_mech_check_fall(struct MainObj* self)
 {
     if ((self->air_state == 0) && (self->unk5 != 0xA) && !(self->collision_flags & 8)) {
         self->unk5 = 3;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
         self->air_state = 1;
     }

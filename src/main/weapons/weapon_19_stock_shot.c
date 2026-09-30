@@ -16,8 +16,8 @@ void stock_shot_init(struct WeaponObj* arg0)
     arg0->unk50 = (const u8*)stock_shot_hit_box;
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     arg0->animation_table = D_8011BF40;
-    arg0->unk42 = 0x7802;
     arg0->unk40 = 0;
+    arg0->unk42 = 0x7802;
     arg0->unk16 = 1;
     owner = arg0->owner;
     arg0->unk15 = owner->unk15;

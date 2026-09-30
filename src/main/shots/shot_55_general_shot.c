@@ -202,8 +202,8 @@ void general_fist_approach(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    x_pos = self->x_pos.i.hi;
     target_x_pos = self->unk7C->x_pos.i.hi;
+    x_pos = self->x_pos.i.hi;
     delta = x_pos - target_x_pos;
     if (delta >= 0 ? delta < 0x30 : (target_x_pos - x_pos) < 0x30) {
         self->x_vel.val = 0;
@@ -238,18 +238,17 @@ void general_fist_sweep_turn(struct ShotObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        x_velocity = FIXED(-1.5);
         self->animation_step.fields.event = 0;
         direction = self->unk15 ^ 0x40;
         self->unk15 = direction;
+        x_velocity = FIXED(-1.5);
         if (direction != 0) {
             x_velocity = FIXED(1.5);
         }
         self->x_vel.val = x_velocity;
     }
     if (self->animation_step.fields.relative_step == 0) {
-        timer = (u16)self->unk8A + 1;
-        self->unk8A = timer;
+        timer = ++self->unk8A;
         if (timer == 2) {
             self->unk5++;
             if (self->unk2 == 3) {
@@ -370,8 +369,8 @@ void general_dust_start(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        self->timer = 0x19;
         self->unk5++;
+        self->timer = 0x19;
         if (self->unk2 == 6) {
             set_animation(self, 0x19);
         } else {
@@ -436,9 +435,9 @@ void general_shot_orb_launcher(struct ShotObj* self)
     if (self->unk5 == 0) {
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.relative_step == 0) {
-            i = 0;
             owner = self->unk7C;
             self->unk5 = (u8)self->unk5 + 1;
+            i = 0;
             do {
                 shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -509,8 +508,7 @@ void general_orb_aim(struct ShotObj* self)
     s32 velocity;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk8A - 1;
-    self->unk8A = timer;
+    timer = --self->unk8A;
     velocity = FIXED(-5);
     if ((timer << 0x10) == 0) {
         self->unk5 = (u8)self->unk5 + 1;

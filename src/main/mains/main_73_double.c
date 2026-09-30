@@ -41,14 +41,11 @@ void double_intro_voice(struct MainObj* self)
 
 void double_intro_fill_health(struct MainObj* self)
 {
-    s16 temp_v0;
 
     if (update_boss_music_delay() == 0) {
         if (self->animation_step.fields.relative_step == 0) {
             if (self->hp < 0x30) {
-                temp_v0 = self->unk7C - 1;
-                self->unk7C = temp_v0;
-                if (temp_v0 == 0) {
+                if (--self->unk7C == 0) {
                     func_8001540C(0, 0xE, 0);
                     self->unk7C = 2;
                 }
@@ -204,12 +201,12 @@ void double_energy_ball(struct MainObj* self)
 
 void double_dive_leap(struct MainObj* self)
 {
-    self->y_speed = FIXED(8);
+    self->unk6++;
     self->x_accel = 0;
     self->x_speed = 0;
+    self->y_speed = FIXED(8);
     self->gravity = 0;
     self->contact_damage = 9;
-    self->unk6++;
     set_animation(self, 4);
     func_8001540C(2, 0xF6, NULL);
 }
@@ -240,8 +237,8 @@ void double_dive_aim(struct MainObj* self)
     u32 animation;
 
     if (self->animation_step.fields.relative_step < 0) {
-        self->hurt_box = &double_dive_hurt_box;
         self->animation_step.fields.event = 0;
+        self->hurt_box = &double_dive_hurt_box;
         self->attack_box = &double_dive_attack_box;
         self->unk6++;
         animation = angle_to_object(
@@ -275,8 +272,8 @@ void double_dive_fall(struct MainObj* self)
 
     flags = self->collision_flags;
     if (flags & 8) {
-        self->unk7C = 0x1E;
         self->unk6++;
+        self->unk7C = 0x1E;
         set_animation(self, 6);
         self->hurt_box = &double_hurt_box;
         self->attack_box = &double_attack_box;
@@ -302,8 +299,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
 void double_dive_hit_wall(struct MainObj* self)
 {
     if (self->collision_flags & 3) {
-        self->unk7C = 0x1E;
         self->unk6++;
+        self->unk7C = 0x1E;
         start_screen_shake_x(8, 4, 2);
         set_animation(self, 8);
         self->hurt_box = (const u8*)&double_hurt_box;
@@ -353,20 +350,20 @@ void double_dive(struct MainObj* self)
 
 void double_aerial_shot_jump(struct MainObj* self)
 {
+    self->unk6++;
     self->y_speed = FIXED(5);
     self->x_accel = 0;
     self->x_speed = 0;
     self->gravity = FIXED(0.2578125);
     self->ext.main_73.shot_count = 0;
-    self->unk6++;
     set_animation(self, 2);
 }
 
 void double_aerial_shot_fire(struct MainObj* self)
 {
     if (self->y_speed < 0) {
-        self->unk7C = 0x32;
         self->unk6++;
+        self->unk7C = 0x32;
         set_animation(self, 9);
         double_spawn_shot(self, 1, 0);
         self->ext.main_73.shot_count++;
@@ -384,12 +381,12 @@ void double_aerial_shot_hang(struct MainObj* self)
     if (timer == 0) {
         set_animation(self, 0xA);
         if (self->ext.main_73.shot_count < 2) {
+            self->unk6 += 1;
             self->unk7C = 0x14;
             self->x_speed = 0;
             self->x_accel = 0;
             self->y_speed = 0;
             self->gravity = FIXED(0.2578125);
-            self->unk6 += 1;
             set_animation(self, 2);
             self->ext.main_73.effect.position.x = self->x_pos.u.hi;
             self->ext.main_73.effect.position.y = self->y_pos.u.hi + 0x28;
@@ -473,17 +470,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
 void double_death_flicker(struct MainObj* self)
 {
     s16 timer = self->unk7C, next_timer = timer;
-    u16 flags;
     if (timer == 0) {
         next_timer = 0x10;
+        self->unk42 = self->unk42 | 0x8000;
         self->unk7C = next_timer;
-        flags = self->unk42 | 0x8000;
     } else {
         next_timer--;
         self->unk7C = next_timer;
-        flags = self->unk42 & 0x7FFF;
+        self->unk42 = self->unk42 & 0x7FFF;
     }
-    self->unk42 = flags;
 }
 
 void double_death_start(struct MainObj* self)
@@ -568,10 +563,10 @@ void double_death_blink(struct MainObj* self)
         u8 unk8B;
         self->ext.main_73.blink_delay = unk8B = self->ext.main_73.blink_delay - 5;
         self->unk42 ^= 0x8000;
-        if (unk8B >= 0x1A) {
+        if (unk8B > 0x19) {
             self->ext.main_73.blink_delay = 0;
         }
-        self->unk7E = self->ext.main_73.blink_delay < 6 ? 5 : self->ext.main_73.blink_delay;
+        self->unk7E = self->ext.main_73.blink_delay <= 5 ? 5 : self->ext.main_73.blink_delay;
     }
 }
 

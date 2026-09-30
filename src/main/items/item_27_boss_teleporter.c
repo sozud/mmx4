@@ -171,8 +171,8 @@ void boss_teleporter_arrive(struct ItemObj* arg0)
     if (g_Player.script_state < 0) {
         player_end_script_action();
         checkpoint = (u8)arg0->unk2;
-        engine_obj.unkF = -0x40;
         engine_obj.checkpoint = checkpoint & 0xF;
+        engine_obj.unkF = -0x40;
         arg0->state = 3;
         arg0->unk5 = 0;
     }

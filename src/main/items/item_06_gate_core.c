@@ -47,7 +47,6 @@ void gate_core_init(struct ItemObj* arg0)
 void gate_core_main(struct ItemObj* arg0)
 {
     s32 collision;
-    u16 flags;
 
     is_on_screen(BASE_OBJECT(arg0));
     collide_with_players(arg0);
@@ -61,11 +60,10 @@ void gate_core_main(struct ItemObj* arg0)
         return;
     }
     if (collision > 0) {
-        flags = arg0->unk42 | 0x8000;
+        arg0->unk42 = arg0->unk42 | 0x8000;
     } else {
-        flags = arg0->unk42 & 0x7FFF;
+        arg0->unk42 = arg0->unk42 & 0x7FFF;
     }
-    arg0->unk42 = flags;
 }
 
 void gate_core_destroyed(struct ItemObj* self)

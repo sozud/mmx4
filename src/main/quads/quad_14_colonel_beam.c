@@ -73,9 +73,9 @@ void colonel_beam_place(struct QuadObj* arg0, u8 arg1)
     }
     arg0->unk18.val = 0;
     arg0->unk1C.val = arg0->unk14.val + FIXED(2);
-    arg0->unk28.val = arg0->unk18.val + FIXED(1);
     arg0->unk20.val = arg0->unk18.val;
     arg0->unk24.val = arg0->unk14.val;
+    arg0->unk28.val = arg0->unk18.val + FIXED(1);
     arg0->unk2C.val = arg0->unk1C.val;
     arg0->unk30.val = arg0->unk28.val;
 }

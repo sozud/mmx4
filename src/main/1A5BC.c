@@ -157,7 +157,7 @@ void func_8002A484(void)
                 mask = D_8013E188[palette_index >> 5];
             }
             color_index = 0;
-            if ((s32)mask < 0) {
+            if ((s32)mask <= -1) {
                 do {
                     color = *src;
                     src++;

@@ -100,10 +100,8 @@ void npc_cutscene_main(struct MiscObj* self)
 {
     npc_cutscene_type_funcs[self->unk2](self);
     if (D_80141BD8.unk0 % 10 == 0) {
-        u8 unk56;
         self->y_pos.i.hi += self->ext.misc_52.unk57;
-        unk56 = --self->ext.misc_52.unk56;
-        if (unk56 == 0) {
+        if (--self->ext.misc_52.unk56 == 0) {
             self->ext.misc_52.unk56 = 7;
             self->ext.misc_52.unk57 *= -1;
         }

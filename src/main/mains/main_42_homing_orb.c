@@ -20,10 +20,8 @@ void homing_orb_wait(struct MainObj* self)
 {
     s16 temp_v0;
     s32 temp_a2;
-    s32 temp_v0_2;
 
-    temp_v0 = (u16)self->unk7C - 1;
-    self->unk7C = temp_v0;
+    temp_v0 = --self->unk7C;
     if (temp_v0 == 0) {
         self->unk7C = 0x5A;
         set_velocity_from_angle(
@@ -33,16 +31,15 @@ void homing_orb_wait(struct MainObj* self)
                 OBJECT_HEADER(&g_Player))
                 & 0xFF);
 
-        temp_v0_2 = self->x_speed;
+        self->x_accel = -((s32)(self->x_speed * 0x2D) >> 8);
         temp_a2 = self->y_speed;
         self->x_speed = 0;
         self->y_speed = 0;
-        self->x_accel = -((s32)(temp_v0_2 * 0x2D) >> 8);
         self->gravity = -((s32)(temp_a2 * 0x2D) >> 8);
         set_animation(self, 1);
         self->unk5 = 3;
-        self->ext.main_42.unk84 = 0;
         self->ext.main_42.background_relative += 1;
+        self->ext.main_42.unk84 = 0;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -100,8 +97,8 @@ void homing_orb_main(struct MainObj* self)
     extern void (*homing_orb_step_funcs[])(struct MainObj*);
 
     if (func_8002DD04(self) < 0) {
-        self->unk5 = 0;
         self->state += 1;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(6, homing_orb_debris, self);

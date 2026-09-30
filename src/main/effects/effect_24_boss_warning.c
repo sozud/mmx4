@@ -46,14 +46,11 @@ void boss_warning_wait_tiles(struct EffectObj* self)
 void boss_warning_advance_tiles(struct EffectObj* self)
 {
     struct EffectObj* effect;
-    u8 counter;
     u8 old_unk5;
 
     effect = boss_warning_tiles[self->ext.effect_24.unk1B];
     effect->unk5++;
-    counter = self->ext.effect_24.unk1B + 1;
-    self->ext.effect_24.unk1B = counter;
-    if (counter == 0x16) {
+    if (++self->ext.effect_24.unk1B == 0x16) {
         old_unk5 = self->unk5;
         self->ext.effect_24.timer = 0x3C;
         self->unk5 = old_unk5 + 1;

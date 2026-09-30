@@ -95,7 +95,6 @@ void boss_door_init(struct ItemObj* arg0)
     s32 column;
     s32 row;
     s32 x;
-    s8 bg_offset;
 
     arg0->active = 0x49;
     arg0->unk16 = 6;
@@ -106,12 +105,11 @@ void boss_door_init(struct ItemObj* arg0)
     x = column * 4 + 0x18;
     arg0->unk42 = (x % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
     arg0->animation_table = (const u8* const*)boss_door_animations;
-    bg_offset = g_Player.bg_offset;
+    arg0->bg_offset = g_Player.bg_offset;
     arg0->unk7C.timer = (u8)arg0->unk2 & 0x10;
     arg0->unk15 = 0;
     arg0->unk67 = 0;
     arg0->unk75 = 1;
-    arg0->bg_offset = bg_offset;
     arg0->ext.packed = (u8)arg0->unk2 & 0x40;
     if (arg0->unk2 & 0xC0) {
         arg0->state = 2;

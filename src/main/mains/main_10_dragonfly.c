@@ -176,9 +176,9 @@ void dragonfly_wait(struct MainObj* self)
     case 6:
     case 7:
     case 8:
-        if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xC1) {
-            self->ext.main_10.hold_state = 1;
+        if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
             self->unk7A = 0;
+            self->ext.main_10.hold_state = 1;
             self->unk15 = 0x40;
             if (!(self->unk2 & 1)) {
                 self->x_speed = FIXED(8);
@@ -335,8 +335,8 @@ void dragonfly_carry_rise(struct MainObj* self)
     if (timer == 0) {
         set_animation(self, 4);
         self->ext.main_10.timer = 0xA;
-        self->unk7E = 1;
         self->y_speed = 0;
+        self->unk7E = 1;
         self->unk6 = 4;
     } else {
         animate_object(self);
@@ -353,8 +353,7 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     s32 struggle;
     u32 squeeze;
 
-    sound_timer = (u16)self->unk7E - 1;
-    self->unk7E = sound_timer;
+    sound_timer = --self->unk7E;
     if (sound_timer == 0) {
         func_8001540C(2, 0xE, self);
         self->unk7E = 0x14;
@@ -376,8 +375,7 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     }
 
     if (self->animation_step.fields.event != 0) {
-        squeeze = self->ext.main_10.timer - 1;
-        self->ext.main_10.timer = squeeze;
+        squeeze = --self->ext.main_10.timer;
         if (squeeze == 9 || squeeze == 4) {
             player_damage(2);
         }

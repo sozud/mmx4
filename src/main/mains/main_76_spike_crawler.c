@@ -43,10 +43,10 @@ void spike_crawler_fall(struct MainObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk7C = 0;
+        self->x_speed = self->ext.main_76.saved_x_velocity;
         self->y_speed = 0;
         self->x_accel = 0;
         self->gravity = 0;
-        self->x_speed = self->ext.main_76.saved_x_velocity;
         return;
     }
 
@@ -112,8 +112,8 @@ void spike_crawler_main(struct MainObj* self)
     s32 collision;
 
     self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     self->on_screen = 0;
+    self->unk1C.val = self->y_pos.val;
 
     if (self->unk5 == 0) {
         if (self->unk7C != 0) {
@@ -294,7 +294,6 @@ void play_boss_voice(s32 arg0)
 {
     u32 object_id;
     u32 random_value;
-    s8 value;
 
 #ifndef VERSION_JP
     object_id = arg0 & 0xFF;
@@ -306,13 +305,12 @@ void play_boss_voice(s32 arg0)
         object_id = arg0 & 0xFF;
 #endif
         func_8001663C(boss_voice_tracks[object_id][random_value & 0xFF], 0x7F);
-        value = 1;
+        engine_obj.unk36.value = 1;
 #ifndef VERSION_JP
     } else {
-        value = 0x3C;
+        engine_obj.unk36.value = 0x3C;
     }
 #endif
-    engine_obj.unk36.value = value;
 }
 
 s32 update_boss_music_delay(void)

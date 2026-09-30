@@ -41,9 +41,9 @@ void magma_fire_pillar_repeat(struct ShotObj* self)
         self->unk6 -= 2;
         return;
     }
+    self->state++;
     self->unk5 = 0;
     self->unk6 = 0;
-    self->state++;
 }
 
 void magma_fire_pillar(struct ShotObj* self)
@@ -61,9 +61,9 @@ void magma_fire_breath_follow(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
     if (weapon->unk5 != 7) {
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
 }
 
@@ -116,9 +116,9 @@ void magma_fire_breath_exit(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x30, 0x80);
     if (self->on_screen == 0) {
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
 }
 
@@ -137,9 +137,9 @@ void magma_fire_burst(struct ShotObj* self)
     func_8002D9BC(self);
     update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
     if (self->animation_step.fields.relative_step < 0) {
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
 }
 

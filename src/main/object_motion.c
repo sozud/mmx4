@@ -186,7 +186,7 @@ s32 angle_from_delta(s32 arg0, s32 arg1)
 
     if (arg1 >> 0x10 != 0) {
         temp_lo = arg0 / (arg1 >> 0x10);
-        if (temp_lo <= 0xFFFF) {
+        if (temp_lo < 0x10000) {
             ptr = &D_800F45E4[4];
             while (temp_lo < *ptr) {
                 ptr--;

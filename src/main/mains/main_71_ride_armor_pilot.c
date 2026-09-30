@@ -99,12 +99,12 @@ void ride_armor_pilot_check_dash(struct MainObj* self)
 void ride_armor_pilot_return_to_idle(struct MainObj* self)
 {
     self->unk5 = 2;
-    self->hurt_box = ride_armor_pilot_hurt_box;
-    self->attack_box = ride_armor_pilot_attack_box;
     self->unk6 = 0;
     self->ext.main_71.unk88 = 0;
     self->ext.main_71.unk86 = 0;
     self->ext.main_71.unk87 = 0;
+    self->hurt_box = ride_armor_pilot_hurt_box;
+    self->attack_box = ride_armor_pilot_attack_box;
     self->contact_damage = 5;
 }
 

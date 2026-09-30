@@ -98,9 +98,8 @@ void lightning_web_main(struct WeaponObj* arg0)
     u8 timer;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x18, 0x28) == 0) {
-        timer = arg0->ext.weapon_1.lifetime - 1;
+        timer = --arg0->ext.weapon_1.lifetime;
         expired = (timer & 0xFF) == 0;
-        arg0->ext.weapon_1.lifetime = timer;
         if (arg0->unk72 & 0xC) {
             expired = 1;
         }
@@ -239,22 +238,20 @@ void lightning_web_charged_init(struct WeaponObj* arg0)
     s32* player_gfx;
     s32* sprite_frames;
     s32 gfx_offset;
-    s32 frames_offset;
     struct Weapon10Ext* ext;
 
     arg0->on_screen = 1;
     arg0->unk64 = 1;
+    sprite_frames = SP_SPRITE_FRAMES;
     player_gfx = SP_PLAYER_GFX;
     arg0->unk50 = (const u8*)lightning_web_charged_shot_box;
     gfx_offset = player_gfx[2];
-    sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk38 = (u8*)player_gfx + gfx_offset;
-    frames_offset = sprite_frames[10];
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[10];
     arg0->animation_table = D_8011C070;
     arg0->unk40 = 0x530;
     arg0->unk42 = 0x7801;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + frames_offset;
     arg0->unk15 = player->unk15;
     ext = &arg0->ext.weapon_10;
     buster_shot_place_at_muzzle((struct VisualObj*)arg0, player, arg0->id);
@@ -348,18 +345,16 @@ void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner;
     u8 state;
-    s32 y;
 
     owner = arg0->owner;
     if ((u8)owner->shot_fired != 0) {
         arg0->on_screen = 1;
         state = (u8)arg0->state + 1;
         arg0->x_pos.val = owner->x_pos.val;
-        y = owner->y_pos.val;
+        arg0->y_pos.val = owner->y_pos.val;
         arg0->ext.weapon_10.timer = 0x10;
         arg0->state = state;
         arg0->unk5 = 0;
-        arg0->y_pos.val = y;
         lightning_web_charged_draw(arg0);
     }
 }

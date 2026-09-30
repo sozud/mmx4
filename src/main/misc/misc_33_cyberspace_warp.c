@@ -24,12 +24,9 @@ void cyberspace_warp_despawn(struct MiscObj* self)
 
 void cyberspace_warp_fade(struct MiscObj* self)
 {
-    u16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->ext.misc_33.timer - 1;
-    self->ext.misc_33.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_33.timer == 0) {
         self->unk5 = 0;
         self->unk6 = 0;
         self->state++;
@@ -45,9 +42,9 @@ void cyberspace_warp_wait(struct MiscObj* self)
 {
     cyberspace_warp_wait_funcs[self->unk6](self);
     if (*self->ext.misc_33.completion_flag == 0) {
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
 }
 

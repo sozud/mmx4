@@ -155,7 +155,7 @@ void colonel_defeat_blink(struct MainObj* self)
         return;
     self->unk42 ^= 0x8000;
     self->invincibility_timer -= 5;
-    if (self->invincibility_timer >= 0x1A)
+    if (self->invincibility_timer > 0x19)
         self->invincibility_timer = 0;
     level = self->invincibility_timer;
     if (level < 5)
@@ -394,12 +394,9 @@ void colonel_intro_port_voice(struct MainObj* self)
 
 void colonel_intro_port_fill_health(struct MainObj* self)
 {
-    s16 timer;
 
     if (update_boss_music_delay() == 0) {
-        timer = self->unk7E - 1;
-        self->unk7E = timer;
-        if (timer == 0) {
+        if (--self->unk7E == 0) {
             func_8001540C(0, 0xE, NULL);
             self->unk7E = 3;
         }
@@ -429,7 +426,7 @@ void colonel_intro_hall_wait_player(struct MainObj* self)
     object_x = self->x_pos.i.hi;
     delta = g_Player.x_pos.i.hi - object_x;
     if ((delta >= 0) ? (delta < 0xB1)
-                     : ((object_x - g_Player.x_pos.i.hi) < 0xB1)) {
+                     : ((object_x - g_Player.x_pos.i.hi) <= 0xB0)) {
         player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x2C0;
         background_objects[0].unk26 = 0x2A0;
@@ -666,12 +663,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800877A4);
 void colonel_teleport_slash_swing(struct MainObj* self)
 {
     struct ShotObj* shot_obj;
-    s16 timer;
 
     if (self->animation_step.fields.relative_step == 0) {
-        timer = self->unk7C - 1;
-        self->unk7C = timer;
-        if (timer == 0) {
+        if (--self->unk7C == 0) {
             self->hurt_box = &D_80104508;
             self->attack_box = &D_80104504;
             self->unk5 = 3;
@@ -703,11 +697,11 @@ void colonel_dash(struct MainObj* self)
 void colonel_dash_start(struct MainObj* self)
 {
     colonel_face_center(BASE_OBJECT(self));
-    self->x_accel = FIXED(-0.1875);
-    self->unk7C = 0x1E;
     self->x_speed = 0;
+    self->x_accel = FIXED(-0.1875);
     self->y_speed = 0;
     self->gravity = 0;
+    self->unk7C = 0x1E;
     self->hurt_box = NULL;
     self->attack_box = NULL;
     self->unk4B = 1;
@@ -814,12 +808,9 @@ void colonel_saber_waves_fire_high(struct MainObj* self)
 void colonel_saber_waves_fire_last(struct MainObj* self)
 {
     struct ShotObj* shot;
-    s16 timer;
 
     if (self->animation_step.fields.relative_step == 0) {
-        timer = self->unk7C - 1;
-        self->unk7C = timer;
-        if (timer == 0) {
+        if (--self->unk7C == 0) {
             self->hurt_box = &D_801044FC;
             self->attack_box = &D_80104500;
             set_animation(self, 0x17);
@@ -854,11 +845,8 @@ void colonel_saber_waves_recover(struct MainObj* self)
 
 void colonel_saber_waves_wait(struct MainObj* self)
 {
-    s16 timer;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
     } else {
@@ -906,16 +894,13 @@ void colonel_flash_strike_shake(struct MainObj* self)
 void colonel_flash_strike_reappear(struct MainObj* self)
 {
     s16 timer;
-    u16 background;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if ((timer << 0x10) == 0) {
-        background = background_objects[0].unk1E;
+        self->x_pos.i.hi = (s16)(background_objects[0].unk1E + 0xA0);
         self->unk7C = 0x14;
         self->x_speed = FIXED(32);
         self->x_accel = (s32)0xFFFF0000;
-        self->x_pos.i.hi = (s16)(background + 0xA0);
         func_8001540C(2, 0xD3, self);
         self->unk6++;
     }
@@ -995,8 +980,8 @@ void colonel_jump_slam(struct MainObj* self)
 
 void colonel_jump_slam_jump(struct MainObj* self)
 {
-    self->y_speed = FIXED(6.5);
     self->x_speed = 0;
+    self->y_speed = FIXED(6.5);
     self->x_accel = 0;
     self->gravity = FIXED(0.2578125);
     set_animation(self, 3);
@@ -1076,8 +1061,8 @@ void colonel_jump_slam_recover(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
         self->unk5 = 3;
-        self->hurt_box = (const u8*)&D_801044FC;
         self->unk6 = 0;
+        self->hurt_box = (const u8*)&D_801044FC;
         self->attack_box = (const u8*)&D_80104500;
     }
 }
