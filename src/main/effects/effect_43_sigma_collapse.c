@@ -13,12 +13,9 @@ void sigma_collapse_init(struct EffectObj* self)
 
 void sigma_collapse_debris_start(struct EffectObj* self)
 {
-    u32 direction;
-
     self->ext.effect_9.transition_timer = 1;
-    direction = D_801406A8[func_8002938C(0xA4)] >> 7;
+    self->ext.effect_9.direction = (D_801406A8[func_8002938C(0xA4)] >> 7);
     self->unk5++;
-    self->ext.effect_9.direction = direction;
 }
 
 void sigma_collapse_debris_drop(struct EffectObj* self)

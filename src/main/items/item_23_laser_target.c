@@ -11,13 +11,13 @@ void laser_target_init(struct ItemObj* self)
 {
     struct MainObj* owner;
 
-    owner = self->backref;
+    self->unk5 = 0;
     self->state = 1;
     self->on_screen = 1;
+    owner = self->backref;
     self->unk16 = 2;
     self->ext.item_23.unk80 = 0x12C;
     self->ext.item_23.timer = 4;
-    self->unk5 = 0;
     self->backref = NULL;
     self->tail_ext.unk1.unk84.previous_value = 0;
     self->unk68 = &laser_target_terrain_box;
@@ -43,16 +43,16 @@ void laser_target_track(struct ItemObj* arg0)
             x_distance = ABS(arg0->x_pos.i.hi, g_Player.x_pos.i.hi);
             y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
             set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
-            if (x_distance >= 17 || y_distance >= 17) {
+            if (x_distance > 16 || y_distance > 16) {
                 arg0->x_vel.val *= 8;
                 arg0->y_vel.val *= 8;
-            } else if (x_distance >= 9 || y_distance >= 9) {
+            } else if (x_distance > 8 || y_distance > 8) {
                 arg0->x_vel.val *= 4;
                 arg0->y_vel.val *= 4;
-            } else if (x_distance >= 5 || y_distance >= 5) {
+            } else if (x_distance > 4 || y_distance > 4) {
                 arg0->x_vel.val *= 2;
                 arg0->y_vel.val *= 2;
-            } else if (x_distance >= 3 || y_distance >= 3) {
+            } else if (x_distance > 2 || y_distance > 2) {
                 arg0->x_vel.val *= 1;
                 arg0->y_vel.val *= 1;
             } else {

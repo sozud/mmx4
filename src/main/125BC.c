@@ -343,8 +343,7 @@ void func_80022730(struct AbcObj* arg0)
 
     switch (arg0->unkD) {
     case 0:
-        value = arg0->unkA - 1;
-        arg0->unkA = value;
+        value = --arg0->unkA;
 
         if ((value << 0x10) == 0) {
             if (!(D_801397D8 & 0x80)) {
@@ -639,8 +638,7 @@ void func_80022730(struct AbcObj* arg0)
             arg0->unkF = 0;
         }
 
-        value = arg0->unkA - 1;
-        arg0->unkA = value;
+        value = --arg0->unkA;
 
         if ((value << 0x10) == 0) {
             arg0->unkD = 1;
@@ -1666,27 +1664,27 @@ void func_80026648(void)
     u32 var_s0;
     u32 bg_num;
 
-    var_s0 = 0;
     SP_BG_SPRITE_COUNT = 0;
+    var_s0 = 0;
     do {
         if (background_objects[var_s0].unk4C != 0) {
             func_800262B8(var_s0 & 0xFF);
         }
         var_s0 += 1;
     } while (var_s0 < 3);
-    bg_num = 0;
     func_8002728C();
     func_80026720();
     bg_obj = background_objects;
     SP_BG_PRIM_CURSOR = &D_8015D9D0[SP_DRAW_BUFFER];
+    bg_num = 0;
     do {
         if (bg_obj->unk3 != 0) {
             func_800267D4(bg_num);
             func_80026AA0(bg_num);
             func_80026894(bg_num);
         }
-        bg_num += 1;
         bg_obj += 1;
+        bg_num += 1;
     } while (bg_num < 3);
 }
 

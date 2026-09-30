@@ -67,8 +67,8 @@ void eregion_stomp_lift(struct MainObj* self)
     if (self->unk15 != 0) {
         x_vel = FIXED(0.5);
     }
-    self->x_speed = x_vel;
     self->y_speed = FIXED(1.5);
+    self->x_speed = x_vel;
     set_animation(self, 2);
 }
 
@@ -205,12 +205,12 @@ void eregion_leap_rise(struct MainObj* self)
         } else {
             self->x_pos.i.hi = 0x11A0;
         }
-        self->y_speed = FIXED(-2.5);
-        self->unk7E = 0x3C;
         self->x_accel = 0;
         self->x_speed = 0;
+        self->y_speed = FIXED(-2.5);
         self->unk15 ^= 0x40;
         self->unk6++;
+        self->unk7E = 0x3C;
     }
 }
 
@@ -294,8 +294,8 @@ void eregion_pounce_crouch(struct MainObj* self)
     if (self->unk15 != 0) {
         velocity = FIXED(-3);
     }
-    self->x_speed = velocity;
     self->y_speed = FIXED(1.5);
+    self->x_speed = velocity;
     set_animation(self, 2);
 }
 
@@ -344,15 +344,15 @@ void eregion_pounce_rise(struct MainObj* self)
         } else {
             self->x_pos.i.hi = 0x11A0;
         }
-        self->y_speed = FIXED(-2.5);
-        self->contact_damage = 3;
-        self->attack_box = (const u8*)&D_800FA72C;
-        self->ext.main_8.unk88 = 1;
         self->x_speed = 0;
+        self->y_speed = FIXED(-2.5);
         self->x_accel = 0;
         self->gravity = 0;
         self->unk6++;
         self->unk15 ^= 0x40;
+        self->contact_damage = 3;
+        self->attack_box = (const u8*)&D_800FA72C;
+        self->ext.main_8.unk88 = 1;
     }
 }
 
@@ -423,7 +423,7 @@ void eregion_spread_fire(struct MainObj* self)
     struct ShotObj* shot;
 
     animate_object(ANIMATED_OBJECT(self));
-    if (self->animation_step.fields.event >= 2) {
+    if (self->animation_step.fields.event > 1) {
         func_8001540C(2, 0x1E, self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
@@ -449,10 +449,10 @@ void eregion_death_start(struct MainObj* self)
 {
     player_start_script_action(0x14, g_Player.unk15);
     self->unk7 = 1;
+    self->unk6++;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_9.object_id = 0x19;
-    self->unk6++;
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 
@@ -474,9 +474,9 @@ void eregion_death_blink(struct MainObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
     if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
         self->ext.main_9.object_id -= 5;
         var_a0 = self->ext.main_9.object_id;
-        self->unk42 ^= 0x8000;
         if (var_a0 < 5) {
             var_a0 = 5;
         }
@@ -629,14 +629,14 @@ void eregion_intro_rise(struct MainObj* self)
 
     if (self->y_pos.i.hi < 0x90) {
         start_screen_shake_y(-1, 4, 2);
+        self->unk6++;
         self->x_pos.i.hi = 0x1240;
-        self->y_speed = FIXED(-2.5);
         self->x_speed = 0;
+        self->y_speed = FIXED(-2.5);
         self->x_accel = 0;
         self->gravity = 0;
         self->unk15 = 0;
         self->unk7E = 0x78;
-        self->unk6++;
     }
 }
 

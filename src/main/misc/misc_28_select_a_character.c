@@ -197,7 +197,7 @@ void select_char_scroll_text_move(struct MiscObj* self)
     case PLAYER_SELECT_LOWER:
         // when bottom "PLAYER SELECT" goes off to the right,
         // wrap it around
-        if (self->x_pos.i.hi >= 433) {
+        if (self->x_pos.i.hi > 432) {
             self->x_pos.i.hi = -112;
             return;
         }
@@ -234,16 +234,13 @@ void select_char_scroll_text(struct MiscObj* self)
 // select_char_selector_funcs state 0
 void select_char_selector_move(struct MiscObj* self)
 {
-    s16 x_pos;
-
     if (engine_obj.cur_character != CHARACTER_X) {
         set_animation(self, 9);
-        x_pos = 224; // zero is selected, move selector graphic to right
+        self->x_pos.i.hi = 224; // zero is selected, move selector graphic to right
     } else {
         set_animation(self, 8);
-        x_pos = 96; // X is selected, move selector graphic to left
+        self->x_pos.i.hi = 96; // X is selected, move selector graphic to left
     }
-    self->x_pos.i.hi = x_pos;
     self->y_pos.i.hi = 120; // set y pos of green selector
     do {
     } while (0);
@@ -355,7 +352,7 @@ void select_char_charged_shot_fly(struct MiscObj* self)
     }
     animate_object(self);
     move_object((struct MovingObj*)self);
-    if (self->x_pos.i.hi >= 161) {
+    if (self->x_pos.i.hi > 160) {
         self->state++;
     }
 }

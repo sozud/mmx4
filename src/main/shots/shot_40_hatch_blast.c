@@ -32,8 +32,8 @@ void hatch_blast_open(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 1;
-        self->timer = 0xF0;
         self->unk6 = 0;
+        self->timer = 0xF0;
         self->unk50.data = hatch_blast_hit_box;
         set_animation(self, 4);
         return;

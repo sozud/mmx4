@@ -38,8 +38,8 @@ void ice_wall_main(struct MainObj* self)
         self->ext.main_26.last_health = self->hp;
     }
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi, self->y_pos.i.hi - 0x10) == 0 || hit < 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         func_8001540C(5, 1, NULL);
         return;

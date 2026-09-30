@@ -43,16 +43,13 @@ void beam_drone_drop_start(struct MainObj* self)
 
 void beam_drone_drop_fall(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    timer = self->unk7E - 1;
-    self->unk7E = timer;
-    if (timer == 0) {
-        self->unk5 = 3;
+    if (--self->unk7E == 0) {
         self->x_speed = 0;
         self->y_speed = 0;
+        self->unk5 = 3;
         self->unk7E = 0x14;
         self->unk6 = 0;
     }
@@ -100,12 +97,9 @@ void beam_drone_fire_start(struct MainObj* self)
 
 void beam_drone_fire_beam(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 2);
         self->ext.main_58.unk88 = 2;
         self->unk7C = 0x3C;
@@ -115,12 +109,9 @@ void beam_drone_fire_beam(struct MainObj* self)
 
 void beam_drone_fire_fade(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->ext.main_58.unk88 = 0;
         self->unk7C = 0x2A;
         self->unk6++;
@@ -159,13 +150,13 @@ void beam_drone_leave_start(struct MainObj* self)
     self->unk7C = 0x3C;
     if (self->unk2 == 1) {
         velocity = 0x18000;
-        if (self->y_pos.i.hi >= 0x369) {
+        if (self->y_pos.i.hi > 0x368) {
             velocity = -0x18000;
         }
         self->y_speed = velocity;
     } else {
         velocity = -0x18000;
-        if (self->x_pos.i.hi >= 0x951) {
+        if (self->x_pos.i.hi > 0x950) {
             velocity = 0x18000;
         }
         self->x_speed = velocity;
@@ -175,13 +166,10 @@ void beam_drone_leave_start(struct MainObj* self)
 
 void beam_drone_leave_move(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->ext.main_58.unk88 = 2;
         ZeroObjectState(OBJECT_HEADER(self));
     }

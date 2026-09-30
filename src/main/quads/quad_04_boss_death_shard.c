@@ -6,10 +6,10 @@ void boss_death_shard_init(struct QuadObj* arg0)
 {
     s32 value;
 
-    arg0->unk34 = 2;
-    arg0->unk36 = 0;
-    arg0->bg_offset = 0;
     arg0->active |= 0x82;
+    arg0->unk36 = 0;
+    arg0->unk34 = 2;
+    arg0->bg_offset = 0;
     arg0->ext.quad_4.unk38 = arg0->unk2;
     value = get_random_nonzero();
     arg0->unk14.val = 0;

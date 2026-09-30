@@ -88,18 +88,15 @@ void dash_gunner_run_move(struct MainObj* self)
 
 void dash_gunner_wait_for_player(struct MainObj* self)
 {
-    s8 next_state;
-
-    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= 0xBD) {
+    if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) > 0xBC) {
         func_8001540C(2, 0x51, self);
         self->unk7A = 0;
         if (self->ext.main_27.unk80 == 0) {
-            next_state = 2;
+            self->unk5 = 2;
         } else {
             self->unk7C = 1;
-            next_state = 7;
+            self->unk5 = 7;
         }
-        self->unk5 = next_state;
         self->unk6 = 0;
     }
 }
@@ -326,10 +323,10 @@ void dash_gunner_dash_brake(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->x_speed == 0) {
-        self->unk7C = 10;
         self->x_accel = 0;
         self->x_speed = 0;
         self->ext.main_27.unk88 = 0;
+        self->unk7C = 10;
         self->unk6 = 3;
     }
 }
@@ -342,8 +339,7 @@ void dash_gunner_dash_end(struct MainObj* self)
         self->ext.main_27.unk8C--;
     }
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         self->ext.main_27.unk89 = 0;
         self->ext.main_27.unk8A = 0;

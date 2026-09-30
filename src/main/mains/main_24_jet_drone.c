@@ -94,11 +94,11 @@ void jet_drone_fly_arc(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->y_speed == 0) {
         direction = self->unk2 & 3;
-        self->gravity = (direction < 2) ? FIXED(0.1875) : FIXED(-0.1875);
+        self->gravity = (direction <= 1) ? FIXED(0.1875) : FIXED(-0.1875);
     }
     if (self->x_speed == 0) {
-        self->unk7C = 0xA;
         self->x_accel >>= 2;
+        self->unk7C = 0xA;
         set_animation(self, 2);
         self->unk6 = 2;
     }

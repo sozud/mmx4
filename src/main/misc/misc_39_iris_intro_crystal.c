@@ -20,10 +20,10 @@ void iris_intro_crystal_despawn(struct MiscObj* self)
 
 void iris_intro_crystal_start(struct MiscObj* self)
 {
-    self->unk15 = 0x40;
-    self->y_vel.val = FIXED(0.5);
     self->unk16 = 0;
+    self->unk15 = 0x40;
     self->x_vel.val = 0;
+    self->y_vel.val = FIXED(0.5);
     self->ext.misc_39.timer = 0xD6;
     set_animation(self, 0xB);
     self->unk5 = 1;
@@ -31,13 +31,10 @@ void iris_intro_crystal_start(struct MiscObj* self)
 
 void iris_intro_crystal_rise(struct MiscObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    timer = self->ext.misc_39.timer - 1;
-    self->ext.misc_39.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_39.timer == 0) {
         self->ext.misc_39.timer = 0x78;
         self->unk5 = 2;
     }
@@ -45,12 +42,9 @@ void iris_intro_crystal_rise(struct MiscObj* self)
 
 void iris_intro_crystal_charge(struct MiscObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->ext.misc_39.timer - 1;
-    self->ext.misc_39.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_39.timer == 0) {
         set_animation(self, 0xC);
         set_animation(self->ext.misc_39.related, 0x21);
         self->unk5 = 3;

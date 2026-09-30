@@ -67,8 +67,8 @@ void trap_floor_wait_stand(struct ItemObj* self, struct EngineObj* engine,
 
     y_diff = (u16)self->y_pos.i.hi - (u16)player->y_pos.i.hi;
     if (y_diff >= 0) {
-        player_bounds = player->unk68;
         item_bounds = self->unk68;
+        player_bounds = player->unk68;
         if (y_diff >= ITEM13_PLAYER_EXTENT(player_bounds) + (item_bounds->unk3 - item_bounds->unk1)) {
             if (engine->unk10 == 0) {
                 engine->unk10 = 1;

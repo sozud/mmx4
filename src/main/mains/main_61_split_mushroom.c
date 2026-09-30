@@ -55,7 +55,7 @@ void split_mushroom_death_explode(struct MainObj* self)
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
         self->invincibility_timer -= 5;
-        if ((s8)self->invincibility_timer >= 0x1A) {
+        if ((s8)self->invincibility_timer > 0x19) {
             self->invincibility_timer = 0;
         }
         value = self->invincibility_timer;
@@ -233,12 +233,9 @@ void split_mushroom_stun_start(struct MainObj* self)
 
 void split_mushroom_stun_wait(struct MainObj* self)
 {
-    s16 temp_v0;
     s8 state;
 
-    temp_v0 = self->unk7C - 1;
-    self->unk7C = temp_v0;
-    if (temp_v0 != 0) {
+    if (--self->unk7C != 0) {
         return;
     }
 
@@ -283,11 +280,11 @@ void split_mushroom_stun_merge(struct MainObj* self)
 {
     if (self->ext.main_61.split == 0) {
         self->ext.main_61.split_hits = 3;
-        self->gravity = FIXED(0.21875);
         self->ext.main_61.merge = 0;
         self->x_speed = 0;
         self->x_accel = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.21875);
         self->unk6 = 2;
     }
 }
@@ -314,8 +311,7 @@ void split_mushroom_stun_split(struct MainObj* self)
     int drawFlags;
     int one;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if ((timer << 16) == 0) {
         parent = self->ext.main_61.partner;
         if (parent->unk5 != 6) {
@@ -333,9 +329,9 @@ void split_mushroom_stun_split(struct MainObj* self)
         one = 1;
         self->ext.main_61.split = one;
         set_animation(self, 2);
-        self->unk5 = 6;
         self->ext.main_61.split_done = one;
         self->ext.main_61.combo_count = 0;
+        self->unk5 = 6;
         self->unk6 = 7;
     }
 }
@@ -445,8 +441,7 @@ void split_mushroom_spore_rain_finish(struct MainObj* self)
 {
     u16 timer;
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if ((timer << 16) == 0) {
         self->y_speed = 0;
         if (self->unk2 == 0) {
@@ -469,15 +464,12 @@ void split_mushroom_walk(struct MainObj* self)
 
 void split_mushroom_walk_start(struct MainObj* self)
 {
-    s32 x_vel;
-
     set_animation(self, 1);
     if (self->unk15 == 0) {
-        x_vel = -split_mushroom_walk_speeds[self->ext.main_61.speed_level];
+        self->x_speed = -split_mushroom_walk_speeds[self->ext.main_61.speed_level];
     } else {
-        x_vel = split_mushroom_walk_speeds[self->ext.main_61.speed_level];
+        self->x_speed = split_mushroom_walk_speeds[self->ext.main_61.speed_level];
     }
-    self->x_speed = x_vel;
     self->unk6 = 1;
 }
 
@@ -640,11 +632,8 @@ void split_mushroom_dash_recover(struct MainObj* self)
 
 void split_mushroom_dash_finish(struct MainObj* self)
 {
-    s16 timer;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer != 0) {
+    if (--self->unk7C != 0) {
         return;
     }
     if (self->unk2 == 0) {
@@ -672,18 +661,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007AB1C);
 
 void split_mushroom_combo_swing(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         func_8001540C(2, 0xAC, self);
         set_animation(self, 8);
-        self->gravity = FIXED(0.21875);
         self->x_speed = 0;
         self->x_accel = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.21875);
         self->unk6 = 3;
     }
 }
@@ -705,8 +691,8 @@ void split_mushroom_combo_repeat(struct MainObj* self)
         } else {
             set_animation(self, 5);
             func_8001540C(2, 0xA7, self);
-            self->unk7C = 0x28;
             self->unk6 = 0;
+            self->unk7C = 0x28;
             self->unk7E = 1;
         }
     }
@@ -783,12 +769,9 @@ void split_mushroom_wall_jump_air(struct MainObj* self)
 
 void split_mushroom_wall_jump_cling(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->terrain_box = &split_mushroom_terrain_box;
         set_animation(self, 7);
         self->unk7C = 0x28;
@@ -804,11 +787,11 @@ void split_mushroom_wall_jump_turn(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
+        self->unk15 ^= 0x40;
         self->x_speed = 0;
         self->x_accel = 0;
         self->y_speed = 0;
         self->gravity = FIXED(0.21875);
-        self->unk15 ^= 0x40;
         set_animation(self, 3);
         self->unk6 = 5;
     }

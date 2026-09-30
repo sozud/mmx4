@@ -62,8 +62,8 @@ void depth_charge_hit(struct ShotObj* self)
 void depth_charge_main(struct ShotObj* self)
 {
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        self->unk5 = 0;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         spawn_explosion(BASE_OBJECT(self));
         return;

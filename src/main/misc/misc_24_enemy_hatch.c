@@ -50,10 +50,10 @@ void enemy_hatch_release_spawn(struct MiscObj* self)
     main = find_free_main_obj();
     if (main != NULL) {
         main->active = 0x41;
-        if (self->unk2 == 0) {
-            main->id = 0x30;
-        } else {
+        if (self->unk2 != 0) {
             main->id = 3;
+        } else {
+            main->id = 0x30;
         }
         main->unk2 = -0x80;
         main->unk15 = self->unk15;

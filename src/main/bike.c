@@ -175,7 +175,7 @@ void func_8003C624(struct RideArmorObj* arg0)
         value += arg0->unk90.value;
         arg0->unk94.value = value;
         background_objects[arg0->bg_offset].unk47 -= value >> 16;
-        if (background_objects[arg0->bg_offset].unk47 < 6) {
+        if (background_objects[arg0->bg_offset].unk47 <= 5) {
             background_objects[arg0->bg_offset].unk47 = 6;
         }
     }
@@ -195,11 +195,11 @@ void func_8003C8F4(struct RideArmorObj* arg0)
             set_animation(arg0, 2);
             func_8003B458(arg0, 0x45);
         } else {
+            arg0->unk6 = 0;
+            arg0->unk80.bytes.unk80 |= 2;
             arg0->y_vel.val = FIXED(6.5);
             arg0->unk8E.value = 1;
-            arg0->unk6 = 0;
             arg0->unk67 = 1;
-            arg0->unk80.bytes.unk80 |= 2;
         }
     }
 }
@@ -207,10 +207,10 @@ void func_8003C8F4(struct RideArmorObj* arg0)
 void func_8003C9A4(struct RideArmorObj* arg0)
 {
     if ((arg0->unk80.bytes.unk82 != arg0->unk80.bytes.unk83) && (arg0->unk80.bytes.unk80 & 1) && ((arg0->unk80.packed & 0xFFFF0000) == 0x20000)) {
+        arg0->y_vel.val = (((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) * 2) / 237) << 8;
+        arg0->unk80.bytes.unk80 |= 2;
         arg0->unk2C = FIXED(0.3125);
         arg0->unk6 = 2;
-        arg0->unk80.bytes.unk80 |= 2;
-        arg0->y_vel.val = (((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) * 2) / 237) << 8;
     }
 }
 
@@ -292,8 +292,8 @@ void func_8003CCBC(struct RideArmorObj* arg0)
         arg0->unk7D = 1;
         arg0->unk5 = 5;
         arg0->unk6 = 0;
-        arg0->unk98.bytes.high = 0;
         arg0->unk80.bytes.unk80 |= 3;
+        arg0->unk98.bytes.high = 0;
         func_8001540C(5, 1, NULL);
     }
 }
@@ -314,11 +314,11 @@ void func_8003CD38(struct RideArmorObj* arg0)
             }
         } else {
             limit = D_800F9078[arg0->unk7D];
-            if (arg0->x_vel.val < limit) {
+            if (arg0->x_vel.val >= limit) {
+                move_with_gravity(ANIMATED_OBJECT(arg0));
+            } else {
                 func_8003D338(ANIMATED_OBJECT(arg0));
                 move_object(MOVING_OBJECT(arg0));
-            } else {
-                move_with_gravity(ANIMATED_OBJECT(arg0));
             }
         }
         break;

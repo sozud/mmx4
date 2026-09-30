@@ -23,8 +23,8 @@ void func_8003D3F8(struct RideArmorObj* arg0)
     arg0->unk1C = arg0->y_pos;
 
     previous_input = arg0->unk71;
-    arg0->unk71 = 0;
     arg0->input_flags = arg0->unk70 | previous_input;
+    arg0->unk71 = 0;
     D_800F912C[arg0->state](arg0);
     arg0->unk5C &= ~0x80;
 }
@@ -34,18 +34,15 @@ INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
 void func_8003D638(struct VisualObj* arg0, u8 arg1)
 {
     struct VisualObj* obj;
-    u8 active;
     u8 unk16;
-    u8 unk15;
 
     obj = find_free_visual_obj();
     if (obj == NULL) {
         return;
     }
-    active = arg0->active;
+    obj->active = arg0->active;
     obj->id = 0xC;
     obj->unk2 = arg1;
-    obj->active = active;
     obj->x_pos.val = arg0->x_pos.val;
     obj->y_pos.val = arg0->y_pos.val;
     obj->animation_table = arg0->animation_table;
@@ -54,9 +51,8 @@ void func_8003D638(struct VisualObj* arg0, u8 arg1)
     obj->unk42 = arg0->unk42 & 0x7FFF;
     unk16 = arg0->unk16;
     obj->unk16 = unk16;
-    unk15 = arg0->unk15;
+    obj->unk15 = arg0->unk15;
     obj->unk50 = (struct PlayerObj*)arg0;
-    obj->unk15 = unk15;
 }
 
 void func_8003D6EC(struct AnimatedObj* arg0, s32 arg1)
@@ -245,8 +241,8 @@ void func_8003DE84(struct RideArmorObj* arg0)
     if (arg0->unk8E.bytes.active == 0) {
         buttons = arg0->unk8A & 3;
         if (buttons != 0 && buttons != 3) {
-            arg0->unk8E.bytes.active = 1;
             arg0->pad9A = buttons;
+            arg0->unk8E.bytes.active = 1;
             arg0->unk8E.bytes.timer = 12;
         }
         return;
@@ -668,8 +664,7 @@ void func_8003EDF0(struct RideArmorObj* self)
     }
 
     input = self->input_flags;
-    timer = self->unk90.byte - 1;
-    self->unk90.byte = timer;
+    timer = --self->unk90.byte;
     if (!(input & 8)) {
         func_8003DC44(BASE_OBJECT(self), 0xC);
         return;
@@ -701,9 +696,9 @@ void func_8003EEF8(struct RideArmorObj* self)
         self->unkA6 = 0;
         stop_sound(5, 8);
         if (!(self->unk94.bytes.unk97 & 2)) {
-            self->y_vel.val = FIXED(2);
             self->x_vel.val = 0;
             self->unk28 = 0;
+            self->y_vel.val = FIXED(2);
             self->unk2C = FIXED(0.25);
         }
         if (self->unk94.bytes.unk97 & 0x40) {
@@ -745,10 +740,10 @@ void func_8003F068(struct RideArmorObj* self)
 
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        self->unk2C = FIXED(0.2578125);
         self->x_vel.val = 0;
         self->unk28 = 0;
         self->y_vel.val = 0;
+        self->unk2C = FIXED(0.2578125);
         self->unk94.bytes.pad94[2] = 0x28;
         self->unk67 = 1;
         if (self->unk94.bytes.unk97 & 0x40) {
@@ -1040,8 +1035,7 @@ void func_8003FA58(struct RideArmorObj* self)
         }
         func_8001540C(5, 7, NULL);
     }
-    timer = (u8)self->unk90.byte - 1;
-    self->unk90.byte = timer;
+    timer = --self->unk90.byte;
     if (!(self->unk94.bytes.unk97 & 2)) {
         if ((self->input_flags & 3) || timer < 0) {
             func_8003DC44(BASE_OBJECT(self), 0xC);

@@ -123,8 +123,8 @@ void func_80028BF0(void)
     x = FIXED(checkpoint->x);
     g_Player.x_pos.val = x;
     y = FIXED(checkpoint->y);
-    g_Player.unk18.val = x;
     g_Player.y_pos.val = y;
+    g_Player.unk18.val = x;
     g_Player.unk1C.val = y;
 
     g_Player.unk15 = checkpoint->facing;

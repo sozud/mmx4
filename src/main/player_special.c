@@ -541,11 +541,11 @@ void player_set_shoot_animation(struct PlayerObj* self)
 void player_enter_ladder_shoot(struct PlayerObj* self)
 {
     player_set_ladder_shoot_animation(self);
+    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->unk5 = PLAYER_LADDER_SHOOT;
     self->unk6 = 0;
-    self->x_pos.i.hi = (self->x_pos.i.hi & 0xFFF0) + 8;
 }
 
 void player_set_ladder_shoot_animation(struct PlayerObj* self)
@@ -636,7 +636,6 @@ void player_hover_hold(struct PlayerObj* self)
 void player_hover_forward(struct PlayerObj* self)
 {
     s32 direction;
-    s8 next_state;
 
     if (player_hover_check_end(self) != 0 || player_check_wall(self) != 0) {
         return;
@@ -650,12 +649,11 @@ void player_hover_forward(struct PlayerObj* self)
             return;
         }
         player_set_animation_shooting(self, 0x19);
-        next_state = 5;
+        self->unk6 = 5;
     } else {
         player_set_animation_shooting(self, 0x18);
-        next_state = 4;
+        self->unk6 = 4;
     }
-    self->unk6 = next_state;
 }
 
 void player_hover_forward_stop(struct PlayerObj* self)
@@ -680,14 +678,13 @@ void player_hover_forward_stop(struct PlayerObj* self)
 void player_hover_back(struct PlayerObj* self)
 {
     s32 direction;
-    s8 next_state;
 
     if ((player_hover_check_end(self) == 0) && (player_check_wall(self) == 0)) {
         direction = player_hover_steer(self);
         if (direction != 0) {
             if (direction > 0) {
                 player_set_animation_shooting(self, 0x17);
-                next_state = 3;
+                self->unk6 = 3;
             } else {
                 move_object(MOVING_OBJECT(self));
                 func_80038568(self, 0x19);
@@ -695,9 +692,8 @@ void player_hover_back(struct PlayerObj* self)
             }
         } else {
             player_set_animation_shooting(self, 0x1A);
-            next_state = 6;
+            self->unk6 = 6;
         }
-        self->unk6 = next_state;
     }
 }
 
@@ -745,9 +741,9 @@ s32 player_hover_steer(struct PlayerObj* self)
 {
     u16 buttons;
 
-    buttons = self->input.buttons.held;
     self->y_pos.i.hi += player_hover_bob[self->hover_bob];
     self->hover_bob = (self->hover_bob + 1) & 0xF;
+    buttons = self->input.buttons.held;
     self->x_vel.val = 0;
 
     if (buttons & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT)) {
@@ -779,16 +775,13 @@ move_left:
 
 void player_hover_set_direction(struct PlayerObj* self, s32 direction)
 {
-    s8 value;
-
     if (direction > 0) {
         player_set_animation_shooting(self, 0x17);
-        value = 3;
+        self->unk6 = 3;
     } else {
         player_set_animation_shooting(self, 0x19);
-        value = 5;
+        self->unk6 = 5;
     }
-    self->unk6 = value;
 }
 
 void player_nova_strike(struct PlayerObj* self)
@@ -896,7 +889,6 @@ void player_soul_body(struct PlayerObj* self)
 void player_soul_body_cast(struct PlayerObj* self)
 {
     s8 event;
-    u8 facing;
 
     animate_object(ANIMATED_OBJECT(self));
     event = self->animation_step.fields.event;
@@ -908,11 +900,10 @@ void player_soul_body_cast(struct PlayerObj* self)
         g_Entity.active = 1;
         g_Entity.x_pos.val = self->x_pos.val;
         g_Entity.y_pos.val = self->y_pos.val;
-        facing = self->unk15;
+        g_Entity.unk15 = self->unk15;
         g_Entity.air_state = 1;
         g_Entity.clone_timer = 0xF0;
         g_Entity.clone_offset.value = 0;
-        g_Entity.unk15 = facing;
         player_set_collision_bounds(&g_Entity);
         self->unk6 = (u8)self->unk6 + 1;
     }
@@ -1309,9 +1300,9 @@ s32 player_zero_check_double_jump(struct PlayerObj* self)
         player_set_animation(self, 0x63);
         func_8001540C(1, 1, self);
         player_play_voice(self, 7);
-        self->y_vel.val = FIXED(5.8125);
         self->x_vel.val = 0;
         self->unk28 = 0;
+        self->y_vel.val = FIXED(5.8125);
         self->unk2C = FIXED(0.2578125);
         self->dash_momentum = 0;
         self->air_action = 6;
@@ -1719,11 +1710,11 @@ void player_zero_hyouretsuzan_start(struct PlayerObj* self)
     }
 
     if (self->animation_step.fields.event & 0x10) {
-        self->y_vel.val = FIXED(-3);
-        self->unk2C = FIXED(0.2578125);
         self->animation_step.fields.event = 0;
         self->x_vel.val = 0;
         self->unk28 = 0;
+        self->y_vel.val = FIXED(-3);
+        self->unk2C = FIXED(0.2578125);
         self->air_state = -1;
         self->unk6++;
     }
@@ -1731,7 +1722,6 @@ void player_zero_hyouretsuzan_start(struct PlayerObj* self)
 
 void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
 {
-    s16 x_pos;
     struct MiscObj* debris;
     u32 i;
 
@@ -1750,11 +1740,10 @@ void player_zero_hyouretsuzan_drop(struct PlayerObj* self)
                 debris->unk2 = 0;
                 debris->bg_offset = self->bg_offset;
                 if (self->unk15 == 0) {
-                    x_pos = self->x_pos.u.hi - 0x10;
+                    debris->x_pos.i.hi = self->x_pos.u.hi - 0x10;
                 } else {
-                    x_pos = self->x_pos.u.hi + 0x10;
+                    debris->x_pos.i.hi = self->x_pos.u.hi + 0x10;
                 }
-                debris->x_pos.i.hi = x_pos;
                 debris->y_pos.i.hi = self->y_pos.i.hi;
             }
             i++;
@@ -1880,7 +1869,6 @@ void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self)
 void player_zero_rakuhouha(struct PlayerObj* self)
 {
     u32 i;
-    s32 frame_offset;
     s32* sprite_frames;
     struct VisualObj* visual_obj;
     struct WeaponObj* weapon;
@@ -1895,12 +1883,11 @@ void player_zero_rakuhouha(struct PlayerObj* self)
             visual_obj->unk2 = 0xD;
             visual_obj->bg_offset = self->bg_offset;
             sprite_frames = SP_SPRITE_FRAMES;
-            frame_offset = sprite_frames[6];
+            visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[6];
             visual_obj->animation_table = D_8011C018;
             visual_obj->unk40 = 0;
             visual_obj->unk42 = 0x7803;
             visual_obj->unk16 = 0;
-            visual_obj->unk3C = (u8*)sprite_frames + frame_offset;
             visual_obj->x_pos.val = self->x_pos.val;
             visual_obj->y_pos.val = self->y_pos.val;
             visual_obj->unk15 = self->unk15;

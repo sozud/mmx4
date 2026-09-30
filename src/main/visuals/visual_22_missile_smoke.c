@@ -25,7 +25,7 @@ void missile_smoke_main(struct VisualObj* arg0)
     struct PlayerObj* temp_a0;
 
     if (arg0->unk2 != 0x10) {
-        if (arg0->unk2 < 7) {
+        if (arg0->unk2 <= 6) {
             if (arg0->unk2 == 0) {
                 set_animation(arg0, 0x21);
             } else {

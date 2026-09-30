@@ -44,7 +44,7 @@ void falling_ceiling_drop_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    if (self->y_pos.i.hi >= 0x119) {
+    if (self->y_pos.i.hi > 0x118) {
         self->y_speed = 0;
         self->gravity = 0;
     }

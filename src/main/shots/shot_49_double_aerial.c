@@ -15,8 +15,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_49_double_aerial", func_800A9DF4);
 void double_aerial_drop(struct ShotObj* self)
 {
     if (--self->timer == 0) {
-        self->timer = 0x1D;
         self->unk5++;
+        self->timer = 0x1D;
         set_animation(self, 0xF);
         return;
     }
@@ -120,9 +120,9 @@ void double_toss_land(struct ShotObj* self)
             return;
         }
         set_animation(self, 0x15);
+        self->unk68 = NULL;
         self->unk54 = double_ball_box_4[0];
         self->unk50.data = double_ball_box_4[0];
-        self->unk68 = NULL;
         self->unk60 = 3;
         return;
     }

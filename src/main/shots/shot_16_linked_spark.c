@@ -18,10 +18,10 @@ void linked_spark_init(struct ShotObj* rawArg0)
     arg0->unk5C = value;
     value = arg0->unk2;
     arg0->unk16 = 6;
-    arg0->unk60 = 4;
     arg0->unk68 = 0;
     arg0->unk54 = 0;
     arg0->unk50.data = 0;
+    arg0->unk60 = 4;
 
     switch (value) {
     case 0:

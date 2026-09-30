@@ -58,9 +58,9 @@ void regen_turret_fire(struct MainObj* self)
 void regen_turret_main(struct MainObj* self)
 {
     if (func_8002DD04(self) < 0) {
-        self->unk5 = 0;
         self->active |= 4;
         self->state++;
+        self->unk5 = 0;
         self->unk42 &= 0x7FFF;
         return;
     }

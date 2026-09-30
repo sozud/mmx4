@@ -46,7 +46,6 @@ INCLUDE_ASM("main/nonmatchings/items/item_24_breakable_panel", func_800C609C);
 void breakable_panel_main(struct ItemObj* arg0)
 {
     s32 collision;
-    u16 flags;
 
     collision = func_8002DD04(MAIN_OBJECT(arg0));
     if (collision < 0) {
@@ -57,11 +56,10 @@ void breakable_panel_main(struct ItemObj* arg0)
         return;
     }
     if (collision > 0) {
-        flags = arg0->unk42 | 0x8000;
+        arg0->unk42 = arg0->unk42 | 0x8000;
     } else {
-        flags = arg0->unk42 & 0x7FFF;
+        arg0->unk42 = arg0->unk42 & 0x7FFF;
     }
-    arg0->unk42 = flags;
     collide_with_players(arg0);
     is_on_screen(BASE_OBJECT(arg0));
 }

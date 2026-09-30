@@ -13,12 +13,11 @@ void falling_icicle_update(struct MainObj* self)
 void falling_icicle_init(struct MainObj* arg0)
 {
     struct MainObj* self;
-    u8 bg_offset;
 
     self = arg0;
     self->contact_damage = 1;
     self->invincibility_timer = 0;
-    bg_offset = g_Player.bg_offset;
+    self->bg_offset = g_Player.bg_offset;
     self->animation_table = (const u8* const*)falling_icicle_animations;
     self->unk16 = 6;
     self->hurt_box = &falling_icicle_body_box;
@@ -35,7 +34,6 @@ void falling_icicle_init(struct MainObj* arg0)
     self->hp = 3;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    self->bg_offset = bg_offset;
     self->ext.main_21.timer_82 = self->unk2 * 0x14;
     set_animation(arg0, 0);
     self->state = 1;

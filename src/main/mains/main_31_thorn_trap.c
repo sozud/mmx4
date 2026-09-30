@@ -21,7 +21,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BA2C);
 void thorn_trap_open(struct MainObj* self)
 {
     s8 object_variant;
-    s8 next_state;
 
     if (self->animation_step.fields.relative_step < 0) {
         set_animation(self, 2);
@@ -36,16 +35,15 @@ void thorn_trap_open(struct MainObj* self)
                 set_animation(self, 7);
                 return;
             }
-            next_state = 6;
+            self->unk5 = 6;
         } else {
             if (self->ext.main_0.flags[0] != 0) {
                 self->unk5 = 9;
                 set_animation(self, 4);
                 return;
             }
-            next_state = 8;
+            self->unk5 = 8;
         }
-        self->unk5 = next_state;
         set_animation(self, 3);
         return;
     }

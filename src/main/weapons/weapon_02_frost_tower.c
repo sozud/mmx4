@@ -9,7 +9,10 @@ void frost_tower_update(struct WeaponObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 
-    should_change_state = g_Player.input_locked != 0;
+    should_change_state = 0;
+    if (g_Player.input_locked != 0) {
+        should_change_state = 1;
+    }
     if (g_Player.capsule_state != 0) {
         should_change_state = 1;
     }
@@ -66,8 +69,8 @@ void frost_tower_form(struct WeaponObj* arg0)
         func_8001540C(0, 0x1A, arg0);
     }
     if (arg0->animation_step.fields.event & 0x80) {
-        arg0->unk68 = frost_tower_terrain_box;
         arg0->animation_step.fields.event = 0;
+        arg0->unk68 = frost_tower_terrain_box;
         arg0->unk67 = 0;
         arg0->unk5 = 1;
     }
@@ -77,10 +80,10 @@ void frost_tower_check_ground(struct WeaponObj* arg0)
 {
     if (!(arg0->unk70 & 8)) {
         arg0->unk67 = -1;
-        arg0->unk2C = 0x4200;
         arg0->x_vel.val = 0;
         arg0->unk28.val = 0;
         arg0->y_vel.val = 0;
+        arg0->unk2C = 0x4200;
         arg0->unk5 = 2;
     }
 }
@@ -189,8 +192,8 @@ void frost_tower_charged_part_main(struct WeaponObj* arg0)
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->unk5 == 0) {
             if (arg0->animation_step.fields.event == 1) {
-                arg0->unk50 = frost_tower_charged_part_box;
                 arg0->animation_step.fields.event = 0;
+                arg0->unk50 = frost_tower_charged_part_box;
                 arg0->unk64 = 1;
             }
             if (arg0->animation_step.fields.event == 2) {
@@ -235,20 +238,16 @@ void frost_shard_init(struct MiscObj* arg0)
 {
     s32* player_gfx;
     s32* sprite_frames;
-    s32 gfx_offset;
-    s32 frames_offset;
 
     frost_particle_launch(arg0);
     player_gfx = SP_PLAYER_GFX;
-    gfx_offset = player_gfx[0xC / 4];
+    arg0->unk38 = (u8*)player_gfx + (player_gfx[0xC / 4]);
     sprite_frames = SP_SPRITE_FRAMES;
-    arg0->unk38 = (u8*)player_gfx + gfx_offset;
-    frames_offset = sprite_frames[0x2C / 4];
+    arg0->unk3C = (u8*)sprite_frames + (sprite_frames[0x2C / 4]);
     arg0->animation_table = D_8011C094;
     arg0->unk40 = 0x520;
     arg0->unk42 = 0x7801;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + frames_offset;
     set_animation(arg0, (get_random() & 3) + 2);
 }
 
@@ -264,16 +263,14 @@ void frost_sparkle_update(struct MiscObj* arg0)
 void frost_sparkle_init(struct MiscObj* arg0)
 {
     s32* sprite_frames;
-    s32 offset;
 
     frost_particle_launch(arg0);
     sprite_frames = SP_SPRITE_FRAMES;
-    offset = sprite_frames[6];
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[6];
     arg0->animation_table = D_8011C018;
     arg0->unk40 = 0;
     arg0->unk42 = 0x7802;
     arg0->unk16 = 0;
-    arg0->unk3C = (u8*)sprite_frames + offset;
     set_animation(arg0, frost_sparkle_animations[get_random() & 7]);
 }
 
@@ -303,8 +300,8 @@ void frost_particle_launch(struct MiscObj* self)
     self->y_vel.val = frost_particle_y_vels[get_random() & 7];
     self->unk28 = 0;
     self->unk2C = FIXED(0.3125);
-    self->unk5 = 0;
     self->state++;
+    self->unk5 = 0;
     update_on_screen(BASE_OBJECT(self), 0x14, 0x18);
 }
 

@@ -102,8 +102,8 @@ void wall_crawler_corner_end(struct MainObj* self)
     } else {
         set_animation(self, 1);
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 4;
-        self->y_speed = FIXED(3);
         self->x_speed = 0;
+        self->y_speed = FIXED(3);
         self->unk5 = 6;
     }
     self->unk6 = 0;

@@ -18,23 +18,17 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
 
 void train_boss_armor_smoke(struct MainObj* self)
 {
-    s16 timer7C;
-    s16 timer7E;
     s32 tableIndex;
     s32 x;
     s32 y;
     s32 frameArea[2];
 
-    timer7C = self->unk7C - 1;
-    self->unk7C = timer7C;
-    if (timer7C == 0) {
+    if (--self->unk7C == 0) {
         self->state = 3;
         return;
     }
 
-    timer7E = self->unk7E - 1;
-    self->unk7E = timer7E;
-    if (timer7E == 0) {
+    if (--self->unk7E == 0) {
         tableIndex = self->unk2;
         y = (u16)self->ext.main_47.unk80->x_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][0];
         x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][1];

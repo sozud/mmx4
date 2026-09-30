@@ -559,14 +559,14 @@ s32 player_check_hover(struct PlayerObj* self)
         return 0;
     }
     player_set_animation_shooting(self, 0x15);
-    self->air_action = 4;
-    self->hover_timer = 0xB4;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
     self->dash_momentum = 0;
+    self->air_action = 4;
     self->afterimage = 0;
+    self->hover_timer = 0xB4;
     self->hover_bob = 0;
     self->unk5 = PLAYER_HOVER;
     self->unk6 = 0;
@@ -795,9 +795,9 @@ void player_enter_soul_body(struct PlayerObj* self)
     player_set_animation(self, 0x60);
     self->controlling_clone = 1;
     self->spike_immune = 1;
-    self->air_state = 1;
     self->invincibility_timer = 0;
     self->hurt_phase = 0;
+    self->air_state = 1;
     self->unk5 = PLAYER_SOUL_BODY;
     self->unk6 = 0;
 }
@@ -834,12 +834,12 @@ void player_enter_rising_fire_charged(struct PlayerObj* self, s32 airborne)
     }
 
     player_play_voice(self, 7);
+    self->shot_count++;
+    self->special_shot_count++;
     self->air_state = 1;
     self->spike_immune = 1;
     self->unk5 = PLAYER_RISING_FIRE_CHARGED;
     self->unk6 = 0;
-    self->shot_count++;
-    self->special_shot_count++;
 }
 
 void player_enter_double_cyclone_pose(struct PlayerObj* self)

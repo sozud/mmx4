@@ -124,9 +124,9 @@ void jump_shooter_fire_end(struct MainObj* self)
             self->unk5 = 3;
             self->unk6 = 0;
         } else {
+            self->x_speed = 0;
             self->gravity = FIXED(0.25);
             self->unk5 = 4;
-            self->x_speed = 0;
             self->unk6 = 1;
         }
     }

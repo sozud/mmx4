@@ -247,13 +247,10 @@ void sigma_final_appear_dialogue(struct MainObj* self)
 
 void sigma_final_appear_fill_health(struct MainObj* self)
 {
-    s16 temp_v0;
 
     if (self->hp < 0x30) {
         if (update_boss_music_delay() == 0) {
-            temp_v0 = self->unk7E - 1;
-            self->unk7E = temp_v0;
-            if (temp_v0 == 0) {
+            if (--self->unk7E == 0) {
                 func_8001540C(0, 0xE, 0);
                 self->unk7E = 3;
             }
@@ -628,8 +625,8 @@ void sigma_final_grab_release(struct MainObj* self)
 
 void sigma_final_grab_finish(struct MainObj* self)
 {
-    self->contact_damage = 9;
     self->unk62 = 0;
+    self->contact_damage = 9;
     self->unk5 = 0xB;
     self->unk6 = 0;
 }
@@ -649,8 +646,8 @@ void sigma_final_spit_open(struct MainObj* self)
 {
     set_animation(self, 3);
     self->unk7C = 0x1E;
-    self->attack_box = (const u8*)&D_80105360;
     self->unk6++;
+    self->attack_box = (const u8*)&D_80105360;
 }
 
 void sigma_final_spit_wait(struct MainObj* self)
@@ -667,8 +664,7 @@ void sigma_final_spit_fire(struct MainObj* self)
     s16 timer;
     struct ShotObj* shot;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         self->unk5 = 7;
         self->unk6 = 0;
@@ -826,18 +822,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
 
 void sigma_final_death_blink(struct MainObj* self)
 {
-    s16 timer;
     s8 value;
     s8 delay;
 
-    timer = self->unk7E - 1;
-    self->unk7E = timer;
-    if (timer == 0) {
+    if (--self->unk7E == 0) {
         self->unk7C = 0x12C;
         self->unk42 ^= 0x8000;
         value = self->invincibility_timer - 5;
         self->invincibility_timer = value;
-        if (value >= 0x1A) {
+        if (value > 0x19) {
             self->invincibility_timer = 0;
         }
         delay = self->invincibility_timer;
@@ -902,8 +895,8 @@ void sigma_final_death_explosion(struct MainObj* self)
             effect->active = -0x7F;
             effect->id = 0x1A;
             effect->x_pos.i.hi = self->x_pos.i.hi;
-            D_8013B8A8 = OBJECT_HEADER(effect);
             effect->y_pos.i.hi = self->y_pos.i.hi;
+            D_8013B8A8 = OBJECT_HEADER(effect);
         }
         set_animation(self, 0);
     }

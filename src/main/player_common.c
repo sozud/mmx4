@@ -547,9 +547,9 @@ void player_entry_beam_in(struct PlayerObj* self)
 {
     player_set_animation(self, 1);
     func_8001540C(1, 0xD, self);
-    self->y_vel.val = FIXED(-8);
     self->x_vel.val = 0;
     self->unk28 = 0;
+    self->y_vel.val = FIXED(-8);
     self->unk2C = 0;
     self->air_state = -1;
     self->unk5 = PLAYER_BEAM_IN;
@@ -600,8 +600,8 @@ void player_entry_ride(struct PlayerObj* self)
     self->armor_parts = engine_obj.unk47;
     self->arm_type = engine_obj.unk48;
     self->ride_state = -1;
-    self->ride_animation = 0x29;
     self->air_state = 1;
+    self->ride_animation = 0x29;
     self->unk5 = PLAYER_RIDE;
     self->unk6 = 1;
 }
@@ -866,16 +866,14 @@ void player_reset_palette(struct PlayerObj* self)
     u16* dst;
     u16* src;
     u32 a2;
-    s32 temp;
 
     if (self->unk2 == 0) {
         if (self->is_clone == 0) {
             if (self->weapon == 0) {
                 player_set_palette(self, 0);
             } else {
-                temp = ((self->weapon - 1) << 6);
+                src = SP_PALETTE_BANK[3] + (((self->weapon - 1) << 6));
                 dst = SP_PALETTE;
-                src = SP_PALETTE_BANK[3] + temp;
                 for (a2 = 0; a2 < 0x20; a2++) {
                     *dst++ = *src++;
                 }
@@ -904,8 +902,8 @@ void player_set_palette(struct PlayerObj* self, s32 palette)
 
     if (self->unk2 == 0) {
         if (self->is_clone == 0) {
-            dst = SP_PALETTE;
             src = SP_PALETTE_BANK[palette];
+            dst = SP_PALETTE;
             for (i = 0; i < 0x10; i++) {
                 *dst++ = *src++;
             }
@@ -1016,17 +1014,15 @@ void player_spawn_dash_dust(struct PlayerObj* self)
         visual_obj->active = 0x21;
         visual_obj->id = 1;
         bg_offset = self->bg_offset;
+        visual_obj->bg_offset = bg_offset;
         visual_obj->state = 0;
         visual_obj->unk5 = 0;
         visual_obj->unk6 = 0;
-        visual_obj->bg_offset = bg_offset;
     }
 }
 
 void player_spawn_dash_spark(struct PlayerObj* self)
 {
-    s16 x_pos;
-    s32 frame_offset;
     u8 facing;
     struct VisualObj* visual_obj;
     s32* sprite_frames;
@@ -1050,20 +1046,18 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     visual_obj->bg_offset = self->bg_offset;
     sprite_frames = SP_SPRITE_FRAMES;
     visual_obj->unk38 = 0;
-    frame_offset = sprite_frames[1];
+    visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[1];
     visual_obj->animation_table = D_8011BF40;
     visual_obj->unk42 = 0x7804;
     visual_obj->unk40 = 0;
     visual_obj->unk16 = 1;
-    visual_obj->unk3C = (u8*)sprite_frames + frame_offset;
     facing = self->unk15;
     visual_obj->unk15 = facing;
     if (facing == 0) {
-        x_pos = self->x_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2];
+        visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2];
     } else {
-        x_pos = self->x_pos.u.hi - player_dash_effect_offsets[self->unk2 * 2];
+        visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_effect_offsets[self->unk2 * 2];
     }
-    visual_obj->x_pos.i.hi = x_pos;
     visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2 + 1];
 }
 
@@ -1113,8 +1107,6 @@ extern f32 player_wall_kick_spark_offsets[];
 
 void player_spawn_wall_kick_spark(struct PlayerObj* self)
 {
-    s16 x_pos;
-    s32 frame_offset;
     u8 facing;
     struct VisualObj* visual_obj;
     s32* sprite_frames;
@@ -1130,20 +1122,18 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
         visual_obj->unk6 = 0;
         sprite_frames = SP_SPRITE_FRAMES;
         visual_obj->unk38 = 0;
-        frame_offset = sprite_frames[1];
+        visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[1];
         visual_obj->animation_table = D_8011BF40;
         visual_obj->unk40 = 0;
         visual_obj->unk42 = 0x7802;
         visual_obj->unk16 = 0;
-        visual_obj->unk3C = (u8*)sprite_frames + frame_offset;
         facing = self->unk15;
         visual_obj->unk15 = facing;
         if (facing == 0) {
-            x_pos = self->x_pos.u.hi + player_wall_kick_spark_offsets[self->unk2].u.lo;
+            visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_wall_kick_spark_offsets[self->unk2].u.lo;
         } else {
-            x_pos = self->x_pos.u.hi - player_wall_kick_spark_offsets[self->unk2].u.lo;
+            visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_wall_kick_spark_offsets[self->unk2].u.lo;
         }
-        visual_obj->x_pos.i.hi = x_pos;
         visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_wall_kick_spark_offsets[self->unk2].u.hi;
     }
 }
@@ -1151,17 +1141,15 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
 void player_spawn_wall_slide_dust(struct PlayerObj* self)
 {
     struct VisualObj* visual_obj;
-    u8 bg_offset;
 
     visual_obj = find_free_visual_obj();
     if (visual_obj != NULL) {
         visual_obj->active = 0x21;
         visual_obj->id = 0;
-        bg_offset = self->bg_offset;
+        visual_obj->bg_offset = self->bg_offset;
         visual_obj->state = 0;
         visual_obj->unk5 = 0;
         visual_obj->unk6 = 0;
-        visual_obj->bg_offset = bg_offset;
     }
 }
 

@@ -295,7 +295,7 @@ void ready_line_sweep(struct QuadObj* arg0)
     case 1:
         temp_s1 = arg0->link.owner;
         // spawn "READY" text and shadow when blue line reaches center of screen
-        if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi < 3) && (temp_s1->ext.unk_effect.unk15 == 0)) {
+        if ((arg0->x_pos.i.hi >= 0 && arg0->x_pos.i.hi <= 2) && (temp_s1->ext.unk_effect.unk15 == 0)) {
             misc_obj = find_free_misc_obj();
             if (misc_obj != NULL) {
                 misc_obj->active = 1;

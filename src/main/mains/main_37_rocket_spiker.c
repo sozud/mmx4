@@ -184,8 +184,8 @@ void rocket_spiker_boost_launch(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        self->x_accel = FIXED(0.125);
         self->x_speed = 0;
+        self->x_accel = FIXED(0.125);
         self->unk6 = 3;
     }
 }

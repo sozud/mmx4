@@ -81,8 +81,8 @@ void bomb_bat_drop(struct MainObj* self)
 void bomb_bat_drop_start(struct MainObj* self)
 {
     set_animation(self, 1);
-    self->ext.main_32.unk80 = 5;
     self->x_speed = 0;
+    self->ext.main_32.unk80 = 5;
     self->hurt_box = (const u8*)&bomb_bat_body_box;
     self->attack_box = (const u8*)&bomb_bat_body_box;
     self->unk6++;

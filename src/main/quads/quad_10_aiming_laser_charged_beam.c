@@ -38,8 +38,8 @@ void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* ar
     u8 value;
 
     state = &arg0->ext.quad_10;
-    value = state->progress;
     state->counter -= 1;
+    value = state->progress;
     if (value >= 0x78U) {
         state->progress = 0x78;
         arg0->state++;

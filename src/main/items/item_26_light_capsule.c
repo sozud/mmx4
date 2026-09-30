@@ -71,13 +71,13 @@ void light_capsule_wait_player(struct ItemObj* arg0)
     if (dx < 0) {
         dx = -dx;
     }
-    if (dx < 0x41) {
+    if (dx <= 0x40) {
         dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
         if (dy > 0) {
-            close = dy < 0x11;
+            close = dy <= 0x10;
         } else {
             dy = -dy;
-            close = dy < 0x69;
+            close = dy <= 0x68;
         }
         if (close) {
             set_animation(ANIMATED_OBJECT(arg0), 0xA);
@@ -143,8 +143,8 @@ void light_capsule_wait_enter(struct ItemObj* arg0)
         player_start_script_action(0x18, g_Player.unk15);
         light_capsule_spawn_visual(arg0, 0x24, 0);
         x_pos = arg0->x_pos.val;
-        g_Player.item_step = 1;
         g_Player.x_pos.val = x_pos;
+        g_Player.item_step = 1;
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }
 }

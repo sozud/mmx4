@@ -851,7 +851,6 @@ void player_hurt_launch(struct PlayerObj* self)
 void player_hurt_stun(struct PlayerObj* self)
 {
     s8 stun;
-    s8 next_stun;
 
     if (self->input.buttons.held & PLAYER_INPUT_LEFT) {
         self->unk15 = 0;
@@ -872,14 +871,13 @@ void player_hurt_stun(struct PlayerObj* self)
 
     if (stun == -1) {
         player_set_animation(self, 0x25);
-        next_stun = -2;
+        self->stun_timer = -2;
     } else if (self->animation_step.fields.relative_step < 0) {
         player_set_animation(self, 0x24);
-        next_stun = 1;
+        self->stun_timer = 1;
     } else {
         return;
     }
-    self->stun_timer = next_stun;
 }
 
 void player_hurt_slide(struct PlayerObj* self)

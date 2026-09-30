@@ -839,8 +839,8 @@ s32 func_8001E850(u8* arg0, u8 arg1)
             misc->id = 0x20;
             misc->ext.pointer.unk50 = arg0;
             misc->x_pos.i.hi = arg0[0];
-            misc->ext.title_logo.palette_shift_value = arg1;
             arg0++;
+            misc->ext.title_logo.palette_shift_value = arg1;
         }
     } else {
         arg0++;

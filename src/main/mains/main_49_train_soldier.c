@@ -42,10 +42,10 @@ void train_soldier_main(struct MainObj* self)
         } else {
             self->state = 2;
         }
-    } else if (func_8002B1E8(BASE_OBJECT(self), 0x70, 0) != 0) {
-        self->state = 2;
-    } else {
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x70, 0) == 0) {
         is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state = 2;
     }
     return;
 block_12:
@@ -157,8 +157,7 @@ void train_soldier_check_guard(struct MainObj* self)
     u8 timer;
 
     if (self->unk5 == 2) {
-        timer = SP_CUR_MAIN_OBJ->ext.main_49.index + 1;
-        SP_CUR_MAIN_OBJ->ext.main_49.index = timer;
+        timer = ++SP_CUR_MAIN_OBJ->ext.main_49.index;
         if ((timer & 0xFF) == 0x5A) {
             self->unk5 = 5;
             self->unk6 = 0;
@@ -191,7 +190,7 @@ void train_soldier_check_shoot(struct MainObj* arg0)
             distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
         }
 
-        if (distance < 0x81) {
+        if (distance <= 0x80) {
             if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
                 arg0->unk15 = 0;
             } else {
@@ -203,7 +202,7 @@ void train_soldier_check_shoot(struct MainObj* arg0)
                 current->ext.main_49.unk82 = 0x40;
             } else {
                 y_distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
-                if (y_distance >= 0x21) {
+                if (y_distance > 0x20) {
                     SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x80;
                 } else if (y_distance < -0x10) {
                     SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x82;
@@ -234,11 +233,11 @@ void train_soldier_fall_drop(struct MainObj* self)
         } else {
             set_animation(self, 0x18);
         }
+        self->unk6++;
         self->y_speed = 0;
         self->gravity = 0;
         self->x_speed = 0;
         self->x_accel = 0;
-        self->unk6++;
     }
 }
 
@@ -246,10 +245,10 @@ void train_soldier_fall_land(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2) {
-            self->unk5 = 7;
-        } else {
+        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 != 2) {
             self->unk5 = 2;
+        } else {
+            self->unk5 = 7;
         }
         self->unk6 = 0;
         self->air_state = 0;
@@ -277,9 +276,9 @@ void train_soldier_jump_rise(struct MainObj* self)
         SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 4;
         set_animation(self, 9);
         self->unk5 = 3;
-        self->gravity = FIXED(0.2578125);
         self->unk6 = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
         self->air_state = -1;
     }

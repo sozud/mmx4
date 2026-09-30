@@ -60,8 +60,8 @@ void ice_core_shard_hold(struct ShotObj* self)
         self->state = 6;
     } else if (!(value & ice_core_shard_data.masks[self->unk2])) {
         set_animation(self, 0x1E);
-        self->unk2C = FIXED(0.15625);
         self->y_vel.val = 0;
+        self->unk2C = FIXED(0.15625);
         self->state = 5;
     }
     update_on_screen(BASE_OBJECT(self), 0x80, 0x80);

@@ -161,10 +161,10 @@ void magma_dragoon_intro_warning(struct MainObj* self)
 void magma_dragoon_intro_leap(struct MainObj* self)
 {
     if (self->ext.main_65.object->active == 0) {
-        self->y_speed = FIXED(2);
-        self->x_speed = 0;
-        self->x_accel = FIXED(0.0078125);
         self->unk6++;
+        self->x_speed = 0;
+        self->y_speed = FIXED(2);
+        self->x_accel = FIXED(0.0078125);
         set_animation(self, 0xF);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 0);
         self->air_state = 1;
@@ -175,12 +175,12 @@ void magma_dragoon_intro_leap(struct MainObj* self)
 void magma_dragoon_intro_descend(struct MainObj* self)
 {
     if ((self->y_pos.i.hi - background_objects[0].y_pos.i.hi) < 0x20) {
+        self->unk6++;
         self->x_speed = FIXED(-2);
         self->y_speed = FIXED(-2);
-        self->gravity = FIXED(0.1875);
         self->x_accel = 0;
+        self->gravity = FIXED(0.1875);
         self->terrain_box = &magma_dragoon_terrain_box;
-        self->unk6++;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -193,10 +193,10 @@ void magma_dragoon_intro_land(struct MainObj* self)
         set_animation(self, 0x10);
         self->air_state = 0;
         func_8001540C(2, 2, self);
+        self->unk6++;
         self->x_speed = 0;
         self->y_speed = 0;
         self->gravity = 0;
-        self->unk6++;
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -235,11 +235,11 @@ void magma_dragoon_intro_ready(struct MainObj* self)
     if (self->animation_step.fields.relative_step == 0 && update_boss_music_delay() == 0) {
         set_animation(self, 0x12);
         engine_obj.enable_boss = 1;
+        self->unk6++;
         self->unk7E = 3;
         self->x_speed = 0;
         self->y_speed = 0;
         self->gravity = 0;
-        self->unk6++;
     }
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -313,7 +313,7 @@ void magma_dragoon_dive_kick_jump(struct MainObj* self)
 
 void magma_dragoon_dive_kick_rise(struct MainObj* self)
 {
-    if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) >= 0x51) {
+    if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) > 0x50) {
         self->unk6++;
         set_animation(self, 4);
         func_8001540C(2, 1, self);
@@ -481,9 +481,9 @@ void magma_dragoon_leap_center_start(struct MainObj* self)
         var_v1 = FIXED(5);
     }
     self->y_speed = FIXED(3);
-    self->gravity = FIXED(-0.03125);
     self->x_speed = var_v1;
     self->x_accel = 0;
+    self->gravity = FIXED(-0.03125);
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
@@ -541,8 +541,8 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
     self->ext.main_65.leap_frames = 0x40;
     magma_dragoon_face_player(self);
     self->y_speed = FIXED(6);
-    self->gravity = FIXED(0.1875);
     self->x_accel = 0;
+    self->gravity = FIXED(0.1875);
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
@@ -764,10 +764,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FD24);
 void magma_dragoon_death_start(struct MainObj* self)
 {
     self->unk7C = 0x7F;
-    self->unk7E = 0x19;
-    self->invincibility_timer = 0x19;
     self->unk5++;
     self->unk42 &= 0x7FFF;
+    self->unk7E = 0x19;
+    self->invincibility_timer = 0x19;
     set_animation(self, 0xD);
     player_start_script_action(0x14, g_Player.unk15);
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
@@ -840,8 +840,8 @@ void magma_dragoon_death_smoke(struct MainObj* self)
 void magma_dragoon_death_vanish(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        self->unk7C = 0x1E;
         self->unk5++;
+        self->unk7C = 0x1E;
         ZeroObjectState(OBJECT_HEADER(self->ext.main_65.smoke));
     }
 

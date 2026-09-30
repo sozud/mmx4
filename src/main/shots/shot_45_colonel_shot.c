@@ -32,8 +32,6 @@ void colonel_shot_update(struct ShotObj* self)
 void colonel_shot_init(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
-    u8 temp_unk15;
-    s32 temp_y;
 
     weapon = self->unk7C;
     self->unk3C = weapon->unk3C;
@@ -41,16 +39,14 @@ void colonel_shot_init(struct ShotObj* self)
     self->unk42 = weapon->unk42 & 0x7FFF;
     self->bg_offset = weapon->bg_offset;
     self->animation_table = weapon->animation_table;
-    temp_unk15 = weapon->unk15;
+    self->unk15 = weapon->unk15;
     self->unk58.data = NULL;
     self->unk54 = NULL;
     self->unk50.data = NULL;
-    self->unk15 = temp_unk15;
     self->x_pos.val = weapon->x_pos.val;
-    temp_y = weapon->y_pos.val;
+    self->y_pos.val = weapon->y_pos.val;
     self->state++;
     self->unk5 = (s8)(u8)self->unk2 >> 4;
-    self->y_pos.val = temp_y;
     self->unk2 &= 0xF;
 }
 
@@ -221,8 +217,8 @@ void colonel_bolt_start(struct ShotObj* self)
     set_animation(self, 0xF);
     self->unk5C = 5;
     self->unk60 = 9;
-    self->y_vel.val = FIXED(8);
     self->x_vel.val = 0;
+    self->y_vel.val = FIXED(8);
     self->unk28 = 0;
     self->unk2C = 0;
     self->unk58.data = NULL;
@@ -289,7 +285,7 @@ void colonel_shockwave_spread(struct ShotObj* self)
     func_800A858C(object);
     move_object(MOVING_OBJECT(object));
 
-    if ((object->animation_step.fields.event == 1) && (object->timer < 0x10)) {
+    if ((object->animation_step.fields.event == 1) && (object->timer <= 0xF)) {
         shot = find_free_shot_obj();
         if (shot != 0) {
             shot->active = 0x41;

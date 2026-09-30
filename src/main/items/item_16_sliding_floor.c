@@ -19,11 +19,11 @@ void sliding_floor_update(struct ItemObj* arg0)
 void sliding_floor_init(struct ItemObj* arg0)
 {
     arg0->unk16 = 6;
-    arg0->unk68 = &sliding_floor_terrain_box;
-    arg0->x_vel.val = FIXED(1);
     arg0->unk5C = 0;
     arg0->unk61 = 0;
+    arg0->unk68 = &sliding_floor_terrain_box;
     arg0->unk54 = 0;
+    arg0->x_vel.val = FIXED(1);
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;

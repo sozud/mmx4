@@ -27,8 +27,7 @@ void rock_drop_sequence_spawn(struct EffectObj* self)
     u8 index;
     s16 timer;
 
-    timer = self->ext.effect_34.timer - 1;
-    self->ext.effect_34.timer = timer;
+    timer = --self->ext.effect_34.timer;
     if (timer == 0) {
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -67,9 +66,9 @@ void palette_pulse_init(struct EffectObj* self)
     count = 0;
     self->ext.unk_effect.unk14 = 1;
     self->ext.unk_effect.unk15 = 0;
+    self->ext.effect_4.unk16 = 0x20;
     self->state++;
     dst = SP_PALETTE;
-    self->ext.effect_4.unk16 = 0x20;
     dst += 0x5E0 / 2;
     do {
         *dst++ = *src++;

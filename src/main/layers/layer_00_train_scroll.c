@@ -12,10 +12,10 @@ void train_scroll_update(struct LayerObj* arg0)
 void train_scroll_init(struct LayerObj* arg0)
 {
     arg0->unk5 = 4;
+    arg0->state++;
     arg0->bg_offset = 5;
     arg0->unk18.val = FIXED(8);
     arg0->unk16 = 0x78;
-    arg0->state++;
     background_objects[1].unk4D = 2;
     background_objects[1].unk4E = 7;
     background_objects[2].unk4D = 2;
@@ -168,8 +168,8 @@ void train_scroll_section_5(struct LayerObj* arg0)
 
 void train_scroll_update_section(struct LayerObj* arg0)
 {
-    s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
+    s16 player_x = g_Player.x_pos.i.hi;
 
     while (1) {
         if (player_x - train_scroll_lock_positions[offset] < 0) {

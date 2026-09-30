@@ -35,7 +35,7 @@ void ready_text_init(struct MiscObj* self)
     self->state = 1;
     self->bg_offset = -1;
     temp_v1 = ready_text_palettes[self->unk2];
-    self->unk42 = (temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
+    self->unk42 = (temp_v1 % 16) | (((temp_v1 >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
     self->x_pos.i.hi = ready_text_x_positions[self->unk2];
     self->y_pos.i.hi = ready_text_y_positions[self->unk2];
     self->unk16 = ready_text_priorities[self->unk2];
@@ -117,7 +117,7 @@ void ready_text_appear(struct MiscObj* self)
         // cycle palette when "READY" first appears
         ready_text_load_palette(self, ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
         self->ext.ready_text.palette_pos++;
-        if (self->ext.ready_text.palette_pos >= 14) {
+        if (self->ext.ready_text.palette_pos > 13) {
             self->ext.ready_text.palette_pos = 0;
             self->ext.ready_text.palette_cycle_done = 1;
         }
@@ -168,9 +168,9 @@ void ready_text_bounce(struct MiscObj* self)
         } else {
             self->x_vel.val = FIXED(16);
         }
+        self->y_vel.val = 0;
         self->x_pos.i.hi = 160;
         self->y_pos.i.hi = 120;
-        self->y_vel.val = 0;
         engine_obj.unk1E = 1;
         return;
     }

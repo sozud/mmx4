@@ -107,7 +107,6 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     struct MainObj* var_s2;
     struct MiscObj* temp_v0;
     struct MiscObj* obj;
-    u8 temp_v1;
 
     var_s3 = arg1;
     var_s1 = arg0;
@@ -127,10 +126,9 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
                 obj->unk6 = 0;
                 obj->x_pos.val = var_s2->x_pos.val + (get_random() & 3) + arg4;
                 obj->y_pos.val = var_s2->y_pos.val + (get_random() & 3) + arg5;
-                temp_v1 = *var_s3;
+                obj->ext.misc_2.unk58 = (*var_s3);
                 obj->ext.misc_2.owner = var_s2;
                 obj->unk42 = var_s4;
-                obj->ext.misc_2.unk58 = temp_v1;
                 obj->unk3C = ANIMATED_OBJECT(obj->ext.misc_2.owner)->unk3C;
                 obj->animation_table = ANIMATED_OBJECT(obj->ext.misc_2.owner)->animation_table;
                 var_s3 += 1;

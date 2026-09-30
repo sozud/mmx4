@@ -109,11 +109,8 @@ void sigma_ice_fall(struct ShotObj* self)
 
 void sigma_ice_slide(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         set_animation(self, 0x11);
         self->unk6++;
     }
@@ -140,11 +137,8 @@ void sigma_final_shot_ice(struct ShotObj* self)
 
 void sigma_spike_extend(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         self->unk50.data = sigma_spike_box;
         self->timer = 0xD2;
         self->unk6++;
@@ -156,11 +150,8 @@ void sigma_spike_extend(struct ShotObj* self)
 
 void sigma_spike_active(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         self->timer = 0x3C;
         self->unk50.data = NULL;
         self->unk6++;

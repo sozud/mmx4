@@ -24,11 +24,8 @@ void bg_wind_init(struct EffectObj* self)
 
 void bg_wind_delay(struct EffectObj* self)
 {
-    s16 temp_v0;
 
-    temp_v0 = self->ext.effect_9.transition_timer - 1;
-    self->ext.effect_9.transition_timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->ext.effect_9.transition_timer == 0) {
         self->ext.effect_9.direction = 0;
         self->unk5 = 0;
         self->state++;

@@ -27,9 +27,9 @@ void cannon_missile_slow(struct ShotObj* self)
     temp_v0 = self->unk8C.shot_29.timer - 1;
     self->unk8C.shot_29.timer = temp_v0;
     if ((temp_v0 == 0) && (self->unk90.bytes[1] == 0)) {
+        self->x_vel.val = 0;
         self->unk28 = FIXED(0.1875);
         self->unk90.bytes[1] = 1;
-        self->x_vel.val = 0;
         self->y_vel.val = 0;
         self->unk8C.shot_29.unk8D = 0x28;
         self->unk5++;

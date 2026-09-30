@@ -317,8 +317,8 @@ void func_80020DEC(u8* arg0, s16 arg1)
     obj = find_free_unk_obj();
     if (obj != NULL) {
         obj->active = 1;
-        obj->unk2 = -1;
         obj->id = 0;
+        obj->unk2 = -1;
         obj->link.data = D_800F2490;
         obj->x_pos.i.hi = arg1;
     }

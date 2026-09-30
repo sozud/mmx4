@@ -103,14 +103,14 @@ void cyberspace_guide_leave_finish(struct MiscObj* self)
     if (timer == 0) {
         related = self->ext.misc_34.related;
         related->ext.effect_38.active = 1;
-        if (!((u8)engine_obj.checkpoint & 1)) {
+        if (!(engine_obj.checkpoint % 2)) {
             related->ext.effect_38.variant = self->ext.misc_34.variant;
         } else {
             related->ext.effect_38.variant = 3;
         }
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
 }
 

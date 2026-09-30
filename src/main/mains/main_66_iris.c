@@ -108,18 +108,15 @@ void iris_despawn(struct MainObj* self)
 
 void iris_robot_decide(struct MainObj* self)
 {
-    s8 state;
-
     if ((self->ext.main_66.crystal_released == 0) && (--self->ext.main_66.release_countdown == 0)) {
         set_animation(self, 0x20);
         self->collision_data = (const u16*)D_80107E84;
-        state = 5;
+        self->unk5 = 5;
     } else {
         set_animation(self, 1);
         func_8001540C(2, 0xE1, self);
-        state = 3;
+        self->unk5 = 3;
     }
-    self->unk5 = state;
     self->unk6 = 0;
 }
 
@@ -178,12 +175,9 @@ void iris_intro_wait_warning(struct MainObj* self)
 void iris_intro_dialogue(struct MainObj* self)
 {
     s8* state;
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         state = &engine_obj.character_state.bytes[9];
         func_8002217C(0x20, 0xFF, *state);
         *state = 1;
@@ -234,12 +228,9 @@ void iris_intro_wait_transform(struct MainObj* self)
 
 void iris_intro_transform(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 0x1F);
         self->unk7C = 0xC8;
         self->unk6 = 9;
@@ -248,12 +239,9 @@ void iris_intro_transform(struct MainObj* self)
 
 void iris_intro_pose(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 0);
         self->unk6 = 0xA;
     }
@@ -344,9 +332,9 @@ void iris_robot_dash_laser(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         func_8001540C(2, 0xE2, self);
         set_animation(self, 6);
-        i = 0;
         self->x_speed = 0;
         self->unk7C = 0xB4;
+        i = 0;
         do {
             shot = find_free_shot_obj();
             if (shot != NULL) {
@@ -384,10 +372,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
 
 void iris_robot_release_crystal_wait(struct MainObj* self)
 {
-    if (self->hp >= 0x18) {
-        self->ext.main_66.hover_timer = 0xF0;
-    } else {
+    if (self->hp < 0x18) {
         self->ext.main_66.hover_timer = 0xB4;
+    } else {
+        self->ext.main_66.hover_timer = 0xF0;
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -400,13 +388,12 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
     u16* out_x;
     s32 i;
 
-    if (self->unk7C >= 0x11) {
+    if (self->unk7C > 0x10) {
         move_object(MOVING_OBJECT(self));
     }
     animate_object(ANIMATED_OBJECT(self));
 
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         self->y_speed = 0;
         self->ext.main_66.partner->ext.main_66.crystal_released = 1;
@@ -443,7 +430,7 @@ void iris_crystal_drop_fall(struct MainObj* self)
 {
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    if (self->y_pos.i.hi >= 0x1DD) {
+    if (self->y_pos.i.hi > 0x1DC) {
         self->y_pos.i.hi = 0x1DC;
         self->y_speed = 0;
         self->unk6 = 1;
@@ -469,7 +456,7 @@ void iris_crystal_drop_chase(struct MainObj* self)
         } else {
             move_object(MOVING_OBJECT(self));
         }
-    } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
+    } else if (g_Player.x_pos.i.hi - x_pos > 2) {
         move_object(MOVING_OBJECT(self));
     }
 
@@ -498,7 +485,7 @@ void iris_crystal_drop_aim(struct MainObj* self)
         } else {
             move_object(MOVING_OBJECT(self));
         }
-    } else if (g_Player.x_pos.i.hi - x_pos >= 3) {
+    } else if (g_Player.x_pos.i.hi - x_pos > 2) {
         move_object(MOVING_OBJECT(self));
     }
 
@@ -513,13 +500,9 @@ void iris_crystal_drop_aim(struct MainObj* self)
 void iris_crystal_drop_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
-    u32 timer;
-    u8 facing;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
-    if ((timer << 16) == 0) {
+    if ((--self->unk7C << 16) == 0) {
         func_8001540C(2, 0xE3, self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
@@ -534,11 +517,10 @@ void iris_crystal_drop_fire(struct MainObj* self)
             shot->unk40 = self->unk40;
             shot->unk3C = (void*)self->sprite_frames;
             shot->unk42 = self->unk42 & 0x7FFF;
-            facing = self->unk15;
+            shot->unk15 = self->unk15;
             shot->timer = 0x3C;
             shot->unk7C = WEAPON_OBJECT(self);
             shot->state = 6;
-            shot->unk15 = facing;
         }
         self->unk7C = 0x86;
         self->unk6 = 4;

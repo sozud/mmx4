@@ -72,7 +72,7 @@ void caterkiller_crawl_end(struct MainObj* self)
     player_y = g_Player.y_pos.i.hi;
     object_y = self->y_pos.i.hi;
     distance = player_y - object_y;
-    if (distance >= 0 ? distance < 0x1A : object_y - player_y < 0x1A) {
+    if (distance >= 0 ? distance < 0x1A : object_y - player_y <= 0x19) {
         set_animation(self, 1);
         self->unk5 = 3;
         self->unk6 = 0;
@@ -123,8 +123,8 @@ void caterkiller_lunge_end(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->x_speed == 0) {
         distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (distance >= 0) {
-            if (distance < 0x1A) {
+        if (distance > -1) {
+            if (distance <= 0x19) {
                 self->unk6 = 0;
             } else {
                 set_animation(self, 0);
@@ -252,15 +252,15 @@ void caterkiller_climb_cling(struct MainObj* self)
     r = r | func_8002D724(PLAYER_OBJECT(self), tx, ty);
     r = r | func_8002D724(PLAYER_OBJECT(self), tx + self->terrain_box->unk2 * 2, ty);
     if (r == 0 || r == 0x24) {
-        self->unk5 = 4;
         self->ext.main_25.unk88 = 0;
+        self->unk5 = 4;
         self->unk6 = 1;
     }
 }
 
 void caterkiller_wait_above(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0x11) {
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0x10) {
         self->unk5 = 4;
         self->y_pos.u.hi -= 0x18;
     }

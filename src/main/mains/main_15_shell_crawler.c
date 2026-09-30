@@ -49,9 +49,9 @@ void shell_crawler_hop(struct MainObj* self)
             self->unk6++;
             set_animation(self, 3);
             self->unk5 = 2;
-            self->gravity = FIXED(0.2578125);
             self->unk6 = 0;
             self->y_speed = 0;
+            self->gravity = FIXED(0.2578125);
             self->x_accel = 0;
             self->air_state = -1;
         }
@@ -66,11 +66,11 @@ void shell_crawler_land(struct MainObj* self)
         move_with_gravity(ANIMATED_OBJECT(self));
         if (self->collision_flags & 8) {
             set_animation(self, 4);
+            self->unk6++;
             self->y_speed = 0;
             self->gravity = 0;
             self->x_speed = 0;
             self->x_accel = 0;
-            self->unk6++;
         }
     } else if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 1);

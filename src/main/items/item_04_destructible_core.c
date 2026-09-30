@@ -82,7 +82,6 @@ void destructible_core_main(struct ItemObj* arg0)
 {
     s32 temp_s1;
     s32 temp_v0;
-    s32 next_state;
     u32 temp_a0;
     u8 state;
 
@@ -111,7 +110,7 @@ void destructible_core_main(struct ItemObj* arg0)
         }
     }
 
-    if (temp_s1 < 0) {
+    if (temp_s1 <= -1) {
         apply_tile_effect(destructible_core_data.object_ids[arg0->unk2 * 0x10], 0, 0);
         switch (arg0->unk2) {
         case 0:
@@ -134,7 +133,7 @@ void destructible_core_main(struct ItemObj* arg0)
             arg0->unk7C.timer = 0x50;
         }
         state = arg0->state;
-        next_state = state + 1;
+        arg0->state = state + 1;
     } else {
         if (engine_obj.character_state.bytes[1] != 0 && arg0->unk2 == 1) {
             arg0->state += 2;
@@ -146,10 +145,8 @@ void destructible_core_main(struct ItemObj* arg0)
             return;
         }
         state = arg0->state;
-        next_state = state + 2;
+        arg0->state = state + 2;
     }
-
-    arg0->state = next_state;
 }
 
 void destructible_core_destroyed(struct ItemObj* arg0)

@@ -11,9 +11,9 @@ void walrus_ice_init(struct ShotObj* self)
 {
     struct WeaponObj* temp_v1;
 
-    self->unk58.data = (u8*)D_80105FF0;
-    self->unk67 = 0;
     self->state = (u8)self->state + 1 + ((s8)self->unk2 >> 4);
+    self->unk67 = 0;
+    self->unk58.data = (u8*)D_80105FF0;
     self->unk2 = (u8)self->unk2 & 0xF;
     if (self->state < 4) {
         temp_v1 = self->unk7C;
@@ -50,7 +50,6 @@ void walrus_ice_icicle_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
     s32 collision;
-    u16 flags;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -68,11 +67,10 @@ void walrus_ice_icicle_main(struct ShotObj* self)
             ZeroObjectState(OBJECT_HEADER(self));
         }
         if (collision > 0) {
-            flags = self->unk42 | 0x8000;
+            self->unk42 = self->unk42 | 0x8000;
         } else {
-            flags = self->unk42 & 0x7FFF;
+            self->unk42 = self->unk42 & 0x7FFF;
         }
-        self->unk42 = flags;
     }
 }
 
@@ -102,29 +100,22 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
     s16 timer;
     struct MainObj* owner;
     u8 next_state;
-    s8 index;
     u16* table;
-    u16 background_x;
-    u16 offset;
 
     owner = MAIN_OBJECT(self->unk7C);
     if (owner->unk6 != 5) {
-        timer = (u16)self->timer - 1;
-        self->timer = timer;
+        timer = --self->timer;
         if (timer != 0) {
             return;
         }
     }
 
     next_state = self->unk6 + 1;
-    index = self->unk2;
     table = (u16*)owner->ext.main_57.rect;
-    background_x = background_objects[0].unk1E;
-    offset = table[index];
 
+    self->x_pos.i.hi = background_objects[0].unk1E + (table[self->unk2] + 0x10);
     self->timer = 15;
     self->unk6 = next_state;
-    self->x_pos.i.hi = background_x + (offset + 0x10);
 }
 
 void walrus_ice_icicle_fall(struct ShotObj* self)
@@ -162,8 +153,7 @@ void walrus_ice_icicle_stuck(struct ShotObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
     }
-    temp_v0 = (u16)self->timer - 1;
-    self->timer = temp_v0;
+    temp_v0 = --self->timer;
     if (temp_v0 == 0) {
         self->timer = 0x32;
         self->unk6++;
@@ -172,11 +162,8 @@ void walrus_ice_icicle_stuck(struct ShotObj* self)
 
 void walrus_ice_icicle_blink(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         func_8001540C(2, 0x98, self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
@@ -204,7 +191,6 @@ void walrus_ice_ball_main(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
     s32 collision_result;
-    u16 flags;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -220,11 +206,10 @@ void walrus_ice_ball_main(struct ShotObj* self)
         self->unk6 = 0;
     }
     if (collision_result > 0) {
-        flags = self->unk42 | 0x8000;
+        self->unk42 = self->unk42 | 0x8000;
     } else {
-        flags = self->unk42 & 0x7FFF;
+        self->unk42 = self->unk42 & 0x7FFF;
     }
-    self->unk42 = flags;
 }
 
 void walrus_ice_ball_blink(struct ShotObj* self)
@@ -316,7 +301,6 @@ void walrus_ice_shard_main(struct ShotObj* self)
 {
     struct MainObj* owner;
     s32 collision;
-    u16 flags;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -332,11 +316,10 @@ void walrus_ice_shard_main(struct ShotObj* self)
         self->unk6 = 0;
     }
     if (collision > 0) {
-        flags = self->unk42 | 0x8000;
+        self->unk42 = self->unk42 | 0x8000;
     } else {
-        flags = self->unk42 & 0x7FFF;
+        self->unk42 = self->unk42 & 0x7FFF;
     }
-    self->unk42 = flags;
 }
 
 void walrus_ice_shard_launch(struct ShotObj* self)
@@ -385,12 +368,9 @@ void walrus_ice_shard_fly(struct ShotObj* self)
 
 void walrus_ice_shard_stuck(struct ShotObj* self)
 {
-    s16 temp_v0;
 
     animate_object(ANIMATED_OBJECT(self));
-    temp_v0 = self->timer - 1;
-    self->timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->timer == 0) {
         self->timer = 0x32;
         self->unk6++;
     }
@@ -399,11 +379,8 @@ void walrus_ice_shard_stuck(struct ShotObj* self)
 
 void walrus_ice_shard_blink(struct ShotObj* self)
 {
-    s16 timer;
 
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         func_8001540C(2, 0x98, self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
@@ -432,7 +409,6 @@ void walrus_ice_chunk_main(struct ShotObj* self)
 {
     struct ShotObj* owner;
     s32 collision;
-    u16 flags;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -448,11 +424,10 @@ void walrus_ice_chunk_main(struct ShotObj* self)
         self->unk6 = 0;
     }
     if (collision > 0) {
-        flags = self->unk42 | 0x8000;
+        self->unk42 = self->unk42 | 0x8000;
     } else {
-        flags = self->unk42 & 0x7FFF;
+        self->unk42 = self->unk42 & 0x7FFF;
     }
-    self->unk42 = flags;
     CollisionRelated(self);
 }
 
@@ -504,7 +479,6 @@ void walrus_ice_lob(struct ShotObj* self)
 {
     struct BaseObj* target;
     s32 collision;
-    u16 flags;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -520,11 +494,10 @@ void walrus_ice_lob(struct ShotObj* self)
         self->unk6 = 0;
     }
     if (collision > 0) {
-        flags = self->unk42 | 0x8000;
+        self->unk42 = self->unk42 | 0x8000;
     } else {
-        flags = self->unk42 & 0x7FFF;
+        self->unk42 = self->unk42 & 0x7FFF;
     }
-    self->unk42 = flags;
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -541,13 +514,13 @@ void walrus_ice_lob_init(struct ShotObj* object)
         arg0->x_vel.val = -walrus_ice_lob_speeds[index - 3];
     }
     arg0->y_vel.val = FIXED(6.5);
+    arg0->unk28 = 0;
     arg0->unk2C = FIXED(0.2578125);
     arg0->unk5C = 5;
     arg0->unk60 = 6;
     arg0->unk68 = &walrus_ice_lob_terrain_box;
     arg0->unk54 = (const u8*)&walrus_ice_icicle_hurt_box;
     arg0->unk50.data = (const u8*)&walrus_ice_icicle_attack_box;
-    arg0->unk28 = 0;
     arg0->unk16 = 2;
     set_animation(arg0, 0xA);
     arg0->unk5++;

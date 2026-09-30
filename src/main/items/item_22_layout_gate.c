@@ -77,7 +77,6 @@ void layout_gate_init(struct ItemObj* self)
     s32 frame_index;
     const u8* archive;
     s8 state;
-    s8 bg_offset;
 
     self->unk54 = layout_gate_hurt_box;
     self->unk58 = (u8*)D_80108584;
@@ -95,13 +94,12 @@ void layout_gate_init(struct ItemObj* self)
     state = self->state + 1;
     self->sprite_frames = archive + *(const s32*)((unsigned long)frame_index + (unsigned long)archive);
 
-    bg_offset = g_Player.bg_offset;
+    self->bg_offset = g_Player.bg_offset;
     self->animation_table = (u8**)layout_gate_animations;
     self->unk7C.timer = 0xC8;
     self->ext.packed = 0;
     self->state = state;
     self->unk5 = 0;
-    self->bg_offset = bg_offset;
 }
 
 void layout_gate_main(struct ItemObj* arg0)
@@ -184,7 +182,6 @@ void layout_gate_check_layout(struct ItemObj* arg0)
 void layout_gate_spawn_alarm(struct ItemObj* arg0)
 {
     struct EffectObj* effect;
-    s32 y_pos;
 
     effect = find_free_effect_obj();
     if (effect != NULL) {
@@ -192,12 +189,11 @@ void layout_gate_spawn_alarm(struct ItemObj* arg0)
         effect->id = 0x25;
         effect->unk2 = (u8)arg0->unk2;
         effect->x_pos.val = arg0->x_pos.val;
-        y_pos = arg0->y_pos.val;
+        effect->y_pos.val = arg0->y_pos.val;
         effect->ext.effect_37.unk1E = 0x2D;
         effect->ext.effect_37.unk1F = 4;
         effect->ext.effect_37.unk20 = 3;
         effect->ext.effect_37.unk21 = 0x14;
-        effect->y_pos.val = y_pos;
     }
 }
 

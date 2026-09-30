@@ -101,13 +101,10 @@ void gunship_gun_fire(struct MainObj* self)
 
 void gunship_gun_wait(struct MainObj* self)
 {
-    s16 timer;
     s16 reset_timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk6 = 0;
         if (self->ext.main_67.unk8A >= 3) {
             self->unk5 = 2;
@@ -136,12 +133,9 @@ void gunship_missiles_start(struct MainObj* self)
 
 void gunship_missiles_open(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         set_animation(self, 1);
         self->unk7C = 4;
         self->unk6++;
@@ -209,12 +203,9 @@ void gunship_boost_start(struct MainObj* self)
 
 void gunship_boost_wait(struct MainObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 4;
         self->unk6 = 0;
         self->ext.main_67.unk89 = 0;

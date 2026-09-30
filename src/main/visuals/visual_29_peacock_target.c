@@ -10,10 +10,10 @@ void peacock_target_update(struct VisualObj* arg0)
 void peacock_target_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
+    arg0->unk5 = 0;
     arg0->on_screen = 1;
     arg0->unk16 = 2;
     arg0->unk54 = 0x3C;
-    arg0->unk5 = 0;
     arg0->unk56 = 4;
     arg0->unk2C = 0;
     arg0->unk28 = 0;
@@ -35,16 +35,16 @@ void peacock_target_track(struct VisualObj* arg0)
             y_distance = ABS(arg0->y_pos.i.hi, g_Player.y_pos.i.hi);
             set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
             // pursuit/homing missile?
-            if (x_distance >= 17 || y_distance >= 17) {
+            if (x_distance > 16 || y_distance > 16) {
                 arg0->x_vel.val *= 4;
                 arg0->y_vel.val *= 4;
-            } else if (x_distance >= 9 || y_distance >= 9) {
+            } else if (x_distance > 8 || y_distance > 8) {
                 arg0->x_vel.val *= 3;
                 arg0->y_vel.val *= 3;
-            } else if (x_distance >= 5 || y_distance >= 5) {
+            } else if (x_distance > 4 || y_distance > 4) {
                 arg0->x_vel.val *= 2;
                 arg0->y_vel.val *= 2;
-            } else if (x_distance >= 3 || y_distance >= 3) {
+            } else if (x_distance > 2 || y_distance > 2) {
                 arg0->x_vel.val *= 1;
                 arg0->y_vel.val *= 1;
             } else {

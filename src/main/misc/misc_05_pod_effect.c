@@ -10,9 +10,9 @@ void pod_effect_update(struct MiscObj* self)
 void pod_effect_launch_init(struct MiscObj* self)
 {
     set_animation(self, 0xF);
-    self->y_vel.val = FIXED(8.25);
     self->x_vel.val = 0;
     self->unk28 = 0;
+    self->y_vel.val = FIXED(8.25);
     self->unk2C = FIXED(0.375);
     move_object(MOVING_OBJECT(self));
     self->state = 1;
@@ -52,7 +52,7 @@ void pod_effect_animate(struct MiscObj* self)
         }
     } else {
         owner = self->ext.misc_5.owner;
-        if ((owner->air_state != 0) || (owner->state >= 2)) {
+        if ((owner->air_state != 0) || (owner->state > 1)) {
             self->state = 5;
         }
     }

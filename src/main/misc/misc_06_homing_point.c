@@ -28,12 +28,12 @@ void homing_point_move(struct MiscObj* self)
 
     move_object(MOVING_OBJECT(self));
 
-    x_center = self->ext.misc_6.saved_position.position.x;
     x_pos = self->x_pos.i.hi;
+    x_center = self->ext.misc_6.saved_position.position.x;
     if (x_pos >= x_center - 0x10) {
         if (x_pos <= x_center + 0x10) {
-            y_center = self->ext.misc_6.saved_position.position.y;
             y_pos = self->y_pos.i.hi;
+            y_center = self->ext.misc_6.saved_position.position.y;
             if (y_pos >= y_center - 0x10) {
                 if (y_pos <= y_center + 0x10) {
                     self->state = 3;

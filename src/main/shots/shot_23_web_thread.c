@@ -21,8 +21,8 @@ void web_thread_init(struct ShotObj* self)
     }
     self->unk54 = web_thread_hit_box;
     self->unk50.data = web_thread_hit_box;
-    self->unk58.data = web_thread_collision[0];
     self->unk68 = NULL;
+    self->unk58.data = web_thread_collision[0];
     self->unk5C = 3;
     self->unk60 = 3;
     self->unk61 = 0;

@@ -46,24 +46,20 @@ void drone_pod_intro_open(struct MainObj* self)
 
 void drone_pod_intro_fill_health(struct MainObj* self)
 {
-    s16 timer;
     u8 count;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         func_8001540C(0, 0xE, NULL);
         self->unk7C = 3;
     }
-    count = self->hp + 1;
-    self->hp = count;
+    count = ++self->hp;
     if ((s8)count == 0x30) {
         player_end_script_action();
         self->unk5 = 3;
         self->unk6 = 0;
-        self->unk7C = 0xA;
         self->state++;
+        self->unk7C = 0xA;
     }
 }
 
@@ -73,7 +69,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80088EA4);
 void drone_pod_death(struct MainObj* self)
 {
     drone_pod_death_funcs[self->unk5](self);
-    if ((self->unk5 < 3) && (self->state != 0)) {
+    if ((self->unk5 <= 2) && (self->state != 0)) {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     }
 }
@@ -132,8 +128,7 @@ void drone_pod_death_alarm(struct MainObj* self)
         self->unk7E = countdown - 1;
     }
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if ((timer << 0x10) == 0) {
         self->unk5 = (u8)self->unk5 + 1;
     }
@@ -146,8 +141,8 @@ void drone_pod_death_break_wall(struct MainObj* self)
     background_objects[0].unk24 = 0xA00;
     apply_tile_effect(0, 0x9E0, 0x350);
     engine_obj.character_state.bytes[0] = 0;
-    self->unk7C = 0x5A;
     self->on_screen = 0;
+    self->unk7C = 0x5A;
     self->unk7E = 5;
     self->unk5++;
 }
@@ -156,8 +151,7 @@ void drone_pod_death_debris(struct MainObj* self)
 {
     s16 timer;
 
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer == 0) {
         self->unk5++;
         return;
@@ -166,8 +160,7 @@ void drone_pod_death_debris(struct MainObj* self)
         self->y_pos.i.hi = (get_random() & 0x7F) + 0x360;
         spawn_debris(5, &D_801049B0, self);
     }
-    timer = self->unk7E - 1;
-    self->unk7E = timer;
+    timer = --self->unk7E;
     if (timer == 0) {
         func_800AF878(BASE_OBJECT(self), 1, 0x20, 0x20);
         self->unk7E = 5;
@@ -275,14 +268,11 @@ void drone_pod_random_explosion(struct MainObj* self)
 
 void drone_pod_alarm_flash(struct MainObj* self)
 {
-    s16 timer;
 
     if (self->ext.main_70.alarm_flashing != 0) {
         drone_pod_alarm_funcs[self->ext.main_70.alarm_color](self);
     } else {
-        timer = self->ext.main_70.alarm_timer - 1;
-        self->ext.main_70.alarm_timer = timer;
-        if (timer == 0) {
+        if (--self->ext.main_70.alarm_timer == 0) {
             self->ext.main_70.alarm_flashing = 1;
         }
     }
@@ -291,8 +281,8 @@ void drone_pod_alarm_flash(struct MainObj* self)
 void drone_pod_alarm_red(struct MainObj* self)
 {
     if (--self->ext.main_70.flash_timer == 0) {
-        self->ext.main_70.alarm_timer = 0x5A;
         need_palette_load |= 1;
+        self->ext.main_70.alarm_timer = 0x5A;
         self->ext.main_70.flash_timer = 4;
         self->ext.main_70.alarm_color ^= 1;
         g_FilterAmountR = 0;
@@ -308,13 +298,10 @@ void drone_pod_alarm_red(struct MainObj* self)
 
 void drone_pod_alarm_white(struct MainObj* self)
 {
-    s16 timer;
 
-    timer = self->ext.main_70.flash_timer - 1;
-    self->ext.main_70.flash_timer = timer;
-    if (timer == 0) {
-        self->ext.main_70.alarm_timer = 0x28;
+    if (--self->ext.main_70.flash_timer == 0) {
         need_palette_load |= 1;
+        self->ext.main_70.alarm_timer = 0x28;
         self->ext.main_70.flash_timer = 4;
         self->ext.main_70.alarm_color ^= 1;
         g_FilterAmountR = 0;

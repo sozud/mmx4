@@ -92,7 +92,7 @@ void latcher_grab_home(struct MainObj* self)
     distance = g_Player.x_pos.i.hi - self->x_pos.i.hi;
     if (distance >= 0 ? distance < 2 : self->x_pos.i.hi - g_Player.x_pos.i.hi < 2) {
         distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (distance >= 0 ? distance < 2 : self->y_pos.i.hi - g_Player.y_pos.i.hi < 2) {
+        if (distance >= 0 ? distance < 2 : self->y_pos.i.hi - g_Player.y_pos.i.hi <= 1) {
             set_animation(self, 3);
             set_animation(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 3);
             self->unk6++;

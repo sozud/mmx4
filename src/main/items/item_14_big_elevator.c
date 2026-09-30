@@ -14,7 +14,6 @@ void big_elevator_init(struct ItemObj* self)
     s32 frame_index;
     s32 frame_offset;
     s32* archive;
-    u8 bg_offset;
 
     self->active = 0x41;
     self->unk16 = 0x22;
@@ -29,12 +28,11 @@ void big_elevator_init(struct ItemObj* self)
     self->unk54 = NULL;
     self->unk58 = NULL;
     self->sprite_frames = (u8*)archive + frame_offset;
-    bg_offset = g_Player.bg_offset;
+    self->bg_offset = g_Player.bg_offset;
     self->unk61 = 0;
     self->unk75 = 0;
     self->unk67 = 0;
     self->ext.item_2.unk80 = 1;
-    self->bg_offset = bg_offset;
     background_objects[0].unk2C = 0;
     self->unk6 = 0;
     self->unk5 = 0;
@@ -83,7 +81,7 @@ void big_elevator_rise(struct ItemObj* arg0)
         return;
     }
 
-    if (arg0->unk7C.timer <= 0xFFFF) {
+    if (arg0->unk7C.timer < 0x10000) {
         arg0->unk7C.timer += FIXED(0.0625);
     }
 

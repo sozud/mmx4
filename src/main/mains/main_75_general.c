@@ -89,8 +89,8 @@ void general_intro_enter(struct MainObj* self)
             self->ext.main_75.thruster->unk84.shot_55.y = 0;
         }
         if (self->animation_step.fields.relative_step == 0) {
-            self->unk6 = 0;
             self->unk5++;
+            self->unk6 = 0;
             set_animation(self, 3);
             set_animation(self->ext.main_75.thruster, 4);
         }
@@ -158,10 +158,10 @@ void general_intro_finish(struct MainObj* self)
     if (background_objects[0].unk1E == background_objects[0].unk26) {
         player_end_script_action();
         background_objects[0].unk48 = 8;
+        self->state++;
         self->unk5 = 2;
         self->unk6 = 0;
         self->unk7 = 0;
-        self->state++;
     }
 }
 
@@ -391,10 +391,8 @@ void general_punch(struct MainObj* self)
 {
     general_punch_funcs[self->unk6](self);
     if ((self->unk6 >= 3) && (D_80141BD8.unk0 % 10 == 0)) {
-        u8 unk93;
         self->y_pos.i.hi += self->ext.main_75.bob_step;
-        unk93 = --self->ext.main_75.bob_timer;
-        if (unk93 == 0) {
+        if (--self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
             self->ext.main_75.bob_step *= -1;
         }
@@ -413,9 +411,9 @@ void general_orbs_descend(struct MainObj* self)
     func_8001540C(2, 2, NULL);
     self->y_speed = FIXED(-0.5);
     self->unk7C = 0x64;
-    self->ext.main_75.bob_step = 1;
     self->x_speed = 0;
     self->ext.main_75.orbs_ready = 0;
+    self->ext.main_75.bob_step = 1;
     self->ext.main_75.bob_timer = 0xA;
 }
 
@@ -462,10 +460,8 @@ void general_orbs(struct MainObj* self)
 {
     general_orbs_funcs[self->unk6](self);
     if (D_80141BD8.unk0 % 10 == 0) {
-        u8 unk93;
         self->y_pos.i.hi += self->ext.main_75.bob_step;
-        unk93 = --self->ext.main_75.bob_timer;
-        if (unk93 == 0) {
+        if (--self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
             self->ext.main_75.bob_step *= -1;
         }
@@ -605,8 +601,8 @@ void general_slam_leave(struct MainObj* self)
             self->unk5 = 2;
             self->unk6 = 0;
             self->unk7 = 0;
-            self->x_speed = 0;
             self->unk15 ^= 0x40;
+            self->x_speed = 0;
         }
     }
 }
@@ -624,8 +620,8 @@ void general_death_start(struct MainObj* self)
     self->unk7C = 0x7F;
     self->unk7E = 0x19;
     self->ext.main_75.blink_delay = 0x19;
-    g_Player.stun_timer = 0;
     background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
+    g_Player.stun_timer = 0;
     player_start_script_action(0x15, 0);
     self->unk6 = 0;
     self->unk5++;
@@ -653,9 +649,9 @@ void general_death_blink(struct MainObj* self)
         }
     }
     if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
         self->ext.main_75.blink_delay -= 5;
         var_a0 = self->ext.main_75.blink_delay;
-        self->unk42 ^= 0x8000;
         if (var_a0 < 5) {
             var_a0 = 5;
         }

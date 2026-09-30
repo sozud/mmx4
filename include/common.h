@@ -859,7 +859,7 @@ struct Main45Ext {
 };
 
 struct Main48Ext {
-    u8 unk80;
+    s8 unk80;
     u8 unk81;
     s8 unk82;
     s8 unk83;
@@ -1199,7 +1199,7 @@ struct Main75Ext {
     u8 hit_active;
     u8 random_index;
     u8 orbs_ready;
-    s8 bob_timer;
+    u8 bob_timer;
     s8 bob_step;
     u8 blink_delay;
 };
@@ -2468,7 +2468,7 @@ struct Misc34Ext {
 
 struct Misc39Ext {
     void* related;
-    u16 timer;
+    s16 timer;
 };
 
 struct Misc55Ext {
@@ -2478,7 +2478,7 @@ struct Misc55Ext {
 struct Misc52Ext {
     u8 pad50[5];
     u8 timer;
-    s8 unk56;
+    u8 unk56;
     s8 unk57;
 };
 
@@ -2503,7 +2503,7 @@ struct Misc30Ext {
 struct Misc53Ext {
     u8 pad50[4];
     struct EffectObj* effect;
-    u16 timer;
+    s16 timer;
     u8 movement_timer;
     u8 pad5B;
     s8 x_step;
@@ -3483,7 +3483,7 @@ struct Effect8Ext {
 };
 
 struct Effect9Ext {
-    u16 transition_timer;
+    s16 transition_timer;
     u16 movement_timer;
     s16 direction;
     u16 target_x;

@@ -220,8 +220,8 @@ void train_tunnel_idle(struct LayerObj* arg0)
 
 void train_tunnel_update_section(struct LayerObj* arg0)
 {
-    s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
+    s16 player_x = g_Player.x_pos.i.hi;
 
     while (1) {
         if (player_x - train_tunnel_lock_positions[offset] < 0) {

@@ -74,10 +74,10 @@ void dragon_shot_bomb_fall(struct ShotObj* self)
     update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
 
     if (self->unk70 & 8) {
-        self->unk60 = 5;
-        self->unk68 = 0;
-        self->unk50.data = dragon_shot_burn_box;
         self->unk5 = self->unk5 + 1;
+        self->unk68 = 0;
+        self->unk60 = 5;
+        self->unk50.data = dragon_shot_burn_box;
         set_animation(self, 0xB);
 
         if (!(self->unk70 & 3)) {

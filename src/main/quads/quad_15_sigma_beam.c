@@ -26,7 +26,7 @@ void sigma_beam_extend(struct QuadObj* arg0)
 {
     arg0->unk28.i.hi += 4;
     arg0->unk30.i.hi += 4;
-    if (arg0->unk28.i.hi >= 0x41) {
+    if (arg0->unk28.i.hi > 0x40) {
         arg0->ext.unk_ext4.unk3C = 0x2D;
         arg0->unk5++;
     }
@@ -44,7 +44,7 @@ void sigma_beam_sweep(struct QuadObj* arg0)
         arg0->ext.unk_ext4.unk3C = 0x46U;
         return;
     }
-    if (!(D_80141BD8.unk0 & 3)) {
+    if (!(D_80141BD8.unk0 % 4)) {
         obj = find_free_shot_obj();
         if (obj != NULL) {
             obj->active = 0x41;
@@ -61,7 +61,7 @@ void sigma_beam_fade(struct QuadObj* arg0)
 {
     struct ShotObj* temp_v0;
 
-    if (!(D_80141BD8.unk0 & 3)) {
+    if (!(D_80141BD8.unk0 % 4)) {
         temp_v0 = find_free_shot_obj();
         if (temp_v0 != NULL) {
             temp_v0->active = 0x41;
@@ -72,8 +72,8 @@ void sigma_beam_fade(struct QuadObj* arg0)
     }
     if (arg0->ext.unk_ext4.unk3C == 0) {
         arg0->unk14.i.hi++;
-        arg0->unk1C.i.hi--;
         arg0->unk2C.i.hi++;
+        arg0->unk1C.i.hi--;
         arg0->unk24.i.hi--;
         if (arg0->unk14.i.hi == arg0->unk1C.i.hi) {
             arg0->state = 2;

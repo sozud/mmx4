@@ -35,16 +35,16 @@ void jet_stingray_flyby_attack_rise(struct MainObj* self)
 {
     if (self->unk2 == 1) {
         if (self->y_pos.val < background_objects[self->bg_offset].y_pos.val + FIXED(64)) {
-            self->y_speed = 0;
             self->unk6 = (u8)self->unk6 + 1;
+            self->y_speed = 0;
             set_animation(self, 2);
             self->unk7C = 0;
             self->unk7E = 4;
         }
     } else {
+        self->unk6 = (u8)self->unk6 + 1;
         self->unk7C = 0;
         self->unk7E = 4;
-        self->unk6 = (u8)self->unk6 + 1;
         set_animation(self, 2);
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -79,8 +79,7 @@ void jet_stingray_flyby_attack_fire(struct MainObj* self)
         if (self->animation_step.fields.event == 2) {
             self->animation_step.fields.event = 0;
             self->unk7C = 10;
-            remaining = (u16)self->unk7E - 1;
-            self->unk7E = remaining;
+            remaining = --self->unk7E;
             if (remaining == 0) {
                 self->unk6++;
                 set_animation(self, 3);
@@ -117,7 +116,7 @@ void jet_stingray_flyby_attack_align(struct MainObj* self)
         if (y_diff <= 0xFFFFF) {
             goto set_state;
         }
-    } else if (self->y_pos.val - g_Player.y_pos.val <= 0xFFFFF) {
+    } else if (self->y_pos.val - g_Player.y_pos.val < 0x100000) {
     set_state:
         self->unk5 = 1;
         self->unk6 = 0;
@@ -139,11 +138,11 @@ void jet_stingray_flyby_charge_windup(struct MainObj* self)
         set_animation(self, 4);
     }
     if (self->animation_step.fields.event != 0) {
+        self->unk6++;
         self->unk7 = 0;
         self->unk7C = 0;
         self->ext.main_55.unk85 = 0;
         self->ext.main_55.unk86 = 0;
-        self->unk6++;
     }
 }
 

@@ -10,14 +10,14 @@ void ride_armor_punch_update(struct WeaponObj* arg0)
 void ride_armor_punch_init(struct WeaponObj* arg0)
 {
     arg0->state = 1;
-    arg0->unk64 = 1;
-    arg0->unk5C = 1;
-    arg0->unk60 = 3;
     arg0->on_screen = 0;
     arg0->bg_offset = 0;
     arg0->unk68 = NULL;
     arg0->unk54 = 0;
     arg0->unk50 = 0;
+    arg0->unk64 = 1;
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
     arg0->unk88.half = 6;
     ride_armor_punch_main(arg0);
 }
@@ -34,8 +34,7 @@ void ride_armor_punch_main(struct WeaponObj* self)
     self->y_pos.i.hi = (s16)(u16)owner->y_pos.i.hi;
     self->animation_step.fields.event = (s8)((u8)owner->animation_step.fields.event >> 4);
     if (self->unk2 != 0) {
-        timer = self->unk88.half - 1;
-        self->unk88.half = timer;
+        timer = --self->unk88.half;
         if ((timer << 16) == 0) {
             self->unk88.half = 6;
             self->unk64 = (u8)self->unk64 + 1;

@@ -85,7 +85,7 @@ void surface_hopper_crawl_attach(struct MainObj* self)
     s32 animation;
     struct MainObj* current;
 
-    if (self->animation_step.fields.relative_step < 0) {
+    if (self->animation_step.fields.relative_step <= -1) {
         current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_19.animation_index < 2) {
             animation = 9;

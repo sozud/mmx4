@@ -17,8 +17,8 @@ void background_dragon_spawn_trail(struct PlayerObj* self, s8 arg1)
 
     visual_obj = find_free_visual_obj();
     if (visual_obj != 0) {
-        visual_obj->active = 0x41;
         visual_obj->unk50 = self;
+        visual_obj->active = 0x41;
         visual_obj->id = 0x0A;
         visual_obj->unk2 = arg1;
         visual_obj->state = 0;
@@ -65,13 +65,13 @@ void background_dragon_fireball_begin(struct MainObj* self)
     s32 x_velocity;
 
     x_pos_hi = self->x_pos.i.hi;
-    if (x_pos_hi >= 0xC91) {
+    if (x_pos_hi > 0xC90) {
         set_animation(self, 0);
         self->unk5 = 0xC;
         self->unk6 = 0;
         update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     } else {
-        if (x_pos_hi >= 0xC41) {
+        if (x_pos_hi > 0xC40) {
             self->unk15 = 0x40;
         }
         self->y_pos.val = FIXED(368);
@@ -296,7 +296,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_800415B0);
 
 void background_dragon_sequence_bob(struct MainObj* self)
 {
-    s16 count;
 
     if (self->animation_step.fields.event == 0) {
         self->y_speed = 0;
@@ -311,9 +310,7 @@ void background_dragon_sequence_bob(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step < 0) {
         set_animation(self, 0);
-        count = self->unk7E + 1;
-        self->unk7E = count;
-        if (count >= 3) {
+        if (++self->unk7E > 2) {
             self->unk7E = 0;
             if (self->ext.main_0.exit_mode != 0) {
                 self->unk5 = 8;
@@ -371,11 +368,11 @@ void background_dragon_fly_to_route_start(struct MainObj* self)
 
     temp_a0 = self->x_pos.val - background_dragon_perch_points[self->unk2 >> 1][0];
     if (temp_a0 >= 0) {
-        if (temp_a0 > 0x1FFFF) {
+        if (temp_a0 >= 0x20000) {
             update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
             return;
         }
-    } else if (background_dragon_perch_points[self->unk2 >> 1][0] - self->x_pos.val > 0x1FFFF) {
+    } else if (background_dragon_perch_points[self->unk2 >> 1][0] - self->x_pos.val >= 0x20000) {
         update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
         return;
     }
@@ -386,7 +383,7 @@ void background_dragon_fly_to_route_start(struct MainObj* self)
             update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
             return;
         }
-    } else if (background_dragon_perch_points[self->unk2 >> 1][1] - self->y_pos.val > 0x1FFFF) {
+    } else if (background_dragon_perch_points[self->unk2 >> 1][1] - self->y_pos.val >= 0x20000) {
         update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
         return;
     }
@@ -399,8 +396,6 @@ void background_dragon_fly_offscreen(struct MainObj* self)
 {
     s32 target_x;
     s32 target_y;
-    s32 x_velocity;
-    s32 y_velocity;
 
     switch (self->unk2) {
     case 0:
@@ -418,15 +413,13 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         angle_to_point(OBJECT_HEADER(self), target_x, target_y));
 
     if (self->ext.main_0.exit_mode == 2) {
-        x_velocity = self->x_speed * 2;
-        y_velocity = self->y_speed * 2;
+        self->x_speed = self->x_speed * 2;
+        *(volatile s32*)&self->y_speed = self->y_speed * 2;
     } else {
-        x_velocity = self->x_speed * 4;
-        y_velocity = self->y_speed * 4;
+        self->x_speed = self->x_speed * 4;
+        *(volatile s32*)&self->y_speed = self->y_speed * 4;
     }
 
-    self->x_speed = x_velocity;
-    *(volatile s32*)&self->y_speed = y_velocity;
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 
@@ -485,18 +478,13 @@ void background_dragon_fly_to_staging_position(struct MainObj* self)
 
 void background_dragon_attach_to_background(struct MainObj* self)
 {
-    s32 y_base;
-    s32 y_offset;
-
     set_animation(self, 0);
     self->x_pos.val = background_objects[0].x_pos.val + background_dragon_staging_offsets[self->unk2].x;
-    y_base = background_objects[0].y_pos.val;
-    y_offset = background_dragon_staging_offsets[self->unk2].y;
+    self->y_pos.val = background_objects[0].y_pos.val + background_dragon_staging_offsets[self->unk2].y;
     self->unk5 = 6;
     self->unk15 = 0;
     self->bg_offset = 0;
     self->ext.main_0.background_relative = 1;
-    self->y_pos.val = y_base + y_offset;
 }
 
 void background_dragon_noop(struct MainObj* self)

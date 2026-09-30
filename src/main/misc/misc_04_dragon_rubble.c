@@ -53,7 +53,7 @@ void dragon_rubble_init(struct MiscObj* self)
     self->animation_step.fields.frame_index = self->unk2;
     self->state++;
     owner_count = owner->unk7C;
-    if (owner_count >= 0x15) {
+    if (owner_count > 0x14) {
         ZeroObjectState(OBJECT_HEADER(self));
         return;
     }

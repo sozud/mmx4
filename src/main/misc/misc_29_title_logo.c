@@ -18,8 +18,8 @@ extern u32* title_animations[];
 // TitleLogoUpdate state 0
 void title_logo_init(struct MiscObj* self)
 {
-    self->unk3C = SP_TITLE_FRAMES;
     self->unk40 = 0x600;
+    self->unk3C = SP_TITLE_FRAMES;
     self->animation_table = title_animations;
     self->bg_offset = -1;
     self->unk15 = 0;
@@ -28,10 +28,10 @@ void title_logo_init(struct MiscObj* self)
         self->unk42 = 0x7804;
         self->animation_step.fields.frame_index = 0x1C;
         if (!(self->unk2 & 0x10)) {
+            self->x_pos.val = 0;
             self->y_pos.val = FIXED(240);
             self->x_vel.val = FIXED(8);
             self->y_vel.val = FIXED(6);
-            self->x_pos.val = 0;
             self->ext.title_logo.palette_shift_speed = title_logo_star_delays[self->unk2];
             self->unk16 = 0;
             self->state++;

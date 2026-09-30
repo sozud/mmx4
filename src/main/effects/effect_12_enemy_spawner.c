@@ -12,12 +12,12 @@ void enemy_spawner_update(struct EffectObj* self)
 
 void enemy_spawner_init(struct EffectObj* self)
 {
-    self->ext.effect_12.timer = 0x60;
     self->ext.effect_12.children[0] = NULL;
     self->ext.effect_12.children[1] = NULL;
     self->ext.effect_12.children[2] = NULL;
     self->ext.effect_12.children[3] = NULL;
     self->ext.effect_12.cooldown = 0;
+    self->ext.effect_12.timer = 0x60;
     self->ext.effect_12.spawned = 0;
     self->ext.effect_12.child_count = (u8)self->unk2 >> 4;
     self->ext.effect_12.child_id = enemy_spawner_child_ids[(u8)self->unk2 & 0xF];

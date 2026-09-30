@@ -48,10 +48,10 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 
     center0 = object0->x_pos.i.hi + initial_bounds0->unk0;
     center1 = object1->x_pos.i.hi + initial_bounds1->unk0;
-    if ((center0 - center1) >= 0) {
-        distance = center0 - center1;
-    } else {
+    if ((center0 - center1) < 0) {
         distance = center1 - center0;
+    } else {
+        distance = center0 - center1;
     }
 
     bounds0 = object0->collision_bounds;

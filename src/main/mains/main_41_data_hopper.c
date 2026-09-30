@@ -112,10 +112,10 @@ void data_hopper_land(struct MainObj* self)
     }
     if (self->animation_step.fields.relative_step == 0) {
         func_80062650(self);
-        if (self->ext.main_41.unk80 != 0) {
-            self->unk5 = 5;
-        } else {
+        if (self->ext.main_41.unk80 == 0) {
             self->unk5 = 2;
+        } else {
+            self->unk5 = 5;
         }
         self->unk6 = 0;
         return;

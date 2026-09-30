@@ -84,7 +84,6 @@ void sigma_fx_oneshot(struct VisualObj* self)
 void sigma_fx_electric(struct VisualObj* self)
 {
     u8 i;
-    u8 shot_type;
     s8 state;
     struct ShotObj* shot;
 
@@ -99,10 +98,9 @@ void sigma_fx_electric(struct VisualObj* self)
                 if (shot != 0) {
                     shot->active = 0x41;
                     shot->id = 0x2E;
-                    shot_type = self->unk2;
+                    shot->unk2 = self->unk2 + 1;
                     shot->timer = i;
                     shot->unk7C = WEAPON_OBJECT(self);
-                    shot->unk2 = shot_type + 1;
                 }
                 i += 1;
             } while (i < 2);

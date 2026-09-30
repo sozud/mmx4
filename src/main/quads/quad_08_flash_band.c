@@ -42,8 +42,8 @@ void ready_line_nop(void);
 
 void flash_band_init(struct QuadObj* arg0)
 {
+    arg0->active |= 0x82;
     arg0->unk34 = 3;
-    arg0->ext.ready_line.x_vel.val = FIXED(4);
     arg0->unk36 = 0;
     arg0->bg_offset = 0;
     arg0->unk14.val = 0;
@@ -54,7 +54,7 @@ void flash_band_init(struct QuadObj* arg0)
     arg0->unk28.val = 0;
     arg0->unk2C.val = 0;
     arg0->unk30.val = 0;
-    arg0->active |= 0x82;
+    arg0->ext.ready_line.x_vel.val = FIXED(4);
     arg0->state++;
     quad_is_on_screen(arg0);
 }

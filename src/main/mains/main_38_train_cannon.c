@@ -65,8 +65,8 @@ void train_cannon_main(struct MainObj* self)
         self->ext.main_38.unk8C = 1;
         self->unk7C = 0x20;
         self->unk7E = 5;
-        self->on_screen = 0;
         self->state++;
+        self->on_screen = 0;
         return;
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x50, 0x40) == 0) {

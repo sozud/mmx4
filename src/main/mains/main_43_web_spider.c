@@ -60,8 +60,8 @@ void web_spider_intro_setup(struct MainObj* self)
         if (engine_obj.stage != 0xC) {
             self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
         } else {
-            archive = SP_MENU_FRAMES;
             self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            archive = SP_MENU_FRAMES;
             offset = archive[4];
             self->unk42 = 0x7888;
             self->sprite_frames = (u8*)archive + offset;
@@ -122,12 +122,11 @@ void web_spider_intro_descend(struct MainObj* self)
         }
     } else {
         move_with_gravity(ANIMATED_OBJECT(self));
-        timer = (u16)self->unk7C - 1;
-        self->unk7C = timer;
+        timer = --self->unk7C;
         if (timer == 0) {
-            self->unk5 = 6;
             self->y_speed = 0;
             self->gravity = 0;
+            self->unk5 = 6;
             self->unk6 = 0;
             self->unk7 = 0;
             self->unk7C = 2;
@@ -167,8 +166,7 @@ void web_spider_intro_fill_health(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if ((update_boss_music_delay() == 0) && (self->animation_step.fields.relative_step == 0)) {
         if (self->hp < 0x30) {
-            timer = (u16)self->unk7C - 1;
-            self->unk7C = timer;
+            timer = --self->unk7C;
             if (timer == 0) {
                 func_8001540C(0, 0xE, 0);
                 self->unk7C = 2;
@@ -285,8 +283,8 @@ void web_spider_shoot_fire(struct AnimatedObj* self)
         }
     } else {
         self->y_vel.val = FIXED(3.5);
-        self->unk5 = 2;
         self->unk2C = 0;
+        self->unk5 = 2;
         self->unk6 = 1;
         self->unk7 = 1;
         set_animation(self, 0x1F);
@@ -453,9 +451,9 @@ void web_spider_fall(struct MainObj* self)
 void web_spider_fall_start(struct MainObj* self)
 {
     self->unk6 = 1;
-    self->y_speed = FIXED(4);
     self->x_speed = 0;
     self->x_accel = 0;
+    self->y_speed = FIXED(4);
     self->gravity = FIXED(0.25);
     set_animation(self, 0xD);
     self->terrain_box = &D_800FF5B0;
@@ -521,8 +519,8 @@ void web_spider_fall_rethread(struct MainObj* self)
         shot = self->ext.main_43.shot;
         if (shot->unk5 == 0) {
             self->y_speed = FIXED(3.5);
-            self->unk5 = 2;
             self->gravity = 0;
+            self->unk5 = 2;
             self->unk6 = 1;
             self->unk7 = 1;
             set_animation(self, 0x1F);
@@ -702,7 +700,7 @@ void web_spider_death_explode(struct MainObj* self)
         if (temp >= 0x1A) {
             self->ext.main_43.flash_timer = 0;
         }
-        self->unk7E = self->ext.main_43.flash_timer < 6 ? 5 : self->ext.main_43.flash_timer;
+        self->unk7E = self->ext.main_43.flash_timer <= 5 ? 5 : self->ext.main_43.flash_timer;
     }
 }
 

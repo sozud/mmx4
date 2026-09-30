@@ -78,7 +78,7 @@ void train_boss_turret_start_idle(struct MainObj* self)
 void train_boss_turret_arrive(struct MainObj* self)
 {
     if (self->unk6 == 0) {
-        if (self->x_pos.i.hi >= 0x1AA1) {
+        if (self->x_pos.i.hi > 0x1AA0) {
             self->unk7C = 0x78;
             self->unk5 = 3;
             self->unk6 = 0;

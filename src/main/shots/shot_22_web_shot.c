@@ -64,12 +64,12 @@ void web_shot_pin_player(struct ShotObj* self)
 
 void web_shot_catch(struct ShotObj* self)
 {
+    self->unk5++;
     self->timer = 0x78;
     self->unk2C = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
     self->x_vel.val = 0;
-    self->unk5++;
     web_shot_pin_player(self);
     self->unk90.val = 0x30;
 }
@@ -82,7 +82,7 @@ void web_shot_hold(struct ShotObj* self)
     web_shot_pin_player(self);
     temp_v1 = self->timer - func_8002BAA4();
     self->timer = temp_v1;
-    if (temp_v1 < 0) {
+    if (temp_v1 <= -1) {
         self->timer = 0x1E;
         self->unk5++;
         g_Player.stun_timer = 0;
@@ -102,11 +102,8 @@ void web_shot_hold(struct ShotObj* self)
 
 void web_shot_fade(struct ShotObj* self)
 {
-    s16 temp_v0;
 
-    temp_v0 = self->timer - 1;
-    self->timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--self->timer == 0) {
         self->on_screen = 0;
         self->state = 2;
         self->unk5 = 0;

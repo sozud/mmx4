@@ -19,7 +19,6 @@ void title_quad_init(struct QuadObj* arg0)
     struct QuadObj* entity = arg0;
     u16* ptr;
 #ifndef VERSION_JP
-    u16 temp;
 #endif
 
     entity->bg_offset = -1;
@@ -82,12 +81,11 @@ void title_quad_init(struct QuadObj* arg0)
     }
     }
 #else
-    temp = title_quad_palette[0];
+    entity->unk34 = title_quad_palette[0];
     entity->unk36 = 0x10;
     entity->state = 3;
     entity->ext.title_quad.unk38 = 0x14;
     entity->ext.title_quad.unk43 = 0; // 0x43
-    entity->unk34 = temp;
 #endif
 }
 
@@ -110,8 +108,8 @@ void title_quad_split(struct QuadObj* self)
         }
     } else {
         velocity = FIXED(8);
-        self->unk20.val += velocity;
         self->unk18.val += velocity;
+        self->unk20.val += velocity;
         if (self->unk20.i.hi > self->unk28.i.hi) {
             self->state = 2;
             return;

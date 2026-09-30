@@ -59,7 +59,7 @@ void boss_death_fx_spawn_ray(struct EffectObj* self)
 {
     struct QuadObj* quad;
 
-    if (!(get_random_nonzero() & 1)) {
+    if (!(get_random_nonzero() % 2)) {
         quad = find_free_quad_obj();
         if (quad != NULL) {
             quad->active = 1;

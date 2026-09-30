@@ -61,8 +61,8 @@ void item_carrier_approach_fly(struct MainObj* self)
         distance = g_Player.x_pos.val - self->x_pos.val;
     }
     if (distance <= FIXED(64)) {
-        self->x_speed = 0;
         self->unk6++;
+        self->x_speed = 0;
         set_animation(self, 1);
     }
 }
@@ -85,11 +85,11 @@ void item_carrier_hover(struct MainObj* self)
 
 void item_carrier_hover_start(struct MainObj* self)
 {
+    self->unk6++;
     self->unk7C = 0x12C;
     self->unk7E = 0xA;
     self->x_speed = 0;
     self->y_speed = 0x2000;
-    self->unk6++;
     set_animation(self, 3);
 }
 
@@ -105,8 +105,7 @@ void item_carrier_hover_bob(struct MainObj* self)
     } else {
         self->unk7E = timer - 1;
     }
-    countdown = self->unk7C - 1;
-    self->unk7C = countdown;
+    countdown = --self->unk7C;
     if ((countdown << 0x10) == 0) {
         self->unk5 = 3;
         self->unk6 = 0;
@@ -134,11 +133,11 @@ void item_carrier_drop(struct MainObj* self)
 
 void item_carrier_drop_start(struct MainObj* self)
 {
+    self->x_speed = 0;
     self->y_speed = 0x40000;
     self->gravity = 0x4200;
     self->terrain_box = item_carrier_hitboxes;
     self->hurt_box = &item_carrier_capsule_hurtbox;
-    self->x_speed = 0;
     self->x_accel = 0;
     self->attack_box = NULL;
     self->air_state = -1;
@@ -170,9 +169,9 @@ void item_carrier_drop_fall(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->collision_flags & 8) {
+        self->unk6++;
         self->gravity = 0;
         self->air_state = 0;
-        self->unk6++;
         set_animation(self, 4);
     }
     CollisionRelated(PLAYER_OBJECT(self));
@@ -237,8 +236,8 @@ void item_carrier_leave_side_turn(struct MainObj* self)
         if (self->unk15 != 0) {
             velocity = FIXED(2);
         }
-        self->x_speed = velocity;
         self->y_speed = FIXED(0.14453125);
+        self->x_speed = velocity;
         set_animation(self, 0);
         self->unk7C = 0x258;
     }

@@ -48,7 +48,7 @@ void bg_zone_controller_e_zone_0_scroll(struct EffectObj* self)
     if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
         diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
         self->ext.effect_22.unk18 = diff;
-        if (diff >= 0) {
+        if (diff > -1) {
             if (diff >= 8) {
                 self->ext.effect_22.unk18 = 8;
             }
@@ -64,11 +64,11 @@ void bg_zone_controller_e_zone_0_scroll(struct EffectObj* self)
             if ((s8)sum < 8) {
                 return;
             }
-            if (++self->ext.effect_22.unk16 >= 3) {
+            if (++self->ext.effect_22.unk16 > 2) {
                 self->ext.effect_22.unk16 = 0;
             }
         } else {
-            if ((s8)sum >= -7) {
+            if ((s8)sum > -8) {
                 return;
             }
             if (--self->ext.effect_22.unk16 < 0) {
@@ -175,8 +175,8 @@ void bg_zone_controller_e_idle(struct EffectObj* self)
 
 void bg_zone_controller_e_update_zone(struct EffectObj* self)
 {
-    s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
+    s16 player_x = g_Player.x_pos.i.hi;
     while (1) {
         if (player_x - bg_zone_controller_e_zone_bounds[offset] < 0) {
             break;

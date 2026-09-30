@@ -37,8 +37,8 @@ void plasma_orb_linger(struct WeaponObj* arg0)
             arg0->unk50 = 0;
             arg0->unk5 = 1;
         } else {
-            sub_timer = arg0->ext.weapon_20.timer;
             arg0->ext.weapon_20.lifetime = timer - 1;
+            sub_timer = arg0->ext.weapon_20.timer;
             if (sub_timer == 0) {
                 arg0->ext.weapon_20.timer = 4;
                 arg0->unk64 = (u8)arg0->unk64 + 1;
