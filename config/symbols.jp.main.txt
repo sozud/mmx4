@@ -4715,7 +4715,6 @@ boss_warning_quad_open = 0x800D4E14;
 boss_warning_quad_hold = 0x800D4FB8;
 boss_warning_quad_close = 0x800D4FD4;
 func_800D5144 = 0x800D5178;
-func_800D514C = 0x800D5180;
 boss_warning_quad_despawn = 0x800D5244;
 boss_warning_quad_update = 0x800D5264;
 boss_death_shard_init = 0x800D52A0;

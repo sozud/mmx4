@@ -1,7 +1,102 @@
 // MainObj, main_object_update_funcs[56]
-// 8006FD50..80072194
+// 8006FABC..80072194
 #include "common.h"
 #include "func_tables.h"
+
+// jet_stingray_flyby_init
+
+void jet_stingray_flyby_wait_on_screen(struct MainObj* self);
+
+// jet_stingray_flyby_enter_straight
+
+// jet_stingray_flyby_enter_aimed
+
+void jet_stingray_flyby_enter(struct MainObj* self);
+
+// jet_stingray_flyby_cruise
+
+void jet_stingray_flyby_attack_rise(struct MainObj* self);
+
+void jet_stingray_flyby_attack_fire(struct MainObj* self);
+
+void jet_stingray_flyby_attack_end(struct MainObj* self);
+
+void jet_stingray_flyby_attack_align(struct MainObj* self);
+
+void jet_stingray_flyby_attack(struct MainObj* self);
+
+void jet_stingray_flyby_charge_windup(struct MainObj* self);
+
+// jet_stingray_flyby_charge_fire
+
+void jet_stingray_flyby_charge(struct MainObj* self);
+
+void jet_stingray_flyby_drift(struct MainObj* self);
+
+// jet_stingray_flyby_destroyed
+
+void jet_stingray_flyby_main(struct MainObj* self);
+
+void jet_stingray_flyby_despawn(struct MainObj* self)
+{
+    engine_obj.enable_boss = 0;
+    despawn_object_permanently(OBJECT_HEADER(self));
+}
+
+void jet_stingray_flyby_update(struct MainObj* self)
+{
+    jet_stingray_flyby_state_funcs[self->state](self);
+}
+
+// jet_stingray_spawn_water
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_8006FB20);
+struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual != 0) {
+        visual->active = 0x41;
+        visual->id = 0x17;
+        visual->unk2 = 2;
+        visual->x_pos.val = self->x_pos.val;
+        visual->y_pos.val = self->y_pos.val - FIXED(8);
+        visual->unk40 = self->unk40;
+        visual->animation_table = ANIMATED_OBJECT(self)->animation_table;
+        visual->unk3C = ANIMATED_OBJECT(self)->unk3C;
+        visual->unk15 = self->unk15;
+        visual->bg_offset = self->bg_offset;
+        visual->unk50 = PLAYER_OBJECT(self);
+        func_8001540C(2, 0xAE, self);
+        return visual;
+    }
+    return 0;
+}
+
+s32 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
+{
+    s16 temp_a1;
+    s16 temp_a2;
+    s32 temp_v0;
+    u8 tile;
+    s32 temp_v1;
+    s32 var_v0;
+
+    temp_a1 = self->x_pos.u.hi + arg1;
+    temp_a2 = self->y_pos.u.hi + arg2;
+    temp_v0 = ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(
+        self, temp_a1, temp_a2);
+    tile = temp_v0;
+    var_v0 = 1;
+    if ((u32)((temp_v0 - 0x10) & 0xFF) >= 9U) {
+        temp_v1 = tile;
+        if (temp_v1 == 0x38) {
+            return (self->y_pos.i.hi >= 0x121) * 2;
+        }
+        var_v0 = -(temp_v1 == 0x24) & 3;
+        return var_v0;
+    }
+    return var_v0;
+}
 
 extern struct Unk_unk68 jet_stingray_ambush_attack_box;
 extern struct Unk_unk68 jet_stingray_ambush_drop_attack_box;
