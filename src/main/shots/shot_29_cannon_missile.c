@@ -115,3 +115,9 @@ void (*cannon_missile_state_funcs[])(struct ShotObj*) = {
     cannon_missile_despawn,
     cannon_missile_idle,
 };
+
+void (*cannon_missile_step_funcs[3])(struct ShotObj*) = {
+    func_8009F89C,
+    cannon_missile_slow,
+    cannon_missile_track,
+};

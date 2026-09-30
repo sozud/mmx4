@@ -2,19 +2,18 @@
 // 800AC8C4..800ADF30
 #include "common.h"
 
-s8 general_shot_boxes[3][4] = {
-    { 0, -2, 32, 16 },
-    { 15, -13, 32, 24 },
-    { -36, -16, 43, 33 },
-};
+extern s8 general_shot_boxes[3][4];
 
-u8 general_shot_prop_debris[8] = { 40, 41, 42, 43, 44, 45, 0, 0 };
+extern u8 general_shot_prop_debris[6];
 
-s8 general_shot_attack_boxes[3][4] = {
-    { -19, -3, 36, 4 },
+extern s8 general_shot_attack_boxes[][4];
+
+#ifdef MMX4_WIN32
+s8 general_shot_attack_boxes_tail[2][4] = {
     { -10, -9, 18, 16 },
     { -99, 53, -60, 38 },
 };
+#endif
 
 s16 general_fist_rows[4] = { 0x208, 0x238, 0x268, 0x290 };
 
@@ -46,6 +45,11 @@ void (*general_fist_follower_funcs[])(struct ShotObj*) = {
     general_fist_sweep_turn,
     func_800AD338,
     general_fist_docked,
+#ifdef MMX4_WIN32
+};
+
+void (*general_fist_funcs[2])(struct ShotObj*) = {
+#endif
     general_fist_follower,
     general_fist_leader,
 };
@@ -341,7 +345,11 @@ void general_fist_follower(struct ShotObj* self)
 
 void general_shot_fist(struct ShotObj* self)
 {
+#ifdef MMX4_WIN32
+    general_fist_funcs[self->unk2 - 2](self);
+#else
     general_fist_follower_funcs[self->unk2 + 9](self);
+#endif
     self->unk42 = self->unk7C->unk42;
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);
@@ -384,7 +392,11 @@ void general_dust_burst(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
+#ifdef MMX4_WIN32
+        self->unk50.data = (u8*)&general_shot_attack_boxes_tail[1];
+#else
         self->unk50.data = (u8*)&general_shot_attack_boxes[2];
+#endif
         self->timer--;
     }
     if (self->timer == 0) {

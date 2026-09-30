@@ -440,8 +440,11 @@ void SelectACharacterUpdate(struct MiscObj* self)
     g_SelectACharacterUpdateFuncs[self->state](self);
 }
 
-u32 select_char_animation_data[88] = {
+u32 D_8010E968[1] = {
     0x00000008,
+};
+
+u32 D_8010E96C[8] = {
     0x01010001,
     0x02010001,
     0x03010002,
@@ -450,6 +453,9 @@ u32 select_char_animation_data[88] = {
     0x06010005,
     0x07010004,
     0x08000003,
+};
+
+u32 D_8010E98C[7] = {
     0x09010002,
     0x0a010002,
     0x0b010002,
@@ -457,18 +463,36 @@ u32 select_char_animation_data[88] = {
     0x0c010101,
     0x0d010002,
     0x0e000002,
+};
+
+u32 D_8010E9A8[3] = {
     0x0f010103,
     0x10010103,
     0x11fe0103,
+};
+
+u32 D_8010E9B4[2] = {
     0x1201010a,
     0x12000101,
+};
+
+u32 D_8010E9BC[5] = {
     0x13010103,
     0x14010103,
     0x15010103,
     0x16010103,
     0x17000103,
+};
+
+u32 D_8010E9D0[1] = {
     0x18000103,
+};
+
+u32 D_8010E9D4[1] = {
     0x00000001,
+};
+
+u32 D_8010E9D8[18] = {
     0x01010004,
     0x02010002,
     0x03010101,
@@ -487,6 +511,9 @@ u32 select_char_animation_data[88] = {
     0x19010006,
     0x1a010004,
     0x00000006,
+};
+
+u32 D_8010EA20[9] = {
     0x04010001,
     0x06010001,
     0x08010002,
@@ -496,6 +523,9 @@ u32 select_char_animation_data[88] = {
     0x10010003,
     0x12010003,
     0x14000004,
+};
+
+u32 D_8010EA44[9] = {
     0x00010001,
     0x1b010001,
     0x1c010001,
@@ -505,26 +535,62 @@ u32 select_char_animation_data[88] = {
     0x20010006,
     0x21010011,
     0x21000001,
+};
+
+u32 D_8010EA68[6] = {
     0x1e010004,
     0x22010003,
     0x23010002,
     0x24010002,
     0x25010002,
     0x26000002,
+};
+
+u32 D_8010EA80[2] = {
     0x27010002,
     0x28ff0002,
+};
+
+u32 D_8010EA88[1] = {
     0x00000001,
+};
+
+u32 D_8010EA8C[1] = {
     0x01000001,
+};
+
+u32 D_8010EA90[1] = {
     0x02000001,
+};
+
+u32 D_8010EA94[1] = {
     0x03000001,
+};
+
+u32 D_8010EA98[1] = {
     0x04000001,
+};
+
+u32 D_8010EA9C[1] = {
     0x05000001,
+};
+
+u32 D_8010EAA0[1] = {
     0x06000001,
+};
+
+u32 D_8010EAA4[1] = {
     0x07000001,
+};
+
+u32 D_8010EAA8[4] = {
     0x08010003,
     0x09010003,
     0x08010003,
     0x0afd0003,
+};
+
+u32 D_8010EAB8[4] = {
     0x0b010003,
     0x0c010003,
     0x0b010003,
@@ -532,33 +598,33 @@ u32 select_char_animation_data[88] = {
 };
 
 u32* select_char_x_animations[7] = {
-    select_char_animation_data + 0x00 / 4,
-    select_char_animation_data + 0x04 / 4,
-    select_char_animation_data + 0x24 / 4,
-    select_char_animation_data + 0x4c / 4,
-    select_char_animation_data + 0x54 / 4,
-    select_char_animation_data + 0x68 / 4,
-    select_char_animation_data + 0x40 / 4,
+    D_8010E968,
+    D_8010E96C,
+    D_8010E98C,
+    D_8010E9B4,
+    D_8010E9BC,
+    D_8010E9D0,
+    D_8010E9A8,
 };
 u32* select_char_zero_animations[6] = {
-    select_char_animation_data + 0x6c / 4,
-    select_char_animation_data + 0x70 / 4,
-    select_char_animation_data + 0xb8 / 4,
-    select_char_animation_data + 0xdc / 4,
-    select_char_animation_data + 0x100 / 4,
-    select_char_animation_data + 0x118 / 4,
+    D_8010E9D4,
+    D_8010E9D8,
+    D_8010EA20,
+    D_8010EA44,
+    D_8010EA68,
+    D_8010EA80,
 };
 u32* select_char_menu_animations[10] = {
-    select_char_animation_data + 0x120 / 4,
-    select_char_animation_data + 0x124 / 4,
-    select_char_animation_data + 0x128 / 4,
-    select_char_animation_data + 0x12c / 4,
-    select_char_animation_data + 0x130 / 4,
-    select_char_animation_data + 0x134 / 4,
-    select_char_animation_data + 0x138 / 4,
-    select_char_animation_data + 0x13c / 4,
-    select_char_animation_data + 0x140 / 4,
-    select_char_animation_data + 0x150 / 4,
+    D_8010EA88,
+    D_8010EA8C,
+    D_8010EA90,
+    D_8010EA94,
+    D_8010EA98,
+    D_8010EA9C,
+    D_8010EAA0,
+    D_8010EAA4,
+    D_8010EAA8,
+    D_8010EAB8,
 };
 
 u8 select_char_initial_animations[16] = { 0, 1, 2, 2, 3, 4, 8, 0, 0, 6, 2, 2, 5, 7, 6, 0 };

@@ -42,12 +42,6 @@ void cannon_shot_spawn_flash(struct ShotObj* self)
     }
 }
 
-void (*cannon_missile_step_funcs[3])(struct ShotObj*) = {
-    func_8009F89C,
-    cannon_missile_slow,
-    cannon_missile_track,
-};
-
 u8 cannon_shot_boxes[4][4] = {
     { 0xF3, 0xFA, 0x17, 0x0A },
     { 0xF5, 0xFD, 0x1B, 0x0A },

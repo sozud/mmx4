@@ -38,30 +38,37 @@ u8 layout_gate_terrain_box[4] = { 0, 0, 8, 8 };
 u8 layout_gate_hurt_box[4] = { 0xF8, 0xF8, 0x10, 0x10 };
 u8 layout_gate_frames[4] = { 3, 6, 4, 5 };
 
-struct Item22AnimationStep layout_gate_anim_steps[10] = {
-    { 1, 1, 0, 0 },
-    { 1, 0, 0, 1 },
-    { 1, 0, 0, 2 },
-    { 1, 0, 0, 3 },
-    { 1, 0, 0, 4 },
-    { 1, 0, 0, 5 },
-    { 1, 0, 0, 6 },
-    { 1, 0, 0, 7 },
-    { 1, 0, 0, 8 },
-    { 1, 0, 0, 9 },
-};
+struct Item22AnimationStep layout_gate_anim_0 = { 1, 1, 0, 0 };
+
+struct Item22AnimationStep layout_gate_anim_1 = { 1, 0, 0, 1 };
+
+struct Item22AnimationStep layout_gate_anim_2 = { 1, 0, 0, 2 };
+
+struct Item22AnimationStep layout_gate_anim_3 = { 1, 0, 0, 3 };
+
+struct Item22AnimationStep layout_gate_anim_4 = { 1, 0, 0, 4 };
+
+struct Item22AnimationStep layout_gate_anim_5 = { 1, 0, 0, 5 };
+
+struct Item22AnimationStep layout_gate_anim_6 = { 1, 0, 0, 6 };
+
+struct Item22AnimationStep layout_gate_anim_7 = { 1, 0, 0, 7 };
+
+struct Item22AnimationStep layout_gate_anim_8 = { 1, 0, 0, 8 };
+
+struct Item22AnimationStep layout_gate_anim_9 = { 1, 0, 0, 9 };
 
 struct Item22AnimationStep* layout_gate_animations[10] = {
-    &layout_gate_anim_steps[0],
-    &layout_gate_anim_steps[1],
-    &layout_gate_anim_steps[2],
-    &layout_gate_anim_steps[3],
-    &layout_gate_anim_steps[4],
-    &layout_gate_anim_steps[5],
-    &layout_gate_anim_steps[6],
-    &layout_gate_anim_steps[7],
-    &layout_gate_anim_steps[8],
-    &layout_gate_anim_steps[9],
+    &layout_gate_anim_0,
+    &layout_gate_anim_1,
+    &layout_gate_anim_2,
+    &layout_gate_anim_3,
+    &layout_gate_anim_4,
+    &layout_gate_anim_5,
+    &layout_gate_anim_6,
+    &layout_gate_anim_7,
+    &layout_gate_anim_8,
+    &layout_gate_anim_9,
 };
 
 void layout_gate_update(struct ItemObj* arg0)

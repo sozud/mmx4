@@ -2,6 +2,31 @@
 // 800BC144..800BC2E0
 #include "common.h"
 
+struct Effect28AnimationStep tile_anim_script_0[3] = {
+    { 2, 0, 1, 0 },
+    { 2, 0, 1, 1 },
+    { 2, 0, -2, 2 },
+};
+
+struct Effect28AnimationStep tile_anim_script_1[3] = {
+    { 2, 0, 1, 3 },
+    { 2, 0, 1, 4 },
+    { 2, 0, -2, 5 },
+};
+
+struct Effect28AnimationStep tile_anim_script_2[4] = {
+    { 4, 0, 1, 6 },
+    { 4, 0, 1, 7 },
+    { 4, 0, 1, 8 },
+    { 4, 0, -3, 9 },
+};
+
+struct Effect28AnimationStep* tile_anim_scripts[3] = {
+    tile_anim_script_0,
+    tile_anim_script_1,
+    tile_anim_script_2,
+};
+
 void tile_anim_trigger_update(struct EffectObj* self)
 {
     tile_anim_trigger_state_funcs[self->state](self);
@@ -70,31 +95,8 @@ struct Effect29AnimationStep {
     u8 position;
 };
 
-struct Effect29AnimationStep tile_anim_trigger_open_steps[9] = {
-    { 2, 0, 1, 0 },
-    { 2, 0, 1, 1 },
-    { 2, 0, 1, 2 },
-    { 2, 0, 1, 3 },
-    { 25, 0, 1, 4 },
-    { 2, 0, 1, 5 },
-    { 2, 0, 1, 6 },
-    { 2, 0, 1, 7 },
-    { 2, 0, 0, 8 },
-};
+extern struct Effect29AnimationStep tile_anim_trigger_open_steps[9];
 
-struct Effect29AnimationStep tile_anim_trigger_close_steps[9] = {
-    { 2, 0, 1, 8 },
-    { 2, 0, 1, 7 },
-    { 2, 0, 1, 6 },
-    { 2, 0, 1, 5 },
-    { 25, 0, 1, 4 },
-    { 2, 0, 1, 3 },
-    { 2, 0, 1, 2 },
-    { 2, 0, 1, 1 },
-    { 2, 0, 0, 0 },
-};
+extern struct Effect29AnimationStep tile_anim_trigger_close_steps[9];
 
-u8* tile_anim_trigger_scripts[2] = {
-    (u8*)tile_anim_trigger_open_steps,
-    (u8*)tile_anim_trigger_close_steps,
-};
+extern u8* tile_anim_trigger_scripts[2];

@@ -33,16 +33,4 @@ void breakable_boulder_update(struct ItemObj* arg0)
 
 u8 breakable_boulder_hit_box[4] = { 0xE0, 0xD0, 0x40, 0x60 };
 
-u8 breakable_boulder_debris_data[4][8] = {
-    { 0x0A, 0x0E, 0x11, 0x13, 0x0C, 0, 0, 0 },
-    { 9, 0x0B, 0x10, 0x12, 0x0D, 0, 0, 0 },
-    { 0x0F, 0x11, 0x0A, 0x13, 0x0B, 0, 0, 0 },
-    { 0x0D, 0x10, 0x0C, 0x12, 0x0B, 0, 0, 0 },
-};
-
-u8* breakable_boulder_debris[4] = {
-    breakable_boulder_debris_data[0],
-    breakable_boulder_debris_data[1],
-    breakable_boulder_debris_data[2],
-    breakable_boulder_debris_data[3],
-};
+extern u8* breakable_boulder_debris[4];

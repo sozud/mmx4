@@ -1,0 +1,32 @@
+#include "common.h"
+
+u8 turret_laser_beam_box_data[11][4] = {
+    { 0xF3, 0xFD, 0x0A, 0x05 },
+    { 0xE4, 0xFD, 0x1A, 0x05 },
+    { 0xCC, 0xFD, 0x31, 0x05 },
+    { 0xAB, 0xFD, 0x5D, 0x05 },
+    { 0xFD, 0xF4, 0x05, 0x0B },
+    { 0xFD, 0xE8, 0x05, 0x17 },
+    { 0xFD, 0xCD, 0x05, 0x31 },
+    { 0xFD, 0xAE, 0x05, 0x42 },
+    { 0xFD, 0xFE, 0x05, 0x0D },
+    { 0xFD, 0xFE, 0x05, 0x16 },
+    { 0xFD, 0xFE, 0x05, 0x34 },
+};
+
+u8 turret_laser_full_beam_box[4] = { 0xFD, 0xFE, 0x05, 0x50 };
+
+u8* turret_laser_beam_boxes[12] = {
+    turret_laser_beam_box_data[0],
+    turret_laser_beam_box_data[1],
+    turret_laser_beam_box_data[2],
+    turret_laser_beam_box_data[3],
+    turret_laser_beam_box_data[4],
+    turret_laser_beam_box_data[5],
+    turret_laser_beam_box_data[6],
+    turret_laser_beam_box_data[7],
+    turret_laser_beam_box_data[8],
+    turret_laser_beam_box_data[9],
+    turret_laser_beam_box_data[10],
+    turret_laser_full_beam_box,
+};

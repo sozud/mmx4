@@ -35,12 +35,9 @@ void checkpoint_trigger_wait(struct EffectObj* self)
     }
 }
 
-void (*tile_scanner_state_funcs[2])(struct EffectObj*) = {
-    tile_scanner_init,
-    func_800B64BC,
-};
+extern void (*tile_scanner_state_funcs[2])(struct EffectObj*);
 
-void (*tile_scanner_fill_funcs[1])(struct EffectObj*) = { func_800B6660 };
+extern void (*tile_scanner_fill_funcs[1])(struct EffectObj*);
 
 void (*checkpoint_trigger_state_funcs[])(struct EffectObj*) = {
     checkpoint_trigger_init,

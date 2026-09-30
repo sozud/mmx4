@@ -2,6 +2,13 @@
 // 800A3924..800A3C78
 #include "common.h"
 
+s16 drone_beam_boxes[4][2] = {
+    { -0x1280, 0x2AFF },
+    { -0x1280, 0x2AFF },
+    { -0xA80, 0x19FF },
+    { -0xA80, 0x19FF },
+};
+
 void drone_beam_update(struct ShotObj* self)
 {
     drone_beam_state_funcs[self->state](self);

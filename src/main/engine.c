@@ -74,7 +74,31 @@ void func_8001F5D8(struct EngineObj* arg0)
     }
 }
 
+#ifdef MMX4_WIN32
+void func_8001F634(struct EngineObj* arg0)
+{
+    if (--arg0->unk4 == 0) {
+        g_FilterAmountR = 0;
+        g_FilterAmountG = 0;
+        g_FilterAmountB = 0;
+        if (arg0->character_state.bytes[2] == 0) {
+            arg0->unk3 = 0;
+            arg0->unk4 = 0x1E;
+            arg0->unk2++;
+            arg0->character_state.bytes[1] = 1;
+        } else {
+            arg0->unk2 = 4;
+            arg0->unk3 = 0;
+            arg0->unk4 = 0x78;
+        }
+    } else {
+        func_8001F5D8(arg0);
+    }
+    need_palette_load |= 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F634);
+#endif
 
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F6E8);
 

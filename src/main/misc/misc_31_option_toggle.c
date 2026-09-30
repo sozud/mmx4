@@ -23,11 +23,7 @@ void option_toggle_update(struct MiscObj* self)
     option_toggle_state_funcs[self->state](self);
 }
 
-void (*option_toggle_state_funcs[3])(struct MiscObj*) = {
-    func_800CDE44,
-    func_800CDF4C,
-    option_toggle_refresh,
-};
+extern void (*option_toggle_state_funcs[3])(struct MiscObj*);
 
 union AnimationStep option_toggle_anim_0[36] = {
     { .packed = 0x3101000F },

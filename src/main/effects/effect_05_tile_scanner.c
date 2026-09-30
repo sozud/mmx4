@@ -2,6 +2,13 @@
 // 800B60BC..800B6A0C
 #include "common.h"
 
+void (*tile_scanner_state_funcs[2])(struct EffectObj*) = {
+    tile_scanner_init,
+    func_800B64BC,
+};
+
+void (*tile_scanner_fill_funcs[1])(struct EffectObj*) = { func_800B6660 };
+
 // tile_scanner_update
 INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B60BC);
 

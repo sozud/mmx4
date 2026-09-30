@@ -42,19 +42,7 @@ void grenade_idle(struct ShotObj* self)
 {
 }
 
-void (*train_boss_arm_step_funcs[11])(struct ShotObj*) = {
-    enemy_hit_reaction,
-    train_boss_arm_resume_step,
-    train_boss_arm_advance,
-    train_boss_arm_wait_signal,
-    train_boss_arm_windup,
-    train_boss_arm_punch,
-    train_boss_arm_hold,
-    train_boss_arm_retract,
-    func_8009E8E0,
-    train_boss_arm_return,
-    train_boss_arm_wait_sync,
-};
+extern void (*train_boss_arm_step_funcs[11])(struct ShotObj*);
 
 u8 grenade_hit_box[4] = { 0xF9, 0xF9, 0x0C, 0x0C };
 

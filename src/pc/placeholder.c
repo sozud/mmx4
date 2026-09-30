@@ -105,7 +105,7 @@ extern union AnimationStep* bee_hive_animations[8];
 extern u8 bee_hive_debris[8];
 extern void (*bee_hive_step_funcs[])(struct MainObj*);
 extern struct Unk_unk68 D_80103EEC;
-extern struct Unk_unk68 D_80103EF8[2];
+extern struct Unk_unk68 D_80103EF8;
 extern void (*sigma_cloak_step_funcs[5])();
 extern struct Unk_unk68 D_80108204[];
 extern struct Unk_unk68 D_801071F4[];
@@ -117,9 +117,6 @@ extern u8 D_800FDC34[];
 extern u8 D_800FDC38[];
 extern u8 D_800FDC3C[];
 extern u8 moving_block_terrain_box[4];
-extern s32 moving_block_speeds[1];
-extern s32 moving_block_accels[1];
-extern u16 moving_block_ranges[2];
 extern u8 D_800FD5C8[32];
 extern struct Unk_unk68 D_80104914;
 extern union AnimationStep* D_80104974[14];
@@ -127,7 +124,7 @@ extern struct Unk_unk68 ride_armor_pilot_guard_box;
 extern u16 gravity_switch_camera_bounds[16];
 extern s32 D_800FA130[2];
 extern u8 depth_charge_sink_box[4];
-extern u8 depth_charge_boxes[8];
+extern u8 depth_charge_boxes[];
 extern void (*drone_pod_step_funcs[4])(struct MainObj*);
 extern void (*double_step_funcs[6])(struct MainObj*);
 extern u8* double_script_table_0[2];
@@ -323,7 +320,7 @@ extern s16 D_800F98EC[36];
 extern u8 background_dragon_attack_map[128];
 extern u16 D_800F99BC[4];
 extern union AnimationStep* item_carrier_animations[11];
-extern u8 item_carrier_capsule_debris[12];
+extern u8 item_carrier_capsule_debris[4];
 extern struct Unk_unk68* item_carrier_part_hurtboxes[2];
 extern u8* item_carrier_part_debris[2];
 extern u8 item_carrier_part_debris_counts[4];
@@ -3979,7 +3976,7 @@ void func_800C9510(struct MiscObj* arg0)
 
 extern union AnimationStep* slope_skier_animations[];
 extern struct Unk_unk68 slope_skier_hurt_box[];
-extern struct Unk_unk68 slope_skier_terrain_box[2];
+extern struct Unk_unk68 slope_skier_terrain_box;
 extern struct VisualSpawnOffset D_800FCE90[5];
 extern struct Unk_unk68 D_800FCE9C[];
 extern union AnimationStep jet_drone_anim_3[];
@@ -4006,8 +4003,8 @@ void func_800564B4(struct MainObj* arg0)
     arg0->animation_table = (const u8* const*)slope_skier_animations;
     arg0->unk16 = 6;
     arg0->terrain_box = slope_skier_hurt_box;
-    arg0->hurt_box = slope_skier_terrain_box;
-    arg0->attack_box = slope_skier_terrain_box;
+    arg0->hurt_box = &slope_skier_terrain_box;
+    arg0->attack_box = &slope_skier_terrain_box;
     arg0->hp = 3;
     arg0->contact_damage = 1;
     arg0->collision_data = (const u16*)D_80106DF4;
@@ -11776,8 +11773,8 @@ void func_800A6DF4(struct ShotObj* arg0)
 }
 
 extern u8 train_crate_hurt_box[4];
-extern u8 D_800FFBDC[8];
-extern u8 train_crate_debris[8];
+extern u8 D_800FFBDC[6];
+extern u8 train_crate_debris[6];
 extern void (*train_crate_step_funcs[2])();
 
 void func_80069748(struct MainObj* arg0)
@@ -13155,38 +13152,6 @@ void func_800548B8(struct MainObj* arg0)
     spawn_debris(4, ice_block_debris, arg0);
     if (arg0->unk2 == 0)
         func_800C842C(0xC, ice_wall_debris, arg0, 0x1A, ice_wall_animations);
-}
-
-extern u8 ice_block_hitbox_box_0[4];
-extern u8 ice_block_hitbox_box_1[4];
-extern u8 ice_block_hitbox_box_2[4];
-
-void func_800989CC(struct WeaponObj* arg0)
-{
-    struct PlayerObj* owner = arg0->owner;
-
-    arg0->unk68 = NULL;
-    arg0->unk54 = NULL;
-    arg0->state++;
-    switch (arg0->unk2) {
-    case 1:
-        arg0->unk50 = ice_block_hitbox_box_2;
-        break;
-    case 2:
-        arg0->unk50 = ice_block_hitbox_box_1;
-        break;
-    case 3:
-        arg0->unk50 = NULL;
-        break;
-    default:
-        arg0->unk50 = ice_block_hitbox_box_0;
-        break;
-    }
-    arg0->unk5C = 1;
-    arg0->unk60 = 3;
-    arg0->x_pos.val = owner->x_pos.val;
-    arg0->unk5 = 0xC;
-    arg0->y_pos.val = owner->y_pos.val;
 }
 
 extern s8* D_800FEA24[7];
@@ -16409,7 +16374,7 @@ void func_800B2698(struct VisualObj* arg0)
 }
 
 extern u8 magma_fire_wave_hit_box[4];
-extern u8 magma_fire_pillar_hit_boxes[2][4];
+extern u8 magma_fire_pillar_hit_boxes[][4];
 extern u8 magma_fire_ember_hit_box[4];
 extern u8 magma_fire_ember_terrain_box[4];
 extern u8 magma_fire_burst_hit_box[4];
@@ -22627,8 +22592,8 @@ void func_800C20F4(struct ItemObj* self)
     self->unk61 = 0;
     self->unk54 = NULL;
     self->unk68 = (struct Unk_unk68*)(moving_block_terrain_box + 4 * self->unk2);
-    self->x_vel.val = moving_block_speeds[self->unk2 * 3];
-    self->y_vel.val = moving_block_accels[self->unk2 * 3];
+    self->x_vel.val = moving_block_motion[self->unk2].x_velocity;
+    self->y_vel.val = moving_block_motion[self->unk2].y_velocity;
     self->unk28 = 0;
     self->unk2C = 0;
     self->unk7C.timer16 = self->x_pos.u.hi;
@@ -22921,13 +22886,14 @@ void func_800C229C(struct ItemObj* self)
     s32 old_velocity;
     s32 center;
     s32 position;
-    u16 range = moving_block_ranges[0];
+    struct MovingBlockMotion* motion = &moving_block_motion[self->unk2];
+    u16 range = motion->range;
 
     if (*wait_timer != 0)
         --*wait_timer;
     else
         move_object(MOVING_OBJECT(self));
-    if (((u8*)&moving_block_ranges)[2] == 0) {
+    if (motion->vertical == 0) {
         old_velocity = self->x_vel.val;
         center = (s16)self->unk7C.timer16;
         position = self->x_pos.i.hi;
@@ -23545,7 +23511,7 @@ void func_80083C2C(struct MainObj* self)
         self->attack_box = &D_80103EE4;
         self->hurt_box = &D_80103EE8;
         if (--self->unk7C == 0) {
-            self->hurt_box = D_80103EF8;
+            self->hurt_box = &D_80103EF8;
             self->unk7++;
             self->unk15 ^= 0x40;
             set_animation(self, 1);

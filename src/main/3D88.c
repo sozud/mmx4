@@ -31,7 +31,7 @@ struct MoviePlaybackData {
     u16 skip_button;
 };
 
-extern struct CdImageOrigin D_800F1614[11];
+extern struct CdImageOrigin D_800F1614[];
 extern u8 D_800F164C[4];
 extern s16 D_800F1650[2];
 extern u8 D_800F1654[4];
@@ -887,6 +887,7 @@ struct Unk5 D_800F0E18[] = {
 };
 #endif
 
+#ifndef MMX4_WIN32
 u8** D_800F15BC[22] = {
 #ifdef MMX4_PC
     &pc_archive_slots[0],
@@ -936,8 +937,9 @@ u8** D_800F15BC[22] = {
     (u8**)0x1F800048,
 #endif
 };
+#endif
 
-struct CdImageOrigin D_800F1614[11] = {
+struct CdImageOrigin D_800F1614[] = {
     { 0x140, 0x100 },
     { 0x3C0, 0x100 },
     { 0x180, 0x000 },
@@ -949,13 +951,18 @@ struct CdImageOrigin D_800F1614[11] = {
     { 0x380, 0x100 },
     { 0x1C0, 0x000 },
     { 0x200, 0x000 },
+#ifdef MMX4_WIN32
+    { 0x002, 0x000 },
+#endif
 };
 
+#ifndef MMX4_WIN32
 void (*D_800F1640[3])(void) = {
     func_800148E4,
     func_800148EC,
     func_80014968,
 };
+#endif
 
 void func_800147AC(void)
 {

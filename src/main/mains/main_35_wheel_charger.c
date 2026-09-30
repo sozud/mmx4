@@ -310,5 +310,3 @@ void (*wheel_charger_charge_funcs[4])() = {
     wheel_charger_charge_spin,
     wheel_charger_charge_roll,
 };
-
-struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };

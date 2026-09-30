@@ -9,7 +9,7 @@ struct Shot2Hitbox {
     u8 height;
 };
 
-void (*gunner_shot_unused_funcs[])(struct ShotObj*) = { gunner_shot_unused };
+extern void (*gunner_shot_unused_funcs[])(struct ShotObj*);
 
 u8 gunner_shot_hit_box[4] = { 0xFC, 0xFC, 7, 8 };
 
@@ -21,39 +21,23 @@ void (*gunner_shot_state_funcs[])(struct ShotObj*) = {
     gunner_shot_despawn,
 };
 
-u8 eregion_fireball_hit_box[4] = { 0xF7, 0xF5, 0x12, 0x13 };
+extern u8 eregion_fireball_hit_box[4];
 
-u8 eregion_fireball_explode_box[4] = { 0xF6, 0xE5, 0x12, 0x1D };
+extern u8 eregion_fireball_explode_box[4];
 
-u8 eregion_fireball_terrain_box[4] = { 0, 0xFE, 8, 7 };
+extern u8 eregion_fireball_terrain_box[4];
 
-u8 eregion_fireball_debris[2][4] = { { 1, 2, 3, 4 }, { 1, 2, 3, 4 } };
+extern u8 eregion_fireball_debris[2][4];
 
-void (*eregion_fireball_state_funcs[])(struct ShotObj*) = {
-    func_80099F48,
-    func_8009A10C,
-    eregion_fireball_despawn,
-    eregion_fireball_explode,
-};
+extern void (*eregion_fireball_state_funcs[])(struct ShotObj*);
 
-u8 eregion_wing_slash_hit_box[4] = { 0x8C, 0xB8, 0x96, 0x87 };
+extern u8 eregion_wing_slash_hit_box[4];
 
-void (*eregion_wing_slash_state_funcs[])(struct ShotObj*) = {
-    func_8009A448,
-    eregion_wing_slash_active,
-    eregion_wing_slash_despawn,
-};
+extern void (*eregion_wing_slash_state_funcs[])(struct ShotObj*);
 
-struct Shot2Hitbox mech_boulder_shockwave_boxes[7] = {
-    { -7, -9, 0x0F, 0x10 },
-    { -29, -16, 0x15, 0x0C },
-    { -81, -29, 0x2D, 0x16 },
-    { -62, -22, 0x22, 0x0F },
-    { -33, -12, 0x19, 0x07 },
-    { 0, 0, 0, 0 },
-    { 0, 0, 0, 0 },
-};
-u8 mech_boulder_debris[8] = { 0x0F, 0x10, 0x11, 0x0F, 0x10, 0x11, 0, 0 };
+extern struct Shot2Hitbox mech_boulder_shockwave_boxes[1];
+extern struct Shot2Hitbox mech_boulder_shockwave_boxes_tail[6];
+extern u8 mech_boulder_debris[8];
 
 void gunner_shot_unused(struct ShotObj* self)
 {
@@ -253,8 +237,8 @@ void mech_boulder_shockwave(struct ShotObj* self)
     s8 player_active;
 
     animate_object(ANIMATED_OBJECT(self));
-    self->unk54 = (u8*)&mech_boulder_shockwave_boxes[self->animation_step.fields.frame_index - 19];
-    self->unk50.data = (u8*)&mech_boulder_shockwave_boxes[self->animation_step.fields.frame_index - 19];
+    self->unk54 = (u8*)&mech_boulder_shockwave_boxes_tail[self->animation_step.fields.frame_index - 20];
+    self->unk50.data = (u8*)&mech_boulder_shockwave_boxes_tail[self->animation_step.fields.frame_index - 20];
     player_active = g_Player.hp;
     func_8002D9BC(self);
     if (player_active != g_Player.hp) {
@@ -275,11 +259,4 @@ void mech_boulder_shockwave_despawn(struct ShotObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*mech_boulder_state_funcs[])(struct ShotObj*) = {
-    func_8009A5F4,
-    mech_boulder_fall,
-    mech_boulder_despawn,
-    mech_boulder_shockwave_start,
-    mech_boulder_shockwave,
-    mech_boulder_shockwave_despawn,
-};
+extern void (*mech_boulder_state_funcs[])(struct ShotObj*);

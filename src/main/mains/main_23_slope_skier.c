@@ -247,10 +247,9 @@ struct Unk_unk68 slope_skier_hurt_box[] = {
     { 0, 12, 16, 2 },
 };
 
-struct Unk_unk68 slope_skier_terrain_box[2] = {
-    { -11, -16, 21, 29 },
-    { 3, 3, 3, 0 },
-};
+struct Unk_unk68 slope_skier_terrain_box = { -11, -16, 21, 29 };
+
+struct Unk_unk68 D_800FCB50 = { 3, 3, 3, 0 };
 
 union AnimationStep slope_skier_anim_0[] = {
     { 0x06000001 },

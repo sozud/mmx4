@@ -49,9 +49,9 @@ void ride_chaser_ram_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
-u8 ride_chaser_shot_angles[8] = { 2, 0x1E, 0, 4, 0, 0, 0, 0 };
+extern u8 ride_chaser_shot_angles[8];
 
-u8 ride_chaser_shot_animations[8] = { 0x0F, 0x0E, 0x0D, 0x10, 0x0D, 0, 0, 0 };
+extern u8 ride_chaser_shot_animations[8];
 
 u8 ride_chaser_ram_hit_box[4] = { 0xCF, 0xEE, 0x3C, 0x37 };
 

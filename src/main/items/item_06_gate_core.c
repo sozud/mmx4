@@ -115,58 +115,23 @@ struct Item06AnimationStep {
     u8 command;
 };
 
-u8 gate_core_box_data[2][8] = {
-    { 0x08, 0x00, 0x08, 0x38, 0x00, 0xC8, 0x08, 0x70 },
-    { 0xF8, 0x00, 0x08, 0x38, 0x00, 0xC8, 0x08, 0x70 },
-};
+extern u8 gate_core_box_data[2][8];
 
-u8* gate_core_terrain_boxes[2] = { gate_core_box_data[0], gate_core_box_data[1] };
-u8* gate_core_hurt_boxes[2] = { &gate_core_box_data[0][4], &gate_core_box_data[1][4] };
+extern u8* gate_core_terrain_boxes[2];
+extern u8* gate_core_hurt_boxes[2];
 
-struct Item06AnimationStep gate_core_anim_steps[6] = {
-    { 1, 0, 0, 0 },
-    { 1, 0, 0, 1 },
-    { 1, 0, 0, 2 },
-    { 1, 0, 0, 3 },
-    { 1, 0, 0, 4 },
-    { 1, 0, 0, 5 },
-};
+extern struct Item06AnimationStep gate_core_anim_steps[6];
 
-struct Item06AnimationStep* gate_core_animations[5] = {
-    &gate_core_anim_steps[1],
-    &gate_core_anim_steps[2],
-    &gate_core_anim_steps[3],
-    &gate_core_anim_steps[4],
-    &gate_core_anim_steps[5],
-};
+extern struct Item06AnimationStep* gate_core_animations[5];
 
-u8 gate_core_debris[3][4] = {
-    { 0, 1, 4, 3 },
-    { 4, 2, 3, 2 },
-    { 2, 3, 4, 0 },
-};
+extern u8 gate_core_debris[3][4];
 
-u8 gate_core_explosion_sounds[4][4] = { { 0 }, { 1 }, { 2 }, { 3 } };
-s16 gate_core_exit_x[2] = { 0x18C0, 0x18E8 };
-u16 rising_platform_start_y[2] = { 0x1028, 0x1028 };
+extern u8 gate_core_explosion_sounds[4][4];
+extern s16 gate_core_exit_x[2];
+extern u16 rising_platform_start_y[2];
 
-struct Item06AnimationStep rising_platform_anim_steps[5] = {
-    { 1, 0, 0, 0 },
-    { 1, 0, 0, 1 },
-    { 1, 0, 0, 2 },
-    { 1, 0, 0, 3 },
-    { 1, 0, 0, 4 },
-};
+extern struct Item06AnimationStep rising_platform_anim_steps[5];
 
-struct Item06AnimationStep* rising_platform_animations[5] = {
-    &rising_platform_anim_steps[0],
-    &rising_platform_anim_steps[1],
-    &rising_platform_anim_steps[2],
-    &rising_platform_anim_steps[3],
-    &rising_platform_anim_steps[4],
-};
+extern struct Item06AnimationStep* rising_platform_animations[5];
 
-u8 rising_platform_debris[2][4] = {
-    { 1, 4, 3, 2 },
-    { 3, 1, 2, 4 },
-};
+extern u8 rising_platform_debris[2][4];

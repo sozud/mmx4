@@ -31,11 +31,7 @@ void func_8001F9DC(struct EngineObj* arg0);
 
 void func_8001FAC0(struct EngineObj* arg0);
 
-void (*D_800F23DC[3])(struct EngineObj*) = {
-    func_8001F398,
-    func_8001F9A0,
-    func_8001FAC0,
-};
+extern void (*D_800F23DC[3])(struct EngineObj*);
 
 void (*engine_update_funcs[13])(struct EngineObj*) = {
     engine_state_0,

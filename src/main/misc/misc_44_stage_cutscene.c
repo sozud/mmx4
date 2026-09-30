@@ -166,33 +166,4 @@ void (*stage_cutscene_step_funcs[7])(struct UnkObj*) = {
     stage_cutscene_idle,
 };
 
-u8 stage_cutscene_data[24] = {
-    0,
-    2,
-    4,
-    5,
-    6,
-    7,
-    9,
-    10,
-    12,
-    1,
-    13,
-    14,
-    15,
-    16,
-    17,
-    18,
-    19,
-    20,
-    3,
-    8,
-    11,
-#ifdef VERSION_JP
-    0,
-#else
-    21,
-#endif
-    0,
-    0,
-};
+extern u8 stage_cutscene_data[24];

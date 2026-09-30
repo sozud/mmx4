@@ -2,6 +2,21 @@
 // 800C16F0..800C1994
 #include "common.h"
 
+struct Item06AnimationStep {
+    u8 duration;
+    u8 mode;
+    u8 frame;
+    u8 command;
+};
+
+u16 rising_platform_start_y[2] = { 0x1028, 0x1028 };
+
+extern struct Item06AnimationStep rising_platform_anim_steps[5];
+
+extern struct Item06AnimationStep* rising_platform_animations[5];
+
+extern u8 rising_platform_debris[2][4];
+
 // rising_platform_init
 INCLUDE_ASM("main/nonmatchings/items/item_07_rising_platform", func_800C16F0);
 
@@ -48,8 +63,4 @@ void rising_platform_update(struct ItemObj* arg0)
     rising_platform_state_funcs[arg0->state](arg0);
 }
 
-void (*rising_platform_state_funcs[])(struct ItemObj*) = {
-    func_800C16F0,
-    rising_platform_rise,
-    rising_platform_despawn,
-};
+extern void (*rising_platform_state_funcs[])(struct ItemObj*);

@@ -4104,7 +4104,6 @@ void func_80091898(struct MainObj*);
 struct Main76HandlerTable {
     void (*funcs[7])(void*);
 };
-extern const struct Main76HandlerTable enemy_hit_reaction_funcs;
 s32 update_boss_music_delay(void);
 extern void (*spike_crawler_state_funcs[])(struct MainObj*);
 extern u8 spike_crawler_debris[4];
@@ -4474,6 +4473,9 @@ void func_8009BA6C(struct ShotObj*);
 void ice_core_shard_hold(struct ShotObj*);
 struct Shot12CollisionData {
     u16 masks[10];
+#ifdef MMX4_WIN32
+    u8 pad14[4];
+#endif
     u8 effect_id;
     u8 animation[15];
 };

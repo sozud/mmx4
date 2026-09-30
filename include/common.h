@@ -196,14 +196,22 @@ struct FadeState {
 };
 struct ArchiveSelectionData {
     u8 prefix[8];
+#ifdef MMX4_WIN32
+    u8 archive_ids[128];
+#else
     u8 archive_ids[124];
+#endif
 };
 union CdSectorBuffer {
     u8 sectors[16][0x800];
     u32 words[0x2000];
 };
 struct MissionSelectData {
+#ifdef MMX4_WIN32
+    u8 stage_order[16];
+#else
     u8 stage_order[12];
+#endif
     u8 route_a[8];
     u8 route_b[8];
     u16 route_a_positions[4];
@@ -245,10 +253,12 @@ struct TileEffectRecord {
 };
 struct ArchivePathData {
     s8 stage_archive_indices[12];
+#ifndef MMX4_WIN32
 #ifdef VERSION_JP
     char paths[162][64];
 #else
     char paths[163][64];
+#endif
 #endif
 };
 struct VisualAttachmentOffset {
@@ -318,6 +328,9 @@ struct Checkpoint {
     s16 facing;
     s16 bg1_off_x, bg1_off_y, bg2_off_x, bg2_off_y;
     s16 player_unkBE;
+#ifdef MMX4_WIN32
+    s16 pc_unk24[2];
+#endif
 };
 struct StageObjectRecord {
     u8 flags, id, subtype, object_type;
@@ -1274,7 +1287,11 @@ typedef char MemcardSaveSlot_must_be_0x2A_bytes[sizeof(struct MemcardSaveSlot) =
 
 struct MenuRuntimeData {
     struct MemcardSaveSlot save;
+#ifdef MMX4_WIN32
+    u8 pad2A[6];
+#else
     u8 pad2A[2];
+#endif
     u8 button_lookup[24];
     u16 low_button_masks[8];
     u16 high_button_masks[3];
@@ -2948,6 +2965,14 @@ extern u16 web_spider_arena_x;
 extern u16 web_spider_arena_y;
 extern struct Unk_unk68 D_801075F4[];
 
+struct MovingBlockMotion {
+    s32 x_velocity;
+    s32 y_velocity;
+    u16 range;
+    u8 vertical;
+};
+extern struct MovingBlockMotion moving_block_motion[1];
+
 struct Effect1314ItemSpawn {
     u8 reserved;
     u8 id;
@@ -3780,7 +3805,7 @@ extern u8 frost_walrus_script_recover_low[4];
 extern u16 frost_walrus_floor_tiles[18];
 extern u16 frost_walrus_floor_tiles_rush[20];
 extern s16 frost_walrus_burst_offsets[20][2];
-extern u8 frost_walrus_burst_subtypes[32];
+extern u8 frost_walrus_burst_subtypes[20];
 extern void* jet_stingray_animations[45];
 extern void* cyber_peacock_animations[38];
 extern struct Unk_unk68 player_x_collision_bounds;
@@ -3851,7 +3876,7 @@ extern u8 D_8011A130[];
 extern u32 D_8011A230[];
 extern u8 D_8011AF60[];
 extern const u32* D_8011AFF0[];
-extern u32* D_8011BF40[54];
+extern u32* D_8011BF40[];
 extern u32* D_8011C070[9];
 extern u32* D_8011C094[7];
 extern u32* D_8011C0E4[3];
@@ -4049,7 +4074,7 @@ extern struct Unk_unk68 D_80107074[];
 extern struct Unk_unk68 D_80108504[];
 extern struct Unk_unk68 frost_tower_charged_part_box[];
 extern struct Unk_unk68 soul_body_hit_box[];
-extern struct Unk_unk68 ice_bird_charge_box[3];
+extern struct Unk_unk68 ice_bird_charge_box;
 extern struct Unk_unk68 D_80106B74[];
 extern struct Unk_unk68 dragonfly_terrain_box;
 extern u8 boss_voice_tracks[13][3];
@@ -4134,7 +4159,7 @@ extern struct Unk_unk68 D_801049B0[2];
 extern u8 surface_hopper_appear_animations[4];
 extern s8 train_boss_terrain_box[4];
 extern u8 train_boss_attack_timers[20];
-extern union AnimationStep* train_boss_animations[19];
+extern union AnimationStep* train_boss_animations[];
 extern struct Unk_unk68 D_80107678[];
 extern struct Unk_unk68 jet_stingray_dash_attack_box;
 extern struct Unk_unk68 jet_stingray_dash_hurt_box;
@@ -4145,7 +4170,7 @@ extern struct Unk_unk68* flame_jet_attack_boxes[9];
 extern struct Unk_unk68 magma_dragoon_fire_volley_debris;
 extern struct Unk_unk68 double_dive_attack_box;
 extern struct Unk_unk68 double_dive_hurt_box;
-extern u8 ride_armor_punch_hit_boxes[7][4];
+extern u8 ride_armor_punch_hit_boxes[][4];
 extern u8 ride_armor_punch_animations[8];
 extern u8 ride_armor_punch_steps[8];
 extern u8 crusher_wall_terrain_box[4];
@@ -4543,10 +4568,10 @@ extern u16 g_FilterAmountB;
 extern u16 g_FilterAmountG;
 extern u16 controller_state;
 extern s8 D_801419FC;
-extern u8 D_800F4508[0x20];
+extern u8 D_800F4508[];
 extern u8* D_800F4560[];
-extern u8 D_800F4568[0x14];
-extern u8 D_800F457C[0x14];
+extern u8 D_800F4568[];
+extern u8 D_800F457C[];
 extern u8* D_800F4834[10];
 extern u16 D_800F312C[];
 extern void (*D_800F3134[])(struct BackgroundObj* arg0);
@@ -4880,6 +4905,11 @@ void spawn_debris(s32, void*, void*);
 extern u8 D_800F9118[8];
 struct MenuTextureData {
     u32 texture[96];
+#ifdef MMX4_WIN32
+    char product_codes[4][16];
+    char sc[4];
+    char title[12];
+#endif
     s16 bounds[8];
 };
 extern u8 D_800F1FC0[32];

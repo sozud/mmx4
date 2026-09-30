@@ -2,6 +2,35 @@
 // 800922D8..80092648
 #include "common.h"
 
+struct Unk_unk68 lemon_hit_box[] = {
+    { -10, -6, 0x12, 0xB },
+};
+
+struct Unk_unk68 D_80108708[] = {
+    { -13, -7, 0x1D, 0xD },
+    { -34, -19, 0x40, 0x24 },
+    { -24, -17, 0x2C, 0x20 },
+    { -34, -19, 0x40, 0x24 },
+};
+
+struct Unk_unk68 stock_shot_hit_box[] = {
+    { -24, -16, 0x30, 0x20 },
+};
+
+struct Unk_unk68 D_8010871C[] = {
+    { -36, -32, 0x4E, 0x40 },
+#ifndef MMX4_WIN32
+};
+
+struct Unk_unk68 D_80108720[] = {
+#endif
+    { -28, -28, 0x36, 0x36 },
+};
+
+struct Unk_unk68 nova_strike_hit_box[] = {
+    { -52, -34, 0x7C, 0x42 },
+};
+
 void lemon_update(struct WeaponObj* arg0)
 {
     lemon_state_funcs[arg0->state](arg0);

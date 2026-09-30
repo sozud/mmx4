@@ -209,16 +209,8 @@ void (*bg_zone_controller_e_zone_funcs[6])(struct EffectObj*) = {
     bg_zone_controller_e_idle,
 };
 
-u8 D_8010BE44[3][4] = {
-    { 2, 0, 1, 1 },
-    { 2, 0, 1, 2 },
-    { 2, 0, 0xFE, 3 },
-};
+extern u8 D_8010BE44[3][4];
 
-u8 D_8010BE50[3][4] = {
-    { 2, 0, 1, 4 },
-    { 2, 0, 1, 5 },
-    { 2, 0, 0xFE, 6 },
-};
+extern u8 D_8010BE50[3][4];
 
-u8* tile_flicker_scripts[2] = { D_8010BE44[0], D_8010BE50[0] };
+extern u8* tile_flicker_scripts[2];

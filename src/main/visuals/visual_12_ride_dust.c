@@ -58,21 +58,4 @@ u8 ride_dust_animations[12] = {
     0,
 };
 u8 ride_dust_layers[12] = { 0, 0, 0, 0, 0, 4, 4, 4, 2, 0, 0, 0 };
-u8 ride_chaser_jet_animations[16] = {
-    0x15,
-    0x16,
-    0x17,
-    0x18,
-    0x15,
-    0x15,
-    0x15,
-    0x16,
-    0x16,
-    0x16,
-    0x17,
-    0x17,
-    0x17,
-    0,
-    0,
-    0,
-};
+extern u8 ride_chaser_jet_animations[16];

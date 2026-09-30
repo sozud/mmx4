@@ -344,6 +344,12 @@ struct ArchiveSelectionData D_800EE480 = {
         JP_VALUE(0x6B, 0x6A),
         0x00,
         0x00,
+#ifdef MMX4_WIN32
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+#endif
         JP_VALUE(0x82, 0x81),
         JP_VALUE(0x83, 0x82),
         JP_VALUE(0x84, 0x83),

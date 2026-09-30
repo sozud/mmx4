@@ -3,7 +3,6 @@
 #include "common.h"
 #include "func_tables.h"
 
-extern struct Unk_unk68 item_carrier_hitboxes[];
 extern u8 item_carrier_debris[];
 extern u8 item_carrier_capsule_debris[];
 

@@ -241,7 +241,7 @@ union AnimationStep train_boss_anim_16[] = { { 0x14000101 } };
 
 union AnimationStep train_boss_anim_17[] = { { 0x15000101 } };
 
-union AnimationStep* train_boss_animations[19] = {
+union AnimationStep* train_boss_animations[] = {
     train_boss_anim_0,
     train_boss_anim_1,
     train_boss_anim_2,
@@ -260,7 +260,9 @@ union AnimationStep* train_boss_animations[19] = {
     train_boss_anim_15,
     train_boss_anim_16,
     train_boss_anim_17,
+#ifndef MMX4_WIN32
     NULL,
+#endif
 };
 
 void (*train_boss_state_funcs[])(struct MainObj*) = {

@@ -136,5 +136,5 @@ void (*falling_piece_state_funcs[3])(struct MiscObj*) = {
     falling_piece_despawn,
 };
 
-u16 menu_button_bits_a[8] = { 0x10, 0x80, 0x100, 0x40, 0x20, 0x200, 0x400, 0 };
-u16 menu_button_bits_b[8] = { 0x80, 0x10, 0x40, 0x20, 4, 1, 8, 2 };
+extern u16 menu_button_bits_a[8];
+extern u16 menu_button_bits_b[8];

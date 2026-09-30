@@ -380,9 +380,11 @@ struct Unk_unk68* D_800FD018[] = {
 
 struct Unk_unk68* D_800FD048[] = {
     D_800FCFF4,
+#ifndef MMX4_WIN32
 };
 
 struct Unk_unk68* D_800FD04C[] = {
+#endif
     D_800FCFF8,
     D_800FCFF4,
     D_800FCFFC,

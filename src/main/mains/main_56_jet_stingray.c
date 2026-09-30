@@ -1198,9 +1198,6 @@ union AnimationStep jet_stingray_anim_27[] = {
     { 0x5D010004 },
     { 0x5C010003 },
     { 0x5B000003 },
-};
-
-union AnimationStep jet_stingray_anim_28[] = {
     { 0x5E000005 },
     { 0x5F010003 },
     { 0x60010003 },
@@ -1382,7 +1379,7 @@ void* jet_stingray_animations[45] = {
     jet_stingray_anim_25,
     jet_stingray_anim_26,
     jet_stingray_anim_27,
-    jet_stingray_anim_28,
+    &jet_stingray_anim_27[5],
     jet_stingray_anim_29,
     jet_stingray_anim_30,
     jet_stingray_anim_31,
@@ -1451,12 +1448,15 @@ s16 jet_stingray_vortex_debris_offsets[24] = {
     (s16)0x00F3,
 };
 
-void (*jet_stingray_vortex_funcs[5])(struct MainObj*) = {
+void (*jet_stingray_vortex_funcs[])(struct MainObj*) = {
     jet_stingray_vortex_start,
     jet_stingray_vortex_spawn,
     func_80070A38,
     jet_stingray_vortex_wait,
     jet_stingray_vortex_finish,
+#ifdef MMX4_WIN32
+    NULL,
+#endif
 };
 
 u8 jet_stingray_splash_x_offsets[4] = { 0x15, 0xEB, 0xF0, 0x23 };

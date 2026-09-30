@@ -3,7 +3,9 @@
 #include "common.h"
 
 u8 depth_charge_sink_box[4] = { 0xFB, 0xFB, 0x08, 0x09 };
-u8 depth_charge_boxes[8] = { 0xFF, 0xFF, 0x04, 0x05, 0xF8, 0xF6, 0x0E, 0x0E };
+u8 depth_charge_boxes[4] = { 0xFF, 0xFF, 0x04, 0x05 };
+
+u8 D_80108F68[4] = { 0xF8, 0xF6, 0x0E, 0x0E };
 
 void depth_charge_update(struct ShotObj* self)
 {
@@ -96,5 +98,3 @@ void (*depth_charge_step_funcs[])(struct ShotObj*) = {
     depth_charge_fall,
     depth_charge_sink,
 };
-
-u8 aimed_bullet_hit_box[4] = { 0xFC, 0xFD, 0x06, 0x05 };

@@ -496,8 +496,3 @@ struct Checkpoint** D_800F42B4[32] = {
     checkpoint_list_800F42AC,
     checkpoint_list_800F42B0,
 };
-
-struct StageObjectMarginData D_800F4334 = {
-    { 0x20, 0x40, 0x60, 0x80, 0xA0 },
-    0,
-};

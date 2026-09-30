@@ -469,4 +469,6 @@ void (*sentry_drone_spread_funcs[6])(struct MainObj*) = {
 
 void (*sentry_drone_drop_funcs[2])() = { sentry_drone_drop_start, sentry_drone_drop_move };
 
+#ifndef MMX4_WIN32
 u8 D_800FFB5C[4] = { 0, 0, 13, 21 };
+#endif

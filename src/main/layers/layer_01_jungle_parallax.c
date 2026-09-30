@@ -5,6 +5,8 @@
 void jungle_parallax_section_0_scroll(struct LayerObj* arg0);
 void jungle_parallax_section_2_scroll(struct LayerObj* arg0);
 
+s16 train_scroll_unused_positions[2] = { 0x450, 0xA00 };
+
 void jungle_parallax_update(struct LayerObj* arg0)
 {
     jungle_parallax_state_funcs[arg0->state](arg0);

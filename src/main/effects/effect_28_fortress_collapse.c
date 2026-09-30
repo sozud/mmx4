@@ -110,27 +110,10 @@ void (*fortress_collapse_flash_funcs[])(struct EffectObj*) = {
 
 s32 fortress_collapse_explosion_sounds[4] = { 0, 1, 2, 3 };
 
-struct Effect28AnimationStep tile_anim_script_0[3] = {
-    { 2, 0, 1, 0 },
-    { 2, 0, 1, 1 },
-    { 2, 0, -2, 2 },
-};
+extern struct Effect28AnimationStep tile_anim_script_0[3];
 
-struct Effect28AnimationStep tile_anim_script_1[3] = {
-    { 2, 0, 1, 3 },
-    { 2, 0, 1, 4 },
-    { 2, 0, -2, 5 },
-};
+extern struct Effect28AnimationStep tile_anim_script_1[3];
 
-struct Effect28AnimationStep tile_anim_script_2[4] = {
-    { 4, 0, 1, 6 },
-    { 4, 0, 1, 7 },
-    { 4, 0, 1, 8 },
-    { 4, 0, -3, 9 },
-};
+extern struct Effect28AnimationStep tile_anim_script_2[4];
 
-struct Effect28AnimationStep* tile_anim_scripts[3] = {
-    tile_anim_script_0,
-    tile_anim_script_1,
-    tile_anim_script_2,
-};
+extern struct Effect28AnimationStep* tile_anim_scripts[3];
