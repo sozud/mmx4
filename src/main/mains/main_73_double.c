@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[73]
-// 8008BA38..8008D460
+// 8008BA38..8008D3B8
 #include "common.h"
 #include "func_tables.h"
 
@@ -614,29 +614,6 @@ void double_death(struct MainObj* self)
 void double_update(struct MainObj* self)
 {
     double_state_funcs[self->state](self);
-}
-
-s32 sigma_spawn_sequencer(struct MainObj* self, s8 arg1)
-{
-    struct EffectObj* effect;
-
-    self->ext.main_73_parts.object_id = arg1;
-    effect = find_free_effect_obj();
-    if (effect != NULL) {
-        effect->active = 1;
-        effect->id = 0x2A;
-        effect->unk2 = 0;
-        effect->ext.effect_42.owner.main = self;
-        sigma_sequencer = effect;
-    }
-}
-
-void sigma_emit_explosions(struct MainObj* self)
-{
-    if (--self->ext.main_74.unk97 == 0) {
-        self->ext.main_74.unk97 = 4;
-        func_800AF95C(OBJECT_HEADER(self), 1, 0x60, 0x60, 2);
-    }
 }
 
 union AnimationStep double_anim_0[] = {

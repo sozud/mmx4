@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[64]
-// 8007C30C..8007DD98
+// 8007C30C..8007DC54
 #include "common.h"
 #include "func_tables.h"
 
@@ -590,39 +590,7 @@ void cyber_peacock_update(struct MainObj* self)
     cyber_peacock_state_funcs[self->state](self);
 }
 
-void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
-{
-    struct MiscObj* obj;
-
-    obj = find_free_misc_obj();
-    if (obj != 0) {
-        obj->active = 0x41;
-        obj->id = 0x26;
-        obj->unk2 = 2;
-        obj->ext.misc_7.position = self;
-    }
-
-    obj = find_free_misc_obj();
-    if (obj != 0) {
-        obj->active = 0x41;
-        obj->id = 0x26;
-        obj->unk2 = 3;
-        obj->ext.misc_7.position = self;
-    }
-
-    if (arg1 < 2U) {
-        obj = find_free_misc_obj();
-        if (obj != 0) {
-            obj->active = 0x41;
-            obj->id = 0x26;
-            obj->unk2 = arg1;
-            obj->ext.misc_7.position = self;
-        }
-    }
-}
-
 // cyber_peacock_is_player_near_random
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007DD0C);
 
 union AnimationStep cyber_peacock_anim_0[] = {
     { 0x06010002 },

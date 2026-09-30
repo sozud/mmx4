@@ -1,7 +1,126 @@
 // MainObj, main_object_update_funcs[74]
-// 8008D460..8008FA0C
+// 8008D3B8..8008FA0C
 #include "common.h"
 #include "func_tables.h"
+
+// double_init
+
+// double_intro_warning
+
+void double_intro_dialogue(struct MainObj* self);
+
+void double_intro_wait_dialogue(struct MainObj* self);
+
+void double_intro_voice(struct MainObj* self);
+
+void double_intro_fill_health(struct MainObj* self);
+
+void double_intro_talk(struct MainObj* self);
+
+void double_intro(struct MainObj* self);
+
+void double_face_player(struct MainObj* self);
+
+void double_spawn_shot(struct MainObj* self, s32 arg1, s32 arg2);
+
+void double_spawn_afterimage(struct MainObj* self, s8 arg1);
+
+void double_wait_start(struct MainObj* self);
+
+// double_pick_attack
+
+void double_wait(struct MainObj* self);
+
+void double_energy_ball_windup(struct MainObj* self);
+
+void double_spawn_shot(struct MainObj*, s32, s32);
+
+void double_energy_ball_throw(struct MainObj* self);
+
+void double_energy_ball_recover(struct MainObj* self);
+
+void double_energy_ball(struct MainObj* self);
+
+void double_dive_leap(struct MainObj* self);
+
+void double_dive_rise(struct MainObj* self);
+
+void double_dive_climb(struct MainObj* self);
+
+void double_dive_aim(struct MainObj* self);
+
+void double_dive_fall(struct MainObj* self);
+
+// double_dive_slide
+
+void double_dive_hit_wall(struct MainObj* self);
+
+void double_dive_stun(struct MainObj* self);
+
+void double_dive_land(struct MainObj* self);
+
+void double_dive(struct MainObj* self);
+
+void double_aerial_shot_jump(struct MainObj* self);
+
+void double_aerial_shot_fire(struct MainObj* self);
+
+void double_aerial_shot_hang(struct MainObj* self);
+
+void double_aerial_shot_fire_again(struct MainObj* arg);
+
+// double_aerial_shot_wait
+
+void double_aerial_shot_drop(struct MainObj* self);
+
+void double_aerial_shot_land(struct MainObj* self);
+
+void double_aerial_shot(struct MainObj* self);
+
+// double_run
+
+void double_death_flicker(struct MainObj* self);
+
+void double_death_start(struct MainObj* self);
+
+void double_death_fall(struct MainObj* self);
+
+void double_death_wait(struct MainObj* self);
+
+void double_death_wait_dialogue(struct MainObj* self);
+
+void double_death_blink(struct MainObj* self);
+
+void double_death_wait_explosion(struct MainObj* self);
+
+void double_death_finish(struct MainObj* self);
+
+void double_death(struct MainObj* self);
+
+void double_update(struct MainObj* self);
+
+s32 sigma_spawn_sequencer(struct MainObj* self, s8 arg1)
+{
+    struct EffectObj* effect;
+
+    self->ext.main_73_parts.object_id = arg1;
+    effect = find_free_effect_obj();
+    if (effect != NULL) {
+        effect->active = 1;
+        effect->id = 0x2A;
+        effect->unk2 = 0;
+        effect->ext.effect_42.owner.main = self;
+        sigma_sequencer = effect;
+    }
+}
+
+void sigma_emit_explosions(struct MainObj* self)
+{
+    if (--self->ext.main_74.unk97 == 0) {
+        self->ext.main_74.unk97 = 4;
+        func_800AF95C(OBJECT_HEADER(self), 1, 0x60, 0x60, 2);
+    }
+}
 
 void sigma_final_intro_lock_camera(struct MainObj* self)
 {

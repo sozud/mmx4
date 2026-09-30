@@ -1,7 +1,131 @@
 // MainObj, main_object_update_funcs[65]
-// 8007DD98..800806A0
+// 8007DC54..800806A0
 #include "common.h"
 #include "func_tables.h"
+
+// cyber_peacock_intro_init
+
+void cyber_peacock_intro_wait_player(struct MainObj* self);
+
+void cyber_peacock_intro_appear_start(struct MainObj* self);
+
+void cyber_peacock_intro_pose(struct MainObj* self);
+
+void cyber_peacock_intro_start_health_bar(struct MainObj* self);
+
+void cyber_peacock_intro_fill_health(struct MainObj* self);
+
+void cyber_peacock_intro_appear(struct MainObj* self);
+
+void cyber_peacock_intro(struct MainObj* self);
+
+void cyber_peacock_face_player(struct MainObj* self);
+
+u8 cyber_peacock_choose_attack(struct MainObj* self);
+
+void cyber_peacock_start_teleport(struct MainObj* self);
+
+void cyber_peacock_teleport_start(struct MainObj* self);
+
+void cyber_peacock_teleport_vanish(struct MainObj* self);
+
+// cyber_peacock_teleport_choose
+
+void cyber_peacock_teleport_appear(struct MainObj* self);
+
+void cyber_peacock_teleport_wait(struct MainObj* self);
+
+void cyber_peacock_teleport(struct MainObj* self);
+
+void cyber_peacock_rising_kick_start(struct MainObj* self);
+
+void cyber_peacock_rising_kick_jump(struct MainObj* self);
+
+void cyber_peacock_rising_kick_rise(struct MainObj* self);
+
+void cyber_peacock_rising_kick_finish(struct MainObj* self);
+
+void cyber_peacock_rising_kick(struct MainObj* self);
+
+void cyber_peacock_slash_start(struct MainObj* self);
+
+void cyber_peacock_slash_swing(struct MainObj* self);
+
+void cyber_peacock_slash_finish(struct MainObj* self);
+
+void cyber_peacock_slash(struct MainObj* self);
+
+void cyber_peacock_spawn_laser_target(struct MainObj* self);
+
+void cyber_peacock_spawn_missile(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_start(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_raise(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_target(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_wait(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_fire(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_next(struct MainObj* self);
+
+void cyber_peacock_aiming_laser_finish(struct MainObj* self);
+
+void cyber_peacock_aiming_laser(struct MainObj* self);
+
+void cyber_peacock_attack(struct MainObj* self);
+
+// cyber_peacock_hit_vanish
+
+// cyber_peacock_guard_vanish
+
+// cyber_peacock_main
+
+void cyber_peacock_death_start(struct MainObj* self);
+
+void cyber_peacock_death_explode(struct MainObj* self);
+
+void cyber_peacock_death_finish(struct MainObj* self);
+
+void cyber_peacock_death(struct BarObj* self);
+
+void cyber_peacock_update(struct MainObj* self);
+
+void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
+{
+    struct MiscObj* obj;
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 0x41;
+        obj->id = 0x26;
+        obj->unk2 = 2;
+        obj->ext.misc_7.position = self;
+    }
+
+    obj = find_free_misc_obj();
+    if (obj != 0) {
+        obj->active = 0x41;
+        obj->id = 0x26;
+        obj->unk2 = 3;
+        obj->ext.misc_7.position = self;
+    }
+
+    if (arg1 < 2U) {
+        obj = find_free_misc_obj();
+        if (obj != 0) {
+            obj->active = 0x41;
+            obj->id = 0x26;
+            obj->unk2 = arg1;
+            obj->ext.misc_7.position = self;
+        }
+    }
+}
+
+// cyber_peacock_is_player_near_random
+INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
 
 // magma_dragoon_init
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD98);

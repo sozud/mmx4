@@ -1,5 +1,5 @@
 // MainObj, main_object_update_funcs[22]
-// 80054FE8..80055E04
+// 80054FE8..80055C54
 #include "common.h"
 #include "func_tables.h"
 
@@ -164,58 +164,6 @@ void bee_hive_explode_done(void)
 
 // bee_hive_spawn_bees
 INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_800559BC);
-
-void slope_skier_read_slope(struct MainObj* self)
-{
-    struct Unk_unk68* collision;
-    s16 x_pos;
-    s32 y_pos;
-    u8 result;
-
-    self->ext.main_23.unk81 = self->ext.main_23.unk80;
-    x_pos = self->x_pos.i.hi;
-    collision = self->terrain_box;
-    y_pos = (s16)(collision->unk3
-        + ((u16)self->y_pos.i.hi + (s8)(u8)collision->unk1) + 1);
-
-    result = func_8002D724(PLAYER_OBJECT(self), x_pos, y_pos);
-    if (result == 0) {
-        result = ((s32(*)(struct PlayerObj*, s16, s32))func_8002D724)(
-            PLAYER_OBJECT(self), x_pos, y_pos + 0x10);
-        if (result == 0) {
-            self->ext.main_23.unk80 = 3;
-            return;
-        }
-    }
-
-    if (result >= 0x11 && result <= 0x1E) {
-        if (result >= 0x19) {
-            self->ext.main_23.unk80 = 2;
-            if (result >= 0x1B) {
-                if (self->unk15 == 0)
-                    self->ext.main_23.unk80 = 0x82;
-            } else if (self->unk15 != 0) {
-                self->ext.main_23.unk80 = 0x82;
-            }
-        } else {
-            self->ext.main_23.unk80 = 1;
-            if (result >= 0x15) {
-                if (self->unk15 == 0)
-                    self->ext.main_23.unk80 = 0x81;
-            } else if (self->unk15 != 0) {
-                self->ext.main_23.unk80 = 0x81;
-            }
-        }
-    } else if (result == 0x3E) {
-        if (self->on_screen != 0) {
-            spawn_explosion(BASE_OBJECT(self));
-            spawn_debris(7, slope_skier_debris, self);
-            self->state = (u8)self->state + 1;
-        }
-    } else if (result != 0x10) {
-        self->ext.main_23.unk80 = 0;
-    }
-}
 
 struct Unk_unk68 bee_hive_hurt_box = { -19, -48, 37, 92 };
 

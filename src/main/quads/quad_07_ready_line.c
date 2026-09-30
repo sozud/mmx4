@@ -1,5 +1,5 @@
 // QuadObj, quad_object_update_funcs[7]
-// 800D5C54..800D67A0
+// 800D5C54..800D6694
 #include "common.h"
 
 u16 ready_line_sweep_vertices[8] = {
@@ -12,6 +12,7 @@ u16 ready_line_sweep_vertices[8] = {
     0x0000,
     0x0004,
 };
+
 s16 ready_line_shutter_columns[10] = {
     0x0000,
     0x0040,
@@ -24,6 +25,7 @@ s16 ready_line_shutter_columns[10] = {
     0x00C0,
     0x0100,
 };
+
 s16 ready_line_shutter_open_vertices[10][4][2] = {
     0x0040,
     0x0078,
@@ -106,6 +108,7 @@ s16 ready_line_shutter_open_vertices[10][4][2] = {
     0x0100,
     0x00F0,
 };
+
 s16 ready_line_shutter_close_vertices[10][4][2] = {
     0x0040,
     0x0078,
@@ -188,6 +191,7 @@ s16 ready_line_shutter_close_vertices[10][4][2] = {
     0x00E0,
     0x0078,
 };
+
 s16 ready_line_streak_vertices[3][4][2] = {
     0x0000,
     0x0000,
@@ -214,6 +218,7 @@ s16 ready_line_streak_vertices[3][4][2] = {
     0x0000,
     0x0001,
 };
+
 u16 ready_line_shutter_repeats = 0;
 
 void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
@@ -547,41 +552,6 @@ void ready_line_despawn(struct QuadObj* arg0)
 
 void ready_line_nop(void)
 {
-}
-
-void flash_band_init(struct QuadObj* arg0)
-{
-    arg0->unk34 = 3;
-    arg0->ext.ready_line.x_vel.val = FIXED(4);
-    arg0->unk36 = 0;
-    arg0->bg_offset = 0;
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
-    arg0->unk1C.val = 0;
-    arg0->unk20.val = 0;
-    arg0->unk24.val = 0;
-    arg0->unk28.val = 0;
-    arg0->unk2C.val = 0;
-    arg0->unk30.val = 0;
-    arg0->active |= 0x82;
-    arg0->state++;
-    quad_is_on_screen(arg0);
-}
-
-void flash_band_widen(struct QuadObj* arg0)
-{
-    arg0->unk14.val += arg0->ext.ready_line.x_vel.val;
-    arg0->unk2C.val -= arg0->ext.ready_line.x_vel.val;
-    arg0->ext.ready_line.x_vel.val += FIXED(4);
-    quad_is_on_screen(arg0);
-    if (arg0->unk14.i.hi >= 0x14B) {
-        arg0->state++;
-    }
-}
-
-void flash_band_despawn(struct QuadObj* arg0)
-{
-    ZeroObjectState(arg0);
 }
 
 void (*ready_line_state_funcs[])(struct QuadObj*) = {
