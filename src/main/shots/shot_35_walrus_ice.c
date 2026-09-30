@@ -740,10 +740,3 @@ void (*walrus_ice_lob_funcs[])(struct ShotObj*) = {
     walrus_ice_lob_init,
     walrus_ice_lob_fall,
 };
-
-s16 drone_beam_boxes[4][2] = {
-    { -0x1280, 0x2AFF },
-    { -0x1280, 0x2AFF },
-    { -0xA80, 0x19FF },
-    { -0xA80, 0x19FF },
-};

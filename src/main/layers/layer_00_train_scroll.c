@@ -297,5 +297,3 @@ void (*train_scroll_event_funcs[])(struct LayerObj*) = {
     train_scroll_open_tiles,
     train_scroll_release,
 };
-
-s16 train_scroll_unused_positions[2] = { 0x450, 0xA00 };

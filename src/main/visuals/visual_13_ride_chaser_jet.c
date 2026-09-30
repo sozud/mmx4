@@ -2,6 +2,26 @@
 // 800B1AF8..800B1C5C
 #include "common.h"
 
+u8 ride_chaser_jet_animations[16] = {
+    0x15,
+    0x16,
+    0x17,
+    0x18,
+    0x15,
+    0x15,
+    0x15,
+    0x16,
+    0x16,
+    0x16,
+    0x17,
+    0x17,
+    0x17,
+    0,
+    0,
+    0,
+};
+
+
 void ride_chaser_jet_update(struct VisualObj* arg0)
 {
     ride_chaser_jet_state_funcs[arg0->state](arg0);

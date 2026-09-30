@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };
+
 void latcher_update(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;

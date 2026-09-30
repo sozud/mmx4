@@ -250,6 +250,10 @@ void (*D_800F44A8[])(struct EngineObj*) = {
     character_select_state_6,
 };
 
+#ifdef MMX4_WIN32
+u32 D_800F44D8 = 0x4000;
+u32 D_800F44C4 = 0x1000;
+#else
 u16 D_800F44C4[9] = {
 #ifdef VERSION_JP
     0x40,
@@ -283,3 +287,4 @@ u16 D_800F44D8[8] = {
 #endif
     0,
 };
+#endif

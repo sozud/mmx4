@@ -115,14 +115,6 @@ void web_thread_despawn(struct ShotObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void (*web_shot_step_funcs[5])(struct ShotObj*) = {
-    web_shot_fly,
-    web_shot_home,
-    web_shot_catch,
-    web_shot_hold,
-    web_shot_fade,
-};
-
 u8 web_thread_hit_box[4] = { 0xFC, 0x82, 0x07, 0x9B };
 
 u8 web_thread_collision[32][4] = {

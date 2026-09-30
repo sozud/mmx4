@@ -3,7 +3,7 @@
 #include "common.h"
 
 extern u8 train_soldier_guard_attack_box[];
-extern s16 main49_activation_distances[4];
+extern s16 main49_activation_distances[];
 
 void train_soldier_update(struct MainObj* self)
 {
@@ -387,7 +387,7 @@ void train_soldier_shoot_end(struct MainObj* self)
     }
 }
 
-u8 train_soldier_guard_hurt_box[] = { 0xF3, 0xEF, 0x1A, 0x25 };
+extern u8 train_soldier_guard_hurt_box[];
 
 u8 train_soldier_guard_attack_box[] = { 0xF3, 0xEF, 0x1A, 0x22 };
 
@@ -397,12 +397,9 @@ u8 train_soldier_debris[] = {
     0x13,
     0x14,
     0x15,
-    0x00,
-    0x00,
-    0x00,
 };
 
-s16 main49_activation_distances[4] = { 128, 144, 160, 0 };
+s16 main49_activation_distances[3] = { 128, 144, 160 };
 
 void (*train_soldier_state_funcs[])(struct MainObj*) = {
     func_80068548,

@@ -2,6 +2,11 @@
 // 800985F4..80098838
 #include "common.h"
 
+
+
+
+
+
 void ride_chaser_shot_update(struct WeaponObj* arg0)
 {
     ride_chaser_shot_state_funcs[arg0->state](arg0);
@@ -62,3 +67,7 @@ void (*ride_chaser_shot_state_funcs[])(struct WeaponObj*) = {
     ride_chaser_shot_main,
     ride_chaser_shot_despawn,
 };
+
+u8 ride_chaser_shot_angles[8] = { 2, 0x1E, 0, 4, 0, 0, 0, 0 };
+
+u8 ride_chaser_shot_animations[8] = { 0x0F, 0x0E, 0x0D, 0x10, 0x0D, 0, 0, 0 };

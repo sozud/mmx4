@@ -2,6 +2,38 @@
 // 800D0E48..800D1284
 #include "common.h"
 
+u8 stage_cutscene_data[24] = {
+    0,
+    2,
+    4,
+    5,
+    6,
+    7,
+    9,
+    10,
+    12,
+    1,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    3,
+    8,
+    11,
+#ifdef VERSION_JP
+    0,
+#else
+    21,
+#endif
+    0,
+    0,
+};
+
+
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", func_800D0E7C_jp);
 #endif

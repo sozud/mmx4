@@ -36,9 +36,9 @@ void train_crate_idle(struct MainObj* self)
 
 u8 train_crate_hurt_box[4] = { 0xE0, 0xE0, 0x40, 0x50 };
 
-u8 D_800FFBDC[8] = { 0, 1, 2, 1, 0, 2, 0, 0 };
+u8 D_800FFBDC[6] = { 0, 1, 2, 1, 0, 2 };
 
-u8 train_crate_debris[8] = { 7, 8, 9, 7, 9, 8, 0, 0 };
+u8 train_crate_debris[6] = { 7, 8, 9, 7, 9, 8 };
 
 union AnimationStep train_crate_anim_0[1] = { { 0x00000101 } };
 
@@ -84,3 +84,7 @@ void (*train_crate_step_funcs[2])() = {
     enemy_hit_reaction,
     train_crate_idle,
 };
+
+#ifdef MMX4_WIN32
+u8 D_800FFB5C[4] = { 0, 0, 13, 21 };
+#endif

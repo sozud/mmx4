@@ -115,3 +115,10 @@ void (*bg_zone_controller_c_state_funcs[])(struct EffectObj*) = {
     bg_zone_controller_c_init,
     bg_zone_controller_c_main,
 };
+
+void (*bg_zone_controller_c_zone_funcs[4])(struct EffectObj*) = {
+    bg_zone_controller_c_zone_0,
+    bg_zone_controller_c_zone_1,
+    bg_zone_controller_c_zone_2,
+    bg_zone_controller_c_idle,
+};

@@ -1063,10 +1063,9 @@ struct Unk_unk68 D_80103EF0 = { 0, 40, 37, 6 };
 
 struct Unk_unk68 D_80103EF4 = { -9, -19, 27, 56 };
 
-struct Unk_unk68 D_80103EF8[2] = {
-    { -18, -23, 29, 56 },
-    { -36, -18, 53, 53 },
-};
+struct Unk_unk68 D_80103EF8 = { -18, -23, 29, 56 };
+
+struct Unk_unk68 D_80103EFC = { -36, -18, 53, 53 };
 
 struct Unk_unk68 D_80103F00 = { -19, -21, 25, 66 };
 

@@ -2,6 +2,43 @@
 // 800BC518..800BC748
 #include "common.h"
 
+struct Effect29AnimationStep {
+    u8 timer;
+    u8 unused;
+    s8 frame_step;
+    u8 position;
+};
+
+struct Effect29AnimationStep tile_anim_trigger_open_steps[9] = {
+    { 2, 0, 1, 0 },
+    { 2, 0, 1, 1 },
+    { 2, 0, 1, 2 },
+    { 2, 0, 1, 3 },
+    { 25, 0, 1, 4 },
+    { 2, 0, 1, 5 },
+    { 2, 0, 1, 6 },
+    { 2, 0, 1, 7 },
+    { 2, 0, 0, 8 },
+};
+
+struct Effect29AnimationStep tile_anim_trigger_close_steps[9] = {
+    { 2, 0, 1, 8 },
+    { 2, 0, 1, 7 },
+    { 2, 0, 1, 6 },
+    { 2, 0, 1, 5 },
+    { 25, 0, 1, 4 },
+    { 2, 0, 1, 3 },
+    { 2, 0, 1, 2 },
+    { 2, 0, 1, 1 },
+    { 2, 0, 0, 0 },
+};
+
+u8* tile_anim_trigger_scripts[2] = {
+    (u8*)tile_anim_trigger_open_steps,
+    (u8*)tile_anim_trigger_close_steps,
+};
+
+
 void proximity_door_update(struct EffectObj* self)
 {
     proximity_door_state_funcs[self->state](self);

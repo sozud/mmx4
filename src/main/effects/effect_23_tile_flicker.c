@@ -2,6 +2,21 @@
 // 800BAA30..800BABA8
 #include "common.h"
 
+u8 D_8010BE44[3][4] = {
+    { 2, 0, 1, 1 },
+    { 2, 0, 1, 2 },
+    { 2, 0, 0xFE, 3 },
+};
+
+u8 D_8010BE50[3][4] = {
+    { 2, 0, 1, 4 },
+    { 2, 0, 1, 5 },
+    { 2, 0, 0xFE, 6 },
+};
+
+u8* tile_flicker_scripts[2] = { D_8010BE44[0], D_8010BE50[0] };
+
+
 void tile_flicker_update(struct EffectObj* self)
 {
     tile_flicker_state_funcs[self->state](self);

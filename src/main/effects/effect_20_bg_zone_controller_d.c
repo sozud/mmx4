@@ -111,13 +111,6 @@ void bg_zone_controller_d_update_zone(struct EffectObj* self)
 // bg_zone_controller_d_unused
 INCLUDE_ASM("main/nonmatchings/effects/effect_20_bg_zone_controller_d", func_800B9E54);
 
-void (*bg_zone_controller_c_zone_funcs[4])(struct EffectObj*) = {
-    bg_zone_controller_c_zone_0,
-    bg_zone_controller_c_zone_1,
-    bg_zone_controller_c_zone_2,
-    bg_zone_controller_c_idle,
-};
-
 s16 bg_zone_controller_d_zone_bounds[2] = { 0x0740, 0x0A00 };
 
 void (*bg_zone_controller_d_state_funcs[])(struct EffectObj*) = {

@@ -85,23 +85,9 @@ void func_80020808(struct EngineObj* arg0);
 
 void func_8002088C(struct EngineObj* arg0);
 
-void (*D_800F2438[7])(struct EngineObj*) = {
-    func_80020580,
-    func_80020638,
-    func_800206D0,
-    func_80020808,
-    func_8002088C,
-    func_80020984,
-    func_80020A08,
-};
+extern void (*D_800F2438[7])(struct EngineObj*);
 
-void (*D_800F2454[5])(struct EngineObj*) = {
-    func_80020B1C,
-    func_80020B8C,
-    func_80020C24,
-    func_80020CB8,
-    func_80020D3C,
-};
+extern void (*D_800F2454[5])(struct EngineObj*);
 
 u8 D_800F2468[20] = {
     0x59,

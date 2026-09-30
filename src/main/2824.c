@@ -352,6 +352,8 @@ void func_800129F0(s32 arg0)
 
 #ifdef VERSION_JP
 char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";
+#elif defined(MMX4_WIN32)
+char D_800EE40C[36] = "CAPCOM May 12 1998 19:28:57 CAPCOM";
 #else
 char D_800EE40C[36] = "CAPCOM Aug 19 1997 19:54:17 CAPCOM";
 #endif
@@ -376,6 +378,9 @@ u16 D_800EE430[16] = {
 };
 
 RECT D_800EE450 = { 0, 0, 1024, 512 };
+#ifdef MMX4_WIN32
+u8 pc_2824_data[24] = { 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x02, 0x48, 0x00, 0x69, 0x00, 0x00, 0xB0, 0x2D, 0x00, 0x00, 0x00, 0x00, 0x02 };
+#endif
 
 s32 D_800EE458 = 0;
 

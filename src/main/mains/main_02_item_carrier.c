@@ -3,7 +3,7 @@
 #include "common.h"
 #include "func_tables.h"
 
-extern struct Unk_unk68 item_carrier_hitboxes[];
+extern struct Unk_unk68 item_carrier_hitboxes;
 extern struct Unk_unk68 item_carrier_capsule_hurtbox;
 extern u8 item_carrier_debris[];
 extern u8 item_carrier_capsule_debris[];
@@ -136,7 +136,7 @@ void item_carrier_drop_start(struct MainObj* self)
     self->x_speed = 0;
     self->y_speed = 0x40000;
     self->gravity = 0x4200;
-    self->terrain_box = item_carrier_hitboxes;
+    self->terrain_box = &item_carrier_hitboxes;
     self->hurt_box = &item_carrier_capsule_hurtbox;
     self->x_accel = 0;
     self->attack_box = NULL;
@@ -254,12 +254,13 @@ void item_carrier_leave_side_fly(struct MainObj* self)
 
 struct Unk_unk68 item_carrier_body_box = { -1, -15, 17, 23 };
 
-struct Unk_unk68 item_carrier_hitboxes[4] = {
-    { 0, -1, 10, 13 },
-    { -18, -9, 34, 17 },
-    { -12, -38, 25, 31 },
-    { -13, -38, 25, 44 },
-};
+struct Unk_unk68 item_carrier_hitboxes = { 0, -1, 10, 13 };
+
+struct Unk_unk68 D_800F9B28 = { -18, -9, 34, 17 };
+
+struct Unk_unk68 D_800F9B2C = { -12, -38, 25, 31 };
+
+struct Unk_unk68 D_800F9B30 = { -13, -38, 25, 44 };
 
 struct Unk_unk68 item_carrier_capsule_hurtbox = { -10, -19, 20, 32 };
 
@@ -360,7 +361,9 @@ union AnimationStep* item_carrier_animations[11] = {
 
 u8 item_carrier_debris[4] = { 5, 6, 7, 0 };
 
-u8 item_carrier_capsule_debris[12] = { 8, 9, 10, 0, 5, 6, 7, 8, 9, 10, 0, 0 };
+u8 item_carrier_capsule_debris[4] = { 8, 9, 10, 0 };
+
+u8 D_800F9C4C[8] = { 5, 6, 7, 8, 9, 10, 0, 0 };
 
 void (*item_carrier_state_funcs[])(struct MainObj*) = {
     func_80042950,
@@ -371,13 +374,13 @@ void (*item_carrier_state_funcs[])(struct MainObj*) = {
 };
 
 struct Unk_unk68* item_carrier_part_hurtboxes[] = {
-    item_carrier_hitboxes + 1,
-    item_carrier_hitboxes + 2,
+    &D_800F9B28,
+    &D_800F9B2C,
 };
 
 u8* item_carrier_part_debris[] = {
     item_carrier_debris,
-    item_carrier_capsule_debris + 4,
+    D_800F9C4C,
 };
 
 u8 item_carrier_part_debris_counts[] = { 3, 6, 0, 0 };

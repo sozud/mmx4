@@ -2,6 +2,8 @@
 // 8009CAC0..8009CC64
 #include "common.h"
 
+u8 aimed_bullet_hit_box[4] = { 0xFC, 0xFD, 0x06, 0x05 };
+
 void aimed_bullet_update(struct ShotObj* self)
 {
     aimed_bullet_state_funcs[self->state](self);

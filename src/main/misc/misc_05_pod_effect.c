@@ -73,6 +73,6 @@ void (*pod_effect_state_funcs[6])(struct MiscObj*) = {
     pod_effect_despawn,
 };
 
-s8 pod_effect_offsets[8] = { -19, -14, 0x13, -14, 0x11, 0x10, -18, 0x0E };
+extern s8 pod_effect_offsets[8];
 
-u32 pod_effect_unused = 0;
+extern u32 pod_effect_unused;

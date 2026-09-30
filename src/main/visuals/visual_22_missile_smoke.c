@@ -63,4 +63,4 @@ void (*missile_smoke_state_funcs[])(struct VisualObj*) = {
     missile_smoke_despawn,
 };
 
-u32 D_8010A5E0 = 0x33CD;
+extern u32 D_8010A5E0;

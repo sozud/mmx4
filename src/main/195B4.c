@@ -91,6 +91,11 @@ extern struct Checkpoint** D_800F42B4[32];
 
 void func_80028BF0(void);
 
+struct StageObjectMarginData D_800F4334 = {
+    { 0x20, 0x40, 0x60, 0x80, 0xA0 },
+    0,
+};
+
 const u8* s_StageMainIds[13][2] = {
     { D_800F4A50, D_800F4A60 },
     { D_800F5008, D_800F5014 },
@@ -116,38 +121,6 @@ struct ObjectHeader* (*g_MakeObjectFuncs[8])() = {
     find_free_misc_obj,
     find_free_quad_obj,
     find_free_layer_obj,
-};
-
-struct StageObjectRecord* D_800F43C8[13][2] = {
-    { stage_object_records_0_0, stage_object_records_0_1 },
-    { stage_object_records_1_0, stage_object_records_1_1 },
-    { stage_object_records_2_0, stage_object_records_2_1 },
-    { stage_object_records_3_0, stage_object_records_3_1 },
-    { stage_object_records_4_0, stage_object_records_4_1 },
-    { stage_object_records_5_0, stage_object_records_5_1 },
-    { stage_object_records_6_0, stage_object_records_6_1 },
-    { stage_object_records_7_0, stage_object_records_7_1 },
-    { stage_object_records_8_0, stage_object_records_8_1 },
-    { stage_object_records_9_0, NULL },
-    { stage_object_records_10_0, NULL },
-    { stage_object_records_11_0, stage_object_records_11_1 },
-    { stage_object_records_12_0, stage_object_records_12_1 },
-};
-
-struct StageObjectRecord* D_800F4430[13][2] = {
-    { &stage_object_records_0_0[59], &stage_object_records_0_1[49] },
-    { &stage_object_records_1_0[51], &stage_object_records_1_1[79] },
-    { &stage_object_records_2_0[68], &stage_object_records_2_1[250] },
-    { &stage_object_records_3_0[54], &stage_object_records_3_1[65] },
-    { &stage_object_records_4_0[43], &stage_object_records_4_1[42] },
-    { &stage_object_records_5_0[110], &stage_object_records_5_1[77] },
-    { &stage_object_records_6_0[73], &stage_object_records_6_1[41] },
-    { &stage_object_records_7_0[80], &stage_object_records_7_1[29] },
-    { &stage_object_records_8_0[77], &stage_object_records_8_1[128] },
-    { &stage_object_records_9_0[2], NULL },
-    { &stage_object_records_10_0[57], NULL },
-    { &stage_object_records_11_0[21], &stage_object_records_11_1[50] },
-    { &stage_object_records_12_0[26], &stage_object_records_12_1[12] },
 };
 
 void func_80028DB4(void)

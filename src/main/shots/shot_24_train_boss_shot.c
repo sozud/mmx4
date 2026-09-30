@@ -2,6 +2,9 @@
 // 8009E0B8..8009EB6C
 #include "common.h"
 
+
+
+
 void train_boss_shot_update(struct ShotObj* self)
 {
     train_boss_shot_state_funcs[self->state](self);
@@ -300,4 +303,18 @@ void (*train_boss_shot_state_funcs[])(struct ShotObj*) = {
     train_boss_arm_init,
     train_boss_arm_main,
     train_boss_arm_destroyed,
+};
+
+void (*train_boss_arm_step_funcs[11])(struct ShotObj*) = {
+    enemy_hit_reaction,
+    train_boss_arm_resume_step,
+    train_boss_arm_advance,
+    train_boss_arm_wait_signal,
+    train_boss_arm_windup,
+    train_boss_arm_punch,
+    train_boss_arm_hold,
+    train_boss_arm_retract,
+    func_8009E8E0,
+    train_boss_arm_return,
+    train_boss_arm_wait_sync,
 };

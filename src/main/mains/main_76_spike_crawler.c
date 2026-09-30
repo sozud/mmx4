@@ -231,7 +231,15 @@ void spike_crawler_hit_knockback(struct MainObj* self)
 
 void enemy_hit_reaction(void* arg0)
 {
-    struct Main76HandlerTable handlers = enemy_hit_reaction_funcs;
+    struct Main76HandlerTable handlers = { {
+        NULL,
+        (void (*)(void*))spike_crawler_hit_flash,
+        NULL,
+        (void (*)(void*))func_80091EC4,
+        (void (*)(void*))func_80091EC4,
+        (void (*)(void*))spike_crawler_hit_knockback,
+        (void (*)(void*))spike_crawler_hit_knockback,
+    } };
     struct MainObj* object = arg0;
 
     handlers.funcs[object->unk63](arg0);
@@ -279,16 +287,6 @@ s8 spike_crawler_terrain_box[4] = { -1, 0, 11, 11 };
 s8 spike_crawler_attack_box[4] = { -9, -6, 16, 15 };
 
 s8 spike_crawler_hurt_box[4] = { -11, -8, 20, 18 };
-
-const struct Main76HandlerTable enemy_hit_reaction_funcs = { {
-    NULL,
-    (void (*)(void*))spike_crawler_hit_flash,
-    NULL,
-    (void (*)(void*))func_80091EC4,
-    (void (*)(void*))func_80091EC4,
-    (void (*)(void*))spike_crawler_hit_knockback,
-    (void (*)(void*))spike_crawler_hit_knockback,
-} };
 
 void play_boss_voice(s32 arg0)
 {
@@ -338,22 +336,8 @@ void (*spike_crawler_state_funcs[])(struct MainObj*) = {
     spike_crawler_despawn,
 };
 
-s32 spike_crawler_knockback_speeds[2] = { FIXED(3), FIXED(10) };
+extern s32 spike_crawler_knockback_speeds[2];
 
-u8 boss_voice_tracks[13][3] = {
-    { VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_1, VOICE_WEB_SPIDER_2 },
-    { VOICE_FROST_WALRUS_1, VOICE_FROST_WALRUS_2, VOICE_FROST_WALRUS_3 },
-    { VOICE_SPLIT_MUSHROOM_1, VOICE_SPLIT_MUSHROOM_2, VOICE_SPLIT_MUSHROOM_3 },
-    { VOICE_MAGMA_DRAGOON_1, VOICE_MAGMA_DRAGOON_2, VOICE_MAGMA_DRAGOON_3 },
-    { VOICE_JET_STINGRAY_1, VOICE_JET_STINGRAY_2, VOICE_JET_STINGRAY_3 },
-    { VOICE_CYBER_PEACOCK_1, VOICE_CYBER_PEACOCK_2, VOICE_CYBER_PEACOCK_3 },
-    { VOICE_STORM_OWL_1, VOICE_STORM_OWL_2, VOICE_STORM_OWL_3 },
-    { VOICE_SLASH_BEAST_1, VOICE_SLASH_BEAST_2, VOICE_SLASH_BEAST_3 },
-    { VOICE_COLONEL_1, VOICE_COLONEL_2, VOICE_COLONEL_3 },
-    { VOICE_IRIS_1, VOICE_IRIS_2, VOICE_IRIS_3 },
-    { VOICE_DOUBLE_1, VOICE_DOUBLE_2, VOICE_DOUBLE_3 },
-    { VOICE_GENERAL_1, VOICE_GENERAL_2, VOICE_GENERAL_3 },
-    { VOICE_SIGMA_1, VOICE_SIGMA_2, VOICE_SIGMA_3 },
-};
+extern u8 boss_voice_tracks[13][3];
 
-u8 D_80105FEF_padding = 0;
+extern u8 D_80105FEF_padding;

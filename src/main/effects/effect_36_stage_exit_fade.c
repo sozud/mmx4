@@ -56,24 +56,7 @@ void stage_exit_fade_update(struct EffectObj* self)
     stage_exit_fade_state_funcs[self->state](self);
 }
 
-u16 palette_pulse_palette[16] = {
-    0,
-    0xFFFF,
-    0xAB3F,
-    0x829F,
-    0x81FF,
-    0x815F,
-    0x80DD,
-    0x84D8,
-    0x84B4,
-    0x8470,
-    0xAB3F,
-    0x829F,
-    0x81FF,
-    0x815F,
-    0x80DD,
-    0x84D4,
-};
+extern u16 palette_pulse_palette[16];
 
 void (*stage_exit_fade_state_funcs[])(struct EffectObj*) = {
     stage_exit_fade_init,

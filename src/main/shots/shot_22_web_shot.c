@@ -158,3 +158,11 @@ void (*web_shot_state_funcs[])(struct ShotObj*) = {
     web_shot_main,
     web_shot_despawn,
 };
+
+void (*web_shot_step_funcs[5])(struct ShotObj*) = {
+    web_shot_fly,
+    web_shot_home,
+    web_shot_catch,
+    web_shot_hold,
+    web_shot_fade,
+};

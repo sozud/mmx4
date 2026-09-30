@@ -133,8 +133,8 @@ void ice_bird_charge_start(struct MainObj* self)
     set_animation(self, 1);
     self->x_speed = 0;
     self->ext.main_14.unk80 = 0x2E;
-    self->hurt_box = (const u8*)ice_bird_charge_box;
-    self->attack_box = (const u8*)ice_bird_charge_box;
+    self->hurt_box = (const u8*)&ice_bird_charge_box;
+    self->attack_box = (const u8*)&ice_bird_charge_box;
     self->unk6++;
 }
 
@@ -315,11 +315,11 @@ void ice_bird_spawn_ice_shards(struct AnimatedObj* self)
 
 struct Unk_unk68 ice_bird_body_box = { -10, -15, 32, 25 };
 
-struct Unk_unk68 ice_bird_charge_box[3] = {
-    { -9, -25, 28, 48 },
-    { -27, -25, 33, 52 },
-    { -10, 27, 26, 3 },
-};
+struct Unk_unk68 ice_bird_charge_box = { -9, -25, 28, 48 };
+
+struct Unk_unk68 D_800FB894 = { -27, -25, 33, 52 };
+
+struct Unk_unk68 D_800FB898 = { -10, 27, 26, 3 };
 
 s32 ice_bird_fly_speeds[] = {
     (s32)0xFFFE0000,

@@ -275,28 +275,31 @@ u8 spawner_pod_debris[] = {
     0x00,
 };
 
-struct Unk_unk68 D_800FD598[6] = {
-    { -5, -5, 10, 11 },
-    { -5, -5, 10, 11 },
-    { -11, -11, 21, 21 },
-    { -11, -11, 21, 21 },
-    { 22, 0, 22, 18 },
-    { 0, 21, 18, 21 },
-};
+struct Unk_unk68 D_800FD598 = { -5, -5, 10, 11 };
+
+struct Unk_unk68 D_800FD59C = { -5, -5, 10, 11 };
+
+struct Unk_unk68 D_800FD5A0 = { -11, -11, 21, 21 };
+
+struct Unk_unk68 D_800FD5A4 = { -11, -11, 21, 21 };
+
+struct Unk_unk68 D_800FD5A8 = { 22, 0, 22, 18 };
+
+struct Unk_unk68 D_800FD5AC = { 0, 21, 18, 21 };
 
 struct Unk_unk68* D_800FD5B0[] = {
-    D_800FD598 + 4,
-    D_800FD598 + 5,
+    &D_800FD5A8,
+    &D_800FD5AC,
 };
 
 struct Unk_unk68* D_800FD5B8[] = {
-    D_800FD598 + 2,
-    D_800FD598 + 3,
+    &D_800FD5A0,
+    &D_800FD5A4,
 };
 
 struct Unk_unk68* D_800FD5C0[] = {
-    D_800FD598,
-    D_800FD598 + 1,
+    &D_800FD598,
+    &D_800FD59C,
 };
 
 u8 D_800FD5C8[] = {
