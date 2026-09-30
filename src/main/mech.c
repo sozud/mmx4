@@ -1303,7 +1303,6 @@ void func_800405D4(struct RideArmorObj* arg0)
     arg0->unk7 = 0;
 }
 
-
 union AnimationStep D_800F91D0[] = {
     { 0x00010064 },
     { 0x0B010007 },

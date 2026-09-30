@@ -103,7 +103,6 @@ struct Prim D_800EE504[9] = {
     { 0x78, 0xD0, 0x89, 0x03, 0x01, 0x00 },
 };
 
-
 void func_8001326C(u8 arg0)
 {
     DR_MODE* draw_mode;

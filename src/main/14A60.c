@@ -70,7 +70,6 @@ struct ReplayData {
     u16 inputs[0xE10];
 };
 
-
 #define PSX_MAIN_OBJECTS_ADDRESS 0x8013BED0
 #define PSX_MAIN_OBJ_SIZE 0x9C
 
@@ -162,7 +161,6 @@ void func_80023D90(void);
 void init_objects(void);
 
 void func_800241E8(void);
-
 
 u8 D_800F2C58[] = {
     0x0A,

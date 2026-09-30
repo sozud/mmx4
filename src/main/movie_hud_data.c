@@ -43,7 +43,6 @@ struct MoviePlaybackData {
 #define JP_VALUE(us, jp) us
 #endif
 
-
 struct MoviePlaybackData D_800F1D04[11] = {
     { JP_VALUE(0x8A, 0x89), 0x0092, 0x001D, 1, 0x0800 },
     { JP_VALUE(0x8B, 0x8A), 0x0542, 0x0019, 1, 0x08F0 },

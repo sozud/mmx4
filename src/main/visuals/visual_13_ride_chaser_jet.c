@@ -21,7 +21,6 @@ u8 ride_chaser_jet_animations[16] = {
     0,
 };
 
-
 void ride_chaser_jet_update(struct VisualObj* arg0)
 {
     ride_chaser_jet_state_funcs[arg0->state](arg0);

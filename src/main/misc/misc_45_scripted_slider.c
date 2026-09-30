@@ -33,7 +33,6 @@ u8 stage_cutscene_data[24] = {
     0,
 };
 
-
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", func_800D0E7C_jp);
 #endif

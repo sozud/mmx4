@@ -17,7 +17,6 @@ extern struct Item06AnimationStep* rising_platform_animations[5];
 
 extern u8 rising_platform_debris[2][4];
 
-
 // rising_platform_init
 INCLUDE_ASM("main/nonmatchings/items/item_07_rising_platform", func_800C16F0);
 

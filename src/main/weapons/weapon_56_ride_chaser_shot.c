@@ -2,11 +2,6 @@
 // 800985F4..80098838
 #include "common.h"
 
-
-
-
-
-
 void ride_chaser_shot_update(struct WeaponObj* arg0)
 {
     ride_chaser_shot_state_funcs[arg0->state](arg0);

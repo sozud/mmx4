@@ -6,7 +6,6 @@
 #define JP_VALUE(us, jp) us
 #endif
 
-
 u16 D_800F188C[] = {
     0x8000,
     JP_VALUE(0x0c8a, 0x0cc7),

@@ -38,7 +38,6 @@ u8* tile_anim_trigger_scripts[2] = {
     (u8*)tile_anim_trigger_close_steps,
 };
 
-
 void proximity_door_update(struct EffectObj* self)
 {
     proximity_door_state_funcs[self->state](self);

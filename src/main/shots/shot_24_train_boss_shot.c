@@ -2,9 +2,6 @@
 // 8009E0B8..8009EB6C
 #include "common.h"
 
-
-
-
 void train_boss_shot_update(struct ShotObj* self)
 {
     train_boss_shot_state_funcs[self->state](self);

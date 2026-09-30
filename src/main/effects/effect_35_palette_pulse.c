@@ -21,7 +21,6 @@ u16 palette_pulse_palette[16] = {
     0x84D4,
 };
 
-
 void palette_pulse_update(struct EffectObj* self)
 {
     if (self->state == 0) {

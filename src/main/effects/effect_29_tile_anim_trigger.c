@@ -27,7 +27,6 @@ struct Effect28AnimationStep* tile_anim_scripts[3] = {
     tile_anim_script_2,
 };
 
-
 void tile_anim_trigger_update(struct EffectObj* self)
 {
     tile_anim_trigger_state_funcs[self->state](self);

@@ -70,7 +70,6 @@ struct ReplayData {
     u16 inputs[0xE10];
 };
 
-
 #define PSX_MAIN_OBJECTS_ADDRESS 0x8013BED0
 #define PSX_MAIN_OBJ_SIZE 0x9C
 
@@ -96,10 +95,6 @@ struct ReplayData {
 
 void func_80021E74(void);
 
-
-
-
-
 void func_80022074(void);
 
 void func_800220C4(void);
@@ -107,9 +102,6 @@ void func_800220C4(void);
 void func_80022138(void);
 
 // start_dialogue
-
-
-
 
 void func_8002328C(struct AbcObj*);
 
@@ -151,10 +143,6 @@ void func_800239E0(struct EngineObj* arg0);
 
 void func_80023A54(struct EngineObj* arg0);
 
-
-
-
-
 void func_80023B98(struct MiscObj* arg0);
 
 void func_80023C0C(struct MiscObj* arg0);
@@ -176,39 +164,15 @@ void func_800241E8(void);
 
 void func_80024260(void);
 
-
-
-
-
-
-
-
-
-
-
-
-
 void func_80024E70(void);
 
 void func_80024F5C(struct PlayerObj* arg0);
 
 void func_8002509C(struct PlayerObj* arg0);
 
-
-
-
-
-
-
-
-
 void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4);
 
 void func_800257BC(struct PlayerObj* arg0);
-
-
-
-
 
 void func_80025CDC(void);
 
