@@ -12,8 +12,8 @@ void boss_death_shard_init(struct QuadObj* arg0)
     arg0->bg_offset = 0;
     arg0->ext.quad_4.unk38 = arg0->unk2;
     value = get_random_nonzero();
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
     arg0->state++;
     arg0->ext.quad_4.unk39 = value % 3;
 }

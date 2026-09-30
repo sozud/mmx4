@@ -63,14 +63,14 @@ void web_piece_quad_scale(struct QuadObj* arg0)
 {
     s32* p = arg0->ext.quad_5.data;
 
-    arg0->unk14.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk18.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk1C.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk20.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk24.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk28.val = *p++ * arg0->ext.quad_5.scale;
-    arg0->unk2C.val = p[0] * arg0->ext.quad_5.scale;
-    arg0->unk30.val = p[1] * arg0->ext.quad_5.scale;
+    arg0->vertices[0].x.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[0].y.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[1].x.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[1].y.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[2].x.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[2].y.val = *p++ * arg0->ext.quad_5.scale;
+    arg0->vertices[3].x.val = p[0] * arg0->ext.quad_5.scale;
+    arg0->vertices[3].y.val = p[1] * arg0->ext.quad_5.scale;
 }
 
 s32 web_piece_quad_is_visible(struct QuadObj* arg0)
@@ -83,15 +83,15 @@ s32 web_piece_quad_is_visible(struct QuadObj* arg0)
     result = 0;
     x = arg0->x_pos.u.hi - background_objects[arg0->bg_offset].x_pos.u.hi;
     y = arg0->y_pos.u.hi - background_objects[arg0->bg_offset].y_pos.u.hi;
-    width = ABS(arg0->unk1C.i.hi, arg0->unk14.i.hi);
-    height = ABS(arg0->unk30.i.hi, arg0->unk18.i.hi);
+    width = ABS(arg0->vertices[1].x.i.hi, arg0->vertices[0].x.i.hi);
+    height = ABS(arg0->vertices[3].y.i.hi, arg0->vertices[0].y.i.hi);
     if (ON_SCREEN_X(x, width)) {
         if (ON_SCREEN_Y(y, height)) {
             result = 1;
         }
     }
-    x_p = arg0->x_pos.u.hi + arg0->unk14.u.hi;
-    y_p = arg0->y_pos.u.hi + arg0->unk18.u.hi;
+    x_p = arg0->x_pos.u.hi + arg0->vertices[0].x.u.hi;
+    y_p = arg0->y_pos.u.hi + arg0->vertices[0].y.u.hi;
     x2 = x_p + (u16)(width >> 1) - background_objects[arg0->bg_offset].x_pos.u.hi;
     y2 = y_p + (u16)(height >> 1) - background_objects[arg0->bg_offset].y_pos.u.hi;
     if (ON_SCREEN_X(x2, width)) {

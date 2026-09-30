@@ -1342,7 +1342,30 @@ s32 player_zero_check_ryuenjin(struct PlayerObj* self)
 }
 
 // player_zero_check_rakuhouha
-INCLUDE_ASM("main/nonmatchings/player_special", func_80039F28);
+s32 func_80039F28(struct PlayerObj* arg)
+{
+    struct PlayerObj* player = arg;
+
+    if ((player->boss_flags & 0x20) && (player->weapon_energy[0] >= 0xC) && (player->pressed_input & 0x40)) {
+        if (player->attacking != 0) {
+            return 0;
+        }
+        player_zero_begin_attack(arg);
+        player_set_animation(arg, 0x67);
+        player_play_voice(arg, 0xAU);
+        player->invincibility_timer = 0;
+        player->hurt_phase = 0;
+        player_reset_palette(arg);
+        player->air_state = 1;
+        player->spike_immune = 1;
+        player->unk5 = 0x3A;
+        player->unk6 = 0;
+        player->weapon_energy[0] -= 0xC;
+        player_zero_rakuhouha(arg);
+        return 1;
+    }
+    return 0;
+}
 s32 player_zero_check_shippuuga(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {

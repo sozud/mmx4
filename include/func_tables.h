@@ -5967,7 +5967,7 @@ void destructible_core_main(struct ItemObj*);
 void destructible_core_destroyed(struct ItemObj*);
 void destructible_core_finish(struct ItemObj*);
 void destructible_core_flash_palette(struct ItemObj*);
-void func_800B10E4(s32, s32, s32, s32, s32, s32);
+void func_800B10E4(u8, s32, s32, s32, s32, s32);
 
 // moving_lift_state_funcs
 extern void (*moving_lift_state_funcs[])(struct ItemObj*);

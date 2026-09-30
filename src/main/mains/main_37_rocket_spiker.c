@@ -177,7 +177,40 @@ void rocket_spiker_boost_wait(struct MainObj* self)
 }
 
 // rocket_spiker_boost_aim
-INCLUDE_ASM("main/nonmatchings/mains/main_37_rocket_spiker", func_800606D8);
+void func_800606D8(struct MainObj* main)
+{
+    s16 left;
+    s16 top;
+
+    animate_object(ANIMATED_OBJECT(main));
+    if (--main->ext.main_37.unk8C.bytes[1] == 0) {
+        func_8001540C(2, 0x59, main);
+        main->ext.main_37.unk8C.bytes[1] = 0x1E;
+    }
+    if (--main->unk7C == 0) {
+        // original build had no prototype here: args are passed unnarrowed
+        ((struct VisualObj * (*)()) spawn_explosion_at)(2, main->ext.main_37.unk84.i.lo + 0x18, main->ext.main_37.unk84.i.hi + 0x20, 1);
+        apply_tile_effect((main->ext.main_0.index & 1) + 5, main->ext.main_37.unk84.i.lo,
+            main->ext.main_37.unk84.i.hi);
+        main->unk7C = 0x20;
+        main->unk6 = 2;
+    }
+    if (!(main->unk7E & 3)) {
+        if (main->unk15 == 0) {
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, 0x7988, FIXED(-32), 0);
+        } else {
+            spawn_owner_debris(1, &rocket_spiker_exhaust_variants[main->ext.main_37.unk8C.bytes[0]], main, 0x7988, FIXED(32), 0);
+        }
+        if (++main->ext.main_37.unk8C.bytes[0] == 0xA) {
+            main->ext.main_37.unk8C.bytes[0] = 0;
+        }
+    }
+    if (!(++main->unk7E & 7)) {
+        left = main->ext.main_37.unk84.i.lo;
+        top = main->ext.main_37.unk84.i.hi;
+        func_800B10E4(0x11, (s16)(left + 0x10), (s16)(top + 0x10), (s16)(left + 0x20), (s16)(top + 0x30), 1);
+    }
+}
 
 void rocket_spiker_boost_launch(struct MainObj* self)
 {

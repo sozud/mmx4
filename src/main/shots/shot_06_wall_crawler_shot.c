@@ -32,7 +32,68 @@ void wall_crawler_shot_update(struct ShotObj* self)
 }
 
 // wall_crawler_shot_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_06_wall_crawler_shot", func_8009A9E4);
+void func_8009A9E4(struct ShotObj* shot)
+{
+    shot->unk68 = (struct Unk_unk68*)wall_crawler_shot_terrain_box;
+    shot->unk54 = wall_crawler_shot_hit_boxes;
+    shot->unk50.data = wall_crawler_shot_hit_boxes;
+    shot->on_screen = 1;
+    shot->unk58.data = (u8*)D_80105FF0;
+    shot->unk5C = 1;
+    shot->state++;
+    shot->unk28 = 0;
+    shot->unk2C = 0;
+    shot->unk67 = 0;
+    shot->unk16 = 0;
+    shot->unk60 = 2;
+    shot->unk42 &= 0x7FFF;
+    shot->x_vel.val *= 3;
+    shot->y_vel.val *= 3;
+    switch (shot->unk2 & 0xFE) {
+    case 2:
+    case 4:
+    case 6:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[6];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[7];
+        break;
+    case 10:
+    case 12:
+    case 14:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[4];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[5];
+        break;
+    case 8:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[8];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[9];
+        break;
+    case 18:
+    case 20:
+    case 22:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[12];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[13];
+        break;
+    case 26:
+    case 28:
+    case 30:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[14];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[15];
+        break;
+    case 24:
+        shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[10];
+        shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[11];
+        break;
+    default:
+        if (shot->unk15 & 0x40) {
+            shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[2];
+            shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[3];
+        } else {
+            shot->x_pos.i.hi += wall_crawler_shot_spawn_offsets[0];
+            shot->y_pos.i.hi += wall_crawler_shot_spawn_offsets[1];
+        }
+        break;
+    }
+    set_animation(shot, 0xB);
+}
 
 void wall_crawler_shot_fly(struct ShotObj* self)
 {

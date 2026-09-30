@@ -46,14 +46,14 @@ void flash_band_init(struct QuadObj* arg0)
     arg0->unk34 = 3;
     arg0->unk36 = 0;
     arg0->bg_offset = 0;
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
-    arg0->unk1C.val = 0;
-    arg0->unk20.val = 0;
-    arg0->unk24.val = 0;
-    arg0->unk28.val = 0;
-    arg0->unk2C.val = 0;
-    arg0->unk30.val = 0;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
+    arg0->vertices[1].x.val = 0;
+    arg0->vertices[1].y.val = 0;
+    arg0->vertices[2].x.val = 0;
+    arg0->vertices[2].y.val = 0;
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
     arg0->ext.ready_line.x_vel.val = FIXED(4);
     arg0->state++;
     quad_is_on_screen(arg0);
@@ -61,11 +61,11 @@ void flash_band_init(struct QuadObj* arg0)
 
 void flash_band_widen(struct QuadObj* arg0)
 {
-    arg0->unk14.val += arg0->ext.ready_line.x_vel.val;
-    arg0->unk2C.val -= arg0->ext.ready_line.x_vel.val;
+    arg0->vertices[0].x.val += arg0->ext.ready_line.x_vel.val;
+    arg0->vertices[3].x.val -= arg0->ext.ready_line.x_vel.val;
     arg0->ext.ready_line.x_vel.val += FIXED(4);
     quad_is_on_screen(arg0);
-    if (arg0->unk14.i.hi >= 0x14B) {
+    if (arg0->vertices[0].x.i.hi >= 0x14B) {
         arg0->state++;
     }
 }

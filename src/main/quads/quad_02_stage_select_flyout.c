@@ -22,14 +22,14 @@ void stage_select_flyout_scale(struct QuadObj* arg0)
 {
     s32* p = arg0->ext.quad_2.vertices;
 
-    arg0->unk14.val = *p++ * arg0->ext.quad_2.x_scale.value;
-    arg0->unk18.val = *p++ * arg0->ext.quad_2.y_scale.value;
-    arg0->unk1C.val = *p++ * arg0->ext.quad_2.x_scale.value;
-    arg0->unk20.val = *p++ * arg0->ext.quad_2.y_scale.value;
-    arg0->unk24.val = *p++ * arg0->ext.quad_2.x_scale.value;
-    arg0->unk28.val = *p++ * arg0->ext.quad_2.y_scale.value;
-    arg0->unk2C.val = p[0] * arg0->ext.quad_2.x_scale.value;
-    arg0->unk30.val = p[1] * arg0->ext.quad_2.y_scale.value;
+    arg0->vertices[0].x.val = *p++ * arg0->ext.quad_2.x_scale.value;
+    arg0->vertices[0].y.val = *p++ * arg0->ext.quad_2.y_scale.value;
+    arg0->vertices[1].x.val = *p++ * arg0->ext.quad_2.x_scale.value;
+    arg0->vertices[1].y.val = *p++ * arg0->ext.quad_2.y_scale.value;
+    arg0->vertices[2].x.val = *p++ * arg0->ext.quad_2.x_scale.value;
+    arg0->vertices[2].y.val = *p++ * arg0->ext.quad_2.y_scale.value;
+    arg0->vertices[3].x.val = p[0] * arg0->ext.quad_2.x_scale.value;
+    arg0->vertices[3].y.val = p[1] * arg0->ext.quad_2.y_scale.value;
 }
 
 void stage_select_flyout_init(struct QuadObj* self)

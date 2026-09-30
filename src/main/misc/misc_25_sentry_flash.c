@@ -19,7 +19,67 @@ void sentry_flash_update(struct MiscObj* self)
 }
 
 // sentry_flash_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_25_sentry_flash", func_800CC4E0);
+void func_800CC4E0(struct MiscObj* misc)
+{
+
+    misc->on_screen = 1;
+    misc->x_vel.val = 0;
+    misc->unk28 = 0;
+    misc->y_vel.val = 0;
+    misc->unk2C = 0;
+    misc->unk16 = 0;
+    misc->unk40 = misc->ext.misc_5.owner->unk40;
+    misc->unk42 = misc->ext.misc_5.owner->unk42 & 0x7FFF;
+    misc->animation_table = (u32**)misc->ext.misc_5.owner->animation_table;
+    misc->unk3C = misc->ext.misc_5.owner->sprite_frames;
+    misc->unk15 = misc->ext.misc_5.owner->unk15;
+    misc->bg_offset = misc->ext.misc_5.owner->bg_offset;
+    set_animation(misc, 7);
+    switch (misc->unk2 & 0xFE) {
+    case 2:
+    case 4:
+    case 6:
+        misc->x_pos.i.hi += sentry_flash_offsets[3].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[3].y;
+        break;
+    case 10:
+    case 12:
+    case 14:
+        misc->x_pos.i.hi += sentry_flash_offsets[2].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[2].y;
+        break;
+    case 8:
+        misc->x_pos.i.hi += sentry_flash_offsets[4].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[4].y;
+        break;
+    case 18:
+    case 20:
+    case 22:
+        misc->x_pos.i.hi += sentry_flash_offsets[6].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[6].y;
+        break;
+    case 26:
+    case 28:
+    case 30:
+        misc->x_pos.i.hi += sentry_flash_offsets[7].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[7].y;
+        break;
+    case 24:
+        misc->x_pos.i.hi += sentry_flash_offsets[5].x;
+        misc->y_pos.i.hi += sentry_flash_offsets[5].y;
+        break;
+    default:
+        if (misc->unk15 & 0x40) {
+            misc->x_pos.i.hi += sentry_flash_offsets[1].x;
+            misc->y_pos.i.hi += sentry_flash_offsets[1].y;
+        } else {
+            misc->x_pos.i.hi += sentry_flash_offsets[0].x;
+            misc->y_pos.i.hi += sentry_flash_offsets[0].y;
+        }
+        break;
+    }
+    misc->state++;
+}
 
 void sentry_flash_animate(struct MiscObj* self)
 {
@@ -37,11 +97,6 @@ void sentry_flash_despawn(struct MiscObj* self)
 {
     ZeroObjectState(OBJECT_HEADER(self));
 }
-
-struct Misc25Velocity {
-    s8 x;
-    s8 y;
-};
 
 struct Misc25Velocity sentry_flash_offsets[8] = {
     { -13, 0 },

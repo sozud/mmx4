@@ -11,7 +11,7 @@ void item_scatter_init(struct EffectObj* self)
 
 void item_scatter_spawn(struct EffectObj* self)
 {
-    struct Effect14ItemSpawn* entry;
+    struct Effect1314ItemSpawn* entry;
     struct ItemObj* item;
     entry = edge_spawner_items;
 

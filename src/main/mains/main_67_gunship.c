@@ -11,7 +11,43 @@ void gunship_update(struct MainObj* self)
 }
 
 // gunship_init
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082470);
+void func_80082470(struct MainObj* obj)
+{
+    obj->active = 0x41;
+    obj->hp = 0x1E;
+    obj->contact_damage = 0;
+    obj->invincibility_timer = 0;
+    obj->bg_offset = g_Player.bg_offset;
+    obj->collision_data = D_80107F04;
+    obj->animation_table = (const u8* const*)gunship_animations;
+    obj->unk16 = 6;
+    obj->terrain_box = &gunship_terrain_box;
+    obj->hurt_box = &gunship_hurt_box;
+    obj->x_speed = 0;
+    obj->y_speed = 0;
+    obj->x_accel = 0;
+    obj->gravity = 0;
+    obj->air_state = 0;
+    obj->attack_box = NULL;
+    obj->unk15 = 0;
+    obj->unk75 = 1;
+    obj->unk18.val = obj->x_pos.val;
+    obj->unk1C.val = obj->y_pos.val;
+    set_animation(obj, 0);
+    /* volatile: the clear and the real value are both stored to this word */
+    *(volatile u32*)&obj->ext.main_67.vertical_speed = 0;
+    obj->ext.main_67.vertical_speed = -0x5800;
+    obj->unk5 = 2;
+    obj->ext.raw[1] = 0;
+    obj->ext.raw[2] = 0;
+    obj->ext.raw[3] = 0;
+    obj->ext.raw[4] = 0;
+    obj->ext.raw[5] = 0;
+    obj->ext.raw[1] = 0;
+    obj->unk6 = 0;
+    obj->unk7C = 0x28;
+    obj->state++;
+}
 
 // gunship_main
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);

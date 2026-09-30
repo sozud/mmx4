@@ -244,14 +244,14 @@ void ready_line_init(struct QuadObj* arg0)
     arg0->bg_offset = -1;
     arg0->x_pos.val = 0;
     arg0->y_pos.val = 0;
-    arg0->unk14.val = 0;
-    arg0->unk18.val = 0;
-    arg0->unk1C.val = 0;
-    arg0->unk20.val = 0;
-    arg0->unk24.val = 0;
-    arg0->unk28.val = 0;
-    arg0->unk2C.val = 0;
-    arg0->unk30.val = 0;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
+    arg0->vertices[1].x.val = 0;
+    arg0->vertices[1].y.val = 0;
+    arg0->vertices[2].x.val = 0;
+    arg0->vertices[2].y.val = 0;
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
 }
 
 // ready_line_state_funcs state 1
@@ -278,14 +278,14 @@ void ready_line_sweep(struct QuadObj* arg0)
         arg0->x_pos.i.hi = -320;
         arg0->y_pos.i.hi = 112;
         verts = ready_line_sweep_vertices;
-        arg0->unk14.i.hi = *verts++;
-        arg0->unk18.i.hi = *verts++;
-        arg0->unk1C.i.hi = *verts++;
-        arg0->unk20.i.hi = *verts++;
-        arg0->unk24.i.hi = *verts++;
-        arg0->unk28.i.hi = *verts++;
-        arg0->unk2C.i.hi = *verts++;
-        arg0->unk30.i.hi = *verts;
+        arg0->vertices[0].x.i.hi = *verts++;
+        arg0->vertices[0].y.i.hi = *verts++;
+        arg0->vertices[1].x.i.hi = *verts++;
+        arg0->vertices[1].y.i.hi = *verts++;
+        arg0->vertices[2].x.i.hi = *verts++;
+        arg0->vertices[2].y.i.hi = *verts++;
+        arg0->vertices[3].x.i.hi = *verts++;
+        arg0->vertices[3].y.i.hi = *verts;
         arg0->ext.ready_line.x_vel.val = FIXED(32);
         arg0->ext.ready_line.y_vel.val = 0;
         arg0->ext.ready_line.x_accel.val = 0;
@@ -342,21 +342,21 @@ void ready_line_shutter(struct QuadObj* arg0)
         arg0->unk5 = 1;
         arg0->x_pos.i.hi = 0;
         temp_v1_2 = &ready_line_shutter_columns[arg0->unk7];
-        arg0->unk14.i.hi = *temp_v1_2;
-        arg0->unk2C.i.hi = *temp_v1_2;
-        arg0->unk1C.i.hi = *temp_v1_2 + 63;
-        arg0->unk24.i.hi = *temp_v1_2 + 63;
+        arg0->vertices[0].x.i.hi = *temp_v1_2;
+        arg0->vertices[3].x.i.hi = *temp_v1_2;
+        arg0->vertices[1].x.i.hi = *temp_v1_2 + 63;
+        arg0->vertices[2].x.i.hi = *temp_v1_2 + 63;
         arg0->y_pos.i.hi = 0;
         if (arg0->unk7 < 5) {
-            arg0->unk18.i.hi = 0;
-            arg0->unk20.i.hi = 0;
-            arg0->unk28.i.hi = 0;
-            arg0->unk30.i.hi = 0;
+            arg0->vertices[0].y.i.hi = 0;
+            arg0->vertices[1].y.i.hi = 0;
+            arg0->vertices[2].y.i.hi = 0;
+            arg0->vertices[3].y.i.hi = 0;
         } else {
-            arg0->unk18.i.hi = 240;
-            arg0->unk20.i.hi = 240;
-            arg0->unk28.i.hi = 240;
-            arg0->unk30.i.hi = 240;
+            arg0->vertices[0].y.i.hi = 240;
+            arg0->vertices[1].y.i.hi = 240;
+            arg0->vertices[2].y.i.hi = 240;
+            arg0->vertices[3].y.i.hi = 240;
         }
         arg0->runtime.legacy.unk55 = 1;
         arg0->runtime.legacy.unk54 = 1;
@@ -374,14 +374,14 @@ void ready_line_shutter(struct QuadObj* arg0)
         } while (var_s1 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
             verts = &ready_line_shutter_open_vertices[arg0->unk7][0];
-            arg0->unk14.i.hi = *verts++;
-            arg0->unk18.i.hi = *verts++;
-            arg0->unk1C.i.hi = *verts++;
-            arg0->unk20.i.hi = *verts++;
-            arg0->unk24.i.hi = *verts++;
-            arg0->unk28.i.hi = *verts++;
-            arg0->unk2C.i.hi = *verts++;
-            arg0->unk30.i.hi = *verts++;
+            arg0->vertices[0].x.i.hi = *verts++;
+            arg0->vertices[0].y.i.hi = *verts++;
+            arg0->vertices[1].x.i.hi = *verts++;
+            arg0->vertices[1].y.i.hi = *verts++;
+            arg0->vertices[2].x.i.hi = *verts++;
+            arg0->vertices[2].y.i.hi = *verts++;
+            arg0->vertices[3].x.i.hi = *verts++;
+            arg0->vertices[3].y.i.hi = *verts++;
             arg0->unk5 = 2;
             arg0->runtime.legacy.unk55 = 1;
             arg0->runtime.legacy.unk54 = 1;
@@ -401,14 +401,14 @@ void ready_line_shutter(struct QuadObj* arg0)
         } while (var_s1_2 < 4);
         if (--arg0->runtime.legacy.unk50 == 0) {
             verts = &ready_line_shutter_close_vertices[arg0->unk7][0];
-            arg0->unk14.i.hi = *verts++;
-            arg0->unk18.i.hi = *verts++;
-            arg0->unk1C.i.hi = *verts++;
-            arg0->unk20.i.hi = *verts++;
-            arg0->unk24.i.hi = *verts++;
-            arg0->unk28.i.hi = *verts++;
-            arg0->unk2C.i.hi = *verts++;
-            arg0->unk30.i.hi = *verts++;
+            arg0->vertices[0].x.i.hi = *verts++;
+            arg0->vertices[0].y.i.hi = *verts++;
+            arg0->vertices[1].x.i.hi = *verts++;
+            arg0->vertices[1].y.i.hi = *verts++;
+            arg0->vertices[2].x.i.hi = *verts++;
+            arg0->vertices[2].y.i.hi = *verts++;
+            arg0->vertices[3].x.i.hi = *verts++;
+            arg0->vertices[3].y.i.hi = *verts++;
             arg0->unk5 = 3;
             arg0->runtime.legacy.unk55 = 1;
             arg0->runtime.legacy.unk54 = 1;
@@ -445,14 +445,14 @@ void ready_line_streak(struct QuadObj* arg0)
     case 0:
         arg0->unk5 = 1;
         verts = &ready_line_streak_vertices[ready_line_streak_shapes[get_random() & 0xF]][0];
-        arg0->unk14.i.hi = *verts++;
-        arg0->unk18.i.hi = *verts++;
-        arg0->unk1C.i.hi = *verts++;
-        arg0->unk20.i.hi = *verts++;
-        arg0->unk24.i.hi = *verts++;
-        arg0->unk28.i.hi = *verts++;
-        arg0->unk2C.i.hi = *verts++;
-        arg0->unk30.i.hi = *verts++;
+        arg0->vertices[0].x.i.hi = *verts++;
+        arg0->vertices[0].y.i.hi = *verts++;
+        arg0->vertices[1].x.i.hi = *verts++;
+        arg0->vertices[1].y.i.hi = *verts++;
+        arg0->vertices[2].x.i.hi = *verts++;
+        arg0->vertices[2].y.i.hi = *verts++;
+        arg0->vertices[3].x.i.hi = *verts++;
+        arg0->vertices[3].y.i.hi = *verts++;
         var_s1 = 1;
         if (get_random() & 1) {
             var_s1 = 2;
@@ -521,7 +521,7 @@ void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const 
     s32 vertex_index;
     s32 quadrant;
 
-    vertex = &arg0->unk14;
+    vertex = &arg0->vertices[0].x;
     vertex_index = arg2;
     for (i = 0; i < (vertex_index & 0xFF); i++) {
         vertex += 2;
