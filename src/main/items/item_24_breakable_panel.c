@@ -73,7 +73,7 @@ void breakable_panel_destroyed(struct ItemObj* arg0)
             func_800AF878(BASE_OBJECT(arg0), 1, 0xF, 0x3F);
         }
         if ((D_80141BD8.unk0 & 0xF) == 0) {
-            ((s32 (*)(s32, s32, void*))func_8001540C)(0, breakable_panel_explosion_types[get_random() & 3], arg0);
+            ((s32(*)(s32, s32, void*))func_8001540C)(0, breakable_panel_explosion_types[get_random() & 3], arg0);
         }
     } else {
         despawn_object_permanently(OBJECT_HEADER(arg0));

@@ -176,7 +176,6 @@ void rocket_spiker_boost_wait(struct MainObj* self)
     }
     if (!(++self->unk7E & 7)) {
 
-
         func_800B10E4(0x11, (s16)(self->ext.main_37.unk84.i.lo + 0x10), (s16)(self->ext.main_37.unk84.u.hi + 0x10), (s16)(self->ext.main_37.unk84.i.lo + 0x20), (s16)(self->ext.main_37.unk84.u.hi + 0x30), 1);
     }
 }

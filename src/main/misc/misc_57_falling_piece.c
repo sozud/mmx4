@@ -53,7 +53,6 @@ void menu_text_init_cursor(struct UnkObj* self)
     s32* addr_801F3000 = (s32*)0x801F3000;
     s32* addr_801F3008;
 
-
     self->unk40 = 0x1E00;
     self->animation_table = option_toggle_animations;
     self->unk3C = (*((s32*)0x801F3008)) + (s32)addr_801F3000;
