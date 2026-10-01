@@ -9,7 +9,49 @@ void bomb_bat_update(struct MainObj* self)
 }
 
 // bomb_bat_init
-INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", func_8005C860);
+void func_8005C860(struct MainObj* self)
+{
+    struct Main32Ext* ext = &self->ext.main_32;
+
+    self->active = 0x41;
+    self->hp = 3;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
+    self->bg_offset = g_Player.bg_offset;
+    self->collision_data = (const u16*)D_80107274;
+    self->animation_table = (const u8* const*)bomb_bat_animations;
+    self->unk16 = 6;
+    self->hurt_box = (const u8*)&bomb_bat_body_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->terrain_box = NULL;
+    self->attack_box = (const u8*)D_800FDC88;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    set_animation(self, 0);
+    ext->unk80 = 0;
+    ext->unk84 = 0;
+    ext->unk88 = 0;
+    ext->unk8C = 0;
+    ext->unk90 = 0;
+    ext->saved_unk5 = 0;
+    self->state++;
+    switch (self->unk2) {
+    case 0:
+        self->unk5 = 2;
+        break;
+    case 1:
+        self->unk5 = 5;
+        break;
+    default:
+        self->unk5 = 6;
+        break;
+    }
+    self->unk6 = 0;
+}
 
 void bomb_bat_main(struct MainObj* self)
 {

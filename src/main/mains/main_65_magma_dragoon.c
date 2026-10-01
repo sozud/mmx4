@@ -576,7 +576,41 @@ void magma_dragoon_fireball_start(struct MainObj* self)
 }
 
 // magma_dragoon_fireball_fire
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F404);
+void func_8007F404(struct MainObj* self)
+{
+    s32 x;
+    u8 repeat;
+
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (self->animation_step.fields.event == 1) {
+        struct ShotObj* shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x29;
+            shot->unk2 = 3;
+            shot->unk7C = WEAPON_OBJECT(self);
+            x = self->x_pos.i.hi;
+            shot->x_pos.i.hi = self->unk15 ? x + 0x17 : x - 0x17;
+            shot->y_pos.i.hi = self->y_pos.i.hi;
+            func_8001540C(2, 4, self);
+        }
+        self->animation_step.fields.event = 0;
+    }
+
+    if (self->animation_step.fields.relative_step == 0) {
+        if (self->ext.main_65.attack == 0) {
+            self->unk5 = 0xB;
+        } else if (self->ext.main_65.attack == 1) {
+            self->unk5 = &func_8007DD0C != NULL ? 0xC : 9;
+        } else {
+            repeat = self->ext.main_65.attack_repeat;
+            self->ext.main_65.attack_repeat++;
+            self->unk5 = repeat == 0 ? 0xB : 5;
+        }
+        self->unk6 = 0;
+    }
+}
 
 void magma_dragoon_fireball(struct MainObj* self)
 {
@@ -593,7 +627,39 @@ void magma_dragoon_fireball_low_start(struct MainObj* self)
 }
 
 // magma_dragoon_fireball_low_fire
-INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F5B0);
+void func_8007F5B0(struct MainObj* self)
+{
+    s32 x;
+
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (self->animation_step.fields.event == 1) {
+        struct ShotObj* shot = find_free_shot_obj();
+        if (shot != NULL) {
+            shot->active = 0x41;
+            shot->id = 0x29;
+            shot->unk2 = 3;
+            shot->unk7C = WEAPON_OBJECT(self);
+            x = self->x_pos.i.hi;
+            shot->x_pos.i.hi = self->unk15 ? x + 0x17 : x - 0x17;
+            shot->y_pos.i.hi = self->y_pos.i.hi + 0x28;
+            func_8001540C(2, 4, self);
+        }
+        self->animation_step.fields.event = 0;
+    }
+
+    if (self->animation_step.fields.relative_step == 0) {
+        self->attack_box = &magma_dragoon_leap_attack_box;
+        self->unk6 = 0;
+        if (self->ext.main_65.attack == 0) {
+            self->unk5 = 9;
+        } else if (self->ext.main_65.attack == 4) {
+            self->unk5 = 4;
+        } else {
+            self->unk5 = 0xA;
+        }
+    }
+}
 
 void magma_dragoon_fireball_low(struct MainObj* self)
 {

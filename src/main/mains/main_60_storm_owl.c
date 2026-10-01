@@ -54,7 +54,48 @@ void storm_owl_start_wait_warning(struct MainObj* self)
 }
 
 // storm_owl_start_init
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_800751AC);
+void func_800751AC(struct MainObj* self)
+{
+    s32 x;
+
+    self->hp = 0;
+    self->contact_damage = 6;
+    self->invincibility_timer = 0;
+    if (engine_obj.stage != 0xC) {
+        self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    } else {
+        self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+        self->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x10 / 4];
+        self->unk42 = 0x7888;
+    }
+    self->bg_offset = g_Player.bg_offset;
+    self->collision_data = D_80107B78;
+    self->animation_table = (const u8* const*)storm_owl_animations;
+    self->unk16 = 5;
+    self->terrain_box = &storm_owl_slam_terrain_box;
+    self->hurt_box = &storm_owl_hurt_box;
+    self->unk18.val = self->x_pos.val;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->attack_box = &storm_owl_attack_box;
+    self->unk1C.val = self->y_pos.val;
+    x = self->x_pos.val;
+    self->unk15 = (g_Player.x_pos.val >= x) << 6;
+    set_animation(self, 1);
+    self->state = 1;
+    self->unk5 = 2;
+    self->ext.raw[0] = 0;
+    self->ext.raw[1] = 0;
+    self->ext.raw[2] = 0;
+    self->ext.raw[3] = 0;
+    self->ext.raw[4] = 0;
+    self->ext.raw[5] = 0;
+    self->unk6 = 0;
+    self->unk7 = 0x28;
+}
 
 // storm_owl_main
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075320);
@@ -148,7 +189,25 @@ void storm_owl_intro(struct MainObj* self)
 }
 
 // storm_owl_intro_descend
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80075944);
+void func_80075944(struct MainObj* self)
+{
+    set_animation(self, 0);
+
+    if (engine_obj.stage == 7) {
+        self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x20;
+        self->unk15 = 0x40;
+    } else {
+        self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x120;
+        self->unk15 = 0;
+    }
+
+    self->y_pos.i.hi = background_objects[0].y_pos.u.hi - 0x20;
+    self->y_speed = FIXED(-2);
+
+    storm_owl_spawn_intro_wind(self);
+    func_8001540C(2, 0xB4, self);
+    self->unk6++;
+}
 
 void storm_owl_intro_land(struct MainObj* self)
 {
@@ -512,7 +571,20 @@ void storm_owl_feather_volley_start(struct MainObj* self)
 }
 
 // storm_owl_feather_volley_spread
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076D14);
+void func_80076D14(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        if (++self->ext.main_60.shot_count >= 4) {
+            self->unk7C = 0x3C;
+            self->unk6++;
+        } else {
+            self->unk7C = 0x3D;
+        }
+        ((void (*)())storm_owl_spawn_volley_feather)(self, self->ext.main_60.shot_count);
+        func_8001540C(2, 0xB5, self);
+    }
+}
 
 void storm_owl_feather_volley_aim(struct MainObj* self)
 {
@@ -1067,7 +1139,35 @@ void storm_owl_spawn_storm_charge(struct AnimatedObj* self)
 }
 
 // storm_owl_spawn_storm_shot
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80078180);
+void func_80078180(struct MainObj* self)
+{
+    struct ShotObj* shot;
+    u8 i;
+
+    if (self->ext.main_60.storm_active == 1) {
+        if (--self->unk7E != 0) {
+            return;
+        }
+
+        for (i = 0; i < 4; i++) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x25;
+                shot->unk2 = i + 5;
+                shot->unk7C = WEAPON_OBJECT(self);
+                shot->unk42 = self->unk42;
+                shot->animation_table = (u32**)storm_owl_animations;
+                shot->unk3C = self->sprite_frames;
+                shot->unk40 = self->unk40;
+                shot->bg_offset = self->bg_offset;
+                shot->unk16 = 5;
+                shot->unk15 = self->unk15;
+            }
+        }
+    }
+    self->unk7E = 0xA;
+}
 
 void storm_owl_spawn_hit_flash(struct PlayerObj* self)
 {
@@ -1078,7 +1178,7 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
         obj->unk2 = 3;
         obj->unk50 = self;
         obj->unk42 = self->unk42;
-        obj->animation_table = storm_owl_animations;
+        obj->animation_table = (u32**)storm_owl_animations;
         obj->unk3C = self->unk3C;
         obj->unk40 = self->unk40;
         obj->bg_offset = self->bg_offset;

@@ -76,7 +76,53 @@ void dragon_rubble_wait(struct MiscObj* self)
 }
 
 // dragon_rubble_b_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_04_dragon_rubble", func_800C899C);
+void func_800C899C(struct MiscObj* self)
+{
+    s32 owner_x;
+    struct MainObj* owner;
+
+    owner = self->ext.misc_4.owner;
+    self->animation_table = (const u8* const*)dragon_rubble_animations;
+    self->state++;
+
+    self->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x85));
+    self->unk40 = D_801406A8[func_8002938C(0x85)] >> 7;
+
+    self->unk3C = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x85));
+
+    owner_x = owner->x_pos.i.hi;
+    if (owner->unk15 != 0) {
+        self->x_pos.val = FIXED(owner_x - 0x30);
+    } else {
+        self->x_pos.val = FIXED(owner_x + 0x30);
+    }
+    self->y_pos.val = FIXED(owner->y_pos.i.hi - 0x5C);
+
+    if (self->unk2 != 0) {
+        spawn_debris(8, dragon_rubble_debris, self);
+        spawn_explosion_variant(BASE_OBJECT(self), 2);
+        self->unk16 = 1;
+        self->animation_step.fields.frame_index = 2;
+        start_screen_shake_y(0xA, 4, 2);
+        func_8001540C(5, 1, self);
+        self->bg_offset = 0;
+    } else {
+        self->unk16 = 6;
+        self->animation_step.fields.frame_index = 1;
+        self->bg_offset = 0;
+    }
+
+    self->unk15 = 0;
+    self->x_vel.val = 0;
+
+    if (owner->unk7C >= 0x15) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    owner->unk7C++;
+
+    update_on_screen(BASE_OBJECT(self), 0x38, 0x20);
+}
 
 void dragon_rubble_b_wait(struct MiscObj* self)
 {

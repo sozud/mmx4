@@ -46,7 +46,38 @@ void func_80069AD0(struct MainObj* obj)
 }
 
 // fortress_cannon_main
-INCLUDE_ASM("main/nonmatchings/mains/main_51_fortress_cannon", func_80069BE4);
+void func_80069BE4(struct MainObj* self)
+{
+    s32 check;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+
+    fortress_cannon_step_funcs[self->unk5](self);
+    check = func_8002DD04(self);
+    func_8002D9BC(self);
+    CollisionRelated(self);
+    fortress_cannon_check_fall(self);
+
+    if (self->unk5 != 0) {
+        self->ext.main_51.saved_unk5 = self->unk5;
+    }
+
+    if (check < 0) {
+        spawn_debris(5, fortress_cannon_debris, self);
+        self->unk7C = 0x1E;
+        self->on_screen = 0;
+        self->unk7E = 5;
+        self->state++;
+        return;
+    }
+
+    if (func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x30, 0x30);
+        return;
+    }
+    self->state = 3;
+}
 
 void fortress_cannon_explode(struct MainObj* self)
 {

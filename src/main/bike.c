@@ -365,7 +365,19 @@ void func_8003CD38(struct RideArmorObj* arg0)
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003CF24);
 
-INCLUDE_ASM("main/nonmatchings/bike", func_8003CF6C);
+void func_8003CF6C(struct RideArmorObj* ride_armor)
+{
+    s16 tile_x;
+
+    if (ride_armor->unk15 == 0) {
+        tile_x = ride_armor->x_pos.i.hi + (s8)ride_armor->unk68->unk0;
+    } else {
+        tile_x = ride_armor->x_pos.i.hi - (s8)ride_armor->unk68->unk0;
+    }
+
+    ride_armor->unk80.bytes.unk81 = func_8002D724(PLAYER_OBJECT(ride_armor), tile_x,
+        ride_armor->unk68->unk3 + (ride_armor->y_pos.i.hi + (s8)ride_armor->unk68->unk1) + 1);
+}
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
 

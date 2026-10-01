@@ -159,7 +159,25 @@ s32 func_8001CEDC(void)
     return 3;
 }
 
-INCLUDE_ASM("main/nonmatchings/memcard", func_8001CF74);
+s32 func_8001CF74(void)
+{
+    s32 retries;
+    s32 result;
+
+    retries = 0x3D08F;
+    for (; retries != 0; retries--) {
+        if (TestEvent(D_80139680) != 0) {
+            return 0;
+        }
+        if (TestEvent(D_80139684) != 0) {
+            return 1;
+        }
+        if (TestEvent(D_80139688) != 0) {
+            return 2;
+        }
+    }
+    return 3;
+}
 
 s32 func_8001CFF4(s32 arg0)
 {

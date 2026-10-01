@@ -106,7 +106,38 @@ s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
 }
 #endif
 
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D8A8);
+// Callers discard the legacy integer return value.
+s32 func_8003D8A8(struct RideArmorObj* owner, s32 shot_kind, s32 shot_variant)
+{
+    struct RideArmorObj* ride_armor = owner;
+    s32 variant = shot_variant;
+    s8 kind = shot_kind;
+    struct WeaponObj* weapon;
+    u8 resource;
+    u8 type = variant;
+
+    if (ride_armor->unk86 < 3) {
+        weapon = find_free_weapon_obj();
+        if (weapon != NULL) {
+            weapon->active = 0x41;
+            weapon->id = variant + 0x3B;
+            weapon->unk2 = kind;
+            weapon->x_pos.i.hi = ride_armor->x_pos.i.hi;
+            weapon->y_pos.i.hi = ride_armor->y_pos.i.hi;
+            weapon->animation_table = ride_armor->animation_table;
+            weapon->unk40 = ride_armor->unk40;
+            weapon->unk3C = ride_armor->unk3C;
+            resource = func_8002938C(0x86);
+            weapon->unk42 = SOME_COORDINATE_CONVERSION(resource);
+            weapon->unk16 = ride_armor->unk16;
+            weapon->owner = PLAYER_OBJECT(ride_armor);
+            weapon->unk15 = ride_armor->unk15;
+            if (type == 0) {
+                ride_armor->unk86++;
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D9E0);
 

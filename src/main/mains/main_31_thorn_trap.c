@@ -121,10 +121,156 @@ void thorn_trap_extend_high(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005BFC0);
 
 // thorn_trap_main
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005C0E4);
+void func_8005C0E4(struct MainObj* self)
+{
+    u8 health;
+    u8 secondary_health;
+    const void* saved_bounds;
+    s16 x;
+
+    self->collision_data = D_801071F4;
+    self->unk65 = self->ext.main_31.unk83;
+
+    if (func_8002DD04(self) < 0) {
+        self->unk5 = 0;
+        self->state++;
+        self->unk42 &= 0x7FFF;
+        update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
+        return;
+    }
+
+    health = self->unk65;
+    secondary_health = self->ext.main_31.unk84;
+    saved_bounds = self->hurt_box;
+    self->collision_data = D_801060F0;
+    self->hurt_box = D_800FDA0C;
+
+    self->ext.main_31.unk83 = health;
+    self->unk65 = secondary_health;
+    func_8002DD04(self);
+    self->hurt_box = saved_bounds;
+    self->ext.main_31.unk84 = self->unk65;
+
+    thorn_trap_step_funcs[self->unk5](self);
+
+    if ((self->y_pos.val - background_objects[self->bg_offset].y_pos.val) > FIXED(168)) {
+        x = self->x_pos.val >> 16;
+        self->state++;
+        self->unk5 = 0;
+
+        spawn_explosion_at(0, self->unk15 != 0 ? x - 0x47 : x + 0x47, self->y_pos.u.hi + 1, 0);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x28 : x - 0x28, self->y_pos.i.hi, 1);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.u.hi - 1, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.u.hi + 2, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.u.hi - 1, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x50 : x + 0x50, self->y_pos.i.hi, 0xFF);
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-71) : FIXED(71), FIXED(1));
+
+        spawn_debris_offset(1, D_800FDC30, self,
+            self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
+
+        spawn_debris_offset(1, D_800FDC34, self,
+            self->unk15 != 0 ? FIXED(-12) : FIXED(12), FIXED(-1));
+
+        spawn_debris_offset(1, D_800FDC38, self,
+            self->unk15 != 0 ? FIXED(21) : FIXED(-21), FIXED(2));
+
+        spawn_debris_offset(1, D_800FDC3C, self,
+            self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+    }
+
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
+        return;
+    }
+    despawn_object(OBJECT_HEADER(self));
+}
 
 // thorn_trap_break
-INCLUDE_ASM("main/nonmatchings/mains/main_31_thorn_trap", func_8005C474);
+void func_8005C474(struct MainObj* self)
+{
+    u8 health;
+    const void* saved_bounds;
+    s16 x;
+
+    if (self->unk5 == 0) {
+        self->unk5++;
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x4D : x - 0x4D, self->y_pos.i.hi, 1);
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-77) : FIXED(77), 0);
+
+        set_animation(self, 0xB);
+    }
+
+    if ((self->y_pos.val - background_objects[self->bg_offset].y_pos.val) > FIXED(168)) {
+        self->state++;
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x47 : x - 0x47, self->y_pos.u.hi + 1, 0);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0x28 : x - 0x28, self->y_pos.i.hi, 1);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x + 0xC : x - 0xC, self->y_pos.u.hi - 1, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x15 : x + 0x15, self->y_pos.u.hi + 2, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x33 : x + 0x33, self->y_pos.u.hi - 1, 0xFF);
+
+        x = self->x_pos.val >> 16;
+        spawn_explosion_at(0, self->unk15 == 0 ? x - 0x50 : x + 0x50, self->y_pos.i.hi, 0xFF);
+
+        spawn_debris_offset(5, D_800FDC28, self,
+            self->unk15 != 0 ? FIXED(-71) : FIXED(71), FIXED(1));
+
+        spawn_debris_offset(1, D_800FDC30, self,
+            self->unk15 != 0 ? FIXED(-40) : FIXED(40), 0);
+
+        spawn_debris_offset(1, D_800FDC34, self,
+            self->unk15 != 0 ? FIXED(-12) : FIXED(12), FIXED(-1));
+
+        spawn_debris_offset(1, D_800FDC38, self,
+            self->unk15 != 0 ? FIXED(21) : FIXED(-21), FIXED(2));
+
+        spawn_debris_offset(1, D_800FDC3C, self,
+            self->unk15 != 0 ? FIXED(51) : FIXED(-51), FIXED(-1));
+    }
+
+    health = self->ext.main_31.unk83;
+    saved_bounds = self->hurt_box;
+    self->collision_data = D_801060F0;
+    self->hurt_box = D_800FDA0C;
+    self->unk65 = health;
+    func_8002DD04(self);
+    self->hurt_box = saved_bounds;
+    self->ext.main_31.unk84 = self->unk65;
+
+    func_8002D9BC(self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x80, 0x80) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x70, 0x30);
+        return;
+    }
+    despawn_object(OBJECT_HEADER(self));
+}
 
 void thorn_trap_despawn(struct MainObj* self)
 {

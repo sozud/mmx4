@@ -152,7 +152,47 @@ void ride_armor_pilot_stub(struct MainObj* self, s32 arg1, s32 arg2)
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A064);
 
 // ride_armor_pilot_walk
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A180);
+void func_8008A180(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6++;
+        set_animation(self, 1);
+        self->ext.main_71.unk84 = 0x160;
+        ride_armor_pilot_update_facing(self);
+        self->hurt_box = ride_armor_pilot_hurt_box;
+        self->attack_box = ride_armor_pilot_attack_box;
+        self->contact_damage = 5;
+        self->ext.main_71.unk8D &= 0xF3;
+    }
+
+    if (!(self->collision_flags & 8)) {
+        ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
+        return;
+    }
+
+    if (!(self->ext.main_71.unk8D & 2)) {
+        if (!(ride_armor_pilot_update_facing(self) & 0xFF)) {
+            ride_armor_pilot_return_to_idle(self);
+            return;
+        }
+        if (self->ext.main_71.unk86 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 8);
+            return;
+        }
+        if (self->ext.main_71.unk87 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
+            return;
+        }
+        ride_armor_pilot_set_walk_speed(self);
+        ride_armor_pilot_apply_x_speed(self);
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.event != 0) {
+            func_8001540C(2, 0x3D, self);
+        }
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+}
 
 void ride_armor_pilot_punch(struct MainObj* self)
 {
@@ -190,13 +230,132 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A3B0);
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A4D8);
 
 // ride_armor_pilot_jump_punch
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A60C);
+void func_8008A60C(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6++;
+        ride_armor_pilot_stub(self, 0, 1);
+        set_animation(self, 0xA);
+        func_8001540C(2, 0x41, self);
+    }
+
+    if (self->collision_flags & 8) {
+        ride_armor_pilot_set_step(BASE_OBJECT(self), 5);
+        return;
+    }
+
+    if (!(self->ext.main_71.unk8D & 2)) {
+        self->x_speed = 0;
+        self->x_accel = 0;
+        ride_armor_pilot_set_scripted_speed(self);
+
+        if ((self->y_speed >= 0) && (self->collision_flags & 4)) {
+            self->y_speed = 0;
+        }
+
+        if (self->animation_step.fields.relative_step == 0) {
+            s32 state = 8;
+            if (self->y_speed < 0) {
+                state = 4;
+            }
+            self->unk5 = state;
+        } else {
+            s32 fall_speed = FIXED(-5.875);
+            if (self->y_speed < fall_speed) {
+                self->y_speed = fall_speed;
+            }
+            move_with_gravity(ANIMATED_OBJECT(self));
+        }
+
+        if (self->animation_step.fields.event == 1) {
+            self->attack_box = &ride_armor_pilot_punch_box;
+            self->contact_damage = 6;
+        } else if (self->animation_step.fields.event == 2) {
+            self->attack_box = ride_armor_pilot_attack_box;
+            self->contact_damage = 5;
+        }
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+}
 
 // ride_armor_pilot_dash
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A778);
+void func_8008A778(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        ride_armor_pilot_update_facing(self);
+        self->unk6 = 1;
+        self->ext.main_71.unk84 = 0x420;
+
+        if (self->unk15 != 0) {
+            self->x_speed = FIXED(4.125);
+        } else {
+            self->x_speed = FIXED(-4.125);
+        }
+
+        self->ext.main_71.unk8E = 0x1E;
+        ride_armor_pilot_spawn_dust(VISUAL_OBJECT(self), 5);
+        set_animation(self, 5);
+        func_8001540C(2, 0x3F, self);
+        self->ext.main_71.unk8D |= 4;
+    }
+
+    if (!(self->ext.main_71.unk8D & 2)) {
+        if (self->ext.main_71.unk86 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 8);
+        } else if (self->ext.main_71.unk87 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 0xB);
+        } else if (!(self->collision_flags & 8)) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
+        } else if (!(self->collision_flags & 3)) {
+            ride_armor_pilot_apply_x_speed(self);
+            if (self->ext.main_71.unk8E-- < 0) {
+                ride_armor_pilot_set_step(BASE_OBJECT(self), 7);
+                return;
+            }
+        } else {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 7);
+            return;
+        }
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+}
 
 // ride_armor_pilot_dash_end
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A8E4);
+void func_8008A8E4(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        self->ext.main_71.unk84 = 0x160;
+        set_animation(self, 6);
+        self->hurt_box = ride_armor_pilot_hurt_box;
+        self->attack_box = ride_armor_pilot_attack_box;
+        self->contact_damage = 5;
+        self->ext.main_71.unk8D &= 0xFB;
+    }
+
+    if (!(self->ext.main_71.unk8D & 2)) {
+        if (self->animation_step.fields.relative_step == 0) {
+            ride_armor_pilot_return_to_idle(self);
+            return;
+        }
+        if (self->ext.main_71.unk86 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 8);
+            return;
+        }
+        if (self->ext.main_71.unk87 != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
+            return;
+        }
+        if (self->ext.main_71.unk8A != 0) {
+            ride_armor_pilot_set_step(BASE_OBJECT(self), 3);
+            return;
+        }
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+}
 
 // ride_armor_pilot_guard
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A9F4);

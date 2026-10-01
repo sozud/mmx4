@@ -398,7 +398,24 @@ void player_enter_wall_slide(struct PlayerObj* self)
 }
 
 // player_enter_wall_slide_release
-INCLUDE_ASM("main/nonmatchings/player_enter", func_80034B64);
+void func_80034B64(struct PlayerObj* player)
+{
+    player_set_animation_shooting(player, 0xB);
+
+    if (player->unk88.bytes.collision_flags & 1) {
+        player->x_vel.val = FIXED(-2);
+    } else {
+        player->x_vel.val = FIXED(2);
+    }
+
+    player->unk2C = 0x4200;
+    player->unk8A.bytes.low = 4;
+    player->air_state = -1;
+    player->unk5 = 0xB;
+    player->unk28 = 0;
+    player->y_vel.val = 0;
+    player->unk6 = 1;
+}
 void player_enter_ladder_grab(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1B);

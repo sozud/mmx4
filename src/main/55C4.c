@@ -1410,7 +1410,20 @@ INCLUDE_ASM("main/nonmatchings/55C4", func_800175AC);
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800179BC);
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_80017E84);
+void func_80017E84(void)
+{
+    u32 row;
+    u32 column;
+
+    for (row = 0; row < 4; row++) {
+        for (column = 0; column < 8; column++) {
+            D_8013E1E8[0][row][column] = NULL;
+            D_8013E1E8[1][row][column] = NULL;
+            D_8013BC40[0][row][column] = (P_TAG*)&D_8013E1E8[0][row][column];
+            D_8013BC40[1][row][column] = (P_TAG*)&D_8013E1E8[1][row][column];
+        }
+    }
+}
 void func_80017F2C(void)
 {
     u32 buffer;

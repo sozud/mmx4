@@ -53,7 +53,27 @@ void frost_walrus_death(struct BarObj* self)
 }
 
 // frost_walrus_death_start
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072628);
+void func_80072628(struct MainObj* self)
+{
+    g_Player.stun_timer = 0;
+    player_start_script_action(0x14, g_Player.unk15);
+
+    self->unk5 = 1;
+    self->unk42 = self->unk42 & 0x7FFF;
+
+    if (self->ext.main_57.tusks_broken) {
+        set_animation(self, 0x1C);
+    } else {
+        set_animation(self, 0x1B);
+    }
+
+    self->unk7C = 0x7F;
+    self->unk7E = 0x19;
+    self->invincibility_timer = 0x19;
+
+    frost_walrus_set_floor_tiles(0x38);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
 
 void frost_walrus_death_explode(struct MainObj* self)
 {

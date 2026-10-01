@@ -27,7 +27,36 @@ void gravity_switch_update(struct ItemObj* arg0)
 }
 
 // gravity_switch_init
-INCLUDE_ASM("main/nonmatchings/items/item_20_gravity_switch", func_800C4D20);
+void func_800C4D20(struct ItemObj* self)
+{
+    self->active = 0x41;
+    self->unk16 = 6;
+    self->unk40 = D_801406A8[func_8002938C(0x9C)] >> 7;
+
+    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9C));
+
+    self->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x9C));
+
+    self->animation_step.fields.frame_index = self->unk2 & 7;
+    if (self->unk2 & 8) {
+        self->unk15 = 0x40;
+    } else {
+        self->unk15 = 0;
+    }
+
+    self->unk68 = (struct Unk_unk68*)gravity_switch_terrain_box;
+    self->unk54 = gravity_switch_hit_box;
+    self->unk50 = gravity_switch_hit_box;
+    self->unk58 = NULL;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk61 = 0;
+    self->unk75 = 0;
+    self->unk67 = 0;
+    self->state = 1;
+    self->unk5 = 0;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+}
 
 void gravity_switch_main(struct ItemObj* arg0)
 {

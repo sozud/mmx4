@@ -28,7 +28,37 @@ void double_mine_shot_init(struct ShotObj* self)
 }
 
 // double_mine_shot_fly
-INCLUDE_ASM("main/nonmatchings/shots/shot_52_double_mine_shot", func_800AAB74);
+void func_800AAB74(struct ShotObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (self->unk7C->state == 2) {
+        spawn_explosion(self);
+        self->state = 2;
+        self->on_screen = 0;
+    } else {
+        func_8002D9BC(self);
+
+        if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            spawn_explosion(self);
+            self->state = 2;
+            self->on_screen = 0;
+        } else if (func_8002BB80(self, &g_Player) != 0) {
+            self->state = 2;
+            self->on_screen = 0;
+        } else if (func_8002B160(BASE_OBJECT(self)) == 0) {
+            is_on_screen(BASE_OBJECT(self));
+        } else {
+            self->state = 2;
+            self->unk5 = 0;
+            self->unk6 = 0;
+            self->on_screen = 0;
+        }
+    }
+}
 
 void double_mine_shot_update(struct ShotObj* self)
 {

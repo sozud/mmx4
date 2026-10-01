@@ -11,7 +11,27 @@ void train_tunnel_update(struct LayerObj* arg0)
 }
 
 // train_tunnel_init
-INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9268);
+void func_800D9268(struct LayerObj* self)
+{
+    self->unk5 = 2;
+    self->bg_offset = 5;
+    self->unk18.val = FIXED(8);
+    self->unk16 = 0x78;
+    self->unk17 = 1;
+    self->private_state.bytes[0] = 0xFF;
+    self->private_state.bytes[1] = 0;
+    self->state++;
+    background_objects[1].unk4E = 0xD;
+    background_objects[0].unk2E = 0xA0;
+    background_objects[1].unk4D = 2;
+    background_objects[2].unk4D = 2;
+    background_objects[2].unk4E = 5;
+    engine_obj.character_state.fields.flags = 0;
+    engine_obj.character_state.fields.active = 0;
+    background_objects[0].unk2C = 0x30;
+    func_8001540C(5, 9, NULL);
+    train_tunnel_main(self);
+}
 
 void train_tunnel_main(struct LayerObj* arg0)
 {

@@ -28,7 +28,54 @@ void shell_crawler_buried(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
 
 // shell_crawler_check_shell
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DB10);
+void func_8004DB10(struct MainObj* self)
+{
+    s16 x;
+    s16 y;
+
+    if (self->air_state != 0) {
+        return;
+    }
+
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (!(self->collision_flags & 8)) {
+        set_animation(self, 3);
+        self->unk5 = 2;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->air_state = -1;
+        return;
+    }
+
+    if (self->unk15 != 0) {
+        x = self->x_pos.u.hi + self->terrain_box->unk0 + self->terrain_box->unk2;
+    } else {
+        x = self->x_pos.u.hi - self->terrain_box->unk0 - self->terrain_box->unk2;
+    }
+    y = self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1) + 8;
+    if (func_8002D724(PLAYER_OBJECT(self), x, y) != 0) {
+        return;
+    }
+
+    if (self->unk2 == 1) {
+        self->unk15 = self->unk15 == 0 ? 0x40 : 0;
+        self->x_speed = -self->x_speed;
+        return;
+    }
+    if (self->collision_flags & 3) {
+        return;
+    }
+
+    set_animation(self, 2);
+    self->unk5 = 5;
+    self->y_speed = FIXED(3.5);
+    self->unk6 = 0;
+    self->gravity = FIXED(0.2578125);
+    self->x_speed = self->unk15 != 0 ? FIXED(1) : FIXED(-1);
+    self->air_state = 1;
+}
 
 // shell_crawler_check_shoot
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);

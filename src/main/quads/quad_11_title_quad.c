@@ -177,7 +177,61 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 
 // TitleUpdate2 state 5
 #ifdef VERSION_JP
-INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);
+void title_quad_morph(struct QuadObj* quad)
+{
+    f32* xy_ptr;
+    s32 x_diff;
+    s32 y_diff;
+    s32 i;
+    s16* ptr;
+    u8 temp_v0;
+
+    xy_ptr = &quad->vertices[0].x;
+    for (i = 0; i < 4; ++i) {
+        ptr = &title_quad_shapes[quad->unk2 + 5][i * 2];
+        x_diff = xy_ptr[0].val - FIXED(ptr[0]);
+        y_diff = xy_ptr[1].val - FIXED(ptr[1]);
+        temp_v0 = angle_from_delta(x_diff, y_diff);
+        if ((((quad->ext.title_quad.unk3E[i] ^ temp_v0) & 0x10) || (quad->ext.title_quad.unk3A[i] != 0)) && (quad->ext.title_quad.unk42 == 0)) {
+            xy_ptr[0].val = FIXED(ptr[0]);
+            xy_ptr[1].val = FIXED(ptr[1]);
+            quad->ext.title_quad.unk3A[i] = 1;
+        } else {
+            xy_ptr[0].val -= x_diff / quad->ext.title_quad.unk38;
+            xy_ptr[1].val -= y_diff / quad->ext.title_quad.unk38;
+            quad->ext.title_quad.unk3A[i] = 0;
+            if (i == 3) {
+                quad->ext.title_quad.unk42 = 0;
+            }
+        }
+        xy_ptr += 2;
+        quad->ext.title_quad.unk3E[i] = temp_v0;
+    }
+
+    if (quad->ext.title_quad.unk38 % 3 == 0) {
+        // BUG: likely a MIN(++unk43, 14) macro that increments twice, so the
+        // fade skips every other color. Could be fixed in the PC build.
+        quad->unk34 = title_quad_palette[quad->unk2 - 2]
+                                        [++quad->ext.title_quad.unk43 < 14 ? ++quad->ext.title_quad.unk43 : 14];
+    }
+
+    quad->ext.title_quad.unk38--;
+    if (quad->ext.title_quad.unk38 == 0) {
+        ptr = title_quad_shapes[quad->unk2 + 5];
+        quad->vertices[0].x.i.hi = *(u16*)ptr++;
+        quad->vertices[0].y.i.hi = *(u16*)ptr++;
+        quad->vertices[1].x.i.hi = *(u16*)ptr++;
+        quad->vertices[1].y.i.hi = *(u16*)ptr++;
+        quad->vertices[2].x.i.hi = *(u16*)ptr++;
+        quad->vertices[2].y.i.hi = *(u16*)ptr++;
+        quad->vertices[3].x.i.hi = *(u16*)ptr++;
+        quad->vertices[3].y.i.hi = *(u16*)ptr;
+        quad->unk2 = 4;
+        quad->state = 4;
+        quad->ext.title_quad.unk38 = 3;
+    }
+    quad_is_on_screen(quad);
+}
 #else
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);

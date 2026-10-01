@@ -239,7 +239,99 @@ void slash_beast_dash_start(struct MainObj* self)
 }
 
 // slash_beast_dash_run
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CFB8);
+void func_8006CFB8(struct MainObj* self)
+{
+    struct MiscObj* afterimage;
+
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (--self->ext.main_54.afterimage_timer == 0) {
+        afterimage = find_free_misc_obj();
+        if (afterimage != NULL) {
+            afterimage->active = 0x41;
+            afterimage->id = 0x1A;
+            afterimage->unk2 = 1;
+            afterimage->unk16 = 0x21;
+            afterimage->unk40 = self->unk40;
+            afterimage->unk42 = self->unk42 & 0x7FFF;
+            afterimage->animation_table = (u32**)self->animation_table;
+            afterimage->unk3C = self->sprite_frames;
+            afterimage->bg_offset = self->bg_offset;
+            afterimage->x_pos.val = self->x_pos.val;
+            afterimage->y_pos.val = self->y_pos.val;
+            afterimage->unk15 = self->unk15;
+            afterimage->animation_step.fields.frame_index = self->animation_step.fields.frame_index;
+            afterimage->ext.misc_26.timer = 0x1E;
+            afterimage->ext.misc_26.owner = self;
+            afterimage->state = 0;
+        }
+
+        if (self->ext.main_54.powered_up != 0) {
+            afterimage = find_free_misc_obj();
+            if (afterimage != NULL) {
+                afterimage->active = 0x41;
+                afterimage->id = 0x1A;
+                afterimage->unk2 = 1;
+                afterimage->unk16 = 0x20;
+                afterimage->unk40 = self->unk40;
+                afterimage->unk42 = self->unk42 & 0x7FFF;
+                afterimage->animation_table = (u32**)self->animation_table;
+                afterimage->unk3C = self->sprite_frames;
+                afterimage->bg_offset = self->bg_offset;
+                afterimage->x_pos.val = self->x_pos.val;
+                afterimage->y_pos.val = self->y_pos.val;
+                afterimage->unk15 = self->unk15;
+                afterimage->animation_step.fields.frame_index = self->animation_step.fields.frame_index + 0x3C;
+                afterimage->ext.misc_26.timer = 0x1E;
+                afterimage->ext.misc_26.owner = self;
+                afterimage->state = 0;
+            }
+        }
+
+        self->ext.main_54.afterimage_timer = 0xA;
+    }
+
+    if (self->ext.main_54.powered_up != 0) {
+        if ((self->x_speed >= 0 ? self->x_speed : -self->x_speed) >= FIXED(7.5)) {
+            self->x_accel = 0;
+        }
+    } else {
+        if ((self->x_speed >= 0 ? self->x_speed : -self->x_speed) >= FIXED(6)) {
+            self->x_accel = 0;
+        }
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (self->unk15 == 0) {
+        if (!(self->collision_flags & 2)) {
+            return;
+        }
+        start_screen_shake_x(0x1E, 8, 2);
+        self->contact_damage = 6;
+        set_animation(self, 0xF);
+        self->unk6 = 3;
+        self->hurt_box = NULL;
+        self->attack_box = NULL;
+        self->ext.main_54.crash_timer = 0x1E;
+        func_8001540C(2, 0x88, self);
+        func_8006E920(self, 0x39);
+    } else {
+        if (!(self->collision_flags & 1)) {
+            return;
+        }
+        start_screen_shake_x(0x1E, 8, 2);
+        set_animation(self, 0xF);
+        self->contact_damage = 6;
+        self->unk6 = 3;
+        self->hurt_box = NULL;
+        self->attack_box = NULL;
+        self->ext.main_54.crash_timer = 0x1E;
+        func_8001540C(2, 0x88, self);
+        func_8006E920(self, 0x39);
+    }
+}
 
 // slash_beast_dash_crash
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006D280);
@@ -312,7 +404,81 @@ void slash_beast_grab_windup(struct MainObj* self)
 }
 
 // slash_beast_grab_drag
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006D888);
+void func_8006D888(struct MainObj* self)
+{
+    s16 terrain_y;
+    struct MiscObj* afterimage;
+
+    move_object(MOVING_OBJECT(self));
+
+    if (--self->ext.main_54.afterimage_timer == 0) {
+        afterimage = find_free_misc_obj();
+        if (afterimage != NULL) {
+            afterimage->active = 0x41;
+            afterimage->id = 0x1A;
+            afterimage->unk2 = 1;
+            afterimage->unk16 = 0x21;
+            afterimage->unk40 = self->unk40;
+            afterimage->unk42 = self->unk42 & 0x7FFF;
+            afterimage->animation_table = (u32**)self->animation_table;
+            afterimage->unk3C = self->sprite_frames;
+            afterimage->bg_offset = self->bg_offset;
+            afterimage->x_pos.val = self->x_pos.val;
+            afterimage->y_pos.val = self->y_pos.val;
+            afterimage->unk15 = self->unk15;
+            afterimage->animation_step.fields.frame_index = self->animation_step.fields.frame_index;
+            afterimage->ext.misc_26.timer = 0x1E;
+            afterimage->ext.misc_26.owner = self;
+            afterimage->state = 0;
+        }
+
+        if (self->ext.main_54.powered_up != 0) {
+            afterimage = find_free_misc_obj();
+            if (afterimage != NULL) {
+                afterimage->active = 0x41;
+                afterimage->id = 0x1A;
+                afterimage->unk2 = 1;
+                afterimage->unk16 = 0x20;
+                afterimage->unk40 = self->unk40;
+                afterimage->unk42 = self->unk42 & 0x7FFF;
+                afterimage->animation_table = (u32**)self->animation_table;
+                afterimage->unk3C = self->sprite_frames;
+                afterimage->bg_offset = self->bg_offset;
+                afterimage->x_pos.val = self->x_pos.val;
+                afterimage->y_pos.val = self->y_pos.val;
+                afterimage->unk15 = self->unk15;
+                afterimage->animation_step.fields.frame_index = self->animation_step.fields.frame_index + 0x3C;
+                afterimage->ext.misc_26.timer = 0x1E;
+                afterimage->ext.misc_26.owner = self;
+                afterimage->state = 0;
+            }
+        }
+
+        self->ext.main_54.afterimage_timer = 0xA;
+    }
+
+    terrain_y = self->y_pos.u.hi + self->terrain_box->unk1;
+
+    if (self->unk15 == 0) {
+        g_Player.x_pos.i.hi = self->x_pos.u.hi - 35;
+        if ((func_8002D724(PLAYER_OBJECT(self),
+                 (s16)(self->x_pos.u.hi + self->terrain_box->unk0 - 48), terrain_y)
+                & 0xFF)
+            == 0x38) {
+            func_8001540C(2, 0x88, self);
+            self->unk6 = 3;
+        }
+    } else {
+        g_Player.x_pos.i.hi = self->x_pos.u.hi + 35;
+        if ((func_8002D724(PLAYER_OBJECT(self),
+                 (s16)(self->x_pos.u.hi + self->terrain_box->unk0 + 48), terrain_y)
+                & 0xFF)
+            == 0x38) {
+            func_8001540C(2, 0x88, self);
+            self->unk6 = 3;
+        }
+    }
+}
 
 void slash_beast_grab_throw(struct MainObj* self)
 {

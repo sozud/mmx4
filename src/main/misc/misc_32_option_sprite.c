@@ -6,7 +6,27 @@
 INCLUDE_ASM("main/nonmatchings/misc/misc_32_option_sprite", func_800CE114);
 
 // option_sprite_animate
-INCLUDE_ASM("main/nonmatchings/misc/misc_32_option_sprite", func_800CE1D4);
+void func_800CE1D4(struct MiscObj* self)
+{
+    if (self->ext.misc_8.timer == 0) {
+        if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
+            || ((controller_input.pressed & PADstart) && (game_info.unk0 == 0xA))) {
+            self->unk2 = -1;
+        }
+        if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
+            || ((controller_input.pressed & PADstart) && (game_info.unk0 == 8))) {
+            self->unk2 = -1;
+        }
+    }
+
+    if (self->unk2 != -1 && (u8)self->ext.misc_5.animation != main_bss_state.transition.selection) {
+        self->y_pos.i.hi = ((u8*)self->ext.misc_5.owner)[main_bss_state.transition.selection * 2 + 2] + 8;
+        self->ext.misc_5.animation = main_bss_state.transition.selection;
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void option_sprite_update(struct MiscObj* self)
 {

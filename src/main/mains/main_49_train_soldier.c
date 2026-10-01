@@ -150,7 +150,65 @@ void train_soldier_guard_hold(struct MainObj* self)
 }
 
 // train_soldier_check_jump
-INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068D6C);
+void func_80068D6C(struct MainObj* self)
+{
+    s16 x;
+    s16 y;
+
+    if (self->air_state != 0) {
+        return;
+    }
+
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (!(self->collision_flags & 8)) {
+        set_animation(self, 0xF);
+        SP_CUR_MAIN_OBJ->ext.main_49.unk80 = 5;
+        self->unk5 = 3;
+        self->gravity = FIXED(0.2578125);
+        self->unk6 = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->air_state = -1;
+        return;
+    }
+
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2 || self->unk5 == 6) {
+        return;
+    }
+
+    if (self->unk15 != 0) {
+        x = self->x_pos.i.hi + self->terrain_box->unk0 + self->terrain_box->unk2;
+    } else {
+        x = self->x_pos.i.hi - self->terrain_box->unk0 - self->terrain_box->unk2;
+    }
+    y = self->y_pos.i.hi + self->terrain_box->unk1 + self->terrain_box->unk3 + 8;
+    if (func_8002D724(PLAYER_OBJECT(self), x, y) != 0) {
+        return;
+    }
+
+    if (self->unk2 == 0) {
+        self->unk15 = self->unk15 == 0 ? 0x40 : 0;
+        self->x_speed = -self->x_speed;
+        return;
+    }
+    if (self->collision_flags & 3) {
+        return;
+    }
+
+    set_animation(self, 0x19);
+    self->unk5 = 4;
+    self->unk6 = 0;
+    if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0) {
+        self->y_speed = FIXED(3.5);
+        self->gravity = FIXED(0.2578125);
+        self->x_speed = self->unk15 != 0 ? FIXED(1) : FIXED(-1);
+    } else {
+        self->y_speed = FIXED(4.5);
+        self->gravity = FIXED(0.3203125);
+        self->x_speed = self->unk15 != 0 ? FIXED(2) : FIXED(-2);
+    }
+    self->air_state = 1;
+}
 
 void train_soldier_check_guard(struct MainObj* self)
 {

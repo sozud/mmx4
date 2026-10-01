@@ -801,7 +801,31 @@ void func_8001EA90(struct GameInfo* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001EBA0);
+void func_8001EBA0(struct GameInfo* info)
+{
+    if (main_bss_state.transition.active != 0) {
+        return;
+    }
+    if (main_bss_state.transition.selection == 0) {
+        info->unk0 = 0xA;
+        info->mode = 0;
+        info->unk2 = 0;
+        info->unk3 = 0;
+        return;
+    }
+
+    func_8001E980(1);
+    background_objects[0].unk4C = 1;
+    background_objects[1].unk4C = 1;
+    background_objects[2].unk4C = 1;
+    background_objects[1].unk3 = 1;
+    background_objects[2].unk3 = 1;
+    background_objects[2].x_pos.i.hi = 0;
+    info->unk0 = 6;
+    info->mode = 0;
+    info->unk2 = 0;
+    info->unk3 = 0;
+}
 void func_8001EC34(struct GameInfo* arg0)
 {
     D_800F2390[arg0->mode](arg0);

@@ -63,7 +63,33 @@ u8 pod_spawner_player_quadrant(struct MainObj* self)
 }
 
 // pod_spawner_find_slot
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005ABC0);
+void func_8005ABC0(struct WeaponObj* self, s8 direction)
+{
+    struct ShotObj* shot;
+    struct MainObj* controller;
+
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = self->active;
+        shot->id = 0x10;
+        shot->unk2 = direction;
+        shot->x_pos.val = self->x_pos.val;
+        shot->y_pos.val = self->y_pos.val;
+        shot->animation_table = self->animation_table;
+        shot->unk38 = self->unk38;
+        shot->unk3C = self->unk3C;
+        shot->unk40 = self->unk40;
+        shot->unk42 = self->unk42;
+        shot->unk16 = 7;
+        shot->unk42 = self->unk42 & 0x7FFF;
+        shot->unk16 = self->unk16;
+        shot->unk7C = self;
+        controller = SP_CUR_MAIN_OBJ;
+        controller->ext.main_29_controller.unk81 = 1;
+        controller->ext.main_29.slots.controller.record = (struct Main29Record*)shot;
+        self->unk5 = 3;
+    }
+}
 
 void pod_spawner_despawn(struct MainObj* self)
 {

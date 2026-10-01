@@ -229,7 +229,23 @@ void colonel_retreat_vanish(struct MainObj* self)
 }
 
 // colonel_retreat_wait
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086860);
+void func_80086860(struct MainObj* self)
+{
+    if (self->unk7C != 0) {
+        self->unk7C--;
+        return;
+    }
+
+    if (g_Player.script_state == -1) {
+        self->x_pos.i.hi = background_objects[0].unk1E + 0x100;
+        self->unk7C = 0x20;
+        self->x_speed = FIXED(32);
+        self->x_accel = FIXED(-1);
+        colonel_face_player(self);
+        func_8001540C(2, 0xD3, self);
+        self->unk6++;
+    }
+}
 
 void colonel_retreat_reappear(struct MainObj* self)
 {
@@ -324,7 +340,22 @@ void colonel_intro_port(struct MainObj* self)
 }
 
 // colonel_intro_port_appear
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086C00);
+void func_80086C00(struct MainObj* self)
+{
+    struct VisualObj* visual_obj;
+
+    visual_obj = find_free_visual_obj();
+    if (visual_obj != NULL) {
+        visual_obj->active = 0x41;
+        visual_obj->id = 0x1E;
+        visual_obj->unk2 = 0;
+        visual_obj->unk50 = PLAYER_OBJECT(self);
+        self->unk7C = 0x10;
+        self->ext.main_69.linked_object = visual_obj;
+        self->unk7++;
+        func_8001540C(2, 0xD7, self);
+    }
+}
 
 void colonel_intro_port_flash(struct PlayerObj* self)
 {
