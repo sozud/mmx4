@@ -5,3 +5,7 @@ D_80139FA0 = 0x80139FA0;
 jet_stingray_bubble_index = 0x8013B838;
 sigma_sequencer = 0x8013B8AC;
 boss_warning_tiles = 0x8013B8E8;
+D_8013BC3C = 0x8013BC3C;
+D_80158014 = 0x80158014;
+D_80173C30 = 0x80173C30;
+D_801754D4 = 0x801754D4;

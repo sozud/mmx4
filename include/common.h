@@ -3097,13 +3097,8 @@ extern struct SecondaryPrimitiveBuffer temp2[];
 extern struct BackgroundPrimitiveBuffer temp3[];
 extern struct OrderingTableBuffer temp4[];
 extern struct AuxiliaryPrimitiveBuffer temp5[];
-#ifdef MMX4_PC
 extern TILE D_80169D78[2];
 extern struct FadeState D_8016DEA0;
-#else
-extern struct SecondaryPrimitiveBuffer D_80169D78[];
-extern struct BackgroundPrimitiveBuffer D_8016DEA0;
-#endif
 extern DR_TPAGE D_8012F498[2];
 extern TILE D_8013B7B0[2];
 extern POLY_FT4 D_80139F20[2];
