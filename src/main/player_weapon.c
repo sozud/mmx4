@@ -576,7 +576,7 @@ s32 player_check_hover(struct PlayerObj* self)
 
 s32 player_check_nova_strike(struct PlayerObj* self)
 {
-    s32 wall_side;
+    u8 wall_side;
 
     if (self->shot_cooldown) {
         return 0;
@@ -591,7 +591,7 @@ s32 player_check_nova_strike(struct PlayerObj* self)
         return 0;
     }
     wall_side = self->unk15 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
-    if (wall_side & self->unk88.bytes.collision_flags) {
+    if (self->unk88.bytes.collision_flags & wall_side) {
         return 0;
     }
     if (!(self->pressed_input & PLAYER_INPUT_GIGA)) {
@@ -764,6 +764,9 @@ void player_fire_charged_buster(struct PlayerObj* self)
 
 // player_fire_twin_slasher
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_weapon", player_fire_lightning_web_charged);
+#else
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {
     s8 i;
@@ -789,6 +792,7 @@ void player_fire_lightning_web_charged(struct PlayerObj* self)
         i++;
     } while (i < 9);
 }
+#endif
 
 void player_enter_frost_tower_pose(struct PlayerObj* self)
 {
@@ -887,6 +891,9 @@ void player_update_charge(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_weapon", player_set_charge_flash);
+#else
 s32 player_set_charge_flash(struct PlayerObj* self, s8 button)
 {
     s8 shot_type;
@@ -905,6 +912,7 @@ s32 player_set_charge_flash(struct PlayerObj* self, s8 button)
     }
     return 1;
 }
+#endif
 
 s32 player_charge_released(struct PlayerObj* self)
 {

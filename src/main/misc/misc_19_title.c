@@ -31,6 +31,9 @@ void title_init(struct MiscObj* self)
 }
 
 // g_TitleUpdateFuncs state 1
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_19_title", title_draw);
+#else
 void title_draw(struct MiscObj* self)
 {
     u8 temp_v1;
@@ -62,6 +65,7 @@ void title_draw(struct MiscObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
 // g_TitleUpdateFuncs state 2
 void title_despawn(struct MiscObj* self)
@@ -105,7 +109,11 @@ struct TitleObjectInit title_object_inits[] = {
 #else
     { 152, 184, 6, 10 },
 #endif
+#ifdef VERSION_EU
+    { 148, 216, 7, 10 },
+#else
     { 160, 216, 7, 10 },
+#endif
     { 272, 128, 8, 10 },
     { 288, 120, 9, 10 },
     { 120, 72, 26, 0 },
@@ -115,7 +123,11 @@ struct TitleObjectInit title_object_inits[] = {
     { 160, 160, 30, 7 },
     { 160, 128, 2, 6 },
     { 278, 72, 31, 4 },
+#ifdef VERSION_EU
+    { 164, 216, 31, 10 },
+#else
     { 176, 216, 31, 10 },
+#endif
     { 128, 72, 26, 0 },
     { 176, 72, 32, 0 },
     { 128, 72, 33, 8 },

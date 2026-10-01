@@ -122,6 +122,9 @@ void wheel_charger_charge_spin(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", wheel_charger_charge_roll);
+#else
 void wheel_charger_charge_roll(struct MainObj* self)
 {
     s32 value;
@@ -154,6 +157,7 @@ void wheel_charger_charge_roll(struct MainObj* self)
         self->unk6 = 0;
     }
 }
+#endif
 
 void wheel_charger_crash(struct MainObj* self)
 {

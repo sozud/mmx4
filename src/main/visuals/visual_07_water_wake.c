@@ -97,6 +97,9 @@ void water_wake_moving(struct VisualObj* arg0, struct PlayerObj* arg1)
     arg0->unk5 = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_07_water_wake", water_wake_player_idle);
+#else
 s32 water_wake_player_idle(struct PlayerObj* arg0)
 {
     if (arg0->unk2 != 0) {
@@ -104,6 +107,7 @@ s32 water_wake_player_idle(struct PlayerObj* arg0)
     }
     return x_water_wake_modes[0][arg0->unk17] == 1;
 }
+#endif
 
 s32 water_wake_player_moving(struct PlayerObj* arg0)
 {

@@ -174,6 +174,9 @@ void func_80023D90(void)
     func_80017340();
 }
 // some kind of init?
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/144A4", init_objects);
+#else
 void init_objects(void)
 {
     struct UnkObj* var_s0;
@@ -297,6 +300,7 @@ void init_objects(void)
 
     func_80024260();
 }
+#endif
 void func_800241E8(void)
 {
     u32 buffer;

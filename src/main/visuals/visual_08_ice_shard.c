@@ -40,6 +40,9 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0CA0);
         (high) <<= 8,                  \
         ((low)&0xFF) + (high) + 1)
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B10E4);
+#else
 void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_arg)
 {
     s16 x_min = left;
@@ -114,6 +117,7 @@ void func_800B10E4(u8 kind, s32 left, s32 top, s32 right, s32 bottom, s32 count_
         visual->unk6 = 0;
     }
 }
+#endif
 
 void (*ice_shard_state_funcs[])(struct VisualObj*) = {
     func_800B08CC,

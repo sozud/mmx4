@@ -9,6 +9,9 @@ void armored_walker_update(struct MainObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_01_armored_walker", armored_walker_init);
+#else
 void armored_walker_init(struct MainObj* self)
 {
     u8 state;
@@ -43,6 +46,7 @@ void armored_walker_init(struct MainObj* self)
     self->air_state = 0;
     set_animation(self, 1);
 }
+#endif
 
 void armored_walker_main(struct MainObj* obj)
 {

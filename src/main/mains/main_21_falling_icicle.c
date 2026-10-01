@@ -10,6 +10,9 @@ void falling_icicle_update(struct MainObj* self)
     animate_object(self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", falling_icicle_init);
+#else
 void falling_icicle_init(struct MainObj* arg0)
 {
     struct MainObj* self;
@@ -39,6 +42,7 @@ void falling_icicle_init(struct MainObj* arg0)
     self->state = 1;
     self->unk5 = 2;
 }
+#endif
 
 // falling_icicle_main
 INCLUDE_ASM("main/nonmatchings/mains/main_21_falling_icicle", func_80054D8C);

@@ -514,6 +514,9 @@ void cyber_peacock_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", cyber_peacock_death_explode);
+#else
 void cyber_peacock_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -539,6 +542,7 @@ void cyber_peacock_death_explode(struct MainObj* self)
         self->unk7E = self->ext.main_64.flash_timer > 5 ? self->ext.main_64.flash_timer : 5;
     }
 }
+#endif
 
 void cyber_peacock_death_finish(struct MainObj* self)
 {

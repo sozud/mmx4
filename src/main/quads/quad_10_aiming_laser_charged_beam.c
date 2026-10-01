@@ -49,6 +49,9 @@ void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* ar
     func_800D6DC4(arg0, arg1, arg2);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", aiming_laser_charged_beam_sweep);
+#else
 void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state = &arg0->ext.quad_10;
@@ -75,7 +78,11 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
     }
     func_800D6DC4(arg0, arg1, arg2);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", aiming_laser_charged_beam_retract);
+#else
 void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state;
@@ -104,6 +111,7 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
     state->counter--;
     func_800D6DC4(arg0, arg1, arg2);
 }
+#endif
 
 // aiming_laser_charged_beam_place
 INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);

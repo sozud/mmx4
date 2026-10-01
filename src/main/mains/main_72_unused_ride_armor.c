@@ -102,6 +102,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
 // unused_ride_armor_walk
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", unused_ride_armor_shoot);
+#else
 void unused_ride_armor_shoot(struct MainObj* self)
 {
     s8 state;
@@ -132,6 +135,7 @@ void unused_ride_armor_shoot(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
+#endif
 
 void unused_ride_armor_jump(struct MainObj* self)
 {
@@ -208,6 +212,9 @@ void unused_ride_armor_fall(struct MainObj* self)
 // unused_ride_armor_jump_shoot
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", unused_ride_armor_rapid_fire);
+#else
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -228,6 +235,7 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
+#endif
 
 void unused_ride_armor_reset(struct MainObj* self)
 {

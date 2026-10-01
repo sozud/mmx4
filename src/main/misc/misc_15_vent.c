@@ -26,6 +26,9 @@ void vent_update(struct MiscObj* self)
     vent_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", vent_spawn_mixed_puffs);
+#else
 void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
@@ -56,7 +59,11 @@ void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
         slot->unk15 = self->unk15;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", vent_spawn_puffs);
+#else
 void vent_spawn_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
@@ -82,6 +89,7 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
         slot->unk15 = self->unk15;
     }
 }
+#endif
 
 union AnimationStep vent_anim_0[4] = {
     { .packed = 0x00010006 },

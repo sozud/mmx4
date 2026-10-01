@@ -9,6 +9,9 @@
 #endif
 #include "common.h"
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_33_hover_jet", hover_jet_update);
+#else
 void hover_jet_update(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -62,7 +65,11 @@ void hover_jet_update(struct VisualObj* arg0)
     }
     update_on_screen(arg0, 0x28, 0x28);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_33_hover_jet", stock_charge_meter_update);
+#else
 void stock_charge_meter_update(struct MiscObj* arg0)
 {
     u8 playerUnkA6;
@@ -87,3 +94,4 @@ void stock_charge_meter_update(struct MiscObj* arg0)
         }
     }
 }
+#endif

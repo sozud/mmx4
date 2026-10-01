@@ -9,6 +9,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
 // double_intro_warning
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_intro_dialogue);
+#else
 void double_intro_dialogue(struct MainObj* self)
 {
     typedef void (*SignedSoundFunction)(u16, u8, s8);
@@ -20,6 +23,7 @@ void double_intro_dialogue(struct MainObj* self)
     ((SignedSoundFunction)func_8002217C)(0x27, 0xFF, *engine_state);
     *engine_state = 1;
 }
+#endif
 
 void double_intro_wait_dialogue(struct MainObj* self)
 {
@@ -265,6 +269,9 @@ void double_dive_aim(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_dive_fall);
+#else
 void double_dive_fall(struct MainObj* self)
 {
     s32 flags;
@@ -293,6 +300,7 @@ void double_dive_fall(struct MainObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
 // double_dive_slide
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
@@ -374,6 +382,9 @@ void double_aerial_shot_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_aerial_shot_hang);
+#else
 void double_aerial_shot_hang(struct MainObj* self)
 {
     s16 timer;
@@ -403,6 +414,7 @@ void double_aerial_shot_hang(struct MainObj* self)
     self->unk7C = timer - 1;
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
 void double_aerial_shot_fire_again(struct MainObj* arg)
 {
@@ -546,6 +558,9 @@ void double_death_wait_dialogue(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_73_double", double_death_blink);
+#else
 void double_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -571,6 +586,7 @@ void double_death_blink(struct MainObj* self)
         self->unk7E = self->ext.main_73.blink_delay > 5 ? self->ext.main_73.blink_delay : 5;
     }
 }
+#endif
 
 void double_death_wait_explosion(struct MainObj* self)
 {

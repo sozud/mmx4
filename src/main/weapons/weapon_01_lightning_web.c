@@ -72,6 +72,9 @@ void lightning_web_init(struct WeaponObj* arg0)
     lightning_web_draw(arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_fly);
+#else
 void lightning_web_fly(struct WeaponObj* arg0)
 {
     u8 temp_v0;
@@ -88,6 +91,7 @@ void lightning_web_fly(struct WeaponObj* arg0)
     }
     lightning_web_draw(arg0);
 }
+#endif
 
 void lightning_web_main(struct WeaponObj* arg0)
 {
@@ -137,6 +141,9 @@ void lightning_web_spread(struct WeaponObj* arg0)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_hang);
+#else
 void lightning_web_hang(struct WeaponObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -151,6 +158,7 @@ void lightning_web_hang(struct WeaponObj* arg0)
         arg0->unk5++;
     }
 }
+#endif
 
 void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
 {
@@ -343,6 +351,9 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
 // lightning_web_charged_part_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", func_80093930);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_charged_part_wait);
+#else
 void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner;
@@ -360,6 +371,7 @@ void lightning_web_charged_part_wait(struct WeaponObj* arg0)
         lightning_web_charged_draw(arg0);
     }
 }
+#endif
 
 void lightning_web_charged_part_main(struct WeaponObj* arg0)
 {

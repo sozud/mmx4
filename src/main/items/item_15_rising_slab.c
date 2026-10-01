@@ -37,6 +37,9 @@ void rising_slab_init(struct ItemObj* arg0)
     arg0->state = 1;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_15_rising_slab", rising_slab_rise);
+#else
 void rising_slab_rise(struct ItemObj* arg0)
 {
     if (!(++arg0->unk7C.timer & 7)
@@ -61,6 +64,7 @@ void rising_slab_rise(struct ItemObj* arg0)
         arg0->state = 2;
     }
 }
+#endif
 
 void rising_slab_finish(struct ItemObj* arg0)
 {

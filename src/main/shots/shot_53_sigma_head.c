@@ -103,6 +103,9 @@ void sigma_head_idle(struct ShotObj* self)
 {
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", sigma_head_move_start);
+#else
 void sigma_head_move_start(struct ShotObj* self)
 {
 
@@ -119,6 +122,7 @@ void sigma_head_move_start(struct ShotObj* self)
     self->y_vel.val *= 3;
     self->unk6++;
 }
+#endif
 
 void sigma_head_move(struct ShotObj* self)
 {

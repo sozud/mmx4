@@ -11,6 +11,9 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F
 // crumble_sequencer_triggered
 INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", crumble_sequencer_chain);
+#else
 void crumble_sequencer_chain(struct EffectObj* self)
 {
     struct MiscObj* misc;
@@ -63,6 +66,7 @@ void crumble_sequencer_chain(struct EffectObj* self)
         break;
     }
 }
+#endif
 
 void crumble_sequencer_main(struct EffectObj* self)
 {

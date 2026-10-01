@@ -309,11 +309,11 @@ void frost_walrus_charge_run(struct MainObj* self)
 
 void frost_walrus_charge_slide(struct MainObj* self)
 {
-    s32 mask;
+    u8 mask;
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     mask = self->unk15 != 0 ? 1 : 2;
-    if (mask & self->collision_flags) {
+    if (self->collision_flags & mask) {
         frost_walrus_set_floor_tiles(0x39);
         start_screen_shake_x(0x1E, 4, 1);
         func_8001540C(2, 0x90, self);
@@ -398,7 +398,7 @@ void frost_walrus_leap_jump(struct MainObj* self)
 
 void frost_walrus_leap_air(struct MainObj* self)
 {
-    s8 side_mask;
+    u8 side_mask;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -417,7 +417,7 @@ void frost_walrus_leap_air(struct MainObj* self)
     }
     if (self->air_state == 0) {
         side_mask = self->unk15 != 0 ? 1 : 2;
-        if (side_mask & self->collision_flags) {
+        if (self->collision_flags & side_mask) {
             frost_walrus_set_floor_tiles(0x39);
             func_8001540C(2, 0x90, self);
             start_screen_shake_x(0x1E, 4, 1);
@@ -519,6 +519,9 @@ void frost_walrus_shards_count(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", frost_walrus_shards_fire);
+#else
 void frost_walrus_shards_fire(struct MainObj* self)
 {
     u8 i;
@@ -542,6 +545,7 @@ void frost_walrus_shards_fire(struct MainObj* self)
     self->unk7C += 2;
     self->unk6++;
 }
+#endif
 
 void frost_walrus_shards_repeat(struct MainObj* self)
 {
@@ -854,6 +858,9 @@ void frost_walrus_face_player(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", frost_walrus_choose_script);
+#else
 void frost_walrus_choose_script(struct MainObj* self)
 {
     u8 index;
@@ -876,6 +883,7 @@ void frost_walrus_choose_script(struct MainObj* self)
         i++;
     }
 }
+#endif
 
 void frost_walrus_set_floor_tiles(s32 self)
 {

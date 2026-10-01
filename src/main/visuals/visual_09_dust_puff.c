@@ -38,6 +38,9 @@ void dust_puff_init(struct VisualObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_09_dust_puff", dust_puff_main);
+#else
 void dust_puff_main(struct VisualObj* arg0)
 {
     u8 temp_v1;
@@ -57,3 +60,4 @@ void dust_puff_main(struct VisualObj* arg0)
         is_on_screen((struct BaseObj*)arg0);
     }
 }
+#endif

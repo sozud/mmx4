@@ -95,6 +95,9 @@ void walrus_ice_icicle_rise(struct ShotObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", walrus_ice_icicle_wait_drop);
+#else
 void walrus_ice_icicle_wait_drop(struct ShotObj* self)
 {
     s16 timer;
@@ -117,6 +120,7 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
     self->timer = 15;
     self->unk6 = next_state;
 }
+#endif
 
 void walrus_ice_icicle_fall(struct ShotObj* self)
 {

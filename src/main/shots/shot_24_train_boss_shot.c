@@ -50,6 +50,9 @@ void train_boss_bullet_despawn(struct ShotObj* self)
     self->unk84.shot_24.timer--;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_init);
+#else
 void train_boss_arm_init(struct ShotObj* self)
 {
     u16 y_offset;
@@ -75,6 +78,7 @@ void train_boss_arm_init(struct ShotObj* self)
     self->unk5C = 0x1A;
     self->unk60 = 6;
 }
+#endif
 
 void train_boss_arm_main(struct ShotObj* self)
 {
@@ -241,6 +245,9 @@ void train_boss_arm_wait_sync(struct ShotObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", train_boss_arm_destroyed);
+#else
 void train_boss_arm_destroyed(struct ShotObj* self)
 {
     u8 pad[8];
@@ -251,6 +258,7 @@ void train_boss_arm_destroyed(struct ShotObj* self)
     spawn_explosion(self);
     ZeroObjectState(OBJECT_HEADER(self));
 }
+#endif
 
 u8 train_boss_bullet_hit_box[4] = { 0xFD, 0xFD, 0x05, 0x05 };
 

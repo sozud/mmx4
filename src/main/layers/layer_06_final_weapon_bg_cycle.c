@@ -15,6 +15,9 @@ void final_weapon_bg_cycle_init(struct LayerObj* arg0)
     arg0->state++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/layers/layer_06_final_weapon_bg_cycle", final_weapon_bg_cycle_main);
+#else
 void final_weapon_bg_cycle_main(struct LayerObj* arg0)
 {
     struct BackgroundObj* background;
@@ -35,6 +38,7 @@ void final_weapon_bg_cycle_main(struct LayerObj* arg0)
         background->unk4C = 1;
     }
 }
+#endif
 
 void (*final_weapon_bg_cycle_state_funcs[])(struct LayerObj*) = {
     final_weapon_bg_cycle_init,

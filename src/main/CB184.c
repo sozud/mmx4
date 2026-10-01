@@ -24,6 +24,9 @@ void space_port_parallax_despawn(struct LayerObj* arg0);
         }              \
     } while (0)
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/CB184", refresh_visible_tile_effect);
+#else
 void refresh_visible_tile_effect(s32 effect_id, s32 x_offset, s32 y_offset)
 {
     struct TileEffectRecord* record;
@@ -56,6 +59,7 @@ void refresh_visible_tile_effect(s32 effect_id, s32 x_offset, s32 y_offset)
         record++;
     }
 }
+#endif
 
 u8 tile_effect_is_visible(s16 arg0, s16 arg1, s16 arg2, s16 arg3)
 {
@@ -70,6 +74,9 @@ void tile_effect_write_tile(struct TileEffectRecord* arg0, s32 arg1, s32 arg2, s
     D_801441C8[arg0->layer][arg2 & 0x1F][arg1 & 0x1F] = arg0->tiles[arg3 & 0xFF];
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/CB184", apply_tile_effect);
+#else
 void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)
 {
     struct TileEffectRecord* record;
@@ -101,6 +108,7 @@ void apply_tile_effect(u8 effect_id, s32 x_offset, s32 y_offset)
         record++;
     }
 }
+#endif
 #undef UPDATE_XY
 
 // tile_effect_apply_tile

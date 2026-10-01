@@ -87,6 +87,9 @@ void charge_muzzle_flash_fade(struct VisualObj* arg0)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_02_charge_muzzle_flash", charge_muzzle_flash_follow);
+#else
 void charge_muzzle_flash_follow(struct VisualObj* arg0)
 {
     struct PlayerObj* entity = &g_Player;
@@ -103,6 +106,7 @@ void charge_muzzle_flash_follow(struct VisualObj* arg0)
         }
     }
 }
+#endif
 
 struct VisualAttachmentInit charge_muzzle_flash_types[4] = {
     { 0x03, 0x16, 0x09 },

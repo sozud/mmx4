@@ -109,11 +109,18 @@ void bomb_bat_drop_end(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off);
+#else
 void bomb_bat_fly_off(struct MainObj* self)
 {
     bomb_bat_move_funcs[self->unk6 + 2](self);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_fly_off_start);
+#else
 void bomb_bat_fly_off_start(struct MainObj* self)
 {
     s32* velocity;
@@ -131,6 +138,7 @@ void bomb_bat_fly_off_start(struct MainObj* self)
     self->x_speed = selected;
     self->unk6 = step + 1;
 }
+#endif
 
 void bomb_bat_fly_off_move(struct MainObj* self)
 {
@@ -138,11 +146,18 @@ void bomb_bat_fly_off_move(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee);
+#else
 void bomb_bat_flee(struct MainObj* self)
 {
     bomb_bat_move_funcs[self->unk6 + 4](self);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_32_bomb_bat", bomb_bat_flee_start);
+#else
 void bomb_bat_flee_start(struct MainObj* self)
 {
     s32* velocity;
@@ -160,6 +175,7 @@ void bomb_bat_flee_start(struct MainObj* self)
     self->x_speed = selected;
     self->unk6++;
 }
+#endif
 
 void bomb_bat_flee_move(struct MainObj* self)
 {

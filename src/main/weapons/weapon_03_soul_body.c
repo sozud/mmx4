@@ -28,6 +28,9 @@ void soul_body_update(struct WeaponObj* arg0)
     soul_body_state_funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03_soul_body", soul_body_init);
+#else
 void soul_body_init(struct WeaponObj* arg0)
 {
     u32** animation_table;
@@ -55,6 +58,7 @@ void soul_body_init(struct WeaponObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x20);
 }
+#endif
 
 void soul_body_main(struct WeaponObj* self)
 {
@@ -183,6 +187,9 @@ void soul_body_load_palette(s32 arg0)
     need_palette_load |= 1;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_03_soul_body", soul_body_clone_update);
+#else
 void soul_body_clone_update(void)
 {
     s32 var_a0;
@@ -246,6 +253,7 @@ void soul_body_clone_update(void)
         }
     }
 }
+#endif
 
 struct Unk_unk68 soul_body_hit_box[] = {
     { -21, -24, 0x28, 0x30 },

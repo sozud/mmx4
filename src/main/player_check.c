@@ -158,6 +158,9 @@ s32 player_check_dash_jump(struct PlayerObj* self)
     return 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_check", player_check_walk_start);
+#else
 s32 player_check_walk_start(struct PlayerObj* self)
 {
     if (self->input_locked) {
@@ -186,6 +189,7 @@ s32 player_check_walk_start(struct PlayerObj* self)
         return 0;
     }
 }
+#endif
 
 s32 player_check_walk(struct PlayerObj* self)
 {
@@ -230,6 +234,9 @@ void player_check_fall(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_check", player_check_dash_input);
+#else
 s32 player_check_dash_input(struct PlayerObj* self)
 {
     if (self->input_locked || (!self->double_tap_dash && !(self->pressed_input & PLAYER_INPUT_DASH))) {
@@ -256,6 +263,7 @@ s32 player_check_dash_input(struct PlayerObj* self)
         return 0;
     }
 }
+#endif
 
 void player_update_double_tap(struct PlayerObj* self)
 {
@@ -431,6 +439,9 @@ s32 player_check_wall_jump(struct PlayerObj* self)
     return 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_check", player_is_pushing_wall);
+#else
 s32 player_is_pushing_wall(struct PlayerObj* self)
 {
     if ((self->input_locked != 0) || (self->wall_climbable == 0)) {
@@ -438,6 +449,7 @@ s32 player_is_pushing_wall(struct PlayerObj* self)
     }
     return (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT) & self->unk88.bytes.collision_flags) != 0;
 }
+#endif
 
 void player_check_damage(struct PlayerObj* self)
 {

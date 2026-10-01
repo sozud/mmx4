@@ -56,6 +56,9 @@ void spike_crawler_fall(struct MainObj* self)
 // spike_crawler_crawl
 INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", spike_crawler_update_speed);
+#else
 void spike_crawler_update_speed(struct MainObj* self)
 {
     s16 object_y;
@@ -106,6 +109,7 @@ far_range:
 store_timer:
     self->unk7E = new_timer;
 }
+#endif
 
 void spike_crawler_main(struct MainObj* self)
 {

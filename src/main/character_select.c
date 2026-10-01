@@ -2,6 +2,9 @@
 
 extern u16 D_800F44D6;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/character_select", character_select_state_0);
+#else
 void character_select_state_0(struct EngineObj* arg0)
 {
     u8 var_v1;
@@ -32,6 +35,7 @@ void character_select_state_0(struct EngineObj* arg0)
     arg0->unkA = 3;
     arg0->unk1++;
 }
+#endif
 
 void character_select_state_1(struct EngineObj* arg0)
 {
@@ -133,6 +137,9 @@ void character_select_state_2(struct EngineObj* arg0)
     character_select_state_2_update_funcs[arg0->unk2](arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/character_select", character_select_state_3);
+#else
 void character_select_state_3(struct EngineObj* arg0)
 {
     u16* ptr = &controller_state;
@@ -160,6 +167,7 @@ void character_select_state_3(struct EngineObj* arg0)
     }
     arg0->character_state.bytes[3] = arg0->cur_character;
 }
+#endif
 
 void character_select_state_4(struct EngineObj* arg0)
 {

@@ -25,6 +25,9 @@ void space_port_parallax_init(struct LayerObj* arg0)
     space_port_parallax_main(arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/layers/layer_07_space_port_parallax", space_port_parallax_main);
+#else
 void space_port_parallax_main(struct LayerObj* arg0)
 {
     struct BackgroundObj* background_0;
@@ -35,6 +38,7 @@ void space_port_parallax_main(struct LayerObj* arg0)
     background_1->x_pos.val += *(s32*)&arg0->bg_offset - ((background_0->unk14.val - background_0->x_pos.val) / 2);
     background_1->y_pos.val = background_0->y_pos.val;
 }
+#endif
 
 void space_port_parallax_despawn(struct LayerObj* arg0)
 {

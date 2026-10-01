@@ -41,6 +41,9 @@ INCLUDE_RODATA("main/nonmatchings/menu", D_80010058);
 INCLUDE_RODATA("main/nonmatchings/menu", D_8001005C);
 #endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_800193D8);
+#else
 void func_800193D8(struct EngineObj* arg0)
 {
     u8* ptr = D_80141BDF;
@@ -59,9 +62,13 @@ void func_800193D8(struct EngineObj* arg0)
         init_objects();
     }
 }
+#endif
 
 extern u8 D_800F1DEC[];
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_800194C8);
+#else
 void func_800194C8(struct EngineObj* engine)
 {
     u8 i;
@@ -94,7 +101,11 @@ void func_800194C8(struct EngineObj* engine)
     D_801721B8 = 0;
     func_8001B644(D_800F1DFC);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001961C);
+#else
 void func_8001961C(struct EngineObj* engine)
 {
     u16* controller;
@@ -179,7 +190,11 @@ void func_8001961C(struct EngineObj* engine)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001989C);
+#else
 void func_8001989C(struct EngineObj* arg0)
 {
     u8* timer;
@@ -263,6 +278,7 @@ void func_8001989C(struct EngineObj* arg0)
         return;
     }
 }
+#endif
 
 void func_80019B64(struct EngineObj* arg0)
 {
@@ -280,6 +296,9 @@ void func_80019BA0(struct EngineObj* arg0)
     func_8001C008(4, 2);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_80019BF4);
+#else
 void func_80019BF4(struct EngineObj* arg0)
 {
     u16* controller = &controller_state;
@@ -303,7 +322,11 @@ void func_80019BF4(struct EngineObj* arg0)
         arg0->unk2 = 0;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_80019D04);
+#else
 void func_80019D04(struct EngineObj* arg0)
 {
     u8* timer;
@@ -362,7 +385,11 @@ void func_80019D04(struct EngineObj* arg0)
         func_8001B644(D_800F1EE0);
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_80019EF0);
+#else
 void func_80019EF0(struct EngineObj* engine)
 {
     u16* controller;
@@ -440,7 +467,11 @@ void func_80019EF0(struct EngineObj* engine)
         func_8001C008(0, 1);
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001A178);
+#else
 void func_8001A178(struct EngineObj* arg0)
 {
     u16* controller;
@@ -476,7 +507,11 @@ void func_8001A178(struct EngineObj* arg0)
         D_801721BA = 2;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001A308);
+#else
 void func_8001A308(struct EngineObj* arg0)
 {
     u16* controller;
@@ -512,11 +547,15 @@ void func_8001A308(struct EngineObj* arg0)
         D_801721BA = 2;
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A498);
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001A710);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001A7D4);
+#else
 void func_8001A7D4(struct EngineObj* arg0)
 {
     u8* timer_ptr;
@@ -538,6 +577,7 @@ void func_8001A7D4(struct EngineObj* arg0)
         arg0->unk1 = (u8)arg0->unk1 + 1;
     }
 }
+#endif
 
 void func_8001A860(struct EngineObj* arg0)
 {
@@ -608,6 +648,9 @@ void func_8001A9EC(struct EngineObj* arg0)
     init_objects();
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001AA98);
+#else
 void func_8001AA98(struct EngineObj* arg0)
 {
     struct EngineObj* engine = arg0;
@@ -642,7 +685,11 @@ void func_8001AA98(struct EngineObj* arg0)
         func_8001B644(D_800F1F00);
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001ABDC);
+#else
 void func_8001ABDC(struct EngineObj* engine)
 {
     u16* controller;
@@ -728,7 +775,11 @@ void func_8001ABDC(struct EngineObj* engine)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001AE8C);
+#else
 void func_8001AE8C(struct EngineObj* arg0)
 {
     u8* timer;
@@ -813,7 +864,11 @@ void func_8001AE8C(struct EngineObj* arg0)
     }
     D_80141BDF[0] = 0;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001B10C);
+#else
 void func_8001B10C(struct EngineObj* arg0)
 {
     u8 i;
@@ -896,6 +951,10 @@ void func_8001B10C(struct EngineObj* arg0)
         func_8001C008(0, 1);
     }
 }
+#endif
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/menu", func_8001B388);
+#else
 void func_8001B388(struct EngineObj* arg0)
 {
     u16* controller;
@@ -930,6 +989,7 @@ void func_8001B388(struct EngineObj* arg0)
         func_800129F0(8);
     }
 }
+#endif
 
 void func_8001B4E4(struct EngineObj* arg0)
 {

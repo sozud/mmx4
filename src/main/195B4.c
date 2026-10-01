@@ -168,7 +168,11 @@ void func_800292D0(struct StageObjectRecord* arg0)
 INCLUDE_ASM("main/nonmatchings/195B4", func_8002938C);
 extern struct ObjectHeader* (*g_MakeObjectFuncs[8])();
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/195B4", MakeObject);
+#else
 struct ObjectHeader* MakeObject(u8 arg0)
 {
     return g_MakeObjectFuncs[arg0](arg0 << 2);
 }
+#endif

@@ -65,6 +65,9 @@ u8 pod_spawner_player_quadrant(struct MainObj* self)
 // pod_spawner_find_slot
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005ABC0);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", pod_spawner_despawn);
+#else
 void pod_spawner_despawn(struct MainObj* self)
 {
     struct Main29Ext* context;
@@ -80,6 +83,7 @@ void pod_spawner_despawn(struct MainObj* self)
     target->unk4 = 2;
     despawn_object(OBJECT_HEADER(self));
 }
+#endif
 
 // pod_spawner_state_3
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AD00);

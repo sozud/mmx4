@@ -28,6 +28,9 @@ void tile_loop_anim_main(struct EffectObj* self)
     tile_loop_anim_step(self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_40_tile_loop_anim", tile_loop_anim_step);
+#else
 void tile_loop_anim_step(struct EffectObj* self)
 {
     s8 timer;
@@ -44,6 +47,7 @@ void tile_loop_anim_step(struct EffectObj* self)
             self->y_pos.i.hi - tile_loop_anim_offsets[self->unk2][1]);
     }
 }
+#endif
 
 u8 tile_loop_anim_script_0[6][4] = {
     { 9, 0, 1, 0 },

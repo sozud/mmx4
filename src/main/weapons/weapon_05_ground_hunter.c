@@ -75,12 +75,12 @@ void ground_hunter_rise(struct WeaponObj* arg0)
 void ground_hunter_crawl(struct WeaponObj* arg0)
 {
     u8 mask;
-    u32 flags;
+    u8 flags;
 
     mask = arg0->unk15 != 0 ? 1 : 2;
     flags = arg0->unk70;
     if (flags & 8) {
-        if (mask & flags) {
+        if (flags & mask) {
             ground_hunter_start_burst(arg0);
         } else {
             ground_hunter_start_crawl(arg0);
@@ -109,6 +109,9 @@ void ground_hunter_despawn(struct WeaponObj* arg0)
     ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", ground_hunter_check_wall);
+#else
 s32 ground_hunter_check_wall(struct WeaponObj* arg0)
 {
     u16 mask;
@@ -130,6 +133,7 @@ s32 ground_hunter_check_wall(struct WeaponObj* arg0)
     }
     return 0;
 }
+#endif
 
 void ground_hunter_start_crawl(struct WeaponObj* arg0)
 {

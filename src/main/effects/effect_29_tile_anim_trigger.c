@@ -56,6 +56,9 @@ void tile_anim_trigger_main(struct EffectObj* self)
     despawn_object(OBJECT_HEADER(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_29_tile_anim_trigger", tile_anim_trigger_step);
+#else
 void tile_anim_trigger_step(struct EffectObj* self)
 {
     s8 timer;
@@ -72,6 +75,7 @@ void tile_anim_trigger_step(struct EffectObj* self)
             self->y_pos.i.hi - tile_anim_trigger_offsets[self->unk2][1]);
     }
 }
+#endif
 
 void (*tile_anim_trigger_state_funcs[])(struct EffectObj*) = {
     tile_anim_trigger_init,

@@ -95,6 +95,9 @@ void final_cutscene_wait_fade(struct MiscObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_53_final_cutscene", final_cutscene_finish);
+#else
 void final_cutscene_finish(struct MiscObj* self)
 {
     s16 timer;
@@ -115,6 +118,7 @@ void final_cutscene_finish(struct MiscObj* self)
         g_FilterAmountB = 0x7C00;
     }
 }
+#endif
 
 void final_cutscene_main(struct MiscObj* self)
 {

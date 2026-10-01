@@ -430,6 +430,9 @@ void eregion_death_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", eregion_death_blink);
+#else
 void eregion_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -454,7 +457,11 @@ void eregion_death_blink(struct MainObj* self)
         self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", eregion_death_wait_explosion);
+#else
 void eregion_death_wait_explosion(struct MainObj* self)
 {
     struct MiscObj* misc;
@@ -486,12 +493,16 @@ void eregion_death_wait_explosion(struct MainObj* self)
     player_start_script_action(0x14, 0x40);
     ZeroObjectState(OBJECT_HEADER(self));
 }
+#endif
 
 void eregion_death(struct MainObj* self)
 {
     eregion_death_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", eregion_recoil_start);
+#else
 void eregion_recoil_start(struct MainObj* self)
 {
     self->unk6++;
@@ -501,6 +512,7 @@ void eregion_recoil_start(struct MainObj* self)
         self->x_pos.i.hi = self->unk15 != 0 ? self->x_speed - 0x16 : self->x_speed + 0x16;
     }
 }
+#endif
 
 // eregion_recoil_wait
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);

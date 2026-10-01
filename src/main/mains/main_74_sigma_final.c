@@ -143,6 +143,8 @@ void sigma_final_intro_start_music(struct MainObj* self)
         func_80013AD8(
 #ifdef VERSION_JP
             0x80,
+#elif defined(VERSION_EU)
+            0x82,
 #else
             0x81,
 #endif
@@ -447,6 +449,9 @@ void sigma_final_hide_upper_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_upper_wait);
+#else
 void sigma_final_hide_upper_wait(struct MainObj* self)
 {
     s32 count;
@@ -473,6 +478,7 @@ void sigma_final_hide_upper_wait(struct MainObj* self)
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
 }
+#endif
 
 void sigma_final_hide_upper(struct MainObj* self)
 {
@@ -516,6 +522,9 @@ void sigma_final_hide_lower_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", sigma_final_hide_lower_wait);
+#else
 void sigma_final_hide_lower_wait(struct MainObj* self)
 {
     u32 i;
@@ -540,6 +549,7 @@ void sigma_final_hide_lower_wait(struct MainObj* self)
     self->x_pos.i.hi = 0;
     self->y_pos.i.hi = 0;
 }
+#endif
 
 void sigma_final_hide_lower(struct MainObj* self)
 {

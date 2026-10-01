@@ -127,6 +127,9 @@ void func_8002328C(struct AbcObj*);
 
 #define CONFIG D_801397DC
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/128C4", func_80022730);
+#else
 void func_80022730(struct AbcObj* arg0)
 {
     s32 charOffset;
@@ -578,3 +581,4 @@ void func_80022730(struct AbcObj* arg0)
         break;
     }
 }
+#endif

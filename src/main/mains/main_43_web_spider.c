@@ -530,6 +530,9 @@ void web_spider_fall_rethread(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", web_spider_check_big_web);
+#else
 void web_spider_check_big_web(struct MainObj* self)
 {
     if (self->ext.main_43.big_web_done == 0 && self->state < 2 && self->unk5 == 2 && (*(u32*)&self->state & 0xFFFF0000) == 0x02010000 && self->hp < 0x18) {
@@ -541,6 +544,7 @@ void web_spider_check_big_web(struct MainObj* self)
         self->ext.main_43.hurt_collision = 1;
     }
 }
+#endif
 
 struct ShotObj* web_spider_spawn_thread(struct MainObj* self, s32 variant)
 {
@@ -650,13 +654,20 @@ void web_spider_set_move_timer(struct MainObj* self)
     self->unk7C = web_spider_move_timers[(self->hp & 0x7F) >> 3];
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", web_spider_set_attack_cooldown);
+#else
 void web_spider_set_attack_cooldown(struct MainObj* self)
 {
     if (self->ext.main_43.attack_cooldown == 0) {
         self->ext.main_43.attack_cooldown = web_spider_attack_cooldowns[(self->hp & 0x7F) >> 3];
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", web_spider_set_swing_animation);
+#else
 void web_spider_set_swing_animation(struct MainObj* self)
 {
     u8 animation_id;
@@ -665,6 +676,7 @@ void web_spider_set_swing_animation(struct MainObj* self)
     self->ext.main_43.animation_id = animation_id;
     set_animation(self, animation_id);
 }
+#endif
 
 void web_spider_death_start(struct MainObj* self)
 {
@@ -678,6 +690,9 @@ void web_spider_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", web_spider_death_explode);
+#else
 void web_spider_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -703,6 +718,7 @@ void web_spider_death_explode(struct MainObj* self)
         self->unk7E = self->ext.main_43.flash_timer > 5 ? self->ext.main_43.flash_timer : 5;
     }
 }
+#endif
 
 void web_spider_death_finish(struct MainObj* self)
 {
@@ -737,6 +753,9 @@ void web_spider_death(struct MainObj* self)
 // spiderling_init
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065574);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", spiderling_run);
+#else
 void spiderling_run(struct MainObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -751,6 +770,7 @@ void spiderling_run(struct MainObj* self)
     func_8002D9BC(self);
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void spiderling_fall(struct MainObj* self)
 {

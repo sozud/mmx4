@@ -44,6 +44,9 @@ extern struct Effect09MovementStep bg_wind_steps_fast[3];
 extern struct Effect09MovementStep bg_wind_steps_slow[3];
 extern struct Effect09MovementStep bg_wind_steps_medium[4];
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_slow);
+#else
 void bg_wind_gust_slow(struct EffectObj* effect)
 {
     s16* x_hi;
@@ -96,7 +99,11 @@ void bg_wind_gust_slow(struct EffectObj* effect)
         background_objects[2].unk4C = 1;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_fast);
+#else
 void bg_wind_gust_fast(struct EffectObj* self)
 {
     s32 shifted_target;
@@ -151,7 +158,11 @@ void bg_wind_gust_fast(struct EffectObj* self)
         background_objects[2].unk4C = 1;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_medium);
+#else
 void bg_wind_gust_medium(struct EffectObj* self)
 {
     s32 shifted_target;
@@ -206,6 +217,7 @@ void bg_wind_gust_medium(struct EffectObj* self)
         background_objects[2].unk4C = 1;
     }
 }
+#endif
 
 // bg_wind_storm
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B7CFC);

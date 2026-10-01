@@ -46,6 +46,9 @@ void wave_rider_move(struct MainObj* self)
     move_with_gravity(self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", wave_rider_check_camera);
+#else
 s32 wave_rider_check_camera(struct MainObj* self)
 {
     s32 background_x;
@@ -65,6 +68,7 @@ s32 wave_rider_check_camera(struct MainObj* self)
     }
     return distance <= 0x1FFFF;
 }
+#endif
 
 // wave_rider_ride
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B5F8);

@@ -120,6 +120,9 @@ void trap_floor_open(struct ItemObj* arg0, struct EngineObj* arg1,
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_13_trap_floor", trap_floor_opened);
+#else
 void trap_floor_opened(struct ItemObj* arg0)
 {
     u8 type;
@@ -134,6 +137,7 @@ void trap_floor_opened(struct ItemObj* arg0)
     apply_tile_effect(type, (s16)(arg0->x_pos.u.hi - 0x10),
         arg0->y_pos.i.hi);
 }
+#endif
 
 void (*trap_floor_state_funcs[])(struct ItemObj*) = {
     func_800C3578,

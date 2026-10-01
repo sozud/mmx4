@@ -380,6 +380,9 @@ INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFBD0);
 // pickup_collect_weapon_energy
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFCC0);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", pickup_collect_health);
+#else
 void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 {
     u8 player_status;
@@ -425,6 +428,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
         }
     }
 }
+#endif
 // pickup_check_collect
 INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800C00BC);
 

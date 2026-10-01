@@ -45,6 +45,9 @@ void peacock_missile_explode(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", peacock_missile_hit_target);
+#else
 s32 peacock_missile_hit_target(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
@@ -59,6 +62,7 @@ s32 peacock_missile_hit_target(struct ShotObj* self)
     }
     return 0;
 }
+#endif
 
 void peacock_missile_main(struct ShotObj* self)
 {

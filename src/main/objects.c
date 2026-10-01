@@ -491,6 +491,9 @@ s32 func_8002B160(struct BaseObj* arg0)
 // is_off_screen
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B1E8);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/objects", is_on_screen);
+#else
 void is_on_screen(struct BaseObj* arg0)
 {
     s16 x_pos;
@@ -509,6 +512,7 @@ void is_on_screen(struct BaseObj* arg0)
         arg0->on_screen = 1;
     }
 }
+#endif
 
 void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
 {
@@ -534,6 +538,9 @@ void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/objects", func_8002B3C0);
+#else
 void func_8002B3C0(struct BaseObj* arg0)
 {
     s16 x_pos;
@@ -551,6 +558,7 @@ void func_8002B3C0(struct BaseObj* arg0)
         arg0->on_screen = 1;
     }
 }
+#endif
 
 void func_8002B450(void)
 {

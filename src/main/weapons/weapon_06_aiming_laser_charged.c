@@ -33,6 +33,9 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 // aiming_laser_reticle_main
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800963E8);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", aiming_laser_reticle_place);
+#else
 void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     u8* temp_a0;
@@ -49,7 +52,11 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1)
     arg0->y_pos.val = arg1->y_pos.val + arg0->y_vel.val * 0x60;
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", aiming_laser_try_lock_on);
+#else
 s32 aiming_laser_try_lock_on(struct WeaponObj* arg0, struct PlayerObj* player, struct MainObj* target)
 {
     s32 slot;
@@ -102,6 +109,7 @@ s32 aiming_laser_try_lock_on(struct WeaponObj* arg0, struct PlayerObj* player, s
     }
     return 0;
 }
+#endif
 
 void aiming_laser_marker_init(struct WeaponObj* arg0)
 {
@@ -123,6 +131,9 @@ void aiming_laser_marker_init(struct WeaponObj* arg0)
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", aiming_laser_marker_wait_fire);
+#else
 void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* player,
     struct PlayerObj* owner)
 {
@@ -145,6 +156,7 @@ void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* pla
         self->state = (u8)self->state + 1;
     }
 }
+#endif
 
 void aiming_laser_marker_fire(struct WeaponObj* arg0)
 {
@@ -205,6 +217,9 @@ void aiming_laser_charged_update(struct WeaponObj* arg0)
     aiming_laser_charged_state_funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", aiming_laser_charged_init);
+#else
 void aiming_laser_charged_init(struct WeaponObj* arg0)
 {
     s8 i;
@@ -232,6 +247,7 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
     arg0->unk5 = 0;
     arg0->state = (u8)arg0->state + 1;
 }
+#endif
 
 // aiming_laser_charged_main
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_80096B54);

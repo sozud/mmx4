@@ -408,6 +408,9 @@ s32 func_8002D41C(struct PlayerObj* arg0, s32 arg1, s32 arg2)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1CF60", func_8002D490);
+#else
 s32 func_8002D490(struct PlayerObj* arg0)
 {
     s16 var_v0_2;
@@ -433,6 +436,7 @@ s32 func_8002D490(struct PlayerObj* arg0)
     arg0->x_pos.i.hi += D_8013B800;
     return 0;
 }
+#endif
 
 s32 func_8002D5E4(struct PlayerObj* arg0, s16 arg1)
 {

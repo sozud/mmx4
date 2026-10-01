@@ -15,6 +15,9 @@ void colonel_spawn(struct MainObj* self)
     colonel_spawn_funcs[self->unk5](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_spawn_warning);
+#else
 void colonel_spawn_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -34,6 +37,7 @@ void colonel_spawn_warning(struct MainObj* self)
     }
     self->unk5++;
 }
+#endif
 
 // colonel_init
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
@@ -131,6 +135,9 @@ void colonel_defeat_wait_dialogue(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_defeat_blink);
+#else
 void colonel_defeat_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -158,6 +165,7 @@ void colonel_defeat_blink(struct MainObj* self)
         self->invincibility_timer = 0;
     self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
 }
+#endif
 
 void colonel_defeat_wait_explosion(struct MainObj* self)
 {
@@ -365,6 +373,9 @@ void colonel_intro_port_blink_in(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_intro_port_pose);
+#else
 void colonel_intro_port_pose(struct MainObj* self)
 {
     u16 value;
@@ -385,6 +396,7 @@ void colonel_intro_port_pose(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void colonel_intro_port_voice(struct MainObj* self)
 {
@@ -1070,6 +1082,9 @@ void colonel_jump_slam_recover(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_shot_incoming);
+#else
 ret_u8 colonel_shot_incoming(struct MainObj* self)
 {
     volatile struct WeaponObj* weapon;
@@ -1094,6 +1109,7 @@ ret_u8 colonel_shot_incoming(struct MainObj* self)
 
     return 0;
 }
+#endif
 
 void colonel_face_player(struct MainObj* self)
 {

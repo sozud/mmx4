@@ -28,6 +28,9 @@ void web_shot_fly(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", web_shot_home);
+#else
 void web_shot_home(struct ShotObj* self)
 {
     s32 target;
@@ -55,6 +58,7 @@ void web_shot_home(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
+#endif
 
 void web_shot_pin_player(struct ShotObj* self)
 {
@@ -118,6 +122,9 @@ void web_shot_fade(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", web_shot_main);
+#else
 void web_shot_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
@@ -142,6 +149,7 @@ void web_shot_main(struct ShotObj* self)
         self->state = 2;
     }
 }
+#endif
 
 void web_shot_despawn(struct ShotObj* self)
 {

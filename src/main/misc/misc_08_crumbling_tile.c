@@ -77,6 +77,9 @@ void crumbling_tile_second_wait_anim(struct MiscObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_08_crumbling_tile", crumbling_tile_second_delay);
+#else
 void crumbling_tile_second_delay(struct MiscObj* self)
 {
     s32 step;
@@ -105,6 +108,7 @@ void crumbling_tile_second_delay(struct MiscObj* self)
         ext->timer--;
     }
 }
+#endif
 
 void crumbling_tile_break_second(struct MiscObj* self)
 {

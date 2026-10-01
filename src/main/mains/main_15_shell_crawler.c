@@ -180,6 +180,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
 // shell_crawler_init
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", shell_crawler_main);
+#else
 void shell_crawler_main(struct MainObj* self)
 {
     s32 hit;
@@ -213,6 +216,7 @@ void shell_crawler_main(struct MainObj* self)
         self->state++;
     }
 }
+#endif
 
 void shell_crawler_despawn(struct MainObj* self)
 {

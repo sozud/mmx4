@@ -716,6 +716,9 @@ void player_hover_back_stop(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_special", player_hover_check_end);
+#else
 s32 player_hover_check_end(struct PlayerObj* self)
 {
     s32 result;
@@ -736,7 +739,11 @@ s32 player_hover_check_end(struct PlayerObj* self)
     }
     return result;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_special", player_hover_steer);
+#else
 s32 player_hover_steer(struct PlayerObj* self)
 {
     u16 buttons;
@@ -772,6 +779,7 @@ move_left:
     }
     return 1;
 }
+#endif
 
 void player_hover_set_direction(struct PlayerObj* self, s32 direction)
 {
@@ -859,17 +867,18 @@ void player_nova_strike_end(struct PlayerObj* self)
 
 s32 player_nova_strike_hit_wall(struct PlayerObj* self)
 {
-    s32 wall_flag;
+    u8 wall_flag;
 
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_CEILING) {
         self->y_vel.val = 0;
         self->unk2C = 0;
     }
-    wall_flag = PLAYER_COLLIDE_LEFT;
     if (self->unk15 != 0) {
         wall_flag = PLAYER_COLLIDE_RIGHT;
+    } else {
+        wall_flag = PLAYER_COLLIDE_LEFT;
     }
-    if (wall_flag & self->unk88.bytes.collision_flags) {
+    if (self->unk88.bytes.collision_flags & wall_flag) {
         self->x_vel.val = 0;
         self->unk28 = 0;
         return 1;
@@ -1117,6 +1126,9 @@ void player_rising_fire_charged_fall(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_special", player_zero_check_ground_technique);
+#else
 s32 player_zero_check_ground_technique(struct PlayerObj* self)
 {
     if (self->unk2 == 0) {
@@ -1130,6 +1142,7 @@ s32 player_zero_check_ground_technique(struct PlayerObj* self)
     }
     return 1;
 }
+#endif
 
 s32 player_zero_check_saber(struct PlayerObj* self)
 {
@@ -1973,7 +1986,7 @@ void player_zero_spawn_saber(struct PlayerObj* self, s8 saber_id)
 
 void player_zero_shippuuga(struct PlayerObj* self)
 {
-    s32 side_mask;
+    u8 side_mask;
 
     if (self->unk6 == 0) {
         self->unk6++;
@@ -1997,7 +2010,7 @@ void player_zero_shippuuga(struct PlayerObj* self)
                 self->x_vel.val = 0;
             }
         }
-        if (side_mask & self->unk88.bytes.collision_flags) {
+        if (self->unk88.bytes.collision_flags & side_mask) {
             self->x_vel.val = 0;
         }
         if (self->x_vel.val != 0) {

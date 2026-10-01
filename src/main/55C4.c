@@ -262,6 +262,9 @@ void func_80014C70(void);
 #ifdef VERSION_JP
 #define CD_AUDIO_FIRST_TRACK 0x4C
 #define CD_AUDIO_LAST_TRACK 0x4E
+#elif defined(VERSION_EU)
+#define CD_AUDIO_FIRST_TRACK 0x4B
+#define CD_AUDIO_LAST_TRACK 0x4D
 #else
 #define CD_AUDIO_FIRST_TRACK 0x4A
 #define CD_AUDIO_LAST_TRACK 0x4C
@@ -332,6 +335,9 @@ extern u32 D_800F1D88;
 
 extern u32 D_800F1D8C;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80014DC4);
+#else
 void func_80014DC4(void)
 {
     u8 var_v1;
@@ -404,6 +410,7 @@ void func_80014DC4(void)
     }
 #endif
 }
+#endif
 
 void func_8001512C(void)
 {
@@ -519,6 +526,9 @@ s32 is_sound_finished(s32 arg0, struct MainObj* owner)
 #endif
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80015A50);
+#else
 s32 func_80015A50(u8 slot)
 {
     u8* state;
@@ -574,11 +584,15 @@ complete:
     }
     return result;
 }
+#endif
 
 extern u8 D_800F1654[];
 
 extern union SepBundle D_801459C8;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80015C10);
+#else
 void func_80015C10(void)
 {
     u8 var_s1;
@@ -606,6 +620,7 @@ void func_80015C10(void)
         SsSepSetVol(D_8013E1C8[1], var_s1, 0x7F, 0x7F);
     }
 }
+#endif
 
 s32 set_animation(void* object, s32 animation)
 {
@@ -765,6 +780,9 @@ void func_800160F4(void)
 }
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80016334);
+#else
 void func_80016334(void)
 {
     func_80016420(0);
@@ -781,6 +799,7 @@ void func_80016334(void)
     D_80139564 = 0;
     D_801441B0 = 0;
 }
+#endif
 
 void func_800163BC(s32 arg0)
 {
@@ -808,6 +827,9 @@ void func_80016420(s8 arg0)
 void pc_cd_set_volume(s32 volume);
 #endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80016448);
+#else
 void func_80016448(u8 arg0)
 {
 #ifdef MMX4_WIN32
@@ -831,7 +853,11 @@ void func_80016448(u8 arg0)
     CdMix(&D_80139520);
 #endif
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_800164D8);
+#else
 void func_800164D8(void)
 {
     s8 pad[2];
@@ -844,7 +870,11 @@ void func_800164D8(void)
     func_8001663C(((u8*)&D_800F1A0C)[temp_v0],
         ((u8*)&D_800F1A0C)[temp_v0 + 1]);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_8001653C);
+#else
 void func_8001653C(void)
 {
     s8 pad[8];
@@ -884,6 +914,7 @@ void func_8001653C(void)
 
     func_8001663C(track, volume);
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_8001663C);
 
@@ -966,6 +997,9 @@ extern s32 D_80141BD4;
 
 extern u8 D_80171EA9;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_800169D8);
+#else
 s32 func_800169D8(void)
 {
     u8 temp_a0;
@@ -1001,6 +1035,7 @@ s32 func_800169D8(void)
     }
     return -1;
 }
+#endif
 
 void func_80016B38(void)
 {
@@ -1065,6 +1100,9 @@ void func_80016C5C(void)
 #endif
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80016D0C);
+#else
 void func_80016D0C(void)
 {
 #ifdef MMX4_WIN32
@@ -1095,6 +1133,7 @@ void func_80016D0C(void)
     }
 #endif
 }
+#endif
 
 void func_80016DAC()
 {
@@ -1197,6 +1236,9 @@ void func_80016FB4(s32 arg0)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", decompress_gfx);
+#else
 void decompress_gfx(u16* src, u16* dest)
 {
     s32 var_a3;
@@ -1245,6 +1287,7 @@ start:
 
     goto start;
 }
+#endif
 
 extern RECT D_800F1AD0;
 
@@ -1261,6 +1304,9 @@ void func_800170E0(void)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017100);
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80017268);
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80017340);
+#else
 void func_80017340(void)
 {
     u8 start;
@@ -1326,6 +1372,7 @@ void func_80017340(void)
     func_800179BC();
     func_80017F2C();
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_800175AC);
 
@@ -1372,6 +1419,9 @@ void func_800182E8(void)
     asm(".rept 194 ; nop ; .endr");
 }
 #endif
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", Set24BitDisp);
+#else
 void Set24BitDisp(s32 w, s32 h)
 {
     RECT rect;
@@ -1393,6 +1443,7 @@ void Set24BitDisp(s32 w, s32 h)
     draw_infos[1].dispenv.isinter = 0;
     draw_infos[0].dispenv.isinter = 0;
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80018788);
 extern s32 func_80013614(s32, s32*);
@@ -1517,6 +1568,9 @@ extern u32 D_80139630;
 
 extern s32 D_801410B8;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/55C4", func_80019100);
+#else
 void func_80019100(void)
 {
     u32* temp_a0;
@@ -1539,6 +1593,7 @@ void func_80019100(void)
     }
     D_80139634 = 0;
 }
+#endif
 
 extern s32 D_80139610;
 

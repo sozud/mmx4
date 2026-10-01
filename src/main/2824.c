@@ -44,6 +44,9 @@ void func_80012024(void)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_8001213C);
+#else
 void func_8001213C(void)
 {
     ResetCallback();
@@ -77,7 +80,11 @@ void func_8001213C(void)
     D_80141BD2 = 0x78;
     func_80012740(0, &func_8001D064);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_800122E0);
+#else
 void func_800122E0(struct DrawInfo* arg0)
 {
     ClearOTagR(&arg0->ordering_table.start, 0xC);
@@ -87,6 +94,7 @@ void func_800122E0(struct DrawInfo* arg0)
     arg0->drawenv.g0 = 0;
     arg0->drawenv.b0 = 0;
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
 
@@ -117,6 +125,9 @@ void func_80012454(void)
 
 extern void (*D_800EE45C[9])();
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_80012560);
+#else
 void func_80012560(void)
 {
 #ifdef MMX4_PC
@@ -161,7 +172,11 @@ void func_80012560(void)
     }
 #endif
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_80012600);
+#else
 void func_80012600(void)
 {
 #ifdef MMX4_PC
@@ -214,7 +229,11 @@ void func_80012600(void)
     } while ((u32)temp_v0 <= 0x801F82FFU);
 #endif
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_80012740);
+#else
 void func_80012740(s32 arg0, void* arg1)
 {
 #ifdef MMX4_PC
@@ -232,7 +251,11 @@ void func_80012740(s32 arg0, void* arg1)
     *ptr = 2;
 #endif
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_800127C8);
+#else
 void func_800127C8(s32 arg0)
 {
     D_801F8300->timer = arg0;
@@ -243,6 +266,7 @@ void func_800127C8(s32 arg0)
     ChangeTh(0xFF000000);
 #endif
 }
+#endif
 
 void func_800127FC()
 {
@@ -258,6 +282,9 @@ void func_800127FC()
 #endif
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_80012854);
+#else
 void func_80012854(s32 arg0)
 {
 #ifdef MMX4_PC
@@ -276,6 +303,7 @@ void func_80012854(s32 arg0)
     }
 #endif
 }
+#endif
 
 void func_800128B8(void (*arg0)(void))
 {
@@ -329,6 +357,9 @@ void func_80012944(void)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_800129A4);
+#else
 void func_800129A4(s8 arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -337,7 +368,11 @@ void func_800129A4(s8 arg0)
         func_80012740(2, func_80012A3C);
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/2824", func_800129F0);
+#else
 void func_800129F0(s32 arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -346,9 +381,12 @@ void func_800129F0(s32 arg0)
         func_80012740(2, func_80012A3C);
     }
 }
+#endif
 
 #ifdef VERSION_JP
 char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";
+#elif defined(VERSION_EU)
+char D_800EE40C[36] = "CAPCOM Aug  3 1998 09:30:21 CAPCOM";
 #elif defined(MMX4_WIN32)
 char D_800EE40C[36] = "CAPCOM May 12 1998 19:28:57 CAPCOM";
 #else

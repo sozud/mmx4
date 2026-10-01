@@ -521,7 +521,7 @@ void player_dash_move(struct PlayerObj* self)
 
 void player_dash_end(struct PlayerObj* self)
 {
-    s32 wall_flag;
+    u8 wall_flag;
     s8 event;
 
     if (player_check_ladder(self) == 0 && player_check_shoot(self) == 0 && player_zero_check_ground_technique(self) == 0 && player_check_dash_jump_walk(self) == 0 && player_zero_check_saber(self) == 0) {
@@ -532,7 +532,7 @@ void player_dash_end(struct PlayerObj* self)
         }
         if ((self->animation_step.fields.event & 0x40) && self->dash_timer == 0) {
             wall_flag = self->unk15 != 0 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
-            if (wall_flag & self->unk88.bytes.collision_flags) {
+            if (self->unk88.bytes.collision_flags & wall_flag) {
                 self->x_vel.val = 0;
             }
             if (self->x_vel.val != 0) {
@@ -881,7 +881,7 @@ void player_hurt_stun(struct PlayerObj* self)
 void player_hurt_slide(struct PlayerObj* self)
 {
     s32 velocity;
-    s8 direction;
+    u8 direction;
 
     if (self->capsule_state != 0) {
         return;
@@ -894,7 +894,7 @@ void player_hurt_slide(struct PlayerObj* self)
         } else {
             direction = PLAYER_COLLIDE_LEFT;
         }
-        if ((direction & self->unk88.bytes.collision_flags) != 0) {
+        if ((self->unk88.bytes.collision_flags & direction) != 0) {
             self->x_vel.val = 0;
             self->unk28 = 0;
         }

@@ -34,6 +34,9 @@ void (*sigma_spit_step_funcs[])(struct ShotObj*) = {
 // sigma_spit_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", func_800ADF30);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", sigma_spit_return);
+#else
 void sigma_spit_return(struct ShotObj* self)
 {
     struct WeaponObj* owner;
@@ -50,6 +53,7 @@ void sigma_spit_return(struct ShotObj* self)
     }
     update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
 }
+#endif
 
 void sigma_spit_fall(struct ShotObj* self)
 {

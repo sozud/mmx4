@@ -240,6 +240,9 @@ void drone_pod_launch_close(struct MainObj* self)
 // drone_pod_spawn_drones
 INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80089588);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", drone_pod_random_explosion);
+#else
 void drone_pod_random_explosion(struct MainObj* self)
 {
     s16 x = background_objects[0].x_pos.i.hi;
@@ -266,6 +269,7 @@ void drone_pod_random_explosion(struct MainObj* self)
         func_8001540C(0, D_80104A3C[(get_random() & 3) * 4], NULL);
     }
 }
+#endif
 
 void drone_pod_alarm_flash(struct MainObj* self)
 {

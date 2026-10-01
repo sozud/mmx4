@@ -486,11 +486,18 @@ void func_8001DF48(struct GameInfo* arg0)
 #ifdef VERSION_JP
         ZeroObjectState(OBJECT_HEADER(((struct MiscObj*)D_80139690)->ext.pointer.unk50));
 #endif
+#ifdef VERSION_EU
+        arg0->unk4 = 0x14;
+#else
         arg0->unk4 = 0x32;
+#endif
         arg0->mode++;
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001DF7C);
+#else
 void func_8001DF7C(struct GameInfo* arg0)
 {
     struct EffectObj* obj;
@@ -510,6 +517,7 @@ void func_8001DF7C(struct GameInfo* arg0)
     background_objects[0].x_pos.i.hi += 6;
 #endif
 }
+#endif
 #ifdef VERSION_JP
 void func_8001E194_jp(struct GameInfo* arg0)
 {
@@ -626,7 +634,11 @@ void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
                 obj->unk2 = D_800F21F8[var_s0];
             }
         }
+#ifdef VERSION_EU
+        arg0->unk4 = 0x5DC;
+#else
         arg0->unk4 = 0x258;
+#endif
         arg0->mode++;
         background_objects[2].unk3 = 1;
         arg0->unkD = 0;
@@ -765,6 +777,9 @@ void func_8001E9E0(struct GameInfo* arg0)
     arg0->mode++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001EA90);
+#else
 void func_8001EA90(struct GameInfo* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -788,6 +803,7 @@ void func_8001EA90(struct GameInfo* arg0)
         }
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/E47C", func_8001EBA0);
 void func_8001EC34(struct GameInfo* arg0)
@@ -817,6 +833,9 @@ void func_8001EC90(struct GameInfo* arg0)
     func_800129A4(8);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001ED44);
+#else
 void func_8001ED44(struct GameInfo* arg0)
 {
     if (*D_80141BDC == 0) {
@@ -835,7 +854,11 @@ void func_8001ED44(struct GameInfo* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001EE08);
+#else
 void func_8001EE08(struct GameInfo* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -876,7 +899,11 @@ void func_8001EE08(struct GameInfo* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001EF48);
+#else
 void func_8001EF48(struct GameInfo* arg0)
 {
     if (D_80141BDC[0] != 0) {
@@ -897,7 +924,11 @@ void func_8001EF48(struct GameInfo* arg0)
 
     arg0->mode++;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/E47C", func_8001EFF0);
+#else
 void func_8001EFF0(struct GameInfo* arg0)
 {
     struct TransitionState* transition;
@@ -923,6 +954,7 @@ void func_8001EFF0(struct GameInfo* arg0)
         }
     }
 }
+#endif
 
 void func_8001F0BC(struct GameInfo* arg0)
 {

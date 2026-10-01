@@ -126,6 +126,9 @@ void move_object(struct MovingObj* arg0)
     arg0->y_pos.val -= arg0->y_vel.val;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/object_motion", get_random);
+#else
 u8 get_random()
 {
     u16 temp = cur_random * 3;
@@ -139,6 +142,7 @@ u8 get_random()
 
     return cur_random;
 }
+#endif
 
 ret_u8 get_random_nonzero(void)
 {
@@ -166,6 +170,9 @@ ret_u8 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
         & 0xFF;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/object_motion", angle_from_delta);
+#else
 u8 angle_from_delta(s32 arg0, s32 arg1)
 {
     extern u32 D_800F45E4[];
@@ -225,6 +232,7 @@ u8 angle_from_delta(s32 arg0, s32 arg1)
 
     return angle & 0xFF;
 }
+#endif
 
 extern s32 D_800F459C[];
 

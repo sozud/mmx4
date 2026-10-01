@@ -102,6 +102,9 @@ INCLUDE_ASM("main/nonmatchings/engine", func_8001F634);
 
 INCLUDE_ASM("main/nonmatchings/engine", func_8001F6E8);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/engine", func_8001F798);
+#else
 void func_8001F798(struct EngineObj* arg0)
 {
     u8 a1;
@@ -128,6 +131,7 @@ void func_8001F798(struct EngineObj* arg0)
     }
     need_palette_load |= 1;
 }
+#endif
 
 void func_8001F850(struct EngineObj* arg0)
 {

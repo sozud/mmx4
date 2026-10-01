@@ -151,6 +151,9 @@ void title_logo_fade_start(struct MiscObj* self)
 }
 
 // TitleLogoUpdate state 6
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_29_title_logo", title_logo_fade_palette);
+#else
 void title_logo_fade_palette(struct MiscObj* self)
 {
     s32* src;
@@ -175,6 +178,7 @@ void title_logo_fade_palette(struct MiscObj* self)
     }
     is_on_screen(self);
 }
+#endif
 
 // TitleLogoUpdate state 7
 void title_logo_sparkle(struct MiscObj* self)

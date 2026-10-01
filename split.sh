@@ -1,9 +1,16 @@
 #!/bin/sh
-if [ "${VERSION:-us}" = "us" ]; then
+case "${VERSION:-us}" in
+us)
 	SPLAT_CONFIG=SLUS_005.61.splat.yaml
 	rm -rf asm/us assets/main
-else # jp
+	;;
+jp)
 	SPLAT_CONFIG=SLPS_009.02.splat.yaml
 	rm -rf asm/jp assets/jp
-fi
+	;;
+eu)
+	SPLAT_CONFIG=SLES_011.76.splat.yaml
+	rm -rf asm/eu assets/eu
+	;;
+esac
 splat split ./config/${SPLAT_CONFIG}

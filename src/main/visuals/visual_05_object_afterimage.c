@@ -121,6 +121,9 @@ void object_afterimage_follow(struct VisualObj* arg0)
     arg0->y_pos.val = parent->unk1C.val;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_05_object_afterimage", object_afterimage_start);
+#else
 void object_afterimage_start(struct VisualObj* arg0)
 {
     struct ObjectHeader* parent;
@@ -134,3 +137,4 @@ void object_afterimage_start(struct VisualObj* arg0)
     arg0->unk5 = 0;
     arg0->state++;
 }
+#endif

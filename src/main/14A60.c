@@ -859,6 +859,9 @@ void func_8002509C(struct PlayerObj* arg0)
 INCLUDE_ASM("main/nonmatchings/14A60", func_80025188);
 
 INCLUDE_ASM("main/nonmatchings/14A60", func_800253F0);
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/14A60", func_80025588);
+#else
 void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
     u32 color;
@@ -932,6 +935,10 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     addPrim(&cur_draw_info->ordering_table.unk3, prim);
     SP_AUX_CURSOR = SP_AUX_POLY_F4_CURSOR + 1;
 }
+#endif
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/14A60", func_800257BC);
+#else
 void func_800257BC(struct PlayerObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -949,6 +956,7 @@ void func_800257BC(struct PlayerObj* arg0)
         func_8002588C(arg0, 1, 0x7843);
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/14A60", func_8002588C);
 void func_80025CDC(void)

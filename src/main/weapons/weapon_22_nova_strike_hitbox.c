@@ -36,6 +36,9 @@ u16 buster_muzzle_offsets[48] = {
     [40] = 0xFFF2,
 };
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_22_nova_strike_hitbox", buster_shot_place_at_muzzle);
+#else
 void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1, arg_u8 arg2)
 {
     s16 y;
@@ -55,3 +58,4 @@ void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1,
     arg0->y_pos.i.hi = y;
     arg0->y_pos.i.hi = y + buster_muzzle_offsets[weapon_offset * 2 + 1];
 }
+#endif

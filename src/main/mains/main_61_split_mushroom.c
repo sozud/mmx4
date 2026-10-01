@@ -33,6 +33,9 @@ void split_mushroom_death_start(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", split_mushroom_death_explode);
+#else
 void split_mushroom_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -65,6 +68,7 @@ void split_mushroom_death_explode(struct MainObj* self)
         self->unk7E = (s8)value;
     }
 }
+#endif
 
 void split_mushroom_death_finish(struct MainObj* self)
 {
@@ -131,6 +135,9 @@ void split_mushroom_intro_wait_player(struct MainObj* self)
     self->unk6 = 1;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", split_mushroom_intro_drop);
+#else
 void split_mushroom_intro_drop(struct MainObj* self)
 {
     if (0 == *self->ext.main_61.data.script) {
@@ -146,6 +153,7 @@ void split_mushroom_intro_drop(struct MainObj* self)
         self->unk6 = 2;
     }
 }
+#endif
 
 void split_mushroom_intro_bounce(struct MainObj* self)
 {

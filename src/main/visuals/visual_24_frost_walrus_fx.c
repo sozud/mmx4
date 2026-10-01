@@ -13,6 +13,9 @@ void frost_walrus_fx_update(struct VisualObj* arg0)
     frost_walrus_fx_state_funcs[arg0->state](arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_24_frost_walrus_fx", frost_walrus_fx_init);
+#else
 void frost_walrus_fx_init(struct VisualObj* self)
 {
     u8 background;
@@ -43,6 +46,7 @@ void frost_walrus_fx_init(struct VisualObj* self)
     }
     self->unk2 = (u8)self->unk2 & 0xF;
 }
+#endif
 
 void frost_walrus_fx_main(struct VisualObj* arg0)
 {

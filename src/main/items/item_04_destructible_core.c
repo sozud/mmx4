@@ -147,8 +147,8 @@ void destructible_core_main(struct ItemObj* arg0)
 
 void destructible_core_destroyed(struct ItemObj* arg0)
 {
-    s32 temp_v0;
-    s8 var_v0;
+    u32 temp_v0;
+    u32 var_v0;
 
     temp_v0 = arg0->unk7C.timer - 1;
     arg0->unk7C.timer = temp_v0;

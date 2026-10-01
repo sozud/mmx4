@@ -41,12 +41,16 @@ void func_800989CC(struct WeaponObj* arg0)
     arg0->unk5 = 0xC;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_58_ice_block_hitbox", ice_block_hitbox_main);
+#else
 void ice_block_hitbox_main(struct WeaponObj* arg0)
 {
     if ((u8)arg0->unk5-- == 0) {
         arg0->state = 2;
     }
 }
+#endif
 
 void ice_block_hitbox_despawn(struct WeaponObj* arg0)
 {

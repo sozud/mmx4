@@ -3,6 +3,9 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003D3F8);
+#else
 void func_8003D3F8(struct RideArmorObj* arg0)
 {
     u8 previous_input;
@@ -28,6 +31,7 @@ void func_8003D3F8(struct RideArmorObj* arg0)
     D_800F912C[arg0->state](arg0);
     arg0->unk5C &= ~0x80;
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
 
@@ -86,6 +90,9 @@ void func_8003D7A0(void)
 }
 
 // The unused integer return type preserves the original delay-slot scheduling.
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003D7E4);
+#else
 s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
 {
     struct WeaponObj* weapon = find_free_weapon_obj();
@@ -104,6 +111,7 @@ s32 func_8003D7E4(struct RideArmorObj* arg0, u8 kind, s32 variant)
         weapon->unk15 = arg0->unk15;
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D8A8);
 
@@ -227,6 +235,9 @@ s32 func_8003DE08(struct MainObj* arg0)
     return 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003DE84);
+#else
 void func_8003DE84(struct RideArmorObj* arg0)
 {
     u16 active_mask;
@@ -269,7 +280,11 @@ void func_8003DE84(struct RideArmorObj* arg0)
         arg0->unk8E.bytes.active = 0;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003DF9C);
+#else
 void func_8003DF9C(struct PlayerObj* arg0)
 {
     struct BaseObj* base;
@@ -290,7 +305,11 @@ void func_8003DF9C(struct PlayerObj* arg0)
         arg0->last_shot_type |= 8;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003E048);
+#else
 s32 func_8003E048(struct PlayerObj* arg0)
 {
     u16 mask;
@@ -316,10 +335,11 @@ s32 func_8003E048(struct PlayerObj* arg0)
     }
     return result;
 }
+#endif
 
 s32 func_8003E0B0(struct PlayerObj* arg0)
 {
-    s32 mask;
+    u16 mask;
 
     mask = 1;
     if (arg0->unk15 != 0) {
@@ -853,6 +873,9 @@ void func_8003F31C(struct RideArmorObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mech", func_8003F44C);
+#else
 void func_8003F44C(struct RideArmorObj* self)
 {
     u32 i;
@@ -885,6 +908,7 @@ void func_8003F44C(struct RideArmorObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
 void func_8003F570(struct RideArmorObj* arg0)
 {

@@ -85,6 +85,9 @@ void dragonfly_init(struct MainObj* self)
     self->unk6 = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_10_dragonfly", dragonfly_run);
+#else
 void dragonfly_run(struct MainObj* self)
 {
     s32 hit;
@@ -119,6 +122,7 @@ void dragonfly_run(struct MainObj* self)
         }
     }
 }
+#endif
 
 void dragonfly_finish(struct MainObj* self)
 {

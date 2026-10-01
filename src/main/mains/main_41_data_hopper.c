@@ -8,6 +8,9 @@ void data_hopper_update(struct MainObj* self)
     data_hopper_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", data_hopper_init);
+#else
 void data_hopper_init(struct MainObj* self)
 {
     s8 mode = 2;
@@ -41,6 +44,7 @@ void data_hopper_init(struct MainObj* self)
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
 }
+#endif
 
 void data_hopper_spawn_item(struct MainObj* self)
 {
