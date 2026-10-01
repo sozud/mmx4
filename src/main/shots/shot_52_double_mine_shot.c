@@ -6,18 +6,18 @@ void double_mine_shot_init(struct ShotObj* self)
 {
     self->state = 1;
     self->on_screen = 1;
-    self->unk16 = 3;
-    self->unk54 = double_ball_box_5[0];
-    self->unk50.data = double_ball_box_5[0];
-    self->unk58.collision_bounds = D_801060F0;
-    self->unk5C = 2;
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7 = 0;
     self->timer = 0;
     self->unk8A = 0;
     self->bg_offset = 0;
+    self->unk16 = 3;
     self->unk68 = NULL;
+    self->unk54 = double_ball_box_5[0];
+    self->unk50.data = double_ball_box_5[0];
+    self->unk58.collision_bounds = D_801060F0;
+    self->unk5C = 2;
     self->unk60 = 4;
     self->unk61 = 0;
     set_animation(self, 0x17);

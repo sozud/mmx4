@@ -19,8 +19,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
 void train_boss_armor_smoke(struct MainObj* self)
 {
     s32 tableIndex;
-    s32 x;
-    s32 y;
+    s16 x;
+    s16 y;
     s32 frameArea[2];
 
     if (--self->unk7C == 0) {
@@ -57,7 +57,7 @@ void train_boss_armor_start_idle(struct MainObj* self)
 void train_boss_armor_arrive(struct MainObj* self)
 {
     if (self->unk6 == 0) {
-        if (self->x_pos.i.hi >= 0x1AA1) {
+        if (self->x_pos.i.hi > 0x1AA0) {
             self->unk6 = 1;
             return;
         }

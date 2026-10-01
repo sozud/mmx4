@@ -55,10 +55,10 @@ void title_logo_init(struct MiscObj* self)
         self->state = 7;
     } else {
         self->unk42 = 0x7804;
+        self->unk16 = 0;
         self->x_pos.i.hi = 216;
         self->y_pos.i.hi = 72;
         self->state = 3;
-        self->unk16 = 0;
         self->animation_step.fields.frame_index = 0x1C;
         self->unk2 = 0;
     }

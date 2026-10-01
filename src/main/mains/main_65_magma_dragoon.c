@@ -292,21 +292,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E4C8);
 
 void magma_dragoon_dive_kick_jump(struct MainObj* self)
 {
-    s32 var_a0;
-
     magma_dragoon_face_player(self);
     set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
     func_8001540C(2, 0, self);
-    var_a0 = FIXED(-0.75);
     self->unk6 = (u8)self->unk6 + 1;
-    if (self->unk15 != 0) {
-        var_a0 = FIXED(0.75);
-    }
+    self->x_speed = self->unk15 != 0 ? FIXED(0.75) : FIXED(-0.75);
     self->y_speed = FIXED(4);
     self->x_accel = FIXED(0.03125);
-    self->x_speed = var_a0;
     self->gravity = FIXED(-0.03125);
     self->ext.main_65.jump_start_y = (u16)self->y_pos.i.hi;
 }
@@ -465,8 +459,6 @@ void magma_dragoon_breath(struct MainObj* self)
 
 void magma_dragoon_leap_center_start(struct MainObj* self)
 {
-    s32 var_v1;
-
     if (self->x_pos.i.hi > magma_dragoon_arena_center[0]) {
         self->unk15 = 0;
     } else {
@@ -476,12 +468,8 @@ void magma_dragoon_leap_center_start(struct MainObj* self)
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
     func_8001540C(2, 0, self);
-    var_v1 = FIXED(-5);
-    if (self->unk15 != 0) {
-        var_v1 = FIXED(5);
-    }
+    self->x_speed = self->unk15 != 0 ? FIXED(5) : FIXED(-5);
     self->y_speed = FIXED(3);
-    self->x_speed = var_v1;
     self->x_accel = 0;
     self->gravity = FIXED(-0.03125);
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
@@ -610,7 +598,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007F5B0);
 void magma_dragoon_fireball_low(struct MainObj* self)
 {
     magma_dragoon_fireball_low_funcs[self->unk6](self);
-    if ((u32)(self->animation_step.fields.frame_index - 0x19) < 2U) {
+    if ((self->animation_step.fields.frame_index == 0x19 || self->animation_step.fields.frame_index == 0x1A)) {
         self->hurt_box = (const u8*)&magma_dragoon_crouch_hurt_box;
     } else {
         self->hurt_box = (const u8*)&magma_dragoon_hurt_box;
@@ -640,12 +628,7 @@ void magma_dragoon_rising_punch_rise(struct MainObj* self)
         self->attack_box = (const u8*)&magma_dragoon_punch_attack_box;
     }
 
-    if (self->unk15 != 0) {
-        if (self->x_speed < 0) {
-            goto reset_velocity;
-        }
-    } else if (self->x_speed >= 0) {
-    reset_velocity:
+    if (self->unk15 != 0 ? self->x_speed < 0 : self->x_speed >= 0) {
         self->x_speed = 0;
         self->x_accel = 0;
     }
@@ -793,10 +776,10 @@ void func_8007FF00(struct MainObj* arg0)
     if (arg0->unk7E-- == 0) {
         arg0->unk42 ^= 0x8000;
         arg0->invincibility_timer -= 5;
-        if (arg0->invincibility_timer >= 0x1A) {
+        if (arg0->invincibility_timer > 0x19) {
             arg0->invincibility_timer = 0;
         }
-        arg0->unk7E = (s8)(arg0->invincibility_timer < 5 ? 5 : arg0->invincibility_timer);
+        arg0->unk7E = arg0->invincibility_timer > 5 ? arg0->invincibility_timer : 5;
     }
 
     update_on_screen(BASE_OBJECT(arg0), 0x40, 0x40);
@@ -807,7 +790,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007FFFC);
 
 void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2)
 {
-    if (self->ext.main_65.object->active == 0) {
+    if (0 == self->ext.main_65.object->active) {
         self->unk5++;
 #ifdef MMX4_PC
         func_8002217C(0xC, 0xFF, 0);
@@ -879,7 +862,7 @@ void magma_dragoon_death_vanish(struct MainObj* self)
         MAGMA_DRAGOON_SMOKE(self, 1);
     }
 
-    if ((self->unk7C & 1) != 0) {
+    if ((BLINK_CLOCK(self->unk7C) & 1) != 0) {
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
     }
 }

@@ -48,7 +48,7 @@ void func_8003B98C(struct PlayerObj* arg0)
 
     timer -= 1;
     arg0->invincibility_timer = timer;
-    if (timer & 2) {
+    if (BLINK_CLOCK(timer) & 2) {
         arg0->unk42 |= 0x8000;
     } else {
         arg0->unk42 &= 0x7FFF;
@@ -206,7 +206,7 @@ void func_8003C8F4(struct RideArmorObj* arg0)
 
 void func_8003C9A4(struct RideArmorObj* arg0)
 {
-    if ((arg0->unk80.bytes.unk82 != arg0->unk80.bytes.unk83) && (arg0->unk80.bytes.unk80 & 1) && ((arg0->unk80.packed & 0xFFFF0000) == 0x20000)) {
+    if ((arg0->unk80.bytes.unk82 != arg0->unk80.bytes.unk83) && (arg0->unk80.bytes.unk80 & 1) && (arg0->unk80.bytes.unk82 == 2 && arg0->unk80.bytes.unk83 == 0)) {
         arg0->y_vel.val = (((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) * 2) / 237) << 8;
         arg0->unk80.bytes.unk80 |= 2;
         arg0->unk2C = FIXED(0.3125);
@@ -301,8 +301,10 @@ void func_8003CCBC(struct RideArmorObj* arg0)
 void func_8003CD38(struct RideArmorObj* arg0)
 {
     s32 limit;
+    u8 state;
 
-    switch (func_8003CF24(arg0)) {
+    state = func_8003CF24(arg0);
+    switch (state) {
     case 0:
         if (arg0->unk7C == 0) {
             limit = D_800F9070[arg0->unk7D];
@@ -325,7 +327,7 @@ void func_8003CD38(struct RideArmorObj* arg0)
     case 1:
         if (arg0->unk7C != 0) {
             limit = D_800F9080[arg0->unk7D];
-            if (arg0->x_vel.val < limit) {
+            if (limit > arg0->x_vel.val) {
                 func_8003D338(ANIMATED_OBJECT(arg0));
                 move_object(MOVING_OBJECT(arg0));
             } else {
@@ -334,7 +336,7 @@ void func_8003CD38(struct RideArmorObj* arg0)
             }
         } else {
             limit = D_800F9088[arg0->unk7D];
-            if (limit < arg0->x_vel.val) {
+            if (arg0->x_vel.val > limit) {
                 func_8003D338(ANIMATED_OBJECT(arg0));
                 move_object(MOVING_OBJECT(arg0));
             } else {
@@ -369,7 +371,7 @@ INCLUDE_ASM("main/nonmatchings/bike", func_8003D01C);
 
 void func_8003D164(struct VisualObj* arg0, s32 arg1)
 {
-    s32 v;
+    u8 v;
     struct VisualObj* obj = find_free_visual_obj();
     if (obj != NULL) {
         obj->active = 0x41;
@@ -390,7 +392,7 @@ void func_8003D164(struct VisualObj* arg0, s32 arg1)
 
 void func_8003D254(struct VisualObj* arg0)
 {
-    s32 v;
+    u8 v;
     struct VisualObj* obj = find_free_visual_obj();
     if (obj != NULL) {
         obj->active = 0x41;

@@ -20,7 +20,7 @@ void title_init(struct MiscObj* self)
     self->unk40 = 0x600;
     self->unk3C = SP_TITLE_FRAMES;
     temp_v1 = title_object_inits[temp_a1].flags;
-    self->unk42 = ((temp_v1 & 0xF) | (((temp_v1 >> 4) + 0x1E0) << 6));
+    self->unk42 = ((temp_v1 % 16) | (((temp_v1 >> 4) + 0x1E0) << 6));
     // for unk2 == 0, setting position of "MEGAMAN" text
     // for unk2 == 1, didn't notice a difference
     // for unk2 == 2, setting position of greyed out "GAME START" text
@@ -39,7 +39,7 @@ void title_draw(struct MiscObj* self)
         self->unk16 = 2;
         self->y_pos.i.hi = (game_info.unk2 % 3) * 16 + 0x80;
         if (game_info.unk2 != 1) {
-            if (!((game_info.unk2 < 2) && (game_info.unk2 == 0)))
+            if (!((game_info.unk2 <= 1) && (game_info.unk2 == 0)))
                 goto use_default_frame;
             self->animation_step.fields.frame_index = title_object_inits[2].sprite;
         } else {
@@ -52,9 +52,9 @@ void title_draw(struct MiscObj* self)
     }
 
     temp_v1 = self->unk2;
-    if (((temp_v1 >= 4) && (temp_v1 < 6)) || ((s8)temp_v1 == 6)) {
+    if (((temp_v1 >= 4) && (temp_v1 <= 5)) || ((s8)temp_v1 == 6)) {
         self->on_screen = 0;
-        if ((D_80141BD8.unk0 & 0x10) == 0) {
+        if ((BLINK_TIMER.unk0 & 0x10) == 0) {
             return;
         }
     } else {

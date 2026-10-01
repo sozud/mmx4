@@ -42,7 +42,6 @@ void bg_zone_controller_e_zone_0_enter(struct EffectObj* self)
 void bg_zone_controller_e_zone_0_scroll(struct EffectObj* self)
 {
     s16 diff;
-    s8 sum;
     s32 t;
 
     if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
@@ -58,17 +57,16 @@ void bg_zone_controller_e_zone_0_scroll(struct EffectObj* self)
             }
         }
 
-        sum = self->ext.effect_22.unk17 + self->ext.effect_22.unk18;
-        self->ext.effect_22.unk17 = sum;
-        if ((s8)sum >= 0) {
-            if ((s8)sum < 8) {
+        self->ext.effect_22.unk17 += self->ext.effect_22.unk18;
+        if ((s8)self->ext.effect_22.unk17 >= 0) {
+            if ((s8)self->ext.effect_22.unk17 < 8) {
                 return;
             }
             if (++self->ext.effect_22.unk16 > 2) {
                 self->ext.effect_22.unk16 = 0;
             }
         } else {
-            if ((s8)sum > -8) {
+            if ((s8)self->ext.effect_22.unk17 > -8) {
                 return;
             }
             if (--self->ext.effect_22.unk16 < 0) {

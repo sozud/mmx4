@@ -32,7 +32,7 @@ void drop_pillar_init(struct ItemObj* arg0)
 void drop_pillar_fall(struct ItemObj* arg0)
 {
     move_with_gravity(ANIMATED_OBJECT(arg0));
-    if ((0x188 - (arg0->unk2 << 6)) < arg0->y_pos.i.hi) {
+    if (arg0->y_pos.i.hi > (0x188 - (arg0->unk2 << 6))) {
         func_8001540C(2, 0x88, arg0);
         arg0->state = 2;
     }

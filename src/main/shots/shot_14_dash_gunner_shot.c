@@ -11,23 +11,20 @@ void dash_gunner_shot_update(struct ShotObj* self)
 
 void dash_gunner_shot_init(struct ShotObj* self)
 {
-    s16 x_pos;
-
     self->state = 1;
     self->on_screen = 1;
     self->unk58.collision_data = D_80106070;
     self->unk16 = 0;
     self->unk42 &= 0x7FFF;
-    if (self->unk15 == 0) {
-        x_pos = (u16)self->x_pos.i.hi - 6;
+    if (0 == self->unk15) {
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 6;
     } else {
-        x_pos = (u16)self->x_pos.i.hi + 6;
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 6;
     }
-    self->x_pos.i.hi = x_pos;
+    self->unk68 = NULL;
     self->unk54 = dash_gunner_shot_hit_box;
     self->unk50.data = dash_gunner_shot_hit_box;
     self->unk5C = 1;
-    self->unk68 = NULL;
     self->unk60 = 3;
     set_animation(self, 5);
 }
@@ -40,9 +37,9 @@ void dash_gunner_shot_fly(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
     if (engine_obj.stage == 3) {
         if ((u8)self->unk2 < 4) {
-            in_range = g_Player.x_pos.i.hi < 0x7B7;
+            in_range = g_Player.x_pos.i.hi <= 0x7B6;
         } else {
-            in_range = g_Player.x_pos.i.hi < 0x9B7;
+            in_range = g_Player.x_pos.i.hi <= 0x9B6;
         }
         if (in_range != 0) {
             func_8002D9BC(self);

@@ -59,7 +59,7 @@ void refresh_visible_tile_effect(s32 effect_id, s32 x_offset, s32 y_offset)
 
 u8 tile_effect_is_visible(s16 arg0, s16 arg1, s16 arg2, s16 arg3)
 {
-    if (((arg0 - 0x20) <= arg2) && (arg2 < (arg0 + 0x160)) && ((arg1 - 0x20) <= arg3) && (arg3 < (arg1 + 0x110))) {
+    if (((arg0 - 0x20) <= arg2) && ((arg0 + 0x160) > arg2) && ((arg1 - 0x20) <= arg3) && ((arg1 + 0x110) > arg3)) {
         return 1;
     }
     return 0;

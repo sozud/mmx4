@@ -73,6 +73,9 @@ void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pat
 
 s32 func_8001CD70(s32 arg0)
 {
+#ifdef MMX4_WIN32
+    return 0;
+#else
     s32 retries;
     s32 result;
 
@@ -88,10 +91,14 @@ s32 func_8001CD70(s32 arg0)
         retries--;
     } while (retries != 0);
     return result;
+#endif
 }
 
 int func_8001CDE4(int arg0)
 {
+#ifdef MMX4_WIN32
+    return 0;
+#else
     int var_s0;
     int var_s1;
     int var_s2;
@@ -115,14 +122,19 @@ int func_8001CDE4(int arg0)
         var_s0 = 0;
     }
     return var_s0;
+#endif
 }
 
 s32 func_8001CE84(s32 device_num)
 {
+#ifdef MMX4_WIN32
+    return 0;
+#else
     struct MemcardPath buf = D_800100C0;
 
     buf.path[2] += device_num;
     return format(buf.path) ^ 1;
+#endif
 }
 
 s32 func_8001CEDC(void)

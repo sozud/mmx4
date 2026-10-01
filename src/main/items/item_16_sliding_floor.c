@@ -36,7 +36,7 @@ void sliding_floor_init(struct ItemObj* arg0)
 void sliding_floor_slide(struct ItemObj* arg0)
 {
     if (arg0->unk5 == 0) {
-        if (arg0->x_pos.i.hi >= 0x1AA1) {
+        if (arg0->x_pos.i.hi > 0x1AA0) {
             arg0->unk5 = 1;
             return;
         }

@@ -40,14 +40,8 @@ void item_carrier_approach(struct MainObj* self)
 
 void item_carrier_approach_start(struct MainObj* self)
 {
-    s32 var_a1;
-
-    var_a1 = -0x20000;
     self->unk6++;
-    if (self->unk15 != 0) {
-        var_a1 = 0x20000;
-    }
-    self->x_speed = var_a1;
+    self->x_speed = self->unk15 != 0 ? 0x20000 : -0x20000;
     set_animation(self, 0);
 }
 
@@ -133,22 +127,22 @@ void item_carrier_drop(struct MainObj* self)
 
 void item_carrier_drop_start(struct MainObj* self)
 {
+    self->unk6++;
     self->x_speed = 0;
+    self->x_accel = 0;
     self->y_speed = 0x40000;
     self->gravity = 0x4200;
     self->terrain_box = &item_carrier_hitboxes;
     self->hurt_box = &item_carrier_capsule_hurtbox;
-    self->x_accel = 0;
     self->attack_box = NULL;
     self->air_state = -1;
-    self->unk6++;
     set_animation(self, 4);
     CollisionRelated(PLAYER_OBJECT(self));
     if ((self->collision_flags & 0xF) == 0xF) {
-        self->unk6 = 3;
-        self->air_state = 0;
         self->x_pos.val = self->unk18.val;
         self->y_pos.val = self->unk1C.val;
+        self->unk6 = 3;
+        self->air_state = 0;
     }
 }
 
@@ -188,15 +182,13 @@ void item_carrier_leave(struct MainObj* self)
 
 void item_carrier_leave_start(struct MainObj* self)
 {
-    s32 state;
-    state = self->y_pos.val > g_Player.y_pos.val;
-    if (state) {
-        state = 1;
+    if ((self->y_pos.val > g_Player.y_pos.val)) {
+        self->unk6 = 1;
+        self->unk7 = 0;
     } else {
-        state = 2;
+        self->unk6 = 2;
+        self->unk7 = 0;
     }
-    self->unk6 = state;
-    self->unk7 = 0;
 }
 
 void item_carrier_leave_up(struct MainObj* self)

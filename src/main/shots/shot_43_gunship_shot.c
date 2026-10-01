@@ -29,7 +29,6 @@ void gunship_shot_bullet_fall(struct ShotObj* self)
 void gunship_shot_missile_fly(struct ShotObj* self)
 {
     struct MiscObj* misc;
-    s16 y;
 
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
@@ -56,12 +55,11 @@ void gunship_shot_missile_fly(struct ShotObj* self)
             misc->unk15 = get_random() & 0x40;
             misc->ext.unk.unk54 = 0;
             misc->x_pos.i.hi = self->x_pos.i.hi;
-            y = self->y_pos.i.hi;
+            misc->y_pos.i.hi = self->y_pos.i.hi;
             misc->unk7 = 1;
             misc->x_vel.val = 0;
             misc->y_vel.val = 0;
             misc->unk16 = 7;
-            misc->y_pos.i.hi = y;
         }
         self->unk7 = 2;
     } else {

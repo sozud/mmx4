@@ -120,17 +120,14 @@ void beam_drone_fire_fade(struct MainObj* self)
 
 void beam_drone_fire_end(struct MainObj* self)
 {
-    s32 state;
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         set_animation(self, 0);
-        state = self->unk2;
-        if (state != 0) {
-            state = 5;
+        if (self->unk2 == 0) {
+            self->unk5 = 2;
         } else {
-            state = 2;
+            self->unk5 = 5;
         }
-        self->unk5 = state;
         self->unk6 = 0;
         self->unk7E = 0x28;
     }
@@ -143,23 +140,13 @@ void beam_drone_leave(struct MainObj* self)
 
 void beam_drone_leave_start(struct MainObj* self)
 {
-    s32 velocity;
-
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 0);
     self->unk7C = 0x3C;
     if (self->unk2 == 1) {
-        velocity = 0x18000;
-        if (self->y_pos.i.hi > 0x368) {
-            velocity = -0x18000;
-        }
-        self->y_speed = velocity;
+        self->y_speed = (self->y_pos.i.hi > 0x368 ? -0x18000 : 0x18000);
     } else {
-        velocity = -0x18000;
-        if (self->x_pos.i.hi > 0x950) {
-            velocity = 0x18000;
-        }
-        self->x_speed = velocity;
+        self->x_speed = self->x_pos.i.hi > 0x950 ? 0x18000 : -0x18000;
     }
     self->unk6++;
 }

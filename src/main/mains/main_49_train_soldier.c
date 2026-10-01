@@ -16,11 +16,13 @@ INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", func_80068548);
 
 void train_soldier_main(struct MainObj* self)
 {
+    s32 hit;
     u8 temp_v1;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, train_soldier_debris, self);
         drop_item(BASE_OBJECT(self), 0x12);
@@ -133,6 +135,7 @@ extern u8 train_soldier_guard_hurt_box[];
 
 void train_soldier_guard_start(struct MainObj* self)
 {
+    self->unk6++;
     self->collision_data = (const u16*)D_801076F8;
     self->hurt_box = train_soldier_guard_hurt_box;
     self->attack_box = train_soldier_guard_attack_box;
@@ -140,7 +143,6 @@ void train_soldier_guard_start(struct MainObj* self)
     self->x_accel = 0;
     self->y_speed = 0;
     self->gravity = 0;
-    self->unk6++;
     set_animation(self, 8);
 }
 
@@ -177,43 +179,41 @@ void train_soldier_check_shoot(struct MainObj* arg0)
     struct MainObj* self;
     struct MainObj* current;
 
-    if ((arg0->air_state == 0) && (arg0->unk5 != 6)) {
-        self = SP_CUR_MAIN_OBJ;
-        if (self->ext.main_49.unk83 != 0) {
-            self->ext.main_49.unk83--;
-            return;
-        }
-
-        if ((arg0->x_pos.i.hi - g_Player.x_pos.i.hi) >= 0) {
-            distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-        } else {
-            distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-        }
-
-        if (distance <= 0x80) {
-            if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
-                arg0->unk15 = 0;
-            } else {
-                arg0->unk15 = 0x40;
+    if (arg0->air_state == 0) {
+        if (arg0->unk5 != 6) {
+            self = SP_CUR_MAIN_OBJ;
+            if (self->ext.main_49.unk83 != 0) {
+                self->ext.main_49.unk83--;
+                return;
             }
 
-            current = SP_CUR_MAIN_OBJ;
-            if ((current->ext.main_49.unk85 == 1) || ((current->ext.main_49.unk85 == 2) && (arg0->unk2 != 0))) {
-                current->ext.main_49.unk82 = 0x40;
-            } else {
-                y_distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
-                if (y_distance > 0x20) {
-                    SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x80;
-                } else if (y_distance < -0x10) {
-                    SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x82;
+            distance = (arg0->x_pos.i.hi - g_Player.x_pos.i.hi) < 0 ? g_Player.x_pos.i.hi - arg0->x_pos.i.hi : arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+
+            if (distance <= 0x80) {
+                if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
+                    arg0->unk15 = 0;
                 } else {
-                    SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x81;
+                    arg0->unk15 = 0x40;
                 }
-            }
 
-            set_animation(arg0, 0xA);
-            arg0->unk5 = 6;
-            arg0->unk6 = 0;
+                current = SP_CUR_MAIN_OBJ;
+                if ((current->ext.main_49.unk85 == 1) || ((current->ext.main_49.unk85 == 2) && (arg0->unk2 != 0))) {
+                    current->ext.main_49.unk82 = 0x40;
+                } else {
+                    y_distance = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+                    if (y_distance > 0x20) {
+                        SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x80;
+                    } else if (y_distance < -0x10) {
+                        SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x82;
+                    } else {
+                        SP_CUR_MAIN_OBJ->ext.main_49.unk82 = 0x81;
+                    }
+                }
+
+                set_animation(arg0, 0xA);
+                arg0->unk5 = 6;
+                arg0->unk6 = 0;
+            }
         }
     }
 }
@@ -367,10 +367,10 @@ void train_soldier_shoot_end(struct MainObj* self)
     struct MainObj* main;
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.relative_step == 0) {
-        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 == 2) {
-            self->unk5 = 7;
-        } else {
+        if (SP_CUR_MAIN_OBJ->ext.main_49.unk85 != 2) {
             self->unk5 = 5;
+        } else {
+            self->unk5 = 7;
         }
         self->unk6 = 0;
         self->y_speed = 0;
@@ -378,12 +378,13 @@ void train_soldier_shoot_end(struct MainObj* self)
         self->x_speed = 0;
         SP_CUR_MAIN_OBJ->ext.main_49.index = 0;
         main = SP_CUR_MAIN_OBJ;
-        if (main->ext.main_49.unk85 == 2) {
-            main->ext.main_49.unk83 = 0x5A;
-        } else {
+        if (main->ext.main_49.unk85 != 2) {
             main->ext.main_49.unk83 = 0xB4;
+            set_animation(self, 7);
+        } else {
+            main->ext.main_49.unk83 = 0x5A;
+            set_animation(self, 7);
         }
-        set_animation(self, 7);
     }
 }
 

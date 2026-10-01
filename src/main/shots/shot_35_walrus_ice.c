@@ -170,7 +170,9 @@ void walrus_ice_icicle_blink(struct ShotObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
     } else {
-        self->on_screen ^= 1;
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
         if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }
@@ -240,20 +242,16 @@ void walrus_ice_ball_main(struct ShotObj* self)
 
 void walrus_ice_ball_blink(struct ShotObj* self)
 {
-    s16 timer;
-    s8 on_screen;
-
-    timer = self->timer - 1;
-    self->timer = timer;
-    if (timer == 0) {
+    if (--self->timer == 0) {
         func_8001540C(2, 0x96, self);
         self->unk6++;
         return;
     }
 
-    on_screen = self->on_screen ^ 1;
-    self->on_screen = on_screen;
-    if (on_screen != 0) {
+    if (FLICKER_ENABLED) {
+        self->on_screen ^= 1;
+    }
+    if (self->on_screen != 0) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -272,7 +270,7 @@ void walrus_ice_ball_grow(struct ShotObj* self)
 
 void walrus_ice_ball_burst(struct ShotObj* self)
 {
-    s32 i;
+    s8 i;
     struct ShotObj* shot;
 
     if (self->unk8C.word != 0) {
@@ -413,7 +411,9 @@ void walrus_ice_shard_blink(struct ShotObj* self)
         self->unk5 = 0;
         self->unk6 = 0;
     } else {
-        self->on_screen ^= 1;
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
         if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }

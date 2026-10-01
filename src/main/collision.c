@@ -29,7 +29,6 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
     s16 center1;
     s16 distance;
     struct Unk_unk68* bounds0;
-    struct Unk_unk68* bounds1;
     struct Unk_unk68* initial_bounds0;
     struct Unk_unk68* initial_bounds1;
     struct CollisionObj* object1;
@@ -48,25 +47,16 @@ s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1)
 
     center0 = object0->x_pos.i.hi + initial_bounds0->unk0;
     center1 = object1->x_pos.i.hi + initial_bounds1->unk0;
-    if ((center0 - center1) < 0) {
-        distance = center1 - center0;
-    } else {
-        distance = center0 - center1;
-    }
+    distance = (center0 - center1) > -1 ? center0 - center1 : center1 - center0;
 
     bounds0 = object0->collision_bounds;
-    bounds1 = object1->collision_bounds;
-    if (distance >= bounds0->unk2 + bounds1->unk2) {
+    if (distance >= bounds0->unk2 + object1->collision_bounds->unk2) {
         return 0;
     }
 
     center0 = object0->y_pos.i.hi + bounds0->unk1;
-    center1 = object1->y_pos.i.hi + bounds1->unk1;
-    if ((center0 - center1) >= 0) {
-        distance = center0 - center1;
-    } else {
-        distance = center1 - center0;
-    }
+    center1 = object1->y_pos.i.hi + object1->collision_bounds->unk1;
+    distance = (center0 - center1) > -1 ? center0 - center1 : center1 - center0;
     return distance < object0->collision_bounds->unk3 + object1->collision_bounds->unk3;
 }
 

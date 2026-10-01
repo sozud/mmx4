@@ -43,26 +43,30 @@ void aiming_laser_beam_update(struct QuadObj* arg0)
 
 void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
+    struct QuadUnkExt3* ext = &arg0->ext.unk_ext3;
     arg0->active = -0x7D;
     arg0->on_screen = 1;
     arg0->bg_offset = arg1->bg_offset;
     arg0->unk34 = arg0->unk2 + 0xD;
     arg0->unk36 = 1;
-    arg0->ext.unk_ext3.unk38 = 0x3C;
+    ext->unk38 = 0x3C;
     func_800D69A8(arg0, arg1, arg2);
     arg0->state++;
 }
 
 void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
-    if (arg0->ext.unk_ext3.unk38 == 0) {
+    struct QuadUnkExt3* ext = &arg0->ext.unk_ext3;
+    if (ext->unk38 == 0) {
         ZeroObjectState(arg0);
         return;
     }
-    if (arg0->ext.unk_ext3.unk38 & 2) {
-        arg0->on_screen ^= 1;
+    if (ext->unk38 & 2) {
+        if (FLICKER_ENABLED) {
+            arg0->on_screen ^= 1;
+        }
     }
-    arg0->ext.unk_ext3.unk38 -= 1;
+    ext->unk38 -= 1;
     func_800D69A8(arg0, arg1, arg2);
 }
 

@@ -87,7 +87,7 @@ void func_80013404(u8 arg0);
 void func_80013530(void);
 #endif
 
-void func_80013588(s32 arg0);
+void func_80013588(void);
 
 s32 func_80013614(s32 arg0, s32* arg1);
 
@@ -503,12 +503,20 @@ void stop_sound(u8 arg0, u8 arg1)
 
 s32 SpuGetKeyStatus(s32);
 
+#ifdef MMX4_WIN32
+u8 pc_spu_key_status(u8 voice);
+#endif
+
 s32 is_sound_finished(s32 arg0, struct MainObj* owner)
 {
+#ifdef MMX4_WIN32
+    return pc_spu_key_status(D_80141F50[2][(arg0 & 0xFF) * 4 + 3] & 0x1F) == 0;
+#else
     u8* entry = D_80141F50[2];
 
     entry += (arg0 & 0xFF) * 4;
     return SpuGetKeyStatus(1 << (entry[3] & 0x1F)) == 0;
+#endif
 }
 
 s32 func_80015A50(u8 slot)
@@ -796,8 +804,16 @@ void func_80016420(s8 arg0)
     func_80016448(arg0);
 }
 
+#ifdef MMX4_WIN32
+void pc_cd_set_volume(s32 volume);
+#endif
+
 void func_80016448(u8 arg0)
 {
+#ifdef MMX4_WIN32
+    D_80139528 = arg0;
+    pc_cd_set_volume(arg0);
+#else
     s32 temp_v0;
     D_80139528 = arg0;
     if (D_80171EA9 == 1) {
@@ -813,6 +829,7 @@ void func_80016448(u8 arg0)
         D_80139520.val3 = temp_v0; // volume for CD(R) -> SPU (R)
     }
     CdMix(&D_80139520);
+#endif
 }
 
 void func_800164D8(void)
@@ -832,7 +849,7 @@ void func_8001653C(void)
 {
     s8 pad[8];
     s32 track;
-    s32 volume;
+    s16 volume;
 
     if ((u32)((u8)engine_obj.stage - 0xB) < 2U) {
         if (engine_obj.stage == 0xB) {
@@ -951,7 +968,7 @@ extern u8 D_80171EA9;
 
 s32 func_800169D8(void)
 {
-    s32 temp_a0;
+    u8 temp_a0;
 
     if (D_80141BD4 == 2) {
         if (*(u8*)&D_8013952C == 0) {
@@ -994,6 +1011,10 @@ void func_80016B38(void)
 
 void func_80016B58(void)
 {
+#ifdef MMX4_WIN32
+    D_80173C84 = 2;
+    D_80139530 = 2;
+#else
     s32 temp_v0;
     u8* ptr = &D_80139554;
 
@@ -1002,10 +1023,16 @@ void func_80016B58(void)
         D_80173C84 = 2;
         D_80139530 = temp_v0;
     }
+#endif
 }
 
 void func_80016BDC(void)
 {
+#ifdef MMX4_WIN32
+    if (D_8013955C & D_801441B8) {
+        D_80139530 = 3;
+    }
+#else
     if (D_8013955C & D_801441B8) {
         while (CdControl(CdlPause, 0, &D_80139554) == 5)
             ;
@@ -1014,10 +1041,17 @@ void func_80016BDC(void)
             D_8013952C = 1;
         }
     }
+#endif
 }
 
 void func_80016C5C(void)
 {
+#ifdef MMX4_WIN32
+    if (D_80139564 != 0 && D_801441B8 == 0) {
+        D_8013955C = 0;
+        D_80139530 = 2;
+    }
+#else
     s32 status;
 
     status = CdSync(1, 0);
@@ -1028,10 +1062,20 @@ void func_80016C5C(void)
             D_8013952C = 1;
         }
     }
+#endif
 }
 
 void func_80016D0C(void)
 {
+#ifdef MMX4_WIN32
+    if (D_80139564 == 2) {
+        func_80016420(0);
+        D_80139564 = 0;
+    } else {
+        func_80016420(0);
+    }
+    D_80139530 = 0;
+#else
     s32 status;
 
     status = CdSync(1, 0);
@@ -1049,10 +1093,15 @@ void func_80016D0C(void)
         }
         D_80139530 = 0;
     }
+#endif
 }
 
 void func_80016DAC()
 {
+#ifdef MMX4_WIN32
+    D_80139530 = 1;
+    D_80139564 = 2;
+#else
     s32 var_v0;
 
     if (CdSync(1, 0) == 2) {
@@ -1066,13 +1115,18 @@ void func_80016DAC()
         }
         D_80139564 = 2;
     }
+#endif
 }
 
 void func_80016E34()
 {
+#ifdef MMX4_WIN32
+    D_80139530 = 5;
+#else
     if (CdSync(1, 0) == CdlComplete && CdControl(CdlSetfilter, &D_80175EE8, 0) != 0) {
         D_80139530 = 5;
     }
+#endif
 }
 
 extern s8 D_8013952C;
@@ -1083,6 +1137,9 @@ extern u8 D_80139554[];
 
 void func_80016E84(void)
 {
+#ifdef MMX4_WIN32
+    D_80139530 = 6;
+#else
     u8 sp10;
 
     if (CdSync(1, 0) == CdlComplete) {
@@ -1095,10 +1152,25 @@ void func_80016E84(void)
             }
         }
     }
+#endif
 }
+
+#ifdef MMX4_WIN32
+void pc_cd_stop(void);
+#endif
 
 void func_80016F0C()
 {
+#ifdef MMX4_WIN32
+    if (D_80141BD4 == 2) {
+        func_80016420(0);
+        pc_cd_stop();
+        D_80139564 = 0;
+        D_80139568 = 0;
+        D_80173C84 = 0;
+        D_80139530 = 0;
+    }
+#else
     s32 temp_s0 = D_80141BD4;
     if (temp_s0 == 2) {
         func_80016420(0);
@@ -1114,11 +1186,12 @@ void func_80016F0C()
         D_80173C84 = 0;
         D_80139530 = 0;
     }
+#endif
 }
 
 void func_80016FB4(s32 arg0)
 {
-    if (ENGINE_STAGE_ID == 0x10C || D_80173C84 != 0) {
+    if ((engine_obj.stage == 0xC && engine_obj.substage == 1) || D_80173C84 != 0) {
         D_80139534 = arg0;
         D_80141BD0 = 1;
     }
@@ -1200,11 +1273,7 @@ void func_80017340(void)
 
     func_80017E84();
 
-    if (engine_obj.cur_character == CHARACTER_X) {
-        end = 10;
-    } else {
-        end = 8;
-    }
+    end = engine_obj.cur_character == CHARACTER_X ? 10 : 8;
 
     if (engine_obj.cur_character == CHARACTER_X) {
         func_800175AC(0x14);
@@ -1217,11 +1286,7 @@ void func_80017340(void)
         }
     }
 
-    if (engine_obj.cur_character != CHARACTER_X) {
-        start = 0;
-    } else {
-        start = 2;
-    }
+    start = engine_obj.cur_character != CHARACTER_X ? 0 : 2;
 
     while (start < end) {
         if (bar_object.unk16[start] != 0) {
@@ -1292,7 +1357,7 @@ void func_80017F2C(void)
 #ifndef SKIP_MDEC
 INCLUDE_ASM("main/nonmatchings/55C4", func_80018000);
 #else
-void func_80018000(s32 temp)
+void func_80018000(arg_u8 temp)
 {
     asm(".rept 184 ; nop ; .endr");
 }

@@ -77,7 +77,7 @@ void unused_ride_armor_set_jump_speed(struct MainObj* self)
 
 void unused_ride_armor_spawn_shot(struct MainObj* self, s32 arg1)
 {
-    s32 v;
+    u8 v;
     struct ShotObj* obj = find_free_shot_obj();
     if (obj != NULL) {
         obj->active = 0x41;

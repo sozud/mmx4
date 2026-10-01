@@ -294,16 +294,16 @@ void func_80026118(void)
     u32 var_s0;
 
     (void)&var_s0;
-    var_a2 = SP_BG_TILEMAP;
     var_a0 = D_8010FFDC[engine_obj.stage][engine_obj.substage];
+    var_a2 = SP_BG_TILEMAP;
     var_a1 = 0;
     if ((layout_size * 3) != 0) {
         do {
             temp_v0 = *var_a0;
             var_a0 += 1;
-            var_a1 += 1;
             *var_a2 = temp_v0;
             var_a2 += 1;
+            var_a1 += 1;
         } while (var_a1 < (u32)(layout_size * 3));
     }
     func_800261B4(-1, var_a1, var_a2);
@@ -449,7 +449,7 @@ INCLUDE_ASM("main/nonmatchings/165A0", func_80026CEC);
 INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
 void func_8002728C(void)
 {
-    s16 temp_s1;
+    s32 temp_s1;
     s16 temp_s2;
     u32 var_i;
     for (var_i = 0; var_i < 3; var_i++) {

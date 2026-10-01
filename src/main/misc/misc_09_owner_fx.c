@@ -31,9 +31,10 @@ void owner_fx_animate(struct MiscObj* self)
 
     if (self->ext.misc_9.owner->ext.packed == 0) {
         animate_object(ANIMATED_OBJECT(self));
-        on_screen = self->on_screen ^ 1;
-        self->on_screen = on_screen;
-        if (on_screen != 0) {
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
+        if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }
         if (self->animation_step.fields.event != 1) {

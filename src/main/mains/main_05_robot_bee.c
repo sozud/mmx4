@@ -83,15 +83,13 @@ void robot_bee_wait_for_player(struct MainObj* self)
 {
     s32 object_x;
     s32 player_x;
-    s32 delta;
     s32* velocity;
     s32 x_vel;
 
     animate_object(ANIMATED_OBJECT(self));
     object_x = self->x_pos.val;
     player_x = g_Player.x_pos.val;
-    delta = object_x - player_x;
-    if (delta >= 0 ? delta <= FIXED(144) : (player_x - object_x) <= FIXED(144)) {
+    if (ABS(object_x, player_x) <= FIXED(144)) {
         velocity = robot_bee_approach_speeds;
         if (!(self->unk15 & 0x40)) {
             velocity++;
@@ -469,10 +467,8 @@ void robot_bee_swarm_return_hover(struct MainObj* self)
 
 void robot_bee_check_dive(struct MainObj* self)
 {
-    s32 player_x;
-
     if ((self->unk5 == 3) && (self->y_pos.val + FIXED(16) >= g_Player.y_pos.val)) {
-        player_x = g_Player.x_pos.val;
+        self->unk15 = g_Player.x_pos.val > self->x_pos.val ? 0x40 : 0;
         self->unk5 = 4;
         self->unk6 = 0;
         self->x_speed = 0;
@@ -480,7 +476,6 @@ void robot_bee_check_dive(struct MainObj* self)
         self->x_accel = 0;
         self->gravity = 0;
         self->unk7C = 0xF;
-        self->unk15 = (self->x_pos.val < player_x) << 6;
         set_animation(self, 2);
     }
 }

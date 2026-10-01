@@ -325,12 +325,11 @@ void func_80019D04(struct EngineObj* arg0)
         arg0->unk2 = 0;
         if (status == 1) {
             D_801721B8 = 0;
-            script = D_800F1F00;
+            func_8001B644(D_800F1F00);
         } else {
             D_801721B8 = 4;
-            script = D_800F1EE0;
+            func_8001B644(D_800F1EE0);
         }
-        func_8001B644(script);
     } else if (func_8001CE84(D_801721B6) == 0) {
         reset_objects();
         arg0->unk2 = 0;
@@ -355,10 +354,11 @@ void func_80019D04(struct EngineObj* arg0)
         D_801721B8 = 4;
         if (D_801721B9 != 0) {
             arg0->unk1 = 0xB;
+            arg0->unk2 = 0;
         } else {
             arg0->unk1 = 6;
+            arg0->unk2 = 0;
         }
-        arg0->unk2 = 0;
         func_8001B644(D_800F1EE0);
     }
 }
@@ -383,8 +383,8 @@ void func_80019EF0(struct EngineObj* engine)
         } else {
             struct MemcardSaveSlot** slot = &D_801721BC;
 
-            *cursor = current - 1;
             (*slot)--;
+            *cursor = current - 1;
         }
         if (D_80141BDF[0] != 3) {
             func_8001B7C0(0xD0, 0x88, 0);
@@ -525,8 +525,8 @@ void func_8001A7D4(struct EngineObj* arg0)
 
     timer_ptr = &D_801721BA;
     temp_v1 = *timer_ptr - 1;
-    *timer_ptr = temp_v1;
     temp_v1_2 = temp_v1 & 0xFF;
+    *timer_ptr = temp_v1;
     if (temp_v1_2 < 0x79U) {
         if (!(controller_state & PAD_CONFIRM)) {
             if (temp_v1_2 != 0) {
@@ -627,23 +627,20 @@ void func_8001AA98(struct EngineObj* arg0)
     engine->unk2 = 0;
     func_8001E980(0);
     D_801721B9 = 0;
-    if (D_801721B4 != 0) {
-        if (D_801721B5 != 0) {
-            goto load_save;
+    if (D_801721B4 == 0 || D_801721B5 == 0) {
+        if (D_801721B4 == 0) {
+            func_8001B718(0x70, 0x0B, 0);
         }
+        if (D_801721B5 == 0) {
+            func_8001B718(0x90, 0x0C, 1);
+        }
+        func_8001B644(D_800F1EF0);
+        func_8001C008(2, 0);
     } else {
-        func_8001B718(0x70, 0x0B, 0);
+        engine->unk1 = 6;
+        D_801721B8 = 0;
+        func_8001B644(D_800F1F00);
     }
-    if (D_801721B5 == 0) {
-        func_8001B718(0x90, 0x0C, 1);
-    }
-    func_8001B644(D_800F1EF0);
-    func_8001C008(2, 0);
-    return;
-load_save:
-    engine->unk1 = 6;
-    D_801721B8 = 0;
-    func_8001B644(D_800F1F00);
 }
 
 void func_8001ABDC(struct EngineObj* engine)
@@ -753,12 +750,13 @@ void func_8001AE8C(struct EngineObj* arg0)
             script = D_800F1F00;
             arg0->unk1 = 6;
             D_801721B8 = 0;
+            func_8001B644(script);
         } else {
             script = D_800F1F20;
             arg0->unk1 = 6;
             D_801721B8 = 1;
+            func_8001B644(script);
         }
-        func_8001B644(script);
         D_80141BDF[0] = 0;
         return;
     }
@@ -794,8 +792,8 @@ void func_8001AE8C(struct EngineObj* arg0)
         if (D_80173C2A != 0) {
             if (func_8001CB24(D_801721B0, D_801721B6, 0x2000) != 0) {
                 reset_objects();
-                D_801721B8 = 2;
                 D_80141BDF[0] = 0;
+                D_801721B8 = 2;
                 arg0->unk1 = 6;
                 func_8001B644(D_800F1F10);
                 return;
@@ -1057,7 +1055,6 @@ void func_8001C210(void)
 {
     struct MemcardSaveSlot* slot;
     u8 i;
-    s8 mode;
     struct EngineObj* obj = &engine_obj;
 
     slot = D_801721BC;
@@ -1072,11 +1069,8 @@ void func_8001C210(void)
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
-    mode = 2;
-    if (slot->unk6 & D_800F1D90.sign_bit_mask) {
-        mode = 4;
-    }
-    obj->unk44 = mode;
+    obj->unk44 = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
+    EASY_HP_SET(obj->unk46 * 2 - 1);
     obj->unk5C[0] = 0;
     obj->unk5C[1] = 0;
     obj->unk5C[2] = 0;
@@ -1087,7 +1081,6 @@ void func_8001C210(void)
 void func_8001C30C(struct MemcardSaveSlot* slot)
 {
     u8 i;
-    s8 mode;
     struct EngineObj* obj = &engine_obj;
 
     engine_obj.cur_character = slot->character;
@@ -1101,11 +1094,8 @@ void func_8001C30C(struct MemcardSaveSlot* slot)
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
-    mode = 2;
-    if (slot->unk6 & D_800F1D90.sign_bit_mask) {
-        mode = 4;
-    }
-    obj->unk44 = mode;
+    obj->unk44 = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
+    EASY_HP_SET(obj->unk46 * 2 - 1);
     obj->unk5C[0] = 0;
     obj->unk5C[1] = 0;
     obj->unk5C[2] = 0;

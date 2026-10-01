@@ -7,8 +7,11 @@ void aiming_laser_scope_update(struct VisualObj* arg0)
     struct PlayerObj* player = &g_Player;
     s32 var_a0;
 
-    var_a0 = engine_obj.unkF != 0;
-    if (player->weapon != 6) {
+    var_a0 = 0;
+    if (engine_obj.unkF != 0) {
+        var_a0 = 1;
+    }
+    if (6 != player->weapon) {
         var_a0 = 1;
     }
     if (player->hp == 0) {

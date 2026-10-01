@@ -6,7 +6,10 @@ void rising_fire_update(struct WeaponObj* arg0)
 {
     s32 disabled;
 
-    disabled = g_Player.input_locked != 0;
+    disabled = 0;
+    if (g_Player.input_locked != 0) {
+        disabled = 1;
+    }
     if (g_Player.capsule_state != 0) {
         disabled = 1;
     }

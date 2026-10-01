@@ -41,33 +41,29 @@ void bg_zone_controller_zone_0_enter(struct EffectObj* self)
 
 void bg_zone_controller_zone_0_scroll(struct EffectObj* self)
 {
-    s16 diff;
-    s8 sum;
     s32 t;
 
     if (background_objects[0].unk14.val != background_objects[0].x_pos.val) {
-        diff = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
-        self->ext.effect_8.unk18 = diff;
-        if (diff > -1) {
-            if (diff >= 8) {
+        self->ext.effect_8.unk18 = background_objects[0].x_pos.i.hi - background_objects[0].unk14.i.hi;
+        if (self->ext.effect_8.unk18 >= 0) {
+            if (self->ext.effect_8.unk18 >= 8) {
                 self->ext.effect_8.unk18 = 8;
             }
         } else {
-            if (diff < -8) {
+            if (self->ext.effect_8.unk18 < -8) {
                 self->ext.effect_8.unk18 = -8;
             }
         }
-        sum = self->ext.effect_8.unk17 + self->ext.effect_8.unk18;
-        self->ext.effect_8.unk17 = sum;
-        if (sum >= 0) {
-            if (sum < 8) {
+        self->ext.effect_8.unk17 += self->ext.effect_8.unk18;
+        if (self->ext.effect_8.unk17 >= 0) {
+            if (self->ext.effect_8.unk17 < 8) {
                 return;
             }
             if (++self->ext.effect_8.unk16 > 2) {
                 self->ext.effect_8.unk16 = 0;
             }
         } else {
-            if (sum > -8) {
+            if (self->ext.effect_8.unk17 > -8) {
                 return;
             }
             if (--self->ext.effect_8.unk16 < 0) {

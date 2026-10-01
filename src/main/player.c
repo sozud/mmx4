@@ -309,7 +309,6 @@ void player_wall_jump_push(struct PlayerObj* self)
     s32 should_end_state;
     s32 direction_mask;
     s32 vertical_mask;
-    u8 collision_flags;
     s8 timer;
 
     if (self->input_locked != 0) {
@@ -320,14 +319,15 @@ void player_wall_jump_push(struct PlayerObj* self)
     if (player_check_shoot_air(self) != 0) {
         return;
     }
-
-    collision_flags = self->unk88.bytes.collision_flags;
-    vertical_mask = collision_flags & PLAYER_COLLIDE_CEILING;
-    should_end_state = vertical_mask != 0;
+    vertical_mask = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_CEILING;
+    should_end_state = 0;
+    if (vertical_mask != 0) {
+        should_end_state = 1;
+    }
     if (self->unk15 != 0) {
-        direction_mask = collision_flags & PLAYER_COLLIDE_LEFT;
+        direction_mask = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT;
     } else {
-        direction_mask = collision_flags & PLAYER_COLLIDE_RIGHT;
+        direction_mask = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT;
     }
     if (direction_mask != 0) {
         should_end_state = 1;
@@ -531,10 +531,7 @@ void player_dash_end(struct PlayerObj* self)
             func_8001540C(1, 6, self);
         }
         if ((self->animation_step.fields.event & 0x40) && self->dash_timer == 0) {
-            wall_flag = PLAYER_COLLIDE_LEFT;
-            if (self->unk15 != 0) {
-                wall_flag = PLAYER_COLLIDE_RIGHT;
-            }
+            wall_flag = self->unk15 != 0 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
             if (wall_flag & self->unk88.bytes.collision_flags) {
                 self->x_vel.val = 0;
             }
@@ -561,22 +558,23 @@ void player_air_dash(struct PlayerObj* self)
 {
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_GROUND) {
         player_enter_land(self);
-    } else if (self->input_locked != 0) {
-        player_enter_fall(self);
-
-    } else if (self->unk2 == 0) {
-        if (player_check_shoot_air(self) == 0) {
-            if (self->attacking != 0) {
-                player_enter_fall_shooting(self);
-            } else {
-                animate_object(ANIMATED_OBJECT(self));
-                player_air_dash_funcs[self->unk6](self);
-            }
-        }
-    } else {
-        animate_object(ANIMATED_OBJECT(self));
-        player_air_dash_funcs[self->unk6](self);
+        return;
     }
+    if (self->input_locked != 0) {
+        player_enter_fall(self);
+        return;
+    }
+    if (self->unk2 == 0) {
+        if (player_check_shoot_air(self) != 0) {
+            return;
+        }
+        if (self->attacking != 0) {
+            player_enter_fall_shooting(self);
+            return;
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    player_air_dash_funcs[self->unk6](self);
 }
 
 void player_air_dash_start(struct PlayerObj* self)
@@ -883,7 +881,7 @@ void player_hurt_stun(struct PlayerObj* self)
 void player_hurt_slide(struct PlayerObj* self)
 {
     s32 velocity;
-    s32 direction;
+    s8 direction;
 
     if (self->capsule_state != 0) {
         return;
@@ -891,9 +889,10 @@ void player_hurt_slide(struct PlayerObj* self)
 
     velocity = self->x_vel.val;
     if (velocity != 0) {
-        direction = PLAYER_COLLIDE_LEFT;
         if (velocity > 0) {
             direction = PLAYER_COLLIDE_RIGHT;
+        } else {
+            direction = PLAYER_COLLIDE_LEFT;
         }
         if ((direction & self->unk88.bytes.collision_flags) != 0) {
             self->x_vel.val = 0;

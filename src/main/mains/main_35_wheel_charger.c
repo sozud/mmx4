@@ -14,6 +14,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", func_8005ECA8);
 
 void wheel_charger_main(struct MainObj* self)
 {
+    s32 hit;
+
     wheel_charger_check_fall(self);
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -25,7 +27,8 @@ void wheel_charger_main(struct MainObj* self)
         func_8002D9BC(self);
     }
     self->ext.main_35.saved_unk5 = self->unk5;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, wheel_charger_debris, self);
         drop_item(BASE_OBJECT(self), 0xC);
@@ -99,29 +102,23 @@ void wheel_charger_charge_open(struct MainObj* self)
 
 void wheel_charger_charge_spin(struct MainObj* self)
 {
-    s16 timer;
-    s32 velocity;
-
     if (--self->ext.main_35.sound_timer == 0) {
         func_8001540C(2, 0x58, self);
         self->ext.main_35.sound_timer = 0x14;
     }
     animate_object(ANIMATED_OBJECT(self));
-    timer = --self->unk7E;
-    if (timer == 0) {
+    if (--self->unk7E == 0) {
         func_800B0CA0(1, 2, self, 8, 1);
         self->unk7E = 3;
     }
     if (self->animation_step.fields.event != 0) {
-        velocity = self->unk15;
-        if (velocity == 0) {
-            velocity = FIXED(-4);
+        if (self->unk15 == 0) {
+            self->x_speed = FIXED(-4);
+            self->unk6 = 3;
         } else {
-            velocity = FIXED(4);
+            self->x_speed = FIXED(4);
+            self->unk6 = 3;
         }
-        self->x_speed = velocity;
-        velocity = 3;
-        self->unk6 = velocity;
     }
 }
 
@@ -177,10 +174,12 @@ void wheel_charger_crash(struct MainObj* self)
 void wheel_charger_check_fall(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if ((u8)(self->unk5 - 3) >= 2 && !(self->collision_flags & 8)) {
-        self->unk5 = 3;
-        self->unk6 = 0;
-        self->gravity = FIXED(0.234375);
+    if (3 != self->unk5 && self->unk5 != 4) {
+        if (!(self->collision_flags & 8)) {
+            self->unk5 = 3;
+            self->unk6 = 0;
+            self->gravity = FIXED(0.234375);
+        }
     }
 }
 

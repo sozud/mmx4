@@ -83,18 +83,14 @@ void latcher_grab(struct MainObj* self)
 
 void latcher_grab_home(struct MainObj* self)
 {
-    s32 distance;
-
     SP_CUR_MAIN_OBJ->ext.main_36.unk89 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     set_velocity_from_angle(MOVING_OBJECT(self), SP_CUR_MAIN_OBJ->ext.main_36.unk89);
     SP_CUR_MAIN_OBJ->ext.main_36.unk84->x_vel.val = self->x_speed;
     SP_CUR_MAIN_OBJ->ext.main_36.unk84->y_vel.val = self->y_speed;
     move_object(MOVING_OBJECT(self));
     move_object(MOVING_OBJECT(SP_CUR_MAIN_OBJ->ext.main_36.unk84));
-    distance = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-    if (distance >= 0 ? distance < 2 : self->x_pos.i.hi - g_Player.x_pos.i.hi < 2) {
-        distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (distance >= 0 ? distance < 2 : self->y_pos.i.hi - g_Player.y_pos.i.hi <= 1) {
+    if (ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) < 2) {
+        if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) < 2) {
             set_animation(self, 3);
             set_animation(SP_CUR_MAIN_OBJ->ext.main_36.unk84, 3);
             self->unk6++;
@@ -116,12 +112,10 @@ void latcher_grab_clamp(struct MainObj* self)
 void latcher_grab_drain(struct MainObj* self)
 {
     struct MainObj* current;
-    u16 timer;
 
     current = SP_CUR_MAIN_OBJ;
-    timer = current->ext.main_36.unk8A - 1;
-    current->ext.main_36.unk8A = timer;
-    if (timer == 0) {
+    current->ext.main_36.unk8A -= 1;
+    if (current->ext.main_36.unk8A == 0) {
         self->unk62 = 0;
         self->attack_box = NULL;
         self->hurt_box = NULL;
@@ -134,8 +128,10 @@ void latcher_grab_drain(struct MainObj* self)
         set_animation(self, 6);
         return;
     }
-    if (current->ext.main_36.unk8C != 0 && timer == 0x40) {
-        player_damage(4);
+    if (current->ext.main_36.unk8C != 0) {
+        if (current->ext.main_36.unk8A == 0x40) {
+            player_damage(4);
+        }
     }
     if ((SP_CUR_MAIN_OBJ->ext.main_36.unk8A & 7) == 0) {
         func_8001540C(2, 0xED, self);
@@ -146,8 +142,8 @@ void latcher_grab_release(struct MainObj* self)
 {
     if (self->animation_step.fields.event != 0) {
         self->unk5 = 0;
-        self->unk6 = 0;
         self->state++;
+        self->unk6 = 0;
     }
 }
 

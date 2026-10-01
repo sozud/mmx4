@@ -260,7 +260,7 @@ void player_set_collision_bounds(struct PlayerObj* self);
 
 void player_read_input(void);
 
-s32 player_map_buttons(s32 pad);
+u16 player_map_buttons(s32 pad);
 
 void player_clear_dash(struct PlayerObj* self);
 
@@ -529,7 +529,7 @@ extern u8 player_shoot_animations[];
 
 void player_set_shoot_animation(struct PlayerObj* self)
 {
-    u8 animation;
+    s32 animation;
 
     animation = player_shoot_animations[self->shot_type];
     player_set_animation(self, animation);
@@ -550,7 +550,7 @@ void player_enter_ladder_shoot(struct PlayerObj* self)
 
 void player_set_ladder_shoot_animation(struct PlayerObj* self)
 {
-    u8 animation;
+    s32 animation;
 
     animation = player_ladder_shoot_animations[self->last_shot_type];
     player_set_animation(self, animation);
@@ -1358,9 +1358,9 @@ s32 func_80039F28(struct PlayerObj* arg)
         player_reset_palette(arg);
         player->air_state = 1;
         player->spike_immune = 1;
+        player->weapon_energy[0] -= 0xC;
         player->unk5 = 0x3A;
         player->unk6 = 0;
-        player->weapon_energy[0] -= 0xC;
         player_zero_rakuhouha(arg);
         return 1;
     }
@@ -1496,7 +1496,13 @@ void player_zero_jump_slash(struct PlayerObj* self)
         return;
     }
     if (self->unk8A.bytes.high == 0) {
-        if (player_check_ladder_air(self) != 0 || player_check_wall(self) != 0 || player_check_air_move(self) != 0) {
+        if (player_check_ladder_air(self) != 0) {
+            return;
+        }
+        if (player_check_wall(self) != 0) {
+            return;
+        }
+        if (player_check_air_move(self) != 0) {
             return;
         }
     } else {
@@ -1637,7 +1643,10 @@ void player_zero_wall_slash(struct PlayerObj* self)
         player_enter_land(self);
         return;
     }
-    airborne = self->input_locked != 0;
+    airborne = 0;
+    if (self->input_locked != 0) {
+        airborne = 1;
+    }
     if (!(collision_flags & (PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_LEFT))) {
         airborne = 1;
     }

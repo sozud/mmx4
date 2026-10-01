@@ -31,18 +31,19 @@ void fortress_collapse_despawn(struct EffectObj* self)
 void fortress_collapse_flash_red(struct EffectObj* self)
 {
     u8 temp_v0;
+    struct Effect28Ext* ext = &self->ext.effect_28;
 
-    temp_v0 = self->ext.effect_28.filter_timer - 1;
-    self->ext.effect_28.filter_timer = temp_v0;
-    if (temp_v0 == 0) {
+    temp_v0 = ext->filter_timer - 1;
+    ext->filter_timer = temp_v0;
+    if (0 == temp_v0) {
         need_palette_load |= 1;
-        self->ext.effect_28.timer = 0x5A;
-        self->ext.effect_28.filter_timer = 4;
-        self->ext.effect_28.palette_index ^= 1;
+        ext->timer = 0x5A;
+        ext->filter_timer = 4;
+        ext->palette_index ^= 1;
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        self->ext.effect_28.finished = 0;
+        ext->finished = 0;
         return;
     }
     g_FilterAmountR = 0x1F;

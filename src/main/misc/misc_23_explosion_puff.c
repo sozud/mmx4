@@ -43,7 +43,7 @@ void explosion_puff_animate(struct MiscObj* self)
         ZeroObjectState(self);
     } else {
         self->on_screen = 0;
-        if (((self->ext.unk.unk54 & 3) && !(self->ext.unk.unk54 & 1)) || (D_80141BD8.unk0 & 1) == self->unk7) {
+        if (((self->ext.unk.unk54 & 3) && !(self->ext.unk.unk54 & 1)) || (BLINK_TIMER.unk0 & 1) == self->unk7) {
             is_on_screen(self);
         }
     }

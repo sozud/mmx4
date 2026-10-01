@@ -12,52 +12,46 @@ void train_boss_turret_init(struct MainObj* self)
 {
     self->hp = 0x20;
     self->unk5D = 0x20;
+    self->invincibility_timer = 0;
     self->contact_damage = 4;
     self->collision_data = (const u16*)D_80106670;
     self->x_speed = FIXED(1);
-    self->unk16 = 3;
-    self->hurt_box = train_boss_turret_hurt_box;
-    self->attack_box = train_boss_turret_attack_box;
-    self->state = 1;
-    self->invincibility_timer = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->unk16 = 3;
     self->terrain_box = NULL;
+    self->hurt_box = train_boss_turret_hurt_box;
+    self->attack_box = train_boss_turret_attack_box;
     self->unk15 = 0;
+    self->state = 1;
     self->unk5 = 2;
     self->unk6 = 0;
 }
 
 void train_boss_turret_main(struct MainObj* self)
 {
+    s32 collision;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     train_boss_turret_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-
-    if (func_8002DD04(self) < 0) {
-        goto hit;
+    collision = func_8002DD04(self);
+    if (collision < 0 || (self->ext.main_46.owner->attack_flags & 7) == 7) {
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
+        self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(6, train_boss_turret_debris, self);
+        self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
+        self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
+        self->unk42 &= 0x7FFF;
+        set_animation(self, 0xE);
+        self->ext.main_46.owner->attack_flags |= 8;
+        self->state = 2;
+        return;
     }
-    if ((self->ext.main_46.owner->attack_flags & 7) != 7) {
-        goto active;
-    }
-
-hit:
-    self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x54;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x5B;
-    spawn_explosion(BASE_OBJECT(self));
-    spawn_debris(6, train_boss_turret_debris, self);
-    self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x54;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x5B;
-    self->unk42 &= 0x7FFF;
-    set_animation(self, 0xE);
-    self->ext.main_46.owner->attack_flags |= 8;
-    self->state = 2;
-    return;
-
-active:
     if (self->unk42 & 0x8000) {
         self->ext.main_46.owner->layer_signals->collision_state = 2;
     }

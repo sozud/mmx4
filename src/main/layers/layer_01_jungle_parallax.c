@@ -105,7 +105,7 @@ void jungle_parallax_idle(struct LayerObj* arg0)
 
 void jungle_parallax_update_section(struct LayerObj* arg0)
 {
-    u32 var_v1;
+    s8 var_v1;
 
     if (g_Player.y_pos.i.hi <= 0x200) {
         var_v1 = (u32) ~(g_Player.x_pos.i.hi - 0x450) >> 0x1F;

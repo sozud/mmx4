@@ -46,31 +46,16 @@ void func_8002E420(struct EngineObj* arg0)
             if (((u8)arg0->palette_flags >> i) & 1)
                 completed++;
         if (completed == 4) {
-            if (arg0->cur_character != 0) {
-                i = 7;
-            } else {
-                i = 2;
-            }
-            arg0->unkE = i;
+            arg0->unkE = (arg0->cur_character != 0 ? 7 : 2);
         }
         arg0->unk1 = 1;
         break;
     case 5:
-        if (arg0->cur_character != 0) {
-            i = 8;
-        } else {
-            i = 3;
-        }
-        arg0->unkE = i;
+        arg0->unkE = (arg0->cur_character != 0 ? 8 : 3);
         arg0->unk1 = 1;
         break;
     case 7:
-        if (arg0->cur_character != 0) {
-            i = 9;
-        } else {
-            i = 4;
-        }
-        arg0->unkE = i;
+        arg0->unkE = (arg0->cur_character != 0 ? 9 : 4);
         arg0->unk1 = 1;
         break;
     case 8:
@@ -126,10 +111,11 @@ void func_8002E698(struct EngineObj* arg0)
     if ((u8)arg0->unk5F >= 5) {
         var_a0 = MUSIC_BRIEFING_LATE;
         var_a1 = 0x75;
+        func_8001663C(var_a0, var_a1);
     } else {
         var_a1 = 0x72;
+        func_8001663C(var_a0, var_a1);
     }
-    func_8001663C(var_a0, var_a1);
     func_8002E5E0();
     temp_v0 = find_free_misc_obj();
     if (temp_v0 != 0) {
@@ -241,8 +227,8 @@ INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E994);
 void func_8002ED80(struct EngineObj* arg0)
 {
     arg0->unk40 = 0;
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
 }
 
 // engine_state_3_update_funcs state 6
@@ -329,10 +315,7 @@ void func_8002EF14(struct EngineObj* arg0)
     switch (arg0->unkE) {
     case 0:
     case 1:
-        next = 10;
-        if (arg0->unkE != 0) {
-            next = 5;
-        }
+        next = arg0->unkE != 0 ? 5 : 10;
         goto load_archive;
     case 2:
         next = 1;

@@ -8,7 +8,7 @@ void func_80012024(void);
 void update_misc_objects(void);
 s32 func_8002D1F8(struct PlayerObj*, u8, s32);
 s32 player_set_charge_flash(struct PlayerObj*, s8);
-s32 func_8001E850(u8*, u8);
+u8 func_8001E850(u8*, u8);
 
 void _SsNoteOn(s16, s16, u8, u8);
 void _SsSetProgramChange(s16, s16, u8);

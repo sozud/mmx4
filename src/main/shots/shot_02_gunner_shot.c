@@ -56,7 +56,7 @@ void gunner_shot_fly(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    if (engine_obj.stage == 0 && engine_obj.substage != 0 && self->x_pos.i.hi >= 0xF41) {
+    if (engine_obj.stage == 0 && engine_obj.substage != 0 && self->x_pos.i.hi > 0xF40) {
         self->on_screen = 0;
         ZeroObjectState(OBJECT_HEADER(self));
         return;
@@ -142,7 +142,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A448);
 
 void eregion_wing_slash_active(struct ShotObj* self)
 {
-    if (self->animation_step.fields.event < 0) {
+    if (0 > self->animation_step.fields.event) {
         if (func_8002D9BC(self) == 1) {
             MAIN_OBJECT(self->unk7C)->ext.main_8.queued_sound = 0x1C;
         }
@@ -150,7 +150,7 @@ void eregion_wing_slash_active(struct ShotObj* self)
 
     update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
 
-    if (*(u16*)&self->unk7C->state == 0x501) {
+    if (self->unk7C->state == 1 && self->unk7C->unk5 == 5) {
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 1) {
             return;

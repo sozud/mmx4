@@ -16,7 +16,6 @@ void snowman_bomb_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_80106AF4;
     self->bg_offset = (u8)g_Player.bg_offset;
-    self->unk16 = 6;
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     self->animation_table = (const u8* const*)snowman_bomb_animations;
@@ -27,6 +26,7 @@ void snowman_bomb_init(struct MainObj* self)
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->unk16 = 6;
     self->attack_box = &snowman_bomb_attack_box;
     snowman_bomb_face_player(ANIMATED_OBJECT(self));
     set_animation(self, 0);
@@ -43,13 +43,14 @@ void snowman_bomb_init(struct MainObj* self)
 void snowman_bomb_main(struct MainObj* self)
 {
     s32 collision;
+    struct Main17Ext* ext = &self->ext.main_17;
 
     snowman_bomb_check_fall(self);
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     snowman_bomb_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-    self->ext.main_17.unk90 = self->unk5;
+    ext->unk90 = self->unk5;
     collision = func_8002DD04(self);
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->terrain_box->unk0,
             self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1))
@@ -122,7 +123,6 @@ void snowman_bomb_detonate(struct MainObj* self)
 
 void snowman_bomb_fall(struct MainObj* self)
 {
-    s32 distance;
     s32 target_y;
     s32 current_y;
 
@@ -135,7 +135,6 @@ void snowman_bomb_fall(struct MainObj* self)
             set_animation(self, 0);
             target_y = self->ext.main_17.saved_unk5;
             current_y = self->y_pos.val;
-            distance = target_y - current_y;
             self->unk5 = 2;
             self->unk6 = 0;
             self->y_speed = 0;
@@ -143,7 +142,7 @@ void snowman_bomb_fall(struct MainObj* self)
             self->x_speed = 0;
             self->x_accel = 0;
             self->air_state = 0;
-            if (distance >= 0 ? distance > 0x7FFFF : current_y - target_y >= 0x80000) {
+            if (ABS(target_y, current_y) >= 0x80000) {
                 self->ext.main_17.unk80 = 4;
                 self->ext.main_17.unk84 = 3;
                 self->ext.main_17.unk88 = 0xC;

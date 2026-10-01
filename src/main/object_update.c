@@ -113,7 +113,7 @@ void update_effect_objects(void)
 {
 #define current SP_CUR_EFFECT_OBJ
     for (current = effect_objects; current < &effect_objects[COUNT(effect_objects)]; current++) {
-        if (engine_obj.unk15 == 0 && current->active) {
+        if (0 == engine_obj.unk15 && current->active) {
             effect_object_update_funcs[current->id](current);
         } else if (engine_obj.unk15 && current->active & 8) {
             effect_object_update_funcs[current->id](current);

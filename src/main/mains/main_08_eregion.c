@@ -5,15 +5,13 @@
 
 void eregion_update(struct MainObj* self)
 {
-    u8 sound_id;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     CollisionRelated(PLAYER_OBJECT(self));
     eregion_state_funcs[self->state](self);
-    sound_id = self->ext.main_8.queued_sound;
-    if (sound_id != 0xFF) {
-        func_8001540C(2, sound_id, self);
+    if (self->ext.main_8.queued_sound != 0xFF) {
+        func_8001540C(2, self->ext.main_8.queued_sound, self);
         self->ext.main_8.queued_sound = 0xFF;
     }
 }
@@ -60,33 +58,22 @@ void eregion_roar(struct MainObj* self)
 
 void eregion_stomp_lift(struct MainObj* self)
 {
-    s32 x_vel;
-
-    x_vel = FIXED(-0.5);
     self->unk6++;
-    if (self->unk15 != 0) {
-        x_vel = FIXED(0.5);
-    }
+    self->x_speed = self->unk15 != 0 ? FIXED(0.5) : FIXED(-0.5);
     self->y_speed = FIXED(1.5);
-    self->x_speed = x_vel;
     set_animation(self, 2);
 }
 
 void eregion_stomp_step(struct MainObj* self)
 {
-    s32 x_vel;
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         move_object(MOVING_OBJECT(self));
     }
     if (self->animation_step.fields.event == 1) {
         set_animation(self, 4);
-        x_vel = FIXED(-1.5);
         self->unk6++;
-        if (self->unk15 != 0) {
-            x_vel = FIXED(1.5);
-        }
-        self->x_speed = x_vel;
+        self->x_speed = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
         self->y_speed = 0;
         self->attack_box = (const u8*)&D_800FA730;
         self->ext.main_8.unk88 = 0;
@@ -116,20 +103,14 @@ void eregion_stomp_advance(struct MainObj* self)
 
 void eregion_stomp_drop(struct MainObj* self)
 {
-    s32 x_vel;
-
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         set_animation(self, 6);
-        x_vel = FIXED(-0.75);
         self->unk6++;
-        if (self->unk15 != 0) {
-            x_vel = FIXED(0.75);
-        }
+        self->x_speed = self->unk15 != 0 ? FIXED(0.75) : FIXED(-0.75);
         self->y_speed = FIXED(-1.5);
         self->attack_box = (const u8*)&D_800FA72C;
-        self->x_speed = x_vel;
         self->ext.main_36.saved_unk5 = 1;
     }
 }
@@ -289,13 +270,9 @@ void eregion_wing_slash(struct MainObj* self)
 
 void eregion_pounce_crouch(struct MainObj* self)
 {
-    s32 velocity = FIXED(3);
     self->unk6++;
-    if (self->unk15 != 0) {
-        velocity = FIXED(-3);
-    }
+    self->x_speed = self->unk15 != 0 ? FIXED(-3) : FIXED(3);
     self->y_speed = FIXED(1.5);
-    self->x_speed = velocity;
     set_animation(self, 2);
 }
 
@@ -311,10 +288,7 @@ void eregion_pounce_jump(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        x_velocity = FIXED(-8.5);
-        if (self->unk15 != 0) {
-            x_velocity = FIXED(8.5);
-        }
+        x_velocity = self->unk15 != 0 ? FIXED(8.5) : FIXED(-8.5);
         self->x_speed = x_velocity;
         self->y_speed = FIXED(-4);
         self->gravity = FIXED(-0.1875);
@@ -344,11 +318,11 @@ void eregion_pounce_rise(struct MainObj* self)
         } else {
             self->x_pos.i.hi = 0x11A0;
         }
+        self->unk6++;
         self->x_speed = 0;
         self->y_speed = FIXED(-2.5);
         self->x_accel = 0;
         self->gravity = 0;
-        self->unk6++;
         self->unk15 ^= 0x40;
         self->contact_damage = 3;
         self->attack_box = (const u8*)&D_800FA72C;
@@ -477,10 +451,7 @@ void eregion_death_blink(struct MainObj* self)
         self->unk42 ^= 0x8000;
         self->ext.main_9.object_id -= 5;
         var_a0 = self->ext.main_9.object_id;
-        if (var_a0 < 5) {
-            var_a0 = 5;
-        }
-        self->unk7E = var_a0;
+        self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
 
@@ -523,16 +494,11 @@ void eregion_death(struct MainObj* self)
 
 void eregion_recoil_start(struct MainObj* self)
 {
-    s32 x_pos;
-    u8 frame;
-
     self->unk6++;
     set_animation(self, 0xA);
-    x_pos = self->x_pos.i.hi;
-    self->x_speed = x_pos;
-    frame = self->animation_step.fields.frame_index;
-    if (frame >= 0x1C && frame <= 0x1D) {
-        self->x_pos.i.hi = (self->unk15 != 0) ? x_pos - 0x16 : x_pos + 0x16;
+    self->x_speed = self->x_pos.i.hi;
+    if ((self->animation_step.fields.frame_index == 0x1C || self->animation_step.fields.frame_index == 0x1D)) {
+        self->x_pos.i.hi = self->unk15 != 0 ? self->x_speed - 0x16 : self->x_speed + 0x16;
     }
 }
 
@@ -582,7 +548,6 @@ void eregion_intro_warning(struct MainObj* self)
 
 void eregion_intro_leap(struct MainObj* self)
 {
-    s32 x_velocity;
     struct VisualObj* visual;
 
     if (self->ext.main_9.effect->active == 0) {
@@ -602,12 +567,8 @@ void eregion_intro_leap(struct MainObj* self)
         }
         self->unk6 = (u8)self->unk6 + 1;
         start_screen_shake_y(-1, 4, 2);
-        x_velocity = FIXED(-8.5);
-        if (self->unk15 != 0) {
-            x_velocity = FIXED(8.5);
-        }
+        self->x_speed = self->unk15 != 0 ? FIXED(8.5) : FIXED(-8.5);
         self->y_speed = FIXED(-6);
-        self->x_speed = x_velocity;
         self->x_accel = 0;
         self->gravity = FIXED(-0.09375);
         set_animation(self, 4);

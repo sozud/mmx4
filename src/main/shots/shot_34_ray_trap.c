@@ -123,7 +123,6 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1E3C);
 void ray_trap_chase(struct ShotObj* self)
 {
     s16 shot_x;
-    s32 distance;
     u8 collision_flags;
 
     animate_object(ANIMATED_OBJECT(self));
@@ -131,8 +130,7 @@ void ray_trap_chase(struct ShotObj* self)
 
     if (self->unk6 == 0) {
         shot_x = self->x_pos.i.hi;
-        distance = g_Player.x_pos.i.hi - shot_x;
-        if (distance >= 0 ? distance < 8 : shot_x - g_Player.x_pos.i.hi < 8) {
+        if (ABS(g_Player.x_pos.i.hi, shot_x) < 8) {
             self->unk6++;
             self->x_vel.val = 0;
             set_animation(self, 0x11);
@@ -140,11 +138,13 @@ void ray_trap_chase(struct ShotObj* self)
         }
 
         collision_flags = self->unk70;
-        if ((collision_flags & 3) && !(collision_flags & 8)) {
-            self->unk6++;
-            self->x_vel.val = 0;
-            self->unk15 ^= 0x40;
-            set_animation(self, 0x11);
+        if (collision_flags & 3) {
+            if (!(collision_flags & 8)) {
+                self->unk6++;
+                self->x_vel.val = 0;
+                self->unk15 ^= 0x40;
+                set_animation(self, 0x11);
+            }
         }
     } else if (self->animation_step.fields.relative_step == 0) {
         self->unk5 = 4;

@@ -36,23 +36,24 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80093D78);
 void frost_tower_main(struct WeaponObj* arg0)
 {
     u32 i;
+    struct Weapon2Ext* ext = &arg0->ext.weapon_2;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x38) == 0) {
-        if (arg0->ext.weapon_2.lifetime == 0) {
+        if (ext->lifetime == 0) {
             func_8001540C(0, 0x1A, arg0);
             for (i = 0; i < 8U; i++) {
                 frost_tower_spawn_shard(arg0);
             }
         } else {
-            arg0->ext.weapon_2.lifetime--;
+            ext->lifetime--;
             animate_object(ANIMATED_OBJECT(arg0));
             frost_tower_step_funcs[arg0->unk5](arg0);
             if (arg0->unk50 != NULL) {
-                if (arg0->ext.weapon_2.timer == 0) {
-                    arg0->ext.weapon_2.timer = 8;
+                if (ext->timer == 0) {
+                    ext->timer = 8;
                     arg0->unk64++;
                 } else {
-                    arg0->ext.weapon_2.timer--;
+                    ext->timer--;
                 }
             }
             update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
@@ -145,7 +146,10 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
 {
     s32 disabled;
 
-    disabled = g_Player.input_locked != 0;
+    disabled = 0;
+    if (g_Player.input_locked != 0) {
+        disabled = 1;
+    }
     if (g_Player.capsule_state != 0) {
         disabled = 1;
     }
@@ -213,7 +217,10 @@ void frost_shard_update(struct MiscObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.input_locked != 0;
+    var_a1 = 0;
+    if (g_Player.input_locked != 0) {
+        var_a1 = 1;
+    }
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
@@ -311,9 +318,10 @@ void frost_particle_fall(struct MiscObj* arg0)
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x14, 0x18) == 0) {
         move_with_gravity(ANIMATED_OBJECT(arg0));
-        on_screen = arg0->on_screen ^ 1;
-        arg0->on_screen = on_screen;
-        if (on_screen != 0) {
+        if (FLICKER_ENABLED) {
+            arg0->on_screen ^= 1;
+        }
+        if (arg0->on_screen != 0) {
             update_on_screen(BASE_OBJECT(arg0), 0x14, 0x18);
         }
     } else {

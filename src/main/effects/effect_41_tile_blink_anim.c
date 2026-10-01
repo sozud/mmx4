@@ -42,9 +42,8 @@ void tile_blink_anim_step(struct EffectObj* self)
         return;
     }
 
-    frame = self->ext.effect_41.palette_source.words + self->ext.effect_41.palette.fields.step;
-    self->ext.effect_41.palette_source.words = frame;
-    self->ext.effect_41.palette.packed = *frame;
+    self->ext.effect_41.palette_source.words += self->ext.effect_41.palette.fields.step;
+    self->ext.effect_41.palette.packed = *self->ext.effect_41.palette_source.words;
     refresh_visible_tile_effect(self->ext.effect_41.palette.fields.id,
         self->x_pos.i.hi - 0x10, self->y_pos.i.hi - 0x10);
 }

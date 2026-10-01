@@ -33,7 +33,7 @@ void highway_trooper_despawn(struct MainObj* self)
 
 void highway_trooper_ride_in(struct MainObj* self)
 {
-    if (highway_trooper_stop_x[self->unk2] >= self->x_pos.i.hi) {
+    if (self->x_pos.i.hi <= highway_trooper_stop_x[self->unk2]) {
         SP_CUR_MAIN_OBJ->ext.main_34.unk80 = 1;
         set_animation(self, 0);
         self->unk5 = 1;

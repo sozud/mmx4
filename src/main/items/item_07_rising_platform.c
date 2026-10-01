@@ -23,7 +23,6 @@ INCLUDE_ASM("main/nonmatchings/items/item_07_rising_platform", func_800C16F0);
 void rising_platform_rise(struct ItemObj* self)
 {
     struct ItemObj* item;
-    s32 x_pos;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -39,14 +38,13 @@ void rising_platform_rise(struct ItemObj* self)
     }
 
     collide_with_players(self);
-    if (self->unk7C.value == 0 && self->y_pos.i.hi < 0x5B1) {
+    if (self->unk7C.value == 0 && self->y_pos.i.hi <= 0x5B0) {
         item = find_free_item_obj();
         if (item != NULL) {
             item->active = 0x41;
             item->id = 7;
-            x_pos = self->x_pos.val;
+            item->x_pos.val = self->x_pos.val;
             item->y_pos.val = FIXED(2320);
-            item->x_pos.val = x_pos;
             self->unk7C.value = 1;
         }
     }

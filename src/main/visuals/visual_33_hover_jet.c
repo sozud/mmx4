@@ -19,8 +19,8 @@ void hover_jet_update(struct VisualObj* arg0)
         arg0->unk2 = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
         arg0->animation_table = &D_8011BF40;
-        arg0->unk42 = 0x7802;
         arg0->unk40 = 0;
+        arg0->unk42 = 0x7802;
         arg0->unk16 = 3;
         arg0->unk5C.value = 0;
         arg0->state++;
@@ -70,10 +70,10 @@ void stock_charge_meter_update(struct MiscObj* arg0)
     if (arg0->state == 0) {
         arg0->bg_offset = -1;
         arg0->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0x30 / 4];
+        arg0->unk40 = 0;
         arg0->unk42 = 0x780A;
         arg0->unk16 = 0x10;
         arg0->x_pos.i.hi = 0x20;
-        arg0->unk40 = 0;
         arg0->y_pos.i.hi = 0x34;
         arg0->state++;
     } else {

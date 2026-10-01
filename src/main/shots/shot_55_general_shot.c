@@ -155,12 +155,9 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800ACF60);
 
 void general_fist_hold(struct ShotObj* self)
 {
-    s16 temp_v0;
-
     animate_object(ANIMATED_OBJECT(self));
-    temp_v0 = self->unk90.u.lo - 1;
-    self->unk90.i.lo = temp_v0;
-    if (temp_v0 == 0) {
+    self->unk90.i.lo = self->unk90.u.lo - 1;
+    if (self->unk90.i.lo == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0x16);
@@ -172,44 +169,30 @@ void general_fist_hold(struct ShotObj* self)
 
 void general_fist_turn(struct ShotObj* self)
 {
-    s32 velocity;
-    u8 direction;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        velocity = FIXED(-1.5);
         self->animation_step.fields.event = 0;
-        direction = self->unk15 ^ 0x40;
-        self->unk15 = direction;
-        if (direction != 0) {
-            velocity = FIXED(1.5);
-        }
-        self->x_vel.val = velocity;
+        self->unk15 ^= 0x40;
+        self->x_vel.val = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
     }
     if (self->animation_step.fields.relative_step == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0xF);
+            func_8001540C(2, 5, self);
         } else {
             set_animation(self, 0x14);
+            func_8001540C(2, 5, self);
         }
-        func_8001540C(2, 5, self);
     }
 }
 
 void general_fist_approach(struct ShotObj* self)
 {
-    s16 x_pos;
-    s16 target_x_pos;
-    s32 delta;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    target_x_pos = self->unk7C->x_pos.i.hi;
-    x_pos = self->x_pos.i.hi;
-    delta = x_pos - target_x_pos;
-    if (delta >= 0 ? delta < 0x30 : (target_x_pos - x_pos) < 0x30) {
+    if (ABS(self->x_pos.i.hi, self->unk7C->x_pos.i.hi) < 0x30) {
         self->x_vel.val = 0;
         self->unk90.u.lo = 0x3C;
         self->unk5++;
@@ -218,12 +201,9 @@ void general_fist_approach(struct ShotObj* self)
 
 void general_fist_pause(struct ShotObj* self)
 {
-    s16 temp_v0;
-
     animate_object(ANIMATED_OBJECT(self));
-    temp_v0 = self->unk90.u.lo - 1;
-    self->unk90.i.lo = temp_v0;
-    if (temp_v0 == 0) {
+    self->unk90.i.lo = self->unk90.u.lo - 1;
+    if (self->unk90.i.lo == 0) {
         self->unk5++;
         if (self->unk2 == 3) {
             set_animation(self, 0x11);
@@ -235,29 +215,19 @@ void general_fist_pause(struct ShotObj* self)
 
 void general_fist_sweep_turn(struct ShotObj* self)
 {
-    s16 timer;
-    s32 x_velocity;
     struct WeaponObj* owner;
-    u8 direction;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        direction = self->unk15 ^ 0x40;
-        self->unk15 = direction;
-        x_velocity = FIXED(-1.5);
-        if (direction != 0) {
-            x_velocity = FIXED(1.5);
-        }
-        self->x_vel.val = x_velocity;
+        self->unk15 ^= 0x40;
+        self->x_vel.val = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
     }
     if (self->animation_step.fields.relative_step == 0) {
-        timer = ++self->unk8A;
-        if (timer == 2) {
+        if ((++self->unk8A) == 2) {
             self->unk5++;
             if (self->unk2 == 3) {
-                owner = self->unk7C;
-                owner->unk6++;
+                self->unk7C->unk6++;
                 set_animation(self, 0x15);
                 return;
             }
@@ -267,10 +237,11 @@ void general_fist_sweep_turn(struct ShotObj* self)
         self->unk5 = 3;
         if (self->unk2 == 3) {
             set_animation(self, 0x14);
+            func_8001540C(2, 5, self);
         } else {
             set_animation(self, 0xF);
+            func_8001540C(2, 5, self);
         }
-        func_8001540C(2, 5, self);
     }
 }
 
@@ -326,12 +297,9 @@ void general_fist_follower_fly_to_row(struct ShotObj* self)
             self, 0xE20,
             general_fist_rows[general_fist_row_order[SHOT_OBJECT(self->unk8C.object)->timer]])
         & 0xFF) {
-        velocity = FIXED(-1.5);
         self->y_vel.val = 0;
         self->unk5 = (u8)self->unk5 + 1;
-        if (self->unk15 != 0) {
-            velocity = FIXED(1.5);
-        }
+        velocity = self->unk15 != 0 ? FIXED(1.5) : FIXED(-1.5);
         self->x_vel.val = velocity;
     }
     animate_object(ANIMATED_OBJECT(self));

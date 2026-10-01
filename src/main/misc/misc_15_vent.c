@@ -30,7 +30,6 @@ void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
     u32 i;
-    u16 t;
 
     for (i = 0; i < count; i++) {
         slot = find_free_misc_obj();
@@ -52,9 +51,8 @@ void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
         slot->animation_table = self->animation_table;
         slot->unk40 = self->unk40;
         slot->unk3C = self->unk3C;
-        t = self->unk42;
+        slot->unk42 = self->unk42 & 0x7FFF;
         slot->unk16 = 3;
-        slot->unk42 = t & 0x7FFF;
         slot->unk15 = self->unk15;
     }
 }
@@ -63,7 +61,6 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
     u32 i;
-    u16 t;
 
     for (i = 0; i < count; i++) {
         slot = find_free_misc_obj();
@@ -80,9 +77,8 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
         slot->animation_table = self->animation_table;
         slot->unk40 = self->unk40;
         slot->unk3C = self->unk3C;
-        t = self->unk42;
+        slot->unk42 = self->unk42 & 0x7FFF;
         slot->unk16 = 3;
-        slot->unk42 = t & 0x7FFF;
         slot->unk15 = self->unk15;
     }
 }

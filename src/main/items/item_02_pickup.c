@@ -355,7 +355,7 @@ void pickup_main(struct ItemObj* arg0)
         }
     } else {
         arg0->on_screen = 0;
-        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(D_80141BD8.unk0 & 1)) {
+        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(BLINK_TIMER.unk0 & 1)) {
             is_on_screen((struct BaseObj*)arg0);
         }
     }
@@ -382,33 +382,28 @@ INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFCC0);
 
 void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 {
-    s32 player_status;
-    u8 player_health;
-    u8 charge;
+    u8 player_status;
     s8 value;
-
-    player_health = g_Player.hp;
-    player_status = player_health & 0x80;
-    if ((player_health & 0x7F) < engine_obj.unk46) {
+    player_status = g_Player.hp & 0x80;
+    if ((g_Player.hp & 0x7F) < engine_obj.unk46) {
         set_objects_frozen(1);
+        arg0->active |= 8;
         arg0->ext.item_2.unk80 = arg1;
         arg0->ext.item_2.unk81 = 2;
         arg0->state = 2;
         arg0->unk5 = 0;
         arg0->unk6 = 0;
-        arg0->active |= 8;
     } else {
         arg0->state = 3;
     }
 
-    player_health = g_Player.hp;
-    if ((player_health & 0x7F) >= engine_obj.unk46) {
+    if ((g_Player.hp & 0x7F) >= engine_obj.unk46) {
+        EASY_HP_SET(engine_obj.unk46 * 2 - 1);
         g_Player.hp = engine_obj.unk46 | player_status;
     }
 
-    charge = g_Player.weapon_energy[0] + arg1;
-    g_Player.weapon_energy[0] = charge;
-    if ((s8)charge > 0x30) {
+    g_Player.weapon_energy[0] += arg1;
+    if ((s8)g_Player.weapon_energy[0] > 0x30) {
         g_Player.weapon_energy[0] = 0x30;
     }
 

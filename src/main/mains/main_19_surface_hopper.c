@@ -85,13 +85,10 @@ void surface_hopper_crawl_attach(struct MainObj* self)
     s32 animation;
     struct MainObj* current;
 
-    if (self->animation_step.fields.relative_step <= -1) {
+    if (self->animation_step.fields.relative_step < 0) {
         current = SP_CUR_MAIN_OBJ;
         if (current->ext.main_19.animation_index < 2) {
-            animation = 9;
-            if (current->ext.main_19.unk80 == 0) {
-                animation = 8;
-            }
+            animation = current->ext.main_19.unk80 == 0 ? 8 : 9;
             self->gravity = 0;
             self->x_speed = 0;
             self->x_accel = 0;
@@ -145,7 +142,7 @@ u8 surface_hopper_aim_at_player(struct MainObj* self)
     u16 player_y;
     s16 dy;
     s16 dx;
-    s32 flags;
+    s8 flags;
 
     player_x = g_Player.x_pos.u.hi;
     player_y = g_Player.y_pos.u.hi;
@@ -182,11 +179,11 @@ u8 surface_hopper_probe_collision(struct PlayerObj* self, s16 arg1, s16 arg2)
     self->x_pos.u.hi = self->x_pos.u.hi + arg1;
     self->y_pos.u.hi = self->y_pos.u.hi + arg2;
     CollisionRelated(self);
-    result = self->unk70;
     self->x_pos.val = saved_x_pos;
     self->y_pos.val = saved_y_pos;
     self->unk18.val = saved_unk18;
     self->unk1C.val = saved_unk1C;
+    result = self->unk70;
     self->unk70 = 0;
     return result;
 }
@@ -231,17 +228,14 @@ void surface_hopper_set_launch(struct MainObj* self)
 
 void surface_hopper_launch(struct MainObj* self)
 {
-    s16 timer;
-
     if (self->unk6 == 0) {
         surface_hopper_set_launch(self);
         self->unk6 = 1;
         self->unk7C = 0x1E;
         return;
     }
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if (timer == 0) {
+    self->unk7C -= 1;
+    if (self->unk7C == 0) {
         self->unk5 = 2;
         self->unk6 = 0;
     }

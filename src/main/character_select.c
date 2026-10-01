@@ -164,7 +164,7 @@ void character_select_state_3(struct EngineObj* arg0)
 void character_select_state_4(struct EngineObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        if ((arg0->character_state.bytes[1] >> arg0->cur_character) & 1) {
+        if (arg0->character_state.bytes[1] & (1 << arg0->cur_character)) {
             arg0->unk2++;
             arg0->character_state.bytes[1] |= 0x80;
         }

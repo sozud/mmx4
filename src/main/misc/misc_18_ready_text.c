@@ -22,7 +22,6 @@ void ready_text_init(struct MiscObj* self)
     u16* pal_dst;
     u16* color;
     u32 pal_pos;
-    u8 temp_v1;
 
     if (engine_obj.cur_character == CHARACTER_X) {
         self->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk24];
@@ -34,8 +33,7 @@ void ready_text_init(struct MiscObj* self)
     self->animation_table = (u32**)ready_text_animations;
     self->state = 1;
     self->bg_offset = -1;
-    temp_v1 = ready_text_palettes[self->unk2];
-    self->unk42 = (temp_v1 % 16) | (((temp_v1 >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
+    self->unk42 = (ready_text_palettes[self->unk2] % 16) | (((ready_text_palettes[self->unk2] >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
     self->x_pos.i.hi = ready_text_x_positions[self->unk2];
     self->y_pos.i.hi = ready_text_y_positions[self->unk2];
     self->unk16 = ready_text_priorities[self->unk2];
@@ -197,7 +195,7 @@ void ready_text_leave(struct MiscObj* self)
 void ready_text_blink(struct MiscObj* self)
 {
     self->on_screen = 0;
-    if (D_80141BD8.unk0 & 0x10) {
+    if (BLINK_TIMER.unk0 & 0x10) {
         is_on_screen(self);
     }
 }

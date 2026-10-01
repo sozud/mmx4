@@ -863,7 +863,7 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
     u32 color;
     u32 temp_r;
-    u32 temp_g;
+    s8 temp_g;
     u32 temp_b;
     u32 temp_v1;
     u32 var_r;
@@ -881,12 +881,9 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     color = D_800F312C[arg4];
 
     if (((u16)g_FilterAmountB | (g_FilterAmountR | (u16)g_FilterAmountG)) != 0) {
-        if (ENGINE_STAGE_ID != 2 && g_FilterAmountR == ((u16)g_FilterAmountG >> 5) && g_FilterAmountR == ((u16)g_FilterAmountB >> 10)) {
+        if ((engine_obj.stage != 0x2 || engine_obj.substage != 0) && g_FilterAmountR == ((u16)g_FilterAmountG >> 5) && g_FilterAmountR == ((u16)g_FilterAmountB >> 10)) {
             if (*(u8*)&g_FilterModeR != 0) {
-                var_r = 0;
-                if ((color & 0x1F) >= g_FilterAmountR) {
-                    var_r = (color & 0x1F) - g_FilterAmountR;
-                }
+                var_r = g_FilterAmountR <= (color & 0x1F) ? (color & 0x1F) - g_FilterAmountR : 0;
             } else {
                 temp_v1 = (color & 0x1F) + g_FilterAmountR;
                 var_r = 0x1F;
@@ -911,15 +908,13 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 
             temp_v1 = color & 0x7C00;
             if (*(u8*)&g_FilterModeB != 0) {
-                var_b = 0;
-                if (temp_v1 >= (u16)g_FilterAmountB) {
-                    var_b = temp_v1 - (u16)g_FilterAmountB;
-                }
+                var_b = temp_v1 < (u16)g_FilterAmountB ? 0 : temp_v1 - (u16)g_FilterAmountB;
             } else {
                 temp_v1 += (u16)g_FilterAmountB;
-                var_b = 0x7C00;
                 if (temp_v1 < 0x7C01U) {
                     var_b = temp_v1;
+                } else {
+                    var_b = 0x7C00;
                 }
             }
 
@@ -940,7 +935,6 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 void func_800257BC(struct PlayerObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
-    s16 var_a2;
 
     if (player->armor_parts & 8) {
         func_8002588C(arg0, 3, 0x7843);
@@ -949,12 +943,7 @@ void func_800257BC(struct PlayerObj* arg0)
         func_8002588C(arg0, 0, 0x7843);
     }
     if (player->armor_parts & 4) {
-        if (player->arm_type == 2) {
-            var_a2 = 0x7844;
-        } else {
-            var_a2 = 0x7843;
-        }
-        func_8002588C(arg0, 2, var_a2);
+        func_8002588C(arg0, 2, (player->arm_type == 2 ? 0x7844 : 0x7843));
     }
     if (player->armor_parts & 2) {
         func_8002588C(arg0, 1, 0x7843);

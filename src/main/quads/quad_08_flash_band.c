@@ -8,7 +8,7 @@ extern s16 ready_line_shutter_close_vertices[10][4][2];
 extern s16 ready_line_streak_vertices[3][4][2];
 extern u16 ready_line_shutter_repeats;
 
-void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
+void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2]);
 
 void ready_line_update(struct QuadObj* arg0);
 
@@ -33,7 +33,7 @@ void ready_line_streak(struct QuadObj* arg0);
 
 void ready_line_move(struct QuadObj* arg0);
 
-void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
+void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2]);
 
 // ready_line_state_funcs state 2
 void ready_line_despawn(struct QuadObj* arg0);
@@ -65,7 +65,7 @@ void flash_band_widen(struct QuadObj* arg0)
     arg0->vertices[3].x.val -= arg0->ext.ready_line.x_vel.val;
     arg0->ext.ready_line.x_vel.val += FIXED(4);
     quad_is_on_screen(arg0);
-    if (arg0->vertices[0].x.i.hi >= 0x14B) {
+    if (arg0->vertices[0].x.i.hi > 0x14A) {
         arg0->state++;
     }
 }

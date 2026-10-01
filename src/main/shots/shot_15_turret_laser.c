@@ -30,7 +30,10 @@ void turret_laser_move(struct ShotObj* self)
 
 void turret_laser_main(struct ShotObj* self)
 {
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    s32 hit;
+
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->unk5 = 0;
         self->state++;
         spawn_explosion(BASE_OBJECT(self));

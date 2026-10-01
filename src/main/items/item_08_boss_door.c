@@ -92,25 +92,18 @@ void boss_door_update(struct ItemObj* arg0)
 
 void boss_door_init(struct ItemObj* arg0)
 {
-    s32 column;
-    s32 row;
-    s32 x;
-
     arg0->active = 0x49;
     arg0->unk16 = 6;
     arg0->unk40 = D_801406A8[func_8002938C(0x80)] >> 7;
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x80)];
-    column = func_8002938C(0x80);
-    row = func_8002938C(0x80);
-    x = column * 4 + 0x18;
-    arg0->unk42 = (x % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    arg0->unk42 = ((func_8002938C(0x80) * 4 + 0x18) % 16) | (((func_8002938C(0x80) * 4 + 0x18) / 16 + 0x1E0) << 6);
     arg0->animation_table = (const u8* const*)boss_door_animations;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk7C.timer = (u8)arg0->unk2 & 0x10;
     arg0->unk15 = 0;
     arg0->unk67 = 0;
     arg0->unk75 = 1;
-    arg0->ext.packed = (u8)arg0->unk2 & 0x40;
+    arg0->unk7C.timer = arg0->unk2 & 0x10;
+    arg0->ext.packed = arg0->unk2 & 0x40;
     if (arg0->unk2 & 0xC0) {
         arg0->state = 2;
         arg0->unk68 = NULL;
@@ -118,8 +111,8 @@ void boss_door_init(struct ItemObj* arg0)
         arg0->state = 1;
         arg0->unk68 = &boss_door_terrain_box;
     }
-    arg0->unk5 = 0;
     arg0->unk2 &= 0xF;
+    arg0->unk5 = 0;
     set_animation(ANIMATED_OBJECT(arg0), 0);
 }
 

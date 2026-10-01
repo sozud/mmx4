@@ -53,10 +53,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_8005754C);
 
 void caterkiller_crawl_end(struct MainObj* self)
 {
-    s32 distance;
-    s32 player_y;
-    s32 object_y;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
         self->ext.main_25.unk84 = 1;
@@ -69,10 +65,7 @@ void caterkiller_crawl_end(struct MainObj* self)
         return;
     }
     self->x_accel = 0;
-    player_y = g_Player.y_pos.i.hi;
-    object_y = self->y_pos.i.hi;
-    distance = player_y - object_y;
-    if (distance >= 0 ? distance < 0x1A : object_y - player_y <= 0x19) {
+    if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) <= 0x19) {
         set_animation(self, 1);
         self->unk5 = 3;
         self->unk6 = 0;
@@ -262,7 +255,7 @@ void caterkiller_wait_above(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0x10) {
         self->unk5 = 4;
-        self->y_pos.u.hi -= 0x18;
+        self->y_pos.i.hi -= 0x18;
     }
 }
 
@@ -282,15 +275,15 @@ void caterkiller_check_fall(struct MainObj* self)
         self->unk5 = 4;
         self->unk6 = 0;
         if (self->unk15 == 0) {
-            self->x_pos.u.hi -= 2;
+            self->x_pos.i.hi -= 2;
         } else {
             self->x_pos.u.hi += 2;
         }
-        self->gravity = FIXED(0.2578125);
-        self->ext.main_25.unk84 = 2;
         self->x_speed = 0;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->x_accel = 0;
+        self->ext.main_25.unk84 = 2;
         self->air_state = 1;
     }
 }

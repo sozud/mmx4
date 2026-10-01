@@ -20,10 +20,7 @@ void stage_portrait_select(struct MiscObj* self)
         animation = engine_state;
         self->unk7 = animation;
         if (engine_state >= 8) {
-            animation = 9;
-            if (engine_obj.unk5F < 7U) {
-                animation = 8;
-            }
+            animation = engine_obj.unk5F < 7U ? 8 : 9;
         }
         set_animation_frame(ANIMATED_OBJECT(self), 0,
             (s8)D_800F474C.stage_order[animation] - 1);

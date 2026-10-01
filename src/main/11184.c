@@ -222,17 +222,14 @@ void func_80020B8C(struct EngineObj* arg0)
 
 void func_80020C24(struct EngineObj* arg0)
 {
-    s8 temp_v1;
-
     if (D_80141BDC[0] == 0) {
         switch (D_80141BDF[0]) {
         case 0:
-            temp_v1 = arg0->state;
+            arg0->unk4 = arg0->state;
             arg0->state = 0xC;
             arg0->unk1 = 0;
             arg0->unk2 = 0;
             arg0->unk3 = 0;
-            arg0->unk4 = temp_v1;
             return;
         case 1:
             arg0->state = 3;

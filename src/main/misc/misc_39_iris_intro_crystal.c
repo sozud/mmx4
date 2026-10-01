@@ -56,12 +56,9 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_39_iris_intro_crystal", func_800CF950);
 
 void iris_intro_crystal_wait(struct MiscObj* self)
 {
-    s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->ext.misc_39.timer - 1;
-    self->ext.misc_39.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_39.timer == 0) {
         self->ext.misc_39.timer = 0x76;
         self->y_vel.val = FIXED(-1);
         self->unk5 = 5;
@@ -70,13 +67,10 @@ void iris_intro_crystal_wait(struct MiscObj* self)
 
 void iris_intro_crystal_leave(struct MiscObj* self)
 {
-    s16 timer;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    timer = self->ext.misc_39.timer - 1;
-    self->ext.misc_39.timer = timer;
-    if (timer == 0) {
+    self->ext.misc_39.timer -= 1;
+    if (self->ext.misc_39.timer == 0) {
         self->state = 1;
     }
 }

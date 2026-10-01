@@ -221,7 +221,7 @@ s16 ready_line_streak_vertices[3][4][2] = {
 
 u16 ready_line_shutter_repeats = 0;
 
-void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2]);
+void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2]);
 
 // QuadObj #7
 // megaman never appears in intro stage if nopped out
@@ -482,14 +482,14 @@ void ready_line_streak(struct QuadObj* arg0)
             return;
         }
         if (arg0->runtime.legacy.unk48 == 0) {
-            if (arg0->x_pos.i.hi < 320) {
-                ready_line_move(arg0);
+            if (arg0->x_pos.i.hi >= 320) {
+                arg0->unk5 = 2;
                 return;
             }
-            goto block_18;
+            ready_line_move(arg0);
+            return;
         }
         if (arg0->x_pos.i.hi < -176) {
-        block_18:
             arg0->unk5 = 2;
             return;
         }
@@ -512,13 +512,13 @@ void ready_line_move(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
-void ready_line_converge_vertex(struct QuadObj* arg0, s32 arg1, s32 arg2, const s16 target[2])
+void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2])
 {
     f32* vertex;
     s32 temp_s2;
     s32 temp_s3;
     s32 i;
-    s32 vertex_index;
+    u8 vertex_index;
     s32 quadrant;
 
     vertex = &arg0->vertices[0].x;

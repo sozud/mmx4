@@ -52,6 +52,7 @@ void spawner_pod_init(struct MainObj* arg0)
 
 void spawner_pod_main(struct MainObj* self)
 {
+    s32 hit;
     struct MainObj* context = self->ext.main_28.context;
 
     self->unk18.val = self->x_pos.val;
@@ -61,7 +62,8 @@ void spawner_pod_main(struct MainObj* self)
 
     spawner_pod_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         self->x_speed = 0;
         self->y_speed = 0;

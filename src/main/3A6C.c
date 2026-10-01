@@ -157,11 +157,7 @@ void func_80013404(u8 arg0)
         func_8001326C(5);
 
         a0 = &D_800EE54C;
-        if (ptr->stage == 0xC) {
-            var_v0 = a0 + 0xB;
-        } else {
-            var_v0 = a0 + ptr->stage;
-        }
+        var_v0 = ptr->stage == 0xC ? a0 + 0xB : a0 + ptr->stage;
         ((u8*)D_800EE504)[0x34] = *var_v0;
 
         func_8001326C(6);

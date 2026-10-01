@@ -15,7 +15,7 @@ void flame_jet_wait_sync(struct MainObj* self)
 #ifdef MMX4_PC
         if ((self->unk2 >= 4) || (self->ext.main_62.unk80->animation_step.fields.event != 0)) {
 #else
-        if ((self->ext.main_62.unk80->animation_step.fields.event != 0) || (self->unk2 >= 4)) {
+        if ((self->ext.main_62.unk80->animation_step.fields.event != 0) || (self->unk2 > 3)) {
 #endif
             set_animation(self, 2);
             self->unk5 = 2;
@@ -67,12 +67,10 @@ void flame_jet_pause(struct MainObj* self)
 void flame_jet_main(struct MainObj* self)
 {
     s32 result;
-    u8 frame_index;
 
     flame_jet_step_funcs[self->unk5](self);
-    frame_index = self->animation_step.fields.frame_index;
-    if ((3 <= frame_index) && (frame_index < 12)) {
-        self->hurt_box = flame_jet_hurt_boxes[frame_index - 3];
+    if ((self->animation_step.fields.frame_index > 2) && (self->animation_step.fields.frame_index < 12)) {
+        self->hurt_box = flame_jet_hurt_boxes[self->animation_step.fields.frame_index - 3];
         self->attack_box = flame_jet_attack_boxes[self->animation_step.fields.frame_index - 3];
     } else {
         self->hurt_box = NULL;
@@ -80,8 +78,8 @@ void flame_jet_main(struct MainObj* self)
     }
     result = func_8002DD04(self);
     if ((result == 3) || (result == 0xC) || (result == 0x22)) {
-        self->unk7E = 0x14;
         self->unk5 = 0;
+        self->unk7E = 0x14;
         self->state++;
         self->unk42 = (self->unk42 & 0x7FFF) + 2;
     } else {

@@ -23,7 +23,7 @@ void ice_wall_idle(struct MainObj* self)
 void ice_wall_main(struct MainObj* self)
 {
     s32 hit = func_8002DD04(self);
-    s8 stage;
+    s32 stage;
 
     if (self->ext.main_26.last_health != self->hp) {
         stage = self->ext.main_26.stage--;

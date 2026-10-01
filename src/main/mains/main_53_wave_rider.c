@@ -108,7 +108,7 @@ void wave_rider_air(struct MainObj* self)
 
 void wave_rider_main(struct MainObj* self)
 {
-    s32 destroyed;
+    s8 destroyed;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
@@ -116,8 +116,8 @@ void wave_rider_main(struct MainObj* self)
     self->hurt_box = &wave_rider_body_hurt_box;
     destroyed = func_8002DD04(self) < 0;
     if (!destroyed) {
-        self->hurt_box = wave_rider_rider_hurt_box;
         self->ext.main_53.unk82 = self->unk65;
+        self->hurt_box = wave_rider_rider_hurt_box;
         self->unk65 = self->ext.main_53.unk83;
         destroyed = func_8002DD04(self) < 0;
     }

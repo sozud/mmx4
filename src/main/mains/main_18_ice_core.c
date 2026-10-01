@@ -505,7 +505,7 @@ void ice_core_bounce_move(struct MainObj* self)
 {
     s32 hit;
 
-    if (self->x_speed < 0) {
+    if (0 > self->x_speed) {
         if (self->collision_flags & 2) {
             spawn_debris(2, D_800FC340, self);
             func_8001540C(2, 0x37, self);
@@ -537,7 +537,7 @@ void ice_core_bounce_move(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     if (self->ext.main_18.state.runtime.unk86 != 2) {
         if (--self->unk7C == 0) {
-            if ((u16)(self->y_pos.i.hi - 0x849) < 0x47 && (u16)(self->x_pos.i.hi - 0x17D1) < 0xEF) {
+            if ((self->y_pos.i.hi > 0x848 && self->y_pos.i.hi < 0x890) && (self->x_pos.i.hi > 0x17D0 && self->x_pos.i.hi < 0x18C0)) {
                 self->unk7C = 0x30;
                 self->unk6 = 2;
                 ice_core_face_player(ANIMATED_OBJECT(self));
@@ -776,8 +776,6 @@ void ice_core_shed_ice(struct MainObj* self)
 {
     u8 timer;
     u8 random;
-    u16 flags;
-    s32 value;
 
     timer = self->ext.main_18.shed_timer;
     if (timer & 0xE0) {
@@ -794,12 +792,10 @@ void ice_core_shed_ice(struct MainObj* self)
                 if (random) {
                     random %= 10;
                 }
-                flags = self->ext.main_18.ice_pieces;
-            } while ((flags & D_800FBEDC[random]) == 0);
+            } while ((self->ext.main_18.ice_pieces & D_800FBEDC[random]) == 0);
 
-            value = flags ^ D_800FBEDC[random];
-            self->ext.main_18.ice_pieces = value;
-            if (value == 0x8000) {
+            self->ext.main_18.ice_pieces = self->ext.main_18.ice_pieces ^ D_800FBEDC[random];
+            if (self->ext.main_18.ice_pieces == 0x8000) {
                 self->ext.main_18.state.runtime.unk85 = self->hp;
             }
             self->ext.main_18.shed_timer = (self->ext.main_18.shed_timer - 0x20) | 0xC;

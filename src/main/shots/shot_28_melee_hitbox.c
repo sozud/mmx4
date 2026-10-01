@@ -25,9 +25,9 @@ void melee_hitbox_init(struct ShotObj* self)
     self->x_pos.val = owner->x_pos.val;
     self->y_pos.val = owner->y_pos.val;
     self->unk50.data = melee_hitbox_box;
+    self->unk54 = NULL;
     self->unk5C = 1;
     self->unk16 = 4;
-    self->unk54 = NULL;
     self->unk60 = 6;
     self->unk68 = NULL;
     self->unk58.data = NULL;

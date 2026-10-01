@@ -22,7 +22,6 @@ void select_char_init(struct MiscObj* self)
 {
     s8 temp_v0;
     s8 temp_v1_2;
-    u8 temp_a1;
 
     temp_v0 = self->unk2 - 7;
     switch (temp_v0) {
@@ -46,8 +45,7 @@ void select_char_init(struct MiscObj* self)
     default:
         self->unk40 = D_801406A8[1] >> 7;
         self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
-        temp_a1 = select_char_palettes[self->unk2];
-        self->unk42 = (((temp_a1 * 4) + 4) % 16) | ((((temp_a1 + 1) / 4) + 0x1E0) << 6);
+        self->unk42 = (((select_char_palettes[self->unk2] * 4) + 4) % 16) | ((((select_char_palettes[self->unk2] + 1) / 4) + 0x1E0) << 6);
         self->animation_table = select_char_menu_animations;
         break;
     }
@@ -56,7 +54,7 @@ void select_char_init(struct MiscObj* self)
         self->x_pos.val = FIXED(select_char_positions[self->unk2].x);
         self->y_pos.val = FIXED(select_char_positions[self->unk2].y);
     }
-    if (self->unk2 >= 0xC) {
+    if (self->unk2 > 0xB) {
         s32 temp = self->unk2 - 0xC;
         self->x_pos.val = FIXED(select_char_text_positions[temp].x);
         self->y_pos.val = FIXED(select_char_text_positions[(self->unk2 - 0xC)].y);
@@ -79,10 +77,10 @@ void select_char_portrait_slide_in(struct MiscObj* self)
 {
     // set speeds of portraits when "select a character"
     // screen first starts and portraits come in
-    if (self->unk2 == X_PORTRAIT) {
-        self->x_vel.val = FIXED(16); // speed of X portrait
-    } else {
+    if (self->unk2 != X_PORTRAIT) {
         self->x_vel.val = FIXED(-16); // speed of Zero portrait
+    } else {
+        self->x_vel.val = FIXED(16); // speed of X portrait
     }
     if (((self->unk2 == X_PORTRAIT) && (self->x_pos.i.hi == 96)) || ((self->unk2 == ZERO_PORTRAIT) && (self->x_pos.i.hi == 224))) {
         engine_obj.character_state.bytes[2] |= 1 << self->unk2;

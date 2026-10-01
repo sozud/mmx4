@@ -87,6 +87,7 @@ void dragonfly_init(struct MainObj* self)
 
 void dragonfly_run(struct MainObj* self)
 {
+    s32 hit;
     s8* held;
 
     self->unk18.val = self->x_pos.val;
@@ -101,7 +102,8 @@ void dragonfly_run(struct MainObj* self)
             }
         }
         self->ext.main_10.saved_unk5 = self->unk5;
-        if (func_8002DD04(self) < 0) {
+        hit = func_8002DD04(self);
+        if (hit < 0) {
             spawn_explosion(self);
             spawn_debris(6, &dragonfly_debris, self);
             drop_item(self, 0x11);
@@ -214,15 +216,19 @@ void dragonfly_hunt(struct MainObj* self)
 void dragonfly_hunt_start(struct MainObj* self)
 {
     s32 velocity = self->unk15;
-    if (velocity != 0) {
-        velocity = FIXED(4);
-    } else {
+    if (velocity == 0) {
         velocity = FIXED(-4);
+        self->x_speed = velocity;
+        self->ext.main_10.timer = 0xB4;
+        self->unk6 = 1;
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        velocity = FIXED(4);
+        self->x_speed = velocity;
+        self->ext.main_10.timer = 0xB4;
+        self->unk6 = 1;
+        animate_object(ANIMATED_OBJECT(self));
     }
-    self->x_speed = velocity;
-    self->ext.main_10.timer = 0xB4;
-    self->unk6 = 1;
-    animate_object(ANIMATED_OBJECT(self));
 }
 // dragonfly_hunt_fly
 INCLUDE_ASM("main/nonmatchings/mains/main_10_dragonfly", func_80049E68);
@@ -244,7 +250,7 @@ void dragonfly_hunt_hover(struct MainObj* self)
             return;
         }
 
-        if (g_Player.y_pos.i.hi - 0x18 < self->y_pos.i.hi) {
+        if (self->y_pos.i.hi > g_Player.y_pos.i.hi - 0x18) {
             self->y_speed = FIXED(3);
         } else {
             self->y_speed = FIXED(-3);
@@ -313,12 +319,10 @@ void dragonfly_carry_lift(struct MainObj* self)
 void dragonfly_carry_rise(struct MainObj* self)
 {
     u32 timer;
-    s32 struggle;
 
     dragonfly_hold_player(self);
-    struggle = self->ext.main_10.struggle + func_8002BAA4();
-    self->ext.main_10.struggle = struggle;
-    if (struggle >= 0x15) {
+    self->ext.main_10.struggle += func_8002BAA4();
+    if (self->ext.main_10.struggle >= 0x15) {
         g_Player.stun_timer = 0;
         self->attack_box = dragonfly_body_boxes;
         self->unk62 = 0;
@@ -349,20 +353,16 @@ void dragonfly_carry_rise(struct MainObj* self)
 
 void dragonfly_carry_squeeze(struct MainObj* self)
 {
-    s16 sound_timer;
-    s32 struggle;
     u32 squeeze;
 
-    sound_timer = --self->unk7E;
-    if (sound_timer == 0) {
+    if (--self->unk7E == 0) {
         func_8001540C(2, 0xE, self);
         self->unk7E = 0x14;
     }
 
     dragonfly_hold_player(self);
-    struggle = self->ext.main_10.struggle + func_8002BAA4();
-    self->ext.main_10.struggle = struggle;
-    if (struggle >= 0x15) {
+    self->ext.main_10.struggle += func_8002BAA4();
+    if (self->ext.main_10.struggle >= 0x15) {
         stop_sound(2, 0xE);
         g_Player.stun_timer = 0;
         self->attack_box = NULL;
@@ -384,8 +384,8 @@ void dragonfly_carry_squeeze(struct MainObj* self)
             g_Player.stun_timer = 0;
             self->unk62 = 0;
             set_animation(self, 5);
-            self->y_speed = 0x20000;
             self->attack_box = NULL;
+            self->y_speed = 0x20000;
             self->unk5 = 5;
             self->unk6 = 0;
             return;

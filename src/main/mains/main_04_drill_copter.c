@@ -39,11 +39,8 @@ void drill_copter_approach_start(struct MainObj* self)
 {
     s32 x_vel;
 
-    x_vel = FIXED(-2);
     self->unk6++;
-    if (self->unk15 != 0) {
-        x_vel = FIXED(2);
-    }
+    x_vel = 0 != self->unk15 ? FIXED(2) : FIXED(-2);
     self->x_speed = x_vel;
     set_animation(self, 2);
     func_8001540C(2, 7, self);
@@ -239,8 +236,8 @@ void drill_copter_fire_shots(struct MainObj* self)
                 shot->unk40 = self->unk40;
                 shot->unk42 = self->unk42;
                 sprite_frames = self->sprite_frames;
-                shot->unk2 = i;
                 shot->unk3C = (void*)sprite_frames;
+                shot->unk2 = i;
                 shot->bg_offset = self->bg_offset;
                 shot->x_pos.val = self->x_pos.val;
                 shot->y_pos.val = self->y_pos.val;

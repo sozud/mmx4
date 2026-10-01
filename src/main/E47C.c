@@ -364,10 +364,10 @@ void func_8001DCCC(struct GameInfo* arg0)
     func_80028BF0();
     func_8002771C();
     func_80023CE0();
+    need_palette_load |= 1;
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 1;
     background_objects[2].unk3 = 0;
-    need_palette_load |= 1;
 #ifdef VERSION_JP
     func_8001DC7C(0xB, 0);
     func_8001DC7C(0xB, 1);
@@ -432,8 +432,6 @@ void func_8001DF24_jp(struct GameInfo* arg0)
 #endif
 void func_8001DE54(struct GameInfo* arg0)
 {
-    s16 temp_v0_2;
-    s32 temp_v1;
     s16 var_a2;
     s16* var_a1;
     s32* var_a0;
@@ -457,8 +455,8 @@ void func_8001DE54(struct GameInfo* arg0)
 #endif
         temp_v0 = find_free_misc_obj();
         if (temp_v0 != 0) {
-            temp_v0->id = 0x1D;
             temp_v0->active = 1;
+            temp_v0->id = 0x1D;
             temp_v0->unk2 = 0x20;
 #ifdef VERSION_JP
             temp_v0->ext.unk.unk50 = (struct MiscUnk50_2*)first;
@@ -471,13 +469,11 @@ void func_8001DE54(struct GameInfo* arg0)
         var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
-            temp_v1 = *var_a1;
-            var_a1 += 1;
-            temp_v0_2 = var_a2 + 1;
-            var_a2 = temp_v0_2;
-            *var_a0 = temp_v1 << 0x10;
+            *var_a0 = (*var_a1) << 0x10;
             var_a0++;
-        } while (temp_v0_2 < 0x24);
+            var_a1 += 1;
+            var_a2 += 1;
+        } while (var_a2 < 0x24);
         D_80169498.title.settled = 1;
         background_objects[0].unk3 = 1;
         arg0->mode++;
@@ -617,6 +613,8 @@ void func_8001E54C(struct GameInfo* /* D_80173C70 */ arg0)
         for (var_s0 = 0;
 #ifdef VERSION_JP
              var_s0 < 5;
+#elif defined(MMX4_WIN32)
+             var_s0 < 8;
 #else
              var_s0 < 9;
 #endif
@@ -689,7 +687,7 @@ void func_8001E708(struct GameInfo* arg0)
     func_80023D68();
 }
 
-s32 func_8001E850(u8* arg0, u8 arg1)
+u8 func_8001E850(u8* arg0, u8 arg1)
 {
     s8 counter = 0;
     struct MiscObj* misc;
@@ -828,11 +826,7 @@ void func_8001ED44(struct GameInfo* arg0)
                 func_800129F0(8);
             }
             arg0->mode = (u8)arg0->mode + 1;
-#ifdef VERSION_JP
-        } else if (controller_state & PADRdown) {
-#else
-        } else if (controller_state & PADRup) {
-#endif
+        } else if (controller_state & PAD_SELECTION_ALT) {
             func_800129F0(8);
             D_80141BDF[0] = 2;
             arg0->mode = (u8)arg0->mode + 1;
@@ -852,7 +846,7 @@ void func_8001EE08(struct GameInfo* arg0)
             s32 state = (u8)D_80141BDC[3];
 
             if (state != 1) {
-                if (state < 2 && state == 0) {
+                if (state <= 1 && state == 0) {
                     func_8001C30C(&D_800F1D90.save);
                     engine_obj.state = 1;
                     engine_obj.unk1 = 6;
@@ -894,11 +888,7 @@ void func_8001EF48(struct GameInfo* arg0)
         if (D_80141BDF[0] != 0) {
             func_800129F0(8);
         }
-#ifdef VERSION_JP
-    } else if (controller_state & PADRdown) {
-#else
-    } else if (controller_state & PADRup) {
-#endif
+    } else if (controller_state & PAD_SELECTION_ALT) {
         func_800129F0(8);
         D_80141BDF[0] = 2;
     } else {
@@ -920,12 +910,12 @@ void func_8001EFF0(struct GameInfo* arg0)
             engine_obj.unk2 = 0;
             engine_obj.unk3 = 0;
         } else {
+            background_objects[2].x_pos.i.hi = 0;
             background_objects[0].unk4C = 1;
             background_objects[1].unk4C = 1;
             background_objects[2].unk4C = 1;
             background_objects[1].unk3 = 1;
             background_objects[2].unk3 = 1;
-            background_objects[2].x_pos.i.hi = 0;
             arg0->unk0 = 6;
             arg0->mode = 0;
             arg0->unk2 = 0;

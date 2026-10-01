@@ -389,7 +389,7 @@ u8 D_801406B4[0x4];
 u8 D_801406B8[0x40];
 struct WeaponObj weapon_objects[0x10];
 u8 D_801410B8[0x8];
-struct UnkObj unk_objects[0x14];
+struct UnkObj unk_objects[UNK_OBJECT_COUNT];
 u8 D_80141840[0x40];
 u8 D_80141880[0x8];
 u8 D_80141888[0x40];

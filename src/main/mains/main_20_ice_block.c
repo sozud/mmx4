@@ -28,7 +28,7 @@ void ice_block_idle(struct MainObj* self)
 void ice_block_main(struct MainObj* self)
 {
     s32 collision = func_8002DD04(self);
-    s8 countdown;
+    s32 countdown;
 
     if (self->unk2 == 0 && self->ext.main_20.unk80 != self->hp) {
         countdown = self->ext.main_20.unk81--;

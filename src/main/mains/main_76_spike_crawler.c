@@ -59,7 +59,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
 void spike_crawler_update_speed(struct MainObj* self)
 {
     s16 object_y;
-    s16 player_y;
+    s32 player_y;
     s16 current_timer;
     s16 new_timer;
     s32 distance;
@@ -158,7 +158,7 @@ void spike_crawler_hit_flash(struct MainObj* self)
         self->unk6++;
         self->invincibility_timer = 0x28;
     }
-    if (self->invincibility_timer & 7) {
+    if (BLINK_CLOCK(self->invincibility_timer) & 7) {
         self->unk42 &= 0x7FFF;
     } else {
         self->unk42 |= 0x8000;
@@ -177,12 +177,9 @@ extern s32 spike_crawler_knockback_speeds[2];
 
 void spike_crawler_hit_knockback(struct MainObj* self)
 {
-    s8 step;
     s32 speed;
-
-    step = self->unk6;
-    if (step == 0) {
-        self->unk6 = step + 1;
+    if (self->unk6 == 0) {
+        self->unk6 = self->unk6 + 1;
         if (g_Player.x_pos.val < self->x_pos.val) {
             self->x_speed = spike_crawler_knockback_speeds[self->unk63 - 5];
         } else {
@@ -290,7 +287,7 @@ s8 spike_crawler_hurt_box[4] = { -11, -8, 20, 18 };
 
 void play_boss_voice(s32 arg0)
 {
-    u32 object_id;
+    s16 object_id;
     u32 random_value;
 
 #ifndef VERSION_JP
@@ -300,9 +297,8 @@ void play_boss_voice(s32 arg0)
         random_value = get_random() & 0xFF;
         random_value %= 3U;
 #ifdef VERSION_JP
-        object_id = arg0 & 0xFF;
 #endif
-        func_8001663C(boss_voice_tracks[object_id][random_value & 0xFF], 0x7F);
+        func_8001663C(boss_voice_tracks[(arg0 & 0xFF)][random_value & 0xFF], 0x7F);
         engine_obj.unk36.value = 1;
 #ifndef VERSION_JP
     } else {

@@ -2575,7 +2575,7 @@ void wave_rider_wait_offscreen(struct MainObj*);
 extern void (*wave_rider_step_funcs[])(struct MainObj*);
 void enemy_hit_reaction(void* arg0);
 void wave_rider_idle(struct MainObj* arg0);
-s32 func_8006B1C4(struct MainObj* arg0, u8 side);
+u8 func_8006B1C4(struct MainObj* arg0, u8 side);
 void func_8006B5F8(struct MainObj* arg0);
 void func_8006B6B0(struct MainObj* arg0);
 void wave_rider_catch_up(struct MainObj* arg0);
@@ -3749,7 +3749,7 @@ void colonel_jump_slam_drop(struct MainObj*);
 void colonel_jump_slam_shockwave(struct MainObj*);
 void colonel_jump_slam_recover(struct MainObj*);
 void colonel_face_player(struct MainObj *arg0);
-s32 colonel_shot_incoming(struct MainObj*);
+ret_u8 colonel_shot_incoming(struct MainObj*);
 
 // drone_pod_state_funcs
 extern void (*drone_pod_state_funcs[])(struct MainObj *);
@@ -3811,7 +3811,7 @@ void func_8008A60C(struct MainObj* arg0);
 void func_8008A9F4(struct MainObj* arg0);
 void ride_armor_pilot_return_to_idle(struct MainObj *arg0);
 void ride_armor_pilot_set_scripted_speed(struct MainObj* arg0);
-s32 ride_armor_pilot_update_facing(struct MainObj* arg0);
+u8 ride_armor_pilot_update_facing(struct MainObj* arg0);
 void ride_armor_pilot_set_jump_speed(struct MainObj* arg0);
 
 // ride_armor_pilot_despawn_funcs

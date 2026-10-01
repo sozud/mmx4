@@ -93,10 +93,13 @@ void homing_orb_leave(struct MainObj* self)
 
 void homing_orb_main(struct MainObj* self)
 {
+    s32 hit;
+
     extern u8 homing_orb_debris[];
     extern void (*homing_orb_step_funcs[])(struct MainObj*);
 
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         self->state += 1;
         self->unk5 = 0;
         self->unk42 &= 0x7FFF;

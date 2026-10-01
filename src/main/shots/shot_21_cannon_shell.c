@@ -33,7 +33,7 @@ void cannon_shell_fly(struct ShotObj* self)
         CollisionRelated(PLAYER_OBJECT(self));
     }
     func_8009D588(self);
-    if (self->y_pos.i.hi >= background_objects[0].y_pos.i.hi + 0xE0) {
+    if (background_objects[0].y_pos.i.hi + 0xE0 <= self->y_pos.i.hi) {
         self->unk70 = 1;
     }
     if (self->unk70 != 0) {

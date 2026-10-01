@@ -61,7 +61,10 @@ void cyberspace_warp_wait_blink(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->ext.misc_33.timer != 0) {
-        if ((self->on_screen ^= 1) != 0) {
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
+        if (self->on_screen != 0) {
             update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
         }
         self->ext.misc_33.timer--;

@@ -24,9 +24,10 @@ void debris_fall(struct MiscObj* self)
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         move_with_gravity((struct AnimatedObj*)self);
         animate_object(self);
-        temp_v0 = self->on_screen ^ 1;
-        self->on_screen = temp_v0;
-        if (temp_v0 != 0) {
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
+        if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }
     } else {

@@ -18,8 +18,8 @@ void gunship_exhaust_init(struct VisualObj* self)
     flags = self->unk42;
     type = player->unk15;
     self->unk42 = flags & 0x7FFF;
-    self->on_screen = 1;
     self->unk15 = type;
+    self->on_screen = 1;
     if (get_random() & 1) {
         set_animation(self, 0x15);
     } else {
@@ -60,35 +60,30 @@ void gunship_exhaust_delay(struct VisualObj* arg0)
 
 void gunship_exhaust_main(struct VisualObj* self)
 {
-    s16 timer;
-    s16 x;
-    s8 type;
-    struct PlayerObj* player = self->unk50;
+    struct PlayerObj* player;
+
+    player = self->unk50;
 
     animate_object(ANIMATED_OBJECT(self));
-    type = self->unk2;
-    switch (type) {
+    switch (self->unk2) {
     case 0:
-        x = player->x_pos.u.hi - 0x3C;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi - 0x3C;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 1:
-        x = player->x_pos.u.hi - 0x14;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi - 0x14;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 2:
-        x = player->x_pos.u.hi + 0x14;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi + 0x14;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     case 3:
-        x = player->x_pos.u.hi + 0x3C;
-        goto set_position;
+        self->x_pos.i.hi = player->x_pos.u.hi + 0x3C;
+        self->y_pos.i.hi = player->y_pos.u.hi - 9;
+        break;
     }
-    goto update_timer;
-set_position:
-    self->x_pos.i.hi = x;
-    self->y_pos.i.hi = player->y_pos.u.hi - 9;
-update_timer:
-    timer = (u16)self->unk54 - 1;
-    self->unk54 = timer;
-    if (timer == 0 || player->active == 0) {
+    if (--self->unk54 == 0 || player->active == 0) {
         self->state++;
     }
     update_on_screen(BASE_OBJECT(self), 0x30, 0x30);

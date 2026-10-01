@@ -25,10 +25,10 @@ void jet_drone_bullet_init(struct ShotObj* arg0)
             & 0xFF);
     self->unk54 = jet_drone_bullet_hit_box;
     self->unk50.data = jet_drone_bullet_hit_box;
-    self->unk60 = 3;
     self->unk16 = 0;
     self->unk68 = 0;
     self->unk5C = 1;
+    self->unk60 = 3;
     self->x_vel.val *= 2;
     self->y_vel.val *= 2;
     set_animation(self, 3);
@@ -38,7 +38,7 @@ void jet_drone_bullet_fly(struct ShotObj* self)
 {
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    if (ENGINE_STAGE_ID != 3 || engine_obj.checkpoint != 0 || g_Player.x_pos.i.hi < 0x7B7) {
+    if ((engine_obj.stage != 0x3 || engine_obj.substage != 0) || engine_obj.checkpoint != 0 || g_Player.x_pos.i.hi <= 0x7B6) {
         func_8002D9BC(self);
     }
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {

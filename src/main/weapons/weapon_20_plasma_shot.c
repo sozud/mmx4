@@ -29,21 +29,22 @@ void plasma_orb_linger(struct WeaponObj* arg0)
 {
     u8 timer;
     u8 sub_timer;
+    struct Weapon20Ext* ext = &arg0->ext.weapon_20;
 
     if (arg0->unk5 == 0) {
-        timer = arg0->ext.weapon_20.lifetime;
+        timer = ext->lifetime;
         if (timer == 0) {
             set_animation(arg0, 0x1F);
             arg0->unk50 = 0;
             arg0->unk5 = 1;
         } else {
-            arg0->ext.weapon_20.lifetime = timer - 1;
-            sub_timer = arg0->ext.weapon_20.timer;
+            ext->lifetime = timer - 1;
+            sub_timer = ext->timer;
             if (sub_timer == 0) {
-                arg0->ext.weapon_20.timer = 4;
+                ext->timer = 4;
                 arg0->unk64 = (u8)arg0->unk64 + 1;
             } else {
-                arg0->ext.weapon_20.timer = sub_timer - 1;
+                ext->timer = sub_timer - 1;
             }
         }
     } else if (arg0->animation_step.fields.relative_step == 0) {

@@ -7,7 +7,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_53_final_cutscene", func_800D2A74);
 
 void final_cutscene_wait_player(struct MiscObj* self)
 {
-    if (g_Player.x_pos.i.hi >= 0x6E1) {
+    if (g_Player.x_pos.i.hi > 0x6E0) {
         self->unk5++;
         player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x6B0;

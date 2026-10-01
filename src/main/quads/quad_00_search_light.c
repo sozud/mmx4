@@ -13,7 +13,7 @@ void search_light_init(struct QuadObj* arg0)
 {
     u16 temp_a0;
     struct SearchLightInit* temp_v0;
-    s16 temp = arg0->unk2;
+    s8 temp = arg0->unk2;
 
     arg0->active |= 0x90;
     arg0->unk36 = search_light_blend_modes.values[arg0->unk2 >> 1];

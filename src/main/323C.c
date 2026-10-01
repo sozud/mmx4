@@ -54,7 +54,6 @@ void func_80012A3C(void)
     }* d80141BD8;
     s32 temp_a0;
     s32 var_v0;
-    u16 temp_v0;
     u16 temp_v1;
     TILE* temp_s0;
     DR_TPAGE* temp_s1;
@@ -116,9 +115,8 @@ void func_80012A3C(void)
                 }
                 dea0->unk2 = (s16)((u16)dea0->unk2 + 1);
             } else {
-                temp_v0 = dea0->unk4 + (s8)d80141BD8->unk5;
-                dea0->unk4 = temp_v0;
-                if ((s16)temp_v0 >= 0x100) {
+                dea0->unk4 += (s8)d80141BD8->unk5;
+                if ((s16)dea0->unk4 >= 0x100) {
                     dea0->unk4 = 0xFFU;
                     d80141BD8->unk5 = 2U;
                     dea0->unk0 = (s16)((u16)dea0->unk0 + 1);

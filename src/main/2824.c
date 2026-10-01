@@ -92,12 +92,9 @@ INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
 
 void func_80012454(void)
 {
-    u16 temp_v0;
-
     if ((D_8013BD44 != 0) && (D_80141BDC[0] == 0)) {
         if ((D_80166C08 & 0x900) == 0x900) {
-            temp_v0 = --D_80141BD2;
-            if ((temp_v0 << 0x10) == 0) {
+            if ((--D_80141BD2 << 0x10) == 0) {
                 if ((engine_obj.stage != 0) && (engine_obj.unk5F >= 3U)) {
                     func_8001C3E8();
                 }

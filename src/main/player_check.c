@@ -284,10 +284,7 @@ s32 player_dash_should_end(struct PlayerObj* self)
     u16 held;
     u8 timer;
 
-    collision_side = PLAYER_COLLIDE_LEFT;
-    if (self->unk15 != 0) {
-        collision_side = PLAYER_COLLIDE_RIGHT;
-    }
+    collision_side = self->unk15 != 0 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
     if (collision_side & self->unk88.bytes.collision_flags) {
         return 1;
     }
@@ -447,15 +444,19 @@ void player_check_damage(struct PlayerObj* self)
     s8 action;
     if (self->is_clone == 0 && (action = self->unk5, action != 0) && (action != PLAYER_BEAM_OUT)) {
         if ((self->unk88.bytes.collision_flags & (PLAYER_COLLIDE_CEILING | PLAYER_COLLIDE_GROUND)) == 0xC) {
+            EASY_HP_SET(0);
             self->hp = -0x80;
         }
         if ((self->unk88.bytes.collision_flags & (PLAYER_COLLIDE_RIGHT | PLAYER_COLLIDE_LEFT)) == 3) {
+            EASY_HP_SET(0);
             self->hp = -0x80;
         }
         if (self->touching_spikes != 0 && self->invincibility_timer == 0 && self->spike_immune == 0) {
+            EASY_HP_SET(0);
             self->hp = -0x80;
         }
         if (self->hp == -0x80) {
+            EASY_HP_SET(0);
             self->hp = 0;
             engine_obj.unk1C = 1;
             player_reset_actions(self);

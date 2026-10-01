@@ -25,13 +25,13 @@ void mushroom_shot_spore_init(struct ShotObj* self)
         self->x_vel.val = -mushroom_shot_spore_x_speeds[self->unk2];
     }
     self->y_pos.i.hi += (s8)(mushroom_shot_spore_offsets[self->unk2 * 2 + 1]);
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
     self->unk50.data = mushroom_shot_spore_hit_box;
     self->timer = 0x28;
     self->unk5C = 1;
     self->unk60 = 6;
-    self->unk16 = 0;
-    self->unk68 = NULL;
-    self->unk54 = NULL;
     set_animation(self, 0xB);
 }
 
@@ -88,7 +88,7 @@ void mushroom_shot_sprout_init(struct ShotObj* self)
 {
     self->unk58.collision_bounds = D_801061F0;
     if (self->unk15 == 0) {
-        self->x_pos.u.hi = self->x_pos.u.hi - 0x20;
+        self->x_pos.i.hi = self->x_pos.u.hi - 0x20;
     } else {
         self->x_pos.u.hi = self->x_pos.u.hi + 0x20;
     }
@@ -105,6 +105,7 @@ void mushroom_shot_sprout_init(struct ShotObj* self)
 
 void mushroom_shot_sprout_main(struct ShotObj* self)
 {
+    s32 hit;
     u8 color;
 
     self->unk18.val = self->x_pos.val;
@@ -128,7 +129,8 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
             self->unk42 = (color & 0xF) | (((color >> 4) + 0x1E0) << 6);
         }
     }
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->state = 6;
     }
     if (self->unk7C->state == 2) {

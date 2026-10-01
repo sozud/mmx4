@@ -58,9 +58,9 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
 void func_800C05FC(struct ItemObj* pillar)
 {
     s32 in_range;
-    u16 right;
+    s32 right;
 
-    if (pillar->unk2 < 0xA || pillar->unk2 == 0x14) {
+    if (pillar->unk2 <= 0x9 || pillar->unk2 == 0x14) {
         if (pillar->x_pos.i.hi >= falling_pillar_entries[pillar->unk2].trigger_x && pillar->ext.packed == 0) {
             apply_tile_effect(pillar->unk2 + 0xB, 0, 0);
             pillar->ext.packed = 1;

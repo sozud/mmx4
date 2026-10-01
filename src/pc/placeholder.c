@@ -11,7 +11,7 @@ void wall_crawler_update_surface(struct MainObj*);
 void func_80089C7C(struct MainObj*);
 void ride_armor_pilot_check_dash(struct MainObj*);
 void ride_armor_pilot_set_step(struct BaseObj*, s8);
-s32 ride_armor_pilot_update_facing(struct MainObj*);
+u8 ride_armor_pilot_update_facing(struct MainObj*);
 void ride_armor_pilot_set_jump_speed(struct MainObj*);
 void ride_armor_pilot_spawn_dust(struct VisualObj*, u8);
 void func_80062AEC(struct MainObj*);
@@ -398,7 +398,7 @@ extern u8 D_8013B8E0[];
 void func_800DADA0(struct TileEffectRecord*, u16, u16, u8, u8);
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
-s32 func_8002938C(s32 id)
+ret_u8 func_8002938C(s32 id)
 {
     const u8* ids = s_StageMainIds[(u8)engine_obj.stage][(u8)engine_obj.substage];
     s32 index = 0;
@@ -1941,7 +1941,7 @@ void func_80036F50(struct PlayerObj* player)
     }
 }
 
-s32 func_8002DD04(struct MainObj* object)
+ret_s8 func_8002DD04(struct MainObj* object)
 {
     struct WeaponObj* weapon;
 
@@ -6231,7 +6231,7 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
     return a1 < box0->unk3;
 }
 
-s32 func_8002D9BC(void* shot)
+ret_u8 func_8002D9BC(void* shot)
 {
     struct ShotObj* arg0 = (struct ShotObj*)shot;
     s32 result;
@@ -12673,7 +12673,7 @@ void func_8006AF70(struct MainObj* arg0)
     }
 }
 
-s32 func_8006B1C4(struct MainObj* arg0, u8 side)
+u8 func_8006B1C4(struct MainObj* arg0, u8 side)
 {
     const struct Unk_unk68* bounds = arg0->terrain_box;
     s32 x;
@@ -14524,7 +14524,7 @@ void func_80063B20(struct MainObj* arg0)
 
 extern RECT* web_spider_swing_paths[6];
 extern u16 web_spider_arena_y;
-s32 angle_from_delta(s32 arg0, s32 arg1);
+u8 angle_from_delta(s32 arg0, s32 arg1);
 
 void func_80065168(struct MainObj* arg0, s16 x, s16 y)
 {

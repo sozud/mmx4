@@ -468,6 +468,8 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     for (var_s0 = 0;
 #ifdef VERSION_JP
          var_s0 < 9;
+#elif defined(MMX4_WIN32)
+         var_s0 < 13;
 #else
          var_s0 < 14;
 #endif
@@ -561,7 +563,7 @@ void func_8001DAD0(struct GameInfo* arg0)
 
 void func_8001DAF8(void)
 {
-    s32 var_v1;
+    s16 var_v1;
 
     game_info.unkD = 1;
     D_80141BDE[0] = 0;
@@ -570,10 +572,7 @@ void func_8001DAF8(void)
     while (1) {
         D_800F21B0[game_info.unk0](&game_info);
         if (game_info.unkD == 0) {
-            var_v1 = 0x800;
-            if (game_info.unk0 != 1) {
-                var_v1 = 0x8F0;
-            }
+            var_v1 = game_info.unk0 != 1 ? 0x8F0 : 0x800;
             if (var_v1 & controller_state) {
                 func_8001540C(0, 0x22, 0);
                 game_info.unkD = 1;

@@ -25,7 +25,7 @@ void depth_charge_fall(struct ShotObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     func_8002D9BC(self);
-    if ((u32)(self->x_pos.u.hi - 0x1721) >= 0xFF) {
+    if ((self->x_pos.i.hi <= 0x1720 || self->x_pos.i.hi >= 0x1820)) {
         self->x_vel.val = 0;
         self->y_vel.val = FIXED(-2);
     }
@@ -63,7 +63,10 @@ void depth_charge_hit(struct ShotObj* self)
 
 void depth_charge_main(struct ShotObj* self)
 {
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    s32 hit;
+
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->state++;
         self->unk5 = 0;
         self->unk42 &= 0x7FFF;

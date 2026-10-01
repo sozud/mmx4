@@ -10,7 +10,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D2190);
 void npc_cutscene_talk_wait_player(struct MiscObj* self)
 {
     if (self->unk6 == 0) {
-        if (g_Player.x_pos.i.hi >= 0x911) {
+        if (g_Player.x_pos.i.hi > 0x910) {
             self->unk6++;
             background_objects[0].unk26 = 0x8C0;
             player_start_script_action(0x14, 0x40);
@@ -34,7 +34,7 @@ void npc_cutscene_talk_line(struct MiscObj* self)
     }
 
     self->on_screen = 0;
-    if (D_80141BD8.unk0 & 1) {
+    if (BLINK_TIMER.unk0 & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -120,7 +120,7 @@ void npc_cutscene_blink(struct MiscObj* self)
         self->ext.misc_52.timer = timer - 1;
     }
     self->on_screen = 0;
-    if (D_80141BD8.unk0 & 1) {
+    if (BLINK_TIMER.unk0 & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -131,7 +131,7 @@ void npc_cutscene_fade_out(struct MiscObj* self)
     self->on_screen = 0;
     timer--;
     self->ext.misc_52.timer = timer;
-    if (timer == 0) {
+    if (0 == timer) {
         engine_obj.unkF = 0x40;
     }
 }

@@ -20,17 +20,22 @@ extern void (*rocket_spiker_step_funcs[])(struct MainObj*);
 
 void rocket_spiker_main(struct MainObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     rocket_spiker_step_funcs[self->unk5](self);
     func_8002D9BC(self);
     self->ext.main_37.saved_unk5 = self->unk5;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(0xA, rocket_spiker_debris, self);
         drop_item(BASE_OBJECT(self), 0x13);
         self->state = 2;
-    } else if (self->unk2 == 3 || func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
+    } else if (self->unk2 == 3) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x60, 0x40) == 0) {
         update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
     } else {
         self->state = 2;
@@ -99,7 +104,7 @@ void rocket_spiker_crawl(struct MainObj* self)
 
 void rocket_spiker_crawl_move(struct MainObj* self)
 {
-    s32 direction_mask;
+    s8 direction_mask;
 
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -170,18 +175,14 @@ void rocket_spiker_boost_wait(struct MainObj* self)
         }
     }
     if (!(++self->unk7E & 7)) {
-        u16 left = self->ext.main_37.unk84.i.lo;
-        u16 top = self->ext.main_37.unk84.u.hi;
-        func_800B10E4(0x11, (s16)(left + 0x10), (s16)(top + 0x10), (s16)(left + 0x20), (s16)(top + 0x30), 1);
+
+        func_800B10E4(0x11, (s16)(self->ext.main_37.unk84.i.lo + 0x10), (s16)(self->ext.main_37.unk84.u.hi + 0x10), (s16)(self->ext.main_37.unk84.i.lo + 0x20), (s16)(self->ext.main_37.unk84.u.hi + 0x30), 1);
     }
 }
 
 // rocket_spiker_boost_aim
 void func_800606D8(struct MainObj* main)
 {
-    s16 left;
-    s16 top;
-
     animate_object(ANIMATED_OBJECT(main));
     if (--main->ext.main_37.unk8C.bytes[1] == 0) {
         func_8001540C(2, 0x59, main);
@@ -206,9 +207,7 @@ void func_800606D8(struct MainObj* main)
         }
     }
     if (!(++main->unk7E & 7)) {
-        left = main->ext.main_37.unk84.i.lo;
-        top = main->ext.main_37.unk84.i.hi;
-        func_800B10E4(0x11, (s16)(left + 0x10), (s16)(top + 0x10), (s16)(left + 0x20), (s16)(top + 0x30), 1);
+        func_800B10E4(0x11, (s16)(main->ext.main_37.unk84.i.lo + 0x10), (s16)(main->ext.main_37.unk84.i.hi + 0x10), (s16)(main->ext.main_37.unk84.i.lo + 0x20), (s16)(main->ext.main_37.unk84.i.hi + 0x30), 1);
     }
 }
 

@@ -17,11 +17,11 @@ void dialogue_ui_update(struct MiscObj* self)
                 self->ext.unk.unk56.sht = 0x20;
                 self->ext.unk.unk54 ^= 1;
             }
-            if (self->ext.unk.unk54) {
-                self->on_screen = 0;
+            if (!self->ext.unk.unk54) {
+                is_on_screen(self);
                 return;
             }
-            is_on_screen(self);
+            self->on_screen = 0;
             return;
         }
         ZeroObjectState(self);

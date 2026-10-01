@@ -67,21 +67,16 @@ void post_boss_cutscene_stop(struct UnkObj* self)
 
 void post_boss_cutscene_first_line(struct UnkObj* self)
 {
-    u16 sound_id;
-    u8 sound_type;
-
     if (--self->ext.timer != 0) {
         return;
     }
-    sound_id = 0x1A;
     if (engine_obj.cur_character == 0) {
-        sound_id = 0x1F;
-        sound_type = 1;
+        func_8002217C(0x1F, 1, 0);
+        self->unk5 = 5;
     } else {
-        sound_type = 3;
+        func_8002217C(0x1A, 3, 0);
+        self->unk5 = 5;
     }
-    func_8002217C(sound_id, sound_type, 0);
-    self->unk5 = 5;
 }
 
 void post_boss_cutscene_wait_first(struct UnkObj* self)
@@ -110,41 +105,33 @@ void post_boss_cutscene_shake_start(struct UnkObj* self)
 
 void post_boss_cutscene_shake(struct UnkObj* self)
 {
-    s32 delta;
-
     if (--self->ext.timer == 0) {
         self->ext.timer = 0x3C;
         self->on_screen = 0;
         self->unk5 = 8;
         return;
     }
-    delta = self->x_vel.val + self->unk28;
-    self->x_vel.val = delta;
-    if (self->ext.timer & 1) {
-        self->x_pos.val += delta;
-    } else {
-        self->x_pos.val -= delta;
+    self->x_vel.val = self->x_vel.val + self->unk28;
+    if (SHAKE_ENABLED) {
+        if (BLINK_CLOCK(self->ext.timer) & 1) {
+            self->x_pos.val += self->x_vel.val;
+        } else {
+            self->x_pos.val -= self->x_vel.val;
+        }
     }
 }
 
 void post_boss_cutscene_second_line(struct UnkObj* self)
 {
-    s8 temp_v0;
-    u16 sound_id;
-    u8 sound_type;
-
-    temp_v0 = self->ext.timer - 1;
-    self->ext.timer = temp_v0;
-    if (temp_v0 == 0) {
-        sound_id = 0x2B;
+    self->ext.timer -= 1;
+    if (self->ext.timer == 0) {
         if (engine_obj.cur_character == 0) {
-            sound_id = 0x30;
-            sound_type = 2;
+            func_8002217C(0x30, 2, 0);
+            self->unk5 = 9;
         } else {
-            sound_type = 4;
+            func_8002217C(0x2B, 4, 0);
+            self->unk5 = 9;
         }
-        func_8002217C(sound_id, sound_type, 0);
-        self->unk5 = 9;
     }
 }
 
@@ -158,9 +145,7 @@ void post_boss_cutscene_wait_second(struct UnkObj* self)
 
 void post_boss_cutscene_finish(struct UnkObj* self)
 {
-    s8 timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         engine_obj.unkF = 1;
         self->state = 2;
     }
@@ -168,7 +153,7 @@ void post_boss_cutscene_finish(struct UnkObj* self)
 
 void post_boss_cutscene_spawn_afterimages(struct UnkObj* self)
 {
-    s32 var_s1;
+    u8 var_s1;
     struct VisualObj* temp_v0;
     struct VisualObj* var_s2;
 
