@@ -122,6 +122,9 @@ void func_80020580(struct EngineObj* arg0)
     arg0->unk1 = next_state;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/10CA4", func_80020638);
+#else
 void func_80020638(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -135,7 +138,11 @@ void func_80020638(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/10CA4", func_800206D0);
+#else
 void func_800206D0(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -183,7 +190,11 @@ void func_800206D0(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/10CA4", func_80020808);
+#else
 void func_80020808(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -195,7 +206,11 @@ void func_80020808(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/10CA4", func_8002088C);
+#else
 void func_8002088C(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -238,3 +253,4 @@ void func_8002088C(struct EngineObj* arg0)
         }
     }
 }
+#endif

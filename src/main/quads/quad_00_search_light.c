@@ -9,6 +9,9 @@ void SearchLightUpdate(struct QuadObj* arg0)
 }
 
 // SearchLight state 0
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_00_search_light", search_light_init);
+#else
 void search_light_init(struct QuadObj* arg0)
 {
     u16 temp_a0;
@@ -43,6 +46,7 @@ void search_light_init(struct QuadObj* arg0)
     arg0->link.direction = 0;
     arg0->runtime.search_light.base_speed = arg0->ext.search_light.velocity;
 }
+#endif
 
 // SearchLight state 1
 // search_light_sweep

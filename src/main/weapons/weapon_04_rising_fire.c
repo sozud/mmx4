@@ -76,6 +76,9 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 // rising_fire_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", rising_fire_charged_main);
+#else
 void rising_fire_charged_main(struct WeaponObj* self)
 {
     u8 timer;
@@ -116,6 +119,7 @@ void rising_fire_charged_main(struct WeaponObj* self)
         self->state = 3;
     }
 }
+#endif
 
 void rising_fire_charged_draw(struct WeaponObj* arg0)
 {

@@ -25,6 +25,9 @@ void plasma_shot_main(struct WeaponObj* arg0)
 // plasma_shot_move
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", func_80092B5C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_20_plasma_shot", plasma_orb_linger);
+#else
 void plasma_orb_linger(struct WeaponObj* arg0)
 {
     u8 timer;
@@ -54,6 +57,7 @@ void plasma_orb_linger(struct WeaponObj* arg0)
 
     update_on_screen(BASE_OBJECT(arg0), 0x2A, 0x22);
 }
+#endif
 
 void buster_shot_follow_muzzle(struct WeaponObj* arg0)
 {

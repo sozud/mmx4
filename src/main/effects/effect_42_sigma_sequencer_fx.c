@@ -35,6 +35,9 @@ void sigma_sequencer_fx_wait_player(struct EffectObj* self)
 // sigma_sequencer_fx_summon
 INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", func_800BE364);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_42_sigma_sequencer_fx", sigma_sequencer_fx_wait_parts);
+#else
 void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
 {
     s32 count;
@@ -56,6 +59,7 @@ void sigma_sequencer_fx_wait_parts(struct EffectObj* self)
         self->ext.effect_42.timer = 0xC8;
     }
 }
+#endif
 
 void sigma_sequencer_fx_hold(struct EffectObj* self)
 {

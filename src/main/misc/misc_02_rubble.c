@@ -138,6 +138,9 @@ void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", spawn_debris_offset);
+#else
 void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_offset, s32 y_offset)
 {
     u8 i;
@@ -162,6 +165,7 @@ void spawn_debris_offset(u8 count, u8* variants, struct MainObj* owner, s32 x_of
         }
     }
 }
+#endif
 
 // spawn_animated_debris
 INCLUDE_ASM("main/nonmatchings/misc/misc_02_rubble", func_800C842C);

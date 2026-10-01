@@ -54,6 +54,9 @@ void scripted_slider_slide(struct MiscObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", scripted_slider_brake);
+#else
 void scripted_slider_brake(struct MiscObj* self)
 {
     volatile u8 stack_pad[0x10];
@@ -78,6 +81,7 @@ void scripted_slider_brake(struct MiscObj* self)
         self->unk5++;
     }
 }
+#endif
 
 void scripted_slider_idle(void)
 {

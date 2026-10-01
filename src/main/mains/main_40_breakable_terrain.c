@@ -14,6 +14,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
 // breakable_terrain_main
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061F2C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_crumble);
+#else
 void breakable_terrain_crumble(struct MainObj* self)
 {
     s32 index;
@@ -35,7 +38,11 @@ void breakable_terrain_crumble(struct MainObj* self)
         self->state++;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_remove);
+#else
 void breakable_terrain_remove(struct MainObj* self)
 {
     u8 state = self->ext.main_40.unk80;
@@ -50,10 +57,14 @@ void breakable_terrain_remove(struct MainObj* self)
     }
     despawn_object_permanently(OBJECT_HEADER(self));
 }
+#endif
 
 extern u8 breakable_terrain_rubble_sizes[];
 extern u8 breakable_terrain_rubble_variants[];
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", breakable_terrain_spawn_rubble);
+#else
 void breakable_terrain_spawn_rubble(struct MainObj* self)
 {
     s32 temp_v0;
@@ -78,6 +89,7 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
         temp_s5);
     func_8001540C(0, (get_random() & 1) ^ 1, self);
 }
+#endif
 
 // breakable_terrain_check_hit
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80062338);

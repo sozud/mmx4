@@ -28,6 +28,9 @@ void double_cyclone_update(struct WeaponObj* arg0)
 // double_cyclone_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", double_cyclone_main);
+#else
 void double_cyclone_main(struct WeaponObj* arg0)
 {
     u8 temp_v0;
@@ -48,6 +51,7 @@ void double_cyclone_main(struct WeaponObj* arg0)
         double_cyclone_hide(arg0);
     }
 }
+#endif
 
 void double_cyclone_form(struct WeaponObj* arg0)
 {
@@ -59,6 +63,9 @@ void double_cyclone_form(struct WeaponObj* arg0)
     double_cyclone_draw(arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", double_cyclone_fly);
+#else
 void double_cyclone_fly(struct WeaponObj* arg0)
 {
     if (double_cyclone_check_expired(arg0) == 0) {
@@ -78,6 +85,7 @@ void double_cyclone_fly(struct WeaponObj* arg0)
         double_cyclone_draw(arg0);
     }
 }
+#endif
 
 void double_cyclone_spin(struct WeaponObj* arg0)
 {

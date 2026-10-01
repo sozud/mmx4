@@ -18,6 +18,9 @@ enum SubTypes {
 };
 
 // SelectACharacterUpdate state 0
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_init);
+#else
 void select_char_init(struct MiscObj* self)
 {
     s8 temp_v0;
@@ -71,6 +74,7 @@ void select_char_init(struct MiscObj* self)
     self->state++;
     self->unk5 = self->unk2;
 }
+#endif
 
 // select_char_portrait_funcs state 0
 void select_char_portrait_slide_in(struct MiscObj* self)
@@ -300,6 +304,9 @@ void select_char_character_idle(struct MiscObj* self)
 }
 
 // select_char_character_funcs state 1
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_character_shoot);
+#else
 void select_char_character_shoot(struct MiscObj* self)
 {
     struct BaseObj* obj;
@@ -327,6 +334,7 @@ void select_char_character_shoot(struct MiscObj* self)
         set_animation(self, 0);
     }
 }
+#endif
 
 // select_char_subtype_funcs state 7,8
 void select_char_character(struct MiscObj* self)
@@ -379,6 +387,9 @@ void select_char_shot_burst(struct MiscObj* self)
 }
 
 // select_char_subtype_funcs state 15
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_character_exit);
+#else
 void select_char_character_exit(struct MiscObj* self)
 {
     switch (self->unk6) {
@@ -418,6 +429,7 @@ void select_char_character_exit(struct MiscObj* self)
         break;
     }
 }
+#endif
 
 // SelectACharacterUpdate state 1
 void select_char_main(struct MiscObj* self)

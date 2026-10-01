@@ -95,6 +95,9 @@ void ice_bird_fly_in(struct MainObj* self)
     ice_bird_fly_in_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_14_ice_bird", ice_bird_fly_in_start);
+#else
 void ice_bird_fly_in_start(struct MainObj* self)
 {
     s32* velocity;
@@ -113,6 +116,7 @@ void ice_bird_fly_in_start(struct MainObj* self)
     self->x_speed = *velocity;
     self->unk6++;
 }
+#endif
 
 void ice_bird_fly_in_move(struct MainObj* self)
 {
@@ -219,6 +223,9 @@ void ice_bird_leave(struct MainObj* self)
     ice_bird_leave_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_14_ice_bird", ice_bird_leave_start);
+#else
 void ice_bird_leave_start(struct MainObj* self)
 {
     s32* table;
@@ -237,6 +244,7 @@ void ice_bird_leave_start(struct MainObj* self)
     engine_obj.character_state.bytes[0] = 0;
     self->unk6++;
 }
+#endif
 
 void ice_bird_leave_fly(struct MainObj* self)
 {

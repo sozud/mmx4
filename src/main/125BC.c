@@ -31,6 +31,9 @@ void func_80021DBC(s16* arg0, s16* arg1, s32 arg2)
     *arg1 = (product2 >> 8) + (product3 >> 8);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/125BC", func_80021E3C);
+#else
 void func_80021E3C(void)
 {
 #ifdef MMX4_PC
@@ -43,6 +46,7 @@ void func_80021E3C(void)
     engine_obj.substage = D_801F6019;
 #endif
 }
+#endif
 
 #ifdef MMX4_PC
 struct SerializedEngineObj {

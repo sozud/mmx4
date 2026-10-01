@@ -3,7 +3,10 @@ import os
 
 def apply(config, args):
     version = os.environ.get("VERSION", "us")
-    config["baseimg"] = "disks/jp/SLPS_009.02" if version == "jp" else "disks/us/SLUS_005.61"
+    config["baseimg"] = {
+        "jp": "disks/jp/SLPS_009.02",
+        "eu": "disks/eu/SLES_011.76",
+    }.get(version, "disks/us/SLUS_005.61")
     config["myimg"] = f"build/{version}/main.bin"
     config["mapfile"] = f"build/{version}/main.map"
     config["objdump_executable"] = "mipsel-linux-gnu-objdump"

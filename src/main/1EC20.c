@@ -74,6 +74,9 @@ void func_8002E420(struct EngineObj* arg0)
     D_80171EA8 = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E5E0);
+#else
 void func_8002E5E0(void)
 {
     u8 r, g, b;
@@ -97,6 +100,7 @@ void func_8002E5E0(void)
         }
     }
 }
+#endif
 
 // engine_state_3_update_funcs state 1 (load briefing room)
 void func_8002E698(struct EngineObj* arg0)
@@ -295,6 +299,9 @@ extern RECT D_800F4768;
 extern RECT D_800F4770;
 #endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1EC20", func_8002EF14);
+#else
 void func_8002EF14(struct EngineObj* arg0)
 {
     s8 next;
@@ -348,6 +355,7 @@ void func_8002EF14(struct EngineObj* arg0)
         return;
     }
 }
+#endif
 
 void func_8002F048(void)
 {
@@ -394,6 +402,9 @@ void func_8002F048(void)
 }
 
 // briefing_room_state_9_update_funcs state 0
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/1EC20", func_8002F1B4);
+#else
 void func_8002F1B4(struct EngineObj* arg0)
 {
     // if the player presses a button, skip to the bottom
@@ -410,6 +421,7 @@ void func_8002F1B4(struct EngineObj* arg0)
     D_8013B80C = D_800F4834[arg0->unkE - 1];
     func_8002217C(D_800F474C.briefing_sound_ids[arg0->unkE], 0xFF, 0);
 }
+#endif
 
 // briefing_room_state_9_update_funcs state 1
 void func_8002F264(struct EngineObj* arg0)

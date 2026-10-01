@@ -88,12 +88,16 @@ void (*sigma_shot_subtype_funcs[])(struct ShotObj*) = {
 // sigma_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", func_800A8628);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_shot_at_position);
+#else
 s32 sigma_shot_at_position(struct ShotObj* self, s32 arg1, s32 arg2)
 {
     POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, arg1)
     POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, arg2)
     return 1;
 }
+#endif
 
 void sigma_shot_cloak_scythe(struct ShotObj* self)
 {
@@ -119,6 +123,9 @@ void sigma_shot_cloak_scythe(struct ShotObj* self)
     shot->unk50.data = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_bolt_gather);
+#else
 void sigma_bolt_gather(struct ShotObj* self)
 {
     s8 collision;
@@ -141,6 +148,7 @@ void sigma_bolt_gather(struct ShotObj* self)
     }
     set_velocity_from_angle(MOVING_OBJECT(self), collision & 0xFF);
 }
+#endif
 
 void sigma_bolt_launch(struct ShotObj* self)
 {
@@ -256,6 +264,9 @@ void sigma_planted_scythe_recall(struct ShotObj* self)
     func_8001540C(2, 5, self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_planted_scythe_return);
+#else
 void sigma_planted_scythe_return(struct ShotObj* self)
 {
     struct WeaponObj* owner;
@@ -272,6 +283,7 @@ void sigma_planted_scythe_return(struct ShotObj* self)
         MAIN_OBJECT(owner)->ext.main_68.scythe = NULL;
     }
 }
+#endif
 
 void sigma_shot_planted_scythe(struct ShotObj* self)
 {
@@ -289,6 +301,9 @@ void sigma_shot_drift(struct ShotObj* self)
     is_on_screen((struct BaseObj*)self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_dart_spread);
+#else
 void sigma_dart_spread(struct ShotObj* self)
 {
 
@@ -303,7 +318,11 @@ void sigma_dart_spread(struct ShotObj* self)
         self->timer = (self->unk95 + 1) * 0x28;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_dart_wait);
+#else
 void sigma_dart_wait(struct ShotObj* self)
 {
     if (--self->timer == 0) {
@@ -313,7 +332,11 @@ void sigma_dart_wait(struct ShotObj* self)
         func_8001540C(2, 0xB, self);
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_dart_strike);
+#else
 void sigma_dart_strike(struct ShotObj* self)
 {
     set_velocity_from_angle(MOVING_OBJECT(self), (u8)(self->pad94 = angle_to_point(OBJECT_HEADER(self), self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10)));
@@ -329,7 +352,11 @@ void sigma_dart_strike(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_46_sigma_shot", sigma_dart_aim);
+#else
 void sigma_dart_aim(struct ShotObj* self)
 {
     if (--self->timer == 0) {
@@ -342,6 +369,7 @@ void sigma_dart_aim(struct ShotObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
 }
+#endif
 
 void sigma_dart_fly(struct ShotObj* self)
 {

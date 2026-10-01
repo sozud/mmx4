@@ -28,6 +28,9 @@ void fortress_collapse_despawn(struct EffectObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_28_fortress_collapse", fortress_collapse_flash_red);
+#else
 void fortress_collapse_flash_red(struct EffectObj* self)
 {
     u8 temp_v0;
@@ -50,6 +53,7 @@ void fortress_collapse_flash_red(struct EffectObj* self)
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
 }
+#endif
 
 void fortress_collapse_flash_white(struct EffectObj* self)
 {

@@ -249,6 +249,9 @@ void (*D_800F30C8[])(struct MiscObj*) = {
     func_80023C0C,
 };
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/165A0", func_80025DA0);
+#else
 void func_80025DA0(s32 texture_depth, s32 blend_mode)
 {
     u32 buffer, i, j;
@@ -281,10 +284,14 @@ void func_80025DA0(s32 texture_depth, s32 blend_mode)
     }
     SP_BG_TILEMAP = D_80141BE8;
 }
+#endif
 #undef BG_TPAGE
 
 #undef BG_DRAW_TPAGE
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/165A0", func_80026118);
+#else
 void func_80026118(void)
 {
     u32 var_a1;
@@ -308,6 +315,7 @@ void func_80026118(void)
     }
     func_800261B4(-1, var_a1, var_a2);
 }
+#endif
 void func_800261B4(s32 arg0, u32 arg1, u8* arg2)
 {
     s32 var_v0;
@@ -423,6 +431,9 @@ extern s32* D_8013BD50[][8];
 
 extern s32 D_8013E2F0[][8];
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/165A0", func_800267D4);
+#else
 void func_800267D4(s32 input)
 {
     u32 i;
@@ -439,6 +450,7 @@ void func_800267D4(s32 input)
         D_8013BD50[input3 + 6][i] = &D_8013E2F0[input3 + 6][i];
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80026894);
 

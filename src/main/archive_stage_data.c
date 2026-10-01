@@ -2,6 +2,8 @@
 
 #ifdef VERSION_JP
 #define ARCHIVE_PATH(path) "E:\\ROCKX4\\JAPAN\\" path
+#elif defined(VERSION_EU)
+#define ARCHIVE_PATH(path) "E:\\ROCKX4\\" path
 #else
 #define ARCHIVE_PATH(path) "E:\\ROCKX4\\USA\\" path
 #endif
@@ -94,6 +96,9 @@ struct ArchivePathData D_800EE54C = {
         ARCHIVE_PATH("ARC\\LOAD.ARC"),
 #else
         ARCHIVE_PATH("ARC\\LOAD_U.ARC"),
+#endif
+#ifdef VERSION_EU
+        ARCHIVE_PATH("ARC\\LOGO.ARC"),
 #endif
         ARCHIVE_PATH("ARC\\MOJIPAT.ARC"),
         ARCHIVE_PATH("ARC\\ONPARE1.ARC"),
@@ -215,6 +220,9 @@ struct ArchivePathData D_800EE54C = {
         ARCHIVE_PATH("XA\\BGM1.XA"),
 #else
         ARCHIVE_PATH("STR\\OP_U.STR"),
+#ifdef VERSION_EU
+        ARCHIVE_PATH("STR\\VIRGIN.STR"),
+#endif
         ARCHIVE_PATH("STR\\X1_U.STR"),
         ARCHIVE_PATH("STR\\X2_U.STR"),
         ARCHIVE_PATH("STR\\X3_U.STR"),
@@ -247,8 +255,13 @@ struct ArchivePathData D_800EE54C = {
         ARCHIVE_PATH("XA\\VOICE3_U.XA"),
         ARCHIVE_PATH("XA\\VOICE4_U.XA"),
         ARCHIVE_PATH("XA\\VOICE5_U.XA"),
+#ifdef VERSION_EU
+        ARCHIVE_PATH("X4PAL.CNF"),
+        ARCHIVE_PATH("PROG\\MAIN.EXE"),
+#else
         "E:\\PSX\\00561.CNF",
         "E:\\ROCKX4\\0801US\\PROG\\ROCKX4.EXE",
+#endif
 #endif
         "E:\\PSX\\ZNULL.DAT",
     },

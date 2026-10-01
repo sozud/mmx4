@@ -17,6 +17,9 @@ extern u8 ready_text_priorities[];
 extern u16 D_8013B940;
 
 // g_MegamanRelatedUpdateFuncs state 0
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_18_ready_text", ready_text_init);
+#else
 void ready_text_init(struct MiscObj* self)
 {
     u16* pal_dst;
@@ -70,6 +73,7 @@ void ready_text_init(struct MiscObj* self)
         set_animation(self, self->unk2 - 1);
     }
 }
+#endif
 
 // g_MegamanRelatedUpdateFuncs state 1
 void ready_text_main(struct MiscObj* self)

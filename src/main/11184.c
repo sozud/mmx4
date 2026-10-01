@@ -143,6 +143,9 @@ void (*D_800F2498[])(struct EngineObj*) = {
     func_800210B8,
 };
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020984);
+#else
 void func_80020984(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -154,7 +157,11 @@ void func_80020984(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020A08);
+#else
 void func_80020A08(struct EngineObj* arg0)
 {
     s8 var_v0;
@@ -184,6 +191,7 @@ void func_80020A08(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
 void func_80020AC8(struct EngineObj* arg0)
 {
@@ -206,6 +214,9 @@ void func_80020B1C(struct EngineObj* arg0)
     arg0->unk1++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020B8C);
+#else
 void func_80020B8C(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -219,7 +230,11 @@ void func_80020B8C(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020C24);
+#else
 void func_80020C24(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -245,7 +260,11 @@ void func_80020C24(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020CB8);
+#else
 void func_80020CB8(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -257,7 +276,11 @@ void func_80020CB8(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020D3C);
+#else
 void func_80020D3C(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -272,6 +295,7 @@ void func_80020D3C(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
 void func_80020D98(struct EngineObj* arg0)
 {
@@ -318,6 +342,9 @@ void func_80020ED4(struct EngineObj* arg0)
     func_800129A4(8);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/11184", func_80020F24);
+#else
 void func_80020F24(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -371,6 +398,7 @@ void func_80020F24(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
 void func_800210B8(struct EngineObj* arg0)
 {

@@ -109,6 +109,9 @@ void latcher_grab_clamp(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_36_latcher", latcher_grab_drain);
+#else
 void latcher_grab_drain(struct MainObj* self)
 {
     struct MainObj* current;
@@ -137,6 +140,7 @@ void latcher_grab_drain(struct MainObj* self)
         func_8001540C(2, 0xED, self);
     }
 }
+#endif
 
 void latcher_grab_release(struct MainObj* self)
 {

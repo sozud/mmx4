@@ -160,6 +160,9 @@ void jump_shooter_jump(struct MainObj* self)
     jump_shooter_jump_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", jump_shooter_jump_launch);
+#else
 void jump_shooter_jump_launch(struct MainObj* self)
 {
     s8 event;
@@ -189,6 +192,7 @@ void jump_shooter_jump_launch(struct MainObj* self)
         self->unk6 = 1;
     }
 }
+#endif
 
 void jump_shooter_jump_air(struct MainObj* self)
 {

@@ -55,6 +55,9 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
 }
 
 // falling_pillar_fall
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_03_falling_pillar", func_800C05FC);
+#else
 void func_800C05FC(struct ItemObj* pillar)
 {
     s32 in_range;
@@ -89,6 +92,7 @@ void func_800C05FC(struct ItemObj* pillar)
     }
     update_on_screen(BASE_OBJECT(pillar), falling_pillar_entries[pillar->unk2].width, falling_pillar_entries[pillar->unk2].height);
 }
+#endif
 
 void falling_pillar_finish(struct ItemObj* arg0)
 {

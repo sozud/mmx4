@@ -8,6 +8,9 @@ void spawner_pod_update(struct MainObj* self)
     spawner_pod_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", spawner_pod_init);
+#else
 void spawner_pod_init(struct MainObj* arg0)
 {
     volatile struct MainObj* self = arg0;
@@ -49,6 +52,7 @@ void spawner_pod_init(struct MainObj* arg0)
     self->unk15 = ((u8*)spawner_pod_init_data)[tableIndex + 1];
     set_animation(arg0, arg0->ext.main_28.unk84);
 }
+#endif
 
 void spawner_pod_main(struct MainObj* self)
 {
@@ -89,6 +93,9 @@ void spawner_pod_step_4(struct MainObj* self)
 {
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", spawner_pod_detach);
+#else
 void spawner_pod_detach(struct MainObj* self)
 {
     struct MainObj* context;
@@ -100,6 +107,7 @@ void spawner_pod_detach(struct MainObj* self)
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
+#endif
 
 void spawner_pod_explode(struct MainObj* self)
 {

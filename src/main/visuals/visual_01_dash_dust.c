@@ -2,6 +2,9 @@
 // 800AED18..800AEED8
 #include "common.h"
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_01_dash_dust", dash_dust_update);
+#else
 void dash_dust_update(struct VisualObj* arg0)
 {
     struct VisualObj* obj;
@@ -43,6 +46,7 @@ void dash_dust_update(struct VisualObj* arg0)
     }
     is_on_screen(obj);
 }
+#endif
 
 void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1)
 {

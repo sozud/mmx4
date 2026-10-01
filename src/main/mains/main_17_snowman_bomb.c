@@ -9,6 +9,9 @@ void snowman_bomb_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", snowman_bomb_init);
+#else
 void snowman_bomb_init(struct MainObj* self)
 {
     self->hp = 6;
@@ -39,7 +42,11 @@ void snowman_bomb_init(struct MainObj* self)
     self->unk6 = 0;
     self->ext.main_17.saved_unk5 = self->y_pos.val;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", snowman_bomb_main);
+#else
 void snowman_bomb_main(struct MainObj* self)
 {
     s32 collision;
@@ -67,6 +74,7 @@ void snowman_bomb_main(struct MainObj* self)
     }
     self->state = 2;
 }
+#endif
 
 void snowman_bomb_despawn(struct MainObj* self)
 {

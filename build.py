@@ -4,8 +4,8 @@ import subprocess
 import ninja_syntax
 
 VERSION = os.environ.get("VERSION", "us").lower()
-if VERSION not in ("us", "jp"):
-    raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us' or 'jp'")
+if VERSION not in ("us", "jp", "eu"):
+    raise RuntimeError(f"unsupported VERSION={VERSION!r}; expected 'us', 'jp' or 'eu'")
 
 OUTPUT_DIR = f"build/{VERSION}"
 BUILD_FILE = f"{OUTPUT_DIR}/build.ninja"
@@ -19,6 +19,9 @@ UNDEFINED_SYMBOL_FILES = (
 )
 if VERSION == "jp":
     UNDEFINED_SYMBOL_FILES += " config/undefined_syms.jp.manual.txt"
+EXE_SIZE = 0x11B800 if VERSION == "eu" else 0x120000
+CC1 = "./bin/compilers/gcc-2.8.1/cc1" if VERSION == "eu" else "./bin/cc1"
+ASPSX_VERSION = "2.56"
 EXTRA_CPP_DEFS = f" -DVERSION_{VERSION.upper()}=1"
 if os.environ.get("MMX4_PROGRESS_REPORT") == "1":
     EXTRA_CPP_DEFS += " -DSKIP_ASM=1"
@@ -153,11 +156,11 @@ ninja.rule('cpp_263',
            deps='gcc')
 
 ninja.rule('cc1_263',
-           command='./bin/cc1 -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char $in -o $out',
+           command=f'{CC1} -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char $in -o $out',
            description='Running cc1 on $out from $in')
 
 ninja.rule('aspsx_263',
-           command='python3 tools/maspsx/maspsx.py --aspsx-version=2.56 --expand-div $in > $out',
+           command=f'python3 tools/maspsx/maspsx.py --aspsx-version={ASPSX_VERSION} --expand-div < $in > $out',
            description='Running aspsx on $out from $in')
 
 ninja.rule('as',
@@ -170,7 +173,7 @@ ninja.rule('link',
            f'mipsel-linux-gnu-ld -Map={OUTPUT_DIR}/main.map -T {LINKER_SCRIPT} {UNDEFINED_SYMBOL_FILES} $in -o $out')
 
 ninja.rule('objcopy',
-           'mipsel-linux-gnu-objcopy --pad-to=0x120000 --gap-fill=0 $in -O binary $out')
+           f'mipsel-linux-gnu-objcopy --pad-to={EXE_SIZE:#x} --gap-fill=0 $in -O binary $out')
 
 ninja.rule('copy',
            'cp $in $out')

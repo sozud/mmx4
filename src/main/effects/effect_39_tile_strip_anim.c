@@ -29,6 +29,9 @@ void tile_strip_anim_main(struct EffectObj* self)
     tile_strip_anim_step(self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_39_tile_strip_anim", tile_strip_anim_step);
+#else
 void tile_strip_anim_step(struct EffectObj* self)
 {
     s8 temp_v0;
@@ -51,6 +54,7 @@ void tile_strip_anim_step(struct EffectObj* self)
     refresh_visible_tile_effect(ext->palette.fields.id,
         self->x_pos.i.hi - 0x40, self->y_pos.i.hi - 0x20);
 }
+#endif
 
 void tile_strip_anim_refresh_row(struct EffectObj* self)
 {

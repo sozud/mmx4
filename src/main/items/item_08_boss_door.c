@@ -116,10 +116,14 @@ void boss_door_init(struct ItemObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), 0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/items/item_08_boss_door", boss_door_main);
+#else
 void boss_door_main(struct ItemObj* arg0)
 {
     boss_door_step_funcs[arg0->unk5](arg0, &engine_obj, &g_Player);
 }
+#endif
 
 void boss_door_wait_player(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)

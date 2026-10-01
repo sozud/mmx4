@@ -73,6 +73,9 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 // twin_slasher_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", twin_slasher_charged_main);
+#else
 void twin_slasher_charged_main(struct WeaponObj* arg0)
 {
     struct MiscObj* misc_obj;
@@ -102,6 +105,7 @@ void twin_slasher_charged_main(struct WeaponObj* arg0)
     }
     twin_slasher_hide(arg0);
 }
+#endif
 
 // twin_slasher_trail_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097DD8);

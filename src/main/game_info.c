@@ -43,6 +43,9 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
 }
 #endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/game_info", func_8001D064);
+#else
 void func_8001D064(void)
 {
     s32 var_v1;
@@ -224,16 +227,21 @@ void func_8001D064(void)
 #endif
     func_800128B8(&func_8001DAF8);
 }
+#endif
 
 void func_8001D104(void)
 {
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/game_info", PlayCapcomLogo);
+#else
 void PlayCapcomLogo(void)
 {
     func_800182E8(); // nop out to skip capcom logo
     SetDispMask(0);
 }
+#endif
 
 void func_8001D134(void)
 {
@@ -355,6 +363,9 @@ void func_8001D460(struct GameInfo* arg0)
     func_80023D68();
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/game_info", func_8001D514);
+#else
 void func_8001D514(struct GameInfo* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -368,6 +379,7 @@ void func_8001D514(struct GameInfo* arg0)
         func_80023D68();
     }
 }
+#endif
 
 void func_8001D57C(struct GameInfo* arg0)
 {
@@ -561,6 +573,9 @@ void func_8001DAD0(struct GameInfo* arg0)
     func_8001A9EC(&engine_obj);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/game_info", func_8001DAF8);
+#else
 void func_8001DAF8(void)
 {
     s16 var_v1;
@@ -590,6 +605,7 @@ void func_8001DAF8(void)
         func_800127C8(1);
     }
 }
+#endif
 
 void func_8001DC30(void)
 {
@@ -607,7 +623,11 @@ void (*D_800F2170[4])(struct GameInfo*) = {
     func_8001D514,
 };
 
+#ifdef VERSION_EU
+u8 D_800F2180[4] = { 0x51, 0x52, 0x53, 0x54 };
+#else
 u8 D_800F2180[4] = { 0x50, 0x51, 0x52, 0x53 };
+#endif
 
 void (*D_800F2184[4])(struct GameInfo*) = {
     func_8001D5C8,

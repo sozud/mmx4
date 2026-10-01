@@ -63,6 +63,9 @@ void train_soldier_despawn(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", train_soldier_wait_for_player);
+#else
 void train_soldier_wait_for_player(struct MainObj* self)
 {
     s8 temp_a2;
@@ -96,6 +99,7 @@ void train_soldier_wait_for_player(struct MainObj* self)
         temp_v1[0x81] = temp_v0 - 1;
     }
 }
+#endif
 
 void train_soldier_idle(struct MainObj* self)
 {

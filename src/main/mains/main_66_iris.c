@@ -172,6 +172,9 @@ void iris_intro_wait_warning(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", iris_intro_dialogue);
+#else
 void iris_intro_dialogue(struct MainObj* self)
 {
     s8* state;
@@ -184,6 +187,7 @@ void iris_intro_dialogue(struct MainObj* self)
         self->unk6 = 5;
     }
 }
+#endif
 
 void iris_intro_wait_dialogue(struct MainObj* self)
 {

@@ -8,6 +8,9 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
 // option_toggle_appear
 INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDF4C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", option_toggle_refresh);
+#else
 void option_toggle_refresh(struct MiscObj* self)
 {
     if (D_80171EA9 != self->ext.misc_31.animation) {
@@ -16,6 +19,7 @@ void option_toggle_refresh(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void option_toggle_update(struct MiscObj* self)
 {

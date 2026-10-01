@@ -5,6 +5,9 @@
 extern u8 title_facet_vertex_indices[][4];
 extern union TitleScratch D_80169498;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_12_title_facet", title_facet_init);
+#else
 void title_facet_init(struct QuadObj* arg0)
 {
     u16* points;
@@ -38,7 +41,11 @@ void title_facet_init(struct QuadObj* arg0)
     arg0->unk34 = 0x7FFF;
     arg0->on_screen = 1;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_12_title_facet", title_facet_follow);
+#else
 void title_facet_follow(struct QuadObj* arg0)
 {
     u16* points;
@@ -63,6 +70,7 @@ void title_facet_follow(struct QuadObj* arg0)
     }
     arg0->on_screen = 1;
 }
+#endif
 
 void title_facet_finish(struct QuadObj* arg0)
 {

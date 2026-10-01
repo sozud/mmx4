@@ -223,6 +223,9 @@ void fortress_cannon_fire_shot(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_51_fortress_cannon", fortress_cannon_fire_double_shot);
+#else
 void fortress_cannon_fire_double_shot(struct MainObj* self)
 {
     u8 i;
@@ -253,6 +256,7 @@ void fortress_cannon_fire_double_shot(struct MainObj* self)
         i++;
     } while (i < 2);
 }
+#endif
 
 void fortress_cannon_fire_volley(struct MainObj* self)
 {

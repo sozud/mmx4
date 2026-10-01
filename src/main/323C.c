@@ -40,6 +40,9 @@ struct MoviePlaybackData {
 
 // uncomment to skip movies
 // #define SKIP_MDEC
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/323C", func_80012A3C);
+#else
 void func_80012A3C(void)
 {
     struct Func80012A3C_FadeState {
@@ -136,6 +139,7 @@ void func_80012A3C(void)
         }
     }
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80012D28);
 
@@ -164,7 +168,7 @@ void func_80012E38(void)
     func_80013AD8(0x40, 0, 0);
 #endif
     func_80014C70();
-#ifdef VERSION_JP
+#if defined(VERSION_JP) || defined(VERSION_EU)
     func_80013890(0x42, WINDOW_ARCHIVE_DATA);
 #else
     func_80013890(0x41, WINDOW_ARCHIVE_DATA);
@@ -182,6 +186,9 @@ void func_80012EB0(void)
 {
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/323C", func_80012EB8);
+#else
 void func_80012EB8(void)
 {
     s32 var_a0;
@@ -205,7 +212,11 @@ void func_80012EB8(void)
     D_80166BB4 = D_80142F70;
     func_80015C10();
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/323C", func_80012F44);
+#else
 void func_80012F44(void)
 {
     u8* saved_data;
@@ -240,6 +251,7 @@ void func_80012F44(void)
     need_palette_load |= 1;
     D_80171EA8 = (u8)engine_obj.checkpoint;
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80013014);
 
@@ -295,6 +307,69 @@ void func_80014514(void);
 #endif
 
 struct ArchiveSelectionData D_800EE480 = {
+#ifdef VERSION_EU
+    { 0x46, 0x48, 0x45, 0x47,
+        0x49, 0x43, 0x4A, 0x44 },
+    {
+        0x55,
+        0x56,
+        0x57,
+        0x58,
+        0x59,
+        0x5A,
+        0x5B,
+        0x5C,
+        0x5D,
+        0x5E,
+        0x5F,
+        0x60,
+        0x61,
+        0x62,
+        0x63,
+        0x64,
+        0x65,
+        0x66,
+        0x67,
+        0x00,
+        0x68,
+        0x00,
+        0x00,
+        0x6A,
+        0x6D,
+        0x6E,
+        0x70,
+        0x00,
+        0x72,
+        0x73,
+        0x75,
+        0x74,
+        0x70,
+        0x71,
+        0x00,
+        0x00,
+        0x75,
+        0x76,
+        0x00,
+        0x00,
+        0x6B,
+        0x6C,
+        0x00,
+        0x00,
+#ifdef MMX4_WIN32
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+#endif
+        0x83,
+        0x84,
+        0x85,
+        0x86,
+        0x87,
+        0x88,
+        0x89,
+        0x8A,
+#else
     { JP_VALUE(0x45, 0x46), JP_VALUE(0x47, 0x48), JP_VALUE(0x44, 0x45), JP_VALUE(0x46, 0x47),
         JP_VALUE(0x48, 0x49), JP_VALUE(0x42, 0x43), JP_VALUE(0x49, 0x4A), JP_VALUE(0x43, 0x44) },
     {
@@ -356,6 +431,7 @@ struct ArchiveSelectionData D_800EE480 = {
         JP_VALUE(0x87, 0x86),
         JP_VALUE(0x88, 0x87),
         JP_VALUE(0x89, 0x88),
+#endif
         0x01,
         0x03,
         0x05,

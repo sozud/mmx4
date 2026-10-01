@@ -177,6 +177,9 @@ s8 func_800136B0(void)
 #endif
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_800137F0);
+#else
 void func_800137F0(void)
 {
     CdReadyCallback(0);
@@ -188,6 +191,7 @@ void func_800137F0(void)
     D_8015D9C8 = D_80137DC4;
     D_80142F70 = D_80137DD0;
 }
+#endif
 
 u8 func_8001385C(void)
 {
@@ -245,6 +249,9 @@ void func_80013890(u32 arg0, u8* arg1)
     func_80013968();
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80013968);
+#else
 void func_80013968(void)
 {
     u8 sp10;
@@ -266,6 +273,7 @@ void func_80013968(void)
     } while (CdControl(CdlSetloc, &D_80137CF8.minute, NULL) == 0);
     func_80013650();
 }
+#endif
 
 void MyCdReadyCallback(u8 status, u8* result)
 {
@@ -297,6 +305,9 @@ extern u8* D_80137DC4;
 
 extern u8* D_80137DCC;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80013AD8);
+#else
 void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
 {
     u8 i;
@@ -378,6 +389,7 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
     CdReadyCallback(func_80013E68);
     func_80013DA8();
 }
+#endif
 
 typedef struct {
     void (*unk0)(void);
@@ -400,6 +412,9 @@ extern s32 D_80137CEC;
 
 extern CdlLOC D_80137CF8;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80013DA8);
+#else
 void func_80013DA8(void)
 {
     u8 sp10;
@@ -421,6 +436,7 @@ void func_80013DA8(void)
     } while (CdControl(CdlReadN, NULL, NULL) == 0);
     D_801406AC = 1;
 }
+#endif
 
 extern void func_800137F0(void);
 
@@ -452,6 +468,9 @@ extern CdlLOC D_80137DE8;
 
 extern union TitleScratch D_80169498;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80013E68);
+#else
 void func_80013E68(u8 status, u8* result)
 {
     D_80010014_t sp10;
@@ -518,6 +537,7 @@ void func_80013E68(u8 status, u8* result)
         }
     }
 }
+#endif
 
 void func_80014140(void)
 {
@@ -532,6 +552,9 @@ void func_80014140(void)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_800141BC);
+#else
 void func_800141BC(void)
 {
     u8 index;
@@ -555,6 +578,7 @@ void func_800141BC(void)
         D_8013E1C8[index] = SsSepOpenJ((unsigned long*)D_80137DC4, D_8013E198[index], 3);
     }
 }
+#endif
 
 extern struct CdImageOrigin D_800F1614[];
 
@@ -564,6 +588,9 @@ extern u16 D_8012F4AC;
 
 extern u16 D_8012F4B0;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_800142BC);
+#else
 void func_800142BC(void)
 {
     s32 temp_a1;
@@ -631,9 +658,13 @@ void func_800142BC(void)
         }
     }
 }
+#endif
 
 extern u32 D_80137CE0;
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80014514);
+#else
 void func_80014514(void)
 {
     s32 temp_s0;
@@ -698,6 +729,7 @@ void func_80014514(void)
         D_801374B8 = 0;
     }
 }
+#endif
 
 void func_800147AC(void);
 
@@ -718,6 +750,10 @@ const D_80010014_t D_80010014 = {
 #ifdef VERSION_JP
 struct Unk5 D_800F0E18[] = {
 #include "archive_data.jp.inc"
+};
+#elif defined(VERSION_EU)
+struct Unk5 D_800F0E18[] = {
+#include "archive_data.eu.inc"
 };
 #else
 struct Unk5 D_800F0E18[] = {
@@ -983,6 +1019,9 @@ void func_800148E4(void)
 {
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_800148EC);
+#else
 void func_800148EC()
 {
     u32 temp_a1;
@@ -994,6 +1033,7 @@ void func_800148EC()
     D_80137CFC.h = 0x10;
     LoadImage(&D_80137CFC, (u_long*)D_8012F4B4.sectors[D_801374B4]);
 }
+#endif
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 s16 SsVabTransCompleted();
@@ -1030,6 +1070,9 @@ void func_80014968(void)
     }
 }
 #ifndef MMX4_PC
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80014A90);
+#else
 void func_80014A90(s32 arg0, s32 arg1)
 {
     u8 sp10;
@@ -1075,7 +1118,11 @@ void func_80014A90(s32 arg0, s32 arg1)
     }
 }
 #endif
+#endif
 #ifndef MMX4_PC
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3D88", func_80014C70);
+#else
 void func_80014C70(void)
 {
     u8 sp10;
@@ -1111,4 +1158,5 @@ void func_80014C70(void)
     D_8013BD44 = 1;
     D_80141BD2 = 0x78;
 }
+#endif
 #endif

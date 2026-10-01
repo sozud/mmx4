@@ -72,6 +72,9 @@ struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
     return 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_check_surface);
+#else
 u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
 {
     s16 temp_a1;
@@ -97,6 +100,7 @@ u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
     }
     return var_v0;
 }
+#endif
 
 extern struct Unk_unk68 jet_stingray_ambush_attack_box;
 extern struct Unk_unk68 jet_stingray_ambush_drop_attack_box;
@@ -265,6 +269,9 @@ void jet_stingray_intro(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_at_target);
+#else
 s32 jet_stingray_at_target(struct MainObj* self, s32 arg1, s32 arg2)
 {
     s32 v1, v2;
@@ -274,7 +281,11 @@ s32 jet_stingray_at_target(struct MainObj* self, s32 arg1, s32 arg2)
     POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, v2)
     return 1;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_choose_pattern);
+#else
 void jet_stingray_choose_pattern(struct MainObj* self)
 {
     u32 idx;
@@ -304,6 +315,7 @@ void jet_stingray_choose_pattern(struct MainObj* self)
         i++;
     }
 }
+#endif
 
 void jet_stingray_swim_start(struct MainObj* self)
 {
@@ -573,6 +585,9 @@ void jet_stingray_dash_start(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_dash_charge);
+#else
 void jet_stingray_dash_charge(struct MainObj* self)
 {
     s16 timer;
@@ -600,6 +615,7 @@ void jet_stingray_dash_charge(struct MainObj* self)
         self->y_pos.i.hi = background_objects[self->bg_offset].unk22 - 0x50;
     }
 }
+#endif
 
 void jet_stingray_dash_return(struct MainObj* self)
 {
@@ -837,6 +853,9 @@ void jet_stingray_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_death_explode);
+#else
 void jet_stingray_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -861,6 +880,7 @@ void jet_stingray_death_explode(struct MainObj* self)
         self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
+#endif
 
 void jet_stingray_death_finish(struct MainObj* self)
 {

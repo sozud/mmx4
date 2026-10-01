@@ -45,11 +45,9 @@ void (*general_fist_follower_funcs[])(struct ShotObj*) = {
     general_fist_sweep_turn,
     func_800AD338,
     general_fist_docked,
-#ifdef MMX4_WIN32
 };
 
 void (*general_fist_funcs[2])(struct ShotObj*) = {
-#endif
     general_fist_follower,
     general_fist_leader,
 };
@@ -313,11 +311,7 @@ void general_fist_follower(struct ShotObj* self)
 
 void general_shot_fist(struct ShotObj* self)
 {
-#ifdef MMX4_WIN32
     general_fist_funcs[self->unk2 - 2](self);
-#else
-    general_fist_follower_funcs[self->unk2 + 9](self);
-#endif
     self->unk42 = self->unk7C->unk42;
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0xA0, 0xA0);

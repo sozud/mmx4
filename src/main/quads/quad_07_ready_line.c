@@ -329,6 +329,9 @@ void ready_line_sweep(struct QuadObj* arg0)
 }
 
 // ready_line_type_funcs state 1
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_shutter);
+#else
 void ready_line_shutter(struct QuadObj* arg0)
 {
     u16* verts;
@@ -430,10 +433,14 @@ void ready_line_shutter(struct QuadObj* arg0)
         break;
     }
 }
+#endif
 
 extern u8 ready_line_streak_shapes[];
 
 // ready_line_type_funcs state 2
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_streak);
+#else
 void ready_line_streak(struct QuadObj* arg0)
 {
     s32 var_s1;
@@ -503,6 +510,7 @@ void ready_line_streak(struct QuadObj* arg0)
         return;
     }
 }
+#endif
 
 void ready_line_move(struct QuadObj* arg0)
 {
@@ -512,6 +520,9 @@ void ready_line_move(struct QuadObj* arg0)
     arg0->ext.ready_line.y_vel.val += arg0->ext.ready_line.y_accel.val;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_converge_vertex);
+#else
 void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, const s16 target[2])
 {
     f32* vertex;
@@ -543,6 +554,7 @@ void ready_line_converge_vertex(struct QuadObj* arg0, arg_u8 arg1, s32 arg2, con
     }
     arg0->runtime.ready_line.directions[vertex_index & 0xFF] = quadrant;
 }
+#endif
 
 // ready_line_state_funcs state 2
 void ready_line_despawn(struct QuadObj* arg0)

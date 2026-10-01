@@ -750,6 +750,9 @@ void sigma_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", sigma_death_blink);
+#else
 void sigma_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -774,6 +777,7 @@ void sigma_death_blink(struct MainObj* self)
         self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
+#endif
 
 void sigma_death_wait_explosion(struct MainObj* self)
 {
@@ -949,6 +953,9 @@ void sigma_reveal_wait_cloak(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", sigma_reveal_dialogue);
+#else
 void sigma_reveal_dialogue(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -968,6 +975,7 @@ void sigma_reveal_dialogue(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void sigma_reveal_fill_health(struct MainObj* self)
 {

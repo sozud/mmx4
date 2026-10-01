@@ -77,6 +77,9 @@ void drill_copter_sway_start(struct MainObj* self)
     set_animation(self, 3);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", drill_copter_sway_move);
+#else
 void drill_copter_sway_move(struct MainObj* self)
 {
     s32 object_x;
@@ -106,6 +109,7 @@ void drill_copter_sway_move(struct MainObj* self)
         }
     }
 }
+#endif
 
 void drill_copter_sway_idle(struct MainObj* self)
 {

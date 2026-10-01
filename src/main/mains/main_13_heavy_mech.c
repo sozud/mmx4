@@ -9,6 +9,9 @@ void heavy_mech_update(struct MainObj* self)
     CollisionRelated((struct PlayerObj*)self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", heavy_mech_init);
+#else
 void heavy_mech_init(struct MainObj* self)
 {
     self->hp = 0x10;
@@ -36,6 +39,7 @@ void heavy_mech_init(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
 }
+#endif
 
 // heavy_mech_main
 INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", func_8004C860);

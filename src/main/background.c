@@ -231,6 +231,9 @@ void func_80027D40(void)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027DC0);
+#else
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
@@ -240,6 +243,7 @@ void func_80027DC0(struct BackgroundObj* arg0)
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
 #endif
 }
+#endif
 
 void func_80027DF0(struct BackgroundObj* arg0)
 {
@@ -248,19 +252,27 @@ void func_80027DF0(struct BackgroundObj* arg0)
     func_80027FA8(arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027E28);
+#else
 void func_80027E28(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
     v0 = arg0->unk42 + (v0 >> 1);
     arg0->y_pos.i.hi = v0;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027E48);
+#else
 void func_80027E48(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
     v0 = arg0->unk42 + (v0 >> 2);
     arg0->y_pos.i.hi = v0;
 }
+#endif
 
 void func_80027E68(struct BackgroundObj* arg0)
 {
@@ -271,6 +283,9 @@ void func_80027E68(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027E90);
+#else
 void func_80027E90(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
@@ -281,7 +296,11 @@ void func_80027E90(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027EBC);
+#else
 void func_80027EBC(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
@@ -292,20 +311,29 @@ void func_80027EBC(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027EE8);
+#else
 void func_80027EE8(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
     v0 = arg0->unk40 + (v0 >> 1);
     arg0->x_pos.i.hi = v0;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027F08);
+#else
 void func_80027F08(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
     v0 = arg0->unk40 + (v0 >> 2);
     arg0->x_pos.u.hi = v0;
 }
+#endif
 
 void func_80027F28(struct BackgroundObj* arg0)
 {
@@ -316,6 +344,9 @@ void func_80027F28(struct BackgroundObj* arg0)
     arg0->x_pos.u.hi = value;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027F50);
+#else
 void func_80027F50(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
@@ -326,7 +357,11 @@ void func_80027F50(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80027F7C);
+#else
 void func_80027F7C(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
@@ -337,6 +372,7 @@ void func_80027F7C(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
+#endif
 
 #define FUNC_NAME func_80027FA8
 
@@ -400,6 +436,9 @@ void func_800281E8(void)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80028268);
+#else
 void func_80028268(struct BackgroundObj* arg0)
 {
 #ifdef MMX4_WIN32
@@ -408,6 +447,7 @@ void func_80028268(struct BackgroundObj* arg0)
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
 #endif
 }
+#endif
 
 void func_80028298(struct BackgroundObj* arg0)
 {
@@ -416,19 +456,27 @@ void func_80028298(struct BackgroundObj* arg0)
     func_80028450(arg0);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_800282D0);
+#else
 void func_800282D0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
     v0 = arg0->unk42 + (v0 >> 1);
     arg0->y_pos.i.hi = v0;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_800282F0);
+#else
 void func_800282F0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
     v0 = arg0->unk42 + (v0 >> 2);
     arg0->y_pos.i.hi = v0;
 }
+#endif
 
 void func_80028310(struct BackgroundObj* arg0)
 {
@@ -439,6 +487,9 @@ void func_80028310(struct BackgroundObj* arg0)
     arg0->y_pos.i.hi = value;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80028338);
+#else
 void func_80028338(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
@@ -449,7 +500,11 @@ void func_80028338(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80028364);
+#else
 void func_80028364(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].y_pos.i.hi;
@@ -460,20 +515,29 @@ void func_80028364(struct BackgroundObj* arg0)
     value = arg0->unk42 + value;
     arg0->y_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80028390);
+#else
 void func_80028390(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
     v0 = arg0->unk40 + (v0 >> 1);
     arg0->x_pos.i.hi = v0;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_800283B0);
+#else
 void func_800283B0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
     v0 = arg0->unk40 + (v0 >> 2);
     arg0->x_pos.i.hi = v0;
 }
+#endif
 
 void func_800283D0(struct BackgroundObj* arg0)
 {
@@ -484,6 +548,9 @@ void func_800283D0(struct BackgroundObj* arg0)
     arg0->x_pos.i.hi = value;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_800283F8);
+#else
 void func_800283F8(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
@@ -494,7 +561,11 @@ void func_800283F8(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/background", func_80028424);
+#else
 void func_80028424(struct BackgroundObj* arg0)
 {
     volatile u16* background = (volatile u16*)&background_objects[0].x_pos.i.hi;
@@ -505,6 +576,7 @@ void func_80028424(struct BackgroundObj* arg0)
     value = arg0->unk40 + value;
     arg0->x_pos.i.hi = value;
 }
+#endif
 
 #define FUNC_NAME func_80028450
 

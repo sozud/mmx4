@@ -121,7 +121,11 @@ void func_8002F87C(struct EngineObj* arg0)
 void func_8002F8F8(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
+#ifdef VERSION_EU
+        arg0->unk4 = 0x69;
+#else
         arg0->unk4 = 0x96;
+#endif
         arg0->unk2++;
     }
 }

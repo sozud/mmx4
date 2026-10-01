@@ -1,5 +1,7 @@
 #ifdef VERSION_JP
 #define ASM_ROOT "asm/jp/"
+#elif defined(VERSION_EU)
+#define ASM_ROOT "asm/eu/"
 #else
 #define ASM_ROOT "asm/us/"
 #endif
@@ -272,6 +274,8 @@ struct ArchivePathData {
 #ifndef MMX4_WIN32
 #ifdef VERSION_JP
     char paths[162][64];
+#elif defined(VERSION_EU)
+    char paths[165][64];
 #else
     char paths[163][64];
 #endif

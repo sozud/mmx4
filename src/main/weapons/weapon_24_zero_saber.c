@@ -41,6 +41,9 @@ void zero_saber_update(struct WeaponObj* arg0)
 // zero_saber_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", zero_saber_follow);
+#else
 void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 {
     u8 id;
@@ -63,6 +66,7 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
     arg0->unk64 = value;
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
 }
+#endif
 
 // WeaponObj, weapon_object_update_funcs[36]
 

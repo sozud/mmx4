@@ -25,6 +25,9 @@ void cyberspace_trial_init(struct EffectObj* self)
     self->ext.effect_38.timer = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_38_cyberspace_trial", cyberspace_trial_wait_start);
+#else
 void cyberspace_trial_wait_start(struct EffectObj* self)
 {
     s8 subtype;
@@ -41,7 +44,11 @@ void cyberspace_trial_wait_start(struct EffectObj* self)
         self->state++;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_38_cyberspace_trial", cyberspace_trial_wait_goal);
+#else
 void cyberspace_trial_wait_goal(struct EffectObj* self)
 {
     s8 subtype;
@@ -61,6 +68,7 @@ void cyberspace_trial_wait_goal(struct EffectObj* self)
         }
     }
 }
+#endif
 
 void cyberspace_trial_delay(struct EffectObj* self)
 {

@@ -103,6 +103,9 @@ struct Prim D_800EE504[9] = {
     { 0x78, 0xD0, 0x89, 0x03, 0x01, 0x00 },
 };
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3A6C", func_8001326C);
+#else
 void func_8001326C(u8 arg0)
 {
     DR_MODE* draw_mode;
@@ -132,7 +135,11 @@ void func_8001326C(u8 arg0)
         SP_DRAW_MODE_CURSOR = ++draw_mode;
     }
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3A6C", func_80013404);
+#else
 void func_80013404(u8 arg0)
 {
     s32 temp_v1;
@@ -171,7 +178,11 @@ void func_80013404(u8 arg0)
         }
     }
 }
+#endif
 #ifndef MMX4_PC
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/3A6C", func_80013530);
+#else
 void func_80013530(void)
 {
     func_800129F0(0x10);
@@ -182,4 +193,5 @@ void func_80013530(void)
         } while (D_80141BDC[0] != 0);
     }
 }
+#endif
 #endif

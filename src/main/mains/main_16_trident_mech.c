@@ -268,6 +268,9 @@ void trident_mech_fan_shot_start(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", trident_mech_fan_shot_fire);
+#else
 void trident_mech_fan_shot_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -310,6 +313,7 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
         }
     }
 }
+#endif
 
 void trident_mech_fan_shot_end(struct MainObj* self)
 {

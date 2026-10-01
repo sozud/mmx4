@@ -8,6 +8,9 @@ void spike_sled_update(struct MainObj* self)
     spike_sled_state_funcs[self->state](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", spike_sled_init);
+#else
 void spike_sled_init(struct MainObj* self)
 {
     u8 bg_offset;
@@ -52,6 +55,7 @@ void spike_sled_init(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
 }
+#endif
 
 void spike_sled_run(struct MainObj* self)
 {

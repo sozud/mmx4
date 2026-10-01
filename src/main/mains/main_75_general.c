@@ -18,6 +18,9 @@ u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
     return 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_pick_script);
+#else
 void general_pick_script(struct MainObj* self)
 {
     s32 low_health = self->hp < 0x19;
@@ -34,6 +37,7 @@ void general_pick_script(struct MainObj* self)
         i++;
     }
 }
+#endif
 
 void general_intro_wait_player(struct MainObj* self)
 {
@@ -108,6 +112,9 @@ void general_intro_land(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_intro_dialogue);
+#else
 void general_intro_dialogue(struct MainObj* self)
 {
     u16 sound_id;
@@ -132,6 +139,7 @@ void general_intro_dialogue(struct MainObj* self)
         self->unk7C = 1;
     }
 }
+#endif
 
 void general_intro_fill_health(struct MainObj* self)
 {
@@ -347,6 +355,9 @@ void general_punch_rings(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_punch_wait_return);
+#else
 void general_punch_wait_return(struct MainObj* self)
 {
     if ((D_8013B8C0->timer == 0x80) && (D_8013B8C4->timer == D_8013B8C0->timer)) {
@@ -356,6 +367,7 @@ void general_punch_wait_return(struct MainObj* self)
         set_animation(self, 0x17);
     }
 }
+#endif
 
 void general_punch_recover(struct MainObj* self)
 {
@@ -596,6 +608,9 @@ void general_death_start(struct MainObj* self)
     self->ext.main_75.bob_step = 1;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_death_blink);
+#else
 void general_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -619,6 +634,7 @@ void general_death_blink(struct MainObj* self)
         self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
+#endif
 
 // general_death_explode
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);

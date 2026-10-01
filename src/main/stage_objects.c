@@ -104,6 +104,9 @@ void start_screen_shake_y(s8 arg0, s8 arg1, s8 arg2)
 
 extern struct Checkpoint** D_800F42B4[32];
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/stage_objects", func_80028BF0);
+#else
 void func_80028BF0(void)
 {
     s16 bg1_x;
@@ -162,6 +165,7 @@ void func_80028BF0(void)
     background_objects[2].unk18.i.hi = bg2_y;
     g_Player.beam_in_delay = checkpoint->player_unkBE;
 }
+#endif
 
 // find_stage_main_index
 

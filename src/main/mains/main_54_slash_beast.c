@@ -475,6 +475,9 @@ void slash_beast_intro_wait_dialogue(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", slash_beast_intro_fill_health);
+#else
 void slash_beast_intro_fill_health(struct MainObj* self)
 {
     if (update_boss_music_delay() == 0) {
@@ -502,6 +505,7 @@ void slash_beast_intro_fill_health(struct MainObj* self)
         }
     }
 }
+#endif
 
 void slash_beast_stagger(struct MainObj* self)
 {
@@ -626,6 +630,9 @@ void slash_beast_face_player(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", slash_beast_pick_pattern);
+#else
 void slash_beast_pick_pattern(struct MainObj* self)
 {
     u8* base;
@@ -655,6 +662,7 @@ void slash_beast_pick_pattern(struct MainObj* self)
 
     self->ext.main_54.pattern = base + i * 4;
 }
+#endif
 
 union AnimationStep D_801001F8[] = {
     { 0x2225F1EF },

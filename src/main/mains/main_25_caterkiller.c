@@ -102,6 +102,9 @@ void caterkiller_lunge_start(struct MainObj* self)
 // caterkiller_lunge_move
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", caterkiller_lunge_end);
+#else
 void caterkiller_lunge_end(struct MainObj* self)
 {
     s32 distance;
@@ -140,6 +143,7 @@ void caterkiller_lunge_end(struct MainObj* self)
         }
     }
 }
+#endif
 
 void caterkiller_fall(struct MainObj* self)
 {

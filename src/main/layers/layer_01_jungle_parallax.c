@@ -43,12 +43,16 @@ void jungle_parallax_section_0_setup(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/layers/layer_01_jungle_parallax", jungle_parallax_section_0_scroll);
+#else
 void jungle_parallax_section_0_scroll(struct LayerObj* arg0)
 {
     volatile f32* camera_x = &background_objects[0].x_pos;
     background_objects[1].x_pos.i.hi = background_objects[1].unk40 + (camera_x->i.hi + (camera_x->i.hi >> 1));
     background_objects[1].y_pos.i.hi = background_objects[0].y_pos.i.hi;
 }
+#endif
 
 void jungle_parallax_section_1(struct LayerObj* arg0)
 {
@@ -88,6 +92,9 @@ void jungle_parallax_section_2_setup(struct LayerObj* arg0)
     arg0->unk6++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/layers/layer_01_jungle_parallax", jungle_parallax_section_2_scroll);
+#else
 void jungle_parallax_section_2_scroll(struct LayerObj* arg0)
 {
     s16 value;
@@ -98,6 +105,7 @@ void jungle_parallax_section_2_scroll(struct LayerObj* arg0)
     value = background_objects[0].y_pos.i.hi - 0x500;
     background_objects[1].y_pos.i.hi = background_objects[1].unk42 + (background_objects[0].y_pos.i.hi - (value >> 2));
 }
+#endif
 
 void jungle_parallax_idle(struct LayerObj* arg0)
 {

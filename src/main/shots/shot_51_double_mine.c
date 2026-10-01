@@ -18,6 +18,9 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
 // double_mine_arm
 INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", double_mine_dash_start);
+#else
 void double_mine_dash_start(struct ShotObj* self)
 {
     s32 angle;
@@ -37,6 +40,7 @@ void double_mine_dash_start(struct ShotObj* self)
     self->unk2C = 0;
     animate_object(self);
 }
+#endif
 
 void double_mine_dash(struct ShotObj* self)
 {

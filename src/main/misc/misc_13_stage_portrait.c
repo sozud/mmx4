@@ -5,6 +5,9 @@
 // stage_portrait_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", func_800CA52C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", stage_portrait_select);
+#else
 void stage_portrait_select(struct MiscObj* self)
 {
     s32 temp_a0;
@@ -41,6 +44,7 @@ void stage_portrait_select(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
+#endif
 
 void stage_portrait_show(struct MiscObj* self)
 {

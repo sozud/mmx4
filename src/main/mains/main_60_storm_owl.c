@@ -289,6 +289,9 @@ void storm_owl_grab(struct MainObj* self)
     storm_owl_grab_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_grab_dive);
+#else
 void storm_owl_grab_dive(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -314,6 +317,7 @@ void storm_owl_grab_dive(struct MainObj* self)
     self->unk16 = 2;
     self->unk6++;
 }
+#endif
 
 // storm_owl_grab_swoop
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
@@ -321,6 +325,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
 // storm_owl_grab_rise
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_8007651C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_grab_carry);
+#else
 void storm_owl_grab_carry(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -338,6 +345,7 @@ void storm_owl_grab_carry(struct MainObj* self)
         self->unk6++;
     }
 }
+#endif
 
 void storm_owl_grab_slam(struct MainObj* self)
 {
@@ -1013,6 +1021,9 @@ void storm_owl_spawn_volley_feather(struct MainObj* self, s8 arg1)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_spawn_cyclones);
+#else
 void storm_owl_spawn_cyclones(struct MainObj* arg0)
 {
     struct MainObj* self;
@@ -1041,6 +1052,7 @@ void storm_owl_spawn_cyclones(struct MainObj* arg0)
         i += 1;
     } while ((u8)i < 3);
 }
+#endif
 
 void storm_owl_spawn_storm_charge(struct AnimatedObj* self)
 {
@@ -1107,6 +1119,9 @@ void storm_owl_choose_corner(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_choose_pattern);
+#else
 void storm_owl_choose_pattern(struct MainObj* self)
 {
     u32 idx;
@@ -1135,6 +1150,7 @@ void storm_owl_choose_pattern(struct MainObj* self)
         i++;
     }
 }
+#endif
 
 void storm_owl_clear_shots(void)
 {

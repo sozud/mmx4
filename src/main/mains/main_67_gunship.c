@@ -52,6 +52,9 @@ void func_80082470(struct MainObj* obj)
 // gunship_main
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", gunship_destroyed);
+#else
 void gunship_destroyed(struct MainObj* self)
 {
     s32 y;
@@ -61,6 +64,7 @@ void gunship_destroyed(struct MainObj* self)
     self->unk1C.val = y;
     gunship_destroyed_funcs[self->unk5](self, y);
 }
+#endif
 
 void gunship_destroyed_start(struct MainObj* self, s32 y)
 {
@@ -333,12 +337,16 @@ void gunship_spawn_exhaust(struct MainObj* self)
     } while ((var_s1 & 0xFF) < 4U);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", gunship_is_within);
+#else
 s32 gunship_is_within(struct MainObj* self, s32 arg1, s32 arg2)
 {
     POS_BOUNDS_CHECK_FAIL_RET0(self->x_pos.val, arg1)
     POS_BOUNDS_CHECK_FAIL_RET0(self->y_pos.val, arg2)
     return 1;
 }
+#endif
 
 struct Unk_unk68 gunship_hurt_box = { -77, -41, -105, 68 };
 

@@ -231,7 +231,11 @@ void func_8002328C(struct AbcObj* arg0)
                 temp_v0_4->active = 1;
                 temp_v0_4->id = 0x16;
                 temp_v0_4->unk16 = 0x10;
+#ifdef VERSION_EU
+                temp_v0_4->unk40 = 0x1F38;
+#else
                 temp_v0_4->unk40 = 0x1FFF;
+#endif
                 temp_v0_4->unk2 = 1;
                 temp_v0_4->unk3C = D_800F2F38;
                 if (engine_obj.stage == 0xD) {
@@ -284,6 +288,9 @@ void func_80023684(struct EngineObj* arg0)
 {
     arg0->unk1++;
 }
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/13A8C", func_80023698);
+#else
 void func_80023698(struct EngineObj* arg0)
 {
     struct MiscObj* obj;
@@ -326,6 +333,10 @@ void func_80023698(struct EngineObj* arg0)
     func_8001663C(MUSIC_STAFF_ROLL, 0x7F);
     func_800129A4(8);
 }
+#endif
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/13A8C", func_800237E4);
+#else
 void func_800237E4(struct EngineObj* arg0)
 {
     if (D_80141BDC[0] == 0) {
@@ -355,6 +366,7 @@ void func_800237E4(struct EngineObj* arg0)
         }
     }
 }
+#endif
 void func_80023870(struct EngineObj* arg0)
 {
     struct MiscObj* obj;
@@ -415,6 +427,9 @@ void func_800239E0(struct EngineObj* arg0)
         func_800127FC();
     }
 }
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/13A8C", func_80023A54);
+#else
 void func_80023A54(struct EngineObj* arg0)
 {
     D_800F2FE0[arg0->unk1](arg0);
@@ -422,6 +437,7 @@ void func_80023A54(struct EngineObj* arg0)
     update_misc_objects();
     func_80023D68();
 }
+#endif
 
 INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
 void func_80023B98(struct MiscObj* arg0)

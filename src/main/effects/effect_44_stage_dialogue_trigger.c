@@ -21,6 +21,9 @@ void stage_dialogue_trigger_wait(struct EffectObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_44_stage_dialogue_trigger", stage_dialogue_trigger_talk);
+#else
 void stage_dialogue_trigger_talk(struct EffectObj* self)
 {
     u16 sound_id;
@@ -38,6 +41,7 @@ void stage_dialogue_trigger_talk(struct EffectObj* self)
         self->state = 2;
     }
 }
+#endif
 
 void stage_dialogue_trigger_finish(struct EffectObj* self)
 {

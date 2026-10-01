@@ -16,6 +16,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066DE8);
 // train_boss_armor_main
 INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", func_80066F1C);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_47_train_boss_armor", train_boss_armor_smoke);
+#else
 void train_boss_armor_smoke(struct MainObj* self)
 {
     s32 tableIndex;
@@ -37,6 +40,7 @@ void train_boss_armor_smoke(struct MainObj* self)
         self->unk7E = 10;
     }
 }
+#endif
 
 void train_boss_armor_clear(struct MainObj* self)
 {

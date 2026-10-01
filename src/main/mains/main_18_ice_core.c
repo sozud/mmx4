@@ -501,6 +501,9 @@ void ice_core_bounce_start(struct MainObj* self)
     self->unk6 = 1;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", ice_core_bounce_move);
+#else
 void ice_core_bounce_move(struct MainObj* self)
 {
     s32 hit;
@@ -550,6 +553,7 @@ void ice_core_bounce_move(struct MainObj* self)
         self->unk6 = 3;
     }
 }
+#endif
 
 void ice_core_bounce_wait(struct MainObj* self)
 {
@@ -688,6 +692,9 @@ void ice_core_fall(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", ice_core_float);
+#else
 void ice_core_float(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -721,6 +728,7 @@ landed:
     self->unk5 = 2;
     self->unk6 = 0;
 }
+#endif
 
 void ice_core_pick_attack(struct MainObj* self)
 {

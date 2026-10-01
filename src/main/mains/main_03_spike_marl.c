@@ -43,6 +43,9 @@ void spike_marl_run(struct MainObj* self)
     self->state = 2;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", spike_marl_cleanup);
+#else
 void spike_marl_cleanup(struct MainObj* self)
 {
     u8 subtype;
@@ -60,6 +63,7 @@ void spike_marl_cleanup(struct MainObj* self)
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
+#endif
 
 void spike_marl_resume_step(struct MainObj* self)
 {

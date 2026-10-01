@@ -79,6 +79,9 @@ void robot_bee_wait_start(struct MainObj* self)
     self->unk6++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_wait_for_player);
+#else
 void robot_bee_wait_for_player(struct MainObj* self)
 {
     s32 object_x;
@@ -100,6 +103,7 @@ void robot_bee_wait_for_player(struct MainObj* self)
         self->x_speed = x_vel;
     }
 }
+#endif
 
 void robot_bee_glide(struct MainObj* self)
 {
@@ -109,6 +113,9 @@ void robot_bee_glide(struct MainObj* self)
     robot_bee_glide_funcs[self->unk6](self);
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_glide_start);
+#else
 void robot_bee_glide_start(struct MainObj* self)
 {
     s32* velocity;
@@ -124,6 +131,7 @@ void robot_bee_glide_start(struct MainObj* self)
     self->x_speed = x_vel;
     self->unk6++;
 }
+#endif
 
 void robot_bee_glide_move(struct MainObj* self)
 {
@@ -157,6 +165,9 @@ void robot_bee_dash_wind_up(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_dash_charge);
+#else
 void robot_bee_dash_charge(struct MainObj* self)
 {
     s32* velocity;
@@ -175,6 +186,7 @@ void robot_bee_dash_charge(struct MainObj* self)
         self->gravity = FIXED(-0.03125);
     }
 }
+#endif
 
 void robot_bee_dash_accelerate(struct MainObj* self)
 {
@@ -185,6 +197,9 @@ void robot_bee_dash_accelerate(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting);
+#else
 void robot_bee_sting(struct MainObj* self)
 {
     if (self->unk6 > 3) {
@@ -196,7 +211,11 @@ void robot_bee_sting(struct MainObj* self)
     }
     robot_bee_sting_funcs[self->unk6](self);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_start);
+#else
 void robot_bee_sting_start(struct MainObj* self)
 {
     s32* velocity;
@@ -212,6 +231,7 @@ void robot_bee_sting_start(struct MainObj* self)
     self->x_speed = *velocity;
     self->unk6++;
 }
+#endif
 
 void robot_bee_sting_approach(struct MainObj* self)
 {
@@ -232,6 +252,9 @@ void robot_bee_sting_approach(struct MainObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_brake);
+#else
 void robot_bee_sting_brake(struct MainObj* self)
 {
     s32* velocity;
@@ -247,6 +270,7 @@ void robot_bee_sting_brake(struct MainObj* self)
         self->unk6++;
     }
 }
+#endif
 
 void robot_bee_sting_lunge(struct MainObj* self)
 {
@@ -300,6 +324,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_8004619C);
 // robot_bee_circle_orbit
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_drop);
+#else
 void robot_bee_drop(struct MainObj* self)
 {
     if (self->unk6 > 1) {
@@ -311,6 +338,7 @@ void robot_bee_drop(struct MainObj* self)
     }
     robot_bee_drop_funcs[self->unk6](self);
 }
+#endif
 
 // robot_bee_drop_start
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046400);

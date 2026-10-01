@@ -471,6 +471,9 @@ void player_spawn(void)
     background_objects[2].unk44 = 0;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_init_clone);
+#else
 void player_init_clone(void)
 {
     struct PlayerObj* entity = &g_Entity;
@@ -491,7 +494,11 @@ void player_init_clone(void)
     entity->unk42 = 0x7800;
     entity->unk49 = 1;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_update_init);
+#else
 void player_update_init(struct PlayerObj* self)
 {
     struct EngineObj* engine = &engine_obj;
@@ -540,6 +547,7 @@ void player_update_init(struct PlayerObj* self)
         player_entry_funcs[entry](self);
     }
 }
+#endif
 
 void player_entry_beam_in(struct PlayerObj* self)
 {
@@ -680,6 +688,9 @@ void player_spawn_death_orb(s8 direction)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_death_orbs);
+#else
 void player_spawn_death_orbs(s8 pattern)
 {
     const s8* entry;
@@ -697,6 +708,7 @@ void player_spawn_death_orbs(s8 pattern)
         player_spawn_death_orb(*entry++);
     } while (entry < end);
 }
+#endif
 
 void player_update_inactive(struct PlayerObj* self)
 {
@@ -745,6 +757,9 @@ void player_set_collision_bounds(struct PlayerObj* self)
     self->unk68 = &player_zero_collision_bounds;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_read_input);
+#else
 void player_read_input(void)
 {
     if (g_Player.controlling_clone == 0) {
@@ -760,7 +775,11 @@ void player_read_input(void)
     g_Entity.input.buttons.previous = player_map_buttons(D_80166C0A);
     g_Entity.pressed_input = player_map_buttons(controller_state);
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_map_buttons);
+#else
 u16 player_map_buttons(s32 pad)
 {
     u16 result = 0;
@@ -784,6 +803,7 @@ u16 player_map_buttons(s32 pad)
 
     return result;
 }
+#endif
 
 void player_clear_dash(struct PlayerObj* self)
 {
@@ -1037,6 +1057,9 @@ void player_spawn_dash_dust(struct PlayerObj* self)
     }
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_dash_spark);
+#else
 void player_spawn_dash_spark(struct PlayerObj* self)
 {
     u8 facing;
@@ -1075,7 +1098,11 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     }
     visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2 + 1];
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_dash_splash);
+#else
 void player_spawn_dash_splash(struct PlayerObj* self)
 {
     u8 facing;
@@ -1108,6 +1135,7 @@ void player_spawn_dash_splash(struct PlayerObj* self)
         }
     }
 }
+#endif
 
 extern f32 player_wall_kick_spark_offsets[];
 
@@ -1200,6 +1228,9 @@ void player_check_splash(struct PlayerObj* self)
 
 // player_spawn_splash
 INCLUDE_ASM("main/nonmatchings/player_common", func_80036BF4);
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_weapon);
+#else
 struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerObj* owner)
 {
     struct WeaponObj* weapon = find_free_weapon_obj();
@@ -1217,7 +1248,11 @@ struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerOb
     }
     return weapon;
 }
+#endif
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_visual);
+#else
 struct VisualObj* player_spawn_visual(s8 active, s8 id, s8 variant, void* owner)
 {
     struct VisualObj* visual_obj = find_free_visual_obj();
@@ -1235,3 +1270,4 @@ struct VisualObj* player_spawn_visual(s8 active, s8 id, s8 variant, void* owner)
     }
     return visual_obj;
 }
+#endif

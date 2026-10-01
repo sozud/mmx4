@@ -66,6 +66,9 @@ void func_8001FAFC(struct EngineObj* arg0)
     func_8001F118();
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/102FC", func_8001FB50);
+#else
 void func_8001FB50(void)
 {
     while (1) {
@@ -73,6 +76,7 @@ void func_8001FB50(void)
         func_800127C8(1);
     }
 }
+#endif
 
 void engine_state_0(struct EngineObj* arg0)
 {
@@ -217,6 +221,9 @@ void engine_state_6(struct EngineObj* arg0)
 }
 
 // D_800F241C state 0
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/102FC", func_8001FF8C);
+#else
 void func_8001FF8C(struct EngineObj* arg0)
 {
     if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADstart)
@@ -236,6 +243,7 @@ void func_8001FF8C(struct EngineObj* arg0)
     }
     func_80023D68();
 }
+#endif
 
 // D_800F241C state 1
 void func_80020060(struct EngineObj* arg0)

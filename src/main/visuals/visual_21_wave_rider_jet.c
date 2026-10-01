@@ -19,6 +19,9 @@ void wave_rider_jet_init(struct VisualObj* arg0)
     arg0->state++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/visuals/visual_21_wave_rider_jet", wave_rider_jet_main);
+#else
 void wave_rider_jet_main(struct VisualObj* arg0)
 {
     struct PlayerObj* temp_a0;
@@ -36,6 +39,7 @@ void wave_rider_jet_main(struct VisualObj* arg0)
         update_on_screen(arg0, 0x90, 0x90);
     }
 }
+#endif
 
 void wave_rider_jet_despawn(struct VisualObj* arg0)
 {

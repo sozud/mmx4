@@ -53,6 +53,9 @@ void sigma_collapse_rumble_start(struct EffectObj* self)
     self->unk5++;
 }
 
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_43_sigma_collapse", sigma_collapse_rumble_shake);
+#else
 void sigma_collapse_rumble_shake(struct EffectObj* self)
 {
     if (--self->ext.effect_43.unk14 == 0) {
@@ -66,6 +69,7 @@ void sigma_collapse_rumble_shake(struct EffectObj* self)
         self->ext.effect_43.unk16 = 0x28;
     }
 }
+#endif
 
 void sigma_collapse_rumble(struct EffectObj* self)
 {

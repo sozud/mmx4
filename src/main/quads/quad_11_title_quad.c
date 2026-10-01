@@ -179,6 +179,9 @@ void TitleSetWhiteQuadSpeed(struct QuadObj* arg0)
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);
 #else
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", title_quad_morph);
+#else
 void title_quad_morph(struct QuadObj* arg0)
 {
     f32* xy_ptr;
@@ -249,9 +252,13 @@ void title_quad_morph(struct QuadObj* arg0)
     quad_is_on_screen(arg0);
 }
 #endif
+#endif
 
 // TitleUpdate2 state 6
 // title_quad_flash
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/quads/quad_11_title_quad", func_800D7468);
+#else
 void func_800D7468(struct QuadObj* quad)
 {
     struct QuadVertex* vertex;
@@ -297,6 +304,7 @@ void func_800D7468(struct QuadObj* quad)
     }
     quad_is_on_screen(quad);
 }
+#endif
 
 // TitleUpdate2 state 2
 void title_quad_despawn(struct QuadObj* arg0)
