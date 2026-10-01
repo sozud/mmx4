@@ -39,7 +39,7 @@ segments:
     start: 0x00000800
     end: 0x0011FC18
     vram:  0x80010000
-    bss_size: 0x46B20
+    bss_size: 0x46BD8
     align: 1
     subalign: 1
     subsegments:
@@ -1086,6 +1086,5 @@ segments:
       - [0x10A924, .data, player_animations_2]
       - [0x10BB24, .data, sprite_animations]
       - [0x10CA20, .data, data/sdk_runtime_data]
-      - {type: bss, vram: 0x80166CC4, name: bss}
   - [0x11FC18, bin, padding/jp_exe]
   - [0x120000]

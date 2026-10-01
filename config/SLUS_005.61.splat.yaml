@@ -1081,5 +1081,4 @@ segments:
       - [0x10A830, .data, player_animations_2]
       - [0x10BA30, .data, sprite_animations]
       - [0x10C92C, .data, data/sdk_runtime_data]
-      - {type: bss, vram: 0x80166BE4, name: bss}
   - [0x11FC18]

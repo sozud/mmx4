@@ -479,13 +479,83 @@ u8 pad_80166BB8[0x14];
 s32 _snd_openflag;
 u8 pad_snd_openflag[0x14];
 #endif
-
+u8 D_80166BE4[0x4];
+u8 D_80166BE8;
+u8 D_80166BE9;
+u8 D_80166BEA;
+u8 D_80166BEB;
+u8 D_80166BEC;
+u8 D_80166BED;
+u8 D_80166BEE;
+u8 D_80166BEF[0x3];
+u8 D_80166BF2;
+u8 D_80166BF3;
+u8 D_80166BF4;
+u8 D_80166BF5;
+u8 D_80166BF6;
+u8 D_80166BF7;
+u8 D_80166BF8;
+u8 D_80166BF9;
+u8 D_80166BFA;
+u8 D_80166BFB;
+u8 D_80166BFC[0x2];
+u8 D_80166BFE[0x2];
+u8 D_80166C00[0x2];
+u8 D_80166C02[0x2];
+u8 D_80166C04[0x2];
+u8 D_80166C06[0x2];
+u16 D_80166C08;
+u16 D_80166C0A;
+u16 controller_state;
+#ifndef MMX4_PC
+u8 pad_80166C0E[2];
+#endif
+struct DrawInfo draw_infos[2];
+#ifndef MMX4_PC
+u8 pad_80166D50[2];
+#endif
+u8 D_80166D52[0x6];
+u8 D_80166D58[0x10];
 #ifdef MMX4_PC
-
+u8 D_80166D68[0x22];
+#elif !defined(VERSION_JP)
+u8 D_80166D68;
+u8 pad_80166D69[0x27];
+#endif
+u8 D_80166D90[0x2];
+u8 D_80166D92[0x2];
+u8 D_80166D94[0x2];
+u8 D_80166D96[0x2];
+u8 D_80166D98[0x2];
+u8 D_80166D9A[0x26F6];
+u8 D_80169490[0x4];
+u8 D_80169494[0x4];
+union TitleScratch D_80169498;
+#ifndef MMX4_PC
+u8 pad_80169C98[0x18];
+#endif
+u8 D_80169CB0[0x8];
+struct LayerObj layer_objects[4];
+TILE D_80169D78[2];
+struct SecondaryPrimitiveBuffer temp2[2];
+u8 D_8016DD98[0x4];
 u16 lastFilterAmountG;
-u8 g_FilterModeG;
-u16 g_FilterAmountG;
-
+#ifndef MMX4_PC
+u8 pad_8016DD9E[0x102];
+#endif
+struct FadeState D_8016DEA0;
+s32 player_gfx_buf_0[0x400];
+#ifdef MMX4_PC
+s32 player_gfx_buf_1[0x4000];
+#else
+s32 player_gfx_buf_1[0xC00];
+#endif
+u8 D_80171EA8;
+u8 D_80171EA9;
+#ifndef MMX4_PC
+u8 pad_80171EAA[6];
+#endif
+DR_TPAGE D_80171EB0[2][6][8];
 u8* D_801721B0;
 u8 D_801721B4;
 u8 D_801721B5;
@@ -494,59 +564,93 @@ u8 D_801721B7;
 u8 D_801721B8;
 u8 D_801721B9;
 u8 D_801721BA;
+#ifndef MMX4_PC
+u8 pad_801721BB[1];
+#endif
 struct MemcardSaveSlot* D_801721BC;
+struct EngineObj engine_obj;
+u8 layout_width;
+#ifndef MMX4_PC
+u8 pad_80172225[3];
+#endif
+u8 D_80172228[0x4];
+u8 D_8017222C[0x4];
+u8 D_80172230[0x4];
+u8 D_80172234[0x17F4];
+u8 layout_height;
+#ifndef MMX4_PC
+u8 pad_80173A29[7];
+#endif
+struct RideArmorObj qux_object;
 u8 D_80173AE0[0x14A];
 u8 D_80173C2A;
-s8 pad_80173C2B;
+#ifndef MMX4_PC
+u8 pad_80173C2B[1];
+#endif
 s32 D_80173C2C;
 s32 D_80173C30[0xF];
+s8 D_80173C6C[4];
+struct GameInfo game_info;
+u8* D_80173C80;
+u8 D_80173C84;
+#ifndef MMX4_PC
+u8 pad_80173C85[3];
+#endif
+u8 D_80173C88[0x4];
+u8 D_80173C8C[0x4];
+u8 D_80173C90[0x4];
+u8 D_80173C94[0xC];
+struct MiscObj misc_objects[0x40];
+struct BarObj bar_object;
+u8 D_801754D4[0x4];
+u8 D_801754D8[0x80];
+u8 D_80175558[0x800];
+struct PlayerObj g_Entity;
+u8 D_80175E3C[0x4];
+u8 D_80175E40[0x4];
+u8 D_80175E44[0x4];
+u8 D_80175E48[0x4];
+u8 D_80175E4C[0x4];
+u8 D_80175E50[0x4];
+s32 D_80175E54;
+u8 D_80175E58[0x44];
+u8 g_FilterModeR;
+#ifndef MMX4_PC
+u8 pad_80175E9D[1];
+#endif
+u8 D_80175E9E[0x2];
+u16 g_FilterAmountR;
+#ifndef MMX4_PC
+u8 pad_80175EA2[6];
+#endif
+u8 D_80175EA8[0x40];
+s32 D_80175EE8[2];
+u8 D_80175EF0[0x40];
+s32 D_80175F30;
+u8 D_80175F34[0x2];
+u8 D_80175F36[0x2];
+
+#ifdef MMX4_PC
+
+u8 g_FilterModeG;
+u16 g_FilterAmountG;
+
 s8 D_801721E4;
 
-u8 D_80166D68[0x22];
-
-u8 D_80171EA9;
-u8 D_80171EA8;
 struct MainObj* D_80171FE0;
 u8 D_80171FE5;
 s8 D_80141F4A;
-u8 D_80173C84;
-s32 D_80175EE8[1];
 s8 D_801F6018, D_801F6019, D_801F604F;
-struct DrawInfo draw_infos[2];
-u16 D_80166C08;
-u16 D_80166C0A;
-u16 controller_state;
 struct MainBssState main_bss_state;
 #ifndef MMX4_PC
 struct GameThread* D_801F8300;
 #endif
-u8* D_80173C80;
 u8 pc_archive_arena[0x88000];
-union TitleScratch D_80169498;
-struct GameInfo game_info;
-s8 D_80173C6C[4];
 u8* D_80141F50[8];
-struct PlayerObj g_Entity;
-struct EngineObj engine_obj;
-struct BarObj bar_object;
-struct MiscObj misc_objects[0x40];
-
-struct LayerObj layer_objects[4];
-struct RideArmorObj qux_object;
-s32 player_gfx_buf_0[0x400];
-s32 player_gfx_buf_1[0x4000];
-u16 g_FilterAmountR;
-u8 g_FilterModeR;
 u8* pc_archive_slots[22];
 
-u8 layout_width, layout_height;
-struct SecondaryPrimitiveBuffer temp2[2];
 struct MainPrimitiveBuffer temp1[2];
-DR_TPAGE D_80171EB0[2][6][8];
 u8 window_archive_data[0x3000];
 u8 replay_data[0x2000];
-
-struct FadeState D_8016DEA0;
-TILE D_80169D78[2];
 
 #endif
