@@ -4338,7 +4338,6 @@ extern u8* const* D_800F2DD8[];
 extern const u8* D_800F2DD0[];
 extern u16 D_800F2F40[16];
 extern const u32* const* D_800F2EE8[];
-extern const u32* const* D_800F2F00[];
 extern s16 D_800F2FDC[2];
 extern struct MiscObj* D_801397BC;
 extern struct MiscObj* D_801397C0;

@@ -690,9 +690,9 @@ const u32* const* D_800F2EE8[] = {
     animation_94,
     animation_95,
     animation_96,
+	animation_97,
+	animation_98
 };
-
-const u32* const* D_800F2F00[] = { animation_97, animation_98 };
 
 u32 D_800F2F08[12] = {
     0xFEFE19FE,

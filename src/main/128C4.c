@@ -255,7 +255,7 @@ void func_80022730(struct AbcObj* arg0)
                     value = 0x11;
                     obj->unk16 = value;
 
-                    obj->animation_table = D_800F2F00[0];
+                    obj->animation_table = D_800F2EE8[6];
 
                     if (CONFIG->unk4 != 0) {
                         obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
@@ -290,9 +290,9 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
+                    obj->state = 0;
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
-                    obj->state = 0;
 
                     set_animation(obj, 0);
                 }
@@ -378,7 +378,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         *(volatile u8*)&obj->unk16 = 0x11;
 
-                        obj->animation_table = D_800F2F00[0];
+                        obj->animation_table = D_800F2EE8[6];
 
                         if (CONFIG->unk4 != 0) {
                             obj->unk40 = (D_801406A8[CONFIG->unk0] >> 7) + 0xB0;
