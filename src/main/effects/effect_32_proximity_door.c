@@ -68,9 +68,8 @@ void proximity_door_step(struct EffectObj* self)
     timer = self->ext.effect_32.palette.fields.timer - 1;
     self->ext.effect_32.palette.fields.timer = timer;
     if (timer == 0) {
-        entry = self->ext.effect_32.palette_source.words + self->ext.effect_32.palette.fields.step;
-        self->ext.effect_32.palette_source.words = entry;
-        self->ext.effect_32.palette.packed = *entry;
+        self->ext.effect_32.palette_source.words += self->ext.effect_32.palette.fields.step;
+        self->ext.effect_32.palette.packed = *self->ext.effect_32.palette_source.words;
         apply_tile_effect(self->ext.effect_32.palette.fields.id,
             self->x_pos.i.hi - 0x30, self->y_pos.i.hi - 0x30);
     }
@@ -79,18 +78,20 @@ void proximity_door_step(struct EffectObj* self)
 void proximity_door_check_player(struct EffectObj* self)
 {
     s16 x_pos;
-    s32 delta;
 
     x_pos = self->x_pos.i.hi;
-    delta = g_Player.x_pos.i.hi - x_pos;
-    if (delta >= 0 ? delta < 0x30 : (x_pos - g_Player.x_pos.i.hi) < 0x30) {
-        if (self->ext.effect_32.unk15 != 1 && self->ext.effect_32.palette.fields.step == 0) {
-            proximity_door_start_script(self, 0);
-            self->ext.effect_32.unk15 = 1;
+    if (((g_Player.x_pos.i.hi - x_pos) < 0 ? x_pos - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - x_pos) < 0x30) {
+        if (self->ext.effect_32.unk15 != 1) {
+            if (self->ext.effect_32.palette.fields.step == 0) {
+                proximity_door_start_script(self, 0);
+                self->ext.effect_32.unk15 = 1;
+            }
         }
-    } else if (self->ext.effect_32.unk15 == 1 && self->ext.effect_32.palette.fields.step == 0) {
-        proximity_door_start_script(self, 1);
-        self->ext.effect_32.unk15 = -1;
+    } else if (self->ext.effect_32.unk15 == 1) {
+        if (self->ext.effect_32.palette.fields.step == 0) {
+            proximity_door_start_script(self, 1);
+            self->ext.effect_32.unk15 = -1;
+        }
     }
 }
 

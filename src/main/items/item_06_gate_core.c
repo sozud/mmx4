@@ -13,7 +13,7 @@ void gate_core_init(struct ItemObj* arg0)
 {
     u8 bg_offset;
     s32* archive;
-    s32 frame_index;
+    u8 frame_index;
 
     arg0->active = 0x41;
     arg0->unk75 = 1;
@@ -32,9 +32,8 @@ void gate_core_init(struct ItemObj* arg0)
     arg0->unk2C = 0;
     arg0->animation_step.fields.frame_index = 0;
     frame_index = func_8002938C(0x98) & 0xFF;
-    archive = SP_MENU_FRAMES;
     arg0->unk40 = D_801406A8[frame_index] >> 7;
-    arg0->sprite_frames = (u8*)archive + archive[frame_index];
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[frame_index];
     if (arg0->unk2 == 0) {
         arg0->unk42 = 0x79CE;
     } else {
@@ -94,7 +93,7 @@ void gate_core_exit(struct ItemObj* arg0)
 
 void gate_core_wait_exit(struct ItemObj* arg0)
 {
-    if (gate_core_exit_x[arg0->unk2] < g_Player.x_pos.i.hi) {
+    if (g_Player.x_pos.i.hi > gate_core_exit_x[arg0->unk2]) {
         engine_obj.unkF = 0x40;
         despawn_object_permanently(OBJECT_HEADER(arg0));
     }

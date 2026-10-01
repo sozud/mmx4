@@ -72,13 +72,13 @@ struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
     return 0;
 }
 
-s32 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
+u8 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
 {
     s16 temp_a1;
     s16 temp_a2;
     s32 temp_v0;
     u8 tile;
-    s32 temp_v1;
+    u8 temp_v1;
     s32 var_v0;
 
     temp_a1 = self->x_pos.u.hi + arg1;
@@ -87,7 +87,7 @@ s32 jet_stingray_check_surface(struct PlayerObj* self, s32 arg1, s32 arg2)
         self, temp_a1, temp_a2);
     tile = temp_v0;
     var_v0 = 1;
-    if ((u32)((temp_v0 - 0x10) & 0xFF) >= 9U) {
+    if (9U <= (u32)((temp_v0 - 0x10) & 0xFF)) {
         temp_v1 = tile;
         if (temp_v1 == 0x38) {
             return (self->y_pos.i.hi >= 0x121) * 2;
@@ -213,8 +213,7 @@ void jet_stingray_intro_pose(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 0) {
             if (engine_obj.stage == 5) {
-                ((void (*)(s32, s32, s32))func_8002217C)(
-                    0xD, 0xFF, (s32)(s8)engine_obj.character_state.bytes[8]);
+                ((void (*)(u16, u8, s8))func_8002217C)(0xD, 0xFF, engine_obj.character_state.bytes[8]);
                 engine_obj.character_state.bytes[8] = 1;
             }
             self->unk6 = (u8)self->unk6 + 1;
@@ -283,7 +282,7 @@ void jet_stingray_choose_pattern(struct MainObj* self)
     u8* weights;
     u8* base;
     u8 i;
-    u32 rnd;
+    u8 rnd;
     u32 gr;
 
     idx = self->hp - 1;
@@ -464,9 +463,9 @@ void jet_stingray_ambush_exit(struct MainObj* self)
         self->contact_damage = 9;
         self->attack_box = &jet_stingray_ambush_attack_box;
         self->hurt_box = &jet_stingray_ambush_hurt_box;
+        self->unk7++;
         self->y_speed = FIXED(9);
         self->x_speed = 0;
-        self->unk7++;
         set_animation(self, 7);
         func_8001540C(2, 0xAF, self);
     }
@@ -539,7 +538,6 @@ void jet_stingray_ambush_rise(struct MainObj* self)
 
 void jet_stingray_ambush_return(struct MainObj* self)
 {
-    s32 bg_idx;
 
     if (--self->unk7C != 0) {
         return;
@@ -547,11 +545,10 @@ void jet_stingray_ambush_return(struct MainObj* self)
     self->unk5 = 2;
     self->unk6 = 0;
     self->unk7 = 0;
-    bg_idx = self->bg_offset;
-    if (self->x_pos.i.hi < background_objects[bg_idx].x_pos.i.hi + 0xA0) {
-        self->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x40;
+    if (self->x_pos.i.hi < background_objects[self->bg_offset].x_pos.i.hi + 0xA0) {
+        self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x40;
     } else {
-        self->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x120;
+        self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x120;
     }
     self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.u.hi - 0x50;
 }
@@ -606,19 +603,17 @@ void jet_stingray_dash_charge(struct MainObj* self)
 
 void jet_stingray_dash_return(struct MainObj* self)
 {
-    s32 bg_idx;
 
     if (--self->unk7C != 0) {
         return;
     }
-    bg_idx = self->bg_offset;
     self->unk5 = 2;
     self->unk6 = 0;
 
-    if (self->x_pos.i.hi < background_objects[bg_idx].x_pos.i.hi) {
-        self->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x40;
+    if (self->x_pos.i.hi < background_objects[self->bg_offset].x_pos.i.hi) {
+        self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x40;
     } else {
-        self->x_pos.i.hi = background_objects[bg_idx].unk1E + 0x120;
+        self->x_pos.i.hi = background_objects[self->bg_offset].unk1E + 0x120;
     }
 
     self->y_pos.i.hi = background_objects[self->bg_offset].y_pos.u.hi - 0x50;
@@ -689,22 +684,15 @@ void jet_stingray_leap_return(struct MainObj* entity)
 
 void jet_stingray_leap(struct MainObj* self)
 {
-    s32 direction;
-    s32 result;
-
     jet_stingray_leap_funcs[self->unk6](self);
     animate_object(ANIMATED_OBJECT(self));
     jet_stingray_apply_leap(self);
 
-    direction = -0x30;
-    if (self->unk15 != 0) {
-        direction = 0x30;
-    }
-
-    result = jet_stingray_check_surface(PLAYER_OBJECT(self), direction, 0);
-    if ((result & 0xFF) == 3 && !(self->ext.main_56.flags & 2)) {
-        jet_stingray_spawn_splash(self);
-        self->ext.main_56.flags |= 2;
+    if (((jet_stingray_check_surface(PLAYER_OBJECT(self), (self->unk15 != 0 ? 0x30 : -0x30), 0)) & 0xFF) == 3) {
+        if (!(self->ext.main_56.flags & 2)) {
+            jet_stingray_spawn_splash(self);
+            self->ext.main_56.flags |= 2;
+        }
     }
 }
 
@@ -870,10 +858,7 @@ void jet_stingray_death_explode(struct MainObj* self)
         self->unk42 ^= 0x8000;
         self->ext.main_56.unk89.value -= 5;
         var_a0 = self->ext.main_56.unk89.value;
-        if (var_a0 < 5) {
-            var_a0 = 5;
-        }
-        self->unk7E = var_a0;
+        self->unk7E = var_a0 > 5 ? var_a0 : 5;
     }
 }
 

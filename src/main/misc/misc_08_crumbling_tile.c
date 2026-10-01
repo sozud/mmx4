@@ -62,7 +62,7 @@ void crumbling_tile_break_first(struct MiscObj* self)
             }
         }
         if (self->unk15 != 0) {
-            self->x_pos.u.hi -= 0x10;
+            self->x_pos.i.hi -= 0x10;
         }
         apply_tile_effect(crumbling_tile_first_effects[self->unk2].variant, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
         self->state++;
@@ -80,9 +80,10 @@ void crumbling_tile_second_wait_anim(struct MiscObj* self)
 void crumbling_tile_second_delay(struct MiscObj* self)
 {
     s32 step;
-    s32 specialStep;
+    u8 specialStep;
+    struct Misc8Ext* ext = &self->ext.misc_8;
 
-    if (self->ext.misc_8.timer == 0) {
+    if (ext->timer == 0) {
         self->unk5++;
         step = self->unk2;
 
@@ -101,7 +102,7 @@ void crumbling_tile_second_delay(struct MiscObj* self)
         }
         set_animation(self, crumbling_tile_second_effects.entries[self->unk2].second);
     } else {
-        self->ext.misc_8.timer--;
+        ext->timer--;
     }
 }
 
@@ -160,7 +161,7 @@ void crumbling_tile_break_second(struct MiscObj* self)
             }
         }
         if (self->unk15 != 0) {
-            self->x_pos.u.hi -= 0x10;
+            self->x_pos.i.hi -= 0x10;
         }
         apply_tile_effect(crumbling_tile_second_effects.entries[self->unk2].third, (s16)self->x_pos.u.hi, self->y_pos.i.hi);
         self->state++;

@@ -13,8 +13,8 @@ void func_8002F524(struct EngineObj* arg0)
         temp_v0->active = -0x7F;
         temp_v0->id = 1;
         temp_v0->unk2 = arg0->unk3 + 0x10;
-        arg0->unk3C = temp_v0;
         arg0->unk2++;
+        arg0->unk3C = temp_v0;
     }
 }
 
@@ -106,7 +106,7 @@ void func_8002F828(struct EngineObj* arg0)
 
 void func_8002F87C(struct EngineObj* arg0)
 {
-    if (D_80173C84 == 2) {
+    if (2 == D_80173C84) {
         background_objects[1].y_pos.val -= FIXED(8 + 1.0 / 16);
         background_objects[2].y_pos.val += FIXED(8 + 1.0 / 16);
         if (background_objects[1].y_pos.val < 0) {

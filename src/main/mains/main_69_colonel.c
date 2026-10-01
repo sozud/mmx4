@@ -54,7 +54,7 @@ void colonel_defeat(struct MainObj* self)
 
 void colonel_defeat_start(struct MainObj* self)
 {
-    s32 facing;
+    u8 facing;
 
     if (self->x_pos.i.hi > g_Player.x_pos.i.hi) {
         facing = 1;
@@ -135,7 +135,6 @@ void colonel_defeat_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
     s16 timer;
-    s8 level;
 
     if (--self->unk7C == 0) {
         self->unk6++;
@@ -157,10 +156,7 @@ void colonel_defeat_blink(struct MainObj* self)
     self->invincibility_timer -= 5;
     if (self->invincibility_timer > 0x19)
         self->invincibility_timer = 0;
-    level = self->invincibility_timer;
-    if (level < 5)
-        level = 5;
-    self->unk7E = level;
+    self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
 }
 
 void colonel_defeat_wait_explosion(struct MainObj* self)
@@ -222,10 +218,12 @@ void colonel_retreat_vanish(struct MainObj* self)
         self->unk6++;
     } else {
         self->x_speed += self->x_accel;
-        if (self->unk7C & 1) {
-            self->x_pos.val += self->x_speed;
-        } else {
-            self->x_pos.val -= self->x_speed;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
         is_on_screen(BASE_OBJECT(self));
     }
@@ -244,10 +242,12 @@ void colonel_retreat_reappear(struct MainObj* self)
     } else {
         animate_object(ANIMATED_OBJECT(self));
         self->x_speed += self->x_accel;
-        if (self->unk7C & 1) {
-            self->x_pos.val += self->x_speed;
-        } else {
-            self->x_pos.val -= self->x_speed;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
     }
     is_on_screen(BASE_OBJECT(self));
@@ -285,10 +285,12 @@ void colonel_retreat_vanish_again(struct MainObj* self)
         self->unk6++;
     } else {
         self->x_speed += self->x_accel;
-        if (self->unk7C & 1) {
-            self->x_pos.val += self->x_speed;
-        } else {
-            self->x_pos.val -= self->x_speed;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
         is_on_screen(BASE_OBJECT(self));
     }
@@ -350,7 +352,9 @@ void colonel_intro_port_flash(struct PlayerObj* self)
 
 void colonel_intro_port_blink_in(struct MainObj* self)
 {
-    self->on_screen ^= 1;
+    if (FLICKER_ENABLED) {
+        self->on_screen ^= 1;
+    }
     if (self->on_screen != 0) {
         is_on_screen(BASE_OBJECT(self));
     }
@@ -421,12 +425,10 @@ void colonel_intro_hall(struct MainObj* self)
 void colonel_intro_hall_wait_player(struct MainObj* self)
 {
     s16 object_x;
-    s32 delta;
 
     object_x = self->x_pos.i.hi;
-    delta = g_Player.x_pos.i.hi - object_x;
-    if ((delta >= 0) ? (delta < 0xB1)
-                     : ((object_x - g_Player.x_pos.i.hi) <= 0xB0)) {
+    if (((g_Player.x_pos.i.hi - object_x) >= 0) ? ((g_Player.x_pos.i.hi - object_x) < 0xB1)
+                                                : ((object_x - g_Player.x_pos.i.hi) <= 0xB0)) {
         player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x2C0;
         background_objects[0].unk26 = 0x2A0;
@@ -648,10 +650,12 @@ void colonel_teleport_slash_shake(struct MainObj* self)
         self->unk6++;
     } else {
         self->x_speed += self->x_accel;
-        if (self->unk7C & 1) {
-            self->x_pos.val += self->x_speed;
-        } else {
-            self->x_pos.val -= self->x_speed;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
         is_on_screen(BASE_OBJECT(self));
     }
@@ -882,10 +886,12 @@ void colonel_flash_strike_shake(struct MainObj* self)
         self->unk6++;
     } else {
         self->x_speed += self->x_accel;
-        if (self->unk7C & 1) {
-            self->x_pos.val += self->x_speed;
-        } else {
-            self->x_pos.val -= self->x_speed;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
         is_on_screen(BASE_OBJECT(self));
     }
@@ -908,24 +914,21 @@ void colonel_flash_strike_reappear(struct MainObj* self)
 
 void colonel_flash_strike_slide(struct MainObj* self)
 {
-    u16 timer;
-    s32 delta;
-
-    timer = self->unk7C - 1;
-    self->unk7C = timer;
-    if ((timer << 0x10) == 0) {
+    self->unk7C = self->unk7C - 1;
+    if ((self->unk7C << 0x10) == 0) {
         self->hurt_box = &D_801044FC;
         self->attack_box = &D_80104500;
         set_animation(self, 7);
         self->unk6 = (u8)self->unk6 + 1;
     } else {
         animate_object(ANIMATED_OBJECT(self));
-        delta = self->x_speed + self->x_accel;
-        self->x_speed = delta;
-        if (self->unk7C & 1) {
-            self->x_pos.val += delta;
-        } else {
-            self->x_pos.val -= delta;
+        self->x_speed += self->x_accel;
+        if (SHAKE_ENABLED) {
+            if (BLINK_CLOCK(self->unk7C) & 1) {
+                self->x_pos.val += self->x_speed;
+            } else {
+                self->x_pos.val -= self->x_speed;
+            }
         }
     }
     is_on_screen(BASE_OBJECT(self));
@@ -1067,24 +1070,22 @@ void colonel_jump_slam_recover(struct MainObj* self)
     }
 }
 
-s32 colonel_shot_incoming(struct MainObj* self)
+ret_u8 colonel_shot_incoming(struct MainObj* self)
 {
     volatile struct WeaponObj* weapon;
-    s32 active;
-    s32 i;
+    u8 i;
     s32 x_diff;
 
     i = 0;
     weapon = weapon_objects;
-    active = weapon_objects->active;
     do {
-        if (active != 0 && weapon->unk50 != 0) {
+        if (weapon_objects->active != 0 && weapon->unk50 != 0) {
             x_diff = (u16)weapon->x_pos.i.hi - (u16)self->x_pos.i.hi;
             if (self->unk15 == 0) {
                 if ((x_diff << 16) <= 0 && weapon->x_vel.val >= 0) {
                     return 1;
                 }
-            } else if ((x_diff << 16) >= 0 && weapon->x_vel.val <= 0) {
+            } else if ((x_diff << 16) >= 0 && weapon->x_vel.val < 1) {
                 return 1;
             }
         }
@@ -1134,8 +1135,8 @@ void colonel_spawn_afterimages(struct MainObj* self)
             visual_obj->unk3C = (void*)self->sprite_frames;
             visual_obj->animation_table = (u32**)self->animation_table;
             visual_obj->unk42 = self->unk42;
-            visual_obj->unk5C.owner = PLAYER_OBJECT(self);
             visual_obj->unk16 = 6;
+            visual_obj->unk5C.owner = PLAYER_OBJECT(self);
             if (i != 0) {
                 visual_obj->unk50 = PLAYER_OBJECT(previous);
             } else {

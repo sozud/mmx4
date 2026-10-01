@@ -15,6 +15,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_24_jet_drone", func_800567C4);
 
 void jet_drone_main(struct MainObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     jet_drone_step_funcs[self->unk5](self);
@@ -23,7 +25,8 @@ void jet_drone_main(struct MainObj* self)
         func_8002D9BC(self);
         self->ext.main_24.saved_unk5 = self->unk5;
 
-        if (func_8002DD04(self) < 0) {
+        hit = func_8002DD04(self);
+        if (hit < 0) {
             spawn_explosion(self);
             spawn_debris(5, jet_drone_debris, self);
             drop_item(BASE_OBJECT(self), 0xC);
@@ -57,7 +60,6 @@ void jet_drone_fly(struct MainObj* self)
 void jet_drone_fly_dash(struct MainObj* self)
 {
     struct MiscObj* trail;
-    u8 facing;
 
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -74,10 +76,9 @@ void jet_drone_fly_dash(struct MainObj* self)
             trail->bg_offset = self->bg_offset;
             trail->x_pos.val = self->x_pos.val;
             trail->y_pos.val = self->y_pos.val;
-            facing = self->unk15;
+            trail->unk15 = self->unk15;
             trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
-            trail->unk15 = facing;
         }
     }
     if (--self->unk7C == 0) {
@@ -107,7 +108,6 @@ void jet_drone_fly_arc(struct MainObj* self)
 void jet_drone_fly_turn(struct MainObj* self)
 {
     struct MiscObj* trail;
-    u8 facing;
 
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -124,15 +124,14 @@ void jet_drone_fly_turn(struct MainObj* self)
             trail->bg_offset = self->bg_offset;
             trail->x_pos.val = self->x_pos.val;
             trail->y_pos.val = self->y_pos.val;
-            facing = self->unk15;
+            trail->unk15 = self->unk15 ^ 0x40;
             trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
-            trail->unk15 = facing ^ 0x40;
         }
     }
     if (--self->unk7C == 0) {
         self->gravity = 0;
-        if ((self->unk2 & 3) < 2) {
+        if ((self->unk2 & 3) <= 1) {
             self->y_speed = FIXED(-2);
         } else {
             self->y_speed = FIXED(2);
@@ -147,7 +146,6 @@ void jet_drone_fly_bomb(struct MainObj* self)
 {
     struct MiscObj* trail;
     struct ShotObj* shot;
-    u8 facing;
 
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
@@ -164,10 +162,9 @@ void jet_drone_fly_bomb(struct MainObj* self)
             trail->bg_offset = self->bg_offset;
             trail->x_pos.val = self->x_pos.val;
             trail->y_pos.val = self->y_pos.val;
-            facing = self->unk15;
+            trail->unk15 = self->unk15 ^ 0x40;
             trail->ext.misc_7.position = &self->x_pos;
             trail->state = 0;
-            trail->unk15 = facing ^ 0x40;
         }
     }
     if (--self->unk7E == 0) {
@@ -197,7 +194,7 @@ void jet_drone_fly_bomb(struct MainObj* self)
 
 void jet_drone_wait_for_player(struct MainObj* self)
 {
-    if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xA1) {
+    if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xA0) {
         func_8001540C(2, 0x50, self);
         self->unk7A = 0;
         self->unk5 = 2;

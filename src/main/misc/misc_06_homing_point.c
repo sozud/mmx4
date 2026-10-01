@@ -14,7 +14,7 @@ void homing_point_wait(struct MiscObj* self)
 {
     s8 timer = self->ext.misc_6.timer - 1;
     self->ext.misc_6.timer = timer;
-    if (timer == 0) {
+    if (0 == timer) {
         self->state = 2;
     }
 }

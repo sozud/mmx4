@@ -132,8 +132,7 @@ void func_8001F798(struct EngineObj* arg0)
 void func_8001F850(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
-        ((void (*)(s32, u8, u8))func_8002217C)(
-            arg0->character_state.bytes[0] + 0x10, 0x80, 0);
+        ((void (*)(arg_u16, u8, u8))func_8002217C)(arg0->character_state.bytes[0] + 0x10, 0x80, 0);
         arg0->unk2++;
     } else if (arg0->unk4 == 0xF0 - *(s16*)&arg0->unk6) {
         func_8001540C(5, (u8)arg0->character_state.bytes[0], 0);

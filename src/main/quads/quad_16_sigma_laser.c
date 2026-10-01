@@ -34,8 +34,8 @@ void func_800D8180(struct QuadObj* quad)
             delta *= 8 - quad->ext.unk38;
             *out = delta + FIXED(base);
             to++;
-            from++;
             out++;
+            from++;
         }
         return;
     }
@@ -83,8 +83,8 @@ void func_800D82E8(struct QuadObj* quad)
             delta *= quad->ext.unk38;
             *out = delta + FIXED(base);
             to++;
-            from++;
             out++;
+            from++;
         }
         return;
     }

@@ -17,6 +17,8 @@ INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", func_80043390);
 
 void spike_marl_run(struct MainObj* self)
 {
+    s32 hit;
+
     if (self->unk5 != 8) {
         spike_marl_check_patrol_path(self);
         spike_marl_begin_fall(self);
@@ -29,7 +31,8 @@ void spike_marl_run(struct MainObj* self)
     spike_marl_step_funcs[self->unk5](self);
     func_8002D9BC(self);
     self->ext.main_3.saved_step = (u32)self->unk5;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion((struct BaseObj*)self);
         spawn_debris(7, &spike_marl_debris, self);
         drop_item(BASE_OBJECT(self), 0x11);
@@ -43,13 +46,14 @@ void spike_marl_run(struct MainObj* self)
 void spike_marl_cleanup(struct MainObj* self)
 {
     u8 subtype;
+    struct Main3Ext* ext = &self->ext.main_3;
 
     subtype = (u8)self->unk2;
-    self->ext.main_3.alerted = 0;
-    self->ext.main_3.roll_timer = 0;
-    self->ext.main_3.player_ahead = 0;
-    self->ext.main_3.turn_timer = 0;
-    self->ext.main_3.saved_step = 0;
+    ext->alerted = 0;
+    ext->roll_timer = 0;
+    ext->player_ahead = 0;
+    ext->turn_timer = 0;
+    ext->saved_step = 0;
     if (subtype < 2U) {
         despawn_object(OBJECT_HEADER(self));
         return;
@@ -69,12 +73,8 @@ void spike_marl_patrol(struct MainObj* self)
 
 void spike_marl_patrol_begin(struct MainObj* self)
 {
-    s32 velocity = FIXED(-0.8);
     self->unk6 = 1;
-    if (self->unk15 & 0x40) {
-        velocity = FIXED(0.8);
-    }
-    self->x_speed = velocity;
+    self->x_speed = self->unk15 & 0x40 ? FIXED(0.8) : FIXED(-0.8);
     animate_object(ANIMATED_OBJECT(self));
 }
 
@@ -169,16 +169,10 @@ void spike_marl_roll(struct MainObj* self)
 
 void spike_marl_roll_begin(struct MainObj* self)
 {
-    s32 value;
-
     if (self->unk7C == 0) {
         func_8001540C(2, 1, self);
         set_animation(self, 5);
-        value = FIXED(-4);
-        if (self->unk15 & 0x40) {
-            value = FIXED(4);
-        }
-        self->x_speed = value;
+        self->x_speed = self->unk15 & 0x40 ? FIXED(4) : FIXED(-4);
         self->unk6 = 1;
     } else {
         self->unk7C--;
@@ -294,16 +288,10 @@ void spike_marl_roll_entry_begin(struct MainObj* self)
 
 void spike_marl_roll_entry_update(struct MainObj* self)
 {
-    s32 x_vel;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (--self->unk7C == 0) {
-        x_vel = FIXED(-2);
-        if (self->unk15 & 0x40) {
-            x_vel = FIXED(2);
-        }
-        self->x_speed = x_vel;
+        self->x_speed = self->unk15 & 0x40 ? FIXED(2) : FIXED(-2);
         self->unk5 = 5;
         self->unk6 = 0;
     }
@@ -393,29 +381,10 @@ void spike_marl_begin_fall(struct MainObj* self)
 
 void spike_marl_detect_player(struct MainObj* self)
 {
-    s16 temp_v1;
-    s32 temp_v0;
-
-    if (self->unk5 < 5 || self->unk5 > 6) {
-        temp_v1 = self->y_pos.i.hi;
-        temp_v0 = g_Player.y_pos.i.hi - temp_v1;
-        if (temp_v0 >= 0) {
-            if (temp_v0 < 0x20) {
-                goto check_x_distance;
-            }
-        } else if (temp_v1 - g_Player.y_pos.i.hi < 0x20) {
-        check_x_distance:
-            temp_v1 = self->x_pos.i.hi;
-            temp_v0 = g_Player.x_pos.i.hi - temp_v1;
-            if (temp_v0 >= 0) {
-                if (temp_v0 < 0x60) {
-                    goto check_facing;
-                }
-            } else if (temp_v1 - g_Player.x_pos.i.hi < 0x60) {
-            check_facing:
-                if (!(self->collision_flags & 3) && ((self->unk15 == 0 && g_Player.x_pos.val < self->x_pos.val) || (self->unk15 != 0 && g_Player.x_pos.val > self->x_pos.val))) {
-                    self->ext.main_3.alerted = 1;
-                }
+    if ((self->unk5 != 5 && self->unk5 != 6)) {
+        if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) < 0x20 && ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) < 0x60) {
+            if (!(self->collision_flags & 3) && ((self->unk15 == 0 && g_Player.x_pos.val < self->x_pos.val) || (self->unk15 != 0 && g_Player.x_pos.val > self->x_pos.val))) {
+                self->ext.main_3.alerted = 1;
             }
         }
 
@@ -434,32 +403,16 @@ void spike_marl_noop(struct MainObj* self)
 
 void spike_marl_track_player_side(struct MainObj* self)
 {
-    s32 temp_v0;
-
     if (self->unk5 == 2) {
         if (self->ext.main_3.player_ahead == 0) {
-            temp_v0 = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-            if (temp_v0 >= 0) {
-                if (temp_v0 < 0x20) {
-                    goto block_6;
-                }
-            } else if (self->y_pos.i.hi - g_Player.y_pos.i.hi < 0x20) {
-            block_6:
+            if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) < 0x20) {
                 if ((self->unk15 == 0 && g_Player.x_pos.val < self->x_pos.val) || (self->unk15 != 0 && g_Player.x_pos.val > self->x_pos.val)) {
                     self->ext.main_3.player_ahead = 1;
                 }
             }
-        } else {
-            temp_v0 = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-            if (temp_v0 >= 0) {
-                if (temp_v0 >= 0x21) {
-                    goto block_15;
-                }
-            } else if (self->y_pos.i.hi - g_Player.y_pos.i.hi >= 0x21) {
-            block_15:
-                self->ext.main_3.player_ahead = 0;
-                self->ext.main_3.turn_timer = 0x78;
-            }
+        } else if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) > 0x20) {
+            self->ext.main_3.player_ahead = 0;
+            self->ext.main_3.turn_timer = 0x78;
         }
     }
 }

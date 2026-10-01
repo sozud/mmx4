@@ -80,7 +80,7 @@ void bg_wind_gust_slow(struct EffectObj* effect)
             effect->ext.effect_9.velocity -= FIXED(1.0 / 64);
         }
     } else {
-        if (effect->ext.effect_9.velocity <= FIXED(1.5) - 1) {
+        if (effect->ext.effect_9.velocity < FIXED(1.5)) {
             effect->ext.effect_9.velocity += FIXED(1.0 / 64);
         }
     }
@@ -135,7 +135,7 @@ void bg_wind_gust_fast(struct EffectObj* self)
             self->ext.effect_9.velocity -= FIXED(1.0 / 64);
         }
     } else {
-        if (self->ext.effect_9.velocity <= FIXED(2.5) - 1) {
+        if (self->ext.effect_9.velocity < FIXED(2.5)) {
             self->ext.effect_9.velocity += FIXED(1.0 / 64);
         }
     }
@@ -155,7 +155,7 @@ void bg_wind_gust_fast(struct EffectObj* self)
 void bg_wind_gust_medium(struct EffectObj* self)
 {
     s32 shifted_target;
-    if (--self->ext.effect_9.movement_timer << 16 == 0) {
+    if (0 == --self->ext.effect_9.movement_timer << 16) {
         if (self->ext.effect_9.direction != 0) {
             self->ext.effect_9.movement_timer = 0xB4;
             self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
@@ -190,7 +190,7 @@ void bg_wind_gust_medium(struct EffectObj* self)
             self->ext.effect_9.velocity -= FIXED(1.0 / 64);
         }
     } else {
-        if (self->ext.effect_9.velocity <= FIXED(3.5) - 1) {
+        if (self->ext.effect_9.velocity < FIXED(3.5)) {
             self->ext.effect_9.velocity += FIXED(1.0 / 64);
         }
     }

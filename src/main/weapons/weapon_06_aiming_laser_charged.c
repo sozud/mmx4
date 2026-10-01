@@ -148,24 +148,24 @@ void aiming_laser_marker_wait_fire(struct WeaponObj* self, struct PlayerObj* pla
 
 void aiming_laser_marker_fire(struct WeaponObj* arg0)
 {
-    u8* temp_s1 = arg0->ext.raw;
-    u8 temp_v0;
+    u8* ext = arg0->ext.raw;
+    u8 timer;
 
     animate_object(ANIMATED_OBJECT(arg0));
-    if (arg0->ext.raw[2] == 0) {
+    if (ext[2] == 0) {
         arg0->unk50 = 0;
         arg0->on_screen = 0;
         arg0->state = 3;
         return;
     }
-    temp_v0 = arg0->ext.raw[3];
-    if (temp_v0 == 0) {
-        arg0->ext.raw[3] = 6;
+    timer = ext[3];
+    if (timer == 0) {
+        ext[3] = 6;
         arg0->unk64++;
     } else {
-        arg0->ext.raw[3] = temp_v0 - 1;
+        ext[3] = timer - 1;
     }
-    temp_s1[2] -= 1;
+    ext[2] -= 1;
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
 }
 
@@ -183,7 +183,10 @@ void aiming_laser_charged_update(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.input_locked != 0;
+    var_a1 = 0;
+    if (g_Player.input_locked != 0) {
+        var_a1 = 1;
+    }
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
@@ -238,7 +241,7 @@ void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)
     u8* angle = &self->ext.weapon_15.unk8C;
 
     self->unk15 = player->unk15;
-    if (player->unk15 != 0) {
+    if (0 != player->unk15) {
         self->x_pos.i.hi = player->x_pos.u.hi - D_8011B230.components[player->animation_step.fields.frame_index * 2];
         angle[1] = angle[0];
     } else {

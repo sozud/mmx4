@@ -150,7 +150,7 @@ void func_800292D0(struct StageObjectRecord* arg0)
     struct StageObjectRecord* var_s1 = arg0;
     struct ObjectHeader* obj;
 
-    while (var_s1->object_type != 0xFF && var_s1->flags <= engine_obj.checkpoint) {
+    while (0xFF != var_s1->object_type && var_s1->flags <= engine_obj.checkpoint) {
         obj = MakeObject(var_s1->object_type);
         if (obj != NULL) {
             obj->active = 1;

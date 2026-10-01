@@ -62,7 +62,6 @@ void background_dragon_wait_for_animation(struct MainObj* self)
 void background_dragon_fireball_begin(struct MainObj* self)
 {
     s16 x_pos_hi;
-    s32 x_velocity;
 
     x_pos_hi = self->x_pos.i.hi;
     if (x_pos_hi > 0xC90) {
@@ -74,14 +73,10 @@ void background_dragon_fireball_begin(struct MainObj* self)
         if (x_pos_hi > 0xC40) {
             self->unk15 = 0x40;
         }
-        self->y_pos.val = FIXED(368);
         self->unk6++;
+        self->y_pos.val = FIXED(368);
         set_animation(self, 3);
-        x_velocity = FIXED(-1);
-        if (self->unk15 != 0) {
-            x_velocity = FIXED(1);
-        }
-        self->x_speed = x_velocity;
+        self->x_speed = FIXED(self->unk15 != 0 ? 1 : -1);
         self->y_speed = 0;
         update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     }
@@ -117,7 +112,7 @@ void background_dragon_fireball_update(struct MainObj* self)
             misc_obj->state = 0;
 
             x_pos = self->x_pos.val;
-            misc_obj->x_pos.val = x_pos + ((self->unk15 == 0) ? FIXED(60) : FIXED(-60));
+            misc_obj->x_pos.val = x_pos + (FIXED((self->unk15 == 0) ? 60 : -60));
             misc_obj->y_pos.val = self->y_pos.val + FIXED(68);
         }
 
@@ -154,9 +149,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80041060);
 
 void background_dragon_projectile_attack_update(struct MainObj* self)
 {
-    s32 value;
     struct MiscObj* misc;
-    u8 index;
     struct ShotObj* shot;
 
     animate_object(ANIMATED_OBJECT(self));
@@ -174,18 +167,13 @@ void background_dragon_projectile_attack_update(struct MainObj* self)
             shot->unk6 = 0;
             shot->unk2 = 0;
         }
-        value = FIXED(3.75);
         self->animation_step.fields.event = 0;
-        if (self->unk15 != 0) {
-            value = FIXED(-3.75);
-        }
-        self->x_speed = value;
+        self->x_speed = self->unk15 != 0 ? FIXED(-3.75) : FIXED(3.75);
         self->y_speed = FIXED(-1);
         func_8001540C(2, 4, self);
     }
     if (self->animation_step.fields.event == 2) {
-        index = self->ext.main_0.index;
-        if (index < 3U && engine_obj.character_state.bytes[index + 1] == 0) {
+        if (self->ext.main_0.index < 3U && engine_obj.character_state.bytes[self->ext.main_0.index + 1] == 0) {
             misc = find_free_misc_obj();
             if (misc != NULL) {
                 misc->active = 1;
@@ -250,7 +238,7 @@ void background_dragon_multi_shot_update(struct MainObj* self)
         self->animation_step.fields.event = 0;
         func_8001540C(2, 0xB, self);
     }
-    if (self->animation_step.fields.event >= 2 && self->animation_step.fields.event <= 3) {
+    if ((self->animation_step.fields.event == 2 || self->animation_step.fields.event == 3)) {
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -331,11 +319,11 @@ void background_dragon_sequence_bob(struct MainObj* self)
 
 void background_dragon_sequence(struct MainObj* self)
 {
-    s8 state;
+    s32 state;
 
     state = self->unk6;
     if (state != 1) {
-        if (state < 2) {
+        if (state <= 1) {
             if (state == 0) {
                 background_dragon_sequence_begin(self);
                 return;
@@ -367,7 +355,7 @@ void background_dragon_fly_to_route_start(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 
     temp_a0 = self->x_pos.val - background_dragon_perch_points[self->unk2 >> 1][0];
-    if (temp_a0 >= 0) {
+    if (0 <= temp_a0) {
         if (temp_a0 >= 0x20000) {
             update_on_screen(BASE_OBJECT(self), 0x90, 0x90);
             return;
@@ -437,7 +425,7 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         self->ext.main_0.background_relative = 0;
         set_animation(self, 6);
 
-        if (self->unk2 >= 2 && self->unk2 <= 3) {
+        if ((self->unk2 == 2 || self->unk2 == 3)) {
             self->unk15 = 0x40;
         } else {
             self->unk15 = 0;
@@ -466,7 +454,7 @@ void background_dragon_fly_to_staging_position(struct MainObj* self)
 
         self->unk16 = 0x22;
         self->unk5 = 0xA;
-        if (self->unk2 >= 2 && self->unk2 <= 3) {
+        if ((self->unk2 == 2 || self->unk2 == 3)) {
             self->unk15 = 0x40;
         } else {
             self->unk15 = 0;

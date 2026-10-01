@@ -9,25 +9,20 @@ void cyberspace_trial_update(struct EffectObj* self)
 
 void cyberspace_trial_init(struct EffectObj* self)
 {
-    s8 next_state;
-
-    if (engine_obj.substage == 0) {
+    if (0 == engine_obj.substage) {
         self->unk2 = (u8)engine_obj.checkpoint;
         cyberspace_trial_delete_unused_items();
-    } else if (engine_obj.checkpoint != 0) {
-        next_state = 6;
-        goto write_state;
-    } else {
+    } else if (engine_obj.checkpoint == 0) {
         self->unk2 = 6;
+    } else {
+        self->state = 6;
+        return;
     }
 
     self->unk5 = 0;
     self->unk6 = 0;
+    self->state++;
     self->ext.effect_38.timer = 0;
-    next_state = (u8)self->state + 1;
-
-write_state:
-    self->state = next_state;
 }
 
 void cyberspace_trial_wait_start(struct EffectObj* self)
@@ -247,7 +242,7 @@ void cyberspace_trial_clear_objects(struct EffectObj* self)
     }
 
     for (i = 0; i < 0x40; i++) {
-        if (misc_objects[i].id < 0x21 || misc_objects[i].id > 0x22) {
+        if ((misc_objects[i].id != 0x21 && misc_objects[i].id != 0x22)) {
             ptr = (s8*)&misc_objects[i];
             count = sizeof(misc_objects[i]) - 1;
             do {

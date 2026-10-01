@@ -280,7 +280,7 @@ void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
 
 u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 {
-    s32 left = train_tunnel_lock_positions[(u8)arg0->bg_offset - 1];
+    s16 left = train_tunnel_lock_positions[(u8)arg0->bg_offset - 1];
     s32 x = g_Player.x_pos.i.hi;
     if (x >= left && x <= left + 0x10) {
         return 1;

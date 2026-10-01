@@ -7,8 +7,8 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_48_double_ball", func_800A9964);
 
 void double_ball_travel(struct ShotObj* self)
 {
-    s32 temp_a0;
-    s32 temp_a2;
+    s8 temp_a0;
+    s8 temp_a2;
     s32 temp_s1;
     s32 temp_s2;
     s32 temp_v0;
@@ -19,13 +19,13 @@ void double_ball_travel(struct ShotObj* self)
     temp_a2 = angle_from_delta(temp_s2, temp_s1);
     if ((s16)self->unk8A == 0) {
         temp_a0 = (u8)self->unk5;
-        self->timer = 0x5A;
         temp_v0 = (s16)self->unk8C.half;
         temp_v1 = self->unk8C.halves[1];
-        temp_a0 += 1;
         self->x_pos.val = temp_v0 << 16;
         self->y_pos.val = temp_v1 << 16;
+        temp_a0 += 1;
         self->unk5 = temp_a0;
+        self->timer = 0x5A;
     } else {
         self->x_pos.val -= temp_s2 / (s16)self->unk8A;
         self->y_pos.val -= temp_s1 / (s16)self->unk8A;

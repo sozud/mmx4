@@ -194,10 +194,7 @@ void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2)
 
     delta = arg0->x_pos.val - arg0->unk18.val;
     if (delta != 0) {
-        direction = 1;
-        if (delta > 0) {
-            direction = 2;
-        }
+        direction = delta > 0 ? 2 : 1;
         if (!(direction & arg2)) {
             target_hi = arg1->x_pos.u.hi;
             target_prev_hi = arg1->unk18.u.hi;

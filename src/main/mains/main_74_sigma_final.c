@@ -223,10 +223,7 @@ void sigma_final_appear_pose(struct MainObj* self)
 
     if (self->animation_step.fields.relative_step < 0) {
         self->unk6++;
-        sound_id = 0x2D;
-        if (engine_obj.cur_character == 0) {
-            sound_id = 0x32;
-        }
+        sound_id = engine_obj.cur_character == 0 ? 0x32 : 0x2D;
         func_8002217C(sound_id, 0xFF, 0);
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -759,15 +756,12 @@ void sigma_final_wind_push_hard(struct MainObj* self)
 
 void sigma_final_wind_finish(struct MainObj* self)
 {
-    s16 timer = self->unk7C - 1;
-
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->unk5 = 7;
         self->unk6 = 0;
         return;
     }
-    if ((timer % 10) == 0) {
+    if ((self->unk7C % 10) == 0) {
         func_8001540C(2, 10, self);
     }
 }
@@ -822,22 +816,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_74_sigma_final", func_8008F3F4);
 
 void sigma_final_death_blink(struct MainObj* self)
 {
-    s8 value;
-    s8 delay;
 
     if (--self->unk7E == 0) {
         self->unk7C = 0x12C;
         self->unk42 ^= 0x8000;
-        value = self->invincibility_timer - 5;
-        self->invincibility_timer = value;
-        if (value > 0x19) {
+        self->invincibility_timer -= 5;
+        if (self->invincibility_timer > 0x19) {
             self->invincibility_timer = 0;
         }
-        delay = self->invincibility_timer;
-        if (self->invincibility_timer < 5) {
-            delay = 5;
-        }
-        self->unk7E = delay;
+        self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
         self->ext.main_74.unk97 = 4;
         self->unk5 = 2;
     }
@@ -874,10 +861,7 @@ void sigma_final_death_wait_player(struct MainObj* self)
         return;
     }
     sigma_final_set_target(self, 0);
-    sound_id = 0x25;
-    if (engine_obj.cur_character == 0) {
-        sound_id = 0x2C;
-    }
+    sound_id = engine_obj.cur_character == 0 ? 0x2C : 0x25;
     func_8002217C(sound_id, 7, 0);
     self->unk5 = 5;
     animate_object(ANIMATED_OBJECT(self));

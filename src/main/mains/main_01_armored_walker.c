@@ -26,7 +26,7 @@ void armored_walker_init(struct MainObj* self)
     self->bg_offset = (s8)((u8)g_Player.bg_offset);
     self->unk1C.val = y_pos;
     self->unk18.val = x_pos;
-    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
     self->animation_table = (u32**)armored_walker_animations;
     self->unk16 = 6;
     self->terrain_box = &armored_walker_terrain_box;
@@ -46,6 +46,8 @@ void armored_walker_init(struct MainObj* self)
 
 void armored_walker_main(struct MainObj* obj)
 {
+    s32 hit;
+
     if (obj->unk5 != 0) {
         armored_walker_check_wall(obj);
         armored_walker_check_behind(obj);
@@ -54,7 +56,8 @@ void armored_walker_main(struct MainObj* obj)
 
     obj->unk18.val = obj->x_pos.val;
     obj->unk1C.val = obj->y_pos.val;
-    if (func_8002DD04(obj) < 0) {
+    hit = func_8002DD04(obj);
+    if (hit < 0) {
         spawn_explosion(obj);
         spawn_debris(5, armored_walker_debris, obj);
         drop_item(BASE_OBJECT(obj), 9);
@@ -89,20 +92,14 @@ INCLUDE_ASM("main/nonmatchings/mains/main_01_armored_walker", func_800423A0);
 
 void armored_walker_hop(struct MainObj* self)
 {
-    s32 var_a0;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
         if (self->animation_step.fields.event != 0) {
             func_8001540C(2, 0x11, self);
-            var_a0 = FIXED(2);
             self->unk6++;
-            if (self->unk15 != 0) {
-                var_a0 = FIXED(-2);
-            }
-            self->y_speed = FIXED(6);
-            self->x_speed = var_a0;
+            self->x_speed = self->unk15 != 0 ? FIXED(-2) : FIXED(2);
             self->x_accel = 0;
+            self->y_speed = FIXED(6);
             self->gravity = FIXED(0.2578125);
         }
     } else {

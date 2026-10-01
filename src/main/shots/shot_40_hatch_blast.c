@@ -74,7 +74,7 @@ void hatch_blast_close(struct ShotObj* self)
 
 void hatch_blast_main(struct ShotObj* self)
 {
-    s32 x_offset;
+    s16 x_offset;
 
     if (self->unk7C->active != 0 && self->unk7C->id == 0x3F) {
         self->unk18.val = self->x_pos.val;

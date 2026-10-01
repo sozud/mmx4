@@ -4,9 +4,9 @@
 
 void item_scatter_init(struct EffectObj* self)
 {
+    self->state++;
     self->ext.effect_14.unk16 = 0;
     self->ext.effect_14.unk14 = 0;
-    self->state++;
 }
 
 void item_scatter_spawn(struct EffectObj* self)

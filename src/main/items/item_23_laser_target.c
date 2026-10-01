@@ -15,15 +15,15 @@ void laser_target_init(struct ItemObj* self)
     self->state = 1;
     self->on_screen = 1;
     owner = self->backref;
+    self->unk7C.owner = owner;
+    self->backref = NULL;
     self->unk16 = 2;
     self->ext.item_23.unk80 = 0x12C;
     self->ext.item_23.timer = 4;
-    self->backref = NULL;
     self->tail_ext.unk1.unk84.previous_value = 0;
     self->unk68 = &laser_target_terrain_box;
     self->unk2C = 0;
     self->unk28 = 0;
-    self->unk7C.owner = owner;
     set_velocity_from_angle(MOVING_OBJECT(self),
         angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
     self->x_vel.val *= 8;

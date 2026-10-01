@@ -107,7 +107,7 @@ void split_mushroom_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
 
-    if (engine_obj.stage == 3) {
+    if (3 == engine_obj.stage) {
         if (engine_obj.cur_character == 0 ? g_Player.y_pos.i.hi < 0x1CC : g_Player.y_pos.i.hi < 0x1CB) {
             effect = find_free_effect_obj();
             if (effect != NULL) {
@@ -133,12 +133,13 @@ void split_mushroom_intro_wait_player(struct MainObj* self)
 
 void split_mushroom_intro_drop(struct MainObj* self)
 {
-    if (*self->ext.main_61.data.script == 0) {
-        s16* y_pos = &background_objects[g_Player.bg_offset].y_pos.i.hi;
+    if (0 == *self->ext.main_61.data.script) {
+        s16* y_pos;
+
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 0;
         engine_obj.boss_ptr = self;
-        self->y_pos.i.hi = *y_pos - 0x20;
+        self->y_pos.i.hi = *(&background_objects[g_Player.bg_offset].y_pos.i.hi) - 0x20;
         self->ext.main_61.active = 1;
         func_8001540C(2, 0xA7, self);
         self->unk7C = 2;
@@ -306,25 +307,18 @@ void split_mushroom_stun_land(struct MainObj* self)
 void split_mushroom_stun_split(struct MainObj* self)
 {
     struct MainObj* parent;
-    u16 timer;
-    s16 backgroundY;
-    int drawFlags;
     int one;
 
-    timer = --self->unk7C;
-    if ((timer << 16) == 0) {
+    if ((--self->unk7C << 16) == 0) {
         parent = self->ext.main_61.partner;
         if (parent->unk5 != 6) {
-            backgroundY = background_objects[g_Player.bg_offset].x_pos.i.hi;
-            if (self->x_pos.i.hi < backgroundY + 0xA0) {
-                drawFlags = 0x40;
-                self->unk15 = drawFlags;
+            if (self->x_pos.i.hi < background_objects[g_Player.bg_offset].x_pos.i.hi + 0xA0) {
+                self->unk15 = 0x40;
             } else {
                 self->unk15 = 0;
             }
         } else {
-            drawFlags = parent->unk15 ^ 0x40;
-            self->unk15 = drawFlags;
+            self->unk15 = (parent->unk15 ^ 0x40);
         }
         one = 1;
         self->ext.main_61.split = one;
@@ -480,7 +474,7 @@ void split_mushroom_walk_move(struct MainObj* self)
 
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    if (self->unk15 == 0) {
+    if (0 == self->unk15) {
         if ((self->collision_flags & 2) == 0) {
             goto done;
         }
@@ -708,7 +702,7 @@ void split_mushroom_combo_sync(struct MainObj* self)
         return;
     }
 
-    if ((self->unk2 != 0) && ((*(u32*)&self->ext.main_61.partner->state & 0xFFFF00) == 0x50600)) {
+    if ((self->unk2 != 0) && (self->ext.main_61.partner->unk5 == 6 && self->ext.main_61.partner->unk6 == 5)) {
         self->unk7C = 1;
         self->unk5 = 5;
         self->unk6 = 4;

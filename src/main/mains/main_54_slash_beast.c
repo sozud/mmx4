@@ -39,8 +39,6 @@ void slash_beast_death_start(struct MainObj* self)
 void slash_beast_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
-    s8 delay;
-    s8 next_delay;
 
     self->unk7C--;
     if (self->unk7C == 0) {
@@ -57,16 +55,11 @@ void slash_beast_death_blink(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        delay = self->invincibility_timer - 5;
-        self->invincibility_timer = delay;
-        if (delay > 0x19) {
+        self->invincibility_timer -= 5;
+        if (self->invincibility_timer > 0x19) {
             self->invincibility_timer = 0;
         }
-        next_delay = self->invincibility_timer;
-        if (self->invincibility_timer < 5) {
-            next_delay = 5;
-        }
-        self->unk7E = next_delay;
+        self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
     }
 }
 
@@ -279,10 +272,10 @@ void slash_beast_grab_check(struct MainObj* self)
         self->unk16 = 6;
         self->contact_damage = 6;
         self->unk62 = 0;
+        self->ext.main_54.grab = 0;
         self->hurt_box = D_801001FC;
         self->attack_box = D_801001F8;
         self->unk5 = 4;
-        self->ext.main_54.grab = 0;
         self->unk6 = 2;
     }
     if (g_Player.stun_timer == 0) {

@@ -11,23 +11,18 @@ void big_elevator_update(struct ItemObj* arg0)
 
 void big_elevator_init(struct ItemObj* self)
 {
-    s32 frame_index;
-    s32 frame_offset;
     s32* archive;
 
     self->active = 0x41;
     self->unk16 = 0x22;
     self->unk15 = 0;
     self->unk40 = D_801406A8[func_8002938C(0x8B) & 0xFF] >> 7;
-    frame_index = func_8002938C(0x8B) & 0xFF;
-    archive = SP_MENU_FRAMES;
-    frame_offset = archive[frame_index];
-    self->unk42 = 0x7947;
+    self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(func_8002938C(0x8B) & 0xFF)];
     self->animation_step.fields.frame_index = 0;
+    self->unk42 = 0x7947;
     self->unk68 = &big_elevator_terrain_box;
     self->unk54 = NULL;
     self->unk58 = NULL;
-    self->sprite_frames = (u8*)archive + frame_offset;
     self->bg_offset = g_Player.bg_offset;
     self->unk61 = 0;
     self->unk75 = 0;

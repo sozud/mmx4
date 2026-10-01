@@ -9,6 +9,7 @@ void web_piece_quad_update(struct QuadObj* arg0)
 
 void web_piece_quad_init(struct QuadObj* arg0)
 {
+    arg0->active |= 0x80;
     arg0->unk36 = 4;
     arg0->unk34 = 0x7EC0;
     arg0->state = 1;
@@ -16,7 +17,6 @@ void web_piece_quad_init(struct QuadObj* arg0)
     arg0->ext.quad_5.scale = 0x100;
     arg0->ext.quad_5.index = 0;
     arg0->ext.quad_5.update_timer = 0;
-    arg0->active |= 0x80;
     arg0->ext.quad_5.data = web_piece_quad_frame_table[arg0->ext.quad_5.index];
     web_piece_quad_scale(arg0);
 }

@@ -16,7 +16,7 @@ void frost_walrus_fx_update(struct VisualObj* arg0)
 void frost_walrus_fx_init(struct VisualObj* self)
 {
     u8 background;
-    s32 state;
+    s8 state;
 
     self->unk3C = self->unk50->unk3C;
     self->animation_table = self->unk50->animation_table;
@@ -29,12 +29,12 @@ void frost_walrus_fx_init(struct VisualObj* self)
     self->unk16 = 3;
     background = (u8)g_Player.bg_offset;
     self->state = (u8)self->state + 1;
+    self->bg_offset = (s8)background;
     state = (s32)((u8)self->unk2 << 24) >> 28;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
-    self->bg_offset = (s8)background;
     self->unk5 = (s8)state;
     if (state == 2) {
         set_animation(self, 0x18);
@@ -95,11 +95,7 @@ void frost_walrus_fx_breath(struct VisualObj* arg0)
 
 void frost_walrus_fx_breath_start(struct VisualObj* arg0)
 {
-    if (arg0->unk15 != 0) {
-        arg0->x_vel.val = frost_walrus_fx_breath_x_vels[get_random() & 3];
-    } else {
-        arg0->x_vel.val = -frost_walrus_fx_breath_x_vels[get_random() & 3];
-    }
+    arg0->x_vel.val = arg0->unk15 != 0 ? frost_walrus_fx_breath_x_vels[get_random() & 3] : -frost_walrus_fx_breath_x_vels[get_random() & 3];
     arg0->y_vel.val = frost_walrus_fx_breath_y_vels[get_random() & 3];
     arg0->unk6++;
 }
@@ -121,11 +117,7 @@ void frost_walrus_fx_blizzard(struct VisualObj* arg0)
 
 void frost_walrus_fx_blizzard_start(struct VisualObj* arg0)
 {
-    if (arg0->unk15 != 0) {
-        arg0->x_vel.val = frost_walrus_fx_blizzard_x_vels[get_random() & 3];
-    } else {
-        arg0->x_vel.val = -frost_walrus_fx_blizzard_x_vels[get_random() & 3];
-    }
+    arg0->x_vel.val = arg0->unk15 != 0 ? frost_walrus_fx_blizzard_x_vels[get_random() & 3] : -frost_walrus_fx_blizzard_x_vels[get_random() & 3];
     arg0->y_vel.val = frost_walrus_fx_blizzard_y_vels[get_random() & 3];
     arg0->unk6++;
 }

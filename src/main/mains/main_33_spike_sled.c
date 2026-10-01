@@ -55,6 +55,7 @@ void spike_sled_init(struct MainObj* self)
 
 void spike_sled_run(struct MainObj* self)
 {
+    s32 hit;
     s32 x;
     s32 y;
 
@@ -63,7 +64,8 @@ void spike_sled_run(struct MainObj* self)
     spike_sled_step_funcs[self->unk5](self);
     if (self->ext.main_33.intro_active == 0) {
         self->ext.main_33.saved_unk5 = self->unk5;
-        if (func_8002DD04(self) < 0) {
+        hit = func_8002DD04(self);
+        if (hit < 0) {
             g_Player.spike_immune = 1;
             g_Player.invincibility_timer = 0x7F;
             spawn_explosion(BASE_OBJECT(self));
@@ -71,9 +73,9 @@ void spike_sled_run(struct MainObj* self)
             self->hurt_box = NULL;
             self->attack_box = NULL;
             apply_tile_effect(1, 0, 0);
+            self->on_screen = 0;
             self->unk7C = 0x5A;
             self->unk7E = 4;
-            self->on_screen = 0;
             self->state = 2;
             self->unk5 = 0;
             return;
@@ -248,17 +250,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005DED4);
 
 void spike_sled_charge_approach(struct MainObj* self)
 {
-    s16 target;
-    s16 position;
     s16 distance;
 
-    target = self->ext.main_33.target_x;
-    position = self->x_pos.i.hi;
-    if ((target - position) >= 0) {
-        distance = target - position;
-    } else {
-        distance = position - target;
-    }
+    distance = (self->ext.main_33.target_x - self->x_pos.i.hi) < 0 ? self->x_pos.i.hi - self->ext.main_33.target_x : self->ext.main_33.target_x - self->x_pos.i.hi;
 
     if (distance == 0) {
         set_animation(self, 5);
@@ -307,49 +301,39 @@ INCLUDE_ASM("main/nonmatchings/mains/main_33_spike_sled", func_8005E108);
 
 void spike_sled_bomb_rise(struct MainObj* self)
 {
-    s32 variant;
-    s32 should_transition;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
-    variant = self->ext.main_33.variant;
-    if (variant == 5) {
-        goto state_5;
-    }
-    if (variant >= 6) {
-        if (variant == 6) {
-            goto state_6;
+    switch (self->ext.main_33.variant) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+        if (self->y_pos.i.hi < 0x2F0) {
+            self->unk7E = 4;
+            self->unk6 = 2;
+            return;
         }
-        goto timer_update;
+        break;
+    case 5:
+        if (self->y_pos.i.hi < 0x2A0) {
+            self->unk7E = 4;
+            self->unk6 = 2;
+            return;
+        }
+        break;
+    case 6:
+        if (self->y_pos.i.hi < 0x280) {
+            self->unk7E = 4;
+            self->unk6 = 2;
+            return;
+        }
+        break;
     }
-    if (variant >= 0) {
-        goto state_low;
-    }
-    goto timer_update;
-
-state_low:
-    should_transition = self->y_pos.i.hi < 0x2F0;
-    goto transition_check;
-
-state_5:
-    should_transition = self->y_pos.i.hi < 0x2A0;
-    goto transition_check;
-
-state_6:
-    should_transition = self->y_pos.i.hi < 0x280;
-
-transition_check:
-    if (should_transition != 0) {
-        self->unk7E = 4;
-        self->unk6 = 2;
-        return;
-    }
-
-timer_update:
     if (--self->unk7C == 0) {
-        self->gravity = FIXED(0.2578125);
         self->ext.main_33.unk84 = 0;
+        self->gravity = FIXED(0.2578125);
         self->unk5 = 3;
         self->unk6 = 0;
         set_animation(self, 7);

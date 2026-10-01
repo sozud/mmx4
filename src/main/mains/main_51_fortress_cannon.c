@@ -18,31 +18,31 @@ void func_80069AD0(struct MainObj* obj)
     obj->contact_damage = 4;
     obj->invincibility_timer = 0;
     obj->bg_offset = g_Player.bg_offset;
-    obj->collision_data = &D_80107778;
-    obj->animation_table = (const u8* const*)fortress_cannon_animations;
-    obj->unk16 = 5;
-    obj->terrain_box = &D_800FFC5C;
-    obj->hurt_box = &D_800FFC54;
     obj->unk18.val = obj->x_pos.val;
+    obj->unk1C.val = obj->y_pos.val;
+    obj->collision_data = &D_80107778;
     obj->x_speed = 0;
     obj->y_speed = 0;
     obj->x_accel = 0;
     obj->gravity = 0;
     obj->air_state = 0;
+    obj->animation_table = (const u8* const*)fortress_cannon_animations;
+    obj->unk16 = 5;
+    obj->terrain_box = &D_800FFC5C;
+    obj->hurt_box = &D_800FFC54;
     obj->attack_box = &D_800FFC58;
-    obj->unk1C.val = obj->y_pos.val;
-    obj->unk15 = (obj->x_pos.val <= g_Player.x_pos.val) << 6;
+    obj->unk15 = obj->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
     set_animation(obj, 0);
-    obj->unk5 = 2;
     obj->ext.raw[0] = 0;
     obj->ext.raw[1] = 0;
     obj->ext.raw[2] = 0;
     obj->ext.raw[3] = 0;
     obj->ext.raw[4] = 0;
     obj->ext.raw[5] = 0;
+    obj->state++;
+    obj->unk5 = 2;
     obj->unk6 = 0;
     obj->unk7C = 0x28;
-    obj->state++;
 }
 
 // fortress_cannon_main

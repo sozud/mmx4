@@ -65,7 +65,7 @@ void light_capsule_wait_player(struct ItemObj* arg0)
     struct PlayerObj* player = &g_Player;
     s16 dx;
     s16 dy;
-    s32 close;
+    s8 close;
 
     dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
     if (dx < 0) {

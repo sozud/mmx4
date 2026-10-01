@@ -39,7 +39,7 @@ void ride_chaser_jet_init(struct VisualObj* arg0)
 void ride_chaser_jet_main(struct VisualObj* arg0)
 {
     struct PlayerObj* player;
-    s32 animation;
+    u8 animation;
     s16 previous_frame;
     u8 frame;
     u8 next_animation;
@@ -53,8 +53,8 @@ void ride_chaser_jet_main(struct VisualObj* arg0)
             set_animation_frame(ANIMATED_OBJECT(arg0), animation,
                 arg0->animation_step.fields.event);
             frame = player->animation_step.fields.frame_index;
-            arg0->unk54 = next_animation;
             arg0->unk56 = frame;
+            arg0->unk54 = next_animation;
         }
         arg0->x_pos.i.hi = player->x_pos.i.hi;
         arg0->y_pos.i.hi = player->y_pos.i.hi;

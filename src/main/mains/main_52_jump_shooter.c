@@ -17,12 +17,15 @@ INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006A55C);
 
 void jump_shooter_main(struct MainObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     jump_shooter_step_funcs[self->unk5](self);
     func_8002D9BC(self);
     self->ext.main_52.saved_unk5 = self->unk5;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(self);
         spawn_debris(3, &jump_shooter_debris, self);
         drop_item(BASE_OBJECT(self), 0);
@@ -160,24 +163,22 @@ void jump_shooter_jump(struct MainObj* self)
 void jump_shooter_jump_launch(struct MainObj* self)
 {
     s8 event;
-    s32 variant;
 
     animate_object(ANIMATED_OBJECT(self));
     event = self->animation_step.fields.event;
-    if (event == 2) {
-        variant = self->ext.main_52.unk8C;
+    if (2 == event) {
         self->ext.main_52.unk80 = 1;
         self->y_speed = FIXED(6);
         self->gravity = FIXED(0.25);
-        if (variant == 0) {
+        if (self->ext.main_52.unk8C == 0) {
             if (self->unk15 != 0) {
                 self->x_speed = FIXED(1.8);
             } else {
                 self->x_speed = FIXED(-1.8);
             }
-        } else if (variant == 1) {
+        } else if (self->ext.main_52.unk8C == 1) {
             self->x_speed = 0;
-        } else if (variant == event) {
+        } else if (self->ext.main_52.unk8C == event) {
             if (self->unk15 == 0) {
                 self->x_speed = FIXED(1.8);
             } else {

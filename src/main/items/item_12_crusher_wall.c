@@ -25,17 +25,17 @@ void crusher_wall_init(struct ItemObj* self)
     self->unk1C.val = self->y_pos.val;
     self->bg_offset = g_Player.bg_offset;
     self->unk68 = (struct Unk_unk68*)crusher_wall_terrain_box;
-    self->unk40 = 0x1500;
     self->animation_step.fields.frame_index = 0;
     self->unk16 = 6;
+    self->unk40 = 0x1500;
     self->unk15 = 0;
     self->sprite_frames = (u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
     self->unk42 = 0x7901;
-    self->unk7C.timer16 = 0x80;
     self->unk76 = 1;
     self->unk67 = 0;
     self->unk75 = 1;
     self->state = 1;
+    self->unk7C.timer16 = 0x80;
     self->ext.item_12.x_offset = 0x400;
 }
 
@@ -48,7 +48,7 @@ void crusher_wall_rumble(struct ItemObj* arg0)
             arg0->y_pos.u.hi += 0x10;
             func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
             func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);
-            arg0->y_pos.u.hi -= 0x10;
+            arg0->y_pos.i.hi -= 0x10;
             start_screen_shake_y(8, 4, 1);
         }
     } else {
@@ -59,6 +59,7 @@ void crusher_wall_rumble(struct ItemObj* arg0)
 void crusher_wall_crush(struct ItemObj* arg0)
 {
     if (crusher_wall_player_near(arg0) && (g_Player.unk70 & 8)) {
+        EASY_HP_SET(0);
         g_Player.hp = -0x80;
     }
 }
@@ -92,7 +93,7 @@ u8 crusher_wall_player_near(struct MainObj* arg0)
     s32 object_x;
     object_x = arg0->x_pos.i.hi;
     player_x = g_Player.x_pos.i.hi;
-    if (object_x - 0x30 < player_x && player_x < object_x + 0x30) {
+    if (player_x > object_x - 0x30 && player_x < object_x + 0x30) {
         return 1;
     }
     return 0;

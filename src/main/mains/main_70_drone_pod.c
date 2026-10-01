@@ -244,8 +244,9 @@ void drone_pod_random_explosion(struct MainObj* self)
 {
     s16 x = background_objects[0].x_pos.i.hi;
     s16 y = background_objects[0].y_pos.i.hi;
-    self->ext.main_70.unk85 = get_random_nonzero() % 4;
-    switch (self->ext.main_70.unk85) {
+    struct Main70Ext* ext = &self->ext.main_70;
+    ext->unk85 = get_random_nonzero() % 4;
+    switch (ext->unk85) {
     case 0:
         break;
     case 1:

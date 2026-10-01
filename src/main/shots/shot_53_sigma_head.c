@@ -105,18 +105,13 @@ void sigma_head_idle(struct ShotObj* self)
 
 void sigma_head_move_start(struct ShotObj* self)
 {
-    s8 direction;
 
     self->unk8C.bytes[2] = MAIN_OBJECT(self->unk7C)->ext.main_74.effect_state;
     self->unk15 = 0;
     self->unk5C = 0x30;
     self->x_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][0];
     self->y_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][1];
-    direction = angle_to_point(OBJECT_HEADER(self),
-        sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16,
-        sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16);
-    self->unk8C.bytes[1] = direction;
-    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)(self->unk8C.bytes[1] = angle_to_point(OBJECT_HEADER(self), sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16, sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16)));
     set_animation(self, 7);
     self->unk8C.byte = 1;
     self->unk68 = (struct Unk_unk68*)sigma_head_boxes[2];
@@ -127,7 +122,6 @@ void sigma_head_move_start(struct ShotObj* self)
 
 void sigma_head_move(struct ShotObj* self)
 {
-    u8 index;
     s8 variant;
 
     move_object(MOVING_OBJECT(self));
@@ -139,14 +133,13 @@ void sigma_head_move(struct ShotObj* self)
         self->unk6 = 0;
         self->x_pos.i.hi = sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0];
         self->y_pos.i.hi = sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1];
-        index = self->unk8C.bytes[2];
         variant = self->unk2;
-        if (sigma_head_formation_next[index][variant] != 0) {
+        if (sigma_head_formation_next[self->unk8C.bytes[2]][variant] != 0) {
             self->unk5 = 9;
             if (sigma_head_formation_next[self->unk8C.bytes[2]][self->unk2] == 2) {
                 self->unk15 = 0x40;
             }
-        } else if (index == 5 && variant != 0) {
+        } else if (self->unk8C.bytes[2] == 5 && variant != 0) {
             self->unk5 = 8;
             self->unk15 = 0x40;
         } else {
@@ -402,9 +395,11 @@ void sigma_head_vanish_blink(struct ShotObj* self)
         return;
     }
 
-    if (--self->unk8A == 0) {
-        self->unk8A = 2;
-        self->unk8C.byte ^= 1;
+    if (FLICKER_ENABLED) {
+        if (--self->unk8A == 0) {
+            self->unk8A = 2;
+            self->unk8C.byte ^= 1;
+        }
     }
     if ((u8)self->unk8C.byte != 0) {
         update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
@@ -418,9 +413,12 @@ void sigma_head_vanish(struct ShotObj* self)
 
 void sigma_head_run(struct ShotObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->unk8C.byte = 0;
         self->unk5 = 3;
         self->unk6 = 0;

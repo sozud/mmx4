@@ -6,7 +6,10 @@ void double_cyclone_update(struct WeaponObj* arg0)
 {
     s32 disabled;
 
-    disabled = g_Player.input_locked != 0;
+    disabled = 0;
+    if (g_Player.input_locked != 0) {
+        disabled = 1;
+    }
     if (g_Player.capsule_state != 0) {
         disabled = 1;
     }
@@ -28,17 +31,18 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4)
 void double_cyclone_main(struct WeaponObj* arg0)
 {
     u8 temp_v0;
+    struct Weapon7Ext* ext = &arg0->ext.weapon_7;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
         double_cyclone_step_funcs[arg0->unk5](arg0);
         if (arg0->unk50 != 0) {
-            temp_v0 = arg0->ext.weapon_7.unk91;
+            temp_v0 = ext->unk91;
             if (temp_v0 == 0) {
-                arg0->ext.weapon_7.unk91 = 4;
+                ext->unk91 = 4;
                 arg0->unk64++;
                 return;
             }
-            arg0->ext.weapon_7.unk91 = temp_v0 - 1;
+            ext->unk91 = temp_v0 - 1;
         }
     } else {
         double_cyclone_hide(arg0);
@@ -138,7 +142,10 @@ void double_cyclone_charged_update(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.input_locked != 0;
+    var_a1 = 0;
+    if (g_Player.input_locked != 0) {
+        var_a1 = 1;
+    }
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
@@ -184,12 +191,13 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670)
 
 void double_cyclone_charged_fly(struct WeaponObj* arg0)
 {
+    struct Weapon16Ext* ext = &arg0->ext.weapon_16;
     move_object(MOVING_OBJECT(arg0));
-    if (arg0->ext.weapon_16.unk91 == 0) {
-        arg0->ext.weapon_16.unk91 = 4;
+    if (ext->unk91 == 0) {
+        ext->unk91 = 4;
         arg0->unk64++;
     } else {
-        arg0->ext.weapon_16.unk91--;
+        ext->unk91--;
     }
     update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
 }

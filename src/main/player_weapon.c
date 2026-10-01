@@ -260,7 +260,7 @@ void player_set_collision_bounds(struct PlayerObj* self);
 
 void player_read_input(void);
 
-s32 player_map_buttons(s32 pad);
+u16 player_map_buttons(s32 pad);
 
 void player_clear_dash(struct PlayerObj* self);
 
@@ -503,24 +503,22 @@ s32 player_check_shoot(struct PlayerObj* self)
 
 s32 player_check_shoot_air(struct PlayerObj* self)
 {
-    if (self->input_locked != 0 || self->unk2 != 0) {
+    if (self->input_locked != 0) {
         return 0;
     }
-
+    if (self->unk2 != 0) {
+        return 0;
+    }
     if (player_check_nova_strike(self) != 0) {
         return 1;
     }
-
     player_update_shooting(self);
-
     if (self->shot_fired == 0) {
         return 0;
     }
-
     if (player_shot_has_pose[self->shot_type] == 0) {
         return 0;
     }
-
     self->dash_momentum = 0;
     self->afterimage = 0;
     func_80037484(self, 1);
@@ -529,7 +527,10 @@ s32 player_check_shoot_air(struct PlayerObj* self)
 
 s32 player_check_shoot_ladder(struct PlayerObj* self)
 {
-    if (self->input_locked != 0 || self->unk2 != 0) {
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (self->unk2 != 0) {
         return 0;
     }
     if (player_check_nova_strike(self) != 0) {
@@ -577,15 +578,23 @@ s32 player_check_nova_strike(struct PlayerObj* self)
 {
     s32 wall_side;
 
-    if (self->shot_cooldown || !(self->armor_parts & 2) || self->weapon_energy[0] != 0x30 || self->air_action) {
+    if (self->shot_cooldown) {
         return 0;
     }
-
-    wall_side = PLAYER_COLLIDE_LEFT;
-    if (self->unk15) {
-        wall_side = PLAYER_COLLIDE_RIGHT;
+    if (!(self->armor_parts & 2)) {
+        return 0;
     }
-    if ((wall_side & self->unk88.bytes.collision_flags) || !(self->pressed_input & PLAYER_INPUT_GIGA)) {
+    if (self->weapon_energy[0] != 0x30) {
+        return 0;
+    }
+    if (self->air_action) {
+        return 0;
+    }
+    wall_side = self->unk15 ? PLAYER_COLLIDE_RIGHT : PLAYER_COLLIDE_LEFT;
+    if (wall_side & self->unk88.bytes.collision_flags) {
+        return 0;
+    }
+    if (!(self->pressed_input & PLAYER_INPUT_GIGA)) {
         return 0;
     }
 
@@ -611,9 +620,9 @@ s32 player_check_nova_strike(struct PlayerObj* self)
     } else {
         self->x_vel.val = FIXED(-2.5);
     }
+    self->unk28 = 0;
     self->y_vel.val = FIXED(3.5);
     self->unk2C = 0x4200;
-    self->unk28 = 0;
     self->unk5 = PLAYER_NOVA_STRIKE;
     self->unk6 = 0;
 
@@ -679,7 +688,7 @@ void player_check_shoot_button(struct PlayerObj* self)
             }
         }
         self->shot_type = self->shot_types[0];
-    } else if ((self->input.history & 0x100010) == 0x100000) { // flags?
+    } else if (!(self->input.buttons.held & PLAYER_INPUT_SHOOT) && (self->input.buttons.previous & PLAYER_INPUT_SHOOT)) {
         s8 temp = self->shot_types[0];
         if ((temp != 0) && (player_shot_is_special_weapon[temp] == 0) && (temp != 0x13)) {
             if (self->weapon != 0) {
@@ -700,7 +709,7 @@ void player_check_special_button(struct PlayerObj* self)
             self->shot_type = self->shot_types[1];
             return;
         }
-        if ((self->input.history & 0x200020) == 0x200000) {
+        if (!(self->input.buttons.held & PLAYER_INPUT_SPECIAL) && (self->input.buttons.previous & PLAYER_INPUT_SPECIAL)) {
             if ((self->shot_types[1] != 0) && (self->shot_types[1] != 0x13)) {
                 self->shot_type = self->shot_types[1];
             }
@@ -905,13 +914,13 @@ s32 player_charge_released(struct PlayerObj* self)
     if (self->pressed_input & PLAYER_INPUT_SPECIAL) {
         return 1;
     }
-    if ((self->input.history & 0x100010) == 0x100000) {
+    if (!(self->input.buttons.held & PLAYER_INPUT_SHOOT) && (self->input.buttons.previous & PLAYER_INPUT_SHOOT)) {
         return 1;
     }
-    if ((self->input.history & 0x200020) == 0x200000) {
+    if (!(self->input.buttons.held & PLAYER_INPUT_SPECIAL) && (self->input.buttons.previous & PLAYER_INPUT_SPECIAL)) {
         return 1;
     }
-    if (self->charge_timer && (self->input.buttons.held & PLAYER_INPUT_SHOOT) == 0) {
+    if (self->charge_timer && !(self->input.buttons.held & PLAYER_INPUT_SHOOT)) {
         return 1;
     }
     if (self->special_charge_timer && !(self->input.buttons.held & PLAYER_INPUT_SPECIAL)) {

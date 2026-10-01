@@ -9,17 +9,14 @@ void dash_dust_update(struct VisualObj* arg0)
     struct PlayerObj* entity;
 
     obj = arg0;
-    entity = &g_Entity;
-    if (g_Player.controlling_clone == 0) {
-        entity = &g_Player;
-    }
+    entity = g_Player.controlling_clone == 0 ? &g_Player : &g_Entity;
     if (obj->state == 0) {
         obj->on_screen = 1;
         obj->unk38 = 0;
         obj->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
         obj->animation_table = D_8011BF40;
-        obj->unk42 = 0x7802;
         obj->unk40 = 0;
+        obj->unk42 = 0x7802;
         obj->unk16 = 3;
 
         dash_dust_attach(obj, entity);

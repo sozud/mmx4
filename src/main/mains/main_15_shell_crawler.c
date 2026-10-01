@@ -88,7 +88,7 @@ void shell_crawler_shell(struct MainObj* self)
         set_animation(self, 5);
         self->unk7C = 0x3C;
     case 1:
-        if (self->animation_step.fields.event != 0) {
+        if (0 != self->animation_step.fields.event) {
             self->collision_data = D_801060F0;
             self->hurt_box = &shell_crawler_shell_box;
             self->attack_box = &shell_crawler_shell_box;
@@ -101,13 +101,13 @@ void shell_crawler_shell(struct MainObj* self)
     case 2:
         if (self->animation_step.fields.relative_step == 0) {
             set_animation(self, 1);
+            self->ext.main_0.background_relative &= 0xFE;
             self->unk5 = 1;
+            self->unk6 = 0;
             self->collision_data = D_801069F4;
             self->hurt_box = &shell_crawler_body_box;
             self->attack_box = &shell_crawler_body_box;
-            self->unk6 = 0;
             self->ext.main_0.flags[0] = 0x78;
-            self->ext.main_0.background_relative &= 0xFE;
         }
         break;
     }
@@ -146,19 +146,13 @@ void shell_crawler_shoot(struct MainObj* self)
 
 void shell_crawler_walk(struct MainObj* self)
 {
-    s32 x_velocity;
-
     if (self->unk6 == 0) {
         self->collision_data = D_801069F4;
         self->hurt_box = &shell_crawler_body_box;
         self->attack_box = &shell_crawler_body_box;
         self->unk6++;
         set_animation(self, 1);
-        x_velocity = FIXED(-0.375);
-        if (self->unk15 != 0) {
-            x_velocity = FIXED(0.375);
-        }
-        self->x_speed = x_velocity;
+        self->x_speed = (self->unk15 != 0 ? FIXED(0.375) : FIXED(-0.375));
         self->x_accel = 0;
         self->y_speed = 0;
         self->gravity = 0;
@@ -188,12 +182,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
 
 void shell_crawler_main(struct MainObj* self)
 {
-    u16 x;
+    s32 hit;
 
-    if (ENGINE_STAGE_ID == 0x102 && engine_obj.character_state.bytes[0] != 0) {
-        x = self->x_pos.i.hi;
-        if ((u16)(x - 0xC0F) < 0x1E2 || (u16)(x - 0x100F) < 0x1E2
-            || (u16)(x - 0x1315) < 0x1DC || (u16)(x - 0x1613) < 0x1BF) {
+    if ((engine_obj.stage == 0x2 && engine_obj.substage == 1) && engine_obj.character_state.bytes[0] != 0) {
+        if ((self->x_pos.i.hi >= 0xC0F && self->x_pos.i.hi <= 0xDF0) || (u16)(self->x_pos.i.hi - 0x100F) < 0x1E2
+            || (u16)(self->x_pos.i.hi - 0x1315) < 0x1DC || (self->x_pos.i.hi >= 0x1613 && self->x_pos.i.hi <= 0x17D1)) {
             self->state = 3;
             self->unk6 = 0;
             return;
@@ -201,7 +194,8 @@ void shell_crawler_main(struct MainObj* self)
     }
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(4, shell_crawler_debris, self);
         drop_item(BASE_OBJECT(self), 0x12);

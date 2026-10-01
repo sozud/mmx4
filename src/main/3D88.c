@@ -87,7 +87,7 @@ void func_80013404(u8 arg0);
 void func_80013530(void);
 #endif
 
-void func_80013588(s32 arg0)
+void func_80013588(void)
 {
     u8 sp10;
     sp10 = 0xA0;
@@ -300,7 +300,7 @@ extern u8* D_80137DCC;
 void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
 {
     u8 i;
-    s8 temp_a0;
+    s16 temp_a0;
     s8 temp_a0_2;
     if (CdReady(1, 0) != 0) {
         CdControlB(9U, 0, 0);

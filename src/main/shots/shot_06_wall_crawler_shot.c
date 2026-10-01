@@ -39,9 +39,9 @@ void func_8009A9E4(struct ShotObj* shot)
     shot->unk50.data = wall_crawler_shot_hit_boxes;
     shot->on_screen = 1;
     shot->unk58.data = (u8*)D_80105FF0;
-    shot->unk5C = 1;
     shot->state++;
     shot->unk28 = 0;
+    shot->unk5C = 1;
     shot->unk2C = 0;
     shot->unk67 = 0;
     shot->unk16 = 0;

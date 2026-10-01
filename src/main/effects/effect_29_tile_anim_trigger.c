@@ -35,18 +35,15 @@ void tile_anim_trigger_update(struct EffectObj* self)
 void tile_anim_trigger_init(struct EffectObj* self)
 {
     struct Effect28AnimationStep* temp_v0;
-    u8 temp_v1;
 
     self->ext.effect_29.unk14 = 2;
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
-        temp_v0 = tile_anim_scripts[self->unk2];
-        self->ext.effect_29.palette_source.animation = temp_v0;
-        self->ext.effect_29.palette.fields.timer = temp_v0->timer;
+        self->ext.effect_29.palette_source.animation = tile_anim_scripts[self->unk2];
+        self->ext.effect_29.palette.fields.timer = self->ext.effect_29.palette_source.animation->timer;
         self->ext.effect_29.palette.fields.unk1 = self->ext.effect_29.palette_source.animation->unused;
         self->ext.effect_29.palette.fields.step = self->ext.effect_29.palette_source.animation->frame_step;
-        temp_v1 = self->ext.effect_29.palette_source.animation->frame;
+        self->ext.effect_29.palette.fields.id = self->ext.effect_29.palette_source.animation->frame;
         self->state = (u8)self->state + 1;
-        self->ext.effect_29.palette.fields.id = temp_v1;
     }
 }
 
@@ -63,14 +60,14 @@ void tile_anim_trigger_step(struct EffectObj* self)
 {
     s8 timer;
     s32* source;
+    struct EffectPaletteExt* ext = &self->ext.effect_29;
 
-    timer = self->ext.effect_29.palette.fields.timer - 1;
-    self->ext.effect_29.palette.fields.timer = timer;
+    timer = ext->palette.fields.timer - 1;
+    ext->palette.fields.timer = timer;
     if (timer == 0) {
-        source = self->ext.effect_29.palette_source.words + self->ext.effect_29.palette.fields.step;
-        self->ext.effect_29.palette_source.words = source;
-        self->ext.effect_29.palette.packed = *source;
-        refresh_visible_tile_effect(self->ext.effect_29.palette.fields.id,
+        ext->palette_source.words += ext->palette.fields.step;
+        ext->palette.packed = *ext->palette_source.words;
+        refresh_visible_tile_effect(ext->palette.fields.id,
             self->x_pos.i.hi - tile_anim_trigger_offsets[self->unk2][0],
             self->y_pos.i.hi - tile_anim_trigger_offsets[self->unk2][1]);
     }

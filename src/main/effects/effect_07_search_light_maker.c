@@ -99,7 +99,7 @@ void search_light_maker_spawn_in_rect(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s3
 
     if (D_8010B465 != 0xFF) {
         do {
-            if (current->active == 0 && arg0 < current->value1 && current->value1 < arg1 && arg2 < current->value2 && current->value2 < arg3) {
+            if (current->active == 0 && current->value1 > arg0 && current->value1 < arg1 && current->value2 > arg2 && current->value2 < arg3) {
                 result = find_free_quad_obj();
                 if (result != NULL) {
                     result->active = 1;

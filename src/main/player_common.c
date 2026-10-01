@@ -366,6 +366,7 @@ void player_spawn(void)
         player->hp = engine->unk46;
         player->hud_hp = engine->unk46;
         player->unk5E = engine->unk46;
+        EASY_HP_SET(engine->unk46 * 2 - 1);
         do {
             player->weapon_energy[i++] = 0x30;
         } while (i < 0x10);
@@ -514,13 +515,10 @@ void player_update_init(struct PlayerObj* self)
             }
             break;
         case 5:
-            entry = 2;
-            if (engine->substage != 0) {
-                if (engine->checkpoint == 0) {
-                    entry = 2;
-                } else {
-                    entry = 0;
-                }
+            if (engine->substage != 0 && engine->checkpoint != 0) {
+                entry = 0;
+            } else {
+                entry = 2;
             }
             break;
         case 6:
@@ -710,14 +708,16 @@ void player_update_frame_hitbox(struct PlayerObj* self)
     u8 x_hitbox;
 
     if (self->unk2 == 0) {
-        if (self->is_clone == 0) {
-            x_hitbox = D_801193F0[self->animation_step.fields.frame_index];
-            if (D_801193F0[self->animation_step.fields.frame_index] != 0) {
-                self->unk54 = &D_801194F0[x_hitbox];
-                return;
-            }
+        if (self->is_clone != 0) {
+            self->unk54 = NULL;
+            return;
         }
-        self->unk54 = NULL;
+        x_hitbox = D_801193F0[self->animation_step.fields.frame_index];
+        if (x_hitbox == 0) {
+            self->unk54 = NULL;
+            return;
+        }
+        self->unk54 = &D_801194F0[x_hitbox];
         return;
     }
     if (D_8011AF60[self->unk17] == 0) {
@@ -761,7 +761,7 @@ void player_read_input(void)
     g_Entity.pressed_input = player_map_buttons(controller_state);
 }
 
-s32 player_map_buttons(s32 pad)
+u16 player_map_buttons(s32 pad)
 {
     u16 result = 0;
     u32 bit = 1;
@@ -840,7 +840,9 @@ void player_update_flash(struct PlayerObj* self)
                     player_reset_palette(self);
                 }
                 self->flash_delay = 1;
-                self->flash_phase ^= 1;
+                if (FLICKER_ENABLED) {
+                    self->flash_phase ^= 1;
+                }
             }
             self->flash_palette = 0;
         }
@@ -949,18 +951,32 @@ void player_damage(s8 damage)
             } else {
                 amount = (damage / 3) * 2;
             }
-            player->hp = (u8)(player->hp - amount);
+            if (EASY_MODE) {
+                easy_hp -= (s8)amount;
+                player->hp = (easy_hp + 1) / 2;
+            } else {
+                player->hp = (u8)(player->hp - amount);
+            }
         } else {
-            g_Player.hp = (u8)(g_Player.hp - damage);
+            if (EASY_MODE) {
+                easy_hp -= damage;
+                g_Player.hp = (easy_hp + 1) / 2;
+            } else {
+                g_Player.hp = (u8)(g_Player.hp - damage);
+            }
         }
     }
     if (player->hp > 0) {
         value = player->hp | 0x80;
+        player->hp = value;
     } else {
         value = -0x80;
         player->stun_timer = 0;
+#ifdef MMX4_WIN32
+        easy_hp = 0;
+#endif
+        player->hp = value;
     }
-    player->hp = value;
 }
 
 void player_set_idle_animation(struct PlayerObj* self)
@@ -1044,12 +1060,11 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     visual_obj->unk5 = 0;
     visual_obj->unk6 = 0;
     visual_obj->bg_offset = self->bg_offset;
-    sprite_frames = SP_SPRITE_FRAMES;
     visual_obj->unk38 = 0;
-    visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[1];
+    visual_obj->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[1];
     visual_obj->animation_table = D_8011BF40;
-    visual_obj->unk42 = 0x7804;
     visual_obj->unk40 = 0;
+    visual_obj->unk42 = 0x7804;
     visual_obj->unk16 = 1;
     facing = self->unk15;
     visual_obj->unk15 = facing;
@@ -1063,14 +1078,10 @@ void player_spawn_dash_spark(struct PlayerObj* self)
 
 void player_spawn_dash_splash(struct PlayerObj* self)
 {
-    s16 x_pos;
     u8 facing;
     struct VisualObj* visual_obj;
     s32* menu_frames;
-    s32 column;
-    s32 row;
     s32 index;
-    u8 bg_offset;
 
     if (func_8002D900(self) == 0x24) {
         visual_obj = find_free_visual_obj();
@@ -1078,27 +1089,22 @@ void player_spawn_dash_splash(struct PlayerObj* self)
             visual_obj->active = 0x41;
             visual_obj->id = 3;
             visual_obj->unk2 = 8;
-            bg_offset = self->bg_offset;
+            visual_obj->bg_offset = self->bg_offset;
             visual_obj->unk16 = 1;
             visual_obj->animation_table = D_8011BF40;
-            visual_obj->bg_offset = bg_offset;
-            index = func_8002938C(0x84) & 0xFF;
-            menu_frames = SP_MENU_FRAMES;
-            visual_obj->unk3C = (u8*)menu_frames + menu_frames[index];
+            visual_obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(func_8002938C(0x84) & 0xFF)];
             index = func_8002938C(0x84) & 0xFF;
             visual_obj->unk40 = D_801406A8[index] >> 7;
-            column = func_8002938C(0x84);
-            row = func_8002938C(0x84);
-            visual_obj->unk42 = (((column & 0xFF) * 4 + 0x18) % 16) | ((((row & 0xFF) + 6) / 4 + 0x1E0) << 6);
+            visual_obj->unk42 = (((func_8002938C(0x84) & 0xFF) * 4 + 0x18) % 16) | ((((func_8002938C(0x84) & 0xFF) + 6) / 4 + 0x1E0) << 6);
             facing = self->unk15;
             visual_obj->unk15 = facing;
             if (facing == 0) {
-                x_pos = self->x_pos.u.hi + player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->y_pos.i.hi = self->y_pos.u.hi;
             } else {
-                x_pos = self->x_pos.u.hi - player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->y_pos.i.hi = self->y_pos.u.hi;
             }
-            visual_obj->x_pos.i.hi = x_pos;
-            visual_obj->y_pos.i.hi = self->y_pos.u.hi;
         }
     }
 }
@@ -1120,8 +1126,8 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
         visual_obj->state = 0;
         visual_obj->unk5 = 0;
         visual_obj->unk6 = 0;
-        sprite_frames = SP_SPRITE_FRAMES;
         visual_obj->unk38 = 0;
+        sprite_frames = SP_SPRITE_FRAMES;
         visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[1];
         visual_obj->animation_table = D_8011BF40;
         visual_obj->unk40 = 0;

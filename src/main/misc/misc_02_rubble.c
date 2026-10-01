@@ -2,7 +2,7 @@
 // 800C7DA4..800C85D0
 #include "common.h"
 
-void spawn_rubble(s32 count, u8* variants, void* source, s32 x_velocity)
+void spawn_rubble(arg_u8 count, u8* variants, void* source, s32 x_velocity)
 {
     struct BaseObj* source_obj;
     struct MiscObj* obj;
@@ -10,7 +10,6 @@ void spawn_rubble(s32 count, u8* variants, void* source, s32 x_velocity)
     u8* variant;
     s32 velocity;
 
-    variant = variants;
     remaining = count;
     velocity = x_velocity;
     source_obj = source;
@@ -33,7 +32,7 @@ void spawn_rubble(s32 count, u8* variants, void* source, s32 x_velocity)
                 }
                 obj->x_pos.val = source_obj->x_pos.val + rubble_x_offsets[get_random() & 7];
                 obj->y_pos.val = source_obj->y_pos.val + rubble_y_offsets[get_random() & 7];
-                obj->ext.unk.unk54 = *variant++;
+                obj->ext.unk.unk54 = *variants++;
             }
             remaining--;
         } while (remaining & 0xFF);
@@ -56,7 +55,9 @@ void rubble_fall(struct MiscObj* self)
 {
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         move_with_gravity(ANIMATED_OBJECT(self));
-        self->on_screen ^= 1;
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
         if (self->on_screen != 0) {
             is_on_screen(BASE_OBJECT(self));
         }
@@ -65,10 +66,9 @@ void rubble_fall(struct MiscObj* self)
     }
 }
 
-void spawn_debris(s32 arg0, void* arg1, void* arg2)
+void spawn_debris(arg_u8 arg0, void* arg1, void* arg2)
 {
     s32 var_s1;
-    u8 temp_v0_2;
     u8* var_s3;
     struct MainObj* var_s2;
     struct MiscObj* temp_v0;
@@ -89,10 +89,9 @@ void spawn_debris(s32 arg0, void* arg1, void* arg2)
                 temp_v0->unk6 = 0;
                 temp_v0->x_pos.val = var_s2->x_pos.val + ((get_random() & 3) << 16);
                 temp_v0->y_pos.val = var_s2->y_pos.val + ((get_random() & 3) << 16);
-                temp_v0_2 = *var_s3;
+                temp_v0->ext.misc_2.unk58 = *var_s3;
                 var_s3 += 1;
                 temp_v0->ext.misc_2.owner = var_s2;
-                temp_v0->ext.misc_2.unk58 = temp_v0_2;
             }
             var_s1 -= 1;
         } while (var_s1 & 0xFF);

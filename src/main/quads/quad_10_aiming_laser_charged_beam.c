@@ -55,20 +55,17 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
     u8* player_data = &arg2->unk8D - 1;
     u8* entry;
     s32 i;
-    s32 velocity;
 
     for (i = 0xF; i != 0; i--) {
         entry = (u8*)state + i;
         entry[0xD] = entry[0xC];
     }
-
-    velocity = state->counter;
     state->history[0] = (player_data[1] - 8) & 0x1F;
-    if (velocity == 0x1E) {
+    if (state->counter == 0x1E) {
         arg0->state++;
     } else {
         if (arg0->unk2 == 3) {
-            if (velocity & 2) {
+            if (state->counter & 2) {
                 arg0->on_screen = 1;
             } else {
                 arg0->on_screen = 0;
@@ -84,7 +81,7 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
     struct Quad10Ext* state;
     struct PlayerUnk8CFields* player_state;
     u8* cursor;
-    u8 value;
+    s16 value;
     s32 index;
 
     state = &arg0->ext.quad_10;

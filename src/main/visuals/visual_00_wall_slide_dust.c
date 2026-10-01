@@ -33,7 +33,7 @@ void wall_slide_dust_main(struct VisualObj* arg0, struct PlayerObj* arg1)
     s32 var_a0 = 0;
 
     animate_object(arg0);
-    if ((*(s32*)&arg1->state & 0xFFFF00) == 0xB00) {
+    if (arg1->unk5 == 0xB && arg1->unk6 == 0) {
         var_a0 = 1;
     }
     if (arg1->unk5 == 0x34) {

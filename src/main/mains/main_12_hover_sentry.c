@@ -110,19 +110,15 @@ void hover_sentry_face_player(struct MainObj* self)
 
 void hover_sentry_check_player_near(struct MainObj* self)
 {
-    s16 object_x;
     s16 distance;
 
-    if ((self->unk7C != 0) && (self->unk5 == 2)) {
-        object_x = self->x_pos.i.hi;
-        if ((g_Player.x_pos.i.hi - object_x) >= 0) {
-            distance = g_Player.x_pos.i.hi - object_x;
-        } else {
-            distance = object_x - g_Player.x_pos.i.hi;
-        }
-        if (distance < 0x90) {
-            self->unk5 = 3;
-            self->unk6 = 0;
+    if (self->unk7C != 0) {
+        if (self->unk5 == 2) {
+            distance = (g_Player.x_pos.i.hi - self->x_pos.i.hi) < 0 ? self->x_pos.i.hi - g_Player.x_pos.i.hi : g_Player.x_pos.i.hi - self->x_pos.i.hi;
+            if (distance < 0x90) {
+                self->unk5 = 3;
+                self->unk6 = 0;
+            }
         }
     }
 }

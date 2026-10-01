@@ -234,20 +234,20 @@ void double_dive_climb(struct MainObj* self)
 
 void double_dive_aim(struct MainObj* self)
 {
-    u32 animation;
+    u8 animation;
 
     if (self->animation_step.fields.relative_step < 0) {
+        self->unk6++;
         self->animation_step.fields.event = 0;
         self->hurt_box = &double_dive_hurt_box;
         self->attack_box = &double_dive_attack_box;
-        self->unk6++;
         animation = angle_to_object(
                         OBJECT_HEADER(self), OBJECT_HEADER(&g_Player))
             | 0x10;
         if ((animation & 0xFF) < 0x14U) {
             animation = 0x14;
         }
-        if ((animation & 0xFF) >= 0x1DU) {
+        if ((animation & 0xFF) > 0x1C) {
             animation = 0x1C;
         }
         set_velocity_from_angle(MOVING_OBJECT(self), animation & 0xFF);
@@ -268,7 +268,7 @@ void double_dive_aim(struct MainObj* self)
 void double_dive_fall(struct MainObj* self)
 {
     s32 flags;
-    s32 mask;
+    u16 mask;
 
     flags = self->collision_flags;
     if (flags & 8) {
@@ -281,9 +281,10 @@ void double_dive_fall(struct MainObj* self)
         return;
     }
 
-    mask = 1;
     if (self->unk15 != 0) {
         mask = 2;
+    } else {
+        mask = 1;
     }
     if (mask & flags) {
         self->x_speed = 0;
@@ -376,11 +377,12 @@ void double_aerial_shot_fire(struct MainObj* self)
 void double_aerial_shot_hang(struct MainObj* self)
 {
     s16 timer;
+    struct Main73Ext* ext = &self->ext.main_73;
 
     timer = self->unk7C;
     if (timer == 0) {
         set_animation(self, 0xA);
-        if (self->ext.main_73.shot_count < 2) {
+        if (ext->shot_count < 2) {
             self->unk6 += 1;
             self->unk7C = 0x14;
             self->x_speed = 0;
@@ -388,14 +390,14 @@ void double_aerial_shot_hang(struct MainObj* self)
             self->y_speed = 0;
             self->gravity = FIXED(0.2578125);
             set_animation(self, 2);
-            self->ext.main_73.effect.position.x = self->x_pos.u.hi;
-            self->ext.main_73.effect.position.y = self->y_pos.u.hi + 0x28;
+            ext->effect.position.x = self->x_pos.u.hi;
+            ext->effect.position.y = self->y_pos.u.hi + 0x28;
             return;
         }
+        self->unk6 += 3;
         self->unk7C = 0x1E;
         self->y_speed = 0;
         self->gravity = FIXED(0.2578125);
-        self->unk6 += 3;
         return;
     }
     self->unk7C = timer - 1;
@@ -420,7 +422,7 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
     }
 
     targetY = (s16)self->ext.main_5.part_index;
-    if (self->y_pos.i.hi < targetY) {
+    if (targetY > self->y_pos.i.hi) {
         if (self->y_speed < FIXED(-4)) {
             self->y_speed = FIXED(-4);
             self->gravity = 0;
@@ -483,21 +485,21 @@ void double_death_flicker(struct MainObj* self)
 
 void double_death_start(struct MainObj* self)
 {
-    s32 var_a1;
+    u8 var_a1;
 
-    var_a1 = 0x40;
     if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
         var_a1 = 0;
         self->unk15 = 0x40;
     } else {
+        var_a1 = 0x40;
         self->unk15 = 0;
     }
     player_start_script_action(0x14, var_a1);
     self->unk5 = 1;
-    self->gravity = FIXED(0.2578125);
     self->x_accel = 0;
     self->x_speed = 0;
     self->y_speed = 0;
+    self->gravity = FIXED(0.2578125);
     self->unk7C = 0x10;
     self->unk7E = 0x10;
     self->unk42 &= 0x7FFF;
@@ -566,7 +568,7 @@ void double_death_blink(struct MainObj* self)
         if (unk8B > 0x19) {
             self->ext.main_73.blink_delay = 0;
         }
-        self->unk7E = self->ext.main_73.blink_delay <= 5 ? 5 : self->ext.main_73.blink_delay;
+        self->unk7E = self->ext.main_73.blink_delay > 5 ? self->ext.main_73.blink_delay : 5;
     }
 }
 
@@ -591,11 +593,8 @@ void double_death_wait_explosion(struct MainObj* self)
 
 void double_death_finish(struct MainObj* self)
 {
-    s16 temp_v0;
-
-    temp_v0 = self->unk7C - 1;
-    self->unk7C = temp_v0;
-    if (temp_v0 == 0) {
+    self->unk7C -= 1;
+    if (self->unk7C == 0) {
         engine_obj.unkF = 1;
         ZeroObjectState(OBJECT_HEADER(self));
     }

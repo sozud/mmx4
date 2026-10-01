@@ -51,16 +51,16 @@ void stage_music_load(struct EffectObj* self)
 {
     switch (self->unk5) {
     case 0:
-        if (D_80173C84 != 0) {
+        if (0 != D_80173C84) {
             break;
         }
-        if (ENGINE_STAGE_ID == 0x000A) {
+        if ((engine_obj.stage == 0xA && engine_obj.substage == 0)) {
             if (D_80171EA8 == 0) {
                 self->unk5 = 1;
             } else {
                 self->unk5 = 3;
             }
-        } else if (ENGINE_STAGE_ID == 0x010C || D_80171EA8 != 0) {
+        } else if ((engine_obj.stage == 0xC && engine_obj.substage == 1) || D_80171EA8 != 0) {
             self->unk5 = 3;
         } else if (engine_obj.substage != 0) {
             self->unk5++;

@@ -32,9 +32,9 @@ void trident_mech_main(struct MainObj* self)
     if (engine_obj.character_state.bytes[0] != 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(0xB, trident_mech_debris, self);
+        self->ext.main_16.shot_09_active = 0;
         self->unk7C = 0x20;
         self->unk7E = 6;
-        self->ext.main_16.shot_09_active = 0;
         self->on_screen = 0;
         self->state = 2;
         return;
@@ -46,9 +46,9 @@ void trident_mech_main(struct MainObj* self)
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(0xB, trident_mech_debris, self);
         drop_item(BASE_OBJECT(self), 0x13);
+        self->ext.main_16.shot_09_active = 0;
         self->unk7C = 0x20;
         self->unk7E = 6;
-        self->ext.main_16.shot_09_active = 0;
         self->on_screen = 0;
         self->state = 2;
         return;
@@ -222,12 +222,9 @@ void trident_mech_charge_wind_up(struct MainObj* self)
 
 void trident_mech_charge_attack(struct MainObj* self)
 {
-    s16 value;
-
     animate_object(ANIMATED_OBJECT(self));
-    value = (u16)self->unk7C ^ self->ext.main_16.unk88;
-    self->unk7C = value;
-    if (value == 0) {
+    self->unk7C = (u16)self->unk7C ^ self->ext.main_16.unk88;
+    if (self->unk7C == 0) {
         self->contact_damage = 3;
         self->attack_box = &trident_mech_attack_box;
     } else {
@@ -433,11 +430,9 @@ void trident_mech_double_shot_recover(struct MainObj* self)
 
 void trident_mech_throw_pod(struct MainObj* self)
 {
-    s16 timer;
     struct MiscObj* misc;
 
-    timer = --self->unk7C;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         misc = find_free_misc_obj();
         if (misc != NULL) {
             misc->active = 0x41;
@@ -455,8 +450,8 @@ void trident_mech_throw_pod(struct MainObj* self)
             misc->ext.misc_5.animation = 0x14;
             misc->state = 3;
         }
-        self->ext.main_16.unk90 = 1;
         self->ext.main_16.unk80 = 0;
+        self->ext.main_16.unk90 = 1;
         self->unk5 = 4;
         self->unk6 = 0;
     }
@@ -466,7 +461,7 @@ void trident_mech_wait_behind(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0x10) {
         self->unk5 = 2;
-        self->y_pos.u.hi -= 0x28;
+        self->y_pos.i.hi -= 0x28;
     }
 }
 
@@ -496,10 +491,11 @@ void trident_mech_face_player(struct AnimatedObj* self)
 
 void trident_mech_fire_tracked_shot(struct MainObj* obj)
 {
-    struct ShotObj* shot = find_free_shot_obj();
+    struct ShotObj* shot;
+
+    shot = find_free_shot_obj();
 
     if (shot != 0) {
-        u8 final_unk15;
 
         shot->active = 0x41;
         shot->id = 9;
@@ -512,10 +508,9 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
         shot->bg_offset = obj->bg_offset;
         shot->x_pos.val = obj->x_pos.val;
         shot->y_pos.val = obj->y_pos.val;
-        final_unk15 = obj->unk15;
+        shot->unk15 = obj->unk15;
         shot->unk7C = (struct WeaponObj*)&obj->ext.main_16.shot_09_active;
         shot->state = 0;
-        shot->unk15 = final_unk15;
     }
 }
 

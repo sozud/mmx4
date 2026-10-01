@@ -40,8 +40,8 @@ void owl_cyclone_fly(struct ShotObj* self)
                 self->y_vel.val = 0;
                 break;
             case 1:
-                self->timer = 0xC;
                 self->unk84.value = 2;
+                self->timer = 0xC;
                 self->y_vel.val = FIXED(21);
                 break;
             case 2:

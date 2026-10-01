@@ -87,9 +87,11 @@ void train_boss_defeated(struct MainObj* self)
             self->unk7C = 1;
         }
     }
-    if ((self->unk6 == 0) && ((self->x_pos.i.hi + 0x69 >= g_Player.x_pos.i.hi) || (g_Player.x_pos.i.hi >= 0x1B36))) {
-        player_start_script_action(0x14, 0x40);
-        self->unk6 = 1;
+    if (self->unk6 == 0) {
+        if ((g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69) || (g_Player.x_pos.i.hi >= 0x1B36)) {
+            player_start_script_action(0x14, 0x40);
+            self->unk6 = 1;
+        }
     }
     collide_with_players(PLAYER_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x100, 0x100);
@@ -117,7 +119,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800665BC);
 
 void train_boss_arrive_approach(struct MainObj* self)
 {
-    if (self->x_pos.i.hi >= 0x19A1) {
+    if (self->x_pos.i.hi > 0x19A0) {
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 2;
         engine_obj.boss_ptr = self;
@@ -128,7 +130,7 @@ void train_boss_arrive_approach(struct MainObj* self)
 
 void train_boss_arrive_stop(struct MainObj* self)
 {
-    if (self->x_pos.i.hi >= 0x1AA1) {
+    if (self->x_pos.i.hi > 0x1AA0) {
         self->unk7E = 3;
         self->unk6 = 3;
     } else {
@@ -138,12 +140,8 @@ void train_boss_arrive_stop(struct MainObj* self)
 
 void train_boss_arrive_fill_hp(struct MainObj* self)
 {
-    s16 timer;
-
     if (self->hp < 0x30) {
-        timer = (u16)self->unk7E - 1;
-        self->unk7E = timer;
-        if (timer == 0) {
+        if (--self->unk7E == 0) {
             func_8001540C(0, 0xE, NULL);
             self->unk7E = 3;
         }

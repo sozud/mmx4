@@ -18,7 +18,7 @@ void dragon_spread_shot_fly(struct ShotObj* arg0)
     move_object(MOVING_OBJECT(self));
     func_8002D9BC(self);
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        if (self->unk84.value >= 3) {
+        if (self->unk84.value > 2) {
             spawn_explosion(BASE_OBJECT(self));
         }
         self->state = (u8)self->state + 1;

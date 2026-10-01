@@ -140,32 +140,33 @@ u8 get_random()
     return cur_random;
 }
 
-s32 get_random_nonzero(void)
+ret_u8 get_random_nonzero(void)
 {
-    s32 random_value;
+    u8 random_value;
     s32 result;
 
     random_value = get_random() & 0xFF;
-    result = 1;
     if (random_value != 0) {
         result = random_value;
+    } else {
+        result = 1;
     }
     return result;
 }
 
-s32 angle_to_point(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
+ret_u8 angle_to_point(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
 {
     return angle_from_delta(arg0->x_pos.val - arg1, arg0->y_pos.val - arg2) & 0xFF;
 }
 
-s32 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
+ret_u8 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
 {
     return angle_from_delta(arg0->x_pos.val - arg1->x_pos.val,
                arg0->y_pos.val - arg1->y_pos.val)
         & 0xFF;
 }
 
-s32 angle_from_delta(s32 arg0, s32 arg1)
+u8 angle_from_delta(s32 arg0, s32 arg1)
 {
     extern u32 D_800F45E4[];
     s32 temp_lo;
@@ -173,22 +174,24 @@ s32 angle_from_delta(s32 arg0, s32 arg1)
     s16 var_a3, var_a2;
     u32* ptr;
 
-    var_a2 = -1;
     if (arg0 < 0) {
         var_a2 = 1;
         arg0 = -arg0;
+    } else {
+        var_a2 = -1;
     }
-    var_a3 = 1;
     if (arg1 < 0) {
         var_a3 = -1;
         arg1 = -arg1;
+    } else {
+        var_a3 = 1;
     }
 
     if (arg1 >> 0x10 != 0) {
         temp_lo = arg0 / (arg1 >> 0x10);
         if (temp_lo < 0x10000) {
             ptr = &D_800F45E4[4];
-            while (temp_lo < *ptr) {
+            while (*ptr > temp_lo) {
                 ptr--;
             }
 #ifdef MMX4_PC
@@ -227,7 +230,7 @@ extern s32 D_800F459C[];
 
 extern s32 D_800F45C0[];
 
-void set_velocity_from_angle(struct MovingObj* arg0, s32 arg1)
+void set_velocity_from_angle(struct MovingObj* arg0, arg_u8 arg1)
 {
     u8 angle;
     s16 var_a2, var_v0;

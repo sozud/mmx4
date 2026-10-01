@@ -20,12 +20,12 @@ void ice_bird_init(struct MainObj* self)
     self->unk1C.val = self->y_pos.val;
 
     self->collision_data = D_80106974;
-    self->animation_table = (const u8* const*)ice_bird_animations;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->animation_table = (const u8* const*)ice_bird_animations;
     self->unk16 = 5;
     self->terrain_box = 0;
     self->hurt_box = &ice_bird_body_box;
@@ -38,9 +38,9 @@ void ice_bird_init(struct MainObj* self)
     self->ext.main_14.unk8C = 0;
     self->ext.main_14.saved_unk5 = 0;
     self->ext.main_14.unk94 = 0;
+    self->state++;
     self->unk5 = 2;
     self->unk6 = 0;
-    self->state++;
 }
 
 void ice_bird_main(struct MainObj* self)
@@ -98,14 +98,15 @@ void ice_bird_fly_in(struct MainObj* self)
 void ice_bird_fly_in_start(struct MainObj* self)
 {
     s32* velocity;
+    struct Main14Ext* ext = &self->ext.main_14;
 
     animate_object(ANIMATED_OBJECT(self));
     ice_bird_spawn_charge_ring(self, 3);
     func_8001540C(2, 0x40, self);
 
     velocity = ice_bird_fly_speeds;
-    self->ext.main_14.unk80 = 0x20;
-    self->ext.main_14.unk84 = 1;
+    ext->unk80 = 0x20;
+    ext->unk84 = 1;
     if (self->unk15 & 0x40) {
         velocity++;
     }
@@ -261,10 +262,10 @@ void ice_bird_spawn_charge_ring(struct MainObj* self, s8 arg1)
 
     temp_v0 = find_free_visual_obj();
     if (temp_v0 != 0) {
-        temp_v0->active = 0x41;
-        temp_v0->id = 0xB;
         temp_v0->unk50 = PLAYER_OBJECT(self);
+        temp_v0->active = 0x41;
         temp_v0->unk2 = arg1;
+        temp_v0->id = 0xB;
         self->ext.main_14.visual_variant = arg1;
         temp_v0->state = 0;
         temp_v0->unk5 = 0;

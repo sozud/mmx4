@@ -36,7 +36,7 @@ u16 buster_muzzle_offsets[48] = {
     [40] = 0xFFF2,
 };
 
-void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1, s32 arg2)
+void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1, arg_u8 arg2)
 {
     s16 y;
     s32 frame_component;

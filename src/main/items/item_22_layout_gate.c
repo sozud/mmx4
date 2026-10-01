@@ -78,10 +78,6 @@ void layout_gate_update(struct ItemObj* arg0)
 
 void layout_gate_init(struct ItemObj* self)
 {
-    s32 rand_x;
-    s32 rand_y;
-    s32 x_offset;
-    s32 frame_index;
     const u8* archive;
     s8 state;
 
@@ -91,15 +87,10 @@ void layout_gate_init(struct ItemObj* self)
     self->unk5C = 3;
     self->unk40 = D_801406A8[func_8002938C(0x28)] >> 7;
 
-    rand_x = func_8002938C(0x28);
-    rand_y = func_8002938C(0x28);
-    x_offset = rand_x * 4 + 0x18;
-    self->unk42 = (x_offset % 16) | (((rand_y + 6) / 4 + 0x1E0) << 6);
+    self->unk42 = ((func_8002938C(0x28) * 4 + 0x18) % 16) | (((func_8002938C(0x28) + 6) / 4 + 0x1E0) << 6);
 
-    frame_index = func_8002938C(0x28) * 4;
-    archive = (const u8*)SP_MENU_FRAMES;
+    self->sprite_frames = ((const u8*)SP_MENU_FRAMES) + *(const s32*)((unsigned long)(func_8002938C(0x28) * 4) + (unsigned long)((const u8*)SP_MENU_FRAMES));
     state = self->state + 1;
-    self->sprite_frames = archive + *(const s32*)((unsigned long)frame_index + (unsigned long)archive);
 
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (u8**)layout_gate_animations;
@@ -131,14 +122,18 @@ void layout_gate_finish(struct ItemObj* arg0)
 
 void layout_gate_wait_hit(struct ItemObj* arg0)
 {
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+    s32 hit;
+
+    hit = func_8002DD04(MAIN_OBJECT(arg0));
+    if (hit < 0) {
         arg0->ext.item_22.collision_side = 1;
         arg0->unk5++;
         layout_gate_spawn_alarm(arg0);
         return;
     }
     arg0->x_pos.i.hi += 0x1A0;
-    if (func_8002DD04(MAIN_OBJECT(arg0)) < 0) {
+    hit = func_8002DD04(MAIN_OBJECT(arg0));
+    if (hit < 0) {
         arg0->unk5++;
         layout_gate_spawn_alarm(arg0);
         arg0->ext.item_22.collision_side = 2;

@@ -204,7 +204,7 @@ void eregion_part_slash(struct VisualObj* arg0)
     if (arg0->animation_step.fields.event == 2) {
         MAIN_OBJECT(arg0->unk50)->ext.main_8.queued_sound = 0x20;
     }
-    if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && *(u16*)&arg0->unk50->state != 0x501)) {
+    if (arg0->animation_step.fields.event == 1 || (arg0->unk2 == 1 && (arg0->unk50->state != 1 || arg0->unk50->unk5 != 5))) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -239,10 +239,9 @@ void eregion_part_mouth(struct VisualObj* arg0)
 
 void eregion_part_legs(struct VisualObj* arg0)
 {
-    s32 frame;
     s32 animation;
 
-    if (arg0->unk50->active == 0) {
+    if (0 == arg0->unk50->active) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
@@ -258,8 +257,7 @@ void eregion_part_legs(struct VisualObj* arg0)
                 animate_object(ANIMATED_OBJECT(arg0));
             }
         } else {
-            frame = arg0->unk50->animation_step.fields.frame_index;
-            if ((u8)frame == 0x18 || (u8)frame == 0x1B || (u8)frame == 0x1C || (u8)frame == 0x1D) {
+            if ((u8)arg0->unk50->animation_step.fields.frame_index == 0x18 || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1B || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1C || (u8)arg0->unk50->animation_step.fields.frame_index == 0x1D) {
                 arg0->unk16 = 7;
             } else {
                 arg0->unk16 = 5;
@@ -287,16 +285,14 @@ void eregion_part_legs(struct VisualObj* arg0)
 void eregion_part_mirror(struct VisualObj* arg0)
 {
     struct PlayerObj* player;
-    u8 frame;
 
     player = arg0->unk50;
-    if (player->active == 0) {
+    if (0 == player->active) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     }
-    frame = player->animation_step.fields.frame_index;
-    if (arg0->animation_step.fields.frame_index != frame) {
-        set_animation_frame(ANIMATED_OBJECT(arg0), 0x19, frame);
+    if (arg0->animation_step.fields.frame_index != player->animation_step.fields.frame_index) {
+        set_animation_frame(ANIMATED_OBJECT(arg0), 0x19, player->animation_step.fields.frame_index);
     }
     if (arg0->unk50->unk7 >= 0) {
         update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);

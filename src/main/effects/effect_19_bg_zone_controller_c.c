@@ -93,10 +93,10 @@ void bg_zone_controller_c_idle(struct EffectObj* self)
 
 void bg_zone_controller_c_update_zone(struct EffectObj* self)
 {
-    s16 player_x = g_Player.x_pos.i.hi;
     s8 offset = 0;
+    s16 player_x = g_Player.x_pos.i.hi;
     while (1) {
-        if (player_x - bg_zone_controller_c_zone_bounds[offset] < 0) {
+        if (0 > player_x - bg_zone_controller_c_zone_bounds[offset]) {
             break;
         }
         offset++;

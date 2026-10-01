@@ -6,7 +6,10 @@ void soul_body_update(struct WeaponObj* arg0)
 {
     s32 var_a1;
 
-    var_a1 = g_Player.input_locked != 0;
+    var_a1 = 0;
+    if (g_Player.input_locked != 0) {
+        var_a1 = 1;
+    }
     if (g_Player.capsule_state != 0) {
         var_a1 = 1;
     }
@@ -56,7 +59,6 @@ void soul_body_init(struct WeaponObj* arg0)
 void soul_body_main(struct WeaponObj* self)
 {
     struct Weapon3Ext* ext = &self->ext.weapon_3;
-    s8 palette_index;
     s8 timer;
 
     self->y_pos.val = g_Player.y_pos.val;
@@ -64,11 +66,10 @@ void soul_body_main(struct WeaponObj* self)
     self->unk15 = g_Player.unk15;
     soul_body_step_funcs[self->unk5](self);
 
-    if (D_80141BD8.unk0 & 1) {
+    if (BLINK_TIMER.unk0 & 1) {
         soul_body_load_palette(soul_body_palettes[ext->unk90]);
-        palette_index = ext->unk90 + 1;
-        ext->unk90 = palette_index;
-        if (palette_index == 6) {
+        ext->unk90 += 1;
+        if (ext->unk90 == 6) {
             ext->unk90 = 0;
         }
     }
@@ -190,7 +191,10 @@ void soul_body_clone_update(void)
 
     obj = &background_objects[g_Player.bg_offset];
     if (entity->active != 0) {
-        var_a0 = g_Player.input_locked != 0;
+        var_a0 = 0;
+        if (g_Player.input_locked != 0) {
+            var_a0 = 1;
+        }
         if (g_Player.capsule_state != 0) {
             var_a0 = 1;
         }
@@ -226,13 +230,13 @@ void soul_body_clone_update(void)
         player_state_funcs[entity->state](entity);
         if (entity->active != 0) {
             CollisionRelated(entity);
-            if (obj->x_pos.i.hi >= entity->x_pos.i.hi) {
+            if (entity->x_pos.i.hi <= obj->x_pos.i.hi) {
                 entity->x_pos.i.hi = obj->x_pos.i.hi;
             }
             if (entity->x_pos.i.hi >= (obj->x_pos.i.hi + 320)) {
                 entity->x_pos.i.hi = obj->x_pos.i.hi + 320;
             }
-            if (obj->y_pos.i.hi >= entity->y_pos.i.hi) {
+            if (entity->y_pos.i.hi <= obj->y_pos.i.hi) {
                 entity->y_pos.i.hi = obj->y_pos.i.hi;
             }
             decompress_player_gfx(GRAPHICS_OBJECT(entity), 320, 64);

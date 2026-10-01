@@ -23,13 +23,13 @@ void falling_icicle_init(struct MainObj* arg0)
     self->hurt_box = &falling_icicle_body_box;
     self->attack_box = &falling_icicle_body_box;
     self->terrain_box = &falling_icicle_terrain_box;
-    self->collision_data = D_80108504;
-    self->ext.main_21.timer_80 = 0x1E;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
+    self->collision_data = D_80108504;
+    self->ext.main_21.timer_80 = 0x1E;
     self->unk15 = 0;
     self->hp = 3;
     self->unk18.val = self->x_pos.val;

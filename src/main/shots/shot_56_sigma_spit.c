@@ -37,13 +37,9 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_56_sigma_spit", func_800ADF30);
 void sigma_spit_return(struct ShotObj* self)
 {
     struct WeaponObj* owner;
-    s8 angle;
 
     owner = self->unk7C;
-    angle = angle_to_point(OBJECT_HEADER(self),
-        owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16));
-    self->unk8C.byte = angle;
-    set_velocity_from_angle(MOVING_OBJECT(self), angle & 0xFF);
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)(self->unk8C.byte = angle_to_point(OBJECT_HEADER(self), owner->x_pos.val + FIXED(16), owner->y_pos.val + FIXED(16))));
     self->x_vel.val *= (get_random() & 3) + 2;
     self->y_vel.val *= (get_random() & 3) + 2;
     move_object(MOVING_OBJECT(self));
@@ -76,7 +72,10 @@ void sigma_spit_idle(struct ShotObj* self)
 
 void sigma_spit_main(struct ShotObj* self)
 {
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    s32 hit;
+
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->state = 2;
         self->unk5 = 0;
         spawn_explosion(self);

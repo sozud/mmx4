@@ -13,9 +13,8 @@ void tile_loop_anim_init(struct EffectObj* self)
 
     self->ext.effect_40.unk14 = 1;
     self->y_pos.i.hi = 0x210;
-    temp_v0 = tile_loop_anim_scripts[self->unk2];
-    self->ext.effect_40.palette_source.bytes = temp_v0;
-    self->ext.effect_40.palette.fields.timer = *temp_v0;
+    self->ext.effect_40.palette_source.bytes = tile_loop_anim_scripts[self->unk2];
+    self->ext.effect_40.palette.fields.timer = *self->ext.effect_40.palette_source.bytes;
     self->ext.effect_40.palette.fields.unk1 = self->ext.effect_40.palette_source.bytes[1];
     self->ext.effect_40.palette.fields.step = self->ext.effect_40.palette_source.bytes[2];
     self->ext.effect_40.palette.fields.id = self->ext.effect_40.palette_source.bytes[3];
@@ -33,14 +32,14 @@ void tile_loop_anim_step(struct EffectObj* self)
 {
     s8 timer;
     s32* palette_source;
+    struct EffectPaletteExt* ext = &self->ext.effect_40;
 
-    timer = self->ext.effect_40.palette.fields.timer - 1;
-    self->ext.effect_40.palette.fields.timer = timer;
+    timer = ext->palette.fields.timer - 1;
+    ext->palette.fields.timer = timer;
     if (timer == 0) {
-        palette_source = self->ext.effect_40.palette_source.words + self->ext.effect_40.palette.fields.step;
-        self->ext.effect_40.palette_source.words = palette_source;
-        self->ext.effect_40.palette.packed = *palette_source;
-        apply_tile_effect(self->ext.effect_40.palette.fields.id,
+        ext->palette_source.words += ext->palette.fields.step;
+        ext->palette.packed = *ext->palette_source.words;
+        apply_tile_effect(ext->palette.fields.id,
             self->x_pos.i.hi - tile_loop_anim_offsets[self->unk2][0],
             self->y_pos.i.hi - tile_loop_anim_offsets[self->unk2][1]);
     }

@@ -9,32 +9,26 @@ INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089AA4);
 void ride_armor_pilot_spawn_dust(struct VisualObj* self, u8 arg1)
 {
     struct VisualObj* obj;
-    u8 active;
-    u8 unk16;
-    u8 unk15;
 
     obj = find_free_visual_obj();
     if (obj == NULL) {
         return;
     }
-    active = self->active;
+    obj->active = self->active;
     obj->id = 0xC;
     obj->unk2 = arg1;
-    obj->active = active;
     obj->x_pos.val = self->x_pos.val;
     obj->y_pos.val = self->y_pos.val;
     obj->animation_table = self->animation_table;
     obj->unk40 = self->unk40;
     obj->unk3C = self->unk3C;
     obj->unk42 = self->unk42 & 0x7FFF;
-    unk16 = self->unk16;
-    obj->unk16 = unk16;
-    unk15 = self->unk15;
+    obj->unk16 = self->unk16;
+    obj->unk15 = self->unk15;
     obj->unk50 = (struct PlayerObj*)self;
-    obj->unk15 = unk15;
 }
 
-s32 ride_armor_pilot_update_facing(struct MainObj* self)
+u8 ride_armor_pilot_update_facing(struct MainObj* self)
 {
     u8 flags;
 
@@ -242,12 +236,21 @@ void ride_armor_pilot_update(struct MainObj* self)
     ride_armor_pilot_state_funcs[self->state](self);
 }
 
+#ifdef MMX4_WIN32
+struct Unk_unk68 ride_armor_pilot_anim_0[5] = {
+#else
 struct Unk_unk68 ride_armor_pilot_anim_0[13] = {
+#endif
     { 100, 0, 1, 0 },
     { 7, 0, 1, 11 },
     { 1, 1, 1, 12 },
     { 49, 0, 1, 12 },
     { 8, 0, -4, 11 },
+#ifdef MMX4_WIN32
+};
+
+struct Unk_unk68 ride_armor_pilot_anim_1[8] = {
+#endif
     { 6, 0, 1, 1 },
     { 6, 1, 1, 2 },
     { 6, 0, 1, 3 },
@@ -444,7 +447,11 @@ struct Unk_unk68 ride_armor_pilot_anim_23[4] = {
 
 void* ride_armor_pilot_animations[31] = {
     ride_armor_pilot_anim_0,
+#ifdef MMX4_WIN32
+    ride_armor_pilot_anim_1,
+#else
     &ride_armor_pilot_anim_0[5],
+#endif
     ride_armor_pilot_anim_2,
     ride_armor_pilot_anim_3,
     ride_armor_pilot_anim_4,

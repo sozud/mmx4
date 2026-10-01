@@ -81,22 +81,18 @@ INCLUDE_ASM("main/nonmatchings/items/item_04_destructible_core", func_800C0864);
 void destructible_core_main(struct ItemObj* arg0)
 {
     s32 temp_s1;
-    s32 temp_v0;
-    u32 temp_a0;
     u8 state;
 
     temp_s1 = func_8002DD04(MAIN_OBJECT(arg0));
-    temp_a0 = arg0->unk5C;
-    if (((temp_a0 < arg0->tail_ext.unk1.unk84.previous_value) && (temp_a0 != 0)) || (arg0->tail_ext.unk1.unk88 != 0)) {
+    if (((arg0->unk5C < arg0->tail_ext.unk1.unk84.previous_value) && (arg0->unk5C != 0)) || (arg0->tail_ext.unk1.unk88 != 0)) {
         destructible_core_flash_palette(arg0);
         arg0->tail_ext.unk1.unk88 ^= 1;
     }
 
     arg0->tail_ext.unk1.unk84.previous_value = arg0->unk5C;
     if (arg0->unk2 == 0) {
-        temp_v0 = arg0->ext.timer - 1;
-        arg0->ext.timer = temp_v0;
-        if (temp_v0 == 0) {
+        arg0->ext.timer = arg0->ext.timer - 1;
+        if (arg0->ext.timer == 0) {
             arg0->ext.timer = 5;
             if (arg0->unk5C < 0x50) {
                 func_800B10E4(0x11, 0xCA8, 0x198, 0xCB8, 0x1A8, 1);
@@ -110,7 +106,7 @@ void destructible_core_main(struct ItemObj* arg0)
         }
     }
 
-    if (temp_s1 <= -1) {
+    if (temp_s1 < 0) {
         apply_tile_effect(destructible_core_data.object_ids[arg0->unk2 * 0x10], 0, 0);
         switch (arg0->unk2) {
         case 0:
@@ -152,7 +148,7 @@ void destructible_core_main(struct ItemObj* arg0)
 void destructible_core_destroyed(struct ItemObj* arg0)
 {
     s32 temp_v0;
-    s32 var_v0;
+    s8 var_v0;
 
     temp_v0 = arg0->unk7C.timer - 1;
     arg0->unk7C.timer = temp_v0;

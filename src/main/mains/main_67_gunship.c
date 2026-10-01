@@ -120,25 +120,17 @@ void gunship_gun(struct MainObj* self)
 
 void gunship_gun_fire(struct MainObj* self)
 {
-    s16 timer;
-
     animate_object(ANIMATED_OBJECT(self));
     self->ext.main_67.unk89 = 1;
     func_8001540C(2, 0xA1, self);
     gunship_spawn_bullet(self);
     self->ext.main_67.unk8A++;
-    timer = 0xA;
-    if (engine_obj.cur_character == 0) {
-        timer = 0x14;
-    }
-    self->unk7C = timer;
+    self->unk7C = engine_obj.cur_character == 0 ? 0x14 : 0xA;
     self->unk6++;
 }
 
 void gunship_gun_wait(struct MainObj* self)
 {
-    s16 reset_timer;
-
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk6 = 0;
@@ -146,11 +138,7 @@ void gunship_gun_wait(struct MainObj* self)
             self->unk5 = 2;
             self->ext.main_67.unk89 = 0;
             self->ext.main_67.unk8A = 0;
-            reset_timer = 0x28;
-            if (engine_obj.cur_character == 0) {
-                reset_timer = 0x1E;
-            }
-            self->unk7C = reset_timer;
+            self->unk7C = engine_obj.cur_character == 0 ? 0x1E : 0x28;
         }
     }
 }
@@ -291,8 +279,8 @@ void gunship_spawn_missiles(struct VisualObj* self)
 
 void gunship_bob(struct MainObj* self)
 {
-    if (self->ext.main_67.direction == 0) {
-        if (self->ext.main_67.vertical_speed < FIXED(0.375) + 1) {
+    if (0 == self->ext.main_67.direction) {
+        if (self->ext.main_67.vertical_speed <= FIXED(0.375)) {
             if (self->ext.main_67.vertical_speed > 0 && self->ext.main_67.delay != 0) {
                 self->ext.main_67.delay--;
             } else {
@@ -322,7 +310,7 @@ void gunship_bob(struct MainObj* self)
 
 void gunship_spawn_exhaust(struct MainObj* self)
 {
-    s32 var_s1;
+    u8 var_s1;
     struct VisualObj* temp_v0;
 
     var_s1 = 0;

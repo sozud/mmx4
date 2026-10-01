@@ -12,6 +12,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_44_iris_shot", func_800A7008);
 
 void iris_drone_run(struct ShotObj* self)
 {
+    s32 hit;
     u8 saved_unk61;
 
     self->unk18.val = self->x_pos.val;
@@ -22,7 +23,8 @@ void iris_drone_run(struct ShotObj* self)
         self->state = 2;
     }
     func_8002D9BC(self);
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         self->state = 2;
     }
@@ -66,10 +68,10 @@ void iris_laser_init(struct ShotObj* self)
     } else {
         self->unk16 = 1;
     }
-    self->timer = 0x3C;
     self->unk68 = NULL;
     self->unk54 = NULL;
     self->unk50.data = NULL;
+    self->timer = 0x3C;
     self->unk5C = 1;
     self->unk60 = 8;
     set_animation(self, self->unk2 + 0x17);

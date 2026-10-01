@@ -9,9 +9,9 @@ void tile_animator_update(struct EffectObj* self)
 
 void tile_animator_init(struct EffectObj* self)
 {
+    self->state++;
     self->unk6 = 0;
     self->unk5 = 0;
-    self->state++;
 }
 
 void tile_animator_step(struct EffectObj* self, s32 arg1, s32 arg2)

@@ -8,19 +8,19 @@
 #define INCLUDE_ASM(FOLDER, NAME)
 #define INCLUDE_RODATA(FOLDER, NAME)
 #else
-#define INCLUDE_ASM(FOLDER, NAME)                   \
-    __asm__(".pushsection .text\n"                  \
-            "\t.align\t2\n"                         \
-            "\t.globl\t" #NAME "\n"                 \
-            "\t.ent\t" #NAME "\n" #NAME ":\n"       \
+#define INCLUDE_ASM(FOLDER, NAME)                            \
+    __asm__(".pushsection .text\n"                           \
+            "\t.align\t2\n"                                  \
+            "\t.globl\t" #NAME "\n"                          \
+            "\t.ent\t" #NAME "\n" #NAME ":\n"                \
             ".include \"" ASM_ROOT FOLDER "/" #NAME ".s\"\n" \
-            "\t.set reorder\n"                      \
-            "\t.set at\n"                           \
-            "\t.end\t" #NAME "\n"                   \
+            "\t.set reorder\n"                               \
+            "\t.set at\n"                                    \
+            "\t.end\t" #NAME "\n"                            \
             ".popsection");
 
-#define INCLUDE_RODATA(FOLDER, NAME)                \
-    __asm__(".pushsection .rodata\n"                \
+#define INCLUDE_RODATA(FOLDER, NAME)                         \
+    __asm__(".pushsection .rodata\n"                         \
             ".include \"" ASM_ROOT FOLDER "/" #NAME ".s\"\n" \
             ".popsection");
 
@@ -33,21 +33,20 @@ __asm__(".include \"macro.inc\"\n");
 #define NULL ((void*)0)
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
-#define SOME_COORDINATE_CONVERSION(v) ((((v) * 4) + 24) % 16 | ((((v) + 6) / 4) + 480) * 64)
-#define SOME_COORDINATE_CONVERSION_XY(x,y) ((((x) * 4) + 24) % 16 | ((((y) + 6) / 4) + 480) * 64)
+#define SOME_COORDINATE_CONVERSION(v) ((((v)*4) + 24) % 16 | (((((v)*4) + 24) / 16) + 480) << 6)
 #define WITHIN_BOUNDS(lo, v, hi) ((lo) < (v) && (v) < (hi))
-#define POS_BOUNDS_CHECK_FAIL_RET0(a, b)         \
-    if (a - b >= 0) {                            \
-        if (a - b <= 0x2FFFF) {                  \
-        } else {                                 \
-            return 0;                            \
-        }                                        \
-    } else {                                     \
-        if (b - a > 0x2FFFF)                     \
-            return 0;                            \
+#define POS_BOUNDS_CHECK_FAIL_RET0(a, b) \
+    if (a - b >= 0) {                    \
+        if (a - b <= 0x2FFFF) {          \
+        } else {                         \
+            return 0;                    \
+        }                                \
+    } else {                             \
+        if (b - a > 0x2FFFF)             \
+            return 0;                    \
     }
 
-#define ABS(A, B) ((A) - (B) >= 0) ? (A) - (B) : (B) - (A)
+#define ABS(A, B) (((A) - (B) < 0) ? (B) - (A) : (A) - (B))
 
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
@@ -56,7 +55,7 @@ __asm__(".include \"macro.inc\"\n");
 #ifdef MMX4_PC
 #define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
 #else
-#define MMX4_OFFSET_OF(type, member) ((u32)&(((type*)0)->member))
+#define MMX4_OFFSET_OF(type, member) ((u32) & (((type*)0)->member))
 #endif
 
 typedef signed char s8;
@@ -69,6 +68,18 @@ typedef unsigned int u32;
 typedef unsigned long long u64;
 
 typedef u16 Palette[16];
+
+#ifdef MMX4_WIN32
+typedef u8 ret_u8;
+typedef s8 ret_s8;
+typedef u8 arg_u8;
+typedef u16 arg_u16;
+#else
+typedef s32 ret_u8;
+typedef s32 ret_s8;
+typedef s32 arg_u8;
+typedef s32 arg_u16;
+#endif
 
 #ifdef MMX4_PC
 #include <psyz.h>
@@ -101,6 +112,11 @@ typedef u16 Palette[16];
 #define PAD_CANCEL PADRdown
 #define PAD_SELECTION_ALT PADRdown
 #define PAD_SELECTION_BUTTONS (PADRright | PADRdown)
+#elif defined(MMX4_WIN32)
+#define PAD_CONFIRM (PADRleft | PADstart)
+#define PAD_CANCEL PADRright
+#define PAD_SELECTION_ALT PADRdown
+#define PAD_SELECTION_BUTTONS (PADstart | PADRleft | PADRdown)
 #else
 #define PAD_CONFIRM PADRdown
 #define PAD_CANCEL PADRright
@@ -301,9 +317,9 @@ typedef union {
 } f32;
 struct TitlePointState {
     f32 coordinates[36];
-    u8 unk90[18];                 /* 0x90 */
-    u8 unkA2[18];                 /* 0xA2 */
-    u8 settled;                   /* 0xB4 */
+    u8 unk90[18]; /* 0x90 */
+    u8 unkA2[18]; /* 0xA2 */
+    u8 settled; /* 0xB4 */
 };
 union TitleScratch {
     s32 sector[0x200];
@@ -466,46 +482,46 @@ enum PlayerCollision {
 MMX4_STATIC_ASSERT(animation_step_size, sizeof(union AnimationStep) == sizeof(u32));
 
 #define OBJECT_HEADER_FIELDS \
-    s8 active;                \
-    s8 id;                    \
-    s8 unk2;                  \
-    s8 on_screen;             \
-    s8 state;                 \
-    s8 unk5;                  \
-    s8 unk6;                  \
-    s8 unk7;                  \
-    f32 x_pos;                \
-    f32 y_pos;                \
+    s8 active;               \
+    s8 id;                   \
+    s8 unk2;                 \
+    s8 on_screen;            \
+    s8 state;                \
+    s8 unk5;                 \
+    s8 unk6;                 \
+    s8 unk7;                 \
+    f32 x_pos;               \
+    f32 y_pos;               \
     void* backref;
 
 #define BASE_OBJ_TAIL_FIELDS \
-    s8 bg_offset;             \
-    u8 unk15;                 \
-    u8 unk16;                 \
+    s8 bg_offset;            \
+    u8 unk15;                \
+    u8 unk16;                \
     u8 unk17;
 
-#define BASE_OBJ_FIELDS \
+#define BASE_OBJ_FIELDS  \
     OBJECT_HEADER_FIELDS \
     BASE_OBJ_TAIL_FIELDS
 
 #define MOVING_OBJ_FIELDS \
-    BASE_OBJ_FIELDS        \
-    f32 unk18;             \
-    f32 unk1C;             \
-    f32 x_vel;             \
+    BASE_OBJ_FIELDS       \
+    f32 unk18;            \
+    f32 unk1C;            \
+    f32 x_vel;            \
     f32 y_vel;
 
-#define ANIMATED_OBJ_FIELDS                   \
-    MOVING_OBJ_FIELDS                         \
-    s32 unk28;                                \
-    s32 unk2C;                                \
-    u32** animation_table;                    \
-    u32* animation_cursor;                    \
-    void* unk38;                              \
-    void* unk3C;                              \
-    u16 unk40;                                \
-    u16 unk42;                                \
-    union AnimationStep animation_step;       \
+#define ANIMATED_OBJ_FIELDS             \
+    MOVING_OBJ_FIELDS                   \
+    s32 unk28;                          \
+    s32 unk2C;                          \
+    u32** animation_table;              \
+    u32* animation_cursor;              \
+    void* unk38;                        \
+    void* unk3C;                        \
+    u16 unk40;                          \
+    u16 unk42;                          \
+    union AnimationStep animation_step; \
     u8 previous_animation_index;
 
 struct ObjectHeader {
@@ -608,7 +624,9 @@ struct MainSavedState80Ext {
     u32 saved_unk5;
 };
 
-struct Main58Ext { u32 saved_unk5, unk84, unk88; };
+struct Main58Ext {
+    u32 saved_unk5, unk84, unk88;
+};
 struct Main10Ext {
     u32 timer;
     s32 turn_delay;
@@ -1051,7 +1069,7 @@ union Main56Unk80 {
 
 struct Main56Ext {
     union Main56Unk80 object;
-    u8 *pattern;
+    u8* pattern;
     u8 vortex_result;
     union Main56Unk89 unk89;
     u8 flash_timer;
@@ -1524,7 +1542,8 @@ MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
     s16 unk6C;                          \
     s16 unk6E;                          \
     u8 collision_flags;                 \
-    s8 : 8;                             \
+    s8:                                 \
+    8;                                  \
     s8 unk72;                           \
     s8 unk73;                           \
     s8 unk74;                           \
@@ -1651,17 +1670,17 @@ struct PlayerObj {
     s8 spike_immune;
     union {
         u32 history;
-    struct {
-        u16 held;
-        u16 previous;
-    } buttons;
-    struct {
-        u8 held_low;
-        u8 held_high;
-        u8 previous_low;
-        u8 previous_high;
-    } bytes;
-} input;
+        struct {
+            u16 held;
+            u16 previous;
+        } buttons;
+        struct {
+            u8 held_low;
+            u8 held_high;
+            u8 previous_low;
+            u8 previous_high;
+        } bytes;
+    } input;
     u16 pressed_input;
     u16 double_tap_direction;
     s8 dash_momentum;
@@ -2162,8 +2181,8 @@ struct Item12Ext {
 };
 
 struct Item23Ext {
-	s16 unk80;
-	s16 timer;
+    s16 unk80;
+    s16 timer;
 };
 
 struct Item22Ext {
@@ -2226,9 +2245,9 @@ struct ItemTailExtUnk {
 };
 
 struct ItemTailExtUnk2 {
-	u8 timer;
-	u8 previous_value;
-	u8 value;
+    u8 timer;
+    u8 previous_value;
+    u8 value;
 };
 
 union ItemTailExt {
@@ -2351,7 +2370,10 @@ struct Misc9Ext {
     u8 unk58;
 };
 
-struct Misc11Ext { u8 pad50[4]; s8 active; };
+struct Misc11Ext {
+    u8 pad50[4];
+    s8 active;
+};
 
 struct Misc42Ext {
     u8 pad50[4];
@@ -2362,8 +2384,8 @@ struct Misc42Ext {
 };
 
 struct Misc15Ext {
-	u8 pad50[4];
-	u16 unk54;
+    u8 pad50[4];
+    u16 unk54;
 };
 
 struct Misc16Ext {
@@ -2423,7 +2445,12 @@ extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 void func_80012E18(u8* arg0, u8* arg1);
 void spawn_owner_debris(s32 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4, s32 arg5);
 void spawn_debris_offset(u8 arg0, u8* arg1, struct MainObj* arg2, s32 arg3, s32 arg4);
-struct Misc24Ext { struct MainObj* main; s16 timer; u16 child_active; struct MiscObj* child; };
+struct Misc24Ext {
+    struct MainObj* main;
+    s16 timer;
+    u16 child_active;
+    struct MiscObj* child;
+};
 
 struct TitleLogoExt {
     struct MiscObj* unk50;
@@ -2731,8 +2758,8 @@ struct RideArmorObj {
     s8 padA9[0xB0 - 0xA9];
 }; // size 0xB0
 
-#define ASSERT_RIDE_ARMOR_FIELD(ride_field, player_field)                         \
-    MMX4_STATIC_ASSERT(ride_armor_##ride_field,                                  \
+#define ASSERT_RIDE_ARMOR_FIELD(ride_field, player_field) \
+    MMX4_STATIC_ASSERT(ride_armor_##ride_field,           \
         MMX4_OFFSET_OF(struct RideArmorObj, ride_field) == MMX4_OFFSET_OF(struct PlayerObj, player_field))
 ASSERT_RIDE_ARMOR_FIELD(unk49, unk49);
 ASSERT_RIDE_ARMOR_FIELD(unk50, unk50);
@@ -2954,6 +2981,37 @@ extern struct PlayerObj g_Player;
 extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
 extern struct Unk16 D_80141BD8;
+#ifdef MMX4_WIN32
+extern u8 flicker_enabled;
+#define FLICKER_ENABLED flicker_enabled
+#else
+#define FLICKER_ENABLED 1
+#endif
+#ifdef MMX4_WIN32
+extern struct Unk16 blink_timer;
+#define BLINK_TIMER blink_timer
+#else
+#define BLINK_TIMER D_80141BD8
+#endif
+#ifdef MMX4_WIN32
+extern u8 easy_mode;
+extern s16 easy_hp;
+#define EASY_MODE easy_mode
+#define EASY_HP_SET(v) (easy_hp = (v))
+#define EASY_HP_ADD(v) (easy_hp += (v))
+#else
+extern s16 easy_hp;
+#define EASY_MODE 0
+#define EASY_HP_SET(v)
+#define EASY_HP_ADD(v)
+#endif
+#ifdef MMX4_WIN32
+#define SHAKE_ENABLED FLICKER_ENABLED
+#define BLINK_CLOCK(timer) BLINK_TIMER.unk0
+#else
+#define SHAKE_ENABLED 1
+#define BLINK_CLOCK(timer) (timer)
+#endif
 extern struct BackgroundObj background_objects[3];
 extern u8 jet_stingray_bubble_index;
 extern u8 web_spider_move_timers[];
@@ -3350,8 +3408,6 @@ struct EngineObj {
     u8 pad61[3];
 }; // size 0x64
 
-#define ENGINE_STAGE_ID (*(u16*)&engine_obj.stage)
-
 #define engine_flags engine_obj.character_state.fields.flags
 
 struct Unk66 {
@@ -3696,10 +3752,10 @@ MMX4_STATIC_ASSERT(pc_effect_object_size, sizeof(struct EffectObj) == 0x40);
 MMX4_STATIC_ASSERT(psx_effect_object_size, sizeof(struct EffectObj) == 0x30);
 #endif
 
-#define ASSERT_OBJECT_HEADER(type, first_tail_member)                                        \
-    MMX4_STATIC_ASSERT(type##_backref_offset,                                                 \
+#define ASSERT_OBJECT_HEADER(type, first_tail_member)                                          \
+    MMX4_STATIC_ASSERT(type##_backref_offset,                                                  \
         MMX4_OFFSET_OF(struct type, backref) == MMX4_OFFSET_OF(struct ObjectHeader, backref)); \
-    MMX4_STATIC_ASSERT(type##_header_size,                                                    \
+    MMX4_STATIC_ASSERT(type##_header_size,                                                     \
         MMX4_OFFSET_OF(struct type, first_tail_member) == sizeof(struct ObjectHeader))
 
 ASSERT_OBJECT_HEADER(BaseObj, bg_offset);
@@ -3719,10 +3775,10 @@ ASSERT_OBJECT_HEADER(EffectObj, ext);
 
 #undef ASSERT_OBJECT_HEADER
 
-#define ASSERT_MOVING_OBJECT(type)                                                   \
-    MMX4_STATIC_ASSERT(type##_x_vel_offset,                                          \
+#define ASSERT_MOVING_OBJECT(type)                                                      \
+    MMX4_STATIC_ASSERT(type##_x_vel_offset,                                             \
         MMX4_OFFSET_OF(struct type, x_vel) == MMX4_OFFSET_OF(struct MovingObj, x_vel)); \
-    MMX4_STATIC_ASSERT(type##_y_vel_offset,                                          \
+    MMX4_STATIC_ASSERT(type##_y_vel_offset,                                             \
         MMX4_OFFSET_OF(struct type, y_vel) == MMX4_OFFSET_OF(struct MovingObj, y_vel))
 
 ASSERT_MOVING_OBJECT(PlayerObj);
@@ -3732,19 +3788,15 @@ ASSERT_MOVING_OBJECT(WeaponObj);
 
 #undef ASSERT_MOVING_OBJECT
 
-#define ASSERT_ANIMATED_OBJECT(type)                                                   \
-    MMX4_STATIC_ASSERT(type##_animation_table_offset,                                  \
-        MMX4_OFFSET_OF(struct type, animation_table) ==                                \
-            MMX4_OFFSET_OF(struct AnimatedObj, animation_table));                      \
-    MMX4_STATIC_ASSERT(type##_animation_cursor_offset,                                 \
-        MMX4_OFFSET_OF(struct type, animation_cursor) ==                               \
-            MMX4_OFFSET_OF(struct AnimatedObj, animation_cursor));                     \
-    MMX4_STATIC_ASSERT(type##_animation_step_offset,                                   \
-        MMX4_OFFSET_OF(struct type, animation_step) ==                                 \
-            MMX4_OFFSET_OF(struct AnimatedObj, animation_step));                       \
-    MMX4_STATIC_ASSERT(type##_previous_animation_index_offset,                         \
-        MMX4_OFFSET_OF(struct type, previous_animation_index) ==                       \
-            MMX4_OFFSET_OF(struct AnimatedObj, previous_animation_index))
+#define ASSERT_ANIMATED_OBJECT(type)                                                                            \
+    MMX4_STATIC_ASSERT(type##_animation_table_offset,                                                           \
+        MMX4_OFFSET_OF(struct type, animation_table) == MMX4_OFFSET_OF(struct AnimatedObj, animation_table));   \
+    MMX4_STATIC_ASSERT(type##_animation_cursor_offset,                                                          \
+        MMX4_OFFSET_OF(struct type, animation_cursor) == MMX4_OFFSET_OF(struct AnimatedObj, animation_cursor)); \
+    MMX4_STATIC_ASSERT(type##_animation_step_offset,                                                            \
+        MMX4_OFFSET_OF(struct type, animation_step) == MMX4_OFFSET_OF(struct AnimatedObj, animation_step));     \
+    MMX4_STATIC_ASSERT(type##_previous_animation_index_offset,                                                  \
+        MMX4_OFFSET_OF(struct type, previous_animation_index) == MMX4_OFFSET_OF(struct AnimatedObj, previous_animation_index))
 
 ASSERT_ANIMATED_OBJECT(PlayerObj);
 ASSERT_ANIMATED_OBJECT(MainObj);
@@ -3914,7 +3966,6 @@ extern struct Unk_unk68 D_800FDD8C;
 extern u8 ride_armor_missile_hit_box[4];
 extern struct Weapon60SpawnOffset ride_armor_missile_offsets[3];
 extern s32 D_80137CC0;
-extern s8 D_801419B3;
 extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
@@ -4285,7 +4336,6 @@ extern u8* D_8010FFDC[][2];
 extern u8 layout_height;
 extern u16 D_80166C08;
 extern u16 D_80166C0A;
-extern s8 D_800F8BE9[];
 extern u8 dragonfly_debris[8];
 extern u8 player_death_orb_directions[4][8];
 extern u8 spawner_pod_debris[];
@@ -4422,7 +4472,12 @@ extern struct BazObj baz_objects[2];
 extern struct VisualObj visual_objects[0x20];
 extern struct ShotObj shot_objects[0x20];
 extern struct WeaponObj weapon_objects[0x10];
-extern struct UnkObj unk_objects[0x14];
+#ifdef MMX4_WIN32
+#define UNK_OBJECT_COUNT 30
+#else
+#define UNK_OBJECT_COUNT 0x14
+#endif
+extern struct UnkObj unk_objects[UNK_OBJECT_COUNT];
 extern struct UnkObj foo_objects[3];
 extern struct EffectObj effect_objects[0x20];
 extern struct ItemObj item_objects[0x20];
@@ -4567,7 +4622,6 @@ extern u16 g_FilterAmountR;
 extern u16 g_FilterAmountB;
 extern u16 g_FilterAmountG;
 extern u16 controller_state;
-extern s8 D_801419FC;
 extern u8 D_800F4508[];
 extern u8* D_800F4560[];
 extern u8 D_800F4568[];
@@ -4697,7 +4751,7 @@ extern u8* cur_draw_info_drawenv;
 void func_8001293C(void);
 void TeleportRelatedObjectUpdate(struct EffectObj*);
 void grenade_fly(struct ShotObj*);
-s32 func_8002DD04(struct MainObj*);
+ret_s8 func_8002DD04(struct MainObj*);
 void hover_sentry_check_player_near(struct MainObj*);
 u8 func_8003CF24(struct RideArmorObj*);
 void func_8003D338(struct AnimatedObj*);
@@ -4733,7 +4787,7 @@ void player_damage(s8);
 void func_800129F0(s32);
 void func_800127C8(s32);
 void func_80012A3C();
-s32 func_8001540C(s32, s32, void*);
+s32 func_8001540C(s32, arg_u8, void*);
 s32 is_sound_finished(s32, struct MainObj*);
 void func_8001B644(u8*);
 s32 func_8001CB24(u8* buffer, s32 device_num, s32 size);
@@ -4776,8 +4830,8 @@ struct WeaponObj* player_spawn_weapon(s8, s8, s8, struct PlayerObj*);
 void func_80037484(struct PlayerObj*, s32);
 void player_set_shoot_animation(struct PlayerObj*);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
-s32 get_random_nonzero(void);
-s32 func_8002938C();
+ret_u8 get_random_nonzero(void);
+ret_u8 func_8002938C();
 void update_on_screen(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
 void func_800127FC(void);
@@ -4803,7 +4857,7 @@ extern struct Item03StageEntry falling_pillar_entries[22];
 void start_screen_shake_x(s8, s8, s8);
 void func_800292D0(struct StageObjectRecord*);
 struct ObjectHeader* MakeObject(u8);
-s32 angle_to_object(struct ObjectHeader*, struct ObjectHeader*);
+ret_u8 angle_to_object(struct ObjectHeader*, struct ObjectHeader*);
 void soul_body_clone_update(void);
 void func_80015284(void);
 void func_8001C3E8(void);
@@ -4888,20 +4942,20 @@ void func_8001FB50();
 void func_8002217C(u16, u8, u8);
 void func_80022730(struct AbcObj*);
 void move_object(struct MovingObj*);
-s32 angle_to_point(struct ObjectHeader*, s32, s32);
-void set_velocity_from_angle(struct MovingObj*, s32);
-void func_8002B9F0(s32 *arg0, s32 *arg1, u8 arg2);
-void update_screen_shake_x(struct BackgroundObj *arg0);
+ret_u8 angle_to_point(struct ObjectHeader*, s32, s32);
+void set_velocity_from_angle(struct MovingObj*, arg_u8);
+void func_8002B9F0(s32* arg0, s32* arg1, u8 arg2);
+void update_screen_shake_x(struct BackgroundObj* arg0);
 void start_screen_shake_y(s8, s8, s8);
 void apply_tile_effect(u8, s32, s32);
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
-s32 func_8002D9BC(void*);
+ret_u8 func_8002D9BC(void*);
 void drop_item(struct BaseObj*, s8);
 void func_800BF638(struct BaseObj* arg0, s8 arg1, s16 arg2, s16 arg3);
-void spawn_rubble(s32, u8*, void*, s32);
+void spawn_rubble(arg_u8, u8*, void*, s32);
 void ice_bird_spawn_charge_ring(struct MainObj*, s8);
-void spawn_debris(s32, void*, void*);
+void spawn_debris(arg_u8, void*, void*);
 extern u8 D_800F9118[8];
 struct MenuTextureData {
     u32 texture[96];
@@ -4950,7 +5004,7 @@ void func_80013650(void);
 s8 func_800136B0();
 void func_800137F0();
 void MyCdReadyCallback(u8 status, u8* result);
-void func_80018000(s32);
+void func_80018000(arg_u8);
 void despawn_object(struct ObjectHeader* arg0);
 void despawn_object_permanently(struct ObjectHeader* arg0);
 void func_8002B560(s8, s8);
@@ -4997,9 +5051,9 @@ void func_8003D6EC(struct AnimatedObj*, s32);
 void player_hover_set_direction(struct PlayerObj*, s32);
 void play_boss_voice(s32);
 void func_800AF95C(struct ObjectHeader*, s32, s32, s32, s32);
-void func_800B0CA0(s32, s32, struct MainObj*, s32, s32);
+void func_800B0CA0(s32, arg_u8, struct MainObj*, s32, s32);
 struct VisualObj* jet_stingray_spawn_splash(struct MainObj*);
-s32 jet_stingray_check_surface(struct PlayerObj*, s32, s32);
+u8 jet_stingray_check_surface(struct PlayerObj*, s32, s32);
 void fortress_collapse_spawn_random_explosion(struct EffectObj*);
 
 enum SelectedPlayer {
@@ -5065,7 +5119,7 @@ void func_8006B398(struct MainObj*);
 void func_8006E920(struct MainObj*, s32);
 void colonel_face_center(struct BaseObj*);
 void func_800889DC(struct MainObj*);
-void buster_shot_place_at_muzzle(struct VisualObj*, struct PlayerObj*, s32);
+void buster_shot_place_at_muzzle(struct VisualObj*, struct PlayerObj*, arg_u8);
 void lightning_web_draw(struct WeaponObj*);
 void iris_drone_move(struct ShotObj*);
 void func_800AFB90(struct VisualObj*);

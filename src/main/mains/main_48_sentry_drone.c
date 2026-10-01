@@ -16,11 +16,14 @@ extern void (*sentry_drone_step_funcs[])();
 
 void sentry_drone_main(struct MainObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     SP_CUR_MAIN_OBJ->ext.main_48.saved_unk5 = self->unk5;
 
-    if (func_8002DD04(self) < 0) {
+    hit = func_8002DD04(self);
+    if (hit < 0) {
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(5, sentry_drone_debris, self);
         self->state = 2;
@@ -48,13 +51,9 @@ void sentry_drone_drift(struct MainObj* self)
 
 void sentry_drone_drift_start(struct MainObj* self)
 {
-    s32 direction = -FIXED(0.5);
     self->air_state = 1;
     self->unk6++;
-    if (self->unk15 != 0) {
-        direction = FIXED(0.5);
-    }
-    self->x_speed = direction;
+    self->x_speed = self->unk15 != 0 ? FIXED(0.5) : -FIXED(0.5);
     self->x_accel = 0;
     self->y_speed = 0;
     self->gravity = 0;
@@ -82,15 +81,12 @@ void sentry_drone_dash(struct MainObj* self)
 void sentry_drone_dash_start(struct MainObj* self)
 {
     s32 velocity;
-    self->air_state = 0;
     self->unk6++;
+    self->air_state = 0;
     if ((self->unk2 & 0xF) == 2) {
         self->x_speed = 0;
     } else {
-        velocity = -FIXED(4);
-        if (self->unk15 != 0) {
-            velocity = FIXED(4);
-        }
+        velocity = self->unk15 != 0 ? FIXED(4) : -FIXED(4);
         self->x_speed = velocity;
     }
     self->x_accel = 0;
@@ -173,7 +169,7 @@ void sentry_drone_burst_fire(struct MainObj* self)
 void sentry_drone_burst_repeat(struct MainObj* self)
 {
     struct MainObj* work = SP_CUR_MAIN_OBJ;
-    if (work->ext.main_48.unk82 >= 3) {
+    if (3 <= work->ext.main_48.unk82) {
         self->unk6++;
         SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
         SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
@@ -307,25 +303,15 @@ void sentry_drone_drop_move(struct MainObj* self)
 
 void sentry_drone_check_player_near(struct MainObj* self)
 {
-    s32 distance;
-    s32 max_distance;
+    s16 max_distance;
     s8 state;
 
     if ((self->air_state == 0) && ((state = self->unk5) != 4) && (state != 5)) {
         max_distance = sentry_drone_activation_distances[(s8)SP_CUR_MAIN_OBJ->ext.main_0.index];
-        distance = g_Player.x_pos.i.hi - self->x_pos.i.hi;
-        if (distance >= 0) {
-            if (max_distance >= distance) {
-                goto activate;
-            }
-            return;
+        if (ABS(g_Player.x_pos.i.hi, self->x_pos.i.hi) <= max_distance) {
+            self->unk5 = 4;
+            self->unk6 = 0;
         }
-        if (max_distance < (self->x_pos.i.hi - g_Player.x_pos.i.hi)) {
-            return;
-        }
-    activate:
-        self->unk5 = 4;
-        self->unk6 = 0;
     }
 }
 

@@ -10,12 +10,9 @@ void shell_crawler_shot_init(struct ShotObj* self)
     s32 var_v0;
     s32 var_a1;
 
-    var_a1 = FIXED(-2.5);
     self->on_screen = 1;
     self->state = (u8)self->state + 1;
-    if (self->unk15 != 0) {
-        var_a1 = FIXED(2.5);
-    }
+    var_a1 = self->unk15 != 0 ? FIXED(2.5) : FIXED(-2.5);
     temp_v1 = *(s16*)&self->x_pos.i.hi;
     self->x_vel.val = var_a1;
     self->unk28 = 0;

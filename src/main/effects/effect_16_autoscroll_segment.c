@@ -9,19 +9,14 @@ void autoscroll_segment_update(struct EffectObj* self)
 
 void autoscroll_segment_start(struct EffectObj* self)
 {
-    s32 index;
-    u16 value;
-
     self->ext.effect_16.saved_background_2A = background_objects[0].unk2A;
-    index = self->unk2;
     self->ext.effect_16.saved_background_28 = background_objects[0].unk28;
-    background_objects[0].unk26 = autoscroll_segment_bounds[index].primary;
-    value = autoscroll_segment_bounds[self->unk2].primary;
+    background_objects[0].unk26 = autoscroll_segment_bounds[self->unk2].primary;
+    background_objects[0].unk24 = autoscroll_segment_bounds[self->unk2].primary;
     background_objects[0].unk47 = 6;
     background_objects[0].unk30 = 0;
     background_objects[0].unk32 = 0x140;
     background_objects[0].pad51[0] = 0;
-    background_objects[0].unk24 = value;
     self->state++;
 }
 
@@ -39,12 +34,12 @@ void autoscroll_segment_end(struct EffectObj* self)
     background_objects[0].unk24 = autoscroll_segment_bounds[self->unk2].secondary;
     background_objects[0].unk2A = self->ext.effect_16.saved_background_2A;
     unk6 = self->ext.effect_16.saved_background_28;
+    background_objects[0].unk28 = unk6;
     background_objects[0].pad51[0] = 1;
     background_objects[0].unk30 = 0xA0;
     background_objects[0].unk32 = 0xA0;
     background_objects[0].unk47 = 2;
     background_objects[0].unk48 = 8;
-    background_objects[0].unk28 = unk6;
     despawn_object_permanently(OBJECT_HEADER(self));
 }
 

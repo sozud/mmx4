@@ -167,7 +167,7 @@ void dash_gunner_shoot_aim(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7E == 0) {
         if (self->unk15 == 0) {
-            self->x_pos.u.hi -= 6;
+            self->x_pos.i.hi -= 6;
         } else {
             self->x_pos.u.hi += 6;
         }
@@ -175,7 +175,7 @@ void dash_gunner_shoot_aim(struct MainObj* self)
         if (self->unk15 == 0) {
             self->x_pos.u.hi += 6;
         } else {
-            self->x_pos.u.hi -= 6;
+            self->x_pos.i.hi -= 6;
         }
         self->unk6 = 2;
     }
@@ -188,12 +188,12 @@ void dash_gunner_shoot_fire(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     direction = self->ext.main_27.collision_direction;
-    if ((u32)(direction - 9) < 0xF) {
+    if ((direction > 8 && direction < 24)) {
         if (self->unk15 != 0) {
             self->unk7C = 0xA;
             self->unk6 = 3;
         }
-    } else if ((u32)(direction - 8) >= 0x11 && self->unk15 == 0) {
+    } else if ((direction < 8 || direction > 24) && self->unk15 == 0) {
         self->unk7C = 0xA;
         self->unk6 = 3;
     }
@@ -266,32 +266,19 @@ void dash_gunner_dash_start(struct MainObj* self)
     s16 timer;
 
     animate_object(ANIMATED_OBJECT(self));
-    timer = (u16)self->unk7C - 1;
-    self->unk7C = timer;
+    timer = --self->unk7C;
     if (timer != 0) {
         return;
     }
 
     self->ext.main_27.unk8A = 1;
-    if (self->unk15 == 0) {
-        if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
-            goto action;
-        }
-        goto common;
+    if ((self->unk15 == 0 && g_Player.x_pos.i.hi > self->x_pos.i.hi) || (self->unk15 != 0 && g_Player.x_pos.i.hi < self->x_pos.i.hi)) {
+        set_animation(self, 2);
+        self->unk5 = 4;
+        self->unk6 = 1;
+        self->unk7C = 1;
+        return;
     }
-    if (g_Player.x_pos.i.hi < self->x_pos.i.hi) {
-        goto action;
-    }
-    goto common;
-
-action:
-    set_animation(self, 2);
-    self->unk5 = 4;
-    self->unk6 = 1;
-    self->unk7C = 1;
-    return;
-
-common:
     self->unk7C = 0x14;
     self->unk6 = 1;
     if (self->unk15 == 0) {

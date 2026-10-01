@@ -68,12 +68,12 @@ void web_spider_intro_setup(struct MainObj* self)
         }
         self->animation_table = (const u8* const*)web_spider_animations;
         self->unk16 = 4;
+        self->hp = 0;
         self->contact_damage = 6;
         self->invincibility_timer = -0x80;
+        self->unk62 = 0;
         self->unk63 = 2;
         self->unk7C = 7;
-        self->hp = 0;
-        self->unk62 = 0;
         self->ext.main_43.flash_timer = 0;
         self->ext.main_43.shot = NULL;
         self->ext.main_43.hurt_collision = 0;
@@ -433,8 +433,8 @@ void web_spider_big_web_center(struct MainObj* self)
         self->unk6 = 0;
         self->unk7 = 0;
         self->x_pos.i.lo = 0;
-        self->y_pos.i.lo = 0;
         self->x_pos.i.hi = web_spider_arena_x + 0xA0;
+        self->y_pos.i.lo = 0;
         self->y_pos.i.hi = web_spider_arena_y + 0x70;
         web_spider_set_attack_cooldown(self);
         self->collision_data = D_801075F4;
@@ -681,7 +681,7 @@ void web_spider_death_start(struct MainObj* self)
 void web_spider_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
-    if (--self->unk7C == 0) {
+    if (0 == --self->unk7C) {
         self->unk5 = 2;
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -700,7 +700,7 @@ void web_spider_death_explode(struct MainObj* self)
         if (temp >= 0x1A) {
             self->ext.main_43.flash_timer = 0;
         }
-        self->unk7E = self->ext.main_43.flash_timer <= 5 ? 5 : self->ext.main_43.flash_timer;
+        self->unk7E = self->ext.main_43.flash_timer > 5 ? self->ext.main_43.flash_timer : 5;
     }
 }
 

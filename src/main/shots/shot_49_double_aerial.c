@@ -78,9 +78,6 @@ void double_toss_init(struct ShotObj* self)
 
     self->state = 1;
     self->on_screen = 1;
-    self->unk16 = 3;
-    self->unk58.data = (const u8*)D_80105FF0;
-    self->unk5C = 3;
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7 = 0;
@@ -88,19 +85,19 @@ void double_toss_init(struct ShotObj* self)
     self->unk8A = 0;
     self->bg_offset = 0;
     self->unk84.value = 0;
+    self->unk16 = 3;
     self->unk68 = 0;
+    self->unk58.data = (const u8*)D_80105FF0;
     self->unk54 = 0;
     self->unk50.data = 0;
+    self->unk5C = 3;
     self->unk60 = 4;
     self->unk61 = 0;
     self->y_pos.i.hi -= 0x10;
     set_animation(self, 0x11);
 
-    x_vel = FIXED(-3);
     self->timer = 0x14;
-    if (self->unk2 != 0) {
-        x_vel = FIXED(3);
-    }
+    x_vel = self->unk2 != 0 ? FIXED(3) : FIXED(-3);
     self->y_vel.val = FIXED(4.5);
     self->x_vel.val = x_vel;
     self->unk28 = 0;

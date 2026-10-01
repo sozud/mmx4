@@ -439,8 +439,6 @@ void iris_crystal_drop_fall(struct MainObj* self)
 
 void iris_crystal_drop_chase(struct MainObj* self)
 {
-    s16 x_pos;
-
     animate_object(ANIMATED_OBJECT(self));
     if (!(D_80141BD8.unk0 & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
@@ -450,13 +448,7 @@ void iris_crystal_drop_chase(struct MainObj* self)
         }
     }
 
-    x_pos = self->x_pos.i.hi;
-    if (x_pos - g_Player.x_pos.i.hi >= 0) {
-        if (x_pos - g_Player.x_pos.i.hi < 3) {
-        } else {
-            move_object(MOVING_OBJECT(self));
-        }
-    } else if (g_Player.x_pos.i.hi - x_pos > 2) {
+    if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) > 2) {
         move_object(MOVING_OBJECT(self));
     }
 
@@ -468,8 +460,6 @@ void iris_crystal_drop_chase(struct MainObj* self)
 
 void iris_crystal_drop_aim(struct MainObj* self)
 {
-    s16 x_pos;
-
     animate_object(ANIMATED_OBJECT(self));
     if (!(D_80141BD8.unk0 & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
@@ -479,13 +469,7 @@ void iris_crystal_drop_aim(struct MainObj* self)
         }
     }
 
-    x_pos = self->x_pos.i.hi;
-    if (x_pos - g_Player.x_pos.i.hi >= 0) {
-        if (x_pos - g_Player.x_pos.i.hi < 3) {
-        } else {
-            move_object(MOVING_OBJECT(self));
-        }
-    } else if (g_Player.x_pos.i.hi - x_pos > 2) {
+    if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) > 2) {
         move_object(MOVING_OBJECT(self));
     }
 
@@ -518,8 +502,8 @@ void iris_crystal_drop_fire(struct MainObj* self)
             shot->unk3C = (void*)self->sprite_frames;
             shot->unk42 = self->unk42 & 0x7FFF;
             shot->unk15 = self->unk15;
-            shot->timer = 0x3C;
             shot->unk7C = WEAPON_OBJECT(self);
+            shot->timer = 0x3C;
             shot->state = 6;
         }
         self->unk7C = 0x86;

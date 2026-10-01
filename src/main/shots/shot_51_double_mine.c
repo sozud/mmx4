@@ -21,13 +21,11 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA68C);
 void double_mine_dash_start(struct ShotObj* self)
 {
     s32 angle;
-    u16 player_x;
 
     self->timer = 0x3C;
     self->unk5++;
-    player_x = g_Player.x_pos.u.hi;
-    self->unk8C.half = player_x;
-    angle = angle_from_delta(self->x_pos.val - (player_x << 16), 0);
+    self->unk8C.half = g_Player.x_pos.u.hi;
+    angle = angle_from_delta(self->x_pos.val - (self->unk8C.half << 16), 0);
     self->unk84.value = angle;
     if (angle & 0x10) {
         self->x_vel.val = FIXED(-8);
@@ -42,7 +40,7 @@ void double_mine_dash_start(struct ShotObj* self)
 
 void double_mine_dash(struct ShotObj* self)
 {
-    s32 angle;
+    u8 angle;
 
     angle = angle_from_delta(self->x_pos.val - (self->unk8C.halves[0] << 16), 0);
     if ((angle ^ self->unk84.value) & 0x10) {

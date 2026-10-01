@@ -13,7 +13,7 @@ void data_hopper_init(struct MainObj* self)
     s8 mode = 2;
 
     self->state = 1;
-    if (self->unk2 != 0) {
+    if (0 != self->unk2) {
         mode = 6;
     }
     self->unk5 = mode;

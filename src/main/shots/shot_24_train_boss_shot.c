@@ -67,8 +67,8 @@ void train_boss_arm_init(struct ShotObj* self)
     self->x_pos.i.hi += train_boss_arm_offsets[self->unk2][0];
     y_offset = train_boss_arm_offsets[self->unk2][1];
     self->unk16 = 5;
-    self->unk54 = train_boss_arm_attack_box;
     self->unk68 = NULL;
+    self->unk54 = train_boss_arm_attack_box;
     self->unk50.data = train_boss_arm_hurt_boxes[0];
     self->y_pos.i.hi += y_offset;
     set_animation(self, 1);
@@ -117,7 +117,7 @@ void train_boss_arm_resume_step(struct ShotObj* self)
 
 void train_boss_arm_advance(struct ShotObj* self)
 {
-    if (train_boss_arm_offsets[self->unk2][0] + 0x1AA0 < self->x_pos.i.hi) {
+    if (self->x_pos.i.hi > train_boss_arm_offsets[self->unk2][0] + 0x1AA0) {
         self->unk28 = 0;
         self->unk5 = 3;
         return;
@@ -128,10 +128,7 @@ void train_boss_arm_advance(struct ShotObj* self)
 
 void train_boss_arm_wait_signal(struct ShotObj* self)
 {
-    u8 temp_v1;
-
-    temp_v1 = *(u8*)&self->unk7C->x_pos.val;
-    if ((temp_v1 == self->unk2) || (temp_v1 == 4)) {
+    if (((*(u8*)&self->unk7C->x_pos.val) == self->unk2) || ((*(u8*)&self->unk7C->x_pos.val) == 4)) {
         func_8001540C(2, 0x63, self);
         self->unk84.bytes[0] = self->unk7C->unk6;
         self->unk28 = 1;
@@ -170,7 +167,7 @@ void train_boss_arm_punch(struct ShotObj* self)
     move_object(MOVING_OBJECT(self));
     owner = self->unk7C;
     subtype = self->unk2;
-    if ((owner->x_pos.i.hi + train_boss_arm_reach[subtype]) < self->x_pos.i.hi) {
+    if (self->x_pos.i.hi > (owner->x_pos.i.hi + train_boss_arm_reach[subtype])) {
         owner->unk7 = (u8)owner->unk7 | train_boss_arm_extended_bits[subtype];
     }
     timer = self->unk7 - 1;
@@ -193,7 +190,6 @@ void train_boss_arm_hold(struct ShotObj* self)
 void train_boss_arm_retract(struct ShotObj* self)
 {
     s8 shot_variant;
-    s8 timer;
     struct WeaponObj* weapon;
 
     move_object(MOVING_OBJECT(self));
@@ -203,16 +199,15 @@ void train_boss_arm_retract(struct ShotObj* self)
         weapon->unk7 = (u8)weapon->unk7 & train_boss_arm_extended_clear_masks[shot_variant];
     }
 
-    timer = (u8)self->unk7 - 1;
-    self->unk7 = timer;
-    if (timer == 0) {
-        if (self->unk84.bytes[0] >= 3 && self->unk84.bytes[0] <= 4) {
+    self->unk7 = (u8)self->unk7 - 1;
+    if (self->unk7 == 0) {
+        if ((self->unk84.bytes[0] == 3 || self->unk84.bytes[0] == 4)) {
             self->unk7C->x_pos.bytes[0] = 0xFF;
         }
         self->unk28 = 0;
         self->unk5 = 3;
-    } else if (timer == 26) {
-        if (self->unk84.bytes[0] < 3 || self->unk84.bytes[0] > 4) {
+    } else if (self->unk7 == 26) {
+        if ((self->unk84.bytes[0] != 3 && self->unk84.bytes[0] != 4)) {
             self->unk7C->x_pos.bytes[0] = 0xFF;
         }
     }
@@ -223,7 +218,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E8E0);
 
 void train_boss_arm_return(struct ShotObj* self)
 {
-    if ((self->unk7C->x_pos.i.hi + *train_boss_arm_offsets[self->unk2]) < self->x_pos.i.hi) {
+    if (self->x_pos.i.hi > (self->unk7C->x_pos.i.hi + *train_boss_arm_offsets[self->unk2])) {
         self->unk61 = 0;
         self->unk7C->active = (u8)self->unk7C->active & train_boss_arm_active_clear_masks[self->unk2];
         if (((u8)self->unk7C->active & 0xF) == (train_boss_arm_extended_bits[self->unk2] ^ 0xF)) {
@@ -238,10 +233,7 @@ void train_boss_arm_return(struct ShotObj* self)
 
 void train_boss_arm_wait_sync(struct ShotObj* self)
 {
-    u8 active;
-
-    active = self->unk7C->active;
-    if ((active & 7) == ((active & 0x70) >> 4)) {
+    if ((self->unk7C->active & 7) == ((self->unk7C->active & 0x70) >> 4)) {
         self->unk5 = 3;
     }
     if ((u8)self->unk7C->x_pos.val != 4) {

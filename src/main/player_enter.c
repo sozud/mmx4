@@ -402,6 +402,7 @@ INCLUDE_ASM("main/nonmatchings/player_enter", func_80034B64);
 void player_enter_ladder_grab(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1B);
+    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
     self->x_vel.val = 0;
@@ -409,7 +410,6 @@ void player_enter_ladder_grab(struct PlayerObj* self)
     self->y_vel.val = FIXED(1);
     self->unk2C = 0;
     self->air_state = 1;
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     player_clear_dash(self);
     player_clear_attack(self);
     self->unk5 = PLAYER_LADDER_TRANSITION;
@@ -421,7 +421,7 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self)
     player_set_animation(self, 0x1C);
     self->unk68 = 0;
     self->y_pos.u.lo = 0;
-    self->y_pos.u.hi &= 0xFFF0;
+    self->y_pos.i.hi &= 0xFFF0;
     player_clear_attack(self);
     self->unk5 = PLAYER_LADDER_TRANSITION;
     self->unk6 = 1;
@@ -430,11 +430,11 @@ void player_enter_ladder_climb_off_top(struct PlayerObj* self)
 void player_enter_ladder_climb_on_top(struct PlayerObj* self)
 {
     player_set_animation(self, 0x1D);
+    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.u.lo = 0;
     self->y_pos.u.lo = 0;
     self->unk68 = 0;
     self->air_state = 1;
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     player_clear_dash(self);
     player_clear_attack(self);
     self->unk5 = PLAYER_LADDER_TRANSITION;
@@ -451,7 +451,7 @@ void player_enter_ladder_step_off_bottom(struct PlayerObj* self)
 
 void player_enter_ladder_up(struct PlayerObj* self)
 {
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;
@@ -465,7 +465,7 @@ void player_enter_ladder_up(struct PlayerObj* self)
 
 void player_enter_ladder_down(struct PlayerObj* self)
 {
-    self->x_pos.u.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
+    self->x_pos.i.hi = (self->x_pos.u.hi & 0xFFF0) + 8;
     self->x_pos.i.lo = 0;
     self->y_pos.i.lo = 0;
     self->x_vel.val = 0;
@@ -482,8 +482,6 @@ INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
 void player_start_stage_clear(struct PlayerObj* self)
 {
     u8 flags;
-    u8 sound_id;
-    u8 sound_arg;
 
     player_clear_dash_and_attack(self);
     player_reset_charge_and_weapon(self);
@@ -495,14 +493,11 @@ void player_start_stage_clear(struct PlayerObj* self)
         player_set_idle_animation(self);
         player_reset_weapon(self);
 
-        sound_id = MUSIC_STAGE_CLEAR_ZERO;
         if (self->unk2 == 0) {
-            sound_id = MUSIC_STAGE_CLEAR_X;
-            sound_arg = 0x75;
+            func_8001663C(MUSIC_STAGE_CLEAR_X, 0x75);
         } else {
-            sound_arg = 0x72;
+            func_8001663C(MUSIC_STAGE_CLEAR_ZERO, 0x72);
         }
-        func_8001663C(sound_id, sound_arg);
 
         self->unk5 = PLAYER_STAGE_CLEAR;
         self->unk6 = 0;

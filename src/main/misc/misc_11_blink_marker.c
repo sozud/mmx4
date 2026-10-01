@@ -33,7 +33,9 @@ void blink_marker_main(struct MiscObj* self)
         self->state++;
     }
     if (self->unk2 == 0) {
-        self->on_screen ^= 1;
+        if (FLICKER_ENABLED) {
+            self->on_screen ^= 1;
+        }
         if (self->on_screen == 0) {
             return;
         }

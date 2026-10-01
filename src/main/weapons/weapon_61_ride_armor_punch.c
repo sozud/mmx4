@@ -32,7 +32,7 @@ void ride_armor_punch_main(struct WeaponObj* self)
     owner = self->owner;
     self->x_pos.i.hi = (s16)(u16)owner->x_pos.i.hi;
     self->y_pos.i.hi = (s16)(u16)owner->y_pos.i.hi;
-    self->animation_step.fields.event = (s8)((u8)owner->animation_step.fields.event >> 4);
+    self->animation_step.fields.event = (owner->animation_step.fields.event >> 4) & 0xF;
     if (self->unk2 != 0) {
         timer = --self->unk88.half;
         if ((timer << 16) == 0) {

@@ -21,8 +21,7 @@ void edge_spawner_main(struct EffectObj* self)
 
     pos = self->x_pos.i.hi - 0x10;
     if (background_objects[0].x_pos.i.hi - 0x10 <= pos && background_objects[0].x_pos.i.hi + 0x150 >= pos) {
-        pos = self->y_pos.i.hi;
-        if (background_objects[0].y_pos.i.hi - 0x10 <= pos && background_objects[0].y_pos.i.hi + 0x100 >= pos) {
+        if (background_objects[0].y_pos.i.hi - 0x10 <= self->y_pos.i.hi && background_objects[0].y_pos.i.hi + 0x100 >= self->y_pos.i.hi) {
             func_800B875C(self, background_objects[0].x_pos.i.hi);
             self->ext.unk_effect.unk15++;
         }

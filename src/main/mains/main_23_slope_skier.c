@@ -55,16 +55,14 @@ void bee_hive_explode_done(void);
 
 void slope_skier_read_slope(struct MainObj* self)
 {
-    struct Unk_unk68* collision;
     s16 x_pos;
     s32 y_pos;
     u8 result;
 
     self->ext.main_23.unk81 = self->ext.main_23.unk80;
     x_pos = self->x_pos.i.hi;
-    collision = self->terrain_box;
-    y_pos = (s16)(collision->unk3
-        + ((u16)self->y_pos.i.hi + (s8)(u8)collision->unk1) + 1);
+    y_pos = (s16)(self->terrain_box->unk3
+        + ((u16)self->y_pos.i.hi + (s8)(u8)self->terrain_box->unk1) + 1);
 
     result = func_8002D724(PLAYER_OBJECT(self), x_pos, y_pos);
     if (result == 0) {
@@ -132,14 +130,12 @@ void slope_skier_land(struct MainObj* self)
 
 void slope_skier_fall(struct MainObj* self)
 {
-    s8 step;
 
     animate_object(ANIMATED_OBJECT(self));
-    step = self->unk6;
-    if (step == 0) {
-        self->unk6 = step + 1;
-        self->gravity = FIXED(0.2578125);
+    if (self->unk6 == 0) {
+        self->unk6 = self->unk6 + 1;
         self->y_speed = 0;
+        self->gravity = FIXED(0.2578125);
         self->air_state = -1;
     }
     if (self->collision_flags & 8) {
@@ -174,15 +170,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80056054);
 
 void slope_skier_slide_start(struct MainObj* self)
 {
-    s32 velocity;
-
     self->unk6++;
     slope_skier_read_slope(self);
-    velocity = FIXED(-4.5);
-    if (self->unk15 != 0) {
-        velocity = FIXED(4.5);
-    }
-    self->x_speed = velocity;
+    self->x_speed = self->unk15 != 0 ? FIXED(4.5) : FIXED(-4.5);
     set_animation(self, (self->ext.main_23.unk80 & 0x7F) + 4);
     func_8001540C(2, 0x3A, self);
 }

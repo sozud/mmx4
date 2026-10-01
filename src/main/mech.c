@@ -293,7 +293,7 @@ void func_8003DF9C(struct PlayerObj* arg0)
 
 s32 func_8003E048(struct PlayerObj* arg0)
 {
-    s32 mask;
+    u16 mask;
     s32 flags;
     s32 result;
 
@@ -663,8 +663,8 @@ void func_8003EDF0(struct RideArmorObj* self)
         func_8001540C(5, 0, 0);
     }
 
-    input = self->input_flags;
     timer = --self->unk90.byte;
+    input = self->input_flags;
     if (!(input & 8)) {
         func_8003DC44(BASE_OBJECT(self), 0xC);
         return;
@@ -1037,7 +1037,9 @@ void func_8003FA58(struct RideArmorObj* self)
     }
     timer = --self->unk90.byte;
     if (!(self->unk94.bytes.unk97 & 2)) {
-        if ((self->input_flags & 3) || timer < 0) {
+        if (self->input_flags & 3) {
+            func_8003DC44(BASE_OBJECT(self), 0xC);
+        } else if (timer < 0) {
             func_8003DC44(BASE_OBJECT(self), 0xC);
         } else if (self->animation_step.fields.relative_step == 0) {
             func_8003DD14(MAIN_OBJECT(self));
@@ -1178,11 +1180,10 @@ void func_8003FF9C(struct RideArmorObj* self)
         self->unkA0.saved_accel.x = self->unk28 >> 8;
         self->unkA0.saved_accel.y = self->unk2C >> 8;
         if (self->unk15 == 0) {
-            velocity = self->launch_speed << 8;
+            self->x_vel.val = (self->launch_speed << 8);
         } else {
-            velocity = -(self->launch_speed << 8);
+            self->x_vel.val = (-(self->launch_speed << 8));
         }
-        self->x_vel.val = velocity;
         self->unk28 = 0x5800;
         self->y_vel.val = 0;
         self->unk2C = 0x5800;

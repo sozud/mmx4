@@ -13,13 +13,16 @@ INCLUDE_ASM("main/nonmatchings/mains/main_07_ambush_gunner", func_80047404);
 
 void ambush_gunner_main(struct MainObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     ambush_gunner_step_funcs[self->unk5](self);
     if (self->ext.main_7.unk90 != 0) {
         func_8002D9BC(self);
         self->ext.main_7.saved_unk5 = self->unk5;
-        if (func_8002DD04(self) < 0) {
+        hit = func_8002DD04(self);
+        if (hit < 0) {
             spawn_explosion(BASE_OBJECT(self));
             spawn_debris(5, ambush_gunner_debris, self);
             if (!(self->unk2 & 1)) {

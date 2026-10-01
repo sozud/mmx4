@@ -21,12 +21,10 @@ void sigma_collapse_debris_start(struct EffectObj* self)
 void sigma_collapse_debris_drop(struct EffectObj* self)
 {
     struct MiscObj* misc;
-    u16 timer;
 
     if (D_80171EA8 == 0) {
-        timer = self->ext.effect_9.transition_timer - 1;
-        self->ext.effect_9.transition_timer = timer;
-        if (!(timer & 0xFFFF)) {
+        self->ext.effect_9.transition_timer -= 1;
+        if (!(self->ext.effect_9.transition_timer & 0xFFFF)) {
             misc = find_free_misc_obj();
             if (misc != NULL) {
                 misc->active = 0x41;

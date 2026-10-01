@@ -117,19 +117,12 @@ void teleporter_update(struct ItemObj* arg0)
 // teleporter_init
 void func_800C2C3C(struct ItemObj* arg0)
 {
-    s32 resource;
-    s32 row;
-
     arg0->active = 0x41;
     arg0->unk16 = 6;
     arg0->unk15 = 0;
     arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
-    resource = func_8002938C(0x88);
-    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    resource = func_8002938C(0x88);
-    row = func_8002938C(0x88);
-    arg0->unk42 = SOME_COORDINATE_CONVERSION_XY(resource, row);
-
+    arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x88)];
+    arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x88));
     arg0->animation_table = (const u8* const*)teleporter_animations;
     arg0->unk67 = 0;
     arg0->unk75 = 0;
@@ -196,8 +189,6 @@ void teleporter_warp(struct ItemObj* arg0)
 void teleporter_spawn_beam(struct ItemObj* arg0)
 {
     struct MiscObj* slot;
-    void* sprite_frames;
-    s8 bg_off;
 
     if (++arg0->tail_ext.unk1.unk84.timer == 0x60) {
         slot = find_free_misc_obj();
@@ -207,15 +198,13 @@ void teleporter_spawn_beam(struct ItemObj* arg0)
         slot->active = 0x41;
         slot->id = 0xB;
         slot->unk2 = 1;
-        bg_off = g_Player.bg_offset;
+        slot->bg_offset = g_Player.bg_offset;
         slot->unk16 = 1;
-        slot->bg_offset = bg_off;
         slot->unk15 = arg0->unk15;
         slot->unk40 = arg0->unk40;
         slot->unk42 = arg0->unk42;
-        sprite_frames = (void*)arg0->sprite_frames;
+        slot->unk3C = (void*)arg0->sprite_frames;
         slot->animation_table = (u32**)teleporter_animations;
-        slot->unk3C = sprite_frames;
         slot->x_pos.val = arg0->x_pos.val;
         slot->y_pos.val = arg0->y_pos.val;
         slot->ext.misc_11.active = 0;

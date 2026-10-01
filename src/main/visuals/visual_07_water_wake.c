@@ -4,10 +4,9 @@
 
 void water_wake_update(struct VisualObj* arg0)
 {
-    struct PlayerObj* var_a1 = &g_Entity;
-    if (!(arg0->unk2 & 2)) {
-        var_a1 = &g_Player;
-    }
+    struct PlayerObj* var_a1;
+
+    var_a1 = !(arg0->unk2 & 2) ? &g_Player : &g_Entity;
     if (arg0->state == 0) {
         water_wake_init(arg0, var_a1);
     } else {

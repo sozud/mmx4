@@ -9,7 +9,10 @@ void ground_hunter_update(struct WeaponObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
 
-    shouldSetState = g_Player.input_locked != 0;
+    shouldSetState = 0;
+    if (g_Player.input_locked != 0) {
+        shouldSetState = 1;
+    }
     if (g_Player.capsule_state != 0) {
         shouldSetState = 1;
     }
@@ -71,13 +74,10 @@ void ground_hunter_rise(struct WeaponObj* arg0)
 
 void ground_hunter_crawl(struct WeaponObj* arg0)
 {
-    s32 mask;
+    u8 mask;
     u32 flags;
 
-    mask = 2;
-    if (arg0->unk15 != 0) {
-        mask = 1;
-    }
+    mask = arg0->unk15 != 0 ? 1 : 2;
     flags = arg0->unk70;
     if (flags & 8) {
         if (mask & flags) {
@@ -111,7 +111,7 @@ void ground_hunter_despawn(struct WeaponObj* arg0)
 
 s32 ground_hunter_check_wall(struct WeaponObj* arg0)
 {
-    s32 mask;
+    u16 mask;
     u32 flags;
 
     mask = 2;
@@ -207,9 +207,10 @@ void ground_hunter_charged_main(struct WeaponObj* arg0)
 
 void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 {
+    struct Weapon14Ext* ext = &arg0->ext.weapon_14;
     if (g_Player.input.buttons.held & 0xC) {
-        arg0->ext.weapon_14.unk8C = 0;
-        arg0->ext.weapon_14.unk8D = 5;
+        ext->unk8C = 0;
+        ext->unk8D = 5;
         arg0->unk5 = 1;
     }
     update_on_screen(BASE_OBJECT(arg0), 0x2C, 0x18);

@@ -58,8 +58,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_80072628);
 void frost_walrus_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
-    s8 delay;
-    s8 next_delay;
 
     self->unk7C--;
     if (self->unk7C == 0) {
@@ -76,16 +74,11 @@ void frost_walrus_death_explode(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
     if (self->unk7E-- == 0) {
         self->unk42 ^= 0x8000;
-        delay = self->invincibility_timer - 5;
-        self->invincibility_timer = delay;
-        if (delay > 0x19) {
+        self->invincibility_timer -= 5;
+        if (self->invincibility_timer > 0x19) {
             self->invincibility_timer = 0;
         }
-        next_delay = self->invincibility_timer;
-        if (self->invincibility_timer < 5) {
-            next_delay = 5;
-        }
-        self->unk7E = next_delay;
+        self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
     }
 }
 
@@ -144,9 +137,6 @@ void frost_walrus_intro_walk(struct MainObj* self)
 
 void frost_walrus_intro_approach(struct MainObj* self)
 {
-    s16 temp_a0;
-    s32 temp_v0;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
@@ -154,17 +144,7 @@ void frost_walrus_intro_approach(struct MainObj* self)
         func_8001540C(2, 0x91, self);
     }
 
-    temp_a0 = self->x_pos.i.hi;
-    temp_v0 = temp_a0 - g_Player.x_pos.i.hi;
-    if (temp_v0 >= 0) {
-        if (temp_v0 < 0xC1) {
-            goto update;
-        }
-        return;
-    }
-
-    if (g_Player.x_pos.i.hi - temp_a0 <= 0xC0) {
-    update:
+    if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) <= 0xC0) {
         self->x_speed = 0;
         set_animation(self, 1);
         self->unk6++;
@@ -285,19 +265,13 @@ void frost_walrus_charge(struct MainObj* self)
 
 void frost_walrus_charge_start(struct MainObj* self)
 {
-    s32 var_v1;
-
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->unk6 = (u8)self->unk6 + 1;
     if (self->ext.main_57.tusks_broken != 0) {
         set_animation(self, 0x17);
-        var_v1 = -0x18000;
-        if (self->unk15 != 0) {
-            var_v1 = 0x18000;
-        }
-        self->x_speed = var_v1;
+        self->x_speed = self->unk15 != 0 ? 0x18000 : -0x18000;
         self->hurt_box = (u8*)&frost_walrus_charge_hurt_box;
         self->attack_box = (u8*)&frost_walrus_charge_attack_box;
         func_8001540C(2, 0x93, self);
@@ -323,16 +297,10 @@ void frost_walrus_charge_windup(struct MainObj* self)
 
 void frost_walrus_charge_run(struct MainObj* self)
 {
-    s32 value;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        value = FIXED(-3);
-        if (self->unk15 != 0) {
-            value = FIXED(3);
-        }
+        self->x_speed = self->unk15 != 0 ? FIXED(3) : FIXED(-3);
         self->hurt_box = (const u8*)&frost_walrus_charge_hurt_box;
-        self->x_speed = value;
         self->attack_box = (const u8*)&frost_walrus_charge_attack_box;
         func_8001540C(2, 0x93, self);
         self->unk6++;
@@ -344,10 +312,7 @@ void frost_walrus_charge_slide(struct MainObj* self)
     s32 mask;
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    mask = 2;
-    if (self->unk15 != 0) {
-        mask = 1;
-    }
+    mask = self->unk15 != 0 ? 1 : 2;
     if (mask & self->collision_flags) {
         frost_walrus_set_floor_tiles(0x39);
         start_screen_shake_x(0x1E, 4, 1);
@@ -433,24 +398,25 @@ void frost_walrus_leap_jump(struct MainObj* self)
 
 void frost_walrus_leap_air(struct MainObj* self)
 {
-    s32 side_mask;
+    s8 side_mask;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    if (self->air_state == 1 && self->y_speed < 0) {
-        self->air_state = -1;
+    if (self->air_state == 1) {
+        if (self->y_speed < 0) {
+            self->air_state = -1;
+        }
     }
-    if (self->air_state == -1 && (self->collision_flags & 8)) {
-        func_8001540C(2, 0x90, self);
-        func_8001540C(2, 0x93, self);
-        start_screen_shake_y(0x18, 3, 1);
-        self->air_state = 0;
+    if (self->air_state == -1) {
+        if (self->collision_flags & 8) {
+            func_8001540C(2, 0x90, self);
+            func_8001540C(2, 0x93, self);
+            start_screen_shake_y(0x18, 3, 1);
+            self->air_state = 0;
+        }
     }
     if (self->air_state == 0) {
-        side_mask = 2;
-        if (self->unk15 != 0) {
-            side_mask = 1;
-        }
+        side_mask = self->unk15 != 0 ? 1 : 2;
         if (side_mask & self->collision_flags) {
             frost_walrus_set_floor_tiles(0x39);
             func_8001540C(2, 0x90, self);
@@ -894,14 +860,14 @@ void frost_walrus_choose_script(struct MainObj* self)
     u8** choices;
     u8* thresholds;
     u8 i;
-    u32 rnd;
+    u8 rnd;
 
     index = (self->hp - 1) / 16;
     choices = frost_walrus_scripts[index];
     rnd = get_random();
+    rnd &= 0xF;
     i = 0;
     thresholds = frost_walrus_script_weights[index];
-    rnd &= 0xF;
     while (i < 4) {
         if (rnd < thresholds[i]) {
             self->ext.main_57.script = choices[i];
@@ -916,10 +882,7 @@ void frost_walrus_set_floor_tiles(s32 self)
     u16* list;
     u32* attrs;
 
-    list = frost_walrus_floor_tiles;
-    if (engine_obj.stage == 0xC) {
-        list = frost_walrus_floor_tiles_rush;
-    }
+    list = engine_obj.stage == 0xC ? frost_walrus_floor_tiles_rush : frost_walrus_floor_tiles;
     while (*list != 0) {
         attrs = SP_BG_TILE_ATTRS;
         attrs[*list] &= ~0xFF;

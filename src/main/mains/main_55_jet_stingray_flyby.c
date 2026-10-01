@@ -53,7 +53,6 @@ void jet_stingray_flyby_attack_rise(struct MainObj* self)
 void jet_stingray_flyby_attack_fire(struct MainObj* self)
 {
     s16 timer = self->unk7C;
-    s16 remaining;
     u32** animation_table;
     struct ShotObj* shot;
 
@@ -70,17 +69,15 @@ void jet_stingray_flyby_attack_fire(struct MainObj* self)
                 shot->bg_offset = self->bg_offset;
                 shot->x_pos.val = self->x_pos.val;
                 shot->y_pos.val = self->y_pos.val;
-                animation_table = ANIMATED_OBJECT(self)->animation_table;
+                shot->animation_table = (ANIMATED_OBJECT(self)->animation_table);
                 shot->unk7C = WEAPON_OBJECT(self);
                 shot->unk2 = 0;
-                shot->animation_table = animation_table;
             }
         }
         if (self->animation_step.fields.event == 2) {
             self->animation_step.fields.event = 0;
             self->unk7C = 10;
-            remaining = --self->unk7E;
-            if (remaining == 0) {
+            if (--self->unk7E == 0) {
                 self->unk6++;
                 set_animation(self, 3);
             }
@@ -109,15 +106,7 @@ void jet_stingray_flyby_attack_end(struct MainObj* self)
 
 void jet_stingray_flyby_attack_align(struct MainObj* self)
 {
-    s32 y_diff;
-
-    y_diff = g_Player.y_pos.val - self->y_pos.val;
-    if (y_diff >= 0) {
-        if (y_diff <= 0xFFFFF) {
-            goto set_state;
-        }
-    } else if (self->y_pos.val - g_Player.y_pos.val < 0x100000) {
-    set_state:
+    if (ABS(g_Player.y_pos.val, self->y_pos.val) < 0x100000) {
         self->unk5 = 1;
         self->unk6 = 0;
     }

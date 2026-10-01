@@ -211,6 +211,7 @@ void func_80027BE4(struct BackgroundObj* arg0)
         arg0->y_pos.i.hi = arg0->unk20;
         temp_v1 = arg0->unk20 + 0x100;
         if (g_Player.y_pos.i.hi - 8 >= temp_v1) {
+            EASY_HP_SET(0);
             g_Player.hp = -0x80;
         }
     } else {
@@ -233,7 +234,11 @@ void func_80027D40(void)
 void func_80027DC0(struct BackgroundObj* arg0)
 {
     // overlap with D_800F32D5
+#ifdef MMX4_WIN32
+    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
+#else
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
+#endif
 }
 
 void func_80027DF0(struct BackgroundObj* arg0)
@@ -299,7 +304,7 @@ void func_80027F08(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
     v0 = arg0->unk40 + (v0 >> 2);
-    arg0->x_pos.i.hi = v0;
+    arg0->x_pos.u.hi = v0;
 }
 
 void func_80027F28(struct BackgroundObj* arg0)
@@ -308,7 +313,7 @@ void func_80027F28(struct BackgroundObj* arg0)
     value >>= 1;
     value = value + (value >> 1);
     value = arg0->unk40 + value;
-    arg0->x_pos.i.hi = value;
+    arg0->x_pos.u.hi = value;
 }
 
 void func_80027F50(struct BackgroundObj* arg0)
@@ -397,7 +402,11 @@ void func_800281E8(void)
 
 void func_80028268(struct BackgroundObj* arg0)
 {
+#ifdef MMX4_WIN32
+    arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].primary;
+#else
     arg0->unk4 = D_800F32D4[engine_obj.stage][engine_obj.substage].secondary;
+#endif
 }
 
 void func_80028298(struct BackgroundObj* arg0)

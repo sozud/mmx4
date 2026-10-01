@@ -22,19 +22,18 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_29_cannon_missile", func_8009F89C);
 
 void cannon_missile_slow(struct ShotObj* self)
 {
-    u8 temp_v0;
-
-    temp_v0 = self->unk8C.shot_29.timer - 1;
-    self->unk8C.shot_29.timer = temp_v0;
-    if ((temp_v0 == 0) && (self->unk90.bytes[1] == 0)) {
-        self->x_vel.val = 0;
-        self->unk28 = FIXED(0.1875);
-        self->unk90.bytes[1] = 1;
-        self->y_vel.val = 0;
-        self->unk8C.shot_29.unk8D = 0x28;
-        self->unk5++;
+    self->unk8C.shot_29.timer -= 1;
+    if (self->unk8C.shot_29.timer == 0) {
+        if (self->unk90.bytes[1] == 0) {
+            self->x_vel.val = 0;
+            self->y_vel.val = 0;
+            self->unk28 = FIXED(0.1875);
+            self->unk90.bytes[1] = 1;
+            self->unk8C.shot_29.unk8D = 0x28;
+            self->unk5++;
+        }
     }
-    if ((self->unk2 != 0) && (self->unk8C.shot_29.timer < 0x15U) && (self->y_vel.val != 0)) {
+    if ((self->unk2 != 0) && (self->unk8C.shot_29.timer <= 0x14) && (self->y_vel.val != 0)) {
         self->y_vel.val = 0;
     }
 }
@@ -47,7 +46,6 @@ void cannon_missile_track(struct ShotObj* self)
     s32 targetY;
     s32 delta;
     struct MiscObj* effect;
-    s16 spawnX;
 
     shot = self;
     verticalTimer = shot->unk8C.bytes[1];
@@ -74,29 +72,30 @@ vertical_zero:
     shot->y_vel.val = 0;
 vertical_done:
     spawnTimer = shot->unk8C.bytes[2];
-    if (spawnTimer != 0) {
-        shot->unk8C.bytes[2] = spawnTimer - 1;
-    } else if (shot->unk90.bytes[1] != 0) {
-        effect = find_free_misc_obj();
-        if (effect != 0) {
-            effect->active = 0x21;
-            effect->id = 0x17;
-            effect->unk2 = 0;
-            effect->unk15 = get_random() & 0x40;
-            effect->ext.misc_5.animation = 0;
-            if (shot->unk15 == 0) {
-                spawnX = (u16)shot->x_pos.i.hi + 0x10;
-            } else {
-                spawnX = (u16)shot->x_pos.i.hi - 0x10;
+    if (spawnTimer == 0) {
+        if (shot->unk90.bytes[1] != 0) {
+            effect = find_free_misc_obj();
+            if (effect != 0) {
+                effect->active = 0x21;
+                effect->id = 0x17;
+                effect->unk2 = 0;
+                effect->unk15 = get_random() & 0x40;
+                effect->ext.misc_5.animation = 0;
+                if (shot->unk15 == 0) {
+                    effect->x_pos.i.hi = (u16)shot->x_pos.i.hi + 0x10;
+                } else {
+                    effect->x_pos.i.hi = (u16)shot->x_pos.i.hi - 0x10;
+                }
+                effect->y_pos.i.hi = (u16)shot->y_pos.i.hi;
+                effect->x_vel.val = 0;
+                effect->y_vel.val = 0;
+                effect->unk7 = 1;
+                effect->unk16 = 7;
             }
-            effect->x_pos.i.hi = spawnX;
-            effect->y_pos.i.hi = (u16)shot->y_pos.i.hi;
-            effect->unk7 = 1;
-            effect->x_vel.val = 0;
-            effect->y_vel.val = 0;
-            effect->unk16 = 7;
+            shot->unk8C.bytes[2] = 1;
         }
-        shot->unk8C.bytes[2] = 1;
+    } else {
+        shot->unk8C.bytes[2] = spawnTimer - 1;
     }
 }
 

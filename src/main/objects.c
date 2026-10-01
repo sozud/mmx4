@@ -431,7 +431,7 @@ struct UnkObj* find_free_unk_obj()
 {
     struct UnkObj* current;
 
-    for (current = &unk_objects[0]; current < &unk_objects[20]; current++) {
+    for (current = &unk_objects[0]; current < &unk_objects[COUNT(unk_objects)]; current++) {
         if (!current->active) {
             return current;
         }
@@ -472,8 +472,8 @@ void ZeroObjectState(struct ObjectHeader* arg0)
 s32 func_8002B160(struct BaseObj* arg0)
 {
     struct BaseObj* self = arg0;
-    s32 x;
-    s32 y;
+    u16 x;
+    u16 y;
 
     if (self->bg_offset < 0) {
         x = self->x_pos.u.hi;
@@ -482,7 +482,7 @@ s32 func_8002B160(struct BaseObj* arg0)
         x = self->x_pos.u.hi - background_objects[self->bg_offset].x_pos.u.hi;
         y = self->y_pos.u.hi - background_objects[self->bg_offset].y_pos.u.hi;
     }
-    if ((u32)((x + 0x40) & 0xFFFF) < 0x1C0U && (u32)(u16)(y + 0x40) < 0x170U) {
+    if ((u16)(x + 0x40) < 0x1C0 && (u16)(y + 0x40) < 0x170) {
         return 0;
     }
     return 1;

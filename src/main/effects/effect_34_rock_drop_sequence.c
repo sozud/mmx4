@@ -9,12 +9,12 @@ void rock_drop_sequence_update(struct EffectObj* self)
 
 void rock_drop_sequence_wait_player(struct EffectObj* self)
 {
-    if (engine_obj.checkpoint != 0) {
+    if (0 != engine_obj.checkpoint) {
         ZeroObjectState(OBJECT_HEADER(self));
         return;
     }
 
-    if (g_Player.x_pos.i.hi >= 0x241) {
+    if (g_Player.x_pos.i.hi > 0x240) {
         self->ext.effect_34.unk14 = 0;
         self->ext.effect_34.timer = rock_drop_sequence_delays[0];
         self->state = 1;
@@ -24,7 +24,6 @@ void rock_drop_sequence_wait_player(struct EffectObj* self)
 void rock_drop_sequence_spawn(struct EffectObj* self)
 {
     struct EffectObj* effect;
-    u8 index;
     s16 timer;
 
     timer = --self->ext.effect_34.timer;
@@ -40,9 +39,8 @@ void rock_drop_sequence_spawn(struct EffectObj* self)
             effect->state = 0;
         }
 
-        index = self->ext.effect_34.unk14 + 1;
-        self->ext.effect_34.unk14 = index;
-        timer = rock_drop_sequence_delays[index];
+        self->ext.effect_34.unk14 += 1;
+        timer = rock_drop_sequence_delays[self->ext.effect_34.unk14];
         self->ext.effect_34.timer = timer;
         if (timer == 0) {
             self->state = 2;

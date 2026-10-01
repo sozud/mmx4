@@ -51,13 +51,12 @@ void menu_text_init_label(struct UnkObj* self)
 void menu_text_init_cursor(struct UnkObj* self)
 {
     s32* addr_801F3000 = (s32*)0x801F3000;
-    s32* addr_801F3008 = (s32*)0x801F3008;
-    u32 temp_v1;
+    s32* addr_801F3008;
+
 
     self->unk40 = 0x1E00;
     self->animation_table = option_toggle_animations;
-    temp_v1 = *addr_801F3008;
-    self->unk3C = temp_v1 + (s32)addr_801F3000;
+    self->unk3C = (*((s32*)0x801F3008)) + (s32)addr_801F3000;
     self->unk15 = 0;
     self->bg_offset = -1;
     if (self->unk2 == -1) {
@@ -89,7 +88,7 @@ void menu_text_highlight(struct UnkObj* self)
 {
     s8 temp_v1; // probably fake
 
-    if (self->y_pos.i.hi != 0x10) {
+    if (0x10 != self->y_pos.i.hi) {
         if (self->unk7 == D_80141BDF[0]) {
             self->unk42 = 0x7803;
         } else {

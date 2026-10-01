@@ -154,12 +154,14 @@ s32 func_8001FD7C(struct EngineObj* arg0)
 {
     if (arg0->stage != 0xC) {
         return 0;
-    } else if (arg0->substage != 0) {
-        return 0;
-    } else if (arg0->checkpoint >= 2) {
-        return arg0->checkpoint < 0xA;
     }
-    return 0;
+    if (arg0->substage != 0) {
+        return 0;
+    }
+    if (arg0->checkpoint < 2) {
+        return 0;
+    }
+    return arg0->checkpoint <= 9;
 }
 
 void func_8001FDBC(void)
@@ -196,9 +198,16 @@ extern void func_800164D8(void);
 
 void func_8001FEC0(void)
 {
-    if (((ENGINE_STAGE_ID != 0x10C) || (engine_obj.character_state.bytes[8] != 0) || (engine_obj.cur_character == 0)) && ((engine_obj.stage != 0xC) || ((u32)((u8)engine_obj.checkpoint - 2) >= 8U)) && (engine_obj.stage != 9)) {
-        func_800164D8();
+    if (engine_obj.stage == 0xC && engine_obj.substage == 1 && engine_obj.character_state.bytes[8] == 0 && engine_obj.cur_character != 0) {
+        return;
     }
+    if (engine_obj.stage == 0xC && engine_obj.checkpoint > 1 && engine_obj.checkpoint < 10) {
+        return;
+    }
+    if (engine_obj.stage == 9) {
+        return;
+    }
+    func_800164D8();
 }
 
 // in a stage

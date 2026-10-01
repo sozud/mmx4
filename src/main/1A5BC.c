@@ -72,10 +72,7 @@ void func_80029E1C(struct GameInfo* arg0)
         var_s1 += 3;
     }
 
-    var_s1 = D_800F457C;
-    if (D_80141BE0 != 0) {
-        var_s1 = D_800F4568;
-    }
+    var_s1 = D_80141BE0 != 0 ? D_800F4568 : D_800F457C;
     if (var_s1[1] != 7) {
         do {
             obj = find_free_unk_obj();
@@ -139,7 +136,6 @@ void func_8002A484(void)
 {
     u32 mask;
     u32 color;
-    u16 copy_color;
     u16* dst;
     u16* src;
     u32 component;
@@ -149,74 +145,67 @@ void func_8002A484(void)
     u32 red;
     u32 palette_index;
 
-    if ((((g_FilterAmountB | (g_FilterAmountR | g_FilterAmountG)) != 0) || (need_palette_load & 4)) && ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0))) {
-        src = dst = SP_PALETTE;
-        dst = D_80141F70;
-        for (palette_index = 0; palette_index < 128; palette_index++, mask <<= 1) {
-            if (!(palette_index & 0x1F)) {
-                mask = D_8013E188[palette_index >> 5];
+    if (((g_FilterAmountB | (g_FilterAmountR | g_FilterAmountG)) != 0) || (need_palette_load & 4)) {
+        if ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0)) {
+            src = dst = SP_PALETTE;
+            dst = D_80141F70;
+            for (palette_index = 0; palette_index < 128; palette_index++, mask <<= 1) {
+                if (!(palette_index & 0x1F)) {
+                    mask = D_8013E188[palette_index >> 5];
+                }
+                color_index = 0;
+                if ((s32)mask <= -1) {
+                    do {
+                        color = *src;
+                        src++;
+                        if (color != 0) {
+                            if (g_FilterModeR != 0) {
+                                red = (color & 0x1F) < g_FilterAmountR ? 0 : (color & 0x1F) - g_FilterAmountR;
+                            } else {
+                                component = (color & 0x1F) + g_FilterAmountR;
+                                red = 0x1F;
+                                if (component < 0x20U) {
+                                    red = component;
+                                }
+                            }
+                            if (g_FilterModeG != 0) {
+                                green = (color & 0x3E0) < g_FilterAmountG ? 0 : (color & 0x3E0) - g_FilterAmountG;
+                            } else {
+                                component = (color & 0x3E0) + g_FilterAmountG;
+                                green = 0x3E0;
+                                if (component < 0x3E1U) {
+                                    green = component;
+                                }
+                            }
+                            if (g_FilterModeB != 0) {
+                                blue = (color & 0x7C00) < g_FilterAmountB ? 0 : (color & 0x7C00) - g_FilterAmountB;
+                            } else {
+                                component = (color & 0x7C00) + g_FilterAmountB;
+                                if (component < 0x7C01U) {
+                                    blue = component;
+                                } else {
+                                    blue = 0x7C00;
+                                }
+                            }
+                            *dst = red | green | blue | (color & 0x8000);
+                        }
+                        color_index += 1;
+                        dst++;
+                    } while (color_index < 0x10U);
+                } else {
+                    do {
+                        *dst = *src;
+                        src++;
+                        color_index += 1;
+                        dst++;
+                    } while (color_index < 0x10U);
+                }
             }
-            color_index = 0;
-            if ((s32)mask <= -1) {
-                do {
-                    color = *src;
-                    src++;
-                    if (color != 0) {
-                        if (g_FilterModeR != 0) {
-                            red = 0;
-                            if ((color & 0x1F) >= g_FilterAmountR) {
-                                red = (color & 0x1F) - g_FilterAmountR;
-                            }
-                        } else {
-                            component = (color & 0x1F) + g_FilterAmountR;
-                            red = 0x1F;
-                            if (component < 0x20U) {
-                                red = component;
-                            }
-                        }
-                        if (g_FilterModeG != 0) {
-                            green = 0;
-                            if ((color & 0x3E0) >= g_FilterAmountG) {
-                                green = (color & 0x3E0) - g_FilterAmountG;
-                            }
-                        } else {
-                            component = (color & 0x3E0) + g_FilterAmountG;
-                            green = 0x3E0;
-                            if (component < 0x3E1U) {
-                                green = component;
-                            }
-                        }
-                        if (g_FilterModeB != 0) {
-                            blue = 0;
-                            if ((color & 0x7C00) >= g_FilterAmountB) {
-                                blue = (color & 0x7C00) - g_FilterAmountB;
-                            }
-                        } else {
-                            component = (color & 0x7C00) + g_FilterAmountB;
-                            blue = 0x7C00;
-                            if (component < 0x7C01U) {
-                                blue = component;
-                            }
-                        }
-                        *dst = red | green | blue | (color & 0x8000);
-                    }
-                    color_index += 1;
-                    dst++;
-                } while (color_index < 0x10U);
-            } else {
-                do {
-                    copy_color = *src;
-                    src++;
-                    color_index += 1;
-                    *dst = copy_color;
-                    dst++;
-                } while (color_index < 0x10U);
-            }
+            lastFilterAmountR = g_FilterAmountR;
+            lastFilterAmountG = g_FilterAmountG;
+            lastFilterAmountB = g_FilterAmountB;
+            need_palette_load = 2;
         }
-        need_palette_load = 2;
-        lastFilterAmountR = g_FilterAmountR;
-        lastFilterAmountG = g_FilterAmountG;
-        lastFilterAmountB = g_FilterAmountB;
     }
 }
 

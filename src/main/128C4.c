@@ -134,7 +134,7 @@ void func_80022730(struct AbcObj* arg0)
     s32 temp_a1;
     s32 temp_v0;
     signed long temp_v1;
-    s16 temp_a2;
+    u16 temp_a2;
     struct MiscObj* obj;
     u8* readyText;
     u16 value;
@@ -287,9 +287,9 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
-                    obj->state = 0;
                     temp_v1 += temp_v0;
                     obj->unk3C = (void*)temp_v1;
+                    obj->state = 0;
 
                     set_animation(obj, 0);
                 }
@@ -499,8 +499,7 @@ void func_80022730(struct AbcObj* arg0)
         break;
 
     case 4:
-        value = arg0->unkA - 1;
-        arg0->unkA = value;
+        value = --arg0->unkA;
 
         if ((value << 0x10) == 0) {
             if (engine_obj.stage != 0xD) {
@@ -568,8 +567,7 @@ void func_80022730(struct AbcObj* arg0)
         break;
 
     case 6:
-        value = arg0->unkA - 1;
-        arg0->unkA = value;
+        value = --arg0->unkA;
 
         if ((value << 0x10) != 0) {
             return;

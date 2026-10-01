@@ -307,8 +307,8 @@ void func_80023698(struct EngineObj* arg0)
     func_80023CE0();
     background_objects[0].unk3 = 1;
     background_objects[1].unk3 = 0;
-    background_objects[2].unk3 = 1;
     need_palette_load |= 1;
+    background_objects[2].unk3 = 1;
 
     for (var_v1 = 0; var_v1 < 5; var_v1++) {
         obj = find_free_misc_obj();
@@ -320,8 +320,8 @@ void func_80023698(struct EngineObj* arg0)
         }
     }
 
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
 
     func_8001663C(MUSIC_STAFF_ROLL, 0x7F);
     func_800129A4(8);

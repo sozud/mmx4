@@ -195,9 +195,12 @@ void sigma_final_shot_idle(struct ShotObj* self)
 
 void sigma_final_shot_run(struct ShotObj* self)
 {
+    s32 hit;
+
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
-    if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+    hit = func_8002DD04(MAIN_OBJECT(self));
+    if (hit < 0) {
         self->state = 2;
         self->unk5 = 0;
         spawn_explosion(self);

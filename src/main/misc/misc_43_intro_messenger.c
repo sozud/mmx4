@@ -69,10 +69,7 @@ void intro_messenger_land(struct MiscObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        sound_id = 0x27;
-        if (engine_obj.cur_character == 0) {
-            sound_id = 0x2E;
-        }
+        sound_id = engine_obj.cur_character == 0 ? 0x2E : 0x27;
         func_8002217C(sound_id, 0xFF, 0);
         self->unk5 = 3;
     }

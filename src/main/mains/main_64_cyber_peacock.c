@@ -10,7 +10,6 @@ void cyber_peacock_intro_wait_player(struct MainObj* self)
 {
     struct EffectObj* effect;
     s32* archive;
-    s32 offset;
 
     if (g_Player.capsule_state != 0) {
         return;
@@ -38,16 +37,14 @@ void cyber_peacock_intro_wait_player(struct MainObj* self)
             self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
         } else {
             self->unk40 = (D_801406A8[0] >> 7) + 0x160;
-            archive = SP_MENU_FRAMES;
-            offset = archive[4];
-            self->sprite_frames = (u8*)archive + offset;
+            self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
             self->unk42 = 0x7888;
         }
         self->animation_table = (const u8* const*)cyber_peacock_animations;
         self->unk16 = 4;
+        self->hp = 0;
         self->contact_damage = 5;
         self->invincibility_timer = -0x80;
-        self->hp = 0;
         self->unk62 = 0;
         self->unk63 = 2;
         self->unk7C = 0x20;
@@ -171,12 +168,12 @@ u8 cyber_peacock_choose_attack(struct MainObj* self)
 void cyber_peacock_start_teleport(struct MainObj* self)
 {
     self->ext.main_64.target_x = self->x_pos.u.hi;
+    self->ext.main_64.target_y = self->y_pos.u.hi;
     self->x_speed = 0;
     self->x_accel = FIXED(1);
     self->y_speed = 0;
     self->gravity = 0;
     self->hurt_box = NULL;
-    self->ext.main_64.target_y = self->y_pos.u.hi;
     self->attack_box = NULL;
     func_8001540C(2, 0xC6, self);
 }
@@ -192,8 +189,6 @@ void cyber_peacock_teleport_start(struct MainObj* self)
 
 void cyber_peacock_teleport_vanish(struct MainObj* self)
 {
-    s32 temp_v1;
-
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
         self->unk7 = 0;
@@ -202,12 +197,13 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
         self->contact_damage = 5;
         return;
     }
-    temp_v1 = self->x_speed + self->x_accel;
-    self->x_speed = temp_v1;
-    if (D_80141BD8.unk0 & 1) {
-        self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + temp_v1;
-    } else {
-        self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - temp_v1;
+    self->x_speed += self->x_accel;
+    if (SHAKE_ENABLED) {
+        if (BLINK_CLOCK(BLINK_TIMER.unk0) & 1) {
+            self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
+        } else {
+            self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
+        }
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -217,8 +213,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007CA68);
 
 void cyber_peacock_teleport_appear(struct MainObj* self)
 {
-    s32 temp_v1;
-
     if (self->animation_step.fields.relative_step == 0) {
         self->unk6++;
         self->unk7 = 0;
@@ -230,12 +224,13 @@ void cyber_peacock_teleport_appear(struct MainObj* self)
         return;
     }
 
-    temp_v1 = self->x_speed - self->x_accel;
-    self->x_speed = temp_v1;
-    if (D_80141BD8.unk0 & 1) {
-        self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + temp_v1;
-    } else {
-        self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - temp_v1;
+    self->x_speed -= self->x_accel;
+    if (SHAKE_ENABLED) {
+        if (BLINK_CLOCK(BLINK_TIMER.unk0) & 1) {
+            self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
+        } else {
+            self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
+        }
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -541,7 +536,7 @@ void cyber_peacock_death_explode(struct MainObj* self)
         if (unk92 > 0x19) {
             self->ext.main_64.flash_timer = 0;
         }
-        self->unk7E = self->ext.main_64.flash_timer <= 5 ? 5 : self->ext.main_64.flash_timer;
+        self->unk7E = self->ext.main_64.flash_timer > 5 ? self->ext.main_64.flash_timer : 5;
     }
 }
 
