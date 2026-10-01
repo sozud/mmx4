@@ -96,6 +96,11 @@ jobs:
           token: ${{ secrets.MMX4_DEPS_TOKEN }}
           path: disks/dependencies
           persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            mmx4.us.tar.gz.part_*
+            SCPH1001.BIN
       - name: Extract game dependencies
         working-directory: disks
         run: cat dependencies/mmx4.us.tar.gz.part_* | tar -zxf -
@@ -271,13 +276,13 @@ jobs:
       matrix:
         include:
           - version: us
-            dependency: us
+            executable: SLUS_005.61
             splat_config: SLUS_005.61.splat.yaml
           - version: jp
-            dependency: jp
+            executable: SLPS_009.02
             splat_config: SLPS_009.02.splat.yaml
           - version: eu
-            dependency: eu
+            executable: SLES_011.76
             splat_config: SLES_011.76.splat.yaml
     runs-on: ubuntu-latest
     environment:
@@ -286,7 +291,7 @@ jobs:
       VERSION: ${{ matrix.version }}
     steps:
       - name: Install requirements
-        run: sudo apt-get install gcc-mipsel-linux-gnu bchunk ninja-build clang-format-15
+        run: sudo apt-get install gcc-mipsel-linux-gnu ninja-build clang-format-15
       - name: Install python requirements
         run: pip3 install splat64==0.24.6 spimdisasm==1.26.0 rabbitizer==1.11.0 n64img==0.3.3 pygfxd crunch64 tabulate
       - name: Clone main repo
@@ -313,11 +318,13 @@ jobs:
           token: ${{ secrets.MMX4_DEPS_TOKEN }}
           path: 'disks/dependencies'
           persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: exe/${{ matrix.executable }}
       - name: Setting up dependencies
-        working-directory: disks
-        run: cat dependencies/mmx4.${{ matrix.dependency }}.tar.gz.part_* | tar -zxf -
-      - name: Extract dependencies
-        run: sh extract.sh
+        run: |
+          mkdir -p disks/${{ matrix.version }}
+          cp disks/dependencies/exe/${{ matrix.executable }} disks/${{ matrix.version }}/
       - name: Get Compiler
         run: sh compiler.sh
       - name: Split game data
