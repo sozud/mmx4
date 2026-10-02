@@ -54,34 +54,24 @@ void scripted_slider_slide(struct MiscObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_45_scripted_slider", scripted_slider_brake);
-#else
 void scripted_slider_brake(struct MiscObj* self)
 {
-    volatile u8 stack_pad[0x10];
-    s32 var_v0;
-    s32 var_v1;
-    s32 var_a0;
-
     move_with_gravity(ANIMATED_OBJECT(self));
+
     if (self->ext.misc_45.direction == 0) {
-        var_v1 = self->ext.misc_45.target_x;
-        var_v0 = self->x_pos.i.hi;
-        var_a0 = var_v1;
-    } else {
-        var_v0 = self->ext.misc_45.target_x;
-        var_v1 = self->x_pos.i.hi;
-        var_a0 = var_v0;
-    }
-    if (var_v0 < var_v1) {
-        self->x_pos.i.hi = var_a0;
+        if (self->x_pos.i.hi < self->ext.misc_45.target_x) {
+            self->x_pos.i.hi = self->ext.misc_45.target_x;
+            self->unk28 = 0;
+            self->x_vel.val = 0;
+            self->unk5++;
+        }
+    } else if (self->x_pos.i.hi > self->ext.misc_45.target_x) {
+        self->x_pos.i.hi = self->ext.misc_45.target_x;
         self->unk28 = 0;
         self->x_vel.val = 0;
         self->unk5++;
     }
 }
-#endif
 
 void scripted_slider_idle(void)
 {

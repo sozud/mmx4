@@ -28,12 +28,10 @@ void soul_body_update(struct WeaponObj* arg0)
     soul_body_state_funcs[arg0->state](arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03_soul_body", soul_body_init);
-#else
 void soul_body_init(struct WeaponObj* arg0)
 {
     u32** animation_table;
+    struct Weapon3Ext* weapon_3;
 
     arg0->on_screen = 1;
     arg0->unk50 = soul_body_hit_box;
@@ -49,16 +47,16 @@ void soul_body_init(struct WeaponObj* arg0)
     arg0->animation_step.fields.frame_index = g_Player.animation_step.fields.frame_index;
     arg0->x_pos.val = g_Player.x_pos.val;
     arg0->y_pos.val = g_Player.y_pos.val;
-    arg0->ext.weapon_3.lifetime = 0x96;
+    weapon_3 = &arg0->ext.weapon_3;
     arg0->ext.weapon_3.offset = 0;
-    arg0->ext.weapon_3.unk90 = 0;
-    arg0->ext.weapon_3.unk91 = 8;
+    weapon_3->lifetime = 0x96;
+    weapon_3->unk90 = 0;
+    weapon_3->unk91 = 8;
     func_8001540C(1, 9, arg0);
     arg0->unk5 = 0;
     arg0->state = (u8)arg0->state + 1;
     update_on_screen(BASE_OBJECT(arg0), 0x80, 0x20);
 }
-#endif
 
 void soul_body_main(struct WeaponObj* self)
 {
@@ -70,7 +68,7 @@ void soul_body_main(struct WeaponObj* self)
     self->unk15 = g_Player.unk15;
     soul_body_step_funcs[self->unk5](self);
 
-    if (BLINK_TIMER.unk0 & 1) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
         soul_body_load_palette(soul_body_palettes[ext->unk90]);
         ext->unk90 += 1;
         if (ext->unk90 == 6) {
@@ -187,31 +185,29 @@ void soul_body_load_palette(s32 arg0)
     need_palette_load |= 1;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_03_soul_body", soul_body_clone_update);
-#else
 void soul_body_clone_update(void)
 {
     s32 var_a0;
+    struct PlayerObj* player = &g_Player;
     struct BackgroundObj* obj;
     struct PlayerObj* entity = &g_Entity;
 
-    obj = &background_objects[g_Player.bg_offset];
+    obj = &background_objects[player->bg_offset];
     if (entity->active != 0) {
         var_a0 = 0;
-        if (g_Player.input_locked != 0) {
+        if (player->input_locked != 0) {
             var_a0 = 1;
         }
-        if (g_Player.capsule_state != 0) {
+        if (player->capsule_state != 0) {
             var_a0 = 1;
         }
-        if (g_Player.weapon != 3) {
+        if (player->weapon != 3) {
             var_a0 = 1;
         }
-        if (g_Player.actions_reset != 0) {
+        if (player->actions_reset != 0) {
             var_a0 = 1;
         }
-        if (g_Player.hp == 0) {
+        if (player->hp == 0) {
             var_a0 = 1;
         }
         if (entity->y_pos.i.hi >= obj->y_pos.i.hi + 328) {
@@ -220,11 +216,11 @@ void soul_body_clone_update(void)
         if (var_a0 != 0) {
             entity->active = 0;
             entity->on_screen = 0;
-            g_Player.controlling_clone = 0;
-            g_Player.spike_immune = 0;
+            player->controlling_clone = 0;
+            player->spike_immune = 0;
             return;
         }
-        engine_obj.unk38 = entity;
+        engine_obj.controlled_player = entity;
         if (entity->unk5 != 0x25) {
             if (--entity->clone_timer == 0) {
                 player_set_animation(entity, 0x62);
@@ -247,13 +243,14 @@ void soul_body_clone_update(void)
                 entity->y_pos.i.hi = obj->y_pos.i.hi;
             }
             decompress_player_gfx(GRAPHICS_OBJECT(entity), 320, 64);
-            if (entity->clone_timer != 0 && entity->clone_timer < 60) {
-                entity->on_screen ^= 1;
+            if (entity->clone_timer != 0) {
+                if (entity->clone_timer < 60) {
+                    entity->on_screen ^= 1;
+                }
             }
         }
     }
 }
-#endif
 
 struct Unk_unk68 soul_body_hit_box[] = {
     { -21, -24, 0x28, 0x30 },

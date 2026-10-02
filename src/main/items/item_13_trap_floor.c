@@ -120,24 +120,18 @@ void trap_floor_open(struct ItemObj* arg0, struct EngineObj* arg1,
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/items/item_13_trap_floor", trap_floor_opened);
-#else
 void trap_floor_opened(struct ItemObj* arg0)
 {
-    u8 type;
-
     collide_with_players(PLAYER_OBJECT(arg0));
 
-    type = 7;
     if (engine_obj.substage != 0) {
-        type = 0x10;
+        apply_tile_effect(0x10, (s16)(arg0->x_pos.u.hi - 0x10),
+            arg0->y_pos.i.hi);
+    } else {
+        apply_tile_effect(7, (s16)(arg0->x_pos.u.hi - 0x10),
+            arg0->y_pos.i.hi);
     }
-
-    apply_tile_effect(type, (s16)(arg0->x_pos.u.hi - 0x10),
-        arg0->y_pos.i.hi);
 }
-#endif
 
 void (*trap_floor_state_funcs[])(struct ItemObj*) = {
     func_800C3578,

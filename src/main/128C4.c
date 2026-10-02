@@ -102,7 +102,7 @@ void func_800220C4(void)
     struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
 
     replay->frame = 0;
-    replay->flags = D_80141BD8.unk0;
+    replay->flags = main_bss_state.frame_counter;
     replay->random = cur_random;
 #ifdef MMX4_PC
     save_replay_engine(&replay->initial_engine);
@@ -437,7 +437,7 @@ void func_80022730(struct AbcObj* arg0)
         return;
 
     case 2:
-        if (*(u8*)&controller_state != 0) {
+        if (*(u8*)&controller_input.pressed != 0) {
             arg0->unkF = 0;
         }
 
@@ -450,7 +450,7 @@ void func_80022730(struct AbcObj* arg0)
         break;
 
     case 3:
-        if (*(u8*)&controller_state != 0) {
+        if (*(u8*)&controller_input.pressed != 0) {
             if ((D_801397C4 != NULL) && (D_801397C4->id == 0x16)) {
                 D_801397C4->active = 0;
                 D_801397C4->on_screen = 0;

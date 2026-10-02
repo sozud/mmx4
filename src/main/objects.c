@@ -491,13 +491,11 @@ s32 func_8002B160(struct BaseObj* arg0)
 // is_off_screen
 INCLUDE_ASM("main/nonmatchings/objects", func_8002B1E8);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/objects", is_on_screen);
-#else
 void is_on_screen(struct BaseObj* arg0)
 {
     s16 x_pos;
     s16 y_pos;
+    u16 y_range;
 
     arg0->on_screen = 0;
     if (arg0->bg_offset < 0) {
@@ -508,11 +506,13 @@ void is_on_screen(struct BaseObj* arg0)
         y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     // check if the object is within 320x240 viewport += 32
-    if (x_pos >= -32 && x_pos < 352 && y_pos >= -32 && y_pos < 272) {
-        arg0->on_screen = 1;
+    if (x_pos >= -32 && x_pos < 352) {
+        y_range = y_pos + 32;
+        if ((u32)y_range < 0x130U) {
+            arg0->on_screen = 1;
+        }
     }
 }
-#endif
 
 void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
 {
@@ -538,9 +538,6 @@ void update_on_screen(struct BaseObj* arg0, s32 arg1, s32 arg2)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/objects", func_8002B3C0);
-#else
 void func_8002B3C0(struct BaseObj* arg0)
 {
     s16 x_pos;
@@ -554,11 +551,10 @@ void func_8002B3C0(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
-    if (x_pos >= -0x60 && x_pos < 0x1A0 && y_pos >= -0x50 && y_pos < 0x140) {
+    if (x_pos >= -0x60 && x_pos < 0x1A0 && (u16)(y_pos + 0x50) < 0x190) {
         arg0->on_screen = 1;
     }
 }
-#endif
 
 void func_8002B450(void)
 {

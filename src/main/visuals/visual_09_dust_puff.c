@@ -38,9 +38,6 @@ void dust_puff_init(struct VisualObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_09_dust_puff", dust_puff_main);
-#else
 void dust_puff_main(struct VisualObj* arg0)
 {
     u8 temp_v1;
@@ -56,8 +53,7 @@ void dust_puff_main(struct VisualObj* arg0)
     }
     arg0->on_screen = 0;
     temp_v1 = (u8)arg0->unk5C.value;
-    if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((s8)(BLINK_TIMER.unk0 & 1) == arg0->unk7)) {
+    if (((temp_v1 & 3) && !(temp_v1 & 1)) || ((BLINK_CLOCK(main_bss_state.frame_counter) & 1) == arg0->unk7)) {
         is_on_screen((struct BaseObj*)arg0);
     }
 }
-#endif

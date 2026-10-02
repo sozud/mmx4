@@ -179,7 +179,7 @@ static u16 replay_input(void)
         if (engine_obj.state != 6 || (u8)engine_obj.stage != replay_stage || (u8)engine_obj.substage != replay_substage)
             return 0;
         replay_started = 1;
-        D_80141BD8.unk0 = 0;
+        main_bss_state.frame_counter = 0;
         fprintf(stderr, "MMX4 PC: replay started at stage %u-%u (engine state 6)\n",
             replay_stage, replay_substage);
     }

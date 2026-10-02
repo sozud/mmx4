@@ -495,9 +495,6 @@ void func_8001DF48(struct GameInfo* arg0)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001DF7C);
-#else
 void func_8001DF7C(struct GameInfo* arg0)
 {
     struct EffectObj* obj;
@@ -510,14 +507,17 @@ void func_8001DF7C(struct GameInfo* arg0)
             obj->unk2 = 0xC;
             D_80139690 = OBJECT_HEADER(obj);
         }
+#ifdef VERSION_EU
+        arg0->unk4 = 0;
+#else
         arg0->unk4 = 0xA;
+#endif
         arg0->mode++;
     }
 #ifdef VERSION_JP
     background_objects[0].x_pos.i.hi += 6;
 #endif
 }
-#endif
 #ifdef VERSION_JP
 void func_8001E194_jp(struct GameInfo* arg0)
 {
@@ -656,14 +656,14 @@ void func_8001E638(struct GameInfo* arg0)
 
 void func_8001E690(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->mode++;
     }
 }
 
 void func_8001E6BC(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unkD = 1;
         func_8001D134();
         arg0->mode = 0;
@@ -674,7 +674,7 @@ void func_8001E6BC(struct GameInfo* arg0)
 void func_8001E708(struct GameInfo* arg0)
 {
     D_800F2294[arg0->mode](arg0);
-    if (controller_state & PADstart && arg0->unkD == 1) {
+    if (controller_input.pressed & PADstart && arg0->unkD == 1) {
         func_80016F0C();
         func_8001540C(0, 0x22, 0);
         arg0->mode = 0xC;
@@ -740,7 +740,7 @@ u8 func_8001E850(u8* arg0, u8 arg1)
 
 void func_8001E954(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->mode++;
     }
 }
@@ -767,7 +767,7 @@ void func_8001E9E0(struct GameInfo* arg0)
         obj->unk2 = 0x56;
         obj->y_pos.i.hi = 0x80;
     }
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     arg0->unk8 = func_8001E850(D_800F22F0, 0) & 0xFF;
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 0;
@@ -777,33 +777,29 @@ void func_8001E9E0(struct GameInfo* arg0)
     arg0->mode++;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001EA90);
-#else
 void func_8001EA90(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        if (controller_state & (PADstart | PAD_SELECTION_ALT)) {
+    if (main_bss_state.transition.active == 0) {
+        if (controller_input.pressed & (PADstart | PAD_SELECTION_ALT)) {
             func_800129F0(8);
-            D_80141BDF[0] = 2;
+            main_bss_state.transition.selection = 2;
             arg0->mode++;
             return;
         }
-        if ((controller_state & PAD_CONFIRM) && D_80141BDF[0] != 1) {
+        if ((controller_input.pressed & PAD_CONFIRM) && main_bss_state.transition.selection != 1) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->mode++;
             return;
         }
-        func_800204CC(D_80141BDF, arg0->unk8);
-        if ((controller_state & (PADLleft | PADLright | PAD_CONFIRM)) && D_80141BDF[0] == 1) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if ((controller_input.pressed & (PADLleft | PADLright | PAD_CONFIRM)) && main_bss_state.transition.selection == 1) {
             func_8001540C(0, 0xC, 0);
             D_80171EA9 ^= 1;
             func_800153D4(D_80171EA9);
         }
     }
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/E47C", func_8001EBA0);
 void func_8001EC34(struct GameInfo* arg0)
@@ -818,7 +814,7 @@ void func_8001EC34(struct GameInfo* arg0)
 void func_8001EC90(struct GameInfo* arg0)
 {
     reset_objects();
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     if (D_800F1D90.save.character != 0xFF) {
         arg0->unk8 = func_8001E850(D_800F22D0, 0) & 0xFF;
         arg0->mode = arg0->mode + 1;
@@ -833,51 +829,46 @@ void func_8001EC90(struct GameInfo* arg0)
     func_800129A4(8);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001ED44);
-#else
 void func_8001ED44(struct GameInfo* arg0)
 {
-    if (*D_80141BDC == 0) {
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
-            if (D_80141BDF[0] != 1) {
+            if (main_bss_state.transition.selection != 1) {
                 func_800129F0(8);
             }
             arg0->mode = (u8)arg0->mode + 1;
-        } else if (controller_state & PAD_SELECTION_ALT) {
+        } else if (controller_input.pressed & PAD_SELECTION_ALT) {
             func_800129F0(8);
-            D_80141BDF[0] = 2;
+            main_bss_state.transition.selection = 2;
             arg0->mode = (u8)arg0->mode + 1;
         } else {
-            func_800204CC(D_80141BDC + 3, arg0->unk8);
+            func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001EE08);
-#else
 void func_8001EE08(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        if (D_80141BDF[0] != 1) {
+    if (main_bss_state.transition.active == 0) {
+        if (main_bss_state.transition.selection != 1) {
             func_8001E980(1);
         }
         {
-            s32 state = (u8)D_80141BDC[3];
+            s32 state = main_bss_state.transition.selection;
 
             if (state != 1) {
-                if (state <= 1 && state == 0) {
-                    func_8001C30C(&D_800F1D90.save);
-                    engine_obj.state = 1;
-                    engine_obj.unk1 = 6;
-                    engine_obj.unk2 = 0;
-                    engine_obj.unk3 = 0;
-                    func_80012740(1, &func_8001FB50);
-                    func_800127FC();
-                    return;
+                if (state < 2) {
+                    if (state == 0) {
+                        func_8001C30C(&D_800F1D90.save);
+                        engine_obj.state = 1;
+                        engine_obj.unk1 = 6;
+                        engine_obj.unk2 = 0;
+                        engine_obj.unk3 = 0;
+                        func_80012740(1, &func_8001FB50);
+                        func_800127FC();
+                        return;
+                    }
                 }
             } else {
                 arg0->unk0 = 9;
@@ -886,12 +877,12 @@ void func_8001EE08(struct GameInfo* arg0)
                 engine_obj.unk3 = 0;
                 return;
             }
+            background_objects[2].x_pos.i.hi = 0;
             background_objects[0].unk4C = 1;
             background_objects[1].unk4C = 1;
             background_objects[2].unk4C = 1;
             background_objects[1].unk3 = 1;
             background_objects[2].unk3 = 1;
-            background_objects[2].x_pos.i.hi = 0;
             arg0->unk0 = 6;
             arg0->mode = 0;
             arg0->unk2 = 0;
@@ -899,32 +890,27 @@ void func_8001EE08(struct GameInfo* arg0)
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001EF48);
-#else
 void func_8001EF48(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         return;
     }
 
-    if (controller_state & PAD_CONFIRM) {
+    if (controller_input.pressed & PAD_CONFIRM) {
         func_8001540C(0, 0x22, 0);
-        if (D_80141BDF[0] != 0) {
+        if (main_bss_state.transition.selection != 0) {
             func_800129F0(8);
         }
-    } else if (controller_state & PAD_SELECTION_ALT) {
+    } else if (controller_input.pressed & PAD_SELECTION_ALT) {
         func_800129F0(8);
-        D_80141BDF[0] = 2;
+        main_bss_state.transition.selection = 2;
     } else {
         return;
     }
 
     arg0->mode++;
 }
-#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/E47C", func_8001EFF0);
@@ -933,9 +919,9 @@ void func_8001EFF0(struct GameInfo* arg0)
 {
     struct TransitionState* transition;
 
-    transition = (struct TransitionState*)D_80141BDC;
-    if (D_80141BDC[0] == 0) {
-        if ((transition->selection == 0) || (func_8001E980(1), D_80141BDF[0] == 0)) {
+    transition = &main_bss_state.transition;
+    if (main_bss_state.transition.active == 0) {
+        if ((transition->selection == 0) || (func_8001E980(1), main_bss_state.transition.selection == 0)) {
             arg0->unk0 = 9;
             engine_obj.unk1 = 0;
             engine_obj.unk2 = 0;

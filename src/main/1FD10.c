@@ -97,7 +97,7 @@ void func_8002F7A8(struct EngineObj* arg0)
 
 void func_8002F828(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unk2++;
         arg0->unk4 = 0x10;
         func_8001663C(D_8013B810 + (MUSIC_BOSS_INTRO_WEB_SPIDER - 1), 0x7F);
@@ -198,7 +198,7 @@ void func_8002FAE4(struct EngineObj* arg0)
 
 void func_8002FB54(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         func_8001D134();
         arg0->stage = D_8013B810;
         arg0->substage = D_8013B814;

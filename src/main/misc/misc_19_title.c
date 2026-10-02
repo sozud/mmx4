@@ -57,7 +57,7 @@ void title_draw(struct MiscObj* self)
     temp_v1 = self->unk2;
     if (((temp_v1 >= 4) && (temp_v1 <= 5)) || ((s8)temp_v1 == 6)) {
         self->on_screen = 0;
-        if ((BLINK_TIMER.unk0 & 0x10) == 0) {
+        if ((BLINK_CLOCK(main_bss_state.frame_counter) & 0x10) == 0) {
             return;
         }
     } else {

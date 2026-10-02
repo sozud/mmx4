@@ -17,7 +17,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_800698D8);
 void train_crate_explode(struct MainObj* self)
 {
     if (++self->ext.main_50.timer != 0x30) {
-        if (!(D_80141BD8.unk0 & 7)) {
+        if (!(main_bss_state.frame_counter & 7)) {
             func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x18);
         }
     } else {

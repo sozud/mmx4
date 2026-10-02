@@ -104,9 +104,6 @@ void start_screen_shake_y(s8 arg0, s8 arg1, s8 arg2)
 
 extern struct Checkpoint** D_800F42B4[32];
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/stage_objects", func_80028BF0);
-#else
 void func_80028BF0(void)
 {
     s16 bg1_x;
@@ -120,52 +117,57 @@ void func_80028BF0(void)
     u16 bg2_offset_y;
     u16 bg1_offset_x;
     u16 bg2_offset_x;
+    struct BackgroundObj* bg_obj;
+    struct PlayerObj* player;
 
     checkpoint = D_800F42B4[engine_obj.stage * 2 + engine_obj.substage][engine_obj.checkpoint];
+    player = &g_Player;
 
     x = FIXED(checkpoint->x);
-    g_Player.x_pos.val = x;
+    player->x_pos.val = x;
     y = FIXED(checkpoint->y);
-    g_Player.y_pos.val = y;
-    g_Player.unk18.val = x;
-    g_Player.unk1C.val = y;
+    player->y_pos.val = y;
+    player->unk18.val = x;
+    player->unk1C.val = y;
 
-    g_Player.unk15 = checkpoint->facing;
-    background_objects[0].x_pos.i.hi = checkpoint->bg0_x;
-    background_objects[0].unk14.i.hi = checkpoint->bg0_x;
-    background_objects[0].y_pos.i.hi = checkpoint->bg0_y;
-    background_objects[0].unk18.i.hi = checkpoint->bg0_y;
-    background_objects[0].unk1E = checkpoint->bg0_right;
-    background_objects[0].unk26 = checkpoint->bg0_right;
-    background_objects[0].unk1C = checkpoint->bg0_bottom;
-    background_objects[0].unk24 = checkpoint->bg0_bottom;
-    background_objects[0].unk22 = checkpoint->bg0_left;
-    background_objects[0].unk2A = checkpoint->bg0_left;
-    background_objects[0].unk20 = checkpoint->bg0_top;
-    background_objects[0].unk28 = checkpoint->bg0_top;
+    player->unk15 = checkpoint->facing;
+    bg_obj = background_objects;
+    bg_obj->x_pos.i.hi = checkpoint->bg0_x;
+    bg_obj->unk14.i.hi = checkpoint->bg0_x;
+    bg_obj->y_pos.i.hi = checkpoint->bg0_y;
+    bg_obj->unk18.i.hi = checkpoint->bg0_y;
+    bg_obj->unk1E = checkpoint->bg0_right;
+    bg_obj->unk26 = checkpoint->bg0_right;
+    bg_obj->unk1C = checkpoint->bg0_bottom;
+    bg_obj->unk24 = checkpoint->bg0_bottom;
+    bg_obj->unk22 = checkpoint->bg0_left;
+    bg_obj->unk2A = checkpoint->bg0_left;
+    bg_obj->unk20 = checkpoint->bg0_top;
+    bg_obj->unk28 = checkpoint->bg0_top;
     bg1_offset_x = checkpoint->bg1_off_x;
-    background_objects[1].unk40 = bg1_offset_x;
+    bg_obj++;
+    bg_obj->unk40 = bg1_offset_x;
     bg1_offset_y = checkpoint->bg1_off_y;
-    background_objects[1].unk42 = bg1_offset_y;
+    bg_obj->unk42 = bg1_offset_y;
     bg1_x = checkpoint->bg1_x + bg1_offset_x;
-    background_objects[1].x_pos.i.hi = bg1_x;
-    background_objects[1].unk14.i.hi = bg1_x;
+    bg_obj->x_pos.i.hi = bg1_x;
+    bg_obj->unk14.i.hi = bg1_x;
     bg1_y = checkpoint->bg1_y + bg1_offset_y;
-    background_objects[1].y_pos.i.hi = bg1_y;
-    background_objects[1].unk18.i.hi = bg1_y;
+    bg_obj->y_pos.i.hi = bg1_y;
+    bg_obj->unk18.i.hi = bg1_y;
     bg2_offset_x = checkpoint->bg2_off_x;
-    background_objects[2].unk40 = bg2_offset_x;
+    bg_obj++;
+    bg_obj->unk40 = bg2_offset_x;
     bg2_offset_y = checkpoint->bg2_off_y;
-    background_objects[2].unk42 = bg2_offset_y;
+    bg_obj->unk42 = bg2_offset_y;
     bg2_x = checkpoint->bg2_x + bg2_offset_x;
-    background_objects[2].x_pos.i.hi = bg2_x;
-    background_objects[2].unk14.i.hi = bg2_x;
+    bg_obj->x_pos.i.hi = bg2_x;
+    bg_obj->unk14.i.hi = bg2_x;
     bg2_y = checkpoint->bg2_y + bg2_offset_y;
-    background_objects[2].y_pos.i.hi = bg2_y;
-    background_objects[2].unk18.i.hi = bg2_y;
-    g_Player.beam_in_delay = checkpoint->player_unkBE;
+    bg_obj->y_pos.i.hi = bg2_y;
+    bg_obj->unk18.i.hi = bg2_y;
+    player->beam_in_delay = checkpoint->player_unkBE;
 }
-#endif
 
 // find_stage_main_index
 

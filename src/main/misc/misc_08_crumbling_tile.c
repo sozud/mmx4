@@ -77,16 +77,12 @@ void crumbling_tile_second_wait_anim(struct MiscObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_08_crumbling_tile", crumbling_tile_second_delay);
-#else
 void crumbling_tile_second_delay(struct MiscObj* self)
 {
     s32 step;
     u8 specialStep;
-    struct Misc8Ext* ext = &self->ext.misc_8;
 
-    if (ext->timer == 0) {
+    if (self->ext.misc_8.timer == 0) {
         self->unk5++;
         step = self->unk2;
 
@@ -105,10 +101,9 @@ void crumbling_tile_second_delay(struct MiscObj* self)
         }
         set_animation(self, crumbling_tile_second_effects.entries[self->unk2].second);
     } else {
-        ext->timer--;
+        self->ext.misc_8.timer--;
     }
 }
-#endif
 
 void crumbling_tile_break_second(struct MiscObj* self)
 {

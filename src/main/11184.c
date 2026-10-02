@@ -143,31 +143,24 @@ void (*D_800F2498[])(struct EngineObj*) = {
     func_800210B8,
 };
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020984);
-#else
 void func_80020984(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020A08);
-#else
 void func_80020A08(struct EngineObj* arg0)
 {
     s8 var_v0;
 
-    if (D_80141BDC[0] == 0) {
-        if (D_80141BDF[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
+        if (main_bss_state.transition.selection == 0) {
             if (D_80171EA8 != 0) {
                 func_800127C8(1);
                 func_80013014();
@@ -191,7 +184,6 @@ void func_80020A08(struct EngineObj* arg0)
         }
     }
 }
-#endif
 
 void func_80020AC8(struct EngineObj* arg0)
 {
@@ -204,7 +196,7 @@ void func_80020AC8(struct EngineObj* arg0)
 void func_80020B1C(struct EngineObj* arg0)
 {
     func_8001D134();
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     arg0->unk1F = 0;
     arg0->enable_boss = 0;
     func_8001E980(0);
@@ -214,31 +206,24 @@ void func_80020B1C(struct EngineObj* arg0)
     arg0->unk1++;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020B8C);
-#else
 void func_80020B8C(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
-            if ((u8)D_80141BDC[3] != 0) {
+            if (main_bss_state.transition.selection != 0) {
                 func_800129F0(8);
             }
             arg0->unk1++;
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020C24);
-#else
 void func_80020C24(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        switch (D_80141BDF[0]) {
+    if (main_bss_state.transition.active == 0) {
+        switch (main_bss_state.transition.selection) {
         case 0:
             arg0->unk4 = arg0->state;
             arg0->state = 0xC;
@@ -260,31 +245,23 @@ void func_80020C24(struct EngineObj* arg0)
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020CB8);
-#else
 void func_80020CB8(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        func_800204CC(D_80141BDC + 3, arg0->unk8); // why not D_80141BDF?
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020D3C);
-#else
 void func_80020D3C(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        if (D_80141BDF[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
+        if (main_bss_state.transition.selection == 0) {
             arg0->state = 3;
             arg0->unk1 = 0;
             arg0->unk2 = 0;
@@ -295,7 +272,6 @@ void func_80020D3C(struct EngineObj* arg0)
         }
     }
 }
-#endif
 
 void func_80020D98(struct EngineObj* arg0)
 {
@@ -336,42 +312,39 @@ void func_80020ED4(struct EngineObj* arg0)
     arg0->unk7 = 1;
     arg0->character_state.fields.menu_state = 0;
     func_80029DBC();
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     func_80020DEC(&D_800F2468, 0x40);
     func_8001E980(0);
     func_800129A4(8);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/11184", func_80020F24);
-#else
 void func_80020F24(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         if (arg0->character_state.fields.menu_state == 0) {
-            func_800204CC(D_80141BDC + 3, 1);
-            if (controller_state & PAD_CONFIRM) {
+            func_800204CC((s8*)&main_bss_state.transition.selection, 1);
+            if (controller_input.pressed & PAD_CONFIRM) {
                 func_8001540C(0, 0x22, 0);
-                if ((u8)D_80141BDC[3] == 0) {
+                if (main_bss_state.transition.selection == 0) {
                     func_800129F0(8);
                     arg0->unk7 = 2;
                 } else {
                     arg0->character_state.fields.menu_state = 1;
                     func_80029DBC();
 #ifdef VERSION_JP
-                    D_80141BDC[3] = 1;
+                    main_bss_state.transition.selection = 1;
 #else
-                    D_80141BDC[3] = 0;
+                    main_bss_state.transition.selection = 0;
 #endif
                     func_80020DEC(&D_800F247C, 0x78);
                 }
             }
         } else {
-            func_800204CC(D_80141BDC + 3, 1);
-            if (controller_state & PAD_CONFIRM) {
+            func_800204CC((s8*)&main_bss_state.transition.selection, 1);
+            if (controller_input.pressed & PAD_CONFIRM) {
                 func_8001540C(0, 0x22, 0);
                 arg0->character_state.fields.menu_state = 0;
-                if ((u8)D_80141BDC[3] ==
+                if (main_bss_state.transition.selection ==
 #ifdef VERSION_JP
                     0
 #else
@@ -390,7 +363,7 @@ void func_80020F24(struct EngineObj* arg0)
                     func_800127FC();
                 } else {
                     func_80029DBC();
-                    D_80141BDC[3] = 0;
+                    main_bss_state.transition.selection = 0;
                     func_80020DEC(&D_800F2468, 0x40);
                     arg0->unk7 = 1;
                 }
@@ -398,11 +371,10 @@ void func_80020F24(struct EngineObj* arg0)
         }
     }
 }
-#endif
 
 void func_800210B8(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unk6++;
         func_80029DBC();
         arg0->unk7 = 0;

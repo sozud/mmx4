@@ -95,14 +95,10 @@ void walrus_ice_icicle_rise(struct ShotObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", walrus_ice_icicle_wait_drop);
-#else
 void walrus_ice_icicle_wait_drop(struct ShotObj* self)
 {
     s16 timer;
     struct MainObj* owner;
-    u8 next_state;
     u16* table;
 
     owner = MAIN_OBJECT(self->unk7C);
@@ -113,14 +109,12 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
         }
     }
 
-    next_state = self->unk6 + 1;
     table = (u16*)owner->ext.main_57.rect;
 
     self->x_pos.i.hi = background_objects[0].unk1E + (table[self->unk2] + 0x10);
     self->timer = 15;
-    self->unk6 = next_state;
+    self->unk6++;
 }
-#endif
 
 void walrus_ice_icicle_fall(struct ShotObj* self)
 {

@@ -233,15 +233,16 @@ void func_8001D104(void)
 {
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/game_info", PlayCapcomLogo);
-#else
 void PlayCapcomLogo(void)
 {
-    func_800182E8(); // nop out to skip capcom logo
+#ifdef VERSION_EU
+    func_800182E8(11);
+    func_800182E8(0);
+#else
+    func_800182E8();
+#endif
     SetDispMask(0);
 }
-#endif
 
 void func_8001D134(void)
 {
@@ -254,7 +255,7 @@ void func_8001D134(void)
 
 void func_8001D178(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unkD = 0;
         arg0->mode++;
     }
@@ -262,7 +263,7 @@ void func_8001D178(struct GameInfo* arg0)
 
 void func_8001D1A4(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unkD = 1;
         func_8001D134();
         arg0->mode = 0;
@@ -301,7 +302,7 @@ void func_8001D294(struct GameInfo* arg0)
 void func_8001D2D0(struct GameInfo* arg0)
 {
     arg0->unkD = 1;
-    D_80141BDE[0] = 1;
+    main_bss_state.transition.suspended = 1;
     func_8001D134();
     reset_game_engine();
     func_80013890(D_800F2180[arg0->unkC], REPLAY_DATA);
@@ -349,7 +350,7 @@ void func_8001D364(struct GameInfo* arg0)
 
 void func_8001D460(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unkD = 0;
     }
     if (--arg0->unk4 == 0 || g_Player.active == 0 || g_Player.state == 3) {
@@ -363,14 +364,11 @@ void func_8001D460(struct GameInfo* arg0)
     func_80023D68();
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/game_info", func_8001D514);
-#else
 void func_8001D514(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->unkD = 1;
-        D_80141BDE[0] = 0;
+        main_bss_state.transition.suspended = 0;
         func_8001D134();
         reset_game_engine();
         arg0->unk0 = 3;
@@ -379,7 +377,6 @@ void func_8001D514(struct GameInfo* arg0)
         func_80023D68();
     }
 }
-#endif
 
 void func_8001D57C(struct GameInfo* arg0)
 {
@@ -428,7 +425,7 @@ void func_8001D698(struct GameInfo* arg0)
 
 void func_8001D6DC(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         if (arg0->unkE == 1) {
             arg0->unk0 = 6;
         } else {
@@ -467,7 +464,7 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
     u8 var_s0;
     struct MiscObj* temp_v0;
 
-    D_80141BDE[0] = 0;
+    main_bss_state.transition.suspended = 0;
     func_80016F0C();
     stop_sound(0xFF, 0);
     g_FilterAmountR = g_FilterAmountG = g_FilterAmountB = 0;
@@ -499,8 +496,8 @@ void func_8001D7D0(struct GameInfo* /* D_80173C70 */ arg0)
 
 void func_8001D8DC(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        if (controller_state & PADLup) {
+    if (main_bss_state.transition.active == 0) {
+        if (controller_input.pressed & PADLup) {
             func_8001540C(0, 0xC, 0);
             if (arg0->unk2 == 0) {
                 arg0->unk2 = 2;
@@ -508,7 +505,7 @@ void func_8001D8DC(struct GameInfo* arg0)
                 arg0->unk2--;
             }
         }
-        if (controller_state & PADLdown) {
+        if (controller_input.pressed & PADLdown) {
             func_8001540C(0, 0xC, 0);
             if (arg0->unk2 == 2) {
                 arg0->unk2 = 0;
@@ -516,7 +513,7 @@ void func_8001D8DC(struct GameInfo* arg0)
                 arg0->unk2++;
             }
         }
-        if (controller_state & (PAD_CONFIRM | PADstart)) {
+        if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->mode++;
@@ -526,7 +523,7 @@ void func_8001D8DC(struct GameInfo* arg0)
 
 void func_8001D9D0(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         switch (arg0->unk2) {
         case 0:
             engine_obj.state = 0;
@@ -573,27 +570,26 @@ void func_8001DAD0(struct GameInfo* arg0)
     func_8001A9EC(&engine_obj);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/game_info", func_8001DAF8);
-#else
 void func_8001DAF8(void)
 {
     s16 var_v1;
+    u16 controller_value;
 
     game_info.unkD = 1;
-    D_80141BDE[0] = 0;
-    D_80141BE0 = 1;
+    main_bss_state.transition.suspended = 0;
+    main_bss_state.character_mode = 1;
     func_8001D134();
     while (1) {
         D_800F21B0[game_info.unk0](&game_info);
         if (game_info.unkD == 0) {
             var_v1 = game_info.unk0 != 1 ? 0x8F0 : 0x800;
-            if (var_v1 & controller_state) {
+            controller_value = controller_input.pressed;
+            if (controller_value &= var_v1) {
                 func_8001540C(0, 0x22, 0);
                 game_info.unkD = 1;
                 game_info.unkE = game_info.unk0;
                 func_80012854(1);
-                if (D_80141BDC[0] == 0) {
+                if (main_bss_state.transition.active == 0) {
                     func_800129F0(8);
                 }
                 game_info.unk0 = 5;
@@ -605,7 +601,6 @@ void func_8001DAF8(void)
         func_800127C8(1);
     }
 }
-#endif
 
 void func_8001DC30(void)
 {

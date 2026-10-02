@@ -48,9 +48,6 @@ void menu_text_init_label(struct UnkObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_57_falling_piece", menu_text_init_cursor);
-#else
 void menu_text_init_cursor(struct UnkObj* self)
 {
     s32* addr_801F3000 = (s32*)0x801F3000;
@@ -63,8 +60,8 @@ void menu_text_init_cursor(struct UnkObj* self)
     self->bg_offset = -1;
     if (self->unk2 == -1) {
         self->unk42 = 0x7806;
-        self->y_pos.i.hi = self->link.data[D_80141BDF[0] * 2] + 8;
-        self->ext.unk_0.selection_index = D_80141BDF[0];
+        self->y_pos.i.hi = self->link.data[main_bss_state.transition.selection * 2] + 8;
+        self->ext.unk_0.selection_index = main_bss_state.transition.selection;
         set_animation(self, 0);
     } else {
         self->unk42 = 0x784B;
@@ -75,7 +72,6 @@ void menu_text_init_cursor(struct UnkObj* self)
     self->unk16 = 0;
     self->state = 3;
 }
-#endif
 
 void menu_text_init(struct UnkObj* self)
 {
@@ -92,13 +88,13 @@ void menu_text_highlight(struct UnkObj* self)
     s8 temp_v1; // probably fake
 
     if (0x10 != self->y_pos.i.hi) {
-        if (self->unk7 == D_80141BDF[0]) {
+        if (self->unk7 == main_bss_state.transition.selection) {
             self->unk42 = 0x7803;
         } else {
             self->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (engine_obj.cur_character != CHARACTER_X)) {
+    if ((main_bss_state.character_mode == 0) && (engine_obj.cur_character != CHARACTER_X)) {
         temp_v1 = self->unk7;
         if ((self->unk7 < 7) && (temp_v1 >= 5)) {
             self->unk42 = 0x7804;
@@ -110,21 +106,17 @@ void menu_text_highlight(struct UnkObj* self)
 // menu_text_blink
 INCLUDE_ASM("main/nonmatchings/misc/misc_57_falling_piece", func_800D3798);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_57_falling_piece", menu_text_cursor);
-#else
 void menu_text_cursor(struct UnkObj* self)
 {
     if (self->unk2 == -1) {
-        if (self->ext.unk_0.selection_index != D_80141BDF[0]) {
-            self->y_pos.i.hi = self->link.data[D_80141BDF[0] * 2] + 8;
-            self->ext.unk_0.selection_index = D_80141BDF[0];
+        if (self->ext.unk_0.selection_index != main_bss_state.transition.selection) {
+            self->y_pos.i.hi = self->link.data[main_bss_state.transition.selection * 2] + 8;
+            self->ext.unk_0.selection_index = main_bss_state.transition.selection;
         }
         animate_object(self);
     }
     is_on_screen(self);
 }
-#endif
 
 union AnimationStep menu_text_anim_0[6] = {
     { .packed = 0x00010001 },

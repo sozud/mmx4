@@ -11,7 +11,7 @@ struct PlayerHurtVelocity {
 
 void player_update(void)
 {
-    engine_obj.unk38 = &g_Player;
+    engine_obj.controlled_player = &g_Player;
     if (g_Player.update_delay_request != 0) {
         g_Player.update_delay = 5;
         g_Player.update_delay_request = 0;

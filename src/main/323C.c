@@ -45,16 +45,8 @@ INCLUDE_ASM("main/nonmatchings/323C", func_80012A3C);
 #else
 void func_80012A3C(void)
 {
-    struct Func80012A3C_FadeState {
-        s16 unk0;
-        s16 unk2;
-        u16 unk4;
-    }* dea0;
-    struct Func80012A3C_FadeParams {
-        u8 pad[4];
-        s8 unk4;
-        u8 unk5;
-    }* d80141BD8;
+    struct FadeState* dea0;
+    struct MainBssState* state;
     s32 temp_a0;
     s32 var_v0;
     u16 temp_v1;
@@ -64,14 +56,14 @@ void func_80012A3C(void)
 
     *(s16*)&D_8016DEA0 = 0;
     D_8016DEA2 = 0;
-    if (*D_80141BDC > 0) {
+    if (main_bss_state.transition.active > 0) {
         D_8016DEA4 = 0xFF;
     } else {
         D_8016DEA4 = 0;
     }
 
-    dea0 = (struct Func80012A3C_FadeState*)&D_8016DEA0;
-    d80141BD8 = (struct Func80012A3C_FadeParams*)&D_80141BD8;
+    dea0 = (struct FadeState*)&D_8016DEA0;
+    state = &main_bss_state;
 
     for (;;) {
         func_800127C8(1);
@@ -105,12 +97,12 @@ void func_80012A3C(void)
         addPrims(&cur_draw_info->ordering_table.fade, temp_s1, temp_s0);
 
         if (dea0->unk0 == 0) {
-            if (d80141BD8->unk4 > 0) {
-                temp_v1 = dea0->unk4 - (s8)d80141BD8->unk5;
+            if (state->transition.active > 0) {
+                temp_v1 = dea0->unk4 - (s8)state->transition.fade_amount;
                 dea0->unk4 = temp_v1;
                 if ((temp_v1 << 0x10) <= 0) {
                     dea0->unk4 = 0U;
-                    d80141BD8->unk5 = 2U;
+                    state->transition.fade_amount = 2U;
                     dea0->unk0 = (s16)((u16)dea0->unk0 + 1);
                 }
                 if (dea0->unk2 == 2) {
@@ -118,24 +110,24 @@ void func_80012A3C(void)
                 }
                 dea0->unk2 = (s16)((u16)dea0->unk2 + 1);
             } else {
-                dea0->unk4 += (s8)d80141BD8->unk5;
+                dea0->unk4 += (s8)state->transition.fade_amount;
                 if ((s16)dea0->unk4 >= 0x100) {
                     dea0->unk4 = 0xFFU;
-                    d80141BD8->unk5 = 2U;
+                    state->transition.fade_amount = 2U;
                     dea0->unk0 = (s16)((u16)dea0->unk0 + 1);
                 }
             }
             continue;
         }
 
-        if ((s8)d80141BD8->unk5 == 0) {
-            if (d80141BD8->unk4 < 0) {
+        if ((s8)state->transition.fade_amount == 0) {
+            if (state->transition.active < 0) {
                 SetDispMask(0);
             }
-            d80141BD8->unk4 = 0;
+            state->transition.active = 0;
             func_800127FC();
         } else {
-            d80141BD8->unk5 = (u8)((s8)d80141BD8->unk5 - 1);
+            state->transition.fade_amount = (u8)((s8)state->transition.fade_amount - 1);
         }
     }
 }
@@ -186,14 +178,18 @@ void func_80012EB0(void)
 {
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/323C", func_80012EB8);
-#else
 void func_80012EB8(void)
 {
     s32 var_a0;
 
     if (engine_obj.cur_character == CHARACTER_X) { // g_GameVars.unk43
+#ifdef VERSION_EU
+        if (engine_obj.unk37 != 0) { // g_GameVars.unk37
+            var_a0 = 0x4F;
+        } else {
+            var_a0 = 0x4C;
+        }
+#else
 #ifdef VERSION_JP
         var_a0 = 0x4F;
 #else
@@ -202,21 +198,22 @@ void func_80012EB8(void)
         if (engine_obj.unk37 == 0) { // g_GameVars.unk37
             var_a0 = 0x4B;
         }
+#endif
     } else {
+#ifdef VERSION_EU
+        var_a0 = 0x4E;
+#else
         var_a0 = 0x4D;
+#endif
     }
     func_80013AD8(var_a0, 0, 0);
     func_80014A90(0, 0);
     func_80013530();
     D_80173C80 = D_8015D9C8;
-    D_80166BB4 = D_80142F70;
+    saved_vab_address = loaded_vab_address;
     func_80015C10();
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/323C", func_80012F44);
-#else
 void func_80012F44(void)
 {
     u8* saved_data;
@@ -227,7 +224,6 @@ void func_80012F44(void)
     saved_data = D_8015D9C8;
 #ifdef MMX4_PC
     {
-        extern struct ArchiveSelectionData D_800EE480;
         static const u8 pointer_high_bytes[2] = { 0x01, 0x80 };
         u8 checkpoint = engine_obj.checkpoint;
         func_80013AD8(checkpoint < 2 ? pointer_high_bytes[checkpoint]
@@ -235,7 +231,8 @@ void func_80012F44(void)
             4, D_80141F38);
     }
 #else
-    func_80013AD8(D_800EE47E[engine_obj.checkpoint], 4, D_80141F38);
+    func_80013AD8(D_800EE480.prefix[engine_obj.checkpoint - 2],
+        4, D_80141F38);
 #endif
     func_80014C70();
 
@@ -251,7 +248,6 @@ void func_80012F44(void)
     need_palette_load |= 1;
     D_80171EA8 = (u8)engine_obj.checkpoint;
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/323C", func_80013014);
 
@@ -631,8 +627,6 @@ extern s32 D_80139614;
 extern RECT D_80139618;
 
 extern u32* D_80139620;
-
-extern s32 D_80139624;
 
 extern s32 D_80139628;
 

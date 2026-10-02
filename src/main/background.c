@@ -252,27 +252,21 @@ void func_80027DF0(struct BackgroundObj* arg0)
     func_80027FA8(arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_80027E28);
-#else
 void func_80027E28(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
-    v0 = arg0->unk42 + (v0 >> 1);
+    v0 >>= 1;
+    v0 += arg0->unk42;
     arg0->y_pos.i.hi = v0;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_80027E48);
-#else
 void func_80027E48(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
-    v0 = arg0->unk42 + (v0 >> 2);
+    v0 >>= 2;
+    v0 = arg0->unk42 + v0;
     arg0->y_pos.i.hi = v0;
 }
-#endif
 
 void func_80027E68(struct BackgroundObj* arg0)
 {
@@ -313,27 +307,22 @@ void func_80027EBC(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_80027EE8);
-#else
 void func_80027EE8(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
-    v0 = arg0->unk40 + (v0 >> 1);
+    v0 >>= 1;
+    v0 += arg0->unk40;
     arg0->x_pos.i.hi = v0;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_80027F08);
-#else
 void func_80027F08(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
-    v0 = arg0->unk40 + (v0 >> 2);
+    u16 v1 = arg0->unk40;
+    v0 >>= 2;
+    v0 += v1;
     arg0->x_pos.u.hi = v0;
 }
-#endif
 
 void func_80027F28(struct BackgroundObj* arg0)
 {
@@ -456,27 +445,21 @@ void func_80028298(struct BackgroundObj* arg0)
     func_80028450(arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_800282D0);
-#else
 void func_800282D0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
-    v0 = arg0->unk42 + (v0 >> 1);
+    v0 >>= 1;
+    v0 += arg0->unk42;
     arg0->y_pos.i.hi = v0;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_800282F0);
-#else
 void func_800282F0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].y_pos.i.hi;
-    v0 = arg0->unk42 + (v0 >> 2);
+    v0 >>= 2;
+    v0 += arg0->unk42;
     arg0->y_pos.i.hi = v0;
 }
-#endif
 
 void func_80028310(struct BackgroundObj* arg0)
 {
@@ -517,27 +500,21 @@ void func_80028364(struct BackgroundObj* arg0)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_80028390);
-#else
 void func_80028390(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
-    v0 = arg0->unk40 + (v0 >> 1);
+    v0 >>= 1;
+    v0 += arg0->unk40;
     arg0->x_pos.i.hi = v0;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/background", func_800283B0);
-#else
 void func_800283B0(struct BackgroundObj* arg0)
 {
     s16 v0 = background_objects[0].x_pos.i.hi;
-    v0 = arg0->unk40 + (v0 >> 2);
+    v0 >>= 2;
+    v0 += arg0->unk40;
     arg0->x_pos.i.hi = v0;
 }
-#endif
 
 void func_800283D0(struct BackgroundObj* arg0)
 {

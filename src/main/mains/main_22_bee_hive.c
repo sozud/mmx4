@@ -150,7 +150,7 @@ void bee_hive_explode_start(struct MainObj* self)
 void bee_hive_explode_smoke(struct MainObj* self)
 {
     if (--self->ext.main_22.unk84 != 0) {
-        if ((D_80141BD8.unk0 & 3) == 0) {
+        if ((main_bss_state.frame_counter & 3) == 0) {
             func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x30);
         }
     } else {

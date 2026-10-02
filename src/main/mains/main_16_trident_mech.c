@@ -268,14 +268,10 @@ void trident_mech_fan_shot_start(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", trident_mech_fan_shot_fire);
-#else
 void trident_mech_fan_shot_fire(struct MainObj* self)
 {
     struct ShotObj* shot;
     u8 facing;
-    u32 angle;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk7C == 8) {
@@ -300,9 +296,8 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
             shot->unk15 = facing;
         }
 
-        angle = self->ext.main_16.unk80 & 0x1F;
-        self->ext.main_16.unk80 = angle;
-        set_velocity_from_angle(MOVING_OBJECT(shot), angle);
+        self->ext.main_16.unk80 &= 0x1F;
+        set_velocity_from_angle(MOVING_OBJECT(shot), (u8)self->ext.main_16.unk80);
         self->ext.main_16.unk80 += self->ext.main_16.unk84;
         if ((s32)self->ext.main_16.unk80 < 0x10) {
             set_animation(self, 7);
@@ -313,7 +308,6 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
         }
     }
 }
-#endif
 
 void trident_mech_fan_shot_end(struct MainObj* self)
 {

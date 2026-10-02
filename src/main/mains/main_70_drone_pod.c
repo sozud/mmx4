@@ -117,7 +117,7 @@ void drone_pod_death_alarm(struct MainObj* self)
     s16 countdown;
     u16 timer;
 
-    if ((D_80141BD8.unk0 & 3) == 0) {
+    if ((main_bss_state.frame_counter & 3) == 0) {
         drone_pod_random_explosion(self);
     }
 
@@ -156,7 +156,7 @@ void drone_pod_death_debris(struct MainObj* self)
         self->unk5++;
         return;
     }
-    if ((D_80141BD8.unk0 & 7) == 0) {
+    if ((main_bss_state.frame_counter & 7) == 0) {
         self->y_pos.i.hi = (get_random() & 0x7F) + 0x360;
         spawn_debris(5, &D_801049B0, self);
     }
@@ -240,16 +240,12 @@ void drone_pod_launch_close(struct MainObj* self)
 // drone_pod_spawn_drones
 INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80089588);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", drone_pod_random_explosion);
-#else
 void drone_pod_random_explosion(struct MainObj* self)
 {
     s16 x = background_objects[0].x_pos.i.hi;
     s16 y = background_objects[0].y_pos.i.hi;
-    struct Main70Ext* ext = &self->ext.main_70;
-    ext->unk85 = get_random_nonzero() % 4;
-    switch (ext->unk85) {
+    self->ext.main_70.unk85 = get_random_nonzero() % 4;
+    switch (self->ext.main_70.unk85) {
     case 0:
         break;
     case 1:
@@ -265,11 +261,10 @@ void drone_pod_random_explosion(struct MainObj* self)
     x += get_random_nonzero() % 0xA0;
     y += get_random_nonzero() % 0x78;
     spawn_explosion_at(0, x, y, 0xFF);
-    if ((D_80141BD8.unk0 & 3) == 0) {
+    if ((main_bss_state.frame_counter & 3) == 0) {
         func_8001540C(0, D_80104A3C[(get_random() & 3) * 4], NULL);
     }
 }
-#endif
 
 void drone_pod_alarm_flash(struct MainObj* self)
 {

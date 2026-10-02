@@ -12,7 +12,7 @@ void TeleportRelatedObjectUpdate(struct EffectObj* self)
 // teleport_intro_state_funcs state 0
 void teleport_intro_init(struct EffectObj* self)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         self->ext.effect_27.unk14 = 0;
         self->ext.effect_27.unk15 = 0;
         self->ext.effect_27.unk16 = 0;

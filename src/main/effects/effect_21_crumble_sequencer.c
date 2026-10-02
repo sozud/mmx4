@@ -11,11 +11,9 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F
 // crumble_sequencer_triggered
 INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800BA178);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", crumble_sequencer_chain);
-#else
 void crumble_sequencer_chain(struct EffectObj* self)
 {
+    struct PlayerObj* player = &g_Player;
     struct MiscObj* misc;
     struct ItemObj* item;
     struct Effect21SpawnRecord* record;
@@ -23,7 +21,7 @@ void crumble_sequencer_chain(struct EffectObj* self)
 
     switch (self->unk5) {
     case 0:
-        if (g_Player.x_pos.i.hi >= 0xC60) {
+        if (player->x_pos.i.hi >= 0xC60) {
             self->unk5 = 1;
         }
         break;
@@ -66,7 +64,6 @@ void crumble_sequencer_chain(struct EffectObj* self)
         break;
     }
 }
-#endif
 
 void crumble_sequencer_main(struct EffectObj* self)
 {

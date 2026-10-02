@@ -177,9 +177,6 @@ s8 func_800136B0(void)
 #endif
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/3D88", func_800137F0);
-#else
 void func_800137F0(void)
 {
     CdReadyCallback(0);
@@ -189,9 +186,8 @@ void func_800137F0(void)
     } while (CdControl(CdlPause, 0, 0) == 0);
     D_801406AC = 2;
     D_8015D9C8 = D_80137DC4;
-    D_80142F70 = D_80137DD0;
+    loaded_vab_address = D_80137DD0;
 }
-#endif
 
 u8 func_8001385C(void)
 {
@@ -361,7 +357,7 @@ void func_80013AD8(s32 arg0, u8 arg1, CdLoadAddress arg2)
     case 3:
         i = 2;
         D_80137DCC = D_80173C80;
-        D_80137DD0 = D_80166BB4;
+        D_80137DD0 = saved_vab_address;
         do {
             if (i != 3) {
                 temp_a0_2 = D_8013E198[i];
@@ -552,9 +548,6 @@ void func_80014140(void)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/3D88", func_800141BC);
-#else
 void func_800141BC(void)
 {
     u8 index;
@@ -570,7 +563,7 @@ void func_800141BC(void)
         return;
     }
     if (D_80137CBC == 0) {
-        index = D_80137CD4.f.op;
+        index = (D_80137CD4.word >> 8) & 0xFF;
         if (D_8013E1C8[index] != -1) {
             SsSepClose(D_8013E1C8[index]);
             D_8013E1C8[index] = -1;
@@ -578,7 +571,6 @@ void func_800141BC(void)
         D_8013E1C8[index] = SsSepOpenJ((unsigned long*)D_80137DC4, D_8013E198[index], 3);
     }
 }
-#endif
 
 extern struct CdImageOrigin D_800F1614[];
 
@@ -1070,23 +1062,19 @@ void func_80014968(void)
     }
 }
 #ifndef MMX4_PC
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/3D88", func_80014A90);
-#else
+
 void func_80014A90(s32 arg0, s32 arg1)
 {
     u8 sp10;
     u32 temp_v0;
-    u32 temp_v1;
 
-    temp_v1 = D_801406AC;
     sp10 = 0xA0;
-    D_80137DD4 = 0;
+    cd_fade_requested = 0;
     D_8013BD44 = 0;
-    while ((temp_v1 != 2) || (D_8013BD40 != 0)) {
-        if ((D_80137DD4 == 0) && !(arg1 & 0xFF) && (D_80141BDC[0] == 0)) {
+    while ((D_801406AC != 2) || (D_8013BD40 != 0)) {
+        if ((cd_fade_requested == 0) && !(arg1 & 0xFF) && (main_bss_state.transition.active == 0)) {
             func_800129A4(8);
-            D_80137DD4 += 1;
+            cd_fade_requested += 1;
         }
         func_80013404(arg0 & 0xFF);
         if (D_801406AC & 0xC0) {
@@ -1109,7 +1097,6 @@ void func_80014A90(s32 arg0, s32 arg1)
             }
         }
         func_800127C8(1);
-        temp_v1 = D_801406AC;
     }
     D_8013BD44 = 1;
     D_80141BD2 = 0x78;
@@ -1118,20 +1105,16 @@ void func_80014A90(s32 arg0, s32 arg1)
     }
 }
 #endif
-#endif
 #ifndef MMX4_PC
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/3D88", func_80014C70);
-#else
 void func_80014C70(void)
 {
     u8 sp10;
     u32 temp_v0;
-    s32 temp_v1;
+    u8 temp_v1;
 
-    temp_v1 = D_801406AC;
     sp10 = 0xA0;
     D_8013BD44 = 0;
+    temp_v1 = D_801406AC;
     while (temp_v1 != 2 || D_8013BD40 != 0) {
         if (D_801406AC & 0xC0) {
             if (D_80137CD8 == 0) {
@@ -1158,5 +1141,4 @@ void func_80014C70(void)
     D_8013BD44 = 1;
     D_80141BD2 = 0x78;
 }
-#endif
 #endif

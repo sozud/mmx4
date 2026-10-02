@@ -85,21 +85,16 @@ void dragonfly_init(struct MainObj* self)
     self->unk6 = 0;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_10_dragonfly", dragonfly_run);
-#else
 void dragonfly_run(struct MainObj* self)
 {
     s32 hit;
-    s8* held;
 
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     dragonfly_step_funcs[self->unk5](self);
     if (self->ext.main_10.hold_state != 0) {
         if (self->ext.main_10.can_grab != 0) {
-            held = &g_Player.stun_timer;
-            if ((*held == 0) && (func_8002D9BC(self) != 0) && (*held != 0)) {
+            if ((g_Player.stun_timer == 0) && (func_8002D9BC(self) != 0) && (g_Player.stun_timer != 0)) {
                 g_Player.hit_facing = self->unk15;
                 self->ext.main_10.hold_state = 3;
             }
@@ -122,7 +117,6 @@ void dragonfly_run(struct MainObj* self)
         }
     }
 }
-#endif
 
 void dragonfly_finish(struct MainObj* self)
 {

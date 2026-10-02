@@ -49,19 +49,14 @@ void aiming_laser_charged_beam_extend(struct QuadObj* arg0, struct PlayerObj* ar
     func_800D6DC4(arg0, arg1, arg2);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", aiming_laser_charged_beam_sweep);
-#else
 void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state = &arg0->ext.quad_10;
     u8* player_data = &arg2->unk8D - 1;
-    u8* entry;
     s32 i;
 
     for (i = 0xF; i != 0; i--) {
-        entry = (u8*)state + i;
-        entry[0xD] = entry[0xC];
+        state->history[i] = state->history[i - 1];
     }
     state->history[0] = (player_data[1] - 8) & 0x1F;
     if (state->counter == 0x1E) {
@@ -78,28 +73,18 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
     }
     func_800D6DC4(arg0, arg1, arg2);
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", aiming_laser_charged_beam_retract);
-#else
 void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2)
 {
     struct Quad10Ext* state;
     struct PlayerUnk8CFields* player_state;
-    u8* cursor;
-    s16 value;
     s32 index;
 
     state = &arg0->ext.quad_10;
     player_state = (struct PlayerUnk8CFields*)&arg2->afterimage;
-    index = 0xF;
-    do {
-        cursor = (u8*)state + index;
-        value = cursor[0xC];
-        index--;
-        cursor[0xD] = value;
-    } while (index != 0);
+    for (index = 0xF; index != 0; index--) {
+        state->history[index] = state->history[index - 1];
+    }
 
     state->history[0] = (player_state->unk8D - 8) & 0x1F;
     if (state->counter == 0) {
@@ -111,7 +96,6 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
     state->counter--;
     func_800D6DC4(arg0, arg1, arg2);
 }
-#endif
 
 // aiming_laser_charged_beam_place
 INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);

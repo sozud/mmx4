@@ -9,9 +9,6 @@
 #endif
 #include "common.h"
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_33_hover_jet", hover_jet_update);
-#else
 void hover_jet_update(struct VisualObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -29,7 +26,10 @@ void hover_jet_update(struct VisualObj* arg0)
         arg0->state++;
     }
 
-    var_s1 = -((player->animation_step.fields.frame_index == 0xE5 || player->animation_step.fields.frame_index == 0xE6) ^ 1);
+    var_s1 = -1;
+    if (player->animation_step.fields.frame_index == 0xE5 || player->animation_step.fields.frame_index == 0xE6) {
+        var_s1 = 0;
+    }
     if (player->animation_step.fields.frame_index == 0xDD || player->animation_step.fields.frame_index == 0xDE) {
         var_s1 = 1;
     }
@@ -65,14 +65,11 @@ void hover_jet_update(struct VisualObj* arg0)
     }
     update_on_screen(arg0, 0x28, 0x28);
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_33_hover_jet", stock_charge_meter_update);
-#else
 void stock_charge_meter_update(struct MiscObj* arg0)
 {
     u8 playerUnkA6;
+    struct PlayerObj* player = &g_Player;
 
     if (arg0->state == 0) {
         arg0->bg_offset = -1;
@@ -85,13 +82,12 @@ void stock_charge_meter_update(struct MiscObj* arg0)
         arg0->state++;
     } else {
         arg0->on_screen = 0;
-        if (engine_obj.unk1F != 0 && g_Player.stock_charge != 0) {
+        if (engine_obj.unk1F != 0 && player->stock_charge != 0) {
             arg0->on_screen = 1;
-            playerUnkA6 = *(u8*)PLAYER_UNKA6_ADDRESS;
+            playerUnkA6 = g_Player.stock_charge;
             arg0->x_pos.i.hi = 0x20;
             arg0->y_pos.i.hi = 0x34;
             arg0->animation_step.fields.frame_index = 0x1F - playerUnkA6;
         }
     }
 }
-#endif

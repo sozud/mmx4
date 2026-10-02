@@ -2,12 +2,10 @@
 
 extern u16 D_800F44D6;
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/character_select", character_select_state_0);
-#else
 void character_select_state_0(struct EngineObj* arg0)
 {
     u8 var_v1;
+    u8 palette_load;
 
     for (var_v1 = 0; var_v1 < 0x10; var_v1++) {
         arg0->character_state.bytes[var_v1] = 0;
@@ -22,10 +20,11 @@ void character_select_state_0(struct EngineObj* arg0)
     func_80028BF0();
     func_8002771C();
     func_80023CE0();
+    palette_load = need_palette_load;
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 0;
     background_objects[2].unk3 = 1;
-    need_palette_load |= 1;
+    need_palette_load = palette_load | 1;
     func_8001663C(MUSIC_CHARACTER_SELECT, 0x70);
     arg0->unk37 = 0;
     func_800129A4(8);
@@ -35,14 +34,13 @@ void character_select_state_0(struct EngineObj* arg0)
     arg0->unkA = 3;
     arg0->unk1++;
 }
-#endif
 
 void character_select_state_1(struct EngineObj* arg0)
 {
     s8 var_s0;
     struct MiscObj* misc;
 
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         if (arg0->unk2 == 0) {
             arg0->unk2++;
             var_s0 = 0;
@@ -137,37 +135,32 @@ void character_select_state_2(struct EngineObj* arg0)
     character_select_state_2_update_funcs[arg0->unk2](arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/character_select", character_select_state_3);
-#else
 void character_select_state_3(struct EngineObj* arg0)
 {
-    u16* ptr = &controller_state;
     s8 temp_v1;
 
     // select X
-    if (*ptr & (PADLdown | PADLleft)) {
+    if (controller_input.pressed & (PADLdown | PADLleft)) {
         arg0->cur_character = CHARACTER_X;
     }
     // select Zero
-    if (*ptr & (PADLup | PADLright)) {
+    if (controller_input.pressed & (PADLup | PADLright)) {
         arg0->cur_character = CHARACTER_ZERO;
     }
     temp_v1 = arg0->character_state.bytes[3];
     if (temp_v1 == arg0->cur_character) {
         character_select_state_3_update_funcs[temp_v1]();
     } else {
-        engine_obj.character_state.bytes[4] = 0;
+        engine_obj.character_state.fields.secret_code_phase = 0;
         arg0->unk37 = 0;
     }
-    if (controller_state & (PAD_CONFIRM | PADstart)) {
+    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
         arg0->character_state.bytes[0] = 1;
         arg0->unk1++;
         func_8001540C(5, 1, 0);
     }
     arg0->character_state.bytes[3] = arg0->cur_character;
 }
-#endif
 
 void character_select_state_4(struct EngineObj* arg0)
 {
@@ -195,7 +188,7 @@ void character_select_state_5(struct EngineObj* arg0)
 
 void character_select_state_6(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         func_8001D134();
         background_objects[0].unk3 = 0;
         background_objects[1].unk3 = 0;

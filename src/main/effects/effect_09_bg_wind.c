@@ -101,13 +101,13 @@ void bg_wind_gust_slow(struct EffectObj* effect)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_fast);
-#else
 void bg_wind_gust_fast(struct EffectObj* self)
 {
     s32 shifted_target;
-    if (--self->ext.effect_9.movement_timer << 16 == 0) {
+    struct Effect9Ext* effect_9 = &self->ext.effect_9;
+
+    /* The promoted-width test preserves the retail load and branch sequence. */
+    if ((effect_9->movement_timer = self->ext.effect_9.movement_timer - 1) << 16 == 0) {
         if (self->ext.effect_9.direction != 0) {
             self->ext.effect_9.movement_timer = 0x168;
             self->ext.effect_9.movement_table = (u8*)bg_wind_steps_fast;
@@ -122,8 +122,7 @@ void bg_wind_gust_fast(struct EffectObj* self)
         self->ext.effect_9.target_x = self->ext.effect_9.movement_table[2];
         return;
     }
-    if (--self->ext.effect_9.timer == 0) {
-        s16* bg_hi;
+    if ((effect_9->timer = self->ext.effect_9.timer - 1) == 0) {
         s32 final_target;
 
         self->ext.effect_9.movement_table = (u8*)&self->ext.effect_9.movement_table[(self->ext.effect_9.frame * 4)];
@@ -131,10 +130,8 @@ void bg_wind_gust_fast(struct EffectObj* self)
         self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
         self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
 
-        bg_hi = &background_objects[2].x_pos.i.hi;
-        final_target = (self->ext.effect_9.target_x << 9) + *(u8*)bg_hi;
-        *bg_hi = (s32)final_target;
-
+        final_target = (self->ext.effect_9.target_x << 9) + (u8)background_objects[2].x_pos.i.hi;
+        background_objects[2].x_pos.i.hi = (s32)final_target;
         background_objects[2].unk4C = 1;
     }
     if (self->ext.effect_9.direction != 0) {
@@ -158,7 +155,6 @@ void bg_wind_gust_fast(struct EffectObj* self)
         background_objects[2].unk4C = 1;
     }
 }
-#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_medium);

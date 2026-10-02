@@ -501,9 +501,6 @@ void ice_core_bounce_start(struct MainObj* self)
     self->unk6 = 1;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", ice_core_bounce_move);
-#else
 void ice_core_bounce_move(struct MainObj* self)
 {
     s32 hit;
@@ -540,7 +537,7 @@ void ice_core_bounce_move(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     if (self->ext.main_18.state.runtime.unk86 != 2) {
         if (--self->unk7C == 0) {
-            if ((self->y_pos.i.hi > 0x848 && self->y_pos.i.hi < 0x890) && (self->x_pos.i.hi > 0x17D0 && self->x_pos.i.hi < 0x18C0)) {
+            if (self->y_pos.i.hi > 0x848 && self->y_pos.i.hi < 0x890 && self->x_pos.i.hi > 0x17D0 && self->x_pos.i.hi < 0x18C0) {
                 self->unk7C = 0x30;
                 self->unk6 = 2;
                 ice_core_face_player(ANIMATED_OBJECT(self));
@@ -553,7 +550,6 @@ void ice_core_bounce_move(struct MainObj* self)
         self->unk6 = 3;
     }
 }
-#endif
 
 void ice_core_bounce_wait(struct MainObj* self)
 {
@@ -692,9 +688,6 @@ void ice_core_fall(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", ice_core_float);
-#else
 void ice_core_float(struct MainObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -707,20 +700,19 @@ void ice_core_float(struct MainObj* self)
             }
             return;
         }
-        if (self->y_pos.i.hi > 0x8B0) {
-            goto landed;
+        if (self->y_pos.i.hi <= 0x8B0) {
+            return;
         }
-        return;
-    }
-
-    if (self->ext.main_18.state.runtime.unk84 == 0) {
-        if (self->y_pos.i.hi < 0x890) {
-            goto landed;
+    } else {
+        if (self->ext.main_18.state.runtime.unk84 == 0) {
+            if (self->y_pos.i.hi < 0x890) {
+                goto landed;
+            }
+            return;
         }
-        return;
-    }
-    if (self->y_pos.i.hi >= 0x8B0) {
-        return;
+        if (self->y_pos.i.hi >= 0x8B0) {
+            return;
+        }
     }
 
 landed:
@@ -728,7 +720,6 @@ landed:
     self->unk5 = 2;
     self->unk6 = 0;
 }
-#endif
 
 void ice_core_pick_attack(struct MainObj* self)
 {

@@ -80,7 +80,7 @@ void func_800204AC(struct EngineObj* arg0)
 
 void func_800204CC(s8* arg0, s32 arg1)
 {
-    if (controller_state & 0x1000) {
+    if (controller_input.pressed & 0x1000) {
         func_8001540C(0, 0xC, 0);
         if (*arg0 == 0) {
             *arg0 = arg1;
@@ -88,7 +88,7 @@ void func_800204CC(s8* arg0, s32 arg1)
             *arg0 = *arg0 - 1;
         }
     }
-    if (controller_state & 0x4000) {
+    if (controller_input.pressed & 0x4000) {
         func_8001540C(0, 0xC, 0);
         if (*arg0 == arg1) {
             *arg0 = 0;
@@ -103,7 +103,7 @@ void func_80020580(struct EngineObj* arg0)
     s8 next_state;
 
     func_8001D134();
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     arg0->unk1F = 0;
     arg0->enable_boss = 0;
     func_8001E980(0);
@@ -122,31 +122,24 @@ void func_80020580(struct EngineObj* arg0)
     arg0->unk1 = next_state;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/10CA4", func_80020638);
-#else
 void func_80020638(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
-            if (D_80141BDC[3] != 2U) {
+            if ((s8)main_bss_state.transition.selection != 2U) {
                 func_800129F0(8);
             }
             arg0->unk1++;
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/10CA4", func_800206D0);
-#else
 void func_800206D0(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        switch (D_80141BDF[0]) {
+    if (main_bss_state.transition.active == 0) {
+        switch (main_bss_state.transition.selection) {
         case 0:
             if (D_80171EA8 != 0) {
                 func_800127C8(1);
@@ -190,31 +183,23 @@ void func_800206D0(struct EngineObj* arg0)
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/10CA4", func_80020808);
-#else
 void func_80020808(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        func_800204CC(D_80141BDC + 3, arg0->unk8);
-        if (controller_state & PAD_CONFIRM) {
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (controller_input.pressed & PAD_CONFIRM) {
             func_8001540C(0, 0x22, 0);
             func_800129F0(8);
             arg0->unk1++;
         }
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/10CA4", func_8002088C);
-#else
 void func_8002088C(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        switch (D_80141BDF[0]) {
+    if (main_bss_state.transition.active == 0) {
+        switch (main_bss_state.transition.selection) {
         case 0:
             if (D_80171EA8 != 0) {
                 func_800127C8(1);
@@ -253,4 +238,3 @@ void func_8002088C(struct EngineObj* arg0)
         }
     }
 }
-#endif

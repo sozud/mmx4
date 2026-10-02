@@ -741,9 +741,6 @@ s32 player_hover_check_end(struct PlayerObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_special", player_hover_steer);
-#else
 s32 player_hover_steer(struct PlayerObj* self)
 {
     u16 buttons;
@@ -753,33 +750,30 @@ s32 player_hover_steer(struct PlayerObj* self)
     buttons = self->input.buttons.held;
     self->x_vel.val = 0;
 
-    if (buttons & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT)) {
-        if (buttons & PLAYER_INPUT_RIGHT) {
-            if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
-                return 0;
-            }
-            self->x_vel.val = FIXED(2);
-            if (self->unk15 != 0) {
-                return 1;
-            }
+    if (!(buttons & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT))) {
+        return 0;
+    }
+
+    if (buttons & PLAYER_INPUT_RIGHT) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
+            return 0;
+        }
+        self->x_vel.val = FIXED(2);
+        if (self->unk15 != 0) {
+            return 1;
+        }
+        return -1;
+    } else {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+            return 0;
+        }
+        self->x_vel.val = FIXED(-2);
+        if (self->unk15 != 0) {
             return -1;
         }
-        if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT)) {
-            goto move_left;
-        }
+        return 1;
     }
-
-return_zero:
-    return 0;
-
-move_left:
-    self->x_vel.val = FIXED(-2);
-    if (self->unk15 != 0) {
-        return -1;
-    }
-    return 1;
 }
-#endif
 
 void player_hover_set_direction(struct PlayerObj* self, s32 direction)
 {
@@ -1899,7 +1893,7 @@ void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self)
 {
     struct MiscObj* obj;
 
-    if (!(D_80141BD8.unk0 & 1)) {
+    if (!(main_bss_state.frame_counter & 1)) {
         self->animation_step.fields.event &= 0xFE;
         obj = find_free_misc_obj();
         if (obj != NULL) {

@@ -5,9 +5,6 @@
 // stage_portrait_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", func_800CA52C);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", stage_portrait_select);
-#else
 void stage_portrait_select(struct MiscObj* self)
 {
     s32 temp_a0;
@@ -26,10 +23,9 @@ void stage_portrait_select(struct MiscObj* self)
             animation = engine_obj.unk5F < 7U ? 8 : 9;
         }
         set_animation_frame(ANIMATED_OBJECT(self), 0,
-            (s8)D_800F474C.stage_order[animation] - 1);
-        stage = (s8)D_800F474C.stage_order[animation];
-        temp_v0 = stage - 1;
-        temp_v0 <<= 1;
+            (s8)mission_stage_order[animation] - 1);
+        stage = (s8)mission_stage_order[animation];
+        temp_v0 = (stage - 1) << 1;
         temp_a0 = temp_v0 + 0xB;
         var_a2 = temp_a0;
         if (temp_a0 < 0) {
@@ -44,7 +40,6 @@ void stage_portrait_select(struct MiscObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void stage_portrait_show(struct MiscObj* self)
 {

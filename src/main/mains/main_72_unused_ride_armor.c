@@ -102,11 +102,9 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B020);
 // unused_ride_armor_walk
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B188);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", unused_ride_armor_shoot);
-#else
 void unused_ride_armor_shoot(struct MainObj* self)
 {
+    struct Main72Ext* main_72;
     s8 state;
     u8 timer1;
     u8 timer2;
@@ -122,10 +120,11 @@ void unused_ride_armor_shoot(struct MainObj* self)
     }
 
     timer1 = self->ext.main_72.lifetime - 1;
-    self->ext.main_72.lifetime = timer1;
+    main_72 = &self->ext.main_72;
+    main_72->lifetime = timer1;
     if (timer1 != 0) {
         timer2 = self->ext.main_72.spawn_timer - 1;
-        self->ext.main_72.spawn_timer = timer2;
+        main_72->spawn_timer = timer2;
         if (timer2 == 0) {
             unused_ride_armor_spawn_shot(self, 0);
             self->ext.main_72.spawn_timer = 0x10;
@@ -135,7 +134,6 @@ void unused_ride_armor_shoot(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
-#endif
 
 void unused_ride_armor_jump(struct MainObj* self)
 {
@@ -212,11 +210,12 @@ void unused_ride_armor_fall(struct MainObj* self)
 // unused_ride_armor_jump_shoot
 INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", unused_ride_armor_rapid_fire);
-#else
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
+    struct Main72Ext* main_72;
+    unsigned char lifetime;
+    unsigned char spawn_timer;
+
     if (self->unk6 == 0) {
         self->unk6++;
         set_animation(self, 9);
@@ -226,8 +225,13 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         func_8001540C(2, 0x4C, self);
     }
 
-    if (--self->ext.main_72.lifetime != 0) {
-        if ((--self->ext.main_72.spawn_timer & 0xF) != 0) {
+    main_72 = &self->ext.main_72;
+    lifetime = self->ext.main_72.lifetime - 1;
+    main_72->lifetime = lifetime;
+    if (lifetime != 0) {
+        spawn_timer = self->ext.main_72.spawn_timer - 1;
+        main_72->spawn_timer = spawn_timer;
+        if ((spawn_timer & 0xF) != 0) {
             unused_ride_armor_spawn_shot(self, 1);
         }
         animate_object(ANIMATED_OBJECT(self));
@@ -235,7 +239,6 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         unused_ride_armor_set_step(BASE_OBJECT(self), 2);
     }
 }
-#endif
 
 void unused_ride_armor_reset(struct MainObj* self)
 {

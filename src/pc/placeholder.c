@@ -545,11 +545,11 @@ void func_80012328(void)
 {
     u16 buttons;
 
-    mmx4_pc_input_update(D_80166D68);
-    buttons = decode_pad_buttons(D_80166D68);
-    D_80166C0A = D_80166C08;
-    D_80166C08 = buttons;
-    controller_state = buttons & (buttons ^ D_80166C0A);
+    mmx4_pc_input_update(pad_port1_packet);
+    buttons = decode_pad_buttons(pad_port1_packet);
+    controller_input.previous = controller_input.held;
+    controller_input.held = buttons;
+    controller_input.pressed = buttons & (buttons ^ controller_input.previous);
 
     buttons = decode_pad_buttons(D_8012F46C);
     D_80166D50.previous = D_80166D50.current;
@@ -625,8 +625,8 @@ void func_80029A48(void)
     static const u16 sequence[] = { 0x20, 0x20, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000 };
     s8* phase = &engine_obj.character_state.fields.secret_code_phase;
     s8* index = &engine_obj.character_state.fields.secret_code_index;
-    u16 input = controller_state;
-    u16 held = D_80166C08;
+    u16 input = controller_input.pressed;
+    u16 held = controller_input.held;
 
     switch (*phase) {
     case 0:
@@ -668,8 +668,8 @@ void func_80029BD8(void)
     static const u16 sequence[] = { 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x2000, 0x20 };
     s8* phase = &engine_obj.character_state.fields.secret_code_phase;
     s8* index = &engine_obj.character_state.fields.secret_code_index;
-    u16 input = controller_state;
-    u16 held = D_80166C08;
+    u16 input = controller_input.pressed;
+    u16 held = controller_input.held;
 
     switch (*phase) {
     case 0:
@@ -759,13 +759,13 @@ u8 func_8002D7E4(struct PlayerObj* object, s16 x, s16 y)
 
 void func_8002E994(struct EngineObj* arg0)
 {
-    u16 direction = D_80166C08 & 0xF000;
+    u16 direction = controller_input.held & 0xF000;
     s8 selection = arg0->unk3;
     s8 next = selection;
     int moved = 0;
 
     if (direction == PADLup || direction == PADLright || direction == PADLdown || direction == PADLleft) {
-        if ((D_80166C08 ^ controller_state) & direction) {
+        if ((controller_input.held ^ controller_input.pressed) & direction) {
             if (arg0->unk8 != 0) {
                 arg0->unk8--;
             } else {
@@ -809,7 +809,7 @@ void func_8002E994(struct EngineObj* arg0)
         func_8001540C(5, 0, 0);
     }
 
-    if (controller_state & (PADstart | PAD_CONFIRM)) {
+    if (controller_input.pressed & (PADstart | PAD_CONFIRM)) {
         if (arg0->unk3 == 8) {
             if ((u8)arg0->unk5F < 7) {
                 arg0->stage = 0xA;
@@ -821,7 +821,7 @@ void func_8002E994(struct EngineObj* arg0)
             D_8013B814 = 0;
         } else {
             arg0->unk40 = arg0->cur_character == 0 ? 0x31 : 0x11;
-            arg0->stage = D_800F474C.stage_order[(u8)arg0->unk3];
+            arg0->stage = mission_stage_order[(u8)arg0->unk3];
             arg0->substage = D_8013B814;
         }
         func_8001540C(5, 1, 0);
@@ -1894,7 +1894,7 @@ void func_800253F0(struct MainObj* player, s32 gauge)
         player->unk5F--;
         return;
     }
-    if (!(D_80141BD8.unk0 & 3))
+    if (!(main_bss_state.frame_counter & 3))
         player->unk5D--;
 }
 
@@ -7119,7 +7119,7 @@ void func_80040838(struct MainObj* arg0)
 
     blocked = get_random_nonzero() & 1;
     if (!blocked && ext[5] == 2) {
-        spawn = ((u8)D_80141BD8.unk0 ^ 1) & 1;
+        spawn = ((u8)main_bss_state.frame_counter ^ 1) & 1;
         x = arg0->x_pos.i.hi;
         offset_index = (get_random() & 0x1F) % (COUNT(D_800F98EC) / 2);
         if (arg0->unk15 != 0) {
@@ -8717,7 +8717,7 @@ void func_800D5144(struct QuadObj* arg0)
 
     boss_warning_quad_step_funcs[arg0->unk5](arg0);
     if (arg0->unk5 == 0 || D_8013B960[0] == 0
-        || D_80141BD8.unk0 % 3 != 0) {
+        || main_bss_state.frame_counter % 3 != 0) {
         return;
     }
 
@@ -13333,17 +13333,17 @@ void func_800CE114(struct MiscObj* arg0)
     arg0->unk15 = 0;
     arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
     arg0->x_pos.i.hi += 8;
-    arg0->y_pos.i.hi = rows[D_80141BDF[0] * 2 + 2] + 8;
+    arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;
     arg0->unk16 = 0x10;
     arg0->state++;
-    arg0->ext.unk.unk54 = D_80141BDF[0];
+    arg0->ext.unk.unk54 = main_bss_state.transition.selection;
     set_animation(arg0, 0);
     is_on_screen(BASE_OBJECT(arg0));
 }
 
 static int misc_32_cancelled(s8 mode)
 {
-    return (controller_state & PAD_SELECTION_ALT) || ((controller_state & 0x800) && game_info.unk0 == mode);
+    return (controller_input.pressed & PAD_SELECTION_ALT) || ((controller_input.pressed & 0x800) && game_info.unk0 == mode);
 }
 
 void func_800CE1D4(struct MiscObj* arg0)
@@ -13356,9 +13356,9 @@ void func_800CE1D4(struct MiscObj* arg0)
         if (arg0->unk2 == -1 || misc_32_cancelled(8))
             arg0->unk2 = -1;
     }
-    if (arg0->unk2 != -1 && (u8)arg0->ext.unk.unk54 != D_80141BDF[0]) {
-        arg0->y_pos.i.hi = rows[D_80141BDF[0] * 2 + 2] + 8;
-        arg0->ext.unk.unk54 = D_80141BDF[0];
+    if (arg0->unk2 != -1 && (u8)arg0->ext.unk.unk54 != main_bss_state.transition.selection) {
+        arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;
+        arg0->ext.unk.unk54 = main_bss_state.transition.selection;
     }
     animate_object(ANIMATED_OBJECT(arg0));
     is_on_screen(BASE_OBJECT(arg0));
@@ -13689,7 +13689,7 @@ void func_800CDF4C(struct MiscObj* arg0)
                 return;
             }
         }
-        if (arg0->unk7 == D_80141BDF[0])
+        if (arg0->unk7 == main_bss_state.transition.selection)
             arg0->unk42 = 0x7803;
         else
             arg0->unk42 = misc_31_palette(arg0);
@@ -13835,7 +13835,7 @@ void func_80099118(struct WeaponObj* arg0)
         arg0->unk88.half--;
         arg0->unk84.word = 0;
     }
-    if (!(D_80141BD8.unk0 & 1) && (s16)arg0->unk88.half == 0) {
+    if (!(main_bss_state.frame_counter & 1) && (s16)arg0->unk88.half == 0) {
         if (++arg0->unk84.word >= 0x1E0)
             arg0->unk88.half = 0x3C;
         func_80098DA0(arg0);
@@ -14775,7 +14775,7 @@ void func_8002FD70(struct BarObj* arg0)
     u8* bytes = BAR_BYTES(arg0);
     u32 i;
 
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         func_80023D68();
         return;
     }
@@ -14841,7 +14841,7 @@ void func_800301BC(struct BarObj* arg0)
     s32 cursor;
     s32 count;
 
-    switch (controller_state) {
+    switch (controller_input.pressed) {
     case PAD_CONFIRM:
         if ((u8)original < 10) {
             if ((s8)original < 2)
@@ -14955,7 +14955,7 @@ void func_800304E4(struct BarObj* arg0)
     s32 original = (u8)arg0->unk14;
     s32 cursor;
 
-    switch (controller_state) {
+    switch (controller_input.pressed) {
     case 0x800:
         arg0->state = 2;
         arg0->unk5 = 0;
@@ -15029,12 +15029,12 @@ void func_80030728(struct BarObj* arg0)
     s32 original = (u8)arg0->unk14;
     s32 cursor;
 
-    if (controller_state & 0x800) {
+    if (controller_input.pressed & 0x800) {
         arg0->state = 2;
         arg0->unk5 = 0;
         goto done;
     }
-    switch (controller_state) {
+    switch (controller_input.pressed) {
     case PAD_CONFIRM:
         if ((s8)original == 0xD) {
             arg0->state = 2;
@@ -15122,7 +15122,7 @@ static void bar_merge_sub_tanks(void)
 
 void func_80030A2C(struct BarObj* arg0)
 {
-    s32 frame = D_80141BD8.unk0;
+    s32 frame = main_bss_state.frame_counter;
     u32 tank;
     u8 energy;
     u8 health;
@@ -15139,7 +15139,7 @@ void func_80030A2C(struct BarObj* arg0)
             if (engine_obj.unk46 < (s8)health)
                 health = engine_obj.unk46;
             g_Player.hp = health;
-            if ((D_80141BD8.unk0 & 3) == 0)
+            if ((main_bss_state.frame_counter & 3) == 0)
                 func_8001540C(0, 0x17, 0);
             return;
         }
@@ -15171,7 +15171,7 @@ void func_80030A2C(struct BarObj* arg0)
     if (engine_obj.unk46 < (s8)health)
         health = engine_obj.unk46;
     g_Player.hp = health | (player_health & 0x80);
-    if ((D_80141BD8.unk0 & 3) == 0)
+    if ((main_bss_state.frame_counter & 3) == 0)
         func_8001540C(0, 0x17, 0);
 }
 
@@ -15181,7 +15181,7 @@ void func_80030C54(struct BarObj* arg0)
     s32 refilled = 0;
     u8 energy;
 
-    if (D_80141BD8.unk0 & 1)
+    if (main_bss_state.frame_counter & 1)
         return;
     if (arg0->unk2C != 0) {
         for (i = 0; i < 9; i++) {
@@ -15222,7 +15222,7 @@ void func_80030C54(struct BarObj* arg0)
     }
     energy = engine_obj.unk5C[2] & 0x7F;
     engine_obj.unk5C[2] = energy != 0 ? energy - 1 : energy;
-    if ((D_80141BD8.unk0 & 3) == 0)
+    if ((main_bss_state.frame_counter & 3) == 0)
         func_8001540C(0, 0x17, 0);
 }
 
@@ -15373,7 +15373,7 @@ void func_800175AC(u8 index)
     count = frame[0];
     pieces = archive + frame[1] * 4;
     if (bar_object.unk14 == layout->character) {
-        clut = pause_menu_clut((D_80141BD8.unk0 & 0x10) ? layout->alternate_clut : layout->clut);
+        clut = pause_menu_clut((main_bss_state.frame_counter & 0x10) ? layout->alternate_clut : layout->clut);
     } else if (engine_obj.cur_character == CHARACTER_X) {
         clut = pause_menu_clut(layout->clut);
         if (g_Player.weapon + 1 == layout->character || (g_Player.weapon == 0 && layout->character == 0))
@@ -16648,7 +16648,7 @@ void func_8007D5D0(struct MainObj* arg0)
             break;
         }
         arg0->x_speed += arg0->x_accel;
-        if (D_80141BD8.unk0 & 1)
+        if (main_bss_state.frame_counter & 1)
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) + arg0->x_speed;
         else
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) - arg0->x_speed;
@@ -16821,7 +16821,7 @@ void func_800A6510(struct ShotObj* arg0)
 
     if (arg0->timer != 0) {
         arg0->timer--;
-    } else if ((D_80141BD8.unk0 & 1) == 0) {
+    } else if ((main_bss_state.frame_counter & 1) == 0) {
         target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(arg0->unk7C));
         direction = arg0->unk84.value;
         if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
@@ -17711,7 +17711,7 @@ void func_80070A38(struct MainObj* arg0)
         arg0->ext.main_56.vortex_result = 1;
         arg0->unk6++;
     }
-    if (D_80141BD8.unk0 % 5 != 0)
+    if (main_bss_state.frame_counter % 5 != 0)
         return;
     debris = func_8006FB20(arg0, 0, 0);
     roll = get_random();
@@ -21874,7 +21874,7 @@ void func_8005A758(struct MainObj* self)
     s32 dx;
     s32 dy;
 
-    if ((D_80141BD8.unk0 & 3) == 0) {
+    if ((main_bss_state.frame_counter & 3) == 0) {
         context[0]++;
         if (context[0] >= 12)
             context[0] = 0;
@@ -23040,11 +23040,11 @@ void func_800C580C(struct ItemObj* self)
         self->unk2 = self->tail_ext.unk1.unk84.bytes[0];
         return;
     }
-    if ((D_80141BD8.unk0 & 3) == 0)
+    if ((main_bss_state.frame_counter & 3) == 0)
         func_800C5994(self, 0);
-    if ((D_80141BD8.unk0 & 7) == 0)
+    if ((main_bss_state.frame_counter & 7) == 0)
         func_800C5994(self, 1);
-    if ((D_80141BD8.unk0 & 15) == 0)
+    if ((main_bss_state.frame_counter & 15) == 0)
         func_8001540C(0, layout_gate_unused[get_random() & 3], self);
     if (self->unk7C.timer == 0x1E) {
         layout_gate_check_layout(self);
@@ -23986,7 +23986,7 @@ void func_8001F488(struct EngineObj* arg0)
 {
     struct BackgroundObj* background;
 
-    if (controller_state & 0x8FF) {
+    if (controller_input.pressed & 0x8FF) {
         func_8001F3D4((struct MainObj*)arg0);
         background_objects[arg0->cur_character].unk4C = 1;
         arg0->character_state.bytes[2] = 1;
@@ -24033,7 +24033,7 @@ void func_8001F634(struct EngineObj* arg0)
 void func_8001F6E8(struct EngineObj* arg0)
 {
     if (D_801396C0->unk5 != 2 || D_801396C4->unk5 != 2) {
-        if (!(controller_state & 0x8FF))
+        if (!(controller_input.pressed & 0x8FF))
             return;
         D_801396C0->state = 1;
         D_801396C4->state = 1;
@@ -24743,7 +24743,7 @@ void func_80085A44(struct MainObj* self)
     struct ShotObj* shot;
     u8 i;
 
-    if (D_80141BD8.unk0 == (D_80141BD8.unk0 / 3) * 3) {
+    if (main_bss_state.frame_counter == (main_bss_state.frame_counter / 3) * 3) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -24992,7 +24992,7 @@ void func_80085460(struct MainObj* self)
         return;
     }
     if ((u8)get_random() % 7 == 0) {
-        kind = (*(u8*)&D_80141BD8 ^ 1) & 1;
+        kind = ((u8)main_bss_state.frame_counter ^ 1) & 1;
         x = D_8010442C[(get_random() & 7) * 2] + 0x470;
         y = D_8010442C[(get_random() & 7) * 2 + 1] + 0x1E0;
         spawn_explosion_at(0, x, y, kind);
@@ -25774,7 +25774,7 @@ void func_800A766C(struct ShotObj* self)
             self->unk2 = 0;
         }
     }
-    if (!(D_80141BD8.unk0 & 3)) {
+    if (!(main_bss_state.frame_counter & 3)) {
         set_velocity_from_angle(MOVING_OBJECT(self),
             angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
         if (self->unk2 == 0) {
@@ -25908,7 +25908,7 @@ void func_80081E44(struct MainObj* self)
     s32 dx;
     s32 dy;
 
-    if (!(D_80141BD8.unk0 & 1)) {
+    if (!(main_bss_state.frame_counter & 1)) {
         D_8013B858[ext->trail_write] = ext->partner->x_pos.i.hi;
         D_8013B878[ext->trail_write] = ext->partner->y_pos.i.hi - 0x50;
         if (++ext->trail_write == 0x10) {

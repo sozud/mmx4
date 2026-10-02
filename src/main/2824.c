@@ -29,7 +29,7 @@ void func_80012024(void)
         func_800169D8();
         func_80012328();
         clear_vram_rect_ptrs();
-        D_80141BD8.unk0++;
+        main_bss_state.frame_counter++;
         func_80012600();
         func_80014780();
         DrawSync(0);
@@ -44,18 +44,18 @@ void func_80012024(void)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/2824", func_8001213C);
-#else
 void func_8001213C(void)
 {
+#ifdef VERSION_EU
+    SetVideoMode(1);
+#endif
     ResetCallback();
     StopCallback();
     ResetGraph(0);
     func_800E9040();
     SetGeomOffset(0xA0, 0x78);
     SetGeomScreen(0x200);
-    InitPAD(&D_80166D68, 0x22, &D_8012F46C, 0x22);
+    InitPAD(pad_port1_packet, 0x22, &D_8012F46C, 0x22);
     StartPAD();
     InitCARD(1);
     StartCARD();
@@ -73,35 +73,38 @@ void func_8001213C(void)
     func_800122E0(&draw_infos[0]);
     func_800122E0(&draw_infos[1]);
     func_80012560();
-    cur_random = 0xD37; // seed RNG
     SP_DRAW_BUFFER = 0;
     cur_draw_info = &draw_infos[0];
+    cur_random = 0xD37;
     D_8013BD44 = 0;
     D_80141BD2 = 0x78;
     func_80012740(0, &func_8001D064);
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/2824", func_800122E0);
-#else
 void func_800122E0(struct DrawInfo* arg0)
 {
     ClearOTagR(&arg0->ordering_table.start, 0xC);
     arg0->drawenv.dtd = 0;
     arg0->drawenv.isbg = 1;
+#ifdef VERSION_EU
+    arg0->dispenv.screen.y = 0x1C;
+#endif
     arg0->drawenv.r0 = 0;
     arg0->drawenv.g0 = 0;
     arg0->drawenv.b0 = 0;
-}
+#ifdef VERSION_EU
+    arg0->dispenv.screen.x = 0;
+    arg0->dispenv.screen.h = 0xF0;
+    arg0->dispenv.screen.w = 0;
 #endif
+}
 
 INCLUDE_ASM("main/nonmatchings/2824", func_80012328);
 
 void func_80012454(void)
 {
-    if ((D_8013BD44 != 0) && (D_80141BDC[0] == 0)) {
-        if ((D_80166C08 & 0x900) == 0x900) {
+    if ((D_8013BD44 != 0) && (main_bss_state.transition.active == 0)) {
+        if ((controller_input.held & 0x900) == 0x900) {
             if ((--D_80141BD2 << 0x10) == 0) {
                 if ((engine_obj.stage != 0) && (engine_obj.unk5F >= 3U)) {
                     func_8001C3E8();
@@ -357,31 +360,23 @@ void func_80012944(void)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/2824", func_800129A4);
-#else
 void func_800129A4(s8 arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        D_80141BDC[0] = 1;
-        D_80141BDC[1] = arg0;
+    if (main_bss_state.transition.active == 0) {
+        main_bss_state.transition.active = 1;
+        main_bss_state.transition.fade_amount = arg0;
         func_80012740(2, func_80012A3C);
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/2824", func_800129F0);
-#else
-void func_800129F0(s32 arg0)
+void func_800129F0(s32 amount)
 {
-    if (D_80141BDC[0] == 0) {
-        D_80141BDC[0] = -1;
-        D_80141BDC[1] = arg0;
+    if (main_bss_state.transition.active == 0) {
+        main_bss_state.transition.active = -1;
+        main_bss_state.transition.fade_amount = amount;
         func_80012740(2, func_80012A3C);
     }
 }
-#endif
 
 #ifdef VERSION_JP
 char D_800EE40C[36] = "CAPCOM Jun 20 1997 12:14:39 CAPCOM";

@@ -289,34 +289,24 @@ void func_80025DA0(s32 texture_depth, s32 blend_mode)
 
 #undef BG_DRAW_TPAGE
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/165A0", func_80026118);
-#else
 void func_80026118(void)
 {
     u32 var_a1;
     u8 temp_v0;
     u8* var_a0;
     u8* var_a2;
-    u32 var_s0;
 
-    (void)&var_s0;
     var_a0 = D_8010FFDC[engine_obj.stage][engine_obj.substage];
     var_a2 = SP_BG_TILEMAP;
-    var_a1 = 0;
-    if ((layout_size * 3) != 0) {
-        do {
-            temp_v0 = *var_a0;
-            var_a0 += 1;
-            *var_a2 = temp_v0;
-            var_a2 += 1;
-            var_a1 += 1;
-        } while (var_a1 < (u32)(layout_size * 3));
+    for (var_a1 = 0; var_a1 < (u32)(layout_size * 3); var_a1++) {
+        temp_v0 = *var_a0;
+        var_a0 += 1;
+        *var_a2 = temp_v0;
+        var_a2 += 1;
     }
-    func_800261B4(-1, var_a1, var_a2);
+    func_800261B4(-1);
 }
-#endif
-void func_800261B4(s32 arg0, u32 arg1, u8* arg2)
+void func_800261B4(s32 arg0)
 {
     s32 var_v0;
     s32 var_s0;

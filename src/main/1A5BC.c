@@ -22,9 +22,6 @@ void func_80029DBC(void)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_80029E1C);
-#else
 void func_80029E1C(struct GameInfo* arg0)
 {
     struct UnkObj* obj;
@@ -43,7 +40,7 @@ void func_80029E1C(struct GameInfo* arg0)
         obj->active = 1;
         obj->id = 0;
         obj->unk2 = -1;
-        if (D_80141BE0 != 0) {
+        if (main_bss_state.character_mode != 0) {
             obj->link.data = D_800F4568;
         } else {
             obj->link.data = D_800F457C;
@@ -55,7 +52,7 @@ void func_80029E1C(struct GameInfo* arg0)
 #endif
     }
 
-    if (D_80141BE0 != 0) {
+    if (main_bss_state.character_mode != 0) {
         var_s1 = D_800F4508;
     } else {
         var_s1 = D_800F4560[engine_obj.cur_character];
@@ -75,7 +72,7 @@ void func_80029E1C(struct GameInfo* arg0)
         var_s1 += 3;
     }
 
-    var_s1 = D_80141BE0 != 0 ? D_800F4568 : D_800F457C;
+    var_s1 = main_bss_state.character_mode != 0 ? D_800F4568 : D_800F457C;
     if (var_s1[1] != 7) {
         do {
             obj = find_free_unk_obj();
@@ -97,24 +94,20 @@ void func_80029E1C(struct GameInfo* arg0)
         obj->x_pos.i.hi = 0x20;
     }
 
-    if (D_80141BE0 == 0) {
+    if (main_bss_state.character_mode == 0) {
         func_8001E980(0);
     }
-    D_80141BDF[0] = 0;
+    main_bss_state.transition.selection = 0;
     func_800129A4(8);
     D_8013B7D0++;
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002A098);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002A394);
-#else
 void func_8002A394(struct GameInfo* arg0)
 {
-    if (D_80141BDC[0] == 0) {
-        if (D_80141BE0 != 0) {
+    if (main_bss_state.transition.active == 0) {
+        if (main_bss_state.character_mode != 0) {
             arg0->unk0 = 8;
             arg0->mode = 0;
             arg0->unk2 = 0;
@@ -123,13 +116,12 @@ void func_8002A394(struct GameInfo* arg0)
             (*(s8*)&arg0->unk6)++;
         }
         func_80029DBC();
-        if (D_80141BE0 != 0) {
+        if (main_bss_state.character_mode != 0) {
             func_8001E980(1);
         }
         D_8013B7D0 = 0;
     }
 }
-#endif
 
 void func_8002A41C(struct GameInfo* arg0)
 {
@@ -140,9 +132,6 @@ void func_8002A41C(struct GameInfo* arg0)
     func_80025CDC();
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1A5BC", func_8002A484);
-#else
 void func_8002A484(void)
 {
     u32 mask;
@@ -156,11 +145,11 @@ void func_8002A484(void)
     u32 red;
     u32 palette_index;
 
-    if (((g_FilterAmountB | (g_FilterAmountR | g_FilterAmountG)) != 0) || (need_palette_load & 4)) {
+    if (((g_FilterAmountR | g_FilterAmountG | g_FilterAmountB) != 0) || (need_palette_load & 4)) {
         if ((lastFilterAmountR != g_FilterAmountR) || (lastFilterAmountG != g_FilterAmountG) || (lastFilterAmountB != g_FilterAmountB) || (need_palette_load != 0)) {
             src = dst = SP_PALETTE;
             dst = D_80141F70;
-            for (palette_index = 0; palette_index < 128; palette_index++, mask <<= 1) {
+            for (palette_index = 0; palette_index < 128; palette_index++) {
                 if (!(palette_index & 0x1F)) {
                     mask = D_8013E188[palette_index >> 5];
                 }
@@ -211,6 +200,7 @@ void func_8002A484(void)
                         dst++;
                     } while (color_index < 0x10U);
                 }
+                mask <<= 1;
             }
             lastFilterAmountR = g_FilterAmountR;
             lastFilterAmountG = g_FilterAmountG;
@@ -219,7 +209,6 @@ void func_8002A484(void)
         }
     }
 }
-#endif
 
 extern u16 D_800F44E8[8];
 

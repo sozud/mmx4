@@ -151,18 +151,20 @@ void title_logo_fade_start(struct MiscObj* self)
 }
 
 // TitleLogoUpdate state 6
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_29_title_logo", title_logo_fade_palette);
-#else
 void title_logo_fade_palette(struct MiscObj* self)
 {
+    u8* palette_shift;
+    u8 palette_shift_value;
     s32* src;
     s32* dst;
     u32 i;
 
+    palette_shift = &self->ext.title_logo.palette_shift_speed;
     if (--self->ext.title_logo.palette_shift_speed == 0) {
         self->ext.title_logo.palette_shift_speed = 2;
-        if (--self->ext.title_logo.palette_shift_value) {
+        palette_shift_value = self->ext.title_logo.palette_shift_value - 1;
+        palette_shift[1] = palette_shift_value;
+        if (palette_shift_value) {
             src = self->ext.title_logo.palette1;
             dst = self->ext.title_logo.palette2;
             for (i = 0; i < TITLE_PALETTE_WORDS; i++) {
@@ -178,7 +180,6 @@ void title_logo_fade_palette(struct MiscObj* self)
     }
     is_on_screen(self);
 }
-#endif
 
 // TitleLogoUpdate state 7
 void title_logo_sparkle(struct MiscObj* self)

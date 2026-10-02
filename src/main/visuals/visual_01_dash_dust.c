@@ -2,32 +2,27 @@
 // 800AED18..800AEED8
 #include "common.h"
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_01_dash_dust", dash_dust_update);
-#else
 void dash_dust_update(struct VisualObj* arg0)
 {
-    struct VisualObj* obj;
     s32 var_a0;
     struct PlayerObj* entity;
 
-    obj = arg0;
     entity = g_Player.controlling_clone == 0 ? &g_Player : &g_Entity;
-    if (obj->state == 0) {
-        obj->on_screen = 1;
-        obj->unk38 = 0;
-        obj->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
-        obj->animation_table = D_8011BF40;
-        obj->unk40 = 0;
-        obj->unk42 = 0x7802;
-        obj->unk16 = 3;
+    if (arg0->state == 0) {
+        arg0->on_screen = 1;
+        arg0->unk38 = 0;
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
+        arg0->animation_table = D_8011BF40;
+        arg0->unk40 = 0;
+        arg0->unk42 = 0x7802;
+        arg0->unk16 = 3;
 
-        dash_dust_attach(obj, entity);
-        set_animation(obj, 2);
-        obj->state = (u8)obj->state + 1;
+        dash_dust_attach(arg0, entity);
+        set_animation(arg0, 2);
+        arg0->state = (u8)arg0->state + 1;
     } else {
-        animate_object(obj);
-        dash_dust_attach(obj, entity);
+        animate_object(arg0);
+        dash_dust_attach(arg0, entity);
         var_a0 = 0;
         if (entity->dash_momentum > 0) {
             if (entity->unk17 != 0x10) {
@@ -36,17 +31,16 @@ void dash_dust_update(struct VisualObj* arg0)
         } else if (entity->unk17 != 0x12) {
             var_a0 = 1;
         }
-        if (obj->animation_step.fields.relative_step < 0) {
+        if (arg0->animation_step.fields.relative_step < 0) {
             var_a0 = 1;
         }
         if (var_a0 != 0) {
-            ZeroObjectState(obj);
+            ZeroObjectState(arg0);
             return;
         }
     }
-    is_on_screen(obj);
+    is_on_screen(arg0);
 }
-#endif
 
 void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1)
 {

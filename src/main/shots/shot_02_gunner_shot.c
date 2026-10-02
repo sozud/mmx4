@@ -173,20 +173,16 @@ void mech_boulder_update(struct ShotObj* self)
 // mech_boulder_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A5F4);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", mech_boulder_fall);
-#else
 void mech_boulder_fall(struct ShotObj* self)
 {
-    s8* player_state = &g_Player.hp;
     s8 previous_state;
     u32* collision_state;
 
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
-    previous_state = *player_state;
+    previous_state = g_Player.hp;
     func_8002D9BC(self);
-    if (previous_state != *player_state) {
+    if (previous_state != g_Player.hp) {
         collision_state = self->unk84.collision_state;
         if (*collision_state == 0x8000) {
             *collision_state = 0x8001;
@@ -210,7 +206,6 @@ void mech_boulder_fall(struct ShotObj* self)
         self->state = 2;
     }
 }
-#endif
 
 void mech_boulder_despawn(struct ShotObj* self)
 {

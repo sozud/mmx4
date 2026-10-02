@@ -47,7 +47,7 @@ void sigma_intro_fill_health(struct MainObj* self)
         self->unk7E--;
     }
     self->on_screen = 0;
-    if (BLINK_TIMER.unk0 & 1) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -64,7 +64,7 @@ void sigma_intro_wait(struct MainObj* self)
         return;
     }
     self->on_screen = 0;
-    if (BLINK_TIMER.unk0 & 1) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -171,7 +171,7 @@ void sigma_cloak_teleport(struct MainObj* self)
 {
     sigma_cloak_teleport_funcs[self->unk6](self);
     animate_object(ANIMATED_OBJECT(self));
-    if (D_80141BD8.unk0 % 10 == 0) {
+    if (main_bss_state.frame_counter % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
             self->unk7E = 4;
@@ -750,13 +750,11 @@ void sigma_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", sigma_death_blink);
-#else
 void sigma_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
     s8 var_a0;
+    s16 blink_value;
 
     if (--self->unk7C == 0) {
         self->unk5++;
@@ -774,10 +772,10 @@ void sigma_death_blink(struct MainObj* self)
         self->unk42 ^= 0x8000;
         self->ext.main_68.blink_delay -= 5;
         var_a0 = self->ext.main_68.blink_delay;
-        self->unk7E = var_a0 > 5 ? var_a0 : 5;
+        blink_value = var_a0 > 5 ? var_a0 : 5;
+        self->unk7E = blink_value;
     }
 }
-#endif
 
 void sigma_death_wait_explosion(struct MainObj* self)
 {
@@ -839,7 +837,7 @@ void sigma_cloak_stagger_trail(struct MainObj* self)
 {
     struct VisualObj* visual;
 
-    if (!(D_80141BD8.unk0 % 8)) {
+    if (!(main_bss_state.frame_counter % 8)) {
         visual = find_free_visual_obj();
         if (visual != 0) {
             visual->active = 0x41;
@@ -889,7 +887,7 @@ void sigma_cloak_stagger(struct MainObj* self)
 {
     sigma_cloak_stagger_funcs[self->unk5](self);
     animate_object(ANIMATED_OBJECT(self));
-    if (D_80141BD8.unk0 % 10 == 0) {
+    if (main_bss_state.frame_counter % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
             self->unk7E = 4;
@@ -922,7 +920,7 @@ void sigma_reveal_fall(struct MainObj* self)
 {
     struct VisualObj* temp_v0;
 
-    if (D_80141BD8.unk0 == ((D_80141BD8.unk0 / 5) * 5)) {
+    if (main_bss_state.frame_counter == ((main_bss_state.frame_counter / 5) * 5)) {
         temp_v0 = find_free_visual_obj();
         if (temp_v0 != 0) {
             temp_v0->active = 0x41;
@@ -953,9 +951,6 @@ void sigma_reveal_wait_cloak(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", sigma_reveal_dialogue);
-#else
 void sigma_reveal_dialogue(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -964,8 +959,13 @@ void sigma_reveal_dialogue(struct MainObj* self)
             self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : 0x40;
             player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
             self->unk6 = (u8)self->unk6 + 1;
-            ((void (*)(u16, u8, s8))func_8002217C)(
-                (engine_obj.cur_character == 0 ? 0x31 : 0x2C), 0xFFU, engine_obj.character_state.bytes[9]);
+            if (engine_obj.cur_character == CHARACTER_X) {
+                ((void (*)(u16, u8, s8))func_8002217C)(
+                    0x31, 0xFF, engine_obj.character_state.bytes[9]);
+            } else {
+                ((void (*)(u16, u8, s8))func_8002217C)(
+                    0x2C, 0xFF, engine_obj.character_state.bytes[9]);
+            }
             engine_obj.character_state.bytes[9] = 1;
         }
     } else if (abc_object.unkC == 0) {
@@ -975,7 +975,6 @@ void sigma_reveal_dialogue(struct MainObj* self)
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void sigma_reveal_fill_health(struct MainObj* self)
 {

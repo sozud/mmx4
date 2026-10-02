@@ -17,9 +17,6 @@ extern u8 ready_text_priorities[];
 extern u16 D_8013B940;
 
 // g_MegamanRelatedUpdateFuncs state 0
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_18_ready_text", ready_text_init);
-#else
 void ready_text_init(struct MiscObj* self)
 {
     u16* pal_dst;
@@ -52,9 +49,9 @@ void ready_text_init(struct MiscObj* self)
     self->ext.ready_text.palette_cycle_done = 0;
 
     if (self->unk2 < 2) {
-        pal_pos = 0;
         if (self->unk2 != 0) {
             pal_dst = &D_8013B940;
+            pal_pos = 0;
             color = SP_PALETTE + 0x100;
             do {
                 *pal_dst++ = *color;
@@ -73,7 +70,6 @@ void ready_text_init(struct MiscObj* self)
         set_animation(self, self->unk2 - 1);
     }
 }
-#endif
 
 // g_MegamanRelatedUpdateFuncs state 1
 void ready_text_main(struct MiscObj* self)
@@ -199,7 +195,7 @@ void ready_text_leave(struct MiscObj* self)
 void ready_text_blink(struct MiscObj* self)
 {
     self->on_screen = 0;
-    if (BLINK_TIMER.unk0 & 0x10) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 0x10) {
         is_on_screen(self);
     }
 }

@@ -52,21 +52,14 @@ void func_80082470(struct MainObj* obj)
 // gunship_main
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", gunship_destroyed);
-#else
 void gunship_destroyed(struct MainObj* self)
 {
-    s32 y;
-
-    self->unk18.val = self->x_pos.val;
-    y = self->y_pos.val;
-    self->unk1C.val = y;
-    gunship_destroyed_funcs[self->unk5](self, y);
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    gunship_destroyed_funcs[self->unk5](self);
 }
-#endif
 
-void gunship_destroyed_start(struct MainObj* self, s32 y)
+void gunship_destroyed_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 0x13);
@@ -80,7 +73,7 @@ void gunship_destroyed_start(struct MainObj* self, s32 y)
     collide_with_players(PLAYER_OBJECT(self));
 }
 
-void gunship_destroyed_sink(struct MainObj* self, s32 y)
+void gunship_destroyed_sink(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -99,7 +92,7 @@ void gunship_destroyed_sink(struct MainObj* self, s32 y)
     }
 }
 
-void gunship_destroyed_end(struct MainObj* self, s32 y)
+void gunship_destroyed_end(struct MainObj* self)
 {
     ZeroObjectState(OBJECT_HEADER(self));
 }
@@ -587,7 +580,7 @@ void (*gunship_step_funcs[7])() = {
     gunship_boost,
 };
 
-void (*gunship_destroyed_funcs[3])(struct MainObj*, s32) = {
+void (*gunship_destroyed_funcs[3])(struct MainObj*) = {
     gunship_destroyed_start,
     gunship_destroyed_sink,
     gunship_destroyed_end,

@@ -180,14 +180,11 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
 // shell_crawler_init
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", shell_crawler_main);
-#else
 void shell_crawler_main(struct MainObj* self)
 {
     s32 hit;
 
-    if ((engine_obj.stage == 0x2 && engine_obj.substage == 1) && engine_obj.character_state.bytes[0] != 0) {
+    if (*(u16*)&engine_obj.stage == 0x102 && engine_obj.character_state.bytes[0] != 0) {
         if ((self->x_pos.i.hi >= 0xC0F && self->x_pos.i.hi <= 0xDF0) || (u16)(self->x_pos.i.hi - 0x100F) < 0x1E2
             || (u16)(self->x_pos.i.hi - 0x1315) < 0x1DC || (self->x_pos.i.hi >= 0x1613 && self->x_pos.i.hi <= 0x17D1)) {
             self->state = 3;
@@ -216,7 +213,6 @@ void shell_crawler_main(struct MainObj* self)
         self->state++;
     }
 }
-#endif
 
 void shell_crawler_despawn(struct MainObj* self)
 {

@@ -117,7 +117,7 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
     }
     if (self->unk6 != 0) {
         func_8002D9BC(self);
-        if (D_80141BD8.unk0 & 1) {
+        if (main_bss_state.frame_counter & 1) {
             if (++self->unk7 == 4) {
                 self->unk7 = 0;
             }

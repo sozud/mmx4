@@ -56,60 +56,33 @@ void spike_crawler_fall(struct MainObj* self)
 // spike_crawler_crawl
 INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", func_80091B1C);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_76_spike_crawler", spike_crawler_update_speed);
-#else
 void spike_crawler_update_speed(struct MainObj* self)
 {
     s16 object_y;
     s32 player_y;
-    s16 current_timer;
-    s16 new_timer;
     s32 distance;
-    s32 velocity;
 
     object_y = self->y_pos.u.hi - 8;
     player_y = g_Player.y_pos.i.hi;
     distance = player_y - object_y;
 
-    if (distance >= 0) {
-        if (distance < 0x10) {
-            goto close_range;
+    if (distance >= 0 ? distance < 0x10 : object_y - player_y < 0x10) {
+        if (self->x_speed < 0) {
+            self->x_speed = FIXED(-4);
+        } else {
+            self->x_speed = FIXED(4);
         }
-        goto far_range;
-    }
-    if ((object_y - player_y) < 0x10) {
-        goto close_range;
-    }
-    goto far_range;
-
-close_range:
-    velocity = self->x_speed;
-    if (velocity < 0) {
-        velocity = FIXED(-4);
-    } else {
-        velocity = FIXED(4);
-    }
-    self->x_speed = velocity;
-    new_timer = 0x78;
-    goto store_timer;
-
-far_range:
-    current_timer = self->unk7E;
-    if (current_timer == 0) {
+        self->unk7E = 0x78;
+    } else if (self->unk7E == 0) {
         if (self->x_speed < 0) {
             self->x_speed = FIXED(-2);
         } else {
             self->x_speed = FIXED(2);
         }
-        return;
+    } else {
+        self->unk7E--;
     }
-    new_timer = current_timer - 1;
-
-store_timer:
-    self->unk7E = new_timer;
 }
-#endif
 
 void spike_crawler_main(struct MainObj* self)
 {

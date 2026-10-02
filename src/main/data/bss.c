@@ -53,7 +53,7 @@ u8* D_80137DC4;
 s32 D_80137DC8;
 u8* D_80137DCC;
 s32 D_80137DD0;
-u8 D_80137DD4;
+u8 cd_fade_requested;
 u8 pad_80137DD5[3];
 u8 D_80137DD8;
 u8 pad_80137DD9[3];
@@ -83,7 +83,7 @@ u8 pad_80139518[8];
 CdlATV D_80139520; // spans D_80139521/22/23
 u8 D_80139524;
 u8 pad_80139525[3];
-s8 D_80139528;
+u8 D_80139528;
 u8 pad_80139529[3];
 s8 D_8013952C;
 u8 pad_8013952D[3];
@@ -132,7 +132,7 @@ u8 D_8013961A[0x2];
 u8 D_8013961C[0x2];
 u8 D_8013961E[0x2];
 u8 D_80139620[0x4];
-u8 D_80139624[0x4];
+s32 movie_slice_offset;
 u8 D_80139628[0x4];
 u8 D_8013962C[0x4];
 u8 D_80139630[0x4];
@@ -239,8 +239,7 @@ struct EffectObj* sigma_sequencer;
 struct Unk_unk68* D_8013B8B0;
 void* D_8013B8B4;
 u8 D_8013B8B8[0x8];
-struct ShotObj* D_8013B8C0;
-struct ShotObj* D_8013B8C4;
+struct ShotObj* general_fists[2];
 u8 D_8013B8C8[0x4];
 u8 D_8013B8CC[0x4];
 u8 D_8013B8D0[0xC];
@@ -428,7 +427,7 @@ u8 D_80141F58[0x10];
 struct RectPtrPair* vram_rect_ptr;
 u8 D_80141F6C[0x4];
 u16 D_80141F70[0x800];
-s32 D_80142F70;
+s32 loaded_vab_address;
 u8 D_80142F74[0x4];
 u8 D_80142F78[0x8];
 struct DrawInfo* cur_draw_info;
@@ -473,7 +472,7 @@ u8 need_palette_load;
 #ifndef MMX4_PC
 u8 pad_need_palette_load[3];
 #endif
-s32 D_80166BB4;
+s32 saved_vab_address;
 #ifndef MMX4_PC
 u8 pad_80166BB8[0x14];
 s32 _snd_openflag;
@@ -504,9 +503,7 @@ u8 D_80166C00[0x2];
 u8 D_80166C02[0x2];
 u8 D_80166C04[0x2];
 u8 D_80166C06[0x2];
-u16 D_80166C08;
-u16 D_80166C0A;
-u16 controller_state;
+struct ControllerInput controller_input;
 #ifndef MMX4_PC
 u8 pad_80166C0E[2];
 #endif
@@ -517,7 +514,7 @@ u8 pad_80166D50[2];
 u8 D_80166D52[0x6];
 u8 D_80166D58[0x10];
 #ifdef MMX4_PC
-u8 D_80166D68[0x22];
+u8 pad_port1_packet[0x22];
 #elif !defined(VERSION_JP)
 u8 D_80166D68;
 u8 pad_80166D69[0x27];
@@ -556,18 +553,7 @@ u8 D_80171EA9;
 u8 pad_80171EAA[6];
 #endif
 DR_TPAGE D_80171EB0[2][6][8];
-u8* D_801721B0;
-u8 D_801721B4;
-u8 D_801721B5;
-u8 D_801721B6;
-u8 D_801721B7;
-u8 D_801721B8;
-u8 D_801721B9;
-u8 D_801721BA;
-#ifndef MMX4_PC
-u8 pad_801721BB[1];
-#endif
-struct MemcardSaveSlot* D_801721BC;
+struct MemcardMenuState memcard_menu;
 struct EngineObj engine_obj;
 u8 layout_width;
 #ifndef MMX4_PC

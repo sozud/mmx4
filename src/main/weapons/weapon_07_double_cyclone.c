@@ -28,15 +28,13 @@ void double_cyclone_update(struct WeaponObj* arg0)
 // double_cyclone_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", double_cyclone_main);
-#else
 void double_cyclone_main(struct WeaponObj* arg0)
 {
     u8 temp_v0;
-    struct Weapon7Ext* ext = &arg0->ext.weapon_7;
+    struct Weapon7Ext* ext;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x20, 0x20) == 0) {
+        ext = &arg0->ext.weapon_7;
         double_cyclone_step_funcs[arg0->unk5](arg0);
         if (arg0->unk50 != 0) {
             temp_v0 = ext->unk91;
@@ -51,7 +49,6 @@ void double_cyclone_main(struct WeaponObj* arg0)
         double_cyclone_hide(arg0);
     }
 }
-#endif
 
 void double_cyclone_form(struct WeaponObj* arg0)
 {
@@ -63,9 +60,6 @@ void double_cyclone_form(struct WeaponObj* arg0)
     double_cyclone_draw(arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", double_cyclone_fly);
-#else
 void double_cyclone_fly(struct WeaponObj* arg0)
 {
     if (double_cyclone_check_expired(arg0) == 0) {
@@ -73,9 +67,10 @@ void double_cyclone_fly(struct WeaponObj* arg0)
             arg0->unk98 = 0;
             arg0->unk5++;
         } else {
-            if (arg0->ext.weapon_7.unk90 != 0) {
-                arg0->ext.weapon_7.unk90--;
-                if (arg0->ext.weapon_7.unk90 == 0) {
+            struct Weapon7Ext* weapon_7 = &arg0->ext.weapon_7;
+            if (weapon_7->unk90 != 0) {
+                weapon_7->unk90--;
+                if (weapon_7->unk90 == 0) {
                     arg0->unk2C = FIXED(-0.21484375);
                 }
             }
@@ -85,7 +80,6 @@ void double_cyclone_fly(struct WeaponObj* arg0)
         double_cyclone_draw(arg0);
     }
 }
-#endif
 
 void double_cyclone_spin(struct WeaponObj* arg0)
 {

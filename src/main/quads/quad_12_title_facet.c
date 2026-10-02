@@ -5,31 +5,33 @@
 extern u8 title_facet_vertex_indices[][4];
 extern union TitleScratch D_80169498;
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/quads/quad_12_title_facet", title_facet_init);
-#else
 void title_facet_init(struct QuadObj* arg0)
 {
     u16* points;
     u16* vertex;
     u16 x;
     u8 state;
+    u8 index;
 
     arg0->active |= 0x80;
     arg0->bg_offset = -1;
     arg0->x_pos.i.hi = 0;
     arg0->y_pos.i.hi = 0;
+    index = title_facet_vertex_indices[arg0->unk2][0];
     points = &D_80169498.title.coordinates[0].u.hi;
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][0] * 4];
+    vertex = &points[index * 4];
     arg0->vertices[0].x.i.hi = vertex[0];
     arg0->vertices[0].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][1] * 4];
+    index = title_facet_vertex_indices[arg0->unk2][1];
+    vertex = &points[index * 4];
     arg0->vertices[1].x.i.hi = vertex[0];
     arg0->vertices[1].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][2] * 4];
+    index = title_facet_vertex_indices[arg0->unk2][2];
+    vertex = &points[index * 4];
     arg0->vertices[2].x.i.hi = vertex[0];
     arg0->vertices[2].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][3] * 4];
+    index = title_facet_vertex_indices[arg0->unk2][3];
+    vertex = &points[index * 4];
     state = arg0->state;
     x = vertex[0];
     state++;
@@ -41,27 +43,21 @@ void title_facet_init(struct QuadObj* arg0)
     arg0->unk34 = 0x7FFF;
     arg0->on_screen = 1;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/quads/quad_12_title_facet", title_facet_follow);
-#else
 void title_facet_follow(struct QuadObj* arg0)
 {
-    u16* points;
     u16* vertex;
 
-    points = &D_80169498.title.coordinates[0].u.hi;
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][0] * 4];
+    vertex = &D_80169498.title.coordinates[0].u.hi + title_facet_vertex_indices[arg0->unk2][0] * 4;
     arg0->vertices[0].x.i.hi = vertex[0];
     arg0->vertices[0].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][1] * 4];
+    vertex = &D_80169498.title.coordinates[0].u.hi + title_facet_vertex_indices[arg0->unk2][1] * 4;
     arg0->vertices[1].x.i.hi = vertex[0];
     arg0->vertices[1].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][2] * 4];
+    vertex = &D_80169498.title.coordinates[0].u.hi + title_facet_vertex_indices[arg0->unk2][2] * 4;
     arg0->vertices[2].x.i.hi = vertex[0];
     arg0->vertices[2].y.i.hi = vertex[2];
-    vertex = &points[title_facet_vertex_indices[arg0->unk2][3] * 4];
+    vertex = &D_80169498.title.coordinates[0].u.hi + title_facet_vertex_indices[arg0->unk2][3] * 4;
     arg0->vertices[3].x.i.hi = vertex[0];
     arg0->vertices[3].y.i.hi = vertex[2];
     if (game_info.unk6 == 0) {
@@ -70,7 +66,6 @@ void title_facet_follow(struct QuadObj* arg0)
     }
     arg0->on_screen = 1;
 }
-#endif
 
 void title_facet_finish(struct QuadObj* arg0)
 {

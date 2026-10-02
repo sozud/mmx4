@@ -72,15 +72,14 @@ void lightning_web_init(struct WeaponObj* arg0)
     lightning_web_draw(arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_fly);
-#else
 void lightning_web_fly(struct WeaponObj* arg0)
 {
     u8 temp_v0;
+    struct Weapon1Ext* weapon_1;
 
-    temp_v0 = arg0->ext.weapon_1.timer - 1;
-    arg0->ext.weapon_1.timer = temp_v0;
+    weapon_1 = &arg0->ext.weapon_1;
+    temp_v0 = weapon_1->timer - 1;
+    weapon_1->timer = temp_v0;
     if (temp_v0 == 0) {
         set_animation(arg0, 1);
         arg0->unk16 = 3;
@@ -91,7 +90,6 @@ void lightning_web_fly(struct WeaponObj* arg0)
     }
     lightning_web_draw(arg0);
 }
-#endif
 
 void lightning_web_main(struct WeaponObj* arg0)
 {
@@ -141,13 +139,12 @@ void lightning_web_spread(struct WeaponObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_hang);
-#else
 void lightning_web_hang(struct WeaponObj* arg0)
 {
+    u8* lifetime = &arg0->ext.weapon_1.lifetime;
+
     animate_object(ANIMATED_OBJECT(arg0));
-    lightning_web_buzz_sound(arg0, &arg0->ext.weapon_1.lifetime);
+    lightning_web_buzz_sound(arg0, lifetime);
     if ((arg0->unk76 != 0) && ((arg0->unk72 & 3) != 0)) {
         set_animation(arg0, 4);
         if (arg0->unk72 & 1) {
@@ -158,7 +155,6 @@ void lightning_web_hang(struct WeaponObj* arg0)
         arg0->unk5++;
     }
 }
-#endif
 
 void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1)
 {
@@ -351,9 +347,6 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
 // lightning_web_charged_part_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", func_80093930);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", lightning_web_charged_part_wait);
-#else
 void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {
     struct PlayerObj* owner;
@@ -362,16 +355,15 @@ void lightning_web_charged_part_wait(struct WeaponObj* arg0)
     owner = arg0->owner;
     if (0 != (u8)owner->shot_fired) {
         arg0->on_screen = 1;
-        state = (u8)arg0->state + 1;
         arg0->x_pos.val = owner->x_pos.val;
         arg0->y_pos.val = owner->y_pos.val;
+        state = (u8)arg0->state + 1;
         arg0->ext.weapon_10.timer = 0x10;
         arg0->state = state;
         arg0->unk5 = 0;
         lightning_web_charged_draw(arg0);
     }
 }
-#endif
 
 void lightning_web_charged_part_main(struct WeaponObj* arg0)
 {

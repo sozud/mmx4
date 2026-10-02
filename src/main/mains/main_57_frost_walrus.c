@@ -519,9 +519,6 @@ void frost_walrus_shards_count(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", frost_walrus_shards_fire);
-#else
 void frost_walrus_shards_fire(struct MainObj* self)
 {
     u8 i;
@@ -533,7 +530,7 @@ void frost_walrus_shards_fire(struct MainObj* self)
         if (shot != NULL) {
             shot->active = 0x41;
             shot->id = 0x23;
-            shot->unk2 = i + self->unk7C;
+            shot->unk2 = self->unk7C + i;
             shot->unk7C = WEAPON_OBJECT(self);
             shot->unk7 = self->ext.main_57.shard_count;
             self->ext.main_57.shot = shot;
@@ -545,7 +542,6 @@ void frost_walrus_shards_fire(struct MainObj* self)
     self->unk7C += 2;
     self->unk6++;
 }
-#endif
 
 void frost_walrus_shards_repeat(struct MainObj* self)
 {
@@ -858,14 +854,10 @@ void frost_walrus_face_player(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", frost_walrus_choose_script);
-#else
 void frost_walrus_choose_script(struct MainObj* self)
 {
     u8 index;
     u8** choices;
-    u8* thresholds;
     u8 i;
     u8 rnd;
 
@@ -874,16 +866,14 @@ void frost_walrus_choose_script(struct MainObj* self)
     rnd = get_random();
     rnd &= 0xF;
     i = 0;
-    thresholds = frost_walrus_script_weights[index];
     while (i < 4) {
-        if (rnd < thresholds[i]) {
+        if (rnd < frost_walrus_script_weights[index][i]) {
             self->ext.main_57.script = choices[i];
             return;
         }
         i++;
     }
 }
-#endif
 
 void frost_walrus_set_floor_tiles(s32 self)
 {

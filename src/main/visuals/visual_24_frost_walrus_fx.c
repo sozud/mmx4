@@ -13,12 +13,8 @@ void frost_walrus_fx_update(struct VisualObj* arg0)
     frost_walrus_fx_state_funcs[arg0->state](arg0);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_24_frost_walrus_fx", frost_walrus_fx_init);
-#else
 void frost_walrus_fx_init(struct VisualObj* self)
 {
-    u8 background;
     s8 state;
 
     self->unk3C = self->unk50->unk3C;
@@ -30,9 +26,8 @@ void frost_walrus_fx_init(struct VisualObj* self)
         self->unk42 = self->unk50->unk42 & 0x7FFF;
     }
     self->unk16 = 3;
-    background = (u8)g_Player.bg_offset;
-    self->state = (u8)self->state + 1;
-    self->bg_offset = (s8)background;
+    self->bg_offset = (s8)(u8)g_Player.bg_offset;
+    self->state++;
     state = (s32)((u8)self->unk2 << 24) >> 28;
     self->x_vel.val = 0;
     self->y_vel.val = 0;
@@ -46,7 +41,6 @@ void frost_walrus_fx_init(struct VisualObj* self)
     }
     self->unk2 = (u8)self->unk2 & 0xF;
 }
-#endif
 
 void frost_walrus_fx_main(struct VisualObj* arg0)
 {

@@ -13,13 +13,11 @@ void search_light_maker_update(struct EffectObj* self)
 }
 
 // search_light_maker_state_funcs state 0
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_07_search_light_maker", search_light_maker_init);
-#else
 void search_light_maker_init(struct EffectObj* self)
 {
     s32 var_v0;
     struct SearchLightSpawner* var_v1;
+    struct BackgroundObj* background_object;
 
     self->state = 1;
 
@@ -29,11 +27,13 @@ void search_light_maker_init(struct EffectObj* self)
         var_v1 += 1;
     }
 
-    search_light_maker_spawn_in_rect((background_objects[0].x_pos.i.hi - 48), (background_objects[0].x_pos.i.hi + 368), (background_objects[0].y_pos.i.hi - 48), (background_objects[0].y_pos.i.hi + 288), self);
-    search_light_maker_spawn_in_rect((background_objects[1].x_pos.i.hi - 48), (background_objects[1].x_pos.i.hi + 368), (background_objects[1].y_pos.i.hi - 48), (background_objects[1].y_pos.i.hi + 288), self);
-    search_light_maker_spawn_in_rect((background_objects[2].x_pos.i.hi - 48), (background_objects[2].x_pos.i.hi + 368), (background_objects[2].y_pos.i.hi - 48), (background_objects[2].y_pos.i.hi + 288), self);
+    background_object = background_objects;
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
+    background_object++;
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
+    background_object++;
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
 }
-#endif
 
 // search_light_maker_state_funcs state 1
 void search_light_maker_main(struct EffectObj* self)
@@ -96,15 +96,12 @@ struct Initializer {
     s16 value2;
 };
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_07_search_light_maker", search_light_maker_spawn_in_rect);
-#else
 void search_light_maker_spawn_in_rect(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
 {
     struct Initializer* current = (struct Initializer*)search_light_spawners;
     struct QuadObj* result;
 
-    if (D_8010B465 != 0xFF) {
+    if (current->type != 0xFF) {
         do {
             if (current->active == 0 && current->value1 > arg0 && current->value1 < arg1 && current->value2 > arg2 && current->value2 < arg3) {
                 result = find_free_quad_obj();
@@ -123,7 +120,6 @@ void search_light_maker_spawn_in_rect(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s3
         } while (current->type != 0xFF);
     }
 }
-#endif
 
 s8 search_light_maker_scroll_dirs(s32 arg0, s8 arg1)
 {

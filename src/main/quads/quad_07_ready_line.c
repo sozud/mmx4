@@ -438,20 +438,19 @@ void ready_line_shutter(struct QuadObj* arg0)
 extern u8 ready_line_streak_shapes[];
 
 // ready_line_type_funcs state 2
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/quads/quad_07_ready_line", ready_line_streak);
-#else
 void ready_line_streak(struct QuadObj* arg0)
 {
     s32 var_s1;
     struct EffectObj* temp_v0_9;
     u16 temp_v0_8;
     s16* verts;
+    u8* shapes;
 
     switch (arg0->unk5) {
     case 0:
+        shapes = ready_line_streak_shapes;
         arg0->unk5 = 1;
-        verts = &ready_line_streak_vertices[ready_line_streak_shapes[get_random() & 0xF]][0];
+        verts = &ready_line_streak_vertices[shapes[get_random() & 0xF]][0];
         arg0->vertices[0].x.i.hi = *verts++;
         arg0->vertices[0].y.i.hi = *verts++;
         arg0->vertices[1].x.i.hi = *verts++;
@@ -510,7 +509,6 @@ void ready_line_streak(struct QuadObj* arg0)
         return;
     }
 }
-#endif
 
 void ready_line_move(struct QuadObj* arg0)
 {

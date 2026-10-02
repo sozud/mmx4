@@ -83,7 +83,7 @@ void hatch_blast_main(struct ShotObj* self)
         func_8002D9BC(self);
         func_8002C808(PLAYER_OBJECT(self));
         if (self->unk8A != 0) {
-            if (!(D_80141BD8.unk0 & 3)) {
+            if (!(main_bss_state.frame_counter & 3)) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x60, 0x60);
                 func_800AF878(BASE_OBJECT(self), 1, 0x30, 0x30);
                 x_offset = get_random() & 0x30;

@@ -103,18 +103,15 @@ void sigma_head_idle(struct ShotObj* self)
 {
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", sigma_head_move_start);
-#else
 void sigma_head_move_start(struct ShotObj* self)
 {
-
     self->unk8C.bytes[2] = MAIN_OBJECT(self->unk7C)->ext.main_74.effect_state;
     self->unk15 = 0;
     self->unk5C = 0x30;
     self->x_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][0];
     self->y_pos.i.hi = sigma_head_formation_start[self->unk8C.bytes[2]][self->unk2][1];
-    set_velocity_from_angle(MOVING_OBJECT(self), (u8)(self->unk8C.bytes[1] = angle_to_point(OBJECT_HEADER(self), sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16, sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16)));
+    self->unk8C.bytes[1] = angle_to_point(OBJECT_HEADER(self), sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][0] << 16, sigma_head_formation_end[self->unk8C.bytes[2]][self->unk2][1] << 16);
+    set_velocity_from_angle(MOVING_OBJECT(self), self->unk8C.bytes[1]);
     set_animation(self, 7);
     self->unk8C.byte = 1;
     self->unk68 = (struct Unk_unk68*)sigma_head_boxes[2];
@@ -122,7 +119,6 @@ void sigma_head_move_start(struct ShotObj* self)
     self->y_vel.val *= 3;
     self->unk6++;
 }
-#endif
 
 void sigma_head_move(struct ShotObj* self)
 {

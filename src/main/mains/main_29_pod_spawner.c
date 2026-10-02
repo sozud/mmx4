@@ -65,25 +65,19 @@ u8 pod_spawner_player_quadrant(struct MainObj* self)
 // pod_spawner_find_slot
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005ABC0);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", pod_spawner_despawn);
-#else
 void pod_spawner_despawn(struct MainObj* self)
 {
-    struct Main29Ext* context;
     struct Main29Record* record;
     struct Main29Record* target;
 
-    context = &SP_CUR_MAIN_OBJ->ext.main_29;
-    target = context->slots.controller.target;
-    record = context->slots.controller.record;
+    target = SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target;
+    record = SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.record;
     if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
         record->unk4 = 2;
     }
     target->unk4 = 2;
     despawn_object(OBJECT_HEADER(self));
 }
-#endif
 
 // pod_spawner_state_3
 INCLUDE_ASM("main/nonmatchings/mains/main_29_pod_spawner", func_8005AD00);

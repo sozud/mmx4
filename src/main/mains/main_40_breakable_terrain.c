@@ -23,7 +23,7 @@ void breakable_terrain_crumble(struct MainObj* self)
 
     self->ext.main_40.timer--;
     if (self->ext.main_40.timer != 0) {
-        if (!(D_80141BD8.unk0 & 7)) {
+        if (!(main_bss_state.frame_counter & 7)) {
             if (self->ext.main_40.unk80 < 2U) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x10, 0x30);
             }

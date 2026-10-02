@@ -160,9 +160,6 @@ void jump_shooter_jump(struct MainObj* self)
     jump_shooter_jump_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", jump_shooter_jump_launch);
-#else
 void jump_shooter_jump_launch(struct MainObj* self)
 {
     s8 event;
@@ -170,18 +167,21 @@ void jump_shooter_jump_launch(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     event = self->animation_step.fields.event;
     if (2 == event) {
+        u8 direction;
+
         self->ext.main_52.unk80 = 1;
         self->y_speed = FIXED(6);
         self->gravity = FIXED(0.25);
-        if (self->ext.main_52.unk8C == 0) {
+        direction = self->ext.main_52.unk8C;
+        if (direction == 0) {
             if (self->unk15 != 0) {
                 self->x_speed = FIXED(1.8);
             } else {
                 self->x_speed = FIXED(-1.8);
             }
-        } else if (self->ext.main_52.unk8C == 1) {
+        } else if (direction == 1) {
             self->x_speed = 0;
-        } else if (self->ext.main_52.unk8C == event) {
+        } else if (direction == event) {
             if (self->unk15 == 0) {
                 self->x_speed = FIXED(1.8);
             } else {
@@ -192,7 +192,6 @@ void jump_shooter_jump_launch(struct MainObj* self)
         self->unk6 = 1;
     }
 }
-#endif
 
 void jump_shooter_jump_air(struct MainObj* self)
 {

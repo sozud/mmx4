@@ -475,17 +475,12 @@ void slash_beast_intro_wait_dialogue(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", slash_beast_intro_fill_health);
-#else
 void slash_beast_intro_fill_health(struct MainObj* self)
 {
     if (update_boss_music_delay() == 0) {
         if (engine_obj.stage == 8) {
-            s16* background_object = &background_objects[0].unk26;
-
-            if (*background_object != 0x24B0) {
-                *background_object -= 1;
+            if (background_objects[0].unk26 != 0x24B0) {
+                background_objects[0].unk26 -= 1;
             }
         }
 
@@ -505,7 +500,6 @@ void slash_beast_intro_fill_health(struct MainObj* self)
         }
     }
 }
-#endif
 
 void slash_beast_stagger(struct MainObj* self)
 {

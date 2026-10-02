@@ -355,7 +355,7 @@ void pickup_main(struct ItemObj* arg0)
         }
     } else {
         arg0->on_screen = 0;
-        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(BLINK_TIMER.unk0 & 1)) {
+        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(BLINK_CLOCK(main_bss_state.frame_counter) & 1)) {
             is_on_screen((struct BaseObj*)arg0);
         }
     }

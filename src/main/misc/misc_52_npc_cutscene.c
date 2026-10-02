@@ -34,7 +34,7 @@ void npc_cutscene_talk_line(struct MiscObj* self)
     }
 
     self->on_screen = 0;
-    if (BLINK_TIMER.unk0 & 1) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -65,7 +65,7 @@ void npc_cutscene_reply(struct MiscObj* obj)
     s8 state;
     u8 timer;
 
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         state = obj->unk5;
         switch (state) {
         case 0:
@@ -99,7 +99,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D26F4);
 void npc_cutscene_main(struct MiscObj* self)
 {
     npc_cutscene_type_funcs[self->unk2](self);
-    if (D_80141BD8.unk0 % 10 == 0) {
+    if (main_bss_state.frame_counter % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_52.unk57;
         if (--self->ext.misc_52.unk56 == 0) {
             self->ext.misc_52.unk56 = 7;
@@ -120,7 +120,7 @@ void npc_cutscene_blink(struct MiscObj* self)
         self->ext.misc_52.timer = timer - 1;
     }
     self->on_screen = 0;
-    if (BLINK_TIMER.unk0 & 1) {
+    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }

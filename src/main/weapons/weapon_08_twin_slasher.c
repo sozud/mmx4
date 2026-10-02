@@ -73,18 +73,16 @@ void twin_slasher_charged_update(struct WeaponObj* arg0)
 // twin_slasher_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097BA4);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", twin_slasher_charged_main);
-#else
 void twin_slasher_charged_main(struct WeaponObj* arg0)
 {
     struct MiscObj* misc_obj;
     u8 timer;
+    struct Weapon17Ext* weapon_17 = &arg0->ext.weapon_17;
 
     if (func_8002B1E8((struct BaseObj*)arg0, 0x20, 0x20) == 0) {
-        timer = arg0->ext.weapon_17.timer;
+        timer = weapon_17->timer;
         if (timer == 0) {
-            arg0->ext.weapon_17.timer = 3;
+            weapon_17->timer = 3;
             misc_obj = find_free_misc_obj();
             if (misc_obj != 0) {
                 misc_obj->active = 1;
@@ -96,7 +94,7 @@ void twin_slasher_charged_main(struct WeaponObj* arg0)
                 misc_obj->unk15 = arg0->unk15;
             }
         } else {
-            arg0->ext.weapon_17.timer = timer - 1;
+            weapon_17->timer = timer - 1;
         }
         animate_object((struct AnimatedObj*)arg0);
         move_object((struct MovingObj*)arg0);
@@ -105,7 +103,6 @@ void twin_slasher_charged_main(struct WeaponObj* arg0)
     }
     twin_slasher_hide(arg0);
 }
-#endif
 
 // twin_slasher_trail_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097DD8);

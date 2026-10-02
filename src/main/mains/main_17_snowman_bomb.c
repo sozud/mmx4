@@ -44,20 +44,16 @@ void snowman_bomb_init(struct MainObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", snowman_bomb_main);
-#else
 void snowman_bomb_main(struct MainObj* self)
 {
     s32 collision;
-    struct Main17Ext* ext = &self->ext.main_17;
 
     snowman_bomb_check_fall(self);
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     snowman_bomb_step_funcs[self->unk5](self);
     func_8002D9BC(self);
-    ext->unk90 = self->unk5;
+    self->ext.main_17.unk90 = self->unk5;
     collision = func_8002DD04(self);
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi + self->terrain_box->unk0,
             self->terrain_box->unk3 + (self->y_pos.i.hi + self->terrain_box->unk1))
@@ -74,7 +70,6 @@ void snowman_bomb_main(struct MainObj* self)
     }
     self->state = 2;
 }
-#endif
 
 void snowman_bomb_despawn(struct MainObj* self)
 {

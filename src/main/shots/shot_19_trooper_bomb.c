@@ -33,7 +33,7 @@ void trooper_bomb_explode(struct ShotObj* self)
         if (self->unk84.value == 0x20) {
             self->unk7C->unk1C.bytes[0] = 1;
         }
-        if (!(D_80141BD8.unk0 & 7)) {
+        if (!(main_bss_state.frame_counter & 7)) {
             if (self->unk84.value >= 0x34) {
                 func_800C842C(8, trooper_bomb_debris, self, 0x28, train_crate_animations);
                 self->x_pos.i.hi += 0x20;

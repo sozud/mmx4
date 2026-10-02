@@ -283,7 +283,11 @@ struct Unk_unk68 player_x_collision_bounds = { 0, 2, 0x0B, 0x13 };
 
 struct Unk_unk68 player_zero_collision_bounds = { 0, 3, 0x0A, 0x13 };
 
-u16 player_dash_effect_offsets[6] = { 0x10, 0x0E, 0x1A, 0x11, 0x10, 0x1A };
+struct PlayerDashEffectOffset player_dash_spark_offsets[2] = {
+    { 0x10, 0x0E },
+    { 0x1A, 0x11 },
+};
+u16 player_dash_splash_offsets[2] = { 0x10, 0x1A };
 
 f32 player_wall_kick_spark_offsets[2] = {
     { 0x000CFFF5 },
@@ -496,12 +500,8 @@ void player_init_clone(void)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_update_init);
-#else
 void player_update_init(struct PlayerObj* self)
 {
-    struct EngineObj* engine = &engine_obj;
     s32 entry;
 
     if (self->is_clone != 0) {
@@ -511,43 +511,46 @@ void player_update_init(struct PlayerObj* self)
         self->state++;
         return;
     }
-    if (engine->unk1E != 0) {
-        self->on_screen = 1;
-        engine->unk1F = 1;
-        entry = 0;
-        switch (engine->stage) {
-        case 3:
-            if (engine->unk1E == -1 && engine->checkpoint != 0) {
-                entry = 1;
-            }
-            break;
-        case 5:
-            if (engine->substage != 0 && engine->checkpoint != 0) {
-                entry = 0;
-            } else {
-                entry = 2;
-            }
-            break;
-        case 6:
-            if (engine->unk1E == -1) {
-                entry = 1;
-            }
-            break;
-        case 12:
-            if (engine->substage == 0) {
-                if (engine->checkpoint >= 2) {
+    {
+        struct EngineObj* engine = &engine_obj;
+
+        if (engine->unk1E != 0) {
+            self->on_screen = 1;
+            engine->unk1F = 1;
+            entry = 0;
+            switch (engine->stage) {
+            case 3:
+                if (engine->unk1E == -1 && engine->checkpoint != 0) {
                     entry = 1;
                 }
-            } else if (engine->checkpoint == 0) {
-                entry = 1;
+                break;
+            case 5:
+                if (engine->substage != 0 && engine->checkpoint != 0) {
+                    entry = 0;
+                } else {
+                    entry = 2;
+                }
+                break;
+            case 6:
+                if (engine->unk1E == -1) {
+                    entry = 1;
+                }
+                break;
+            case 12:
+                if (engine->substage == 0) {
+                    if (engine->checkpoint >= 2) {
+                        entry = 1;
+                    }
+                } else if (engine->checkpoint == 0) {
+                    entry = 1;
+                }
+                break;
             }
-            break;
+            self->state++;
+            player_entry_funcs[entry](self);
         }
-        self->state++;
-        player_entry_funcs[entry](self);
     }
 }
-#endif
 
 void player_entry_beam_in(struct PlayerObj* self)
 {
@@ -688,27 +691,14 @@ void player_spawn_death_orb(s8 direction)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_death_orbs);
-#else
 void player_spawn_death_orbs(s8 pattern)
 {
-    const s8* entry;
-    const s8* end;
-    s32 index;
-    const s8* table;
+    u32 index;
 
-    index = pattern;
-    table = (const s8*)player_death_orb_directions;
-    index *= 8;
-    entry = table + index;
-    end = entry + 8;
-
-    do {
-        player_spawn_death_orb(*entry++);
-    } while (entry < end);
+    for (index = 0; index < 8; index++) {
+        player_spawn_death_orb(player_death_orb_directions[pattern][index]);
+    }
 }
-#endif
 
 void player_update_inactive(struct PlayerObj* self)
 {
@@ -763,17 +753,17 @@ INCLUDE_ASM("main/nonmatchings/player_common", player_read_input);
 void player_read_input(void)
 {
     if (g_Player.controlling_clone == 0) {
-        g_Player.input.buttons.held = player_map_buttons(D_80166C08);
-        g_Player.input.buttons.previous = player_map_buttons(D_80166C0A);
-        g_Player.pressed_input = player_map_buttons(controller_state);
+        g_Player.input.buttons.held = player_map_buttons(controller_input.held);
+        g_Player.input.buttons.previous = player_map_buttons(controller_input.previous);
+        g_Player.pressed_input = player_map_buttons(controller_input.pressed);
         return;
     }
     g_Player.input.buttons.held = 0;
     g_Player.input.buttons.previous = 0;
     g_Player.pressed_input = 0;
-    g_Entity.input.buttons.held = player_map_buttons(D_80166C08);
-    g_Entity.input.buttons.previous = player_map_buttons(D_80166C0A);
-    g_Entity.pressed_input = player_map_buttons(controller_state);
+    g_Entity.input.buttons.held = player_map_buttons(controller_input.held);
+    g_Entity.input.buttons.previous = player_map_buttons(controller_input.previous);
+    g_Entity.pressed_input = player_map_buttons(controller_input.pressed);
 }
 #endif
 
@@ -1057,9 +1047,6 @@ void player_spawn_dash_dust(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_dash_spark);
-#else
 void player_spawn_dash_spark(struct PlayerObj* self)
 {
     u8 facing;
@@ -1092,17 +1079,13 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     facing = self->unk15;
     visual_obj->unk15 = facing;
     if (facing == 0) {
-        visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2];
+        visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_spark_offsets[self->unk2].x;
     } else {
-        visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_effect_offsets[self->unk2 * 2];
+        visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_spark_offsets[self->unk2].x;
     }
-    visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_dash_effect_offsets[self->unk2 * 2 + 1];
+    visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_dash_spark_offsets[self->unk2].y;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_dash_splash);
-#else
 void player_spawn_dash_splash(struct PlayerObj* self)
 {
     u8 facing;
@@ -1126,16 +1109,15 @@ void player_spawn_dash_splash(struct PlayerObj* self)
             facing = self->unk15;
             visual_obj->unk15 = facing;
             if (facing == 0) {
-                visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_dash_splash_offsets[self->unk2];
                 visual_obj->y_pos.i.hi = self->y_pos.u.hi;
             } else {
-                visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_effect_offsets[4 + self->unk2];
+                visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_dash_splash_offsets[self->unk2];
                 visual_obj->y_pos.i.hi = self->y_pos.u.hi;
             }
         }
     }
 }
-#endif
 
 extern f32 player_wall_kick_spark_offsets[];
 
@@ -1228,46 +1210,36 @@ void player_check_splash(struct PlayerObj* self)
 
 // player_spawn_splash
 INCLUDE_ASM("main/nonmatchings/player_common", func_80036BF4);
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_weapon);
-#else
 struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerObj* owner)
 {
     struct WeaponObj* weapon = find_free_weapon_obj();
 
-    if (weapon == NULL) {
-        return NULL;
+    if (weapon != NULL) {
+        weapon->active = active;
+        weapon->id = id;
+        weapon->unk2 = type;
+        weapon->bg_offset = g_Player.bg_offset;
+        if (owner != NULL) {
+            weapon->owner = owner;
+        }
+        return weapon;
     }
-
-    weapon->active = active;
-    weapon->id = id;
-    weapon->unk2 = type;
-    weapon->bg_offset = g_Player.bg_offset;
-    if (owner != NULL) {
-        weapon->owner = owner;
-    }
-    return weapon;
+    return NULL;
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_common", player_spawn_visual);
-#else
 struct VisualObj* player_spawn_visual(s8 active, s8 id, s8 variant, void* owner)
 {
     struct VisualObj* visual_obj = find_free_visual_obj();
 
-    if (visual_obj == NULL) {
-        return NULL;
+    if (visual_obj != NULL) {
+        visual_obj->active = active;
+        visual_obj->id = id;
+        visual_obj->unk2 = variant;
+        visual_obj->bg_offset = g_Player.bg_offset;
+        if (owner) {
+            visual_obj->unk50 = owner;
+        }
+        return visual_obj;
     }
-
-    visual_obj->active = active;
-    visual_obj->id = id;
-    visual_obj->unk2 = variant;
-    visual_obj->bg_offset = g_Player.bg_offset;
-    if (owner) {
-        visual_obj->unk50 = owner;
-    }
-    return visual_obj;
+    return NULL;
 }
-#endif

@@ -114,7 +114,7 @@ void func_8001326C(u8 arg0)
     struct Prim* prim;
     s32 tpage;
 
-    if ((arg0 != 0) || !(D_80141BD8.unk0 & 0x10)) {
+    if ((arg0 != 0) || !(main_bss_state.frame_counter & 0x10)) {
         sprt = SP_PRIM_CURSOR;
         draw_mode = SP_DRAW_MODE_CURSOR;
         prim = &D_800EE504[arg0];
@@ -180,18 +180,14 @@ void func_80013404(u8 arg0)
 }
 #endif
 #ifndef MMX4_PC
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/3A6C", func_80013530);
-#else
 void func_80013530(void)
 {
     func_800129F0(0x10);
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         do {
             func_80013404(0);
             func_800127C8(1);
-        } while (D_80141BDC[0] != 0);
+        } while (main_bss_state.transition.active != 0);
     }
 }
-#endif
 #endif

@@ -387,3 +387,17 @@ D_80158014 = 0x80158014;
 D_80173C30 = 0x80173CE8;
 D_801754D4 = 0x8017558C;
 D_80175558 = 0x80175610;
+main_bss_state = 0x80141CB8;
+controller_input = 0x80166CE8;
+memcard_menu = 0x80172268;
+general_fists = 0x8013B9A0;
+
+loaded_vab_address = 0x80143050;
+saved_vab_address = 0x80166C94;
+cd_fade_requested = 0x80137EF4;
+movie_slice_offset = 0x80139744;
+pad_port1_packet = 0x8012F558;
+player_dash_effect_offsets = 0x800F8D08;
+sigma_bolt_offsets = 0x80109C48;
+D_800F1A0C = 0x800F1B9C;
+D_800F474C = 0x800F48A0;

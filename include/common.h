@@ -193,21 +193,40 @@ struct StageObjectMarginData {
     u16 margins[5];
     u16 alignment_padding;
 };
-struct MainFlags {
-    s32 unk0;
-};
 struct TransitionState {
     s8 active;
-    s8 unk1;
-    s8 unk2;
+    s8 fade_amount;
+    s8 suspended;
     u8 selection;
 };
 struct MainBssState {
-    struct MainFlags flags;
-    s8 transition[4];
+    s32 frame_counter;
+    struct TransitionState transition;
     u8 character_mode;
     u8 alignment_padding[3];
 };
+extern struct MainBssState main_bss_state;
+
+struct ControllerInput {
+    u16 held;
+    u16 previous;
+    u16 pressed;
+};
+extern struct ControllerInput controller_input;
+
+struct MemcardMenuState {
+    u8* buffer;
+    u8 card_status[2];
+    u8 port;
+    u8 selection;
+    u8 result;
+    u8 operation;
+    u8 timer;
+    u8 padding;
+    struct MemcardSaveSlot* slot;
+};
+extern struct MemcardMenuState memcard_menu;
+
 struct FadeState {
     s16 unk0, unk2;
     u16 unk4, alignment_padding;
@@ -223,18 +242,6 @@ struct ArchiveSelectionData {
 union CdSectorBuffer {
     u8 sectors[16][0x800];
     u32 words[0x2000];
-};
-struct MissionSelectData {
-#ifdef MMX4_WIN32
-    u8 stage_order[16];
-#else
-    u8 stage_order[12];
-#endif
-    u8 route_a[8];
-    u8 route_b[8];
-    u16 route_a_positions[4];
-    u16 route_b_positions[3];
-    u16 briefing_sound_ids[11];
 };
 struct TitleObjectInit {
     s16 x, y;
@@ -372,7 +379,16 @@ struct BootTransitionDataRegion {
     u8 stage_map[9];
 } __attribute__((packed));
 
-extern struct MissionSelectData D_800F474C;
+#ifdef MMX4_WIN32
+extern u8 mission_stage_order[16];
+#else
+extern u8 mission_stage_order[12];
+#endif
+extern u8 mission_palette_order[8];
+extern u8 mission_route_b[8];
+extern RECT mission_route_a_positions;
+extern RECT mission_route_b_positions;
+extern u16 briefing_voice_ids[10];
 extern union PlayerChargeData player_weapon_energy;
 
 union AnimationStep {
@@ -2984,7 +3000,6 @@ struct Prim {
 extern struct PlayerObj g_Player;
 extern struct PlayerObj g_Entity;
 extern const u32* D_80119DF0[144];
-extern struct Unk16 D_80141BD8;
 #ifdef MMX4_WIN32
 extern u8 flicker_enabled;
 #define FLICKER_ENABLED flicker_enabled
@@ -2994,8 +3009,6 @@ extern u8 flicker_enabled;
 #ifdef MMX4_WIN32
 extern struct Unk16 blink_timer;
 #define BLINK_TIMER blink_timer
-#else
-#define BLINK_TIMER D_80141BD8
 #endif
 #ifdef MMX4_WIN32
 extern u8 easy_mode;
@@ -3387,7 +3400,7 @@ struct EngineObj {
         u8 timer;
     } unk36;
     s8 unk37;
-    void* unk38;
+    struct PlayerObj* controlled_player;
     struct BaseObj* unk3C;
     u8 unk40;
     s8 unk41;
@@ -3941,19 +3954,6 @@ extern struct Unk_unk68 web_spider_hurt_box;
 extern void* beam_drone_animations[12];
 extern void* storm_owl_animations[30];
 extern void* gunship_animations[29];
-#ifdef MMX4_PC
-extern struct MainBssState main_bss_state;
-#define D_80141BD8 (main_bss_state.flags)
-#define D_80141BDC (main_bss_state.transition)
-#define D_80141BDE (&main_bss_state.transition[2])
-#define D_80141BDF ((u8*)&main_bss_state.transition[3])
-#define D_80141BE0 (main_bss_state.character_mode)
-#else
-extern s8 D_80141BDC[];
-extern s8 D_80141BDE[];
-extern u8 D_80141BDF[];
-extern u8 D_80141BE0;
-#endif
 extern struct Unk5 D_800F0E18[];
 extern struct Unk_unk68 jet_stingray_land_attack_box;
 extern struct Unk_unk68 jet_stingray_land_hurt_box;
@@ -3969,6 +3969,7 @@ extern s8 D_80141A07;
 extern s8 D_80141A5B;
 extern struct DrawInfo* cur_draw_info;
 extern struct EngineObj engine_obj;
+extern s8 D_801307F8;
 extern struct EffectObj* boss_warning_tiles[22];
 extern u8* tile_flicker_scripts[2];
 extern struct Effect28AnimationStep* tile_anim_scripts[3];
@@ -3982,14 +3983,6 @@ extern u8 layout_width;
 extern u16 layout_size;
 extern void (*engine_update_funcs[])(struct EngineObj*);
 extern u8 D_80171EA8;
-extern u8* D_801721B0;
-extern u8 D_801721B4;
-extern u8 D_801721B5;
-extern u8 D_801721B6;
-extern u8 D_801721B7;
-extern u8 D_801721B9;
-extern u8 D_801721BA;
-extern struct MemcardSaveSlot* D_801721BC;
 struct MemcardPath {
     char path[6];
 };
@@ -4309,8 +4302,7 @@ extern u16 D_8013B858[0x10];
 extern s16 D_8013B878[0x10];
 extern struct Unk_unk68* D_8013B8B0;
 extern u8 D_8013B8B8[8];
-extern struct ShotObj* D_8013B8C0;
-extern struct ShotObj* D_8013B8C4;
+extern struct ShotObj* general_fists[2];
 extern u8 rising_slab_crush_boxes[4][16];
 extern u8 rising_slab_terrain_boxes[4][16];
 extern struct Unk_unk68 sliding_floor_terrain_box;
@@ -4322,7 +4314,6 @@ extern s8 D_80173C6C[4];
 extern u8 D_80137DFC;
 extern u8 D_80137DFD;
 extern struct SoundTransfer D_80137E00;
-extern u8 D_80137DD4;
 extern u8 D_80137DDC;
 extern s32 D_8013BD44;
 extern u8 D_8013BD40;
@@ -4333,8 +4324,6 @@ extern struct StageObjectRecord* D_800F4430[13][2];
 extern struct StageObjectRecord* D_800F43C8[13][2];
 extern u8* D_8010FFDC[][2];
 extern u8 layout_height;
-extern u16 D_80166C08;
-extern u16 D_80166C0A;
 extern u8 dragonfly_debris[8];
 extern u8 player_death_orb_directions[4][8];
 extern u8 spawner_pod_debris[];
@@ -4503,7 +4492,6 @@ extern u8 select_char_priorities[16];
 extern struct CharacterSelectPosition select_char_positions[9];
 extern struct CharacterSelectPosition select_char_text_positions[3];
 extern u8 D_801406AC;
-extern s32 D_80142F70;
 extern u8* D_8015D9C8;
 extern u8 D_800EE47E[];
 extern u32 D_80141F38;
@@ -4541,19 +4529,14 @@ extern u32 D_800F1D8C;
 extern struct MenuRuntimeData D_800F1D90;
 extern CdlATV D_80139644;
 extern u8 D_80171EA9;
-extern s32 D_80166BB4;
-#ifdef MMX4_PC
-extern u8 D_80166D68[0x22];
-#else
 extern u8 D_80166D68;
-#endif
 extern u8 D_8012F46C[0x22];
 extern u16 D_800EE430[];
 extern RECT D_800EE450;
 extern u16 cur_random;
 extern s32 D_8013BD44;
 extern s16 D_80141BD2;
-extern s8 D_80139528;
+extern u8 D_80139528;
 extern CdlATV D_80139520;
 extern s32 D_80137CD8;
 extern RECT D_800F1658;
@@ -4600,7 +4583,6 @@ extern void (*select_char_scroll_text_funcs[])();
 extern void (*select_char_selector_funcs[])();
 extern u8 need_palette_load;
 extern void (*select_char_character_funcs[])();
-extern u8 D_801721B8;
 extern s8 D_801721F7;
 extern void (*ready_line_type_funcs[])();
 extern struct Unk14* color_filter_scripts[];
@@ -4620,7 +4602,6 @@ extern u8 g_FilterModeB;
 extern u16 g_FilterAmountR;
 extern u16 g_FilterAmountB;
 extern u16 g_FilterAmountG;
-extern u16 controller_state;
 extern u8 D_800F4508[];
 extern u8* D_800F4560[];
 extern u8 D_800F4568[];
@@ -4736,11 +4717,8 @@ enum XaTrack {
 struct XaSequenceParams {
     u8 sequence, volume;
 };
-struct XaSequenceData {
-    struct XaSequenceParams stage[16][2][2];
-    struct XaSequenceParams alternate[16];
-};
-extern struct XaSequenceData D_800F1A0C;
+extern struct XaSequenceParams stage_music[16][2][2];
+extern u8 alternate_stage_music[32];
 extern u8* D_80141F00;
 extern u8* D_80141EE8[];
 extern u8* D_80141F50[];
@@ -4816,7 +4794,11 @@ extern u8 trident_mech_debris[12];
 extern u16 player_stage_3_entry_y[2][4];
 extern u16 player_stage_6_entry_y[6];
 extern u16 player_stage_12_entry_y[20];
-extern u16 player_dash_effect_offsets[6];
+struct PlayerDashEffectOffset {
+    u16 x, y;
+};
+extern struct PlayerDashEffectOffset player_dash_spark_offsets[2];
+extern u16 player_dash_splash_offsets[2];
 void player_set_idle_animation(struct PlayerObj*);
 void func_800CEFC0(struct MiscObj*);
 void cyberspace_guide_update_blink(struct MiscObj*);
@@ -4840,7 +4822,7 @@ typedef unsigned long CdLoadAddress;
 extern u32 D_80141F30[8];
 void func_80013AD8(s32, u8, CdLoadAddress);
 void func_80013890(u32, u8*);
-void func_800261B4(s32, u32, u8*);
+void func_800261B4(s32);
 void func_80028FEC(s16, s16, s16, s16, u8);
 struct Item03StageEntry {
     u16 x;
@@ -5060,6 +5042,21 @@ enum SelectedPlayer {
     CHARACTER_ZERO
 };
 
+extern struct ArchiveSelectionData D_800EE480;
+extern s32 loaded_vab_address;
+extern s32 saved_vab_address;
+extern s32 movie_slice_offset;
+extern u8 cd_fade_requested;
+extern u8 pad_port1_packet[0x22];
+
+#ifdef VERSION_EU
+void func_800182E8(s32);
+#else
+void func_800182E8(void);
+#endif
+
+void func_800E9040(void);
+
 #ifdef MMX4_PC
 long SpuSetTransferMode(long);
 void StCdInterrupt(void);
@@ -5133,7 +5130,6 @@ void func_800D9B48(struct LayerObj*);
 void func_800DCF40(void);
 void func_800E0CEC(void);
 void func_800E0D0C(void);
-void func_800E9040(void);
 void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 
 #include "game_prototypes.h"

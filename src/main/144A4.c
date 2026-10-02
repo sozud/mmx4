@@ -174,9 +174,6 @@ void func_80023D90(void)
     func_80017340();
 }
 // some kind of init?
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/144A4", init_objects);
-#else
 void init_objects(void)
 {
     struct UnkObj* var_s0;
@@ -197,9 +194,9 @@ void init_objects(void)
     void* temp_v1_7;
     void* temp_v1_8;
     void* temp_v1_9;
-    struct PlayerObj* ptr = &g_Player;
+    struct PlayerObj* ptr;
     struct BazObj* ptr2;
-    struct PlayerObj* ptr3 = &g_Entity;
+    struct PlayerObj* ptr3;
     struct RideArmorObj* ptr4;
 
     SP_SPRITE_COUNT = 0;
@@ -212,13 +209,15 @@ void init_objects(void)
     func_80024E70();
     func_800241E8();
 
+    ptr = &g_Player;
     if (g_Player.on_screen) {
         func_80024334(ptr);
         if (g_Player.unk2 == 0) {
             func_800257BC(ptr);
         }
     }
-    if (g_Entity.on_screen != 0) {
+    ptr3 = &g_Entity;
+    if (ptr3->on_screen != 0) {
         func_80024334(ptr3);
     }
     if (ptr->unk2 == 0) {
@@ -233,7 +232,7 @@ void init_objects(void)
     }
 
     // this one loops backwards for some reason, doesn't seem to be a compiler optimization
-    for (var_s0 = &foo_objects[2]; var_s0 >= &foo_objects[0]; var_s0--) {
+    for (var_s0 = &foo_objects[2]; var_s0 >= foo_objects; var_s0--) {
         if (var_s0->on_screen != 0) {
             func_80024334(var_s0);
         }
@@ -300,7 +299,6 @@ void init_objects(void)
 
     func_80024260();
 }
-#endif
 void func_800241E8(void)
 {
     u32 buffer;

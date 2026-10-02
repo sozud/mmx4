@@ -28,32 +28,27 @@ void fortress_collapse_despawn(struct EffectObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_28_fortress_collapse", fortress_collapse_flash_red);
-#else
 void fortress_collapse_flash_red(struct EffectObj* self)
 {
     u8 temp_v0;
-    struct Effect28Ext* ext = &self->ext.effect_28;
 
-    temp_v0 = ext->filter_timer - 1;
-    ext->filter_timer = temp_v0;
+    temp_v0 = self->ext.effect_28.filter_timer - 1;
+    self->ext.effect_28.filter_timer = temp_v0;
     if (0 == temp_v0) {
         need_palette_load |= 1;
-        ext->timer = 0x5A;
-        ext->filter_timer = 4;
-        ext->palette_index ^= 1;
+        self->ext.effect_28.timer = 0x5A;
+        self->ext.effect_28.filter_timer = 4;
+        self->ext.effect_28.palette_index ^= 1;
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
-        ext->finished = 0;
+        self->ext.effect_28.finished = 0;
         return;
     }
     g_FilterAmountR = 0x1F;
     g_FilterAmountG = 0;
     g_FilterAmountB = 0;
 }
-#endif
 
 void fortress_collapse_flash_white(struct EffectObj* self)
 {
@@ -96,7 +91,7 @@ void fortress_collapse_spawn_random_explosion(struct EffectObj* self)
     x += get_random_nonzero() % 0xA0;
     y += get_random_nonzero() % 0x78;
     spawn_explosion_at(0, x, y, 0xFF);
-    if ((D_80141BD8.unk0 & 3) == 0) {
+    if ((main_bss_state.frame_counter & 3) == 0) {
         func_8001540C(0, fortress_collapse_explosion_sounds[get_random() & 3], NULL);
     }
 }
