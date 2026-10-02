@@ -15,9 +15,6 @@ void colonel_spawn(struct MainObj* self)
     colonel_spawn_funcs[self->unk5](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_spawn_warning);
-#else
 void colonel_spawn_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -25,7 +22,9 @@ void colonel_spawn_warning(struct MainObj* self)
 
     value = self->unk2;
     self->ext.main_69.state.bytes.variant = value;
-    if (value != 1) {
+    if (value == 1) {
+        self->unk5++;
+    } else {
         effect = find_free_effect_obj();
         if (effect == NULL) {
             return;
@@ -34,10 +33,9 @@ void colonel_spawn_warning(struct MainObj* self)
         effect->id = 0x18;
         self->ext.main_69.effect = effect;
         player_start_script_action(0x15, 0);
+        self->unk5++;
     }
-    self->unk5++;
 }
-#endif
 
 // colonel_init
 INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_80086008);
@@ -135,13 +133,9 @@ void colonel_defeat_wait_dialogue(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_defeat_blink);
-#else
 void colonel_defeat_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
-    s16 timer;
 
     if (--self->unk7C == 0) {
         self->unk6++;
@@ -155,9 +149,7 @@ void colonel_defeat_blink(struct MainObj* self)
         }
     }
     is_on_screen(BASE_OBJECT(self));
-    timer = self->unk7E;
-    self->unk7E = timer - 1;
-    if (timer != 0)
+    if (self->unk7E-- != 0)
         return;
     self->unk42 ^= 0x8000;
     self->invincibility_timer -= 5;
@@ -165,7 +157,6 @@ void colonel_defeat_blink(struct MainObj* self)
         self->invincibility_timer = 0;
     self->unk7E = self->invincibility_timer > 5 ? self->invincibility_timer : 5;
 }
-#endif
 
 void colonel_defeat_wait_explosion(struct MainObj* self)
 {

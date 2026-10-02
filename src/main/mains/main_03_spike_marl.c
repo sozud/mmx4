@@ -43,27 +43,22 @@ void spike_marl_run(struct MainObj* self)
     self->state = 2;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_03_spike_marl", spike_marl_cleanup);
-#else
 void spike_marl_cleanup(struct MainObj* self)
 {
-    u8 subtype;
-    struct Main3Ext* ext = &self->ext.main_3;
+    u32 subtype;
 
     subtype = (u8)self->unk2;
-    ext->alerted = 0;
-    ext->roll_timer = 0;
-    ext->player_ahead = 0;
-    ext->turn_timer = 0;
-    ext->saved_step = 0;
+    self->ext.main_3.alerted = 0;
+    self->ext.main_3.roll_timer = 0;
+    self->ext.main_3.player_ahead = 0;
+    self->ext.main_3.turn_timer = 0;
+    self->ext.main_3.saved_step = 0;
     if (subtype < 2U) {
         despawn_object(OBJECT_HEADER(self));
         return;
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
-#endif
 
 void spike_marl_resume_step(struct MainObj* self)
 {

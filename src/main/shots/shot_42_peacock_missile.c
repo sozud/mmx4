@@ -45,24 +45,20 @@ void peacock_missile_explode(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", peacock_missile_hit_target);
-#else
 s32 peacock_missile_hit_target(struct ShotObj* self)
 {
     struct WeaponObj* weapon;
 
     weapon = self->unk7C;
-    if (weapon->active == 0) {
+    if (weapon->active != 0 && weapon->id == 0x17) {
+        if (func_8002C160(COLLISION_OBJECT(self), COLLISION_OBJECT(weapon)) != 0) {
+            return 1;
+        }
+    } else {
         self->unk5 = 1;
-    } else if (weapon->id != 0x17) {
-        self->unk5 = 1;
-    } else if (func_8002C160(COLLISION_OBJECT(self), COLLISION_OBJECT(weapon)) != 0) {
-        return 1;
     }
     return 0;
 }
-#endif
 
 void peacock_missile_main(struct ShotObj* self)
 {

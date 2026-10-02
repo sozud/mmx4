@@ -95,28 +95,17 @@ void ice_bird_fly_in(struct MainObj* self)
     ice_bird_fly_in_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_14_ice_bird", ice_bird_fly_in_start);
-#else
 void ice_bird_fly_in_start(struct MainObj* self)
 {
-    s32* velocity;
-    struct Main14Ext* ext = &self->ext.main_14;
-
     animate_object(ANIMATED_OBJECT(self));
     ice_bird_spawn_charge_ring(self, 3);
     func_8001540C(2, 0x40, self);
 
-    velocity = ice_bird_fly_speeds;
-    ext->unk80 = 0x20;
-    ext->unk84 = 1;
-    if (self->unk15 & 0x40) {
-        velocity++;
-    }
-    self->x_speed = *velocity;
+    self->ext.main_14.unk80 = 0x20;
+    self->ext.main_14.unk84 = 1;
+    self->x_speed = ice_bird_fly_speeds[(self->unk15 & 0x40) ? 1 : 0];
     self->unk6++;
 }
-#endif
 
 void ice_bird_fly_in_move(struct MainObj* self)
 {
@@ -223,28 +212,17 @@ void ice_bird_leave(struct MainObj* self)
     ice_bird_leave_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_14_ice_bird", ice_bird_leave_start);
-#else
 void ice_bird_leave_start(struct MainObj* self)
 {
-    s32* table;
-
     set_animation(self, 0);
     animate_object(ANIMATED_OBJECT(self));
 
-    table = ice_bird_fly_speeds;
-    if (self->unk15 & 0x40) {
-        table++;
-    }
-
-    self->x_speed = (*table);
+    self->x_speed = ice_bird_fly_speeds[(self->unk15 & 0x40) != 0];
     self->hurt_box = (const u8*)&ice_bird_body_box;
     self->attack_box = (const u8*)&ice_bird_body_box;
     engine_obj.character_state.bytes[0] = 0;
     self->unk6++;
 }
-#endif
 
 void ice_bird_leave_fly(struct MainObj* self)
 {

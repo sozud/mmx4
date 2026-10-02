@@ -585,9 +585,6 @@ void jet_stingray_dash_start(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_dash_charge);
-#else
 void jet_stingray_dash_charge(struct MainObj* self)
 {
     s16 timer;
@@ -608,14 +605,13 @@ void jet_stingray_dash_charge(struct MainObj* self)
             func_8001540C(2, 0xAF, self);
         }
     } else if (self->on_screen == 0) {
-        self->unk7C = 0x78;
         self->unk7 = 0;
+        self->unk7C = 0x78;
         self->x_speed = 0;
         self->unk6 = (u8)self->unk6 + 1;
         self->y_pos.i.hi = background_objects[self->bg_offset].unk22 - 0x50;
     }
 }
-#endif
 
 void jet_stingray_dash_return(struct MainObj* self)
 {
@@ -853,13 +849,11 @@ void jet_stingray_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", jet_stingray_death_explode);
-#else
 void jet_stingray_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
     s8 var_a0;
+    s16 next_unk7e;
 
     if (--self->unk7C == 0) {
         self->unk5++;
@@ -877,10 +871,10 @@ void jet_stingray_death_explode(struct MainObj* self)
         self->unk42 ^= 0x8000;
         self->ext.main_56.unk89.value -= 5;
         var_a0 = self->ext.main_56.unk89.value;
-        self->unk7E = var_a0 > 5 ? var_a0 : 5;
+        next_unk7e = var_a0 > 5 ? var_a0 : 5;
+        self->unk7E = next_unk7e;
     }
 }
-#endif
 
 void jet_stingray_death_finish(struct MainObj* self)
 {

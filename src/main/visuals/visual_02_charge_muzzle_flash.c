@@ -87,26 +87,25 @@ void charge_muzzle_flash_fade(struct VisualObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/visuals/visual_02_charge_muzzle_flash", charge_muzzle_flash_follow);
-#else
 void charge_muzzle_flash_follow(struct VisualObj* arg0)
 {
-    struct PlayerObj* entity = &g_Player;
+    struct PlayerObj* entity;
 
+    if (arg0->unk5C.value != 0) {
+        return;
+    }
+
+    entity = &g_Player;
+    if (entity->attacking == 0) {
+        arg0->unk5C.value = 1;
+    }
+    if (entity->unk15 != arg0->unk15) {
+        arg0->unk5C.value = 1;
+    }
     if (arg0->unk5C.value == 0) {
-        if (entity->attacking == 0) {
-            arg0->unk5C.value = 1;
-        }
-        if (entity->unk15 != arg0->unk15) {
-            arg0->unk5C.value = 1;
-        }
-        if (arg0->unk5C.value == 0) {
-            buster_shot_place_at_muzzle(arg0, entity, arg0->unk2);
-        }
+        buster_shot_place_at_muzzle(arg0, entity, arg0->unk2);
     }
 }
-#endif
 
 struct VisualAttachmentInit charge_muzzle_flash_types[4] = {
     { 0x03, 0x16, 0x09 },

@@ -56,26 +56,20 @@ void tile_anim_trigger_main(struct EffectObj* self)
     despawn_object(OBJECT_HEADER(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_29_tile_anim_trigger", tile_anim_trigger_step);
-#else
 void tile_anim_trigger_step(struct EffectObj* self)
 {
     s8 timer;
-    s32* source;
-    struct EffectPaletteExt* ext = &self->ext.effect_29;
 
-    timer = ext->palette.fields.timer - 1;
-    ext->palette.fields.timer = timer;
+    timer = self->ext.effect_29.palette.fields.timer - 1;
+    self->ext.effect_29.palette.fields.timer = timer;
     if (timer == 0) {
-        ext->palette_source.words += ext->palette.fields.step;
-        ext->palette.packed = *ext->palette_source.words;
-        refresh_visible_tile_effect(ext->palette.fields.id,
+        self->ext.effect_29.palette_source.words += self->ext.effect_29.palette.fields.step;
+        self->ext.effect_29.palette.packed = *self->ext.effect_29.palette_source.words;
+        refresh_visible_tile_effect(self->ext.effect_29.palette.fields.id,
             self->x_pos.i.hi - tile_anim_trigger_offsets[self->unk2][0],
             self->y_pos.i.hi - tile_anim_trigger_offsets[self->unk2][1]);
     }
 }
-#endif
 
 void (*tile_anim_trigger_state_funcs[])(struct EffectObj*) = {
     tile_anim_trigger_init,

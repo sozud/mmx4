@@ -135,25 +135,19 @@ void split_mushroom_intro_wait_player(struct MainObj* self)
     self->unk6 = 1;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", split_mushroom_intro_drop);
-#else
 void split_mushroom_intro_drop(struct MainObj* self)
 {
     if (0 == *self->ext.main_61.data.script) {
-        s16* y_pos;
-
         engine_obj.enable_boss = 1;
         engine_obj.unk25 = 0;
         engine_obj.boss_ptr = self;
-        self->y_pos.i.hi = *(&background_objects[g_Player.bg_offset].y_pos.i.hi) - 0x20;
+        self->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x20;
         self->ext.main_61.active = 1;
         func_8001540C(2, 0xA7, self);
         self->unk7C = 2;
         self->unk6 = 2;
     }
 }
-#endif
 
 void split_mushroom_intro_bounce(struct MainObj* self)
 {

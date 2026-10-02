@@ -66,17 +66,14 @@ void func_8001FAFC(struct EngineObj* arg0)
     func_8001F118();
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/102FC", func_8001FB50);
-#else
 void func_8001FB50(void)
 {
     while (1) {
-        engine_update_funcs[engine_obj.state](&engine_obj);
+        s8 state = engine_obj.state;
+        engine_update_funcs[state](&engine_obj);
         func_800127C8(1);
     }
 }
-#endif
 
 void engine_state_0(struct EngineObj* arg0)
 {
@@ -221,17 +218,20 @@ void engine_state_6(struct EngineObj* arg0)
 }
 
 // D_800F241C state 0
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/102FC", func_8001FF8C);
-#else
 void func_8001FF8C(struct EngineObj* arg0)
 {
-    if (!arg0->unk1C && !D_80141BDC[0] && ((controller_state & PADstart)
+    if (!arg0->unk1C && !main_bss_state.transition.active &&
+#ifdef VERSION_EU
+        ((controller_input.pressed & PADstart) || D_80166D68 != 0) &&
+#else
+        ((controller_input.pressed & PADstart)
 #ifndef VERSION_JP
-            || D_80166D68 == 0xFF
+            || pad_port1_packet[0] == 0xFF
 #endif
             )
-        && !arg0->unk10 && !arg0->unkF) {
+        &&
+#endif
+        !arg0->unk10 && !arg0->unkF) {
         arg0->unk1 = 2;
     } else {
         if (g_Player.state == 3) {
@@ -243,12 +243,11 @@ void func_8001FF8C(struct EngineObj* arg0)
     }
     func_80023D68();
 }
-#endif
 
 // D_800F241C state 1
 void func_80020060(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         func_80021158();
         func_80023D68();
     } else {

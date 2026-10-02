@@ -44,7 +44,7 @@ void crusher_wall_rumble(struct ItemObj* arg0)
 
     crusher_wall_speed_funcs[arg0->unk5](arg0);
     if (--arg0->unk7C.timer16 != 0) {
-        if (!(D_80141BD8.unk0 & 7)) {
+        if (!(main_bss_state.frame_counter & 7)) {
             arg0->y_pos.u.hi += 0x10;
             func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
             func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);

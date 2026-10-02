@@ -170,14 +170,10 @@ ret_u8 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
         & 0xFF;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/object_motion", angle_from_delta);
-#else
 u8 angle_from_delta(s32 arg0, s32 arg1)
 {
     extern u32 D_800F45E4[];
     s32 temp_lo;
-    s32 angle;
     s16 var_a3, var_a2;
     u32* ptr;
 
@@ -217,22 +213,18 @@ u8 angle_from_delta(s32 arg0, s32 arg1)
         arg0 = 8;
     }
 
-    if (var_a3 << 0x10 < 0) {
-        if (var_a2 << 0x10 > 0) {
+    if ((var_a3 << 0x10) < 0) {
+        if ((var_a2 << 0x10) > 0) {
             if ((s16)arg0 == 8) {
                 return 0;
             }
-            angle = 0x18 + arg0;
-        } else {
-            angle = 0x18 - arg0;
+            return 0x18 + arg0;
         }
-    } else {
-        angle = (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
+        return 0x18 - arg0;
     }
 
-    return angle & 0xFF;
+    return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
 }
-#endif
 
 extern s32 D_800F459C[];
 

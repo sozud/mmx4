@@ -79,31 +79,22 @@ void robot_bee_wait_start(struct MainObj* self)
     self->unk6++;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_wait_for_player);
-#else
 void robot_bee_wait_for_player(struct MainObj* self)
 {
     s32 object_x;
     s32 player_x;
-    s32* velocity;
     s32 x_vel;
 
     animate_object(ANIMATED_OBJECT(self));
     object_x = self->x_pos.val;
     player_x = g_Player.x_pos.val;
     if (ABS(object_x, player_x) <= FIXED(144)) {
-        velocity = robot_bee_approach_speeds;
-        if (!(self->unk15 & 0x40)) {
-            velocity++;
-        }
-        x_vel = *velocity;
+        x_vel = robot_bee_approach_speeds[!(self->unk15 & 0x40)];
         self->y_speed = 0;
         self->unk5 = 3;
         self->x_speed = x_vel;
     }
 }
-#endif
 
 void robot_bee_glide(struct MainObj* self)
 {
@@ -113,25 +104,16 @@ void robot_bee_glide(struct MainObj* self)
     robot_bee_glide_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_glide_start);
-#else
 void robot_bee_glide_start(struct MainObj* self)
 {
-    s32* velocity;
     s32 x_vel;
 
     animate_object(ANIMATED_OBJECT(self));
-    velocity = robot_bee_approach_speeds;
-    if (!(self->unk15 & 0x40)) {
-        velocity++;
-    }
-    x_vel = *velocity;
+    x_vel = robot_bee_approach_speeds[!(self->unk15 & 0x40)];
     self->y_speed = FIXED(1);
     self->x_speed = x_vel;
     self->unk6++;
 }
-#endif
 
 void robot_bee_glide_move(struct MainObj* self)
 {
@@ -165,20 +147,11 @@ void robot_bee_dash_wind_up(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_dash_charge);
-#else
 void robot_bee_dash_charge(struct MainObj* self)
 {
-    s32* velocity;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    velocity = robot_bee_charge_speeds;
-    if (self->unk15 & 0x40) {
-        velocity++;
-    }
-    self->x_speed = *velocity;
+    self->x_speed = robot_bee_charge_speeds[(self->unk15 & 0x40) ? 1 : 0];
     if (self->unk7C-- == 0) {
         self->unk6++;
         set_animation(self, 9);
@@ -186,7 +159,6 @@ void robot_bee_dash_charge(struct MainObj* self)
         self->gravity = FIXED(-0.03125);
     }
 }
-#endif
 
 void robot_bee_dash_accelerate(struct MainObj* self)
 {
@@ -197,11 +169,17 @@ void robot_bee_dash_accelerate(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting);
-#else
 void robot_bee_sting(struct MainObj* self)
 {
+#ifdef VERSION_EU
+    if (self->unk6 > 3) {
+        if (is_sound_finished(0x14, self) != 0) {
+            func_8001540C(2, 0x14, self);
+        }
+    } else if (is_sound_finished(0x13, self) != 0) {
+        func_8001540C(2, 0x13, self);
+    }
+#else
     if (self->unk6 > 3) {
         if (is_sound_finished(0x14, self) != 0) {
             func_8001540C(2, 0x14, self);
@@ -209,9 +187,9 @@ void robot_bee_sting(struct MainObj* self)
             func_8001540C(2, 0x13, self);
         }
     }
+#endif
     robot_bee_sting_funcs[self->unk6](self);
 }
-#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_sting_start);
@@ -324,11 +302,17 @@ INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_8004619C);
 // robot_bee_circle_orbit
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", robot_bee_drop);
-#else
 void robot_bee_drop(struct MainObj* self)
 {
+#ifdef VERSION_EU
+    if (self->unk6 > 1) {
+        if (is_sound_finished(0x14, self) != 0) {
+            func_8001540C(2, 0x14, self);
+        }
+    } else if (is_sound_finished(0x13, self) != 0) {
+        func_8001540C(2, 0x13, self);
+    }
+#else
     if (self->unk6 > 1) {
         if (is_sound_finished(0x14, self) != 0) {
             func_8001540C(2, 0x14, self);
@@ -336,9 +320,9 @@ void robot_bee_drop(struct MainObj* self)
             func_8001540C(2, 0x13, self);
         }
     }
+#endif
     robot_bee_drop_funcs[self->unk6](self);
 }
-#endif
 
 // robot_bee_drop_start
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046400);

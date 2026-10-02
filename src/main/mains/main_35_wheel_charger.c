@@ -122,13 +122,10 @@ void wheel_charger_charge_spin(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_35_wheel_charger", wheel_charger_charge_roll);
-#else
 void wheel_charger_charge_roll(struct MainObj* self)
 {
     s32 value;
-    s32 mask;
+    u8 mask;
 
     if (--self->ext.main_35.sound_timer == 0) {
         func_8001540C(2, 0x58, self);
@@ -143,12 +140,12 @@ void wheel_charger_charge_roll(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
 
+    mask = 9;
     if (self->unk15 == 0) {
-        mask = 0xA;
         value = self->collision_flags & 0xA;
+        mask = 0xA;
     } else {
         value = self->collision_flags & 9;
-        mask = 9;
     }
 
     if (value == mask) {
@@ -157,7 +154,6 @@ void wheel_charger_charge_roll(struct MainObj* self)
         self->unk6 = 0;
     }
 }
-#endif
 
 void wheel_charger_crash(struct MainObj* self)
 {

@@ -30,13 +30,13 @@ void menu_label_highlight(struct UnkObj* self)
     s8 temp_v1; // probably fake
 
     if (self->y_pos.i.hi != 0x10) {
-        if (self->unk7 == D_80141BDF[0]) {
+        if (self->unk7 == main_bss_state.transition.selection) {
             self->unk42 = 0x7803;
         } else {
             self->unk42 = 0x7800;
         }
     }
-    if ((D_80141BE0 == 0) && (engine_obj.cur_character != CHARACTER_X)) {
+    if ((main_bss_state.character_mode == 0) && (engine_obj.cur_character != CHARACTER_X)) {
         temp_v1 = self->unk7;
         if ((self->unk7 < 7) && (temp_v1 >= 5)) {
             self->unk42 = 0x7804;

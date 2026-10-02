@@ -27,7 +27,7 @@ INCLUDE_ASM("main/nonmatchings/pause_menu", func_8002FD70);
 
 void func_800300AC(struct BarObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         arg0->state = 1;
         arg0->unk5 = 0;
         if (g_Player.unk2 || arg0->unk2) {
@@ -43,7 +43,7 @@ void func_800300AC(struct BarObj* arg0)
 
 void func_80030128(struct BarObj* arg0)
 {
-    if (controller_state & PADselect) {
+    if (controller_input.pressed & PADselect) {
         if (arg0->unk5 < 3) {
             arg0->unk28 = arg0->unk5;
             arg0->unk5 = 6;
@@ -75,7 +75,7 @@ void func_80030DF8(struct BarObj* arg0)
         func_80023D90();
         return;
     case 1:
-        if (D_80141BDC[0] == 0) {
+        if (main_bss_state.transition.active == 0) {
             arg0->unk6++;
         }
         func_80023D90();
@@ -89,7 +89,7 @@ void func_80030DF8(struct BarObj* arg0)
         func_80023D90();
         return;
     case 4:
-        if (D_80141BDC[0] == 0) {
+        if (main_bss_state.transition.active == 0) {
             arg0->unk5 = 2;
             arg0->unk6 = 0;
             return;
@@ -108,7 +108,7 @@ void func_80030EC8(struct BarObj* arg0)
         func_80023D90();
         return;
     case 1:
-        if (D_80141BDC[0] == 0) {
+        if (main_bss_state.transition.active == 0) {
             arg0->unk6++;
         }
         func_80023D90();
@@ -122,7 +122,7 @@ void func_80030EC8(struct BarObj* arg0)
         func_80023D90();
         return;
     case 4:
-        if (D_80141BDC[0] == 0) {
+        if (main_bss_state.transition.active == 0) {
             arg0->unk5 = arg0->unk28;
             arg0->unk6 = 0;
             return;
@@ -146,7 +146,7 @@ void func_80030FD8(struct BarObj* arg0)
 
 void func_80031014(struct BarObj* arg0)
 {
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         func_80023D90();
     } else {
         func_800170E0();
@@ -158,7 +158,7 @@ INCLUDE_ASM("main/nonmatchings/pause_menu", func_80031064);
 
 void func_80031130(struct BarObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         if (arg0->unk30 == 0) {
             engine_obj.unk1 = 0;
             arg0->state = 0;

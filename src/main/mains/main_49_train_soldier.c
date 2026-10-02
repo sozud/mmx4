@@ -63,20 +63,15 @@ void train_soldier_despawn(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_49_train_soldier", train_soldier_wait_for_player);
-#else
 void train_soldier_wait_for_player(struct MainObj* self)
 {
     s8 temp_a2;
-    s16 threshold;
     u8 temp_v0;
     u8* temp_v1;
 
     if (self->unk6 == 0) {
         temp_a2 = self->unk2;
-        threshold = main49_activation_distances[temp_a2 - 6];
-        if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= threshold) {
+        if ((g_Player.x_pos.i.hi - self->x_pos.i.hi) >= main49_activation_distances[temp_a2 - 6]) {
             temp_v1 = (u8*)SP_CUR_MAIN_OBJ;
             temp_v1[0x81] = (u8)((temp_a2 - 6) * 0x10);
             self->unk6 = (u8)self->unk6 + 1;
@@ -99,7 +94,6 @@ void train_soldier_wait_for_player(struct MainObj* self)
         temp_v1[0x81] = temp_v0 - 1;
     }
 }
-#endif
 
 void train_soldier_idle(struct MainObj* self)
 {

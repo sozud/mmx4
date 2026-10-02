@@ -214,7 +214,7 @@ void func_8002328C(struct AbcObj* arg0)
     } while (!(arg0->unk4 & 0xB000));
     func_8001540C(0, 0xE, 0);
     if ((arg0->unk4 & 0xB000) == 0x1000) {
-        if (*(u8*)&controller_state != 0) {
+        if (*(u8*)&controller_input.pressed != 0) {
             temp_v0_3 = arg0->unkF;
             if (temp_v0_3 != 0) {
                 arg0->unkF = (u8)(temp_v0_3 - 1);
@@ -288,9 +288,6 @@ void func_80023684(struct EngineObj* arg0)
 {
     arg0->unk1++;
 }
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/13A8C", func_80023698);
-#else
 void func_80023698(struct EngineObj* arg0)
 {
     struct MiscObj* obj;
@@ -312,9 +309,9 @@ void func_80023698(struct EngineObj* arg0)
     }
 
     func_80023CE0();
+    need_palette_load |= 1;
     background_objects[0].unk3 = 1;
     background_objects[1].unk3 = 0;
-    need_palette_load |= 1;
     background_objects[2].unk3 = 1;
 
     for (var_v1 = 0; var_v1 < 5; var_v1++) {
@@ -333,23 +330,22 @@ void func_80023698(struct EngineObj* arg0)
     func_8001663C(MUSIC_STAFF_ROLL, 0x7F);
     func_800129A4(8);
 }
-#endif
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/13A8C", func_800237E4);
-#else
 void func_800237E4(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         if (arg0->unk2 == 0) {
             if (D_80173C84 == 2) {
                 arg0->unk2++;
             }
         } else {
-#ifdef VERSION_JP
-            background_objects[0].y_pos.val += FIXED(7.0 / 16);
-            if (background_objects[0].y_pos.i.hi == 0x11FF) {
+#ifdef VERSION_EU
+            background_objects[0].y_pos.val += 0x8800;
 #else
             background_objects[0].y_pos.val += FIXED(7.0 / 16);
+#endif
+#ifdef VERSION_JP
+            if (background_objects[0].y_pos.i.hi == 0x11FF) {
+#else
             if (background_objects[0].y_pos.i.hi == 4304) {
 #endif
                 arg0->unk2 = 0;
@@ -366,7 +362,6 @@ void func_800237E4(struct EngineObj* arg0)
         }
     }
 }
-#endif
 void func_80023870(struct EngineObj* arg0)
 {
     struct MiscObj* obj;
@@ -416,7 +411,7 @@ void func_80023970(struct EngineObj* arg0)
 }
 void func_800239E0(struct EngineObj* arg0)
 {
-    if (D_80141BDC[0] == 0) {
+    if (main_bss_state.transition.active == 0) {
         game_info.unk0 = 3;
         game_info.mode = 0;
         game_info.unk2 = 0;
@@ -427,17 +422,20 @@ void func_800239E0(struct EngineObj* arg0)
         func_800127FC();
     }
 }
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/13A8C", func_80023A54);
-#else
+
 void func_80023A54(struct EngineObj* arg0)
 {
+#ifdef VERSION_EU
+    if (arg0->unk1 != 7 && (controller_input.pressed & 0x840) != 0) {
+        arg0->unk1 = 7;
+        func_800129F0(8);
+    }
+#endif
     D_800F2FE0[arg0->unk1](arg0);
     func_8002B460();
     update_misc_objects();
     func_80023D68();
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/13A8C", func_80023AA8);
 void func_80023B98(struct MiscObj* arg0)

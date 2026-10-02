@@ -172,22 +172,15 @@ void iris_intro_wait_warning(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", iris_intro_dialogue);
-#else
 void iris_intro_dialogue(struct MainObj* self)
 {
-    s8* state;
-
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        state = &engine_obj.character_state.bytes[9];
-        func_8002217C(0x20, 0xFF, *state);
-        *state = 1;
+        func_8002217C(0x20, 0xFF, engine_obj.character_state.bytes[9]);
+        engine_obj.character_state.bytes[9] = 1;
         self->unk6 = 5;
     }
 }
-#endif
 
 void iris_intro_wait_dialogue(struct MainObj* self)
 {
@@ -444,7 +437,7 @@ void iris_crystal_drop_fall(struct MainObj* self)
 void iris_crystal_drop_chase(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (!(D_80141BD8.unk0 & 1)) {
+    if (!(main_bss_state.frame_counter & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
             self->x_speed = FIXED(4);
         } else {
@@ -465,7 +458,7 @@ void iris_crystal_drop_chase(struct MainObj* self)
 void iris_crystal_drop_aim(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (!(D_80141BD8.unk0 & 1)) {
+    if (!(main_bss_state.frame_counter & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
             self->x_speed = FIXED(4);
         } else {

@@ -12,7 +12,7 @@ void dialogue_ui_update(struct MiscObj* self)
         is_on_screen(self);
         return;
     case 1:
-        if ((u8)controller_state == 0) {
+        if ((u8)controller_input.pressed == 0) {
             if (--self->ext.unk.unk56.sht == 0) {
                 self->ext.unk.unk56.sht = 0x20;
                 self->ext.unk.unk54 ^= 1;

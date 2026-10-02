@@ -28,26 +28,20 @@ void tile_loop_anim_main(struct EffectObj* self)
     tile_loop_anim_step(self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_40_tile_loop_anim", tile_loop_anim_step);
-#else
 void tile_loop_anim_step(struct EffectObj* self)
 {
     s8 timer;
-    s32* palette_source;
-    struct EffectPaletteExt* ext = &self->ext.effect_40;
 
-    timer = ext->palette.fields.timer - 1;
-    ext->palette.fields.timer = timer;
+    timer = self->ext.effect_40.palette.fields.timer - 1;
+    self->ext.effect_40.palette.fields.timer = timer;
     if (timer == 0) {
-        ext->palette_source.words += ext->palette.fields.step;
-        ext->palette.packed = *ext->palette_source.words;
-        apply_tile_effect(ext->palette.fields.id,
+        self->ext.effect_40.palette_source.words += self->ext.effect_40.palette.fields.step;
+        self->ext.effect_40.palette.packed = *self->ext.effect_40.palette_source.words;
+        apply_tile_effect(self->ext.effect_40.palette.fields.id,
             self->x_pos.i.hi - tile_loop_anim_offsets[self->unk2][0],
             self->y_pos.i.hi - tile_loop_anim_offsets[self->unk2][1]);
     }
 }
-#endif
 
 u8 tile_loop_anim_script_0[6][4] = {
     { 9, 0, 1, 0 },

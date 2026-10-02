@@ -44,7 +44,7 @@ void sigma_beam_sweep(struct QuadObj* arg0)
         arg0->ext.unk_ext4.unk3C = 0x46U;
         return;
     }
-    if (!(D_80141BD8.unk0 % 4)) {
+    if (!(main_bss_state.frame_counter % 4)) {
         obj = find_free_shot_obj();
         if (obj != NULL) {
             obj->active = 0x41;
@@ -61,7 +61,7 @@ void sigma_beam_fade(struct QuadObj* arg0)
 {
     struct ShotObj* temp_v0;
 
-    if (!(D_80141BD8.unk0 % 4)) {
+    if (!(main_bss_state.frame_counter % 4)) {
         temp_v0 = find_free_shot_obj();
         if (temp_v0 != NULL) {
             temp_v0->active = 0x41;

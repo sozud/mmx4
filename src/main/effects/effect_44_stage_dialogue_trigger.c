@@ -21,27 +21,22 @@ void stage_dialogue_trigger_wait(struct EffectObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_44_stage_dialogue_trigger", stage_dialogue_trigger_talk);
-#else
 void stage_dialogue_trigger_talk(struct EffectObj* self)
 {
-    u16 sound_id;
     s8 timer;
 
     timer = self->ext.unk_effect.unk14 - 1;
     self->ext.unk_effect.unk14 = timer;
     if (timer == 0) {
-        sound_id = 0x2F;
-        if (engine_obj.cur_character == 0) {
-            sound_id = 0x34;
+        if (engine_obj.cur_character == CHARACTER_X) {
+            func_8002217C(0x34, 9, engine_obj.character_state.bytes[9]);
+        } else {
+            func_8002217C(0x2F, 9, engine_obj.character_state.bytes[9]);
         }
-        func_8002217C(sound_id, 9, engine_obj.character_state.bytes[9]);
         engine_obj.character_state.bytes[9] = 1;
         self->state = 2;
     }
 }
-#endif
 
 void stage_dialogue_trigger_finish(struct EffectObj* self)
 {

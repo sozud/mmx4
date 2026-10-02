@@ -26,9 +26,6 @@ void vent_update(struct MiscObj* self)
     vent_state_funcs[self->state](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", vent_spawn_mixed_puffs);
-#else
 void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
@@ -44,7 +41,13 @@ void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
         slot->x_pos.val = self->x_pos.val;
         slot->y_pos.val = self->y_pos.val;
         slot->x_pos.i.hi += get_random() & 0x1F;
+        // The bits do not overlap, so both forms give the same value.
+        // Keep the original OR (EU) / ADDU (US/JP) instructions for matching.
+#ifdef VERSION_EU
+        slot->ext.misc_15.unk54 = (get_random() & 7) | (i << 3);
+#else
         slot->ext.misc_15.unk54 = (get_random() & 7) + (i << 3);
+#endif
         slot->unk2 = get_random() & 1;
         if (i < 3) {
             slot->unk2 = 0;
@@ -59,15 +62,12 @@ void vent_spawn_mixed_puffs(struct MiscObj* self, u8 count)
         slot->unk15 = self->unk15;
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", vent_spawn_puffs);
-#else
 void vent_spawn_puffs(struct MiscObj* self, u8 count)
 {
     struct MiscObj* slot;
     u32 i;
+    u8 puff_variant;
 
     for (i = 0; i < count; i++) {
         slot = find_free_misc_obj();
@@ -79,7 +79,8 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
         slot->x_pos.val = self->x_pos.val;
         slot->y_pos.val = self->y_pos.val;
         slot->x_pos.i.hi += get_random() & 0x1F;
-        slot->ext.misc_15.unk54 = (get_random() & 7) + (i << 3);
+        puff_variant = get_random() & 7;
+        slot->ext.misc_15.unk54 = puff_variant + (i << 3);
         slot->unk2 = 1;
         slot->animation_table = self->animation_table;
         slot->unk40 = self->unk40;
@@ -89,7 +90,6 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
         slot->unk15 = self->unk15;
     }
 }
-#endif
 
 union AnimationStep vent_anim_0[4] = {
     { .packed = 0x00010006 },

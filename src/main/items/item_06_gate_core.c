@@ -72,10 +72,10 @@ void gate_core_destroyed(struct ItemObj* self)
     timer = self->unk7C.timer - 1;
     self->unk7C.timer = timer;
     if (timer != 0) {
-        if (!(D_80141BD8.unk0 & 7)) {
+        if (!(main_bss_state.frame_counter & 7)) {
             func_800AF878(BASE_OBJECT(self), 1, 0x1F, 0x3F);
         }
-        if (!(D_80141BD8.unk0 & 0xF)) {
+        if (!(main_bss_state.frame_counter & 0xF)) {
             func_8001540C(0, gate_core_explosion_sounds[get_random() & 3][0], self);
         }
     } else {

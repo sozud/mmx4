@@ -77,11 +77,11 @@ void func_80013530(void)
         return;
     }
     func_800129F0(0x10);
-    if (D_80141BDC[0] != 0) {
+    if (main_bss_state.transition.active != 0) {
         do {
             func_80013404(0);
             func_800127C8(1);
-        } while (D_80141BDC[0] != 0);
+        } while (main_bss_state.transition.active != 0);
     }
 }
 
@@ -98,14 +98,14 @@ void func_80014A90(s32 arg0, s32 arg1)
     u8 mode = 0xA0;
     u32 state = D_801406AC;
 
-    D_80137DD4 = 0;
+    cd_fade_requested = 0;
     D_8013BD44 = 0;
     while (state != 2 || D_8013BD40 != 0) {
         mmx4_pc_advance_cd_load();
         if (mmx4_pc_canonical_load) {
-            if (D_80137DD4 == 0 && !(arg1 & 0xff) && D_80141BDC[0] == 0) {
+            if (cd_fade_requested == 0 && !(arg1 & 0xff) && main_bss_state.transition.active == 0) {
                 func_800129A4(8);
-                D_80137DD4++;
+                cd_fade_requested++;
             }
             func_80013404(arg0 & 0xff);
         }

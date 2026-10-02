@@ -266,7 +266,7 @@ void func_80021E74(void)
     struct ReplayData* replay = (struct ReplayData*)REPLAY_DATA;
 
     replay->frame = 0;
-    D_80141BD8.unk0 = replay->flags;
+    main_bss_state.frame_counter = replay->flags;
     cur_random = replay->random;
     REPLAY_SAVED_ENGINE = engine_obj;
 #ifdef MMX4_PC

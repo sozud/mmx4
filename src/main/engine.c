@@ -179,7 +179,7 @@ void func_8001F9A0(struct EngineObj* arg0)
 
 void func_8001F9DC(struct EngineObj* arg0)
 {
-    if (*D_80141BDC == 0) {
+    if (main_bss_state.transition.active == 0) {
         func_8001D134();
         arg0->unk2++;
     }

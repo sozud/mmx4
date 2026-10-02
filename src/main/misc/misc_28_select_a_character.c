@@ -387,15 +387,14 @@ void select_char_shot_burst(struct MiscObj* self)
 }
 
 // select_char_subtype_funcs state 15
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_28_select_a_character", select_char_character_exit);
-#else
 void select_char_character_exit(struct MiscObj* self)
 {
+    struct EngineObj* engine = &engine_obj;
+
     switch (self->unk6) {
     case 0:
         self->unk6++;
-        if (engine_obj.cur_character == (self->unk2 - 7)) {
+        if (engine->cur_character == (self->unk2 - 7)) {
             set_animation(self, 3);
         } else {
             set_animation(self, 0);
@@ -404,9 +403,9 @@ void select_char_character_exit(struct MiscObj* self)
     case 1:
         animate_object(self);
         if (self->animation_step.fields.relative_step == 0) {
-            set_engine_flags(engine_flags | (1 << (self->unk2 - 7)));
+            set_engine_flags(engine->character_state.fields.flags | (1 << (self->unk2 - 7)));
         }
-        if ((s8)engine_flags & 0x80) {
+        if ((s8)engine->character_state.fields.flags & 0x80) {
             self->unk6 = (u8)self->unk6 + 1;
             set_animation(self, 4);
         }
@@ -423,13 +422,12 @@ void select_char_character_exit(struct MiscObj* self)
         animate_object(self);
         move_object((struct MovingObj*)self);
         if (self->on_screen == 0) {
-            set_engine_flags(engine_flags & ~(1 << (self->unk2 - 7)));
+            set_engine_flags(engine->character_state.fields.flags & ~(1 << (self->unk2 - 7)));
             self->state = (u8)self->state + 1;
         }
         break;
     }
 }
-#endif
 
 // SelectACharacterUpdate state 1
 void select_char_main(struct MiscObj* self)

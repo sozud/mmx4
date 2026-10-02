@@ -764,25 +764,20 @@ void player_fire_charged_buster(struct PlayerObj* self)
 
 // player_fire_twin_slasher
 INCLUDE_ASM("main/nonmatchings/player_weapon", func_80037C28);
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_weapon", player_fire_lightning_web_charged);
-#else
 void player_fire_lightning_web_charged(struct PlayerObj* self)
 {
     s8 i;
-    struct PlayerObj* player;
     struct WeaponObj* weapon;
     struct WeaponObj* first_weapon;
 
-    player = self;
     i = 0;
     do {
         weapon = find_free_weapon_obj();
         if (weapon != 0) {
             weapon->active = 1;
-            weapon->id = player->shot_type;
+            weapon->id = self->shot_type;
             weapon->unk2 = i;
-            weapon->bg_offset = player->bg_offset;
+            weapon->bg_offset = self->bg_offset;
             if (i == 0) {
                 first_weapon = weapon;
             } else {
@@ -792,7 +787,6 @@ void player_fire_lightning_web_charged(struct PlayerObj* self)
         i++;
     } while (i < 9);
 }
-#endif
 
 void player_enter_frost_tower_pose(struct PlayerObj* self)
 {

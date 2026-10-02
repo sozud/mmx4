@@ -93,21 +93,17 @@ void spawner_pod_step_4(struct MainObj* self)
 {
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", spawner_pod_detach);
-#else
 void spawner_pod_detach(struct MainObj* self)
 {
     struct MainObj* context;
 
     context = self->ext.main_28.context;
-    if (context->active != 0 && context->ext.main_29.slots.children[self->ext.main_28.index] == self) {
+    if (context->active != 0 && (&context->ext)->main_29.slots.children[self->ext.main_28.index] == self) {
         context->ext.main_29.unk94--;
-        context->ext.main_29.slots.children[self->ext.main_28.index] = NULL;
+        (&context->ext)->main_29.slots.children[self->ext.main_28.index] = NULL;
     }
     ZeroObjectState(OBJECT_HEADER(self));
 }
-#endif
 
 void spawner_pod_explode(struct MainObj* self)
 {

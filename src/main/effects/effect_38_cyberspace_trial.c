@@ -33,7 +33,7 @@ void cyberspace_trial_wait_start(struct EffectObj* self)
     s8 subtype;
 
     subtype = self->unk2;
-    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2]) {
+    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype].start_x) {
         if (!(subtype % 2) && engine_obj.substage == 0) {
             cyberspace_trial_spawn_guide(self);
             engine_obj.unk10 = 1;
@@ -46,16 +46,13 @@ void cyberspace_trial_wait_start(struct EffectObj* self)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_38_cyberspace_trial", cyberspace_trial_wait_goal);
-#else
 void cyberspace_trial_wait_goal(struct EffectObj* self)
 {
     s8 subtype;
 
     cyberspace_trial_delete_unused_items();
     subtype = self->unk2;
-    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype * 2 + 1] && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
+    if (g_Player.x_pos.i.hi >= cyberspace_trial_trigger_x[subtype].goal_x && (subtype != 6 || g_Player.y_pos.i.hi < 0x400)) {
         player_start_script_action(0x14, 0x40);
         cyberspace_trial_clear_objects(self);
         if ((engine_obj.checkpoint % 2) || engine_obj.substage != 0) {
@@ -68,7 +65,6 @@ void cyberspace_trial_wait_goal(struct EffectObj* self)
         }
     }
 }
-#endif
 
 void cyberspace_trial_delay(struct EffectObj* self)
 {
@@ -280,21 +276,14 @@ void delete_items(s32 arg0, s32 arg1)
     }
 }
 
-u16 cyberspace_trial_trigger_x[14] = {
-    0x0190,
-    0x0700,
-    0,
-    0x0300,
-    0x0190,
-    0x0800,
-    0,
-    0x0300,
-    0x0170,
-    0x0C00,
-    0,
-    0x0300,
-    0,
-    0x0F78,
+struct CyberspaceTrialBounds cyberspace_trial_trigger_x[7] = {
+    { 0x0190, 0x0700 },
+    { 0, 0x0300 },
+    { 0x0190, 0x0800 },
+    { 0, 0x0300 },
+    { 0x0170, 0x0C00 },
+    { 0, 0x0300 },
+    { 0, 0x0F78 },
 };
 
 void (*cyberspace_trial_state_funcs[])(struct EffectObj*) = {

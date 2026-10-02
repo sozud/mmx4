@@ -29,32 +29,27 @@ void tile_strip_anim_main(struct EffectObj* self)
     tile_strip_anim_step(self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_39_tile_strip_anim", tile_strip_anim_step);
-#else
 void tile_strip_anim_step(struct EffectObj* self)
 {
     s8 temp_v0;
-    struct EffectPaletteExt* ext = &self->ext.effect_39;
 
-    temp_v0 = ext->palette.fields.timer - 1;
-    ext->palette.fields.timer = temp_v0;
+    temp_v0 = self->ext.effect_39.palette.fields.timer - 1;
+    self->ext.effect_39.palette.fields.timer = temp_v0;
     if (temp_v0 != 0) {
         return;
     }
 
-    ext->palette_source.words += ext->palette.fields.step;
-    ext->palette.packed = *ext->palette_source.words;
+    self->ext.effect_39.palette_source.words += self->ext.effect_39.palette.fields.step;
+    self->ext.effect_39.palette.packed = *self->ext.effect_39.palette_source.words;
 
     if (self->unk2 == 0) {
         tile_strip_anim_refresh_row(self);
         return;
     }
 
-    refresh_visible_tile_effect(ext->palette.fields.id,
+    refresh_visible_tile_effect(self->ext.effect_39.palette.fields.id,
         self->x_pos.i.hi - 0x40, self->y_pos.i.hi - 0x20);
 }
-#endif
 
 void tile_strip_anim_refresh_row(struct EffectObj* self)
 {

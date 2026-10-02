@@ -158,9 +158,6 @@ s32 player_check_dash_jump(struct PlayerObj* self)
     return 0;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_check", player_check_walk_start);
-#else
 s32 player_check_walk_start(struct PlayerObj* self)
 {
     if (self->input_locked) {
@@ -173,23 +170,20 @@ s32 player_check_walk_start(struct PlayerObj* self)
 
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
         self->unk15 = 0x40;
-        if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT)) {
-            self->x_vel.val = FIXED(0.5);
-            return 1;
-        } else {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             return 0;
         }
+        self->x_vel.val = FIXED(0.5);
+    } else {
+        self->unk15 = 0;
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+            return 0;
+        }
+        self->x_vel.val = FIXED(-0.5);
     }
 
-    self->unk15 = 0;
-    if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT)) {
-        self->x_vel.val = FIXED(-0.5);
-        return 1;
-    } else {
-        return 0;
-    }
+    return 1;
 }
-#endif
 
 s32 player_check_walk(struct PlayerObj* self)
 {
@@ -234,9 +228,6 @@ void player_check_fall(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_check", player_check_dash_input);
-#else
 s32 player_check_dash_input(struct PlayerObj* self)
 {
     if (self->input_locked || (!self->double_tap_dash && !(self->pressed_input & PLAYER_INPUT_DASH))) {
@@ -249,21 +240,21 @@ s32 player_check_dash_input(struct PlayerObj* self)
     if (self->input.buttons.held & PLAYER_INPUT_LEFT) {
         self->unk15 = 0;
     }
+
     if (self->unk15 != 0) {
-        if ((self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT)) {
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             return 0;
-        } else {
-            self->x_vel.val = FIXED(6.5);
-            return 1;
         }
-    } else if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT)) {
-        self->x_vel.val = FIXED(-6.5);
-        return 1;
+        self->x_vel.val = FIXED(6.5);
     } else {
-        return 0;
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+            return 0;
+        }
+        self->x_vel.val = FIXED(-6.5);
     }
+
+    return 1;
 }
-#endif
 
 void player_update_double_tap(struct PlayerObj* self)
 {

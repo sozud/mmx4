@@ -313,8 +313,6 @@ extern const u16* D_800F1A04;
 
 extern const u16* D_800F1A08;
 
-extern struct XaSequenceData D_800F1A0C;
-
 extern s32 D_800F1AAC;
 
 extern void (*D_800F1AB0[])(void);
@@ -335,9 +333,6 @@ extern u32 D_800F1D88;
 
 extern u32 D_800F1D8C;
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_80014DC4);
-#else
 void func_80014DC4(void)
 {
     u8 var_v1;
@@ -351,12 +346,51 @@ void func_80014DC4(void)
         D_8013E1C8[var_v1] = -1;
     }
     for (var_v1 = 0; var_v1 < 4; var_v1++) {
-        D_8013924C[var_v1] = -1;
+        D_8013924C[var_v1] = 0xFF;
     }
     for (var_v1 = 0; var_v1 < 24; var_v1++) {
         D_80139234[var_v1] = -1;
     }
 
+#ifdef VERSION_EU
+    SsFCALL.noteon = &_SsNoteOn;
+    SsFCALL.programchange = &_SsSetProgramChange;
+    SsFCALL.metaevent = &dmy_SsGetMetaEvent;
+    SsFCALL.pitchbend = &dmy_SsSetPitchBend;
+    SsFCALL.control[0] = &_SsSetControlChange;
+    SsFCALL.control[1] = &dmy_SsContBankChange;
+    SsFCALL.control[3] = &_SsContMainVol;
+    SsFCALL.control[4] = &dmy_SsContPanpot;
+    SsFCALL.control[5] = &dmy_SsContExpression;
+    SsFCALL.control[6] = &dmy_SsContDamper;
+    SsFCALL.control[7] = &dmy_SsContNrpn1;
+    SsFCALL.control[8] = &dmy_SsContNrpn2;
+    SsFCALL.control[9] = &_SsContRpn1;
+    SsFCALL.control[10] = &dmy_SsContRpn2;
+    SsFCALL.control[11] = &dmy_SsContExternal;
+    SsFCALL.control[12] = &dmy_SsContResetAll;
+    SsFCALL.control[2] = &dmy_SsContDataEntry;
+    SsFCALL.ccentry[0] = &dmy_SsSetNrpnVabAttr0;
+    SsFCALL.ccentry[1] = &dmy_SsSetNrpnVabAttr1;
+    SsFCALL.ccentry[2] = &dmy_SsSetNrpnVabAttr2;
+    SsFCALL.ccentry[3] = &dmy_SsSetNrpnVabAttr3;
+    SsFCALL.ccentry[4] = &dmy_SsSetNrpnVabAttr4;
+    SsFCALL.ccentry[5] = &dmy_SsSetNrpnVabAttr5;
+    SsFCALL.ccentry[6] = &dmy_SsSetNrpnVabAttr6;
+    SsFCALL.ccentry[7] = &dmy_SsSetNrpnVabAttr7;
+    SsFCALL.ccentry[8] = &dmy_SsSetNrpnVabAttr8;
+    SsFCALL.ccentry[9] = &dmy_SsSetNrpnVabAttr9;
+    SsFCALL.ccentry[10] = &dmy_SsSetNrpnVabAttr10;
+    SsFCALL.ccentry[11] = &dmy_SsSetNrpnVabAttr11;
+    SsFCALL.ccentry[12] = &dmy_SsSetNrpnVabAttr12;
+    SsFCALL.ccentry[13] = &dmy_SsSetNrpnVabAttr13;
+    SsFCALL.ccentry[14] = &dmy_SsSetNrpnVabAttr14;
+    SsFCALL.ccentry[15] = &dmy_SsSetNrpnVabAttr15;
+    SsFCALL.ccentry[16] = &dmy_SsSetNrpnVabAttr16;
+    SsFCALL.ccentry[17] = &dmy_SsSetNrpnVabAttr17;
+    SsFCALL.ccentry[18] = &dmy_SsSetNrpnVabAttr18;
+    SsFCALL.ccentry[19] = &dmy_SsSetNrpnVabAttr19;
+#else
     D_8013DC10 = &_SsNoteOn;
     D_8013DC14 = &_SsSetProgramChange;
     D_8013DC1C = &dmy_SsGetMetaEvent;
@@ -393,10 +427,15 @@ void func_80014DC4(void)
     D_8013DC98 = &dmy_SsSetNrpnVabAttr17;
     D_8013DC9C = &dmy_SsSetNrpnVabAttr18;
     D_8013DCA0 = &dmy_SsSetNrpnVabAttr19;
+#endif
 
     SsInit();
     SsSetTableSize(&D_80137E0C, 3, 0xA);
+#ifdef VERSION_EU
+    SsSetTickMode(4);
+#else
     SsSetTickMode(1);
+#endif
     SsUtSetReverbType(2);
     while (SpuClearReverbWorkArea(2) == -1)
         ;
@@ -410,7 +449,6 @@ void func_80014DC4(void)
     }
 #endif
 }
-#endif
 
 void func_8001512C(void)
 {
@@ -780,17 +818,26 @@ void func_800160F4(void)
 }
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80016124);
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_80016334);
-#else
+
 void func_80016334(void)
 {
     func_80016420(0);
+#ifdef VERSION_EU
+    D_801419AC = 0;
+    D_8013956C = 0;
+    D_801307F8 = 0;
+#endif
     D_80171EA9 = 1;
+#ifndef VERSION_EU
     D_8013956C = 1;
     D_801419AC = 0;
     D_801441B8 = 0;
+#endif
+#ifdef VERSION_EU
+    D_80141F4A = 1;
+#else
     D_80141F4A = 0;
+#endif
     D_8013952C = 0;
     D_80141BD4 = 0;
     D_80139524 = 0x80;
@@ -799,7 +846,6 @@ void func_80016334(void)
     D_80139564 = 0;
     D_801441B0 = 0;
 }
-#endif
 
 void func_800163BC(s32 arg0)
 {
@@ -827,16 +873,12 @@ void func_80016420(s8 arg0)
 void pc_cd_set_volume(s32 volume);
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_80016448);
-#else
 void func_80016448(u8 arg0)
 {
 #ifdef MMX4_WIN32
     D_80139528 = arg0;
     pc_cd_set_volume(arg0);
 #else
-    s32 temp_v0;
     D_80139528 = arg0;
     if (D_80171EA9 == 1) {
         D_80139520.val0 = arg0;
@@ -844,16 +886,14 @@ void func_80016448(u8 arg0)
         D_80139520.val2 = arg0;
         D_80139520.val3 = 0;
     } else {
-        temp_v0 = arg0 >> 1;
-        D_80139520.val0 = temp_v0; // volume for CD(L) -> SPU (L)
-        D_80139520.val1 = temp_v0; // volume for CD(L) -> SPU (R)
-        D_80139520.val2 = temp_v0; // volume for CD(R) -> SPU (L)
-        D_80139520.val3 = temp_v0; // volume for CD(R) -> SPU (R)
+        D_80139520.val0 = arg0 >> 1;
+        D_80139520.val1 = D_80139520.val0;
+        D_80139520.val2 = D_80139520.val0;
+        D_80139520.val3 = D_80139520.val0;
     }
     CdMix(&D_80139520);
 #endif
 }
-#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/55C4", func_800164D8);
@@ -867,17 +907,13 @@ void func_800164D8(void)
     s32 temp_v0;
 
     temp_v0 = a + b + c;
-    func_8001663C(((u8*)&D_800F1A0C)[temp_v0],
-        ((u8*)&D_800F1A0C)[temp_v0 + 1]);
+    func_8001663C(((u8*)stage_music)[temp_v0],
+        ((u8*)stage_music)[temp_v0 + 1]);
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_8001653C);
-#else
 void func_8001653C(void)
 {
-    s8 pad[8];
     s32 track;
     s16 volume;
 
@@ -908,13 +944,12 @@ void func_8001653C(void)
             }
         }
     } else {
-        track = D_800F1A0C.alternate[engine_obj.stage].sequence;
-        volume = D_800F1A0C.alternate[engine_obj.stage].volume;
+        track = alternate_stage_music[engine_obj.stage * 2];
+        volume = alternate_stage_music[engine_obj.stage * 2 + 1];
     }
 
     func_8001663C(track, volume);
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_8001663C);
 
@@ -997,9 +1032,6 @@ extern s32 D_80141BD4;
 
 extern u8 D_80171EA9;
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_800169D8);
-#else
 s32 func_800169D8(void)
 {
     u8 temp_a0;
@@ -1015,15 +1047,19 @@ s32 func_800169D8(void)
                     D_80141BD0 = 0;
                 } else if (D_800F1AAC != 0) {
                     D_800F1AAC = 0;
-                    D_80139510 = (u8)D_80139528 - D_80139534;
+                    D_80139510 = D_80139528 - D_80139534;
                 } else {
                     D_800F1AAC = 1;
                 }
                 func_80016448(D_80139510);
             }
-            temp_a0 = D_80171EA9 & 0xFF;
-            if ((u8)D_8013956C != temp_a0) {
+#ifdef VERSION_EU
+            if ((u8)D_80141F4A != (temp_a0 = D_80171EA9 & 0xFF)) {
+                D_80141F4A = D_80171EA9;
+#else
+            if ((u8)D_8013956C != (temp_a0 = D_80171EA9 & 0xFF)) {
                 D_8013956C = D_80171EA9;
+#endif
                 if (temp_a0 == 1) {
                     func_800163EC();
                 } else {
@@ -1035,7 +1071,6 @@ s32 func_800169D8(void)
     }
     return -1;
 }
-#endif
 
 void func_80016B38(void)
 {
@@ -1100,9 +1135,6 @@ void func_80016C5C(void)
 #endif
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_80016D0C);
-#else
 void func_80016D0C(void)
 {
 #ifdef MMX4_WIN32
@@ -1125,15 +1157,15 @@ void func_80016D0C(void)
             SsSetSerialAttr(0, 0, 0);
             func_80016420(0);
             D_80139564 = 0;
+            D_80139530 = 0;
         } else {
             SsSetSerialAttr(0, 0, 0);
             func_80016420(0);
+            D_80139530 = 0;
         }
-        D_80139530 = 0;
     }
 #endif
 }
-#endif
 
 void func_80016DAC()
 {
@@ -1419,9 +1451,6 @@ void func_800182E8(void)
     asm(".rept 194 ; nop ; .endr");
 }
 #endif
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", Set24BitDisp);
-#else
 void Set24BitDisp(s32 w, s32 h)
 {
     RECT rect;
@@ -1440,10 +1469,21 @@ void Set24BitDisp(s32 w, s32 h)
     SetDefDispEnv(&draw_infos[1].dispenv, 0, 240, w, h);
     draw_infos[1].dispenv.isrgb24 = 1;
     draw_infos[0].dispenv.isrgb24 = 1;
+#ifdef VERSION_EU
+    draw_infos[1].dispenv.screen.y = 28;
+    draw_infos[0].dispenv.screen.y = 28;
+#endif
     draw_infos[1].dispenv.isinter = 0;
     draw_infos[0].dispenv.isinter = 0;
-}
+#ifdef VERSION_EU
+    draw_infos[1].dispenv.screen.x = 0;
+    draw_infos[0].dispenv.screen.x = 0;
+    draw_infos[1].dispenv.screen.h = 240;
+    draw_infos[0].dispenv.screen.h = 240;
+    draw_infos[1].dispenv.screen.w = 0;
+    draw_infos[0].dispenv.screen.w = 0;
 #endif
+}
 
 INCLUDE_ASM("main/nonmatchings/55C4", func_80018788);
 extern s32 func_80013614(s32, s32*);
@@ -1558,8 +1598,6 @@ extern RECT D_80139618;
 
 extern u32* D_80139620;
 
-extern s32 D_80139624;
-
 extern s32 D_80139628;
 
 extern u32 D_8013962C;
@@ -1568,9 +1606,6 @@ extern u32 D_80139630;
 
 extern s32 D_801410B8;
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/55C4", func_80019100);
-#else
 void func_80019100(void)
 {
     u32* temp_a0;
@@ -1585,7 +1620,7 @@ void func_80019100(void)
     }
     if ((u32)D_8013962C < (u32)D_80139630) {
         D_80139618.x += (D_801395E4 ? 0x18 : 0x10);
-        temp_a0 = &D_80139620[D_80139624];
+        temp_a0 = &D_80139620[movie_slice_offset];
         D_80139620 = temp_a0;
         DecDCTout(temp_a0, D_80139628);
         D_80139634 = 1;
@@ -1593,7 +1628,6 @@ void func_80019100(void)
     }
     D_80139634 = 0;
 }
-#endif
 
 extern s32 D_80139610;
 

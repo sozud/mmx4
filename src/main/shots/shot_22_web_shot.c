@@ -42,7 +42,7 @@ void web_shot_home(struct ShotObj* self)
         return;
     }
     if (self->timer != 0) {
-        if (!(D_80141BD8.unk0 & 3)) {
+        if (!(main_bss_state.frame_counter & 3)) {
             target = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
             direction = self->unk84.value;
             if ((direction - (target & 0xFF)) & 0x1F) {
@@ -112,7 +112,7 @@ void web_shot_fade(struct ShotObj* self)
         self->unk6 = 0;
         return;
     }
-    if (!(BLINK_TIMER.unk0 & 3)) {
+    if (!(BLINK_CLOCK(main_bss_state.frame_counter) & 3)) {
         self->on_screen = 0;
         self->unk8A = 1;
     } else {
@@ -122,9 +122,6 @@ void web_shot_fade(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/shots/shot_22_web_shot", web_shot_main);
-#else
 void web_shot_main(struct ShotObj* self)
 {
     struct WeaponObj* owner;
@@ -140,8 +137,9 @@ void web_shot_main(struct ShotObj* self)
         self->y_pos.val = g_Player.y_pos.val;
     }
     owner = self->unk7C;
-    if ((self->unk8C.word != 3 || g_Player.stun_timer == 0 || owner->state != 2)
-        && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+    if (self->unk8C.word == 3 && g_Player.stun_timer != 0 && owner->state == 2) {
+        self->state = 2;
+    } else if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
         if (self->unk8A == 0) {
             update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
         }
@@ -149,7 +147,6 @@ void web_shot_main(struct ShotObj* self)
         self->state = 2;
     }
 }
-#endif
 
 void web_shot_despawn(struct ShotObj* self)
 {

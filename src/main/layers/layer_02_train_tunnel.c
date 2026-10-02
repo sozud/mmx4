@@ -13,17 +13,12 @@ void train_tunnel_update(struct LayerObj* arg0)
 // train_tunnel_init
 INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9268);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", train_tunnel_main);
-#else
 void train_tunnel_main(struct LayerObj* arg0)
 {
-    f32* bg1_x = &background_objects[1].x_pos;
-
     arg0->unk15 = (u8)arg0->bg_offset;
     train_tunnel_update_section(arg0);
     train_tunnel_section_funcs[arg0->unk5](arg0);
-    bg1_x->val += arg0->unk18.val;
+    background_objects[1].x_pos.val += arg0->unk18.val;
     background_objects[2].x_pos.val += arg0->unk18.val >> 1;
     switch (arg0->unk17) {
     case 1:
@@ -35,7 +30,6 @@ void train_tunnel_main(struct LayerObj* arg0)
     }
     train_tunnel_spawn_scroll_prop(arg0);
 }
-#endif
 
 void train_tunnel_despawn(struct LayerObj* arg0)
 {
@@ -282,19 +276,17 @@ void train_tunnel_spawn_scroll_prop(struct LayerObj* arg0)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", train_tunnel_player_at_lock);
-#else
 u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 {
-    s16 left = train_tunnel_lock_positions[(u8)arg0->bg_offset - 1];
+    u8 index = (u8)arg0->bg_offset;
     s32 x = g_Player.x_pos.i.hi;
+    s16 left = train_tunnel_lock_positions[index - 1];
+
     if (x >= left && x <= left + 0x10) {
         return 1;
     }
     return 0;
 }
-#endif
 
 // train_tunnel_update_lights
 INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9B48);

@@ -936,27 +936,24 @@ void func_80025588(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s32 arg4)
     SP_AUX_CURSOR = SP_AUX_POLY_F4_CURSOR + 1;
 }
 #endif
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/14A60", func_800257BC);
-#else
 void func_800257BC(struct PlayerObj* arg0)
 {
+    struct PlayerObj* target = arg0;
     struct PlayerObj* player = &g_Player;
 
     if (player->armor_parts & 8) {
-        func_8002588C(arg0, 3, 0x7843);
+        func_8002588C(target, 3, 0x7843);
     }
     if (player->armor_parts & 1) {
-        func_8002588C(arg0, 0, 0x7843);
+        func_8002588C(target, 0, 0x7843);
     }
     if (player->armor_parts & 4) {
-        func_8002588C(arg0, 2, (player->arm_type == 2 ? 0x7844 : 0x7843));
+        func_8002588C(target, 2, (player->arm_type == 2 ? 0x7844 : 0x7843));
     }
     if (player->armor_parts & 2) {
-        func_8002588C(arg0, 1, 0x7843);
+        func_8002588C(target, 1, 0x7843);
     }
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/14A60", func_8002588C);
 void func_80025CDC(void)

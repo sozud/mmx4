@@ -10,7 +10,7 @@ void func_8002E420(struct EngineObj* arg0)
     arg0->stage = 0xD;
     arg0->substage = 0;
     arg0->checkpoint = 0;
-    D_80141BE0 = 0;
+    main_bss_state.character_mode = 0;
     i = 0;
     do {
         arg0->character_state.bytes[i] = 0;
@@ -74,25 +74,24 @@ void func_8002E420(struct EngineObj* arg0)
     D_80171EA8 = 0;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E5E0);
-#else
 void func_8002E5E0(void)
 {
     u8 r, g, b;
     u16* palette_ptr;
     u16 t;
+    u16 color;
     u32 var_j;
     u32 var_i;
     u8 var_d = engine_obj.palette_flags;
 
     for (var_i = 0; var_i < 8; var_i++) {
-        palette_ptr = SP_PALETTES[D_800F474C.route_a[var_i]];
+        palette_ptr = SP_PALETTES[mission_palette_order[var_i]];
         if ((var_d >> var_i) & 1) {
             for (var_j = 0; var_j < 0x10; var_j++) {
-                r = *palette_ptr & 0x1F;
-                g = (*palette_ptr & 0x3E0) >> 5;
-                b = (*palette_ptr & 0x7C00) >> 10;
+                color = *palette_ptr;
+                r = color & 0x1F;
+                g = (color & 0x3E0) >> 5;
+                b = (color & 0x7C00) >> 10;
                 t = (r + g + b) / 3;
                 *palette_ptr = t + (t << 5) + (t << 10);
                 palette_ptr++;
@@ -100,7 +99,6 @@ void func_8002E5E0(void)
         }
     }
 }
-#endif
 
 // engine_state_3_update_funcs state 1 (load briefing room)
 void func_8002E698(struct EngineObj* arg0)
@@ -165,7 +163,7 @@ void func_8002E7BC(struct EngineObj* arg0)
     struct QuadObj* quad;
     u8 i;
 
-    if (controller_state & (PAD_CONFIRM | PADstart)) {
+    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
         background_objects[0].y_pos.i.hi = 0x110;
         background_objects[0].unk4C = 1;
     }
@@ -254,7 +252,7 @@ void func_8002EDD4(struct EngineObj* arg0)
         arg0->palette_flags = (u8)(0xFF & ~(1 << (arg0->stage - 1)));
     }
 #endif
-    if (*D_80141BDC == 0) {
+    if (main_bss_state.transition.active == 0) {
         func_8001D134();
         reset_objects();
         if (arg0->cur_character == 0) {
@@ -299,22 +297,19 @@ extern RECT D_800F4768;
 extern RECT D_800F4770;
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1EC20", func_8002EF14);
-#else
 void func_8002EF14(struct EngineObj* arg0)
 {
     s8 next;
 
 #ifdef MMX4_PC
-    MoveImage((RECT*)&D_800F474C.route_a_positions, 576, 0);
+    MoveImage(&mission_route_a_positions, 576, 0);
 #else
     MoveImage(&D_800F4768, 576, 0);
 #endif
     DrawSync(0);
-    func_80018000(D_800F474C.route_b[arg0->unkE]);
+    func_80018000(mission_route_b[arg0->unkE]);
 #ifdef MMX4_PC
-    MoveImage((RECT*)&D_800F474C.route_b_positions, 320, 176);
+    MoveImage(&mission_route_b_positions, 320, 176);
 #else
     MoveImage(&D_800F4770, 320, 176);
 #endif
@@ -355,7 +350,6 @@ void func_8002EF14(struct EngineObj* arg0)
         return;
     }
 }
-#endif
 
 void func_8002F048(void)
 {
@@ -402,13 +396,11 @@ void func_8002F048(void)
 }
 
 // briefing_room_state_9_update_funcs state 0
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/1EC20", func_8002F1B4);
-#else
+
 void func_8002F1B4(struct EngineObj* arg0)
 {
     // if the player presses a button, skip to the bottom
-    if (controller_state & (PAD_CONFIRM | PADstart)) {
+    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
         background_objects[0].y_pos.i.hi = 272;
         background_objects[0].unk4C = 1;
     }
@@ -419,9 +411,8 @@ void func_8002F1B4(struct EngineObj* arg0)
     }
     arg0->unk2++;
     D_8013B80C = D_800F4834[arg0->unkE - 1];
-    func_8002217C(D_800F474C.briefing_sound_ids[arg0->unkE], 0xFF, 0);
+    func_8002217C(briefing_voice_ids[arg0->unkE - 1], 0xFF, 0);
 }
-#endif
 
 // briefing_room_state_9_update_funcs state 1
 void func_8002F264(struct EngineObj* arg0)
@@ -523,25 +514,40 @@ void func_8002F4C4(struct EngineObj* arg0)
     func_80022730(&abc_object);
 }
 
-struct MissionSelectData D_800F474C = {
-    { 1, 6, 7, 4, 5, 3, 8, 2, 9, 10, 11, 0 },
-    { 0, 7, 5, 3, 4, 1, 2, 6 },
-    { 2, 6, 3, 4, 7, 0, 0, 0 },
-    { 0x0140, 0x00B0, 0x0100, 0x0050 },
-    { 0x0240, 0, 0x0100 },
-    {
-        0x50,
-        0x20,
-        0x21,
-        0x24,
-        0x26,
-        0x19,
-        0x1B,
-        0x1C,
-        0x1D,
-        0x1F,
-        0x1E,
-    },
+#ifdef MMX4_WIN32
+u8 mission_stage_order[16] = {
+#else
+u8 mission_stage_order[12] = {
+#endif
+    1,
+    6,
+    7,
+    4,
+    5,
+    3,
+    8,
+    2,
+    9,
+    10,
+    11,
+    0,
+};
+u8 mission_palette_order[8] = { 0, 7, 5, 3, 4, 1, 2, 6 };
+u8 mission_route_b[8] = { 2, 6, 3, 4, 7, 0, 0, 0 };
+RECT mission_route_a_positions = { 0x0140, 0x00B0, 0x0100, 0x0050 };
+RECT mission_route_b_positions = { 0x0240, 0, 0x0100, 0x50 };
+
+u16 briefing_voice_ids[10] = {
+    0x20,
+    0x21,
+    0x24,
+    0x26,
+    0x19,
+    0x1B,
+    0x1C,
+    0x1D,
+    0x1F,
+    0x1E,
 };
 
 #ifdef VERSION_JP

@@ -85,10 +85,10 @@ extern u32 stage_block_explosion_sounds[4];
 void stage_block_destroyed(struct ItemObj* arg0)
 {
     if (--arg0->unk7C.timer != 0) {
-        if ((D_80141BD8.unk0 & 7) == 0) {
+        if ((main_bss_state.frame_counter & 7) == 0) {
             func_800AF878(BASE_OBJECT(arg0), 1, 0x1F, 0x1F);
         }
-        if ((D_80141BD8.unk0 & 0xF) == 0) {
+        if ((main_bss_state.frame_counter & 0xF) == 0) {
             func_8001540C(0, stage_block_explosion_sounds[get_random() & 3], arg0);
         }
     } else {

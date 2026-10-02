@@ -141,20 +141,12 @@ void boss_death_fx_rays(struct EffectObj* self)
 // boss_death_fx_whiteout
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB750);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", boss_death_fx_wait);
-#else
 void boss_death_fx_wait(struct EffectObj* self)
 {
-    u16 timer;
-
-    timer = self->ext.effect_26.timer;
-    self->ext.effect_26.timer = timer - 1;
-    if (timer == 0) {
+    if (self->ext.effect_26.timer-- == 0) {
         self->state = (u8)self->state + 1;
     }
 }
-#endif
 
 // boss_death_fx_fade_in
 INCLUDE_ASM("main/nonmatchings/effects/effect_26_boss_death_fx", func_800BB888);

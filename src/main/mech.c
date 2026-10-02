@@ -3,13 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mech", func_8003D3F8);
-#else
 void func_8003D3F8(struct RideArmorObj* arg0)
 {
-    u8 previous_input;
-
     if (g_Player.script_state == 0) {
         arg0->collision_flags = g_Player.input.buttons.held;
         arg0->unk8A = g_Player.pressed_input;
@@ -25,13 +20,11 @@ void func_8003D3F8(struct RideArmorObj* arg0)
     arg0->unk18 = arg0->x_pos;
     arg0->unk1C = arg0->y_pos;
 
-    previous_input = arg0->unk71;
-    arg0->input_flags = arg0->unk70 | previous_input;
+    arg0->input_flags = arg0->unk70 | arg0->unk71;
     arg0->unk71 = 0;
     D_800F912C[arg0->state](arg0);
     arg0->unk5C &= ~0x80;
 }
-#endif
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);
 
@@ -84,7 +77,7 @@ void func_8003D6EC(struct AnimatedObj* arg0, s32 arg1)
 
 void func_8003D7A0(void)
 {
-    if (!(D_80141BD8.unk0 & 3) && (get_random() & 1)) {
+    if (!(main_bss_state.frame_counter & 3) && (get_random() & 1)) {
         get_random();
     }
 }
@@ -235,13 +228,10 @@ s32 func_8003DE08(struct MainObj* arg0)
     return 0;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mech", func_8003DE84);
-#else
 void func_8003DE84(struct RideArmorObj* arg0)
 {
     u16 active_mask;
-    u16 buttons;
+    u32 buttons;
     u16 current_mask;
     s8 mode;
 
@@ -251,7 +241,7 @@ void func_8003DE84(struct RideArmorObj* arg0)
 
     if (arg0->unk8E.bytes.active == 0) {
         buttons = arg0->unk8A & 3;
-        if (buttons != 0 && buttons != 3) {
+        if ((u16)buttons != 0 && (u16)buttons != 3) {
             arg0->pad9A = buttons;
             arg0->unk8E.bytes.active = 1;
             arg0->unk8E.bytes.timer = 12;
@@ -280,11 +270,7 @@ void func_8003DE84(struct RideArmorObj* arg0)
         arg0->unk8E.bytes.active = 0;
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mech", func_8003DF9C);
-#else
 void func_8003DF9C(struct PlayerObj* arg0)
 {
     struct BaseObj* base;
@@ -294,27 +280,21 @@ void func_8003DF9C(struct PlayerObj* arg0)
         base = BASE_OBJECT(arg0);
         if (arg0->air_state == 0) {
             effect = 7;
-        } else {
+        } else if (arg0->input.bytes.held_high == 0) {
             effect = 0xF;
-            if (arg0->input.bytes.held_high != 0) {
-                return;
-            }
+        } else {
+            return;
         }
 
         func_8003DC44(base, effect);
         arg0->last_shot_type |= 8;
     }
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mech", func_8003E048);
-#else
 s32 func_8003E048(struct PlayerObj* arg0)
 {
     u16 mask;
-    s32 flags;
-    s32 result;
+    u16 flags;
 
     if (!(arg0->last_shot_type & 8)) {
         mask = 2;
@@ -329,13 +309,8 @@ s32 func_8003E048(struct PlayerObj* arg0)
         mask = 1;
     }
     flags = arg0->unk88.value;
-    result = mask & flags;
-    if (result == 0) {
-        result = flags & 0x100;
-    }
-    return result;
+    return (flags & mask) ? (flags & mask) : (u16)(flags & 0x100);
 }
-#endif
 
 s32 func_8003E0B0(struct PlayerObj* arg0)
 {

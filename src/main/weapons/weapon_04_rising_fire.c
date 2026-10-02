@@ -76,24 +76,22 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 // rising_fire_charged_init
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", func_80095538);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_04_rising_fire", rising_fire_charged_main);
-#else
 void rising_fire_charged_main(struct WeaponObj* self)
 {
     u8 timer;
     s8 event;
     u8* timer_ptr = &self->ext.weapon_13.timer;
+    struct PlayerObj* player = &g_Player;
 
     if (func_8002B1E8(BASE_OBJECT(self), 0x38, 0x38) == 0) {
         animate_object(ANIMATED_OBJECT(self));
         if (self->unk5 == 0) {
-            if (g_Player.unk17 == 0x67) {
+            if (player->unk17 == 0x67) {
                 move_object(MOVING_OBJECT(self));
                 self->unk5++;
             } else {
-                self->x_pos.val = g_Player.x_pos.val;
-                self->y_pos.val = g_Player.y_pos.val;
+                self->x_pos.val = player->x_pos.val;
+                self->y_pos.val = player->y_pos.val;
             }
         } else {
             move_object(MOVING_OBJECT(self));
@@ -119,7 +117,6 @@ void rising_fire_charged_main(struct WeaponObj* self)
         self->state = 3;
     }
 }
-#endif
 
 void rising_fire_charged_draw(struct WeaponObj* arg0)
 {

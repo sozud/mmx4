@@ -112,22 +112,18 @@ void general_intro_land(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_intro_dialogue);
-#else
 void general_intro_dialogue(struct MainObj* self)
 {
-    u16 sound_id;
-
     if (self->unk6 == 0) {
         if (--self->unk7C == 0) {
             if (engine_obj.stage == 0xB) {
-                sound_id = 0x21;
-                if (engine_obj.cur_character == 0) {
-                    sound_id = 0x29;
+                if (engine_obj.cur_character == CHARACTER_X) {
+                    ((void (*)(u16, u8, s8))func_8002217C)(
+                        0x29, 0xFF, engine_obj.character_state.bytes[8]);
+                } else {
+                    ((void (*)(u16, u8, s8))func_8002217C)(
+                        0x21, 0xFF, engine_obj.character_state.bytes[8]);
                 }
-                ((void (*)(u16, u8, s8))func_8002217C)(
-                    sound_id, 0xFF, engine_obj.character_state.bytes[8]);
                 engine_obj.character_state.bytes[8] = 1;
             }
             self->unk6++;
@@ -139,7 +135,6 @@ void general_intro_dialogue(struct MainObj* self)
         self->unk7C = 1;
     }
 }
-#endif
 
 void general_intro_fill_health(struct MainObj* self)
 {
@@ -303,7 +298,7 @@ void general_punch_launch(struct MainObj* self)
             first->id = 0x37;
             first->unk2 = 2;
             first->unk7C = WEAPON_OBJECT(self);
-            D_8013B8C0 = first;
+            general_fists[0] = first;
         }
         second = find_free_shot_obj();
         if (second != NULL) {
@@ -311,7 +306,7 @@ void general_punch_launch(struct MainObj* self)
             second->id = 0x37;
             second->unk2 = 3;
             second->unk7C = WEAPON_OBJECT(self);
-            D_8013B8C4 = second;
+            general_fists[1] = second;
         }
         first->unk8C.shot = second;
         second->unk8C.shot = first;
@@ -355,19 +350,15 @@ void general_punch_rings(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_punch_wait_return);
-#else
 void general_punch_wait_return(struct MainObj* self)
 {
-    if ((D_8013B8C0->timer == 0x80) && (D_8013B8C4->timer == D_8013B8C0->timer)) {
+    if ((general_fists[0]->timer == 0x80) && (general_fists[1]->timer == general_fists[0]->timer)) {
         self->unk6++;
-        D_8013B8C0->state++;
-        D_8013B8C4->state++;
+        general_fists[0]->state++;
+        general_fists[1]->state++;
         set_animation(self, 0x17);
     }
 }
-#endif
 
 void general_punch_recover(struct MainObj* self)
 {
@@ -382,7 +373,7 @@ void general_punch_recover(struct MainObj* self)
 void general_punch(struct MainObj* self)
 {
     general_punch_funcs[self->unk6](self);
-    if ((self->unk6 >= 3) && (D_80141BD8.unk0 % 10 == 0)) {
+    if ((self->unk6 >= 3) && (main_bss_state.frame_counter % 10 == 0)) {
         self->y_pos.i.hi += self->ext.main_75.bob_step;
         if (--self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
@@ -451,7 +442,7 @@ void general_orbs_recover(struct MainObj* self)
 void general_orbs(struct MainObj* self)
 {
     general_orbs_funcs[self->unk6](self);
-    if (D_80141BD8.unk0 % 10 == 0) {
+    if (main_bss_state.frame_counter % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_75.bob_step;
         if (--self->ext.main_75.bob_timer == 0) {
             self->ext.main_75.bob_timer = 0xA;
@@ -608,13 +599,11 @@ void general_death_start(struct MainObj* self)
     self->ext.main_75.bob_step = 1;
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", general_death_blink);
-#else
 void general_death_blink(struct MainObj* self)
 {
     struct EffectObj* effect;
     s8 var_a0;
+    s16 var_a1;
 
     if (--self->unk7C == 0) {
         self->unk5++;
@@ -631,10 +620,10 @@ void general_death_blink(struct MainObj* self)
         self->unk42 ^= 0x8000;
         self->ext.main_75.blink_delay -= 5;
         var_a0 = self->ext.main_75.blink_delay;
-        self->unk7E = var_a0 > 5 ? var_a0 : 5;
+        var_a1 = var_a0 < 6 ? 5 : var_a0;
+        self->unk7E = var_a1;
     }
 }
-#endif
 
 // general_death_explode
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);

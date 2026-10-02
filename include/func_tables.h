@@ -3471,13 +3471,13 @@ void gunship_turn(struct MainObj *arg0);
 void gunship_boost(struct MainObj *arg0);
 
 // gunship_destroyed_funcs
-extern void (*gunship_destroyed_funcs[])(struct MainObj*, s32);
-void gunship_destroyed_start(struct MainObj*, s32);
+extern void (*gunship_destroyed_funcs[])(struct MainObj*);
+void gunship_destroyed_start(struct MainObj*);
+void gunship_destroyed_sink(struct MainObj*);
+void gunship_destroyed_end(struct MainObj*);
 void gunship_spawn_bullet(struct MainObj*);
 void gunship_spawn_exhaust(struct MainObj*);
 s32 gunship_is_within(struct MainObj*, s32, s32);
-void gunship_destroyed_sink(struct MainObj*, s32);
-void gunship_destroyed_end(struct MainObj*, s32);
 
 // gunship_choose_funcs
 extern void (*gunship_choose_funcs[])(struct MainObj*);
@@ -5865,7 +5865,10 @@ void cyberspace_trial_wait_start(struct EffectObj*);
 void cyberspace_trial_wait_goal(struct EffectObj*);
 void cyberspace_trial_spawn_guide(struct EffectObj*);
 void cyberspace_trial_clear_objects(struct EffectObj*);
-extern u16 cyberspace_trial_trigger_x[14];
+struct CyberspaceTrialBounds {
+    u16 start_x, goal_x;
+};
+extern struct CyberspaceTrialBounds cyberspace_trial_trigger_x[7];
 void cyberspace_trial_delay(struct EffectObj*);
 void cyberspace_trial_wait_rank(struct EffectObj*);
 void cyberspace_trial_advance(struct EffectObj*);

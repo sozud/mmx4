@@ -153,7 +153,7 @@ void destructible_core_destroyed(struct ItemObj* arg0)
     temp_v0 = arg0->unk7C.timer - 1;
     arg0->unk7C.timer = temp_v0;
     if (temp_v0 != 0) {
-        if ((D_80141BD8.unk0 & 3) == 0) {
+        if ((main_bss_state.frame_counter & 3) == 0) {
             if (arg0->unk2 != 0) {
                 func_800AF878(arg0, 1, 0x20, 0x30);
             } else {
@@ -161,14 +161,14 @@ void destructible_core_destroyed(struct ItemObj* arg0)
             }
         }
         if (arg0->unk2 != 0) {
-            var_v0 = D_80141BD8.unk0 & 3;
+            var_v0 = main_bss_state.frame_counter & 3;
         } else {
-            var_v0 = D_80141BD8.unk0 & 7;
+            var_v0 = main_bss_state.frame_counter & 7;
         }
         if (var_v0 == 0) {
             spawn_debris(4, destructible_core_debris, arg0);
         }
-        if ((D_80141BD8.unk0 & 0xF) == 0) {
+        if ((main_bss_state.frame_counter & 0xF) == 0) {
             func_8001540C(
                 0, destructible_core_explosion_sounds[get_random() & 3], (struct Unk6*)arg0);
         }

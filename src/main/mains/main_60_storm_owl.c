@@ -289,9 +289,6 @@ void storm_owl_grab(struct MainObj* self)
     storm_owl_grab_funcs[self->unk6](self);
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", storm_owl_grab_dive);
-#else
 void storm_owl_grab_dive(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -303,11 +300,7 @@ void storm_owl_grab_dive(struct MainObj* self)
 
     self->x_speed *= 3;
     self->y_speed *= 4;
-    if (self->unk15 == 0) {
-        if (self->x_speed > 0) {
-            self->x_speed = 0;
-        }
-    } else if (self->x_speed < 0) {
+    if (self->unk15 == 0 ? self->x_speed > 0 : self->x_speed < 0) {
         self->x_speed = 0;
     }
     self->attack_box = &storm_owl_grab_attack_box;
@@ -317,7 +310,6 @@ void storm_owl_grab_dive(struct MainObj* self)
     self->unk16 = 2;
     self->unk6++;
 }
-#endif
 
 // storm_owl_grab_swoop
 INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);

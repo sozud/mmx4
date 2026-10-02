@@ -223,16 +223,11 @@ void fortress_cannon_fire_shot(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_51_fortress_cannon", fortress_cannon_fire_double_shot);
-#else
 void fortress_cannon_fire_double_shot(struct MainObj* self)
 {
     u8 i;
-    struct MainObj* obj;
     struct ShotObj* shot;
 
-    obj = self;
     i = 0;
     do {
         shot = find_free_shot_obj();
@@ -244,19 +239,18 @@ void fortress_cannon_fire_double_shot(struct MainObj* self)
             } else {
                 shot->unk2 = 2;
             }
-            shot->unk7C = (struct WeaponObj*)obj;
-            shot->unk42 = obj->unk42;
+            shot->unk7C = (struct WeaponObj*)self;
+            shot->unk42 = self->unk42;
             shot->animation_table = (u32**)fortress_cannon_animations;
-            shot->unk3C = obj->sprite_frames;
-            shot->unk40 = obj->unk40;
-            shot->unk15 = obj->unk15;
-            shot->bg_offset = (s8)(u8)obj->bg_offset;
+            shot->unk3C = self->sprite_frames;
+            shot->unk40 = self->unk40;
+            shot->unk15 = self->unk15;
+            shot->bg_offset = (s8)(u8)self->bg_offset;
             shot->unk16 = 4;
         }
         i++;
     } while (i < 2);
 }
-#endif
 
 void fortress_cannon_fire_volley(struct MainObj* self)
 {

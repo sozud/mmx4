@@ -95,9 +95,6 @@ void final_cutscene_wait_fade(struct MiscObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/misc/misc_53_final_cutscene", final_cutscene_finish);
-#else
 void final_cutscene_finish(struct MiscObj* self)
 {
     s16 timer;
@@ -111,14 +108,13 @@ void final_cutscene_finish(struct MiscObj* self)
         D_8013E188[2] = -1;
         D_8013E188[3] = -1;
         g_FilterModeR = 1;
+        g_FilterModeG = 2;
         g_FilterModeB = 4;
         g_FilterAmountR = 0x1F;
         g_FilterAmountG = 0x3E0;
-        g_FilterModeG = 2;
         g_FilterAmountB = 0x7C00;
     }
 }
-#endif
 
 void final_cutscene_main(struct MiscObj* self)
 {

@@ -199,7 +199,7 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
     }
     self->x_speed += self->x_accel;
     if (SHAKE_ENABLED) {
-        if (BLINK_CLOCK(BLINK_TIMER.unk0) & 1) {
+        if (BLINK_CLOCK(BLINK_CLOCK(main_bss_state.frame_counter)) & 1) {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
         } else {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
@@ -226,7 +226,7 @@ void cyber_peacock_teleport_appear(struct MainObj* self)
 
     self->x_speed -= self->x_accel;
     if (SHAKE_ENABLED) {
-        if (BLINK_CLOCK(BLINK_TIMER.unk0) & 1) {
+        if (BLINK_CLOCK(BLINK_CLOCK(main_bss_state.frame_counter)) & 1) {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
         } else {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
@@ -514,9 +514,6 @@ void cyber_peacock_death_start(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", cyber_peacock_death_explode);
-#else
 void cyber_peacock_death_explode(struct MainObj* self)
 {
     struct EffectObj* effect;
@@ -534,15 +531,14 @@ void cyber_peacock_death_explode(struct MainObj* self)
     is_on_screen(BASE_OBJECT(self));
     if (self->unk7E-- == 0) {
         u8 unk92;
-        self->ext.main_64.flash_timer = unk92 = self->ext.main_64.flash_timer - 5;
         self->unk42 ^= 0x8000;
+        self->ext.main_64.flash_timer = unk92 = self->ext.main_64.flash_timer - 5;
         if (unk92 > 0x19) {
             self->ext.main_64.flash_timer = 0;
         }
         self->unk7E = self->ext.main_64.flash_timer > 5 ? self->ext.main_64.flash_timer : 5;
     }
 }
-#endif
 
 void cyber_peacock_death_finish(struct MainObj* self)
 {
