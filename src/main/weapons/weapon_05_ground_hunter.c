@@ -28,7 +28,40 @@ void ground_hunter_update(struct WeaponObj* arg0)
 }
 
 // ground_hunter_init
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_05_ground_hunter", func_80095854);
+void func_80095854(struct WeaponObj* self)
+{
+    struct PlayerObj* player = &g_Player;
+
+    self->on_screen = 1;
+    self->unk50 = ground_hunter_crawl_box;
+    self->unk64 = 1;
+    self->unk68 = ground_hunter_terrain_box;
+    self->unk38 = (u8*)SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 6);
+    self->unk3C = (u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 14);
+    self->animation_table = D_8011C0C8;
+    self->unk40 = 0x520;
+    self->unk42 = 0x7801;
+    self->unk16 = 0;
+    self->unk15 = player->unk15;
+
+    buster_shot_place_at_muzzle(VISUAL_OBJECT(self), player, self->id);
+
+    if (self->unk15) {
+        self->x_vel.val = FIXED(6);
+    } else {
+        self->x_vel.val = FIXED(-6);
+    }
+    self->y_vel.val = FIXED(-2);
+    self->unk28.val = 0;
+    self->unk2C = 0;
+    self->unk67 = 1;
+
+    set_animation(self, 0);
+    func_8001540C(1, 8, self);
+    self->unk5 = 0;
+    self->state++;
+    update_on_screen(BASE_OBJECT(self), 0x2C, 0x20);
+}
 
 void ground_hunter_main(struct WeaponObj* arg0)
 {

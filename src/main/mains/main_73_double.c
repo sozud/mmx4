@@ -438,7 +438,19 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
 }
 
 // double_aerial_shot_wait
-INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CBF8);
+void func_8008CBF8(struct MainObj* self)
+{
+    if (--self->unk7C == 0) {
+        self->unk6 = 2;
+        *(volatile s16*)&self->unk7C = 0;
+        self->unk7C = 0x5A;
+        set_animation(self, 9);
+        double_spawn_shot(self, 1, 1);
+        self->ext.main_73.shot_count++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+}
 
 void double_aerial_shot_drop(struct MainObj* self)
 {

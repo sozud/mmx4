@@ -17,7 +17,29 @@ void item_carrier_update(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
 
 // item_carrier_init
-INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042A48);
+void func_80042A48(struct MainObj* self)
+{
+    self->unk5 = 0;
+    self->unk2 = 0;
+    self->state++;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
+    self->animation_table = (const u8* const*)item_carrier_animations;
+    self->unk16 = 4;
+    self->hp = 1;
+    self->contact_damage = 1;
+    self->attack_box = NULL;
+    self->terrain_box = NULL;
+    self->collision_data = (const u16*)D_801063F0;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->y_speed = 0;
+    self->gravity = 0;
+    set_animation(self, 0);
+}
 
 // item_carrier_main
 INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042AFC);

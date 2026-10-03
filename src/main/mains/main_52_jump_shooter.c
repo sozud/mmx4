@@ -13,7 +13,39 @@ void jump_shooter_update(struct MainObj* self)
 }
 
 // jump_shooter_init
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_52_jump_shooter", func_8006A55C);
+#else
+void func_8006A55C(struct MainObj* self)
+{
+    const u8* const* animations = (const u8* const*)jump_shooter_animations;
+
+    self->hp = 9;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
+    self->collision_data = D_801077F8;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->animation_table = animations;
+    self->unk16 = 6;
+    self->terrain_box = &jump_shooter_terrain_box;
+    self->hurt_box = &jump_shooter_hurt_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->attack_box = &jump_shooter_attack_box;
+    jump_shooter_face_player(ANIMATED_OBJECT(self));
+    self->unk7C = 0x5A;
+    self->ext.main_52.unk80 = 0;
+    self->ext.main_52.unk8C = 0;
+    self->state = 1;
+    self->unk5 = 3;
+    self->unk6 = 0;
+}
+#endif
 
 void jump_shooter_main(struct MainObj* self)
 {

@@ -92,7 +92,24 @@ void armored_walker_pick_step(struct MainObj* self)
 }
 
 // armored_walker_walk
-INCLUDE_ASM("main/nonmatchings/mains/main_01_armored_walker", func_800423A0);
+void func_800423A0(struct MainObj* self)
+{
+    s32 speed;
+
+    if (self->unk6 == 0) {
+        self->unk6++;
+        speed = FIXED(-3);
+        self->x_accel = 0;
+        if (self->unk15 != 0) {
+            speed = FIXED(3);
+        }
+        self->x_speed = speed;
+        func_8001540C(2, 0xF, self);
+    }
+
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+}
 
 void armored_walker_hop(struct MainObj* self)
 {

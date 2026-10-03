@@ -12,7 +12,44 @@ void bee_hive_update(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055024);
 
 // bee_hive_main
-INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055164);
+void func_80055164(struct MainObj* self)
+{
+    s32 collision_result = 0;
+
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+
+    bee_hive_step_funcs[self->unk5](self);
+
+    if (self->ext.main_22.destroyed == 0) {
+        func_8002D9BC(self);
+        collision_result = func_8002DD04(self);
+    }
+
+    if (self->unk5 != 0) {
+        self->ext.main_22.saved_unk5 = (s8)self->unk5;
+    }
+
+    if (collision_result < 0) {
+        self->unk5 = 6;
+        self->unk6 = 0;
+        spawn_debris(8, bee_hive_debris, self);
+        drop_item(BASE_OBJECT(self), 9);
+        self->ext.main_22.destroyed = 1;
+        self->unk42 &= 0x7FFF;
+        set_animation(self, 3);
+        return;
+    }
+
+    if (func_8002B1E8(BASE_OBJECT(self), 0x30, 0x30) == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+        return;
+    }
+
+    if (self->ext.main_22.parts_mask == 0) {
+        self->state++;
+    }
+}
 
 void bee_hive_despawn(struct MainObj* self)
 {

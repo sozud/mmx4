@@ -6,7 +6,34 @@
 INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
 
 // option_toggle_appear
-INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDF4C);
+void func_800CDF4C(struct MiscObj* self)
+{
+    if (self->y_pos.i.hi != 0x10) {
+        if (self->ext.misc_31.timer == 0) {
+            if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
+                || ((controller_input.pressed & PADstart) && (game_info.unk0 == 0xA))) {
+                self->unk2 = -1;
+            }
+            if ((self->unk2 == -1) || (controller_input.pressed & PAD_SELECTION_ALT)
+                || ((controller_input.pressed & PADstart) && (game_info.unk0 == 8))) {
+                self->unk2 = -1;
+            }
+            if (self->unk2 == -1) {
+                is_on_screen(BASE_OBJECT(self));
+                return;
+            }
+        }
+        if (self->unk7 == main_bss_state.transition.selection) {
+            self->unk42 = 0x7803;
+        } else if ((self->unk2 == 3) && (D_800F1D90.save.character == 0xFF)) {
+            self->unk42 = 0x7804;
+        } else {
+            self->unk42 = 0x7800;
+        }
+    }
+
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void option_toggle_refresh(struct MiscObj* self)
 {

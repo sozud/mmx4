@@ -212,10 +212,107 @@ void engine_state_1(struct EngineObj* arg0)
 }
 
 // character_select_state_3_update_funcs state 0
-INCLUDE_ASM("main/nonmatchings/character_select", func_80029A48);
+void func_80029A48(void)
+{
+    s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
+    u16 input = controller_input.pressed;
+    u16 held = controller_input.held;
+
+    switch (engine_obj.character_state.fields.secret_code_phase) {
+    case 0:
+        engine_obj.character_state.fields.secret_code_index = 0;
+        if (input != 0 && input == D_800F44C4[0] && held == input) {
+            engine_obj.character_state.fields.secret_code_index = 1;
+            (*phase)++;
+        }
+        break;
+    case 1:
+        if (input == 0) {
+            break;
+        }
+        if (input != D_800F44C4[engine_obj.character_state.fields.secret_code_index] || held != input) {
+            *phase = 0;
+            break;
+        }
+        if (engine_obj.character_state.fields.secret_code_index == 7) {
+            (*phase)++;
+        }
+        engine_obj.character_state.fields.secret_code_index++;
+        break;
+    case 2:
+        if (input == 0) {
+            break;
+        }
+        if (input & (PADstart | PAD_CONFIRM)) {
+            u16 expected = D_800F44C4[engine_obj.character_state.fields.secret_code_index];
+
+            if ((held & expected) == expected) {
+                engine_obj.unk37 = 1;
+            }
+        } else if (input & D_800F44C4[engine_obj.character_state.fields.secret_code_index]) {
+            break;
+        }
+        engine_obj.character_state.fields.secret_code_phase = 0;
+        break;
+    }
+}
 
 // character_select_state_3_update_funcs state 1
-INCLUDE_ASM("main/nonmatchings/character_select", func_80029BD8);
+void func_80029BD8(void)
+{
+    s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
+    u16 input = controller_input.pressed;
+    u16 held = controller_input.held;
+
+    switch (engine_obj.character_state.fields.secret_code_phase) {
+    case 0:
+        engine_obj.character_state.fields.secret_code_index = 0;
+        if (input != 0 && input == D_800F44D8[0]) {
+            if (held != (D_800F44D8[0] | PADR1)) {
+                *phase = 0;
+            } else {
+                engine_obj.character_state.fields.secret_code_index = 1;
+                (*phase)++;
+            }
+        }
+        break;
+    case 1:
+        if (input == 0) {
+            break;
+        }
+        if (input != D_800F44D8[engine_obj.character_state.fields.secret_code_index] || held != (D_800F44D8[engine_obj.character_state.fields.secret_code_index] | PADR1)) {
+            *phase = 0;
+            break;
+        }
+        if (engine_obj.character_state.fields.secret_code_index == 5) {
+            (*phase)++;
+        }
+        engine_obj.character_state.fields.secret_code_index++;
+        break;
+    case 2:
+        if (held == 0) {
+            (*phase)++;
+        } else if (!(held & (D_800F44D8[engine_obj.character_state.fields.secret_code_index - 1] | PADR1)) || input != 0) {
+            *phase = 0;
+        }
+        break;
+    case 3:
+        if (input == 0) {
+            break;
+        }
+        if (input & (PADstart | PAD_CONFIRM)) {
+            u16 expected = D_800F44D8[engine_obj.character_state.fields.secret_code_index];
+
+            if ((held & expected) == expected) {
+                engine_obj.unk37 = 1;
+            }
+        } else if (input & D_800F44D8[engine_obj.character_state.fields.secret_code_index]) {
+            break;
+        }
+        engine_obj.character_state.fields.secret_code_phase = 0;
+        break;
+    }
+}
 
 void (*character_select_state_2_update_funcs[])(struct EngineObj*) = {
     character_select_state_2_substate_0,

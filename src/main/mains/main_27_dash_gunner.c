@@ -142,7 +142,26 @@ void dash_gunner_turn_flip(struct MainObj* self)
 }
 
 // dash_gunner_turn_end
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059154);
+void func_80059154(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        set_animation(self, 1);
+        if (self->ext.main_27.unk80 == 0) {
+            if (self->unk15 == 0) {
+                self->x_speed = FIXED(-1.5);
+            } else {
+                self->x_speed = FIXED(1.5);
+            }
+            self->unk5 = 2;
+        } else {
+            self->ext.main_27.unk89 = 0x14;
+            self->ext.main_27.unk88 = 0;
+            self->unk5 = 6;
+        }
+        self->unk6 = 0;
+    }
+}
 
 void dash_gunner_shoot(struct MainObj* self)
 {
@@ -251,7 +270,29 @@ void dash_gunner_shoot_lower(struct MainObj* self)
 }
 
 // dash_gunner_shoot_end
-INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059590);
+void func_80059590(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        set_animation(self, 1);
+        func_8001540C(2, 0x51, self);
+        if (self->ext.main_27.unk80 == 0) {
+            self->ext.main_27.unk8C = 0xB4;
+            if (self->unk15 == 0) {
+                self->x_speed = FIXED(-1.5);
+            } else {
+                self->x_speed = FIXED(1.5);
+            }
+            self->unk5 = 2;
+        } else {
+            self->ext.main_27.unk89 = 0x14;
+            self->ext.main_27.unk8C = 0x12C;
+            self->ext.main_27.unk88 = 0;
+            self->unk5 = 6;
+        }
+        self->unk6 = 0;
+    }
+}
 
 // dash_gunner_hop
 INCLUDE_ASM("main/nonmatchings/mains/main_27_dash_gunner", func_80059640);

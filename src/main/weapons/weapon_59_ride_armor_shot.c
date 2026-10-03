@@ -63,7 +63,26 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
 
 // ride_armor_missile_spawn_smoke
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098EA8);
+void func_80098EA8(struct WeaponObj* shot)
+{
+    struct VisualObj* visual;
+
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = shot->active;
+        visual->id = 0x16;
+        visual->unk2 = 0;
+        visual->x_pos.u.hi = shot->x_pos.u.hi;
+        visual->y_pos.u.hi = shot->y_pos.u.hi;
+        visual->animation_table = shot->animation_table;
+        visual->unk40 = shot->unk40;
+        visual->unk3C = shot->unk3C;
+        visual->unk42 = shot->unk42;
+        visual->unk16 = shot->unk16;
+        visual->unk50 = PLAYER_OBJECT(shot);
+        visual->unk15 = shot->unk15;
+    }
+}
 
 u8 ride_armor_shot_hit_box[4] = { 0xFC, 0xFD, 6, 5 };
 

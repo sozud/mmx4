@@ -703,6 +703,12 @@ struct Main37Ext {
     u32 saved_unk5;
 };
 
+struct Main31Ext {
+    u8 pad80[3];
+    u8 unk83;
+    u8 unk84;
+};
+
 struct Main32Ext {
     u32 unk80;
     u32 unk84;
@@ -820,7 +826,10 @@ struct Main13Ext {
 
 struct Main11Ext {
     u8 unk80;
-    u8 pad81[6];
+    u8 pad81[3];
+    u8 angle;
+    u8 unk85;
+    u8 unk86;
     u8 saved_unk5;
 };
 
@@ -838,7 +847,7 @@ struct Main12Ext {
 struct Main22Ext {
     u32 saved_unk5;
     u32 unk84;
-    u8 pad88[4];
+    u32 destroyed;
     u32 unk8C;
     u32 unk90;
     u32 parts_mask;
@@ -1143,7 +1152,7 @@ struct Main71Ext {
     u8 unk8A;
     u8 pad8B[2];
     u8 unk8D;
-    u8 unk8E;
+    s8 unk8E;
 };
 
 struct Main72Ext {
@@ -1343,6 +1352,11 @@ struct Main29Record {
     s8 unk4;
 };
 
+struct Main29ControllerExt {
+    u8 unk80;
+    u8 unk81;
+};
+
 struct Main29Ext {
     struct MainObj* source;
     union {
@@ -1476,6 +1490,8 @@ union MainObjExt {
     struct Main27Ext main_27;
     struct Main28Ext main_28;
     struct Main29Ext main_29;
+    struct Main29ControllerExt main_29_controller;
+    struct Main31Ext main_31;
     struct Main32Ext main_32;
     struct Main33Ext main_33;
     struct Main34Ext main_34;
@@ -2248,6 +2264,11 @@ union ItemUnk84 {
     u8 bytes[4];
 };
 
+struct Item19Unk7C {
+    u16 timer;
+    u16 open_requested;
+};
+
 union ItemUnk7C {
     u8 value;
     u16 timer16;
@@ -2257,6 +2278,7 @@ union ItemUnk7C {
     void* object;
     struct Unk_unk68* bounds;
     s32 item_26_value;
+    struct Item19Unk7C item_19;
 };
 
 struct ItemTailExtUnk {
@@ -2328,6 +2350,7 @@ union LayerPrivateState {
     f32 value;
     s8 signed_byte;
     u8 misc_20_active;
+    u8 bytes[2];
 };
 
 struct LayerObj {
@@ -2511,7 +2534,9 @@ struct Misc20Ext {
 };
 
 struct Misc31Ext {
-    u8 pad50[4], animation;
+    u8 pad50[4];
+    u8 animation;
+    u8 timer;
 };
 
 struct Misc33Ext {
@@ -3618,6 +3643,7 @@ struct Effect21Ext {
 };
 
 extern struct Effect21SpawnRecord* crumble_sequencer_sequences[20];
+s32 func_800B9E54(struct Effect21SpawnRecord* record);
 
 struct Effect5Ext {
     s32 unk14;
@@ -4338,7 +4364,6 @@ extern u8* const* D_800F2DD8[];
 extern const u8* D_800F2DD0[];
 extern u16 D_800F2F40[16];
 extern const u32* const* D_800F2EE8[];
-extern const u32* const* D_800F2F00[];
 extern s16 D_800F2FDC[2];
 extern struct MiscObj* D_801397BC;
 extern struct MiscObj* D_801397C0;
@@ -5023,7 +5048,7 @@ s32 player_hover_check_end(struct PlayerObj*);
 s32 player_hover_steer(struct PlayerObj*);
 s32 player_check_shoot_ladder(struct PlayerObj*);
 void func_8003C624(struct RideArmorObj*);
-void func_8003D8A8(struct RideArmorObj*, s32, s32);
+s32 func_8003D8A8(struct RideArmorObj*, s32, s32);
 s32 func_8003DCD8(struct RideArmorObj*);
 s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
 s32 player_zero_shippuuga_cancel(struct PlayerObj*);
@@ -5138,3 +5163,56 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 #ifdef MMX4_PC
 #include "pc_build.h"
 #endif
+
+extern u32 D_800FA734;
+
+extern s32 layout_gate_unused[4];
+void layout_gate_check_layout(struct ItemObj*);
+void layout_gate_apply_layout(struct ItemObj*);
+void func_800C5994(struct ItemObj*, u8);
+
+void CollisionRelated(struct PlayerObj*);
+void fortress_cannon_check_fall(struct MainObj*);
+extern u8 fortress_cannon_debris[8];
+
+extern union AnimationStep* item_carrier_animations[11];
+extern struct Unk_unk68 D_801063F0[32];
+
+extern union AnimationStep* jump_shooter_animations[28];
+extern struct Unk_unk68 jump_shooter_hurt_box;
+extern struct Unk_unk68 jump_shooter_attack_box;
+extern struct Unk_unk68 jump_shooter_terrain_box;
+extern struct Unk_unk68 D_801077F8[];
+
+extern union AnimationStep* bomb_bat_animations[8];
+extern struct Unk_unk68 D_800FDC88[2];
+extern struct Unk_unk68 D_80107274[];
+
+extern void* split_mushroom_animations[26];
+extern struct Unk_unk68 split_mushroom_hurt_box;
+extern struct Unk_unk68 split_mushroom_attack_box;
+extern struct Unk_unk68 D_80107BF8[];
+
+extern void (*sigma_step_funcs[9])();
+
+extern struct Unk_unk68 ground_hunter_terrain_box[];
+extern u32* D_8011C0C8[7];
+
+extern u8 bee_hive_debris[8];
+
+extern u8 gravity_switch_terrain_box[4];
+extern u8 gravity_switch_hit_box[4];
+
+extern struct Unk_unk68 storm_owl_hurt_box;
+
+extern u16 D_800F44C4[9]; // secret code sequence
+extern u16 D_800F44D8[8]; // secret code sequence
+
+extern u8 D_800FDC28[];
+extern u8 D_800FDC30[];
+extern u8 D_800FDC34[];
+extern u8 D_800FDC38[];
+extern u8 D_800FDC3C[];
+extern struct Unk_unk68 D_800FDA0C[];
+extern struct Unk_unk68 D_801071F4[];
+extern void (*thorn_trap_step_funcs[10])();

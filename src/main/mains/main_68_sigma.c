@@ -729,7 +729,84 @@ void sigma_pose(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80084EE4);
 
 // sigma_revealed_fight
-INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_8008502C);
+void func_8008502C(struct MainObj* self)
+{
+    s32 collision_result;
+    struct VisualObj* visual;
+
+    collision_result = func_8002DD04(self);
+
+    if (self->ext.main_68.flash_timer != 0) {
+        if (--self->ext.main_68.flash_timer & 1) {
+            self->unk42 |= 0x8000;
+        } else {
+            self->unk42 &= 0x7FFF;
+        }
+    } else {
+        self->collision_data = D_80108004;
+    }
+
+    if (collision_result < 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+        return;
+    }
+
+    if (collision_result != 0) {
+        if (engine_obj.cur_character == CHARACTER_X) {
+            switch (collision_result) {
+            case 0xB:
+            case 2:
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 0x41;
+                    visual->id = 0x20;
+                    visual->unk2 = 6;
+                    visual->unk50 = PLAYER_OBJECT(self);
+                }
+            default:
+                if (self->ext.main_68.flash_timer == 0) {
+                    self->collision_data = D_801060F0;
+                    self->ext.main_68.flash_timer = 0x40;
+                }
+                break;
+            case 0x7F:
+                break;
+            }
+        } else {
+            switch (collision_result) {
+            case 0x25:
+                visual = find_free_visual_obj();
+                if (visual != NULL) {
+                    visual->active = 0x41;
+                    visual->id = 0x20;
+                    visual->unk2 = 6;
+                    visual->unk50 = PLAYER_OBJECT(self);
+                }
+            default:
+                if (self->ext.main_68.flash_timer == 0) {
+                    self->collision_data = D_801060F0;
+                    self->ext.main_68.flash_timer = 0x40;
+                }
+                break;
+            case 0x18:
+            case 0x19:
+            case 0x7F:
+                break;
+            }
+        }
+    }
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+
+    sigma_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    CollisionRelated(PLAYER_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
+}
 
 void sigma_fight(struct BarObj* self)
 {

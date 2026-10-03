@@ -2978,6 +2978,8 @@ void storm_owl_stagger(struct MainObj *arg0);
 void storm_owl_ground_cyclone(struct MainObj *arg0);
 void storm_owl_spawn_roar(struct AnimatedObj* arg0);
 void storm_owl_spawn_feather(struct MainObj* arg0);
+void storm_owl_spawn_intro_wind(struct MainObj* self);
+void storm_owl_spawn_volley_feather(struct MainObj* self, s8 count);
 void func_80078314(struct MainObj* arg0);
 void storm_owl_choose_corner(struct MainObj* arg0);
 void storm_owl_choose_pattern(struct MainObj*);
@@ -3896,7 +3898,7 @@ void aiming_laser_reticle_init(struct WeaponObj*, struct PlayerObj*);
 void aiming_laser_reticle_place(struct WeaponObj*, struct PlayerObj*);
 s32 aiming_laser_try_lock_on(struct WeaponObj*, struct PlayerObj*, struct MainObj*);
 void double_aerial_shot_fire_again(struct MainObj*);
-void func_8008CBF8(void);
+void func_8008CBF8(struct MainObj*);
 void double_aerial_shot_drop(struct MainObj*);
 void double_aerial_shot_land(struct MainObj*);
 
@@ -4365,6 +4367,7 @@ void ride_armor_shot_despawn(struct WeaponObj*);
 
 // ride_armor_missile_state_funcs
 extern void (*ride_armor_missile_state_funcs[])(struct WeaponObj*);
+void func_80098EA8(struct WeaponObj*);
 void func_80098F88(struct WeaponObj*);
 void func_80099118(struct WeaponObj*);
 void ride_armor_missile_despawn(struct WeaponObj*);
@@ -7115,3 +7118,8 @@ extern void (*unused_ride_armor_despawn_funcs[])(struct MainObj*);
 #endif
 
 void gunship_spawn_missiles(struct VisualObj* arg0);
+
+extern void (*fortress_cannon_step_funcs[])(struct MainObj*);
+void func_8007DD0C(void);
+
+extern void (*bee_hive_step_funcs[])(struct MainObj*);

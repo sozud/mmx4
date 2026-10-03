@@ -71,7 +71,51 @@ void wall_crawler_corner(struct MainObj* self)
 }
 
 // wall_crawler_corner_0
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B2BC);
+void func_8004B2BC(struct MainObj* self)
+{
+    SP_CUR_MAIN_OBJ->ext.main_11.angle = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    switch (SP_CUR_MAIN_OBJ->ext.main_11.angle & 0xFE) {
+    case 2:
+    case 4:
+    case 6:
+        self->unk15 = 0x40;
+    case 10:
+    case 12:
+    case 14:
+        if (SP_CUR_MAIN_OBJ->ext.main_11.angle >= 0xA) {
+            self->unk15 = 0;
+        }
+        set_animation(self, 7);
+        break;
+    case 8:
+        set_animation(self, 3);
+        break;
+    case 18:
+    case 20:
+    case 22:
+        self->unk15 = 0;
+    case 26:
+    case 28:
+    case 30:
+        if (SP_CUR_MAIN_OBJ->ext.main_11.angle >= 0x1A) {
+            self->unk15 = 0x40;
+        }
+        set_animation(self, 9);
+        break;
+    case 24:
+        set_animation(self, 5);
+        break;
+    case 0:
+        self->unk15 = 0x40;
+        break;
+    case 16:
+        self->unk15 = 0;
+        break;
+    }
+    SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x14;
+    SP_CUR_MAIN_OBJ->ext.main_11.unk85 = 0;
+    self->unk6++;
+}
 
 // wall_crawler_corner_1
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);

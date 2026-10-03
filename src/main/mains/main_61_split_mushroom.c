@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+void split_mushroom_load_palette(void);
+
 void split_mushroom_update(struct MainObj* self)
 {
     split_mushroom_state_funcs[self->state](self);
@@ -10,7 +12,53 @@ void split_mushroom_update(struct MainObj* self)
 }
 
 // split_mushroom_init
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007877C);
+void func_8007877C(struct MainObj* self)
+{
+    self->contact_damage = 5;
+    self->hp = 0;
+    self->invincibility_timer = 0;
+    self->collision_data = D_80107BF8;
+
+    if (engine_obj.stage != 0xC) {
+        self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        self->unk15 = 0x40;
+    } else {
+        self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+        self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 4);
+        self->unk42 = 0x7888;
+        self->unk15 = 0;
+    }
+
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->gravity = FIXED(0.21875);
+    self->animation_table = (const u8* const*)split_mushroom_animations;
+    self->unk16 = 6;
+    self->hurt_box = &split_mushroom_hurt_box;
+    self->attack_box = &split_mushroom_attack_box;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->air_state = 0;
+    self->terrain_box = &split_mushroom_terrain_box;
+
+    set_animation(self, 5);
+
+    self->ext.main_61.flash_timer = 0;
+    self->ext.main_61.split = 0;
+    self->ext.main_61.stunned = 0;
+    self->ext.main_61.split_hits = 3;
+    self->ext.main_61.merge = 0;
+    self->ext.main_61.hit_lock = 0;
+    self->ext.main_61.active = 0;
+    self->ext.main_61.speed_level = 0;
+    self->ext.main_61.split_done = 0;
+    split_mushroom_load_palette();
+    self->state = 1;
+    self->unk5 = 1;
+    self->unk6 = 0;
+}
 
 // split_mushroom_main
 INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_800788E4);

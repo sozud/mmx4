@@ -109,7 +109,16 @@ void bg_zone_controller_d_update_zone(struct EffectObj* self)
 }
 
 // bg_zone_controller_d_unused
-INCLUDE_ASM("main/nonmatchings/effects/effect_20_bg_zone_controller_d", func_800B9E54);
+s32 func_800B9E54(struct Effect21SpawnRecord* record)
+{
+    s32 x = record->x - background_objects[g_Player.bg_offset].x_pos.u.hi;
+    s32 y = record->y - background_objects[g_Player.bg_offset].y_pos.u.hi;
+
+    if ((u16)(x + 0x280) < 0x640 && (u16)(y + 0x1E0) < 0x4B0) {
+        return 1;
+    }
+    return 0;
+}
 
 s16 bg_zone_controller_d_zone_bounds[2] = { 0x0740, 0x0A00 };
 

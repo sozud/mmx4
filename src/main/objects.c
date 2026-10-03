@@ -489,7 +489,23 @@ s32 func_8002B160(struct BaseObj* arg0)
 }
 
 // is_off_screen
-INCLUDE_ASM("main/nonmatchings/objects", func_8002B1E8);
+s32 func_8002B1E8(struct BaseObj* self, s32 x_offset, s32 y_offset)
+{
+    u16 x_pos;
+    u16 y_pos;
+
+    if (self->bg_offset < 0) {
+        x_pos = self->x_pos.u.hi;
+        y_pos = self->y_pos.u.hi;
+    } else {
+        x_pos = self->x_pos.u.hi - background_objects[self->bg_offset].x_pos.u.hi;
+        y_pos = self->y_pos.u.hi - background_objects[self->bg_offset].y_pos.u.hi;
+    }
+    if ((u16)(x_pos + x_offset) < (u16)((x_offset << 1) + 0x140) && (u16)(y_pos + y_offset) < (u16)((y_offset << 1) + 0xF0)) {
+        return 0;
+    }
+    return 1;
+}
 
 void is_on_screen(struct BaseObj* arg0)
 {

@@ -142,7 +142,28 @@ void layout_gate_wait_hit(struct ItemObj* arg0)
 }
 
 // layout_gate_open
-INCLUDE_ASM("main/nonmatchings/items/item_22_layout_gate", func_800C580C);
+void func_800C580C(struct ItemObj* self)
+{
+    if (--self->unk7C.timer != 0) {
+        if ((main_bss_state.frame_counter & 3) == 0) {
+            func_800C5994(self, 0);
+        }
+        if ((main_bss_state.frame_counter & 7) == 0) {
+            func_800C5994(self, 1);
+        }
+        if ((main_bss_state.frame_counter & 0xF) == 0) {
+            func_8001540C(0, layout_gate_unused[get_random() & 3], self);
+        }
+        if (self->unk7C.timer == 0x1E) {
+            layout_gate_check_layout(self);
+            layout_gate_apply_layout(self);
+        }
+    } else {
+        self->state = 3;
+        self->unk5 = 0;
+        self->unk2 = self->tail_ext.unk1.unk84.bytes[0];
+    }
+}
 
 void layout_gate_apply_layout(struct ItemObj* arg0)
 {

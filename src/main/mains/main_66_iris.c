@@ -40,7 +40,31 @@ void iris_death_start(struct MainObj* self)
 }
 
 // iris_death_blink
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080DF4);
+void func_80080DF4(struct MainObj* self)
+{
+    struct EffectObj* effect;
+
+    if (--self->unk7C == 0) {
+        self->unk5 = 2;
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1A;
+            effect->x_pos.i.hi = self->x_pos.i.hi;
+            effect->y_pos.i.hi = self->y_pos.i.hi;
+            self->ext.main_66.effect = effect;
+        }
+    }
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+    if (self->unk7E-- == 0) {
+        self->unk42 ^= 0x8000;
+        self->ext.main_66.partner->unk42 ^= 0x8000;
+        if ((self->invincibility_timer -= 5) > 0x19) {
+            self->invincibility_timer = 0;
+        }
+        self->unk7E = self->invincibility_timer <= 5 ? 5 : self->invincibility_timer;
+    }
+}
 
 void iris_death_wait_explosion(struct MainObj* self)
 {
@@ -357,7 +381,22 @@ void iris_robot_dash_laser(struct MainObj* self)
 }
 
 // iris_robot_dash_recover
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081AD0);
+void func_80081AD0(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        if (self->hp >= 0x18) {
+            self->ext.main_66.hover_timer = 0xF0;
+        } else {
+            self->ext.main_66.hover_timer = 0xB4;
+        }
+        set_animation(self, 1);
+        self->collision_data = D_80107DFC;
+        func_8001540C(2, 0xE1, self);
+        self->unk5 = 3;
+        self->unk6 = 0;
+    }
+}
 
 void iris_robot_release_crystal(struct MainObj* self)
 {

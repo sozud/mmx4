@@ -602,7 +602,30 @@ void eregion_intro_rise(struct MainObj* self)
 }
 
 // eregion_intro_land
-INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004970C);
+void func_8004970C(struct MainObj* self)
+{
+    if (self->unk7E != 0) {
+        self->unk7E--;
+        return;
+    }
+
+    animate_object(ANIMATED_OBJECT(self));
+
+    if (self->animation_step.fields.event == 1) {
+        func_800B0CA0(0x21, 2, self, 0x18, 6);
+        func_800B0CA0(0x22, 2, self, 0x18, 6);
+        func_8001540C(2, 0x18, self);
+        start_screen_shake_y(0xA, 4, 2);
+        self->animation_step.fields.event = 0;
+    }
+
+    if (self->animation_step.fields.event < 0) {
+        self->unk6++;
+        engine_obj.enable_boss = 1;
+        self->ext.main_9.animation_1 = (const u8*)&D_800FA734;
+        self->unk7E = 3;
+    }
+}
 
 void eregion_intro_fill_health(struct MainObj* self)
 {

@@ -44,7 +44,51 @@ void cannon_blast_init(struct ShotObj* raw_arg0)
 }
 
 // cannon_blast_active
-INCLUDE_ASM("main/nonmatchings/shots/shot_20_cannon_blast", func_8009D048);
+void func_8009D048(struct ShotObj* self)
+{
+    struct WeaponObj* owner;
+    s16 distance;
+    s16 adjusted_distance;
+
+    owner = self->unk7C;
+    animate_object(ANIMATED_OBJECT(self));
+
+    if ((u32)(self->unk84.value - 0x1A) < 0x4A) {
+        func_8002D9BC(self);
+    }
+
+    if (self->unk84.value == 0x46) {
+        if (self->unk2 != 0) {
+            self->unk50.data = cannon_blast_box_1;
+        } else {
+            self->unk50.data = cannon_blast_box_0;
+        }
+    }
+
+    if (self->unk84.value == 0x19) {
+        if (self->unk2 != 0) {
+            set_animation(self, 0xC);
+        } else {
+            set_animation(self, 0xB);
+        }
+    }
+
+    distance = ABS(background_objects->x_pos.i.hi, owner->x_pos.i.hi);
+    if ((u16)distance >= 0x1A0) {
+        if (self->unk2 != 0) {
+            self->x_pos.i.hi = (owner->x_pos.u.hi - distance) + 0x29;
+        } else {
+            adjusted_distance = distance - 0x129;
+            self->x_pos.i.hi = owner->x_pos.u.hi - adjusted_distance;
+        }
+    }
+
+    if ((--self->unk84.value == 0) || (owner->active == 0) || (owner->state >= 2)) {
+        self->state++;
+    }
+
+    update_on_screen(BASE_OBJECT(self), 0x80, 0x20);
+}
 
 void cannon_blast_despawn(struct ShotObj* self)
 {

@@ -208,7 +208,21 @@ void data_hopper_vanish(struct MainObj* self)
 }
 
 // data_hopper_check_player
-INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062AEC);
+void func_80062AEC(struct MainObj* self)
+{
+    struct ItemObj* item;
+
+    for (item = item_objects; item < item_objects + COUNT(item_objects); item++) {
+        if ((item->active != 0) && (item->id == 0x13) && ((u8)(item->unk2 - 1) < 3)) {
+            if (func_8002C160(self, item) != 0) {
+                self->unk5 = 7;
+                self->unk6 = 0;
+                item->unk7C.item_19.open_requested = 1;
+                return;
+            }
+        }
+    }
+}
 
 // data_hopper_main
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062BBC);

@@ -127,7 +127,54 @@ void sentry_drone_burst_start(struct MainObj* self)
 }
 
 // sentry_drone_burst_aim
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800678F8);
+void func_800678F8(struct MainObj* self)
+{
+    if (--SP_CUR_MAIN_OBJ->ext.main_48.unk80 == 0) {
+        if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0) {
+            self->unk15 = 0x40;
+        }
+        SP_CUR_MAIN_OBJ->ext.main_48.collision_result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        switch ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE) {
+        case 2:
+        case 4:
+        case 6:
+            self->unk15 = 0x40;
+        case 10:
+        case 12:
+        case 14:
+            if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0xA) {
+                self->unk15 = 0;
+            }
+            set_animation(self, 4);
+            break;
+        case 8:
+            set_animation(self, 2);
+            break;
+        case 18:
+        case 20:
+        case 22:
+            self->unk15 = 0;
+        case 26:
+        case 28:
+        case 30:
+            if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0x1A) {
+                self->unk15 = 0x40;
+            }
+            set_animation(self, 5);
+            break;
+        case 24:
+            set_animation(self, 3);
+            break;
+        case 0:
+            self->unk15 = 0x40;
+            break;
+        case 16:
+            self->unk15 = 0;
+            break;
+        }
+        self->unk6++;
+    }
+}
 
 void sentry_drone_burst_wait(struct MainObj* self)
 {
@@ -223,7 +270,52 @@ void sentry_drone_spread_start(struct MainObj* self)
 }
 
 // sentry_drone_spread_aim
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80067DAC);
+void func_80067DAC(struct MainObj* self)
+{
+    if (--SP_CUR_MAIN_OBJ->ext.main_48.unk80 == 0) {
+        switch ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE) {
+        case 2:
+        case 4:
+        case 6:
+            self->unk15 = 0x40;
+        case 10:
+        case 12:
+        case 14:
+            if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0xA) {
+                self->unk15 = 0;
+            }
+            set_animation(self, 4);
+            break;
+        case 8:
+            set_animation(self, 2);
+            break;
+        case 18:
+        case 20:
+        case 22:
+            self->unk15 = 0;
+        case 26:
+        case 28:
+        case 30:
+            if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0x1A) {
+                self->unk15 = 0x40;
+            }
+            set_animation(self, 5);
+            break;
+        case 24:
+            set_animation(self, 3);
+            break;
+        case 0:
+            self->unk15 = 0x40;
+            set_animation(self, 1);
+            break;
+        case 16:
+            self->unk15 = 0;
+            set_animation(self, 1);
+            break;
+        }
+        self->unk6++;
+    }
+}
 
 void sentry_drone_spread_fire(struct MainObj* self)
 {
