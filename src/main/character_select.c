@@ -214,11 +214,11 @@ void engine_state_1(struct EngineObj* arg0)
 // character_select_state_3_update_funcs state 0
 void func_80029A48(void)
 {
-    s8* phase = &engine_obj.character_state.fields.secret_code_phase;
+    s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
     u16 input = controller_input.pressed;
     u16 held = controller_input.held;
 
-    switch (*phase) {
+    switch (engine_obj.character_state.fields.secret_code_phase) {
     case 0:
         engine_obj.character_state.fields.secret_code_index = 0;
         if (input != 0 && input == D_800F44C4[0] && held == input) {
@@ -260,19 +260,19 @@ void func_80029A48(void)
 // character_select_state_3_update_funcs state 1
 void func_80029BD8(void)
 {
-    s8* phase = &engine_obj.character_state.fields.secret_code_phase;
+    s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
     u16 input = controller_input.pressed;
     u16 held = controller_input.held;
 
-    switch (*phase) {
+    switch (engine_obj.character_state.fields.secret_code_phase) {
     case 0:
         engine_obj.character_state.fields.secret_code_index = 0;
         if (input != 0 && input == D_800F44D8[0]) {
-            if (held == (D_800F44D8[0] | PADR1)) {
+            if (held != (D_800F44D8[0] | PADR1)) {
+                *phase = 0;
+            } else {
                 engine_obj.character_state.fields.secret_code_index = 1;
                 (*phase)++;
-            } else {
-                *phase = 0;
             }
         }
         break;

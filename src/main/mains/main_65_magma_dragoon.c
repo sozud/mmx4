@@ -579,7 +579,6 @@ void magma_dragoon_fireball_start(struct MainObj* self)
 void func_8007F404(struct MainObj* self)
 {
     s32 x;
-    u8 repeat;
 
     animate_object(ANIMATED_OBJECT(self));
 
@@ -604,9 +603,11 @@ void func_8007F404(struct MainObj* self)
         } else if (self->ext.main_65.attack == 1) {
             self->unk5 = &func_8007DD0C != NULL ? 0xC : 9;
         } else {
-            repeat = self->ext.main_65.attack_repeat;
-            self->ext.main_65.attack_repeat++;
-            self->unk5 = repeat == 0 ? 0xB : 5;
+            if (self->ext.main_65.attack_repeat++ == 0) {
+                self->unk5 = 0xB;
+            } else {
+                self->unk5 = 5;
+            }
         }
         self->unk6 = 0;
     }

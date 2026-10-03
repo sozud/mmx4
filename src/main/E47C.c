@@ -815,12 +815,12 @@ void func_8001EBA0(struct GameInfo* info)
     }
 
     func_8001E980(1);
+    background_objects[2].x_pos.i.hi = 0;
     background_objects[0].unk4C = 1;
     background_objects[1].unk4C = 1;
     background_objects[2].unk4C = 1;
     background_objects[1].unk3 = 1;
     background_objects[2].unk3 = 1;
-    background_objects[2].x_pos.i.hi = 0;
     info->unk0 = 6;
     info->mode = 0;
     info->unk2 = 0;

@@ -216,9 +216,11 @@ void bg_wind_gust_medium(struct EffectObj* self)
 #endif
 
 // bg_wind_storm
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B7CFC);
+#else
 void func_800B7CFC(struct EffectObj* effect)
 {
-    s16* x_hi;
     s32 new_hi;
     s32 target_hi;
 
@@ -238,9 +240,8 @@ void func_800B7CFC(struct EffectObj* effect)
         effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
         effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
 
-        x_hi = &background_objects[2].x_pos.i.hi;
-        new_hi = (effect->ext.effect_9.target_x << 9) + *(u8*)x_hi;
-        *x_hi = (s16)new_hi;
+        new_hi = (effect->ext.effect_9.target_x << 9) + background_objects[2].x_pos.bytes[2];
+        background_objects[2].x_pos.i.hi = new_hi;
 
         background_objects[2].unk4C = 1;
     }
@@ -259,6 +260,7 @@ void func_800B7CFC(struct EffectObj* effect)
         background_objects[2].unk4C = 1;
     }
 }
+#endif
 
 u8 player_in_bounds(s16* bounds)
 {

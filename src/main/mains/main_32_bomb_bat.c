@@ -11,8 +11,6 @@ void bomb_bat_update(struct MainObj* self)
 // bomb_bat_init
 void func_8005C860(struct MainObj* self)
 {
-    struct Main32Ext* ext = &self->ext.main_32;
-
     self->active = 0x41;
     self->hp = 3;
     self->contact_damage = 3;
@@ -32,12 +30,12 @@ void func_8005C860(struct MainObj* self)
     self->unk18.val = self->x_pos.val;
     self->unk1C.val = self->y_pos.val;
     set_animation(self, 0);
-    ext->unk80 = 0;
-    ext->unk84 = 0;
-    ext->unk88 = 0;
-    ext->unk8C = 0;
-    ext->unk90 = 0;
-    ext->saved_unk5 = 0;
+    self->ext.main_32.unk80 = 0;
+    self->ext.main_32.unk84 = 0;
+    self->ext.main_32.unk88 = 0;
+    self->ext.main_32.unk8C = 0;
+    self->ext.main_32.unk90 = 0;
+    self->ext.main_32.saved_unk5 = 0;
     self->state++;
     switch (self->unk2) {
     case 0:

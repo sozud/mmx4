@@ -21,14 +21,14 @@ void func_800D9268(struct LayerObj* self)
     self->private_state.bytes[0] = 0xFF;
     self->private_state.bytes[1] = 0;
     self->state++;
+    engine_obj.character_state.fields.flags = 0;
+    engine_obj.character_state.fields.active = 0;
     background_objects[1].unk4E = 0xD;
     background_objects[0].unk2E = 0xA0;
+    background_objects[0].unk2C = 0x30;
     background_objects[1].unk4D = 2;
     background_objects[2].unk4D = 2;
     background_objects[2].unk4E = 5;
-    engine_obj.character_state.fields.flags = 0;
-    engine_obj.character_state.fields.active = 0;
-    background_objects[0].unk2C = 0x30;
     func_8001540C(5, 9, NULL);
     train_tunnel_main(self);
 }

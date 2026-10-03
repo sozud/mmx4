@@ -43,7 +43,6 @@ void iris_death_start(struct MainObj* self)
 void func_80080DF4(struct MainObj* self)
 {
     struct EffectObj* effect;
-    s8 next_delay;
 
     if (--self->unk7C == 0) {
         self->unk5 = 2;
@@ -63,11 +62,7 @@ void func_80080DF4(struct MainObj* self)
         if ((self->invincibility_timer -= 5) > 0x19) {
             self->invincibility_timer = 0;
         }
-        next_delay = self->invincibility_timer;
-        if (self->invincibility_timer < 5) {
-            next_delay = 5;
-        }
-        self->unk7E = next_delay;
+        self->unk7E = self->invincibility_timer <= 5 ? 5 : self->invincibility_timer;
     }
 }
 
