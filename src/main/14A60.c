@@ -795,9 +795,130 @@ void func_80024260(void)
 
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
 
-INCLUDE_ASM("main/nonmatchings/14A60", func_80024920);
+void func_80024920(struct QuadObj* quad)
+{
+    POLY_F4* primitive;
+    DR_TPAGE* draw_mode;
+    u16 x;
+    u16 y;
+    u32 red;
+    u32 green;
+    u32 blue;
+    u8 ordering;
+    u32 buffer;
 
-INCLUDE_ASM("main/nonmatchings/14A60", func_80024B9C);
+    if (SP_SPRITE_COUNT >= 1000) {
+        return;
+    }
+    SP_SPRITE_COUNT++;
+
+    if (quad->bg_offset < 0) {
+        x = quad->x_pos.u.hi;
+        y = quad->y_pos.u.hi;
+    } else {
+        x = quad->x_pos.u.hi - background_objects[quad->bg_offset].x_pos.u.hi;
+        y = quad->y_pos.u.hi - background_objects[quad->bg_offset].y_pos.u.hi;
+    }
+
+    draw_mode = SP_DRAW_MODE_CURSOR;
+    primitive = SP_PRIM_CURSOR;
+
+    setPolyF4(primitive);
+    setSemiTrans(primitive, quad->active & 0x10);
+
+    primitive->x0 = x + quad->vertices[0].x.u.hi;
+    primitive->y0 = y + quad->vertices[0].y.u.hi;
+    primitive->x1 = x + quad->vertices[1].x.u.hi;
+    primitive->y1 = y + quad->vertices[1].y.u.hi;
+    primitive->x2 = x + quad->vertices[3].x.u.hi;
+    primitive->y2 = y + quad->vertices[3].y.u.hi;
+    primitive->x3 = x + quad->vertices[2].x.u.hi;
+    primitive->y3 = y + quad->vertices[2].y.u.hi;
+
+    red = (u8)quad->unk34 & 0x1F;
+    primitive->r0 = (red * 8) + (red >> 2);
+    green = (quad->unk34 >> 5) & 0x1F;
+    primitive->g0 = (green * 8) + (green >> 2);
+    blue = quad->unk34 >> 10;
+    primitive->b0 = (blue * 8) + (blue >> 2);
+
+    BG_DRAW_TPAGE(draw_mode, 0);
+
+    ordering = quad->unk36;
+    buffer = SP_DRAW_BUFFER;
+
+    setaddr(D_8013BC40[buffer][ordering >> 4][ordering & 0xF], draw_mode);
+    setaddr(draw_mode, primitive);
+    D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)primitive;
+
+    SP_PRIM_CURSOR += sizeof(POLY_FT4);
+    SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
+}
+
+void func_80024B9C(struct QuadObj* quad)
+{
+    POLY_G4* primitive;
+    DR_TPAGE* draw_mode;
+    u8* color;
+    u16 x;
+    u16 y;
+    u8 ordering;
+    u32 buffer;
+
+    if (SP_SPRITE_COUNT >= 1000) {
+        return;
+    }
+    SP_SPRITE_COUNT++;
+
+    if (quad->bg_offset < 0) {
+        x = quad->x_pos.u.hi;
+        y = quad->y_pos.u.hi;
+    } else {
+        x = quad->x_pos.u.hi - background_objects[quad->bg_offset].x_pos.u.hi;
+        y = quad->y_pos.u.hi - background_objects[quad->bg_offset].y_pos.u.hi;
+    }
+
+    draw_mode = SP_DRAW_MODE_CURSOR;
+    primitive = SP_PRIM_CURSOR;
+
+    setPolyG4(primitive);
+    setSemiTrans(primitive, quad->active & 0x10);
+
+    primitive->x0 = x + quad->vertices[0].x.u.hi;
+    primitive->y0 = y + quad->vertices[0].y.u.hi;
+    primitive->x1 = x + quad->vertices[1].x.u.hi;
+    primitive->y1 = y + quad->vertices[1].y.u.hi;
+    primitive->x2 = x + quad->vertices[3].x.u.hi;
+    primitive->y2 = y + quad->vertices[3].y.u.hi;
+    primitive->x3 = x + quad->vertices[2].x.u.hi;
+    primitive->y3 = y + quad->vertices[2].y.u.hi;
+
+    color = D_800F2B5C[quad->unk34];
+    primitive->r0 = *color++;
+    primitive->g0 = *color++;
+    primitive->b0 = *color++;
+    primitive->r1 = *color++;
+    primitive->g1 = *color++;
+    primitive->b1 = *color++;
+    primitive->r3 = *color++;
+    primitive->g3 = *color++;
+    primitive->b3 = *color++;
+    primitive->r2 = *color++;
+    primitive->g2 = *color++;
+    primitive->b2 = *color;
+
+    BG_DRAW_TPAGE(draw_mode, 0);
+
+    ordering = quad->unk36;
+    buffer = SP_DRAW_BUFFER;
+
+    setaddr(D_8013BC40[buffer][ordering >> 4][ordering & 0xF], draw_mode);
+    setaddr(draw_mode, primitive);
+    D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)primitive;
+
+    SP_PRIM_CURSOR += sizeof(POLY_FT4);
+    SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
+}
 void func_80024E70(void)
 {
     struct PlayerObj* player = &g_Player;

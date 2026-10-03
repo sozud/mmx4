@@ -467,10 +467,52 @@ s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
     }
 }
 
-// get_tile_attribute
-INCLUDE_ASM("main/nonmatchings/1CF60", func_8002D724);
+static inline u16 stage_tile_entry(u8 block, s32 row, s32 column)
+{
+    u16(*tiles)[16][16] = (u16(*)[16][16])SP_BG_TILE_PIXELS;
 
-INCLUDE_ASM("main/nonmatchings/1CF60", func_8002D7E4);
+    return tiles[block][row][column];
+}
+
+// get_tile_attribute
+u8 func_8002D724(struct PlayerObj* player, s16 x, s16 y)
+{
+    s8 block_row = y >> 8;
+    s8 block_column = x >> 8;
+    s32 tile_column = (x & 0xF0) >> 4;
+    s32 tile_row = (y & 0xF0) >> 4;
+    u8 attribute;
+    u8 block = (SP_BG_TILEMAP + player->bg_offset * layout_size
+        + layout_width * block_row)[block_column];
+
+    if (block == 0 || block_row < 0 || block_column < 0) {
+        attribute = 0;
+    } else {
+        attribute = SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF];
+    }
+    return attribute;
+}
+
+u8 func_8002D7E4(struct PlayerObj* player, s16 x, s16 y)
+{
+    s8 block_row = y >> 8;
+    s32 tile_column = (x & 0xF0) >> 4;
+    s32 tile_row = (y & 0xF0) >> 4;
+    u8 attribute;
+    u8 block = (SP_BG_TILEMAP + player->bg_offset * layout_size
+        + layout_width * block_row)[(s8)(x >> 8)];
+
+    if (block == 0 || block_row < 0 || (s8)(x >> 8) < 0) {
+        attribute = 0;
+    } else {
+        player->unk6C = x & 0xF;
+        player->unk6E = y & 0xF;
+
+        attribute = SP_BG_TILE_ATTRS[stage_tile_entry(block, tile_row, tile_column) & 0x3FFF];
+    }
+    return attribute;
+}
+
 u8 func_8002D8B8(struct PlayerObj* arg0)
 {
     struct Unk_unk68* temp_v1 = arg0->unk68;
