@@ -24424,4 +24424,3 @@ void func_800A73C4(struct ShotObj* self)
     self->state = 7;
     self->unk5 = 0;
 }
-
