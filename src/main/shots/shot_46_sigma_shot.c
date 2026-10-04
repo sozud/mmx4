@@ -187,14 +187,11 @@ void sigma_bolt_bounce_wall(struct ShotObj* self)
 
 void sigma_bolt_bounce_floor(struct ShotObj* self)
 {
-    s32 var_a1;
-
     if (self->unk70 & 8) {
         self->unk5++;
-        var_a1 = self->unk99 != 0 ? FIXED(5) : FIXED(-5);
-        self->x_vel.val = var_a1;
+        self->x_vel.val = self->unk99 != 0 ? FIXED(5) : FIXED(-5);
         if (self->unk2 == 2) {
-            self->x_vel.val = -var_a1;
+            self->x_vel.val *= -1;
         }
         self->y_vel.val = 0;
     }

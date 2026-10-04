@@ -31,12 +31,9 @@ void cyberspace_guide_despawn(struct MiscObj* self)
 
 void cyberspace_guide_appear(struct MiscObj* self)
 {
-    u8 timer;
     animate_object(ANIMATED_OBJECT(self));
-    timer = self->ext.unk.unk54 - 1;
-    self->ext.unk.unk54 = timer;
-    if (timer == 0) {
-        self->ext.unk.unk54 = 0x24;
+    if (--self->ext.misc_34.timer == 0) {
+        self->ext.misc_34.timer = 0x24;
         self->unk5 = 1;
         set_animation(self, 2);
     }
@@ -77,13 +74,9 @@ void cyberspace_guide_leave_start(struct MiscObj* self)
 
 void cyberspace_guide_leave_drift(struct MiscObj* self)
 {
-    u8 timer;
-
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    timer = self->ext.misc_34.timer - 1;
-    self->ext.misc_34.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_34.timer == 0) {
         self->ext.misc_34.timer = 0x1E;
         self->x_vel.val = FIXED(3);
         self->y_vel.val = 0;
@@ -94,13 +87,10 @@ void cyberspace_guide_leave_drift(struct MiscObj* self)
 
 void cyberspace_guide_leave_finish(struct MiscObj* self)
 {
-    u8 timer;
     struct EffectObj* related;
 
     move_with_gravity(ANIMATED_OBJECT(self));
-    timer = self->ext.misc_34.timer - 1;
-    self->ext.misc_34.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_34.timer == 0) {
         related = self->ext.misc_34.related;
         related->ext.effect_38.active = 1;
         if (!(engine_obj.checkpoint % 2)) {

@@ -898,8 +898,8 @@ void sigma_death(struct MainObj* self)
 
 void sigma_cloak_stagger_start(struct MainObj* self)
 {
-    self->unk42 &= 0x7FFF;
     self->unk4B = -1;
+    self->unk42 &= 0x7FFF;
     self->unk5++;
     self->unk7C = 0x40;
     self->unk7E = 4;
@@ -947,11 +947,8 @@ void sigma_cloak_stagger_fade(struct MainObj* self)
 
 void sigma_cloak_stagger_finish(struct MainObj* self)
 {
-    s16 timer = self->unk7C;
     self->on_screen = 0;
-    timer--;
-    self->unk7C = timer;
-    if (timer == 0) {
+    if (--self->unk7C == 0) {
         self->state = 1;
         self->unk5 = 2;
         self->unk6 = 0;
@@ -1055,18 +1052,18 @@ void sigma_reveal_dialogue(struct MainObj* self)
 
 void sigma_reveal_fill_health(struct MainObj* self)
 {
-    u16 temp_v0;
+    s16 temp_v0;
 
     if (self->hp < 0x30) {
         temp_v0 = --self->unk7C;
-        if ((temp_v0 << 0x10) == 0) {
+        if (temp_v0 == 0) {
             func_8001540C(0, 0xE, 0);
             self->unk7C = 2;
         }
         self->hp = (s8)((u8)self->hp + 1);
     } else {
-        self->unk7C = 0x5A;
         self->unk5 = (s8)((u8)self->unk5 + 1);
+        self->unk7C = 0x5A;
     }
     is_on_screen(BASE_OBJECT(self));
 }

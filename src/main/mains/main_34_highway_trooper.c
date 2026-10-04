@@ -81,7 +81,7 @@ void highway_trooper_attack_fire(struct MainObj* self)
 void highway_trooper_attack_ready_jump(struct MainObj* self)
 {
     if (self->animation_step.fields.event == 2) {
-        if (self->unk2 == self->animation_step.fields.event) {
+        if (self->unk2 == 2) {
             self->terrain_box = &highway_trooper_terrain_box;
         }
         self->unk6++;

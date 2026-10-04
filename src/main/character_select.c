@@ -173,9 +173,9 @@ void character_select_state_4(struct EngineObj* arg0)
             arg0->character_state.bytes[1] |= 0x80;
         }
     } else if (!(arg0->character_state.bytes[1] & 0x7F)) {
+        arg0->unk1++;
         arg0->unk2 = 0;
         arg0->unk4 = 20; // how long to wait on green background before fading out
-        arg0->unk1++;
     }
 }
 

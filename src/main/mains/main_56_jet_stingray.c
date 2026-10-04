@@ -673,10 +673,10 @@ void jet_stingray_leap_start(struct MainObj* self)
 void jet_stingray_leap_fall(struct MainObj* self)
 {
     if (self->y_speed > 0) {
-        self->y_speed = 0;
-        self->gravity = -FIXED(0.8125);
         self->unk6++;
         self->ext.main_56.flags &= ~2;
+        self->y_speed = 0;
+        self->gravity = -FIXED(0.8125);
     }
 }
 

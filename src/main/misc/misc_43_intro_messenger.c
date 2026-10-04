@@ -69,11 +69,10 @@ void intro_messenger_land(struct MiscObj* self)
     if (self->animation_step.fields.event != 0) {
         if (engine_obj.cur_character == 0) {
             func_8002217C(0x2E, 0xFF, 0);
-            self->unk5 = 3;
         } else {
             func_8002217C(0x27, 0xFF, 0);
-            self->unk5 = 3;
         }
+        self->unk5 = 3;
     }
 }
 
@@ -110,10 +109,9 @@ void intro_messenger_delay(struct MiscObj* self)
     }
     if (engine_obj.cur_character == 0) {
         func_8002217C(0x2F, 0, 0);
-        self->unk5 = 7;
-        return;
+    } else {
+        func_8002217C(0x28, 0, 0);
     }
-    func_8002217C(0x28, 0, 0);
     self->unk5 = 7;
 }
 

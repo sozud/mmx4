@@ -266,8 +266,8 @@ void sigma_head_lightning(struct ShotObj* self)
 void sigma_head_freeze_start(struct ShotObj* self)
 {
     set_animation(self, 9);
-    self->unk6++;
     self->timer = 1;
+    self->unk6++;
     self->x_vel.val = FIXED(-1);
     self->y_vel.val = 0;
 }

@@ -52,10 +52,12 @@ void data_capsule_idle(struct ItemObj* arg0)
 void data_capsule_attached_init(struct ItemObj* arg0)
 {
     arg0->state = 1;
-    arg0->on_screen = 1;
     arg0->unk5 = 0;
     arg0->unk6 = 0;
     arg0->unk7 = 0;
+    arg0->on_screen = 1;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
     arg0->unk54 = 0;
     arg0->unk50 = 0;
     arg0->unk68 = NULL;
@@ -67,8 +69,6 @@ void data_capsule_attached_init(struct ItemObj* arg0)
     arg0->unk28 = 0;
     arg0->unk2C = 0;
     arg0->unk16 = 4;
-    arg0->unk18.val = arg0->x_pos.val;
-    arg0->unk1C.val = arg0->y_pos.val;
     set_animation(arg0, 1);
 }
 

@@ -19,9 +19,9 @@ void trooper_bomb_fall(struct ShotObj* self)
 {
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->unk70 != 0) {
+        self->state++;
         self->unk84.value = 0x40;
         self->on_screen = 0;
-        self->state++;
         return;
     }
     update_on_screen(BASE_OBJECT(self), 0x20, 0x20);

@@ -352,7 +352,7 @@ void general_punch_rings(struct MainObj* self)
 
 void general_punch_wait_return(struct MainObj* self)
 {
-    if ((general_fists[0]->timer == 0x80) && (general_fists[1]->timer == general_fists[0]->timer)) {
+    if ((general_fists[0]->timer == 0x80) && (general_fists[1]->timer == 0x80)) {
         self->unk6++;
         general_fists[0]->state++;
         general_fists[1]->state++;

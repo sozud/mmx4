@@ -429,7 +429,8 @@ void func_8001D698(struct GameInfo* arg0)
     arg0->mode = 0;
     arg0->unk2 = 0;
     arg0->unk3 = 0;
-    if (++arg0->unkC == 4) {
+    arg0->unkC++;
+    if (arg0->unkC == 4) {
         arg0->unkC = 0;
     }
 }

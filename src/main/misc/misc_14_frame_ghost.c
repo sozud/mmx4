@@ -8,7 +8,6 @@ void frame_ghost_init(register struct MiscObj* self)
     u8 state;
 
     source = self->ext.pointer.unk50;
-    state = self->state + 1;
     self->unk40 = source->unk40;
     self->unk42 = source->unk42 & 0x7FFF;
     self->animation_table = source->animation_table;
@@ -16,6 +15,7 @@ void frame_ghost_init(register struct MiscObj* self)
     self->bg_offset = source->bg_offset;
     self->unk15 = 0;
     self->unk16 = 7;
+    state = self->state + 1;
     self->state = state;
     set_animation_frame(ANIMATED_OBJECT(self), 2, self->unk2);
     self->unk7 = 0xA;

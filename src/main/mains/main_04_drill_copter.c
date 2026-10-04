@@ -120,9 +120,9 @@ void drill_copter_drop(struct MainObj* self)
 
 void drill_copter_drop_start(struct MainObj* self)
 {
+    self->unk6++;
     self->unk7C = 0x1E;
     self->air_state = -1;
-    self->unk6++;
     set_animation(self, 4);
     func_8001540C(2, 8, self);
 }

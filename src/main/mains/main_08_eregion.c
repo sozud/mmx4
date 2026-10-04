@@ -497,8 +497,8 @@ void eregion_recoil_start(struct MainObj* self)
     set_animation(self, 0xA);
     self->x_speed = self->x_pos.i.hi;
     if (self->animation_step.fields.frame_index == 0x1C || self->animation_step.fields.frame_index == 0x1D) {
-        s32 x_speed = (s16)self->x_speed;
-        self->x_pos.i.hi = self->unk15 != 0 ? x_speed - 0x16 : x_speed + 0x16;
+        s16 x_speed = self->x_speed;
+        self->x_pos.i.hi = x_speed + (self->unk15 != 0 ? -0x16 : 0x16);
     }
 }
 

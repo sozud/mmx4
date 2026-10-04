@@ -524,17 +524,20 @@ s32 player_check_ladder(struct PlayerObj* self)
 
 s32 player_check_ladder_air(struct PlayerObj* self)
 {
-    if (self->input_locked != 0 || !(self->input.buttons.held & PLAYER_INPUT_UP)) {
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if (!(self->input.buttons.held & PLAYER_INPUT_UP)) {
         return 0;
     }
 
     if (func_8002D994(self) == 0x20) {
         if (self->attacking) {
             player_enter_ladder_shoot(self);
-            return 1;
+        } else {
+            player_set_animation(self, 0x1F);
+            player_enter_ladder_up(self);
         }
-        player_set_animation(self, 0x1F);
-        player_enter_ladder_up(self);
         return 1;
     }
     return 0;
@@ -636,11 +639,13 @@ s32 player_leap_check_peak(struct PlayerObj* self)
 
 void player_leap_check_wall(struct PlayerObj* self)
 {
-    s32 blocked;
+    u32 blocked;
 
     blocked = 0;
     if (self->unk15 != 0) {
-        blocked = self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT;
+        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
+            blocked = 1;
+        }
         if (self->x_vel.val <= 0) {
             blocked = 1;
         }

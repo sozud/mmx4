@@ -1858,7 +1858,6 @@ void player_zero_ryuenjin(struct PlayerObj* self)
 void player_zero_ryuenjin_start(struct PlayerObj* self)
 {
     u8 event;
-    s32 scratch;
 
     player_zero_saber_on_event(self, 0x23);
     event = self->animation_step.fields.event;
@@ -1869,14 +1868,11 @@ void player_zero_ryuenjin_start(struct PlayerObj* self)
         } else {
             self->x_vel.val = -FIXED(4);
         }
-        scratch = FIXED(6.75);
-        self->y_vel.val = scratch;
-        scratch = (u8)self->unk6;
         self->unk28 = -FIXED(0.25);
+        self->y_vel.val = FIXED(6.75);
         self->unk2C = FIXED(0.2578125);
         self->spike_immune = 0;
-        scratch += 1;
-        self->unk6 = scratch;
+        self->unk6++;
     }
 }
 

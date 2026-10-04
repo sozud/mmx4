@@ -77,13 +77,10 @@ void lightning_web_init(struct WeaponObj* arg0)
 
 void lightning_web_fly(struct WeaponObj* arg0)
 {
-    u8 temp_v0;
     struct Weapon1Ext* weapon_1;
 
     weapon_1 = &arg0->ext.weapon_1;
-    temp_v0 = weapon_1->timer - 1;
-    weapon_1->timer = temp_v0;
-    if (temp_v0 == 0) {
+    if (--weapon_1->timer == 0) {
         set_animation(arg0, 1);
         arg0->unk16 = 3;
         arg0->state++;

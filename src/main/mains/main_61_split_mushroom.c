@@ -483,10 +483,8 @@ void split_mushroom_spore_rain_recover(struct MainObj* self)
 
 void split_mushroom_spore_rain_finish(struct MainObj* self)
 {
-    u16 timer;
     animate_object(ANIMATED_OBJECT(self));
-    timer = --self->unk7C;
-    if ((timer << 16) == 0) {
+    if (--self->unk7C == 0) {
         self->y_speed = 0;
         if (self->unk2 == 0) {
             self->unk7C = 6;

@@ -5,33 +5,28 @@
 
 void unused_ride_armor_init(struct MainObj* self)
 {
-    s32 x_pos;
-    s32 y_pos;
-
-    x_pos = self->x_pos.val;
-    y_pos = self->y_pos.val;
     self->state = 1;
     self->unk5 = 2;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->unk7C = 0;
+    self->on_screen = 0;
     self->hp = 0x18;
     self->contact_damage = 6;
+    self->invincibility_timer = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
     self->animation_table = (const u8* const*)unused_ride_armor_animations;
     self->hurt_box = (const u8*)&unused_ride_armor_hit_box;
     self->attack_box = (const u8*)&unused_ride_armor_hit_box;
     self->terrain_box = &unused_ride_armor_terrain_box;
     self->collision_data = (const u16*)D_80108184;
-    self->unk6 = 0;
-    self->unk7 = 0;
-    self->unk7C = 0;
-    self->on_screen = 0;
-    self->invincibility_timer = 0;
     self->air_state = 0;
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
     self->unk16 = 5;
-    self->unk18.val = x_pos;
-    self->unk1C.val = y_pos;
 }
 
 void unused_ride_armor_face_player(struct MainObj* self)

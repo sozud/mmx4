@@ -1075,13 +1075,12 @@ INCLUDE_ASM("main/nonmatchings/player_weapon", func_80038568);
 void player_cancel_released_charge(void)
 {
     struct PlayerObj* player = &g_Player;
-    u16 held = player->input.buttons.held;
 
-    if (!(held & PLAYER_INPUT_SHOOT)) {
+    if (!(player->input.buttons.held & PLAYER_INPUT_SHOOT)) {
         player->charge_state[0] = 0;
         player->charge_timer = 0;
     }
-    if (!(held & PLAYER_INPUT_SPECIAL)) {
+    if (!(player->input.buttons.held & PLAYER_INPUT_SPECIAL)) {
         player->charge_state[1] = 0;
         player->special_charge_timer = 0;
     }

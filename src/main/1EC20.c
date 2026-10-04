@@ -237,8 +237,8 @@ void func_8002ED80(struct EngineObj* arg0)
 void func_8002ED98(struct EngineObj* arg0)
 {
     func_800129F0(8);
-    arg0->unk2 = 0;
     arg0->unk1++;
+    arg0->unk2 = 0;
 }
 
 // engine_state_3_update_funcs state 7
