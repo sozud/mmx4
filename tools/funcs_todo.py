@@ -7,7 +7,6 @@ import re
 import concurrent.futures
 import json
 import requests
-import sys
 import threading
 import time
 import zipfile
@@ -22,17 +21,46 @@ export_cache = {}
 
 request_lock = threading.Lock()
 last_request_time = 0.0
+REQUEST_ATTEMPTS = 5
+REQUEST_TIMEOUT = 30
+RETRY_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
 def get_decomp_me(url):
     global last_request_time
 
-    with request_lock:
-        delay = 1.0 - (time.monotonic() - last_request_time)
-        if delay > 0:
-            time.sleep(delay)
-        last_request_time = time.monotonic()
+    for attempt in range(REQUEST_ATTEMPTS):
+        with request_lock:
+            delay = 1.0 - (time.monotonic() - last_request_time)
+            if delay > 0:
+                time.sleep(delay)
+            last_request_time = time.monotonic()
 
-    return requests.get(url=url, headers={"User-Agent": "function-finder"})
+        response = None
+        try:
+            response = requests.get(
+                url=url,
+                headers={"User-Agent": "function-finder"},
+                timeout=REQUEST_TIMEOUT,
+            )
+        except (requests.ConnectionError, requests.Timeout) as error:
+            if attempt == REQUEST_ATTEMPTS - 1:
+                raise
+            reason = str(error)
+        else:
+            if response.status_code not in RETRY_STATUS_CODES:
+                return response
+            if attempt == REQUEST_ATTEMPTS - 1:
+                response.raise_for_status()
+            reason = f"HTTP {response.status_code}"
+
+        delay = 2 ** attempt
+        if response is not None:
+            retry_after = response.headers.get("Retry-After")
+            if retry_after and retry_after.isdigit():
+                delay = max(delay, int(retry_after))
+            response.close()
+        print(f"{reason}: retrying {url} in {delay}s", file=sys.stderr)
+        time.sleep(delay)
 
 def get_export(slug):
     if slug in export_cache:
@@ -136,6 +164,12 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--use-trace",
+    action="store_true",
+    help="Only include functions from tools/mednafen_trace.txt (disabled by default)",
+)
+
+parser.add_argument(
     "--keywords",
     metavar="keyword",
     type=str,
@@ -144,20 +178,16 @@ parser.add_argument(
 )
 
 # look in asm files, read in the text and check for branches and jump tables
-def get_asm_files(asm_path, og_files):
+def get_asm_files(asm_path, og_files=None):
     files = []
+    matching_paths = None if og_files is None else {Path(file) for file, _ in og_files}
     for path in Path(asm_path).rglob("*.s"):
-        found = False
-        for file, size in og_files:
-            if Path(file) == path:
-                found = True
-        if not found:
+        if matching_paths is not None and path not in matching_paths:
             continue
-        # ignore data
-        if not "/nonmatchings" in str(path):
+        # Only undecompiled game functions; exclude data and SDK libraries.
+        if "nonmatchings" not in path.parts or "psxsdk" in path.parts:
             continue
-        f = open(f"{path}", "r")
-        text = f.read()
+        text = path.read_text()
 
         # check for different mips branch types and count
         branches = 0
@@ -211,9 +241,13 @@ def find_wip(o):
     return None
 
 
-def do_files(files, objtypes):
+def do_files(objtypes):
     args = parser.parse_args()
-    asm_files = get_asm_files("asm/us", files)
+    matching_files = None
+    if args.use_trace:
+        hex_numbers = read_hex_numbers('mednafen_trace.txt')
+        matching_files = find_matching_files_sorted_by_size('asm/us', hex_numbers)
+    asm_files = get_asm_files("asm/us", matching_files)
 
     # sort by name, then number of branches, then length
     asm_files = sorted(asm_files, key=lambda x: (x["name"]))
@@ -237,9 +271,7 @@ def do_files(files, objtypes):
         branches = f["branches"]
         jump_table = f["jump_table"]
 
-        if "/psxsdk/" in name:
-            ovl_name = name.split("/")[5]  # grab library name
-        elif "/weapon/" in name:
+        if "/weapon/" in name:
             # use the weapon name
             ovl_name = name.split("/")[4]  # grab library name
         else:
@@ -362,15 +394,8 @@ def read_obj_list(filename):
 
 # Main function
 def main():
-    # Read hex numbers from output.txt in the same folder as this script
-    hex_numbers = read_hex_numbers('mednafen_trace.txt')
-
     objtypes = read_obj_list('objtypes.txt')
-
-    # Find matching files and sort them by size
-    matching_files = find_matching_files_sorted_by_size('asm', hex_numbers)
-
-    do_files(matching_files, objtypes)
+    do_files(objtypes)
 
 if __name__ == "__main__":
     main()
