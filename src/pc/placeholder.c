@@ -19627,36 +19627,6 @@ void func_8005B24C(struct MainObj* self)
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
-void func_80088C40(struct MainObj* self)
-{
-    if (engine_obj.checkpoint >= 2) {
-        ZeroObjectState(OBJECT_HEADER(self));
-        return;
-    }
-    self->active = 0x41;
-    self->hp = 0;
-    self->contact_damage = 0;
-    self->invincibility_timer = 0;
-    self->collision_data = D_80108104;
-    self->animation_table = (u32**)D_80104974;
-    self->unk16 = 5;
-    self->hurt_box = &D_80104914;
-    self->x_speed = 0;
-    self->y_speed = 0;
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->air_state = 0;
-    self->attack_box = NULL;
-    self->terrain_box = NULL;
-    self->unk15 = 0;
-    self->unk1C = self->y_pos;
-    self->bg_offset = g_Player.bg_offset;
-    self->unk18 = self->x_pos;
-    set_animation(self, 0);
-    memset(&self->ext.main_70, 0, sizeof(self->ext.main_70));
-    self->unk5++;
-}
-
 void func_8008A9F4(struct MainObj* self)
 {
     struct Main71Ext* ext = &self->ext.main_71;

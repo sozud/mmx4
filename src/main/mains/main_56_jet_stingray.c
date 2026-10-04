@@ -838,9 +838,6 @@ void jet_stingray_reset(struct MainObj* self)
 }
 
 // jet_stingray_main
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071D30);
-#else
 void func_80071D30(struct MainObj* self)
 {
     s32 check;
@@ -908,7 +905,6 @@ void func_80071D30(struct MainObj* self)
     update_on_screen(BASE_OBJECT(self), 0x80, 0x80);
     func_8002D9BC(self);
 }
-#endif
 
 void jet_stingray_death_start(struct MainObj* self)
 {
