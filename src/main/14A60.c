@@ -795,9 +795,6 @@ void func_80024260(void)
 
 INCLUDE_ASM("main/nonmatchings/14A60", func_80024334);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/14A60", func_80024920);
-#else
 void func_80024920(struct QuadObj* quad)
 {
     POLY_F4* primitive;
@@ -857,11 +854,7 @@ void func_80024920(struct QuadObj* quad)
     SP_PRIM_CURSOR += sizeof(POLY_FT4);
     SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
 }
-#endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/14A60", func_80024B9C);
-#else
 void func_80024B9C(struct QuadObj* quad)
 {
     POLY_G4* primitive;
@@ -926,7 +919,7 @@ void func_80024B9C(struct QuadObj* quad)
     SP_PRIM_CURSOR += sizeof(POLY_FT4);
     SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
 }
-#endif
+
 void func_80024E70(void)
 {
     struct PlayerObj* player = &g_Player;

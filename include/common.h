@@ -126,8 +126,14 @@ typedef s32 arg_u16;
 #define PAD_SELECTION_BUTTONS (PADRup | PADRdown)
 #endif
 
+/* EU writes the tpage mode inline; US/JP query GetGraphType(). */
+#ifdef VERSION_EU
+#define BG_DRAW_TPAGE(p, tpage) \
+    (setlen(p, 1), ((u_long*)(p))[sizeof(OT_TYPE) / sizeof(u_long)] = 0xE1000000 | (tpage))
+#else
 #define BG_DRAW_TPAGE(p, tpage) \
     (setlen(p, 1), ((u_long*)(p))[sizeof(OT_TYPE) / sizeof(u_long)] = 0xE1000000 | ((GetGraphType() == 1 || GetGraphType() == 2) ? (tpage) : ((tpage)&0x9FF)))
+#endif
 
 union MainPaletteData {
     u8 raw[0x200];

@@ -176,10 +176,15 @@ void func_800257BC(struct PlayerObj* arg0);
 
 void func_80025CDC(void);
 
+/* EU always uses the getTPage layout; US/JP pick it from GetGraphType(). */
+#ifdef VERSION_EU
+#define BG_TPAGE(tp, abr, x, y) getTPage(tp, abr, x, y)
+#else
 #define BG_TPAGE(tp, abr, x, y)                                                            \
     ((GetGraphType() == 1 || GetGraphType() == 2)                                          \
             ? (((tp)&3) << 9) | (((abr)&3) << 7) | (((y)&0x300) >> 3) | (((x)&0x3FF) >> 6) \
             : getTPage(tp, abr, x, y))
+#endif
 
 s16 D_800F2FDC[2] = { 0x0300, 0x0600 };
 
@@ -246,9 +251,6 @@ void (*D_800F30C8[])(struct MiscObj*) = {
     func_80023C0C,
 };
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/165A0", func_80025DA0);
-#else
 void func_80025DA0(s32 texture_depth, s32 blend_mode)
 {
     u32 buffer, i, j;
@@ -281,7 +283,6 @@ void func_80025DA0(s32 texture_depth, s32 blend_mode)
     }
     SP_BG_TILEMAP = D_80141BE8;
 }
-#endif
 #undef BG_TPAGE
 
 void func_80026118(void)
