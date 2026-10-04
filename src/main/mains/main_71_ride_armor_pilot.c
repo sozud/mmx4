@@ -7,6 +7,9 @@ extern void* ride_armor_pilot_animations[31];
 extern struct Unk_unk68 ride_armor_pilot_terrain_box;
 
 // ride_armor_pilot_init
+#ifdef VERSION_EU
+INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089AA4);
+#else
 void func_80089AA4(struct MainObj* self)
 {
     s32 x_pos;
@@ -47,6 +50,7 @@ void func_80089AA4(struct MainObj* self)
     self->unk18.val = x_pos;
     self->unk1C.val = y_pos;
 }
+#endif
 
 void ride_armor_pilot_spawn_dust(struct VisualObj* self, u8 arg1)
 {
