@@ -50,10 +50,11 @@ void boss_warning_advance_tiles(struct EffectObj* self)
 
     effect = boss_warning_tiles[self->ext.effect_24.unk1B];
     effect->unk5++;
-    if (++self->ext.effect_24.unk1B == 0x16) {
+    self->ext.effect_24.unk1B++;
+    if (self->ext.effect_24.unk1B == 0x16) {
         old_unk5 = self->unk5;
-        self->ext.effect_24.timer = 0x3C;
         self->unk5 = old_unk5 + 1;
+        self->ext.effect_24.timer = 0x3C;
         if (engine_obj.stage == 0) {
             func_8001653C();
         }

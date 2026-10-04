@@ -10,26 +10,24 @@ void train_boss_shot_update(struct ShotObj* self)
 void train_boss_bullet_init(struct ShotObj* self)
 {
     u16 flags;
-    struct WeaponObj* owner;
 
-    flags = self->unk42;
-    owner = self->unk7C;
     self->state = 1;
     self->on_screen = 1;
     self->unk58.collision_data = D_80106070;
+    flags = self->unk42;
+    self->unk42 = flags & 0x7FFF;
     self->x_vel.val = 0;
-    self->unk54 = train_boss_bullet_hit_box;
-    self->unk50.data = train_boss_bullet_hit_box;
-    self->unk84.shot_24.timer = 0x20;
     self->y_vel.val = 0;
     self->unk28 = 0;
     self->unk2C = 0;
     self->unk16 = 0;
     self->unk68 = NULL;
+    self->unk54 = train_boss_bullet_hit_box;
+    self->unk50.data = train_boss_bullet_hit_box;
     self->unk6 = 0;
+    self->unk84.shot_24.timer = 0x20;
     self->unk84.shot_24.owner_notified = 0;
-    self->unk42 = flags & 0x7FFF;
-    self->unk84.shot_24.owner_state = owner->unk6;
+    self->unk84.shot_24.owner_state = self->unk7C->unk6;
     self->unk5C = 1;
     self->unk60 = 4;
     set_animation(self, 4);

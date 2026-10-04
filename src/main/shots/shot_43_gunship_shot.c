@@ -16,12 +16,13 @@ void gunship_shot_bullet_fall(struct ShotObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
         spawn_explosion(BASE_OBJECT(self));
-    } else {
-        func_8002D9BC(self);
-        if (func_8002B160(BASE_OBJECT(self)) == 0) {
-            is_on_screen(BASE_OBJECT(self));
-            return;
-        }
+        self->state = 3;
+        return;
+    }
+    func_8002D9BC(self);
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        return;
     }
     self->state = 3;
 }

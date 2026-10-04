@@ -144,24 +144,16 @@ void npc_cutscene_finish_fade(struct MiscObj* self)
 
 void npc_cutscene_finish_wait(struct MiscObj* self)
 {
-    u8 timer;
-
     is_on_screen(BASE_OBJECT(self));
-    timer = self->ext.misc_52.timer - 1;
-    self->ext.misc_52.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_52.timer == 0) {
         engine_obj.unkF = 0x40;
     }
 }
 
 void npc_cutscene_leave(struct MiscObj* self)
 {
-    u8 timer;
-
     self->on_screen = 0;
-    timer = self->ext.misc_52.timer - 1;
-    self->ext.misc_52.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.misc_52.timer == 0) {
         player_end_script_action();
         despawn_object_permanently(OBJECT_HEADER(self));
     }

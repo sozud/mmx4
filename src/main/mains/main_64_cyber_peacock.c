@@ -181,8 +181,8 @@ void cyber_peacock_start_teleport(struct MainObj* self)
 void cyber_peacock_teleport_start(struct MainObj* self)
 {
     cyber_peacock_start_teleport(self);
-    self->unk7 = 0;
     self->unk6++;
+    self->unk7 = 0;
     set_animation(self, 2);
     self->ext.main_64.skip_attack = 0;
 }

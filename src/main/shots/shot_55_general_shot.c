@@ -478,11 +478,8 @@ void general_orb_wait(struct ShotObj* self)
 
 void general_orb_aim(struct ShotObj* self)
 {
-    s16 timer;
-
     animate_object(ANIMATED_OBJECT(self));
-    timer = --self->unk8A;
-    if ((timer << 0x10) == 0) {
+    if (--self->unk8A == 0) {
         self->unk5 = (u8)self->unk5 + 1;
         self->x_vel.val = self->unk15 ? FIXED(5) : FIXED(-5);
         self->y_vel.val = 0;

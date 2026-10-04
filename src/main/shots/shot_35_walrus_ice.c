@@ -99,7 +99,7 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
 {
     s16 timer;
     struct MainObj* owner;
-    u16* table;
+    s16* table;
 
     owner = MAIN_OBJECT(self->unk7C);
     if (owner->unk6 != 5) {
@@ -109,9 +109,8 @@ void walrus_ice_icicle_wait_drop(struct ShotObj* self)
         }
     }
 
-    table = (u16*)owner->ext.main_57.rect;
-
-    self->x_pos.i.hi = background_objects[0].unk1E + (table[self->unk2] + 0x10);
+    table = (s16*)owner->ext.main_57.rect;
+    self->x_pos.i.hi = (background_objects[0].unk1E + 0x10) + table[self->unk2];
     self->timer = 15;
     self->unk6++;
 }

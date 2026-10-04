@@ -563,10 +563,10 @@ void storm_owl_feather_volley_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 3);
+    self->unk15 = self->ext.main_60.corner >= 2 ? 0 : 0x40;
     self->unk7C = 0x1C;
     self->collision_data = (const u16*)D_80107B78;
     self->ext.main_60.shot_count = 0;
-    self->unk15 = self->ext.main_60.corner < 2 ? 0x40 : 0;
     self->unk6++;
 }
 

@@ -2,8 +2,8 @@
 
 void func_8002F510(struct EngineObj* arg0)
 {
-    arg0->unk3 = 0;
     arg0->unk2++;
+    arg0->unk3 = 0;
 }
 
 void func_8002F524(struct EngineObj* arg0)

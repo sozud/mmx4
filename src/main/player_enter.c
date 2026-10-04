@@ -364,13 +364,13 @@ void player_enter_wall_cling(struct PlayerObj* self)
 {
     player_set_animation_shooting(self, 0xD);
     func_8001540C(1, 4, self);
-    self->afterimage = -1;
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = 0;
     self->unk2C = 0;
     self->dash_momentum = 0;
     self->air_action = 0;
+    self->afterimage = -1;
     self->unk8A.bytes.low = 8;
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
         self->unk15 = 0x40;

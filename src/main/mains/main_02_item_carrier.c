@@ -208,11 +208,10 @@ void item_carrier_leave_start(struct MainObj* self)
 {
     if ((self->y_pos.val > g_Player.y_pos.val)) {
         self->unk6 = 1;
-        self->unk7 = 0;
     } else {
         self->unk6 = 2;
-        self->unk7 = 0;
     }
+    self->unk7 = 0;
 }
 
 void item_carrier_leave_up(struct MainObj* self)

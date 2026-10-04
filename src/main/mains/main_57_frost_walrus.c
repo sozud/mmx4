@@ -664,7 +664,7 @@ void frost_walrus_breath_launch(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        self->ext.main_57.shot->unk8C.word = self->animation_step.fields.event;
+        self->ext.main_57.shot->unk8C.word = 1;
         spawn_debris(0xA, frost_walrus_breath_debris, self->ext.main_57.shot);
     }
     if (self->animation_step.fields.event == 2) {

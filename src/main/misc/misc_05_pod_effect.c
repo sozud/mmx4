@@ -45,9 +45,7 @@ void pod_effect_animate(struct MiscObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk2 == 0) {
-        if (self->animation_step.fields.event != 0) {
-            self->state = 5;
-        } else if (self->animation_step.fields.relative_step < 0) {
+        if ((self->animation_step.fields.event != 0) || (self->animation_step.fields.relative_step < 0)) {
             self->state = 5;
         }
     } else {

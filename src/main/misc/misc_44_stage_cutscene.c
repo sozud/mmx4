@@ -43,11 +43,7 @@ void stage_cutscene_wait_scroll(struct UnkObj* self)
 
 void stage_cutscene_first_line(struct UnkObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         func_8002217C(0x29, 1, 0);
         self->unk5 = 3;
     }
@@ -63,11 +59,7 @@ void stage_cutscene_wait_first(struct UnkObj* self)
 
 void stage_cutscene_second_line(struct UnkObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         func_8002217C(0x2A, 2, 0);
         self->unk5 = 5;
     }

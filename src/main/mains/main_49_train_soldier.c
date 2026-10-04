@@ -58,10 +58,7 @@ void train_soldier_despawn(struct MainObj* self)
 {
     if (SP_CUR_MAIN_OBJ->ext.main_49.unk86 == 0) {
         despawn_object(OBJECT_HEADER(self));
-        return;
-    }
-
-    if (self->unk2 == 9) {
+    } else if (self->unk2 == 9) {
         despawn_object(OBJECT_HEADER(self));
     } else {
         despawn_object_permanently(OBJECT_HEADER(self));

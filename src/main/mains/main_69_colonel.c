@@ -20,11 +20,9 @@ void colonel_spawn(struct MainObj* self)
 void colonel_spawn_warning(struct MainObj* self)
 {
     struct EffectObj* effect;
-    u8 value;
 
-    value = self->unk2;
-    self->ext.main_69.state.bytes.variant = value;
-    if (value == 1) {
+    self->ext.main_69.state.bytes.variant = self->unk2;
+    if (self->ext.main_69.state.bytes.variant == 1) {
         self->unk5++;
     } else {
         effect = find_free_effect_obj();

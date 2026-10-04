@@ -16,9 +16,9 @@ void volcano_camera_update(struct LayerObj* arg0)
 
 void volcano_camera_init(struct LayerObj* arg0)
 {
+    arg0->state++;
     arg0->unk5 = 1;
     arg0->bg_offset = 2;
-    arg0->state++;
     background_objects[0].unk2E = 0xA0;
     background_objects[0].unk2C = 0x50;
     volcano_camera_main(arg0);

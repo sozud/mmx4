@@ -93,12 +93,12 @@ void soul_body_main(struct WeaponObj* self)
 
 void soul_body_extend(struct WeaponObj* arg0)
 {
-    u16* offset_ptr;
+    s16* offset_ptr;
     s16 x_pos;
     s16 offset;
 
     arg0->on_screen = 1;
-    offset_ptr = &arg0->ext.weapon_3.offset;
+    offset_ptr = (s16*)&arg0->ext.weapon_3.offset;
     if (arg0->unk15 != 0) {
         arg0->x_pos.i.hi = g_Player.x_pos.u.hi + *offset_ptr;
     } else {
@@ -110,7 +110,7 @@ void soul_body_extend(struct WeaponObj* arg0)
         arg0->unk5++;
         return;
     }
-    *(s16*)offset_ptr = offset + 8;
+    *offset_ptr = offset + 8;
 }
 
 void soul_body_hold(struct WeaponObj* arg0)

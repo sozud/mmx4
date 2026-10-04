@@ -58,18 +58,18 @@ void func_80027850(void)
 
 void func_80027908(struct BackgroundObj* arg0)
 {
-    arg0->unk47 = 2;
-    arg0->unk48 = 8;
-    arg0->unk2C = 0x60;
-    arg0->unk2E = 0xC0;
-    arg0->unk30 = 0xA0;
-    arg0->unk32 = 0xA0;
     arg0->unk14.val = arg0->x_pos.val;
     arg0->unk18.val = arg0->y_pos.val;
     arg0->unk24 = arg0->unk1C;
     arg0->unk26 = arg0->unk1E;
     arg0->unk28 = arg0->unk20;
     arg0->unk2A = arg0->unk22;
+    arg0->unk47 = 2;
+    arg0->unk48 = 8;
+    arg0->unk2C = 0x60;
+    arg0->unk2E = 0xC0;
+    arg0->unk30 = 0xA0;
+    arg0->unk32 = 0xA0;
     arg0->unk4++;
 }
 

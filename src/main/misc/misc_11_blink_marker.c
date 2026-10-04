@@ -36,13 +36,13 @@ void blink_marker_main(struct MiscObj* self)
         if (FLICKER_ENABLED) {
             self->on_screen ^= 1;
         }
-        if (self->on_screen == 0) {
-            return;
+        if (self->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(self));
         }
     } else {
         animate_object(ANIMATED_OBJECT(self));
+        is_on_screen(BASE_OBJECT(self));
     }
-    is_on_screen(BASE_OBJECT(self));
 }
 
 void blink_marker_despawn(struct MiscObj* self)

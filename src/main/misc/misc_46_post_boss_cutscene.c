@@ -35,11 +35,7 @@ void post_boss_cutscene_wait_scroll(struct UnkObj* self)
 
 void post_boss_cutscene_arrive(struct UnkObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         func_8001540C(2, 0x2A, self);
         self->unk4B = 1;
         self->unk5 = 2;
@@ -72,11 +68,10 @@ void post_boss_cutscene_first_line(struct UnkObj* self)
     }
     if (engine_obj.cur_character == 0) {
         func_8002217C(0x1F, 1, 0);
-        self->unk5 = 5;
     } else {
         func_8002217C(0x1A, 3, 0);
-        self->unk5 = 5;
     }
+    self->unk5 = 5;
 }
 
 void post_boss_cutscene_wait_first(struct UnkObj* self)
@@ -89,11 +84,7 @@ void post_boss_cutscene_wait_first(struct UnkObj* self)
 
 void post_boss_cutscene_shake_start(struct UnkObj* self)
 {
-    s8 timer;
-
-    timer = self->ext.timer - 1;
-    self->ext.timer = timer;
-    if (timer == 0) {
+    if (--self->ext.timer == 0) {
         func_8001540C(2, 0x2A, self);
         self->x_vel.val = 0;
         self->unk28 = FIXED(1);
@@ -123,15 +114,13 @@ void post_boss_cutscene_shake(struct UnkObj* self)
 
 void post_boss_cutscene_second_line(struct UnkObj* self)
 {
-    self->ext.timer -= 1;
-    if (self->ext.timer == 0) {
+    if (--self->ext.timer == 0) {
         if (engine_obj.cur_character == 0) {
             func_8002217C(0x30, 2, 0);
-            self->unk5 = 9;
         } else {
             func_8002217C(0x2B, 4, 0);
-            self->unk5 = 9;
         }
+        self->unk5 = 9;
     }
 }
 

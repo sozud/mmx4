@@ -24,12 +24,11 @@ void cyberspace_warp_despawn(struct MiscObj* self)
 
 void cyberspace_warp_fade(struct MiscObj* self)
 {
-
     animate_object(ANIMATED_OBJECT(self));
     if (--self->ext.misc_33.timer == 0) {
+        self->state++;
         self->unk5 = 0;
         self->unk6 = 0;
-        self->state++;
     }
     if (func_8002B160(BASE_OBJECT(self)) == 0) {
         is_on_screen(BASE_OBJECT(self));
