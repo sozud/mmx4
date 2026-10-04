@@ -8,6 +8,11 @@ extern u8 window_archive_data[0x3000];
 #define MAIN_ARCHIVE_ARENA pc_archive_arena
 #define REPLAY_DATA replay_data
 #define WINDOW_ARCHIVE_DATA window_archive_data
+#elif defined(MMX4_WIN32)
+extern u8* win32_main_ram;
+#define MAIN_ARCHIVE_ARENA (win32_main_ram + 0x178000)
+#define REPLAY_DATA (win32_main_ram + 0x1F6000)
+#define WINDOW_ARCHIVE_DATA (win32_main_ram + 0x1F3000)
 #else
 #define MAIN_ARCHIVE_ARENA ((u8*)0x80178000)
 #define REPLAY_DATA ((u8*)0x801F6000)

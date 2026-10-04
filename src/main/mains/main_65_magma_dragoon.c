@@ -487,9 +487,13 @@ void magma_dragoon_leap_center_glide(struct MainObj* self)
         self->gravity = 0;
     }
 
-    if (self->unk15 == 0
-            ? self->x_pos.i.hi < (magma_dragoon_arena_center - 0x10)
-            : (magma_dragoon_arena_center + 0x10) < self->x_pos.i.hi) {
+    if (self->unk15 == 0) {
+        if (self->x_pos.i.hi < (magma_dragoon_arena_center - 0x10)) {
+            self->gravity = FIXED(0.12109375);
+            self->unk6++;
+            return;
+        }
+    } else if (self->x_pos.i.hi > (magma_dragoon_arena_center + 0x10)) {
         self->gravity = FIXED(0.12109375);
         self->unk6++;
     }

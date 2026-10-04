@@ -143,11 +143,11 @@ s32 player_check_dash_jump_walk(struct PlayerObj* self)
         player_enter_jump(self);
         return 1;
     }
-    if (player_check_walk(self) == 0) {
-        return 0;
+    if (player_check_walk(self) != 0) {
+        player_enter_walk(self);
+        return 1;
     }
-    player_enter_walk(self);
-    return 1;
+    return 0;
 }
 
 s32 player_check_dash_jump(struct PlayerObj* self)
@@ -544,12 +544,12 @@ s32 player_check_ladder_air(struct PlayerObj* self)
 INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
 s32 player_check_off_ladder(struct PlayerObj* self)
 {
-    if (func_8002D994(self) == 0x20) {
-        return 0;
+    if (func_8002D994(self) != 0x20) {
+        player_enter_fall(self);
+        return 1;
     }
 
-    player_enter_fall(self);
-    return 1;
+    return 0;
 }
 
 s32 player_check_script(struct PlayerObj* self)

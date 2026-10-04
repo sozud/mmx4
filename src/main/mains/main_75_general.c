@@ -560,7 +560,9 @@ void general_slam_leave(struct MainObj* self)
     reset = 0;
     if (flags & 3) {
         if (self->unk15 != 0) {
-            reset = flags & 1;
+            if (flags & 1) {
+                reset = 1;
+            }
         } else if (flags & 2) {
             reset = 1;
         }

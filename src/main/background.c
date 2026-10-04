@@ -98,10 +98,7 @@ void func_800279D8(struct BackgroundObj* arg0)
     func_80027AFC(arg0);
     func_80027BE4(arg0);
     scroll_x = background_objects[0].x_pos.i.hi;
-    if (scroll_x < 0) {
-        scroll_x += 3;
-    }
-    background_objects[0].y_pos.i.hi = (u16)background_objects[0].unk20 - (scroll_x >> 2);
+    background_objects[0].y_pos.i.hi = (u16)background_objects[0].unk20 - (scroll_x / 4);
 }
 
 void func_80027A5C(struct BackgroundObj* a0)

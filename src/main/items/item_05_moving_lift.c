@@ -165,7 +165,7 @@ void moving_lift_spawn_all(void)
     struct ItemObj* item;
 
     index = 1;
-    do {
+    while ((u8)index < 9U) {
         item = find_free_item_obj();
         if (item == NULL) {
             break;
@@ -177,7 +177,7 @@ void moving_lift_spawn_all(void)
         item->state = 0;
         item->unk5 = 0;
         item->unk6 = 0;
-    } while ((u8)index < 9U);
+    }
 }
 
 void (*moving_lift_state_funcs[])(struct ItemObj*) = {

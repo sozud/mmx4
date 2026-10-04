@@ -97,11 +97,12 @@ void lightning_web_fly(struct WeaponObj* arg0)
 void lightning_web_main(struct WeaponObj* arg0)
 {
     s32 expired;
-    u8 timer;
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x18, 0x28) == 0) {
-        timer = --arg0->ext.weapon_1.lifetime;
-        expired = (timer & 0xFF) == 0;
+        expired = 0;
+        if (--arg0->ext.weapon_1.lifetime == 0) {
+            expired = 1;
+        }
         if (arg0->unk72 & 0xC) {
             expired = 1;
         }

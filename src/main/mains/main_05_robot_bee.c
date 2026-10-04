@@ -48,7 +48,7 @@ void robot_bee_despawn(struct MainObj* self)
     stop_sound(2, 0x14);
     self->on_screen = 0;
     subtype = self->unk2;
-    if ((subtype >= 3) && (subtype <= 4)) {
+    if ((subtype == 3) || (subtype == 4)) {
         target = self->ext.main_5.owner;
         if ((target->active != 0) && (target->id == 0x16)) {
             target->ext.main_22.parts_mask ^= 1 << self->ext.main_5.part_index;
@@ -344,17 +344,16 @@ void robot_bee_swarm(struct MainObj* self)
 void robot_bee_swarm_start(struct MainObj* arg0)
 {
     struct MainObj* self = arg0;
+    u8 angle;
 
     set_animation(self, 1);
     func_8001540C(2, 0x13, self);
     animate_object(ANIMATED_OBJECT(self));
-    set_velocity_from_angle(
-        MOVING_OBJECT(self),
-        angle_to_point(
-            OBJECT_HEADER(self),
-            self->ext.main_5.target_y << 0x10,
-            self->ext.main_5.target_x << 0x10)
-            & 0xFF);
+    angle = angle_to_point(
+        OBJECT_HEADER(self),
+        self->ext.main_5.target_y << 0x10,
+        self->ext.main_5.target_x << 0x10);
+    set_velocity_from_angle(MOVING_OBJECT(self), angle & 0xFF);
 
     self->unk7C = 0x14;
     if (self->unk15 == 0) {
@@ -415,14 +414,15 @@ void robot_bee_swarm_return(struct MainObj* self)
 
 void robot_bee_swarm_return_start(struct MainObj* self)
 {
+    u8 angle;
+
     set_animation(self, 1);
     func_8001540C(2, 0x13, self);
     animate_object(ANIMATED_OBJECT(self));
-    set_velocity_from_angle(MOVING_OBJECT(self),
-        angle_to_point(OBJECT_HEADER(self),
-            self->ext.main_5.target_y << 0x10,
-            self->ext.main_5.target_x << 0x10)
-            & 0xFF);
+    angle = angle_to_point(OBJECT_HEADER(self),
+        self->ext.main_5.target_y << 0x10,
+        self->ext.main_5.target_x << 0x10);
+    set_velocity_from_angle(MOVING_OBJECT(self), angle);
 
     self->unk7C = 0x14;
     if (self->unk15 == 0) {

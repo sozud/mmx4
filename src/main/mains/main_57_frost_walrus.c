@@ -478,13 +478,8 @@ void frost_walrus_walk(struct MainObj* self)
 
 void frost_walrus_walk_start(struct MainObj* self)
 {
-    s32 x_vel = FIXED(-0.75);
-
     self->unk6++;
-    if (self->unk15 != 0) {
-        x_vel = FIXED(0.75);
-    }
-    self->x_speed = x_vel;
+    self->x_speed = self->unk15 != 0 ? FIXED(0.75) : FIXED(-0.75);
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
@@ -898,13 +893,11 @@ void frost_walrus_choose_script(struct MainObj* self)
 void frost_walrus_set_floor_tiles(s32 self)
 {
     u16* list;
-    u32* attrs;
 
     list = engine_obj.stage == 0xC ? frost_walrus_floor_tiles_rush : frost_walrus_floor_tiles;
     while (*list != 0) {
-        attrs = SP_BG_TILE_ATTRS;
-        attrs[*list] &= ~0xFF;
-        attrs[*list] |= self;
+        SP_BG_TILE_ATTRS[*list] &= ~0xFF;
+        SP_BG_TILE_ATTRS[*list] |= self;
         list++;
     }
 }

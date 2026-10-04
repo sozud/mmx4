@@ -12,28 +12,28 @@ void spike_crawler_init(struct MainObj* arg0)
     struct MainObj* self = arg0;
 
     self->state = 1;
-    self->hp = 3;
-    self->contact_damage = 4;
-    self->animation_table = (const u8* const*)spike_crawler_animations;
-    self->hurt_box = spike_crawler_hurt_box;
-    self->attack_box = spike_crawler_attack_box;
-    self->terrain_box = (struct Unk_unk68*)spike_crawler_terrain_box;
-    self->collision_data = D_80108484;
-    self->x_speed = FIXED(2);
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7C = 0;
     self->unk7E = 0;
     self->bg_offset = 0;
+    self->hp = 3;
+    self->contact_damage = 4;
     self->invincibility_timer = 0;
+    self->animation_table = (const u8* const*)spike_crawler_animations;
+    self->hurt_box = spike_crawler_hurt_box;
+    self->attack_box = spike_crawler_attack_box;
+    self->terrain_box = (struct Unk_unk68*)spike_crawler_terrain_box;
+    self->collision_data = D_80108484;
     self->air_state = 0;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->x_speed = FIXED(2);
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 5;
-    self->unk18.val = self->x_pos.val;
-    self->unk1C.val = self->y_pos.val;
     self->ext.main_76.saved_x_velocity = self->x_speed;
+    self->unk16 = 5;
     set_animation(self, 0);
 }
 

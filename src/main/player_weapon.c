@@ -898,28 +898,30 @@ void player_update_charge(struct PlayerObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/player_weapon", player_set_charge_flash);
-#else
 s32 player_set_charge_flash(struct PlayerObj* self, s8 button)
 {
     s8 shot_type;
+
     if (self->charge_state[button] == PLAYER_CHARGE_NONE) {
         return 0;
     }
     if (self->charge_state[button] == PLAYER_CHARGE_PARTIAL) {
         self->flash_palette = 0x26;
-    } else {
-        shot_type = self->shot_types[button];
-        if (shot_type == 0x13) {
-            self->flash_palette = 0x2C;
-        } else {
-            self->flash_palette = (shot_type == 0x14) ? 0x2F : 0x29;
-        }
+        return 1;
     }
+
+    shot_type = self->shot_types[button];
+    if (shot_type == 0x13) {
+        self->flash_palette = 0x2C;
+        return 1;
+    }
+    if (shot_type == 0x14) {
+        self->flash_palette = 0x2F;
+        return 1;
+    }
+    self->flash_palette = 0x29;
     return 1;
 }
-#endif
 
 s32 player_charge_released(struct PlayerObj* self)
 {

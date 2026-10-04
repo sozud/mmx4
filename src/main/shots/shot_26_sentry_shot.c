@@ -107,24 +107,22 @@ void sentry_shot_fly(struct ShotObj* self)
     func_8002D9BC(self);
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
         spawn_explosion(BASE_OBJECT(self));
-    } else {
-        if (func_8002BB80(self, &g_Player) != 0) {
-            self->state++;
-            return;
-        }
+        self->state++;
+        return;
+    }
+    if (func_8002BB80(self, &g_Player) == 0) {
         if (self->unk70 != 0) {
             spawn_explosion(BASE_OBJECT(self));
             self->state++;
             return;
         }
-        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) != 0) {
-            self->state++;
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
             return;
         }
-        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
-        return;
     }
     self->state++;
+    return;
 }
 
 void sentry_shot_despawn(struct ShotObj* self)

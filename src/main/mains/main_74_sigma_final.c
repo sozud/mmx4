@@ -221,12 +221,13 @@ void sigma_final_appear_start(struct MainObj* self)
 
 void sigma_final_appear_pose(struct MainObj* self)
 {
-    u16 sound_id;
-
     if (self->animation_step.fields.relative_step < 0) {
         self->unk6++;
-        sound_id = engine_obj.cur_character == 0 ? 0x32 : 0x2D;
-        func_8002217C(sound_id, 0xFF, 0);
+        if (engine_obj.cur_character == 0) {
+            func_8002217C(0x32, 0xFF, 0);
+        } else {
+            func_8002217C(0x2D, 0xFF, 0);
+        }
     }
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
@@ -864,15 +865,16 @@ void sigma_final_death_collapse(struct MainObj* self)
 
 void sigma_final_death_wait_player(struct MainObj* self)
 {
-    u16 sound_id;
-
     if (g_Player.script_state != -1) {
         update_on_screen(BASE_OBJECT(self), 0x40, 0x40);
         return;
     }
     sigma_final_set_target(self, 0);
-    sound_id = engine_obj.cur_character == 0 ? 0x2C : 0x25;
-    func_8002217C(sound_id, 7, 0);
+    if (engine_obj.cur_character == 0) {
+        func_8002217C(0x2C, 7, 0);
+    } else {
+        func_8002217C(0x25, 7, 0);
+    }
     self->unk5 = 5;
     animate_object(ANIMATED_OBJECT(self));
     update_on_screen(BASE_OBJECT(self), 0x40, 0x40);

@@ -155,11 +155,11 @@ void eregion_stomp(struct MainObj* self)
 
 void eregion_leap_crouch(struct MainObj* self)
 {
-    self->y_speed = FIXED(0.75);
     self->ext.main_487.unk8A = 0;
-    self->x_speed = 0;
-    self->x_accel = FIXED(1.0 / 16);
     self->unk6++;
+    self->x_speed = 0;
+    self->y_speed = FIXED(0.75);
+    self->x_accel = FIXED(1.0 / 16);
     set_animation(self, 2);
 }
 

@@ -397,30 +397,24 @@ void colonel_intro_port_blink_in(struct MainObj* self)
     }
 }
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", colonel_intro_port_pose);
-#else
 void colonel_intro_port_pose(struct MainObj* self)
 {
-    u16 value;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
         func_8001540C(2, 0xD5, self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 0);
-        value = 0x1E;
         if (engine_obj.cur_character == 0) {
-            value = 0x25;
+            func_8002217C(0x25, 0xFFU, engine_obj.character_state.bytes[8]);
+        } else {
+            func_8002217C(0x1E, 0xFFU, engine_obj.character_state.bytes[8]);
         }
-        func_8002217C(value, 0xFFU, engine_obj.character_state.bytes[8]);
         engine_obj.character_state.bytes[8] = 1;
         self->unk7++;
     }
     is_on_screen(BASE_OBJECT(self));
 }
-#endif
 
 void colonel_intro_port_voice(struct MainObj* self)
 {
@@ -463,8 +457,7 @@ void colonel_intro_hall_wait_player(struct MainObj* self)
     s16 object_x;
 
     object_x = self->x_pos.i.hi;
-    if (((g_Player.x_pos.i.hi - object_x) >= 0) ? ((g_Player.x_pos.i.hi - object_x) < 0xB1)
-                                                : ((object_x - g_Player.x_pos.i.hi) <= 0xB0)) {
+    if (ABS(g_Player.x_pos.i.hi, object_x) <= 0xB0) {
         player_start_script_action(0x14, 0x40);
         background_objects[0].unk24 = 0x2C0;
         background_objects[0].unk26 = 0x2A0;

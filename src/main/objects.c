@@ -567,7 +567,7 @@ void func_8002B3C0(struct BaseObj* arg0)
         x_pos = arg0->x_pos.i.hi - background_objects[arg0->bg_offset].x_pos.i.hi;
         y_pos = arg0->y_pos.i.hi - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
-    if (x_pos >= -0x60 && x_pos < 0x1A0 && (u16)(y_pos + 0x50) < 0x190) {
+    if ((u16)(x_pos + 0x60) < 0x200 && (u16)(y_pos + 0x50) < 0x190) {
         arg0->on_screen = 1;
     }
 }

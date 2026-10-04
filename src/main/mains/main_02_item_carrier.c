@@ -72,15 +72,17 @@ void item_carrier_approach_fly(struct MainObj* self)
     s32 distance;
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    distance = self->x_pos.val - g_Player.x_pos.val;
-    if (distance < 0) {
+    if (self->x_pos.val - g_Player.x_pos.val < 0) {
         distance = g_Player.x_pos.val - self->x_pos.val;
+    } else {
+        distance = self->x_pos.val - g_Player.x_pos.val;
     }
-    if (distance <= FIXED(64)) {
-        self->unk6++;
-        self->x_speed = 0;
-        set_animation(self, 1);
+    if (distance > FIXED(64)) {
+        return;
     }
+    self->unk6++;
+    self->x_speed = 0;
+    set_animation(self, 1);
 }
 
 void item_carrier_approach_stop(struct MainObj* self)

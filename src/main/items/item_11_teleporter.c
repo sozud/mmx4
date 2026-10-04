@@ -217,7 +217,6 @@ void teleporter_spawn_beam(struct ItemObj* arg0)
 void teleporter_spawn_glow(struct ItemObj* arg0)
 {
     struct MiscObj* slot;
-    void* sprite_frames;
 
     if (++arg0->tail_ext.unk1.unk84.timer == 0x60) {
         slot = find_free_misc_obj();
@@ -232,9 +231,8 @@ void teleporter_spawn_glow(struct ItemObj* arg0)
         slot->unk15 = arg0->unk15;
         slot->unk40 = arg0->unk40;
         slot->unk42 = arg0->unk42;
-        sprite_frames = (void*)arg0->sprite_frames;
+        slot->unk3C = (void*)arg0->sprite_frames;
         slot->animation_table = (u32**)teleporter_animations;
-        slot->unk3C = sprite_frames;
         slot->x_pos.val = arg0->x_pos.val;
         slot->y_pos.val = arg0->y_pos.val;
         slot->ext.misc_11.active = 0;

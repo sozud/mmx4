@@ -269,7 +269,11 @@ void gunship_spawn_missiles(struct VisualObj* self)
             shot->unk40 = self->unk40;
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
-            shot->unk16 = (i < 2) ? 4 : 7;
+            if (i < 2) {
+                shot->unk16 = 4;
+            } else {
+                shot->unk16 = 7;
+            }
         }
     }
 }

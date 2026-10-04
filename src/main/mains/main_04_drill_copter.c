@@ -52,10 +52,7 @@ void drill_copter_approach_fly(struct MainObj* self)
 
     move_object(MOVING_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
-    distance = self->x_pos.val - g_Player.x_pos.val;
-    if (distance < 0) {
-        distance = g_Player.x_pos.val - self->x_pos.val;
-    }
+    distance = ABS(self->x_pos.val, g_Player.x_pos.val);
     if (distance < 0x50000) {
         self->unk5 = 2;
         self->unk6 = 0;

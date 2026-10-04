@@ -774,16 +774,16 @@ s32 player_hover_steer(struct PlayerObj* self)
             return 1;
         }
         return -1;
-    } else {
-        if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
-            return 0;
-        }
-        self->x_vel.val = FIXED(-2);
-        if (self->unk15 != 0) {
-            return -1;
-        }
-        return 1;
     }
+
+    if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_LEFT) {
+        return 0;
+    }
+    self->x_vel.val = FIXED(-2);
+    if (self->unk15 != 0) {
+        return -1;
+    }
+    return 1;
 }
 
 void player_hover_set_direction(struct PlayerObj* self, s32 direction)
@@ -853,7 +853,10 @@ void player_nova_strike_end(struct PlayerObj* self)
     s32 should_reset;
     u8 timer;
 
-    should_reset = player_nova_strike_hit_wall(self) != 0;
+    should_reset = 0;
+    if (player_nova_strike_hit_wall(self) != 0) {
+        should_reset = 1;
+    }
     timer = self->nova_strike_timer;
     if (timer == 0) {
         should_reset = 1;
@@ -1247,11 +1250,20 @@ s32 player_zero_check_wall_slash(struct PlayerObj* self)
 
 s32 player_zero_check_slash_input(struct PlayerObj* self)
 {
-    if (self->unk2 != 0 && self->input_locked == 0 && (self->pressed_input & PLAYER_INPUT_SHOOT) && self->attacking == 0) {
-        player_zero_begin_attack(self);
-        return 1;
+    if (self->unk2 == 0) {
+        return 0;
     }
-    return 0;
+    if (self->input_locked != 0) {
+        return 0;
+    }
+    if ((self->pressed_input & PLAYER_INPUT_SHOOT) == 0) {
+        return 0;
+    }
+    if (self->attacking != 0) {
+        return 0;
+    }
+    player_zero_begin_attack(self);
+    return 1;
 }
 
 void player_zero_begin_attack(struct PlayerObj* self)
@@ -1265,17 +1277,17 @@ s32 player_zero_check_raijingeki(struct PlayerObj* self)
 {
     if (!(self->boss_flags & 1))
         return 0;
-    if (self->pressed_input & PLAYER_INPUT_SPECIAL) {
-        if (self->attacking == 0) {
-            player_zero_begin_attack(self);
-            player_set_animation(self, 0x5F);
-            self->unk5 = PLAYER_ZERO_RAIJINGEKI;
-            self->unk6 = 0;
-            player_zero_raijingeki(self);
-            return 1;
-        }
-    }
-    return 0;
+    if (!(self->pressed_input & PLAYER_INPUT_SPECIAL))
+        return 0;
+    if (self->attacking != 0)
+        return 0;
+
+    player_zero_begin_attack(self);
+    player_set_animation(self, 0x5F);
+    self->unk5 = PLAYER_ZERO_RAIJINGEKI;
+    self->unk6 = 0;
+    player_zero_raijingeki(self);
+    return 1;
 }
 
 s32 player_zero_check_hyouretsuzan(struct PlayerObj* self)
@@ -1452,14 +1464,14 @@ void player_zero_saber(struct PlayerObj* self)
 INCLUDE_ASM("main/nonmatchings/player_special", func_8003A1DC);
 s32 player_zero_check_ladder_or_walk(struct PlayerObj* self)
 {
-    if (player_check_ladder(self) != 0) {
+    if (player_check_ladder(self)) {
         return 1;
     }
-    if (player_check_walk_start(self) == 0) {
-        return 0;
+    if (player_check_walk_start(self)) {
+        player_enter_walk_start(self);
+        return 1;
     }
-    player_enter_walk_start(self);
-    return 1;
+    return 0;
 }
 
 void player_zero_attack_finish(struct PlayerObj* self)

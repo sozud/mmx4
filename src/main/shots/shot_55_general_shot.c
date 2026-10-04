@@ -479,17 +479,12 @@ void general_orb_wait(struct ShotObj* self)
 void general_orb_aim(struct ShotObj* self)
 {
     s16 timer;
-    s32 velocity;
 
     animate_object(ANIMATED_OBJECT(self));
     timer = --self->unk8A;
-    velocity = FIXED(-5);
     if ((timer << 0x10) == 0) {
         self->unk5 = (u8)self->unk5 + 1;
-        if (self->unk15 != 0) {
-            velocity = FIXED(5);
-        }
-        self->x_vel.val = velocity;
+        self->x_vel.val = self->unk15 ? FIXED(5) : FIXED(-5);
         self->y_vel.val = 0;
         func_8001540C(2, 4, self);
     }

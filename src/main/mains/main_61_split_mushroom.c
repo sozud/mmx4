@@ -284,8 +284,6 @@ void split_mushroom_stun_start(struct MainObj* self)
 
 void split_mushroom_stun_wait(struct MainObj* self)
 {
-    s8 state;
-
     if (--self->unk7C != 0) {
         return;
     }
@@ -303,17 +301,19 @@ void split_mushroom_stun_wait(struct MainObj* self)
             return;
         }
 
+        self->x_speed = 0;
+        self->x_accel = 0;
+        self->y_speed = 0;
         self->gravity = 0x3800;
-        state = 5;
-    } else {
-        self->gravity = 0x3800;
-        state = 2;
+        self->unk6 = 5;
+        return;
     }
 
     self->x_speed = 0;
     self->x_accel = 0;
     self->y_speed = 0;
-    self->unk6 = state;
+    self->gravity = 0x3800;
+    self->unk6 = 2;
 }
 
 void split_mushroom_stun_fall(struct MainObj* self)
@@ -790,8 +790,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007B1BC);
 
 void split_mushroom_wall_jump_air(struct MainObj* self)
 {
-    s32 flags;
-
     move_with_gravity(ANIMATED_OBJECT(self));
     if ((self->unk7 == 0) && (self->y_speed < 0)) {
         self->unk7 = 1;
@@ -799,16 +797,16 @@ void split_mushroom_wall_jump_air(struct MainObj* self)
     }
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk15 == 0) {
-        flags = self->collision_flags & 2;
-    } else {
-        flags = self->collision_flags & 1;
+        if ((self->collision_flags & 2) == 0) {
+            return;
+        }
+    } else if ((self->collision_flags & 1) == 0) {
+        return;
     }
-    if (flags != 0) {
-        self->ext.main_61.stunned = 0;
-        set_animation(self, 6);
-        self->unk7C = 0x28;
-        self->unk6 = 2;
-    }
+    self->ext.main_61.stunned = 0;
+    set_animation(self, 6);
+    self->unk7C = 0x28;
+    self->unk6 = 2;
 }
 
 void split_mushroom_wall_jump_cling(struct MainObj* self)

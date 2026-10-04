@@ -55,7 +55,7 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
     u8* player_data = &arg2->unk8D - 1;
     s32 i;
 
-    for (i = 0xF; i != 0; i--) {
+    for (i = 0xF; (u32)i > 0; i--) {
         state->history[i] = state->history[i - 1];
     }
     state->history[0] = (player_data[1] - 8) & 0x1F;
@@ -63,7 +63,7 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
         arg0->state++;
     } else {
         if (arg0->unk2 == 3) {
-            if (state->counter & 2) {
+            if (BLINK_CLOCK(state->counter) & 2) {
                 arg0->on_screen = 1;
             } else {
                 arg0->on_screen = 0;

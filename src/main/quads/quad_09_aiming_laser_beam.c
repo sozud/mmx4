@@ -64,10 +64,8 @@ void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct
         ZeroObjectState(arg0);
         return;
     }
-    if (ext->unk38 & 2) {
-        if (FLICKER_ENABLED) {
-            arg0->on_screen ^= 1;
-        }
+    if (FLICKER_ENABLED && (BLINK_CLOCK(ext->unk38) & 2)) {
+        arg0->on_screen ^= 1;
     }
     ext->unk38 -= 1;
     func_800D69A8(arg0, arg1, arg2);

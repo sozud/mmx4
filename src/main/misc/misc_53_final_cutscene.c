@@ -32,7 +32,11 @@ void final_cutscene_approach(struct MiscObj* self)
     self->ext.misc_53.movement_timer = 0xA;
     self->ext.misc_53.x_step = 1;
     self->unk5++;
-    func_8002217C(engine_obj.cur_character == 0 ? 0x2D : 0x26, 8, 0);
+    if (engine_obj.cur_character == 0) {
+        func_8002217C(0x2D, 8, 0);
+        return;
+    }
+    func_8002217C(0x26, 8, 0);
 }
 
 // final_cutscene_talk

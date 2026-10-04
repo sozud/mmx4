@@ -9,22 +9,22 @@ void hatch_blast_update(struct ShotObj* self)
 
 void hatch_blast_init(struct ShotObj* self)
 {
+    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x7E;
     self->state = 1;
-    self->on_screen = 1;
-    self->unk16 = 2;
-    self->unk68 = &hatch_blast_terrain_box;
-    self->unk5C = 3;
     self->unk5 = 0;
     self->unk6 = 0;
     self->unk7 = 0;
+    self->on_screen = 1;
     self->unk8A = 0;
     self->unk84.value = 0;
+    self->unk16 = 2;
+    self->unk68 = &hatch_blast_terrain_box;
     self->unk54 = NULL;
     self->unk50.data = NULL;
     self->unk58.data = NULL;
+    self->unk5C = 3;
     self->unk60 = 6;
     self->unk61 = 0;
-    self->y_pos.i.hi = (u16)self->y_pos.i.hi + 0x7E;
     set_animation(self, 2);
 }
 

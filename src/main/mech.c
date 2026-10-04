@@ -1283,7 +1283,7 @@ void func_800401F8(struct PlayerObj* arg0)
     if (arg0->last_shot_type & 0x40) {
         temp_v0 = arg0->afterimage;
         if (temp_v0 != 0) {
-            if ((temp_v0 & 3) == 0) {
+            if ((BLINK_CLOCK(temp_v0) & 3) == 0) {
                 arg0->unk42 |= 0x8000;
             } else {
                 arg0->unk42 &= 0x7FFF;

@@ -433,7 +433,7 @@ void storm_owl_grab_leave(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
-    if (FIXED(2.99999) >= self->y_speed) {
+    if (self->y_speed < FIXED(3.0)) {
         self->y_speed += FIXED(0.125);
     }
     if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1) {
