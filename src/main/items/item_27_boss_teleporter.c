@@ -409,7 +409,46 @@ void boss_teleporter_wait_bosses_cleared(struct ItemObj* self)
 }
 
 // boss_teleporter_player_inside
-INCLUDE_ASM("main/nonmatchings/items/item_27_boss_teleporter", func_800C7970);
+s8 func_800C7970(struct ItemObj* item, struct PlayerObj* player)
+{
+    struct ItemObj* teleporter = item;
+    struct PlayerObj* character;
+    struct Unk_unk68* player_box;
+    struct Unk_unk68* teleporter_box;
+    s16 player_y;
+    s16 teleporter_y;
+    s16 distance;
+    s16 teleporter_left;
+    s16 player_left;
+    s16 teleporter_right;
+    s16 player_right;
+
+    player_box = player->unk68;
+    if (player_box == NULL) {
+        return 0;
+    }
+
+    character = player;
+    teleporter_box = teleporter->unk68;
+
+    teleporter_left = teleporter->x_pos.u.hi - (teleporter_box->unk2 - 0x10);
+    player_left = character->x_pos.u.hi - player_box->unk2;
+    if (teleporter_left > player_left) {
+        return 0;
+    }
+    teleporter_right = teleporter->x_pos.u.hi + (teleporter_box->unk2 - 0x10);
+    player_right = character->x_pos.u.hi + player_box->unk2;
+    if (teleporter_right < player_right) {
+        return 0;
+    }
+
+    teleporter_y = teleporter->y_pos.u.hi + teleporter_box->unk1;
+    player_y = character->y_pos.u.hi + player_box->unk1;
+    distance = teleporter_y - player_y >= 0
+        ? teleporter_y - player_y
+        : player_y - teleporter_y;
+    return distance <= teleporter->unk68->unk3 + character->unk68->unk3;
+}
 
 void (*boss_teleporter_state_funcs[])(struct ItemObj*) = {
     func_800C71C0,

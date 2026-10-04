@@ -3,8 +3,54 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern void* ride_armor_pilot_animations[31];
+extern struct Unk_unk68 ride_armor_pilot_terrain_box;
+
 // ride_armor_pilot_init
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_80089AA4);
+#else
+void func_80089AA4(struct MainObj* self)
+{
+    s32 x_pos;
+    s32 y_pos;
+    s8 damage;
+
+    x_pos = self->x_pos.val;
+    y_pos = self->y_pos.val;
+    self->state = 1;
+    self->unk5 = 2;
+    self->on_screen = 1;
+    self->hp = 0x18;
+    damage = 5;
+    do {
+    } while (0); // Empty loop: scheduling barrier for perfect match
+    self->animation_table = (const u8* const*)ride_armor_pilot_animations;
+    self->hurt_box = ride_armor_pilot_hurt_box;
+    self->attack_box = ride_armor_pilot_attack_box;
+    self->terrain_box = &ride_armor_pilot_terrain_box;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->unk7C = 0;
+    self->contact_damage = damage;
+    self->invincibility_timer = 0;
+    self->collision_data = D_80108184;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk16 = 5;
+    self->ext.main_71.unk8A = 0;
+    self->ext.main_71.unk89 = 0;
+    self->ext.main_71.unk88 = 0;
+    self->ext.main_71.unk87 = 0;
+    self->ext.main_71.unk86 = 0;
+    self->ext.main_71.unk8D = 0;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
+}
+#endif
 
 void ride_armor_pilot_spawn_dust(struct VisualObj* self, u8 arg1)
 {

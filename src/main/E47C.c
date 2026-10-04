@@ -560,7 +560,91 @@ void func_8001E000(struct GameInfo* arg0)
 #endif
 }
 
-INCLUDE_ASM("main/nonmatchings/E47C", func_8001E130);
+void func_8001E130(struct GameInfo* game)
+{
+    s32 i;
+    f32* x;
+    f32* reset;
+    struct TitlePointState* title;
+    s16* target;
+    s32 dx;
+    s32 dy;
+    u8 angle;
+    struct MiscObj* effect;
+
+    title = &D_80169498.title;
+    x = title->coordinates;
+    for (i = 0; i < 0x12; i++) {
+        target = &D_800F224C[i * 2];
+        dx = x->val - FIXED(target[0]);
+        dy = x[1].val - FIXED(target[1]);
+        angle = angle_from_delta(dx, dy);
+
+        if ((((title->unkA2[i] ^ angle) & 0x10) || (title->unk90[i] != 0))
+            && (D_80169498.title.settled == 0)) {
+            x->val = FIXED(target[0]);
+            x[1].val = FIXED(target[1]);
+            title->unk90[i] = 1;
+        } else {
+            x->val -= dx / game->unk6;
+            x[1].val -= dy / game->unk6;
+            title->unk90[i] = 0;
+            if (i == 0x11) {
+                D_80169498.title.settled = 0;
+            }
+        }
+        x += 2;
+        title->unkA2[i] = angle;
+    }
+
+    if (--game->unk6 == 0) {
+        target = D_800F224C;
+        reset = D_80169498.title.coordinates;
+        for (i = 0; i < 0x24; i++) {
+            reset->val = FIXED(*target);
+            target++;
+            reset++;
+        }
+
+        game->mode++;
+
+#ifdef VERSION_JP
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1D;
+            effect->unk2 = 0x22;
+        }
+#else
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x13;
+            effect->unk2 = 0xC;
+        }
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x13;
+            effect->unk2 = 0x14;
+        }
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x13;
+            effect->unk2 = 0x15;
+        }
+#endif
+        effect = find_free_misc_obj();
+        if (effect != NULL) {
+            effect->active = 1;
+            effect->id = 0x1D;
+            effect->unk2 = 0x21;
+        }
+        D_80139690 = OBJECT_HEADER(effect);
+    }
+}
+
 void func_8001E3FC(struct GameInfo* arg0)
 {
     if (D_80139690->active == 0) {

@@ -126,6 +126,9 @@ typedef s32 arg_u16;
 #define PAD_SELECTION_BUTTONS (PADRup | PADRdown)
 #endif
 
+#define BG_DRAW_TPAGE(p, tpage) \
+    (setlen(p, 1), ((u_long*)(p))[sizeof(OT_TYPE) / sizeof(u_long)] = 0xE1000000 | ((GetGraphType() == 1 || GetGraphType() == 2) ? (tpage) : ((tpage)&0x9FF)))
+
 union MainPaletteData {
     u8 raw[0x200];
     struct {
@@ -1148,7 +1151,7 @@ struct Main71Ext {
     u8 unk86;
     u8 unk87;
     u8 unk88;
-    u8 pad89;
+    u8 unk89;
     u8 unk8A;
     u8 pad8B[2];
     u8 unk8D;

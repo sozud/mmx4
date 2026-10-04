@@ -181,9 +181,6 @@ void func_80025CDC(void);
             ? (((tp)&3) << 9) | (((abr)&3) << 7) | (((y)&0x300) >> 3) | (((x)&0x3FF) >> 6) \
             : getTPage(tp, abr, x, y))
 
-#define BG_DRAW_TPAGE(p, tpage) \
-    (setlen(p, 1), ((u_long*)(p))[sizeof(OT_TYPE) / sizeof(u_long)] = 0xE1000000 | ((GetGraphType() == 1 || GetGraphType() == 2) ? (tpage) : ((tpage)&0x9FF)))
-
 s16 D_800F2FDC[2] = { 0x0300, 0x0600 };
 
 void (*D_800F2FE0[8])(struct EngineObj*) = {
@@ -286,8 +283,6 @@ void func_80025DA0(s32 texture_depth, s32 blend_mode)
 }
 #endif
 #undef BG_TPAGE
-
-#undef BG_DRAW_TPAGE
 
 void func_80026118(void)
 {

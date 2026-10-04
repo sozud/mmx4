@@ -4,6 +4,8 @@
 #include "func_tables.h"
 
 extern u8 D_80104A3C[];
+extern struct Unk_unk68 D_80104914;
+extern union AnimationStep* D_80104974[14];
 
 void drone_pod_update(struct MainObj* self)
 {
@@ -19,7 +21,47 @@ void drone_pod_intro(struct MainObj* self)
 }
 
 // drone_pod_init
-INCLUDE_ASM("main/nonmatchings/mains/main_70_drone_pod", func_80088C40);
+void func_80088C40(struct MainObj* self)
+{
+    s32 x_pos;
+    s32 y_pos;
+    u8 bg_offset;
+
+    if (engine_obj.checkpoint >= 2) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    self->active = 0x41;
+    self->hp = 0;
+    self->contact_damage = 0;
+    self->invincibility_timer = 0;
+    x_pos = self->x_pos.val;
+    y_pos = self->y_pos.val;
+    bg_offset = g_Player.bg_offset;
+    self->collision_data = D_80108104;
+    self->animation_table = (const u8* const*)D_80104974;
+    self->unk16 = 5;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->hurt_box = &D_80104914;
+    self->attack_box = NULL;
+    self->terrain_box = NULL;
+    self->unk15 = 0;
+    self->bg_offset = bg_offset;
+    self->unk18.val = x_pos;
+    self->unk1C.val = y_pos;
+    set_animation(self, 0);
+    self->ext.raw[0] = 0;
+    self->ext.raw[1] = 0;
+    self->ext.raw[2] = 0;
+    self->ext.raw[3] = 0;
+    self->ext.raw[4] = 0;
+    self->ext.raw[5] = 0;
+    self->unk5++;
+}
 
 void drone_pod_intro_wait_player(struct MainObj* self)
 {

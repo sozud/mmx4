@@ -605,48 +605,6 @@ void func_80016124(void)
     addPrim(&cur_draw_info->ordering_table.ui, draw_mode);
 }
 
-static s32 stage_tile_block(s8 layer, s16 x, s16 y)
-{
-    s32 block_x = x >> 8;
-    s32 block_y = y >> 8;
-    s32 index = layer * layout_size + block_y * layout_width + block_x;
-
-    if (block_x < 0 || block_y < 0 || index < 0 || index >= PC_TILEMAP_SIZE)
-        return 0;
-    return SP_BG_TILEMAP[index];
-}
-
-static u8 get_stage_tile_attribute(s8 layer, s16 x, s16 y)
-{
-    u8 block;
-    u16 tile;
-
-    block = stage_tile_block(layer, x, y);
-    if (block == 0)
-        return 0;
-    tile = SP_BG_TILE_PIXELS[block * 0x100 + ((y & 0xF0) >> 4) * 0x10 + ((x & 0xF0) >> 4)];
-    return SP_BG_TILE_ATTRS[tile & 0x3FFF] & 0xFF;
-}
-
-u8 func_8002D724(struct PlayerObj* object, s16 x, s16 y)
-{
-    return get_stage_tile_attribute(object->bg_offset, x, y);
-}
-
-u8 func_8002D7E4(struct PlayerObj* object, s16 x, s16 y)
-{
-    u8 block;
-    u16 tile;
-
-    block = stage_tile_block(object->bg_offset, x, y);
-    if (block == 0)
-        return 0;
-    object->unk6C = x & 0xF;
-    object->unk6E = y & 0xF;
-    tile = SP_BG_TILE_PIXELS[block * 0x100 + ((y & 0xF0) >> 4) * 0x10 + ((x & 0xF0) >> 4)];
-    return SP_BG_TILE_ATTRS[tile & 0x3FFF] & 0xFF;
-}
-
 void func_8002E994(struct EngineObj* arg0)
 {
     u16 direction = controller_input.held & 0xF000;
@@ -1615,116 +1573,6 @@ void func_8002588C(struct PlayerObj* arg0, s32 part, s32 clut)
     SP_DRAW_MODE_CURSOR = draw_mode;
 }
 
-void func_80024920(struct QuadObj* arg0)
-{
-    POLY_F4* primitive;
-    DR_MODE* draw_mode;
-    s32 x;
-    s32 y;
-    u32 red;
-    u32 green;
-    u32 blue;
-    u8 ordering;
-    u32 group;
-    u32 priority;
-    u32 buffer;
-
-    if (SP_SPRITE_COUNT >= 1000)
-        return;
-    SP_SPRITE_COUNT++;
-
-    if (arg0->bg_offset < 0) {
-        x = arg0->x_pos.i.hi;
-        y = arg0->y_pos.i.hi;
-    } else {
-        struct BackgroundObj* background = &background_objects[arg0->bg_offset];
-
-        x = arg0->x_pos.i.hi - background->x_pos.i.hi;
-        y = arg0->y_pos.i.hi - background->y_pos.i.hi;
-    }
-
-    primitive = SP_PRIM_CURSOR;
-    draw_mode = SP_DRAW_MODE_CURSOR;
-    setPolyF4(primitive);
-    setSemiTrans(primitive, (arg0->active & 0x10) != 0);
-    setXY4(primitive,
-        x + arg0->vertices[0].x.i.hi, y + arg0->vertices[0].y.i.hi,
-        x + arg0->vertices[1].x.i.hi, y + arg0->vertices[1].y.i.hi,
-        x + arg0->vertices[3].x.i.hi, y + arg0->vertices[3].y.i.hi,
-        x + arg0->vertices[2].x.i.hi, y + arg0->vertices[2].y.i.hi);
-
-    red = arg0->unk34 & 0x1F;
-    green = (arg0->unk34 >> 5) & 0x1F;
-    blue = arg0->unk34 >> 10;
-    setRGB0(primitive,
-        red * 8 + (red >> 2),
-        green * 8 + (green >> 2),
-        blue * 8 + (blue >> 2));
-    setlen(draw_mode, 1);
-    draw_mode->code[0] = 0xE1000000;
-
-    ordering = arg0->unk36;
-    group = (ordering >> 4) & 3;
-    priority = ordering & 0xF;
-    buffer = SP_DRAW_BUFFER;
-    setaddr(D_8013BC40[buffer][group][priority], draw_mode);
-    setaddr(draw_mode, primitive);
-    D_8013BC40[buffer][group][priority] = (P_TAG*)primitive;
-
-    SP_PRIM_CURSOR = primitive + 1;
-    SP_DRAW_MODE_CURSOR = draw_mode + 1;
-}
-
-void func_80024B9C(struct QuadObj* arg0)
-{
-    POLY_G4* primitive;
-    DR_MODE* draw_mode;
-    const u8* color;
-    s32 x;
-    s32 y;
-    u32 group;
-    u32 priority;
-    u32 buffer;
-
-    if (SP_SPRITE_COUNT >= 1000 || arg0->unk34 >= COUNT(D_800F2B5C))
-        return;
-    if (arg0->bg_offset < 0) {
-        x = arg0->x_pos.i.hi;
-        y = arg0->y_pos.i.hi;
-    } else {
-        struct BackgroundObj* background = &background_objects[arg0->bg_offset];
-
-        x = arg0->x_pos.i.hi - background->x_pos.i.hi;
-        y = arg0->y_pos.i.hi - background->y_pos.i.hi;
-    }
-    primitive = SP_PRIM_CURSOR;
-    draw_mode = SP_DRAW_MODE_CURSOR;
-    color = D_800F2B5C[arg0->unk34];
-    setPolyG4(primitive);
-    setSemiTrans(primitive, (arg0->active & 0x10) != 0);
-    setXY4(primitive,
-        x + arg0->vertices[0].x.i.hi, y + arg0->vertices[0].y.i.hi,
-        x + arg0->vertices[1].x.i.hi, y + arg0->vertices[1].y.i.hi,
-        x + arg0->vertices[3].x.i.hi, y + arg0->vertices[3].y.i.hi,
-        x + arg0->vertices[2].x.i.hi, y + arg0->vertices[2].y.i.hi);
-    setRGB0(primitive, color[0], color[1], color[2]);
-    setRGB1(primitive, color[3], color[4], color[5]);
-    setRGB2(primitive, color[6], color[7], color[8]);
-    setRGB3(primitive, color[9], color[10], color[11]);
-    SetDrawMode(draw_mode, 0, 0, 0, NULL);
-    group = ((u8)arg0->unk36 >> 4) & 3;
-    priority = (u8)arg0->unk36 & 0xF;
-    if (priority >= 8)
-        return;
-    buffer = SP_DRAW_BUFFER;
-    setaddr(D_8013BC40[buffer][group][priority], draw_mode);
-    setaddr(draw_mode, primitive);
-    D_8013BC40[buffer][group][priority] = (P_TAG*)primitive;
-    SP_PRIM_CURSOR = primitive + 1;
-    SP_DRAW_MODE_CURSOR = draw_mode + 1;
-    SP_SPRITE_COUNT++;
-}
-
 void func_80025188(s32 slot, u8 index)
 {
     const u8* archive = (const u8*)SP_SPRITE_FRAMES;
@@ -2105,99 +1953,6 @@ void func_800E9040(void)
     Psyz_GteCtrlWrite(28, 0x01400000);
     Psyz_GteCtrlWrite(24, 0);
     Psyz_GteCtrlWrite(25, 0);
-}
-
-extern s16 D_800F224C[];
-extern union TitleScratch D_80169498;
-
-void func_8001E130(struct GameInfo* arg0)
-{
-    s16* target;
-    s32* x;
-    s32* y;
-    u8* flags;
-    s32 x_diff;
-    s32 y_diff;
-    s32 i;
-    struct MiscObj* obj;
-    u8 direction;
-
-    x = &D_80169498.sector[0];
-    i = 0;
-    flags = (u8*)&D_80169498;
-    y = &D_80169498.sector[1];
-    do {
-        target = &D_800F224C[i * 2];
-        x_diff = *x - (target[0] << 16);
-        y_diff = *y - (target[1] << 16);
-        direction = angle_from_delta(x_diff, y_diff);
-        if (((((flags[0xA2] ^ direction) & 0x10) != 0) || (flags[0x90] != 0)) && (D_80169498.title.settled == 0)) {
-            *x = target[0] << 16;
-            *y = target[1] << 16;
-            flags[0x90] = 1;
-        } else {
-            *x -= x_diff / arg0->unk6;
-            *y -= y_diff / arg0->unk6;
-            flags[0x90] = 0;
-            if (i == 0x11) {
-                D_80169498.title.settled = 0;
-            }
-        }
-        y += 2;
-        x += 2;
-        flags[0xA2] = direction;
-        i++;
-        flags++;
-    } while (i < 0x12);
-
-    arg0->unk6--;
-    if (arg0->unk6 == 0) {
-        target = D_800F224C;
-        x = D_80169498.sector;
-        i = 0;
-        do {
-            *x = *target << 16;
-            target++;
-            x++;
-            i++;
-        } while (i < 0x24);
-        arg0->mode++;
-
-#ifdef VERSION_JP
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 0x1D;
-            obj->unk2 = 0x22;
-        }
-#else
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 0x13;
-            obj->unk2 = 0xC;
-        }
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 0x13;
-            obj->unk2 = 0x14;
-        }
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 0x13;
-            obj->unk2 = 0x15;
-        }
-#endif
-        obj = find_free_misc_obj();
-        if (obj != NULL) {
-            obj->active = 1;
-            obj->id = 0x1D;
-            obj->unk2 = 0x21;
-        }
-        D_80139690 = OBJECT_HEADER(obj);
-    }
 }
 
 void func_800C00BC(struct ItemObj* arg0)
@@ -13602,27 +13357,6 @@ void func_800C71C0(struct ItemObj* arg0)
     arg0->unk6 = 0;
 }
 
-s8 func_800C7970(struct ItemObj* self, struct PlayerObj* player)
-{
-    struct Unk_unk68* other = player->unk68;
-    struct Unk_unk68* box;
-    u16 self_y;
-    u16 other_y;
-    s16 distance;
-
-    if (other == NULL)
-        return 0;
-    box = self->unk68;
-    if ((s16)(player->x_pos.i.hi - other->unk2) < (s16)(self->x_pos.i.hi - (box->unk2 - 0x10)))
-        return 0;
-    if ((s16)(self->x_pos.i.hi + box->unk2 - 0x10) < (s16)(player->x_pos.i.hi + other->unk2))
-        return 0;
-    self_y = self->y_pos.i.hi + box->unk1;
-    other_y = player->y_pos.i.hi + other->unk1;
-    distance = (s16)self_y - (s16)other_y >= 0 ? (s16)(self_y - other_y) : (s16)(other_y - self_y);
-    return box->unk3 + other->unk3 >= distance;
-}
-
 void func_800D2094(struct MiscObj* arg0)
 {
     if (arg0->unk6 == 0) {
@@ -16994,55 +16728,6 @@ void func_80071740(struct MainObj* arg0)
 
 extern void (*jet_stingray_step_funcs[])(struct MainObj*);
 
-void func_80071D30(struct MainObj* arg0)
-{
-    s32 hit = func_8002DD04(arg0);
-    s32 flash = 0;
-
-    if (arg0->ext.main_56.flash_timer != 0) {
-        arg0->ext.main_56.flash_timer--;
-        if (arg0->ext.main_56.flash_timer & 1)
-            arg0->unk42 |= 0x8000;
-        else
-            arg0->unk42 &= 0x7FFF;
-    } else {
-        arg0->collision_data = D_801079F8;
-    }
-    if (hit < 0) {
-        arg0->unk5 = 0;
-        arg0->state++;
-        arg0->unk42 &= 0x7FFF;
-        g_Player.spike_immune = 1;
-        return;
-    }
-    if (hit != 0) {
-        if (engine_obj.cur_character == CHARACTER_X) {
-            if (hit == 0xC || hit == 3) {
-                arg0->state = 3;
-                arg0->unk6 = 0;
-                arg0->unk7 = 0;
-                return;
-            }
-            flash = hit != 0x7F;
-        } else {
-            if (hit == 0x22) {
-                arg0->state = 3;
-                arg0->unk6 = 0;
-                arg0->unk7 = 0;
-                return;
-            }
-            flash = hit != 0x7F && hit != 0x19 && hit != 0x1A;
-        }
-    }
-    if (flash && arg0->ext.main_56.flash_timer == 0) {
-        arg0->collision_data = D_801060F0;
-        arg0->ext.main_56.flash_timer = 0x40;
-    }
-    jet_stingray_step_funcs[arg0->unk5](arg0);
-    update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
-    func_8002D9BC(arg0);
-}
-
 extern struct Unk_unk68 frost_tower_hit_box[];
 extern u32* D_8011C094[];
 
@@ -19846,38 +19531,6 @@ void func_8006EB40(struct MainObj* self)
     set_animation(self, 0);
 }
 
-void func_80089AA4(struct MainObj* self)
-{
-    self->unk5 = 2;
-    self->state = 1;
-    self->on_screen = 1;
-    self->hp = 0x18;
-    self->animation_table = (const u8* const*)ride_armor_pilot_animations;
-    self->hurt_box = ride_armor_pilot_hurt_box;
-    self->attack_box = ride_armor_pilot_attack_box;
-    self->terrain_box = &ride_armor_pilot_terrain_box;
-    self->unk6 = 0;
-    self->unk7 = 0;
-    self->unk7C = 0;
-    self->contact_damage = 5;
-    self->invincibility_timer = 0;
-    self->collision_data = D_80108184;
-    self->air_state = 0;
-    self->x_speed = 0;
-    self->y_speed = 0;
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->unk16 = 5;
-    self->ext.main_71.unk86 = 0;
-    self->ext.main_71.unk87 = 0;
-    self->ext.main_71.unk88 = 0;
-    self->ext.main_71.pad89 = 0;
-    self->ext.main_71.unk8A = 0;
-    self->ext.main_71.unk8D = 0;
-    self->unk18 = self->x_pos;
-    self->unk1C = self->y_pos;
-}
-
 void func_80059E40(struct MainObj* self)
 {
     struct Main28Ext* ext = &self->ext.main_28;
@@ -19972,36 +19625,6 @@ void func_8005B24C(struct MainObj* self)
         ext->slots.children[i] = NULL;
     }
     ZeroObjectState(OBJECT_HEADER(self));
-}
-
-void func_80088C40(struct MainObj* self)
-{
-    if (engine_obj.checkpoint >= 2) {
-        ZeroObjectState(OBJECT_HEADER(self));
-        return;
-    }
-    self->active = 0x41;
-    self->hp = 0;
-    self->contact_damage = 0;
-    self->invincibility_timer = 0;
-    self->collision_data = D_80108104;
-    self->animation_table = (u32**)D_80104974;
-    self->unk16 = 5;
-    self->hurt_box = &D_80104914;
-    self->x_speed = 0;
-    self->y_speed = 0;
-    self->x_accel = 0;
-    self->gravity = 0;
-    self->air_state = 0;
-    self->attack_box = NULL;
-    self->terrain_box = NULL;
-    self->unk15 = 0;
-    self->unk1C = self->y_pos;
-    self->bg_offset = g_Player.bg_offset;
-    self->unk18 = self->x_pos;
-    set_animation(self, 0);
-    memset(&self->ext.main_70, 0, sizeof(self->ext.main_70));
-    self->unk5++;
 }
 
 void func_8008A9F4(struct MainObj* self)

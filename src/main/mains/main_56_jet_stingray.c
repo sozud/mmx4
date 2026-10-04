@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern void (*jet_stingray_step_funcs[10])();
+
 // jet_stingray_flyby_init
 
 void jet_stingray_flyby_wait_on_screen(struct MainObj* self);
@@ -836,7 +838,73 @@ void jet_stingray_reset(struct MainObj* self)
 }
 
 // jet_stingray_main
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071D30);
+void func_80071D30(struct MainObj* self)
+{
+    s32 check;
+
+    check = func_8002DD04(self);
+
+    if (self->ext.main_56.flash_timer != 0) {
+        if (--self->ext.main_56.flash_timer & 1) {
+            self->unk42 |= 0x8000;
+        } else {
+            self->unk42 &= 0x7FFF;
+        }
+    } else {
+        self->collision_data = D_801079F8;
+    }
+
+    if (check < 0) {
+        self->unk5 = 0;
+        self->state++;
+        self->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+        return;
+    }
+
+    if (check != 0) {
+        if (engine_obj.cur_character == CHARACTER_X) {
+            switch (check) {
+            case 0xC:
+            case 3:
+                self->state = 3;
+                self->unk6 = 0;
+                self->unk7 = 0;
+                return;
+            default:
+                if (self->ext.main_56.flash_timer == 0) {
+                    self->collision_data = D_801060F0;
+                    self->ext.main_56.flash_timer = 0x40;
+                }
+                break;
+            case 0x7F:
+                break;
+            }
+        } else {
+            switch (check) {
+            case 0x7F:
+            case 0x19:
+            case 0x1A:
+                break;
+            case 0x22:
+                self->state = 3;
+                self->unk6 = 0;
+                self->unk7 = 0;
+                return;
+            default:
+                if (self->ext.main_56.flash_timer == 0) {
+                    self->collision_data = D_801060F0;
+                    self->ext.main_56.flash_timer = 0x40;
+                }
+                break;
+            }
+        }
+    }
+
+    jet_stingray_step_funcs[self->unk5](self);
+    update_on_screen(BASE_OBJECT(self), 0x80, 0x80);
+    func_8002D9BC(self);
+}
 
 void jet_stingray_death_start(struct MainObj* self)
 {
