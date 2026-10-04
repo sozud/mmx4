@@ -4,6 +4,8 @@ assets
 build
 build.ninja
 build-linux/
+build-linux-jp/
+build-linux-replay/
 compile_commands.json
 .ninja_deps
 .ninja_log
