@@ -273,8 +273,11 @@ void train_cannon_fire_blast(struct PlayerObj* self)
             shot->unk40 = self->unk40;
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
-            is_zero = (self->unk2 == 0);
-            shot->unk16 = is_zero ? 2 : 1;
+            if (self->unk2 == 0) {
+                shot->unk16 = 2;
+            } else {
+                shot->unk16 = 1;
+            }
         }
     }
 }

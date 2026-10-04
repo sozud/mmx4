@@ -182,14 +182,10 @@ void bg_zone_controller_update_zone(struct EffectObj* self)
 {
     s8 value;
 
-    value = 0;
-    for (;;) {
-        if ((g_Player.x_pos.i.hi - bg_zone_controller_zone_bounds[value]) >= 0) {
-            if ((value = value + 1) < 3) {
-                continue;
-            }
+    for (value = 0; value < 3; value++) {
+        if ((g_Player.x_pos.i.hi - bg_zone_controller_zone_bounds[value]) < 0) {
+            break;
         }
-        break;
     }
     if ((value == 2) && (g_Player.y_pos.i.hi >= 0x128)) {
         value = 4;

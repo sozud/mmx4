@@ -65,13 +65,15 @@ void intro_messenger_wait_script(struct MiscObj* self)
 
 void intro_messenger_land(struct MiscObj* self)
 {
-    u16 sound_id;
-
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        sound_id = engine_obj.cur_character == 0 ? 0x2E : 0x27;
-        func_8002217C(sound_id, 0xFF, 0);
-        self->unk5 = 3;
+        if (engine_obj.cur_character == 0) {
+            func_8002217C(0x2E, 0xFF, 0);
+            self->unk5 = 3;
+        } else {
+            func_8002217C(0x27, 0xFF, 0);
+            self->unk5 = 3;
+        }
     }
 }
 
@@ -106,7 +108,12 @@ void intro_messenger_delay(struct MiscObj* self)
     if (--self->ext.unk.unk54 != 0) {
         return;
     }
-    func_8002217C(engine_obj.cur_character == 0 ? 0x2F : 0x28, 0, 0);
+    if (engine_obj.cur_character == 0) {
+        func_8002217C(0x2F, 0, 0);
+        self->unk5 = 7;
+        return;
+    }
+    func_8002217C(0x28, 0, 0);
     self->unk5 = 7;
 }
 

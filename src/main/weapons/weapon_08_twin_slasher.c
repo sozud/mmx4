@@ -4,8 +4,11 @@
 
 void twin_slasher_update(struct WeaponObj* arg0)
 {
-    s32 should_reset = g_Player.input_locked != 0;
+    s32 should_reset = 0;
 
+    if (g_Player.input_locked != 0) {
+        should_reset = 1;
+    }
     if (g_Player.capsule_state != 0) {
         should_reset = 1;
     }
@@ -56,8 +59,11 @@ void twin_slasher_hide(struct WeaponObj* arg0)
 
 void twin_slasher_charged_update(struct WeaponObj* arg0)
 {
-    s32 should_reset = g_Player.input_locked != 0;
+    s32 should_reset = 0;
 
+    if (g_Player.input_locked != 0) {
+        should_reset = 1;
+    }
     if (g_Player.capsule_state != 0) {
         should_reset = 1;
     }

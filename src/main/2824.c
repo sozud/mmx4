@@ -338,6 +338,8 @@ void func_800128EC(s32 arg0)
 {
 #ifdef MMX4_PC
     u16* temp_a0 = &mmx4_pc_thread_slot(arg0)->state;
+#elif defined(MMX4_WIN32)
+    u8* temp_a0 = win32_main_ram + 0x1F8100 + (arg0 << 7);
 #else
     u16* temp_a0 = (arg0 << 7) + 0x801F8100;
 #endif

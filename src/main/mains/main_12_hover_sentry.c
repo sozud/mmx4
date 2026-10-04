@@ -48,20 +48,17 @@ void hover_sentry_resume_step(struct MainObj* self)
 
 void hover_sentry_bob(struct MainObj* self)
 {
-    struct MainObj* current;
-
     move_with_gravity(ANIMATED_OBJECT(self));
-    current = SP_CUR_MAIN_OBJ;
-    if (current->ext.main_12.unk88 == 0) {
+    if (SP_CUR_MAIN_OBJ->ext.main_12.unk88 == 0) {
         if (self->y_speed >= 0) {
             self->y_speed = FIXED(0.5);
             self->gravity = -self->gravity;
-            current->ext.main_12.unk88 = 1;
+            SP_CUR_MAIN_OBJ->ext.main_12.unk88 = 1;
         }
     } else if (self->y_speed < 0) {
         self->y_speed = FIXED(-0.5);
         self->gravity = -self->gravity;
-        current->ext.main_12.unk88 = 0;
+        SP_CUR_MAIN_OBJ->ext.main_12.unk88 = 0;
     }
     animate_object(ANIMATED_OBJECT(self));
 }

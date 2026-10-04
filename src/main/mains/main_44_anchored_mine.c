@@ -10,35 +10,38 @@ void anchored_mine_update(struct MainObj* self)
 
 void anchored_mine_init(struct MainObj* obj)
 {
+    u8 new_state;
+
     obj->active = 0x41;
     obj->hp = 1;
     obj->contact_damage = 3;
     obj->invincibility_timer = 0;
     obj->bg_offset = g_Player.bg_offset;
+    obj->unk18.val = obj->x_pos.val;
+    obj->unk1C.val = obj->y_pos.val;
     obj->collision_data = D_801060F0;
-    obj->animation_table = (const u8* const*)anchored_mine_animations;
-    obj->unk16 = 6;
-    obj->hurt_box = &anchored_mine_hurt_box;
     // memset 0
     obj->x_speed = 0;
     obj->y_speed = 0;
     obj->x_accel = 0;
     obj->gravity = 0;
     obj->air_state = 0;
+    obj->animation_table = (const u8* const*)anchored_mine_animations;
+    obj->unk16 = 6;
     obj->terrain_box = NULL;
+    obj->hurt_box = &anchored_mine_hurt_box;
     obj->attack_box = &anchored_mine_attack_box;
-    obj->unk18.val = obj->x_pos.val;
-    obj->unk1C.val = obj->y_pos.val;
     set_animation(obj, 0);
+    new_state = obj->state + 1;
     obj->ext.main_44.unk80 = 0;
     obj->ext.main_44.unk84 = 0;
     obj->ext.main_44.unk88 = 0;
     obj->ext.main_44.unk8C = 0;
     obj->ext.main_44.unk90 = 0;
     obj->ext.main_44.saved_unk5 = 0;
+    obj->state = new_state;
     obj->unk5 = 2;
     obj->unk6 = 0;
-    obj->state++;
 }
 
 extern void (*anchored_mine_step_funcs[])(struct MainObj*);

@@ -173,14 +173,10 @@ void func_8003C584(struct RideArmorObj* arg0)
 
 void func_8003C624(struct RideArmorObj* arg0)
 {
-    u32 value;
-
-    if ((u32)((u8)arg0->unk6 - 1) < 4U) {
-        value = arg0->unk94.value;
-        value += arg0->unk90.value;
-        arg0->unk94.value = value;
-        background_objects[arg0->bg_offset].unk47 -= value >> 16;
-        if (background_objects[arg0->bg_offset].unk47 <= 5) {
+    if ((s8)arg0->unk6 >= 1 && (s8)arg0->unk6 < 5) {
+        arg0->unk94.value += arg0->unk90.value;
+        background_objects[arg0->bg_offset].unk47 -= arg0->unk94.value >> 16;
+        if (background_objects[arg0->bg_offset].unk47 < 6) {
             background_objects[arg0->bg_offset].unk47 = 6;
         }
     }
@@ -211,7 +207,7 @@ void func_8003C8F4(struct RideArmorObj* arg0)
 
 void func_8003C9A4(struct RideArmorObj* arg0)
 {
-    if ((arg0->unk80.bytes.unk82 != arg0->unk80.bytes.unk83) && (arg0->unk80.bytes.unk80 & 1) && (arg0->unk80.bytes.unk82 == 2 && arg0->unk80.bytes.unk83 == 0)) {
+    if ((arg0->unk80.bytes.unk82 != arg0->unk80.bytes.unk83) && (arg0->unk80.bytes.unk80 & 1) && (arg0->unk80.bytes.unk83 == 0) && (arg0->unk80.bytes.unk82 == 2)) {
         arg0->y_vel.val = (((arg0->x_vel.val < 0 ? -arg0->x_vel.val : arg0->x_vel.val) * 2) / 237) << 8;
         arg0->unk80.bytes.unk80 |= 2;
         arg0->unk2C = FIXED(0.3125);

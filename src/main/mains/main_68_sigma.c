@@ -499,10 +499,10 @@ void sigma_darts_spawn(struct MainObj* self)
     struct ShotObj* temp_v0;
 
     animate_object(ANIMATED_OBJECT(self));
-    var_s1 = 0;
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
         self->unk6 = (u8)self->unk6 + 1;
+        var_s1 = 0;
         do {
             temp_v0 = find_free_shot_obj();
             if (temp_v0 != 0) {
@@ -898,12 +898,12 @@ void sigma_death(struct MainObj* self)
 
 void sigma_cloak_stagger_start(struct MainObj* self)
 {
+    self->unk42 &= 0x7FFF;
     self->unk4B = -1;
+    self->unk5++;
     self->unk7C = 0x40;
     self->unk7E = 4;
     self->hurt_box = NULL;
-    self->unk42 &= 0x7FFF;
-    self->unk5++;
     set_animation(self, 8);
     set_animation(self->ext.main_68.scythe, 9);
     func_8001540C(2, 4, self);
@@ -997,7 +997,7 @@ void sigma_reveal_fall(struct MainObj* self)
 {
     struct VisualObj* temp_v0;
 
-    if (main_bss_state.frame_counter == ((main_bss_state.frame_counter / 5) * 5)) {
+    if ((main_bss_state.frame_counter % 5) == 0) {
         temp_v0 = find_free_visual_obj();
         if (temp_v0 != 0) {
             temp_v0->active = 0x41;

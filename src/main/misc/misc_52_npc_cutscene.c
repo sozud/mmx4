@@ -28,7 +28,11 @@ void npc_cutscene_talk_line(struct MiscObj* self)
 
     if (timer == 0) {
         self->unk5++;
-        func_8002217C(engine_obj.cur_character == 0 ? 0x2B : 0x23, 0xFF, 0);
+        if (engine_obj.cur_character == 0) {
+            func_8002217C(0x2B, 0xFF, 0);
+        } else {
+            func_8002217C(0x23, 0xFF, 0);
+        }
     } else {
         self->ext.misc_52.timer = timer - 1;
     }
@@ -127,11 +131,8 @@ void npc_cutscene_blink(struct MiscObj* self)
 
 void npc_cutscene_fade_out(struct MiscObj* self)
 {
-    u8 timer = self->ext.misc_52.timer;
     self->on_screen = 0;
-    timer--;
-    self->ext.misc_52.timer = timer;
-    if (0 == timer) {
+    if (--self->ext.misc_52.timer == 0) {
         engine_obj.unkF = 0x40;
     }
 }

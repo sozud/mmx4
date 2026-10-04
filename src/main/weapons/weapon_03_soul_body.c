@@ -133,7 +133,7 @@ void soul_body_hold(struct WeaponObj* arg0)
         return;
     }
 
-    if (temp_v0 <= 0x1E) {
+    if (FLICKER_ENABLED && temp_v0 <= 0x1E) {
         arg0->on_screen ^= 1;
     }
     field_8c[1]--;

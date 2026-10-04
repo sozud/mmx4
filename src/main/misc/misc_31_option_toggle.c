@@ -37,6 +37,14 @@ void func_800CDF4C(struct MiscObj* self)
 
 void option_toggle_refresh(struct MiscObj* self)
 {
+#ifdef MMX4_WIN32
+    if (EASY_MODE != 0) {
+        self->animation_step.fields.frame_index = 0x56;
+        is_on_screen(BASE_OBJECT(self));
+        return;
+    }
+    self->animation_step.fields.frame_index = 0x57;
+#else
     if (D_80171EA9 != self->ext.misc_31.animation) {
         if (D_80171EA9 != 0) {
             self->animation_step.fields.frame_index = 0x56;
@@ -45,6 +53,7 @@ void option_toggle_refresh(struct MiscObj* self)
         }
         self->ext.misc_31.animation = D_80171EA9;
     }
+#endif
     is_on_screen(BASE_OBJECT(self));
 }
 

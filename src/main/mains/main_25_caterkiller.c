@@ -102,12 +102,8 @@ void caterkiller_lunge_start(struct MainObj* self)
 // caterkiller_lunge_move
 INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057874);
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", caterkiller_lunge_end);
-#else
 void caterkiller_lunge_end(struct MainObj* self)
 {
-    s32 distance;
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
@@ -118,32 +114,17 @@ void caterkiller_lunge_end(struct MainObj* self)
     }
     move_with_gravity(ANIMATED_OBJECT(self));
     if (self->x_speed == 0) {
-        distance = g_Player.y_pos.i.hi - self->y_pos.i.hi;
-        if (distance > -1) {
-            if (distance <= 0x19) {
-                self->unk6 = 0;
-            } else {
-                set_animation(self, 0);
-                self->unk5 = 2;
-                self->unk6 = 0;
-                self->ext.main_25.unk80 = 0x40;
-                self->ext.main_25.unk84 = 0;
-            }
-        } else {
-            distance = self->y_pos.i.hi - g_Player.y_pos.i.hi;
-            if (distance < 0x1A) {
-                self->unk6 = 0;
-            } else {
-                set_animation(self, 0);
-                self->unk5 = 2;
-                self->unk6 = 0;
-                self->ext.main_25.unk80 = 0x40;
-                self->ext.main_25.unk84 = 0;
-            }
+        if (ABS(g_Player.y_pos.i.hi, self->y_pos.i.hi) <= 0x19) {
+            self->unk6 = 0;
+            return;
         }
+        set_animation(self, 0);
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->ext.main_25.unk80 = 0x40;
+        self->ext.main_25.unk84 = 0;
     }
 }
-#endif
 
 void caterkiller_fall(struct MainObj* self)
 {

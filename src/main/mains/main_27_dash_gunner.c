@@ -371,27 +371,16 @@ void dash_gunner_dash_end(struct MainObj* self)
     if (timer == 0) {
         self->ext.main_27.unk89 = 0;
         self->ext.main_27.unk8A = 0;
-        if (self->unk15 == 0) {
-            if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
-                timer = 0x14;
-                self->unk7C = timer;
-                timer = 4;
-                self->x_accel = 0;
-                self->y_speed = 0;
-            } else {
-                timer = 6;
-            }
-        } else if (g_Player.x_pos.i.hi < self->x_pos.i.hi) {
-            timer = 0x14;
-            self->unk7C = timer;
-            timer = 4;
+        if (((self->unk15 == 0) && (g_Player.x_pos.i.hi > self->x_pos.i.hi)) || ((self->unk15 != 0) && (g_Player.x_pos.i.hi < self->x_pos.i.hi))) {
+            self->unk7C = 0x14;
             self->x_accel = 0;
             self->y_speed = 0;
+            self->unk5 = 4;
+            self->unk6 = 0;
         } else {
-            timer = 6;
+            self->unk5 = 6;
+            self->unk6 = 0;
         }
-        self->unk5 = timer;
-        self->unk6 = 0;
     }
 }
 

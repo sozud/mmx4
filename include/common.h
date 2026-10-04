@@ -88,11 +88,13 @@ typedef u8 ret_u8;
 typedef s8 ret_s8;
 typedef u8 arg_u8;
 typedef u16 arg_u16;
+typedef s16 arg_s16;
 #else
 typedef s32 ret_u8;
 typedef s32 ret_s8;
 typedef s32 arg_u8;
 typedef s32 arg_u16;
+typedef s32 arg_s16;
 #endif
 
 #ifdef MMX4_PC
@@ -4485,7 +4487,11 @@ extern s32 D_80175EE8[];
 extern s16 D_8016DEA2;
 extern s16 D_8016DEA4;
 #endif
+#ifdef MMX4_WIN32
+#define D_801F8300 (*(struct GameThread**)(win32_main_ram + 0x1F8300))
+#else
 extern struct GameThread* D_801F8300;
+#endif
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
 extern void (*g_TitleUpdateFuncs[])();
 extern void (*select_char_portrait_funcs[4])();
@@ -4992,7 +4998,7 @@ void set_velocity_from_angle(struct MovingObj*, arg_u8);
 void func_8002B9F0(s32* arg0, s32* arg1, u8 arg2);
 void update_screen_shake_x(struct BackgroundObj* arg0);
 void start_screen_shake_y(s8, s8, s8);
-void apply_tile_effect(u8, s32, s32);
+void apply_tile_effect(u8, arg_s16, arg_s16);
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
 ret_u8 func_8002D9BC(void*);

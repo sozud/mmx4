@@ -89,13 +89,15 @@ void jet_drone_fly_dash(struct MainObj* self)
 
 void jet_drone_fly_arc(struct MainObj* self)
 {
-    s32 direction;
 
     move_with_gravity(ANIMATED_OBJECT(self));
     animate_object(ANIMATED_OBJECT(self));
     if (self->y_speed == 0) {
-        direction = self->unk2 & 3;
-        self->gravity = (direction <= 1) ? FIXED(0.1875) : FIXED(-0.1875);
+        if ((self->unk2 & 3) <= 1) {
+            self->gravity = FIXED(0.1875);
+        } else {
+            self->gravity = FIXED(-0.1875);
+        }
     }
     if (self->x_speed == 0) {
         self->x_accel >>= 2;

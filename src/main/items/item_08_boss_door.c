@@ -198,13 +198,13 @@ void boss_door_locked(struct ItemObj* arg0)
 
 void boss_door_block_player(struct ItemObj* arg0)
 {
-    volatile struct PlayerObj* player = &g_Player;
+    struct PlayerObj* player = &g_Player;
 
     if (arg0->unk72 & 4) {
-        player->unk71 = (u8)(player->unk71 & 0xB);
+        player->unk71 &= 0xB;
     }
     if (arg0->unk72 & 8) {
-        player->unk71 = (u8)(player->unk71 & 7);
+        player->unk71 &= 7;
     }
 }
 

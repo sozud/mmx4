@@ -33,7 +33,7 @@ void owl_feather_despawn(struct ShotObj* self)
 {
     struct MainObj* owner;
 
-    if ((u32)((u8)self->unk2 - 1) < 4U) {
+    if (self->unk2 > 0 && self->unk2 < 5) {
         owner = MAIN_OBJECT(self->unk7C);
         owner->ext.main_60.feather_mask -= 1 << self->unk84.value;
     }

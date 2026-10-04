@@ -276,9 +276,12 @@ void train_scroll_shake(struct LayerObj* arg0)
 
 u8 train_scroll_player_at_lock(struct LayerObj* arg0)
 {
-    f32 x_pos;
-    x_pos = g_Player.x_pos;
-    if (x_pos.i.hi >= train_scroll_lock_positions[(u8)arg0->bg_offset - 1] && (16 + train_scroll_lock_positions[(u8)arg0->bg_offset - 1]) >= x_pos.i.hi)
+    s16 player_x;
+    s16 lock_x;
+
+    player_x = g_Player.x_pos.i.hi;
+    lock_x = train_scroll_lock_positions[(u8)arg0->bg_offset - 1];
+    if (player_x >= lock_x && player_x <= (lock_x + 16))
         return 1;
     return 0;
 }
