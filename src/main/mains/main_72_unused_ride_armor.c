@@ -212,10 +212,6 @@ INCLUDE_ASM("main/nonmatchings/mains/main_72_unused_ride_armor", func_8008B69C);
 
 void unused_ride_armor_rapid_fire(struct MainObj* self)
 {
-    struct Main72Ext* main_72;
-    unsigned char lifetime;
-    unsigned char spawn_timer;
-
     if (self->unk6 == 0) {
         self->unk6++;
         set_animation(self, 9);
@@ -225,13 +221,8 @@ void unused_ride_armor_rapid_fire(struct MainObj* self)
         func_8001540C(2, 0x4C, self);
     }
 
-    main_72 = &self->ext.main_72;
-    lifetime = self->ext.main_72.lifetime - 1;
-    main_72->lifetime = lifetime;
-    if (lifetime != 0) {
-        spawn_timer = self->ext.main_72.spawn_timer - 1;
-        main_72->spawn_timer = spawn_timer;
-        if ((spawn_timer & 0xF) != 0) {
+    if (--(&self->ext.main_72)->lifetime != 0) {
+        if ((--(&self->ext.main_72)->spawn_timer & 0xF) != 0) {
             unused_ride_armor_spawn_shot(self, 1);
         }
         animate_object(ANIMATED_OBJECT(self));

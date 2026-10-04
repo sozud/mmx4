@@ -1,6 +1,11 @@
 // RideArmorObj, D_800F2AD4[0]
 // 8003B3DC..8003D3F8
 #include "common.h"
+
+void func_8003C8F4(struct RideArmorObj* arg0);
+void func_8003CB08(struct RideArmorObj* arg0);
+void func_8003CCBC(struct RideArmorObj* arg0);
+void func_8003CD38(struct RideArmorObj* arg0);
 #include "func_tables.h"
 
 void func_8003B3DC(struct RideArmorObj* arg0)

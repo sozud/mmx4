@@ -1,6 +1,17 @@
 // 80038678..8003B3DC
 #include "common.h"
 
+s32 player_nova_strike_hit_wall(struct PlayerObj* self);
+void player_set_ladder_shoot_animation(struct PlayerObj* self);
+void player_zero_attack_finish(struct PlayerObj* self);
+void player_zero_begin_attack(struct PlayerObj* self);
+s32 player_zero_check_hyouretsuzan(struct PlayerObj* self);
+s32 player_zero_check_ladder_or_walk(struct PlayerObj* self);
+s32 player_zero_check_slash_input(struct PlayerObj* self);
+void player_zero_ryuenjin_spawn_flame(struct PlayerObj* self);
+void player_zero_saber_on_event(struct PlayerObj* self, s8 saber_id);
+void player_zero_spawn_saber(struct PlayerObj* self, s8 saber_id);
+
 struct PlayerHurtVelocity {
     s32 x_vel;
     s32 x_accel;

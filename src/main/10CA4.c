@@ -1,6 +1,8 @@
 // 800204A4..80020984
 #include "common.h"
 
+void func_800193D8(struct EngineObj* arg0);
+
 void func_80016F0C();
 
 void func_8001F118(void);

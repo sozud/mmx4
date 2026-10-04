@@ -957,7 +957,11 @@ void func_8001B558(struct EngineObj* arg0)
         func_8001540C(0, 0x22, 0);
         reset_objects();
         switch (memcard_menu.result) {
-        case 0 ... 4:
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
             game_info.unk0 = 7;
             game_info.unk2 = 0;
             game_info.unk3 = 0;

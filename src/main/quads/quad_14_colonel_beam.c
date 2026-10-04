@@ -2,6 +2,8 @@
 // 800D7A54..800D7CEC
 #include "common.h"
 
+void colonel_beam_place(struct QuadObj* arg0, u8 arg1);
+
 void colonel_beam_update(struct QuadObj* arg0)
 {
     colonel_beam_state_funcs[arg0->state](arg0);

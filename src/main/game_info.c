@@ -2,6 +2,17 @@
 // 8001D064..8001DC7C
 #include "common.h"
 
+void PlayCapcomLogo(void);
+void func_80012E38(void);
+void func_80012E80();
+void func_8001512C(void);
+void func_8001A9EC(struct EngineObj* arg0);
+void func_8001D104(void);
+void func_8001D284(struct GameInfo* arg0);
+void func_80021E3C(void);
+void func_80021E74(void);
+void func_80022074(void);
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>

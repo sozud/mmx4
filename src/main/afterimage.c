@@ -2,6 +2,8 @@
 // 800AE7DC..800AEAC0
 #include "common.h"
 
+void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player);
+
 void func_800AE7DC(struct UnkObj* arg0)
 {
     struct PlayerObj* player = &g_Player;

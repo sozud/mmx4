@@ -2,6 +2,38 @@
 // 800311EC..80033414
 #include "common.h"
 
+s32 player_check_air_move(struct PlayerObj* self);
+void player_check_capsule(struct PlayerObj* self);
+void player_check_damage(struct PlayerObj* self);
+s32 player_check_dash_jump(struct PlayerObj* self);
+s32 player_check_dash_jump_walk(struct PlayerObj* self);
+void player_check_fall(struct PlayerObj* self);
+s32 player_check_ladder(struct PlayerObj* self);
+s32 player_check_ladder_air(struct PlayerObj* self);
+void player_check_low_hp_alarm(struct PlayerObj* self);
+void player_check_ride(struct PlayerObj* self);
+s32 player_check_script(struct PlayerObj* self);
+s32 player_check_shoot_air(struct PlayerObj* self);
+s32 player_check_walk_start(struct PlayerObj* self);
+s32 player_check_wall(struct PlayerObj* self);
+s32 player_dash_should_end(struct PlayerObj* self);
+void player_enter_air_dash_end(struct PlayerObj* self);
+void player_enter_idle(struct PlayerObj* self);
+void player_enter_ladder_down(struct PlayerObj* self);
+void player_enter_land_or_fall(struct PlayerObj* self);
+void player_enter_walk_start(struct PlayerObj* self);
+void player_enter_wall_slide(struct PlayerObj* self);
+void player_idle_animate(struct PlayerObj* self);
+void player_spawn_dash_dust(struct PlayerObj* self);
+void player_update_charge(struct PlayerObj* self);
+void player_update_double_tap(struct PlayerObj* self);
+void player_update_flash(struct PlayerObj* self);
+void player_update_frame_hitbox(struct PlayerObj* self);
+void player_update_weapon(struct PlayerObj* self);
+s32 player_zero_check_fall_slash(struct PlayerObj* self);
+s32 player_zero_check_jump_slash(struct PlayerObj* self);
+s32 player_zero_check_wall_slash(struct PlayerObj* self);
+
 struct PlayerHurtVelocity {
     s32 x_vel;
     s32 x_accel;

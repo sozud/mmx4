@@ -2,6 +2,9 @@
 // 800CBD40..800CBECC
 #include "common.h"
 
+void explosion_puff_animate(struct MiscObj* self);
+void explosion_puff_init(struct MiscObj* self);
+
 void explosion_puff_update(struct MiscObj* self)
 {
     if (self->state == 0) {

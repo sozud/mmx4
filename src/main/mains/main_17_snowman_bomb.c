@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[17]
 // 8004FF90..80050708
 #include "common.h"
+
+void snowman_bomb_face_player(struct AnimatedObj* self);
 #include "func_tables.h"
 
 void snowman_bomb_update(struct MainObj* self)

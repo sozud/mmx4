@@ -87,7 +87,11 @@ void menu_text_highlight(struct UnkObj* self)
 {
     s8 temp_v1; // probably fake
 
+#ifdef MMX4_WIN32
+    if (self->y_pos.i.hi != 0x10 && self->y_pos.i.hi != 1) {
+#else
     if (0x10 != self->y_pos.i.hi) {
+#endif
         if (self->unk7 == main_bss_state.transition.selection) {
             self->unk42 = 0x7803;
         } else {
@@ -119,12 +123,12 @@ void menu_text_cursor(struct UnkObj* self)
 }
 
 union AnimationStep menu_text_anim_0[6] = {
-    { .packed = 0x00010001 },
-    { .packed = 0x01010001 },
-    { .packed = 0x02010001 },
-    { .packed = 0x03010001 },
-    { .packed = 0x04010001 },
-    { .packed = 0x05000001 },
+    { 0x00010001 },
+    { 0x01010001 },
+    { 0x02010001 },
+    { 0x03010001 },
+    { 0x04010001 },
+    { 0x05000001 },
 };
 union AnimationStep* menu_text_animations[1] = { menu_text_anim_0 };
 

@@ -47,7 +47,7 @@ void drone_beam_init(struct ShotObj* self)
     self->y_pos.i.hi = owner->y_pos.i.hi - 3;
 }
 
-static inline void beam_update_visibility(struct ShotObj* self, s16 camera_x, s16 owner_x, s32 offset)
+static __inline void beam_update_visibility(struct ShotObj* self, s16 camera_x, s16 owner_x, s32 offset)
 {
     u16 distance = ABS(camera_x, owner_x - offset);
     update_on_screen(BASE_OBJECT(self), distance, 0x20);

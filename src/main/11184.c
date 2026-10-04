@@ -1,6 +1,8 @@
 // 80020984..80021158
 #include "common.h"
 
+void func_80029DBC(void);
+
 void func_80016F0C();
 
 void func_8001F118(void);

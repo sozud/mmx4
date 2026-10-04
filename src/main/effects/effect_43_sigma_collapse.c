@@ -55,18 +55,13 @@ void sigma_collapse_rumble_start(struct EffectObj* self)
 
 void sigma_collapse_rumble_shake(struct EffectObj* self)
 {
-    u16* timer = &self->ext.effect_43.unk14;
-    u16 timer_value;
-
-    if (--self->ext.effect_43.unk14 == 0) {
+    if (--(&self->ext.effect_43)->unk14 == 0) {
         func_8001540C(5, 0, NULL);
         start_screen_shake_x(0xA, 2, 1);
         self->ext.effect_43.unk14 = 0xA;
     }
 
-    timer_value = self->ext.effect_43.unk16;
-    timer[1] = --timer_value;
-    if (timer_value == 0) {
+    if (--(&self->ext.effect_43)->unk16 == 0) {
         func_8001540C(0, 0x13, NULL);
         self->ext.effect_43.unk16 = 0x28;
     }

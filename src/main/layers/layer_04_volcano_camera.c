@@ -2,6 +2,11 @@
 // 800DA05C..800DA298
 #include "common.h"
 
+void volcano_camera_section_0_done(struct LayerObj* arg0);
+void volcano_camera_section_0_wait(struct LayerObj* arg0);
+void volcano_camera_section_1_done(struct LayerObj* arg0);
+void volcano_camera_section_1_wait(struct LayerObj* arg0);
+
 s16 volcano_camera_section_positions[2] = { 0x8D0, 0 };
 
 void volcano_camera_update(struct LayerObj* arg0)

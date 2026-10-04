@@ -1,6 +1,10 @@
 // 800350A4..80036E98
 #include "common.h"
 
+void player_init_clone(void);
+u16 player_map_buttons(s32 pad);
+void reset_entity(struct PlayerObj* arg0);
+
 struct PlayerHurtVelocity {
     s32 x_vel;
     s32 x_accel;

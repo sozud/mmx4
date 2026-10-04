@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[3]
 // 80043340..8004441C
 #include "common.h"
+
+void spike_marl_noop(struct MainObj* self);
 #include "func_tables.h"
 
 extern u8 item_carrier_debris[];

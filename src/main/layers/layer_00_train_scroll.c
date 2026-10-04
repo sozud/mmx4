@@ -2,6 +2,18 @@
 // 800D8648..800D8ED4
 #include "common.h"
 
+void train_scroll_section_0_skip(struct LayerObj* arg0);
+void train_scroll_section_0_wait(struct LayerObj* arg0);
+void train_scroll_section_1_event(struct LayerObj* arg0);
+void train_scroll_section_1_lock(struct LayerObj* arg0);
+void train_scroll_section_2_event(struct LayerObj* arg0);
+void train_scroll_section_2_lock(struct LayerObj* arg0);
+void train_scroll_section_3_event(struct LayerObj* arg0);
+void train_scroll_section_3_lock(struct LayerObj* arg0);
+void train_scroll_section_4_event(struct LayerObj* arg0);
+void train_scroll_section_4_lock(struct LayerObj* arg0);
+void train_scroll_shake(struct LayerObj* arg0);
+
 void train_scroll_update_section(struct LayerObj* arg0);
 
 void train_scroll_update(struct LayerObj* arg0)

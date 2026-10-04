@@ -1,5 +1,8 @@
 // 80013588..80014DC4
 #include "common.h"
+
+void func_80013968(void);
+void func_80013DA8(void);
 #include "scratchpad.h"
 
 struct HudLayoutData {
@@ -746,6 +749,7 @@ struct Unk5 D_800F0E18[] = {
 #elif defined(VERSION_EU)
 struct Unk5 D_800F0E18[] = {
 #include "archive_data.eu.inc"
+
 };
 #else
 struct Unk5 D_800F0E18[] = {

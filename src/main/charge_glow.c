@@ -2,6 +2,9 @@
 // 800AE6B4..800AE7DC
 #include "common.h"
 
+void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1);
+void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1);
+
 void func_800AE6B4(struct BazObj* arg0)
 {
     struct PlayerObj* ptr = &g_Player;

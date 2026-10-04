@@ -189,9 +189,9 @@ void crumbling_tile_update(struct MiscObj* self)
     crumbling_tile_state_funcs[self->state](self);
 }
 
-#define ANIM_STEP(value)  \
-    {                     \
-        .packed = (value) \
+#define ANIM_STEP(value) \
+    {                    \
+        (value)          \
     }
 
 union AnimationStep D_8010DC7C[] = { ANIM_STEP(0x00010003), ANIM_STEP(0x01010003), ANIM_STEP(0x02010003), ANIM_STEP(0x03010003), ANIM_STEP(0x04010002), ANIM_STEP(0x04000001) };

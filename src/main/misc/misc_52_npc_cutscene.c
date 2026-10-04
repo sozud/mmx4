@@ -182,17 +182,17 @@ void npc_cutscene_update(struct MiscObj* self)
 }
 
 union AnimationStep npc_cutscene_anim_0[5] = {
-    { .packed = 0x0001003A },
-    { .packed = 0x04010008 },
-    { .packed = 0x05010021 },
-    { .packed = 0x04010008 },
-    { .packed = 0x00FC003A },
+    { 0x0001003A },
+    { 0x04010008 },
+    { 0x05010021 },
+    { 0x04010008 },
+    { 0x00FC003A },
 };
 
 union AnimationStep npc_cutscene_anim_1[3] = {
-    { .packed = 0x01010001 },
-    { .packed = 0x02010001 },
-    { .packed = 0x03FE0001 },
+    { 0x01010001 },
+    { 0x02010001 },
+    { 0x03FE0001 },
 };
 
 union AnimationStep* npc_cutscene_animations[2] = { npc_cutscene_anim_0, npc_cutscene_anim_1 };

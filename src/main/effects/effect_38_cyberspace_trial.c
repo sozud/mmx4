@@ -2,6 +2,8 @@
 // 800BD654..800BDE68
 #include "common.h"
 
+void cyberspace_trial_spawn_rank_warp(struct EffectObj* self);
+
 void cyberspace_trial_update(struct EffectObj* self)
 {
     cyberspace_trial_state_funcs[self->state](self);

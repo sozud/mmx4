@@ -1,6 +1,11 @@
 // 8001FAFC..800204A4
 #include "common.h"
 
+void func_80012F44(void);
+s32 func_8001FD7C(struct EngineObj* arg0);
+void func_80021158(void);
+void func_8002FCAC(void);
+
 void func_80016F0C();
 
 void func_8001F118(void);

@@ -45,7 +45,7 @@ void boss_warning_quad_open(struct QuadObj* arg0)
     if (integer == 0) {
         arg0->unk5++;
         if (arg0->unk2 == 0x15) {
-            D_8013B960[0] = 1;
+            D_8013B960 = 1;
         }
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;
@@ -79,7 +79,7 @@ void boss_warning_quad_close(struct QuadObj* arg0)
     if (integer == 0) {
         arg0->state++;
         if (arg0->unk2 == 0x15) {
-            D_8013B960[0] = 0;
+            D_8013B960 = 0;
         }
     } else {
         arg0->ext.quad_2.x_scale.bytes.integer = integer - 1;

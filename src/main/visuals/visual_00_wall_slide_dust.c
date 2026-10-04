@@ -2,6 +2,8 @@
 // 800AEAC0..800AED18
 #include "common.h"
 
+void wall_slide_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
+
 void wall_slide_dust_update(struct VisualObj* arg0)
 {
     struct PlayerObj* var_a1;

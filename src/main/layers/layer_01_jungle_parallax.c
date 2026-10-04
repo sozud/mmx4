@@ -2,6 +2,12 @@
 // 800D8ED4..800D9218
 #include "common.h"
 
+void jungle_parallax_section_0_setup(struct LayerObj* arg0);
+void jungle_parallax_section_1_done(struct LayerObj* arg0);
+void jungle_parallax_section_1_setup(struct LayerObj* arg0);
+void jungle_parallax_section_2_setup(struct LayerObj* arg0);
+void jungle_parallax_update_section(struct LayerObj* arg0);
+
 void jungle_parallax_section_0_scroll(struct LayerObj* arg0);
 void jungle_parallax_section_2_scroll(struct LayerObj* arg0);
 
@@ -92,14 +98,13 @@ void jungle_parallax_section_2_setup(struct LayerObj* arg0)
 void jungle_parallax_section_2_scroll(struct LayerObj* arg0)
 {
     struct BackgroundObj* obj = &background_objects[1];
-    struct BackgroundObj* prev = obj - 1;
     s16 value;
-    value = prev->x_pos.i.hi - 0x960;
+    value = background_objects[0].x_pos.i.hi - 0x960;
     value >>= 1;
     value = value + (value >> 1);
     obj->x_pos.i.hi = value + obj->unk40;
-    value = prev->y_pos.i.hi - 0x500;
-    obj->y_pos.i.hi = obj->unk42 + (prev->y_pos.i.hi - (value >> 2));
+    value = background_objects[0].y_pos.i.hi - 0x500;
+    obj->y_pos.i.hi = obj->unk42 + (background_objects[0].y_pos.i.hi - (value >> 2));
 }
 
 void jungle_parallax_idle(struct LayerObj* arg0)

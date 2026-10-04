@@ -2,6 +2,9 @@
 // 80096E10..80097860
 #include "common.h"
 
+s32 double_cyclone_charged_check_expired(struct WeaponObj* arg0);
+s32 double_cyclone_check_expired(struct WeaponObj* arg0);
+
 void double_cyclone_update(struct WeaponObj* arg0)
 {
     s32 disabled;

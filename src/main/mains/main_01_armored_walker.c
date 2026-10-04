@@ -1,6 +1,10 @@
 // MainObj, main_object_update_funcs[1]
 // 80042120..80042914
 #include "common.h"
+
+void armored_walker_check_behind(struct MainObj* self);
+void armored_walker_check_fall(struct MainObj* self);
+void armored_walker_check_wall(struct MainObj* self);
 #include "func_tables.h"
 
 void armored_walker_update(struct MainObj* self)

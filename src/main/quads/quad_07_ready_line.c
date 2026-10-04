@@ -2,6 +2,8 @@
 // 800D5C54..800D6694
 #include "common.h"
 
+void ready_line_move(struct QuadObj* arg0);
+
 u16 ready_line_sweep_vertices[8] = {
     0x0000,
     0x0000,

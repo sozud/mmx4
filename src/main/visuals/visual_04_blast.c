@@ -2,6 +2,8 @@
 // 800AFB50..800AFC9C
 #include "common.h"
 
+void blast_animate(struct VisualObj* arg0);
+
 u8 blast_anim_0[19][4] = {
     { 1, 0, 1, 0 },
     { 2, 0, 1, 1 },

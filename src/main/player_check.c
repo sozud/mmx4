@@ -1,6 +1,11 @@
 // 80033414..800343A4
 #include "common.h"
 
+s32 player_check_hover(struct PlayerObj* self);
+void player_clear_flash(struct PlayerObj* self);
+void player_reset_actions(struct PlayerObj* self);
+s32 player_zero_check_double_jump(struct PlayerObj* self);
+
 struct PlayerHurtVelocity {
     s32 x_vel;
     s32 x_accel;

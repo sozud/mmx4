@@ -53,18 +53,18 @@ void stage_portrait_update(struct MiscObj* self)
 }
 
 union AnimationStep stage_portrait_anim_0[12] = {
-    { .packed = 0x0001001E },
-    { .packed = 0x0101001E },
-    { .packed = 0x0201001E },
-    { .packed = 0x0301001E },
-    { .packed = 0x0401001E },
-    { .packed = 0x0501001E },
-    { .packed = 0x0601001E },
-    { .packed = 0x0701001E },
-    { .packed = 0x0801001E },
-    { .packed = 0x0901001E },
-    { .packed = 0x0A01001E },
-    { .packed = 0x1001001E },
+    { 0x0001001E },
+    { 0x0101001E },
+    { 0x0201001E },
+    { 0x0301001E },
+    { 0x0401001E },
+    { 0x0501001E },
+    { 0x0601001E },
+    { 0x0701001E },
+    { 0x0801001E },
+    { 0x0901001E },
+    { 0x0A01001E },
+    { 0x1001001E },
 };
 
 union AnimationStep* stage_portrait_animations[1] = { stage_portrait_anim_0 };

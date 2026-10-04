@@ -1,6 +1,18 @@
 // 80021158..80021DBC
 #include "common.h"
 
+void func_80021C14(void);
+void func_80021CC8(void);
+void func_80021D84(void);
+void func_800AE7DC(struct UnkObj* arg0);
+void player_update(void);
+void update_item_objects(void);
+void update_layer_objects(void);
+void update_main_objects(void);
+void update_shot_objects(void);
+void update_visual_objects(void);
+void update_weapon_objects(void);
+
 void TitleScalingXUpdate(struct EffectObj*);
 void MegamanInBriefingRoomUpdate(struct MiscObj*);
 void MegamanRelatedUpdate(struct MiscObj*);

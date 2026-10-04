@@ -2,6 +2,8 @@
 // 800C62DC..800C7164
 #include "common.h"
 
+void func_800164D8(void);
+
 void light_capsule_update(struct ItemObj* self)
 {
     struct MainObj* linked_object;
