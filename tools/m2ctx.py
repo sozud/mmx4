@@ -23,6 +23,8 @@ CPP_FLAGS = [
     "-D__asm__(...)=",
     "-ffreestanding",
     "-DM2CTX",
+    # Same version define as build.py, so version-specific declarations match.
+    f"-DVERSION_{os.environ.get('VERSION', 'us').upper()}=1",
 ]
 
 
