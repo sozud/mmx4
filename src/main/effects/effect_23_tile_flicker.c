@@ -2,6 +2,8 @@
 // 800BAA30..800BABA8
 #include "common.h"
 
+void tile_flicker_step(struct EffectObj* self);
+
 u8 D_8010BE44[3][4] = {
     { 2, 0, 1, 1 },
     { 2, 0, 1, 2 },

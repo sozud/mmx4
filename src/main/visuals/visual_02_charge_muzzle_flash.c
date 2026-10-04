@@ -2,6 +2,12 @@
 // 800AEED8..800AF22C
 #include "common.h"
 
+void charge_muzzle_flash_fade(struct VisualObj* arg0);
+void charge_muzzle_flash_follow(struct VisualObj* arg0);
+void charge_muzzle_flash_init(struct VisualObj* arg0);
+void charge_muzzle_flash_main(struct VisualObj* arg0);
+void charge_muzzle_flash_spawn_shot(struct VisualObj* arg0);
+
 void charge_muzzle_flash_update(struct VisualObj* arg0)
 {
     if (arg0->state == 0) {

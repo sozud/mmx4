@@ -43,22 +43,22 @@ void ambient_bubble_update(struct MiscObj* self)
 }
 
 union AnimationStep ambient_bubble_anim_0[4] = {
-    { .packed = 0x0001000E },
-    { .packed = 0x0101000E },
-    { .packed = 0x0201000E },
-    { .packed = 0x01FD000E },
+    { 0x0001000E },
+    { 0x0101000E },
+    { 0x0201000E },
+    { 0x01FD000E },
 };
 
 union AnimationStep ambient_bubble_anim_1[3] = {
-    { .packed = 0x0001000E },
-    { .packed = 0x0101000E },
-    { .packed = 0x0200000E },
+    { 0x0001000E },
+    { 0x0101000E },
+    { 0x0200000E },
 };
 
 union AnimationStep ambient_bubble_anim_2[3] = {
-    { .packed = 0x0201000E },
-    { .packed = 0x0101000E },
-    { .packed = 0x0000000E },
+    { 0x0201000E },
+    { 0x0101000E },
+    { 0x0000000E },
 };
 
 union AnimationStep* ambient_bubble_animations[3] = {

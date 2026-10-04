@@ -2,6 +2,8 @@
 // 800B5CC4..800B5EB0
 #include "common.h"
 
+void copy_animated_palette(struct EffectObj* self);
+
 void palette_animator_update(struct EffectObj* self)
 {
     if (self->state == 0) {

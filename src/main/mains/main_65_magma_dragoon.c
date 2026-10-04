@@ -410,7 +410,7 @@ void magma_dragoon_fire_volley(struct MainObj* self)
 
 void magma_dragoon_breath_start(struct MainObj* self)
 {
-    if (self->x_pos.i.hi > magma_dragoon_arena_center[0]) {
+    if (self->x_pos.i.hi > magma_dragoon_arena_center) {
         self->unk15 = 0;
     } else {
         self->unk15 = 0x40;
@@ -459,7 +459,7 @@ void magma_dragoon_breath(struct MainObj* self)
 
 void magma_dragoon_leap_center_start(struct MainObj* self)
 {
-    if (self->x_pos.i.hi > magma_dragoon_arena_center[0]) {
+    if (self->x_pos.i.hi > magma_dragoon_arena_center) {
         self->unk15 = 0;
     } else {
         self->unk15 = 0x40;
@@ -481,15 +481,15 @@ void magma_dragoon_leap_center_glide(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     move_with_gravity(ANIMATED_OBJECT(self));
 
-    if (self->y_pos.i.hi < magma_dragoon_arena_ceiling[0]) {
-        self->y_pos.i.hi = magma_dragoon_arena_ceiling[0];
+    if (self->y_pos.i.hi < magma_dragoon_arena_ceiling) {
+        self->y_pos.i.hi = magma_dragoon_arena_ceiling;
         self->y_speed = 0;
         self->gravity = 0;
     }
 
     if (self->unk15 == 0
-            ? self->x_pos.i.hi < (*magma_dragoon_arena_center - 0x10)
-            : (*magma_dragoon_arena_center + 0x10) < self->x_pos.i.hi) {
+            ? self->x_pos.i.hi < (magma_dragoon_arena_center - 0x10)
+            : (magma_dragoon_arena_center + 0x10) < self->x_pos.i.hi) {
         self->gravity = FIXED(0.12109375);
         self->unk6++;
     }
@@ -536,7 +536,7 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
     func_8001540C(2, 0, self);
-    if (self->x_pos.i.hi < magma_dragoon_arena_center[0]) {
+    if (self->x_pos.i.hi < magma_dragoon_arena_center) {
         self->ext.main_65.leap_to_right = 1;
     } else {
         self->ext.main_65.leap_to_right = 0;
@@ -731,7 +731,7 @@ void magma_dragoon_rising_punch_recover(struct MainObj* self)
         return;
     }
     self->unk6 = 0;
-    if ((self->y_pos.i.hi <= magma_dragoon_arena_floor[0]) && (self->ext.main_65.attack == 3)) {
+    if ((self->y_pos.i.hi <= magma_dragoon_arena_floor) && (self->ext.main_65.attack == 3)) {
         if (self->ext.main_65.attack_repeat++ == 0) {
             return;
         }

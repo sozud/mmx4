@@ -118,23 +118,23 @@ void intro_messenger_finish(struct MiscObj* self)
     }
 }
 
-union AnimationStep intro_messenger_anim_0[1] = { { .packed = 0x00000101 } };
+union AnimationStep intro_messenger_anim_0[1] = { { 0x00000101 } };
 
 union AnimationStep intro_messenger_anim_1[4] = {
-    { .packed = 0x00010002 },
-    { .packed = 0x02010002 },
-    { .packed = 0x01010001 },
-    { .packed = 0x01000101 },
+    { 0x00010002 },
+    { 0x02010002 },
+    { 0x01010001 },
+    { 0x01000101 },
 };
 
 union AnimationStep intro_messenger_anim_2[7] = {
-    { .packed = 0x02010002 },
-    { .packed = 0x0001000A },
-    { .packed = 0x02010002 },
-    { .packed = 0x03010006 },
-    { .packed = 0x00010002 },
-    { .packed = 0x04010001 },
-    { .packed = 0x04000101 },
+    { 0x02010002 },
+    { 0x0001000A },
+    { 0x02010002 },
+    { 0x03010006 },
+    { 0x00010002 },
+    { 0x04010001 },
+    { 0x04000101 },
 };
 
 union AnimationStep* intro_messenger_animations[3] = {

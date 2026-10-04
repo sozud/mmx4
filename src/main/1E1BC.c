@@ -1,6 +1,8 @@
 // 8002D9BC..8002E420
 #include "common.h"
 
+void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2);
+
 void func_8002C99C(struct PlayerObj* arg0);
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);

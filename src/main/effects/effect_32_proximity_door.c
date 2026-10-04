@@ -2,6 +2,8 @@
 // 800BC518..800BC748
 #include "common.h"
 
+void proximity_door_step(struct EffectObj* self);
+
 struct Effect29AnimationStep {
     u8 timer;
     u8 unused;

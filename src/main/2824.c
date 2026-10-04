@@ -1,7 +1,22 @@
 #include "common.h"
 
+void InitMemcards(void);
+void clear_vram_rect_ptrs(void);
+void func_80012454(void);
+void func_80012560(void);
+void func_80012600(void);
+void func_80013588(void);
+void func_80014780(void);
+void func_80014DC4(void);
+void func_800168D8(void);
+s32 func_800169D8(void);
+void load_palette(void);
+void load_vram_rect_ptrs(void);
+void tile_effect_nop(void);
+
 #ifdef MMX4_PC
 #include "../pc/oracle.h"
+
 void mmx4_pc_finish_cd_load(void);
 extern s32 mmx4_pc_canonical_load;
 #endif

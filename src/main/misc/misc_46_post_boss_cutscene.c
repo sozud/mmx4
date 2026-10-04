@@ -183,11 +183,11 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj* self)
 }
 
 union AnimationStep D_8010F194[1] = {
-    { .packed = 0x00000101 },
+    { 0x00000101 },
 };
 
 union AnimationStep D_8010F198[1] = {
-    { .packed = 0x01000101 },
+    { 0x01000101 },
 };
 
 union AnimationStep* D_8010F19C[2] = {

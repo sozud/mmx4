@@ -1,5 +1,8 @@
 #include "common.h"
 
+void func_80024F5C(struct PlayerObj* arg0);
+void func_8002509C(struct PlayerObj* arg0);
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>
@@ -851,8 +854,8 @@ void func_80024920(struct QuadObj* quad)
     setaddr(draw_mode, primitive);
     D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)primitive;
 
-    SP_PRIM_CURSOR += sizeof(POLY_FT4);
-    SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
+    SP_PRIM_CURSOR = (u8*)SP_PRIM_CURSOR + sizeof(POLY_FT4);
+    SP_DRAW_MODE_CURSOR = (u8*)SP_DRAW_MODE_CURSOR + sizeof(DR_TPAGE);
 }
 
 void func_80024B9C(struct QuadObj* quad)
@@ -916,8 +919,8 @@ void func_80024B9C(struct QuadObj* quad)
     setaddr(draw_mode, primitive);
     D_8013BC40[buffer][ordering >> 4][ordering & 0xF] = (P_TAG*)primitive;
 
-    SP_PRIM_CURSOR += sizeof(POLY_FT4);
-    SP_DRAW_MODE_CURSOR += sizeof(DR_TPAGE);
+    SP_PRIM_CURSOR = (u8*)SP_PRIM_CURSOR + sizeof(POLY_FT4);
+    SP_DRAW_MODE_CURSOR = (u8*)SP_DRAW_MODE_CURSOR + sizeof(DR_TPAGE);
 }
 
 void func_80024E70(void)

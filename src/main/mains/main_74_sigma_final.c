@@ -124,7 +124,7 @@ void sigma_emit_explosions(struct MainObj* self)
 
 void sigma_final_intro_lock_camera(struct MainObj* self)
 {
-    D_8013B8B8[0] = 0;
+    D_8013B8B8 = 0;
     self->ext.main_74.death_kind = 0;
     self->ext.main_74.pattern_index = 0;
     background_objects[0].unk26 = 0x410;

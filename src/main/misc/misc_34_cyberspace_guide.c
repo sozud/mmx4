@@ -133,9 +133,9 @@ void cyberspace_guide_update_blink(struct MiscObj* self)
     }
 }
 
-#define STEP(value)       \
-    {                     \
-        .packed = (value) \
+#define STEP(value) \
+    {               \
+        (value)     \
     }
 
 union AnimationStep cyberspace_guide_anim_0[6] = {

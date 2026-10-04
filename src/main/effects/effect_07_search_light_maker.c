@@ -2,6 +2,8 @@
 // 800B6B18..800B7078
 #include "common.h"
 
+void search_light_maker_spawn_scrolled(struct EffectObj* self);
+
 extern struct SearchLightSpawner search_light_spawners[];
 
 // search lights don't appear in level if nopped out

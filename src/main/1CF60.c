@@ -1,6 +1,10 @@
 // 8002C760..8002D9BC
 #include "common.h"
 
+void func_8002C9E4(struct PlayerObj* arg0);
+s32 func_8002D1F8(struct PlayerObj* arg0, u8 arg1, s32 arg2);
+s32 func_8002D41C(struct PlayerObj* arg0, s32 arg1, s32 arg2);
+
 void func_8002C99C(struct PlayerObj* arg0);
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);
@@ -180,7 +184,7 @@ s32 func_8002CD70(struct PlayerObj* arg0, u8 arg1)
 #ifdef MMX4_PC
         return 0;
 #endif
-        // return 0; // this does not work
+        ;
     }
 }
 
@@ -241,8 +245,14 @@ s32 func_8002CF98(struct PlayerObj* entity, u8 arg1, s16 arg2, s16 arg3)
     }
 
     switch (arg1) {
-    case 0x9 ... 0xC:
-    case 0x19 ... 0x1C:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 25:
+    case 26:
+    case 27:
+    case 28:
         var_a0 = arg2 & 0xF;
         temp_v1 = arg1 & 0xF;
         if (temp_v1 == 0xA) {
@@ -257,8 +267,22 @@ s32 func_8002CF98(struct PlayerObj* entity, u8 arg1, s16 arg2, s16 arg3)
             var_v0 = 0xF - var_a0 / 2;
         }
         return func_8002D180(entity, arg3, var_v0, flag);
-    case 0x1 ... 0x8:
-    case 0x11 ... 0x18:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+    case 17:
+    case 18:
+    case 19:
+    case 20:
+    case 21:
+    case 22:
+    case 23:
+    case 24:
         var_a0 = arg2 & 0xF;
         temp_v1 = arg1 & 0xF;
         if (temp_v1 == 2) {
@@ -467,7 +491,7 @@ s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1)
     }
 }
 
-static inline u16 stage_tile_entry(u8 block, s32 row, s32 column)
+static __inline u16 stage_tile_entry(u8 block, s32 row, s32 column)
 {
     u16(*tiles)[16][16] = (u16(*)[16][16])SP_BG_TILE_PIXELS;
 

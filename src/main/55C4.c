@@ -1,5 +1,13 @@
 // 80014DC4..800193D8
 #include "common.h"
+
+void decompress_gfx(u16* src, u16* dest);
+#ifdef MMX4_WIN32
+void func_80016420(s8 arg0);
+#endif
+void func_80017E84(void);
+void func_80017F2C(void);
+void func_800192F8(void);
 #include "scratchpad.h"
 
 struct HudLayoutData {

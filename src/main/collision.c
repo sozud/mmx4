@@ -2,6 +2,10 @@
 // 8002BB80..8002C760
 #include "common.h"
 
+void func_8002C760(struct PlayerObj* arg0);
+void func_8002C954(struct PlayerObj* arg0);
+void func_8002CDD4(struct PlayerObj* arg0);
+
 void func_8002C99C(struct PlayerObj* arg0);
 s32 func_8002D6BC(struct PlayerObj* arg0, u8 arg1);
 s32 func_8002CAF0(struct PlayerObj* arg0, u8 arg1);

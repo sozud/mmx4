@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[69]
 // 80085F08..80088BA0
 #include "common.h"
+
+void colonel_face_center(struct BaseObj* self);
 #include "func_tables.h"
 
 void colonel_update(struct MainObj* self)

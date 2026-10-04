@@ -92,16 +92,16 @@ void vent_spawn_puffs(struct MiscObj* self, u8 count)
 }
 
 union AnimationStep vent_anim_0[4] = {
-    { .packed = 0x00010006 },
-    { .packed = 0x01010006 },
-    { .packed = 0x02010005 },
-    { .packed = 0x02FD0001 },
+    { 0x00010006 },
+    { 0x01010006 },
+    { 0x02010005 },
+    { 0x02FD0001 },
 };
 
 union AnimationStep vent_anim_1[3] = {
-    { .packed = 0x03000001 },
-    { .packed = 0x05000001 },
-    { .packed = 0x04000001 },
+    { 0x03000001 },
+    { 0x05000001 },
+    { 0x04000001 },
 };
 
 union AnimationStep* vent_animations[2] = { vent_anim_0, vent_anim_1 };

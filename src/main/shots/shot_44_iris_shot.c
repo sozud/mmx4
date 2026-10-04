@@ -2,6 +2,8 @@
 // 800A6FCC..800A7AF0
 #include "common.h"
 
+void iris_drone_move(struct ShotObj* self);
+
 void iris_shot_update(struct ShotObj* self)
 {
     iris_shot_state_funcs[self->state](self);

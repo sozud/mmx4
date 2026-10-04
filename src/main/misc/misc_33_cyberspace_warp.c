@@ -73,9 +73,9 @@ void cyberspace_warp_wait_blink(struct MiscObj* self)
     }
 }
 
-#define STEP(value)       \
-    {                     \
-        .packed = (value) \
+#define STEP(value) \
+    {               \
+        (value)     \
     }
 
 union AnimationStep cyberspace_warp_anim_0[24] = {

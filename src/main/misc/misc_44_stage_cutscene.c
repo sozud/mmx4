@@ -122,26 +122,26 @@ void func_800D0C68(struct MiscObj* self)
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0D68);
 
 union AnimationStep stage_cutscene_anim_0[6] = {
-    { .packed = 0x00010048 },
-    { .packed = 0x01010002 },
-    { .packed = 0x02010003 },
-    { .packed = 0x00010006 },
-    { .packed = 0x01010002 },
-    { .packed = 0x02FB0003 },
+    { 0x00010048 },
+    { 0x01010002 },
+    { 0x02010003 },
+    { 0x00010006 },
+    { 0x01010002 },
+    { 0x02FB0003 },
 };
 
 union AnimationStep stage_cutscene_anim_1[2] = {
-    { .packed = 0x03010005 },
-    { .packed = 0x03000101 },
+    { 0x03010005 },
+    { 0x03000101 },
 };
 
 union AnimationStep stage_cutscene_anim_2[6] = {
-    { .packed = 0x04010048 },
-    { .packed = 0x05010002 },
-    { .packed = 0x06010003 },
-    { .packed = 0x04010006 },
-    { .packed = 0x05010002 },
-    { .packed = 0x06FB0003 },
+    { 0x04010048 },
+    { 0x05010002 },
+    { 0x06010003 },
+    { 0x04010006 },
+    { 0x05010002 },
+    { 0x06FB0003 },
 };
 
 union AnimationStep* stage_cutscene_animations[3] = {

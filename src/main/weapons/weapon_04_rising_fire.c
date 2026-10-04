@@ -2,6 +2,8 @@
 // 800951C0..800957B0
 #include "common.h"
 
+void rising_fire_draw(struct WeaponObj* arg0);
+
 void rising_fire_update(struct WeaponObj* arg0)
 {
     s32 disabled;

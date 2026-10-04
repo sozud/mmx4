@@ -1,5 +1,15 @@
 #include "common.h"
 
+void func_80017340(void);
+void func_800241E8(void);
+void func_80024260(void);
+void func_80024920(struct QuadObj* quad);
+void func_80024B9C(struct QuadObj* quad);
+void func_80024E70(void);
+void func_800257BC(struct PlayerObj* arg0);
+void func_80025DA0(s32 texture_depth, s32 blend_mode);
+void func_80026118(void);
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>

@@ -2,6 +2,9 @@
 // 80092F08..80093CBC
 #include "common.h"
 
+void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1);
+void lightning_web_draw(struct WeaponObj* arg0);
+
 void lightning_web_update(struct WeaponObj* self)
 {
     s32 should_reset;

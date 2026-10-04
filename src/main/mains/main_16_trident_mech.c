@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[16]
 // 8004E890..8004FF90
 #include "common.h"
+
+void trident_mech_face_player(struct AnimatedObj* self);
 #include "func_tables.h"
 
 void trident_mech_update(struct MainObj* self)

@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[13]
 // 8004C734..8004CF24
 #include "common.h"
+
+void heavy_mech_face_player(struct AnimatedObj* self);
 #include "func_tables.h"
 
 void heavy_mech_update(struct MainObj* self)

@@ -2,6 +2,9 @@
 // 8002771C..80028B68
 #include "common.h"
 
+void func_80027A5C(struct BackgroundObj* a0);
+void func_80028390(struct BackgroundObj* arg0);
+
 void func_80027E28(struct BackgroundObj* arg0);
 void func_80027EE8(struct BackgroundObj* arg0);
 void func_800282D0(struct BackgroundObj* arg0);

@@ -2,6 +2,9 @@
 // 800AF22C..800AF6A0
 #include "common.h"
 
+void water_wake_init(struct VisualObj* arg0, struct VisualObj* arg1);
+void water_wake_main(struct VisualObj* arg0, struct PlayerObj* arg1);
+
 void water_wake_update(struct VisualObj* arg0)
 {
     struct PlayerObj* var_a1;

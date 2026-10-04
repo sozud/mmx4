@@ -134,9 +134,9 @@ void final_cutscene_update(struct MiscObj* self)
 }
 
 union AnimationStep final_cutscene_anim_0[3] = {
-    { .packed = 0x00010001 },
-    { .packed = 0x01010001 },
-    { .packed = 0x02FE0001 },
+    { 0x00010001 },
+    { 0x01010001 },
+    { 0x02FE0001 },
 };
 union AnimationStep* final_cutscene_animations[1] = { final_cutscene_anim_0 };
 

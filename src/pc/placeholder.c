@@ -165,8 +165,6 @@ extern void (*eregion_part_funcs[])(struct VisualObj*);
 extern union AnimationStep* D_800FADD0[];
 extern const u8* magma_dragoon_animations[38];
 extern struct Unk_unk68 D_80107D7C[];
-extern u8 magma_dragoon_arena_right[4];
-extern u8 magma_dragoon_arena_left[4];
 extern void (*magma_dragoon_step_funcs[14])(struct MainObj*);
 extern u32 D_800FA734;
 extern union AnimationStep* hover_sentry_animations[];
@@ -8094,7 +8092,7 @@ void func_800D4C50(struct QuadObj* arg0)
     arg0->ext.quad_2.x_scale.bytes.integer = index == 0x15 ? 0xF : 2;
     arg0->ext.quad_2.y_scale.bytes.fraction = 0;
     if (index == 0)
-        D_8013B960[0] = 0;
+        D_8013B960 = 0;
 }
 
 void func_800D5144(struct QuadObj* arg0)
@@ -8102,7 +8100,7 @@ void func_800D5144(struct QuadObj* arg0)
     u8 index;
 
     boss_warning_quad_step_funcs[arg0->unk5](arg0);
-    if (arg0->unk5 == 0 || D_8013B960[0] == 0
+    if (arg0->unk5 == 0 || D_8013B960 == 0
         || main_bss_state.frame_counter % 3 != 0) {
         return;
     }
@@ -8172,17 +8170,17 @@ void func_800D4B30(struct QuadObj* arg0)
 void func_8007DD98(struct MainObj* arg0)
 {
     if (engine_obj.stage == 0xC) {
-        *(s16*)magma_dragoon_arena_right = 0x2B0;
-        magma_dragoon_arena_center[0] = 0x200;
-        *(s16*)magma_dragoon_arena_left = 0x150;
-        magma_dragoon_arena_floor[0] = 0x690;
-        magma_dragoon_arena_ceiling[0] = 0x670;
+        magma_dragoon_arena_right = 0x2B0;
+        magma_dragoon_arena_center = 0x200;
+        magma_dragoon_arena_left = 0x150;
+        magma_dragoon_arena_floor = 0x690;
+        magma_dragoon_arena_ceiling = 0x670;
     } else {
-        *(s16*)magma_dragoon_arena_right = 0x1590;
-        magma_dragoon_arena_center[0] = 0x14E0;
-        *(s16*)magma_dragoon_arena_left = 0x1430;
-        magma_dragoon_arena_floor[0] = 0x280;
-        magma_dragoon_arena_ceiling[0] = 0x260;
+        magma_dragoon_arena_right = 0x1590;
+        magma_dragoon_arena_center = 0x14E0;
+        magma_dragoon_arena_left = 0x1430;
+        magma_dragoon_arena_floor = 0x280;
+        magma_dragoon_arena_ceiling = 0x260;
     }
 
     arg0->animation_table = (const u8* const*)magma_dragoon_animations;
@@ -8228,9 +8226,9 @@ void func_8007F174(struct MainObj* arg0)
 
     if (arg0->ext.main_65.leap_frames != 0) {
         if (arg0->ext.main_65.leap_to_right != 0)
-            distance = *(s16*)magma_dragoon_arena_right - (arg0->x_pos.i.hi + 0x30);
+            distance = magma_dragoon_arena_right - (arg0->x_pos.i.hi + 0x30);
         else
-            distance = (arg0->x_pos.i.hi - 0x30) - *(s16*)magma_dragoon_arena_left;
+            distance = (arg0->x_pos.i.hi - 0x30) - magma_dragoon_arena_left;
         if (distance < 0)
             distance = -distance;
         arg0->x_speed = (distance << 16)
@@ -8243,9 +8241,9 @@ void func_8007F174(struct MainObj* arg0)
     move_with_gravity(ANIMATED_OBJECT(arg0));
     if ((arg0->collision_flags & 8) != 0 && arg0->y_speed < 0) {
         if (arg0->ext.main_65.leap_to_right != 0)
-            arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_right - 0x30;
+            arg0->x_pos.i.hi = magma_dragoon_arena_right - 0x30;
         else
-            arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_left + 0x30;
+            arg0->x_pos.i.hi = magma_dragoon_arena_left + 0x30;
         set_animation(arg0, 6);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(arg0), 2);
         arg0->air_state = 0;
@@ -15018,9 +15016,9 @@ void func_8007E6F8(struct MainObj* arg0)
     if (arg0->animation_step.fields.event == 2) {
         x = arg0->x_pos.i.hi;
         if (x < g_Player.x_pos.i.hi)
-            arg0->unk15 = x < *(s16*)magma_dragoon_arena_right - 0x50 ? 0x40 : 0;
+            arg0->unk15 = x < magma_dragoon_arena_right - 0x50 ? 0x40 : 0;
         else
-            arg0->unk15 = x < *(s16*)magma_dragoon_arena_left + 0x50 ? 0x40 : 0;
+            arg0->unk15 = x < magma_dragoon_arena_left + 0x50 ? 0x40 : 0;
         arg0->x_speed = arg0->unk15 != 0 ? 0x80000 : -0x80000;
     }
     if (arg0->animation_step.fields.event == 1)
@@ -15177,16 +15175,16 @@ void func_8007FFFC(struct MainObj* arg0)
         return;
     arg0->unk5++;
     set_animation(arg0, 0x14);
-    if (magma_dragoon_arena_center[0] < g_Player.x_pos.i.hi) {
+    if (magma_dragoon_arena_center < g_Player.x_pos.i.hi) {
         arg0->unk15 = 0;
-        arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_right - 0x30;
+        arg0->x_pos.i.hi = magma_dragoon_arena_right - 0x30;
         if (g_Player.ride_state < 0)
             qux_object.unk15 = 0x40;
         player_start_script_action(0x14, 0x40);
         scroll = 0x1490;
     } else {
         arg0->unk15 = 0x40;
-        arg0->x_pos.i.hi = *(s16*)magma_dragoon_arena_left + 0x30;
+        arg0->x_pos.i.hi = magma_dragoon_arena_left + 0x30;
         if (g_Player.ride_state < 0)
             qux_object.unk15 = 0;
         player_start_script_action(0x14, 0);
@@ -15194,14 +15192,14 @@ void func_8007FFFC(struct MainObj* arg0)
     }
     background_objects[0].unk26 = scroll;
     background_objects[0].unk24 = scroll;
-    y = magma_dragoon_arena_floor[0];
+    y = magma_dragoon_arena_floor;
     arg0->y_pos.i.hi = y;
     if (g_Player.ride_state < 0) {
         qux_object.y_pos.i.hi = y;
-        qux_object.x_pos.i.hi = magma_dragoon_arena_center[0];
+        qux_object.x_pos.i.hi = magma_dragoon_arena_center;
     } else {
         g_Player.y_pos.i.hi = y;
-        g_Player.x_pos.i.hi = magma_dragoon_arena_center[0];
+        g_Player.x_pos.i.hi = magma_dragoon_arena_center;
     }
     background_objects[0].unk2A = 0x1EB;
     background_objects[0].unk28 = 0x1EB;
@@ -23275,7 +23273,7 @@ void func_8008F1A8(struct MainObj* self)
         self->unk62 = 0;
         self->state++;
         self->unk42 &= 0x7FFF;
-        if (D_8013B8B8[0] != 0) {
+        if (D_8013B8B8 != 0) {
             ext->death_kind = 2;
             player_start_script_action(0x14, g_Player.unk15);
             g_Player.spike_immune = 1;
@@ -23325,7 +23323,7 @@ void func_8008DAE8(struct MainObj* self)
         ext->pattern_index++;
         break;
     case 2:
-        if (D_8013B8B8[0] == 2) {
+        if (D_8013B8B8 == 2) {
             ext->pattern_index = 6;
             self->unk5 = 4;
         } else {
@@ -23342,7 +23340,7 @@ void func_8008DAE8(struct MainObj* self)
         ext->pattern_index++;
         break;
     case 6:
-        if (D_8013B8B8[0] == 1) {
+        if (D_8013B8B8 == 1) {
             ext->pattern_index = 2;
             self->unk5 = 6;
         } else {

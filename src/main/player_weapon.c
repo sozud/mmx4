@@ -1,6 +1,19 @@
 // 80036E98..80038678
 #include "common.h"
 
+s32 player_charge_released(struct PlayerObj* self);
+void player_charge_shoot_button(struct PlayerObj* self);
+void player_charge_special_button(struct PlayerObj* self);
+s32 player_check_nova_strike(struct PlayerObj* self);
+void player_check_shoot_button(struct PlayerObj* self);
+void player_check_special_button(struct PlayerObj* self);
+s32 player_has_weapon_energy(struct PlayerObj* self);
+void player_reset_charge(struct PlayerObj* self);
+s32 player_set_charge_flash(struct PlayerObj* self, s8 button);
+void player_update_charged_shot_type(struct PlayerObj* self, s32 button);
+void player_update_shooting(struct PlayerObj* self);
+void player_use_weapon_energy(struct PlayerObj* self, s8 shot_type);
+
 struct PlayerHurtVelocity {
     s32 x_vel;
     s32 x_accel;

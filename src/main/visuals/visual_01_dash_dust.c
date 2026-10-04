@@ -2,6 +2,8 @@
 // 800AED18..800AEED8
 #include "common.h"
 
+void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
+
 void dash_dust_update(struct VisualObj* arg0)
 {
     s32 var_a0;

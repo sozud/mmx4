@@ -2,6 +2,10 @@
 // 8002FCAC..800311EC
 #include "common.h"
 
+void func_800170E0(void);
+void func_80021104(struct EngineObj* arg0);
+void func_80023D90(void);
+
 extern u8 D_800F48EC[8];
 
 void func_8002FCAC(void)

@@ -53,7 +53,11 @@ __asm__(".include \"macro.inc\"\n");
 #define ON_SCREEN_X(X, W) ((u16)((X) + (W)) < (u16)((W) + ((W) + SCREEN_WIDTH)))
 #define ON_SCREEN_Y(Y, H) ((u16)((Y) + (H)) < (u16)((H) + ((H) + SCREEN_HEIGHT)))
 
+#ifdef MMX4_WIN32
+#define MMX4_STATIC_ASSERT(name, condition)
+#else
 #define MMX4_STATIC_ASSERT(name, condition) typedef char static_assert_##name[(condition) ? 1 : -1]
+#endif
 #ifdef MMX4_PC
 #define MMX4_OFFSET_OF(type, member) __builtin_offsetof(type, member)
 #else
@@ -63,11 +67,19 @@ __asm__(".include \"macro.inc\"\n");
 typedef signed char s8;
 typedef signed short s16;
 typedef signed int s32;
+#ifdef MMX4_WIN32
+typedef signed __int64 s64;
+#else
 typedef signed long long s64;
+#endif
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
+#ifdef MMX4_WIN32
+typedef unsigned __int64 u64;
+#else
 typedef unsigned long long u64;
+#endif
 
 typedef u16 Palette[16];
 
@@ -97,6 +109,11 @@ typedef s32 arg_u16;
 #include <libpress.h>
 #else
 #include "psy-q-4.0/SYS/TYPES.H"
+#ifdef MMX4_WIN32
+#define _INC_TYPES
+#define near near_
+#define far far_
+#endif
 #include "psy-q-4.0/LIBGTE.H"
 #include "psy-q-4.0/LIBGPU.H"
 #include "psy-q-4.0/LIBSND.H"
@@ -386,7 +403,7 @@ struct FixedMatrix2 {
 struct BootTransitionDataRegion {
     u8 preceding_record_tail[3];
     u8 stage_map[9];
-} __attribute__((packed));
+};
 
 #ifdef MMX4_WIN32
 extern u8 mission_stage_order[16];
@@ -3260,7 +3277,7 @@ struct QuadMotionData {
 };
 
 extern struct QuadMotionData boss_warning_quad_motions[22];
-extern u8 D_8013B960[0x10];
+extern u8 D_8013B960;
 
 struct QuadUnkExt3 {
     u8 unk38;
@@ -3380,6 +3397,9 @@ struct QuadObj {
     struct PlayerObj* unk5C; // might be something else
 }; // size 0x60
 
+#ifdef MMX4_WIN32
+#pragma pack(push, 1)
+#endif
 union EngineCharacterState {
     s8 bytes[0x10];
     struct {
@@ -3391,8 +3411,16 @@ union EngineCharacterState {
         s8 secret_code_index;
         s32 menu_state;
         u8 reserved[6];
-    } __attribute__((packed)) fields;
+    }
+#ifndef MMX4_WIN32
+    __attribute__((packed))
+#endif
+    fields;
 };
+
+#ifdef MMX4_WIN32
+#pragma pack(pop)
+#endif
 
 // D_801721C0
 struct EngineObj {
@@ -4336,7 +4364,7 @@ extern struct ObjectHeader* D_8013B8A8;
 extern u16 D_8013B858[0x10];
 extern s16 D_8013B878[0x10];
 extern struct Unk_unk68* D_8013B8B0;
-extern u8 D_8013B8B8[8];
+extern u8 D_8013B8B8;
 extern struct ShotObj* general_fists[2];
 extern u8 rising_slab_crush_boxes[4][16];
 extern u8 rising_slab_terrain_boxes[4][16];
@@ -4481,9 +4509,11 @@ extern s16 D_8013B800;
 extern s16 D_8013B804;
 extern struct MiscObj* D_8013B808;
 extern u8* D_8013B80C;
-extern s16 magma_dragoon_arena_center[2];
-extern s16 magma_dragoon_arena_floor[2];
-extern s16 magma_dragoon_arena_ceiling[4];
+extern s16 magma_dragoon_arena_left;
+extern s16 magma_dragoon_arena_right;
+extern s16 magma_dragoon_arena_center;
+extern s16 magma_dragoon_arena_floor;
+extern s16 magma_dragoon_arena_ceiling;
 extern s8 D_8013B810;
 extern u8 D_8013B814;
 extern u8 D_8013B8A0[];
@@ -5214,8 +5244,13 @@ extern u8 gravity_switch_hit_box[4];
 
 extern struct Unk_unk68 storm_owl_hurt_box;
 
+#ifdef MMX4_WIN32
+extern u32 D_800F44C4;
+extern u32 D_800F44D8;
+#else
 extern u16 D_800F44C4[9]; // secret code sequence
 extern u16 D_800F44D8[8]; // secret code sequence
+#endif
 
 extern u8 D_800FDC28[];
 extern u8 D_800FDC30[];
@@ -5225,3 +5260,69 @@ extern u8 D_800FDC3C[];
 extern struct Unk_unk68 D_800FDA0C[];
 extern struct Unk_unk68 D_801071F4[];
 extern void (*thorn_trap_step_funcs[10])();
+
+s32 func_8002C160(struct CollisionObj* arg0, struct CollisionObj* arg1);
+s32 func_8002D25C(struct PlayerObj* arg0);
+s32 func_8002D490(struct PlayerObj* arg0);
+s32 player_check_shoot(struct PlayerObj* self);
+s32 player_check_walk(struct PlayerObj* self);
+s32 player_check_wall_jump(struct PlayerObj* self);
+s32 player_is_pushing_wall(struct PlayerObj* self);
+s32 player_zero_check_ground_technique(struct PlayerObj* self);
+s32 player_zero_check_saber(struct PlayerObj* self);
+struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1);
+struct UnkObj* find_free_unk_obj();
+struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1);
+#ifdef MMX4_WIN32
+u8 angle_from_delta(s32 arg0, s32 arg1);
+u8 func_8001E850(u8* arg0, u8 arg1);
+u8 get_random();
+#endif
+void buster_shot_place_at_muzzle(struct VisualObj* arg0, struct PlayerObj* arg1, arg_u8 arg2);
+void collide_with_players(struct PlayerObj* arg0);
+void decompress_player_gfx(struct GraphicsObj* arg0, s16 x, s16 y);
+void func_80014C70(void);
+void func_800160AC(void);
+void func_800160F4(void);
+void func_8001E980(u8 arg0);
+void func_8001FDBC(void);
+void func_8001FEC0(void);
+void func_80021D20(void);
+void func_80023CE0();
+void func_80025CDC(void);
+void func_8002771C(void);
+void func_80027850(void);
+void func_80027D40(void);
+void func_800281E8(void);
+void func_80028BF0(void);
+void func_80028DB4(void);
+void func_80028F58(void);
+void func_8002B3C0(struct BaseObj* arg0);
+void func_8002B458(struct QuadObj* arg0);
+void func_8002B460(void);
+void func_80034B64(struct PlayerObj* player);
+void player_air_steer(struct PlayerObj* self);
+void player_check_splash(struct PlayerObj* self);
+void player_clear_attack(struct PlayerObj* self);
+void player_end_script_action(void);
+void player_enter_fall(struct PlayerObj* self);
+void player_enter_ladder_shoot(struct PlayerObj* self);
+void player_enter_walk(struct PlayerObj* self);
+void player_equip_weapon(struct PlayerObj* self);
+void player_read_input(void);
+void player_reset_charge_and_weapon(struct PlayerObj* self);
+void player_reset_palette(struct PlayerObj* self);
+void player_set_animation_shooting(struct PlayerObj* self, s32 animation);
+void player_set_palette(struct PlayerObj* self, s32 palette);
+void player_spawn(void);
+#ifdef MMX4_WIN32
+void player_start_script_action(s8 action, s8 facing);
+#endif
+void player_update_shot_types(struct PlayerObj* self);
+void reset_main_and_shots();
+void spawn_explosion(struct BaseObj* arg0);
+void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1);
+void update_effect_objects(void);
+void update_misc_objects(void);
+void update_quad_objects(void);
+void update_unk_objects(void);

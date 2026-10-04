@@ -2,6 +2,9 @@
 // 800957B0..800961B0
 #include "common.h"
 
+s32 ground_hunter_check_wall(struct WeaponObj* arg0);
+void ground_hunter_start_rise(struct WeaponObj* arg0);
+
 void ground_hunter_update(struct WeaponObj* arg0)
 {
     s32 shouldSetState;

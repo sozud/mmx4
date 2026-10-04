@@ -1,4 +1,7 @@
 #include "common.h"
+
+void func_80014A90(s32 arg0, s32 arg1);
+void func_80015C10(void);
 #include "scratchpad.h"
 
 struct HudLayoutData {

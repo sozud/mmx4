@@ -1,5 +1,8 @@
 #include "common.h"
 
+void func_80029A48(void);
+void func_80029BD8(void);
+
 extern u16 D_800F44D6;
 
 void character_select_state_0(struct EngineObj* arg0)
@@ -211,6 +214,10 @@ void engine_state_1(struct EngineObj* arg0)
     func_80023D68();
 }
 
+#ifdef MMX4_WIN32
+INCLUDE_ASM("main/nonmatchings/character_select", func_80029A48);
+INCLUDE_ASM("main/nonmatchings/character_select", func_80029BD8);
+#else
 // character_select_state_3_update_funcs state 0
 void func_80029A48(void)
 {
@@ -313,6 +320,8 @@ void func_80029BD8(void)
         break;
     }
 }
+
+#endif
 
 void (*character_select_state_2_update_funcs[])(struct EngineObj*) = {
     character_select_state_2_substate_0,

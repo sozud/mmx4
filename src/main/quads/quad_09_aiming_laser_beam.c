@@ -2,6 +2,9 @@
 // 800D67DC..800D6AD8
 #include "common.h"
 
+void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2);
+void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2);
+
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target);
 
 void aiming_laser_beam_update(struct QuadObj* arg0)

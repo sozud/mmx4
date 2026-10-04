@@ -30,11 +30,7 @@ void nova_strike_hitbox_update(struct WeaponObj* arg0)
     arg0->unk15 = player->unk15;
 }
 
-u16 buster_muzzle_offsets[48] = {
-    [18] = 0xFFEF,
-    [36] = 0xFFF2,
-    [40] = 0xFFF2,
-};
+u16 buster_muzzle_offsets[48] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFEF, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0xFFF2, 0, 0, 0, 0xFFF2 };
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_22_nova_strike_hitbox", buster_shot_place_at_muzzle);

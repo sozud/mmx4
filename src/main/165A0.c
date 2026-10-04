@@ -1,5 +1,10 @@
 #include "common.h"
 
+void func_800264D0(s32 layer, s32 x, s32 y);
+void func_80026720(void);
+void func_800267D4(s32 input);
+void func_8002728C(void);
+
 #ifdef MMX4_PC
 #include <psyz/audio.h>
 #include <psyz/spu.h>
@@ -200,43 +205,43 @@ void (*D_800F2FE0[8])(struct EngineObj*) = {
 };
 
 union AnimationStep D_800F3000[10] = {
-    { .packed = 0x00010004 },
-    { .packed = 0x01010004 },
-    { .packed = 0x02010002 },
-    { .packed = 0x03010004 },
-    { .packed = 0x04010004 },
-    { .packed = 0x05010004 },
-    { .packed = 0x06010004 },
-    { .packed = 0x07010004 },
-    { .packed = 0x08010003 },
-    { .packed = 0x09000003 },
+    { 0x00010004 },
+    { 0x01010004 },
+    { 0x02010002 },
+    { 0x03010004 },
+    { 0x04010004 },
+    { 0x05010004 },
+    { 0x06010004 },
+    { 0x07010004 },
+    { 0x08010003 },
+    { 0x09000003 },
 };
 
 union AnimationStep D_800F3028[11] = {
-    { .packed = 0x0A010002 },
-    { .packed = 0x0B010002 },
-    { .packed = 0x0A010002 },
-    { .packed = 0x0B010002 },
-    { .packed = 0x0A010002 },
-    { .packed = 0x0B010002 },
-    { .packed = 0x0C010003 },
-    { .packed = 0x0D010003 },
-    { .packed = 0x0E010003 },
-    { .packed = 0x0F010003 },
-    { .packed = 0x10000003 },
+    { 0x0A010002 },
+    { 0x0B010002 },
+    { 0x0A010002 },
+    { 0x0B010002 },
+    { 0x0A010002 },
+    { 0x0B010002 },
+    { 0x0C010003 },
+    { 0x0D010003 },
+    { 0x0E010003 },
+    { 0x0F010003 },
+    { 0x10000003 },
 };
 
 union AnimationStep D_800F3054[10] = {
-    { .packed = 0x11010002 },
-    { .packed = 0x12010002 },
-    { .packed = 0x11010002 },
-    { .packed = 0x12010002 },
-    { .packed = 0x11010002 },
-    { .packed = 0x12010002 },
-    { .packed = 0x13010003 },
-    { .packed = 0x14010003 },
-    { .packed = 0x15010003 },
-    { .packed = 0x16000003 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x11010002 },
+    { 0x12010002 },
+    { 0x13010003 },
+    { 0x14010003 },
+    { 0x15010003 },
+    { 0x16000003 },
 };
 
 union AnimationStep* D_800F307C[3] = { D_800F3028, D_800F3054, D_800F3000 };

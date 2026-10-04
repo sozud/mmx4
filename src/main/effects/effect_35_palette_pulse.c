@@ -2,6 +2,8 @@
 // 800BD1A4..800BD1E4
 #include "common.h"
 
+void palette_pulse_init(struct EffectObj* self);
+
 u16 palette_pulse_palette[16] = {
     0,
     0xFFFF,

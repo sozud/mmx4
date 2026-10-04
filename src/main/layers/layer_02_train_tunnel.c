@@ -2,6 +2,18 @@
 // 800D9218..800D9C84
 #include "common.h"
 
+void train_tunnel_accelerate(struct LayerObj* arg0);
+void train_tunnel_brake(struct LayerObj* arg0);
+void train_tunnel_section_0_skip(struct LayerObj* arg0);
+void train_tunnel_section_0_wait(struct LayerObj* arg0);
+void train_tunnel_section_3_skip(struct LayerObj* arg0);
+void train_tunnel_section_3_wait(struct LayerObj* arg0);
+void train_tunnel_section_4_skip(struct LayerObj* arg0);
+void train_tunnel_section_4_wait(struct LayerObj* arg0);
+void train_tunnel_start_braking(struct LayerObj* arg0);
+void train_tunnel_start_departure(struct LayerObj* arg0);
+void train_tunnel_wait_stop_point(struct LayerObj* arg0);
+
 s16 train_tunnel_lock_positions[4] = { 0x16B0, 0x1DE0, 0x2700, 0x2710 };
 
 void train_tunnel_update(struct LayerObj* arg0)

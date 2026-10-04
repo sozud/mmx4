@@ -1,6 +1,8 @@
 // MainObj, main_object_update_funcs[52]
 // 8006A50C..8006AF70
 #include "common.h"
+
+void jump_shooter_face_player(struct AnimatedObj* self);
 #include "func_tables.h"
 
 extern u8 jump_shooter_debris[];

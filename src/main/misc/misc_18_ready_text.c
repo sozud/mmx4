@@ -2,6 +2,8 @@
 // 800CB00C..800CB634
 #include "common.h"
 
+void ready_text_load_palette(s32 arg0, s32 arg1);
+
 extern const u32* ready_text_animations[];
 
 // megaman never appears in stage if nopped out
@@ -14,7 +16,7 @@ extern u8 ready_text_palettes[];
 extern s16 ready_text_x_positions[];
 extern s16 ready_text_y_positions[];
 extern u8 ready_text_priorities[];
-extern u16 D_8013B940;
+extern u16 D_8013B940[16];
 
 // g_MegamanRelatedUpdateFuncs state 0
 void ready_text_init(struct MiscObj* self)
@@ -50,7 +52,7 @@ void ready_text_init(struct MiscObj* self)
 
     if (self->unk2 < 2) {
         if (self->unk2 != 0) {
-            pal_dst = &D_8013B940;
+            pal_dst = D_8013B940;
             pal_pos = 0;
             color = SP_PALETTE + 0x100;
             do {
@@ -122,8 +124,6 @@ void ready_text_appear(struct MiscObj* self)
     }
 }
 
-extern u16 D_8013B940;
-
 // ReadyText State 1
 void ready_text_bounce(struct MiscObj* self)
 {
@@ -154,7 +154,7 @@ void ready_text_bounce(struct MiscObj* self)
         self->unk6 = 0;
         self->unk42 = 0x7801;
         if (self->unk2 != 0) {
-            pal_src = &D_8013B940;
+            pal_src = D_8013B940;
             pal_pos = 0;
             self->x_vel.val = FIXED(-16);
             pal_dst = SP_PALETTE + 0x100;

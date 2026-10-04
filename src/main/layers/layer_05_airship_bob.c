@@ -2,6 +2,13 @@
 // 800DA298..800DA7C0
 #include "common.h"
 
+void airship_bob_section_0_done(struct LayerObj* arg0);
+void airship_bob_section_0_wait(struct LayerObj* arg0);
+void airship_bob_section_1_done(struct LayerObj* arg0);
+void airship_bob_section_1_wait(struct LayerObj* arg0);
+void airship_bob_section_2_done(struct LayerObj* arg0);
+void airship_bob_section_2_wait(struct LayerObj* arg0);
+
 void airship_bob_update(struct LayerObj* arg0)
 {
     airship_bob_state_funcs[arg0->state](arg0);
