@@ -25,10 +25,15 @@ if [[ -z "$input" || -z "$output" ]]; then
     exit 2
 fi
 
+case "${VERSION:-us}" in
+    eu|EU) cc1=./bin/compilers/gcc-2.8.1/cc1 ;;
+    *) cc1=./bin/cc1 ;;
+esac
+
 task_tmp="$(mktemp -d)"
 trap 'rm -rf "$task_tmp"' EXIT
 
-./bin/cc1 -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char \
+"$cc1" -w -quiet -msoft-float -O2 -g0 -G0 -funsigned-char \
     "$input" -o "$task_tmp/input.s"
 python3 tools/maspsx/maspsx.py --aspsx-version=2.56 --expand-div \
     "$task_tmp/input.s" > "$task_tmp/input.s_"
