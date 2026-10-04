@@ -482,8 +482,13 @@ u8 func_8002D724(struct PlayerObj* player, s16 x, s16 y)
     s32 tile_column = (x & 0xF0) >> 4;
     s32 tile_row = (y & 0xF0) >> 4;
     u8 attribute;
+#ifdef MMX4_PC
+    u8 block = (block_row < 0 || block_column < 0) ? 0
+                                                   : (SP_BG_TILEMAP + player->bg_offset * layout_size + layout_width * block_row)[block_column];
+#else
     u8 block = (SP_BG_TILEMAP + player->bg_offset * layout_size
         + layout_width * block_row)[block_column];
+#endif
 
     if (block == 0 || block_row < 0 || block_column < 0) {
         attribute = 0;
@@ -499,8 +504,13 @@ u8 func_8002D7E4(struct PlayerObj* player, s16 x, s16 y)
     s32 tile_column = (x & 0xF0) >> 4;
     s32 tile_row = (y & 0xF0) >> 4;
     u8 attribute;
+#ifdef MMX4_PC
+    u8 block = (block_row < 0 || (s8)(x >> 8) < 0) ? 0
+                                                   : (SP_BG_TILEMAP + player->bg_offset * layout_size + layout_width * block_row)[(s8)(x >> 8)];
+#else
     u8 block = (SP_BG_TILEMAP + player->bg_offset * layout_size
         + layout_width * block_row)[(s8)(x >> 8)];
+#endif
 
     if (block == 0 || block_row < 0 || (s8)(x >> 8) < 0) {
         attribute = 0;
