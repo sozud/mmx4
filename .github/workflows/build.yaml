@@ -359,7 +359,7 @@ jobs:
         if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
             cd tools/dups
-            cargo run --release -- --threshold .90 --output-file ../../info/duplicates.txt
+            cargo run --release -- --threshold .40 --output-file ../../info/duplicates.txt
       - name: Commit all reports
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: |
