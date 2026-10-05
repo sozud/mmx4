@@ -65,7 +65,10 @@ extern u8* pc_archive_slots[22];
 #define SP_OT_CURSOR mmx4_sp_ordering_cursor
 #define SP_AUX_CURSOR mmx4_sp_auxiliary_cursor
 #define SP_AUX_POLY_F4_CURSOR ((POLY_F4*)mmx4_sp_auxiliary_cursor)
+#define SP_BG_BLOCK_WIDTH (*MMX4_SP_PTR(0x10C, u32))
+#define SP_BG_BLOCK_HEIGHT (*MMX4_SP_PTR(0x110, u32))
 #define SP_CUR_BG_INDEX (*MMX4_SP_PTR(0x114, s32))
+#define SP_BG_BLOCK (*MMX4_SP_PTR(0x118, u8))
 #define SP_BG_SPRITE_COUNT (*MMX4_SP_PTR(0x11C, s32))
 #define SP_SPRITE_COUNT (*MMX4_SP_PTR(0x124, s32))
 #define SP_ARCHIVE_ENTRY(archive, index) \
@@ -113,7 +116,10 @@ extern u8* scratchpad_base;
 #define SP_OT_CURSOR (*(void**)SP(0x10C))
 #define SP_AUX_CURSOR (*(void**)SP(0x110))
 #define SP_AUX_POLY_F4_CURSOR (*(POLY_F4**)SP(0x110))
+#define SP_BG_BLOCK_WIDTH (*(u32*)SP(0x10C))
+#define SP_BG_BLOCK_HEIGHT (*(u32*)SP(0x110))
 #define SP_CUR_BG_INDEX (*(s32*)SP(0x114))
+#define SP_BG_BLOCK (*(u8*)SP(0x118))
 #define SP_BG_SPRITE_COUNT (*(s32*)SP(0x11C))
 #define SP_SPRITE_COUNT (*(s32*)SP(0x124))
 #define SP_ARCHIVE_ENTRY(archive, index) \

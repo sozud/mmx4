@@ -194,7 +194,67 @@ void (*eregion_part_funcs[])(struct VisualObj*) = {
 };
 
 // eregion_part_update
-INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800AFF78);
+void func_800AFF78(struct VisualObj* arg0)
+{
+    arg0->x_pos.val = arg0->unk50->x_pos.val;
+    arg0->y_pos.val = arg0->unk50->y_pos.val;
+    arg0->unk15 = arg0->unk50->unk15;
+    arg0->on_screen = 0;
+    switch (arg0->unk2) {
+    case 0:
+        if (arg0->unk50->unk15 == 0) {
+            arg0->x_pos.i.hi += (u8)eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        } else {
+            arg0->x_pos.i.hi -= (u8)eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        }
+        arg0->y_pos.i.hi -= eregion_part_offsets_center[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->unk42 = arg0->unk50->unk42;
+        eregion_part_funcs[arg0->state](arg0);
+        return;
+    case 1:
+        if (arg0->unk50->unk15 == 0) {
+            arg0->x_pos.val -= FIXED(75);
+        } else {
+            arg0->x_pos.val += FIXED(75);
+        }
+        arg0->unk42 = arg0->unk50->unk42;
+        arg0->y_pos.val += FIXED(2);
+        break;
+    case 3:
+        if (arg0->unk50->unk15 == 0) {
+            arg0->x_pos.i.hi += eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        } else {
+            arg0->x_pos.i.hi -= eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        }
+        arg0->y_pos.i.hi += eregion_part_offsets_left[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->unk42 &= ~0x8000;
+        arg0->unk42 |= arg0->unk50->unk42 & 0x8000;
+        eregion_part_funcs[arg0->state](arg0);
+        return;
+    case 4:
+        if (arg0->unk50->unk15 == 0) {
+            arg0->x_pos.i.hi += eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        } else {
+            arg0->x_pos.i.hi -= eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][0];
+        }
+        arg0->y_pos.i.hi = arg0->y_pos.i.hi + eregion_part_offsets_right[(u8)arg0->unk50->animation_step.fields.frame_index][1];
+        arg0->unk42 &= ~0x8000;
+        arg0->unk42 |= arg0->unk50->unk42 & 0x8000;
+        eregion_part_funcs[arg0->state](arg0);
+        return;
+    case 5:
+        arg0->unk42 &= ~0x8000;
+        arg0->unk42 |= arg0->unk50->unk42 & 0x8000;
+        eregion_part_funcs[arg0->state](arg0);
+        return;
+    }
+
+    if (arg0->unk50->state == 1) {
+        eregion_part_funcs[arg0->state](arg0);
+        return;
+    }
+    ZeroObjectState(OBJECT_HEADER(arg0));
+}
 
 // eregion_part_init
 INCLUDE_ASM("main/nonmatchings/visuals/visual_06_eregion_part", func_800B0320);

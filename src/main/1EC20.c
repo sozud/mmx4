@@ -223,7 +223,151 @@ void func_8002E8D4(struct EngineObj* arg0)
 }
 
 // engine_state_3_update_funcs state 4 (mission selection)
-INCLUDE_ASM("main/nonmatchings/1EC20", func_8002E994);
+void func_8002E994(struct EngineObj* arg0)
+{
+    u8 var_a0;
+    u8 var_v1;
+
+    switch (controller_input.held & 0xF000) {
+    case PADLup:
+        if (!((controller_input.held ^ controller_input.pressed) & PADLup)) {
+            break;
+        }
+
+        if (arg0->unk8 == 0) {
+            if (arg0->unkA++ < 3) {
+                arg0->unk8 = 0x1E;
+            } else {
+                arg0->unk8 = 0xA;
+            }
+            if (arg0->unk5F >= 5) {
+                if (arg0->unk3 == 8) {
+                    arg0->unk3 = 0;
+                    func_8001540C(5, 0, 0);
+                } else if (arg0->unk3 >= 4) {
+                    arg0->unk3 = 8;
+                    func_8001540C(5, 0, 0);
+                }
+            } else {
+                if (arg0->unk3 >= 4) {
+                    arg0->unk3 -= 4;
+                    func_8001540C(5, 0, 0);
+                }
+            }
+        } else {
+            arg0->unk8--;
+        }
+        break;
+    case PADLdown:
+        if (!((controller_input.held ^ controller_input.pressed) & PADLdown)) {
+            break;
+        }
+
+        if (arg0->unk8 == 0) {
+            if (arg0->unkA++ < 3) {
+                arg0->unk8 = 0x1E;
+            } else {
+                arg0->unk8 = 0xA;
+            }
+            if (arg0->unk5F >= 5) {
+                if (arg0->unk3 == 8) {
+                    arg0->unk3 = 4;
+                    func_8001540C(5, 0, 0);
+                } else if (arg0->unk3 < 4) {
+                    arg0->unk3 = 8;
+                    func_8001540C(5, 0, 0);
+                }
+            } else {
+                if (arg0->unk3 < 4) {
+                    arg0->unk3 += 4;
+                    func_8001540C(5, 0, 0);
+                }
+            }
+        } else {
+            arg0->unk8--;
+        }
+        break;
+    case PADLright:
+        if (!((controller_input.held ^ controller_input.pressed) & PADLright)) {
+            break;
+        }
+
+        if (arg0->unk8 == 0) {
+            if (arg0->unkA++ < 3) {
+                arg0->unk8 = 0x1E;
+            } else {
+                arg0->unk8 = 0xA;
+            }
+            if (arg0->unk3 != 8) {
+                if ((arg0->unk3 & 3) != 3) {
+                    arg0->unk3++;
+                    func_8001540C(5, 0, 0);
+                }
+            }
+        } else {
+            arg0->unk8--;
+        }
+        break;
+    case PADLleft:
+        if (!((controller_input.held ^ controller_input.pressed) & PADLleft)) {
+            break;
+        }
+
+        if (arg0->unk8 != 0) {
+            arg0->unk8--;
+            break;
+        }
+
+        if (arg0->unkA++ < 3) {
+            arg0->unk8 = 0x1E;
+        } else {
+            arg0->unk8 = 0xA;
+        }
+        if (arg0->unk3 != 8) {
+            if (arg0->unk3 & 3) {
+                arg0->unk3--;
+                func_8001540C(5, 0, 0);
+            }
+        }
+        break;
+    default:
+        arg0->unk8 = 0;
+        arg0->unkA = 0;
+        break;
+    }
+
+    if (controller_input.pressed & (PADstart | PAD_CONFIRM)) {
+        if (arg0->unk3 == 8) {
+            var_a0 = 0x11;
+            if (arg0->unk5F < 7U) {
+                arg0->stage = 0xA;
+                if (arg0->cur_character == 0) {
+                    var_a0 = 0x31;
+                }
+                arg0->unk40 = var_a0;
+            } else {
+                if (arg0->unk5F >= 0xAU) {
+                    arg0->stage = 0xC;
+                } else {
+                    arg0->stage = 0xB;
+                }
+                arg0->unk40 = 0x11;
+            }
+            D_8013B814 = 0;
+        } else {
+            var_v1 = 0x11;
+            if (arg0->cur_character == 0) {
+                var_v1 = 0x31;
+            }
+            arg0->unk40 = var_v1;
+            arg0->stage = mission_stage_order[arg0->unk3];
+            arg0->substage = D_8013B814;
+        }
+        func_8001540C(5, 1, 0);
+        arg0->unk2 = 0;
+        arg0->unk1++;
+    }
+}
 
 // engine_state_3_update_funcs state 5
 void func_8002ED80(struct EngineObj* arg0)
