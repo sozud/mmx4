@@ -177,15 +177,28 @@ parser.add_argument(
     help="Only match paths with these keywords",
 )
 
+INCLUDE_ASM_RE = re.compile(
+    r'__asm__\("\.pushsection \.text\\n".*?"(asm/us/)" "([^"]+)" "/" "([^"]+)" "\.s'
+)
+
+def get_included_asm(build_path):
+    included = set()
+    for path in Path(build_path).rglob("*.cpp"):
+        for match in INCLUDE_ASM_RE.finditer(path.read_text(errors="replace")):
+            included.add(Path(match.group(1)) / match.group(2) / f"{match.group(3)}.s")
+    if not included:
+        sys.exit(f"no INCLUDE_ASM found in {build_path}; run build.sh first")
+    return included
+
 # look in asm files, read in the text and check for branches and jump tables
 def get_asm_files(asm_path, og_files=None):
     files = []
     matching_paths = None if og_files is None else {Path(file) for file, _ in og_files}
+    included = get_included_asm("build/us/src")
     for path in Path(asm_path).rglob("*.s"):
         if matching_paths is not None and path not in matching_paths:
             continue
-        # Only undecompiled game functions; exclude data and SDK libraries.
-        if "nonmatchings" not in path.parts or "psxsdk" in path.parts:
+        if path not in included or "psxsdk" in path.parts:
             continue
         text = path.read_text()
 
