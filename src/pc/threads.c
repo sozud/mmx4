@@ -141,7 +141,7 @@ void mmx4_pc_thread_yield(void)
     if (slot < 0)
         abort();
     if (thread_debug_enabled())
-        fprintf(stderr, "MMX4 PC: thread %d yield state=%u timer=%u\n", slot,
+        fprintf(stderr, "MMX4 PC: thread %d yield state=%u timer=%d\n", slot,
             game_threads[slot].state, game_threads[slot].timer);
 #ifdef MMX4_PC_ASAN
     __sanitizer_start_switch_fiber(
