@@ -4,6 +4,7 @@ void func_800264D0(s32 layer, s32 x, s32 y);
 void func_80026720(void);
 void func_800267D4(s32 input);
 void func_8002728C(void);
+void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y);
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>
@@ -447,7 +448,91 @@ INCLUDE_ASM("main/nonmatchings/165A0", func_80026894);
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_80026AA0);
 
-INCLUDE_ASM("main/nonmatchings/165A0", func_80026CEC);
+void func_80026CEC(s32 arg0)
+{
+    s32 x_hi;
+    s32 x_lo;
+    s32 y_lo;
+    s32 y_hi;
+    u32 width_a;
+    u32 width_c;
+    s32 height_a;
+    s32 height_b;
+    s32 x_b;
+    s32 x_c;
+    s32 y;
+    s32 x;
+    s32 y_pos, x_pos;
+    u32 width_b;
+
+    x_pos = background_objects[arg0].x_pos.i.hi;
+    y_pos = background_objects[arg0].y_pos.i.hi;
+
+    x_lo = (x_pos >> 8) & 0x1F;
+    x_hi = (x_pos >> 4) & 0xF;
+
+    y_lo = (y_pos >> 8) & 0x1F;
+    y_hi = (y_pos >> 4) & 0xF;
+
+    width_a = 0x10 - x_hi;
+    width_b = 0x15 - width_a;
+
+    height_a = 0x10 - y_hi;
+    height_b = 0x10 - height_a;
+
+    width_c = 0;
+    if (width_b > 0x10) {
+        width_c = width_b - 0x10;
+        width_b = 0x10;
+    }
+
+    x = -(x_pos & 0xF);
+    y = -(y_pos & 0xF);
+    x_b = x + (width_a * 0x10);
+    x_c = x_b + (width_b * 0x10);
+
+    SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 0];
+    if (SP_BG_BLOCK != 0) {
+        SP_BG_BLOCK_WIDTH = width_a;
+        SP_BG_BLOCK_HEIGHT = height_a;
+        func_800270F8(x, y, x_hi, y_hi);
+    }
+    SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 1];
+    if (SP_BG_BLOCK != 0) {
+        SP_BG_BLOCK_WIDTH = width_b;
+        func_800270F8(x_b, y, 0, y_hi);
+    }
+    if (width_c != 0) {
+        SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 2];
+        if (SP_BG_BLOCK != 0) {
+            SP_BG_BLOCK_WIDTH = width_c;
+            func_800270F8(x_c, y, 0, y_hi);
+        }
+    }
+
+    if (height_b != 0) {
+        y_lo++;
+        y += height_a * 0x10;
+        SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 0];
+        if (SP_BG_BLOCK != 0) {
+            SP_BG_BLOCK_WIDTH = width_a;
+            SP_BG_BLOCK_HEIGHT = height_b;
+            func_800270F8(x, y, x_hi, 0);
+        }
+        SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 1];
+        if (SP_BG_BLOCK != 0) {
+            SP_BG_BLOCK_WIDTH = width_b;
+            func_800270F8(x_b, y, 0, 0);
+        }
+        if (width_c != 0) {
+            SP_BG_BLOCK = (SP_BG_TILEMAP + arg0 * layout_size + layout_width * y_lo)[x_lo + 2];
+            if (SP_BG_BLOCK != 0) {
+                SP_BG_BLOCK_WIDTH = width_c;
+                func_800270F8(x_c, y, 0, 0);
+            }
+        }
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_800270F8);
 void func_8002728C(void)

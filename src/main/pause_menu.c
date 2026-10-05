@@ -60,7 +60,129 @@ void func_80030128(struct BarObj* arg0)
     }
 }
 
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_800301BC);
+void func_800301BC(struct BarObj* arg0)
+{
+    s16 var_a1;
+    u16 var_a1_2;
+    s8 var_a2;
+    s8 initial_unk14;
+
+    var_a1 = 0;
+    initial_unk14 = arg0->unk14;
+    switch (controller_input.pressed) {
+    case PADstart:
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        break;
+    case PAD_CONFIRM:
+        if (arg0->unk14 < 0xAU) {
+            if (arg0->unk14 < 2) {
+                g_Player.weapon = 0;
+            } else {
+                g_Player.weapon = arg0->unk14 - 1;
+            }
+        }
+        func_8001540C(0, 0x22, 0);
+        break;
+    case PADLup:
+        var_a2 = arg0->unk14;
+        do {
+            var_a2 -= 2;
+            if (var_a2 < 0) {
+                var_a2 = arg0->unk14;
+            }
+            if (arg0->unk14 == var_a2) {
+                break;
+            }
+            if (var_a2 == 0) {
+                break;
+            }
+        } while (arg0->unk16[var_a2] == 0);
+        arg0->unk14 = var_a2;
+        break;
+    case PADLdown:
+        var_a2 = initial_unk14;
+        do {
+            var_a2 += 2;
+            if (var_a2 < 0xA) {
+                continue;
+            }
+            var_a2 = 9;
+            for (var_a1_2 = 0; var_a1_2 < 5; var_a1_2++) {
+                var_a2++;
+                if (arg0->unk16[var_a2] != 0) {
+                    if (var_a2 >= 0xD) {
+                        arg0->unk5 = 2;
+                    } else {
+                        arg0->unk5 = 1;
+                    }
+                    break;
+                }
+            }
+            break;
+        } while (arg0->unk14 != var_a2 && arg0->unk16[var_a2] == 0);
+        arg0->unk14 = var_a2;
+        break;
+    case PADLright:
+        var_a2 = initial_unk14 + 1;
+        if (!(var_a2 & 1)) {
+            break;
+        }
+        initial_unk14 = var_a2;
+        if (arg0->unk16[var_a2] == 0) {
+            do {
+                if (var_a1 == 0) {
+                    var_a2 += 2;
+                    if (var_a2 >= 0xB) {
+                        var_a2 -= 2;
+                        var_a1 = 1;
+                    }
+                } else {
+                    var_a2 -= 2;
+                }
+                if (var_a2 == initial_unk14) {
+                    var_a2 = initial_unk14 = arg0->unk14;
+                    break;
+                }
+            } while (arg0->unk16[var_a2] == 0);
+        } else {
+            initial_unk14 = initial_unk14 - 1;
+        }
+        arg0->unk14 = var_a2;
+        break;
+    case PADLleft:
+        var_a2 = initial_unk14 - 1;
+        if (var_a2 & 1) {
+            break;
+        }
+        initial_unk14 = var_a2;
+        if (arg0->unk16[var_a2] == 0) {
+            do {
+                if (var_a1 == 0) {
+                    var_a2 -= 2;
+                    if (var_a2 < 0) {
+                        var_a2 += 2;
+                        var_a1 = 1;
+                    }
+                } else {
+                    var_a2 += 2;
+                }
+                if (var_a2 == initial_unk14) {
+                    var_a2 = initial_unk14 = arg0->unk14;
+                    break;
+                }
+            } while (arg0->unk16[var_a2] == 0);
+        } else {
+            initial_unk14++;
+        }
+        arg0->unk14 = var_a2;
+        break;
+    }
+
+    if (arg0->unk14 != initial_unk14) {
+        func_8001540C(0, 0xC, 0);
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/pause_menu", func_800304E4);
 
