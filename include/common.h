@@ -3031,7 +3031,7 @@ struct StageSpritePrimitive {
 
 struct GameThread {
     u16 state;
-    u16 timer;
+    s16 timer;
     u32 unk4;
     u32 handle;
     u32 unkC;
@@ -4489,8 +4489,12 @@ extern s16 D_8016DEA4;
 #endif
 #ifdef MMX4_WIN32
 #define D_801F8300 (*(struct GameThread**)(win32_main_ram + 0x1F8300))
+#define GAME_THREADS ((struct GameThread*)(win32_main_ram + 0x1F8100))
+#define CUR_GAME_THREAD (*(struct GameThread**)(win32_main_ram + 0x1F8300))
 #else
 extern struct GameThread* D_801F8300;
+#define GAME_THREADS ((struct GameThread*)0x801F8100)
+#define CUR_GAME_THREAD (*(struct GameThread**)0x801F8300)
 #endif
 extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
 extern void (*g_TitleUpdateFuncs[])();

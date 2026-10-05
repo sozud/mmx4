@@ -192,9 +192,6 @@ void func_80012560(void)
 }
 #endif
 
-#ifdef VERSION_EU
-INCLUDE_ASM("main/nonmatchings/2824", func_80012600);
-#else
 void func_80012600(void)
 {
 #ifdef MMX4_PC
@@ -209,45 +206,32 @@ void func_80012600(void)
             mmx4_pc_thread_run(slot);
     }
 #else
-    u16 temp_v0_2;
-    u16 temp_v1;
-    void* temp_v0;
-    struct GameThread* temp_v0_3;
-    struct GameThread* temp_v0_4;
-
-    D_801F8300 = (void*)0x801F8100;
+    CUR_GAME_THREAD = GAME_THREADS;
     do {
-        temp_v1 = ((struct GameThread*)D_801F8300)->state;
-        switch (temp_v1) {
-        case 0x1:
-            temp_v0_2 = ((struct GameThread*)D_801F8300)->timer - 1;
-            ((struct GameThread*)D_801F8300)->timer = temp_v0_2;
-            if ((temp_v0_2 << 0x10) == 0) {
-            case 0x2:
-            case 0x4:
+        switch (CUR_GAME_THREAD->state) {
+        case 1:
+            CUR_GAME_THREAD->timer--;
+            if (CUR_GAME_THREAD->timer == 0) {
+            case 2:
+            case 4:
             case 0x7F:
-                temp_v0_3 = *(struct GameThread**)0x801F8300;
-                temp_v0_3->state = 0x7F;
-                ChangeTh(temp_v0_3->handle);
+                CUR_GAME_THREAD->state = 0x7F;
+                ChangeTh(CUR_GAME_THREAD->handle);
                 if (D_800EE458 != 0) {
                     D_800EE458 = 0;
                     EnterCriticalSection();
-                    CloseTh((*(struct GameThread**)0x801F8300)->handle);
-                    temp_v0_4 = *(struct GameThread**)0x801F8300;
-                    (*(struct GameThread**)0x801F8300)->handle = OpenTh(
-                        (long (*)())D_8012F490, temp_v0_4->stack,
-                        temp_v0_4->global_pointer);
+                    CloseTh(CUR_GAME_THREAD->handle);
+                    CUR_GAME_THREAD->handle = OpenTh((long (*)())D_8012F490,
+                        CUR_GAME_THREAD->stack, CUR_GAME_THREAD->global_pointer);
                     ExitCriticalSection();
                 }
             }
             break;
         }
-        temp_v0 = (u8*)*(void**)0x801F8300 + 0x80;
-        *(void**)0x801F8300 = temp_v0;
-    } while ((u32)temp_v0 <= 0x801F82FFU);
+        CUR_GAME_THREAD++;
+    } while (CUR_GAME_THREAD < &GAME_THREADS[4]);
 #endif
 }
-#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/2824", func_80012740);
