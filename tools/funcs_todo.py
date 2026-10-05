@@ -7,6 +7,7 @@ import re
 import concurrent.futures
 import json
 import requests
+import subprocess
 import threading
 import time
 import zipfile
@@ -181,20 +182,33 @@ INCLUDE_ASM_RE = re.compile(
     r'__asm__\("\.pushsection \.text\\n".*?"(asm/us/)" "([^"]+)" "/" "([^"]+)" "\.s'
 )
 
-def get_included_asm(build_path):
+CPP_FLAGS = [
+    "-undef", "-D__GNUC__=2", "-DVERSION_US=1", "-D__OPTIMIZE__",
+    "-I./src/snd", "-I./include", "-lang-c",
+    "-Dmips", "-D__mips__", "-D__mips", "-Dpsx", "-D__psx__", "-D__psx",
+    "-D__EXTENSIONS__", "-D_MIPSEL", "-D__CHAR_UNSIGNED__",
+    "-D_LANGUAGE_C", "-DLANGUAGE_C",
+]
+
+def preprocess(src):
+    result = subprocess.run(["cpp", *CPP_FLAGS, str(src)], capture_output=True, text=True, errors="replace")
+    if result.returncode != 0:
+        sys.exit(f"cpp failed on {src}:\n{result.stderr}")
+    return result.stdout
+
+def get_included_asm(src_path):
     included = set()
-    for path in Path(build_path).rglob("*.cpp"):
-        for match in INCLUDE_ASM_RE.finditer(path.read_text(errors="replace")):
-            included.add(Path(match.group(1)) / match.group(2) / f"{match.group(3)}.s")
-    if not included:
-        sys.exit(f"no INCLUDE_ASM found in {build_path}; run build.sh first")
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for text in executor.map(preprocess, Path(src_path).rglob("*.c")):
+            for match in INCLUDE_ASM_RE.finditer(text):
+                included.add(Path(match.group(1)) / match.group(2) / f"{match.group(3)}.s")
     return included
 
 # look in asm files, read in the text and check for branches and jump tables
 def get_asm_files(asm_path, og_files=None):
     files = []
     matching_paths = None if og_files is None else {Path(file) for file, _ in og_files}
-    included = get_included_asm("build/us/src")
+    included = get_included_asm("src/main")
     for path in Path(asm_path).rglob("*.s"):
         if matching_paths is not None and path not in matching_paths:
             continue
