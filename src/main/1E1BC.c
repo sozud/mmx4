@@ -153,7 +153,125 @@ struct EffectSpawnData D_800F460C[64] = {
 };
 
 // damage_player_on_contact
-INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002D9BC);
+ret_u8 func_8002D9BC(void* object)
+{
+    struct PlayerObj* player;
+    struct RideArmorObj* ride;
+    struct ShotObj* shot;
+    s8 ride_hp;
+    s8 damage_type;
+    s8 remaining_hp;
+    s8 hp_flags;
+    u32 damage;
+    u8 contact_damage;
+    u8 energy;
+    shot = object;
+    player = &g_Player;
+    if (g_Player.spike_immune != 0) {
+        return 0;
+    }
+    if (g_Player.ride_state < 0) {
+        ride = &qux_object;
+        if (ride->unk5C & 0x80) {
+            return 0;
+        }
+        if (((u8)ride->unk85) != 0) {
+            return 0;
+        }
+        if (func_8002BB80((struct MainObj*)shot, (struct MainObj*)ride) == 0) {
+            return 0;
+        }
+        ride->unk63 = 0;
+        ride->unk86 = 0;
+        ride_hp = shot->unk60;
+        ride->unk63 = ride_hp >= 5 ? 2 : 1;
+        ride_hp = ride->unk5C - shot->unk60;
+        ride->unk5C = ride_hp;
+        if (ride_hp > 0) {
+            ride_hp |= 0x80;
+        } else {
+            ride_hp = -0x80;
+        }
+        ride->unk5C = ride_hp;
+        if (ride->x_pos.i.hi >= shot->x_pos.i.hi) {
+            ride->unk84 = 0;
+        } else {
+            ride->unk84 = 0x40;
+        }
+        return 1;
+    }
+    if (player->hp & 0x80) {
+        return 0;
+    }
+    if (player->hurt_phase != 0) {
+        return 0;
+    }
+    if (func_8002BB80((struct MainObj*)shot, (struct MainObj*)player) == 0) {
+        return 0;
+    }
+    player->hurt_type = (s8)shot->unk62;
+    player->stun_timer = 0;
+    damage_type = (s8)shot->unk62;
+    switch (damage_type) {
+    case 0:
+        if ((player->unk2 == 0) && (((u8)player->armor_parts) & 2)) {
+            player->hurt_type = 4;
+        } else if (shot->unk60 < 5) {
+            player->hurt_type = 1;
+        } else {
+            player->hurt_type = 2;
+        }
+        break;
+
+    case 3:
+        player->stun_timer = 1;
+        break;
+    }
+
+    contact_damage = (u8)shot->unk60;
+    damage_type = (s8)contact_damage;
+    if (damage_type != 0) {
+        if (((u8)player->armor_parts) & 2) {
+            if (damage_type < 3) {
+                damage = 1;
+            } else {
+                damage = ((u32)((damage_type / 3) << 0x18)) >> 0x17;
+            }
+            remaining_hp = ((u8)player->hp) - damage;
+        } else {
+            remaining_hp = ((u8)player->hp) - contact_damage;
+        }
+        player->hp = remaining_hp;
+    }
+    if (player->hp > 0) {
+        hp_flags = player->hp | 0x80;
+    } else {
+        hp_flags = -0x80;
+    }
+    player->hp = hp_flags;
+    if (((s8)shot->unk62) != 3) {
+        if (player->x_pos.i.hi >= shot->x_pos.i.hi) {
+            player->hit_facing = 0;
+        } else {
+            player->hit_facing = 0x40;
+        }
+    }
+    if (player->unk2 == 0) {
+        if (!(((u8)player->armor_parts) & 2)) {
+            return 1;
+        }
+    } else if (!(((u8)player->boss_flags) & 0x20)) {
+        return 1;
+    }
+    if (player->weapon_energy[0] != 0x30) {
+        energy = ((s8)player->weapon_energy[0]) + 6;
+        player->weapon_energy[0] = energy;
+        if (((s8)energy) >= 0x31) {
+            player->weapon_energy[0] = 0x30;
+        }
+    }
+    return 1;
+}
 // check_weapon_hits
 INCLUDE_ASM("main/nonmatchings/1E1BC", func_8002DD04);
 

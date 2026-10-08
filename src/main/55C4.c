@@ -3,7 +3,7 @@
 
 void decompress_gfx(u16* src, u16* dest);
 #ifdef MMX4_WIN32
-void func_80016420(s8 arg0);
+void func_80016420(arg_u8 arg0);
 #endif
 void func_80017E84(void);
 void func_80017F2C(void);
@@ -870,7 +870,7 @@ void func_80016448(u8 arg0);
 
 extern u8 D_80139524;
 
-void func_80016420(s8 arg0)
+void func_80016420(arg_u8 arg0)
 {
     D_80139524 = arg0;
     func_80016448(arg0);
@@ -958,7 +958,123 @@ void func_8001653C(void)
     func_8001663C(track, volume);
 }
 
-INCLUDE_ASM("main/nonmatchings/55C4", func_8001663C);
+extern s32 D_80139538, D_80139540, D_80139544;
+extern s16 D_80139560;
+extern s32 D_80139530, D_80141BD4;
+
+void func_8001663C(u8 selection, u8 volume)
+{
+    u16 base;
+    const u16* entry;
+    s32 channel;
+    CdlLOC* location;
+    base = 0;
+    channel = 0;
+    D_80139568 = 0;
+    switch (selection >> 3) {
+    case 0:
+        D_80139560 = XA_ARCHIVE_BGM1;
+        entry = D_800F19E0;
+        if (selection == 0) {
+            D_80139568 = 1;
+        }
+        break;
+
+    case 1:
+        entry = D_800F19E4;
+        D_80139560 = XA_ARCHIVE_BGM2;
+        selection &= 7;
+        break;
+
+    case 2:
+        entry = D_800F19E8;
+        D_80139560 = XA_ARCHIVE_BGM3;
+        selection &= 7;
+        break;
+
+    case 3:
+        entry = D_800F19EC;
+        D_80139560 = XA_ARCHIVE_BGM4;
+        selection &= 7;
+        break;
+
+    case 4:
+        selection &= 7;
+        entry = D_800F19F0;
+        D_80139560 = XA_ARCHIVE_BGM5;
+        D_80139568 = 1;
+        break;
+
+    case 5:
+        selection &= 7;
+        entry = D_800F19F4;
+        D_80139560 = XA_ARCHIVE_VOICE1;
+        D_80139568 = 1;
+        break;
+
+    case 6:
+        selection &= 7;
+        entry = D_800F19F8;
+        D_80139560 = XA_ARCHIVE_VOICE2;
+        D_80139568 = 1;
+        break;
+
+    case 7:
+        selection &= 7;
+        entry = D_800F19FC;
+        D_80139560 = XA_ARCHIVE_VOICE3;
+        D_80139568 = 1;
+        break;
+
+    case 8:
+        selection &= 7;
+        entry = D_800F1A00;
+        D_80139560 = XA_ARCHIVE_VOICE4;
+        D_80139568 = 1;
+        break;
+
+    case 9:
+        selection &= 7;
+        entry = D_800F1A04;
+        D_80139560 = XA_ARCHIVE_VOICE5;
+        D_80139568 = 1;
+        break;
+
+    case 10:
+        selection &= 7;
+        entry = D_800F1A08;
+        D_80139560 = XA_ARCHIVE_BOSS_INTRO;
+        D_80139568 = 1;
+        break;
+
+    default:
+        break;
+    }
+
+    while (base++ < selection) {
+        if ((*entry) & 0x8000) {
+            channel++;
+            entry++;
+        }
+        entry++;
+    }
+
+    ((u8*)D_80175EE8)[0] = 1;
+    ((u8*)D_80175EE8)[1] = channel;
+    D_80139544 = func_80013614(D_80139560, &D_80139538) + ((u8*)D_80175EE8)[1];
+    D_80139540 = D_80139544;
+    do {
+        D_80139540 += ((entry[0] & 0x7FFF) * 8);
+        location = (CdlLOC*)&D_80139514;
+    } while (0);
+    D_80139544 += ((entry[1] & 0x7FFF) * 8);
+    CdIntToPos(D_80139540, location);
+    SsSetSerialAttr(0, 0, 1);
+    func_80016420(volume);
+    D_80141BD4 = 2;
+    D_80173C84 = 1;
+    D_80139530 = 7;
+}
 
 INCLUDE_RODATA("main/nonmatchings/55C4", D_80010050);
 void func_80016F0C();
@@ -1364,7 +1480,7 @@ void func_80017340(void)
         func_800175AC(0x14);
         func_800175AC(0);
         func_800175AC(1);
-        if (bar_object.unk16[1] != 0) {
+        if (bar_object.options.items[1] != 0) {
             func_800175AC(0x15);
             func_800175AC(2);
             func_800175AC(3);
@@ -1374,7 +1490,7 @@ void func_80017340(void)
     start = engine_obj.cur_character != CHARACTER_X ? 0 : 2;
 
     while (start < end) {
-        if (bar_object.unk16[start] != 0) {
+        if (bar_object.options.items[start] != 0) {
             func_800175AC(start + 0x14);
             func_800175AC(start * 2);
             func_800175AC(start * 2 + 1);
@@ -1382,26 +1498,26 @@ void func_80017340(void)
         start++;
     }
 
-    if (bar_object.unk20 != 0) {
+    if (bar_object.options.fields.unk20 != 0) {
         func_800175AC(0x23);
     }
-    if (bar_object.unk21 != 0) {
+    if (bar_object.options.fields.unk21 != 0) {
         func_800175AC(0x24);
     }
-    if (bar_object.unk22 != 0) {
+    if (bar_object.options.fields.unk22 != 0) {
         func_800175AC(0x25);
     }
     func_800175AC(0x1F);
-    if (bar_object.unk25 != 0) {
+    if (bar_object.options.fields.unk25 != 0) {
         func_800175AC(0x26);
     }
     func_800175AC(0x1E);
     func_800175AC(0x20);
     if (engine_obj.stage >= 1 && engine_obj.stage <= 8) {
         if (engine_obj.cur_character == CHARACTER_X) {
-            var_v0 = bar_object.unk16[engine_obj.stage + 1];
+            var_v0 = bar_object.options.items[engine_obj.stage + 1];
         } else {
-            var_v0 = bar_object.unk16[D_800F1C0F[engine_obj.stage]];
+            var_v0 = bar_object.options.items[D_800F1C0F[engine_obj.stage]];
         }
         if (var_v0 != 0) {
             func_800175AC(0x21);

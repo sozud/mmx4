@@ -3,6 +3,8 @@
 #include "common.h"
 
 void func_800170E0(void);
+void func_800170B0(void);
+extern u8 D_8013B818[0x10];
 void func_80021104(struct EngineObj* arg0);
 void func_80023D90(void);
 
@@ -27,7 +29,106 @@ void func_8002FD28(struct BarObj* arg0)
     arg0->unk5 = 1;
 }
 
-INCLUDE_ASM("main/nonmatchings/pause_menu", func_8002FD70);
+void func_8002FD70(struct BarObj* self)
+{
+    s8 weapon;
+    u8 current_weapon;
+    s32 option;
+    u32 i;
+    u32 j;
+    if (main_bss_state.transition.active != 0) {
+        func_80023D68();
+        return;
+    }
+    func_800170B0();
+    func_800129A4(8);
+    self->unk5 = 2;
+    self->unk14 = 0;
+    if (g_Player.unk2 == 0) {
+        self->options.fields.player[0] = 1;
+        if (((u8)g_Player.armor_parts) & 2) {
+            self->options.fields.player[1] = 1;
+        } else {
+            self->options.fields.player[1] = 0;
+        }
+        for (i = 2; i < 10; i++) {
+            if (((u8)g_Player.boss_flags >> (i - 2)) & 1) {
+                self->options.items[i] = 1;
+            } else {
+                self->options.items[i] = 0;
+            }
+        }
+    } else {
+        for (j = 0; j < 8; j++) {
+            option = D_800F48EC[j];
+            if (((u8)g_Player.boss_flags >> j) & 1) {
+                self->options.items[option] = 1;
+            } else {
+                self->options.items[option] = 0;
+            }
+        }
+        self->options.fields.weapons[7] = 0;
+        self->options.fields.unk20 = 0;
+    }
+    if (engine_obj.unk5A & 0x3000) {
+        if (engine_obj.unk5A & 0x1000) {
+            self->options.fields.unk20 = 1;
+            engine_obj.unk5C[0] |= 0x80;
+        }
+        if (engine_obj.unk5A & 0x2000) {
+            self->options.fields.unk21 = 1;
+            engine_obj.unk5C[1] |= 0x80;
+        }
+    } else {
+        self->options.fields.unk20 = 0;
+        self->options.fields.unk21 = 0;
+    }
+    if (engine_obj.unk5A & 0x4000) {
+        self->options.fields.unk22 = 1;
+    } else {
+        self->options.fields.unk22 = 0;
+    }
+    if (engine_obj.stage != 0) {
+        if ((((u8)engine_obj.palette_flags) >> (engine_obj.stage - 1)) & 1) {
+            self->options.fields.unk23 = 1;
+        } else {
+            self->options.fields.unk23 = 0;
+        }
+    }
+    self->options.fields.unk24 = 1;
+    if (g_Player.unk2 != 0) {
+        for (i = 0xA; i < 0xF; i++) {
+            if (self->options.items[i] != 0) {
+                self->unk14 = i;
+                break;
+            }
+        }
+    } else if (((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) || (g_Player.ride_state < 0)) {
+        self->unk2 = 1;
+        for (i = 0xA; i < 0xF; i++) {
+            if (self->options.items[i] != 0) {
+                self->unk14 = i;
+                break;
+            }
+        }
+    } else {
+        self->unk2 = 0;
+        weapon = g_Player.weapon;
+        if (weapon != 0) {
+            self->unk14 = weapon + 1;
+        }
+    }
+    if (engine_obj.unk5A & 0x8000) {
+        self->options.fields.unk25 = 1;
+    } else {
+        self->options.fields.unk25 = 0;
+    }
+    current_weapon = g_Player.weapon;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk30 = 0;
+    D_8013B818[0] = current_weapon;
+}
 
 void func_800300AC(struct BarObj* arg0)
 {
@@ -97,7 +198,7 @@ void func_800301BC(struct BarObj* arg0)
             if (var_a2 == 0) {
                 break;
             }
-        } while (arg0->unk16[var_a2] == 0);
+        } while (arg0->options.items[var_a2] == 0);
         arg0->unk14 = var_a2;
         break;
     case PADLdown:
@@ -110,7 +211,7 @@ void func_800301BC(struct BarObj* arg0)
             var_a2 = 9;
             for (var_a1_2 = 0; var_a1_2 < 5; var_a1_2++) {
                 var_a2++;
-                if (arg0->unk16[var_a2] != 0) {
+                if (arg0->options.items[var_a2] != 0) {
                     if (var_a2 >= 0xD) {
                         arg0->unk5 = 2;
                     } else {
@@ -120,7 +221,7 @@ void func_800301BC(struct BarObj* arg0)
                 }
             }
             break;
-        } while (arg0->unk14 != var_a2 && arg0->unk16[var_a2] == 0);
+        } while (arg0->unk14 != var_a2 && arg0->options.items[var_a2] == 0);
         arg0->unk14 = var_a2;
         break;
     case PADLright:
@@ -129,7 +230,7 @@ void func_800301BC(struct BarObj* arg0)
             break;
         }
         initial_unk14 = var_a2;
-        if (arg0->unk16[var_a2] == 0) {
+        if (arg0->options.items[var_a2] == 0) {
             do {
                 if (var_a1 == 0) {
                     var_a2 += 2;
@@ -144,7 +245,7 @@ void func_800301BC(struct BarObj* arg0)
                     var_a2 = initial_unk14 = arg0->unk14;
                     break;
                 }
-            } while (arg0->unk16[var_a2] == 0);
+            } while (arg0->options.items[var_a2] == 0);
         } else {
             initial_unk14 = initial_unk14 - 1;
         }
@@ -156,7 +257,7 @@ void func_800301BC(struct BarObj* arg0)
             break;
         }
         initial_unk14 = var_a2;
-        if (arg0->unk16[var_a2] == 0) {
+        if (arg0->options.items[var_a2] == 0) {
             do {
                 if (var_a1 == 0) {
                     var_a2 -= 2;
@@ -171,7 +272,7 @@ void func_800301BC(struct BarObj* arg0)
                     var_a2 = initial_unk14 = arg0->unk14;
                     break;
                 }
-            } while (arg0->unk16[var_a2] == 0);
+            } while (arg0->options.items[var_a2] == 0);
         } else {
             initial_unk14++;
         }

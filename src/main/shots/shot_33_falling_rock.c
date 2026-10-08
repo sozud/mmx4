@@ -2,6 +2,10 @@
 // 800A03B8..800A16FC
 #include "common.h"
 
+extern u8 falling_rock_debris_0[], falling_rock_debris_1[];
+extern u8 falling_rock_debris_4[], falling_rock_debris_5[], falling_rock_debris_6[];
+extern union AnimationStep* falling_rock_d_animations[];
+
 void falling_rock_update(struct ShotObj* self)
 {
     falling_rock_state_funcs[self->state](self);
@@ -11,7 +15,93 @@ void falling_rock_update(struct ShotObj* self)
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A03F4);
 
 // falling_rock_a_fall
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A068C);
+static __inline s32 falling_rock_tile_attribute(struct PlayerObj* object, s16 x, s16 y)
+{
+#if defined(MMX4_PC) || defined(MMX4_WIN32)
+    return func_8002D724(object, x, y);
+#else
+    return ((s32(*)(struct PlayerObj*, s16, s16))func_8002D724)(object, x, y);
+#endif
+}
+
+void func_800A068C(struct ShotObj* self)
+{
+    u8 collided;
+    s32 result;
+    s16 collision_x;
+    s16 collision_y;
+    self->unk42 &= 0x7FFF;
+    switch (self->unk5) {
+    case 0:
+        move_with_gravity(ANIMATED_OBJECT(self));
+        animate_object(ANIMATED_OBJECT(self));
+        result = falling_rock_tile_attribute((struct PlayerObj*)self, (((u16)self->x_pos.i.hi) + self->unk68->unk0) - self->unk68->unk2, self->unk68->unk3 + (((u16)self->y_pos.i.hi) + self->unk68->unk1));
+        collided = result != 0;
+        collision_x = (((u16)self->x_pos.i.hi) + self->unk68->unk0) - self->unk68->unk2;
+        collision_y = ((u16)self->y_pos.i.hi) + self->unk68->unk1;
+        if (falling_rock_tile_attribute((struct PlayerObj*)self, collision_x, collision_y) != 0) {
+            collided = 1;
+        }
+        collision_x = ((u16)self->x_pos.i.hi) + self->unk68->unk0;
+        collision_y = self->unk68->unk3 + (((u16)self->y_pos.i.hi) + self->unk68->unk1);
+        if (falling_rock_tile_attribute((struct PlayerObj*)self, collision_x, collision_y) != 0) {
+            collided = 1;
+        }
+        if (collided != 0) {
+            if (!(background_objects[g_Player.bg_offset].unk34 & 0x10)) {
+                start_screen_shake_x(0x10, 6, 2);
+            }
+            self->x_vel.val = 0;
+            self->unk28 = 0;
+            self->y_vel.val = 0;
+            self->unk2C = 0;
+            set_animation(self, 2);
+            self->unk5 = 1;
+            return;
+        }
+        func_8002D9BC(self);
+        if (func_8002BB80((struct MainObj*)self, (struct MainObj*)(&g_Player)) != 0) {
+            set_animation(self, 2);
+            self->unk5 = 1;
+        }
+        result = func_8002DD04((struct MainObj*)self);
+        if (result < 0) {
+            set_animation(self, 2);
+            self->unk5 = 1;
+        } else if (((result == 3) || (result == 0xC)) || (result == 0x22)) {
+            self->unk84.value = 8;
+            set_animation(self, 8);
+            self->unk7C->active = 0;
+            self->unk7C->on_screen = 0;
+            self->unk5 = 2;
+        }
+        break;
+
+    case 1:
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.event != 0) {
+            spawn_debris(5, falling_rock_debris_0, self);
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xA0, self);
+            }
+            self->state = 2;
+        }
+        break;
+
+    case 2:
+        if ((--self->unk84.value) == 0) {
+            spawn_debris(5, falling_rock_debris_1, self);
+            self->state = 2;
+        }
+        break;
+    }
+
+    if ((background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) < self->y_pos.i.hi) {
+        self->state = 2;
+        return;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
 
 void falling_rock_a_despawn(struct ShotObj* self)
 {
@@ -34,7 +124,96 @@ void falling_rock_b_despawn(struct ShotObj* self)
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0FE8);
 
 // falling_rock_c_fall
-INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A12EC);
+void func_800A12EC(struct ShotObj* self)
+{
+    u8 flags;
+    s32 tile;
+    u16 timer;
+    self->unk42 &= 0x7FFF;
+    if (self->unk5 == 0) {
+        move_with_gravity(ANIMATED_OBJECT(self));
+        CollisionRelated((struct PlayerObj*)self);
+        flags = self->unk70;
+        if (flags & 4) {
+            if ((engine_obj.substage != 0) && (((u32)(((u16)self->x_pos.i.hi) - 0x61)) < 0x47F)) {
+                if (self->unk6 != 0) {
+                    self->y_pos.i.hi -= 0x28;
+                    if (self->on_screen != 0) {
+                        func_8001540C(2, 0xA0, self);
+                    }
+                    func_800C842C(7, falling_rock_debris_6, self, 0x9A, falling_rock_d_animations);
+                    self->y_pos.i.hi += 0x28;
+                }
+                apply_tile_effect(self->unk6, (s16)(self->x_pos.i.hi - 0x18), (s16)(self->y_pos.i.hi - 0x58));
+            }
+            if (!(background_objects[g_Player.bg_offset].unk34 & 0x10)) {
+                start_screen_shake_x(0x10, 6, 2);
+            }
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xA0, self);
+            }
+            spawn_debris(5, falling_rock_debris_4, self);
+            self->state = 8;
+            return;
+        }
+        if (flags & 8) {
+            if (!(background_objects[g_Player.bg_offset].unk34 & 0x10)) {
+                start_screen_shake_x(0x10, 6, 2);
+            }
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xA0, self);
+            }
+            spawn_debris(5, falling_rock_debris_4, self);
+            self->state = 8;
+            return;
+        }
+        if (self->y_vel.val == 0) {
+            if (self->unk2 == 2) {
+                self->state = 8;
+                return;
+            }
+            set_animation(self, 3);
+            set_animation(self->unk7C, 2);
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        func_8002D9BC(self);
+        if (func_8002BB80((struct MainObj*)self, (struct MainObj*)(&g_Player)) != 0) {
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xA0, self);
+            }
+            spawn_debris(5, falling_rock_debris_4, self);
+            self->state = 8;
+        }
+        tile = func_8002DD04((struct MainObj*)self);
+        if ((tile < 0) || (engine_obj.character_state.fields.active != 0)) {
+            if (self->on_screen != 0) {
+                func_8001540C(2, 0xA0, self);
+            }
+            self->unk84.effect->ext.effect_33.timer = 0xB4;
+            spawn_debris(5, falling_rock_debris_4, self);
+            self->state = 8;
+        } else if (((tile == 3) || (tile == 0xC)) || (tile == 0x22)) {
+            self->timer = 8;
+            set_animation(self, 9);
+            self->unk7C->active = 0;
+            self->unk7C->on_screen = 0;
+            self->unk5 = 1;
+        }
+    } else {
+        timer = self->timer - 1;
+        self->timer = timer;
+        if ((timer << 0x10) == 0) {
+            self->unk84.effect->ext.effect_33.timer = 0xB4;
+            spawn_debris(5, falling_rock_debris_5, self);
+            self->state = 8;
+        }
+    }
+    if ((background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150) < self->y_pos.i.hi) {
+        self->state = 8;
+        return;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
 
 void falling_rock_c_despawn(struct ShotObj* self)
 {

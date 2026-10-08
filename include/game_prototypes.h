@@ -113,7 +113,7 @@ extern void func_80015C10 (void);
 extern void func_80016074 (void);
 extern void func_800160AC (void);
 extern void func_800160F4 (void);
-extern void func_80016420 (s8 arg0);
+extern void func_80016420 (arg_u8 arg0);
 extern void func_80016448 (u8 arg0);
 extern void func_800164D8 (void);
 extern void func_800168D8 (void);

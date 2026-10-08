@@ -396,7 +396,7 @@ extern u8 D_8013B8E0[];
 void func_800DADA0(struct TileEffectRecord*, u16, u16, u8, u8);
 s32 func_800157AC(u8 type, s32 unused, struct BaseObj* source);
 
-ret_u8 func_8002938C(s32 id)
+ret_u8 func_8002938C(arg_u8 id)
 {
     const u8* ids = s_StageMainIds[(u8)engine_obj.stage][(u8)engine_obj.substage];
     s32 index = 0;
@@ -619,105 +619,7 @@ extern s32 D_80139538;
 extern s32 D_80139540;
 extern s32 D_80139544;
 s32 func_80013614(s32 arg0, s32* arg1);
-void func_80016420(s8 arg0);
-
-void func_8001663C(u8 selection, u8 volume)
-{
-    const u16* entry;
-    u8 index = selection;
-    u8 channel = 0;
-    s32 start;
-    u16 i;
-
-    D_80139568 = 0;
-    switch (selection >> 3) {
-    case 0:
-        D_80139560 = XA_ARCHIVE_BGM1;
-        entry = D_800F19E0;
-        if (selection == 0)
-            D_80139568 = 1;
-        break;
-    case 1:
-        D_80139560 = XA_ARCHIVE_BGM2;
-        entry = D_800F19E4;
-        index &= 7;
-        break;
-    case 2:
-        D_80139560 = XA_ARCHIVE_BGM3;
-        entry = D_800F19E8;
-        index &= 7;
-        break;
-    case 3:
-        D_80139560 = XA_ARCHIVE_BGM4;
-        entry = D_800F19EC;
-        index &= 7;
-        break;
-    case 4:
-        D_80139560 = XA_ARCHIVE_BGM5;
-        entry = D_800F19F0;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 5:
-        D_80139560 = XA_ARCHIVE_VOICE1;
-        entry = D_800F19F4;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 6:
-        D_80139560 = XA_ARCHIVE_VOICE2;
-        entry = D_800F19F8;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 7:
-        D_80139560 = XA_ARCHIVE_VOICE3;
-        entry = D_800F19FC;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 8:
-        D_80139560 = XA_ARCHIVE_VOICE4;
-        entry = D_800F1A00;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 9:
-        D_80139560 = XA_ARCHIVE_VOICE5;
-        entry = D_800F1A04;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    case 10:
-        D_80139560 = XA_ARCHIVE_BOSS_INTRO;
-        entry = D_800F1A08;
-        index &= 7;
-        D_80139568 = 1;
-        break;
-    default:
-        return;
-    }
-
-    for (i = 0; i < index; i++) {
-        if (*entry & 0x8000) {
-            channel++;
-            entry++;
-        }
-        entry++;
-    }
-
-    ((u8*)D_80175EE8)[0] = 1;
-    ((u8*)D_80175EE8)[1] = channel;
-    start = func_80013614(D_80139560, &D_80139538) + channel;
-    D_80139540 = start + ((entry[0] & 0x7FFF) * 8);
-    D_80139544 = start + ((entry[1] & 0x7FFF) * 8);
-    CdIntToPos(D_80139540, (CdlLOC*)&D_80139514);
-    SsSetSerialAttr(0, 0, 1);
-    func_80016420(volume);
-    D_80141BD4 = 2;
-    D_80173C84 = 1;
-    D_80139530 = 7;
-}
+void func_80016420(arg_u8 arg0);
 
 void func_8002217C(u16 message, u8 portrait, u8 delay_only)
 {
@@ -2636,80 +2538,6 @@ s32 func_800B8490(struct EffectObj* arg0)
     if ((u16)(arg0->x_pos.i.hi - background_objects[0].x_pos.i.hi + 0x40) >= 0x1C0)
         return 1;
     return (u16)(arg0->y_pos.i.hi - background_objects[0].y_pos.i.hi + 0x40) >= 0x170;
-}
-
-void func_800B8114(struct EffectObj* arg0)
-{
-    struct Effect12Ext* ext = &arg0->ext.effect_12;
-    struct MainObj* child;
-    s32 distance;
-    u8 index;
-    s16 i;
-
-    if (func_800B8490(arg0) != 0) {
-        arg0->state = 2;
-        return;
-    }
-
-    for (i = 0; i < ext->child_count; i++) {
-        child = ext->children[i];
-        if (child != NULL && child->active == 0)
-            ext->children[i] = NULL;
-    }
-
-    switch (arg0->unk5) {
-    case 0:
-        distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
-        if (distance < 0)
-            distance = -distance;
-        if ((s16)distance < 0x80)
-            arg0->unk5 = 1;
-        break;
-    case 1:
-        for (i = 0; i < ext->child_count; i++) {
-            if (ext->children[i] != NULL)
-                continue;
-            if (ext->cooldown != 0) {
-                ext->cooldown--;
-                continue;
-            }
-            child = find_free_main_obj();
-            if (child == NULL)
-                continue;
-            ext->children[i] = child;
-            child->active = 0x41;
-            child->id = ext->child_id;
-            child->unk2 = ext->child_subtype;
-            child->x_pos.val = arg0->x_pos.val;
-            child->y_pos.val = arg0->y_pos.val;
-            ext->cooldown = 0x20;
-            index = func_8002938C(child->id);
-            child->unk40 = D_801406A8[index] >> 7;
-            index = func_8002938C(child->id);
-            child->unk42 = SOME_COORDINATE_CONVERSION(index);
-            index = func_8002938C(child->id);
-            child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[index];
-            ext->spawned++;
-            if (ext->spawned >= ext->child_count)
-                arg0->unk5 = 2;
-        }
-        break;
-    case 2:
-        child = NULL;
-        for (i = 0; i < ext->child_count; i++)
-            child = ext->children[i];
-        if (child == NULL) {
-            arg0->unk5 = 3;
-            ext->spawned = 0;
-            ext->cooldown = 0;
-            ext->timer = 0x60;
-        }
-        break;
-    case 3:
-        if (--ext->timer == 0)
-            arg0->unk5 = 0;
-        break;
-    }
 }
 
 struct Item05MotionConfig {
@@ -5616,98 +5444,6 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
         return a1 < box1->unk3;
     }
     return a1 < box0->unk3;
-}
-
-ret_u8 func_8002D9BC(void* shot)
-{
-    struct ShotObj* arg0 = (struct ShotObj*)shot;
-    s32 result;
-    s8 health;
-    s8 damage;
-    u32 amount;
-    u8 charge;
-
-    if (g_Player.spike_immune != 0) {
-        return 0;
-    }
-
-    if (g_Player.ride_state < 0) {
-        if (qux_object.unk5C & 0x80) {
-            return 0;
-        }
-        if (qux_object.unk85 != 0) {
-            return 0;
-        }
-        if (!func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&qux_object))) {
-            return 0;
-        }
-        qux_object.unk63 = 0;
-        qux_object.unk86 = 0;
-        qux_object.unk63 = arg0->unk60 < 5 ? 1 : 2;
-        health = (u8)qux_object.unk5C - (u8)arg0->unk60;
-        qux_object.unk5C = health;
-        qux_object.unk5C = (health << 24) > 0 ? (s8)(health | 0x80) : (s8)-0x80;
-        qux_object.unk84 = qux_object.x_pos.i.hi < arg0->x_pos.i.hi ? 0x40 : 0;
-        return 1;
-    }
-
-    if (g_Player.hp & 0x80) {
-        return 0;
-    }
-    if (g_Player.hurt_phase != 0) {
-        return 0;
-    }
-    if (!func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&g_Player))) {
-        return 0;
-    }
-
-    g_Player.stun_timer = 0;
-    g_Player.hurt_type = (u8)arg0->unk62;
-    switch (arg0->unk62) {
-    case 0:
-        if (g_Player.unk2 == 0 && ((u8)g_Player.armor_parts & 2)) {
-            g_Player.hurt_type = 4;
-        } else {
-            g_Player.hurt_type = arg0->unk60 < 5 ? 1 : 2;
-        }
-        break;
-    case 3:
-        g_Player.stun_timer = 1;
-        break;
-    }
-
-    damage = arg0->unk60;
-    if (damage != 0) {
-        if ((u8)g_Player.armor_parts & 2) {
-            amount = damage < 3 ? 1 : (u32)(((arg0->unk60 / 3) << 24) >> 23);
-            g_Player.hp = (u8)g_Player.hp - amount;
-        } else {
-            g_Player.hp = (u8)g_Player.hp - (u8)damage;
-        }
-    }
-    g_Player.hp = g_Player.hp > 0 ? (s8)(g_Player.hp | 0x80) : (s8)-0x80;
-
-    if (arg0->unk62 != 3) {
-        g_Player.hit_facing = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0x40 : 0;
-    }
-
-    result = 1;
-    if (g_Player.unk2 == 0) {
-        if (!((u8)g_Player.armor_parts & 2)) {
-            return 1;
-        }
-    } else if (!((u8)g_Player.boss_flags & 0x20)) {
-        return 1;
-    }
-
-    if (g_Player.weapon_energy[0] != 0x30) {
-        charge = (s8)g_Player.weapon_energy[0] + 6;
-        g_Player.weapon_energy[0] = charge;
-        if ((s8)charge >= 0x31) {
-            g_Player.weapon_energy[0] = 0x30;
-        }
-    }
-    return result;
 }
 
 void func_80092684(struct WeaponObj* arg0)
@@ -9192,71 +8928,6 @@ void func_800A03F4(struct ShotObj* arg0)
     arg0->unk5 = 0;
 }
 
-void func_800A068C(struct ShotObj* arg0)
-{
-    s32 hit;
-    s32 collision;
-
-    arg0->unk42 &= 0x7FFF;
-    switch (arg0->unk5) {
-    case 0:
-        move_with_gravity(ANIMATED_OBJECT(arg0));
-        animate_object(ANIMATED_OBJECT(arg0));
-        hit = shot_33_touches_floor(arg0, -arg0->unk68->unk2, arg0->unk68->unk3);
-        if (shot_33_touches_floor(arg0, -arg0->unk68->unk2, 0))
-            hit = 1;
-        if (shot_33_touches_floor(arg0, 0, arg0->unk68->unk3))
-            hit = 1;
-        if (hit) {
-            shot_33_quake();
-            arg0->x_vel.val = 0;
-            arg0->unk28 = 0;
-            arg0->y_vel.val = 0;
-            arg0->unk2C = 0;
-            set_animation(arg0, 2);
-            arg0->unk5 = 1;
-            return;
-        }
-        func_8002D9BC(arg0);
-        if (func_8002BB80((struct MainObj*)arg0, (struct MainObj*)&g_Player) != 0) {
-            set_animation(arg0, 2);
-            arg0->unk5 = 1;
-        }
-        collision = func_8002DD04((struct MainObj*)arg0);
-        if (collision < 0) {
-            set_animation(arg0, 2);
-            arg0->unk5 = 1;
-        } else if (collision == 3 || collision == 0xC || collision == 0x22) {
-            arg0->unk84.value = 8;
-            set_animation(arg0, 8);
-            arg0->unk7C->active = 0;
-            arg0->unk7C->on_screen = 0;
-            arg0->unk5 = 2;
-        }
-        break;
-    case 1:
-        animate_object(ANIMATED_OBJECT(arg0));
-        if (arg0->animation_step.fields.event == 0)
-            break;
-        spawn_debris(5, falling_rock_debris_0, arg0);
-        if (arg0->on_screen != 0)
-            func_8001540C(2, 0xA0, arg0);
-        arg0->state = 2;
-        break;
-    case 2:
-        if (--arg0->unk84.value != 0)
-            break;
-        spawn_debris(5, falling_rock_debris_1, arg0);
-        arg0->state = 2;
-        break;
-    }
-    if (shot_33_below_screen(arg0)) {
-        arg0->state = 2;
-        return;
-    }
-    update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
-}
-
 void func_800A0A38(struct ShotObj* arg0)
 {
     arg0->on_screen = 1;
@@ -9386,76 +9057,6 @@ static void shot_33_release(struct ShotObj* arg0, u8* effect)
     arg0->unk84.effect->ext.effect_33.timer = 0xB4;
     spawn_debris(5, effect, arg0);
     arg0->state = 8;
-}
-
-void func_800A12EC(struct ShotObj* arg0)
-{
-    s32 collision;
-
-    arg0->unk42 &= 0x7FFF;
-    if (arg0->unk5 != 0) {
-        if (--arg0->timer == 0)
-            shot_33_release(arg0, falling_rock_debris_5);
-    } else {
-        move_with_gravity(ANIMATED_OBJECT(arg0));
-        CollisionRelated((struct PlayerObj*)arg0);
-        if (arg0->unk70 & 4) {
-            if (engine_obj.substage != 0 && (u16)(arg0->x_pos.i.hi - 0x61) < 0x47F) {
-                if (arg0->unk6 != 0) {
-                    arg0->y_pos.i.hi -= 0x28;
-                    if (arg0->on_screen != 0)
-                        func_8001540C(2, 0xA0, arg0);
-                    func_800C842C(7, falling_rock_debris_6, arg0, 0x9A, falling_rock_d_animations);
-                    arg0->y_pos.i.hi += 0x28;
-                }
-                apply_tile_effect(arg0->unk6, (s16)(arg0->x_pos.i.hi - 0x18),
-                    (s16)(arg0->y_pos.i.hi - 0x58));
-            }
-            shot_33_quake();
-            shot_33_hit_sound(arg0);
-            spawn_debris(5, falling_rock_debris_4, arg0);
-            arg0->state = 8;
-            return;
-        }
-        if (arg0->unk70 & 8) {
-            shot_33_quake();
-            shot_33_hit_sound(arg0);
-            spawn_debris(5, falling_rock_debris_4, arg0);
-            arg0->state = 8;
-            return;
-        }
-        if (arg0->y_vel.val == 0) {
-            if (arg0->unk2 == 2) {
-                arg0->state = 8;
-                return;
-            }
-            set_animation(arg0, 3);
-            set_animation(arg0->unk7C, 2);
-        }
-        animate_object(ANIMATED_OBJECT(arg0));
-        func_8002D9BC(arg0);
-        if (func_8002BB80((struct MainObj*)arg0, (struct MainObj*)&g_Player) != 0) {
-            shot_33_hit_sound(arg0);
-            spawn_debris(5, falling_rock_debris_4, arg0);
-            arg0->state = 8;
-        }
-        collision = func_8002DD04((struct MainObj*)arg0);
-        if (collision < 0 || engine_obj.character_state.bytes[0] != 0) {
-            shot_33_hit_sound(arg0);
-            shot_33_release(arg0, falling_rock_debris_4);
-        } else if (collision == 3 || collision == 0xC || collision == 0x22) {
-            arg0->timer = 8;
-            set_animation(arg0, 9);
-            arg0->unk7C->active = 0;
-            arg0->unk7C->on_screen = 0;
-            arg0->unk5 = 1;
-        }
-    }
-    if (shot_33_below_screen(arg0)) {
-        arg0->state = 8;
-        return;
-    }
-    update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
 }
 
 void func_800C842C(s32 count, u8* variants, void* owner, s32 id, void* animation_table)
@@ -13680,68 +13281,6 @@ extern u8 D_800F48EC[8];
 extern u8 D_8013B818[0x10];
 void func_800170B0(void);
 
-void func_8002FD70(struct BarObj* arg0)
-{
-    u8* bytes = BAR_BYTES(arg0);
-    u32 i;
-
-    if (main_bss_state.transition.active != 0) {
-        func_80023D68();
-        return;
-    }
-    func_800170B0();
-    func_800129A4(8);
-    arg0->unk5 = 2;
-    arg0->unk14 = 0;
-    if (g_Player.unk2 == 0) {
-        bytes[0x16] = 1;
-        bytes[0x17] = (g_Player.armor_parts & 2) ? 1 : 0;
-        for (i = 2; i < 10; i++)
-            bytes[0x16 + i] = ((u8)g_Player.boss_flags >> (i - 2)) & 1;
-    } else {
-        for (i = 0; i < 8; i++)
-            bytes[0x16 + D_800F48EC[i]] = ((u8)g_Player.boss_flags >> i) & 1;
-        bytes[0x1F] = 0;
-        bytes[0x20] = 0;
-    }
-    if (engine_obj.unk5A & 0x3000) {
-        if (engine_obj.unk5A & 0x1000) {
-            bytes[0x20] = 1;
-            engine_obj.unk5C[0] |= 0x80;
-        }
-        if (engine_obj.unk5A & 0x2000) {
-            bytes[0x21] = 1;
-            engine_obj.unk5C[1] |= 0x80;
-        }
-    } else {
-        bytes[0x20] = 0;
-        bytes[0x21] = 0;
-    }
-    bytes[0x22] = (engine_obj.unk5A & 0x4000) ? 1 : 0;
-    if (engine_obj.stage != 0)
-        bytes[0x23] = ((u8)engine_obj.palette_flags >> (engine_obj.stage - 1)) & 1;
-    bytes[0x24] = 1;
-    if (g_Player.unk2 != 0 || (engine_obj.stage == 5 && engine_obj.checkpoint == 0) || g_Player.ride_state < 0) {
-        if (g_Player.unk2 == 0)
-            arg0->unk2 = 1;
-        for (i = 10; i < 15; i++) {
-            if (bytes[0x16 + i] != 0) {
-                arg0->unk14 = i;
-                break;
-            }
-        }
-    } else {
-        arg0->unk2 = 0;
-        if (g_Player.weapon != 0)
-            arg0->unk14 = g_Player.weapon + 1;
-    }
-    bytes[0x25] = (engine_obj.unk5A & 0x8000) ? 1 : 0;
-    arg0->unk28 = 0;
-    arg0->unk2C = 0;
-    arg0->unk30 = 0;
-    D_8013B818[0] = g_Player.weapon;
-}
-
 void func_800304E4(struct BarObj* arg0)
 {
     u8* bytes = BAR_BYTES(arg0);
@@ -14145,7 +13684,7 @@ void func_800175AC(u8 index)
         frame = (const u16*)(archive + (layout->tile + engine_obj.unk44) * 4);
     else
         frame = (const u16*)(archive + layout->tile * 4);
-    if (index == 0x26 && bar_object.unk25 != 0)
+    if (index == 0x26 && bar_object.options.fields.unk25 != 0)
         frame = (const u16*)(archive + layout->tile * 4 + 0x28);
     count = frame[0];
     pieces = archive + frame[1] * 4;
