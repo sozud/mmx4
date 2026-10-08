@@ -611,7 +611,15 @@ D_800F1A0C = 0x800F1B9C; // size:0xA0 allow_addend:true
 
 D_800F1660 = 0x800F17F0; // size:0x200 allow_addend:true
 D_800F3124 = 0x800F3278; // size:0x8 allow_addend:true
-D_800EE480 = 0x800EE65C; // size:0x84 allow_addend:true
+D_800EE480 = 0x800EE65C; // size:0x8 allow_addend:true
+stage_common_archives = 0x800EE664; // size:0x20 allow_addend:true
+stage_common_stage13_variants = 0x800EE684; // size:0x4 allow_addend:true
+stage_common_stage15_variants = 0x800EE688; // size:0x4 allow_addend:true
+stage_common_stage11_variants = 0x800EE68C; // size:0x4 allow_addend:true
+stage13_common_substage_archives = 0x800EE690; // size:0x8 allow_addend:true
+stage_x_archives = 0x800EE698; // size:0x20 allow_addend:true
+stage_zero_archives = 0x800EE6B8; // size:0x20 allow_addend:true
+stage13_character_archives = 0x800EE6D8; // size:0x8 allow_addend:true
 x_ready_text_flags = 0x800F2DFC; // size:0x5C allow_addend:true
 title_object_inits = 0x8010E858; // size:0x84 allow_addend:true
 search_light_shapes = 0x8010F710; // size:0x6C allow_addend:true

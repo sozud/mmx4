@@ -259,14 +259,6 @@ struct FadeState {
     s16 unk0, unk2;
     u16 unk4, alignment_padding;
 };
-struct ArchiveSelectionData {
-    u8 prefix[8];
-#ifdef MMX4_WIN32
-    u8 archive_ids[128];
-#else
-    u8 archive_ids[124];
-#endif
-};
 union CdSectorBuffer {
     u8 sectors[16][0x800];
     u32 words[0x2000];
@@ -3415,7 +3407,7 @@ union EngineCharacterState {
         u8 reserved[6];
     }
 #ifndef MMX4_WIN32
-    __attribute__((packed))
+    __attribute((packed))
 #endif
     fields;
 };
@@ -5116,7 +5108,7 @@ enum SelectedPlayer {
     CHARACTER_ZERO
 };
 
-extern struct ArchiveSelectionData D_800EE480;
+extern u8 D_800EE480[8];
 extern s32 loaded_vab_address;
 extern s32 saved_vab_address;
 extern s32 movie_slice_offset;
