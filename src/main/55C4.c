@@ -164,7 +164,6 @@ void func_80014514(void);
 #else
 #define JP_VALUE(us, jp) us
 #endif
-extern struct ArchiveSelectionData D_800EE480;
 extern struct Prim D_800EE504[9];
 #undef JP_VALUE
 extern const D_80010014_t D_80010014;
@@ -1453,9 +1452,67 @@ void func_80017F2C(void)
     }
 }
 
+extern s32 D_80139590;
+extern s32 D_80139598, D_8013959C, D_801395A0, D_801395A4;
+void Set24BitDisp(s32 w, s32 h);
+s32 func_80018B88(s32 arg0, s32 arg1);
+
 // general movie playing code
 #ifndef SKIP_MDEC
-INCLUDE_ASM("main/nonmatchings/55C4", func_80018000);
+void func_80018000(arg_u8 movie)
+{
+    RECT rect;
+    s32 status;
+    s32 display_y;
+    s32 finished;
+
+    D_80139598 = (s32)D_80173C80;
+    D_8013959C = (s32)(D_80173C80 + 0x4000);
+    D_801395A0 = D_8013959C + 0xE000;
+    D_801395A4 = D_801395A0 + 0xE000;
+    Set24BitDisp(0x140, 0xF0);
+    func_80018FD0(0x80);
+    func_80019058(D_80171EA9);
+    movie = (u8)movie;
+    ((u8*)D_80175EE8)[1] = 1;
+    status = func_80018AD0(
+        D_800F1D04[movie].file_id, 1, D_800F1D04[movie].arg2,
+        D_801395A4, D_800F1D04[movie].arg8,
+        D_8013959C, D_801395A0, D_80139598, 1, 1);
+    D_80139590 = 0;
+    if (status == 0) {
+        do {
+            VSync(0);
+            PutDispEnv(&draw_infos[D_80139590].dispenv);
+            D_80139590 ^= 1;
+#ifdef VERSION_EU
+            display_y = D_80139590 != 0 ? 0xF0 : 0;
+            finished = func_80018B88(0, display_y);
+#else
+            display_y = -(D_80139590 != 0);
+            finished = func_80018B88(0, display_y & 0xF0);
+#endif
+            func_80018EEC();
+            func_80012328();
+            if (controller_input.pressed & D_800F1D04[movie].skip_button) {
+                finished = 1;
+            }
+        } while (finished == 0);
+    }
+    SetDispMask(0);
+    rect.x = 0;
+    rect.y = 0;
+    rect.w = 0x1E0;
+    rect.h = 0x1E0;
+    ClearImage(&rect, 0U, 0U, 0U);
+    DrawSync(0);
+    func_80018E50();
+    draw_infos[0].dispenv = old_dispenv[0];
+    draw_infos[1].dispenv = old_dispenv[1];
+    D_80139590 ^= 1;
+    PutDispEnv(&draw_infos[D_80139590].dispenv);
+    DrawSync(0);
+}
 #else
 void func_80018000(arg_u8 temp)
 {
@@ -1509,9 +1566,9 @@ void Set24BitDisp(s32 w, s32 h)
 INCLUDE_ASM("main/nonmatchings/55C4", func_80018788);
 extern s32 func_80013614(s32, s32*);
 
-extern void func_80018788(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+extern s32 func_80018788(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
 
-void func_80018AD0(
+s32 func_80018AD0(
     s32 arg0,
     s32 arg1,
     s32 arg2,
@@ -1525,7 +1582,7 @@ void func_80018AD0(
 {
     s32 local;
 
-    func_80018788(
+    return func_80018788(
         func_80013614(arg0, &local),
         arg1,
         arg2,

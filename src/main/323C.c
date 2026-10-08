@@ -230,11 +230,11 @@ void func_80012F44(void)
         static const u8 pointer_high_bytes[2] = { 0x01, 0x80 };
         u8 checkpoint = engine_obj.checkpoint;
         func_80013AD8(checkpoint < 2 ? pointer_high_bytes[checkpoint]
-                                     : ((u8*)&D_800EE480)[checkpoint - 2],
+                                     : D_800EE480[checkpoint - 2],
             4, D_80141F38);
     }
 #else
-    func_80013AD8(D_800EE480.prefix[engine_obj.checkpoint - 2],
+    func_80013AD8(D_800EE480[engine_obj.checkpoint - 2],
         4, D_80141F38);
 #endif
     func_80014C70();
@@ -252,7 +252,71 @@ void func_80012F44(void)
     D_80171EA8 = (u8)engine_obj.checkpoint;
 }
 
-INCLUDE_ASM("main/nonmatchings/323C", func_80013014);
+extern u8 D_80110064[64];
+
+struct CharacterArchiveVariants {
+    u8 archive_ids[2];
+    u8 unused[2];
+};
+
+extern u8 stage_common_archives[16][2];
+extern struct CharacterArchiveVariants stage_common_stage13_variants;
+extern struct CharacterArchiveVariants stage_common_stage15_variants;
+extern struct CharacterArchiveVariants stage_common_stage11_variants;
+extern u8 stage13_common_substage_archives[8];
+extern u8 stage_x_archives[16][2];
+extern u8 stage_zero_archives[16][2];
+extern u8 stage13_character_archives[8];
+
+void func_80013014(void)
+{
+    u16* source;
+    u16* destination;
+    s32 count;
+    struct EngineObj* engine = &engine_obj;
+
+    stage_common_archives[15][0] = stage_common_stage15_variants.archive_ids[engine_obj.cur_character];
+    stage_common_archives[11][0] = stage_common_stage11_variants.archive_ids[engine_obj.cur_character];
+    if ((engine_obj.stage == 0xD) && (engine_obj.substage != 0)) {
+        stage_common_archives[13][1] = stage13_common_substage_archives[engine_obj.unk40 - 1];
+        stage_x_archives[13][1] = stage13_character_archives[engine_obj.unk40 - 1];
+        stage_zero_archives[13][1] = stage13_character_archives[engine_obj.unk40 - 1];
+    } else {
+        stage_common_archives[13][0] = stage_common_stage13_variants.archive_ids[engine->cur_character];
+    }
+    if (engine->stage == 0xE) {
+        func_80013AD8(stage_common_archives[14][engine->substage], 0, 0);
+    } else {
+        func_80013AD8(stage_common_archives[engine->stage][engine->substage], 3, 0);
+    }
+    func_80014A90(engine->stage < 0xD, 0);
+    if (engine->cur_character == 0) {
+        func_80013AD8(stage_x_archives[engine->stage][engine->substage], 1, 0);
+    } else {
+        func_80013AD8(stage_zero_archives[engine->stage][engine->substage], 1, 0);
+    }
+
+    func_80014A90(engine->stage < 0xD, 1);
+    D_801441B4 = (u16*)D_8015D9C8;
+    destination = D_801441B4;
+    source = SP_BG_TILE_PIXELS;
+#ifdef MMX4_PC
+    count = ((u8*)SP_BG_TILE_ATTRS - (u8*)source) / sizeof(*source);
+#else
+    count = ((u32)SP_BG_TILE_ATTRS - (u32)source) / sizeof(*source);
+#endif
+    while (count > 0) {
+        *destination++ = *source++;
+        count -= 1;
+    }
+    D_8015D9C8 = (u8*)destination;
+    count = (engine->stage * 4) + (engine->substage * 2);
+    layout_width = D_80110064[count + 0];
+    layout_height = D_80110064[count + 1];
+    layout_size = layout_width * layout_height;
+    func_80016074();
+    need_palette_load |= 1;
+}
 
 extern u8 D_801374BC[0x800];
 
@@ -299,214 +363,124 @@ void func_800142BC(void);
 
 void func_80014514(void);
 
-#ifdef VERSION_JP
-#define JP_VALUE(us, jp) jp
+#if defined(VERSION_JP)
+#define REGION_VALUE(us, jp, eu) jp
+#elif defined(VERSION_EU)
+#define REGION_VALUE(us, jp, eu) eu
 #else
-#define JP_VALUE(us, jp) us
+#define REGION_VALUE(us, jp, eu) us
 #endif
 
-struct ArchiveSelectionData D_800EE480 = {
-#ifdef VERSION_EU
-    { 0x46, 0x48, 0x45, 0x47,
-        0x49, 0x43, 0x4A, 0x44 },
-    {
-        0x55,
-        0x56,
-        0x57,
-        0x58,
-        0x59,
-        0x5A,
-        0x5B,
-        0x5C,
-        0x5D,
-        0x5E,
-        0x5F,
-        0x60,
-        0x61,
-        0x62,
-        0x63,
-        0x64,
-        0x65,
-        0x66,
-        0x67,
-        0x00,
-        0x68,
-        0x00,
-        0x00,
-        0x6A,
-        0x6D,
-        0x6E,
-        0x70,
-        0x00,
-        0x72,
-        0x73,
-        0x75,
-        0x74,
-        0x70,
-        0x71,
-        0x00,
-        0x00,
-        0x75,
-        0x76,
-        0x00,
-        0x00,
-        0x6B,
-        0x6C,
-        0x00,
-        0x00,
-#ifdef MMX4_WIN32
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-#endif
-        0x83,
-        0x84,
-        0x85,
-        0x86,
-        0x87,
-        0x88,
-        0x89,
-        0x8A,
-#else
-    { JP_VALUE(0x45, 0x46), JP_VALUE(0x47, 0x48), JP_VALUE(0x44, 0x45), JP_VALUE(0x46, 0x47),
-        JP_VALUE(0x48, 0x49), JP_VALUE(0x42, 0x43), JP_VALUE(0x49, 0x4A), JP_VALUE(0x43, 0x44) },
-    {
-        0x54,
-        0x55,
-        0x56,
-        0x57,
-        0x58,
-        0x59,
-        0x5A,
-        0x5B,
-        0x5C,
-        0x5D,
-        0x5E,
-        0x5F,
-        0x60,
-        0x61,
-        0x62,
-        0x63,
-        0x64,
-        0x65,
-        0x66,
-        0x00,
-        0x67,
-        0x00,
-        0x00,
-        JP_VALUE(0x69, 0x68),
-        JP_VALUE(0x6C, 0x6B),
-        JP_VALUE(0x6D, 0x6C),
-        JP_VALUE(0x6F, 0x6D),
-        JP_VALUE(0x00, 0x81),
-        JP_VALUE(0x71, 0x6F),
-        JP_VALUE(0x72, 0x70),
-        JP_VALUE(0x74, 0x73),
-        JP_VALUE(0x73, 0x72),
-        JP_VALUE(0x6F, 0x6D),
-        JP_VALUE(0x70, 0x6E),
-        0x00,
-        0x00,
-        JP_VALUE(0x74, 0x73),
-        JP_VALUE(0x75, 0x74),
-        0x00,
-        0x00,
-        JP_VALUE(0x6A, 0x69),
-        JP_VALUE(0x6B, 0x6A),
-        0x00,
-        0x00,
-#ifdef MMX4_WIN32
-        0x00,
-        0x00,
-        0x00,
-        0x00,
-#endif
-        JP_VALUE(0x82, 0x81),
-        JP_VALUE(0x83, 0x82),
-        JP_VALUE(0x84, 0x83),
-        JP_VALUE(0x85, 0x84),
-        JP_VALUE(0x86, 0x85),
-        JP_VALUE(0x87, 0x86),
-        JP_VALUE(0x88, 0x87),
-        JP_VALUE(0x89, 0x88),
-#endif
-        0x01,
-        0x03,
-        0x05,
-        0x07,
-        0x09,
-        0x0B,
-        0x0D,
-        0x0F,
-        0x11,
-        0x13,
-        0x15,
-        0x17,
-        0x19,
-        0x1B,
-        0x1D,
-        0x1F,
-        0x21,
-        0x23,
-        0x25,
-        0x00,
-        0x27,
-        0x00,
-        0x29,
-        0x2B,
-        0x2D,
-        0x2F,
-        0x31,
-        JP_VALUE(0x00, 0x38),
-        0x33,
-        0x34,
-        JP_VALUE(0x35, 0x36),
-        JP_VALUE(0x36, 0x37),
-        0x02,
-        0x04,
-        0x06,
-        0x08,
-        0x0A,
-        0x0C,
-        0x0E,
-        0x10,
-        0x12,
-        0x14,
-        0x16,
-        0x18,
-        0x1A,
-        0x1C,
-        0x1E,
-        0x20,
-        0x22,
-        0x24,
-        0x26,
-        0x00,
-        0x28,
-        0x00,
-        0x2A,
-        0x2C,
-        0x2E,
-        0x30,
-        0x32,
-        JP_VALUE(0x00, 0x38),
-        0x33,
-        0x34,
-        JP_VALUE(0x35, 0x36),
-        JP_VALUE(0x36, 0x37),
-        JP_VALUE(0x37, 0x38),
-        JP_VALUE(0x38, 0x39),
-        JP_VALUE(0x39, 0x3A),
-        JP_VALUE(0x3A, 0x3B),
-        JP_VALUE(0x3B, 0x3C),
-        JP_VALUE(0x3C, 0x3D),
-        JP_VALUE(0x3D, 0x3E),
-        JP_VALUE(0x3E, 0x3F),
-    },
+u8 D_800EE480[8] = {
+    REGION_VALUE(0x45, 0x46, 0x46),
+    REGION_VALUE(0x47, 0x48, 0x48),
+    REGION_VALUE(0x44, 0x45, 0x45),
+    REGION_VALUE(0x46, 0x47, 0x47),
+    REGION_VALUE(0x48, 0x49, 0x49),
+    REGION_VALUE(0x42, 0x43, 0x43),
+    REGION_VALUE(0x49, 0x4A, 0x4A),
+    REGION_VALUE(0x43, 0x44, 0x44),
 };
 
-#undef JP_VALUE
+u8 stage_common_archives[16][2] = {
+    { REGION_VALUE(0x54, 0x54, 0x55), REGION_VALUE(0x55, 0x55, 0x56) },
+    { REGION_VALUE(0x56, 0x56, 0x57), REGION_VALUE(0x57, 0x57, 0x58) },
+    { REGION_VALUE(0x58, 0x58, 0x59), REGION_VALUE(0x59, 0x59, 0x5A) },
+    { REGION_VALUE(0x5A, 0x5A, 0x5B), REGION_VALUE(0x5B, 0x5B, 0x5C) },
+    { REGION_VALUE(0x5C, 0x5C, 0x5D), REGION_VALUE(0x5D, 0x5D, 0x5E) },
+    { REGION_VALUE(0x5E, 0x5E, 0x5F), REGION_VALUE(0x5F, 0x5F, 0x60) },
+    { REGION_VALUE(0x60, 0x60, 0x61), REGION_VALUE(0x61, 0x61, 0x62) },
+    { REGION_VALUE(0x62, 0x62, 0x63), REGION_VALUE(0x63, 0x63, 0x64) },
+    { REGION_VALUE(0x64, 0x64, 0x65), REGION_VALUE(0x65, 0x65, 0x66) },
+    { REGION_VALUE(0x66, 0x66, 0x67), 0x00 },
+    { REGION_VALUE(0x67, 0x67, 0x68), 0x00 },
+    { 0x00, REGION_VALUE(0x69, 0x68, 0x6A) },
+    { REGION_VALUE(0x6C, 0x6B, 0x6D), REGION_VALUE(0x6D, 0x6C, 0x6E) },
+    { REGION_VALUE(0x6F, 0x6D, 0x70), REGION_VALUE(0x00, 0x81, 0x00) },
+    { REGION_VALUE(0x71, 0x6F, 0x72), REGION_VALUE(0x72, 0x70, 0x73) },
+    { REGION_VALUE(0x74, 0x73, 0x75), REGION_VALUE(0x73, 0x72, 0x74) },
+};
+
+struct CharacterArchiveVariants stage_common_stage13_variants = {
+    { REGION_VALUE(0x6F, 0x6D, 0x70), REGION_VALUE(0x70, 0x6E, 0x71) },
+    { 0x00, 0x00 },
+};
+
+struct CharacterArchiveVariants stage_common_stage15_variants = {
+    { REGION_VALUE(0x74, 0x73, 0x75), REGION_VALUE(0x75, 0x74, 0x76) },
+    { 0x00, 0x00 },
+};
+
+struct CharacterArchiveVariants stage_common_stage11_variants = {
+    { REGION_VALUE(0x6A, 0x69, 0x6B), REGION_VALUE(0x6B, 0x6A, 0x6C) },
+    { 0x00, 0x00 },
+};
+
+#ifdef MMX4_WIN32
+u8 stage_archive_padding[4] = { 0, 0, 0, 0 };
+#endif
+
+u8 stage13_common_substage_archives[8] = {
+    REGION_VALUE(0x82, 0x81, 0x83),
+    REGION_VALUE(0x83, 0x82, 0x84),
+    REGION_VALUE(0x84, 0x83, 0x85),
+    REGION_VALUE(0x85, 0x84, 0x86),
+    REGION_VALUE(0x86, 0x85, 0x87),
+    REGION_VALUE(0x87, 0x86, 0x88),
+    REGION_VALUE(0x88, 0x87, 0x89),
+    REGION_VALUE(0x89, 0x88, 0x8A),
+};
+
+u8 stage_x_archives[16][2] = {
+    { 0x01, 0x03 },
+    { 0x05, 0x07 },
+    { 0x09, 0x0B },
+    { 0x0D, 0x0F },
+    { 0x11, 0x13 },
+    { 0x15, 0x17 },
+    { 0x19, 0x1B },
+    { 0x1D, 0x1F },
+    { 0x21, 0x23 },
+    { 0x25, 0x00 },
+    { 0x27, 0x00 },
+    { 0x29, 0x2B },
+    { 0x2D, 0x2F },
+    { 0x31, REGION_VALUE(0x00, 0x38, 0x00) },
+    { 0x33, 0x34 },
+    { REGION_VALUE(0x35, 0x36, 0x35), REGION_VALUE(0x36, 0x37, 0x36) },
+};
+
+u8 stage_zero_archives[16][2] = {
+    { 0x02, 0x04 },
+    { 0x06, 0x08 },
+    { 0x0A, 0x0C },
+    { 0x0E, 0x10 },
+    { 0x12, 0x14 },
+    { 0x16, 0x18 },
+    { 0x1A, 0x1C },
+    { 0x1E, 0x20 },
+    { 0x22, 0x24 },
+    { 0x26, 0x00 },
+    { 0x28, 0x00 },
+    { 0x2A, 0x2C },
+    { 0x2E, 0x30 },
+    { 0x32, REGION_VALUE(0x00, 0x38, 0x00) },
+    { 0x33, 0x34 },
+    { REGION_VALUE(0x35, 0x36, 0x35), REGION_VALUE(0x36, 0x37, 0x36) },
+};
+
+u8 stage13_character_archives[8] = {
+    REGION_VALUE(0x37, 0x38, 0x37),
+    REGION_VALUE(0x38, 0x39, 0x38),
+    REGION_VALUE(0x39, 0x3A, 0x39),
+    REGION_VALUE(0x3A, 0x3B, 0x3A),
+    REGION_VALUE(0x3B, 0x3C, 0x3B),
+    REGION_VALUE(0x3C, 0x3D, 0x3C),
+    REGION_VALUE(0x3D, 0x3E, 0x3D),
+    REGION_VALUE(0x3E, 0x3F, 0x3E),
+};
+
+#undef REGION_VALUE
 
 extern s32 D_80137CCC;
 

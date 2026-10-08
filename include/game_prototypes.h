@@ -125,7 +125,7 @@ extern void func_80016E34 (void);
 extern void func_80016E84 (void);
 extern void func_800170E0 (void);
 extern void func_80017340(void);
-extern void func_80018AD0 (s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9);
+extern s32 func_80018AD0 (s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9);
 extern void func_80018E50 (void);
 extern void func_80018EEC (void);
 extern void func_80018FD0 (u32 arg0);

@@ -19995,61 +19995,6 @@ void func_800615CC(struct MainObj* self)
     self->unk1C = self->y_pos;
 }
 
-void func_8004AE20(struct MainObj* self)
-{
-    struct MainObj* owner = SP_CUR_MAIN_OBJ;
-    u8 flags = owner->ext.main_11.unk80;
-
-    if (flags & 0x10) {
-        wall_crawler_update_surface(self);
-        flags = owner->ext.main_11.unk80;
-        switch (flags) {
-        case 1:
-            self->x_speed = -0x18000;
-            self->y_speed = 0;
-            if (self->unk15 == 0) {
-                set_animation(self, 0);
-                break;
-            }
-            self->unk5 = 3;
-            set_animation(self, 2);
-            break;
-        case 2:
-            self->x_speed = 0x18000;
-            self->y_speed = 0;
-            if (self->unk15 == 0x40) {
-                set_animation(self, 0);
-                break;
-            }
-            self->unk5 = 3;
-            set_animation(self, 2);
-            break;
-        case 4:
-            self->x_speed = 0;
-            self->y_speed = 0x18000;
-            set_animation(self, 1);
-            break;
-        case 8:
-            self->x_speed = 0;
-            self->y_speed = -0x18000;
-            set_animation(self, 1);
-            break;
-        }
-    } else if (self->unk2 == 0) {
-        if ((flags == 1 && (self->collision_flags & 2)) || (flags == 2 && (self->collision_flags & 1)) || (flags == 4 && (self->collision_flags & 4)) || (flags == 8 && (self->collision_flags & 8))) {
-            owner->ext.main_11.unk80 = flags | 0x10;
-        }
-    } else {
-        s32 distance = self->unk15 ? self->x_pos.i.hi - g_Player.x_pos.i.hi
-                                   : g_Player.x_pos.i.hi - self->x_pos.i.hi;
-        if (distance >= 0x20) {
-            set_animation(self, 2);
-            self->unk5 = 3;
-        }
-    }
-    move_object(MOVING_OBJECT(self));
-}
-
 void func_8004A78C(struct MainObj* self)
 {
     u16 x;

@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+void wall_crawler_update_surface(struct MainObj* self);
+
 void wall_crawler_update(struct MainObj* self)
 {
     wall_crawler_state_funcs[self->state](self);
@@ -47,7 +49,86 @@ void wall_crawler_drop(struct MainObj* self)
 }
 
 // wall_crawler_crawl
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004AE20);
+void func_8004AE20(struct MainObj* self)
+{
+    struct MainObj** current = &SP_CUR_MAIN_OBJ;
+    struct MainObj* owner;
+
+    owner = *current;
+    if (owner->ext.main_11.unk80 & 0x10) {
+        wall_crawler_update_surface(self);
+        switch ((*current)->ext.main_11.unk80) {
+        case 1:
+            self->x_speed = -0x18000;
+            self->y_speed = 0;
+            if (self->unk15 != 0) {
+                self->unk5 = 3;
+                set_animation(self, 2);
+            } else {
+                set_animation(self, 0);
+            }
+            break;
+        case 2:
+            self->x_speed = 0x18000;
+            self->y_speed = 0;
+            if (self->unk15 != 0x40) {
+                self->unk5 = 3;
+                set_animation(self, 2);
+            } else {
+                set_animation(self, 0);
+            }
+            break;
+        case 4:
+            self->x_speed = 0;
+            self->y_speed = 0x18000;
+            set_animation(self, 1);
+            break;
+        case 8:
+            self->x_speed = 0;
+            self->y_speed = -0x18000;
+            set_animation(self, 1);
+            break;
+        }
+    } else {
+        if (self->unk2 == 0) {
+            switch (owner->ext.main_11.unk80) {
+            case 1:
+                if (self->collision_flags & 2) {
+                    owner->ext.main_11.unk80 |= 0x10;
+                }
+                break;
+            case 2:
+                if (self->collision_flags & 1) {
+                    owner->ext.main_11.unk80 |= 0x10;
+                }
+                break;
+            case 4:
+                if (self->collision_flags & 4) {
+                    owner->ext.main_11.unk80 |= 0x10;
+                }
+                break;
+            case 8:
+                if (self->collision_flags & 8) {
+                    owner->ext.main_11.unk80 |= 0x10;
+                }
+                break;
+            }
+        } else {
+            if (self->unk15 != 0) {
+                if (self->x_pos.i.hi - g_Player.x_pos.i.hi >= 0x20) {
+                    set_animation(self, 2);
+                    self->unk5 = 3;
+                }
+            } else {
+                if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0x20) {
+                    set_animation(self, 2);
+                    self->unk5 = 3;
+                }
+            }
+        }
+    }
+    move_object(MOVING_OBJECT(self));
+}
 
 void wall_crawler_turn(struct MainObj* self)
 {
