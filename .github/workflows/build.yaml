@@ -31,7 +31,7 @@ jobs:
     strategy:
       matrix:
         version: [us, jp]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Clone main repo
         uses: actions/checkout@v7
@@ -52,11 +52,17 @@ jobs:
         run: cmake --build build-linux --parallel
       - name: Check replay format validation
         run: python3 tools/oracle/test_replay_validation.py --binary build-linux/mmx4_pc
+      - name: Install coverage test tools
+        if: matrix.version == 'us'
+        run: sudo apt-get install --yes clang-18 llvm-18
+      - name: Test movie coverage reporting
+        if: matrix.version == 'us'
+        run: python3 tools/oracle/test_movie_coverage.py --clang clang-18 --llvm-profdata llvm-profdata-18 --llvm-cov llvm-cov-18
 
   oracle-scene-suite:
     name: Capture and compare scene oracles
     if: github.event_name != 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 180
     environment:
       name: ${{ github.event_name == 'pull_request_target' && 'private-ci' || 'ci' }}
@@ -73,6 +79,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install --yes \
             build-essential cmake ninja-build pkg-config zlib1g-dev \
+            clang-18 llvm-18 \
             libasound2-dev libjack-jackd2-dev \
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxtst-dev \
@@ -128,7 +135,7 @@ jobs:
             sound-comparison/**/psx.log
           key: mednafen-sound-v1-frames360-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/audio_fixture.py') }}
       - name: Configure Linux port
-        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DPSYZ_RENDERER=headless
+        run: cmake -S . -B build-linux -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang-18 -DCMAKE_CXX_COMPILER=clang++-18 -DPSYZ_RENDERER=headless -DMMX4_PC_COVERAGE=ON
       - name: Build Linux port
         run: cmake --build build-linux --parallel
       - name: Configure Mednafen oracle
@@ -217,13 +224,18 @@ jobs:
           SDL_AUDIODRIVER: dummy
         run: |
           set -e
+          mkdir coverage
           while read -r replay digest mode; do
+            movie=$(basename "$replay" .mmx4r)
+            mkdir -p "coverage/raw/$movie"
             extra=()
             if [ "$mode" = object-state ]; then
               extra+=(--main19-semantic-extensions)
             fi
+            LLVM_PROFILE_FILE="$PWD/coverage/raw/$movie/%p.profraw" \
             python3 tools/oracle/run_replay_regression.py \
               --replay "$replay" \
+              --output "coverage/replays/$movie" \
               --expect-sha256 "$digest" \
               --mednafen tools/mednafen-build/src/mednafen \
               --cue disks/mmx4.us.cue \
@@ -233,6 +245,33 @@ jobs:
               --psx-cache replay-psx \
               "${extra[@]}"
           done < tools/oracle/replay_ci_manifest.txt
+      - name: Report movie coverage
+        run: |
+          python3 tools/oracle/report_movie_coverage.py \
+            --binary build-linux/mmx4_pc \
+            --llvm-profdata llvm-profdata-18 \
+            --llvm-cov llvm-cov-18
+          cat coverage/coverage.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v7
+        with:
+          name: movie-coverage-report
+          if-no-files-found: error
+          retention-days: 7
+          path: |
+            coverage/coverage.md
+            coverage/coverage.json
+      - name: Upload detailed coverage evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: movie-coverage-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            coverage
+            build-linux/mmx4_pc
+            build-linux/CMakeCache.txt
       - name: Check Mednafen replay logs
         id: mednafen_replay_logs
         if: always() && steps.mednafen_replay_cache.outputs.cache-hit != 'true'
@@ -344,28 +383,57 @@ jobs:
         with:
           name: ${{ matrix.version }}_report
           path: build/${{ matrix.version }}/report.json
-      - name: Get dependencies
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: Generate functions list
+        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          mkdir info-reports
+          python3 ./tools/funcs_todo.py > info-reports/functions.md
+      - name: Generate duplicates report
+        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+            cd tools/dups
+            cargo run --release -- --threshold .40 --output-file ../../info-reports/duplicates.txt
+      - name: Upload info reports
+        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v7
+        with:
+          name: info-reports
+          path: info-reports
+          if-no-files-found: error
+
+  publish-info:
+    name: Publish reports to mmx4-info
+    needs: [build-linux, oracle-scene-suite, build-and-test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: ci
+    steps:
+      - name: Check out report repository
         uses: actions/checkout@v7
         with:
           repository: sozud/mmx4-info
           ref: main
           token: ${{ secrets.MMX4_INFO_TOKEN }}
-          path: 'info'
-      - name: Generate functions list
-        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: python3 ./tools/funcs_todo.py > info/functions.md
-      - name: Generate duplicates report
-        if: matrix.version == 'us' && github.ref == 'refs/heads/main' && github.event_name == 'push'
+          path: info
+      - name: Download info reports
+        uses: actions/download-artifact@v8
+        with:
+          name: info-reports
+          path: reports
+      - name: Download coverage reports
+        uses: actions/download-artifact@v8
+        with:
+          name: movie-coverage-report
+          path: reports
+      - name: Commit reports
         run: |
-            cd tools/dups
-            cargo run --release -- --threshold .40 --output-file ../../info/duplicates.txt
-      - name: Commit all reports
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-            git config --global user.name 'GitHub Action'
-            git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add -A
-            git commit -m 'Update reports' || true
-            git push
+          cp ../reports/functions.md ../reports/duplicates.txt ../reports/coverage.md ../reports/coverage.json .
+          git config user.name 'GitHub Action'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add functions.md duplicates.txt coverage.md coverage.json
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m "Update reports for $GITHUB_SHA"
+          git push origin HEAD:main
         working-directory: info

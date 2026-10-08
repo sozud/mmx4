@@ -24,4 +24,7 @@ expected
 objdiff.json
 replay-runs
 replay-ssim
+coverage/
+*.profraw
+tools/oracle/__pycache__/
 tools/oracle/recordings/*.mp4
