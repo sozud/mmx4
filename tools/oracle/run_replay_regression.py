@@ -9,6 +9,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 WORKSPACE = Path(__file__).resolve().parents[2]
@@ -309,6 +310,8 @@ def main():
     binary = args.build / "mmx4_pc"
     if not binary.is_file():
         raise SystemExit(f"{binary}: PC binary is missing")
+    metadata["binary_sha256"] = sha256(binary)
+    metadata["sync_sha256"] = sha256(sync_path) if sync else None
 
     cache_stamp = None
     if args.psx_cache is not None:
@@ -353,7 +356,9 @@ def main():
     command = [str(binary), "--replay", str(args.replay)]
     if not headless_build(args.build) and shutil.which("xvfb-run") is not None:
         command = ["xvfb-run", "-a", *command]
+    metadata["pc_started_ns"] = time.time_ns()
     metadata["pc_exit"] = run(command, pc_dir / "run.log", env, args.timeout)
+    metadata["pc_finished_ns"] = time.time_ns()
 
     print()
     print(f"== replay {args.replay}")
@@ -369,7 +374,7 @@ def main():
     if sync:
         print(f"   {len(sync_points)} explicit sync points from {sync_path}")
 
-    status = 0
+    status = 0 if metadata["pc_exit"] == 0 and metadata.get("psx_exit", 0) == 0 else 1
     logs = {}
     for side, directory in (("psx", psx_dir), ("pc", pc_dir)):
         print(f"== {side}")
