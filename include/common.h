@@ -2683,14 +2683,19 @@ struct BarObj {
     s8 padC[8];
     s8 unk14;
     s8 : 8;
-    u8 unk16[8]; // size unconfirmed
-    s16 : 16;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-    s8 : 8;
-    s8 : 8;
-    u8 unk25;
+    union {
+        u8 items[16];
+        struct {
+            u8 player[2];
+            u8 weapons[8];
+            u8 unk20;
+            u8 unk21;
+            u8 unk22;
+            u8 unk23;
+            u8 unk24;
+            u8 unk25;
+        } fields;
+    } options;
     s8 pad26[0x28 - 0x26];
     s32 unk28;
     s32 unk2C;
@@ -4682,6 +4687,8 @@ extern u8 D_800F30D4[16][2];
 enum XaArchive {
 #ifdef VERSION_JP
     XA_ARCHIVE_BGM1 = 0x94,
+#elif defined(VERSION_EU)
+    XA_ARCHIVE_BGM1 = 0x97,
 #else
     XA_ARCHIVE_BGM1 = 0x95,
 #endif
