@@ -165,7 +165,17 @@ void func_800292D0(struct StageObjectRecord* arg0)
 }
 
 // find_stage_main_index
-INCLUDE_ASM("main/nonmatchings/195B4", func_8002938C);
+ret_u8 func_8002938C(arg_u8 id)
+{
+    u8 i = 0;
+    do {
+        u8 sid = s_StageMainIds[engine_obj.stage][engine_obj.substage][i];
+        if (sid == 0xFF || sid == (u8)id)
+            return i;
+        ++i;
+    } while (1);
+}
+
 extern struct ObjectHeader* (*g_MakeObjectFuncs[8])();
 
 struct ObjectHeader* MakeObject(u8 arg0)

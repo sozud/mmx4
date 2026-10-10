@@ -194,7 +194,24 @@ void trident_mech_jump_rise(struct MainObj* self)
 }
 
 // trident_mech_land
-INCLUDE_ASM("main/nonmatchings/mains/main_16_trident_mech", func_8004F1A0);
+void func_8004F1A0(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 0) {
+        return;
+    }
+    self->hurt_box = &trident_mech_stunned_hurt_box;
+    trident_mech_face_player(ANIMATED_OBJECT(self));
+    if (self->unk2 >= 4) {
+        self->unk7E = 3;
+        set_animation(ANIMATED_OBJECT(self), 0x11);
+        self->unk5 = 8;
+    } else {
+        set_animation(ANIMATED_OBJECT(self), 0);
+        self->unk5 = 2;
+    }
+    self->unk6 = 0;
+}
 
 void trident_mech_charge(struct MainObj* self)
 {

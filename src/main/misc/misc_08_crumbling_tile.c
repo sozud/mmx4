@@ -10,7 +10,29 @@ extern u8 crumbling_tile_debris_9[];
 extern u8 crumbling_tile_debris_10[];
 
 // crumbling_tile_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_08_crumbling_tile", func_800C9510);
+void func_800C9510(struct MiscObj* self)
+{
+    self->animation_table = (u32**)D_8010DF48;
+    self->ext.misc_8.alternate = (u8)self->unk2 >> 7;
+    self->unk2 &= 0x7F;
+    self->state++;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x99)];
+    self->unk40 = D_801406A8[func_8002938C(0x99)] >> 7;
+    self->unk42 = CLUT_FROM_ID(0x99);
+    self->unk16 = 7;
+    self->unk15 = 0;
+    if ((u8)(self->unk2 - 0xD) < 6) {
+        self->unk15 = 0x40;
+        self->x_pos.u.hi += 0x10;
+    }
+    self->ext.misc_8.timer = 0;
+    if (self->ext.misc_8.alternate != 0) {
+        set_animation(self, crumbling_tile_second_effects.entries[self->unk2].first);
+    } else {
+        set_animation(self, crumbling_tile_first_effects[self->unk2].effect_id);
+    }
+}
 
 void crumbling_tile_break_first(struct MiscObj* self)
 {

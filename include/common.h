@@ -36,6 +36,8 @@ __asm__(".include \"macro.inc\"\n");
 #define FIXED(x) ((s32)((x)*0x10000))
 #define COUNT(x) (sizeof(x) / sizeof(x[0]))
 #define SOME_COORDINATE_CONVERSION(v) ((((v)*4) + 24) % 16 | (((((v)*4) + 24) / 16) + 480) << 6)
+#define CLUT_FROM_XY(x, y) ((((x)*4 + 0x18) % 16) | ((((y) + 6) / 4 + 0x1E0) << 6))
+#define CLUT_FROM_ID(id) CLUT_FROM_XY(func_8002938C(id), func_8002938C(id))
 #define WITHIN_BOUNDS(lo, v, hi) ((lo) < (v) && (v) < (hi))
 #define POS_BOUNDS_CHECK_FAIL_RET0(a, b) \
     if (a - b >= 0) {                    \
@@ -639,7 +641,8 @@ struct Main3Ext {
 
 struct Main5Ext {
     u8 unk80;
-    u8 pad81[6];
+    u8 unk81;
+    u8 pad82[5];
     u8 lifetime;
     u8 spawn_timer;
     u8 pad89[2];
@@ -973,7 +976,7 @@ struct Main73Ext {
     u8* cycle_script;
     u8 cycle_step;
     u8 shot_count;
-    u8 pad8A;
+    u8 unk8A;
     u8 blink_delay;
     union Main73EffectData effect;
 };
@@ -1067,7 +1070,8 @@ struct Main54Ext {
 };
 
 struct Main55Ext {
-    u8 pad80[5];
+    u8 pad80[4];
+    u8 unk84;
     u8 unk85;
     u8 unk86;
     u8 unk87;
@@ -1075,7 +1079,7 @@ struct Main55Ext {
 };
 
 struct Main36Ext {
-    u8 pad80[4];
+    u8 unk80[4];
     struct MiscObj* unk84;
     u8 saved_unk5;
     u8 unk89;
@@ -1170,7 +1174,8 @@ struct Main71Ext {
     u8 unk88;
     u8 unk89;
     u8 unk8A;
-    u8 pad8B[2];
+    u8 unk8B;
+    u8 unk8C;
     u8 unk8D;
     s8 unk8E;
 };
@@ -1393,7 +1398,7 @@ struct Main29Ext {
 
 struct Main41Ext {
     u8 unk80;
-    u8 pad81;
+    u8 unk81;
     u8 unk82;
     u8 unk83;
     u8 unk84;
@@ -1468,7 +1473,7 @@ struct Main66Ext {
 struct Main70Ext {
     s16 alarm_timer;
     s16 flash_timer;
-    u8 pad84;
+    u8 unk84;
     u8 unk85;
     u8 alarm_color;
     u8 alarm_flashing;
@@ -1674,7 +1679,8 @@ struct BackgroundObj {
     u8 unk4E;
     s8 min_y;
     s8 max_y;
-    s8 pad51[3];
+    s8 unk51;
+    s8 pad52[2];
 }; // size 0x54
 
 union PlayerUnk88 {
@@ -1947,12 +1953,14 @@ struct ShotObj {
     s16 unk8A;
     union ShotUnk8C unk8C;
     f32 unk90;
-    s8 pad94;
+    s8 unk94;
     u8 unk95;
-    s8 pad96[0x98 - 0x96];
+    s8 unk96;
+    s8 pad97;
     s8 unk98;
     s8 unk99;
-    s8 pad9A[0x9C - 0x9A];
+    s8 unk9A;
+    s8 pad9B;
 }; // size 0x9C
 
 MMX4_STATIC_ASSERT(shot_unk54_offset,
@@ -2162,7 +2170,7 @@ struct WeaponObj {
     union WeaponUnk80 unk80;
     union WeaponUnk84 unk84;
     union WeaponUnk88 unk88;
-    s8 pad8A[0x8C - 0x8A];
+    s16 unk8A;
     union WeaponObjExt ext;
     u8 unk94;
     u8 unk95;
@@ -2299,6 +2307,10 @@ union ItemUnk7C {
     struct Unk_unk68* bounds;
     s32 item_26_value;
     struct Item19Unk7C item_19;
+    struct {
+        u16 x;
+        u16 y;
+    } saved_pos;
 };
 
 struct ItemTailExtUnk {
@@ -2377,7 +2389,7 @@ struct LayerObj {
     BASE_OBJ_FIELDS
     f32 unk18;
     union LayerPrivateState private_state;
-    s8 pad20[0x24 - 0x20];
+    s8 unk20[0x24 - 0x20];
     u8 unk24;
     u8 unk25;
     s8 pad26[0x30 - 0x26];
@@ -2567,7 +2579,7 @@ struct Misc33Ext {
 struct Misc34Ext {
     struct EffectObj* related;
     u8 timer;
-    u8 pad55;
+    u8 unk55;
     u8 variant;
     u8 unk57;
     u8 unk58;
@@ -2628,6 +2640,7 @@ struct UnkExt {
         s8 byte;
         u16 sht;
     } unk56;
+    s8 unk58;
 };
 
 union MiscExt {
@@ -2662,6 +2675,10 @@ union MiscExt {
     struct Misc53Ext misc_53;
     struct Misc55Ext misc_55;
     struct UnkExt unk;
+    struct {
+        u32 pad;
+        s8 bytes[10];
+    } tail;
 };
 
 struct MiscObj {
@@ -2810,7 +2827,7 @@ struct RideArmorObj {
     u8 unk84;
     u8 unk85;
     u8 unk86;
-    s8 pad87;
+    s8 unk87;
     u16 collision_flags;
     s16 unk8A;
     union RideArmorInputState unk8C;
@@ -3603,7 +3620,7 @@ struct Effect28Ext {
     u8 pad14[4];
     u8 timer;
     u8 filter_timer;
-    u8 pad1A;
+    u8 unk1A;
     u8 unk1B;
     u8 palette_index;
     u8 finished;
@@ -3613,7 +3630,8 @@ struct Effect37Ext {
     u8 pad14[4];
     u8 timer;
     u8 unk19;
-    u8 pad1A[2];
+    u8 unk1A;
+    u8 pad1B;
     u8 action;
     u8 finished;
     u8 unk1E;
@@ -4885,7 +4903,7 @@ void func_80037484(struct PlayerObj*, s32);
 void player_set_shoot_animation(struct PlayerObj*);
 s32 func_8002D180(struct PlayerObj*, s16, s16, s32);
 ret_u8 get_random_nonzero(void);
-ret_u8 func_8002938C();
+ret_u8 func_8002938C(s32);
 void update_on_screen(struct BaseObj*, s32, s32);
 void func_800127C8(s32);
 void func_800127FC(void);

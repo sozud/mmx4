@@ -632,7 +632,23 @@ void ice_core_intro(struct MainObj* self)
 }
 
 // ice_core_intro_appear
-INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80052218);
+void func_80052218(struct MainObj* self)
+{
+    struct ItemObj* item;
+
+    for (item = item_objects; item < &item_objects[COUNT(item_objects)]; item++) {
+        if (item->id != 8) {
+            item->active = 0;
+        }
+    }
+    self->y_speed = FIXED(1);
+    self->x_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk7C = 0x74;
+    player_start_script_action(0x15, 0);
+    self->unk6 = 1;
+}
 
 void ice_core_intro_wait_player(struct MainObj* self)
 {

@@ -2,6 +2,8 @@
 // 80097860..80097EEC
 #include "common.h"
 
+extern u32* D_8011C104[10];
+
 void twin_slasher_update(struct WeaponObj* arg0)
 {
     s32 should_reset = 0;
@@ -111,7 +113,43 @@ void twin_slasher_charged_main(struct WeaponObj* arg0)
 }
 
 // twin_slasher_trail_update
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_08_twin_slasher", func_80097DD8);
+void func_80097DD8(struct MiscObj* self)
+{
+    s32* player_gfx;
+    s32* sprite_frames;
+    s32 should_reset = g_Player.input_locked != 0;
+
+    if (g_Player.capsule_state != 0) {
+        should_reset = 1;
+    }
+    if (g_Player.weapon != 8) {
+        should_reset = 1;
+    }
+    if (should_reset != 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    if (self->state != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.relative_step == 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+            return;
+        }
+    } else {
+        self->on_screen = 1;
+        player_gfx = SP_PLAYER_GFX;
+        sprite_frames = SP_SPRITE_FRAMES;
+        self->unk38 = (u8*)player_gfx + player_gfx[9];
+        self->unk3C = (u8*)sprite_frames + sprite_frames[0x11];
+        self->animation_table = D_8011C104;
+        self->unk40 = 0x520;
+        self->unk42 = 0x7801;
+        self->unk16 = 1;
+        set_animation(self, self->unk2 + 6);
+        self->state++;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+}
 
 struct Unk_unk68 twin_slasher_hit_boxes[] = {
     { -8, -12, 0x14, 0x18 },

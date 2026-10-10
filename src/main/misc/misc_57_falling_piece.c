@@ -2,8 +2,26 @@
 // 800D3388..800D3928
 #include "common.h"
 
+extern union AnimationStep* menu_text_animations[1];
+
 // falling_piece_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_57_falling_piece", func_800D3388);
+void func_800D3388(struct MiscObj* self)
+{
+    self->x_pos.u.hi = background_objects[0].x_pos.u.hi + ((get_random() & 0xFF) + 0x30);
+    self->y_pos.u.hi = background_objects[0].y_pos.u.hi - 0x10;
+    self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA4));
+    self->animation_table = (u32**)menu_text_animations;
+    self->unk42 = CLUT_FROM_ID(0xA4);
+    self->bg_offset = 0;
+    self->unk15 = 0;
+    self->unk16 = 0x10;
+    set_animation_frame(ANIMATED_OBJECT(self), 0, self->unk2);
+    self->y_vel.val = 0xFFFE0000;
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0x4200;
+    self->state++;
+}
 
 void falling_piece_fall(struct MiscObj* self)
 {

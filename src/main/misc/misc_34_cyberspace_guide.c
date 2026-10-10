@@ -2,6 +2,8 @@
 // 800CE894..800CF144
 #include "common.h"
 
+extern union AnimationStep* cyberspace_guide_animations[5];
+
 void cyberspace_guide_update(struct MiscObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -10,7 +12,53 @@ void cyberspace_guide_update(struct MiscObj* self)
 }
 
 // cyberspace_guide_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CE8DC);
+void func_800CE8DC(struct MiscObj* self)
+{
+    s32 resource;
+    u16 y_pos;
+
+    self->unk16 = 2;
+    self->unk15 = 0;
+    self->bg_offset = g_Player.bg_offset;
+    self->animation_table = (u32**)cyberspace_guide_animations;
+    resource = func_8002938C(0x90);
+    self->unk40 = D_801406A8[resource] >> 7;
+    resource = func_8002938C(0x90);
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk42 = CLUT_FROM_ID(0x90);
+    self->x_pos.u.hi = g_Player.x_pos.u.hi;
+    y_pos = g_Player.y_pos.u.hi;
+    self->state = 1;
+    self->unk5 = 0;
+    self->unk6 = 0;
+#ifdef MMX4_PC
+    self->ext.misc_34.timer = 0;
+    self->ext.misc_34.unk55 = 0;
+    self->ext.misc_34.variant = 0;
+    self->ext.misc_34.unk57 = 0;
+    self->ext.misc_34.unk58 = 0;
+    self->ext.misc_34.enabled = 0;
+    self->ext.misc_34.unk5A = 0;
+    self->ext.misc_34.unk5C = 0;
+    self->ext.misc_34.unk5D = 0;
+    self->ext.misc_34.timer = 0x24;
+#else
+    self->ext.tail.bytes[0] = 0;
+    self->ext.tail.bytes[1] = 0;
+    self->ext.tail.bytes[2] = 0;
+    self->ext.tail.bytes[3] = 0;
+    self->ext.tail.bytes[4] = 0;
+    self->ext.tail.bytes[5] = 0;
+    self->ext.tail.bytes[6] = 0;
+    self->ext.tail.bytes[7] = 0;
+    self->ext.tail.bytes[8] = 0;
+    self->ext.tail.bytes[9] = 0;
+    self->ext.tail.bytes[0] = 0x24;
+#endif
+    self->y_pos.u.hi = y_pos;
+    set_animation(self, 0);
+    func_8001540C(2, 0xE9, self);
+}
 
 void cyberspace_guide_main(struct MiscObj* self)
 {

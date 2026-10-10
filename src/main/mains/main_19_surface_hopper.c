@@ -3,6 +3,9 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern u8 surface_hopper_debris[8];
+extern void (*surface_hopper_step_funcs[6])();
+
 void surface_hopper_update(struct MainObj* self)
 {
     if (self->unk2 < 3) {
@@ -16,7 +19,44 @@ void surface_hopper_update(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800528BC);
 
 // surface_hopper_main
-INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052A68);
+void func_80052A68(struct MainObj* self)
+{
+    s32 collision;
+    s16 x;
+    s16 y;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    surface_hopper_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    collision = func_8002DD04(self);
+    if (collision < 0) {
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->x_accel = 0;
+        self->gravity = 0;
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(8, surface_hopper_debris, self);
+        x = self->x_pos.i.hi;
+        y = self->y_pos.i.hi;
+        if (SP_CUR_MAIN_OBJ->ext.main_19.animation_index < 2) {
+            if (self->unk15 != 0) {
+                func_800BF638(BASE_OBJECT(self), 0xC, x - 0x10, y);
+            } else {
+                func_800BF638(BASE_OBJECT(self), 0xC, x + 0x10, y);
+            }
+        } else {
+            func_800BF638(BASE_OBJECT(self), 0xC, x, y + 0x10);
+        }
+        self->state = 2;
+        return;
+    }
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+    } else {
+        self->state = 2;
+    }
+}
 
 void surface_hopper_appear(struct MainObj* self)
 {

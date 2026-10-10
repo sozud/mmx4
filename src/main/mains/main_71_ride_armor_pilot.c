@@ -195,7 +195,40 @@ void ride_armor_pilot_stub(struct MainObj* self, s32 arg1, s32 arg2)
 }
 
 // ride_armor_pilot_idle
-INCLUDE_ASM("main/nonmatchings/mains/main_71_ride_armor_pilot", func_8008A064);
+void func_8008A064(struct MainObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk6++;
+        self->ext.main_71.unk8A = 0;
+        set_animation(self, 0);
+        self->ext.main_71.unk84 = 0x160;
+        self->ext.main_71.unk8C = get_random() & 0x3F;
+        ride_armor_pilot_update_facing(self);
+    }
+    if (!(self->collision_flags & 8)) {
+        ride_armor_pilot_set_step(BASE_OBJECT(self), 4);
+        return;
+    }
+    if (self->ext.main_71.unk8C == 0) {
+        if (!(self->ext.main_71.unk8D & 2)) {
+            if (ride_armor_pilot_update_facing(self)) {
+                ride_armor_pilot_set_step(BASE_OBJECT(self), 3);
+                return;
+            }
+            if (self->ext.main_71.unk86 != 0) {
+                ride_armor_pilot_set_step(BASE_OBJECT(self), 8);
+                return;
+            }
+            if (self->ext.main_71.unk87 != 0) {
+                ride_armor_pilot_set_step(BASE_OBJECT(self), 9);
+                return;
+            }
+        }
+    } else {
+        self->ext.main_71.unk8C--;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
 
 // ride_armor_pilot_walk
 void func_8008A180(struct MainObj* self)

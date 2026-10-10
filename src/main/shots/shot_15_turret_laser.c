@@ -10,7 +10,32 @@ void turret_laser_update(struct ShotObj* self)
 }
 
 // turret_laser_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_15_turret_laser", func_8009C12C);
+void func_8009C12C(struct ShotObj* self)
+{
+    struct MainObj* owner = MAIN_OBJECT(self->unk7C);
+
+    self->unk40 = owner->unk40;
+    self->unk42 = owner->unk42 & 0x7FFF;
+    self->animation_table = ANIMATED_OBJECT(owner)->animation_table;
+    self->unk3C = ANIMATED_OBJECT(owner)->unk3C;
+    self->unk15 = owner->unk15;
+    self->bg_offset = owner->bg_offset;
+    self->x_pos.val = owner->x_pos.val;
+    self->y_pos.val = owner->y_pos.val;
+    self->state++;
+    self->unk5 = 2;
+    set_velocity_from_angle(MOVING_OBJECT(self), angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
+    self->unk58.data = (const u8*)D_80106070;
+    self->unk54 = turret_laser_hit_box;
+    self->unk50.data = turret_laser_hit_box;
+    self->unk5C = 1;
+    self->unk60 = 3;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->x_vel.val *= 2;
+    self->y_vel.val *= 2;
+    set_animation(self, 4);
+}
 
 void turret_laser_hit(struct ShotObj* self)
 {

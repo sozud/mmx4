@@ -78,18 +78,14 @@ void layout_gate_update(struct ItemObj* arg0)
 
 void layout_gate_init(struct ItemObj* self)
 {
-    const u8* archive;
     s8 state;
-
     self->unk54 = layout_gate_hurt_box;
     self->unk58 = (u8*)D_80108584;
     self->bg_offset = g_Player.bg_offset;
     self->unk5C = 3;
     self->unk40 = D_801406A8[func_8002938C(0x28)] >> 7;
-
-    self->unk42 = ((func_8002938C(0x28) * 4 + 0x18) % 16) | (((func_8002938C(0x28) + 6) / 4 + 0x1E0) << 6);
-
-    self->sprite_frames = ((const u8*)SP_MENU_FRAMES) + *(const s32*)((unsigned long)(func_8002938C(0x28) * 4) + (unsigned long)((const u8*)SP_MENU_FRAMES));
+    self->unk42 = CLUT_FROM_ID(0x28);
+    self->sprite_frames = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x28));
     state = self->state + 1;
 
     self->bg_offset = g_Player.bg_offset;

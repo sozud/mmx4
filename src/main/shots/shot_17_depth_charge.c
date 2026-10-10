@@ -15,7 +15,42 @@ void depth_charge_update(struct ShotObj* self)
 }
 
 // depth_charge_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_17_depth_charge", func_8009C638);
+void func_8009C638(struct ShotObj* self)
+{
+    struct MainObj* parent = (struct MainObj*)self->unk7C;
+    s32 direction;
+
+    self->unk40 = parent->unk40;
+    self->unk42 = parent->unk42 & 0x7FFF;
+    self->animation_table = ANIMATED_OBJECT(parent)->animation_table;
+    self->unk3C = ANIMATED_OBJECT(parent)->unk3C;
+    self->unk15 = parent->unk15;
+    self->bg_offset = parent->bg_offset;
+    self->unk50.data = depth_charge_sink_box;
+    self->unk54 = depth_charge_sink_box;
+    self->unk5C = 1;
+    if (self->unk2 != 0) {
+        self->unk16 = 0x20;
+        self->unk60 = 3;
+        self->unk68 = (struct Unk_unk68*)depth_charge_boxes;
+        self->unk58.animation_steps = D_80105FF0;
+        set_animation(self, 5);
+        direction = (u8)self->unk6;
+        set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    } else {
+        self->unk16 = 0x10;
+        self->unk60 = 3;
+        self->unk68 = NULL;
+        self->unk58.collision_data = D_80106070;
+        set_animation(self, 8);
+        direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF;
+        set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    }
+    self->unk5 = 2;
+    self->x_vel.val *= 2;
+    self->y_vel.val *= 2;
+    self->state++;
+}
 
 // depth_charge_launch
 INCLUDE_ASM("main/nonmatchings/shots/shot_17_depth_charge", func_8009C784);

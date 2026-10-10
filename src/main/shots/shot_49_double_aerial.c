@@ -2,6 +2,8 @@
 // 800A9DF4..800AA2FC
 #include "common.h"
 
+extern u8 double_ball_box_1[2][4];
+
 void (*double_aerial_funcs[])(struct ShotObj*) = {
     double_aerial_drop,
     func_800A9F30,
@@ -25,7 +27,23 @@ void double_aerial_drop(struct ShotObj* self)
 }
 
 // double_aerial_split
-INCLUDE_ASM("main/nonmatchings/shots/shot_49_double_aerial", func_800A9F30);
+void func_800A9F30(struct ShotObj* self)
+{
+    if (--self->timer == 0) {
+        if (self->unk15 == 0) {
+            self->x_vel.val = FIXED(-4);
+        } else {
+            self->x_vel.val = FIXED(4);
+        }
+        set_animation(self, 0x10);
+        self->unk54 = (const u8*)double_ball_box_1;
+        self->unk50.data = (const u8*)double_ball_box_1;
+        self->unk5++;
+        func_8001540C(2, 0xF3, NULL);
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+}
 
 void double_aerial_fly(struct ShotObj* self)
 {

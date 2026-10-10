@@ -16,7 +16,7 @@ void autoscroll_segment_start(struct EffectObj* self)
     background_objects[0].unk47 = 6;
     background_objects[0].unk30 = 0;
     background_objects[0].unk32 = 0x140;
-    background_objects[0].pad51[0] = 0;
+    background_objects[0].unk51 = 0;
     self->state++;
 }
 
@@ -35,7 +35,7 @@ void autoscroll_segment_end(struct EffectObj* self)
     background_objects[0].unk2A = self->ext.effect_16.saved_background_2A;
     unk6 = self->ext.effect_16.saved_background_28;
     background_objects[0].unk28 = unk6;
-    background_objects[0].pad51[0] = 1;
+    background_objects[0].unk51 = 1;
     background_objects[0].unk30 = 0xA0;
     background_objects[0].unk32 = 0xA0;
     background_objects[0].unk47 = 2;

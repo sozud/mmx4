@@ -3,13 +3,55 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern u32 D_801076F8[];
+extern union AnimationStep* sentry_drone_animations[13];
+extern s8 D_800FFACC[4];
+extern u8 D_800FFAD0[4];
+extern u8 D_800FFAD4[4];
+
 void sentry_drone_update(struct MainObj* self)
 {
     sentry_drone_state_funcs[self->state](self);
 }
 
 // sentry_drone_init
-INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_8006738C);
+void func_8006738C(struct MainObj* self)
+{
+    self->bg_offset = g_Player.bg_offset;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk40 = D_801406A8[func_8002938C(0x30)] >> 7;
+    self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x30)];
+    self->unk42 = CLUT_FROM_ID(0x30);
+    self->animation_table = (const u8* const*)sentry_drone_animations;
+    self->unk16 = 4;
+    self->terrain_box = (struct Unk_unk68*)D_800FFAD0;
+    self->attack_box = D_800FFAD4;
+    self->hurt_box = D_800FFACC;
+    self->collision_data = D_801076F8;
+    self->air_state = 0;
+    self->invincibility_timer = 0;
+    self->hp = 5;
+    self->contact_damage = 3;
+    self->state = 1;
+    self->unk6 = 0;
+    SP_CUR_MAIN_OBJ->ext.main_48.unk81 = get_random() & 3;
+    if (self->unk2 & 0x80) {
+        set_animation(self, 0);
+        self->unk5 = 2;
+        self->air_state = 1;
+    } else {
+        self->unk15 = 0;
+        set_animation(self, 0);
+        self->air_state = 0;
+        self->unk5 = 3;
+    }
+    if ((u8)(self->unk2 & 0xF) == 1) {
+        self->state = 3;
+    }
+}
 
 extern u8 sentry_drone_debris[];
 extern void (*sentry_drone_step_funcs[])();

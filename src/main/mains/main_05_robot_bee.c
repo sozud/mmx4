@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern s32 D_800FA130[];
+
 void robot_bee_update(struct MainObj* self)
 {
     robot_bee_state_funcs[self->state](self);
@@ -297,7 +299,20 @@ void robot_bee_circle(struct MainObj* self)
 }
 
 // robot_bee_circle_start
-INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_8004619C);
+void func_8004619C(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    set_animation(self, 1);
+    func_8001540C(2, 0x13, self);
+    self->x_accel = 0x400;
+    self->ext.main_5.unk80 = self->unk15;
+    self->x_speed = 0;
+    self->y_speed = D_800FA130[0];
+    self->gravity = -0x400;
+    self->ext.main_5.unk81 = 0;
+    self->unk7C = 0x3C;
+    self->unk6++;
+}
 
 // robot_bee_circle_orbit
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);

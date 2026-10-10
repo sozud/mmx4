@@ -1071,7 +1071,29 @@ void player_set_animation_shooting(struct PlayerObj* self, s32 animation)
 }
 
 // player_continue_animation
-INCLUDE_ASM("main/nonmatchings/player_weapon", func_80038568);
+void func_80038568(struct PlayerObj* self, s32 frame)
+{
+    s32 attack_frame;
+    u8 duration;
+
+    if (self->unk2 != 0) {
+        return;
+    }
+    attack_frame = frame + 0x70;
+    if (self->attack_ended != 0) {
+        duration = self->animation_step.fields.duration;
+        player_set_animation_frame(self, frame, self->animation_step.fields.event & 0x3F);
+        self->animation_step.fields.duration = duration;
+    } else {
+        if (self->attacking == 0 || self->unk17 == attack_frame) {
+            return;
+        }
+        duration = self->animation_step.fields.duration;
+        player_set_animation_frame(self, attack_frame, self->animation_step.fields.event & 0x3F);
+        self->animation_step.fields.duration = duration;
+    }
+}
+
 void player_cancel_released_charge(void)
 {
     struct PlayerObj* player = &g_Player;

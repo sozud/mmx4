@@ -800,7 +800,19 @@ void storm_owl_storm_rain(struct MainObj* self)
 }
 
 // storm_owl_storm_flap
-INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80077580);
+void func_80077580(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C == 0) {
+        if ((get_random() & 7) < 3) {
+            self->unk6++;
+            func_8001540C(2, 0xBC, self);
+        } else {
+            self->unk6 += 2;
+        }
+        self->unk7C = 0x1E;
+    }
+}
 
 void storm_owl_storm_rain_again(struct MainObj* self)
 {

@@ -6611,7 +6611,7 @@ void scripted_slider_despawn(struct MiscObj*);
 
 // post_boss_cutscene_state_funcs
 extern void (*post_boss_cutscene_state_funcs[])(struct MiscObj*);
-void func_800D12C0(void);
+void post_boss_cutscene_init(struct MiscObj*);
 void post_boss_cutscene_main(struct MiscObj*);
 void post_boss_cutscene_despawn(struct MiscObj*);
 
@@ -6698,7 +6698,7 @@ void npc_cutscene_finish(struct MiscObj*);
 extern void (*final_cutscene_step_funcs[])(struct MiscObj*);
 void final_cutscene_wait_player(struct MiscObj*);
 void final_cutscene_approach(struct MiscObj*);
-void func_800D2CA4(void);
+void func_800D2CA4(struct MiscObj*);
 void final_cutscene_rise(struct MiscObj*);
 void final_cutscene_leave(struct MiscObj*);
 void final_cutscene_start_effect(struct MiscObj*);
@@ -6707,7 +6707,7 @@ void final_cutscene_wait_fade(struct MiscObj*);
 
 // final_cutscene_state_funcs
 extern void (*final_cutscene_state_funcs[])(struct MiscObj*);
-void func_800D2A74(void);
+void func_800D2A74(struct MiscObj*);
 void final_cutscene_main(struct MiscObj* arg0);
 void final_cutscene_despawn(struct MiscObj*);
 

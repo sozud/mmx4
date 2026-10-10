@@ -13,20 +13,13 @@ void intro_messenger_update(struct MiscObj* self)
 
 void intro_messenger_init(struct MiscObj* self)
 {
-    s8 bg_offset = g_Player.bg_offset;
-    s32 column;
-    s32 row;
-
-    self->bg_offset = bg_offset;
+    self->bg_offset = g_Player.bg_offset;
     self->x_vel.val = 0;
     self->y_vel.val = FIXED(10);
     self->unk28 = 0;
     self->unk2C = FIXED(0.125);
     self->unk40 = D_801406A8[func_8002938C(0x45)] >> 7;
-    column = func_8002938C(0x45);
-    row = func_8002938C(0x45);
-    column *= 4;
-    self->unk42 = ((column + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
+    self->unk42 = CLUT_FROM_ID(0x45);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x45)];
     self->animation_table = (u32**)intro_messenger_animations;
     self->unk16 = 6;

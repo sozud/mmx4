@@ -85,7 +85,22 @@ void capsule_part_glass(struct MiscObj* self)
 }
 
 // capsule_part_beam
-INCLUDE_ASM("main/nonmatchings/misc/misc_51_capsule_part", func_800D2094);
+void func_800D2094(struct MiscObj* self)
+{
+    if (self->unk6 == 0) {
+        self->unk16 = 1;
+        set_animation(self, 7);
+        self->ext.misc_51.unk54 = 0x78;
+        self->unk6++;
+    } else if (--self->ext.misc_51.unk54 != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+    } else {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void capsule_part_light(struct MiscObj* self)
 {

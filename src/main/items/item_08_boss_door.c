@@ -96,7 +96,7 @@ void boss_door_init(struct ItemObj* arg0)
     arg0->unk16 = 6;
     arg0->unk40 = D_801406A8[func_8002938C(0x80)] >> 7;
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x80)];
-    arg0->unk42 = ((func_8002938C(0x80) * 4 + 0x18) % 16) | (((func_8002938C(0x80) * 4 + 0x18) / 16 + 0x1E0) << 6);
+    arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x80));
     arg0->animation_table = (const u8* const*)boss_door_animations;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk15 = 0;

@@ -1109,7 +1109,7 @@ void player_spawn_dash_splash(struct PlayerObj* self)
             visual_obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(func_8002938C(0x84) & 0xFF)];
             index = func_8002938C(0x84) & 0xFF;
             visual_obj->unk40 = D_801406A8[index] >> 7;
-            visual_obj->unk42 = (((func_8002938C(0x84) & 0xFF) * 4 + 0x18) % 16) | ((((func_8002938C(0x84) & 0xFF) + 6) / 4 + 0x1E0) << 6);
+            visual_obj->unk42 = CLUT_FROM_XY((u8)func_8002938C(0x84), (u8)func_8002938C(0x84));
             facing = self->unk15;
             visual_obj->unk15 = facing;
             if (facing == 0) {
@@ -1213,7 +1213,44 @@ void player_check_splash(struct PlayerObj* self)
 }
 
 // player_spawn_splash
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/player_common", func_80036BF4);
+#else
+void func_80036BF4(struct PlayerObj* self, s16 ground_y)
+{
+    struct VisualObj* visual;
+    s32 resource;
+
+    if (func_8002D724(self, self->x_pos.i.hi, ground_y) != 0x24 || self->unkDF != 0) {
+        return;
+    }
+
+    self->unkDF = 1;
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 3;
+        visual->unk2 = 9;
+        visual->bg_offset = self->bg_offset;
+        visual->unk16 = 1;
+        visual->animation_table = D_8011BF40;
+        resource = func_8002938C(0x84) & 0xFF;
+        visual->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+        resource = func_8002938C(0x84) & 0xFF;
+        visual->unk40 = D_801406A8[resource] >> 7;
+        visual->unk42 = CLUT_FROM_XY((u8)func_8002938C(0x84), (u8)func_8002938C(0x84));
+        visual->unk15 = self->unk15;
+        visual->x_pos.i.hi = self->x_pos.i.hi;
+        visual->y_pos.i.hi = ground_y - 8;
+    }
+
+    if (engine_obj.stage == 1) {
+        func_8001540C(5, (get_random() & 1) + 3, self);
+    } else {
+        func_8001540C(2, 0xAE, self);
+    }
+}
+#endif
 struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerObj* owner)
 {
     struct WeaponObj* weapon = find_free_weapon_obj();

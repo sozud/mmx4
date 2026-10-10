@@ -3,6 +3,8 @@
 #include "common.h"
 extern s16 stage_select_flyout_targets[8][2];
 
+extern u8 boss_warning_quad_blink_levels[16];
+
 void stage_select_flyout_update(struct QuadObj* arg0);
 
 void stage_select_flyout_scale(struct QuadObj* arg0);
@@ -98,7 +100,18 @@ void boss_warning_quad_close(struct QuadObj* arg0)
 }
 
 // boss_warning_quad_main
-INCLUDE_ASM("main/nonmatchings/quads/quad_03_boss_warning_quad", func_800D5144);
+void func_800D5144(struct QuadObj* self)
+{
+    boss_warning_quad_step_funcs[self->unk5](self);
+    if (self->unk5 == 0 || D_8013B960 == 0 || main_bss_state.frame_counter % 3 != 0) {
+        return;
+    }
+    self->unk34 = boss_warning_quad_blink_levels[self->ext.quad_2.x_scale.bytes.fraction];
+    self->ext.quad_2.x_scale.bytes.fraction++;
+    if (self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
+        self->ext.quad_2.x_scale.bytes.fraction = 0;
+    }
+}
 
 void boss_warning_quad_despawn(struct QuadObj* arg0)
 {

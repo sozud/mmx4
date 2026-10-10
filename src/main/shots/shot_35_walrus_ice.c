@@ -482,7 +482,20 @@ void walrus_ice_chunk_main(struct ShotObj* self)
 }
 
 // walrus_ice_chunk_launch
-INCLUDE_ASM("main/nonmatchings/shots/shot_35_walrus_ice", func_800A348C);
+void func_800A348C(struct ShotObj* self)
+{
+    if (--self->timer == 0) {
+        self->unk54 = (const u8*)&walrus_ice_ball_hurt_box;
+        self->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
+        func_8001540C(2, 0x96, self);
+        self->unk6++;
+    } else {
+        self->on_screen ^= 1;
+        if (self->on_screen != 0) {
+            is_on_screen(BASE_OBJECT(self));
+        }
+    }
+}
 
 void walrus_ice_chunk_fall(struct ShotObj* obj)
 {
