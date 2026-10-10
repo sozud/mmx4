@@ -28,7 +28,30 @@ void wave_rider_idle(struct MainObj* self)
 }
 
 // wave_rider_probe_tile
-INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B1C4);
+u8 func_8006B1C4(struct MainObj* self, u8 side)
+{
+    s16 x;
+    s16 y;
+    u8 tile;
+
+    if (self->unk15 == 0) {
+        x = self->x_pos.u.hi + (s8)(u8)self->terrain_box->unk0;
+    } else {
+        x = self->x_pos.u.hi - (s8)(u8)self->terrain_box->unk0;
+    }
+    y = self->terrain_box->unk3 + (self->y_pos.u.hi + (s8)(u8)self->terrain_box->unk1);
+    y += 1;
+    if (side != 0) {
+        y -= 16;
+    }
+scan:
+    tile = func_8002D724(PLAYER_OBJECT(self), x, y);
+    if (tile == 0x10) {
+        y -= 16;
+        goto scan;
+    }
+    return tile;
+}
 
 // wave_rider_float
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);

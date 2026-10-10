@@ -3,13 +3,49 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern struct Unk_unk68 D_80106D74[];
+extern union AnimationStep* bee_hive_animations[8];
+extern struct Unk_unk68 bee_hive_hurt_box;
+
 void bee_hive_update(struct MainObj* self)
 {
     bee_hive_state_funcs[self->state](self);
 }
 
 // bee_hive_init
-INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055024);
+void func_80055024(struct MainObj* self)
+{
+
+    self->hp = 0xF;
+    self->contact_damage = 4;
+    self->invincibility_timer = 0;
+    self->bg_offset = g_Player.bg_offset;
+    self->collision_data = (const u16*)D_80106D74;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->unk42 = CLUT_FROM_ID(5);
+    self->animation_table = (const u8* const*)bee_hive_animations;
+    self->unk16 = 6;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->unk15 = 0;
+    self->hurt_box = (const u8*)&bee_hive_hurt_box;
+    self->attack_box = &bee_hive_hurt_box;
+    self->terrain_box = NULL;
+    set_animation(self, 0);
+    self->ext.main_22.saved_unk5 = 0;
+    self->ext.main_22.unk84 = 0;
+    self->ext.main_22.destroyed = 0;
+    self->ext.main_22.unk8C = 1;
+    self->ext.main_22.unk90 = 0;
+    self->ext.main_22.parts_mask = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
+    self->state++;
+}
 
 // bee_hive_main
 void func_80055164(struct MainObj* self)

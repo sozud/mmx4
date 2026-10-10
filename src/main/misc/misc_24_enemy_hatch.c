@@ -2,6 +2,8 @@
 // 800CBECC..800CC460
 #include "common.h"
 
+extern union AnimationStep* enemy_hatch_animations[4];
+
 void enemy_hatch_update(struct MiscObj* self)
 {
     self->unk18.val = self->x_pos.val;
@@ -10,7 +12,29 @@ void enemy_hatch_update(struct MiscObj* self)
 }
 
 // enemy_hatch_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_24_enemy_hatch", func_800CBF14);
+void func_800CBF14(struct MiscObj* self)
+{
+    u8 bg_offset;
+    u8 state;
+
+    if (self->x_pos.i.hi - g_Player.x_pos.i.hi <= 0) {
+        self->unk15 = 0x40;
+    } else {
+        self->unk15 = 0;
+    }
+    self->unk40 = D_801406A8[func_8002938C(0x8F)] >> 7;
+    self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x8F));
+    self->unk42 = CLUT_FROM_ID(0x8F);
+    bg_offset = g_Player.bg_offset;
+    state = self->state;
+    self->animation_table = (u32**)enemy_hatch_animations;
+    self->unk5 = 0;
+    self->unk16 = 5;
+    self->unk6 = 0;
+    self->bg_offset = bg_offset;
+    self->ext.misc_24.child_active = 0;
+    self->state = state + 1;
+}
 
 void enemy_hatch_main(struct MiscObj* self)
 {
@@ -34,7 +58,37 @@ void enemy_hatch_wait_start(struct MiscObj* self)
 }
 
 // enemy_hatch_wait_player
-INCLUDE_ASM("main/nonmatchings/misc/misc_24_enemy_hatch", func_800CC114);
+void func_800CC114(struct MiscObj* self)
+{
+    struct MiscObj* child;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step != 0) {
+        return;
+    }
+    self->unk6 = 0;
+    self->unk5 = 1;
+    child = find_free_misc_obj();
+    if (child == NULL) {
+        return;
+    }
+    child->active = 0x41;
+    child->id = 0xB;
+    child->unk2 = 3;
+    child->unk16 = 3;
+    child->unk15 = self->unk15;
+    child->unk40 = self->unk40;
+    child->unk42 = self->unk42;
+    child->unk3C = self->unk3C;
+    child->animation_table = ANIMATED_OBJECT(self)->animation_table;
+    child->bg_offset = self->bg_offset;
+    child->x_pos.val = self->x_pos.val;
+    child->y_pos.val = self->y_pos.val;
+    set_animation(child, 2);
+    child->ext.misc_11.active = 0;
+    self->ext.misc_24.child = child;
+    self->ext.misc_24.child_active = 1;
+}
 
 void enemy_hatch_release(struct MiscObj* self)
 {

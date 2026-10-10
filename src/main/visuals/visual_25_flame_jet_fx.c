@@ -3,7 +3,24 @@
 #include "common.h"
 
 // flame_jet_fx_init
-INCLUDE_ASM("main/nonmatchings/visuals/visual_25_flame_jet_fx", func_800B3D3C);
+void func_800B3D3C(struct VisualObj* self)
+{
+    struct MainObj* owner = (struct MainObj*)self->unk50;
+
+    self->unk40 = owner->unk40;
+    self->unk42 = owner->unk42 & 0x7FFF;
+    self->animation_table = ANIMATED_OBJECT(owner)->animation_table;
+    self->unk3C = ANIMATED_OBJECT(owner)->unk3C;
+    self->unk15 = owner->unk15;
+    self->bg_offset = owner->bg_offset;
+    if (self->unk2 != 0) {
+        self->unk16 = 1;
+    } else {
+        self->unk16 = 6;
+    }
+    set_animation(self, self->unk2);
+    self->state++;
+}
 
 void flame_jet_fx_main(struct VisualObj* arg0)
 {

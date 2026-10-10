@@ -2,6 +2,10 @@
 // 800A47C4..800A5348
 #include "common.h"
 
+extern u8 mushroom_shot_sprout_hit_box[4];
+extern u8 mushroom_shot_spray_offsets[12];
+extern s32 mushroom_shot_spray_speeds[5];
+
 void mushroom_shot_update(struct ShotObj* self)
 {
     mushroom_shot_state_funcs[self->state](self);
@@ -152,7 +156,35 @@ void mushroom_shot_sprout_despawn(struct ShotObj* self)
 }
 
 // mushroom_shot_spray_init
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/shots/shot_39_mushroom_shot", func_800A4D20);
+#else
+void func_800A4D20(struct ShotObj* self)
+{
+    self->state = 8;
+    self->on_screen = 1;
+    self->unk61 = 1;
+    self->y_vel.val = FIXED(1.5);
+    self->unk58.data = NULL;
+    self->x_vel.val = 0;
+    self->unk2C = 0;
+    self->unk42 &= 0x7FFF;
+    if (self->unk15 == 0) {
+        self->x_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
+    } else {
+        self->x_pos.u.hi -= (s8)mushroom_shot_spray_offsets[self->unk2 * 2];
+    }
+    self->y_pos.u.hi += (s8)mushroom_shot_spray_offsets[self->unk2 * 2 + 1];
+    self->unk28 = mushroom_shot_spray_speeds[self->unk2];
+    self->unk50.data = mushroom_shot_sprout_hit_box;
+    self->unk5C = 1;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
+    self->unk60 = 6;
+    set_animation(ANIMATED_OBJECT(self), 0x12);
+}
+#endif
 
 void mushroom_shot_spray_fly(struct ShotObj* self)
 {

@@ -89,21 +89,13 @@ void common_effect_update(struct MiscObj* self)
 
 void common_effect_init(struct MiscObj* self)
 {
-    s32 resource;
-    s32 column;
-    s32 row;
-
     self->state = 1;
     self->unk6 = 0;
     self->bg_offset = 0;
     self->animation_table = (u32**)common_effect_animations;
     self->unk40 = D_801406A8[func_8002938C(0x84)] >> 7;
-    column = func_8002938C(0x84);
-    row = func_8002938C(0x84);
-    column *= 4;
-    self->unk42 = ((column + 0x18) % 16) | ((((row + 6) / 4) + 0x1E0) << 6);
-    resource = func_8002938C(0x84);
-    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk42 = CLUT_FROM_ID(0x84);
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x84)];
     if (self->unk2 == 5) {
         self->unk16 = 5;
     } else {

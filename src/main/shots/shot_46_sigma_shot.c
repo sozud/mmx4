@@ -134,11 +134,11 @@ void sigma_bolt_gather(struct ShotObj* self)
 
     weapon = self->unk7C;
     if (self->unk2 == 1) {
-        x = weapon->x_pos.val + (sigma_bolt_x_offsets[0][self->unk99] << 16);
-        y = weapon->y_pos.val + (sigma_bolt_y_offsets[0][self->pad9A[0]] << 16);
+        x = weapon->x_pos.val + FIXED(sigma_bolt_x_offsets[0][self->unk99]);
+        y = weapon->y_pos.val + FIXED(sigma_bolt_y_offsets[0][self->unk9A]);
     } else {
-        x = weapon->x_pos.val + (sigma_bolt_x_offsets[1][self->unk99] << 16);
-        y = weapon->y_pos.val + (sigma_bolt_y_offsets[1][1] << 16);
+        x = weapon->x_pos.val + FIXED(sigma_bolt_x_offsets[1][self->unk99]);
+        y = weapon->y_pos.val + FIXED(sigma_bolt_y_offsets[1][1]);
     }
     collision = angle_to_point(OBJECT_HEADER(self), x, y);
     if (sigma_shot_at_position(self, x, y) & 0xFF) {
@@ -261,8 +261,8 @@ void sigma_planted_scythe_return(struct ShotObj* self)
     struct WeaponObj* owner;
 
     owner = self->unk7C;
-    self->pad94 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(owner));
-    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->pad94);
+    self->unk94 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(owner));
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
     self->x_vel.val *= 6;
     self->y_vel.val *= 6;
     move_object(MOVING_OBJECT(self));
@@ -291,8 +291,8 @@ void sigma_shot_drift(struct ShotObj* self)
 
 void sigma_dart_spread(struct ShotObj* self)
 {
-    self->pad94 = angle_to_point(OBJECT_HEADER(self), self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
-    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->pad94);
+    self->unk94 = angle_to_point(OBJECT_HEADER(self), self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
     self->x_vel.val *= 3;
     self->y_vel.val *= 3;
     move_object(MOVING_OBJECT(self));
@@ -318,8 +318,8 @@ void sigma_dart_wait(struct ShotObj* self)
 
 void sigma_dart_strike(struct ShotObj* self)
 {
-    self->pad94 = angle_to_point(OBJECT_HEADER(self), self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
-    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->pad94);
+    self->unk94 = angle_to_point(OBJECT_HEADER(self), self->unk90.i.lo << 0x10, self->unk90.i.hi << 0x10);
+    set_velocity_from_angle(MOVING_OBJECT(self), (u8)self->unk94);
     self->x_vel.val *= 6;
     self->y_vel.val *= 6;
     if ((sigma_shot_at_position(self,
@@ -340,8 +340,8 @@ void sigma_dart_aim(struct ShotObj* self)
 {
     if (--self->timer == 0) {
         self->unk5++;
-        self->pad94 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
-        set_velocity_from_angle(MOVING_OBJECT(self), self->pad94 & 0xFF);
+        self->unk94 = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+        set_velocity_from_angle(MOVING_OBJECT(self), self->unk94 & 0xFF);
         self->x_vel.val *= 6;
         self->y_vel.val *= 6;
         func_8001540C(2, 0xB, self);

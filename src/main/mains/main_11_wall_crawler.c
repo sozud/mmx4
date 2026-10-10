@@ -202,7 +202,39 @@ void func_8004B2BC(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B418);
 
 // wall_crawler_corner_2
-INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B514);
+void func_8004B514(struct MainObj* self)
+{
+    struct ShotObj* shot;
+
+    if (self->animation_step.fields.event == 1) {
+        if ((s8)SP_CUR_MAIN_OBJ->ext.main_11.unk85 == 3) {
+            SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x20;
+            self->unk6++;
+        } else if ((s8)--SP_CUR_MAIN_OBJ->ext.main_11.unk86 <= 0) {
+            SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x20;
+            self->unk6--;
+        }
+    }
+    if (self->animation_step.fields.event != 2) {
+        return;
+    }
+    shot = find_free_shot_obj();
+    if (shot == NULL) {
+        return;
+    }
+    shot->active = 0x41;
+    shot->id = 6;
+    shot->unk40 = self->unk40;
+    shot->unk42 = self->unk42;
+    shot->animation_table = (u32**)self->animation_table;
+    shot->unk3C = (void*)self->sprite_frames;
+    shot->unk15 = self->unk15;
+    shot->bg_offset = self->bg_offset;
+    shot->x_pos = self->x_pos;
+    shot->y_pos = self->y_pos;
+    shot->unk2 = SP_CUR_MAIN_OBJ->ext.main_11.angle;
+    set_velocity_from_angle(MOVING_OBJECT(shot), SP_CUR_MAIN_OBJ->ext.main_11.angle);
+}
 
 // wall_crawler_corner_3
 INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004B668);

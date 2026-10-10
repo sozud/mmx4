@@ -385,7 +385,7 @@ void func_8003E368(struct RideArmorObj* self)
         self->unk98.packed = 0x160;
         set_animation(self, 0);
         func_8003DC1C(PLAYER_OBJECT(self), 0x29);
-        self->pad87 = 0;
+        self->unk87 = 0;
     }
     if (self->unk94.bytes.pad94[0] == 2) {
         func_8003DC44(BASE_OBJECT(self), 0xD);
@@ -418,7 +418,7 @@ void func_8003E488(struct RideArmorObj* self)
         self->unk98.packed = 0x160;
         set_animation(self, 1);
         func_8003DC1C(PLAYER_OBJECT(self), 0x2A);
-        self->pad87 = 0;
+        self->unk87 = 0;
     }
     if (self->unk94.bytes.pad94[0] == 2) {
         func_8003DC44(BASE_OBJECT(self), 0xD);
@@ -459,7 +459,7 @@ void func_8003E5F8(struct RideArmorObj* self)
 {
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        if ((u8)self->pad87 == 1) {
+        if ((u8)self->unk87 == 1) {
             func_8003D7E4(self, 2, 1);
             set_animation(self, 0xA);
             func_8003DC1C(PLAYER_OBJECT(self), 0x32);
@@ -476,15 +476,15 @@ void func_8003E5F8(struct RideArmorObj* self)
         if (self->unk80.bytes.unk81 != 0) {
             func_8003DC44(BASE_OBJECT(self), 3);
         } else {
-            self->pad87 = 0;
+            self->unk87 = 0;
             self->unk80.bytes.unk81 = 0;
             func_8003DC44(BASE_OBJECT(self), 1);
         }
         return;
     }
     if ((self->animation_step.fields.event & 1) && func_8003DCD8(self)
-        && self->unk80.bytes.unk81 == 0 && (u8)self->pad87 < 2) {
-        self->pad87++;
+        && self->unk80.bytes.unk81 == 0 && (u8)self->unk87 < 2) {
+        self->unk87++;
         self->unk80.bytes.unk81 = 1;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -504,7 +504,7 @@ void func_8003E750(struct RideArmorObj* self)
         }
         set_animation(self, 2);
         func_8003DC1C(PLAYER_OBJECT(self), 0x2B);
-        self->pad87 = 0;
+        self->unk87 = 0;
         if (self->unk2 == 0) {
             func_8001540C(5, 4, NULL);
         } else {
@@ -959,7 +959,7 @@ void func_8003F698(struct RideArmorObj* arg0)
         func_8001540C(5, 7, 0);
     }
     if (arg0->animation_step.fields.relative_step == 0) {
-        arg0->pad87 = 0;
+        arg0->unk87 = 0;
         func_8003DC44(BASE_OBJECT(arg0), 1);
         return;
     }
@@ -1100,7 +1100,7 @@ void func_8003FBD8(struct RideArmorObj* self)
         self->unk98.packed = 0x160;
         set_animation(self, 0xD);
         func_8003DC1C(PLAYER_OBJECT(self), 0x3C);
-        self->pad87 = 0;
+        self->unk87 = 0;
         func_8001540C(5, 5, 0);
     }
     if (func_8003DC8C(self)) {
@@ -1141,7 +1141,7 @@ void func_8003FD08(struct RideArmorObj* self)
         } else {
             func_8003D8A8(self, 0, 0);
         }
-        self->pad87 = 0;
+        self->unk87 = 0;
         func_8001540C(5, 7, NULL);
     }
     if (func_8003DC8C(self)) {

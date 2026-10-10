@@ -1038,7 +1038,28 @@ INCLUDE_ASM("main/nonmatchings/menu", func_8001BCAC);
 
 INCLUDE_ASM("main/nonmatchings/menu", func_8001BE10);
 
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/menu", func_8001C008);
+#else
+void func_8001C008(s32 first, s32 second)
+{
+    struct MiscObj* self = find_free_misc_obj();
+    u8 mode;
+
+    if (self == NULL) {
+        return;
+    }
+    self->active = 1;
+    self->id = 0x2A;
+    self->unk2 = 4;
+    self->unk42 = 0x7806;
+    mode = engine_obj.unk1;
+    self->ext.unk.unk55 = 1;
+    self->ext.unk.unk56.byte = first;
+    self->ext.unk.unk58 = second;
+    self->ext.unk.unk54 = mode;
+}
+#endif
 
 void func_8001C07C(void)
 {

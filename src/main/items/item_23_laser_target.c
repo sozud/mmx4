@@ -90,7 +90,24 @@ void laser_target_despawn(struct ItemObj* arg0)
 }
 
 // laser_target_main
-INCLUDE_ASM("main/nonmatchings/items/item_23_laser_target", func_800C5F90);
+void func_800C5F90(struct ItemObj* self)
+{
+    struct MainObj* owner = self->unk7C.owner;
+
+    if (owner->state != 1 || (owner->unk5 != 3 && owner->unk2 != 2)) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    if (owner->unk5 >= 4) {
+        if (self->tail_ext.unk1.unk84.previous_value == 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+        }
+        return;
+    }
+    laser_target_step_funcs[self->unk5](self);
+    laser_target_hold(self);
+    is_on_screen(BASE_OBJECT(self));
+}
 
 struct Unk_unk68 laser_target_terrain_box = { 0, 0, 4, 4 };
 

@@ -23,7 +23,8 @@ void dragon_rubble_init(struct MiscObj* self)
     self->animation_table = dragon_rubble_animations;
     random_x = func_8002938C(0x85);
     random_y = func_8002938C(0x85);
-    clut_x = random_x * 4 + 0x18;
+    clut_x = random_x;
+    clut_x = (clut_x * 4) + 0x18;
     adjusted_x = clut_x;
     if (clut_x < 0) {
         adjusted_x = clut_x + 0xF;
@@ -34,7 +35,7 @@ void dragon_rubble_init(struct MiscObj* self)
         adjusted_y = random_y + 9;
     }
     self->unk42 = clut_x | (((adjusted_y >> 2) + 0x1E0) << 6);
-    resource_index = func_8002938C(0x85, adjusted_y, random_y);
+    resource_index = func_8002938C(0x85);
     self->unk40 = D_801406A8[resource_index] >> 7;
 
     resource_index = func_8002938C(0x85);

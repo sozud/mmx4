@@ -74,7 +74,45 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
 
 // rising_flame_trail_update
-INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098338);
+void func_80098338(struct VisualObj* self)
+{
+    struct PlayerObj* player = &g_Player;
+    s32 should_reset = player->hp == 0;
+
+    if (player->input_locked != 0) {
+        should_reset = 1;
+    }
+    if (player->actions_reset != 0) {
+        should_reset = 1;
+    }
+    if (player->unk17 != 0x66) {
+        should_reset = 1;
+    }
+    if (should_reset != 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    if (self->state != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.relative_step == 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+            return;
+        }
+    } else {
+        self->on_screen = 1;
+        self->unk3C = player->unk3C;
+        self->animation_table = player->animation_table;
+        self->unk40 = player->unk40;
+        self->unk42 = 0x7801;
+        self->unk16 = 2;
+        set_animation(self, 0x7C);
+        self->state++;
+    }
+    self->x_pos.val = player->x_pos.val;
+    self->y_pos.val = player->y_pos.val;
+    self->unk15 = player->unk15;
+    update_on_screen(BASE_OBJECT(self), 0x80, 0x80);
+}
 
 // ryuenjin_flame_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);

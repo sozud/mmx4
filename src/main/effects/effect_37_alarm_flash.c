@@ -8,7 +8,27 @@ void alarm_flash_update(struct EffectObj* self)
 }
 
 // alarm_flash_init
-INCLUDE_ASM("main/nonmatchings/effects/effect_37_alarm_flash", func_800BD3C0);
+void func_800BD3C0(struct EffectObj* self)
+{
+    u8 i;
+
+    for (i = 0; i < 4; i++) {
+        D_8013E188[i] = -1;
+    }
+    g_FilterModeR = 0;
+    g_FilterModeG = 0;
+    g_FilterModeB = 0;
+    g_FilterAmountR = 0;
+    g_FilterAmountG = 0;
+    g_FilterAmountB = 0;
+    self->unk7 = 0x27;
+    self->ext.effect_37.action = (s8)self->unk2 >> 4;
+    self->ext.effect_37.timer = self->ext.effect_37.unk1E;
+    self->ext.effect_37.unk19 = self->ext.effect_37.unk1F;
+    self->ext.effect_37.unk1A = self->ext.effect_37.unk20;
+    self->ext.effect_37.unk22 = (s8)self->unk2 >> 4;
+    self->state++;
+}
 
 void alarm_flash_main(struct EffectObj* self)
 {

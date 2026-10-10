@@ -325,7 +325,22 @@ void iris_robot_dash_land(struct MainObj* self)
 }
 
 // iris_robot_dash_start
-INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_800818C4);
+void func_800818C4(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event != 0) {
+        if (self->x_pos.i.hi > g_Player.x_pos.i.hi) {
+            self->unk15 = 0;
+            self->x_speed = FIXED(4);
+        } else {
+            self->unk15 = 0x40;
+            self->x_speed = FIXED(-4);
+        }
+        func_8001540C(2, 0xE0, self);
+        set_animation(self, 4);
+        self->unk6 = 2;
+    }
+}
 
 void iris_robot_dash_run(struct MainObj* self)
 {

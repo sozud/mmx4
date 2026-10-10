@@ -2,13 +2,44 @@
 // 800D07EC..800D0E48
 #include "common.h"
 
+extern union AnimationStep* stage_cutscene_animations[3];
+
 void stage_cutscene_update(struct MiscObj* self)
 {
     stage_cutscene_state_funcs[self->state](self);
 }
 
 // stage_cutscene_init
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/misc/misc_44_stage_cutscene", func_800D0828);
+#else
+void func_800D0828(struct MiscObj* self)
+{
+    if (engine_obj.cur_character == 0) {
+        despawn_object_permanently(OBJECT_HEADER(self));
+        return;
+    }
+    if (engine_obj.character_state.bytes[8] != 0) {
+        despawn_object_permanently(OBJECT_HEADER(self));
+        return;
+    }
+    self->bg_offset = g_Player.bg_offset;
+    self->y_vel.val = FIXED(10);
+    self->x_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0x2000;
+    self->unk40 = D_801406A8[func_8002938C(0x42)] >> 7;
+    self->unk42 = CLUT_FROM_ID(0x42);
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x42)];
+    self->animation_table = (u32**)stage_cutscene_animations;
+    self->unk16 = 6;
+    self->unk15 = 0;
+    self->state = 1;
+    self->unk5 = 0;
+    self->ext.unk.unk55 = 0;
+    set_animation(self, 0);
+}
+#endif
 
 void stage_cutscene_main(struct MiscObj* self)
 {

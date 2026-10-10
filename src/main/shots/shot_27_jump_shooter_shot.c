@@ -32,7 +32,30 @@ void jump_shooter_shot_update(struct ShotObj* self)
 }
 
 // jump_shooter_shot_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_27_jump_shooter_shot", func_8009F27C);
+void func_8009F27C(struct ShotObj* self)
+{
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk58.collision_data = D_80106070;
+    self->unk42 &= 0x7FFF;
+    self->unk28 *= 2;
+    self->unk2C *= 2;
+    if (self->unk15 == 0) {
+        self->x_pos.u.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
+    } else {
+        self->x_pos.u.hi -= jump_shooter_shot_muzzle_offsets[self->unk2 * 2];
+    }
+    self->y_pos.u.hi += jump_shooter_shot_muzzle_offsets[self->unk2 * 2 + 1];
+    self->x_vel.val *= 2;
+    self->y_vel.val *= 2;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = jump_shooter_shot_hit_box;
+    self->unk50.data = jump_shooter_shot_hit_box;
+    self->unk5C = 1;
+    self->unk60 = 3;
+    set_animation(ANIMATED_OBJECT(self), 0xC);
+}
 
 void jump_shooter_shot_fly(struct ShotObj* self)
 {

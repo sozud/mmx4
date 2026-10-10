@@ -3,8 +3,38 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern void* hatch_turret_animations[13];
+
 // hatch_turret_init
-INCLUDE_ASM("main/nonmatchings/mains/main_63_hatch_turret", func_8007BFF4);
+void func_8007BFF4(struct MainObj* self)
+{
+    s32 v = 1;
+
+    self->state = v;
+    self->on_screen = v;
+    self->unk7C = 0x30;
+    self->hp = 3;
+    self->contact_damage = 3;
+    self->unk7A = v;
+    self->animation_table = (const u8* const*)hatch_turret_animations;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->invincibility_timer = 0;
+    self->hurt_box = NULL;
+    self->attack_box = NULL;
+    self->terrain_box = NULL;
+    self->collision_data = NULL;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk16 = 5;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    set_animation(self, 0);
+}
 
 // hatch_turret_spawn_shot
 void func_8007C090(struct WeaponObj* weapon)

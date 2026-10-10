@@ -27,7 +27,32 @@ void func_8003B458(void* arg0, s8 arg1)
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B470);
 
-INCLUDE_ASM("main/nonmatchings/bike", func_8003B694);
+void func_8003B694(struct RideArmorObj* self)
+{
+    s16 x;
+    s16 y;
+
+    if (self->unk15 == 0) {
+        x = self->x_pos.u.hi + self->unk68->unk0;
+    } else {
+        x = self->x_pos.u.hi - self->unk68->unk0;
+    }
+    y = self->unk68->unk3 + (self->y_pos.u.hi + self->unk68->unk1) - 15;
+    if (func_8002D724(PLAYER_OBJECT(self), x, y) == 0x24) {
+        if ((u16)self->saved_x_vel == 0) {
+            self->x_pos.i.hi -= 8;
+            self->y_pos.i.hi += 0x10;
+            spawn_common_effect(MAIN_OBJECT(self), 4);
+            self->saved_x_vel = 2;
+            self->y_pos.i.hi -= 0x10;
+            self->x_pos.i.hi += 8;
+        } else {
+            self->saved_x_vel--;
+        }
+    } else {
+        self->saved_x_vel = 0;
+    }
+}
 
 INCLUDE_ASM("main/nonmatchings/bike", func_8003B7B4);
 

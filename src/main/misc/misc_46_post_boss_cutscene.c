@@ -7,8 +7,30 @@ void post_boss_cutscene_update(struct MiscObj* self)
     post_boss_cutscene_state_funcs[self->state](self);
 }
 
-// post_boss_cutscene_init
-INCLUDE_ASM("main/nonmatchings/misc/misc_46_post_boss_cutscene", func_800D12C0);
+extern union AnimationStep* D_8010F19C[2];
+
+void post_boss_cutscene_init(struct MiscObj* self)
+{
+    self->bg_offset = g_Player.bg_offset;
+    self->x_pos.i.hi = g_Player.x_pos.i.hi + 0x170;
+    self->y_pos.i.hi = g_Player.y_pos.i.hi - 8;
+    self->x_vel.val = FIXED(-4.125);
+    self->y_vel.val = 0;
+    self->unk28 = FIXED(-0.1875);
+    self->unk2C = 0;
+    self->unk40 = (D_801406A8[2] >> 7) + 0xB0;
+    self->unk42 = CLUT_FROM_ID(0x45);
+    self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x45));
+    self->animation_table = (u32**)D_8010F19C;
+    self->unk16 = 6;
+    self->unk15 = 0;
+    self->state = 1;
+    self->unk5 = 0;
+    post_boss_cutscene_spawn_afterimages(UNK_OBJECT(self));
+    background_objects[g_Player.bg_offset].unk26 = g_Player.x_pos.i.hi - 0x30;
+    background_objects[g_Player.bg_offset].unk24 = g_Player.x_pos.i.hi - 0x30;
+    set_animation(ANIMATED_OBJECT(self), 1);
+}
 
 void post_boss_cutscene_main(struct MiscObj* self)
 {
@@ -185,7 +207,7 @@ union AnimationStep* D_8010F19C[2] = {
 };
 
 void (*post_boss_cutscene_state_funcs[3])(struct MiscObj*) = {
-    func_800D12C0,
+    post_boss_cutscene_init,
     post_boss_cutscene_main,
     post_boss_cutscene_despawn,
 };

@@ -2,13 +2,44 @@
 // 8009B3E8..8009B67C
 #include "common.h"
 
+extern u8 dragon_spread_shot_hit_box[4];
+extern u8 dragon_spread_shot_large_hit_box[4];
+extern u8* dragon_spread_shot_animations[16];
+
 void dragon_spread_shot_update(struct ShotObj* self)
 {
     dragon_spread_shot_state_funcs[self->state](self);
 }
 
 // dragon_spread_shot_init
-INCLUDE_ASM("main/nonmatchings/shots/shot_10_dragon_spread_shot", func_8009B424);
+void func_8009B424(struct ShotObj* self)
+{
+
+    self->on_screen = 1;
+    self->unk54 = dragon_spread_shot_hit_box;
+    self->unk50.data = dragon_spread_shot_hit_box;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk67 = 0;
+    self->unk16 = 0;
+    self->unk15 = 0;
+    self->unk68 = NULL;
+    self->unk58.animation_steps = D_80105FF0;
+    self->state++;
+    self->unk42 &= 0x7FFF;
+    self->unk40 = D_801406A8[9] >> 7;
+    self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 9);
+    self->animation_table = (u32**)dragon_spread_shot_animations;
+    self->unk42 = CLUT_FROM_ID(0xB);
+    self->unk60 = 2;
+    self->unk5C = 1;
+    self->unk54 = dragon_spread_shot_large_hit_box;
+    self->x_vel.val *= 5;
+    self->y_vel.val *= 5;
+    self->y_pos.u.hi -= 8;
+    set_animation(self, self->unk2 >> 1);
+    self->unk84.value = 0;
+}
 
 void dragon_spread_shot_fly(struct ShotObj* arg0)
 {

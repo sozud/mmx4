@@ -324,7 +324,27 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E6F8);
 
 // magma_dragoon_dive_kick_land
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007E848);
+#else
+void func_8007E848(struct MainObj* self)
+{
+    s32 state;
+
+    if (self->animation_step.fields.relative_step == 0) {
+        self->unk6 = 0;
+        if (self->ext.main_65.attack == 0) {
+            state = 0xA;
+        } else if (self->ext.main_65.attack == 1 || self->ext.main_65.attack_repeat++ == 0) {
+            state = 0xB;
+        } else {
+            state = 0xC;
+        }
+        self->unk5 = state;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#endif
 
 void magma_dragoon_dive_kick(struct MainObj* self)
 {

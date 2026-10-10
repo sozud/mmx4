@@ -192,10 +192,7 @@ void func_80022730(struct AbcObj* arg0)
 
                     obj->unk42 = temp_a1 | ((temp_a0 + 0x1E0) << 6);
 
-                    temp_v0 = func_8002938C(
-                        engine_obj.cur_character + 0x91,
-                        temp_a1,
-                        &engine_obj.cur_character);
+                    temp_v0 = func_8002938C(engine_obj.cur_character + 0x91);
 
                     temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
@@ -277,16 +274,13 @@ void func_80022730(struct AbcObj* arg0)
                     temp_v1 -= temp_a2 & 0x7F0;
 
                     if (temp_a1 < 0) {
-                        temp_a1 = value + 9;
+                        temp_a1 = value;
+                        temp_a1 += 9;
                     }
 
                     obj->unk42 = temp_v1 | (((temp_a1 >> 2) + 0x1E0) << 6);
 
-                    temp_v0 = func_8002938C(
-                        0x97,
-                        temp_a1,
-                        (s8*)temp_a2);
-
+                    temp_v0 = func_8002938C(0x97);
                     temp_v1 = (signed long)SP_MENU_FRAMES;
                     temp_v0 = ((s32*)temp_v1)[temp_v0];
 
@@ -339,11 +333,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         obj->unk42 = temp_a0 | (((temp_v1 >> 2) + 0x1E0) << 6);
 
-                        temp_v0 = func_8002938C(
-                            CONFIG->unk2,
-                            value,
-                            (s8*)temp_a2,
-                            D_801397DC);
+                        temp_v0 = func_8002938C(CONFIG->unk2);
 
                         temp_v1 = (signed long)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];
@@ -405,10 +395,7 @@ void func_80022730(struct AbcObj* arg0)
 
                         obj->unk42 = temp_v1 | (((temp_a1 >> 2) + 0x1E0) << 6);
 
-                        temp_v0 = func_8002938C(
-                            0x97,
-                            temp_a1,
-                            (s8*)temp_a2);
+                        temp_v0 = func_8002938C(0x97);
 
                         temp_v1 = (signed long)SP_MENU_FRAMES;
                         temp_v0 = ((s32*)temp_v1)[temp_v0];

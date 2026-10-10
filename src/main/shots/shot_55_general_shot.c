@@ -4,6 +4,12 @@
 
 extern s8 general_shot_boxes[3][4];
 
+extern s16 D_8013B8C8;
+
+extern s16 D_8013B8CC;
+
+extern u8 D_8013B8D0[0xC];
+
 extern u8 general_shot_prop_debris[6];
 
 extern s8 general_shot_attack_boxes[][4];
@@ -149,7 +155,56 @@ void general_fist_fly_to_row(struct ShotObj* self)
 }
 
 // general_fist_sweep
-INCLUDE_ASM("main/nonmatchings/shots/shot_55_general_shot", func_800ACF60);
+#ifdef VERSION_EU
+void func_800ACF60(struct ShotObj* self)
+{
+    s32 origin_x;
+    s16 probe_x;
+    u16 probe_y;
+    s16* probe_slot = &D_8013B8C8;
+    u8* tile_slot;
+
+    self->unk68 = (struct Unk_unk68*)general_shot_boxes;
+    origin_x = self->x_pos.i.hi;
+    probe_x = self->unk15 != 0 ? origin_x + 0x59 : origin_x - 0x59;
+    probe_y = self->y_pos.u.hi;
+    tile_slot = D_8013B8D0;
+    *probe_slot = probe_x;
+    D_8013B8CC = probe_y;
+    *tile_slot = func_8002D724(PLAYER_OBJECT(self), D_8013B8C8, probe_y);
+    if (*tile_slot == 0x38) {
+        self->x_vel.val = 0;
+        self->unk90.u.lo = 0x3C;
+        self->unk5++;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+}
+#else
+void func_800ACF60(struct ShotObj* self)
+{
+    s32 origin_x;
+    s16 probe_x;
+    u16 probe_y;
+    u8 tile;
+
+    self->unk68 = (struct Unk_unk68*)general_shot_boxes;
+    origin_x = self->x_pos.i.hi;
+    probe_x = self->unk15 != 0 ? origin_x + 0x59 : origin_x - 0x59;
+    probe_y = self->y_pos.u.hi;
+    D_8013B8C8 = probe_x;
+    D_8013B8CC = probe_y;
+    tile = func_8002D724(PLAYER_OBJECT(self), probe_x, probe_y);
+    D_8013B8D0[0] = tile;
+    if (tile == 0x38) {
+        self->x_vel.val = 0;
+        self->unk90.u.lo = 0x3C;
+        self->unk5++;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+}
+#endif
 
 void general_fist_hold(struct ShotObj* self)
 {

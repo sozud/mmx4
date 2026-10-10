@@ -18,7 +18,27 @@ extern struct Item06AnimationStep* rising_platform_animations[5];
 extern u8 rising_platform_debris[2][4];
 
 // rising_platform_init
-INCLUDE_ASM("main/nonmatchings/items/item_07_rising_platform", func_800C16F0);
+void func_800C16F0(struct ItemObj* self)
+{
+    s32 resource;
+
+    self->active = 0x41;
+    self->animation_table = (const u8* const*)rising_platform_animations;
+    self->state++;
+    self->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(0x87);
+    self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk40 = D_801406A8[func_8002938C(0x87)] >> 7;
+    self->unk42 = CLUT_FROM_ID(0x87);
+    self->unk16 = 6;
+    self->unk15 = 0;
+    self->unk68 = (struct Unk_unk68*)rising_platform_start_y;
+    set_animation(ANIMATED_OBJECT(self), 0);
+    self->unk76 = 0;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0x8000;
+    self->unk7C.value = 0;
+}
 
 void rising_platform_rise(struct ItemObj* self)
 {

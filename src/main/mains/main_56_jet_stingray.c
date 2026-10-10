@@ -51,7 +51,30 @@ void jet_stingray_flyby_update(struct MainObj* self)
 }
 
 // jet_stingray_spawn_water
-INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_8006FB20);
+struct MainObj* func_8006FB20(struct MainObj* self, s32 dx, s32 dy)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 0x17;
+        visual->unk2 = 1;
+        visual->x_pos.i.hi = self->x_pos.i.hi + dx;
+        visual->y_pos.i.hi = self->y_pos.i.hi + dy;
+        visual->unk40 = self->unk40;
+        visual->animation_table = ANIMATED_OBJECT(self)->animation_table;
+        visual->unk3C = ANIMATED_OBJECT(self)->unk3C;
+        visual->unk42 = self->unk42;
+        visual->unk15 = self->unk15;
+        visual->bg_offset = self->bg_offset;
+        visual->unk50 = PLAYER_OBJECT(self);
+        visual->x_vel.val = 0;
+        visual->y_vel.val = 0;
+        return MAIN_OBJECT(visual);
+    }
+    return NULL;
+}
+
 struct VisualObj* jet_stingray_spawn_splash(struct MainObj* self)
 {
     struct VisualObj* visual = find_free_visual_obj();

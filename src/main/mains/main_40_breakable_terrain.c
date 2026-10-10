@@ -92,7 +92,32 @@ void breakable_terrain_spawn_rubble(struct MainObj* self)
 #endif
 
 // breakable_terrain_check_hit
+#ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80062338);
+#else
+#ifdef MMX4_PC
+static const struct Unk_unk68* relative_bounds_or_zero(const struct Unk_unk68* bounds)
+{
+    static const struct Unk_unk68 zero;
+
+    return bounds != NULL ? bounds : &zero;
+}
+#define BOUNDS(bounds) relative_bounds_or_zero(bounds)
+#else
+#define BOUNDS(bounds) (bounds)
+#endif
+
+u8 func_80062338(struct MainObj* self)
+{
+    struct PlayerObj* player = &g_Player;
+    s16 edge = self->x_pos.u.hi + (s8)BOUNDS(self->terrain_box)->unk0;
+    s16 player_edge = player->x_pos.u.hi + (s8)BOUNDS(player->unk68)->unk0;
+    s16 distance = edge - player_edge >= 0 ? (s16)(edge - player_edge) : (s16)(player_edge - edge);
+
+    return distance <= BOUNDS(self->terrain_box)->unk2 + BOUNDS(player->unk68)->unk2;
+}
+#undef BOUNDS
+#endif
 
 s8 D_800FE9C8[4] = { -32, -32, 64, 80 };
 

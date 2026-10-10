@@ -3,6 +3,8 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern void (*general_death_funcs[5])();
+
 u8 general_at_position(struct ObjectHeader* self, s16 arg1, s16 arg2)
 {
     s16 temp_v1;
@@ -643,7 +645,21 @@ void general_death_wait_explosion(struct MainObj* self)
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800917AC);
 
 // general_death
-INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091898);
+void func_80091898(struct MainObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    general_death_funcs[self->unk5](self);
+    if (main_bss_state.frame_counter % 10 == 0) {
+        self->y_pos.i.hi += self->ext.main_75.bob_step;
+        if (--self->ext.main_75.bob_timer == 0) {
+            self->ext.main_75.bob_timer = 0xA;
+            self->ext.main_75.bob_step *= -1;
+        }
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
 
 void general_update(struct MainObj* self)
 {

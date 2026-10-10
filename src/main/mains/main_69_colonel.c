@@ -962,7 +962,53 @@ void colonel_flash_strike_slide(struct MainObj* self)
 }
 
 // colonel_flash_strike_strike
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800881F8);
+void func_800881F8(struct MainObj* self)
+{
+    struct VisualObj* visual;
+    struct EffectObj* effect;
+
+    if (self->animation_step.fields.event == 1) {
+        func_8001540C(2, 0xD5, self);
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x1E;
+            visual->unk2 = 0;
+            visual->unk50 = PLAYER_OBJECT(self);
+            self->unk7C = 0x30;
+            self->ext.main_69.linked_object = visual;
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x1E;
+            visual->unk2 = 0x20;
+            visual->unk50 = PLAYER_OBJECT(self);
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x1E;
+            visual->unk2 = 0x10;
+            visual->unk54 = 0x50;
+            visual->unk50 = PLAYER_OBJECT(self);
+        }
+        effect = find_free_effect_obj();
+        if (effect != NULL) {
+            effect->active = 0x41;
+            effect->id = 0x25;
+            effect->unk2 = 0x10;
+            effect->ext.effect_37.unk1E = 8;
+            effect->ext.effect_37.unk1F = 2;
+            effect->ext.effect_37.unk20 = 3;
+            effect->ext.effect_37.unk21 = 6;
+        }
+        self->unk6++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void colonel_flash_strike_flash(struct MainObj* self)
 {
@@ -979,7 +1025,39 @@ void colonel_flash_strike_flash(struct MainObj* self)
 }
 
 // colonel_flash_strike_hold
-INCLUDE_ASM("main/nonmatchings/mains/main_69_colonel", func_800883CC);
+void func_800883CC(struct MainObj* self)
+{
+    struct ShotObj* shot;
+    struct VisualObj* visual;
+    u8 i;
+
+    if (self->animation_step.fields.relative_step == 0) {
+        for (i = 0; i < 2; i++) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x2D;
+                shot->unk2 = i + 0x10;
+                shot->unk7C = WEAPON_OBJECT(self);
+                shot->unk8C.object = OBJECT_HEADER(self);
+            }
+            func_8001540C(2, 0xD7, self);
+        }
+        visual = find_free_visual_obj();
+        if (visual != NULL) {
+            visual->active = 0x41;
+            visual->id = 0x1E;
+            visual->unk2 = 0x30;
+            visual->unk50 = PLAYER_OBJECT(self);
+        }
+        start_screen_shake_y(0x10, 2, 1);
+        self->unk7C = 0x50;
+        self->unk6++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void colonel_flash_strike_wait(struct MainObj* self)
 {

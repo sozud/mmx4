@@ -577,7 +577,19 @@ void split_mushroom_walk_fall(struct MainObj* self)
 }
 
 // split_mushroom_walk_turn
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007A444);
+void func_8007A444(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 0) {
+        return;
+    }
+    self->unk15 ^= 0x40;
+    if (--self->unk7C == 0) {
+        func_8007B6BC(ANIMATED_OBJECT(self));
+    } else {
+        self->unk6 = 0;
+    }
+}
 
 void split_mushroom_dash(struct MainObj* self)
 {
@@ -717,7 +729,47 @@ void split_mushroom_combo_swing(struct MainObj* self)
 }
 
 // split_mushroom_combo_slam
-INCLUDE_ASM("main/nonmatchings/mains/main_61_split_mushroom", func_8007AE2C);
+void func_8007AE2C(struct MainObj* self)
+{
+    s32 i;
+
+    move_with_gravity(ANIMATED_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (!(self->collision_flags & 8)) {
+        return;
+    }
+    func_8001540C(2, 0xA8, self);
+    if (!(background_objects[g_Player.bg_offset].unk34 & 1)) {
+        start_screen_shake_y(0x10, 8, 2);
+    }
+    for (i = 0; i < 4; ++i) {
+        struct ShotObj* shot = find_free_shot_obj();
+        if (shot == NULL) {
+            continue;
+        }
+        shot->active = 0x41;
+        shot->id = 0x27;
+        shot->unk2 = i;
+        shot->unk40 = self->unk40;
+        shot->unk42 = self->unk42;
+        shot->animation_table = (u32**)self->animation_table;
+        shot->unk3C = (void*)self->sprite_frames;
+        shot->unk15 = self->unk15;
+        shot->bg_offset = self->bg_offset;
+        shot->x_pos = self->x_pos;
+        shot->y_pos = self->y_pos;
+        shot->unk15 = self->unk15;
+        if (self->unk2 == 0) {
+            shot->unk7C = WEAPON_OBJECT(self);
+        } else {
+            shot->unk7C = self->ext.main_61.partner;
+        }
+        shot->state = 0;
+    }
+    set_animation(self, 9);
+    self->unk7C = 0x30;
+    self->unk6 = 4;
+}
 
 void split_mushroom_combo_repeat(struct MainObj* self)
 {

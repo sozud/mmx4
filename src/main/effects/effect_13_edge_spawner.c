@@ -38,7 +38,22 @@ void edge_spawner_despawn(struct EffectObj* self)
 }
 
 // edge_spawner_spawn_enemy
-INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B8630);
+void func_800B8630(struct EffectObj* self)
+{
+    struct MainObj* main = find_free_main_obj();
+
+    if (main == NULL) {
+        return;
+    }
+    main->active = 0x41;
+    main->id = 0x15;
+    main->unk2 = get_random_nonzero() % 4;
+    main->x_pos.val = self->x_pos.val;
+    main->y_pos.val = self->y_pos.val;
+    main->unk40 = D_801406A8[(u8)func_8002938C(0x15)] >> 7;
+    main->unk42 = SOME_COORDINATE_CONVERSION((u8)func_8002938C(0x15));
+    main->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(u8)func_8002938C(0x15)];
+}
 
 // edge_spawner_try_spawn
 INCLUDE_ASM("main/nonmatchings/effects/effect_13_edge_spawner", func_800B875C);

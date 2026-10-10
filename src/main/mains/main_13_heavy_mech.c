@@ -5,6 +5,11 @@
 void heavy_mech_face_player(struct AnimatedObj* self);
 #include "func_tables.h"
 
+extern u8 heavy_mech_debris[];
+extern void (*heavy_mech_step_funcs[])();
+void heavy_mech_check_fall(struct MainObj* self);
+void heavy_mech_check_catch(struct MainObj* self);
+
 void heavy_mech_update(struct MainObj* self)
 {
     heavy_mech_state_funcs[self->state](self);
@@ -44,7 +49,33 @@ void heavy_mech_init(struct MainObj* self)
 #endif
 
 // heavy_mech_main
-INCLUDE_ASM("main/nonmatchings/mains/main_13_heavy_mech", func_8004C860);
+void func_8004C860(struct MainObj* self)
+{
+    heavy_mech_check_fall(self);
+    heavy_mech_check_catch(self);
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    heavy_mech_step_funcs[self->unk5](self);
+    if (self->state != 2) {
+        func_8002D9BC(self);
+    }
+    self->ext.main_13.saved_unk5 = self->unk5;
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(9, heavy_mech_debris, self);
+        drop_item(BASE_OBJECT(self), 8);
+        self->unk7C = 0x20;
+        self->unk7E = 6;
+        self->on_screen = 0;
+        self->state = 2;
+    } else if (self->state != 2) {
+        if (func_8002B1E8(BASE_OBJECT(self), 0x68, 0x68) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x48, 0x48);
+        } else {
+            self->state = 3;
+        }
+    }
+}
 
 void heavy_mech_explode(struct MainObj* self)
 {

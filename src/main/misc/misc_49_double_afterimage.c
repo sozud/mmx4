@@ -6,7 +6,26 @@
 INCLUDE_ASM("main/nonmatchings/misc/misc_49_double_afterimage", func_800D1990);
 
 // double_afterimage_fade
-INCLUDE_ASM("main/nonmatchings/misc/misc_49_double_afterimage", func_800D1A48);
+void func_800D1A48(struct MiscObj* self)
+{
+    if (self->unk2 != 4) {
+        if (--self->ext.misc_49.timer == 0) {
+            self->on_screen = 0;
+            self->state = 2;
+            return;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        move_with_gravity(ANIMATED_OBJECT(self));
+    } else {
+        if (--self->ext.misc_49.timer == 0) {
+            self->on_screen = 0;
+            self->state = 2;
+            return;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
 
 void double_afterimage_despawn(struct MiscObj* self)
 {

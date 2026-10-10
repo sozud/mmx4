@@ -3,7 +3,26 @@
 #include "common.h"
 
 // crumble_sequencer_init
-INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9EC0);
+void func_800B9EC0(struct EffectObj* self)
+{
+    self->state++;
+    self->ext.effect_21.timer = 0;
+    switch (self->unk2) {
+    case 0:
+        self->ext.effect_21.spawned = 0;
+        self->ext.effect_21.phase = 0;
+        break;
+    case 1:
+    case 2:
+    case 4:
+    case 5:
+        self->ext.effect_21.cursor = crumble_sequencer_sequences[self->ext.effect_21.index & 0x7F];
+        break;
+    case 3:
+        self->ext.effect_21.index = 8;
+        break;
+    }
+}
 
 // crumble_sequencer_timed
 INCLUDE_ASM("main/nonmatchings/effects/effect_21_crumble_sequencer", func_800B9F38);

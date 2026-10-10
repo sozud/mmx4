@@ -138,7 +138,24 @@ void fortress_cannon_fire_start(struct MainObj* self)
 }
 
 // fortress_cannon_fire_wait
-INCLUDE_ASM("main/nonmatchings/mains/main_51_fortress_cannon", func_80069F28);
+void func_80069F28(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (--self->unk7C != 0) {
+        return;
+    }
+    self->unk6 = 0;
+    if (self->unk2 == 0) {
+        if ((s32)++self->ext.main_51.unk84 < engine_obj.cur_character + 3) {
+            return;
+        }
+    } else if ((s32)++self->ext.main_51.unk84 < 4) {
+        return;
+    }
+    self->unk5 = 4;
+    self->unk7C = 0x14;
+    self->ext.main_51.unk84 = 0;
+}
 
 void fortress_cannon_volley(struct MainObj* self)
 {
