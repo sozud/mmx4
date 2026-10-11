@@ -43,7 +43,7 @@ struct SerializedEngineObj {
     s8 unk10, unk11, unk12, unk13;
     s8 unk14, unk15, unk16, unk17;
     s8 unk18, unk19, unk1A, unk1B;
-    s8 unk1C, checkpoint, unk1E, unk1F;
+    s8 gameplay_locked, checkpoint, unk1E, unk1F;
     u32 boss_ptr;
     s8 enable_boss, unk25;
     union EngineCharacterState character_state;
@@ -57,7 +57,7 @@ struct SerializedEngineObj {
     s8 max_hp, armor_parts, arm_type;
     s8 player_initial_data[0x10];
     s8 palette_flags;
-    u16 unk5A;
+    u16 collected_upgrades;
     s8 sub_tanks[3];
     u8 unk5F, unk60;
     u8 pad61[3];

@@ -142,7 +142,7 @@ void func_8001FC20(struct EngineObj* arg0)
     arg0->unk18 = 0;
     arg0->unk19 = 0;
     arg0->unk1A = 0;
-    arg0->unk1C = 1;
+    arg0->gameplay_locked = 1;
     arg0->unkF = 0;
 
     func_80023CE0();
@@ -225,7 +225,7 @@ void engine_state_6(struct EngineObj* arg0)
 // D_800F241C state 0
 void func_8001FF8C(struct EngineObj* arg0)
 {
-    if (!arg0->unk1C && !main_bss_state.transition.active &&
+    if (!arg0->gameplay_locked && !main_bss_state.transition.active &&
 #ifdef VERSION_EU
         ((controller_input.pressed & PADstart) || D_80166D68 != 0) &&
 #else

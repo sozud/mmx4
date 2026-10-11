@@ -1067,7 +1067,7 @@ void func_8001C07C(void)
     slot->unk2 = engine_obj.arm_type;
     slot->unk4 = engine_obj.palette_flags;
     slot->unk5 = engine_obj.unk5F;
-    slot->unk6 = engine_obj.unk5A;
+    slot->unk6 = engine_obj.collected_upgrades;
     slot->unk3 = engine_obj.armor_parts;
     slot->unk29 = engine_obj.unk37;
     for (i = 0; i < 16; i++) {
@@ -1089,7 +1089,7 @@ void func_8001C210(void)
     engine_obj.arm_type = slot->unk2;
     engine_obj.palette_flags = slot->unk4;
     engine_obj.unk5F = slot->unk5;
-    engine_obj.unk5A = slot->unk6;
+    engine_obj.collected_upgrades = slot->unk6;
     engine_obj.armor_parts = slot->unk3;
     engine_obj.unk37 = slot->unk29;
     for (i = 0; i < 16; i++) {
@@ -1114,7 +1114,7 @@ void func_8001C30C(struct MemcardSaveSlot* slot)
     engine_obj.arm_type = slot->unk2;
     engine_obj.palette_flags = slot->unk4;
     engine_obj.unk5F = slot->unk5;
-    engine_obj.unk5A = slot->unk6;
+    engine_obj.collected_upgrades = slot->unk6;
     engine_obj.armor_parts = slot->unk3;
     engine_obj.unk37 = slot->unk29;
     for (i = 0; i < 16; i++) {
@@ -1139,7 +1139,7 @@ void func_8001C3E8(void)
     save->unk2 = engine_obj.arm_type;
     save->unk4 = engine_obj.palette_flags;
     save->unk5 = engine_obj.unk5F;
-    save->unk6 = engine_obj.unk5A;
+    save->unk6 = engine_obj.collected_upgrades;
     save->unk3 = engine_obj.armor_parts;
     save->unk29 = engine_obj.unk37;
     for (i = 0; i < 0x10; i++) {

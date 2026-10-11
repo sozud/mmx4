@@ -70,12 +70,12 @@ void func_8002FD70(struct BarObj* self)
         self->options.fields.weapons[7] = 0;
         self->options.fields.unk20 = 0;
     }
-    if (engine_obj.unk5A & 0x3000) {
-        if (engine_obj.unk5A & 0x1000) {
+    if (engine_obj.collected_upgrades & 0x3000) {
+        if (engine_obj.collected_upgrades & 0x1000) {
             self->options.fields.unk20 = 1;
             engine_obj.sub_tanks[0] |= 0x80;
         }
-        if (engine_obj.unk5A & 0x2000) {
+        if (engine_obj.collected_upgrades & 0x2000) {
             self->options.fields.unk21 = 1;
             engine_obj.sub_tanks[1] |= 0x80;
         }
@@ -83,7 +83,7 @@ void func_8002FD70(struct BarObj* self)
         self->options.fields.unk20 = 0;
         self->options.fields.unk21 = 0;
     }
-    if (engine_obj.unk5A & 0x4000) {
+    if (engine_obj.collected_upgrades & 0x4000) {
         self->options.fields.unk22 = 1;
     } else {
         self->options.fields.unk22 = 0;
@@ -118,7 +118,7 @@ void func_8002FD70(struct BarObj* self)
             self->unk14 = weapon + 1;
         }
     }
-    if (engine_obj.unk5A & 0x8000) {
+    if (engine_obj.collected_upgrades & 0x8000) {
         self->options.fields.unk25 = 1;
     } else {
         self->options.fields.unk25 = 0;

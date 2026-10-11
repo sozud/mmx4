@@ -826,7 +826,7 @@ void player_nova_strike_dash(struct PlayerObj* self)
     if (player_nova_strike_hit_wall(self) != 0 && ((u8)self->animation_step.fields.event & 0x40)) {
         self->spike_immune = 0;
         self->nova_strike_active = 0;
-        engine_obj.unk1C = 0;
+        engine_obj.gameplay_locked = 0;
         player_enter_land_or_fall(self);
         return;
     }
@@ -864,7 +864,7 @@ void player_nova_strike_end(struct PlayerObj* self)
     if (should_reset != 0) {
         self->spike_immune = 0;
         self->nova_strike_active = 0;
-        engine_obj.unk1C = 0;
+        engine_obj.gameplay_locked = 0;
         player_reset_palette(self);
         player_enter_land_or_fall(self);
     } else {

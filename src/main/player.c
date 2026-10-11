@@ -136,7 +136,7 @@ void player_beam_in(struct PlayerObj* self)
         self->arm_type = engine_obj.arm_type;
     }
     if (self->animation_step.fields.relative_step == 0) {
-        engine_obj.unk1C = 0;
+        engine_obj.gameplay_locked = 0;
         player_enter_idle(self);
     }
 }

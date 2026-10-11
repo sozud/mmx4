@@ -466,7 +466,7 @@ void player_check_damage(struct PlayerObj* self)
         if (self->hp == -0x80) {
             EASY_HP_SET(0);
             self->hp = 0;
-            engine_obj.unk1C = 1;
+            engine_obj.gameplay_locked = 1;
             player_reset_actions(self);
             player_reset_charge_and_weapon(self);
             self->unk68 = 0;

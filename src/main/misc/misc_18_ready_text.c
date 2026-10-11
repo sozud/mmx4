@@ -187,7 +187,7 @@ void ready_text_leave(struct MiscObj* self)
     self->state = 2;
     self->unk5 = 0;
     if ((engine_obj.stage == 5) && (engine_obj.checkpoint == 0)) {
-        engine_obj.unk1C = 0;
+        engine_obj.gameplay_locked = 0;
     }
 }
 

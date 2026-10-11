@@ -1459,7 +1459,7 @@ void func_80036F50(struct PlayerObj* player)
     u16 input;
     s8 weapon;
 
-    if (player->input_locked != 0 || player->is_clone != 0 || player->special_shot_count != 0 || player->ride_state != 0 || player->nova_strike_active != 0 || engine_obj.unk1C != 0)
+    if (player->input_locked != 0 || player->is_clone != 0 || player->special_shot_count != 0 || player->ride_state != 0 || player->nova_strike_active != 0 || engine_obj.gameplay_locked != 0)
         return;
     input = player->pressed_input;
     if (((player->input.buttons.held & 0x600) == 0x600) || ((input & 0x600) == 0x600)) {
@@ -1820,7 +1820,7 @@ void func_800C00BC(struct ItemObj* arg0)
         pickup_collect_health(arg0, engine_obj.max_hp, 4);
         break;
     case 7:
-        flag = engine_obj.unk5A;
+        flag = engine_obj.collected_upgrades;
         if ((flag & 0xFF) == 0xFF) {
             arg0->state = 3;
             break;
@@ -1830,13 +1830,13 @@ void func_800C00BC(struct ItemObj* arg0)
             arg0->state = 3;
             break;
         }
-        engine_obj.unk5A = flag | (1 << shift);
+        engine_obj.collected_upgrades = flag | (1 << shift);
         engine_obj.max_hp += 2;
         func_8001540C(0, 0x15, 0);
         arg0->state = 3;
         break;
     case 8:
-        flag = engine_obj.unk5A;
+        flag = engine_obj.collected_upgrades;
         if ((flag & 0x3000) == 0x3000) {
             break;
         }
@@ -1844,27 +1844,27 @@ void func_800C00BC(struct ItemObj* arg0)
         if (flag & (0x1000 << shift)) {
             break;
         }
-        engine_obj.unk5A = flag | (0x1000 << shift);
+        engine_obj.collected_upgrades = flag | (0x1000 << shift);
         arg0->state = 3;
         engine_obj.sub_tanks[arg0->unk2 == 15 ? 0 : 1] = -0x80;
         func_8001540C(0, 0x15, 0);
         break;
     case 9:
-        flag = engine_obj.unk5A;
+        flag = engine_obj.collected_upgrades;
         if ((flag & 0x4000) || (flag & (0x4000 << (arg0->unk2 - 17)))) {
             break;
         }
-        engine_obj.unk5A = flag | (0x4000 << (arg0->unk2 - 17));
+        engine_obj.collected_upgrades = flag | (0x4000 << (arg0->unk2 - 17));
         arg0->state = 3;
         func_8001540C(0, 0x15, 0);
         engine_obj.sub_tanks[2] = 0;
         break;
     case 10:
-        flag = engine_obj.unk5A;
+        flag = engine_obj.collected_upgrades;
         if ((flag & 0x8000) || (flag & (0x8000 << (arg0->unk2 - 18)))) {
             break;
         }
-        engine_obj.unk5A = flag | (0x8000 << (arg0->unk2 - 18));
+        engine_obj.collected_upgrades = flag | (0x8000 << (arg0->unk2 - 18));
         arg0->state = 3;
         func_8001540C(0, 0x15, 0);
         break;
@@ -5422,7 +5422,7 @@ void func_800BF76C(struct ItemObj* arg0)
     }
 
     blocked = 0;
-    flags = engine_obj.unk5A;
+    flags = engine_obj.collected_upgrades;
     switch (kind) {
     case 7:
         if ((flags & 0xFF) == 0xFF
@@ -5562,7 +5562,7 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
         }
     }
 
-    if ((engine_obj.unk5A & 0x4000) != 0) {
+    if ((engine_obj.collected_upgrades & 0x4000) != 0) {
         value = (u8)engine_obj.sub_tanks[2] + engine_step;
         engine_obj.sub_tanks[2] = value;
         if ((s8)value >= 0x21) {
@@ -21065,7 +21065,7 @@ void func_80085460(struct MainObj* self)
     s16 x;
     s16 y;
 
-    engine_obj.unk1C = 0;
+    engine_obj.gameplay_locked = 0;
     self->on_screen = 0;
     if (self->unk7C == 0) {
         apply_tile_effect(6, 0x430, 0x1C0);
@@ -21201,7 +21201,7 @@ void func_8008F1A8(struct MainObj* self)
             ext->death_kind = 2;
             player_start_script_action(0x14, g_Player.unk15);
             g_Player.spike_immune = 1;
-            engine_obj.unk1C = 1;
+            engine_obj.gameplay_locked = 1;
         } else {
             ext->death_kind = 1;
         }

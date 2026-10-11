@@ -156,7 +156,7 @@ void boss_death_fx_finish(struct EffectObj* self)
     if (!(self->active & 0x80)) {
         player_end_script_action();
     }
-    engine_obj.unk1C = 1;
+    engine_obj.gameplay_locked = 1;
     ZeroObjectState(OBJECT_HEADER(self));
 }
 
