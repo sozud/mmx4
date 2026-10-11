@@ -67,7 +67,7 @@ struct SerializedEngineObj {
     u8 unk40;
     s8 unk41;
     u8 unk42;
-    s8 cur_character, unk44;
+    s8 cur_character, player_lives;
     u8 unk45;
     s8 unk46, unk47, unk48;
     s8 player_initial_data[0x10];
@@ -165,7 +165,7 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.unk41 = source->unk41;
     restored.unk42 = source->unk42;
     restored.cur_character = source->cur_character;
-    restored.unk44 = source->unk44;
+    restored.player_lives = source->player_lives;
     restored.unk45 = source->unk45;
     restored.unk46 = source->unk46;
     restored.unk47 = source->unk47;
@@ -229,7 +229,7 @@ static void save_replay_engine(struct SerializedEngineObj* target)
     target->unk41 = engine_obj.unk41;
     target->unk42 = engine_obj.unk42;
     target->cur_character = engine_obj.cur_character;
-    target->unk44 = engine_obj.unk44;
+    target->player_lives = engine_obj.player_lives;
     target->unk45 = engine_obj.unk45;
     target->unk46 = engine_obj.unk46;
     target->unk47 = engine_obj.unk47;

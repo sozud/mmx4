@@ -262,7 +262,7 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
     engine_obj.unk5F = story;
     if (loadout != 1 && loadout != 2)
         return;
-    engine_obj.unk44 = 4;
+    engine_obj.player_lives = 4;
     engine_obj.unk45 = 0x30;
     engine_obj.unk46 = 0x30;
     engine_obj.palette_flags = 0xFF;

@@ -52,7 +52,7 @@ struct SerializedEngineObj {
     u8 unk40;
     s8 unk41;
     u8 unk42;
-    s8 cur_character, unk44;
+    s8 cur_character, player_lives;
     u8 unk45;
     s8 unk46, unk47, unk48;
     s8 player_initial_data[0x10];

@@ -3484,7 +3484,7 @@ struct EngineObj {
     s8 unk41;
     u8 unk42;
     s8 cur_character; // 0x43
-    s8 unk44;
+    s8 player_lives;
     u8 unk45;
     s8 unk46;
     s8 unk47;

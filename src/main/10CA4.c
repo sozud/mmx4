@@ -149,9 +149,9 @@ void func_800206D0(struct EngineObj* arg0)
                 D_80171EA8 = 0;
             }
             if (engine_obj.unk5A & 0x8000) {
-                arg0->unk44 = 4;
+                arg0->player_lives = 4;
             } else {
-                arg0->unk44 = 2;
+                arg0->player_lives = 2;
             }
             arg0->checkpoint = 0;
             arg0->unk1E = 0;
@@ -162,9 +162,9 @@ void func_800206D0(struct EngineObj* arg0)
             break;
         case 1:
             if (engine_obj.unk5A & 0x8000) {
-                arg0->unk44 = 4;
+                arg0->player_lives = 4;
             } else {
-                arg0->unk44 = 2;
+                arg0->player_lives = 2;
             }
             arg0->state = 3;
             arg0->unk1 = 0;
@@ -210,9 +210,9 @@ void func_8002088C(struct EngineObj* arg0)
             }
 
             if (engine_obj.unk5A & 0x8000) {
-                arg0->unk44 = 4;
+                arg0->player_lives = 4;
             } else {
-                arg0->unk44 = 2;
+                arg0->player_lives = 2;
             }
             arg0->checkpoint = 0;
             arg0->unk1E = 0;
@@ -223,9 +223,9 @@ void func_8002088C(struct EngineObj* arg0)
             break;
         case 1:
             if (engine_obj.unk5A & 0x8000) {
-                arg0->unk44 = 4;
+                arg0->player_lives = 4;
             } else {
-                arg0->unk44 = 2;
+                arg0->player_lives = 2;
             }
             arg0->state = 3;
             arg0->unk1 = 0;

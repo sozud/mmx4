@@ -1808,9 +1808,9 @@ void func_800C00BC(struct ItemObj* arg0)
         arg0->state = 3;
         break;
     case 4:
-        engine_obj.unk44++;
-        if (engine_obj.unk44 >= 10) {
-            engine_obj.unk44 = 9;
+        engine_obj.player_lives++;
+        if (engine_obj.player_lives >= 10) {
+            engine_obj.player_lives = 9;
         } else {
             func_8001540C(0, 0x15, 0);
         }
@@ -6813,8 +6813,8 @@ void func_800200D4(struct EngineObj* arg0)
         }
         arg0->state = 5;
     } else {
-        arg0->unk44--;
-        if (arg0->unk44 < 0) {
+        arg0->player_lives--;
+        if (arg0->player_lives < 0) {
             arg0->state = 8;
             if (*(u16*)&arg0->stage == 0xC) {
                 for (i = 0; i < 0x10; i++) {
@@ -12860,7 +12860,7 @@ void func_800175AC(u8 index)
         x = ((s8)engine_obj.unk46 << 1) + 0x80;
     }
     if (index == 0x1F)
-        frame = (const u16*)(archive + (layout->tile + engine_obj.unk44) * 4);
+        frame = (const u16*)(archive + (layout->tile + engine_obj.player_lives) * 4);
     else
         frame = (const u16*)(archive + layout->tile * 4);
     if (index == 0x26 && bar_object.options.fields.unk25 != 0)

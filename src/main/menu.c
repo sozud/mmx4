@@ -1095,7 +1095,7 @@ void func_8001C210(void)
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
-    obj->unk44 = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
+    obj->player_lives = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
     EASY_HP_SET(obj->unk46 * 2 - 1);
     obj->unk5C[0] = 0;
     obj->unk5C[1] = 0;
@@ -1120,7 +1120,7 @@ void func_8001C30C(struct MemcardSaveSlot* slot)
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
-    obj->unk44 = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
+    obj->player_lives = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
     EASY_HP_SET(obj->unk46 * 2 - 1);
     obj->unk5C[0] = 0;
     obj->unk5C[1] = 0;
