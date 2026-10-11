@@ -1063,12 +1063,12 @@ void func_8001C07C(void)
     u8 i;
 
     slot->character = engine_obj.cur_character;
-    slot->unk1 = engine_obj.unk46;
-    slot->unk2 = engine_obj.unk48;
+    slot->unk1 = engine_obj.max_hp;
+    slot->unk2 = engine_obj.arm_type;
     slot->unk4 = engine_obj.palette_flags;
     slot->unk5 = engine_obj.unk5F;
     slot->unk6 = engine_obj.unk5A;
-    slot->unk3 = engine_obj.unk47;
+    slot->unk3 = engine_obj.armor_parts;
     slot->unk29 = engine_obj.unk37;
     for (i = 0; i < 16; i++) {
         slot->unk8[i] = D_800EE430[i];
@@ -1085,22 +1085,22 @@ void func_8001C210(void)
 
     slot = memcard_menu.slot;
     engine_obj.cur_character = slot->character;
-    engine_obj.unk46 = slot->unk1;
-    engine_obj.unk48 = slot->unk2;
+    engine_obj.max_hp = slot->unk1;
+    engine_obj.arm_type = slot->unk2;
     engine_obj.palette_flags = slot->unk4;
     engine_obj.unk5F = slot->unk5;
     engine_obj.unk5A = slot->unk6;
-    engine_obj.unk47 = slot->unk3;
+    engine_obj.armor_parts = slot->unk3;
     engine_obj.unk37 = slot->unk29;
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
     obj->player_lives = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
-    EASY_HP_SET(obj->unk46 * 2 - 1);
-    obj->unk5C[0] = 0;
-    obj->unk5C[1] = 0;
-    obj->unk5C[2] = 0;
-    obj->unk45 = obj->unk46;
+    EASY_HP_SET(obj->max_hp * 2 - 1);
+    obj->sub_tanks[0] = 0;
+    obj->sub_tanks[1] = 0;
+    obj->sub_tanks[2] = 0;
+    obj->checkpoint_hp = obj->max_hp;
     func_8001C3E8();
 }
 
@@ -1110,22 +1110,22 @@ void func_8001C30C(struct MemcardSaveSlot* slot)
     struct EngineObj* obj = &engine_obj;
 
     engine_obj.cur_character = slot->character;
-    engine_obj.unk46 = slot->unk1;
-    engine_obj.unk48 = slot->unk2;
+    engine_obj.max_hp = slot->unk1;
+    engine_obj.arm_type = slot->unk2;
     engine_obj.palette_flags = slot->unk4;
     engine_obj.unk5F = slot->unk5;
     engine_obj.unk5A = slot->unk6;
-    engine_obj.unk47 = slot->unk3;
+    engine_obj.armor_parts = slot->unk3;
     engine_obj.unk37 = slot->unk29;
     for (i = 0; i < 16; i++) {
         D_800EE430[i] = slot->unk8[i];
     }
     obj->player_lives = (slot->unk6 & D_800F1D90.sign_bit_mask) ? 4 : 2;
-    EASY_HP_SET(obj->unk46 * 2 - 1);
-    obj->unk5C[0] = 0;
-    obj->unk5C[1] = 0;
-    obj->unk5C[2] = 0;
-    obj->unk45 = obj->unk46;
+    EASY_HP_SET(obj->max_hp * 2 - 1);
+    obj->sub_tanks[0] = 0;
+    obj->sub_tanks[1] = 0;
+    obj->sub_tanks[2] = 0;
+    obj->checkpoint_hp = obj->max_hp;
 }
 
 void func_8001C3E8(void)
@@ -1135,12 +1135,12 @@ void func_8001C3E8(void)
 
     save = &D_800F1D90.save;
     save->character = engine_obj.cur_character;
-    save->unk1 = engine_obj.unk46;
-    save->unk2 = engine_obj.unk48;
+    save->unk1 = engine_obj.max_hp;
+    save->unk2 = engine_obj.arm_type;
     save->unk4 = engine_obj.palette_flags;
     save->unk5 = engine_obj.unk5F;
     save->unk6 = engine_obj.unk5A;
-    save->unk3 = engine_obj.unk47;
+    save->unk3 = engine_obj.armor_parts;
     save->unk29 = engine_obj.unk37;
     for (i = 0; i < 0x10; i++) {
         save->unk8[i] = D_800EE430[i];

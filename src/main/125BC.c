@@ -68,12 +68,12 @@ struct SerializedEngineObj {
     s8 unk41;
     u8 unk42;
     s8 cur_character, player_lives;
-    u8 unk45;
-    s8 unk46, unk47, unk48;
+    u8 checkpoint_hp;
+    s8 max_hp, armor_parts, arm_type;
     s8 player_initial_data[0x10];
     s8 palette_flags;
     u16 unk5A;
-    s8 pad5C[3];
+    s8 sub_tanks[3];
     u8 unk5F, unk60;
     u8 pad61[3];
 };
@@ -166,18 +166,18 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     restored.unk42 = source->unk42;
     restored.cur_character = source->cur_character;
     restored.player_lives = source->player_lives;
-    restored.unk45 = source->unk45;
-    restored.unk46 = source->unk46;
-    restored.unk47 = source->unk47;
-    restored.unk48 = source->unk48;
+    restored.checkpoint_hp = source->checkpoint_hp;
+    restored.max_hp = source->max_hp;
+    restored.armor_parts = source->armor_parts;
+    restored.arm_type = source->arm_type;
     for (i = 0; i < COUNT(restored.player_initial_data); i++) {
         restored.player_initial_data[i] = source->player_initial_data[i];
     }
     restored.palette_flags = source->palette_flags;
     restored.unk5A = source->unk5A;
-    restored.unk5C[0] = source->pad5C[0];
-    restored.unk5C[1] = source->pad5C[1];
-    restored.unk5C[2] = source->pad5C[2];
+    restored.sub_tanks[0] = source->sub_tanks[0];
+    restored.sub_tanks[1] = source->sub_tanks[1];
+    restored.sub_tanks[2] = source->sub_tanks[2];
     restored.unk5F = source->unk5F;
     restored.unk60 = source->unk60;
     restored.pad61[0] = source->pad61[0];
@@ -230,18 +230,18 @@ static void save_replay_engine(struct SerializedEngineObj* target)
     target->unk42 = engine_obj.unk42;
     target->cur_character = engine_obj.cur_character;
     target->player_lives = engine_obj.player_lives;
-    target->unk45 = engine_obj.unk45;
-    target->unk46 = engine_obj.unk46;
-    target->unk47 = engine_obj.unk47;
-    target->unk48 = engine_obj.unk48;
+    target->checkpoint_hp = engine_obj.checkpoint_hp;
+    target->max_hp = engine_obj.max_hp;
+    target->armor_parts = engine_obj.armor_parts;
+    target->arm_type = engine_obj.arm_type;
     for (i = 0; i < COUNT(engine_obj.player_initial_data); i++) {
         target->player_initial_data[i] = engine_obj.player_initial_data[i];
     }
     target->palette_flags = engine_obj.palette_flags;
     target->unk5A = engine_obj.unk5A;
-    target->pad5C[0] = engine_obj.unk5C[0];
-    target->pad5C[1] = engine_obj.unk5C[1];
-    target->pad5C[2] = engine_obj.unk5C[2];
+    target->sub_tanks[0] = engine_obj.sub_tanks[0];
+    target->sub_tanks[1] = engine_obj.sub_tanks[1];
+    target->sub_tanks[2] = engine_obj.sub_tanks[2];
     target->unk5F = engine_obj.unk5F;
     target->unk60 = engine_obj.unk60;
     target->pad61[0] = engine_obj.pad61[0];

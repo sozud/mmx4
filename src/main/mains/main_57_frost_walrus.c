@@ -12,7 +12,7 @@ void frost_walrus_update(struct MainObj* self)
 {
     frost_walrus_state_funcs[self->state](self);
     CollisionRelated(PLAYER_OBJECT(self));
-    if (!(g_Player.hp & 0x7F)) {
+    if (!HP_VALUE(g_Player.hp)) {
         frost_walrus_set_floor_tiles(0x38);
     }
 }

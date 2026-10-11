@@ -263,18 +263,18 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
     if (loadout != 1 && loadout != 2)
         return;
     engine_obj.player_lives = 4;
-    engine_obj.unk45 = 0x30;
-    engine_obj.unk46 = 0x30;
+    engine_obj.checkpoint_hp = 0x30;
+    engine_obj.max_hp = 0x30;
     engine_obj.palette_flags = 0xFF;
     if (loadout == 2 && stage >= 1 && stage <= 8)
         engine_obj.palette_flags &= (u8) ~(1 << (stage - 1));
     engine_obj.unk5A = 0xF0FF;
-    engine_obj.unk5C[0] = 0xA0;
-    engine_obj.unk5C[1] = 0xA0;
-    engine_obj.unk5C[2] = 0x20;
+    engine_obj.sub_tanks[0] = 0xA0;
+    engine_obj.sub_tanks[1] = 0xA0;
+    engine_obj.sub_tanks[2] = 0x20;
     if (character == CHARACTER_X) {
-        engine_obj.unk47 = 0x0F;
-        engine_obj.unk48 = 2;
+        engine_obj.armor_parts = 0x0F;
+        engine_obj.arm_type = 2;
     }
 }
 #endif

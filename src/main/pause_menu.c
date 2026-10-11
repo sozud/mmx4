@@ -73,11 +73,11 @@ void func_8002FD70(struct BarObj* self)
     if (engine_obj.unk5A & 0x3000) {
         if (engine_obj.unk5A & 0x1000) {
             self->options.fields.unk20 = 1;
-            engine_obj.unk5C[0] |= 0x80;
+            engine_obj.sub_tanks[0] |= 0x80;
         }
         if (engine_obj.unk5A & 0x2000) {
             self->options.fields.unk21 = 1;
-            engine_obj.unk5C[1] |= 0x80;
+            engine_obj.sub_tanks[1] |= 0x80;
         }
     } else {
         self->options.fields.unk20 = 0;

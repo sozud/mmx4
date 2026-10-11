@@ -528,7 +528,7 @@ void player_idle_animate(struct PlayerObj* self)
         }
     }
     if (self->unk17 == 6) {
-        if (self->hp >= engine_obj.unk46 / 3) {
+        if (self->hp >= engine_obj.max_hp / 3) {
             player_set_animation(self, 5);
             return;
         }

@@ -23,7 +23,7 @@ void func_8003D3F8(struct RideArmorObj* arg0)
     arg0->input_flags = arg0->unk70 | arg0->unk71;
     arg0->unk71 = 0;
     D_800F912C[arg0->state](arg0);
-    arg0->unk5C &= ~0x80;
+    arg0->hp &= ~0x80;
 }
 
 INCLUDE_ASM("main/nonmatchings/mech", func_8003D4C8);

@@ -353,7 +353,7 @@ void mmx4_pc_object_log_dump(void)
         "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\n",
         frame, game, engine, engine_obj.state, engine_obj.stage,
         engine_obj.substage, engine_obj.checkpoint, engine_obj.cur_character,
-        cur_random, controller_input.held, controller_input.previous, engine_obj.unk46,
+        cur_random, controller_input.held, controller_input.previous, engine_obj.max_hp,
         g_Player.x_pos.val, g_Player.y_pos.val,
         background_objects[0].x_pos.val, background_objects[0].y_pos.val,
         main_bss_state.frame_counter, D_801406AC, D_8013BD40,

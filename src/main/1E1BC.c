@@ -172,7 +172,7 @@ ret_u8 func_8002D9BC(void* object)
     }
     if (g_Player.ride_state < 0) {
         ride = &qux_object;
-        if (ride->unk5C & 0x80) {
+        if (HP_DAMAGE_FLAG(ride->hp)) {
             return 0;
         }
         if (((u8)ride->unk85) != 0) {
@@ -185,14 +185,14 @@ ret_u8 func_8002D9BC(void* object)
         ride->unk86 = 0;
         ride_hp = shot->unk60;
         ride->unk63 = ride_hp >= 5 ? 2 : 1;
-        ride_hp = ride->unk5C - shot->unk60;
-        ride->unk5C = ride_hp;
+        ride_hp = ride->hp - shot->unk60;
+        ride->hp = ride_hp;
         if (ride_hp > 0) {
             ride_hp |= 0x80;
         } else {
             ride_hp = -0x80;
         }
-        ride->unk5C = ride_hp;
+        ride->hp = ride_hp;
         if (ride->x_pos.i.hi >= shot->x_pos.i.hi) {
             ride->unk84 = 0;
         } else {
@@ -200,7 +200,7 @@ ret_u8 func_8002D9BC(void* object)
         }
         return 1;
     }
-    if (player->hp & 0x80) {
+    if (HP_DAMAGE_FLAG(player->hp)) {
         return 0;
     }
     if (player->hurt_phase != 0) {

@@ -1430,8 +1430,8 @@ void func_80025188(s32 slot, u8 index)
 
 void func_800253F0(struct MainObj* player, s32 gauge)
 {
-    s8 value = player->hp & 0x7F;
-    s8 target = gauge == 0 ? engine_obj.unk46 : 0x30;
+    s8 value = HP_VALUE(player->hp);
+    s8 target = gauge == 0 ? engine_obj.max_hp : 0x30;
     s16 x = D_800F3124[gauge].x;
     u16 bottom = D_800F3124[gauge].bottom;
 
@@ -1442,11 +1442,11 @@ void func_800253F0(struct MainObj* player, s32 gauge)
         player->unk5D = value;
         return;
     }
-    if (player->hp & 0x80)
-        player->unk5F = 0x10;
+    if (HP_DAMAGE_FLAG(player->hp))
+        player->drain_hold_timer = 0x10;
     func_80025588(x, x + 5, bottom - (s8)player->unk5D, bottom - value, 2);
-    if (player->unk5F != 0) {
-        player->unk5F--;
+    if (player->drain_hold_timer != 0) {
+        player->drain_hold_timer--;
         return;
     }
     if (!(main_bss_state.frame_counter & 3))
@@ -1780,12 +1780,12 @@ void func_800C00BC(struct ItemObj* arg0)
 
     if (g_Player.ride_state == 0) {
         player = (struct CollisionObj*)&g_Player;
-        if (!(g_Player.hp & 0x7F)) {
+        if (!HP_VALUE(g_Player.hp)) {
             return;
         }
     } else {
         player = (struct CollisionObj*)&qux_object;
-        if (!(qux_object.unk5C & 0x7F)) {
+        if (!(HP_VALUE(qux_object.hp))) {
             return;
         }
     }
@@ -1817,7 +1817,7 @@ void func_800C00BC(struct ItemObj* arg0)
         arg0->state = 3;
         break;
     case 5:
-        pickup_collect_health(arg0, engine_obj.unk46, 4);
+        pickup_collect_health(arg0, engine_obj.max_hp, 4);
         break;
     case 7:
         flag = engine_obj.unk5A;
@@ -1831,7 +1831,7 @@ void func_800C00BC(struct ItemObj* arg0)
             break;
         }
         engine_obj.unk5A = flag | (1 << shift);
-        engine_obj.unk46 += 2;
+        engine_obj.max_hp += 2;
         func_8001540C(0, 0x15, 0);
         arg0->state = 3;
         break;
@@ -1846,7 +1846,7 @@ void func_800C00BC(struct ItemObj* arg0)
         }
         engine_obj.unk5A = flag | (0x1000 << shift);
         arg0->state = 3;
-        engine_obj.unk5C[arg0->unk2 == 15 ? 0 : 1] = -0x80;
+        engine_obj.sub_tanks[arg0->unk2 == 15 ? 0 : 1] = -0x80;
         func_8001540C(0, 0x15, 0);
         break;
     case 9:
@@ -1857,7 +1857,7 @@ void func_800C00BC(struct ItemObj* arg0)
         engine_obj.unk5A = flag | (0x4000 << (arg0->unk2 - 17));
         arg0->state = 3;
         func_8001540C(0, 0x15, 0);
-        engine_obj.unk5C[2] = 0;
+        engine_obj.sub_tanks[2] = 0;
         break;
     case 10:
         flag = engine_obj.unk5A;
@@ -4510,7 +4510,7 @@ void func_800C6EDC(struct VisualObj* arg0)
             if (engine_obj.unk37 != 0) {
                 g_Player.armor_parts = 0xF;
                 g_Player.arm_type = 2;
-                engine_obj.unk48 = 2;
+                engine_obj.arm_type = 2;
             } else {
                 u8 bit = light_capsule_part_bits[arg0->unk2];
 
@@ -4520,10 +4520,10 @@ void func_800C6EDC(struct VisualObj* arg0)
                         g_Player.arm_type = 1;
                     if (arg0->unk2 == 3)
                         g_Player.arm_type = 2;
-                    engine_obj.unk48 = g_Player.arm_type;
+                    engine_obj.arm_type = g_Player.arm_type;
                 }
             }
-            engine_obj.unk47 = g_Player.armor_parts;
+            engine_obj.armor_parts = g_Player.armor_parts;
         }
     }
     update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
@@ -5563,10 +5563,10 @@ void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
     }
 
     if ((engine_obj.unk5A & 0x4000) != 0) {
-        value = (u8)engine_obj.unk5C[2] + engine_step;
-        engine_obj.unk5C[2] = value;
+        value = (u8)engine_obj.sub_tanks[2] + engine_step;
+        engine_obj.sub_tanks[2] = value;
         if ((s8)value >= 0x21) {
-            engine_obj.unk5C[2] = 0x20;
+            engine_obj.sub_tanks[2] = 0x20;
         }
     }
 }
@@ -5577,7 +5577,7 @@ void func_80033D54(struct PlayerObj* arg0)
     s32 index;
 
     player_set_collision_bounds(arg0);
-    arg0->hp = (u8)arg0->hp & 0x7F;
+    arg0->hp = HP_VALUE((u8)arg0->hp);
     if (arg0->unk5 == 0x11) {
         return;
     }
@@ -5823,7 +5823,7 @@ void func_80042950(struct MainObj* arg0)
     arg0->active = (u8)arg0->active | 4;
     weapon = (u8)g_Player.weapon;
     flags = 0;
-    if (((s8)engine_obj.unk46 / 2) >= g_Player.hp) {
+    if (((s8)engine_obj.max_hp / 2) >= g_Player.hp) {
         flags = 1;
         ext[0] = 1;
     }
@@ -6802,7 +6802,7 @@ void func_800200D4(struct EngineObj* arg0)
     } else if (arg0->unkF < 0) {
         arg0->unk1E = -1;
         func_8002B560(2, 0xE);
-        arg0->unk45 = g_Player.hp;
+        arg0->checkpoint_hp = g_Player.hp;
         for (i = 0; i < 0x10; i++) {
             arg0->player_initial_data[i] = g_Player.weapon_energy[i];
         }
@@ -6851,10 +6851,10 @@ void func_800BFBD0(struct ItemObj* arg0)
 
         arg0->ext.item_2.unk81 = 2;
         health = g_Player.hp;
-        status = health & 0x80;
-        if ((health & 0x7F) >= engine_obj.unk46) {
+        status = HP_DAMAGE_FLAG(health);
+        if (HP_VALUE(health) >= engine_obj.max_hp) {
             arg0->unk6 = 1;
-            g_Player.hp = (u8)engine_obj.unk46 | status;
+            g_Player.hp = (u8)engine_obj.max_hp | status;
         } else {
             g_Player.hp = (health + 1) | status;
         }
@@ -10194,7 +10194,7 @@ void func_8003B470(struct RideArmorObj* arg0)
     arg0->unk50 = NULL;
     arg0->unk68 = (struct Unk_unk68*)D_800F9068;
     arg0->unk58 = NULL;
-    arg0->unk5C = g_Player.hp;
+    arg0->hp = g_Player.hp;
     func_8002C808((struct PlayerObj*)arg0);
     arg0->unk7D = 0;
     arg0->unk7E = 0;
@@ -10228,20 +10228,20 @@ void func_8003B470(struct RideArmorObj* arg0)
 
 void func_8003B7B4(struct RideArmorObj* arg0)
 {
-    s8 health = arg0->unk5C;
+    s8 health = arg0->hp;
 
     if (health == 0 || g_Player.hp == 0) {
         g_Player.hp = -0x80;
-        arg0->unk5C = -0x80;
+        arg0->hp = -0x80;
         spawn_debris(0xB, D_800F905C, arg0);
         arg0->state = 3;
         return;
     }
-    if (health < 0 && (health & 0x7F) != 0) {
+    if (health < 0 && HP_VALUE(health) != 0) {
         RIDE_U8(arg0, 0x9A) = 1;
         arg0->unk61 = 0x79;
         arg0->unk85 = 1;
-        g_Player.hp = arg0->unk5C & 0x7F;
+        g_Player.hp = HP_VALUE(arg0->hp);
     }
     if (background_objects[0].unk51 != 0) {
         RIDE_U8(arg0, 0x9B) = 0;
@@ -10578,7 +10578,7 @@ void func_8003D01C(struct RideArmorObj* arg0)
         arg0->x_pos.i.hi -= edge;
     } else if (edge < -8) {
         g_Player.hp = -0x80;
-        arg0->unk5C = -0x80;
+        arg0->hp = -0x80;
     }
     edge = offset + bounds->unk2;
     if (edge >= 0x100)
@@ -11294,7 +11294,7 @@ void func_8003D4C8(struct RideArmorObj* arg0)
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->unk40 = D_801406A8[resource] >> 7;
     arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
-    arg0->unk5C = 0x20;
+    arg0->hp = 0x20;
     arg0->unk16 = 3;
     arg0->unk68 = &D_800F9124;
     arg0->unk60 = 0;
@@ -11460,8 +11460,8 @@ void func_800403DC(struct RideArmorObj* arg0)
     arg0->on_screen = 0;
     if (func_8002B160(BASE_OBJECT(arg0)) != 0)
         return;
-    if (arg0->unk5C < 0) {
-        if (arg0->unk5C == -0x80) {
+    if (arg0->hp < 0) {
+        if (arg0->hp == -0x80) {
             RIDE_U8(arg0, 0x92) = 0x1E;
             RIDE_U8(arg0, 0x91) = 0x1E;
             RIDE_U8(arg0, 0x8C) = 0;
@@ -12477,17 +12477,17 @@ void func_800304E4(struct BarObj* arg0)
         switch (arg0->unk14) {
         case 10:
             arg0->unk5 = 3;
-            if ((engine_obj.unk5C[0] & 0x7F) == 0x20)
+            if (TANK_VALUE(engine_obj.sub_tanks[0]) == 0x20)
                 arg0->unk28 = 1;
             break;
         case 11:
             arg0->unk5 = 3;
-            if ((engine_obj.unk5C[1] & 0x7F) == 0x20)
+            if (TANK_VALUE(engine_obj.sub_tanks[1]) == 0x20)
                 arg0->unk28 = 1;
             break;
         case 12:
             arg0->unk5 = 4;
-            if ((engine_obj.unk5C[2] & 0x7F) == 0x20)
+            if (TANK_VALUE(engine_obj.sub_tanks[2]) == 0x20)
                 arg0->unk2C = 1;
             break;
         }
@@ -12623,12 +12623,12 @@ done:
 
 static void bar_merge_sub_tanks(void)
 {
-    s8 second = engine_obj.unk5C[1];
+    s8 second = engine_obj.sub_tanks[1];
 
     if (second >= 0)
         return;
-    engine_obj.unk5C[0] = second;
-    engine_obj.unk5C[1] = second & 0x80;
+    engine_obj.sub_tanks[0] = second;
+    engine_obj.sub_tanks[1] = TANK_DRAINED(second);
 }
 
 void func_80030A2C(struct BarObj* arg0)
@@ -12643,21 +12643,21 @@ void func_80030A2C(struct BarObj* arg0)
         return;
     tank = arg0->unk14 != 10;
     if (arg0->unk28 != 0) {
-        energy = engine_obj.unk5C[tank] & 0x7F;
+        energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
         if (energy != 0) {
-            engine_obj.unk5C[tank] = (energy - 1) | 0x80;
-            health = (g_Player.hp & 0x7F) + 1;
-            if (engine_obj.unk46 < (s8)health)
-                health = engine_obj.unk46;
+            engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
+            health = HP_VALUE(g_Player.hp) + 1;
+            if (engine_obj.max_hp < (s8)health)
+                health = engine_obj.max_hp;
             g_Player.hp = health;
             if ((main_bss_state.frame_counter & 3) == 0)
                 func_8001540C(0, 0x17, 0);
             return;
         }
-        if (g_Player.hp != engine_obj.unk46) {
-            health = (g_Player.hp & 0x7F) + 1;
-            if (engine_obj.unk46 < (s8)health)
-                health = engine_obj.unk46;
+        if (g_Player.hp != engine_obj.max_hp) {
+            health = HP_VALUE(g_Player.hp) + 1;
+            if (engine_obj.max_hp < (s8)health)
+                health = engine_obj.max_hp;
             g_Player.hp = health;
             if ((frame & 3) == 0)
                 func_8001540C(0, 0x17, 0);
@@ -12669,19 +12669,19 @@ void func_80030A2C(struct BarObj* arg0)
             bar_merge_sub_tanks();
         return;
     }
-    energy = engine_obj.unk5C[tank] & 0x7F;
+    energy = TANK_VALUE(engine_obj.sub_tanks[tank]);
     if (energy == 0) {
         arg0->unk5 = 1;
         if (tank == 0)
             bar_merge_sub_tanks();
         return;
     }
-    engine_obj.unk5C[tank] = (energy - 1) | 0x80;
+    engine_obj.sub_tanks[tank] = (energy - 1) | 0x80;
     player_health = g_Player.hp;
-    health = (player_health & 0x7F) + 1;
-    if (engine_obj.unk46 < (s8)health)
-        health = engine_obj.unk46;
-    g_Player.hp = health | (player_health & 0x80);
+    health = HP_VALUE(player_health) + 1;
+    if (engine_obj.max_hp < (s8)health)
+        health = engine_obj.max_hp;
+    g_Player.hp = health | HP_DAMAGE_FLAG(player_health);
     if ((main_bss_state.frame_counter & 3) == 0)
         func_8001540C(0, 0x17, 0);
 }
@@ -12704,9 +12704,9 @@ void func_80030C54(struct BarObj* arg0)
             }
         }
         if (refilled == 0) {
-            energy = engine_obj.unk5C[2] & 0x7F;
+            energy = TANK_VALUE(engine_obj.sub_tanks[2]);
             if (energy != 0) {
-                engine_obj.unk5C[2] = energy - 1;
+                engine_obj.sub_tanks[2] = energy - 1;
             } else {
                 arg0->unk5 = 1;
                 arg0->unk2C = 0;
@@ -12714,7 +12714,7 @@ void func_80030C54(struct BarObj* arg0)
             return;
         }
     } else {
-        if ((engine_obj.unk5C[2] & 0x7F) == 0) {
+        if (TANK_VALUE(engine_obj.sub_tanks[2]) == 0) {
             arg0->unk5 = 1;
             return;
         }
@@ -12731,8 +12731,8 @@ void func_80030C54(struct BarObj* arg0)
             return;
         }
     }
-    energy = engine_obj.unk5C[2] & 0x7F;
-    engine_obj.unk5C[2] = energy != 0 ? energy - 1 : energy;
+    energy = TANK_VALUE(engine_obj.sub_tanks[2]);
+    engine_obj.sub_tanks[2] = energy != 0 ? energy - 1 : energy;
     if ((main_bss_state.frame_counter & 3) == 0)
         func_8001540C(0, 0x17, 0);
 }
@@ -12857,7 +12857,7 @@ void func_800175AC(u8 index)
 
     if (index == 0x20) {
         y = 0xD8;
-        x = ((s8)engine_obj.unk46 << 1) + 0x80;
+        x = ((s8)engine_obj.max_hp << 1) + 0x80;
     }
     if (index == 0x1F)
         frame = (const u16*)(archive + (layout->tile + engine_obj.player_lives) * 4);
@@ -12962,10 +12962,10 @@ void func_800179BC(void)
                 poly->x3 = poly->x2 + (s8)g_Player.hp * 2;
             }
         } else if (i == 0xC) {
-            poly->x1 = poly->x0 + (s8)engine_obj.unk5C[2];
-            poly->x3 = poly->x2 + (s8)engine_obj.unk5C[2];
+            poly->x1 = poly->x0 + (s8)engine_obj.sub_tanks[2];
+            poly->x3 = poly->x2 + (s8)engine_obj.sub_tanks[2];
         } else {
-            amount = engine_obj.unk5C[i - 10] & 0x7F;
+            amount = TANK_VALUE(engine_obj.sub_tanks[i - 10]);
             poly->x1 = poly->x0 + amount;
             poly->x3 = poly->x2 + amount;
         }
