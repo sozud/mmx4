@@ -7665,42 +7665,6 @@ void func_80099F48(struct ShotObj* arg0)
     set_animation(ANIMATED_OBJECT(arg0), 0x17);
 }
 
-void func_8009A10C(struct ShotObj* arg0)
-{
-    struct WeaponObj* owner = arg0->unk7C;
-    s32 subtype = arg0->unk2;
-    s32 offset;
-    s32 target;
-    s32 angle;
-
-    func_8002D9BC(arg0);
-    if (subtype != 0) {
-        offset = ((subtype - 1) * 19 << 16) - 0x200000;
-        target = arg0->x_pos.val
-            + (owner->unk15 != 0 ? offset : -offset);
-        angle = angle_to_point(OBJECT_HEADER(arg0), target, 0x1E00000);
-        set_velocity_from_angle(MOVING_OBJECT(arg0), angle & 0xFF);
-        arg0->x_vel.val *= 8;
-        arg0->y_vel.val *= 8;
-    }
-
-    if (func_8002BB80(MAIN_OBJECT(arg0), MAIN_OBJECT(&g_Player)) != 0) {
-        arg0->state = 2;
-        return;
-    }
-    if ((arg0->unk70 & 8) != 0) {
-        arg0->unk68 = NULL;
-        arg0->state = 3;
-    }
-    animate_object(ANIMATED_OBJECT(arg0));
-    move_object(MOVING_OBJECT(arg0));
-    if (func_8002B1E8(BASE_OBJECT(arg0), 0x19, 0x19) != 0) {
-        arg0->state = 2;
-        return;
-    }
-    update_on_screen(BASE_OBJECT(arg0), 0x19, 0x19);
-}
-
 void func_8009A448(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
