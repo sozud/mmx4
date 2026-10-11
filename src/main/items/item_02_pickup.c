@@ -411,7 +411,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
     }
 
     for (arg1 = 0; arg1 < 2; arg1++) {
-        if (engine_obj.unk5A & (0x1000 << arg1)) {
+        if (engine_obj.collected_upgrades & (0x1000 << arg1)) {
             value = TANK_VALUE(engine_obj.sub_tanks[arg1]);
             if (value < 0x20) {
                 value += arg2;

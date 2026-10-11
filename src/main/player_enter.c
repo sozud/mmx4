@@ -504,7 +504,7 @@ void player_start_stage_clear(struct PlayerObj* self)
     player_reset_charge_and_weapon(self);
 
     flags = engine_obj.unkF;
-    engine_obj.unk1C = 1;
+    engine_obj.gameplay_locked = 1;
 
     if (flags & 0x10) {
         player_set_idle_animation(self);

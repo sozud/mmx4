@@ -14,7 +14,7 @@ void stage_dialogue_trigger_wait(struct EffectObj* self)
         return;
     }
 
-    if (engine_obj.unk1C == 0) {
+    if (engine_obj.gameplay_locked == 0) {
         player_start_script_action(0x14, 0x40);
         self->ext.unk_effect.unk14 = 0x30;
         self->state = 1;

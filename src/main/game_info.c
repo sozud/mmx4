@@ -43,7 +43,7 @@ static void apply_direct_progress(u8 stage, u8 character, u8 loadout, u8 story)
     engine_obj.palette_flags = 0xFF;
     if (loadout == 2 && stage >= 1 && stage <= 8)
         engine_obj.palette_flags &= (u8) ~(1 << (stage - 1));
-    engine_obj.unk5A = 0xF0FF;
+    engine_obj.collected_upgrades = 0xF0FF;
     engine_obj.sub_tanks[0] = 0xA0;
     engine_obj.sub_tanks[1] = 0xA0;
     engine_obj.sub_tanks[2] = 0x20;

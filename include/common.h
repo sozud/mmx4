@@ -3471,7 +3471,7 @@ struct EngineObj {
     s8 unk19;
     s8 unk1A;
     s8 unk1B;
-    s8 unk1C;
+    s8 gameplay_locked;
     s8 checkpoint; // 0x1d
     s8 unk1E;
     s8 unk1F;
@@ -3497,7 +3497,7 @@ struct EngineObj {
     s8 arm_type;
     s8 player_initial_data[0x10]; // 0x49
     s8 palette_flags; // 0x59
-    u16 unk5A;
+    u16 collected_upgrades;
     s8 sub_tanks[3];
     u8 unk5F;
     u8 unk60;

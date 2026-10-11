@@ -818,7 +818,7 @@ void sigma_death_start(struct MainObj* self)
     stop_sound(2, 5);
     stop_sound(2, 9);
     player_start_script_action(0x15, 0);
-    engine_obj.unk1C = 1;
+    engine_obj.gameplay_locked = 1;
     self->unk5++;
     self->unk7C = 0x7F;
     self->unk7E = 0x19;

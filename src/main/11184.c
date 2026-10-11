@@ -169,7 +169,7 @@ void func_80020A08(struct EngineObj* arg0)
                 D_80171EA8 = 0;
             }
 
-            if (engine_obj.unk5A & 0x8000) {
+            if (engine_obj.collected_upgrades & 0x8000) {
                 arg0->player_lives = 4;
             } else {
                 arg0->player_lives = 2;

@@ -599,7 +599,7 @@ void player_entry_placed(struct PlayerObj* self)
         self->y_pos.i.hi--;
     }
     self->y_pos.i.lo = 0;
-    engine->unk1C = 0;
+    engine->gameplay_locked = 0;
     player_set_collision_bounds(self);
     player_enter_idle(self);
     background_objects[0].unk44 = 1;
@@ -1179,14 +1179,14 @@ void player_start_script_action(s8 action, s8 facing)
     g_Player.script_action = action;
     g_Player.script_facing = facing;
     g_Player.spike_immune = 1;
-    engine_obj.unk1C = 1;
+    engine_obj.gameplay_locked = 1;
 }
 
 void player_end_script_action(void)
 {
     g_Player.script_state = 0;
     g_Player.spike_immune = 0;
-    engine_obj.unk1C = 0;
+    engine_obj.gameplay_locked = 0;
 }
 
 void player_check_splash_tile(struct PlayerObj* self)

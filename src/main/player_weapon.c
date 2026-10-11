@@ -626,7 +626,7 @@ s32 player_check_nova_strike(struct PlayerObj* self)
     self->spike_immune = 1;
     self->nova_strike_active = 1;
     self->nova_strike_timer = 0x18;
-    engine_obj.unk1C = 1;
+    engine_obj.gameplay_locked = 1;
 
     if (self->unk15) {
         self->x_vel.val = FIXED(2.5);
