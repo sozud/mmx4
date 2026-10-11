@@ -132,8 +132,8 @@ void player_beam_in(struct PlayerObj* self)
     }
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        self->armor_parts = engine_obj.unk47;
-        self->arm_type = engine_obj.unk48;
+        self->armor_parts = engine_obj.armor_parts;
+        self->arm_type = engine_obj.arm_type;
     }
     if (self->animation_step.fields.relative_step == 0) {
         engine_obj.unk1C = 0;

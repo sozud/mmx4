@@ -38,6 +38,12 @@ __asm__(".include \"macro.inc\"\n");
 #define SOME_COORDINATE_CONVERSION(v) ((((v)*4) + 24) % 16 | (((((v)*4) + 24) / 16) + 480) << 6)
 #define CLUT_FROM_XY(x, y) ((((x)*4 + 0x18) % 16) | ((((y) + 6) / 4 + 0x1E0) << 6))
 #define CLUT_FROM_ID(id) CLUT_FROM_XY(func_8002938C(id), func_8002938C(id))
+// Player and ride-armor HP and Sub Tanks store a 7-bit quantity with bit 7
+// latched on the frame it is damaged or drained.
+#define HP_VALUE(v) ((v) & 0x7F)
+#define HP_DAMAGE_FLAG(v) ((v) & 0x80)
+#define TANK_VALUE(v) HP_VALUE(v)
+#define TANK_DRAINED(v) HP_DAMAGE_FLAG(v)
 #define WITHIN_BOUNDS(lo, v, hi) ((lo) < (v) && (v) < (hi))
 #define POS_BOUNDS_CHECK_FAIL_RET0(a, b) \
     if (a - b >= 0) {                    \
@@ -1590,7 +1596,7 @@ MMX4_STATIC_ASSERT(main_obj_ext_size, sizeof(union MainObjExt) == 0x1C);
     s8 hp;                              \
     s8 unk5D;                           \
     s8 unk5E;                           \
-    s8 unk5F;                           \
+    s8 drain_hold_timer;                \
     s8 contact_damage;                  \
     s8 invincibility_timer;             \
     s8 unk62;                           \
@@ -1706,8 +1712,8 @@ struct PlayerObj {
     void* unk58;
     s8 hp;
     s8 hud_hp;
-    s8 unk5E;
-    s8 unk5F;
+    s8 spawn_hp;
+    s8 drain_hold_timer;
     s8 unk60;
     s8 invincibility_timer;
     s8 unk62;
@@ -2792,7 +2798,7 @@ struct RideArmorObj {
     void* unk50;
     const void* unk54;
     const void* unk58;
-    s8 unk5C;
+    s8 hp;
     s8 unk5D;
     s8 unk5E;
     s8 unk5F;
@@ -2850,7 +2856,7 @@ struct RideArmorObj {
         MMX4_OFFSET_OF(struct RideArmorObj, ride_field) == MMX4_OFFSET_OF(struct PlayerObj, player_field))
 ASSERT_RIDE_ARMOR_FIELD(unk49, unk49);
 ASSERT_RIDE_ARMOR_FIELD(unk50, unk50);
-ASSERT_RIDE_ARMOR_FIELD(unk5C, hp);
+ASSERT_RIDE_ARMOR_FIELD(hp, hp);
 ASSERT_RIDE_ARMOR_FIELD(unk68, unk68);
 ASSERT_RIDE_ARMOR_FIELD(unk70, unk70);
 ASSERT_RIDE_ARMOR_FIELD(unk7A, spike_immune);
@@ -3484,15 +3490,15 @@ struct EngineObj {
     s8 unk41;
     u8 unk42;
     s8 cur_character; // 0x43
-    s8 unk44;
-    u8 unk45;
-    s8 unk46;
-    s8 unk47;
-    s8 unk48;
+    s8 player_lives;
+    u8 checkpoint_hp;
+    s8 max_hp;
+    s8 armor_parts;
+    s8 arm_type;
     s8 player_initial_data[0x10]; // 0x49
     s8 palette_flags; // 0x59
     u16 unk5A;
-    s8 unk5C[3];
+    s8 sub_tanks[3];
     u8 unk5F;
     u8 unk60;
     u8 pad61[3];

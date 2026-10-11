@@ -371,10 +371,10 @@ void player_spawn(void)
         i = 0;
     case -2:
         i = 0;
-        player->hp = engine->unk46;
-        player->hud_hp = engine->unk46;
-        player->unk5E = engine->unk46;
-        EASY_HP_SET(engine->unk46 * 2 - 1);
+        player->hp = engine->max_hp;
+        player->hud_hp = engine->max_hp;
+        player->spawn_hp = engine->max_hp;
+        EASY_HP_SET(engine->max_hp * 2 - 1);
         do {
             player->weapon_energy[i++] = 0x30;
         } while (i < 0x10);
@@ -384,9 +384,9 @@ void player_spawn(void)
         player_data = player->weapon_energy;
         initial_data = engine->player_initial_data;
         i = 0;
-        player->hp = engine->unk45;
-        player->hud_hp = engine->unk45;
-        player->unk5E = engine->unk45;
+        player->hp = engine->checkpoint_hp;
+        player->hud_hp = engine->checkpoint_hp;
+        player->spawn_hp = engine->checkpoint_hp;
         do {
             *player_data++ = *initial_data++;
             i++;
@@ -492,9 +492,9 @@ void player_init_clone(void)
     entity->unk50 = 0;
     entity->unk54 = 0;
     entity->unk68 = NULL;
-    entity->hp = engine_obj.unk46;
-    entity->hud_hp = engine_obj.unk46;
-    entity->unk5E = engine_obj.unk46;
+    entity->hp = engine_obj.max_hp;
+    entity->hud_hp = engine_obj.max_hp;
+    entity->spawn_hp = engine_obj.max_hp;
     entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
     entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
     entity->unk40 = 0x540;
@@ -593,8 +593,8 @@ void player_entry_placed(struct PlayerObj* self)
     }
 
     if (self->unk2 == 0) {
-        self->armor_parts = engine->unk47;
-        self->arm_type = engine->unk48;
+        self->armor_parts = engine->armor_parts;
+        self->arm_type = engine->arm_type;
     } else {
         self->y_pos.i.hi--;
     }
@@ -610,8 +610,8 @@ void player_entry_placed(struct PlayerObj* self)
 void player_entry_ride(struct PlayerObj* self)
 {
     qux_object.active = 1;
-    self->armor_parts = engine_obj.unk47;
-    self->arm_type = engine_obj.unk48;
+    self->armor_parts = engine_obj.armor_parts;
+    self->arm_type = engine_obj.arm_type;
     self->ride_state = -1;
     self->air_state = 1;
     self->ride_animation = 0x29;
@@ -944,7 +944,7 @@ void player_play_voice(struct PlayerObj* self, u8 voice)
 
 void player_check_low_hp_alarm(struct PlayerObj* self)
 {
-    if (self->voice_timer == 0 && self->hp < (engine_obj.unk46 / 3)) {
+    if (self->voice_timer == 0 && self->hp < (engine_obj.max_hp / 3)) {
         func_8001540C(3, 0xB, 0);
         self->voice_timer = 0x78;
     }
@@ -995,7 +995,7 @@ void player_damage(s8 damage)
 
 void player_set_idle_animation(struct PlayerObj* self)
 {
-    if (self->hp >= (engine_obj.unk46 / 3)) {
+    if (self->hp >= (engine_obj.max_hp / 3)) {
         player_set_animation(self, 5);
     } else {
         player_set_animation(self, 6);

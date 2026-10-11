@@ -170,9 +170,9 @@ void func_80020A08(struct EngineObj* arg0)
             }
 
             if (engine_obj.unk5A & 0x8000) {
-                arg0->unk44 = 4;
+                arg0->player_lives = 4;
             } else {
-                arg0->unk44 = 2;
+                arg0->player_lives = 2;
             }
             arg0->checkpoint = 0;
             arg0->unk1E = 0;

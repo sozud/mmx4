@@ -7,7 +7,7 @@ void slash_beast_update(struct MainObj* self)
 {
     slash_beast_state_funcs[self->state](self);
     CollisionRelated(self);
-    if (!(g_Player.hp & 0x7F)) {
+    if (!HP_VALUE(g_Player.hp)) {
         func_8006E920(self, 0x38);
     }
 }

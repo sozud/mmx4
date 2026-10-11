@@ -82,8 +82,8 @@ void func_8001FB50(void)
 
 void engine_state_0(struct EngineObj* arg0)
 {
-    arg0->unk44 = 2;
-    arg0->unk46 = 0x20;
+    arg0->player_lives = 2;
+    arg0->max_hp = 0x20;
     arg0->state = 1;
 }
 

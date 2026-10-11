@@ -16,7 +16,7 @@ void func_8003B3DC(struct RideArmorObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
 
     D_800F90D8[arg0->state](arg0);
-    arg0->unk5C &= ~0x80;
+    arg0->hp &= ~0x80;
 }
 
 void func_8003B458(void* arg0, s8 arg1)

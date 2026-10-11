@@ -85,7 +85,41 @@ void gunner_shot_despawn(struct ShotObj* self)
 INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_80099F48);
 
 // eregion_fireball_fly
-INCLUDE_ASM("main/nonmatchings/shots/shot_02_gunner_shot", func_8009A10C);
+void func_8009A10C(struct ShotObj* self)
+{
+    struct WeaponObj* owner = self->unk7C;
+    s32 target;
+    s32 angle;
+
+    func_8002D9BC(self);
+    if (self->unk2 != 0) {
+        if (owner->unk15 == 0) {
+            s32 offset = FIXED((self->unk2 - 1) * 19) - FIXED(32);
+            target = self->x_pos.val - offset;
+            angle = angle_to_point(OBJECT_HEADER(self), target, FIXED(0x1E0));
+        } else {
+            s32 offset = FIXED((self->unk2 - 1) * 19) - FIXED(32);
+            target = self->x_pos.val + offset;
+            angle = angle_to_point(OBJECT_HEADER(self), target, FIXED(0x1E0));
+        }
+        set_velocity_from_angle(MOVING_OBJECT(self), angle & 0xFF);
+        self->x_vel.val *= 8;
+        self->y_vel.val *= 8;
+    }
+    if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) == 0) {
+        if ((self->unk70 & 8) != 0) {
+            self->unk68 = NULL;
+            self->state = 3;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+        if (func_8002B1E8(BASE_OBJECT(self), 0x19, 0x19) == 0) {
+            update_on_screen(BASE_OBJECT(self), 0x19, 0x19);
+            return;
+        }
+    }
+    self->state = 2;
+}
 
 void eregion_fireball_explode(struct ShotObj* self)
 {

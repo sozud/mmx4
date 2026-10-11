@@ -387,8 +387,8 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 {
     u8 player_status;
     s8 value;
-    player_status = g_Player.hp & 0x80;
-    if ((g_Player.hp & 0x7F) < engine_obj.unk46) {
+    player_status = HP_DAMAGE_FLAG(g_Player.hp);
+    if (HP_VALUE(g_Player.hp) < engine_obj.max_hp) {
         set_objects_frozen(1);
         arg0->active |= 8;
         arg0->ext.item_2.unk80 = arg1;
@@ -400,9 +400,9 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
         arg0->state = 3;
     }
 
-    if ((g_Player.hp & 0x7F) >= engine_obj.unk46) {
-        EASY_HP_SET(engine_obj.unk46 * 2 - 1);
-        g_Player.hp = engine_obj.unk46 | player_status;
+    if (HP_VALUE(g_Player.hp) >= engine_obj.max_hp) {
+        EASY_HP_SET(engine_obj.max_hp * 2 - 1);
+        g_Player.hp = engine_obj.max_hp | player_status;
     }
 
     g_Player.weapon_energy[0] += arg1;
@@ -412,7 +412,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 
     for (arg1 = 0; arg1 < 2; arg1++) {
         if (engine_obj.unk5A & (0x1000 << arg1)) {
-            value = engine_obj.unk5C[arg1] & 0x7F;
+            value = TANK_VALUE(engine_obj.sub_tanks[arg1]);
             if (value < 0x20) {
                 value += arg2;
                 if (value >= 0x20) {
@@ -422,7 +422,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
                     func_8001540C(0, 0x17, 0);
                 }
                 value |= 0x80;
-                engine_obj.unk5C[arg1] = value;
+                engine_obj.sub_tanks[arg1] = value;
                 return;
             }
         }

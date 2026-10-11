@@ -46,13 +46,13 @@ struct SerializedEngineObj {
     u8 unk40;
     s8 unk41;
     u8 unk42;
-    s8 cur_character, unk44;
-    u8 unk45;
-    s8 unk46, unk47, unk48;
+    s8 cur_character, player_lives;
+    u8 checkpoint_hp;
+    s8 max_hp, armor_parts, arm_type;
     s8 player_initial_data[0x10];
     s8 palette_flags;
     u16 unk5A;
-    s8 pad5C[3];
+    s8 sub_tanks[3];
     u8 unk5F, unk60;
     u8 pad61[3];
 };
