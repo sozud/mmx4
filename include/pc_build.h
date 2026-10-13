@@ -37,6 +37,7 @@ void mmx4_pc_render_log_dump(void);
 int mmx4_pc_replay_complete(void);
 int mmx4_pc_replay_exit_requested(void);
 int mmx4_pc_replay_cd_load_due(int input_phase);
+int mmx4_pc_replay_cd_load_scheduled(void);
 unsigned long mmx4_pc_replay_consumed(void);
 void mmx4_pc_replay_cd_load_consume(void);
 int mmx4_pc_replay_cd_load_pending(void);
