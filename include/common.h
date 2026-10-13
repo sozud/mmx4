@@ -4589,7 +4589,6 @@ extern struct CharacterSelectPosition select_char_text_positions[3];
 extern u8 D_801406AC;
 extern u8* D_8015D9C8;
 extern u8 D_800EE47E[];
-extern u32 D_80141F38;
 extern union AnimationStep D_800F8DC8[];
 extern struct Unk_unk68 armored_walker_terrain_box;
 extern struct Unk_unk68 armored_walker_hit_box;

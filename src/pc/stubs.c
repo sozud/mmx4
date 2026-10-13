@@ -53,8 +53,6 @@ static void mmx4_pc_unimplemented(const char* name)
 
 PC_GAME_STUB(func_8003DCD8)
 
-unsigned int D_80141F38;
-
 PC_GAME_STUB(func_800154E8)
 PC_GAME_STUB(func_80018788)
 PC_GAME_STUB(func_80018B88)

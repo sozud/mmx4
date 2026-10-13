@@ -87,7 +87,7 @@ void stage_music_load(struct EffectObj* self)
         break;
     case 1:
         D_80171EA8 = 1;
-        func_80013AD8(stage_music_tracks[engine_obj.stage], 4, D_80141F38);
+        func_80013AD8(stage_music_tracks[engine_obj.stage], 4, D_80141F30[2]);
         self->unk5++;
         break;
     case 2:
