@@ -43,6 +43,7 @@ static unsigned long replay_load_points[64];
 static unsigned char replay_load_input_phase[64];
 static unsigned char replay_load_pending[64];
 static size_t replay_load_point_count;
+static int replay_synced;
 static size_t replay_load_point_index;
 static unsigned long replay_xa_stop_points[64];
 static size_t replay_xa_stop_point_count;
@@ -92,6 +93,7 @@ static void open_replay_sync(void)
     }
     document[size] = '\0';
     fclose(file);
+    replay_synced = 1;
 
     cursor = document;
     while ((cursor = strstr(cursor, "\"sample\"")) != NULL) {
@@ -219,6 +221,11 @@ int mmx4_pc_replay_complete(void)
 int mmx4_pc_replay_exit_requested(void)
 {
     return replay_exit_requested;
+}
+
+int mmx4_pc_replay_cd_load_scheduled(void)
+{
+    return replay_started && replay_synced;
 }
 
 int mmx4_pc_replay_cd_load_due(int input_phase)

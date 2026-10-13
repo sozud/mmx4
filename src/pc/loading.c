@@ -23,7 +23,7 @@ static void mmx4_pc_cd_ready_callback(void)
 void mmx4_pc_advance_cd_load(void)
 {
     if (D_801406AC == 1) {
-        if (mmx4_pc_replay_frame() < 0 && completing_phase < 0) {
+        if (!mmx4_pc_replay_cd_load_scheduled() && completing_phase < 0) {
             mmx4_pc_cd_ready_callback();
         } else if (completing_phase >= 0 && mmx4_pc_replay_cd_load_due(completing_phase)) {
             while (D_801406AC == 1) {
@@ -48,7 +48,7 @@ void mmx4_pc_advance_cd_load(void)
 void mmx4_pc_finish_cd_load(void)
 {
     if ((D_801406AC == 1 || D_8013BD40 != 0)
-        && mmx4_pc_replay_frame() >= 0)
+        && mmx4_pc_replay_cd_load_scheduled())
         return;
     while (D_801406AC == 1 || D_8013BD40 != 0) {
         mmx4_pc_advance_cd_load();
