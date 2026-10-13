@@ -231,11 +231,11 @@ void func_80012F44(void)
         u8 checkpoint = engine_obj.checkpoint;
         func_80013AD8(checkpoint < 2 ? pointer_high_bytes[checkpoint]
                                      : D_800EE480[checkpoint - 2],
-            4, D_80141F38);
+            4, D_80141F30[2]);
     }
 #else
     func_80013AD8(D_800EE480[engine_obj.checkpoint - 2],
-        4, D_80141F38);
+        4, D_80141F30[2]);
 #endif
     func_80014C70();
 
