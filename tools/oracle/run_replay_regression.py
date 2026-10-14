@@ -11,6 +11,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
+import oracle_cache
 
 WORKSPACE = Path(__file__).resolve().parents[2]
 REPLAY_SHA256 = "e2ea3b524007787270960b7e74275fc2a043c42f53b9bfd09ffb199d5f239ef7"
@@ -106,21 +107,13 @@ def headless_build(build):
 
 
 def psx_cache_stamp(args, metadata):
-    return {
-        "replay_sha256": metadata["sha256"],
-        "psx_frames": args.psx_frames,
-        "mednafen_sha256": sha256(args.mednafen),
-    }
+    return oracle_cache.inputs(metadata["sha256"], args.mednafen, args.cue,
+                               args.bios, args.psx_frames)
 
 
-def psx_cache_valid(directory, stamp):
-    path = directory / "complete.json"
-    if not path.is_file():
-        return False
-    try:
-        return json.loads(path.read_text()) == stamp
-    except ValueError:
-        return False
+def psx_cache_valid(args, directory, stamp, frames):
+    return (oracle_cache.valid(directory, stamp) or
+            oracle_cache.upgrade_legacy(directory, stamp, sha256(args.mednafen), frames))
 
 
 def psx_log_complete(directory, frames):
@@ -321,7 +314,7 @@ def main():
         if args.psx_log is None:
             raise SystemExit("--skip-psx requires --psx-log")
         psx_dir = args.psx_log
-    elif cache_stamp is not None and psx_cache_valid(psx_dir, cache_stamp):
+    elif cache_stamp is not None and psx_cache_valid(args, psx_dir, cache_stamp, metadata["frames"]):
         print(f"== reusing the cached PSX oracle log {psx_dir}")
         metadata["psx_cached"] = True
     else:
@@ -340,7 +333,7 @@ def main():
         metadata["psx_exit"] = code
         if (cache_stamp is not None and code == 0 and
                 psx_log_complete(psx_dir, metadata["frames"])):
-            (psx_dir / "complete.json").write_text(json.dumps(cache_stamp) + "\n")
+            oracle_cache.seal(psx_dir, cache_stamp, frames=metadata["frames"])
 
     print("== running the PC port")
     env = os.environ.copy()
