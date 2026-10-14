@@ -1,5 +1,8 @@
 // 8001C6DC..8001D064
 #include "common.h"
+#ifdef MMX4_PC
+#include "../pc/memcard.h"
+#endif
 
 INCLUDE_RODATA("main/nonmatchings/memcard", D_80010094);
 
@@ -52,6 +55,9 @@ INCLUDE_ASM("main/nonmatchings/memcard", func_8001CB24);
 
 void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern)
 {
+#ifdef MMX4_PC
+    mmx4_pc_card_list(device_num, list, pattern);
+#else
     struct DIRENTRY dir;
     char path[0x20];
 
@@ -69,11 +75,14 @@ void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pat
             list->count++;
         } while (nextfile(&dir) == &dir);
     }
+#endif
 }
 
 s32 func_8001CD70(s32 arg0)
 {
-#ifdef MMX4_WIN32
+#ifdef MMX4_PC
+    return mmx4_pc_card_load(arg0);
+#elif defined(MMX4_WIN32)
     return 0;
 #else
     s32 retries;
@@ -96,7 +105,9 @@ s32 func_8001CD70(s32 arg0)
 
 int func_8001CDE4(int arg0)
 {
-#ifdef MMX4_WIN32
+#ifdef MMX4_PC
+    return mmx4_pc_card_info(arg0);
+#elif defined(MMX4_WIN32)
     return 0;
 #else
     int var_s0;
@@ -127,7 +138,9 @@ int func_8001CDE4(int arg0)
 
 s32 func_8001CE84(s32 device_num)
 {
-#ifdef MMX4_WIN32
+#ifdef MMX4_PC
+    return mmx4_pc_card_format(device_num);
+#elif defined(MMX4_WIN32)
     return 0;
 #else
     struct MemcardPath buf = D_800100C0;
