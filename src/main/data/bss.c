@@ -575,13 +575,7 @@ u8 layout_height;
 u8 pad_80173A29[7];
 #endif
 struct RideArmorObj qux_object;
-u8 D_80173AE0[0x14A];
-u8 D_80173C2A;
-#ifndef MMX4_PC
-u8 pad_80173C2B[1];
-#endif
-s32 D_80173C2C;
-s32 D_80173C30[0xF];
+struct MemcardFileList memcard_files;
 s8 D_80173C6C[4];
 struct GameInfo game_info;
 u8* D_80173C80;
