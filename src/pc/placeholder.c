@@ -21952,3 +21952,386 @@ void func_800A73C4(struct ShotObj* self)
     self->state = 7;
     self->unk5 = 0;
 }
+
+#include "memcard.h"
+extern u8 D_800F1DEC[], D_800F1DFC[], D_800F1E14[], D_800F1E24[], D_800F1E34[];
+extern u8 D_800F1E78[], D_800F1E88[];
+void func_8001B8B0(s16, s16, u8);
+void func_8001C5A8(u8**);
+void func_8001C07C(void);
+void func_8001BCAC(s16, s16, u8);
+void func_8001BE10(s16, s16, u8);
+
+void func_8001B7C0(s16 x, s16 y, u8 mode)
+{
+    struct MiscObj* obj = find_free_misc_obj();
+    if (obj) {
+        obj->active = 0x41;
+        obj->id = obj->animation_step.fields.frame_index = 0x2A;
+        obj->unk2 = 1;
+        obj->ext.misc_42.unk55 = mode ? 1 : 3;
+        obj->ext.misc_42.unk54 = mode ? engine_obj.unk1 : main_bss_state.transition.selection;
+        obj->x_pos.i.hi = x;
+        obj->y_pos.i.hi = y;
+    }
+    func_8001BCAC(x - 0x40, y, mode);
+    func_8001BE10(x - 0x40, y, mode);
+    func_8001B8B0(x, y, mode);
+}
+
+void func_8001A498(struct EngineObj* engine)
+{
+    int status;
+    if (--memcard_menu.timer)
+        return;
+    status = func_8001CDE4(memcard_menu.port);
+    if (status) {
+        engine->unk1 = 11;
+        memcard_menu.result = status == 1 ? 1 : 2;
+        func_8001B644(status == 1 ? D_800F1DFC : D_800F1E24);
+        main_bss_state.transition.selection = 0;
+        return;
+    }
+    status = func_8001CD70(memcard_menu.port);
+    if (status == 1) {
+        engine->unk1 = 11;
+        memcard_menu.result = 1;
+        func_8001B644(D_800F1DFC);
+        return;
+    }
+    if (status == 2) {
+        reset_objects();
+        engine->unk1 = 3;
+        engine->unk2 = 0;
+        return;
+    }
+    if (status == 3) {
+        reset_objects();
+        engine->unk1 = 11;
+        memcard_menu.result = 1;
+        main_bss_state.transition.selection = 0;
+        func_8001B644(D_800F1E24);
+        return;
+    }
+    func_8001CC5C(memcard_menu.port, &memcard_files, "");
+    if (memcard_files.total_size == 0x1E000) {
+        func_8001CC5C(memcard_menu.port, &memcard_files, "BASLUS-00561");
+        if (!memcard_files.count) {
+            engine->unk1 = 11;
+            memcard_menu.result = 3;
+            main_bss_state.transition.selection = 0;
+            reset_objects();
+            func_8001B644(D_800F1E34);
+            return;
+        }
+    }
+    engine->unk1 = 8;
+    reset_objects();
+    memcard_menu.timer = 5;
+    func_8001B718(0x30, memcard_menu.selection + memcard_menu.port * 3 + 0x1A, 0xFF);
+    func_8001B644(D_800F1E78);
+    func_8001B7C0(0xA0, 0x78, 1);
+}
+
+s32 func_8001CB24(u8* buffer, s32 port, s32 size)
+{
+    return mmx4_pc_card_read(port, buffer, 0x800);
+}
+
+s32 func_8001C8F4(u8* buffer, s32 port, s32 size)
+{
+    static const u8 title[21] = { 0x82, 0x6C, 0x82, 0x64, 0x82, 0x66, 0x82, 0x60, 0x82, 0x6C, 0x82, 0x60, 0x82, 0x6D, 0x81, 0x40, 0x82, 0x77, 0x82, 0x53, 0x00 };
+    buffer[3] = (size + 0x1FFF) >> 13;
+    memcpy(buffer + 4, title, sizeof(title));
+    return mmx4_pc_card_write(port, buffer, size);
+}
+
+void func_8001C4B4(struct MemcardMenuState* menu)
+{
+    menu->buffer[0] = 's';
+    menu->buffer[1] = 'c';
+    menu->buffer[2] = 0x13;
+    menu->result = func_8001CDE4(menu->port);
+    if (menu->result) {
+        engine_obj.unk1 = 11;
+        reset_objects();
+        main_bss_state.transition.selection = 0;
+        func_8001B644(D_800F1DFC);
+        return;
+    }
+    func_8001C5A8(&menu->buffer);
+    menu->result = func_8001C8F4(menu->buffer, menu->port, 0x2000);
+    if (menu->result) {
+        engine_obj.unk1 = 11;
+        reset_objects();
+        main_bss_state.transition.selection = 0;
+        func_8001B644(D_800F1E14);
+    }
+}
+
+void func_8001A710(struct EngineObj* engine)
+{
+    if (--memcard_menu.timer)
+        return;
+    func_8001C07C();
+    func_8001C4B4(&memcard_menu);
+    if (engine->unk1 == 11)
+        return;
+    engine->unk1 = 9;
+    reset_objects();
+    func_8001B718(0x30, memcard_menu.selection + memcard_menu.port * 3 + 0x1A, 0xFF);
+    func_8001B644(D_800F1E88);
+    func_8001B7C0(0xA0, 0x78, 1);
+    memcard_menu.timer = 0x8C;
+}
+
+static void save_icon_lifetime(struct MiscObj* obj, u8 mode)
+{
+    obj->ext.misc_42.unk55 = mode ? 1 : 3;
+    obj->ext.misc_42.unk54 = mode ? engine_obj.unk1 : main_bss_state.transition.selection;
+}
+
+void func_8001BCAC(s16 x, s16 y, u8 mode)
+{
+    const struct MemcardSaveSlot* save = memcard_menu.slot;
+    struct MiscObj* obj = find_free_misc_obj();
+    if (!obj)
+        return;
+    obj->active = 1;
+    obj->id = 0x2A;
+    obj->unk16 = 4;
+    if (save->character != 0xFF) {
+        obj->unk2 = 2;
+        obj->animation_step.fields.frame_index = save->character ? 0x2B : 0x2C;
+        obj->unk42 = save->unk29 ? (save->character ? 0x784B : 0x784F) : 0x7808;
+        obj->x_pos.i.hi = x;
+        obj->y_pos.i.hi = y;
+    } else {
+        obj->animation_step.fields.frame_index = 0x5D;
+        obj->x_pos.i.hi = x + 0x14;
+        obj->y_pos.i.hi = y - 8;
+        obj->unk2 = 0;
+        obj->ext.misc_42.unk56 = 0xFF;
+    }
+    save_icon_lifetime(obj, mode);
+}
+
+void func_8001BE10(s16 x, s16 y, u8 mode)
+{
+    const struct MemcardSaveSlot* save = memcard_menu.slot;
+    int i;
+    if (save->character != 0)
+        return;
+    if (!save->unk29) {
+        for (i = 0; i < 4; i++) {
+            struct MiscObj* obj;
+            if (!(save->unk3 & (1 << i)))
+                continue;
+            obj = find_free_misc_obj();
+            if (!obj)
+                continue;
+            obj->id = 0x2A;
+            obj->active = 1;
+            obj->unk2 = 2;
+            obj->unk16 = 3;
+            obj->animation_step.fields.frame_index = i + 0x2D;
+            obj->unk42 = i == 2 && save->unk2 == 2 ? 0x780A : 0x7808;
+            obj->x_pos.i.hi = x;
+            obj->y_pos.i.hi = y;
+            save_icon_lifetime(obj, mode);
+        }
+    } else if (save->unk3 & 0xF) {
+        struct MiscObj* obj = find_free_misc_obj();
+        if (!obj)
+            return;
+        obj->id = 0x2A;
+        obj->active = 1;
+        obj->unk2 = 2;
+        obj->unk16 = 3;
+        obj->animation_step.fields.frame_index = 0x34;
+        obj->unk42 = 0x784E;
+        obj->x_pos.i.hi = x;
+        obj->y_pos.i.hi = y;
+        save_icon_lifetime(obj, mode);
+    }
+}
+
+void func_8001B8B0(s16 x, s16 y, u8 mode)
+{
+    const struct MemcardSaveSlot* save = memcard_menu.slot;
+    int i, count = 0;
+    for (i = 0; i < 8; i++) {
+        struct MiscObj* obj;
+        const u8* lookup = D_800F1D90.button_lookup + i * 3;
+        static const u16 zero_cluts[8] = { 0x7844, 0x7844, 0x7845, 0x7846, 0x7847, 0x7846, 0x7847, 0x7845 };
+        if (!(lookup[0] & save->unk4))
+            continue;
+        obj = find_free_misc_obj();
+        if (!obj)
+            continue;
+        obj->active = 0x41;
+        obj->id = 0x2A;
+        obj->unk2 = 3;
+        if (!save->character) {
+            int palette = lookup[1] + 0xC;
+            obj->animation_step.fields.frame_index = lookup[1];
+            obj->unk42 = (palette % 16) | ((palette / 16 + 0x1E0) << 6);
+        } else {
+            obj->animation_step.fields.frame_index = lookup[2] + 8;
+            if (lookup[2] < 8)
+                obj->unk42 = zero_cluts[lookup[2]];
+        }
+        save_icon_lifetime(obj, mode);
+        obj->x_pos.i.hi = x + count++ * 16 - 0x28;
+        obj->y_pos.i.hi = y - 16;
+    }
+    count = 0;
+    for (i = 0; i < 8; i++) {
+        struct MiscObj* obj;
+        if (!(D_800F1D90.low_button_masks[i] & save->unk6))
+            continue;
+        obj = find_free_misc_obj();
+        if (!obj)
+            continue;
+        obj->active = 0x41;
+        obj->id = 0x2A;
+        obj->unk2 = 3;
+        obj->animation_step.fields.frame_index = 0x13;
+        obj->unk42 = 0x784A;
+        obj->x_pos.i.hi = x + count++ * 16 - 0x28;
+        obj->y_pos.i.hi = y;
+        save_icon_lifetime(obj, mode);
+    }
+    count = 0;
+    for (i = 0; i < 4; i++) {
+        struct MiscObj* obj;
+        u16 mask = i == 3 ? D_800F1D90.sign_bit_mask : D_800F1D90.high_button_masks[i];
+        if (!(mask & save->unk6))
+            continue;
+        obj = find_free_misc_obj();
+        if (!obj)
+            continue;
+        obj->active = 0x41;
+        obj->id = 0x2A;
+        obj->unk2 = 3;
+        obj->animation_step.fields.frame_index = i < 2 ? 0x11 : i == 2 ? 0x10
+                                                                       : 0x12;
+        obj->unk42 = i == 3 ? 0x7849 : 0x7848;
+        obj->x_pos.i.hi = x + count++ * 32 - 32;
+        obj->y_pos.i.hi = y + 16;
+        save_icon_lifetime(obj, mode);
+    }
+}
+
+void func_800CFEE0(struct MiscObj* obj)
+{
+    obj->active = obj->on_screen = 1;
+    obj->bg_offset = -1;
+    obj->unk15 = 0;
+    switch (obj->unk2) {
+    case 0:
+        obj->unk16 = 2;
+        obj->unk40 = 0x1F00;
+        obj->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[0];
+        obj->unk42 = obj->y_pos.i.hi == 0x10 ? 0x7802 : (obj->ext.misc_42.unk56 == main_bss_state.transition.selection ? 0x7803 : 0x7800);
+        break;
+    case 1:
+        obj->unk16 = 6;
+        obj->unk40 = 0x1E00;
+        obj->unk42 = 0x7807;
+        obj->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
+        break;
+    case 2:
+        obj->unk15 = 0x40;
+        obj->unk40 = 0x1E00;
+        obj->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
+        break;
+    case 3:
+        obj->unk16 = 3;
+        obj->unk40 = 0x1DE0;
+        obj->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[3];
+        break;
+    case 4:
+        obj->unk40 = 0x1E00;
+        obj->animation_table = (u32**)option_toggle_animations;
+        obj->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[2];
+        obj->unk16 = 0;
+        obj->ext.misc_42.unk57 = main_bss_state.transition.selection;
+        set_animation(obj, 0);
+        switch (obj->ext.misc_42.unk58) {
+        case 0:
+            obj->y_pos.i.hi = 0x78;
+            if (memcard_menu.card_status[1] == 0 && memcard_menu.card_status[0] != 0) {
+                main_bss_state.transition.selection = 1;
+                obj->y_pos.i.hi = 0x98;
+            }
+            obj->x_pos.i.hi = 0x50;
+            break;
+        case 1:
+        case 3:
+            obj->x_pos.i.hi = 0x28;
+            obj->y_pos.i.hi = 0x78;
+            break;
+        case 2:
+            obj->x_pos.i.hi = 0x88;
+            obj->y_pos.i.hi = 0xB8;
+            break;
+        case 4:
+            obj->x_pos.i.hi = 0x98;
+            obj->y_pos.i.hi = 0x78;
+            break;
+        }
+        break;
+    }
+    obj->state = 1;
+    obj->unk6 = 0;
+}
+
+void func_800D0118(struct MiscObj* obj)
+{
+    u8 cursor = main_bss_state.transition.selection;
+    is_on_screen(BASE_OBJECT(obj));
+    if (obj->unk2 == 0) {
+        u8 frame = obj->animation_step.fields.frame_index;
+        if (frame != 0x32 && frame != 8 && frame != 0x3E && frame != 0x3C && frame != 0x3A)
+            obj->unk42 = obj->ext.misc_42.unk56 == cursor ? 0x7803 : 0x7800;
+    } else if (obj->unk2 == 4) {
+        if (obj->ext.misc_42.unk57 != cursor) {
+            switch (obj->ext.misc_42.unk56) {
+            case 0:
+            case 1:
+                obj->y_pos.i.hi = cursor ? 0x98 : 0x78;
+                break;
+            case 2:
+                if (cursor < 3)
+                    obj->y_pos.i.hi = 0x78 + cursor * 0x20;
+                break;
+            case 3:
+                if (cursor < 4) {
+                    static const s16 ys[] = { 0x78, 0x88, 0x98, 0xB8 };
+                    obj->y_pos.i.hi = ys[cursor];
+                }
+                break;
+            case 4:
+                obj->y_pos.i.hi = cursor ? 0xB8 : 0xA8;
+                break;
+            }
+            obj->ext.misc_42.unk57 = cursor;
+        }
+        animate_object(ANIMATED_OBJECT(obj));
+    }
+    switch (obj->ext.misc_42.unk55) {
+    case 1:
+        if (obj->ext.misc_42.unk54 != engine_obj.unk1)
+            ZeroObjectState(OBJECT_HEADER(obj));
+        break;
+    case 2:
+        if (obj->ext.misc_42.unk54 != engine_obj.unk2)
+            ZeroObjectState(OBJECT_HEADER(obj));
+        break;
+    case 3:
+        if (obj->ext.misc_42.unk54 != cursor)
+            ZeroObjectState(OBJECT_HEADER(obj));
+        break;
+    }
+}

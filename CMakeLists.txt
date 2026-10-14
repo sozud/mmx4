@@ -47,6 +47,7 @@ add_executable(mmx4_pc
     src/pc/input.c
     src/pc/loading.c
     src/pc/main.c
+    src/pc/memcard.c
     src/pc/objectlog.c
     src/pc/oracle.c
     src/pc/placeholder.c

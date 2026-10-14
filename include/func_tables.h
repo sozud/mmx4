@@ -6558,8 +6558,8 @@ void ambient_bubble_despawn(struct MiscObj*);
 
 // menu_icon_state_funcs
 extern void (*menu_icon_state_funcs[])(struct MiscObj*);
-void func_800CFEE0(void);
-void func_800D0118(void);
+void func_800CFEE0(struct MiscObj*);
+void func_800D0118(struct MiscObj*);
 
 // intro_messenger_state_funcs
 extern void (*intro_messenger_state_funcs[])(struct MiscObj*);

@@ -2462,6 +2462,7 @@ struct Misc42Ext {
     s8 unk55;
     s8 unk56;
     s8 unk57;
+    s8 unk58;
 };
 
 struct Misc15Ext {

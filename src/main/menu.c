@@ -1051,10 +1051,10 @@ void func_8001C008(s32 first, s32 second)
     self->unk2 = 4;
     self->unk42 = 0x7806;
     mode = engine_obj.unk1;
-    self->ext.unk.unk55 = 1;
-    self->ext.unk.unk56.byte = first;
-    self->ext.unk.unk58 = second;
-    self->ext.unk.unk54 = mode;
+    self->ext.misc_42.unk55 = 1;
+    self->ext.misc_42.unk56 = first;
+    self->ext.misc_42.unk58 = second;
+    self->ext.misc_42.unk54 = mode;
 }
 
 void func_8001C07C(void)
