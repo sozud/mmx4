@@ -4083,10 +4083,7 @@ struct MemcardFileList {
     s32 sizes[15]; // 0x150
 };
 
-extern u8 D_80173AE0[0x14A];
-extern u8 D_80173C2A;
-extern s32 D_80173C2C;
-#define D_80173AE0_LIST ((struct MemcardFileList*)D_80173AE0)
+extern struct MemcardFileList memcard_files;
 
 extern u8 D_800F2180[];
 extern u8 D_800F21A0[];

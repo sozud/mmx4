@@ -239,10 +239,10 @@ void func_8001989C(struct EngineObj* arg0)
         return;
     case 0:
         arg0->unk1 = (u8)arg0->unk1 + 2;
-        func_8001CC5C(memcard_menu.port, D_80173AE0_LIST, D_80010058);
-        if (D_80173C2C == 0x1E000) {
-            func_8001CC5C(memcard_menu.port, D_80173AE0_LIST, D_8001005C);
-            if (D_80173C2A == 0) {
+        func_8001CC5C(memcard_menu.port, &memcard_files, D_80010058);
+        if (memcard_files.total_size == 0x1E000) {
+            func_8001CC5C(memcard_menu.port, &memcard_files, D_8001005C);
+            if (memcard_files.count == 0) {
                 arg0->unk1 = 0xB;
                 memcard_menu.result = 3;
                 main_bss_state.transition.selection = 0;
@@ -252,8 +252,8 @@ void func_8001989C(struct EngineObj* arg0)
             }
             func_8001CB24(memcard_menu.buffer, memcard_menu.port, 0x2000);
         } else {
-            func_8001CC5C(memcard_menu.port, D_80173AE0_LIST, D_8001005C);
-            if (D_80173C2A != 0) {
+            func_8001CC5C(memcard_menu.port, &memcard_files, D_8001005C);
+            if (memcard_files.count != 0) {
                 func_8001CB24(memcard_menu.buffer, memcard_menu.port, 0x2000);
             } else {
                 memcard_menu.slot[0].character = 0xFF;
@@ -356,7 +356,7 @@ void func_80019D04(struct EngineObj* arg0)
         func_8001B644(D_800F1ED0);
         func_8001B7C0(0xD0, 0x88, 0);
         func_8001C008(3, 3);
-        D_80173C2A = 0;
+        memcard_files.count = 0;
         memcard_menu.timer = 2;
     } else {
         reset_objects();
@@ -793,8 +793,8 @@ void func_8001AE8C(struct EngineObj* arg0)
         break;
     case 0:
         arg0->unk1++;
-        func_8001CC5C(memcard_menu.port, D_80173AE0_LIST, D_8001005C);
-        if (D_80173C2A != 0) {
+        func_8001CC5C(memcard_menu.port, &memcard_files, D_8001005C);
+        if (memcard_files.count != 0) {
             if (func_8001CB24(memcard_menu.buffer, memcard_menu.port, 0x2000) != 0) {
                 reset_objects();
                 main_bss_state.transition.selection = 0;
