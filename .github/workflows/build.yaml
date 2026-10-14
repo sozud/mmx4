@@ -84,6 +84,8 @@ jobs:
             libx11-dev libxext-dev libxrandr-dev libxcursor-dev \
             libxfixes-dev libxi-dev libxss-dev libxtst-dev \
             libgl-dev libgles-dev libgl1-mesa-dri libglx-mesa0 xvfb
+      - name: Test per-movie oracle cache
+        run: python3 tools/oracle/test_oracle_cache.py
       - name: Resolve Mednafen revision
         id: mednafen_revision
         run: |
@@ -213,15 +215,22 @@ jobs:
             --output sound-comparison \
             --no-build \
             "${reuse_args[@]}"
-      - name: Restore Mednafen replay logs
-        id: mednafen_replay_cache
+      - name: Seed Mednafen replay logs from the previous cache format
+        if: always() && steps.oracle_inputs.outcome == 'success'
         uses: actions/cache/restore@v6
         with:
           path: replay-psx
           key: mednafen-replays-v1-${{ runner.os }}-${{ runner.arch }}-${{ steps.mednafen_revision.outputs.image_os }}-${{ steps.mednafen_revision.outputs.sha }}-${{ steps.oracle_inputs.outputs.disc_sha }}-${{ steps.oracle_inputs.outputs.bios_sha }}-${{ hashFiles('tools/oracle/replay_ci_manifest.txt') }}
+      - name: Fetch Mednafen replay cache
+        if: always() && steps.oracle_inputs.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MMX4_ORACLE_DISC_SHA256: ${{ steps.oracle_inputs.outputs.disc_sha }}
+        run: python3 tools/oracle/replay_cache.py fetch
       - name: Run stage replay regressions
         env:
           SDL_AUDIODRIVER: dummy
+          MMX4_ORACLE_DISC_SHA256: ${{ steps.oracle_inputs.outputs.disc_sha }}
         run: |
           set -e
           mkdir coverage
@@ -272,19 +281,12 @@ jobs:
             coverage
             build-linux/mmx4_pc
             build-linux/CMakeCache.txt
-      - name: Check Mednafen replay logs
-        id: mednafen_replay_logs
-        if: always() && steps.mednafen_replay_cache.outputs.cache-hit != 'true'
-        run: |
-          expected=$(wc -l < tools/oracle/replay_ci_manifest.txt)
-          complete=$(find replay-psx -name complete.json 2>/dev/null | wc -l)
-          echo "complete=$([[ $complete -eq $expected ]] && echo true || echo false)" >> "$GITHUB_OUTPUT"
-      - name: Save Mednafen replay logs
-        if: always() && steps.mednafen_replay_logs.outputs.complete == 'true'
-        uses: actions/cache/save@v6
-        with:
-          path: replay-psx
-          key: ${{ steps.mednafen_replay_cache.outputs.cache-primary-key }}
+      - name: Publish Mednafen replay cache
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.oracle_inputs.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.MMX4_INFO_TOKEN }}
+          MMX4_ORACLE_DISC_SHA256: ${{ steps.oracle_inputs.outputs.disc_sha }}
+        run: python3 tools/oracle/replay_cache.py publish --prune
       - name: Upload replay evidence
         if: failure()
         uses: actions/upload-artifact@v7
