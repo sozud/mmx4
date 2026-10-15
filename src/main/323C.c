@@ -562,7 +562,6 @@ extern s16 D_8013955C;
 
 extern s32 D_80141BD4;
 
-
 void func_800163BC(s32);
 
 void func_800163EC(void);

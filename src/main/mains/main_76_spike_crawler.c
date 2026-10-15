@@ -219,7 +219,6 @@ void enemy_hit_reaction(struct MainObj* arg0)
     handlers.funcs[object->unk63](arg0);
 }
 
-
 union AnimationStep spike_crawler_anim_0[16] = {
     { 0x00010002 },
     { 0x01010002 },
