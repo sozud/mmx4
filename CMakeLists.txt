@@ -43,53 +43,56 @@ file(GLOB MMX4_PC_GAME_SOURCES CONFIGURE_DEPENDS
     src/main/weapons/*.c
 )
 
-add_executable(mmx4_pc
+add_library(mmx4_game OBJECT
+    src/pc/bg_tile_cache.c
     src/pc/input.c
     src/pc/loading.c
-    src/pc/main.c
     src/pc/memcard.c
     src/pc/objectlog.c
     src/pc/oracle.c
     src/pc/placeholder.c
     src/pc/playerdump.c
     src/pc/renderlog.c
+    src/pc/scratchpad.c
     src/pc/screenshot.c
     src/pc/stubs.c
     src/pc/threads.c
     ${MMX4_PC_GAME_SOURCES}
 )
-
-target_compile_definitions(mmx4_pc PRIVATE MMX4_PC=1 __psyz=1 SKIP_MDEC=1
+target_compile_definitions(mmx4_game PUBLIC MMX4_PC=1 __psyz=1 SKIP_MDEC=1
     VERSION_${MMX4_PC_VERSION_UPPER}=1)
-target_compile_options(mmx4_pc PRIVATE -ffunction-sections -fdata-sections)
+target_compile_options(mmx4_game PUBLIC -ffunction-sections -fdata-sections)
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(mmx4_pc PRIVATE
+    target_compile_options(mmx4_game PUBLIC
         -fno-strict-aliasing
         -Werror=implicit-function-declaration)
 endif()
 if(CMAKE_C_COMPILER_ID MATCHES "Clang")
-    target_compile_options(mmx4_pc PRIVATE
+    target_compile_options(mmx4_game PUBLIC
         -Wno-error=int-conversion
         -Wno-error=incompatible-function-pointer-types)
 endif()
-target_include_directories(mmx4_pc PRIVATE include tools/psyz/psyz/include)
-target_link_libraries(mmx4_pc PRIVATE psyz z)
+target_include_directories(mmx4_game PUBLIC include tools/psyz/psyz/include)
+target_link_libraries(mmx4_game PUBLIC psyz z)
 if(MMX4_PC_COVERAGE)
-    target_compile_options(mmx4_pc PRIVATE -fprofile-instr-generate -fcoverage-mapping)
-    target_link_options(mmx4_pc PRIVATE -fprofile-instr-generate)
+    target_compile_options(mmx4_game PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+    target_link_options(mmx4_game PUBLIC -fprofile-instr-generate)
 endif()
 if(APPLE)
-    target_link_options(mmx4_pc PRIVATE -Wl,-dead_strip)
+    target_link_options(mmx4_game PUBLIC -Wl,-dead_strip)
 else()
-    target_link_options(mmx4_pc PRIVATE -Wl,--gc-sections)
+    target_link_options(mmx4_game PUBLIC -Wl,--gc-sections)
 endif()
 if(MMX4_PC_ASAN AND CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_definitions(mmx4_pc PRIVATE MMX4_PC_ASAN=1)
-    target_compile_options(mmx4_pc PRIVATE
+    target_compile_definitions(mmx4_game PUBLIC MMX4_PC_ASAN=1)
+    target_compile_options(mmx4_game PUBLIC
         -fsanitize=address
         -fno-omit-frame-pointer)
-    target_link_options(mmx4_pc PRIVATE -fsanitize=address)
+    target_link_options(mmx4_game PUBLIC -fsanitize=address)
 endif()
+
+add_executable(mmx4_pc src/pc/main.c)
+target_link_libraries(mmx4_pc PRIVATE mmx4_game)
 
 psyz_title(mmx4_pc "Mega Man X4")
 
@@ -103,4 +106,35 @@ if(BUILD_TESTING)
             --binary "$<TARGET_FILE:mmx4_pc>"
             --output "${CMAKE_CURRENT_BINARY_DIR}/pc-object-changes"
     )
+
+    if(MMX4_PC_VERSION STREQUAL "us")
+        file(GLOB_RECURSE MMX4_TEST_SOURCES CONFIGURE_DEPENDS tests/main/*.c)
+        set(MMX4_TEST_REGISTRY "#include \"test_runtime.h\"\n")
+        set(MMX4_TEST_SUITES "")
+        foreach(source IN LISTS MMX4_TEST_SOURCES)
+            file(RELATIVE_PATH suite "${CMAKE_CURRENT_SOURCE_DIR}/tests" "${source}")
+            string(REGEX REPLACE "\\.c$" "" suite "${suite}")
+            string(MAKE_C_IDENTIFIER "suite_${suite}" symbol)
+            set_source_files_properties("${source}" PROPERTIES COMPILE_DEFINITIONS
+                "c_test_groups=${symbol}_groups;c_test_group_count=${symbol}_group_count;c_test_count=${symbol}_count")
+            string(APPEND MMX4_TEST_REGISTRY
+                "extern const struct CTestGroup ${symbol}_groups[];\nextern const u32 ${symbol}_group_count;\n")
+            string(APPEND MMX4_TEST_SUITES "    { \"${suite}\", ${symbol}_groups, &${symbol}_group_count },\n")
+        endforeach()
+        string(APPEND MMX4_TEST_REGISTRY
+            "struct CTestSuite { const char* name; const struct CTestGroup* groups; const u32* group_count; };\n"
+            "const struct CTestSuite c_test_suites[] = {\n${MMX4_TEST_SUITES}};\n"
+            "const u32 c_test_suite_count = COUNT(c_test_suites);\n")
+        file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_registry.c" CONTENT "${MMX4_TEST_REGISTRY}")
+
+        add_executable(mmx4_tests
+            tests/runtime/runner.c
+            tests/runtime/test_runtime.c
+            "${CMAKE_CURRENT_BINARY_DIR}/test_registry.c"
+            ${MMX4_TEST_SOURCES}
+        )
+        target_include_directories(mmx4_tests PRIVATE tests tests/runtime)
+        target_link_libraries(mmx4_tests PRIVATE mmx4_game)
+        add_test(NAME unit_tests COMMAND mmx4_tests)
+    endif()
 endif()
