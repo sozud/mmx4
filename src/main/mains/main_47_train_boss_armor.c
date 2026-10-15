@@ -5,6 +5,12 @@
 extern u16 train_boss_armor_smoke_offsets[3][2];
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern s8 train_boss_armor_hurt_boxes[3][16];
+extern u8 D_800FF9FC[4], D_800FFA00[4], D_800FFA04[8];
+extern void (*train_boss_armor_step_funcs[3])(struct MainObj*);
+#endif
+
 void train_boss_armor_update(struct MainObj* self)
 {
     train_boss_armor_state_funcs[self->state](self);
@@ -33,7 +39,7 @@ void train_boss_armor_smoke(struct MainObj* self)
 
     if (--self->unk7E == 0) {
         tableIndex = self->unk2;
-        y = (u16)self->ext.main_47.unk80->x_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][0];
+        y = (u16)((struct BaseObj*)self->ext.main_47.train_boss)->x_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][0];
         x = (u16)self->y_pos.i.hi + train_boss_armor_smoke_offsets[tableIndex][1];
         func_800B10E4(0x11, (s16)(y - 6), (s16)(x - 6),
             (s16)(y + 6), (s16)(x + 6), 1);
@@ -44,8 +50,8 @@ void train_boss_armor_smoke(struct MainObj* self)
 
 void train_boss_armor_clear(struct MainObj* self)
 {
-    self->ext.main_47.unk80 = 0;
-    self->ext.main_47.unk84 = 0;
+    self->ext.main_47.train_boss = 0;
+    self->ext.main_47.boss_hp = 0;
     self->ext.main_47.unk88 = 0;
     self->ext.main_47.unk8C = 0;
     self->ext.main_47.unk90 = 0;
@@ -92,4 +98,12 @@ void (*train_boss_armor_state_funcs[])(struct MainObj*) = {
     train_boss_armor_clear,
 };
 
+#ifdef MMX4_PC
+void (*train_boss_armor_step_funcs[3])(struct MainObj*) = {
+    (void (*)(struct MainObj*))enemy_hit_reaction,
+    train_boss_armor_start_idle,
+    train_boss_armor_arrive,
+};
+#else
 void (*train_boss_armor_step_funcs[3])() = { enemy_hit_reaction, train_boss_armor_start_idle, train_boss_armor_arrive };
+#endif

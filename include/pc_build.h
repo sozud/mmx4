@@ -1,7 +1,7 @@
 #ifndef MMX4_PC_BUILD_H
 #define MMX4_PC_BUILD_H
 
-#define PC_TILEMAP_SIZE (0x300 + 0x300)
+#include "pc_bg_tile_cache.h"
 
 struct UnkObj* find_free_unk_obj(void);
 void func_80012024(void);

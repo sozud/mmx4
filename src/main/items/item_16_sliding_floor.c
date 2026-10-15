@@ -7,10 +7,10 @@ void sliding_floor_update(struct ItemObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     sliding_floor_state_funcs[arg0->state](arg0);
-    collide_with_players(arg0);
-    if (!(BASE_OBJECT(arg0->unk7C.object)->on_screen & 1)) {
+    collide_with_players(PLAYER_OBJECT(arg0));
+    if (!(arg0->unk7C.train_boss->unk83 & 1)) {
         if ((g_Player.wall_climbable != 0) || (arg0->unk76 != 0)) {
-            arg0->ext.owner->active = 1;
+            *arg0->ext.train_layer_parameter = 1;
         }
     }
     update_on_screen(BASE_OBJECT(arg0), 0x200, 0x100);

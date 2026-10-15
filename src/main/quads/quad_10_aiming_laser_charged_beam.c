@@ -58,7 +58,11 @@ void aiming_laser_charged_beam_sweep(struct QuadObj* arg0, struct PlayerObj* arg
     for (i = 0xF; (u32)i > 0; i--) {
         state->history[i] = state->history[i - 1];
     }
+#ifdef MMX4_PC
+    state->history[0] = (((struct WeaponObj*)arg2)->ext.weapon_6.adjusted_direction - 8) & 0x1F;
+#else
     state->history[0] = (player_data[1] - 8) & 0x1F;
+#endif
     if (state->counter == 0x1E) {
         arg0->state++;
     } else {
@@ -86,7 +90,11 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
         state->history[index] = state->history[index - 1];
     }
 
+#ifdef MMX4_PC
+    state->history[0] = (((struct WeaponObj*)arg2)->ext.weapon_6.adjusted_direction - 8) & 0x1F;
+#else
     state->history[0] = (player_state->unk8D - 8) & 0x1F;
+#endif
     if (state->counter == 0) {
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;

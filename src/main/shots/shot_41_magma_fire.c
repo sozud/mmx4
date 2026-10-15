@@ -145,7 +145,7 @@ void magma_fire_burst(struct ShotObj* self)
 
 void magma_fire_hit(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void magma_fire_idle(struct ShotObj* self)

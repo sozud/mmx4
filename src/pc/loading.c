@@ -1,6 +1,6 @@
 #include "common.h"
 
-extern s32 mmx4_pc_canonical_load;
+s32 mmx4_pc_canonical_load;
 extern u8 D_80137DD8;
 extern u8* D_80137DE0;
 extern s32 D_80137DE4;

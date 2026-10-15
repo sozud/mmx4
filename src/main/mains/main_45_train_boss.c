@@ -77,7 +77,7 @@ void train_boss_defeated(struct MainObj* self)
 {
     s16 timer;
 
-    func_80066970();
+    func_80066970(self);
     timer = --self->unk7C;
     if (timer == 0) {
         if (get_layout_screen(1, -0x20, 0x80) == 0x1C) {
@@ -159,8 +159,15 @@ void train_boss_fight(struct MainObj* self)
     train_boss_fight_funcs[self->unk6](self);
 }
 
+#ifdef MMX4_PC
+void train_boss_fight_idle(struct MainObj* self)
+#else
 void train_boss_fight_idle(void)
+#endif
 {
+#ifdef MMX4_PC
+    (void)self;
+#endif
 }
 
 // train_boss_spawn_smoke

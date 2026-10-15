@@ -1190,10 +1190,10 @@ ret_u8 colonel_shot_incoming(struct MainObj* self)
         if (weapon_objects->active != 0 && weapon->unk50 != 0) {
             x_diff = (u16)weapon->x_pos.i.hi - (u16)self->x_pos.i.hi;
             if (self->unk15 == 0) {
-                if ((x_diff << 16) <= 0 && weapon->x_vel.val >= 0) {
+                if ((s32)((u32)x_diff << 16) <= 0 && weapon->x_vel.val >= 0) {
                     return 1;
                 }
-            } else if ((x_diff << 16) >= 0 && weapon->x_vel.val < 1) {
+            } else if ((s32)((u32)x_diff << 16) >= 0 && weapon->x_vel.val < 1) {
                 return 1;
             }
         }

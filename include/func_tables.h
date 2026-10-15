@@ -1,6 +1,9 @@
 #ifndef MMX4_FUNC_TABLES_H
 #define MMX4_FUNC_TABLES_H
 
+void enemy_hit_reaction(struct MainObj*);
+void enemy_hit_reaction_shot(struct ShotObj*);
+
 // D_800EE45C
 void func_80012740(s32, void*);
 void func_800127C8(s32);
@@ -1087,7 +1090,6 @@ void armored_walker_despawn(struct MainObj*);
 
 // armored_walker_step_funcs
 extern void (*armored_walker_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void armored_walker_pick_step(struct MainObj* arg0);
 void func_800423A0(struct MainObj* arg0);
 void armored_walker_hop(struct MainObj* arg0);
@@ -1148,7 +1150,6 @@ void spike_marl_cleanup(struct MainObj* arg0);
 
 // spike_marl_step_funcs
 extern void (*spike_marl_step_funcs[9])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void spike_marl_resume_step(struct MainObj* arg0);
 void spike_marl_patrol(struct MainObj* arg0);
 void spike_marl_turn(struct MainObj* arg0);
@@ -1195,7 +1196,6 @@ void drill_copter_despawn(struct MainObj*);
 void drill_copter_noop(struct MainObj*);
 
 // drill_copter_step_funcs
-void enemy_hit_reaction(void* arg0);
 void drill_copter_approach(struct MainObj* arg0);
 void drill_copter_sway(struct MainObj* arg0);
 void drill_copter_drop(struct MainObj* arg0);
@@ -1239,7 +1239,6 @@ void robot_bee_main(struct MainObj* arg0);
 void robot_bee_despawn(struct MainObj*);
 
 // robot_bee_step_funcs
-void enemy_hit_reaction(void* arg0);
 void robot_bee_resume_step(struct MainObj* arg0);
 void robot_bee_wait(struct MainObj* arg0);
 void robot_bee_glide(struct MainObj* arg0);
@@ -1308,7 +1307,6 @@ void func_80046C8C(struct MainObj* arg0);
 void bulldozer_cleanup(struct MainObj*);
 
 // bulldozer_step_funcs
-void enemy_hit_reaction(void* arg0);
 void bulldozer_resume_step(struct MainObj* arg0);
 void bulldozer_rev(struct MainObj* arg0);
 void bulldozer_charge(struct MainObj* arg0);
@@ -1330,7 +1328,6 @@ void ambush_gunner_despawn(struct MainObj* arg0);
 
 // ambush_gunner_step_funcs
 extern void (*ambush_gunner_step_funcs[5])();
-void enemy_hit_reaction(void* arg0);
 void ambush_gunner_resume_step(struct MainObj* arg0);
 void ambush_gunner_emerge(struct MainObj* arg0);
 void ambush_gunner_aim(struct MainObj* arg0);
@@ -1425,7 +1422,6 @@ void dragonfly_finish(struct MainObj*);
 void dragonfly_despawn(struct MainObj*);
 
 // dragonfly_step_funcs
-void enemy_hit_reaction(void* arg0);
 void dragonfly_resume_step(struct MainObj* arg0);
 void dragonfly_wait(struct MainObj* arg0);
 void dragonfly_hunt(struct MainObj* arg0);
@@ -1458,7 +1454,6 @@ void wall_crawler_next_state(struct MainObj*);
 void wall_crawler_despawn(struct MainObj*);
 
 // wall_crawler_step_funcs
-void enemy_hit_reaction(void* arg0);
 void wall_crawler_resume_step(struct MainObj* arg0);
 void func_8004AE20(struct MainObj* arg0);
 void wall_crawler_turn(struct MainObj* arg0);
@@ -1481,7 +1476,6 @@ void hover_sentry_despawn(struct MainObj*);
 
 // hover_sentry_step_funcs
 extern void (*hover_sentry_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void hover_sentry_resume_step(struct MainObj* arg0);
 void hover_sentry_bob(struct MainObj* arg0);
 void hover_sentry_alert(struct MainObj* arg0);
@@ -1499,7 +1493,6 @@ void heavy_mech_explode(struct MainObj*);
 void heavy_mech_despawn(struct MainObj* arg0);
 
 // heavy_mech_step_funcs
-void enemy_hit_reaction(void* arg0);
 void heavy_mech_resume_step(struct MainObj* arg0);
 void heavy_mech_idle(struct MainObj* arg0);
 void heavy_mech_fall(struct MainObj* arg0);
@@ -1520,7 +1513,6 @@ void ice_bird_despawn(struct MainObj*);
 
 // ice_bird_step_funcs
 extern void (*ice_bird_step_funcs[6])();
-void enemy_hit_reaction(void* arg0);
 void ice_bird_resume_step(struct MainObj* arg0);
 void ice_bird_fly_in(struct MainObj* arg0);
 void ice_bird_charge(struct MainObj* arg0);
@@ -1548,7 +1540,6 @@ void ice_bird_leave_fly(struct MainObj* arg0);
 
 // shell_crawler_step_funcs
 extern void (*shell_crawler_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void shell_crawler_walk(struct MainObj* arg0);
 void shell_crawler_land(struct MainObj* arg0);
 void shell_crawler_shell(struct MainObj* arg0);
@@ -1575,7 +1566,6 @@ void trident_mech_despawn(struct MainObj*);
 
 // trident_mech_step_funcs
 extern void (*trident_mech_step_funcs[11])();
-void enemy_hit_reaction(void* arg0);
 void func_8004FAE4(struct MainObj* arg0);
 void trident_mech_idle(struct MainObj* arg0);
 void trident_mech_fall(struct MainObj* arg0);
@@ -1620,7 +1610,6 @@ void snowman_bomb_despawn(struct MainObj*);
 
 // snowman_bomb_step_funcs
 extern void (*snowman_bomb_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void snowman_bomb_resume_step(struct MainObj* arg0);
 void func_80050278(struct MainObj* arg0);
 void snowman_bomb_turn(struct MainObj* arg0);
@@ -1636,7 +1625,6 @@ void ice_core_death_release_camera(struct MainObj*);
 void ice_core_death_wait_player(struct MainObj*);
 
 // ice_core_step_funcs
-void enemy_hit_reaction(void* arg0);
 void ice_core_resume_step(struct MainObj* arg0);
 void ice_core_drift(struct MainObj* arg0);
 void ice_core_bob(struct MainObj* arg0);
@@ -1705,12 +1693,11 @@ void func_80052A68(struct MainObj*);
 void surface_hopper_despawn(struct MainObj* arg0);
 
 // surface_hopper_launched_state_funcs
-void func_80053D24(void);
-void func_80053EB8(void);
+void func_80053D24(struct MainObj*);
+void func_80053EB8(struct MainObj*);
 void surface_hopper_despawn(struct MainObj* arg0);
 
 // surface_hopper_step_funcs
-void enemy_hit_reaction(void* arg0);
 void surface_hopper_appear(struct MainObj* arg0);
 void surface_hopper_crawl(struct MainObj* arg0);
 void surface_hopper_crawl(struct MainObj* arg0);
@@ -1733,7 +1720,6 @@ void func_8005368C(struct MainObj*);
 extern u8 surface_hopper_leap_animations[];
 
 // surface_hopper_launched_step_funcs
-void enemy_hit_reaction(void* arg0);
 void surface_hopper_launch(struct MainObj* arg0);
 void surface_hopper_set_launch(struct MainObj* arg0);
 void func_8005402C(struct MainObj* arg0);
@@ -1748,7 +1734,6 @@ void ice_block_break(struct MainObj*);
 
 // ice_block_step_funcs
 extern void (*ice_block_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void ice_block_start_idle(struct MainObj* arg0);
 void ice_block_idle(struct MainObj* arg0);
 
@@ -1766,7 +1751,6 @@ void falling_icicle_shatter(struct MainObj*);
 void falling_icicle_despawn(struct MainObj* arg0);
 
 // falling_icicle_step_funcs
-void enemy_hit_reaction(void* arg0);
 void falling_icicle_resume_step(struct MainObj* arg0);
 void falling_icicle_wait(struct MainObj* arg0);
 void falling_icicle_release(struct MainObj* arg0);
@@ -1778,7 +1762,6 @@ void func_80055164(struct MainObj*);
 void bee_hive_despawn(struct MainObj* arg0);
 
 // bee_hive_step_funcs
-void enemy_hit_reaction(void* arg0);
 void bee_hive_resume_step(struct MainObj* arg0);
 void bee_hive_open(struct MainObj* arg0);
 void bee_hive_wait(struct MainObj* arg0);
@@ -1819,7 +1802,6 @@ void func_800562AC(struct MainObj*);
 void slope_skier_slide_idle(void);
 
 // slope_skier_step_funcs
-void enemy_hit_reaction(void* arg0);
 void slope_skier_slide(struct MainObj* arg0);
 void slope_skier_fall(struct MainObj* arg0);
 void slope_skier_land(struct MainObj* arg0);
@@ -1840,7 +1822,6 @@ void jet_drone_despawn(struct MainObj* arg0);
 
 // jet_drone_step_funcs
 extern void (*jet_drone_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void jet_drone_resume_step(struct MainObj* arg0);
 void jet_drone_fly(struct MainObj* arg0);
 void jet_drone_wait_for_player(struct MainObj* arg0);
@@ -1857,7 +1838,6 @@ void func_80057308(struct MainObj*);
 void caterkiller_despawn(struct MainObj* arg0);
 
 // caterkiller_step_funcs
-void enemy_hit_reaction(void* arg0);
 void caterkiller_resume_step(struct MainObj* arg0);
 void caterkiller_crawl(struct MainObj* arg0);
 void caterkiller_lunge(struct MainObj* arg0);
@@ -1893,7 +1873,6 @@ void ice_wall_break(struct BaseObj*);
 
 // ice_wall_step_funcs
 extern void (*ice_wall_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void ice_wall_start_idle(struct MainObj* arg0);
 void ice_wall_idle(struct MainObj* arg0);
 
@@ -1910,7 +1889,6 @@ void dash_gunner_explode(struct MainObj*);
 void dash_gunner_despawn(struct MainObj*);
 
 // dash_gunner_step_funcs
-void enemy_hit_reaction(void* arg0);
 void dash_gunner_resume_step(struct MainObj* arg0);
 void dash_gunner_run(struct MainObj* arg0);
 void dash_gunner_wait_for_player(struct MainObj* arg0);
@@ -1950,7 +1928,6 @@ void spawner_pod_remove(struct MainObj* arg0);
 
 // spawner_pod_step_funcs
 extern void (*spawner_pod_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void spawner_pod_idle(struct MainObj* arg0);
 void func_80059E40(struct MainObj* arg0);
 void func_80059F60(struct MainObj* arg0);
@@ -1969,7 +1946,6 @@ void func_8005B24C(struct MainObj*);
 void func_8005B2C8(struct MainObj*);
 
 // pod_spawner_step_funcs
-void enemy_hit_reaction(void* arg0);
 void pod_spawner_idle(struct MainObj* arg0);
 void func_8005A758(struct MainObj* arg0);
 void pod_spawner_wait(struct MainObj* arg0);
@@ -1982,7 +1958,6 @@ void regen_turret_rebuild(struct MainObj*);
 
 // regen_turret_step_funcs
 extern void (*regen_turret_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void regen_turret_start_idle(struct MainObj* arg0);
 void regen_turret_idle(struct MainObj* arg0);
 void regen_turret_fire(struct MainObj* arg0);
@@ -1999,7 +1974,6 @@ void func_8005C474(struct MainObj*);
 void thorn_trap_despawn(struct MainObj*);
 
 // thorn_trap_step_funcs
-void enemy_hit_reaction(void* arg0);
 void thorn_trap_idle(struct MainObj* arg0);
 void func_8005BA2C(struct MainObj* arg0);
 void thorn_trap_open(struct MainObj* arg0);
@@ -2018,7 +1992,6 @@ void bomb_bat_despawn(struct MainObj*);
 
 // bomb_bat_step_funcs
 extern void (*bomb_bat_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void bomb_bat_resume_step(struct MainObj* arg0);
 void bomb_bat_hover(struct MainObj* arg0);
 void bomb_bat_drop(struct MainObj* arg0);
@@ -2053,7 +2026,6 @@ void spike_sled_despawn(struct MainObj*);
 
 // spike_sled_step_funcs
 extern void (*spike_sled_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void spike_sled_resume_step(struct MainObj* arg0);
 void spike_sled_patrol(struct MainObj* arg0);
 void spike_sled_fall(struct MainObj* arg0);
@@ -2112,7 +2084,6 @@ void wheel_charger_despawn(struct MainObj* arg0);
 
 // wheel_charger_step_funcs
 extern void (*wheel_charger_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void wheel_charger_resume_step(struct MainObj* arg0);
 void wheel_charger_drop(struct MainObj* arg0);
 void func_8005EFB0(struct MainObj* arg0);
@@ -2134,7 +2105,6 @@ void latcher_main(struct MainObj*);
 void latcher_despawn(struct MainObj* arg0);
 
 // latcher_step_funcs
-void enemy_hit_reaction(void* arg0);
 void latcher_resume_step(struct MainObj* arg0);
 void latcher_drift(struct MainObj* arg0);
 void latcher_grab(struct MainObj* arg0);
@@ -2153,7 +2123,6 @@ void rocket_spiker_main(struct MainObj*);
 void rocket_spiker_despawn(struct MainObj* arg0);
 
 // rocket_spiker_step_funcs
-void enemy_hit_reaction(void* arg0);
 void rocket_spiker_resume_step(struct MainObj* arg0);
 void rocket_spiker_drop(struct MainObj* arg0);
 void rocket_spiker_crawl(struct MainObj* arg0);
@@ -2186,7 +2155,6 @@ void train_cannon_despawn(struct MainObj*);
 
 // train_cannon_step_funcs
 extern void (*train_cannon_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void train_cannon_resume_step(struct MainObj* arg0);
 void train_cannon_idle(struct MainObj* arg0);
 void train_cannon_charge(struct MainObj* arg0);
@@ -2243,7 +2211,6 @@ void func_80062BBC(struct MainObj*);
 void data_hopper_despawn(struct MainObj*);
 
 // data_hopper_step_funcs
-void enemy_hit_reaction(void* arg0);
 void data_hopper_idle(struct MainObj* arg0);
 void data_hopper_stand(struct MainObj* arg0);
 void data_hopper_fall(struct MainObj* arg0);
@@ -2259,7 +2226,6 @@ void homing_orb_main(struct MainObj*);
 void homing_orb_despawn(struct MainObj* arg0);
 
 // homing_orb_step_funcs
-void enemy_hit_reaction(void* arg0);
 void homing_orb_start_idle(struct MainObj* arg0);
 void homing_orb_wait(struct MainObj* arg0);
 void homing_orb_lunge(struct MainObj* arg0);
@@ -2288,7 +2254,6 @@ void web_spider_intro_fill_health(struct MainObj*);
 void web_spider_intro_climb(struct MainObj*);
 
 // web_spider_step_funcs
-void enemy_hit_reaction(void* arg0);
 void web_spider_fall(struct MainObj* arg0);
 void web_spider_drop(struct MainObj* arg0);
 void web_spider_shoot(struct MainObj* arg0);
@@ -2334,8 +2299,6 @@ void web_spider_death_finish(struct MainObj*);
 
 // spiderling_step_funcs
 extern void (*spiderling_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
-void enemy_hit_reaction(void* arg0);
 void spiderling_fall(struct MainObj* arg0);
 void spiderling_crawl(struct MainObj* arg0);
 void spiderling_leave(struct MainObj* arg0);
@@ -2346,7 +2309,6 @@ void anchored_mine_main(struct MainObj*);
 void anchored_mine_despawn(struct MainObj* arg0);
 
 // anchored_mine_step_funcs
-void enemy_hit_reaction(void* arg0);
 void anchored_mine_resume_step(struct MainObj* arg0);
 void anchored_mine_idle(struct MainObj* arg0);
 
@@ -2357,8 +2319,8 @@ void anchored_mine_animate(struct MainObj* arg0);
 void train_boss_init(struct MainObj*);
 void train_boss_main(struct MainObj*);
 void train_boss_defeated(struct MainObj*);
-void func_80065EA4(void);
-void func_800661AC(void);
+void func_80065EA4(struct MainObj*);
+void func_800661AC(struct MainObj*);
 void func_8006630C(struct MainObj*);
 void func_80066478(struct MainObj*);
 
@@ -2368,14 +2330,18 @@ void train_boss_arrive(struct MainObj*);
 void train_boss_fight(struct MainObj*);
 
 // train_boss_arrive_funcs
-void func_800665BC(void);
+void func_800665BC(struct MainObj*);
 void train_boss_arrive_approach(struct MainObj*);
 void train_boss_arrive_stop(struct MainObj*);
 void train_boss_arrive_fill_hp(struct MainObj*);
 
 // train_boss_fight_funcs
+#ifdef MMX4_PC
+void train_boss_fight_idle(struct MainObj*);
+#else
 void train_boss_fight_idle(void);
-void func_80066970(void);
+#endif
+void func_80066970(struct MainObj*);
 
 // train_boss_turret_state_funcs
 void train_boss_turret_init(struct MainObj*);
@@ -2384,19 +2350,17 @@ void train_boss_turret_destroyed(struct MainObj* arg0);
 
 // train_boss_turret_step_funcs
 extern void (*train_boss_turret_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void train_boss_turret_start_idle(struct MainObj* arg0);
 void train_boss_turret_arrive(struct MainObj* arg0);
 void train_boss_turret_fire(struct MainObj* arg0);
 
 // train_boss_armor_state_funcs
-void func_80066DE8(void);
-void func_80066F1C(void);
+void func_80066DE8(struct MainObj*);
+void func_80066F1C(struct MainObj*);
 void train_boss_armor_smoke(struct MainObj*);
 void train_boss_armor_clear(struct MainObj*);
 
 // train_boss_armor_step_funcs
-void enemy_hit_reaction(void* arg0);
 void train_boss_armor_start_idle(struct MainObj* arg0);
 void train_boss_armor_arrive(struct MainObj* arg0);
 
@@ -2407,7 +2371,6 @@ void sentry_drone_despawn(struct ObjectHeader*);
 void sentry_drone_wait_for_player(struct MainObj*);
 
 // sentry_drone_step_funcs
-void enemy_hit_reaction(void* arg0);
 void sentry_drone_resume_step(struct MainObj* arg0);
 void sentry_drone_drift(struct MainObj* arg0);
 void sentry_drone_dash(struct MainObj* arg0);
@@ -2456,7 +2419,6 @@ void train_soldier_check_guard(struct MainObj* arg0);
 void train_soldier_check_shoot(struct MainObj* arg0);
 
 // train_soldier_step_funcs
-void enemy_hit_reaction(void* arg0);
 void train_soldier_idle(struct MainObj* arg0);
 void train_soldier_walk(struct MainObj* arg0);
 void train_soldier_fall(struct MainObj* arg0);
@@ -2494,7 +2456,6 @@ void train_crate_explode(struct MainObj*);
 void train_crate_despawn(struct MainObj* arg0);
 
 // train_crate_step_funcs
-void enemy_hit_reaction(void* arg0);
 void train_crate_idle(struct MainObj* arg0);
 
 // fortress_cannon_state_funcs
@@ -2505,7 +2466,6 @@ void fortress_cannon_explode(struct MainObj*);
 void fortress_cannon_despawn(struct MainObj* arg0);
 
 // fortress_cannon_step_funcs
-void enemy_hit_reaction(void* arg0);
 void fortress_cannon_resume_step(struct MainObj* arg0);
 void fortress_cannon_wait(struct MainObj* arg0);
 void fortress_cannon_fire(struct MainObj* arg0);
@@ -2542,7 +2502,6 @@ void jump_shooter_main(struct MainObj*);
 void jump_shooter_despawn(struct MainObj*);
 
 // jump_shooter_step_funcs
-void enemy_hit_reaction(void* arg0);
 void jump_shooter_resume_step(struct MainObj* arg0);
 void jump_shooter_fire(struct MainObj* arg0);
 void jump_shooter_walk(struct MainObj* arg0);
@@ -2573,7 +2532,6 @@ void wave_rider_wait_offscreen(struct MainObj*);
 
 // wave_rider_step_funcs
 extern void (*wave_rider_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void wave_rider_idle(struct MainObj* arg0);
 u8 func_8006B1C4(struct MainObj* arg0, u8 side);
 void func_8006B5F8(struct MainObj* arg0);
@@ -2596,7 +2554,6 @@ void slash_beast_death(struct MainObj*);
 
 // slash_beast_step_funcs
 extern void (*slash_beast_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void*); // TODO - MainObj
 void slash_beast_start_pattern(struct MainObj*);
 void slash_beast_crescent(struct MainObj*);
 void slash_beast_decide(struct MainObj*);
@@ -2675,8 +2632,8 @@ void slash_beast_high_leap_recover(struct MainObj*);
 
 // jet_stingray_flyby_enter_funcs
 extern void (*jet_stingray_flyby_enter_funcs[])(struct MainObj*);
-void func_8006ED44(void);
-void func_8006EF28(void);
+void func_8006ED44(struct MainObj*);
+void func_8006EF28(struct MainObj*);
 
 // jet_stingray_flyby_attack_funcs
 extern void (*jet_stingray_flyby_attack_funcs[])(struct MainObj*);
@@ -2692,7 +2649,6 @@ void func_8006F5F4(struct MainObj*);
 
 // jet_stingray_flyby_step_funcs
 extern void (*jet_stingray_flyby_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void jet_stingray_flyby_enter(struct MainObj* arg0);
 void jet_stingray_flyby_wait_on_screen(struct MainObj* arg0);
 void func_8006F0DC(struct MainObj* arg0);
@@ -2773,7 +2729,6 @@ void jet_stingray_stagger_flee(struct MainObj*);
 void jet_stingray_stagger_return(struct MainObj*);
 
 // jet_stingray_step_funcs
-void enemy_hit_reaction(void* arg0);
 void jet_stingray_reset(struct MainObj* arg0);
 void jet_stingray_swim(struct MainObj* arg0);
 void jet_stingray_land(struct MainObj* arg0);
@@ -2811,7 +2766,6 @@ void frost_walrus_start_warning(struct MainObj*);
 void func_800722A0(struct MainObj*);
 
 // frost_walrus_step_funcs
-void enemy_hit_reaction(void* arg0);
 void frost_walrus_reset(struct MainObj* arg0);
 void frost_walrus_intro(struct MainObj* arg0);
 void frost_walrus_think(struct MainObj* arg0);
@@ -2912,7 +2866,6 @@ void func_800745E8(struct MainObj*);
 void beam_drone_despawn(struct MainObj*);
 
 // beam_drone_step_funcs
-void enemy_hit_reaction(void* arg0);
 void beam_drone_resume_step(struct MainObj* arg0);
 void beam_drone_drop(struct MainObj* arg0);
 void beam_drone_charge(struct MainObj* arg0);
@@ -2963,7 +2916,6 @@ void storm_owl_start_wait_warning(struct MainObj*);
 void func_800751AC(struct MainObj*);
 
 // storm_owl_step_funcs
-void enemy_hit_reaction(void* arg0);
 void storm_owl_resume_step(struct MainObj* arg0);
 void storm_owl_intro(struct MainObj *arg0);
 void storm_owl_patrol(struct MainObj *arg0);
@@ -3099,7 +3051,6 @@ void func_800788E4(struct MainObj*);
 void split_mushroom_death(struct MainObj* arg0);
 
 // split_mushroom_step_funcs
-void enemy_hit_reaction(void* arg0);
 void split_mushroom_intro(struct MainObj *arg0);
 void split_mushroom_stun(struct MainObj *arg0);
 void split_mushroom_spore_rain(struct MainObj *arg0);
@@ -3189,7 +3140,6 @@ void flame_jet_wait_sync(struct MainObj*);
 
 // flame_jet_step_funcs
 extern void (*flame_jet_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void flame_jet_idle(struct MainObj* arg0);
 u8 func_8007BABC(struct MainObj*);
 void flame_jet_erupt(struct MainObj* arg0);
@@ -3266,8 +3216,6 @@ void cyber_peacock_aiming_laser(struct MainObj* arg0);
 void cyber_peacock_rising_kick(struct MainObj* arg0);
 
 // cyber_peacock_step_funcs
-void enemy_hit_reaction(void* arg0);
-void enemy_hit_reaction(void* arg0);
 void cyber_peacock_teleport(struct MainObj *arg0);
 void cyber_peacock_attack(struct MainObj *arg0);
 void func_8007D5D0(struct MainObj* arg0);
@@ -3360,7 +3308,6 @@ void magma_dragoon_stagger_fall(struct MainObj*);
 void magma_dragoon_stagger_recover(struct MainObj*);
 
 // magma_dragoon_step_funcs
-void enemy_hit_reaction(void* arg0);
 void magma_dragoon_hold(struct MainObj* arg0);
 void magma_dragoon_intro(struct MainObj *arg0);
 void func_8007E4C8(struct MainObj* arg0);
@@ -3400,7 +3347,6 @@ void iris_despawn(struct MainObj*);
 
 // iris_step_funcs
 extern void (*iris_step_funcs[])(struct MainObj*);
-void enemy_hit_reaction(void* arg0);
 void iris_robot_decide(struct MainObj* arg0);
 void iris_intro(struct MainObj *arg0);
 void iris_robot_hover(struct MainObj *arg0);
@@ -3464,7 +3410,6 @@ void func_80082574(struct MainObj*);
 void gunship_destroyed(struct MainObj* arg0);
 
 // gunship_step_funcs
-void enemy_hit_reaction(void* arg0);
 void gunship_resume_step(struct MainObj* arg0);
 void gunship_choose(struct MainObj *arg0);
 void gunship_gun(struct MainObj *arg0);
@@ -3572,14 +3517,12 @@ void sigma_eye_laser_fire(struct MainObj*);
 void sigma_eye_laser_wait(struct MainObj*);
 
 // sigma_cloak_step_funcs
-void enemy_hit_reaction(void* arg0);
 void sigma_idle(struct MainObj* arg0);
 void sigma_cloak_pick_attack(struct MainObj* arg0);
 void sigma_cloak_teleport(struct MainObj* arg0);
 void sigma_cloak_dash(struct MainObj *arg0);
 
 // sigma_step_funcs
-void enemy_hit_reaction(void* arg0);
 void sigma_idle(struct MainObj* arg0);
 void sigma_scythe_spin(struct MainObj* arg0);
 void sigma_scythe_plant(struct MainObj* arg0);
@@ -3639,7 +3582,6 @@ void colonel_spawn_warning(struct MainObj*);
 void func_80086008(struct MainObj*);
 
 // colonel_step_funcs
-void enemy_hit_reaction(void* arg0);
 void colonel_start_fight(struct MainObj* arg0);
 void colonel_intro(struct MainObj* arg0);
 void colonel_guard(struct MainObj* arg0);
@@ -3767,7 +3709,6 @@ void drone_pod_intro_open(struct MainObj*);
 void drone_pod_intro_fill_health(struct MainObj*);
 
 // drone_pod_step_funcs
-void enemy_hit_reaction(void* arg0);
 void drone_pod_resume_step(struct MainObj* arg0);
 void drone_pod_rest(struct MainObj* arg0);
 void drone_pod_launch(struct MainObj* arg0);
@@ -3799,7 +3740,6 @@ void drone_pod_alarm_red(struct MainObj*);
 void drone_pod_alarm_white(struct MainObj*);
 
 // ride_armor_pilot_step_funcs
-void enemy_hit_reaction(void* arg0);
 void ride_armor_pilot_reset(struct MainObj* arg0);
 void func_8008A064(struct MainObj* arg0);
 void func_8008A180(struct MainObj* arg0);
@@ -3829,7 +3769,6 @@ void func_8008AC40(struct MainObj*);
 void ride_armor_pilot_despawn(struct MainObj *arg0);
 
 // unused_ride_armor_step_funcs
-void enemy_hit_reaction(void* arg0);
 void unused_ride_armor_reset(struct MainObj* arg0);
 void func_8008B020(struct MainObj* arg0);
 void func_8008B188(struct MainObj* arg0);
@@ -3903,7 +3842,6 @@ void double_aerial_shot_drop(struct MainObj*);
 void double_aerial_shot_land(struct MainObj*);
 
 // double_step_funcs
-void enemy_hit_reaction(void* arg0);
 void double_wait(struct MainObj* arg0);
 void double_energy_ball(struct MainObj* arg0);
 void double_dive(struct MainObj* arg0);
@@ -3944,7 +3882,7 @@ void sigma_final_appear_fill_health(struct MainObj*);
 extern void (*sigma_final_laser_funcs[])(struct MainObj *);
 void sigma_final_laser_start(struct MainObj*);
 void sigma_final_laser_aim(struct MainObj*);
-void sigma_final_laser_fire(struct PlayerObj*);
+void sigma_final_laser_fire(struct MainObj*);
 void sigma_final_laser_wait(struct MainObj*);
 void sigma_final_laser_repeat(struct MainObj*);
 
@@ -4003,7 +3941,6 @@ void sigma_final_summon_start(struct MainObj*);
 void sigma_final_summon_wait(struct MainObj*);
 
 // sigma_final_step_funcs
-void enemy_hit_reaction(void* arg0);
 void sigma_final_idle(struct MainObj* arg0);
 void func_8008DAE8(struct MainObj* arg0);
 void sigma_final_appear(struct MainObj* arg0);
@@ -4081,7 +4018,6 @@ void general_slam_ascend(struct MainObj*);
 void general_slam_leave(struct MainObj*);
 
 // general_step_funcs
-void enemy_hit_reaction(void* arg0);
 void general_resume_step(struct MainObj* arg0);
 void func_8009027C(struct MainObj* arg0);
 void general_fly(struct MainObj* arg0);
@@ -4104,7 +4040,7 @@ void func_80091898(struct MainObj*);
 
 // spike_crawler_state_funcs
 struct Main76HandlerTable {
-    void (*funcs[7])(void*);
+    void (*funcs[7])(struct MainObj*);
 };
 s32 update_boss_music_delay(void);
 extern void (*spike_crawler_state_funcs[])(struct MainObj*);
@@ -4597,7 +4533,6 @@ void train_boss_arm_destroyed(struct ShotObj*);
 
 // train_boss_arm_step_funcs
 extern void (*train_boss_arm_step_funcs[])(struct ShotObj*);
-void enemy_hit_reaction(void* arg0);
 void train_boss_arm_resume_step(struct ShotObj* arg0);
 void train_boss_arm_advance(struct ShotObj* arg0);
 void train_boss_arm_wait_signal(struct ShotObj* arg0);
@@ -6516,7 +6451,7 @@ void cyclone_trail_animate(struct MiscObj*);
 
 // item_sparkle_state_funcs
 extern void (*item_sparkle_state_funcs[])(struct MiscObj*);
-void func_800CF300(void);
+void func_800CF300(struct MiscObj*);
 void item_sparkle_move(struct MiscObj*);
 void item_sparkle_despawn(struct MiscObj*);
 
@@ -6637,7 +6572,7 @@ void double_afterimage_despawn(struct MiscObj*);
 
 // cutscene_actor_state_funcs
 extern void (*cutscene_actor_state_funcs[])(struct MiscObj*);
-void func_800D1B44(void);
+void func_800D1B44(struct MiscObj*);
 void cutscene_actor_wait(struct MiscObj*);
 void cutscene_actor_hold(struct MiscObj*);
 void cutscene_actor_animate(struct MiscObj* arg0);
@@ -6670,8 +6605,8 @@ void npc_cutscene_talk_wait_line(struct MiscObj*);
 // npc_cutscene_type_funcs
 void npc_cutscene_talk(struct MiscObj* arg0);
 void npc_cutscene_reply(struct MiscObj*);
-void func_800D26F4(void);
-void func_800D26F4(void);
+void func_800D26F4(struct MiscObj*);
+void func_800D26F4(struct MiscObj*);
 
 // npc_cutscene_finish_fade_funcs
 extern void (*npc_cutscene_finish_fade_funcs[])(struct MiscObj*);
@@ -6690,7 +6625,7 @@ void npc_cutscene_finish_leave(struct MiscObj*);
 
 // npc_cutscene_state_funcs
 extern void (*npc_cutscene_state_funcs[])(struct MiscObj*);
-void func_800D2190(void);
+void func_800D2190(struct MiscObj*);
 void npc_cutscene_main(struct MiscObj*);
 void npc_cutscene_finish(struct MiscObj*);
 

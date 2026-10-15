@@ -2,6 +2,7 @@
 // 800BEBB4..800BF730
 #include "common.h"
 
+
 void stage_block_update(struct ItemObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;

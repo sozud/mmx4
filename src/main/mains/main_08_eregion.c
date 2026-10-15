@@ -882,6 +882,46 @@ union AnimationStep D_800FA964[] = {
     { 0x36EC0108 },
 };
 
+#if defined(MMX4_PC) && !defined(MMX4_WIN32)
+static struct {
+    union AnimationStep D_800FA948[7];
+    union AnimationStep D_800FA964[19];
+} eregion_anim_run = {
+    {
+        { 0x2D010003 },
+        { 0x2E010003 },
+        { 0x2F010004 },
+        { 0x30010003 },
+        { 0x31010004 },
+        { 0x32010002 },
+        { 0x32FA0001 },
+    },
+    {
+        { 0x36010008 },
+        { 0x3601000C },
+        { 0x36010002 },
+        { 0x36010006 },
+        { 0x21010206 },
+        { 0x22010004 },
+        { 0x23010003 },
+        { 0x22010004 },
+        { 0x23010003 },
+        { 0x21010006 },
+        { 0x22010005 },
+        { 0x23010004 },
+        { 0x24010003 },
+        { 0x25010004 },
+        { 0x27010001 },
+        { 0x28010001 },
+        { 0x36010006 },
+        { 0x3601000C },
+        { 0x36EC0108 },
+    },
+};
+#define D_800FA948 eregion_anim_run.D_800FA948
+#define D_800FA964 eregion_anim_run.D_800FA964
+#endif
+
 union AnimationStep D_800FA9B0[] = {
     { 0x37010001 },
     { 0x38FF0001 },

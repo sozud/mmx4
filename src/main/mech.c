@@ -1455,6 +1455,25 @@ union AnimationStep D_800F930C[] = {
     { 0x1AFE0001 },
 };
 
+#if defined(MMX4_PC) && !defined(MMX4_WIN32)
+static struct {
+    union AnimationStep D_800F9304[2];
+    union AnimationStep D_800F930C[3];
+} ride_armor_land_run = {
+    {
+        { 0x16010005 },
+        { 0x17010004 },
+    },
+    {
+        { 0x18010001 },
+        { 0x19010001 },
+        { 0x1AFE0001 },
+    },
+};
+#define D_800F9304 ride_armor_land_run.D_800F9304
+#define D_800F930C ride_armor_land_run.D_800F930C
+#endif
+
 union AnimationStep D_800F9318[] = {
     { 0x10010001 },
     { 0x12010001 },

@@ -574,6 +574,52 @@ union AnimationStep D_800F97B4[] = {
     { 0x25EE0001 },
 };
 
+#if defined(MMX4_PC) && !defined(MMX4_WIN32)
+static struct {
+    union AnimationStep D_800F9778[4];
+    union AnimationStep D_800F9788[11];
+    union AnimationStep D_800F97B4[13];
+} background_dragon_anim_run = {
+    {
+        { 0x19010008 },
+        { 0x1A010008 },
+        { 0x1B010008 },
+        { 0x1CFD0008 },
+    },
+    {
+        { 0x1B010003 },
+        { 0x1D010003 },
+        { 0x1E010003 },
+        { 0x1F010136 },
+        { 0x1F010003 },
+        { 0x1E010203 },
+        { 0x1F010014 },
+        { 0x1F010003 },
+        { 0x1E010303 },
+        { 0x1F010013 },
+        { 0x1FF30001 },
+    },
+    {
+        { 0x20010003 },
+        { 0x21010003 },
+        { 0x22010003 },
+        { 0x23010003 },
+        { 0x24010003 },
+        { 0x25010003 },
+        { 0x20010003 },
+        { 0x21010003 },
+        { 0x22010003 },
+        { 0x23010003 },
+        { 0x24010003 },
+        { 0x25010002 },
+        { 0x25EE0001 },
+    },
+};
+#define D_800F9778 background_dragon_anim_run.D_800F9778
+#define D_800F9788 background_dragon_anim_run.D_800F9788
+#define D_800F97B4 background_dragon_anim_run.D_800F97B4
+#endif
+
 union AnimationStep D_800F97E8[] = {
     { 0x1F010003 },
     { 0x1E010003 },

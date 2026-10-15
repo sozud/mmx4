@@ -562,10 +562,6 @@ extern s16 D_8013955C;
 
 extern s32 D_80141BD4;
 
-#ifdef MMX4_PC
-extern u32 mmx4_pc_xa_stops;
-extern u32 mmx4_pc_xa_stop_sample;
-#endif
 
 void func_800163BC(s32);
 
@@ -593,7 +589,9 @@ extern u8 D_80139554[];
 
 extern s32 func_80013614(s32, s32*);
 
+#ifndef MMX4_PC
 extern void func_80018788(s32, s32, s32, s32, s32, s32, s32, s32, s32, s32);
+#endif
 
 extern s32 D_80139614;
 

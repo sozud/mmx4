@@ -2,6 +2,7 @@
 // 8009C364..8009C5F0
 #include "common.h"
 
+
 void linked_spark_update(struct ShotObj* self)
 {
     linked_spark_state_funcs[self->state](self);

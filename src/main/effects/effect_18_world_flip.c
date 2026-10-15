@@ -1,6 +1,7 @@
 // EffectObj, effect_object_update_funcs[18]
 // 800B9690..800B9940
 #include "common.h"
+void world_flip_objects(void);
 
 void world_flip_update(struct EffectObj* self)
 {

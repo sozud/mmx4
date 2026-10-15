@@ -165,9 +165,16 @@ ret_u8 angle_to_point(struct ObjectHeader* arg0, s32 arg1, s32 arg2)
 
 ret_u8 angle_to_object(struct ObjectHeader* arg0, struct ObjectHeader* arg1)
 {
+#ifdef MMX4_PC
+
+    return angle_from_delta((s32)((u32)arg0->x_pos.val - (u32)arg1->x_pos.val),
+               (s32)((u32)arg0->y_pos.val - (u32)arg1->y_pos.val))
+        & 0xFF;
+#else
     return angle_from_delta(arg0->x_pos.val - arg1->x_pos.val,
                arg0->y_pos.val - arg1->y_pos.val)
         & 0xFF;
+#endif
 }
 
 u8 angle_from_delta(s32 arg0, s32 arg1)
@@ -179,13 +186,22 @@ u8 angle_from_delta(s32 arg0, s32 arg1)
 
     if (arg0 < 0) {
         var_a2 = 1;
+#ifdef MMX4_PC
+
+        arg0 = (s32)(0u - (u32)arg0);
+#else
         arg0 = -arg0;
+#endif
     } else {
         var_a2 = -1;
     }
     if (arg1 < 0) {
         var_a3 = -1;
+#ifdef MMX4_PC
+        arg1 = (s32)(0u - (u32)arg1);
+#else
         arg1 = -arg1;
+#endif
     } else {
         var_a3 = 1;
     }
@@ -213,8 +229,8 @@ u8 angle_from_delta(s32 arg0, s32 arg1)
         arg0 = 8;
     }
 
-    if ((var_a3 << 0x10) < 0) {
-        if ((var_a2 << 0x10) > 0) {
+    if (var_a3 < 0) {
+        if (var_a2 > 0) {
             if ((s16)arg0 == 8) {
                 return 0;
             }
@@ -223,7 +239,7 @@ u8 angle_from_delta(s32 arg0, s32 arg1)
         return 0x18 - arg0;
     }
 
-    return (var_a2 << 0x10) <= 0 ? arg0 + 8 : 8 - arg0;
+    return var_a2 <= 0 ? arg0 + 8 : 8 - arg0;
 }
 
 extern s32 D_800F459C[];

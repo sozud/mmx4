@@ -63,7 +63,7 @@ void unused_ride_armor_set_jump_speed(struct MainObj* self)
 {
     s32 value;
 
-    value = self->ext.main_72.unk84 << 8;
+    value = self->ext.main_72.unk84 * 0x100;
     if (self->unk15 == 0) {
         value = -value;
     }

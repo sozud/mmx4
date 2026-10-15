@@ -3,6 +3,20 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern union AnimationStep* ice_block_animations[9];
+extern struct Unk_unk68 D_80106C74[];
+extern struct Unk_unk68 D_800FC844;
+extern struct Unk_unk68 D_800FC848;
+extern struct Unk_unk68 D_800FC84C;
+extern struct Unk_unk68 D_800FC850;
+extern struct Unk_unk68 D_800FC854;
+extern struct Unk_unk68 D_800FC858;
+extern struct Unk_unk68 D_800FC85C;
+extern u8 ice_block_debris[4];
+extern union AnimationStep* ice_wall_animations[];
+#endif
+
 void ice_block_update(struct MainObj* self)
 {
     ice_block_state_funcs[self->state](self);

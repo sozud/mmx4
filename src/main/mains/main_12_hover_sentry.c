@@ -3,6 +3,12 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
+extern struct Unk_unk68 D_800FB694, D_800FB698;
+void hover_sentry_face_player(struct MainObj* self);
+#endif
+
 void hover_sentry_update(struct MainObj* self)
 {
     hover_sentry_state_funcs[self->state](self);
