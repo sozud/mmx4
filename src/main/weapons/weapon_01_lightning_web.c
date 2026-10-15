@@ -350,11 +350,11 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", func_80093930);
 
 void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {
-    struct PlayerObj* owner;
+    struct WeaponObj* owner;
     u8 state;
 
-    owner = arg0->owner;
-    if (0 != (u8)owner->shot_fired) {
+    owner = (struct WeaponObj*)arg0->owner;
+    if (0 != (u8)owner->ext.weapon_10.unk8F) {
         arg0->on_screen = 1;
         arg0->x_pos.val = owner->x_pos.val;
         arg0->y_pos.val = owner->y_pos.val;

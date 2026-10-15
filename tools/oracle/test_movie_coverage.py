@@ -101,6 +101,37 @@ class CoverageTests(unittest.TestCase):
         self.assertTrue(any(path.name == "placeholder.c.html" for path in html_files))
         self.assertFalse(any(path.name == "main.c.html" for path in html_files))
 
+    def test_unit_tests_are_reported_beside_movies(self):
+        unit_main = self.root / "unit_main.c"
+        unit_main.write_text("int game(int);\nint main(void) { return game(0) != 3; }\n")
+        unit_binary = self.root / "unit-fixture"
+        subprocess.run([TOOLS["clang"], "-fprofile-instr-generate", "-fcoverage-mapping",
+                        str(self.root / "src/main/game.c"), str(unit_main), "-o", str(unit_binary)], check=True)
+        profile = self.root / "coverage/unit/unit.profraw"
+        profile.parent.mkdir(parents=True)
+        subprocess.run([str(unit_binary)], check=True, env={**os.environ, "LLVM_PROFILE_FILE": str(profile)})
+        log = self.root / "unit.log"
+        log.write_text("PASS\tgame\t0\tzero#0\t3\n")
+        result = subprocess.run([sys.executable, str(Path(coverage.__file__)),
+            "--binary", str(self.binary), "--source-root", str(self.root),
+            "--manifest", str(self.manifest), "--coverage", str(self.root / "coverage"),
+            "--llvm-profdata", TOOLS["llvm-profdata"], "--llvm-cov", TOOLS["llvm-cov"],
+            "--unit-binary", str(unit_binary), "--unit-log", str(log)], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads((self.root / "coverage/coverage.json").read_text())
+        self.assertEqual(report["unit_tests"]["passed"], 1)
+        self.assertEqual(report["sources"]["unit_tests"]["functions"], {"count": 1, "covered": 1})
+        self.assertEqual(report["sources"]["unit_tests"]["branches"], {"count": 2, "covered": 1})
+        self.assertEqual(report["sources"]["combined"], report["totals"])
+        self.assertEqual(report["sources"]["combined"]["functions"], {"count": 2, "covered": 2})
+        self.assertIn("| Metric | Movies | Unit tests | Total |", (self.root / "coverage/coverage.md").read_text())
+        log.write_text("PASS\tgame\t0\tzero#0\t3\nFAIL\tgame\t1\tzero#1\n")
+        self.assertNotEqual(subprocess.run([sys.executable, str(Path(coverage.__file__)),
+            "--binary", str(self.binary), "--source-root", str(self.root),
+            "--manifest", str(self.manifest), "--coverage", str(self.root / "coverage"),
+            "--llvm-profdata", TOOLS["llvm-profdata"], "--llvm-cov", TOOLS["llvm-cov"],
+            "--unit-binary", str(unit_binary), "--unit-log", str(log)]).returncode, 0)
+
     def test_failed_incomplete_or_wrong_binary_results_are_rejected(self):
         for change in ({"status": 1}, {"pc_exit": 1}, {"psx_exit": 1},
                        {"pc_frames": 0}, {"psx_frames": 0}, {"binary_sha256": "other"},

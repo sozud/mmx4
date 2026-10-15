@@ -257,8 +257,13 @@ void surface_hopper_set_launch(struct MainObj* self)
     s32 index;
 
     index = (SP_CUR_MAIN_OBJ->ext.main_19.animation_index << 2) + SP_CUR_MAIN_OBJ->ext.main_19.unk80;
+#ifdef MMX4_PC
+    self->x_speed = surface_hopper_launch_x_speeds[index] * FIXED(1);
+    self->y_speed = surface_hopper_launch_y_speeds[index] * FIXED(1);
+#else
     self->x_speed = surface_hopper_launch_x_speeds[index] << 16;
     self->y_speed = surface_hopper_launch_y_speeds[index] << 16;
+#endif
     self->unk15 = surface_hopper_launch_facings[index];
     set_animation(self, surface_hopper_launch_animations[index]);
     self->hurt_box = surface_hopper_launch_hurt_boxes[SP_CUR_MAIN_OBJ->ext.main_19.unk80];
@@ -669,7 +674,7 @@ s16 D_800FC7E8[6] = {
     (s16)0x001C,
 };
 
-void (*surface_hopper_launched_step_funcs[6])() = {
+void (*surface_hopper_launched_step_funcs[6])(struct MainObj*) = {
     enemy_hit_reaction,
     surface_hopper_launch,
     func_8005402C,

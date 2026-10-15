@@ -3,6 +3,34 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern union AnimationStep* slope_skier_animations[31];
+extern struct Unk_unk68 slope_skier_hurt_box[];
+extern struct Unk_unk68 slope_skier_terrain_box;
+extern struct VisualSpawnOffset D_800FCE90[5];
+extern struct Unk_unk68 D_800FCE9C[];
+extern union AnimationStep jet_drone_anim_3[];
+extern struct Unk_unk68 D_80106DF4[];
+
+static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual == NULL)
+        return NULL;
+    visual->active = 0x41;
+    visual->id = 3;
+    visual->unk2 = 5;
+    visual->bg_offset = arg0->bg_offset;
+    visual->unk15 = facing;
+    visual->unk40 = arg0->unk40;
+    visual->unk3C = (void*)arg0->sprite_frames;
+    visual->animation_table = (u32**)arg0->animation_table;
+    visual->unk42 = arg0->unk42;
+    return visual;
+}
+#endif
+
 void bee_hive_update(struct MainObj* self);
 
 // bee_hive_init
@@ -66,8 +94,12 @@ void slope_skier_read_slope(struct MainObj* self)
 
     result = func_8002D724(PLAYER_OBJECT(self), x_pos, y_pos);
     if (result == 0) {
+#ifdef MMX4_PC
+        result = func_8002D724(PLAYER_OBJECT(self), x_pos, (s16)(y_pos + 0x10));
+#else
         result = ((s32(*)(struct PlayerObj*, s16, s32))func_8002D724)(
             PLAYER_OBJECT(self), x_pos, y_pos + 0x10);
+#endif
         if (result == 0) {
             self->ext.main_23.unk80 = 3;
             return;

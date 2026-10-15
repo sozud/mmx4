@@ -1,6 +1,12 @@
 // 8002D9BC..8002E420
 #include "common.h"
 
+#ifdef MMX4_PC
+s32 func_8002DE30(struct MainObj*, struct WeaponObj*);
+void func_8002DF7C(struct WeaponObj*, s32);
+s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
+#endif
+
 void func_8002E380(struct MovingObj* arg0, struct MovingObj* arg1, u8 arg2);
 
 void func_8002C99C(struct PlayerObj* arg0);

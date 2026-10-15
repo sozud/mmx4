@@ -317,10 +317,17 @@ void spike_marl_check_patrol_path(struct MainObj* self)
             var_v1 = self->x_pos.u.hi - self->terrain_box->unk0 - 0x10;
         }
 
+#ifdef MMX4_PC
+        if (func_8002D724(
+                PLAYER_OBJECT(self), var_v1,
+                self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1))
+            == 0) {
+#else
         if (((s32(*)(void*, s16, s16))func_8002D724)(
                 self, var_v1,
                 self->terrain_box->unk3 + (self->y_pos.u.hi + self->terrain_box->unk1))
             == 0) {
+#endif
             self->ext.main_3.turn_timer = 0x78;
             self->unk5 = 3;
             self->unk6 = 0;

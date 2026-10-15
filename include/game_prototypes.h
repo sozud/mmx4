@@ -437,7 +437,11 @@ extern void pod_spawner_idle (struct MainObj *arg0);
 extern void pod_spawner_wait (struct MainObj *arg0);
 extern void thorn_trap_idle (struct MainObj *arg0);
 extern void data_hopper_idle (struct MainObj *arg0);
+#ifdef MMX4_PC
+extern void train_boss_fight_idle(struct MainObj*);
+#else
 extern void train_boss_fight_idle (void);
+#endif
 extern void train_boss_turret_start_idle (struct MainObj *arg0);
 extern void train_soldier_idle (struct MainObj *arg0);
 extern void train_crate_idle (struct MainObj *arg0);

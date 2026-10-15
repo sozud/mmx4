@@ -39,7 +39,7 @@ void func_8009C12C(struct ShotObj* self)
 
 void turret_laser_hit(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void turret_laser_idle(struct ShotObj* arg)

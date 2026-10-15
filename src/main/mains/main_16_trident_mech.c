@@ -3,6 +3,7 @@
 #include "common.h"
 
 void trident_mech_face_player(struct AnimatedObj* self);
+void trident_mech_fire_tracked_shot(struct MainObj* self);
 #include "func_tables.h"
 
 void trident_mech_update(struct MainObj* self)
@@ -316,7 +317,10 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
         }
 
         self->ext.main_16.unk80 &= 0x1F;
-        set_velocity_from_angle(MOVING_OBJECT(shot), (u8)self->ext.main_16.unk80);
+#ifdef MMX4_PC
+        if (shot != NULL)
+#endif
+            set_velocity_from_angle(MOVING_OBJECT(shot), (u8)self->ext.main_16.unk80);
         self->ext.main_16.unk80 += self->ext.main_16.unk84;
         if ((s32)self->ext.main_16.unk80 < 0x10) {
             set_animation(self, 7);

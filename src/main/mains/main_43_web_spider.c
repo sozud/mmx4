@@ -142,7 +142,11 @@ void web_spider_intro_pose(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         self->unk5 = 7;
         if (engine_obj.stage == 1) {
+#ifdef MMX4_PC
+            func_8002217C(8, 0xFF, (u8)engine_obj.character_state.bytes[8]);
+#else
             ((void (*)(u16, u8, s8))func_8002217C)(8, 0xFF, engine_obj.character_state.bytes[8]);
+#endif
             engine_obj.character_state.bytes[8] = 1;
         }
     } else {
@@ -645,16 +649,35 @@ void web_spider_spawn_web_shot(struct AnimatedObj* self, u8 arg1)
 // web_spider_aim_swing
 INCLUDE_ASM("main/nonmatchings/mains/main_43_web_spider", func_80065168);
 
+#ifdef MMX4_PC
+
+static u8 web_spider_retail_timer_byte(u8 offset)
+{
+    static const u8 bytes[20] = {
+        0x10, 0x14, 0x18, 0x20, 0x5A, 0x50, 0x44, 0x32, 0x0C, 0x53, 0x06, 0x80, 0x7C, 0x53, 0x06, 0x80, 0x58, 0x54, 0x06, 0x80
+    };
+    return bytes[offset];
+}
+#endif
+
 void web_spider_set_move_timer(struct MainObj* self)
 {
+#ifdef MMX4_PC
+    self->unk7C = web_spider_retail_timer_byte((self->hp & 0x7F) >> 3);
+#else
     self->unk7C = web_spider_move_timers[(self->hp & 0x7F) >> 3];
+#endif
 }
 
 void web_spider_set_attack_cooldown(struct MainObj* self)
 {
     if (self->ext.main_43.attack_cooldown == 0) {
         int cooldown_index = (self->hp & 0x7F) >> 3;
+#ifdef MMX4_PC
+        self->ext.main_43.attack_cooldown = web_spider_retail_timer_byte(cooldown_index + 4);
+#else
         self->ext.main_43.attack_cooldown = web_spider_attack_cooldowns[cooldown_index];
+#endif
     }
 }
 

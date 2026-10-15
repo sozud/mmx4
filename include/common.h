@@ -900,8 +900,8 @@ struct Main24Ext {
 };
 
 struct Main47Ext {
-    struct BaseObj* unk80;
-    u32 unk84;
+    struct Main45Ext* train_boss;
+    s8* boss_hp;
     u32 unk88;
     u32 unk8C;
     u32 unk90;
@@ -910,6 +910,8 @@ struct Main47Ext {
 
 struct Main76Ext {
     s32 saved_x_velocity;
+    u8 pad84[0x98 - 0x84];
+    s8 bounce_step;
 };
 
 struct Main25Ext {
@@ -2267,6 +2269,7 @@ union ItemExt {
     struct Item22Ext item_22;
     struct Item23Ext item_23;
     struct MainObj* owner;
+    u8* train_layer_parameter;
 };
 
 struct Item01StageEntry {
@@ -2308,6 +2311,7 @@ union ItemUnk7C {
     u16 timer16;
     s32 timer;
     struct MainObj* owner;
+    struct Main45Ext* train_boss;
     struct MiscObj* misc;
     void* object;
     struct Unk_unk68* bounds;
@@ -2606,7 +2610,8 @@ struct Misc55Ext {
 };
 
 struct Misc52Ext {
-    u8 pad50[5];
+    struct MiscObj* parent;
+    u8 pad54;
     u8 timer;
     u8 unk56;
     s8 unk57;
@@ -3318,7 +3323,11 @@ struct Quad10Ext {
     s32 x_step;
     s32 y_step;
     u8 progress;
+#ifdef MMX4_PC
+    u8 history[16];
+#else
     u8 history[3];
+#endif
 };
 
 struct PlayerUnk8CFields {
@@ -4862,15 +4871,22 @@ s32 func_8001540C(s32, arg_u8, void*);
 s32 is_sound_finished(s32, struct MainObj*);
 void func_8001B644(u8*);
 s32 func_8001CB24(u8* buffer, s32 device_num, s32 size);
+s32 func_8001C8F4(u8* buffer, s32 device_num, s32 size);
+void func_8001C4B4(struct MemcardMenuState*);
+void func_8001C5A8(u8**);
 void func_8001CC5C(s32 device_num, struct MemcardFileList* list, const char* pattern);
 s32 func_8001CD70(s32 arg0);
 int func_8001CDE4(int arg0);
 s32 func_8001CE84(s32 device_num);
 void func_8001B718(s16, u8, u8);
 void func_8001B7C0(s16 x, s16 y, u8 arg2);
+void func_8001B8B0(s16 x, s16 y, u8 arg2);
+void func_8001BCAC(s16 x, s16 y, u8 arg2);
+void func_8001BE10(s16 x, s16 y, u8 arg2);
 void func_8001C210(void);
 void func_8001C30C(struct MemcardSaveSlot*);
 void func_8001C008(s32, s32);
+void func_8001C07C(void);
 s32 player_set_animation(struct PlayerObj*, s32);
 void player_enter_beam_out(struct PlayerObj*);
 void player_enter_stand(struct PlayerObj*);

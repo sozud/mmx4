@@ -96,7 +96,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AAC98);
 
 void sigma_head_resume(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void sigma_head_idle(struct ShotObj* self)

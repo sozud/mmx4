@@ -186,7 +186,7 @@ void sigma_final_shot_lightning_split(struct ShotObj* self)
 
 void sigma_final_shot_resume(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void sigma_final_shot_idle(struct ShotObj* self)

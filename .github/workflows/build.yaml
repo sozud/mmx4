@@ -55,6 +55,9 @@ jobs:
       - name: Install coverage test tools
         if: matrix.version == 'us'
         run: sudo apt-get install --yes clang-18 llvm-18
+      - name: Run unit tests
+        if: matrix.version == 'us'
+        run: ASAN_OPTIONS=detect_leaks=0 build-linux/mmx4_tests > unit-tests.log || { grep '^FAIL' unit-tests.log; exit 1; }
       - name: Test movie coverage reporting
         if: matrix.version == 'us'
         run: python3 tools/oracle/test_movie_coverage.py --clang clang-18 --llvm-profdata llvm-profdata-18 --llvm-cov llvm-cov-18
@@ -254,10 +257,17 @@ jobs:
               --psx-cache replay-psx \
               "${extra[@]}"
           done < tools/oracle/replay_ci_manifest.txt
+      - name: Run unit tests
+        run: |
+          mkdir -p coverage/unit
+          ASAN_OPTIONS=detect_leaks=0 LLVM_PROFILE_FILE="$PWD/coverage/unit/unit-%m.profraw" \
+            build-linux/mmx4_tests > coverage/unit-tests.log || { grep '^FAIL' coverage/unit-tests.log; exit 1; }
       - name: Report movie coverage
         run: |
           python3 tools/oracle/report_movie_coverage.py \
             --binary build-linux/mmx4_pc \
+            --unit-binary build-linux/mmx4_tests \
+            --unit-log coverage/unit-tests.log \
             --llvm-profdata llvm-profdata-18 \
             --llvm-cov llvm-cov-18
           cat coverage/coverage.md >> "$GITHUB_STEP_SUMMARY"
@@ -270,6 +280,7 @@ jobs:
           path: |
             coverage/coverage.md
             coverage/coverage.json
+            coverage/unit-tests.log
       - name: Upload detailed coverage evidence
         if: always()
         uses: actions/upload-artifact@v7

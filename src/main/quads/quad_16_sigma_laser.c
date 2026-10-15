@@ -16,7 +16,7 @@ void sigma_laser_wait(struct QuadObj* arg0)
 // sigma_laser_charge
 void func_800D8180(struct QuadObj* quad)
 {
-    struct PlayerObj* player = quad->unk5C;
+    struct MainObj* owner = MAIN_OBJECT(quad->unk5C);
     s32* out;
     s16* to;
     s16* from;
@@ -30,7 +30,7 @@ void func_800D8180(struct QuadObj* quad)
         from = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
         for (i = 0; i < 4; i++) {
             base = *from;
-            delta = (((s32)(*to - base)) << 16) >> 3;
+            delta = ((s32)(*to - base) * 65536) >> 3;
             delta *= 8 - quad->ext.unk38;
             *out = delta + FIXED(base);
             to++;
@@ -45,19 +45,19 @@ void func_800D8180(struct QuadObj* quad)
     quad->vertices[3].x.val = FIXED(*to++);
     quad->vertices[3].y.val = FIXED(*to);
     quad->ext.unk38 = 0x2F;
-    player->shot_types[1] = 1;
+    owner->ext.main_74.pad95 = 1;
     quad->unk5++;
 }
 
 void sigma_laser_flash(struct QuadObj* arg0)
 {
-    struct PlayerObj* obj = arg0->unk5C;
+    struct MainObj* owner = MAIN_OBJECT(arg0->unk5C);
     arg0->ext.unk38--;
     if (arg0->ext.unk38 == 0) {
         arg0->unk34 = 0x12;
         arg0->ext.unk38 = 0x10;
         arg0->unk5 = (u8)arg0->unk5 + 1;
-        obj->shot_types[1] = 0;
+        owner->ext.main_74.pad95 = 0;
     } else {
         arg0->unk34 = sigma_laser_flash_colors[arg0->ext.unk38 & 3];
     }
@@ -79,7 +79,7 @@ void func_800D82E8(struct QuadObj* quad)
         from = &sigma_laser_sweep_offsets[quad->unk2 * 4][0];
         for (i = 0; i < 4; i++) {
             base = *from;
-            delta = (((s32)(*to - base)) << 16) >> 4;
+            delta = ((s32)(*to - base) * 65536) >> 4;
             delta *= quad->ext.unk38;
             *out = delta + FIXED(base);
             to++;
@@ -122,18 +122,17 @@ void sigma_laser_cancel(struct QuadObj* arg0)
 
 void sigma_laser_despawn(struct QuadObj* arg0)
 {
-    ZeroObjectState(arg0);
+    ZeroObjectState(OBJECT_HEADER(arg0));
 }
 
 void sigma_laser_update(struct QuadObj* arg0)
 {
-    struct PlayerObj* temp_v1;
+    struct MainObj* owner = MAIN_OBJECT(arg0->unk5C);
 
-    temp_v1 = arg0->unk5C;
-    if ((u8)temp_v1->shot_types[0] != 0) {
+    if (owner->ext.main_74.death_kind != 0) {
         arg0->state = 2;
         arg0->unk5 = 0;
-        temp_v1->shot_types[1] = 0;
+        owner->ext.main_74.pad95 = 0;
     }
     sigma_laser_state_funcs[arg0->state](arg0);
 }

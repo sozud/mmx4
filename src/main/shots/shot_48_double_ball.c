@@ -14,15 +14,15 @@ void double_ball_travel(struct ShotObj* self)
     s32 temp_v0;
     s32 temp_v1;
 
-    temp_s2 = self->x_pos.val - ((s16)self->unk8C.half << 16);
-    temp_s1 = self->y_pos.val - (self->unk8C.halves[1] << 16);
+    temp_s2 = self->x_pos.val - FIXED((s16)self->unk8C.half);
+    temp_s1 = self->y_pos.val - FIXED(self->unk8C.halves[1]);
     temp_a2 = angle_from_delta(temp_s2, temp_s1);
     if ((s16)self->unk8A == 0) {
         temp_a0 = (u8)self->unk5;
         temp_v0 = (s16)self->unk8C.half;
         temp_v1 = self->unk8C.halves[1];
-        self->x_pos.val = temp_v0 << 16;
-        self->y_pos.val = temp_v1 << 16;
+        self->x_pos.val = FIXED(temp_v0);
+        self->y_pos.val = FIXED(temp_v1);
         temp_a0 += 1;
         self->unk5 = temp_a0;
         self->timer = 0x5A;

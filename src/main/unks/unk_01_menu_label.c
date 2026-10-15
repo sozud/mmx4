@@ -5,13 +5,17 @@
 void menu_label_init(struct UnkObj* self)
 {
     s16 var_v0;
-    s32* addr_801F3000 = (s32*)0x801F3000;
+    s32* addr_801F3000 = (s32*)WINDOW_ARCHIVE_DATA;
     s32 temp_v1;
 
     self->unk40 = 0x1F00;
     temp_v1 = *addr_801F3000;
     self->bg_offset = -1;
+#ifdef MMX4_PC
+    self->unk3C = (u8*)addr_801F3000 + temp_v1;
+#else
     self->unk3C = temp_v1 + (s32)addr_801F3000;
+#endif
     self->unk15 = 0;
     if (self->y_pos.i.hi == 0x10) {
         self->unk42 = 0x7802;

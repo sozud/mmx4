@@ -3,6 +3,22 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+void caterkiller_check_fall(struct MainObj*);
+extern void (*caterkiller_step_funcs[])(struct MainObj*);
+extern union AnimationStep* caterkiller_animations[10];
+extern struct Unk_unk68 D_800FCFD4[];
+extern struct Unk_unk68 D_800FCFE4[];
+extern struct Unk_unk68 D_800FCFF4[];
+extern struct Unk_unk68 D_800FD004[];
+extern struct Unk_unk68 D_800FD014[];
+extern struct Unk_unk68* D_800FD018[12];
+extern struct Unk_unk68* D_800FD048[];
+extern struct Unk_unk68* D_800FD04C[];
+extern struct Unk_unk68 D_80106EF4[];
+extern u8 caterkiller_debris[4];
+#endif
+
 void caterkiller_update(struct MainObj* self)
 {
     caterkiller_state_funcs[self->state](self);

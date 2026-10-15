@@ -1179,7 +1179,11 @@ void (*general_step_funcs[7])() = {
     general_slam,
 };
 
+#ifdef MMX4_PC
+void (*general_death_funcs[5])(struct MainObj*) = {
+#else
 void (*general_death_funcs[5])() = {
+#endif
     general_death_start,
     general_death_blink,
     func_800915C4,

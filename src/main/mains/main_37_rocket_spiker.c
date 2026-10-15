@@ -367,6 +367,73 @@ union AnimationStep rocket_spiker_anim_7[] = {
     { 0x1EF90003 },
 };
 
+#if defined(MMX4_PC) && !defined(MMX4_WIN32)
+static struct {
+    union AnimationStep rocket_spiker_anim_6[45];
+    union AnimationStep rocket_spiker_anim_7[8];
+} rocket_spiker_anim_run = {
+    {
+        { 0x03010001 },
+        { 0x04010001 },
+        { 0x05010001 },
+        { 0x03010001 },
+        { 0x04010001 },
+        { 0x05010001 },
+        { 0x06010001 },
+        { 0x07010001 },
+        { 0x08010001 },
+        { 0x06010001 },
+        { 0x07010001 },
+        { 0x08010001 },
+        { 0x0B010002 },
+        { 0x0C010002 },
+        { 0x0D010002 },
+        { 0x0E010001 },
+        { 0x0F010001 },
+        { 0x10010001 },
+        { 0x0E010001 },
+        { 0x0F010001 },
+        { 0x10010001 },
+        { 0x0E010001 },
+        { 0x0F010001 },
+        { 0x10010001 },
+        { 0x11010002 },
+        { 0x12010002 },
+        { 0x13010002 },
+        { 0x14010001 },
+        { 0x15010001 },
+        { 0x16010001 },
+        { 0x14010001 },
+        { 0x15010001 },
+        { 0x16010001 },
+        { 0x14010001 },
+        { 0x15010001 },
+        { 0x16010001 },
+        { 0x14010001 },
+        { 0x15010001 },
+        { 0x16010001 },
+        { 0x1A010003 },
+        { 0x1B010003 },
+        { 0x1C010003 },
+        { 0x1D010003 },
+        { 0x1E010002 },
+        { 0x1E010101 },
+    },
+    {
+        { 0x17010003 },
+        { 0x18010003 },
+        { 0x19010003 },
+        { 0x1A010003 },
+        { 0x1B010003 },
+        { 0x1C010003 },
+        { 0x1D010003 },
+        { 0x1EF90003 },
+    },
+};
+#define rocket_spiker_anim_6 rocket_spiker_anim_run.rocket_spiker_anim_6
+#define rocket_spiker_anim_7 rocket_spiker_anim_run.rocket_spiker_anim_7
+#endif
+
 union AnimationStep rocket_spiker_anim_8[] = {
     { 0x23000101 },
 };

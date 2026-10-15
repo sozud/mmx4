@@ -203,16 +203,16 @@ void spike_crawler_hit_knockback(struct MainObj* self)
     }
 }
 
-void enemy_hit_reaction(void* arg0)
+void enemy_hit_reaction(struct MainObj* arg0)
 {
     struct Main76HandlerTable handlers = { {
         NULL,
-        (void (*)(void*))spike_crawler_hit_flash,
+        spike_crawler_hit_flash,
         NULL,
-        (void (*)(void*))func_80091EC4,
-        (void (*)(void*))func_80091EC4,
-        (void (*)(void*))spike_crawler_hit_knockback,
-        (void (*)(void*))spike_crawler_hit_knockback,
+        func_80091EC4,
+        func_80091EC4,
+        spike_crawler_hit_knockback,
+        spike_crawler_hit_knockback,
     } };
     struct MainObj* object = arg0;
 

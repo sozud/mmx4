@@ -3,6 +3,16 @@
 #include "common.h"
 #include "func_tables.h"
 
+extern struct Unk_unk68 D_800F9EBC;
+extern struct Unk_unk68 D_800F9EC0;
+extern struct Unk_unk68 D_800F9EC4[2];
+extern u8* D_800FA0A8[];
+extern u8 D_800FA0B4[];
+extern union AnimationStep* drill_copter_animations[];
+extern struct Unk_unk68 D_801064F0[];
+extern void (*drill_copter_step_funcs[])();
+void func_80044DE4(struct MainObj* self);
+
 void drill_copter_update(struct MainObj* self)
 {
     drill_copter_state_funcs[self->state](self);

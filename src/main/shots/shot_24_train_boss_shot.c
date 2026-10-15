@@ -94,7 +94,11 @@ void train_boss_arm_main(struct ShotObj* self)
         result = func_8002DD04(MAIN_OBJECT(self));
 
         if (self->unk42 & 0x8000) {
-            ((struct Shot24Owner*)self->unk7C)->collision_states[self->unk2 + 2] = 2;
+#ifdef MMX4_PC
+            ((struct Main45Ext*)self->unk7C)->layer_signals->projectile_state[self->unk2] = 2;
+#else
+        ((struct Shot24Owner*)self->unk7C)->collision_states[self->unk2 + 2] = 2;
+#endif
         }
         if (result < 0) {
             weapon = self->unk7C;
@@ -301,7 +305,11 @@ void (*train_boss_shot_state_funcs[])(struct ShotObj*) = {
 };
 
 void (*train_boss_arm_step_funcs[11])(struct ShotObj*) = {
-    enemy_hit_reaction,
+#ifdef MMX4_PC
+    enemy_hit_reaction_shot,
+#else
+    (void (*)(struct ShotObj*))enemy_hit_reaction,
+#endif
     train_boss_arm_resume_step,
     train_boss_arm_advance,
     train_boss_arm_wait_signal,

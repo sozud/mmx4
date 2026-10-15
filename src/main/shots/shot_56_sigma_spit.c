@@ -67,7 +67,7 @@ void sigma_spit_fall(struct ShotObj* self)
 
 void sigma_spit_hit(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void sigma_spit_idle(struct ShotObj* self)

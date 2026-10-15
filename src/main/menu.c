@@ -11,6 +11,7 @@
 extern u8 D_80171EA9;
 extern u8 D_800F1DFC[];
 extern u8 D_800F1E0C[];
+extern u8 D_800F1E14[];
 extern u8 D_800F1E24[];
 extern u8 D_800F1E34[];
 extern u8 D_800F1E4C[];

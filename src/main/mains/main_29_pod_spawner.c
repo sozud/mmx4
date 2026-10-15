@@ -3,6 +3,17 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern union AnimationStep* pod_spawner_animations[16];
+extern struct Unk_unk68 D_800FD830[1];
+extern struct Unk_unk68 D_800FD834[1];
+extern s16 D_800FD86C[12];
+extern s16 D_800FD884[12];
+extern u8 D_800FD89C[16];
+u8 pod_spawner_player_quadrant(struct MainObj*);
+void func_8005ABC0(struct WeaponObj*, s8);
+#endif
+
 void pod_spawner_update(struct MainObj* self)
 {
     if (self->unk2 >= 0) {
@@ -101,7 +112,10 @@ void pod_spawner_despawn(struct MainObj* self)
     if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
         record->unk4 = 2;
     }
-    target->unk4 = 2;
+#ifdef MMX4_PC
+    if (target != NULL)
+#endif
+        target->unk4 = 2;
     despawn_object(OBJECT_HEADER(self));
 }
 

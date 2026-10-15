@@ -299,22 +299,22 @@ void sigma_final_laser_aim(struct MainObj* self)
     self->unk6++;
 }
 
-void sigma_final_laser_fire(struct PlayerObj* player)
+void sigma_final_laser_fire(struct MainObj* self)
 {
     struct QuadObj* quad;
     struct ShotObj* shot;
 
-    animate_object(ANIMATED_OBJECT(player));
-    if (player->animation_step.fields.relative_step < 0) {
-        player->unk6 += 1;
-        func_8001540C(2, 5, player);
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.relative_step < 0) {
+        self->unk6 += 1;
+        func_8001540C(2, 5, self);
 
         quad = find_free_quad_obj();
         if (quad != 0) {
             quad->active = 1;
             quad->id = 0x10;
-            quad->unk2 = player->attack_ended;
-            quad->unk5C = player;
+            quad->unk2 = self->ext.main_74.animation_index;
+            quad->unk5C = PLAYER_OBJECT(self);
         }
         D_8013B8A8 = OBJECT_HEADER(quad);
 
@@ -322,8 +322,8 @@ void sigma_final_laser_fire(struct PlayerObj* player)
         if (shot != 0) {
             shot->active = 1;
             shot->id = 0x39;
-            shot->unk2 = player->attack_ended;
-            shot->unk7C = WEAPON_OBJECT(player);
+            shot->unk2 = self->ext.main_74.animation_index;
+            shot->unk7C = WEAPON_OBJECT(self);
         }
     }
 }

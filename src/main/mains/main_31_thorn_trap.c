@@ -3,6 +3,11 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern union AnimationStep* thorn_trap_animations[21];
+extern s8 D_800FDC40[8];
+#endif
+
 void thorn_trap_update(struct MainObj* self)
 {
     thorn_trap_state_funcs[self->state](self);

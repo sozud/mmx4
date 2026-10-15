@@ -424,7 +424,7 @@ void double_aerial_shot_fire_again(struct MainObj* arg)
         return;
     }
 
-    targetY = (s16)self->ext.main_5.part_index;
+    targetY = (s16)self->ext.main_73.effect.position.y;
     if (targetY > self->y_pos.i.hi) {
         if (self->y_speed < FIXED(-4)) {
             self->y_speed = FIXED(-4);
@@ -806,6 +806,26 @@ struct Unk_unk68 double_anim_20[8] = {
     { 4, 0, -7, 79 },
 };
 
+#ifdef MMX4_PC
+
+union AnimationStep double_mine_animation_steps[] = {
+    { 0x51010006 },
+    { 0x52010004 },
+    { 0x53010003 },
+    { 0x54010002 },
+    { 0x58000012 },
+    { 0x58010002 },
+    { 0x59010001 },
+    { 0x5A010001 },
+    { 0x5B010001 },
+    { 0x5C010101 },
+    { 0x5D010002 },
+    { 0x5E010002 },
+    { 0x5F000002 },
+};
+#define double_anim_21 (double_mine_animation_steps)
+#define double_anim_22 (double_mine_animation_steps + 5)
+#else
 union AnimationStep double_anim_21[] = {
     { 0x51010006 },
     { 0x52010004 },
@@ -824,6 +844,7 @@ union AnimationStep double_anim_22[] = {
     { 0x5E010002 },
     { 0x5F000002 },
 };
+#endif
 
 struct Unk_unk68 double_anim_23[3] = {
     { 1, 0, 1, 96 },

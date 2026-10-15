@@ -93,7 +93,7 @@ void depth_charge_idle(struct ShotObj* self)
 
 void depth_charge_hit(struct ShotObj* self)
 {
-    enemy_hit_reaction(self);
+    enemy_hit_reaction(MAIN_OBJECT(self));
 }
 
 void depth_charge_main(struct ShotObj* self)

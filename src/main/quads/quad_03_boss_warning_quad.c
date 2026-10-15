@@ -1,6 +1,9 @@
 // QuadObj, quad_object_update_funcs[3]
 // 800D4C50..800D526C
 #include "common.h"
+#ifdef MMX4_PC
+extern u8 boss_warning_quad_blink_levels[16];
+#endif
 extern s16 stage_select_flyout_targets[8][2];
 
 extern u8 boss_warning_quad_blink_levels[16];

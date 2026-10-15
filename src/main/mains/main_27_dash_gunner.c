@@ -3,6 +3,18 @@
 #include "common.h"
 #include "func_tables.h"
 
+#ifdef MMX4_PC
+extern union AnimationStep* dash_gunner_animations[12];
+extern struct Unk_unk68 dash_gunner_boxes[10];
+extern struct Unk_unk68* D_8013B828;
+extern struct Unk_unk68* D_8013B82C;
+extern struct Unk_unk68* D_8013B830;
+extern struct Unk_unk68* D_8013B834;
+extern void (*dash_gunner_step_funcs[])(struct MainObj*);
+extern struct Unk_unk68 D_80106FF4[];
+extern u8 dash_gunner_debris[4];
+#endif
+
 void dash_gunner_update(struct MainObj* self)
 {
     dash_gunner_state_funcs[self->state](self);
