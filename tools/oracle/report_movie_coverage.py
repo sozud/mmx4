@@ -105,20 +105,47 @@ def fraction(value):
     return f"{covered}/{count} ({100 * covered / count:.2f}%)" if count else "0/0 (n/a)"
 
 
+def unit_results(log):
+    text = log.read_text()
+    passed = len(re.findall(r"^PASS\t", text, re.M))
+    failed = len(re.findall(r"^FAIL\t", text, re.M))
+    if failed or not passed:
+        raise ValueError(f"unit tests: {passed} passed, {failed} failed")
+    return {"passed": passed}
+
+
 def markdown(report):
-    lines = ["# Movie code coverage", "",
+    sources = report.get("sources")
+    lines = ["# Code coverage", "",
              f"Revision: `{report['revision']}`. "
-             f"Movies passed: **{len(report['movies'])}/{len(report['movies'])}**.", ""]
+             f"Movies passed: **{len(report['movies'])}/{len(report['movies'])}**."
+             + (f" Unit test cases passed: **{report['unit_tests']['passed']}**." if sources else ""), ""]
     if report["ci_run"]:
         lines += [f"[CI run and detailed coverage artifacts]({report['ci_run']})", ""]
-    lines += ["| Metric | Covered / total |", "| --- | --- |"]
-    lines += [f"| {metric.capitalize()} | {fraction(report['totals'][metric])} |"
-              for metric in METRICS]
-    lines += ["", "## Files", "", "| File | Lines | Functions | Regions | Branches |",
-              "| --- | --- | --- | --- | --- |"]
-    for entry in report["files"]:
-        lines.append("| `" + entry["file"] + "` | " + " | ".join(
-            fraction(entry[metric]) for metric in METRICS) + " |")
+    if sources:
+        lines += ["| Metric | Movies | Unit tests | Total |", "| --- | --- | --- | --- |"]
+        lines += [f"| {metric.capitalize()} | " + " | ".join(
+            fraction(sources[name][metric]) for name in ("movies", "unit_tests", "combined")) + " |"
+            for metric in METRICS]
+        lines += ["", "## Files", "",
+                  "| File | Lines (movies) | Lines (unit tests) | Lines | Functions | Regions | Branches |",
+                  "| --- | --- | --- | --- | --- | --- | --- |"]
+        by_source = {name: {entry["file"]: entry for entry in report["source_files"][name]}
+                     for name in ("movies", "unit_tests")}
+        for entry in report["files"]:
+            split = [fraction(by_source[name][entry["file"]]["lines"]) if entry["file"] in by_source[name]
+                     else "0/0 (n/a)" for name in ("movies", "unit_tests")]
+            lines.append("| `" + entry["file"] + "` | " + " | ".join(
+                split + [fraction(entry[metric]) for metric in METRICS]) + " |")
+    else:
+        lines += ["| Metric | Covered / total |", "| --- | --- |"]
+        lines += [f"| {metric.capitalize()} | {fraction(report['totals'][metric])} |"
+                  for metric in METRICS]
+        lines += ["", "## Files", "", "| File | Lines | Functions | Regions | Branches |",
+                  "| --- | --- | --- | --- | --- |"]
+        for entry in report["files"]:
+            lines.append("| `" + entry["file"] + "` | " + " | ".join(
+                fraction(entry[metric]) for metric in METRICS) + " |")
     lines += ["", "## Movies", "", "| Movie | Input samples | Result |",
               "| --- | --- | --- |"]
     lines += [f"| `{Path(movie['movie']).name}` | {movie['samples']} | Passed |"
@@ -140,11 +167,15 @@ def main():
     parser.add_argument("--coverage", type=Path, default=ROOT / "coverage")
     parser.add_argument("--llvm-profdata", default="llvm-profdata")
     parser.add_argument("--llvm-cov", default="llvm-cov")
+    parser.add_argument("--unit-binary", type=Path, help="unit test binary built from the same game objects")
+    parser.add_argument("--unit-log", type=Path, help="output of the unit test binary")
     parser.add_argument("--ci-run", default=(
         f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/"
         f"{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
         if "GITHUB_RUN_ID" in os.environ and "GITHUB_REPOSITORY" in os.environ else ""))
     args = parser.parse_args()
+    if (args.unit_binary is None) != (args.unit_log is None):
+        parser.error("--unit-binary and --unit-log go together")
     root, output, binary = args.source_root.resolve(), args.coverage.resolve(), args.binary.resolve()
     try:
         revision = command("git", "rev-parse", "HEAD", cwd=root).strip()
@@ -156,17 +187,45 @@ def main():
         binary_hash = sha256(binary)
         movies, profiles = checked_movies(root, args.manifest, output / "raw",
                                          output / "replays", binary_hash, revision)
-        listing = output / "profiles.txt"
-        listing.write_text("".join(f"{path}\n" for path in profiles))
-        merged = output / "merged.profdata"
-        subprocess.run([args.llvm_profdata, "merge", "-sparse", "-f", str(listing),
-                        "-o", str(merged)], check=True)
+        def merge(name, paths):
+            listing = output / f"{name}.txt"
+            listing.write_text("".join(f"{path}\n" for path in paths))
+            merged = output / f"{name}.profdata"
+            subprocess.run([args.llvm_profdata, "merge", "-sparse", "-f", str(listing),
+                            "-o", str(merged)], check=True)
+            return merged
+
+        def export(merged, binaries):
+            objects = [str(binaries[0])] + [f"-object={path}" for path in binaries[1:]]
+            return game_files(json.loads(command(args.llvm_cov, "export", *objects,
+                                                 f"-instr-profile={merged}", "-summary-only")), root)
+
+        merged = merge("profiles", profiles)
+        binaries = [binary]
+        extra = {}
+        if args.unit_binary:
+            unit_binary = args.unit_binary.resolve()
+            unit_profiles = sorted((output / "unit").glob("*.profraw"))
+            if not unit_profiles or not all(path.stat().st_size for path in unit_profiles):
+                raise ValueError("unit tests: expected nonempty raw profiles in coverage/unit")
+            movie_files = export(merged, [binary])
+            unit_merged = merge("unit-profiles", unit_profiles)
+            unit_files = export(unit_merged, [unit_binary])
+            combined = output / "combined.profdata"
+            subprocess.run([args.llvm_profdata, "merge", "-sparse", str(merged), str(unit_merged),
+                            "-o", str(combined)], check=True)
+            merged, binaries = combined, [binary, unit_binary]
+            extra = {"unit_tests": {**unit_results(args.unit_log), "binary_sha256": sha256(unit_binary)},
+                     "source_files": {"movies": movie_files, "unit_tests": unit_files}}
         # Select game files explicitly for all exports, including annotated HTML.
-        exported = json.loads(command(args.llvm_cov, "export", binary,
-                                      f"-instr-profile={merged}", "-summary-only"))
-        files = game_files(exported, root)
+        files = export(merged, binaries)
+        if extra:
+            extra["sources"] = {"movies": totals(extra["source_files"]["movies"]),
+                                "unit_tests": totals(extra["source_files"]["unit_tests"]),
+                                "combined": totals(files)}
         sources = [str(root / entry["file"]) for entry in files]
-        command(args.llvm_cov, "show", binary, f"-instr-profile={merged}",
+        command(args.llvm_cov, "show", str(binaries[0]), *[f"-object={path}" for path in binaries[1:]],
+                f"-instr-profile={merged}",
                 "-format=html", f"-output-dir={output / 'html'}", "-show-branches=count",
                 "-show-expansions", *sources)
         report = {"schema_version": 1,
@@ -174,10 +233,13 @@ def main():
                   "revision": revision, "binary_sha256": binary_hash,
                   "manifest_sha256": sha256(args.manifest), "tool_versions": versions,
                   "ci_run": args.ci_run, "scope": ["src/main/**", "src/pc/placeholder.c"],
-                  "totals": totals(files), "files": files, "movies": movies}
+                  "totals": totals(files), "files": files, "movies": movies, **extra}
         (output / "coverage.json").write_text(json.dumps(report, indent=2) + "\n")
         (output / "coverage.md").write_text(markdown(report))
         print(f"{len(movies)} movies passed; game line coverage: {fraction(report['totals']['lines'])}")
+        if extra:
+            print("movies " + fraction(extra["sources"]["movies"]["lines"]) + ", unit tests "
+                  + fraction(extra["sources"]["unit_tests"]["lines"]) + " (lines)")
         print(f"Report: {output / 'coverage.md'}")
     except (ValueError, OSError, subprocess.CalledProcessError) as error:
         parser.exit(1, f"coverage: {error}\n")
