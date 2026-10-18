@@ -95,8 +95,107 @@ static u32 equal(void)
 static const CTestCase moving_block_resource_facing_cases[] = { left, equal };
 
 static const u32 moving_block_resource_facing_cases_expected[] = { 0xFFFF0000u, 0x10000u };
+
+extern u8 moving_block_terrain_box[4];
+static const struct {
+    s32 velocity;
+    s16 destination;
+    u8 reverse;
+} motions[] = {
+    { 0x18000, 103, 1 },
+    { 0x18000, 104, 1 },
+    { 0x18000, 105, 0 },
+    { -0x18000, 135, 0 },
+    { -0x18000, 136, 1 },
+    { -0x18000, 137, 1 },
+    { 0, 135, 0 },
+    { 0, 136, 0 },
+    { 0, 137, 0 },
+};
+static const s16 x_edges[] = { 160, -64, -65, 383, 384 };
+static const u8 wait_values[] = { 0, 1, 10 };
+static const u8 far_away[] = { 0, 0, 1, 0, 1 };
+static u32 vertical_motion(u32 row)
+{
+    struct ItemObj obj, expected;
+    struct PlayerObj player_before, entity_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    struct RideArmorObj qux_before;
+    struct MovingBlockMotion saved = moving_block_motion[0], configured;
+    struct Unk_unk68 player_box = { 0, 0, 8, 16 };
+    u32 motion = row % 9, edge = row / 9 % 5, wait = row / 45 % 3, fraction = (motion + edge) % 2, layer = (motion + wait) % 4, i;
+    s32 camera_x = layer ? (s32)layer * 512 - 320 : 0, camera_y = layer ? (s32)layer * 256 - 240 : 0;
+    s32 destination = (camera_y + motions[motion].destination) * 65536 + (fraction ? 0xFFFF : 0);
+    assert(saved.x_velocity == 65536 && saved.y_velocity == 0 && saved.range == 144 && saved.vertical == 0);
+    configured = saved;
+    configured.x_velocity = 0;
+    configured.y_velocity = motions[motion].velocity;
+    configured.range = 16;
+    configured.vertical = 1;
+    moving_block_motion[0] = configured;
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&g_Entity, 0, sizeof(g_Entity));
+    memset(&qux_object, 0, sizeof(qux_object));
+    g_Player.active = 0x41;
+    g_Player.unk68 = &player_box;
+    g_Player.x_pos.val = (camera_x - 2000) * 65536;
+    g_Player.y_pos.val = (camera_y - 2000) * 65536;
+    player_before = g_Player;
+    entity_before = g_Entity;
+    qux_before = qux_object;
+    for (i = 0; i < 3; i++) {
+        memset(&background_objects[i], 0, sizeof(background_objects[i]));
+        background_objects[i].x_pos.val = camera_x * 65536;
+        background_objects[i].y_pos.val = camera_y * 65536;
+        background_objects[i].unk24 = 0x1234 + i;
+    }
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 9;
+    obj.state = 1;
+    obj.on_screen = 1;
+    obj.bg_offset = (s32)layer - 1;
+    obj.x_pos.val = (camera_x + x_edges[edge]) * 65536 + 0x1234;
+    obj.y_pos.val = destination + (wait == 0 ? motions[motion].velocity : 0);
+    obj.y_vel.val = motions[motion].velocity;
+    obj.unk68 = (struct Unk_unk68*)moving_block_terrain_box;
+    obj.unk7C.saved_pos.x = camera_x + 160;
+    obj.unk7C.saved_pos.y = camera_y + 120;
+    obj.ext.packed = 0x35254700u | wait_values[wait];
+    expected = obj;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.y_pos.val = destination;
+    if (wait != 0)
+        ((u8*)&expected.ext)[0]--;
+    if (motions[motion].reverse) {
+        expected.y_vel.val = -obj.y_vel.val;
+        ((u8*)&expected.ext)[0] = 10;
+    }
+    if (far_away[edge])
+        expected.state = 2;
+    else
+        expected.on_screen = edge == 0;
+    moving_block_update(&obj);
+    c_test_same_words(&moving_block_motion[0], &configured, sizeof(configured));
+    moving_block_motion[0] = saved;
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&g_Entity, &entity_before, sizeof(g_Entity));
+    c_test_same_words(&qux_object, &qux_before, sizeof(qux_object));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    assert(moving_block_terrain_box[0] == 0 && moving_block_terrain_box[1] == 0 && moving_block_terrain_box[2] == 24 && moving_block_terrain_box[3] == 16);
+    assert(player_box.unk0 == 0 && player_box.unk1 == 0 && player_box.unk2 == 8 && player_box.unk3 == 16);
+    c_test_same_words(&moving_block_motion[0], &saved, sizeof(saved));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "moving_block_resource_facing", moving_block_resource_facing_cases, moving_block_resource_facing_cases_expected, COUNT(moving_block_resource_facing_cases), 0 },
+    { "defined_vertical_motion", NULL, NULL, 54, vertical_motion },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(moving_block_resource_facing_cases);
+const u32 c_test_count = COUNT(moving_block_resource_facing_cases) + 54;

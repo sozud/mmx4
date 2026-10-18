@@ -3,6 +3,10 @@
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/weapons/weapon_00_lemon.h"
+#include "support/state_cases.h"
+void bomb_bat_dive(struct MainObj* arg0);
+void bomb_bat_flee(struct MainObj* arg0);
+void bomb_bat_fly_off(struct MainObj* arg0);
 void bomb_bat_drop_end(struct MainObj*);
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
@@ -45,60 +49,7 @@ static u32 drop_case(u32 wait)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.ext.main_32.unk80 << 16) | ((u32)obj.unk17 << 24);
 }
-#define CASE(m)                                           \
-    static u32 bomb_bat_drop_animation_end_drop_##m(void) \
-    {                                                     \
-        return drop_case(m);                              \
-    }
-CASE(0)
-CASE(1)
-#define ENTRY(m) bomb_bat_drop_animation_end_drop_##m,
-static const CTestCase bomb_bat_drop_animation_end_cases[]
-    = { ENTRY(0) ENTRY(1) };
 static const u32 bomb_bat_drop_animation_end_cases_expected[] = { 0x3000004u, 0x10203u };
-#undef CASE
-#undef ENTRY
-
-static const u32 bomb_bat_drop_bomb_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_bomb_bat_drop_bomb(u32 row)
-{
-    u32 observed_values[10];
-    struct MainObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    bomb_bat_drop_bomb(&obj);
-    observed_values[0] = (u32)shot_objects[0].active;
-    observed_values[1] = (u32)shot_objects[0].bg_offset;
-    observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
-    observed_values[5] = (u32)shot_objects[0].unk2;
-    observed_values[6] = (u32)shot_objects[0].unk40;
-    observed_values[7] = (u32)shot_objects[0].unk42;
-    observed_values[8] = (u32)shot_objects[0].x_pos.val;
-    observed_values[9] = (u32)shot_objects[0].y_pos.val;
-    return c_test_observe(0, row, observed_values, bomb_bat_drop_bomb_expected, 10);
-}
-
-static const u32 bomb_bat_drop_end_expected[] = { 0xFFFFFFFFu, 0u, 0u };
-static u32 test_bomb_bat_drop_end(u32 row)
-{
-    u32 observed_values[3];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    bomb_bat_drop_end(&obj);
-    observed_values[0] = (u32)obj.ext.main_32.unk80;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, bomb_bat_drop_end_expected, 3);
-}
 
 static const u32 bomb_bat_main_0_expected[] = { 0u, 1u, 0x1606060u, 0u };
 static u32 test_bomb_bat_main_0(u32 row)
@@ -362,14 +313,70 @@ static u32 test_func_8005CF9C(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 7);
 }
 
+#define BB(step, sub) (state_reset(step, sub, 0), so.animation_table = (void*)bomb_bat_animations, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+static void bb_fly_off(void)
+{
+    BB(2, 0);
+    bomb_bat_fly_off(&so);
+}
+static void bb_flee_left(void)
+{
+    BB(3, 0);
+    bomb_bat_flee(&so);
+}
+static void bb_flee_right(void)
+{
+    BB(3, 0);
+    so.unk15 = 0x40;
+    bomb_bat_flee(&so);
+}
+static void bb_flee_move(void)
+{
+    BB(3, 1);
+    so.x_speed = 0x10000;
+    bomb_bat_flee(&so);
+}
+static void bb_dive_wait(void)
+{
+    BB(4, 1);
+    so.unk7C = 2;
+    bomb_bat_dive(&so);
+}
+static void bb_dive_go(void)
+{
+    BB(4, 1);
+    bomb_bat_dive(&so);
+}
+static void bb_dive_fall(void)
+{
+    BB(4, 2);
+    so.y_speed = 0x10000;
+    bomb_bat_dive(&so);
+}
+
+static void (*const bomb_bat_states_cases[])(void) = {
+    bb_fly_off,
+    bb_flee_left,
+    bb_flee_right,
+    bb_flee_move,
+    bb_dive_wait,
+    bb_dive_go,
+    bb_dive_fall,
+};
+static const u32 bomb_bat_states_expected[] = { 0x102u, 0u, 0x800000u, 0xFFFD0000u, 0x5000u, 0u, 3u, 0u, 0u, 0u, 0x103u, 0u, 0x800000u, 0xFFFD0000u, 0u, 0u, 3u, 2u, 0u, 0u, 0x103u, 0u, 0x800000u, 0x30000u, 0u, 0u, 0x4003u, 2u, 0u, 0u, 0x103u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 0x104u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x800000u, 0u, 0x10100u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_bomb_bat_states(u32 row)
+{
+    return state_run(bomb_bat_states_cases[row], row, &bomb_bat_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "bomb_bat_drop_animation_end", bomb_bat_drop_animation_end_cases, bomb_bat_drop_animation_end_cases_expected, COUNT(bomb_bat_drop_animation_end_cases), 0 },
-    { "bomb_bat_drop_bomb", 0, 0, 1, test_bomb_bat_drop_bomb },
-    { "bomb_bat_drop_end", 0, 0, 1, test_bomb_bat_drop_end },
+    { "bomb_bat_states", 0, 0, COUNT(bomb_bat_states_cases), test_bomb_bat_states },
+    { "bomb_bat_drop_animation_end", NULL, bomb_bat_drop_animation_end_cases_expected, COUNT(bomb_bat_drop_animation_end_cases_expected), drop_case },
     { "bomb_bat_main_0", 0, 0, 1, test_bomb_bat_main_0 },
     { "bomb_bat_main_1", 0, 0, 3, test_bomb_bat_main_1 },
     { "func_8005C860", 0, 0, 2, test_func_8005C860 },
     { "func_8005CF9C", 0, 0, 4, test_func_8005CF9C },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(bomb_bat_drop_animation_end_cases) + 1 + 1 + 1 + 3 + 2 + 4;
+const u32 c_test_count = COUNT(bomb_bat_states_cases) + COUNT(bomb_bat_drop_animation_end_cases_expected) + 1 + 3 + 2 + 4;

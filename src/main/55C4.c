@@ -8,26 +8,6 @@
 #include "main/main_palette_data.h"
 #include "main/movie_hud_data.h"
 
-enum XaArchive {
-#ifdef VERSION_JP
-    XA_ARCHIVE_BGM1 = 0x94,
-#elif defined(VERSION_EU)
-    XA_ARCHIVE_BGM1 = 0x97,
-#else
-    XA_ARCHIVE_BGM1 = 0x95,
-#endif
-    XA_ARCHIVE_BGM2,
-    XA_ARCHIVE_BGM3,
-    XA_ARCHIVE_BGM4,
-    XA_ARCHIVE_BGM5,
-    XA_ARCHIVE_BOSS_INTRO,
-    XA_ARCHIVE_VOICE1,
-    XA_ARCHIVE_VOICE2,
-    XA_ARCHIVE_VOICE3,
-    XA_ARCHIVE_VOICE4,
-    XA_ARCHIVE_VOICE5,
-};
-
 extern s8 D_801307F8;
 
 #ifdef MMX4_PC
@@ -524,11 +504,11 @@ void func_80015178(void)
         }
     }
 
-    func_800E0CEC();
+    SsUtReverbOff();
     SsUtSetReverbType(0);
     SsUtSetReverbDepth(0, 0);
     SsEnd();
-    func_800DCF40();
+    SsQuit();
 }
 
 void func_80015284(void)
@@ -1133,6 +1113,8 @@ extern s32 D_80141BD4;
 #ifdef MMX4_PC
 extern u32 mmx4_pc_xa_stops;
 extern u32 mmx4_pc_xa_stop_sample;
+extern u32 mmx4_pc_xa_starts;
+extern u32 mmx4_pc_xa_start_sample;
 #endif
 void func_800168D8(void)
 {
@@ -1252,10 +1234,19 @@ void func_80016B58(void)
     s32 temp_v0;
     u8* ptr = &D_80139554;
 
+#ifdef MMX4_PC
+    if (!mmx4_pc_replay_xa_start_ready())
+        return;
+#endif
     temp_v0 = CdSync(1, ptr);
     if ((temp_v0 == 2) && !(*ptr & 0x40) && (CdControl(CdlReadS, 0, ptr) != 0)) {
         D_80173C84 = 2;
         D_80139530 = temp_v0;
+#ifdef MMX4_PC
+        mmx4_pc_xa_starts++;
+        mmx4_pc_xa_start_sample = mmx4_pc_replay_consumed();
+        mmx4_pc_replay_xa_start_done();
+#endif
     }
 #endif
 }

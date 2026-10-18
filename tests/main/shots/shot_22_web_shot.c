@@ -83,25 +83,10 @@ static u32 web_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk8C.word << 16) | ((u32)(u8)player_before.stun_timer << 24);
 }
-#define CASE(m)              \
-    static u32 web_##m(void) \
-    {                        \
-        return web_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) web_##m,
-static const CTestCase web_shot_owner_and_hit_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 web_shot_owner_and_hit_cases_expected[] = { 0x10001u, 0x1u, 0x10001u, 0x1030302u, 0x1030001u };
-#undef CASE
-#undef ENTRY
 
 const struct CTestGroup c_test_groups[] = {
-    { "web_shot_owner_and_hit", web_shot_owner_and_hit_cases, web_shot_owner_and_hit_cases_expected, COUNT(web_shot_owner_and_hit_cases), 0 },
+    { "web_shot_owner_and_hit", NULL, web_shot_owner_and_hit_cases_expected, COUNT(web_shot_owner_and_hit_cases_expected), web_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_shot_owner_and_hit_cases);
+const u32 c_test_count = COUNT(web_shot_owner_and_hit_cases_expected);

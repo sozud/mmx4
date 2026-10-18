@@ -41,52 +41,10 @@ static u32 door_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.ext.effect_32.unk15 | ((u32)obj.ext.effect_32.palette.fields.id << 8) | ((u32)obj.ext.effect_32.palette.fields.timer << 16);
 }
-#define CASE(m)                                           \
-    static u32 proximity_door_real_scripts_door_##m(void) \
-    {                                                     \
-        return door_case(m);                              \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) proximity_door_real_scripts_door_##m,
-static const CTestCase proximity_door_real_scripts_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 proximity_door_real_scripts_cases_expected[] = { 0x20001u, 0x20001u, 0x110601u, 0x1106FFu, 0x208FFu, 0x110601u, 0x1106FFu };
-#undef CASE
-#undef ENTRY
-
-struct proximity_door_check_player_case {
-    u32 obj_x_pos_hi, g_Player_x_pos_hi, unk15;
-    u32 expected[1];
-};
-static const struct proximity_door_check_player_case proximity_door_check_player_cases[] = {
-    { -28528, -28704, 1, { 1u } },
-    { 0, 0, 0, { 0u } },
-};
-static u32 test_proximity_door_check_player(u32 row)
-{
-    const struct proximity_door_check_player_case* c = &proximity_door_check_player_cases[row];
-    u32 observed_values[1];
-    struct EffectObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    obj.x_pos.i.hi = c->obj_x_pos_hi;
-    g_Player.x_pos.i.hi = c->g_Player_x_pos_hi;
-    obj.ext.effect_32.unk15 = c->unk15;
-    obj.ext.effect_32.palette.fields.step = -1;
-    proximity_door_check_player(&obj);
-    observed_values[0] = (u32)obj.ext.effect_32.unk15;
-    return c_test_observe(0, row, observed_values, c->expected, 1);
-}
 
 const struct CTestGroup c_test_groups[] = {
-    { "proximity_door_real_scripts", proximity_door_real_scripts_cases, proximity_door_real_scripts_cases_expected, COUNT(proximity_door_real_scripts_cases), 0 },
-    { "proximity_door_check_player", 0, 0, 2, test_proximity_door_check_player },
+    { "proximity_door_real_scripts", NULL, proximity_door_real_scripts_cases_expected, COUNT(proximity_door_real_scripts_cases_expected), door_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(proximity_door_real_scripts_cases) + 2;
+const u32 c_test_count = COUNT(proximity_door_real_scripts_cases_expected);

@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_24_jet_drone.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+void jet_drone_resume_step(struct MainObj* arg0);
 extern union AnimationStep* jet_drone_animations[11];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
@@ -109,22 +111,7 @@ static u32 bomb_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u16)obj.unk7E | ((u32)(u8)obj.unk7C << 16) | ((u32)obj.unk17 << 24);
 }
-#define CASE(m)                                    \
-    static u32 jet_drone_bomb_pools_bomb_##m(void) \
-    {                                              \
-        return bomb_case(m);                       \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) jet_drone_bomb_pools_bomb_##m,
-static const CTestCase jet_drone_bomb_pools_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 jet_drone_bomb_pools_cases_expected[] = { 0x8020001u, 0x9010008u, 0x9007FFFu, 0x9010008u, 0x9010008u };
-#undef CASE
-#undef ENTRY
 
 static const u32 func_800567C4_0_expected[] = { 0u, 0u, 3u, 0u, 0u, 2u, 0u, 1u, 0u, 6u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_func_800567C4_0(u32 row)
@@ -234,7 +221,6 @@ static u32 test_jet_drone_fly_dash(u32 row)
     u32 observed_values[7];
     struct MainObj obj;
     struct MiscObj before[64];
-    u8 pool_full;
     memset(&obj, 0, sizeof(obj));
     memset(&g_Player, 0, sizeof(g_Player));
     obj.active = 0x41;
@@ -253,12 +239,7 @@ static u32 test_jet_drone_fly_dash(u32 row)
     assert(obj.terrain_box == 0);
     assert(obj.unk18.val == obj.x_pos.val);
     assert(obj.unk1C.val == obj.y_pos.val);
-    pool_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 64; ++slot)
-            misc_objects[slot].active = pool_full ? 1 : 0;
-    }
+    FILL_ACTIVE(misc_objects, 64, 1);
     memcpy(before, misc_objects, sizeof(before));
     obj.ext.main_24.unk80 = 3;
     obj.unk7C = 2;
@@ -310,12 +291,30 @@ static u32 test_jet_drone_fly_turn(u32 row)
     return c_test_observe(0, row, observed_values, jet_drone_fly_turn_expected, 16);
 }
 
+static void jd_resume(void)
+{
+    state_reset(1, 0, 0);
+    so.ext.main_24.saved_unk5 = 3;
+    jet_drone_resume_step(&so);
+}
+
+static void (*const jet_drone_misc_cases[])(void) = {
+    jd_resume,
+};
+static const u32 jet_drone_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_jet_drone_misc(u32 row)
+{
+    return state_run(jet_drone_misc_cases[row], row, &jet_drone_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "jet_drone_bomb_pools", jet_drone_bomb_pools_cases, jet_drone_bomb_pools_cases_expected, COUNT(jet_drone_bomb_pools_cases), 0 },
+    { "jet_drone_misc", 0, 0, COUNT(jet_drone_misc_cases), test_jet_drone_misc },
+    { "jet_drone_bomb_pools", NULL, jet_drone_bomb_pools_cases_expected, COUNT(jet_drone_bomb_pools_cases_expected), bomb_case },
     { "func_800567C4_0", 0, 0, 1, test_func_800567C4_0 },
     { "func_800567C4_1", 0, 0, 8, test_func_800567C4_1 },
     { "jet_drone_fly_dash", 0, 0, 1, test_jet_drone_fly_dash },
     { "jet_drone_fly_turn", 0, 0, 1, test_jet_drone_fly_turn },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(jet_drone_bomb_pools_cases) + 1 + 8 + 1 + 1;
+const u32 c_test_count = COUNT(jet_drone_misc_cases) + COUNT(jet_drone_bomb_pools_cases_expected) + 1 + 8 + 1 + 1;

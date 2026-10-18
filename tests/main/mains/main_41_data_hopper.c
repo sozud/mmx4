@@ -2,6 +2,8 @@
 #include "main/mains/main_41_data_hopper.h"
 #include "main/mains/main_56_jet_stingray.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+void data_hopper_idle(struct MainObj* arg0);
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 void data_hopper_spawn_item(struct MainObj*);
@@ -55,96 +57,7 @@ static u32 vanish_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk6 << 16) | ((u32)(u8)obj.unk7C << 24);
 }
-#define CASE(m)                                              \
-    static u32 data_hopper_vanish_animation_vanish_##m(void) \
-    {                                                        \
-        return vanish_case(m);                               \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) data_hopper_vanish_animation_vanish_##m,
-static const CTestCase data_hopper_vanish_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 data_hopper_vanish_animation_cases_expected[] = { 0x10401u, 0x6020401u, 0x6010401u, 0x5000002u, 0x5030401u };
-#undef CASE
-#undef ENTRY
-
-struct data_hopper_blink_case {
-    u32 unk6, unk7C, on_screen;
-    u32 expected[5];
-};
-static const struct data_hopper_blink_case data_hopper_blink_cases[] = {
-    { -1, 0, 0, { 0u, 0u, 0u, 0xFFFFFFFFu, 0u } },
-    { 2, 6, -1, { 0u, 0u, 2u, 0u, 6u } },
-};
-static u32 test_data_hopper_blink(u32 row)
-{
-    const struct data_hopper_blink_case* c = &data_hopper_blink_cases[row];
-    u32 observed_values[5];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.unk6 = c->unk6;
-    obj.unk7C = c->unk7C;
-    obj.on_screen = c->on_screen;
-    data_hopper_blink(&obj);
-    observed_values[0] = (u32)obj.ext.main_41.unk83;
-    observed_values[1] = (u32)obj.ext.main_41.unk84;
-    observed_values[2] = (u32)obj.unk5;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
-}
-
-static const u32 data_hopper_spawn_item_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_data_hopper_spawn_item(u32 row)
-{
-    u32 observed_values[6];
-    struct MainObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&item_objects, 0, sizeof(item_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            item_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    data_hopper_spawn_item(&obj);
-    observed_values[0] = (u32)item_objects[0].active;
-    observed_values[1] = (u32)item_objects[0].id;
-    observed_values[2] = (u32)item_objects[0].unk15;
-    observed_values[3] = (u32)item_objects[0].unk2;
-    observed_values[4] = (u32)item_objects[0].unk40;
-    observed_values[5] = (u32)item_objects[0].unk42;
-    return c_test_observe(0, row, observed_values, data_hopper_spawn_item_expected, 6);
-}
-
-static const u32 data_hopper_vanish_expected[] = { 0u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u };
-static u32 test_data_hopper_vanish(u32 row)
-{
-    u32 observed_values[6];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.unk6 = -1;
-    data_hopper_vanish(&obj);
-    observed_values[0] = (u32)obj.ext.main_41.unk83;
-    observed_values[1] = (u32)obj.ext.main_41.unk84;
-    observed_values[2] = (u32)obj.state;
-    observed_values[3] = (u32)obj.unk5;
-    observed_values[4] = (u32)obj.unk6;
-    observed_values[5] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, data_hopper_vanish_expected, 6);
-}
 
 struct func_80062778_case {
     u32 unk80, collision_flags;
@@ -163,7 +76,6 @@ static u32 test_func_80062778(u32 row)
     struct MainObj obj;
     struct PlayerObj player_before;
     struct ItemObj items_before[32];
-    u8 pools_full;
     u8 tiles[256], tiles_before[256];
     memset(&tiles, 0, sizeof(tiles));
     SP_BG_TILEMAP = tiles;
@@ -180,12 +92,7 @@ static u32 test_func_80062778(u32 row)
     obj.unk6 = 0;
     obj.ext.main_41.unk80 = c->unk80;
     obj.collision_flags = c->collision_flags;
-    pools_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            item_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(item_objects, 32, 1);
     player_before = g_Player;
     memcpy(items_before, item_objects, sizeof(items_before));
     func_80062778(&obj);
@@ -205,42 +112,6 @@ static u32 test_func_80062778(u32 row)
     observed_values[10] = (u32)obj.x_accel;
     observed_values[11] = (u32)obj.animation_step.packed;
     return c_test_observe(0, row, observed_values, c->expected, 12);
-}
-
-static const u32 func_80062AEC_expected[] = { 1u, 5u, 1u, 0u };
-static u32 test_func_80062AEC(u32 row)
-{
-    u32 observed_values[4];
-    struct MainObj obj, expected;
-    struct ItemObj items_before[32];
-    struct PlayerObj player_before;
-    u8 pools_full;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 41;
-    obj.x_pos.val = 6553600;
-    obj.y_pos.val = 5242880;
-    data_hopper_init(&obj);
-    obj.unk5 = 5;
-    obj.unk6 = 1;
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            item_objects[slot].active = pools_full ? 1 : 0;
-    }
-    expected = obj;
-    player_before = g_Player;
-    memcpy(items_before, item_objects, sizeof(items_before));
-    func_80062AEC(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    c_test_same_words(item_objects, items_before, sizeof(item_objects));
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.unk15;
-    return c_test_observe(0, row, observed_values, func_80062AEC_expected, 4);
 }
 
 static const u32 func_80062BBC_0_expected[] = { 2u, 3u, 0u, 0u, 0u, 0u, 0x8000u, 0x54006Cu, 0u, 0x640000u, 0x500000u };
@@ -339,7 +210,6 @@ static u32 test_func_80062BBC_1(u32 row)
     struct PlayerObj player_before;
     struct EngineObj engine_before;
     struct BackgroundObj backgrounds_before[3];
-    u8 pools_full;
     u8 tiles[256], tiles_before[256];
     memset(&tiles, 0, sizeof(tiles));
     SP_BG_TILEMAP = tiles;
@@ -362,12 +232,7 @@ static u32 test_func_80062BBC_1(u32 row)
     obj.x_pos.val = 65536000;
     obj.y_pos.val = 5242880;
     set_animation(&obj, 3);
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            item_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(item_objects, 32, 0);
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
     player_before = g_Player;
@@ -397,16 +262,79 @@ RESET_CASE(4)
 static const CTestCase data_hopper_blink_reset_cases[] = { RESET_ENTRY(1) RESET_ENTRY(2) RESET_ENTRY(4) };
 
 static const u32 data_hopper_blink_reset_cases_expected[] = { 0x2u, 0x2u, 0x303u };
+static void dh_idle(void)
+{
+    state_reset(2, 0, 0);
+    data_hopper_idle(&so);
+}
+
+static void (*const data_hopper_misc_cases[])(void) = {
+    dh_idle,
+};
+static const u32 data_hopper_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_data_hopper_misc(u32 row)
+{
+    return state_run(data_hopper_misc_cases[row], row, &data_hopper_misc_expected[row * 10]);
+}
+
+extern struct Unk_unk68 data_hopper_terrain_box;
+static const u8 materials[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0x24, 255 };
+static const u8 kinds[] = { 0, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 0, 0 };
+static u8 map[3 * 16 * 16];
+static u32 attributes[1];
+static u16 pixels[2][16][16];
+static u32 terrain_kind(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 material = row % COUNT(materials), layer = row / COUNT(materials) % 3, edge = row / COUNT(materials) / 3;
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(map, 1, sizeof(map));
+    memset(pixels, 0, sizeof(pixels));
+    attributes[0] = materials[material];
+    SP_BG_TILEMAP = map;
+    TEST_BG_TILE_PIXELS = (u8*)pixels;
+    TEST_BG_TILE_ATTRS = (u8*)attributes;
+    layout_width = layout_height = 16;
+    layout_size = 256;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 41;
+    obj.state = 1;
+    obj.unk5 = 5;
+    obj.bg_offset = layer;
+    obj.terrain_box = &data_hopper_terrain_box;
+    obj.ext.main_41.unk80 = 0x7E;
+    obj.x_pos.val = (edge ? 256 : 255) * 65536 + 0x1234;
+    obj.y_pos.val = (edge ? 256 - 23 : 255 - 23) * 65536 + 0x5678;
+    expected = obj;
+    expected.ext.main_41.unk80 = kinds[material];
+    func_80062650(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    for (row = 0; row < sizeof(map); row++)
+        assert(map[row] == 1);
+    for (row = 0; row < sizeof(pixels) / 2; row++)
+        assert(((u16*)pixels)[row] == 0);
+    assert(attributes[0] == materials[material]);
+    assert(data_hopper_terrain_box.unk1 == 0 && data_hopper_terrain_box.unk3 == 23);
+    assert(SP_BG_TILEMAP == map && TEST_BG_TILE_PIXELS == (u8*)pixels && TEST_BG_TILE_ATTRS == (u8*)attributes);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "data_hopper_vanish_animation", data_hopper_vanish_animation_cases, data_hopper_vanish_animation_cases_expected, COUNT(data_hopper_vanish_animation_cases), 0 },
-    { "data_hopper_blink", 0, 0, 2, test_data_hopper_blink },
-    { "data_hopper_spawn_item", 0, 0, 1, test_data_hopper_spawn_item },
-    { "data_hopper_vanish", 0, 0, 1, test_data_hopper_vanish },
+    { "data_hopper_misc", 0, 0, COUNT(data_hopper_misc_cases), test_data_hopper_misc },
+    { "data_hopper_vanish_animation", NULL, data_hopper_vanish_animation_cases_expected, COUNT(data_hopper_vanish_animation_cases_expected), vanish_case },
     { "func_80062778", 0, 0, 4, test_func_80062778 },
-    { "func_80062AEC", 0, 0, 1, test_func_80062AEC },
     { "func_80062BBC_0", 0, 0, 1, test_func_80062BBC_0 },
     { "func_80062BBC_1", 0, 0, 1, test_func_80062BBC_1 },
     { "data_hopper_blink_reset", data_hopper_blink_reset_cases, data_hopper_blink_reset_cases_expected, COUNT(data_hopper_blink_reset_cases), 0 },
+    { "terrain_kind_layers_and_block_edges", NULL, NULL, COUNT(materials) * 6, terrain_kind },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(data_hopper_vanish_animation_cases) + 2 + 1 + 1 + 4 + 1 + 1 + 1 + COUNT(data_hopper_blink_reset_cases);
+const u32 c_test_count = COUNT(data_hopper_misc_cases) + COUNT(data_hopper_vanish_animation_cases_expected) + 4 + 1 + 1 + COUNT(data_hopper_blink_reset_cases) + COUNT(materials) * 6;

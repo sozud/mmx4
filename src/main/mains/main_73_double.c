@@ -47,12 +47,10 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
 
 void double_intro_dialogue(struct MainObj* self)
 {
-    typedef void (*SignedSoundFunction)(u16, u8, s8);
-
     self->on_screen = 1;
     self->unk7C = 2;
     self->unk6++;
-    ((SignedSoundFunction)func_8002217C)(
+    func_8002217C(
         0x27, 0xFF, engine_obj.character_state.bytes[9]);
     engine_obj.character_state.bytes[9] = 1;
 }

@@ -114,29 +114,7 @@ static u32 panel_case(u32 mode)
         assert(((s16*)stage_select_panel_shapes)[i] == ((s16*)shapes_before)[i]);
     return obj.state | ((u32)obj.ext.quad_1.steps << 8) | ((u32)(u8)misc_objects[63].unk2 << 16) | ((u32)(u8)effect_objects[31].id << 24);
 }
-#define CASE(m)                                                \
-    static u32 stage_panel_interpolation_pools_panel_##m(void) \
-    {                                                          \
-        return panel_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-#define ENTRY(m) stage_panel_interpolation_pools_panel_##m,
-static const CTestCase stage_panel_interpolation_pools_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) };
 static const u32 stage_panel_interpolation_pools_cases_expected[] = { 0x27090201u, 0x27090101u, 0x27090101u, 0x27090101u, 0x27090101u, 0x27090002u, 0x3090002u, 0x27070002u, 0x3000002u, 0x27810002u, 0x3820002u, 0x27090101u };
-#undef CASE
-#undef ENTRY
 
 static const s8 dx[11] = { -8, 8, 8, -8, -8, 0, 8, 0, 0, -8, -8 };
 static const s8 dy[11] = { -8, -8, 8, 8, 0, 8, 0, -8, 0, -8, 8 };
@@ -170,32 +148,11 @@ static u32 move_case(u32 mode, u32 observation)
                                                          : *y;
     return result;
 }
-#define CASE(m, n)                                              \
-    static u32 stage_select_move_quadrants_move_##m##_##n(void) \
-    {                                                           \
-        return move_case(m, n);                                 \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1) CASE(m, 2)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-MODE(4)
-MODE(5)
-MODE(6)
-MODE(7)
-MODE(8)
-MODE(9)
-MODE(10)
-#define ENTRY(m, n) stage_select_move_quadrants_move_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2)
-static const CTestCase stage_select_move_quadrants_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) ENTRIES(7) ENTRIES(8) ENTRIES(9) ENTRIES(10) };
 static const u32 stage_select_move_quadrants_cases_expected[] = { 0x1Cu, 0x65D6C0u, 0xC965FFu, 0x14u, 0x624DA7u, 0xC965FFu, 0xCu, 0x624DA7u, 0xC746F0u, 0x4u, 0x65D6C0u, 0xC746F0u, 0x0u, 0x669234u, 0xC85678u, 0x8u, 0x641234u, 0xC6D678u, 0x10u, 0x619234u, 0xC85678u, 0x18u, 0x641234u, 0xC9D678u, 0x10u, 0x619234u, 0xC85678u, 0x1Cu, 0x624DA7u, 0xC746F0u, 0x4u, 0x64C738u, 0x64C738u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 stage_select_move_quadrants_cases_row(u32 row)
+{
+    return move_case(row / 3, row % 3);
+}
 
 static const u32 quad_is_on_screen_expected[] = { 1u };
 static u32 test_quad_is_on_screen(u32 row)
@@ -218,9 +175,9 @@ static u32 test_quad_is_on_screen(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "stage_panel_interpolation_pools", stage_panel_interpolation_pools_cases, stage_panel_interpolation_pools_cases_expected, COUNT(stage_panel_interpolation_pools_cases), 0 },
-    { "stage_select_move_quadrants", stage_select_move_quadrants_cases, stage_select_move_quadrants_cases_expected, COUNT(stage_select_move_quadrants_cases), 0 },
+    { "stage_panel_interpolation_pools", NULL, stage_panel_interpolation_pools_cases_expected, COUNT(stage_panel_interpolation_pools_cases_expected), panel_case },
+    { "stage_select_move_quadrants", NULL, stage_select_move_quadrants_cases_expected, COUNT(stage_select_move_quadrants_cases_expected), stage_select_move_quadrants_cases_row },
     { "quad_is_on_screen", 0, 0, 1, test_quad_is_on_screen },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(stage_panel_interpolation_pools_cases) + COUNT(stage_select_move_quadrants_cases) + 1;
+const u32 c_test_count = COUNT(stage_panel_interpolation_pools_cases_expected) + COUNT(stage_select_move_quadrants_cases_expected) + 1;

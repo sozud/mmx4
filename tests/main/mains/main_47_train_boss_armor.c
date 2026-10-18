@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_47_train_boss_armor.h"
 #include "main/collision_bounds.h"
+#include "support/state_cases.h"
 extern u16 train_boss_armor_smoke_offsets[3][2];
 
 static u32* reflected_word(struct MainObj* obj)
@@ -311,7 +312,6 @@ static u32 test_func_80066DE8(u32 row)
 {
     u32 observed_values[22];
     struct MainObj obj;
-    u8 pool_0_full;
     struct MainObj before;
     struct BaseObj owner;
     struct ShotObj shots_before[32];
@@ -319,12 +319,7 @@ static u32 test_func_80066DE8(u32 row)
     memset(&obj, 0, sizeof(obj));
     memset(&shot_objects, 0, sizeof(shot_objects));
     memset(&owner, 0, sizeof(owner));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 255 ? 1 : 0);
     memcpy(shots_before, shot_objects, sizeof(shots_before));
     func_80066DE8(&obj);
     c_test_same_words(shot_objects, shots_before, sizeof(shot_objects));
@@ -378,10 +373,113 @@ static u32 test_func_80066DE8(u32 row)
 #undef TEST_ARMOR_WORD90
 #undef TEST_ARMOR_WORD94
 
+static struct Main45Ext armor_boss;
+static struct Main45LayerSignals armor_signals;
+static s8 armor_boss_hp;
+#define TBA(st, step, part) (state_reset(step, 0, 0), memset(&armor_boss, 0, sizeof(armor_boss)), memset(&armor_signals, 0, sizeof(armor_signals)), armor_boss.layer_signals = &armor_signals, armor_boss_hp = 0x20, so.state = st, so.unk2 = part, so.hp = so.unk5D = 0x10, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_47.train_boss = &armor_boss, so.ext.main_47.boss_hp = &armor_boss_hp)
+#define SEEN() (state_extra = (u8)armor_boss_hp | armor_boss.attack_flags << 8 | armor_signals.unk16 << 16 | (u32)(u8)so.ext.main_47.unk88 << 24)
+static void tba_init(void)
+{
+    TBA(0, 0, 1);
+    train_boss_armor_update(&so);
+    state_extra = shot_objects[0].id | shot_objects[0].state << 8;
+}
+static void tba_arrive(void)
+{
+    TBA(1, 2, 0);
+    so.x_speed = 0x10000;
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_arrive_end(void)
+{
+    TBA(1, 2, 0);
+    so.x_pos.i.hi = 0x1AB0;
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_arrived(void)
+{
+    TBA(1, 2, 0);
+    so.unk6 = 1;
+    so.unk42 = 0x8001;
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_cooldown(void)
+{
+    TBA(1, 2, 0);
+    so.unk6 = 1;
+    so.invincibility_timer = 2;
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_cooldown_reflect(void)
+{
+    TBA(1, 2, 0);
+    so.unk6 = 1;
+    so.invincibility_timer = 2;
+    so.ext.main_47.unk88 = 1;
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_hit(void)
+{
+    TBA(1, 2, 0);
+    so.unk6 = 1;
+    armor_boss.unk87 = 1;
+    so.unk42 = 0x8000;
+    state_hit(&so, 0, 0, 1);
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_break(void)
+{
+    TBA(1, 2, 1);
+    so.unk6 = 1;
+    armor_boss.attack_flags = 0x20;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    train_boss_armor_update(&so);
+    SEEN();
+}
+static void tba_break_last(void)
+{
+    u8 immune = g_Player.spike_immune;
+    TBA(1, 2, 2);
+    so.unk6 = 1;
+    armor_boss.attack_flags = 3;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    train_boss_armor_update(&so);
+    SEEN();
+    state_extra ^= g_Player.spike_immune << 28;
+    g_Player.spike_immune = immune;
+}
+
+static void (*const train_boss_armor_states_cases[])(void) = {
+    tba_init,
+    tba_arrive,
+    tba_arrive_end,
+    tba_arrived,
+    tba_cooldown,
+    tba_cooldown_reflect,
+    tba_hit,
+    tba_break,
+    tba_break_last,
+};
+static const u32 train_boss_armor_states_expected[] = { 2u, 0u, 0x800000u, 0x10000u, 0u, 0u, 0u, 0x100001u, 0x318u, 0x410000u, 2u, 0u, 0x810000u, 0x10000u, 0u, 0u, 0u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x1AB00000u, 0u, 0u, 0u, 0u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0x10000u, 0x100000u, 0x20u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x100100u, 0x10020u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x100100u, 0x1000020u, 0u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0xF0201u, 0x1001Fu, 0x2100u, 0x102u, 0x100B4u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 1u, 0x2210u, 0x2100u, 0x102u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x10001u, 0x320u, 0u };
+
+static u32 test_train_boss_armor_states(u32 row)
+{
+    return state_run(train_boss_armor_states_cases[row], row, &train_boss_armor_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "train_boss_armor_states", 0, 0, COUNT(train_boss_armor_states_cases), test_train_boss_armor_states },
     { "train_armor_context", train_armor_context_cases, train_armor_context_cases_expected, COUNT(train_armor_context_cases), 0 },
     { "train_armor_smoke_context", train_armor_smoke_context_cases, train_armor_smoke_context_cases_expected, COUNT(train_armor_smoke_context_cases), 0 },
     { "func_80066DE8", 0, 0, 1, test_func_80066DE8 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(train_armor_context_cases) + COUNT(train_armor_smoke_context_cases) + 1;
+const u32 c_test_count = COUNT(train_boss_armor_states_cases) + COUNT(train_armor_context_cases) + COUNT(train_armor_smoke_context_cases) + 1;

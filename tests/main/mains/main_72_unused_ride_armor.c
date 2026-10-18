@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_72_unused_ride_armor.h"
+#include "main/collision_bounds.h"
+#include "main/55C4.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 
@@ -63,271 +65,52 @@ static void initialize(struct Fixture* fixture, u32 mode)
     g_Player.x_pos.i.hi = 100;
 }
 
-#define ANIMATION_CASE(name, function, finished, value)                                          \
-    static u32 name(void)                                                                        \
-    {                                                                                            \
-        struct Fixture fixture;                                                                  \
-        u32 actual;                                                                              \
-        initialize(&fixture, finished);                                                          \
-        function(&fixture.obj);                                                                  \
-        assert(fixture.obj.animation_table == fixture.table);                                    \
-        assert(fixture.obj.animation_cursor == (const u8*)(fixture.frames + ((finished) == 2))); \
-        actual = (u32)(value);                                                                   \
-        return actual;                                                                           \
-    }
-ANIMATION_CASE(jump_state, unused_ride_armor_jump, 0, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(jump_frame, unused_ride_armor_jump, 0, fixture.obj.animation_step.packed)
-ANIMATION_CASE(jump_speed, unused_ride_armor_jump, 0, fixture.obj.y_speed)
-ANIMATION_CASE(jump_gravity, unused_ride_armor_jump, 0, fixture.obj.gravity)
-ANIMATION_CASE(jump_flags, unused_ride_armor_jump, 0, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(jump_timers, unused_ride_armor_jump, 0, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(fall_state, unused_ride_armor_fall, 0, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(fall_frame, unused_ride_armor_fall, 0, fixture.obj.animation_step.packed)
-ANIMATION_CASE(fall_speed, unused_ride_armor_fall, 0, fixture.obj.y_speed)
-ANIMATION_CASE(fall_gravity, unused_ride_armor_fall, 0, fixture.obj.gravity)
-ANIMATION_CASE(fall_flags, unused_ride_armor_fall, 0, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(fall_timers, unused_ride_armor_fall, 0, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(land_state, unused_ride_armor_land, 0, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(land_frame, unused_ride_armor_land, 0, fixture.obj.animation_step.packed)
-ANIMATION_CASE(land_speed, unused_ride_armor_land, 0, fixture.obj.y_speed)
-ANIMATION_CASE(land_gravity, unused_ride_armor_land, 0, fixture.obj.gravity)
-ANIMATION_CASE(land_flags, unused_ride_armor_land, 0, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(land_timers, unused_ride_armor_land, 0, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(land_finished_state, unused_ride_armor_land, 1, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(land_finished_frame, unused_ride_armor_land, 1, fixture.obj.animation_step.packed)
-ANIMATION_CASE(land_finished_speed, unused_ride_armor_land, 1, fixture.obj.y_speed)
-ANIMATION_CASE(land_finished_gravity, unused_ride_armor_land, 1, fixture.obj.gravity)
-ANIMATION_CASE(land_finished_flags, unused_ride_armor_land, 1, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(land_finished_timers, unused_ride_armor_land, 1, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_state, unused_ride_armor_shoot, 0, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(shoot_frame, unused_ride_armor_shoot, 0, fixture.obj.animation_step.packed)
-ANIMATION_CASE(shoot_speed, unused_ride_armor_shoot, 0, fixture.obj.y_speed)
-ANIMATION_CASE(shoot_gravity, unused_ride_armor_shoot, 0, fixture.obj.gravity)
-ANIMATION_CASE(shoot_flags, unused_ride_armor_shoot, 0, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(shoot_timers, unused_ride_armor_shoot, 0, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(land_advance_state, unused_ride_armor_land, 2, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(land_advance_frame, unused_ride_armor_land, 2, fixture.obj.animation_step.packed)
-ANIMATION_CASE(land_advance_speed, unused_ride_armor_land, 2, fixture.obj.y_speed)
-ANIMATION_CASE(land_advance_gravity, unused_ride_armor_land, 2, fixture.obj.gravity)
-ANIMATION_CASE(land_advance_flags, unused_ride_armor_land, 2, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(land_advance_timers, unused_ride_armor_land, 2, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_expired_state, unused_ride_armor_shoot, 3, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(shoot_expired_frame, unused_ride_armor_shoot, 3, fixture.obj.animation_step.packed)
-ANIMATION_CASE(shoot_expired_speed, unused_ride_armor_shoot, 3, fixture.obj.y_speed)
-ANIMATION_CASE(shoot_expired_gravity, unused_ride_armor_shoot, 3, fixture.obj.gravity)
-ANIMATION_CASE(shoot_expired_flags, unused_ride_armor_shoot, 3, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(shoot_expired_timers, unused_ride_armor_shoot, 3, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_spawn_state, unused_ride_armor_shoot, 4, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(shoot_spawn_frame, unused_ride_armor_shoot, 4, fixture.obj.animation_step.packed)
-ANIMATION_CASE(shoot_spawn_speed, unused_ride_armor_shoot, 4, fixture.obj.y_speed)
-ANIMATION_CASE(shoot_spawn_gravity, unused_ride_armor_shoot, 4, fixture.obj.gravity)
-ANIMATION_CASE(shoot_spawn_flags, unused_ride_armor_shoot, 4, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(shoot_spawn_timers, unused_ride_armor_shoot, 4, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_wait_state, unused_ride_armor_shoot, 5, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(shoot_wait_frame, unused_ride_armor_shoot, 5, fixture.obj.animation_step.packed)
-ANIMATION_CASE(shoot_wait_speed, unused_ride_armor_shoot, 5, fixture.obj.y_speed)
-ANIMATION_CASE(shoot_wait_gravity, unused_ride_armor_shoot, 5, fixture.obj.gravity)
-ANIMATION_CASE(shoot_wait_flags, unused_ride_armor_shoot, 5, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(shoot_wait_timers, unused_ride_armor_shoot, 5, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_spawn_shot_state, unused_ride_armor_shoot, 4, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8) | ((u32)(u8)shot_objects[0].unk2 << 16))
-ANIMATION_CASE(shoot_spawn_shot_position, unused_ride_armor_shoot, 4, shot_objects[0].x_pos.u.hi | ((u32)shot_objects[0].y_pos.u.hi << 16))
-ANIMATION_CASE(shoot_spawn_shot_links, unused_ride_armor_shoot, 4, (shot_objects[0].unk7C == &fixture.obj) | ((u32)(shot_objects[0].animation_table == fixture.obj.animation_table) << 1))
-ANIMATION_CASE(fall_near_state, unused_ride_armor_fall, 6, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(fall_near_frame, unused_ride_armor_fall, 6, fixture.obj.animation_step.packed)
-ANIMATION_CASE(fall_near_speed, unused_ride_armor_fall, 6, fixture.obj.y_speed)
-ANIMATION_CASE(fall_near_gravity, unused_ride_armor_fall, 6, fixture.obj.gravity)
-ANIMATION_CASE(fall_near_flags, unused_ride_armor_fall, 6, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(fall_near_timers, unused_ride_armor_fall, 6, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(fall_near_x, unused_ride_armor_fall, 6, fixture.obj.x_pos.val)
-ANIMATION_CASE(fall_near_y, unused_ride_armor_fall, 6, fixture.obj.y_pos.val)
-ANIMATION_CASE(fall_far_state, unused_ride_armor_fall, 7, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(fall_far_frame, unused_ride_armor_fall, 7, fixture.obj.animation_step.packed)
-ANIMATION_CASE(fall_far_speed, unused_ride_armor_fall, 7, fixture.obj.y_speed)
-ANIMATION_CASE(fall_far_gravity, unused_ride_armor_fall, 7, fixture.obj.gravity)
-ANIMATION_CASE(fall_far_flags, unused_ride_armor_fall, 7, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(fall_far_timers, unused_ride_armor_fall, 7, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(fall_far_x, unused_ride_armor_fall, 7, fixture.obj.x_pos.val)
-ANIMATION_CASE(fall_far_y, unused_ride_armor_fall, 7, fixture.obj.y_pos.val)
-ANIMATION_CASE(fall_capped_state, unused_ride_armor_fall, 8, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(fall_capped_frame, unused_ride_armor_fall, 8, fixture.obj.animation_step.packed)
-ANIMATION_CASE(fall_capped_speed, unused_ride_armor_fall, 8, fixture.obj.y_speed)
-ANIMATION_CASE(fall_capped_gravity, unused_ride_armor_fall, 8, fixture.obj.gravity)
-ANIMATION_CASE(fall_capped_flags, unused_ride_armor_fall, 8, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(fall_capped_timers, unused_ride_armor_fall, 8, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(fall_capped_x, unused_ride_armor_fall, 8, fixture.obj.x_pos.val)
-ANIMATION_CASE(fall_capped_y, unused_ride_armor_fall, 8, fixture.obj.y_pos.val)
-ANIMATION_CASE(shoot_no_slot_state, unused_ride_armor_shoot, 9, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8))
-ANIMATION_CASE(shoot_no_slot_timers, unused_ride_armor_shoot, 9, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(shoot_no_slot_shot_state, unused_ride_armor_shoot, 9, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8))
-ANIMATION_CASE(fall_negative_x_x, unused_ride_armor_fall, 10, fixture.obj.x_pos.val)
-ANIMATION_CASE(fall_negative_x_x_speed, unused_ride_armor_fall, 10, fixture.obj.x_speed)
-ANIMATION_CASE(fall_negative_x_y, unused_ride_armor_fall, 10, fixture.obj.y_pos.val)
-ANIMATION_CASE(rapid_initial_state, unused_ride_armor_rapid_fire, 0, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(rapid_initial_frame, unused_ride_armor_rapid_fire, 0, fixture.obj.animation_step.packed)
-ANIMATION_CASE(rapid_initial_flags, unused_ride_armor_rapid_fire, 0, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(rapid_initial_timers, unused_ride_armor_rapid_fire, 0, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(rapid_initial_shot_state, unused_ride_armor_rapid_fire, 0, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8) | ((u32)(u8)shot_objects[0].unk2 << 16))
-ANIMATION_CASE(rapid_initial_shot_links, unused_ride_armor_rapid_fire, 0, (shot_objects[0].unk7C == &fixture.obj) | ((u32)(shot_objects[0].animation_table == fixture.obj.animation_table) << 1))
-ANIMATION_CASE(rapid_expired_state, unused_ride_armor_rapid_fire, 3, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(rapid_expired_frame, unused_ride_armor_rapid_fire, 3, fixture.obj.animation_step.packed)
-ANIMATION_CASE(rapid_expired_flags, unused_ride_armor_rapid_fire, 3, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(rapid_expired_timers, unused_ride_armor_rapid_fire, 3, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(rapid_expired_shot_state, unused_ride_armor_rapid_fire, 3, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8) | ((u32)(u8)shot_objects[0].unk2 << 16))
-ANIMATION_CASE(rapid_expired_shot_links, unused_ride_armor_rapid_fire, 3, (shot_objects[0].unk7C == &fixture.obj) | ((u32)(shot_objects[0].animation_table == fixture.obj.animation_table) << 1))
-ANIMATION_CASE(rapid_pause_state, unused_ride_armor_rapid_fire, 4, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(rapid_pause_frame, unused_ride_armor_rapid_fire, 4, fixture.obj.animation_step.packed)
-ANIMATION_CASE(rapid_pause_flags, unused_ride_armor_rapid_fire, 4, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(rapid_pause_timers, unused_ride_armor_rapid_fire, 4, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(rapid_pause_shot_state, unused_ride_armor_rapid_fire, 4, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8) | ((u32)(u8)shot_objects[0].unk2 << 16))
-ANIMATION_CASE(rapid_pause_shot_links, unused_ride_armor_rapid_fire, 4, (shot_objects[0].unk7C == &fixture.obj) | ((u32)(shot_objects[0].animation_table == fixture.obj.animation_table) << 1))
-ANIMATION_CASE(rapid_spawn_state, unused_ride_armor_rapid_fire, 5, (u8)fixture.obj.unk5 | ((u32)(u8)fixture.obj.unk6 << 8) | ((u32)fixture.obj.unk15 << 16) | ((u32)(u8)fixture.obj.air_state << 24))
-ANIMATION_CASE(rapid_spawn_frame, unused_ride_armor_rapid_fire, 5, fixture.obj.animation_step.packed)
-ANIMATION_CASE(rapid_spawn_flags, unused_ride_armor_rapid_fire, 5, fixture.obj.collision_flags | ((u32)fixture.obj.unk17 << 8) | ((u32)fixture.obj.previous_animation_index << 16))
-ANIMATION_CASE(rapid_spawn_timers, unused_ride_armor_rapid_fire, 5, fixture.obj.ext.main_72.lifetime | ((u32)fixture.obj.ext.main_72.spawn_timer << 8))
-ANIMATION_CASE(rapid_spawn_shot_state, unused_ride_armor_rapid_fire, 5, (u8)shot_objects[0].active | ((u32)(u8)shot_objects[0].id << 8) | ((u32)(u8)shot_objects[0].unk2 << 16))
-ANIMATION_CASE(rapid_spawn_shot_links, unused_ride_armor_rapid_fire, 5, (shot_objects[0].unk7C == &fixture.obj) | ((u32)(shot_objects[0].animation_table == fixture.obj.animation_table) << 1))
+static const struct {
+    void (*function)(struct MainObj*);
+    u8 finished;
+} animations[] = {
+    { unused_ride_armor_jump, 0 },
+    { unused_ride_armor_fall, 0 },
+    { unused_ride_armor_land, 0 },
+    { unused_ride_armor_land, 1 },
+    { unused_ride_armor_shoot, 0 },
+    { unused_ride_armor_land, 2 },
+    { unused_ride_armor_shoot, 3 },
+    { unused_ride_armor_shoot, 4 },
+    { unused_ride_armor_shoot, 5 },
+    { unused_ride_armor_fall, 6 },
+    { unused_ride_armor_fall, 7 },
+    { unused_ride_armor_fall, 8 },
+    { unused_ride_armor_shoot, 9 },
+    { unused_ride_armor_fall, 10 },
+    { unused_ride_armor_rapid_fire, 0 },
+    { unused_ride_armor_rapid_fire, 3 },
+    { unused_ride_armor_rapid_fire, 4 },
+    { unused_ride_armor_rapid_fire, 5 },
+};
 
-static const CTestCase ride_armor_animation_cases[] = {
-    jump_state,
-    jump_frame,
-    jump_speed,
-    jump_gravity,
-    jump_flags,
-    jump_timers,
-    fall_state,
-    fall_frame,
-    fall_speed,
-    fall_gravity,
-    fall_flags,
-    fall_timers,
-    land_state,
-    land_frame,
-    land_speed,
-    land_gravity,
-    land_flags,
-    land_timers,
-    land_finished_state,
-    land_finished_frame,
-    land_finished_speed,
-    land_finished_gravity,
-    land_finished_flags,
-    land_finished_timers,
-    shoot_state,
-    shoot_frame,
-    shoot_speed,
-    shoot_gravity,
-    shoot_flags,
-    shoot_timers,
-    land_advance_state,
-    land_advance_frame,
-    land_advance_speed,
-    land_advance_gravity,
-    land_advance_flags,
-    land_advance_timers,
-    shoot_expired_state,
-    shoot_expired_frame,
-    shoot_expired_speed,
-    shoot_expired_gravity,
-    shoot_expired_flags,
-    shoot_expired_timers,
-    shoot_spawn_state,
-    shoot_spawn_frame,
-    shoot_spawn_speed,
-    shoot_spawn_gravity,
-    shoot_spawn_flags,
-    shoot_spawn_timers,
-    shoot_wait_state,
-    shoot_wait_frame,
-    shoot_wait_speed,
-    shoot_wait_gravity,
-    shoot_wait_flags,
-    shoot_wait_timers,
-    shoot_spawn_shot_state,
-    shoot_spawn_shot_position,
-    shoot_spawn_shot_links,
-    fall_near_state,
-    fall_near_frame,
-    fall_near_speed,
-    fall_near_gravity,
-    fall_near_flags,
-    fall_near_timers,
-    fall_near_x,
-    fall_near_y,
-    fall_far_state,
-    fall_far_frame,
-    fall_far_speed,
-    fall_far_gravity,
-    fall_far_flags,
-    fall_far_timers,
-    fall_far_x,
-    fall_far_y,
-    fall_capped_state,
-    fall_capped_frame,
-    fall_capped_speed,
-    fall_capped_gravity,
-    fall_capped_flags,
-    fall_capped_timers,
-    fall_capped_x,
-    fall_capped_y,
-    shoot_no_slot_state,
-    shoot_no_slot_timers,
-    shoot_no_slot_shot_state,
-    fall_negative_x_x,
-    fall_negative_x_x_speed,
-    fall_negative_x_y,
-    rapid_initial_state,
-    rapid_initial_frame,
-    rapid_initial_flags,
-    rapid_initial_timers,
-    rapid_initial_shot_state,
-    rapid_initial_shot_links,
-    rapid_expired_state,
-    rapid_expired_frame,
-    rapid_expired_flags,
-    rapid_expired_timers,
-    rapid_expired_shot_state,
-    rapid_expired_shot_links,
-    rapid_pause_state,
-    rapid_pause_frame,
-    rapid_pause_flags,
-    rapid_pause_timers,
-    rapid_pause_shot_state,
-    rapid_pause_shot_links,
-    rapid_spawn_state,
-    rapid_spawn_frame,
-    rapid_spawn_flags,
-    rapid_spawn_timers,
-    rapid_spawn_shot_state,
-    rapid_spawn_shot_links,
-};
-static const u32 ride_armor_animation_cases_expected[] = { 0x1400100u, 0x4010302u, 0x53E00u, 0x4200u, 0xFF0200u, 0x0u, 0x1000005u, 0x4010302u, 0x0u, 0x4200u, 0xFF0308u, 0x0u, 0x100u, 0x4010301u, 0x0u, 0x0u, 0xFF0408u, 0x0u, 0x7u, 0x4000302u, 0x0u, 0x0u, 0xFF0408u, 0x0u, 0x400100u, 0x4010301u, 0x0u, 0x0u, 0xFF0808u, 0xF3Fu, 0x100u, 0x6000103u, 0x0u, 0x0u, 0x90008u, 0x0u, 0x2u, 0x4010302u, 0x0u, 0x0u, 0x90008u, 0x200u, 0x100u, 0x4010301u, 0x0u, 0x0u, 0x90008u, 0x1001u, 0x100u, 0x4010301u, 0x0u, 0x0u, 0x90008u, 0x101u, 0x2F41u, 0x640032u, 0x3u, 0x2u, 0x4010302u, 0xFFFF0000u, 0x4200u, 0x90000u, 0x202u, 0x320000u, 0x0u, 0x100u, 0x4010302u, 0xFFFEBE00u, 0x4200u, 0x90000u, 0x202u, 0x31FF00u, 0xFF9D0000u, 0x100u, 0x4010302u, 0xFFF9DE00u, 0x4200u, 0x90000u, 0x202u, 0x31FF00u, 0xFFA1E000u, 0x100u, 0x1001u, 0x1u, 0x320100u, 0x100u, 0xFF9D0000u, 0x400100u, 0x4010301u, 0xFF0908u, 0x2F7Fu, 0x12F41u, 0x3u, 0x2u, 0x4010302u, 0x90008u, 0x200u, 0x0u, 0x0u, 0x100u, 0x4010301u, 0x90008u, 0x1u, 0x0u, 0x0u, 0x100u, 0x4010301u, 0x90008u, 0x101u, 0x12F41u, 0x3u };
-#undef ANIMATION_CASE
-
-struct unused_ride_armor_fall_case {
-    u32 collision_flags;
-    u32 expected[6];
-};
-static const struct unused_ride_armor_fall_case unused_ride_armor_fall_cases[] = {
-    { 8, { 0u, 0u, 0u, 0u, 0u, 0u } },
-    { 0, { 0u, 0u, 0u, 0u, 0u, 0u } },
-};
-static u32 test_unused_ride_armor_fall(u32 row)
+static u32 animation_run(u32 row)
 {
-    const struct unused_ride_armor_fall_case* c = &unused_ride_armor_fall_cases[row];
-    u32 observed_values[6];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    obj.unk6 = -1;
-    obj.collision_flags = c->collision_flags;
-    unused_ride_armor_fall(&obj);
-    observed_values[0] = (u32)obj.air_state;
-    observed_values[1] = (u32)obj.gravity;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.x_accel;
-    observed_values[4] = (u32)obj.x_speed;
-    observed_values[5] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, c->expected, 6);
+    struct Fixture fixture;
+    struct MainObj* obj = &fixture.obj;
+    struct ShotObj* shot = &shot_objects[0];
+    u32 hash;
+    initialize(&fixture, animations[row].finished);
+    animations[row].function(obj);
+    assert(obj->animation_table == fixture.table);
+    assert(obj->animation_cursor == (const u8*)(fixture.frames + (animations[row].finished == 2)));
+    hash = (u8)obj->unk5 | ((u32)(u8)obj->unk6 << 8) | ((u32)obj->unk15 << 16) | ((u32)(u8)obj->air_state << 24);
+    hash = hash * 31 + obj->animation_step.packed;
+    hash = hash * 31 + obj->x_speed;
+    hash = hash * 31 + obj->y_speed;
+    hash = hash * 31 + obj->gravity;
+    hash = hash * 31 + (obj->collision_flags | ((u32)obj->unk17 << 8) | ((u32)obj->previous_animation_index << 16));
+    hash = hash * 31 + (obj->ext.main_72.lifetime | ((u32)obj->ext.main_72.spawn_timer << 8));
+    hash = hash * 31 + obj->x_pos.val;
+    hash = hash * 31 + obj->y_pos.val;
+    hash = hash * 31 + ((u8)shot->active | ((u32)(u8)shot->id << 8) | ((u32)(u8)shot->unk2 << 16));
+    hash = hash * 31 + ((shot->unk7C == obj) | ((u32)(shot->animation_table == obj->animation_table) << 1));
+    return hash * 31 + (shot->x_pos.u.hi | ((u32)shot->y_pos.u.hi << 16));
 }
 
 struct unused_ride_armor_jump_case {
@@ -370,10 +153,127 @@ static u32 test_unused_ride_armor_jump(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 7);
 }
 
+extern void* unused_ride_armor_animations[];
+extern struct Unk_unk68 unused_ride_armor_hit_box;
+extern struct Unk_unk68 unused_ride_armor_terrain_box;
+void unused_ride_armor_main(struct MainObj*);
+static const s16 screen_positions[][2] = { { 160, 120 }, { -65, 120 }, { 384, 120 }, { 160, -65 }, { 160, 304 } };
+static u8 tilemap[256];
+static u16 pixels[2][16][16];
+static u32 attributes[1];
+static struct WeaponObj weapons_expected[16];
+static struct MiscObj misc_before[64];
+static struct VisualObj visuals_before[32];
+#define SAME(a, b) assert(c_test_word_difference((const u32*)&(a), (const u32*)&(b), sizeof(a) / 4) == 0)
+static u32 root(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 hit = row % 3, edge = row / 3 % 5, facing = row / 15, i;
+    memset(tilemap, 1, sizeof(tilemap));
+    memset(pixels, 0, sizeof(pixels));
+    attributes[0] = 0;
+    SP_BG_TILEMAP = tilemap;
+    TEST_BG_TILE_PIXELS = (u8*)pixels;
+    TEST_BG_TILE_ATTRS = (u8*)attributes;
+    layout_width = layout_height = 16;
+    layout_size = 256;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.spike_immune = 1;
+    player_before = g_Player;
+    memset(background_objects, 0, sizeof(background_objects));
+    background_objects[0].x_pos.val = background_objects[0].y_pos.val = 512 * 65536;
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    for (i = 0; i < 32; i++) {
+        visual_objects[i].active = 1;
+        visual_objects[i].id = 39;
+    }
+    for (i = 0; i < 64; i++) {
+        misc_objects[i].active = 1;
+        misc_objects[i].id = 39;
+    }
+    memcpy(visuals_before, visual_objects, sizeof(visuals_before));
+    memcpy(misc_before, misc_objects, sizeof(misc_before));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 72;
+    obj.state = 1;
+    obj.unk5 = 1;
+    obj.unk6 = 9;
+    obj.bg_offset = 0;
+    obj.on_screen = 7;
+    obj.unk15 = facing ? 0x40 : 0;
+    obj.hp = hit == 2 ? 2 : 10;
+    obj.x_pos.val = (screen_positions[edge][0] + 512) * 65536 + 0x1234;
+    obj.y_pos.val = (screen_positions[edge][1] + 512) * 65536 + 0x5678;
+    obj.unk18.val = 0x1234;
+    obj.unk1C.val = 0x5678;
+    obj.collision_flags = 15;
+    obj.unk79 = 1;
+    obj.hurt_box = &unused_ride_armor_hit_box;
+    obj.attack_box = &unused_ride_armor_hit_box;
+    obj.terrain_box = &unused_ride_armor_terrain_box;
+    obj.collision_data = (const u16*)D_80108184;
+    obj.animation_table = (const u8* const*)unused_ride_armor_animations;
+    set_animation(&obj, 0);
+    obj.unk42 = 0x9234;
+    cur_random = 0x1234;
+    D_8013E198[1] = -1;
+    if (hit) {
+        weapon_objects[15].active = 0x21;
+        weapon_objects[15].id = 0;
+        weapon_objects[15].unk15 = obj.unk15;
+        weapon_objects[15].x_pos = obj.x_pos;
+        weapon_objects[15].y_pos = obj.y_pos;
+        weapon_objects[15].unk50 = (const u8*)&unused_ride_armor_hit_box;
+    }
+    memcpy(weapons_expected, weapon_objects, sizeof(weapons_expected));
+    expected = obj;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.unk5 = 2;
+    expected.unk6 = 0;
+    expected.collision_flags = expected.unk79 = 0;
+    expected.unk6C = obj.x_pos.i.hi & 15;
+    expected.unk6E = (obj.y_pos.i.hi + 48) & 15;
+    expected.unk42 = 0x1234;
+    if (hit) {
+        expected.hp = hit == 2 ? 0 : 7;
+        expected.unk42 = 0x9234;
+        ((s16*)&weapons_expected[15].unk80)[0] = obj.x_pos.i.hi;
+        ((s16*)&weapons_expected[15].unk80)[1] = obj.y_pos.i.hi + 8;
+        weapons_expected[15].unk98 = 1;
+        if (hit == 2) {
+            expected.state = 2;
+            expected.unk5 = 0;
+        }
+    }
+    if (edge) {
+        expected.state = 2;
+        expected.unk5 = 0;
+    } else
+        expected.on_screen = 1;
+    unused_ride_armor_main(&obj);
+    SAME(obj, expected);
+    SAME(g_Player, player_before);
+    SAME(engine_obj, engine_before);
+    SAME(background_objects, backgrounds_before);
+    SAME(weapon_objects, weapons_expected);
+    SAME(visual_objects, visuals_before);
+    SAME(misc_objects, misc_before);
+    assert(cur_random == 0x1234 && D_8013E198[1] == -1);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "ride_armor_animation", ride_armor_animation_cases, ride_armor_animation_cases_expected, COUNT(ride_armor_animation_cases), 0 },
-    { "unused_ride_armor_fall", 0, 0, 2, test_unused_ride_armor_fall },
+    { "ride_armor_animation", NULL, NULL, COUNT(animations), animation_run },
     { "unused_ride_armor_jump", 0, 0, 4, test_unused_ride_armor_jump },
+    { "root_real_weapon_hits_and_bounds", NULL, NULL, 30, root },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ride_armor_animation_cases) + 2 + 4;
+const u32 c_test_count = COUNT(animations) + 4 + 30;

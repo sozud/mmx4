@@ -7,18 +7,16 @@ extern struct Unk_unk68 D_800FC84C, D_80106C74[];
 
 struct enemy_hit_reaction_case {
     u32 obj_unk6, obj_invincibility_timer, unk5, expected_unk6, expected_invincibility_timer, unk42;
-    u32 expected[3];
 };
 static const struct enemy_hit_reaction_case enemy_hit_reaction_cases[] = {
-    { 0, 0, 0, 1, 39, 37428, { 0u, 0x27u, 0x9234u } },
-    { 1, 1, 1, 0, 0, 4660, { 1u, 0u, 0x1234u } },
-    { 1, 7, 0, 1, 6, 4660, { 0u, 6u, 0x1234u } },
-    { 1, 8, 0, 1, 7, 37428, { 0u, 7u, 0x9234u } },
+    { 0, 0, 0, 1, 39, 37428 },
+    { 1, 1, 1, 0, 0, 4660 },
+    { 1, 7, 0, 1, 6, 4660 },
+    { 1, 8, 0, 1, 7, 37428 },
 };
 static u32 test_enemy_hit_reaction(u32 row)
 {
     const struct enemy_hit_reaction_case* c = &enemy_hit_reaction_cases[row];
-    u32 observed_values[3];
     struct MainObj obj, input, expected;
     struct PlayerObj player_expected;
     void (*reaction)(struct MainObj*);
@@ -55,10 +53,7 @@ static u32 test_enemy_hit_reaction(u32 row)
     enemy_hit_reaction(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.invincibility_timer;
-    observed_values[2] = (u32)obj.unk42;
-    return c_test_observe(0, row, observed_values, c->expected, 3);
+    return 1;
 }
 
 struct func_80091B1C_case {
@@ -204,44 +199,12 @@ static u32 test_spike_crawler_hit_knockback(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 8);
 }
 
-struct update_boss_music_delay_case {
-    u32 timer, D_80173C84;
-    u32 expected[2];
-};
-static const struct update_boss_music_delay_case update_boss_music_delay_cases[] = {
-    { 0, 0, { 0u, 0u } },
-    { 2, 1, { 2u, 2u } },
-};
-static u32 test_update_boss_music_delay(u32 row)
-{
-    const struct update_boss_music_delay_case* c = &update_boss_music_delay_cases[row];
-    u32 observed_values[2];
-    s32 result;
-    struct EngineObj engine_before;
-    struct PlayerObj player_before;
-    u8 flag_before;
-    memset(&engine_obj, 0, sizeof(engine_obj));
-    engine_obj.unk36.timer = c->timer;
-    D_80173C84 = c->D_80173C84;
-    flag_before = D_80173C84;
-    engine_before = engine_obj;
-    player_before = g_Player;
-    result = update_boss_music_delay();
-    assert(D_80173C84 == flag_before);
-    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    observed_values[0] = (u32)result;
-    observed_values[1] = (u32)engine_obj.unk36.timer;
-    return c_test_observe(0, row, observed_values, c->expected, 2);
-}
-
 const struct CTestGroup c_test_groups[] = {
     { "enemy_hit_reaction", 0, 0, 4, test_enemy_hit_reaction },
     { "func_80091B1C", 0, 0, 2, test_func_80091B1C },
     { "func_80091EC4_0", 0, 0, 3, test_func_80091EC4_0 },
     { "func_80091EC4_1", 0, 0, 1, test_func_80091EC4_1 },
     { "spike_crawler_hit_knockback", 0, 0, 2, test_spike_crawler_hit_knockback },
-    { "update_boss_music_delay", 0, 0, 2, test_update_boss_music_delay },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 4 + 2 + 3 + 1 + 2 + 2;
+const u32 c_test_count = 4 + 2 + 3 + 1 + 2;

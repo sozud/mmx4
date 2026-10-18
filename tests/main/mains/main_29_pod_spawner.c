@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_29_pod_spawner.h"
 #include "main/55C4.h"
+#include "support/scalar_hash.h"
+void pod_spawner_idle(struct MainObj* arg0);
 extern union AnimationStep* pod_spawner_animations[16];
 u8 pod_spawner_player_quadrant(struct MainObj*);
 extern s16 D_800FD86C[12], D_800FD884[12];
@@ -83,24 +85,11 @@ static u32 pod_case(u32 mode, u32 observation)
         return obj.animation_step.packed;
     }
 }
-#define CASE(m, n)                                              \
-    static u32 pod_spawner_children_context_pod_##m##_##n(void) \
-    {                                                           \
-        return pod_case(m, n);                                  \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1) CASE(m, 2) CASE(m, 3) CASE(m, 4) CASE(m, 5) CASE(m, 6)
-MODE(0)
-MODE(1)
-MODE(2)
-#define ENTRY(m, n) pod_spawner_children_context_pod_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2) ENTRY(m, 3) ENTRY(m, 4) ENTRY(m, 5) ENTRY(m, 6)
-static const CTestCase pod_spawner_children_context_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) };
 static const u32 pod_spawner_children_context_cases_expected[] = { 0x10103u, 0x7FFFu, 0x641234u, 0xC85678u, 0x3020202u, 0xFu, 0x1u, 0xFF03u, 0x2718FFFFu, 0x641234u, 0xC85678u, 0x2020202u, 0x1u, 0x1u, 0x303u, 0x2718FFFFu, 0x641234u, 0xC85678u, 0x2020202u, 0x1u, 0x1u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 pod_spawner_children_context_cases_row(u32 row)
+{
+    return pod_case(row / 7, row % 7);
+}
 
 static u32 cleanup_case(u32 mode)
 {
@@ -151,22 +140,7 @@ static u32 cleanup_case(u32 mode)
         result |= (u32)(u8)children[i].state << (i * 8);
     return result;
 }
-#define CASE(m)                                             \
-    static u32 pod_spawner_linked_cleanup_cleanup_##m(void) \
-    {                                                       \
-        return cleanup_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) pod_spawner_linked_cleanup_cleanup_##m,
-static const CTestCase pod_spawner_linked_cleanup_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 pod_spawner_linked_cleanup_cases_expected[] = { 0x1010101u, 0x1010103u, 0x3030303u, 0x1010103u, 0x1010101u };
-#undef CASE
-#undef ENTRY
 
 static u32 pod_spawner_quadrant_context_quadrant_case(u32 mode)
 {
@@ -197,21 +171,7 @@ static u32 pod_spawner_quadrant_context_quadrant_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return actual;
 }
-#define CASE(m)                                                \
-    static u32 pod_spawner_quadrant_context_quadrant_##m(void) \
-    {                                                          \
-        return pod_spawner_quadrant_context_quadrant_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) pod_spawner_quadrant_context_quadrant_##m,
-static const CTestCase pod_spawner_quadrant_context_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 pod_spawner_quadrant_context_cases_expected[] = { 0x1u, 0x0u, 0x3u, 0x2u };
-#undef CASE
-#undef ENTRY
 
 enum { POOL_FULL,
     COOLDOWN,
@@ -279,20 +239,7 @@ static u32 pod_spawner_spawn_run(u32 mode)
         | ((u32)(spawner.ext.main_29.slots.children[0] != NULL) << 16) | ((u32)(spawner.ext.main_29.slots.children[1] != NULL) << 17);
 }
 
-#define CASE(name)                                   \
-    static u32 pod_spawner_spawn_##name##_case(void) \
-    {                                                \
-        return pod_spawner_spawn_run(name);          \
-    }
-CASE(POOL_FULL)
-CASE(COOLDOWN)
-CASE(HANDOFF)
-#define ENTRY(name) pod_spawner_spawn_##name##_case,
-static const CTestCase pod_spawner_spawn_cases[]
-    = { ENTRY(POOL_FULL) ENTRY(COOLDOWN) ENTRY(HANDOFF) };
 static const u32 pod_spawner_spawn_cases_expected[] = { 0x12000001u, 0x12000001u, 0x14000003u };
-#undef CASE
-#undef ENTRY
 
 static s32 frames[4] = { 8, 12, 0x11223344, 0x55667788 };
 static u32 pod_spawner_subtype_quadrants_quadrant_case(u32 mode)
@@ -415,94 +362,7 @@ static u32 pod_spawner_subtype_quadrants_quadrant_case(u32 mode)
     i = (u8)obj.unk5 | ((u32)(u8)shot_objects[31].unk2 << 8) | ((u32)context[0] << 16) | ((u32)context[1] << 24);
     return i;
 }
-#define CASE(m)                                                 \
-    static u32 pod_spawner_subtype_quadrants_quadrant_##m(void) \
-    {                                                           \
-        return pod_spawner_subtype_quadrants_quadrant_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-CASE(12)
-CASE(13)
-CASE(14)
-CASE(15)
-CASE(16)
-CASE(17)
-CASE(18)
-CASE(19)
-CASE(20)
-CASE(21)
-CASE(22)
-CASE(23)
-CASE(24)
-CASE(25)
-CASE(26)
-CASE(27)
-CASE(28)
-CASE(29)
-CASE(30)
-CASE(31)
-CASE(32)
-CASE(33)
-CASE(34)
-#define ENTRY(m) pod_spawner_subtype_quadrants_quadrant_##m,
-static const CTestCase pod_spawner_subtype_quadrants_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) ENTRY(12) ENTRY(13) ENTRY(14) ENTRY(15) ENTRY(16) ENTRY(17) ENTRY(18) ENTRY(19) ENTRY(20) ENTRY(21) ENTRY(22) ENTRY(23) ENTRY(24) ENTRY(25) ENTRY(26) ENTRY(27) ENTRY(28) ENTRY(29) ENTRY(30) ENTRY(31) ENTRY(32) ENTRY(33) ENTRY(34) };
 static const u32 pod_spawner_subtype_quadrants_cases_expected[] = { 0x1000103u, 0x1000203u, 0x1000203u, 0x1000003u, 0x1000003u, 0x1000303u, 0x1000303u, 0x1000103u, 0x1000203u, 0x1000203u, 0x1000203u, 0x1000203u, 0x1000303u, 0x1000303u, 0x1000303u, 0x1000303u, 0x1000103u, 0x1000103u, 0x1000003u, 0x1000003u, 0x1000003u, 0x1000003u, 0x1000103u, 0x1000103u, 0x902u, 0x902u, 0x1010103u, 0x1000103u, 0x1000103u, 0x1000902u, 0x902u, 0x902u, 0x902u, 0x902u, 0x902u };
-#undef CASE
-#undef ENTRY
-
-static const u32 func_8005A538_expected[] = { 0u, 0u, 1u, 0u, 0u, 0u, 3u, 0u, 8u, 0u, 1u, 1u, 7u, 2u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_func_8005A538(u32 row)
-{
-    u32 observed_values[19];
-    struct MainObj obj;
-    struct MainObj child_0;
-    u8 child_0_present;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    memset(&main_objects, 0, sizeof(main_objects));
-    child_0_present = 255;
-    pool_0_full = 255;
-    SP_CUR_MAIN_OBJ = child_0_present ? &child_0 : NULL;
-    {
-        u32 slot;
-        for (slot = 0; slot < 48; ++slot)
-            main_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    func_8005A538(&obj);
-    observed_values[0] = (u32)((u8*)&child_0.ext)[0];
-    observed_values[1] = (u32)((u8*)&child_0.ext)[1];
-    observed_values[2] = (u32)main_objects[0].active;
-    observed_values[3] = (u32)main_objects[0].id;
-    observed_values[4] = (u32)main_objects[0].unk2;
-    observed_values[5] = (u32)obj.air_state;
-    observed_values[6] = (u32)obj.contact_damage;
-    observed_values[7] = (u32)obj.gravity;
-    observed_values[8] = (u32)obj.hp;
-    observed_values[9] = (u32)obj.invincibility_timer;
-    observed_values[10] = (u32)obj.on_screen;
-    observed_values[11] = (u32)obj.state;
-    observed_values[12] = (u32)obj.unk16;
-    observed_values[13] = (u32)obj.unk5;
-    observed_values[14] = (u32)obj.unk6;
-    observed_values[15] = (u32)obj.unk7C;
-    observed_values[16] = (u32)obj.x_accel;
-    observed_values[17] = (u32)obj.x_speed;
-    observed_values[18] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, func_8005A538_expected, 19);
-}
 
 static const u32 inputs_0[2][5] = {
     { 255, 255, 255, 0, 0 },
@@ -544,14 +404,280 @@ static u32 test_pod_spawner_despawn(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 2);
 }
 
+#include "support/state_cases.h"
+
+static struct MainObj pod_target;
+static struct Main29Record pod_record;
+static struct MainObj pod_children[2];
+#define POD(step) (state_reset(step, 0, 0), memset(&pod_target, 0, sizeof(pod_target)), memset(&pod_record, 0, sizeof(pod_record)), memset(pod_children, 0, sizeof(pod_children)), SP_CUR_MAIN_OBJ = &so, so.ext.main_29.slots.controller.target = (struct Main29Record*)&pod_target, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+#define POD_SEEN() (state_extra = pod_target.state | pod_target.unk5 << 8 | pod_record.unk4 << 16 | (u32)(u8)pod_children[1].state << 24)
+static void pd_open_record(void)
+{
+    POD(0);
+    pod_record.unk0 = 1;
+    pod_record.unk1 = 0x10;
+    so.ext.main_29.slots.controller.record = &pod_record;
+    func_8005AD00(&so);
+    POD_SEEN();
+}
+static void pd_open_other(void)
+{
+    POD(0);
+    pod_record.unk0 = 1;
+    pod_record.unk1 = 0x11;
+    so.ext.main_29.slots.controller.record = &pod_record;
+    func_8005AD00(&so);
+    POD_SEEN();
+}
+static void pd_open_bare(void)
+{
+    POD(0);
+    func_8005AD00(&so);
+    POD_SEEN();
+}
+static void pd_rise(void)
+{
+    POD(1);
+    so.unk7C = 3;
+    main_bss_state.frame_counter = 1;
+    func_8005AD00(&so);
+    POD_SEEN();
+}
+static void pd_rise_puff(void)
+{
+    POD(1);
+    so.unk7C = 3;
+    main_bss_state.frame_counter = 0x10;
+    func_8005AD00(&so);
+}
+static void pd_rise_done(void)
+{
+    POD(1);
+    so.unk7C = 1;
+    main_bss_state.frame_counter = 2;
+    func_8005AD00(&so);
+    POD_SEEN();
+}
+static void pc_release(void)
+{
+    POD(0);
+    so.ext.main_29.source = &pod_target;
+    pod_target.x_pos.i.hi = 0x40;
+    pod_children[1].active = 1;
+    pod_children[1].id = 0x1C;
+    pod_children[0].active = 1;
+    so.ext.main_29.slots.children[1] = &pod_children[1];
+    so.ext.main_29.slots.children[0] = &pod_children[0];
+    func_8005B2C8(&so);
+    POD_SEEN();
+}
+static void pc_hover(void)
+{
+    POD(1);
+    so.ext.main_29.source = &pod_target;
+    main_bss_state.frame_counter = 1;
+    func_8005B2C8(&so);
+}
+static void pc_hover_hidden(void)
+{
+    POD(1);
+    so.ext.main_29.source = &pod_target;
+    main_bss_state.frame_counter = 4;
+    func_8005B2C8(&so);
+}
+static void pc_gone(void)
+{
+    POD(2);
+    so.active = 1;
+    so.ext.main_29.source = &pod_target;
+    func_8005B2C8(&so);
+}
+static void pd_idle(void)
+{
+    POD(1);
+    pod_spawner_idle(&so);
+}
+
+static void (*const pod_spawner_states_cases[])(void) = {
+    pd_open_record,
+    pd_open_other,
+    pd_open_bare,
+    pd_rise,
+    pd_rise_puff,
+    pd_rise_done,
+    pc_release,
+    pc_hover,
+    pc_hover_hidden,
+    pc_gone,
+    pd_idle,
+};
+static const u32 pod_spawner_states_expected[] = { 0x100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFF8000u, 0u, 0x50000u, 0x20003u, 0u, 0x100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFF8000u, 0u, 0x50000u, 3u, 0u, 0x100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFF8000u, 0u, 0x50000u, 3u, 0u, 0x100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x200u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0x200u, 0u, 0x100u, 0u, 0x400000u, 0u, 0u, 0u, 0u, 0x40000u, 0x3000000u, 0u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x100u, 0u, 0u, 0u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+
+static u32 test_pod_spawner_states(u32 row)
+{
+    return object_run(pod_spawner_states_cases[row], row, &pod_spawner_states_expected[row * 10]);
+}
+
+void pod_spawner_update(struct MainObj*);
+
+static u32 orphan(u32 row)
+{
+    static const u32 expected[3] = { 1018203287u, 4011073377u, 3526619004u };
+    struct MainObj* self = &main_objects[0];
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    u32 hash, i;
+#ifndef MMX4_PC
+    u32 low[2];
+    low[0] = ((volatile u32*)0)[0];
+    low[1] = ((volatile u32*)0)[1];
+#endif
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
+    for (i = 1; i < COUNT(main_objects); i++)
+        main_objects[i].active = 1;
+    for (i = 0; i < 6; i++)
+        D_8013E198[i] = -1;
+    self->active = 0x41;
+    self->id = 29;
+    self->x_pos.i.hi = 160;
+    self->y_pos.i.hi = 120;
+    SP_CUR_MAIN_OBJ = self;
+    main_bss_state.frame_counter = 1;
+    pod_spawner_update(self);
+    assert(self->state == 1 && self->ext.main_29.slots.controller.target == NULL);
+    assert(self->ext.main_29.slots.controller.record == NULL);
+    self->state = row == 1 ? 2 : 3;
+    self->unk5 = row == 2;
+    self->unk7C = 1;
+    pod_spawner_update(self);
+    hash = hash_animated(0, (struct AnimatedObj*)self);
+    hash = hash * 31 + self->unk7C;
+    for (i = 1; i < COUNT(main_objects); i++)
+        assert(main_objects[i].active == 1 && main_objects[i].state == 0);
+    SP_CUR_MAIN_OBJ = current;
+#ifndef MMX4_PC
+    ((volatile u32*)0)[0] = low[0];
+    ((volatile u32*)0)[1] = low[1];
+#endif
+    return c_test_observe(0, row, &hash, &expected[row], 1);
+}
+
+extern union AnimationStep* pod_spawner_animations[16];
+static struct ItemObj items_before[32];
+static u32 teardown(u32 row)
+{
+    struct MainObj obj, expected, source, source_expected, target, target_expected, *current = SP_CUR_MAIN_OBJ;
+    struct ShotObj record, record_expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 mode = row < 24 ? row % 3 : 0, copy = row < 24 && row / 3 % 2, face = row < 24 ? row / 6 % 2 : (row - 24) % 2, layer = row < 24 ? row / 12 : (row - 24) / 4, i, backref = row >= 24 && (row - 24) / 2 % 2 ? 0x8F : 0xDF, saved_backref = backref;
+    memset(&obj, 0, sizeof(obj));
+    memset(&source, 0, sizeof(source));
+    memset(&target, 0, sizeof(target));
+    memset(&record, 0, sizeof(record));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < 32; i++) {
+        memset(&item_objects[i], 0, sizeof(item_objects[i]));
+        item_objects[i].active = 1;
+    }
+    memcpy(items_before, item_objects, sizeof(items_before));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    obj.active = 0x41;
+    obj.id = 29;
+    obj.state = copy ? 1 : 3;
+    obj.unk2 = copy ? -1 : 0;
+    obj.unk5 = 0;
+    obj.unk6 = copy ? 3 : 0;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.bg_offset = layer;
+    source.active = 0x41;
+    source.id = 29;
+    source.state = 1;
+    source.x_pos.val = 160 * 65536 + 0x1234;
+    source.y_pos.val = 120 * 65536 + 0x5678;
+    source.unk42 = 0x9234;
+    obj.x_pos = source.x_pos;
+    obj.y_pos = source.y_pos;
+    obj.x_speed = 0x18000;
+    obj.x_accel = 0x1000;
+    obj.y_speed = 0x20000;
+    obj.gravity = 0x4200;
+    obj.unk42 = 0xFFFF;
+    target.active = 0x41;
+    target.id = 29;
+    target.unk2 = -1;
+    target.state = 1;
+    target.unk5 = 2;
+    record.active = mode == 2 ? 0x41 : 0;
+    record.id = 16;
+    record.state = 1;
+    source.ext.main_29.slots.controller.record = mode ? (struct Main29Record*)&record : NULL;
+    source.ext.main_29.slots.controller.target = (struct Main29Record*)&target;
+    obj.ext.main_29.source = &source;
+    obj.animation_table = (const u8* const*)pod_spawner_animations;
+    set_animation(&obj, copy ? 5 : 0);
+    expected = obj;
+    source_expected = source;
+    target_expected = target;
+    record_expected = record;
+    if (row >= 24) {
+        obj.unk5 = expected.unk5 = 2;
+        obj.backref = expected.backref = (u8*)&backref;
+        memset(&expected, 0, 8);
+    } else if (copy) {
+        expected.unk42 = source.unk42;
+        expected.animation_step.fields.duration = 0;
+        expected.animation_cursor += 4;
+        memcpy(&expected.animation_step, expected.animation_cursor, 4);
+        expected.unk6 = 4;
+        expected.unk7C = 120;
+        expected.on_screen = 1;
+        if (mode == 2) {
+            record_expected.state = 2;
+            source_expected.ext.main_29_controller.unk81 = 2;
+        }
+    } else {
+        target_expected.state = 3;
+        target_expected.unk5 = 0;
+        expected.unk5 = 1;
+        expected.unk7C = 60;
+        expected.x_speed = expected.x_accel = expected.gravity = 0;
+        expected.y_speed = -0x8000;
+        expected.unk42 = 0x7FFF;
+        expected.on_screen = 1;
+        if (mode == 2)
+            record_expected.state = 2;
+    }
+    cur_random = 0x1234;
+    SP_CUR_MAIN_OBJ = copy ? &obj : &source;
+    if (copy)
+        func_8005AF5C(&obj);
+    else
+        func_8005AD00(&obj);
+    assert(SP_CUR_MAIN_OBJ == (copy ? &obj : &source));
+    SP_CUR_MAIN_OBJ = current;
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&source, &source_expected, sizeof(source));
+    c_test_same_words(&target, &target_expected, sizeof(target));
+    c_test_same_words(&record, &record_expected, sizeof(record));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    assert(c_test_word_difference((u32*)item_objects, (u32*)items_before, sizeof(items_before) / 4) == 0 && cur_random == (row >= 24 ? 0x366A : 0x1234) && backref == (row >= 24 ? saved_backref & 0x70 : saved_backref));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "pod_spawner_children_context", pod_spawner_children_context_cases, pod_spawner_children_context_cases_expected, COUNT(pod_spawner_children_context_cases), 0 },
-    { "pod_spawner_linked_cleanup", pod_spawner_linked_cleanup_cases, pod_spawner_linked_cleanup_cases_expected, COUNT(pod_spawner_linked_cleanup_cases), 0 },
-    { "pod_spawner_quadrant_context", pod_spawner_quadrant_context_cases, pod_spawner_quadrant_context_cases_expected, COUNT(pod_spawner_quadrant_context_cases), 0 },
-    { "pod_spawner_spawn", pod_spawner_spawn_cases, pod_spawner_spawn_cases_expected, COUNT(pod_spawner_spawn_cases), 0 },
-    { "pod_spawner_subtype_quadrants", pod_spawner_subtype_quadrants_cases, pod_spawner_subtype_quadrants_cases_expected, COUNT(pod_spawner_subtype_quadrants_cases), 0 },
-    { "func_8005A538", 0, 0, 1, test_func_8005A538 },
+    { "pod_spawner_states", 0, 0, COUNT(pod_spawner_states_cases), test_pod_spawner_states },
+    { "pod_spawner_children_context", NULL, pod_spawner_children_context_cases_expected, COUNT(pod_spawner_children_context_cases_expected), pod_spawner_children_context_cases_row },
+    { "pod_spawner_linked_cleanup", NULL, pod_spawner_linked_cleanup_cases_expected, COUNT(pod_spawner_linked_cleanup_cases_expected), cleanup_case },
+    { "pod_spawner_quadrant_context", NULL, pod_spawner_quadrant_context_cases_expected, COUNT(pod_spawner_quadrant_context_cases_expected), pod_spawner_quadrant_context_quadrant_case },
+    { "pod_spawner_spawn", NULL, pod_spawner_spawn_cases_expected, COUNT(pod_spawner_spawn_cases_expected), pod_spawner_spawn_run },
+    { "pod_spawner_subtype_quadrants", NULL, pod_spawner_subtype_quadrants_cases_expected, COUNT(pod_spawner_subtype_quadrants_cases_expected), pod_spawner_subtype_quadrants_quadrant_case },
     { "pod_spawner_despawn", 0, 0, 2, test_pod_spawner_despawn },
+    { "orphan_controller_death_and_despawn", NULL, NULL, 3, orphan },
+    { "null_inactive_live_records_and_final_drop_with_full_pool", NULL, NULL, 32, teardown },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pod_spawner_children_context_cases) + COUNT(pod_spawner_linked_cleanup_cases) + COUNT(pod_spawner_quadrant_context_cases) + COUNT(pod_spawner_spawn_cases) + COUNT(pod_spawner_subtype_quadrants_cases) + 1 + 2;
+const u32 c_test_count = COUNT(pod_spawner_states_cases) + COUNT(pod_spawner_children_context_cases_expected) + COUNT(pod_spawner_linked_cleanup_cases_expected) + COUNT(pod_spawner_quadrant_context_cases_expected) + COUNT(pod_spawner_spawn_cases_expected) + COUNT(pod_spawner_subtype_quadrants_cases_expected) + 2 + 3 + 32;

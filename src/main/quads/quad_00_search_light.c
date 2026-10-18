@@ -5,28 +5,6 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
-struct SearchLightColorLookup {
-    u16 values[3];
-    u16 alignment;
-};
-struct SearchLightIntensityLookup {
-    u8 values[3];
-    u8 alignment;
-};
-
-struct Unk22 {
-    u8 pad0[8];
-    s32 unk8;
-    s32 unkC;
-    u8 pad[0x28];
-    s32 unk38;
-    s32 unk3C;
-    s32 unk40;
-    s32 unk44;
-    s32 unk48;
-    s32 unk4C;
-};
-
 extern void (*g_SearchLightUpdateFuncs[3])(struct QuadObj*);
 
 extern s32 search_light_speeds[3];

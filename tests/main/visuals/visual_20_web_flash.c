@@ -65,27 +65,10 @@ static u32 flash_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.active | ((u32)(u8)obj.on_screen << 8) | ((u32)(u8)obj.state << 16);
 }
-#define CASE(m)                \
-    static u32 flash_##m(void) \
-    {                          \
-        return flash_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) flash_##m,
-static const CTestCase web_flash_pointer_views_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 web_flash_pointer_views_cases_expected[] = { 0x10141u, 0x0u, 0x10141u, 0x10141u, 0x0u, 0x0u, 0x0u };
-#undef CASE
-#undef ENTRY
 
 const struct CTestGroup c_test_groups[] = {
-    { "web_flash_pointer_views", web_flash_pointer_views_cases, web_flash_pointer_views_cases_expected, COUNT(web_flash_pointer_views_cases), 0 },
+    { "web_flash_pointer_views", NULL, web_flash_pointer_views_cases_expected, COUNT(web_flash_pointer_views_cases_expected), flash_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_flash_pointer_views_cases);
+const u32 c_test_count = COUNT(web_flash_pointer_views_cases_expected);

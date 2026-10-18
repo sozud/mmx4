@@ -1,6 +1,7 @@
 #include "all.h"
 
 #include <libspu.h>
+#include "memcard.h"
 #include "pc_replay.h"
 
 extern u16 D_800F44E8[8], D_800F44F8[8];
@@ -441,7 +442,7 @@ s32 func_8001540C(s32 arg0, s32 arg1, void* arg2)
         return -1;
     if (D_80141F50[group] == NULL || D_80141EE8[group] == NULL)
         return -2;
-    count = (u32*)D_80141EE8[group] - (u32*)D_80141F50[group];
+    count = (u8)((u32*)D_80141EE8[group] - (u32*)D_80141F50[group]);
     if (index >= count)
         return -2;
     command = &((u32*)D_80141F50[group])[index];
@@ -644,7 +645,7 @@ extern s32 D_80139544;
 s32 func_80013614(s32 arg0, s32* arg1);
 void func_80016420(arg_u8 arg0);
 
-void func_8002217C(u16 message, u8 portrait, u8 delay_only)
+void func_8002217C(arg_u16 message, u8 portrait, s32 delay_only)
 {
     struct MiscObj* window;
     u8* window_archive;
@@ -655,6 +656,21 @@ void func_8002217C(u16 message, u8 portrait, u8 delay_only)
     if (abc_object.unkC != 0) {
         abc_object.unk10 = message | 0x8000;
         if (abc_object.unkC != 0x80) {
+            struct MiscObj* parts[] = {
+                D_801397C0,
+                D_801397C4,
+                D_801397CC,
+                D_801397C8,
+                D_801397D4,
+                D_801397D0,
+            };
+            u32 i;
+            for (i = 0; i < COUNT(parts); i++) {
+                if (parts[i] != NULL && parts[i]->id == 0x16) {
+                    parts[i]->active = 0;
+                    parts[i]->on_screen = 0;
+                }
+            }
             abc_object.unkC = 0x80;
             abc_object.unkA = 0x27;
             abc_object.unkD = 4;
@@ -1665,6 +1681,38 @@ void func_80026AA0(s32 layer)
     SP_BG_PRIM_CURSOR = sprite;
 }
 
+void func_800270F8(s32 x, s32 y, s32 tile_x, s32 tile_y)
+{
+    SPRT_16* sprite = SP_BG_PRIM_CURSOR;
+    u32 row, column;
+
+    for (row = 0; row < SP_BG_BLOCK_HEIGHT; row++) {
+        for (column = 0; column < SP_BG_BLOCK_WIDTH; column++) {
+            u32 attributes = SP_BG_TILE_ATTRS[SP_BG_BLOCK * 256
+                + (tile_y + row) * 16 + tile_x + column];
+            u8 page = attributes >> 8;
+
+            if (page != 0) {
+                u16 bucket = page - 0x15;
+                P_TAG* tail = background_tails[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket];
+
+                setXY0(sprite, x + column * 16, y + row * 16);
+                setUV0(sprite, (attributes & 15) * 16, attributes & 0xF0);
+                sprite->clut = attributes >> 16;
+                if (tail == NULL) {
+                    background_heads[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket] = (P_TAG*)sprite;
+                } else {
+                    setaddr(tail, sprite);
+                }
+                background_tails[SP_DRAW_BUFFER][SP_CUR_BG_INDEX][bucket] = (P_TAG*)sprite;
+                sprite++;
+            }
+        }
+    }
+
+    SP_BG_PRIM_CURSOR = sprite;
+}
+
 void func_80027344(s32 layer, s32 x, s32 y)
 {
     struct BackgroundObj* bg = &background_objects[layer];
@@ -2426,10 +2474,12 @@ void func_800C63BC(struct ItemObj* arg0)
     g_Player.item_step = 0;
     set_animation(ANIMATED_OBJECT(arg0), 0);
 
-    do {
-        arg0->y_pos.u.hi += 0x10;
+    for (;;) {
         CollisionRelated(PLAYER_OBJECT(arg0));
-    } while (!(arg0->unk70 & 8));
+        if (arg0->unk70 & 8)
+            break;
+        arg0->y_pos.u.hi += 0x10;
+    }
 
     child = find_free_item_obj();
     if (child != NULL) {
@@ -4238,8 +4288,8 @@ void func_80052CB8(struct MainObj* arg0)
 
 u8 func_80053B54(struct MainObj* arg0)
 {
-    s16 dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
-    s16 dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    s32 dx = (s16)(g_Player.x_pos.i.hi - arg0->x_pos.i.hi);
+    s32 dy = (s16)(g_Player.y_pos.i.hi - arg0->y_pos.i.hi);
     u8 direction;
     s32 selected = 0;
 
@@ -5993,8 +6043,12 @@ void func_800200D4(struct EngineObj* arg0)
             }
         } else if (arg0->substage == 0
             && (arg0->stage >= 0xB || arg0->stage == 0)) {
-            arg0->substage = 1;
-            arg0->state = 4;
+            if (arg0->stage != 0) {
+                arg0->state = 0xA;
+            } else {
+                arg0->substage = 1;
+                arg0->state = 4;
+            }
         } else if (*(u16*)&arg0->stage == 0x10C) {
             arg0->state = 0xB;
         } else {
@@ -7216,10 +7270,12 @@ void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius,
         visual->active = 0x21;
         visual->id = 9;
         visual->unk2 = 0;
-        random_value = ((get_random() & 0xFF) << 8) | (get_random() & 0xFF);
-        visual->x_pos.i.hi = width == 0 ? left : left + (random_value + 1) % width;
-        random_value = ((get_random() & 0xFF) << 8) | (get_random() & 0xFF);
-        visual->y_pos.i.hi = height == 0 ? top : top + (random_value + 1) % height;
+        random_value = (u32)get_random() << 8;
+        random_value |= get_random();
+        visual->x_pos.i.hi = width == 0 ? left : left + (s32)(u16)(random_value + 1) % width;
+        random_value = (u32)get_random() << 8;
+        random_value |= get_random();
+        visual->y_pos.i.hi = height == 0 ? top : top + (s32)(u16)(random_value + 1) % height;
         visual->x_pos.u.lo = 0;
         visual->y_pos.u.lo = 0;
         if (((u8)type & 3) == 1) {
@@ -7968,8 +8024,8 @@ void func_8007BE40(struct MainObj* arg0)
     x_offset = flame_jet_smoke_offsets[index * 2];
     if (arg0->unk15 != 0)
         x_offset = -x_offset;
-    spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0, x_offset << 16,
-        flame_jet_smoke_offsets[index * 2 + 1] << 16);
+    spawn_debris_offset(8, (u8*)flame_jet_extinguish_debris, (struct MiscObj*)arg0, (s32)((u32)x_offset << 16),
+        (s32)((u32)flame_jet_smoke_offsets[index * 2 + 1] << 16));
     arg0->state = 1;
     arg0->unk5 = 3;
     arg0->unk7E = 0xC8;
@@ -8954,8 +9010,8 @@ void func_800A6DF4(struct ShotObj* arg0)
     }
     arg0->unk90.bytes[0] = next;
     set_velocity_from_angle(MOVING_OBJECT(arg0), next);
-    arg0->x_vel.val <<= 2;
-    arg0->y_vel.val <<= 2;
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
     animation = next / 2;
     set_animation(arg0, animation < 4 ? animation + 0xF : animation - 1);
 }
@@ -9718,9 +9774,9 @@ void func_80098630(struct WeaponObj* arg0)
     arg0->y_pos.i.hi += ride_chaser_shot_offsets[arg0->unk2][1];
     set_velocity_from_angle(MOVING_OBJECT(arg0), ride_chaser_shot_angles[arg0->unk2]);
     arg0->unk60 = 3;
-    arg0->x_vel.val <<= 3;
+    arg0->x_vel.val *= 8;
     arg0->unk5C = 1;
-    arg0->y_vel.val <<= 3;
+    arg0->y_vel.val *= 8;
     set_animation(arg0, ride_chaser_shot_animations[arg0->unk2]);
 }
 
@@ -10162,7 +10218,7 @@ void func_80061F2C(struct MainObj* arg0)
         return;
     }
     if (ext->unk80 != 0 && ext->unk80 < 7) {
-        dy = breakable_terrain_effect_offsets[(ext->unk80 - 2) * 2 + 1] << 16;
+        dy = (s32)((u32)breakable_terrain_effect_offsets[(ext->unk80 - 2) * 2 + 1] << 16);
         if (arg0->y_pos.val - dy - background_objects[arg0->bg_offset].y_pos.val > 0xA80000) {
             ext->timer = 0x10;
             ext->trigger_time = 8;
@@ -10243,7 +10299,7 @@ void func_800BD080(struct EffectObj* arg0)
 
 void func_800CE114(struct MiscObj* arg0)
 {
-    const u8* rows = (const u8*)arg0->ext.unk.unk50;
+    const u8* rows = (const u8*)arg0->ext.misc_32.owner;
 
     arg0->unk40 = 0x1E00;
     arg0->animation_table = (u32**)option_toggle_animations;
@@ -10255,7 +10311,7 @@ void func_800CE114(struct MiscObj* arg0)
     arg0->y_pos.i.hi = rows[main_bss_state.transition.selection * 2 + 2] + 8;
     arg0->unk16 = 0x10;
     arg0->state++;
-    arg0->ext.unk.unk54 = main_bss_state.transition.selection;
+    arg0->ext.misc_32.animation = main_bss_state.transition.selection;
     set_animation(arg0, 0);
     is_on_screen(BASE_OBJECT(arg0));
 }
@@ -10576,8 +10632,8 @@ void func_80098AF8(struct WeaponObj* arg0)
     set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
     arg0->unk5C = 1;
     arg0->unk60 = 3;
-    arg0->x_vel.val <<= 3;
-    arg0->y_vel.val <<= 3;
+    arg0->x_vel.val *= 8;
+    arg0->y_vel.val *= 8;
     set_animation(arg0, arg0->unk2 + 0x1F);
 }
 
@@ -12036,8 +12092,8 @@ void func_800978DC(struct WeaponObj* arg0)
     arg0->unk15 = g_Player.unk15;
     buster_shot_place_at_muzzle((struct VisualObj*)arg0, &g_Player, arg0->id);
     set_velocity_from_angle(MOVING_OBJECT(arg0), arg0->unk2 == 0 ? 2 : 0x1E);
-    arg0->x_vel.val <<= 3;
-    arg0->y_vel.val <<= 3;
+    arg0->x_vel.val *= 8;
+    arg0->y_vel.val *= 8;
     if (arg0->unk15 == 0)
         arg0->x_vel.val = -arg0->x_vel.val;
     arg0->unk28.val = 0;
@@ -12113,8 +12169,8 @@ void func_800B20CC(struct VisualObj* arg0)
     arg0->unk54 = direction;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
-    arg0->x_vel.val <<= 1;
-    arg0->y_vel.val <<= 1;
+    arg0->x_vel.val *= 2;
+    arg0->y_vel.val *= 2;
     quad = find_free_quad_obj();
     if (quad != NULL) {
         quad->active = -0x7F;
@@ -12855,7 +12911,7 @@ void func_800A56E4(struct ShotObj* arg0)
         arg0->unk60 = 4;
         arg0->x_pos.val = owner->x_pos.val + (owner->unk15 != 0 ? -0x100000 : 0x100000);
         arg0->y_pos.val = owner->y_pos.val - 0x200000;
-        arg0->x_vel.val = magma_fire_wave_offsets[arg0->unk7] << 12;
+        arg0->x_vel.val = (s32)((u32)magma_fire_wave_offsets[arg0->unk7] << 12);
         if (arg0->unk15 != 0)
             arg0->x_vel.val = -arg0->x_vel.val;
         arg0->y_vel.val = 0x50000;
@@ -13231,8 +13287,8 @@ void func_800A63B0(struct ShotObj* arg0)
     set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)arg0->unk84.value);
     arg0->unk2C = 0;
     arg0->unk28 = 0;
-    arg0->x_vel.val <<= 2;
-    arg0->y_vel.val <<= 2;
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
 }
 
 void func_800A6510(struct ShotObj* arg0)
@@ -13249,8 +13305,8 @@ void func_800A6510(struct ShotObj* arg0)
             direction = ((u32)((target - direction) & 0x1F) < 0x10) ? direction + 1 : direction - 1;
             arg0->unk84.value = direction & 0x1F;
             set_velocity_from_angle(MOVING_OBJECT(arg0), direction & 0x1E);
-            arg0->x_vel.val <<= 2;
-            arg0->y_vel.val <<= 2;
+            arg0->x_vel.val *= 4;
+            arg0->y_vel.val *= 4;
             set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
         }
     }
@@ -13309,7 +13365,7 @@ void func_800D1990(struct MiscObj* arg0)
     arg0->unk2C = 0x4000;
     arg0->ext.misc_49.timer = 0xA;
     arg0->unk28 = 0;
-    arg0->x_vel.val <<= 1;
+    arg0->x_vel.val *= 2;
     arg0->y_vel.val *= 3;
 }
 
@@ -13639,16 +13695,16 @@ void func_800A3CB4(struct ShotObj* arg0)
     arg0->y_pos.i.hi = owner->y_pos.i.hi + 6;
     if (arg0->unk2 == 0) {
         set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
-        arg0->x_vel.val <<= 2;
-        arg0->y_vel.val <<= 2;
+        arg0->x_vel.val *= 4;
+        arg0->y_vel.val *= 4;
         return;
     }
     if (arg0->unk2 >= 5) {
         arg0->x_pos.i.hi = owner->x_pos.i.hi;
         arg0->y_pos.i.hi = owner->y_pos.i.hi;
         set_velocity_from_angle(MOVING_OBJECT(arg0), (owner->ext.main_60.storm_timer + (arg0->unk2 - 5) * 8 + 4) & 0x1F);
-        arg0->x_vel.val <<= 3;
-        arg0->y_vel.val <<= 3;
+        arg0->x_vel.val *= 8;
+        arg0->y_vel.val *= 8;
         return;
     }
     background_x = background_objects[0].x_pos.i.hi;
@@ -13677,8 +13733,8 @@ void func_800A3CB4(struct ShotObj* arg0)
         angle_to_point(OBJECT_HEADER(arg0), (background_x + owl_feather_velocities[arg0->unk84.value][0]) << 16,
             (background_y + owl_feather_velocities[arg0->unk84.value][1]) << 16)
             & 0xFF);
-    arg0->x_vel.val <<= 1;
-    arg0->y_vel.val <<= 1;
+    arg0->x_vel.val *= 2;
+    arg0->y_vel.val *= 2;
 }
 
 void func_800A3FEC(struct ShotObj* arg0)
@@ -13698,8 +13754,8 @@ void func_800A3FEC(struct ShotObj* arg0)
             target_y = background_objects[0].y_pos.i.hi + owl_feather_velocities[arg0->unk84.value][1];
             set_velocity_from_angle(MOVING_OBJECT(arg0),
                 angle_to_point(OBJECT_HEADER(arg0), target_x << 16, target_y << 16) & 0xFF);
-            arg0->x_vel.val <<= 1;
-            arg0->y_vel.val <<= 1;
+            arg0->x_vel.val *= 2;
+            arg0->y_vel.val *= 2;
             d = arg0->x_pos.i.hi - target_x;
             if ((d < 0 ? -d : d) < 8)
                 arg0->x_vel.val = 0;
@@ -13842,6 +13898,10 @@ void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
     arg0->unk50 = NULL;
 }
 
+void aiming_laser_marker_init(struct WeaponObj*);
+void aiming_laser_marker_fire(struct WeaponObj*);
+void aiming_laser_marker_despawn(struct WeaponObj*, struct PlayerObj*);
+
 void func_800961B0(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -13870,8 +13930,20 @@ void func_800961B0(struct WeaponObj* arg0)
         arg0->state = 3;
     arg0->x_pos.val = owner->x_pos.val;
     arg0->y_pos.val = owner->y_pos.val;
-    ((void (*)(struct WeaponObj*, struct PlayerObj*, struct PlayerObj*))aiming_laser_marker_state_funcs[arg0->state])(
-        arg0, player, (struct PlayerObj*)owner);
+    switch (arg0->state) {
+    case 0:
+        aiming_laser_marker_init(arg0);
+        break;
+    case 1:
+        aiming_laser_marker_wait_fire(arg0, player, (struct PlayerObj*)owner);
+        break;
+    case 2:
+        aiming_laser_marker_fire(arg0);
+        break;
+    default:
+        aiming_laser_marker_despawn(arg0, player);
+        break;
+    }
 }
 
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target)
@@ -14893,7 +14965,7 @@ void func_800793AC(struct MainObj* arg0)
     }
     if (arg0->animation_step.fields.event == 2) {
         if (engine_obj.stage == 3) {
-            func_8002217C(0xA, 0xFF, engine_obj.character_state.bytes[8]);
+            func_8002217C(0xA, 0xFF, (u8)engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
         arg0->unk6 = 5;
@@ -18486,6 +18558,41 @@ void func_8001F6E8(struct EngineObj* arg0)
     arg0->unk2++;
 }
 
+extern union AnimationStep* cutscene_actor_animations[8];
+
+void func_800D1B44(struct MiscObj* self)
+{
+    u32 row;
+    u32 i;
+
+    if (self->unk2 != 0) {
+        self->animation_table = (void*)cutscene_actor_animations;
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 0);
+        self->unk42 = 0x7880;
+        self->unk40 = (u16)(D_801406A8[0] >> 7);
+        for (row = 0; row < 4; row++) {
+            for (i = 0; i < 15; i++)
+                SP_PALETTE[0x201 + row * 0x10 + i] = 0x8000;
+        }
+        need_palette_load |= 1;
+        set_animation(self, self->unk2 - 1);
+        self->state = 1;
+        self->unk16 = 0x10;
+    } else {
+        self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 1);
+        self->unk42 = 0x784C;
+        self->x_pos.i.hi = 0x88;
+        self->y_pos.i.hi = 0x78;
+        self->state = 2;
+        self->animation_step.fields.frame_index = 0;
+        self->unk16 = 0x11;
+        self->unk40 = (u16)(D_801406A8[1] >> 7);
+    }
+    self->bg_offset = -1;
+    self->unk15 = 0;
+    is_on_screen(BASE_OBJECT(self));
+}
+
 void func_800D11B0(struct MiscObj* self)
 {
     self->unk28 = 0;
@@ -19122,8 +19229,8 @@ void func_800AD338(struct ShotObj* self)
     set_velocity_from_angle(MOVING_OBJECT(self),
         (u8)angle_to_point(OBJECT_HEADER(self), self->unk84.shot_55.x << 16,
             self->unk84.shot_55.y << 16));
-    self->x_vel.val <<= 2;
-    self->y_vel.val <<= 2;
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
     animate_object(ANIMATED_OBJECT(self));
     move_object(MOVING_OBJECT(self));
     if (sigma_final_shot_at_position(self, self->unk84.shot_55.x, self->unk84.shot_55.y) & 0xFF) {
@@ -22567,8 +22674,10 @@ void func_8005AD00(struct MainObj* self)
         if (record != NULL && record->unk0 != 0 && record->unk1 == 0x10) {
             record->unk4 = 2;
         }
-        target->state = 3;
-        target->unk5 = 0;
+        if (target != NULL) {
+            target->state = 3;
+            target->unk5 = 0;
+        }
         self->unk5 = 1;
         self->unk7C = 0x3C;
         self->x_speed = 0;
@@ -22582,7 +22691,8 @@ void func_8005AD00(struct MainObj* self)
     case 1:
         if (--self->unk7C == 0) {
             target = (struct ObjectHeader*)SP_CUR_MAIN_OBJ->ext.main_29.slots.controller.target;
-            target->unk5 = 2;
+            if (target != NULL)
+                target->unk5 = 2;
             self->unk5 = 2;
         } else {
             move_with_gravity(ANIMATED_OBJECT(self));
@@ -23153,8 +23263,8 @@ void func_80066DE8(struct MainObj* self)
     self->air_state = 0;
     self->unk16 = 3;
     self->terrain_box = NULL;
-    self->hurt_box = NULL;
-    self->attack_box = (u8*)train_boss_armor_hurt_boxes[self->unk2];
+    self->attack_box = NULL;
+    self->hurt_box = (u8*)train_boss_armor_hurt_boxes[self->unk2];
     self->unk15 = 0;
     shot = find_free_shot_obj();
     if (shot != NULL) {
@@ -23238,9 +23348,9 @@ void func_80066F1C(struct MainObj* self)
 void func_8006ED44(struct MainObj* self)
 {
     struct Main55Ext* ext = &self->ext.main_55;
-    switch (ext->pad80[4]) {
+    switch (ext->unk84) {
     case 0:
-        ext->pad80[4] = 1;
+        ext->unk84 = 1;
         ext->unk87 = 0;
         self->unk5 = 5;
         self->unk6 = 0;
@@ -23249,10 +23359,10 @@ void func_8006ED44(struct MainObj* self)
         break;
     case 1:
         if (ext->unk85 == 0)
-            ext->pad80[4] = 3;
+            ext->unk84 = 3;
         if (self->unk7C == 0xF0 || ext->unk85 < 5) {
             ext->unk87 = 1;
-            ext->pad80[4] = 2;
+            ext->unk84 = 2;
             self->unk7C = 20;
         } else {
             self->unk7C = (s16)((u16)self->unk7C + 1);
@@ -23263,7 +23373,7 @@ void func_8006ED44(struct MainObj* self)
             self->unk7C = (s16)((u16)self->unk7C - 1);
         } else {
             if (ext->unk88 == 0)
-                ext->pad80[4] = 3;
+                ext->unk84 = 3;
             for (unsigned bit = 0; bit < 8; bit++) {
                 if ((ext->unk88 >> bit) & 1) {
                     ext->unk88 &= ~(1U << bit);
@@ -23274,7 +23384,7 @@ void func_8006ED44(struct MainObj* self)
         }
         break;
     case 3:
-        ext->pad80[4] = 0;
+        ext->unk84 = 0;
         self->unk5 = 4;
         self->unk6 = 0;
         self->unk7 = 0;
@@ -23644,65 +23754,21 @@ static const u8 memcard_save_title[21] = {
 
 s32 func_8001C8F4(u8* buffer, s32 device_num, s32 size)
 {
-    char path[20] = "bu00:BASLUS-00561";
     u8 verification[0x200];
-    s32 fd, retries, attempt, received;
+    s32 result;
 
     buffer[3] = ((u32)size >> 13) + ((size & 0x1FFF) != 0);
-    path[2] += device_num;
     memcpy(buffer + 4, memcard_save_title, sizeof(memcard_save_title));
-    fd = open(path, ((u32)buffer[3] << 16) | 0x200);
-    close(fd);
-    for (attempt = 0; attempt < 3; attempt++) {
-        for (retries = 30; retries != 0; retries--) {
-            fd = open(path, 2);
-            if (fd != -1)
-                break;
-            VSync(2);
-        }
-        if (retries == 0)
-            return 1;
-        for (retries = 30; retries != 0; retries--) {
-            if (write(fd, buffer, size) == size)
-                break;
-            VSync(2);
-        }
-        if (retries == 0)
-            return 2;
-        close(fd);
-        fd = open(path, 1);
-        if (fd == -1)
-            return 2;
-        received = read(fd, verification, sizeof(verification));
-        close(fd);
-        if (received == sizeof(verification))
-            return 0;
-    }
-    return 2;
+    result = mmx4_pc_card_write(device_num, buffer, size);
+    if (result != 0)
+        return result;
+    return mmx4_pc_card_read(device_num, verification, sizeof(verification)) == 0 ? 0 : 2;
 }
 
 s32 func_8001CB24(u8* buffer, s32 device_num, s32 size)
 {
-    char path[20] = "bu00:BASLUS-00561";
-    s32 fd, retries;
-    path[2] += device_num;
-    for (retries = 30; retries != 0; retries--) {
-        fd = open(path, 1);
-        if (fd != -1)
-            break;
-        VSync(2);
-    }
-    if (retries == 0)
-        return 1;
-    for (retries = 30; retries != 0; retries--) {
-        if (read(fd, buffer, 0x800) == 0x800)
-            break;
-        VSync(2);
-    }
-    if (retries == 0)
-        return 2;
-    close(fd);
-    return 0;
+    (void)size;
+    return mmx4_pc_card_read(device_num, buffer, 0x800);
 }
 
 // src/main/menu.c

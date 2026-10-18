@@ -80,30 +80,10 @@ static u32 ring_case(u32 mode)
         assert(((u32*)background_objects)[i] == ((u32*)backgrounds_before)[i]);
     return obj.state | ((u32)(u8)obj.unk2 << 8) | ((u32)obj.animation_step.fields.duration << 16);
 }
-#define CASE(m)               \
-    static u32 ring_##m(void) \
-    {                         \
-        return ring_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-#define ENTRY(m) ring_##m,
-static const CTestCase charge_ring_parent_animation_context_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) };
 static const u32 charge_ring_parent_animation_context_cases_expected[] = { 0x50301u, 0x50301u, 0x50301u, 0x10601u, 0x20701u, 0x60302u, 0x60302u, 0x60303u, 0x50302u, 0x10601u };
-#undef CASE
-#undef ENTRY
 
 const struct CTestGroup c_test_groups[] = {
-    { "charge_ring_parent_animation_context", charge_ring_parent_animation_context_cases, charge_ring_parent_animation_context_cases_expected, COUNT(charge_ring_parent_animation_context_cases), 0 },
+    { "charge_ring_parent_animation_context", NULL, charge_ring_parent_animation_context_cases_expected, COUNT(charge_ring_parent_animation_context_cases_expected), ring_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(charge_ring_parent_animation_context_cases);
+const u32 c_test_count = COUNT(charge_ring_parent_animation_context_cases_expected);

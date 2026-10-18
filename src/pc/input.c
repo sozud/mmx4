@@ -48,6 +48,9 @@ static size_t replay_load_point_index;
 static unsigned long replay_xa_stop_points[64];
 static size_t replay_xa_stop_point_count;
 static size_t replay_xa_stop_point_index;
+static unsigned long replay_xa_start_points[64];
+static size_t replay_xa_start_point_count;
+static size_t replay_xa_start_point_index;
 
 static void replay_fail(const char* reason)
 {
@@ -102,6 +105,7 @@ static void open_replay_sync(void)
         char* kind;
         char* load_kind;
         char* xa_kind;
+        char* xa_start_kind;
         char* pending;
         unsigned long sample;
 
@@ -111,6 +115,14 @@ static void open_replay_sync(void)
         kind = strstr(colon, "\"kind\"");
         load_kind = kind == NULL ? NULL : strstr(kind, "\"load-complete\"");
         xa_kind = kind == NULL ? NULL : strstr(kind, "\"xa-complete\"");
+        xa_start_kind = kind == NULL ? NULL : strstr(kind, "\"xa-start\"");
+        if (kind != NULL && kind < object_end && xa_start_kind != NULL && xa_start_kind < object_end) {
+            if (replay_xa_start_point_count == COUNT(replay_xa_start_points)) {
+                free(document);
+                replay_fail("too many xa-start sync points");
+            }
+            replay_xa_start_points[replay_xa_start_point_count++] = sample;
+        }
         if (kind != NULL && kind < object_end && xa_kind != NULL && xa_kind < object_end) {
             if (replay_xa_stop_point_count == COUNT(replay_xa_stop_points)) {
                 free(document);
@@ -258,6 +270,19 @@ int mmx4_pc_replay_xa_stop_due(void)
     if (!replay_started || replay_xa_stop_point_index >= replay_xa_stop_point_count)
         return 0;
     return replay_consumed >= replay_xa_stop_points[replay_xa_stop_point_index];
+}
+
+int mmx4_pc_replay_xa_start_ready(void)
+{
+    if (!replay_started || replay_xa_start_point_index >= replay_xa_start_point_count)
+        return 1;
+    return replay_consumed >= replay_xa_start_points[replay_xa_start_point_index];
+}
+
+void mmx4_pc_replay_xa_start_done(void)
+{
+    if (replay_started && replay_xa_start_point_index < replay_xa_start_point_count)
+        replay_xa_start_point_index++;
 }
 
 void mmx4_pc_replay_xa_stop_consume(void)

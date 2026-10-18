@@ -37,24 +37,7 @@ static u32 rock_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.active | ((u32)(u8)obj.unk2 << 8) | ((u32)record.flags << 16);
 }
-#define CASE(m)                                     \
-    static u32 rock_dropper_backrefs_rock_##m(void) \
-    {                                               \
-        return rock_case(m);                        \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) rock_dropper_backrefs_rock_##m,
-static const CTestCase rock_dropper_backrefs_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 rock_dropper_backrefs_cases_expected[] = { 0xEF0000u, 0x800000u, 0xEF0000u, 0x800000u, 0xEF0000u, 0x600000u, 0xEF3341u };
-#undef CASE
-#undef ENTRY
 
 static struct DropperInput {
     s8 subtype, phase;
@@ -168,35 +151,11 @@ static u32 dropper_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define DROPPER(m, n)                                       \
-    static u32 rock_dropper_context_dropper_##m##_##n(void) \
-    {                                                       \
-        return dropper_case(m, n);                          \
-    }
-#define MODE(m) DROPPER(m, 0) DROPPER(m, 1) DROPPER(m, 2) DROPPER(m, 3) DROPPER(m, 4) DROPPER(m, 5)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-MODE(4)
-MODE(5)
-MODE(6)
-MODE(7)
-MODE(8)
-MODE(9)
-MODE(10)
-MODE(11)
-MODE(12)
-MODE(13)
-#define ENTRY(m, n) rock_dropper_context_dropper_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2) ENTRY(m, 3) ENTRY(m, 4) ENTRY(m, 5)
-static const CTestCase rock_dropper_context_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) ENTRIES(7) ENTRIES(8) ENTRIES(9) ENTRIES(10) ENTRIES(11) ENTRIES(12) ENTRIES(13) };
 static const u32 rock_dropper_context_cases_expected[] = { 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270101u, 0x26010401u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x27FF01u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270003u, 0x26010301u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270101u, 0x26010301u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270002u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010426u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x10001u, 0x26010400u, 0x6012141u, 0x3E81234u, 0x1F45678u, 0x12740u, 0x270001u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270001u, 0x26010400u, 0x27281701u, 0xFA1234u, 0x1F45678u, 0x2F40u, 0x270301u, 0x26010401u, 0x27281700u, 0xFA1234u, 0x1F45678u, 0x2F40u };
-#undef DROPPER
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 rock_dropper_context_cases_row(u32 row)
+{
+    return dropper_case(row / 6, row % 6);
+}
 
 struct func_800BC784_case {
     u32 unk2;
@@ -227,10 +186,44 @@ static u32 test_func_800BC784(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 9);
 }
 
+void func_800BC784(struct EffectObj*);
+static const s16 locations[3] = { 6048, 6176, 6304 };
+static u32 enter(u32 row)
+{
+    struct EffectObj obj, expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before;
+    u32 place = row % 3, fraction = row / 3;
+    engine_obj.stage = 4;
+    engine_obj.substage = 0;
+    engine_before = engine_obj;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 1;
+    obj.id = 33;
+    obj.unk2 = 0x23;
+    obj.x_pos.val = locations[place] * 65536 + fraction * 0x1234;
+    obj.y_pos.val = 640 * 65536 + fraction * 0x5678;
+    obj.ext.effect_33.timer = 7;
+    obj.ext.effect_33.period = 11;
+    obj.ext.effect_33.proximity = 3;
+    obj.ext.effect_33.variant = 2;
+    expected = obj;
+    expected.ext.effect_33.timer = expected.ext.effect_33.period = 180;
+    expected.ext.effect_33.proximity = 1;
+    expected.ext.effect_33.variant = 0;
+    expected.state = 1;
+    func_800BC784(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "rock_dropper_backrefs", rock_dropper_backrefs_cases, rock_dropper_backrefs_cases_expected, COUNT(rock_dropper_backrefs_cases), 0 },
-    { "rock_dropper_context", rock_dropper_context_cases, rock_dropper_context_cases_expected, COUNT(rock_dropper_context_cases), 0 },
+    { "rock_dropper_backrefs", NULL, rock_dropper_backrefs_cases_expected, COUNT(rock_dropper_backrefs_cases_expected), rock_case },
+    { "rock_dropper_context", NULL, rock_dropper_context_cases_expected, COUNT(rock_dropper_context_cases_expected), rock_dropper_context_cases_row },
     { "func_800BC784", 0, 0, 2, test_func_800BC784 },
+    { "all_three_shipped_jungle_proximity_rock_spawners", NULL, NULL, 6, enter },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(rock_dropper_backrefs_cases) + COUNT(rock_dropper_context_cases) + 2;
+const u32 c_test_count = COUNT(rock_dropper_backrefs_cases_expected) + COUNT(rock_dropper_context_cases_expected) + 2 + 6;

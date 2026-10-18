@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/misc/misc_52_npc_cutscene.h"
+#include "main/55C4.h"
+void npc_cutscene_reply(struct MiscObj*);
 
 static u32 line_case(u32 character)
 {
@@ -55,66 +57,7 @@ static u32 line_case(u32 character)
         assert(((u8*)background_objects)[i] == ((u8*)backgrounds_before)[i]);
     return actual;
 }
-#define LINE_CASE(m)                           \
-    static u32 npc_line_context_line_##m(void) \
-    {                                          \
-        return line_case(m);                   \
-    }
-LINE_CASE(0)
-LINE_CASE(1)
-#define LINE_ENTRY(m) npc_line_context_line_##m,
-static const CTestCase npc_line_context_cases[]
-    = { LINE_ENTRY(0) LINE_ENTRY(1) };
 static const u32 npc_line_context_cases_expected[] = { 0x802B0002u, 0x80230002u };
-#undef main_bss_state
-#undef LINE_CASE
-#undef LINE_ENTRY
-
-struct npc_cutscene_fade_out_case {
-    u32 timer;
-    u32 expected[3];
-};
-static const struct npc_cutscene_fade_out_case npc_cutscene_fade_out_cases[] = {
-    { 0, { 0u, 0xFFu, 0u } },
-    { 1, { 0x40u, 0u, 0u } },
-};
-static u32 test_npc_cutscene_fade_out(u32 row)
-{
-    const struct npc_cutscene_fade_out_case* c = &npc_cutscene_fade_out_cases[row];
-    u32 observed_values[3];
-    struct MiscObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&engine_obj, 0, sizeof(engine_obj));
-    obj.ext.misc_52.timer = c->timer;
-    npc_cutscene_fade_out(&obj);
-    observed_values[0] = (u32)engine_obj.unkF;
-    observed_values[1] = (u32)obj.ext.misc_52.timer;
-    observed_values[2] = (u32)obj.on_screen;
-    return c_test_observe(0, row, observed_values, c->expected, 3);
-}
-
-struct npc_cutscene_finish_wait_case {
-    u32 timer;
-    u32 expected[2];
-};
-static const struct npc_cutscene_finish_wait_case npc_cutscene_finish_wait_cases[] = {
-    { 1, { 0x40u, 0u } },
-    { 0, { 0u, 0xFFu } },
-};
-static u32 test_npc_cutscene_finish_wait(u32 row)
-{
-    const struct npc_cutscene_finish_wait_case* c = &npc_cutscene_finish_wait_cases[row];
-    u32 observed_values[2];
-    struct MiscObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&engine_obj, 0, sizeof(engine_obj));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.ext.misc_52.timer = c->timer;
-    npc_cutscene_finish_wait(&obj);
-    observed_values[0] = (u32)engine_obj.unkF;
-    observed_values[1] = (u32)obj.ext.misc_52.timer;
-    return c_test_observe(0, row, observed_values, c->expected, 2);
-}
 
 struct npc_cutscene_talk_line_case {
     u32 frame_counter;
@@ -221,13 +164,68 @@ static u32 test_npc_cutscene_talk_wait_player(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 4);
 }
 
+static const struct {
+    u8 phase, timer, dialogue, next_phase, next_timer, next_state;
+    s8 fade;
+    s16 x;
+} reply_cases[] = {
+    { 0, 2, 0x80, 0, 1, 1, 0, 100 },
+    { 0, 1, 0x80, 1, 0, 1, 0, 100 },
+    { 0, 0, 0x80, 0, 255, 1, 0, 100 },
+    { 1, 0, 0x80, 2, 0, 1, 0, 100 },
+    { 2, 3, 0x80, 2, 3, 1, 0, 100 },
+    { 2, 3, 0, 2, 30, 2, 0, 100 },
+    { 0, 1, 0x80, 0, 1, 1, 1, 100 },
+    { 1, 0, 0x80, 1, 0, 1, -1, 1000 },
+    { 2, 3, 0, 2, 3, 1, 1, 100 },
+};
+static u32 reply_frame = 5;
+static u32* reply_animations[] = { &reply_frame };
+
+static u32 test_npc_reply(u32 row)
+{
+    struct MiscObj obj, expected;
+    memset(&obj, 0, sizeof(obj));
+    memset(&abc_object, 0, sizeof(abc_object));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    obj.active = 0x41;
+    obj.id = 52;
+    obj.state = 1;
+    obj.unk5 = reply_cases[row].phase;
+    obj.unk6 = 7;
+    obj.bg_offset = -1;
+    obj.x_pos.val = FIXED(reply_cases[row].x);
+    obj.y_pos.val = FIXED(80);
+    obj.ext.misc_52.timer = reply_cases[row].timer;
+    obj.animation_table = (const u8* const*)reply_animations;
+    set_animation(&obj, 0);
+    abc_object.unkC = reply_cases[row].dialogue;
+    abc_object.unk10 = 0x1234;
+    main_bss_state.transition.active = reply_cases[row].fade;
+    expected = obj;
+    expected.state = reply_cases[row].next_state;
+    expected.unk5 = reply_cases[row].next_phase;
+    expected.ext.misc_52.timer = reply_cases[row].next_timer;
+    expected.on_screen = reply_cases[row].x == 100;
+    if (reply_cases[row].next_state == 2)
+        expected.unk6 = 0;
+    if (!reply_cases[row].fade)
+        expected.animation_step.fields.duration = 4;
+    npc_cutscene_reply(&obj);
+    c_test_same_words(&obj, &expected, sizeof(expected));
+    assert(abc_object.unkC == reply_cases[row].dialogue);
+    assert((u16)abc_object.unk10 == (reply_cases[row].phase == 1 && !reply_cases[row].fade ? 0x8024 : 0x1234));
+    assert(main_bss_state.transition.active == reply_cases[row].fade);
+    assert(reply_frame == 5);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "npc_line_context", npc_line_context_cases, npc_line_context_cases_expected, COUNT(npc_line_context_cases), 0 },
-    { "npc_cutscene_fade_out", 0, 0, 2, test_npc_cutscene_fade_out },
-    { "npc_cutscene_finish_wait", 0, 0, 2, test_npc_cutscene_finish_wait },
+    { "npc_reply", 0, 0, COUNT(reply_cases), test_npc_reply },
+    { "npc_line_context", NULL, npc_line_context_cases_expected, COUNT(npc_line_context_cases_expected), line_case },
     { "npc_cutscene_talk_line", 0, 0, 2, test_npc_cutscene_talk_line },
     { "npc_cutscene_talk_wait_line", 0, 0, 3, test_npc_cutscene_talk_wait_line },
     { "npc_cutscene_talk_wait_player", 0, 0, 4, test_npc_cutscene_talk_wait_player },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(npc_line_context_cases) + 2 + 2 + 2 + 3 + 4;
+const u32 c_test_count = COUNT(reply_cases) + COUNT(npc_line_context_cases_expected) + 2 + 3 + 4;

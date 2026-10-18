@@ -921,7 +921,7 @@ void player_reset_palette(struct PlayerObj* self)
             if (self->weapon == 0) {
                 player_set_palette(self, 0);
             } else {
-                src = SP_PALETTE_BANK[3] + (((self->weapon - 1) << 6));
+                src = (u16*)SP_PALETTE_BANK + 0x30 + (((self->weapon - 1) << 6));
                 dst = SP_PALETTE;
                 for (a2 = 0; a2 < 0x20; a2++) {
                     *dst++ = *src++;

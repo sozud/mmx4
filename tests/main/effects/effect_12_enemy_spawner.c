@@ -128,36 +128,10 @@ static u32 spawner_case(u32 mode)
     i = obj.unk5 | ((u32)obj.ext.effect_12.cooldown << 8) | ((u32)obj.ext.effect_12.spawned << 24);
     return i;
 }
-#define CASE(m)                  \
-    static u32 spawner_##m(void) \
-    {                            \
-        return spawner_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-CASE(12)
-CASE(13)
-CASE(14)
-CASE(15)
-#define ENTRY(m) spawner_##m,
-static const CTestCase enemy_spawner_child_graph_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) ENTRY(12) ENTRY(13) ENTRY(14) ENTRY(15) };
 static const u32 enemy_spawner_child_graph_cases_expected[] = { 0x0u, 0x1u, 0x0u, 0x1u, 0x1002001u, 0x1u, 0x1001E01u, 0x1002002u, 0x3u, 0x4000002u, 0x4000000u, 0x4000003u, 0x4000004u, 0x4000000u, 0xFFFFFF80u, 0x3u };
-#undef CASE
-#undef ENTRY
 
 const struct CTestGroup c_test_groups[] = {
-    { "enemy_spawner_child_graph", enemy_spawner_child_graph_cases, enemy_spawner_child_graph_cases_expected, COUNT(enemy_spawner_child_graph_cases), 0 },
+    { "enemy_spawner_child_graph", NULL, enemy_spawner_child_graph_cases_expected, COUNT(enemy_spawner_child_graph_cases_expected), spawner_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(enemy_spawner_child_graph_cases);
+const u32 c_test_count = COUNT(enemy_spawner_child_graph_cases_expected);

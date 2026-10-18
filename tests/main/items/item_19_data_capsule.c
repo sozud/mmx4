@@ -2,6 +2,8 @@
 #include "main/items/item_19_data_capsule.h"
 #include "main/195B4.h"
 #include "main/mains/main_41_data_hopper.h"
+#include "main/player_animations.h"
+#include "main/player_common.h"
 extern u8 data_capsule_box_0[4], data_capsule_box_1[4], data_capsule_box_2[4];
 
 static s32 frames[128];
@@ -129,30 +131,75 @@ static u32 capsule_case(u32 mode)
     i = (u8)obj.active | ((u32)(u8)obj.state << 8) | ((u32)obj.unk17 << 16) | ((u32)backref[0] << 24);
     return i;
 }
-#define CASE(m)                  \
-    static u32 capsule_##m(void) \
-    {                            \
-        return capsule_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-#define ENTRY(m) capsule_##m,
-static const CTestCase data_capsule_resources_child_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) };
 static const u32 data_capsule_resources_child_pool_cases_expected[] = { 0x110F0141u, 0x11100141u, 0x11110141u, 0x11120141u, 0x11000000u, 0x11000000u, 0x11000000u, 0x80000000u, 0x80000000u, 0x80000000u };
-#undef CASE
-#undef ENTRY
+
+static struct MainObj mains_before[48];
+static struct ItemObj items_expected[32];
+static u32 archive[64], metadata_data_capsule_enemy_capacity[16];
+static u32 full(u32 row)
+{
+    struct PlayerObj player;
+    struct EngineObj engine;
+    struct ItemObj* child = &item_objects[1];
+    u32 i;
+    (void)row;
+    engine_obj.stage = 6;
+    engine_obj.substage = 1;
+    engine_obj.character_state.fields.active = 1;
+    background_objects[0].x_pos.i.hi = 1808;
+    background_objects[0].y_pos.i.hi = 436;
+    g_Player.active = 0x41;
+    g_Player.state = 1;
+    g_Player.hp = 24;
+    g_Player.x_pos.i.hi = 1000;
+    g_Player.y_pos.i.hi = 1000;
+    g_Player.unk54 = &D_801194F0[0];
+    g_Player.unk68 = &player_x_collision_bounds;
+    for (i = 0; i < COUNT(archive); i++)
+        archive[i] = i < 16 ? 64 + i * 4 : 0x13570000 + i;
+    for (i = 0; i < COUNT(metadata_data_capsule_enemy_capacity); i++)
+        metadata_data_capsule_enemy_capacity[i] = (i + 1) * 128;
+    TEST_MENU_FRAMES = (u8*)archive;
+    D_801406A8 = metadata_data_capsule_enemy_capacity;
+    assert(func_8002938C(0x29) == 2);
+    c_test_zero_words((u32*)item_objects, sizeof(item_objects) / 4);
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    for (i = 0; i < COUNT(main_objects); i++)
+        main_objects[i].active = 1;
+    item_objects[0].active = 1;
+    item_objects[0].id = 19;
+    item_objects[0].unk2 = 4;
+    item_objects[0].x_pos.i.hi = 624;
+    item_objects[0].y_pos.i.hi = 912;
+    func_800C4778(&item_objects[0]);
+    assert(child->active == 1 && child->id == 19 && child->unk2 == 0 && child->x_pos.i.hi == 1968 && child->y_pos.i.hi == 556);
+    func_800C4778(child);
+    assert(child->state == 1 && child->unk17 == 15 && child->unk7C.timer16 == 10);
+    for (i = 0; i < 16; i++)
+        func_800C49BC(child);
+    assert(child->unk7C.timer16 == 0 && child->animation_step.packed == 0x42000001 && child->on_screen == 1);
+    memcpy(items_expected, item_objects, sizeof(items_expected));
+    items_expected[1].unk7C.timer16 = 30;
+    memcpy(mains_before, main_objects, sizeof(mains_before));
+    player = g_Player;
+    engine = engine_obj;
+    cur_random = 0x1234;
+    func_800C49BC(child);
+    assert(c_test_word_difference((u32*)item_objects, (u32*)items_expected, sizeof(items_expected) / 4) == 0);
+    assert(c_test_word_difference((u32*)main_objects, (u32*)mains_before, sizeof(mains_before) / 4) == 0);
+    c_test_same_words(&g_Player, &player, sizeof(player));
+    c_test_same_words(&engine_obj, &engine, sizeof(engine));
+    assert(cur_random == 0x1234 && TEST_MENU_FRAMES == (u8*)archive && D_801406A8 == metadata_data_capsule_enemy_capacity);
+    for (i = 0; i < COUNT(archive); i++)
+        assert(archive[i] == (i < 16 ? 64 + i * 4 : 0x13570000 + i));
+    for (i = 0; i < COUNT(metadata_data_capsule_enemy_capacity); i++)
+        assert(metadata_data_capsule_enemy_capacity[i] == (i + 1) * 128);
+    return 1;
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "data_capsule_resources_child_pool", data_capsule_resources_child_pool_cases, data_capsule_resources_child_pool_cases_expected, COUNT(data_capsule_resources_child_pool_cases), 0 },
+    { "data_capsule_resources_child_pool", NULL, data_capsule_resources_child_pool_cases_expected, COUNT(data_capsule_resources_child_pool_cases_expected), capsule_case },
+    { "stage6_real_capsule_factory_own_animation_clock_full_main_pool", NULL, NULL, 1, full },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(data_capsule_resources_child_pool_cases);
+const u32 c_test_count = COUNT(data_capsule_resources_child_pool_cases_expected) + 1;

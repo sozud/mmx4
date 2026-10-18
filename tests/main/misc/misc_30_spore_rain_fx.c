@@ -16,16 +16,14 @@ static u32 test_spore_rain_fx_animate(u32 row)
     u32 observed_values[8];
     struct MiscObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&background_objects, 0, sizeof(background_objects));
-    child_0_present = 255;
     child_0.state = c->state;
     obj.unk2 = c->unk2;
     obj.ext.misc_30.unk54 = c->unk54;
     child_0.x_pos.val = c->x_pos;
-    obj.ext.misc_30.owner = child_0_present ? &child_0 : NULL;
+    obj.ext.misc_30.owner = &child_0;
     spore_rain_fx_animate(&obj);
     observed_values[0] = (u32)obj.ext.misc_30.unk54;
     observed_values[1] = (u32)obj.ext.misc_30.unk56;

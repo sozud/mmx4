@@ -529,9 +529,9 @@ void colonel_intro_port_pose(struct MainObj* self)
     if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 0);
         if (engine_obj.cur_character == 0) {
-            func_8002217C(0x25, 0xFFU, engine_obj.character_state.bytes[8]);
+            func_8002217C(0x25, 0xFFU, (u8)engine_obj.character_state.bytes[8]);
         } else {
-            func_8002217C(0x1E, 0xFFU, engine_obj.character_state.bytes[8]);
+            func_8002217C(0x1E, 0xFFU, (u8)engine_obj.character_state.bytes[8]);
         }
         engine_obj.character_state.bytes[8] = 1;
         self->unk7++;
@@ -609,7 +609,7 @@ void colonel_intro_hall_portrait_player(struct MainObj* self)
 void colonel_intro_hall_dialogue(struct MainObj* self)
 {
     if (--self->unk7C == 0) {
-        func_8002217C(0x22, 0xFF, engine_obj.character_state.bytes[8]);
+        func_8002217C(0x22, 0xFF, (u8)engine_obj.character_state.bytes[8]);
         engine_obj.character_state.bytes[8] = 1;
         self->unk7++;
     }

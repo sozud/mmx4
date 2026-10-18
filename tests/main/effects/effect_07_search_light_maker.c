@@ -40,27 +40,14 @@ static u32 search_case(u32 mode, u32 observation)
     actual = observation == 0 ? (u16)g_QuadObjects[17].x_pos.i.hi | ((u32)(u16)g_QuadObjects[17].y_pos.i.hi << 16) : search_light_spawners[0].active;
     return actual;
 }
-#define CASE(m, n)                    \
-    static u32 search_##m##_##n(void) \
-    {                                 \
-        return search_case(m, n);     \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1)
-MODE(0)
-MODE(1)
-MODE(2)
-#define ENTRY(m, n) search_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1)
-static const CTestCase search_light_spawner_pool_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) };
 static const u32 search_light_spawner_pool_cases_expected[] = { 0x0u, 0x0u, 0x0u, 0x0u, 0x2000430u, 0x1u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 search_light_spawner_pool_cases_row(u32 row)
+{
+    return search_case(row / 2, row % 2);
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "search_light_spawner_pool", search_light_spawner_pool_cases, search_light_spawner_pool_cases_expected, COUNT(search_light_spawner_pool_cases), 0 },
+    { "search_light_spawner_pool", NULL, search_light_spawner_pool_cases_expected, COUNT(search_light_spawner_pool_cases_expected), search_light_spawner_pool_cases_row },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(search_light_spawner_pool_cases);
+const u32 c_test_count = COUNT(search_light_spawner_pool_cases_expected);

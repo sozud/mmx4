@@ -85,26 +85,7 @@ static u32 trail_case(u32 mode)
     result = (u8)obj.active | ((u32)(u8)obj.state << 8) | ((u32)obj.animation_step.fields.duration << 16) | ((u32)obj.unk17 << 24);
     return result;
 }
-#define CASE(m)                                                 \
-    static u32 twin_slasher_trail_archive_gates_trail_##m(void) \
-    {                                                           \
-        return trail_case(m);                                   \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-#define ENTRY(m) twin_slasher_trail_archive_gates_trail_##m,
-static const CTestCase twin_slasher_trail_archive_gates_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) };
 static const u32 twin_slasher_trail_archive_gates_cases_expected[] = { 0x6020000u, 0x6020000u, 0x6020000u, 0x6010101u, 0x65F0000u, 0x6020101u, 0x7020101u, 0x8020101u, 0x9020101u };
-#undef CASE
-#undef ENTRY
 
 static const u32 twin_slasher_charged_update_expected[] = { 0x10200u };
 static u32 test_twin_slasher_charged_update(u32 row)
@@ -186,9 +167,9 @@ static u32 test_twin_slasher_update(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "twin_slasher_trail_archive_gates", twin_slasher_trail_archive_gates_cases, twin_slasher_trail_archive_gates_cases_expected, COUNT(twin_slasher_trail_archive_gates_cases), 0 },
+    { "twin_slasher_trail_archive_gates", NULL, twin_slasher_trail_archive_gates_cases_expected, COUNT(twin_slasher_trail_archive_gates_cases_expected), trail_case },
     { "twin_slasher_charged_update", 0, 0, 1, test_twin_slasher_charged_update },
     { "twin_slasher_update", 0, 0, 1, test_twin_slasher_update },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(twin_slasher_trail_archive_gates_cases) + 1 + 1;
+const u32 c_test_count = COUNT(twin_slasher_trail_archive_gates_cases_expected) + 1 + 1;

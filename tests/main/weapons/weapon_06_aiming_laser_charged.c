@@ -7,6 +7,8 @@
 #include "main/weapons/weapon_07_double_cyclone.h"
 #include "main/player_weapon.h"
 #include "main/sprite_animations.h"
+#include "main/player_animations.h"
+#include "main/55C4.h"
 void func_800963E8(struct WeaponObj*, struct PlayerObj*);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 extern u32* D_80137E08;
@@ -377,61 +379,6 @@ static const u32 charged_aiming_thresholds_cases_expected[] = { 0x40010101u, 0x6
 #undef ENTRY
 #undef ENTRIES
 
-static const u32 aiming_laser_charged_aim_expected[] = { 8u, 0u, 0x68u, 0x680000u, 0u, 0u };
-static u32 test_aiming_laser_charged_aim(u32 row)
-{
-    u32 observed_values[6];
-    struct WeaponObj obj;
-    struct PlayerObj argument_obj_1;
-    memset(&obj, 0, sizeof(obj));
-    memset(&argument_obj_1, 0, sizeof(argument_obj_1));
-    obj.ext.weapon_6.direction = 24;
-    obj.ext.weapon_6.adjusted_direction = 0;
-    aiming_laser_charged_aim(&obj, &argument_obj_1);
-    observed_values[0] = (u32)obj.ext.weapon_6.adjusted_direction;
-    observed_values[1] = (u32)obj.unk15;
-    observed_values[2] = (u32)obj.x_pos.i.hi;
-    observed_values[3] = (u32)obj.x_pos.val;
-    observed_values[4] = (u32)obj.y_pos.i.hi;
-    observed_values[5] = (u32)obj.y_pos.val;
-    return c_test_observe(0, row, observed_values, aiming_laser_charged_aim_expected, 6);
-}
-
-static const u32 aiming_laser_charged_init_expected[] = { 1u, 0u, 0u, 0x18u, 8u, 0xF0u, 6u, 1u, 0u };
-static u32 test_aiming_laser_charged_init(u32 row)
-{
-    u32 observed_values[9];
-    struct WeaponObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&g_QuadObjects, 0, sizeof(g_QuadObjects));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            g_QuadObjects[slot].active = pool_0_full ? 1 : 0;
-    }
-    aiming_laser_charged_init(&obj);
-    observed_values[0] = (u32)g_QuadObjects[0].active;
-    observed_values[1] = (u32)g_QuadObjects[0].id;
-    observed_values[2] = (u32)g_QuadObjects[0].unk2;
-    observed_values[3] = (u32)obj.ext.weapon_6.adjusted_direction;
-    observed_values[4] = (u32)obj.ext.weapon_6.direction;
-    observed_values[5] = (u32)obj.ext.weapon_6.lifetime;
-    observed_values[6] = (u32)obj.ext.weapon_6.timer;
-    observed_values[7] = (u32)obj.state;
-    observed_values[8] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, aiming_laser_charged_init_expected, 9);
-}
-
 struct aiming_laser_marker_wait_fire_case {
     u32 shot_type, pool_0_full;
     u32 expected[7];
@@ -447,7 +394,6 @@ static u32 test_aiming_laser_marker_wait_fire(u32 row)
     struct WeaponObj obj;
     struct PlayerObj argument_obj_1;
     struct PlayerObj argument_obj_2;
-    u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&argument_obj_1, 0, sizeof(argument_obj_1));
     memset(&argument_obj_2, 0, sizeof(argument_obj_2));
@@ -455,12 +401,7 @@ static u32 test_aiming_laser_marker_wait_fire(u32 row)
     memset(&background_objects, 0, sizeof(background_objects));
     argument_obj_1.shot_fired = -1;
     argument_obj_1.shot_type = c->shot_type;
-    pool_0_full = c->pool_0_full;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            g_QuadObjects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(g_QuadObjects, 32, c->pool_0_full ? 1 : 0);
     aiming_laser_marker_wait_fire(&obj, &argument_obj_1, &argument_obj_2);
     observed_values[0] = (u32)g_QuadObjects[0].active;
     observed_values[1] = (u32)g_QuadObjects[0].id;
@@ -470,33 +411,6 @@ static u32 test_aiming_laser_marker_wait_fire(u32 row)
     observed_values[5] = (u32)obj.state;
     observed_values[6] = (u32)obj.unk64;
     return c_test_observe(0, row, observed_values, c->expected, 7);
-}
-
-static const u32 aiming_laser_try_lock_on_expected[] = { 0u, 0u };
-static u32 test_aiming_laser_try_lock_on(u32 row)
-{
-    u32 observed_values[2];
-    struct WeaponObj obj;
-    struct PlayerObj argument_obj_1;
-    struct MainObj argument_obj_2;
-    s32 return_value;
-    memset(&obj, 0, sizeof(obj));
-    memset(&argument_obj_1, 0, sizeof(argument_obj_1));
-    memset(&argument_obj_2, 0, sizeof(argument_obj_2));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    memset(&weapon_objects, 0, sizeof(weapon_objects));
-    argument_obj_2.active = -5;
-    argument_obj_2.unk7A = -1;
-    return_value = aiming_laser_try_lock_on(&obj, &argument_obj_1, &argument_obj_2);
-    observed_values[0] = (u32)return_value;
-    observed_values[1] = (u32)argument_obj_1.special_shot_count;
-    return c_test_observe(0, row, observed_values, aiming_laser_try_lock_on_expected, 2);
 }
 
 struct func_80096B54_case {
@@ -546,18 +460,73 @@ AIMING_CANCEL_SIX(1)
 static const CTestCase aiming_laser_cancellation_cases[] = { AIMING_CANCEL_ENTRIES(0, 0) AIMING_CANCEL_SIX_ENTRIES(1) };
 
 static const u32 aiming_laser_cancellation_cases_expected[] = { 0x0u, 0x641234u, 0xC82468u, 0x6u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u, 0x0u, 0x12C3456u, 0x1904567u, 0x5u };
+
+static struct QuadObj expected_pool[32];
+static u32 beam(u32 row)
+{
+    struct WeaponObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    u32 available = row % 5, face = row / 5, i;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.active = 0x41;
+    g_Player.weapon = 6;
+    g_Player.hp = 24;
+    g_Player.unk15 = face ? 0x40 : 0;
+    g_Player.animation_table = (u32**)D_80119DF0;
+    set_animation(ANIMATED_OBJECT(&g_Player), 0);
+    assert(g_Player.animation_step.packed == 0x0001000B);
+    g_Player.x_pos.i.hi = 160;
+    g_Player.y_pos.i.hi = 120;
+    player_before = g_Player;
+    D_8013E198[0] = -1;
+    c_test_zero_words((u32*)g_QuadObjects, sizeof(g_QuadObjects) / 4);
+    for (i = 0; i < COUNT(g_QuadObjects); i++)
+        g_QuadObjects[i].active = i >= 32 - available ? 0 : 1;
+    memcpy(expected_pool, g_QuadObjects, sizeof(expected_pool));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x21;
+    obj.id = 15;
+    obj.state = 0;
+    obj.x_pos.i.lo = 0x1234;
+    obj.y_pos.i.lo = 0x5678;
+    expected = obj;
+    expected.ext.weapon_6.direction = 8;
+    expected.ext.weapon_6.adjusted_direction = face ? 8 : 24;
+    expected.ext.weapon_6.lifetime = 240;
+    expected.ext.weapon_6.timer = 6;
+    expected.unk15 = g_Player.unk15;
+    expected.x_pos.i.hi = 160;
+    expected.y_pos.i.hi = 120;
+    expected.x_vel.val = face ? 0x10000 : -0x10000;
+    expected.x_pos.val += expected.x_vel.val * 104;
+    expected.state = 1;
+    for (i = 0; i < available; i++) {
+        struct QuadObj* q = &expected_pool[32 - available + i];
+        q->active = 1;
+        q->id = 10;
+        q->unk2 = i;
+        q->unk5C = PLAYER_OBJECT(&obj);
+    }
+    aiming_laser_charged_init(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(g_QuadObjects, expected_pool, sizeof(expected_pool));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(D_8013E198[0] == -1);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "aiming_lock_slots", aiming_lock_slots_cases, aiming_lock_slots_cases_expected, COUNT(aiming_lock_slots_cases), 0 },
     { "aiming_marker_dispatch", aiming_marker_dispatch_cases, aiming_marker_dispatch_cases_expected, COUNT(aiming_marker_dispatch_cases), 0 },
     { "aiming_reticle_hiding", aiming_reticle_hiding_cases, aiming_reticle_hiding_cases_expected, COUNT(aiming_reticle_hiding_cases), 0 },
     { "charged_aiming_thresholds", charged_aiming_thresholds_cases, charged_aiming_thresholds_cases_expected, COUNT(charged_aiming_thresholds_cases), 0 },
-    { "aiming_laser_charged_aim", 0, 0, 1, test_aiming_laser_charged_aim },
-    { "aiming_laser_charged_init", 0, 0, 1, test_aiming_laser_charged_init },
     { "aiming_laser_marker_wait_fire", 0, 0, 2, test_aiming_laser_marker_wait_fire },
-    { "aiming_laser_try_lock_on", 0, 0, 1, test_aiming_laser_try_lock_on },
     { "func_80096B54", 0, 0, 6, test_func_80096B54 },
     { "aiming_laser_charged_dispatch", aiming_laser_charged_dispatch_cases, aiming_laser_charged_dispatch_cases_expected, COUNT(aiming_laser_charged_dispatch_cases), 0 },
     { "aiming_laser_cancellation", aiming_laser_cancellation_cases, aiming_laser_cancellation_cases_expected, COUNT(aiming_laser_cancellation_cases), 0 },
+    { "X_aiming_laser_both_facings_zero_to_four_beam_slots", NULL, NULL, 10, beam },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(aiming_lock_slots_cases) + COUNT(aiming_marker_dispatch_cases) + COUNT(aiming_reticle_hiding_cases) + COUNT(charged_aiming_thresholds_cases) + 1 + 1 + 2 + 1 + 6 + COUNT(aiming_laser_charged_dispatch_cases) + COUNT(aiming_laser_cancellation_cases);
+const u32 c_test_count = COUNT(aiming_lock_slots_cases) + COUNT(aiming_marker_dispatch_cases) + COUNT(aiming_reticle_hiding_cases) + COUNT(charged_aiming_thresholds_cases) + 2 + 6 + COUNT(aiming_laser_charged_dispatch_cases) + COUNT(aiming_laser_cancellation_cases) + 10;

@@ -61,7 +61,7 @@ void func_8002F524(struct EngineObj* arg0)
 void func_8002F584(struct EngineObj* arg0)
 {
     if (arg0->unk3C->state == 2) {
-        func_8002217C(arg0->unk3, 0xFF, 0);
+        func_8002217C((u16)arg0->unk3, 0xFF, 0);
         arg0->unk2++;
     }
 }

@@ -24,12 +24,16 @@ static int selected(const char* name, int argc, char** argv)
     return 0;
 }
 
+enum { CASE_FAIL,
+    CASE_PASS,
+    CASE_SKIP };
+
 static int run_case(const struct CTestGroup* group, u32 index, u32* value)
 {
     int fds[2], status;
     pid_t pid;
     if (pipe(fds) != 0)
-        return 0;
+        return CASE_FAIL;
     fflush(stdout);
     pid = fork();
     if (pid == 0) {
@@ -45,12 +49,14 @@ static int run_case(const struct CTestGroup* group, u32 index, u32* value)
     status = read(fds[0], value, sizeof(*value)) == sizeof(*value);
     close(fds[0]);
     if (pid < 0)
-        return 0;
+        return CASE_FAIL;
     {
         int wait_status;
         if (waitpid(pid, &wait_status, 0) != pid)
-            return 0;
-        return status && WIFEXITED(wait_status) && WEXITSTATUS(wait_status) == 0;
+            return CASE_FAIL;
+        if (WIFEXITED(wait_status) && WEXITSTATUS(wait_status) == 77)
+            return CASE_SKIP;
+        return status && WIFEXITED(wait_status) && WEXITSTATUS(wait_status) == 0 ? CASE_PASS : CASE_FAIL;
     }
 }
 
@@ -61,7 +67,7 @@ static void case_name(const struct CTestGroup* group, u32 index, char* name, u32
 
 int main(int argc, char** argv)
 {
-    u32 s, g, i, number, passes = 0, failures = 0;
+    u32 s, g, i, number, passes = 0, failures = 0, skips = 0;
     char name[256];
     int describe = argc >= 2 && strcmp(argv[1], "--describe") == 0;
     if (describe) {
@@ -83,17 +89,24 @@ int main(int argc, char** argv)
                     continue;
                 }
                 printf("CASE\t%s\t%u\t%s\n", suite->name, number, group->name);
-                if (run_case(group, i, &value)) {
+                switch (run_case(group, i, &value)) {
+                case CASE_PASS:
                     printf("PASS\t%s\t%u\t%s\t%u\n", suite->name, number, name, value);
                     passes++;
-                } else {
+                    break;
+                case CASE_SKIP:
+                    printf("SKIP\t%s\t%u\t%s\n", suite->name, number, name);
+                    skips++;
+                    break;
+                default:
                     printf("FAIL\t%s\t%u\t%s\n", suite->name, number, name);
                     failures++;
+                    break;
                 }
             }
         }
     }
     if (!describe)
-        printf("%u passed, %u failed\n", passes, failures);
+        printf("%u passed, %u failed, %u skipped\n", passes, failures, skips);
     return failures != 0;
 }

@@ -2,6 +2,7 @@
 #include "main/shots/shot_21_cannon_shell.h"
 #include "main/collision_bounds.h"
 #include "main/mains/main_38_train_cannon.h"
+#include "main/55C4.h"
 extern u8 cannon_shell_hit_box[4], cannon_shell_flat_hit_box[4], cannon_shell_steep_hit_box[4];
 extern u8 cannon_shell_terrain_box[4], cannon_shell_flat_terrain_box[4], cannon_shell_steep_terrain_box[4];
 
@@ -55,25 +56,11 @@ static u32 cannon_shell_animation_shell_case(u32 mode, u32 observation)
     assert(*(u32*)train_cannon_animations[7] == original_step);
     return actual;
 }
-#define SHELL_CASE(m, n)                                    \
-    static u32 cannon_shell_animation_shell_##m##_##n(void) \
-    {                                                       \
-        return cannon_shell_animation_shell_case(m, n);     \
-    }
-#define SHELL_MODE(m) SHELL_CASE(m, 0) SHELL_CASE(m, 1)
-SHELL_MODE(0)
-SHELL_MODE(1)
-SHELL_MODE(2)
-SHELL_MODE(3)
-#define SHELL_ENTRY(m, n) cannon_shell_animation_shell_##m##_##n,
-#define SHELL_ENTRIES(m) SHELL_ENTRY(m, 0) SHELL_ENTRY(m, 1)
-static const CTestCase cannon_shell_animation_cases[]
-    = { SHELL_ENTRIES(0) SHELL_ENTRIES(1) SHELL_ENTRIES(2) SHELL_ENTRIES(3) };
 static const u32 cannon_shell_animation_cases_expected[] = { 0x1u, 0x29000001u, 0x2u, 0x2A000001u, 0x3u, 0x2B000001u, 0xFFFFFFFFu, 0x28000001u };
-#undef SHELL_CASE
-#undef SHELL_MODE
-#undef SHELL_ENTRY
-#undef SHELL_ENTRIES
+static u32 cannon_shell_animation_cases_row(u32 row)
+{
+    return cannon_shell_animation_shell_case(row / 2, row % 2);
+}
 
 static u32 cannon_shell_distance_animation_start_shell_case(u32 mode)
 {
@@ -141,22 +128,7 @@ static u32 cannon_shell_distance_animation_start_shell_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_expected)[i]);
     return (u32)obj.unk2C;
 }
-#define CASE(m)                                                      \
-    static u32 cannon_shell_distance_animation_start_shell_##m(void) \
-    {                                                                \
-        return cannon_shell_distance_animation_start_shell_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) cannon_shell_distance_animation_start_shell_##m,
-static const CTestCase cannon_shell_distance_animation_start_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 cannon_shell_distance_animation_start_cases_expected[] = { 0x471Cu, 0x471Cu, 0x1400u, 0x21AFu, 0x28000u };
-#undef CASE
-#undef ENTRY
 
 struct func_8009D588_case {
     u32 value, y_vel, x_vel;
@@ -182,10 +154,113 @@ static u32 test_func_8009D588(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 1);
 }
 
+void cannon_shell_fly(struct ShotObj*);
+extern u8 cannon_shell_hit_box[4], cannon_shell_terrain_box[4];
+static const struct {
+    s16 x, y;
+    u8 bottom, far;
+} positions[] = {
+    { 160, 223, 0, 0 },
+    { 160, 224, 1, 0 },
+    { -289, 120, 0, 1 },
+    { -288, 120, 0, 0 },
+    { 607, 120, 0, 0 },
+    { 608, 120, 0, 1 },
+};
+static struct MiscObj misc_expected[64];
+static struct VisualObj visuals_before[32];
+static struct WeaponObj weapons_before[16];
+static u32 viewport(u32 row)
+{
+    struct ShotObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 position = row % COUNT(positions), full = row / COUNT(positions) % 2, timer = row / COUNT(positions) / 2 % 2, facing = row / COUNT(positions) / 4, i;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.hp = 24;
+    player_before = g_Player;
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(misc_objects, 0, sizeof(misc_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    for (i = 0; i < 64; i++) {
+        misc_objects[i].active = full || i != 63;
+        misc_objects[i].id = 39;
+        misc_objects[i].state = 40;
+    }
+    for (i = 0; i < 32; i++) {
+        visual_objects[i].active = 1;
+        visual_objects[i].id = 39;
+    }
+    memcpy(misc_expected, misc_objects, sizeof(misc_expected));
+    memcpy(visuals_before, visual_objects, sizeof(visuals_before));
+    memcpy(weapons_before, weapon_objects, sizeof(weapons_before));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 21;
+    obj.state = 1;
+    obj.on_screen = 7;
+    obj.unk7 = timer;
+    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk42 = 0x1234;
+    obj.unk5C = 1;
+    obj.unk60 = 3;
+    obj.x_pos.val = (positions[position].x - 1) * 65536 + 0x1234;
+    obj.y_pos.val = (positions[position].y + 1) * 65536 + 0x5678;
+    obj.x_vel.val = obj.y_vel.val = 65536;
+    obj.unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
+    obj.unk50.data = obj.unk54 = cannon_shell_hit_box;
+    obj.unk58.animation_steps = D_80105FF0;
+    obj.animation_table = (u32**)train_cannon_animations;
+    set_animation(&obj, 7);
+    assert(obj.animation_step.packed == 0x28000001);
+    expected = obj;
+    expected.x_pos.val += 65536;
+    expected.y_pos.val -= 65536;
+    if (positions[position].bottom) {
+        expected.unk70 = 1;
+        expected.state = 2;
+    } else {
+        expected.unk7 = !timer;
+        if (!timer && !full) {
+            struct MiscObj* m = &misc_expected[63];
+            m->active = 0x21;
+            m->id = 23;
+            m->unk2 = 0;
+            m->unk15 = 0x40;
+            m->ext.unk.unk54 = 0;
+            m->x_pos.i.hi = positions[position].x;
+            m->y_pos.i.hi = positions[position].y;
+            m->x_vel.val = m->y_vel.val = 0;
+            m->unk7 = 1;
+            m->unk16 = 7;
+        }
+        if (positions[position].far)
+            expected.state = 2;
+        else
+            expected.on_screen = position == 0;
+    }
+    D_8013E198[1] = -1;
+    cur_random = 0x1234;
+    cannon_shell_fly(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    c_test_same_words(misc_objects, misc_expected, sizeof(misc_expected));
+    c_test_same_words(visual_objects, visuals_before, sizeof(visuals_before));
+    c_test_same_words(weapon_objects, weapons_before, sizeof(weapons_before));
+    assert(cur_random == (positions[position].bottom || (!timer && !full) ? 0x366A : 0x1234));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "cannon_shell_animation", cannon_shell_animation_cases, cannon_shell_animation_cases_expected, COUNT(cannon_shell_animation_cases), 0 },
-    { "cannon_shell_distance_animation_start", cannon_shell_distance_animation_start_cases, cannon_shell_distance_animation_start_cases_expected, COUNT(cannon_shell_distance_animation_start_cases), 0 },
+    { "cannon_shell_animation", NULL, cannon_shell_animation_cases_expected, COUNT(cannon_shell_animation_cases_expected), cannon_shell_animation_cases_row },
+    { "cannon_shell_distance_animation_start", NULL, cannon_shell_distance_animation_start_cases_expected, COUNT(cannon_shell_distance_animation_start_cases_expected), cannon_shell_distance_animation_start_shell_case },
     { "func_8009D588", 0, 0, 4, test_func_8009D588 },
+    { "bottom_margin_trail_pool_and_despawn_edges", NULL, NULL, COUNT(positions) * 8, viewport },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(cannon_shell_animation_cases) + COUNT(cannon_shell_distance_animation_start_cases) + 4;
+const u32 c_test_count = COUNT(cannon_shell_animation_cases_expected) + COUNT(cannon_shell_distance_animation_start_cases_expected) + 4 + COUNT(positions) * 8;

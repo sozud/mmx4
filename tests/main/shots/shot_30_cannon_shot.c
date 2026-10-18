@@ -6,15 +6,9 @@ static u32 test_cannon_shot_spawn_flash(u32 row)
 {
     u32 observed_values[10];
     struct ShotObj obj;
-    u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&visual_objects, 0, sizeof(visual_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(visual_objects, 32, 255 ? 1 : 0);
     cannon_shot_spawn_flash(&obj);
     observed_values[0] = (u32)visual_objects[0].active;
     observed_values[1] = (u32)visual_objects[0].bg_offset;

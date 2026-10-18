@@ -627,7 +627,7 @@ void func_80021D20(void)
     if (abc_object.unkC != 0) {
         func_80022730(&abc_object);
     } else if (abc_object.unk10 != 0) {
-        func_8002217C(abc_object.unk10 & ~0x8000, 0xFF, 0);
+        func_8002217C((u16)(abc_object.unk10 & ~0x8000), 0xFF, 0);
     }
 }
 

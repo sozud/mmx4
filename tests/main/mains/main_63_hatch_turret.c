@@ -8,17 +8,11 @@ static u32 test_func_8007C090(u32 row)
 {
     u32 observed_values[10];
     struct WeaponObj obj;
-    u8 pool_0_full;
     struct WeaponObj before;
     struct ShotObj shots_before[32];
     memset(&obj, 0, sizeof(obj));
     memset(&shot_objects, 0, sizeof(shot_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 255 ? 1 : 0);
     before = obj;
     memcpy(shots_before, shot_objects, sizeof(shots_before));
     func_8007C090(&obj);

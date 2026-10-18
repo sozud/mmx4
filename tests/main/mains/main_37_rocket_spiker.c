@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_37_rocket_spiker.h"
+#include "support/state_cases.h"
+void rocket_spiker_resume_step(struct MainObj* arg0);
 extern union AnimationStep* rocket_spiker_animations[28];
 extern struct Unk_unk68 D_800FE4E4;
 
@@ -61,8 +63,26 @@ static u32 test_func_8005FE1C(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 17);
 }
 
+static void rs_resume(void)
+{
+    state_reset(1, 0, 0);
+    so.ext.main_37.saved_unk5 = 3;
+    rocket_spiker_resume_step(&so);
+}
+
+static void (*const rocket_spiker_misc_cases[])(void) = {
+    rs_resume,
+};
+static const u32 rocket_spiker_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_rocket_spiker_misc(u32 row)
+{
+    return state_run(rocket_spiker_misc_cases[row], row, &rocket_spiker_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "rocket_spiker_misc", 0, 0, COUNT(rocket_spiker_misc_cases), test_rocket_spiker_misc },
     { "func_8005FE1C", 0, 0, 8, test_func_8005FE1C },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 8;
+const u32 c_test_count = COUNT(rocket_spiker_misc_cases) + 8;

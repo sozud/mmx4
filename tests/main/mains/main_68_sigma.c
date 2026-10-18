@@ -3,6 +3,7 @@
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/sprite_animations.h"
+#include "main/shots/shot_46_sigma_shot.h"
 extern struct Unk_unk68 D_80107F84[32];
 extern void* sigma_animations[44];
 
@@ -173,23 +174,7 @@ static u32 laser_case(u32 mode)
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u8)g_QuadObjects[31].unk2 << 16) | ((u32)obj.animation_step.fields.event << 24);
 }
-#define CASE(m)                                          \
-    static u32 sigma_eye_laser_quad_pool_laser_##m(void) \
-    {                                                    \
-        return laser_case(m);                            \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) sigma_eye_laser_quad_pool_laser_##m,
-static const CTestCase sigma_eye_laser_quad_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 sigma_eye_laser_quad_pool_cases_expected[] = { 0x1C02u, 0x1C02u, 0x11C02u, 0x31C02u, 0x21C02u, 0x1D03u };
-#undef CASE
-#undef ENTRY
 
 static u32 pose_case(u32 mode, u32 observation)
 {
@@ -415,53 +400,17 @@ static u32 revealed_case(u32 mode)
     i = (u8)obj.hp | ((u32)obj.ext.main_68.flash_timer << 8) | ((u32)(u8)obj.state << 16) | ((u32)(u8)visual_objects[31].id << 24);
     return i;
 }
-#define CASE(m)                                                   \
-    static u32 sigma_revealed_hit_visual_pools_revealed_##m(void) \
-    {                                                             \
-        return revealed_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-CASE(12)
-CASE(13)
-CASE(14)
-CASE(15)
-CASE(16)
-CASE(17)
-CASE(18)
-CASE(19)
-#define ENTRY(m) sigma_revealed_hit_visual_pools_revealed_##m,
-static const CTestCase sigma_revealed_hit_visual_pools_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) ENTRY(12) ENTRY(13) ENTRY(14) ENTRY(15) ENTRY(16) ENTRY(17) ENTRY(18) ENTRY(19) };
 static const u32 sigma_revealed_hit_visual_pools_cases_expected[] = { 0x27014060u, 0x3014060u, 0x20014060u, 0x20014060u, 0x27014060u, 0x3014060u, 0x20014060u, 0x27010163u, 0x27014063u, 0x27010064u, 0x27010064u, 0x27020000u, 0x27020000u, 0x27010164u, 0x27010064u, 0x27014063u, 0x27010164u, 0x27010162u, 0x27014061u, 0x27014061u };
-#undef CASE
-#undef ENTRY
 
 static const u32 sigma_pose_expected[] = { 0xFFFFFFFFu, 0xFFFFFFFFu, 0u, 0u, 0u };
 static u32 test_sigma_pose(u32 row)
 {
     u32 observed_values[5];
     struct MainObj obj;
-    u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&visual_objects, 0, sizeof(visual_objects));
     obj.unk7 = -1;
-    pool_0_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(visual_objects, 32, 0);
     sigma_pose(&obj);
     observed_values[0] = (u32)obj.unk7;
     observed_values[1] = (u32)obj.unk7C;
@@ -558,13 +507,383 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50001u, 0x1u, 0x50100u, 0x10000u, 0x50000u };
+
+void general_intro_dialogue(struct MainObj*);
+void sigma_reveal_dialogue(struct MainObj*);
+void sigma_reveal_start(struct MainObj*);
+extern void* sigma_animations[44];
+extern struct Unk_unk68 D_80103EF0;
+static u32 dialogue(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_expected;
+    struct EngineObj engine_expected;
+    struct AbcObj window_expected;
+    struct BackgroundObj backgrounds_before[3];
+    u32 sigma = row % 2, character = row / 2 % 2, side = row / 4 % 3, wait = row / 12 % 2, played = row / 24;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&abc_object, 0, sizeof(abc_object));
+    memset(background_objects, 0, sizeof(background_objects));
+    obj.active = 0x41;
+    obj.id = sigma ? 68 : 75;
+    obj.state = sigma ? 4 : 0;
+    obj.unk5 = sigma ? 4 : 5;
+    obj.unk7C = 1 + wait;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    if (sigma) {
+        obj.animation_table = (const u8* const*)sigma_animations;
+        set_animation(&obj, 15);
+        obj.animation_cursor = (const u8*)sigma_animations[15] + 24;
+        obj.animation_step.packed = 0x3C000021;
+        assert(*(const u32*)obj.animation_cursor == 0x3C000021);
+    }
+    g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
+    g_Player.stun_timer = 3;
+    engine_obj.cur_character = character;
+    engine_obj.stage = sigma ? 9 : 11;
+    engine_obj.character_state.bytes[sigma ? 9 : 8] = played;
+    abc_object.unkC = 0x80;
+    abc_object.unk10 = 0x1234;
+    abc_object.unkA = 9;
+    abc_object.unkD = 7;
+    expected = obj;
+    player_expected = g_Player;
+    engine_expected = engine_obj;
+    window_expected = abc_object;
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    if (sigma) {
+        expected.animation_step.fields.duration = 32;
+        expected.unk6 = 1;
+        expected.unk15 = side ? 0x40 : 0;
+        expected.on_screen = 1;
+        player_expected.script_state = 1;
+        player_expected.script_action = 20;
+        player_expected.script_facing = side < 2 ? 0x40 : 0;
+        player_expected.spike_immune = 1;
+        engine_expected.gameplay_locked = 1;
+        engine_expected.character_state.bytes[9] = 1;
+        window_expected.unk10 = 0x8000 | (character ? 0x2C : 0x31);
+    } else {
+        expected.unk7C--;
+        if (!wait) {
+            expected.unk6 = 1;
+            engine_expected.character_state.bytes[8] = 1;
+            window_expected.unk10 = 0x8000 | (character ? 0x21 : 0x29);
+        }
+    }
+    if (sigma)
+        sigma_reveal_dialogue(&obj);
+    else
+        general_intro_dialogue(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(&abc_object, &window_expected, sizeof(abc_object));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    return 1;
+}
+static u32 reveal(u32 row)
+{
+    struct MainObj obj, expected;
+    struct ShotObj scythe, scythe_expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 side = row % 3, face = row / 3;
+    memset(&obj, 0, sizeof(obj));
+    memset(&scythe, 0, sizeof(scythe));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    obj.active = 0x41;
+    obj.id = 68;
+    obj.state = 4;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.unk42 = 0x9234;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.animation_table = (const u8* const*)sigma_animations;
+    obj.ext.main_68.scythe = MAIN_OBJECT(&scythe);
+    scythe.active = 0x41;
+    scythe.id = 46;
+    scythe.unk2 = 7;
+    scythe.animation_table = (u32**)sigma_animations;
+    g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
+    player_before = g_Player;
+    expected = obj;
+    scythe_expected = scythe;
+    expected.unk4B = -1;
+    expected.terrain_box = &D_80103EF0;
+    expected.y_speed = -65536;
+    expected.x_speed = 0;
+    expected.unk42 = 0x1234;
+    expected.unk5 = 1;
+    expected.unk15 = side ? 0x40 : 0;
+    expected.on_screen = 1;
+    expected.unk17 = 8;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = sigma_animations[8];
+    expected.animation_step.packed = 0x00010001;
+    scythe_expected.unk17 = 9;
+    scythe_expected.previous_animation_index = 255;
+    scythe_expected.animation_cursor = sigma_animations[9];
+    scythe_expected.animation_step.packed = 0x01010001;
+    D_8013E198[2] = -1;
+    sigma_reveal_start(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&scythe, &scythe_expected, sizeof(scythe));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    return 1;
+}
+
+void sigma_cloak_teleport_appear(struct MainObj*);
+void sigma_cloak_teleport_fade_in(struct MainObj*);
+extern void* sigma_animations[44];
+static struct ShotObj expected_shots[32];
+static struct VisualObj expected_visuals[32];
+static u32 attack(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player;
+    struct EngineObj engine;
+    struct ShotObj* scythe = &shot_objects[0];
+    u32 fire = row % 2, far = row / 2, i;
+    engine_obj.stage = 12;
+    engine_obj.substage = 1;
+    engine = engine_obj;
+    background_objects[0].x_pos.i.hi = 1088;
+    background_objects[0].y_pos.i.hi = 256;
+    g_Player.x_pos.val = (far ? 1392 : 1232) * 65536;
+    player = g_Player;
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = 1;
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    for (i = 0; i < COUNT(visual_objects); i++)
+        visual_objects[i].active = i == 31 && fire ? 0 : 1;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 68;
+    obj.state = 1;
+    obj.unk5 = 3;
+    obj.hp = 48;
+    obj.animation_table = (const u8* const*)sigma_animations;
+    obj.ext.main_68.scythe = (struct MainObj*)scythe;
+    scythe->active = 0x41;
+    scythe->id = 46;
+    scythe->unk7C = WEAPON_OBJECT(&obj);
+    func_800A8628(scythe);
+    D_8013E198[2] = -1;
+    sigma_cloak_teleport_appear(&obj);
+    for (i = 0; i < 6; i++)
+        sigma_cloak_teleport_fade_in(&obj);
+    assert(obj.unk6 == 2 && obj.unk7C == 40);
+    for (i = 0; i < 39; i++)
+        func_80083710(&obj);
+    assert(obj.unk7C == 1);
+    memcpy(expected_shots, shot_objects, sizeof(expected_shots));
+    memcpy(expected_visuals, visual_objects, sizeof(expected_visuals));
+    expected = obj;
+    expected.unk7C = 10;
+    expected.unk6 = 3;
+    expected.on_screen = 1;
+    expected.unk17 = 4;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = sigma_animations[4];
+    expected.animation_step.packed = 0x17000021;
+    expected.ext.main_68.count = 0;
+    expected.ext.main_68.shot_type = far ? 1 : 2;
+    expected_shots[0].unk17 = 7;
+    expected_shots[0].previous_animation_index = 255;
+    expected_shots[0].animation_cursor = sigma_animations[7];
+    expected_shots[0].animation_step.packed = *(u32*)sigma_animations[7];
+    if (fire) {
+        func_80083710(&obj);
+        assert(obj.ext.main_68.visual == &visual_objects[31] && obj.unk6 == 3 && obj.unk7C == 10);
+        for (i = 0; i < 9; i++)
+            func_800837FC(&obj);
+        expected = obj;
+        expected.unk7C = 0;
+        expected.ext.main_68.count = 1;
+        memcpy(expected_shots, shot_objects, sizeof(expected_shots));
+        memcpy(expected_visuals, visual_objects, sizeof(expected_visuals));
+    }
+    cur_random = 0x1234;
+    if (fire)
+        func_800837FC(&obj);
+    else
+        func_80083710(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(shot_objects, expected_shots, sizeof(expected_shots));
+    c_test_same_words(visual_objects, expected_visuals, sizeof(expected_visuals));
+    c_test_same_words(&g_Player, &player, sizeof(player));
+    c_test_same_words(&engine_obj, &engine, sizeof(engine));
+    assert(cur_random == 0x1234 && D_8013E198[2] == -1);
+    return 1;
+}
+
+extern void* sigma_animations[44];
+static struct VisualObj visuals_expected[32];
+static struct ShotObj shots_expected[32];
+static u32 reveal_sigma_reveal_pool_capacity(u32 row)
+{
+    struct MainObj obj, expected;
+    struct ShotObj scythe, scythe_expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before;
+    struct MainBssState main_before;
+    u32 slots = row % 3, shot_free = row / 3 % 2, periodic = row / 6 % 2, face = row / 12, available = slots == 2 ? 21 : slots, first = available && periodic, count = available - first > 20 ? 20 : available - first, i, high;
+    u16 rng = 0x1234;
+    engine_obj.stage = 12;
+    engine_obj.substage = 1;
+    engine_before = engine_obj;
+    main_bss_state.frame_counter = periodic ? 0 : 1;
+    main_before = main_bss_state;
+    g_Player.x_pos.i.hi = face ? 180 : 140;
+    player_before = g_Player;
+    cur_random = rng;
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    for (i = 0; i < COUNT(visual_objects); i++)
+        visual_objects[i].active = i >= 32 - available ? 0 : 1;
+    memcpy(visuals_expected, visual_objects, sizeof(visuals_expected));
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = i == 31 && shot_free ? 0 : 1;
+    memcpy(shots_expected, shot_objects, sizeof(shots_expected));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 68;
+    obj.state = 4;
+    obj.unk5 = 2;
+    obj.hp = 48;
+    obj.x_pos.i.hi = 160;
+    obj.y_pos.i.hi = 120;
+    obj.animation_table = (const u8* const*)sigma_animations;
+    obj.unk7C = 1;
+    memset(&scythe, 0, sizeof(scythe));
+    scythe.active = 0x41;
+    scythe.id = 46;
+    scythe.state = 1;
+    scythe.unk7C = WEAPON_OBJECT(&obj);
+    scythe.animation_table = (u32**)sigma_animations;
+    obj.ext.main_68.scythe = MAIN_OBJECT(&scythe);
+    expected = obj;
+    scythe_expected = scythe;
+    scythe_expected.state = 2;
+    expected.unk7C = 0;
+    expected.unk5 = 3;
+    expected.ext.main_68.count = count;
+    expected.unk17 = 14;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = sigma_animations[14];
+    expected.animation_step.packed = 0x39010003;
+    expected.unk15 = face ? 0x40 : 0;
+    if (first) {
+        struct VisualObj* v = &visuals_expected[32 - available];
+        v->active = 0x41;
+        v->id = 32;
+        v->unk2 = 5;
+        v->unk50 = PLAYER_OBJECT(&obj);
+    }
+    for (i = 0; i < count; i++) {
+        struct VisualObj* v = &visuals_expected[32 - available + first + i];
+        high = (u16)(rng * 3) >> 8;
+        rng = ((rng + high) & 255) | high << 8;
+        v->active = 0x41;
+        v->id = 32;
+        v->unk2 = 1;
+        v->unk54 = rng & 3;
+        v->unk50 = PLAYER_OBJECT(&obj);
+    }
+    if (shot_free) {
+        struct ShotObj* s = &shots_expected[31];
+        s->active = 0x41;
+        s->id = 46;
+        s->unk2 = 9;
+        s->unk7C = WEAPON_OBJECT(&obj);
+        expected.ext.main_68.scythe = MAIN_OBJECT(&shot_objects[31]);
+    }
+    func_80085A44(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&scythe, &scythe_expected, sizeof(scythe));
+    c_test_same_words(visual_objects, visuals_expected, sizeof(visuals_expected));
+    c_test_same_words(shot_objects, shots_expected, sizeof(shots_expected));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&main_bss_state, &main_before, sizeof(main_bss_state));
+    assert(cur_random == rng);
+    return 1;
+}
+
+void sigma_scythe_spin_rise(struct MainObj*);
+void sigma_scythe_spin_throw(struct MainObj*);
+extern void* sigma_animations[44];
+static struct ShotObj expected_shots_sigma_spin_throw_capacity[32];
+static u32 full(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player = g_Player;
+    struct EngineObj engine;
+    u32 i;
+    (void)row;
+    engine_obj.stage = 12;
+    engine_obj.substage = 1;
+    engine = engine_obj;
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = 1;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 68;
+    obj.unk2 = 1;
+    obj.state = 1;
+    obj.hp = 48;
+    obj.unk5 = 2;
+    obj.unk6 = 1;
+    obj.x_pos.i.hi = 1232;
+    obj.y_pos.i.hi = 336;
+    obj.animation_table = (const u8* const*)sigma_animations;
+    obj.ext.main_68.scythe = (struct MainObj*)&shot_objects[0];
+    shot_objects[0].active = 0x41;
+    shot_objects[0].id = 46;
+    shot_objects[0].unk7C = WEAPON_OBJECT(&obj);
+    func_800A8628(&shot_objects[0]);
+    set_animation(&obj, 23);
+    sigma_scythe_spin_rise(&obj);
+    assert(obj.unk6 == 2 && obj.unk7C == 40);
+    for (i = 0; i < 64; i++)
+        sigma_scythe_spin_throw(&obj);
+    assert(obj.unk7 == 1 && obj.unk17 == 26 && obj.animation_cursor == (const u8*)sigma_animations[26] + 12 && obj.animation_step.fields.duration == 1);
+    expected = obj;
+    expected.animation_cursor = (const u8*)sigma_animations[26] + 16;
+    expected.animation_step.packed = 0x5301000C;
+    memcpy(expected_shots_sigma_spin_throw_capacity, shot_objects, sizeof(expected_shots_sigma_spin_throw_capacity));
+    cur_random = 0x1234;
+    sigma_scythe_spin_throw(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(shot_objects, expected_shots_sigma_spin_throw_capacity, sizeof(expected_shots_sigma_spin_throw_capacity));
+    c_test_same_words(&g_Player, &player, sizeof(player));
+    c_test_same_words(&engine_obj, &engine, sizeof(engine));
+    assert(cur_random == 0x1234);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
     { "sigma_cloak_flash_hits", sigma_cloak_flash_hits_cases, sigma_cloak_flash_hits_cases_expected, COUNT(sigma_cloak_flash_hits_cases), 0 },
-    { "sigma_eye_laser_quad_pool", sigma_eye_laser_quad_pool_cases, sigma_eye_laser_quad_pool_cases_expected, COUNT(sigma_eye_laser_quad_pool_cases), 0 },
+    { "sigma_eye_laser_quad_pool", NULL, sigma_eye_laser_quad_pool_cases_expected, COUNT(sigma_eye_laser_quad_pool_cases_expected), laser_case },
     { "sigma_pose_visual_pool", sigma_pose_visual_pool_cases, sigma_pose_visual_pool_cases_expected, COUNT(sigma_pose_visual_pool_cases), 0 },
-    { "sigma_revealed_hit_visual_pools", sigma_revealed_hit_visual_pools_cases, sigma_revealed_hit_visual_pools_cases_expected, COUNT(sigma_revealed_hit_visual_pools_cases), 0 },
+    { "sigma_revealed_hit_visual_pools", NULL, sigma_revealed_hit_visual_pools_cases_expected, COUNT(sigma_revealed_hit_visual_pools_cases_expected), revealed_case },
     { "sigma_pose", 0, 0, 1, test_sigma_pose },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+    { "shipped_boss_dialogue_characters_and_player_side", NULL, NULL, 48, dialogue },
+    { "sigma_reveal_faces_player_and_preserves_scythe_owner", NULL, NULL, 6, reveal },
+    { "cloaked_Sigma_own_appear_fade_windup_near_far_full_visual_or_shot_pool", NULL, NULL, 4, attack },
+    { "own_Sigma_reveal_cloak_and_scythe_full_partial_pools_exact_RNG", NULL, NULL, 24, reveal_sigma_reveal_pool_capacity },
+    { "uncloaked_Sigma_real_rise_40_wait_25_throw_animation_ticks_full_shots", NULL, NULL, 1, full },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(sigma_cloak_flash_hits_cases) + COUNT(sigma_eye_laser_quad_pool_cases) + COUNT(sigma_pose_visual_pool_cases) + COUNT(sigma_revealed_hit_visual_pools_cases) + 1 + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(sigma_cloak_flash_hits_cases) + COUNT(sigma_eye_laser_quad_pool_cases_expected) + COUNT(sigma_pose_visual_pool_cases) + COUNT(sigma_revealed_hit_visual_pools_cases_expected) + 1 + COUNT(pool_full_cases) + 48 + 6 + 4 + 24 + 1;

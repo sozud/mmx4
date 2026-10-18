@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/mains/main_40_breakable_terrain.h"
+#include "support/state_cases.h"
 extern s8* D_800FEA24[7];
 extern struct Unk_unk68 D_800FEAA0;
 extern union AnimationStep* breakable_terrain_animations[6];
@@ -128,8 +129,38 @@ static u32 test_func_80061F2C(u32 index)
     return test_func_80061F2C_1(index);
 }
 
+static u8 terrain_record;
+#define BT(mode, setup) (state_reset(0, 0, 0), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_40.unk80 = mode, setup, func_80061F2C(&so), state_extra = so.ext.main_40.timer | so.ext.main_40.trigger_time << 16)
+static void btr_drop(void)
+{
+    BT(2, so.y_pos.i.hi = 0x200);
+}
+static void btr_drop_wait(void) { BT(3, 0); }
+static void btr_idle(void) { BT(0, 0); }
+static void btr_away(void)
+{
+    terrain_record = 0;
+    BT(0, (so.x_pos.i.hi = 0x1000, so.backref = (void*)&terrain_record));
+    state_extra ^= terrain_record << 8;
+    so.backref = NULL;
+}
+
+static void (*const breakable_terrain_main_cases[])(void) = {
+    btr_drop,
+    btr_drop_wait,
+    btr_idle,
+    btr_away,
+};
+static const u32 breakable_terrain_main_expected[] = { 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x80010u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x10000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_breakable_terrain_main(u32 row)
+{
+    return state_run(breakable_terrain_main_cases[row], row, &breakable_terrain_main_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "breakable_terrain_main", 0, 0, COUNT(breakable_terrain_main_cases), test_breakable_terrain_main },
     { "func_80061F2C", 0, 0, 3, test_func_80061F2C },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 3;
+const u32 c_test_count = COUNT(breakable_terrain_main_cases) + 3;

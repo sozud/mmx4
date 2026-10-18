@@ -15,17 +15,15 @@ static u32 test_func_8009D048(u32 row)
     u32 observed_values[3];
     struct ShotObj obj;
     struct WeaponObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&background_objects, 0, sizeof(background_objects));
     memset(&qux_object, 0, sizeof(qux_object));
-    child_0_present = 255;
     obj.unk84.value = c->value;
     obj.unk2 = c->unk2;
     background_objects[0].x_pos.i.hi = c->v_0_x_pos_hi;
     child_0.x_pos.u.hi = c->child_0_x_pos_hi;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
+    obj.unk7C = &child_0;
     func_8009D048(&obj);
     observed_values[0] = (u32)obj.state;
     observed_values[1] = (u32)obj.unk84.value;

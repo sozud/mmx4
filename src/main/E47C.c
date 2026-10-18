@@ -508,7 +508,7 @@ void func_8001DE54(struct GameInfo* arg0)
         var_a0 = D_80169498.sector;
         var_a2 = 0;
         do {
-            *var_a0 = (*var_a1) << 0x10;
+            *var_a0 = *var_a1 * 0x10000;
             var_a0++;
             var_a1 += 1;
             var_a2 += 1;

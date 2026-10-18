@@ -7,16 +7,6 @@
 #include "main/misc/misc_02_rubble.h"
 #include "main/objects.h"
 
-struct Misc08EffectTripletTable {
-    struct Misc08EffectTriplet entries[26];
-    u8 padding[2];
-};
-
-struct Misc08EffectDescriptor {
-    u8 effect_id;
-    u8 variant;
-};
-
 extern struct Misc08EffectTripletTable crumbling_tile_second_effects;
 extern u8 crumbling_tile_debris_0[];
 extern u8 crumbling_tile_debris_1[];
@@ -40,7 +30,7 @@ void crumbling_tile_break_second(struct MiscObj*);
 // crumbling_tile_main_funcs
 extern void (*crumbling_tile_main_funcs[])(struct MiscObj*);
 void crumbling_tile_break_first(struct MiscObj*);
-void crumbling_tile_second(struct MainObj* arg0);
+void crumbling_tile_second(struct MiscObj* arg0);
 
 // crumbling_tile_state_funcs
 extern void (*crumbling_tile_state_funcs[])(struct MiscObj*);
@@ -235,7 +225,7 @@ void crumbling_tile_break_second(struct MiscObj* self)
     }
 }
 
-void crumbling_tile_second(struct MainObj* self)
+void crumbling_tile_second(struct MiscObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     crumbling_tile_second_funcs[self->unk5](self);

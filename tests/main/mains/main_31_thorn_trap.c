@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_31_thorn_trap.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+void thorn_trap_idle(struct MainObj* arg0);
 extern s8 D_800FDC40[8];
 extern union AnimationStep* thorn_trap_animations[18];
 extern struct StageObjectRecord stage_object_records_3_1[71];
@@ -133,30 +135,7 @@ static u32 thorn_trap_fire_run(u32 mode)
     return actual;
 }
 
-#define CASE(name)                                 \
-    static u32 thorn_trap_fire_##name##_case(void) \
-    {                                              \
-        return thorn_trap_fire_run(name);          \
-    }
-CASE(SPREAD_WIDE)
-CASE(SPREAD_NARROW)
-CASE(SPREAD_FULL)
-CASE(SPREAD_IDLE)
-CASE(SPREAD_ENDED)
-CASE(AIMED)
-CASE(AIMED_RIGHT)
-CASE(AIMED_FULL)
-CASE(AIMED_IDLE)
-#define ENTRY(name) thorn_trap_fire_##name##_case,
-static const CTestCase thorn_trap_fire_cases[]
-    = {
-          ENTRY(SPREAD_WIDE) ENTRY(SPREAD_NARROW) ENTRY(SPREAD_FULL) ENTRY(SPREAD_IDLE) ENTRY(SPREAD_ENDED) ENTRY(AIMED) ENTRY(AIMED_RIGHT)
-              ENTRY(AIMED_FULL) ENTRY(AIMED_IDLE)
-      };
 static const u32 thorn_trap_fire_cases_expected[] = { 0x20100u, 0x20101u, 0x1020000u, 0x20000u, 0x30000u, 0x2010Du, 0x2010Du, 0x2020000u, 0x30000u };
-#undef SHOT_SLOT
-#undef CASE
-#undef ENTRY
 
 static u32 open_case(u32 mode)
 {
@@ -198,23 +177,7 @@ static u32 open_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)obj.unk17 << 8) | ((u32)obj.animation_step.fields.duration << 16);
 }
-#define CASE(m)                                         \
-    static u32 thorn_trap_open_animation_open_##m(void) \
-    {                                                   \
-        return open_case(m);                            \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) thorn_trap_open_animation_open_##m,
-static const CTestCase thorn_trap_open_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 thorn_trap_open_animation_cases_expected[] = { 0x80306u, 0x50707u, 0x80308u, 0x50409u, 0x40204u, 0x30103u };
-#undef CASE
-#undef ENTRY
 
 #include "support/enemy_world.h"
 static const u32 func_8005C474_expected[] = { 0x4398u };
@@ -245,10 +208,27 @@ static u32 test_func_8005C474(u32 row)
     return c_test_observe(0, row, &observed, func_8005C474_expected, 1);
 }
 
+static void tt_idle(void)
+{
+    state_reset(2, 0, 0);
+    thorn_trap_idle(&so);
+}
+
+static void (*const thorn_trap_misc_cases[])(void) = {
+    tt_idle,
+};
+static const u32 thorn_trap_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_thorn_trap_misc(u32 row)
+{
+    return state_run(thorn_trap_misc_cases[row], row, &thorn_trap_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "thorn_trap_fire", thorn_trap_fire_cases, thorn_trap_fire_cases_expected, COUNT(thorn_trap_fire_cases), 0 },
-    { "thorn_trap_open_animation", thorn_trap_open_animation_cases, thorn_trap_open_animation_cases_expected, COUNT(thorn_trap_open_animation_cases), 0 },
+    { "thorn_trap_misc", 0, 0, COUNT(thorn_trap_misc_cases), test_thorn_trap_misc },
+    { "thorn_trap_fire", NULL, thorn_trap_fire_cases_expected, COUNT(thorn_trap_fire_cases_expected), thorn_trap_fire_run },
+    { "thorn_trap_open_animation", NULL, thorn_trap_open_animation_cases_expected, COUNT(thorn_trap_open_animation_cases_expected), open_case },
     { "func_8005C474", 0, 0, 1, test_func_8005C474 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(thorn_trap_fire_cases) + COUNT(thorn_trap_open_animation_cases) + 1;
+const u32 c_test_count = COUNT(thorn_trap_misc_cases) + COUNT(thorn_trap_fire_cases_expected) + COUNT(thorn_trap_open_animation_cases_expected) + 1;

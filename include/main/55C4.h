@@ -1,6 +1,26 @@
 #ifndef MAIN_55C4_H
 #define MAIN_55C4_H
 
+enum XaArchive {
+#ifdef VERSION_JP
+    XA_ARCHIVE_BGM1 = 0x94,
+#elif defined(VERSION_EU)
+    XA_ARCHIVE_BGM1 = 0x97,
+#else
+    XA_ARCHIVE_BGM1 = 0x95,
+#endif
+    XA_ARCHIVE_BGM2,
+    XA_ARCHIVE_BGM3,
+    XA_ARCHIVE_BGM4,
+    XA_ARCHIVE_BGM5,
+    XA_ARCHIVE_BOSS_INTRO,
+    XA_ARCHIVE_VOICE1,
+    XA_ARCHIVE_VOICE2,
+    XA_ARCHIVE_VOICE3,
+    XA_ARCHIVE_VOICE4,
+    XA_ARCHIVE_VOICE5,
+};
+
 union MainPaletteData {
     u8 raw[0x200];
     struct {

@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/shots/shot_00_dragon_shot.h"
+#include "support/state_cases.h"
+void dragon_shot_pulse(struct ShotObj*);
 extern union AnimationStep* D_800F9934[16];
 extern u8 dragon_shot_flame_box[4], dragon_shot_pulse_hit_box[4], dragon_shot_bomb_box[4];
 extern u8 dragon_shot_box_0[4], dragon_shot_box_1[4], dragon_shot_box_2[4];
@@ -119,64 +121,33 @@ static u32 dragon_case(u32 mode)
     actual = (u8)obj.state | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
     return actual;
 }
-#define CASE(m)                                             \
-    static u32 dragon_shot_owner_animation_dragon_##m(void) \
-    {                                                       \
-        return dragon_case(m);                              \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-#define ENTRY(m) dragon_shot_owner_animation_dragon_##m,
-static const CTestCase dragon_shot_owner_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) };
 static const u32 dragon_shot_owner_animation_cases_expected[] = { 0x640201u, 0x640402u, 0xBE0A03u, 0x6E0A03u, 0xBE0A03u, 0x6E0A03u, 0x640C05u, 0x640E05u, 0x4D0006u, 0x4D0006u };
-#undef CASE
-#undef ENTRY
 
-static const u32 func_800994DC_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_func_800994DC(u32 row)
+static struct WeaponObj pulse_owner;
+#define ss state_room.shot
+#define PULSE(ev, rel) (state_reset(0, 0, 0), memset(&pulse_owner, 0, sizeof(pulse_owner)), pulse_owner.x_pos.i.hi = 0x80, pulse_owner.y_pos.i.hi = 0x60, pulse_owner.unk42 = 0x8004, ss.active = 1, ss.state = 3, ss.unk7C = &pulse_owner, ss.animation_step.fields.event = ev, ss.animation_step.fields.relative_step = rel, dragon_shot_pulse(&ss), state_extra = ss.unk50.data == dragon_shot_pulse_hit_box)
+static void dsp_glow(void)
 {
-    u32 observed_values[14];
-    struct ShotObj obj;
-    struct MainObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    memset(&background_objects, 0, sizeof(background_objects));
-    child_0_present = 255;
-    obj.unk2 = -1;
-    background_objects[0].x_pos.val = -30396368;
-    background_objects[0].y_pos.val = 0;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
-    func_800994DC(&obj);
-    observed_values[0] = (u32)obj.bg_offset;
-    observed_values[1] = (u32)obj.state;
-    observed_values[2] = (u32)obj.unk15;
-    observed_values[3] = (u32)obj.unk16;
-    observed_values[4] = (u32)obj.unk28;
-    observed_values[5] = (u32)obj.unk2C;
-    observed_values[6] = (u32)obj.unk40;
-    observed_values[7] = (u32)obj.unk42;
-    observed_values[8] = (u32)obj.unk5C;
-    observed_values[9] = (u32)obj.unk60;
-    observed_values[10] = (u32)obj.x_pos.val;
-    observed_values[11] = (u32)obj.x_vel.val;
-    observed_values[12] = (u32)obj.y_pos.val;
-    observed_values[13] = (u32)obj.y_vel.val;
-    return c_test_observe(0, row, observed_values, func_800994DC_expected, 14);
+    PULSE(0, 1);
+}
+static void dsp_strike(void) { PULSE(1, 1); }
+static void dsp_end(void) { PULSE(0, -1); }
+
+static void (*const dragon_shot_pulse_states_cases[])(void) = {
+    dsp_glow,
+    dsp_strike,
+    dsp_end,
+};
+static const u32 dragon_shot_pulse_states_expected[] = { 3u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 0u, 0u, 3u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 1u, 0u, 4u, 1u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48004u, 0u, 0u };
+
+static u32 test_dragon_shot_pulse_states(u32 row)
+{
+    return object_run(dragon_shot_pulse_states_cases[row], row, &dragon_shot_pulse_states_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "dragon_shot_owner_animation", dragon_shot_owner_animation_cases, dragon_shot_owner_animation_cases_expected, COUNT(dragon_shot_owner_animation_cases), 0 },
-    { "func_800994DC", 0, 0, 1, test_func_800994DC },
+    { "dragon_shot_pulse_states", 0, 0, COUNT(dragon_shot_pulse_states_cases), test_dragon_shot_pulse_states },
+    { "dragon_shot_owner_animation", NULL, dragon_shot_owner_animation_cases_expected, COUNT(dragon_shot_owner_animation_cases_expected), dragon_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(dragon_shot_owner_animation_cases) + 1;
+const u32 c_test_count = COUNT(dragon_shot_pulse_states_cases) + COUNT(dragon_shot_owner_animation_cases_expected);

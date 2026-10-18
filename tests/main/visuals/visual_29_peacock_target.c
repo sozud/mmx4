@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/visuals/visual_29_peacock_target.h"
 #include "main/mains/main_64_cyber_peacock.h"
+#include "main/55C4.h"
 
 static u32 track_case(u32 mode, u32 observation)
 {
@@ -83,27 +84,11 @@ static u32 track_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define TRACK_CASE(m, n)                                      \
-    static u32 peacock_tracking_context_track_##m##_##n(void) \
-    {                                                         \
-        return track_case(m, n);                              \
-    }
-#define TRACK_MODE(m) TRACK_CASE(m, 0) TRACK_CASE(m, 1) TRACK_CASE(m, 2) TRACK_CASE(m, 3) TRACK_CASE(m, 4) TRACK_CASE(m, 5) TRACK_CASE(m, 6) TRACK_CASE(m, 7)
-TRACK_MODE(0)
-TRACK_MODE(1)
-TRACK_MODE(2)
-TRACK_MODE(3)
-TRACK_MODE(4)
-TRACK_MODE(5)
-#define TRACK_ENTRY(m, n) peacock_tracking_context_track_##m##_##n,
-#define TRACK_ENTRIES(m) TRACK_ENTRY(m, 0) TRACK_ENTRY(m, 1) TRACK_ENTRY(m, 2) TRACK_ENTRY(m, 3) TRACK_ENTRY(m, 4) TRACK_ENTRY(m, 5) TRACK_ENTRY(m, 6) TRACK_ENTRY(m, 7)
-static const CTestCase peacock_tracking_context_cases[]
-    = { TRACK_ENTRIES(0) TRACK_ENTRIES(1) TRACK_ENTRIES(2) TRACK_ENTRIES(3) TRACK_ENTRIES(4) TRACK_ENTRIES(5) };
 static const u32 peacock_tracking_context_cases_expected[] = { 0x641234u, 0x5E2345u, 0x100u, 0x3FE00u, 0x1003Bu, 0x350001u, 0x59FF0001u, 0xA50A01u, 0x641234u, 0x572345u, 0x100u, 0x2FE00u, 0x1003Bu, 0x350001u, 0x59FF0001u, 0xA50A01u, 0x641234u, 0x542345u, 0x100u, 0x1FE00u, 0x1003Bu, 0x350001u, 0x59FF0001u, 0xA50A01u, 0x641234u, 0x522345u, 0x100u, 0xFE00u, 0x1003Bu, 0x350001u, 0x59FF0001u, 0xA50A01u, 0x661234u, 0x512345u, 0xFFFF0100u, 0xFFFFFE00u, 0x1003Bu, 0x350001u, 0x59FF0001u, 0xA50A01u, 0x641234u, 0x502345u, 0x2468u, 0xFFFFEDCCu, 0x10000u, 0x350101u, 0x58010002u, 0xFF0B00u };
-#undef TRACK_CASE
-#undef TRACK_MODE
-#undef TRACK_ENTRY
-#undef TRACK_ENTRIES
+static u32 peacock_tracking_context_cases_row(u32 row)
+{
+    return track_case(row / 8, row % 8);
+}
 
 struct peacock_target_fire_case {
     u32 previous, pool_0_full;
@@ -120,15 +105,13 @@ static u32 test_peacock_target_fire(u32 row)
     u32 observed_values[10];
     struct VisualObj obj;
     struct PlayerObj child_0;
-    u8 child_0_present;
     u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&shot_objects, 0, sizeof(shot_objects));
-    child_0_present = 255;
     child_0.input.buttons.previous = c->previous;
     pool_0_full = c->pool_0_full;
-    obj.unk50 = child_0_present ? &child_0 : NULL;
+    obj.unk50 = &child_0;
     {
         u32 slot;
         for (slot = 0; slot < 32; ++slot)
@@ -182,10 +165,62 @@ static u32 test_peacock_target_track(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 7);
 }
 
+void peacock_target_main(struct VisualObj*);
+static const s16 positions[5][2] = { { 160, 120 }, { -32, 120 }, { 352, 120 }, { 160, -32 }, { 160, 272 } };
+static const u32 hold_words[] = { 0x58010001, 0x59FF0001 };
+static u32 target_lifecycle(u32 row)
+{
+    struct VisualObj obj, expected;
+    struct WeaponObj owner, owner_before;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 edge = row % 5, state = row / 5 % 3, frame = row / 15;
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(&owner, 0, sizeof(owner));
+    owner.active = 0x41;
+    owner.id = 8;
+    owner.state = state;
+    owner.x_pos.val = 0x24681357;
+    owner.y_pos.val = 0x13572468;
+    owner_before = owner;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 29;
+    obj.state = 1;
+    obj.unk5 = 3;
+    obj.unk6 = 7;
+    obj.on_screen = 7;
+    obj.bg_offset = -1;
+    obj.unk50 = &owner;
+    obj.x_pos.val = positions[edge][0] * 65536 + 0x1234;
+    obj.y_pos.val = positions[edge][1] * 65536 + 0x5678;
+    obj.animation_table = (u32**)cyber_peacock_animations;
+    set_animation_frame(ANIMATED_OBJECT(&obj), 10, frame);
+    assert(obj.animation_step.packed == hold_words[frame]);
+    obj.previous_animation_index = 0x35;
+    expected = obj;
+    if (state != 1)
+        memset(&expected, 0, 8);
+    else {
+        expected.animation_cursor = (u32*)cyber_peacock_animations[10] + (frame ^ 1);
+        expected.animation_step.packed = hold_words[frame ^ 1];
+        expected.on_screen = edge == 0 || edge == 1 || edge == 3;
+    }
+    peacock_target_main(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "peacock_tracking_context", peacock_tracking_context_cases, peacock_tracking_context_cases_expected, COUNT(peacock_tracking_context_cases), 0 },
+    { "peacock_tracking_context", NULL, peacock_tracking_context_cases_expected, COUNT(peacock_tracking_context_cases_expected), peacock_tracking_context_cases_row },
     { "peacock_target_fire", 0, 0, 3, test_peacock_target_fire },
     { "peacock_target_track", 0, 0, 5, test_peacock_target_track },
+    { "target_owner_lifecycle", NULL, NULL, 30, target_lifecycle },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(peacock_tracking_context_cases) + 3 + 5;
+const u32 c_test_count = COUNT(peacock_tracking_context_cases_expected) + 3 + 5 + 30;

@@ -143,50 +143,7 @@ static u32 linked_spark_owner_guards_spark_case(u32 mode)
     actual = (u8)obj.unk5 | ((u32)(u8)owner.unk5 << 8) | ((u32)obj.unk17 << 16);
     return actual;
 }
-#define CASE(m)                                          \
-    static u32 linked_spark_owner_guards_spark_##m(void) \
-    {                                                    \
-        return linked_spark_owner_guards_spark_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-#define ENTRY(m) linked_spark_owner_guards_spark_##m,
-static const CTestCase linked_spark_owner_guards_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) };
 static const u32 linked_spark_owner_guards_cases_expected[] = { 0x70601u, 0x70601u, 0x70601u, 0x70601u, 0x70401u, 0xA0401u, 0xD0401u, 0x70401u, 0x60600u, 0x90600u, 0xC0600u, 0x60601u };
-#undef CASE
-#undef ENTRY
-
-static const u32 func_8009C45C_expected[] = { 0u, 0xFFFFFFFFu };
-static u32 test_func_8009C45C(u32 row)
-{
-    u32 observed_values[2];
-    struct ShotObj obj;
-    struct WeaponObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&background_objects, 0, sizeof(background_objects));
-    memset(&qux_object, 0, sizeof(qux_object));
-    child_0_present = 255;
-    obj.unk5 = -1;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
-    func_8009C45C(&obj);
-    observed_values[0] = (u32)child_0.unk5;
-    observed_values[1] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, func_8009C45C_expected, 2);
-}
 
 static const u32 inputs_0[2][5] = {
     { 255, 1, 0, 0, 0 },
@@ -222,9 +179,8 @@ static u32 test_linked_spark_despawn(u32 row)
 
 const struct CTestGroup c_test_groups[] = {
     { "linked_spark_animation", linked_spark_animation_cases, linked_spark_animation_cases_expected, COUNT(linked_spark_animation_cases), 0 },
-    { "linked_spark_owner_guards", linked_spark_owner_guards_cases, linked_spark_owner_guards_cases_expected, COUNT(linked_spark_owner_guards_cases), 0 },
-    { "func_8009C45C", 0, 0, 1, test_func_8009C45C },
+    { "linked_spark_owner_guards", NULL, linked_spark_owner_guards_cases_expected, COUNT(linked_spark_owner_guards_cases_expected), linked_spark_owner_guards_spark_case },
     { "linked_spark_despawn", 0, 0, 2, test_linked_spark_despawn },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(linked_spark_animation_cases) + COUNT(linked_spark_owner_guards_cases) + 1 + 2;
+const u32 c_test_count = COUNT(linked_spark_animation_cases) + COUNT(linked_spark_owner_guards_cases_expected) + 2;

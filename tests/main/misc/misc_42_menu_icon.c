@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/misc/misc_42_menu_icon.h"
 #include "main/misc/misc_31_option_toggle.h"
+#include "support/state_cases.h"
 extern union AnimationStep option_toggle_anim_0[36];
 
 static u32 frame_case(u32 mode)
@@ -29,30 +30,7 @@ static u32 frame_case(u32 mode)
     assert(main_bss_state.transition.selection == 3);
     return obj.unk42 | ((u32)(u8)obj.on_screen << 16) | ((u32)obj.animation_step.fields.frame_index << 24);
 }
-#define FRAME_CASE(name, mode)   \
-    static u32 name(void)        \
-    {                            \
-        return frame_case(mode); \
-    }
-FRAME_CASE(FRAME_32, 0)
-FRAME_CASE(FRAME_08, 1)
-FRAME_CASE(FRAME_3E, 2)
-FRAME_CASE(FRAME_3C, 3)
-FRAME_CASE(FRAME_3A, 4)
-FRAME_CASE(FRAME_DEFAULT_SELECTED, 5)
-FRAME_CASE(FRAME_DEFAULT_UNSELECTED, 6)
-static const CTestCase menu_icon_displayed_frame_cases[] = {
-    FRAME_32,
-    FRAME_08,
-    FRAME_3E,
-    FRAME_3C,
-    FRAME_3A,
-    FRAME_DEFAULT_SELECTED,
-    FRAME_DEFAULT_UNSELECTED,
-};
 static const u32 menu_icon_displayed_frame_cases_expected[] = { 0x32013456u, 0x8013456u, 0x3E013456u, 0x3C013456u, 0x3A013456u, 0x12017803u, 0x12017800u };
-#undef main_bss_state
-#undef FRAME_CASE
 
 static u32 lifecycle_case(u32 mode, u32 observation)
 {
@@ -163,109 +141,12 @@ static u32 lifecycle_case(u32 mode, u32 observation)
     assert(obj.animation_table == (mode == 2 ? NULL : option_toggle_animations));
     return actual;
 }
-#define LIFECYCLE_CASE(name, mode, observation)   \
-    static u32 name(void)                         \
-    {                                             \
-        return lifecycle_case(mode, observation); \
-    }
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_HEADER, 0, 0)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_STATE, 0, 1)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_ANIMATION, 0, 2)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_POSITION, 0, 3)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_POINTERS, 0, 4)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_PARAMETERS, 0, 5)
-LIFECYCLE_CASE(MENU_ICON_ADVANCE_DETAIL, 0, 6)
-LIFECYCLE_CASE(MENU_ICON_WRAP_HEADER, 1, 0)
-LIFECYCLE_CASE(MENU_ICON_WRAP_STATE, 1, 1)
-LIFECYCLE_CASE(MENU_ICON_WRAP_ANIMATION, 1, 2)
-LIFECYCLE_CASE(MENU_ICON_WRAP_POSITION, 1, 3)
-LIFECYCLE_CASE(MENU_ICON_WRAP_POINTERS, 1, 4)
-LIFECYCLE_CASE(MENU_ICON_WRAP_PARAMETERS, 1, 5)
-LIFECYCLE_CASE(MENU_ICON_WRAP_DETAIL, 1, 6)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_HEADER, 2, 0)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_STATE, 2, 1)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_ANIMATION, 2, 2)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_POSITION, 2, 3)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_POINTERS, 2, 4)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_PARAMETERS, 2, 5)
-LIFECYCLE_CASE(MENU_ICON_EXPIRE_DETAIL, 2, 6)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_HEADER, 3, 0)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_STATE, 3, 1)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_ANIMATION, 3, 2)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_POSITION, 3, 3)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_POINTERS, 3, 4)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_PARAMETERS, 3, 5)
-LIFECYCLE_CASE(MENU_ICON_INIT_DEFAULT_DETAIL, 3, 6)
-static const CTestCase menu_icon_lifecycle_cases[] = {
-    MENU_ICON_ADVANCE_HEADER,
-    MENU_ICON_ADVANCE_STATE,
-    MENU_ICON_ADVANCE_ANIMATION,
-    MENU_ICON_ADVANCE_POSITION,
-    MENU_ICON_ADVANCE_POINTERS,
-    MENU_ICON_ADVANCE_PARAMETERS,
-    MENU_ICON_ADVANCE_DETAIL,
-    MENU_ICON_WRAP_HEADER,
-    MENU_ICON_WRAP_STATE,
-    MENU_ICON_WRAP_ANIMATION,
-    MENU_ICON_WRAP_POSITION,
-    MENU_ICON_WRAP_POINTERS,
-    MENU_ICON_WRAP_PARAMETERS,
-    MENU_ICON_WRAP_DETAIL,
-    MENU_ICON_EXPIRE_HEADER,
-    MENU_ICON_EXPIRE_STATE,
-    MENU_ICON_EXPIRE_ANIMATION,
-    MENU_ICON_EXPIRE_POSITION,
-    MENU_ICON_EXPIRE_POINTERS,
-    MENU_ICON_EXPIRE_PARAMETERS,
-    MENU_ICON_EXPIRE_DETAIL,
-    MENU_ICON_INIT_DEFAULT_HEADER,
-    MENU_ICON_INIT_DEFAULT_STATE,
-    MENU_ICON_INIT_DEFAULT_ANIMATION,
-    MENU_ICON_INIT_DEFAULT_POSITION,
-    MENU_ICON_INIT_DEFAULT_POINTERS,
-    MENU_ICON_INIT_DEFAULT_PARAMETERS,
-    MENU_ICON_INIT_DEFAULT_DETAIL,
-};
 static const u32 menu_icon_lifecycle_cases_expected[] = { 0x1042A41u, 0x4030201u, 0x3201000Du, 0xA80040u, 0xFFFF0001u, 0xBEE12468u, 0x3522ABu, 0x1042A41u, 0x4030201u, 0x3101000Fu, 0xA80040u, 0xFFFF0000u, 0xBEE12468u, 0x3522ABu, 0x0u, 0x0u, 0x0u, 0x440040u, 0xFFFFFFFFu, 0xBEE12468u, 0x13522ABu, 0x1042A01u, 0x4000201u, 0x3101000Fu, 0x440040u, 0x1800000u, 0xBEE11E00u, 0x0u };
-#undef main_bss_state
-#undef LIFECYCLE_CASE
-
-struct func_800CFEE0_case {
-    u32 unk2, card_status_1, card_status_0;
-    u32 expected[13];
-};
-static const struct func_800CFEE0_case func_800CFEE0_cases[] = {
-    { -1, 0, 0, { 0u, 1u, 0xFFFFFFFFu, 0u, 1u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u } },
-    { 4, 255, 0, { 0u, 1u, 0xFFFFFFFFu, 0u, 1u, 1u, 0u, 0u, 0x1E00u, 0u, 0u, 0x50u, 0x78u } },
-    { 4, 0, 255, { 1u, 1u, 0xFFFFFFFFu, 0u, 1u, 1u, 0u, 0u, 0x1E00u, 0u, 0u, 0x50u, 0x98u } },
-};
-static u32 test_func_800CFEE0(u32 row)
+static u32 menu_icon_lifecycle_cases_row(u32 row)
 {
-    const struct func_800CFEE0_case* c = &func_800CFEE0_cases[row];
-    u32 observed_values[13];
-    struct MiscObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&main_bss_state, 0, sizeof(main_bss_state));
-    memset(&memcard_menu, 0, sizeof(memcard_menu));
-    obj.unk2 = c->unk2;
-    memcard_menu.card_status[1] = c->card_status_1;
-    memcard_menu.card_status[0] = c->card_status_0;
-    func_800CFEE0(&obj);
-    observed_values[0] = (u32)main_bss_state.transition.selection;
-    observed_values[1] = (u32)obj.active;
-    observed_values[2] = (u32)obj.bg_offset;
-    observed_values[3] = (u32)obj.ext.misc_42.unk57;
-    observed_values[4] = (u32)obj.on_screen;
-    observed_values[5] = (u32)obj.state;
-    observed_values[6] = (u32)obj.unk15;
-    observed_values[7] = (u32)obj.unk16;
-    observed_values[8] = (u32)obj.unk40;
-    observed_values[9] = (u32)obj.unk42;
-    observed_values[10] = (u32)obj.unk6;
-    observed_values[11] = (u32)obj.x_pos.i.hi;
-    observed_values[12] = (u32)obj.y_pos.i.hi;
-    return c_test_observe(0, row, observed_values, c->expected, 13);
+    return lifecycle_case(row / 7, row % 7);
 }
+
 #undef main_bss_state
 #undef memcard_menu
 
@@ -305,11 +186,117 @@ static u32 test_func_800D0118(u32 row)
 }
 #undef main_bss_state
 
+#define sm state_room.misc
+#define ICON(st, kind, layout, sel, body)                                                                        \
+    do {                                                                                                         \
+        u8 selection = main_bss_state.transition.selection;                                                      \
+        u8 cards[2];                                                                                             \
+        u8 e1 = engine_obj.unk1, e2 = engine_obj.unk2;                                                           \
+        cards[0] = memcard_menu.card_status[0];                                                                  \
+        cards[1] = memcard_menu.card_status[1];                                                                  \
+        state_reset(0, 0, 0);                                                                                    \
+        sm.active = 1;                                                                                           \
+        sm.state = st;                                                                                           \
+        sm.unk2 = kind;                                                                                          \
+        sm.x_pos.i.hi = 0x40;                                                                                    \
+        sm.y_pos.i.hi = 0x20;                                                                                    \
+        sm.ext.misc_42.unk58 = layout;                                                                           \
+        sm.ext.misc_42.unk56 = layout;                                                                           \
+        main_bss_state.transition.selection = sel;                                                               \
+        engine_obj.unk1 = engine_obj.unk2 = 1;                                                                   \
+        memcard_menu.card_status[0] = 1;                                                                         \
+        memcard_menu.card_status[1] = 0;                                                                         \
+        body;                                                                                                    \
+        menu_icon_update(&sm);                                                                                   \
+        state_extra = main_bss_state.transition.selection | (u8)sm.ext.misc_42.unk57 << 8 | (u32)sm.unk16 << 16; \
+        main_bss_state.transition.selection = selection;                                                         \
+        memcard_menu.card_status[0] = cards[0];                                                                  \
+        memcard_menu.card_status[1] = cards[1];                                                                  \
+        engine_obj.unk1 = e1;                                                                                    \
+        engine_obj.unk2 = e2;                                                                                    \
+    } while (0)
+static void mi_cursor_top(void)
+{
+    ICON(0, 0, 0, 0, sm.y_pos.i.hi = 0x10);
+}
+static void mi_cursor_chosen(void) { ICON(0, 0, 0, 0, ); }
+static void mi_cursor_other(void) { ICON(0, 0, 1, 0, ); }
+static void mi_arrow(void) { ICON(0, 1, 0, 0, ); }
+static void mi_arrow_flip(void) { ICON(0, 2, 0, 0, ); }
+static void mi_frame(void) { ICON(0, 3, 0, 0, ); }
+static void mi_toggle_card(void) { ICON(0, 4, 0, 0, ); }
+static void mi_toggle_both(void) { ICON(0, 4, 0, 0, memcard_menu.card_status[1] = 1); }
+static void mi_toggle_options(void) { ICON(0, 4, 1, 0, ); }
+static void mi_toggle_wide(void) { ICON(0, 4, 2, 0, ); }
+static void mi_toggle_right(void) { ICON(0, 4, 4, 0, ); }
+static void mi_toggle_other(void) { ICON(0, 4, 5, 0, ); }
+static void mi_other(void) { ICON(0, 5, 0, 0, ); }
+static void mi_blink(void) { ICON(1, 0, 0, 1, ); }
+static void mi_blink_hold(void) { ICON(1, 0, 0, 1, sm.animation_step.fields.frame_index = 8); }
+static void mi_move_two(void) { ICON(1, 4, 0, 1, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_three(void) { ICON(1, 4, 2, 2, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_three_mid(void) { ICON(1, 4, 2, 1, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_three_top(void) { ICON(1, 4, 2, 0, sm.ext.misc_42.unk57 = 1); }
+static void mi_move_four(void) { ICON(1, 4, 3, 3, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_four_two(void) { ICON(1, 4, 3, 2, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_four_one(void) { ICON(1, 4, 3, 1, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_four_top(void) { ICON(1, 4, 3, 0, sm.ext.misc_42.unk57 = 1); }
+static void mi_move_low(void) { ICON(1, 4, 4, 1, sm.ext.misc_42.unk57 = 0); }
+static void mi_move_low_top(void) { ICON(1, 4, 4, 0, sm.ext.misc_42.unk57 = 1); }
+static void mi_move_same(void) { ICON(1, 4, 0, 0, sm.ext.misc_42.unk57 = 0); }
+static void mi_kill_engine1(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 1, sm.ext.misc_42.unk54 = 2)); }
+static void mi_keep_engine1(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 1, sm.ext.misc_42.unk54 = 1)); }
+static void mi_kill_engine2(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 2, sm.ext.misc_42.unk54 = 2)); }
+static void mi_keep_engine2(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 2, sm.ext.misc_42.unk54 = 1)); }
+static void mi_kill_selection(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 3, sm.ext.misc_42.unk54 = 2)); }
+static void mi_keep_selection(void) { ICON(1, 1, 0, 0, (sm.ext.misc_42.unk55 = 3, sm.ext.misc_42.unk54 = 0)); }
+
+static void (*const menu_icon_states_cases[])(void) = {
+    mi_cursor_top,
+    mi_cursor_chosen,
+    mi_cursor_other,
+    mi_arrow,
+    mi_arrow_flip,
+    mi_frame,
+    mi_toggle_card,
+    mi_toggle_both,
+    mi_toggle_options,
+    mi_toggle_wide,
+    mi_toggle_right,
+    mi_toggle_other,
+    mi_other,
+    mi_blink,
+    mi_blink_hold,
+    mi_move_two,
+    mi_move_three,
+    mi_move_three_mid,
+    mi_move_three_top,
+    mi_move_four,
+    mi_move_four_two,
+    mi_move_four_one,
+    mi_move_four_top,
+    mi_move_low,
+    mi_move_low_top,
+    mi_move_same,
+    mi_kill_engine1,
+    mi_keep_engine1,
+    mi_kill_engine2,
+    mi_keep_engine2,
+    mi_kill_selection,
+    mi_keep_selection,
+};
+static const u32 menu_icon_states_expected[] = { 1u, 1u, 0x400000u, 0x100000u, 0u, 0u, 0u, 0x57802u, 0x20000u, 0u, 1u, 1u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x57803u, 0x20000u, 0u, 1u, 1u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x57800u, 0x20000u, 0u, 1u, 0x101u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x57807u, 0x60000u, 0u, 1u, 0x400201u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0x301u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0x30000u, 0u, 1u, 0xFF000401u, 0x500000u, 0x980000u, 0u, 0u, 0u, 0xF0000u, 1u, 0u, 1u, 0xFF000401u, 0x500000u, 0x780000u, 0u, 0u, 0u, 0xF0000u, 0u, 0u, 1u, 0xFF000401u, 0x280000u, 0x780000u, 0u, 0u, 0u, 0xF0000u, 0u, 0u, 1u, 0xFF000401u, 0x880000u, 0xB80000u, 0u, 0u, 0u, 0xF0000u, 0u, 0u, 1u, 0xFF000401u, 0x980000u, 0x780000u, 0u, 0u, 0u, 0xF0000u, 0u, 0u, 1u, 0xFF000401u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0xF0000u, 0u, 0u, 1u, 0x501u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 1u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x57800u, 1u, 0u, 1u, 1u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 1u, 0u, 1u, 0x401u, 0x400000u, 0x980000u, 0u, 0u, 0u, 0x40000u, 0x101u, 0u, 1u, 0x401u, 0x400000u, 0xB80000u, 0u, 0u, 0u, 0x40000u, 0x202u, 0u, 1u, 0x401u, 0x400000u, 0x980000u, 0u, 0u, 0u, 0x40000u, 0x101u, 0u, 1u, 0x401u, 0x400000u, 0x780000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 1u, 0x401u, 0x400000u, 0xB80000u, 0u, 0u, 0u, 0x40000u, 0x303u, 0u, 1u, 0x401u, 0x400000u, 0x980000u, 0u, 0u, 0u, 0x40000u, 0x202u, 0u, 1u, 0x401u, 0x400000u, 0x880000u, 0u, 0u, 0u, 0x40000u, 0x101u, 0u, 1u, 0x401u, 0x400000u, 0x780000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 1u, 0x401u, 0x400000u, 0xB80000u, 0u, 0u, 0u, 0x40000u, 0x101u, 0u, 1u, 0x401u, 0x400000u, 0xA80000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 1u, 0x401u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0x101u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0x101u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 1u, 0x101u, 0x400000u, 0x200000u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+
+static u32 test_menu_icon_states(u32 row)
+{
+    return object_run(menu_icon_states_cases[row], row, &menu_icon_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "menu_icon_displayed_frame", menu_icon_displayed_frame_cases, menu_icon_displayed_frame_cases_expected, COUNT(menu_icon_displayed_frame_cases), 0 },
-    { "menu_icon_lifecycle", menu_icon_lifecycle_cases, menu_icon_lifecycle_cases_expected, COUNT(menu_icon_lifecycle_cases), 0 },
-    { "func_800CFEE0", 0, 0, 3, test_func_800CFEE0 },
+    { "menu_icon_states", 0, 0, COUNT(menu_icon_states_cases), test_menu_icon_states },
+    { "menu_icon_displayed_frame", NULL, menu_icon_displayed_frame_cases_expected, COUNT(menu_icon_displayed_frame_cases_expected), frame_case },
+    { "menu_icon_lifecycle", NULL, menu_icon_lifecycle_cases_expected, COUNT(menu_icon_lifecycle_cases_expected), menu_icon_lifecycle_cases_row },
     { "func_800D0118", 0, 0, 5, test_func_800D0118 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(menu_icon_displayed_frame_cases) + COUNT(menu_icon_lifecycle_cases) + 3 + 5;
+const u32 c_test_count = COUNT(menu_icon_states_cases) + COUNT(menu_icon_displayed_frame_cases_expected) + COUNT(menu_icon_lifecycle_cases_expected) + 5;

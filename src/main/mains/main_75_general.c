@@ -182,10 +182,10 @@ void general_intro_dialogue(struct MainObj* self)
         if (--self->unk7C == 0) {
             if (engine_obj.stage == 0xB) {
                 if (engine_obj.cur_character == CHARACTER_X) {
-                    ((void (*)(u16, u8, s8))func_8002217C)(
+                    func_8002217C(
                         0x29, 0xFF, engine_obj.character_state.bytes[8]);
                 } else {
-                    ((void (*)(u16, u8, s8))func_8002217C)(
+                    func_8002217C(
                         0x21, 0xFF, engine_obj.character_state.bytes[8]);
                 }
                 engine_obj.character_state.bytes[8] = 1;

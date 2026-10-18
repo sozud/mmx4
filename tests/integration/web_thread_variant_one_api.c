@@ -1,0 +1,106 @@
+#include "test_runtime.h"
+#include "main/mains/main_43_web_spider.h"
+struct ShotObj* web_spider_spawn_thread(struct MainObj*, s32);
+void web_thread_update(struct ShotObj*);
+void web_flash_update(struct VisualObj*);
+extern u8 web_thread_hit_box[4], web_thread_collision[32][4];
+static struct ShotObj shots[32];
+static struct VisualObj visuals[32];
+static struct WeaponObj weapons[16];
+static struct MainObj owner, owner_before;
+static u32 frames[32];
+static struct PlayerObj player, entity;
+static struct EngineObj engine;
+static struct MainBssState main_before;
+static struct BackgroundObj cameras[3];
+static struct ControllerInput input;
+static u16 rng;
+static void check(void)
+{
+    u32 i;
+    for (i = 0; i < COUNT(frames); i++)
+        assert(frames[i] == (i == 0 ? 64u : 0));
+    assert(c_test_word_difference((u32*)shot_objects, (u32*)shots, sizeof(shots) / 4) == 0 && c_test_word_difference((u32*)visual_objects, (u32*)visuals, sizeof(visuals) / 4) == 0 && c_test_word_difference((u32*)weapon_objects, (u32*)weapons, sizeof(weapons) / 4) == 0);
+    assert(c_test_word_difference((u32*)&owner, (u32*)&owner_before, sizeof(owner) / 4) == 0 && c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0);
+    assert(c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && D_8013E198[5] == -1);
+}
+static u32 pulse_flash(u32 row)
+{
+    (void)row;
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    c_test_zero_words((u32*)weapon_objects, sizeof(weapon_objects) / 4);
+    c_test_zero_words((u32*)&owner, sizeof(owner) / 4);
+    c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
+    c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
+    owner.active = 0x41;
+    owner.id = 43;
+    owner.state = 1;
+    owner.x_pos.i.hi = 200;
+    owner.y_pos.i.hi = 170;
+    owner.animation_table = (const u8* const*)web_spider_animations;
+    frames[0] = 64;
+    owner.sprite_frames = (u8*)frames;
+    owner.unk42 = 0x7804;
+    owner.unk16 = 4;
+    g_Player.hp = 24;
+    g_Player.x_pos.i.hi = -512;
+    g_Player.y_pos.i.hi = -512;
+    D_8013E198[5] = -1;
+    cur_random = 0x1234;
+    assert(web_spider_spawn_thread(&owner, 1) == &shot_objects[0]);
+    assert(owner.ext.main_43.shot == &shot_objects[0] && shot_objects[0].state == 0 && shot_objects[0].unk2 == 1);
+    c_test_copy_words((u32*)shots, (u32*)shot_objects, sizeof(shots) / 4);
+    owner_before = owner;
+    player = g_Player;
+    entity = g_Entity;
+    engine = engine_obj;
+    main_before = main_bss_state;
+    input = controller_input;
+    c_test_copy_words((u32*)cameras, (u32*)background_objects, sizeof(cameras) / 4);
+    rng = cur_random;
+    shots[0].state = 1;
+    shots[0].on_screen = 1;
+    shots[0].unk16 = 5;
+    shots[0].timer = -50;
+    shots[0].unk5 = 2;
+    shots[0].unk54 = shots[0].unk50.data = web_thread_hit_box;
+    shots[0].unk58.data = web_thread_collision[0];
+    shots[0].unk5C = shots[0].unk60 = 3;
+    shots[0].unk17 = 19;
+    shots[0].previous_animation_index = 255;
+    shots[0].animation_cursor = (u32*)web_spider_animations[19];
+    shots[0].animation_step.packed = 0x64010001;
+    web_thread_update(&shot_objects[0]);
+    check();
+    shots[0].y_pos.i.hi = 120;
+    shots[0].unk6 = 1;
+    shots[0].unk17 = 18;
+    shots[0].animation_cursor = (u32*)web_spider_animations[18];
+    shots[0].animation_step.packed = 0x55010001;
+    visuals[0].active = 0x41;
+    visuals[0].id = 20;
+    visuals[0].x_pos = shots[0].x_pos;
+    visuals[0].y_pos = shots[0].y_pos;
+    visuals[0].animation_table = (u32**)web_spider_animations;
+    visuals[0].unk3C = (u8*)frames;
+    visuals[0].unk42 = 0x7804;
+    visuals[0].unk16 = 5;
+    visuals[0].unk50 = PLAYER_OBJECT(&shot_objects[0]);
+    web_thread_update(&shot_objects[0]);
+    check();
+    visuals[0].state = 1;
+    visuals[0].on_screen = 1;
+    visuals[0].unk16 = 4;
+    visuals[0].unk17 = 17;
+    visuals[0].previous_animation_index = 255;
+    visuals[0].animation_cursor = (u32*)web_spider_animations[17];
+    visuals[0].animation_step.packed = 0x51010001;
+    web_flash_update(&visual_objects[0]);
+    check();
+    return 1;
+}
+const struct CTestGroup c_test_groups[] = { { "supported_variant1_real_thread_initializer_pulse_and_own_flash", NULL, NULL, 1, pulse_flash } };
+const u32 c_test_group_count = COUNT(c_test_groups);
+const u32 c_test_count = 1;

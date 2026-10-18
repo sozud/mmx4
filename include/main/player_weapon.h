@@ -1,6 +1,11 @@
 #ifndef MAIN_PLAYER_WEAPON_H
 #define MAIN_PLAYER_WEAPON_H
 
+struct PlayerShotTiming {
+    u8 pose_time;
+    u8 cooldown;
+};
+
 union PlayerChargeData {
     struct {
         s8 animation_indices[6];
@@ -11,6 +16,7 @@ union PlayerChargeData {
         s8 health_divisors[18];
         s8 alignment_padding[6];
     } hud;
+    s8 shot_costs[24];
 };
 
 enum {

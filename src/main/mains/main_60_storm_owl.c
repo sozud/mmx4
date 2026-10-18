@@ -371,7 +371,7 @@ void storm_owl_intro_pose(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         if (engine_obj.stage == 7) {
-            func_8002217C(0xF, 0xFF, engine_obj.character_state.bytes[8]);
+            func_8002217C(0xF, 0xFF, (u8)engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
         self->unk6++;
@@ -859,8 +859,8 @@ void storm_owl_storm_start(struct MainObj* self)
 
     velocity_x = self->x_speed;
     velocity_y = self->y_speed;
-    velocity_x <<= 1;
-    velocity_y <<= 1;
+    velocity_x *= 2;
+    velocity_y *= 2;
     self->x_speed = velocity_x;
     self->y_speed = velocity_y;
 

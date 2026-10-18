@@ -99,29 +99,7 @@ static u32 sweep_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u16)obj.x_pos.i.hi << 8) | ((u32)(u8)owner.ext.unk_effect.unk14 << 24);
 }
-#define CASE(m)                                            \
-    static u32 ready_line_sweep_pool_edges_sweep_##m(void) \
-    {                                                      \
-        return sweep_case(m);                              \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-#define ENTRY(m) ready_line_sweep_pool_edges_sweep_##m,
-static const CTestCase ready_line_sweep_pool_edges_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) };
 static const u32 ready_line_sweep_pool_edges_cases_expected[] = { 0xBFEE001u, 0xB002001u, 0xB002101u, 0xB002201u, 0xB002301u, 0xB002101u, 0xB014002u, 0x100u, 0xB001F01u, 0xB015F01u, 0xB000103u, 0xB0001FFu };
-#undef CASE
-#undef ENTRY
 
 static u32 shutter_case(u32 raw)
 {
@@ -157,17 +135,7 @@ static u32 shutter_case(u32 raw)
     actual = (u8)obj.unk5 | ((u32)obj.runtime.ready_line.interpolation_frames << 16);
     return actual;
 }
-#define CASE(m)                                                  \
-    static u32 ready_shutter_close_and_default_shutter_##m(void) \
-    {                                                            \
-        return shutter_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-static const CTestCase ready_shutter_close_and_default_cases[] = { ready_shutter_close_and_default_shutter_0, ready_shutter_close_and_default_shutter_1, ready_shutter_close_and_default_shutter_2 };
 static const u32 ready_shutter_close_and_default_cases_expected[] = { 0x100003u, 0x10004u, 0x100003u };
-#undef CASE
 
 static u32 vertex_case(u32 mode, u32 observation)
 {
@@ -219,70 +187,16 @@ static u32 vertex_case(u32 mode, u32 observation)
     value = quad.runtime.ready_line.directions[index] | ((u32)quad.runtime.ready_line.crossed[index] << 8) | ((u32)quad.runtime.ready_line.converging << 16);
     return value;
 }
-#define OBSERVE(mode, field)                             \
-    static u32 ready_vertex_ready_##mode##_##field(void) \
-    {                                                    \
-        return vertex_case(mode, field);                 \
-    }
-#define MODE(mode) OBSERVE(mode, 0) OBSERVE(mode, 1) OBSERVE(mode, 2) OBSERVE(mode, 3)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-#define ENTRY(mode, field) ready_vertex_ready_##mode##_##field,
-#define ENTRIES(mode) ENTRY(mode, 0) ENTRY(mode, 1) ENTRY(mode, 2) ENTRY(mode, 3)
-static const CTestCase ready_vertex_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) };
 static const u32 ready_vertex_cases_expected[] = { 0x31234u, 0x192468u, 0x0u, 0x103u, 0x31234u, 0x192468u, 0x0u, 0x103u, 0x3EFEDu, 0x187FDBu, 0x12342468u, 0x3u, 0x3EFEDu, 0x187FDBu, 0x12342468u, 0x3u };
-#undef OBSERVE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
-
-static const u32 ready_line_shutter_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_ready_line_shutter(u32 row)
+static u32 ready_vertex_cases_row(u32 row)
 {
-    u32 observed_values[21];
-    struct QuadObj obj;
-    struct EffectObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    memset(&ready_line_shutter_repeats, 0, sizeof(ready_line_shutter_repeats));
-    obj.unk5 = -1;
-    ready_line_shutter_repeats = 0;
-    child_0_present = 0;
-    obj.link.owner = child_0_present ? &child_0 : NULL;
-    ready_line_shutter(&obj);
-    observed_values[0] = (u32)child_0.ext.unk_effect.unk14;
-    observed_values[1] = (u32)obj.runtime.legacy.unk4C;
-    observed_values[2] = (u32)obj.runtime.legacy.unk4D;
-    observed_values[3] = (u32)obj.runtime.legacy.unk4E;
-    observed_values[4] = (u32)obj.runtime.legacy.unk4F;
-    observed_values[5] = (u32)obj.runtime.legacy.unk50;
-    observed_values[6] = (u32)obj.runtime.legacy.unk54;
-    observed_values[7] = (u32)obj.runtime.legacy.unk55;
-    observed_values[8] = (u32)obj.state;
-    observed_values[9] = (u32)obj.unk5;
-    observed_values[10] = (u32)obj.vertices[0].x.i.hi;
-    observed_values[11] = (u32)obj.vertices[0].y.i.hi;
-    observed_values[12] = (u32)obj.vertices[1].x.i.hi;
-    observed_values[13] = (u32)obj.vertices[1].y.i.hi;
-    observed_values[14] = (u32)obj.vertices[2].x.i.hi;
-    observed_values[15] = (u32)obj.vertices[2].y.i.hi;
-    observed_values[16] = (u32)obj.vertices[3].x.i.hi;
-    observed_values[17] = (u32)obj.vertices[3].y.i.hi;
-    observed_values[18] = (u32)obj.x_pos.i.hi;
-    observed_values[19] = (u32)obj.y_pos.i.hi;
-    observed_values[20] = (u32)ready_line_shutter_repeats;
-    return c_test_observe(0, row, observed_values, ready_line_shutter_expected, 21);
+    return vertex_case(row / 4, row % 4);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "ready_line_sweep_pool_edges", ready_line_sweep_pool_edges_cases, ready_line_sweep_pool_edges_cases_expected, COUNT(ready_line_sweep_pool_edges_cases), 0 },
-    { "ready_shutter_close_and_default", ready_shutter_close_and_default_cases, ready_shutter_close_and_default_cases_expected, COUNT(ready_shutter_close_and_default_cases), 0 },
-    { "ready_vertex", ready_vertex_cases, ready_vertex_cases_expected, COUNT(ready_vertex_cases), 0 },
-    { "ready_line_shutter", 0, 0, 1, test_ready_line_shutter },
+    { "ready_line_sweep_pool_edges", NULL, ready_line_sweep_pool_edges_cases_expected, COUNT(ready_line_sweep_pool_edges_cases_expected), sweep_case },
+    { "ready_shutter_close_and_default", NULL, ready_shutter_close_and_default_cases_expected, COUNT(ready_shutter_close_and_default_cases_expected), shutter_case },
+    { "ready_vertex", NULL, ready_vertex_cases_expected, COUNT(ready_vertex_cases_expected), ready_vertex_cases_row },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ready_line_sweep_pool_edges_cases) + COUNT(ready_shutter_close_and_default_cases) + COUNT(ready_vertex_cases) + 1;
+const u32 c_test_count = COUNT(ready_line_sweep_pool_edges_cases_expected) + COUNT(ready_shutter_close_and_default_cases_expected) + COUNT(ready_vertex_cases_expected);

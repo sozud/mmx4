@@ -39,23 +39,54 @@ static u32 record_case(u32 mode)
         assert(((u32*)&engine_obj)[i] == ((u32*)&engine_before)[i]);
     return main_objects[17].id | ((u32)main_objects[17].unk2 << 8) | ((u32)(u16)main_objects[17].x_pos.i.hi << 16);
 }
-#define CASE(m)                 \
-    static u32 record_##m(void) \
-    {                           \
-        return record_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-#define ENTRY(m) record_##m,
-static const CTestCase stage_record_checkpoint_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) };
 static const u32 stage_record_checkpoint_pool_cases_expected[] = { 0x25u, 0x25u, 0x642827u };
-#undef CASE
-#undef ENTRY
+
+extern struct StageObjectRecord* D_800F43C8[13][2];
+static struct StageObjectRecord records_before[256];
+static struct EffectObj effects_before[32];
+static const s16 positions[3] = { 6048, 6176, 6304 };
+static u32 scan(u32 row)
+{
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before;
+    struct StageObjectRecord* records = D_800F43C8[4][0];
+    u32 i, count = 0, found = 0;
+    engine_obj.stage = 4;
+    engine_obj.substage = 0;
+    engine_before = engine_obj;
+    while (records[count].object_type != 255) {
+        assert(count + 1 < COUNT(records_before));
+        count++;
+    }
+    count++;
+    c_test_copy_words((u32*)records_before, (const u32*)records, count * sizeof(*records) / 4);
+    for (i = 0; i < count; i++)
+        if (records[i].x == positions[row] && records[i].y == 640 && !(records[i].flags & 0x81)) {
+            assert(records[i].object_type == 3 && records[i].id == 33 && records[i].subtype == 0x23);
+            found++;
+        }
+    assert(found == 1);
+    c_test_zero_words((u32*)effect_objects, sizeof(effect_objects) / 4);
+    for (i = 0; i < COUNT(effect_objects); i++) {
+        effect_objects[i].active = 1;
+        effect_objects[i].id = 33;
+        effect_objects[i].state = 1;
+        effect_objects[i].unk2 = 0x22;
+        effect_objects[i].x_pos.val = i * 65536 + 0x1234;
+    }
+    memcpy(effects_before, effect_objects, sizeof(effects_before));
+    func_80028FEC(positions[row] - 1, positions[row] + 1, 639, 641, 1);
+    c_test_same_words(records, records_before, count * sizeof(*records));
+    c_test_same_words(effect_objects, effects_before, sizeof(effects_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(D_800F43C8[4][0] == records);
+    return 1;
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "stage_record_checkpoint_pool", stage_record_checkpoint_pool_cases, stage_record_checkpoint_pool_cases_expected, COUNT(stage_record_checkpoint_pool_cases), 0 },
+    { "stage_record_checkpoint_pool", NULL, stage_record_checkpoint_pool_cases_expected, COUNT(stage_record_checkpoint_pool_cases_expected), record_case },
+    { "three_real_jungle_records_remain_unspawned_when_effect_pool_is_full", NULL, NULL, 3, scan },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(stage_record_checkpoint_pool_cases);
+const u32 c_test_count = COUNT(stage_record_checkpoint_pool_cases_expected) + 3;

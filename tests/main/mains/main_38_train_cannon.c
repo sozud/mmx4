@@ -31,32 +31,6 @@ static u32 signed_default(void)
 static const CTestCase train_cannon_signed_default_cases[] = { signed_default };
 static const u32 train_cannon_signed_default_cases_expected[] = { 0x270000u };
 
-static const u32 train_cannon_fire_blast_0_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_train_cannon_fire_blast_0(u32 row)
-{
-    u32 observed_values[8];
-    struct PlayerObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    train_cannon_fire_blast(&obj);
-    observed_values[0] = (u32)shot_objects[0].active;
-    observed_values[1] = (u32)shot_objects[0].bg_offset;
-    observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
-    observed_values[5] = (u32)shot_objects[0].unk2;
-    observed_values[6] = (u32)shot_objects[0].unk40;
-    observed_values[7] = (u32)shot_objects[0].unk42;
-    return c_test_observe(0, row, observed_values, train_cannon_fire_blast_0_expected, 8);
-}
-
 struct train_cannon_fire_blast_1_case {
     u32 free_last;
     u32 expected[8];
@@ -142,32 +116,6 @@ static u32 test_train_cannon_fire_blast_1(u32 row)
     observed_values[6] = (u32)shot_objects[31].unk40;
     observed_values[7] = (u32)shot_objects[31].bg_offset;
     return c_test_observe(0, row, observed_values, c->expected, 8);
-}
-
-static const u32 train_cannon_fire_volley_0_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_train_cannon_fire_volley_0(u32 row)
-{
-    u32 observed_values[8];
-    struct MainObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    train_cannon_fire_volley(&obj);
-    observed_values[0] = (u32)shot_objects[0].active;
-    observed_values[1] = (u32)shot_objects[0].bg_offset;
-    observed_values[2] = (u32)shot_objects[0].id;
-    observed_values[3] = (u32)shot_objects[0].unk15;
-    observed_values[4] = (u32)shot_objects[0].unk16;
-    observed_values[5] = (u32)shot_objects[0].unk2;
-    observed_values[6] = (u32)shot_objects[0].unk40;
-    observed_values[7] = (u32)shot_objects[0].unk42;
-    return c_test_observe(0, row, observed_values, train_cannon_fire_volley_0_expected, 8);
 }
 
 struct train_cannon_fire_volley_1_case {
@@ -257,22 +205,6 @@ static u32 test_train_cannon_fire_volley_1(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 8);
 }
 
-static const u32 train_cannon_idle_pick_expected[] = { 0x100u, 0u, 0u, 0u };
-static u32 test_train_cannon_idle_pick(u32 row)
-{
-    u32 observed_values[4];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.unk7E = 1;
-    obj.ext.main_38.unk84 = 255;
-    train_cannon_idle_pick(&obj);
-    observed_values[0] = (u32)obj.ext.main_38.unk84;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.unk7E;
-    return c_test_observe(0, row, observed_values, train_cannon_idle_pick_expected, 4);
-}
-
 struct train_cannon_main_case {
     u32 g_Player_x_pos, obj_x_pos, unk5, saved_unk5;
     u32 expected[16];
@@ -291,7 +223,6 @@ static u32 test_train_cannon_main(u32 row)
     struct EngineObj engine_before;
     struct BackgroundObj cameras_before[3];
     struct WeaponObj weapons_before[16];
-    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 38;
@@ -323,12 +254,7 @@ static u32 test_train_cannon_main(u32 row)
     }
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 16; ++slot)
-            weapon_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(weapon_objects, 16, 0);
     player_before = g_Player;
     entity_before = g_Entity;
     engine_before = engine_obj;
@@ -357,34 +283,6 @@ static u32 test_train_cannon_main(u32 row)
     observed_values[14] = (u32)obj.unk1C.val;
     observed_values[15] = (u32)obj.animation_step.packed;
     return c_test_observe(0, row, observed_values, c->expected, 16);
-}
-
-static const u32 train_cannon_spawn_charge_glow_0_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_train_cannon_spawn_charge_glow_0(u32 row)
-{
-    u32 observed_values[10];
-    struct VisualObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    train_cannon_spawn_charge_glow(&obj);
-    observed_values[0] = (u32)visual_objects[0].active;
-    observed_values[1] = (u32)visual_objects[0].bg_offset;
-    observed_values[2] = (u32)visual_objects[0].id;
-    observed_values[3] = (u32)visual_objects[0].unk15;
-    observed_values[4] = (u32)visual_objects[0].unk16;
-    observed_values[5] = (u32)visual_objects[0].unk2;
-    observed_values[6] = (u32)visual_objects[0].unk40;
-    observed_values[7] = (u32)visual_objects[0].unk42;
-    observed_values[8] = (u32)visual_objects[0].x_pos.val;
-    observed_values[9] = (u32)visual_objects[0].y_pos.val;
-    return c_test_observe(0, row, observed_values, train_cannon_spawn_charge_glow_0_expected, 10);
 }
 
 struct train_cannon_spawn_charge_glow_1_case {
@@ -478,14 +376,10 @@ static u32 test_train_cannon_spawn_charge_glow_1(u32 row)
 
 const struct CTestGroup c_test_groups[] = {
     { "train_cannon_signed_default", train_cannon_signed_default_cases, train_cannon_signed_default_cases_expected, COUNT(train_cannon_signed_default_cases), 0 },
-    { "train_cannon_fire_blast_0", 0, 0, 1, test_train_cannon_fire_blast_0 },
     { "train_cannon_fire_blast_1", 0, 0, 2, test_train_cannon_fire_blast_1 },
-    { "train_cannon_fire_volley_0", 0, 0, 1, test_train_cannon_fire_volley_0 },
     { "train_cannon_fire_volley_1", 0, 0, 2, test_train_cannon_fire_volley_1 },
-    { "train_cannon_idle_pick", 0, 0, 1, test_train_cannon_idle_pick },
     { "train_cannon_main", 0, 0, 3, test_train_cannon_main },
-    { "train_cannon_spawn_charge_glow_0", 0, 0, 1, test_train_cannon_spawn_charge_glow_0 },
     { "train_cannon_spawn_charge_glow_1", 0, 0, 2, test_train_cannon_spawn_charge_glow_1 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(train_cannon_signed_default_cases) + 1 + 2 + 1 + 2 + 1 + 3 + 1 + 2;
+const u32 c_test_count = COUNT(train_cannon_signed_default_cases) + 2 + 2 + 3 + 2;

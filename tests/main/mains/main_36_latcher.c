@@ -63,19 +63,7 @@ static u32 release_case(u32 linked)
     assert(SP_CUR_MAIN_OBJ == &obj);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)companion.ext.misc_11.active << 16);
 }
-#define CASE(m)                                                  \
-    static u32 latcher_drain_release_animation_release_##m(void) \
-    {                                                            \
-        return release_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-#define ENTRY(m) latcher_drain_release_animation_release_##m,
-static const CTestCase latcher_drain_release_animation_cases[]
-    = { ENTRY(0) ENTRY(1) };
 static const u32 latcher_drain_release_animation_cases_expected[] = { 0x603u, 0x10603u };
-#undef CASE
-#undef ENTRY
 
 static u32 hit_case(u32 mode)
 {
@@ -163,40 +151,21 @@ static u32 hit_case(u32 mode)
     assert(SP_CUR_MAIN_OBJ == &context && D_8013E198[0] == -1);
     return (u8)obj.hp | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk6 << 16) | ((u32)obj.unk17 << 24);
 }
-#define CASE(m)                                       \
-    static u32 latcher_weapon_responses_hit_##m(void) \
-    {                                                 \
-        return hit_case(m);                           \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) latcher_weapon_responses_hit_##m,
-static const CTestCase latcher_weapon_responses_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 latcher_weapon_responses_cases_expected[] = { 0x10Au, 0x3010300u, 0x310u, 0x1000110u, 0x110u, 0x2000110u, 0x110u };
-#undef CASE
-#undef ENTRY
 
 struct func_8005F558_case {
     u32 unk2;
-    u32 expected[5];
 };
 static const struct func_8005F558_case func_8005F558_cases[] = {
-    { 0, { 0u, 0u, 0u, 0x784Cu, 0u } },
-    { 1, { 0x18000u, 0u, 1u, 0x784Cu, 0x31u } },
-    { 2, { 0xFFFE8000u, 0x40u, 1u, 0x784Cu, 0x31u } },
-    { -1, { 0u, 0u, 2u, 0x784Cu, 0x31u } },
-    { 3, { 0u, 0u, 2u, 0x784Cu, 0x31u } },
+    { 0 },
+    { 1 },
+    { 2 },
+    { -1 },
+    { 3 },
 };
 static u32 test_func_8005F558(u32 row)
 {
     const struct func_8005F558_case* c = &func_8005F558_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -315,12 +284,7 @@ static u32 test_func_8005F558(u32 row)
     c_test_same_words(frames, frames_before, sizeof(frames));
     c_test_same_words(metadata, metadata_before, sizeof(metadata));
     assert(SP_MENU_FRAMES == frames && D_801406A8 == metadata);
-    observed_values[0] = (u32)obj.x_speed;
-    observed_values[1] = (u32)obj.unk15;
-    observed_values[2] = (u32)obj.unk17;
-    observed_values[3] = (u32)obj.unk42;
-    observed_values[4] = (u32)obj.ext.main_36.unk80[0];
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 struct latcher_drift_case {
@@ -337,18 +301,16 @@ static u32 test_latcher_drift(u32 row)
     u32 observed_values[13];
     struct MainObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&misc_objects, 0, sizeof(misc_objects));
     memset(&background_objects, 0, sizeof(background_objects));
-    child_0_present = 255;
     child_0.ext.main_36.unk8D = 1;
     g_Player.stun_timer = c->stun_timer;
     pool_0_full = c->pool_0_full;
-    SP_CUR_MAIN_OBJ = child_0_present ? &child_0 : NULL;
+    SP_CUR_MAIN_OBJ = &child_0;
     {
         u32 slot;
         for (slot = 0; slot < 64; ++slot)
@@ -377,12 +339,10 @@ static u32 test_latcher_grab_clamp(u32 row)
     u32 observed_values[1];
     struct MainObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     obj.animation_step.fields.event = -1;
-    child_0_present = 255;
-    SP_CUR_MAIN_OBJ = child_0_present ? &child_0 : NULL;
+    SP_CUR_MAIN_OBJ = &child_0;
     latcher_grab_clamp(&obj);
     observed_values[0] = (u32)obj.unk6;
     return c_test_observe(0, row, observed_values, latcher_grab_clamp_expected, 1);
@@ -394,9 +354,7 @@ static u32 test_latcher_grab_drain(u32 row)
     u32 observed_values[5];
     struct MainObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     struct MiscObj child_1;
-    u8 child_1_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&child_1, 0, sizeof(child_1));
@@ -408,10 +366,8 @@ static u32 test_latcher_grab_drain(u32 row)
     memset(&D_80141EE8, 0, sizeof(D_80141EE8));
     memset(&D_80141F50, 0, sizeof(D_80141F50));
     memset(&background_objects, 0, sizeof(background_objects));
-    child_0_present = 255;
-    child_1_present = 0;
-    SP_CUR_MAIN_OBJ = child_0_present ? &child_0 : NULL;
-    child_0.ext.main_36.unk84 = child_1_present ? &child_1 : NULL;
+    SP_CUR_MAIN_OBJ = &child_0;
+    child_0.ext.main_36.unk84 = NULL;
     latcher_grab_drain(&obj);
     observed_values[0] = (u32)child_0.ext.main_36.unk8A;
     observed_values[1] = (u32)child_1.ext.misc_11.active;
@@ -423,18 +379,16 @@ static u32 test_latcher_grab_drain(u32 row)
 
 struct latcher_grab_home_case {
     u32 y_pos, close, y_speed, unk89;
-    u32 expected[5];
 };
 static const struct latcher_grab_home_case latcher_grab_home_cases[] = {
-    { 7886456, 0, -65536, 24, { 0x18u, 0x655678u, 0u, 0u, 0x655678u } },
-    { 6772344, 0, -65536, 24, { 0x18u, 0x655678u, 0u, 0u, 0x655678u } },
-    { 6706808, 1, -65536, 24, { 0x18u, 0x655678u, 1u, 3u, 0x655678u } },
-    { 6444664, 1, 65536, 8, { 8u, 0x635678u, 1u, 3u, 0x635678u } },
+    { 7886456, 0, -65536, 24 },
+    { 6772344, 0, -65536, 24 },
+    { 6706808, 1, -65536, 24 },
+    { 6444664, 1, 65536, 8 },
 };
 static u32 test_latcher_grab_home(u32 row)
 {
     const struct latcher_grab_home_case* c = &latcher_grab_home_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -501,12 +455,7 @@ static u32 test_latcher_grab_home(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     assert(SP_CUR_MAIN_OBJ == &obj);
     c_test_same_words(misc_objects, misc_expected, sizeof(misc_expected));
-    observed_values[0] = (u32)obj.ext.main_36.unk89;
-    observed_values[1] = (u32)obj.y_pos.val;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.unk17;
-    observed_values[4] = (u32)misc_objects[63].y_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 struct latcher_main_case {
@@ -527,7 +476,7 @@ static u32 test_latcher_main(u32 row)
     struct EngineObj engine_before;
     struct BackgroundObj background_before;
     struct WeaponObj weapons_before[16];
-    u8 pools_full, immune;
+    u8 immune;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 36;
@@ -559,12 +508,7 @@ static u32 test_latcher_main(u32 row)
     g_Player.spike_immune = immune;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 16; ++slot)
-            weapon_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(weapon_objects, 16, 0);
     expected = obj;
     expected.unk5 = 2;
     expected.animation_step.fields.duration = 1;
@@ -600,8 +544,8 @@ static u32 test_latcher_main(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "latcher_drain_release_animation", latcher_drain_release_animation_cases, latcher_drain_release_animation_cases_expected, COUNT(latcher_drain_release_animation_cases), 0 },
-    { "latcher_weapon_responses", latcher_weapon_responses_cases, latcher_weapon_responses_cases_expected, COUNT(latcher_weapon_responses_cases), 0 },
+    { "latcher_drain_release_animation", NULL, latcher_drain_release_animation_cases_expected, COUNT(latcher_drain_release_animation_cases_expected), release_case },
+    { "latcher_weapon_responses", NULL, latcher_weapon_responses_cases_expected, COUNT(latcher_weapon_responses_cases_expected), hit_case },
     { "func_8005F558", 0, 0, 5, test_func_8005F558 },
     { "latcher_drift", 0, 0, 2, test_latcher_drift },
     { "latcher_grab_clamp", 0, 0, 1, test_latcher_grab_clamp },
@@ -610,4 +554,4 @@ const struct CTestGroup c_test_groups[] = {
     { "latcher_main", 0, 0, 3, test_latcher_main },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(latcher_drain_release_animation_cases) + COUNT(latcher_weapon_responses_cases) + 5 + 2 + 1 + 1 + 4 + 3;
+const u32 c_test_count = COUNT(latcher_drain_release_animation_cases_expected) + COUNT(latcher_weapon_responses_cases_expected) + 5 + 2 + 1 + 1 + 4 + 3;

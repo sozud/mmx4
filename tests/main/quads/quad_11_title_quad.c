@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/quads/quad_11_title_quad.h"
 #include "main/object_motion.h"
+void title_quad_init(struct QuadObj* arg0);
 extern s16 title_quad_morph_targets[6][2];
 extern s16 title_quad_shapes[][8];
 extern u16 title_quad_palette[30];
@@ -57,29 +58,7 @@ static u32 morph_case(u32 observation)
     }
     return actual;
 }
-#define MORPH_CASE(n)                              \
-    static u32 title_morph_context_morph_##n(void) \
-    {                                              \
-        return morph_case(n);                      \
-    }
-MORPH_CASE(0)
-MORPH_CASE(1)
-MORPH_CASE(2)
-MORPH_CASE(3)
-MORPH_CASE(4)
-MORPH_CASE(5)
-MORPH_CASE(6)
-MORPH_CASE(7)
-MORPH_CASE(8)
-MORPH_CASE(9)
-MORPH_CASE(10)
-MORPH_CASE(11)
-#define MORPH_ENTRY(n) title_morph_context_morph_##n,
-static const CTestCase title_morph_context_cases[]
-    = { MORPH_ENTRY(0) MORPH_ENTRY(1) MORPH_ENTRY(2) MORPH_ENTRY(3) MORPH_ENTRY(4) MORPH_ENTRY(5) MORPH_ENTRY(6) MORPH_ENTRY(7) MORPH_ENTRY(8) MORPH_ENTRY(9) MORPH_ENTRY(10) MORPH_ENTRY(11) };
 static const u32 title_morph_context_cases_expected[] = { 0x170000u, 0x480000u, 0xD80000u, 0x410000u, 0xDAC2F0u, 0x3FB6CDu, 0x170000u, 0x4A0000u, 0x6000002u, 0x1C210u, 0x14141414u, 0x1000101u };
-#undef MORPH_CASE
-#undef MORPH_ENTRY
 
 static u32 title_case(u32 mode, u32 observation)
 {
@@ -226,32 +205,11 @@ static u32 quad_case(u32 shape, u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return obj.unk34 | ((u32)obj.ext.title_quad.unk38 << 16) | ((u32)(u8)obj.state << 24);
 }
-#define CASE(s, m)                                          \
-    static u32 title_quad_real_targets_quad_##s##_##m(void) \
-    {                                                       \
-        return quad_case(s, m);                             \
-    }
-CASE(0, 0)
-CASE(0, 1)
-CASE(0, 2)
-CASE(0, 3)
-CASE(0, 4)
-CASE(0, 5)
-CASE(1, 0)
-CASE(1, 1)
-CASE(1, 2)
-CASE(1, 3)
-CASE(1, 4)
-CASE(1, 5)
-#define ENTRY(s, m) title_quad_real_targets_quad_##s##_##m,
-static const CTestCase title_quad_real_targets_cases[]
-    = {
-          ENTRY(0, 0) ENTRY(0, 1) ENTRY(0, 2) ENTRY(0, 3) ENTRY(0, 4) ENTRY(0, 5)
-              ENTRY(1, 0) ENTRY(1, 1) ENTRY(1, 2) ENTRY(1, 3) ENTRY(1, 4) ENTRY(1, 5)
-      };
 static const u32 title_quad_real_targets_cases_expected[] = { 0x10594A5u, 0x1011234u, 0x1027FFFu, 0x1027FFFu, 0x2031234u, 0x1057FFFu, 0x6051234u, 0x6011234u, 0x6021234u, 0x6021234u, 0x4001234u, 0x6051234u };
-#undef CASE
-#undef ENTRY
+static u32 title_quad_real_targets_cases_row(u32 row)
+{
+    return quad_case(row / 6, row % 6);
+}
 
 struct title_quad_split_case {
     u32 unkA, unk2, hi, y;
@@ -285,11 +243,46 @@ static u32 test_title_quad_split(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 5);
 }
 
+static struct QuadObj title_quad;
+#define TQ(kind) (memset(&title_quad, 0, sizeof(title_quad)), title_quad.active = 1, title_quad.unk2 = kind, title_quad_init(&title_quad))
+static void tq_init_0(void)
+{
+    TQ(0);
+}
+static void tq_init_3(void) { TQ(3); }
+static void tq_init_5(void) { TQ(5); }
+
+static u32 title_quad_run(void (*run)(void), u32 row, const u32* expected)
+{
+    u32 seen[6];
+    run();
+    seen[0] = (u8)title_quad.active | (u8)title_quad.state << 8 | (u8)title_quad.unk2 << 16 | (u32)(u8)title_quad.bg_offset << 24;
+    seen[1] = (u16)title_quad.vertices[0].x.i.hi | (u32)(u16)title_quad.vertices[0].y.i.hi << 16;
+    seen[2] = (u16)title_quad.vertices[1].x.i.hi | (u32)(u16)title_quad.vertices[1].y.i.hi << 16;
+    seen[3] = (u16)title_quad.vertices[2].x.i.hi | (u32)(u16)title_quad.vertices[2].y.i.hi << 16;
+    seen[4] = (u16)title_quad.vertices[3].x.i.hi | (u32)(u16)title_quad.vertices[3].y.i.hi << 16;
+    seen[5] = title_quad.unk34 | (u32)title_quad.unk36 << 16 | (u32)(u8)title_quad.ext.unk_ext.unk38 << 24;
+    return c_test_observe(0, row, seen, expected, 6);
+}
+
+static void (*const title_quad_init_states_cases[])(void) = {
+    tq_init_0,
+    tq_init_3,
+    tq_init_5,
+};
+static const u32 title_quad_init_states_expected[] = { 0xFF000381u, 0u, 0x13Fu, 0x78013Fu, 0x780000u, 0x14108421u, 0xFF030381u, 0xBF0050u, 0x780000u, 0x790004u, 0xC00054u, 0x14108421u, 0xFF050381u, 0x780000u, 0x78014Au, 0xC00050u, 0xC00050u, 0x14108421u };
+
+static u32 test_title_quad_init_states(u32 row)
+{
+    return title_quad_run(title_quad_init_states_cases[row], row, &title_quad_init_states_expected[row * 6]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "title_morph_context", title_morph_context_cases, title_morph_context_cases_expected, COUNT(title_morph_context_cases), 0 },
+    { "title_quad_init_states", 0, 0, COUNT(title_quad_init_states_cases), test_title_quad_init_states },
+    { "title_morph_context", NULL, title_morph_context_cases_expected, COUNT(title_morph_context_cases_expected), morph_case },
     { "title_quad_converge", title_quad_converge_cases, title_quad_converge_cases_expected, COUNT(title_quad_converge_cases), 0 },
-    { "title_quad_real_targets", title_quad_real_targets_cases, title_quad_real_targets_cases_expected, COUNT(title_quad_real_targets_cases), 0 },
+    { "title_quad_real_targets", NULL, title_quad_real_targets_cases_expected, COUNT(title_quad_real_targets_cases_expected), title_quad_real_targets_cases_row },
     { "title_quad_split", 0, 0, 3, test_title_quad_split },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(title_morph_context_cases) + COUNT(title_quad_converge_cases) + COUNT(title_quad_real_targets_cases) + 3;
+const u32 c_test_count = COUNT(title_quad_init_states_cases) + COUNT(title_morph_context_cases_expected) + COUNT(title_quad_converge_cases) + COUNT(title_quad_real_targets_cases_expected) + 3;

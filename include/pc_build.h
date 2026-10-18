@@ -43,6 +43,8 @@ void mmx4_pc_replay_cd_load_consume(void);
 int mmx4_pc_replay_cd_load_pending(void);
 int mmx4_pc_replay_xa_stop_due(void);
 void mmx4_pc_replay_xa_stop_consume(void);
+int mmx4_pc_replay_xa_start_ready(void);
+void mmx4_pc_replay_xa_start_done(void);
 void mmx4_pc_complete_scheduled_cd_load(int input_phase);
 
 extern DR_MODE D_80139250[2];

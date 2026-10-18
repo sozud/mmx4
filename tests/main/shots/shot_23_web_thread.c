@@ -75,53 +75,7 @@ static u32 pulse_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.unk17 << 16) | ((u32)visual_objects[31].active << 24);
 }
-#define CASE(m)                                             \
-    static u32 web_thread_pulse_visual_pool_pulse_##m(void) \
-    {                                                       \
-        return pulse_case(m);                               \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) web_thread_pulse_visual_pool_pulse_##m,
-static const CTestCase web_thread_pulse_visual_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 web_thread_pulse_visual_pool_cases_expected[] = { 0x1120101u, 0x41120101u, 0x1130000u, 0x1120101u };
-#undef CASE
-#undef ENTRY
-
-static const u32 web_thread_pulse_expected[] = { 0u, 0u, 0xFFFFFFFFu, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_web_thread_pulse(u32 row)
-{
-    u32 observed_values[12];
-    struct ShotObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    obj.unk6 = -1;
-    pool_0_full = 0;
-    obj.animation_step.fields.relative_step = -1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    web_thread_pulse(&obj);
-    observed_values[0] = (u32)obj.unk2;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)visual_objects[0].active;
-    observed_values[4] = (u32)visual_objects[0].id;
-    observed_values[5] = (u32)visual_objects[0].unk15;
-    observed_values[6] = (u32)visual_objects[0].unk16;
-    observed_values[7] = (u32)visual_objects[0].unk2;
-    observed_values[8] = (u32)visual_objects[0].unk40;
-    observed_values[9] = (u32)visual_objects[0].unk42;
-    observed_values[10] = (u32)visual_objects[0].x_pos.val;
-    observed_values[11] = (u32)visual_objects[0].y_pos.val;
-    return c_test_observe(0, row, observed_values, web_thread_pulse_expected, 12);
-}
 
 static const u32 inputs_0[2][2] = {
     { -1, 0 },
@@ -153,10 +107,115 @@ static u32 test_web_thread_snap(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
+void web_thread_main(struct ShotObj*);
+extern u8 web_thread_hit_box[4], web_thread_collision[32][4];
+static struct WeaponObj weapons_expected[16];
+static struct VisualObj visuals_before[32];
+static u32 owner_handoffs(u32 row)
+{
+    struct ShotObj obj, expected;
+    struct MainObj owner, owner_expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 gate = row % 4, dead = row / 4 % 2, flash = row / 8 % 2, hit = row / 16 % 2, facing = row / 32, i;
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.hp = 24;
+    player_before = g_Player;
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    for (i = 0; i < 32; i++) {
+        visual_objects[i].active = 1;
+        visual_objects[i].id = 39;
+    }
+    memcpy(visuals_before, visual_objects, sizeof(visuals_before));
+    memset(&owner, 0, sizeof(owner));
+    owner.active = 0x41;
+    owner.id = 43;
+    owner.state = dead ? 2 : 1;
+    owner.unk5 = 6;
+    owner.unk6 = 4;
+    owner.x_pos.val = 160 * 65536 + 0x1234;
+    owner.y_pos.val = 170 * 65536 + 0x5678;
+    owner.ext.main_43.flash_timer = flash;
+    owner.ext.main_43.hurt_collision = gate & 1;
+    owner.ext.main_43.big_web_done = gate >> 1;
+    owner_expected = owner;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 23;
+    obj.state = 1;
+    obj.on_screen = 7;
+    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk42 = 0x1234;
+    obj.unk5C = 3;
+    obj.unk60 = 3;
+    obj.timer = -50;
+    obj.unk7C = WEAPON_OBJECT(&owner);
+    obj.unk84.value = 16 * 65536;
+    obj.x_pos.val = 0x12345;
+    obj.y_pos.val = 0x23456;
+    obj.unk50.data = obj.unk54 = web_thread_hit_box;
+    obj.unk58.data = web_thread_collision[0];
+    obj.animation_table = (u32**)web_spider_animations;
+    set_animation(&obj, 19);
+    assert(obj.animation_step.packed == 0x64010001);
+    if (hit) {
+        weapon_objects[0].active = 0x21;
+        weapon_objects[0].id = 8;
+        weapon_objects[0].unk15 = obj.unk15;
+        weapon_objects[0].x_pos.val = owner.x_pos.val + 16 * 65536;
+        weapon_objects[0].y_pos.val = owner.y_pos.val - 50 * 65536;
+        weapon_objects[0].unk50 = web_thread_hit_box;
+    }
+    memcpy(weapons_expected, weapon_objects, sizeof(weapons_expected));
+    expected = obj;
+    expected.x_pos.val = owner.x_pos.val + 16 * 65536;
+    expected.y_pos.val = owner.y_pos.val - 50 * 65536;
+    if (dead) {
+        expected.active = expected.id = expected.unk2 = expected.on_screen = expected.state = expected.unk5 = expected.unk6 = expected.unk7 = 0;
+        expected.unk61 = flash;
+    } else {
+        expected.animation_cursor = (u32*)web_spider_animations[19] + 1;
+        expected.animation_step.packed = 0x65010001;
+        expected.on_screen = 1;
+        if (!gate && hit && !flash) {
+            expected.unk42 |= 0x8000;
+            weapons_expected[0].unk98 = 1;
+            ((s16*)&weapons_expected[0].unk80)[0] = facing ? 177 : 175;
+            ((s16*)&weapons_expected[0].unk80)[1] = 71;
+            if (!flash) {
+                expected.unk5 = 1;
+                expected.unk61 = 30;
+                expected.unk17 = 20;
+                expected.previous_animation_index = 0xFF;
+                expected.animation_cursor = (u32*)web_spider_animations[20];
+                expected.animation_step.packed = 0x66010001;
+                owner_expected.unk5 = 1;
+                owner_expected.unk6 = 0;
+            }
+        }
+    }
+    D_8013E198[5] = -1;
+    cur_random = 0x1234;
+    web_thread_main(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_expected, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    c_test_same_words(weapon_objects, weapons_expected, sizeof(weapons_expected));
+    c_test_same_words(visual_objects, visuals_before, sizeof(visuals_before));
+    assert(cur_random == 0x1234);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "web_thread_pulse_visual_pool", web_thread_pulse_visual_pool_cases, web_thread_pulse_visual_pool_cases_expected, COUNT(web_thread_pulse_visual_pool_cases), 0 },
-    { "web_thread_pulse", 0, 0, 1, test_web_thread_pulse },
+    { "web_thread_pulse_visual_pool", NULL, web_thread_pulse_visual_pool_cases_expected, COUNT(web_thread_pulse_visual_pool_cases_expected), pulse_case },
     { "web_thread_snap", 0, 0, 2, test_web_thread_snap },
+    { "owner_death_web_gates_and_real_weapon_snap", NULL, NULL, 64, owner_handoffs },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(web_thread_pulse_visual_pool_cases) + 1 + 2;
+const u32 c_test_count = COUNT(web_thread_pulse_visual_pool_cases_expected) + 2 + 64;

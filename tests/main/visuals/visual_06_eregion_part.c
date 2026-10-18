@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/visuals/visual_06_eregion_part.h"
+#include "support/state_cases.h"
 extern union AnimationStep* D_800FAD68[26];
 
 static u32 slash_case(u32 mode)
@@ -68,24 +69,7 @@ static u32 slash_case(u32 mode)
     assert(D_800FAD68[18][0].packed == 0x0C010008 && D_800FAD68[18][6].packed == 0x20010103 && D_800FAD68[18][10].packed == 0x20010203);
     return (u8)obj.active | ((u32)(u8)owner.ext.main_8.queued_sound << 8) | ((u32)obj.animation_step.fields.duration << 16) | ((u32)(u8)obj.on_screen << 24);
 }
-#define CASE(m)                                           \
-    static u32 eregion_slash_owner_events_slash_##m(void) \
-    {                                                     \
-        return slash_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) eregion_slash_owner_events_slash_##m,
-static const CTestCase eregion_slash_owner_events_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 eregion_slash_owner_events_cases_expected[] = { 0x1022041u, 0x30700u, 0x80700u, 0x80700u, 0x1032041u, 0x1070741u, 0x10C0741u };
-#undef CASE
-#undef ENTRY
 
 static const s8 subtypes[7] = { -1, -1, 6, 6, 127, 127, 2 };
 static u32 owner_case(u32 mode)
@@ -138,28 +122,70 @@ static u32 owner_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return obj.active | ((u32)(u8)obj.unk2 << 8) | ((u32)(u8)obj.state << 16) | ((u32)obj.unk15 << 24);
 }
-#define CASE(m)                                             \
-    static u32 eregion_visual_default_owner_owner_##m(void) \
-    {                                                       \
-        return owner_case(m);                               \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) eregion_visual_default_owner_owner_##m,
-static const CTestCase eregion_visual_default_owner_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 eregion_visual_default_owner_cases_expected[] = { 0x2FF41u, 0x40000000u, 0x20641u, 0x40000000u, 0x27F41u, 0x40000000u, 0x20241u };
-#undef CASE
-#undef ENTRY
+
+static struct MainObj part_owner;
+#define sv state_room.visual
+#define PART(kind, st, setup) (state_reset(0, 0, 0), memset(&part_owner, 0, sizeof(part_owner)), part_owner.active = 1, part_owner.unk17 = 2, part_owner.x_pos.i.hi = 0x80, part_owner.y_pos.i.hi = 0x60, part_owner.unk42 = 0x8001, sv.active = 1, sv.unk2 = kind, sv.state = st, sv.unk50 = (struct PlayerObj*)&part_owner, setup, func_800AFF78(&sv), state_extra = sv.unk54 | sv.unk16 << 8 | part_owner.ext.main_8.queued_sound << 16)
+static void ep_body_orphan(void)
+{
+    PART(1, 2, part_owner.state = 2);
+}
+static void ep_body_left(void) { PART(1, 2, part_owner.state = 1); }
+static void ep_body_right(void) { PART(1, 2, (part_owner.state = 1, part_owner.unk15 = 0x40)); }
+static void ep_mouth_gone(void) { PART(5, 2, part_owner.active = 0); }
+static void ep_mouth_open(void) { PART(5, 2, 0); }
+static void ep_mouth_hold(void) { PART(5, 2, sv.unk17 = 3); }
+static void ep_mouth_busy(void) { PART(5, 2, part_owner.unk7 = 1); }
+static void ep_mouth_hidden(void) { PART(5, 2, part_owner.unk7 = -1); }
+static void ep_legs_gone(void) { PART(3, 3, part_owner.active = 0); }
+static void ep_legs_hidden(void) { PART(3, 3, part_owner.unk7 = -1); }
+static void ep_legs_busy(void) { PART(3, 3, part_owner.unk7 = 1); }
+static void ep_legs_step(void) { PART(3, 3, 0); }
+static void ep_legs_walk(void) { PART(3, 3, sv.unk17 = 2); }
+static void ep_legs_stomp(void) { PART(4, 3, (part_owner.animation_step.fields.frame_index = 0x18, sv.animation_step.fields.event = 1)); }
+static void ep_legs_stomp_b(void) { PART(4, 3, (part_owner.animation_step.fields.frame_index = 0x1B, sv.unk17 = 3, sv.animation_step.fields.event = 1, sv.unk54 = 1)); }
+static void ep_legs_stomp_c(void) { PART(4, 3, part_owner.animation_step.fields.frame_index = 0x1C); }
+static void ep_legs_stomp_d(void) { PART(4, 3, part_owner.animation_step.fields.frame_index = 0x1D); }
+static void ep_legs_plain(void) { PART(4, 3, part_owner.animation_step.fields.frame_index = 2); }
+static void ep_mirror_gone(void) { PART(5, 4, part_owner.active = 0); }
+static void ep_mirror_sync(void) { PART(5, 4, part_owner.animation_step.fields.frame_index = 3); }
+static void ep_mirror_hidden(void) { PART(5, 4, part_owner.unk7 = -1); }
+
+static void (*const eregion_part_states_cases[])(void) = {
+    ep_body_orphan,
+    ep_body_left,
+    ep_body_right,
+    ep_mouth_gone,
+    ep_mouth_open,
+    ep_mouth_hold,
+    ep_mouth_busy,
+    ep_mouth_hidden,
+    ep_legs_gone,
+    ep_legs_hidden,
+    ep_legs_busy,
+    ep_legs_step,
+    ep_legs_walk,
+    ep_legs_stomp,
+    ep_legs_stomp_b,
+    ep_legs_stomp_c,
+    ep_legs_stomp_d,
+    ep_legs_plain,
+    ep_mirror_gone,
+    ep_mirror_sync,
+    ep_mirror_hidden,
+};
+static const u32 eregion_part_states_expected[] = { 0u, 0u, 0x350000u, 0x620000u, 0u, 0u, 0u, 0x58001u, 0u, 0u, 2u, 0xFF000101u, 0x350000u, 0x620000u, 0u, 0u, 0u, 0x58001u, 0u, 0u, 2u, 0xFF400101u, 0xCB0000u, 0x620000u, 0u, 0u, 0u, 0x58001u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 2u, 0xFF000501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 2u, 0x501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x48000u, 0u, 0u, 2u, 0x501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 2u, 0x501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 0u, 0u, 0x7A0000u, 0x120000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 3u, 0x301u, 0x7A0000u, 0x120000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 3u, 0x301u, 0x7A0000u, 0x120000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 3u, 0xFF000301u, 0x7A0000u, 0x120000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 3u, 0x301u, 0x7A0000u, 0x120000u, 0u, 0u, 0u, 0x48000u, 0u, 0u, 3u, 0xFF000401u, 0xB60000u, 0x330000u, 0u, 0u, 0u, 0x58000u, 0x700u, 0u, 3u, 0x401u, 0xB70000u, 0x330000u, 0u, 0u, 0u, 0x48000u, 0x1A0700u, 0u, 3u, 0xFF000401u, 0xD50000u, 0x2D0000u, 0u, 0u, 0u, 0x58000u, 0x700u, 0u, 3u, 0xFF000401u, 0xD70000u, 0x2C0000u, 0u, 0u, 0u, 0x58000u, 0x700u, 0u, 3u, 0xFF000401u, 0xC90000u, 0x200000u, 0u, 0u, 0u, 0x58000u, 0x500u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 4u, 0xFF000501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 4u, 0x501u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0u };
+
+static u32 test_eregion_part_states(u32 row)
+{
+    return object_run(eregion_part_states_cases[row], row, &eregion_part_states_expected[row * 10]);
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "eregion_slash_owner_events", eregion_slash_owner_events_cases, eregion_slash_owner_events_cases_expected, COUNT(eregion_slash_owner_events_cases), 0 },
-    { "eregion_visual_default_owner", eregion_visual_default_owner_cases, eregion_visual_default_owner_cases_expected, COUNT(eregion_visual_default_owner_cases), 0 },
+    { "eregion_part_states", 0, 0, COUNT(eregion_part_states_cases), test_eregion_part_states },
+    { "eregion_slash_owner_events", NULL, eregion_slash_owner_events_cases_expected, COUNT(eregion_slash_owner_events_cases_expected), slash_case },
+    { "eregion_visual_default_owner", NULL, eregion_visual_default_owner_cases_expected, COUNT(eregion_visual_default_owner_cases_expected), owner_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(eregion_slash_owner_events_cases) + COUNT(eregion_visual_default_owner_cases);
+const u32 c_test_count = COUNT(eregion_part_states_cases) + COUNT(eregion_slash_owner_events_cases_expected) + COUNT(eregion_visual_default_owner_cases_expected);

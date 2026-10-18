@@ -35,7 +35,7 @@ void ice_core_spray_fly(struct ShotObj* self)
 {
     move_object(MOVING_OBJECT(self));
     func_8002D9BC(self);
-    if (*(s16*)&self->unk7C->active == 2) {
+    if (*(s16*)((void*)self->unk7C) == 2) {
         self->state = 2;
     }
     if (func_8002BB80(self, &g_Player) != 0) {

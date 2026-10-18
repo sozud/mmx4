@@ -8,14 +8,26 @@ void c_test_fail(u32 line)
     for (;;) { }
 }
 
-#if defined(MMX4_PC) && defined(MMX4_COMPACT_OBSERVATIONS)
+#ifdef MMX4_PC
 #include <stdio.h>
+#include <unistd.h>
+
+void c_test_skip(void)
+{
+    fflush(stdout);
+    _exit(77);
+}
 #endif
 
 u32 c_test_observe(u32 group, u32 row, const u32* observed, const u32* expected, u32 count)
 {
     u32 i;
     for (i = 0; i < count; ++i) {
+#ifdef MMX4_PC
+        if (observed[i] != expected[i])
+            fprintf(stderr, "observation mismatch: group=%u row=%u index=%u expected=0x%08X actual=0x%08X\n",
+                group, row, i, expected[i], observed[i]);
+#endif
         assert(observed[i] == expected[i]);
 #if defined(MMX4_PC) && defined(MMX4_COMPACT_OBSERVATIONS)
         printf("OBS\t%u\t%u\t%u\t%u\n", group, row, i, observed[i]);
@@ -92,9 +104,9 @@ void c_test_zero_words(u32* dest, u32 count)
 u32 c_test_group_run(const struct CTestGroup* group, u32 index)
 {
     u32 actual;
-    if (!group->cases)
+    if (!group->cases && !group->expected)
         return group->run(index);
-    actual = group->cases[index]();
+    actual = group->cases ? group->cases[index]() : group->run(index);
     return c_test_observe(0, index, &actual, &group->expected[index], 1);
 }
 
@@ -108,8 +120,11 @@ u32 c_test_run(u32 index)
     c_test_status.failure_line = 0;
     if (index >= c_test_count)
         c_test_fail(__LINE__);
-    while (local >= c_test_groups[group].count)
+    while (local >= c_test_groups[group].count) {
         local -= c_test_groups[group++].count;
+        if (group >= c_test_group_count)
+            c_test_fail(__LINE__);
+    }
     c_test_status.value = c_test_group_run(&c_test_groups[group], local);
     c_test_status.passed = 1;
     return c_test_status.value;

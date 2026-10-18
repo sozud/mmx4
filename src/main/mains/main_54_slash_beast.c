@@ -97,7 +97,7 @@ void slash_beast_stagger_recover(struct MainObj*);
 
 // slash_beast_high_leap_funcs
 extern void (*slash_beast_high_leap_funcs[])(struct MainObj*);
-void slash_beast_high_leap_jump(struct AnimatedObj*);
+void slash_beast_high_leap_jump(struct MainObj*);
 void slash_beast_high_leap_fall(struct MainObj*);
 void slash_beast_high_leap_land(struct MainObj*);
 
@@ -724,7 +724,7 @@ void slash_beast_intro_pose(struct MainObj* self)
         if (engine_obj.stage == 8) {
             self->unk15 = 0;
             set_animation(self, 0x18);
-            func_8002217C(0x10, 0xFF, engine_obj.character_state.bytes[8]);
+            func_8002217C(0x10, 0xFF, (u8)engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
         self->unk6 = 6;
@@ -808,19 +808,19 @@ void slash_beast_high_leap(struct MainObj* self)
     slash_beast_high_leap_funcs[self->unk6](self);
 }
 
-void slash_beast_high_leap_jump(struct AnimatedObj* self)
+void slash_beast_high_leap_jump(struct MainObj* self)
 {
-    animate_object(self);
+    animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         if (self->unk15 == 0) {
-            self->x_vel.val = FIXED(-1.75);
+            self->x_speed = FIXED(-1.75);
         } else {
-            self->x_vel.val = FIXED(1.75);
+            self->x_speed = FIXED(1.75);
         }
-        self->unk28 = 0;
-        self->y_vel.val = FIXED(7.4375);
-        self->unk2C = FIXED(0.21875);
-        move_with_gravity(self);
+        self->x_accel = 0;
+        self->y_speed = FIXED(7.4375);
+        self->gravity = FIXED(0.21875);
+        move_with_gravity(ANIMATED_OBJECT(self));
         func_8001540C(2, 0x81, self);
         set_animation(self, 2);
         self->unk6 = 1;

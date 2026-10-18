@@ -1,6 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_49_train_soldier.h"
 #include "main/55C4.h"
+#include "main/195B4.h"
 extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
 extern u32 D_801076F8[];
@@ -53,23 +54,7 @@ static u32 aim_case(u32 mode)
     assert(SP_CUR_MAIN_OBJ == &obj);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)obj.animation_step.fields.duration << 16);
 }
-#define CASE(m)                                      \
-    static u32 train_soldier_aim_flags_aim_##m(void) \
-    {                                                \
-        return aim_case(m);                          \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) train_soldier_aim_flags_aim_##m,
-static const CTestCase train_soldier_aim_flags_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 train_soldier_aim_flags_cases_expected[] = { 0x140D03u, 0x140C03u, 0x140E03u, 0x50B03u, 0x81A03u, 0x90B02u };
-#undef CASE
-#undef ENTRY
 
 static struct JumpInput {
     s8 air;
@@ -207,29 +192,11 @@ static u32 check(u32 mode, u32 observation)
     return (u16)train_soldier_check_jump_soldier.y_pos.i.hi | ((u32)(u8)train_soldier_check_jump_soldier.unk6C << 16) | ((u32)(u8)train_soldier_check_jump_soldier.unk6E << 24);
 }
 
-#define OBSERVE(name, field)                                   \
-    static u32 train_soldier_check_jump_##name##_##field(void) \
-    {                                                          \
-        return check(name, field);                             \
-    }
-#define CASE(name) OBSERVE(name, 0) OBSERVE(name, 1)
-CASE(AIRBORNE)
-CASE(FALL)
-CASE(GUARD)
-CASE(GROUND_AHEAD)
-CASE(TURN)
-CASE(WALL)
-CASE(JUMP_FAST_LEFT)
-CASE(JUMP_SLOW_RIGHT)
-#define ENTRY(name) train_soldier_check_jump_##name##_0, train_soldier_check_jump_##name##_1,
-static const CTestCase train_soldier_check_jump_cases[]
-    = {
-          ENTRY(AIRBORNE) ENTRY(FALL) ENTRY(GUARD) ENTRY(GROUND_AHEAD) ENTRY(TURN) ENTRY(WALL) ENTRY(JUMP_FAST_LEFT) ENTRY(JUMP_SLOW_RIGHT)
-      };
 static const u32 train_soldier_check_jump_cases_expected[] = { 0x10200u, 0x6Bu, 0xFF0300u, 0x8006Bu, 0x208u, 0x8006Bu, 0x208u, 0x8006Bu, 0x40000208u, 0x8006Bu, 0x20Eu, 0x8006Bu, 0x10408u, 0x8006Bu, 0x40010408u, 0x8006Bu };
-#undef OBSERVE
-#undef CASE
-#undef ENTRY
+static u32 train_soldier_check_jump_cases_row(u32 row)
+{
+    return check(row / 2, row % 2);
+}
 
 static u32 train_soldier_states_steps[2];
 static u32* train_soldier_states_table[0x20];
@@ -400,23 +367,6 @@ static const u32 train_soldier_states_cases_expected[] = { 0xFFFE4000u, 0x1C000u
 #undef CASE
 #undef ENTRY
 
-static const u32 train_soldier_shoot_aim_expected[] = { 1u };
-static u32 test_train_soldier_shoot_aim(u32 row)
-{
-    u32 observed_values[1];
-    struct MainObj obj;
-    struct MainObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    child_0_present = 255;
-    child_0.ext.main_49.unk82 = 131;
-    SP_CUR_MAIN_OBJ = child_0_present ? &child_0 : NULL;
-    train_soldier_shoot_aim(&obj);
-    observed_values[0] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, train_soldier_shoot_aim_expected, 1);
-}
-
 #define SOLDIER_CASE(name, player_x, object_x)  \
     static u32 name(void)                       \
     {                                           \
@@ -448,12 +398,125 @@ static const CTestCase train_soldier_wait_facing_cases[] = {
 };
 
 static const u32 train_soldier_wait_facing_cases_expected[] = { 0x0u, 0x40u };
+
+void train_soldier_despawn(struct MainObj* arg0);
+extern union AnimationStep* highway_trooper_animations[27];
+extern u8 D_800FFB5C[4], train_soldier_guard_hurt_box[], train_soldier_guard_attack_box[];
+extern u32 D_801076F8[];
+static u32 metadata[8], archive[16];
+static u32 initialize(u32 row)
+{
+    struct MainObj obj, expected, *current = SP_CUR_MAIN_OBJ;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before;
+    struct BackgroundObj backgrounds_before[3];
+    u32 type = row % 10, side = row / 10 % 3, layer = row / 30 % 3, substage = row / 90, resource = substage ? 4 : 3, i;
+    for (i = 0; i < 8; i++) {
+        metadata[i] = (i + 1) * 128;
+        archive[i] = 32 + i * 4;
+        archive[8 + i] = 0x13570000 + i;
+    }
+    D_801406A8 = metadata;
+    TEST_MENU_FRAMES = (u8*)archive;
+    engine_obj.stage = 8;
+    engine_obj.substage = substage;
+    engine_before = engine_obj;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    obj.active = 0x41;
+    obj.id = 49;
+    obj.unk2 = type;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.x_speed = 0x10000;
+    obj.y_speed = -0x20000;
+    obj.x_accel = 0x3456;
+    obj.gravity = 0x4567;
+    obj.unk15 = 0x40;
+    g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
+    g_Player.bg_offset = layer;
+    player_before = g_Player;
+    expected = obj;
+    expected.ext.main_49.unk85 = type < 6 ? type / 2 : type;
+    expected.ext.main_49.unk86 = type >= 6;
+    expected.unk2 = type < 6 ? type % 2 : type;
+    expected.unk7A = type >= 6 && type != 9;
+    expected.unk42 = (substage ? 0x7888 : 0x7884) + (type == 2 || type == 3 || type == 5 ? 2 : 0);
+    expected.unk40 = resource + 1;
+    expected.sprite_frames = (u8*)archive + 32 + resource * 4;
+    expected.x_speed = expected.y_speed = expected.x_accel = expected.gravity = 0;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.animation_table = (const u8* const*)highway_trooper_animations;
+    expected.terrain_box = (struct Unk_unk68*)D_800FFB5C;
+    expected.attack_box = train_soldier_guard_attack_box;
+    expected.hurt_box = train_soldier_guard_hurt_box;
+    expected.collision_data = D_801076F8;
+    expected.bg_offset = layer;
+    expected.unk16 = 6;
+    expected.hp = 6;
+    expected.contact_damage = 3;
+    expected.unk17 = 1;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = (const u8*)highway_trooper_animations[1];
+    expected.animation_step.packed = 0x01010004;
+    expected.state = type >= 6 && type != 9 ? 3 : 1;
+    expected.unk5 = type >= 6 && type != 9 ? 0 : type == 4 || type == 5 ? 7
+                                                                        : 2;
+    expected.unk15 = type < 6 || !side ? 0 : 0x40;
+    assert(s_StageMainIds[8][substage][resource] == 0x22 && (u8)func_8002938C(0x22) == resource);
+    cur_random = 0x1234;
+    SP_CUR_MAIN_OBJ = &obj;
+    func_80068548(&obj);
+    assert(SP_CUR_MAIN_OBJ == &obj);
+    SP_CUR_MAIN_OBJ = current;
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    for (i = 0; i < 8; i++)
+        assert(metadata[i] == (i + 1) * 128 && archive[i] == 32 + i * 4 && archive[8 + i] == 0x13570000 + i);
+    assert(cur_random == 0x1234 && D_801406A8 == metadata && TEST_MENU_FRAMES == (u8*)archive);
+    return 1;
+}
+static u32 despawn(u32 row)
+{
+    struct MainObj obj, expected, *current = SP_CUR_MAIN_OBJ;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    u32 type = row % 10, record = row / 10 ? 0x8F : 0xDF, wanted = type >= 6 && type != 9 ? 0x80 : record & 0x70;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 49;
+    obj.state = 2;
+    obj.unk2 = type < 6 ? type % 2 : type;
+    obj.on_screen = 1;
+    obj.unk5 = 3;
+    obj.unk6 = 2;
+    obj.unk7 = 1;
+    obj.backref = (u8*)&record;
+    obj.ext.main_49.unk86 = type >= 6;
+    expected = obj;
+    memset(&expected, 0, 8);
+    SP_CUR_MAIN_OBJ = &obj;
+    train_soldier_despawn(&obj);
+    assert(SP_CUR_MAIN_OBJ == &obj);
+    SP_CUR_MAIN_OBJ = current;
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(record == wanted);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "train_soldier_aim_flags", train_soldier_aim_flags_cases, train_soldier_aim_flags_cases_expected, COUNT(train_soldier_aim_flags_cases), 0 },
-    { "train_soldier_check_jump", train_soldier_check_jump_cases, train_soldier_check_jump_cases_expected, COUNT(train_soldier_check_jump_cases), 0 },
+    { "train_soldier_aim_flags", NULL, train_soldier_aim_flags_cases_expected, COUNT(train_soldier_aim_flags_cases_expected), aim_case },
+    { "train_soldier_check_jump", NULL, train_soldier_check_jump_cases_expected, COUNT(train_soldier_check_jump_cases_expected), train_soldier_check_jump_cases_row },
     { "train_soldier_states", train_soldier_states_cases, train_soldier_states_cases_expected, COUNT(train_soldier_states_cases), 0 },
-    { "train_soldier_shoot_aim", 0, 0, 1, test_train_soldier_shoot_aim },
     { "train_soldier_wait_facing", train_soldier_wait_facing_cases, train_soldier_wait_facing_cases_expected, COUNT(train_soldier_wait_facing_cases), 0 },
+    { "all_shipped_modes_resource_variants_layers_and_player_sides", NULL, NULL, 30, initialize },
+    { "temporary_and_permanent_backref_rules_including_mode9", NULL, NULL, 10, despawn },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(train_soldier_aim_flags_cases) + COUNT(train_soldier_check_jump_cases) + COUNT(train_soldier_states_cases) + 1 + COUNT(train_soldier_wait_facing_cases);
+const u32 c_test_count = COUNT(train_soldier_aim_flags_cases_expected) + COUNT(train_soldier_check_jump_cases_expected) + COUNT(train_soldier_states_cases) + COUNT(train_soldier_wait_facing_cases) + 30 + 10;

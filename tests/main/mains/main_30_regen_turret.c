@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_30_regen_turret.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+void regen_turret_start_idle(struct MainObj* arg0);
 extern union AnimationStep* regen_turret_animations[];
 
 static u32 turret_case(u32 mode)
@@ -89,25 +91,7 @@ static u32 turret_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return obj.unk17 | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)shot_objects[31].active << 16);
 }
-#define CASE(m)                                          \
-    static u32 regen_turret_facing_pool_turret_##m(void) \
-    {                                                    \
-        return turret_case(m);                           \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-#define ENTRY(m) regen_turret_facing_pool_turret_##m,
-static const CTestCase regen_turret_facing_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) };
 static const u32 regen_turret_facing_pool_cases_expected[] = { 0x41020Au, 0x1020Au, 0x41020Au, 0x1020Au, 0x1020Au, 0x20Au, 0x10301u, 0x10301u };
-#undef CASE
-#undef ENTRY
 
 static const u32 regen_turret_rebuild_expected[] = { 0u, 0u, 0u, 0u, 0u, 0x70u, 0x76u, 0x3E80000u, 0x3E80000u, 6u };
 static u32 test_regen_turret_rebuild(u32 row)
@@ -153,9 +137,26 @@ static u32 test_regen_turret_rebuild(u32 row)
     return c_test_observe(0, row, observed_values, regen_turret_rebuild_expected, 10);
 }
 
+static void rt_idle(void)
+{
+    state_reset(1, 0, 0);
+    regen_turret_start_idle(&so);
+}
+
+static void (*const regen_turret_misc_cases[])(void) = {
+    rt_idle,
+};
+static const u32 regen_turret_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0xAu, 0u, 0u, 0u };
+
+static u32 test_regen_turret_misc(u32 row)
+{
+    return state_run(regen_turret_misc_cases[row], row, &regen_turret_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "regen_turret_facing_pool", regen_turret_facing_pool_cases, regen_turret_facing_pool_cases_expected, COUNT(regen_turret_facing_pool_cases), 0 },
+    { "regen_turret_misc", 0, 0, COUNT(regen_turret_misc_cases), test_regen_turret_misc },
+    { "regen_turret_facing_pool", NULL, regen_turret_facing_pool_cases_expected, COUNT(regen_turret_facing_pool_cases_expected), turret_case },
     { "regen_turret_rebuild", 0, 0, 1, test_regen_turret_rebuild },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(regen_turret_facing_pool_cases) + 1;
+const u32 c_test_count = COUNT(regen_turret_misc_cases) + COUNT(regen_turret_facing_pool_cases_expected) + 1;

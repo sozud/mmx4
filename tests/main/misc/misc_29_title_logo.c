@@ -59,22 +59,7 @@ static u32 star_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.state | ((u32)obj.ext.title_logo.palette_shift_speed << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
 }
-#define CASE(m)                                    \
-    static u32 title_logo_star_pool_star_##m(void) \
-    {                                              \
-        return star_case(m);                       \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) title_logo_star_pool_star_##m,
-static const CTestCase title_logo_star_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 title_logo_star_pool_cases_expected[] = { 0xD80003u, 0x7E0102u, 0x7E0302u, 0x7E0302u, 0x7E0302u };
-#undef CASE
-#undef ENTRY
 
 static u32 hold_case(u32 despawn)
 {
@@ -108,16 +93,7 @@ static u32 hold_case(u32 despawn)
         assert(((u32*)background_objects)[i] == ((u32*)background_before)[i]);
     return (u8)obj.active | ((u32)(u8)obj.state << 8) | ((u32)(u8)obj.on_screen << 16);
 }
-#define CASE(n)                                       \
-    static u32 title_star_hold_context_hold_##n(void) \
-    {                                                 \
-        return hold_case(n);                          \
-    }
-CASE(0)
-CASE(1)
-static const CTestCase title_star_hold_context_cases[] = { title_star_hold_context_hold_0, title_star_hold_context_hold_1 };
 static const u32 title_star_hold_context_cases_expected[] = { 0x10341u, 0x0u };
-#undef CASE
 
 struct title_logo_init_case {
     u32 unk2;
@@ -199,11 +175,11 @@ static u32 test_title_logo_trail_fade(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "title_logo_star_pool", title_logo_star_pool_cases, title_logo_star_pool_cases_expected, COUNT(title_logo_star_pool_cases), 0 },
-    { "title_star_hold_context", title_star_hold_context_cases, title_star_hold_context_cases_expected, COUNT(title_star_hold_context_cases), 0 },
+    { "title_logo_star_pool", NULL, title_logo_star_pool_cases_expected, COUNT(title_logo_star_pool_cases_expected), star_case },
+    { "title_star_hold_context", NULL, title_star_hold_context_cases_expected, COUNT(title_star_hold_context_cases_expected), hold_case },
     { "title_logo_init", 0, 0, 3, test_title_logo_init },
     { "title_logo_star_delay", 0, 0, 2, test_title_logo_star_delay },
     { "title_logo_trail_fade", 0, 0, 2, test_title_logo_trail_fade },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(title_logo_star_pool_cases) + COUNT(title_star_hold_context_cases) + 3 + 2 + 2;
+const u32 c_test_count = COUNT(title_logo_star_pool_cases_expected) + COUNT(title_star_hold_context_cases_expected) + 3 + 2 + 2;

@@ -267,7 +267,7 @@ void iris_intro_dialogue(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8002217C(0x20, 0xFF, engine_obj.character_state.bytes[9]);
+        func_8002217C(0x20, 0xFF, (u8)engine_obj.character_state.bytes[9]);
         engine_obj.character_state.bytes[9] = 1;
         self->unk6 = 5;
     }

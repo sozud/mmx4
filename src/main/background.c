@@ -7,15 +7,6 @@ struct BackgroundCameraModePair {
     u8 primary, secondary;
 };
 
-struct BackgroundLayoutConfig {
-    u8 object_ids[4];
-    u8 layer_ids[3][2];
-};
-struct BackgroundLayoutConfigData {
-    struct BackgroundLayoutConfig records[33];
-    u8 alignment_padding[2];
-};
-
 struct Unk9 {
     u8 pad0[4];
     u8 unk4;
