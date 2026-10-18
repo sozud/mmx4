@@ -1,6 +1,22 @@
 // ShotObj, shot_object_update_funcs[50]
 // 800AA2FC..800AA5E0
 #include "common.h"
+#include "main/shots/shot_48_double_ball.h"
+#include "main/shots/shot_49_double_aerial.h"
+#include "main/shots/shot_50_double_bouncer.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// double_bouncer_step_funcs
+extern void (*double_bouncer_step_funcs[])(struct ShotObj*);
+
+// double_bouncer_state_funcs
+extern void (*double_bouncer_state_funcs[])(struct ShotObj*);
+
+void double_bouncer_main(struct ShotObj*);
 
 void (*double_bouncer_step_funcs[])(struct ShotObj*) = {
     double_toss_land,

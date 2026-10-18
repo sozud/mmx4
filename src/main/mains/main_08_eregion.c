@@ -1,7 +1,73 @@
 // MainObj, main_object_update_funcs[8]
 // 80047C88..800498C0
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_08_eregion.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_08_ice_shard.h"
+
+// eregion_state_funcs
+extern void (*eregion_state_funcs[])(struct MainObj*);
+
+void eregion_death(struct MainObj* arg0);
+
+void eregion_roar(struct MainObj* arg0);
+void eregion_stomp(struct MainObj* arg0);
+void eregion_leap(struct MainObj* arg0);
+void eregion_wing_slash(struct MainObj* arg0);
+void eregion_pounce(struct MainObj* arg0);
+void eregion_spread(struct MainObj* arg0);
+void eregion_fireball(struct MainObj* arg0);
+void eregion_intro(struct MainObj* arg0);
+
+// eregion_roar_funcs
+void eregion_roar_start(struct MainObj*);
+void eregion_roar_wait(struct MainObj*);
+
+// eregion_stomp_funcs
+void eregion_stomp_lift(struct MainObj* arg0);
+void eregion_stomp_step(struct MainObj*);
+void eregion_stomp_follow(struct MainObj*);
+void eregion_stomp_advance(struct MainObj*);
+void eregion_stomp_drop(struct MainObj*);
+void eregion_stomp_land(struct MainObj*);
+
+// eregion_leap_funcs
+void eregion_leap_crouch(struct MainObj*);
+void eregion_leap_jump(struct MainObj*);
+void eregion_leap_rise(struct MainObj*);
+void eregion_fall(struct MainObj*);
+void eregion_land(struct MainObj*);
+
+// eregion_pounce_funcs
+void eregion_pounce_crouch(struct MainObj*);
+void eregion_pounce_jump(struct MainObj*);
+
+// eregion_death_funcs
+void eregion_death_start(struct MainObj*);
+
+void eregion_death_wait_explosion(struct MainObj*);
+
+// eregion_recoil_funcs
+extern void (*eregion_recoil_funcs[])(struct MainObj*);
+
+void func_8004970C(struct MainObj*);
+void eregion_intro_fill_health(struct MainObj*);
+
+extern void (*eregion_roar_funcs[])(struct MainObj*);
+extern void (*eregion_stomp_funcs[])(struct MainObj*);
+extern void (*eregion_leap_funcs[])(struct MainObj*);
+extern void (*eregion_wing_slash_funcs[])(struct MainObj*);
+extern void (*eregion_pounce_funcs[])(struct MainObj*);
+extern void (*eregion_fireball_funcs[])(struct MainObj*);
+extern void (*eregion_spread_funcs[])(struct MainObj*);
+extern void (*eregion_death_funcs[])(struct MainObj*);
+extern void (*eregion_intro_funcs[])(struct MainObj*);
 
 void eregion_update(struct MainObj* self)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_10_spark_machine.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_spark_machine_spawn_spark_a(void)

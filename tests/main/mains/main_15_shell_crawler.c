@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_15_shell_crawler.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern u8 D_800FFB5C[4];
 extern union AnimationStep* shell_crawler_animations[];
 extern u32* D_80137E08;

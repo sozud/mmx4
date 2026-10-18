@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_32_proximity_door.h"
 
 static u32 door_case(u32 mode)
 {

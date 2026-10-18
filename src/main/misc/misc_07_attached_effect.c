@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[7]
 // 800C938C..800C9510
 #include "common.h"
+#include "main/misc/misc_07_attached_effect.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// attached_effect_state_funcs
+extern void (*attached_effect_state_funcs[])(struct MiscObj*);
+void attached_effect_init(struct MiscObj*);
+void attached_effect_animate(struct MiscObj*);
+void attached_effect_despawn(struct MiscObj*);
 
 void attached_effect_update(struct MiscObj* self)
 {

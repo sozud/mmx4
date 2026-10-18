@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_19_title.h"
 extern struct TitleObjectInit title_object_inits[22];
 
 struct title_draw_case {

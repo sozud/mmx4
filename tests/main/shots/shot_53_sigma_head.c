@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/shots/shot_53_sigma_head.h"
+#include "main/object_motion.h"
 extern s16 sigma_head_formation_end[8][3][2];
 extern u8 sigma_head_formation_next[8][3];
 

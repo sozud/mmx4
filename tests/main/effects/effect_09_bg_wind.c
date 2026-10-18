@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_09_bg_wind.h"
 
 static const u32 bg_wind_delay_expected[] = { 0u, 0xFFFFFFFFu, 0u, 0u };
 static u32 test_bg_wind_delay(u32 row)

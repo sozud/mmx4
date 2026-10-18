@@ -1,6 +1,13 @@
 // WeaponObj, weapon_object_update_funcs[60]
 // 80098F4C..800992FC
 #include "common.h"
+#include "main/weapons/weapon_60_ride_armor_missile.h"
+#include "main/objects.h"
+
+// ride_armor_missile_state_funcs
+extern void (*ride_armor_missile_state_funcs[])(struct WeaponObj*);
+
+void ride_armor_missile_despawn(struct WeaponObj*);
 
 void ride_armor_missile_update(struct WeaponObj* arg0)
 {

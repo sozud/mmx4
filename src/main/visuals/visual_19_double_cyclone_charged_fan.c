@@ -1,6 +1,9 @@
 // VisualObj, visual_object_update_funcs[19]
 // 800B2698..800B28CC
 #include "common.h"
+#include "main/visuals/visual_19_double_cyclone_charged_fan.h"
+#include "main/55C4.h"
+#include "main/objects.h"
 
 // double_cyclone_charged_fan_update
 INCLUDE_ASM("main/nonmatchings/visuals/visual_19_double_cyclone_charged_fan", func_800B2698);

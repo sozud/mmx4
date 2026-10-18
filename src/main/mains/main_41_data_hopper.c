@@ -1,7 +1,25 @@
 // MainObj, main_object_update_funcs[41]
 // 800623C4..80062D60
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_41_data_hopper.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern struct Unk_unk68 data_hopper_attack_box;
+
+void data_hopper_despawn(struct MainObj*);
+
+// data_hopper_step_funcs
+void data_hopper_idle(struct MainObj* arg0);
+void data_hopper_stand(struct MainObj* arg0);
+void data_hopper_fall(struct MainObj* arg0);
+
+void data_hopper_land(struct MainObj* arg0);
+
+extern void (*data_hopper_state_funcs[])(struct MainObj*);
 
 void data_hopper_update(struct MainObj* self)
 {

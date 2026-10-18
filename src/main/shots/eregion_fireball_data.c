@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/shots/eregion_fireball_data.h"
+#include "main/shots/shot_02_gunner_shot.h"
 
 u8 eregion_fireball_hit_box[4] = { 0xF7, 0xF5, 0x12, 0x13 };
 

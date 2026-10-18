@@ -1,6 +1,18 @@
 // WeaponObj, weapon_object_update_funcs[61, 62]
 // 800992FC..800994A0
 #include "common.h"
+#include "main/weapons/weapon_61_ride_armor_punch.h"
+#include "main/objects.h"
+
+extern u8 ride_armor_punch_hit_boxes[][4];
+extern u8 ride_armor_punch_animations[8];
+extern u8 ride_armor_punch_steps[8];
+
+// ride_armor_punch_state_funcs
+extern void (*ride_armor_punch_state_funcs[])(struct WeaponObj*);
+void ride_armor_punch_init(struct WeaponObj*);
+void ride_armor_punch_main(struct WeaponObj*);
+void ride_armor_punch_despawn(struct WeaponObj*);
 
 void ride_armor_punch_update(struct WeaponObj* arg0)
 {

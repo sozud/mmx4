@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/effects/effect_38_cyberspace_trial.h"
+#include "main/items/item_27_boss_teleporter.h"
+#include "main/mains/main_60_storm_owl.h"
 
 static u32 warp_case(u32 mode)
 {

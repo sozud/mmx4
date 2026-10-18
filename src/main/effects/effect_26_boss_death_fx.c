@@ -1,6 +1,21 @@
 // EffectObj, effect_object_update_funcs[26]
 // 800BB1F0..800BB9B8
 #include "common.h"
+#include "main/effects/effect_26_boss_death_fx.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+// boss_death_fx_state_funcs
+extern void (*boss_death_fx_state_funcs[])(struct EffectObj*);
+
+void boss_death_fx_burst(struct EffectObj*);
+void boss_death_fx_rays(struct EffectObj*);
+
+void boss_death_fx_wait(struct EffectObj*);
+
+void boss_death_fx_finish(struct EffectObj*);
 
 void boss_death_fx_init(struct EffectObj* self)
 {

@@ -1,6 +1,12 @@
 // MiscObj, misc_object_update_funcs[9]
 // 800C9D64..800C9EAC
 #include "common.h"
+#include "main/misc/misc_09_owner_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+void owner_fx_init(struct MiscObj*);
+void owner_fx_animate(struct MiscObj*);
 
 void owner_fx_update(struct MiscObj* self)
 {

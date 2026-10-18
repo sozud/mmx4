@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_11_wall_crawler.h"
+#include "main/55C4.h"
 void wall_crawler_update_surface(struct MainObj*);
 extern union AnimationStep* wall_crawler_animations[25];
 extern struct Unk_unk68 D_800FB568;

@@ -1,6 +1,29 @@
 // MainObj, main_object_update_funcs[76]
 // 800919C4..800922D8
 #include "common.h"
+#include "main/mains/main_76_spike_crawler.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/enemy_reaction_data.h"
+#include "main/objects.h"
+
+extern s8 spike_crawler_attack_box[4];
+extern s8 spike_crawler_hurt_box[4];
+
+// spike_crawler_state_funcs
+struct Main76HandlerTable {
+    void (*funcs[7])(struct MainObj*);
+};
+
+extern void (*spike_crawler_state_funcs[])(struct MainObj*);
+
+void spike_crawler_update_speed(struct MainObj*);
+void spike_crawler_main(struct MainObj*);
+void spike_crawler_despawn(struct MainObj*);
+void spike_crawler_hit_flash(struct MainObj*);
 
 void spike_crawler_update(struct MainObj* self)
 {

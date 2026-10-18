@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_46_sigma_shot.h"
 
 static const u32 func_800A9544_expected[] = { 2u, 0xFFFFFFA6u, 0u, 0x30u, 0xFFFFFFE0u };
 static u32 test_func_800A9544(u32 row)

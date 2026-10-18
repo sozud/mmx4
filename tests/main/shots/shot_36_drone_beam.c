@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_36_drone_beam.h"
 
 struct func_800A3A4C_case {
     u32 value, unk2, v_0_x_pos_hi, unk15, child_0_x_pos_hi;

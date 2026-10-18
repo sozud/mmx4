@@ -1,5 +1,33 @@
 // 80036E98..80038678
 #include "common.h"
+#include "main/objects.h"
+#include "main/player.h"
+#include "main/player_common.h"
+#include "main/player_weapon.h"
+#include "main/1CF60.h"
+#include "main/object_motion.h"
+#include "main/player_check.h"
+#include "main/player_enter.h"
+#include "main/55C4.h"
+#include "main/player_special.h"
+
+struct PlayerShotTiming {
+    u8 pose_time;
+    u8 cooldown;
+};
+
+extern s8 player_shot_has_pose[];
+extern s8 player_shot_is_special_weapon[];
+extern s8 player_shot_is_charged_special[];
+
+extern struct PlayerShotTiming player_shot_timings[];
+extern s8 player_shot_limits[];
+extern s8 player_shot_waits_for_specials[];
+extern s8 player_shot_counts_as_shot[];
+extern s8 player_shot_counts_as_special[];
+
+// player_fire_funcs
+extern void (*player_fire_funcs[])(struct PlayerObj*);
 
 s32 player_charge_released(struct PlayerObj* self);
 void player_charge_shoot_button(struct PlayerObj* self);

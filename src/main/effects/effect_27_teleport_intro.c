@@ -1,6 +1,16 @@
 // EffectObj, effect_object_update_funcs[27]
 // 800BB9B8..800BBC14
 #include "common.h"
+#include "main/effects/effect_27_teleport_intro.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+
+extern void (*teleport_intro_state_funcs[])();
+
+// teleport_intro_state_funcs
+void teleport_intro_init(struct EffectObj* arg0);
+
+void teleport_intro_despawn(struct EffectObj* arg0);
 
 // megaman never teleports in if nopped out
 // asm(".rept 13 ; nop ; .endr");

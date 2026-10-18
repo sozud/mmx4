@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_43_sigma_collapse.h"
 
 static const u32 sigma_collapse_init_expected[] = { 2u };
 static u32 test_sigma_collapse_init(u32 row)

@@ -1,6 +1,40 @@
 // MiscObj, misc_object_update_funcs[52]
 // 800D2190..800D2A74
 #include "common.h"
+#include "main/misc/misc_52_npc_cutscene.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// npc_cutscene_talk_funcs
+extern void (*npc_cutscene_talk_funcs[])(struct MiscObj*);
+
+// npc_cutscene_type_funcs
+void npc_cutscene_talk(struct MiscObj* arg0);
+void npc_cutscene_reply(struct MiscObj*);
+void func_800D26F4(struct MiscObj*);
+void func_800D26F4(struct MiscObj*);
+
+// npc_cutscene_finish_fade_funcs
+extern void (*npc_cutscene_finish_fade_funcs[])(struct MiscObj*);
+void npc_cutscene_blink(struct MiscObj*);
+
+// npc_cutscene_finish_leave_funcs
+extern void (*npc_cutscene_finish_leave_funcs[])(struct MiscObj*);
+void npc_cutscene_leave(struct MiscObj*);
+
+// npc_cutscene_finish_funcs
+extern void (*npc_cutscene_finish_funcs[])(struct MiscObj*);
+void npc_cutscene_finish_fade(struct MiscObj*);
+
+void npc_cutscene_finish_leave(struct MiscObj*);
+
+// npc_cutscene_state_funcs
+extern void (*npc_cutscene_state_funcs[])(struct MiscObj*);
+void func_800D2190(struct MiscObj*);
+void npc_cutscene_main(struct MiscObj*);
+void npc_cutscene_finish(struct MiscObj*);
 
 extern void (*npc_cutscene_type_funcs[])(struct MiscObj*);
 

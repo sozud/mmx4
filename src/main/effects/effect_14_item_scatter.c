@@ -1,6 +1,15 @@
 // EffectObj, effect_object_update_funcs[14]
 // 800B89B4..800B8AF8
 #include "common.h"
+#include "main/effects/effect_14_item_scatter.h"
+#include "main/objects.h"
+#include "main/effects/edge_spawner_data.h"
+
+// item_scatter_state_funcs
+extern void (*item_scatter_state_funcs[])(struct EffectObj*);
+void item_scatter_init(struct EffectObj*);
+
+void item_scatter_despawn(struct EffectObj*);
 
 void item_scatter_init(struct EffectObj* self)
 {

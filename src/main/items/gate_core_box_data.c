@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/items/gate_core_box_data.h"
+#include "main/items/item_06_gate_core.h"
 
 struct Item06AnimationStep {
     u8 duration;

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_42_sigma_sequencer_fx.h"
 
 static const u32 sigma_sequencer_fx_wait_player_expected[] = { 0u, 0u };
 static u32 test_sigma_sequencer_fx_wait_player(u32 row)

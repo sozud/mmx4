@@ -1,6 +1,49 @@
 // ShotObj, shot_object_update_funcs[54]
 // 800ABE08..800AC8C4
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_54_sigma_final_shot.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+
+extern u8 sigma_spike_box[4];
+
+// sigma_lightning_funcs
+extern void (*sigma_lightning_funcs[])(struct ShotObj*);
+void sigma_lightning_aim(struct ShotObj*);
+
+void sigma_lightning_fade(struct ShotObj*);
+
+// sigma_ice_funcs
+extern void (*sigma_ice_funcs[])(struct ShotObj*);
+void sigma_ice_fall(struct ShotObj*);
+void sigma_ice_slide(struct ShotObj*);
+void sigma_ice_melt(struct ShotObj*);
+
+// sigma_spike_funcs
+extern void (*sigma_spike_funcs[])(struct ShotObj*);
+void sigma_spike_extend(struct ShotObj*);
+void sigma_spike_active(struct ShotObj*);
+void sigma_spike_retract(struct ShotObj*);
+
+// sigma_final_shot_step_funcs
+extern void (*sigma_final_shot_step_funcs[])(struct ShotObj*);
+void sigma_final_shot_resume(struct ShotObj*);
+void sigma_final_shot_idle(struct ShotObj*);
+void sigma_final_shot_fireball(struct ShotObj*);
+void sigma_final_shot_lightning(struct ShotObj*);
+void sigma_final_shot_ice(struct ShotObj*);
+void sigma_final_shot_spike(struct ShotObj*);
+void sigma_final_shot_lightning_split(struct ShotObj*);
+
+// sigma_final_shot_state_funcs
+extern void (*sigma_final_shot_state_funcs[])(struct ShotObj*);
+
+void sigma_final_shot_run(struct ShotObj*);
+
+void sigma_final_shot_despawn(struct ShotObj*);
 
 // sigma_final_shot_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_54_sigma_final_shot", func_800ABE08);

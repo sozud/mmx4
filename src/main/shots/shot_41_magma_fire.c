@@ -1,6 +1,39 @@
 // ShotObj, shot_object_update_funcs[41]
 // 800A56E4..800A6374
 #include "common.h"
+#include "main/shots/shot_41_magma_fire.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// magma_fire_pillar_funcs
+extern void (*magma_fire_pillar_funcs[])(struct ShotObj*);
+
+// magma_fire_breath_funcs
+extern void (*magma_fire_breath_funcs[])(struct ShotObj*);
+void magma_fire_breath_follow(struct ShotObj*);
+void magma_fire_breath_drop(struct ShotObj*);
+
+void magma_fire_breath_rise(struct ShotObj*);
+void magma_fire_breath_exit(struct ShotObj*);
+
+// magma_fire_step_funcs
+extern void (*magma_fire_step_funcs[])(struct ShotObj*);
+void magma_fire_hit(struct ShotObj*);
+void magma_fire_idle(struct ShotObj*);
+void magma_fire_wave(struct ShotObj*);
+void magma_fire_pillar(struct ShotObj*);
+void magma_fire_breath(struct ShotObj*);
+
+void magma_fire_burst(struct ShotObj*);
+
+// magma_fire_state_funcs
+extern void (*magma_fire_state_funcs[])(struct ShotObj*);
+
+void magma_fire_main(struct ShotObj*);
+void magma_fire_despawn(struct ShotObj*);
 
 // magma_fire_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A56E4);

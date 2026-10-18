@@ -1,6 +1,17 @@
 // VisualObj, visual_object_update_funcs[2]
 // 800AEED8..800AF22C
 #include "common.h"
+#include "main/objects.h"
+#include "main/visuals/visual_02_charge_muzzle_flash.h"
+#include "main/55C4.h"
+#include "main/sprite_animations.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
+
+struct VisualAttachmentInit {
+    u8 archive_slot, animation, sound;
+};
+
+extern struct VisualAttachmentInit charge_muzzle_flash_types[4];
 
 void charge_muzzle_flash_fade(struct VisualObj* arg0);
 void charge_muzzle_flash_follow(struct VisualObj* arg0);

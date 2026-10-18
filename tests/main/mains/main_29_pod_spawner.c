@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_29_pod_spawner.h"
+#include "main/55C4.h"
 extern union AnimationStep* pod_spawner_animations[16];
 u8 pod_spawner_player_quadrant(struct MainObj*);
 extern s16 D_800FD86C[12], D_800FD884[12];

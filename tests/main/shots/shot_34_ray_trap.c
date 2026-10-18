@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_34_ray_trap.h"
+#include "main/55C4.h"
+#include "main/mains/main_56_jet_stingray.h"
 extern union AnimationStep jet_stingray_anim_17[2];
 extern struct AnimationTable12 jet_stingray_flyby_animations;
 

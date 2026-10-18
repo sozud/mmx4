@@ -1,6 +1,43 @@
 // WeaponObj, weapon_object_update_funcs[5]
 // 800957B0..800961B0
 #include "common.h"
+#include "main/weapons/weapon_05_ground_hunter.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
+
+extern struct Unk_unk68 ground_hunter_crawl_box[];
+extern struct Unk_unk68 ground_hunter_rise_box[];
+
+// ground_hunter_state_funcs
+extern void (*ground_hunter_state_funcs[])(struct WeaponObj*);
+void func_80095854(struct WeaponObj*);
+void ground_hunter_main(struct WeaponObj*);
+void ground_hunter_burst(struct WeaponObj*);
+void ground_hunter_despawn(struct WeaponObj*);
+void ground_hunter_hide(struct WeaponObj* arg0);
+
+// ground_hunter_step_funcs
+extern void (*ground_hunter_step_funcs[])(struct WeaponObj*);
+void ground_hunter_fly(struct WeaponObj*);
+void ground_hunter_start_crawl(struct WeaponObj*);
+
+void ground_hunter_rise(struct WeaponObj*);
+void ground_hunter_crawl(struct WeaponObj*);
+
+// ground_hunter_charged_state_funcs
+extern void (*ground_hunter_charged_state_funcs[])(struct WeaponObj*);
+
+void ground_hunter_charged_main(struct WeaponObj*);
+void ground_hunter_burst(struct WeaponObj*);
+void ground_hunter_despawn(struct WeaponObj*);
+
+// ground_hunter_charged_step_funcs
+extern void (*ground_hunter_charged_step_funcs[])(struct WeaponObj*);
+void ground_hunter_charged_wait_fire(struct WeaponObj*);
 
 s32 ground_hunter_check_wall(struct WeaponObj* arg0);
 void ground_hunter_start_rise(struct WeaponObj* arg0);

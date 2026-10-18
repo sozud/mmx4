@@ -1,6 +1,12 @@
 // LayerObj, layer_object_update_funcs[6]
 // 800DA7C0..800DA878
 #include "common.h"
+#include "main/layers/layer_06_final_weapon_bg_cycle.h"
+
+// final_weapon_bg_cycle_state_funcs
+extern void (*final_weapon_bg_cycle_state_funcs[])(struct LayerObj*);
+void final_weapon_bg_cycle_init(struct LayerObj*);
+void final_weapon_bg_cycle_main(struct LayerObj*);
 
 void final_weapon_bg_cycle_update(struct LayerObj* arg0)
 {

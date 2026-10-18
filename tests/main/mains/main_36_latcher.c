@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_36_latcher.h"
+#include "main/195B4.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern struct Unk_unk68 latcher_hurt_box;
 extern struct Unk_unk68 D_801073F4[];
 extern u32* D_80137E08;

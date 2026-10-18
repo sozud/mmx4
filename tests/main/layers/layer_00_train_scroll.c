@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/layers/layer_00_train_scroll.h"
+#include "main/layers/layer_02_train_tunnel.h"
 void train_scroll_update_section(struct LayerObj*);
 
 static u32 event_case(u32 section, u32 mode)

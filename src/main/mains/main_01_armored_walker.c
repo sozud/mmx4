@@ -1,11 +1,45 @@
 // MainObj, main_object_update_funcs[1]
 // 80042120..80042914
 #include "common.h"
+#include "main/mains/main_01_armored_walker.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 armored_walker_terrain_box;
+extern struct Unk_unk68 armored_walker_hit_box;
+extern union AnimationStep* armored_walker_animations[];
+
+extern u8 armored_walker_debris[8];
+
+// armored_walker_state_funcs
+extern void (*armored_walker_state_funcs[])(struct MainObj*);
+void armored_walker_init(struct MainObj*);
+void armored_walker_main(struct MainObj*);
+void armored_walker_despawn(struct MainObj*);
+
+// armored_walker_step_funcs
+extern void (*armored_walker_step_funcs[])(struct MainObj*);
+void armored_walker_pick_step(struct MainObj* arg0);
+void func_800423A0(struct MainObj* arg0);
+void armored_walker_hop(struct MainObj* arg0);
+void armored_walker_land(struct MainObj* arg0);
+void armored_walker_turn(struct MainObj* arg0);
+void armored_walker_fall(struct MainObj* arg0);
+
+// armored_walker_turn_funcs
+void armored_walker_turn_brake(struct MainObj*);
+void armored_walker_turn_flip(struct MainObj*);
+
+// MainObj dispatcher tables
+extern void (*armored_walker_turn_funcs[])(struct MainObj*);
 
 void armored_walker_check_behind(struct MainObj* self);
 void armored_walker_check_fall(struct MainObj* self);
 void armored_walker_check_wall(struct MainObj* self);
-#include "func_tables.h"
 
 void armored_walker_update(struct MainObj* self)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/165A0.h"
 
 static u32 tile_case(u32 mode)
 {

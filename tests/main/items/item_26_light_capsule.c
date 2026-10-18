@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_26_light_capsule.h"
 extern struct Item26AnimationStep* light_capsule_animations[14];
 extern s32 player_gfx_buf_0[1024];
 extern s32 D_80139538;

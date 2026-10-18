@@ -1,6 +1,13 @@
 // VisualObj, visual_object_update_funcs[6]
 // 800AFF78..800B0890
 #include "common.h"
+#include "main/visuals/visual_06_eregion_part.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+void eregion_part_mouth(struct VisualObj*);
+void eregion_part_legs(struct VisualObj*);
+void eregion_part_mirror(struct VisualObj*);
 
 s8 eregion_part_offsets_left[58][2] = {
     { -6, -78 },

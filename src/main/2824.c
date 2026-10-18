@@ -1,4 +1,32 @@
 #include "common.h"
+#include "main/2824.h"
+#include "main/3D88.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/memcard.h"
+#include "main/102FC.h"
+#include "main/323C.h"
+#include "main/game_info.h"
+#include "main/menu.h"
+#include "main/objects.h"
+#include "main/psxsdk/libgte/msc00.h"
+
+extern s32 D_800EE458;
+
+extern RECT D_800EE450;
+
+void func_8001293C(void);
+
+void func_8001213C(void);
+void func_800122E0(struct DrawInfo* arg0);
+
+#ifdef MMX4_PC
+extern void func_80012944(void);
+#endif
+
+void func_800128EC(s32);
+void func_80012910(s32);
+void func_80012934(s32);
 
 void InitMemcards(void);
 void clear_vram_rect_ptrs(void);

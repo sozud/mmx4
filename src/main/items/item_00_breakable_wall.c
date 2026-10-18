@@ -1,6 +1,18 @@
 // ItemObj, item_object_update_funcs[0]
 // 800BE9A0..800BEBB4
 #include "common.h"
+#include "main/items/item_00_breakable_wall.h"
+#include "main/1E1BC.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+extern u8 breakable_wall_debris[8];
+
+// breakable_wall_state_funcs
+extern void (*breakable_wall_state_funcs[])(struct ItemObj*);
+
+void breakable_wall_main(struct ItemObj*);
+void breakable_wall_despawn(struct ItemObj*);
 
 void breakable_wall_update(struct ItemObj* arg0)
 {

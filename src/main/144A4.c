@@ -1,4 +1,12 @@
 #include "common.h"
+#include "main/13A8C.h"
+#include "main/144A4.h"
+#include "main/165A0.h"
+#include "main/125BC.h"
+#include "main/14A60.h"
+#include "main/55C4.h"
+#include "main/128C4.h"
+#include "main/hud_origins.h"
 
 void func_80017340(void);
 void func_800241E8(void);

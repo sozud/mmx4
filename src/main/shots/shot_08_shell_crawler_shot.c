@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[8]
 // 8009AEE4..8009B07C
 #include "common.h"
+#include "main/shots/shot_08_shell_crawler_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// shell_crawler_shot_state_funcs
+extern void (*shell_crawler_shot_state_funcs[])(struct ShotObj*);
+void shell_crawler_shot_init(struct ShotObj*);
+void shell_crawler_shot_fly(struct ShotObj*);
+void shell_crawler_shot_despawn(struct ShotObj*);
 
 u8 shell_crawler_shot_hit_box[4] = { 0xFB, 0xFC, 0x09, 0x07 };
 

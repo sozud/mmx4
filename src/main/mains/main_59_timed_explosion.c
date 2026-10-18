@@ -1,7 +1,21 @@
 // MainObj, main_object_update_funcs[59]
 // 80074E84..8007501C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_59_timed_explosion.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/misc/misc_23_explosion_puff.h"
+#include "main/objects.h"
+
+// timed_explosion_state_funcs
+extern void (*timed_explosion_state_funcs[])(struct MainObj*);
+void timed_explosion_wait(struct MainObj*);
+
+void timed_explosion_despawn(struct MainObj* arg0);
+
+// storm_owl_grab_funcs
+extern struct Unk_unk68 timed_explosion_attack_box;
 
 void timed_explosion_wait(struct MainObj* self)
 {

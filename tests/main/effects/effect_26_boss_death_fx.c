@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_26_boss_death_fx.h"
 
 static u32 death_case(u32 available)
 {

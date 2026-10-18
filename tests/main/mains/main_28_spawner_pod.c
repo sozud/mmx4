@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_28_spawner_pod.h"
+#include "main/55C4.h"
 extern u8 D_800FD5C8[32];
 extern struct Unk_unk68* D_800FD5B0[2];
 extern struct Unk_unk68* D_800FD5B8[2];

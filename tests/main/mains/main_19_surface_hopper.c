@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/1CF60.h"
+#include "main/mains/main_19_surface_hopper.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 u8 func_80053B54(struct MainObj*);
 extern union AnimationStep* surface_hopper_animations[27];
 extern u8 D_800FC80C[8];

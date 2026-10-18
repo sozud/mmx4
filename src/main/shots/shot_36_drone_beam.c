@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[36]
 // 800A3924..800A3C78
 #include "common.h"
+#include "main/shots/shot_36_drone_beam.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+
+extern s16 drone_beam_boxes[4][2];
+
+// drone_beam_state_funcs
+extern void (*drone_beam_state_funcs[])(struct ShotObj*);
+void drone_beam_init(struct ShotObj*);
+
+void drone_beam_despawn(struct ShotObj*);
+void drone_beam_idle(struct ShotObj*);
 
 s16 drone_beam_boxes[4][2] = {
     { -0x1280, 0x2AFF },

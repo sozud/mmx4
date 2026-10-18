@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[41]
 // 800BE184..800BE2C4
 #include "common.h"
+#include "main/effects/effect_41_tile_blink_anim.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+extern u8* tile_blink_anim_scripts[1];
+
+// tile_blink_anim_state_funcs
+extern void (*tile_blink_anim_state_funcs[])(struct EffectObj*);
+void tile_blink_anim_init(struct EffectObj*);
+void tile_blink_anim_main(struct EffectObj*);
+void tile_blink_anim_step(struct EffectObj*);
 
 void tile_blink_anim_update(struct EffectObj* self)
 {

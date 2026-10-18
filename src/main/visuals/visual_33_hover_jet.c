@@ -8,6 +8,10 @@
 #define PLAYER_UNKA6_ADDRESS 0x8014196E
 #endif
 #include "common.h"
+#include "main/visuals/visual_33_hover_jet.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
 
 void hover_jet_update(struct VisualObj* arg0)
 {

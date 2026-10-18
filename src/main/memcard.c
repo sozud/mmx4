@@ -1,5 +1,19 @@
 // 8001C6DC..8001D064
 #include "common.h"
+#include "main/memcard.h"
+
+struct MemcardPath {
+    char path[6];
+};
+
+extern const struct MemcardPath D_800100C0;
+
+#ifdef MMX4_PC
+extern s32 func_8001CEDC(void);
+extern s32 func_8001CFF4(s32 arg0);
+extern s32 func_8001CF74(void);
+#endif
+
 #ifdef MMX4_PC
 #include "../pc/memcard.h"
 #endif

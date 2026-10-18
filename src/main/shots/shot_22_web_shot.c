@@ -1,6 +1,23 @@
 // ShotObj, shot_object_update_funcs[22]
 // 8009D74C..8009DD40
 #include "common.h"
+#include "main/shots/shot_22_web_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+
+// web_shot_state_funcs
+extern void (*web_shot_state_funcs[])(struct ShotObj*);
+
+void web_shot_despawn(struct ShotObj*);
+
+void web_shot_fly(struct ShotObj*);
+void web_shot_home(struct ShotObj*);
+void web_shot_catch(struct ShotObj*);
+void web_shot_hold(struct ShotObj*);
+void web_shot_fade(struct ShotObj*);
 
 u8 web_shot_hit_box[4] = { 0xF7, 0xF8, 0x11, 0x10 };
 

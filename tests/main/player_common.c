@@ -1,4 +1,10 @@
 #include "test_runtime.h"
+#include "main/player_common.h"
+#include "main/195B4.h"
+#include "main/player_animations.h"
+#include "main/player_animations_2.h"
+#include "main/sprite_animations.h"
+#include "main/player_special.h"
 void player_check_splash_tile(struct PlayerObj*);
 
 static s32 gfx_archive[4] = { 8, 12, 0x11223344, 0x55667788 };

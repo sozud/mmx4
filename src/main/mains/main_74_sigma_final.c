@@ -1,7 +1,118 @@
 // MainObj, main_object_update_funcs[74]
 // 8008D3B8..8008FA0C
 #include "common.h"
-#include "func_tables.h"
+#include "main/55C4.h"
+#include "main/mains/main_73_double.h"
+#include "main/mains/main_74_sigma_final.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/3D88.h"
+#include "main/CB184.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+extern struct Unk_unk68 D_80105374;
+
+extern struct Unk_unk68 D_80105364;
+
+// sigma_final_intro_funcs
+extern void (*sigma_final_intro_funcs[])(struct MainObj*);
+void sigma_final_intro_lock_camera(struct MainObj*);
+void sigma_final_intro_start_music(struct MainObj*);
+void sigma_final_intro_wait_load(struct MainObj*);
+void sigma_final_intro_load(struct MainObj*);
+
+// sigma_final_appear_funcs
+extern void (*sigma_final_appear_funcs[])(struct MainObj*);
+void sigma_final_appear_start(struct MainObj*);
+void sigma_final_appear_pose(struct MainObj*);
+void sigma_final_appear_dialogue(struct MainObj*);
+void sigma_final_appear_fill_health(struct MainObj*);
+
+// sigma_final_laser_funcs
+extern void (*sigma_final_laser_funcs[])(struct MainObj*);
+void sigma_final_laser_start(struct MainObj*);
+
+void sigma_final_laser_fire(struct MainObj*);
+void sigma_final_laser_wait(struct MainObj*);
+void sigma_final_laser_repeat(struct MainObj*);
+
+// sigma_final_big_beam_funcs
+extern void (*sigma_final_big_beam_funcs[])(struct MainObj*);
+void sigma_final_big_beam_start(struct MainObj*);
+
+void sigma_final_big_beam_fire(struct MainObj*);
+void sigma_final_big_beam_wait(struct MainObj*);
+void sigma_final_big_beam_recover(struct MainObj*);
+
+// sigma_final_hide_upper_funcs
+extern void (*sigma_final_hide_upper_funcs[])(struct MainObj*);
+void sigma_final_hide_upper_start(struct MainObj*);
+void sigma_final_hide_upper_wait(struct MainObj*);
+
+// sigma_final_show_upper_funcs
+extern void (*sigma_final_show_upper_funcs[])(struct MainObj*);
+void sigma_final_show_upper_start(struct MainObj*);
+void sigma_final_show_upper_wait(struct MainObj*);
+
+// sigma_final_hide_lower_funcs
+extern void (*sigma_final_hide_lower_funcs[])(struct MainObj*);
+void sigma_final_hide_lower_start(struct MainObj*);
+
+// sigma_final_show_lower_funcs
+extern void (*sigma_final_show_lower_funcs[])(struct MainObj*);
+void sigma_final_show_lower_start(struct MainObj*);
+void sigma_final_show_lower_wait(struct MainObj*);
+
+// sigma_final_grab_funcs
+extern void (*sigma_final_grab_funcs[])(struct MainObj*);
+void sigma_final_grab_start(struct MainObj*);
+
+void sigma_final_grab_finish(struct MainObj*);
+
+// sigma_final_spit_funcs
+extern void (*sigma_final_spit_funcs[])(struct MainObj*);
+void sigma_final_spit_open(struct MainObj*);
+void sigma_final_spit_wait(struct MainObj*);
+
+// sigma_final_wind_funcs
+extern void (*sigma_final_wind_funcs[])(struct MainObj*);
+
+void sigma_final_wind_push_hard(struct MainObj*);
+void sigma_final_wind_finish(struct MainObj*);
+
+// sigma_final_summon_funcs
+extern void (*sigma_final_summon_funcs[])(struct MainObj*);
+void sigma_final_summon_start(struct MainObj*);
+void sigma_final_summon_wait(struct MainObj*);
+
+// sigma_final_step_funcs
+void sigma_final_idle(struct MainObj* arg0);
+
+void sigma_final_appear(struct MainObj* arg0);
+void sigma_final_show_upper(struct MainObj* arg0);
+void sigma_final_hide_upper(struct MainObj* arg0);
+void sigma_final_show_lower(struct MainObj* arg0);
+void sigma_final_hide_lower(struct MainObj* arg0);
+void sigma_final_summon(struct MainObj* arg0);
+void sigma_final_laser(struct MainObj* arg0);
+void sigma_final_big_beam(struct MainObj* arg0);
+void sigma_final_spit(struct MainObj* arg0);
+void sigma_final_wind(struct MainObj* arg0);
+void sigma_final_grab(struct MainObj* arg0);
+
+// sigma_final_death_funcs
+extern void (*sigma_final_death_funcs[])(struct MainObj*);
+
+void sigma_final_death_explosion(struct MainObj*);
+void sigma_final_death_finish(struct MainObj*);
+
+// sigma_final_state_funcs
+extern void (*sigma_final_state_funcs[])(struct MainObj*);
+void sigma_final_intro(struct MainObj* arg0);
+
+void sigma_final_death(struct MainObj* arg0);
 
 // double_init
 

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/1FD10.h"
 
 static u32 transition_case(u32 mode)
 {

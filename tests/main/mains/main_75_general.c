@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_75_general.h"
+#include "main/195B4.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern union AnimationStep* final_cutscene_animations[1];
 extern void* general_animations[46];
 extern struct Unk_unk68 D_801059BC, D_801059C4[5];

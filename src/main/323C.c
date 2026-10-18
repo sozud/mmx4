@@ -1,4 +1,11 @@
 #include "common.h"
+#include "main/2824.h"
+#include "main/323C.h"
+#include "main/3D88.h"
+#include "main/55C4.h"
+#include "main/3A6C.h"
+
+extern u8 D_800EE480[8];
 
 void func_80014A90(s32 arg0, s32 arg1);
 void func_80015C10(void);

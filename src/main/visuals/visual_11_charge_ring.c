@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[11]
 // 800B17CC..800B19BC
 #include "common.h"
+#include "main/visuals/visual_11_charge_ring.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// charge_ring_state_funcs
+extern void (*charge_ring_state_funcs[])(struct VisualObj*);
+void charge_ring_init(struct VisualObj*);
+
+void charge_ring_despawn(struct VisualObj*);
 
 void charge_ring_update(struct VisualObj* arg0)
 {

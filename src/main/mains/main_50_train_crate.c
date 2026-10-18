@@ -1,7 +1,16 @@
 // MainObj, main_object_update_funcs[50]
 // 8006970C..80069A94
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_50_train_crate.h"
+#include "main/objects.h"
+
+void train_crate_explode(struct MainObj*);
+void train_crate_despawn(struct MainObj* arg0);
+
+// train_crate_step_funcs
+void train_crate_idle(struct MainObj* arg0);
+
+extern void (*train_crate_state_funcs[])(struct MainObj*);
 
 void train_crate_update(struct MainObj* self)
 {

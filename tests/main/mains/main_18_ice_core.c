@@ -1,4 +1,9 @@
 #include "test_runtime.h"
+#include "main/mains/main_18_ice_core.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/weapons/weapon_00_lemon.h"
+#include "main/weapons/weapon_01_lightning_web.h"
 extern union AnimationStep* D_800FC2B4[34];
 void ice_core_check_rebuild(struct MainObj*);
 void ice_core_pick_attack(struct MainObj*);

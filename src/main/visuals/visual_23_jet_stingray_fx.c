@@ -1,6 +1,21 @@
 // VisualObj, visual_object_update_funcs[23]
 // 800B322C..800B35B8
 #include "common.h"
+#include "main/visuals/visual_23_jet_stingray_fx.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// jet_stingray_fx_funcs
+extern void (*jet_stingray_fx_funcs[])(struct VisualObj*);
+
+void jet_stingray_fx_oneshot(struct VisualObj*);
+
+// jet_stingray_fx_state_funcs
+extern void (*jet_stingray_fx_state_funcs[])(struct VisualObj*);
+
+void jet_stingray_fx_main(struct VisualObj*);
+void jet_stingray_fx_despawn(struct VisualObj*);
 
 void jet_stingray_fx_init(struct VisualObj* arg0)
 {

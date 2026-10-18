@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_12_hover_sentry.h"
+#include "main/mains/main_23_slope_skier.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
 extern struct Unk_unk68 D_800FCE9C[];
 extern struct VisualSpawnOffset D_800FCE90[5];
 extern struct Unk_unk68 slope_skier_terrain_box;

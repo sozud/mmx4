@@ -1,6 +1,13 @@
 // UnkObj, unk_object_update_funcs[1]
 // 800D3964..800D3AC0
 #include "common.h"
+#include "main/unks/unk_01_menu_label.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+
+// menu_label_state_funcs
+extern void (*menu_label_state_funcs[])(struct UnkObj*);
+void menu_label_init(struct UnkObj*);
 
 void menu_label_init(struct UnkObj* self)
 {

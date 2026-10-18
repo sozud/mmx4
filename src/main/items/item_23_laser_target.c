@@ -1,6 +1,20 @@
 // ItemObj, item_object_update_funcs[23]
 // 800C5C4C..800C6054
 #include "common.h"
+#include "main/items/item_23_laser_target.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// laser_target_state_funcs
+extern void (*laser_target_state_funcs[])(struct ItemObj*);
+void laser_target_init(struct ItemObj*);
+extern struct Unk_unk68 laser_target_terrain_box;
+void func_800C5F90(struct ItemObj*);
+void laser_target_despawn(struct ItemObj*);
+
+void laser_target_track(struct ItemObj*);
+void laser_target_lock(struct ItemObj*);
 
 void laser_target_update(struct ItemObj* arg0)
 {

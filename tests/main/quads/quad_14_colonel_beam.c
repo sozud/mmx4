@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_14_colonel_beam.h"
 
 struct colonel_beam_widen_case {
     u32 v_2_x_hi, v_3_x_hi;

@@ -1,7 +1,23 @@
 // MainObj, main_object_update_funcs[71]
 // 80089AA4..8008ADFC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_71_ride_armor_pilot.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+
+// ride_armor_pilot_despawn_funcs
+extern void (*ride_armor_pilot_despawn_funcs[])(struct MainObj*);
+void ride_armor_pilot_despawn_remove(struct MainObj* arg0);
+void ride_armor_pilot_despawn_idle(void);
+void ride_armor_pilot_despawn_idle2(void);
+
+// ride_armor_pilot_state_funcs
+extern void (*ride_armor_pilot_state_funcs[])(struct MainObj*);
+void func_80089AA4(struct MainObj*);
+
+void ride_armor_pilot_despawn(struct MainObj* arg0);
 
 extern void* ride_armor_pilot_animations[31];
 extern struct Unk_unk68 ride_armor_pilot_terrain_box;

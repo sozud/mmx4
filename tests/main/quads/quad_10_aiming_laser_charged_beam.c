@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_10_aiming_laser_charged_beam.h"
 
 static u32 cancel_case(u32 mode)
 {

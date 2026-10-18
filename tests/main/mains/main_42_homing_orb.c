@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_42_homing_orb.h"
+#include "main/55C4.h"
 extern union AnimationStep* homing_orb_animations[7];
 
 static u32 lunge_case(u32 mode)

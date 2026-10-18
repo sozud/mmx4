@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_30_regen_turret.h"
+#include "main/misc/misc_02_rubble.h"
 extern void* regen_turret_animations[11];
 
 static u32 debris_case(u32 mode)

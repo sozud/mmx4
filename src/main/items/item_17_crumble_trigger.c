@@ -1,6 +1,15 @@
 // ItemObj, item_object_update_funcs[17]
 // 800C413C..800C42EC
 #include "common.h"
+#include "main/items/item_17_crumble_trigger.h"
+#include "main/objects.h"
+#include "main/collision.h"
+
+// crumble_trigger_state_funcs
+extern void (*crumble_trigger_state_funcs[])(struct ItemObj*);
+void crumble_trigger_init(struct ItemObj*);
+void crumble_trigger_wait_player(struct ItemObj*);
+void crumble_trigger_despawn(struct ItemObj*);
 
 struct Item17SpawnPosition {
     s16 x;

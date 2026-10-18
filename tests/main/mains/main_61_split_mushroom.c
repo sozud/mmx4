@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_61_split_mushroom.h"
+#include "main/55C4.h"
 extern s16 split_mushroom_hop_speeds[4];
 void split_mushroom_face_player(struct AnimatedObj*);
 

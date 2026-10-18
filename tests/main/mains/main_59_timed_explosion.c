@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_59_timed_explosion.h"
 
 static const u32 timed_explosion_explode_expected[] = { 1u };
 static u32 test_timed_explosion_explode(u32 row)

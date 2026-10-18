@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_46_train_boss_turret.h"
+#include "main/55C4.h"
+#include "main/mains/main_45_train_boss.h"
+#include "main/weapons/weapon_00_lemon.h"
 
 static const u32 train_boss_turret_arrive_0_expected[] = { 0u, 0xFFFFFFFFu, 0u };
 static u32 test_train_boss_turret_arrive_0(u32 row)

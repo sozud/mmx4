@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_49_train_soldier.h"
+#include "main/55C4.h"
 extern union AnimationStep* highway_trooper_animations[27];
 extern u8 D_800FFB5C[4];
 extern u32 D_801076F8[];

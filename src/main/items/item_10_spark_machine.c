@@ -1,6 +1,20 @@
 // ItemObj, item_object_update_funcs[10]
 // 800C24E0..800C2BE0
 #include "common.h"
+#include "main/items/item_10_spark_machine.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+
+// spark_machine_state_funcs
+extern void (*spark_machine_state_funcs[])(struct ItemObj*);
+
+void spark_machine_sparking(struct ItemObj*);
+void spark_machine_break(struct ItemObj*);
+void spark_machine_broken(struct ItemObj*);
+
+extern u8 spark_machine_debris[8];
 
 struct Item10AnimationStep {
     u8 duration;

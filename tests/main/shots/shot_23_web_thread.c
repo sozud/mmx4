@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_23_web_thread.h"
+#include "main/55C4.h"
+#include "main/mains/main_43_web_spider.h"
 
 static u32 pulse_case(u32 mode)
 {

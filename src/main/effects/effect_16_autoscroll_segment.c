@@ -1,6 +1,20 @@
 // EffectObj, effect_object_update_funcs[16]
 // 800B8F5C..800B9100
 #include "common.h"
+#include "main/effects/effect_16_autoscroll_segment.h"
+#include "main/objects.h"
+
+struct Effect16Coordinate {
+    u16 primary;
+    u16 secondary;
+};
+
+// autoscroll_segment_state_funcs
+extern void (*autoscroll_segment_state_funcs[])(struct EffectObj*);
+extern struct Effect16Coordinate autoscroll_segment_bounds[];
+void autoscroll_segment_start(struct EffectObj*);
+void autoscroll_segment_wait(struct EffectObj*);
+void autoscroll_segment_end(struct EffectObj*);
 
 void autoscroll_segment_update(struct EffectObj* self)
 {

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/collision_bounds.h"
 
 union AnimationStep D_80105FF0[32] = {
     { 0x01000300 },

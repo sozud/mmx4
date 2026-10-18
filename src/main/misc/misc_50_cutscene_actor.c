@@ -1,6 +1,16 @@
 // MiscObj, misc_object_update_funcs[50]
 // 800D1B44..800D1DC4
 #include "common.h"
+#include "main/misc/misc_50_cutscene_actor.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// cutscene_actor_state_funcs
+extern void (*cutscene_actor_state_funcs[])(struct MiscObj*);
+void func_800D1B44(struct MiscObj*);
+void cutscene_actor_wait(struct MiscObj*);
+void cutscene_actor_hold(struct MiscObj*);
+void cutscene_actor_animate(struct MiscObj* arg0);
 
 // cutscene_actor_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_50_cutscene_actor", func_800D1B44);

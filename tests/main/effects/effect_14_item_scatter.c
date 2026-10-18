@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/effects/effect_14_item_scatter.h"
+#include "main/effects/edge_spawner_data.h"
 
 struct item_scatter_spawn_case {
     u32 id, pool_0_full;

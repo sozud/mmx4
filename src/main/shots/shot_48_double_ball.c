@@ -1,6 +1,22 @@
 // ShotObj, shot_object_update_funcs[48]
 // 800A9964..800A9DF4
 #include "common.h"
+#include "main/shots/shot_48_double_ball.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// double_ball_funcs
+extern void (*double_ball_funcs[])(struct ShotObj*);
+
+void double_ball_hold(struct ShotObj*);
+void double_ball_burst(struct ShotObj*);
+
+// double_ball_state_funcs
+extern void (*double_ball_state_funcs[])(struct ShotObj*);
+
+void double_ball_run(struct ShotObj*);
 
 // double_ball_init
 INCLUDE_ASM("main/nonmatchings/shots/shot_48_double_ball", func_800A9964);

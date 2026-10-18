@@ -1,7 +1,27 @@
 // MainObj, main_object_update_funcs[36]
 // 8005F510..8005FDBC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_36_latcher.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+
+// latcher_state_funcs
+extern void (*latcher_state_funcs[])(struct MainObj*);
+
+void latcher_despawn(struct MainObj* arg0);
+
+// latcher_step_funcs
+void latcher_resume_step(struct MainObj* arg0);
+
+void latcher_grab(struct MainObj* arg0);
+
+// latcher_grab_funcs
+extern void (*latcher_grab_funcs[])(struct MainObj*);
+
+void latcher_grab_release(struct MainObj*);
 
 struct Unk_unk68 D_800FE2E4 = { -20, -20, 38, 38 };
 

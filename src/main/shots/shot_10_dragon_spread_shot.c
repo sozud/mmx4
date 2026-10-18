@@ -1,6 +1,19 @@
 // ShotObj, shot_object_update_funcs[10]
 // 8009B3E8..8009B67C
 #include "common.h"
+#include "main/shots/shot_10_dragon_spread_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// dragon_spread_shot_state_funcs
+extern void (*dragon_spread_shot_state_funcs[])(struct ShotObj*);
+void func_8009B424(struct ShotObj*);
+
+void dragon_spread_shot_despawn(struct ShotObj*);
+void dragon_spread_shot_idle(struct ShotObj*);
 
 extern u8 dragon_spread_shot_hit_box[4];
 extern u8 dragon_spread_shot_large_hit_box[4];

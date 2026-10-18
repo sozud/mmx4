@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_51_capsule_part.h"
 extern void* light_capsule_animations[14];
 
 static u32 light_case(u32 mode)

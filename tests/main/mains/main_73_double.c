@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_73_double.h"
 void double_face_player(struct MainObj*);
 void double_spawn_afterimage(struct MainObj*, s8);
 

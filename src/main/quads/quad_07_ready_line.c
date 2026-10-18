@@ -1,6 +1,19 @@
 // QuadObj, quad_object_update_funcs[7]
 // 800D5C54..800D6694
 #include "common.h"
+#include "main/objects.h"
+#include "main/quads/quad_07_ready_line.h"
+#include "main/object_motion.h"
+
+extern void (*ready_line_state_funcs[])();
+
+extern void (*ready_line_type_funcs[])();
+
+// ready_line_state_funcs
+extern void (*ready_line_state_funcs[])(struct QuadObj*);
+
+// ready_line_type_funcs
+extern void (*ready_line_type_funcs[])(struct QuadObj*);
 
 void ready_line_move(struct QuadObj* arg0);
 

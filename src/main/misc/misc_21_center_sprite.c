@@ -1,6 +1,7 @@
 // MiscObj, misc_object_update_funcs[21]
 // 800CB884..800CB8F8
 #include "common.h"
+#include "main/misc/misc_21_center_sprite.h"
 
 void center_sprite_update(struct MiscObj* self)
 {

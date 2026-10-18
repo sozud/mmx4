@@ -1,7 +1,54 @@
 // MainObj, main_object_update_funcs[48]
 // 80067350..800684F8
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_48_sentry_drone.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+extern s16 sentry_drone_activation_distances[];
+
+void sentry_drone_main(struct MainObj*);
+void sentry_drone_despawn(struct ObjectHeader*);
+void sentry_drone_wait_for_player(struct MainObj*);
+
+void sentry_drone_drift(struct MainObj* arg0);
+void sentry_drone_dash(struct MainObj* arg0);
+void sentry_drone_burst(struct MainObj* arg0);
+void sentry_drone_spread(struct MainObj* arg0);
+void sentry_drone_drop(struct MainObj* arg0);
+
+void sentry_drone_drift_move(struct MainObj*);
+
+void sentry_drone_dash_move(struct MainObj*);
+
+// sentry_drone_burst_funcs
+extern void (*sentry_drone_burst_funcs[])(struct MainObj*);
+void sentry_drone_burst_start(struct MainObj*);
+void func_800678F8(struct MainObj*);
+void sentry_drone_burst_wait(struct MainObj* arg0);
+
+void sentry_drone_burst_repeat(struct MainObj*);
+void sentry_drone_burst_end(struct MainObj*);
+
+// sentry_drone_spread_funcs
+extern void (*sentry_drone_spread_funcs[])(struct MainObj*);
+void sentry_drone_spread_start(struct MainObj*);
+
+void sentry_drone_spread_repeat(struct MainObj*);
+void sentry_drone_spread_pause(struct MainObj* arg0);
+void sentry_drone_spread_end(struct WeaponObj* arg0);
+
+// sentry_drone_drop_funcs
+void sentry_drone_drop_start(struct MainObj*);
+void sentry_drone_drop_move(struct MainObj* arg0);
+void sentry_drone_check_player_near(struct MainObj* arg0);
+
+extern void (*sentry_drone_state_funcs[])(struct MainObj*);
+extern void (*sentry_drone_drift_funcs[])(struct MainObj*);
+extern void (*sentry_drone_dash_funcs[])(struct MainObj*);
+extern void (*sentry_drone_drop_funcs[])(struct MainObj*);
 
 extern u32 D_801076F8[];
 extern union AnimationStep* sentry_drone_animations[13];

@@ -1,6 +1,17 @@
 // ItemObj, item_object_update_funcs[16]
 // 800C3FEC..800C413C
 #include "common.h"
+#include "main/items/item_16_sliding_floor.h"
+#include "main/1E1BC.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 sliding_floor_terrain_box;
+
+// sliding_floor_state_funcs
+extern void (*sliding_floor_state_funcs[])(struct ItemObj*);
+void sliding_floor_init(struct ItemObj*);
+void sliding_floor_slide(struct ItemObj*);
 
 void sliding_floor_update(struct ItemObj* arg0)
 {

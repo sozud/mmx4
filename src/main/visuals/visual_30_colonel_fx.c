@@ -1,6 +1,42 @@
 // VisualObj, visual_object_update_funcs[30]
 // 800B4610..800B4B64
 #include "common.h"
+#include "main/visuals/visual_30_colonel_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// colonel_fx_state_funcs
+extern void (*colonel_fx_state_funcs[])(struct VisualObj*);
+void colonel_fx_init(struct VisualObj*);
+void colonel_fx_main(struct VisualObj*);
+void colonel_fx_despawn(struct VisualObj*);
+
+// colonel_fx_mode_funcs
+extern void (*colonel_fx_mode_funcs[])(struct VisualObj*);
+void colonel_fx_beam_in(struct VisualObj*);
+void colonel_fx_flash(struct VisualObj*);
+void colonel_fx_slash(struct VisualObj*);
+void colonel_fx_ground(struct VisualObj*);
+
+// colonel_fx_beam_in_funcs
+extern void (*colonel_fx_beam_in_funcs[])(struct VisualObj*);
+void colonel_fx_beam_in_start(struct VisualObj*);
+void colonel_fx_beam_in_animate(struct VisualObj*);
+
+// colonel_fx_flash_funcs
+extern void (*colonel_fx_flash_funcs[])(struct VisualObj*);
+void colonel_fx_flash_start(struct VisualObj*);
+void colonel_fx_flash_animate(struct VisualObj*);
+
+// colonel_fx_slash_funcs
+extern void (*colonel_fx_slash_funcs[])(struct VisualObj*);
+void colonel_fx_slash_start(struct VisualObj*);
+void colonel_fx_slash_animate(struct VisualObj*);
+
+// colonel_fx_ground_funcs
+extern void (*colonel_fx_ground_funcs[])(struct VisualObj*);
+void colonel_fx_ground_start(struct VisualObj*);
+void colonel_fx_ground_animate(struct VisualObj*);
 
 void colonel_fx_update(struct VisualObj* arg0)
 {

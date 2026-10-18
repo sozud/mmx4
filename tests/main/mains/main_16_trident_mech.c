@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_16_trident_mech.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/weapons/weapon_24_zero_saber.h"
 extern union AnimationStep* trident_mech_animations[29];
 extern struct Unk_unk68 D_800FBBC8;
 extern struct Unk_unk68 D_80106A74[];

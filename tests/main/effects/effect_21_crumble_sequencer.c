@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_21_crumble_sequencer.h"
 
 static u32 chain_default(void)
 {

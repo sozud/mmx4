@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_00_dragon_shot.h"
 extern union AnimationStep* D_800F9934[16];
 extern u8 dragon_shot_flame_box[4], dragon_shot_pulse_hit_box[4], dragon_shot_bomb_box[4];
 extern u8 dragon_shot_box_0[4], dragon_shot_box_1[4], dragon_shot_box_2[4];

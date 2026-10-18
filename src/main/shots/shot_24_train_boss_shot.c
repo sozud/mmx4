@@ -1,6 +1,40 @@
 // ShotObj, shot_object_update_funcs[24]
 // 8009E0B8..8009EB6C
 #include "common.h"
+#include "main/shots/shot_24_train_boss_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern u8 train_boss_arm_attack_box[4];
+extern u8 train_boss_arm_hurt_boxes[2][4];
+
+extern s16 train_boss_arm_reach[4];
+extern u8 train_boss_arm_extended_clear_masks[4];
+
+extern u8 train_boss_arm_extended_bits[4];
+extern u8 train_boss_arm_active_clear_masks[4];
+
+// train_boss_shot_state_funcs
+extern void (*train_boss_shot_state_funcs[])(struct ShotObj*);
+void train_boss_bullet_init(struct ShotObj*);
+
+void train_boss_bullet_despawn(struct ShotObj*);
+void train_boss_arm_init(struct ShotObj*);
+void train_boss_arm_main(struct ShotObj*);
+void train_boss_arm_destroyed(struct ShotObj*);
+
+void train_boss_arm_resume_step(struct ShotObj* arg0);
+void train_boss_arm_advance(struct ShotObj* arg0);
+void train_boss_arm_wait_signal(struct ShotObj* arg0);
+void train_boss_arm_windup(struct ShotObj* arg0);
+void train_boss_arm_punch(struct ShotObj* arg0);
+void train_boss_arm_hold(struct ShotObj* arg0);
+void train_boss_arm_retract(struct ShotObj* arg0);
+
+void train_boss_arm_return(struct ShotObj* arg0);
 
 void train_boss_shot_update(struct ShotObj* self)
 {

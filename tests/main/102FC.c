@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/102FC.h"
 
 static u32 outcome_case(u32 mode)
 {

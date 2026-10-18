@@ -1,7 +1,26 @@
 // MainObj, main_object_update_funcs[30]
 // 8005B3FC..8005B894
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_30_regen_turret.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+extern void (*regen_turret_rebuild_funcs[])(struct MainObj*);
+
+void regen_turret_main(struct MainObj*);
+
+// regen_turret_step_funcs
+extern void (*regen_turret_step_funcs[])(struct MainObj*);
+void regen_turret_start_idle(struct MainObj* arg0);
+void regen_turret_idle(struct MainObj* arg0);
+
+// regen_turret_rebuild_funcs
+void regen_turret_rebuild_break(struct MainObj*);
+void regen_turret_rebuild_wait(struct MainObj*);
+void regen_turret_rebuild_finish(struct MainObj*);
+
+extern void (*regen_turret_state_funcs[])(struct MainObj*);
 
 void regen_turret_update(struct MainObj* self)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/55C4.h"
 void func_80012D68(u32*, u32*, s32);
 
 static u32 same_bytes(const void* lhs, const void* rhs, u32 size)

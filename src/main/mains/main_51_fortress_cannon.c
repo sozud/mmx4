@@ -1,7 +1,51 @@
 // MainObj, main_object_update_funcs[51]
 // 80069A94..8006A50C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_51_fortress_cannon.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern struct Unk_unk68 D_800FFC54;
+extern struct Unk_unk68 D_800FFC58;
+extern struct Unk_unk68 D_800FFC5C;
+
+extern union AnimationStep* fortress_cannon_animations[14];
+
+// fortress_cannon_state_funcs
+extern void (*fortress_cannon_state_funcs[])(struct MainObj*);
+
+void fortress_cannon_explode(struct MainObj*);
+void fortress_cannon_despawn(struct MainObj* arg0);
+
+// fortress_cannon_step_funcs
+void fortress_cannon_resume_step(struct MainObj* arg0);
+void fortress_cannon_wait(struct MainObj* arg0);
+void fortress_cannon_fire(struct MainObj* arg0);
+void fortress_cannon_volley(struct MainObj* arg0);
+void fortress_cannon_lower(struct MainObj* arg0);
+
+// fortress_cannon_wait_funcs
+extern void (*fortress_cannon_wait_funcs[])(struct MainObj*);
+void fortress_cannon_wait_timer(struct MainObj*);
+
+// fortress_cannon_fire_funcs
+extern void (*fortress_cannon_fire_funcs[])(struct MainObj*);
+
+// fortress_cannon_volley_funcs
+extern void (*fortress_cannon_volley_funcs[])(struct MainObj*);
+void fortress_cannon_volley_raise(struct MainObj*);
+void fortress_cannon_volley_fire(struct MainObj*);
+
+void fortress_cannon_volley_wait(struct MainObj*);
+
+// fortress_cannon_lower_funcs
+extern void (*fortress_cannon_lower_funcs[])(struct MainObj*);
+void fortress_cannon_lower_start(struct MainObj*);
+void fortress_cannon_lower_end(struct MainObj*);
 
 void fortress_cannon_fire_volley(struct MainObj* arg0);
 

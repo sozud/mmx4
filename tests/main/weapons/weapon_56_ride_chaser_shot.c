@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_56_ride_chaser_shot.h"
 
 static const u32 ride_chaser_shot_follow_scroll_expected[] = { 0u, 0u };
 static u32 test_ride_chaser_shot_follow_scroll(u32 row)

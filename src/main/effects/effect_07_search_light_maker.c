@@ -1,6 +1,20 @@
 // EffectObj, effect_object_update_funcs[7]
 // 800B6B18..800B7078
 #include "common.h"
+#include "main/effects/effect_07_search_light_maker.h"
+#include "main/objects.h"
+
+extern void (*search_light_maker_state_funcs[])();
+
+void search_light_maker_spawn_edges(s32, s8, s8);
+
+s8 search_light_maker_scroll_dirs(s32, s8);
+
+// search_light_maker_state_funcs
+extern void (*search_light_maker_state_funcs[])(struct EffectObj*);
+void search_light_maker_init(struct EffectObj*);
+void search_light_maker_main(struct EffectObj*);
+void search_light_maker_idle(struct EffectObj*);
 
 void search_light_maker_spawn_scrolled(struct EffectObj* self);
 

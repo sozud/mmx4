@@ -1,6 +1,20 @@
 // MiscObj, misc_object_update_funcs[10]
 // 800C9EAC..800CA0C8
 #include "common.h"
+#include "main/misc/misc_10_briefing_character.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern u32* briefing_x_partner_animations[];
+extern u32* briefing_x_animations[];
+extern u32* briefing_zero_animations[];
+extern u32* briefing_zero_partner_animations[];
+
+extern void (*g_MegamanInBriefingRoomUpdateFuncs[2])();
+
+// D_8010E578
+void briefing_character_init(struct MiscObj* arg0);
+void briefing_character_animate(struct MiscObj* arg0);
 
 // megaman standing in the briefing room. doesn't show
 // up if nopped out

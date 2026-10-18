@@ -1,6 +1,13 @@
 // EffectObj, effect_object_update_funcs[17]
 // 800B9100..800B9690
 #include "common.h"
+#include "main/effects/effect_17_freeze_blast.h"
+#include "main/objects.h"
+
+// freeze_blast_state_funcs
+extern void (*freeze_blast_state_funcs[])(struct EffectObj*);
+
+void freeze_blast_finish(struct EffectObj*);
 
 void freeze_blast_update(struct EffectObj* self)
 {

@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[2, 3, 4, 5]
 // 80099D10..8009A984
 #include "common.h"
+#include "main/shots/eregion_fireball_data.h"
+#include "main/shots/eregion_wing_slash_data.h"
+#include "main/shots/gunner_shot_unused_data.h"
+#include "main/shots/mech_boulder_data.h"
+#include "main/shots/shot_02_gunner_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// gunner_shot_state_funcs
+extern void (*gunner_shot_state_funcs[])(struct ShotObj*);
 
 struct Shot2Hitbox {
     s8 x;

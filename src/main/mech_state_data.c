@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/mech.h"
+#include "main/mech_state_data.h"
 
 u8 D_800F9118[8] = { 24, 25, 26, 27, 28, 29, 30, 0 };
 

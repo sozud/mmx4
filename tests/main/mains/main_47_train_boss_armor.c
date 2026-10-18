@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_47_train_boss_armor.h"
+#include "main/collision_bounds.h"
 extern u16 train_boss_armor_smoke_offsets[3][2];
 
 static u32* reflected_word(struct MainObj* obj)

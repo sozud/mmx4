@@ -1,4 +1,7 @@
 #include "common.h"
+#include "main/items/item_06_gate_core.h"
+#include "main/items/item_07_rising_platform.h"
+#include "main/items/rising_platform_animation_data.h"
 
 struct Item06AnimationStep {
     u8 duration;

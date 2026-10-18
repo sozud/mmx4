@@ -1,5 +1,44 @@
 // 8001DC7C..8001F118
 #include "common.h"
+#include "main/2824.h"
+#include "main/E47C.h"
+#include "main/E47C_menu_funcs.h"
+#include "main/game_info.h"
+#include "main/objects.h"
+#include "main/144A4.h"
+#include "main/object_motion.h"
+#include "main/102FC.h"
+#include "main/10CA4.h"
+#include "main/1A5BC.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/E47C_menu_data.h"
+#include "main/background.h"
+#include "main/menu.h"
+#include "main/object_update.h"
+#include "main/stage_objects.h"
+#include "main/xa_sequence_data.h"
+
+extern s16 D_800F21DC[];
+extern u8 D_800F21F8[];
+
+// D_800F2294
+extern void (*D_800F2294[])(struct GameInfo* arg0);
+void func_8001DCCC(struct GameInfo* arg0);
+void func_8001E690(struct GameInfo* arg0);
+void func_8001DDB0(struct GameInfo* arg0);
+void func_8001DE20(struct GameInfo* arg0);
+void func_8001DE54(struct GameInfo* arg0);
+void func_8001DF48(struct GameInfo* arg0);
+void func_8001DF7C(struct GameInfo* arg0);
+void func_8001E000(struct GameInfo* arg0);
+
+void func_8001E3FC(struct GameInfo* arg0);
+void func_8001E458(struct GameInfo* arg0);
+void func_8001E4F0(struct GameInfo* arg0);
+
+void func_8001E638(struct GameInfo* arg0);
+void func_8001E6BC(struct GameInfo* arg0);
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>

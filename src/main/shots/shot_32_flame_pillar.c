@@ -1,6 +1,16 @@
 // ShotObj, shot_object_update_funcs[32]
 // 800A0170..800A03B8
 #include "common.h"
+#include "main/shots/shot_32_flame_pillar.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// flame_pillar_state_funcs
+extern void (*flame_pillar_state_funcs[])(struct ShotObj*);
+
+void flame_pillar_active(struct ShotObj*);
+void flame_pillar_despawn(struct ShotObj*);
 
 u8 flame_pillar_short_box[4] = { 0xF8, 0xCC, 0x0F, 0x23 };
 u8 flame_pillar_tall_box[4] = { 0xF8, 0xCC, 0x0F, 0x65 };

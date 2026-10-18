@@ -1,6 +1,22 @@
 // MiscObj, misc_object_update_funcs[25]
 // 800CC460..800CC7BC
 #include "common.h"
+#include "main/misc/misc_25_sentry_flash.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+struct Misc25Velocity {
+    s8 x;
+    s8 y;
+};
+
+extern struct Misc25Velocity sentry_flash_offsets[8];
+
+// sentry_flash_state_funcs
+extern void (*sentry_flash_state_funcs[])(struct MiscObj*);
+void func_800CC4E0(struct MiscObj*);
+void sentry_flash_animate(struct MiscObj*);
+void sentry_flash_despawn(struct MiscObj*);
 
 void sentry_flash_update(struct MiscObj* self)
 {

@@ -1,6 +1,19 @@
 // ItemObj, item_object_update_funcs[13]
 // 800C351C..800C3880
 #include "common.h"
+#include "main/items/item_13_trap_floor.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+// trap_floor_state_funcs
+extern void (*trap_floor_state_funcs[])(struct ItemObj*);
+void func_800C3578(struct ItemObj*);
+void trap_floor_main(struct ItemObj*);
+void trap_floor_wait_stand(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+void trap_floor_open(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+void trap_floor_opened(struct ItemObj*);
 
 struct Item13AnimationStep {
     u8 duration;

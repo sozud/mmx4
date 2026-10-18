@@ -1,7 +1,51 @@
 // MainObj, main_object_update_funcs[32]
 // 8005C824..8005D1F4
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_32_bomb_bat.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern u8 bomb_bat_debris[4];
+
+extern struct Unk_unk68* bomb_bat_hurt_boxes[2];
+
+extern s32 bomb_bat_fly_speeds[2];
+
+// bomb_bat_state_funcs
+extern void (*bomb_bat_state_funcs[])(struct MainObj*);
+
+void bomb_bat_despawn(struct MainObj*);
+
+// bomb_bat_step_funcs
+extern void (*bomb_bat_step_funcs[])(struct MainObj*);
+void bomb_bat_resume_step(struct MainObj* arg0);
+void bomb_bat_hover(struct MainObj* arg0);
+void bomb_bat_drop(struct MainObj* arg0);
+void bomb_bat_fly_off(struct MainObj* arg0);
+void bomb_bat_flee(struct MainObj* arg0);
+void bomb_bat_dive(struct MainObj* arg0);
+
+// bomb_bat_hover_funcs
+extern void (*bomb_bat_hover_funcs[])(struct MainObj*);
+void bomb_bat_hover_start(struct MainObj*);
+
+// bomb_bat_move_funcs
+void bomb_bat_drop_start(struct MainObj*);
+void bomb_bat_drop_release(struct MainObj*);
+void bomb_bat_fly_off_start(struct MainObj*);
+void bomb_bat_fly_off_move(struct MainObj* arg0);
+void bomb_bat_flee_start(struct MainObj*);
+void bomb_bat_flee_move(struct MainObj* arg0);
+
+void bomb_bat_dive_wait(struct MainObj*);
+void bomb_bat_dive_fall(struct MainObj*);
+void bomb_bat_face_player(struct MainObj*);
+
+extern void (*bomb_bat_move_funcs[])(struct MainObj*);
+extern void (*bomb_bat_dive_funcs[])(struct MainObj*);
 
 void bomb_bat_update(struct MainObj* self)
 {

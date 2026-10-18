@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_27_teleport_intro.h"
 
 static u32 teleport_case(u32 mode)
 {

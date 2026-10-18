@@ -1,4 +1,26 @@
 #include "common.h"
+#include "main/character_select.h"
+#include "main/objects.h"
+#include "main/144A4.h"
+#include "main/1A5BC.h"
+#include "main/2824.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/background.h"
+#include "main/game_info.h"
+#include "main/object_update.h"
+#include "main/stage_objects.h"
+#include "main/xa_sequence_data.h"
+
+// D_800F4498
+extern void (*character_select_state_2_update_funcs[])(struct EngineObj*);
+void character_select_state_2_substate_0(struct EngineObj*);
+
+// D_800F44A0 character_select_state_3_update_funcs
+extern void (*character_select_state_3_update_funcs[])();
+
+// D_800F44A8
+extern void (*D_800F44A8[])(struct EngineObj*);
 
 void func_80029A48(void);
 void func_80029BD8(void);

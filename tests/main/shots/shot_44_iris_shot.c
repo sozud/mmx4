@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/shots/shot_44_iris_shot.h"
+#include "main/55C4.h"
 extern void* iris_animations[37];
 
 static u32 drone_case(u32 burst, u32 observation)

@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/shots/eregion_wing_slash_data.h"
+#include "main/shots/shot_02_gunner_shot.h"
 
 u8 eregion_wing_slash_hit_box[4] = { 0x8C, 0xB8, 0x96, 0x87 };
 

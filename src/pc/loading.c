@@ -1,4 +1,8 @@
 #include "common.h"
+#include "main/2824.h"
+#include "main/3A6C.h"
+#include "main/3D88.h"
+#include "main/323C.h"
 
 s32 mmx4_pc_canonical_load;
 extern u8 D_80137DD8;

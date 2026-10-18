@@ -1,7 +1,53 @@
 // MainObj, main_object_update_funcs[38]
 // 80060A88..80061590
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_38_train_cannon.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision_bounds.h"
+
+extern u8 train_cannon_debris[8];
+
+void train_cannon_explode(struct MainObj*);
+void train_cannon_despawn(struct MainObj*);
+
+// train_cannon_step_funcs
+extern void (*train_cannon_step_funcs[])(struct MainObj*);
+void train_cannon_resume_step(struct MainObj* arg0);
+void train_cannon_idle(struct MainObj* arg0);
+void train_cannon_charge(struct MainObj* arg0);
+void train_cannon_blast(struct MainObj* arg0);
+void train_cannon_volley(struct MainObj* arg0);
+void train_cannon_recoil(struct MainObj* arg0);
+
+// train_cannon_idle_funcs
+void train_cannon_idle_start(struct MainObj*);
+
+// train_cannon_charge_funcs
+void train_cannon_charge_start(struct MainObj*);
+void train_cannon_charge_wait(struct MainObj* arg0);
+
+// train_cannon_blast_funcs
+void train_cannon_blast_fire(struct MainObj*);
+void train_cannon_blast_end(struct MainObj*);
+
+// train_cannon_volley_funcs
+void train_cannon_volley_start(struct MainObj*);
+void train_cannon_volley_fire(struct MainObj*);
+void train_cannon_volley_end(struct MainObj*);
+
+// train_cannon_recoil_funcs
+void train_cannon_recoil_start(struct MainObj*);
+void train_cannon_recoil_end(struct MainObj*);
+
+extern void (*train_cannon_state_funcs[])(struct MainObj*);
+extern void (*train_cannon_idle_funcs[])(struct MainObj*);
+extern void (*train_cannon_charge_funcs[])(struct MainObj*);
+extern void (*train_cannon_blast_funcs[])(struct MainObj*);
+extern void (*train_cannon_volley_funcs[])(struct MainObj*);
+extern void (*train_cannon_recoil_funcs[])(struct MainObj*);
 
 void train_cannon_update(struct MainObj* self)
 {

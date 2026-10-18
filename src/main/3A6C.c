@@ -1,6 +1,12 @@
 // 8001326C..80013588
 #include "common.h"
 #include "scratchpad.h"
+#include "main/2824.h"
+#include "main/323C.h"
+#include "main/3A6C.h"
+#include "main/55C4.h"
+#include "main/archive_stage_data.h"
+#include "main/3D88.h"
 
 struct HudLayoutData {
     s16 x;

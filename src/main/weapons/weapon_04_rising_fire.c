@@ -1,6 +1,26 @@
 // WeaponObj, weapon_object_update_funcs[4]
 // 800951C0..800957B0
 #include "common.h"
+#include "main/weapons/weapon_04_rising_fire.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// rising_fire_state_funcs
+extern void (*rising_fire_state_funcs[])(struct WeaponObj*);
+
+void rising_fire_main(struct WeaponObj*);
+void rising_fire_despawn(struct WeaponObj*);
+void rising_fire_despawn(struct WeaponObj*);
+
+// rising_fire_charged_state_funcs
+extern struct Unk_unk68 rising_fire_charged_hit_boxes[4];
+extern void (*rising_fire_charged_state_funcs[])(struct WeaponObj*);
+
+void rising_fire_charged_main(struct WeaponObj*);
+
+void rising_fire_despawn(struct WeaponObj*);
+void rising_fire_despawn(struct WeaponObj*);
 
 void rising_fire_draw(struct WeaponObj* arg0);
 

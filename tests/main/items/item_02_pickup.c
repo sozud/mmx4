@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_02_pickup.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 

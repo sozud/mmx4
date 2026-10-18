@@ -1,7 +1,22 @@
 // MainObj, main_object_update_funcs[46]
 // 80066A48..80066DAC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_46_train_boss_turret.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern u8 train_boss_turret_hurt_box[];
+extern u8 train_boss_turret_attack_box[];
+
+extern char train_boss_turret_debris[8];
+
+// train_boss_turret_step_funcs
+extern void (*train_boss_turret_step_funcs[])(struct MainObj*);
+
+extern void (*train_boss_turret_state_funcs[])(struct MainObj*);
 
 void train_boss_turret_update(struct MainObj* self)
 {

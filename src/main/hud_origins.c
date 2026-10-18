@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/hud_origins.h"
+#include "main/128C4.h"
 
 u8 D_800F30D4[16][2] = {
     { 1, 1 },

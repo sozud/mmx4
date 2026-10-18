@@ -1,6 +1,9 @@
 // MiscObj, misc_object_update_funcs[22]
 // 800CBA80..800CBD40
 #include "common.h"
+#include "main/misc/misc_22_dialogue_ui.h"
+#include "main/55C4.h"
+#include "main/objects.h"
 
 // misc obj update #22
 void dialogue_ui_update(struct MiscObj* self)

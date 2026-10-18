@@ -1,6 +1,24 @@
 // ShotObj, shot_object_update_funcs[12]
 // 8009B7F8..8009BD28
 #include "common.h"
+#include "main/shots/shot_12_ice_core_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// ice_core_shot_state_funcs
+extern void (*ice_core_shot_state_funcs[])(struct ShotObj*);
+
+void ice_core_spray_fly(struct ShotObj*);
+void ice_core_spray_despawn(struct ShotObj*);
+
+void ice_core_shard_hold(struct ShotObj*);
+
+void ice_core_shard_fall(struct ShotObj*);
+
+void ice_core_shard_despawn(struct ShotObj*);
 
 void ice_core_shot_update(struct ShotObj* self)
 {

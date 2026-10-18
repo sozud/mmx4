@@ -1,6 +1,19 @@
 // ShotObj, shot_object_update_funcs[38]
 // 800A428C..800A47C4
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_38_owl_cyclone.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// owl_cyclone_state_funcs
+extern void (*owl_cyclone_state_funcs[])(struct ShotObj*);
+
+void owl_cyclone_fly(struct ShotObj*);
+
+void owl_cyclone_despawn(struct ShotObj*);
+void owl_cyclone_idle(struct ShotObj*);
 
 u8 owl_cyclone_hit_box[4] = { 0xFC, 0xFC, 0x08, 0x08 };
 u8 owl_cyclone_column_box[4] = { 0xF0, 0x92, 0x1F, 0xD4 };

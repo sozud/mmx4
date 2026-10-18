@@ -1,4 +1,12 @@
 #include "test_runtime.h"
+#include "main/quads/quad_09_aiming_laser_beam.h"
+#include "main/visuals/visual_18_aiming_laser_scope.h"
+#include "main/weapons/weapon_01_lightning_web.h"
+#include "main/weapons/weapon_02_frost_tower.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
+#include "main/weapons/weapon_07_double_cyclone.h"
+#include "main/player_weapon.h"
+#include "main/sprite_animations.h"
 void func_800963E8(struct WeaponObj*, struct PlayerObj*);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 extern u32* D_80137E08;

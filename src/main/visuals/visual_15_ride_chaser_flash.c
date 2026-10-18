@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[15]
 // 800B1D6C..800B1EA4
 #include "common.h"
+#include "main/visuals/visual_15_ride_chaser_flash.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// ride_chaser_flash_state_funcs
+extern void (*ride_chaser_flash_state_funcs[])(struct VisualObj*);
+void ride_chaser_flash_init(struct VisualObj*);
+void ride_chaser_flash_main(struct VisualObj*);
+void ride_chaser_flash_despawn(struct VisualObj*);
 
 void ride_chaser_flash_update(struct VisualObj* arg0)
 {

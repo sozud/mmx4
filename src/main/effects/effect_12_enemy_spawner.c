@@ -1,6 +1,14 @@
 // EffectObj, effect_object_update_funcs[12]
 // 800B806C..800B84DC
 #include "common.h"
+#include "main/effects/effect_12_enemy_spawner.h"
+#include "main/objects.h"
+
+// enemy_spawner_state_funcs
+extern void (*enemy_spawner_state_funcs[])(struct EffectObj*);
+void enemy_spawner_init(struct EffectObj*);
+
+void enemy_spawner_despawn(struct EffectObj*);
 
 u8 enemy_spawner_child_ids[8] = { 12, 25, 12, 12, 12, 12, 12, 12 };
 u8 enemy_spawner_child_subtypes[8] = { 2, 1, 2, 2, 2, 2, 2, 2 };

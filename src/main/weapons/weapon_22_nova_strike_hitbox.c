@@ -1,6 +1,12 @@
 // WeaponObj, weapon_object_update_funcs[22]
 // 80092D64..80092F08
 #include "common.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+#include "main/weapons/weapon_00_lemon.h"
+
+extern u16 buster_muzzle_offsets[48];
 
 void nova_strike_hitbox_update(struct WeaponObj* arg0)
 {

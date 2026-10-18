@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_39_falling_ceiling.h"
+#include "main/55C4.h"
 extern union AnimationStep* falling_ceiling_animations[4];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];

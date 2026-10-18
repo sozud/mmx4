@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_40_breakable_terrain.h"
 extern s8* D_800FEA24[7];
 extern struct Unk_unk68 D_800FEAA0;
 extern union AnimationStep* breakable_terrain_animations[6];

@@ -1,6 +1,14 @@
 // WeaponObj, weapon_object_update_funcs[58]
 // 80098990..80098ABC
 #include "common.h"
+#include "main/weapons/weapon_58_ice_block_hitbox.h"
+#include "main/objects.h"
+
+// ice_block_hitbox_state_funcs
+extern void (*ice_block_hitbox_state_funcs[])(struct WeaponObj*);
+
+void ice_block_hitbox_main(struct WeaponObj*);
+void ice_block_hitbox_despawn(struct WeaponObj*);
 
 void ice_block_hitbox_update(struct WeaponObj* arg0)
 {

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/stage_object_record_tables.h"
 
 extern struct StageObjectRecord stage_object_records_0_0[];
 extern struct StageObjectRecord stage_object_records_0_1[];

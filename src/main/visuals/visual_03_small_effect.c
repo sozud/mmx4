@@ -1,6 +1,19 @@
 // VisualObj, visual_object_update_funcs[3]
 // 800AF6A0..800AFB50
 #include "common.h"
+#include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+
+struct Visual03Bounds {
+    s32 x;
+    s32 y;
+};
+
+extern u8 small_effect_animations[];
+
+extern struct Visual03Bounds small_effect_bounds[];
 
 u8 small_effect_animations[] = {
     0x00,

@@ -1,7 +1,50 @@
 // MainObj, main_object_update_funcs[14]
 // 8004CF24..8004D930
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_14_ice_bird.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern struct Unk_unk68 ice_bird_charge_box;
+
+extern u8 ice_bird_debris[];
+
+void ice_bird_spawn_charge_ring(struct MainObj*, s8);
+
+// ice_bird_state_funcs
+void ice_bird_init(struct MainObj*);
+
+// ice_bird_step_funcs
+extern void (*ice_bird_step_funcs[6])();
+void ice_bird_resume_step(struct MainObj* arg0);
+void ice_bird_fly_in(struct MainObj* arg0);
+void ice_bird_charge(struct MainObj* arg0);
+void ice_bird_blast(struct MainObj* arg0);
+void ice_bird_leave(struct MainObj* arg0);
+
+void ice_bird_fly_in_move(struct MainObj*);
+
+// ice_bird_charge_funcs
+void ice_bird_charge_start(struct MainObj*);
+void ice_bird_charge_wait(struct MainObj*);
+void ice_bird_charge_ring(struct MainObj*);
+
+// ice_bird_blast_funcs
+void ice_bird_blast_start(struct MainObj* arg0);
+void ice_bird_blast_wait(struct MainObj*);
+
+void ice_bird_blast_finish(struct MainObj*);
+
+void ice_bird_leave_fly(struct MainObj* arg0);
+
+extern void (*ice_bird_state_funcs[])(struct MainObj*);
+extern void (*ice_bird_fly_in_funcs[])(struct MainObj*);
+extern void (*ice_bird_charge_funcs[])(struct MainObj*);
+extern void (*ice_bird_blast_funcs[])(struct MainObj*);
+extern void (*ice_bird_leave_funcs[])(struct MainObj*);
 
 void ice_bird_update(struct MainObj* self)
 {

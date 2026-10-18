@@ -1,6 +1,31 @@
 // VisualObj, visual_object_update_funcs[32]
 // 800B4E34..800B5570
 #include "common.h"
+#include "main/objects.h"
+#include "main/visuals/visual_32_sigma_fx.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// sigma_cloak_piece_funcs
+extern void (*sigma_cloak_piece_funcs[])(struct VisualObj*);
+void sigma_cloak_piece_wait(struct VisualObj*);
+void sigma_cloak_piece_blink(struct VisualObj*);
+
+// sigma_fx_subtype_funcs
+extern void (*sigma_fx_subtype_funcs[])(struct VisualObj*);
+void sigma_fx_glow(struct VisualObj*);
+void sigma_fx_cloak_piece(struct VisualObj*);
+void sigma_fx_oneshot(struct VisualObj*);
+void sigma_fx_electric(struct VisualObj*);
+void sigma_fx_electric(struct VisualObj*);
+void sigma_fx_oneshot(struct VisualObj*);
+void sigma_fx_hit_glow(struct VisualObj*);
+
+// sigma_fx_state_funcs
+extern void (*sigma_fx_state_funcs[])(struct VisualObj*);
+
+void sigma_fx_run(struct VisualObj*);
+void sigma_fx_despawn(struct VisualObj*);
 
 u8 sigma_fx_x_offsets[4] = { 0xF, 6, 0x16, 0xF0 };
 u8 sigma_fx_y_offsets[4] = { 0xF8, 0x16, 2, 0xFF };

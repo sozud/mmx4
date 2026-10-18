@@ -1,9 +1,41 @@
 // MainObj, main_object_update_funcs[17]
 // 8004FF90..80050708
 #include "common.h"
+#include "main/mains/main_17_snowman_bomb.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 snowman_bomb_hurt_box;
+extern struct Unk_unk68 snowman_bomb_attack_box;
+
+extern union AnimationStep* snowman_bomb_animations[];
+extern struct Unk_unk68 snowman_bomb_blast_hurt_box;
+extern struct Unk_unk68 snowman_bomb_blast_attack_box;
+extern struct Unk_unk68 snowman_bomb_blast_terrain_box;
+extern u8 snowman_bomb_debris[4];
+
+void snowman_bomb_check_fall(struct MainObj*);
+
+// snowman_bomb_state_funcs
+extern void (*snowman_bomb_state_funcs[])(struct MainObj*);
+
+void snowman_bomb_despawn(struct MainObj*);
+
+// snowman_bomb_step_funcs
+extern void (*snowman_bomb_step_funcs[])(struct MainObj*);
+void snowman_bomb_resume_step(struct MainObj* arg0);
+
+void snowman_bomb_turn(struct MainObj* arg0);
+void snowman_bomb_detonate(struct MainObj* arg0);
+void snowman_bomb_fall(struct MainObj* arg0);
+void snowman_bomb_wait(struct MainObj* arg0);
 
 void snowman_bomb_face_player(struct AnimatedObj* self);
-#include "func_tables.h"
 
 void snowman_bomb_update(struct MainObj* self)
 {

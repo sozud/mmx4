@@ -1,5 +1,38 @@
 // 80020984..80021158
 #include "common.h"
+#include "main/102FC.h"
+#include "main/10CA4.h"
+#include "main/11184.h"
+#include "main/11184_dispatch_data.h"
+#include "main/2824.h"
+#include "main/engine.h"
+#include "main/engine_transition_data.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/144A4.h"
+#include "main/14A60.h"
+#include "main/323C.h"
+#include "main/E47C.h"
+#include "main/E47C_menu_data.h"
+#include "main/game_info.h"
+#include "main/menu.h"
+#include "main/object_update.h"
+#include "main/objects.h"
+
+extern u8 D_800F2468[];
+
+extern u8 D_800F247C[];
+extern u8 D_800F2490[];
+
+#ifdef MMX4_PC
+extern void func_80020DEC(u8* arg0, s16 arg1);
+#endif
+
+// D_800F2498
+extern void (*D_800F2498[])(struct EngineObj*);
+void func_80020ED4(struct EngineObj*);
+void func_80020F24(struct EngineObj*);
+void func_800210B8(struct EngineObj*);
 
 void func_80029DBC(void);
 

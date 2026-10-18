@@ -1,6 +1,16 @@
 // WeaponObj, weapon_object_update_funcs[56]
 // 800985F4..80098838
 #include "common.h"
+#include "main/weapons/weapon_56_ride_chaser_shot.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// ride_chaser_shot_state_funcs
+extern void (*ride_chaser_shot_state_funcs[])(struct WeaponObj*);
+
+void ride_chaser_shot_main(struct WeaponObj*);
+void ride_chaser_shot_despawn(struct WeaponObj*);
 
 void ride_chaser_shot_update(struct WeaponObj* arg0)
 {

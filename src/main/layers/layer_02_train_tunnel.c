@@ -1,6 +1,30 @@
 // LayerObj, layer_object_update_funcs[2]
 // 800D9218..800D9C84
 #include "common.h"
+#include "main/layers/layer_02_train_tunnel.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+
+// train_tunnel_state_funcs
+extern void (*train_tunnel_state_funcs[])(struct LayerObj*);
+void func_800D9268(struct LayerObj*);
+void train_tunnel_main(struct LayerObj*);
+void train_tunnel_despawn(struct LayerObj*);
+
+// train_tunnel_section_funcs
+extern void (*train_tunnel_section_funcs[])(struct LayerObj*);
+void train_tunnel_section_0(struct LayerObj*);
+void train_tunnel_section_1(struct LayerObj*);
+void train_tunnel_section_2(struct LayerObj*);
+
+void train_tunnel_idle(struct LayerObj*);
+
+void train_tunnel_shake_running(struct LayerObj*);
+void train_tunnel_shake_braking(struct LayerObj*);
+void train_tunnel_spawn_scroll_prop(struct LayerObj*);
 
 void train_tunnel_accelerate(struct LayerObj* arg0);
 void train_tunnel_brake(struct LayerObj* arg0);

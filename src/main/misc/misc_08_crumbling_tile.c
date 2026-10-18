@@ -1,6 +1,52 @@
 // MiscObj, misc_object_update_funcs[8]
 // 800C9510..800C9D64
 #include "common.h"
+#include "main/misc/misc_08_crumbling_tile.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+
+struct Misc08EffectTripletTable {
+    struct Misc08EffectTriplet entries[26];
+    u8 padding[2];
+};
+
+struct Misc08EffectDescriptor {
+    u8 effect_id;
+    u8 variant;
+};
+
+extern struct Misc08EffectTripletTable crumbling_tile_second_effects;
+extern u8 crumbling_tile_debris_0[];
+extern u8 crumbling_tile_debris_1[];
+extern u8 crumbling_tile_debris_2[];
+extern u8 crumbling_tile_debris_3[];
+extern u8 crumbling_tile_debris_4[];
+extern u8 crumbling_tile_debris_5[];
+extern u8 crumbling_tile_debris_6[];
+extern u8 crumbling_tile_debris_7[];
+extern u8 crumbling_tile_debris_8[];
+extern u8 crumbling_tile_debris_9[];
+extern u8 crumbling_tile_debris_10[];
+extern struct Misc08EffectDescriptor crumbling_tile_first_effects[];
+
+// crumbling_tile_second_funcs
+extern void (*crumbling_tile_second_funcs[])(struct MiscObj*);
+void crumbling_tile_second_wait_anim(struct MiscObj*);
+void crumbling_tile_second_delay(struct MiscObj*);
+void crumbling_tile_break_second(struct MiscObj*);
+
+// crumbling_tile_main_funcs
+extern void (*crumbling_tile_main_funcs[])(struct MiscObj*);
+void crumbling_tile_break_first(struct MiscObj*);
+void crumbling_tile_second(struct MainObj* arg0);
+
+// crumbling_tile_state_funcs
+extern void (*crumbling_tile_state_funcs[])(struct MiscObj*);
+void func_800C9510(struct MiscObj*);
+void crumbling_tile_main(struct MiscObj* arg0);
+void crumbling_tile_despawn(struct MiscObj*);
 
 extern u8 crumbling_tile_debris_0[];
 extern u8 crumbling_tile_debris_1[];

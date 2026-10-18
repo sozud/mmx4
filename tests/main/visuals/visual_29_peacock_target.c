@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_29_peacock_target.h"
+#include "main/mains/main_64_cyber_peacock.h"
 
 static u32 track_case(u32 mode, u32 observation)
 {

@@ -1,7 +1,107 @@
 // MainObj, main_object_update_funcs[54]
 // 8006BB00..8006EB40
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_54_slash_beast.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/stage_objects.h"
+
+extern struct Unk_unk68 D_80100200;
+extern struct Unk_unk68 D_80100204;
+extern struct Unk_unk68 D_80100210;
+extern struct Unk_unk68 D_80100214;
+
+extern u8 D_801005B0[4];
+
+extern u8** slash_beast_patterns[3];
+extern u8 slash_beast_pattern_weights[12];
+
+extern struct Unk_unk68 D_80100220;
+extern struct Unk_unk68 D_80100224;
+
+// slash_beast_state_funcs
+extern void (*slash_beast_state_funcs[])(struct MainObj*);
+
+void slash_beast_death(struct MainObj*);
+
+void slash_beast_start_pattern(struct MainObj*);
+void slash_beast_crescent(struct MainObj*);
+void slash_beast_decide(struct MainObj*);
+void slash_beast_jump(struct MainObj*);
+
+void slash_beast_dash(struct MainObj*);
+
+void slash_beast_grab(struct MainObj*);
+void slash_beast_intro(struct MainObj*);
+void slash_beast_stagger(struct MainObj*);
+void slash_beast_high_leap(struct MainObj*);
+
+// slash_beast_death_funcs
+extern void (*slash_beast_death_funcs[])(struct MainObj*);
+void slash_beast_death_start(struct MainObj*);
+
+void slash_beast_death_finish(struct MainObj*);
+
+// slash_beast_crescent_funcs
+extern void (*slash_beast_crescent_funcs[])(struct MainObj*);
+void slash_beast_crescent_jump(struct MainObj*);
+
+void slash_beast_crescent_land(struct MainObj*);
+void slash_beast_crescent_recover(struct MainObj*);
+
+// slash_beast_decide_funcs
+extern void (*slash_beast_decide_funcs[])(struct MainObj*);
+
+void slash_beast_crouch(struct MainObj*);
+
+// slash_beast_jump_funcs
+extern void (*slash_beast_jump_funcs[])(struct MainObj*);
+
+void slash_beast_jump_recover(struct MainObj*);
+
+// slash_beast_dash_funcs
+extern void (*slash_beast_dash_funcs[])(struct MainObj*);
+void slash_beast_dash_windup(struct MainObj*);
+void slash_beast_dash_start(struct MainObj*);
+void func_8006CFB8(struct MainObj*);
+
+void slash_beast_dash_turn(struct MainObj*);
+
+// slash_beast_grab_funcs
+extern void (*slash_beast_grab_funcs[])(struct MainObj*);
+void slash_beast_grab_check(struct MainObj*);
+void slash_beast_grab_windup(struct MainObj*);
+void func_8006D888(struct MainObj*);
+void slash_beast_grab_throw(struct MainObj*);
+
+// slash_beast_intro_funcs
+extern void (*slash_beast_intro_funcs[])(struct MainObj*);
+
+void slash_beast_intro_leap(struct MainObj*);
+void slash_beast_intro_land(struct MainObj*);
+void slash_beast_intro_pose(struct MainObj*);
+void slash_beast_intro_wait_dialogue(struct MainObj*);
+void slash_beast_intro_fill_health(struct MainObj*);
+
+// slash_beast_stagger_funcs
+extern void (*slash_beast_stagger_funcs[])(struct MainObj*);
+
+void slash_beast_stagger_land(struct MainObj*);
+void slash_beast_stagger_recover(struct MainObj*);
+
+// slash_beast_high_leap_funcs
+extern void (*slash_beast_high_leap_funcs[])(struct MainObj*);
+void slash_beast_high_leap_jump(struct AnimatedObj*);
+void slash_beast_high_leap_fall(struct MainObj*);
+void slash_beast_high_leap_land(struct MainObj*);
+
+void slash_beast_high_leap_recover(struct MainObj*);
 
 void slash_beast_update(struct MainObj* self)
 {

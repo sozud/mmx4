@@ -1,6 +1,22 @@
 // MiscObj, misc_object_update_funcs[57]
 // 800D3388..800D3928
 #include "common.h"
+#include "main/misc/misc_57_falling_piece.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/misc/misc_31_option_toggle.h"
+#include "main/objects.h"
+
+#ifdef MMX4_PC
+extern void menu_text_init_label(struct UnkObj* arg0);
+extern void menu_text_init_cursor(struct UnkObj* arg0);
+#endif
+
+// falling_piece_state_funcs
+extern void (*falling_piece_state_funcs[])(struct MiscObj*);
+void func_800D3388(struct MiscObj*);
+void falling_piece_fall(struct MiscObj*);
+void falling_piece_despawn(struct MiscObj*);
 
 extern union AnimationStep* menu_text_animations[1];
 

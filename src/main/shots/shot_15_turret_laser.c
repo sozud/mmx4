@@ -1,6 +1,24 @@
 // ShotObj, shot_object_update_funcs[15]
 // 8009C0F0..8009C364
 #include "common.h"
+#include "main/shots/shot_15_turret_laser.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// turret_laser_state_funcs
+extern void (*turret_laser_state_funcs[])(struct ShotObj*);
+void func_8009C12C(struct ShotObj*);
+void turret_laser_main(struct ShotObj*);
+void turret_laser_despawn(struct ShotObj*);
+
+// turret_laser_step_funcs
+extern void (*turret_laser_step_funcs[])(struct ShotObj*);
+void turret_laser_hit(struct ShotObj*);
+void turret_laser_idle(struct ShotObj*);
+void turret_laser_move(struct ShotObj*);
 
 u8 turret_laser_hit_box[4] = { 0xFD, 0xFD, 0x06, 0x06 };
 

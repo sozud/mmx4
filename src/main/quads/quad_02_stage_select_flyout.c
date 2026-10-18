@@ -1,6 +1,13 @@
 // QuadObj, quad_object_update_funcs[2]
 // 800D4948..800D4C50
 #include "common.h"
+#include "main/quads/quad_02_stage_select_flyout.h"
+#include "main/object_motion.h"
+
+// stage_select_flyout_state_funcs
+extern void (*stage_select_flyout_state_funcs[])(struct QuadObj*);
+
+extern s32 stage_select_flyout_vertices[4][2];
 
 s16 stage_select_flyout_targets[8][2] = {
     { 0x28, 0x10 },

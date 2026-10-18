@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/quads/quad_09_aiming_laser_beam.h"
+#include "main/visuals/visual_18_aiming_laser_scope.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
 
 #include "support/aiming_cancellation.h"
 AIMING_CANCEL_MODE(3, 0)

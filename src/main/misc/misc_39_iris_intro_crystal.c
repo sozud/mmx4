@@ -1,6 +1,24 @@
 // MiscObj, misc_object_update_funcs[39]
 // 800CF790..800CFB70
 #include "common.h"
+#include "main/misc/misc_39_iris_intro_crystal.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// iris_intro_crystal_state_funcs
+extern void (*iris_intro_crystal_state_funcs[])(struct MiscObj*);
+void iris_intro_crystal_run(struct MiscObj* arg0);
+void iris_intro_crystal_despawn(struct MiscObj*);
+
+// iris_intro_crystal_step_funcs
+extern void (*iris_intro_crystal_step_funcs[])(struct MiscObj*);
+void iris_intro_crystal_start(struct MiscObj*);
+void iris_intro_crystal_rise(struct MiscObj*);
+void iris_intro_crystal_charge(struct MiscObj*);
+
+void iris_intro_crystal_wait(struct MiscObj*);
+void iris_intro_crystal_leave(struct MiscObj*);
 
 void iris_intro_crystal_update(struct MiscObj* self)
 {

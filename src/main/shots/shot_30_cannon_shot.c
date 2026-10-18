@@ -1,6 +1,14 @@
 // ShotObj, shot_object_update_funcs[30]
 // 8009FB60..8009FF10
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_30_cannon_shot.h"
+
+// cannon_shot_state_funcs
+extern void (*cannon_shot_state_funcs[])(struct ShotObj*);
+
+void cannon_shot_despawn(struct ShotObj*);
+void cannon_shot_idle(struct ShotObj*);
 
 void cannon_shot_update(struct ShotObj* self)
 {

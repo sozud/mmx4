@@ -1,6 +1,13 @@
 // MiscObj, misc_object_update_funcs[26]
 // 800CC7BC..800CC908
 #include "common.h"
+#include "main/misc/misc_26_slash_beast_afterimage.h"
+#include "main/objects.h"
+
+// slash_beast_afterimage_state_funcs
+extern void (*slash_beast_afterimage_state_funcs[])(struct MiscObj*);
+
+void slash_beast_afterimage_despawn(struct MiscObj*);
 
 void slash_beast_afterimage_update(struct MiscObj* self)
 {

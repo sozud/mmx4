@@ -1,6 +1,10 @@
 // MiscObj, misc_object_update_funcs[42]
 // 800CFE98..800D0374
 #include "common.h"
+#include "main/misc/misc_42_menu_icon.h"
+
+// menu_icon_state_funcs
+extern void (*menu_icon_state_funcs[])(struct MiscObj*);
 
 void menu_icon_update(struct MiscObj* self)
 {

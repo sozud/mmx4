@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_41_data_hopper.h"
+#include "main/mains/main_56_jet_stingray.h"
+#include "main/55C4.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 void data_hopper_spawn_item(struct MainObj*);

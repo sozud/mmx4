@@ -1,6 +1,24 @@
 // ShotObj, shot_object_update_funcs[56]
 // 800ADF30..800AE450
 #include "common.h"
+#include "main/shots/shot_56_sigma_spit.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/collision.h"
+#include "main/objects.h"
+
+// sigma_spit_step_funcs
+extern void (*sigma_spit_step_funcs[])(struct ShotObj*);
+
+void sigma_spit_idle(struct ShotObj*);
+void sigma_spit_return(struct ShotObj*);
+void sigma_spit_fall(struct ShotObj*);
+
+// sigma_spit_state_funcs
+extern void (*sigma_spit_state_funcs[])(struct ShotObj*);
+
+void sigma_spit_main(struct ShotObj*);
+void sigma_spit_despawn(struct ShotObj*);
 
 s8 sigma_spit_box_data[8][4] = {
     { -13, -12, 28, 23 },

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/1EC20.h"
 
 static u32 briefing_case(u32 mode)
 {

@@ -1,7 +1,91 @@
 // MainObj, main_object_update_funcs[18]
 // 80050708..8005284C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_18_ice_core.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+extern u8 D_800FC340[4];
+
+extern struct Unk_unk68 D_800FBF00;
+extern struct Unk_unk68 D_800FBF04;
+
+extern struct Unk_unk68 D_800FBF10;
+
+void ice_core_death_sink(struct MainObj*);
+void ice_core_death_release_camera(struct MainObj*);
+void ice_core_death_wait_player(struct MainObj*);
+
+// ice_core_step_funcs
+void ice_core_resume_step(struct MainObj* arg0);
+void ice_core_drift(struct MainObj* arg0);
+void ice_core_bob(struct MainObj* arg0);
+void ice_core_charge(struct MainObj* arg0);
+void ice_core_stomp(struct MainObj* arg0);
+void ice_core_fall(struct MainObj* arg0);
+
+void ice_core_build(struct MainObj* arg0);
+void ice_core_bounce(struct MainObj* arg0);
+void ice_core_spray(struct MainObj* arg0);
+void ice_core_intro(struct MainObj* arg0);
+
+// ice_core_drift_funcs
+void ice_core_drift_start(struct MainObj*);
+
+// ice_core_bob_funcs
+void ice_core_bob_start(struct MainObj*);
+
+void ice_core_bob_recover(struct MainObj*);
+
+// ice_core_charge_funcs
+void ice_core_charge_face(struct MainObj*);
+void ice_core_charge_back_off(struct MainObj*);
+
+void ice_core_charge_start(struct MainObj*);
+
+void ice_core_charge_recover(struct MainObj*);
+
+// ice_core_stomp_funcs
+void ice_core_stomp_start(struct MainObj*);
+void ice_core_stomp_land(struct MainObj*);
+
+void ice_core_stomp_impact(struct MainObj*);
+
+// ice_core_build_funcs
+void ice_core_build_open(struct MainObj*);
+
+void ice_core_build_wait(struct MainObj*);
+
+// ice_core_bounce_funcs
+void ice_core_bounce_start(struct MainObj*);
+void ice_core_bounce_move(struct MainObj*);
+void ice_core_bounce_wait(struct MainObj*);
+void ice_core_bounce_reform(struct MainObj*);
+
+void ice_core_spray_wait_event(struct MainObj*);
+void ice_core_spray_wait(struct MainObj*);
+
+void ice_core_intro_wait_player(struct MainObj*);
+void ice_core_intro_descend(struct MainObj*);
+void ice_core_intro_slow(struct MainObj*);
+void ice_core_intro_start_fight(struct MainObj*);
+
+extern void (*ice_core_state_funcs[])(struct MainObj*);
+extern void (*ice_core_drift_funcs[])(struct MainObj*);
+extern void (*ice_core_bob_funcs[])(struct MainObj*);
+extern void (*ice_core_charge_funcs[])(struct MainObj*);
+extern void (*ice_core_stomp_funcs[])(struct MainObj*);
+extern void (*ice_core_build_funcs[])(struct MainObj*);
+extern void (*ice_core_bounce_funcs[])(struct MainObj*);
+extern void (*ice_core_spray_funcs[])(struct MainObj*);
+extern void (*ice_core_intro_funcs[])(struct MainObj*);
 
 void ice_core_update(struct MainObj* self)
 {

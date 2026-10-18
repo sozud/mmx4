@@ -1,6 +1,14 @@
 // MiscObj, misc_object_update_funcs[30]
 // 800CDCC0..800CDE44
 #include "common.h"
+#include "main/misc/misc_30_spore_rain_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// spore_rain_fx_state_funcs
+extern void (*spore_rain_fx_state_funcs[])(struct MiscObj*);
+
+void spore_rain_fx_despawn(struct MiscObj*);
 
 void spore_rain_fx_update(struct MiscObj* self)
 {

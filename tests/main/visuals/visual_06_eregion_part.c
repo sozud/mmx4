@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_06_eregion_part.h"
 extern union AnimationStep* D_800FAD68[26];
 
 static u32 slash_case(u32 mode)

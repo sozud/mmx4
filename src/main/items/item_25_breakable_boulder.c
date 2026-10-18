@@ -1,6 +1,17 @@
 // ItemObj, item_object_update_funcs[25]
 // 800C42EC..800C4544
 #include "common.h"
+#include "main/items/item_25_breakable_boulder.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/CB184.h"
+#include "main/collision_bounds.h"
+#include "main/items/breakable_boulder_debris_table.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/misc/misc_08_crumbling_tile.h"
+#include "main/objects.h"
+
+extern u8 breakable_boulder_hit_box[4];
 
 void breakable_boulder_update(struct ItemObj* arg0)
 {

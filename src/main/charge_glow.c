@@ -1,6 +1,9 @@
 // BazObj, baz_objects
 // 800AE6B4..800AE7DC
 #include "common.h"
+#include "main/55C4.h"
+#include "main/charge_glow.h"
+#include "main/player_weapon.h"
 
 void func_800AE714(struct BazObj* arg0, struct PlayerObj* arg1);
 void func_800AE790(struct BazObj* arg0, struct PlayerObj* arg1);

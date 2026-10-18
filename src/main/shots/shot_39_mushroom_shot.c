@@ -1,6 +1,40 @@
 // ShotObj, shot_object_update_funcs[39]
 // 800A47C4..800A5348
 #include "common.h"
+#include "main/shots/shot_39_mushroom_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern u8 mushroom_shot_spore_hit_box[4];
+extern u8 mushroom_shot_spore_offsets[8];
+extern s32 mushroom_shot_spore_x_speeds[4];
+extern s32 mushroom_shot_spore_x_accels[4];
+
+// mushroom_shot_state_funcs
+extern void (*mushroom_shot_state_funcs[])(struct ShotObj*);
+void mushroom_shot_spore_init(struct ShotObj*);
+void mushroom_shot_spore_fly(struct ShotObj*);
+void mushroom_shot_spore_burst(struct ShotObj*);
+void mushroom_shot_spore_despawn(struct ShotObj*);
+void mushroom_shot_sprout_init(struct ShotObj*);
+void mushroom_shot_sprout_main(struct ShotObj*);
+void mushroom_shot_sprout_despawn(struct ShotObj*);
+void func_800A4D20(struct ShotObj*);
+void mushroom_shot_spray_fly(struct ShotObj*);
+void mushroom_shot_spray_despawn(struct ShotObj*);
+
+void mushroom_shot_sprout_grow(struct ShotObj*);
+
+void mushroom_shot_sprout_hop(struct ShotObj*);
+void mushroom_shot_sprout_land(struct ShotObj*);
+void mushroom_shot_sprout_wait(struct ShotObj*);
+void mushroom_shot_sprout_jump(struct ShotObj*);
+
+void mushroom_shot_sprout_fall(struct ShotObj*);
 
 extern u8 mushroom_shot_sprout_hit_box[4];
 extern u8 mushroom_shot_spray_offsets[12];

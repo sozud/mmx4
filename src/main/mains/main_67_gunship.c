@@ -1,7 +1,59 @@
 // MainObj, main_object_update_funcs[67]
 // 80082434..80083218
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_67_gunship.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern struct Unk_unk68 gunship_debris[];
+
+// gunship_state_funcs
+extern void (*gunship_state_funcs[])(struct MainObj*);
+void func_80082470(struct MainObj*);
+
+void gunship_destroyed(struct MainObj* arg0);
+
+// gunship_step_funcs
+void gunship_resume_step(struct MainObj* arg0);
+void gunship_choose(struct MainObj* arg0);
+void gunship_gun(struct MainObj* arg0);
+void gunship_missiles(struct MainObj* arg0);
+void gunship_turn(struct MainObj* arg0);
+void gunship_boost(struct MainObj* arg0);
+
+// gunship_destroyed_funcs
+extern void (*gunship_destroyed_funcs[])(struct MainObj*);
+void gunship_destroyed_start(struct MainObj*);
+void gunship_destroyed_sink(struct MainObj*);
+void gunship_destroyed_end(struct MainObj*);
+
+// gunship_choose_funcs
+extern void (*gunship_choose_funcs[])(struct MainObj*);
+
+// gunship_gun_funcs
+extern void (*gunship_gun_funcs[])(struct MainObj*);
+void gunship_gun_fire(struct MainObj*);
+void gunship_gun_wait(struct MainObj*);
+
+// gunship_missiles_funcs
+extern void (*gunship_missiles_funcs[])(struct MainObj*);
+void gunship_missiles_start(struct MainObj*);
+void gunship_missiles_open(struct MainObj*);
+void gunship_missiles_launch(struct MainObj*);
+void gunship_missiles_end(struct MainObj* arg0);
+
+// gunship_turn_funcs
+extern void (*gunship_turn_funcs[])(struct MainObj*);
+void gunship_turn_start(struct MainObj*);
+void gunship_turn_wait(struct MainObj*);
+
+// gunship_boost_funcs
+extern void (*gunship_boost_funcs[])(struct MainObj*);
+void gunship_boost_start(struct MainObj*);
+void gunship_boost_wait(struct MainObj*);
 
 void gunship_spawn_missiles(struct VisualObj* arg0);
 

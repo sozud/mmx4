@@ -1,7 +1,19 @@
 // MainObj, main_object_update_funcs[22]
 // 80054FE8..80055C54
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_22_bee_hive.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+void func_80055164(struct MainObj*);
+
+extern void (*bee_hive_state_funcs[])(struct MainObj*);
+extern void (*bee_hive_open_funcs[])(struct MainObj*);
+extern void (*bee_hive_wait_funcs[])(struct MainObj*);
+extern void (*bee_hive_release_funcs[])(struct MainObj*);
+extern void (*bee_hive_shake_funcs[])(struct MainObj*);
+extern void (*bee_hive_explode_funcs[])(struct MainObj*);
 
 extern struct Unk_unk68 D_80106D74[];
 extern union AnimationStep* bee_hive_animations[8];

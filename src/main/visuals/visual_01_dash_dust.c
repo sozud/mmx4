@@ -1,6 +1,13 @@
 // VisualObj, visual_object_update_funcs[1]
 // 800AED18..800AEED8
 #include "common.h"
+#include "main/visuals/visual_01_dash_dust.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+#include "main/visuals/visual_00_wall_slide_dust.h"
+
+extern struct VisualAttachmentOffset dash_dust_offsets[2];
 
 void dash_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
 

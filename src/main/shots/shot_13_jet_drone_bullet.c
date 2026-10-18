@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[13]
 // 8009BD28..8009BF14
 #include "common.h"
+#include "main/shots/shot_13_jet_drone_bullet.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// jet_drone_bullet_state_funcs
+extern void (*jet_drone_bullet_state_funcs[])(struct ShotObj*);
+void jet_drone_bullet_init(struct ShotObj*);
+void jet_drone_bullet_fly(struct ShotObj*);
+void jet_drone_bullet_despawn(struct ShotObj*);
 
 u8 jet_drone_bullet_hit_box[4] = { 0xFD, 0xFE, 0x05, 0x04 };
 

@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_11_charge_ring.h"
+#include "main/mains/main_14_ice_bird.h"
 
 static u32 ring_case(u32 mode)
 {

@@ -1,5 +1,15 @@
 // 80021DBC..8002771C
 #include "common.h"
+#include "main/125BC.h"
+#include "main/55C4.h"
+#include "main/13A8C.h"
+
+struct FixedMatrix2 {
+    s16 m00, m01;
+    s16 m10, m11;
+};
+
+extern struct FixedMatrix2 D_800F2ADC[16];
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>

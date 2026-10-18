@@ -1,7 +1,27 @@
 // MainObj, main_object_update_funcs[26]
 // 80058158..800586F0
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_26_ice_wall.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern void (*ice_wall_break_funcs[])(struct BaseObj*);
+
+void ice_wall_main(struct MainObj*);
+
+// ice_wall_step_funcs
+extern void (*ice_wall_step_funcs[])(struct MainObj*);
+void ice_wall_start_idle(struct MainObj* arg0);
+void ice_wall_idle(struct MainObj* arg0);
+
+// ice_wall_break_funcs
+void ice_wall_break_start(struct BaseObj*);
+void ice_wall_break_idle(struct BaseObj*);
+void ice_wall_break_remove(struct BaseObj* arg0);
+
+extern void (*ice_wall_state_funcs[])(struct MainObj*);
 
 void ice_wall_update(struct MainObj* self)
 {

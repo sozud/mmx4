@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_10_dragonfly.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 
 static u32 carry_case(u32 mode)
 {

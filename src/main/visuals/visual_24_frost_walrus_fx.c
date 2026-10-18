@@ -1,6 +1,48 @@
 // VisualObj, visual_object_update_funcs[24]
 // 800B35B8..800B3D3C
 #include "common.h"
+#include "main/visuals/visual_24_frost_walrus_fx.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// frost_walrus_fx_state_funcs
+extern void (*frost_walrus_fx_state_funcs[])(struct VisualObj*);
+void frost_walrus_fx_init(struct VisualObj*);
+void frost_walrus_fx_main(struct VisualObj*);
+
+// frost_walrus_fx_mode_funcs
+extern void (*frost_walrus_fx_mode_funcs[])(struct VisualObj*);
+void frost_walrus_fx_burst(struct VisualObj*);
+void frost_walrus_fx_breath(struct VisualObj*);
+void frost_walrus_fx_regrow(struct VisualObj*);
+void frost_walrus_fx_blizzard(struct VisualObj*);
+void frost_walrus_fx_sparkle(struct VisualObj*);
+void frost_walrus_fx_stagger(struct VisualObj*);
+
+// frost_walrus_fx_burst_funcs
+extern void (*frost_walrus_fx_burst_funcs[])(struct VisualObj*);
+
+void frost_walrus_fx_burst_move(struct VisualObj*);
+
+// frost_walrus_fx_breath_funcs
+extern void (*frost_walrus_fx_breath_funcs[])(struct VisualObj*);
+void frost_walrus_fx_breath_start(struct VisualObj*);
+void frost_walrus_fx_breath_move(struct VisualObj*);
+
+// frost_walrus_fx_blizzard_funcs
+extern void (*frost_walrus_fx_blizzard_funcs[])(struct VisualObj*);
+void frost_walrus_fx_blizzard_start(struct VisualObj*);
+void frost_walrus_fx_blizzard_move(struct VisualObj*);
+
+// frost_walrus_fx_sparkle_funcs
+extern void (*frost_walrus_fx_sparkle_funcs[])(struct VisualObj*);
+void frost_walrus_fx_sparkle_start(struct VisualObj*);
+
+// frost_walrus_fx_stagger_funcs
+extern void (*frost_walrus_fx_stagger_funcs[])(struct VisualObj*);
+void frost_walrus_fx_stagger_start(struct VisualObj*);
+void frost_walrus_fx_stagger_follow(struct VisualObj*);
 
 s32 frost_walrus_fx_blizzard_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
 s32 frost_walrus_fx_blizzard_y_vels[4] = { 0x18000, 0x28000, 0x8000, 0x30000 };

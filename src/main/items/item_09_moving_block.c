@@ -1,6 +1,13 @@
 // ItemObj, item_object_update_funcs[9]
 // 800C20AC..800C24E0
 #include "common.h"
+#include "main/items/item_09_moving_block.h"
+#include "main/objects.h"
+
+// moving_block_state_funcs
+extern void (*moving_block_state_funcs[])(struct ItemObj*);
+
+void moving_block_despawn(struct ItemObj*);
 
 extern u8 moving_block_terrain_box[4];
 

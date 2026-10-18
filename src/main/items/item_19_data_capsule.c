@@ -1,6 +1,20 @@
 // ItemObj, item_object_update_funcs[19]
 // 800C470C..800C4CE4
 #include "common.h"
+#include "main/items/item_19_data_capsule.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// data_capsule_state_funcs
+extern void (*data_capsule_state_funcs[])(struct ItemObj*);
+
+void data_capsule_idle(struct ItemObj*);
+
+// data_capsule_attached_funcs
+extern void (*data_capsule_attached_funcs[])(struct ItemObj*);
+void data_capsule_attached_init(struct ItemObj*);
+void data_capsule_attached_follow(struct ItemObj*);
+void data_capsule_idle(struct ItemObj*);
 
 struct Item19SpawnPosition {
     u16 x;

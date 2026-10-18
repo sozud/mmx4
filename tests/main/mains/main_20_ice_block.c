@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_20_ice_block.h"
 extern struct Unk_unk68 D_800FC850;
 extern struct Unk_unk68 D_800FC854;
 extern struct Unk_unk68 D_800FC858;

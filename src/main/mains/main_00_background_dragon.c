@@ -1,7 +1,37 @@
 // MainObj, main_object_update_funcs[0]
 // 80040608..80042120
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_00_background_dragon.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+
+extern s32 background_dragon_perch_points[][2];
+extern struct FixedPointPosition background_dragon_route_starts[];
+extern struct FixedPointPosition background_dragon_staging_offsets[];
+
+// background_dragon_state_funcs
+extern void (*background_dragon_state_funcs[])(struct MainObj*);
+
+void background_dragon_cleanup(struct MainObj*);
+
+void background_dragon_reset(struct MainObj*);
+void background_dragon_wait_for_animation(struct MainObj*);
+void background_dragon_fireball(struct MainObj*);
+void background_dragon_projectile_attack(struct MainObj*);
+void background_dragon_multi_shot(struct MainObj*);
+void background_dragon_sequence_begin(struct MainObj*);
+
+void background_dragon_sequence_bob(struct MainObj*);
+void background_dragon_sequence(struct MainObj*);
+
+void background_dragon_fly_to_route_start(struct MainObj*);
+void background_dragon_fly_offscreen(struct MainObj*);
+void background_dragon_fly_to_staging_position(struct MainObj*);
+void background_dragon_attach_to_background(struct MainObj*);
+void background_dragon_noop(struct MainObj*);
 
 void background_dragon_update(struct MainObj* self)
 {

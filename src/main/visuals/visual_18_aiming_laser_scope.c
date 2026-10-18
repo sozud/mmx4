@@ -1,6 +1,10 @@
 // VisualObj, visual_object_update_funcs[18]
 // 800B2544..800B2698
 #include "common.h"
+#include "main/visuals/visual_18_aiming_laser_scope.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
 
 void aiming_laser_scope_update(struct VisualObj* arg0)
 {

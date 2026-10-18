@@ -1,6 +1,26 @@
 // ShotObj, shot_object_update_funcs[0]
 // 800994A0..80099B30
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_00_dragon_shot.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+
+extern u8 dragon_shot_flame_hit_box[4];
+
+extern u8 dragon_shot_pulse_box[4];
+extern u8 dragon_shot_burn_box[4];
+
+// dragon_shot_state_funcs
+extern void (*dragon_shot_state_funcs[])(struct ShotObj*);
+
+void dragon_shot_flame(struct ShotObj*);
+void dragon_shot_pulse(struct ShotObj*);
+void dragon_shot_bomb(struct ShotObj*);
+void dragon_shot_despawn(struct ShotObj*);
+void dragon_shot_follow_owner(struct ShotObj*);
 
 u8 dragon_shot_flame_box[4] = { 0xB4, 0x1B, 0x52, 0x31 };
 u8 dragon_shot_flame_hit_box[4] = { 0x9E, 0xAE, 0x2C, 0x72 };

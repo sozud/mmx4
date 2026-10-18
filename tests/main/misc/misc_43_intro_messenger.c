@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_43_intro_messenger.h"
+#include "main/55C4.h"
 
 static u32 messenger_case(u32 delay, u32 zero, u32 observation)
 {

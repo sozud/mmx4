@@ -1,7 +1,36 @@
 // MainObj, main_object_update_funcs[7]
 // 800473C8..80047C88
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_07_ambush_gunner.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/items/item_01_stage_block.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
+
+extern u8 ambush_gunner_emerge_particles[8];
+
+extern u8 ambush_gunner_debris[];
+
+void ambush_gunner_main(struct MainObj* arg0);
+void ambush_gunner_despawn(struct MainObj* arg0);
+
+// ambush_gunner_step_funcs
+extern void (*ambush_gunner_step_funcs[5])();
+
+void ambush_gunner_emerge(struct MainObj* arg0);
+void ambush_gunner_aim(struct MainObj* arg0);
+
+void ambush_gunner_emerge_burst(struct MainObj*);
+void ambush_gunner_emerge_finish(struct MainObj*);
+
+// ambush_gunner_aim_funcs
+void ambush_gunner_aim_start(struct MainObj*);
+
+extern void (*ambush_gunner_state_funcs[])(struct MainObj*);
+extern void (*ambush_gunner_emerge_funcs[])(struct MainObj*);
+extern void (*ambush_gunner_aim_funcs[])(struct MainObj*);
 
 void ambush_gunner_update(struct MainObj* self)
 {

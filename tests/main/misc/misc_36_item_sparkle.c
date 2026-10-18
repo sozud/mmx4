@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_36_item_sparkle.h"
 
 static const u32 func_800CF300_expected[] = { 0u, 0u, 1u, 5u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_func_800CF300(u32 row)

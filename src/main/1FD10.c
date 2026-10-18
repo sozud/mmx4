@@ -1,4 +1,44 @@
 #include "common.h"
+#include "main/1EC20.h"
+#include "main/1FD10.h"
+#include "main/objects.h"
+#include "main/144A4.h"
+#include "main/128C4.h"
+#include "main/1A5BC.h"
+#include "main/2824.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/background.h"
+#include "main/game_info.h"
+#include "main/object_motion.h"
+#include "main/object_update.h"
+#include "main/stage_objects.h"
+#include "main/xa_sequence_data.h"
+
+// D_800F486C
+extern void (*D_800F486C[])(struct EngineObj*);
+void func_8002F510(struct EngineObj*);
+void func_8002F524(struct EngineObj*);
+void func_8002F584(struct EngineObj*);
+
+// D_800F487C
+extern void (*D_800F487C[])(struct EngineObj*);
+void func_8002F6E4(struct EngineObj*);
+void func_8002F7A8(struct EngineObj*);
+void func_8002F828(struct EngineObj*);
+void func_8002F87C(struct EngineObj*);
+void func_8002F8F8(struct EngineObj*);
+void func_8002F92C(struct EngineObj*);
+void func_8002F9EC(struct EngineObj*);
+void func_8002FAB0(struct EngineObj*);
+void func_8002FAE4(struct EngineObj*);
+void func_8002FB54(struct EngineObj*);
+
+// engine_state_3_update_func
+extern void (*engine_state_3_update_funcs[])(struct EngineObj*);
+
+void func_8002F698(struct EngineObj* arg0);
+void func_8002FBDC(struct EngineObj* arg0);
 
 void func_8002F510(struct EngineObj* arg0)
 {

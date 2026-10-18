@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_08_ice_shard.h"
 
 static u32 dust_case(u32 mode, u32 observation)
 {

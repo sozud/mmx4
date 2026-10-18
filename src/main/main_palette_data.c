@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/main_palette_data.h"
+#include "main/55C4.h"
 
 RECT D_800F1658 = { 0, 480, 256, 8 };
 

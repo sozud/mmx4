@@ -1,6 +1,36 @@
 // MiscObj, misc_object_update_funcs[24]
 // 800CBECC..800CC460
 #include "common.h"
+#include "main/misc/misc_24_enemy_hatch.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+
+// enemy_hatch_state_funcs
+extern void (*enemy_hatch_state_funcs[])(struct MiscObj*);
+void func_800CBF14(struct MiscObj*);
+void enemy_hatch_main(struct MiscObj*);
+void enemy_hatch_despawn(struct MiscObj*);
+
+// enemy_hatch_step_funcs
+extern void (*enemy_hatch_step_funcs[])(struct MiscObj*);
+void enemy_hatch_wait(struct MiscObj*);
+void enemy_hatch_release(struct MiscObj*);
+void enemy_hatch_close(struct MiscObj*);
+
+// enemy_hatch_wait_funcs
+extern void (*enemy_hatch_wait_funcs[])(struct MiscObj*);
+void enemy_hatch_wait_start(struct MiscObj*);
+void func_800CC114(struct MiscObj*);
+
+// enemy_hatch_release_funcs
+extern void (*enemy_hatch_release_funcs[])(struct MiscObj*);
+void enemy_hatch_release_spawn(struct MiscObj*);
+void enemy_hatch_release_wait(struct MiscObj*);
+
+// enemy_hatch_close_funcs
+extern void (*enemy_hatch_close_funcs[])(struct MiscObj*);
+void enemy_hatch_close_start(struct MiscObj*);
+void enemy_hatch_close_finish(struct MiscObj*);
 
 extern union AnimationStep* enemy_hatch_animations[4];
 

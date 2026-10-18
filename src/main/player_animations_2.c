@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/player_animations_2.h"
 
 u8 D_8011A030[256] = {
     0x01,

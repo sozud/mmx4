@@ -1,6 +1,19 @@
 // VisualObj, visual_object_update_funcs[12]
 // 800B19BC..800B1AF8
 #include "common.h"
+#include "main/visuals/visual_12_ride_dust.h"
+#include "main/visuals/visual_13_ride_chaser_jet.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern u8 ride_dust_animations[];
+extern u8 ride_dust_layers[];
+
+// ride_dust_state_funcs
+extern void (*ride_dust_state_funcs[])(struct VisualObj*);
+void ride_dust_init(struct VisualObj*);
+void ride_dust_main(struct VisualObj*);
+void ride_dust_despawn(struct VisualObj*);
 
 void ride_dust_update(struct VisualObj* arg0)
 {

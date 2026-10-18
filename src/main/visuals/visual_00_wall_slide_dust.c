@@ -1,6 +1,18 @@
 // VisualObj, visual_object_update_funcs[0]
 // 800AEAC0..800AED18
 #include "common.h"
+#include "main/visuals/visual_00_wall_slide_dust.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+
+extern struct VisualAttachmentOffset wall_slide_dust_offsets[2];
+
+// wall_slide_dust_state_funcs
+extern void (*wall_slide_dust_state_funcs[])(struct VisualObj*, struct PlayerObj*);
+void wall_slide_dust_init(struct VisualObj*, struct PlayerObj*);
+void wall_slide_dust_main(struct VisualObj*, struct PlayerObj*);
+void wall_slide_dust_fade(struct VisualObj*, struct PlayerObj*);
 
 void wall_slide_dust_attach(struct VisualObj* arg0, struct PlayerObj* arg1);
 

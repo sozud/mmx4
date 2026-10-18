@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/shots/general_shot_debris_data.h"
 
 u8 general_shot_prop_debris[6] = { 40, 41, 42, 43, 44, 45 };
 

@@ -1,6 +1,12 @@
 // LayerObj, layer_object_update_funcs[7]
 // 800DA878..800DA984
 #include "common.h"
+#include "main/layers/layer_07_space_port_parallax.h"
+#include "main/objects.h"
+#include "main/tile_effects.h"
+
+// space_port_parallax_state_funcs
+extern void (*space_port_parallax_state_funcs[])(struct LayerObj*);
 
 extern struct TileEffectRecord** tile_effect_tables[26];
 

@@ -1,9 +1,134 @@
 // MainObj, main_object_update_funcs[69]
 // 80085F08..80088BA0
 #include "common.h"
+#include "main/mains/main_69_colonel.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+
+extern struct Unk_unk68 D_8010450C;
+extern struct Unk_unk68 D_80104510;
+
+// colonel_state_funcs
+extern void (*colonel_state_funcs[])(struct MainObj*);
+void colonel_spawn(struct MainObj* arg0);
+
+void colonel_death(struct MainObj* arg0);
+
+// colonel_spawn_funcs
+extern void (*colonel_spawn_funcs[])(struct MainObj*);
+
+// colonel_step_funcs
+void colonel_start_fight(struct MainObj* arg0);
+void colonel_intro(struct MainObj* arg0);
+void colonel_guard(struct MainObj* arg0);
+void colonel_teleport_slash(struct MainObj* arg0);
+void colonel_dash(struct MainObj* arg0);
+void colonel_saber_waves(struct MainObj* arg0);
+void colonel_flash_strike(struct MainObj* arg0);
+void colonel_jump_slam(struct MainObj* arg0);
+
+// colonel_death_funcs
+extern void (*colonel_death_funcs[])(struct MainObj*);
+void colonel_defeat(struct MainObj* arg0);
+void colonel_retreat(struct MainObj* arg0);
+
+// colonel_defeat_funcs
+extern void (*colonel_defeat_funcs[])(struct MainObj*);
+
+void colonel_defeat_next(struct MainObj* arg0);
+void colonel_defeat_dialogue(struct MainObj*);
+void colonel_defeat_wait_dialogue(struct MainObj*);
+
+void colonel_defeat_wait_explosion(struct MainObj*);
+
+// colonel_retreat_funcs
+extern void (*colonel_retreat_funcs[])(struct MainObj*);
+void colonel_retreat_start(struct MainObj*);
+void colonel_retreat_vanish(struct MainObj*);
+void func_80086860(struct MainObj*);
+void colonel_retreat_reappear(struct MainObj*);
+void colonel_retreat_wait_dialogue(struct MainObj*);
+void colonel_retreat_start_again(struct MainObj*);
+void colonel_retreat_vanish_again(struct MainObj*);
+void colonel_retreat_finish(struct MainObj*);
+
+// colonel_intro_funcs
+extern void (*colonel_intro_funcs[])(struct MainObj*);
+void colonel_intro_port(struct MainObj* arg0);
+void colonel_intro_hall(struct MainObj* arg0);
+
+// colonel_intro_port_funcs
+extern void (*colonel_intro_port_funcs[])(struct MainObj*);
+
+void colonel_intro_port_blink_in(struct MainObj*);
+void colonel_intro_port_pose(struct MainObj*);
+void colonel_intro_port_voice(struct MainObj*);
+void colonel_intro_port_fill_health(struct MainObj*);
+
+// colonel_intro_hall_funcs
+extern void (*colonel_intro_hall_funcs[])(struct MainObj*);
+
+void colonel_intro_hall_portrait_player(struct MainObj*);
+void colonel_intro_hall_dialogue(struct MainObj*);
+void colonel_intro_hall_portrait_colonel(struct MainObj*);
+void colonel_intro_hall_wait(struct MainObj*);
+void colonel_intro_hall_blink_in(struct MainObj*);
+void colonel_intro_hall_flash(struct MainObj*);
+
+void colonel_intro_hall_fill_health(struct MainObj*);
+
+// colonel_guard_funcs
+extern void (*colonel_guard_funcs[])(struct MainObj*);
+void colonel_guard_pick(struct MainObj*);
+void colonel_guard_watch(struct MainObj*);
+void colonel_guard_block(struct MainObj*);
+void colonel_guard_recover(struct MainObj*);
+
+// colonel_teleport_slash_funcs
+extern void (*colonel_teleport_slash_funcs[])(struct MainObj*);
+void colonel_teleport_slash_vanish(struct MainObj*);
+void colonel_teleport_slash_shake(struct MainObj*);
+
+// colonel_dash_funcs
+extern void (*colonel_dash_funcs[])(struct MainObj*);
+void colonel_dash_start(struct MainObj*);
+
+// colonel_saber_waves_funcs
+extern void (*colonel_saber_waves_funcs[])(struct MainObj*);
+void colonel_saber_waves_start(struct MainObj*);
+
+void colonel_saber_waves_recover(struct MainObj*);
+void colonel_saber_waves_wait(struct MainObj*);
+
+// colonel_flash_strike_funcs
+extern void (*colonel_flash_strike_funcs[])(struct MainObj*);
+void colonel_flash_strike_vanish(struct MainObj*);
+void colonel_flash_strike_shake(struct MainObj*);
+void colonel_flash_strike_reappear(struct MainObj*);
+void colonel_flash_strike_slide(struct MainObj*);
+void func_800881F8(struct MainObj*);
+void colonel_flash_strike_flash(struct MainObj*);
+void func_800883CC(struct MainObj*);
+void colonel_flash_strike_wait(struct MainObj*);
+void colonel_flash_strike_recover(struct MainObj*);
+
+// colonel_jump_slam_funcs
+extern void (*colonel_jump_slam_funcs[])(struct MainObj*);
+void colonel_jump_slam_jump(struct MainObj*);
+void colonel_jump_slam_rise(struct MainObj*);
+void colonel_jump_slam_land(struct MainObj*);
+void colonel_jump_slam_drop(struct MainObj*);
+
+void colonel_jump_slam_recover(struct MainObj*);
 
 void colonel_face_center(struct BaseObj* self);
-#include "func_tables.h"
 
 void colonel_update(struct MainObj* self)
 {

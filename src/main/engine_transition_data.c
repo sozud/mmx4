@@ -1,4 +1,7 @@
 #include "common.h"
+#include "main/10CA4.h"
+#include "main/11184.h"
+#include "main/engine_transition_data.h"
 
 void (*D_800F2438[7])(struct EngineObj*) = {
     func_80020580,

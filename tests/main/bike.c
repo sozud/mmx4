@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/bike.h"
+#include "main/195B4.h"
 void func_8003D01C(struct RideArmorObj*);
 extern union AnimationStep* D_800F8FC4[38];
 extern u32* D_80137E08;

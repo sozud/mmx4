@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_12_hover_sentry.h"
+#include "main/mains/main_23_slope_skier.h"
+#include "main/55C4.h"
 extern union AnimationStep* hover_sentry_animations[];
 extern struct Unk_unk68 D_800FB684;
 extern struct Unk_unk68 D_800FB688;

@@ -1,6 +1,25 @@
 // ItemObj, item_object_update_funcs[22]
 // 800C5544..800C5C4C
 #include "common.h"
+#include "main/items/item_22_layout_gate.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/1A5BC.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+
+// layout_gate_state_funcs
+extern void (*layout_gate_state_funcs[])(struct ItemObj*);
+void layout_gate_init(struct ItemObj*);
+void layout_gate_main(struct ItemObj*);
+void layout_gate_despawn(struct ItemObj*);
+void layout_gate_finish(struct ItemObj*);
+
+// layout_gate_step_funcs
+extern void (*layout_gate_step_funcs[])(struct ItemObj*);
+void layout_gate_wait_hit(struct ItemObj*);
+void func_800C580C(struct ItemObj*);
 
 struct Item22LayoutDescriptor {
     u8 start;

@@ -1,5 +1,9 @@
 // 80028DB4..80029420
 #include "common.h"
+#include "main/objects.h"
+#include "main/195B4.h"
+#include "main/stage_object_record_tables.h"
+#include "main/stage_objects.h"
 
 extern u8 D_800F4A50[16];
 extern u8 D_800F4A60[16];

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/195B4.h"
 
 static u32 record_case(u32 mode)
 {

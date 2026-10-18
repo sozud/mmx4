@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_27_boss_teleporter.h"
 
 static const u32 func_800C7970_expected[] = { 1u };
 static u32 test_func_800C7970(u32 row)

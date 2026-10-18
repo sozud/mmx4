@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_23_explosion_puff.h"
 
 static s32 sprite_frames[8] = { 16, 20, 24, 28, 1, 2, 3, 4 };
 static u32 puff_case(u32 mode)

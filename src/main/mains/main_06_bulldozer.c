@@ -1,7 +1,33 @@
 // MainObj, main_object_update_funcs[6]
 // 80046B30..800473C8
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_06_bulldozer.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// bulldozer_state_funcs
+extern void (*bulldozer_state_funcs[])(struct MainObj*);
+
+void bulldozer_cleanup(struct MainObj*);
+
+// bulldozer_step_funcs
+void bulldozer_resume_step(struct MainObj* arg0);
+void bulldozer_rev(struct MainObj* arg0);
+void bulldozer_charge(struct MainObj* arg0);
+
+// bulldozer_rev_funcs
+void bulldozer_rev_begin(struct MainObj*);
+void bulldozer_rev_wait(struct MainObj*);
+
+// bulldozer_charge_funcs
+void bulldozer_charge_start(struct MainObj*);
+void bulldozer_charge_move(struct MainObj* arg0);
+
+extern void (*bulldozer_rev_funcs[])(struct MainObj*);
+extern void (*bulldozer_charge_funcs[])(struct MainObj*);
 
 void bulldozer_update(struct MainObj* self)
 {

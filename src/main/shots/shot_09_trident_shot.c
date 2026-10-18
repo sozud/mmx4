@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[9]
 // 8009B07C..8009B3E8
 #include "common.h"
+#include "main/shots/shot_09_trident_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// trident_shot_state_funcs
+extern void (*trident_shot_state_funcs[])(struct ShotObj*);
+
+void trident_shot_flash(struct ShotObj*);
+void trident_shot_flash_despawn(struct ShotObj*);
+
+void trident_shot_fly(struct ShotObj*);
+void trident_shot_despawn(struct ShotObj*);
 
 u8 trident_shot_flash_box[4] = { 0xCB, 0xD0, 0x2C, 0x3A };
 u8 trident_shot_hit_box[4] = { 0xFB, 0xFC, 0x0D, 0x06 };

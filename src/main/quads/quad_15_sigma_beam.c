@@ -1,6 +1,23 @@
 // QuadObj, quad_object_update_funcs[15]
 // 800D7CEC..800D802C
 #include "common.h"
+#include "main/objects.h"
+#include "main/quads/quad_15_sigma_beam.h"
+#include "main/55C4.h"
+
+extern s8 sigma_beam_sweep_speeds[];
+
+// sigma_beam_step_funcs
+extern void (*sigma_beam_step_funcs[])(struct QuadObj*);
+void sigma_beam_extend(struct QuadObj*);
+
+void sigma_beam_fade(struct QuadObj*);
+
+// sigma_beam_state_funcs
+extern void (*sigma_beam_state_funcs[])(struct QuadObj*);
+void sigma_beam_init(struct QuadObj*);
+void sigma_beam_main(struct QuadObj*);
+void sigma_beam_despawn(struct QuadObj*);
 
 void sigma_beam_init(struct QuadObj* arg0)
 {

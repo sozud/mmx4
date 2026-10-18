@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[44]
 // 800BE83C..800BE9A0
 #include "common.h"
+#include "main/effects/effect_44_stage_dialogue_trigger.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+
+// stage_dialogue_trigger_state_funcs
+extern void (*stage_dialogue_trigger_state_funcs[])(struct EffectObj*);
+void stage_dialogue_trigger_wait(struct EffectObj*);
+void stage_dialogue_trigger_talk(struct EffectObj*);
+void stage_dialogue_trigger_finish(struct EffectObj*);
 
 void stage_dialogue_trigger_update(struct EffectObj* self)
 {

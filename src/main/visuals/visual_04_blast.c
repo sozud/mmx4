@@ -1,6 +1,9 @@
 // VisualObj, visual_object_update_funcs[4]
 // 800AFB50..800AFC9C
 #include "common.h"
+#include "main/visuals/visual_04_blast.h"
+#include "main/55C4.h"
+#include "main/objects.h"
 
 void blast_animate(struct VisualObj* arg0);
 

@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_43_web_spider.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 void func_80065168(struct MainObj*, s16, s16);
 void func_800643B0(struct MainObj*);
 void web_spider_attack_web(struct MainObj*);

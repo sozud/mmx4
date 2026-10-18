@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/unks/unk_01_menu_label.h"
 
 struct menu_label_highlight_case {
     u32 unk7, character_mode, cur_character;

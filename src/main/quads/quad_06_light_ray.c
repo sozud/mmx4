@@ -1,6 +1,14 @@
 // QuadObj, quad_object_update_funcs[6]
 // 800D5934..800D5C54
 #include "common.h"
+#include "main/quads/quad_06_light_ray.h"
+#include "main/objects.h"
+
+// light_ray_state_funcs
+extern void (*light_ray_state_funcs[])(struct QuadObj*);
+
+void light_ray_main(struct QuadObj*);
+void light_ray_despawn(struct QuadObj*);
 
 // light_ray_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);

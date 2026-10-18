@@ -1,7 +1,36 @@
 // MainObj, main_object_update_funcs[53]
 // 8006AF70..8006BB00
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_53_wave_rider.h"
+#include "main/misc/misc_00_static_sprite.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 wave_rider_body_hurt_box;
+extern struct Unk_unk68 wave_rider_rider_hurt_box[2];
+extern u8 wave_rider_debris[8];
+extern u8 wave_rider_rider_debris[8];
+
+// wave_rider_wait_funcs
+extern void (*wave_rider_wait_funcs[])(struct MainObj*);
+
+// wave_rider_step_funcs
+extern void (*wave_rider_step_funcs[])(struct MainObj*);
+void wave_rider_idle(struct MainObj* arg0);
+
+void wave_rider_catch_up(struct MainObj* arg0);
+void wave_rider_leap(struct MainObj* arg0);
+void wave_rider_air(struct MainObj* arg0);
+
+// wave_rider_state_funcs
+extern void (*wave_rider_state_funcs[])(struct MainObj*);
+void wave_rider_wait(struct MainObj* arg0);
+void wave_rider_main(struct MainObj*);
+void wave_rider_despawn(struct MainObj* arg0);
 
 // wave_rider_init
 INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006AF70);

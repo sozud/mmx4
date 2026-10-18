@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_00_static_sprite.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_spawn_common_effect(void)

@@ -1,5 +1,31 @@
 // 8001FAFC..800204A4
 #include "common.h"
+#include "main/102FC.h"
+#include "main/10CA4.h"
+#include "main/11184.h"
+#include "main/13A8C.h"
+#include "main/1FD10.h"
+#include "main/2824.h"
+#include "main/character_select.h"
+#include "main/engine.h"
+#include "main/engine_dispatch_data.h"
+#include "main/objects.h"
+#include "main/144A4.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/object_update.h"
+#include "main/pause_menu.h"
+#include "main/195B4.h"
+#include "main/323C.h"
+#include "main/background.h"
+#include "main/player_common.h"
+#include "main/stage_objects.h"
+
+extern RECT D_800F2428;
+extern RECT D_800F2430;
+
+// D_800F241C
+extern void (*D_800F241C[])(struct EngineObj*);
 
 void func_80012F44(void);
 s32 func_8001FD7C(struct EngineObj* arg0);

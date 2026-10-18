@@ -1,6 +1,22 @@
 // QuadObj, quad_object_update_funcs[3]
 // 800D4C50..800D526C
 #include "common.h"
+#include "main/quads/quad_02_stage_select_flyout.h"
+#include "main/quads/quad_03_boss_warning_quad.h"
+#include "main/objects.h"
+
+// boss_warning_quad_step_funcs
+extern void (*boss_warning_quad_step_funcs[])(struct QuadObj*);
+void boss_warning_quad_open(struct QuadObj*);
+void boss_warning_quad_hold(struct QuadObj*);
+void boss_warning_quad_close(struct QuadObj*);
+
+// boss_warning_quad_state_funcs
+extern void (*boss_warning_quad_state_funcs[])(struct QuadObj*);
+
+void func_800D5144(struct QuadObj*);
+void boss_warning_quad_despawn(struct QuadObj*);
+
 #ifdef MMX4_PC
 extern u8 boss_warning_quad_blink_levels[16];
 #endif

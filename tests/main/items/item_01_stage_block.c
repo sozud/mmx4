@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_01_stage_block.h"
 
 struct func_800BF638_case {
     u32 stage, pool_0_full, arg1;

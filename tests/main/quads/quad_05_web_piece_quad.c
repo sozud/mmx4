@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_05_web_piece_quad.h"
 
 static u32 quad_case(u32 mode, u32 observation)
 {

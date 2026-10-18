@@ -1,6 +1,17 @@
 // WeaponObj, weapon_object_update_funcs[57]
 // 80098838..80098990
 #include "common.h"
+#include "main/weapons/weapon_57_ride_chaser_ram.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern u8 ride_chaser_ram_hit_box[];
+
+// ride_chaser_ram_state_funcs
+extern void (*ride_chaser_ram_state_funcs[])(struct WeaponObj*);
+void ride_chaser_ram_init(struct WeaponObj*);
+void ride_chaser_ram_main(struct WeaponObj*);
+void ride_chaser_ram_despawn(struct WeaponObj*);
 
 void ride_chaser_ram_update(struct WeaponObj* arg0)
 {

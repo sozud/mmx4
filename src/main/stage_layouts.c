@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/stage_layouts.h"
 
 extern u8 D_801100A4[];
 extern u8 D_801103A4[];

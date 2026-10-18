@@ -1,6 +1,31 @@
 // QuadObj, quad_object_update_funcs[16]
 // 800D802C..800D8648
 #include "common.h"
+#include "main/quads/quad_16_sigma_laser.h"
+#include "main/objects.h"
+
+extern u8 sigma_laser_flash_colors[];
+
+extern s16 sigma_laser_end_offsets[8][2];
+
+// sigma_laser_step_funcs
+extern void (*sigma_laser_step_funcs[])(struct QuadObj*);
+void sigma_laser_wait(struct QuadObj*);
+void func_800D8180(struct QuadObj*);
+void sigma_laser_flash(struct QuadObj*);
+void func_800D82E8(struct QuadObj*);
+
+// sigma_laser_cancel_funcs
+extern void (*sigma_laser_cancel_funcs[])(struct QuadObj*);
+void sigma_laser_cancel_wait(struct QuadObj*);
+
+// sigma_laser_state_funcs
+extern void (*sigma_laser_state_funcs[])(struct QuadObj*);
+void sigma_laser_cancel(struct QuadObj*);
+
+void sigma_laser_main(struct QuadObj*);
+void sigma_laser_despawn(struct QuadObj*);
+void sigma_laser_cancel(struct QuadObj*);
 
 // sigma_laser_init
 INCLUDE_ASM("main/nonmatchings/quads/quad_16_sigma_laser", func_800D802C);

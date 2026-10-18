@@ -1,4 +1,10 @@
 #include "common.h"
+#include "main/102FC.h"
+#include "main/125BC.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/13A8C.h"
+#include "main/323C.h"
 
 struct PcCdLocBuffer {
     CdlLOC loc;

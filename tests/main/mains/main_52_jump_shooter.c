@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_52_jump_shooter.h"
 
 static u32 aim_case(u32 mode)
 {

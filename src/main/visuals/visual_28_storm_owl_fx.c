@@ -1,6 +1,14 @@
 // VisualObj, visual_object_update_funcs[28]
 // 800B3E7C..800B41CC
 #include "common.h"
+#include "main/visuals/visual_28_storm_owl_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// storm_owl_fx_state_funcs
+extern void (*storm_owl_fx_state_funcs[])(struct VisualObj*);
+
+void storm_owl_fx_despawn(struct VisualObj*);
 
 void storm_owl_fx_update(struct VisualObj* arg0)
 {

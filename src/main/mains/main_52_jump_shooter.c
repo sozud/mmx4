@@ -1,9 +1,44 @@
 // MainObj, main_object_update_funcs[52]
 // 8006A50C..8006AF70
 #include "common.h"
+#include "main/mains/main_52_jump_shooter.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+// jump_shooter_state_funcs
+extern void (*jump_shooter_state_funcs[])(struct MainObj*);
+void func_8006A55C(struct MainObj*);
+void jump_shooter_main(struct MainObj*);
+void jump_shooter_despawn(struct MainObj*);
+
+// jump_shooter_step_funcs
+void jump_shooter_resume_step(struct MainObj* arg0);
+void jump_shooter_fire(struct MainObj* arg0);
+void jump_shooter_walk(struct MainObj* arg0);
+void jump_shooter_jump(struct MainObj* arg0);
+
+// jump_shooter_fire_funcs
+extern void (*jump_shooter_fire_funcs[])(struct MainObj*);
+void jump_shooter_fire_aim(struct MainObj*);
+void jump_shooter_fire_ready(struct MainObj*);
+
+void jump_shooter_fire_end(struct MainObj*);
+
+// jump_shooter_walk_funcs
+extern void (*jump_shooter_walk_funcs[])(struct MainObj*);
+void jump_shooter_walk_start(struct MainObj*);
+
+// jump_shooter_jump_funcs
+extern void (*jump_shooter_jump_funcs[])(struct MainObj*);
+
+void jump_shooter_jump_air(struct MainObj*);
+void jump_shooter_jump_land(struct MainObj*);
 
 void jump_shooter_face_player(struct AnimatedObj* self);
-#include "func_tables.h"
 
 extern u8 jump_shooter_debris[];
 extern void (*jump_shooter_step_funcs[])(struct MainObj*);

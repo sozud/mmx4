@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_29_cannon_missile.h"
 
 static const u32 cannon_missile_slow_expected[] = { 0u, 0u, 0u, 0u, 0xFFu, 0u, 0u };
 static u32 test_cannon_missile_slow(u32 row)

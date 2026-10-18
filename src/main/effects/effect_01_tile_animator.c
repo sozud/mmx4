@@ -1,6 +1,12 @@
 // EffectObj, effect_object_update_funcs[1]
 // 800B58A0..800B5960
 #include "common.h"
+#include "main/effects/effect_01_tile_animator.h"
+#include "main/CB184.h"
+
+// tile_animator_state_funcs
+extern void (*tile_animator_state_funcs[])(struct EffectObj*);
+void tile_animator_init(struct EffectObj*);
 
 void tile_animator_update(struct EffectObj* self)
 {

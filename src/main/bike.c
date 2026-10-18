@@ -1,12 +1,38 @@
 // RideArmorObj, D_800F2AD4[0]
 // 8003B3DC..8003D3F8
 #include "common.h"
+#include "main/bike.h"
+#include "main/misc/misc_00_static_sprite.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/player_weapon.h"
+
+extern s32 D_800F9070[2];
+extern s32 D_800F9078[2];
+extern s32 D_800F9080[2];
+extern s32 D_800F9088[2];
+
+extern union AnimationStep D_800F8DC8[];
+
+void func_8003D338(struct AnimatedObj*);
+void func_8003D39C(struct MainObj*);
+
+// D_800F90D8
+extern void (*D_800F90D8[])(struct RideArmorObj*);
+
+void func_8003BA24(struct RideArmorObj*);
+void func_8003BAE8(struct RideArmorObj*);
+
+void func_8003BDA0(struct RideArmorObj*);
 
 void func_8003C8F4(struct RideArmorObj* arg0);
 void func_8003CB08(struct RideArmorObj* arg0);
 void func_8003CCBC(struct RideArmorObj* arg0);
 void func_8003CD38(struct RideArmorObj* arg0);
-#include "func_tables.h"
 
 void func_8003B3DC(struct RideArmorObj* arg0)
 {

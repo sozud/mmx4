@@ -1,5 +1,63 @@
 // 800193D8..8001C6DC
 #include "common.h"
+#include "main/2824.h"
+#include "main/menu.h"
+#include "main/objects.h"
+#include "main/102FC.h"
+#include "main/144A4.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/E47C.h"
+#include "main/E47C_menu_data.h"
+#include "main/memcard.h"
+#include "main/object_update.h"
+
+struct MenuTextureData {
+    u32 texture[96];
+#ifdef MMX4_WIN32
+    char product_codes[4][16];
+    char sc[4];
+    char title[12];
+#endif
+    s16 bounds[8];
+};
+
+extern u8 D_800F1E90[];
+extern u8 D_800F1EAC[];
+
+void func_8001C210(void);
+
+extern u8 D_800F1FC0[32];
+extern struct MenuTextureData D_800F1FE0;
+
+// D_800F1F64
+extern void (*D_800F1F64[])(struct EngineObj* arg0);
+void func_800194C8(struct EngineObj* arg0);
+
+void func_8001989C(struct EngineObj* arg0);
+void func_80019B64(struct EngineObj* arg0);
+void func_80019EF0(struct EngineObj* arg0);
+void func_8001A178(struct EngineObj* arg0);
+void func_8001A308(struct EngineObj* arg0);
+
+void func_8001A860(struct EngineObj* arg0);
+void func_8001A8E8(struct EngineObj* arg0);
+
+// D_800F1F94
+extern void (*D_800F1F94[])(struct EngineObj* arg0);
+void func_80019BA0(struct EngineObj* arg0);
+void func_80019BF4(struct EngineObj* arg0);
+void func_80019D04(struct EngineObj* arg0);
+
+// D_800F1FA0
+extern void (*D_800F1FA0[])(struct EngineObj* arg0);
+void func_8001AA98(struct EngineObj* arg0);
+void func_8001ABDC(struct EngineObj* arg0);
+void func_8001AE8C(struct EngineObj* arg0);
+void func_8001B10C(struct EngineObj* arg0);
+void func_8001B388(struct EngineObj* arg0);
+void func_8001B4E4(struct EngineObj* arg0);
+void func_8001B558(struct EngineObj* arg0);
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>

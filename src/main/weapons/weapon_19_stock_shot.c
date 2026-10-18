@@ -1,6 +1,17 @@
 // WeaponObj, weapon_object_update_funcs[19]
 // 800927EC..800929A0
 #include "common.h"
+#include "main/weapons/weapon_00_lemon.h"
+#include "main/weapons/weapon_19_stock_shot.h"
+#include "main/weapons/weapon_20_plasma_shot.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+
+// stock_shot_state_funcs
+extern void (*stock_shot_state_funcs[])(struct WeaponObj*);
+void stock_shot_init(struct WeaponObj*);
+void stock_shot_main(struct WeaponObj*);
 
 void stock_shot_update(struct WeaponObj* arg0)
 {

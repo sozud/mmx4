@@ -1,6 +1,18 @@
 // EffectObj, effect_object_update_funcs[39]
 // 800BDE68..800BE038
 #include "common.h"
+#include "main/effects/effect_39_tile_strip_anim.h"
+#include "main/CB184.h"
+
+extern u8* tile_strip_anim_scripts[2];
+
+void tile_strip_anim_step(struct EffectObj*);
+void tile_strip_anim_refresh_row(struct EffectObj*);
+
+// tile_strip_anim_state_funcs
+extern void (*tile_strip_anim_state_funcs[])(struct EffectObj*);
+void tile_strip_anim_init(struct EffectObj*);
+void tile_strip_anim_main(struct EffectObj*);
 
 void tile_strip_anim_update(struct EffectObj* self)
 {

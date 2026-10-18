@@ -1,6 +1,26 @@
 // ShotObj, shot_object_update_funcs[51]
 // 800AA5E0..800AAAD4
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_48_double_ball.h"
+#include "main/shots/shot_49_double_aerial.h"
+#include "main/shots/shot_51_double_mine.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+// double_mine_step_funcs
+extern void (*double_mine_step_funcs[])(struct ShotObj*);
+
+void double_mine_dash_start(struct ShotObj*);
+void double_mine_dash(struct ShotObj*);
+void double_mine_fire(struct ShotObj*);
+void double_mine_cooldown(struct ShotObj*);
+
+// double_mine_state_funcs
+extern void (*double_mine_state_funcs[])(struct ShotObj*);
+
+void double_mine_main(struct ShotObj*);
 
 void (*double_mine_step_funcs[])(struct ShotObj*) = {
     double_toss_land,

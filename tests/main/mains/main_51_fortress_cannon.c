@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_51_fortress_cannon.h"
+#include "main/1A5BC.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 void fortress_cannon_fire_volley(struct MainObj*);

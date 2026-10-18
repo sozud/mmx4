@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_07_ambush_gunner.h"
+#include "main/55C4.h"
 extern union AnimationStep* ambush_gunner_animations[9];
 extern struct Unk_unk68 ambush_gunner_terrain_box;
 extern u32* D_80137E08;

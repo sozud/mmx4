@@ -1,10 +1,61 @@
 // MainObj, main_object_update_funcs[16]
 // 8004E890..8004FF90
 #include "common.h"
+#include "main/mains/main_16_trident_mech.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+extern struct Unk_unk68 trident_mech_charge_attack_box;
+
+void trident_mech_check_fall(struct MainObj*);
+
+extern u8 trident_mech_debris[12];
+
+// trident_mech_state_funcs
+extern void (*trident_mech_state_funcs[])(struct MainObj*);
+
+void trident_mech_explode(struct MainObj*);
+void trident_mech_despawn(struct MainObj*);
+
+// trident_mech_step_funcs
+extern void (*trident_mech_step_funcs[11])();
+
+void trident_mech_idle(struct MainObj* arg0);
+void trident_mech_fall(struct MainObj* arg0);
+void trident_mech_jump(struct MainObj* arg0);
+void func_8004F1A0(struct MainObj* arg0);
+void trident_mech_charge(struct MainObj* arg0);
+void trident_mech_fan_shot(struct MainObj* arg0);
+void trident_mech_double_shot(struct MainObj* arg0);
+
+void trident_mech_wait_behind(struct MainObj* arg0);
+
+// trident_mech_idle_funcs
+void trident_mech_idle_start(struct MainObj*);
+
+void trident_mech_jump_start(struct MainObj*);
+void trident_mech_jump_rise(struct MainObj*);
+
+// trident_mech_charge_funcs
+void trident_mech_charge_start(struct MainObj*);
+void trident_mech_charge_wind_up(struct MainObj*);
+void trident_mech_charge_attack(struct MainObj*);
+
+void trident_mech_fan_shot_end(struct MainObj*);
+
+void trident_mech_double_shot_recover(struct MainObj*);
+
+extern void (*trident_mech_idle_funcs[])(struct MainObj*);
+extern void (*trident_mech_jump_funcs[])(struct MainObj*);
+extern void (*trident_mech_charge_funcs[])(struct MainObj*);
+extern void (*trident_mech_fan_shot_funcs[])(struct MainObj*);
+extern void (*trident_mech_double_shot_funcs[])(struct MainObj*);
 
 void trident_mech_face_player(struct AnimatedObj* self);
 void trident_mech_fire_tracked_shot(struct MainObj* self);
-#include "func_tables.h"
 
 void trident_mech_update(struct MainObj* self)
 {

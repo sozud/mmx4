@@ -1,6 +1,13 @@
 // MiscObj, misc_object_update_funcs[0]
 // 800C7A68..800C7BF4
 #include "common.h"
+#include "main/misc/misc_00_static_sprite.h"
+#include "main/objects.h"
+
+// static_sprite_state_funcs
+void static_sprite_init(struct MiscObj* arg0);
+void static_sprite_main(struct MiscObj* arg0);
+void static_sprite_despawn(struct MiscObj* arg0);
 
 extern void (*static_sprite_state_funcs[])(struct MiscObj*);
 

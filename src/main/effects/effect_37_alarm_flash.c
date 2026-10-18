@@ -1,6 +1,20 @@
 // EffectObj, effect_object_update_funcs[37]
 // 800BD384..800BD654
 #include "common.h"
+#include "main/effects/effect_37_alarm_flash.h"
+#include "main/1A5BC.h"
+#include "main/objects.h"
+
+// alarm_flash_state_funcs
+extern void (*alarm_flash_state_funcs[])(struct EffectObj*);
+void func_800BD3C0(struct EffectObj*);
+void alarm_flash_main(struct EffectObj*);
+void alarm_flash_despawn(struct EffectObj*);
+
+// alarm_flash_funcs
+extern void (*alarm_flash_funcs[])(struct EffectObj*);
+
+void alarm_flash_white(struct EffectObj*);
 
 void alarm_flash_update(struct EffectObj* self)
 {

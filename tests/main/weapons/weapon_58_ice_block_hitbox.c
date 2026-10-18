@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_58_ice_block_hitbox.h"
 extern u8 ice_block_hitbox_box_0[4], ice_block_hitbox_box_1[4], ice_block_hitbox_box_2[4];
 
 static u32 initialize_variant(s8 variant)

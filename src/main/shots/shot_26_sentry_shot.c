@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[26]
 // 8009EE68..8009F240
 #include "common.h"
+#include "main/shots/shot_26_sentry_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// sentry_shot_state_funcs
+extern void (*sentry_shot_state_funcs[])(struct ShotObj*);
+void func_8009EEC8(struct ShotObj*);
+void sentry_shot_fly(struct ShotObj*);
+void sentry_shot_despawn(struct ShotObj*);
+void sentry_shot_idle(struct ShotObj*);
 
 u8 sentry_shot_hit_boxes[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
 u8 sentry_shot_terrain_box[4] = { 0, 0, 4, 4 };

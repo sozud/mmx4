@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_71_ride_armor_pilot.h"
 
 static const u32 inputs_0[5][6] = {
     { -1, 2, 0, 0, 0, 0 },

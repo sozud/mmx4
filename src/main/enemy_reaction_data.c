@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/enemy_reaction_data.h"
+#include "main/xa_sequence_data.h"
 
 s32 spike_crawler_knockback_speeds[2] = { FIXED(3), FIXED(10) };
 

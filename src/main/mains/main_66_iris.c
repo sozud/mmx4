@@ -1,7 +1,74 @@
 // MainObj, main_object_update_funcs[66]
 // 800806A0..80082434
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_66_iris.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+void iris_death(struct BarObj* arg0);
+void iris_despawn(struct MainObj*);
+
+void iris_robot_decide(struct MainObj* arg0);
+void iris_intro(struct MainObj* arg0);
+void iris_robot_hover(struct MainObj* arg0);
+void iris_robot_dash(struct MainObj* arg0);
+void iris_robot_release_crystal(struct MainObj* arg0);
+
+void iris_crystal_drop(struct MainObj* arg0);
+
+// iris_death_funcs
+extern void (*iris_death_funcs[])(struct MainObj*);
+void iris_death_start(struct MainObj*);
+
+void iris_death_wait_explosion(struct MainObj*);
+void iris_death_finish(struct MainObj*);
+
+// iris_intro_funcs
+extern void (*iris_intro_funcs[])(struct MainObj*);
+void iris_intro_wait_player(struct MainObj*);
+void iris_intro_wait_camera(struct MainObj*);
+void iris_intro_warning(struct MainObj*);
+void iris_intro_wait_warning(struct MainObj*);
+void iris_intro_dialogue(struct MainObj*);
+void iris_intro_wait_dialogue(struct MainObj*);
+
+void iris_intro_wait_transform(struct MainObj* arg0);
+void iris_intro_transform(struct MainObj*);
+void iris_intro_pose(struct MainObj*);
+void iris_intro_voice(struct MainObj*);
+void iris_intro_fill_health(struct MainObj*);
+
+// iris_robot_hover_funcs
+extern void (*iris_robot_hover_funcs[])(struct MainObj*);
+
+// iris_robot_dash_funcs
+extern void (*iris_robot_dash_funcs[])(struct MainObj*);
+void iris_robot_dash_land(struct MainObj*);
+void func_800818C4(struct MainObj*);
+void iris_robot_dash_run(struct MainObj*);
+
+void func_80081AD0(struct MainObj*);
+
+// iris_robot_release_crystal_funcs
+extern void (*iris_robot_release_crystal_funcs[])(struct MainObj*);
+
+void iris_robot_release_crystal_wait(struct MainObj*);
+void iris_robot_release_crystal_finish(struct MainObj*);
+
+// iris_crystal_drop_funcs
+extern void (*iris_crystal_drop_funcs[])(struct MainObj*);
+void iris_crystal_drop_fall(struct MainObj*);
+void iris_crystal_drop_chase(struct MainObj*);
+void iris_crystal_drop_aim(struct MainObj* arg0);
+
+void iris_crystal_drop_return(struct MainObj*);
+
+extern void (*iris_state_funcs[])(struct MainObj*);
 
 void iris_update(struct MainObj* self)
 {

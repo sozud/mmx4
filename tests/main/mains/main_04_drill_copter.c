@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_04_drill_copter.h"
+#include "main/55C4.h"
+#include "main/weapons/weapon_00_lemon.h"
 extern union AnimationStep* drill_copter_animations[15];
 extern struct Unk_unk68 D_801064F0[];
 extern u32* D_80137E08;

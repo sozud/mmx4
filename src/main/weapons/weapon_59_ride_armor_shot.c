@@ -1,6 +1,23 @@
 // WeaponObj, weapon_object_update_funcs[59]
 // 80098ABC..80098F4C
 #include "common.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_59_ride_armor_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// ride_armor_shot_state_funcs
+extern void (*ride_armor_shot_state_funcs[])(struct WeaponObj*);
+
+void ride_armor_shot_main(struct WeaponObj*);
+void ride_armor_shot_despawn(struct WeaponObj*);
+
+// enemy_ride_armor_shot_state_funcs
+extern void (*enemy_ride_armor_shot_state_funcs[])(struct WeaponObj*);
+
+void enemy_ride_armor_shot_main(struct WeaponObj*);
+void ride_armor_shot_despawn(struct WeaponObj*);
 
 void ride_armor_shot_update(struct WeaponObj* arg0)
 {

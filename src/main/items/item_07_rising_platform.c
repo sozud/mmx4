@@ -1,6 +1,15 @@
 // ItemObj, item_object_update_funcs[7]
 // 800C16F0..800C1994
 #include "common.h"
+#include "main/items/item_06_gate_core.h"
+#include "main/items/item_07_rising_platform.h"
+#include "main/items/rising_platform_animation_data.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
 
 struct Item06AnimationStep {
     u8 duration;

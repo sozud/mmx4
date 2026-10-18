@@ -1,6 +1,13 @@
 // EffectObj, effect_object_update_funcs[3]
 // 800B5CC4..800B5EB0
 #include "common.h"
+#include "main/effects/effect_03_palette_animator.h"
+#include "main/effects/effect_02_color_filter.h"
+
+// D_8010B42C
+extern void (*D_8010B42C[])(struct EffectObj*);
+
+void palette_animator_step(struct EffectObj*);
 
 void copy_animated_palette(struct EffectObj* self);
 

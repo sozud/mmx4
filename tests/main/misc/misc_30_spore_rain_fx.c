@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_30_spore_rain_fx.h"
 
 struct spore_rain_fx_animate_case {
     u32 state, unk2, unk54, x_pos;

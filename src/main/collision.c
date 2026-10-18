@@ -1,6 +1,8 @@
 // hitbox and terrain collision
 // 8002BB80..8002C760
 #include "common.h"
+#include "main/1CF60.h"
+#include "main/collision.h"
 
 void func_8002C760(struct PlayerObj* arg0);
 void func_8002C954(struct PlayerObj* arg0);

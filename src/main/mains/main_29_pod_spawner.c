@@ -1,7 +1,26 @@
 // MainObj, main_object_update_funcs[29]
 // 8005A4CC..8005B3FC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_29_pod_spawner.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+extern void (*pod_spawner_step_funcs[])(struct MainObj*);
+
+void pod_spawner_main(struct MainObj*);
+
+// pod_spawner_copy_state_funcs
+void pod_spawner_copy_init(struct MainObj*);
+
+// pod_spawner_step_funcs
+void pod_spawner_idle(struct MainObj* arg0);
+
+void pod_spawner_wait(struct MainObj* arg0);
+
+extern void (*pod_spawner_state_funcs[])(struct MainObj*);
+extern void (*pod_spawner_copy_state_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern union AnimationStep* pod_spawner_animations[16];

@@ -1,0 +1,6 @@
+#ifndef MAIN_EFFECTS_EFFECT_44_STAGE_DIALOGUE_TRIGGER_H
+#define MAIN_EFFECTS_EFFECT_44_STAGE_DIALOGUE_TRIGGER_H
+
+void stage_dialogue_trigger_update(struct EffectObj* arg0);
+
+#endif

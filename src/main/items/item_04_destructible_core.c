@@ -1,6 +1,24 @@
 // ItemObj, item_object_update_funcs[4]
 // 800C081C..800C0E74
 #include "common.h"
+#include "main/items/item_04_destructible_core.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+extern u8 destructible_core_debris[];
+extern s32 destructible_core_explosion_sounds[4];
+
+// destructible_core_state_funcs
+extern void (*destructible_core_state_funcs[])(struct ItemObj*);
+
+void destructible_core_main(struct ItemObj*);
+void destructible_core_destroyed(struct ItemObj*);
+void destructible_core_finish(struct ItemObj*);
+void destructible_core_flash_palette(struct ItemObj*);
 
 struct Item04Data destructible_core_data = {
     0x0CC0,

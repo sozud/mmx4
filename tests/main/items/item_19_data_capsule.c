@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/items/item_19_data_capsule.h"
+#include "main/195B4.h"
+#include "main/mains/main_41_data_hopper.h"
 extern u8 data_capsule_box_0[4], data_capsule_box_1[4], data_capsule_box_2[4];
 
 static s32 frames[128];

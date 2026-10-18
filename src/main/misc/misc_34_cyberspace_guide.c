@@ -1,6 +1,31 @@
 // MiscObj, misc_object_update_funcs[34]
 // 800CE894..800CF144
 #include "common.h"
+#include "main/misc/misc_34_cyberspace_guide.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void cyberspace_guide_update_blink(struct MiscObj*);
+
+// cyberspace_guide_state_funcs
+extern void (*cyberspace_guide_state_funcs[])(struct MiscObj*);
+void func_800CE8DC(struct MiscObj*);
+void cyberspace_guide_main(struct MiscObj*);
+void cyberspace_guide_despawn(struct MiscObj*);
+
+// cyberspace_guide_step_funcs
+extern void (*cyberspace_guide_step_funcs[])(struct MiscObj*);
+void cyberspace_guide_appear(struct MiscObj*);
+void cyberspace_guide_start_timer(struct MiscObj*);
+
+void cyberspace_guide_leave(struct MiscObj*);
+
+// cyberspace_guide_leave_funcs
+extern void (*cyberspace_guide_leave_funcs[])(struct MiscObj*);
+void cyberspace_guide_leave_start(struct MiscObj*);
+void cyberspace_guide_leave_drift(struct MiscObj*);
+void cyberspace_guide_leave_finish(struct MiscObj*);
 
 extern union AnimationStep* cyberspace_guide_animations[5];
 

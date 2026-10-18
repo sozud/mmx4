@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_53_final_cutscene.h"
+#include "main/1A5BC.h"
 extern union AnimationStep final_cutscene_anim_0[3];
 extern union AnimationStep* final_cutscene_animations[1];
 void final_cutscene_finish(struct MiscObj*);

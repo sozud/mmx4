@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_00_search_light.h"
 
 static const u32 search_light_is_visible_expected[] = { 0u };
 static u32 test_search_light_is_visible(u32 row)

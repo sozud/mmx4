@@ -1,6 +1,27 @@
 // ItemObj, item_object_update_funcs[8]
 // 800C1994..800C20AC
 #include "common.h"
+#include "main/items/item_08_boss_door.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/player_common.h"
+
+// boss_door_step_funcs
+typedef void (*Item08StateFunc)(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+
+// boss_door_state_funcs
+extern void (*boss_door_state_funcs[])(struct ItemObj*);
+void boss_door_init(struct ItemObj*);
+void boss_door_main(struct ItemObj*);
+void boss_door_locked(struct ItemObj*);
+
+extern Item08StateFunc boss_door_step_funcs[];
+void boss_door_wait_player(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+void boss_door_open(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+
+void boss_door_walk_through(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+void boss_door_close(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
 
 struct Item08AnimationStep {
     u8 duration;

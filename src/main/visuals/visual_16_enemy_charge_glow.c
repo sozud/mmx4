@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[16]
 // 800B1EA4..800B2090
 #include "common.h"
+#include "main/visuals/visual_16_enemy_charge_glow.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// enemy_charge_glow_state_funcs
+extern void (*enemy_charge_glow_state_funcs[])(struct VisualObj*);
+void enemy_charge_glow_init(struct VisualObj*);
+
+void enemy_charge_glow_despawn(struct VisualObj*);
 
 void enemy_charge_glow_update(struct VisualObj* arg0)
 {

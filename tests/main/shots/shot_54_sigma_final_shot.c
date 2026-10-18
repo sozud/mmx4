@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/shots/shot_54_sigma_final_shot.h"
+#include "main/55C4.h"
 extern void* sigma_final_animations[39];
 
 static u32 lightning_case(u32 mode)

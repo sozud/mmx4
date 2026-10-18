@@ -1,6 +1,35 @@
 // WeaponObj, weapon_object_update_funcs[7]
 // 80096E10..80097860
 #include "common.h"
+#include "main/weapons/weapon_07_double_cyclone.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void double_cyclone_charged_fly(struct WeaponObj*);
+
+// double_cyclone_state_funcs
+extern void (*double_cyclone_state_funcs[])(struct WeaponObj*);
+
+void double_cyclone_main(struct WeaponObj*);
+void double_cyclone_despawn(struct WeaponObj*);
+void double_cyclone_despawn(struct WeaponObj*);
+
+// double_cyclone_step_funcs
+extern void (*double_cyclone_step_funcs[])(struct WeaponObj*);
+void double_cyclone_form(struct WeaponObj*);
+void double_cyclone_fly(struct WeaponObj*);
+void double_cyclone_spin(struct WeaponObj*);
+void double_cyclone_dissipate(struct WeaponObj*);
+void double_cyclone_hide(struct WeaponObj* arg0);
+
+// double_cyclone_charged_state_funcs
+extern void (*double_cyclone_charged_state_funcs[])(struct WeaponObj*);
+
+void double_cyclone_charged_main(struct WeaponObj*);
+void double_cyclone_charged_offscreen(struct WeaponObj*);
+
+void double_cyclone_charged_despawn(struct WeaponObj*);
 
 s32 double_cyclone_charged_check_expired(struct WeaponObj* arg0);
 s32 double_cyclone_check_expired(struct WeaponObj* arg0);

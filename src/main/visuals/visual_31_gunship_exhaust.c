@@ -1,6 +1,17 @@
 // VisualObj, visual_object_update_funcs[31]
 // 800B4B64..800B4E34
 #include "common.h"
+#include "main/visuals/visual_31_gunship_exhaust.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// gunship_exhaust_state_funcs
+extern void (*gunship_exhaust_state_funcs[])(struct VisualObj*);
+void gunship_exhaust_init(struct VisualObj*);
+void gunship_exhaust_delay(struct VisualObj*);
+
+void gunship_exhaust_despawn(struct VisualObj*);
 
 void gunship_exhaust_update(struct VisualObj* arg0)
 {

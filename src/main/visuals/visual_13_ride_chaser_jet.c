@@ -1,6 +1,16 @@
 // VisualObj, visual_object_update_funcs[13]
 // 800B1AF8..800B1C5C
 #include "common.h"
+#include "main/visuals/visual_13_ride_chaser_jet.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// ride_chaser_jet_state_funcs
+extern void (*ride_chaser_jet_state_funcs[])(struct VisualObj*);
+void ride_chaser_jet_init(struct VisualObj*);
+void ride_chaser_jet_main(struct VisualObj*);
+
+void ride_chaser_jet_despawn(struct VisualObj*);
 
 u8 ride_chaser_jet_animations[16] = {
     0x15,

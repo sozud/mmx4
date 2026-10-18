@@ -1,6 +1,16 @@
 // ShotObj, shot_object_update_funcs[57]
 // 800AE450..800AE6B4
 #include "common.h"
+#include "main/shots/shot_57_sigma_beam_hitbox.h"
+#include "main/1E1BC.h"
+#include "main/objects.h"
+
+// sigma_beam_hitbox_state_funcs
+extern void (*sigma_beam_hitbox_state_funcs[])(struct ShotObj*);
+
+void sigma_beam_hitbox_pulse(struct ShotObj*);
+void sigma_beam_hitbox_active(struct ShotObj*);
+void sigma_beam_hitbox_despawn(struct ShotObj*);
 
 u16 sigma_beam_hitbox_offsets[6][2] = {
     { 0x4AE, 0x29C },

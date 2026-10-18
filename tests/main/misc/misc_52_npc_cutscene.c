@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_52_npc_cutscene.h"
 
 static u32 line_case(u32 character)
 {

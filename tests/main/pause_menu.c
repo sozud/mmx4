@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/pause_menu.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern struct BgDrawRelated D_8015D9D0[2];

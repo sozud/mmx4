@@ -1,6 +1,14 @@
 // VisualObj, visual_object_update_funcs[34]
 // 800B5570..800B56F4
 #include "common.h"
+#include "main/visuals/visual_34_split_mushroom_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// split_mushroom_fx_state_funcs
+extern void (*split_mushroom_fx_state_funcs[])(struct VisualObj*);
+void split_mushroom_fx_main(struct VisualObj*);
+void split_mushroom_fx_despawn(struct VisualObj*);
 
 void split_mushroom_fx_update(struct VisualObj* arg0)
 {

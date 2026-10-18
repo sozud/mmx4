@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_02_stage_select_flyout.h"
 
 struct stage_select_flyout_wait_case {
     u32 unk7;

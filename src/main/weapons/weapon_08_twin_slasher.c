@@ -1,6 +1,26 @@
 // WeaponObj, weapon_object_update_funcs[8]
 // 80097860..80097EEC
 #include "common.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_08_twin_slasher.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+void twin_slasher_hide(struct WeaponObj*);
+
+// twin_slasher_state_funcs
+extern void (*twin_slasher_state_funcs[])(struct WeaponObj*);
+
+void twin_slasher_main(struct WeaponObj*);
+void twin_slasher_despawn(struct WeaponObj*);
+void twin_slasher_despawn(struct WeaponObj*);
+
+// twin_slasher_charged_state_funcs
+extern void (*twin_slasher_charged_state_funcs[])(struct WeaponObj*);
+
+void twin_slasher_charged_main(struct WeaponObj*);
+void twin_slasher_despawn(struct WeaponObj*);
+void twin_slasher_despawn(struct WeaponObj*);
 
 extern u32* D_8011C104[10];
 

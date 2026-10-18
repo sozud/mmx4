@@ -1,6 +1,16 @@
 // QuadObj, quad_object_update_funcs[12]
 // 800D7734..800D7A4C
 #include "common.h"
+#include "main/objects.h"
+#include "main/quads/quad_12_title_facet.h"
+#include "main/323C.h"
+
+// title_facet_state_funcs
+extern void (*title_facet_state_funcs[])(struct QuadObj*);
+void title_facet_init(struct QuadObj*);
+void title_facet_follow(struct QuadObj*);
+void title_facet_finish(struct QuadObj*);
+void title_facet_despawn(struct QuadObj*);
 
 extern u8 title_facet_vertex_indices[][4];
 extern union TitleScratch D_80169498;

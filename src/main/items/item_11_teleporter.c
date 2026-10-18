@@ -1,6 +1,32 @@
 // ItemObj, item_object_update_funcs[11]
 // 800C2BE0..800C3224
 #include "common.h"
+#include "main/items/item_11_teleporter.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+// teleporter_state_funcs
+extern void (*teleporter_state_funcs[])(struct ItemObj*);
+void func_800C2C3C(struct ItemObj*);
+void teleporter_main(struct ItemObj*);
+void teleporter_despawn(struct ItemObj*);
+void teleporter_idle(struct ItemObj*);
+
+// teleporter_step_funcs
+extern void (*teleporter_step_funcs[])(struct ItemObj*);
+void teleporter_wait_player(struct ItemObj*);
+void teleporter_activate(struct ItemObj*);
+void teleporter_warp(struct ItemObj*);
+void teleporter_finish(struct ItemObj*);
+
+// teleporter_warp_funcs
+extern void (*teleporter_warp_funcs[])(struct ItemObj*);
+void teleporter_spawn_beam(struct ItemObj*);
+void teleporter_spawn_glow(struct ItemObj*);
+void teleporter_wait_flash(struct ItemObj*);
+void teleporter_delay(struct ItemObj*);
 
 struct Item11AnimationStep {
     u8 duration;

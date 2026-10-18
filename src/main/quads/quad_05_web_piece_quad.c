@@ -1,6 +1,15 @@
 // QuadObj, quad_object_update_funcs[5]
 // 800D553C..800D5934
 #include "common.h"
+#include "main/quads/quad_05_web_piece_quad.h"
+#include "main/objects.h"
+
+// web_piece_quad_state_funcs
+extern void (*web_piece_quad_state_funcs[])(struct QuadObj*);
+void web_piece_quad_init(struct QuadObj*);
+void web_piece_quad_scale(struct QuadObj*);
+
+void web_piece_quad_despawn(struct QuadObj*);
 
 void web_piece_quad_update(struct QuadObj* arg0)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_07_search_light_maker.h"
 extern struct SearchLightSpawner search_light_spawners[12];
 
 static u32 search_case(u32 mode, u32 observation)

@@ -1,4 +1,9 @@
 #include "test_runtime.h"
+#include "main/player_special.h"
+#include "main/player_check.h"
+#include "main/55C4.h"
+#include "main/player_animations_2.h"
+#include "main/player.h"
 
 static u8 tilemap[256];
 static u16 pixels[512];

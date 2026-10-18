@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[1]
 // 800C7BF4..800C7DA4
 #include "common.h"
+#include "main/misc/misc_01_common_effect.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// common_effect_state_funcs
+extern void (*common_effect_state_funcs[])(struct MiscObj*);
+void common_effect_init(struct MiscObj*);
+void common_effect_animate(struct MiscObj*);
+void common_effect_despawn(struct MiscObj*);
 
 struct Misc01AnimationStep {
     u8 duration;

@@ -1,7 +1,138 @@
 // MainObj, main_object_update_funcs[60]
 // 8007501C..8007872C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_60_storm_owl.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+
+// storm_owl_state_funcs
+extern void (*storm_owl_state_funcs[])(struct MainObj*);
+void storm_owl_start(struct MainObj* arg0);
+
+void storm_owl_death(struct MainObj* arg0);
+
+// storm_owl_start_funcs
+extern void (*storm_owl_start_funcs[])(struct MainObj*);
+void storm_owl_start_wait_player(struct MainObj*);
+
+void storm_owl_start_wait_warning(struct MainObj*);
+void func_800751AC(struct MainObj*);
+
+// storm_owl_step_funcs
+void storm_owl_resume_step(struct MainObj* arg0);
+void storm_owl_intro(struct MainObj* arg0);
+void storm_owl_patrol(struct MainObj* arg0);
+void storm_owl_grab(struct MainObj* arg0);
+void storm_owl_reenter(struct MainObj* arg0);
+void storm_owl_feather(struct MainObj* arg0);
+void storm_owl_feather_volley(struct MainObj* arg0);
+void storm_owl_cyclone(struct MainObj* arg0);
+void storm_owl_storm(struct MainObj* arg0);
+void storm_owl_hover(struct MainObj* arg0);
+void storm_owl_stagger(struct MainObj* arg0);
+void storm_owl_ground_cyclone(struct MainObj* arg0);
+
+// storm_owl_death_funcs
+extern void (*storm_owl_death_funcs[])(struct MainObj*);
+void storm_owl_death_start(struct MainObj*);
+
+void storm_owl_death_finish(struct MainObj* arg0);
+
+// storm_owl_intro_funcs
+extern void (*storm_owl_intro_funcs[])(struct MainObj*);
+void func_80075944(struct MainObj*);
+void storm_owl_intro_land(struct MainObj*);
+void storm_owl_intro_roar(struct MainObj*);
+void storm_owl_intro_pose(struct MainObj*);
+void storm_owl_intro_start_health_bar(struct MainObj*);
+void storm_owl_intro_fill_health(struct MainObj*);
+
+void storm_owl_intro_rise(struct MainObj*);
+
+extern void (*storm_owl_patrol_funcs[])(struct MainObj*);
+void storm_owl_patrol_start(struct MainObj*);
+
+void storm_owl_patrol_wait(struct MainObj*);
+
+void storm_owl_patrol_return(struct MainObj*);
+
+extern struct Unk_unk68 storm_owl_grab_attack_box;
+extern struct Unk_unk68 storm_owl_grab_terrain_box;
+extern void (*storm_owl_grab_funcs[])(struct MainObj*);
+void storm_owl_grab_dive(struct MainObj*);
+
+void storm_owl_grab_carry(struct MainObj*);
+void storm_owl_grab_slam(struct MainObj*);
+void storm_owl_grab_leave(struct MainObj*);
+
+// storm_owl_reenter_funcs
+extern void (*storm_owl_reenter_funcs[])(struct MainObj*);
+
+void storm_owl_reenter_wait(struct MainObj*);
+
+// storm_owl_feather_funcs
+extern void (*storm_owl_feather_funcs[])(struct MainObj*);
+void storm_owl_feather_start(struct MainObj*);
+void storm_owl_feather_fire(struct MainObj*);
+void storm_owl_feather_takeoff(struct MainObj*);
+void storm_owl_feather_leave(struct MainObj*);
+
+// storm_owl_feather_volley_funcs
+extern void (*storm_owl_feather_volley_funcs[])(struct MainObj*);
+void storm_owl_feather_volley_start(struct MainObj*);
+void func_80076D14(struct MainObj*);
+void storm_owl_feather_volley_aim(struct MainObj*);
+void storm_owl_feather_volley_release(struct MainObj*);
+void storm_owl_feather_volley_wait(struct MainObj*);
+void storm_owl_feather_volley_leave(struct MainObj*);
+
+// storm_owl_cyclone_funcs
+extern void (*storm_owl_cyclone_funcs[])(struct MainObj*);
+void storm_owl_cyclone_start(struct MainObj*);
+void storm_owl_cyclone_fire(struct MainObj*);
+void storm_owl_cyclone_finish(struct MainObj*);
+void storm_owl_cyclone_leave(struct MainObj*);
+
+// storm_owl_storm_funcs
+extern void (*storm_owl_storm_funcs[])(struct MainObj*);
+void storm_owl_storm_start(struct MainObj*);
+void storm_owl_storm_fly_to_center(struct MainObj*);
+void storm_owl_storm_charge(struct MainObj*);
+void storm_owl_storm_begin(struct MainObj*);
+void storm_owl_storm_rain(struct MainObj*);
+void func_80077580(struct MainObj*);
+
+void storm_owl_storm_end(struct MainObj*);
+void storm_owl_storm_leave(struct MainObj*);
+
+// storm_owl_hover_funcs
+extern void (*storm_owl_hover_funcs[])(struct MainObj*);
+void storm_owl_hover_start(struct MainObj*);
+void storm_owl_hover_wait(struct MainObj*);
+
+// storm_owl_stagger_funcs
+extern void (*storm_owl_stagger_funcs[])(struct MainObj*);
+void storm_owl_stagger_start(struct MainObj*);
+
+void storm_owl_stagger_recover(struct MainObj*);
+void storm_owl_stagger_leave(struct MainObj*);
+
+// storm_owl_ground_cyclone_funcs
+extern void (*storm_owl_ground_cyclone_funcs[])(struct MainObj*);
+void storm_owl_ground_cyclone_start(struct MainObj*);
+void storm_owl_ground_cyclone_drop(struct MainObj*);
+void storm_owl_ground_cyclone_land(struct MainObj*);
+void storm_owl_ground_cyclone_fire(struct MainObj*);
+void storm_owl_ground_cyclone_wait(struct MainObj* arg0);
+void storm_owl_ground_cyclone_takeoff(struct MainObj*);
+void storm_owl_ground_cyclone_leave(struct MainObj*);
+void func_80078180(struct MainObj* arg0);
 
 extern void* storm_owl_patterns[];
 extern u8 storm_owl_pattern_weights[];

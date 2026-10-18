@@ -1,6 +1,27 @@
 // ShotObj, shot_object_update_funcs[33]
 // 800A03B8..800A16FC
 #include "common.h"
+#include "main/shots/shot_33_falling_rock.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+// falling_rock_state_funcs
+extern void (*falling_rock_state_funcs[])(struct ShotObj*);
+
+void func_800A068C(struct ShotObj*);
+void falling_rock_a_despawn(struct ShotObj*);
+
+void falling_rock_b_despawn(struct ShotObj*);
+
+void func_800A12EC(struct ShotObj*);
+void falling_rock_c_despawn(struct ShotObj*);
 
 extern u8 falling_rock_debris_0[], falling_rock_debris_1[];
 extern u8 falling_rock_debris_4[], falling_rock_debris_5[], falling_rock_debris_6[];

@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_55_general_shot.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern void* general_animations[46];
 extern s8 general_shot_attack_boxes[][4];
 extern s8 general_shot_boxes[3][4];

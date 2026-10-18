@@ -1,5 +1,38 @@
 // 800350A4..80036E98
 #include "common.h"
+#include "main/objects.h"
+#include "main/player.h"
+#include "main/player_common.h"
+#include "main/1CF60.h"
+#include "main/object_motion.h"
+#include "main/player_check.h"
+#include "main/player_enter.h"
+#include "main/2824.h"
+#include "main/55C4.h"
+#include "main/player_animations.h"
+#include "main/player_animations_2.h"
+#include "main/player_weapon.h"
+#include "main/sprite_animations.h"
+#include "main/player_special.h"
+
+struct PlayerDashEffectOffset {
+    u16 x, y;
+};
+
+extern u8 player_death_orb_directions[4][8];
+
+extern struct PlayerDashEffectOffset player_dash_spark_offsets[2];
+extern u16 player_dash_splash_offsets[2];
+
+#ifdef MMX4_PC
+extern void func_80036BF4(struct PlayerObj* arg0, s16 arg1);
+#endif
+
+// player_entry_funcs
+extern void (*player_entry_funcs[])(struct PlayerObj*);
+
+// player_death_funcs
+extern void (*player_death_funcs[])(struct PlayerObj*);
 
 void player_init_clone(void);
 u16 player_map_buttons(s32 pad);

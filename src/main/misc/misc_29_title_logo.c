@@ -1,6 +1,17 @@
 // MiscObj, misc_object_update_funcs[29]
 // 800CD78C..800CDCC0
 #include "common.h"
+#include "main/misc/misc_29_title_logo.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// D_8010EC10 - g_TitleLogoUpdateFuncs
+extern void (*g_TitleLogoUpdateFuncs[])(struct MiscObj* arg0);
+
+void title_logo_fade_start(struct MiscObj* arg0);
+void title_logo_fade_palette(struct MiscObj* arg0);
+void title_logo_sparkle(struct MiscObj* arg0);
 
 #ifdef VERSION_JP
 #define TITLE_FADE_X 120

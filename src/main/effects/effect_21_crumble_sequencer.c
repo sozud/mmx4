@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[21]
 // 800B9EC0..800BA57C
 #include "common.h"
+#include "main/effects/effect_21_crumble_sequencer.h"
+#include "main/objects.h"
+
+// crumble_sequencer_subtype_funcs
+extern void (*crumble_sequencer_subtype_funcs[])(struct EffectObj*);
+
+// crumble_sequencer_state_funcs
+extern void (*crumble_sequencer_state_funcs[])(struct EffectObj*);
+
+void crumble_sequencer_main(struct EffectObj*);
+void crumble_sequencer_despawn(struct EffectObj*);
 
 // crumble_sequencer_init
 void func_800B9EC0(struct EffectObj* self)

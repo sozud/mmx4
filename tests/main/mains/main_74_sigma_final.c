@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_74_sigma_final.h"
+#include "main/55C4.h"
 extern void* sigma_final_animations[39];
 extern void* D_8013B8B4;
 extern u8 D_8013B8A0[4];

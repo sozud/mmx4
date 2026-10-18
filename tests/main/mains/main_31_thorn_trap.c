@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_31_thorn_trap.h"
+#include "main/55C4.h"
 extern s8 D_800FDC40[8];
 extern union AnimationStep* thorn_trap_animations[18];
 extern struct StageObjectRecord stage_object_records_3_1[71];

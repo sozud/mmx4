@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_16_linked_spark.h"
 extern union AnimationStep* pod_spawner_animations[16];
 extern u8* turret_laser_beam_boxes[12];
 

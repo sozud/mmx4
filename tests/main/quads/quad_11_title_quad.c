@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/quads/quad_11_title_quad.h"
+#include "main/object_motion.h"
 extern s16 title_quad_morph_targets[6][2];
 extern s16 title_quad_shapes[][8];
 extern u16 title_quad_palette[30];

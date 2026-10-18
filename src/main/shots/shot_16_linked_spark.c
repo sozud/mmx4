@@ -1,6 +1,12 @@
 // ShotObj, shot_object_update_funcs[16]
 // 8009C364..8009C5F0
 #include "common.h"
+#include "main/shots/shot_16_linked_spark.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// linked_spark_state_funcs
+extern void (*linked_spark_state_funcs[])(struct ShotObj*);
 
 void linked_spark_update(struct ShotObj* self)
 {

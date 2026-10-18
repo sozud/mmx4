@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_48_double_ball.h"
 extern void* double_animations[31];
 
 static u32 travel_case(u32 mode, u32 observation)

@@ -1,6 +1,7 @@
 // EffectObj, effect_object_update_funcs[35]
 // 800BD1A4..800BD1E4
 #include "common.h"
+#include "main/effects/effect_35_palette_pulse.h"
 
 void palette_pulse_init(struct EffectObj* self);
 

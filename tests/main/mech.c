@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mech.h"
+#include "main/195B4.h"
+#include "main/mech_state_data.h"
 extern union AnimationStep* D_800F9428[31];
 extern union AnimationStep* D_800F965C[38];
 void func_8003D638(struct VisualObj*, u8);

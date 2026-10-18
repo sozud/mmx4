@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_21_cannon_shell.h"
+#include "main/collision_bounds.h"
+#include "main/mains/main_38_train_cannon.h"
 extern u8 cannon_shell_hit_box[4], cannon_shell_flat_hit_box[4], cannon_shell_steep_hit_box[4];
 extern u8 cannon_shell_terrain_box[4], cannon_shell_flat_terrain_box[4], cannon_shell_steep_terrain_box[4];
 

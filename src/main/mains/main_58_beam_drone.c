@@ -1,7 +1,44 @@
 // MainObj, main_object_update_funcs[58]
 // 800743FC..80074E84
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_58_beam_drone.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// beam_drone_state_funcs
+extern void (*beam_drone_state_funcs[])(struct MainObj*);
+
+void beam_drone_despawn(struct MainObj*);
+
+// beam_drone_step_funcs
+void beam_drone_resume_step(struct MainObj* arg0);
+void beam_drone_drop(struct MainObj* arg0);
+void beam_drone_charge(struct MainObj* arg0);
+void beam_drone_fire(struct MainObj* arg0);
+void beam_drone_leave(struct MainObj* arg0);
+
+// beam_drone_drop_funcs
+extern void (*beam_drone_drop_funcs[])(struct MainObj*);
+void beam_drone_drop_start(struct MainObj*);
+void beam_drone_drop_fall(struct MainObj*);
+
+// beam_drone_charge_funcs
+extern void (*beam_drone_charge_funcs[])(struct MainObj*);
+void beam_drone_charge_start(struct MainObj*);
+void beam_drone_charge_wait(struct MainObj* arg0);
+
+// beam_drone_fire_funcs
+extern void (*beam_drone_fire_funcs[])(struct MainObj*);
+void beam_drone_fire_start(struct MainObj*);
+void beam_drone_fire_beam(struct MainObj*);
+void beam_drone_fire_fade(struct MainObj*);
+void beam_drone_fire_end(struct MainObj*);
+
+// beam_drone_leave_funcs
+extern void (*beam_drone_leave_funcs[])(struct MainObj*);
+void beam_drone_leave_start(struct MainObj*);
+void beam_drone_leave_move(struct MainObj*);
 
 void beam_drone_update(struct MainObj* self)
 {

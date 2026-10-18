@@ -1,6 +1,21 @@
 // EffectObj, effect_object_update_funcs[9]
 // 800B75C8..800B7EE8
 #include "common.h"
+#include "main/effects/effect_09_bg_wind.h"
+
+// bg_wind_state_funcs
+extern void (*bg_wind_state_funcs[])(struct EffectObj*);
+void bg_wind_init(struct EffectObj*);
+
+void bg_wind_main(struct EffectObj*);
+
+// bg_wind_phase_funcs
+extern void (*bg_wind_phase_funcs[])(struct EffectObj*);
+
+void bg_wind_gust_slow(struct EffectObj*);
+void bg_wind_gust_fast(struct EffectObj*);
+void bg_wind_gust_medium(struct EffectObj*);
+void func_800B7CFC(struct EffectObj*);
 
 struct Effect09MovementStep {
     u8 timer;

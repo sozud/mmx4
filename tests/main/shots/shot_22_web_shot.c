@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_22_web_shot.h"
+#include "main/55C4.h"
+#include "main/mains/main_43_web_spider.h"
 extern u8 web_shot_hit_box[4];
 
 static u32 web_case(u32 mode)

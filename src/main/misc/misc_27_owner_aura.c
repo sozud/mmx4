@@ -1,6 +1,14 @@
 // MiscObj, misc_object_update_funcs[27]
 // 800CC908..800CCA34
 #include "common.h"
+#include "main/misc/misc_27_owner_aura.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// owner_aura_state_funcs
+extern void (*owner_aura_state_funcs[])(struct MiscObj*);
+void owner_aura_follow(struct MiscObj*);
+void owner_aura_despawn(struct MiscObj*);
 
 void owner_aura_update(struct MiscObj* self)
 {
