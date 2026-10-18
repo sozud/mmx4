@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_35_wheel_charger.h"
+#include "main/55C4.h"
 extern union AnimationStep* wheel_charger_animations[9];
 extern struct Unk_unk68 D_800FE1B8;
 extern struct Unk_unk68 D_800FE1B0;

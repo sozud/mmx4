@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/shots/shot_45_colonel_shot.h"
+#include "main/55C4.h"
 extern void* D_80104770[25];
 extern s8 colonel_shot_boxes[14][4];
 

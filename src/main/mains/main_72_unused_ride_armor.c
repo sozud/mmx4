@@ -1,7 +1,43 @@
 // MainObj, main_object_update_funcs[72]
 // 8008ADFC..8008BA38
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_72_unused_ride_armor.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/mains/main_71_ride_armor_pilot.h"
+#include "main/object_motion.h"
+
+extern void* unused_ride_armor_animations[];
+extern struct Unk_unk68 unused_ride_armor_hit_box;
+extern struct Unk_unk68 unused_ride_armor_terrain_box;
+
+extern struct Unk_unk68 unused_ride_armor_debris[2];
+extern void (*unused_ride_armor_step_funcs[])(struct MainObj*);
+
+// unused_ride_armor_step_funcs
+void unused_ride_armor_reset(struct MainObj* arg0);
+void func_8008B020(struct MainObj* arg0);
+void func_8008B188(struct MainObj* arg0);
+
+void func_8008B4B8(struct MainObj* arg0);
+
+void func_8008B69C(struct MainObj* arg0);
+
+// unused_ride_armor_despawn_funcs
+void unused_ride_armor_despawn_remove(struct MainObj* arg0);
+void unused_ride_armor_despawn_idle(void);
+void unused_ride_armor_despawn_idle2(void);
+
+// unused_ride_armor_state_funcs
+extern void (*unused_ride_armor_state_funcs[])(struct MainObj*);
+void unused_ride_armor_init(struct MainObj*);
+void unused_ride_armor_main(struct MainObj*);
+void unused_ride_armor_despawn(struct MainObj* arg0);
+
+extern void (*unused_ride_armor_despawn_funcs[])(struct MainObj*);
 
 void unused_ride_armor_init(struct MainObj* self)
 {

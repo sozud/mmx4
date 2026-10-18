@@ -1,6 +1,25 @@
 // ShotObj, shot_object_update_funcs[49]
 // 800A9DF4..800AA2FC
 #include "common.h"
+#include "main/shots/shot_48_double_ball.h"
+#include "main/shots/shot_49_double_aerial.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// double_aerial_funcs
+extern void (*double_aerial_funcs[])(struct ShotObj*);
+void double_aerial_drop(struct ShotObj*);
+void func_800A9F30(struct ShotObj*);
+void double_aerial_fly(struct ShotObj*);
+void double_aerial_fly_alt(struct ShotObj*);
+
+// double_aerial_state_funcs
+extern void (*double_aerial_state_funcs[])(struct ShotObj*);
+
+void double_aerial_run(struct ShotObj*);
 
 extern u8 double_ball_box_1[2][4];
 

@@ -1,6 +1,13 @@
 // EffectObj, effect_object_update_funcs[33]
 // 800BC748..800BCE48
 #include "common.h"
+#include "main/effects/effect_33_rock_dropper.h"
+#include "main/objects.h"
+
+// rock_dropper_state_funcs
+extern void (*rock_dropper_state_funcs[])(struct EffectObj*);
+
+void rock_dropper_idle(struct EffectObj*);
 
 void rock_dropper_update(struct EffectObj* self)
 {

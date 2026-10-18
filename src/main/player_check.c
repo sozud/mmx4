@@ -1,5 +1,16 @@
 // 80033414..800343A4
 #include "common.h"
+#include "main/objects.h"
+#include "main/player.h"
+#include "main/1CF60.h"
+#include "main/player_check.h"
+#include "main/player_common.h"
+#include "main/player_enter.h"
+#include "main/object_motion.h"
+#include "main/player_special.h"
+#include "main/player_weapon.h"
+
+extern u8 player_leap_fall_animations[];
 
 s32 player_check_hover(struct PlayerObj* self);
 void player_clear_flash(struct PlayerObj* self);

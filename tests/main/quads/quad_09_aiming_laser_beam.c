@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/quads/quad_09_aiming_laser_beam.h"
+#include "main/visuals/visual_18_aiming_laser_scope.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
 void func_800D69A8(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
 
 static const u32 func_800D69A8_expected[] = { 0u, 0u, 0xFFFFFFF7u, 6u, 3u, 6u, 3u, 0xFFFFFFFAu, 3u, 0u };

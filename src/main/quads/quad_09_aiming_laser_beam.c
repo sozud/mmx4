@@ -1,6 +1,8 @@
 // QuadObj, quad_object_update_funcs[9]
 // 800D67DC..800D6AD8
 #include "common.h"
+#include "main/quads/quad_09_aiming_laser_beam.h"
+#include "main/objects.h"
 
 void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2);
 void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct PlayerObj* arg2);

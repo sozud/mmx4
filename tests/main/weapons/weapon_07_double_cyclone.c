@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_01_lightning_web.h"
+#include "main/weapons/weapon_02_frost_tower.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
+#include "main/weapons/weapon_07_double_cyclone.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern s32 player_gfx_buf_0[1024];

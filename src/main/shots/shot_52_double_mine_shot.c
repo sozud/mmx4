@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[52]
 // 800AAAD4..800AAC98
 #include "common.h"
+#include "main/shots/shot_48_double_ball.h"
+#include "main/shots/shot_52_double_mine_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// double_mine_shot_state_funcs
+extern void (*double_mine_shot_state_funcs[])(struct ShotObj*);
+void double_mine_shot_init(struct ShotObj*);
+void func_800AAB74(struct ShotObj*);
 
 void double_mine_shot_init(struct ShotObj* self)
 {

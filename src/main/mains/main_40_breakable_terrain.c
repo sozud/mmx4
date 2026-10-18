@@ -1,7 +1,20 @@
 // MainObj, main_object_update_funcs[40]
 // 80061DC0..800623C4
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_40_breakable_terrain.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+
+void breakable_terrain_spawn_rubble(struct MainObj*);
+
+void breakable_terrain_crumble(struct MainObj*);
+void breakable_terrain_remove(struct MainObj*);
+
+extern void (*breakable_terrain_state_funcs[])(struct MainObj*);
 
 void breakable_terrain_update(struct MainObj* self)
 {

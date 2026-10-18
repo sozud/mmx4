@@ -1,6 +1,14 @@
 // LayerObj, layer_object_update_funcs[0]
 // 800D8648..800D8ED4
 #include "common.h"
+#include "main/layers/layer_00_train_scroll.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/stage_objects.h"
+
+extern s16 train_scroll_lock_positions[4];
 
 void train_scroll_section_0_skip(struct LayerObj* arg0);
 void train_scroll_section_0_wait(struct LayerObj* arg0);

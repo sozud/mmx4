@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_30_cannon_shot.h"
 
 static const u32 cannon_shot_spawn_flash_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_cannon_shot_spawn_flash(u32 row)

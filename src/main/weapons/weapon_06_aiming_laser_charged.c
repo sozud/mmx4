@@ -2,6 +2,23 @@
 // 800961B0..80096E10
 #include "common.h"
 #include "scratchpad.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/sprite_animations.h"
+
+void aiming_laser_marker_init(struct WeaponObj*);
+
+void aiming_laser_marker_fire(struct WeaponObj*);
+void aiming_laser_marker_despawn(struct WeaponObj*, struct PlayerObj*);
+
+// aiming_laser_charged_state_funcs
+extern void (*aiming_laser_charged_state_funcs[])(struct WeaponObj*);
+
+void aiming_laser_charged_despawn(struct WeaponObj*);
+void aiming_laser_charged_despawn(struct WeaponObj*);
 
 // aiming_laser_update
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_06_aiming_laser_charged", func_800961B0);

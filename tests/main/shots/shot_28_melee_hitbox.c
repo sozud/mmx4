@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_28_melee_hitbox.h"
 
 struct melee_hitbox_active_case {
     u32 state, frame_index;

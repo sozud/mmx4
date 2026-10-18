@@ -1,6 +1,15 @@
 // EffectObj, effect_object_update_funcs[2]
 // 800B5960..800B5CC4
 #include "common.h"
+#include "main/effects/effect_02_color_filter.h"
+#include "main/1A5BC.h"
+#include "main/objects.h"
+
+extern void (*g_TitleScalingXUpdateFuncs[])();
+
+extern s32 color_filter_masks[][4];
+
+void color_filter_step(struct EffectObj*);
 
 // scaling X animation in logo graphics
 void TitleScalingXUpdate(struct EffectObj* self)

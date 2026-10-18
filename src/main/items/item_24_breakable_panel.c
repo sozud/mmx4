@@ -1,6 +1,17 @@
 // ItemObj, item_object_update_funcs[24]
 // 800C6054..800C62DC
 #include "common.h"
+#include "main/items/item_24_breakable_panel.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// breakable_panel_state_funcs
+extern void (*breakable_panel_state_funcs[])(struct ItemObj*);
+
+void breakable_panel_main(struct ItemObj*);
+void breakable_panel_destroyed(struct ItemObj*);
 
 struct Item24AnimationStep {
     u8 duration;

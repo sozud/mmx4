@@ -1,6 +1,26 @@
 // ShotObj, shot_object_update_funcs[17]
 // 8009C5F0..8009CAC0
 #include "common.h"
+#include "main/shots/shot_17_depth_charge.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// depth_charge_state_funcs
+extern void (*depth_charge_state_funcs[])(struct ShotObj*);
+void func_8009C638(struct ShotObj*);
+void depth_charge_main(struct ShotObj*);
+void depth_charge_despawn(struct ShotObj*);
+
+// depth_charge_step_funcs
+extern void (*depth_charge_step_funcs[])(struct ShotObj*);
+void depth_charge_hit(struct ShotObj*);
+void depth_charge_idle(struct ShotObj*);
+
+void depth_charge_fall(struct ShotObj*);
+void depth_charge_sink(struct ShotObj*);
 
 u8 depth_charge_sink_box[4] = { 0xFB, 0xFB, 0x08, 0x09 };
 u8 depth_charge_boxes[4] = { 0xFF, 0xFF, 0x04, 0x05 };

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_08_boss_door.h"
 
 static const u32 boss_door_block_player_expected[] = { 0u };
 static u32 test_boss_door_block_player(u32 row)

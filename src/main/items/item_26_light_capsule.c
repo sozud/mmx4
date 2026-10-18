@@ -1,6 +1,33 @@
 // ItemObj, item_object_update_funcs[26]
 // 800C62DC..800C7164
 #include "common.h"
+#include "main/items/item_26_light_capsule.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1E1BC.h"
+#include "main/xa_sequence_data.h"
+
+extern struct Unk_unk68 light_capsule_platform_box;
+
+void light_capsule_main(struct ItemObj*);
+
+// light_capsule_step_funcs
+extern void (*light_capsule_step_funcs[])(struct ItemObj*);
+
+void light_capsule_start_dialogue(struct ItemObj*);
+void light_capsule_wait_dialogue_open(struct ItemObj*);
+void light_capsule_wait_dialogue_close(struct ItemObj*);
+
+void light_capsule_end_dialogue(struct ItemObj*);
+void light_capsule_wait_enter(struct ItemObj*);
+void light_capsule_wait_scan(struct ItemObj*);
+void light_capsule_wait_beams(struct ItemObj*);
+void light_capsule_grant_part(struct ItemObj*);
+void light_capsule_wait_done(struct ItemObj*);
+void light_capsule_idle(struct ItemObj*);
+extern u8 light_capsule_dialogue_ids[8];
 
 void func_800164D8(void);
 

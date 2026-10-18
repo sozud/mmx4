@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/E47C_menu_data.h"
 
 #ifdef VERSION_JP
 #define GAME_INFO_ALT_X 0x50

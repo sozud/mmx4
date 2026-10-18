@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_57_falling_piece.h"
+#include "main/2824.h"
 extern u16 menu_button_bits_a[8], menu_button_bits_b[8];
 
 static u32 binding_case(u8 disabled)

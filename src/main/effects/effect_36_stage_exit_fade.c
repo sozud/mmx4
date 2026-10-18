@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[36]
 // 800BD1E4..800BD384
 #include "common.h"
+#include "main/effects/effect_36_stage_exit_fade.h"
+#include "main/objects.h"
+#include "main/1A5BC.h"
+#include "main/effects/effect_35_palette_pulse.h"
+
+// stage_exit_fade_state_funcs
+extern void (*stage_exit_fade_state_funcs[])(struct EffectObj*);
+
+void stage_exit_fade_wait_filter(struct EffectObj*);
+void stage_exit_fade_whiteout(struct EffectObj*);
+void stage_exit_fade_finish(struct EffectObj*);
 
 void stage_exit_fade_init(struct EffectObj* self)
 {

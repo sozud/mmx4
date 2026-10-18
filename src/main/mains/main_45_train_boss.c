@@ -1,7 +1,46 @@
 // MainObj, main_object_update_funcs[45]
 // 80065B8C..80066A48
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_45_train_boss.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern s8 train_boss_terrain_box[4];
+
+#ifdef MMX4_PC
+#ifdef MMX4_PC
+extern void train_boss_fight_idle(struct MainObj*);
+#else
+extern void train_boss_fight_idle(void);
+#endif
+#endif
+
+// train_boss_state_funcs
+void train_boss_init(struct MainObj*);
+
+// train_boss_step_funcs
+extern void (*train_boss_step_funcs[])(struct MainObj*);
+void train_boss_arrive(struct MainObj*);
+void train_boss_fight(struct MainObj*);
+
+void train_boss_arrive_approach(struct MainObj*);
+void train_boss_arrive_stop(struct MainObj*);
+void train_boss_arrive_fill_hp(struct MainObj*);
+
+// train_boss_fight_funcs
+#ifdef MMX4_PC
+void train_boss_fight_idle(struct MainObj*);
+#else
+void train_boss_fight_idle(void);
+#endif
+
+extern void (*train_boss_state_funcs[])(struct MainObj*);
+extern void (*train_boss_arrive_funcs[])(struct MainObj*);
+extern void (*train_boss_fight_funcs[])(struct MainObj*);
 
 void train_boss_update(struct MainObj* self)
 {

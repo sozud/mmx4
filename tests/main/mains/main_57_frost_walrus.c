@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_57_frost_walrus.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern void* frost_walrus_animations[39];
 extern u32* D_80137E08;
 void frost_walrus_choose_script(struct MainObj*);

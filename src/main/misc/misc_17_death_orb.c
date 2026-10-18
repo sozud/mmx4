@@ -1,6 +1,12 @@
 // MiscObj, misc_object_update_funcs[17]
 // 800CADF8..800CB00C
 #include "common.h"
+#include "main/misc/misc_17_death_orb.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void death_orb_fly(struct MiscObj*);
 
 void death_orb_update(struct MiscObj* self)
 {

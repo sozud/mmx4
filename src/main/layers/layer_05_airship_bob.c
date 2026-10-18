@@ -1,6 +1,25 @@
 // LayerObj, layer_object_update_funcs[5]
 // 800DA298..800DA7C0
 #include "common.h"
+#include "main/layers/layer_05_airship_bob.h"
+#include "main/objects.h"
+
+// airship_bob_state_funcs
+extern void (*airship_bob_state_funcs[])(struct LayerObj*);
+
+void airship_bob_despawn(struct LayerObj*);
+
+extern s16 airship_bob_section_positions[2];
+
+void airship_bob_section_0(struct LayerObj*);
+void airship_bob_section_1(struct LayerObj*);
+void airship_bob_section_2(struct LayerObj*);
+void airship_bob_idle(struct LayerObj*);
+
+// airship_bob_sway_funcs
+extern void (*airship_bob_sway_funcs[])(struct LayerObj*);
+void airship_bob_sway_up(struct LayerObj*);
+void airship_bob_sway_down(struct LayerObj*);
 
 void airship_bob_section_0_done(struct LayerObj* arg0);
 void airship_bob_section_0_wait(struct LayerObj* arg0);

@@ -1,6 +1,26 @@
 // EffectObj, effect_object_update_funcs[25]
 // 800BAF60..800BB1F0
 #include "common.h"
+#include "main/effects/effect_25_bg_zone_controller_f.h"
+
+// bg_zone_controller_f_state_funcs
+extern void (*bg_zone_controller_f_state_funcs[])(struct EffectObj*);
+void bg_zone_controller_f_init(struct EffectObj*);
+void bg_zone_controller_f_main(struct EffectObj*);
+void bg_zone_controller_f_zone_0_enter(struct EffectObj*);
+void bg_zone_controller_f_zone_0_done(struct EffectObj*);
+void bg_zone_controller_f_zone_1_enter(struct EffectObj*);
+void bg_zone_controller_f_zone_1_done(struct EffectObj*);
+void bg_zone_controller_f_zone_2_enter(struct EffectObj*);
+void bg_zone_controller_f_zone_2_done(struct EffectObj*);
+void bg_zone_controller_f_update_zone(struct EffectObj*);
+
+// bg_zone_controller_f_zone_funcs
+extern void (*bg_zone_controller_f_zone_funcs[])(struct EffectObj*);
+void bg_zone_controller_f_zone_0(struct EffectObj*);
+void bg_zone_controller_f_zone_1(struct EffectObj*);
+void bg_zone_controller_f_zone_2(struct EffectObj*);
+void bg_zone_controller_f_idle(struct EffectObj*);
 
 s16 bg_zone_controller_f_zone_bounds[2] = { 0x0580, 0x0A40 };
 

@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[6]
 // 8009A984..8009AD30
 #include "common.h"
+#include "main/shots/shot_06_wall_crawler_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// wall_crawler_shot_state_funcs
+extern void (*wall_crawler_shot_state_funcs[])(struct ShotObj*);
+
+void wall_crawler_shot_fly(struct ShotObj*);
+void wall_crawler_shot_despawn(struct ShotObj*);
+void wall_crawler_shot_idle(struct ShotObj*);
 
 u8 wall_crawler_shot_hit_boxes[8] = { 0xFD, 0xFA, 8, 8, 0xF7, 0xF6, 0x10, 0x13 };
 u8 wall_crawler_shot_terrain_box[4] = { 0, 0, 4, 4 };

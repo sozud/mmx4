@@ -1,6 +1,10 @@
 // MiscObj, misc_object_update_funcs[31]
 // 800CDE44..800CE114
 #include "common.h"
+#include "main/misc/misc_31_option_toggle.h"
+#include "main/misc/option_toggle_funcs.h"
+#include "main/menu.h"
+#include "main/objects.h"
 
 // option_toggle_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);

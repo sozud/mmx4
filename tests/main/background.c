@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/background.h"
 
 static const u32 func_80027BE4_expected[] = { 0xFFFFFF80u, 0u, 6u, 0xFFFFFFFFu };
 static u32 test_func_80027BE4(u32 row)

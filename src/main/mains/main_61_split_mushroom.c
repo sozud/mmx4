@@ -1,7 +1,103 @@
 // MainObj, main_object_update_funcs[61]
 // 8007872C..8007B90C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_61_split_mushroom.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+
+extern s32 split_mushroom_walk_speeds[3];
+extern struct Unk_unk68 split_mushroom_terrain_box;
+
+// split_mushroom_state_funcs
+extern void (*split_mushroom_state_funcs[])(struct MainObj*);
+void func_8007877C(struct MainObj*);
+
+void split_mushroom_death(struct MainObj* arg0);
+
+// split_mushroom_step_funcs
+void split_mushroom_intro(struct MainObj* arg0);
+void split_mushroom_stun(struct MainObj* arg0);
+void split_mushroom_spore_rain(struct MainObj* arg0);
+void split_mushroom_walk(struct MainObj* arg0);
+void split_mushroom_dash(struct MainObj* arg0);
+void split_mushroom_combo(struct MainObj* arg0);
+void split_mushroom_wall_jump(struct MainObj* arg0);
+
+// split_mushroom_death_funcs
+extern void (*split_mushroom_death_funcs[])(struct MainObj*);
+void split_mushroom_death_start(struct MainObj*);
+
+void split_mushroom_death_finish(struct MainObj*);
+
+// split_mushroom_intro_funcs
+extern void (*split_mushroom_intro_funcs[])(struct MainObj*);
+
+void split_mushroom_intro_drop(struct MainObj*);
+void split_mushroom_intro_bounce(struct MainObj*);
+void split_mushroom_intro_land(struct MainObj*);
+
+void split_mushroom_intro_start_health_bar(struct MainObj*);
+void split_mushroom_intro_fill_health(struct MainObj*);
+
+// split_mushroom_stun_funcs
+extern void (*split_mushroom_stun_funcs[])(struct MainObj*);
+void split_mushroom_stun_start(struct MainObj*);
+
+void split_mushroom_stun_fall(struct MainObj*);
+void split_mushroom_stun_merge(struct MainObj*);
+
+void split_mushroom_stun_land(struct MainObj*);
+void split_mushroom_stun_split(struct MainObj*);
+
+// split_mushroom_spore_rain_funcs
+extern void (*split_mushroom_spore_rain_funcs[])(struct MainObj*);
+
+void split_mushroom_spore_rain_split(struct MainObj*);
+void split_mushroom_spore_rain_land(struct MainObj*);
+void split_mushroom_spore_rain_recover(struct MainObj*);
+void split_mushroom_spore_rain_finish(struct MainObj*);
+
+// split_mushroom_walk_funcs
+extern void (*split_mushroom_walk_funcs[])(struct MainObj*);
+void split_mushroom_walk_start(struct MainObj*);
+void split_mushroom_walk_move(struct MainObj*);
+
+void split_mushroom_walk_fall(struct MainObj*);
+void func_8007A444(struct MainObj*);
+
+// split_mushroom_dash_funcs
+extern void (*split_mushroom_dash_funcs[])(struct MainObj*);
+
+void split_mushroom_dash_bounce(struct MainObj*);
+void split_mushroom_dash_land(struct MainObj*);
+void split_mushroom_dash_recover(struct MainObj*);
+void split_mushroom_dash_finish(struct MainObj*);
+
+// split_mushroom_combo_funcs
+extern void (*split_mushroom_combo_funcs[])(struct MainObj*);
+
+void split_mushroom_combo_swing(struct MainObj*);
+void func_8007AE2C(struct MainObj*);
+void split_mushroom_combo_repeat(struct MainObj*);
+void split_mushroom_combo_sync(struct MainObj*);
+void split_mushroom_combo_end(struct MainObj*);
+void split_mushroom_combo_restart(struct MainObj*);
+
+// split_mushroom_wall_jump_funcs
+extern void (*split_mushroom_wall_jump_funcs[])(struct MainObj*);
+
+void split_mushroom_wall_jump_air(struct MainObj*);
+
+void split_mushroom_wall_jump_cling(struct MainObj*);
+
+void split_mushroom_wall_jump_turn(struct MainObj*);
+void split_mushroom_wall_jump_land(struct MainObj*);
+void split_mushroom_wall_jump_finish(struct MainObj*);
 
 void split_mushroom_load_palette(void);
 

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_08_bg_zone_controller.h"
 
 struct bg_zone_controller_zone_0_scroll_case {
     u32 x_pos_hi, unk14_hi, unk17;

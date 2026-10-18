@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_64_cyber_peacock.h"
 
 static u32 peacock_case(u32 mode, u32 observation)
 {

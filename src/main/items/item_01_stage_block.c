@@ -1,6 +1,30 @@
 // ItemObj, item_object_update_funcs[1]
 // 800BEBB4..800BF730
 #include "common.h"
+#include "main/items/item_01_stage_block.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+extern u8 stage_block_debris[16];
+
+// stage_block_state_funcs
+extern void (*stage_block_state_funcs[])(struct ItemObj*);
+
+void stage_block_main(struct ItemObj*);
+void stage_block_destroyed(struct ItemObj*);
+void stage_block_despawn(struct ItemObj*);
+
+// stage_block_step_funcs
+extern void (*stage_block_step_funcs[])(struct ItemObj*);
+void stage_block_wait_trigger(struct ItemObj*);
+
+void stage_block_stop(struct ItemObj*);
 
 void stage_block_update(struct ItemObj* arg0)
 {

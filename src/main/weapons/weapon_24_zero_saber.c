@@ -1,6 +1,11 @@
 // WeaponObj, weapon_object_update_funcs[24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35]
 // 80097EEC..800985F4
 #include "common.h"
+#include "main/weapons/weapon_24_zero_saber.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+void zero_saber_follow(struct WeaponObj*, struct PlayerObj*);
 
 void zero_saber_update(struct WeaponObj* arg0)
 {

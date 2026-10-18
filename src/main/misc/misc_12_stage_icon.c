@@ -1,6 +1,16 @@
 // MiscObj, misc_object_update_funcs[12]
 // 800CA228..800CA52C
 #include "common.h"
+#include "main/misc/misc_12_stage_icon.h"
+#include "main/objects.h"
+
+// stage_icon_state_funcs
+extern void (*stage_icon_state_funcs[])(struct MiscObj*);
+
+void stage_icon_highlight(struct MiscObj*);
+
+void stage_icon_follow(struct MiscObj*);
+void stage_icon_show_selected(struct MiscObj*);
 
 // stage_icon_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_12_stage_icon", func_800CA228);

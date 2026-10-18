@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/layers/layer_00_train_scroll.h"
+#include "main/layers/layer_02_train_tunnel.h"
 
 static const u32 train_tunnel_accelerate_0_expected[] = { 0x80000u, 5u, 0u };
 static u32 test_train_tunnel_accelerate_0(u32 row)

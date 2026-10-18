@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_69_colonel.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
 void colonel_spawn_afterimages(struct MainObj*);
 extern void* D_80104770[25];
 extern u32* D_80137E08;

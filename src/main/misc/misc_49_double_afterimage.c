@@ -1,6 +1,16 @@
 // MiscObj, misc_object_update_funcs[49]
 // 800D1990..800D1B44
 #include "common.h"
+#include "main/misc/misc_49_double_afterimage.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// double_afterimage_state_funcs
+extern void (*double_afterimage_state_funcs[])(struct MiscObj*);
+
+void func_800D1A48(struct MiscObj*);
+void double_afterimage_despawn(struct MiscObj*);
 
 // double_afterimage_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_49_double_afterimage", func_800D1990);

@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/shots/shot_06_wall_crawler_shot.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern union AnimationStep* wall_crawler_animations[25];
 extern u8 wall_crawler_shot_hit_boxes[8], wall_crawler_shot_terrain_box[4];
 extern s8 wall_crawler_shot_spawn_offsets[16];

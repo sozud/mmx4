@@ -1,6 +1,18 @@
 // MiscObj, misc_object_update_funcs[55]
 // 800D3084..800D3388
 #include "common.h"
+#include "main/misc/misc_55_sigma_final_fx.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// sigma_final_fx_state_funcs
+extern void (*sigma_final_fx_state_funcs[])(struct MiscObj*);
+
+void sigma_final_fx_charge(struct MiscObj*);
+void sigma_final_fx_despawn(struct MiscObj*);
+void sigma_final_fx_gust(struct MiscObj* arg0);
+void sigma_final_fx_follow(struct MiscObj*);
 
 // sigma_final_fx_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_55_sigma_final_fx", func_800D3084);

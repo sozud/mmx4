@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_20_web_flash.h"
+#include "main/55C4.h"
+#include "main/mains/main_43_web_spider.h"
 
 static u32 flash_case(u32 mode)
 {

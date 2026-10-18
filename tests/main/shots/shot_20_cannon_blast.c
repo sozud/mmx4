@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_20_cannon_blast.h"
 
 struct func_8009D048_case {
     u32 value, unk2, v_0_x_pos_hi, child_0_x_pos_hi;

@@ -1,7 +1,28 @@
 // MainObj, main_object_update_funcs[25]
 // 80057100..80058158
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_25_caterkiller.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void caterkiller_despawn(struct MainObj* arg0);
+
+// caterkiller_step_funcs
+void caterkiller_resume_step(struct MainObj* arg0);
+void caterkiller_crawl(struct MainObj* arg0);
+void caterkiller_lunge(struct MainObj* arg0);
+void caterkiller_fall(struct MainObj* arg0);
+void caterkiller_climb(struct MainObj* arg0);
+void caterkiller_wait_above(struct MainObj* arg0);
+
+extern void (*caterkiller_state_funcs[])(struct MainObj*);
+extern void (*caterkiller_crawl_funcs[])(struct MainObj*);
+extern void (*caterkiller_lunge_funcs[])(struct MainObj*);
+extern void (*caterkiller_fall_funcs[])(struct MainObj*);
+extern void (*caterkiller_climb_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 void caterkiller_check_fall(struct MainObj*);

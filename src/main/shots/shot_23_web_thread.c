@@ -1,6 +1,21 @@
 // ShotObj, shot_object_update_funcs[23]
 // 8009DD40..8009E0B8
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_23_web_thread.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+extern u8 web_thread_hit_box[4];
+extern u8 web_thread_collision[32][4];
+
+// web_thread_state_funcs
+extern void (*web_thread_state_funcs[])(struct ShotObj*);
+void web_thread_init(struct ShotObj*);
+void web_thread_main(struct ShotObj*);
+void web_thread_despawn(struct ShotObj*);
+
+void web_thread_idle(struct ShotObj*);
 
 void web_thread_update(struct ShotObj* self)
 {

@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_08_twin_slasher.h"
+#include "main/55C4.h"
 extern u32* D_8011C104[10];
 
 static s32 gfx[128], sprites[128];

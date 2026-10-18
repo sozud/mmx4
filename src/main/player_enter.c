@@ -1,5 +1,17 @@
 // 800343A4..800350A4
 #include "common.h"
+#include "main/player.h"
+#include "main/1CF60.h"
+#include "main/object_motion.h"
+#include "main/player_check.h"
+#include "main/player_enter.h"
+#include "main/55C4.h"
+#include "main/player_common.h"
+#include "main/player_special.h"
+#include "main/player_weapon.h"
+#include "main/xa_sequence_data.h"
+
+extern u8 player_jump_voices[][4];
 
 struct PlayerHurtVelocity {
     s32 x_vel;

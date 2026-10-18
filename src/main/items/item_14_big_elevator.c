@@ -1,6 +1,32 @@
 // ItemObj, item_object_update_funcs[14]
 // 800C3880..800C3CF8
 #include "common.h"
+#include "main/items/item_14_big_elevator.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+// big_elevator_state_funcs
+extern void (*big_elevator_state_funcs[])(struct ItemObj*);
+void big_elevator_init(struct ItemObj*);
+extern struct Unk_unk68 big_elevator_terrain_box;
+void big_elevator_main(struct ItemObj*);
+void big_elevator_next(struct ItemObj*);
+void big_elevator_despawn(struct ItemObj*);
+
+// big_elevator_step_funcs
+extern void (*big_elevator_step_funcs[])(struct ItemObj*);
+void big_elevator_ride(struct ItemObj*);
+
+void big_elevator_restore_camera(struct ItemObj*);
+void big_elevator_finish(struct ItemObj*);
+
+// big_elevator_ride_funcs
+extern void (*big_elevator_ride_funcs[])(struct ItemObj*);
+void big_elevator_wait_player(struct ItemObj*);
+void big_elevator_rise(struct ItemObj*);
+void big_elevator_arrive(struct ItemObj*);
 
 void big_elevator_update(struct ItemObj* arg0)
 {

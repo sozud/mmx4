@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/items/item_03_falling_pillar.h"
+#include "main/tile_effects.h"
 extern struct TileEffectRecord** tile_effect_tables[26];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];

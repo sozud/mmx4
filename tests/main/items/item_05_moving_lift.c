@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_05_moving_lift.h"
 
 static const u32 moving_lift_spawn_effect_expected[] = { 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_moving_lift_spawn_effect(u32 row)

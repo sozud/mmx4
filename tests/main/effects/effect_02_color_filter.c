@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/effects/effect_02_color_filter.h"
+#include "main/1A5BC.h"
 
 static u32 filter_case(u32 mode, u32 observation)
 {

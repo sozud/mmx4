@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_32_bomb_bat.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/weapons/weapon_00_lemon.h"
 void bomb_bat_drop_end(struct MainObj*);
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];

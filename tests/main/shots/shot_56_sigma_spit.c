@@ -1,9 +1,10 @@
 #include "test_runtime.h"
+#include "main/shots/shot_56_sigma_spit.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern union AnimationStep* ice_block_animations[9];
 extern void* sigma_final_animations[39];
 extern s8* sigma_spit_boxes[8];
-
-#include "func_tables.h"
 
 struct sigma_spit_hit_case {
     u32 obj_unk6, obj_unk61, unk5, expected_unk6, expected_unk61, unk42;

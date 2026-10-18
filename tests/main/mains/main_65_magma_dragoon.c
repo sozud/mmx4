@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_65_magma_dragoon.h"
+#include "main/55C4.h"
 extern void* magma_dragoon_animations[38];
 
 static u32 breath_case(u32 mode)

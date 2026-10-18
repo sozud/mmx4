@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_22_layout_gate.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_layout_gate_spawn_alarm(void)

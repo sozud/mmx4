@@ -1,6 +1,20 @@
 // VisualObj, visual_object_update_funcs[5]
 // 800AFC9C..800AFF78
 #include "common.h"
+#include "main/visuals/visual_05_object_afterimage.h"
+
+// object_afterimage_state_funcs
+extern void (*object_afterimage_state_funcs[])(struct VisualObj*);
+void object_afterimage_follow(struct VisualObj*);
+void object_afterimage_start(struct VisualObj*);
+void object_afterimage_wait(struct VisualObj*);
+void object_afterimage_main(struct VisualObj*);
+
+// object_afterimage_step_funcs
+extern void (*object_afterimage_step_funcs[])(struct VisualObj*);
+void object_afterimage_trail(struct VisualObj*);
+void object_afterimage_linger(struct VisualObj*);
+void object_afterimage_catch_up(struct VisualObj*);
 
 void (*object_afterimage_state_funcs[])(struct VisualObj*) = {
     object_afterimage_wait,

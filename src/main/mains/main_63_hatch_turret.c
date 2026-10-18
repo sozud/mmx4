@@ -1,7 +1,15 @@
 // MainObj, main_object_update_funcs[63]
 // 8007BFF4..8007C30C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_63_hatch_turret.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+
+// hatch_turret_state_funcs
+extern void (*hatch_turret_state_funcs[])(struct MainObj*);
+void func_8007BFF4(struct MainObj*);
+
+void hatch_turret_despawn(struct MainObj* arg0);
 
 extern void* hatch_turret_animations[13];
 

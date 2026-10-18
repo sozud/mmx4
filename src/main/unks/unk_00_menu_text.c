@@ -1,6 +1,11 @@
 // UnkObj, unk_object_update_funcs[0]
 // 800D3928..800D3964
 #include "common.h"
+#include "main/misc/misc_57_falling_piece.h"
+#include "main/unks/unk_00_menu_text.h"
+
+// menu_text_state_funcs
+extern void (*menu_text_state_funcs[])(struct UnkObj*);
 
 void menu_text_update(struct UnkObj* arg0)
 {

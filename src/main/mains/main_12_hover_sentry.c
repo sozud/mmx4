@@ -1,7 +1,27 @@
 // MainObj, main_object_update_funcs[12]
 // 8004B8C0..8004C734
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_12_hover_sentry.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern u8 hover_sentry_debris[];
+
+void hover_sentry_check_player_near(struct MainObj*);
+
+void hover_sentry_main(struct MainObj* arg0);
+void hover_sentry_despawn(struct MainObj*);
+
+// hover_sentry_step_funcs
+extern void (*hover_sentry_step_funcs[])(struct MainObj*);
+void hover_sentry_resume_step(struct MainObj* arg0);
+void hover_sentry_bob(struct MainObj* arg0);
+void hover_sentry_alert(struct MainObj* arg0);
+
+extern void (*hover_sentry_state_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;

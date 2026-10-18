@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/E47C.h"
+#include "main/E47C_menu_funcs.h"
 
 void (*D_800F2390[3])(struct GameInfo*) = {
     func_8001E9E0,

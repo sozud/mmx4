@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[22]
 // 800B3074..800B322C
 #include "common.h"
+#include "main/visuals/visual_22_missile_smoke.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// missile_smoke_state_funcs
+extern void (*missile_smoke_state_funcs[])(struct VisualObj*);
+void missile_smoke_init(struct VisualObj*);
+void missile_smoke_main(struct VisualObj*);
+void missile_smoke_despawn(struct VisualObj*);
 
 void missile_smoke_update(struct VisualObj* arg0)
 {

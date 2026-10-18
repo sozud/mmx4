@@ -1,7 +1,39 @@
 // MainObj, main_object_update_funcs[35]
 // 8005EC58..8005F510
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_35_wheel_charger.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/visuals/visual_08_ice_shard.h"
+
+extern struct Unk_unk68 wheel_charger_open_hurt_box;
+extern struct Unk_unk68 wheel_charger_open_attack_box;
+
+extern u8 wheel_charger_debris[8];
+
+void wheel_charger_face_player(struct MainObj*);
+
+// wheel_charger_state_funcs
+extern void (*wheel_charger_state_funcs[])(struct MainObj*);
+
+void wheel_charger_despawn(struct MainObj* arg0);
+
+// wheel_charger_step_funcs
+extern void (*wheel_charger_step_funcs[])(struct MainObj*);
+
+void wheel_charger_drop(struct MainObj* arg0);
+
+void wheel_charger_wait_for_player(struct MainObj* arg0);
+void wheel_charger_charge(struct MainObj* arg0);
+
+// wheel_charger_charge_funcs
+void wheel_charger_charge_ready(struct MainObj*);
+void wheel_charger_charge_open(struct MainObj*);
+
+extern void (*wheel_charger_charge_funcs[])(struct MainObj*);
 
 void wheel_charger_update(struct MainObj* self)
 {

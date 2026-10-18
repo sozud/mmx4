@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_48_sentry_drone.h"
 extern union AnimationStep* sentry_drone_animations[13];
 extern u8 D_800FFAD0[4];
 extern u8 D_800FFAD4[];

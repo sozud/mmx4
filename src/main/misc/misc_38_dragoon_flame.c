@@ -1,6 +1,17 @@
 // MiscObj, misc_object_update_funcs[38]
 // 800CF4B8..800CF790
 #include "common.h"
+#include "main/misc/misc_38_dragoon_flame.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// dragoon_flame_state_funcs
+extern void (*dragoon_flame_state_funcs[])(struct MiscObj*);
+
+void dragoon_flame_burn(struct MiscObj*);
+void dragoon_flame_despawn(struct MiscObj*);
+
+void dragoon_flame_attached(struct MiscObj*);
 
 // dragoon_flame_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_38_dragoon_flame", func_800CF4B8);

@@ -1,6 +1,29 @@
 // PlayerObj
 // 800311EC..80033414
 #include "common.h"
+#include "main/player.h"
+#include "main/player_common.h"
+#include "main/player_special.h"
+#include "main/1CF60.h"
+#include "main/player_check.h"
+#include "main/player_enter.h"
+#include "main/player_weapon.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_03_soul_body.h"
+
+// player_dash_funcs
+extern void (*player_dash_funcs[])(struct PlayerObj*);
+
+// player_air_dash_funcs
+extern void (*player_air_dash_funcs[])(struct PlayerObj*);
+
+// player_ladder_transition_funcs
+extern void (*player_ladder_transition_funcs[])(struct PlayerObj*);
+
+// player_hurt_funcs
+extern void (*player_hurt_funcs[])(struct PlayerObj*);
 
 s32 player_check_air_move(struct PlayerObj* self);
 void player_check_capsule(struct PlayerObj* self);

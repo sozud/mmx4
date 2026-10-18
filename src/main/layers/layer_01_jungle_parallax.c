@@ -1,6 +1,22 @@
 // LayerObj, layer_object_update_funcs[1]
 // 800D8ED4..800D9218
 #include "common.h"
+#include "main/layers/layer_01_jungle_parallax.h"
+
+#ifdef MMX4_PC
+extern void jungle_parallax_idle(struct LayerObj* arg0);
+#endif
+
+// jungle_parallax_state_funcs
+extern void (*jungle_parallax_state_funcs[])(struct LayerObj*);
+void jungle_parallax_init(struct LayerObj*);
+void jungle_parallax_main(struct LayerObj*);
+
+// jungle_parallax_section_funcs
+extern void (*jungle_parallax_section_funcs[])(struct LayerObj*);
+void jungle_parallax_section_0(struct LayerObj*);
+void jungle_parallax_section_1(struct LayerObj*);
+void jungle_parallax_section_2(struct LayerObj*);
 
 void jungle_parallax_section_0_setup(struct LayerObj* arg0);
 void jungle_parallax_section_1_done(struct LayerObj* arg0);

@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_26_ice_wall.h"
+#include "main/tile_effects.h"
 extern struct TileEffectRecord** tile_effect_tables[26];
 extern struct TileEffectRecord* D_8011919C[33];
 

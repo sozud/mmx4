@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[14]
 // 8009BF14..8009C0F0
 #include "common.h"
+#include "main/shots/shot_14_dash_gunner_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// dash_gunner_shot_state_funcs
+extern void (*dash_gunner_shot_state_funcs[])(struct ShotObj*);
+void dash_gunner_shot_init(struct ShotObj*);
+void dash_gunner_shot_fly(struct ShotObj*);
+void dash_gunner_shot_despawn(struct ShotObj*);
 
 u8 dash_gunner_shot_hit_box[4] = { 0xFD, 0xFE, 0x05, 0x04 };
 

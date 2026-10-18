@@ -1,6 +1,14 @@
 // MiscObj, misc_object_update_funcs[14]
 // 800CA754..800CA86C
 #include "common.h"
+#include "main/misc/misc_14_frame_ghost.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// frame_ghost_state_funcs
+extern void (*frame_ghost_state_funcs[])(struct MiscObj*);
+void frame_ghost_init(struct MiscObj*);
+void frame_ghost_fade(struct MiscObj*);
 
 void frame_ghost_init(register struct MiscObj* self)
 {

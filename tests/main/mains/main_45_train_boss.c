@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_45_train_boss.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 

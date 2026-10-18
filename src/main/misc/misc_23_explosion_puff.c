@@ -1,6 +1,10 @@
 // MiscObj, misc_object_update_funcs[23]
 // 800CBD40..800CBECC
 #include "common.h"
+#include "main/misc/misc_23_explosion_puff.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
 
 void explosion_puff_animate(struct MiscObj* self);
 void explosion_puff_init(struct MiscObj* self);

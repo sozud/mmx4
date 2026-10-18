@@ -1,7 +1,29 @@
 // MainObj, main_object_update_funcs[15]
 // 8004D930..8004E890
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_15_shell_crawler.h"
+#include "main/objects.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern u8 shell_crawler_debris[4];
+
+// shell_crawler_step_funcs
+extern void (*shell_crawler_step_funcs[])(struct MainObj*);
+void shell_crawler_walk(struct MainObj* arg0);
+void shell_crawler_land(struct MainObj* arg0);
+
+void shell_crawler_hop(struct MainObj* arg0);
+
+void shell_crawler_despawn(struct MainObj* arg0);
+
+void shell_crawler_buried(struct MainObj*);
+
+extern void (*shell_crawler_state_funcs[])(struct MainObj*);
 
 void shell_crawler_buried(struct MainObj* self)
 {

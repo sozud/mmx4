@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/1A5BC.h"
+#include "main/stage_menu_funcs.h"
 
 void (*D_800F4590[])(struct GameInfo* arg0) = {
     func_80029E1C,

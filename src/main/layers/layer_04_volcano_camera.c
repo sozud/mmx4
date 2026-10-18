@@ -1,6 +1,21 @@
 // LayerObj, layer_object_update_funcs[4]
 // 800DA05C..800DA298
 #include "common.h"
+#include "main/layers/layer_04_volcano_camera.h"
+#include "main/objects.h"
+
+// volcano_camera_state_funcs
+extern void (*volcano_camera_state_funcs[])(struct LayerObj*);
+void volcano_camera_init(struct LayerObj*);
+void volcano_camera_main(struct LayerObj*);
+void volcano_camera_despawn(struct LayerObj*);
+void volcano_camera_update_section(struct LayerObj*);
+
+// volcano_camera_section_funcs
+extern void (*volcano_camera_section_funcs[])(struct LayerObj*);
+void volcano_camera_section_0(struct LayerObj*);
+void volcano_camera_section_1(struct LayerObj*);
+void volcano_camera_idle(struct LayerObj*);
 
 void volcano_camera_section_0_done(struct LayerObj* arg0);
 void volcano_camera_section_0_wait(struct LayerObj* arg0);

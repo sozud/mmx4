@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_28_storm_owl_fx.h"
+#include "main/55C4.h"
+#include "main/mains/main_60_storm_owl.h"
 
 static u32 storm_owl_fx_raw_modes_start_case(u32 mode)
 {

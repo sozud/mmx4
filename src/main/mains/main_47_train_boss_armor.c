@@ -1,9 +1,17 @@
 // MainObj, main_object_update_funcs[47]
 // 80066DAC..80067350
 #include "common.h"
+#include "main/mains/main_47_train_boss_armor.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/object_motion.h"
+
+// train_boss_armor_step_funcs
+void train_boss_armor_start_idle(struct MainObj* arg0);
+void train_boss_armor_arrive(struct MainObj* arg0);
+
+extern void (*train_boss_armor_state_funcs[])(struct MainObj*);
 
 extern u16 train_boss_armor_smoke_offsets[3][2];
-#include "func_tables.h"
 
 #ifdef MMX4_PC
 extern s8 train_boss_armor_hurt_boxes[3][16];

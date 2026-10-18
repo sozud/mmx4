@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_24_jet_drone.h"
+#include "main/55C4.h"
 extern union AnimationStep* jet_drone_animations[11];
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];

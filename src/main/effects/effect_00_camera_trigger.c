@@ -1,6 +1,13 @@
 // EffectObj, effect_object_update_funcs[0]
 // 800B56F4..800B58A0
 #include "common.h"
+#include "main/effects/effect_00_camera_trigger.h"
+
+extern u16** camera_trigger_stage_scripts[26];
+
+// camera_trigger_state_funcs
+extern void (*camera_trigger_state_funcs[])(struct EffectObj*);
+void camera_trigger_init(struct EffectObj*);
 
 struct Effect00BackgroundUpdate {
     u16 object_index;

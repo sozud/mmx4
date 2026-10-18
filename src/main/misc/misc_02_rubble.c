@@ -1,6 +1,14 @@
 // MiscObj, misc_object_update_funcs[2]
 // 800C7DA4..800C85D0
 #include "common.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+
+extern s32 rubble_x_offsets[8];
+extern s32 rubble_y_offsets[8];
+
+void rubble_fall(struct MiscObj*);
 
 void spawn_rubble(arg_u8 count, u8* variants, void* source, s32 x_velocity)
 {

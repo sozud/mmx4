@@ -1,6 +1,16 @@
 // WeaponObj, weapon_object_update_funcs[9, 18]
 // 80092648..800927EC
 #include "common.h"
+#include "main/weapons/weapon_00_lemon.h"
+#include "main/weapons/weapon_09_charge_shot.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// charge_shot_state_funcs
+extern void (*charge_shot_state_funcs[])(struct WeaponObj*);
+
+void charge_shot_main(struct WeaponObj*);
 
 void charge_shot_update(struct WeaponObj* arg0)
 {

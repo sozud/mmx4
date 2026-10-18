@@ -1,6 +1,11 @@
 // MiscObj, misc_object_update_funcs[35]
 // 800CF144..800CF2B8
 #include "common.h"
+#include "main/misc/misc_35_cyclone_trail.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+void cyclone_trail_animate(struct MiscObj*);
 
 void cyclone_trail_update(struct MiscObj* self)
 {

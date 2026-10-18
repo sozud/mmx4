@@ -1,9 +1,51 @@
 // MainObj, main_object_update_funcs[37]
 // 8005FDBC..80060A88
 #include "common.h"
+#include "main/mains/main_37_rocket_spiker.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+void rocket_spiker_main(struct MainObj*);
+void rocket_spiker_despawn(struct MainObj* arg0);
+
+// rocket_spiker_step_funcs
+void rocket_spiker_resume_step(struct MainObj* arg0);
+void rocket_spiker_drop(struct MainObj* arg0);
+void rocket_spiker_crawl(struct MainObj* arg0);
+void rocket_spiker_boost(struct MainObj* arg0);
+
+// rocket_spiker_drop_funcs
+void rocket_spiker_drop_fall(struct MainObj*);
+
+void rocket_spiker_drop_land(struct MainObj*);
+
+// rocket_spiker_crawl_funcs
+void rocket_spiker_crawl_move(struct MainObj*);
+void rocket_spiker_crawl_fall(struct MainObj*);
+void rocket_spiker_crawl_turn(struct MainObj*);
+
+// rocket_spiker_boost_funcs
+void rocket_spiker_boost_wait(struct MainObj*);
+void func_800606D8(struct MainObj*);
+void rocket_spiker_boost_launch(struct MainObj*);
+
+void rocket_spiker_boost_pause(struct MainObj*);
+void rocket_spiker_boost_brake(struct MainObj*);
+void rocket_spiker_boost_rest(struct MainObj*);
+
+extern void (*rocket_spiker_state_funcs[])(struct MainObj*);
+extern void (*rocket_spiker_drop_funcs[])(struct MainObj*);
+extern void (*rocket_spiker_crawl_funcs[])(struct MainObj*);
+extern void (*rocket_spiker_boost_funcs[])(struct MainObj*);
 
 extern u8 rocket_spiker_debris[12];
-#include "func_tables.h"
 
 void rocket_spiker_update(struct MainObj* self)
 {

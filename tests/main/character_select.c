@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/character_select.h"
 
 static u32 select_case(u32 available)
 {

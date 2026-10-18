@@ -1,6 +1,17 @@
 // ItemObj, item_object_update_funcs[21]
 // 800C52CC..800C5544
 #include "common.h"
+#include "main/items/item_21_hopper_switch.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/objects.h"
+
+// hopper_switch_state_funcs
+extern void (*hopper_switch_state_funcs[])(struct ItemObj*);
+
+void hopper_switch_main(struct ItemObj*);
+void hopper_switch_despawn(struct ItemObj*);
 
 // hopper_switch_init
 INCLUDE_ASM("main/nonmatchings/items/item_21_hopper_switch", func_800C52CC);

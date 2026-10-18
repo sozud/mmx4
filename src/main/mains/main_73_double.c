@@ -1,7 +1,43 @@
 // MainObj, main_object_update_funcs[73]
 // 8008BA38..8008D3B8
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_73_double.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+
+extern struct Unk_unk68 double_dive_attack_box;
+extern struct Unk_unk68 double_dive_hurt_box;
+
+// double_intro_talk_funcs
+extern void (*double_intro_talk_funcs[])(struct MainObj*);
+
+// double_intro_funcs
+extern void (*double_intro_funcs[])(struct MainObj*);
+
+// double_wait_funcs
+extern void (*double_wait_funcs[])(struct MainObj*);
+
+// double_energy_ball_funcs
+extern void (*double_energy_ball_funcs[])(struct MainObj*);
+
+// double_dive_funcs
+extern void (*double_dive_funcs[])(struct MainObj*);
+
+// double_aerial_shot_funcs
+extern void (*double_aerial_shot_funcs[])(struct MainObj*);
+
+void func_8008CBF8(struct MainObj*);
+
+// double_death_funcs
+extern void (*double_death_funcs[7])(struct MainObj*);
+
+// double_state_funcs
+extern void (*double_state_funcs[])(struct MainObj*);
 
 // double_init
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);

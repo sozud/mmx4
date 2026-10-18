@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/11184.h"
+#include "main/11184_dispatch_data.h"
 
 void (*D_800F2454[5])(struct EngineObj*) = {
     func_80020B1C,

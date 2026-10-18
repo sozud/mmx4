@@ -1,6 +1,17 @@
 // ShotObj, shot_object_update_funcs[11]
 // 8009B67C..8009B7F8
 #include "common.h"
+#include "main/shots/shot_11_enemy_bullet.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// enemy_bullet_state_funcs
+extern void (*enemy_bullet_state_funcs[])(struct ShotObj*);
+
+void enemy_bullet_fly(struct ShotObj*);
+void enemy_bullet_despawn(struct ShotObj*);
 
 u8 enemy_bullet_hit_box[4] = { 0xFC, 0xFD, 0x06, 0x05 };
 

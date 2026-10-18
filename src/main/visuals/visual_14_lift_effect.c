@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[14]
 // 800B1C5C..800B1D6C
 #include "common.h"
+#include "main/visuals/visual_14_lift_effect.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// lift_effect_state_funcs
+extern void (*lift_effect_state_funcs[])(struct VisualObj*);
+void lift_effect_init(struct VisualObj*);
+void lift_effect_main(struct VisualObj*);
+void lift_effect_despawn(struct VisualObj*);
 
 void lift_effect_update(struct VisualObj* arg0)
 {

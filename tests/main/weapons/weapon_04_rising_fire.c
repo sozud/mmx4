@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_04_rising_fire.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern s32 player_gfx_buf_0[1024];

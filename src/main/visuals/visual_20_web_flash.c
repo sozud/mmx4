@@ -1,6 +1,13 @@
 // VisualObj, visual_object_update_funcs[20]
 // 800B2D48..800B2E98
 #include "common.h"
+#include "main/visuals/visual_20_web_flash.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// web_flash_state_funcs
+extern void (*web_flash_state_funcs[])(struct VisualObj*);
+void web_flash_init(struct VisualObj*);
 
 void web_flash_update(struct VisualObj* arg0)
 {

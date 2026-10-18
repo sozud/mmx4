@@ -1,6 +1,18 @@
 // QuadObj, quad_object_update_funcs[10]
 // 800D6AD8..800D6F94
 #include "common.h"
+#include "main/quads/quad_10_aiming_laser_charged_beam.h"
+#include "main/objects.h"
+
+struct PlayerUnk8CFields {
+    s8 unk8C;
+    u8 unk8D;
+};
+
+// aiming_laser_charged_beam_state_funcs
+extern void (*aiming_laser_charged_beam_state_funcs[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+
+void aiming_laser_charged_beam_extend(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
 
 void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 {

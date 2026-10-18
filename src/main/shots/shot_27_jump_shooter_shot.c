@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[27]
 // 8009F240..8009F46C
 #include "common.h"
+#include "main/shots/shot_27_jump_shooter_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// jump_shooter_shot_state_funcs
+extern void (*jump_shooter_shot_state_funcs[])(struct ShotObj*);
+void func_8009F27C(struct ShotObj*);
+void jump_shooter_shot_fly(struct ShotObj*);
+void jump_shooter_shot_despawn(struct ShotObj*);
 
 u8 jump_shooter_shot_hit_box[4] = { 0xFD, 0xFD, 5, 5 };
 s8 jump_shooter_shot_muzzle_offsets[20] = {

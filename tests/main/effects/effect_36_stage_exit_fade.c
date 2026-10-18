@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_36_stage_exit_fade.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_stage_exit_fade_init(void)

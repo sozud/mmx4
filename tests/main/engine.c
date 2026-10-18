@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/engine.h"
 extern struct MiscObj* D_801396C0;
 extern struct MiscObj* D_801396C4;
 s32 func_8001F8FC(struct GameInfo*);

@@ -1,5 +1,7 @@
 // 80028B68..80028DB4
 #include "common.h"
+#include "main/stage_objects.h"
+#include "main/195B4.h"
 
 extern u8 D_800F4A50[16];
 extern u8 D_800F4A60[16];

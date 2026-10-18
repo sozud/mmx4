@@ -1,5 +1,9 @@
 // 8002C760..8002D9BC
 #include "common.h"
+#include "main/1CF60.h"
+#include "main/collision.h"
+
+u8 func_8002D7E4(struct PlayerObj*, s16, s16);
 
 void func_8002C9E4(struct PlayerObj* arg0);
 s32 func_8002D1F8(struct PlayerObj* arg0, u8 arg1, s32 arg2);

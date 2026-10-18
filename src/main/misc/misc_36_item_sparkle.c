@@ -1,6 +1,16 @@
 // MiscObj, misc_object_update_funcs[36]
 // 800CF2B8..800CF4B8
 #include "common.h"
+#include "main/misc/misc_36_item_sparkle.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// item_sparkle_state_funcs
+extern void (*item_sparkle_state_funcs[])(struct MiscObj*);
+
+void item_sparkle_move(struct MiscObj*);
+void item_sparkle_despawn(struct MiscObj*);
 
 void item_sparkle_update(struct MiscObj* self)
 {

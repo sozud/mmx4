@@ -1,4 +1,16 @@
 #include "common.h"
+#include "main/1A5BC.h"
+#include "main/stage_menu_funcs.h"
+#include "main/14A60.h"
+#include "main/2824.h"
+#include "main/E47C.h"
+#include "main/object_update.h"
+#include "main/objects.h"
+
+extern u8 D_800F4508[];
+extern u8* D_800F4560[];
+extern u8 D_800F4568[];
+extern u8 D_800F457C[];
 
 extern u16 D_800F44E8[8];
 extern u16 D_800F44F8[8];

@@ -1,7 +1,64 @@
 // MainObj, main_object_update_funcs[70]
 // 80088BA0..80089AA4
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_70_drone_pod.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+extern u8 D_80104A3C[];
+
+extern struct Unk_unk68 D_801049B0[2];
+
+void drone_pod_alarm_flash(struct MainObj*);
+
+// drone_pod_state_funcs
+extern void (*drone_pod_state_funcs[])(struct MainObj*);
+void drone_pod_intro(struct MainObj* arg0);
+
+void drone_pod_death(struct MainObj*);
+
+// drone_pod_intro_funcs
+extern void (*drone_pod_intro_funcs[])(struct MainObj*);
+void func_80088C40(struct MainObj*);
+void drone_pod_intro_wait_player(struct MainObj*);
+void drone_pod_intro_open(struct MainObj*);
+void drone_pod_intro_fill_health(struct MainObj*);
+
+// drone_pod_step_funcs
+void drone_pod_resume_step(struct MainObj* arg0);
+void drone_pod_rest(struct MainObj* arg0);
+void drone_pod_launch(struct MainObj* arg0);
+
+// drone_pod_death_funcs
+extern void (*drone_pod_death_funcs[])(struct MainObj*);
+void drone_pod_death_start(struct MainObj*);
+void drone_pod_death_explode(struct MainObj*);
+void drone_pod_death_alarm(struct MainObj*);
+void drone_pod_death_break_wall(struct MainObj*);
+void drone_pod_death_debris(struct MainObj*);
+void drone_pod_death_finish(struct MainObj* arg0);
+
+// drone_pod_rest_funcs
+extern void (*drone_pod_rest_funcs[])(struct MainObj*);
+void drone_pod_rest_wait(struct MainObj*);
+void drone_pod_rest_open(struct MainObj*);
+
+// drone_pod_launch_funcs
+extern void (*drone_pod_launch_funcs[])(struct MainObj*);
+void drone_pod_launch_prepare(struct MainObj*);
+void drone_pod_launch_fire(struct MainObj*);
+void drone_pod_launch_close(struct MainObj*);
+
+// drone_pod_alarm_funcs
+extern void (*drone_pod_alarm_funcs[])(struct MainObj*);
+void drone_pod_alarm_red(struct MainObj*);
+void drone_pod_alarm_white(struct MainObj*);
 
 extern u8 D_80104A3C[];
 extern struct Unk_unk68 D_80104914;

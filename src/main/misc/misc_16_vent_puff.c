@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[16]
 // 800CAC18..800CADF8
 #include "common.h"
+#include "main/misc/misc_16_vent_puff.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// vent_puff_state_funcs
+extern void (*vent_puff_state_funcs[])(struct MiscObj*);
+void vent_puff_init(struct MiscObj*);
+
+void vent_puff_despawn(struct MiscObj*);
 
 void vent_puff_update(struct MiscObj* self)
 {

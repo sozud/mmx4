@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_27_dash_gunner.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
 extern union AnimationStep* dash_gunner_animations[12];
 extern struct StageObjectRecord stage_object_records_10_0[62];
 extern struct StageObjectRecord stage_object_records_3_1[71];

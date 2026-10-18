@@ -1,4 +1,15 @@
 #include "common.h"
+#include "main/13A8C.h"
+#include "main/144A4.h"
+#include "main/125BC.h"
+#include "main/14A60.h"
+#include "main/128C4.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/hud_origins.h"
+#include "main/player_weapon.h"
+
+extern u8 x_ready_text_flags[];
 
 void func_80024F5C(struct PlayerObj* arg0);
 void func_8002509C(struct PlayerObj* arg0);

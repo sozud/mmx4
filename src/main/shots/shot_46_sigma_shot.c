@@ -1,6 +1,54 @@
 // ShotObj, shot_object_update_funcs[46]
 // 800A8628..800A9964
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_46_sigma_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+// sigma_bolt_funcs
+extern void (*sigma_bolt_funcs[])(struct ShotObj*);
+void sigma_bolt_gather(struct ShotObj*);
+void sigma_bolt_launch(struct ShotObj*);
+void sigma_bolt_bounce_wall(struct ShotObj*);
+void sigma_bolt_bounce_floor(struct ShotObj*);
+void sigma_bolt_bounce_wall(struct ShotObj*);
+void sigma_bolt_idle(struct ShotObj*);
+
+// sigma_planted_scythe_funcs
+extern void (*sigma_planted_scythe_funcs[])(struct ShotObj*);
+
+void sigma_planted_scythe_stuck(struct ShotObj*);
+void sigma_planted_scythe_recall(struct ShotObj*);
+void sigma_planted_scythe_return(struct ShotObj*);
+
+// sigma_dart_funcs
+extern void (*sigma_dart_funcs[])(struct ShotObj*);
+void sigma_dart_spread(struct ShotObj*);
+void sigma_dart_wait(struct ShotObj*);
+void sigma_dart_strike(struct ShotObj*);
+void sigma_dart_aim(struct ShotObj*);
+void sigma_dart_fly(struct ShotObj*);
+
+// sigma_shot_subtype_funcs
+extern void (*sigma_shot_subtype_funcs[])(struct ShotObj*);
+void sigma_shot_cloak_scythe(struct ShotObj*);
+void sigma_shot_bolt(struct ShotObj*);
+void sigma_shot_planted_scythe(struct ShotObj*);
+void sigma_shot_drift(struct ShotObj*);
+void sigma_shot_drift(struct ShotObj*);
+void sigma_shot_dart(struct ShotObj*);
+
+void sigma_shot_cloak_fire(struct ShotObj*);
+void sigma_shot_dropped_scythe(struct ShotObj*);
+
+// sigma_shot_state_funcs
+extern void (*sigma_shot_state_funcs[])(struct ShotObj*);
+
+void sigma_shot_run(struct ShotObj*);
+void sigma_shot_despawn(struct ShotObj*);
 
 s8 sigma_shot_boxes[10][4] = {
     { 0, -1, 10, 10 },

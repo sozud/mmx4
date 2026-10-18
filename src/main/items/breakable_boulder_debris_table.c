@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/items/breakable_boulder_debris_table.h"
 
 u8 breakable_boulder_debris_0[5] = { 0x0A, 0x0E, 0x11, 0x13, 0x0C };
 

@@ -1,6 +1,24 @@
 // EffectObj, effect_object_update_funcs[28]
 // 800BBC14..800BC144
 #include "common.h"
+#include "main/effects/effect_28_fortress_collapse.h"
+#include "main/object_motion.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/effects/effect_29_tile_anim_trigger.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+// fortress_collapse_state_funcs
+extern void (*fortress_collapse_state_funcs[])(struct EffectObj*);
+void func_800BBC50(struct EffectObj*);
+void fortress_collapse_shake(struct EffectObj*);
+
+void fortress_collapse_despawn(struct EffectObj*);
+
+void fortress_collapse_flash_red(struct EffectObj*);
+void fortress_collapse_flash_white(struct EffectObj*);
 
 void fortress_collapse_update(struct EffectObj* self)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/object_motion.h"
 
 static u32 minimum_x(void)
 {

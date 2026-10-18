@@ -1,5 +1,15 @@
 // 800204A4..80020984
 #include "common.h"
+#include "main/102FC.h"
+#include "main/10CA4.h"
+#include "main/2824.h"
+#include "main/engine.h"
+#include "main/55C4.h"
+#include "main/menu.h"
+#include "main/323C.h"
+#include "main/E47C.h"
+#include "main/E47C_menu_data.h"
+#include "main/game_info.h"
 
 void func_800193D8(struct EngineObj* arg0);
 

@@ -1,6 +1,21 @@
 // VisualObj, visual_object_update_funcs[7]
 // 800AF22C..800AF6A0
 #include "common.h"
+#include "main/visuals/visual_07_water_wake.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/charge_glow.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+
+s32 water_wake_player_idle(struct PlayerObj*);
+s32 water_wake_player_moving(struct PlayerObj*);
+
+// water_wake_step_funcs
+extern void (*water_wake_step_funcs[])(struct VisualObj*, struct PlayerObj*);
+void water_wake_hidden(struct VisualObj*, struct PlayerObj*);
+void water_wake_idle(struct VisualObj*, struct PlayerObj*);
+void water_wake_moving(struct VisualObj*, struct PlayerObj*);
 
 void water_wake_init(struct VisualObj* arg0, struct VisualObj* arg1);
 void water_wake_main(struct VisualObj* arg0, struct PlayerObj* arg1);

@@ -1,6 +1,16 @@
 // MiscObj, misc_object_update_funcs[6]
 // 800C91B0..800C938C
 #include "common.h"
+#include "main/misc/misc_06_homing_point.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// homing_point_state_funcs
+extern void (*homing_point_state_funcs[])(struct MiscObj*);
+
+void homing_point_wait(struct MiscObj*);
+void homing_point_move(struct MiscObj*);
+void homing_point_despawn(struct MiscObj*);
 
 void homing_point_update(struct MiscObj* self)
 {

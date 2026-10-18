@@ -1,6 +1,20 @@
 // VisualObj, visual_object_update_funcs[26]
 // 800B28CC..800B2A3C
 #include "common.h"
+#include "main/visuals/visual_26_weapon_overlay.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/mains/main_23_slope_skier.h"
+
+struct VisualBounds {
+    s16 x, y;
+};
+
+extern u16 weapon_overlay_palettes[];
+extern u8 weapon_overlay_layers[4];
+extern u8 weapon_overlay_animations[4];
+extern s16 weapon_overlay_gfx_rows[4];
+extern struct VisualBounds weapon_overlay_bounds[4];
 
 void weapon_overlay_update(struct VisualObj* arg0)
 {

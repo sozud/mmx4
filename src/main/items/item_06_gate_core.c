@@ -1,6 +1,26 @@
 // ItemObj, item_object_update_funcs[6]
 // 800C1390..800C16F0
 #include "common.h"
+#include "main/items/gate_core_box_data.h"
+#include "main/items/item_06_gate_core.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/items/rising_platform_animation_data.h"
+#include "main/objects.h"
+
+// gate_core_state_funcs
+extern void (*gate_core_state_funcs[])(struct ItemObj*);
+
+void gate_core_init(struct ItemObj*);
+void gate_core_main(struct ItemObj*);
+
+void gate_core_destroyed(struct ItemObj*);
+
+void gate_core_exit(struct ItemObj*);
+void gate_core_wait_exit(struct ItemObj*);
 
 void gate_core_update(struct ItemObj* arg0)
 {

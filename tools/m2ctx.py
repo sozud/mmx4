@@ -67,7 +67,9 @@ def main():
     )
     parser.add_argument(
         "c_file",
-        help="""File from which to create context""",
+        nargs="?",
+        default="include/all.h",
+        help="""File from which to create context (default: include/all.h, every declaration)""",
     )
     parser.add_argument(
         "-o",

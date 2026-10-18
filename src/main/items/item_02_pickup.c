@@ -1,6 +1,18 @@
 // ItemObj, item_object_update_funcs[2]
 // 800BF730..800C0404
 #include "common.h"
+#include "main/items/item_02_pickup.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// pickup_state_funcs
+extern void (*pickup_state_funcs[])(struct ItemObj*);
+
+void pickup_main(struct ItemObj*);
+void pickup_collected(struct ItemObj*);
+void pickup_despawn(struct ItemObj*);
 
 struct Item02AnimationStep {
     u8 duration;

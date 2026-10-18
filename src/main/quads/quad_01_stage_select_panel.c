@@ -1,6 +1,12 @@
 // QuadObj, quad_object_update_funcs[1]
 // 800D41B0..800D4948
 #include "common.h"
+#include "main/quads/quad_01_stage_select_panel.h"
+
+// stage_select_panel_state_funcs
+extern void (*stage_select_panel_state_funcs[])(struct QuadObj*);
+
+void stage_select_panel_idle(struct QuadObj*);
 
 void stage_select_panel_update(struct QuadObj* arg0)
 {

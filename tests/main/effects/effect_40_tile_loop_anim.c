@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/effects/effect_01_tile_animator.h"
+#include "main/CB184.h"
+#include "main/tile_effects.h"
 
 #include "support/tile_effects.h"
 TILE_LOOP(3)

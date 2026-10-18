@@ -1,6 +1,19 @@
 // ShotObj, shot_object_update_funcs[18]
 // 8009CAC0..8009CC64
 #include "common.h"
+#include "main/shots/shot_18_aimed_bullet.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// aimed_bullet_state_funcs
+extern void (*aimed_bullet_state_funcs[])(struct ShotObj*);
+void aimed_bullet_init(struct ShotObj*);
+extern u8 aimed_bullet_hit_box[4];
+void aimed_bullet_fly(struct ShotObj*);
+void aimed_bullet_despawn(struct ShotObj*);
 
 u8 aimed_bullet_hit_box[4] = { 0xFC, 0xFD, 0x06, 0x05 };
 

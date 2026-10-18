@@ -1,6 +1,21 @@
 // ShotObj, shot_object_update_funcs[34]
 // 800A16FC..800A22D4
 #include "common.h"
+#include "main/shots/shot_34_ray_trap.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// ray_trap_ride_funcs
+extern void (*ray_trap_ride_funcs[])(struct ShotObj*);
+
+void ray_trap_ride(struct ShotObj*);
+
+// ray_trap_state_funcs
+extern void (*ray_trap_state_funcs[])(struct ShotObj*);
+
+void ray_trap_despawn(struct ShotObj*);
 
 struct Shot34Data {
     struct Unk_unk68 bounds[6];

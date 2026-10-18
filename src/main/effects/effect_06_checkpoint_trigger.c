@@ -1,6 +1,14 @@
 // EffectObj, effect_object_update_funcs[6]
 // 800B6A0C..800B6B18
 #include "common.h"
+#include "main/effects/effect_05_tile_scanner.h"
+#include "main/effects/effect_06_checkpoint_trigger.h"
+#include "main/objects.h"
+
+// checkpoint_trigger_state_funcs
+extern void (*checkpoint_trigger_state_funcs[])(struct EffectObj*);
+void checkpoint_trigger_init(struct EffectObj*);
+void checkpoint_trigger_wait(struct EffectObj*);
 
 void checkpoint_trigger_update(struct EffectObj* self)
 {

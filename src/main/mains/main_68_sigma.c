@@ -1,7 +1,136 @@
 // MainObj, main_object_update_funcs[68]
 // 80083218..80085F08
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_67_gunship.h"
+#include "main/mains/main_68_sigma.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+
+extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
+
+extern struct Unk_unk68 D_80103EF0;
+extern struct Unk_unk68 D_80103EF4;
+
+extern u8 sigma_scythe_plant_next[4];
+extern u8 sigma_cloak_pattern[4];
+
+void sigma_intro_fill_health(struct MainObj*);
+void sigma_intro_wait(struct MainObj*);
+void sigma_intro_finish(struct MainObj* arg0);
+
+// sigma_cloak_teleport_funcs
+extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
+void sigma_cloak_teleport_appear(struct MainObj*);
+void sigma_cloak_teleport_fade_in(struct MainObj*);
+
+void sigma_cloak_teleport_wait_shots(struct MainObj*);
+void sigma_cloak_teleport_fade_out(struct MainObj*);
+void sigma_cloak_teleport_finish(struct MainObj*);
+
+// sigma_cloak_dash_funcs
+extern void (*sigma_cloak_dash_funcs[])(struct MainObj*);
+void sigma_cloak_dash_appear(struct MainObj*);
+void sigma_cloak_dash_fade_in(struct MainObj*);
+
+void sigma_cloak_dash_run(struct MainObj*);
+void sigma_cloak_dash_fade_out(struct MainObj*);
+void sigma_cloak_dash_finish(struct MainObj* arg0);
+
+// sigma_scythe_spin_funcs
+void sigma_scythe_spin_recover(struct MainObj*);
+extern void (*sigma_scythe_spin_funcs[])(struct MainObj*);
+void sigma_scythe_spin_jump(struct MainObj*);
+void sigma_scythe_spin_rise(struct MainObj*);
+void sigma_scythe_spin_throw(struct MainObj*);
+void sigma_scythe_spin_wait(struct MainObj*);
+void sigma_scythe_spin_land(struct MainObj*);
+
+// sigma_scythe_plant_funcs
+extern void (*sigma_scythe_plant_funcs[])(struct MainObj*);
+void sigma_scythe_plant_jump(struct MainObj*);
+void sigma_scythe_plant_apex(struct MainObj*);
+
+void sigma_scythe_plant_land(struct MainObj*);
+void sigma_scythe_plant_wait(struct MainObj*);
+
+// sigma_darts_funcs
+extern void (*sigma_darts_funcs[])(struct MainObj*);
+void sigma_darts_start(struct MainObj*);
+
+void sigma_darts_pose(struct MainObj*);
+void sigma_darts_wait(struct MainObj*);
+
+// sigma_scythe_retrieve_funcs
+extern void (*sigma_scythe_retrieve_funcs[])(struct MainObj*);
+void sigma_scythe_retrieve_jump(struct MainObj*);
+void sigma_scythe_retrieve_rise(struct MainObj*);
+void sigma_scythe_retrieve_wait(struct MainObj*);
+void sigma_scythe_retrieve_land(struct MainObj*);
+void sigma_scythe_retrieve_recover(struct MainObj*);
+
+// sigma_eye_laser_funcs
+extern void (*sigma_eye_laser_funcs[])(struct MainObj*);
+
+void sigma_eye_laser_wait(struct MainObj*);
+
+// sigma_cloak_step_funcs
+void sigma_idle(struct MainObj* arg0);
+void sigma_cloak_pick_attack(struct MainObj* arg0);
+void sigma_cloak_teleport(struct MainObj* arg0);
+void sigma_cloak_dash(struct MainObj* arg0);
+
+// sigma_step_funcs
+void sigma_idle(struct MainObj* arg0);
+void sigma_scythe_spin(struct MainObj* arg0);
+void sigma_scythe_plant(struct MainObj* arg0);
+void sigma_darts(struct MainObj* arg0);
+void sigma_scythe_retrieve(struct MainObj* arg0);
+void sigma_land_pause(struct MainObj* arg0);
+void sigma_eye_laser(struct MainObj* arg0);
+
+// sigma_fight_funcs
+extern void (*sigma_fight_funcs[])(struct BarObj*);
+
+// sigma_death_funcs
+extern void (*sigma_death_funcs[])(struct MainObj*);
+void sigma_death_start(struct MainObj*);
+
+void sigma_death_wait_explosion(struct MainObj*);
+
+void sigma_death_finish(struct MainObj*);
+
+// sigma_cloak_stagger_funcs
+extern void (*sigma_cloak_stagger_funcs[])(struct MainObj*);
+void sigma_cloak_stagger_start(struct MainObj*);
+
+void sigma_cloak_stagger_fade(struct MainObj*);
+void sigma_cloak_stagger_finish(struct MainObj*);
+
+// sigma_reveal_funcs
+extern void (*sigma_reveal_funcs[])(struct MainObj*);
+void sigma_reveal_start(struct MainObj*);
+
+void sigma_reveal_wait_cloak(struct MainObj*);
+void sigma_reveal_dialogue(struct MainObj*);
+void sigma_reveal_fill_health(struct MainObj*);
+void sigma_reveal_finish(struct MainObj*);
+
+// sigma_state_funcs
+extern void (*sigma_state_funcs[])(struct MainObj*);
+void sigma_intro(struct MainObj* arg0);
+void sigma_fight(struct BarObj* arg0);
+void sigma_death(struct MainObj* arg0);
+void sigma_cloak_stagger(struct MainObj*);
+void sigma_reveal(struct MainObj*);
+
+extern void (*sigma_intro_funcs[])(struct MainObj*);
 
 extern void (*sigma_cloak_teleport_funcs[])(struct MainObj*);
 

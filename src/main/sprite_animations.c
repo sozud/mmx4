@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/sprite_animations.h"
 
 union PlayerFrameOffsetData D_8011B230 = {
     {

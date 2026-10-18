@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_15_sigma_beam.h"
 
 struct sigma_beam_sweep_case {
     u32 unk3C, cur_character, pool_0_full;

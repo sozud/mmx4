@@ -1,8 +1,9 @@
 #include "test_runtime.h"
+#include "main/mains/main_20_ice_block.h"
+#include "main/mains/main_76_spike_crawler.h"
+#include "main/55C4.h"
 extern union AnimationStep* ice_block_animations[9];
 extern struct Unk_unk68 D_800FC84C, D_80106C74[];
-
-#include "func_tables.h"
 
 struct enemy_hit_reaction_case {
     u32 obj_unk6, obj_invincibility_timer, unk5, expected_unk6, expected_invincibility_timer, unk42;

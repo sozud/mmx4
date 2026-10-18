@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/shots/shot_39_mushroom_shot.h"
+#include "main/mains/main_61_split_mushroom.h"
 
 static u32 launch_case(u32 observation)
 {

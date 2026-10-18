@@ -1,6 +1,21 @@
 // EffectObj, effect_object_update_funcs[42]
 // 800BE2C4..800BE57C
 #include "common.h"
+#include "main/effects/effect_42_sigma_sequencer_fx.h"
+#include "main/objects.h"
+
+// sigma_sequencer_fx_step_funcs
+extern void (*sigma_sequencer_fx_step_funcs[])(struct EffectObj*);
+void sigma_sequencer_fx_start(struct EffectObj*);
+
+void sigma_sequencer_fx_wait_parts(struct EffectObj*);
+void sigma_sequencer_fx_hold(struct EffectObj*);
+
+// sigma_sequencer_fx_state_funcs
+extern void (*sigma_sequencer_fx_state_funcs[])(struct EffectObj*);
+void sigma_sequencer_fx_init(struct EffectObj*);
+void sigma_sequencer_fx_main(struct EffectObj*);
+void sigma_sequencer_fx_finish(struct EffectObj*);
 
 void sigma_sequencer_fx_init(struct EffectObj* self)
 {

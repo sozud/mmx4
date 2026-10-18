@@ -1,6 +1,21 @@
 // VisualObj, visual_object_update_funcs[17]
 // 800B2090..800B2544
 #include "common.h"
+#include "main/visuals/visual_17_web_piece.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// web_piece_state_funcs
+extern void (*web_piece_state_funcs[])(struct VisualObj*);
+
+void web_piece_main(struct VisualObj*);
+void web_piece_fall(struct VisualObj*);
+
+// web_piece_step_funcs
+extern void (*web_piece_step_funcs[])(struct VisualObj*);
+
+void web_piece_hang(struct VisualObj*);
 
 s16 web_piece_positions_a[4][2] = {
     { 0x12C0, 0x538 },

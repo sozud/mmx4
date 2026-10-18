@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_51_double_mine.h"
 
 static u32 mine_case(u32 observation)
 {

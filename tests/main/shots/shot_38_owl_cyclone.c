@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_38_owl_cyclone.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_owl_cyclone_spawn_trail(void)

@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_03_spike_marl.h"
+#include "main/195B4.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern union AnimationStep* D_800F9E1C[13];
 extern struct Unk_unk68 spike_marl_terrain_box;
 

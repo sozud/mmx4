@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_56_jet_stingray.h"
+#include "main/visuals/visual_23_jet_stingray_fx.h"
+#include "main/55C4.h"
 
 static u32 jet_stingray_fx_animation_start_start_case(u32 mode)
 {

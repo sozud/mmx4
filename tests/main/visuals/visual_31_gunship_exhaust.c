@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_31_gunship_exhaust.h"
+#include "main/55C4.h"
+#include "main/mains/main_67_gunship.h"
 
 static u32 exhaust_case(void)
 {

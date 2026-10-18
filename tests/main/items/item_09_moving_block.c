@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/items/item_09_moving_block.h"
+#include "main/195B4.h"
 extern u8 moving_block_terrain_box[4];
 
 static s32 frames[128];

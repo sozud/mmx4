@@ -1,6 +1,13 @@
 // ItemObj, item_object_update_funcs[5]
 // 800C0E74..800C1390
 #include "common.h"
+#include "main/items/item_05_moving_lift.h"
+#include "main/objects.h"
+
+// moving_lift_state_funcs
+extern void (*moving_lift_state_funcs[])(struct ItemObj*);
+
+void moving_lift_despawn(struct ItemObj*);
 
 struct Item05AnimationStep {
     u8 duration;

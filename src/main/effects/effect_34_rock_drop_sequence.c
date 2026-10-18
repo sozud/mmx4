@@ -1,6 +1,16 @@
 // EffectObj, effect_object_update_funcs[34]
 // 800BCE48..800BD1A4
 #include "common.h"
+#include "main/effects/effect_34_rock_drop_sequence.h"
+#include "main/objects.h"
+#include "main/effects/effect_35_palette_pulse.h"
+#include "main/stage_objects.h"
+
+// rock_drop_sequence_state_funcs
+extern void (*rock_drop_sequence_state_funcs[])(struct EffectObj*);
+void rock_drop_sequence_wait_player(struct EffectObj*);
+
+void rock_drop_sequence_idle(struct EffectObj*);
 
 void rock_drop_sequence_update(struct EffectObj* self)
 {

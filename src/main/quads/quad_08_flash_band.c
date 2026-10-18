@@ -1,6 +1,16 @@
 // QuadObj, quad_object_update_funcs[8]
 // 800D6694..800D67DC
 #include "common.h"
+#include "main/quads/quad_07_ready_line.h"
+#include "main/quads/quad_08_flash_band.h"
+#include "main/objects.h"
+
+// flash_band_state_funcs
+extern void (*flash_band_state_funcs[])(struct QuadObj*);
+void flash_band_init(struct QuadObj*);
+void flash_band_widen(struct QuadObj*);
+void flash_band_despawn(struct QuadObj*);
+
 extern u16 ready_line_sweep_vertices[8];
 extern s16 ready_line_shutter_columns[10];
 extern s16 ready_line_shutter_open_vertices[10][4][2];

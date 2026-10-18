@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_58_beam_drone.h"
 extern struct Unk_unk68 beam_drone_hit_box;
 extern struct Unk_unk68 beam_drone_debris;
 

@@ -1,7 +1,46 @@
 // MainObj, main_object_update_funcs[33]
 // 8005D1F4..8005E570
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_33_spike_sled.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern u8 D_800FDF40[12];
+
+void spike_sled_run(struct MainObj*);
+
+void spike_sled_despawn(struct MainObj*);
+
+// spike_sled_step_funcs
+extern void (*spike_sled_step_funcs[])(struct MainObj*);
+
+void spike_sled_patrol(struct MainObj* arg0);
+void spike_sled_fall(struct MainObj* arg0);
+void spike_sled_charge(struct MainObj* arg0);
+void spike_sled_bomb(struct MainObj* arg0);
+void spike_sled_intro(struct MainObj* arg0);
+
+// spike_sled_charge_funcs
+void spike_sled_charge_start(struct MainObj*);
+
+void spike_sled_charge_approach(struct MainObj*);
+void spike_sled_charge_leap(struct MainObj*);
+
+// spike_sled_intro_funcs
+void spike_sled_intro_drive(struct MainObj*);
+void spike_sled_intro_fill_health(struct MainObj*);
+void spike_sled_intro_start_fight(struct MainObj*);
+
+extern void (*spike_sled_state_funcs[])(struct MainObj*);
+extern void (*spike_sled_patrol_funcs[])(struct MainObj*);
+extern void (*spike_sled_charge_funcs[])(struct MainObj*);
+extern void (*spike_sled_bomb_funcs[])(struct MainObj*);
+extern void (*spike_sled_intro_funcs[])(struct MainObj*);
 
 void spike_sled_update(struct MainObj* self)
 {

@@ -1,6 +1,26 @@
 // ItemObj, item_object_update_funcs[12]
 // 800C3224..800C351C
 #include "common.h"
+#include "main/items/item_12_crusher_wall.h"
+#include "main/1E1BC.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+extern u8 crusher_wall_terrain_box[4];
+extern u16 crusher_wall_x_positions[4];
+
+// crusher_wall_state_funcs
+extern void (*crusher_wall_state_funcs[])(struct ItemObj*);
+void crusher_wall_init(struct ItemObj*);
+void crusher_wall_rumble(struct ItemObj*);
+
+void crusher_wall_despawn(struct ItemObj*);
+
+// crusher_wall_speed_funcs
+extern void (*crusher_wall_speed_funcs[])(struct ItemObj*);
+void crusher_wall_accelerate(struct ItemObj*);
+void crusher_wall_hold(struct ItemObj*);
+void crusher_wall_idle(struct ItemObj*);
 
 void crusher_wall_update(struct ItemObj* arg0)
 {

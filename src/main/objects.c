@@ -1,6 +1,8 @@
 // object pools, movement and angle helpers
 // 8002A6FC..8002B694
 #include "common.h"
+#include "main/objects.h"
+#include "main/1A5BC.h"
 
 void reset_game_engine()
 {

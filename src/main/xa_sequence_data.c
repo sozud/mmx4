@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/55C4.h"
+#include "main/xa_sequence_data.h"
 
 #define XA(sequence_, volume_) \
     {                          \

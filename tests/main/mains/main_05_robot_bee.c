@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_05_robot_bee.h"
 extern union AnimationStep* robot_bee_animations[];
 extern s32 D_800FA130[2];
 

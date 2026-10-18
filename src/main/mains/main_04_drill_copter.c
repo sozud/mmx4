@@ -1,7 +1,53 @@
 // MainObj, main_object_update_funcs[4]
 // 8004441C..80044F4C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_04_drill_copter.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// drill_copter_state_funcs
+extern void (*drill_copter_state_funcs[])(struct MainObj*);
+
+void drill_copter_despawn(struct MainObj*);
+
+// drill_copter_step_funcs
+void drill_copter_approach(struct MainObj* arg0);
+void drill_copter_sway(struct MainObj* arg0);
+void drill_copter_drop(struct MainObj* arg0);
+void drill_copter_rise(struct MainObj* arg0);
+void drill_copter_fire(struct MainObj* arg0);
+
+// drill_copter_approach_funcs
+extern void (*drill_copter_approach_funcs[])(struct MainObj*);
+void drill_copter_approach_start(struct MainObj*);
+void drill_copter_approach_fly(struct MainObj*);
+
+// drill_copter_sway_funcs
+extern void (*drill_copter_sway_funcs[])(struct MainObj*);
+void drill_copter_sway_start(struct MainObj*);
+void drill_copter_sway_move(struct MainObj*);
+
+// drill_copter_drop_funcs
+extern void (*drill_copter_drop_funcs[])(struct MainObj*);
+void drill_copter_drop_start(struct MainObj*);
+void drill_copter_drop_wait(struct MainObj*);
+
+void drill_copter_drop_land(struct MainObj*);
+
+// drill_copter_rise_funcs
+void drill_copter_rise_start(struct MainObj*);
+void drill_copter_rise_wait(struct MainObj*);
+void drill_copter_rise_fly(struct MainObj*);
+
+// drill_copter_fire_funcs
+void drill_copter_fire_start(struct MainObj*);
+void drill_copter_fire_wait(struct MainObj*);
+
+void drill_copter_fire_reload(struct MainObj*);
+
+extern void (*drill_copter_rise_funcs[])(struct MainObj*);
+extern void (*drill_copter_fire_funcs[])(struct MainObj*);
 
 extern struct Unk_unk68 D_800F9EBC;
 extern struct Unk_unk68 D_800F9EC0;

@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_62_flame_jet.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern union AnimationStep* flame_jet_animations[9];
 
 static u32 flame_case(u32 mode)

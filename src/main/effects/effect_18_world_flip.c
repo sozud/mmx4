@@ -1,6 +1,15 @@
 // EffectObj, effect_object_update_funcs[18]
 // 800B9690..800B9940
 #include "common.h"
+#include "main/effects/effect_18_world_flip.h"
+#include "main/objects.h"
+
+// world_flip_state_funcs
+extern void (*world_flip_state_funcs[])(struct EffectObj*);
+void world_flip_init(struct EffectObj*);
+
+void world_flip_despawn(struct EffectObj*);
+
 void world_flip_objects(void);
 
 void world_flip_update(struct EffectObj* self)

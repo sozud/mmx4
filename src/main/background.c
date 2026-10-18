@@ -1,6 +1,105 @@
 // BackgroundObj
 // 8002771C..80028B68
 #include "common.h"
+#include "main/background.h"
+
+struct BackgroundCameraModePair {
+    u8 primary, secondary;
+};
+
+struct BackgroundLayoutConfig {
+    u8 object_ids[4];
+    u8 layer_ids[3][2];
+};
+struct BackgroundLayoutConfigData {
+    struct BackgroundLayoutConfig records[33];
+    u8 alignment_padding[2];
+};
+
+struct Unk9 {
+    u8 pad0[4];
+    u8 unk4;
+    u8 pad5[3];
+    u32 unk8;
+    u32 unkC;
+    u8 padd[1];
+    u32 unk14;
+    u32 unk18;
+    u16 unk1C;
+    u16 unk1E;
+    u16 unk20;
+    u16 unk22;
+    u16 unk24;
+    u16 unk26;
+    u16 unk28;
+    u16 unk2A;
+    s16 unk2C;
+    s16 unk2E;
+    s16 unk30;
+    s16 unk32;
+    u8 pad33[19];
+    s8 unk47;
+    s8 unk48;
+    s8 unk49;
+};
+
+extern struct BackgroundCameraModePair D_800F32D4[16][2];
+
+extern struct BackgroundLayoutConfigData D_800F3188;
+
+extern void (*D_800F3134[])(struct BackgroundObj* arg0);
+
+void func_80027AAC(struct BackgroundObj*);
+void func_80027AFC(struct BackgroundObj*);
+void func_80027B70(struct Unk9*);
+
+void func_80027E90(struct BackgroundObj*);
+void func_80027EBC(struct BackgroundObj*);
+void func_80027F50(struct BackgroundObj*);
+void func_80027F7C(struct BackgroundObj*);
+void func_80028310(struct BackgroundObj*);
+void func_80028338(struct BackgroundObj*);
+void func_80028364(struct BackgroundObj*);
+void func_800283D0(struct BackgroundObj*);
+void func_800283F8(struct BackgroundObj*);
+void func_80028424(struct BackgroundObj*);
+
+void func_80027FA8();
+
+void update_screen_shake_x(struct BackgroundObj* arg0);
+
+#ifdef MMX4_PC
+extern void func_80028138(void);
+#endif
+
+// D_800F3134
+void func_80027908(struct BackgroundObj* arg0);
+void func_80027974(struct BackgroundObj* arg0);
+void func_800279D8(struct BackgroundObj* arg0);
+
+// D_800F3140
+extern void (*D_800F3140[])(struct BackgroundObj*);
+void func_80027DC0(struct BackgroundObj* arg0);
+void func_80027DF0(struct BackgroundObj* arg0);
+void func_80028070(struct BackgroundObj* arg0);
+void func_800280BC(struct BackgroundObj* arg0);
+void func_800280F4(struct BackgroundObj* arg0);
+void func_800285E0(struct BackgroundObj* arg0);
+void func_800285E8(struct BackgroundObj* arg0);
+void func_80028620(struct BackgroundObj* arg0);
+void func_80028658(struct BackgroundObj* arg0);
+
+// D_800F3164
+extern void (*D_800F3164[])(struct BackgroundObj*);
+void func_80028268(struct BackgroundObj* arg0);
+void func_80028298(struct BackgroundObj* arg0);
+void func_80028518(struct BackgroundObj* arg0);
+void func_80028564(struct BackgroundObj* arg0);
+void func_8002859C(struct BackgroundObj* arg0);
+void func_800285E0(struct BackgroundObj* arg0);
+void func_800285E8(struct BackgroundObj* arg0);
+void func_80028620(struct BackgroundObj* arg0);
+void func_80028658(struct BackgroundObj* arg0);
 
 void func_80027A5C(struct BackgroundObj* a0);
 void func_80028390(struct BackgroundObj* arg0);

@@ -1,6 +1,9 @@
 // VisualObj, visual_object_update_funcs[27]
 // 800B2A3C..800B2AD0
 #include "common.h"
+#include "main/visuals/visual_27_weapon_gfx_preload.h"
+#include "main/55C4.h"
+#include "main/objects.h"
 
 void weapon_gfx_preload_update(struct VisualObj* arg0)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_34_rock_drop_sequence.h"
 
 static u32 rock_case(u32 mode)
 {

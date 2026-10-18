@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/14A60.h"
+#include "main/1A5BC.h"
 
 static u32 subtract_all_channels(void)
 {

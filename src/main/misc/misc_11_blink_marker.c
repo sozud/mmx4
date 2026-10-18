@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[11]
 // 800CA0C8..800CA228
 #include "common.h"
+#include "main/misc/misc_11_blink_marker.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// blink_marker_state_funcs
+extern void (*blink_marker_state_funcs[])(struct MiscObj*);
+void blink_marker_init(struct MiscObj*);
+void blink_marker_main(struct MiscObj*);
+void blink_marker_despawn(struct MiscObj*);
 
 void blink_marker_update(struct MiscObj* self)
 {

@@ -1,6 +1,17 @@
 // ShotObj, shot_object_update_funcs[31]
 // 8009FF10..800A0170
 #include "common.h"
+#include "main/shots/shot_31_slash_beast_crescent.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// slash_beast_crescent_state_funcs
+extern void (*slash_beast_crescent_state_funcs[])(struct ShotObj*);
+
+void slash_beast_crescent_fly(struct ShotObj*);
+void slash_beast_crescent_despawn(struct ShotObj*);
 
 u8 slash_beast_crescent_boxes[2][4] = {
     { 0xF8, 0xEE, 0x0F, 0x23 },

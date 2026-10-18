@@ -1,9 +1,36 @@
 // MainObj, main_object_update_funcs[34]
 // 8005E570..8005EC58
 #include "common.h"
+#include "main/mains/main_34_highway_trooper.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+extern u16 highway_trooper_stop_x[];
+extern void (*highway_trooper_step_funcs[])(struct MainObj*);
+
+// highway_trooper_state_funcs
+extern void (*highway_trooper_state_funcs[])(struct MainObj*);
+
+void highway_trooper_main(struct MainObj*);
+void highway_trooper_despawn(struct MainObj* arg0);
+
+// highway_trooper_step_funcs
+void highway_trooper_ride_in(struct MainObj*);
+
+void highway_trooper_attack(struct MainObj* arg0);
+
+void highway_trooper_fall_away(struct MainObj*);
+void highway_trooper_drift(struct MainObj* arg0);
+
+void highway_trooper_attack_jump(struct MainObj*);
+void highway_trooper_attack_land(struct MainObj*);
+void highway_trooper_attack_end(struct MainObj*);
+
+extern void (*highway_trooper_attack_funcs[])(struct MainObj*);
 
 extern union AnimationStep* highway_trooper_animations[27];
-#include "func_tables.h"
 
 void highway_trooper_update(struct MainObj* self)
 {

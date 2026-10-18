@@ -1,6 +1,53 @@
 // MiscObj, misc_object_update_funcs[28]
 // 800CCA34..800CD78C
 #include "common.h"
+#include "main/misc/misc_28_select_a_character.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+extern void (*select_char_portrait_funcs[4])();
+extern void (*g_SelectACharacterUpdateFuncs[3])();
+
+extern u8 select_char_palettes[16];
+
+extern void (*select_char_subtype_funcs[16])();
+extern void (*select_char_scroll_text_funcs[])();
+extern void (*select_char_selector_funcs[])();
+
+extern void (*select_char_character_funcs[])();
+
+// select_char_portrait_funcs
+void select_char_portrait_slide_in(struct MiscObj* arg0);
+void select_char_portrait_wait_select(struct MiscObj* arg0);
+void select_char_portrait_slide_out(struct MiscObj* arg0);
+
+// select_char_selector_funcs
+void select_char_selector_move(struct MiscObj* arg0);
+void select_char_selector_animate(struct MiscObj* arg0);
+
+// select_char_character_funcs
+void select_char_character_idle(struct MiscObj* arg0);
+
+// select_char_subtype_funcs
+void select_char_portrait(struct MiscObj* arg0);
+void select_char_portrait(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_selector(struct MiscObj* arg0);
+void select_char_character(struct MiscObj* arg0);
+void select_char_character(struct MiscObj* arg0);
+void select_char_charged_shot_fly(struct MiscObj* arg0);
+
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_scroll_text(struct MiscObj* arg0);
+void select_char_character_exit(struct MiscObj* arg0);
+
+void select_char_main(struct MiscObj* arg0);
+void select_char_despawn(struct MiscObj* arg0);
 
 enum SubTypes {
     X_PORTRAIT,

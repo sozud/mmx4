@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_31_option_toggle.h"
+#include "main/menu.h"
 
 struct func_800CDF4C_case {
     u32 timer, unk2, pressed, unk0, selection;

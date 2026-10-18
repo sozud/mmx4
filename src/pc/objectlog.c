@@ -1,5 +1,6 @@
 #include "common.h"
 #include "oracle.h"
+#include "main/mains/main_08_eregion.h"
 
 #include <errno.h>
 #include <stddef.h>

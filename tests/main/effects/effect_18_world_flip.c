@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_18_world_flip.h"
 void world_flip_objects(void);
 
 #define INIT_POOL(pool)                                        \

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/shots/shot_50_double_bouncer.h"
 
 static const u32 double_bouncer_bounce_expected[] = { 1u, 0u, 1u };
 static u32 test_double_bouncer_bounce(u32 row)

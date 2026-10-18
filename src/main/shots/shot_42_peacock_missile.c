@@ -1,6 +1,25 @@
 // ShotObj, shot_object_update_funcs[42]
 // 800A6374..800A6960
 #include "common.h"
+#include "main/shots/shot_42_peacock_missile.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/objects.h"
+
+extern u8 peacock_missile_explosion_box[4];
+
+// peacock_missile_state_funcs
+extern void (*peacock_missile_state_funcs[])(struct ShotObj*);
+
+void peacock_missile_main(struct ShotObj*);
+void peacock_missile_despawn(struct ShotObj*);
+
+// peacock_missile_step_funcs
+extern void (*peacock_missile_step_funcs[])(struct ShotObj*);
+
+void peacock_missile_explode_start(struct ShotObj*);
+void peacock_missile_explode(struct ShotObj*);
 
 void peacock_missile_update(struct ShotObj* self)
 {

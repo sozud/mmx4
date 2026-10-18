@@ -1,6 +1,34 @@
 // EffectObj, effect_object_update_funcs[15]
 // 800B8AF8..800B8F5C
 #include "common.h"
+#include "main/effects/effect_15_bg_zone_controller_b.h"
+
+// bg_zone_controller_b_state_funcs
+extern void (*bg_zone_controller_b_state_funcs[])(struct EffectObj*);
+void bg_zone_controller_b_init(struct EffectObj*);
+void bg_zone_controller_b_main(struct EffectObj*);
+
+// bg_zone_controller_b_zone_funcs
+extern void (*bg_zone_controller_b_zone_funcs[])(struct EffectObj*);
+void bg_zone_controller_b_zone_0(struct EffectObj*);
+void bg_zone_controller_b_zone_1(struct EffectObj*);
+void bg_zone_controller_b_zone_2(struct EffectObj*);
+void bg_zone_controller_b_zone_3(struct EffectObj*);
+void bg_zone_controller_b_zone_4(struct EffectObj*);
+void bg_zone_controller_b_zone_5(struct EffectObj*);
+void bg_zone_controller_b_idle(struct EffectObj*);
+void bg_zone_controller_b_zone_0_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_0_done(struct EffectObj*);
+void bg_zone_controller_b_zone_1_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_1_done(struct EffectObj*);
+void bg_zone_controller_b_zone_2_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_2_done(struct EffectObj*);
+void bg_zone_controller_b_zone_3_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_3_done(struct EffectObj*);
+void bg_zone_controller_b_zone_4_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_4_done(struct EffectObj*);
+void bg_zone_controller_b_zone_5_enter(struct EffectObj*);
+void bg_zone_controller_b_zone_5_done(struct EffectObj*);
 
 void bg_zone_controller_b_update(struct EffectObj* self)
 {

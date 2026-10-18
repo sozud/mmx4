@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/quads/quad_01_stage_select_panel.h"
 extern s16 stage_select_panel_shapes[8][8];
 u8 func_800D41EC(s32*, s32*, s32, s32, s32, s32);
 extern s32 D_800F459C[9], D_800F45C0[9];

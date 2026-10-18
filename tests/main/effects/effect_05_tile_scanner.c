@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_05_tile_scanner.h"
 
 static struct ScannerInput {
     u8 phase, subphase, flags, direction, timer, tile;

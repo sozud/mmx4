@@ -1,6 +1,62 @@
 // WeaponObj, weapon_object_update_funcs[1]
 // 80092F08..80093CBC
 #include "common.h"
+#include "main/weapons/weapon_01_lightning_web.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
+
+extern struct Unk_unk68 lightning_web_charged_shot_box[];
+
+extern struct Unk_unk68 lightning_web_charged_net_box[];
+extern struct Unk_unk68 lightning_web_net_box[];
+extern struct Unk_unk68 lightning_web_terrain_box[];
+
+// lightning_web_state_funcs
+extern void (*lightning_web_state_funcs[])(struct WeaponObj*);
+void lightning_web_init(struct WeaponObj*);
+void lightning_web_fly(struct WeaponObj*);
+void lightning_web_main(struct WeaponObj*);
+void lightning_web_start_vanish(struct WeaponObj*);
+void lightning_web_despawn(struct WeaponObj*);
+void lightning_web_vanish(struct WeaponObj*);
+
+// lightning_web_step_funcs
+extern void (*lightning_web_step_funcs[])(struct WeaponObj*);
+void lightning_web_spread(struct WeaponObj*);
+void lightning_web_hang(struct WeaponObj*);
+void lightning_web_stuck(struct WeaponObj*);
+void lightning_web_charged_draw(struct WeaponObj* arg0);
+void lightning_web_release(struct WeaponObj*);
+
+// lightning_web_charged_state_funcs
+extern void (*lightning_web_charged_state_funcs[])(struct WeaponObj*);
+void lightning_web_charged_init(struct WeaponObj*);
+void lightning_web_charged_main(struct WeaponObj*);
+void lightning_web_despawn(struct WeaponObj*);
+void lightning_web_despawn(struct WeaponObj*);
+
+// lightning_web_charged_part_state_funcs
+extern void (*lightning_web_charged_part_state_funcs[])(struct WeaponObj*);
+
+void lightning_web_charged_part_wait(struct WeaponObj*);
+void lightning_web_charged_part_main(struct WeaponObj*);
+void lightning_web_despawn(struct WeaponObj*);
+
+// lightning_web_charged_step_funcs
+extern void (*lightning_web_charged_step_funcs[])(struct WeaponObj*);
+void lightning_web_charged_fly(struct WeaponObj*);
+void lightning_web_charged_spread(struct WeaponObj*);
+void lightning_web_charged_hold(struct WeaponObj*);
+void lightning_web_charged_fade(struct WeaponObj*);
+
+// lightning_web_charged_part_step_funcs
+extern void (*lightning_web_charged_part_step_funcs[])(struct WeaponObj*);
+
+void lightning_web_charged_part_drift(struct WeaponObj*);
 
 void lightning_web_buzz_sound(struct WeaponObj* arg0, u8* arg1);
 void lightning_web_draw(struct WeaponObj* arg0);

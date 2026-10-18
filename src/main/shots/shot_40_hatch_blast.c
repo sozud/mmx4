@@ -1,6 +1,32 @@
 // ShotObj, shot_object_update_funcs[40]
 // 800A5348..800A56E4
 #include "common.h"
+#include "main/1CF60.h"
+#include "main/shots/shot_40_hatch_blast.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+
+extern s16 hatch_blast_tile_x[4];
+extern u8 hatch_blast_debris[8];
+extern u8 hatch_blast_break_debris[16];
+
+extern struct Unk_unk68 hatch_blast_terrain_box;
+
+extern u8 hatch_blast_hit_box[4];
+
+// hatch_blast_state_funcs
+extern void (*hatch_blast_state_funcs[])(struct ShotObj*);
+void hatch_blast_init(struct ShotObj*);
+void hatch_blast_main(struct ShotObj*);
+void hatch_blast_despawn(struct ShotObj*);
+
+void hatch_blast_open(struct ShotObj*);
+void hatch_blast_fire(struct ShotObj*);
+void hatch_blast_close(struct ShotObj*);
 
 void hatch_blast_update(struct ShotObj* self)
 {

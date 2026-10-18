@@ -1,7 +1,29 @@
 // MainObj, main_object_update_funcs[39]
 // 80061590..80061DC0
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_39_falling_ceiling.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void falling_ceiling_main(struct MainObj*);
+void falling_ceiling_despawn(struct MainObj*);
+
+// falling_ceiling_step_funcs
+extern void (*falling_ceiling_step_funcs[])(struct MainObj*);
+
+void falling_ceiling_drop(struct MainObj* arg0);
+void falling_ceiling_sink(struct MainObj* arg0);
+
+// falling_ceiling_drop_funcs
+void falling_ceiling_drop_start(struct MainObj*);
+
+void falling_ceiling_drop_land(struct MainObj*);
+
+extern void (*falling_ceiling_state_funcs[])(struct MainObj*);
+extern void (*falling_ceiling_drop_funcs[])(struct MainObj*);
 
 void falling_ceiling_update(struct MainObj* self)
 {

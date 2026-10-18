@@ -1,6 +1,29 @@
 // MiscObj, misc_object_update_funcs[43]
 // 800D0374..800D07EC
 #include "common.h"
+#include "main/misc/misc_43_intro_messenger.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// intro_messenger_state_funcs
+extern void (*intro_messenger_state_funcs[])(struct MiscObj*);
+void intro_messenger_init(struct MiscObj*);
+void intro_messenger_main(struct MiscObj* arg0);
+void intro_messenger_despawn(struct MiscObj*);
+
+// intro_messenger_step_funcs
+extern void (*intro_messenger_step_funcs[])(struct MiscObj*);
+void intro_messenger_wait_scroll(struct MiscObj*);
+void intro_messenger_wait_script(struct MiscObj*);
+
+void intro_messenger_wait_dialogue(struct MiscObj*);
+void intro_messenger_take_off(struct MiscObj*);
+void intro_messenger_fly_up(struct MiscObj*);
+
+void intro_messenger_finish(struct MiscObj*);
 
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/misc/misc_43_intro_messenger", func_800D03A8_jp);

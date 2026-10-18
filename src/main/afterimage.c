@@ -1,6 +1,17 @@
 // UnkObj, foo_objects
 // 800AE7DC..800AEAC0
 #include "common.h"
+#include "main/afterimage.h"
+
+void func_800AE88C(struct UnkObj*, struct PlayerObj*);
+void func_800AEA58(struct UnkObj*, struct PlayerObj*);
+void func_800AEAA0(struct UnkObj*);
+
+// D_8010A194
+extern void (*D_8010A194[])(struct UnkObj*, struct PlayerObj*);
+void func_800AE8E4(struct UnkObj*, struct PlayerObj*);
+void func_800AE95C(struct UnkObj*, struct PlayerObj*);
+void func_800AE9D8(struct UnkObj*, struct PlayerObj*);
 
 void func_800AE848(struct UnkObj* arg0, struct PlayerObj* player);
 

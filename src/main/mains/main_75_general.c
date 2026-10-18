@@ -1,7 +1,69 @@
 // MainObj, main_object_update_funcs[75]
 // 8008FA0C..800919C4
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_75_general.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/stage_objects.h"
+
+// general_intro_funcs
+extern void (*general_intro_funcs[])(struct MainObj*);
+void general_intro_wait_player(struct MainObj*);
+
+void general_intro_lock_camera(struct MainObj*);
+void general_intro_enter(struct MainObj*);
+void general_intro_land(struct MainObj*);
+void general_intro_dialogue(struct MainObj*);
+void general_intro_fill_health(struct MainObj*);
+void general_intro_finish(struct MainObj*);
+
+// general_fly_funcs
+extern void (*general_fly_funcs[])(struct MainObj*);
+void general_fly_descend(struct MainObj*);
+void general_fly_start(struct MainObj*);
+
+// general_punch_funcs
+extern void (*general_punch_funcs[])(struct MainObj*);
+void general_punch_rise(struct MainObj*);
+
+void general_punch_wait(struct MainObj*);
+
+void general_punch_wait_return(struct MainObj*);
+void general_punch_recover(struct MainObj*);
+
+// general_orbs_funcs
+extern void (*general_orbs_funcs[])(struct MainObj*);
+void general_orbs_descend(struct MainObj*);
+void general_orbs_fire(struct MainObj*);
+void general_orbs_wait(struct MainObj*);
+void general_orbs_recover(struct MainObj*);
+
+// general_slam_funcs
+extern void (*general_slam_funcs[])(struct MainObj*);
+
+void general_slam_land(struct MainObj*);
+
+// general_step_funcs
+void general_resume_step(struct MainObj* arg0);
+
+void general_fly(struct MainObj* arg0);
+void general_punch(struct MainObj* arg0);
+void general_orbs(struct MainObj* arg0);
+void general_slam(struct MainObj* arg0);
+
+// general_death_funcs
+void general_death_start(struct MainObj*);
+
+void general_death_wait_explosion(struct MainObj*);
+
+// general_state_funcs
+extern void (*general_state_funcs[])(struct MainObj*);
+void general_intro(struct MainObj*);
+
+void func_80091898(struct MainObj*);
 
 extern void (*general_death_funcs[5])();
 

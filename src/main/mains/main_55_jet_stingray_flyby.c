@@ -1,7 +1,24 @@
 // MainObj, main_object_update_funcs[55]
 // 8006EB40..8006FABC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_55_jet_stingray_flyby.h"
+#include "main/mains/main_56_jet_stingray.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// jet_stingray_flyby_enter_funcs
+extern void (*jet_stingray_flyby_enter_funcs[])(struct MainObj*);
+
+// jet_stingray_flyby_attack_funcs
+extern void (*jet_stingray_flyby_attack_funcs[])(struct MainObj*);
+
+// jet_stingray_flyby_charge_funcs
+extern void (*jet_stingray_flyby_charge_funcs[])(struct MainObj*);
+
+// jet_stingray_flyby_step_funcs
+extern void (*jet_stingray_flyby_step_funcs[])(struct MainObj*);
 
 // jet_stingray_flyby_init
 INCLUDE_ASM("main/nonmatchings/mains/main_55_jet_stingray_flyby", func_8006EB40);

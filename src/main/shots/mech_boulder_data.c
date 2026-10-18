@@ -1,4 +1,6 @@
 #include "common.h"
+#include "main/shots/mech_boulder_data.h"
+#include "main/shots/shot_02_gunner_shot.h"
 
 u8 mech_boulder_debris[8] = { 0x0F, 0x10, 0x11, 0x0F, 0x10, 0x11, 0, 0 };
 

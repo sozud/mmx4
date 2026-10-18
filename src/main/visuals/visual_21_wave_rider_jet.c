@@ -1,6 +1,17 @@
 // VisualObj, visual_object_update_funcs[21]
 // 800B2E98..800B3074
 #include "common.h"
+#include "main/visuals/visual_21_wave_rider_jet.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern u8 wave_rider_jet_animations[];
+
+// wave_rider_jet_state_funcs
+extern void (*wave_rider_jet_state_funcs[])(struct VisualObj*);
+void wave_rider_jet_init(struct VisualObj*);
+void wave_rider_jet_main(struct VisualObj*);
+void wave_rider_jet_despawn(struct VisualObj*);
 
 void wave_rider_jet_init(struct VisualObj* arg0)
 {

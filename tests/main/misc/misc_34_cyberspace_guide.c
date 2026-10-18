@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_34_cyberspace_guide.h"
 
 struct func_800CEFC0_case {
     u32 variant, checkpoint, unk58, unk57, unk17;

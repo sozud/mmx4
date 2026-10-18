@@ -1,6 +1,52 @@
 // WeaponObj, weapon_object_update_funcs[2]
 // 80093CBC..80094A78
 #include "common.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_02_frost_tower.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/sprite_animations.h"
+#include "main/stage_objects.h"
+
+extern struct Unk_unk68 frost_tower_charged_part_box[];
+
+extern struct Unk_unk68 frost_tower_terrain_box[];
+
+extern u8 frost_sparkle_animations[];
+
+extern s32 frost_particle_x_vels[8];
+extern s32 frost_particle_y_vels[8];
+void frost_particle_launch(struct MiscObj* arg0);
+void frost_sparkle_init(struct MiscObj* arg0);
+void frost_shard_init(struct MiscObj* arg0);
+void frost_particle_fall(struct MiscObj* arg0);
+
+// frost_tower_state_funcs
+extern void (*frost_tower_state_funcs[])(struct WeaponObj*);
+
+void frost_tower_main(struct WeaponObj*);
+void frost_tower_despawn(struct WeaponObj*);
+void frost_tower_despawn(struct WeaponObj*);
+
+// frost_tower_step_funcs
+extern void (*frost_tower_step_funcs[])(struct WeaponObj*);
+void frost_tower_form(struct WeaponObj*);
+void frost_tower_check_ground(struct WeaponObj*);
+void frost_tower_fall(struct WeaponObj*);
+
+// frost_tower_charged_state_funcs
+extern void (*frost_tower_charged_state_funcs[])(struct WeaponObj*);
+
+void frost_tower_despawn(struct WeaponObj*);
+void frost_tower_despawn(struct WeaponObj*);
+
+// frost_tower_charged_part_state_funcs
+extern void (*frost_tower_charged_part_state_funcs[])(struct WeaponObj*);
+
+void frost_tower_charged_part_main(struct WeaponObj*);
+void frost_tower_despawn(struct WeaponObj*);
+void frost_tower_despawn(struct WeaponObj*);
 
 void frost_tower_update(struct WeaponObj* arg0)
 {

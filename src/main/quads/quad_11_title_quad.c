@@ -1,6 +1,16 @@
 // QuadObj, quad_object_update_funcs[11]
 // 800D6F94..800D7734
 #include "common.h"
+#include "main/quads/quad_11_title_quad.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern void (*g_TitleUpdate2Funcs[])();
+
+void title_quad_init(struct QuadObj* arg0);
+
+void title_quad_despawn(struct QuadObj* arg0);
+void title_quad_delay(struct QuadObj* arg0);
 
 // white quad that turns into "MEGAMAN" on title screen
 

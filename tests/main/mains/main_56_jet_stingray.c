@@ -1,4 +1,9 @@
 #include "test_runtime.h"
+#include "main/mains/main_41_data_hopper.h"
+#include "main/mains/main_56_jet_stingray.h"
+#include "main/visuals/visual_23_jet_stingray_fx.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern struct Unk_unk68 jet_stingray_ambush_drop_attack_box;

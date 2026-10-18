@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[21]
 // 8009D200..8009D74C
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_21_cannon_shell.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+
+// cannon_shell_state_funcs
+extern void (*cannon_shell_state_funcs[])(struct ShotObj*);
+
+void cannon_shell_fly(struct ShotObj*);
+
+void cannon_shell_despawn(struct ShotObj*);
+void cannon_shell_idle(struct ShotObj*);
 
 u8 cannon_shell_hit_box[4] = { 0xF7, 0xF8, 0x11, 0x11 };
 u8 cannon_shell_flat_hit_box[4] = { 0xF3, 0xFC, 0x18, 0x0B };

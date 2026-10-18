@@ -1,6 +1,27 @@
 // EffectObj, effect_object_update_funcs[43]
 // 800BE57C..800BE83C
 #include "common.h"
+#include "main/effects/effect_43_sigma_collapse.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/stage_objects.h"
+
+// sigma_collapse_debris_funcs
+extern void (*sigma_collapse_debris_funcs[])(struct EffectObj*);
+void sigma_collapse_debris_start(struct EffectObj*);
+void sigma_collapse_debris_drop(struct EffectObj*);
+
+// sigma_collapse_rumble_funcs
+extern void (*sigma_collapse_rumble_funcs[])(struct EffectObj*);
+void sigma_collapse_rumble_start(struct EffectObj*);
+void sigma_collapse_rumble_shake(struct EffectObj*);
+
+// sigma_collapse_state_funcs
+extern void (*sigma_collapse_state_funcs[])(struct EffectObj*);
+
+void sigma_collapse_debris(struct EffectObj*);
+void sigma_collapse_rumble(struct EffectObj*);
 
 void sigma_collapse_init(struct EffectObj* self)
 {

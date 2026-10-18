@@ -1,6 +1,31 @@
 // MiscObj, misc_object_update_funcs[46]
 // 800D1284..800D1990
 #include "common.h"
+#include "main/misc/misc_46_post_boss_cutscene.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// post_boss_cutscene_state_funcs
+extern void (*post_boss_cutscene_state_funcs[])(struct MiscObj*);
+void post_boss_cutscene_init(struct MiscObj*);
+void post_boss_cutscene_main(struct MiscObj*);
+void post_boss_cutscene_despawn(struct MiscObj*);
+
+// post_boss_cutscene_step_funcs
+void post_boss_cutscene_wait_scroll(struct UnkObj*);
+void post_boss_cutscene_arrive(struct UnkObj*);
+void post_boss_cutscene_fly_in(struct UnkObj*);
+extern void (*post_boss_cutscene_step_funcs[])(struct UnkObj*);
+void post_boss_cutscene_stop(struct UnkObj*);
+void post_boss_cutscene_first_line(struct UnkObj*);
+void post_boss_cutscene_wait_first(struct UnkObj*);
+void post_boss_cutscene_shake_start(struct UnkObj*);
+void post_boss_cutscene_shake(struct UnkObj*);
+void post_boss_cutscene_second_line(struct UnkObj*);
+void post_boss_cutscene_wait_second(struct UnkObj*);
+void post_boss_cutscene_finish(struct UnkObj*);
 
 void post_boss_cutscene_update(struct MiscObj* self)
 {

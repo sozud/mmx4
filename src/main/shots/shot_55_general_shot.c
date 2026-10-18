@@ -1,6 +1,78 @@
 // ShotObj, shot_object_update_funcs[55]
 // 800AC8C4..800ADF30
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_54_sigma_final_shot.h"
+#include "main/shots/shot_55_general_shot.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/shots/general_shot_debris_data.h"
+
+// general_fist_leader_funcs
+extern void (*general_fist_leader_funcs[])(struct ShotObj*);
+void general_fist_wait_launch(struct ShotObj*);
+
+void general_fist_fly_to_row(struct ShotObj*);
+void func_800ACF60(struct ShotObj*);
+void general_fist_hold(struct ShotObj*);
+void general_fist_turn(struct ShotObj*);
+
+void general_fist_pause(struct ShotObj*);
+void general_fist_sweep_turn(struct ShotObj*);
+
+void general_fist_docked(struct ShotObj*);
+
+// general_fist_follower_funcs
+extern void (*general_fist_follower_funcs[])(struct ShotObj*);
+void general_fist_follower_wait_launch(struct ShotObj*);
+void general_fist_follower_launch(struct ShotObj*);
+void general_fist_follower_fly_to_row(struct ShotObj*);
+void func_800ACF60(struct ShotObj*);
+void general_fist_hold(struct ShotObj*);
+void general_fist_turn(struct ShotObj*);
+
+void general_fist_pause(struct ShotObj*);
+void general_fist_sweep_turn(struct ShotObj*);
+
+void general_fist_docked(struct ShotObj*);
+void general_fist_follower(struct ShotObj*);
+void general_fist_leader(struct ShotObj*);
+
+// general_ring_funcs
+extern void (*general_ring_funcs[])(struct ShotObj*);
+
+void general_ring_fly(struct ShotObj*);
+
+// general_dust_funcs
+extern void (*general_dust_funcs[])(struct ShotObj*);
+
+// general_orb_funcs
+extern void (*general_orb_funcs[])(struct ShotObj*);
+void general_orb_spread(struct ShotObj*);
+void general_orb_wait(struct ShotObj*);
+
+// general_shot_subtype_funcs
+extern void (*general_shot_subtype_funcs[])(struct ShotObj*);
+void general_shot_thruster(struct ShotObj*);
+void general_shot_intro_prop(struct ShotObj*);
+void general_shot_fist(struct ShotObj*);
+void general_shot_fist(struct ShotObj*);
+void general_shot_ring(struct ShotObj*);
+void general_shot_ring(struct ShotObj*);
+void general_shot_dust(struct ShotObj*);
+void general_shot_dust(struct ShotObj*);
+void general_shot_hit_flash(struct ShotObj*);
+void general_shot_orb_launcher(struct ShotObj*);
+void general_shot_orb(struct ShotObj*);
+void general_shot_orb(struct ShotObj*);
+
+// general_shot_state_funcs
+extern void (*general_shot_state_funcs[])(struct ShotObj*);
+
+void general_shot_run(struct ShotObj*);
+void general_shot_despawn(struct ShotObj*);
 
 extern s8 general_shot_boxes[3][4];
 

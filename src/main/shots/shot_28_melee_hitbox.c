@@ -1,6 +1,16 @@
 // ShotObj, shot_object_update_funcs[28]
 // 8009F46C..8009F638
 #include "common.h"
+#include "main/shots/shot_28_melee_hitbox.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// melee_hitbox_state_funcs
+extern void (*melee_hitbox_state_funcs[])(struct ShotObj*);
+void melee_hitbox_init(struct ShotObj*);
+
+void melee_hitbox_despawn(struct ShotObj*);
 
 u8 melee_hitbox_box[4] = { 0xDB, 0xF2, 0x1E, 0x37 };
 

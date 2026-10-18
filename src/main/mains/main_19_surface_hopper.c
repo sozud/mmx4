@@ -1,7 +1,47 @@
 // MainObj, main_object_update_funcs[19]
 // 8005284C..8005458C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_19_surface_hopper.h"
+#include "main/object_motion.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/items/item_01_stage_block.h"
+#include "main/objects.h"
+
+extern u8 surface_hopper_appear_animations[4];
+
+void func_80052A68(struct MainObj*);
+void surface_hopper_despawn(struct MainObj* arg0);
+
+void surface_hopper_despawn(struct MainObj* arg0);
+
+// surface_hopper_step_funcs
+void surface_hopper_appear(struct MainObj* arg0);
+void surface_hopper_crawl(struct MainObj* arg0);
+void surface_hopper_crawl(struct MainObj* arg0);
+void surface_hopper_leap(struct MainObj* arg0);
+void surface_hopper_fly(struct MainObj* arg0);
+
+// surface_hopper_crawl_funcs
+extern void (*surface_hopper_crawl_funcs[])(struct MainObj*);
+
+void surface_hopper_crawl_turn_end(struct MainObj*);
+void surface_hopper_crawl_attach(struct MainObj*);
+
+void surface_hopper_crawl_finish(struct MainObj*);
+
+// surface_hopper_leap_funcs
+void surface_hopper_leap_start(struct MainObj*);
+
+extern u8 surface_hopper_leap_animations[];
+
+void surface_hopper_fly(struct MainObj* arg0);
+
+extern void (*surface_hopper_state_funcs[])(struct MainObj*);
+extern void (*surface_hopper_launched_state_funcs[])(struct MainObj*);
+extern void (*surface_hopper_leap_funcs[])(struct MainObj*);
 
 extern u8 surface_hopper_debris[8];
 extern void (*surface_hopper_step_funcs[6])();

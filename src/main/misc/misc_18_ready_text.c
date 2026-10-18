@@ -1,6 +1,31 @@
 // MiscObj, misc_object_update_funcs[18]
 // 800CB00C..800CB634
 #include "common.h"
+#include "main/misc/misc_18_ready_text.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern void (*ReadyTextUpdateFuncs[3])();
+
+// D_8010E6F0 - g_MegamanRelatedUpdateFuncs
+extern void (*g_MegamanRelatedUpdateFuncs[])(struct MiscObj*);
+void ready_text_init(struct MiscObj*);
+void ready_text_main(struct MiscObj*);
+void ready_text_despawn(struct MiscObj*);
+
+// ready_text_part_funcs
+extern void (*ready_text_part_funcs[])(struct MiscObj*);
+void ready_text_word(struct MiscObj*);
+void ready_text_word(struct MiscObj*);
+void ready_text_blink(struct MiscObj*);
+void ready_text_show(struct MiscObj*);
+void ready_text_show(struct MiscObj*);
+
+// D_8010E710
+void ready_text_appear(struct MiscObj* arg0);
+void ready_text_bounce(struct MiscObj* arg0);
+void ready_text_leave(struct MiscObj* arg0);
 
 void ready_text_load_palette(s32 arg0, s32 arg1);
 

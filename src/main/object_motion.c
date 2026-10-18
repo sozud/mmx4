@@ -1,5 +1,7 @@
 // 8002B694..8002BB80
 #include "common.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
 
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];

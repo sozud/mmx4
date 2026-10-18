@@ -1,6 +1,35 @@
 // BarObj, bar_object
 // 8002FCAC..800311EC
 #include "common.h"
+#include "main/1A5BC.h"
+#include "main/pause_menu.h"
+#include "main/11184.h"
+#include "main/144A4.h"
+#include "main/55C4.h"
+#include "main/2824.h"
+
+// D_800F48D4
+extern void (*D_800F48D4[])(struct BarObj*);
+void func_8002FCEC(struct BarObj*);
+void func_80030128(struct BarObj*);
+void func_80030F9C(struct BarObj*);
+
+// D_800F48E0
+extern void (*D_800F48E0[])(struct BarObj*);
+void func_8002FD28(struct BarObj*);
+
+// D_800F48F4
+extern void (*D_800F48F4[])(struct BarObj*);
+
+void func_80030DF8(struct BarObj*);
+void func_80030EC8(struct BarObj*);
+
+// D_800F4910
+extern void (*D_800F4910[])(struct BarObj*);
+void func_80030FD8(struct BarObj*);
+void func_80031014(struct BarObj*);
+
+void func_80031130(struct BarObj*);
 
 void func_800170E0(void);
 void func_800170B0(void);

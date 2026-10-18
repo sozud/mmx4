@@ -1,7 +1,86 @@
 // MainObj, main_object_update_funcs[43]
 // 800631C8..80065930
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_43_web_spider.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/misc/misc_15_vent.h"
+
+extern u8 web_spider_move_timers[];
+extern u8 web_spider_attack_cooldowns[4];
+extern const u8* web_spider_swing_animations[];
+
+extern struct Unk_unk68 D_800FF5B0;
+
+extern u8 web_spider_swing_sets[];
+
+extern struct Unk_unk68 web_spider_attack_box;
+extern struct Unk_unk68 web_spider_hurt_box;
+
+// web_spider_state_funcs
+void web_spider_intro(struct MainObj*);
+
+void web_spider_death(struct MainObj*);
+
+void spiderling_run(struct MainObj*);
+void spiderling_despawn(struct MainObj* arg0);
+
+void web_spider_intro_setup(struct MainObj*);
+
+void web_spider_intro_spawn_thread(struct MainObj*);
+void web_spider_intro_wait(struct MainObj*);
+void web_spider_intro_descend(struct MainObj*);
+void web_spider_intro_pose(struct MainObj*);
+void web_spider_intro_start_health_bar(struct MainObj*);
+void web_spider_intro_fill_health(struct MainObj*);
+void web_spider_intro_climb(struct MainObj*);
+
+// web_spider_step_funcs
+void web_spider_fall(struct MainObj* arg0);
+void web_spider_drop(struct MainObj* arg0);
+void web_spider_shoot(struct MainObj* arg0);
+void web_spider_swing(struct MainObj* arg0);
+void web_spider_attack(struct MainObj* arg0);
+void web_spider_big_web(struct MainObj* arg0);
+
+// web_spider_shoot_funcs
+void web_spider_shoot_start(struct MainObj*);
+void web_spider_shoot_fire(struct AnimatedObj*);
+
+// web_spider_swing_funcs
+void web_spider_swing_start(struct MainObj*);
+
+void web_spider_swing_wait(struct MainObj*);
+
+// web_spider_fall_funcs
+extern void (*web_spider_fall_funcs[])(struct MainObj*);
+void web_spider_fall_start(struct MainObj*);
+void web_spider_fall_slow(struct MainObj*);
+void web_spider_fall_land(struct MainObj*);
+void web_spider_fall_crash(struct MainObj*);
+
+void web_spider_death_start(struct MainObj*);
+
+// spiderling_step_funcs
+extern void (*spiderling_step_funcs[])(struct MainObj*);
+void spiderling_fall(struct MainObj* arg0);
+
+void spiderling_leave(struct MainObj* arg0);
+
+extern void (*web_spider_state_funcs[])(struct MainObj*);
+extern void (*spiderling_state_funcs[])(struct MainObj*);
+extern void (*web_spider_intro_funcs[])(struct MainObj*);
+extern void (*web_spider_drop_funcs[])(struct MainObj*);
+extern void (*web_spider_shoot_funcs[])(struct MainObj*);
+extern void (*web_spider_swing_funcs[])(struct MainObj*);
+extern void (*web_spider_big_web_funcs[])(struct MainObj*);
+extern void (*web_spider_death_funcs[])(struct MainObj*);
 
 void func_800643B0(struct MainObj* arg0);
 void web_spider_attack_web(struct MainObj* arg0);

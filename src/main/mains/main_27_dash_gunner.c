@@ -1,7 +1,46 @@
 // MainObj, main_object_update_funcs[27]
 // 800586F0..80059C48
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_27_dash_gunner.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+// dash_gunner_state_funcs
+extern void (*dash_gunner_state_funcs[])(struct MainObj*);
+
+void dash_gunner_explode(struct MainObj*);
+void dash_gunner_despawn(struct MainObj*);
+
+// dash_gunner_step_funcs
+void dash_gunner_resume_step(struct MainObj* arg0);
+void dash_gunner_run(struct MainObj* arg0);
+void dash_gunner_wait_for_player(struct MainObj* arg0);
+void dash_gunner_turn(struct MainObj* arg0);
+void dash_gunner_shoot(struct MainObj* arg0);
+
+void dash_gunner_dash(struct MainObj* arg0);
+
+// dash_gunner_turn_funcs
+void dash_gunner_turn_brake(struct MainObj*);
+
+void func_80059154(struct MainObj*);
+
+// dash_gunner_shoot_funcs
+void dash_gunner_shoot_raise(struct MainObj*);
+void dash_gunner_shoot_aim(struct MainObj*);
+
+void dash_gunner_shoot_wait(struct MainObj*);
+void dash_gunner_shoot_lower(struct MainObj*);
+void func_80059590(struct MainObj*);
+
+void dash_gunner_dash_brake(struct MainObj*);
+
+extern void (*dash_gunner_run_funcs[])(struct MainObj*);
+extern void (*dash_gunner_turn_funcs[])(struct MainObj*);
+extern void (*dash_gunner_shoot_funcs[])(struct MainObj*);
+extern void (*dash_gunner_dash_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern union AnimationStep* dash_gunner_animations[12];

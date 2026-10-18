@@ -1,6 +1,19 @@
 // EffectObj, effect_object_update_funcs[29]
 // 800BC144..800BC2E0
 #include "common.h"
+#include "main/effects/effect_29_tile_anim_trigger.h"
+#include "main/effects/effect_32_proximity_door.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+extern u8 tile_anim_trigger_offsets[4][2];
+
+void tile_anim_trigger_step(struct EffectObj*);
+
+// tile_anim_trigger_state_funcs
+extern void (*tile_anim_trigger_state_funcs[])(struct EffectObj*);
+void tile_anim_trigger_init(struct EffectObj*);
+void tile_anim_trigger_main(struct EffectObj*);
 
 struct Effect28AnimationStep tile_anim_script_0[3] = {
     { 2, 0, 1, 0 },

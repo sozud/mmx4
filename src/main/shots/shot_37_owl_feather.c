@@ -1,6 +1,14 @@
 // ShotObj, shot_object_update_funcs[37]
 // 800A3C78..800A428C
 #include "common.h"
+#include "main/shots/shot_37_owl_feather.h"
+#include "main/objects.h"
+
+// owl_feather_state_funcs
+extern void (*owl_feather_state_funcs[])(struct ShotObj*);
+
+void owl_feather_despawn(struct ShotObj*);
+void owl_feather_idle(struct ShotObj*);
 
 s8 owl_feather_hit_box[4] = { -11, -11, 22, 22 };
 

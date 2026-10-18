@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[13]
 // 800B84DC..800B89B4
 #include "common.h"
+#include "main/effects/effect_13_edge_spawner.h"
+#include "main/objects.h"
+#include "main/effects/edge_spawner_data.h"
+#include "main/object_motion.h"
+
+// edge_spawner_state_funcs
+extern void (*edge_spawner_state_funcs[])(struct EffectObj*);
+void edge_spawner_init(struct EffectObj*);
+void edge_spawner_main(struct EffectObj*);
+
+void edge_spawner_despawn(struct EffectObj*);
 
 void edge_spawner_update(struct EffectObj* self)
 {

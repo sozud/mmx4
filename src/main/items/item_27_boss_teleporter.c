@@ -1,6 +1,34 @@
 // ItemObj, item_object_update_funcs[27]
 // 800C7164..800C7A68
 #include "common.h"
+#include "main/items/item_27_boss_teleporter.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+// boss_teleporter_state_funcs
+extern void (*boss_teleporter_state_funcs[])(struct ItemObj*);
+
+void boss_teleporter_main(struct ItemObj*);
+void boss_teleporter_close(struct ItemObj*);
+void boss_teleporter_idle(struct ItemObj*);
+void boss_teleporter_despawn(struct ItemObj*);
+
+// boss_teleporter_step_funcs
+extern void (*boss_teleporter_step_funcs[])(struct ItemObj*);
+void boss_teleporter_wait_player(struct ItemObj*);
+
+void boss_teleporter_wait_enter(struct ItemObj*);
+void boss_teleporter_warp(struct ItemObj*);
+void boss_teleporter_arrive(struct ItemObj*);
+
+// boss_teleporter_warp_funcs
+extern void (*boss_teleporter_warp_funcs[])(struct ItemObj*);
+
+void boss_teleporter_warp_charge(struct ItemObj*);
+void boss_teleporter_warp_leave(struct ItemObj*);
+void boss_teleporter_warp_finish(struct ItemObj*);
 
 struct Item26AnimationStep {
     u8 duration;

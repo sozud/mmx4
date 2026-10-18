@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_66_iris.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_iris_death_explode(void)

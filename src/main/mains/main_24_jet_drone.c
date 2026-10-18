@@ -1,7 +1,27 @@
 // MainObj, main_object_update_funcs[24]
 // 80056788..80057100
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_24_jet_drone.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+extern u8 jet_drone_debris[];
+
+void jet_drone_main(struct MainObj*);
+void jet_drone_despawn(struct MainObj* arg0);
+
+// jet_drone_step_funcs
+extern void (*jet_drone_step_funcs[])(struct MainObj*);
+void jet_drone_resume_step(struct MainObj* arg0);
+void jet_drone_fly(struct MainObj* arg0);
+void jet_drone_wait_for_player(struct MainObj* arg0);
+
+void jet_drone_fly_arc(struct MainObj*);
+
+extern void (*jet_drone_state_funcs[])(struct MainObj*);
+extern void (*jet_drone_fly_funcs[])(struct MainObj*);
 
 extern u8 jet_drone_debris[];
 

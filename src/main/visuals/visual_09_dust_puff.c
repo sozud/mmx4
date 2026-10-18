@@ -1,6 +1,14 @@
 // VisualObj, visual_object_update_funcs[9]
 // 800B1354..800B14E8
 #include "common.h"
+#include "main/visuals/visual_09_dust_puff.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/misc/misc_23_explosion_puff.h"
+#include "main/objects.h"
+
+void dust_puff_init(struct VisualObj*);
+void dust_puff_main(struct VisualObj*);
 
 void dust_puff_update(struct VisualObj* arg0)
 {

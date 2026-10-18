@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/E47C.h"
+#include "main/323C.h"
 extern s16 D_800F224C[36];
 extern union TitleScratch D_80169498;
 void func_8001E954(struct GameInfo* self);

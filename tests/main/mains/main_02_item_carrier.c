@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_02_item_carrier.h"
 extern struct Unk_unk68 item_carrier_hitboxes;
 extern struct Unk_unk68 item_carrier_capsule_hurtbox;
 

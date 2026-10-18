@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_33_spike_sled.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
 extern u8 D_800FDD98[8];
 extern struct StageObjectRecord stage_object_records_3_0[58];
 

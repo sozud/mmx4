@@ -1,7 +1,125 @@
 // MainObj, main_object_update_funcs[57]
 // 80072194..800743FC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_57_frost_walrus.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+
+extern u8 frost_walrus_script_recover_high[4];
+extern u8 frost_walrus_script_recover_low[4];
+
+extern s16 frost_walrus_burst_offsets[20][2];
+extern u8 frost_walrus_burst_subtypes[20];
+
+extern struct Unk_unk68 frost_walrus_breath_debris[3];
+
+// frost_walrus_state_funcs
+extern void (*frost_walrus_state_funcs[])(struct MainObj*);
+void frost_walrus_start(struct MainObj* arg0);
+
+void frost_walrus_death(struct BarObj* arg0);
+
+// frost_walrus_start_funcs
+extern void (*frost_walrus_start_funcs[])(struct MainObj*);
+
+// frost_walrus_step_funcs
+void frost_walrus_reset(struct MainObj* arg0);
+void frost_walrus_intro(struct MainObj* arg0);
+void frost_walrus_think(struct MainObj* arg0);
+void frost_walrus_charge(struct MainObj* arg0);
+void frost_walrus_leap(struct MainObj* arg0);
+void frost_walrus_walk(struct MainObj* arg0);
+void frost_walrus_shards(struct MainObj* arg0);
+void frost_walrus_breath(struct MainObj* arg0);
+void frost_walrus_blizzard(struct MainObj* arg0);
+void frost_walrus_stagger(struct MainObj* arg0);
+void frost_walrus_regrow(struct MainObj* arg0);
+
+// frost_walrus_death_funcs
+extern void (*frost_walrus_death_funcs[])(struct BarObj*);
+void func_80072628(struct MainObj*);
+
+void frost_walrus_death_finish(struct MainObj* arg0);
+
+// frost_walrus_intro_funcs
+extern void (*frost_walrus_intro_funcs[])(struct MainObj*);
+void frost_walrus_intro_walk(struct MainObj*);
+
+void frost_walrus_intro_roar(struct MainObj*);
+
+void frost_walrus_intro_start_health_bar(struct MainObj*);
+void frost_walrus_intro_fill_health(struct MainObj*);
+
+// frost_walrus_think_funcs
+extern void (*frost_walrus_think_funcs[])(struct MainObj*);
+void frost_walrus_think_next(struct MainObj*);
+void frost_walrus_think_pause(struct MainObj*);
+
+// frost_walrus_charge_funcs
+extern void (*frost_walrus_charge_funcs[])(struct MainObj*);
+
+void frost_walrus_charge_windup(struct MainObj*);
+void frost_walrus_charge_run(struct MainObj*);
+void frost_walrus_charge_slide(struct MainObj*);
+void frost_walrus_charge_recover(struct MainObj*);
+void frost_walrus_charge_finish(struct MainObj*);
+
+// frost_walrus_leap_funcs
+extern void (*frost_walrus_leap_funcs[])(struct MainObj*);
+void frost_walrus_leap_start(struct MainObj*);
+void frost_walrus_leap_windup(struct MainObj*);
+void frost_walrus_leap_jump(struct MainObj*);
+void frost_walrus_leap_air(struct MainObj*);
+void frost_walrus_leap_recover(struct MainObj*);
+void frost_walrus_leap_finish(struct MainObj*);
+
+// frost_walrus_walk_funcs
+extern void (*frost_walrus_walk_funcs[])(struct MainObj*);
+void frost_walrus_walk_start(struct MainObj*);
+void frost_walrus_walk_stomp(struct MainObj*);
+
+// frost_walrus_shards_funcs
+extern void (*frost_walrus_shards_funcs[])(struct MainObj*);
+void frost_walrus_shards_start(struct MainObj*);
+
+void frost_walrus_shards_repeat(struct MainObj*);
+void frost_walrus_shards_finish(struct MainObj*);
+void frost_walrus_shards_wait(struct MainObj*);
+
+// frost_walrus_breath_funcs
+extern void (*frost_walrus_breath_funcs[])(struct MainObj*);
+void frost_walrus_breath_start(struct MainObj*);
+
+void frost_walrus_breath_wait(struct MainObj*);
+void frost_walrus_breath_launch(struct MainObj*);
+void frost_walrus_breath_finish(struct MainObj* arg0);
+
+// frost_walrus_blizzard_funcs
+extern void (*frost_walrus_blizzard_funcs[])(struct MainObj*);
+void frost_walrus_blizzard_start(struct MainObj*);
+
+void frost_walrus_blizzard_wait(struct MainObj*);
+void frost_walrus_blizzard_finish(struct MainObj*);
+void frost_walrus_blizzard_idle(struct MainObj*);
+
+// frost_walrus_stagger_funcs
+extern void (*frost_walrus_stagger_funcs[])(struct MainObj*);
+
+void frost_walrus_stagger_fall(struct MainObj*);
+void frost_walrus_stagger_slide(struct MainObj*);
+void frost_walrus_stagger_recover(struct MainObj*);
+
+// frost_walrus_regrow_funcs
+extern void (*frost_walrus_regrow_funcs[])(struct MainObj*);
+
+void frost_walrus_regrow_finish(struct MainObj*);
+void frost_walrus_face_player(struct MainObj* arg0);
 
 extern u8** frost_walrus_scripts[];
 extern u8 frost_walrus_script_weights[][4];

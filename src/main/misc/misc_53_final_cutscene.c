@@ -1,6 +1,23 @@
 // MiscObj, misc_object_update_funcs[53]
 // 800D2A74..800D3084
 #include "common.h"
+#include "main/misc/misc_53_final_cutscene.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1A5BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// final_cutscene_step_funcs
+extern void (*final_cutscene_step_funcs[])(struct MiscObj*);
+void final_cutscene_wait_player(struct MiscObj*);
+
+// final_cutscene_state_funcs
+extern void (*final_cutscene_state_funcs[])(struct MiscObj*);
+void func_800D2A74(struct MiscObj*);
+void final_cutscene_main(struct MiscObj* arg0);
+void final_cutscene_despawn(struct MiscObj*);
 
 extern union AnimationStep* final_cutscene_animations[1];
 

@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[19]
 // 8009CC64..8009CF38
 #include "common.h"
+#include "main/shots/shot_19_trooper_bomb.h"
+#include "main/collision.h"
+#include "main/mains/main_50_train_crate.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+// trooper_bomb_state_funcs
+extern void (*trooper_bomb_state_funcs[])(struct ShotObj*);
+
+void trooper_bomb_fall(struct ShotObj*);
+void trooper_bomb_explode(struct ShotObj*);
+void trooper_bomb_despawn(struct ShotObj*);
 
 u8 trooper_bomb_terrain_box[4] = { 0, 0, 4, 4 };
 u8 trooper_bomb_debris[8] = { 3, 5, 4, 6, 4, 6, 3, 5 };

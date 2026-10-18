@@ -1,6 +1,14 @@
 // MiscObj, misc_object_update_funcs[20]
 // 800CB8F8..800CBA80
 #include "common.h"
+#include "main/misc/misc_20_scroll_prop.h"
+#include "main/objects.h"
+
+// scroll_prop_state_funcs
+extern void (*scroll_prop_state_funcs[])(struct MiscObj*);
+void scroll_prop_init(struct MiscObj*);
+void scroll_prop_scroll(struct MiscObj*);
+void scroll_prop_despawn(struct MiscObj*);
 
 void scroll_prop_update(struct MiscObj* self)
 {

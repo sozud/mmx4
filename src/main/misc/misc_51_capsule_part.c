@@ -1,6 +1,27 @@
 // MiscObj, misc_object_update_funcs[51]
 // 800D1DC4..800D2190
 #include "common.h"
+#include "main/misc/misc_51_capsule_part.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// capsule_part_state_funcs
+extern void (*capsule_part_state_funcs[])(struct MiscObj*);
+void capsule_part_init(struct MiscObj*);
+void capsule_part_main(struct MiscObj*);
+void capsule_part_despawn(struct MiscObj*);
+
+// capsule_part_type_funcs
+extern void (*capsule_part_type_funcs[])(struct MiscObj*);
+void capsule_part_base(struct MiscObj* arg0);
+void capsule_part_glass(struct MiscObj*);
+void func_800D2094(struct MiscObj*);
+
+// capsule_part_base_funcs
+extern void (*capsule_part_base_funcs[])(struct MiscObj*);
+void capsule_part_base_open(struct MiscObj*);
+void capsule_part_base_opening(struct MiscObj*);
+void capsule_part_base_animate(struct MiscObj*);
 
 void capsule_part_update(struct MiscObj* self)
 {

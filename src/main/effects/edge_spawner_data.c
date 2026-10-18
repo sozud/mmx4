@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/effects/edge_spawner_data.h"
 
 struct Effect1314ItemSpawn edge_spawner_items[19] = {
     { 0, 0x1, 0x1550, 0x5b0 },

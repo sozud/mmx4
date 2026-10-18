@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_25_caterkiller.h"
+#include "main/1CF60.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
 extern union AnimationStep* caterkiller_animations[];
 void caterkiller_check_fall(struct MainObj*);
 extern struct StageObjectRecord stage_object_records_1_1[88];

@@ -1,6 +1,12 @@
 // MiscObj, misc_object_update_funcs[32]
 // 800CE114..800CE340
 #include "common.h"
+#include "main/misc/misc_32_option_sprite.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// option_sprite_state_funcs
+extern void (*option_sprite_state_funcs[])(struct MiscObj*);
 
 // option_sprite_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_32_option_sprite", func_800CE114);

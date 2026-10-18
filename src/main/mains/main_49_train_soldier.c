@@ -1,6 +1,50 @@
 // MainObj, main_object_update_funcs[49]
 // 800684F8..8006970C
 #include "common.h"
+#include "main/mains/main_49_train_soldier.h"
+#include "main/objects.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+void train_soldier_main(struct MainObj* arg0);
+void train_soldier_despawn(struct MainObj* arg0);
+
+void train_soldier_check_guard(struct MainObj* arg0);
+void train_soldier_check_shoot(struct MainObj* arg0);
+
+void train_soldier_walk(struct MainObj* arg0);
+void train_soldier_fall(struct MainObj* arg0);
+void train_soldier_jump(struct MainObj* arg0);
+void train_soldier_rest(struct MainObj* arg0);
+void train_soldier_shoot(struct MainObj* arg0);
+void train_soldier_guard(struct MainObj* arg0);
+
+void train_soldier_walk_move(struct MainObj*);
+
+// train_soldier_guard_funcs
+void train_soldier_guard_start(struct MainObj* arg0);
+void train_soldier_guard_hold(struct MainObj* arg0);
+
+// train_soldier_fall_funcs
+void train_soldier_fall_drop(struct MainObj*);
+void train_soldier_fall_land(struct MainObj*);
+
+void train_soldier_jump_rise(struct MainObj*);
+
+void train_soldier_shoot_recoil(struct MainObj* arg0);
+void train_soldier_shoot_end(struct MainObj*);
+
+extern u8 train_soldier_debris[];
+extern void (*train_soldier_state_funcs[])(struct MainObj*);
+extern void (*train_soldier_step_funcs[])(struct MainObj*);
+extern void (*train_soldier_walk_funcs[])(struct MainObj*);
+extern void (*train_soldier_guard_funcs[])(struct MainObj*);
+extern void (*train_soldier_fall_funcs[])(struct MainObj*);
+extern void (*train_soldier_jump_funcs[])(struct MainObj*);
+extern void (*train_soldier_shoot_funcs[])(struct MainObj*);
 
 extern u8 train_soldier_guard_attack_box[];
 extern s16 main49_activation_distances[];

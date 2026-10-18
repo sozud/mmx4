@@ -1,6 +1,18 @@
 // ShotObj, shot_object_update_funcs[20]
 // 8009CF38..8009D200
 #include "common.h"
+#include "main/shots/shot_20_cannon_blast.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+
+// cannon_blast_state_funcs
+extern void (*cannon_blast_state_funcs[])(struct ShotObj*);
+void cannon_blast_init(struct ShotObj*);
+
+void cannon_blast_despawn(struct ShotObj*);
+void cannon_blast_idle(struct ShotObj*);
 
 u8 cannon_blast_box_0[4] = { 0x80, 0xF1, 0xBE, 0x26 };
 u8 cannon_blast_box_1[4] = { 0x80, 0xF1, 0xFF, 0x26 };

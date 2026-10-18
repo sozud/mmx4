@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/shots/shot_24_train_boss_shot.h"
+#include "main/collision_bounds.h"
+#include "main/mains/main_45_train_boss.h"
+#include "main/sprite_animations.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 

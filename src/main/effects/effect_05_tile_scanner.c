@@ -1,6 +1,9 @@
 // EffectObj, effect_object_update_funcs[5]
 // 800B60BC..800B6A0C
 #include "common.h"
+#include "main/effects/effect_05_tile_scanner.h"
+
+void tile_scanner_init(struct EffectObj*);
 
 void (*tile_scanner_state_funcs[2])(struct EffectObj*) = {
     tile_scanner_init,

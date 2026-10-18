@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_34_highway_trooper.h"
+#include "main/195B4.h"
+#include "main/55C4.h"
 extern union AnimationStep* highway_trooper_animations[27];
 
 struct func_8005E5C0_case {

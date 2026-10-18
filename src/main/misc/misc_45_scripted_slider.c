@@ -1,6 +1,22 @@
 // MiscObj, misc_object_update_funcs[45]
 // 800D0E48..800D1284
 #include "common.h"
+#include "main/misc/misc_45_scripted_slider.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// scripted_slider_step_funcs
+extern void (*scripted_slider_step_funcs[])(struct MiscObj*);
+void scripted_slider_slide(struct MiscObj*);
+void scripted_slider_brake(struct MiscObj*);
+void scripted_slider_idle(void);
+void scripted_slider_follow_owner(struct MiscObj*);
+
+// scripted_slider_state_funcs
+extern void (*scripted_slider_state_funcs[])(struct MiscObj*);
+
+void scripted_slider_main(struct MiscObj*);
+void scripted_slider_despawn(struct MiscObj*);
 
 u8 stage_cutscene_data[24] = {
     0,

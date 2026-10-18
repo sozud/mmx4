@@ -1,6 +1,20 @@
 // WeaponObj, weapon_object_update_funcs[0, 12, 23, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
 // 800922D8..80092648
 #include "common.h"
+#include "main/weapons/weapon_00_lemon.h"
+#include "main/weapons/weapon_20_plasma_shot.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/sprite_animations.h"
+
+void lemon_deflect(struct WeaponObj*);
+
+// lemon_state_funcs
+extern void (*lemon_state_funcs[])(struct WeaponObj*);
+void lemon_init(struct WeaponObj*);
+void lemon_main(struct WeaponObj*);
+void lemon_deflected(struct WeaponObj*);
 
 struct Unk_unk68 lemon_hit_box[] = {
     { -10, -6, 0x12, 0xB },

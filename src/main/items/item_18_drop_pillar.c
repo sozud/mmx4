@@ -1,6 +1,18 @@
 // ItemObj, item_object_update_funcs[18]
 // 800C4544..800C470C
 #include "common.h"
+#include "main/items/item_18_drop_pillar.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+// drop_pillar_state_funcs
+extern void (*drop_pillar_state_funcs[])(struct ItemObj*);
+void drop_pillar_init(struct ItemObj*);
+void drop_pillar_fall(struct ItemObj*);
+void drop_pillar_land(struct ItemObj*);
 
 void drop_pillar_update(struct ItemObj* arg0)
 {

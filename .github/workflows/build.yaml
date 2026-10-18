@@ -361,7 +361,7 @@ jobs:
       #     ./configure
       #     make
       - name: Lint
-        run: sh format.sh && git diff --exit-code
+        run: sh format.sh && git diff --exit-code && python3 tools/headers/check_headers.py
       - name: Get dependencies
         uses: actions/checkout@v7
         with:

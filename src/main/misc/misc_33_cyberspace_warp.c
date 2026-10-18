@@ -1,6 +1,25 @@
 // MiscObj, misc_object_update_funcs[33]
 // 800CE340..800CE894
 #include "common.h"
+#include "main/misc/misc_33_cyberspace_warp.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// cyberspace_warp_state_funcs
+extern void (*cyberspace_warp_state_funcs[])(struct MiscObj*);
+
+void cyberspace_warp_main(struct MiscObj*);
+void cyberspace_warp_despawn(struct MiscObj*);
+
+// cyberspace_warp_main_funcs
+extern void (*cyberspace_warp_main_funcs[])(struct MiscObj*);
+void cyberspace_warp_fade(struct MiscObj*);
+void cyberspace_warp_wait(struct MiscObj*);
+
+// cyberspace_warp_wait_funcs
+extern void (*cyberspace_warp_wait_funcs[])(struct MiscObj*);
+void cyberspace_warp_wait_start(struct MiscObj*);
+void cyberspace_warp_wait_blink(struct MiscObj*);
 
 void cyberspace_warp_update(struct MiscObj* self)
 {

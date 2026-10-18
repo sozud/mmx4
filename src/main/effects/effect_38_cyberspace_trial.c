@@ -1,6 +1,29 @@
 // EffectObj, effect_object_update_funcs[38]
 // 800BD654..800BDE68
 #include "common.h"
+#include "main/effects/effect_38_cyberspace_trial.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+
+struct CyberspaceTrialBounds {
+    u16 start_x, goal_x;
+};
+
+void cyberspace_trial_delete_unused_items(void);
+
+// cyberspace_trial_state_funcs
+extern void (*cyberspace_trial_state_funcs[])(struct EffectObj*);
+void cyberspace_trial_init(struct EffectObj*);
+void cyberspace_trial_wait_start(struct EffectObj*);
+void cyberspace_trial_wait_goal(struct EffectObj*);
+
+void cyberspace_trial_clear_objects(struct EffectObj*);
+
+extern struct CyberspaceTrialBounds cyberspace_trial_trigger_x[7];
+void cyberspace_trial_delay(struct EffectObj*);
+void cyberspace_trial_wait_rank(struct EffectObj*);
+
+void cyberspace_trial_despawn(struct EffectObj*);
 
 void cyberspace_trial_spawn_rank_warp(struct EffectObj* self);
 

@@ -1,9 +1,35 @@
 // MainObj, main_object_update_funcs[13]
 // 8004C734..8004CF24
 #include "common.h"
+#include "main/mains/main_13_heavy_mech.h"
+#include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/stage_objects.h"
+
+// heavy_mech_state_funcs
+extern void (*heavy_mech_state_funcs[])(struct MainObj*);
+void heavy_mech_init(struct MainObj*);
+
+void heavy_mech_explode(struct MainObj*);
+void heavy_mech_despawn(struct MainObj* arg0);
+
+// heavy_mech_step_funcs
+void heavy_mech_resume_step(struct MainObj* arg0);
+void heavy_mech_idle(struct MainObj* arg0);
+
+void heavy_mech_throw(struct MainObj* arg0);
+
+// heavy_mech_idle_funcs
+void heavy_mech_idle_start(struct MainObj*);
+
+extern void (*heavy_mech_idle_funcs[])(struct MainObj*);
+extern void (*heavy_mech_throw_funcs[])(struct MainObj*);
 
 void heavy_mech_face_player(struct AnimatedObj* self);
-#include "func_tables.h"
 
 extern u8 heavy_mech_debris[];
 extern void (*heavy_mech_step_funcs[])();

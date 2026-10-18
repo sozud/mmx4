@@ -1,6 +1,16 @@
 // ItemObj, item_object_update_funcs[3]
 // 800C0404..800C081C
 #include "common.h"
+#include "main/items/item_03_falling_pillar.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/CB184.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+
+// falling_pillar_state_funcs
+extern void (*falling_pillar_state_funcs[])(struct ItemObj*);
 
 struct Item03StageEntry falling_pillar_entries[22] = {
     { 0x0DE0, 0x0218, 0x03B0, 0x0E50, 0x0DF8, 0x000B, 0x0050, 0x0018 },

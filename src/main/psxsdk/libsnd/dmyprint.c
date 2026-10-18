@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/psxsdk/libsnd/dmyprint.h"
 
 void dmy_nothing1(short arg0, short arg1, unsigned char arg2, unsigned char arg3)
 {

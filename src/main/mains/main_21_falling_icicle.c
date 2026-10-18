@@ -1,7 +1,27 @@
 // MainObj, main_object_update_funcs[21]
 // 80054C50..80054FE8
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_21_falling_icicle.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern union AnimationStep* falling_icicle_animations[];
+extern struct Unk_unk68 falling_icicle_body_box;
+extern struct Unk_unk68 falling_icicle_terrain_box;
+
+// falling_icicle_state_funcs
+extern void (*falling_icicle_state_funcs[])(struct MainObj*);
+void falling_icicle_init(struct MainObj*);
+
+void falling_icicle_shatter(struct MainObj*);
+void falling_icicle_despawn(struct MainObj* arg0);
+
+void falling_icicle_wait(struct MainObj* arg0);
+void falling_icicle_release(struct MainObj* arg0);
+void falling_icicle_fall(struct MainObj* arg0);
 
 void falling_icicle_update(struct MainObj* self)
 {

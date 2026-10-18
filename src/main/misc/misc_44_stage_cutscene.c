@@ -1,6 +1,28 @@
 // MiscObj, misc_object_update_funcs[44]
 // 800D07EC..800D0E48
 #include "common.h"
+#include "main/misc/misc_44_stage_cutscene.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// stage_cutscene_state_funcs
+extern void (*stage_cutscene_state_funcs[])(struct MiscObj*);
+void func_800D0828(struct MiscObj* arg0);
+void stage_cutscene_main(struct MiscObj*);
+void stage_cutscene_despawn(struct MiscObj*);
+void func_800D0C68(struct MiscObj*);
+
+// stage_cutscene_step_funcs
+extern void (*stage_cutscene_step_funcs[])(struct UnkObj*);
+void stage_cutscene_wait_player(struct UnkObj*);
+void stage_cutscene_wait_scroll(struct UnkObj*);
+void stage_cutscene_first_line(struct UnkObj*);
+void stage_cutscene_wait_first(struct UnkObj*);
+void stage_cutscene_second_line(struct UnkObj*);
+void stage_cutscene_finish(struct UnkObj*);
+void stage_cutscene_idle(struct UnkObj*);
 
 extern union AnimationStep* stage_cutscene_animations[3];
 

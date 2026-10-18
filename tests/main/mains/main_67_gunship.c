@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_67_gunship.h"
 
 static u32 wait_case(u32 mode, u32 observation)
 {

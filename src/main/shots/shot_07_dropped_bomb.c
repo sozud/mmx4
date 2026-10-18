@@ -1,6 +1,19 @@
 // ShotObj, shot_object_update_funcs[7]
 // 8009AD30..8009AEE4
 #include "common.h"
+#include "main/shots/shot_07_dropped_bomb.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// dropped_bomb_state_funcs
+extern void (*dropped_bomb_state_funcs[])(struct ShotObj*);
+
+void dropped_bomb_fall(struct ShotObj*);
+void dropped_bomb_despawn(struct ShotObj*);
+void dropped_bomb_idle(struct ShotObj*);
 
 u8 dropped_bomb_hit_box[4] = { 0xFE, 0x16, 0x07, 0x0E };
 u8 dropped_bomb_terrain_box[4] = { 0xF8, 0x0A, 0x0D, 0x1A };

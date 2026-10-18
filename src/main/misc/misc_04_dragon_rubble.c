@@ -1,6 +1,19 @@
 // MiscObj, misc_object_update_funcs[4]
 // 800C8774..800C8FA8
 #include "common.h"
+#include "main/misc/misc_04_dragon_rubble.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+// dragon_rubble_state_funcs
+extern void (*dragon_rubble_state_funcs[])(struct MiscObj*);
+void dragon_rubble_init(struct MiscObj* arg0);
+void dragon_rubble_wait(struct MiscObj* arg0);
+void func_800C899C(struct MiscObj* arg0);
+void dragon_rubble_b_wait(struct MiscObj* arg0);
 
 void dragon_rubble_update(struct MiscObj* self)
 {

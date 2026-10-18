@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_03_soul_body.h"
 extern s32 player_gfx_buf_0[1024];
 
 static u32 cancel_case(u32 mode)

@@ -1,6 +1,92 @@
 // ShotObj, shot_object_update_funcs[35]
 // 800A22D4..800A3924
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_35_walrus_ice.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+
+extern struct Unk_unk68 walrus_ice_shard_terrain_box;
+extern struct Unk_unk68 walrus_ice_ball_hurt_box;
+
+extern struct Unk_unk68 walrus_ice_ball_attack_box;
+
+extern struct Unk_unk68 walrus_ice_ball_attack_box;
+extern struct Unk_unk68 walrus_ice_shard_hurt_box;
+extern struct Unk_unk68 walrus_ice_shard_attack_box;
+extern u8 walrus_ice_debris[12];
+extern RECT** walrus_ice_drop_patterns_a;
+extern RECT** walrus_ice_drop_patterns_b;
+
+// walrus_ice_state_funcs
+extern void (*walrus_ice_state_funcs[])(struct ShotObj*);
+extern struct Unk_unk68 walrus_ice_chunk_terrain_box;
+
+extern s32 walrus_ice_lob_speeds[3];
+extern u8 walrus_ice_chunk_debris[12];
+void walrus_ice_init(struct ShotObj*);
+void walrus_ice_icicle(struct ShotObj*);
+void walrus_ice_ball(struct ShotObj*);
+void walrus_ice_chunk(struct ShotObj*);
+
+void walrus_ice_shard(struct ShotObj*);
+void walrus_ice_break(struct ShotObj*);
+void walrus_ice_despawn(struct ShotObj*);
+
+// walrus_ice_icicle_funcs
+extern void (*walrus_ice_icicle_funcs[])(struct ShotObj*);
+
+void walrus_ice_icicle_main(struct ShotObj*);
+
+// walrus_ice_icicle_step_funcs
+extern void (*walrus_ice_icicle_step_funcs[])(struct ShotObj*);
+
+void walrus_ice_icicle_rise(struct ShotObj*);
+
+void walrus_ice_icicle_fall(struct ShotObj*);
+void walrus_ice_icicle_stuck(struct ShotObj*);
+void walrus_ice_icicle_blink(struct ShotObj*);
+
+// walrus_ice_ball_funcs
+extern void (*walrus_ice_ball_funcs[])(struct ShotObj*);
+void func_800A2AA0(struct ShotObj*);
+
+// walrus_ice_ball_step_funcs
+extern void (*walrus_ice_ball_step_funcs[])(struct ShotObj*);
+void walrus_ice_ball_blink(struct ShotObj*);
+void walrus_ice_ball_grow(struct ShotObj*);
+void walrus_ice_ball_burst(struct ShotObj*);
+
+// walrus_ice_shard_funcs
+extern void (*walrus_ice_shard_funcs[])(struct ShotObj*);
+void walrus_ice_shard_init(struct ShotObj*);
+void walrus_ice_shard_main(struct ShotObj*);
+
+// walrus_ice_shard_step_funcs
+extern void (*walrus_ice_shard_step_funcs[])(struct ShotObj*);
+void walrus_ice_shard_launch(struct ShotObj*);
+void walrus_ice_shard_fly(struct ShotObj*);
+void walrus_ice_shard_stuck(struct ShotObj*);
+void walrus_ice_shard_blink(struct ShotObj*);
+
+// walrus_ice_chunk_funcs
+extern void (*walrus_ice_chunk_funcs[])(struct ShotObj*);
+void func_800A32B8(struct ShotObj*);
+
+// walrus_ice_chunk_step_funcs
+extern void (*walrus_ice_chunk_step_funcs[])(struct ShotObj*);
+void func_800A348C(struct ShotObj*);
+void walrus_ice_chunk_fall(struct ShotObj*);
+void walrus_ice_chunk_break(struct ShotObj*);
+
+// walrus_ice_lob_funcs
+extern void (*walrus_ice_lob_funcs[])(struct ShotObj*);
+void walrus_ice_lob_init(struct ShotObj*);
+void walrus_ice_lob_fall(struct ShotObj*);
 
 void walrus_ice_update(struct ShotObj* self)
 {

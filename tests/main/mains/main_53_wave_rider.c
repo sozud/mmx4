@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_53_wave_rider.h"
+#include "main/55C4.h"
 extern union AnimationStep* wave_rider_animations[27];
 
 static struct WaveInput {

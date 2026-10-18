@@ -1,7 +1,108 @@
 // MainObj, main_object_update_funcs[56]
 // 8006FABC..80072194
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_55_jet_stingray_flyby.h"
+#include "main/mains/main_56_jet_stingray.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+
+extern struct Unk_unk68 jet_stingray_swim_attack_box;
+extern struct Unk_unk68 jet_stingray_swim_hurt_box;
+
+extern struct Unk_unk68 jet_stingray_debris[2];
+
+extern struct Unk_unk68 jet_stingray_dash_attack_box;
+extern struct Unk_unk68 jet_stingray_dash_hurt_box;
+
+// jet_stingray_intro_funcs
+extern s8 jet_stingray_bubble_offsets[];
+extern void (*jet_stingray_intro_funcs[])(struct MainObj*);
+void jet_stingray_intro_setup(struct MainObj*);
+
+void jet_stingray_intro_emerge(struct MainObj*);
+void jet_stingray_intro_rise(struct MainObj*);
+void jet_stingray_intro_pose(struct MainObj*);
+void jet_stingray_intro_fill_health(struct MainObj*);
+void jet_stingray_intro_finish(struct MainObj*);
+
+// jet_stingray_swim_funcs
+extern void (*jet_stingray_swim_funcs[])(struct MainObj*);
+void jet_stingray_swim_start(struct MainObj*);
+
+void jet_stingray_swim_next(struct MainObj*);
+
+// jet_stingray_vortex_funcs
+extern void (*jet_stingray_vortex_funcs[])(struct MainObj*);
+void jet_stingray_vortex_start(struct MainObj*);
+
+void jet_stingray_vortex_wait(struct MainObj*);
+void jet_stingray_vortex_finish(struct MainObj*);
+
+extern struct Unk_unk68 jet_stingray_ambush_hurt_box;
+void jet_stingray_ambush_exit(struct MainObj*);
+
+// jet_stingray_dash_funcs
+extern void (*jet_stingray_dash_funcs[])(struct MainObj*);
+void jet_stingray_dash_start(struct MainObj*);
+void jet_stingray_dash_charge(struct MainObj*);
+void jet_stingray_dash_return(struct MainObj*);
+
+// jet_stingray_leap_funcs
+extern struct Unk_unk68 jet_stingray_leap_attack_box;
+extern struct Unk_unk68 jet_stingray_leap_hurt_boxes[];
+extern void (*jet_stingray_leap_funcs[])(struct MainObj*);
+void jet_stingray_leap_start(struct MainObj*);
+void jet_stingray_leap_fall(struct MainObj*);
+void jet_stingray_leap_return(struct MainObj*);
+
+// jet_stingray_missiles_funcs
+extern void (*jet_stingray_missiles_funcs[])(struct MainObj*);
+
+void jet_stingray_missiles_repeat(struct MainObj*);
+void jet_stingray_missiles_finish(struct MainObj*);
+
+// jet_stingray_missiles_wide_funcs
+extern void (*jet_stingray_missiles_wide_funcs[])(struct MainObj*);
+
+// jet_stingray_stagger_funcs
+extern void (*jet_stingray_stagger_funcs[])(struct MainObj*);
+void jet_stingray_stagger_start(struct MainObj*);
+void jet_stingray_stagger_wait(struct MainObj*);
+void jet_stingray_stagger_shake(struct MainObj*);
+void jet_stingray_stagger_flee(struct MainObj*);
+void jet_stingray_stagger_return(struct MainObj*);
+
+// jet_stingray_step_funcs
+void jet_stingray_reset(struct MainObj* arg0);
+void jet_stingray_swim(struct MainObj* arg0);
+void jet_stingray_land(struct MainObj* arg0);
+void jet_stingray_vortex(struct MainObj* arg0);
+
+void jet_stingray_dash(struct MainObj* arg0);
+void jet_stingray_apply_leap(struct MainObj* arg0);
+void jet_stingray_leap(struct MainObj* arg0);
+void jet_stingray_missiles(struct MainObj* arg0);
+void jet_stingray_missiles_wide(struct MainObj* arg0);
+
+// jet_stingray_death_funcs
+extern void (*jet_stingray_death_funcs[])(struct MainObj*);
+void jet_stingray_death_start(struct MainObj*);
+
+void jet_stingray_death_finish(struct MainObj*);
+
+// jet_stingray_state_funcs
+extern void (*jet_stingray_state_funcs[])(struct MainObj*);
+void jet_stingray_intro(struct MainObj*);
+
+void jet_stingray_death(struct MainObj* arg0);
+void jet_stingray_stagger(struct MainObj*);
 
 extern void (*jet_stingray_step_funcs[10])();
 

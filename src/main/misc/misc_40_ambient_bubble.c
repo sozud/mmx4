@@ -1,6 +1,23 @@
 // MiscObj, misc_object_update_funcs[40]
 // 800CFB70..800CFE98
 #include "common.h"
+#include "main/misc/misc_40_ambient_bubble.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// ambient_bubble_step_funcs
+extern void (*ambient_bubble_step_funcs[])(struct MiscObj*);
+
+void ambient_bubble_float(struct MiscObj*);
+
+extern s32 ambient_bubble_max_speeds[4];
+
+// ambient_bubble_state_funcs
+extern void (*ambient_bubble_state_funcs[])(struct MiscObj*);
+
+void ambient_bubble_main(struct MiscObj*);
+void ambient_bubble_despawn(struct MiscObj*);
 
 // ambient_bubble_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFB70);

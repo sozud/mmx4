@@ -1,4 +1,17 @@
 #include "common.h"
+#include "main/weapons/weapon_00_lemon.h"
+#include "main/weapons/weapon_09_charge_shot.h"
+#include "main/weapons/weapon_20_plasma_shot.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+#include "main/weapons/weapon_22_nova_strike_hitbox.h"
+
+// plasma_shot_state_funcs
+extern void (*plasma_shot_state_funcs[])(struct WeaponObj*);
+
+void plasma_shot_main(struct WeaponObj*);
+
+void plasma_orb_linger(struct WeaponObj*);
 
 void plasma_shot_update(struct WeaponObj* arg0)
 {

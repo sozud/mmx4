@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[25]
 // 800B3D3C..800B3E7C
 #include "common.h"
+#include "main/visuals/visual_25_flame_jet_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// flame_jet_fx_state_funcs
+extern void (*flame_jet_fx_state_funcs[])(struct VisualObj*);
+void func_800B3D3C(struct VisualObj*);
+void flame_jet_fx_main(struct VisualObj*);
+void flame_jet_fx_despawn(struct VisualObj*);
 
 // flame_jet_fx_init
 void func_800B3D3C(struct VisualObj* self)

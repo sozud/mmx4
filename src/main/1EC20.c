@@ -1,4 +1,34 @@
 #include "common.h"
+#include "main/1EC20.h"
+#include "main/objects.h"
+#include "main/144A4.h"
+#include "main/128C4.h"
+#include "main/2824.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/background.h"
+#include "main/game_info.h"
+#include "main/stage_objects.h"
+#include "main/xa_sequence_data.h"
+
+extern u8 mission_palette_order[8];
+extern u8 mission_route_b[8];
+extern RECT mission_route_a_positions;
+extern RECT mission_route_b_positions;
+extern u16 briefing_voice_ids[10];
+
+extern u8* D_800F4834[10];
+
+#ifdef MMX4_PC
+extern void func_8002E5E0(void);
+#endif
+
+// D_800F485C briefing_room_state_9_update_funcs
+extern void (*briefing_room_state_9_update_funcs[])(struct EngineObj*);
+void func_8002F1B4(struct EngineObj* arg0);
+void func_8002F264(struct EngineObj* arg0);
+void func_8002F2A0(struct EngineObj* arg0);
+void func_8002F47C(struct EngineObj* arg0);
 
 // engine_state_3_update_funcs state 0 (load video)
 void func_8002E420(struct EngineObj* arg0)

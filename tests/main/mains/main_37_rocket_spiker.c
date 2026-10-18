@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_37_rocket_spiker.h"
 extern union AnimationStep* rocket_spiker_animations[28];
 extern struct Unk_unk68 D_800FE4E4;
 

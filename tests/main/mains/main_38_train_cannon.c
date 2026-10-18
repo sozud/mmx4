@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_38_train_cannon.h"
+#include "main/55C4.h"
 
 static u32 signed_default(void)
 {

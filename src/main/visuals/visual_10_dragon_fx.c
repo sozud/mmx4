@@ -1,6 +1,18 @@
 // VisualObj, visual_object_update_funcs[10]
 // 800B14E8..800B17CC
 #include "common.h"
+#include "main/visuals/visual_10_dragon_fx.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// dragon_fx_state_funcs
+extern void (*dragon_fx_state_funcs[])(struct VisualObj*);
+
+void dragon_fx_flash_init(struct VisualObj*);
+
+void dragon_fx_trail_init(struct VisualObj*);
+void dragon_fx_animate(struct VisualObj*);
+void dragon_fx_despawn(struct VisualObj*);
 
 void dragon_fx_update(struct VisualObj* arg0)
 {

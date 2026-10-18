@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
 extern union MainPaletteData D_800F1660;
 
 static u32 dialogue_case(u32 mode, u32 observation)

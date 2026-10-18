@@ -1,7 +1,51 @@
 // MainObj, main_object_update_funcs[2]
 // 80042914..80043340
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_02_item_carrier.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void item_carrier_hide(struct MainObj* arg0);
+void item_carrier_despawn(struct MainObj* arg0);
+
+// item_carrier_action_funcs
+void item_carrier_approach(struct MainObj* arg0);
+void item_carrier_hover(struct MainObj* arg0);
+
+void item_carrier_leave(struct MainObj* arg0);
+
+// item_carrier_approach_funcs
+void item_carrier_approach_start(struct MainObj* arg0);
+void item_carrier_approach_fly(struct MainObj*);
+void item_carrier_approach_stop(struct MainObj*);
+
+// item_carrier_hover_funcs
+extern void (*item_carrier_hover_funcs[])(struct MainObj*);
+void item_carrier_hover_start(struct MainObj* arg0);
+void item_carrier_hover_bob(struct MainObj* arg0);
+
+void item_carrier_drop_rise(struct MainObj* arg0);
+
+void item_carrier_drop_landed(struct MainObj* arg0);
+
+// item_carrier_leave_funcs
+void item_carrier_leave_start(struct MainObj*);
+
+void item_carrier_leave_side(struct MainObj* arg0);
+
+// item_carrier_leave_side_funcs
+void item_carrier_leave_side_start(struct MainObj*);
+void item_carrier_leave_side_turn(struct MainObj*);
+void item_carrier_leave_side_fly(struct MainObj*);
+
+extern void (*item_carrier_state_funcs[])(struct MainObj*);
+extern void (*item_carrier_approach_funcs[])(struct MainObj*);
+extern void (*item_carrier_drop_funcs[])(struct MainObj*);
+extern void (*item_carrier_leave_funcs[])(struct MainObj*);
+extern void (*item_carrier_leave_side_funcs[])(struct MainObj*);
 
 extern struct Unk_unk68 item_carrier_hitboxes;
 extern struct Unk_unk68 item_carrier_capsule_hurtbox;

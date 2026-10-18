@@ -1,6 +1,20 @@
 // QuadObj, quad_object_update_funcs[14]
 // 800D7A54..800D7CEC
 #include "common.h"
+#include "main/quads/quad_14_colonel_beam.h"
+#include "main/objects.h"
+
+// colonel_beam_state_funcs
+extern void (*colonel_beam_state_funcs[])(struct QuadObj*);
+void colonel_beam_init(struct QuadObj*);
+void colonel_beam_main(struct QuadObj*);
+void colonel_beam_despawn(struct QuadObj*);
+
+// colonel_beam_step_funcs
+extern void (*colonel_beam_step_funcs[])(struct QuadObj*);
+void colonel_beam_drop(struct QuadObj*);
+
+void colonel_beam_wait(struct QuadObj*);
 
 void colonel_beam_place(struct QuadObj* arg0, u8 arg1);
 

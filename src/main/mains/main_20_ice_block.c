@@ -1,7 +1,28 @@
 // MainObj, main_object_update_funcs[20]
 // 8005458C..80054C50
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_20_ice_block.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/mains/main_26_ice_wall.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 ice_block_crumble_attack_box;
+
+void ice_block_main(struct MainObj*);
+void ice_block_break(struct MainObj*);
+
+void ice_block_start_idle(struct MainObj* arg0);
+void ice_block_idle(struct MainObj* arg0);
+
+// ice_block_break_funcs
+extern void (*ice_block_break_funcs[])(struct MainObj*);
+
+void ice_block_break_crumble(struct MainObj*);
+void ice_block_break_remove(struct MainObj* arg0);
+
+extern void (*ice_block_state_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern union AnimationStep* ice_block_animations[9];

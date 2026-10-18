@@ -1,6 +1,65 @@
 // ShotObj, shot_object_update_funcs[53]
 // 800AAC98..800ABE08
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_53_sigma_head.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+// sigma_head_move_funcs
+extern void (*sigma_head_move_funcs[])(struct ShotObj*);
+void sigma_head_move_start(struct ShotObj*);
+
+// sigma_head_fire_wall_funcs
+extern void (*sigma_head_fire_wall_funcs[])(struct ShotObj*);
+void sigma_head_fire_wall_start(struct ShotObj*);
+
+// sigma_head_lightning_funcs
+extern void (*sigma_head_lightning_funcs[])(struct ShotObj*);
+void sigma_head_lightning_start(struct ShotObj*);
+void sigma_head_lightning_shoot(struct ShotObj*);
+
+// sigma_head_freeze_funcs
+extern void (*sigma_head_freeze_funcs[])(struct ShotObj*);
+void sigma_head_freeze_start(struct ShotObj*);
+void sigma_head_freeze_open(struct ShotObj*);
+void sigma_head_freeze_drop(struct ShotObj*);
+
+// sigma_head_chomp_funcs
+extern void (*sigma_head_chomp_funcs[])(struct ShotObj*);
+void sigma_head_chomp_start(struct ShotObj*);
+void sigma_head_chomp_wait(struct ShotObj*);
+
+// sigma_head_shift_funcs
+extern void (*sigma_head_shift_funcs[])(struct ShotObj*);
+void sigma_head_shift_start(struct ShotObj*);
+void sigma_head_shift_move(struct ShotObj*);
+
+// sigma_head_vanish_funcs
+extern void (*sigma_head_vanish_funcs[])(struct ShotObj*);
+void sigma_head_vanish_start(struct ShotObj*);
+void sigma_head_vanish_blink(struct ShotObj*);
+
+// sigma_head_step_funcs
+extern void (*sigma_head_step_funcs[])(struct ShotObj*);
+void sigma_head_resume(struct ShotObj*);
+void sigma_head_idle(struct ShotObj*);
+void sigma_head_move_to_formation(struct ShotObj*);
+
+void sigma_head_fire_wall(struct ShotObj*);
+void sigma_head_lightning(struct ShotObj*);
+void sigma_head_freeze(struct ShotObj*);
+void sigma_head_vanish(struct ShotObj*);
+void sigma_head_shift(struct ShotObj*);
+void sigma_head_chomp(struct ShotObj*);
+
+// sigma_head_state_funcs
+extern void (*sigma_head_state_funcs[])(struct ShotObj*);
+
+void sigma_head_run(struct ShotObj*);
+void sigma_head_despawn(struct ShotObj*);
 
 s8 sigma_head_boxes[3][4] = {
     { -34, -40, 67, 79 },

@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_19_double_cyclone_charged_fan.h"
+#include "main/55C4.h"
 extern u32* D_8011C0F0[5];
 
 static s32 gfx[128], sprites[128];

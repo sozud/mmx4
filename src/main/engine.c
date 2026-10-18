@@ -1,6 +1,24 @@
 // EngineObj
 // 8001F118..8001FAFC
 #include "common.h"
+#include "main/55C4.h"
+#include "main/engine.h"
+#include "main/objects.h"
+#include "main/128C4.h"
+#include "main/144A4.h"
+#include "main/1A5BC.h"
+#include "main/2824.h"
+#include "main/game_info.h"
+#include "main/object_update.h"
+
+// D_800F23B0
+extern void (*D_800F23B0[])(struct EngineObj*);
+
+// D_800F23B8
+extern void (*D_800F23B8[])(struct EngineObj*);
+
+// D_800F23D4
+extern void (*D_800F23D4[])(struct EngineObj*);
 
 void func_80016F0C();
 

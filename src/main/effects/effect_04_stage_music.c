@@ -1,6 +1,16 @@
 // EffectObj, effect_object_update_funcs[4]
 // 800B5EB0..800B60BC
 #include "common.h"
+#include "main/55C4.h"
+#include "main/effects/effect_04_stage_music.h"
+#include "main/3D88.h"
+#include "main/objects.h"
+
+// stage_music_state_funcs
+extern void (*stage_music_state_funcs[])(struct EffectObj*);
+void stage_music_init(struct EffectObj*);
+void stage_music_load(struct EffectObj*);
+void stage_music_despawn(struct EffectObj*);
 
 void stage_music_init(struct EffectObj* self)
 {

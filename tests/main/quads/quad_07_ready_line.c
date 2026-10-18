@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/quads/quad_07_ready_line.h"
+#include "main/object_motion.h"
 extern u16 ready_line_sweep_vertices[8];
 extern s16 ready_line_shutter_close_vertices[10][4][2];
 extern u16 ready_line_shutter_repeats;

@@ -1,7 +1,49 @@
 // MainObj, main_object_update_funcs[64]
 // 8007C30C..8007DC54
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_64_cyber_peacock.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+
+extern struct Unk_unk68 cyber_peacock_rising_kick_attack_box;
+extern struct Unk_unk68 cyber_peacock_rising_kick_hurt_box;
+extern struct Unk_unk68 cyber_peacock_slash_attack_box;
+extern struct Unk_unk68 cyber_peacock_slash_hurt_box;
+extern struct Unk_unk68 cyber_peacock_slash_swing_attack_box;
+extern struct Unk_unk68 cyber_peacock_slash_swing_hurt_box;
+
+extern u8 cyber_peacock_attacks[32];
+extern u8 cyber_peacock_attacks_low_health[32];
+
+// cyber_peacock_intro_appear_funcs
+extern void (*cyber_peacock_intro_appear_funcs[])(struct MainObj*);
+
+// cyber_peacock_intro_funcs
+extern void (*cyber_peacock_intro_funcs[])(struct MainObj*);
+
+// cyber_peacock_teleport_funcs
+extern void (*cyber_peacock_teleport_funcs[])(struct MainObj*);
+
+// cyber_peacock_rising_kick_funcs
+extern void (*cyber_peacock_rising_kick_funcs[])(struct MainObj*);
+
+// cyber_peacock_slash_funcs
+extern void (*cyber_peacock_slash_funcs[])(struct MainObj*);
+
+// cyber_peacock_aiming_laser_funcs
+extern void (*cyber_peacock_aiming_laser_funcs[])(struct MainObj*);
+
+// cyber_peacock_attack_funcs
+extern void (*cyber_peacock_attack_funcs[])(struct MainObj*);
+
+// cyber_peacock_death_funcs
+extern void (*cyber_peacock_death_funcs[])(struct BarObj*);
+
+// cyber_peacock_state_funcs
+extern void (*cyber_peacock_state_funcs[])(struct MainObj*);
 
 // cyber_peacock_intro_init
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007C30C);

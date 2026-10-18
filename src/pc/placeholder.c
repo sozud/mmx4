@@ -1,4 +1,4 @@
-#include "common.h"
+#include "all.h"
 
 #include <libspu.h>
 #include "pc_replay.h"

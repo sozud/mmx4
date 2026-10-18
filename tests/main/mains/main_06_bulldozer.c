@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_06_bulldozer.h"
 extern struct Unk_unk68 bulldozer_hurt_boxes[2];
 extern union AnimationStep* D_800FA4E8[];
 

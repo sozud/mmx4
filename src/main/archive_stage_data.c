@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/archive_stage_data.h"
 
 #ifdef VERSION_JP
 #define ARCHIVE_PATH(path) "E:\\ROCKX4\\JAPAN\\" path

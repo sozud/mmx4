@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[40]
 // 800BE038..800BE184
 #include "common.h"
+#include "main/effects/effect_40_tile_loop_anim.h"
+#include "main/CB184.h"
+
+extern u8* tile_loop_anim_scripts[2];
+
+extern s16 tile_loop_anim_offsets[2][2];
+
+// tile_loop_anim_state_funcs
+extern void (*tile_loop_anim_state_funcs[])(struct EffectObj*);
+void tile_loop_anim_init(struct EffectObj*);
+void tile_loop_anim_main(struct EffectObj*);
 
 void tile_loop_anim_update(struct EffectObj* self)
 {

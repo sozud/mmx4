@@ -1,6 +1,23 @@
 // VisualObj, visual_object_update_funcs[29]
 // 800B41CC..800B4610
 #include "common.h"
+#include "main/objects.h"
+#include "main/visuals/visual_29_peacock_target.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// peacock_target_state_funcs
+extern void (*peacock_target_state_funcs[])(struct VisualObj*);
+void peacock_target_init(struct VisualObj*);
+void peacock_target_main(struct VisualObj*);
+void peacock_target_despawn(struct VisualObj*);
+
+// peacock_target_step_funcs
+extern void (*peacock_target_step_funcs[])(struct VisualObj*);
+
+void peacock_target_lock(struct VisualObj*);
+
+void peacock_target_hold(struct VisualObj*);
 
 void peacock_target_update(struct VisualObj* arg0)
 {

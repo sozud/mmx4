@@ -1,7 +1,82 @@
 // MainObj, main_object_update_funcs[5]
 // 80044F4C..80046B30
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_05_robot_bee.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern s32 robot_bee_approach_speeds[2];
+extern s32 robot_bee_charge_speeds[2];
+extern s32 robot_bee_sting_speeds[2];
+
+extern s32 robot_bee_lunge_speeds[2];
+
+void robot_bee_main(struct MainObj* arg0);
+void robot_bee_despawn(struct MainObj*);
+
+// robot_bee_step_funcs
+void robot_bee_resume_step(struct MainObj* arg0);
+void robot_bee_wait(struct MainObj* arg0);
+void robot_bee_glide(struct MainObj* arg0);
+void robot_bee_dash(struct MainObj* arg0);
+void robot_bee_sting(struct MainObj* arg0);
+void robot_bee_circle(struct MainObj* arg0);
+void robot_bee_drop(struct MainObj* arg0);
+void robot_bee_swarm(struct MainObj* arg0);
+void robot_bee_swarm_return(struct MainObj* arg0);
+
+// robot_bee_wait_funcs
+extern void (*robot_bee_wait_funcs[])(struct MainObj*);
+void robot_bee_wait_start(struct MainObj*);
+void robot_bee_wait_for_player(struct MainObj*);
+
+// robot_bee_glide_funcs
+extern void (*robot_bee_glide_funcs[])(struct MainObj*);
+void robot_bee_glide_start(struct MainObj*);
+void robot_bee_glide_move(struct MainObj*);
+
+// robot_bee_dash_funcs
+extern void (*robot_bee_dash_funcs[])(struct MainObj*);
+void robot_bee_dash_start(struct MainObj*);
+void robot_bee_dash_wind_up(struct MainObj*);
+void robot_bee_dash_charge(struct MainObj*);
+void robot_bee_dash_accelerate(struct MainObj*);
+
+// robot_bee_sting_funcs
+extern void (*robot_bee_sting_funcs[])(struct MainObj*);
+void robot_bee_sting_start(struct MainObj*);
+void robot_bee_sting_approach(struct MainObj*);
+void robot_bee_sting_brake(struct MainObj*);
+void robot_bee_sting_lunge(struct MainObj*);
+
+void robot_bee_sting_recoil(struct MainObj*);
+
+void robot_bee_sting_fly_off(struct MainObj*);
+
+// robot_bee_circle_funcs
+extern void (*robot_bee_circle_funcs[])(struct MainObj*);
+void func_8004619C(struct MainObj*);
+
+// robot_bee_drop_funcs
+extern void (*robot_bee_drop_funcs[])(struct MainObj*);
+
+void robot_bee_drop_fall(struct MainObj*);
+
+// robot_bee_swarm_funcs
+extern void (*robot_bee_swarm_funcs[])(struct MainObj*);
+void robot_bee_swarm_start(struct MainObj*);
+void robot_bee_swarm_fly(struct MainObj*);
+void robot_bee_swarm_hover(struct MainObj*);
+
+// robot_bee_swarm_return_funcs
+extern void (*robot_bee_swarm_return_funcs[])(struct MainObj*);
+void robot_bee_swarm_return_start(struct MainObj*);
+void robot_bee_swarm_return_fly(struct MainObj*);
+void robot_bee_swarm_return_hover(struct MainObj*);
+
+extern void (*robot_bee_state_funcs[])(struct MainObj*);
 
 extern s32 D_800FA130[];
 

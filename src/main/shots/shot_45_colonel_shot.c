@@ -1,6 +1,55 @@
 // ShotObj, shot_object_update_funcs[45]
 // 800A7AF0..800A8628
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_45_colonel_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+
+// colonel_shot_state_funcs
+extern void (*colonel_shot_state_funcs[])(struct ShotObj*);
+void colonel_shot_init(struct ShotObj*);
+void colonel_shot_run(struct ShotObj*);
+void colonel_shot_despawn(struct ShotObj*);
+
+// colonel_shot_kind_funcs
+extern void (*colonel_shot_kind_funcs[])(struct ShotObj*);
+void colonel_wave(struct ShotObj*);
+void colonel_streak(struct ShotObj*);
+void colonel_marker(struct ShotObj*);
+void colonel_bolt(struct ShotObj*);
+void colonel_slash(struct ShotObj*);
+void colonel_shockwave(struct ShotObj*);
+
+// colonel_wave_funcs
+extern void (*colonel_wave_funcs[])(struct ShotObj*);
+
+void colonel_wave_fly(struct ShotObj*);
+
+// colonel_streak_funcs
+extern void (*colonel_streak_funcs[])(struct ShotObj*);
+void colonel_streak_start(struct ShotObj*);
+void colonel_streak_move(struct ShotObj*);
+
+// colonel_marker_funcs
+extern void (*colonel_marker_funcs[])(struct ShotObj*);
+void colonel_marker_start(struct ShotObj*);
+
+// colonel_bolt_funcs
+extern void (*colonel_bolt_funcs[])(struct ShotObj*);
+
+void colonel_bolt_fall(struct ShotObj*);
+
+// colonel_slash_funcs
+extern void (*colonel_slash_funcs[])(struct ShotObj*);
+
+void colonel_slash_wait(struct ShotObj*);
+
+// colonel_shockwave_funcs
+extern void (*colonel_shockwave_funcs[])(struct ShotObj*);
+
+void colonel_shockwave_spread(struct ShotObj*);
 
 s16 colonel_wave_offsets[2][2] = {
     { 0x45, -0x12 },

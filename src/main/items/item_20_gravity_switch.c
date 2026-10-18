@@ -1,6 +1,20 @@
 // ItemObj, item_object_update_funcs[20]
 // 800C4CE4..800C52CC
 #include "common.h"
+#include "main/items/item_20_gravity_switch.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// gravity_switch_state_funcs
+extern void (*gravity_switch_state_funcs[])(struct ItemObj*);
+void func_800C4D20(struct ItemObj*);
+void gravity_switch_main(struct ItemObj*);
+void gravity_switch_despawn(struct ItemObj*);
+
+// gravity_switch_step_funcs
+extern void (*gravity_switch_step_funcs[])(struct ItemObj*);
+void gravity_switch_wait_touch(struct ItemObj*);
+void gravity_switch_activate(struct ItemObj*);
 
 struct Item20BackgroundConfig {
     u16 first;

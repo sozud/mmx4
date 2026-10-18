@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_54_slash_beast.h"
 
 static const u32 slash_beast_death_blink_expected[] = { 1u, 0u, 0u, 0u, 0u, 0x8000u, 2u, 0u, 5u };
 static u32 test_slash_beast_death_blink(u32 row)

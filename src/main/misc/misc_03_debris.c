@@ -1,6 +1,10 @@
 // MiscObj, misc_object_update_funcs[3]
 // 800C85D0..800C8774
 #include "common.h"
+#include "main/misc/misc_03_debris.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
 
 void func_800C8610(struct MiscObj* arg0);
 void debris_fall(struct MiscObj* arg0);

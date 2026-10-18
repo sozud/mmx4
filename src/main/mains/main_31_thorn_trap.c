@@ -1,7 +1,35 @@
 // MainObj, main_object_update_funcs[31]
 // 8005B894..8005C824
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_31_thorn_trap.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/misc/misc_02_rubble.h"
+#include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+extern struct Unk_unk68 thorn_trap_open_hurt_box[];
+
+extern struct Unk_unk68 thorn_trap_strike_boxes[];
+extern struct Unk_unk68 D_800FD9F8[];
+extern struct Unk_unk68 D_800FD9FC[];
+extern struct Unk_unk68 D_800FDA00[];
+extern struct Unk_unk68 D_800FDA04[];
+extern struct Unk_unk68 D_800FDA08[];
+
+void thorn_trap_despawn(struct MainObj*);
+
+// thorn_trap_step_funcs
+void thorn_trap_idle(struct MainObj* arg0);
+
+void thorn_trap_windup(struct MainObj* arg0);
+void thorn_trap_strike(struct MainObj* arg0);
+void thorn_trap_extend(struct MainObj* arg0);
+
+void thorn_trap_extend_high(struct MainObj* arg0);
+
+extern void (*thorn_trap_state_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern union AnimationStep* thorn_trap_animations[21];

@@ -1,6 +1,21 @@
 // ShotObj, shot_object_update_funcs[25]
 // 8009EB6C..8009EE68
 #include "common.h"
+#include "main/shots/shot_24_train_boss_shot.h"
+#include "main/shots/shot_25_grenade.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void grenade_fly(struct ShotObj*);
+
+// grenade_state_funcs
+extern void (*grenade_state_funcs[])(struct ShotObj*);
+
+void grenade_despawn(struct ShotObj* arg0);
+void grenade_idle(struct ShotObj* arg0);
 
 void grenade_update(struct ShotObj* self)
 {

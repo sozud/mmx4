@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/game_info.h"
 
 static const u32 func_8001D698_expected[] = { 0u, 0u, 0u, 0u, 0u, 1u };
 static u32 test_func_8001D698(u32 row)

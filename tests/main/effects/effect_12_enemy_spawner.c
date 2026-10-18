@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/effects/effect_12_enemy_spawner.h"
+#include "main/195B4.h"
 
 static s32 frames[8] = { 16, 20, 24, 28, 1, 2, 3, 4 };
 static u32 metadata[4] = { 0x400, 0x480, 0x500, 0x580 };

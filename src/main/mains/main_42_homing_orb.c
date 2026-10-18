@@ -1,7 +1,22 @@
 // MainObj, main_object_update_funcs[42]
 // 80062D60..800631C8
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_42_homing_orb.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+void homing_orb_main(struct MainObj*);
+void homing_orb_despawn(struct MainObj* arg0);
+
+// homing_orb_step_funcs
+void homing_orb_start_idle(struct MainObj* arg0);
+void homing_orb_wait(struct MainObj* arg0);
+
+void homing_orb_leave(struct MainObj* arg0);
+
+extern void (*homing_orb_state_funcs[])(struct MainObj*);
 
 void homing_orb_update(struct MainObj* self)
 {

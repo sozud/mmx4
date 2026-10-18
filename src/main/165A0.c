@@ -1,4 +1,16 @@
 #include "common.h"
+#include "main/13A8C.h"
+#include "main/144A4.h"
+#include "main/165A0.h"
+#include "main/125BC.h"
+#include "main/14A60.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/stage_layouts.h"
+
+#ifdef MMX4_PC
+extern void func_80026CEC(s32 arg0);
+#endif
 
 void func_800264D0(s32 layer, s32 x, s32 y);
 void func_80026720(void);

@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[15]
 // 800CA86C..800CAC18
 #include "common.h"
+#include "main/misc/misc_15_vent.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+
+// vent_state_funcs
+extern void (*vent_state_funcs[])(struct MiscObj*);
+
+void vent_animate(struct MiscObj*);
 
 // vent_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_15_vent", func_800CA86C);

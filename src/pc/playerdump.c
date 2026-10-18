@@ -1,4 +1,8 @@
 #include "common.h"
+#include "main/player.h"
+#include "main/1CF60.h"
+#include "main/player_common.h"
+#include "main/player_weapon.h"
 
 #include <errno.h>
 #include <signal.h>

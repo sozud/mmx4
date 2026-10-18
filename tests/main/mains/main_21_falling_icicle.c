@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_21_falling_icicle.h"
 
 struct falling_icicle_resume_step_case {
     u32 saved_unk5;

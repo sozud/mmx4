@@ -1,6 +1,38 @@
 // GameInfo
 // 8001D064..8001DC7C
 #include "common.h"
+#include "main/102FC.h"
+#include "main/1A5BC.h"
+#include "main/2824.h"
+#include "main/E47C.h"
+#include "main/game_info.h"
+#include "main/objects.h"
+#include "main/125BC.h"
+#include "main/144A4.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/195B4.h"
+#include "main/3D88.h"
+#include "main/background.h"
+#include "main/object_update.h"
+#include "main/player_common.h"
+#include "main/stage_objects.h"
+
+extern u8 D_800F2180[];
+extern u8 D_800F21A0[];
+
+// D_800F2170
+extern void (*D_800F2170[])(struct GameInfo* arg0);
+
+// D_800F2184
+extern void (*D_800F2184[])(struct GameInfo* arg0);
+
+// D_800F2194
+extern void (*D_800F2194[])(struct GameInfo* arg0);
+
+// D_800F21B0
+extern void (*D_800F21B0[])(struct GameInfo* arg0);
 
 void PlayCapcomLogo(void);
 void func_80012E38(void);

@@ -1,6 +1,17 @@
 // ShotObj, shot_object_update_funcs[1]
 // 80099B30..80099D10
 #include "common.h"
+#include "main/shots/shot_01_drill_copter_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// drill_copter_shot_state_funcs
+extern void (*drill_copter_shot_state_funcs[])(struct ShotObj*);
+
+void drill_copter_shot_fly(struct ShotObj*);
+void drill_copter_shot_despawn(struct ShotObj*);
 
 u8 drill_copter_shot_hit_box[4] = { 0xF8, 0xFC, 0x0D, 0x09 };
 s8 drill_copter_shot_spawn_offsets[2][2] = { { 0x12, 0x09 }, { -0x12, 0x09 } };

@@ -1,5 +1,67 @@
 // 80038678..8003B3DC
 #include "common.h"
+#include "main/objects.h"
+#include "main/player.h"
+#include "main/player_common.h"
+#include "main/player_special.h"
+#include "main/player_weapon.h"
+#include "main/1CF60.h"
+#include "main/player_check.h"
+#include "main/player_enter.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/sprite_animations.h"
+
+extern s8 player_hover_bob[16];
+
+void player_set_shoot_animation(struct PlayerObj*);
+
+s32 player_zero_check_raijingeki(struct PlayerObj*);
+
+s32 func_80039F28(struct PlayerObj*);
+
+s32 player_hover_check_end(struct PlayerObj*);
+
+void player_hover_set_direction(struct PlayerObj*, s32);
+
+void player_soul_body_cast(struct PlayerObj*);
+void player_soul_body_wait(struct PlayerObj*);
+
+// player_hover_funcs
+extern void (*player_hover_funcs[])(struct PlayerObj*);
+void player_hover_start(struct PlayerObj*);
+void player_hover_rise(struct PlayerObj*);
+void player_hover_hold(struct PlayerObj*);
+void player_hover_forward(struct PlayerObj*);
+void player_hover_forward_stop(struct PlayerObj*);
+void player_hover_back(struct PlayerObj*);
+void player_hover_back_stop(struct PlayerObj*);
+
+// player_nova_strike_funcs
+extern void (*player_nova_strike_funcs[])(struct PlayerObj*);
+void player_nova_strike_windup(struct PlayerObj*);
+void player_nova_strike_dash(struct PlayerObj*);
+void player_nova_strike_end(struct PlayerObj*);
+
+// player_rising_fire_charged_funcs
+extern void (*player_rising_fire_charged_funcs[])(struct PlayerObj*);
+
+void player_rising_fire_charged_rise(struct PlayerObj*);
+void player_rising_fire_charged_peak(struct PlayerObj*);
+void player_rising_fire_charged_fall(struct PlayerObj*);
+
+// player_zero_hyouretsuzan_funcs
+extern void (*player_zero_hyouretsuzan_funcs[])(struct PlayerObj*);
+
+void player_zero_hyouretsuzan_drop(struct PlayerObj*);
+void player_zero_hyouretsuzan_land(struct PlayerObj*);
+
+// player_zero_ryuenjin_funcs
+extern void (*player_zero_ryuenjin_funcs[])(struct PlayerObj*);
+void player_zero_ryuenjin_start(struct PlayerObj*);
+void player_zero_ryuenjin_rise(struct PlayerObj*);
+void player_zero_ryuenjin_peak(struct PlayerObj*);
+void player_zero_ryuenjin_fall(struct PlayerObj*);
 
 s32 player_nova_strike_hit_wall(struct PlayerObj* self);
 void player_set_ladder_shoot_animation(struct PlayerObj* self);

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/misc/misc_29_title_logo.h"
 
 static u32 star_case(u32 mode)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/items/item_12_crusher_wall.h"
 
 static const u32 inputs_0[2][5] = {
     { 0, 0x41, 12, 1, 0x27 },

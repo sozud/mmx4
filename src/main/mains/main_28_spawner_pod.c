@@ -1,7 +1,29 @@
 // MainObj, main_object_update_funcs[28]
 // 80059C48..8005A4CC
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_28_spawner_pod.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+
+struct Main28InitData {
+    u8 unk84;
+    u8 unk15;
+};
+
+extern struct Main28InitData spawner_pod_init_data[];
+
+extern u8 spawner_pod_debris[];
+
+void spawner_pod_main(struct MainObj*);
+
+void spawner_pod_explode(struct MainObj*);
+
+// spawner_pod_step_funcs
+extern void (*spawner_pod_step_funcs[])(struct MainObj*);
+
+extern void (*spawner_pod_state_funcs[])(struct MainObj*);
 
 void spawner_pod_update(struct MainObj* self)
 {

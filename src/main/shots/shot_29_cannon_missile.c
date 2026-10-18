@@ -1,6 +1,15 @@
 // ShotObj, shot_object_update_funcs[29]
 // 8009F638..8009FB60
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_29_cannon_missile.h"
+#include "main/object_motion.h"
+
+// cannon_missile_state_funcs
+extern void (*cannon_missile_state_funcs[])(struct ShotObj*);
+
+void cannon_missile_despawn(struct ShotObj*);
+void cannon_missile_idle(struct ShotObj*);
 
 u8 cannon_missile_boxes[8] = { 0xF5, 0xFD, 0x1B, 0x0A, 2, 2, 0x0D, 4 };
 s32 cannon_missile_speeds[2] = { 0x5000, -0x5000 };

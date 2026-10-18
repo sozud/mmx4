@@ -1,7 +1,125 @@
 // MainObj, main_object_update_funcs[65]
 // 8007DC54..800806A0
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_64_cyber_peacock.h"
+#include "main/mains/main_65_magma_dragoon.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/128C4.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/visuals/visual_03_small_effect.h"
+
+extern struct Unk_unk68 magma_dragoon_terrain_box;
+
+extern struct Unk_unk68 magma_dragoon_crouch_hurt_box;
+
+extern struct Unk_unk68 magma_dragoon_leap_attack_box;
+extern struct Unk_unk68 magma_dragoon_punch_attack_box;
+
+extern struct Unk_unk68 magma_dragoon_fire_volley_debris;
+
+// magma_dragoon_intro_funcs
+extern void (*magma_dragoon_intro_funcs[])(struct MainObj*);
+
+void magma_dragoon_intro_leap(struct MainObj*);
+void magma_dragoon_intro_descend(struct MainObj*);
+void magma_dragoon_intro_land(struct MainObj*);
+void magma_dragoon_intro_pose(struct MainObj*);
+void magma_dragoon_intro_start_health_bar(struct MainObj*);
+void magma_dragoon_intro_ready(struct MainObj*);
+void magma_dragoon_intro_fill_health(struct MainObj*);
+
+// magma_dragoon_dive_kick_funcs
+extern void (*magma_dragoon_dive_kick_funcs[])(struct MainObj*);
+void magma_dragoon_dive_kick_jump(struct MainObj*);
+void magma_dragoon_dive_kick_rise(struct MainObj*);
+
+void func_8007E848(struct MainObj*);
+
+// magma_dragoon_flame_burst_funcs
+extern void (*magma_dragoon_flame_burst_funcs[])(struct MainObj*);
+void magma_dragoon_flame_burst_start(struct MainObj*);
+
+// magma_dragoon_fire_volley_funcs
+extern void (*magma_dragoon_fire_volley_funcs[])(struct MainObj*);
+void magma_dragoon_fire_volley_start(struct MainObj*);
+
+void magma_dragoon_fire_volley_wait(struct MainObj*);
+
+// magma_dragoon_breath_funcs
+extern void (*magma_dragoon_breath_funcs[])(struct MainObj*);
+void magma_dragoon_breath_start(struct MainObj*);
+
+// magma_dragoon_leap_center_funcs
+extern void (*magma_dragoon_leap_center_funcs[])(struct MainObj*);
+void magma_dragoon_leap_center_start(struct MainObj*);
+void magma_dragoon_leap_center_glide(struct MainObj*);
+void magma_dragoon_leap_center_land(struct MainObj*);
+void magma_dragoon_leap_center_recover(struct MainObj*);
+
+// magma_dragoon_leap_wall_funcs
+extern void (*magma_dragoon_leap_wall_funcs[])(struct MainObj*);
+void magma_dragoon_leap_wall_start(struct MainObj*);
+
+void magma_dragoon_leap_wall_finish(struct MainObj*);
+
+// magma_dragoon_fireball_funcs
+extern void (*magma_dragoon_fireball_funcs[])(struct MainObj*);
+void magma_dragoon_fireball_start(struct MainObj*);
+
+// magma_dragoon_fireball_low_funcs
+extern void (*magma_dragoon_fireball_low_funcs[])(struct MainObj*);
+void magma_dragoon_fireball_low_start(struct MainObj*);
+
+// magma_dragoon_rising_punch_funcs
+extern void (*magma_dragoon_rising_punch_funcs[])(struct MainObj*);
+void magma_dragoon_rising_punch_start(struct MainObj*);
+
+void magma_dragoon_rising_punch_rise(struct MainObj*);
+void magma_dragoon_rising_punch_land(struct MainObj*);
+void magma_dragoon_rising_punch_recover(struct MainObj*);
+
+// magma_dragoon_stagger_funcs
+extern void (*magma_dragoon_stagger_funcs[])(struct MainObj*);
+
+void magma_dragoon_stagger_rise(struct MainObj*);
+void magma_dragoon_stagger_burn(struct MainObj*);
+void magma_dragoon_stagger_fall(struct MainObj*);
+void magma_dragoon_stagger_recover(struct MainObj*);
+
+// magma_dragoon_step_funcs
+void magma_dragoon_hold(struct MainObj* arg0);
+void magma_dragoon_intro(struct MainObj* arg0);
+
+void magma_dragoon_dive_kick(struct MainObj* arg0);
+void magma_dragoon_flame_burst(struct MainObj* arg0);
+void magma_dragoon_fire_volley(struct MainObj* arg0);
+void magma_dragoon_breath(struct MainObj* arg0);
+void magma_dragoon_leap_center(struct MainObj* arg0);
+void magma_dragoon_leap_wall(struct MainObj* arg0);
+void magma_dragoon_fireball(struct MainObj* arg0);
+void magma_dragoon_fireball_low(struct MainObj* arg0);
+void magma_dragoon_rising_punch(struct MainObj* arg0);
+void magma_dragoon_stagger(struct MainObj* arg0);
+
+// magma_dragoon_death_funcs
+extern void (*magma_dragoon_death_funcs[])(struct MainObj*);
+void magma_dragoon_death_start(struct MainObj*);
+
+void magma_dragoon_death_wait_explosion(struct MainObj*, s32, s32);
+void magma_dragoon_death_wait_dialog(struct MainObj*);
+void magma_dragoon_death_smoke(struct MainObj*);
+void magma_dragoon_death_vanish(struct MainObj*);
+void magma_dragoon_death_end(struct MainObj* arg0);
+
+// magma_dragoon_state_funcs
+extern void (*magma_dragoon_state_funcs[])(struct MainObj*);
+
+void magma_dragoon_death(struct MainObj* arg0);
+
+void func_8007DD0C(void);
 
 // cyber_peacock_intro_init
 

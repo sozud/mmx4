@@ -1,5 +1,8 @@
 // 8002D9BC..8002E420
 #include "common.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/collision.h"
 
 #ifdef MMX4_PC
 s32 func_8002DE30(struct MainObj*, struct WeaponObj*);

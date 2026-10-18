@@ -1,6 +1,19 @@
 // MiscObj, misc_object_update_funcs[5]
 // 800C8FA8..800C91B0
 #include "common.h"
+#include "main/misc/misc_05_pod_effect.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// pod_effect_state_funcs
+extern void (*pod_effect_state_funcs[])(struct MiscObj*);
+void pod_effect_launch_init(struct MiscObj*);
+void pod_effect_launch(struct MiscObj*);
+void pod_effect_launch_despawn(struct MiscObj*);
+void pod_effect_init(struct MiscObj*);
+void pod_effect_animate(struct MiscObj*);
+void pod_effect_despawn(struct MiscObj*);
 
 void pod_effect_update(struct MiscObj* self)
 {

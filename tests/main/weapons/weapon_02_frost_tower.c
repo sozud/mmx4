@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_01_lightning_web.h"
+#include "main/weapons/weapon_02_frost_tower.h"
+#include "main/weapons/weapon_06_aiming_laser_charged.h"
+#include "main/weapons/weapon_07_double_cyclone.h"
 void frost_tower_charged_spawn_part(s8);
 
 static u32 shard_case(u32 mode, u32 observation)

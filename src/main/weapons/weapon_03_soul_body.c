@@ -1,6 +1,27 @@
 // WeaponObj, weapon_object_update_funcs[3]
 // 80094A78..800951C0
 #include "common.h"
+#include "main/player.h"
+#include "main/weapons/weapon_03_soul_body.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+
+// soul_body_state_funcs
+extern void (*soul_body_state_funcs[])(struct WeaponObj*);
+void soul_body_init(struct WeaponObj*);
+void soul_body_main(struct WeaponObj*);
+void soul_body_despawn(struct WeaponObj*);
+void soul_body_despawn(struct WeaponObj*);
+
+// soul_body_step_funcs
+extern u8 soul_body_palettes[8];
+extern void (*soul_body_step_funcs[])(struct WeaponObj*);
+void soul_body_extend(struct WeaponObj*);
+void soul_body_hold(struct WeaponObj*);
+void soul_body_retract(struct WeaponObj*);
+void soul_body_load_palette(s32);
 
 void soul_body_update(struct WeaponObj* arg0)
 {

@@ -1,6 +1,18 @@
 // EffectObj, effect_object_update_funcs[32]
 // 800BC518..800BC748
 #include "common.h"
+#include "main/effects/effect_32_proximity_door.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+void proximity_door_start_script(struct EffectObj*, s32);
+
+extern void (*proximity_door_state_funcs[])(struct EffectObj*);
+void proximity_door_init(struct EffectObj*);
+void proximity_door_main(struct EffectObj*);
+#ifdef MMX4_PC
+void proximity_door_step(struct EffectObj*);
+#endif
 
 void proximity_door_step(struct EffectObj* self);
 

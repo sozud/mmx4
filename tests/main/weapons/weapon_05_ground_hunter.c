@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_05_ground_hunter.h"
+#include "main/sprite_animations.h"
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 

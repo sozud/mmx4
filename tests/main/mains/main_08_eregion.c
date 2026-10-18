@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_08_eregion.h"
+#include "main/55C4.h"
 extern union AnimationStep* D_800FAD68[];
 extern u32 D_800FA724, D_800FA728, D_800FA72C;
 extern struct Unk_unk68 D_801066F0[];

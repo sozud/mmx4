@@ -1,6 +1,22 @@
 // ItemObj, item_object_update_funcs[15]
 // 800C3CF8..800C3FEC
 #include "common.h"
+#include "main/items/item_15_rising_slab.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_08_ice_shard.h"
+
+extern u8 rising_slab_crush_boxes[4][16];
+extern u8 rising_slab_terrain_boxes[4][16];
+
+// rising_slab_state_funcs
+extern void (*rising_slab_state_funcs[])(struct ItemObj*);
+void rising_slab_init(struct ItemObj*);
+void rising_slab_rise(struct ItemObj*);
+void rising_slab_finish(struct ItemObj*);
 
 void rising_slab_update(struct ItemObj* arg0)
 {

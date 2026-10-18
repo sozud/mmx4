@@ -1,6 +1,15 @@
 // VisualObj, visual_object_update_funcs[8]
 // 800B0890..800B1354
 #include "common.h"
+#include "main/objects.h"
+#include "main/visuals/visual_08_ice_shard.h"
+#include "main/object_motion.h"
+
+// ice_shard_state_funcs
+extern void (*ice_shard_state_funcs[])(struct VisualObj*);
+
+void ice_shard_despawn(struct VisualObj*);
+void ice_shard_idle(struct VisualObj*);
 
 s8 ice_shard_offsets[4][2] = {
     { 0, -32 },

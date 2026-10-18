@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/mains/main_00_background_dragon.h"
 extern u8 background_dragon_attack_map[128];
 void background_dragon_spawn_trail(struct PlayerObj*, s8);
 void background_dragon_multi_shot_update(struct MainObj*);

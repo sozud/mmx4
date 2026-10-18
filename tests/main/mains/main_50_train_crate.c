@@ -1,4 +1,7 @@
 #include "test_runtime.h"
+#include "main/mains/main_50_train_crate.h"
+#include "main/195B4.h"
+#include "main/collision_bounds.h"
 extern u8 train_crate_hurt_box[4];
 
 struct func_80069748_case {

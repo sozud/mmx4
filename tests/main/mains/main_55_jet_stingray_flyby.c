@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_55_jet_stingray_flyby.h"
+#include "main/55C4.h"
 extern struct AnimationTable12 jet_stingray_flyby_animations;
 
 enum { START,

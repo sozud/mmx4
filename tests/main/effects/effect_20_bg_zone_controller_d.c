@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/effects/effect_20_bg_zone_controller_d.h"
+#include "main/effects/effect_22_bg_zone_controller_e.h"
 
 #include "support/background_zone.h"
 ZONE_CASE(0, 0)

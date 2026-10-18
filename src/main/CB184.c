@@ -1,5 +1,8 @@
 // 800DA984..800DAE8C
 #include "common.h"
+#include "main/layers/layer_07_space_port_parallax.h"
+#include "main/CB184.h"
+#include "main/tile_effects.h"
 
 extern struct TileEffectRecord** tile_effect_tables[26];
 

@@ -1,6 +1,10 @@
 // EffectObj, effect_object_update_funcs[30]
 // 800BC2E0..800BC4D8
 #include "common.h"
+#include "main/effects/effect_30_qux_spawner.h"
+#include "main/objects.h"
+#include "main/CB184.h"
+#include "main/visuals/visual_03_small_effect.h"
 
 void qux_spawner_update(struct EffectObj* self)
 {

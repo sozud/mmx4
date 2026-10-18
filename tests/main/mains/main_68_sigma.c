@@ -1,4 +1,8 @@
 #include "test_runtime.h"
+#include "main/mains/main_68_sigma.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/sprite_animations.h"
 extern struct Unk_unk68 D_80107F84[32];
 extern void* sigma_animations[44];
 

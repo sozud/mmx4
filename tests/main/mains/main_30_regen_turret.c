@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_30_regen_turret.h"
+#include "main/55C4.h"
 extern union AnimationStep* regen_turret_animations[];
 
 static u32 turret_case(u32 mode)

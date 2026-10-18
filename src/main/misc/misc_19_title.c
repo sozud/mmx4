@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[19]
 // 800CB634..800CB884
 #include "common.h"
+#include "main/misc/misc_19_title.h"
+#include "main/objects.h"
+
+extern void (*g_TitleUpdateFuncs[])();
+
+// D_8010E824
+void title_init(struct MiscObj* arg0);
+
+void title_despawn(struct MiscObj* arg0);
 
 extern struct TitleObjectInit title_object_inits[];
 extern u32* title_animations[];

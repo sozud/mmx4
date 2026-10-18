@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/movie_hud_data.h"
 
 struct MovieHudQuad {
     s16 x0;

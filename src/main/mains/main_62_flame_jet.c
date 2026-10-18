@@ -1,7 +1,33 @@
 // MainObj, main_object_update_funcs[62]
 // 8007B90C..8007BFF4
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_62_flame_jet.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 flame_jet_hurt_box_7;
+
+// flame_jet_setup_funcs
+extern void (*flame_jet_setup_funcs[])(struct BarObj*);
+
+// flame_jet_step_funcs
+extern void (*flame_jet_step_funcs[])(struct MainObj*);
+void flame_jet_idle(struct MainObj* arg0);
+
+void flame_jet_erupt(struct MainObj* arg0);
+void flame_jet_pause(struct MainObj* arg0);
+
+// flame_jet_extinguished_funcs
+extern void (*flame_jet_extinguished_funcs[])(struct BarObj*);
+
+void flame_jet_extinguished_idle(void);
+
+// flame_jet_state_funcs
+extern void (*flame_jet_state_funcs[])(struct MainObj*);
+void flame_jet_setup(struct BarObj* arg0);
+
+void flame_jet_extinguished(struct BarObj* arg0);
 
 // flame_jet_init
 INCLUDE_ASM("main/nonmatchings/mains/main_62_flame_jet", func_8007B90C);

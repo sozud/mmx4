@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_60_storm_owl.h"
+#include "main/effects/effect_38_cyberspace_trial.h"
 extern void* storm_owl_patterns[3];
 extern u8 storm_owl_pattern_weights[12];
 void storm_owl_spawn_hit_flash(struct PlayerObj*);

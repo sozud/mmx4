@@ -1,6 +1,17 @@
 // EffectObj, effect_object_update_funcs[23]
 // 800BAA30..800BABA8
 #include "common.h"
+#include "main/effects/effect_23_tile_flicker.h"
+#include "main/CB184.h"
+#include "main/objects.h"
+
+// tile_flicker_state_funcs
+extern void (*tile_flicker_state_funcs[])(struct EffectObj*);
+void tile_flicker_init(struct EffectObj*);
+void tile_flicker_main(struct EffectObj*);
+#ifdef MMX4_PC
+void tile_flicker_step(struct EffectObj*);
+#endif
 
 void tile_flicker_step(struct EffectObj* self);
 

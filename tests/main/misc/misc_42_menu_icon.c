@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_42_menu_icon.h"
+#include "main/misc/misc_31_option_toggle.h"
 extern union AnimationStep option_toggle_anim_0[36];
 
 static u32 frame_case(u32 mode)

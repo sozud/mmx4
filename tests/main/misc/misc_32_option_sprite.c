@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/misc/misc_32_option_sprite.h"
+#include "main/misc/misc_31_option_toggle.h"
 extern union AnimationStep option_toggle_anim_0[36];
 
 static u32 option_case(u32 mode, u32 observation)

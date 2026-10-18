@@ -1,7 +1,41 @@
 // MainObj, main_object_update_funcs[23]
 // 80055C54..80056788
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_22_bee_hive.h"
+#include "main/mains/main_23_slope_skier.h"
+#include "main/objects.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+extern u8 slope_skier_debris[];
+
+void slope_skier_jump_rise(struct MainObj*);
+
+// slope_skier_slide_funcs
+void slope_skier_slide_start(struct MainObj*);
+
+void slope_skier_slide_idle(void);
+
+// slope_skier_step_funcs
+void slope_skier_slide(struct MainObj* arg0);
+void slope_skier_fall(struct MainObj* arg0);
+void slope_skier_land(struct MainObj* arg0);
+void slope_skier_jump(struct MainObj* arg0);
+
+void slope_skier_wait_for_player(struct MainObj* arg0);
+
+// slope_skier_state_funcs
+extern void (*slope_skier_state_funcs[])(struct MainObj*);
+
+void slope_skier_main(struct MainObj* arg0);
+void slope_skier_despawn(struct MainObj* arg0);
+
+extern void (*slope_skier_jump_funcs[])(struct MainObj*);
+extern void (*slope_skier_slide_funcs[])(struct MainObj*);
+extern void (*slope_skier_step_funcs[])(struct MainObj*);
 
 #ifdef MMX4_PC
 extern union AnimationStep* slope_skier_animations[31];

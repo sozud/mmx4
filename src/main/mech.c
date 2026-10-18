@@ -1,7 +1,15 @@
 // RideArmorObj, D_800F2AD4[1]
 // 8003D3F8..80040608
 #include "common.h"
-#include "func_tables.h"
+#include "main/mech.h"
+#include "main/mech_state_data.h"
+#include "main/objects.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/player_common.h"
+
+s32 func_8003D7E4(struct RideArmorObj*, u8, s32);
 
 void func_8003D3F8(struct RideArmorObj* arg0)
 {

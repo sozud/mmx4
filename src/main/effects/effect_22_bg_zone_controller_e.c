@@ -1,6 +1,35 @@
 // EffectObj, effect_object_update_funcs[22]
 // 800BA57C..800BAA30
 #include "common.h"
+#include "main/effects/effect_22_bg_zone_controller_e.h"
+#include "main/effects/effect_23_tile_flicker.h"
+
+extern s16 bg_zone_controller_e_zone_bounds[4];
+
+// bg_zone_controller_e_state_funcs
+extern void (*bg_zone_controller_e_state_funcs[])(struct EffectObj*);
+void bg_zone_controller_e_init(struct EffectObj*);
+void bg_zone_controller_e_main(struct EffectObj*);
+void bg_zone_controller_e_zone_0_enter(struct EffectObj*);
+
+void bg_zone_controller_e_zone_1_enter(struct EffectObj*);
+void bg_zone_controller_e_zone_1_done(struct EffectObj*);
+void bg_zone_controller_e_zone_2_enter(struct EffectObj*);
+void bg_zone_controller_e_zone_2_wait(struct EffectObj*);
+void bg_zone_controller_e_zone_3_enter(struct EffectObj*);
+void bg_zone_controller_e_zone_3_done(struct EffectObj*);
+void bg_zone_controller_e_zone_4_enter(struct EffectObj*);
+void bg_zone_controller_e_zone_4_done(struct EffectObj*);
+void bg_zone_controller_e_update_zone(struct EffectObj*);
+
+// bg_zone_controller_e_zone_funcs
+extern void (*bg_zone_controller_e_zone_funcs[])(struct EffectObj*);
+void bg_zone_controller_e_zone_0(struct EffectObj*);
+void bg_zone_controller_e_zone_1(struct EffectObj*);
+void bg_zone_controller_e_zone_2(struct EffectObj*);
+void bg_zone_controller_e_zone_3(struct EffectObj*);
+
+void bg_zone_controller_e_idle(struct EffectObj*);
 
 void bg_zone_controller_e_update(struct EffectObj* self)
 {

@@ -1,5 +1,46 @@
 // 80014DC4..800193D8
 #include "common.h"
+#include "main/3D88.h"
+#include "main/55C4.h"
+#include "main/xa_sequence_data.h"
+#include "main/323C.h"
+#include "main/3A6C.h"
+#include "main/main_palette_data.h"
+#include "main/movie_hud_data.h"
+
+enum XaArchive {
+#ifdef VERSION_JP
+    XA_ARCHIVE_BGM1 = 0x94,
+#elif defined(VERSION_EU)
+    XA_ARCHIVE_BGM1 = 0x97,
+#else
+    XA_ARCHIVE_BGM1 = 0x95,
+#endif
+    XA_ARCHIVE_BGM2,
+    XA_ARCHIVE_BGM3,
+    XA_ARCHIVE_BGM4,
+    XA_ARCHIVE_BGM5,
+    XA_ARCHIVE_BOSS_INTRO,
+    XA_ARCHIVE_VOICE1,
+    XA_ARCHIVE_VOICE2,
+    XA_ARCHIVE_VOICE3,
+    XA_ARCHIVE_VOICE4,
+    XA_ARCHIVE_VOICE5,
+};
+
+extern s8 D_801307F8;
+
+#ifdef MMX4_PC
+extern s32 func_80018AD0(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7, s32 arg8, s32 arg9);
+extern void func_80018E50(void);
+extern void func_80018EEC(void);
+extern void func_80018FD0(u32 arg0);
+extern void func_80019058(s8 arg0);
+extern void func_800190F0(s32 arg0);
+extern void func_80019100(void);
+extern void func_80019208(void);
+extern void func_80019228(void);
+#endif
 
 void decompress_gfx(u16* src, u16* dest);
 #ifdef MMX4_WIN32

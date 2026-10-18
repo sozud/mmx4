@@ -1,6 +1,23 @@
 // EffectObj, effect_object_update_funcs[24]
 // 800BABA8..800BAF60
 #include "common.h"
+#include "main/effects/effect_24_boss_warning.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// boss_warning_step_funcs
+extern void (*boss_warning_step_funcs[])(struct EffectObj*);
+
+void boss_warning_wait(struct EffectObj*);
+
+void boss_warning_advance_tiles(struct EffectObj*);
+void boss_warning_finish(struct EffectObj*);
+
+// boss_warning_state_funcs
+extern void (*boss_warning_state_funcs[])(struct EffectObj*);
+
+void boss_warning_main(struct EffectObj*);
+void boss_warning_despawn(struct EffectObj*);
 
 // boss_warning_init
 INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);

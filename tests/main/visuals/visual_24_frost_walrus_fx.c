@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/visuals/visual_24_frost_walrus_fx.h"
 
 static const u32 frost_walrus_fx_burst_start_expected[] = { 0u, 1u, 0u, 0u };
 static u32 test_frost_walrus_fx_burst_start(u32 row)

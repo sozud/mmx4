@@ -1,4 +1,6 @@
 #include "test_runtime.h"
+#include "main/mains/main_22_bee_hive.h"
+#include "main/55C4.h"
 void func_800559BC(struct MainObj*);
 
 static const u32 inputs_0[2][2] = {

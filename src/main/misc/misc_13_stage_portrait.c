@@ -1,6 +1,15 @@
 // MiscObj, misc_object_update_funcs[13]
 // 800CA52C..800CA754
 #include "common.h"
+#include "main/misc/misc_13_stage_portrait.h"
+#include "main/55C4.h"
+#include "main/objects.h"
+
+// stage_portrait_state_funcs
+extern void (*stage_portrait_state_funcs[])(struct MiscObj*);
+
+void stage_portrait_select(struct MiscObj*);
+void stage_portrait_show(struct MiscObj*);
 
 // stage_portrait_init
 INCLUDE_ASM("main/nonmatchings/misc/misc_13_stage_portrait", func_800CA52C);

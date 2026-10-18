@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/edge_spawner_data.h"
 void func_800B887C(s16, s16, s16, s16);
 
 static u32 spawn_case(u32 observation)

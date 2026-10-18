@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/weapons/weapon_59_ride_armor_shot.h"
 
 #include "support/pool_full.h"
 static u32 pool_full_ride_armor_shot_visual(void)

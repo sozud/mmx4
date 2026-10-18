@@ -1,9 +1,68 @@
 // MainObj, main_object_update_funcs[3]
 // 80043340..8004441C
 #include "common.h"
+#include "main/mains/main_03_spike_marl.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern struct Unk_unk68 spike_marl_curl_attack_box;
+extern struct Unk_unk68 spike_marl_curl_hurt_box;
+
+// spike_marl_state_funcs
+extern u8 spike_marl_debris[8];
+
+void spike_marl_run(struct MainObj* arg0);
+void spike_marl_cleanup(struct MainObj* arg0);
+
+// spike_marl_step_funcs
+extern void (*spike_marl_step_funcs[9])(struct MainObj*);
+void spike_marl_resume_step(struct MainObj* arg0);
+void spike_marl_patrol(struct MainObj* arg0);
+void spike_marl_turn(struct MainObj* arg0);
+void spike_marl_curl(struct MainObj* arg0);
+void spike_marl_roll(struct MainObj* arg0);
+void spike_marl_fall(struct MainObj* arg0);
+void spike_marl_uncurl(struct MainObj* arg0);
+void spike_marl_roll_entry(struct MainObj* arg0);
+
+void spike_marl_begin_fall(struct MainObj* arg0);
+void spike_marl_detect_player(struct MainObj* arg0);
+void spike_marl_track_player_side(struct MainObj* arg0);
+
+// spike_marl_patrol_funcs
+void spike_marl_patrol_begin(struct MainObj* arg0);
+void spike_marl_patrol_update(struct MainObj* arg0);
+
+// spike_marl_turn_funcs
+void spike_marl_turn_start(struct MainObj* arg0);
+void spike_marl_turn_flip(struct PlayerObj*);
+
+// spike_marl_curl_funcs
+void spike_marl_curl_begin(struct MainObj* arg0);
+
+// spike_marl_roll_funcs
+void spike_marl_roll_begin(struct MainObj* arg0);
+
+// spike_marl_uncurl_funcs
+void spike_marl_uncurl_begin(struct MainObj* arg0);
+
+// spike_marl_roll_entry_funcs
+void spike_marl_roll_entry_begin(struct MainObj*);
+
+extern void (*spike_marl_state_funcs[])(struct MainObj*);
+extern void (*spike_marl_patrol_funcs[])(struct MainObj*);
+extern void (*spike_marl_turn_funcs[])(struct MainObj*);
+extern void (*spike_marl_curl_funcs[])(struct MainObj*);
+extern void (*spike_marl_roll_funcs[])(struct MainObj*);
+extern void (*spike_marl_uncurl_funcs[])(struct MainObj*);
+extern void (*spike_marl_roll_entry_funcs[])(struct MainObj*);
 
 void spike_marl_noop(struct MainObj* self);
-#include "func_tables.h"
 
 extern u8 item_carrier_debris[];
 extern u8 item_carrier_capsule_debris[];

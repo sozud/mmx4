@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main/tile_effects.h"
 
 u16 D_801140A8[6] = {
     0x0200,

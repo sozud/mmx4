@@ -1,5 +1,18 @@
 // 80013588..80014DC4
 #include "common.h"
+#include "main/2824.h"
+#include "main/3D88.h"
+#include "main/323C.h"
+#include "main/3A6C.h"
+#include "main/55C4.h"
+
+struct Unk5 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+};
+
+extern struct Unk5 D_800F0E18[];
 
 void func_80013968(void);
 void func_80013DA8(void);

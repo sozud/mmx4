@@ -1,7 +1,26 @@
 // MainObj, main_object_update_funcs[44]
 // 80065930..80065B8C
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_44_anchored_mine.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+
+// anchored_mine_state_funcs
+void anchored_mine_init(struct MainObj*);
+
+void anchored_mine_despawn(struct MainObj* arg0);
+
+// anchored_mine_step_funcs
+void anchored_mine_resume_step(struct MainObj* arg0);
+void anchored_mine_idle(struct MainObj* arg0);
+
+// anchored_mine_idle_funcs
+void anchored_mine_animate(struct MainObj* arg0);
+
+extern void (*anchored_mine_state_funcs[])(struct MainObj*);
+extern void (*anchored_mine_idle_funcs[])(struct MainObj*);
 
 void anchored_mine_update(struct MainObj* self)
 {

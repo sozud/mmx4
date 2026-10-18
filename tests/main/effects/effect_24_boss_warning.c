@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/effects/effect_24_boss_warning.h"
 
 #define WARNING_CASE(name, id_value, active_value, last_phase, field)            \
     static u32 name(void)                                                        \

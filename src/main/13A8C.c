@@ -1,4 +1,19 @@
 #include "common.h"
+#include "main/13A8C.h"
+#include "main/165A0.h"
+#include "main/2824.h"
+#include "main/objects.h"
+#include "main/125BC.h"
+#include "main/144A4.h"
+#include "main/object_motion.h"
+#include "main/128C4.h"
+#include "main/323C.h"
+#include "main/55C4.h"
+#include "main/background.h"
+#include "main/game_info.h"
+#include "main/object_update.h"
+#include "main/stage_objects.h"
+#include "main/xa_sequence_data.h"
 
 #ifdef MMX4_PC
 #include <psyz/audio.h>

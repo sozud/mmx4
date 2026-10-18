@@ -1,6 +1,51 @@
 // MainObj, main_object_update_funcs[10]
 // 800498C8..8004A718
 #include "common.h"
+#include "main/mains/main_10_dragonfly.h"
+#include "main/object_motion.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#include "main/objects.h"
+#include "main/player_common.h"
+
+extern u8 dragonfly_debris[8];
+
+extern void (*dragonfly_step_funcs[])();
+
+// dragonfly_state_funcs
+extern void (*dragonfly_state_funcs[])(struct MainObj*);
+
+void dragonfly_run(struct MainObj*);
+void dragonfly_finish(struct MainObj*);
+void dragonfly_despawn(struct MainObj*);
+
+// dragonfly_step_funcs
+void dragonfly_resume_step(struct MainObj* arg0);
+void dragonfly_wait(struct MainObj* arg0);
+void dragonfly_hunt(struct MainObj* arg0);
+void dragonfly_carry(struct MainObj* arg0);
+void dragonfly_flee(struct MainObj* arg0);
+void dragonfly_fly_past(struct MainObj* arg0);
+
+// dragonfly_hunt_funcs
+void dragonfly_hunt_start(struct MainObj* arg0);
+
+void dragonfly_hunt_hover(struct MainObj* arg0);
+
+// dragonfly_carry_funcs
+void dragonfly_carry_grab(struct MainObj* arg0);
+void dragonfly_face_player(struct MainObj* arg0);
+
+void dragonfly_carry_lift(struct MainObj* arg0);
+
+void dragonfly_hold_player(struct MainObj* arg0);
+
+extern void (*dragonfly_step_funcs[])(struct MainObj*);
+extern void (*dragonfly_hunt_funcs[])(struct MainObj*);
+extern void (*dragonfly_carry_funcs[])(struct MainObj*);
 
 void dragonfly_update(struct MainObj* self)
 {

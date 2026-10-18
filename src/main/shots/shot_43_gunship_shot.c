@@ -1,6 +1,20 @@
 // ShotObj, shot_object_update_funcs[43]
 // 800A6960..800A6FCC
 #include "common.h"
+#include "main/objects.h"
+#include "main/shots/shot_43_gunship_shot.h"
+#include "main/object_motion.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+
+// gunship_shot_state_funcs
+extern void (*gunship_shot_state_funcs[])(struct ShotObj*);
+
+void gunship_shot_bullet_fall(struct ShotObj*);
+void gunship_shot_missile_fly(struct ShotObj*);
+
+void gunship_shot_despawn(struct ShotObj*);
+void gunship_shot_idle(struct ShotObj*);
 
 void gunship_shot_update(struct ShotObj* self)
 {

@@ -1,4 +1,5 @@
 #include "test_runtime.h"
+#include "main/objects.h"
 struct EffectObj* func_8002B468(s8, s8);
 
 #define IDENTITY(prefix, type, pool)                               \

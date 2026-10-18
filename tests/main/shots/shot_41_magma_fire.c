@@ -1,4 +1,9 @@
 #include "test_runtime.h"
+#include "main/shots/shot_41_magma_fire.h"
+#include "main/weapons/weapon_01_lightning_web.h"
+#include "main/55C4.h"
+#include "main/collision_bounds.h"
+#include "main/sprite_animations.h"
 extern void* magma_dragoon_animations[38];
 extern u8 magma_fire_wave_hit_box[4], magma_fire_pillar_hit_boxes[1][4];
 extern u8 magma_fire_ember_hit_box[4], magma_fire_ember_terrain_box[4];

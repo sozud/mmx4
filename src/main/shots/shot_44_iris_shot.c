@@ -1,6 +1,43 @@
 // ShotObj, shot_object_update_funcs[44]
 // 800A6FCC..800A7AF0
 #include "common.h"
+#include "main/shots/shot_44_iris_shot.h"
+#include "main/1E1BC.h"
+#include "main/55C4.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+extern u8 iris_laser_box[4];
+extern u8 iris_pillar_box[4];
+
+// iris_shot_state_funcs
+extern void (*iris_shot_state_funcs[])(struct ShotObj*);
+
+void iris_drone_run(struct ShotObj*);
+void iris_drone_despawn(struct ShotObj*);
+void iris_laser_init(struct ShotObj*);
+void iris_laser_run(struct ShotObj*);
+void iris_laser_despawn(struct ShotObj*);
+
+void iris_pillar_run(struct ShotObj*);
+void iris_pillar_despawn(struct ShotObj*);
+
+// iris_drone_funcs
+extern void (*iris_drone_funcs[])(struct ShotObj*);
+void iris_drone_launch(struct ShotObj*);
+
+void iris_drone_hover(struct ShotObj*);
+
+// iris_laser_funcs
+extern void (*iris_laser_funcs[])(struct ShotObj*);
+void iris_laser_charge(struct ShotObj*);
+void iris_laser_fire(struct ShotObj*);
+void iris_laser_end(struct ShotObj*);
+
+// iris_pillar_funcs
+extern void (*iris_pillar_funcs[])(struct ShotObj*);
+void iris_pillar_fire(struct ShotObj*);
+void iris_pillar_end(struct ShotObj*);
 
 void iris_drone_move(struct ShotObj* self);
 

@@ -1,6 +1,16 @@
 // QuadObj, quad_object_update_funcs[4]
 // 800D526C..800D553C
 #include "common.h"
+#include "main/quads/quad_04_boss_death_shard.h"
+#include "main/object_motion.h"
+#include "main/objects.h"
+
+// boss_death_shard_state_funcs
+extern void (*boss_death_shard_state_funcs[])(struct QuadObj*);
+void boss_death_shard_init(struct QuadObj*);
+
+void boss_death_shard_fly(struct QuadObj*);
+void boss_death_shard_despawn(struct QuadObj*);
 
 void boss_death_shard_init(struct QuadObj* arg0)
 {

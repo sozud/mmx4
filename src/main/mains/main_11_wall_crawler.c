@@ -1,7 +1,33 @@
 // MainObj, main_object_update_funcs[11]
 // 8004A718..8004B8C0
 #include "common.h"
-#include "func_tables.h"
+#include "main/mains/main_11_wall_crawler.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/collision.h"
+#include "main/object_motion.h"
+
+// wall_crawler_state_funcs
+extern void (*wall_crawler_state_funcs[])(struct MainObj*);
+
+void wall_crawler_next_state(struct MainObj*);
+void wall_crawler_despawn(struct MainObj*);
+
+// wall_crawler_step_funcs
+void wall_crawler_resume_step(struct MainObj* arg0);
+void func_8004AE20(struct MainObj* arg0);
+
+void wall_crawler_corner(struct MainObj* arg0);
+void wall_crawler_drop(struct MainObj* arg0);
+
+// wall_crawler_corner_funcs
+void func_8004B2BC(struct MainObj*);
+
+void func_8004B514(struct MainObj*);
+
+void wall_crawler_corner_end(struct MainObj*);
+
+extern void (*wall_crawler_corner_funcs[])(struct MainObj*);
 
 void wall_crawler_update_surface(struct MainObj* self);
 
