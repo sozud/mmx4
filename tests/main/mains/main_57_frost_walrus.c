@@ -2,6 +2,9 @@
 #include "main/mains/main_57_frost_walrus.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "support/state_cases.h"
+void frost_walrus_blizzard(struct MainObj* arg0);
+void frost_walrus_death_finish(struct MainObj* arg0);
 extern void* frost_walrus_animations[39];
 extern u32* D_80137E08;
 void frost_walrus_choose_script(struct MainObj*);
@@ -169,25 +172,7 @@ static u32 blizzard_case(u32 mode)
     actual = (u8)obj.unk6 | ((u32)(u16)obj.unk7C << 8) | ((u32)visual_objects[31].active << 24);
     return actual;
 }
-#define CASE(m)                                                   \
-    static u32 walrus_blizzard_animation_pools_blizzard_##m(void) \
-    {                                                             \
-        return blizzard_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-#define ENTRY(m) walrus_blizzard_animation_pools_blizzard_##m,
-static const CTestCase walrus_blizzard_animation_pools_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) };
 static const u32 walrus_blizzard_animation_pools_cases_expected[] = { 0x1004003u, 0x41004003u, 0x1004003u, 0x41004003u, 0x1008004u, 0x1000103u, 0x41004003u, 0x4003u };
-#undef CASE
-#undef ENTRY
 
 static u32 charge_case(u32 mode)
 {
@@ -242,21 +227,7 @@ static u32 charge_case(u32 mode)
         assert(D_8013E198[i] == -1);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u16)(obj.x_speed / 32768) << 16);
 }
-#define CASE(m)                                            \
-    static u32 walrus_charge_tusk_context_charge_##m(void) \
-    {                                                      \
-        return charge_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) walrus_charge_tusk_context_charge_##m,
-static const CTestCase walrus_charge_tusk_context_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 walrus_charge_tusk_context_cases_expected[] = { 0x101u, 0x101u, 0xFFFD1703u, 0x31703u };
-#undef CASE
-#undef ENTRY
 
 static const s16 distances[7] = { 193, 192, -192, -193, 193, 192, 0 };
 static u32 intro_case(u32 mode)
@@ -309,24 +280,7 @@ static u32 intro_case(u32 mode)
     actual = (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
     return actual;
 }
-#define CASE(m)                                             \
-    static u32 walrus_intro_player_boundary_intro_##m(void) \
-    {                                                       \
-        return intro_case(m);                               \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-#define ENTRY(m) walrus_intro_player_boundary_intro_##m,
-static const CTestCase walrus_intro_player_boundary_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) };
 static const u32 walrus_intro_player_boundary_cases_expected[] = { 0x642607u, 0x640108u, 0x640108u, 0x642607u, 0x650108u, 0x632607u, 0x640108u };
-#undef CASE
-#undef ENTRY
 
 static u32 script_case(u32 mode)
 {
@@ -357,66 +311,7 @@ static u32 script_case(u32 mode)
     result = mode == 0 ? *obj.ext.main_57.script : 0x100 | *obj.ext.main_57.script;
     return result;
 }
-#define CASE(m)                                          \
-    static u32 walrus_script_exhaustion_script_##m(void) \
-    {                                                    \
-        return script_case(m);                           \
-    }
-CASE(0)
-CASE(1)
-#define ENTRY(m) walrus_script_exhaustion_script_##m,
-static const CTestCase walrus_script_exhaustion_cases[]
-    = { ENTRY(0) ENTRY(1) };
 static const u32 walrus_script_exhaustion_cases_expected[] = { 0x6u, 0x127u };
-#undef CASE
-#undef ENTRY
-
-static const u32 frost_walrus_blizzard_blow_expected[] = { 0u, 0x40u, 0xFFFFFFFFu, 1u, 0u, 0u, 1u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_frost_walrus_blizzard_blow(u32 row)
-{
-    u32 observed_values[12];
-    struct MainObj obj;
-    u8 pool_1_full;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.unk7C = 65;
-    obj.animation_step.fields.event = 2;
-    pool_1_full = 255;
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_1_full ? 1 : 0;
-    }
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    frost_walrus_blizzard_blow(&obj);
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.unk7C;
-    observed_values[2] = (u32)obj.unk7E;
-    observed_values[3] = (u32)shot_objects[0].active;
-    observed_values[4] = (u32)shot_objects[0].id;
-    observed_values[5] = (u32)shot_objects[0].unk2;
-    observed_values[6] = (u32)visual_objects[0].active;
-    observed_values[7] = (u32)visual_objects[0].id;
-    observed_values[8] = (u32)visual_objects[0].unk15;
-    observed_values[9] = (u32)visual_objects[0].unk2;
-    observed_values[10] = (u32)visual_objects[0].x_pos.i.hi;
-    observed_values[11] = (u32)visual_objects[0].y_pos.i.hi;
-    return c_test_observe(0, row, observed_values, frost_walrus_blizzard_blow_expected, 12);
-}
 
 static const u32 frost_walrus_death_explode_expected[] = { 1u, 0u, 0u, 0u, 0u, 0x8000u, 2u, 0u, 5u };
 static u32 test_frost_walrus_death_explode(u32 row)
@@ -448,28 +343,6 @@ static u32 test_frost_walrus_death_explode(u32 row)
     return c_test_observe(0, row, observed_values, frost_walrus_death_explode_expected, 9);
 }
 
-static const u32 frost_walrus_intro_approach_expected[] = { 0u, 0u };
-static u32 test_frost_walrus_intro_approach(u32 row)
-{
-    u32 observed_values[2];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.x_pos.i.hi = -32764;
-    g_Player.x_pos.i.hi = -16368;
-    frost_walrus_intro_approach(&obj);
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.x_speed;
-    return c_test_observe(0, row, observed_values, frost_walrus_intro_approach_expected, 2);
-}
-
 static const u32 frost_walrus_shards_count_expected[] = { 0u, 4u, 1u, 0u };
 static u32 test_frost_walrus_shards_count(u32 row)
 {
@@ -490,15 +363,9 @@ static u32 test_frost_walrus_shards_fire(u32 row)
 {
     u32 observed_values[7];
     struct MainObj obj;
-    u8 pool_0_full;
     memset(&obj, 0, sizeof(obj));
     memset(&shot_objects, 0, sizeof(shot_objects));
-    pool_0_full = 255;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 255 ? 1 : 0);
     frost_walrus_shards_fire(&obj);
     observed_values[0] = (u32)obj.unk6;
     observed_values[1] = (u32)obj.unk7C;
@@ -565,18 +432,440 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u, 0x10000u, 0x400000u };
+static struct EngineObj walrus_engine;
+static u32 walrus_pages[8];
+#define FW(step, sub) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.ext.main_57.effect = &effect_objects[0])
+#define ENGINE(stage_id, body)                                                                                                                 \
+    do {                                                                                                                                       \
+        u32* pages = D_801406A8;                                                                                                               \
+        u8* frames = TEST_MENU_FRAMES;                                                                                                         \
+        walrus_engine = engine_obj;                                                                                                            \
+        engine_obj.stage = stage_id;                                                                                                           \
+        engine_obj.checkpoint = 1;                                                                                                             \
+        D_801406A8 = walrus_pages;                                                                                                             \
+        TEST_MENU_FRAMES = (u8*)walrus_pages;                                                                                                  \
+        body;                                                                                                                                  \
+        state_extra = engine_obj.unk25 | (engine_obj.boss_ptr == &so) << 8 | (u8)engine_obj.unkF << 16 | (u32)(u8)engine_obj.checkpoint << 24; \
+        so.unk42 = 0;                                                                                                                          \
+        engine_obj = walrus_engine;                                                                                                            \
+        D_801406A8 = pages;                                                                                                                    \
+        TEST_MENU_FRAMES = frames;                                                                                                             \
+    } while (0)
+static void fw_blizzard_start(void)
+{
+    FW(5, 0);
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_wait(void)
+{
+    FW(5, 1);
+    so.unk7C = 2;
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_blow(void)
+{
+    FW(5, 1);
+    so.unk7C = 1;
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_finish_wait(void)
+{
+    FW(5, 2);
+    so.unk7C = 2;
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_finish(void)
+{
+    FW(5, 2);
+    so.unk7C = 1;
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_end_wait(void)
+{
+    FW(5, 3);
+    so.unk7C = 2;
+    frost_walrus_blizzard(&so);
+}
+static void fw_blizzard_end(void)
+{
+    FW(5, 3);
+    so.unk7C = 1;
+    frost_walrus_blizzard(&so);
+}
+static void fw_start_wait(void)
+{
+    FW(0, 0);
+    effect_objects[0].active = 1;
+    func_800722A0(&so);
+}
+static void fw_start(void) { ENGINE(0, (FW(0, 0), func_800722A0(&so))); }
+static void fw_start_rematch(void) { ENGINE(0xC, (FW(0, 0), func_800722A0(&so))); }
+static void fw_death_flash(void)
+{
+    FW(3, 0);
+    effect_objects[0].active = 1;
+    so.unk7E = 0;
+    frost_walrus_death_finish(&so);
+}
+static void fw_death_count(void)
+{
+    FW(3, 0);
+    effect_objects[0].active = 1;
+    so.unk7E = 3;
+    frost_walrus_death_finish(&so);
+}
+static void fw_death_held(void)
+{
+    FW(3, 0);
+    effect_objects[0].active = 1;
+    effect_objects[0].unk7 = 1;
+    frost_walrus_death_finish(&so);
+}
+static void fw_death_done(void) { ENGINE(0, (FW(3, 0), frost_walrus_death_finish(&so))); }
+static void fw_death_done_rematch(void) { ENGINE(0xC, (FW(3, 0), frost_walrus_death_finish(&so))); }
+
+static void (*const frost_walrus_states_cases[])(void) = {
+    fw_blizzard_start,
+    fw_blizzard_wait,
+    fw_blizzard_blow,
+    fw_blizzard_finish_wait,
+    fw_blizzard_finish,
+    fw_blizzard_end_wait,
+    fw_blizzard_end,
+    fw_start_wait,
+    fw_start,
+    fw_start_rematch,
+    fw_death_flash,
+    fw_death_count,
+    fw_death_held,
+    fw_death_done,
+    fw_death_done_rematch,
+};
+static const u32 frost_walrus_states_expected[] = { 0x105u, 0x180100u, 0x800000u, 0u, 0u, 0u, 0x16u, 3u, 0u, 0u, 0x105u, 0xFFFF0001u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x205u, 0xFFFF0080u, 0x800000u, 0u, 0u, 0u, 0x16u, 0u, 0u, 0u, 0x205u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x305u, 0x60u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x305u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0x26u, 3u, 0x1000101u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0x26u, 3u, 0x1000101u, 0u, 3u, 0x50000u, 0x800000u, 0u, 0u, 0u, 0x80000000u, 0u, 0u, 1u, 3u, 0x20000u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x1100000u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0xA800000u, 0u };
+
+static u32 test_frost_walrus_states(u32 row)
+{
+    return state_run(frost_walrus_states_cases[row], row, &frost_walrus_states_expected[row * 10]);
+}
+
+extern void* frost_walrus_animations[39];
+extern struct Unk_unk68 frost_walrus_hurt_box, frost_walrus_attack_box, D_80107A78[];
+static const struct {
+    u8 weapon, damage, lethal, flag;
+} hits[] = {
+    { 255, 0, 0, 0 },
+    { 0, 1, 0, 1 },
+    { 4, 4, 0, 0 },
+    { 13, 5, 0, 0 },
+    { 35, 5, 0, 0 },
+    { 37, 0, 0, 0 },
+    { 0, 1, 1, 1 },
+};
+static const u8 flash_times[] = { 0, 1, 2, 64 };
+static struct WeaponObj weapons_expected[16];
+static struct VisualObj visuals_before[32];
+#define SAME(a, b) assert(c_test_word_difference((const u32*)&(a), (const u32*)&(b), sizeof(a) / 4) == 0)
+static u32 weapon_flash(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_expected;
+    struct EngineObj engine_before;
+    struct BackgroundObj backgrounds_before[3];
+    u32 hit = row % COUNT(hits), phase = row / COUNT(hits), character = phase % 2, staggered = phase / 2 % 2;
+    u32 flash = flash_times[phase / 4], facing = (hit + phase) % 2, i;
+    s32 kind = flash || hits[hit].weapon == 37 ? -1 : 0;
+    u32 weakness = character ? hits[hit].weapon == 35 : hits[hit].weapon == 4 || hits[hit].weapon == 13;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.hp = 24;
+    player_expected = g_Player;
+    if (hits[hit].weapon == 35)
+        player_expected.update_delay_request = 1;
+    engine_obj.cur_character = character;
+    engine_before = engine_obj;
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    for (i = 0; i < 32; i++) {
+        visual_objects[i].active = 1;
+        visual_objects[i].id = 39;
+    }
+    memcpy(visuals_before, visual_objects, sizeof(visuals_before));
+    obj.active = 0x41;
+    obj.id = 57;
+    obj.state = 1;
+    obj.unk5 = 1;
+    obj.unk6 = 9;
+    obj.on_screen = 7;
+    obj.bg_offset = 0;
+    obj.unk15 = facing ? 0x40 : 0;
+    obj.unk42 = 0x9234;
+    obj.hp = hits[hit].lethal ? 1 : 48;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.unk18.val = 0x1234;
+    obj.unk1C.val = 0x5678;
+    obj.hurt_box = &frost_walrus_hurt_box;
+    obj.attack_box = &frost_walrus_attack_box;
+    obj.collision_data = flash ? D_801060F0 : D_80107A78;
+    obj.ext.main_57.flash_timer = flash;
+    obj.ext.main_57.flashing = flash != 0;
+    obj.ext.main_57.staggered = staggered;
+    obj.animation_table = (const u8* const*)frost_walrus_animations;
+    set_animation(&obj, 0);
+    if (hits[hit].weapon != 255) {
+        weapon_objects[0].active = 0x21;
+        weapon_objects[0].id = hits[hit].weapon;
+        weapon_objects[0].unk15 = obj.unk15;
+        weapon_objects[0].x_pos = obj.x_pos;
+        weapon_objects[0].y_pos = obj.y_pos;
+        weapon_objects[0].unk50 = (const u8*)&frost_walrus_hurt_box;
+    }
+    memcpy(weapons_expected, weapon_objects, sizeof(weapons_expected));
+    expected = obj;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.unk5 = 3;
+    expected.unk6 = 0;
+    expected.unk42 = 0x1234;
+    expected.on_screen = 1;
+    if (hits[hit].weapon != 255) {
+        ((s16*)&weapons_expected[0].unk80)[0] = facing ? 159 : 161;
+        ((s16*)&weapons_expected[0].unk80)[1] = 136;
+        weapons_expected[0].unk98 = flash && hits[hit].weapon == 0 ? -1 : flash ? 0
+                                                                                : hits[hit].flag;
+        expected.unk63 = kind;
+        if (!kind) {
+            expected.hp = hits[hit].lethal ? 0 : 48 - hits[hit].damage;
+            expected.unk42 |= 0x8000;
+        }
+    }
+    if (flash) {
+        expected.ext.main_57.flash_timer--;
+        if (!(flash & 1))
+            expected.unk42 |= 0x8000;
+        if (flash == 1) {
+            expected.collision_data = D_80107A78;
+            expected.ext.main_57.flashing = 0;
+        }
+    } else if (hits[hit].lethal) {
+        expected.state = 2;
+        expected.unk5 = 0;
+        expected.unk42 &= 0x7FFF;
+        player_expected.spike_immune = 1;
+    } else if (hits[hit].weapon != 255) {
+        if (!kind && weakness && !staggered) {
+            expected.unk5 = 10;
+            expected.on_screen = 7;
+        } else if (!character || !kind) {
+            expected.collision_data = D_801060F0;
+            expected.ext.main_57.flash_timer = 64;
+            expected.ext.main_57.flashing = 1;
+        }
+    }
+    D_8013E198[0] = D_8013E198[1] = D_8013E198[5] = -1;
+    cur_random = 0x1234;
+    func_80072418(&obj);
+    SAME(obj, expected);
+    SAME(g_Player, player_expected);
+    SAME(engine_obj, engine_before);
+    SAME(background_objects, backgrounds_before);
+    SAME(weapon_objects, weapons_expected);
+    SAME(visual_objects, visuals_before);
+    assert(cur_random == 0x1234);
+    return 1;
+}
+
+void frost_walrus_stagger_recover(struct MainObj*);
+extern void* frost_walrus_animations[39];
+extern u8 frost_walrus_script_recover_high[4], frost_walrus_script_recover_low[4];
+static const s8 health[] = { 23, 24, 48 };
+static u32 recover(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    u32 hp = row % 3, wait = row / 3 % 2, face = row / 6;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 57;
+    obj.state = 1;
+    obj.unk5 = 10;
+    obj.unk6 = 3;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.unk7C = 1 + wait;
+    obj.hp = health[hp];
+    obj.ext.main_57.flashing = 1;
+    obj.ext.main_57.flash_timer = 12;
+    obj.animation_table = (const u8* const*)frost_walrus_animations;
+    set_animation(&obj, 21);
+    assert(obj.animation_step.packed == 0x23010002);
+    expected = obj;
+    expected.unk7C--;
+    if (wait)
+        expected.animation_step.fields.duration--;
+    else {
+        expected.ext.main_57.script = hp ? frost_walrus_script_recover_high : frost_walrus_script_recover_low;
+        expected.unk5 = 3;
+        expected.unk6 = 0;
+        expected.ext.main_57.flashing = 0;
+        expected.ext.main_57.flash_timer = 1;
+    }
+    frost_walrus_stagger_recover(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    return 1;
+}
+
+void frost_walrus_stagger_fall(struct MainObj*);
+extern void* frost_walrus_animations[39];
+static struct VisualObj visuals_expected[32];
+static u32 land(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_expected[3];
+    u32 broken = row % 2, available = row / 2 % 2, face = row / 4 % 2, grounded = row / 8, i;
+    memset(&obj, 0, sizeof(obj));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    memset(background_objects, 0, sizeof(background_objects));
+    for (i = 0; i < 32; i++)
+        visual_objects[i].active = 1;
+    if (available)
+        visual_objects[31].active = 0;
+    memcpy(visuals_expected, visual_objects, sizeof(visuals_expected));
+    memcpy(backgrounds_expected, background_objects, sizeof(backgrounds_expected));
+    obj.active = 0x41;
+    obj.id = 57;
+    obj.state = 1;
+    obj.unk5 = 10;
+    obj.unk6 = 1;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.air_state = 1;
+    obj.collision_flags = grounded ? 8 : 0;
+    obj.ext.main_57.tusks_broken = broken;
+    obj.animation_table = (const u8* const*)frost_walrus_animations;
+    set_animation(&obj, 18);
+    assert(obj.animation_step.packed == 0x08000001);
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.x_speed = 0x18000;
+    obj.y_speed = -0x8000;
+    obj.x_accel = 0x1000;
+    obj.gravity = 0x4200;
+    expected = obj;
+    expected.x_pos.val += 0x18000;
+    expected.y_pos.val += 0x8000;
+    expected.x_speed += face ? 0x1000 : -0x1000;
+    expected.y_speed -= 0x4200;
+    expected.air_state = -1;
+    if (grounded) {
+        expected.air_state = 0;
+        expected.unk6++;
+        expected.unk17 = 20;
+        expected.previous_animation_index = 0xFF;
+        expected.animation_cursor = (const u8*)frost_walrus_animations[20];
+        expected.animation_step.packed = 0x21010002;
+        backgrounds_expected[0].unk37 = 16;
+        backgrounds_expected[0].unk46 = backgrounds_expected[0].unk3E.bytes[1] = 3;
+        backgrounds_expected[0].unk3D = backgrounds_expected[0].unk3B = 1;
+        backgrounds_expected[0].unk34 = 1;
+        if (!broken && available) {
+            visuals_expected[31].active = 0x41;
+            visuals_expected[31].id = 24;
+            visuals_expected[31].unk2 = 0x50;
+            visuals_expected[31].unk15 = obj.unk15;
+            visuals_expected[31].unk50 = PLAYER_OBJECT(&obj);
+            expected.ext.main_57.tusks_broken = 1;
+        }
+    }
+    cur_random = 0x1234;
+    frost_walrus_stagger_fall(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_expected, sizeof(backgrounds_expected));
+    assert(c_test_word_difference((u32*)visual_objects, (u32*)visuals_expected, sizeof(visuals_expected) / 4) == 0 && cur_random == 0x1234);
+    return 1;
+}
+
+extern void* frost_walrus_animations[39];
+static struct VisualObj expected_pool[32];
+static u32 stagger(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before;
+    u32 available = row % 3 == 2 ? 4 : row % 3, side = row / 3 % 2, face = row / 6, i;
+    engine_obj.stage = 2;
+    engine_obj.substage = 1;
+    engine_before = engine_obj;
+    g_Player.x_pos.i.hi = side ? 180 : 140;
+    player_before = g_Player;
+    D_8013E198[2] = -1;
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    for (i = 0; i < COUNT(visual_objects); i++)
+        visual_objects[i].active = i >= 32 - available ? 0 : 1;
+    memcpy(expected_pool, visual_objects, sizeof(expected_pool));
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 57;
+    obj.state = 1;
+    obj.hp = 32;
+    obj.unk5 = 10;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.x_pos.i.hi = 160;
+    obj.y_pos.i.hi = 120;
+    obj.animation_table = (const u8* const*)frost_walrus_animations;
+    expected = obj;
+    expected.ext.main_57.staggered = 1;
+    expected.unk17 = 18;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = frost_walrus_animations[18];
+    expected.animation_step.packed = 0x08000001;
+    expected.x_speed = side ? -0x20000 : 0x20000;
+    expected.y_speed = 0x38000;
+    expected.gravity = 0x4200;
+    expected.ext.main_57.flash_timer = 200;
+    expected.air_state = 1;
+    expected.ext.main_57.flashing = 1;
+    expected.collision_data = D_801060F0;
+    expected.unk6 = 1;
+    for (i = 0; i < available; i++) {
+        struct VisualObj* v = &expected_pool[32 - available + i];
+        v->active = 0x41;
+        v->id = 24;
+        v->unk2 = i + 64;
+        v->unk50 = PLAYER_OBJECT(&obj);
+        v->unk15 = obj.unk15;
+    }
+    func_80073E80(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(visual_objects, expected_pool, sizeof(expected_pool));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(D_8013E198[2] == -1);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "frost_walrus_states", 0, 0, COUNT(frost_walrus_states_cases), test_frost_walrus_states },
     { "frost_floor_archive", frost_floor_archive_cases, frost_floor_archive_cases_expected, COUNT(frost_floor_archive_cases), 0 },
-    { "walrus_blizzard_animation_pools", walrus_blizzard_animation_pools_cases, walrus_blizzard_animation_pools_cases_expected, COUNT(walrus_blizzard_animation_pools_cases), 0 },
-    { "walrus_charge_tusk_context", walrus_charge_tusk_context_cases, walrus_charge_tusk_context_cases_expected, COUNT(walrus_charge_tusk_context_cases), 0 },
-    { "walrus_intro_player_boundary", walrus_intro_player_boundary_cases, walrus_intro_player_boundary_cases_expected, COUNT(walrus_intro_player_boundary_cases), 0 },
-    { "walrus_script_exhaustion", walrus_script_exhaustion_cases, walrus_script_exhaustion_cases_expected, COUNT(walrus_script_exhaustion_cases), 0 },
-    { "frost_walrus_blizzard_blow", 0, 0, 1, test_frost_walrus_blizzard_blow },
+    { "walrus_blizzard_animation_pools", NULL, walrus_blizzard_animation_pools_cases_expected, COUNT(walrus_blizzard_animation_pools_cases_expected), blizzard_case },
+    { "walrus_charge_tusk_context", NULL, walrus_charge_tusk_context_cases_expected, COUNT(walrus_charge_tusk_context_cases_expected), charge_case },
+    { "walrus_intro_player_boundary", NULL, walrus_intro_player_boundary_cases_expected, COUNT(walrus_intro_player_boundary_cases_expected), intro_case },
+    { "walrus_script_exhaustion", NULL, walrus_script_exhaustion_cases_expected, COUNT(walrus_script_exhaustion_cases_expected), script_case },
     { "frost_walrus_death_explode", 0, 0, 1, test_frost_walrus_death_explode },
-    { "frost_walrus_intro_approach", 0, 0, 1, test_frost_walrus_intro_approach },
     { "frost_walrus_shards_count", 0, 0, 1, test_frost_walrus_shards_count },
     { "frost_walrus_shards_fire", 0, 0, 1, test_frost_walrus_shards_fire },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+    { "character_weakness_parry_flash_and_death", NULL, NULL, COUNT(hits) * 16, weapon_flash },
+    { "health23_24_boundary_selects_actual_recovery_script", NULL, NULL, 12, recover },
+    { "grounding_existing_tusks_and_exhausted_visual_pool", NULL, NULL, 16, land },
+    { "Walrus_own_stagger_four_sweat_sprites_full_partial_slots", NULL, NULL, 12, stagger },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(frost_floor_archive_cases) + COUNT(walrus_blizzard_animation_pools_cases) + COUNT(walrus_charge_tusk_context_cases) + COUNT(walrus_intro_player_boundary_cases) + COUNT(walrus_script_exhaustion_cases) + 1 + 1 + 1 + 1 + 1 + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(frost_walrus_states_cases) + COUNT(frost_floor_archive_cases) + COUNT(walrus_blizzard_animation_pools_cases_expected) + COUNT(walrus_charge_tusk_context_cases_expected) + COUNT(walrus_intro_player_boundary_cases_expected) + COUNT(walrus_script_exhaustion_cases_expected) + 1 + 1 + 1 + COUNT(pool_full_cases) + COUNT(hits) * 16 + 12 + 16 + 12;

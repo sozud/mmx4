@@ -10,7 +10,7 @@
 extern s16 sentry_drone_activation_distances[];
 
 void sentry_drone_main(struct MainObj*);
-void sentry_drone_despawn(struct ObjectHeader*);
+void sentry_drone_despawn(struct MainObj*);
 void sentry_drone_wait_for_player(struct MainObj*);
 
 void sentry_drone_drift(struct MainObj* arg0);
@@ -38,7 +38,7 @@ void sentry_drone_spread_start(struct MainObj*);
 
 void sentry_drone_spread_repeat(struct MainObj*);
 void sentry_drone_spread_pause(struct MainObj* arg0);
-void sentry_drone_spread_end(struct WeaponObj* arg0);
+void sentry_drone_spread_end(struct MainObj* arg0);
 
 // sentry_drone_drop_funcs
 void sentry_drone_drop_start(struct MainObj*);
@@ -454,9 +454,9 @@ void sentry_drone_spread_pause(struct MainObj* self)
     self->unk6++;
 }
 
-void sentry_drone_spread_end(struct WeaponObj* self)
+void sentry_drone_spread_end(struct MainObj* self)
 {
-    self->unk67 = -1;
+    self->air_state = -1;
     self->unk5 = 6;
     self->unk6 = 0;
 }
@@ -502,7 +502,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
 // sentry_drone_rotate_aim
 INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
 
-void sentry_drone_despawn(struct ObjectHeader* self)
+void sentry_drone_despawn(struct MainObj* self)
 {
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0;
     SP_CUR_MAIN_OBJ->ext.main_48.unk81 = 0;
@@ -515,9 +515,9 @@ void sentry_drone_despawn(struct ObjectHeader* self)
     SP_CUR_MAIN_OBJ->ext.main_48.unk88 = 0;
 
     if (self->unk2 & 0x80) {
-        ZeroObjectState(self);
+        ZeroObjectState((struct ObjectHeader*)self);
     } else {
-        despawn_object(self);
+        despawn_object((struct ObjectHeader*)self);
     }
 }
 

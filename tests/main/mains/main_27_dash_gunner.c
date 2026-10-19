@@ -3,6 +3,9 @@
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
+#include "support/state_cases.h"
+void dash_gunner_dash_brake(struct MainObj*);
+void func_80059590(struct MainObj*);
 extern union AnimationStep* dash_gunner_animations[12];
 extern struct StageObjectRecord stage_object_records_10_0[62];
 extern struct StageObjectRecord stage_object_records_3_1[71];
@@ -103,25 +106,7 @@ static u32 dash_gunner_animation_transitions_dash_case(u32 mode)
     i = (u8)obj.unk5 | ((u32)obj.unk17 << 8) | ((u32)obj.ext.main_27.unk88 << 16) | ((u32)obj.ext.main_27.unk82 << 24);
     return i;
 }
-#define CASE(m)                                                 \
-    static u32 dash_gunner_animation_transitions_dash_##m(void) \
-    {                                                           \
-        return dash_gunner_animation_transitions_dash_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-#define ENTRY(m) dash_gunner_animation_transitions_dash_##m,
-static const CTestCase dash_gunner_animation_transitions_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) };
 static const u32 dash_gunner_animation_transitions_cases_expected[] = { 0x8010706u, 0x8010706u, 0x8000106u, 0x8000106u, 0x9000305u, 0x9000305u, 0x8000006u, 0x1E000007u };
-#undef CASE
-#undef ENTRY
 
 static u32 dash_gunner_facing_start_dash_case(u32 mode)
 {
@@ -167,22 +152,7 @@ static u32 dash_gunner_facing_start_dash_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u16)obj.unk7C | ((u32)(u8)obj.unk5 << 16) | ((u32)obj.unk17 << 24);
 }
-#define CASE(m)                                        \
-    static u32 dash_gunner_facing_start_dash_##m(void) \
-    {                                                  \
-        return dash_gunner_facing_start_dash_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) dash_gunner_facing_start_dash_##m,
-static const CTestCase dash_gunner_facing_start_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 dash_gunner_facing_start_cases_expected[] = { 0x30014u, 0x2040001u, 0x2040001u, 0x30014u, 0x30001u };
-#undef CASE
-#undef ENTRY
 
 static struct GunnerInput {
     u8 shoot, facing, direction, full;
@@ -342,32 +312,7 @@ static u32 dash_gunner_steps_run(u32 mode)
     return i;
 }
 
-#define CASE(name)                                   \
-    static u32 dash_gunner_steps_##name##_case(void) \
-    {                                                \
-        return dash_gunner_steps_run(name);          \
-    }
-CASE(DASH_TICK)
-CASE(DASH_HELD)
-CASE(DASH_TURN_RIGHT)
-CASE(DASH_TURN_LEFT)
-CASE(DASH_STOP)
-CASE(SHOOT_BLOCKED_RIGHT)
-CASE(SHOOT_BLOCKED_LEFT)
-CASE(SHOOT_FULL)
-CASE(SHOOT_SPAWN)
-CASE(SHOOT_EDGE)
-CASE(SHOOT_BURST)
-#define ENTRY(name) dash_gunner_steps_##name##_case,
-static const CTestCase dash_gunner_steps_cases[]
-    = {
-          ENTRY(DASH_TICK) ENTRY(DASH_HELD) ENTRY(DASH_TURN_RIGHT) ENTRY(DASH_TURN_LEFT) ENTRY(DASH_STOP) ENTRY(SHOOT_BLOCKED_RIGHT)
-              ENTRY(SHOOT_BLOCKED_LEFT) ENTRY(SHOOT_FULL) ENTRY(SHOOT_SPAWN) ENTRY(SHOOT_EDGE) ENTRY(SHOOT_BURST)
-      };
 static const u32 dash_gunner_steps_cases_expected[] = { 0x20203u, 0x20203u, 0x140004u, 0x140004u, 0x6u, 0xA0305u, 0xA0305u, 0x40105u, 0x7FF70305u, 0x801C0105u, 0x8011E67Cu };
-#undef SHOT_SLOT
-#undef CASE
-#undef ENTRY
 
 static u32 turn_case(u32 mode, u32 observation)
 {
@@ -406,24 +351,11 @@ static u32 turn_case(u32 mode, u32 observation)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     return observation == 0 ? obj.animation_step.packed : (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16);
 }
-#define CASE(m, n)                                             \
-    static u32 dash_gunner_turn_animation_turn_##m##_##n(void) \
-    {                                                          \
-        return turn_case(m, n);                                \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1)
-MODE(0)
-MODE(1)
-MODE(2)
-#define ENTRY(m, n) dash_gunner_turn_animation_turn_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1)
-static const CTestCase dash_gunner_turn_animation_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) };
 static const u32 dash_gunner_turn_animation_cases_expected[] = { 0x4010003u, 0x400203u, 0x26010002u, 0x400107u, 0x26010002u, 0x107u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 dash_gunner_turn_animation_cases_row(u32 row)
+{
+    return turn_case(row / 2, row % 2);
+}
 
 #include "support/enemy_world.h"
 
@@ -683,11 +615,238 @@ static u32 test_func_80059640(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 10);
 }
 
+#define DG(sub) (state_reset(3, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+static void dg_aim_wait(void)
+{
+    DG(1);
+    so.unk7C = 2;
+    func_80059590(&so);
+}
+static void dg_aim_dash_left(void)
+{
+    DG(1);
+    so.unk7C = 1;
+    func_80059590(&so);
+    state_extra = so.ext.main_27.unk8C;
+}
+static void dg_aim_dash_right(void)
+{
+    DG(1);
+    so.unk7C = 1;
+    so.unk15 = 0x40;
+    func_80059590(&so);
+}
+static void dg_aim_fire(void)
+{
+    DG(1);
+    so.unk7C = 1;
+    so.ext.main_27.unk80 = 1;
+    func_80059590(&so);
+    state_extra = so.ext.main_27.unk8C | so.ext.main_27.unk89 << 16;
+}
+static void dg_brake_slide(void)
+{
+    DG(2);
+    so.ext.main_27.unk8C = 3;
+    so.x_speed = 0x10000;
+    so.x_accel = -0x1000;
+    dash_gunner_dash_brake(&so);
+    state_extra = so.ext.main_27.unk8C;
+}
+static void dg_brake_stop(void)
+{
+    DG(2);
+    so.ext.main_27.unk8C = 1;
+    dash_gunner_dash_brake(&so);
+    state_extra = so.ext.main_27.unk8C;
+}
+
+static void (*const dash_gunner_aim_cases[])(void) = {
+    dg_aim_wait,
+    dg_aim_dash_left,
+    dg_aim_dash_right,
+    dg_aim_fire,
+    dg_brake_slide,
+    dg_brake_stop,
+};
+static const u32 dash_gunner_aim_expected[] = { 0x103u, 1u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0xFFFE8000u, 0u, 0u, 1u, 0u, 0xB4u, 0u, 2u, 0u, 0x800000u, 0x18000u, 0u, 0u, 0x4001u, 0u, 0u, 0u, 6u, 0u, 0x800000u, 0u, 0u, 0u, 1u, 0u, 0x14012Cu, 0u, 0x203u, 0u, 0x810000u, 0x11000u, 0u, 0xFFFFF000u, 0u, 0u, 2u, 0u, 0x303u, 0xAu, 0x800000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u };
+
+static u32 test_dash_gunner_aim(u32 row)
+{
+    return state_run(dash_gunner_aim_cases[row], row, &dash_gunner_aim_expected[row * 10]);
+}
+
+static const struct {
+    s32 speed, wait;
+    u8 phase, facing, mode, aim_wait, direction, aim_timer, airborne, volley, retries;
+} dash_gunner_spawn_cases[] = {
+    { -0x18000, 30, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0x18000, 30, 3, 0x40, 0, 0, 0, 0, 1, 0, 0 },
+    { 0, 300, 6, 0, 1, 30, 0, 20, 0, 0, 0 },
+    { 0, 300, 3, 0x40, 1, 30, 1, 20, 1, 0, 0 },
+    { -0x18000, 30, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
+    { 0x18000, 30, 3, 0x40, 0, 0, 0, 0, 1, 0, 0 },
+    { 0, 300, 6, 0, 1, 30, 0, 20, 0, 0, 0 },
+    { 0, 300, 3, 0x40, 1, 30, 1, 20, 1, 0, 0 },
+    { -0x18000, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0 },
+    { 0x18000, 0, 2, 0x40, 0, 0, 0, 0, 0, 1, 0 },
+    { -0x18000, 0, 2, 0, 0, 0, 0, 0, 0, 2, 2 },
+    { 0x18000, 0, 2, 0x40, 0, 0, 0, 0, 0, 2, 2 },
+};
+
+static u32 test_dash_gunner_spawn_subtypes(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before;
+    u32 i, first = row >= 4 && row < 8 ? 5 : 0;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(D_80141F50, 0, sizeof(D_80141F50));
+    for (i = 0; i < 6; i++)
+        D_8013E198[i] = -1;
+    g_Player.bg_offset = row % 3;
+    player_before = g_Player;
+    obj.active = 0x41;
+    obj.id = 27;
+    obj.unk2 = row;
+    obj.x_pos.val = 0x1281234;
+    obj.y_pos.val = 0x805678;
+    obj.hp = 1;
+    obj.invincibility_timer = 9;
+    obj.air_state = 1;
+    obj.collision_flags = 15;
+    obj.hurt_box = obj.attack_box = (const u8*)&dash_gunner_boxes[0];
+    obj.x_speed = 123;
+    obj.y_speed = -456;
+    obj.x_accel = 789;
+    obj.gravity = 321;
+    obj.ext.main_27.unk8B = 1;
+    expected = obj;
+    expected.hp = 6;
+    expected.invincibility_timer = 0;
+    expected.air_state = 0;
+    expected.collision_flags = 0;
+    expected.bg_offset = row % 3;
+    expected.animation_table = (const u8* const*)dash_gunner_animations;
+    expected.unk16 = 6;
+    expected.hurt_box = expected.attack_box = NULL;
+    expected.x_speed = dash_gunner_spawn_cases[row].speed;
+    expected.y_speed = expected.x_accel = expected.gravity = 0;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.unk5 = dash_gunner_spawn_cases[row].phase;
+    expected.unk15 = dash_gunner_spawn_cases[row].facing;
+    expected.unk7A = dash_gunner_spawn_cases[row].airborne;
+    expected.ext.main_27.unk80 = dash_gunner_spawn_cases[row].mode;
+    expected.ext.main_27.unk82 = dash_gunner_spawn_cases[row].aim_wait;
+    expected.ext.main_27.unk88 = dash_gunner_spawn_cases[row].direction;
+    expected.ext.main_27.unk89 = dash_gunner_spawn_cases[row].aim_timer;
+    expected.ext.main_27.unk8B = 0;
+    expected.ext.main_27.unk8C = dash_gunner_spawn_cases[row].wait;
+    expected.ext.main_27.unk90 = dash_gunner_spawn_cases[row].volley;
+    expected.ext.main_27.unk91 = row >= 8 ? 48 : 0;
+    expected.ext.main_27.unk92 = dash_gunner_spawn_cases[row].retries;
+    expected.contact_damage = first ? 7 : 6;
+    expected.terrain_box = &dash_gunner_boxes[first + 4];
+    expected_animation(&expected, 1);
+    expected.state = 1;
+    func_80058740(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    dg_check_boxes(first);
+    return 1;
+}
+
+extern union AnimationStep* dash_gunner_animations[];
+static u32 stop_entries_dash_gunner_repeat_limits[0x52];
+static u32 repeat(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    u32 mode = row % 3, timer = row / 3 % 2, repeats = row / 6 % 2, duration = row / 12 % 2, wall = row / 24 % 3, face = row / 72, i;
+    memset(&obj, 0, sizeof(obj));
+    memset(stop_entries_dash_gunner_repeat_limits, 0, sizeof(stop_entries_dash_gunner_repeat_limits));
+    D_80141F50[2] = (u8*)stop_entries_dash_gunner_repeat_limits;
+    obj.active = 0x41;
+    obj.id = 27;
+    obj.state = 1;
+    obj.unk5 = 2;
+    obj.unk6 = 1;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.x_speed = face ? 0x20000 : -0x20000;
+    obj.y_speed = 0x12345;
+    obj.collision_flags = wall;
+    obj.unk7C = 9;
+    obj.ext.main_27.unk90 = mode;
+    obj.ext.main_27.unk91 = timer ? 2 : 1;
+    obj.ext.main_27.unk92 = repeats ? 2 : 1;
+    obj.ext.main_27.unk8C = duration ? 2 : 1;
+    obj.animation_table = (const u8* const*)dash_gunner_animations;
+    set_animation(&obj, 2);
+    assert(obj.animation_step.packed == 0x0C010002);
+    expected = obj;
+    expected.x_pos.val += obj.x_speed;
+    expected.y_pos.val -= obj.y_speed;
+    expected.animation_step.fields.duration = 1;
+    expected.ext.main_27.unk8C--;
+    if (!duration) {
+        expected.unk17 = 3;
+        expected.previous_animation_index = 255;
+        expected.animation_cursor = (const u8*)dash_gunner_animations[3];
+        expected.animation_step.packed = 0x12010002;
+        expected.x_speed = 0;
+        expected.unk5 = 5;
+        expected.unk6 = 0;
+    } else {
+        if (mode)
+            expected.ext.main_27.unk91--;
+        if (mode && !timer) {
+            expected.ext.main_27.unk91 = mode == 2 ? 48 : 96;
+            if (mode == 2)
+                expected.ext.main_27.unk92--;
+            if (mode == 2 && !repeats) {
+                expected.ext.main_27.unk92 = 2;
+                expected.unk17 = 3;
+                expected.previous_animation_index = 255;
+                expected.animation_cursor = (const u8*)dash_gunner_animations[3];
+                expected.animation_step.packed = 0x12010002;
+                expected.x_speed = 0;
+                expected.unk5 = 5;
+                expected.unk6 = 0;
+            } else {
+                expected.unk7C = 20;
+                expected.y_speed = 0;
+                expected.unk5 = 4;
+                expected.unk6 = 0;
+            }
+        }
+        if (!(mode == 2 && !timer && !repeats) && (face ? wall == 1 : wall == 2)) {
+            expected.unk7C = 20;
+            expected.y_speed = 0;
+            expected.unk5 = 4;
+            expected.unk6 = 0;
+        }
+    }
+    dash_gunner_run_move(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(D_80141F50[2] == (u8*)stop_entries_dash_gunner_repeat_limits);
+    for (i = 0; i < COUNT(stop_entries_dash_gunner_repeat_limits); i++)
+        assert(stop_entries_dash_gunner_repeat_limits[i] == 0);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "dash_gunner_animation_transitions", dash_gunner_animation_transitions_cases, dash_gunner_animation_transitions_cases_expected, COUNT(dash_gunner_animation_transitions_cases), 0 },
-    { "dash_gunner_facing_start", dash_gunner_facing_start_cases, dash_gunner_facing_start_cases_expected, COUNT(dash_gunner_facing_start_cases), 0 },
-    { "dash_gunner_steps", dash_gunner_steps_cases, dash_gunner_steps_cases_expected, COUNT(dash_gunner_steps_cases), 0 },
-    { "dash_gunner_turn_animation", dash_gunner_turn_animation_cases, dash_gunner_turn_animation_cases_expected, COUNT(dash_gunner_turn_animation_cases), 0 },
+    { "dash_gunner_spawn_subtypes", 0, 0, COUNT(dash_gunner_spawn_cases), test_dash_gunner_spawn_subtypes },
+    { "dash_gunner_aim", 0, 0, COUNT(dash_gunner_aim_cases), test_dash_gunner_aim },
+    { "dash_gunner_animation_transitions", NULL, dash_gunner_animation_transitions_cases_expected, COUNT(dash_gunner_animation_transitions_cases_expected), dash_gunner_animation_transitions_dash_case },
+    { "dash_gunner_facing_start", NULL, dash_gunner_facing_start_cases_expected, COUNT(dash_gunner_facing_start_cases_expected), dash_gunner_facing_start_dash_case },
+    { "dash_gunner_steps", NULL, dash_gunner_steps_cases_expected, COUNT(dash_gunner_steps_cases_expected), dash_gunner_steps_run },
+    { "dash_gunner_turn_animation", NULL, dash_gunner_turn_animation_cases_expected, COUNT(dash_gunner_turn_animation_cases_expected), dash_gunner_turn_animation_cases_row },
     { "dash_gunner_dash_move", 0, 0, 1, test_dash_gunner_dash_move },
     { "dash_gunner_run_move", 0, 0, 1, test_dash_gunner_run_move },
     { "func_80058740_0", 0, 0, 1, test_func_80058740_0 },
@@ -695,6 +854,7 @@ const struct CTestGroup c_test_groups[] = {
     { "func_80058AC8_0", 0, 0, 2, test_func_80058AC8_0 },
     { "func_80058AC8_1", 0, 0, 1, test_func_80058AC8_1 },
     { "func_80059640", 0, 0, 8, test_func_80059640 },
+    { "run_expiry_jump_modes_repeat_limit_and_wall_priority", NULL, NULL, 87, repeat },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(dash_gunner_animation_transitions_cases) + COUNT(dash_gunner_facing_start_cases) + COUNT(dash_gunner_steps_cases) + COUNT(dash_gunner_turn_animation_cases) + 1 + 1 + 1 + 1 + 2 + 1 + 8;
+const u32 c_test_count = COUNT(dash_gunner_spawn_cases) + COUNT(dash_gunner_aim_cases) + COUNT(dash_gunner_animation_transitions_cases_expected) + COUNT(dash_gunner_facing_start_cases_expected) + COUNT(dash_gunner_steps_cases_expected) + COUNT(dash_gunner_turn_animation_cases_expected) + 1 + 1 + 1 + 1 + 2 + 1 + 8 + 87;

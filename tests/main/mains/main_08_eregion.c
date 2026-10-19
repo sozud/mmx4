@@ -1,6 +1,10 @@
 #include "test_runtime.h"
 #include "main/mains/main_08_eregion.h"
 #include "main/55C4.h"
+void eregion_pounce_jump(struct MainObj*);
+void eregion_death(struct MainObj* arg0);
+void eregion_pounce(struct MainObj* arg0);
+void eregion_stomp_land(struct MainObj*);
 extern union AnimationStep* D_800FAD68[];
 extern u32 D_800FA724, D_800FA728, D_800FA72C;
 extern struct Unk_unk68 D_801066F0[];
@@ -58,25 +62,11 @@ static u32 eregion_case(u32 mode, u32 observation)
         return cur_random;
     return obj.animation_step.packed;
 }
-#define CASE(m, n)                                            \
-    static u32 eregion_choice_context_eregion_##m##_##n(void) \
-    {                                                         \
-        return eregion_case(m, n);                            \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1) CASE(m, 2)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-#define ENTRY(m, n) eregion_choice_context_eregion_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2)
-static const CTestCase eregion_choice_context_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) };
 static const u32 eregion_choice_context_cases_expected[] = { 0x104u, 0x0u, 0x1010010u, 0x104u, 0x0u, 0x1010010u, 0x105u, 0x6u, 0x1010010u, 0x106u, 0x7u, 0x1010010u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 eregion_choice_context_cases_row(u32 row)
+{
+    return eregion_case(row / 3, row % 3);
+}
 
 static u32 graphics_header[4] = { 0x1800, 0x12345678, 0x87654321, 0x55555555 };
 static u32 intro_case(u32 mode)
@@ -190,20 +180,7 @@ static u32 intro_case(u32 mode)
     actual = (u8)obj.unk5 | ((u32)visual_objects[29].active << 8) | ((u32)visual_objects[31].active << 16);
     return actual;
 }
-#define CASE(m)                                              \
-    static u32 eregion_intro_two_visual_pool_intro_##m(void) \
-    {                                                        \
-        return intro_case(m);                                \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-#define ENTRY(m) eregion_intro_two_visual_pool_intro_##m,
-static const CTestCase eregion_intro_two_visual_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) };
 static const u32 eregion_intro_two_visual_pool_cases_expected[] = { 0x10109u, 0x14109u, 0x414109u };
-#undef CASE
-#undef ENTRY
 
 static u32 leap_case(u32 mode)
 {
@@ -288,22 +265,7 @@ static u32 leap_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk6 | ((u32)obj.unk17 << 8) | ((u32)(u8)visual_objects[30].unk2 << 16) | ((u32)(u8)visual_objects[31].unk2 << 24);
 }
-#define CASE(m)                                         \
-    static u32 eregion_intro_visual_pool_leap_##m(void) \
-    {                                                   \
-        return leap_case(m);                            \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) eregion_intro_visual_pool_leap_##m,
-static const CTestCase eregion_intro_visual_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 eregion_intro_visual_pool_cases_expected[] = { 0x1u, 0x402u, 0x3000402u, 0x4030402u, 0x4030402u };
-#undef CASE
-#undef ENTRY
 
 static u32 recoil_case(u32 mode, u32 observation)
 {
@@ -343,24 +305,11 @@ static u32 recoil_case(u32 mode, u32 observation)
     actual = observation == 0 ? (u16)obj.x_pos.i.hi | ((u32)(u8)obj.unk6 << 16) : obj.animation_step.packed;
     return actual;
 }
-#define CASE(m, n)                                          \
-    static u32 eregion_recoil_frames_recoil_##m##_##n(void) \
-    {                                                       \
-        return recoil_case(m, n);                           \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1)
-MODE(0)
-MODE(1)
-MODE(2)
-#define ENTRY(m, n) eregion_recoil_frames_recoil_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1)
-static const CTestCase eregion_recoil_frames_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) };
 static const u32 eregion_recoil_frames_cases_expected[] = { 0x28004Eu, 0x1C010003u, 0x28007Au, 0x1D010003u, 0x280064u, 0xC010003u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 eregion_recoil_frames_cases_row(u32 row)
+{
+    return recoil_case(row / 2, row % 2);
+}
 
 static const u8 words[6] = { 0, 1, 3, 3, 4, 0 };
 static u32 recovery_case(u32 mode)
@@ -419,23 +368,7 @@ static u32 recovery_case(u32 mode)
     assert(D_800FAD68[10][4].packed == 0x0C010105);
     return (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u16)obj.unk7C << 16);
 }
-#define CASE(m)                                              \
-    static u32 eregion_recovery_animation_recovery_##m(void) \
-    {                                                        \
-        return recovery_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) eregion_recovery_animation_recovery_##m,
-static const CTestCase eregion_recovery_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 eregion_recovery_animation_cases_expected[] = { 0x403u, 0x70403u, 0x2B0501u, 0x10101u, 0x2B0501u, 0x70403u };
-#undef CASE
-#undef ENTRY
 
 static u32 wing_case(u32 mode)
 {
@@ -531,21 +464,7 @@ static u32 wing_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return obj.unk17 | ((u32)(u8)shot_objects[31].active << 8) | ((u32)(u8)visual_objects[31].active << 16);
 }
-#define CASE(m)                                        \
-    static u32 eregion_wing_slash_pools_wing_##m(void) \
-    {                                                  \
-        return wing_case(m);                           \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) eregion_wing_slash_pools_wing_##m,
-static const CTestCase eregion_wing_slash_pools_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 eregion_wing_slash_pools_cases_expected[] = { 0x10108u, 0x14108u, 0x410108u, 0x414108u };
-#undef CASE
-#undef ENTRY
 
 static const u32 eregion_fireball_fire_expected[] = { 2u, 2u, 0u, 1u, 0u, 0u };
 static u32 test_eregion_fireball_fire(u32 row)
@@ -599,31 +518,6 @@ static u32 test_eregion_intro_rise(u32 row)
     observed_values[6] = (u32)obj.x_speed;
     observed_values[7] = (u32)obj.y_speed;
     return c_test_observe(0, row, observed_values, eregion_intro_rise_expected, 8);
-}
-
-static const u32 eregion_pounce_rise_expected[] = { 3u, 1u, 0u, 0xBFu, 1u, 0xFEu, 0u, 0x12B0u, 0u, 0xFFFD8000u };
-static u32 test_eregion_pounce_rise(u32 row)
-{
-    u32 observed_values[10];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&D_800FA72C, 0, sizeof(D_800FA72C));
-    obj.unk7E = 255;
-    obj.animation_step.fields.event = -1;
-    obj.unk15 = 255;
-    D_800FA72C = 0;
-    eregion_pounce_rise(&obj);
-    observed_values[0] = (u32)obj.contact_damage;
-    observed_values[1] = (u32)obj.ext.main_8.unk88;
-    observed_values[2] = (u32)obj.gravity;
-    observed_values[3] = (u32)obj.unk15;
-    observed_values[4] = (u32)obj.unk6;
-    observed_values[5] = (u32)obj.unk7E;
-    observed_values[6] = (u32)obj.x_accel;
-    observed_values[7] = (u32)obj.x_pos.i.hi;
-    observed_values[8] = (u32)obj.x_speed;
-    observed_values[9] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, eregion_pounce_rise_expected, 10);
 }
 
 struct eregion_recoil_case {
@@ -681,49 +575,6 @@ static u32 test_eregion_spread_fire(u32 row)
     observed_values[4] = (u32)shot_objects[0].id;
     observed_values[5] = (u32)shot_objects[0].unk2;
     return c_test_observe(0, row, observed_values, eregion_spread_fire_expected, 6);
-}
-
-struct func_800480D0_case {
-    u32 unk8A, unk15, g_Player_x_pos, obj_x_pos;
-    u32 expected[3];
-};
-static const struct func_800480D0_case func_800480D0_cases[] = {
-    { 2, 0, 0, 0, { 0u, 6u, 0u } },
-    { 0, 255, 2147088889, -851968, { 1u, 7u, 0u } },
-};
-static u32 test_func_800480D0(u32 row)
-{
-    const struct func_800480D0_case* c = &func_800480D0_cases[row];
-    u32 observed_values[3];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&cur_random, 0, sizeof(cur_random));
-    obj.ext.main_8.unk8A = c->unk8A;
-    obj.unk15 = c->unk15;
-    g_Player.x_pos.val = c->g_Player_x_pos;
-    obj.x_pos.val = c->obj_x_pos;
-    func_800480D0(&obj);
-    observed_values[0] = (u32)obj.ext.main_8.unk8A;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, c->expected, 3);
-}
-
-static const u32 func_8004932C_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_func_8004932C(u32 row)
-{
-    u32 observed_values[6];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    func_8004932C(&obj);
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk42;
-    observed_values[2] = (u32)obj.unk5;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.unk7C;
-    observed_values[5] = (u32)obj.x_pos.i.hi;
-    return c_test_observe(0, row, observed_values, func_8004932C_expected, 6);
 }
 
 #include "support/pool_full.h"
@@ -784,21 +635,414 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50100u, 0x50100u, 0x50100u, 0x100u };
+#include "support/state_cases.h"
+
+static s8 eregion_blast[8];
+static struct Unk_unk68 eregion_feet = { 0, 16, 16, 8 };
+#define ER(step, phase) (state_reset(step, phase, 0), so.x_pos.i.hi = 0x1200, so.y_pos.i.hi = 0x100)
+#define BLAST(alive, done) (eregion_blast[0] = alive, eregion_blast[7] = done, so.ext.main_9.effect = (void*)eregion_blast)
+static void ee_death_start(void)
+{
+    ER(2, 0);
+    g_Player.unk15 = 0x40;
+    eregion_death(&so);
+}
+static void ee_death_blink_spawn(void)
+{
+    ER(2, 1);
+    so.unk7C = 1;
+    so.unk7E = 3;
+    eregion_death(&so);
+}
+static void ee_death_blink(void)
+{
+    ER(2, 1);
+    so.unk7C = 3;
+    so.ext.main_9.object_id = 0x19;
+    eregion_death(&so);
+    state_extra = so.ext.main_9.object_id;
+}
+static void ee_death_blink_last(void)
+{
+    ER(2, 1);
+    so.unk7C = 3;
+    so.ext.main_9.object_id = 7;
+    eregion_death(&so);
+    state_extra = so.ext.main_9.object_id;
+}
+static void ee_wait_blink(void)
+{
+    ER(2, 2);
+    BLAST(1, 0);
+    eregion_death(&so);
+}
+static void ee_wait_count(void)
+{
+    ER(2, 2);
+    BLAST(1, 0);
+    so.unk7E = 3;
+    eregion_death(&so);
+}
+static void ee_wait_boom(void)
+{
+    ER(2, 2);
+    BLAST(1, 1);
+    eregion_death(&so);
+}
+static void ee_wait_done(void)
+{
+    ER(2, 2);
+    BLAST(0, 0);
+    so.active = 1;
+    eregion_death(&so);
+}
+static void ee_crouch_left(void)
+{
+    ER(3, 0);
+    eregion_pounce(&so);
+}
+static void ee_crouch_right(void)
+{
+    ER(3, 0);
+    so.unk15 = 0x40;
+    eregion_pounce(&so);
+}
+static void ee_rise_wait(void)
+{
+    ER(3, 1);
+    so.unk7E = 2;
+    so.animation_step.fields.event = 1;
+    eregion_pounce(&so);
+}
+static void ee_rise_top_left(void)
+{
+    ER(3, 1);
+    so.y_pos.i.hi = 0x80;
+    eregion_pounce(&so);
+}
+static void ee_rise_top_right(void)
+{
+    ER(3, 1);
+    so.y_pos.i.hi = 0x80;
+    so.unk15 = 0x40;
+    eregion_pounce(&so);
+}
+static void ee_jump_left(void)
+{
+    ER(3, 2);
+    so.animation_step.fields.event = 1;
+    eregion_pounce(&so);
+}
+static void ee_jump_right(void)
+{
+    ER(3, 2);
+    so.animation_step.fields.event = 1;
+    so.unk15 = 0x40;
+    eregion_pounce(&so);
+}
+static void ee_jump_roar(void)
+{
+    ER(3, 2);
+    so.animation_step.fields.event = 3;
+    so.x_speed = 0x10000;
+    eregion_pounce(&so);
+}
+static void ee_stomp_shake(void)
+{
+    ER(5, 0);
+    so.terrain_box = &eregion_feet;
+    so.animation_step.fields.event = 1;
+    eregion_stomp_land(&so);
+}
+static void ee_stomp_right_behind(void)
+{
+    ER(5, 0);
+    so.terrain_box = &eregion_feet;
+    so.collision_flags = 8;
+    so.unk15 = 0x40;
+    g_Player.x_pos.i.hi = 0x1000;
+    eregion_stomp_land(&so);
+}
+static void ee_stomp_right_ahead(void)
+{
+    ER(5, 0);
+    so.terrain_box = &eregion_feet;
+    so.collision_flags = 8;
+    so.unk15 = 0x40;
+    g_Player.x_pos.i.hi = 0x1300;
+    eregion_stomp_land(&so);
+}
+static void ee_stomp_left_behind(void)
+{
+    ER(5, 0);
+    so.terrain_box = &eregion_feet;
+    so.collision_flags = 8;
+    g_Player.x_pos.i.hi = 0x1000;
+    eregion_stomp_land(&so);
+}
+static void ee_stomp_left_ahead(void)
+{
+    ER(5, 0);
+    so.terrain_box = &eregion_feet;
+    so.collision_flags = 8;
+    g_Player.x_pos.i.hi = 0x1300;
+    eregion_stomp_land(&so);
+}
+static void ee_swipe_left(void)
+{
+    ER(6, 0);
+    so.x_speed = 0x1234;
+    func_80048B04(&so);
+}
+static void ee_swipe_right(void)
+{
+    ER(6, 0);
+    so.x_speed = 0x1234;
+    so.unk15 = 0x40;
+    so.animation_step.fields.event = 2;
+    func_80048B04(&so);
+}
+static void ee_swipe_end(void)
+{
+    ER(6, 0);
+    so.x_speed = 0x1234;
+    so.animation_step.fields.frame_index = 0xC;
+    so.animation_step.fields.event = 1;
+    func_80048B04(&so);
+}
+static void ee_pick_wait(void)
+{
+    ER(1, 0);
+    so.unk7C = 2;
+    func_800480D0(&so);
+}
+static void ee_pick_tired(void)
+{
+    ER(1, 0);
+    so.ext.main_8.unk8A = 2;
+    so.hp = 0x10;
+    func_800480D0(&so);
+}
+static void ee_pick_tired_strong(void)
+{
+    ER(1, 0);
+    so.ext.main_8.unk8A = 2;
+    so.hp = 0x20;
+    func_800480D0(&so);
+}
+static void ee_pick_near_right(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    so.unk15 = 0x40;
+    so.x_pos.i.hi = 0x1250;
+    g_Player.x_pos.i.hi = 0x1280;
+    func_800480D0(&so);
+}
+static void ee_pick_near_right_edge(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    so.unk15 = 0x40;
+    so.x_pos.i.hi = 0x11B0;
+    g_Player.x_pos.i.hi = 0x11D0;
+    func_800480D0(&so);
+}
+static void ee_pick_near_left(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    so.x_pos.i.hi = 0x11C0;
+    g_Player.x_pos.i.hi = 0x1180;
+    func_800480D0(&so);
+}
+static void ee_pick_near_left_edge(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    so.x_pos.i.hi = 0x1290;
+    g_Player.x_pos.i.hi = 0x1250;
+    func_800480D0(&so);
+}
+static void ee_pick_far_a(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    g_Player.x_pos.i.hi = 0x1000;
+    cur_random = 1;
+    func_800480D0(&so);
+}
+static void ee_pick_far_b(void)
+{
+    ER(1, 0);
+    so.hp = 0x20;
+    g_Player.x_pos.i.hi = 0x1000;
+    cur_random = 5;
+    func_800480D0(&so);
+}
+static void ee_pick_weak_near_a(void)
+{
+    ER(1, 0);
+    so.hp = 0x10;
+    g_Player.x_pos.i.hi = 0x1180;
+    cur_random = 1;
+    func_800480D0(&so);
+}
+static void ee_pick_weak_near_b(void)
+{
+    ER(1, 0);
+    so.hp = 0x10;
+    g_Player.x_pos.i.hi = 0x1180;
+    cur_random = 7;
+    func_800480D0(&so);
+}
+static void ee_pick_weak_far_a(void)
+{
+    ER(1, 0);
+    so.hp = 0x10;
+    g_Player.x_pos.i.hi = 0x1000;
+    cur_random = 2;
+    func_800480D0(&so);
+}
+static void ee_pick_weak_far_b(void)
+{
+    ER(1, 0);
+    so.hp = 0x10;
+    g_Player.x_pos.i.hi = 0x1000;
+    cur_random = 9;
+    func_800480D0(&so);
+}
+
+static void (*const eregion_states_cases[])(void) = {
+    ee_death_start,
+    ee_death_blink_spawn,
+    ee_death_blink,
+    ee_death_blink_last,
+    ee_wait_blink,
+    ee_wait_count,
+    ee_wait_boom,
+    ee_wait_done,
+    ee_crouch_left,
+    ee_crouch_right,
+    ee_rise_wait,
+    ee_rise_top_left,
+    ee_rise_top_right,
+    ee_jump_left,
+    ee_jump_right,
+    ee_jump_roar,
+    ee_stomp_shake,
+    ee_stomp_right_behind,
+    ee_stomp_right_ahead,
+    ee_stomp_left_behind,
+    ee_stomp_left_ahead,
+    ee_swipe_left,
+    ee_swipe_right,
+    ee_swipe_end,
+    ee_pick_wait,
+    ee_pick_tired,
+    ee_pick_tired_strong,
+    ee_pick_near_right,
+    ee_pick_near_right_edge,
+    ee_pick_near_left,
+    ee_pick_near_left_edge,
+    ee_pick_far_a,
+    ee_pick_far_b,
+    ee_pick_weak_near_a,
+    ee_pick_weak_near_b,
+    ee_pick_weak_far_a,
+    ee_pick_weak_far_b,
+};
+static const u32 eregion_states_expected[] = { 0x1010200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 1u, 0x10200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 0x14u, 0u, 0x10200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 2u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x58000u, 0u, 0u, 0x20200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x80020200u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x50000u, 0u, 0x41000000u, 0x10300u, 0xFF000000u, 0x12000000u, 0x1000000u, 0x30000u, 0x18000u, 0u, 0x50000u, 0u, 0u, 0x10300u, 0xFF400000u, 0x12000000u, 0x1000000u, 0xFFFD0000u, 0x18000u, 0u, 0x50000u, 0u, 0u, 0x20300u, 0xFF000000u, 0x12000000u, 0x1000000u, 0xFFF78000u, 0xFFFC0000u, 0xFFD00000u, 0x50000u, 0u, 0u, 0x10300u, 0u, 0x12000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10300u, 0x400000u, 0x12000000u, 0x800000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x20300u, 0u, 0x12010000u, 0x1000000u, 0x10000u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x400u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x500u, 0x400000u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x400u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0x2100u, 0x600u, 0u, 0x123C0000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0x400000u, 0x122C0000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x12340000u, 0x1000000u, 0x1234u, 0u, 0u, 0x40000u, 0u, 0u, 0x100u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x600u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0x400000u, 0x12500000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0x400000u, 0x11B00000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x400u, 0u, 0x11C00000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12900000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x300u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x800u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x500u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x700u, 0u, 0x12000000u, 0x1000000u, 0u, 0u, 0u, 0x40000u, 0u, 0u };
+
+static u32 test_eregion_states(u32 row)
+{
+    return object_run(eregion_states_cases[row], row, &eregion_states_expected[row * 10]);
+}
+
+#define ER_SUB(sub) (state_reset(4, sub, 0), so.x_pos.i.hi = 0x1200, so.y_pos.i.hi = 0x100)
+static void er_rise_hold(void)
+{
+    ER_SUB(2);
+    so.unk7E = 2;
+    eregion_pounce_rise(&so);
+}
+static void er_rise(void)
+{
+    ER_SUB(2);
+    so.y_speed = 0x20000;
+    so.animation_step.fields.event = 1;
+    eregion_pounce_rise(&so);
+}
+static void er_rise_top_left(void)
+{
+    ER_SUB(2);
+    so.y_pos.i.hi = 0x80;
+    eregion_pounce_rise(&so);
+    state_extra = so.ext.main_8.unk88;
+}
+static void er_rise_top_right(void)
+{
+    ER_SUB(2);
+    so.y_pos.i.hi = 0x80;
+    so.unk15 = 0x40;
+    eregion_pounce_rise(&so);
+}
+static void er_jump_wait(void)
+{
+    ER_SUB(1);
+    eregion_pounce_jump(&so);
+}
+static void er_jump_rumble(void)
+{
+    ER_SUB(1);
+    so.animation_step.fields.event = 3;
+    eregion_pounce_jump(&so);
+}
+static void er_jump_left(void)
+{
+    ER_SUB(1);
+    so.animation_step.fields.event = 1;
+    eregion_pounce_jump(&so);
+}
+static void er_jump_right(void)
+{
+    ER_SUB(1);
+    so.animation_step.fields.event = 1;
+    so.unk15 = 0x40;
+    eregion_pounce_jump(&so);
+}
+
+static void (*const eregion_pounce_cases[])(void) = {
+    er_rise_hold,
+    er_rise,
+    er_rise_top_left,
+    er_rise_top_right,
+    er_jump_wait,
+    er_jump_rumble,
+    er_jump_left,
+    er_jump_right,
+};
+static const u32 eregion_pounce_expected[] = { 0x204u, 0x10000u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0u, 0x12000000u, 0u, 0x20000u, 0u, 0u, 0u, 0u, 0u, 0x304u, 0u, 0x11A00000u, 0u, 0xFFFD8000u, 0u, 0x4000u, 2u, 1u, 0u, 0x304u, 0u, 0x12B00000u, 0u, 0xFFFD8000u, 0u, 0u, 2u, 0u, 0u, 0x104u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x104u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x204u, 0x140000u, 0x12000000u, 0xFFF78000u, 0xFFFC0000u, 0xFFD00000u, 4u, 2u, 0u, 0u, 0x204u, 0x140000u, 0x12000000u, 0x88000u, 0xFFFC0000u, 0xFFD00000u, 0x4004u, 2u, 0u, 0u };
+
+static u32 test_eregion_pounce(u32 row)
+{
+    return state_run(eregion_pounce_cases[row], row, &eregion_pounce_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "eregion_choice_context", eregion_choice_context_cases, eregion_choice_context_cases_expected, COUNT(eregion_choice_context_cases), 0 },
-    { "eregion_intro_two_visual_pool", eregion_intro_two_visual_pool_cases, eregion_intro_two_visual_pool_cases_expected, COUNT(eregion_intro_two_visual_pool_cases), 0 },
-    { "eregion_intro_visual_pool", eregion_intro_visual_pool_cases, eregion_intro_visual_pool_cases_expected, COUNT(eregion_intro_visual_pool_cases), 0 },
-    { "eregion_recoil_frames", eregion_recoil_frames_cases, eregion_recoil_frames_cases_expected, COUNT(eregion_recoil_frames_cases), 0 },
-    { "eregion_recovery_animation", eregion_recovery_animation_cases, eregion_recovery_animation_cases_expected, COUNT(eregion_recovery_animation_cases), 0 },
-    { "eregion_wing_slash_pools", eregion_wing_slash_pools_cases, eregion_wing_slash_pools_cases_expected, COUNT(eregion_wing_slash_pools_cases), 0 },
+    { "eregion_pounce", 0, 0, COUNT(eregion_pounce_cases), test_eregion_pounce },
+    { "eregion_states", 0, 0, COUNT(eregion_states_cases), test_eregion_states },
+    { "eregion_choice_context", NULL, eregion_choice_context_cases_expected, COUNT(eregion_choice_context_cases_expected), eregion_choice_context_cases_row },
+    { "eregion_intro_two_visual_pool", NULL, eregion_intro_two_visual_pool_cases_expected, COUNT(eregion_intro_two_visual_pool_cases_expected), intro_case },
+    { "eregion_intro_visual_pool", NULL, eregion_intro_visual_pool_cases_expected, COUNT(eregion_intro_visual_pool_cases_expected), leap_case },
+    { "eregion_recoil_frames", NULL, eregion_recoil_frames_cases_expected, COUNT(eregion_recoil_frames_cases_expected), eregion_recoil_frames_cases_row },
+    { "eregion_recovery_animation", NULL, eregion_recovery_animation_cases_expected, COUNT(eregion_recovery_animation_cases_expected), recovery_case },
+    { "eregion_wing_slash_pools", NULL, eregion_wing_slash_pools_cases_expected, COUNT(eregion_wing_slash_pools_cases_expected), wing_case },
     { "eregion_fireball_fire", 0, 0, 1, test_eregion_fireball_fire },
     { "eregion_intro_rise", 0, 0, 1, test_eregion_intro_rise },
-    { "eregion_pounce_rise", 0, 0, 1, test_eregion_pounce_rise },
     { "eregion_recoil", 0, 0, 2, test_eregion_recoil },
     { "eregion_spread_fire", 0, 0, 1, test_eregion_spread_fire },
-    { "func_800480D0", 0, 0, 2, test_func_800480D0 },
-    { "func_8004932C", 0, 0, 1, test_func_8004932C },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(eregion_choice_context_cases) + COUNT(eregion_intro_two_visual_pool_cases) + COUNT(eregion_intro_visual_pool_cases) + COUNT(eregion_recoil_frames_cases) + COUNT(eregion_recovery_animation_cases) + COUNT(eregion_wing_slash_pools_cases) + 1 + 1 + 1 + 2 + 1 + 2 + 1 + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(eregion_pounce_cases) + COUNT(eregion_states_cases) + COUNT(eregion_choice_context_cases_expected) + COUNT(eregion_intro_two_visual_pool_cases_expected) + COUNT(eregion_intro_visual_pool_cases_expected) + COUNT(eregion_recoil_frames_cases_expected) + COUNT(eregion_recovery_animation_cases_expected) + COUNT(eregion_wing_slash_pools_cases_expected) + 1 + 1 + 2 + 1 + COUNT(pool_full_cases);

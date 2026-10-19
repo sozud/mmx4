@@ -3,6 +3,8 @@
 #include "main/1CF60.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "support/state_cases.h"
+void caterkiller_wait_above(struct MainObj* arg0);
 extern union AnimationStep* caterkiller_animations[];
 void caterkiller_check_fall(struct MainObj*);
 extern struct StageObjectRecord stage_object_records_1_1[88];
@@ -92,29 +94,11 @@ static u32 end_case(u32 mode, u32 lunge)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)(u8)obj.unk15 << 16) | ((u32)obj.ext.main_25.unk84 << 24);
 }
-#define CASE(m, n)                                            \
-    static u32 caterkiller_end_boundaries_end_##m##_##n(void) \
-    {                                                         \
-        return end_case(m, n);                                \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-MODE(4)
-MODE(5)
-MODE(6)
-MODE(7)
-#define ENTRY(m, n) caterkiller_end_boundaries_end_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1)
-static const CTestCase caterkiller_end_boundaries_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) ENTRIES(7) };
 static const u32 caterkiller_end_boundaries_cases_expected[] = { 0x1400102u, 0x2u, 0x102u, 0x400002u, 0x3u, 0x1000003u, 0x400003u, 0x400003u, 0x1000202u, 0x1000203u, 0x1400102u, 0x2u, 0x3u, 0x1000003u, 0x102u, 0x400002u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 caterkiller_end_boundaries_cases_row(u32 row)
+{
+    return end_case(row / 2, row % 2);
+}
 
 enum { NONE,
     NEAR,
@@ -211,29 +195,7 @@ static u32 caterkiller_events_run(u32 mode)
     return (u8)worm.unk5 | ((u32)(u8)worm.ext.main_25.unk84 << 8) | ((u32)(u16)worm.y_pos.u.hi << 16);
 }
 
-#define CASE(name)                                    \
-    static u32 caterkiller_events_##name##_case(void) \
-    {                                                 \
-        return caterkiller_events_run(name);          \
-    }
-CASE(NONE)
-CASE(NEAR)
-CASE(FAR)
-CASE(DROP_SMALL)
-CASE(DROP_LARGE)
-CASE(LEAP)
-CASE(LAND)
-CASE(FALL)
-CASE(SETTLE)
-CASE(UNKNOWN)
-#define ENTRY(name) caterkiller_events_##name##_case,
-static const CTestCase caterkiller_events_cases[]
-    = {
-          ENTRY(NONE) ENTRY(NEAR) ENTRY(FAR) ENTRY(DROP_SMALL) ENTRY(DROP_LARGE) ENTRY(LEAP) ENTRY(LAND) ENTRY(FALL) ENTRY(SETTLE) ENTRY(UNKNOWN)
-      };
 static const u32 caterkiller_events_cases_expected[] = { 0x602204u, 0x600003u, 0x600002u, 0x652204u, 0x6C0304u, 0x6C0404u, 0x602204u, 0x5E2204u, 0x600504u, 0x602204u };
-#undef CASE
-#undef ENTRY
 
 static u32 fall_case(u32 mode)
 {
@@ -280,23 +242,7 @@ static u32 fall_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
 }
-#define CASE(m)                                          \
-    static u32 caterkiller_fall_animation_fall_##m(void) \
-    {                                                    \
-        return fall_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) caterkiller_fall_animation_fall_##m,
-static const CTestCase caterkiller_fall_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 caterkiller_fall_animation_cases_expected[] = { 0x620304u, 0x660304u, 0x660304u, 0x640004u, 0x640006u, 0x640001u };
-#undef CASE
-#undef ENTRY
 
 #include "support/enemy_world.h"
 
@@ -429,14 +375,92 @@ static u32 test_func_80057874(u32 row)
     return c_test_observe(0, row, &observed, func_80057874_expected, 1);
 }
 
+#define CK(step, sub) (state_reset(step, sub, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+static void ck_init_crawl(void)
+{
+    CK(0, 0);
+    func_80057160(&so);
+    state_extra = so.ext.main_25.unk80 | so.ext.main_25.unk84 << 8;
+}
+static void ck_init_drop(void)
+{
+    CK(0, 0);
+    so.unk2 = 1;
+    func_80057160(&so);
+    state_extra = so.ext.main_25.unk84;
+}
+static void ck_init_hang(void)
+{
+    CK(0, 0);
+    so.unk2 = 2;
+    func_80057160(&so);
+    state_extra = so.ext.main_25.unk84;
+}
+static void ck_init_other(void)
+{
+    CK(0, 0);
+    so.unk2 = 3;
+    func_80057160(&so);
+}
+static void ck_wait(void)
+{
+    CK(3, 0);
+    g_Player.x_pos.i.hi = 0x88;
+    caterkiller_wait_above(&so);
+}
+static void ck_wait_drop(void)
+{
+    CK(3, 0);
+    g_Player.x_pos.i.hi = 0xA0;
+    caterkiller_wait_above(&so);
+}
+static void ck_fall(void)
+{
+    CK(4, 0);
+    caterkiller_fall_start(&so);
+}
+static void ck_fall_push(void)
+{
+    CK(4, 0);
+    so.animation_step.fields.event = 2;
+    caterkiller_fall_start(&so);
+}
+static void ck_fall_curl(void)
+{
+    CK(4, 0);
+    so.animation_table = (void*)caterkiller_animations;
+    so.animation_step.fields.event = 1;
+    caterkiller_fall_start(&so);
+    state_extra = so.ext.main_25.unk84;
+}
+
+static void (*const caterkiller_states_cases[])(void) = {
+    ck_init_crawl,
+    ck_init_drop,
+    ck_init_hang,
+    ck_init_other,
+    ck_wait,
+    ck_wait_drop,
+    ck_fall,
+    ck_fall_push,
+    ck_fall_curl,
+};
+static const u32 caterkiller_states_expected[] = { 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30003u, 0x40u, 0u, 0x1000004u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0x1000006u, 0u, 0x800000u, 0u, 0u, 0x420000u, 4u, 0x30003u, 2u, 0u, 0u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0x30000u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0x420000u, 0u, 0u, 0u, 0u, 0x104u, 0u, 0x800000u, 0u, 0u, 0u, 4u, 0u, 2u, 0u };
+
+static u32 test_caterkiller_states(u32 row)
+{
+    return state_run(caterkiller_states_cases[row], row, &caterkiller_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "caterkiller_end_boundaries", caterkiller_end_boundaries_cases, caterkiller_end_boundaries_cases_expected, COUNT(caterkiller_end_boundaries_cases), 0 },
-    { "caterkiller_events", caterkiller_events_cases, caterkiller_events_cases_expected, COUNT(caterkiller_events_cases), 0 },
-    { "caterkiller_fall_animation", caterkiller_fall_animation_cases, caterkiller_fall_animation_cases_expected, COUNT(caterkiller_fall_animation_cases), 0 },
+    { "caterkiller_states", 0, 0, COUNT(caterkiller_states_cases), test_caterkiller_states },
+    { "caterkiller_end_boundaries", NULL, caterkiller_end_boundaries_cases_expected, COUNT(caterkiller_end_boundaries_cases_expected), caterkiller_end_boundaries_cases_row },
+    { "caterkiller_events", NULL, caterkiller_events_cases_expected, COUNT(caterkiller_events_cases_expected), caterkiller_events_run },
+    { "caterkiller_fall_animation", NULL, caterkiller_fall_animation_cases_expected, COUNT(caterkiller_fall_animation_cases_expected), fall_case },
     { "caterkiller_climb_cling", 0, 0, 1, test_caterkiller_climb_cling },
     { "caterkiller_climb_rise", 0, 0, 1, test_caterkiller_climb_rise },
     { "caterkiller_fall_drop", 0, 0, 1, test_caterkiller_fall_drop },
     { "func_80057874", 0, 0, 1, test_func_80057874 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(caterkiller_end_boundaries_cases) + COUNT(caterkiller_events_cases) + COUNT(caterkiller_fall_animation_cases) + 1 + 1 + 1 + 1;
+const u32 c_test_count = COUNT(caterkiller_states_cases) + COUNT(caterkiller_end_boundaries_cases_expected) + COUNT(caterkiller_events_cases_expected) + COUNT(caterkiller_fall_animation_cases_expected) + 1 + 1 + 1 + 1;

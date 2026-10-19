@@ -2,6 +2,7 @@
 #include "main/mains/main_33_spike_sled.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "support/state_cases.h"
 extern u8 D_800FDD98[8];
 extern struct StageObjectRecord stage_object_records_3_0[58];
 
@@ -42,20 +43,7 @@ static u32 turn_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.unk15 << 16) | ((u32)(u8)obj.unk7C << 24);
 }
-#define CASE(m)                                               \
-    static u32 spike_sled_intro_turn_animation_turn_##m(void) \
-    {                                                         \
-        return turn_case(m);                                  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-#define ENTRY(m) spike_sled_intro_turn_animation_turn_##m,
-static const CTestCase spike_sled_intro_turn_animation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) };
 static const u32 spike_sled_intro_turn_animation_cases_expected[] = { 0x40400006u, 0x40000006u, 0x1400102u };
-#undef CASE
-#undef ENTRY
 
 static u32 patrol_case(u32 mode, u32 observation)
 {
@@ -126,23 +114,11 @@ static u32 patrol_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define PATROL_CASE(m, n)                                       \
-    static u32 spike_sled_patrol_context_patrol_##m##_##n(void) \
-    {                                                           \
-        return patrol_case(m, n);                               \
-    }
-#define PATROL_MODE(m) PATROL_CASE(m, 0) PATROL_CASE(m, 1) PATROL_CASE(m, 2) PATROL_CASE(m, 3) PATROL_CASE(m, 4) PATROL_CASE(m, 5) PATROL_CASE(m, 6)
-PATROL_MODE(0)
-PATROL_MODE(1)
-#define PATROL_ENTRY(m, n) spike_sled_patrol_context_patrol_##m##_##n,
-#define PATROL_ENTRIES(m) PATROL_ENTRY(m, 0) PATROL_ENTRY(m, 1) PATROL_ENTRY(m, 2) PATROL_ENTRY(m, 3) PATROL_ENTRY(m, 4) PATROL_ENTRY(m, 5) PATROL_ENTRY(m, 6)
-static const CTestCase spike_sled_patrol_context_cases[]
-    = { PATROL_ENTRIES(0) PATROL_ENTRIES(1) };
 static const u32 spike_sled_patrol_context_cases_expected[] = { 0x12313468u, 0x2E82357u, 0x401u, 0x1u, 0x2468u, 0xD010006u, 0xFF0200u, 0x130F3468u, 0x2E82357u, 0x401u, 0x1u, 0x2468u, 0xD010006u, 0xFF0200u };
-#undef PATROL_CASE
-#undef PATROL_MODE
-#undef PATROL_ENTRY
-#undef PATROL_ENTRIES
+static u32 spike_sled_patrol_context_cases_row(u32 row)
+{
+    return patrol_case(row / 7, row % 7);
+}
 
 static u32 sled_case(u32 mode, u32 observation)
 {
@@ -197,25 +173,11 @@ static u32 sled_case(u32 mode, u32 observation)
         actual = obj.x_accel;
     return actual;
 }
-#define SLED_CASE(m, n)                                  \
-    static u32 spike_sled_selection_sled_##m##_##n(void) \
-    {                                                    \
-        return sled_case(m, n);                          \
-    }
-#define SLED_MODE(m) SLED_CASE(m, 0) SLED_CASE(m, 1) SLED_CASE(m, 2)
-SLED_MODE(0)
-SLED_MODE(1)
-SLED_MODE(2)
-SLED_MODE(3)
-#define SLED_ENTRY(m, n) spike_sled_selection_sled_##m##_##n,
-#define SLED_ENTRIES(m) SLED_ENTRY(m, 0) SLED_ENTRY(m, 1) SLED_ENTRY(m, 2)
-static const CTestCase spike_sled_selection_cases[]
-    = { SLED_ENTRIES(0) SLED_ENTRIES(1) SLED_ENTRIES(2) SLED_ENTRIES(3) };
 static const u32 spike_sled_selection_cases_expected[] = { 0x20312E0u, 0x15010002u, 0xFFFFC000u, 0x2041320u, 0x15010002u, 0xFFFFC000u, 0x2011260u, 0x15010002u, 0xFFFFC000u, 0x2011260u, 0x15010002u, 0xFFFFC000u };
-#undef SLED_CASE
-#undef SLED_MODE
-#undef SLED_ENTRY
-#undef SLED_ENTRIES
+static u32 spike_sled_selection_cases_row(u32 row)
+{
+    return sled_case(row / 3, row % 3);
+}
 
 struct func_8005D4E0_case {
     u32 unk5;
@@ -308,90 +270,6 @@ static u32 test_func_8005DC58(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 7);
 }
 
-struct func_8005E108_case {
-    u32 variant, unk80;
-    u32 expected[3];
-};
-static const struct func_8005E108_case func_8005E108_cases[] = {
-    { 2, 251, { 0xFFu, 1u, 0x26u } },
-    { 4, 239, { 6u, 1u, 0x22u } },
-    { 4, 0, { 0xFFu, 1u, 0x26u } },
-};
-static u32 test_func_8005E108(u32 row)
-{
-    const struct func_8005E108_case* c = &func_8005E108_cases[row];
-    u32 observed_values[3];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.ext.main_33.variant = c->variant;
-    obj.ext.main_33.unk80 = c->unk80;
-    func_8005E108(&obj);
-    observed_values[0] = (u32)obj.ext.main_33.variant;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, c->expected, 3);
-}
-
-static const u32 spike_sled_bomb_rise_0_expected[] = { 0u, 0u, 0u, 2u, 0u, 4u };
-static u32 test_spike_sled_bomb_rise_0(u32 row)
-{
-    u32 observed_values[6];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.ext.main_33.variant = 6;
-    spike_sled_bomb_rise(&obj);
-    observed_values[0] = (u32)obj.ext.main_33.unk84;
-    observed_values[1] = (u32)obj.gravity;
-    observed_values[2] = (u32)obj.unk5;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.unk7C;
-    observed_values[5] = (u32)obj.unk7E;
-    return c_test_observe(0, row, observed_values, spike_sled_bomb_rise_0_expected, 6);
-}
-
-struct spike_sled_bomb_rise_1_case {
-    u32 y_pos, unk7C, variant;
-    u32 expected[9];
-};
-static const struct spike_sled_bomb_rise_1_case spike_sled_bomb_rise_1_cases[] = {
-    { 49283072, 1, 0, { 1u, 3u, 0u, 0u, 0u, 0x4200u, 0u, 0x2F00000u, 0x10005u } },
-    { 41877504, 2, 6, { 1u, 5u, 2u, 2u, 4u, 0u, 1u, 0x27F0000u, 0x10004u } },
-};
-static u32 test_spike_sled_bomb_rise_1(u32 row)
-{
-    const struct spike_sled_bomb_rise_1_case* c = &spike_sled_bomb_rise_1_cases[row];
-    u32 observed_values[9];
-    struct MainObj obj;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 33;
-    obj.state = 1;
-    obj.unk15 = 64;
-    obj.x_pos.val = 307232768;
-    obj.animation_table = (const u8* const*)spike_sled_animations;
-    obj.y_pos.val = c->y_pos;
-    obj.unk5 = 5;
-    obj.unk6 = 1;
-    obj.unk7C = c->unk7C;
-    obj.ext.main_33.variant = c->variant;
-    obj.ext.main_33.unk84 = 1;
-    set_animation(&obj, 6);
-    player_before = g_Player;
-    spike_sled_bomb_rise(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.unk7C;
-    observed_values[4] = (u32)obj.unk7E;
-    observed_values[5] = (u32)obj.gravity;
-    observed_values[6] = (u32)obj.ext.main_33.unk84;
-    observed_values[7] = (u32)obj.y_pos.val;
-    observed_values[8] = (u32)obj.animation_step.packed;
-    return c_test_observe(0, row, observed_values, c->expected, 9);
-}
-
 struct spike_sled_patrol_drive_0_case {
     u32 unk15, hi, unk7C;
     u32 expected[4];
@@ -467,43 +345,91 @@ static u32 test_spike_sled_patrol_turn(u32 row)
     return c_test_observe(0, row, observed_values, spike_sled_patrol_turn_expected, 7);
 }
 
-static const u32 spike_sled_resume_step_expected[] = { 6u };
-static u32 test_spike_sled_resume_step(u32 row)
+#define SLED(sub) (state_reset(1, sub, 0), so.x_pos.i.hi = 0x1200, so.y_pos.i.hi = 0x300)
+#define AIM(px, mask, timer, facing, x) (SLED(1), so.ext.main_33.unk80 = mask, so.unk7C = timer, so.unk15 = facing, so.x_pos.i.hi = x, g_Player.x_pos.i.hi = px, func_8005DC58(&so), so.unk7E = so.ext.main_33.variant | so.ext.main_33.target_x << 4)
+#define RISE(v, y, timer) (SLED(2), so.ext.main_33.variant = v, so.y_pos.i.hi = y, so.unk7C = timer, so.y_speed = 0x10000, spike_sled_bomb_rise(&so))
+#define DROP(v, mask) (SLED(0), so.ext.main_33.variant = v, so.ext.main_33.unk80 = mask, func_8005E108(&so), so.unk7E ^= so.ext.main_33.variant << 8)
+static void ss_aim_locked(void)
 {
-    u32 observed_values[1];
-    struct MainObj obj, expected;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 33;
-    obj.state = 1;
-    obj.unk5 = 1;
-    obj.ext.main_33.saved_unk5 = 6;
-    obj.x_pos.val = 6553600;
-    obj.y_pos.val = 5242880;
-    expected = obj;
-    expected.unk5 = 6;
-    player_before = g_Player;
-    spike_sled_resume_step(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    observed_values[0] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, spike_sled_resume_step_expected, 1);
+    SLED(1);
+    so.ext.main_33.target_x = 0x1220;
+    func_8005DC58(&so);
+}
+static void ss_aim_wait_left(void) { AIM(0x1000, 1, 3, 0, 0x1200); }
+static void ss_aim_wait_right(void) { AIM(0x1000, 1, 3, 0x40, 0x1400); }
+static void ss_aim_wait_hold(void) { AIM(0x1300, 1, 3, 0, 0x1300); }
+static void ss_aim_wait_hold_right(void) { AIM(0x1200, 1, 3, 0x40, 0x1300); }
+static void ss_aim_far_left(void) { AIM(0x1000, 1, 1, 0, 0x1200); }
+static void ss_aim_far_left_next(void) { AIM(0x1000, 2, 1, 0, 0x1200); }
+static void ss_aim_far_left_none(void) { AIM(0x1000, 0x80, 1, 0, 0x1200); }
+static void ss_aim_far_right(void) { AIM(0x1400, 0x10, 1, 0x40, 0x1400); }
+static void ss_aim_far_right_next(void) { AIM(0x1400, 8, 1, 0x40, 0x1400); }
+static void ss_aim_far_right_none(void) { AIM(0x1400, 0x80, 1, 0x40, 0x1400); }
+static void ss_aim_mid_low(void) { AIM(0x1230, 1, 1, 0, 0x1200); }
+static void ss_aim_mid_low_next(void) { AIM(0x1230, 2, 1, 0, 0x1200); }
+static void ss_aim_mid_low_none(void) { AIM(0x1230, 0x80, 1, 0, 0x1200); }
+static void ss_aim_mid_high(void) { AIM(0x1250, 2, 1, 0, 0x1200); }
+static void ss_aim_mid_high_back(void) { AIM(0x1250, 1, 1, 0, 0x1200); }
+static void ss_rise(void) { RISE(0, 0x300, 3); }
+static void ss_rise_top(void) { RISE(2, 0x200, 3); }
+static void ss_rise_mid(void) { RISE(5, 0x2B0, 3); }
+static void ss_rise_mid_top(void) { RISE(5, 0x200, 3); }
+static void ss_rise_high(void) { RISE(6, 0x290, 3); }
+static void ss_rise_high_top(void) { RISE(6, 0x200, 3); }
+static void ss_rise_fall(void) { RISE(0xFF, 0x200, 1); }
+static void ss_drop_slot(void) { DROP(0, 1); }
+static void ss_drop_left(void) { DROP(1, 0x20); }
+static void ss_drop_right(void) { DROP(3, 0x40); }
+static void ss_drop_center(void) { DROP(2, 0x40); }
+static void ss_drop_none(void) { DROP(4, 0); }
+
+static void (*const spike_sled_states_cases[])(void) = {
+    ss_aim_locked,
+    ss_aim_wait_left,
+    ss_aim_wait_right,
+    ss_aim_wait_hold,
+    ss_aim_wait_hold_right,
+    ss_aim_far_left,
+    ss_aim_far_left_next,
+    ss_aim_far_left_none,
+    ss_aim_far_right,
+    ss_aim_far_right_next,
+    ss_aim_far_right_none,
+    ss_aim_mid_low,
+    ss_aim_mid_low_next,
+    ss_aim_mid_low_none,
+    ss_aim_mid_high,
+    ss_aim_mid_high_back,
+    ss_rise,
+    ss_rise_top,
+    ss_rise_mid,
+    ss_rise_mid_top,
+    ss_rise_high,
+    ss_rise_high_top,
+    ss_rise_fall,
+    ss_drop_slot,
+    ss_drop_left,
+    ss_drop_right,
+    ss_drop_center,
+    ss_drop_none,
+};
+static const u32 spike_sled_states_expected[] = { 0x301u, 0u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x101u, 2u, 0x13000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x13000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x2E030000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x32040000u, 0x14000000u, 0u, 0u, 0xFFFFC000u, 0x4004u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x26010000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 0x22000000u, 0x12000000u, 0u, 0u, 0xFFFFC000u, 4u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 2u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0x201u, 0x40003u, 0x12000000u, 0u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x12000000u, 0u, 0x10000u, 0x420000u, 7u, 0u, 0u, 0u, 0x101u, 0xCu, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x5000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0x6000022u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x101u, 0xFF000026u, 0x12000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_spike_sled_states(u32 row)
+{
+    return state_run(spike_sled_states_cases[row], row, &spike_sled_states_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "spike_sled_intro_turn_animation", spike_sled_intro_turn_animation_cases, spike_sled_intro_turn_animation_cases_expected, COUNT(spike_sled_intro_turn_animation_cases), 0 },
-    { "spike_sled_patrol_context", spike_sled_patrol_context_cases, spike_sled_patrol_context_cases_expected, COUNT(spike_sled_patrol_context_cases), 0 },
-    { "spike_sled_selection", spike_sled_selection_cases, spike_sled_selection_cases_expected, COUNT(spike_sled_selection_cases), 0 },
+    { "spike_sled_states", 0, 0, COUNT(spike_sled_states_cases), test_spike_sled_states },
+    { "spike_sled_intro_turn_animation", NULL, spike_sled_intro_turn_animation_cases_expected, COUNT(spike_sled_intro_turn_animation_cases_expected), turn_case },
+    { "spike_sled_patrol_context", NULL, spike_sled_patrol_context_cases_expected, COUNT(spike_sled_patrol_context_cases_expected), spike_sled_patrol_context_cases_row },
+    { "spike_sled_selection", NULL, spike_sled_selection_cases_expected, COUNT(spike_sled_selection_cases_expected), spike_sled_selection_cases_row },
     { "func_8005D4E0", 0, 0, 3, test_func_8005D4E0 },
     { "func_8005DC58", 0, 0, 2, test_func_8005DC58 },
-    { "func_8005E108", 0, 0, 3, test_func_8005E108 },
-    { "spike_sled_bomb_rise_0", 0, 0, 1, test_spike_sled_bomb_rise_0 },
-    { "spike_sled_bomb_rise_1", 0, 0, 2, test_spike_sled_bomb_rise_1 },
     { "spike_sled_patrol_drive_0", 0, 0, 3, test_spike_sled_patrol_drive_0 },
     { "spike_sled_patrol_drive_1", 0, 0, 1, test_spike_sled_patrol_drive_1 },
     { "spike_sled_patrol_turn", 0, 0, 1, test_spike_sled_patrol_turn },
-    { "spike_sled_resume_step", 0, 0, 1, test_spike_sled_resume_step },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spike_sled_intro_turn_animation_cases) + COUNT(spike_sled_patrol_context_cases) + COUNT(spike_sled_selection_cases) + 3 + 2 + 3 + 1 + 2 + 3 + 1 + 1 + 1;
+const u32 c_test_count = COUNT(spike_sled_states_cases) + COUNT(spike_sled_intro_turn_animation_cases_expected) + COUNT(spike_sled_patrol_context_cases_expected) + COUNT(spike_sled_selection_cases_expected) + 3 + 2 + 3 + 1 + 1;

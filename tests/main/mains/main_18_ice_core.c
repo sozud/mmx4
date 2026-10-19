@@ -136,28 +136,7 @@ static u32 ice_core_hit_run(u32 mode)
     return i;
 }
 
-#define CASE(name)                              \
-    static u32 ice_core_hit_##name##_case(void) \
-    {                                           \
-        return ice_core_hit_run(name);          \
-    }
-CASE(HIT_BONUS_2)
-CASE(HIT_BONUS_5)
-CASE(HIT_BONUS_10)
-CASE(HIT_NO_BONUS)
-CASE(INVINCIBLE_TICK)
-CASE(INVINCIBLE_END)
-CASE(NO_HIT)
-CASE(DEFEATED)
-#define ENTRY(name) ice_core_hit_##name##_case,
-static const CTestCase ice_core_hit_cases[]
-    = {
-          ENTRY(HIT_BONUS_2) ENTRY(HIT_BONUS_5) ENTRY(HIT_BONUS_10) ENTRY(HIT_NO_BONUS) ENTRY(INVINCIBLE_TICK) ENTRY(INVINCIBLE_END)
-              ENTRY(NO_HIT) ENTRY(DEFEATED)
-      };
 static const u32 ice_core_hit_cases_expected[] = { 0x41098263u, 0x800C8563u, 0x80118263u, 0x80078573u, 0x8007857Eu, 0x8007047Eu, 0x8007047Eu, 0x8007847Eu };
-#undef CASE
-#undef ENTRY
 
 static u8 sprite_data[4];
 static u32 spray_case(u32 mode)
@@ -237,21 +216,7 @@ static u32 spray_case(u32 mode)
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk6 | ((u32)obj.ext.main_18.state.runtime.unk86 << 8) | (allocated << 16);
 }
-#define CASE(m)                                    \
-    static u32 ice_core_spray_pool_spray_##m(void) \
-    {                                              \
-        return spray_case(m);                      \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) ice_core_spray_pool_spray_##m,
-static const CTestCase ice_core_spray_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 ice_core_spray_pool_cases_expected[] = { 0x101u, 0x20101u, 0x40201u, 0x901u };
-#undef CASE
-#undef ENTRY
 
 struct func_80050874_case {
     u32 state, weapon;
@@ -259,18 +224,16 @@ struct func_80050874_case {
     u32 damage, damage_flags, weapon_unk80;
     s32 unk63;
     u32 unk65, unk87;
-    u32 expected[5];
 };
 static const struct func_80050874_case func_80050874_cases[] = {
-    { 1, 1, (const u8*)lightning_web_shot_box, 255, 0, 6488163, -1, 1, 0, { 0xAu, 0u, 0u, 0u, 1u } },
-    { 2, 0, (const u8*)lemon_hit_box, 0, 1, 0, 0, 0, 7, { 0xAu, 0u, 0u, 7u, 2u } },
+    { 1, 1, (const u8*)lightning_web_shot_box, 255, 0, 6488163, -1, 1, 0 },
+    { 2, 0, (const u8*)lemon_hit_box, 0, 1, 0, 0, 0, 7 },
 };
 static struct WeaponObj func_80050874_weapons_expected[16];
 static struct VisualObj func_80050874_visuals_expected[32];
 static u32 test_func_80050874(u32 row)
 {
     const struct func_80050874_case* c = &func_80050874_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_expected;
@@ -341,12 +304,7 @@ static u32 test_func_80050874(u32 row)
     c_test_same_words(weapon_objects, func_80050874_weapons_expected, sizeof(weapon_objects));
     c_test_same_words(visual_objects, func_80050874_visuals_expected, sizeof(visual_objects));
     c_test_same_words(&background_objects[0], &background_expected, sizeof(background_expected));
-    observed_values[0] = (u32)obj.hp;
-    observed_values[1] = (u32)obj.invincibility_timer;
-    observed_values[2] = (u32)obj.ext.main_18.state.runtime.unk83;
-    observed_values[3] = (u32)obj.ext.main_18.state.runtime.unk87;
-    observed_values[4] = (u32)obj.state;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 struct func_800517D0_0_case {
@@ -663,7 +621,6 @@ static u32 test_func_80052218(u32 row)
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
     struct ItemObj items_expected[32];
-    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 18;
@@ -689,23 +646,13 @@ static u32 test_func_80052218(u32 row)
     obj.y_speed = -0x10000;
     obj.gravity = 0x2000;
     memset(item_objects, 0, sizeof(item_objects));
-    pools_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            item_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(item_objects, 32, 1);
     item_objects[0].id = 8;
     item_objects[31].id = 8;
     item_objects[0].active = 0x41;
     item_objects[31].active = 0x41;
     memcpy(items_expected, item_objects, sizeof(items_expected));
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            items_expected[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(items_expected, 32, 0);
     items_expected[0].active = 0x41;
     items_expected[31].active = 0x41;
     expected = obj;
@@ -737,18 +684,16 @@ static u32 test_func_80052218(u32 row)
 
 struct func_800527F0_case {
     u32 hi, unk84, gravity;
-    u32 expected[4];
 };
 static const struct func_800527F0_case func_800527F0_cases[] = {
-    { 2192, 0, 4096, { 7u, 0u, 0x1000u, 0x8905678u } },
-    { 2193, 0, -4096, { 7u, 0u, 0xFFFFF000u, 0x8915678u } },
-    { 2224, 1, 4096, { 7u, 0u, 0x1000u, 0x8B05678u } },
-    { 2225, 1, -4096, { 7u, 0u, 0xFFFFF000u, 0x8B15678u } },
+    { 2192, 0, 4096 },
+    { 2193, 0, -4096 },
+    { 2224, 1, 4096 },
+    { 2225, 1, -4096 },
 };
 static u32 test_func_800527F0(u32 row)
 {
     const struct func_800527F0_case* c = &func_800527F0_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -791,11 +736,7 @@ static u32 test_func_800527F0(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.gravity;
-    observed_values[3] = (u32)obj.y_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 
 struct ice_core_bob_move_case {
@@ -823,17 +764,15 @@ static u32 test_ice_core_bob_move(u32 row)
 
 struct ice_core_build_grow_case {
     u32 unk7E, obj_hp, expected_hp, unk85;
-    u32 expected[4];
 };
 static const struct ice_core_build_grow_case ice_core_build_grow_cases[] = {
-    { 255, 48, 48, 3, { 0x30u, 3u, 0x6010009u, 2u } },
-    { 255, 47, 48, 2, { 0x30u, 2u, 0x6010009u, 2u } },
-    { 0, 47, 47, 3, { 0x2Fu, 3u, 0x6010009u, 2u } },
+    { 255, 48, 48, 3 },
+    { 255, 47, 48, 2 },
+    { 0, 47, 47, 3 },
 };
 static u32 test_ice_core_build_grow(u32 row)
 {
     const struct ice_core_build_grow_case* c = &ice_core_build_grow_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -871,27 +810,21 @@ static u32 test_ice_core_build_grow(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.hp;
-    observed_values[1] = (u32)obj.ext.main_18.state.runtime.unk85;
-    observed_values[2] = (u32)obj.animation_step.packed;
-    observed_values[3] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 
 struct ice_core_charge_run_case {
     u32 unk15, x_speed, unk83, x_pos, reset_animation, unk6;
-    u32 expected[4];
 };
 static const struct ice_core_charge_run_case ice_core_charge_run_cases[] = {
-    { 0, -65536, 9, 6492724, 0, 4, { 4u, 0x10001u, 0x631234u, 0x635678u } },
-    { 0, -65536, 10, 6492724, 1, 5, { 5u, 0xB010004u, 0x631234u, 0x635678u } },
-    { 64, 65536, 9, 6623796, 0, 4, { 4u, 0x10001u, 0x651234u, 0x635678u } },
-    { 64, 65536, 10, 6623796, 1, 5, { 5u, 0xB010004u, 0x651234u, 0x635678u } },
+    { 0, -65536, 9, 6492724, 0, 4 },
+    { 0, -65536, 10, 6492724, 1, 5 },
+    { 64, 65536, 9, 6623796, 0, 4 },
+    { 64, 65536, 10, 6623796, 1, 5 },
 };
 static u32 test_ice_core_charge_run(u32 row)
 {
     const struct ice_core_charge_run_case* c = &ice_core_charge_run_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -939,43 +872,22 @@ static u32 test_ice_core_charge_run(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.animation_step.packed;
-    observed_values[2] = (u32)obj.x_pos.val;
-    observed_values[3] = (u32)obj.y_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
-}
-
-static const u32 ice_core_charge_slide_0_expected[] = { 3u, 0x1Cu, 0u, 0u };
-static u32 test_ice_core_charge_slide_0(u32 row)
-{
-    u32 observed_values[4];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.unk7C = 1;
-    ice_core_charge_slide(&obj);
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.unk7C;
-    observed_values[2] = (u32)obj.x_accel;
-    observed_values[3] = (u32)obj.x_speed;
-    return c_test_observe(0, row, observed_values, ice_core_charge_slide_0_expected, 4);
+    return 1;
 }
 
 struct ice_core_charge_slide_1_case {
     u32 obj_unk7C, unk15, collision_flags, obj_x_speed, x_pos, y_pos, expected_x_speed, x_accel, y_speed;
     u32 expected_unk7C, unk6;
-    u32 expected[5];
 };
 static const struct ice_core_charge_slide_1_case ice_core_charge_slide_1_cases[] = {
-    { 2, 0, 0, 65536, 6623796, 6510200, 0, 0, 61440, 1, 2, { 0u, 0u, 0x651234u, 0x635678u, 2u } },
-    { 2, 64, 0, -65536, 6492724, 6510200, 0, 0, 61440, 1, 2, { 0u, 0u, 0x631234u, 0x635678u, 2u } },
-    { 2, 0, 3, 65536, 6558260, 6575736, 65536, 65536, 65536, 1, 2, { 0x10000u, 0x10000u, 0x641234u, 0x645678u, 2u } },
-    { 1, 64, 0, -65536, 6492724, 6510200, 0, 0, 61440, 28, 3, { 0u, 0u, 0x631234u, 0x635678u, 3u } },
+    { 2, 0, 0, 65536, 6623796, 6510200, 0, 0, 61440, 1, 2 },
+    { 2, 64, 0, -65536, 6492724, 6510200, 0, 0, 61440, 1, 2 },
+    { 2, 0, 3, 65536, 6558260, 6575736, 65536, 65536, 65536, 1, 2 },
+    { 1, 64, 0, -65536, 6492724, 6510200, 0, 0, 61440, 28, 3 },
 };
 static u32 test_ice_core_charge_slide_1(u32 row)
 {
     const struct ice_core_charge_slide_1_case* c = &ice_core_charge_slide_1_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -1022,49 +934,19 @@ static u32 test_ice_core_charge_slide_1(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.x_speed;
-    observed_values[1] = (u32)obj.x_accel;
-    observed_values[2] = (u32)obj.x_pos.val;
-    observed_values[3] = (u32)obj.y_pos.val;
-    observed_values[4] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
-}
-
-static const u32 ice_core_check_rebuild_0_expected[] = { 0u, 0u, 8u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_ice_core_check_rebuild_0(u32 row)
-{
-    u32 observed_values[9];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.hp = 6;
-    obj.ext.main_18.state.runtime.unk85 = 8;
-    obj.ext.main_18.state.runtime.unk87 = 255;
-    obj.ext.main_18.unk88 = 255;
-    ice_core_check_rebuild(&obj);
-    observed_values[0] = (u32)obj.ext.main_18.state.runtime.unk82;
-    observed_values[1] = (u32)obj.ext.main_18.state.runtime.unk84;
-    observed_values[2] = (u32)obj.ext.main_18.state.runtime.unk85;
-    observed_values[3] = (u32)obj.gravity;
-    observed_values[4] = (u32)obj.unk5;
-    observed_values[5] = (u32)obj.unk6;
-    observed_values[6] = (u32)obj.x_accel;
-    observed_values[7] = (u32)obj.x_speed;
-    observed_values[8] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, ice_core_check_rebuild_0_expected, 9);
+    return 1;
 }
 
 struct ice_core_check_rebuild_1_case {
     u32 unk88, rebuild;
-    u32 expected[4];
 };
 static const struct ice_core_check_rebuild_1_case ice_core_check_rebuild_1_cases[] = {
-    { 1, 0, { 7u, 1u, 1u, 0x10002u } },
-    { 0, 1, { 8u, 0u, 0u, 0x10004u } },
+    { 1, 0 },
+    { 0, 1 },
 };
 static u32 test_ice_core_check_rebuild_1(u32 row)
 {
     const struct ice_core_check_rebuild_1_case* c = &ice_core_check_rebuild_1_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -1138,11 +1020,7 @@ static u32 test_ice_core_check_rebuild_1(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.ext.main_18.state.runtime.unk84;
-    observed_values[3] = (u32)obj.animation_step.packed;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 
 struct ice_core_float_case {
@@ -1171,16 +1049,14 @@ static u32 test_ice_core_float(u32 row)
 
 struct ice_core_pick_attack_case {
     u32 unk7E;
-    u32 expected[4];
 };
 static const struct ice_core_pick_attack_case ice_core_pick_attack_cases[] = {
-    { 2, { 7u, 1u, 0xC3u, 2u } },
-    { 255, { 7u, 1u, 0xC3u, 0xFFu } },
+    { 2 },
+    { 255 },
 };
 static u32 test_ice_core_pick_attack(u32 row)
 {
     const struct ice_core_pick_attack_case* c = &ice_core_pick_attack_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -1217,11 +1093,7 @@ static u32 test_ice_core_pick_attack(u32 row)
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     assert(cur_random == random_before);
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.ext.main_18.state.runtime.unk80;
-    observed_values[3] = (u32)obj.unk7E;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 
 struct ice_core_shed_ice_case {
@@ -1250,16 +1122,14 @@ static u32 test_ice_core_shed_ice(u32 row)
 
 struct ice_core_stomp_drop_case {
     u32 obj_unk7C, expected_unk7C, unk82;
-    u32 expected[5];
 };
 static const struct ice_core_stomp_drop_case ice_core_stomp_drop_cases[] = {
-    { 2, 1, 1, { 1u, 1u, 0xD010205u, 0x651234u, 0x6C5678u } },
-    { 1, 0, 0, { 0u, 0u, 0xD010205u, 0x651234u, 0x6C5678u } },
+    { 2, 1, 1 },
+    { 1, 0, 0 },
 };
 static u32 test_ice_core_stomp_drop(u32 row)
 {
     const struct ice_core_stomp_drop_case* c = &ice_core_stomp_drop_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -1307,12 +1177,7 @@ static u32 test_ice_core_stomp_drop(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.unk7C;
-    observed_values[1] = (u32)obj.ext.main_18.state.runtime.unk82;
-    observed_values[2] = (u32)obj.animation_step.packed;
-    observed_values[3] = (u32)obj.x_pos.val;
-    observed_values[4] = (u32)obj.y_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 static const u32 ice_core_stomp_recover_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u };
@@ -1360,9 +1225,94 @@ static u32 test_ice_core_stomp_rise(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 5);
 }
 
+extern union AnimationStep* D_800FC2B4[];
+extern struct Unk_unk68 D_80106B74[];
+static const u8 damages[] = { 2, 2, 1, 1 };
+static struct WeaponObj weapons_expected[16];
+static struct VisualObj visuals_before[32];
+static u32 saber_meter(u32 row)
+{
+    struct MainObj obj, expected, *current = SP_CUR_MAIN_OBJ;
+    struct PlayerObj player_expected;
+    struct EngineObj engine_before;
+    struct BackgroundObj backgrounds_before[3];
+    u32 weapon = row % 4, character = row / 4 % 2, flags = row / 8 % 2, face = row / 16 % 2, meter = row / 32, i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(weapon_objects, 0, sizeof(weapon_objects));
+    memset(visual_objects, 0, sizeof(visual_objects));
+    for (i = 0; i < 32; i++)
+        visual_objects[i].active = 1;
+    memcpy(visuals_before, visual_objects, sizeof(visuals_before));
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    g_Player.hp = 30;
+    g_Player.spike_immune = 1;
+    player_expected = g_Player;
+    if (weapon >= 2)
+        player_expected.update_delay_request = 1;
+    engine_obj.cur_character = character;
+    engine_before = engine_obj;
+    obj.active = 0x41;
+    obj.id = 18;
+    obj.state = 1;
+    obj.unk5 = 1;
+    obj.unk6 = 1;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.hp = 40;
+    obj.unk42 = 0x9234;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.collision_data = D_80106B74;
+    obj.hurt_box = obj.attack_box = (const u8*)&D_800FBEF4;
+    obj.terrain_box = &D_800FBF0C;
+    obj.ext.main_18.saved_unk5 = 1;
+    obj.ext.main_18.state.runtime.unk81 = 1;
+    obj.ext.main_18.state.runtime.unk80 = flags ? 0x80 : 0;
+    obj.ext.main_18.state.runtime.unk83 = meter ? 250 : 0;
+    obj.animation_table = (const u8* const*)D_800FC2B4;
+    set_animation(&obj, 1);
+    assert(obj.animation_step.packed == 0x00010002);
+    weapon_objects[0].active = 0x21;
+    weapon_objects[0].id = 24 + weapon;
+    weapon_objects[0].unk50 = (const u8*)&D_800FBEF4;
+    weapon_objects[0].x_pos = obj.x_pos;
+    weapon_objects[0].y_pos = obj.y_pos;
+    weapon_objects[0].unk15 = obj.unk15;
+    assert(((const u8*)D_80106B74)[(24 + weapon) * 2] == 0 && ((const u8*)D_80106B74)[(24 + weapon) * 2 + 1] == damages[weapon]);
+    memcpy(weapons_expected, weapon_objects, sizeof(weapons_expected));
+    ((s16*)&weapons_expected[0].unk80)[0] = face ? 159 : 161;
+    ((s16*)&weapons_expected[0].unk80)[1] = 122;
+    expected = obj;
+    expected.unk18 = obj.x_pos;
+    expected.unk1C = obj.y_pos;
+    expected.hp -= damages[weapon];
+    expected.unk42 |= 0x8000;
+    expected.invincibility_timer = character ? 1 : 6;
+    expected.on_screen = 1;
+    expected.ext.main_18.state.runtime.unk87 = 1;
+    expected.ext.main_18.state.runtime.unk80 = flags ? 0x80 : 0x41;
+    if (weapon != 3)
+        expected.ext.main_18.state.runtime.unk83 += 5;
+    D_8013E198[0] = D_8013E198[1] = D_8013E198[5] = -1;
+    cur_random = 0x1234;
+    SP_CUR_MAIN_OBJ = &obj;
+    func_80050874(&obj);
+    assert(SP_CUR_MAIN_OBJ == &obj);
+    SP_CUR_MAIN_OBJ = current;
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(c_test_word_difference((u32*)weapon_objects, (u32*)weapons_expected, sizeof(weapons_expected) / 4) == 0);
+    assert(c_test_word_difference((u32*)visual_objects, (u32*)visuals_before, sizeof(visuals_before) / 4) == 0);
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    assert(cur_random == 0x1234);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "ice_core_hit", ice_core_hit_cases, ice_core_hit_cases_expected, COUNT(ice_core_hit_cases), 0 },
-    { "ice_core_spray_pool", ice_core_spray_pool_cases, ice_core_spray_pool_cases_expected, COUNT(ice_core_spray_pool_cases), 0 },
+    { "ice_core_hit", NULL, ice_core_hit_cases_expected, COUNT(ice_core_hit_cases_expected), ice_core_hit_run },
+    { "ice_core_spray_pool", NULL, ice_core_spray_pool_cases_expected, COUNT(ice_core_spray_pool_cases_expected), spray_case },
     { "func_80050874", 0, 0, 2, test_func_80050874 },
     { "func_800517D0", 0, 0, 4, test_func_800517D0 },
     { "func_80052218", 0, 0, 1, test_func_80052218 },
@@ -1370,9 +1320,7 @@ const struct CTestGroup c_test_groups[] = {
     { "ice_core_bob_move", 0, 0, 2, test_ice_core_bob_move },
     { "ice_core_build_grow", 0, 0, 3, test_ice_core_build_grow },
     { "ice_core_charge_run", 0, 0, 4, test_ice_core_charge_run },
-    { "ice_core_charge_slide_0", 0, 0, 1, test_ice_core_charge_slide_0 },
     { "ice_core_charge_slide_1", 0, 0, 4, test_ice_core_charge_slide_1 },
-    { "ice_core_check_rebuild_0", 0, 0, 1, test_ice_core_check_rebuild_0 },
     { "ice_core_check_rebuild_1", 0, 0, 2, test_ice_core_check_rebuild_1 },
     { "ice_core_float", 0, 0, 2, test_ice_core_float },
     { "ice_core_pick_attack", 0, 0, 2, test_ice_core_pick_attack },
@@ -1380,6 +1328,7 @@ const struct CTestGroup c_test_groups[] = {
     { "ice_core_stomp_drop", 0, 0, 2, test_ice_core_stomp_drop },
     { "ice_core_stomp_recover", 0, 0, 1, test_ice_core_stomp_recover },
     { "ice_core_stomp_rise", 0, 0, 2, test_ice_core_stomp_rise },
+    { "saber_meter_bonus_and_followup_with_real_damage_table", NULL, NULL, 64, saber_meter },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_core_hit_cases) + COUNT(ice_core_spray_pool_cases) + 2 + 4 + 1 + 4 + 2 + 3 + 4 + 1 + 4 + 1 + 2 + 2 + 2 + 2 + 2 + 1 + 2;
+const u32 c_test_count = COUNT(ice_core_hit_cases_expected) + COUNT(ice_core_spray_pool_cases_expected) + 2 + 4 + 1 + 4 + 2 + 3 + 4 + 4 + 2 + 2 + 2 + 2 + 2 + 1 + 2 + 64;

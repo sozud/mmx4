@@ -343,7 +343,7 @@ void jet_stingray_intro_pose(struct MainObj* self)
         animate_object(ANIMATED_OBJECT(self));
         if (self->animation_step.fields.event != 0) {
             if (engine_obj.stage == 5) {
-                ((void (*)(u16, u8, s8))func_8002217C)(0xD, 0xFF, engine_obj.character_state.bytes[8]);
+                func_8002217C(0xD, 0xFF, engine_obj.character_state.bytes[8]);
                 engine_obj.character_state.bytes[8] = 1;
             }
             self->unk6 = (u8)self->unk6 + 1;

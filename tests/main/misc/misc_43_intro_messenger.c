@@ -58,28 +58,14 @@ static u32 messenger_case(u32 delay, u32 zero, u32 observation)
     assert(D_801397CC == NULL && D_801397D0 == NULL && D_801397D4 == NULL);
     return observation == 0 ? (u16)abc_object.unk10 | ((u32)(u8)obj.unk5 << 16) : obj.animation_step.packed;
 }
-#define CASE(d, z, n)                          \
-    static u32 messenger_##d##_##z##_##n(void) \
-    {                                          \
-        return messenger_case(d, z, n);        \
-    }
-#define MODE(d, z) CASE(d, z, 0) CASE(d, z, 1)
-MODE(0, 0)
-MODE(0, 1)
-MODE(1, 0)
-MODE(1, 1)
-#define ENTRY(d, z, n) messenger_##d##_##z##_##n,
-#define ENTRIES(d, z) ENTRY(d, z, 0) ENTRY(d, z, 1)
-static const CTestCase intro_messenger_dialogue_context_cases[]
-    = { ENTRIES(0, 0) ENTRIES(0, 1) ENTRIES(1, 0) ENTRIES(1, 1) };
 static const u32 intro_messenger_dialogue_context_cases_expected[] = { 0x3802Eu, 0x1000101u, 0x38027u, 0x1000101u, 0x7802Fu, 0x1000101u, 0x78028u, 0x1000101u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 intro_messenger_dialogue_context_cases_row(u32 row)
+{
+    return messenger_case(row / 4, row / 2 % 2, row % 2);
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "intro_messenger_dialogue_context", intro_messenger_dialogue_context_cases, intro_messenger_dialogue_context_cases_expected, COUNT(intro_messenger_dialogue_context_cases), 0 },
+    { "intro_messenger_dialogue_context", NULL, intro_messenger_dialogue_context_cases_expected, COUNT(intro_messenger_dialogue_context_cases_expected), intro_messenger_dialogue_context_cases_row },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(intro_messenger_dialogue_context_cases);
+const u32 c_test_count = COUNT(intro_messenger_dialogue_context_cases_expected);

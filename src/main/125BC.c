@@ -156,7 +156,7 @@ static void restore_replay_engine(const struct SerializedEngineObj* source)
     engine_obj = restored;
 }
 
-static void save_replay_engine(struct SerializedEngineObj* target)
+void save_replay_engine(struct SerializedEngineObj* target)
 {
     s32 i;
 

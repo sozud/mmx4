@@ -1,5 +1,6 @@
 #include "test_runtime.h"
 #include "main/quads/quad_10_aiming_laser_charged_beam.h"
+#include "main/sprite_animations.h"
 
 static u32 cancel_case(u32 mode)
 {
@@ -50,23 +51,7 @@ static u32 cancel_case(u32 mode)
     actual = (u8)obj.active | ((u32)(u8)obj.state << 8) | ((u32)(u8)obj.on_screen << 16);
     return actual;
 }
-#define MODE(mode)                                           \
-    static u32 charged_beam_cancellation_cancel_##mode(void) \
-    {                                                        \
-        return cancel_case(mode);                            \
-    }
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-MODE(4)
-MODE(5)
-#define ENTRY(mode) charged_beam_cancellation_cancel_##mode,
-static const CTestCase charged_beam_cancellation_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 charged_beam_cancellation_cases_expected[] = { 0x0u, 0x0u, 0x0u, 0x0u, 0x0u, 0x0u };
-#undef MODE
-#undef ENTRY
 
 static u32 beam_case(u32 mode, u32 observation)
 {
@@ -173,9 +158,150 @@ static const u32 charged_beam_edges_cases_expected[] = { 0x1030393u, 0x1Eu, 0x78
 #undef ENTRY
 #undef ENTRIES
 
+static const s32 beam_vectors[32][2] = {
+    { 0x10000, 0 },
+    { 0xFB14, 0x31F1 },
+    { 0xEC83, 0x61F7 },
+    { 0xD4DB, 0x8E39 },
+    { 0xB505, 0xB505 },
+    { 0x8E39, 0xD4DB },
+    { 0x61F7, 0xEC83 },
+    { 0x31F1, 0xFB14 },
+    { 0, 0x10000 },
+    { -0x31F1, 0xFB14 },
+    { -0x61F7, 0xEC83 },
+    { -0x8E39, 0xD4DB },
+    { -0xB505, 0xB505 },
+    { -0xD4DB, 0x8E39 },
+    { -0xEC83, 0x61F7 },
+    { -0xFB14, 0x31F1 },
+    { -0x10000, 0 },
+    { -0xFB14, -0x31F1 },
+    { -0xEC83, -0x61F7 },
+    { -0xD4DB, -0x8E39 },
+    { -0xB505, -0xB505 },
+    { -0x8E39, -0xD4DB },
+    { -0x61F7, -0xEC83 },
+    { -0x31F1, -0xFB14 },
+    { 0, -0x10000 },
+    { 0x31F1, -0xFB14 },
+    { 0x61F7, -0xEC83 },
+    { 0x8E39, -0xD4DB },
+    { 0xB505, -0xB505 },
+    { 0xD4DB, -0x8E39 },
+    { 0xEC83, -0x61F7 },
+    { 0xFB14, -0x31F1 },
+};
+
+static u32 beam_transitions(u32 row)
+{
+    static const u8 delays[4] = { 9, 6, 3, 0 };
+    static const s16 counters[7] = { 240, 240, 211, 210, 32, 31, 30 };
+    static const u8 progress[7] = { 1, 1, 117, 121, 120, 120, 120 };
+    struct {
+        u32 before;
+        struct QuadObj value;
+        u32 after;
+    } got, want;
+    struct QuadObj* obj = &got.value;
+    struct QuadObj* expected = &want.value;
+    struct WeaponObj owner, owner_before;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct MainBssState main_before = main_bss_state;
+    static struct QuadObj pool_before[32];
+    union PlayerFrameOffsetData offsets_before = D_8011B230;
+    u32 i, d, direction = (row * 7) % 16 * 2, type = row % 4;
+    u32 facing = (row / 2) % 2, layer = row % 3, mode = row / 5;
+    u16 random_before = cur_random;
+    u8 *history, *expected_history;
+    memset(&got, 0xA5, sizeof(got));
+    memset(&owner, 0, sizeof(owner));
+    memset(&g_Player, 0, sizeof(g_Player));
+    got.before = 0x12345678;
+    got.after = 0x87654321;
+    obj->active = 0x93;
+    obj->id = 10;
+    obj->state = mode == 0 ? 0 : mode < 4 ? 1
+                                          : 2;
+    obj->unk2 = type;
+    obj->on_screen = 1;
+    obj->bg_offset = -1;
+    obj->unk5C = PLAYER_OBJECT(&owner);
+    obj->x_pos.val = 100 * 65536 + 0x1234;
+    obj->y_pos.val = 200 * 65536 + 0x2468;
+    obj->ext.quad_10.counter = counters[mode];
+    obj->ext.quad_10.progress = progress[mode];
+    history = (u8*)obj + ((u8*)obj->ext.quad_10.history - (u8*)obj);
+    for (i = 0; i < 16; i++)
+        history[i] = (direction + i * 3) & 31;
+    owner.ext.weapon_6.adjusted_direction = (direction + 8) & 31;
+    g_Player.weapon = 6;
+    g_Player.hp = 16;
+    g_Player.bg_offset = layer == 0 ? -1 : layer - 1;
+    g_Player.unk15 = facing * 0x40;
+    g_Player.animation_step.fields.frame_index = 4;
+    g_Player.x_pos.val = (layer == 2 ? -300 : 300) * 65536 + 0x5678;
+    g_Player.y_pos.val = (layer == 2 ? -400 : 400) * 65536 + 0x6789;
+    player_before = g_Player;
+    owner_before = owner;
+    c_test_copy_words((u32*)pool_before, (const u32*)g_QuadObjects, sizeof(pool_before) / 4);
+    want = got;
+    expected_history = (u8*)expected + (history - (u8*)obj);
+    if (mode == 0) {
+        expected->active = type == 3 ? 0x83 : 0x93;
+        expected->bg_offset = g_Player.bg_offset;
+        expected->unk34 = 13;
+        expected->unk36 = 1;
+        expected->state = 1;
+        for (i = 0; i < 16; i++)
+            expected_history[i] = direction;
+    } else if (mode < 4) {
+        expected->ext.quad_10.counter--;
+        expected->ext.quad_10.progress = mode == 1 ? 5 : mode == 2 ? 121
+                                                                   : 120;
+        if (mode == 3)
+            expected->state = 2;
+    } else {
+        for (i = 15; i > 0; i--)
+            expected_history[i] = history[i - 1];
+        expected_history[0] = direction;
+        if (mode == 6)
+            expected->state = 3;
+        else {
+            expected->ext.quad_10.counter--;
+            if (type == 3)
+                expected->on_screen = mode == 5;
+        }
+    }
+    expected->x_pos.i.hi = g_Player.x_pos.i.hi + (facing ? 26 : -26);
+    expected->y_pos.i.hi = g_Player.y_pos.i.hi - 10;
+    expected->vertices[0].x.val = expected->vertices[0].y.val = 0;
+    d = expected_history[delays[type]];
+    for (i = 1; i < 4; i++) {
+        u32 angle = (d + i - 2) & 31;
+        s32 length = expected->ext.quad_10.progress + (i == 2 ? 12 : 0);
+        expected->vertices[i].x.val = beam_vectors[angle][0] * length;
+        expected->vertices[i].y.val = beam_vectors[angle][1] * length;
+    }
+    expected->ext.quad_10.x_step = beam_vectors[(d + 1) & 31][0];
+    expected->ext.quad_10.y_step = beam_vectors[(d + 1) & 31][1];
+    aiming_laser_charged_beam_update(obj);
+    c_test_same_words(&got, &want, sizeof(want));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&main_bss_state, &main_before, sizeof(main_bss_state));
+    c_test_same_words(g_QuadObjects, pool_before, sizeof(pool_before));
+    c_test_same_words(&D_8011B230, &offsets_before, sizeof(offsets_before));
+    assert(cur_random == random_before);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "charged_beam_cancellation", charged_beam_cancellation_cases, charged_beam_cancellation_cases_expected, COUNT(charged_beam_cancellation_cases), 0 },
+    { "charged_beam_cancellation", NULL, charged_beam_cancellation_cases_expected, COUNT(charged_beam_cancellation_cases_expected), cancel_case },
     { "charged_beam_edges", charged_beam_edges_cases, charged_beam_edges_cases_expected, COUNT(charged_beam_edges_cases), 0 },
+    { "charged_beam_transitions", 0, 0, 30, beam_transitions },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(charged_beam_cancellation_cases) + COUNT(charged_beam_edges_cases);
+const u32 c_test_count = COUNT(charged_beam_cancellation_cases_expected) + COUNT(charged_beam_edges_cases) + 30;

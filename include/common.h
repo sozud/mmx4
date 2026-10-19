@@ -745,8 +745,6 @@ void palette_pulse_init(struct EffectObj*);
 void func_800BD080(struct EffectObj*);
 void cyberspace_trial_spawn_rank_warp(struct EffectObj*);
 void func_800D9B48(struct LayerObj*);
-void func_800DCF40(void);
-void func_800E0CEC(void);
 void func_800E0D0C(void);
 void post_boss_cutscene_spawn_afterimages(struct UnkObj*);
 

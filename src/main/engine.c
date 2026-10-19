@@ -59,7 +59,7 @@ void func_8001F3D4(struct MainObj* obj)
     *(s16*)&obj->state = 6;
     obj->on_screen = 0;
     obj->unk2++;
-    background_index = ((s8*)&obj->unk42)[1];
+    background_index = ((struct EngineObj*)obj)->cur_character;
     if (background_index == 0) {
         background_objects[0].x_pos.val = FIXED(512);
     } else {
@@ -154,7 +154,7 @@ void func_8001F798(struct EngineObj* arg0)
 void func_8001F850(struct EngineObj* arg0)
 {
     if (--arg0->unk4 == 0) {
-        ((void (*)(arg_u16, u8, u8))func_8002217C)(arg0->character_state.bytes[0] + 0x10, 0x80, 0);
+        func_8002217C(arg0->character_state.bytes[0] + 0x10, 0x80, 0);
         arg0->unk2++;
     } else if (arg0->unk4 == 0xF0 - *(s16*)&arg0->unk6) {
         func_8001540C(5, (u8)arg0->character_state.bytes[0], 0);

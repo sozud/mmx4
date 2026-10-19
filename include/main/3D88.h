@@ -1,6 +1,12 @@
 #ifndef MAIN_3D88_H
 #define MAIN_3D88_H
 
+struct Unk5 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+};
+
 struct CdImageOrigin {
     u16 x, y;
 };

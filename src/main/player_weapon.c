@@ -11,11 +11,6 @@
 #include "main/55C4.h"
 #include "main/player_special.h"
 
-struct PlayerShotTiming {
-    u8 pose_time;
-    u8 cooldown;
-};
-
 extern s8 player_shot_has_pose[];
 extern s8 player_shot_is_special_weapon[];
 extern s8 player_shot_is_charged_special[];
@@ -773,14 +768,14 @@ s32 player_has_weapon_energy(struct PlayerObj* self)
         return 1;
     }
 
-    return charge_level >= player_weapon_energy.charge.animation_indices[charge_type];
+    return charge_level >= player_weapon_energy.shot_costs[charge_type];
 }
 
 void player_use_weapon_energy(struct PlayerObj* self, s8 shot_type)
 {
     s8 animation_cost;
 
-    animation_cost = player_weapon_energy.charge.animation_indices[shot_type];
+    animation_cost = player_weapon_energy.shot_costs[shot_type];
     if ((animation_cost != 0) && ((player_shot_is_special_weapon[shot_type] == 0) || !(self->armor_parts & 1))) {
         self->weapon_energy[self->weapon] -= animation_cost;
     }

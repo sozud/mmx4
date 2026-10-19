@@ -25,8 +25,15 @@ void c_test_same_words(const void* actual, const void* expected, u32 size);
 u32 c_test_word_difference(const u32* a, const u32* b, u32 count);
 void c_test_copy_words(u32* dest, const u32* src, u32 count);
 void c_test_zero_words(u32* dest, u32 count);
+#define FILL_ACTIVE(pool, count, value)           \
+    do {                                          \
+        u32 slot_;                                \
+        for (slot_ = 0; slot_ < (count); slot_++) \
+            (pool)[slot_].active = (value);       \
+    } while (0)
 
 #ifdef MMX4_PC
+void c_test_skip(void);
 extern u8* D_80141F50[8];
 extern s32 player_gfx_buf_1[0x4000];
 #else

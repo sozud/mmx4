@@ -20,9 +20,7 @@ static u32 test_func_800C1E7C(u32 row)
     u32 observed_values[1];
     struct ItemObj obj;
     struct Unk_unk68 child_0;
-    u8 child_0_present;
     struct Unk_unk68 child_1;
-    u8 child_1_present;
     s8 return_value;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
@@ -31,12 +29,10 @@ static u32 test_func_800C1E7C(u32 row)
     g_Player.unk2 = -1;
     obj.x_pos.i.hi = 32766;
     g_Player.x_pos.i.hi = 1;
-    child_0_present = 255;
-    child_1_present = 255;
     child_0.unk0 = 106;
     child_1.unk0 = 47;
-    obj.unk68 = child_0_present ? &child_0 : NULL;
-    g_Player.unk68 = child_1_present ? &child_1 : NULL;
+    obj.unk68 = &child_0;
+    g_Player.unk68 = &child_1;
     return_value = func_800C1E7C(&obj);
     observed_values[0] = (u32)return_value;
     return c_test_observe(0, row, observed_values, func_800C1E7C_expected, 1);

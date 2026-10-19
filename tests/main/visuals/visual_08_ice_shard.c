@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/visuals/visual_08_ice_shard.h"
+#include "support/state_cases.h"
+void ice_shard_idle(struct VisualObj*);
 
 static u32 dust_case(u32 mode, u32 observation)
 {
@@ -68,24 +70,11 @@ static u32 dust_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define DUST_CASE(m, n)                               \
-    static u32 dust_rect_context_dust_##m##_##n(void) \
-    {                                                 \
-        return dust_case(m, n);                       \
-    }
-#define DUST_MODE(m) DUST_CASE(m, 0) DUST_CASE(m, 1) DUST_CASE(m, 2) DUST_CASE(m, 3) DUST_CASE(m, 4) DUST_CASE(m, 5)
-DUST_MODE(0)
-DUST_MODE(1)
-DUST_MODE(2)
-#define DUST_ENTRY(m, n) dust_rect_context_dust_##m##_##n,
-#define DUST_ENTRIES(m) DUST_ENTRY(m, 0) DUST_ENTRY(m, 1) DUST_ENTRY(m, 2) DUST_ENTRY(m, 3) DUST_ENTRY(m, 4) DUST_ENTRY(m, 5)
-static const CTestCase dust_rect_context_cases[]
-    = { DUST_ENTRIES(0) DUST_ENTRIES(1) DUST_ENTRIES(2) };
 static const u32 dust_rect_context_cases_expected[] = { 0x13572468u, 0x24681357u, 0x23456789u, 0x3456789Au, 0x73273501u, 0xACE1u, 0xA0000u, 0x140000u, 0x0u, 0x0u, 0xA000921u, 0xBAF3u, 0xA0000u, 0x140000u, 0x0u, 0x0u, 0xA000921u, 0xBAF3u };
-#undef DUST_CASE
-#undef DUST_MODE
-#undef DUST_ENTRY
-#undef DUST_ENTRIES
+static u32 dust_rect_context_cases_row(u32 row)
+{
+    return dust_case(row / 6, row % 6);
+}
 
 static struct ShardInput {
     s32 type, mode, radius;
@@ -178,25 +167,11 @@ static u32 shard_case(u32 mode, u32 observation)
         return cur_random;
     }
 }
-#define CASE(m, n)                                     \
-    static u32 ice_shard_context_shard_##m##_##n(void) \
-    {                                                  \
-        return shard_case(m, n);                       \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1) CASE(m, 2) CASE(m, 3) CASE(m, 4) CASE(m, 5) CASE(m, 6)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-#define ENTRY(m, n) ice_shard_context_shard_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2) ENTRY(m, 3) ENTRY(m, 4) ENTRY(m, 5) ENTRY(m, 6)
-static const CTestCase ice_shard_context_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) };
 static const u32 ice_shard_context_cases_expected[] = { 0x630000u, 0xC20000u, 0x0u, 0x10000u, 0x2000921u, 0x0u, 0x607u, 0x650000u, 0xCC0000u, 0x18000u, 0x0u, 0x2000921u, 0x0u, 0xBAF3u, 0x5F0000u, 0xC20000u, 0x0u, 0x0u, 0x2000921u, 0x0u, 0xFFu, 0x13572468u, 0x24681357u, 0x23456789u, 0x3456789Au, 0x73273501u, 0x40242526u, 0xACE1u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 ice_shard_context_cases_row(u32 row)
+{
+    return shard_case(row / 7, row % 7);
+}
 
 static const u32 inputs_0[2][10] = {
     { 255, 0, 0, 255, 0, 0, 0, 3, 0, 0 },
@@ -259,54 +234,28 @@ static u32 test_func_800B0CA0(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 14);
 }
 
-static const u32 func_800B10E4_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
-static u32 test_func_800B10E4(u32 row)
+static void ish_idle(void)
 {
-    u32 observed_values[14];
-    u8 pool_0_full;
-    u8 kind;
-    s32 left;
-    s32 top;
-    s32 right;
-    s32 bottom;
-    s32 count_arg;
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    memset(&cur_random, 0, sizeof(cur_random));
-    pool_0_full = 0;
-    kind = 0;
-    left = 0;
-    top = 0;
-    right = 0;
-    bottom = 0;
-    count_arg = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            visual_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    func_800B10E4(kind, left, top, right, bottom, count_arg);
-    observed_values[0] = (u32)visual_objects[0].active;
-    observed_values[1] = (u32)visual_objects[0].id;
-    observed_values[2] = (u32)visual_objects[0].state;
-    observed_values[3] = (u32)visual_objects[0].unk15;
-    observed_values[4] = (u32)visual_objects[0].unk2;
-    observed_values[5] = (u32)visual_objects[0].unk5;
-    observed_values[6] = (u32)visual_objects[0].unk5C.value;
-    observed_values[7] = (u32)visual_objects[0].unk6;
-    observed_values[8] = (u32)visual_objects[0].x_pos.i.hi;
-    observed_values[9] = (u32)visual_objects[0].x_pos.i.lo;
-    observed_values[10] = (u32)visual_objects[0].x_vel.val;
-    observed_values[11] = (u32)visual_objects[0].y_pos.i.hi;
-    observed_values[12] = (u32)visual_objects[0].y_pos.i.lo;
-    observed_values[13] = (u32)visual_objects[0].y_vel.val;
-    return c_test_observe(0, row, observed_values, func_800B10E4_expected, 14);
+    state_reset(0, 0, 0);
+    state_room.visual.active = 1;
+    ice_shard_idle(&state_room.visual);
+}
+
+static void (*const ice_shard_misc_cases[])(void) = {
+    ish_idle,
+};
+static const u32 ice_shard_misc_expected[] = { 0u, 1u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+
+static u32 test_ice_shard_misc(u32 row)
+{
+    return object_run(ice_shard_misc_cases[row], row, &ice_shard_misc_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "dust_rect_context", dust_rect_context_cases, dust_rect_context_cases_expected, COUNT(dust_rect_context_cases), 0 },
-    { "ice_shard_context", ice_shard_context_cases, ice_shard_context_cases_expected, COUNT(ice_shard_context_cases), 0 },
+    { "ice_shard_misc", 0, 0, COUNT(ice_shard_misc_cases), test_ice_shard_misc },
+    { "dust_rect_context", NULL, dust_rect_context_cases_expected, COUNT(dust_rect_context_cases_expected), dust_rect_context_cases_row },
+    { "ice_shard_context", NULL, ice_shard_context_cases_expected, COUNT(ice_shard_context_cases_expected), ice_shard_context_cases_row },
     { "func_800B0CA0", 0, 0, 2, test_func_800B0CA0 },
-    { "func_800B10E4", 0, 0, 1, test_func_800B10E4 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(dust_rect_context_cases) + COUNT(ice_shard_context_cases) + 2 + 1;
+const u32 c_test_count = COUNT(ice_shard_misc_cases) + COUNT(dust_rect_context_cases_expected) + COUNT(ice_shard_context_cases_expected) + 2;

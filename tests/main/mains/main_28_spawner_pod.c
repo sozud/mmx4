@@ -171,50 +171,7 @@ static u32 pod_case(u32 mode)
     i = (u8)obj.unk6 | ((u32)(u8)obj.unk7E << 8) | ((u32)(u8)obj.unk15 << 16) | ((u32)(u8)obj.ext.main_28.unk85 << 24);
     return i;
 }
-#define CASE(m)                                               \
-    static u32 spawner_pod_turn_and_shot_states_pod_##m(void) \
-    {                                                         \
-        return pod_case(m);                                   \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-CASE(12)
-CASE(13)
-CASE(14)
-CASE(15)
-CASE(16)
-CASE(17)
-CASE(18)
-CASE(19)
-CASE(20)
-CASE(21)
-CASE(22)
-CASE(23)
-CASE(24)
-CASE(25)
-CASE(26)
-CASE(27)
-CASE(28)
-CASE(29)
-CASE(30)
-CASE(31)
-CASE(32)
-#define ENTRY(m) spawner_pod_turn_and_shot_states_pod_##m,
-static const CTestCase spawner_pod_turn_and_shot_states_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) ENTRY(12) ENTRY(13) ENTRY(14) ENTRY(15) ENTRY(16) ENTRY(17) ENTRY(18) ENTRY(19) ENTRY(20) ENTRY(21) ENTRY(22) ENTRY(23) ENTRY(24) ENTRY(25) ENTRY(26) ENTRY(27) ENTRY(28) ENTRY(29) ENTRY(30) ENTRY(31) ENTRY(32) };
 static const u32 spawner_pod_turn_and_shot_states_cases_expected[] = { 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x3000200u, 0x4000201u, 0x3400200u, 0x4400201u, 0x4000001u, 0x3400004u, 0x202u, 0x3400004u, 0x3000202u, 0x3000203u, 0x3000203u, 0x3000203u, 0x3403200u, 0x3000204u, 0x3003200u, 0x3400200u, 0x3000200u, 0x3000205u, 0x3403200u, 0x3000200u, 0x3000200u };
-#undef CASE
-#undef ENTRY
 
 struct func_80059E40_case {
     u32 unk2;
@@ -297,21 +254,19 @@ static u32 test_spawner_pod_detach(u32 row)
     u32 observed_values[1];
     struct MainObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
-    child_0_present = 255;
     child_0.active = c->active;
-    obj.ext.main_28.context = child_0_present ? &child_0 : NULL;
+    obj.ext.main_28.context = &child_0;
     spawner_pod_detach(&obj);
     observed_values[0] = (u32)child_0.ext.main_29.unk94;
     return c_test_observe(0, row, observed_values, c->expected, 1);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "spawner_pod_turn_and_shot_states", spawner_pod_turn_and_shot_states_cases, spawner_pod_turn_and_shot_states_cases_expected, COUNT(spawner_pod_turn_and_shot_states_cases), 0 },
+    { "spawner_pod_turn_and_shot_states", NULL, spawner_pod_turn_and_shot_states_cases_expected, COUNT(spawner_pod_turn_and_shot_states_cases_expected), pod_case },
     { "func_80059E40", 0, 0, 4, test_func_80059E40 },
     { "spawner_pod_detach", 0, 0, 2, test_spawner_pod_detach },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spawner_pod_turn_and_shot_states_cases) + 4 + 2;
+const u32 c_test_count = COUNT(spawner_pod_turn_and_shot_states_cases_expected) + 4 + 2;

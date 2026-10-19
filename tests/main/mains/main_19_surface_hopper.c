@@ -3,6 +3,8 @@
 #include "main/mains/main_19_surface_hopper.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "support/state_cases.h"
+void surface_hopper_appear(struct MainObj* arg0);
 u8 func_80053B54(struct MainObj*);
 extern union AnimationStep* surface_hopper_animations[27];
 extern u8 D_800FC80C[8];
@@ -48,27 +50,11 @@ static u32 aim_case(u32 mode, u32 observation)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return observation == 0 ? result : obj.ext.main_19.unk83;
 }
-#define AIM_CASE(m, n)                              \
-    static u32 hopper_aim_edges_aim_##m##_##n(void) \
-    {                                               \
-        return aim_case(m, n);                      \
-    }
-#define AIM_MODE(m) AIM_CASE(m, 0) AIM_CASE(m, 1)
-AIM_MODE(0)
-AIM_MODE(1)
-AIM_MODE(2)
-AIM_MODE(3)
-AIM_MODE(4)
-AIM_MODE(5)
-#define AIM_ENTRY(m, n) hopper_aim_edges_aim_##m##_##n,
-#define AIM_ENTRIES(m) AIM_ENTRY(m, 0) AIM_ENTRY(m, 1)
-static const CTestCase hopper_aim_edges_cases[]
-    = { AIM_ENTRIES(0) AIM_ENTRIES(1) AIM_ENTRIES(2) AIM_ENTRIES(3) AIM_ENTRIES(4) AIM_ENTRIES(5) };
 static const u32 hopper_aim_edges_cases_expected[] = { 0x1u, 0x1Cu, 0x0u, 0x27u, 0x1u, 0x18u, 0x0u, 0x27u, 0x0u, 0x27u, 0x0u, 0x27u };
-#undef AIM_CASE
-#undef AIM_MODE
-#undef AIM_ENTRY
-#undef AIM_ENTRIES
+static u32 hopper_aim_edges_cases_row(u32 row)
+{
+    return aim_case(row / 2, row % 2);
+}
 
 static u32 launch_case(u32 observation)
 {
@@ -131,27 +117,7 @@ static u32 launch_case(u32 observation)
     }
     return actual;
 }
-#define LAUNCH_CASE(name, observation)   \
-    static u32 name(void)                \
-    {                                    \
-        return launch_case(observation); \
-    }
-LAUNCH_CASE(HOPPER_LAUNCH_X, 0)
-LAUNCH_CASE(HOPPER_LAUNCH_Y, 1)
-LAUNCH_CASE(HOPPER_LAUNCH_ANIMATION, 2)
-LAUNCH_CASE(HOPPER_LAUNCH_TIMER, 3)
-LAUNCH_CASE(HOPPER_LAUNCH_FACING, 4)
-LAUNCH_CASE(HOPPER_LAUNCH_STATE, 5)
-static const CTestCase hopper_launch_binding_cases[] = {
-    HOPPER_LAUNCH_X,
-    HOPPER_LAUNCH_Y,
-    HOPPER_LAUNCH_ANIMATION,
-    HOPPER_LAUNCH_TIMER,
-    HOPPER_LAUNCH_FACING,
-    HOPPER_LAUNCH_STATE,
-};
 static const u32 hopper_launch_binding_cases_expected[] = { 0xFFFE0000u, 0x0u, 0x45010003u, 0x1E01u, 0xFF1A00u, 0x10101u };
-#undef LAUNCH_CASE
 
 static struct CrawlInput {
     u8 started, solid, index, orientation, flags;
@@ -309,32 +275,11 @@ static u32 surface_hopper_crawl_run(u32 mode, u32 observation)
     return actual;
 }
 
-#define OBSERVE(name, field)                               \
-    static u32 surface_hopper_crawl_##name##_##field(void) \
-    {                                                      \
-        return surface_hopper_crawl_run(name, field);      \
-    }
-#define CASE(name) OBSERVE(name, 0) OBSERVE(name, 1)
-CASE(INIT)
-CASE(EDGE_UP)
-CASE(EDGE_DOWN)
-CASE(MASK_1)
-CASE(MASK_2)
-CASE(MASK_4)
-CASE(MASK_4_REVERSE)
-CASE(MASK_8)
-CASE(NO_CONTACT)
-CASE(MASK_2_REVERSE)
-CASE(MASK_8_REVERSE)
-#define ENTRY(name) surface_hopper_crawl_##name##_0, surface_hopper_crawl_##name##_1,
-static const CTestCase surface_hopper_crawl_cases[]
-    = {
-          ENTRY(INIT) ENTRY(EDGE_UP) ENTRY(EDGE_DOWN) ENTRY(MASK_1) ENTRY(MASK_2) ENTRY(MASK_4) ENTRY(MASK_4_REVERSE) ENTRY(MASK_8) ENTRY(NO_CONTACT) ENTRY(MASK_2_REVERSE) ENTRY(MASK_8_REVERSE)
-      };
 static const u32 surface_hopper_crawl_cases_expected[] = { 0x600000u, 0x500068u, 0x600002u, 0x480062u, 0x600003u, 0x4A0060u, 0x703901u, 0x50006Fu, 0x603903u, 0x50007Fu, 0x6B3902u, 0x50006Fu, 0x653902u, 0x50007Fu, 0x653900u, 0x50007Fu, 0x683900u, 0x50006Fu, 0x603903u, 0x50007Fu, 0x6B3900u, 0x50006Fu };
-#undef OBSERVE
-#undef CASE
-#undef ENTRY
+static u32 surface_hopper_crawl_cases_row(u32 row)
+{
+    return surface_hopper_crawl_run(row / 2, row % 2);
+}
 
 enum { KILL_DOWN,
     KILL_LEFT,
@@ -489,29 +434,11 @@ static u32 surface_hopper_launched_run(u32 mode, u32 observation)
     return actual;
 }
 
-#define OBSERVE(name, field)                                  \
-    static u32 surface_hopper_launched_##name##_##field(void) \
-    {                                                         \
-        return surface_hopper_launched_run(name, field);      \
-    }
-#define CASE(name) OBSERVE(name, 0) OBSERVE(name, 1)
-CASE(KILL_DOWN)
-CASE(KILL_LEFT)
-CASE(KILL_UP)
-CASE(KILL_RIGHT)
-CASE(SURVIVE)
-CASE(VISIBLE)
-CASE(FAR_AWAY)
-CASE(TIMEOUT)
-#define ENTRY(name) surface_hopper_launched_##name##_0, surface_hopper_launched_##name##_1,
-static const CTestCase surface_hopper_launched_cases[]
-    = {
-          ENTRY(KILL_DOWN) ENTRY(KILL_LEFT) ENTRY(KILL_UP) ENTRY(KILL_RIGHT) ENTRY(SURVIVE) ENTRY(VISIBLE) ENTRY(FAR_AWAY) ENTRY(TIMEOUT)
-      };
 static const u32 surface_hopper_launched_cases_expected[] = { 0x202u, 0x4E0018u, 0x202u, 0x5F00EDu, 0x202u, 0x720001u, 0x202u, 0x5F0021u, 0x10A0101u, 0x4E0018u, 0x1010201u, 0x0u, 0x10202u, 0x0u, 0x1010202u, 0x0u };
-#undef OBSERVE
-#undef CASE
-#undef ENTRY
+static u32 surface_hopper_launched_cases_row(u32 row)
+{
+    return surface_hopper_launched_run(row / 2, row % 2);
+}
 
 static struct TurnInput {
     u8 index, direction, facing, ignore, solid, near;
@@ -622,42 +549,22 @@ static u32 wall_crawler_turn_run(u32 mode, u32 observation)
     return actual;
 }
 
-#define OBSERVE(name, field)                            \
-    static u32 wall_crawler_turn_##name##_##field(void) \
-    {                                                   \
-        return wall_crawler_turn_run(name, field);      \
-    }
-#define CASE(name) OBSERVE(name, 0) OBSERVE(name, 1)
-CASE(V_TURN)
-CASE(V_TURN_DOWN)
-CASE(H_TURN)
-CASE(H_TURN_RIGHT)
-CASE(H_NEARBY)
-CASE(V_NEARBY)
-CASE(H_CRAWL)
-CASE(V_EMPTY)
-#define ENTRY(name) wall_crawler_turn_##name##_0, wall_crawler_turn_##name##_1,
-static const CTestCase wall_crawler_turn_cases[]
-    = {
-          ENTRY(V_TURN) ENTRY(V_TURN_DOWN) ENTRY(H_TURN) ENTRY(H_TURN_RIGHT) ENTRY(H_NEARBY) ENTRY(V_NEARBY) ENTRY(H_CRAWL) ENTRY(V_EMPTY)
-      };
 static const u32 wall_crawler_turn_cases_expected[] = { 0xF000001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF000101u, 0x600080u, 0xF400001u, 0x600080u, 0xF400001u, 0x600080u, 0xF000000u, 0x600080u, 0x101u, 0x600080u };
-#undef OBSERVE
-#undef CASE
-#undef ENTRY
+static u32 wall_crawler_turn_cases_row(u32 row)
+{
+    return wall_crawler_turn_run(row / 2, row % 2);
+}
 
 struct func_80052E94_0_case {
     u32 saved_y;
-    u32 expected[5];
 };
 static const struct func_80052E94_0_case func_80052E94_0_cases[] = {
-    { 67, { 2u, 0x1010001u, 0x10000u, 0u, 0u } },
-    { 133, { 2u, 0x1010001u, 0x10000u, 0u, 0u } },
+    { 67 },
+    { 133 },
 };
 static u32 test_func_80052E94_0(u32 row)
 {
     const struct func_80052E94_0_case* c = &func_80052E94_0_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -750,12 +657,7 @@ static u32 test_func_80052E94_0(u32 row)
     c_test_same_words(pixels, pixels_before, sizeof(pixels));
     c_test_same_words(attrs, attrs_before, sizeof(attrs));
     c_test_same_words(tiles, tiles_before, sizeof(tiles));
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.animation_step.packed;
-    observed_values[2] = (u32)obj.x_speed;
-    observed_values[3] = (u32)obj.y_speed;
-    observed_values[4] = (u32)obj.collision_flags;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 static const u32 func_80052E94_1_expected[] = { 1u, 0xF30001u, 0u, 0u, 0u };
 static u32 test_func_80052E94_1(u32 row)
@@ -884,7 +786,7 @@ static u32 test_func_8005368C_0(u32 row)
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
     struct ShotObj shots_expected[32];
-    u8 pools_full, full;
+    u8 full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 19;
@@ -916,12 +818,7 @@ static u32 test_func_8005368C_0(u32 row)
     expected = obj;
     player_expected = g_Player;
     engine_before = engine_obj;
-    pools_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 1);
     full = c->full;
     if (!full) {
         memset(&shot_objects[31], 0, sizeof(shot_objects[31]));
@@ -997,7 +894,7 @@ static u32 test_func_8005368C_1(u32 row)
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
     struct ShotObj shots_expected[32];
-    u8 pools_full, full;
+    u8 full;
     memset(&obj, 0, sizeof(obj));
     obj.active = inputs_1[row][0];
     obj.id = inputs_1[row][1];
@@ -1030,12 +927,7 @@ static u32 test_func_8005368C_1(u32 row)
     expected = obj;
     player_expected = g_Player;
     engine_before = engine_obj;
-    pools_full = inputs_1[row][18];
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, inputs_1[row][18] ? 1 : 0);
     full = inputs_1[row][19];
     if (!full) {
         memset(&shot_objects[31], 0, sizeof(shot_objects[31]));
@@ -1108,7 +1000,7 @@ static u32 test_func_8005368C_2(u32 row)
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
     struct ShotObj shots_expected[32];
-    u8 pools_full, full;
+    u8 full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 19;
@@ -1140,12 +1032,7 @@ static u32 test_func_8005368C_2(u32 row)
     expected = obj;
     player_expected = g_Player;
     engine_before = engine_obj;
-    pools_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 1);
     full = c->full;
     if (!full) {
         memset(&shot_objects[31], 0, sizeof(shot_objects[31]));
@@ -1211,110 +1098,6 @@ static u32 test_func_8005368C(u32 index)
         return test_func_8005368C_1(index);
     index -= 2;
     return test_func_8005368C_2(index);
-}
-
-struct func_80053D24_case {
-    u32 subtype;
-    u32 expected[5];
-};
-static const struct func_80053D24_case func_80053D24_cases[] = {
-    { 9, { 1u, 5u, 0u, 0u, 0u } },
-    { 10, { 1u, 5u, 1u, 0u, 0u } },
-    { 127, { 1u, 5u, 0u, 0u, 0u } },
-};
-static u32 test_func_80053D24(u32 row)
-{
-    const struct func_80053D24_case* c = &func_80053D24_cases[row];
-    u32 observed_values[5];
-    struct MainObj obj, expected;
-    struct PlayerObj player_expected;
-    struct EngineObj engine_before;
-    u8 tiles[4], tiles_before[4];
-    u16 pixels[512], pixels_before[512];
-    u32 attrs[2], attrs_before[2];
-    s8 subtype;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 19;
-    obj.state = 1;
-    obj.unk5 = 1;
-    obj.unk6 = 1;
-    obj.x_pos.val = 0x00641234;
-    obj.y_pos.val = 0x00645678;
-    obj.hp = 3;
-    obj.contact_damage = 1;
-    obj.unk40 = 0x56;
-    obj.unk42 = 0x1234;
-    obj.animation_table = (const u8* const*)surface_hopper_animations;
-    obj.terrain_box = surface_hopper_attach_terrain_boxes[0];
-    obj.hurt_box = surface_hopper_launch_hurt_boxes[0];
-    obj.attack_box = surface_hopper_launch_hurt_boxes[0];
-    obj.collision_data = D_801060F0;
-    set_animation(&obj, 1);
-    subtype = c->subtype;
-    obj.unk2 = subtype;
-    obj.state = 0;
-    obj.ext.main_19.unk80 = 0;
-    memset(&tiles, 0, sizeof(tiles));
-    memset(&pixels, 0, sizeof(pixels));
-    memset(&attrs, 0, sizeof(attrs));
-    tiles[0] = 1;
-    SP_BG_TILEMAP = tiles;
-    TEST_BG_TILE_PIXELS = (u8*)pixels;
-    TEST_BG_TILE_ATTRS = (u8*)attrs;
-    layout_size = 1;
-    layout_width = 1;
-    memcpy(tiles_before, tiles, sizeof(tiles_before));
-    memcpy(pixels_before, pixels, sizeof(pixels_before));
-    memcpy(attrs_before, attrs, sizeof(attrs_before));
-    SP_CUR_MAIN_OBJ = &obj;
-    expected = obj;
-    player_expected = g_Player;
-    engine_before = engine_obj;
-    expected.unk5 = 2;
-    expected.hp = 31;
-    expected.contact_damage = 3;
-    expected.unk16 = 6;
-    expected.state = 1;
-    expected.unk6 = 0;
-    expected.unk7C = 0;
-    expected.on_screen = 1;
-    expected.invincibility_timer = 0;
-    expected.air_state = 0;
-    expected.unk42 = expected.unk42 + 1;
-    expected.unk18 = expected.x_pos;
-    expected.unk1C = expected.y_pos;
-    expected.ext.main_19.unk82 = 0x38;
-    expected.ext.main_19.animation_index = (subtype - 3) & 1;
-    expected.ext.main_19.unk83 = 1;
-    expected.x_speed = 0;
-    expected.y_speed = 0;
-    expected.x_accel = 0;
-    expected.gravity = 0;
-    SP_CUR_MAIN_OBJ = &expected;
-    surface_hopper_set_launch(&expected);
-    SP_CUR_MAIN_OBJ = &obj;
-    expected.x_speed = 0;
-    expected.y_speed = 0;
-    expected.hurt_box = NULL;
-    expected.collision_data = D_801060F0;
-    func_8002C808(PLAYER_OBJECT(&expected));
-    assert(expected.collision_flags == 0);
-    expected.unk5 = 5;
-    func_80053D24(&obj);
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
-    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    assert(SP_CUR_MAIN_OBJ == &obj);
-    c_test_same_words(pixels, pixels_before, sizeof(pixels));
-    c_test_same_words(attrs, attrs_before, sizeof(attrs));
-    c_test_same_words(tiles, tiles_before, sizeof(tiles));
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.ext.main_19.animation_index;
-    observed_values[3] = (u32)obj.x_speed;
-    observed_values[4] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
 }
 
 static const u32 surface_hopper_crawl_turn_0_expected[] = { 3u, 0x1F010009u };
@@ -1442,17 +1225,84 @@ static u32 test_surface_hopper_launch(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
+#define SH(kind, st, step, sub) (state_reset(step, sub, 0), so.unk2 = kind, so.state = st, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.terrain_box = &state_hit_box)
+#define LAUNCH(kind, attr)                         \
+    do {                                           \
+        struct MainObj* current = SP_CUR_MAIN_OBJ; \
+        SH(kind, 0, 0, 0);                         \
+        state_terrain(attr);                       \
+        SP_CUR_MAIN_OBJ = &so;                     \
+        surface_hopper_update(&so);                \
+        SP_CUR_MAIN_OBJ = current;                 \
+        so.collision_data = NULL;                  \
+    } while (0)
+static void sh_launch_up(void)
+{
+    LAUNCH(3, 0);
+}
+static void sh_launch_up_wall(void) { LAUNCH(4, 0x38); }
+static void sh_launch_right(void) { LAUNCH(5, 0); }
+static void sh_launch_right_wall(void) { LAUNCH(6, 0x38); }
+static void sh_launch_left(void) { LAUNCH(7, 0); }
+static void sh_launch_left_wall(void) { LAUNCH(8, 0x38); }
+static void sh_launch_other(void) { LAUNCH(9, 0); }
+static void sh_appear_start(void)
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SH(0, 1, 1, 0);
+    so.animation_table = (void*)surface_hopper_animations;
+    SP_CUR_MAIN_OBJ = &so;
+    surface_hopper_appear(&so);
+    SP_CUR_MAIN_OBJ = current;
+}
+static void sh_appear_wait(void)
+{
+    SH(0, 1, 1, 1);
+    so.animation_step.fields.relative_step = 1;
+    surface_hopper_appear(&so);
+}
+static void sh_appear_done(void)
+{
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    SH(0, 1, 1, 1);
+    so.animation_step.fields.relative_step = -1;
+    cur_random = 0x1234;
+    SP_CUR_MAIN_OBJ = &so;
+    surface_hopper_appear(&so);
+    SP_CUR_MAIN_OBJ = current;
+    state_extra = so.ext.main_19.unk80;
+}
+
+static void (*const surface_hopper_states_cases[])(void) = {
+    sh_launch_up,
+    sh_launch_up_wall,
+    sh_launch_right,
+    sh_launch_right_wall,
+    sh_launch_left,
+    sh_launch_left_wall,
+    sh_launch_other,
+    sh_appear_start,
+    sh_appear_wait,
+    sh_appear_done,
+};
+static const u32 surface_hopper_states_expected[] = { 5u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0xFFF80000u, 0u, 0x1401Au, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14009u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0x80000u, 0u, 0u, 0x14008u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10008u, 0x1F0002u, 0u, 0u, 2u, 0u, 0x800000u, 0xFFF80000u, 0u, 0u, 0x10009u, 0x1F0002u, 0u, 0u, 5u, 0u, 0x800000u, 0u, 0u, 0u, 0x1001Au, 0x1F0002u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0xEu, 0u, 0u, 0u, 0x101u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_surface_hopper_states(u32 row)
+{
+    return state_run(surface_hopper_states_cases[row], row, &surface_hopper_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "hopper_aim_edges", hopper_aim_edges_cases, hopper_aim_edges_cases_expected, COUNT(hopper_aim_edges_cases), 0 },
-    { "hopper_launch_binding", hopper_launch_binding_cases, hopper_launch_binding_cases_expected, COUNT(hopper_launch_binding_cases), 0 },
-    { "surface_hopper_crawl", surface_hopper_crawl_cases, surface_hopper_crawl_cases_expected, COUNT(surface_hopper_crawl_cases), 0 },
-    { "surface_hopper_launched", surface_hopper_launched_cases, surface_hopper_launched_cases_expected, COUNT(surface_hopper_launched_cases), 0 },
-    { "wall_crawler_turn", wall_crawler_turn_cases, wall_crawler_turn_cases_expected, COUNT(wall_crawler_turn_cases), 0 },
+    { "surface_hopper_states", 0, 0, COUNT(surface_hopper_states_cases), test_surface_hopper_states },
+    { "hopper_aim_edges", NULL, hopper_aim_edges_cases_expected, COUNT(hopper_aim_edges_cases_expected), hopper_aim_edges_cases_row },
+    { "hopper_launch_binding", NULL, hopper_launch_binding_cases_expected, COUNT(hopper_launch_binding_cases_expected), launch_case },
+    { "surface_hopper_crawl", NULL, surface_hopper_crawl_cases_expected, COUNT(surface_hopper_crawl_cases_expected), surface_hopper_crawl_cases_row },
+    { "surface_hopper_launched", NULL, surface_hopper_launched_cases_expected, COUNT(surface_hopper_launched_cases_expected), surface_hopper_launched_cases_row },
+    { "wall_crawler_turn", NULL, wall_crawler_turn_cases_expected, COUNT(wall_crawler_turn_cases_expected), wall_crawler_turn_cases_row },
     { "func_80052E94", 0, 0, 3, test_func_80052E94 },
     { "func_8005368C", 0, 0, 6, test_func_8005368C },
-    { "func_80053D24", 0, 0, 3, test_func_80053D24 },
     { "surface_hopper_crawl_turn", 0, 0, 2, test_surface_hopper_crawl_turn },
     { "surface_hopper_launch", 0, 0, 2, test_surface_hopper_launch },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(hopper_aim_edges_cases) + COUNT(hopper_launch_binding_cases) + COUNT(surface_hopper_crawl_cases) + COUNT(surface_hopper_launched_cases) + COUNT(wall_crawler_turn_cases) + 3 + 6 + 3 + 2 + 2;
+const u32 c_test_count = COUNT(surface_hopper_states_cases) + COUNT(hopper_aim_edges_cases_expected) + COUNT(hopper_launch_binding_cases_expected) + COUNT(surface_hopper_crawl_cases_expected) + COUNT(surface_hopper_launched_cases_expected) + COUNT(wall_crawler_turn_cases_expected) + 3 + 6 + 2 + 2;

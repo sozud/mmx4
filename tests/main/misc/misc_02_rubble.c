@@ -73,23 +73,7 @@ static u32 debris_case(u32 mode)
     i = cur_random | ((u32)(u8)misc_objects[63].id << 16) | ((u32)(u8)misc_objects[63].unk15 << 24);
     return i;
 }
-#define CASE(m)                 \
-    static u32 debris_##m(void) \
-    {                           \
-        return debris_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) debris_##m,
-static const CTestCase owner_debris_allocation_prefixes_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 owner_debris_allocation_prefixes_cases_expected[] = { 0x270077u, 0x270077u, 0x40030D89u, 0x36E99u, 0x4003AB72u, 0x270077u };
-#undef CASE
-#undef ENTRY
 
 #include "support/pool_full.h"
 static u32 pool_full_spawn_debris_offset_one(void)
@@ -136,9 +120,43 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50000u, 0x50000u, 0x50000u, 0x50000u };
+
+extern u8 hatch_blast_break_debris[16];
+static struct MiscObj pool_before[64];
+static u32 empty(u32 row)
+{
+    struct ShotObj obj, before;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    u32 rubble = row % 2, full = row / 2 % 2, seed = row / 4, i;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 40;
+    obj.state = 1;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 422 * 65536 + 0x5678;
+    before = obj;
+    c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = full;
+    memcpy(pool_before, misc_objects, sizeof(pool_before));
+    cur_random = seed ? 0x1000 : 0x1234;
+    if (rubble)
+        spawn_rubble(0, hatch_blast_break_debris, &obj, -1);
+    else
+        spawn_debris(0, hatch_blast_break_debris, &obj);
+    c_test_same_words(&obj, &before, sizeof(obj));
+    c_test_same_words(misc_objects, pool_before, sizeof(pool_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    assert(cur_random == (seed ? 0x1000 : 0x1234));
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "owner_debris_allocation_prefixes", owner_debris_allocation_prefixes_cases, owner_debris_allocation_prefixes_cases_expected, COUNT(owner_debris_allocation_prefixes_cases), 0 },
+    { "owner_debris_allocation_prefixes", NULL, owner_debris_allocation_prefixes_cases_expected, COUNT(owner_debris_allocation_prefixes_cases_expected), debris_case },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
+    { "zero_count_debris_API_preserves_source_pools_and_random_state", NULL, NULL, 8, empty },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(owner_debris_allocation_prefixes_cases) + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(owner_debris_allocation_prefixes_cases_expected) + COUNT(pool_full_cases) + 8;

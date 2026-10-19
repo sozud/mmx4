@@ -2,7 +2,12 @@
 #include "main/shots/shot_34_ray_trap.h"
 #include "main/55C4.h"
 #include "main/mains/main_56_jet_stingray.h"
+void ray_trap_ride(struct ShotObj*);
 extern union AnimationStep jet_stingray_anim_17[2];
+struct AnimationTable12 {
+    union AnimationStep* entries[12];
+    s32 count;
+};
 extern struct AnimationTable12 jet_stingray_flyby_animations;
 
 static u32 chase_case(u32 mode, u32 observation)
@@ -70,28 +75,11 @@ static u32 chase_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define CHASE_CASE(m, n)                               \
-    static u32 ray_chase_context_chase_##m##_##n(void) \
-    {                                                  \
-        return chase_case(m, n);                       \
-    }
-#define CHASE_MODE(m) CHASE_CASE(m, 0) CHASE_CASE(m, 1) CHASE_CASE(m, 2) CHASE_CASE(m, 3) CHASE_CASE(m, 4) CHASE_CASE(m, 5)
-CHASE_MODE(0)
-CHASE_MODE(1)
-#define CHASE_ENTRY(m, n) ray_chase_context_chase_##m##_##n,
-#define CHASE_ENTRIES(m) CHASE_ENTRY(m, 0) CHASE_ENTRY(m, 1) CHASE_ENTRY(m, 2) CHASE_ENTRY(m, 3) CHASE_ENTRY(m, 4) CHASE_ENTRY(m, 5)
-static const CTestCase ray_chase_context_cases[]
-    = { CHASE_ENTRIES(0) CHASE_ENTRIES(1) };
 static const u32 ray_chase_context_cases_expected[] = { 0x651234u, 0x50D678u, 0x45010002u, 0x400102u, 0x0u, 0xFF11u, 0x651234u, 0x50D678u, 0x45010002u, 0x102u, 0x0u, 0xFF11u };
-#undef CHASE_CASE
-#undef CHASE_MODE
-#undef CHASE_ENTRY
-#undef CHASE_ENTRIES
-
-static struct AnimationTable12 {
-    union AnimationStep* entries[12];
-    s32 count;
-};
+static u32 ray_chase_context_cases_row(u32 row)
+{
+    return chase_case(row / 6, row % 6);
+}
 
 static u32 ride_case(u32 mode)
 {
@@ -160,23 +148,7 @@ static u32 ride_case(u32 mode)
     assert(jet_stingray_flyby_animations.count == 0x52);
     return obj.state | ((u32)(u8)obj.unk7 << 8) | ((u32)(u8)obj.unk6 << 16);
 }
-#define CASE(m)                                            \
-    static u32 ray_trap_ride_owner_defaults_ride_##m(void) \
-    {                                                      \
-        return ride_case(m);                               \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) ray_trap_ride_owner_defaults_ride_##m,
-static const CTestCase ray_trap_ride_owner_defaults_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 ray_trap_ride_owner_defaults_cases_expected[] = { 0x301u, 0x302u, 0xFF01u, 0x101u, 0x201u, 0x10001u };
-#undef CASE
-#undef ENTRY
 
 static u32 rebound(void)
 {
@@ -264,53 +236,6 @@ static u32 stick_test(void)
 static const CTestCase ray_trap_wall_stick_cases[] = { stick_test };
 static const u32 ray_trap_wall_stick_cases_expected[] = { 0x20103u };
 
-static const u32 inputs_0[2][12] = {
-    { 255, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1 },
-    { 255, 2, 0, 255, 0, 0, 0, 0, 0, 0, 0, 0 },
-};
-struct func_800A19A8_case {
-    u32 expected[10];
-};
-static const struct func_800A19A8_case func_800A19A8_cases[] = {
-    { { 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 0u, 0u, 0u, 0u, 0u } },
-    { { 2u, 0u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u } },
-};
-static u32 test_func_800A19A8(u32 row)
-{
-    const struct func_800A19A8_case* c = &func_800A19A8_cases[row];
-    u32 observed_values[10];
-    struct ShotObj obj;
-    struct MainObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    child_0_present = inputs_0[row][0];
-    obj.unk7 = inputs_0[row][1];
-    obj.unk8C.bytes[1] = inputs_0[row][2];
-    child_0.ext.main_55.unk87 = inputs_0[row][3];
-    obj.unk6 = inputs_0[row][4];
-    obj.timer = inputs_0[row][5];
-    obj.unk8C.bytes[0] = inputs_0[row][6];
-    child_0.x_pos.i.hi = inputs_0[row][7];
-    obj.unk84.halves[0] = inputs_0[row][8];
-    child_0.y_pos.i.hi = inputs_0[row][9];
-    obj.unk84.halves[1] = inputs_0[row][10];
-    child_0.active = inputs_0[row][11];
-    obj.unk7C = child_0_present ? &child_0 : NULL;
-    func_800A19A8(&obj);
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.timer;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.unk7;
-    observed_values[4] = (u32)obj.unk8C.bytes[0];
-    observed_values[5] = (u32)obj.unk8C.bytes[1];
-    observed_values[6] = (u32)obj.x_pos.i.hi;
-    observed_values[7] = (u32)obj.x_vel.val;
-    observed_values[8] = (u32)obj.y_pos.i.hi;
-    observed_values[9] = (u32)obj.y_vel.val;
-    return c_test_observe(0, row, observed_values, c->expected, 10);
-}
-
 static const u32 func_800A1B1C_0_expected[] = { 1u, 0u, 0u, 0x27u, 0x20u, 0x20u };
 static u32 test_func_800A1B1C_0(u32 row)
 {
@@ -320,15 +245,13 @@ static u32 test_func_800A1B1C_0(u32 row)
     struct PlayerObj player_before;
     struct ShotObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&g_Player, 0, sizeof(g_Player));
-    child_0_present = 255;
     child_0.ext.main_55.unk88 = 247;
     obj.unk8A = 7;
     child_0.active = 1;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
+    obj.unk7C = &child_0;
     obj.active = 0x41;
     obj.id = 52;
     obj.state = 1;
@@ -362,12 +285,10 @@ static u32 test_func_800A1B1C_1(u32 row)
     struct PlayerObj player_before;
     struct ShotObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&g_Player, 0, sizeof(g_Player));
-    child_0_present = 255;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
+    obj.unk7C = &child_0;
     obj.active = 0x41;
     obj.id = 52;
     obj.state = 1;
@@ -423,31 +344,322 @@ static u32 test_ray_trap_chase(u32 row)
     return c_test_observe(0, row, observed_values, ray_trap_chase_expected, 5);
 }
 
-static const u32 ray_trap_fall_expected[] = { 0u, 4u, 0u, 0u, 0xFFFD0000u };
-static u32 test_ray_trap_fall(u32 row)
+#include "support/state_cases.h"
+
+void ray_trap_check_airborne(struct ShotObj*);
+static struct MainObj ray_owner;
+#define ss state_room.shot
+#define RAY(st, step, phase) (state_reset(step, phase, 0), memset(&ray_owner, 0, sizeof(ray_owner)), ray_owner.active = 1, ray_owner.x_pos.i.hi = 0x100, ray_owner.y_pos.i.hi = 0x80, ss.state = st, ss.unk7C = (struct WeaponObj*)&ray_owner, ss.x_pos.i.hi = 0x80, ss.y_pos.i.hi = 0x60)
+#define RAY_SEEN() (state_extra = ss.unk8C.word ^ (u32)(u16)ss.timer << 16 ^ (u32)ray_owner.ext.main_55.unk85 << 8)
+static void rt_init_hunter(void)
 {
-    u32 observed_values[5];
-    struct ShotObj obj;
+    RAY(0, 0, 0);
+    g_Player.x_pos.i.hi = 0x100;
+    ray_trap_update(&ss);
+    RAY_SEEN();
+}
+static void rt_init_rider(void)
+{
+    RAY(0, 0, 0);
+    ss.unk2 = 1;
+    ray_trap_update(&ss);
+    RAY_SEEN();
+}
+static void rt_init_crawler_left(void)
+{
+    RAY(0, 0, 0);
+    ss.unk2 = 2;
+    ray_trap_update(&ss);
+    RAY_SEEN();
+}
+static void rt_init_crawler_right(void)
+{
+    RAY(0, 0, 0);
+    ss.unk2 = 3;
+    ss.unk15 = 0x40;
+    ray_trap_update(&ss);
+    RAY_SEEN();
+}
+static void rt_airborne(void)
+{
+    RAY(1, 4, 0);
+    ss.unk70 = 0;
+    ray_trap_check_airborne(&ss);
+}
+static void rt_grounded(void)
+{
+    RAY(1, 4, 0);
+    ss.unk70 = 8;
+    ray_trap_check_airborne(&ss);
+}
+static void rt_fall_land(void)
+{
+    RAY(1, 1, 0);
+    ss.unk70 = 8;
+    ray_trap_fall(&ss);
+}
+static void rt_fall_wall_hunter(void)
+{
+    RAY(1, 1, 0);
+    ss.unk70 = 1;
+    ray_trap_fall(&ss);
+}
+static void rt_fall_wall_crawler(void)
+{
+    RAY(1, 1, 0);
+    ss.unk70 = 2;
+    ss.unk8C.bytes[3] = 1;
+    ray_trap_fall(&ss);
+}
+static void rt_fall(void)
+{
+    RAY(1, 1, 0);
+    ss.y_vel.val = 0x10000;
+    ray_trap_fall(&ss);
+}
+static void rt_ride_launch(void)
+{
+    RAY(1, 5, 0);
+    ray_trap_ride(&ss);
+    RAY_SEEN();
+}
+static void rt_ride_climb(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 1;
+    ss.unk8C.bytes[1] = 1;
+    ray_trap_ride(&ss);
+    RAY_SEEN();
+}
+static void rt_ride_top(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 1;
+    ray_trap_ride(&ss);
+    RAY_SEEN();
+}
+static void rt_ride_orbit(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 2;
+    ss.unk8C.bytes[0] = 3;
+    ray_trap_ride(&ss);
+    RAY_SEEN();
+}
+static void rt_ride_orbit_count(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 2;
+    ss.timer = 2;
+    ray_trap_ride(&ss);
+    RAY_SEEN();
+}
+static void rt_ride_release(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 2;
+    ray_owner.ext.main_55.unk87 = 1;
+    ray_trap_ride(&ss);
+}
+static void rt_ride_owner_gone(void)
+{
+    RAY(1, 5, 0);
+    ss.unk7 = 2;
+    ray_owner.active = 0;
+    ray_trap_ride(&ss);
+}
+static void rt_despawn_rider(void)
+{
+    RAY(2, 0, 0);
+    ss.active = 1;
+    ss.unk2 = 1;
+    ss.unk8A = 2;
+    ray_owner.ext.main_55.unk85 = 3;
+    ray_owner.ext.main_55.unk88 = 0xFF;
+    ray_trap_update(&ss);
+    state_extra = ray_owner.ext.main_55.unk85 | ray_owner.ext.main_55.unk88 << 8;
+}
+static void rt_despawn_crawler(void)
+{
+    RAY(2, 0, 0);
+    ss.active = 1;
+    ss.unk2 = 2;
+    ray_trap_update(&ss);
+}
+static void rt_run_expire(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 2;
+    ss.animation_step.fields.relative_step = 1;
+    ray_trap_update(&ss);
+}
+static void rt_run_owner_down(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 3;
+    ss.timer = 5;
+    ray_owner.state = 2;
+    ray_trap_update(&ss);
+}
+static void rt_run_timer(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 2;
+    ss.timer = 5;
+    ss.animation_step.fields.relative_step = 1;
+    ray_trap_update(&ss);
+    RAY_SEEN();
+}
+static void rt_run_shot(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 1;
+    ss.animation_step.fields.relative_step = 1;
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    ray_trap_update(&ss);
+}
+static void rt_run_away(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 1;
+    ss.animation_step.fields.relative_step = 1;
+    ss.x_pos.i.hi = 0x1000;
+    ray_trap_update(&ss);
+}
+static void rt_crawl_land(void)
+{
+    RAY(1, 4, 0);
+    ss.unk2 = 1;
+    ss.unk70 = 8;
+    func_800A1E3C(&ss);
+}
+static void rt_crawl_start_hunter(void)
+{
+    RAY(1, 4, 1);
+    g_Player.x_pos.i.hi = 0x100;
+    func_800A1E3C(&ss);
+}
+static void rt_crawl_start_crawler(void)
+{
+    RAY(1, 4, 1);
+    ss.unk2 = 2;
+    func_800A1E3C(&ss);
+}
+
+static void (*const ray_trap_states_cases[])(void) = {
+    rt_init_hunter,
+    rt_init_rider,
+    rt_init_crawler_left,
+    rt_init_crawler_right,
+    rt_airborne,
+    rt_grounded,
+    rt_fall_land,
+    rt_fall_wall_hunter,
+    rt_fall_wall_crawler,
+    rt_fall,
+    rt_ride_launch,
+    rt_ride_climb,
+    rt_ride_top,
+    rt_ride_orbit,
+    rt_ride_orbit_count,
+    rt_ride_release,
+    rt_ride_owner_gone,
+    rt_despawn_rider,
+    rt_despawn_crawler,
+    rt_run_expire,
+    rt_run_owner_down,
+    rt_run_timer,
+    rt_run_shot,
+    rt_run_away,
+    rt_crawl_land,
+    rt_crawl_start_hunter,
+    rt_crawl_start_crawler,
+};
+static const u32 ray_trap_states_expected[] = { 0x401u, 0xFF400000u, 0x800000u, 0x600000u, 0x60000u, 0u, 0u, 0x50000u, 7u, 0u, 0x501u, 0xFF000100u, 0x800000u, 0x600000u, 0x60000u, 0u, 0u, 0x50000u, 7u, 0u, 0x301u, 0xFF000200u, 0x800000u, 0x600000u, 0xFFFD0000u, 0u, 0u, 0x50000u, 0xF100007u, 0u, 0x201u, 0xFF400300u, 0x800000u, 0x600000u, 0x30000u, 0u, 0u, 0x50000u, 0xF100007u, 0u, 0x101u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0x420000u, 0x50000u, 0u, 0u, 0x401u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x10401u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x401u, 0u, 0x800000u, 0x600000u, 0u, 0xFFFD0000u, 0u, 0x40000u, 0u, 0u, 0x10301u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 0u, 0x800000u, 0x5F0000u, 0u, 0x10000u, 0u, 0x40000u, 0u, 0u, 0x1000501u, 0u, 0x800000u, 0x560000u, 0u, 0xA0000u, 0u, 0x40000u, 0x100u, 0u, 0x1000501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2000501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2000501u, 0u, 0x1290000u, 0x6E0000u, 0u, 0u, 0u, 0x40000u, 0x30002u, 0u, 0x2000501u, 0u, 0x1200000u, 0xA00000u, 0u, 0u, 0u, 0x40000u, 0x10000u, 0u, 0x10501u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x2000502u, 0u, 0x1200000u, 0xA00000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0xFB02u, 0u, 0u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x10402u, 0x200u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0x41002100u, 0x10402u, 0x300u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0x41002100u, 0x10401u, 0x200u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0x50000u, 0u, 0x10402u, 0x100u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x58000u, 0u, 0x41002100u, 0x10402u, 0x100u, 0x10000000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x10401u, 0xFF000100u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x301u, 0xFF400000u, 0x800000u, 0x700000u, 0x90000u, 0u, 0u, 0x50000u, 0u, 0u, 0x301u, 0xFF000200u, 0x800000u, 0x700000u, 0xFFFD0000u, 0u, 0u, 0x50000u, 0u, 0u };
+
+static u32 test_ray_trap_states(u32 row)
+{
+    return object_run(ray_trap_states_cases[row], row, &ray_trap_states_expected[row * 10]);
+}
+
+void ray_trap_ride(struct ShotObj*);
+static const u32 fly_words[] = { 0x23010002, 0x24010002, 0x25010002, 0x26FD0002 };
+static const s32 player_dx[] = { -65536, -1, 0, 1, 65536 };
+static u32 ray_return(u32 row)
+{
+    struct ShotObj obj, expected;
+    struct MainObj owner, owner_before;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    struct BackgroundObj backgrounds_before[3];
+    u32 offset = row % 5, frame = row / 5 % 4, started = row / 20 % 2, last_tick = row / 40, next = (frame + 1) % 4, i;
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    memset(&g_Player, 0, sizeof(g_Player));
+    g_Player.x_pos.val = 100 * 65536 + 0x1234 + player_dx[offset];
+    g_Player.y_pos.val = 120 * 65536 + 0x5678;
+    player_before = g_Player;
     memset(&obj, 0, sizeof(obj));
-    obj.unk70 = 3;
-    ray_trap_fall(&obj);
-    observed_values[0] = (u32)obj.unk2C;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.x_vel.val;
-    observed_values[4] = (u32)obj.y_vel.val;
-    return c_test_observe(0, row, observed_values, ray_trap_fall_expected, 5);
+    obj.active = 0x41;
+    obj.id = 34;
+    obj.unk2 = 1;
+    memset(&owner, 0, sizeof(owner));
+    owner.active = 0x41;
+    owner.id = 55;
+    owner.state = 1;
+    owner.animation_table = (const u8* const*)jet_stingray_flyby_animations.entries;
+    owner_before = owner;
+    obj.unk7C = WEAPON_OBJECT(&owner);
+    obj.state = 1;
+    obj.unk5 = 5;
+    obj.unk6 = 2;
+    obj.unk7 = started;
+    obj.unk15 = 0x40;
+    obj.unk16 = 5;
+    obj.x_pos.val = 100 * 65536 + 0x1234;
+    obj.y_pos.val = g_Player.y_pos.val;
+    obj.x_vel.val = 0x18000;
+    obj.y_vel.val = -0x24000;
+    obj.animation_table = (u32**)jet_stingray_flyby_animations.entries;
+    set_animation_frame(ANIMATED_OBJECT(&obj), 6, frame);
+    for (i = 0; i < 4; i++)
+        assert(((u32*)jet_stingray_flyby_animations.entries[6])[i] == fly_words[i]);
+    assert(obj.animation_step.packed == fly_words[frame]);
+    if (last_tick)
+        obj.animation_step.fields.duration = 1;
+    obj.previous_animation_index = 0x35;
+    expected = obj;
+    if (!started) {
+        expected.unk7 = 1;
+        expected.unk15 = offset >= 2 ? 0x40 : 0;
+        expected.x_vel.val = 65536;
+        expected.y_vel.val = -0x30000;
+    }
+    expected.x_pos.val += expected.x_vel.val;
+    expected.y_pos.val -= expected.y_vel.val;
+    if (last_tick) {
+        expected.animation_cursor = (u32*)jet_stingray_flyby_animations.entries[6] + next;
+        expected.animation_step.packed = fly_words[next];
+    } else
+        expected.animation_step.fields.duration = 1;
+    ray_trap_ride(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    return 1;
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "ray_chase_context", ray_chase_context_cases, ray_chase_context_cases_expected, COUNT(ray_chase_context_cases), 0 },
-    { "ray_trap_ride_owner_defaults", ray_trap_ride_owner_defaults_cases, ray_trap_ride_owner_defaults_cases_expected, COUNT(ray_trap_ride_owner_defaults_cases), 0 },
+    { "ray_trap_states", 0, 0, COUNT(ray_trap_states_cases), test_ray_trap_states },
+    { "ray_chase_context", NULL, ray_chase_context_cases_expected, COUNT(ray_chase_context_cases_expected), ray_chase_context_cases_row },
+    { "ray_trap_ride_owner_defaults", NULL, ray_trap_ride_owner_defaults_cases_expected, COUNT(ray_trap_ride_owner_defaults_cases_expected), ride_case },
     { "ray_trap_wall_rebound", ray_trap_wall_rebound_cases, ray_trap_wall_rebound_cases_expected, COUNT(ray_trap_wall_rebound_cases), 0 },
     { "ray_trap_wall_stick", ray_trap_wall_stick_cases, ray_trap_wall_stick_cases_expected, COUNT(ray_trap_wall_stick_cases), 0 },
-    { "func_800A19A8", 0, 0, 2, test_func_800A19A8 },
     { "func_800A1B1C", 0, 0, 2, test_func_800A1B1C },
     { "ray_trap_chase", 0, 0, 1, test_ray_trap_chase },
-    { "ray_trap_fall", 0, 0, 1, test_ray_trap_fall },
+    { "ray_trap_return", NULL, NULL, 80, ray_return },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ray_chase_context_cases) + COUNT(ray_trap_ride_owner_defaults_cases) + COUNT(ray_trap_wall_rebound_cases) + COUNT(ray_trap_wall_stick_cases) + 2 + 2 + 1 + 1;
+const u32 c_test_count = COUNT(ray_trap_states_cases) + COUNT(ray_chase_context_cases_expected) + COUNT(ray_trap_ride_owner_defaults_cases_expected) + COUNT(ray_trap_wall_rebound_cases) + COUNT(ray_trap_wall_stick_cases) + 2 + 1 + 80;

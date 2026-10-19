@@ -68,35 +68,10 @@ static u32 teleport_case(u32 mode)
     assert(cur_random == expected_random);
     return (u8)obj.unk5 | ((u32)(u8)obj.ext.effect_27.unk14 << 8) | ((u32)(u8)obj.ext.effect_27.unk16 << 16) | ((u32)pool[31].unk7 << 24);
 }
-#define CASE(m)                   \
-    static u32 teleport_##m(void) \
-    {                             \
-        return teleport_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-CASE(10)
-CASE(11)
-CASE(12)
-CASE(13)
-CASE(14)
-#define ENTRY(m) teleport_##m,
-static const CTestCase teleport_intro_quad_prefixes_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) ENTRY(10) ENTRY(11) ENTRY(12) ENTRY(13) ENTRY(14) };
 static const u32 teleport_intro_quad_prefixes_cases_expected[] = { 0x5000101u, 0x5000101u, 0x5000101u, 0x5000002u, 0x102u, 0x4000502u, 0x9000A02u, 0x5000003u, 0x103u, 0x3000803u, 0x5000103u, 0x5010003u, 0x5000004u, 0x5000102u, 0x50000FFu };
-#undef CASE
-#undef ENTRY
 
 const struct CTestGroup c_test_groups[] = {
-    { "teleport_intro_quad_prefixes", teleport_intro_quad_prefixes_cases, teleport_intro_quad_prefixes_cases_expected, COUNT(teleport_intro_quad_prefixes_cases), 0 },
+    { "teleport_intro_quad_prefixes", NULL, teleport_intro_quad_prefixes_cases_expected, COUNT(teleport_intro_quad_prefixes_cases_expected), teleport_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(teleport_intro_quad_prefixes_cases);
+const u32 c_test_count = COUNT(teleport_intro_quad_prefixes_cases_expected);

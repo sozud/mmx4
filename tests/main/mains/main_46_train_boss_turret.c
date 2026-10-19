@@ -3,87 +3,7 @@
 #include "main/55C4.h"
 #include "main/mains/main_45_train_boss.h"
 #include "main/weapons/weapon_00_lemon.h"
-
-static const u32 train_boss_turret_arrive_0_expected[] = { 0u, 0xFFFFFFFFu, 0u };
-static u32 test_train_boss_turret_arrive_0(u32 row)
-{
-    u32 observed_values[3];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.unk6 = -1;
-    train_boss_turret_arrive(&obj);
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, train_boss_turret_arrive_0_expected, 3);
-}
-
-static const u32 train_boss_turret_arrive_1_expected[] = { 2u, 1u, 0x1B001234u };
-static u32 test_train_boss_turret_arrive_1(u32 row)
-{
-    u32 observed_values[3];
-    struct MainObj obj, expected;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x45;
-    obj.id = 46;
-    obj.x_pos.val = 452989492;
-    obj.y_pos.val = 6575736;
-    obj.unk42 = 0x1234;
-    obj.animation_table = (const u8* const*)train_boss_animations;
-    train_boss_turret_init(&obj);
-    set_animation(&obj, 0xB);
-    obj.unk6 = 1;
-    expected = obj;
-    player_before = g_Player;
-    train_boss_turret_arrive(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.x_pos.val;
-    return c_test_observe(0, row, observed_values, train_boss_turret_arrive_1_expected, 3);
-}
-
-struct train_boss_turret_destroyed_case {
-    u32 x_pos, on_screen;
-    u32 expected[4];
-};
-static const struct train_boss_turret_destroyed_case train_boss_turret_destroyed_cases[] = {
-    { 452989492, 1, { 1u, 2u, 0x1B001234u, 0x645678u } },
-    { 805311028, 0, { 0u, 2u, 0x30001234u, 0x645678u } },
-};
-static u32 test_train_boss_turret_destroyed(u32 row)
-{
-    const struct train_boss_turret_destroyed_case* c = &train_boss_turret_destroyed_cases[row];
-    u32 observed_values[4];
-    struct MainObj obj, expected;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x45;
-    obj.id = 46;
-    obj.x_pos.val = 452989492;
-    obj.y_pos.val = 6575736;
-    obj.unk42 = 0x1234;
-    obj.animation_table = (const u8* const*)train_boss_animations;
-    train_boss_turret_init(&obj);
-    set_animation(&obj, 0xB);
-    obj.state = 2;
-    obj.x_pos.val = c->x_pos;
-    background_objects[0].x_pos.val = 436207616;
-    background_objects[0].y_pos.val = 0;
-    expected = obj;
-    expected.on_screen = c->on_screen;
-    player_before = g_Player;
-    train_boss_turret_destroyed(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    observed_values[0] = (u32)obj.on_screen;
-    observed_values[1] = (u32)obj.state;
-    observed_values[2] = (u32)obj.x_pos.val;
-    observed_values[3] = (u32)obj.y_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
-}
+#include "support/state_cases.h"
 
 static const u32 train_boss_turret_fire_expected[] = { 0xDu, 0x11000101u, 0x80u, 0x1B001234u, 0x645678u };
 static u32 test_train_boss_turret_fire(u32 row)
@@ -92,7 +12,6 @@ static u32 test_train_boss_turret_fire(u32 row)
     struct MainObj obj, parent_expected;
     struct ShotObj shots_before[32];
     struct PlayerObj player_before;
-    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x45;
     obj.id = 46;
@@ -110,12 +29,7 @@ static u32 test_train_boss_turret_fire(u32 row)
     obj.ext.main_46.owner = &main_objects[47].ext.main_45;
     parent_expected = main_objects[47];
     parent_expected.ext.main_45.projectile_command = 0x80;
-    pools_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 32, 1);
     player_before = g_Player;
     memcpy(shots_before, shot_objects, sizeof(shots_before));
     train_boss_turret_fire(&obj);
@@ -238,42 +152,84 @@ static u32 test_train_boss_turret_main(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 12);
 }
 
-static const u32 train_boss_turret_start_idle_expected[] = { 3u, 0u };
-static u32 test_train_boss_turret_start_idle(u32 row)
+static struct Main45Ext turret_boss;
+static struct Main45LayerSignals turret_signals;
+#define TT(st, step, sub) (state_reset(step, sub, 0), memset(&turret_boss, 0, sizeof(turret_boss)), memset(&turret_signals, 0, sizeof(turret_signals)), turret_boss.layer_signals = &turret_signals, so.state = st, so.x_pos.i.hi = 0x100, so.y_pos.i.hi = 0x100, so.ext.main_46.owner = &turret_boss)
+#define SEEN() (state_extra = turret_boss.attack_flags | turret_boss.projectile_command << 8 | turret_signals.collision_state << 16 | (u32)shot_objects[0].id << 24)
+static void tt_fire_idle(void)
 {
-    u32 observed_values[2];
-    struct MainObj obj, expected;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x45;
-    obj.id = 46;
-    obj.x_pos.val = 452989492;
-    obj.y_pos.val = 6575736;
-    obj.unk42 = 0x1234;
-    obj.animation_table = (const u8* const*)train_boss_animations;
-    train_boss_turret_init(&obj);
-    set_animation(&obj, 0xB);
-    obj.unk5 = 1;
-    obj.unk6 = 1;
-    expected = obj;
-    expected.unk5 = 3;
-    expected.unk6 = 0;
-    player_before = g_Player;
-    train_boss_turret_start_idle(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, train_boss_turret_start_idle_expected, 2);
+    TT(1, 0, 0);
+    train_boss_turret_fire(&so);
+    SEEN();
+}
+static void tt_fire(void)
+{
+    TT(1, 0, 0);
+    turret_boss.projectile_command = 3;
+    train_boss_turret_fire(&so);
+    SEEN();
+}
+static void tt_arrive(void)
+{
+    TT(1, 0, 0);
+    so.x_speed = 0x10000;
+    train_boss_turret_arrive(&so);
+}
+static void tt_arrive_end(void)
+{
+    TT(1, 0, 0);
+    so.x_pos.i.hi = 0x1AB0;
+    train_boss_turret_arrive(&so);
+}
+static void tt_arrived(void)
+{
+    TT(1, 0, 1);
+    train_boss_turret_arrive(&so);
+}
+static void tt_main_shielded(void)
+{
+    TT(1, 2, 1);
+    so.unk42 = 0x8000;
+    train_boss_turret_update(&so);
+    SEEN();
+}
+static void tt_main_armor_gone(void)
+{
+    TT(1, 2, 1);
+    turret_boss.attack_flags = 7;
+    train_boss_turret_update(&so);
+    SEEN();
+}
+static void tt_main_destroyed(void)
+{
+    TT(1, 2, 1);
+    so.hp = 1;
+    state_hit(&so, 0, 0, 1);
+    train_boss_turret_update(&so);
+    SEEN();
+}
+
+static void (*const train_boss_turret_states_cases[])(void) = {
+    tt_fire_idle,
+    tt_fire,
+    tt_arrive,
+    tt_arrive_end,
+    tt_arrived,
+    tt_main_shielded,
+    tt_main_armor_gone,
+    tt_main_destroyed,
+};
+static const u32 train_boss_turret_states_expected[] = { 0u, 0u, 0x1000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x1000000u, 0u, 0u, 0u, 0xDu, 0u, 0x18008000u, 0x410000u, 0u, 0u, 0x1010000u, 0x10000u, 0u, 0u, 0u, 0u, 0u, 0u, 3u, 0x78u, 0x1AB00000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x100u, 0u, 0x1000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x1000000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x102u, 0u, 0x1000000u, 0u, 0u, 0u, 0xEu, 0u, 0xFu, 0x2100u, 0x102u, 0u, 0x1000000u, 0u, 0u, 0u, 0xEu, 1u, 8u, 0x2100u };
+
+static u32 test_train_boss_turret_states(u32 row)
+{
+    return state_run(train_boss_turret_states_cases[row], row, &train_boss_turret_states_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "train_boss_turret_arrive_0", 0, 0, 1, test_train_boss_turret_arrive_0 },
-    { "train_boss_turret_arrive_1", 0, 0, 1, test_train_boss_turret_arrive_1 },
-    { "train_boss_turret_destroyed", 0, 0, 2, test_train_boss_turret_destroyed },
+    { "train_boss_turret_states", 0, 0, COUNT(train_boss_turret_states_cases), test_train_boss_turret_states },
     { "train_boss_turret_fire", 0, 0, 1, test_train_boss_turret_fire },
     { "train_boss_turret_main", 0, 0, 3, test_train_boss_turret_main },
-    { "train_boss_turret_start_idle", 0, 0, 1, test_train_boss_turret_start_idle },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + 1 + 2 + 1 + 3 + 1;
+const u32 c_test_count = COUNT(train_boss_turret_states_cases) + 1 + 3;

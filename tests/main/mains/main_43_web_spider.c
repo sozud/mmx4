@@ -2,6 +2,10 @@
 #include "main/mains/main_43_web_spider.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "main/visuals/visual_17_web_piece.h"
+#include "main/object_motion.h"
+void web_spider_fall(struct MainObj* arg0);
+void web_spider_fall_slow(struct MainObj*);
 void func_80065168(struct MainObj*, s16, s16);
 void func_800643B0(struct MainObj*);
 void web_spider_attack_web(struct MainObj*);
@@ -36,22 +40,7 @@ static u32 interpolate(u32 observation)
         actual = (u8)obj.ext.main_43.move_direction;
     return actual;
 }
-#define INTERPOLATE(n)                                              \
-    static u32 spider_interpolation_context_interpolate_2_##n(void) \
-    {                                                               \
-        return interpolate(n);                                      \
-    }
-INTERPOLATE(0)
-INTERPOLATE(1)
-INTERPOLATE(2)
-#define ENTRY(m, n) spider_interpolation_context_interpolate_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2)
-static const CTestCase spider_interpolation_context_cases[]
-    = { ENTRIES(2) };
 static const u32 spider_interpolation_context_cases_expected[] = { 0xBE2468u, 0x8CACF0u, 0xDu };
-#undef INTERPOLATE
-#undef ENTRY
-#undef ENTRIES
 
 static const s8 phases[] = { -1, 2, 3, 3, 3, 4 };
 static u32 sweep_case(u32 mode, u32 observation)
@@ -100,27 +89,11 @@ static u32 sweep_case(u32 mode, u32 observation)
         actual = (u16)obj.unk7C;
     return actual;
 }
-#define SWEEP_CASE(m, n)                                  \
-    static u32 spider_sweep_context_sweep_##m##_##n(void) \
-    {                                                     \
-        return sweep_case(m, n);                          \
-    }
-#define SWEEP_MODE(m) SWEEP_CASE(m, 0) SWEEP_CASE(m, 1) SWEEP_CASE(m, 2)
-SWEEP_MODE(0)
-SWEEP_MODE(1)
-SWEEP_MODE(2)
-SWEEP_MODE(3)
-SWEEP_MODE(4)
-SWEEP_MODE(5)
-#define SWEEP_ENTRY(m, n) spider_sweep_context_sweep_##m##_##n,
-#define SWEEP_ENTRIES(m) SWEEP_ENTRY(m, 0) SWEEP_ENTRY(m, 1) SWEEP_ENTRY(m, 2)
-static const CTestCase spider_sweep_context_cases[]
-    = { SWEEP_ENTRIES(0) SWEEP_ENTRIES(1) SWEEP_ENTRIES(2) SWEEP_ENTRIES(3) SWEEP_ENTRIES(4) SWEEP_ENTRIES(5) };
 static const u32 spider_sweep_context_cases_expected[] = { 0x1FF01u, 0x641234u, 0x6u, 0x140301u, 0x4F01234u, 0x7u, 0x10301u, 0x641234u, 0x6u, 0x201u, 0x641234u, 0x6u, 0x3u, 0x641234u, 0x0u, 0x10401u, 0x641234u, 0x6u };
-#undef SWEEP_CASE
-#undef SWEEP_MODE
-#undef SWEEP_ENTRY
-#undef SWEEP_ENTRIES
+static u32 spider_sweep_context_cases_row(u32 row)
+{
+    return sweep_case(row / 3, row % 3);
+}
 
 enum { SPIN,
     CENTER,
@@ -373,19 +346,7 @@ static u32 climb_case(u32 raw_default)
     assert(D_8013E198[2] == -1);
     return (u8)obj.unk7 | ((u32)obj.unk17 << 8) | ((u32)(u8)g_Player.stun_timer << 16);
 }
-#define CASE(m)                                              \
-    static u32 web_spider_climb_stun_default_climb_##m(void) \
-    {                                                        \
-        return climb_case(m);                                \
-    }
-CASE(0)
-CASE(1)
-#define ENTRY(m) web_spider_climb_stun_default_climb_##m,
-static const CTestCase web_spider_climb_stun_default_cases[]
-    = { ENTRY(0) ENTRY(1) };
 static const u32 web_spider_climb_stun_default_cases_expected[] = { 0x11F01u, 0x10003u };
-#undef CASE
-#undef ENTRY
 
 enum { DEFEATED,
     FLASHING,
@@ -455,20 +416,7 @@ static u32 web_spider_defeat_check_run(u32 mode)
     return actual;
 }
 
-#define CASE(name)                                         \
-    static u32 web_spider_defeat_check_##name##_case(void) \
-    {                                                      \
-        return web_spider_defeat_check_run(name);          \
-    }
-CASE(DEFEATED)
-CASE(FLASHING)
-CASE(FLASH_ENDS)
-#define ENTRY(name) web_spider_defeat_check_##name##_case,
-static const CTestCase web_spider_defeat_check_cases[]
-    = { ENTRY(DEFEATED) ENTRY(FLASHING) ENTRY(FLASH_ENDS) };
 static const u32 web_spider_defeat_check_cases_expected[] = { 0x1230002u, 0x1230601u, 0x1230601u };
-#undef CASE
-#undef ENTRY
 
 enum { EXPLODE_WAIT,
     EXPLODE_FULL,
@@ -675,39 +623,7 @@ static u32 web_spider_late_steps_run(u32 mode)
     return result;
 }
 
-#define CASE(name)                                       \
-    static u32 web_spider_late_steps_##name##_case(void) \
-    {                                                    \
-        return web_spider_late_steps_run(name);          \
-    }
-CASE(EXPLODE_WAIT)
-CASE(EXPLODE_FULL)
-CASE(EXPLODE_SPAWN)
-CASE(FINISH_BLINK)
-CASE(FINISH_PHASE)
-CASE(FINISH_STAGE1)
-CASE(FINISH_OTHER)
-CASE(SWING_STUNNED)
-CASE(SWING_FAR)
-CASE(CRAWL_WALL_LEFT)
-CASE(CRAWL_WALL_RIGHT)
-CASE(CRAWL_START)
-CASE(WEB_START_LEFT)
-CASE(WEB_START_RIGHT)
-CASE(WEB_SHOT)
-CASE(WEB_FLASH)
-CASE(WEB_END)
-#define ENTRY(name) web_spider_late_steps_##name##_case,
-static const CTestCase web_spider_late_steps_cases[]
-    = {
-          ENTRY(EXPLODE_WAIT) ENTRY(EXPLODE_FULL) ENTRY(EXPLODE_SPAWN) ENTRY(FINISH_BLINK) ENTRY(FINISH_PHASE) ENTRY(FINISH_STAGE1)
-              ENTRY(FINISH_OTHER) ENTRY(SWING_STUNNED) ENTRY(SWING_FAR) ENTRY(CRAWL_WALL_LEFT) ENTRY(CRAWL_WALL_RIGHT) ENTRY(CRAWL_START)
-                  ENTRY(WEB_START_LEFT) ENTRY(WEB_START_RIGHT) ENTRY(WEB_SHOT) ENTRY(WEB_FLASH) ENTRY(WEB_END)
-      };
 static const u32 web_spider_late_steps_cases_expected[] = { 0x7210133u, 0x872101F2u, 0x87210152u, 0x87210153u, 0x7210103u, 0x7200000u, 0x7290000u, 0x7210005u, 0x7210005u, 0x3210004u, 0x7210004u, 0x7210103u, 0x3210103u, 0x7210103u, 0x7210103u, 0x7210103u, 0x7210104u };
-#undef FREE_SLOT
-#undef CASE
-#undef ENTRY
 
 enum { THREAD_EXISTS,
     THREAD_FULL,
@@ -722,7 +638,7 @@ enum { THREAD_EXISTS,
     WARNING_CAPSULE,
     WARNING_FULL,
     WARNING_SPAWN };
-#define FREE_SLOT 5
+#define FREE_SLOT_B 5
 static u32 table_storage[2];
 static u32* web_spider_spawns_table[4];
 static struct MainObj web_spider_spawns_spider, web_spider_spawns_expected;
@@ -750,9 +666,9 @@ static u32 web_spider_spawns_run(u32 mode)
     memset(visual_objects, 0, sizeof(visual_objects));
     memset(effect_objects, 0, sizeof(effect_objects));
     for (i = 0; i < 0x20; i++) {
-        shot_objects[i].active = full || i != FREE_SLOT;
-        visual_objects[i].active = full || i != FREE_SLOT;
-        effect_objects[i].active = full || i != FREE_SLOT;
+        shot_objects[i].active = full || i != FREE_SLOT_B;
+        visual_objects[i].active = full || i != FREE_SLOT_B;
+        effect_objects[i].active = full || i != FREE_SLOT_B;
     }
     memset(&g_Player, 0, sizeof(g_Player));
     g_Player.capsule_state = mode == WARNING_CAPSULE ? 2 : 0;
@@ -790,8 +706,8 @@ static u32 web_spider_spawns_run(u32 mode)
         if (mode == THREAD_FULL)
             assert(shot == NULL);
         if (mode == THREAD_SPAWN) {
-            struct ShotObj* s = &web_spider_spawns_want_shots[FREE_SLOT];
-            assert(shot == &shot_objects[FREE_SLOT]);
+            struct ShotObj* s = &web_spider_spawns_want_shots[FREE_SLOT_B];
+            assert(shot == &shot_objects[FREE_SLOT_B]);
             s->active = 0x41;
             s->id = 0x17;
             s->unk2 = 7;
@@ -805,12 +721,12 @@ static u32 web_spider_spawns_run(u32 mode)
             s->unk7C = WEAPON_OBJECT(&web_spider_spawns_spider);
             s->unk15 = web_spider_spawns_spider.unk15;
             web_spider_spawns_expected.ext.main_43.shot = shot;
-            slot = FREE_SLOT;
+            slot = FREE_SLOT_B;
         }
     } else if (mode <= PIECE_SPAWN) {
         web_spider_spawn_web_piece(VISUAL_OBJECT(&web_spider_spawns_spider), 3);
         if (mode == PIECE_SPAWN) {
-            struct VisualObj* v = &web_spider_spawns_want_visuals[FREE_SLOT];
+            struct VisualObj* v = &web_spider_spawns_want_visuals[FREE_SLOT_B];
             v->active = 0x41;
             v->id = 0x11;
             v->unk2 = 3;
@@ -823,12 +739,12 @@ static u32 web_spider_spawns_run(u32 mode)
             v->unk16 = web_spider_spawns_spider.unk16;
             v->unk50 = (struct PlayerObj*)&web_spider_spawns_spider;
             v->unk15 = web_spider_spawns_spider.unk15;
-            slot = FREE_SLOT;
+            slot = FREE_SLOT_B;
         }
     } else if (mode <= FLASH_SPAWN) {
         web_spider_spawn_web_flash(ANIMATED_OBJECT(&web_spider_spawns_spider));
         if (mode == FLASH_SPAWN) {
-            struct VisualObj* v = &web_spider_spawns_want_visuals[FREE_SLOT];
+            struct VisualObj* v = &web_spider_spawns_want_visuals[FREE_SLOT_B];
             v->active = 0x41;
             v->id = 0x14;
             v->unk2 = 1;
@@ -841,12 +757,12 @@ static u32 web_spider_spawns_run(u32 mode)
             v->unk16 = web_spider_spawns_spider.unk16;
             v->unk50 = (struct PlayerObj*)&web_spider_spawns_spider;
             v->unk15 = web_spider_spawns_spider.unk15;
-            slot = FREE_SLOT;
+            slot = FREE_SLOT_B;
         }
     } else if (mode <= SHOT_RIGHT) {
         web_spider_spawn_web_shot(ANIMATED_OBJECT(&web_spider_spawns_spider), 2);
         if (mode != SHOT_FULL) {
-            struct ShotObj* s = &web_spider_spawns_want_shots[FREE_SLOT];
+            struct ShotObj* s = &web_spider_spawns_want_shots[FREE_SLOT_B];
             s->active = 0x41;
             s->id = 0x16;
             s->unk2 = 2;
@@ -861,16 +777,16 @@ static u32 web_spider_spawns_run(u32 mode)
             s->unk16 = web_spider_spawns_spider.unk16;
             s->unk7C = WEAPON_OBJECT(&web_spider_spawns_spider);
             s->unk15 = web_spider_spawns_spider.unk15;
-            slot = FREE_SLOT;
+            slot = FREE_SLOT_B;
         }
     } else {
         web_spider_intro_warning(&web_spider_spawns_spider);
         if (mode != WARNING_CAPSULE) {
             if (mode == WARNING_SPAWN) {
-                web_spider_spawns_want_effects[FREE_SLOT].active = 1;
-                web_spider_spawns_want_effects[FREE_SLOT].id = 0x18;
-                web_spider_spawns_expected.ext.main_43.effect = &effect_objects[FREE_SLOT];
-                slot = FREE_SLOT;
+                web_spider_spawns_want_effects[FREE_SLOT_B].active = 1;
+                web_spider_spawns_want_effects[FREE_SLOT_B].id = 0x18;
+                web_spider_spawns_expected.ext.main_43.effect = &effect_objects[FREE_SLOT_B];
+                slot = FREE_SLOT_B;
             }
             want_player.script_state = 1;
             want_player.script_action = 0x14;
@@ -897,34 +813,7 @@ static u32 web_spider_spawns_run(u32 mode)
     return result;
 }
 
-#define CASE(name)                                   \
-    static u32 web_spider_spawns_##name##_case(void) \
-    {                                                \
-        return web_spider_spawns_run(name);          \
-    }
-CASE(THREAD_EXISTS)
-CASE(THREAD_FULL)
-CASE(THREAD_SPAWN)
-CASE(PIECE_FULL)
-CASE(PIECE_SPAWN)
-CASE(FLASH_FULL)
-CASE(FLASH_SPAWN)
-CASE(SHOT_FULL)
-CASE(SHOT_LEFT)
-CASE(SHOT_RIGHT)
-CASE(WARNING_CAPSULE)
-CASE(WARNING_FULL)
-CASE(WARNING_SPAWN)
-#define ENTRY(name) web_spider_spawns_##name##_case,
-static const CTestCase web_spider_spawns_cases[]
-    = {
-          ENTRY(THREAD_EXISTS) ENTRY(THREAD_FULL) ENTRY(THREAD_SPAWN) ENTRY(PIECE_FULL) ENTRY(PIECE_SPAWN) ENTRY(FLASH_FULL) ENTRY(FLASH_SPAWN)
-              ENTRY(SHOT_FULL) ENTRY(SHOT_LEFT) ENTRY(SHOT_RIGHT) ENTRY(WARNING_CAPSULE) ENTRY(WARNING_FULL) ENTRY(WARNING_SPAWN)
-      };
 static const u32 web_spider_spawns_cases_expected[] = { 0xFF000000u, 0xFF000000u, 0x5018017u, 0xFF000000u, 0x5009011u, 0xFF000000u, 0x500AC14u, 0xFF000000u, 0x5016E16u, 0x5019216u, 0xFF030000u, 0xFF011401u, 0x5011401u };
-#undef FREE_SLOT
-#undef CASE
-#undef ENTRY
 
 static const u32 web_spider_check_big_web_expected[] = { 0u, 0u, 0u, 0u, 0u };
 static u32 test_web_spider_check_big_web(u32 row)
@@ -942,84 +831,228 @@ static u32 test_web_spider_check_big_web(u32 row)
     return c_test_observe(0, row, observed_values, web_spider_check_big_web_expected, 5);
 }
 
-static const u32 web_spider_drop_climb_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 0u };
-static u32 test_web_spider_drop_climb(u32 row)
+#include "support/state_cases.h"
+
+static struct ShotObj spider_thread;
+#define SPIDER(phase) (state_reset(1, phase, 0), memset(&spider_thread, 0, sizeof(spider_thread)), so.ext.main_43.shot = &spider_thread, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+#define THREAD() (state_extra = spider_thread.unk84.value ^ (u32)so.ext.main_43.hurt_collision << 24)
+static void ws_fall_start(void)
 {
-    u32 observed_values[9];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    memset(&cur_random, 0, sizeof(cur_random));
-    obj.unk7 = -1;
-    web_spider_drop_climb(&obj);
-    observed_values[0] = (u32)obj.animation_step.fields.event;
-    observed_values[1] = (u32)obj.ext.main_43.hurt_collision;
-    observed_values[2] = (u32)obj.gravity;
-    observed_values[3] = (u32)obj.unk15;
-    observed_values[4] = (u32)obj.unk5;
-    observed_values[5] = (u32)obj.unk6;
-    observed_values[6] = (u32)obj.unk7;
-    observed_values[7] = (u32)obj.unk7C;
-    observed_values[8] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, web_spider_drop_climb_expected, 9);
+    SPIDER(0);
+    web_spider_fall(&so);
+    THREAD();
+}
+static void ws_fall_slow(void)
+{
+    SPIDER(1);
+    so.y_speed = 0x10000;
+    web_spider_fall(&so);
+}
+static void ws_fall_slow_done(void)
+{
+    SPIDER(1);
+    so.animation_step.fields.relative_step = 0;
+    web_spider_fall(&so);
+}
+static void ws_fall_land(void)
+{
+    SPIDER(2);
+    so.collision_flags = 8;
+    web_spider_fall(&so);
+}
+static void ws_fall_drop(void)
+{
+    SPIDER(2);
+    so.y_speed = -0x10000;
+    web_spider_fall(&so);
+}
+static void ws_crash_hurt(void)
+{
+    SPIDER(3);
+    so.hp = 0x20;
+    so.animation_step.fields.relative_step = 1;
+    so.animation_step.fields.event = 1;
+    web_spider_fall(&so);
+}
+static void ws_crash_wait(void)
+{
+    SPIDER(3);
+    so.animation_step.fields.relative_step = 1;
+    web_spider_fall(&so);
+}
+static void ws_crash_done(void)
+{
+    SPIDER(3);
+    web_spider_fall(&so);
+}
+static void ws_rethread_left(void)
+{
+    SPIDER(4);
+    so.animation_step.fields.relative_step = 1;
+    so.animation_step.fields.event = 1;
+    web_spider_fall(&so);
+    state_extra = shot_objects[0].unk84.value;
+}
+static void ws_rethread_right(void)
+{
+    SPIDER(4);
+    so.unk15 = 0x40;
+    so.animation_step.fields.relative_step = 1;
+    so.animation_step.fields.event = 1;
+    web_spider_fall(&so);
+    state_extra = shot_objects[0].unk84.value;
+}
+static void ws_rethread_wait(void)
+{
+    SPIDER(4);
+    so.animation_step.fields.relative_step = 1;
+    web_spider_fall(&so);
+}
+static void ws_rethread_climb(void)
+{
+    SPIDER(4);
+    spider_thread.unk84.value = 5;
+    web_spider_fall(&so);
+    THREAD();
+}
+static void ws_rethread_pull(void)
+{
+    SPIDER(4);
+    spider_thread.unk5 = 1;
+    spider_thread.unk84.value = 5;
+    web_spider_fall(&so);
+    THREAD();
 }
 
-static const u32 inputs_0[2][5] = {
-    { 0, 0, 0, 255, 1 },
-    { -1, -1, 255, 255, 0 },
+static void (*const web_spider_fall_states_cases[])(void) = {
+    ws_fall_start,
+    ws_fall_slow,
+    ws_fall_slow_done,
+    ws_fall_land,
+    ws_fall_drop,
+    ws_crash_hurt,
+    ws_crash_wait,
+    ws_crash_done,
+    ws_rethread_left,
+    ws_rethread_right,
+    ws_rethread_wait,
+    ws_rethread_climb,
+    ws_rethread_pull,
 };
-struct web_spider_fall_rethread_case {
-    u32 expected[7];
-};
-static const struct web_spider_fall_rethread_case web_spider_fall_rethread_cases[] = {
-    { { 0u, 0u, 0u, 0u, 0u, 0u, 0u } },
-    { { 0xFFF80000u, 0u, 0u, 0u, 0u, 0u, 0u } },
-};
-static u32 test_web_spider_fall_rethread(u32 row)
+static const u32 web_spider_fall_states_expected[] = { 0x10100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0x40000u, 0x400000u, 0x50000u, 0x1000000u, 0u, 0x20100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFF8000u, 0x800000u, 0x50000u, 0u, 0u, 0x20100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0xFFFF8000u, 0x800000u, 0x50000u, 0u, 0u, 0x30100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20100u, 0u, 0x800000u, 0x610000u, 0u, 0xFFFF0000u, 0u, 0x40000u, 0u, 0u, 0x30100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x30100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x40100u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x40100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x40100u, 0x400000u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x40100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 0u, 0u, 0x1010200u, 0xFF000000u, 0x800000u, 0x600000u, 0u, 0x38000u, 0u, 0x40000u, 0u, 0u, 0x40100u, 0u, 0x800000u, 0x600000u, 0u, 0u, 0u, 0x40000u, 5u, 0u };
+
+static u32 test_web_spider_fall_states(u32 row)
 {
-    const struct web_spider_fall_rethread_case* c = &web_spider_fall_rethread_cases[row];
-    u32 observed_values[7];
-    struct MainObj obj;
-    struct ShotObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    obj.animation_step.fields.relative_step = inputs_0[row][0];
-    obj.animation_step.fields.event = inputs_0[row][1];
-    obj.unk15 = inputs_0[row][2];
-    child_0_present = inputs_0[row][3];
-    child_0.unk5 = inputs_0[row][4];
-    obj.ext.main_43.shot = child_0_present ? &child_0 : NULL;
-    web_spider_fall_rethread(&obj);
-    observed_values[0] = (u32)child_0.unk84.value;
-    observed_values[1] = (u32)obj.animation_step.fields.event;
-    observed_values[2] = (u32)obj.gravity;
-    observed_values[3] = (u32)obj.unk5;
-    observed_values[4] = (u32)obj.unk6;
-    observed_values[5] = (u32)obj.unk7;
-    observed_values[6] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, c->expected, 7);
+    return object_run(web_spider_fall_states_cases[row], row, &web_spider_fall_states_expected[row * 10]);
+}
+
+static void ws_slow_descent(void)
+{
+    state_reset(3, 1, 0);
+    so.animation_step.fields.relative_step = 1;
+    so.gravity = 0x1000;
+    web_spider_fall_slow(&so);
+}
+static void ws_slow_done(void)
+{
+    state_reset(3, 1, 0);
+    web_spider_fall_slow(&so);
+}
+
+static void (*const web_spider_misc_cases[])(void) = {
+    ws_slow_descent,
+    ws_slow_done,
+};
+static const u32 web_spider_misc_expected[] = { 0x103u, 0u, 0u, 0u, 0xFFFFF000u, 0x100000u, 0u, 0u, 0u, 0u, 0x203u, 0u, 0u, 0u, 0xFFFF8000u, 0x800000u, 0xEu, 0u, 0u, 0u };
+
+static u32 test_web_spider_misc(u32 row)
+{
+    return state_run(web_spider_misc_cases[row], row, &web_spider_misc_expected[row * 10]);
+}
+
+extern union AnimationStep* web_spider_animations[40];
+extern u16 web_spider_arena_x;
+static struct QuadObj quads_before[32];
+static struct MiscObj misc_before[64];
+static struct VisualObj visuals_expected[32];
+static u32 full(u32 row)
+{
+    struct MainObj spider, parent_before;
+    struct PlayerObj player;
+    struct EngineObj engine;
+    struct VisualObj* piece = &visual_objects[0];
+    u32 i;
+    (void)row;
+    engine_obj.stage = 12;
+    engine_obj.substage = 0;
+    engine_obj.checkpoint = 2;
+    background_objects[0].x_pos.i.hi = 4096;
+    background_objects[0].y_pos.i.hi = 1536;
+    background_objects[0].unk26 = 4096;
+    web_spider_arena_x = 4096;
+    D_8013E198[2] = -1;
+    c_test_zero_words((u32*)visual_objects, sizeof(visual_objects) / 4);
+    c_test_zero_words((u32*)misc_objects, sizeof(misc_objects) / 4);
+    c_test_zero_words((u32*)g_QuadObjects, sizeof(g_QuadObjects) / 4);
+    for (i = 0; i < COUNT(misc_objects); i++)
+        misc_objects[i].active = 1;
+    for (i = 0; i < COUNT(g_QuadObjects); i++)
+        g_QuadObjects[i].active = 1;
+    memset(&spider, 0, sizeof(spider));
+    spider.active = 0x41;
+    spider.id = 43;
+    spider.state = 1;
+    spider.unk5 = 6;
+    spider.y_pos.i.hi = 1624;
+    spider.animation_table = (const u8* const*)web_spider_animations;
+    func_800646EC(&spider);
+    for (i = 0; i < 256 && spider.unk6 == 0; i++)
+        func_800646EC(&spider);
+    assert(spider.unk6 == 1 && spider.unk7 == 0 && spider.x_pos.i.hi == 4272);
+    web_spider_big_web_spin(&spider);
+    for (i = 0; i < 28; i++)
+        web_spider_big_web_spin(&spider);
+    assert(piece->active == 0x41 && piece->id == 17 && piece->unk2 == 1 && piece->unk50 == (struct PlayerObj*)&spider);
+    memcpy(visuals_expected, visual_objects, sizeof(visuals_expected));
+    visuals_expected[0].state = 1;
+    visuals_expected[0].on_screen = 1;
+    visuals_expected[0].unk16 = 5;
+    set_animation(&visuals_expected[0], 23);
+    visuals_expected[0].unk54 = angle_from_delta(piece->x_pos.val - 4288 * 65536, piece->y_pos.val - 1592 * 65536);
+    set_velocity_from_angle(MOVING_OBJECT(&visuals_expected[0]), visuals_expected[0].unk54);
+    visuals_expected[0].x_vel.val *= 2;
+    visuals_expected[0].y_vel.val *= 2;
+    visuals_expected[0].unk28 = 0;
+    visuals_expected[0].unk2C = 0;
+    memcpy(quads_before, g_QuadObjects, sizeof(quads_before));
+    memcpy(misc_before, misc_objects, sizeof(misc_before));
+    parent_before = spider;
+    player = g_Player;
+    engine = engine_obj;
+    cur_random = 0x1234;
+    func_800B20CC(piece);
+    assert(c_test_word_difference((u32*)visual_objects, (u32*)visuals_expected, sizeof(visuals_expected) / 4) == 0);
+    assert(c_test_word_difference((u32*)g_QuadObjects, (u32*)quads_before, sizeof(quads_before) / 4) == 0);
+    assert(c_test_word_difference((u32*)misc_objects, (u32*)misc_before, sizeof(misc_before) / 4) == 0);
+    c_test_same_words(&spider, &parent_before, sizeof(spider));
+    c_test_same_words(&g_Player, &player, sizeof(player));
+    c_test_same_words(&engine_obj, &engine, sizeof(engine));
+    assert(cur_random == 0x1234);
+    return 1;
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "spider_interpolation_context", spider_interpolation_context_cases, spider_interpolation_context_cases_expected, COUNT(spider_interpolation_context_cases), 0 },
-    { "spider_sweep_context", spider_sweep_context_cases, spider_sweep_context_cases_expected, COUNT(spider_sweep_context_cases), 0 },
+    { "web_spider_misc", 0, 0, COUNT(web_spider_misc_cases), test_web_spider_misc },
+    { "web_spider_fall_states", 0, 0, COUNT(web_spider_fall_states_cases), test_web_spider_fall_states },
+    { "spider_interpolation_context", NULL, spider_interpolation_context_cases_expected, COUNT(spider_interpolation_context_cases_expected), interpolate },
+    { "spider_sweep_context", NULL, spider_sweep_context_cases_expected, COUNT(spider_sweep_context_cases_expected), spider_sweep_context_cases_row },
     { "web_spider_big_web_steps", web_spider_big_web_steps_cases, web_spider_big_web_steps_cases_expected, COUNT(web_spider_big_web_steps_cases), 0 },
-    { "web_spider_climb_stun_default", web_spider_climb_stun_default_cases, web_spider_climb_stun_default_cases_expected, COUNT(web_spider_climb_stun_default_cases), 0 },
-    { "web_spider_defeat_check", web_spider_defeat_check_cases, web_spider_defeat_check_cases_expected, COUNT(web_spider_defeat_check_cases), 0 },
-    { "web_spider_late_steps", web_spider_late_steps_cases, web_spider_late_steps_cases_expected, COUNT(web_spider_late_steps_cases), 0 },
-    { "web_spider_spawns", web_spider_spawns_cases, web_spider_spawns_cases_expected, COUNT(web_spider_spawns_cases), 0 },
+    { "web_spider_climb_stun_default", NULL, web_spider_climb_stun_default_cases_expected, COUNT(web_spider_climb_stun_default_cases_expected), climb_case },
+    { "web_spider_defeat_check", NULL, web_spider_defeat_check_cases_expected, COUNT(web_spider_defeat_check_cases_expected), web_spider_defeat_check_run },
+    { "web_spider_late_steps", NULL, web_spider_late_steps_cases_expected, COUNT(web_spider_late_steps_cases_expected), web_spider_late_steps_run },
+    { "web_spider_spawns", NULL, web_spider_spawns_cases_expected, COUNT(web_spider_spawns_cases_expected), web_spider_spawns_run },
     { "web_spider_check_big_web", 0, 0, 1, test_web_spider_check_big_web },
-    { "web_spider_drop_climb", 0, 0, 1, test_web_spider_drop_climb },
-    { "web_spider_fall_rethread", 0, 0, 2, test_web_spider_fall_rethread },
+    { "stage12_actual_big_web_start_spin_and_piece_factory_full_quad_pool", NULL, NULL, 1, full },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spider_interpolation_context_cases) + COUNT(spider_sweep_context_cases) + COUNT(web_spider_big_web_steps_cases) + COUNT(web_spider_climb_stun_default_cases) + COUNT(web_spider_defeat_check_cases) + COUNT(web_spider_late_steps_cases) + COUNT(web_spider_spawns_cases) + 1 + 1 + 2;
+const u32 c_test_count = COUNT(web_spider_misc_cases) + COUNT(web_spider_fall_states_cases) + COUNT(spider_interpolation_context_cases_expected) + COUNT(spider_sweep_context_cases_expected) + COUNT(web_spider_big_web_steps_cases) + COUNT(web_spider_climb_stun_default_cases_expected) + COUNT(web_spider_defeat_check_cases_expected) + COUNT(web_spider_late_steps_cases_expected) + COUNT(web_spider_spawns_cases_expected) + 1 + 1;

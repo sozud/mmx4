@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_20_ice_block.h"
+#include "support/state_cases.h"
+void ice_block_start_idle(struct MainObj* arg0);
 extern struct Unk_unk68 D_800FC850;
 extern struct Unk_unk68 D_800FC854;
 extern struct Unk_unk68 D_800FC858;
@@ -152,33 +154,27 @@ static u32 run(u32 mode)
     return flags | ((u32)(u8)block.unk5 << 8) | ((u32)block.unk17 << 16) | ((u32)(u8)weapon_objects[WEAPON_SLOT].id << 24);
 }
 
-#define CASE(name)               \
-    static u32 name##_case(void) \
-    {                            \
-        return run(name);        \
-    }
-CASE(TOP_BREAK)
-CASE(TOP_OTHER)
-CASE(TOP_SHATTER)
-CASE(BOTTOM_BREAK)
-CASE(BOTTOM_SHATTER)
-CASE(BOTTOM_OTHER)
-CASE(BOTH_SHATTER)
-CASE(POOL_FULL)
-CASE(CARRIED)
-#define ENTRY(name) name##_case,
-static const CTestCase ice_block_shatter_cases[]
-    = {
-          ENTRY(TOP_BREAK) ENTRY(TOP_OTHER) ENTRY(TOP_SHATTER) ENTRY(BOTTOM_BREAK) ENTRY(BOTTOM_SHATTER) ENTRY(BOTTOM_OTHER)
-              ENTRY(BOTH_SHATTER) ENTRY(POOL_FULL) ENTRY(CARRIED)
-      };
 static const u32 ice_block_shatter_cases_expected[] = { 0x3A080300u, 0x3A080300u, 0x3A070301u, 0x3A080300u, 0x3A060302u, 0x3A080300u, 0x3A000303u, 0x80300u, 0x3A080300u };
-#undef WEAPON_SLOT
-#undef CASE
-#undef ENTRY
+
+static void ib_idle(void)
+{
+    state_reset(1, 0, 0);
+    ice_block_start_idle(&so);
+}
+
+static void (*const ice_block_misc_cases[])(void) = {
+    ib_idle,
+};
+static const u32 ice_block_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_ice_block_misc(u32 row)
+{
+    return state_run(ice_block_misc_cases[row], row, &ice_block_misc_expected[row * 10]);
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "ice_block_shatter", ice_block_shatter_cases, ice_block_shatter_cases_expected, COUNT(ice_block_shatter_cases), 0 },
+    { "ice_block_misc", 0, 0, COUNT(ice_block_misc_cases), test_ice_block_misc },
+    { "ice_block_shatter", NULL, ice_block_shatter_cases_expected, COUNT(ice_block_shatter_cases_expected), run },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(ice_block_shatter_cases);
+const u32 c_test_count = COUNT(ice_block_misc_cases) + COUNT(ice_block_shatter_cases_expected);

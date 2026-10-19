@@ -3,6 +3,9 @@
 #include "main/195B4.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
+#include "support/state_cases.h"
+void spike_marl_detect_player(struct MainObj* arg0);
+void spike_marl_resume_step(struct MainObj* arg0);
 extern union AnimationStep* D_800F9E1C[13];
 extern struct Unk_unk68 spike_marl_terrain_box;
 
@@ -78,19 +81,7 @@ static u32 spike_marl_ahead_collision_patrol_case(u32 mode)
     assert(spike_marl_ahead_collision_attributes[0] == input->tile && layout_width == 16 && layout_size == 256);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.ext.main_3.turn_timer << 16);
 }
-#define CASE(m)                                            \
-    static u32 spike_marl_ahead_collision_patrol_##m(void) \
-    {                                                      \
-        return spike_marl_ahead_collision_patrol_case(m);  \
-    }
-CASE(0)
-CASE(1)
-#define ENTRY(m) spike_marl_ahead_collision_patrol_##m,
-static const CTestCase spike_marl_ahead_collision_cases[]
-    = { ENTRY(0) ENTRY(1) };
 static const u32 spike_marl_ahead_collision_cases_expected[] = { 0x3C0003u, 0x3C0003u };
-#undef CASE
-#undef ENTRY
 
 static struct spike_marl_patrol_terrain_PatrolInput {
     s16 timer;
@@ -172,42 +163,20 @@ static u32 spike_marl_patrol_terrain_patrol_case(u32 mode)
     assert(spike_marl_patrol_terrain_attributes[0] == input->tile && layout_width == 16 && layout_size == 256);
     return (u8)obj.unk5 | ((u32)(u8)obj.unk6 << 8) | ((u32)obj.ext.main_3.turn_timer << 16);
 }
-#define CASE(m)                                           \
-    static u32 spike_marl_patrol_terrain_patrol_##m(void) \
-    {                                                     \
-        return spike_marl_patrol_terrain_patrol_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-CASE(6)
-CASE(7)
-CASE(8)
-CASE(9)
-#define ENTRY(m) spike_marl_patrol_terrain_patrol_##m,
-static const CTestCase spike_marl_patrol_terrain_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) ENTRY(6) ENTRY(7) ENTRY(8) ENTRY(9) };
 static const u32 spike_marl_patrol_terrain_cases_expected[] = { 0x252702u, 0x252702u, 0x780003u, 0x252702u, 0x780003u, 0x780003u, 0x252702u, 0x252702u, 0x3C0003u, 0x3C0003u };
-#undef CASE
-#undef ENTRY
 
 struct func_80043390_case {
     u32 unk2, x_pos, unk15, unk5;
-    u32 expected[5];
 };
 static const struct func_80043390_case func_80043390_cases[] = {
-    { 0, 3276800, 0, 2, { 2u, 0u, 0x7880u, 0x1010006u, 3u } },
-    { 1, 9830400, 64, 5, { 5u, 0x40u, 0x7880u, 0x1D010002u, 4u } },
-    { 2, 3276800, 0, 8, { 8u, 0u, 0x7880u, 0x1D010003u, 4u } },
-    { -1, 9830400, 64, 8, { 8u, 0x40u, 0x7880u, 0x1D010003u, 4u } },
+    { 0, 3276800, 0, 2 },
+    { 1, 9830400, 64, 5 },
+    { 2, 3276800, 0, 8 },
+    { -1, 9830400, 64, 8 },
 };
 static u32 test_func_80043390(u32 row)
 {
     const struct func_80043390_case* c = &func_80043390_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_before;
     struct EngineObj engine_before;
@@ -306,12 +275,7 @@ static u32 test_func_80043390(u32 row)
     c_test_same_words(frames, frames_before, sizeof(frames));
     c_test_same_words(metadata, metadata_before, sizeof(metadata));
     assert(SP_MENU_FRAMES == frames && D_801406A8 == metadata);
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk15;
-    observed_values[2] = (u32)obj.unk42;
-    observed_values[3] = (u32)obj.animation_step.packed;
-    observed_values[4] = (u32)obj.contact_damage;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 struct func_80043C0C_case {
@@ -343,17 +307,15 @@ static u32 test_func_80043C0C(u32 row)
 
 struct spike_marl_curl_update_case {
     u32 event;
-    u32 expected[4];
 };
 static const struct spike_marl_curl_update_case spike_marl_curl_update_cases[] = {
-    { 0, { 0xF010001u, 4u, 1u, 7u } },
-    { 5, { 0xF010501u, 4u, 1u, 7u } },
-    { 255, { 0xF01FF01u, 4u, 1u, 7u } },
+    { 0 },
+    { 5 },
+    { 255 },
 };
 static u32 test_spike_marl_curl_update(u32 row)
 {
     const struct spike_marl_curl_update_case* c = &spike_marl_curl_update_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_before;
     struct EngineObj engine_before;
@@ -382,27 +344,21 @@ static u32 test_spike_marl_curl_update(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.animation_step.packed;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.contact_damage;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 
 struct spike_marl_roll_entry_update_case {
     u32 unk15, obj_unk7C, obj_x_speed, expected_unk7C, expected_x_speed, unk5, unk6;
-    u32 expected[5];
 };
 static const struct spike_marl_roll_entry_update_case spike_marl_roll_entry_update_cases[] = {
-    { 0, 1, -32768, 0, -131072, 5, 0, { 0xFFFE0000u, 0u, 5u, 0u, 0x1D010002u } },
-    { 64, 1, 32768, 0, 131072, 5, 0, { 0x20000u, 0u, 5u, 0u, 0x1D010002u } },
-    { 64, 0, 32768, -1, 32768, 8, 1, { 0x8000u, 0xFFFFFFFFu, 8u, 1u, 0x1D010002u } },
-    { 0, 2, -32768, 1, -32768, 8, 1, { 0xFFFF8000u, 1u, 8u, 1u, 0x1D010002u } },
+    { 0, 1, -32768, 0, -131072, 5, 0 },
+    { 64, 1, 32768, 0, 131072, 5, 0 },
+    { 64, 0, 32768, -1, 32768, 8, 1 },
+    { 0, 2, -32768, 1, -32768, 8, 1 },
 };
 static u32 test_spike_marl_roll_entry_update(u32 row)
 {
     const struct spike_marl_roll_entry_update_case* c = &spike_marl_roll_entry_update_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_before;
     struct EngineObj engine_before;
@@ -439,12 +395,7 @@ static u32 test_spike_marl_roll_entry_update(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.x_speed;
-    observed_values[1] = (u32)obj.unk7C;
-    observed_values[2] = (u32)obj.unk5;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.animation_step.packed;
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 
 struct spike_marl_roll_update_case {
@@ -478,17 +429,15 @@ static u32 test_spike_marl_roll_update(u32 row)
 
 struct spike_marl_uncurl_update_case {
     u32 event;
-    u32 expected[4];
 };
 static const struct spike_marl_uncurl_update_case spike_marl_uncurl_update_cases[] = {
-    { 0, { 0x1D010001u, 7u, 1u, 7u } },
-    { 5, { 0x1D010501u, 7u, 1u, 7u } },
-    { 255, { 0x1D01FF01u, 7u, 1u, 7u } },
+    { 0 },
+    { 5 },
+    { 255 },
 };
 static u32 test_spike_marl_uncurl_update(u32 row)
 {
     const struct spike_marl_uncurl_update_case* c = &spike_marl_uncurl_update_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_before;
     struct EngineObj engine_before;
@@ -517,22 +466,175 @@ static u32 test_spike_marl_uncurl_update(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.animation_step.packed;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.contact_damage;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
+}
+
+static void sm_resume(void)
+{
+    state_reset(1, 0, 0);
+    so.ext.main_3.saved_step = 3;
+    spike_marl_resume_step(&so);
+}
+
+static void (*const spike_marl_misc_cases[])(void) = {
+    sm_resume,
+};
+static const u32 spike_marl_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_spike_marl_misc(u32 row)
+{
+    return state_run(spike_marl_misc_cases[row], row, &spike_marl_misc_expected[row * 10]);
+}
+
+#define MARL(step, px, py, flags, facing) (state_reset(step, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.collision_flags = flags, so.unk15 = facing, g_Player.x_pos.i.hi = px, g_Player.y_pos.i.hi = py, spike_marl_detect_player(&so), state_extra = so.ext.main_3.alerted)
+static void smd_rolling(void)
+{
+    MARL(5, 0x70, 0x60, 0, 0);
+}
+static void smd_bouncing(void) { MARL(6, 0x70, 0x60, 0, 0); }
+static void smd_left(void) { MARL(2, 0x70, 0x60, 0, 0); }
+static void smd_right(void) { MARL(2, 0x90, 0x60, 0, 0x40); }
+static void smd_behind(void) { MARL(2, 0x90, 0x60, 0, 0); }
+static void smd_behind_right(void) { MARL(2, 0x70, 0x60, 0, 0x40); }
+static void smd_walled(void) { MARL(2, 0x70, 0x60, 1, 0); }
+static void smd_far(void) { MARL(2, 0x10, 0x60, 0, 0); }
+static void smd_above(void) { MARL(2, 0x70, 0x10, 0, 0); }
+static void smd_walking(void) { MARL(3, 0x70, 0x60, 0, 0); }
+
+static void (*const spike_marl_detect_cases[])(void) = {
+    smd_rolling,
+    smd_bouncing,
+    smd_left,
+    smd_right,
+    smd_behind,
+    smd_behind_right,
+    smd_walled,
+    smd_far,
+    smd_above,
+    smd_walking,
+};
+static const u32 spike_marl_detect_expected[] = { 5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 6u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 4u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 1u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 2u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 1u, 0u };
+
+static u32 test_spike_marl_detect(u32 row)
+{
+    return state_run(spike_marl_detect_cases[row], row, &spike_marl_detect_expected[row * 10]);
+}
+
+void spike_marl_roll_begin(struct MainObj* arg0);
+void spike_marl_roll_entry_begin(struct MainObj*);
+void spike_marl_track_player_side(struct MainObj* arg0);
+extern union AnimationStep* D_800F9E1C[13];
+static const s16 heights[] = { -33, -32, -31, 31, 32, 33 };
+static u32 tracking(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    u32 side = row % 3, face = row / 3 % 2, height = row / 6 % 6, ahead = row / 36;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    obj.active = 0x41;
+    obj.id = 3;
+    obj.state = 1;
+    obj.unk5 = 2;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.ext.main_3.player_ahead = ahead;
+    obj.ext.main_3.turn_timer = 9;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
+    g_Player.y_pos.val = obj.y_pos.val + heights[height] * 65536;
+    player_before = g_Player;
+    expected = obj;
+    if (!ahead && (height == 2 || height == 3) && (face ? side == 2 : side == 0))
+        expected.ext.main_3.player_ahead = 1;
+    if (ahead && (height == 0 || height == 5)) {
+        expected.ext.main_3.player_ahead = 0;
+        expected.ext.main_3.turn_timer = 120;
+    }
+    spike_marl_track_player_side(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    return 1;
+}
+static u32 rolling(u32 row)
+{
+    struct MainObj obj, expected;
+    struct PlayerObj player_before;
+    struct EngineObj engine_before = engine_obj;
+    u32 mode = row % 3, face = row / 3 % 2, side = row / 6 % 3, wait = row / 18;
+    memset(&obj, 0, sizeof(obj));
+    memset(&g_Player, 0, sizeof(g_Player));
+    obj.active = 0x41;
+    obj.id = 3;
+    obj.state = 1;
+    obj.unk5 = mode == 2 ? 8 : 5;
+    obj.unk6 = mode == 1;
+    obj.unk15 = face ? 0x40 : 0;
+    obj.unk7C = wait;
+    obj.x_pos.val = 160 * 65536 + 0x1234;
+    obj.y_pos.val = 120 * 65536 + 0x5678;
+    obj.x_speed = face ? 0x40000 : -0x40000;
+    obj.ext.main_3.roll_timer = wait * 4;
+    obj.animation_table = (const u8* const*)D_800F9E1C;
+    set_animation(&obj, mode == 0 ? 3 : mode == 1 ? 5
+                                                  : 1);
+    assert(obj.animation_step.packed == (mode == 0 ? 0x0F010002 : mode == 1 ? 0x1D010003
+                                                                            : 0x01010006));
+    g_Player.x_pos.val = obj.x_pos.val + ((s32)side - 1) * 65536;
+    player_before = g_Player;
+    expected = obj;
+    if (mode == 0) {
+        if (!wait) {
+            expected.unk6 = 1;
+            expected.unk17 = 5;
+            expected.previous_animation_index = 255;
+            expected.animation_cursor = (const u8*)D_800F9E1C[5];
+            expected.animation_step.packed = 0x1D010003;
+        } else
+            expected.unk7C--;
+        expected.animation_step.fields.duration--;
+    } else if (mode == 1) {
+        expected.ext.main_3.roll_timer += 4;
+        if (face ? side == 0 : side == 2) {
+            expected.x_accel = -0x1800;
+            expected.unk6 = 2;
+        }
+        expected.x_pos.val += obj.x_speed;
+        expected.animation_step.fields.duration--;
+    } else {
+        expected.unk6 = 1;
+        expected.x_speed = face ? 0x8000 : -0x8000;
+        expected.x_accel = expected.y_speed = expected.gravity = 0;
+        expected.unk7C = 48;
+    }
+    D_8013E198[2] = -1;
+    if (mode == 0)
+        spike_marl_roll_begin(&obj);
+    else if (mode == 1)
+        spike_marl_roll_update(&obj);
+    else
+        spike_marl_roll_entry_begin(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    return 1;
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "spike_marl_ahead_collision", spike_marl_ahead_collision_cases, spike_marl_ahead_collision_cases_expected, COUNT(spike_marl_ahead_collision_cases), 0 },
-    { "spike_marl_patrol_terrain", spike_marl_patrol_terrain_cases, spike_marl_patrol_terrain_cases_expected, COUNT(spike_marl_patrol_terrain_cases), 0 },
+    { "spike_marl_detect", 0, 0, COUNT(spike_marl_detect_cases), test_spike_marl_detect },
+    { "spike_marl_misc", 0, 0, COUNT(spike_marl_misc_cases), test_spike_marl_misc },
+    { "spike_marl_ahead_collision", NULL, spike_marl_ahead_collision_cases_expected, COUNT(spike_marl_ahead_collision_cases_expected), spike_marl_ahead_collision_patrol_case },
+    { "spike_marl_patrol_terrain", NULL, spike_marl_patrol_terrain_cases_expected, COUNT(spike_marl_patrol_terrain_cases_expected), spike_marl_patrol_terrain_patrol_case },
     { "func_80043390", 0, 0, 4, test_func_80043390 },
     { "func_80043C0C", 0, 0, 3, test_func_80043C0C },
     { "spike_marl_curl_update", 0, 0, 3, test_spike_marl_curl_update },
     { "spike_marl_roll_entry_update", 0, 0, 4, test_spike_marl_roll_entry_update },
     { "spike_marl_roll_update", 0, 0, 3, test_spike_marl_roll_update },
     { "spike_marl_uncurl_update", 0, 0, 3, test_spike_marl_uncurl_update },
+    { "signed_height_edges_and_both_facing_tracking_relations", NULL, NULL, 45, tracking },
+    { "shipped_roll_entry_start_and_player_crossing", NULL, NULL, 21, rolling },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(spike_marl_ahead_collision_cases) + COUNT(spike_marl_patrol_terrain_cases) + 4 + 3 + 3 + 4 + 3 + 3;
+const u32 c_test_count = COUNT(spike_marl_detect_cases) + COUNT(spike_marl_misc_cases) + COUNT(spike_marl_ahead_collision_cases_expected) + COUNT(spike_marl_patrol_terrain_cases_expected) + 4 + 3 + 3 + 4 + 3 + 3 + 45 + 21;

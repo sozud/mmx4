@@ -325,7 +325,7 @@ void frost_walrus_intro_burst(struct MainObj* self)
     if (--self->unk7C == 0) {
         set_animation(self, 0x1A);
         if (engine_obj.stage == 2) {
-            func_8002217C(9, 0xFF, engine_obj.character_state.bytes[8]);
+            func_8002217C(9, 0xFF, (u8)engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
         self->unk6++;

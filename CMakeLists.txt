@@ -108,7 +108,7 @@ if(BUILD_TESTING)
     )
 
     if(MMX4_PC_VERSION STREQUAL "us")
-        file(GLOB_RECURSE MMX4_TEST_SOURCES CONFIGURE_DEPENDS tests/main/*.c)
+        file(GLOB_RECURSE MMX4_TEST_SOURCES CONFIGURE_DEPENDS tests/main/*.c tests/integration/*.c)
         set(MMX4_TEST_REGISTRY "#include \"test_runtime.h\"\n")
         set(MMX4_TEST_SUITES "")
         foreach(source IN LISTS MMX4_TEST_SOURCES)
@@ -127,13 +127,22 @@ if(BUILD_TESTING)
             "const u32 c_test_suite_count = COUNT(c_test_suites);\n")
         file(CONFIGURE OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/test_registry.c" CONTENT "${MMX4_TEST_REGISTRY}")
 
+        add_library(mmx4_test_application_globals OBJECT src/pc/main.c)
+        target_compile_definitions(mmx4_test_application_globals PRIVATE
+            main=mmx4_pc_application_main)
+        target_link_libraries(mmx4_test_application_globals PRIVATE mmx4_game)
+
         add_executable(mmx4_tests
             tests/runtime/runner.c
             tests/runtime/test_runtime.c
             "${CMAKE_CURRENT_BINARY_DIR}/test_registry.c"
+            $<TARGET_OBJECTS:mmx4_test_application_globals>
             ${MMX4_TEST_SOURCES}
         )
         target_include_directories(mmx4_tests PRIVATE tests tests/runtime)
+        if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+            target_compile_options(mmx4_tests PRIVATE -UNDEBUG)
+        endif()
         target_link_libraries(mmx4_tests PRIVATE mmx4_game)
         add_test(NAME unit_tests COMMAND mmx4_tests)
     endif()

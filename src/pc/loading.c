@@ -13,6 +13,8 @@ u32 mmx4_pc_cd_reads;
 u32 mmx4_pc_cd_read_sample;
 u32 mmx4_pc_cd_read_pending;
 u32 mmx4_pc_xa_stops;
+u32 mmx4_pc_xa_starts;
+u32 mmx4_pc_xa_start_sample;
 u32 mmx4_pc_xa_stop_sample;
 static s32 completing_phase = -1;
 

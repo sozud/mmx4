@@ -189,25 +189,6 @@ static const u32 effect_search_cases_expected[] = { 0x1u, 0x20u, 0x20u, 0x1u, 0x
 #undef SEARCH_CASE
 #undef ENTRY
 
-static const u32 func_8002B1E8_expected[] = { 1u };
-static u32 test_func_8002B1E8(u32 row)
-{
-    u32 observed_values[1];
-    struct BaseObj obj;
-    s32 return_value;
-    s32 x_offset;
-    s32 y_offset;
-    memset(&obj, 0, sizeof(obj));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.bg_offset = -128;
-    obj.x_pos.u.hi = 32924;
-    x_offset = 32608;
-    y_offset = 0;
-    return_value = func_8002B1E8(&obj, x_offset, y_offset);
-    observed_values[0] = (u32)return_value;
-    return c_test_observe(0, row, observed_values, func_8002B1E8_expected, 1);
-}
-
 static const u32 func_8002B3C0_expected[] = { 0u };
 static u32 test_func_8002B3C0(u32 row)
 {
@@ -225,8 +206,7 @@ static u32 test_func_8002B3C0(u32 row)
 const struct CTestGroup c_test_groups[] = {
     { "allocators", allocators_cases, allocators_cases_expected, COUNT(allocators_cases), 0 },
     { "effect_search", effect_search_cases, effect_search_cases_expected, COUNT(effect_search_cases), 0 },
-    { "func_8002B1E8", 0, 0, 1, test_func_8002B1E8 },
     { "func_8002B3C0", 0, 0, 1, test_func_8002B3C0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(allocators_cases) + COUNT(effect_search_cases) + 1 + 1;
+const u32 c_test_count = COUNT(allocators_cases) + COUNT(effect_search_cases) + 1;

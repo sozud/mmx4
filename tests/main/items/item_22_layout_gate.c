@@ -1,7 +1,9 @@
 #include "test_runtime.h"
 #include "main/items/item_22_layout_gate.h"
+#include "support/state_cases.h"
 
 #include "support/pool_full.h"
+void layout_gate_despawn(struct ItemObj*);
 static u32 pool_full_layout_gate_spawn_alarm(void)
 {
     u32 actual;
@@ -44,9 +46,32 @@ static const CTestCase layout_gate_check_layout_tiles_cases[] = {
 };
 
 static const u32 layout_gate_check_layout_tiles_cases_expected[] = { 0x2u, 0x0u, 0x2u, 0x1u };
+static u8 gate_record;
+static void lg_despawn(void)
+{
+    state_reset(0, 0, 0);
+    gate_record = 0;
+    state_room.item.active = 1;
+    state_room.item.backref = (void*)&gate_record;
+    layout_gate_despawn(&state_room.item);
+    state_extra = gate_record;
+    state_room.item.backref = NULL;
+}
+
+static void (*const layout_gate_misc_cases[])(void) = {
+    lg_despawn,
+};
+static const u32 layout_gate_misc_expected[] = { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x50000u, 0u, 0u };
+
+static u32 test_layout_gate_misc(u32 row)
+{
+    return object_run(layout_gate_misc_cases[row], row, &layout_gate_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "layout_gate_misc", 0, 0, COUNT(layout_gate_misc_cases), test_layout_gate_misc },
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
     { "layout_gate_check_layout_tiles", layout_gate_check_layout_tiles_cases, layout_gate_check_layout_tiles_cases_expected, COUNT(layout_gate_check_layout_tiles_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pool_full_cases) + COUNT(layout_gate_check_layout_tiles_cases);
+const u32 c_test_count = COUNT(layout_gate_misc_cases) + COUNT(pool_full_cases) + COUNT(layout_gate_check_layout_tiles_cases);

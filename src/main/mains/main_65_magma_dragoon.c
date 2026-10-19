@@ -328,7 +328,7 @@ void magma_dragoon_intro_pose(struct MainObj* self)
         set_animation(self, 0x11);
         self->unk6++;
         if (engine_obj.stage == 4) {
-            ((void (*)(u16, u8, s8))func_8002217C)(
+            func_8002217C(
                 0xB, 0xFF, engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }
@@ -1004,7 +1004,7 @@ void magma_dragoon_death_wait_explosion(struct MainObj* self, s32 arg1, s32 arg2
 #ifdef MMX4_PC
         func_8002217C(0xC, 0xFF, 0);
 #else
-        ((void (*)(u16, u8, s32))func_8002217C)(0xC, 0xFF, arg2);
+        func_8002217C(0xC, 0xFF, arg2);
 #endif
     }
     animate_object(ANIMATED_OBJECT(self));

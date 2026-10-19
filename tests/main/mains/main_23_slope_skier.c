@@ -3,6 +3,10 @@
 #include "main/mains/main_23_slope_skier.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
+#include "support/state_cases.h"
+void slope_skier_main(struct MainObj* arg0);
+void slope_skier_slide_idle(void);
+void slope_skier_wait_for_player(struct MainObj* arg0);
 extern struct Unk_unk68 D_800FCE9C[];
 extern struct VisualSpawnOffset D_800FCE90[5];
 extern struct Unk_unk68 slope_skier_terrain_box;
@@ -185,37 +189,7 @@ static u32 slope_skier_steps_run(u32 mode)
     return skier.ext.main_23.unk80 | ((u32)(u8)skier.state << 8) | ((u32)(u8)skier.unk5 << 16) | ((u32)skier.unk17 << 24);
 }
 
-#define CASE(name)                                   \
-    static u32 slope_skier_steps_##name##_case(void) \
-    {                                                \
-        return slope_skier_steps_run(name);          \
-    }
-CASE(EMPTY)
-CASE(LOW)
-CASE(LOW_FACING)
-CASE(LOW_STEEP)
-CASE(LOW_STEEP_FACING)
-CASE(HIGH)
-CASE(HIGH_FACING)
-CASE(HIGH_STEEP)
-CASE(SPIKE_HIDDEN)
-CASE(SPIKE_VISIBLE)
-CASE(FLAT)
-CASE(OTHER)
-CASE(SKI_SPAWN)
-CASE(SKI_FULL)
-CASE(SKI_WALL)
-CASE(SKI_DROP)
-#define ENTRY(name) slope_skier_steps_##name##_case,
-static const CTestCase slope_skier_steps_cases[]
-    = {
-          ENTRY(EMPTY) ENTRY(LOW) ENTRY(LOW_FACING) ENTRY(LOW_STEEP) ENTRY(LOW_STEEP_FACING) ENTRY(HIGH) ENTRY(HIGH_FACING) ENTRY(HIGH_STEEP)
-              ENTRY(SPIKE_HIDDEN) ENTRY(SPIKE_VISIBLE) ENTRY(FLAT) ENTRY(OTHER) ENTRY(SKI_SPAWN) ENTRY(SKI_FULL) ENTRY(SKI_WALL) ENTRY(SKI_DROP)
-      };
 static const u32 slope_skier_steps_cases_expected[] = { 0x20103u, 0x20101u, 0x20181u, 0x20181u, 0x20101u, 0x20102u, 0x20182u, 0x20182u, 0x20155u, 0x20255u, 0x20155u, 0x20100u, 0x5020101u, 0x5020101u, 0x5050101u, 0x62040103u };
-#undef VISUAL_SLOT
-#undef CASE
-#undef ENTRY
 
 static struct MainObj ski, ski_expected;
 static struct VisualObj ski_visuals_expected[32];
@@ -348,37 +322,6 @@ static u32 test_func_80056054_2(u32 row)
     return c_test_observe(0, row, &observed, func_80056054_2_expected, 1);
 }
 
-static const u32 func_800564B4_expected[] = { 0u, 0u, 1u, 0u, 0u, 0u, 0u, 3u, 1u, 0u, 6u, 0u, 0u, 1u, 0xAu, 0u, 0u, 0u };
-static u32 test_func_800564B4(u32 row)
-{
-    u32 observed_values[18];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&slope_skier_terrain_box, 0, sizeof(slope_skier_terrain_box));
-    obj.unk2 = -1;
-    func_800564B4(&obj);
-    observed_values[0] = (u32)obj.air_state;
-    observed_values[1] = (u32)obj.bg_offset;
-    observed_values[2] = (u32)obj.contact_damage;
-    observed_values[3] = (u32)obj.ext.main_23.unk80;
-    observed_values[4] = (u32)obj.ext.main_23.unk81;
-    observed_values[5] = (u32)obj.ext.main_23.unk82;
-    observed_values[6] = (u32)obj.gravity;
-    observed_values[7] = (u32)obj.hp;
-    observed_values[8] = (u32)obj.state;
-    observed_values[9] = (u32)obj.unk15;
-    observed_values[10] = (u32)obj.unk16;
-    observed_values[11] = (u32)obj.unk18.val;
-    observed_values[12] = (u32)obj.unk1C.val;
-    observed_values[13] = (u32)obj.unk5;
-    observed_values[14] = (u32)obj.unk7C;
-    observed_values[15] = (u32)obj.x_accel;
-    observed_values[16] = (u32)obj.x_speed;
-    observed_values[17] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, func_800564B4_expected, 18);
-}
-
 #include "support/signed_init_defaults.h"
 DEFAULTS_CASE(0, 1)
 DEFAULTS_CASE(1, 1)
@@ -386,12 +329,111 @@ DEFAULTS_CASE(2, 1)
 static const CTestCase slope_skier_signed_init_defaults_cases[] = { DEFAULTS_ENTRY(0, 1) DEFAULTS_ENTRY(1, 1) DEFAULTS_ENTRY(2, 1) };
 
 static const u32 slope_skier_signed_init_defaults_cases_expected[] = { 0x3012001u, 0x3012001u, 0x3012001u };
+#define SK(step, sub) (state_reset(step, sub, 0), so.state = 1, so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60, so.terrain_box = &state_hit_box)
+static void sk_wait(void)
+{
+    SK(5, 0);
+    g_Player.x_pos.i.hi = 0x100;
+    slope_skier_wait_for_player(&so);
+}
+static void sk_wait_near(void)
+{
+    SK(5, 0);
+    g_Player.x_pos.i.hi = 0x180;
+    slope_skier_wait_for_player(&so);
+}
+static void sk_main_airborne(void)
+{
+    SK(1, 0);
+    so.air_state = 1;
+    so.collision_flags = 8;
+    slope_skier_main(&so);
+}
+static void sk_main_ground_lost(void)
+{
+    SK(1, 0);
+    slope_skier_main(&so);
+}
+static void sk_main_away(void)
+{
+    SK(1, 0);
+    so.air_state = 1;
+    so.x_pos.i.hi = 0x1000;
+    slope_skier_main(&so);
+}
+static void sk_turn_start(void)
+{
+    SK(6, 0);
+    so.ext.main_23.unk80 = 1;
+    func_80056054(&so);
+}
+static void sk_turn_done(void)
+{
+    SK(6, 2);
+    func_80056054(&so);
+}
+static void sk_turn_flip(void)
+{
+    SK(6, 1);
+    so.animation_step.fields.event = 1;
+    so.ext.main_23.unk82 = 3;
+    func_80056054(&so);
+    state_extra = so.ext.main_23.unk82;
+}
+static void sk_turn_hold(void)
+{
+    SK(6, 1);
+    so.animation_step.fields.event = 1;
+    func_80056054(&so);
+}
+static void sk_turn_spray(void)
+{
+    SK(6, 1);
+    so.animation_step.fields.event = 2;
+    func_80056054(&so);
+    state_extra = visual_objects[0].x_pos.i.hi | (u32)visual_objects[1].y_pos.i.hi << 16;
+}
+static void sk_turn_spray_right(void)
+{
+    SK(6, 1);
+    so.unk15 = 0x40;
+    so.animation_step.fields.event = 2;
+    func_80056054(&so);
+    state_extra = visual_objects[0].x_pos.i.hi;
+}
+static void sk_idle(void)
+{
+    SK(7, 0);
+    slope_skier_slide_idle();
+}
+
+static void (*const slope_skier_states_cases[])(void) = {
+    sk_wait,
+    sk_wait_near,
+    sk_main_airborne,
+    sk_main_ground_lost,
+    sk_main_away,
+    sk_turn_start,
+    sk_turn_done,
+    sk_turn_flip,
+    sk_turn_hold,
+    sk_turn_spray,
+    sk_turn_spray_right,
+    sk_idle,
+};
+static const u32 slope_skier_states_expected[] = { 5u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x1000101u, 0u, 0x800000u, 0xFFFB8000u, 0u, 0u, 7u, 0u, 0u, 0u, 0xFF000102u, 0u, 0x800000u, 0u, 0xFFFFBE00u, 0x420000u, 0u, 0u, 0u, 0u, 0x1000101u, 0u, 0x10000000u, 0xFFFB8000u, 0u, 0u, 7u, 0u, 0u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0xBu, 0u, 0u, 0u, 0x206u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 2u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0x620069u, 0x4100u, 0x106u, 0u, 0x800000u, 0u, 0u, 0u, 0x4000u, 0u, 0x97u, 0x4100u, 7u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_slope_skier_states(u32 row)
+{
+    return state_run(slope_skier_states_cases[row], row, &slope_skier_states_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "slope_skier_steps", slope_skier_steps_cases, slope_skier_steps_cases_expected, COUNT(slope_skier_steps_cases), 0 },
+    { "slope_skier_states", 0, 0, COUNT(slope_skier_states_cases), test_slope_skier_states },
+    { "slope_skier_steps", NULL, slope_skier_steps_cases_expected, COUNT(slope_skier_steps_cases_expected), slope_skier_steps_run },
     { "func_80056054_1", 0, 0, 1, test_func_80056054_1 },
     { "func_80056054_2", 0, 0, 1, test_func_80056054_2 },
-    { "func_800564B4", 0, 0, 1, test_func_800564B4 },
     { "slope_skier_signed_init_defaults", slope_skier_signed_init_defaults_cases, slope_skier_signed_init_defaults_cases_expected, COUNT(slope_skier_signed_init_defaults_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(slope_skier_steps_cases) + 1 + 1 + 1 + COUNT(slope_skier_signed_init_defaults_cases);
+const u32 c_test_count = COUNT(slope_skier_states_cases) + COUNT(slope_skier_steps_cases_expected) + 1 + 1 + COUNT(slope_skier_signed_init_defaults_cases);

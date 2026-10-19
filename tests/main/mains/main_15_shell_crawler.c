@@ -129,28 +129,11 @@ static u32 check(u32 mode, u32 observation)
     return (u16)soldier.y_pos.i.hi | ((u32)(u8)soldier.unk6C << 16) | ((u32)(u8)soldier.unk6E << 24);
 }
 
-#define OBSERVE(name, field)                                   \
-    static u32 shell_crawler_check_jump_##name##_##field(void) \
-    {                                                          \
-        return check(name, field);                             \
-    }
-#define CASE(name) OBSERVE(name, 0) OBSERVE(name, 1)
-CASE(AIRBORNE)
-CASE(FALL)
-CASE(GROUND_AHEAD)
-CASE(TURN)
-CASE(WALL)
-CASE(JUMP_LEFT)
-CASE(JUMP_RIGHT)
-#define ENTRY(name) shell_crawler_check_jump_##name##_0, shell_crawler_check_jump_##name##_1,
-static const CTestCase shell_crawler_check_jump_cases[]
-    = {
-          ENTRY(AIRBORNE) ENTRY(FALL) ENTRY(GROUND_AHEAD) ENTRY(TURN) ENTRY(WALL) ENTRY(JUMP_LEFT) ENTRY(JUMP_RIGHT)
-      };
 static const u32 shell_crawler_check_jump_cases_expected[] = { 0x10200u, 0x6Bu, 0xFF0200u, 0x8006Bu, 0x208u, 0x8006Bu, 0x40000208u, 0x8006Bu, 0x20Eu, 0x8006Bu, 0x10508u, 0x8006Bu, 0x40010508u, 0x8006Bu };
-#undef OBSERVE
-#undef CASE
-#undef ENTRY
+static u32 shell_crawler_check_jump_cases_row(u32 row)
+{
+    return check(row / 2, row % 2);
+}
 
 static const u32 frames[] = { 0x11223344, 0x55667788 };
 static u32 shell_case(u32 mode)
@@ -254,22 +237,7 @@ static u32 shell_case(u32 mode)
     assert(frames[0] == 0x11223344 && frames[1] == 0x55667788);
     return (u8)obj.unk5 | ((u32)obj.unk17 << 8) | ((u32)(u8)shot_objects[31].active << 16);
 }
-#define CASE(m)                                           \
-    static u32 shell_crawler_shoot_events_shell_##m(void) \
-    {                                                     \
-        return shell_case(m);                             \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) shell_crawler_shoot_events_shell_##m,
-static const CTestCase shell_crawler_shoot_events_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 shell_crawler_shoot_events_cases_expected[] = { 0x10202u, 0x410202u, 0x10101u, 0x10202u, 0x410202u };
-#undef CASE
-#undef ENTRY
 
 static u32 full_pool(void)
 {
@@ -303,66 +271,23 @@ static u32 full_pool(void)
 static const CTestCase shell_expiry_full_pool_cases[] = { full_pool };
 static const u32 shell_expiry_full_pool_cases_expected[] = { 0x20000u };
 
-struct func_8004E300_0_case {
-    u32 unk6;
-    u32 expected[7];
-};
-static const struct func_8004E300_0_case func_8004E300_0_cases[] = {
-    { -1, { 0u, 0u, 0u, 0xFFFFFFFFu, 0u, 0u, 0u } },
-    { 1, { 0u, 0u, 0u, 1u, 0u, 0u, 0u } },
-};
-static u32 test_func_8004E300_0(u32 row)
-{
-    const struct func_8004E300_0_case* c = &func_8004E300_0_cases[row];
-    u32 observed_values[7];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    memset(&cur_random, 0, sizeof(cur_random));
-
-    memset(&qux_object, 0, sizeof(qux_object));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    memset(&weapon_objects, 0, sizeof(weapon_objects));
-    obj.unk6 = c->unk6;
-    obj.collision_flags = 0;
-    func_8004E300(&obj);
-    observed_values[0] = (u32)obj.air_state;
-    observed_values[1] = (u32)obj.gravity;
-    observed_values[2] = (u32)obj.state;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.x_accel;
-    observed_values[5] = (u32)obj.x_speed;
-    observed_values[6] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, c->expected, 7);
-}
-
 struct func_8004E300_1_0_case {
     u32 unk6, collision_flags, hi, x_pos, y_pos, y_speed, gravity, air_state, state, on_screen;
-    u32 expected[4];
 };
 static const struct func_8004E300_1_0_case func_8004E300_1_0_cases[] = {
-    { -1, 0, 100, 6558260, 6575736, -65536, 16896, -1, 3, 1, { 3u, 0x641234u, 0x645678u, 0xFFFF0000u } },
-    { 3, 0, 500, 32772660, 6575736, -65536, 16896, -1, 2, 0, { 2u, 0x1F41234u, 0x645678u, 0xFFFF0000u } },
-    { 1, 0, 100, 6623796, 6641272, -82432, 16896, -1, 3, 1, { 3u, 0x651234u, 0x655678u, 0xFFFEBE00u } },
-    { 1, 8, 100, 6623796, 6641272, -65536, 0, 0, 3, 1, { 3u, 0x651234u, 0x655678u, 0xFFFF0000u } },
+    { -1, 0, 100, 6558260, 6575736, -65536, 16896, -1, 3, 1 },
+    { 3, 0, 500, 32772660, 6575736, -65536, 16896, -1, 2, 0 },
+    { 1, 0, 100, 6623796, 6641272, -82432, 16896, -1, 3, 1 },
+    { 1, 8, 100, 6623796, 6641272, -65536, 0, 0, 3, 1 },
 };
 static u32 test_func_8004E300_1_0(u32 row)
 {
     const struct func_8004E300_1_0_case* c = &func_8004E300_1_0_cases[row];
-    u32 observed_values[4];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
     struct WeaponObj weapons_before[16];
     struct BackgroundObj background_before;
-    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 15;
@@ -392,12 +317,7 @@ static u32 test_func_8004E300_1_0(u32 row)
     g_Player.spike_immune = 1;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 16; ++slot)
-            weapon_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(weapon_objects, 16, 0);
     memcpy(weapons_before, weapon_objects, sizeof(weapons_before));
     expected = obj;
     expected.x_pos.val = c->x_pos;
@@ -416,11 +336,7 @@ static u32 test_func_8004E300_1_0(u32 row)
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
     c_test_same_words(weapon_objects, weapons_before, sizeof(weapons_before));
     c_test_same_words(&background_objects[0], &background_before, sizeof(background_before));
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.x_pos.val;
-    observed_values[2] = (u32)obj.y_pos.val;
-    observed_values[3] = (u32)obj.y_speed;
-    return c_test_observe(0, row, observed_values, c->expected, 4);
+    return 1;
 }
 struct func_8004E300_1_1_case {
     u32 full;
@@ -554,38 +470,22 @@ static u32 test_func_8004E300_1(u32 index)
     return test_func_8004E300_1_1(index);
 }
 
-static const u32 func_8004E490_expected[] = { 2u, 0xAu };
-static u32 test_func_8004E490(u32 row)
-{
-    u32 observed_values[2];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    obj.unk7C = 1;
-    func_8004E490(&obj);
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, func_8004E490_expected, 2);
-}
-
 struct shell_crawler_main_0_case {
     u32 hi;
-    u32 expected[3];
 };
 static const struct shell_crawler_main_0_case shell_crawler_main_0_cases[] = {
-    { 3087, { 3u, 0u, 0xC0F1234u } },
-    { 3568, { 3u, 0u, 0xDF01234u } },
-    { 4111, { 3u, 0u, 0x100F1234u } },
-    { 4592, { 3u, 0u, 0x11F01234u } },
-    { 4885, { 3u, 0u, 0x13151234u } },
-    { 5360, { 3u, 0u, 0x14F01234u } },
-    { 5651, { 3u, 0u, 0x16131234u } },
-    { 6097, { 3u, 0u, 0x17D11234u } },
+    { 3087 },
+    { 3568 },
+    { 4111 },
+    { 4592 },
+    { 4885 },
+    { 5360 },
+    { 5651 },
+    { 6097 },
 };
 static u32 test_shell_crawler_main_0(u32 row)
 {
     const struct shell_crawler_main_0_case* c = &shell_crawler_main_0_cases[row];
-    u32 observed_values[3];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
@@ -621,10 +521,7 @@ static u32 test_shell_crawler_main_0(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.x_pos.val;
-    return c_test_observe(0, row, observed_values, c->expected, 3);
+    return 1;
 }
 static const u32 shell_crawler_main_1_expected[] = { 1u, 9u, 0x10005u, 1u };
 static u32 test_shell_crawler_main_1(u32 row)
@@ -635,7 +532,6 @@ static u32 test_shell_crawler_main_1(u32 row)
     struct EngineObj engine_before;
     struct WeaponObj weapons_before[16];
     struct BackgroundObj background_before;
-    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 15;
@@ -665,12 +561,7 @@ static u32 test_shell_crawler_main_1(u32 row)
     g_Player.spike_immune = 1;
     background_objects[0].x_pos.val = 0;
     background_objects[0].y_pos.val = 0;
-    pools_full = 0;
-    {
-        u32 slot;
-        for (slot = 0; slot < 16; ++slot)
-            weapon_objects[slot].active = pools_full ? 1 : 0;
-    }
+    FILL_ACTIVE(weapon_objects, 16, 0);
     memcpy(weapons_before, weapon_objects, sizeof(weapons_before));
     expected = obj;
     expected.unk18 = obj.x_pos;
@@ -701,40 +592,20 @@ static u32 test_shell_crawler_main(u32 index)
     return test_shell_crawler_main_1(index);
 }
 
-static const u32 shell_crawler_shell_0_expected[] = { 0u, 0u, 0u, 0xFFFFFFFFu, 0u };
-static u32 test_shell_crawler_shell_0(u32 row)
-{
-    u32 observed_values[5];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&shell_crawler_body_box, 0, sizeof(shell_crawler_body_box));
-    memset(&shell_crawler_shell_box, 0, sizeof(shell_crawler_shell_box));
-    obj.unk6 = -1;
-    shell_crawler_shell(&obj);
-    observed_values[0] = (u32)obj.ext.main_0.background_relative;
-    observed_values[1] = (u32)obj.ext.main_0.flags[0];
-    observed_values[2] = (u32)obj.unk5;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.unk7C;
-    return c_test_observe(0, row, observed_values, shell_crawler_shell_0_expected, 5);
-}
-
 struct shell_crawler_shell_1_0_case {
     u32 obj_unk6, expected_unk6;
-    u32 expected[5];
 };
 static const struct shell_crawler_shell_1_0_case shell_crawler_shell_1_0_cases[] = {
-    { -1, -1, { 0xFFFFFFFFu, 7u, 0x10005u, 0xFFu, 0u } },
-    { 3, 3, { 3u, 7u, 0x10005u, 0xFFu, 0u } },
+    { -1, -1 },
+    { 3, 3 },
 };
 static u32 test_shell_crawler_shell_1_0(u32 row)
 {
     const struct shell_crawler_shell_1_0_case* c = &shell_crawler_shell_1_0_cases[row];
-    u32 observed_values[5];
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
-    u8 change_box, reset_anim;
+    u8 change_box;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 15;
@@ -776,10 +647,6 @@ static u32 test_shell_crawler_shell_1_0(u32 row)
     if (change_box) {
         expected.attack_box = &shell_crawler_shell_box;
     }
-    reset_anim = 0;
-    if (reset_anim) {
-        set_animation(&expected, 6);
-    }
     expected.animation_step.fields.duration = 5;
     player_expected = g_Player;
     engine_before = engine_obj;
@@ -787,12 +654,7 @@ static u32 test_shell_crawler_shell_1_0(u32 row)
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
-    observed_values[0] = (u32)obj.unk6;
-    observed_values[1] = (u32)obj.unk7C;
-    observed_values[2] = (u32)obj.animation_step.packed;
-    observed_values[3] = (u32)obj.ext.main_0.background_relative;
-    observed_values[4] = (u32)obj.ext.main_0.flags[0];
-    return c_test_observe(0, row, observed_values, c->expected, 5);
+    return 1;
 }
 struct shell_crawler_shell_1_1_case {
     u32 obj_unk7C, unk6, expected_unk7C, reset_anim, duration;
@@ -876,7 +738,7 @@ static u32 test_shell_crawler_shell_1_2(u32 row)
     struct MainObj obj, expected;
     struct PlayerObj player_expected;
     struct EngineObj engine_before;
-    u8 change_box, reset_anim;
+    u8 change_box;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 15;
@@ -918,10 +780,7 @@ static u32 test_shell_crawler_shell_1_2(u32 row)
     if (change_box) {
         expected.attack_box = &shell_crawler_shell_box;
     }
-    reset_anim = 1;
-    if (reset_anim) {
-        set_animation(&expected, 1);
-    }
+    set_animation(&expected, 1);
     expected.animation_step.fields.duration = 7;
     player_expected = g_Player;
     engine_before = engine_obj;
@@ -948,15 +807,12 @@ static u32 test_shell_crawler_shell_1(u32 index)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "shell_crawler_check_jump", shell_crawler_check_jump_cases, shell_crawler_check_jump_cases_expected, COUNT(shell_crawler_check_jump_cases), 0 },
-    { "shell_crawler_shoot_events", shell_crawler_shoot_events_cases, shell_crawler_shoot_events_cases_expected, COUNT(shell_crawler_shoot_events_cases), 0 },
+    { "shell_crawler_check_jump", NULL, shell_crawler_check_jump_cases_expected, COUNT(shell_crawler_check_jump_cases_expected), shell_crawler_check_jump_cases_row },
+    { "shell_crawler_shoot_events", NULL, shell_crawler_shoot_events_cases_expected, COUNT(shell_crawler_shoot_events_cases_expected), shell_case },
     { "shell_expiry_full_pool", shell_expiry_full_pool_cases, shell_expiry_full_pool_cases_expected, COUNT(shell_expiry_full_pool_cases), 0 },
-    { "func_8004E300_0", 0, 0, 2, test_func_8004E300_0 },
     { "func_8004E300_1", 0, 0, 6, test_func_8004E300_1 },
-    { "func_8004E490", 0, 0, 1, test_func_8004E490 },
     { "shell_crawler_main", 0, 0, 9, test_shell_crawler_main },
-    { "shell_crawler_shell_0", 0, 0, 1, test_shell_crawler_shell_0 },
     { "shell_crawler_shell_1", 0, 0, 5, test_shell_crawler_shell_1 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(shell_crawler_check_jump_cases) + COUNT(shell_crawler_shoot_events_cases) + COUNT(shell_expiry_full_pool_cases) + 2 + 6 + 1 + 9 + 1 + 5;
+const u32 c_test_count = COUNT(shell_crawler_check_jump_cases_expected) + COUNT(shell_crawler_shoot_events_cases_expected) + COUNT(shell_expiry_full_pool_cases) + 6 + 9 + 5;

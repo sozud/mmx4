@@ -43,4 +43,6 @@ struct ReplayData {
     u16 inputs[0xE10];
 };
 
+void save_replay_engine(struct SerializedEngineObj* target);
+
 #endif

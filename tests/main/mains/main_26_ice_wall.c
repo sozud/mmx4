@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_26_ice_wall.h"
 #include "main/tile_effects.h"
+#include "support/state_cases.h"
+void ice_wall_start_idle(struct MainObj* arg0);
 extern struct TileEffectRecord** tile_effect_tables[26];
 extern struct TileEffectRecord* D_8011919C[33];
 
@@ -295,7 +297,7 @@ static const struct ice_wall_break_case ice_wall_break_cases[] = {
     { 4289663540, 1, { 0u, 0u, 0u, 0x80u } },
     { 26219060, 1, { 0u, 0u, 0u, 0x80u } },
 };
-static u32 test_ice_wall_break(u32 row)
+static u32 run_ice_wall_break(u32 row, u32 dispatch)
 {
     const struct ice_wall_break_case* c = &ice_wall_break_cases[row];
     u32 observed_values[4];
@@ -351,7 +353,10 @@ static u32 test_ice_wall_break(u32 row)
     player_before = g_Player;
     background_before = background_objects[0];
     engine_before = engine_obj;
-    ice_wall_break(BASE_OBJECT(&obj));
+    if (dispatch)
+        ice_wall_update(&obj);
+    else
+        ice_wall_break(&obj);
     c_test_same_words(&obj, &expected, sizeof(obj));
     c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
     c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
@@ -364,9 +369,37 @@ static u32 test_ice_wall_break(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 4);
 }
 
+static u32 test_ice_wall_break(u32 row)
+{
+    return run_ice_wall_break(row, 0);
+}
+
+static u32 test_ice_wall_break_dispatch(u32 row)
+{
+    return run_ice_wall_break(row, 1);
+}
+
+static void iw_idle(void)
+{
+    state_reset(1, 0, 0);
+    ice_wall_start_idle(&so);
+}
+
+static void (*const ice_wall_misc_cases[])(void) = {
+    iw_idle,
+};
+static const u32 ice_wall_misc_expected[] = { 2u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_ice_wall_misc(u32 row)
+{
+    return state_run(ice_wall_misc_cases[row], row, &ice_wall_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "ice_wall_misc", 0, 0, COUNT(ice_wall_misc_cases), test_ice_wall_misc },
     { "func_800583B0", 0, 0, 7, test_func_800583B0 },
     { "ice_wall_break", 0, 0, 4, test_ice_wall_break },
+    { "ice_wall_break_dispatch", 0, 0, 4, test_ice_wall_break_dispatch },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 7 + 4;
+const u32 c_test_count = COUNT(ice_wall_misc_cases) + 7 + 4 + 4;

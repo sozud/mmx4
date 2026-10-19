@@ -91,11 +91,11 @@ void ice_wall_break_remove(struct BaseObj* self)
     despawn_object_permanently(OBJECT_HEADER(self));
 }
 
-void ice_wall_break(struct BaseObj* self)
+void ice_wall_break(struct MainObj* self)
 {
-    ice_wall_break_funcs[self->unk5](self);
+    ice_wall_break_funcs[self->unk5](BASE_OBJECT(self));
     func_8002D9BC(self);
-    if (func_8002B1E8(self, 0x50, 0x30) != 0) {
+    if (func_8002B1E8(BASE_OBJECT(self), 0x50, 0x30) != 0) {
         despawn_object_permanently(OBJECT_HEADER(self));
     }
 }

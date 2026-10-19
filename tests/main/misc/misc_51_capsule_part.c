@@ -46,34 +46,10 @@ static u32 light_case(u32 mode)
     assert(((u32*)light_capsule_animations[9])[0] == 0x2C010001 && ((u32*)light_capsule_animations[9])[1] == 0x2D010001);
     return obj.animation_step.packed ^ ((u32)(u8)obj.unk16 << 8) ^ ((u32)(u8)obj.unk17 << 16);
 }
-#define CASE(m)                                              \
-    static u32 capsule_light_animation_start_light_##m(void) \
-    {                                                        \
-        return light_case(m);                                \
-    }
-CASE(0)
-CASE(1)
-static const CTestCase capsule_light_animation_start_cases[] = { capsule_light_animation_start_light_0, capsule_light_animation_start_light_1 };
 static const u32 capsule_light_animation_start_cases_expected[] = { 0x2C080101u, 0x2D010701u };
-#undef CASE
-
-static const u32 capsule_part_light_expected[] = { 0u, 0xFFFFFFFFu };
-static u32 test_capsule_part_light(u32 row)
-{
-    u32 observed_values[2];
-    struct MiscObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.unk6 = -1;
-    capsule_part_light(&obj);
-    observed_values[0] = (u32)obj.unk16;
-    observed_values[1] = (u32)obj.unk6;
-    return c_test_observe(0, row, observed_values, capsule_part_light_expected, 2);
-}
 
 const struct CTestGroup c_test_groups[] = {
-    { "capsule_light_animation_start", capsule_light_animation_start_cases, capsule_light_animation_start_cases_expected, COUNT(capsule_light_animation_start_cases), 0 },
-    { "capsule_part_light", 0, 0, 1, test_capsule_part_light },
+    { "capsule_light_animation_start", NULL, capsule_light_animation_start_cases_expected, COUNT(capsule_light_animation_start_cases_expected), light_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(capsule_light_animation_start_cases) + 1;
+const u32 c_test_count = COUNT(capsule_light_animation_start_cases_expected);

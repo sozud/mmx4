@@ -1,6 +1,8 @@
 #include "test_runtime.h"
 #include "main/mains/main_22_bee_hive.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+#include "main/195B4.h"
 void func_800559BC(struct MainObj*);
 
 static const u32 inputs_0[2][2] = {
@@ -247,10 +249,115 @@ static u32 test_func_800559BC(u32 row)
     return c_test_observe(0, row, observed_values, func_800559BC_expected, 1);
 }
 
+static void bh_resume(void)
+{
+    state_reset(1, 0, 0);
+    so.ext.main_22.saved_unk5 = 3;
+    bee_hive_resume_step(&so);
+}
+
+static void (*const bee_hive_misc_cases[])(void) = {
+    bh_resume,
+};
+static const u32 bee_hive_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_bee_hive_misc(u32 row)
+{
+    return state_run(bee_hive_misc_cases[row], row, &bee_hive_misc_expected[row * 10]);
+}
+
+void robot_bee_update(struct MainObj*);
+void bee_hive_update(struct MainObj*);
+void bee_hive_open(struct MainObj*);
+void bee_hive_despawn(struct MainObj*);
+static struct MainObj expected[48];
+static struct StageObjectRecord records[2] = { { 0, 22, 0, 0, 160, 120 }, { 0, 0, 0, 255, 0, 0 } };
+static struct StageObjectRecord replacement[2] = { { 0, 5, 0, 0, 160, 120 }, { 0, 0, 0, 255, 0, 0 } };
+static u32 metadata[12], frames[64];
+static u8 commands[84];
+static u32 owner_reuse(u32 row)
+{
+    struct PlayerObj player, entity;
+    struct EngineObj engine;
+    struct MainBssState main_before;
+    struct BackgroundObj cameras[3];
+    struct ControllerInput input;
+    struct MainObj* current = SP_CUR_MAIN_OBJ;
+    u8 *old_frames = TEST_MENU_FRAMES, *old_commands = D_80141F50[2];
+    u32* old_metadata = D_801406A8;
+    u32 i, record_before[8];
+    u16 rng;
+    (void)row;
+    c_test_copy_words(record_before, (u32*)records, 4);
+    c_test_copy_words(record_before + 4, (u32*)replacement, 4);
+    c_test_zero_words((u32*)main_objects, sizeof(main_objects) / 4);
+    c_test_zero_words((u32*)background_objects, sizeof(background_objects) / 4);
+    g_Player.bg_offset = 0;
+    g_Player.x_pos.i.hi = 200;
+    g_Player.y_pos.i.hi = 120;
+    engine_obj.stage = 1;
+    engine_obj.substage = 1;
+    engine_obj.checkpoint = 0;
+    for (i = 0; i < COUNT(metadata); i++)
+        metadata[i] = (i + 1) * 128;
+    for (i = 0; i < COUNT(frames); i++)
+        frames[i] = i < 12 ? 64 : 0;
+    D_801406A8 = metadata;
+    TEST_MENU_FRAMES = (u8*)frames;
+    D_80141F50[2] = commands;
+    assert(func_8002938C(5) == 2);
+    func_800292D0(records);
+    SP_CUR_MAIN_OBJ = &main_objects[0];
+    bee_hive_update(&main_objects[0]);
+    bee_hive_open(&main_objects[0]);
+    for (i = 0; i < 8; i++)
+        bee_hive_open(&main_objects[0]);
+    assert(main_objects[0].ext.main_22.parts_mask == 3 && main_objects[1].active == 0x41 && main_objects[1].id == 5 && main_objects[1].unk2 == 3 && main_objects[1].ext.main_5.owner == &main_objects[0]);
+    SP_CUR_MAIN_OBJ = &main_objects[1];
+    robot_bee_update(&main_objects[1]);
+    background_objects[0].x_pos.i.hi = 1000;
+    robot_bee_update(&main_objects[1]);
+    assert(main_objects[1].state == 2);
+    bee_hive_despawn(&main_objects[0]);
+    assert(main_objects[0].active == 0);
+    if (row) {
+        func_800292D0(replacement);
+        assert(main_objects[0].active == 1 && main_objects[0].id == 5);
+    }
+    c_test_copy_words((u32*)expected, (u32*)main_objects, sizeof(expected) / 4);
+    player = g_Player;
+    entity = g_Entity;
+    engine = engine_obj;
+    main_before = main_bss_state;
+    input = controller_input;
+    c_test_copy_words((u32*)cameras, (u32*)background_objects, sizeof(cameras) / 4);
+    rng = cur_random;
+    c_test_zero_words((u32*)&expected[1], 2);
+    robot_bee_update(&main_objects[1]);
+    assert(c_test_word_difference((u32*)main_objects, (u32*)expected, sizeof(expected) / 4) == 0);
+    assert(c_test_word_difference((u32*)&g_Player, (u32*)&player, sizeof(player) / 4) == 0 && c_test_word_difference((u32*)&g_Entity, (u32*)&entity, sizeof(entity) / 4) == 0);
+    assert(c_test_word_difference((u32*)&engine_obj, (u32*)&engine, sizeof(engine) / 4) == 0 && c_test_word_difference((u32*)&main_bss_state, (u32*)&main_before, sizeof(main_before) / 4) == 0 && c_test_word_difference((u32*)background_objects, (u32*)cameras, sizeof(cameras) / 4) == 0);
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed && cur_random == rng && SP_CUR_MAIN_OBJ == &main_objects[1] && D_801406A8 == metadata && TEST_MENU_FRAMES == (u8*)frames && D_80141F50[2] == commands);
+    for (i = 0; i < COUNT(metadata); i++)
+        assert(metadata[i] == (i + 1) * 128);
+    for (i = 0; i < COUNT(frames); i++)
+        assert(frames[i] == (i < 12 ? 64u : 0));
+    for (i = 0; i < COUNT(commands); i++)
+        assert(commands[i] == 0);
+    assert(c_test_word_difference((u32*)records, record_before, 4) == 0 && c_test_word_difference((u32*)replacement, record_before + 4, 4) == 0);
+    SP_CUR_MAIN_OBJ = current;
+    D_801406A8 = old_metadata;
+    TEST_MENU_FRAMES = old_frames;
+    D_80141F50[2] = old_commands;
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "bee_hive_misc", 0, 0, COUNT(bee_hive_misc_cases), test_bee_hive_misc },
     { "bee_hive_wait_watch", 0, 0, 2, test_bee_hive_wait_watch },
     { "func_80055358", 0, 0, 1, test_func_80055358 },
     { "func_800559BC", 0, 0, 1, test_func_800559BC },
+    { "actual_hive_birth_child_offscreen_owner_despawn_or_Bee_slot_reuse", NULL, NULL, 2, owner_reuse },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 2 + 1 + 1;
+const u32 c_test_count = COUNT(bee_hive_misc_cases) + 2 + 1 + 1 + 2;

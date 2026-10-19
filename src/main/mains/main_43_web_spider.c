@@ -224,7 +224,7 @@ void web_spider_intro_pose(struct MainObj* self)
 #ifdef MMX4_PC
             func_8002217C(8, 0xFF, (u8)engine_obj.character_state.bytes[8]);
 #else
-            ((void (*)(u16, u8, s8))func_8002217C)(8, 0xFF, engine_obj.character_state.bytes[8]);
+            func_8002217C(8, 0xFF, engine_obj.character_state.bytes[8]);
 #endif
             engine_obj.character_state.bytes[8] = 1;
         }

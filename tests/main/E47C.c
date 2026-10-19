@@ -217,7 +217,219 @@ static const CTestCase pool_full_cases[] = {
 };
 
 static const u32 pool_full_cases_expected[] = { 0x50100u, 0x50200u };
+static const struct {
+    u16 pressed;
+    s8 active, selection, mono, next_selection, next_mono, next_mode, next_fade;
+} option_inputs[] = {
+    { 0, 0, 0, 0, 0, 0, 2, 0 },
+    { PADstart, 0, 0, 0, 2, 0, 3, -1 },
+    { PAD_SELECTION_ALT, 0, 1, 1, 2, 1, 3, -1 },
+    { PAD_CONFIRM, 0, 0, 0, 0, 0, 3, -1 },
+    { PAD_CONFIRM, 0, 2, 1, 2, 1, 3, -1 },
+    { PAD_CONFIRM, 0, 1, 0, 1, 1, 2, 0 },
+    { PAD_CONFIRM, 0, 1, 1, 1, 0, 2, 0 },
+    { PADLleft, 0, 1, 0, 1, 1, 2, 0 },
+    { PADLright, 0, 1, 1, 1, 0, 2, 0 },
+    { PADLleft, 0, 0, 0, 0, 0, 2, 0 },
+    { PADLup, 0, 0, 0, 2, 0, 2, 0 },
+    { PADLdown, 0, 2, 1, 0, 1, 2, 0 },
+    { PADLdown | PADLright, 0, 0, 0, 1, 1, 2, 0 },
+    { PADstart | PAD_CONFIRM, 0, 1, 0, 2, 0, 3, -1 },
+    { PAD_CONFIRM | PADLdown, 0, 1, 1, 2, 1, 2, 0 },
+    { PADstart | PADLup, 1, 1, 0, 1, 0, 2, 1 },
+    { PAD_CONFIRM, -1, 0, 1, 0, 1, 2, -1 },
+};
+
+static u32 test_option_inputs(u32 row)
+{
+    struct GameInfo info, expected;
+    struct ControllerInput input;
+    memset(&info, 0x25, sizeof(info));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(&D_80141F50, 0, sizeof(D_80141F50));
+    info.mode = 2;
+    info.unk8 = 2;
+    expected = info;
+    expected.mode = option_inputs[row].next_mode;
+    controller_input.pressed = option_inputs[row].pressed;
+    input = controller_input;
+    main_bss_state.transition.active = option_inputs[row].active;
+    main_bss_state.transition.fade_amount = 3;
+    main_bss_state.transition.selection = option_inputs[row].selection;
+    D_80171EA9 = option_inputs[row].mono;
+    func_8001EA90(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    c_test_same_words(&controller_input, &input, sizeof(input));
+    assert(main_bss_state.transition.selection == option_inputs[row].next_selection);
+    assert(main_bss_state.transition.active == option_inputs[row].next_fade);
+    assert(main_bss_state.transition.fade_amount == (info.mode == 3 ? 8 : 3));
+    assert(D_80171EA9 == option_inputs[row].next_mono);
+    return 1;
+}
+
+static u32 test_option_exit(u32 row)
+{
+    struct GameInfo info, expected;
+    struct BackgroundObj backgrounds[3];
+    u32 i;
+    memset(&info, 0x25, sizeof(info));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(background_objects, 0x12, sizeof(background_objects));
+    background_objects[2].x_pos.val = 0x12345678;
+    memcpy(backgrounds, background_objects, sizeof(backgrounds));
+    expected = info;
+    need_palette_load = 0x10;
+    main_bss_state.transition.selection = row % 3;
+    main_bss_state.transition.active = row >= 3 ? 1 : 0;
+    if (row < 3) {
+        expected.unk0 = row == 0 ? 0xA : 6;
+        expected.mode = expected.unk2 = expected.unk3 = 0;
+        if (row != 0) {
+            backgrounds[2].x_pos.i.hi = 0;
+            for (i = 0; i < 3; i++)
+                backgrounds[i].unk4C = 1;
+            backgrounds[1].unk3 = backgrounds[2].unk3 = 1;
+        }
+    }
+    func_8001EBA0(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    c_test_same_words(background_objects, backgrounds, sizeof(backgrounds));
+    assert(need_palette_load == (row == 1 || row == 2 ? 0x11 : 0x10));
+    assert(main_bss_state.transition.selection == row % 3);
+    assert(main_bss_state.transition.active == (row >= 3 ? 1 : 0));
+    return 1;
+}
+
+static const struct {
+    u16 pressed;
+    s8 active, selection, next_selection, next_mode, next_fade;
+} continue_inputs[] = {
+    { 0, 0, 0, 0, 4, 0 },
+    { PAD_CONFIRM, 0, 0, 0, 5, -1 },
+    { PAD_CONFIRM, 0, 1, 1, 5, 0 },
+    { PAD_CONFIRM, 0, 2, 2, 5, -1 },
+    { PAD_SELECTION_ALT, 0, 0, 2, 5, -1 },
+    { PADLup, 0, 0, 2, 4, 0 },
+    { PADLdown, 0, 2, 0, 4, 0 },
+    { PAD_CONFIRM | PAD_SELECTION_ALT, 0, 1, 1, 5, 0 },
+    { PAD_CONFIRM | PADLdown, 0, 0, 0, 5, -1 },
+    { PAD_CONFIRM, 1, 1, 1, 4, 1 },
+    { PAD_SELECTION_ALT, -1, 0, 0, 4, -1 },
+};
+
+static u32 test_continue_inputs(u32 row)
+{
+    struct GameInfo info, expected;
+    memset(&info, 0x25, sizeof(info));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(&D_80141F50, 0, sizeof(D_80141F50));
+    info.mode = 4;
+    info.unk8 = 2;
+    expected = info;
+    expected.mode = continue_inputs[row].next_mode;
+    main_bss_state.transition.active = continue_inputs[row].active;
+    main_bss_state.transition.fade_amount = 3;
+    main_bss_state.transition.selection = continue_inputs[row].selection;
+    controller_input.pressed = continue_inputs[row].pressed;
+    func_8001ED44(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    assert(main_bss_state.transition.selection == continue_inputs[row].next_selection);
+    assert(main_bss_state.transition.active == continue_inputs[row].next_fade);
+    assert(main_bss_state.transition.fade_amount == (continue_inputs[row].next_fade == -1 && continue_inputs[row].active == 0 ? 8 : 3));
+    return 1;
+}
+
+static const struct {
+    u16 pressed;
+    s8 active, selection, next_selection, next_mode, next_fade;
+} no_save_inputs[] = {
+    { 0, 0, 0, 0, 6, 0 },
+    { PAD_CONFIRM, 0, 0, 0, 7, 0 },
+    { PAD_CONFIRM, 0, 1, 1, 7, -1 },
+    { PAD_CONFIRM, 0, 2, 2, 7, -1 },
+    { PAD_SELECTION_ALT, 0, 0, 2, 7, -1 },
+    { PADLdown, 0, 0, 0, 6, 0 },
+    { PAD_CONFIRM | PAD_SELECTION_ALT, 0, 0, 0, 7, 0 },
+    { PAD_CONFIRM, 1, 1, 1, 6, 1 },
+    { PAD_SELECTION_ALT, -1, 0, 0, 6, -1 },
+};
+
+static u32 test_no_save_inputs(u32 row)
+{
+    struct GameInfo info, expected;
+    memset(&info, 0x25, sizeof(info));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(&D_80141F50, 0, sizeof(D_80141F50));
+    info.mode = 6;
+    expected = info;
+    expected.mode = no_save_inputs[row].next_mode;
+    main_bss_state.transition.active = no_save_inputs[row].active;
+    main_bss_state.transition.fade_amount = 3;
+    main_bss_state.transition.selection = no_save_inputs[row].selection;
+    controller_input.pressed = no_save_inputs[row].pressed;
+    func_8001EF48(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    assert(main_bss_state.transition.selection == no_save_inputs[row].next_selection);
+    assert(main_bss_state.transition.active == no_save_inputs[row].next_fade);
+    assert(main_bss_state.transition.fade_amount == (no_save_inputs[row].next_fade == -1 && no_save_inputs[row].active == 0 ? 8 : 3));
+    return 1;
+}
+
+static u32 test_title_return(u32 row)
+{
+    struct GameInfo info, expected;
+    struct EngineObj engine_expected;
+    struct BackgroundObj backgrounds[3];
+    u32 saved = row < 4;
+    u32 selection = saved ? row % 2 + 1 : (row - 4) % 3;
+    u32 busy = saved ? row >= 2 : row >= 7;
+    u32 to_load = saved ? selection == 1 : selection == 0;
+    u32 i;
+    memset(&info, 0x25, sizeof(info));
+    memset(&engine_obj, 0x26, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(background_objects, 0x12, sizeof(background_objects));
+    background_objects[2].x_pos.val = 0x12345678;
+    memcpy(backgrounds, background_objects, sizeof(backgrounds));
+    expected = info;
+    engine_expected = engine_obj;
+    need_palette_load = 0x10;
+    main_bss_state.transition.selection = selection;
+    main_bss_state.transition.active = busy;
+    if (!busy) {
+        expected.unk0 = to_load ? 9 : 6;
+        if (to_load) {
+            engine_expected.unk1 = engine_expected.unk2 = engine_expected.unk3 = 0;
+        } else {
+            expected.mode = expected.unk2 = expected.unk3 = 0;
+            backgrounds[2].x_pos.i.hi = 0;
+            for (i = 0; i < 3; i++)
+                backgrounds[i].unk4C = 1;
+            backgrounds[1].unk3 = backgrounds[2].unk3 = 1;
+        }
+    }
+    if (saved)
+        func_8001EE08(&info);
+    else
+        func_8001EFF0(&info);
+    c_test_same_words(&info, &expected, sizeof(info));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds, sizeof(backgrounds));
+    assert(need_palette_load == (!busy && !to_load ? 0x11 : 0x10));
+    assert(main_bss_state.transition.selection == selection);
+    assert(main_bss_state.transition.active == busy);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "no_save_inputs", 0, 0, COUNT(no_save_inputs), test_no_save_inputs },
+    { "title_return", 0, 0, 10, test_title_return },
+    { "option_inputs", 0, 0, COUNT(option_inputs), test_option_inputs },
+    { "option_exit", 0, 0, 6, test_option_exit },
+    { "continue_inputs", 0, 0, COUNT(continue_inputs), test_continue_inputs },
     { "title_points_context", title_points_context_cases, title_points_context_cases_expected, COUNT(title_points_context_cases), 0 },
     { "title_transition", title_transition_cases, title_transition_cases_expected, COUNT(title_transition_cases), 0 },
     { "func_8001DC7C", 0, 0, 1, test_func_8001DC7C },
@@ -225,4 +437,4 @@ const struct CTestGroup c_test_groups[] = {
     { "pool_full", pool_full_cases, pool_full_cases_expected, COUNT(pool_full_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(title_points_context_cases) + COUNT(title_transition_cases) + 1 + 2 + COUNT(pool_full_cases);
+const u32 c_test_count = COUNT(no_save_inputs) + 10 + COUNT(option_inputs) + 6 + COUNT(continue_inputs) + COUNT(title_points_context_cases) + COUNT(title_transition_cases) + 1 + 2 + COUNT(pool_full_cases);

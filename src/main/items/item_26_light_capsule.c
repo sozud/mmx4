@@ -131,7 +131,7 @@ void light_capsule_start_dialogue(struct ItemObj* arg0)
         if (engine_obj.unk37 != 0) {
             func_8002217C(0x35, 0xFF, 0);
         } else {
-            func_8002217C(light_capsule_dialogue_ids[arg0->unk2], 0xFF, 0);
+            func_8002217C((u16)light_capsule_dialogue_ids[arg0->unk2], 0xFF, 0);
         }
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }

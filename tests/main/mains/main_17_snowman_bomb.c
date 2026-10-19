@@ -1,5 +1,7 @@
 #include "test_runtime.h"
 #include "main/mains/main_17_snowman_bomb.h"
+#include "support/state_cases.h"
+void snowman_bomb_resume_step(struct MainObj* arg0);
 extern struct Unk_unk68 item_carrier_hitboxes;
 extern struct Unk_unk68 item_carrier_capsule_hurtbox;
 
@@ -69,8 +71,26 @@ static u32 test_snowman_bomb_main(u32 row)
     return c_test_observe(0, row, observed_values, snowman_bomb_main_expected, 8);
 }
 
+static void sb_resume(void)
+{
+    state_reset(1, 0, 0);
+    so.ext.raw[4] = 3;
+    snowman_bomb_resume_step(&so);
+}
+
+static void (*const snowman_bomb_misc_cases[])(void) = {
+    sb_resume,
+};
+static const u32 snowman_bomb_misc_expected[] = { 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_snowman_bomb_misc(u32 row)
+{
+    return state_run(snowman_bomb_misc_cases[row], row, &snowman_bomb_misc_expected[row * 10]);
+}
+
 const struct CTestGroup c_test_groups[] = {
+    { "snowman_bomb_misc", 0, 0, COUNT(snowman_bomb_misc_cases), test_snowman_bomb_misc },
     { "snowman_bomb_main", 0, 0, 1, test_snowman_bomb_main },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1;
+const u32 c_test_count = COUNT(snowman_bomb_misc_cases) + 1;

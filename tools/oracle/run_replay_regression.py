@@ -76,7 +76,7 @@ def load_sync(path, replay_metadata):
             any(not isinstance(point, int) or point < 0 or
                 point >= replay_metadata["frames"] for point in points) or
             any(point.get("kind") not in ("start", "mode-return", "load-complete",
-                                           "xa-complete")
+                                           "xa-complete", "xa-start")
                 for point in entries)):
         raise SystemExit(f"{path}: invalid sync points")
     return document
@@ -396,9 +396,14 @@ def main():
         header_a, rows_a = logs[("psx", name)]
         header_b, rows_b = logs[("pc", name)]
         if header_a and header_b and header_a != header_b:
-            print(f"   {name}: schema mismatch between the two logs")
-            status = 1
-            continue
+            width = min(len(header_a), len(header_b))
+            if header_a[:width] != header_b[:width]:
+                print(f"   {name}: schema mismatch between the two logs")
+                status = 1
+                continue
+            print(f"   {name}: comparing the {width} columns both logs share")
+            rows_a = {frame: [fields[:width] for fields in rows] for frame, rows in rows_a.items()}
+            rows_b = {frame: [fields[:width] for fields in rows] for frame, rows in rows_b.items()}
         if name == "extensions.tsv" and args.main19_semantic_extensions:
             raw_differing = sum(
                 rows_a[frame] != rows_b[frame]

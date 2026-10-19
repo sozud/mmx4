@@ -38,23 +38,11 @@ static u32 general_dust_animation_start_dust_case(u32 mode, u32 observation)
         assert(((u32*)&obj)[i] == ((u32*)&before)[i]);
     return observation == 0 ? (u8)obj.unk5 | ((u32)(u16)obj.timer << 8) | ((u32)obj.unk17 << 24) : obj.animation_step.packed;
 }
-#define CASE(m, n)                                               \
-    static u32 general_dust_animation_start_dust_##m##_##n(void) \
-    {                                                            \
-        return general_dust_animation_start_dust_case(m, n);     \
-    }
-#define MODE(m) CASE(m, 0) CASE(m, 1)
-MODE(0)
-MODE(1)
-#define ENTRY(m, n) general_dust_animation_start_dust_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1)
-static const CTestCase general_dust_animation_start_cases[]
-    = { ENTRIES(0) ENTRIES(1) };
 static const u32 general_dust_animation_start_cases_expected[] = { 0x19001901u, 0x47010001u, 0x1C001901u, 0x51010001u };
-#undef CASE
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 general_dust_animation_start_cases_row(u32 row)
+{
+    return general_dust_animation_start_dust_case(row / 2, row % 2);
+}
 
 static u32 general_dust_event_expiry_dust_case(u32 mode)
 {
@@ -100,21 +88,7 @@ static u32 general_dust_event_expiry_dust_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u16)obj.timer | ((u32)(u8)obj.unk5 << 16) | ((u32)obj.unk17 << 24);
 }
-#define CASE(m)                                         \
-    static u32 general_dust_event_expiry_dust_##m(void) \
-    {                                                   \
-        return general_dust_event_expiry_dust_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) general_dust_event_expiry_dust_##m,
-static const CTestCase general_dust_event_expiry_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 general_dust_event_expiry_cases_expected[] = { 0x19010001u, 0x1A020000u, 0x1D020000u, 0x19010001u };
-#undef CASE
-#undef ENTRY
 
 static u32 wait_case(u32 mode, u32 observation)
 {
@@ -167,25 +141,11 @@ static u32 wait_case(u32 mode, u32 observation)
     assert(D_8013E198[2] == -1);
     return observation == 0 ? (u16)obj.x_pos.i.hi | ((u32)(u16)obj.y_pos.i.hi << 16) : (u8)obj.unk5 | ((u32)(u16)obj.unk8A << 8);
 }
-#define CASE(m, n)                                                  \
-    static u32 general_projectile_wait_context_wait_##m##_##n(void) \
-    {                                                               \
-        return wait_case(m, n);                                     \
-    }
-CASE(0, 0)
-CASE(0, 1)
-CASE(1, 0)
-CASE(1, 1)
-CASE(2, 0)
-CASE(2, 1)
-CASE(3, 0)
-CASE(3, 1)
-#define ENTRY(m, n) general_projectile_wait_context_wait_##m##_##n,
-static const CTestCase general_projectile_wait_context_cases[]
-    = { ENTRY(0, 0) ENTRY(0, 1) ENTRY(1, 0) ENTRY(1, 1) ENTRY(2, 0) ENTRY(2, 1) ENTRY(3, 0) ENTRY(3, 1) };
 static const u32 general_projectile_wait_context_cases_expected[] = { 0xC80065u, 0x203u, 0xC80064u, 0x103u, 0xC80065u, 0x203u, 0xC80064u, 0x4u };
-#undef CASE
-#undef ENTRY
+static u32 general_projectile_wait_context_cases_row(u32 row)
+{
+    return wait_case(row / 2, row % 2);
+}
 
 static const s8 subtypes[] = { 2, 9, 10, 11 };
 static u32 thruster_case(u32 mode, u32 observation)
@@ -291,25 +251,11 @@ static u32 thruster_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define THRUSTER_CASE(m, n)                                   \
-    static u32 general_thruster_init_thruster_##m##_##n(void) \
-    {                                                         \
-        return thruster_case(m, n);                           \
-    }
-#define THRUSTER_MODE(m) THRUSTER_CASE(m, 0) THRUSTER_CASE(m, 1) THRUSTER_CASE(m, 2) THRUSTER_CASE(m, 3) THRUSTER_CASE(m, 4) THRUSTER_CASE(m, 5) THRUSTER_CASE(m, 6) THRUSTER_CASE(m, 7) THRUSTER_CASE(m, 8) THRUSTER_CASE(m, 9)
-THRUSTER_MODE(0)
-THRUSTER_MODE(1)
-THRUSTER_MODE(2)
-THRUSTER_MODE(3)
-#define THRUSTER_ENTRY(m, n) general_thruster_init_thruster_##m##_##n,
-#define THRUSTER_ENTRIES(m) THRUSTER_ENTRY(m, 0) THRUSTER_ENTRY(m, 1) THRUSTER_ENTRY(m, 2) THRUSTER_ENTRY(m, 3) THRUSTER_ENTRY(m, 4) THRUSTER_ENTRY(m, 5) THRUSTER_ENTRY(m, 6) THRUSTER_ENTRY(m, 7) THRUSTER_ENTRY(m, 8) THRUSTER_ENTRY(m, 9)
-static const CTestCase general_thruster_init_cases[]
-    = { THRUSTER_ENTRIES(0) THRUSTER_ENTRIES(1) THRUSTER_ENTRIES(2) THRUSTER_ENTRIES(3) };
 static const u32 general_thruster_init_cases_expected[] = { 0x1060502u, 0xB41234u, 0xA05678u, 0x0u, 0x0u, 0x0u, 0x21000001u, 0x641234u, 0xC85678u, 0xA000B4u, 0x30502u, 0x491234u, 0xAE5678u, 0x0u, 0x0u, 0x0u, 0x52010001u, 0x641234u, 0xC85678u, 0xFFFC0003u, 0x30502u, 0x671234u, 0xC45678u, 0xFFFF0000u, 0x18000u, 0x1E0000u, 0x55010001u, 0x641234u, 0xC85678u, 0xFFFC0003u, 0x30502u, 0x671234u, 0xC45678u, 0xFFFF0000u, 0xFFFE8000u, 0xF0005u, 0x55010001u, 0x641234u, 0xC85678u, 0xFFFC0003u };
-#undef THRUSTER_CASE
-#undef THRUSTER_MODE
-#undef THRUSTER_ENTRY
-#undef THRUSTER_ENTRIES
+static u32 general_thruster_init_cases_row(u32 row)
+{
+    return thruster_case(row / 10, row % 10);
+}
 
 static const u32 func_800AC8C4_expected[] = { 0u, 0u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 3u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
 static u32 test_func_800AC8C4(u32 row)
@@ -317,13 +263,11 @@ static u32 test_func_800AC8C4(u32 row)
     u32 observed_values[22];
     struct ShotObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
     memset(&D_8013B8DC, 0, sizeof(D_8013B8DC));
-    child_0_present = 255;
     obj.unk2 = -1;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
+    obj.unk7C = &child_0;
     func_800AC8C4(&obj);
     observed_values[0] = (u32)D_8013B8DC[0];
     observed_values[1] = (u32)obj.bg_offset;
@@ -348,34 +292,6 @@ static u32 test_func_800AC8C4(u32 row)
     observed_values[20] = (u32)obj.y_pos.val;
     observed_values[21] = (u32)obj.y_vel.val;
     return c_test_observe(0, row, observed_values, func_800AC8C4_expected, 22);
-}
-
-static const u32 general_dust_burst_0_expected[] = { 0u, 0xFFu, 0u };
-static u32 test_general_dust_burst_0(u32 row)
-{
-    u32 observed_values[3];
-    struct ShotObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.timer = 255;
-    general_dust_burst(&obj);
-    observed_values[0] = (u32)obj.animation_step.fields.event;
-    observed_values[1] = (u32)obj.timer;
-    observed_values[2] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, general_dust_burst_0_expected, 3);
-}
-
-static const u32 general_dust_burst_1_expected[] = { 0u, 0xFFu, 0u };
-static u32 test_general_dust_burst_1(u32 row)
-{
-    u32 observed_values[3];
-    struct ShotObj obj;
-    memset(&obj, 0, sizeof(obj));
-    obj.timer = 255;
-    general_dust_burst(&obj);
-    observed_values[0] = (u32)obj.animation_step.fields.event;
-    observed_values[1] = (u32)obj.timer;
-    observed_values[2] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, general_dust_burst_1_expected, 3);
 }
 
 static const u32 inputs_0[2][2] = {
@@ -421,11 +337,9 @@ static u32 test_general_fist_approach(u32 row)
     u32 observed_values[3];
     struct ShotObj obj;
     struct WeaponObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
-    child_0_present = 255;
-    obj.unk7C = child_0_present ? &child_0 : NULL;
+    obj.unk7C = &child_0;
     general_fist_approach(&obj);
     observed_values[0] = (u32)obj.unk5;
     observed_values[1] = (u32)obj.unk90.u.lo;
@@ -467,19 +381,154 @@ static u32 test_general_orb_fly(u32 row)
     return c_test_observe(0, row, observed_values, general_orb_fly_expected, 1);
 }
 
+extern void* general_animations[46];
+static u32 resource[4];
+static u32 dust(u32 row)
+{
+    struct ShotObj obj, expected;
+    struct MainObj owner, owner_before;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before = engine_obj;
+    u32 face = row % 2, layer = row / 2, i;
+    for (i = 0; i < 4; i++)
+        resource[i] = 0x12340000 + i;
+    memset(&obj, 0, sizeof(obj));
+    memset(&owner, 0, sizeof(owner));
+    owner.active = 0x41;
+    owner.id = 75;
+    owner.state = 1;
+    owner.animation_table = (const u8* const*)general_animations;
+    owner.unk15 = face ? 0x40 : 0;
+    owner.bg_offset = layer;
+    owner.unk16 = 6;
+    owner.unk40 = 9;
+    owner.unk42 = 0x9234;
+    owner.sprite_frames = (u8*)resource;
+    owner.x_pos.val = 160 * 65536 + 0x1234;
+    owner.y_pos.val = 120 * 65536 + 0x5678;
+    owner_before = owner;
+    obj.active = 0x41;
+    obj.id = 55;
+    obj.unk2 = 6;
+    obj.unk7C = WEAPON_OBJECT(&owner);
+    expected = obj;
+    expected.state = 1;
+    expected.unk40 = owner.unk40;
+    expected.unk42 = owner.unk42;
+    expected.animation_table = (u32**)general_animations;
+    expected.unk3C = (u8*)resource;
+    expected.unk15 = owner.unk15;
+    expected.bg_offset = layer;
+    expected.unk16 = 5;
+    expected.unk60 = 9;
+    expected.x_pos = expected.unk18 = owner.x_pos;
+    expected.y_pos = expected.unk1C = owner.y_pos;
+    expected.unk17 = 24;
+    expected.previous_animation_index = 255;
+    expected.animation_cursor = general_animations[24];
+    expected.animation_step.packed = 0x3F010002;
+    func_800AC8C4(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    for (i = 0; i < 4; i++)
+        assert(resource[i] == 0x12340000 + i);
+    return 1;
+}
+
+void general_orb_spread(struct ShotObj*);
+void general_shot_orb_launcher(struct ShotObj*);
+extern void* general_animations[46];
+extern s8 general_shot_attack_boxes[][4];
+static struct ShotObj expected_pool[32];
+static u32 orbs(u32 row)
+{
+    struct ShotObj obj, expected;
+    struct MainObj owner, owner_before;
+    struct PlayerObj player_before = g_Player;
+    struct EngineObj engine_before;
+    struct BackgroundObj backgrounds_before[3];
+    u32 kind = row % 3, available = row / 3 % 3, face = row / 9, spawned = kind ? available != 0 : available, i;
+    engine_obj.stage = 11;
+    engine_obj.substage = 1;
+    engine_before = engine_obj;
+    memset(background_objects, 0, sizeof(background_objects));
+    memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
+    D_8013E198[2] = -1;
+    c_test_zero_words((u32*)shot_objects, sizeof(shot_objects) / 4);
+    for (i = 0; i < COUNT(shot_objects); i++)
+        shot_objects[i].active = i >= 32 - available ? 0 : 1;
+    memcpy(expected_pool, shot_objects, sizeof(expected_pool));
+    memset(&owner, 0, sizeof(owner));
+    owner.active = 0x41;
+    owner.id = 75;
+    owner.state = 1;
+    owner.hp = 48;
+    owner.x_pos.i.hi = 160;
+    owner.y_pos.i.hi = 120;
+    owner.unk15 = face ? 0x40 : 0;
+    owner.animation_table = (const u8* const*)general_animations;
+    owner_before = owner;
+    memset(&obj, 0, sizeof(obj));
+    obj.active = 0x41;
+    obj.id = 55;
+    obj.state = 1;
+    obj.unk2 = kind ? 10 : 9;
+    obj.unk7C = WEAPON_OBJECT(&owner);
+    obj.x_pos.i.hi = face ? 187 : 133;
+    obj.y_pos.i.hi = 94;
+    obj.unk15 = owner.unk15;
+    obj.timer = kind == 2;
+    obj.animation_table = (u32**)general_animations;
+    set_animation_frame(&obj, kind ? 31 : 30, kind ? 0 : 23);
+    assert(obj.animation_step.packed == (kind ? 0x55010001 : 0x54000001));
+    expected = obj;
+    expected.unk5 = 1;
+    if (kind) {
+        expected.unk17 = 32;
+        expected.animation_cursor = general_animations[32];
+        expected.animation_step.packed = 0x58010001;
+        expected.unk50.data = (u8*)general_shot_attack_boxes;
+    } else
+        expected.on_screen = 1;
+    for (i = 0; i < spawned; i++) {
+        struct ShotObj* s = &expected_pool[32 - available + i];
+        s->active = 0x41;
+        s->id = 55;
+        s->unk2 = kind ? 10 : i + 10;
+        s->timer = kind ? obj.timer + 1 : 0;
+        s->unk7C = obj.unk7C;
+        s->unk84.halves[0] = face ? 27 : -27;
+        s->unk84.halves[1] = -26;
+    }
+    if (kind)
+        general_orb_spread(&obj);
+    else
+        general_shot_orb_launcher(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(shot_objects, expected_pool, sizeof(expected_pool));
+    c_test_same_words(&owner, &owner_before, sizeof(owner));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(background_objects, backgrounds_before, sizeof(backgrounds_before));
+    assert(D_8013E198[2] == -1);
+    return 1;
+}
+
 const struct CTestGroup c_test_groups[] = {
-    { "general_dust_animation_start", general_dust_animation_start_cases, general_dust_animation_start_cases_expected, COUNT(general_dust_animation_start_cases), 0 },
-    { "general_dust_event_expiry", general_dust_event_expiry_cases, general_dust_event_expiry_cases_expected, COUNT(general_dust_event_expiry_cases), 0 },
-    { "general_projectile_wait_context", general_projectile_wait_context_cases, general_projectile_wait_context_cases_expected, COUNT(general_projectile_wait_context_cases), 0 },
-    { "general_thruster_init", general_thruster_init_cases, general_thruster_init_cases_expected, COUNT(general_thruster_init_cases), 0 },
+    { "general_dust_animation_start", NULL, general_dust_animation_start_cases_expected, COUNT(general_dust_animation_start_cases_expected), general_dust_animation_start_cases_row },
+    { "general_dust_event_expiry", NULL, general_dust_event_expiry_cases_expected, COUNT(general_dust_event_expiry_cases_expected), general_dust_event_expiry_dust_case },
+    { "general_projectile_wait_context", NULL, general_projectile_wait_context_cases_expected, COUNT(general_projectile_wait_context_cases_expected), general_projectile_wait_context_cases_row },
+    { "general_thruster_init", NULL, general_thruster_init_cases_expected, COUNT(general_thruster_init_cases_expected), general_thruster_init_cases_row },
     { "func_800AC8C4", 0, 0, 1, test_func_800AC8C4 },
-    { "general_dust_burst_0", 0, 0, 1, test_general_dust_burst_0 },
-    { "general_dust_burst_1", 0, 0, 1, test_general_dust_burst_1 },
     { "general_dust_end", 0, 0, 2, test_general_dust_end },
     { "general_dust_start", 0, 0, 1, test_general_dust_start },
     { "general_fist_approach", 0, 0, 1, test_general_fist_approach },
     { "general_orb_aim", 0, 0, 1, test_general_orb_aim },
     { "general_orb_fly", 0, 0, 1, test_general_orb_fly },
+    { "actual_slam_dust_mode_inherits_general_resources", NULL, NULL, 6, dust },
+    { "General_own_launcher_terminal_and_orb_chain_full_partial_shot_slots", NULL, NULL, 18, orbs },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(general_dust_animation_start_cases) + COUNT(general_dust_event_expiry_cases) + COUNT(general_projectile_wait_context_cases) + COUNT(general_thruster_init_cases) + 1 + 1 + 1 + 2 + 1 + 1 + 1 + 1;
+const u32 c_test_count = COUNT(general_dust_animation_start_cases_expected) + COUNT(general_dust_event_expiry_cases_expected) + COUNT(general_projectile_wait_context_cases_expected) + COUNT(general_thruster_init_cases_expected) + 1 + 2 + 1 + 1 + 1 + 1 + 6 + 18;

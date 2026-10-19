@@ -56,18 +56,7 @@ static u32 puff_case(u32 mode)
     assert(SP_SPRITE_FRAMES == sprite_frames && cur_random == (mode >> 1 ? 1 : 376));
     return obj.unk42 | ((u32)(u8)obj.unk16 << 16) | ((u32)(u8)obj.unk7 << 24);
 }
-#define CASE(m)                                              \
-    static u32 explosion_puff_animation_start_puff_##m(void) \
-    {                                                        \
-        return puff_case(m);                                 \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-static const CTestCase explosion_puff_animation_start_cases[] = { explosion_puff_animation_start_puff_0, explosion_puff_animation_start_puff_1, explosion_puff_animation_start_puff_2, explosion_puff_animation_start_puff_3 };
 static const u32 explosion_puff_animation_start_cases_expected[] = { 0x17805u, 0x17806u, 0x1077805u, 0x1077806u };
-#undef CASE
 
 struct explosion_puff_animate_case {
     u32 unk54;
@@ -97,8 +86,8 @@ static u32 test_explosion_puff_animate(u32 row)
 #undef main_bss_state
 
 const struct CTestGroup c_test_groups[] = {
-    { "explosion_puff_animation_start", explosion_puff_animation_start_cases, explosion_puff_animation_start_cases_expected, COUNT(explosion_puff_animation_start_cases), 0 },
+    { "explosion_puff_animation_start", NULL, explosion_puff_animation_start_cases_expected, COUNT(explosion_puff_animation_start_cases_expected), puff_case },
     { "explosion_puff_animate", 0, 0, 2, test_explosion_puff_animate },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(explosion_puff_animation_start_cases) + 2;
+const u32 c_test_count = COUNT(explosion_puff_animation_start_cases_expected) + 2;

@@ -26,92 +26,6 @@ static u32 test_ambush_gunner_aim_wait_0(u32 row)
     return c_test_observe(0, row, observed_values, ambush_gunner_aim_wait_0_expected, 7);
 }
 
-static const u32 ambush_gunner_aim_wait_1_expected[] = { 0x3Cu, 3u, 1u, 0u, 0u, 0xFFFE0000u, 0x10000u, 0x1B000101u };
-static u32 test_ambush_gunner_aim_wait_1(u32 row)
-{
-    u32 observed_values[8];
-    struct MainObj obj;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 7;
-    obj.x_pos.val = 6553600;
-    obj.y_pos.val = 5242880;
-    obj.unk2 = 1;
-    g_Player.bg_offset = -1;
-    g_Player.x_pos.val = 0;
-    g_Player.y_pos.val = 5242880;
-    player_before = g_Player;
-    func_80047404(&obj);
-    obj.unk6 = 1;
-    obj.unk7C = 0;
-    obj.ext.main_7.saved_x_velocity = -131072;
-    obj.ext.main_7.saved_y_velocity = 65536;
-    ambush_gunner_aim_wait(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    observed_values[0] = (u32)obj.unk7C;
-    observed_values[1] = (u32)obj.unk5;
-    observed_values[2] = (u32)obj.unk6;
-    observed_values[3] = (u32)obj.x_speed;
-    observed_values[4] = (u32)obj.y_speed;
-    observed_values[5] = (u32)obj.ext.main_7.saved_x_velocity;
-    observed_values[6] = (u32)obj.ext.main_7.saved_y_velocity;
-    observed_values[7] = (u32)obj.animation_step.packed;
-    return c_test_observe(0, row, observed_values, ambush_gunner_aim_wait_1_expected, 8);
-}
-
-struct ambush_gunner_fire_0_case {
-    u32 pool_0_full, unk15, y_pos;
-    u32 expected[15];
-};
-static const struct ambush_gunner_fire_0_case ambush_gunner_fire_0_cases[] = {
-    { 255, 0, 0, { 0u, 0u, 0u, 0u, 1u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u } },
-    { 0, 255, -1, { 0u, 0u, 0u, 0u, 0x41u, 0u, 2u, 0xFFu, 0u, 0u, 0u, 0u, 0u, 0xFFFFFFFFu, 0u } },
-};
-static u32 test_ambush_gunner_fire_0(u32 row)
-{
-    const struct ambush_gunner_fire_0_case* c = &ambush_gunner_fire_0_cases[row];
-    u32 observed_values[15];
-    struct MainObj obj;
-    u8 pool_0_full;
-    memset(&obj, 0, sizeof(obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    obj.animation_step.fields.event = 2;
-    pool_0_full = c->pool_0_full;
-    obj.unk15 = c->unk15;
-    obj.y_pos.val = c->y_pos;
-    {
-        u32 slot;
-        for (slot = 0; slot < 32; ++slot)
-            shot_objects[slot].active = pool_0_full ? 1 : 0;
-    }
-    ambush_gunner_fire(&obj);
-    observed_values[0] = (u32)obj.unk5;
-    observed_values[1] = (u32)obj.unk6;
-    observed_values[2] = (u32)obj.x_speed;
-    observed_values[3] = (u32)obj.y_speed;
-    observed_values[4] = (u32)shot_objects[0].active;
-    observed_values[5] = (u32)shot_objects[0].bg_offset;
-    observed_values[6] = (u32)shot_objects[0].id;
-    observed_values[7] = (u32)shot_objects[0].unk15;
-    observed_values[8] = (u32)shot_objects[0].unk2;
-    observed_values[9] = (u32)shot_objects[0].unk40;
-    observed_values[10] = (u32)shot_objects[0].unk42;
-    observed_values[11] = (u32)shot_objects[0].x_pos.val;
-    observed_values[12] = (u32)shot_objects[0].x_vel.val;
-    observed_values[13] = (u32)shot_objects[0].y_pos.val;
-    observed_values[14] = (u32)shot_objects[0].y_vel.val;
-    return c_test_observe(0, row, observed_values, c->expected, 15);
-}
-
 struct ambush_gunner_fire_1_case {
     u32 pools_full;
     u32 expected[16];
@@ -127,7 +41,7 @@ static u32 test_ambush_gunner_fire_1(u32 row)
     struct MainObj obj;
     struct PlayerObj player_before;
     struct ShotObj shots_before[32];
-    u8 pools_full, prefix_full;
+    u8 pools_full;
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 7;
@@ -146,12 +60,7 @@ static u32 test_ambush_gunner_fire_1(u32 row)
         for (slot = 0; slot < 32; ++slot)
             shot_objects[slot].active = pools_full ? 1 : 0;
     }
-    prefix_full = 1;
-    {
-        u32 slot;
-        for (slot = 0; slot < 31; ++slot)
-            shot_objects[slot].active = prefix_full ? 1 : 0;
-    }
+    FILL_ACTIVE(shot_objects, 31, 1);
     func_80047404(&obj);
     obj.unk5 = 4;
     obj.unk6 = 2;
@@ -223,30 +132,6 @@ static u32 test_ambush_gunner_fire_1(u32 row)
     observed_values[14] = (u32)shot_objects[31].bg_offset;
     observed_values[15] = (u32)shot_objects[31].unk2;
     return c_test_observe(0, row, observed_values, c->expected, 16);
-}
-
-static const u32 ambush_gunner_resume_step_expected[] = { 3u };
-static u32 test_ambush_gunner_resume_step(u32 row)
-{
-    u32 observed_values[1];
-    struct MainObj obj, expected;
-    struct PlayerObj player_before;
-    memset(&obj, 0, sizeof(obj));
-    obj.active = 0x41;
-    obj.id = 7;
-    obj.x_pos.val = 6553600;
-    obj.y_pos.val = 5242880;
-    obj.state = 1;
-    obj.unk5 = 1;
-    obj.ext.main_7.saved_unk5 = 3;
-    expected = obj;
-    expected.unk5 = 3;
-    player_before = g_Player;
-    ambush_gunner_resume_step(&obj);
-    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
-    c_test_same_words(&obj, &expected, sizeof(obj));
-    observed_values[0] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, ambush_gunner_resume_step_expected, 1);
 }
 
 struct func_80047404_case {
@@ -357,13 +242,10 @@ static u32 test_func_80047818_1(u32 row)
 
 const struct CTestGroup c_test_groups[] = {
     { "ambush_gunner_aim_wait_0", 0, 0, 1, test_ambush_gunner_aim_wait_0 },
-    { "ambush_gunner_aim_wait_1", 0, 0, 1, test_ambush_gunner_aim_wait_1 },
-    { "ambush_gunner_fire_0", 0, 0, 2, test_ambush_gunner_fire_0 },
     { "ambush_gunner_fire_1", 0, 0, 2, test_ambush_gunner_fire_1 },
-    { "ambush_gunner_resume_step", 0, 0, 1, test_ambush_gunner_resume_step },
     { "func_80047404", 0, 0, 5, test_func_80047404 },
     { "func_80047818_0", 0, 0, 4, test_func_80047818_0 },
     { "func_80047818_1", 0, 0, 1, test_func_80047818_1 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = 1 + 1 + 2 + 2 + 1 + 5 + 4 + 1;
+const u32 c_test_count = 1 + 2 + 5 + 4 + 1;

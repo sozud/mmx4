@@ -51,9 +51,9 @@ void ready_text_init(struct MiscObj* self)
     u32 pal_pos;
 
     if (engine_obj.cur_character == CHARACTER_X) {
-        self->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk24];
+        self->unk3C = (s8*)SP_SPRITE_FRAMES_HDR + SP_SPRITE_FRAMES_HDR->unk24;
     } else {
-        self->unk3C = &SP_SPRITE_FRAMES_HDR->unk0[SP_SPRITE_FRAMES_HDR->unk10];
+        self->unk3C = (s8*)SP_SPRITE_FRAMES_HDR + SP_SPRITE_FRAMES_HDR->unk10;
     }
 
     self->unk40 = 0x1E00;

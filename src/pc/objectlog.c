@@ -34,6 +34,8 @@ extern u32 mmx4_pc_cd_read_sample;
 extern u32 mmx4_pc_cd_read_pending;
 extern u32 mmx4_pc_xa_stops;
 extern u32 mmx4_pc_xa_stop_sample;
+extern u32 mmx4_pc_xa_starts;
+extern u32 mmx4_pc_xa_start_sample;
 
 extern u32 D_800FA724;
 extern u32 D_800FA728;
@@ -76,7 +78,7 @@ static void log_open(void)
         "frame\tgame\tengine\tstate\tstage\tsubstage\tcheckpoint\tcharacter\t"
         "rng\tpad\tpad_prev\thealth\tplayer_x\tplayer_y\tbg0_x\tbg0_y\tphase\t"
         "cd_state\tcd_pending\thud\tboss\ttransition\tentity_intro\t"
-        "player_health\tcd_reads\tcd_read_sample\tcd_read_pending\txa_stops\txa_stop_sample\n");
+        "player_health\tcd_reads\tcd_read_sample\tcd_read_pending\txa_stops\txa_stop_sample\txa_starts\txa_start_sample\tvoice_priority\tsequence_slots\n");
     fprintf(extension_log,
         "frame\tgame\tengine\ttable\tslot\tid\text80_value\text84_value\t"
         "ext88\text89\text8a\text8b\text8c\n");
@@ -344,14 +346,20 @@ void mmx4_pc_object_log_dump(void)
     u32 game;
     u32 engine;
     int i;
+    char voices[49];
+    char sequences[9];
 
     log_open();
     if (object_log == NULL || frame < 0)
         return;
     memcpy(&game, &game_info, sizeof(game));
     memcpy(&engine, &engine_obj, sizeof(engine));
+    for (i = 0; i < 24; i++)
+        snprintf(voices + i * 2, 3, "%02x", (u8)D_80139234[i]);
+    for (i = 0; i < 4; i++)
+        snprintf(sequences + i * 2, 3, "%02x", D_8013924C[i]);
     fprintf(frame_log,
-        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\n",
+        "%ld\t%08x\t%08x\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%d\t%d\t%d\t%d\t%d\t%d\t%u\t%u\t%d\t%d\t%d\t%d\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%u\t%s\t%s\n",
         frame, game, engine, engine_obj.state, engine_obj.stage,
         engine_obj.substage, engine_obj.checkpoint, engine_obj.cur_character,
         cur_random, controller_input.held, controller_input.previous, engine_obj.max_hp,
@@ -361,7 +369,7 @@ void mmx4_pc_object_log_dump(void)
         engine_obj.unk1F, engine_obj.enable_boss, engine_obj.unk1E,
         g_Entity.is_clone, (u8)g_Player.hp, mmx4_pc_cd_reads,
         mmx4_pc_cd_read_sample, mmx4_pc_cd_read_pending, mmx4_pc_xa_stops,
-        mmx4_pc_xa_stop_sample);
+        mmx4_pc_xa_stop_sample, mmx4_pc_xa_starts, mmx4_pc_xa_start_sample, voices, sequences);
     log_objects(frame, game, engine);
     write_engine_state(frame, game, engine);
     write_player_state(frame, game, engine, "player", &g_Player);

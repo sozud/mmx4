@@ -117,7 +117,7 @@ void cyber_peacock_intro_pose(struct MainObj* self)
         self->unk7C = 2;
         self->unk6 += 1;
         if (engine_obj.stage == 6) {
-            ((void (*)(u16, u8, s8))func_8002217C)(
+            func_8002217C(
                 0xE, 0xFF, engine_obj.character_state.bytes[8]);
             engine_obj.character_state.bytes[8] = 1;
         }

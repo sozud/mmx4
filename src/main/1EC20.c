@@ -585,7 +585,7 @@ void func_8002F1B4(struct EngineObj* arg0)
     }
     arg0->unk2++;
     D_8013B80C = D_800F4834[arg0->unkE - 1];
-    func_8002217C(briefing_voice_ids[arg0->unkE - 1], 0xFF, 0);
+    func_8002217C((u16)briefing_voice_ids[arg0->unkE - 1], 0xFF, 0);
 }
 
 // briefing_room_state_9_update_funcs state 1

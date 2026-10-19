@@ -151,28 +151,11 @@ static u32 falling_pillar_context_pillar_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define PILLAR_CASE(m, n)                                    \
-    static u32 falling_pillar_context_pillar_##m##_##n(void) \
-    {                                                        \
-        return falling_pillar_context_pillar_case(m, n);     \
-    }
-#define PILLAR_MODE(m) PILLAR_CASE(m, 0) PILLAR_CASE(m, 1) PILLAR_CASE(m, 2) PILLAR_CASE(m, 3) PILLAR_CASE(m, 4) PILLAR_CASE(m, 5) PILLAR_CASE(m, 6) PILLAR_CASE(m, 7) PILLAR_CASE(m, 8) PILLAR_CASE(m, 9) PILLAR_CASE(m, 10)
-PILLAR_MODE(0)
-PILLAR_MODE(1)
-PILLAR_MODE(2)
-PILLAR_MODE(3)
-PILLAR_MODE(4)
-PILLAR_MODE(5)
-PILLAR_MODE(6)
-#define PILLAR_ENTRY(m, n) falling_pillar_context_pillar_##m##_##n,
-#define PILLAR_ENTRIES(m) PILLAR_ENTRY(m, 0) PILLAR_ENTRY(m, 1) PILLAR_ENTRY(m, 2) PILLAR_ENTRY(m, 3) PILLAR_ENTRY(m, 4) PILLAR_ENTRY(m, 5) PILLAR_ENTRY(m, 6) PILLAR_ENTRY(m, 7) PILLAR_ENTRY(m, 8) PILLAR_ENTRY(m, 9) PILLAR_ENTRY(m, 10)
-static const CTestCase falling_pillar_context_cases[]
-    = { PILLAR_ENTRIES(0) PILLAR_ENTRIES(1) PILLAR_ENTRIES(2) PILLAR_ENTRIES(3) PILLAR_ENTRIES(4) PILLAR_ENTRIES(5) PILLAR_ENTRIES(6) };
 static const u32 falling_pillar_context_cases_expected[] = { 0xDF9369Cu, 0x2002357u, 0x273502u, 0x1u, 0x28u, 0x3Eu, 0x4Eu, 0xCAFE00A1u, 0xFFFFu, 0x30320u, 0x100101u, 0xE50369Cu, 0x2002357u, 0x273503u, 0x1u, 0x1u, 0xBEEFu, 0xBEEFu, 0xCAFECAFEu, 0x0u, 0x0u, 0x0u, 0xE4F369Cu, 0x2002357u, 0x273502u, 0x0u, 0x1u, 0xBEEFu, 0xBEEFu, 0xCAFECAFEu, 0x0u, 0x0u, 0x0u, 0xEF0369Cu, 0x2002357u, 0x273503u, 0x1u, 0x1u, 0x124u, 0x124u, 0x1DC01DCu, 0xFFFFu, 0x0u, 0x0u, 0xF09369Cu, 0x2002357u, 0x273502u, 0x0u, 0x0u, 0xBEEFu, 0xBEEFu, 0xCAFECAFEu, 0x0u, 0x0u, 0x0u, 0xE50369Cu, 0x2002357u, 0x273503u, 0x1u, 0x1u, 0x3Eu, 0x4Eu, 0xCAFE00A1u, 0xFFFFu, 0x0u, 0x0u, 0xEF0369Cu, 0x2002357u, 0x273503u, 0x1u, 0x1u, 0xBEEFu, 0xBEEFu, 0xCAFECAFEu, 0x0u, 0x0u, 0x0u };
-#undef PILLAR_CASE
-#undef PILLAR_MODE
-#undef PILLAR_ENTRY
-#undef PILLAR_ENTRIES
+static u32 falling_pillar_context_cases_row(u32 row)
+{
+    return falling_pillar_context_pillar_case(row / 11, row % 11);
+}
 
 static u32 falling_pillar_threshold_context_pillar_case(u32 mode)
 {
@@ -213,20 +196,7 @@ static u32 falling_pillar_threshold_context_pillar_case(u32 mode)
     actual = (u8)obj.state | ((u32)(u16)obj.unk7C.timer << 8);
     return actual;
 }
-#define CASE(m)                                                  \
-    static u32 falling_pillar_threshold_context_pillar_##m(void) \
-    {                                                            \
-        return falling_pillar_threshold_context_pillar_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-#define ENTRY(m) falling_pillar_threshold_context_pillar_##m,
-static const CTestCase falling_pillar_threshold_context_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) };
 static const u32 falling_pillar_threshold_context_cases_expected[] = { 0x777701u, 0xA02u, 0xA02u };
-#undef CASE
-#undef ENTRY
 
 struct falling_pillar_finish_case {
     u32 unk2;
@@ -257,9 +227,9 @@ static u32 test_falling_pillar_finish(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "falling_pillar_context", falling_pillar_context_cases, falling_pillar_context_cases_expected, COUNT(falling_pillar_context_cases), 0 },
-    { "falling_pillar_threshold_context", falling_pillar_threshold_context_cases, falling_pillar_threshold_context_cases_expected, COUNT(falling_pillar_threshold_context_cases), 0 },
+    { "falling_pillar_context", NULL, falling_pillar_context_cases_expected, COUNT(falling_pillar_context_cases_expected), falling_pillar_context_cases_row },
+    { "falling_pillar_threshold_context", NULL, falling_pillar_threshold_context_cases_expected, COUNT(falling_pillar_threshold_context_cases_expected), falling_pillar_threshold_context_pillar_case },
     { "falling_pillar_finish", 0, 0, 2, test_falling_pillar_finish },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(falling_pillar_context_cases) + COUNT(falling_pillar_threshold_context_cases) + 2;
+const u32 c_test_count = COUNT(falling_pillar_context_cases_expected) + COUNT(falling_pillar_threshold_context_cases_expected) + 2;

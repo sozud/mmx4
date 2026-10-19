@@ -1163,10 +1163,10 @@ void sigma_reveal_dialogue(struct MainObj* self)
             player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
             self->unk6 = (u8)self->unk6 + 1;
             if (engine_obj.cur_character == CHARACTER_X) {
-                ((void (*)(u16, u8, s8))func_8002217C)(
+                func_8002217C(
                     0x31, 0xFF, engine_obj.character_state.bytes[9]);
             } else {
-                ((void (*)(u16, u8, s8))func_8002217C)(
+                func_8002217C(
                     0x2C, 0xFF, engine_obj.character_state.bytes[9]);
             }
             engine_obj.character_state.bytes[9] = 1;

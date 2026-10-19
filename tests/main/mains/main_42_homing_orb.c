@@ -1,6 +1,9 @@
 #include "test_runtime.h"
 #include "main/mains/main_42_homing_orb.h"
 #include "main/55C4.h"
+#include "support/state_cases.h"
+void homing_orb_leave(struct MainObj* arg0);
+void homing_orb_start_idle(struct MainObj* arg0);
 extern union AnimationStep* homing_orb_animations[7];
 
 static u32 lunge_case(u32 mode)
@@ -75,25 +78,35 @@ static u32 lunge_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.unk5 | ((u32)(u16)obj.unk7C << 8) | ((u32)misc_objects[63].active << 24);
 }
-#define CASE(m)                \
-    static u32 lunge_##m(void) \
-    {                          \
-        return lunge_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-#define ENTRY(m) lunge_##m,
-static const CTestCase homing_orb_lunge_pool_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) };
 static const u32 homing_orb_lunge_pool_cases_expected[] = { 0x1005903u, 0x100B402u, 0x4100B402u, 0x1000004u, 0x41000004u };
-#undef CASE
-#undef ENTRY
+
+#define HO(step) (state_reset(step, 0, 0), so.x_pos.i.hi = 0x80, so.y_pos.i.hi = 0x60)
+static void ho_leave(void)
+{
+    HO(5);
+    so.x_speed = 0x20000;
+    homing_orb_leave(&so);
+}
+static void ho_idle(void)
+{
+    HO(1);
+    homing_orb_start_idle(&so);
+}
+
+static void (*const homing_orb_states_cases[])(void) = {
+    ho_leave,
+    ho_idle,
+};
+static const u32 homing_orb_states_expected[] = { 5u, 0u, 0x820000u, 0x20000u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 0u, 0x800000u, 0u, 0u, 0u, 0u, 0u, 0u, 0u };
+
+static u32 test_homing_orb_states(u32 row)
+{
+    return state_run(homing_orb_states_cases[row], row, &homing_orb_states_expected[row * 10]);
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "homing_orb_lunge_pool", homing_orb_lunge_pool_cases, homing_orb_lunge_pool_cases_expected, COUNT(homing_orb_lunge_pool_cases), 0 },
+    { "homing_orb_states", 0, 0, COUNT(homing_orb_states_cases), test_homing_orb_states },
+    { "homing_orb_lunge_pool", NULL, homing_orb_lunge_pool_cases_expected, COUNT(homing_orb_lunge_pool_cases_expected), lunge_case },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(homing_orb_lunge_pool_cases);
+const u32 c_test_count = COUNT(homing_orb_states_cases) + COUNT(homing_orb_lunge_pool_cases_expected);

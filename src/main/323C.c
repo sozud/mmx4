@@ -59,7 +59,7 @@ void func_80012A3C(void)
     struct MainBssState* state;
     s32 temp_a0;
     s32 var_v0;
-    u16 temp_v1;
+    s16 temp_v1;
     TILE* temp_s0;
     DR_TPAGE* temp_s1;
     u8 color;
@@ -110,7 +110,7 @@ void func_80012A3C(void)
             if (state->transition.active > 0) {
                 temp_v1 = dea0->unk4 - (s8)state->transition.fade_amount;
                 dea0->unk4 = temp_v1;
-                if ((temp_v1 << 0x10) <= 0) {
+                if (temp_v1 <= 0) {
                     dea0->unk4 = 0U;
                     state->transition.fade_amount = 2U;
                     dea0->unk0 = (s16)((u16)dea0->unk0 + 1);

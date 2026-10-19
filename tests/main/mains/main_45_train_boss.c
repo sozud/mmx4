@@ -216,36 +216,7 @@ static u32 train_boss_exit_run(u32 mode)
     return i;
 }
 
-#define CASE(name)                                 \
-    static u32 train_boss_exit_##name##_case(void) \
-    {                                              \
-        return train_boss_exit_run(name);          \
-    }
-CASE(DEFEATED_WAIT)
-CASE(DEFEATED_OPEN)
-CASE(DEFEATED_CLOSED)
-CASE(DEFEATED_SCRIPT_NEAR)
-CASE(DEFEATED_SCRIPT_END)
-CASE(DEFEATED_NO_SCRIPT)
-CASE(LEAVE_TELEPORT)
-CASE(LEAVE_STAY)
-CASE(LEAVE_DONE)
-CASE(LEAVE_DEAD_PLAYER)
-CASE(LEAVE_DONE_FAR)
-CASE(PARTS_FULL)
-CASE(PARTS_SPAWN)
-#define ENTRY(name) train_boss_exit_##name##_case,
-static const CTestCase train_boss_exit_cases[]
-    = {
-          ENTRY(DEFEATED_WAIT) ENTRY(DEFEATED_OPEN) ENTRY(DEFEATED_CLOSED) ENTRY(DEFEATED_SCRIPT_NEAR) ENTRY(DEFEATED_SCRIPT_END)
-              ENTRY(DEFEATED_NO_SCRIPT) ENTRY(LEAVE_TELEPORT) ENTRY(LEAVE_STAY) ENTRY(LEAVE_DONE) ENTRY(LEAVE_DEAD_PLAYER) ENTRY(LEAVE_DONE_FAR) ENTRY(PARTS_FULL) ENTRY(PARTS_SPAWN)
-      };
 static const u32 train_boss_exit_cases_expected[] = { 0x40043102u, 0x40003103u, 0x40013102u, 0x41042502u, 0x4105B502u, 0x40043002u, 0x400413C2u, 0x40043102u, 0x40043000u, 0x40003000u, 0x4105B500u, 0x53102u, 0x53102u };
-#undef LAYER_SLOT
-#undef ITEM_SLOT
-#undef MAIN_SLOT
-#undef CASE
-#undef ENTRY
 
 static u8 train_exit_layout_tilemap[64];
 static u32 exit_case(u32 mode, u32 observation)
@@ -357,33 +328,11 @@ static u32 exit_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define EXIT_CASE(m, n)                               \
-    static u32 train_exit_layout_exit_##m##_##n(void) \
-    {                                                 \
-        return exit_case(m, n);                       \
-    }
-#define EXIT_MODE(m) EXIT_CASE(m, 0) EXIT_CASE(m, 1) EXIT_CASE(m, 2) EXIT_CASE(m, 3) EXIT_CASE(m, 4) EXIT_CASE(m, 5) EXIT_CASE(m, 6) EXIT_CASE(m, 7) EXIT_CASE(m, 8) EXIT_CASE(m, 9)
-EXIT_MODE(0)
-EXIT_MODE(1)
-EXIT_MODE(2)
-EXIT_MODE(3)
-EXIT_MODE(4)
-EXIT_MODE(5)
-EXIT_MODE(6)
-EXIT_MODE(7)
-EXIT_MODE(8)
-EXIT_MODE(9)
-EXIT_MODE(10)
-EXIT_MODE(11)
-#define EXIT_ENTRY(m, n) train_exit_layout_exit_##m##_##n,
-#define EXIT_ENTRIES(m) EXIT_ENTRY(m, 0) EXIT_ENTRY(m, 1) EXIT_ENTRY(m, 2) EXIT_ENTRY(m, 3) EXIT_ENTRY(m, 4) EXIT_ENTRY(m, 5) EXIT_ENTRY(m, 6) EXIT_ENTRY(m, 7) EXIT_ENTRY(m, 8) EXIT_ENTRY(m, 9)
-static const CTestCase train_exit_layout_cases[]
-    = { EXIT_ENTRIES(0) EXIT_ENTRIES(1) EXIT_ENTRIES(2) EXIT_ENTRIES(3) EXIT_ENTRIES(4) EXIT_ENTRIES(5) EXIT_ENTRIES(6) EXIT_ENTRIES(7) EXIT_ENTRIES(8) EXIT_ENTRIES(9) EXIT_ENTRIES(10) EXIT_ENTRIES(11) };
 static const u32 train_exit_layout_cases_expected[] = { 0x35010103u, 0x12468u, 0x52C1234u, 0x1E42345u, 0x52C1234u, 0x1E42345u, 0x1401401u, 0x101u, 0xA5A5A520u, 0xA5A5u, 0x35010603u, 0x12468u, 0x1B361234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x1401401u, 0x101u, 0xA5A5A522u, 0xA5A5u, 0x35000203u, 0x12468u, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0xA5A52122u, 0xA5A5u, 0x35000603u, 0x12468u, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0xA5A5A522u, 0xA5A5u, 0x35000303u, 0x12468u, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0xA522A522u, 0xA5A5u, 0x35010603u, 0x12468u, 0x5501234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x1401401u, 0x101u, 0xA5A5A522u, 0xA5A5u, 0x35000403u, 0x12468u, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0x23A5A522u, 0xA5A5u, 0x35010603u, 0x12468u, 0x5501234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x1401401u, 0x101u, 0xA5A5A522u, 0xA5A5u, 0x35000503u, 0x12468u, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0xA5A5A522u, 0xA524u, 0x35010603u, 0x12468u, 0x5501234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x1401401u, 0x101u, 0xA5A5A522u, 0xA5A5u, 0x35000504u, 0x1000Cu, 0x5C81234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x0u, 0x127u, 0xA51D1D1Du, 0x1DA5u, 0x35010603u, 0x12468u, 0x5501234u, 0x2002345u, 0x24681357u, 0x13572468u, 0x1401401u, 0x101u, 0xA5A5A522u, 0xA5A5u };
-#undef EXIT_CASE
-#undef EXIT_MODE
-#undef EXIT_ENTRY
-#undef EXIT_ENTRIES
+static u32 train_exit_layout_cases_row(u32 row)
+{
+    return exit_case(row / 10, row % 10);
+}
 
 static u32 layer_case(u32 mode)
 {
@@ -427,23 +376,7 @@ static u32 layer_case(u32 mode)
     assert(parameter == (mode == 1 || mode == 2 ? 1 : 0xA5));
     return (u16)obj.ext.main_45.unk84 | ((u32)bg << 16) | ((u32)parameter << 24);
 }
-#define CASE(m)                                               \
-    static u32 train_projectile_layer_signals_layer_##m(void) \
-    {                                                         \
-        return layer_case(m);                                 \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-CASE(4)
-CASE(5)
-#define ENTRY(m) train_projectile_layer_signals_layer_##m,
-static const CTestCase train_projectile_layer_signals_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) ENTRY(4) ENTRY(5) };
 static const u32 train_projectile_layer_signals_cases_expected[] = { 0xA5FF0013u, 0x1FF0013u, 0x1FF0013u, 0xA50700F0u, 0xA507012Cu, 0xA5000013u };
-#undef CASE
-#undef ENTRY
 
 struct func_8006630C_case {
     u32 attack_flags, projectile_command, unk89, v_0_state, v_2_state, unk28;
@@ -479,55 +412,212 @@ static u32 test_func_8006630C(u32 row)
     return c_test_observe(0, row, observed_values, c->expected, 3);
 }
 
-struct train_boss_main_case {
-    u32 unk5;
-    u32 expected[6];
-};
-static const struct train_boss_main_case train_boss_main_cases[] = {
-    { 0, { 0u, 0u, 2u, 0u, 0x78u, 1u } },
-    { 2, { 0u, 0u, 2u, 1u, 0x78u, 1u } },
-};
-static u32 test_train_boss_main(u32 row)
+#include "support/state_cases.h"
+
+static u8 train_layer;
+#define TB(step, phase) (state_reset(step, phase, 0), so.state = 1, so.x_pos.i.hi = 0x1900, so.y_pos.i.hi = 0x80, so.ext.main_45.unk84 = 5, so.ext.main_45.projectile_command = 0x80, so.ext.main_45.layer_bg_offset = &train_layer)
+#define PARTS() (state_extra = so.ext.main_45.projectile_command | so.ext.main_45.unk86 << 8 | so.ext.main_45.unk89 << 16 | (u32)so.ext.main_45.attack_flags << 24)
+static void tr_init(void)
 {
-    const struct train_boss_main_case* c = &train_boss_main_cases[row];
-    u32 observed_values[6];
-    struct MainObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&engine_obj, 0, sizeof(engine_obj));
-    memset(&g_Player, 0, sizeof(g_Player));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
-    memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    memset(&cur_random, 0, sizeof(cur_random));
-    memset(&g_Entity, 0, sizeof(g_Entity));
-    memset(&item_objects, 0, sizeof(item_objects));
-    memset(&layer_objects, 0, sizeof(layer_objects));
-    memset(&main_objects, 0, sizeof(main_objects));
-    memset(&qux_object, 0, sizeof(qux_object));
-    memset(&shot_objects, 0, sizeof(shot_objects));
-    memset(&visual_objects, 0, sizeof(visual_objects));
-    obj.ext.main_45.attack_flags = 7;
-    g_Player.unk5 = c->unk5;
-    train_boss_main(&obj);
-    observed_values[0] = (u32)engine_obj.enable_boss;
-    observed_values[1] = (u32)obj.ext.main_45.unk8A;
-    observed_values[2] = (u32)obj.state;
-    observed_values[3] = (u32)obj.unk6;
-    observed_values[4] = (u32)obj.unk7C;
-    observed_values[5] = (u32)obj.unk7E;
-    return c_test_observe(0, row, observed_values, c->expected, 6);
+    TB(0, 0);
+    so.state = 0;
+    train_boss_update(&so);
+    PARTS();
+}
+static void tr_approach(void)
+{
+    TB(0, 1);
+    so.x_speed = 0x10000;
+    train_boss_update(&so);
+}
+static void tr_approach_arrive(void)
+{
+    TB(0, 1);
+    so.x_pos.i.hi = 0x19B0;
+    train_boss_update(&so);
+}
+static void tr_stop(void)
+{
+    TB(0, 2);
+    so.x_pos.i.hi = 0x1AB0;
+    train_boss_update(&so);
+}
+static void tr_stop_roll(void)
+{
+    TB(0, 2);
+    so.x_speed = 0x10000;
+    train_boss_update(&so);
+}
+static void tr_fill(void)
+{
+    TB(0, 3);
+    so.unk7E = 1;
+    so.hp = 5;
+    train_boss_update(&so);
+}
+static void tr_fill_count(void)
+{
+    TB(0, 3);
+    so.unk7E = 2;
+    so.hp = 5;
+    train_boss_update(&so);
+}
+static void tr_fill_done(void)
+{
+    TB(0, 3);
+    so.hp = 0x30;
+    train_boss_update(&so);
+    PARTS();
+}
+static void tr_fight(void)
+{
+    TB(1, 0);
+    train_boss_update(&so);
+}
+static void tr_defeated(void)
+{
+    TB(1, 0);
+    so.ext.main_45.attack_flags = 7;
+    g_Player.unk5 = 0;
+    train_boss_update(&so);
+    state_extra = train_layer | so.unk6 << 8;
+}
+static void tr_defeated_mounted(void)
+{
+    TB(1, 0);
+    so.ext.main_45.attack_flags = 7;
+    g_Player.unk5 = 2;
+    train_layer = 3;
+    train_boss_update(&so);
+    state_extra = train_layer | so.unk6 << 8;
+}
+static void tr_smoke_front(void)
+{
+    TB(1, 0);
+    so.unk7E = 4;
+    func_80066970(&so);
+}
+static void tr_smoke_back(void)
+{
+    TB(1, 0);
+    so.unk7E = 1;
+    func_80066970(&so);
+}
+static void tr_smoke_wait(void)
+{
+    TB(1, 0);
+    so.unk7E = 2;
+    func_80066970(&so);
+}
+static void tr_command_broken(void)
+{
+    TB(1, 0);
+    so.ext.main_45.attack_flags = 7;
+    so.ext.main_45.projectile_command = 1;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_idle(void)
+{
+    TB(1, 0);
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_next(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 0xFF;
+    so.ext.main_45.unk86 = 2;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_next_skip(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 0xFF;
+    so.ext.main_45.attack_flags = 1;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_shots_done(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 5;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_shots_live(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 5;
+    shot_objects[1].state = 4;
+    shot_objects[1].unk28 = 1;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_arms_done(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 4;
+    so.ext.main_45.attack_flags = 0x70;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_arms(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 4;
+    so.ext.main_45.attack_flags = 0x30;
+    func_8006630C(&so);
+    PARTS();
+}
+static void tr_command_part_gone(void)
+{
+    TB(1, 0);
+    so.ext.main_45.projectile_command = 1;
+    so.ext.main_45.attack_flags = 2;
+    func_8006630C(&so);
+    PARTS();
+}
+
+static void (*const train_boss_states_cases[])(void) = {
+    tr_init,
+    tr_approach,
+    tr_approach_arrive,
+    tr_stop,
+    tr_stop_roll,
+    tr_fill,
+    tr_fill_count,
+    tr_fill_done,
+    tr_fight,
+    tr_defeated,
+    tr_defeated_mounted,
+    tr_smoke_front,
+    tr_smoke_back,
+    tr_smoke_wait,
+    tr_command_broken,
+    tr_command_idle,
+    tr_command_next,
+    tr_command_next_skip,
+    tr_command_shots_done,
+    tr_command_shots_live,
+    tr_command_arms_done,
+    tr_command_arms,
+    tr_command_part_gone,
+};
+static const u32 train_boss_states_expected[] = { 1u, 0xFF000004u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x10000u, 0x80u, 0u, 0x10001u, 0u, 0x19010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x20001u, 0u, 0x19B00000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x1AB00000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x20001u, 0u, 0x19010000u, 0x800000u, 0x10000u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x30001u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0xFFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x102u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x10102u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x100u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0x2100u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x7000001u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x80u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x10102u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x1010100u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0xFFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 5u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x700000FFu, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x30000004u, 0u, 0x101u, 0u, 0x19000000u, 0x800000u, 0u, 0u, 0u, 0x50000u, 0x20000FFu, 0u };
+
+static u32 test_train_boss_states(u32 row)
+{
+    return object_run(train_boss_states_cases[row], row, &train_boss_states_expected[row * 10]);
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "train_boss_exit", train_boss_exit_cases, train_boss_exit_cases_expected, COUNT(train_boss_exit_cases), 0 },
-    { "train_exit_layout", train_exit_layout_cases, train_exit_layout_cases_expected, COUNT(train_exit_layout_cases), 0 },
-    { "train_projectile_layer_signals", train_projectile_layer_signals_cases, train_projectile_layer_signals_cases_expected, COUNT(train_projectile_layer_signals_cases), 0 },
+    { "train_boss_states", 0, 0, COUNT(train_boss_states_cases), test_train_boss_states },
+    { "train_boss_exit", NULL, train_boss_exit_cases_expected, COUNT(train_boss_exit_cases_expected), train_boss_exit_run },
+    { "train_exit_layout", NULL, train_exit_layout_cases_expected, COUNT(train_exit_layout_cases_expected), train_exit_layout_cases_row },
+    { "train_projectile_layer_signals", NULL, train_projectile_layer_signals_cases_expected, COUNT(train_projectile_layer_signals_cases_expected), layer_case },
     { "func_8006630C", 0, 0, 6, test_func_8006630C },
-    { "train_boss_main", 0, 0, 2, test_train_boss_main },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(train_boss_exit_cases) + COUNT(train_exit_layout_cases) + COUNT(train_projectile_layer_signals_cases) + 6 + 2;
+const u32 c_test_count = COUNT(train_boss_states_cases) + COUNT(train_boss_exit_cases_expected) + COUNT(train_exit_layout_cases_expected) + COUNT(train_projectile_layer_signals_cases_expected) + 6;

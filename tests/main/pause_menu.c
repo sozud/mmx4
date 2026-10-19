@@ -1,5 +1,11 @@
 #include "test_runtime.h"
 #include "main/pause_menu.h"
+#include "main/144A4.h"
+#include "main/55C4.h"
+#include "main/player_animations.h"
+#include "main/player_common.h"
+void func_80030DF8(struct BarObj*);
+void func_80030EC8(struct BarObj*);
 extern u32* D_80137E08;
 extern u8* D_80141EE8[6];
 extern struct BgDrawRelated D_8015D9D0[2];
@@ -155,101 +161,11 @@ static u32 action_case(u32 mode, u32 observation)
         actual = obj->unk30;
     return actual;
 }
-#define ACTION_CASE(name, mode, observation)   \
-    static u32 name(void)                      \
-    {                                          \
-        return action_case(mode, observation); \
-    }
-ACTION_CASE(PAUSE_CANCEL_HEADER, 0, 0)
-ACTION_CASE(PAUSE_CANCEL_EXIT_FLAG, 0, 1)
-ACTION_CASE(PAUSE_CONFIRM_EXIT_HEADER, 1, 0)
-ACTION_CASE(PAUSE_CONFIRM_EXIT_EXIT_FLAG, 1, 1)
-ACTION_CASE(PAUSE_DEFAULT_RIGHT_HEADER, 2, 0)
-ACTION_CASE(PAUSE_DEFAULT_RIGHT_EXIT_FLAG, 2, 1)
-ACTION_CASE(PAUSE_DEFAULT_MID_HEADER, 3, 0)
-ACTION_CASE(PAUSE_DEFAULT_MID_EXIT_FLAG, 3, 1)
-ACTION_CASE(PAUSE_DEFAULT_HIGH_HEADER, 4, 0)
-ACTION_CASE(PAUSE_DEFAULT_HIGH_EXIT_FLAG, 4, 1)
-ACTION_CASE(PAUSE_ZERO_UP_CLAMP_HEADER, 5, 0)
-ACTION_CASE(PAUSE_ZERO_UP_CLAMP_EXIT_FLAG, 5, 1)
-ACTION_CASE(PAUSE_ZERO_UP_UNAVAILABLE_HEADER, 6, 0)
-ACTION_CASE(PAUSE_ZERO_UP_UNAVAILABLE_EXIT_FLAG, 6, 1)
-ACTION_CASE(PAUSE_ZERO_UP_ABOVE_HEADER, 7, 0)
-ACTION_CASE(PAUSE_ZERO_UP_ABOVE_EXIT_FLAG, 7, 1)
-ACTION_CASE(PAUSE_OBJECT_UP_CLAMP_HEADER, 8, 0)
-ACTION_CASE(PAUSE_OBJECT_UP_CLAMP_EXIT_FLAG, 8, 1)
-ACTION_CASE(PAUSE_UP_AVAILABLE_HEADER, 9, 0)
-ACTION_CASE(PAUSE_UP_AVAILABLE_EXIT_FLAG, 9, 1)
-ACTION_CASE(PAUSE_UP_EMPTY_HEADER, 10, 0)
-ACTION_CASE(PAUSE_UP_EMPTY_EXIT_FLAG, 10, 1)
-ACTION_CASE(PAUSE_UP_SPARSE_HEADER, 11, 0)
-ACTION_CASE(PAUSE_UP_SPARSE_EXIT_FLAG, 11, 1)
-ACTION_CASE(PAUSE_DOWN_AVAILABLE_HEADER, 12, 0)
-ACTION_CASE(PAUSE_DOWN_AVAILABLE_EXIT_FLAG, 12, 1)
-ACTION_CASE(PAUSE_DOWN_BOUNDARY_HEADER, 13, 0)
-ACTION_CASE(PAUSE_DOWN_BOUNDARY_EXIT_FLAG, 13, 1)
-ACTION_CASE(PAUSE_ZERO_LEFT_AVAILABLE_HEADER, 14, 0)
-ACTION_CASE(PAUSE_ZERO_LEFT_AVAILABLE_EXIT_FLAG, 14, 1)
-ACTION_CASE(PAUSE_ZERO_LEFT_EMPTY_HEADER, 15, 0)
-ACTION_CASE(PAUSE_ZERO_LEFT_EMPTY_EXIT_FLAG, 15, 1)
-ACTION_CASE(PAUSE_OBJECT_LEFT_SPARSE_HEADER, 16, 0)
-ACTION_CASE(PAUSE_OBJECT_LEFT_SPARSE_EXIT_FLAG, 16, 1)
-ACTION_CASE(PAUSE_LEFT_WEAPON_HEADER, 17, 0)
-ACTION_CASE(PAUSE_LEFT_WEAPON_EXIT_FLAG, 17, 1)
-ACTION_CASE(PAUSE_CONFIRM_SAVE_HEADER, 18, 0)
-ACTION_CASE(PAUSE_CONFIRM_SAVE_EXIT_FLAG, 18, 1)
-ACTION_CASE(PAUSE_LEFT_TANK_HEADER, 19, 0)
-ACTION_CASE(PAUSE_LEFT_TANK_EXIT_FLAG, 19, 1)
-ACTION_CASE(PAUSE_LEFT_EMPTY_HEADER, 20, 0)
-ACTION_CASE(PAUSE_LEFT_EMPTY_EXIT_FLAG, 20, 1)
-static const CTestCase pause_action_selection_cases[] = {
-    PAUSE_CANCEL_HEADER,
-    PAUSE_CANCEL_EXIT_FLAG,
-    PAUSE_CONFIRM_EXIT_HEADER,
-    PAUSE_CONFIRM_EXIT_EXIT_FLAG,
-    PAUSE_DEFAULT_RIGHT_HEADER,
-    PAUSE_DEFAULT_RIGHT_EXIT_FLAG,
-    PAUSE_DEFAULT_MID_HEADER,
-    PAUSE_DEFAULT_MID_EXIT_FLAG,
-    PAUSE_DEFAULT_HIGH_HEADER,
-    PAUSE_DEFAULT_HIGH_EXIT_FLAG,
-    PAUSE_ZERO_UP_CLAMP_HEADER,
-    PAUSE_ZERO_UP_CLAMP_EXIT_FLAG,
-    PAUSE_ZERO_UP_UNAVAILABLE_HEADER,
-    PAUSE_ZERO_UP_UNAVAILABLE_EXIT_FLAG,
-    PAUSE_ZERO_UP_ABOVE_HEADER,
-    PAUSE_ZERO_UP_ABOVE_EXIT_FLAG,
-    PAUSE_OBJECT_UP_CLAMP_HEADER,
-    PAUSE_OBJECT_UP_CLAMP_EXIT_FLAG,
-    PAUSE_UP_AVAILABLE_HEADER,
-    PAUSE_UP_AVAILABLE_EXIT_FLAG,
-    PAUSE_UP_EMPTY_HEADER,
-    PAUSE_UP_EMPTY_EXIT_FLAG,
-    PAUSE_UP_SPARSE_HEADER,
-    PAUSE_UP_SPARSE_EXIT_FLAG,
-    PAUSE_DOWN_AVAILABLE_HEADER,
-    PAUSE_DOWN_AVAILABLE_EXIT_FLAG,
-    PAUSE_DOWN_BOUNDARY_HEADER,
-    PAUSE_DOWN_BOUNDARY_EXIT_FLAG,
-    PAUSE_ZERO_LEFT_AVAILABLE_HEADER,
-    PAUSE_ZERO_LEFT_AVAILABLE_EXIT_FLAG,
-    PAUSE_ZERO_LEFT_EMPTY_HEADER,
-    PAUSE_ZERO_LEFT_EMPTY_EXIT_FLAG,
-    PAUSE_OBJECT_LEFT_SPARSE_HEADER,
-    PAUSE_OBJECT_LEFT_SPARSE_EXIT_FLAG,
-    PAUSE_LEFT_WEAPON_HEADER,
-    PAUSE_LEFT_WEAPON_EXIT_FLAG,
-    PAUSE_CONFIRM_SAVE_HEADER,
-    PAUSE_CONFIRM_SAVE_EXIT_FLAG,
-    PAUSE_LEFT_TANK_HEADER,
-    PAUSE_LEFT_TANK_EXIT_FLAG,
-    PAUSE_LEFT_EMPTY_HEADER,
-    PAUSE_LEFT_EMPTY_EXIT_FLAG,
-};
 static const u32 pause_action_selection_cases_expected[] = { 0xD090002u, 0x0u, 0xD090002u, 0x1u, 0xD090201u, 0x0u, 0xD090201u, 0x0u, 0xD090201u, 0x0u, 0xD090201u, 0x0u, 0xE090201u, 0x0u, 0xE090201u, 0x0u, 0xD090201u, 0x0u, 0xD090201u, 0x0u, 0x90001u, 0x0u, 0x5090001u, 0x0u, 0xE090201u, 0x0u, 0xE090201u, 0x0u, 0xC090101u, 0x0u, 0xD090201u, 0x0u, 0xA090101u, 0x0u, 0x8090001u, 0x0u, 0xE000501u, 0x0u, 0xC090101u, 0x0u, 0x90001u, 0x0u };
-#undef controller_input
-#undef main_bss_state
-#undef ACTION_CASE
+static u32 pause_action_selection_cases_row(u32 row)
+{
+    return action_case(row / 2, row % 2);
+}
 
 static u32 image[256];
 
@@ -340,273 +256,11 @@ static u32 availability_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define AVAILABILITY_CASE(name, mode, observation)   \
-    static u32 name(void)                            \
-    {                                                \
-        return availability_case(mode, observation); \
-    }
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_0, 0, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_1, 0, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_2, 0, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_3, 0, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_4, 0, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_5, 0, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_6, 0, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_7, 0, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_8, 0, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_9, 0, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_10, 0, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_11, 0, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_12, 0, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_13, 0, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_14, 0, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_0_15, 0, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_0, 1, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_1, 1, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_2, 1, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_3, 1, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_4, 1, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_5, 1, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_6, 1, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_7, 1, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_8, 1, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_9, 1, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_10, 1, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_11, 1, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_12, 1, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_13, 1, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_14, 1, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_1_15, 1, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_0, 2, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_1, 2, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_2, 2, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_3, 2, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_4, 2, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_5, 2, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_6, 2, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_7, 2, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_8, 2, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_9, 2, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_10, 2, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_11, 2, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_12, 2, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_13, 2, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_14, 2, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_2_15, 2, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_0, 3, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_1, 3, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_2, 3, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_3, 3, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_4, 3, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_5, 3, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_6, 3, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_7, 3, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_8, 3, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_9, 3, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_10, 3, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_11, 3, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_12, 3, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_13, 3, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_14, 3, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_3_15, 3, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_0, 4, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_1, 4, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_2, 4, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_3, 4, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_4, 4, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_5, 4, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_6, 4, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_7, 4, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_8, 4, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_9, 4, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_10, 4, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_11, 4, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_12, 4, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_13, 4, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_14, 4, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_4_15, 4, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_0, 5, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_1, 5, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_2, 5, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_3, 5, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_4, 5, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_5, 5, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_6, 5, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_7, 5, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_8, 5, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_9, 5, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_10, 5, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_11, 5, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_12, 5, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_13, 5, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_14, 5, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_5_15, 5, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_0, 6, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_1, 6, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_2, 6, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_3, 6, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_4, 6, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_5, 6, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_6, 6, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_7, 6, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_8, 6, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_9, 6, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_10, 6, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_11, 6, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_12, 6, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_13, 6, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_14, 6, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_6_15, 6, 15)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_0, 7, 0)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_1, 7, 1)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_2, 7, 2)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_3, 7, 3)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_4, 7, 4)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_5, 7, 5)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_6, 7, 6)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_7, 7, 7)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_8, 7, 8)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_9, 7, 9)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_10, 7, 10)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_11, 7, 11)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_12, 7, 12)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_13, 7, 13)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_14, 7, 14)
-AVAILABILITY_CASE(PAUSE_AVAILABILITY_7_15, 7, 15)
-static const CTestCase pause_availability_cases[] = {
-    PAUSE_AVAILABILITY_0_0,
-    PAUSE_AVAILABILITY_0_1,
-    PAUSE_AVAILABILITY_0_2,
-    PAUSE_AVAILABILITY_0_3,
-    PAUSE_AVAILABILITY_0_4,
-    PAUSE_AVAILABILITY_0_5,
-    PAUSE_AVAILABILITY_0_6,
-    PAUSE_AVAILABILITY_0_7,
-    PAUSE_AVAILABILITY_0_8,
-    PAUSE_AVAILABILITY_0_9,
-    PAUSE_AVAILABILITY_0_10,
-    PAUSE_AVAILABILITY_0_11,
-    PAUSE_AVAILABILITY_0_12,
-    PAUSE_AVAILABILITY_0_13,
-    PAUSE_AVAILABILITY_0_14,
-    PAUSE_AVAILABILITY_0_15,
-    PAUSE_AVAILABILITY_1_0,
-    PAUSE_AVAILABILITY_1_1,
-    PAUSE_AVAILABILITY_1_2,
-    PAUSE_AVAILABILITY_1_3,
-    PAUSE_AVAILABILITY_1_4,
-    PAUSE_AVAILABILITY_1_5,
-    PAUSE_AVAILABILITY_1_6,
-    PAUSE_AVAILABILITY_1_7,
-    PAUSE_AVAILABILITY_1_8,
-    PAUSE_AVAILABILITY_1_9,
-    PAUSE_AVAILABILITY_1_10,
-    PAUSE_AVAILABILITY_1_11,
-    PAUSE_AVAILABILITY_1_12,
-    PAUSE_AVAILABILITY_1_13,
-    PAUSE_AVAILABILITY_1_14,
-    PAUSE_AVAILABILITY_1_15,
-    PAUSE_AVAILABILITY_2_0,
-    PAUSE_AVAILABILITY_2_1,
-    PAUSE_AVAILABILITY_2_2,
-    PAUSE_AVAILABILITY_2_3,
-    PAUSE_AVAILABILITY_2_4,
-    PAUSE_AVAILABILITY_2_5,
-    PAUSE_AVAILABILITY_2_6,
-    PAUSE_AVAILABILITY_2_7,
-    PAUSE_AVAILABILITY_2_8,
-    PAUSE_AVAILABILITY_2_9,
-    PAUSE_AVAILABILITY_2_10,
-    PAUSE_AVAILABILITY_2_11,
-    PAUSE_AVAILABILITY_2_12,
-    PAUSE_AVAILABILITY_2_13,
-    PAUSE_AVAILABILITY_2_14,
-    PAUSE_AVAILABILITY_2_15,
-    PAUSE_AVAILABILITY_3_0,
-    PAUSE_AVAILABILITY_3_1,
-    PAUSE_AVAILABILITY_3_2,
-    PAUSE_AVAILABILITY_3_3,
-    PAUSE_AVAILABILITY_3_4,
-    PAUSE_AVAILABILITY_3_5,
-    PAUSE_AVAILABILITY_3_6,
-    PAUSE_AVAILABILITY_3_7,
-    PAUSE_AVAILABILITY_3_8,
-    PAUSE_AVAILABILITY_3_9,
-    PAUSE_AVAILABILITY_3_10,
-    PAUSE_AVAILABILITY_3_11,
-    PAUSE_AVAILABILITY_3_12,
-    PAUSE_AVAILABILITY_3_13,
-    PAUSE_AVAILABILITY_3_14,
-    PAUSE_AVAILABILITY_3_15,
-    PAUSE_AVAILABILITY_4_0,
-    PAUSE_AVAILABILITY_4_1,
-    PAUSE_AVAILABILITY_4_2,
-    PAUSE_AVAILABILITY_4_3,
-    PAUSE_AVAILABILITY_4_4,
-    PAUSE_AVAILABILITY_4_5,
-    PAUSE_AVAILABILITY_4_6,
-    PAUSE_AVAILABILITY_4_7,
-    PAUSE_AVAILABILITY_4_8,
-    PAUSE_AVAILABILITY_4_9,
-    PAUSE_AVAILABILITY_4_10,
-    PAUSE_AVAILABILITY_4_11,
-    PAUSE_AVAILABILITY_4_12,
-    PAUSE_AVAILABILITY_4_13,
-    PAUSE_AVAILABILITY_4_14,
-    PAUSE_AVAILABILITY_4_15,
-    PAUSE_AVAILABILITY_5_0,
-    PAUSE_AVAILABILITY_5_1,
-    PAUSE_AVAILABILITY_5_2,
-    PAUSE_AVAILABILITY_5_3,
-    PAUSE_AVAILABILITY_5_4,
-    PAUSE_AVAILABILITY_5_5,
-    PAUSE_AVAILABILITY_5_6,
-    PAUSE_AVAILABILITY_5_7,
-    PAUSE_AVAILABILITY_5_8,
-    PAUSE_AVAILABILITY_5_9,
-    PAUSE_AVAILABILITY_5_10,
-    PAUSE_AVAILABILITY_5_11,
-    PAUSE_AVAILABILITY_5_12,
-    PAUSE_AVAILABILITY_5_13,
-    PAUSE_AVAILABILITY_5_14,
-    PAUSE_AVAILABILITY_5_15,
-    PAUSE_AVAILABILITY_6_0,
-    PAUSE_AVAILABILITY_6_1,
-    PAUSE_AVAILABILITY_6_2,
-    PAUSE_AVAILABILITY_6_3,
-    PAUSE_AVAILABILITY_6_4,
-    PAUSE_AVAILABILITY_6_5,
-    PAUSE_AVAILABILITY_6_6,
-    PAUSE_AVAILABILITY_6_7,
-    PAUSE_AVAILABILITY_6_8,
-    PAUSE_AVAILABILITY_6_9,
-    PAUSE_AVAILABILITY_6_10,
-    PAUSE_AVAILABILITY_6_11,
-    PAUSE_AVAILABILITY_6_12,
-    PAUSE_AVAILABILITY_6_13,
-    PAUSE_AVAILABILITY_6_14,
-    PAUSE_AVAILABILITY_6_15,
-    PAUSE_AVAILABILITY_7_0,
-    PAUSE_AVAILABILITY_7_1,
-    PAUSE_AVAILABILITY_7_2,
-    PAUSE_AVAILABILITY_7_3,
-    PAUSE_AVAILABILITY_7_4,
-    PAUSE_AVAILABILITY_7_5,
-    PAUSE_AVAILABILITY_7_6,
-    PAUSE_AVAILABILITY_7_7,
-    PAUSE_AVAILABILITY_7_8,
-    PAUSE_AVAILABILITY_7_9,
-    PAUSE_AVAILABILITY_7_10,
-    PAUSE_AVAILABILITY_7_11,
-    PAUSE_AVAILABILITY_7_12,
-    PAUSE_AVAILABILITY_7_13,
-    PAUSE_AVAILABILITY_7_14,
-    PAUSE_AVAILABILITY_7_15,
-};
 static const u32 pause_availability_cases_expected[] = { 0x5A005A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A00u, 0x10001u, 0x10001u, 0x5A000000u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x131211u, 0x801u, 0x2u, 0x5A015A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x1015A0Au, 0x1000100u, 0x1000100u, 0x1010101u, 0x5A5A0101u, 0x0u, 0x0u, 0x0u, 0x5139291u, 0x801u, 0x2u, 0x5A5A5A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x1005A0Bu, 0x1000101u, 0x5A0000u, 0x100u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x139211u, 0x801u, 0x2u, 0x5A015A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A0Au, 0x1000100u, 0x1000100u, 0x5A01u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x131291u, 0x801u, 0x2u, 0x5A005A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A06u, 0x10001u, 0x10001u, 0x1010000u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x5131211u, 0x801u, 0x2u, 0x5A5A5A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A0Eu, 0x10000u, 0x5A0101u, 0x0u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x131211u, 0x801u, 0x2u, 0x5A005A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A00u, 0x10001u, 0x10001u, 0x0u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x131211u, 0x801u, 0x2u, 0x5A015A5Au, 0x5A5A025Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x5A5A5A5Au, 0x15A0Eu, 0x1000100u, 0x1000100u, 0x0u, 0x5A5A0001u, 0x0u, 0x0u, 0x0u, 0x131211u, 0x801u, 0x2u };
-#undef controller_input
-#undef main_bss_state
-#undef AVAILABILITY_CASE
+static u32 pause_availability_cases_row(u32 row)
+{
+    return availability_case(row / 16, row % 16);
+}
 
 static void assert_preserved(const void* actual, const void* before, u32 size)
 {
@@ -832,26 +486,7 @@ static u32 boundary(u32 observation)
         actual = (u8)obj.state | ((u32)(u8)obj.unk5 << 8) | ((u32)(u8)obj.unk14 << 16) | ((u32)(u8)engine_obj.sub_tanks[2] << 24);
     return actual;
 }
-#define BOUNDARY_CASE(name, observation) \
-    static u32 name(void)                \
-    {                                    \
-        return boundary(observation);    \
-    }
-BOUNDARY_CASE(WEAPON_BOUNDARY_ENERGY_0, 0)
-BOUNDARY_CASE(WEAPON_BOUNDARY_ENERGY_1, 1)
-BOUNDARY_CASE(WEAPON_BOUNDARY_ENERGY_2, 2)
-BOUNDARY_CASE(WEAPON_BOUNDARY_ENERGY_3, 3)
-BOUNDARY_CASE(WEAPON_BOUNDARY_STATE, 4)
-static const CTestCase pause_weapon_boundary_cases[] = {
-    WEAPON_BOUNDARY_ENERGY_0,
-    WEAPON_BOUNDARY_ENERGY_1,
-    WEAPON_BOUNDARY_ENERGY_2,
-    WEAPON_BOUNDARY_ENERGY_3,
-    WEAPON_BOUNDARY_STATE,
-};
 static const u32 pause_weapon_boundary_cases_expected[] = { 0x30303030u, 0x30303030u, 0x55555530u, 0x55555555u, 0x810C0101u };
-#undef main_bss_state
-#undef BOUNDARY_CASE
 
 struct func_800301BC_case {
     u32 unk14, pressed;
@@ -979,86 +614,343 @@ static u32 test_func_80030A2C(u32 row)
 }
 #undef main_bss_state
 
-struct func_80030C54_case {
-    u32 frame_counter, unk2C, weapon_energy_0, weapon_energy_1, weapon_energy_2, weapon_energy_3;
-    u32 weapon_energy_4, weapon_energy_5, weapon_energy_6, weapon_energy_7, weapon_energy_8, unk5C_2;
-    u32 expected[19];
+#undef main_bss_state
+
+static const struct {
+    s8 phase, active, next_phase, next_active;
+} submenu_phases[] = {
+    { 0, 0, 1, -1 },
+    { 0, 1, 1, 1 },
+    { 1, 0, 2, 0 },
+    { 1, -1, 1, -1 },
+    { 2, 0, 2, 0 },
+    { 3, 0, 4, 1 },
+    { 3, -1, 4, -1 },
+    { 4, 0, 0, 0 },
+    { 4, 1, 4, 1 },
 };
-static const struct func_80030C54_case func_80030C54_cases[] = {
-    { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, { 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 0u, 1u } },
-    { 0, 0, 48, 48, 48, 48, 48, 48, 48, 48, 48, 127, { 0x7Fu, 0x30u, 0u, 0u, 0u, 0u, 0u, 0u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0u, 0u, 1u } },
-    { 2, 1048576, 48, 0, 0, 48, 48, 0, 0, 48, 0, 0, { 0u, 0x30u, 0u, 0u, 0u, 0u, 0u, 0u, 1u, 1u, 0x30u, 0x30u, 1u, 1u, 0x30u, 1u, 0u, 0x100000u, 0u } },
-    { 0, 0, 48, 48, 48, 48, 48, 48, 48, 48, 0, 127, { 0x7Eu, 0x30u, 0u, 0u, 0u, 0u, 0u, 0u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 0x30u, 1u, 0u, 0u, 0u } },
-};
-static u32 test_func_80030C54(u32 row)
+
+static u32 test_pause_submenu_phases(u32 row)
 {
-    const struct func_80030C54_case* c = &func_80030C54_cases[row];
-    u32 observed_values[19];
-    struct BarObj obj;
-    memset(&obj, 0, sizeof(obj));
+    struct BarObj expected;
+    struct EngineObj engine_before;
+    struct PlayerObj player_before;
+    u32 variant = row / (2 * COUNT(submenu_phases));
+    u32 character = row / COUNT(submenu_phases) % 2;
+    u32 index = row % COUNT(submenu_phases);
+    memset(&bar_object, 0, sizeof(bar_object));
     memset(&engine_obj, 0, sizeof(engine_obj));
     memset(&g_Player, 0, sizeof(g_Player));
     memset(&main_bss_state, 0, sizeof(main_bss_state));
-    memset(&D_80137E08, 0, sizeof(D_80137E08));
-    memset(&D_80139234, 0, sizeof(D_80139234));
-    memset(&D_8013924C, 0, sizeof(D_8013924C));
-    memset(&D_8013E198, 0, sizeof(D_8013E198));
-    memset(&D_80141EE8, 0, sizeof(D_80141EE8));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(unk_objects, 0, sizeof(unk_objects));
     memset(&D_80141F50, 0, sizeof(D_80141F50));
-    memset(&background_objects, 0, sizeof(background_objects));
-    main_bss_state.frame_counter = c->frame_counter;
-    obj.unk2C = c->unk2C;
-    g_Player.weapon_energy[0] = c->weapon_energy_0;
-    g_Player.weapon_energy[1] = c->weapon_energy_1;
-    g_Player.weapon_energy[2] = c->weapon_energy_2;
-    g_Player.weapon_energy[3] = c->weapon_energy_3;
-    g_Player.weapon_energy[4] = c->weapon_energy_4;
-    g_Player.weapon_energy[5] = c->weapon_energy_5;
-    g_Player.weapon_energy[6] = c->weapon_energy_6;
-    g_Player.weapon_energy[7] = c->weapon_energy_7;
-    g_Player.weapon_energy[8] = c->weapon_energy_8;
-    g_Player.weapon_energy[9] = 0;
-    g_Player.weapon_energy[10] = 0;
-    g_Player.weapon_energy[11] = 0;
-    g_Player.weapon_energy[12] = 0;
-    g_Player.weapon_energy[13] = 0;
-    g_Player.weapon_energy[14] = 0;
-    g_Player.weapon_energy[15] = 0;
-    engine_obj.sub_tanks[2] = c->unk5C_2;
-    func_80030C54(&obj);
-    observed_values[0] = (u32)engine_obj.sub_tanks[2];
-    observed_values[1] = (u32)g_Player.weapon_energy[0];
-    observed_values[2] = (u32)g_Player.weapon_energy[10];
-    observed_values[3] = (u32)g_Player.weapon_energy[11];
-    observed_values[4] = (u32)g_Player.weapon_energy[12];
-    observed_values[5] = (u32)g_Player.weapon_energy[13];
-    observed_values[6] = (u32)g_Player.weapon_energy[14];
-    observed_values[7] = (u32)g_Player.weapon_energy[15];
-    observed_values[8] = (u32)g_Player.weapon_energy[1];
-    observed_values[9] = (u32)g_Player.weapon_energy[2];
-    observed_values[10] = (u32)g_Player.weapon_energy[3];
-    observed_values[11] = (u32)g_Player.weapon_energy[4];
-    observed_values[12] = (u32)g_Player.weapon_energy[5];
-    observed_values[13] = (u32)g_Player.weapon_energy[6];
-    observed_values[14] = (u32)g_Player.weapon_energy[7];
-    observed_values[15] = (u32)g_Player.weapon_energy[8];
-    observed_values[16] = (u32)g_Player.weapon_energy[9];
-    observed_values[17] = (u32)obj.unk2C;
-    observed_values[18] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, c->expected, 19);
+    memset(&pause_action_selection_drawing, 0, sizeof(pause_action_selection_drawing));
+    memset(pause_action_selection_tiles, 0, sizeof(pause_action_selection_tiles));
+    memset(pause_action_selection_title_frames, 0, sizeof(pause_action_selection_title_frames));
+    TEST_ARC_34 = (u8*)pause_action_selection_tiles;
+    TEST_TITLE_FRAMES = (u8*)pause_action_selection_title_frames;
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &pause_action_selection_drawing;
+    func_80023D30();
+    engine_obj.cur_character = character;
+    engine_obj.stage = 9;
+    bar_object.state = 1;
+    bar_object.unk5 = variant ? 5 : 4;
+    bar_object.unk6 = submenu_phases[index].phase;
+    bar_object.pad7 = 1;
+    bar_object.unk28 = 3;
+    D_8013B7D0 = 1;
+    D_8013E198[0] = -1;
+    main_bss_state.transition.active = submenu_phases[index].active;
+    main_bss_state.transition.fade_amount = 3;
+    expected = bar_object;
+    engine_before = engine_obj;
+    player_before = g_Player;
+    expected.unk6 = submenu_phases[index].next_phase;
+    if (submenu_phases[index].phase == 4 && submenu_phases[index].active == 0)
+        expected.unk5 = variant ? 3 : 2;
+    if (variant)
+        func_80030EC8(&bar_object);
+    else
+        func_80030DF8(&bar_object);
+    c_test_same_words(&bar_object, &expected, sizeof(expected));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_before));
+    c_test_same_words(&g_Player, &player_before, sizeof(player_before));
+    assert(main_bss_state.transition.active == submenu_phases[index].next_active);
+    assert(main_bss_state.transition.fade_amount == ((submenu_phases[index].phase == 0 || submenu_phases[index].phase == 3) && submenu_phases[index].active == 0 ? 8 : 3));
+    assert(D_8013B7D0 == 1);
+    assert(controller_input.pressed == 0);
+    return 1;
 }
-#undef main_bss_state
+
+void func_80030128(struct BarObj*);
+static struct DrawInfo drawing;
+static u32 tiles[256], title_frames[512];
+static const struct {
+    u8 phase, substep, select, transition, next_phase, next_substep;
+} cases[] = {
+    { 0, 1, 1, 1, 6, 1 },
+    { 1, 3, 1, 1, 6, 1 },
+    { 2, 4, 1, 1, 6, 1 },
+    { 3, 1, 1, 1, 3, 1 },
+    { 4, 1, 1, 1, 4, 1 },
+    { 6, 1, 0, 1, 6, 1 },
+    { 6, 4, 0, 0, 2, 0 },
+    { 5, 4, 1, 0, 2, 0 },
+};
+static u32 help_dispatch(u32 row)
+{
+    struct BarObj expected;
+    struct EngineObj engine_before;
+    struct PlayerObj player_before;
+    struct MainBssState main_before;
+    struct ControllerInput input;
+    u32 i;
+    memset(&bar_object, 0, sizeof(bar_object));
+    memset(&g_Player, 0, sizeof(g_Player));
+    memset(&engine_obj, 0, sizeof(engine_obj));
+    memset(&main_bss_state, 0, sizeof(main_bss_state));
+    memset(&controller_input, 0, sizeof(controller_input));
+    memset(&drawing, 0, sizeof(drawing));
+    memset(tiles, 0, sizeof(tiles));
+    memset(title_frames, 0, sizeof(title_frames));
+    memset(unk_objects, 0, sizeof(unk_objects));
+    for (i = 0; i < 320; i++) {
+        memset(&D_8015D9D0[0].sprites[i], 0, sizeof(SPRT_16));
+        setSprt16(&D_8015D9D0[0].sprites[i]);
+        setRGB0(&D_8015D9D0[0].sprites[i], 128, 128, 128);
+    }
+    TEST_ARC_34 = (u8*)tiles;
+    TEST_TITLE_FRAMES = (u8*)title_frames;
+    SP_DRAW_BUFFER = 0;
+    cur_draw_info = &drawing;
+    func_80023D30();
+    engine_obj.stage = 9;
+    engine_obj.cur_character = 1;
+    g_Player.unk2 = 1;
+    g_Player.hp = 30;
+    engine_before = engine_obj;
+    player_before = g_Player;
+    main_bss_state.frame_counter = 1;
+    main_bss_state.transition.active = cases[row].transition;
+    main_bss_state.transition.fade_amount = 3;
+    main_before = main_bss_state;
+    bar_object.state = 1;
+    bar_object.unk5 = cases[row].phase;
+    bar_object.unk6 = cases[row].substep;
+    bar_object.unk28 = 2;
+    bar_object.unk14 = 10;
+    expected = bar_object;
+    controller_input.held = 0x1357;
+    controller_input.previous = 0x2468;
+    controller_input.pressed = cases[row].select ? PADselect : 0;
+    input = controller_input;
+    expected.unk5 = cases[row].next_phase;
+    expected.unk6 = cases[row].next_substep;
+    if (cases[row].select && cases[row].phase < 3)
+        expected.unk28 = cases[row].phase;
+    func_80030128(&bar_object);
+    c_test_same_words(&bar_object, &expected, sizeof(expected));
+    c_test_same_words(&engine_obj, &engine_before, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&main_bss_state, &main_before, sizeof(main_bss_state));
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
+    assert(cur_draw_info == &drawing && SP_DRAW_BUFFER == 0 && TEST_ARC_34 == (u8*)tiles && TEST_TITLE_FRAMES == (u8*)title_frames);
+    for (i = 0; i < 320; i++) {
+        SPRT_16* sprite = &D_8015D9D0[0].sprites[i];
+        assert(sprite->x0 == (i < 256 ? i % 16 * 16 : 256 + (i - 256) % 4 * 16));
+        assert(sprite->y0 == (i < 256 ? i / 16 * 16 : (i - 256) / 4 * 16));
+        assert(sprite->clut == 0x7900 && sprite->u0 == 0 && sprite->v0 == 0 && sprite->code == 0x7C && getlen(sprite) == 3);
+        assert(sprite->r0 == 128 && sprite->g0 == 128 && sprite->b0 == 128);
+    }
+    for (i = 0; i < COUNT(tiles); i++)
+        assert(tiles[i] == 0);
+    for (i = 0; i < COUNT(title_frames); i++)
+        assert(title_frames[i] == 0);
+    return 1;
+}
+
+extern u8 D_8013B818[16];
+static u32 confirm(u32 row)
+{
+    struct BarObj obj, expected;
+    struct PlayerObj player;
+    struct EngineObj engine;
+    struct MainBssState main;
+    struct ControllerInput input;
+    u32 i;
+    engine_obj.state = 6;
+    engine_obj.unk5F = 3;
+    engine_obj.unk1 = 1;
+    engine_obj.stage = 1;
+    engine_obj.substage = 0;
+    engine_obj.cur_character = CHARACTER_X;
+    engine_obj.collected_upgrades = 0x7000;
+    engine_obj.palette_flags = 1;
+    engine_obj.sub_tanks[0] = 0x9F;
+    engine_obj.sub_tanks[1] = 0xA0;
+    engine_obj.sub_tanks[2] = 0xA0;
+    main_bss_state.transition.active = 0;
+    c_test_zero_words((u32*)&g_Player, sizeof(g_Player) / 4);
+    g_Player.active = 0x41;
+    g_Player.state = 1;
+    g_Player.hp = 16;
+    g_Player.boss_flags = 1;
+    g_Player.animation_table = (u32**)D_80119DF0;
+    set_animation(&g_Player, 5);
+    player_update_frame_hitbox(&g_Player);
+    player_set_collision_bounds(&g_Player);
+    memset(&obj, 0, sizeof(obj));
+    obj.state = 1;
+    obj.options.fields.player[0] = 1;
+    obj.options.items[2] = 1;
+    for (i = 10; i <= 14; i++)
+        obj.options.items[i] = 1;
+    D_8013B818[0] = 0;
+    D_8013E198[0] = -1;
+    memset(&controller_input, 0, sizeof(controller_input));
+    controller_input.pressed = PADLdown;
+    func_800301BC(&obj);
+    assert(obj.unk14 == 2 && obj.unk5 == 0);
+    func_800301BC(&obj);
+    assert(obj.unk14 == 10 && obj.unk5 == 1);
+    controller_input.pressed = PADLright;
+    for (i = 0; i < (row < 3 ? row : 2); i++)
+        func_800304E4(&obj);
+    assert(obj.unk14 == (row < 3 ? 10 + row : 12));
+    controller_input.pressed = row == 3 ? PADLright : PAD_CONFIRM;
+    input = controller_input;
+    expected = obj;
+    if (row == 3) {
+        expected.unk14 = 13;
+        expected.unk5 = 2;
+    } else {
+        expected.unk5 = row == 2 ? 4 : 3;
+        expected.unk28 = row == 1;
+        expected.unk2C = row == 2;
+    }
+    player = g_Player;
+    engine = engine_obj;
+    main = main_bss_state;
+    cur_random = 0x1234;
+    func_800304E4(&obj);
+    c_test_same_words(&obj, &expected, sizeof(obj));
+    c_test_same_words(&g_Player, &player, sizeof(player));
+    c_test_same_words(&engine_obj, &engine, sizeof(engine));
+    c_test_same_words(&main_bss_state, &main, sizeof(main));
+    assert(controller_input.held == input.held && controller_input.previous == input.previous && controller_input.pressed == input.pressed);
+    assert(D_8013B818[0] == 0 && D_8013E198[0] == -1 && cur_random == 0x1234);
+    return 1;
+}
+
+void func_80031130(struct BarObj*);
+static const u8 amounts[] = { 0, 1, 48, 128, 129, 176 };
+static u32 refill(u32 row)
+{
+    struct BarObj bar, expected;
+    struct PlayerObj player_expected = g_Player;
+    struct EngineObj engine_expected;
+    struct MainBssState main_expected;
+    u32 frame = row % 4, mode = row / 4 % 2, level = row / 8 % 3, tank = row / 24, i;
+    memset(&bar, 0x35, sizeof(bar));
+    bar.unk2C = mode;
+    bar.unk5 = 0;
+    expected = bar;
+    for (i = 0; i < 9; i++)
+        g_Player.weapon_energy[i] = player_expected.weapon_energy[i] = level == 0 ? 48 : level == 1 ? 47
+                                                                                                    : i * 6;
+    engine_obj.sub_tanks[2] = amounts[tank];
+    engine_expected = engine_obj;
+    main_bss_state.frame_counter = frame;
+    main_expected = main_bss_state;
+    D_8013E198[0] = -1;
+    if (!(frame & 1)) {
+        if (mode) {
+            if (level != 0) {
+                for (i = 0; i < 9; i++)
+                    player_expected.weapon_energy[i] = level == 1 ? 48 : i < 8 ? i * 6 + 1
+                                                                               : 48;
+                engine_expected.sub_tanks[2] = amounts[tank] & 127 ? (amounts[tank] & 127) - 1 : 0;
+            } else if (amounts[tank] & 127)
+                engine_expected.sub_tanks[2] = (amounts[tank] & 127) - 1;
+            else {
+                expected.unk5 = 1;
+                expected.unk2C = 0;
+            }
+        } else if (!(amounts[tank] & 127))
+            expected.unk5 = 1;
+        else {
+            for (i = 0; i < 9; i++)
+                player_expected.weapon_energy[i] = level == 2 && i < 8 ? i * 6 + 1 : 48;
+            if (level == 2)
+                engine_expected.sub_tanks[2] = (amounts[tank] & 127) - 1;
+            else
+                expected.unk5 = 1;
+        }
+    }
+    func_80030C54(&bar);
+    c_test_same_words(&bar, &expected, sizeof(bar));
+    c_test_same_words(&g_Player, &player_expected, sizeof(g_Player));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(&main_bss_state, &main_expected, sizeof(main_bss_state));
+    assert(D_8013E198[0] == -1);
+    return 1;
+}
+static u32 exit_pause(u32 row)
+{
+    struct BarObj bar, expected;
+    struct EngineObj engine_expected;
+    struct PlayerObj player_before = g_Player;
+    struct MainBssState main_expected;
+    memset(&bar, 0x35, sizeof(bar));
+    bar.unk30 = 1;
+    bar.state = 2;
+    bar.unk5 = 3;
+    expected = bar;
+    engine_obj.state = 8;
+    engine_obj.unk1 = 3;
+    engine_obj.unk2 = 4;
+    engine_obj.unk10 = 10;
+    engine_obj.unk11 = 11;
+    engine_obj.unk12 = 12;
+    engine_obj.unk13 = 13;
+    engine_obj.unk14 = 14;
+    engine_obj.unk15 = 15;
+    engine_obj.unk16 = 16;
+    engine_obj.unk17 = 17;
+    engine_expected = engine_obj;
+    main_bss_state.transition.active = row;
+    main_expected = main_bss_state;
+    if (!row) {
+        expected.state = expected.unk5 = 0;
+        engine_expected.state = 9;
+        engine_expected.unk1 = engine_expected.unk2 = 0;
+        engine_expected.unk10 = engine_expected.unk11 = engine_expected.unk12 = engine_expected.unk13 = 0;
+        engine_expected.unk14 = engine_expected.unk15 = engine_expected.unk16 = engine_expected.unk17 = 0;
+    }
+    func_80031130(&bar);
+    c_test_same_words(&bar, &expected, sizeof(bar));
+    c_test_same_words(&engine_obj, &engine_expected, sizeof(engine_obj));
+    c_test_same_words(&g_Player, &player_before, sizeof(g_Player));
+    c_test_same_words(&main_bss_state, &main_expected, sizeof(main_bss_state));
+    return 1;
+}
 
 const struct CTestGroup c_test_groups[] = {
-    { "pause_action_selection", pause_action_selection_cases, pause_action_selection_cases_expected, COUNT(pause_action_selection_cases), 0 },
-    { "pause_availability", pause_availability_cases, pause_availability_cases_expected, COUNT(pause_availability_cases), 0 },
+    { "pause_submenu_phases", 0, 0, 4 * COUNT(submenu_phases), test_pause_submenu_phases },
+    { "pause_action_selection", NULL, pause_action_selection_cases_expected, COUNT(pause_action_selection_cases_expected), pause_action_selection_cases_row },
+    { "pause_availability", NULL, pause_availability_cases_expected, COUNT(pause_availability_cases_expected), pause_availability_cases_row },
     { "pause_navigation_edges", pause_navigation_edges_cases, pause_navigation_edges_cases_expected, COUNT(pause_navigation_edges_cases), 0 },
     { "pause_restricted_ready", pause_restricted_ready_cases, pause_restricted_ready_cases_expected, COUNT(pause_restricted_ready_cases), 0 },
-    { "pause_weapon_boundary", pause_weapon_boundary_cases, pause_weapon_boundary_cases_expected, COUNT(pause_weapon_boundary_cases), 0 },
+    { "pause_weapon_boundary", NULL, pause_weapon_boundary_cases_expected, COUNT(pause_weapon_boundary_cases_expected), boundary },
     { "func_800301BC", 0, 0, 5, test_func_800301BC },
     { "func_800304E4", 0, 0, 6, test_func_800304E4 },
     { "func_80030A2C", 0, 0, 8, test_func_80030A2C },
-    { "func_80030C54", 0, 0, 4, test_func_80030C54 },
+    { "select_opens_help_preserves_refill_and_restores_saved_phase", NULL, NULL, COUNT(cases), help_dispatch },
+    { "actual_X_pause_navigation_partial_first_health_full_second_health_full_weapon_and_available_escape", NULL, NULL, 4, confirm },
+    { "weapon_tank_frame_mode_capacity_and_completion", NULL, NULL, 44, refill },
+    { "pause_exit_waits_then_resets_stage_state", NULL, NULL, 2, exit_pause },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(pause_action_selection_cases) + COUNT(pause_availability_cases) + COUNT(pause_navigation_edges_cases) + COUNT(pause_restricted_ready_cases) + COUNT(pause_weapon_boundary_cases) + 5 + 6 + 8 + 4;
+const u32 c_test_count = 4 * COUNT(submenu_phases) + COUNT(pause_action_selection_cases_expected) + COUNT(pause_availability_cases_expected) + COUNT(pause_navigation_edges_cases) + COUNT(pause_restricted_ready_cases) + COUNT(pause_weapon_boundary_cases_expected) + 5 + 6 + 8 + COUNT(cases) + 4 + 44 + 2;

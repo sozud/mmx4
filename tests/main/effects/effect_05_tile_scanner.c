@@ -92,33 +92,11 @@ static u32 scanner_case(u32 mode, u32 observation)
     }
     return actual;
 }
-#define SCANNER(m, n)                                       \
-    static u32 tile_scanner_context_scanner_##m##_##n(void) \
-    {                                                       \
-        return scanner_case(m, n);                          \
-    }
-#define MODE(m) SCANNER(m, 0) SCANNER(m, 1) SCANNER(m, 2) SCANNER(m, 3) SCANNER(m, 4)
-MODE(0)
-MODE(1)
-MODE(2)
-MODE(3)
-MODE(4)
-MODE(5)
-MODE(6)
-MODE(7)
-MODE(8)
-MODE(9)
-MODE(10)
-MODE(11)
-#define ENTRY(m, n) tile_scanner_context_scanner_##m##_##n,
-#define ENTRIES(m) ENTRY(m, 0) ENTRY(m, 1) ENTRY(m, 2) ENTRY(m, 3) ENTRY(m, 4)
-static const CTestCase tile_scanner_context_cases[]
-    = { ENTRIES(0) ENTRIES(1) ENTRIES(2) ENTRIES(3) ENTRIES(4) ENTRIES(5) ENTRIES(6) ENTRIES(7) ENTRIES(8) ENTRIES(9) ENTRIES(10) ENTRIES(11) };
 static const u32 tile_scanner_context_cases_expected[] = { 0x10001u, 0xC84321u, 0x641234u, 0x0u, 0x0u, 0x10001u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x10001u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x10101u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x10101u, 0x631234u, 0x631234u, 0xFFFF0000u, 0x0u, 0xFF0101u, 0x631234u, 0x631234u, 0xFFFF0600u, 0x600u, 0x201u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x201u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x202u, 0x631234u, 0x631234u, 0xFFFF0000u, 0x0u, 0x201u, 0x631234u, 0x631234u, 0xFFFF0000u, 0x0u, 0x202u, 0x651234u, 0x651234u, 0x10000u, 0x0u, 0x202u, 0x651234u, 0x651234u, 0x10000u, 0x0u };
-#undef SCANNER
-#undef MODE
-#undef ENTRY
-#undef ENTRIES
+static u32 tile_scanner_context_cases_row(u32 row)
+{
+    return scanner_case(row / 5, row % 5);
+}
 
 struct func_800B64BC_case {
     u32 state, unk5, unk1C, x_vel, unk1E, unk6, unk15;
@@ -155,8 +133,8 @@ static u32 test_func_800B64BC(u32 row)
 }
 
 const struct CTestGroup c_test_groups[] = {
-    { "tile_scanner_context", tile_scanner_context_cases, tile_scanner_context_cases_expected, COUNT(tile_scanner_context_cases), 0 },
+    { "tile_scanner_context", NULL, tile_scanner_context_cases_expected, COUNT(tile_scanner_context_cases_expected), tile_scanner_context_cases_row },
     { "func_800B64BC", 0, 0, 4, test_func_800B64BC },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(tile_scanner_context_cases) + 4;
+const u32 c_test_count = COUNT(tile_scanner_context_cases_expected) + 4;

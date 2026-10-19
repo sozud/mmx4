@@ -1852,6 +1852,12 @@ struct Misc7Ext {
     void* position;
 };
 
+struct Misc32Ext {
+    struct MainObj* owner;
+    s8 animation;
+    u8 timer;
+};
+
 struct Misc5Ext {
     struct MainObj* owner;
     s8 animation;
@@ -2051,6 +2057,7 @@ union MiscExt {
     struct Misc2Ext misc_2;
     struct Misc9Ext misc_9;
     struct Misc5Ext misc_5;
+    struct Misc32Ext misc_32;
     struct Misc7Ext misc_7;
     struct Misc8Ext misc_8;
     struct Misc11Ext misc_11;

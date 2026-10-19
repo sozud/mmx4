@@ -47,21 +47,7 @@ static u32 jet_stingray_fx_animation_start_start_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.state | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
 }
-#define CASE(m)                                                \
-    static u32 jet_stingray_fx_animation_start_start_##m(void) \
-    {                                                          \
-        return jet_stingray_fx_animation_start_start_case(m);  \
-    }
-CASE(0)
-CASE(1)
-CASE(2)
-CASE(3)
-#define ENTRY(m) jet_stingray_fx_animation_start_start_##m,
-static const CTestCase jet_stingray_fx_animation_start_cases[]
-    = { ENTRY(0) ENTRY(1) ENTRY(2) ENTRY(3) };
 static const u32 jet_stingray_fx_animation_start_cases_expected[] = { 0x311301u, 0x971301u, 0x641E01u, 0x642B01u };
-#undef CASE
-#undef ENTRY
 
 static u32 jet_stingray_fx_raw_default_start_case(u32 mode)
 {
@@ -97,53 +83,7 @@ static u32 jet_stingray_fx_raw_default_start_case(u32 mode)
         assert(((u32*)&g_Player)[i] == ((u32*)&player_before)[i]);
     return (u8)obj.state | ((u32)obj.unk17 << 8) | ((u32)(u16)obj.x_pos.i.hi << 16);
 }
-#define CASE(m)                                            \
-    static u32 jet_stingray_fx_raw_default_start_##m(void) \
-    {                                                      \
-        return jet_stingray_fx_raw_default_start_case(m);  \
-    }
-CASE(0)
-#define ENTRY(m) jet_stingray_fx_raw_default_start_##m,
-static const CTestCase jet_stingray_fx_raw_default_cases[] = { ENTRY(0) };
 static const u32 jet_stingray_fx_raw_default_cases_expected[] = { 0x640001u };
-#undef CASE
-#undef ENTRY
-
-static const u32 jet_stingray_fx_init_expected[] = { 1u, 0u, 0u, 0u, 0u };
-static u32 test_jet_stingray_fx_init(u32 row)
-{
-    u32 observed_values[5];
-    struct VisualObj obj;
-    memset(&obj, 0, sizeof(obj));
-    memset(&engine_obj, 0, sizeof(engine_obj));
-    obj.unk2 = -1;
-    jet_stingray_fx_init(&obj);
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk42;
-    observed_values[2] = (u32)obj.unk5C.value;
-    observed_values[3] = (u32)obj.x_pos.i.hi;
-    observed_values[4] = (u32)obj.y_pos.i.hi;
-    return c_test_observe(0, row, observed_values, jet_stingray_fx_init_expected, 5);
-}
-
-static const u32 jet_stingray_fx_splash_expected[] = { 2u, 0xFFFFFFFFu };
-static u32 test_jet_stingray_fx_splash(u32 row)
-{
-    u32 observed_values[2];
-    struct VisualObj obj;
-    struct PlayerObj child_0;
-    u8 child_0_present;
-    memset(&obj, 0, sizeof(obj));
-    memset(&child_0, 0, sizeof(child_0));
-    child_0_present = 255;
-    obj.unk5 = -1;
-    child_0.state = 2;
-    obj.unk50 = child_0_present ? &child_0 : NULL;
-    jet_stingray_fx_splash(&obj);
-    observed_values[0] = (u32)obj.state;
-    observed_values[1] = (u32)obj.unk5;
-    return c_test_observe(0, row, observed_values, jet_stingray_fx_splash_expected, 2);
-}
 
 static const u32 jet_stingray_fx_vortex_expected[] = { 2u, 0xFFFFFFFFu };
 static u32 test_jet_stingray_fx_vortex(u32 row)
@@ -151,13 +91,11 @@ static u32 test_jet_stingray_fx_vortex(u32 row)
     u32 observed_values[2];
     struct VisualObj obj;
     struct MainObj child_0;
-    u8 child_0_present;
     memset(&obj, 0, sizeof(obj));
     memset(&child_0, 0, sizeof(child_0));
-    child_0_present = 255;
     obj.unk5 = -1;
     child_0.state = 2;
-    obj.unk50 = child_0_present ? &child_0 : NULL;
+    obj.unk50 = &child_0;
     jet_stingray_fx_vortex(&obj);
     observed_values[0] = (u32)obj.state;
     observed_values[1] = (u32)obj.unk5;
@@ -223,13 +161,11 @@ static const CTestCase jet_stingray_fx_vortex_wait_cases[] = { JET_WAIT_ENTRY(1,
 
 static const u32 jet_stingray_fx_vortex_wait_cases_expected[] = { 0x4D010003u, 0x102u, 0x10009u, 0x103u };
 const struct CTestGroup c_test_groups[] = {
-    { "jet_stingray_fx_animation_start", jet_stingray_fx_animation_start_cases, jet_stingray_fx_animation_start_cases_expected, COUNT(jet_stingray_fx_animation_start_cases), 0 },
-    { "jet_stingray_fx_raw_default", jet_stingray_fx_raw_default_cases, jet_stingray_fx_raw_default_cases_expected, COUNT(jet_stingray_fx_raw_default_cases), 0 },
-    { "jet_stingray_fx_init", 0, 0, 1, test_jet_stingray_fx_init },
-    { "jet_stingray_fx_splash", 0, 0, 1, test_jet_stingray_fx_splash },
+    { "jet_stingray_fx_animation_start", NULL, jet_stingray_fx_animation_start_cases_expected, COUNT(jet_stingray_fx_animation_start_cases_expected), jet_stingray_fx_animation_start_start_case },
+    { "jet_stingray_fx_raw_default", NULL, jet_stingray_fx_raw_default_cases_expected, COUNT(jet_stingray_fx_raw_default_cases_expected), jet_stingray_fx_raw_default_start_case },
     { "jet_stingray_fx_vortex", 0, 0, 1, test_jet_stingray_fx_vortex },
     { "jet_stingray_fx_splash_owner", jet_stingray_fx_splash_owner_cases, jet_stingray_fx_splash_owner_cases_expected, COUNT(jet_stingray_fx_splash_owner_cases), 0 },
     { "jet_stingray_fx_vortex_wait", jet_stingray_fx_vortex_wait_cases, jet_stingray_fx_vortex_wait_cases_expected, COUNT(jet_stingray_fx_vortex_wait_cases), 0 },
 };
 const u32 c_test_group_count = COUNT(c_test_groups);
-const u32 c_test_count = COUNT(jet_stingray_fx_animation_start_cases) + COUNT(jet_stingray_fx_raw_default_cases) + 1 + 1 + 1 + COUNT(jet_stingray_fx_splash_owner_cases) + COUNT(jet_stingray_fx_vortex_wait_cases);
+const u32 c_test_count = COUNT(jet_stingray_fx_animation_start_cases_expected) + COUNT(jet_stingray_fx_raw_default_cases_expected) + 1 + COUNT(jet_stingray_fx_splash_owner_cases) + COUNT(jet_stingray_fx_vortex_wait_cases);

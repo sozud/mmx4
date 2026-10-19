@@ -40,9 +40,9 @@ void stage_dialogue_trigger_talk(struct EffectObj* self)
     self->ext.unk_effect.unk14 = timer;
     if (timer == 0) {
         if (engine_obj.cur_character == CHARACTER_X) {
-            func_8002217C(0x34, 9, engine_obj.character_state.bytes[9]);
+            func_8002217C(0x34, 9, (u8)engine_obj.character_state.bytes[9]);
         } else {
-            func_8002217C(0x2F, 9, engine_obj.character_state.bytes[9]);
+            func_8002217C(0x2F, 9, (u8)engine_obj.character_state.bytes[9]);
         }
         engine_obj.character_state.bytes[9] = 1;
         self->state = 2;
