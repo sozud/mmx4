@@ -7,6 +7,10 @@
 #include "main/collision.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#endif
+
 extern u8 peacock_missile_explosion_box[4];
 
 // peacock_missile_state_funcs
@@ -27,10 +31,86 @@ void peacock_missile_update(struct ShotObj* self)
 }
 
 // peacock_missile_init
+#ifdef MMX4_PC
+void func_800A63B0(struct ShotObj* arg0);
+void func_800A6510(struct ShotObj* arg0);
+void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range);
+extern u8 peacock_missile_hit_box[4];
+extern u8 peacock_missile_terrain_box[4];
+extern s16 peacock_missile_launch_offsets[8][2];
+extern u8 peacock_missile_turn_steps_ccw[8];
+extern u8 peacock_missile_turn_steps_cw[8];
+#endif
+
+#ifdef MMX4_PC
+void func_800A63B0(struct ShotObj* arg0)
+{
+    struct MainObj* boss = arg0->backref;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->timer = 0xA;
+    arg0->unk16 = 4;
+    arg0->unk68 = (struct Unk_unk68*)peacock_missile_terrain_box;
+    arg0->unk50.data = peacock_missile_hit_box;
+    arg0->unk5C = 3;
+    arg0->unk60 = 6;
+    arg0->unk90.val = 0x6E;
+    arg0->unk5 = 0;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    arg0->unk8A = 0;
+    arg0->unk84.value = 0;
+    arg0->unk54 = NULL;
+    arg0->unk58.data = NULL;
+    arg0->unk61 = 0;
+    arg0->unk8C.word = 0;
+    if (boss->unk15 != 0) {
+        arg0->x_pos.i.hi -= peacock_missile_launch_offsets[arg0->unk2][0];
+        arg0->unk84.value = peacock_missile_turn_steps_cw[arg0->unk2];
+    } else {
+        arg0->x_pos.i.hi += peacock_missile_launch_offsets[arg0->unk2][0];
+        arg0->unk84.value = peacock_missile_turn_steps_ccw[arg0->unk2];
+    }
+    arg0->y_pos.i.hi += peacock_missile_launch_offsets[arg0->unk2][1];
+    set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
+    set_velocity_from_angle(MOVING_OBJECT(arg0), (u8)arg0->unk84.value);
+    arg0->unk2C = 0;
+    arg0->unk28 = 0;
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 4;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A63B0);
+#endif
 
 // peacock_missile_home
+#ifdef MMX4_PC
+void func_800A6510(struct ShotObj* arg0)
+{
+    s32 target;
+    s32 direction;
+
+    if (arg0->timer != 0) {
+        arg0->timer--;
+    } else if ((main_bss_state.frame_counter & 1) == 0) {
+        target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(arg0->unk7C));
+        direction = arg0->unk84.value;
+        if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
+            direction = ((u32)((target - direction) & 0x1F) < 0x10) ? direction + 1 : direction - 1;
+            arg0->unk84.value = direction & 0x1F;
+            set_velocity_from_angle(MOVING_OBJECT(arg0), direction & 0x1E);
+            arg0->x_vel.val *= 4;
+            arg0->y_vel.val *= 4;
+            set_animation(arg0, (arg0->unk84.value >> 1) + 0xD);
+        }
+    }
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A6510);
+#endif
 
 void peacock_missile_explode_start(struct ShotObj* self)
 {
@@ -47,7 +127,40 @@ void peacock_missile_explode_start(struct ShotObj* self)
 }
 
 // peacock_missile_spawn_explosion
+#ifdef MMX4_PC
+void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
+{
+    struct MiscObj* misc = find_free_misc_obj();
+    u8 amount;
+
+    if (misc == NULL)
+        return;
+    misc->active = 0x41;
+    misc->id = 0x31;
+    misc->unk2 = 4;
+    misc->x_pos.val = arg0->x_pos.val;
+    misc->y_pos.val = arg0->y_pos.val;
+    amount = x_range & get_random();
+    if (get_random() & 1)
+        misc->x_pos.i.hi += amount;
+    else
+        misc->x_pos.i.hi -= amount;
+    amount = y_range & get_random();
+    if (get_random() & 1)
+        misc->y_pos.i.hi += amount;
+    else
+        misc->y_pos.i.hi -= amount;
+    misc->animation_table = arg0->animation_table;
+    misc->unk40 = arg0->unk40;
+    misc->unk3C = arg0->unk3C;
+    misc->unk42 = arg0->unk42 & 0x7FFF;
+    misc->ext.misc_49.owner = arg0;
+    misc->unk15 = 0;
+    misc->unk16 = arg0->unk16;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A666C);
+#endif
 
 void peacock_missile_explode(struct ShotObj* self)
 {

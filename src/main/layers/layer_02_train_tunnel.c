@@ -343,7 +343,43 @@ u8 train_tunnel_player_at_lock(struct LayerObj* arg0)
 }
 
 // train_tunnel_update_lights
+#ifdef MMX4_PC
+void func_800D9B48(struct LayerObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_800D9B48(struct LayerObj* self)
+{
+    u8* private_bytes = (u8*)&self->private_state;
+    s16 value;
+
+    if (engine_obj.character_state.fields.flags == 0)
+        return;
+    if (private_bytes[1] == 0)
+        private_bytes[1] = 2;
+    if (private_bytes[1] == 0xFF)
+        return;
+    if (private_bytes[1] == 2) {
+        if (get_layout_screen(1, 0x14F, 0x80) == 0x1D)
+            return;
+        if (get_layout_screen(1, 0x14F, 0x80) == 0x18)
+            return;
+        private_bytes[2] = get_layout_screen(1, 0x14F, 0x80);
+        private_bytes[1]--;
+        return;
+    }
+    value = get_layout_screen(1, 0x14F, 0x80);
+    if (private_bytes[2] == value)
+        return;
+    background_objects[1].unk4E++;
+    if (background_objects[1].unk4E == 0x1D)
+        private_bytes[1] = 0xFF;
+    background_objects[1].unk4D++;
+    private_bytes[2] = get_layout_screen(1, 0x14F, 0x80);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/layers/layer_02_train_tunnel", func_800D9B48);
+#endif
 
 void (*train_tunnel_state_funcs[])(struct LayerObj*) = {
     func_800D9268,

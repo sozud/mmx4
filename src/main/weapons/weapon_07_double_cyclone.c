@@ -58,7 +58,66 @@ void double_cyclone_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_init
+#ifdef MMX4_PC
+void func_80096EA4(struct WeaponObj* arg0);
+void func_80097430(struct WeaponObj* arg0);
+void func_80097670(struct WeaponObj* arg0);
+extern struct Unk_unk68 double_cyclone_hit_box[];
+extern u8 double_cyclone_spawn_offsets[4];
+extern u32* D_8011C0F0[5];
+extern u8 double_cyclone_charged_spawn_offsets[4];
+extern struct Unk_unk68 double_cyclone_charged_hit_box[];
+void double_cyclone_charged_draw(struct WeaponObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80096EA4(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+    s8 dx = double_cyclone_spawn_offsets[arg0->unk2 * 2];
+    s8 dy = double_cyclone_spawn_offsets[arg0->unk2 * 2 + 1];
+
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    arg0->unk50 = double_cyclone_hit_box;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[8];
+    arg0->unk16 = 1;
+    arg0->animation_table = D_8011C0F0;
+    arg0->unk42 = 0x7801;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
+    if (arg0->unk2 == 0) {
+        arg0->unk40 = 0x520;
+        arg0->x_vel.val = -0x26000;
+        arg0->unk15 = 0;
+    } else {
+        arg0->x_vel.val = 0x26000;
+        arg0->unk40 = 0x530;
+        arg0->unk15 = 0x40;
+    }
+    if (g_Player.unk15 == 0) {
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
+    } else {
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
+        arg0->unk15 ^= 0x40;
+        arg0->x_vel.val = -arg0->x_vel.val;
+    }
+    arg0->unk28.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
+    arg0->unk49 = arg0->unk2;
+    arg0->ext.weapon_7.timer = 0x23;
+    arg0->ext.weapon_7.unk90 = 8;
+    arg0->ext.weapon_7.unk91 = 4;
+    set_animation(arg0, 0);
+    func_8001540C(0, 0x1E, arg0);
+    arg0->state++;
+    double_cyclone_draw(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80096EA4);
+#endif
 
 void double_cyclone_main(struct WeaponObj* arg0)
 {
@@ -199,7 +258,58 @@ void double_cyclone_charged_update(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_init
+#ifdef MMX4_PC
+void func_80097430(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+    s32 side;
+    s8 dx;
+    s8 dy;
+
+    arg0->unk38 = (u8*)player_gfx + player_gfx[8];
+    arg0->animation_table = D_8011C0F0;
+    arg0->unk40 = 0x530;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 0;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
+    if (arg0->unk2 < 0) {
+        side = 1;
+        arg0->x_vel.val = 0x60000;
+        arg0->unk15 = 0x40;
+    } else {
+        side = 0;
+        arg0->x_vel.val = -0x60000;
+        arg0->unk15 = 0;
+    }
+    dx = double_cyclone_charged_spawn_offsets[side * 2];
+    dy = double_cyclone_charged_spawn_offsets[side * 2 + 1];
+    if (g_Player.unk15 == 0) {
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi + dx;
+    } else {
+        arg0->x_pos.i.hi = g_Player.x_pos.i.hi - dx;
+        arg0->unk15 ^= 0x40;
+        arg0->x_vel.val = -arg0->x_vel.val;
+    }
+    arg0->unk28.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
+    arg0->ext.weapon_16.timer = 0x32;
+    arg0->ext.weapon_16.unk91 = 4;
+    arg0->ext.weapon_16.delay = (arg0->unk2 & 0x7F) << 2;
+    arg0->unk49 = 1;
+    set_animation(arg0, 4);
+    func_8001540C(0, 0x1E, arg0);
+    func_8001540C(1, 0xA, arg0);
+    arg0->unk5 = 0;
+    arg0->state++;
+    double_cyclone_charged_draw(arg0);
+    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097430);
+#endif
 
 void double_cyclone_charged_main(struct WeaponObj* arg0)
 {
@@ -221,7 +331,22 @@ void double_cyclone_charged_main(struct WeaponObj* arg0)
 }
 
 // double_cyclone_charged_gather
+#ifdef MMX4_PC
+void func_80097670(struct WeaponObj* arg0)
+{
+    if (arg0->ext.weapon_16.delay != 0) {
+        arg0->ext.weapon_16.delay--;
+        return;
+    }
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    arg0->unk50 = double_cyclone_charged_hit_box;
+    arg0->unk5++;
+    update_on_screen(BASE_OBJECT(arg0), 0x18, 0x30);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_07_double_cyclone", func_80097670);
+#endif
 
 void double_cyclone_charged_fly(struct WeaponObj* arg0)
 {

@@ -702,7 +702,38 @@ void player_death_wait(struct PlayerObj* self)
 }
 
 // player_death_explode
+#ifdef MMX4_PC
+void func_80035C20(struct PlayerObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80035C20(struct PlayerObj* arg0)
+{
+    s32 i;
+
+    if ((arg0->death_timer & 3) == 0) {
+        for (i = 0; i < 4; i++) {
+            player_spawn_death_orb((get_random() & 0x1F) | -0x80);
+        }
+    }
+
+    if (arg0->unkC6 == 3) {
+        arg0->death_timer = 0x14;
+        arg0->unk5 = (u8)arg0->unk5 + 1;
+    } else if (arg0->death_timer == 0) {
+        player_spawn_death_orbs(arg0->unkC6);
+        if (arg0->unkC6 == 2) {
+            player_spawn_death_orbs(3);
+        }
+        arg0->death_timer = 0x12;
+        arg0->unkC6++;
+    } else {
+        arg0->death_timer--;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_common", func_80035C20);
+#endif
 void player_death_end(struct PlayerObj* self)
 {
     if (self->death_timer != 0) {

@@ -127,7 +127,79 @@ void bee_hive_open_start(struct MainObj* self)
 }
 
 // bee_hive_open_move
+#ifdef MMX4_PC
+void func_80055358(struct MainObj* self);
+void func_800559BC(struct MainObj* self);
+void func_800559BC(struct MainObj* self);
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+// src/main/mains/main_22_bee_hive.c
+
+void func_80055358(struct MainObj* self)
+{
+    static const struct {
+        s16 x;
+        s16 y;
+        u8 subtype;
+    } parts[10] = {
+        { -48, 10, 3 },
+        { 48, 10, 3 },
+        { -22, 69, 4 },
+        { 22, 69, 4 },
+        { -40, -16, 3 },
+        { 40, -16, 3 },
+        { -40, 36, 4 },
+        { 40, 36, 4 },
+        { -26, -28, 3 },
+        { 26, -28, 3 },
+    };
+    struct Main22Ext* ext = &self->ext.main_22;
+    u8 i;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (--ext->unk84 != 0)
+        return;
+    for (i = 0; i < 2; i++) {
+        struct MainObj* child = find_free_main_obj();
+        s32 part = ext->unk90;
+        s32 resource;
+        s32 column;
+        if (child != NULL) {
+            child->active = 0x41;
+            child->id = 5;
+            child->unk2 = parts[part].subtype;
+            child->on_screen = 0;
+            child->state = 0;
+            memset(&child->ext.main_5, 0, 12);
+            child->ext.main_5.part_index = part;
+            child->ext.main_5.target_x = self->y_pos.i.hi + parts[part].y;
+            child->ext.main_5.target_y = self->x_pos.i.hi + parts[part].x;
+            child->ext.main_5.owner = self;
+            child->x_pos.i.hi = self->x_pos.i.hi + ((part & 1) ? 0x10 : -0x10);
+            child->y_pos.i.hi = self->y_pos.i.hi + 9;
+            resource = func_8002938C(5);
+            child->unk40 = D_801406A8[resource] >> 7;
+            resource = func_8002938C(5);
+            column = resource * 4 + 0x18;
+            child->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
+            resource = func_8002938C(5);
+            child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+            ext->unk90++;
+            ext->parts_mask |= 1u << part;
+            if (ext->unk90 >= 10) {
+                set_animation(self, 2);
+                ext->unk84 = 0x12;
+                self->unk6++;
+            }
+        }
+    }
+    ext->unk84 = 8;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_80055358);
+#endif
 
 void bee_hive_open_end(struct MainObj* self)
 {
@@ -248,7 +320,79 @@ void bee_hive_explode_done(void)
 }
 
 // bee_hive_spawn_bees
+#ifdef MMX4_PC
+void func_800559BC(struct MainObj* self)
+{
+    static const struct {
+        s16 x;
+        s16 y;
+        u8 subtype;
+    } parts[10] = {
+        { -48, 10, 3 },
+        { 48, 10, 3 },
+        { -22, 69, 4 },
+        { 22, 69, 4 },
+        { -40, -16, 3 },
+        { 40, -16, 3 },
+        { -40, 36, 4 },
+        { 40, 36, 4 },
+        { -26, -28, 3 },
+        { 26, -28, 3 },
+    };
+    struct Main22Ext* ext = &self->ext.main_22;
+    u8 spawned = 0;
+    u8 side = 0;
+    u8 part;
+
+    for (part = 0; part < 10 && spawned < 2; part++) {
+        struct MainObj* child;
+        s32 resource;
+        s32 column;
+        if (ext->parts_mask & (1u << part))
+            continue;
+        child = find_free_main_obj();
+        if (child == NULL)
+            continue;
+        child->active = 0x41;
+        child->id = 5;
+        child->unk2 = parts[part].subtype;
+        child->on_screen = 0;
+        child->state = 0;
+        memset(&child->ext.main_5, 0, 12);
+        child->ext.main_5.part_index = part;
+        child->ext.main_5.target_x = self->y_pos.i.hi + parts[part].y;
+        child->ext.main_5.target_y = self->x_pos.i.hi + parts[part].x;
+        child->ext.main_5.owner = self;
+        child->x_pos.i.hi = self->x_pos.i.hi;
+        if (part & 1) {
+            if (side != 1) {
+                child->x_pos.i.hi += 0x10;
+                side = 1;
+            }
+        } else if (side != 2) {
+            child->x_pos.i.hi -= 0x10;
+            side = 2;
+        }
+        child->y_pos.i.hi = self->y_pos.i.hi + 9;
+        if (child->x_pos.val > g_Player.x_pos.val && (part & 1))
+            child->ext.main_5.target_y += 8;
+        if (child->x_pos.val < g_Player.x_pos.val && !(part & 1))
+            child->ext.main_5.target_y -= 8;
+        resource = func_8002938C(5);
+        child->unk40 = D_801406A8[resource] >> 7;
+        resource = func_8002938C(5);
+        column = resource * 4 + 0x18;
+        child->unk42 = (column % 16) | (((resource + 6) / 4 + 0x1E0) << 6);
+        resource = func_8002938C(5);
+        child->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+        ext->parts_mask |= 1u << part;
+        if (++spawned == 1)
+            ext->unk8C = 1;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_22_bee_hive", func_800559BC);
+#endif
 
 struct Unk_unk68 bee_hive_hurt_box = { -19, -48, 37, 92 };
 

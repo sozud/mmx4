@@ -9,6 +9,11 @@
 #include "main/1E1BC.h"
 #include "main/xa_sequence_data.h"
 
+#ifdef MMX4_PC
+#include "main/collision.h"
+#include "main/sprite_animations.h"
+#endif
+
 extern struct Unk_unk68 light_capsule_platform_box;
 
 void light_capsule_main(struct ItemObj*);
@@ -61,7 +66,86 @@ void light_capsule_update(struct ItemObj* self)
 }
 
 // light_capsule_init
+#ifdef MMX4_PC
+void func_800C63BC(struct ItemObj* arg0);
+void func_800C6EDC(struct VisualObj* arg0);
+extern u8 light_capsule_terrain_box[4];
+extern u8 light_capsule_part_bits[8];
+extern u8 light_capsule_part_animations[8];
+extern u8 light_capsule_part_visuals[8];
+extern struct Item26AnimationStep* light_capsule_animations[14];
+void collide_with_players(struct PlayerObj*);
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800C63BC(struct ItemObj* arg0)
+{
+    struct ItemObj* child;
+    s32 discard;
+    u8 resource;
+    s32 column;
+    s32 row;
+
+    discard = g_Player.unk2 != 0;
+    if (engine_obj.unk37 != 0) {
+        if (g_Player.armor_parts != 0)
+            discard = 1;
+    } else {
+        if (light_capsule_part_bits[(u8)arg0->unk2] & g_Player.armor_parts)
+            discard = 1;
+        if (arg0->unk2 == 2 && g_Player.arm_type == 2)
+            discard = 0;
+        if (arg0->unk2 == 3 && g_Player.arm_type == 1)
+            discard = 0;
+    }
+
+    if (discard) {
+        despawn_object(OBJECT_HEADER(arg0));
+        return;
+    }
+
+    arg0->on_screen = 1;
+    arg0->unk68 = (struct Unk_unk68*)light_capsule_terrain_box;
+    arg0->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(0xA2) & 0xFF;
+    arg0->animation_table = (const u8* const*)light_capsule_animations;
+    arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
+    arg0->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    column = resource * 4 + 0x18;
+    row = resource + 6;
+    arg0->unk42 = (u16)((column - (column & 0x7F0)) | (((row >> 2) + 0x1E0) << 6));
+    arg0->unk16 = 4;
+    arg0->unk15 = 0;
+    arg0->unk75 = 1;
+    g_Player.item_step = 0;
+    set_animation(ANIMATED_OBJECT(arg0), 0);
+
+    for (;;) {
+        CollisionRelated(PLAYER_OBJECT(arg0));
+        if (arg0->unk70 & 8)
+            break;
+        arg0->y_pos.u.hi += 0x10;
+    }
+
+    child = find_free_item_obj();
+    if (child != NULL) {
+        child->active = 1;
+        child->id = 0x1A;
+        child->unk2 = 6;
+        child->unk7C.object = arg0;
+        child->bg_offset = arg0->bg_offset;
+    }
+
+    light_capsule_spawn_visual(arg0, 0x23, light_capsule_part_visuals[(u8)arg0->unk2]);
+    arg0->unk5 = 0;
+    arg0->state++;
+    collide_with_players(PLAYER_OBJECT(arg0));
+    update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C63BC);
+#endif
 
 void light_capsule_spawn_visual(struct ItemObj* arg0, s8 arg1, s8 arg2)
 {
@@ -320,7 +404,63 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 }
 
 // capsule_part_update
+#ifdef MMX4_PC
+void func_800C6EDC(struct VisualObj* arg0)
+{
+    s32 resource;
+    s32 column;
+    s32 index;
+
+    if (arg0->state == 0) {
+        arg0->active = 1;
+        arg0->on_screen = 1;
+        resource = func_8002938C(0xA2) & 0xFF;
+        column = resource * 4 + 0x18;
+        index = (s8)light_capsule_part_animations[arg0->unk2];
+        arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, index + 10);
+        arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, index + 18);
+        arg0->animation_table = D_8011BF40;
+        arg0->unk40 = 0x520;
+        arg0->unk42 = (column - (column & 0x7F0)) | ((((resource + 6) >> 2) + 0x1E0) << 6);
+        arg0->unk16 = 0;
+        arg0->unk15 = g_Player.unk15;
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->y_pos.val = g_Player.y_pos.val;
+        set_animation(ANIMATED_OBJECT(arg0), engine_obj.unk37 != 0 ? 0x26 : 0x25);
+        arg0->state++;
+        decompress_player_gfx((struct GraphicsObj*)arg0, 0x140, 0x20);
+    } else if (arg0->animation_step.fields.relative_step == 0) {
+        g_Player.item_step = 4;
+        ZeroObjectState(OBJECT_HEADER(arg0));
+        return;
+    } else {
+        animate_object(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->animation_step.fields.event = 0;
+            if (engine_obj.unk37 != 0) {
+                g_Player.armor_parts = 0xF;
+                g_Player.arm_type = 2;
+                engine_obj.arm_type = 2;
+            } else {
+                u8 bit = light_capsule_part_bits[arg0->unk2];
+
+                g_Player.armor_parts |= bit;
+                if (bit == 4) {
+                    if (arg0->unk2 == 2)
+                        g_Player.arm_type = 1;
+                    if (arg0->unk2 == 3)
+                        g_Player.arm_type = 2;
+                    engine_obj.arm_type = g_Player.arm_type;
+                }
+            }
+            engine_obj.armor_parts = g_Player.armor_parts;
+        }
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x88, 0x88);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_26_light_capsule", func_800C6EDC);
+#endif
 
 struct Item26AnimationStep {
     u8 duration;

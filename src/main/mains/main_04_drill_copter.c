@@ -6,6 +6,11 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision.h"
+#endif
+
 // drill_copter_state_funcs
 extern void (*drill_copter_state_funcs[])(struct MainObj*);
 
@@ -65,10 +70,65 @@ void drill_copter_update(struct MainObj* self)
 }
 
 // drill_copter_init
+#ifdef MMX4_PC
+void func_80044458(struct MainObj* self);
+void func_80044508(struct MainObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/mains/main_04_drill_copter.c
+
+void func_80044458(struct MainObj* self)
+{
+    self->unk5 = 1;
+    self->unk7C = 0xB4;
+    self->unk2 = 0;
+    self->state++;
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    self->x_speed = self->x_accel = self->y_speed = self->gravity = 0;
+    self->bg_offset = g_Player.bg_offset;
+    self->animation_table = (const u8* const*)drill_copter_animations;
+    self->collision_data = (const u16*)D_801064F0;
+    self->hurt_box = self->attack_box = &D_800F9EC0;
+    self->unk16 = self->hp = 6;
+    self->terrain_box = NULL;
+    self->air_state = 0;
+    self->contact_damage = 2;
+    self->unk15 = ((s32)((u32)self->x_pos.val - (u32)g_Player.x_pos.val) < 1) << 6;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044458);
+#endif
 
 // drill_copter_main
+#ifdef MMX4_PC
+void func_80044508(struct MainObj* self)
+{
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (self->unk2 == 1)
+        CollisionRelated(PLAYER_OBJECT(self));
+    func_8002D9BC(self);
+    if (func_8002DD04(self) < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(D_800FA0B4[(s8)self->unk2], D_800FA0A8[(s8)self->unk2], self);
+        if (self->unk2 != 2)
+            drop_item(BASE_OBJECT(self), 8);
+        self->state = 2;
+        return;
+    }
+    if (self->unk2 == 0)
+        func_80044DE4(self);
+    drill_copter_step_funcs[(s8)self->unk5](self);
+    if (func_8002B1E8(BASE_OBJECT(self), 0x40, 0x40) != 0)
+        self->state = 2;
+    else
+        is_on_screen(BASE_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044508);
+#endif
 
 void drill_copter_despawn(struct MainObj* self)
 {
@@ -322,7 +382,49 @@ void drill_copter_fire_reload(struct MainObj* self)
 }
 
 // drill_copter_spawn_clone
+#ifdef MMX4_PC
+void func_80044DE4(struct MainObj* self)
+{
+    struct MainObj* child;
+
+    self->unk7C = (u16)self->unk7C - 1;
+    if (self->unk7C != 0)
+        return;
+    child = find_free_main_obj();
+    if (child == NULL)
+        return;
+    child->active = 0x41;
+    child->on_screen = 1;
+    child->id = self->id;
+    child->unk40 = self->unk40;
+    child->unk42 = self->unk42;
+    child->sprite_frames = self->sprite_frames;
+    child->unk2 = 1;
+    child->bg_offset = self->bg_offset;
+    child->x_pos.val = self->x_pos.val;
+    child->y_pos.val = self->y_pos.val;
+    child->unk18.val = self->unk18.val;
+    child->unk1C.val = self->unk1C.val;
+    child->animation_table = (const u8* const*)drill_copter_animations;
+    child->unk15 = self->unk15;
+    child->terrain_box = &D_800F9EBC;
+    child->hurt_box = child->attack_box = D_800F9EC4;
+    child->unk16 = self->unk16;
+    child->hp = self->hp;
+    child->contact_damage = 4;
+    child->state = self->state;
+    child->unk5 = 3;
+    child->x_speed = child->x_accel = child->y_speed = child->gravity = 0;
+    child->air_state = 0;
+    child->backref = self->backref;
+    self->unk2 = 2;
+    self->unk5 = 4;
+    self->unk6 = 0;
+    self->unk7E = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_04_drill_copter", func_80044DE4);
+#endif
 
 struct Unk_unk68 D_800F9EBC = { 0, 8, 8, 16 };
 

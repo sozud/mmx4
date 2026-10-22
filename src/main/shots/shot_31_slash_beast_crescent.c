@@ -7,6 +7,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // slash_beast_crescent_state_funcs
 extern void (*slash_beast_crescent_state_funcs[])(struct ShotObj*);
 
@@ -25,7 +29,42 @@ void slash_beast_crescent_update(struct ShotObj* self)
 }
 
 // slash_beast_crescent_init
+#ifdef MMX4_PC
+void func_8009FF4C(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_8009FF4C(struct ShotObj* self)
+{
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk58.collision_data = D_80106070;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->unk42 &= 0x7FFF;
+    if (self->unk15 == 0)
+        self->x_pos.i.hi += slash_beast_crescent_offsets[self->unk2 * 2];
+    else
+        self->x_pos.i.hi -= slash_beast_crescent_offsets[self->unk2 * 2];
+    self->y_pos.i.hi += slash_beast_crescent_offsets[self->unk2 * 2 + 1];
+    if (self->unk2 == 0) {
+        self->y_vel.val = 0;
+        self->x_vel.val = self->unk15 != 0 ? 0x50000 : 0xFFFB0000;
+    } else {
+        self->y_vel.val = 0x38919;
+        self->x_vel.val = self->unk15 != 0 ? 0x38919 : 0xFFFC76E7;
+    }
+    self->unk5C = 1;
+    self->unk60 = 6;
+    self->unk16 = 0;
+    self->unk68 = NULL;
+    self->unk54 = slash_beast_crescent_boxes[self->unk2];
+    self->unk50.data = slash_beast_crescent_boxes[self->unk2];
+    set_animation(self, self->unk2 + 0x1A);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_31_slash_beast_crescent", func_8009FF4C);
+#endif
 
 void slash_beast_crescent_fly(struct ShotObj* self)
 {

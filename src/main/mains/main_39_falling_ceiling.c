@@ -8,6 +8,12 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 void falling_ceiling_main(struct MainObj*);
 void falling_ceiling_despawn(struct MainObj*);
 
@@ -31,7 +37,67 @@ void falling_ceiling_update(struct MainObj* self)
 }
 
 // falling_ceiling_init
+#ifdef MMX4_PC
+void func_80061B58(struct MainObj* self);
+void func_80061918(struct MainObj* self);
+void func_800615CC(struct MainObj* self);
+extern s8 D_800FE944[4];
+extern s8 D_800FE948[4];
+extern s8 D_800FE94C[4];
+extern union AnimationStep* falling_ceiling_animations[4];
+#endif
+
+#ifdef MMX4_PC
+void func_800615CC(struct MainObj* self)
+{
+    static const u16 top[6] = { 0xB20, 0xC20, 0xD20, 0xE20, 0xEA0, 0xF20 };
+    static const u16 left[6] = { 0xB60, 0xC60, 0xD60, 0xE60, 0xEE0, 0xF60 };
+    static const u16 center[6] = { 0xB70, 0xBF0, 0xCE0, 0xDD0, 0xE50, 0xEB0 };
+    u8* ext = (u8*)&self->ext;
+
+    self->contact_damage = 0x14;
+    self->hp = 6;
+    self->invincibility_timer = 0;
+    self->collision_data = D_801060F0;
+    self->animation_table = (const u8* const*)falling_ceiling_animations;
+    self->terrain_box = (struct Unk_unk68*)D_800FE94C;
+    self->hurt_box = D_800FE944;
+    self->attack_box = D_800FE948;
+    self->air_state = 0;
+    self->unk16 = 6;
+    self->unk15 = 0;
+    self->bg_offset = g_Player.bg_offset;
+    set_animation(self, 0);
+
+    if ((u8)self->unk2 < 12) {
+        u8 group = (u8)self->unk2 >> 1;
+        *(u16*)(ext + 2) = top[group];
+        if (!(self->unk2 & 1)) {
+            *(u16*)(ext + 0) = left[group];
+            *(u16*)(ext + 6) = group < 4 ? 0x188 : 0x180;
+        }
+        self->x_pos.val = (u32)(top[group] + ((self->unk2 & 1) ? 0x70 : 0x10)) << 16;
+        *(u16*)(ext + 4) = center[group];
+    }
+    *(u32*)(ext + 0xC) = 0x1200000;
+    self->y_pos.val = 0x1100000;
+    ext[8] = 0;
+    *(u32*)(ext + 0x10) = 0;
+    ext[0x14] = 1;
+    self->unk7E = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0x2000;
+    self->state = 1;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_800615CC);
+#endif
 
 void falling_ceiling_main(struct MainObj* self)
 {
@@ -55,7 +121,40 @@ void falling_ceiling_despawn(struct MainObj* self)
 }
 
 // falling_ceiling_wait
+#ifdef MMX4_PC
+void func_80061918(struct MainObj* self)
+{
+    struct Main39Ext* ext = &self->ext.main_39;
+
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_speed == 0x10000 || self->y_speed == -0x10000)
+        self->gravity = -self->gravity;
+    if (ext->unk88 == 0) {
+        if (ext->unk84.h.unk84 < g_Player.x_pos.i.hi) {
+            self->gravity = 0x2000;
+            set_animation(self, 1);
+            self->unk5 = 1;
+        }
+        return;
+    }
+    ext->unk8C += ext->unk90;
+    ext->unk90 += 0x1000;
+    if (ext->unk90 > 0x10000)
+        ext->unk90 = 0x10000;
+    if (ext->unk8C > 0x3000000)
+        ext->unk8C = 0x3000000;
+    if (g_Player.y_pos.val >= ext->unk8C || self->y_pos.val >= g_Player.y_pos.val)
+        return;
+    s32 target_x = g_Player.x_pos.i.hi + (self->unk2 & 1 ? 0x10 : -0x10);
+    if (target_x - self->x_pos.i.hi >= -0x10 && target_x - self->x_pos.i.hi <= 0x10) {
+        self->gravity = 0x8000;
+        self->unk5 = 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061918);
+#endif
 
 void falling_ceiling_drop(struct MainObj* self)
 {
@@ -78,7 +177,50 @@ void falling_ceiling_drop_start(struct MainObj* self)
 }
 
 // falling_ceiling_drop_fall
+#ifdef MMX4_PC
+void func_80061B58(struct MainObj* self)
+{
+    struct Main39Ext* ext = &self->ext.main_39;
+    if (--ext->unk94 == 0) {
+        func_8001540C(2, 0x59, self);
+        ext->unk94 = 0x1E;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    if (self->y_pos.i.hi >= 0x119) {
+        self->y_speed = 0;
+        self->gravity = 0;
+    }
+    self->unk7E++;
+    if ((self->unk7E & 7) == 0 && (!(background_objects[0].unk34 & 0x10) || (((u8*)&background_objects[0].unk3E)[0] & 7) != 4))
+        start_screen_shake_x(8, 4, 2);
+    if ((self->unk7E & 0xF) == 0)
+        spawn_explosion_at(0, self->x_pos.i.hi, self->y_pos.i.hi + 0x10, 1);
+    if (--self->unk7C != 0)
+        return;
+    if (self->unk2 & 1) {
+        self->unk6 = 2;
+        return;
+    }
+    for (s32 i = 0; i < 2; i++) {
+        struct ItemObj* item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 0x41;
+            item->id = 0xF;
+            item->unk2 = self->unk2 < 8 ? i : i + 2;
+            item->bg_offset = self->bg_offset;
+            item->x_pos.val = 0;
+            item->y_pos.val = 0;
+            item->x_pos.u.hi = ext->unk80.h.unk80;
+            item->y_pos.u.hi = ext->unk84.h.unk86;
+            item->state = 0;
+        }
+    }
+    self->unk6 = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_39_falling_ceiling", func_80061B58);
+#endif
 
 void falling_ceiling_drop_land(struct MainObj* self)
 {

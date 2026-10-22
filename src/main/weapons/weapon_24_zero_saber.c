@@ -5,6 +5,12 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#include "main/player_common.h"
+#include "main/sprite_animations.h"
+#endif
+
 void zero_saber_follow(struct WeaponObj*, struct PlayerObj*);
 
 void zero_saber_update(struct WeaponObj* arg0)
@@ -44,7 +50,59 @@ void zero_saber_update(struct WeaponObj* arg0)
 }
 
 // zero_saber_init
+#ifdef MMX4_PC
+void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player);
+void func_800981CC(struct WeaponObj* self);
+void func_80098474(struct MiscObj* self);
+extern u8 zero_saber_animations[24];
+// src/main/weapons/weapon_24_zero_saber.c
+
+extern struct Unk_unk68 rakuhouha_orb_box[];
+extern u8 ryuenjin_flame_animations[];
+extern u16 ryuenjin_flame_offsets[8];
+#endif
+
+#ifdef MMX4_PC
+void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
+{
+    u8 animation;
+    u8 palette;
+    s32 index;
+
+    weapon->on_screen = 1;
+    if (weapon->id == 0x21) {
+        weapon->active = 0x21;
+        weapon->unk40 = 0;
+        weapon->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 6);
+    } else {
+        weapon->unk40 = player->unk40;
+        weapon->unk3C = player->unk3C;
+    }
+    weapon->unk42 = 0x7801;
+    weapon->unk16 = 2;
+    weapon->animation_table = player->animation_table;
+    index = (weapon->id - 0x18) * 2;
+    animation = zero_saber_animations[index];
+    palette = zero_saber_animations[index + 1];
+    if (palette == 3 && ((u8)player->boss_flags & 0x40)) {
+        palette = 4;
+    }
+    if (weapon->id == 0x20 && weapon->unk2 != 0) {
+        animation = 0x78;
+    }
+    if (weapon->id == 0x1C) {
+        set_animation_frame(ANIMATED_OBJECT(weapon), 0x74, (u8)player->animation_step.fields.event & 0x1F);
+        weapon->animation_step.fields.duration = player->animation_step.fields.duration;
+    } else {
+        set_animation(weapon, animation);
+    }
+    player_copy_palette(player, palette, 1);
+    need_palette_load |= 1;
+    weapon->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80097FC4);
+#endif
 
 #ifdef VERSION_EU
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", zero_saber_follow);
@@ -76,7 +134,41 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
+#ifdef MMX4_PC
+void func_800981CC(struct WeaponObj* self)
+{
+    if (self->state == 0) {
+        self->on_screen = 1;
+        self->unk50 = rakuhouha_orb_box;
+        self->animation_table = D_8011C018;
+        self->unk42 = 0x7803;
+        self->unk16 = 1;
+        self->unk40 = 0;
+        self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
+        self->x_pos.u.hi = g_Player.x_pos.u.hi;
+        self->y_pos.u.hi = g_Player.y_pos.u.hi + 0x15;
+        self->unk15 = 0;
+        set_velocity_from_angle(MOVING_OBJECT(self), (0x10 - self->unk2 * 2) & 0xFE);
+        self->x_vel.val *= 7;
+        self->y_vel.val *= 7;
+        set_animation(self, self->unk2 + 0xA);
+        move_object(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+        self->state++;
+    } else {
+        if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) != 0 || self->unk98 != 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+            return;
+        }
+        animate_object(ANIMATED_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_800981CC);
+#endif
 
 // rising_flame_trail_update
 void func_80098338(struct VisualObj* self)
@@ -120,7 +212,36 @@ void func_80098338(struct VisualObj* self)
 }
 
 // ryuenjin_flame_update
+#ifdef MMX4_PC
+void func_80098474(struct MiscObj* self)
+{
+    if (self->state == 0) {
+        u16 offset;
+        self->on_screen = 1;
+        self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
+        self->animation_table = D_8011C018;
+        self->unk40 = 0;
+        self->unk42 = 0x7804;
+        self->unk16 = 1;
+        offset = ryuenjin_flame_offsets[(get_random() & 3) * 2];
+        self->x_pos.u.hi = g_Player.x_pos.u.hi + (g_Player.unk15 ? -offset : offset);
+        self->y_pos.u.hi = g_Player.y_pos.u.hi
+            + ryuenjin_flame_offsets[(get_random() & 3) * 2 + 1];
+        self->unk15 = g_Player.unk15;
+        set_animation(self, ryuenjin_flame_animations[get_random() & 3]);
+        self->state++;
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+        if (self->animation_step.fields.relative_step == 0) {
+            ZeroObjectState(OBJECT_HEADER(self));
+            return;
+        }
+    }
+    update_on_screen(BASE_OBJECT(self), 0x18, 0x18);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_24_zero_saber", func_80098474);
+#endif
 
 struct Unk_unk68 rakuhouha_orb_box[] = {
     { -26, -26, 0x34, 0x34 },

@@ -7,7 +7,38 @@
 #include "main/objects.h"
 
 // option_toggle_init
+#ifdef MMX4_PC
+static u16 misc_31_palette(struct MiscObj* arg0);
+void func_800CDE44(struct MiscObj* arg0);
+static u16 misc_31_palette(struct MiscObj* arg0)
+{
+    return arg0->unk2 == 3 && D_800F1D90.save.character == 0xFF ? 0x7804 : 0x7800;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_800CDE44(struct MiscObj* arg0)
+{
+    arg0->unk40 = 0x1F00;
+    arg0->bg_offset = -1;
+    arg0->unk3C = WINDOW_ARCHIVE_DATA + ((s32*)WINDOW_ARCHIVE_DATA)[0];
+    arg0->unk15 = 0;
+    arg0->unk42 = arg0->y_pos.i.hi == 0x10 ? 0x7802 : misc_31_palette(arg0);
+    arg0->x_pos.i.hi = 0xA0;
+    arg0->unk16 = 0x10;
+    if ((u8)(arg0->unk2 - 0x56) < 2) {
+        arg0->state += 2;
+        arg0->ext.misc_31.animation = D_80171EA9;
+        arg0->animation_step.fields.frame_index = D_80171EA9 != 0 ? 0x56 : 0x57;
+    } else {
+        arg0->state++;
+        arg0->animation_step.fields.frame_index = arg0->unk2;
+    }
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_31_option_toggle", func_800CDE44);
+#endif
 
 // option_toggle_appear
 void func_800CDF4C(struct MiscObj* self)

@@ -402,7 +402,32 @@ void lightning_web_charged_fade(struct WeaponObj* arg0)
 }
 
 // lightning_web_charged_part_init
+#ifdef MMX4_PC
+void func_80093930(struct WeaponObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/weapons/weapon_01_lightning_web.c
+
+void func_80093930(struct WeaponObj* self)
+{
+    self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[2];
+    self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[10];
+    self->animation_table = D_8011C070;
+    self->unk40 = 0x540;
+    self->unk42 = 0x7801;
+    self->unk16 = 1;
+    self->unk15 = 0;
+    set_velocity_from_angle(MOVING_OBJECT(self), ((self->unk2 - 1) * 4) & 0xFC);
+    self->unk49 = 2;
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
+    set_animation(self, 6);
+    self->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_01_lightning_web", func_80093930);
+#endif
 
 void lightning_web_charged_part_wait(struct WeaponObj* arg0)
 {

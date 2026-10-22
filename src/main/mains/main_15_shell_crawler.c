@@ -47,7 +47,74 @@ void shell_crawler_buried(struct MainObj* self)
 }
 
 // shell_crawler_check_hop
+#ifdef MMX4_PC
+void func_8004D9CC(struct MainObj* arg0);
+void func_8004DCB0(struct MainObj* arg0);
+static void main_15_spawn_spark(struct MainObj* arg0, u8 index);
+void func_8004E300(struct MainObj* arg0);
+void func_8004E490(struct MainObj* arg0);
+void func_8004E55C(struct MainObj* arg0);
+extern struct Unk_unk68 shell_crawler_terrain_box;
+extern union AnimationStep* shell_crawler_animations[14];
+static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
+{
+    struct ShotObj* shot = find_free_shot_obj();
+
+    if (shot == NULL)
+        return;
+    shot->active = 0x41;
+    shot->id = 0xA;
+    shot->unk42 = 0x7885;
+    shot->bg_offset = arg0->bg_offset;
+    shot->x_pos.val = arg0->x_pos.val;
+    shot->unk2 = index * 2;
+    shot->y_pos.val = arg0->y_pos.val;
+    set_velocity_from_angle(MOVING_OBJECT(shot), (s8)(index * 2));
+    arg0->unk7C = 0xA;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_8004D9CC(struct MainObj* arg0)
+{
+    struct Main0Ext* ext = &arg0->ext.main_0;
+    s32 dy;
+
+    if (arg0->air_state != 0 || (ext->background_relative & 3))
+        return;
+    if (ext->flags[1] != 0) {
+        ext->flags[1]--;
+        return;
+    }
+    dy = arg0->y_pos.i.hi - g_Player.y_pos.i.hi;
+    if (dy < 0)
+        dy = -dy;
+    if (dy >= 0x28) {
+        ext->index = 0;
+        return;
+    }
+    if (arg0->unk15 != 0) {
+        if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi + 0x50)
+            ext->index++;
+        else
+            ext->index = 0;
+    } else {
+        if (arg0->x_pos.i.hi - 0x50 < g_Player.x_pos.i.hi)
+            ext->index++;
+        else
+            ext->index = 0;
+    }
+    if (ext->index >= 0x3D) {
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        set_animation(arg0, 7);
+        ext->index = 0;
+        ext->background_relative |= 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004D9CC);
+#endif
 
 // shell_crawler_check_shell
 void func_8004DB10(struct MainObj* self)
@@ -100,7 +167,50 @@ void func_8004DB10(struct MainObj* self)
 }
 
 // shell_crawler_check_shoot
+#ifdef MMX4_PC
+void func_8004DCB0(struct MainObj* arg0)
+{
+    struct Main0Ext* ext = &arg0->ext.main_0;
+    struct WeaponObj* weapon;
+    s32 dy;
+
+    if (arg0->air_state != 0 || (ext->background_relative & 1))
+        return;
+    if (ext->flags[0] != 0) {
+        ext->flags[0]--;
+        return;
+    }
+    for (weapon = weapon_objects; weapon < weapon_objects + COUNT(weapon_objects); weapon++) {
+        if (!weapon->active || weapon->id != 0)
+            continue;
+        if (arg0->unk15 != 0) {
+            if (g_Player.unk15 == 0 && arg0->x_pos.val < g_Player.x_pos.val) {
+                dy = weapon->y_pos.i.hi - arg0->y_pos.i.hi;
+                if (dy < 0)
+                    dy = -dy;
+                if (dy < 0x18 && weapon->x_pos.i.hi < arg0->x_pos.i.hi + 0x80)
+                    ext->background_relative |= 1;
+            }
+        } else {
+            if (g_Player.unk15 != 0 && g_Player.x_pos.val < arg0->x_pos.val) {
+                dy = weapon->y_pos.i.hi - arg0->y_pos.i.hi;
+                if (dy < 0)
+                    dy = -dy;
+                if (dy < 0x18 && arg0->x_pos.i.hi - 0x80 < weapon->x_pos.i.hi)
+                    ext->background_relative |= 1;
+            }
+        }
+        if (ext->background_relative & 1) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            set_animation(arg0, 5);
+            return;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004DCB0);
+#endif
 
 void shell_crawler_hop(struct MainObj* self)
 {
@@ -241,13 +351,106 @@ void shell_crawler_walk(struct MainObj* self)
 }
 
 // shell_crawler_frozen
+#ifdef MMX4_PC
+void func_8004E300(struct MainObj* arg0)
+{
+    u8 i;
+
+    switch (arg0->unk6) {
+    case 0:
+        arg0->unk6++;
+        arg0->gravity = 0x4200;
+        arg0->air_state = -1;
+        arg0->y_speed = 0;
+        arg0->x_speed = 0;
+        arg0->x_accel = 0;
+        arg0->collision_data = D_801069F4;
+        set_animation(arg0, 0xD);
+        /* fallthrough */
+    case 1:
+        if (arg0->collision_flags & 8) {
+            arg0->gravity = 0;
+            arg0->air_state = 0;
+        }
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        break;
+    }
+    if (func_8002DD04(arg0) != 0 || func_8002D9BC(arg0) != 0) {
+        arg0->state = 2;
+        spawn_explosion(BASE_OBJECT(arg0));
+        for (i = 0; i < 0x10; i += 2)
+            main_15_spawn_spark(arg0, i);
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) != 0) {
+        arg0->state = 2;
+        return;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x25, 0x25);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
+#endif
 
 // shell_crawler_thaw
+#ifdef MMX4_PC
+void func_8004E490(struct MainObj* arg0)
+{
+    u8 i;
+
+    if (--arg0->unk7C != 0)
+        return;
+    arg0->state = 2;
+    for (i = 1; i < 0x10; i += 2)
+        main_15_spawn_spark(arg0, i);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
+#endif
 
 // shell_crawler_init
+#ifdef MMX4_PC
+void func_8004E55C(struct MainObj* arg0)
+{
+    struct Main0Ext* ext = &arg0->ext.main_0;
+
+    arg0->unk5 = 1;
+    arg0->state++;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)shell_crawler_animations;
+    arg0->unk16 = 6;
+    arg0->terrain_box = &shell_crawler_terrain_box;
+    arg0->hurt_box = &shell_crawler_body_box;
+    arg0->attack_box = &shell_crawler_body_box;
+    arg0->hp = 3;
+    arg0->collision_data = D_801069F4;
+    arg0->invincibility_timer = 0;
+    arg0->air_state = 0;
+    arg0->contact_damage = 1;
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    arg0->gravity = 0;
+    ext->background_relative = 0;
+    ext->flags[0] = 0;
+    ext->index = 0;
+    ext->flags[1] = 0;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    if ((u8)(arg0->unk2 - 2) < 2) {
+        arg0->state = 5;
+        arg0->hurt_box = NULL;
+        arg0->attack_box = NULL;
+        arg0->x_pos.i.hi = (arg0->x_pos.i.hi & ~0xF) + 8;
+        arg0->y_pos.i.hi = (arg0->y_pos.i.hi & ~0xF) + 0x14;
+        set_animation(arg0, 0);
+    } else {
+        set_animation(arg0, 1);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E55C);
+#endif
 
 void shell_crawler_main(struct MainObj* self)
 {

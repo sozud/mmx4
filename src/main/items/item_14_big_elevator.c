@@ -120,7 +120,36 @@ void big_elevator_arrive(struct ItemObj* arg0)
 }
 
 // big_elevator_transition
+#ifdef MMX4_PC
+void func_800C3BA4(struct ItemObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_800C3BA4(struct ItemObj* self)
+{
+    u8* phase = (u8*)&self->ext;
+    struct BackgroundObj* bg = &background_objects[0];
+
+    if (self->y_pos.i.hi < 0x3B1 && bg->y_pos.i.hi == 0x2D0) {
+        bg->unk20 = 0x2D0;
+        bg->unk22 = 0x2D0;
+        start_screen_shake_y(0x1E, 2, 1);
+        stop_sound(5, 5);
+        self->unk5++;
+        return;
+    }
+    *phase = 1 - *phase;
+    if (*phase != 0) {
+        bg->unk47 = 1;
+        return;
+    }
+    if (self->y_pos.i.hi >= 0x3B1)
+        self->y_pos.u.hi--;
+    bg->unk47 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_14_big_elevator", func_800C3BA4);
+#endif
 
 void big_elevator_restore_camera(struct ItemObj* arg0)
 {

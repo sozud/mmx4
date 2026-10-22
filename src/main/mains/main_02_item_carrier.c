@@ -8,6 +8,10 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 void item_carrier_hide(struct MainObj* arg0);
 void item_carrier_despawn(struct MainObj* arg0);
 
@@ -58,7 +62,47 @@ void item_carrier_update(struct MainObj* self)
 }
 
 // item_carrier_check_needed
+#ifdef MMX4_PC
+void func_80042950(struct MainObj* arg0);
+void func_80042AFC(struct MainObj* arg0);
+extern struct Unk_unk68* item_carrier_part_hurtboxes[2];
+extern u8* item_carrier_part_debris[2];
+extern u8 item_carrier_part_debris_counts[4];
+extern void (*item_carrier_action_funcs[])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80042950(struct MainObj* arg0)
+{
+    u8* ext = (u8*)&arg0->ext;
+    u8 weapon;
+    s32 flags;
+
+    arg0->active = (u8)arg0->active | 4;
+    weapon = (u8)g_Player.weapon;
+    flags = 0;
+    if (((s8)engine_obj.max_hp / 2) >= g_Player.hp) {
+        flags = 1;
+        ext[0] = 1;
+    }
+    if (engine_obj.cur_character == 0) {
+        if (weapon != 0 && g_Player.weapon_energy[weapon] < 0x19) {
+            flags |= 2;
+            ext[0] = 3;
+        }
+    }
+    if ((flags & 0xFF) == 0) {
+        despawn_object(OBJECT_HEADER(arg0));
+        return;
+    }
+    if ((flags & 0xFF) == 3) {
+        ext[0] = g_Player.weapon_energy[weapon] >= g_Player.hp ? 1 : 3;
+    }
+    arg0->state = (u8)arg0->state + 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042950);
+#endif
 
 // item_carrier_init
 void func_80042A48(struct MainObj* self)
@@ -86,7 +130,56 @@ void func_80042A48(struct MainObj* self)
 }
 
 // item_carrier_main
+#ifdef MMX4_PC
+void func_80042AFC(struct MainObj* arg0)
+{
+    struct ItemObj* item;
+    s32 i;
+
+    if (arg0->unk2 == 0) {
+        for (i = 0; i < 2; i++) {
+            arg0->hurt_box = (const u8*)item_carrier_part_hurtboxes[i];
+            if (func_8002DD04(arg0) < 0) {
+                spawn_explosion(BASE_OBJECT(arg0));
+                spawn_debris(item_carrier_part_debris_counts[i], item_carrier_part_debris[i], arg0);
+                if (i == 0) {
+                    arg0->unk2 = 2;
+                    arg0->unk5 = 2;
+                    arg0->unk6 = 0;
+                    arg0->hp = 1;
+                    break;
+                }
+                goto spawn_item;
+            }
+        }
+    } else if (func_8002DD04(arg0) < 0) {
+        spawn_explosion(BASE_OBJECT(arg0));
+        spawn_debris(3, item_carrier_capsule_debris, arg0);
+    spawn_item:
+        item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 0x21;
+            item->id = 2;
+            item->unk2 = (u8)arg0->ext.main_10.timer;
+            item->x_pos.val = arg0->x_pos.val;
+            item->y_pos.val = arg0->y_pos.val;
+            item->backref = NULL;
+            item->bg_offset = arg0->bg_offset;
+        }
+        arg0->state = (u8)arg0->state + 1;
+        return;
+    }
+
+    item_carrier_action_funcs[arg0->unk5](arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x40, 0x40) == 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x20, 0x20);
+        return;
+    }
+    arg0->state = (u8)arg0->state + 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_02_item_carrier", func_80042AFC);
+#endif
 
 void item_carrier_hide(struct MainObj* self)
 {

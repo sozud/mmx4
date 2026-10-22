@@ -1002,7 +1002,35 @@ void player_capsule(struct PlayerObj* self)
 }
 
 // player_capsule_enter
+#ifdef MMX4_PC
+void func_80032FA4(struct PlayerObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80032FA4(struct PlayerObj* arg0)
+{
+    if (arg0->capsule_state == 0) {
+        if (arg0->unk88.unsigned_bytes.collision_flags & 8) {
+            player_enter_stand(arg0);
+            arg0->dash_momentum = 0;
+        } else {
+            player_set_animation(arg0, 0xB);
+            arg0->unk2C = 0x4200;
+            arg0->x_vel.val = 0;
+            arg0->unk28 = 0;
+            arg0->y_vel.val = 0;
+            arg0->air_state = -1;
+            arg0->unk6++;
+            arg0->dash_momentum = 0;
+        }
+        arg0->air_action = 0;
+    } else if (arg0->air_state == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player", func_80032FA4);
+#endif
 
 void player_capsule_fall(struct PlayerObj* self)
 {

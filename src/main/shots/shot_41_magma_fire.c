@@ -8,6 +8,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#include "main/stage_objects.h"
+#endif
+
 // magma_fire_pillar_funcs
 extern void (*magma_fire_pillar_funcs[])(struct ShotObj*);
 
@@ -36,7 +41,105 @@ void magma_fire_main(struct ShotObj*);
 void magma_fire_despawn(struct ShotObj*);
 
 // magma_fire_init
+#ifdef MMX4_PC
+void func_800A56E4(struct ShotObj* arg0);
+void func_800A5AA4(struct ShotObj* arg0);
+void func_800A5BA8(struct ShotObj* arg0);
+void func_800A5E60(struct ShotObj* arg0);
+void func_800A60D0(struct ShotObj* arg0);
+extern u8 magma_fire_wave_hit_box[4];
+extern u8 magma_fire_pillar_hit_boxes[][4];
+extern u8 magma_fire_ember_hit_box[4];
+extern u8 magma_fire_ember_terrain_box[4];
+extern u8 magma_fire_burst_hit_box[4];
+extern u8 magma_fire_burst_terrain_box[4];
+extern s16 magma_fire_wave_offsets[8];
+extern u8 magma_fire_breath_hit_box[4];
+extern u8 magma_fire_column_hit_box[4];
+extern u16 magma_fire_pillar_positions[8];
+#endif
+
+#ifdef MMX4_PC
+void func_800A56E4(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+
+    arg0->unk40 = owner->unk40;
+    arg0->animation_table = (u32**)owner->animation_table;
+    arg0->unk3C = (void*)owner->sprite_frames;
+    arg0->unk5C = 0;
+    arg0->unk16 = 1;
+    arg0->unk42 = owner->unk42 & 0x7FFF;
+    arg0->bg_offset = owner->bg_offset;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk58.data = (u8*)D_801060F0;
+        arg0->unk54 = NULL;
+        arg0->unk60 = 9;
+        arg0->unk15 = owner->unk15;
+        arg0->x_pos.val = owner->x_pos.val + (arg0->unk15 != 0 ? 0x180000 : -0x180000);
+        arg0->y_pos.val = owner->y_pos.val + 0x100000;
+        arg0->y_vel.val = 0x20000;
+        arg0->unk5 = 2;
+        arg0->timer = 7;
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x60000 : -0x60000;
+        arg0->unk50.data = magma_fire_wave_hit_box;
+        arg0->unk68 = NULL;
+        arg0->state++;
+        set_animation(arg0, 0x1C);
+        break;
+    case 1:
+        arg0->unk58.data = (u8*)D_80105FF0;
+        arg0->unk15 = 0;
+        arg0->unk54 = NULL;
+        arg0->unk60 = 4;
+        arg0->x_pos.val = owner->x_pos.val + (owner->unk15 != 0 ? -0x100000 : 0x100000);
+        arg0->y_pos.val = owner->y_pos.val - 0x200000;
+        arg0->x_vel.val = (s32)((u32)magma_fire_wave_offsets[arg0->unk7] << 12);
+        if (arg0->unk15 != 0)
+            arg0->x_vel.val = -arg0->x_vel.val;
+        arg0->y_vel.val = 0x50000;
+        arg0->unk5 = 3;
+        arg0->unk50.data = (u8*)magma_fire_pillar_hit_boxes;
+        arg0->unk68 = NULL;
+        arg0->state++;
+        set_animation(arg0, 0x1D);
+        break;
+    case 2:
+        arg0->unk58.data = (u8*)D_801060F0;
+        arg0->unk50.data = magma_fire_ember_hit_box;
+        arg0->unk54 = NULL;
+        arg0->unk68 = (struct Unk_unk68*)magma_fire_ember_terrain_box;
+        arg0->unk60 = 4;
+        arg0->unk15 = owner->unk15;
+        arg0->x_pos.val = owner->x_pos.val;
+        arg0->y_pos.val = owner->y_pos.val - 0x400000;
+        arg0->y_vel.val = 0x1C000;
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x40000 : -0x40000;
+        arg0->unk28 = 0;
+        arg0->unk2C = 0x1300;
+        arg0->unk5 = 4;
+        arg0->state++;
+        set_animation(arg0, 0x1F);
+        break;
+    case 3:
+        arg0->unk58.data = (u8*)D_801060F0;
+        arg0->unk50.data = magma_fire_burst_hit_box;
+        arg0->unk68 = (struct Unk_unk68*)magma_fire_burst_terrain_box;
+        arg0->unk60 = 6;
+        arg0->unk5 = 5;
+        arg0->unk54 = NULL;
+        arg0->timer = 3;
+        arg0->state++;
+        arg0->unk15 = owner->unk15;
+        set_animation(arg0, 0x1B);
+        break;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A56E4);
+#endif
 
 void magma_fire_wave(struct ShotObj* arg0)
 {
@@ -58,10 +161,63 @@ void magma_fire_wave(struct ShotObj* arg0)
 }
 
 // magma_fire_pillar_rise
+#ifdef MMX4_PC
+void func_800A5AA4(struct ShotObj* arg0)
+{
+    struct BaseObj* owner = (struct BaseObj*)arg0->unk7C;
+
+    func_8002D9BC(arg0);
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->on_screen != 0)
+        return;
+    if (owner->state != 1) {
+        arg0->unk5 = 0;
+        arg0->state++;
+        return;
+    }
+    set_animation(arg0, 0x1E);
+    arg0->unk54 = magma_fire_breath_hit_box;
+    arg0->x_pos.i.hi = background_objects[0].x_pos.i.hi + magma_fire_pillar_positions[arg0->unk7] + (get_random() & 0x1F);
+    arg0->x_vel.val = -0x60000;
+    arg0->y_vel.val = -0x60000;
+    arg0->unk6++;
+    arg0->timer = (arg0->unk7 << 3) + 0x64;
+    arg0->unk8A = 4;
+    arg0->y_pos.i.hi = background_objects[0].y_pos.i.hi - 0x20;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5AA4);
+#endif
 
 // magma_fire_pillar_erupt
+#ifdef MMX4_PC
+void func_800A5BA8(struct ShotObj* arg0)
+{
+    s16 timer = arg0->timer;
+    s16 floor;
+
+    if (timer >= 2) {
+        arg0->timer = timer - 1;
+        return;
+    }
+    if (timer == 1) {
+        arg0->timer = 0;
+        start_screen_shake_y(0x78, 4, 2);
+    }
+    func_8002D9BC(arg0);
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    floor = engine_obj.stage == 0xC ? 0x6C8 : 0x2B8;
+    if (arg0->y_pos.i.hi <= floor)
+        return;
+    set_animation(arg0, 0x20);
+    arg0->y_pos.i.hi = floor;
+    arg0->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5BA8);
+#endif
 
 void magma_fire_pillar_repeat(struct ShotObj* self)
 {
@@ -114,7 +270,32 @@ void magma_fire_breath_drop(struct ShotObj* self)
 }
 
 // magma_fire_breath_burn
+#ifdef MMX4_PC
+void func_800A5E60(struct ShotObj* arg0)
+{
+    func_8002D9BC(arg0);
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.relative_step != 0) {
+        update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
+        return;
+    }
+    arg0->unk60 = 9;
+    arg0->unk6++;
+    set_animation(arg0, 0x23);
+    if (engine_obj.stage == 0xC)
+        arg0->x_pos.i.hi = arg0->unk15 != 0 ? 0x2C8 : 0x138;
+    else
+        arg0->x_pos.i.hi = arg0->unk15 != 0 ? 0x15A8 : 0x1418;
+    arg0->unk50.data = magma_fire_column_hit_box;
+    arg0->y_vel.val = 0x40000;
+    arg0->x_vel.val = 0;
+    arg0->timer = 0xC8;
+    arg0->y_pos.i.hi += 0x12C;
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x80);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A5E60);
+#endif
 
 void magma_fire_breath_rise(struct ShotObj* self)
 {
@@ -161,7 +342,37 @@ void magma_fire_breath(struct ShotObj* self)
 }
 
 // magma_fire_spread
+#ifdef MMX4_PC
+void func_800A60D0(struct ShotObj* arg0)
+{
+    struct ShotObj* child;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    func_8002D9BC(arg0);
+    update_on_screen(BASE_OBJECT(arg0), 0x30, 0x30);
+    if (--arg0->timer == 0 && (arg0->unk70 & 3) == 0) {
+        child = find_free_shot_obj();
+        if (child != NULL) {
+            child->active = 0x41;
+            child->id = 0x29;
+            child->unk2 = 3;
+            child->unk7C = (struct WeaponObj*)arg0;
+            child->x_pos.i.hi = arg0->x_pos.i.hi + (arg0->unk15 != 0 ? 0x18 : -0x18);
+            child->timer = 3;
+            child->y_pos.i.hi = arg0->y_pos.i.hi;
+        }
+    }
+    if (arg0->animation_step.fields.frame_index == 0x8A)
+        arg0->unk50.data = NULL;
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->state++;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_41_magma_fire", func_800A60D0);
+#endif
 
 void magma_fire_burst(struct ShotObj* self)
 {

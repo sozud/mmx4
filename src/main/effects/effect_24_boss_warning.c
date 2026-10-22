@@ -20,10 +20,69 @@ void boss_warning_main(struct EffectObj*);
 void boss_warning_despawn(struct EffectObj*);
 
 // boss_warning_init
+#ifdef MMX4_PC
+void func_800BABA8(struct EffectObj* arg0);
+void func_800BAC58(struct EffectObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+// src/main/effects/effect_24_boss_warning.c
+
+void func_800BABA8(struct EffectObj* arg0)
+{
+    struct EffectObj* spawned;
+    s32 stage = engine_obj.stage;
+
+    if (stage >= 1 && stage <= 8
+        && ((engine_obj.palette_flags >> (stage - 1)) & 1) != 0) {
+        engine_obj.unkF = 1;
+        return;
+    }
+
+    spawned = find_free_effect_obj();
+    if (spawned != NULL) {
+        spawned->active = 1;
+        spawned->id = 4;
+        arg0->ext.effect_24.spawned_effect = spawned;
+    }
+    arg0->ext.effect_24.timer = 0;
+    arg0->ext.effect_24.unk1A = 5;
+    arg0->ext.effect_24.unk1B = 0;
+    arg0->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BABA8);
+#endif
 
 // boss_warning_spawn_tiles
+#ifdef MMX4_PC
+void func_800BAC58(struct EffectObj* arg0)
+{
+    struct QuadObj* quad;
+
+    if (arg0->ext.effect_24.timer != 0) {
+        arg0->ext.effect_24.timer--;
+        return;
+    }
+
+    quad = find_free_quad_obj();
+    if (quad == NULL)
+        return;
+    quad->active = -0x7D;
+    quad->id = 3;
+    quad->unk2 = arg0->ext.effect_24.unk1B;
+    boss_warning_tiles[arg0->ext.effect_24.unk1B] = (struct EffectObj*)quad;
+    arg0->ext.effect_24.timer = 2;
+    arg0->ext.effect_24.unk1B++;
+    if (arg0->ext.effect_24.unk1B == 0x16) {
+        arg0->ext.effect_24.unk1B = 0;
+        arg0->ext.effect_24.timer = 0xB4;
+        arg0->unk5++;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_24_boss_warning", func_800BAC58);
+#endif
 
 void boss_warning_wait(struct EffectObj* self)
 {

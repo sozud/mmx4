@@ -23,7 +23,69 @@ void grenade_update(struct ShotObj* self)
 }
 
 // grenade_init
+#ifdef MMX4_PC
+void func_8009EBA8(struct ShotObj* self);
+extern u8 grenade_hit_box[4];
+extern u8 grenade_terrain_box[4];
+extern s8 grenade_spawn_offsets[8];
+#endif
+
+#ifdef MMX4_PC
+void func_8009EBA8(struct ShotObj* self)
+{
+    s32 velocity;
+    s32 variant;
+    s16 x;
+
+    self->on_screen = 1;
+    self->state = (u8)self->state + 1;
+    variant = (u8)self->unk2 & 0xF;
+
+    if (self->unk2 & 0x80) {
+        self->y_vel.val = 0;
+        velocity = variant == 1 ? -FIXED(3) : -FIXED(1.5);
+        if (self->unk15 != 0) {
+            velocity = FIXED(3);
+        }
+        self->x_vel.val = velocity;
+        if (variant == 0) {
+            self->y_vel.val = FIXED(1.5);
+        }
+        if (variant == 2) {
+            self->y_vel.val = -FIXED(1.5);
+        }
+        self->unk28 = 0;
+        self->unk2C = 0;
+        set_animation(self, 0x10);
+        self->unk60 = 2;
+    } else {
+        velocity = self->unk15 != 0 ? FIXED(3) : -FIXED(3);
+        self->y_vel.val = FIXED(1.5);
+        self->x_vel.val = velocity;
+        self->unk28 = 0;
+        self->unk2C = 0x4000;
+        set_animation(self, 0x16);
+        self->unk60 = 5;
+    }
+
+    x = self->x_pos.i.hi;
+    if (self->unk15 != 0) {
+        x += grenade_spawn_offsets[variant << 1];
+    } else {
+        x -= grenade_spawn_offsets[variant << 1];
+    }
+    self->x_pos.i.hi = x;
+
+    self->unk16 = 6;
+    self->unk68 = (struct Unk_unk68*)grenade_terrain_box;
+    self->unk54 = grenade_hit_box;
+    self->unk50.data = grenade_hit_box;
+    self->unk67 = 0;
+    self->y_pos.u.hi += (s8)grenade_spawn_offsets[(variant << 1) + 1];
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_25_grenade", func_8009EBA8);
+#endif
 
 void grenade_fly(struct ShotObj* self)
 {

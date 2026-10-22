@@ -122,7 +122,56 @@ void snowman_bomb_resume_step(struct MainObj* self)
 }
 
 // snowman_bomb_hop
+#ifdef MMX4_PC
+void func_80050278(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80050278(struct MainObj* arg0)
+{
+    struct Main17Ext* ext = &arg0->ext.main_17;
+    s32 dx;
+
+    if (--ext->unk80 != 0) {
+        if (arg0->collision_flags & 3)
+            arg0->unk15 ^= 0x40;
+        arg0->x_speed = arg0->unk15 != 0 ? 0x10000 : -0x10000;
+        arg0->y_speed = 0x80000;
+        ext->saved_unk5 = arg0->y_pos.val;
+        move_object(MOVING_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    arg0->gravity = 0;
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (!(dx < 0x61 && arg0->y_pos.i.hi - g_Player.y_pos.i.hi < 0x11) && --ext->unk88 != 0) {
+        if (--ext->unk84 == 0) {
+            arg0->unk5 = 3;
+            arg0->unk6 = 0;
+            set_animation(arg0, 1);
+        } else {
+            arg0->unk7C = 0x14;
+            arg0->unk5 = 6;
+            arg0->unk6 = 0;
+        }
+        return;
+    }
+    arg0->x_speed = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+    arg0->x_accel = -0x1000;
+    ext->unk8C = 1;
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+    set_animation(arg0, 2);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_17_snowman_bomb", func_80050278);
+#endif
 
 void snowman_bomb_turn(struct MainObj* self)
 {

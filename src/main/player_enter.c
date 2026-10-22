@@ -394,7 +394,43 @@ void player_enter_wall_cling(struct PlayerObj* self)
 }
 
 // player_enter_wall_jump
+#ifdef MMX4_PC
+s32 func_80034E2C(void);
+void func_800349F4(struct PlayerObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800349F4(struct PlayerObj* arg0)
+{
+    player_set_animation_shooting(arg0, 0xE);
+    func_8001540C(1, 3, BASE_OBJECT(arg0));
+    player_play_voice(arg0, 2);
+    arg0->air_state = 1;
+    if (arg0->input.buttons.held & 0x100) {
+        arg0->dash_momentum = 1;
+        arg0->air_action = 1;
+        arg0->afterimage = 1;
+    } else {
+        player_clear_dash(arg0);
+    }
+    if (arg0->unk88.bytes.collision_flags & 1) {
+        arg0->unk15 = 0x40;
+        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(-4.125) : FIXED(-2);
+    } else {
+        arg0->unk15 = 0;
+        arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(4.125) : FIXED(2);
+    }
+    arg0->y_vel.val = FIXED(5.625);
+    arg0->unk28 = 0;
+    arg0->unk2C = 0x4200;
+    arg0->unk8A.bytes.low = 10;
+    player_spawn_wall_kick_spark(arg0);
+    arg0->unk5 = 10;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_enter", func_800349F4);
+#endif
 void player_enter_wall_slide(struct PlayerObj* self)
 {
     player_set_animation_shooting(self, 0xF);
@@ -507,7 +543,58 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
+#ifdef MMX4_PC
+s32 func_80034E2C(void)
+{
+    struct PlayerObj* player = &g_Player;
+
+    player->unk6 = 0;
+    player->unk5 = player->script_action;
+    player_clear_dash_and_attack(player);
+    switch ((u8)(player->unk5 - 0x14)) {
+    case 0:
+        if ((u8)(player->unk17 - 5) >= 2)
+            player_set_idle_animation(player);
+        player->script_state = -1;
+        player->unk15 = player->script_facing;
+        break;
+    case 1:
+        player_set_animation(player, 0x26);
+        player->y_vel.val = 0;
+        player->unk28 = 0;
+        player->unk2C = 0;
+        if (player->script_facing == 0) {
+            player_script_walk_to_mark(player);
+            break;
+        }
+        player->unk15 = 0x40;
+        break;
+    case 2:
+        player_set_animation(player, 3);
+        player->script_state = -1;
+        player->unk15 = player->script_facing;
+        break;
+    case 3:
+        player_set_animation(player, 0xA);
+        player_set_collision_bounds(player);
+        player->y_vel.val = 0x5D000;
+        player->unk2C = 0x4200;
+        player->x_vel.val = 0;
+        player->unk28 = 0;
+        player->air_state = 1;
+        player->unk15 = player->script_facing;
+        break;
+    case 4:
+        player_set_animation(player, 0x6B);
+        player_reset_weapon(player);
+        player->unk15 = player->script_facing;
+        break;
+    }
+    return 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_enter", func_80034E2C);
+#endif
 void player_start_stage_clear(struct PlayerObj* self)
 {
     u8 flags;

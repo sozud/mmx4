@@ -9,6 +9,10 @@
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 
+#ifdef MMX4_PC
+#include "main/visuals/visual_03_small_effect.h"
+#endif
+
 // layout_gate_state_funcs
 extern void (*layout_gate_state_funcs[])(struct ItemObj*);
 void layout_gate_init(struct ItemObj*);
@@ -197,7 +201,39 @@ void layout_gate_apply_layout(struct ItemObj* arg0)
 }
 
 // layout_gate_restore_layout
+#ifdef MMX4_PC
+void func_800C5994(struct ItemObj* self, u8 collision);
+#endif
+
+#ifdef MMX4_PC
+void func_800C5994(struct ItemObj* self, u8 collision)
+{
+    s16 original_x = self->x_pos.i.hi;
+    s16 original_y = self->y_pos.i.hi;
+    s32 x = original_x;
+    s32 y = original_y;
+    s32 side = get_random_nonzero() % 4;
+
+    if (side == 1 || side == 3)
+        x -= 0x10;
+    if (side == 2 || side == 3)
+        y -= 0x20;
+    x += get_random_nonzero() % 208;
+    x += get_random_nonzero() % 208;
+    y += get_random_nonzero() % 80;
+    if (collision != 0) {
+        self->x_pos.i.hi = x;
+        self->y_pos.i.hi = y;
+        spawn_debris(4, layout_gate_frames, self);
+        self->x_pos.i.hi = original_x;
+        self->y_pos.i.hi = original_y;
+    } else {
+        spawn_explosion_at(0, (s16)x, (s16)y, 0xFF);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_22_layout_gate", func_800C5994);
+#endif
 
 void layout_gate_check_layout(struct ItemObj* arg0)
 {

@@ -127,7 +127,59 @@ void cyberspace_guide_start_timer(struct MiscObj* self)
 }
 
 // cyberspace_guide_follow
+#ifdef MMX4_PC
+static void misc_34_track_axis(f32* position, s32 target, s16 target_hi);
+void func_800CEBC0(struct MiscObj* arg0);
+void func_800CEFC0(struct MiscObj* arg0);
+extern u8 cyberspace_guide_offsets[12];
+static void misc_34_track_axis(f32* position, s32 target, s16 target_hi)
+{
+    s32 delta = target - position->val;
+
+    if (delta < 0)
+        delta = -delta;
+    if (delta <= 0x1FFFFF)
+        return;
+    position->i.hi = target < position->val ? target_hi + 0x20 : target_hi - 0x20;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_800CEBC0(struct MiscObj* arg0)
+{
+    struct EffectObj* related = arg0->ext.misc_34.related;
+    s32 dx;
+    s32 dy;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    set_velocity_from_angle(MOVING_OBJECT(arg0),
+        (u8)angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)));
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->x_vel.val *= 4;
+    arg0->y_vel.val *= 3;
+    misc_34_track_axis(&arg0->x_pos, g_Player.x_pos.val, g_Player.x_pos.i.hi);
+    misc_34_track_axis(&arg0->y_pos, g_Player.y_pos.val, g_Player.y_pos.i.hi);
+    dx = g_Player.x_pos.val - arg0->x_pos.val;
+    if (dx < 0)
+        dx = -dx;
+    dy = g_Player.y_pos.val - arg0->y_pos.val;
+    if (dy < 0)
+        dy = -dy;
+    if (dx > 0x20000 || dy > 0x20000) {
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+    } else {
+        arg0->x_pos.val = g_Player.x_pos.val;
+        arg0->y_pos.val = g_Player.y_pos.val;
+    }
+    if (related->state >= 3)
+        arg0->ext.misc_34.enabled = 1;
+    if (related->state >= 4)
+        arg0->unk5 = 3;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEBC0);
+#endif
 
 void cyberspace_guide_leave(struct MiscObj* self)
 {
@@ -178,7 +230,33 @@ void cyberspace_guide_leave_finish(struct MiscObj* self)
 }
 
 // cyberspace_guide_update_position
+#ifdef MMX4_PC
+void func_800CEFC0(struct MiscObj* arg0)
+{
+    struct Misc34Ext* ext = &arg0->ext.misc_34;
+    u8 limit;
+    u8 counter;
+
+    if (ext->enabled == 0 || ext->variant == 2)
+        return;
+    limit = cyberspace_guide_offsets[engine_obj.checkpoint * 2 + ext->variant];
+    counter = ext->unk58;
+    ext->unk58 = counter + 1;
+    if (counter >= 0x3C) {
+        if (++ext->unk57 == limit - 3 && arg0->unk17 != 3) {
+            set_animation(arg0, 2);
+            ext->unk5A = 0xB4;
+        }
+        ext->unk58 = 0;
+    }
+    if (ext->unk57 >= limit) {
+        ext->variant = ext->variant == 0 ? 1 : 2;
+        ext->unk57 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_34_cyberspace_guide", func_800CEFC0);
+#endif
 
 void cyberspace_guide_update_blink(struct MiscObj* self)
 {

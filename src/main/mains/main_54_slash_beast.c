@@ -12,6 +12,11 @@
 #include "main/collision.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision_bounds.h"
+#endif
+
 extern struct Unk_unk68 D_80100200;
 extern struct Unk_unk68 D_80100204;
 extern struct Unk_unk68 D_80100210;
@@ -113,10 +118,203 @@ void slash_beast_update(struct MainObj* self)
 }
 
 // slash_beast_init
+#ifdef MMX4_PC
+void func_8006E920(struct MainObj* arg0, s32 value);
+void func_8006BB70(struct MainObj* arg0);
+void func_8006BD1C(struct MainObj* arg0);
+static void main54_spawn_shot(struct MainObj* arg0, s8 subtype);
+void func_8006C378(struct MainObj* arg0);
+static s32 main54_player_dx(struct MainObj* arg0);
+static void main54_face_anim(struct MainObj* arg0, s32 anim);
+void func_8006C6AC(struct MainObj* arg0);
+void func_8006CB50(struct MainObj* arg0);
+void func_8006CC3C(struct MainObj* arg0);
+void func_8006CDD4(struct MainObj* arg0);
+void func_8006D280(struct MainObj* arg0);
+void func_8006D3DC(struct MainObj* arg0);
+void func_8006DD44(struct MainObj* arg0);
+void func_8006E450(struct MainObj* arg0);
+extern char D_801005B4[];
+extern u16 D_801005B8[];
+extern u16 D_801005C8[];
+extern union AnimationStep* slash_beast_animations[];
+extern struct Unk_unk68 D_801078F8[];
+extern struct Unk_unk68 D_8010020C;
+extern struct Unk_unk68 D_80100218;
+extern struct Unk_unk68 D_8010021C;
+extern struct Unk_unk68 D_8010023C;
+extern struct Unk_unk68 D_80100228;
+extern struct Unk_unk68 D_8010022C;
+extern union AnimationStep D_80100230[];
+extern union AnimationStep D_80100234[];
+extern union AnimationStep D_80100238[];
+extern struct Unk_unk68 D_80100240;
+extern struct Unk_unk68 D_80100244;
+extern struct Unk_unk68 D_80100248;
+#define M54_FLASH(o) ((o)->ext.main_54.flash_timer)
+#define M54_81(o) ((o)->ext.main_54.powered_up)
+#define M54_82(o) ((o)->ext.main_54.was_hit)
+#define M54_84(o) ((o)->ext.main_54.grab)
+#define M54_85(o) ((o)->ext.main_54.active)
+extern u8 slash_beast_pattern_steps[9][4];
+static void main54_spawn_shot(struct MainObj* arg0, s8 subtype)
+{
+    struct ShotObj* shot = find_free_shot_obj();
+
+    if (shot == NULL)
+        return;
+    shot->active = 0x41;
+    shot->id = 0x1F;
+    shot->unk2 = subtype;
+    shot->unk40 = arg0->unk40;
+    shot->unk42 = arg0->unk42;
+    shot->animation_table = (void*)arg0->animation_table;
+    shot->unk3C = (void*)arg0->sprite_frames;
+    shot->bg_offset = arg0->bg_offset;
+    shot->x_pos.val = arg0->x_pos.val;
+    shot->y_pos.val = arg0->y_pos.val;
+    shot->unk7C = (struct WeaponObj*)arg0;
+    shot->state = 0;
+    shot->unk15 = arg0->unk15;
+}
+static s32 main54_player_dx(struct MainObj* arg0)
+{
+    s32 dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+
+    return dx < 0 ? -dx : dx;
+}
+static void main54_face_anim(struct MainObj* arg0, s32 anim)
+{
+    slash_beast_face_player(arg0);
+    set_animation(arg0, anim);
+}
+#endif
+
+#ifdef MMX4_PC
+void func_8006BB70(struct MainObj* arg0)
+{
+    arg0->contact_damage = 6;
+    arg0->hp = 0;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = D_801078F8;
+    if (engine_obj.stage != 0xC) {
+        arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    } else {
+        arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
+        arg0->unk42 = 0x7888;
+        arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
+        arg0->y_pos.val = background_objects[g_Player.bg_offset].y_pos.val + (s32)0xFFD00000;
+    }
+    arg0->animation_table = (const u8* const*)slash_beast_animations;
+    arg0->unk16 = 6;
+    arg0->hurt_box = D_801001FC;
+    arg0->attack_box = D_801001F8;
+    arg0->unk15 = 0x40;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->terrain_box = NULL;
+    M54_FLASH(arg0) = 0;
+    M54_81(arg0) = 1;
+    M54_82(arg0) = 0;
+    M54_84(arg0) = 0;
+    M54_85(arg0) = 0;
+    arg0->ext.main_54.claw_hitbox = 0;
+    arg0->ext.main_54.pattern_set = 0;
+    arg0->ext.main_54.power_hits = 1;
+    arg0->ext.main_54.fight_started = 0;
+    arg0->ext.main_54.high_jump = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    func_8006E920(arg0, 0x38);
+    set_animation(arg0, 0);
+    arg0->state = 1;
+    arg0->unk5 = 9;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BB70);
+#endif
 
 // slash_beast_run
+#ifdef MMX4_PC
+void func_8006BD1C(struct MainObj* arg0)
+{
+    s32 hit;
+    s8 flash;
+    const void* saved;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    slash_beast_step_funcs[arg0->unk5](arg0);
+    if (arg0->ext.main_54.crash_timer != 0) {
+        if (--arg0->ext.main_54.crash_timer == 0)
+            func_8006E920(arg0, 0x38);
+    }
+    if (engine_obj.stage == 8 && arg0->ext.main_54.pattern_set == 1 && arg0->ext.main_54.fight_started != 0)
+        engine_obj.character_state.bytes[1] = 1;
+    if (M54_85(arg0) == 0)
+        return;
+    hit = func_8002DD04(arg0);
+    flash = (s8)M54_FLASH(arg0);
+    M54_82(arg0) = 0;
+    if (flash == 0) {
+        if (hit < 0) {
+            func_8006E920(arg0, 0x38);
+            g_Player.spike_immune = 1;
+            arg0->state = 2;
+            arg0->unk5 = 0;
+            return;
+        }
+        if (hit != 0 && hit != 0x7F) {
+            M54_82(arg0) = 1;
+            arg0->collision_data = D_801060F0;
+            arg0->unk42 |= 0x8000;
+            M54_FLASH(arg0) = (u32)(hit - 0x19) < 2 ? 4 : 0x40;
+            if ((hit == 6 || hit == 0xF) && M54_84(arg0) == 0 && arg0->ext.main_54.claw_hitbox == 0) {
+                arg0->contact_damage = 6;
+                arg0->unk5 = 0xA;
+                arg0->unk6 = 0;
+            }
+        }
+    } else {
+        M54_FLASH(arg0) = --flash;
+        if (flash == 0) {
+            arg0->collision_data = D_801078F8;
+            arg0->unk42 &= 0x7FFF;
+        } else if (flash & 1) {
+            arg0->unk42 &= 0x7FFF;
+        } else {
+            arg0->unk42 |= 0x8000;
+        }
+    }
+    if (arg0->hp < 0x11)
+        arg0->ext.main_54.pattern_set = 2;
+    else if (arg0->hp < 0x21)
+        arg0->ext.main_54.pattern_set = 1;
+    if (M54_84(arg0) & 0x80)
+        arg0->attack_box = &D_80100218;
+    func_8002D9BC(arg0);
+    if (arg0->ext.main_54.claw_hitbox != 0) {
+        saved = arg0->attack_box;
+        arg0->attack_box = &D_8010021C;
+        func_8002D9BC(arg0);
+        arg0->attack_box = saved;
+    }
+    if (arg0->animation_step.fields.frame_index == 0x25) {
+        saved = arg0->attack_box;
+        arg0->attack_box = &D_8010023C;
+        func_8002D9BC(arg0);
+        arg0->attack_box = saved;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006BD1C);
+#endif
 
 void slash_beast_death(struct MainObj* self)
 {
@@ -229,7 +427,54 @@ void slash_beast_crescent_jump(struct MainObj* self)
 }
 
 // slash_beast_crescent_slash
+#ifdef MMX4_PC
+void func_8006C378(struct MainObj* arg0)
+{
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    if (arg0->x_speed == 0) {
+        arg0->x_accel = 0;
+        arg0->gravity = 0;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+    switch (arg0->animation_step.fields.event) {
+    case 1:
+        set_animation(arg0, 0x25);
+        arg0->gravity = 0x3800;
+        arg0->unk6 = 2;
+        break;
+    case 2:
+        arg0->attack_box = D_80100230;
+        arg0->hurt_box = D_80100234;
+        func_8001540C(2, 0x84, arg0);
+        main54_spawn_shot(arg0, 0);
+        break;
+    case 3:
+        arg0->attack_box = D_80100238;
+        arg0->hurt_box = &D_80100240;
+        func_8001540C(2, 0x84, arg0);
+        if (M54_81(arg0) != 0)
+            main54_spawn_shot(arg0, 1);
+        break;
+    case 4:
+        arg0->attack_box = &D_80100228;
+        arg0->hurt_box = &D_8010022C;
+        break;
+    case 5:
+        arg0->attack_box = &D_80100244;
+        arg0->hurt_box = &D_80100248;
+        break;
+    case 6:
+        arg0->attack_box = D_801001F8;
+        arg0->hurt_box = D_801001FC;
+    case 7:
+        arg0->attack_box = &D_80100208;
+        arg0->hurt_box = &D_8010020C;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C378);
+#endif
 
 void slash_beast_crescent_land(struct MainObj* self)
 {
@@ -263,7 +508,110 @@ void slash_beast_decide(struct MainObj* self)
 }
 
 // slash_beast_pick_attack
+#ifdef MMX4_PC
+void func_8006C6AC(struct MainObj* arg0)
+{
+    u8* cursor;
+    s8 next;
+
+    if (main54_player_dx(arg0) >= 0xA1 && (get_random() & 7) == 0) {
+        if (arg0->hp < 0x10) {
+            main54_face_anim(arg0, 0x26);
+            M54_84(arg0) = 1;
+            next = 7;
+        } else {
+            main54_face_anim(arg0, 8);
+            next = 2;
+        }
+        goto set_state;
+    }
+    cursor = arg0->ext.main_54.pattern;
+    arg0->ext.main_54.pattern = cursor + 1;
+    if ((cursor + 1 == slash_beast_pattern_steps[0] ? (u8)D_8010024C.unk3 : *cursor) == 0xFF)
+        slash_beast_pick_pattern(arg0);
+    switch (*arg0->ext.main_54.pattern) {
+    case 0:
+        if ((get_random() & 7) == 0) {
+            main54_face_anim(arg0, 8);
+            next = 2;
+            goto set_state;
+        }
+        main54_face_anim(arg0, 0xB);
+        arg0->unk7C = 0x3C;
+        arg0->unk6 = 1;
+        return;
+    case 1:
+        if ((get_random() & 7) == 0) {
+            main54_face_anim(arg0, 8);
+            next = 2;
+        } else if (main54_player_dx(arg0) < 0x70) {
+            if (M54_81(arg0) != 0) {
+                set_animation(arg0, 0x26);
+                next = 0xB;
+            } else {
+                main54_face_anim(arg0, 0xC);
+                arg0->unk7C = 0x24;
+                arg0->unk7E = 2;
+                next = 6;
+            }
+        } else {
+            main54_face_anim(arg0, 1);
+            arg0->ext.main_54.high_jump = 0;
+            next = 4;
+        }
+        break;
+    case 2:
+        if (main54_player_dx(arg0) < 0x70 && (get_random() & 7) != 0) {
+            if (M54_81(arg0) != 0) {
+                set_animation(arg0, 0x26);
+                next = 0xB;
+            } else {
+                main54_face_anim(arg0, 0xC);
+                arg0->unk7C = 0x24;
+                arg0->unk7E = 2;
+                next = 6;
+            }
+        } else {
+            main54_face_anim(arg0, 8);
+            next = 2;
+        }
+        break;
+    case 3:
+        main54_face_anim(arg0, 0x26);
+        next = 7;
+        break;
+    case 4:
+        main54_face_anim(arg0, 0xC);
+        arg0->unk7C = 0x24;
+        arg0->unk7E = 2;
+        next = 6;
+        break;
+    case 5:
+        main54_face_anim(arg0, 0x14);
+        func_8001540C(2, 0x85, arg0);
+        arg0->unk7C = 0x5A;
+        next = 5;
+        break;
+    case 6:
+        main54_face_anim(arg0, 0x26);
+        M54_84(arg0) = 1;
+        next = 7;
+        break;
+    case 7:
+        main54_face_anim(arg0, 1);
+        arg0->ext.main_54.high_jump = 1;
+        next = 4;
+        break;
+    default:
+        return;
+    }
+set_state:
+    arg0->unk5 = next;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006C6AC);
+#endif
 
 void slash_beast_crouch(struct MainObj* self)
 {
@@ -286,10 +634,72 @@ void slash_beast_jump(struct MainObj* self)
 }
 
 // slash_beast_jump_start
+#ifdef MMX4_PC
+void func_8006CB50(struct MainObj* arg0)
+{
+    if (arg0->animation_step.fields.event == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    arg0->x_accel = 0;
+    set_animation(arg0, 2);
+    arg0->hurt_box = &D_8010020C;
+    arg0->attack_box = &D_80100208;
+    if (arg0->ext.main_54.high_jump == 0) {
+        arg0->x_speed = arg0->unk15 != 0 ? 0x24000 : -0x24000;
+        arg0->y_speed = 0x5C000;
+    } else {
+        arg0->x_speed = arg0->unk15 != 0 ? 0x36000 : -0x36000;
+        arg0->y_speed = 0x7C000;
+    }
+    arg0->gravity = 0x3800;
+    func_8001540C(2, 0x81, arg0);
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    arg0->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CB50);
+#endif
 
 // slash_beast_jump_air
+#ifdef MMX4_PC
+void func_8006CC3C(struct MainObj* arg0)
+{
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->contact_damage = 6;
+        arg0->hurt_box = D_801001FC;
+        arg0->unk62 = 0;
+        arg0->attack_box = D_801001F8;
+    }
+    if (M54_84(arg0) != 0 && g_Player.stun_timer != 0) {
+        func_8001540C(2, 0x86, arg0);
+        g_Player.unk15 = arg0->unk15;
+        if (arg0->unk15 == 0)
+            g_Player.x_pos.i.hi = arg0->x_pos.i.hi - 0x12;
+        else
+            g_Player.x_pos.i.hi = arg0->x_pos.i.hi + 0x12;
+        g_Player.y_pos.i.hi = arg0->y_pos.i.hi - 8;
+        arg0->unk6 = 1;
+    }
+    if (arg0->collision_flags & 8) {
+        func_8001540C(2, 0x82, arg0);
+        arg0->y_speed = 0;
+        arg0->gravity = 0;
+        if (M54_84(arg0) != 0) {
+            arg0->unk7C = 0xA;
+            arg0->unk5 = 8;
+            arg0->unk6 = 0;
+        } else {
+            set_animation(arg0, 3);
+            arg0->unk6 = 2;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CC3C);
+#endif
 
 void slash_beast_jump_recover(struct MainObj* self)
 {
@@ -303,7 +713,34 @@ void slash_beast_jump_recover(struct MainObj* self)
 }
 
 // slash_beast_guard
+#ifdef MMX4_PC
+void func_8006CDD4(struct MainObj* arg0)
+{
+    s32 behind;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (M54_82(arg0) != 0) {
+        if (arg0->unk15 == 0)
+            behind = g_Player.x_pos.i.hi < arg0->x_pos.i.hi;
+        else
+            behind = arg0->x_pos.i.hi < g_Player.x_pos.i.hi;
+        if (behind) {
+            arg0->unk5 = 2;
+            arg0->unk6 = 0;
+            return;
+        }
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->unk7C = 0x1E;
+        set_animation(arg0, 0);
+        slash_beast_face_player(arg0);
+        arg0->unk5 = 3;
+        arg0->unk6 = 1;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006CDD4);
+#endif
 
 void slash_beast_dash(struct MainObj* self)
 {
@@ -434,7 +871,35 @@ void func_8006CFB8(struct MainObj* self)
 }
 
 // slash_beast_dash_crash
+#ifdef MMX4_PC
+void func_8006D280(struct MainObj* arg0)
+{
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 2) {
+        arg0->hurt_box = D_801001FC;
+        arg0->ext.main_54.claw_hitbox = 0;
+        arg0->attack_box = D_801001F8;
+    }
+    if (arg0->animation_step.fields.event != 1)
+        return;
+    arg0->unk15 ^= 0x40;
+    if (--arg0->unk7E == 0) {
+        set_animation(arg0, 0x25);
+        arg0->gravity = 0x3800;
+        arg0->unk5 = 4;
+        arg0->unk6 = 1;
+    } else {
+        set_animation(arg0, 0x10);
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi -= 0x20;
+        else
+            arg0->x_pos.i.hi += 0x20;
+        arg0->unk6 = 4;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006D280);
+#endif
 
 void slash_beast_dash_turn(struct MainObj* self)
 {
@@ -450,7 +915,72 @@ void slash_beast_dash_turn(struct MainObj* self)
 }
 
 // slash_beast_pounce
+#ifdef MMX4_PC
+void func_8006D3DC(struct MainObj* arg0)
+{
+    s32 target;
+    s32 steps;
+    s32 dist;
+    s32 speed;
+    s32 d;
+
+    if (main54_player_dx(arg0) < 0x70) {
+        arg0->unk5 = 3;
+        arg0->unk6 = 0;
+        return;
+    }
+    if (arg0->animation_step.fields.event == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    arg0->x_accel = 0;
+    if (M54_84(arg0) == 0) {
+        set_animation(arg0, 2);
+        target = arg0->x_pos.val;
+        arg0->hurt_box = &D_8010020C;
+        arg0->attack_box = &D_80100208;
+    } else {
+        M54_84(arg0) |= 0x80;
+        target = arg0->x_pos.val + (arg0->unk15 != 0 ? 0x100000 : (s32)0xFFF00000);
+        arg0->contact_damage = 0;
+        arg0->unk62 = 3;
+        set_animation(arg0, 4);
+        func_8001540C(2, 0x87, arg0);
+    }
+    d = target - g_Player.x_pos.val;
+    if (M54_84(arg0) != 0) {
+        if (d >= 0) {
+            steps = (u32)d >> 16;
+        } else {
+            d = g_Player.x_pos.val - target;
+            if (d < 0)
+                d += 0xFFFF;
+            steps = (u32)d >> 16;
+        }
+        arg0->gravity = 0x6800;
+    } else {
+        if (d < 0)
+            d = g_Player.x_pos.val - target;
+        steps = d / 0x24000;
+        arg0->gravity = 0x3800;
+    }
+    if (arg0->unk15 == 0)
+        arg0->x_speed = -0x1C000 - (s16)steps * 0x480;
+    else
+        arg0->x_speed = (s16)steps * 0x480 + 0x1C000;
+    dist = target - g_Player.x_pos.val;
+    if (dist < 0)
+        dist = g_Player.x_pos.val - target;
+    speed = arg0->x_speed < 0 ? -arg0->x_speed : arg0->x_speed;
+    arg0->y_speed = (((s16)(dist / speed) + 1) * arg0->gravity) / 2;
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    func_8001540C(2, 0x81, arg0);
+    arg0->unk5 = 4;
+    arg0->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006D3DC);
+#endif
 
 void slash_beast_grab(struct MainObj* self)
 {
@@ -645,7 +1175,71 @@ void slash_beast_intro_wait_warning(struct MainObj* self)
 }
 
 // slash_beast_intro_appear
+#ifdef MMX4_PC
+void func_8006DD44(struct MainObj* arg0)
+{
+    struct ItemObj* item;
+    struct MiscObj* misc;
+
+    if (--arg0->unk7E != 0)
+        return;
+    if (engine_obj.stage != 0xC) {
+        item = find_free_item_obj();
+        if (item != NULL) {
+            item->active = 0x41;
+            item->id = 0x12;
+            item->unk16 = 5;
+            item->unk2 = 3 - (u8)arg0->unk7C;
+            item->unk40 = arg0->unk40;
+            item->unk42 = arg0->unk42 & 0x7FFF;
+            item->animation_table = arg0->animation_table;
+            item->sprite_frames = arg0->sprite_frames;
+            item->animation_step.fields.frame_index = 0x79;
+            item->state = 0;
+            item->bg_offset = arg0->bg_offset;
+        }
+    }
+    if (--arg0->unk7C != 0 && engine_obj.stage != 0xC) {
+        arg0->unk7E = 0x1E;
+        return;
+    }
+    engine_obj.enable_boss = 1;
+    engine_obj.unk25 = 1;
+    engine_obj.boss_ptr = arg0;
+    arg0->unk7C = 0xC8;
+    misc = find_free_misc_obj();
+    if (misc != NULL) {
+        misc->active = 0x41;
+        misc->id = 0x1A;
+        misc->unk2 = 0;
+        misc->unk16 = 5;
+        misc->unk40 = arg0->unk40;
+        misc->unk42 = arg0->unk42 & 0x7FFF;
+        misc->animation_table = (void*)arg0->animation_table;
+        misc->unk3C = (void*)arg0->sprite_frames;
+        misc->bg_offset = arg0->bg_offset;
+        misc->x_pos.val = arg0->x_pos.val;
+        misc->y_pos.val = arg0->y_pos.val;
+        misc->unk15 = arg0->unk15;
+        misc->ext.misc_26.owner = arg0;
+        misc->state = 0;
+        misc->animation_step.fields.frame_index = arg0->animation_step.fields.frame_index + 0x3C;
+    }
+    if (engine_obj.stage == 8) {
+        arg0->unk15 = 0x40;
+        set_animation(arg0, 0x15);
+        arg0->x_speed = 0x10000;
+        arg0->unk6 = 3;
+    } else {
+        arg0->unk15 = 0;
+        set_animation(arg0, 0x17);
+        arg0->unk7E = 1;
+        arg0->unk6 = 4;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006DD44);
+#endif
 
 void slash_beast_intro_leap(struct MainObj* self)
 {
@@ -773,7 +1367,48 @@ void slash_beast_stagger(struct MainObj* self)
 }
 
 // slash_beast_stagger_start
+#ifdef MMX4_PC
+void func_8006E450(struct MainObj* arg0)
+{
+    s16 x;
+    s16 y;
+
+    if (--arg0->ext.main_54.power_hits == 0) {
+        y = arg0->y_pos.i.hi;
+        arg0->y_pos.i.hi = y - 4;
+        x = arg0->x_pos.i.hi;
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = x + 0x1B;
+        else
+            arg0->x_pos.i.hi = x - 0x1B;
+        spawn_debris(3, D_801005B4, arg0);
+        arg0->y_pos.i.hi = y + 0xC;
+        if (arg0->unk15 == 0)
+            arg0->x_pos.i.hi = x + 0x1D;
+        else
+            arg0->x_pos.i.hi = x - 0x1D;
+        spawn_debris(3, D_801005B4, arg0);
+        arg0->x_pos.i.hi = x;
+        arg0->y_pos.i.hi = y;
+        M54_81(arg0) = 0;
+    }
+    set_animation(arg0, 0x11);
+    if (arg0->x_pos.i.hi < g_Player.x_pos.i.hi) {
+        arg0->unk15 = 0;
+        arg0->x_speed = -0x10000;
+    } else {
+        arg0->unk15 = 0x40;
+        arg0->x_speed = 0x10000;
+    }
+    arg0->y_speed = 0x40000;
+    arg0->x_accel = 0;
+    arg0->gravity = 0x8000;
+    move_object(MOVING_OBJECT(arg0));
+    arg0->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E450);
+#endif
 
 void slash_beast_stagger_land(struct MainObj* self)
 {
@@ -879,7 +1514,38 @@ void slash_beast_high_leap_recover(struct MainObj* self)
 }
 
 // slash_beast_set_floor_palette
+#ifdef MMX4_PC
+void func_8006E920(struct MainObj* arg0, s32 value)
+{
+    s32 start = 0;
+    s32 end;
+    s32 i;
+    u32* attrs;
+    u16 index;
+
+    if (value == 0x38) {
+        end = engine_obj.stage == 0xC ? 0xE : 8;
+    } else if (arg0->unk15 == 0) {
+        if (engine_obj.stage == 0xC) {
+            start = 7;
+            end = 0xE;
+        } else {
+            start = 4;
+            end = 8;
+        }
+    } else {
+        end = engine_obj.stage == 0xC ? 7 : 4;
+    }
+    for (i = start; i < end; i++) {
+        index = engine_obj.stage == 0xC ? D_801005C8[i] : D_801005B8[i];
+        attrs = SP_BG_TILE_ATTRS;
+        attrs[index] &= ~0xFF;
+        attrs[index] |= value;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_54_slash_beast", func_8006E920);
+#endif
 
 void slash_beast_face_player(struct MainObj* self)
 {

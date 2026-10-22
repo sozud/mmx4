@@ -4,6 +4,10 @@
 #include "main/effects/effect_03_palette_animator.h"
 #include "main/effects/effect_02_color_filter.h"
 
+#ifdef MMX4_PC
+#include "main/objects.h"
+#endif
+
 // D_8010B42C
 extern void (*D_8010B42C[])(struct EffectObj*);
 
@@ -21,7 +25,46 @@ void palette_animator_update(struct EffectObj* self)
 }
 
 // palette_animator_init
+#ifdef MMX4_PC
+void func_800B5D04(struct EffectObj* arg0);
+extern u16* palette_animator_stage_timings[27];
+extern s8** palette_animator_stage_scripts[27];
+#endif
+
+#ifdef MMX4_PC
+void func_800B5D04(struct EffectObj* arg0)
+{
+    u32 stage_index;
+    s8** animations;
+    u16* destinations;
+    const s8* animation;
+    u16 destination;
+
+    arg0->active = 1;
+    stage_index = (u8)engine_obj.stage * 2 + (u8)engine_obj.substage;
+    if (stage_index >= COUNT(palette_animator_stage_timings))
+        abort();
+    animations = palette_animator_stage_scripts[stage_index];
+    destinations = palette_animator_stage_timings[stage_index];
+    if (animations == NULL || destinations == NULL)
+        abort();
+    animation = animations[(u8)arg0->unk2];
+    arg0->ext.palette_animation.cursor = (s8*)animation;
+    if (animation == NULL) {
+        despawn_object_permanently(OBJECT_HEADER(arg0));
+        return;
+    }
+    destination = destinations[(u8)arg0->unk2];
+    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + (destination & 0xFF) * 8;
+    arg0->ext.palette_animation.source = SP_ARC_30 + (u8)animation[0] * 8;
+    arg0->ext.palette_animation.timer = animation[1];
+    arg0->ext.palette_animation.palette_count = destination >> 8;
+    copy_animated_palette(arg0);
+    arg0->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_03_palette_animator", func_800B5D04);
+#endif
 
 void palette_animator_step(struct EffectObj* self)
 {

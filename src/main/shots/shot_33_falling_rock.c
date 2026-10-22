@@ -12,6 +12,10 @@
 #include "main/objects.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // falling_rock_state_funcs
 extern void (*falling_rock_state_funcs[])(struct ShotObj*);
 
@@ -33,7 +37,126 @@ void falling_rock_update(struct ShotObj* self)
 }
 
 // falling_rock_a_init
+#ifdef MMX4_PC
+static void shot_33_load_graphics(struct ShotObj* arg0, s32 id);
+static void shot_33_spawn_shadow(struct ShotObj* arg0, s8 shadow_kind, s8 unk6, s32 animation);
+static void shot_33_quake(void);
+static void shot_33_hit_sound(struct ShotObj* arg0);
+static s32 shot_33_below_screen(struct ShotObj* arg0);
+void func_800A03F4(struct ShotObj* arg0);
+void func_800A0A38(struct ShotObj* arg0);
+static void shot_33_burst(struct ShotObj* arg0, u8* effect);
+void func_800A0C4C(struct ShotObj* arg0);
+void func_800A0FE8(struct ShotObj* arg0);
+extern union AnimationStep* falling_rock_a_animations[];
+extern union AnimationStep* falling_rock_b_animations[];
+extern union AnimationStep* falling_rock_c_animations[];
+extern struct Unk_unk68 falling_rock_box_0[];
+extern struct Unk_unk68 falling_rock_box_1[];
+extern struct Unk_unk68 falling_rock_box_2[];
+extern struct Unk_unk68 falling_rock_box_3[];
+extern struct Unk_unk68 falling_rock_box_4[];
+extern struct Unk_unk68 falling_rock_box_5[];
+extern u8 falling_rock_debris_2[];
+extern u8 falling_rock_debris_3[];
+extern ret_u8 func_8002938C(s32);
+static void shot_33_load_graphics(struct ShotObj* arg0, s32 id)
+{
+    s32 resource;
+
+    arg0->bg_offset = g_Player.bg_offset;
+    resource = func_8002938C(id);
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    resource = func_8002938C(id);
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk42 = CLUT_FROM_ID(id);
+}
+static void shot_33_spawn_shadow(struct ShotObj* arg0, s8 shadow_kind, s8 unk6,
+    s32 animation)
+{
+    struct MiscObj* misc = find_free_misc_obj();
+
+    if (misc == NULL)
+        return;
+    misc->active = 0x41;
+    misc->id = 0x1B;
+    misc->unk16 = shadow_kind;
+    misc->unk40 = arg0->unk40;
+    misc->unk42 = arg0->unk42 & 0x7FFF;
+    misc->animation_table = arg0->animation_table;
+    misc->unk3C = arg0->unk3C;
+    misc->bg_offset = arg0->bg_offset;
+    misc->x_pos.val = arg0->x_pos.val;
+    misc->y_pos.val = arg0->y_pos.val;
+    misc->ext.misc_5.owner = (struct MainObj*)arg0;
+    misc->state = 0;
+    misc->unk6 = unk6;
+    misc->unk7 = 0;
+    misc->unk15 = arg0->unk15;
+    set_animation(misc, animation);
+    arg0->unk7C = (struct WeaponObj*)misc;
+}
+static void shot_33_quake(void)
+{
+    if (!(background_objects[g_Player.bg_offset].unk34 & 0x10))
+        start_screen_shake_x(0x10, 6, 2);
+}
+static void shot_33_hit_sound(struct ShotObj* arg0)
+{
+    if (arg0->on_screen != 0)
+        func_8001540C(2, 0xA0, arg0);
+}
+static s32 shot_33_below_screen(struct ShotObj* arg0)
+{
+    return background_objects[g_Player.bg_offset].y_pos.i.hi + 0x150 < arg0->y_pos.i.hi;
+}
+static void shot_33_burst(struct ShotObj* arg0, u8* effect)
+{
+    shot_33_quake();
+    spawn_debris(5, effect, arg0);
+    if (arg0->on_screen != 0) {
+        func_8001540C(2, 0xA0, arg0);
+        arg0->state = 5;
+    } else {
+        arg0->state = 5;
+    }
+}
+#endif
+
+#ifdef MMX4_PC
+void func_800A03F4(struct ShotObj* arg0)
+{
+    s32 random;
+
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 0xF;
+    arg0->on_screen = 1;
+    arg0->unk60 = 3;
+    arg0->unk42 &= 0x7FFF;
+    shot_33_load_graphics(arg0, 0x8E);
+    arg0->animation_table = (u32**)falling_rock_a_animations;
+    random = get_random();
+    random = ((random & 1) << 8) + (get_random() & 0xFF) + 0x40;
+    arg0->x_pos.i.hi = background_objects[g_Player.bg_offset].x_pos.i.hi + random;
+    arg0->x_vel.val = -0x10000;
+    arg0->y_vel.val = -0x10000;
+    arg0->unk28 = 0x400;
+    arg0->unk2C = 0x400;
+    arg0->unk68 = falling_rock_box_3;
+    arg0->unk54 = (const u8*)falling_rock_box_0;
+    arg0->unk50.data = (const u8*)falling_rock_box_0;
+    arg0->unk16 = 1;
+    arg0->unk15 = 0;
+    arg0->unk62 = 2;
+    arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x40;
+    set_animation(arg0, 1);
+    shot_33_spawn_shadow(arg0, 0, 0, 0);
+    arg0->state = 1;
+    arg0->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A03F4);
+#endif
 
 // falling_rock_a_fall
 static __inline s32 falling_rock_tile_attribute(struct PlayerObj* object, s16 x, s16 y)
@@ -131,10 +254,87 @@ void falling_rock_a_despawn(struct ShotObj* self)
 }
 
 // falling_rock_b_init
+#ifdef MMX4_PC
+void func_800A0A38(struct ShotObj* arg0)
+{
+    arg0->on_screen = 1;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 0x7F;
+    arg0->unk60 = 6;
+    arg0->unk42 &= 0x7FFF;
+    shot_33_load_graphics(arg0, 0x8C);
+    arg0->animation_table = (u32**)falling_rock_b_animations;
+    arg0->unk16 = 0;
+    arg0->x_vel.val = arg0->unk15 != 0 ? -0x38000 : 0x38000;
+    arg0->unk68 = falling_rock_box_4;
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk2C = 0;
+    arg0->unk54 = (const u8*)falling_rock_box_1;
+    arg0->unk50.data = (const u8*)falling_rock_box_1;
+    set_animation(arg0, 1);
+    shot_33_spawn_shadow(arg0, 1, 1, 0);
+    arg0->state = 4;
+    arg0->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0A38);
+#endif
 
 // falling_rock_b_fall
+#ifdef MMX4_PC
+void func_800A0C4C(struct ShotObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk42 &= 0x7FFF;
+    if (arg0->unk5 != 0) {
+        if (--arg0->unk84.value == 0) {
+            spawn_debris(5, falling_rock_debris_3, arg0);
+            arg0->state = 5;
+        }
+    } else {
+        if (!(background_objects[g_Player.bg_offset].unk34 & 0x10))
+            start_screen_shake_x(8, 4, 2);
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        animate_object(ANIMATED_OBJECT(arg0));
+        CollisionRelated((struct PlayerObj*)arg0);
+        if (!(arg0->unk70 & 8))
+            arg0->unk2C = 0x8000;
+        else
+            arg0->unk2C = 0;
+        if (arg0->unk15 != 0 ? (arg0->unk70 & 2) : (arg0->unk70 & 1)) {
+            shot_33_burst(arg0, falling_rock_debris_2);
+            return;
+        }
+        func_8002D9BC(arg0);
+        if (func_8002BB80((struct MainObj*)arg0, (struct MainObj*)&g_Player) != 0) {
+            spawn_debris(5, falling_rock_debris_2, arg0);
+            shot_33_hit_sound(arg0);
+            arg0->state = 5;
+        }
+        collision = func_8002DD04((struct MainObj*)arg0);
+        if (collision < 0) {
+            spawn_debris(5, falling_rock_debris_2, arg0);
+            shot_33_hit_sound(arg0);
+            arg0->state = 5;
+        } else if (collision == 3 || collision == 0xC || collision == 0x22) {
+            arg0->unk84.value = 8;
+            set_animation(arg0, 7);
+            arg0->unk7C->active = 0;
+            arg0->unk7C->on_screen = 0;
+            arg0->unk5 = 1;
+        }
+    }
+    if (shot_33_below_screen(arg0)) {
+        arg0->state = 5;
+        return;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x60, 0x60);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0C4C);
+#endif
 
 void falling_rock_b_despawn(struct ShotObj* self)
 {
@@ -142,7 +342,48 @@ void falling_rock_b_despawn(struct ShotObj* self)
 }
 
 // falling_rock_c_init
+#ifdef MMX4_PC
+void func_800A0FE8(struct ShotObj* arg0)
+{
+    if (engine_obj.character_state.bytes[0] != 0) {
+        arg0->state = 8;
+        return;
+    }
+    arg0->on_screen = 1;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk5C = 0xF;
+    arg0->unk60 = 6;
+    arg0->unk42 &= 0x7FFF;
+    shot_33_load_graphics(arg0, 0x8D);
+    arg0->animation_table = (u32**)falling_rock_c_animations;
+    arg0->unk16 = 0;
+    arg0->unk15 = 0;
+    arg0->x_vel.val = 0;
+    arg0->unk28 = 0;
+    if (arg0->unk2 == 0) {
+        set_animation(arg0, 3);
+        arg0->y_vel.val = -0x18000;
+        arg0->unk2C = 0x2000;
+        arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi - 0x40;
+    } else {
+        set_animation(arg0, 1);
+        arg0->y_vel.val = 0xA0000;
+        arg0->unk2C = 0x2000;
+        if (engine_obj.substage != 0 && (u16)(arg0->x_pos.i.hi - 0x61) < 0x47F)
+            arg0->y_pos.i.hi = 0x330;
+        else
+            arg0->y_pos.i.hi = background_objects[g_Player.bg_offset].y_pos.i.hi + 0x130;
+    }
+    arg0->unk68 = falling_rock_box_5;
+    arg0->unk54 = (const u8*)falling_rock_box_2;
+    arg0->unk50.data = (const u8*)falling_rock_box_2;
+    shot_33_spawn_shadow(arg0, 1, 1, arg0->unk2 == 0 ? 2 : 0);
+    arg0->state = 7;
+    arg0->unk5 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0FE8);
+#endif
 
 // falling_rock_c_fall
 void func_800A12EC(struct ShotObj* self)

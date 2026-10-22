@@ -7,6 +7,10 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/CB184.h"
+#endif
+
 extern void (*ice_wall_break_funcs[])(struct BaseObj*);
 
 void ice_wall_main(struct MainObj*);
@@ -29,7 +33,45 @@ void ice_wall_update(struct MainObj* self)
 }
 
 // ice_wall_init
+#ifdef MMX4_PC
+void func_80058194(struct MainObj* arg0);
+void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base);
+extern union AnimationStep* ice_wall_animations[];
+extern struct Unk_unk68 D_80106F74[];
+extern struct Unk_unk68 ice_wall_hurt_box[];
+extern union AnimationStep* ice_wall_animations[];
+#endif
+
+#ifdef MMX4_PC
+void func_80058194(struct MainObj* arg0)
+{
+    arg0->state++;
+    arg0->unk5 = 2;
+    arg0->unk2 = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->animation_table = (const u8* const*)ice_wall_animations;
+    arg0->unk16 = 6;
+    arg0->collision_data = (const u16*)D_80106F74;
+    arg0->hurt_box = (const u8*)ice_wall_hurt_box;
+    arg0->contact_damage = 3;
+    arg0->hp = 9;
+    arg0->ext.main_26.last_health = 9;
+    arg0->ext.main_26.stage = 2;
+    arg0->unk15 = 0;
+    arg0->terrain_box = NULL;
+    arg0->attack_box = NULL;
+    arg0->invincibility_timer = 0;
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->x_pos.i.hi &= ~0xF;
+    arg0->y_pos.i.hi &= ~0xF;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_26_ice_wall", func_80058194);
+#endif
 
 void ice_wall_start_idle(struct MainObj* self)
 {
@@ -72,7 +114,68 @@ void ice_wall_main(struct MainObj* self)
 }
 
 // spawn_ice_chunks
+#ifdef MMX4_PC
+// src/main/mains/main_26_ice_wall.c
+
+void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base)
+{
+    u8 above;
+    u8 below;
+    u8 tile;
+    s16 left = (x & -0x10) - 0x10;
+    s16 top = y & -0x10;
+
+    above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x20);
+    if (above != 0x38)
+        above = func_8002D724(PLAYER_OBJECT(arg0), x, y - 0x30);
+    below = func_8002D724(PLAYER_OBJECT(arg0), x, y + 0x30);
+
+    switch (above) {
+    case 0x31:
+        tile = 2;
+        break;
+    case 0:
+        tile = 3;
+        break;
+    case 0x30:
+        tile = 1;
+        break;
+    case 0x3C:
+        tile = 0;
+        break;
+    default:
+        tile = 4;
+        break;
+    }
+    apply_tile_effect(tile + base, left, top - 0x20);
+
+    switch (below) {
+    case 0x31:
+        tile = 0x11;
+        break;
+    case 0:
+        tile = 0x12;
+        break;
+    case 0x30:
+        tile = 0x10;
+        break;
+    case 0x3C:
+        tile = 0xF;
+        break;
+    default:
+        tile = 0x13;
+        break;
+    }
+    apply_tile_effect(tile + base, left, top + 0x10);
+
+    base &= 0xFF;
+    apply_tile_effect(base == 0 ? 0x1E : base == 5 ? 0x1F
+                                                   : 0x20,
+        left, top);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_26_ice_wall", func_800583B0);
+#endif
 
 void ice_wall_break_start(struct BaseObj* self)
 {

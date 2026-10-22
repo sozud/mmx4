@@ -8,6 +8,10 @@
 #include "main/55C4.h"
 #include "main/collision.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // cannon_shell_state_funcs
 extern void (*cannon_shell_state_funcs[])(struct ShotObj*);
 
@@ -29,7 +33,68 @@ void cannon_shell_update(struct ShotObj* self)
 }
 
 // cannon_shell_init
+#ifdef MMX4_PC
+void func_8009D23C(struct ShotObj* arg0);
+static s32 shot_21_abs(s32 value);
+void func_8009D588(struct ShotObj* arg0);
+static s32 shot_21_abs(s32 value)
+{
+    return value < 0 ? -value : value;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_8009D23C(struct ShotObj* arg0)
+{
+    struct WeaponObj* owner;
+    s32 distance;
+    u32 half;
+    u32 steps;
+
+    arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
+    arg0->unk58.animation_steps = D_80105FF0;
+    arg0->unk60 = 3;
+    arg0->on_screen = 1;
+    arg0->unk5C = 1;
+    arg0->unk54 = cannon_shell_hit_box;
+    arg0->state++;
+    arg0->unk42 &= 0x7FFF;
+    owner = arg0->unk7C;
+    if (arg0->unk2 != 0) {
+        arg0->unk50.data = cannon_shell_flat_hit_box;
+        arg0->x_pos.i.hi = owner->x_pos.i.hi + 0xA;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi - 0x10;
+    } else {
+        arg0->unk50.data = cannon_shell_hit_box;
+        arg0->x_pos.i.hi = owner->x_pos.i.hi + 0x12;
+        arg0->y_pos.i.hi = owner->y_pos.i.hi;
+    }
+    arg0->x_vel.val = -0x28000;
+    arg0->y_vel.val = 0x28000;
+    arg0->unk28 = 0;
+    distance = arg0->x_pos.val - g_Player.x_pos.val;
+    if (distance < 0)
+        distance = -distance;
+    half = distance / 2;
+    if (half <= 0x1FFFFF)
+        half += 0x100000;
+    if (half > 0x400000)
+        half -= arg0->unk2 << 21;
+    distance = arg0->x_vel.val;
+    if (distance < 0)
+        distance = -distance;
+    steps = half / (u32)distance;
+    if (steps == 0)
+        steps = 1;
+    arg0->unk84.value = 0;
+    arg0->unk70 = 0;
+    arg0->unk7 = 1;
+    arg0->unk2C = (u32)arg0->y_vel.val / steps;
+    set_animation(arg0, 7);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D23C);
+#endif
 
 void cannon_shell_fly(struct ShotObj* self)
 {
@@ -91,7 +156,42 @@ void cannon_shell_idle(struct ShotObj* self)
 }
 
 // cannon_shell_update_facing
+#ifdef MMX4_PC
+void func_8009D588(struct ShotObj* arg0)
+{
+    switch (arg0->unk84.value) {
+    case 0:
+        if (shot_21_abs(arg0->y_vel.val) >= shot_21_abs(arg0->x_vel.val / 2))
+            return;
+        set_animation(arg0, 8);
+        arg0->unk68 = (struct Unk_unk68*)cannon_shell_flat_terrain_box;
+        arg0->unk54 = cannon_shell_flat_hit_box;
+        arg0->unk50.data = cannon_shell_flat_hit_box;
+        break;
+    case 1:
+        if (shot_21_abs(arg0->y_vel.val) < shot_21_abs(arg0->x_vel.val / 2))
+            return;
+        set_animation(arg0, 9);
+        arg0->unk68 = (struct Unk_unk68*)cannon_shell_terrain_box;
+        arg0->unk54 = cannon_shell_hit_box;
+        arg0->unk50.data = cannon_shell_hit_box;
+        break;
+    case 2:
+        if (shot_21_abs(arg0->x_vel.val) >= shot_21_abs(arg0->y_vel.val / 2))
+            return;
+        set_animation(arg0, 0xA);
+        arg0->unk68 = (struct Unk_unk68*)cannon_shell_steep_terrain_box;
+        arg0->unk54 = cannon_shell_steep_hit_box;
+        arg0->unk50.data = cannon_shell_steep_hit_box;
+        break;
+    default:
+        return;
+    }
+    arg0->unk84.value++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_21_cannon_shell", func_8009D588);
+#endif
 
 void (*cannon_shell_state_funcs[])(struct ShotObj*) = {
     func_8009D23C,

@@ -5,6 +5,10 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#endif
+
 // vent_puff_state_funcs
 extern void (*vent_puff_state_funcs[])(struct MiscObj*);
 void vent_puff_init(struct MiscObj*);
@@ -45,7 +49,40 @@ void vent_puff_init(struct MiscObj* self)
 }
 
 // vent_puff_rise
+#ifdef MMX4_PC
+void func_800CACF0(struct MiscObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800CACF0(struct MiscObj* arg0)
+{
+    if (arg0->unk5 == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        move_with_gravity(ANIMATED_OBJECT(arg0));
+        if (arg0->animation_step.fields.event != 0) {
+            arg0->animation_step.fields.event = 0;
+            arg0->x_vel.val = -arg0->x_vel.val;
+        }
+        if (arg0->y_pos.i.hi >= (engine_obj.stage == 0xC ? 0x6D0 : 0x5D0)) {
+            arg0->unk5 = 1;
+            arg0->y_vel.val = 0;
+            arg0->unk2C = 0;
+            arg0->ext.misc_16.timer = 0x14;
+        }
+        is_on_screen(BASE_OBJECT(arg0));
+        return;
+    }
+    if (--arg0->ext.misc_16.timer == 0) {
+        arg0->state = 2;
+        return;
+    }
+    arg0->on_screen = 0;
+    if (arg0->ext.misc_16.timer & 1)
+        is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_16_vent_puff", func_800CACF0);
+#endif
 
 void vent_puff_despawn(struct MiscObj* self)
 {

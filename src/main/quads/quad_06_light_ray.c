@@ -4,6 +4,10 @@
 #include "main/quads/quad_06_light_ray.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/object_motion.h"
+#endif
+
 // light_ray_state_funcs
 extern void (*light_ray_state_funcs[])(struct QuadObj*);
 
@@ -11,7 +15,81 @@ void light_ray_main(struct QuadObj*);
 void light_ray_despawn(struct QuadObj*);
 
 // light_ray_init
+#ifdef MMX4_PC
+void func_800D5934(struct QuadObj* arg0);
+extern s32 D_800F459C[];
+extern s32 D_800F45C0[];
+#define QUAD6_ANGLE(obj) ((obj)->ext.ready_line.x_vel.bytes[0])
+#define QUAD6_DELAY(obj) ((obj)->ext.ready_line.x_vel.bytes[1])
+#define QUAD6_AGE(obj) ((obj)->ext.ready_line.x_vel.bytes[2])
+#define QUAD6_X_SPEED(obj) ((obj)->ext.ready_line.y_vel.val)
+#define QUAD6_Y_SPEED(obj) ((obj)->ext.ready_line.x_accel.val)
+#define QUAD6_X_SPEED2(obj) ((obj)->ext.ready_line.y_accel.val)
+#define QUAD6_Y_SPEED2(obj) ((obj)->runtime.search_light.x_accumulator)
+#define QUAD6_X_ACCEL(obj) ((obj)->runtime.search_light.y_accumulator)
+#define QUAD6_Y_ACCEL(obj) (*(s32*)&(obj)->runtime.search_light.pause_timer)
+#define QUAD6_X_ACCEL2(obj) ((obj)->runtime.search_light.base_speed)
+#define QUAD6_Y_ACCEL2(obj) (*(s32*)&(obj)->link)
+extern s32 D_800F459C[];
+extern s32 D_800F45C0[];
+#endif
+
+#ifdef MMX4_PC
+void func_800D5934(struct QuadObj* arg0)
+{
+    u8 angle;
+    s16 index;
+    s16 x_sign;
+    s16 y_sign;
+
+    arg0->unk36 = 0;
+    arg0->unk34 = 1;
+    arg0->bg_offset = 0;
+    arg0->active |= 0x82;
+    angle = get_random() & 0x1F;
+    QUAD6_ANGLE(arg0) = angle;
+    if (angle < 0x10) {
+        x_sign = -1;
+        if (angle < 8) {
+            index = 8 - angle;
+            y_sign = 1;
+        } else {
+            index = angle - 8;
+            y_sign = -1;
+        }
+    } else {
+        x_sign = 1;
+        if (angle < 0x18) {
+            index = 0x18 - angle;
+            y_sign = -1;
+        } else {
+            index = angle - 0x18;
+            y_sign = 1;
+        }
+    }
+    QUAD6_X_SPEED(arg0) = (s32)((u32)(D_800F459C[index] * y_sign) << 4) >> 4;
+    QUAD6_Y_SPEED(arg0) = (s32)((u32)(D_800F45C0[index] * x_sign) << 4) >> 4;
+    arg0->vertices[0].x.val = 0;
+    arg0->vertices[0].y.val = 0;
+    arg0->vertices[1].x.val = 0;
+    arg0->vertices[1].y.val = 0;
+    arg0->vertices[2].x.val = 0;
+    arg0->vertices[2].y.val = 0;
+    arg0->vertices[3].x.val = 0;
+    arg0->vertices[3].y.val = 0;
+    QUAD6_AGE(arg0) = 0;
+    arg0->state++;
+    QUAD6_X_ACCEL(arg0) = QUAD6_X_SPEED(arg0);
+    QUAD6_X_SPEED2(arg0) = QUAD6_X_SPEED(arg0);
+    QUAD6_Y_SPEED2(arg0) = QUAD6_Y_SPEED(arg0);
+    QUAD6_Y_ACCEL(arg0) = QUAD6_Y_SPEED(arg0);
+    QUAD6_DELAY(arg0) = 4;
+    QUAD6_X_ACCEL2(arg0) = QUAD6_X_SPEED2(arg0) / 2;
+    QUAD6_Y_ACCEL2(arg0) = QUAD6_Y_SPEED2(arg0) / 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_06_light_ray", func_800D5934);
+#endif
 
 void light_ray_main(struct QuadObj* arg0)
 {

@@ -697,7 +697,91 @@ void func_80028658(struct BackgroundObj* arg0)
     func_80028450(arg0);
 }
 
+#ifdef MMX4_PC
+void func_80028690(struct BackgroundObj* bg);
+#endif
+
+#ifdef MMX4_PC
+void func_80028690(struct BackgroundObj* bg)
+{
+    s16 target;
+    s16 origin;
+    s16 delta;
+    s16 next;
+
+    target = bg->unk26;
+    if (bg->unk1E != target) {
+        origin = bg->x_pos.i.hi;
+        if (target >= origin) {
+            next = origin + (s8)bg->unk47;
+        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk30 + 2) < 5) {
+            next = target;
+        } else {
+            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+            if (delta >= 0)
+                delta = 0;
+            next = delta + origin - (s8)bg->unk47;
+        }
+        bg->unk1E = next < target ? next : target;
+    }
+
+    target = bg->unk24;
+    if (bg->unk1C != target) {
+        origin = bg->x_pos.i.hi;
+        if (target < origin) {
+            next = origin - (s8)bg->unk47;
+            bg->unk1C = next < target ? target : next;
+        } else if ((s16)(g_Player.x_pos.i.hi - origin - bg->unk32 + 2) >= 4) {
+            bg->unk1C = target;
+        } else {
+            delta = g_Player.x_pos.i.hi - g_Player.unk18.i.hi;
+            if (delta < 0)
+                delta = 0;
+            next = delta + origin + (s8)bg->unk47;
+            bg->unk1C = target < next ? next : target;
+        }
+    }
+
+    target = bg->unk2A;
+    if (bg->unk22 != target) {
+        origin = bg->y_pos.i.hi;
+        if (target >= origin) {
+            next = origin + (s8)bg->unk47;
+            bg->unk22 = next < target ? next : target;
+        } else {
+            next = g_Player.y_pos.i.hi - origin - bg->unk2C + 2;
+            if (next < 4) {
+                delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+                if (delta >= 0)
+                    delta = 0;
+                next = delta + origin - (s8)bg->unk47;
+                if (next < target)
+                    next = target;
+            }
+            bg->unk22 = next;
+        }
+    }
+
+    target = bg->unk28;
+    if (bg->unk20 != target) {
+        origin = bg->y_pos.i.hi;
+        if (target < origin) {
+            next = origin - (s8)bg->unk47;
+            bg->unk20 = next < target ? target : next;
+        } else if ((s16)(g_Player.y_pos.i.hi - origin - bg->unk2E + 2) >= 4) {
+            bg->unk20 = target;
+        } else {
+            delta = g_Player.y_pos.i.hi - g_Player.unk1C.i.hi;
+            if (delta < 0)
+                delta = 0;
+            next = delta + origin + (s8)bg->unk47;
+            bg->unk20 = next < target ? next : target;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/background", func_80028690);
+#endif
 
 void update_screen_shake_x(struct BackgroundObj* arg0)
 {

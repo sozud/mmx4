@@ -214,7 +214,37 @@ void slope_skier_fall(struct MainObj* self)
 }
 
 // slope_skier_jump_start
+#ifdef MMX4_PC
+void func_80055F1C(struct MainObj* arg0);
+void func_80056054(struct MainObj* arg0);
+void func_800562AC(struct MainObj* arg0);
+void func_800564B4(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+// src/main/mains/main_23_slope_skier.c
+
+void func_80055F1C(struct MainObj* arg0)
+{
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->ext.main_23.unk80 & 0x80) {
+        arg0->y_speed = 0x40000;
+        arg0->x_speed = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+    } else {
+        arg0->y_speed = 0x38000;
+        arg0->x_speed = arg0->unk15 != 0 ? 0x48000 : -0x48000;
+    }
+    arg0->gravity = 0x4200;
+    arg0->air_state = 1;
+    if (arg0->animation_step.fields.relative_step == 0) {
+        arg0->unk6++;
+        set_animation(arg0, 0x11);
+    }
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80055F1C);
+#endif
 
 void slope_skier_jump_rise(struct MainObj* self)
 {
@@ -232,7 +262,48 @@ void slope_skier_jump(struct MainObj* self)
 }
 
 // slope_skier_step_5
+#ifdef MMX4_PC
+void func_80056054(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+    u8 i;
+
+    if (arg0->unk6 == 0) {
+        arg0->unk6++;
+        set_animation(arg0, arg0->ext.main_23.unk80 + 0xA);
+        return;
+    }
+    if (arg0->unk6 != 1)
+        return;
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 1) {
+        if (arg0->ext.main_23.unk82 & 1) {
+            arg0->unk5 = 1;
+            arg0->unk6 = 0;
+            arg0->ext.main_23.unk82 &= 0xFE;
+            arg0->unk15 ^= 0x40;
+        }
+        return;
+    }
+    if (arg0->animation_step.fields.event != 2)
+        return;
+    for (i = 0; i < 5; i++) {
+        visual = main_23_spawn_visual(arg0, arg0->unk15 ^ 0x40);
+        if (visual == NULL)
+            continue;
+        if (arg0->unk15 != 0)
+            visual->x_pos.i.hi = arg0->x_pos.i.hi - D_800FCE90[i].x;
+        else
+            visual->x_pos.i.hi = arg0->x_pos.i.hi + D_800FCE90[i].x;
+        visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + D_800FCE90[i].y;
+        visual->unk16 = arg0->unk16;
+        arg0->animation_step.fields.event = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_80056054);
+#endif
 
 void slope_skier_slide_start(struct MainObj* self)
 {
@@ -244,7 +315,44 @@ void slope_skier_slide_start(struct MainObj* self)
 }
 
 // slope_skier_slide_move
+#ifdef MMX4_PC
+void func_800562AC(struct MainObj* arg0)
+{
+    struct Main23Ext* ext = &arg0->ext.main_23;
+    struct VisualObj* visual;
+    u8 wall;
+
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    slope_skier_read_slope(arg0);
+    if (ext->unk81 != ext->unk80) {
+        if (ext->unk80 == 3 || (ext->unk80 & 0x80)) {
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            set_animation(arg0, ext->unk81 + 0xD);
+        } else {
+            set_animation(arg0, (ext->unk80 & 0x7F) + 4);
+        }
+    }
+    wall = arg0->unk15 != 0 ? arg0->collision_flags & 1 : arg0->collision_flags & 2;
+    if (wall) {
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+        ext->unk82 |= 1;
+    }
+    if (--arg0->unk7C != 0)
+        return;
+    visual = main_23_spawn_visual(arg0, arg0->unk15);
+    if (visual == NULL)
+        return;
+    visual->x_pos.i.hi = arg0->unk15 != 0 ? arg0->x_pos.i.hi - 0x28 : arg0->x_pos.i.hi + 0x28;
+    visual->y_pos.i.hi = (u16)arg0->y_pos.i.hi + (s8)(ext->unk80 < 0x80 ? ((u8*)D_800FCE9C)[ext->unk80] : ((u8*)jet_drone_anim_3)[ext->unk80 - 0x80]);
+    visual->unk16 = arg0->unk16;
+    arg0->unk7C = 5;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800562AC);
+#endif
 
 void slope_skier_slide_idle(void)
 {
@@ -256,7 +364,47 @@ void slope_skier_slide(struct MainObj* self)
 }
 
 // slope_skier_init
+#ifdef MMX4_PC
+void func_800564B4(struct MainObj* arg0)
+{
+    arg0->unk5 = 1;
+    arg0->state++;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->bg_offset = g_Player.bg_offset;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+        break;
+    case 1:
+        arg0->unk15 = 0;
+        break;
+    case 2:
+        arg0->unk15 = 0x40;
+        break;
+    }
+    arg0->animation_table = (const u8* const*)slope_skier_animations;
+    arg0->unk16 = 6;
+    arg0->terrain_box = slope_skier_hurt_box;
+    arg0->hurt_box = &slope_skier_terrain_box;
+    arg0->attack_box = &slope_skier_terrain_box;
+    arg0->hp = 3;
+    arg0->contact_damage = 1;
+    arg0->collision_data = (const u16*)D_80106DF4;
+    arg0->ext.main_23.unk80 = 0;
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    arg0->gravity = 0;
+    arg0->air_state = 0;
+    arg0->unk7C = 10;
+    arg0->ext.main_23.unk81 = 0;
+    arg0->ext.main_23.unk82 = 0;
+    set_animation(arg0, arg0->ext.main_23.unk80 + 4);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_23_slope_skier", func_800564B4);
+#endif
 
 void slope_skier_wait_for_player(struct MainObj* self)
 {

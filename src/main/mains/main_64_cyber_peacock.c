@@ -8,6 +8,10 @@
 #include "main/128C4.h"
 #include "main/55C4.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern struct Unk_unk68 cyber_peacock_rising_kick_attack_box;
 extern struct Unk_unk68 cyber_peacock_rising_kick_hurt_box;
 extern struct Unk_unk68 cyber_peacock_slash_attack_box;
@@ -46,7 +50,67 @@ extern void (*cyber_peacock_death_funcs[])(struct BarObj*);
 extern void (*cyber_peacock_state_funcs[])(struct MainObj*);
 
 // cyber_peacock_intro_init
+#ifdef MMX4_PC
+void func_8007C30C(struct MainObj* arg0);
+void func_8007CA68(struct MainObj* arg0);
+void func_8007D5D0(struct MainObj* arg0);
+void func_8007D710(struct MainObj* arg0);
+void func_8007D838(struct MainObj* arg0);
+extern struct Unk_unk68 cyber_peacock_intro_hurt_box;
+extern struct Unk_unk68 D_80107CFC[];
+extern u8 cyber_peacock_attack_animations[];
+extern u8 cyber_peacock_attack_steps[];
+void cyber_peacock_face_player(struct MainObj* arg0);
+u8 cyber_peacock_choose_attack(struct MainObj* arg0);
+void cyber_peacock_start_teleport(struct MainObj* arg0);
+extern void (*cyber_peacock_step_funcs[6])();
+#endif
+
+#ifdef MMX4_PC
+void func_8007C30C(struct MainObj* arg0)
+{
+    arg0->unk7C = 0x80;
+    arg0->contact_damage = 5;
+    arg0->animation_table = (const u8* const*)cyber_peacock_animations;
+    arg0->hurt_box = &cyber_peacock_intro_hurt_box;
+    arg0->attack_box = &cyber_peacock_hit_box;
+    arg0->collision_data = D_80107CFC;
+    arg0->state = 0;
+    arg0->unk5 = 1;
+    arg0->unk6 = 0;
+    arg0->unk7 = 0;
+    arg0->on_screen = 0;
+    arg0->unk2 = 0;
+    arg0->hp = 0;
+    arg0->invincibility_timer = 0;
+    arg0->ext.main_64.saved_health = 0;
+    arg0->ext.main_64.flash_timer = 0;
+    arg0->ext.main_64.force_laser = 0;
+    arg0->ext.main_64.hit_count = 0;
+    arg0->terrain_box = NULL;
+    arg0->air_state = 0;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    arg0->unk16 = 3;
+    arg0->ext.main_64.shot_count = 0;
+    arg0->ext.main_64.unk8A = 0;
+    arg0->ext.main_64.skip_attack = 1;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    engine_obj.character_state.bytes[7] = 0;
+    if (engine_obj.stage == 6) {
+        arg0->ext.main_64.arena_x = 0x3E0;
+        arg0->ext.main_64.arena_y = 0x900;
+    } else {
+        arg0->ext.main_64.arena_x = 0x410;
+        arg0->ext.main_64.arena_y = 0x600;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007C30C);
+#endif
 
 void cyber_peacock_intro_wait_player(struct MainObj* self)
 {
@@ -251,7 +315,71 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
 }
 
 // cyber_peacock_teleport_choose
+#ifdef MMX4_PC
+void func_8007CA68(struct MainObj* arg0)
+{
+    s16 timer = --arg0->unk7C;
+    u8 attack;
+    s16 base;
+
+    if (timer != 0) {
+        if (timer == 0x14) {
+            arg0->ext.main_64.target_x = g_Player.x_pos.i.hi;
+            arg0->ext.main_64.target_y = g_Player.y_pos.i.hi - 0x18;
+        }
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+    arg0->unk7 = 0;
+    arg0->unk6++;
+    arg0->x_pos.i.hi = arg0->ext.main_64.target_x;
+    arg0->y_pos.i.hi = arg0->ext.main_64.target_y;
+    cyber_peacock_face_player(arg0);
+    attack = cyber_peacock_choose_attack(arg0);
+    arg0->ext.main_64.next_step = cyber_peacock_attack_steps[attack];
+    set_animation(arg0, cyber_peacock_attack_animations[attack]);
+    arg0->unk2 = attack;
+    if (attack == 0) {
+        func_8001540C(2, 0xC7, arg0);
+        return;
+    }
+    base = arg0->ext.main_64.arena_x;
+    switch ((s8)attack) {
+    case 1:
+        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0xB3;
+        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
+        func_8001540C(2, 0xC7, arg0);
+        break;
+    case 2:
+        if (g_Player.x_pos.i.hi - base < 0xA0) {
+            arg0->x_pos.i.hi = base + 0x90;
+            arg0->unk15 = 0x40;
+        } else {
+            arg0->x_pos.i.hi = base + 0xE0;
+            arg0->unk15 = 0;
+        }
+        arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
+        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0xB3;
+        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
+        break;
+    case 3:
+        if (g_Player.x_pos.i.hi - base < 0xA0) {
+            arg0->x_pos.i.hi = base + 0x110;
+            arg0->unk15 = 0;
+        } else {
+            arg0->x_pos.i.hi = base + 0x50;
+            arg0->unk15 = 0x40;
+        }
+        arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
+        arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0x70;
+        arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
+        break;
+    }
+    arg0->unk2--;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007CA68);
+#endif
 
 void cyber_peacock_teleport_appear(struct MainObj* self)
 {
@@ -536,13 +664,135 @@ void cyber_peacock_attack(struct MainObj* self)
 }
 
 // cyber_peacock_hit_vanish
+#ifdef MMX4_PC
+void func_8007D5D0(struct MainObj* arg0)
+{
+    switch (arg0->unk6) {
+    case 0:
+        arg0->ext.main_64.shot_count = 0;
+        arg0->unk6++;
+        cyber_peacock_start_teleport(arg0);
+        set_animation(arg0, 0x20);
+        break;
+    case 1:
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk6++;
+            arg0->unk7C = 0x3C;
+            set_animation(arg0, 0x22);
+            break;
+        }
+        arg0->x_speed += arg0->x_accel;
+        if (main_bss_state.frame_counter & 1)
+            arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) + arg0->x_speed;
+        else
+            arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) - arg0->x_speed;
+        animate_object(ANIMATED_OBJECT(arg0));
+        break;
+    case 2:
+        arg0->unk5 = 2;
+        arg0->unk6 = 1;
+        cyber_peacock_start_teleport(arg0);
+        arg0->x_speed = 0x160000;
+        arg0->ext.main_64.flash_timer = 0;
+        set_animation(arg0, 0x22);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D5D0);
+#endif
 
 // cyber_peacock_guard_vanish
+#ifdef MMX4_PC
+void func_8007D710(struct MainObj* arg0)
+{
+    s16 count;
+
+    switch (arg0->unk6) {
+    case 0:
+        arg0->ext.main_64.shot_count = 0;
+        arg0->unk7C = 0;
+        arg0->unk7 = 0;
+        arg0->unk6++;
+        set_animation(arg0, 0x21);
+        func_8001540C(2, 0xC8, arg0);
+        arg0->attack_box = NULL;
+        arg0->hurt_box = NULL;
+        break;
+    case 1:
+        count = arg0->unk7C;
+        if (count >= 3) {
+            arg0->unk7C = 0x3C;
+            arg0->unk6++;
+            set_animation(arg0, 0x22);
+            break;
+        }
+        if (arg0->animation_step.fields.relative_step < 0)
+            arg0->unk7C = count + 1;
+        animate_object(ANIMATED_OBJECT(arg0));
+        break;
+    case 2:
+        arg0->unk5 = 2;
+        arg0->unk6 = 1;
+        cyber_peacock_start_teleport(arg0);
+        arg0->x_speed = 0x160000;
+        arg0->ext.main_64.flash_timer = 0;
+        set_animation(arg0, 0x22);
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D710);
+#endif
 
 // cyber_peacock_main
+#ifdef MMX4_PC
+void func_8007D838(struct MainObj* arg0)
+{
+    s32 hit;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (arg0->ext.main_64.hit_count >= 7) {
+        arg0->ext.main_64.hit_count = 0;
+        arg0->unk5 = 4;
+        arg0->unk6 = 0;
+        arg0->unk7 = 0;
+    }
+    ((void (*)(struct MainObj*))cyber_peacock_step_funcs[arg0->unk5])(arg0);
+    hit = func_8002DD04(arg0);
+    if (arg0->ext.main_64.flash_timer != 0) {
+        arg0->ext.main_64.flash_timer--;
+        arg0->hp = arg0->ext.main_64.saved_health;
+        if (arg0->ext.main_64.flash_timer & 1)
+            arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
+    } else if (hit < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+    } else if (hit > 0 && hit != 0x7F) {
+        if (hit == 4 || hit == 0x24) {
+            arg0->unk5 = 5;
+            arg0->unk6 = 0;
+            arg0->unk7 = 0;
+            arg0->ext.main_64.flash_timer = 0x40;
+            arg0->ext.main_64.saved_health = arg0->hp;
+        } else {
+            arg0->ext.main_64.flash_timer = 0x40;
+            arg0->ext.main_64.saved_health = arg0->hp;
+            arg0->ext.main_64.hit_count++;
+        }
+    }
+    func_8002D9BC(arg0);
+    is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D838);
+#endif
 
 void cyber_peacock_death_start(struct MainObj* self)
 {

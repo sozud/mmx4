@@ -10,6 +10,10 @@
 #include "main/items/item_01_stage_block.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 extern u8 surface_hopper_appear_animations[4];
 
 void func_80052A68(struct MainObj*);
@@ -56,7 +60,87 @@ void surface_hopper_update(struct MainObj* self)
 }
 
 // surface_hopper_init
+#ifdef MMX4_PC
+void func_800528BC(struct MainObj* arg0);
+u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical);
+void func_80052CB8(struct MainObj* arg0);
+u8 func_80053B54(struct MainObj* arg0);
+void func_80052E94(struct MainObj* arg0);
+void func_8005368C(struct MainObj* arg0);
+void func_80053338(struct MainObj* arg0);
+void func_80053D24(struct MainObj* self);
+void func_80053EB8(struct MainObj* self);
+void func_8005402C(struct MainObj* self);
+extern union AnimationStep* surface_hopper_animations[];
+extern struct Unk_unk68* D_800FC744[2];
+extern struct Unk_unk68* D_800FC74C[2];
+extern struct Unk_unk68 D_80106BF4[];
+extern u8 D_800FC7D4[4];
+extern u8 D_800FC7D8[4];
+extern s16 D_800FC7E8[6];
+u8 surface_hopper_probe_collision(struct PlayerObj*, s16, s16);
+u8 surface_hopper_probe_tile(struct PlayerObj*, s16, s16);
+u8 surface_hopper_aim_at_player(struct MainObj*);
+// src/main/mains/main_19_surface_hopper.c
+
+extern union AnimationStep* surface_hopper_animations[27];
+extern u8 D_800FC80C[8];
+extern void (*surface_hopper_launched_step_funcs[6])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_800528BC(struct MainObj* arg0)
+{
+    s32 index;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk5 = 2;
+    arg0->hp = 4;
+    arg0->contact_damage = 3;
+    arg0->animation_table = (const u8* const*)surface_hopper_animations;
+    arg0->unk6 = 0;
+    arg0->unk7C = 0;
+    arg0->invincibility_timer = 0;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    arg0->air_state = 0;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+
+    switch (arg0->unk2) {
+    case 0:
+        arg0->x_speed = FIXED(8);
+        arg0->unk15 = 0x40;
+        break;
+    case 1:
+        arg0->x_speed = FIXED(-8);
+        arg0->unk15 = 0;
+        break;
+    case 2:
+        arg0->y_speed = FIXED(8);
+        break;
+    }
+    arg0->unk16 = 6;
+
+    arg0->ext.main_19.unk80 = get_random() & 1;
+    if (arg0->ext.main_19.unk8A > 0x17)
+        arg0->ext.main_19.unk8A = 1;
+    arg0->ext.main_19.animation_index = (u8)arg0->unk2;
+    index = arg0->unk2 >> 1;
+    arg0->hurt_box = D_800FC744[index];
+    arg0->attack_box = D_800FC74C[index];
+    arg0->terrain_box = surface_hopper_attach_terrain_boxes[index];
+    arg0->collision_data = D_80106BF4;
+    func_8002C808(PLAYER_OBJECT(arg0));
+    arg0->unk5 = arg0->collision_flags != 0 ? 2 : 5;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800528BC);
+#endif
 
 // surface_hopper_main
 void func_80052A68(struct MainObj* self)
@@ -133,10 +217,135 @@ void surface_hopper_fly(struct MainObj* self)
 }
 
 // surface_hopper_crawl_start
+#ifdef MMX4_PC
+void func_80052CB8(struct MainObj* arg0)
+{
+    u8 animation;
+    u16 probe_result;
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (arg0->ext.main_19.animation_index == 0) {
+            arg0->unk15 = 0x40;
+            arg0->ext.main_19.unk82 = 1;
+        } else {
+            arg0->unk15 = 0;
+            arg0->ext.main_19.unk82 = 2;
+        }
+        arg0->ext.main_19.unk84 = (get_random() & 1) ? 0x50 : 0x20;
+        probe_result = func_800537E0(arg0, arg0->ext.main_19.unk80, 0);
+        if (probe_result != 0)
+            arg0->ext.main_19.unk80 ^= 1;
+        animation = D_800FC7D4[arg0->ext.main_19.unk80];
+        arg0->ext.main_19.unk8A = 0x15;
+    } else {
+        arg0->ext.main_19.unk84 = (get_random() & 1) ? 0x40 : 0x20;
+        if (func_800537E0(arg0, arg0->ext.main_19.unk80, 1) != 0)
+            arg0->ext.main_19.unk80 ^= 1;
+        arg0->unk15 = D_800FC7D8[arg0->ext.main_19.unk80];
+        arg0->ext.main_19.unk8A = 0x17;
+        arg0->ext.main_19.unk82 = 4;
+        animation = 2;
+    }
+
+    arg0->terrain_box = surface_hopper_attach_terrain_boxes[arg0->unk2 >> 1];
+    set_animation(ANIMATED_OBJECT(arg0), animation);
+    arg0->unk6 = 1;
+    arg0->ext.main_19.unk86 = arg0->x_pos.u.hi;
+    arg0->ext.main_19.unk88 = arg0->y_pos.u.hi;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052CB8);
+#endif
 
 // surface_hopper_crawl_move
+#ifdef MMX4_PC
+void func_80052E94(struct MainObj* arg0)
+{
+    s32 distance;
+    u8 flags;
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (arg0->animation_step.fields.relative_step < 0) {
+            distance = arg0->y_pos.i.hi - (s16)arg0->ext.main_19.unk88;
+            if (distance < 0)
+                distance = -distance;
+            if (distance <= arg0->ext.main_19.unk84 && func_800537E0(arg0, arg0->ext.main_19.unk80, 0) == 0) {
+                if (arg0->unk7C >= 0x3C && func_80053B54(arg0) != 0) {
+                    arg0->unk5 = 4;
+                    arg0->unk6 = 0;
+                }
+                goto update_animation;
+            }
+
+            flags = surface_hopper_aim_at_player(arg0);
+            if (flags & 1) {
+                arg0->unk6 = 4;
+                arg0->ext.main_19.unk80 = arg0->y_speed < 0 ? 1 : 0;
+                arg0->x_speed = 0;
+                arg0->y_speed *= 3;
+                set_animation(ANIMATED_OBJECT(arg0), 6);
+            } else if (func_80053B54(arg0) != 0) {
+                arg0->unk5 = 4;
+                arg0->unk6 = 0;
+            } else {
+                arg0->unk6 = 2;
+                set_animation(ANIMATED_OBJECT(arg0), 6);
+            }
+        } else if (arg0->animation_step.fields.event != 0) {
+            if (arg0->ext.main_19.unk80 == 0)
+                arg0->y_pos.u.hi -= arg0->ext.main_19.unk8A;
+            else
+                arg0->y_pos.u.hi += arg0->ext.main_19.unk8A;
+            arg0->animation_step.fields.event = 0;
+        }
+    } else {
+        if (arg0->animation_step.fields.relative_step < 0) {
+            distance = arg0->x_pos.i.hi - (s16)arg0->ext.main_19.unk86;
+            if (distance < 0)
+                distance = -distance;
+            if (distance <= arg0->ext.main_19.unk84 && func_800537E0(arg0, arg0->ext.main_19.unk80, 1) == 0) {
+                if (arg0->unk7C >= 0x3C && func_80053B54(arg0) != 0) {
+                    arg0->unk5 = 4;
+                    arg0->unk6 = 0;
+                }
+                goto update_animation;
+            }
+
+            flags = surface_hopper_aim_at_player(arg0);
+            if (flags & 2) {
+                arg0->unk6 = 4;
+                if (arg0->x_speed >= 0) {
+                    arg0->unk15 = 0x40;
+                    arg0->ext.main_19.unk80 = 1;
+                } else {
+                    arg0->unk15 = 0;
+                    arg0->ext.main_19.unk80 = 0;
+                }
+                arg0->y_speed = 0;
+                arg0->x_speed *= 3;
+                set_animation(ANIMATED_OBJECT(arg0), 5);
+            } else if (func_80053B54(arg0) != 0) {
+                arg0->unk5 = 4;
+                arg0->unk6 = 0;
+            } else {
+                arg0->unk6 = 2;
+                set_animation(ANIMATED_OBJECT(arg0), 5);
+            }
+        } else if (arg0->animation_step.fields.event != 0) {
+            if (arg0->ext.main_19.unk80 == 0)
+                arg0->x_pos.u.hi -= arg0->ext.main_19.unk8A;
+            else
+                arg0->x_pos.u.hi += arg0->ext.main_19.unk8A;
+            arg0->animation_step.fields.event = 0;
+        }
+    }
+
+update_animation:
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052E94);
+#endif
 
 void surface_hopper_crawl_turn(struct MainObj* self)
 {
@@ -186,7 +395,69 @@ void surface_hopper_crawl_attach(struct MainObj* self)
 }
 
 // surface_hopper_crawl_wall
+#ifdef MMX4_PC
+void func_80053338(struct MainObj* arg0)
+{
+    struct Unk_unk68* bounds;
+    s16 probe_x;
+    s16 probe_y;
+    s32 distance;
+    s32 nearby;
+    u8 collision;
+    u8 direction;
+
+    move_object(MOVING_OBJECT(arg0));
+    CollisionRelated(PLAYER_OBJECT(arg0));
+    bounds = arg0->terrain_box;
+    nearby = 0;
+    if (arg0->ext.main_19.animation_index < 2) {
+        probe_y = arg0->y_pos.i.hi;
+        if (arg0->ext.main_19.unk80 == 0)
+            probe_y -= (u8)bounds->unk3;
+        else
+            probe_y += (u8)bounds->unk3;
+        probe_x = arg0->x_pos.i.hi + (arg0->unk15 != 0 ? 4 : -4);
+        distance = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    } else {
+        probe_x = arg0->x_pos.i.hi;
+        if (arg0->unk15 == 0)
+            probe_x -= (u8)bounds->unk2;
+        else
+            probe_x += (u8)bounds->unk2;
+        probe_y = arg0->y_pos.i.hi - 4;
+        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    }
+    if (distance < 0)
+        distance = -distance;
+    if (distance < 0x18)
+        nearby = 1;
+
+    collision = func_8002D724(PLAYER_OBJECT(arg0), probe_x, probe_y);
+    if ((arg0->collision_flags & (u8)~arg0->ext.main_19.unk82) == 0 && collision >= 0x38 && !nearby) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        set_animation(ANIMATED_OBJECT(arg0), 0xB);
+        arg0->unk6 = 6;
+        arg0->ext.main_19.unk80 ^= 1;
+        direction = arg0->ext.main_19.unk80;
+        if ((arg0->collision_flags >> (direction + 2)) & 1)
+            arg0->ext.main_19.unk80 = direction ^ 1;
+    } else {
+        set_animation(ANIMATED_OBJECT(arg0), 0xA);
+        arg0->unk6 = 6;
+        arg0->unk15 ^= 0x40;
+        arg0->ext.main_19.unk80 ^= 1;
+        direction = arg0->ext.main_19.unk80;
+        if ((arg0->collision_flags >> direction) & 1)
+            arg0->ext.main_19.unk80 = direction ^ 1;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053338);
+#endif
 
 void surface_hopper_crawl_finish(struct MainObj* self)
 {
@@ -211,10 +482,92 @@ void surface_hopper_leap_start(struct MainObj* self)
 }
 
 // surface_hopper_leap_fly
+#ifdef MMX4_PC
+void func_8005368C(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+    s32 index;
+
+    if (arg0->animation_step.fields.relative_step < 0) {
+        arg0->unk5 = 2;
+        arg0->unk6 = 0;
+        arg0->ext.main_19.unk80 = get_random() & 1;
+        return;
+    }
+
+    if (arg0->animation_step.fields.event == 0) {
+        animate_object(ANIMATED_OBJECT(arg0));
+        return;
+    }
+
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        index = arg0->ext.main_19.animation_index;
+        shot->active = 0x41;
+        shot->id = 0xB;
+        shot->x_pos.i.hi = arg0->x_pos.i.hi + D_800FC7E8[index * 2];
+        shot->y_pos.i.hi = arg0->y_pos.i.hi + D_800FC7E8[index * 2 + 1];
+        shot->animation_table = (u32**)arg0->animation_table;
+        shot->unk40 = arg0->unk40;
+        shot->unk3C = (void*)arg0->sprite_frames;
+        shot->unk42 = arg0->unk42 & 0x7FFF;
+        shot->unk7C = (struct WeaponObj*)arg0;
+        shot->unk16 = arg0->unk16;
+        shot->unk15 = arg0->unk15;
+        set_velocity_from_angle(MOVING_OBJECT(shot), arg0->ext.main_19.unk83);
+    }
+    arg0->animation_step.fields.event = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
+#endif
 
 // surface_hopper_pick_surface
+#ifdef MMX4_PC
+u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
+{
+    struct Unk_unk68* bounds = arg0->terrain_box;
+    s32 first;
+    s32 second;
+    s16 probe;
+    s16 edge;
+
+    if (vertical == 0) {
+        if (direction == 0) {
+            probe = -(u16)arg0->ext.main_19.unk8A;
+            edge = probe - (u8)bounds->unk3;
+        } else {
+            probe = arg0->ext.main_19.unk8A;
+            edge = probe + (u8)bounds->unk3;
+        }
+        if (arg0->unk15 == 0) {
+            first = surface_hopper_probe_collision(PLAYER_OBJECT(arg0), -1, probe);
+            second = surface_hopper_probe_tile(PLAYER_OBJECT(arg0), -4, edge);
+        } else {
+            first = surface_hopper_probe_collision(PLAYER_OBJECT(arg0), 1, probe);
+            second = surface_hopper_probe_tile(PLAYER_OBJECT(arg0), 4, edge);
+        }
+        if ((first & 0xF) == (1 << arg0->ext.main_19.animation_index))
+            return (u8)second < 0x38;
+        return 1;
+    }
+
+    if (direction == 0) {
+        probe = -(u16)arg0->ext.main_19.unk8A;
+        edge = probe - (u8)bounds->unk2;
+    } else {
+        probe = arg0->ext.main_19.unk8A;
+        edge = probe + (u8)bounds->unk2;
+    }
+    first = surface_hopper_probe_collision(PLAYER_OBJECT(arg0), probe, -1);
+    second = surface_hopper_probe_tile(PLAYER_OBJECT(arg0), edge, -4);
+    if ((first & 0xF) == 4)
+        return (u8)second < 0x38;
+    return 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_800537E0);
+#endif
 
 u8 surface_hopper_aim_at_player(struct MainObj* self)
 {
@@ -276,7 +629,41 @@ u8 surface_hopper_probe_tile(struct PlayerObj* self, s16 arg1, s16 arg2)
 }
 
 // surface_hopper_check_surface
+#ifdef MMX4_PC
+u8 func_80053B54(struct MainObj* arg0)
+{
+    s32 dx = (s16)(g_Player.x_pos.i.hi - arg0->x_pos.i.hi);
+    s32 dy = (s16)(g_Player.y_pos.i.hi - arg0->y_pos.i.hi);
+    u8 direction;
+    s32 selected = 0;
+
+    if (dx < 0)
+        dx = -dx;
+    if (dy < 0)
+        dy = -dy;
+    direction = (u8)angle_to_object(
+        OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player));
+
+    if (arg0->ext.main_19.animation_index < 2) {
+        if (dx < 0x40 && dy >= 0x60)
+            return 0;
+        if (arg0->ext.main_19.animation_index == 0)
+            selected = (u8)(direction - 8) < 0x11;
+        else
+            selected = (u8)(direction - 9) >= 0xF;
+    } else {
+        if (dx >= 0x80)
+            return 0;
+        selected = (u8)(direction - 0x10) < 0x11;
+    }
+
+    if (selected)
+        arg0->ext.main_19.unk83 = direction & 0x1E;
+    return selected;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053B54);
+#endif
 
 void surface_hopper_despawn(struct MainObj* self)
 {
@@ -284,13 +671,183 @@ void surface_hopper_despawn(struct MainObj* self)
 }
 
 // surface_hopper_launched_init
+#ifdef MMX4_PC
+void func_80053D24(struct MainObj* self)
+{
+    struct Main19Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_19;
+    s32 vx = 0, vy = 0;
+
+    self->unk5 = 2;
+    self->hp = 31;
+    self->contact_damage = 3;
+    self->animation_table = (const u8* const*)surface_hopper_animations;
+    self->unk16 = 6;
+    self->state = 1;
+    self->unk6 = 0;
+    self->unk7C = 0;
+    self->on_screen = 1;
+    self->invincibility_timer = 0;
+    self->air_state = 0;
+    self->unk42++;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    ext->unk82 = 0x38;
+    ext->animation_index = ((u8)self->unk2 - 3) & 1;
+    ext->unk83 = 1;
+    self->x_speed = self->y_speed = self->x_accel = self->gravity = 0;
+    switch ((s8)((u8)self->unk2 - 3)) {
+    case 0:
+    case 1:
+        vy = FIXED(-8);
+        ext->unk80 = 0;
+        break;
+    case 2:
+    case 3:
+        vx = FIXED(8);
+        ext->unk80 = 1;
+        break;
+    case 4:
+    case 5:
+        vx = FIXED(-8);
+        ext->unk80 = 3;
+        break;
+    }
+    surface_hopper_set_launch(self);
+    self->x_speed = vx;
+    self->y_speed = vy;
+    self->hurt_box = NULL;
+    self->collision_data = D_801060F0;
+    func_8002C808(PLAYER_OBJECT(self));
+    self->unk5 = (self->collision_flags & 8) ? 2 : 5;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053D24);
+#endif
 
 // surface_hopper_launched_main
+#ifdef MMX4_PC
+void func_80053EB8(struct MainObj* self)
+{
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    surface_hopper_launched_step_funcs[self->unk5](self);
+    func_8002D9BC(BASE_OBJECT(self));
+    s32 hit = func_8002DD04(self);
+    if (hit < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(8, surface_hopper_debris, self);
+        u16 x = self->x_pos.u.hi, y = self->y_pos.u.hi;
+        switch (SP_CUR_MAIN_OBJ->ext.main_19.unk80) {
+        case 0:
+            y += 16;
+            break;
+        case 1:
+            x -= 16;
+            break;
+        case 2:
+            self->state = 2;
+            return;
+        case 3:
+            x += 16;
+            break;
+        }
+        func_800BF638(BASE_OBJECT(self), 12, (s16)(x + 16), (s16)y);
+        self->state = 2;
+        return;
+    }
+    if (hit != 0) {
+        self->unk5 = 1;
+        self->unk6 = 0;
+    }
+    if (func_8002B160(BASE_OBJECT(self)) != 0) {
+        self->state = 2;
+    } else {
+        is_on_screen(BASE_OBJECT(self));
+    }
+    if (SP_CUR_MAIN_OBJ->ext.main_19.unk82 > 0x38) {
+        self->state = 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053EB8);
+#endif
 
 // surface_hopper_launched_crawl
+#ifdef MMX4_PC
+void func_8005402C(struct MainObj* self)
+{
+    struct Main19Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_19;
+    if (self->unk6 == 0) {
+        surface_hopper_set_launch(self);
+        self->unk6 = 1;
+        return;
+    }
+    u16 x = self->x_pos.u.hi, y = self->y_pos.u.hi;
+    u8 orientation = ext->unk80;
+    if (ext->animation_index == 0) {
+        if (orientation == 2)
+            y -= 2;
+        if (orientation == 3) {
+            x -= 2;
+            y -= 2;
+        }
+    } else {
+        if (orientation == 1) {
+            x += 2;
+            y -= 2;
+        }
+        if (orientation == 2) {
+            x -= 2;
+            y -= 2;
+        }
+        if (orientation == 3) {
+            x -= 2;
+            y += 2;
+        }
+    }
+    ext->unk82 = func_8002D724(PLAYER_OBJECT(self), (s16)x, (s16)y);
+    u8 mask = D_800FC80C[ext->animation_index * 4 + ext->unk80];
+    if (ext->unk82 < 0x38) {
+        self->x_pos.u.hi = ext->unk86;
+        self->y_pos.u.hi = ext->unk88;
+        ext->unk83 ^= 1;
+        ext->unk80 = (ext->unk80 + (ext->animation_index == 0 ? 1 : -1)) & 3;
+        surface_hopper_set_launch(self);
+    } else if (self->collision_flags & mask) {
+        struct Unk_unk68* bounds = self->terrain_box;
+        switch (mask) {
+        case 1:
+            self->x_pos.u.hi += bounds->unk0 + bounds->unk2;
+            self->y_pos.u.hi += bounds->unk1;
+            ext->unk80 = 1;
+            break;
+        case 2:
+            self->x_pos.u.hi -= bounds->unk0 + bounds->unk2;
+            self->y_pos.u.hi += bounds->unk1;
+            ext->unk80 = 3;
+            break;
+        case 4:
+        case 8:
+            self->x_pos.u.hi += orientation == 1 ? -bounds->unk0 : bounds->unk0;
+            self->y_pos.u.hi += mask == 4 ? -(bounds->unk1 + bounds->unk3) : bounds->unk1 + bounds->unk3;
+            ext->unk80 = mask == 4 ? 2 : 0;
+            break;
+        default:
+            animate_object(ANIMATED_OBJECT(self));
+            break;
+        }
+        surface_hopper_set_launch(self);
+    } else {
+        animate_object(ANIMATED_OBJECT(self));
+    }
+    ext->unk86 = self->x_pos.u.hi;
+    ext->unk88 = self->y_pos.u.hi;
+    move_with_gravity(ANIMATED_OBJECT(self));
+    CollisionRelated(PLAYER_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005402C);
+#endif
 
 void surface_hopper_set_launch(struct MainObj* self)
 {

@@ -274,7 +274,45 @@ void dragonfly_hunt_start(struct MainObj* self)
     }
 }
 // dragonfly_hunt_fly
+#ifdef MMX4_PC
+void func_80049E68(struct MainObj* arg0);
+void func_8004A178(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80049E68(struct MainObj* arg0)
+{
+    u32 timer;
+    s32 distance;
+
+    move_object(MOVING_OBJECT(arg0));
+
+    timer = arg0->ext.main_10.timer - 1;
+    arg0->ext.main_10.timer = timer;
+    if (timer == 0) {
+        arg0->y_speed = FIXED(2);
+        arg0->x_speed = 0;
+        arg0->unk62 = 0;
+        arg0->attack_box = NULL;
+        arg0->unk5 = 5;
+        arg0->unk6 = 0;
+    }
+
+    if (arg0->unk15 == 0) {
+        distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    } else {
+        distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+    }
+    if (distance >= 0x30) {
+        arg0->ext.main_10.timer = 0x14;
+        arg0->x_speed = 0;
+        arg0->unk6 = 2;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_10_dragonfly", func_80049E68);
+#endif
 
 void dragonfly_hunt_hover(struct MainObj* self)
 {
@@ -346,7 +384,64 @@ void dragonfly_carry_grab(struct MainObj* self)
 }
 
 // dragonfly_carry_hold
+#ifdef MMX4_PC
+void func_8004A178(struct MainObj* arg0)
+{
+    s32 saved_x;
+    s32 saved_y;
+    s32 x_vel;
+    s32 y_vel;
+    u32 timer;
+    s32 past_player;
+
+    if (arg0->unk15 != 0) {
+        past_player = arg0->x_pos.val > g_Player.x_pos.val;
+    } else {
+        past_player = g_Player.x_pos.val > arg0->x_pos.val;
+    }
+
+    if (!past_player) {
+        timer = arg0->ext.main_10.timer - 1;
+        arg0->ext.main_10.timer = timer;
+        if (timer != 0
+            && !(arg0->ext.main_10.hold_state == 1 && g_Player.stun_timer != 0)) {
+            saved_x = arg0->x_pos.val;
+            saved_y = arg0->y_pos.val;
+            if (arg0->unk15 != 0) {
+                arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi + 0x18;
+            } else {
+                arg0->x_pos.i.hi = (u16)arg0->x_pos.i.hi - 0x18;
+            }
+            arg0->y_pos.i.hi = (u16)arg0->y_pos.i.hi + 0x18;
+            set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(&g_Player)) & 0xFF);
+            x_vel = arg0->x_speed;
+            y_vel = arg0->y_speed;
+            arg0->x_pos.val = saved_x;
+            arg0->y_pos.val = saved_y;
+            arg0->x_speed = x_vel + (x_vel / 2);
+            arg0->y_speed = y_vel + (y_vel / 2);
+            move_object(MOVING_OBJECT(arg0));
+            if (g_Player.stun_timer != 0) {
+                set_animation(arg0, 3);
+                arg0->x_speed = 0;
+                arg0->y_speed = 0;
+                arg0->unk6 = 2;
+            }
+            animate_object(ANIMATED_OBJECT(arg0));
+            return;
+        }
+    }
+
+    arg0->y_speed = FIXED(2);
+    arg0->x_speed = 0;
+    arg0->unk62 = 0;
+    arg0->attack_box = NULL;
+    arg0->unk5 = 5;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_10_dragonfly", func_8004A178);
+#endif
 
 void dragonfly_carry_lift(struct MainObj* self)
 {

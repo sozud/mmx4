@@ -102,7 +102,52 @@ void func_80082470(struct MainObj* obj)
 }
 
 // gunship_main
+#ifdef MMX4_PC
+void func_80082574(struct MainObj* arg0);
+void func_800828B4(struct MainObj* arg0);
+extern void (*gunship_step_funcs[7])();
+void gunship_bob(struct MainObj*);
+void collide_with_players(struct PlayerObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80082574(struct MainObj* arg0)
+{
+    s32 collision;
+
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    gunship_step_funcs[arg0->unk5](arg0);
+    collision = func_8002DD04(arg0);
+    func_8002D9BC(arg0);
+    if (arg0->ext.main_67.unk89 == 0)
+        gunship_bob(arg0);
+    collide_with_players(PLAYER_OBJECT(arg0));
+    if (arg0->unk5 != 0)
+        arg0->ext.main_67.saved_unk5 = arg0->unk5;
+    if (collision < 0) {
+        arg0->unk7C = 0x64;
+        arg0->unk7E = 5;
+        arg0->unk5 = 0;
+        arg0->unk42 &= 0x7FFF;
+        arg0->state++;
+        return;
+    }
+    if (collision != 0
+        && (engine_obj.cur_character == 0 ? (collision == 2 || collision == 0xB) : collision == 0x21)
+        && arg0->unk5 != 6) {
+        arg0->unk5 = 6;
+        arg0->unk6 = 0;
+    }
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x60, 0x60) != 0) {
+        despawn_object(OBJECT_HEADER(arg0));
+        return;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x50, 0x50);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_80082574);
+#endif
 
 void gunship_destroyed(struct MainObj* self)
 {
@@ -160,7 +205,42 @@ void gunship_choose(struct MainObj* self)
 }
 
 // gunship_choose_attack
+#ifdef MMX4_PC
+void func_800828B4(struct MainObj* arg0)
+{
+    s32 dx;
+    s32 dy;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (--arg0->unk7C == 0) {
+        if (dx < 0xC1) {
+            dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+            if (dy < 0)
+                dy = -dy;
+            arg0->unk5 = dy < 0x31 ? 3 : 4;
+        } else {
+            arg0->unk5 = 4;
+        }
+        arg0->unk6 = 0;
+        arg0->ext.main_67.unk8D = 0;
+    }
+    if (arg0->unk72 == 8 && arg0->ext.main_67.unk8D != 0) {
+        dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+        if (dx < 0)
+            dx = -dx;
+        if (dx < 0xC1) {
+            arg0->unk5 = 4;
+            arg0->unk6 = 0;
+            arg0->ext.main_67.unk8D = 1;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_67_gunship", func_800828B4);
+#endif
 
 void gunship_gun(struct MainObj* self)
 {

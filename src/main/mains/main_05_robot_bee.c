@@ -86,7 +86,81 @@ void robot_bee_update(struct MainObj* self)
 }
 
 // robot_bee_init
+#ifdef MMX4_PC
+void func_80044F88(struct MainObj* arg0);
+void func_80046220(struct MainObj* self);
+void func_80046400(struct MainObj* self);
+static u32 robot_bee_arc_origin(struct MainObj* self, unsigned offset);
+static void robot_bee_save_arc_origin(struct MainObj* self, s32 y_offset);
+static void robot_bee_arc_position(struct MainObj* self, int index, int x_positive, int y_positive);
+void func_80045940(struct MainObj* self);
+void func_80045DD8(struct MainObj* self);
+extern union AnimationStep* robot_bee_animations[];
+extern struct Unk_unk68 D_800FA100;
+extern struct Unk_unk68 D_800FA104;
+extern u16 D_80106570[];
+extern s32 D_800FA128[], D_800FA348[], D_800FA368[];
+static u32 robot_bee_arc_origin(struct MainObj* self, unsigned offset)
+{
+    u32 value;
+    memcpy(&value, (u8*)&self->ext.main_5 + offset, sizeof(value));
+    return value;
+}
+static void robot_bee_save_arc_origin(struct MainObj* self, s32 y_offset)
+{
+    u32 x = (u32)self->x_pos.val;
+    u32 y = (u32)self->y_pos.val + (u32)y_offset;
+    memcpy((u8*)&self->ext.main_5 + 4, &x, sizeof(x));
+    memcpy((u8*)&self->ext.main_5 + 8, &y, sizeof(y));
+}
+static void robot_bee_arc_position(struct MainObj* self, int index,
+    int x_positive, int y_positive)
+{
+    u32 x = robot_bee_arc_origin(self, 4);
+    u32 y = robot_bee_arc_origin(self, 8);
+    u32 dx = (u32)D_800FA368[index] * 53u;
+    u32 dy = (u32)D_800FA348[index] * 53u;
+    self->x_pos.val = (s32)(x_positive ? x + dx : x - dx);
+    self->y_pos.val = (s32)(y_positive ? y + dy : y - dy);
+}
+#endif
+
+#ifdef MMX4_PC
+void func_80044F88(struct MainObj* arg0)
+{
+    arg0->state = 1;
+    arg0->unk5 = 2;
+    arg0->unk7C = 0;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)robot_bee_animations;
+    arg0->hurt_box = (const u8*)&D_800FA100;
+    arg0->attack_box = (const u8*)&D_800FA104;
+    arg0->collision_data = D_80106570;
+    arg0->contact_damage = 3;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->unk16 = 5;
+    arg0->terrain_box = NULL;
+    arg0->hp = 2;
+    arg0->invincibility_timer = 0;
+    arg0->x_speed = 0;
+    arg0->y_speed = 0;
+    arg0->x_accel = 0;
+    arg0->gravity = 0;
+    if (arg0->unk2 == 1)
+        arg0->unk5 = 5;
+    else if (arg0->unk2 == 2)
+        arg0->unk5 = 6;
+    else if (arg0->unk2 == 3)
+        arg0->unk5 = 8;
+    else if (arg0->unk2 == 4)
+        arg0->unk5 = 9;
+    set_animation(arg0, 1);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80044F88);
+#endif
 
 void robot_bee_main(struct MainObj* self)
 {
@@ -343,7 +417,53 @@ void robot_bee_sting_lunge(struct MainObj* self)
 }
 
 // robot_bee_sting_strike
+#ifdef MMX4_PC
+// src/main/mains/main_05_robot_bee.c
+
+void func_80045940(struct MainObj* self)
+{
+    u8 phase = self->ext.main_5.unk80;
+    int timer = self->unk7C;
+    int right = self->unk15 == 0x40;
+
+    switch (phase) {
+    case 0:
+        robot_bee_save_arc_origin(self, -FIXED(53));
+        self->ext.main_5.unk80++;
+        break;
+    case 1:
+        robot_bee_arc_position(self, timer, right, 1);
+        break;
+    case 2:
+        robot_bee_arc_position(self, 7 - timer, right, 0);
+        break;
+    case 3:
+        robot_bee_arc_position(self, timer, !right, 0);
+        break;
+    case 4:
+        robot_bee_arc_position(self, 7 - timer, !right, 1);
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    timer = self->unk7C;
+    self->unk7C = (s16)((u16)timer - 1);
+    if (timer <= 0) {
+        self->unk7C = 7;
+        phase = self->ext.main_5.unk80;
+        if (phase < 4) {
+            self->ext.main_5.unk80++;
+        } else {
+            self->unk7C = 0x17;
+            self->x_speed = D_800FA128[(self->unk15 & 0x40) != 0];
+            self->y_speed = FIXED(4);
+            self->ext.main_5.unk80 = 0;
+            self->unk6++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80045940);
+#endif
 
 void robot_bee_sting_recoil(struct MainObj* self)
 {
@@ -357,7 +477,46 @@ void robot_bee_sting_recoil(struct MainObj* self)
 }
 
 // robot_bee_sting_return
+#ifdef MMX4_PC
+void func_80045DD8(struct MainObj* self)
+{
+    u8 phase = self->ext.main_5.unk80;
+    int timer = self->unk7C;
+    int right = self->unk15 == 0x40;
+
+    switch (phase) {
+    case 0:
+        robot_bee_save_arc_origin(self, FIXED(53));
+        self->ext.main_5.unk80++;
+        break;
+    case 1:
+        robot_bee_arc_position(self, timer, right, 0);
+        break;
+    case 2:
+        robot_bee_arc_position(self, 7 - timer, right, 1);
+        break;
+    case 3:
+        robot_bee_arc_position(self, timer, !right, 1);
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    timer = self->unk7C;
+    self->unk7C = (s16)((u16)timer - 1);
+    if (timer <= 0) {
+        self->unk7C = 7;
+        phase = self->ext.main_5.unk80;
+        if (phase < 3) {
+            self->ext.main_5.unk80++;
+        } else {
+            self->x_speed = 0;
+            self->y_speed = FIXED(5);
+            self->unk6++;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80045DD8);
+#endif
 
 void robot_bee_sting_fly_off(struct MainObj* self)
 {
@@ -390,7 +549,39 @@ void func_8004619C(struct MainObj* self)
 }
 
 // robot_bee_circle_orbit
+#ifdef MMX4_PC
+void func_80046220(struct MainObj* self)
+{
+    struct Main5Ext* ext = &self->ext.main_5;
+    s32 distance;
+
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    self->unk7C--;
+    if (self->unk7C == 0x1E) {
+        ext->unk81 = ext->unk81 == 0;
+        self->gravity = -self->gravity;
+        self->y_speed = D_800FA130[ext->unk81];
+    }
+    if (self->unk7C == 0) {
+        ext->unk80 = ext->unk80 == 0;
+        self->x_speed = 0;
+        self->x_accel = -self->x_accel;
+        ext->unk81 = ext->unk81 == 0;
+        self->gravity = -self->gravity;
+        self->unk7C = 0x3C;
+        self->y_speed = D_800FA130[ext->unk81];
+    }
+    distance = g_Player.x_pos.val - self->x_pos.val;
+    if (distance >= -0x6FFFFF && distance <= 0x6FFFFF) {
+        set_animation(self, 2);
+        self->unk5 = 7;
+        self->unk6 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046220);
+#endif
 
 void robot_bee_drop(struct MainObj* self)
 {
@@ -415,7 +606,56 @@ void robot_bee_drop(struct MainObj* self)
 }
 
 // robot_bee_drop_start
+#ifdef MMX4_PC
+void func_80046400(struct MainObj* self)
+{
+    s16 timer = self->unk7C;
+    u8 direction;
+    s32 speed;
+
+    animate_object(ANIMATED_OBJECT(self));
+    self->unk7C = timer - 1;
+    if (timer >= 5)
+        return;
+
+    func_8001540C(2, 0x14, self);
+    direction = (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    if (self->unk15 == 0 && self->x_speed > 0)
+        self->unk15 = 0x40;
+    if (self->unk15 == 0x40 && self->x_speed < 0)
+        self->unk15 = 0;
+    if (self->y_speed > 0)
+        self->y_speed = 0;
+    if ((self->x_speed >= 0 && self->x_speed + self->y_speed == 0)
+        || (self->x_speed < 0 && self->x_speed == self->y_speed))
+        self->x_speed = self->unk15 ? 0x10000 : -0x10000;
+
+    if (direction == 0x11 || direction == 0x1F)
+        set_animation(self, 0xF);
+    else if (direction >= 0x12 && direction <= 0x1E && direction != 0x17 && direction != 0x18 && direction != 0x19)
+        set_animation(self, 0xE);
+    else if (direction == 0x17 || direction == 0x19)
+        set_animation(self, 0xD);
+    else if (direction == 0x18)
+        set_animation(self, 0xC);
+    else {
+        self->unk5 = 4;
+        self->unk6 = 0;
+        self->unk7C = 5;
+    }
+
+    self->x_speed *= 3;
+    self->y_speed *= 3;
+    speed = self->x_speed;
+    self->x_accel = (speed < 0 ? -speed : speed) >> 6;
+    speed = self->y_speed;
+    self->gravity = (speed < 0 ? -speed : speed) >> 6;
+    self->unk6++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_05_robot_bee", func_80046400);
+#endif
 
 void robot_bee_drop_fall(struct MainObj* self)
 {

@@ -22,7 +22,47 @@ void breakable_wall_update(struct ItemObj* arg0)
 }
 
 // breakable_wall_init
+#ifdef MMX4_PC
+void func_800BE9E8(struct ItemObj* self);
+extern union AnimationStep* falling_rock_d_animations[];
+extern u8 breakable_wall_hit_box[4];
+extern struct Unk_unk68 D_80108684[];
+extern union AnimationStep* falling_rock_d_animations[];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800BE9E8(struct ItemObj* self)
+{
+    s32 column;
+    s32 row;
+    s32 index;
+
+    self->unk16 = 6;
+    self->on_screen = 0;
+    self->unk5C = 1;
+    self->unk61 = 0;
+    self->animation_table = (const u8* const*)falling_rock_d_animations;
+    column = func_8002938C(0x9A);
+    row = func_8002938C(0x9A);
+    self->unk42 = ((column * 4 + 0x18) & 0xF) | (((row + 6) / 4 + 0x1E0) << 6);
+    index = func_8002938C(0x9A);
+    self->unk40 = D_801406A8[index] >> 7;
+    index = func_8002938C(0x9A);
+    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
+    self->unk54 = breakable_wall_hit_box;
+    self->unk50 = NULL;
+    self->unk68 = NULL;
+    self->unk58 = (const u8*)D_80108684;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->state = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/items/item_00_breakable_wall", func_800BE9E8);
+#endif
 
 void breakable_wall_main(struct ItemObj* arg0)
 {

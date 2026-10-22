@@ -68,7 +68,63 @@ void func_8007C090(struct WeaponObj* weapon)
 }
 
 // hatch_turret_main
+#ifdef MMX4_PC
+void func_8007C144(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_8007C144(struct MainObj* arg0)
+{
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0) {
+        arg0->state = 2;
+        return;
+    }
+    switch (arg0->unk5) {
+    case 0:
+        if (arg0->unk7C == 0) {
+            arg0->unk5 = 1;
+            set_animation(arg0, 0);
+        } else {
+            arg0->unk7C--;
+        }
+        break;
+    case 1:
+        if (arg0->animation_step.fields.relative_step != 0) {
+            animate_object(ANIMATED_OBJECT(arg0));
+            break;
+        }
+        arg0->unk5 = 2;
+        func_8001540C(2, 0x78, arg0);
+        set_animation(arg0, 1);
+        break;
+    case 2:
+        if (arg0->animation_step.fields.relative_step != 0) {
+            animate_object(ANIMATED_OBJECT(arg0));
+            break;
+        }
+        arg0->unk5 = 3;
+        func_8001540C(2, 0x79, arg0);
+        func_8007C090(WEAPON_OBJECT(arg0));
+        break;
+    case 3:
+        if (arg0->unk7 == 0) {
+            arg0->unk5 = 4;
+            set_animation(arg0, 5);
+        }
+        break;
+    case 4:
+        if (arg0->animation_step.fields.relative_step == 0) {
+            arg0->unk7C = 0x80;
+            arg0->unk5 = 0;
+        }
+        animate_object(ANIMATED_OBJECT(arg0));
+        break;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_63_hatch_turret", func_8007C144);
+#endif
 
 void hatch_turret_despawn(struct MainObj* self)
 {

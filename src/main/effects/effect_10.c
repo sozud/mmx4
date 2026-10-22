@@ -2,8 +2,9 @@
 // 800B7EE8..800B8064
 #include "common.h"
 
-// sound_zone_update
-INCLUDE_ASM("main/nonmatchings/effects/effect_10", func_800B7EE8);
+#ifdef MMX4_PC
+#include "main/55C4.h"
+#endif
 
 struct Effect10Trigger {
     s16 left;
@@ -13,6 +14,48 @@ struct Effect10Trigger {
     u8 sound_id;
     u8 pad;
 };
+
+// sound_zone_update
+#ifdef MMX4_PC
+void func_800B7EE8(struct EffectObj* arg0);
+extern struct Effect10Trigger* sound_zone_lists[2];
+u8 player_in_bounds(s16* bounds);
+#endif
+
+#ifdef MMX4_PC
+void func_800B7EE8(struct EffectObj* arg0)
+{
+    struct Effect10Trigger* triggers;
+    u8 index;
+
+    if (arg0->state == 0) {
+        arg0->state++;
+        arg0->ext.unk_effect.unk14 = 0;
+        return;
+    }
+
+    triggers = sound_zone_lists[(s8)engine_obj.substage];
+    for (index = 0; index < 4; index++) {
+        struct Effect10Trigger* trigger = &triggers[index];
+        u8 bit = 1 << index;
+        u8 active = arg0->ext.unk_effect.unk14;
+
+        if (player_in_bounds(&trigger->left)) {
+            if (!(active & bit)) {
+                if (engine_obj.substage == 0 || active == 0)
+                    func_8001540C(5, trigger->sound_id, NULL);
+                arg0->ext.unk_effect.unk14 = active | bit;
+            }
+        } else if (active & bit) {
+            if (engine_obj.substage == 0 || (active != 3 && active != 6))
+                stop_sound(5, trigger->sound_id);
+            arg0->ext.unk_effect.unk14 = active & ~bit;
+        }
+    }
+}
+#else
+INCLUDE_ASM("main/nonmatchings/effects/effect_10", func_800B7EE8);
+#endif
 
 struct Effect10Trigger sound_zone_list_0[4] = {
     { 0x0000, 0x0700, 0x0000, 0x0200, 0, 0 },

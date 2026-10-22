@@ -9,6 +9,12 @@
 #include "main/55C4.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision.h"
+#include "main/collision_bounds.h"
+#endif
+
 // general_intro_funcs
 extern void (*general_intro_funcs[])(struct MainObj*);
 void general_intro_wait_player(struct MainObj*);
@@ -124,7 +130,80 @@ void general_intro_wait_player(struct MainObj* self)
 }
 
 // general_intro_init
+#ifdef MMX4_PC
+void func_8008FBCC(struct MainObj* self);
+void func_80091218(struct MainObj* self);
+void func_8009027C(struct MainObj* self);
+void func_800905D4(struct MainObj* self);
+void func_800915C4(struct MainObj* self);
+void func_800917AC(struct MainObj* self);
+extern struct Unk_unk68 D_801059BC;
+extern struct Unk_unk68 D_801059C4[5];
+extern void* general_animations[46];
+extern struct Unk_unk68 D_80108404[];
+extern struct Unk_unk68 D_80108384[];
+extern struct Unk_unk68 D_801059C0;
+extern void (*general_step_funcs[7])();
+// src/main/mains/main_75_general.c
+
+extern union AnimationStep* final_cutscene_animations[1];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8008FBCC(struct MainObj* self)
+{
+    struct Main75Ext* ext = &self->ext.main_75;
+    struct ShotObj* shot;
+
+    if (ext->object.shot != NULL && ext->object.shot->active != 0)
+        return;
+    self->hp = 0;
+    self->contact_damage = 5;
+    self->invincibility_timer = 0;
+    self->x_pos.i.hi = 0xE98;
+    self->unk5++;
+    self->y_pos.i.hi = 0x27B;
+    self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+    self->unk18.val = self->x_pos.val;
+    self->unk16 = 5;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->terrain_box = NULL;
+    self->unk1C.val = self->y_pos.val;
+    self->collision_data = D_80107B78;
+    self->contact_damage = 9;
+    self->animation_table = (const u8* const*)general_animations;
+    self->hurt_box = D_801059C4;
+    self->attack_box = &D_801059BC;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk15 = (g_Player.x_pos.val >= self->x_pos.val) << 6;
+    set_animation(self, 0);
+    memset(ext, 0, sizeof(*ext));
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x37;
+        shot->unk2 = 1;
+        shot->unk7C = (struct WeaponObj*)self;
+        ext->object.shot = shot;
+    }
+    shot = find_free_shot_obj();
+    if (shot != NULL) {
+        shot->active = 0x41;
+        shot->id = 0x37;
+        shot->unk2 = 0;
+        shot->unk7C = (struct WeaponObj*)self;
+        ext->thruster = shot;
+    }
+    player_end_script_action();
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8008FBCC);
+#endif
 
 void general_intro_lock_camera(struct MainObj* self)
 {
@@ -267,7 +346,58 @@ void general_rise(struct MainObj* self)
 }
 
 // general_move
+#ifdef MMX4_PC
+void func_8009027C(struct MainObj* self)
+{
+    struct Main75Ext* ext = &self->ext.main_75;
+    u8 next;
+
+    switch (self->unk6) {
+    case 0:
+        self->unk6 = 1;
+        set_animation(self, 8);
+        if (self->y_pos.i.hi >= 0x24B) {
+            set_animation(ext->thruster, 5);
+            func_8001540C(2, 1, self);
+        } else {
+            set_animation(ext->thruster, 6);
+            func_8001540C(2, 2, self);
+        }
+        ext->thruster->unk84.shot_55.x = self->unk15 != 0 ? -0x18 : 0x18;
+        ext->thruster->unk84.shot_55.y = 4;
+        break;
+    case 1:
+        set_velocity_from_angle(MOVING_OBJECT(self),
+            (u8)angle_to_point(OBJECT_HEADER(self),
+                self->unk15 != 0 ? 0xD7E0000 : 0xEC50000, 0x24B0000));
+        animate_object(ANIMATED_OBJECT(self));
+        move_object(MOVING_OBJECT(self));
+        if (general_at_position(OBJECT_HEADER(self), self->unk15 != 0 ? 0xD7E : 0xEC5, 0x24B)) {
+            self->unk7C = 0x3C;
+            self->x_speed = 0;
+            self->y_speed = 0;
+            self->unk6++;
+            set_animation(ext->thruster, 7);
+            stop_sound(2, 2);
+        }
+        break;
+    case 2:
+        animate_object(ANIMATED_OBJECT(self));
+        if (--self->unk7C != 0)
+            break;
+        if (ext->script == NULL || *ext->script == 0xFF)
+            general_pick_script(self);
+        next = *ext->script;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        ext->script++;
+        self->unk5 = next;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_8009027C);
+#endif
 
 void general_fly_descend(struct MainObj* self)
 {
@@ -307,7 +437,41 @@ void general_fly_start(struct MainObj* self)
 }
 
 // general_fly_cross
+#ifdef MMX4_PC
+void func_800905D4(struct MainObj* self)
+{
+    s32 dx;
+    s32 turned;
+
+    animate_object(ANIMATED_OBJECT(self));
+    move_object(MOVING_OBJECT(self));
+    if (self->ext.main_75.random_index == 0 && self->y_pos.i.hi + 0x30 < g_Player.y_pos.i.hi) {
+        dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+        if (dx < 0)
+            dx = -dx;
+        if (dx < 8) {
+            self->unk5 = 6;
+            self->unk6 = 0;
+            self->unk7 = 0;
+            self->unk7C = 0x1E;
+            return;
+        }
+    }
+    if (!(self->collision_flags & 3))
+        return;
+    turned = self->unk15 != 0 ? self->collision_flags & 1 : self->collision_flags & 2;
+    if (turned) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        self->unk7 = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->unk15 ^= 0x40;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800905D4);
+#endif
 
 void general_fly(struct MainObj* self)
 {
@@ -646,7 +810,78 @@ void general_slam(struct MainObj* self)
 }
 
 // general_fight
+#ifdef MMX4_PC
+void func_80091218(struct MainObj* self)
+{
+    struct Main75Ext* ext = &self->ext.main_75;
+    struct ShotObj* shot;
+    s32 hit;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    CollisionRelated((struct PlayerObj*)self);
+    self->collision_data = D_80108404;
+    self->hurt_box = D_801059C4;
+    func_8002DD04(self);
+    if (ext->hit_active == 0)
+        self->collision_data = D_80108384;
+    self->hurt_box = &D_801059C0;
+    hit = func_8002DD04(self);
+    if (self->unk5 != 0)
+        ext->saved_unk5 = self->unk5;
+    if (ext->hit_active != 0) {
+        if (!(ext->hit_timer & 1))
+            self->unk42 |= 0x8000;
+        else
+            self->unk42 &= 0x7FFF;
+        if (--ext->hit_timer == 0)
+            ext->hit_active = 0;
+    } else if (hit < 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+        return;
+    } else if (hit != 0) {
+        s32 spawn = 0;
+        s32 flash = 1;
+
+        if (engine_obj.cur_character == 0) {
+            if (hit == 0x12 || hit == 9)
+                spawn = 1;
+            else if (hit == 0x7F)
+                flash = 0;
+        } else if (hit == 0x1E) {
+            spawn = 1;
+        } else if (hit < 0x1F) {
+            if (hit < 0x1A && hit >= 0x18)
+                flash = 0;
+        } else if (hit == 0x7F) {
+            flash = 0;
+        }
+        if (spawn) {
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x37;
+                shot->unk2 = 8;
+                shot->unk7C = (struct WeaponObj*)self;
+            }
+        }
+        if (flash) {
+            self->collision_data = D_801060F0;
+            ext->hit_timer = 0x40;
+            ext->hit_active = 1;
+        }
+    }
+    general_step_funcs[self->unk5](self);
+    func_8002D9BC(self);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_80091218);
+#endif
 
 void general_death_start(struct MainObj* self)
 {
@@ -692,7 +927,46 @@ void general_death_blink(struct MainObj* self)
 }
 
 // general_death_explode
+#ifdef MMX4_PC
+void func_800915C4(struct MainObj* self)
+{
+    struct ObjectHeader* effect = OBJECT_HEADER(self->ext.main_75.object.effect);
+    s32 column, row;
+    u16 timer;
+
+    self->on_screen = 0;
+    if (effect->active == 0)
+        return;
+    if (effect->unk7 == 0) {
+        timer = (u16)self->unk7E;
+        self->unk7E = timer - 1;
+
+        if (timer == 0) {
+            self->unk7E = 5;
+            self->unk42 ^= 0x8000;
+        }
+        return;
+    }
+
+    self->unk5++;
+    background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
+    background_objects[0].unk26 = background_objects[0].x_pos.u.hi;
+    background_objects[0].unk28 = background_objects[0].y_pos.u.hi;
+    background_objects[0].unk2A = background_objects[0].y_pos.u.hi;
+    self->unk40 = (D_801406A8[1] >> 7) + 0xB0;
+    self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA3));
+    column = func_8002938C(0xA3) * 4 + 0x18;
+    row = func_8002938C(0xA3) + 6;
+    self->unk42 = (column % 16) | ((row / 4 + 0x1E0) << 6);
+    self->animation_table = (const u8* const*)final_cutscene_animations;
+    self->x_pos.u.hi = background_objects[0].x_pos.u.hi + 0xE0;
+    self->y_pos.u.hi = background_objects[0].y_pos.u.hi + 0x68;
+    self->unk15 = 0;
+    set_animation(self, 0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800915C4);
+#endif
 
 void general_death_wait_explosion(struct MainObj* self)
 {
@@ -704,7 +978,31 @@ void general_death_wait_explosion(struct MainObj* self)
 }
 
 // general_death_finish
+#ifdef MMX4_PC
+void func_800917AC(struct MainObj* self)
+{
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->unk6 == 0) {
+        self->unk7C = (u16)self->unk7C - 1;
+        if (self->unk7C == 0) {
+            start_screen_shake_y(10, 2, 2);
+            self->unk7E = 10;
+            func_8002217C(engine_obj.cur_character == 0 ? 0x2A : 0x22, 6, 0);
+            self->unk6++;
+        }
+    } else {
+        if (abc_object.unkC == 0)
+            engine_obj.unkF = 1;
+        self->unk7E = (u16)self->unk7E - 1;
+        if (self->unk7E == 0) {
+            start_screen_shake_y(10, 2, 2);
+            self->unk7E = 10;
+        }
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_75_general", func_800917AC);
+#endif
 
 // general_death
 void func_80091898(struct MainObj* self)

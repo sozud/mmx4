@@ -11,6 +11,10 @@
 #include "main/stage_objects.h"
 #include "main/visuals/visual_08_ice_shard.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // eregion_state_funcs
 extern void (*eregion_state_funcs[])(struct MainObj*);
 
@@ -83,10 +87,144 @@ void eregion_update(struct MainObj* self)
 }
 
 // eregion_init
+#ifdef MMX4_PC
+void func_80047E58(struct MainObj* arg0);
+void func_8004932C(struct MainObj* arg0);
+void func_800480D0(struct MainObj* arg0);
+void func_80048B04(struct MainObj* arg0);
+void func_80047D04(struct MainObj* arg0);
+extern union AnimationStep* D_800FAD68[];
+extern u32 D_800FA724;
+extern u32 D_800FA728;
+extern u32 D_800FA738;
+extern u32 D_800FA73C;
+extern u32 D_800FA740;
+extern u32 D_800FA744;
+extern struct Unk_unk68 D_801066F0[];
+extern void (*eregion_step_funcs[])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80047D04(struct MainObj* arg0)
+{
+    struct VisualObj* visual;
+
+    arg0->ext.main_8.queued_sound = 0xFF;
+    arg0->ext.main_8.unk8B = 0;
+    arg0->ext.main_8.unk8C = 0;
+    arg0->on_screen = 1;
+    arg0->unk15 = 0;
+    arg0->bg_offset = 0;
+    arg0->air_state = 1;
+    arg0->hp = 0;
+    arg0->contact_damage = 3;
+    arg0->invincibility_timer = 0;
+    arg0->unk16 = 6;
+    arg0->animation_table = (const u8* const*)D_800FAD68;
+    arg0->terrain_box = (struct Unk_unk68*)&D_800FA724;
+    arg0->collision_data = (const u16*)D_801066F0;
+    arg0->hurt_box = (const u8*)&D_800FA728;
+    arg0->attack_box = (const u8*)&D_800FA72C;
+    arg0->ext.main_8.unk84 = &D_800FA72C;
+    arg0->ext.main_8.unk88 = 1;
+    arg0->ext.main_8.unk80 = 0;
+    arg0->unk40 = (u16)((D_801406A8[0] >> 7) + 0xB0);
+    engine_obj.unk25 = 2;
+    engine_obj.boss_ptr = arg0;
+    set_animation(arg0, 0);
+    arg0->unk5 = 9;
+    arg0->state++;
+
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 6;
+        visual->unk50 = (struct PlayerObj*)arg0;
+        visual->unk2 = 0;
+    }
+    visual = find_free_visual_obj();
+    if (visual != NULL) {
+        visual->active = 0x41;
+        visual->id = 6;
+        visual->unk50 = (struct PlayerObj*)arg0;
+        visual->unk2 = 5;
+    }
+    arg0->x_pos.val = FIXED(0xF60);
+    arg0->y_pos.val = FIXED(0x170);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047D04);
+#endif
 
 // eregion_run
+#ifdef MMX4_PC
+void func_80047E58(struct MainObj* arg0)
+{
+    s32 collision;
+    u8 frame;
+
+    arg0->hurt_box = engine_obj.cur_character == 0
+        ? (const void*)&D_800FA740
+        : (const void*)&D_800FA744;
+    arg0->collision_data = (const u16*)D_801060F0;
+    arg0->unk65 = arg0->ext.main_8.unk8B;
+    func_8002DD04(arg0);
+
+    arg0->collision_data = (const u16*)D_801066F0;
+    frame = arg0->animation_step.fields.frame_index;
+    if (frame >= 0x16 && frame < 0x18)
+        arg0->hurt_box = (const void*)&D_800FA73C;
+    else if (frame >= 0x1F && frame < 0x21)
+        arg0->hurt_box = (const void*)&D_800FA738;
+    else
+        arg0->hurt_box = (const void*)&D_800FA728;
+
+    arg0->ext.main_8.unk8B = arg0->unk65;
+    arg0->unk65 = arg0->ext.main_8.unk8C;
+    collision = func_8002DD04(arg0);
+    if (collision < 0) {
+        arg0->state = 2;
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+        g_Player.spike_immune = 1;
+        return;
+    }
+    if (collision > 0) {
+        func_8001540C(2, 0x21, arg0);
+        arg0->invincibility_timer = 0x1E;
+        if (arg0->unk7C != 0) {
+            arg0->state = 3;
+            arg0->unk5 = 0;
+            arg0->unk6 = 0;
+            arg0->unk42 |= 0x8000;
+        }
+    }
+
+    arg0->ext.main_8.unk8C = arg0->unk65;
+    eregion_step_funcs[arg0->unk5](arg0);
+
+    if (arg0->invincibility_timer != 0) {
+        s8 timer = arg0->invincibility_timer--;
+        if (timer & 2)
+            arg0->unk42 |= 0x8000;
+        else
+            arg0->unk42 &= 0x7FFF;
+        if (arg0->invincibility_timer == 0)
+            arg0->unk42 &= 0x7FFF;
+    }
+
+    func_8002D9BC(arg0);
+    if (arg0->ext.main_8.unk88 != 0) {
+        arg0->attack_box = arg0->ext.main_8.unk80;
+        func_8002D9BC(arg0);
+        arg0->attack_box = arg0->ext.main_8.unk84;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80047E58);
+#endif
 
 void eregion_pick_start(struct MainObj* self)
 {
@@ -96,7 +234,56 @@ void eregion_pick_start(struct MainObj* self)
 }
 
 // eregion_pick_attack
+#ifdef MMX4_PC
+void func_800480D0(struct MainObj* arg0)
+{
+    s32 distance;
+    u16 timer;
+    u8 choice;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    timer = (u16)arg0->unk7C;
+    arg0->unk7C = (s16)(timer - 1);
+    if (timer != 0)
+        return;
+
+    arg0->unk7C = 0;
+    if (arg0->ext.main_8.unk8A++ >= 2) {
+        arg0->ext.main_8.unk8A = 0;
+        arg0->unk5 = arg0->hp < 0x19 ? 6 : 4;
+        return;
+    }
+
+    distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
+    if (distance < 0)
+        distance = -distance;
+    if (arg0->hp >= 0x19) {
+        if (distance < 0x90) {
+            if (arg0->unk15 != 0) {
+                choice = 0x12B0 - arg0->x_pos.i.hi < 0xD0 ? 4 : 5;
+            } else {
+                choice = arg0->x_pos.i.hi - 0x11A0 < 0xD0 ? 4 : 5;
+            }
+        } else {
+            choice = get_random_nonzero() % 8 < 3 ? 3 : 8;
+        }
+    } else if (distance < 0x90) {
+        choice = get_random_nonzero() % 8 < 6 ? 7 : 5;
+    } else {
+        choice = get_random_nonzero() % 8 < 7 ? 7 : 6;
+    }
+    arg0->unk5 = choice;
+
+    if (arg0->unk15 != 0) {
+        if (g_Player.x_pos.val < arg0->x_pos.val)
+            arg0->unk5 = 4;
+    } else if (g_Player.x_pos.val >= arg0->x_pos.val) {
+        arg0->unk5 = 4;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_800480D0);
+#endif
 
 void eregion_roar_start(struct MainObj* self)
 {
@@ -327,7 +514,32 @@ void eregion_wing_slash_start(struct MainObj* self)
 }
 
 // eregion_wing_slash_swing
+#ifdef MMX4_PC
+void func_80048B04(struct MainObj* arg0)
+{
+    animate_object(ANIMATED_OBJECT(arg0));
+
+    if (arg0->animation_step.fields.frame_index != 0xC) {
+        if (arg0->unk15 != 0) {
+            arg0->x_pos.u.hi = arg0->x_speed - 8;
+        } else {
+            arg0->x_pos.u.hi = arg0->x_speed + 8;
+        }
+    }
+
+    if (arg0->animation_step.fields.event == 2) {
+        func_8001540C(2, 0x19, BASE_OBJECT(arg0));
+        arg0->animation_step.fields.event = 0;
+    }
+    if (arg0->animation_step.fields.event == 1) {
+        arg0->unk5 = 0;
+        arg0->unk6 = 0;
+        arg0->x_pos.u.hi = arg0->x_speed;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_80048B04);
+#endif
 
 void eregion_wing_slash(struct MainObj* self)
 {
@@ -569,7 +781,34 @@ void eregion_recoil_start(struct MainObj* self)
 }
 
 // eregion_recoil_wait
+#ifdef MMX4_PC
+void func_8004932C(struct MainObj* arg0)
+{
+    s32 x_pos = arg0->x_speed;
+    u8 frame = arg0->animation_step.fields.frame_index;
+
+    if (frame >= 0x1C && frame <= 0x1D) {
+        x_pos += arg0->unk15 != 0 ? -0x16 : 0x16;
+    }
+    arg0->x_pos.i.hi = (s16)x_pos;
+    arg0->unk42 &= 0x7FFF;
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event != 0) {
+        arg0->state = 1;
+        if (arg0->unk7C != 0) {
+            set_animation(ANIMATED_OBJECT(arg0), 0);
+            arg0->unk5 = 1;
+            arg0->unk7C = 1;
+        } else {
+            eregion_pick_start(arg0);
+        }
+        arg0->unk6 = 0;
+        arg0->x_pos.i.hi = (s16)arg0->x_speed;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_08_eregion", func_8004932C);
+#endif
 
 void eregion_recoil(struct MainObj* self)
 {

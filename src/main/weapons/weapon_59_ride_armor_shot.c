@@ -25,7 +25,56 @@ void ride_armor_shot_update(struct WeaponObj* arg0)
 }
 
 // ride_armor_shot_init
+#ifdef MMX4_PC
+void func_80098AF8(struct WeaponObj* arg0);
+static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1);
+void func_80098DA0(struct WeaponObj* arg0);
+extern u8 ride_armor_shot_hit_box[4];
+extern s16 ride_armor_shot_offsets[2][2];
+static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1)
+{
+    s32 dx = x0 - x1;
+    s32 dy = y0 - y1;
+
+    if (dx < 0)
+        dx = x1 - x0;
+    if (dy < 0)
+        dy = y1 - y0;
+    return dx + dy;
+}
+#endif
+
+#ifdef MMX4_PC
+void func_80098AF8(struct WeaponObj* arg0)
+{
+    s32 dx;
+    s32 direction;
+
+    arg0->state = 1;
+    arg0->on_screen = 1;
+    arg0->unk16 = 3;
+    arg0->unk68 = NULL;
+    arg0->unk54 = NULL;
+    arg0->unk50 = ride_armor_shot_hit_box;
+    dx = (u16)ride_armor_shot_offsets[arg0->unk2][0];
+    if (arg0->unk15 != 0)
+        dx = -dx;
+    arg0->x_pos.i.hi += dx;
+    arg0->y_pos.i.hi += ride_armor_shot_offsets[arg0->unk2][1];
+    if (arg0->unk2 == 0)
+        direction = arg0->unk15 == 0 ? 0x10 : 0;
+    else
+        direction = arg0->unk15 != 0 ? 0x1C : 0x14;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), direction);
+    arg0->unk5C = 1;
+    arg0->unk60 = 3;
+    arg0->x_vel.val *= 8;
+    arg0->y_vel.val *= 8;
+    set_animation(arg0, arg0->unk2 + 0x1F);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098AF8);
+#endif
 
 void ride_armor_shot_main(struct WeaponObj* arg0)
 {
@@ -77,7 +126,29 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 }
 
 // ride_armor_missile_find_target
+#ifdef MMX4_PC
+void func_80098DA0(struct WeaponObj* arg0)
+{
+    struct MainObj* main;
+    struct MainObj* target;
+    s32 found = 0;
+
+    for (main = main_objects; main < main_objects + COUNT(main_objects); main++) {
+        if (main->active == 0 || main->on_screen == 0 || main->unk7A != 0)
+            continue;
+        target = arg0->ext.target;
+        if (target == NULL
+            || weapon_59_distance(arg0->x_pos.val, arg0->y_pos.val, main->x_pos.val, main->y_pos.val)
+                < weapon_59_distance(arg0->x_pos.val, arg0->y_pos.val, target->x_pos.val, target->y_pos.val))
+            arg0->ext.target = main;
+        found = 1;
+    }
+    if (!found)
+        arg0->ext.target = NULL;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_59_ride_armor_shot", func_80098DA0);
+#endif
 
 // ride_armor_missile_spawn_smoke
 void func_80098EA8(struct WeaponObj* shot)

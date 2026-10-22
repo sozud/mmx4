@@ -10,6 +10,10 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 void iris_death(struct BarObj* arg0);
 void iris_despawn(struct MainObj*);
 
@@ -79,10 +83,216 @@ void iris_update(struct MainObj* self)
 }
 
 // iris_init
+#ifdef MMX4_PC
+void func_80080700(struct MainObj* self);
+void func_80080834(struct MainObj* self);
+void func_80081718(struct MainObj* self);
+void func_80081BA0(struct MainObj* self);
+void func_80081E44(struct MainObj* self);
+extern void* iris_animations[];
+extern struct Unk_unk68 D_801035BC;
+extern struct Unk_unk68 D_801035C4;
+extern struct Unk_unk68 D_801035C8;
+extern struct Unk_unk68 D_801035C0;
+extern struct Unk_unk68 D_801035CC;
+extern struct Unk_unk68 D_80107DFC[];
+void iris_face_player(struct MainObj*);
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_80080700(struct MainObj* self)
+{
+    struct Main66Ext* ext = &self->ext.main_66;
+    s32 index;
+
+    if (engine_obj.cur_character == 0) {
+        despawn_object_permanently(OBJECT_HEADER(self));
+        return;
+    }
+    self->contact_damage = 4;
+    self->collision_data = D_80107DFC;
+    self->hp = 0;
+    self->invincibility_timer = 0;
+    index = func_8002938C(0x42);
+    self->unk40 = D_801406A8[index] >> 7;
+    self->unk1C = self->y_pos;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->unk2 = 0;
+    self->unk15 = 0;
+    self->unk18 = self->x_pos;
+    self->animation_table = (const u8* const*)iris_animations;
+    self->unk16 = 6;
+    self->terrain_box = &D_801035CC;
+    self->hurt_box = &D_801035C0;
+    self->attack_box = &D_801035BC;
+    self->bg_offset = g_Player.bg_offset;
+    set_animation(self, 9);
+    ext->hover_timer = 0xF0;
+    ext->release_countdown = 8;
+    self->state = 1;
+    ext->drone_count = 0;
+    ext->crystal_released = 0;
+    ext->flash_timer = 0;
+    ext->blink_timer = 0;
+    ext->active = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
+#endif
 
 // iris_run
+#ifdef MMX4_PC
+void func_80080834(struct MainObj* self)
+{
+    struct Main66Ext* ext = &self->ext.main_66;
+    struct MiscObj* misc;
+    struct ShotObj* shot;
+    s32 hit;
+    s32 first = 0;
+    s32 value;
+    s8 i;
+
+    self->unk18.val = self->x_pos.val;
+    self->unk1C.val = self->y_pos.val;
+    if (ext->active != 0 && self->unk5 == 3) {
+        if (--ext->hover_timer == 0) {
+            self->y_speed = -0x20000;
+            self->x_speed = 0;
+            set_animation(self, 2);
+            self->collision_data = D_80107E84;
+            self->unk5 = 4;
+            self->unk6 = 0;
+        } else if (ext->crystal_released == 0 && g_Player.hp < 8) {
+            set_animation(self, 0x20);
+            self->collision_data = D_80107E84;
+            self->unk5 = 5;
+            self->unk6 = 0;
+        }
+    }
+    iris_step_funcs[self->unk5](self);
+    if (ext->active == 0) {
+        update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+        return;
+    }
+    if (self->unk2 == 0) {
+        self->hp = 0x7F;
+        hit = func_8002DD04(self);
+        self->hp = 0x30;
+    } else {
+        hit = func_8002DD04(self);
+    }
+    if (ext->flash_timer != 0) {
+        if (ext->blink_timer != 0) {
+            if (--ext->blink_timer & 1) {
+                self->unk42 |= 0x8000;
+                ext->partner->unk42 |= 0x8000;
+            } else {
+                self->unk42 &= 0x7FFF;
+                ext->partner->unk42 &= 0x7FFF;
+            }
+        }
+        if (--ext->flash_timer == 0) {
+            if (ext->crystal_released != 0) {
+                ext->partner->unk42 &= 0x7FFF;
+            }
+            if (self->unk2 != 0) {
+                self->collision_data = D_80107E84;
+            }
+            self->invincibility_timer = 0;
+            self->unk42 &= 0x7FFF;
+        }
+    }
+    if (hit < 0) {
+        stop_sound(2, 0xE1);
+        g_Player.spike_immune = 1;
+        self->state = 2;
+        self->unk5 = 0;
+        ext->partner->state = 3;
+        ext->partner->unk5 = 0;
+        return;
+    }
+    if (hit != 0 && hit != 0x7F) {
+        if (self->unk2 == 0) {
+            ext->flash_timer = 0x18;
+            self->invincibility_timer = 1;
+            misc = find_free_misc_obj();
+            if (misc != NULL) {
+                misc->active = 0x41;
+                misc->id = 0x16;
+                misc->unk2 = 8;
+                misc->bg_offset = self->bg_offset;
+                misc->animation_table = (u32**)self->animation_table;
+                misc->unk40 = self->unk40;
+                misc->unk3C = (void*)self->sprite_frames;
+                misc->ext.unk.unk50 = (void*)self;
+                misc->unk42 = self->unk42 & 0x7FFF;
+                set_animation(misc, 0x22);
+                misc->ext.unk.unk56.byte = 0x12;
+                misc->unk5 = 0;
+                misc->unk6 = 1;
+            }
+            if (self->unk5 != 4) {
+                for (i = 0; i < 2; i++) {
+                    if ((s8)ext->drone_count == 0x10) {
+                        continue;
+                    }
+                    ext->drone_count++;
+                    shot = find_free_shot_obj();
+                    if (shot == NULL) {
+                        continue;
+                    }
+                    shot->active = 0x41;
+                    shot->id = 0x2C;
+                    shot->unk2 = i;
+                    if (i == 0) {
+                        first = (get_random() & 0xFF) % 9;
+                        shot->unk84.value = first;
+                    } else {
+                        do {
+                            value = (get_random() & 0xFF) % 9;
+                            shot->unk84.value = value;
+                        } while (first == value);
+                    }
+                    if (self->unk15 != 0) {
+                        shot->unk84.value += 8;
+                    }
+                    shot->x_pos.val = self->x_pos.val;
+                    shot->unk67 = 0;
+                    shot->y_pos.val = self->y_pos.val;
+                    shot->bg_offset = self->bg_offset;
+                    shot->animation_table = (u32**)self->animation_table;
+                    shot->unk40 = self->unk40;
+                    shot->unk3C = (void*)self->sprite_frames;
+                    shot->unk42 = self->unk42 & 0x7FFF;
+                    shot->unk7C = WEAPON_OBJECT(self);
+                    shot->state = 0;
+                    shot->unk15 = self->unk15;
+                }
+            }
+        } else {
+            ext->flash_timer = 0x18;
+            ext->blink_timer = 0x18;
+            self->collision_data = D_801060F0;
+        }
+    }
+    if (self->unk2 == 0) {
+        self->unk42 &= 0x7FFF;
+    } else {
+        ext->partner->unk42 = self->unk42;
+    }
+    func_8002D9BC(self);
+    update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080834);
+#endif
 
 void iris_death(struct BarObj* self)
 {
@@ -373,7 +583,33 @@ void iris_robot_hover(struct MainObj* self)
 }
 
 // iris_robot_hover_chase
+#ifdef MMX4_PC
+void func_80081718(struct MainObj* self)
+{
+    s32 saved_y = g_Player.y_pos.val;
+    s32 direction;
+    s32 dx;
+    s32 dy;
+
+    if (g_Player.y_pos.i.hi < 0x150) {
+        g_Player.y_pos.i.hi = 0x150;
+    }
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF;
+    g_Player.y_pos.val = saved_y;
+    set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    self->x_speed += self->x_speed >> 16;
+    self->y_speed += self->y_speed >> 16;
+    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+    dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
+    if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
+        iris_face_player(self);
+        move_object(MOVING_OBJECT(self));
+    }
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081718);
+#endif
 
 void iris_robot_dash(struct MainObj* self)
 {
@@ -486,7 +722,55 @@ void iris_robot_release_crystal(struct MainObj* self)
 }
 
 // iris_robot_release_crystal_spawn
+#ifdef MMX4_PC
+void func_80081BA0(struct MainObj* self)
+{
+    struct MainObj* body;
+
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->animation_step.fields.event == 0) {
+        return;
+    }
+    body = find_free_main_obj();
+    if (body != NULL) {
+        body->active = 0x41;
+        body->id = 0x42;
+        body->unk2 = 1;
+        body->contact_damage = 4;
+        body->x_pos.val = self->x_pos.val;
+        body->collision_data = D_80107E84;
+        body->hurt_box = &D_801035C8;
+        body->air_state = 0;
+        body->attack_box = &D_801035C4;
+        body->terrain_box = NULL;
+        body->y_pos.val = self->y_pos.val;
+        body->bg_offset = self->bg_offset;
+        body->animation_table = self->animation_table;
+        body->unk40 = self->unk40;
+        body->sprite_frames = self->sprite_frames;
+        body->unk16 = 5;
+        body->hp = 0x30;
+        body->unk42 = self->unk42 & 0x7FFF;
+        body->y_speed = 0x10000;
+        body->unk7C = 0x60;
+        body->x_speed = 0;
+        body->x_accel = 0;
+        body->gravity = 0;
+        body->state = 1;
+        body->unk15 = self->unk15;
+        body->unk5 = 5;
+        body->unk6 = 2;
+        engine_obj.boss_ptr = body;
+        set_animation(body, 0x10);
+        body->ext.main_66.active = 1;
+        body->ext.main_66.partner = self;
+        self->ext.main_66.partner = body;
+    }
+    self->unk6 = 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081BA0);
+#endif
 
 void iris_robot_release_crystal_wait(struct MainObj* self)
 {
@@ -537,7 +821,47 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
 }
 
 // iris_crystal_follow
+#ifdef MMX4_PC
+void func_80081E44(struct MainObj* self)
+{
+    struct Main66Ext* ext = &self->ext.main_66;
+    u8 index;
+    s32 direction;
+    s32 dx;
+    s32 dy;
+
+    if (!(main_bss_state.frame_counter & 1)) {
+        D_8013B858[ext->trail_write] = ext->partner->x_pos.i.hi;
+        D_8013B878[ext->trail_write] = ext->partner->y_pos.i.hi - 0x50;
+        if (++ext->trail_write == 0x10) {
+            ext->trail_write = 0;
+        }
+        index = ext->trail_read;
+        direction = angle_to_point(OBJECT_HEADER(self), (s16)D_8013B858[index] << 16, D_8013B878[index] << 16);
+        ext->trail_target = ext->trail_read;
+        if (++ext->trail_read == 0x10) {
+            ext->trail_read = 0;
+        }
+        set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
+        self->x_speed *= 2;
+        self->y_speed *= 2;
+    }
+    dx = self->x_pos.i.hi - (s16)D_8013B858[ext->trail_target];
+    dy = self->y_pos.i.hi - D_8013B878[ext->trail_target];
+    if ((dx >= 0 ? dx : -dx) >= 3 || (dy >= 0 ? dy : -dy) >= 3) {
+        move_object(MOVING_OBJECT(self));
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    if (ext->partner->unk5 == 4) {
+        self->y_speed = -0x40000;
+        self->x_speed = 0;
+        self->unk5 = 7;
+        self->unk6 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80081E44);
+#endif
 
 void iris_crystal_drop(struct MainObj* self)
 {

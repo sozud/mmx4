@@ -6,6 +6,10 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 // beam_drone_state_funcs
 extern void (*beam_drone_state_funcs[])(struct MainObj*);
 
@@ -46,10 +50,121 @@ void beam_drone_update(struct MainObj* self)
 }
 
 // beam_drone_init
+#ifdef MMX4_PC
+void func_800745E8(struct MainObj* self);
+void func_80074438(struct MainObj* self);
+extern struct Unk_unk68 D_80107AF8[];
+extern struct Unk_unk68 beam_drone_hit_box;
+extern struct Unk_unk68 beam_drone_debris;
+extern void (*beam_drone_step_funcs[6])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80074438(struct MainObj* self)
+{
+    self->active = 0x41;
+    self->hp = 5;
+    self->contact_damage = 3;
+    self->invincibility_timer = 0;
+    self->collision_data = D_80107AF8;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    if (self->unk2 == 0)
+        self->unk15 = g_Player.x_pos.val < self->x_pos.val ? 0 : 0x40;
+    switch (self->unk2) {
+    case 0:
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->unk7E = 0x28;
+        break;
+    case 1:
+        self->x_speed = 0;
+        self->y_speed = self->y_pos.val < g_Player.y_pos.val ? -0x18000 : 0x18000;
+        self->unk7E = 0x3C;
+        break;
+    case 2:
+        self->x_speed = g_Player.x_pos.val < self->x_pos.val ? -0x15000 : 0x15000;
+        self->y_speed = 0;
+        self->unk7E = 0x3C;
+        break;
+    }
+    self->animation_table = (const u8* const*)beam_drone_animations;
+    self->unk16 = 5;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->air_state = 0;
+    self->terrain_box = NULL;
+    self->hurt_box = &beam_drone_hit_box;
+    self->attack_box = &beam_drone_hit_box;
+    set_animation(self, 0);
+    self->state = 1;
+    memset(&self->ext, 0, 0x18);
+    self->unk7C = 0;
+    self->unk5 = 2;
+    self->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_80074438);
+#endif
 
 // beam_drone_main
+#ifdef MMX4_PC
+void func_800745E8(struct MainObj* self)
+{
+    s32 status;
+    s32 x_margin = 0;
+    s32 y_margin = 0;
+
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    if (self->unk5 != 4 && func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 1)
+        self->unk5 = 2;
+    beam_drone_step_funcs[self->unk5](self);
+    status = func_8002DD04(self);
+    func_8002D9BC(self);
+    if (self->unk5 != 0)
+        self->ext.main_58.saved_unk5 = self->unk5;
+    if (status < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(3, &beam_drone_debris, self);
+        if (self->unk2 == 0)
+            drop_item(BASE_OBJECT(self), 8);
+        self->ext.main_58.unk88 = 2;
+        self->state = 2;
+        return;
+    }
+    if (self->unk2 != 0 && engine_obj.character_state.fields.active != 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(3, &beam_drone_debris, self);
+        self->ext.main_58.unk88 = 2;
+        self->state = 2;
+        return;
+    }
+    switch (self->unk2) {
+    case 0:
+        x_margin = 0x60;
+        y_margin = 0x40;
+        break;
+    case 1:
+        x_margin = 0x40;
+        y_margin = 0x50;
+        break;
+    case 2:
+        x_margin = 0x50;
+        y_margin = 0x40;
+        break;
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), x_margin, y_margin) == 0) {
+        if (self->active != 0)
+            update_on_screen(BASE_OBJECT(self), 0x20, 0x20);
+    } else if (self->unk5 != 4) {
+        self->state = 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_58_beam_drone", func_800745E8);
+#endif
 
 void beam_drone_despawn(struct MainObj* self)
 {

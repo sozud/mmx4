@@ -10,6 +10,11 @@
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision_bounds.h"
+#endif
+
 extern struct Unk_unk68 double_dive_attack_box;
 extern struct Unk_unk68 double_dive_hurt_box;
 
@@ -40,10 +45,115 @@ extern void (*double_death_funcs[7])(struct MainObj*);
 extern void (*double_state_funcs[])(struct MainObj*);
 
 // double_init
+#ifdef MMX4_PC
+void func_8008CD80(struct MainObj* self);
+void func_8008C10C(struct MainObj* self);
+void func_8008BA38(struct MainObj* self);
+void func_8008BB6C(struct MainObj* self);
+void func_8008C664(struct MainObj* self);
+void double_spawn_afterimage(struct MainObj*, s8);
+extern void* double_animations[31];
+extern struct Unk_unk68 double_terrain_box;
+extern struct Unk_unk68 double_slide_attack_box;
+extern struct Unk_unk68 double_slide_hurt_box;
+extern struct Unk_unk68 D_80108204[];
+extern void (*double_step_funcs[6])(struct MainObj*);
+extern u8* double_script_table_0[2];
+extern void* double_script_table_1[2];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_8008BA38(struct MainObj* self)
+{
+    struct Main73Ext* ext = &self->ext.main_73;
+    s32 index;
+
+    if (engine_obj.cur_character != 0) {
+        despawn_object_permanently(OBJECT_HEADER(self));
+        return;
+    }
+    self->unk5 = 1;
+    self->unk7C = 0x80;
+    self->contact_damage = 6;
+    self->hurt_box = &double_hurt_box;
+    self->attack_box = &double_attack_box;
+    self->terrain_box = &double_terrain_box;
+    self->collision_data = D_80108204;
+    self->state = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->on_screen = 0;
+    self->hp = 0;
+    self->invincibility_timer = 0;
+    self->animation_table = (const u8* const*)double_animations;
+    self->air_state = 0;
+    self->x_speed = 0;
+    self->y_speed = 0;
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->unk16 = 4;
+    ext->blink_delay = 0;
+    ext->unk8A = 0;
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    self->bg_offset = g_Player.bg_offset;
+    index = func_8002938C(0x49);
+    self->unk40 = D_801406A8[index] >> 7;
+    set_animation(self, 0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
+#endif
 
 // double_intro_warning
+#ifdef MMX4_PC
+void func_8008BB6C(struct MainObj* self)
+{
+    struct Main73Ext* ext = &self->ext.main_73;
+    struct EffectObj* effect;
+
+    if (g_Player.capsule_state == 0) {
+        switch (self->unk6) {
+        case 0:
+            effect = find_free_effect_obj();
+            if (effect != NULL) {
+                effect->active = 1;
+                effect->id = 0x18;
+                ext->unk80.effect = effect;
+            }
+            player_start_script_action(0x14, 0x40);
+            self->unk6 = 1;
+            self->unk7 = 0;
+            break;
+        case 1:
+            if (ext->unk80.effect->active == 0) {
+                self->contact_damage = 6;
+                self->invincibility_timer = -0x80;
+                self->unk6 = 2;
+                self->hp = 0;
+                self->unk62 = 0;
+                self->unk63 = 2;
+                self->unk7C = 0x20;
+                engine_obj.enable_boss = 0;
+                engine_obj.unk25 = 0;
+                engine_obj.boss_ptr = self;
+            }
+            break;
+        case 2:
+            if (--self->unk7C == 0) {
+                self->unk5 = 2;
+                self->unk6 = 0;
+                self->unk7 = 0;
+            }
+            break;
+        }
+    }
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BB6C);
+#endif
 
 void double_intro_dialogue(struct MainObj* self)
 {
@@ -179,7 +289,33 @@ void double_wait_start(struct MainObj* self)
 }
 
 // double_pick_attack
+#ifdef MMX4_PC
+void func_8008C10C(struct MainObj* self)
+{
+    struct Main73Ext* ext = &self->ext.main_73;
+    u8* step = &ext->cycle_step;
+
+    if (self->unk7C != 0) {
+        self->unk7C--;
+        animate_object(ANIMATED_OBJECT(self));
+        return;
+    }
+    if (*step == 0) {
+        u32 index = get_random() & 1;
+        ext->cycle_script = self->hp < 0x19 ? (u8*)double_script_table_1[index] : double_script_table_0[index];
+    }
+    (*step)++;
+    self->unk5 = ext->cycle_script[*step];
+    if (self->unk5 == -1) {
+        *step = 0;
+        self->unk5 = 2;
+    }
+    self->unk6 = 0;
+    self->unk7 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C10C);
+#endif
 
 void double_wait(struct MainObj* self)
 {
@@ -333,7 +469,47 @@ void double_dive_fall(struct MainObj* self)
 #endif
 
 // double_dive_slide
+#ifdef MMX4_PC
+void func_8008C664(struct MainObj* self)
+{
+    s32 direction;
+    s32 facing;
+
+    if (--self->unk7C != 0) {
+        animate_object(ANIMATED_OBJECT(self));
+        return;
+    }
+    self->unk6++;
+    if ((self->collision_flags & 3) != 0)
+        facing = (self->collision_flags >> 1) & 1;
+    else
+        facing = self->x_pos.i.hi < g_Player.x_pos.i.hi;
+    self->unk15 = facing ? 0x40 : 0;
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    if (facing) {
+        if ((u8)(direction - 2) < 14)
+            direction = 1;
+        if ((u8)(direction - 0x11) < 15)
+            direction = 0;
+    } else {
+        if ((u8)direction < 14)
+            direction = 15;
+        if ((u8)direction >= 17)
+            direction = 16;
+    }
+    set_velocity_from_angle(MOVING_OBJECT(self), direction & 0xFF);
+    self->x_accel = 0;
+    self->gravity = 0;
+    self->x_speed = (s32)((u32)self->x_speed * 8u);
+    self->y_speed = (s32)((u32)self->y_speed * 8u);
+    move_with_gravity(ANIMATED_OBJECT(self));
+    set_animation(self, 7);
+    self->hurt_box = &double_slide_hurt_box;
+    self->attack_box = &double_slide_attack_box;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008C664);
+#endif
 
 void double_dive_hit_wall(struct MainObj* self)
 {
@@ -516,7 +692,49 @@ void double_aerial_shot(struct MainObj* self)
 }
 
 // double_run
+#ifdef MMX4_PC
+void func_8008CD80(struct MainObj* self)
+{
+    struct Main73Ext* ext = &self->ext.main_73;
+    s32 collision;
+
+    self->unk18 = self->x_pos;
+    self->unk1C = self->y_pos;
+    double_step_funcs[self->unk5](self);
+    CollisionRelated(PLAYER_OBJECT(self));
+    collision = func_8002DD04(self);
+
+    if (ext->blink_delay != 0) {
+        ext->blink_delay--;
+        if (ext->blink_delay == 0)
+            self->collision_data = D_80108204;
+        if (ext->blink_delay & 1)
+            self->unk42 |= 0x8000;
+        else
+            self->unk42 &= 0x7FFF;
+    } else if (collision < 0) {
+        self->state = 2;
+        self->unk5 = 0;
+        self->unk6 = 0;
+        self->unk42 &= 0x7FFF;
+        g_Player.spike_immune = 1;
+    } else if (collision > 0 && collision != 0x7F) {
+        self->collision_data = D_801060F0;
+        ext->blink_delay = 0x40;
+        if (collision < 0x13 || collision > 0x17) {
+            s32 kind = (get_random() & 1) ? 2 : 3;
+            double_spawn_shot(self, kind, 0);
+            double_spawn_shot(self, kind, 1);
+            for (s8 i = 0; i < 4; i++)
+                double_spawn_afterimage(self, i);
+        }
+    }
+    func_8002D9BC(self);
+    is_on_screen(BASE_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008CD80);
+#endif
 
 void double_death_flicker(struct MainObj* self)
 {

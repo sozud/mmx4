@@ -5,6 +5,10 @@
 #include "main/visuals/visual_08_ice_shard.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/55C4.h"
+#endif
+
 // ice_shard_state_funcs
 extern void (*ice_shard_state_funcs[])(struct VisualObj*);
 
@@ -24,10 +28,62 @@ void ice_shard_update(struct VisualObj* arg0)
 }
 
 // ice_shard_init
+#ifdef MMX4_PC
+void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius, s32 count);
+void func_800B08CC(struct VisualObj* self);
+void func_800B0B48(struct VisualObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_800B08CC(struct VisualObj* self)
+{
+    s32 kind = self->unk2 % 4;
+
+    self->on_screen = 1;
+    self->state++;
+    self->x_vel.val = 0;
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    if (kind >= 0 && kind < 4) {
+        self->x_pos.u.hi += ice_shard_offsets[kind][0] + get_random_nonzero() % 32;
+        self->y_pos.u.hi += ice_shard_offsets[kind][1] + get_random_nonzero() % 32;
+    }
+    set_animation(self, 0xE + get_random_nonzero() % 3);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B08CC);
+#endif
 
 // ice_shard_main
+#ifdef MMX4_PC
+void func_800B0B48(struct VisualObj* self)
+{
+    struct MainObj* parent = (struct MainObj*)self->unk50;
+    s32 direction;
+    s32 old_x_vel;
+    s32 old_y_vel;
+
+    animate_object(ANIMATED_OBJECT(self));
+    move_with_gravity(ANIMATED_OBJECT(self));
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(parent));
+    set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    if ((u32)(direction / 8) < 4) {
+        old_x_vel = self->x_vel.val;
+        old_y_vel = self->y_vel.val;
+        self->x_vel.val = (s32)(0u - (u32)old_y_vel * 24u);
+        self->y_vel.val = (s32)((u32)old_x_vel * 24u);
+    }
+    if (parent->ext.main_14.unk8C != 0)
+        self->state++;
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20) == 0)
+        update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+    else
+        self->state++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0B48);
+#endif
 
 void ice_shard_despawn(struct VisualObj* arg0)
 {
@@ -39,7 +95,100 @@ void ice_shard_idle(struct VisualObj* arg0)
 }
 
 // spawn_dust_puffs_at_object
+#ifdef MMX4_PC
+void func_800B0CA0(s32 type, s32 mode, struct MainObj* source, s32 radius,
+    s32 count)
+{
+    const struct Unk_unk68* bounds = source->terrain_box;
+    s32 left = source->x_pos.i.hi;
+    s32 right = left;
+    s32 base_y = source->y_pos.i.hi + bounds->unk1;
+    s32 top = base_y;
+    s32 bottom = base_y;
+    s32 width;
+    s32 height;
+    s32 i;
+
+    switch ((u8)mode) {
+    case 1:
+    case 2:
+        if (source->unk15 == 0) {
+            left = source->x_pos.i.hi + bounds->unk0 - bounds->unk2;
+            right = left + bounds->unk2 * 2;
+        } else {
+            right = source->x_pos.i.hi - bounds->unk0 + bounds->unk2;
+            left = right - bounds->unk2 * 2;
+        }
+        if ((u8)mode == 1)
+            top = bottom = base_y - bounds->unk3;
+        else
+            top = bottom = base_y + bounds->unk3;
+        break;
+    case 3:
+        left = source->unk15 == 0
+            ? source->x_pos.i.hi + bounds->unk0 - bounds->unk2
+            : source->x_pos.i.hi - bounds->unk0 + bounds->unk2;
+        right = left;
+        top -= bounds->unk3;
+        bottom += bounds->unk3;
+        break;
+    case 4:
+        left = source->unk15 == 0
+            ? source->x_pos.i.hi + bounds->unk0 + bounds->unk2
+            : source->x_pos.i.hi - bounds->unk0 - bounds->unk2;
+        right = left;
+        top -= bounds->unk3;
+        bottom += bounds->unk3;
+        break;
+    default:
+        break;
+    }
+    left -= radius;
+    top -= radius;
+    right += radius;
+    bottom += radius;
+    width = (s16)(right - left);
+    height = (s16)(bottom - top);
+
+    for (i = 0; i < (s16)count; i++) {
+        struct VisualObj* visual = find_free_visual_obj();
+        u32 random_value;
+
+        if (visual == NULL)
+            continue;
+        visual->active = 0x21;
+        visual->id = 9;
+        visual->unk2 = 0;
+        random_value = (u32)get_random() << 8;
+        random_value |= get_random();
+        visual->x_pos.i.hi = width == 0 ? left : left + (s32)(u16)(random_value + 1) % width;
+        random_value = (u32)get_random() << 8;
+        random_value |= get_random();
+        visual->y_pos.i.hi = height == 0 ? top : top + (s32)(u16)(random_value + 1) % height;
+        visual->x_pos.u.lo = 0;
+        visual->y_pos.u.lo = 0;
+        if (((u8)type & 3) == 1) {
+            visual->x_vel.val = 0;
+            visual->y_vel.val = FIXED(1);
+        } else if (((u8)type & 3) == 2) {
+            visual->x_vel.val = visual->x_pos.i.hi < source->x_pos.i.hi
+                ? FIXED(-1.5)
+                : FIXED(1.5);
+            visual->y_vel.val = 0;
+        } else {
+            visual->x_vel.val = 0;
+            visual->y_vel.val = 0;
+        }
+        visual->unk15 = 0;
+        visual->state = 0;
+        visual->unk5 = 0;
+        visual->unk6 = 0;
+        visual->unk5C.value = (u8)type >> 4;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/visuals/visual_08_ice_shard", func_800B0CA0);
+#endif
 
 // spawn_dust_puffs_in_rect
 #define RANDOM_U16_PLUS_ONE(high, low) \

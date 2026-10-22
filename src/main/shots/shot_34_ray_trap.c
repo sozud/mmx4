@@ -7,6 +7,11 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#include "main/collision_bounds.h"
+#endif
+
 // ray_trap_ride_funcs
 extern void (*ray_trap_ride_funcs[])(struct ShotObj*);
 
@@ -67,7 +72,76 @@ void (*ray_trap_step_funcs[])(struct ShotObj*) = {
 };
 
 // ray_trap_init
+#ifdef MMX4_PC
+void func_800A16FC(struct ShotObj* arg0);
+static void shot_34_orbit(struct ShotObj* arg0, struct MainObj* owner);
+void func_800A19A8(struct ShotObj* arg0);
+void func_800A1B1C(struct ShotObj* arg0);
+void func_800A1BEC(struct ShotObj* arg0);
+void func_800A1CCC(struct ShotObj* arg0);
+void func_800A1E3C(struct ShotObj* arg0);
+void func_800A2098(struct ShotObj* arg0);
+void func_80021DBC(s16* arg0, s16* arg1, s32 arg2);
+void ray_trap_check_airborne(struct ShotObj* arg0);
+static void shot_34_orbit(struct ShotObj* arg0, struct MainObj* owner)
+{
+    arg0->unk84.halves[0] = 0x20;
+    arg0->unk84.halves[1] = 0x20;
+    func_80021DBC((s16*)&arg0->unk84.halves[0], (s16*)&arg0->unk84.halves[1], arg0->unk8C.bytes[0]);
+}
+#endif
+
+#ifdef MMX4_PC
+void func_800A16FC(struct ShotObj* arg0)
+{
+    arg0->x_vel.val = 0x60000;
+    arg0->unk16 = 5;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->state = 1;
+    arg0->unk28 = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk1C.val = arg0->y_pos.val;
+    switch (arg0->unk2) {
+    case 0:
+        arg0->unk54 = (u8*)&ray_trap_data.bounds[4];
+        arg0->unk50.data = (u8*)&ray_trap_data.bounds[3];
+        arg0->unk68 = &ray_trap_data.bounds[5];
+        arg0->unk5C = 1;
+        arg0->unk8C.bytes[3] = 0;
+        arg0->timer = 0;
+        arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? 0x40 : 0;
+        break;
+    case 1:
+        arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
+        arg0->unk5C = 1;
+        arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
+        arg0->unk68 = NULL;
+        arg0->timer = 0;
+        break;
+    case 2:
+    case 3:
+        arg0->unk5C = 3;
+        arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
+        arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
+        arg0->unk68 = &ray_trap_data.bounds[2];
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+        arg0->unk8C.bytes[3] = 1;
+        arg0->timer = 0xE10;
+        break;
+    }
+    arg0->unk60 = 6;
+    arg0->unk5C = 3;
+    arg0->unk58.data = (u8*)D_80105FF0;
+    arg0->unk67 = 0;
+    arg0->unk8C.bytes[0] = 7;
+    arg0->unk8C.bytes[2] = 0;
+    arg0->unk5 = ray_trap_floor_animations[arg0->unk2];
+    set_animation(arg0, ray_trap_wall_animations[arg0->unk2]);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A16FC);
+#endif
 
 void ray_trap_check_airborne(struct ShotObj* self)
 {
@@ -116,13 +190,90 @@ void ray_trap_fall(struct ShotObj* arg0)
 }
 
 // ray_trap_ride_move
+#ifdef MMX4_PC
+void func_800A19A8(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+
+    switch (arg0->unk7) {
+    case 0:
+        arg0->unk7 = 1;
+        arg0->y_vel.val = 0xA0000;
+        arg0->x_vel.val = 0;
+        arg0->unk8C.bytes[1] = 2;
+    case 1:
+        if (arg0->unk8C.bytes[1] != 0) {
+            arg0->unk8C.bytes[1]--;
+        } else {
+            arg0->y_vel.val = 0;
+            arg0->unk7++;
+        }
+        move_object(MOVING_OBJECT(arg0));
+        break;
+    case 2:
+        if (owner->ext.main_55.unk87 != 0) {
+            arg0->unk7 = 0;
+            arg0->unk6++;
+            break;
+        }
+        shot_34_orbit(arg0, owner);
+        if (arg0->timer == 0) {
+            arg0->timer = 3;
+            arg0->unk8C.bytes[0] = (arg0->unk8C.bytes[0] - 1) & 0xF;
+        } else {
+            arg0->timer--;
+        }
+        arg0->x_pos.i.hi = owner->x_pos.i.hi + arg0->unk84.halves[0];
+        arg0->y_pos.i.hi = owner->y_pos.i.hi + arg0->unk84.halves[1];
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (owner->active == 0)
+        arg0->state = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A19A8);
+#endif
 
 // ray_trap_ride_wait
+#ifdef MMX4_PC
+void func_800A1B1C(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+
+    if (!((owner->ext.main_55.unk88 >> arg0->unk8A) & 1)) {
+        arg0->unk7 = 0;
+        arg0->unk15 = g_Player.x_pos.val >= arg0->x_pos.val ? 0x40 : 0;
+        arg0->unk6++;
+    }
+    shot_34_orbit(arg0, owner);
+    arg0->x_pos.i.hi = owner->x_pos.i.hi + arg0->unk84.halves[0];
+    arg0->y_pos.i.hi = owner->y_pos.i.hi + arg0->unk84.halves[1];
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (owner->active == 0)
+        arg0->state = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1B1C);
+#endif
 
 // ray_trap_ride_return
+#ifdef MMX4_PC
+void func_800A1BEC(struct ShotObj* arg0)
+{
+    if (arg0->unk7 == 0) {
+        arg0->unk7 = 1;
+        arg0->unk15 = g_Player.x_pos.val >= arg0->x_pos.val ? 0x40 : 0;
+        set_velocity_from_angle(MOVING_OBJECT(arg0),
+            angle_to_point(OBJECT_HEADER(arg0), g_Player.x_pos.val + 0x1400000, g_Player.y_pos.val) & 0xFF);
+        arg0->y_vel.val -= 0x30000;
+    }
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1BEC);
+#endif
 
 void ray_trap_ride(struct ShotObj* self)
 {
@@ -130,10 +281,86 @@ void ray_trap_ride(struct ShotObj* self)
 }
 
 // ray_trap_crawl_wall
+#ifdef MMX4_PC
+void func_800A1CCC(struct ShotObj* arg0)
+{
+    u8 flags;
+    s32 reverse;
+
+    arg0->unk8C.bytes[3] = 1;
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
+    arg0->unk54 = (u8*)&ray_trap_data.bounds[1];
+    arg0->unk50.data = (u8*)&ray_trap_data.bounds[0];
+    arg0->unk68 = &ray_trap_data.bounds[2];
+    if (arg0->unk6 == 0) {
+        flags = arg0->unk70;
+        if ((flags & 3) == 0)
+            return;
+        if (arg0->unk15 != 0)
+            reverse = flags & 1;
+        else
+            reverse = (flags & 2) != 0;
+        if (!(arg0->unk70 & 8)) {
+            arg0->unk6++;
+            arg0->x_vel.val = 0;
+            arg0->unk15 ^= 0x40;
+            set_animation(arg0, ray_trap_crawl_boxes[0][arg0->unk2]);
+        } else if (reverse) {
+            arg0->unk15 ^= 0x40;
+            arg0->x_vel.val = -arg0->x_vel.val;
+        }
+        return;
+    }
+    if (arg0->animation_step.fields.relative_step != 0)
+        return;
+    arg0->unk5 = 4;
+    arg0->unk6 = 0;
+    arg0->y_vel.val = -0x30000;
+    set_animation(arg0, ray_trap_crawl_boxes[1][arg0->unk2]);
+    arg0->unk68 = &ray_trap_data.bounds[5];
+    arg0->x_pos.i.hi += arg0->unk15 != 0 ? -0x10 : 0x10;
+    arg0->unk67 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1CCC);
+#endif
 
 // ray_trap_crawl_floor
+#ifdef MMX4_PC
+void func_800A1E3C(struct ShotObj* arg0)
+{
+    arg0->unk8C.bytes[3] = 0;
+    animate_object(ANIMATED_OBJECT(arg0));
+    move_object(MOVING_OBJECT(arg0));
+    arg0->unk54 = (u8*)&ray_trap_data.bounds[4];
+    arg0->unk50.data = (u8*)&ray_trap_data.bounds[3];
+    arg0->unk68 = &ray_trap_data.bounds[5];
+    if (arg0->unk6 == 0) {
+        if (arg0->unk70 & 8) {
+            arg0->unk6 = 1;
+            arg0->y_vel.val = 0;
+            set_animation(arg0, ray_trap_crawl_boxes[2][arg0->unk2]);
+        }
+        return;
+    }
+    if (arg0->animation_step.fields.relative_step != 0)
+        return;
+    arg0->unk5 = 3;
+    arg0->unk6 = 0;
+    arg0->unk15 = arg0->x_pos.val < g_Player.x_pos.val ? 0x40 : 0;
+    if (arg0->unk2 < 2)
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x90000 : -0x10000;
+    else
+        arg0->x_vel.val = arg0->unk15 != 0 ? 0x30000 : -0x30000;
+    set_animation(arg0, ray_trap_crawl_boxes[3][arg0->unk2]);
+    arg0->unk68 = &ray_trap_data.bounds[2];
+    arg0->unk67 = 0;
+    arg0->y_pos.i.hi += 0x10;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A1E3C);
+#endif
 
 void ray_trap_chase(struct ShotObj* self)
 {
@@ -171,7 +398,43 @@ void ray_trap_chase(struct ShotObj* self)
 }
 
 // ray_trap_main
+#ifdef MMX4_PC
+void func_800A2098(struct ShotObj* arg0)
+{
+    s32 hit = func_8002DD04((struct MainObj*)arg0);
+
+    if (arg0->unk2 >= 2) {
+        if (((struct BaseObj*)arg0->unk7C)->state == 2)
+            hit = -1;
+        if (arg0->timer == 0)
+            hit = -1;
+        else
+            arg0->timer--;
+    }
+    if (hit < 0) {
+        spawn_explosion(BASE_OBJECT(arg0));
+        if (arg0->unk2 == 2)
+            spawn_debris(4, ray_trap_data.effect_animation_ids[1], arg0);
+        else if (arg0->unk2 == 3)
+            spawn_debris(4, ray_trap_data.effect_animation_ids[2], arg0);
+        else if (arg0->unk2 >= 0 && arg0->unk2 < 2)
+            spawn_debris(4, ray_trap_data.effect_animation_ids[0], arg0);
+        arg0->state = 2;
+        return;
+    }
+    arg0->unk8C.bytes[2] = 1;
+    func_8002D9BC(arg0);
+    if (arg0->unk2 == 0)
+        ray_trap_check_airborne(arg0);
+    ray_trap_step_funcs[arg0->unk5](arg0);
+    if (func_8002B1E8(BASE_OBJECT(arg0), 0x80, 0x80) != 0)
+        arg0->state = 2;
+    else
+        is_on_screen(BASE_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_34_ray_trap", func_800A2098);
+#endif
 
 void ray_trap_despawn(struct ShotObj* self)
 {

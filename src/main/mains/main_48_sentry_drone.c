@@ -497,10 +497,90 @@ void sentry_drone_check_player_near(struct MainObj* self)
 }
 
 // sentry_drone_aim
+#ifdef MMX4_PC
+void func_800681C4(struct MainObj* arg0);
+void func_80068340(struct MainObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800681C4(struct MainObj* arg0)
+{
+    struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
+
+    ext->unk88 = ext->collision_result & 0xFE;
+    switch ((u32)((s8)ext->collision_result & 0xFE)) {
+    case 0:
+        ext->unk86 = 0x1E;
+        ext->unk87 = 2;
+        break;
+    case 2:
+    case 4:
+    case 6:
+        ext->unk86 = 0;
+        ext->unk87 = 8;
+        break;
+    case 8:
+        ext->unk86 = 6;
+        ext->unk87 = 0xA;
+        break;
+    case 10:
+    case 12:
+    case 14:
+        ext->unk86 = 8;
+        ext->unk87 = 0x10;
+        break;
+    case 16:
+        ext->unk86 = 0xE;
+        ext->unk87 = 0x12;
+        break;
+    case 18:
+    case 20:
+    case 22:
+        ext->unk86 = 0x10;
+        ext->unk87 = 0x18;
+        break;
+    case 24:
+        ext->unk86 = 0x16;
+        ext->unk87 = 0x1A;
+        break;
+    case 26:
+    case 28:
+    case 30:
+        ext->unk86 = 0x18;
+        ext->unk87 = 0;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
+#endif
 
 // sentry_drone_rotate_aim
+#ifdef MMX4_PC
+void func_80068340(struct MainObj* arg0)
+{
+    struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
+
+    switch ((u32)(s8)(ext->unk82 - 1)) {
+    case 0:
+    case 4:
+        ext->collision_result = ext->unk86;
+        break;
+    case 2:
+    case 6:
+        ext->collision_result = ext->unk87;
+        break;
+    case 1:
+    case 3:
+    case 5:
+    case 7:
+        ext->collision_result = ext->unk88;
+        break;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_80068340);
+#endif
 
 void sentry_drone_despawn(struct MainObj* self)
 {

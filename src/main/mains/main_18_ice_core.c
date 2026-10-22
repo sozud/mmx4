@@ -12,6 +12,10 @@
 #include "main/stage_objects.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/1E1BC.h"
+#endif
+
 extern u8 D_800FC340[4];
 
 extern struct Unk_unk68 D_800FBF00;
@@ -96,10 +100,143 @@ void ice_core_update(struct MainObj* self)
 }
 
 // ice_core_init
+#ifdef MMX4_PC
+void func_8005077C(struct MainObj* arg0);
+void func_80050874(struct MainObj* arg0);
+void func_80050D14(struct MainObj* arg0);
+void func_800527F0(struct MainObj* arg0);
+void func_800517D0(struct MainObj* arg0);
+extern union AnimationStep* D_800FC2B4[34];
+extern struct Unk_unk68 D_800FBF0C;
+extern void (*ice_core_step_funcs[])(struct MainObj*);
+extern u8 D_800FC33C[];
+void ice_core_face_player(struct AnimatedObj* arg0);
+void func_800527F0(struct MainObj* arg0);
+void ice_core_pick_attack(struct MainObj* arg0);
+void ice_core_check_rebuild(struct MainObj* arg0);
+void ice_core_shed_ice(struct MainObj* arg0);
+extern u16 D_800FBEDC[12];
+extern struct Unk_unk68 D_800FBF08;
+#endif
+
+#ifdef MMX4_PC
+void func_8005077C(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+
+    arg0->contact_damage = 4;
+    arg0->invincibility_timer = -0x80;
+    arg0->hp = 0;
+    arg0->collision_data = (const u16*)D_80106B74;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    arg0->animation_table = (const u8* const*)D_800FC2B4;
+    arg0->unk16 = 0x22;
+    arg0->air_state = 0;
+    arg0->terrain_box = &D_800FBF0C;
+    arg0->hurt_box = NULL;
+    arg0->attack_box = NULL;
+    ice_core_face_player(ANIMATED_OBJECT(arg0));
+    set_animation(arg0, 0x21);
+    ext->ice_pieces = 0x8000;
+    *(u8*)&arg0->unk7E = 0xFF;
+    ext->state.runtime.unk80 = 0;
+    ext->state.runtime.unk81 = 0;
+    ext->state.runtime.unk82 = 0;
+    ext->state.runtime.unk83 = 0;
+    ext->state.runtime.unk84 = 0;
+    ext->state.runtime.unk85 = 0;
+    ext->state.runtime.unk86 = 0;
+    ext->state.runtime.unk87 = 0;
+    ext->unk88 = 1;
+    ext->shed_timer = 0;
+    ext->state.runtime.unk82 = 1;
+    ext->ice_pieces = 0;
+    ext->unk8C = 0;
+    ext->unk90 = 0;
+    arg0->state = 1;
+    arg0->unk5 = 0xB;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_8005077C);
+#endif
 
 // ice_core_run
+#ifdef MMX4_PC
+void func_80050874(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+    s32 hit;
+    u8 invulnerable;
+
+    ice_core_pick_attack(arg0);
+    ice_core_check_rebuild(arg0);
+    ice_core_shed_ice(arg0);
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    ice_core_step_funcs[arg0->unk5](arg0);
+    if (arg0->state >= 2) {
+        update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
+        return;
+    }
+    invulnerable = arg0->invincibility_timer;
+    if (invulnerable & 0x7F) {
+        arg0->invincibility_timer = invulnerable - 1;
+        if ((u8)(invulnerable - 1) == 0)
+            arg0->unk42 &= 0x7FFF;
+    } else {
+        ext->saved_unk5 = arg0->unk5;
+        hit = func_8002DD04(arg0);
+        if (hit < 0) {
+            g_Player.invincibility_timer = 0x7F;
+            func_8001540C(5, 2, NULL);
+            spawn_explosion(BASE_OBJECT(arg0));
+            g_Player.spike_immune = 1;
+            spawn_debris(4, D_800FC33C, arg0);
+            arg0->unk7C = 4;
+            arg0->unk7E = 8;
+            ext->ice_pieces = 0;
+            ext->shed_timer = 0;
+            arg0->terrain_box = NULL;
+            arg0->state = 2;
+            arg0->unk42 &= 0x7FFF;
+            return;
+        }
+        if (hit == 0 || hit == 0x7F) {
+            ext->state.runtime.unk87 = 0;
+        } else {
+            arg0->invincibility_timer = engine_obj.cur_character != 0 ? 1 : 6;
+            ext->state.runtime.unk87 = 1;
+            arg0->unk42 |= 0x8000;
+            if (!(ext->state.runtime.unk80 & 0xC0))
+                ext->state.runtime.unk80 = (ext->state.runtime.unk80 | 0x40) + 1;
+            if (ext->state.runtime.unk81 != 0) {
+                switch (hit - 1) {
+                case 0:
+                    ext->state.runtime.unk83 += 2;
+                    break;
+                case 9:
+                case 23:
+                case 24:
+                case 25:
+                case 26:
+                    ext->state.runtime.unk83 += 5;
+                    break;
+                case 18:
+                    ext->state.runtime.unk83 += 10;
+                    break;
+                }
+            }
+        }
+    }
+    func_8002D9BC(arg0);
+    update_on_screen(BASE_OBJECT(arg0), 0x80, 0x80);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050874);
+#endif
 
 void ice_core_death_sink(struct MainObj* self)
 {
@@ -180,7 +317,30 @@ void ice_core_drift_start(struct MainObj* self)
 }
 
 // ice_core_drift_move
+#ifdef MMX4_PC
+void func_80050D14(struct MainObj* arg0)
+{
+    if (arg0->unk15 == 0 ? (arg0->collision_flags & 2) : (arg0->collision_flags & 1)) {
+        if (arg0->ext.main_18.state.runtime.unk84 != 0) {
+            ice_core_face_player(ANIMATED_OBJECT(arg0));
+            set_animation(arg0, 6);
+            arg0->unk5 = 3;
+            arg0->unk6 = 2;
+        } else {
+            arg0->unk15 = arg0->unk15 == 0 ? 0x40 : 0;
+            func_800527F0(arg0);
+        }
+    }
+    move_with_gravity(ANIMATED_OBJECT(arg0));
+    if (arg0->y_speed == 0x30000)
+        arg0->gravity = 0x2000;
+    if (arg0->y_speed == -0x30000)
+        arg0->gravity = -0x2000;
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_80050D14);
+#endif
 
 void ice_core_bob(struct MainObj* self)
 {
@@ -492,7 +652,81 @@ void ice_core_build_open(struct MainObj* self)
 }
 
 // ice_core_build_gather
+#ifdef MMX4_PC
+void func_800517D0(struct MainObj* arg0)
+{
+    struct Main18Ext* ext = &arg0->ext.main_18;
+    struct ShotObj* shot;
+    struct MiscObj* misc;
+    s16 i;
+
+    animate_object(ANIMATED_OBJECT(arg0));
+    if (arg0->animation_step.fields.event == 3) {
+        for (i = 0; i < 10; i++) {
+            if (D_800FBEDC[i] & ext->ice_pieces)
+                continue;
+            shot = find_free_shot_obj();
+            if (shot == NULL)
+                continue;
+            shot->active = 0x41;
+            shot->id = 0xC;
+            shot->unk2 = i;
+            shot->unk40 = arg0->unk40;
+            shot->unk42 = arg0->unk42;
+            shot->animation_table = (u32**)arg0->animation_table;
+            shot->unk3C = (void*)arg0->sprite_frames;
+            shot->x_pos.val = (i << 21) + 0x17B10000;
+            shot->y_pos.val = 0x8200000;
+            shot->state = 3;
+            shot->unk15 = 0;
+            shot->unk7C = (struct WeaponObj*)&ext->ice_pieces;
+            shot->bg_offset = arg0->bg_offset;
+        }
+        ext->ice_pieces = 0x83FF;
+    }
+    if (arg0->animation_step.fields.event == 4) {
+        arg0->attack_box = (const u8*)&D_800FBF08;
+        arg0->hurt_box = (const u8*)&D_800FBF08;
+    }
+    if (arg0->animation_step.fields.event == 2) {
+        func_8001540C(2, 0x34, arg0);
+        for (i = 0; i < 8; i++) {
+            misc = find_free_misc_obj();
+            if (misc == NULL)
+                continue;
+            misc->active = 0x41;
+            misc->id = 6;
+            misc->unk2 = i;
+            misc->unk40 = arg0->unk40;
+            misc->unk42 = arg0->unk42 & 0x7FFF;
+            misc->animation_table = (u32**)arg0->animation_table;
+            misc->unk3C = (void*)arg0->sprite_frames;
+            misc->bg_offset = arg0->bg_offset;
+            misc->x_pos.val = arg0->x_pos.val;
+            misc->unk15 = 0;
+            misc->state = 0;
+            misc->y_pos.val = arg0->y_pos.val;
+        }
+        arg0->invincibility_timer = -0x80;
+    }
+    if (arg0->animation_step.fields.event != 1)
+        return;
+    if (ext->unk88 == 0) {
+        arg0->attack_box = (const u8*)&D_800FBEF8;
+        arg0->hurt_box = (const u8*)&D_800FBEF8;
+        set_animation(arg0, 0xA);
+    } else {
+        ice_core_face_player(ANIMATED_OBJECT(arg0));
+        arg0->attack_box = (const u8*)&D_800FBEF4;
+        arg0->hurt_box = (const u8*)&D_800FBEF4;
+        set_animation(arg0, 9);
+    }
+    ext->state.runtime.unk85 = 3;
+    arg0->unk6 = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800517D0);
+#endif
 
 void ice_core_build_grow(struct MainObj* self)
 {
@@ -912,7 +1146,22 @@ void ice_core_face_player(struct AnimatedObj* self)
 }
 
 // ice_core_end_attack
+#ifdef MMX4_PC
+void func_800527F0(struct MainObj* arg0)
+{
+    arg0->unk5 = 7;
+    arg0->unk6 = 0;
+    arg0->x_speed = 0;
+    arg0->x_accel = 0;
+    arg0->y_speed = 0;
+    if (arg0->ext.main_18.state.runtime.unk84 == 0)
+        arg0->gravity = arg0->y_pos.i.hi < 0x891 ? 0x1000 : -0x1000;
+    else
+        arg0->gravity = arg0->y_pos.i.hi >= 0x8B1 ? -0x1000 : 0x1000;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_18_ice_core", func_800527F0);
+#endif
 
 u16 D_800FBEDC[12] = {
     0x0001,

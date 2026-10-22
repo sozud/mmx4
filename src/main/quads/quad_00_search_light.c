@@ -64,7 +64,104 @@ void search_light_init(struct QuadObj* arg0)
 
 // SearchLight state 1
 // search_light_sweep
+#ifdef MMX4_PC
+void func_800D3C58(struct QuadObj* arg0);
+extern s32 search_light_accels[3];
+#endif
+
+#ifdef MMX4_PC
+void func_800D3C58(struct QuadObj* arg0)
+{
+    const struct SearchLightInit* init = &search_light_shapes[(u8)arg0->unk2];
+    s16 origin = init->vertices[0];
+    s16 span = (s16)(init->vertices[2] - origin);
+    s32 x_accum = arg0->runtime.search_light.x_accumulator;
+    s32 y_accum = arg0->runtime.search_light.y_accumulator;
+    u16 direction = arg0->link.direction;
+
+    if (arg0->runtime.search_light.pause_timer != 0) {
+        arg0->runtime.search_light.pause_timer--;
+    } else {
+        x_accum += arg0->ext.search_light.velocity;
+        y_accum += arg0->ext.search_light.vertical_velocity;
+        arg0->ext.search_light.velocity += arg0->ext.search_light.acceleration;
+        arg0->ext.search_light.vertical_velocity += arg0->ext.search_light.vertical_acceleration;
+        arg0->vertices[0].x.val += arg0->ext.search_light.velocity;
+        arg0->vertices[1].x.val += arg0->ext.search_light.velocity;
+        switch (arg0->unk5) {
+        case 0:
+            if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(arg0->runtime.search_light.extent + origin - 0x20)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(origin + 0x20 - arg0->runtime.search_light.extent))) {
+                arg0->unk5 = 1;
+                arg0->ext.search_light.acceleration = direction
+                    ? search_light_accels[(u8)arg0->unk2 >> 1]
+                    : -search_light_accels[(u8)arg0->unk2 >> 1];
+            }
+            break;
+        case 1:
+            if (!direction) {
+                if (arg0->ext.search_light.velocity <= 0x7FFF) {
+                    arg0->ext.search_light.velocity = 0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (arg0->vertices[0].x.i.hi >= (s16)(origin + arg0->runtime.search_light.extent)) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->vertices[0].x.val = 0;
+                    arg0->vertices[1].x.val = 0;
+                    arg0->vertices[0].x.i.hi = origin + arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + origin + arg0->runtime.search_light.extent;
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    direction ^= 1;
+                }
+            } else {
+                if (arg0->ext.search_light.velocity >= -0x7FFF) {
+                    arg0->ext.search_light.velocity = -0x8000;
+                    arg0->ext.search_light.acceleration = 0;
+                }
+                if (arg0->vertices[0].x.i.hi <= (s16)(origin - arg0->runtime.search_light.extent)) {
+                    arg0->unk5 = 2;
+                    arg0->ext.search_light.velocity = 0;
+                    arg0->ext.search_light.acceleration = 0;
+                    arg0->vertices[0].x.val = 0;
+                    arg0->vertices[1].x.val = 0;
+                    arg0->vertices[0].x.i.hi = origin - arg0->runtime.search_light.extent;
+                    arg0->vertices[1].x.i.hi = span + origin - arg0->runtime.search_light.extent;
+                    arg0->runtime.search_light.pause_timer = get_random() & 7;
+                    direction ^= 1;
+                }
+            }
+            break;
+        case 2:
+            arg0->ext.search_light.acceleration = direction
+                ? -search_light_accels[(u8)arg0->unk2 >> 1]
+                : search_light_accels[(u8)arg0->unk2 >> 1];
+            arg0->unk5 = 3;
+            arg0->runtime.search_light.base_speed = -arg0->runtime.search_light.base_speed;
+            break;
+        case 3:
+            if ((!direction && arg0->vertices[0].x.i.hi >= (s16)(origin + 0x20 - arg0->runtime.search_light.extent)) || (direction && arg0->vertices[0].x.i.hi <= (s16)(arg0->runtime.search_light.extent + origin - 0x20))) {
+                arg0->ext.search_light.acceleration = 0;
+                arg0->unk5 = 0;
+                arg0->ext.search_light.velocity = arg0->runtime.search_light.base_speed;
+            }
+            break;
+        }
+        arg0->runtime.search_light.x_accumulator = x_accum;
+        arg0->runtime.search_light.y_accumulator = y_accum;
+        arg0->link.direction = direction;
+    }
+    if (search_light_is_visible(arg0)) {
+        arg0->on_screen = 1;
+    } else {
+        arg0->on_screen = 0;
+        arg0->state = 2;
+        arg0->unk5 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/quads/quad_00_search_light", func_800D3C58);
+#endif
 
 // SearchLight state 2
 void search_light_despawn(struct QuadObj* arg0)

@@ -10,6 +10,10 @@
 #include "main/player_special.h"
 #include "main/player_weapon.h"
 
+#ifdef MMX4_PC
+#include "main/55C4.h"
+#endif
+
 extern u8 player_leap_fall_animations[];
 
 s32 player_check_hover(struct PlayerObj* self);
@@ -512,7 +516,49 @@ void player_reset_actions(struct PlayerObj* self)
 }
 
 // player_take_hit
+#ifdef MMX4_PC
+s32 func_80033FF0(struct PlayerObj* arg0);
+void func_80033D54(struct PlayerObj* arg0);
+void player_enter_ladder_climb_off_top(struct PlayerObj* arg0);
+void player_enter_ladder_step_off_bottom(struct PlayerObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80033D54(struct PlayerObj* arg0)
+{
+    const struct PlayerHurtVelocity* state;
+    s32 index;
+
+    player_set_collision_bounds(arg0);
+    arg0->hp = HP_VALUE((u8)arg0->hp);
+    if (arg0->unk5 == 0x11) {
+        return;
+    }
+
+    arg0->hurt_phase = 1;
+    player_reset_actions(arg0);
+    index = arg0->hurt_type;
+    arg0->unk15 = (u8)arg0->hit_facing;
+    player_set_animation(arg0, player_hurt_animations[index]);
+    state = &player_hurt_velocities[index];
+    arg0->x_vel.val = state->x_vel;
+    arg0->unk28 = state->x_accel;
+    arg0->y_vel.val = state->y_vel;
+    arg0->unk2C = state->gravity;
+    if (arg0->unk15 != 0) {
+        arg0->x_vel.val = -arg0->x_vel.val;
+    }
+    arg0->invincibility_timer = player_hurt_invincibility[index];
+    if ((u8)(index - 2) < 2) {
+        arg0->air_state = 1;
+    }
+    func_8001540C(3, (get_random() & 1) ^ 1, arg0);
+    arg0->unk5 = 0x11;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_check", func_80033D54);
+#endif
 u8 func_8002D8B8(struct PlayerObj* arg0);
 
 u8 func_8002D94C(struct PlayerObj* arg0);
@@ -555,7 +601,29 @@ s32 player_check_ladder_air(struct PlayerObj* self)
 }
 
 // player_check_ladder_end
+#ifdef MMX4_PC
+s32 func_80033FF0(struct PlayerObj* arg0)
+{
+    u8 attribute = func_8002D994(arg0);
+
+    if (arg0->unk88.bytes.collision_flags & 8) {
+        player_enter_ladder_step_off_bottom(arg0);
+        return 1;
+    }
+    if ((arg0->input.buttons.held & 4) && attribute == 0x21) {
+        player_enter_ladder_climb_off_top(arg0);
+        return 1;
+    }
+    if ((u8)(attribute - 0x20) < 2 && !(arg0->pressed_input & 0x80))
+        return 0;
+    player_set_animation(arg0, 0x1E);
+    arg0->unk5 = 0xE;
+    arg0->unk6 = 4;
+    return 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_check", func_80033FF0);
+#endif
 s32 player_check_off_ladder(struct PlayerObj* self)
 {
     if (func_8002D994(self) != 0x20) {

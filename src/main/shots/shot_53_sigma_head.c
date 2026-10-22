@@ -8,6 +8,10 @@
 #include "main/object_motion.h"
 #include "main/visuals/visual_03_small_effect.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // sigma_head_move_funcs
 extern void (*sigma_head_move_funcs[])(struct ShotObj*);
 void sigma_head_move_start(struct ShotObj*);
@@ -151,7 +155,38 @@ void (*sigma_head_step_funcs[])(struct ShotObj*) = {
 };
 
 // sigma_head_init
+#ifdef MMX4_PC
+void func_800AAC98(struct ShotObj* self);
+void func_800AB050(struct ShotObj* self);
+void func_800AB170(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+void func_800AAC98(struct ShotObj* self)
+{
+    struct MainObj* parent = (struct MainObj*)self->unk7C;
+
+    self->unk40 = parent->unk40;
+    self->animation_table = (u32**)parent->animation_table;
+    self->unk3C = (void*)parent->sprite_frames;
+    self->unk75 = 1;
+    self->unk15 = 0;
+    self->unk42 = (self->unk2 + parent->unk42 + 4) & 0x7FFF;
+    self->x_pos.i.hi = 0;
+    self->y_pos.i.hi = 0;
+    self->unk16 = 0;
+    self->unk50.data = NULL;
+    self->state++;
+    self->unk5 = 3;
+    self->unk58.animation_steps = D_80105FF0;
+    self->unk54 = (u8*)sigma_head_boxes;
+    self->unk5C = 0x30;
+    self->unk60 = 9;
+    self->bg_offset = parent->bg_offset;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AAC98);
+#endif
 
 void sigma_head_resume(struct ShotObj* self)
 {
@@ -214,7 +249,41 @@ void sigma_head_move_to_formation(struct ShotObj* self)
 }
 
 // sigma_head_wait
+#ifdef MMX4_PC
+void func_800AB050(struct ShotObj* self)
+{
+    struct Main74Ext* owner = &((struct MainObj*)self->unk7C)->ext.main_74;
+    u8 phase;
+    u8 slot;
+
+    if (self->unk7 != 0) {
+        self->unk7--;
+        return;
+    }
+    if (self->unk8C.bytes[0] == 0) {
+        if (owner->unk8C == 1)
+            self->unk5 = 2;
+        return;
+    }
+    phase = owner->unk8C;
+    if (phase == 3) {
+        self->unk5 = 7;
+        return;
+    }
+    slot = self->unk8C.bytes[2];
+    if (phase == 2 && slot == (u8)self->unk2) {
+        if (slot == 0)
+            self->unk5 = 4;
+        else if (slot == 1)
+            self->unk5 = 5;
+        else if (slot == 2)
+            self->unk5 = 6;
+    }
+    update_on_screen(BASE_OBJECT(self), 0x50, 0x50);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB050);
+#endif
 
 void sigma_head_fire_wall_start(struct ShotObj* self)
 {
@@ -225,7 +294,31 @@ void sigma_head_fire_wall_start(struct ShotObj* self)
 }
 
 // sigma_head_fire_wall_track
+#ifdef MMX4_PC
+void func_800AB170(struct ShotObj* self)
+{
+    s16 y;
+    s16 player_y;
+    s32 dy;
+
+    if (--self->timer == 0) {
+        self->timer = 1;
+        self->unk6++;
+    }
+    y = self->y_pos.i.hi;
+    player_y = g_Player.y_pos.i.hi;
+    dy = y - player_y;
+    if (dy < 0)
+        dy = -dy;
+    if (dy < 4)
+        self->y_pos.i.hi = player_y;
+    else
+        self->y_pos.i.hi = y < player_y ? y + 3 : y - 3;
+    animate_object(ANIMATED_OBJECT(self));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_53_sigma_head", func_800AB170);
+#endif
 
 void sigma_head_fire_wall_shoot(struct ShotObj* self)
 {

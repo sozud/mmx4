@@ -7,6 +7,10 @@
 #include "main/55C4.h"
 #include "main/objects.h"
 
+#ifdef MMX4_PC
+#include "main/collision_bounds.h"
+#endif
+
 // double_ball_funcs
 extern void (*double_ball_funcs[])(struct ShotObj*);
 
@@ -19,7 +23,56 @@ extern void (*double_ball_state_funcs[])(struct ShotObj*);
 void double_ball_run(struct ShotObj*);
 
 // double_ball_init
+#ifdef MMX4_PC
+void func_800A9964(struct ShotObj* self);
+extern u8 double_ball_boxes[2][4];
+#endif
+
+#ifdef MMX4_PC
+void func_800A9964(struct ShotObj* self)
+{
+    s32 direction;
+    s32 dx;
+    s32 dy;
+
+    self->unk16 = 3;
+    self->unk5C = 3;
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk54 = double_ball_boxes[0];
+    self->unk50.data = double_ball_boxes[0];
+    self->unk58.collision_bounds = D_801060F0;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->timer = 0;
+    self->bg_offset = 0;
+    self->unk68 = NULL;
+    self->unk60 = 6;
+    self->unk61 = 0;
+    self->x_pos.u.hi += self->unk15 ? 0x17 : -0x17;
+    self->y_pos.u.hi += 0xD;
+    set_animation(self, 0xC);
+    self->unk8C.halves[0] = g_Player.x_pos.u.hi;
+    self->unk8C.halves[1] = g_Player.y_pos.u.hi;
+    direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
+    self->unk84.value = direction;
+    set_velocity_from_angle(MOVING_OBJECT(self), direction);
+    self->unk28 = 0;
+    self->unk2C = 0;
+    self->x_vel.val *= 4;
+    self->y_vel.val *= 4;
+    dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+    dy = self->y_pos.i.hi - g_Player.y_pos.i.hi;
+    if (dx < 0)
+        dx = -dx;
+    if (dy < 0)
+        dy = -dy;
+    self->unk8A = ((dx + dy) / 4) + 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_48_double_ball", func_800A9964);
+#endif
 
 void double_ball_travel(struct ShotObj* self)
 {

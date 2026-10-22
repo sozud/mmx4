@@ -1523,7 +1523,49 @@ void player_zero_saber(struct PlayerObj* self)
 }
 
 // player_zero_check_combo
+#ifdef MMX4_PC
+s32 func_8003A1DC(struct PlayerObj* arg0);
+void player_zero_raijingeki(struct PlayerObj*);
+#endif
+
+#ifdef MMX4_PC
+s32 func_8003A1DC(struct PlayerObj* arg0)
+{
+    s8 combo;
+
+    if (arg0->input_locked != 0) {
+        return 0;
+    }
+    if (!(arg0->animation_step.fields.event & 0x20)) {
+        return 0;
+    }
+    if (arg0->pressed_input & 0x10) {
+        combo = arg0->combo + 1;
+        arg0->combo = combo;
+        player_set_animation(arg0, combo + 0x58);
+        func_8001540C(1, player_zero_combo_sounds[arg0->combo][0], arg0);
+        player_play_voice(arg0, player_zero_combo_sounds[arg0->combo][1]);
+        player_zero_spawn_saber(arg0, (s8)(arg0->combo + 0x18));
+        return 1;
+    }
+    arg0->attacking = 0;
+    if (player_zero_check_ryuenjin(arg0) != 0) {
+        return 1;
+    }
+    arg0->attacking = 1;
+    if (!(arg0->boss_flags & 1) || !(arg0->pressed_input & 0x20)) {
+        return 0;
+    }
+    player_set_animation(arg0, 0x60);
+    arg0->combo = 1;
+    arg0->unk5 = 0x35;
+    arg0->unk6 = 0;
+    player_zero_raijingeki(arg0);
+    return 1;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player_special", func_8003A1DC);
+#endif
 s32 player_zero_check_ladder_or_walk(struct PlayerObj* self)
 {
     if (player_check_ladder(self)) {

@@ -182,7 +182,38 @@ void bg_zone_controller_b_idle(struct EffectObj* self)
 }
 
 // bg_zone_controller_b_update_zone
+#ifdef MMX4_PC
+void func_800B8E74(struct EffectObj* arg0);
+extern u16 bg_zone_controller_b_zone_bounds[6];
+#endif
+
+#ifdef MMX4_PC
+void func_800B8E74(struct EffectObj* arg0)
+{
+    s8 index;
+
+    if (g_Player.y_pos.i.hi < 0x500) {
+        for (index = 0; index < 2; index++) {
+            if (g_Player.x_pos.i.hi - (s16)bg_zone_controller_b_zone_bounds[index] < 0)
+                break;
+        }
+        if (index == 2)
+            index = 1;
+    } else {
+        for (index = 2; index < 5; index++) {
+            if (g_Player.x_pos.i.hi - (s16)bg_zone_controller_b_zone_bounds[index] < 0)
+                break;
+        }
+    }
+    arg0->ext.effect_15.unk14 = index;
+    if (index != arg0->ext.effect_15.unk15) {
+        arg0->unk5 = index;
+        arg0->unk6 = 0;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_15_bg_zone_controller_b", func_800B8E74);
+#endif
 
 u16 bg_zone_controller_b_zone_bounds[6] = { 0x0760, 0x0BA0, 0x13F0, 0x1700, 0x1775, 0 };
 

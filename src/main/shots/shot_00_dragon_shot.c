@@ -41,7 +41,93 @@ void dragon_shot_update(struct ShotObj* self)
 }
 
 // dragon_shot_init
+#ifdef MMX4_PC
+void func_800994DC(struct ShotObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_800994DC(struct ShotObj* arg0)
+{
+    struct MainObj* owner = (struct MainObj*)arg0->unk7C;
+    s32 animation;
+    s32 x_offset;
+    s32 velocity;
+
+    arg0->unk40 = owner->unk40;
+    arg0->animation_table = (u32**)owner->animation_table;
+    arg0->unk3C = (void*)owner->sprite_frames;
+    arg0->unk15 = owner->unk15;
+    arg0->unk68 = NULL;
+    arg0->unk54 = NULL;
+    arg0->unk5C = 0;
+    arg0->unk42 = owner->unk42;
+
+    switch (arg0->unk2) {
+    case 0:
+    case 1:
+        arg0->unk16 = 1;
+        arg0->unk60 = 5;
+        arg0->x_pos.val = owner->x_pos.val;
+        arg0->y_pos.val = owner->y_pos.val;
+        arg0->bg_offset = owner->bg_offset;
+        if (arg0->unk2 == 0) {
+            owner->hurt_box = dragon_shot_box_3;
+            arg0->unk50.data = dragon_shot_flame_box;
+            arg0->state = 1;
+            set_animation(arg0, 2);
+        } else {
+            owner->hurt_box = dragon_shot_box_4;
+            arg0->unk50.data = dragon_shot_pulse_hit_box;
+            arg0->state = 2;
+            set_animation(arg0, 4);
+        }
+        break;
+    case 2:
+    case 3:
+        arg0->unk16 = 1;
+        arg0->unk60 = 5;
+        arg0->unk68 = (struct Unk_unk68*)dragon_shot_box_2;
+        arg0->bg_offset = 0;
+        arg0->unk42 &= 0x7FFF;
+        x_offset = owner->unk15 == 0 ? 0x280000 : -0x280000;
+        arg0->x_pos.val
+            = owner->x_pos.val + (background_objects[0].x_pos.val + x_offset);
+        arg0->y_pos.val = owner->y_pos.val + background_objects[0].y_pos.val;
+        if (arg0->unk2 == 2) {
+            velocity = owner->unk15 != 0 ? (-0x40000 | 0x8000) : 0x38000;
+        } else {
+            velocity = owner->unk15 != 0 ? (-0x30000 | 0x8000) : 0x28000;
+        }
+        arg0->x_vel.val = velocity;
+        arg0->y_vel.val = 0x18000;
+        arg0->unk2C = 0x1000;
+        arg0->unk50.data = dragon_shot_bomb_box;
+        arg0->unk28 = 0;
+        arg0->state = 3;
+        set_animation(arg0, 0xA);
+        break;
+    case 4:
+        arg0->unk60 = 5;
+        arg0->x_pos.val = owner->x_pos.val;
+        arg0->bg_offset = 0;
+        arg0->unk16 = 6;
+        arg0->state = 5;
+        arg0->y_pos.val = owner->y_pos.val;
+        if (owner->unk7E != 0) {
+            set_animation(arg0, 0xE);
+            arg0->unk50.data = dragon_shot_box_0;
+            owner->hurt_box = dragon_shot_box_5;
+        } else {
+            set_animation(arg0, 0xC);
+            arg0->unk50.data = dragon_shot_box_1;
+        }
+        break;
+    }
+    update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_00_dragon_shot", func_800994DC);
+#endif
 
 void dragon_shot_flame(struct ShotObj* self)
 {

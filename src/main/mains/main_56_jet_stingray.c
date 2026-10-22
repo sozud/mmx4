@@ -457,7 +457,45 @@ void jet_stingray_swim_start(struct MainObj* self)
 }
 
 // jet_stingray_swim_move
+#ifdef MMX4_PC
+void func_80070514(struct MainObj* arg0);
+void func_80070A38(struct MainObj* arg0);
+void func_800710D4(struct MainObj* arg0);
+void func_80071740(struct MainObj* arg0);
+extern s16 jet_stingray_vortex_debris_offsets[24];
+extern u8 jet_stingray_splash_x_offsets[4];
+extern u8 jet_stingray_splash_y_offsets[4];
+extern void (*jet_stingray_ambush_funcs[])(struct MainObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80070514(struct MainObj* arg0)
+{
+    struct BackgroundObj* background = &background_objects[arg0->bg_offset];
+    s16 target_x;
+    s16 target_y;
+
+    if (arg0->x_pos.val < background->x_pos.val + 0xA00000) {
+        arg0->unk15 = 0x40;
+        target_x = background->unk1E + 0x40;
+    } else {
+        arg0->unk15 = 0;
+        target_x = background->unk1E + 0x120;
+    }
+    target_y = background->unk22 + 0x98;
+    set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), target_x << 16, target_y << 16) & 0xFF);
+    arg0->x_speed <<= 1;
+    arg0->y_speed <<= 1;
+    if (jet_stingray_at_target(arg0, target_x, target_y) & 0xFF) {
+        arg0->x_speed = 0;
+        arg0->y_speed = 0;
+        arg0->unk7C = 0;
+        arg0->unk6++;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070514);
+#endif
 
 void jet_stingray_swim_next(struct MainObj* self)
 {
@@ -570,7 +608,50 @@ void jet_stingray_vortex_spawn(struct MainObj* self)
 }
 
 // jet_stingray_vortex_spin
+#ifdef MMX4_PC
+void func_80070A38(struct MainObj* arg0)
+{
+    struct MainObj* debris;
+    s16 dx;
+    s16 dy;
+    u32 roll;
+
+    if (g_Player.x_pos.i.hi < arg0->x_pos.i.hi)
+        g_Player.x_pos.i.hi += 3;
+    else
+        g_Player.x_pos.i.hi -= 3;
+    if (arg0->y_pos.i.hi < g_Player.y_pos.i.hi)
+        g_Player.y_pos.i.hi -= 1;
+    else
+        g_Player.y_pos.i.hi += 1;
+    g_Player.y_pos.i.hi += 1;
+    dy = g_Player.y_pos.i.hi - arg0->y_pos.i.hi;
+    dx = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
+    if ((dy < 0 ? -dy : dy) < 0x30 && (dx < 0 ? -dx : dx) < 0x20) {
+        arg0->ext.main_56.vortex_result = 2;
+        arg0->unk6++;
+        return;
+    }
+    if (--arg0->unk7C == 0) {
+        arg0->ext.main_56.vortex_result = 1;
+        arg0->unk6++;
+    }
+    if (main_bss_state.frame_counter % 5 != 0)
+        return;
+    debris = func_8006FB20(arg0, 0, 0);
+    roll = get_random();
+    if (debris != NULL)
+        debris->x_pos.i.hi = background_objects[0].unk1E + ((u16*)jet_stingray_vortex_debris_offsets)[(arg0->unk15 != 0 ? 8 : 0) + (roll & 7)];
+    roll = get_random();
+    if (debris == NULL)
+        return;
+    debris->y_pos.i.hi = background_objects[0].unk22 + ((u16*)jet_stingray_vortex_debris_offsets)[0x10 + (roll & 7)];
+    debris->x_speed = arg0->unk15 != 0 ? -0x38000 : 0x38000;
+    debris->y_speed = arg0->y_pos.i.hi < debris->y_pos.i.hi ? 0x10000 : -0x10000;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80070A38);
+#endif
 
 void jet_stingray_vortex_wait(struct MainObj* self)
 {
@@ -692,7 +773,40 @@ void jet_stingray_ambush_return(struct MainObj* self)
 }
 
 // jet_stingray_ambush
+#ifdef MMX4_PC
+void func_800710D4(struct MainObj* arg0)
+{
+    struct MainObj* debris;
+    u8 tile;
+    s8 i;
+
+    jet_stingray_ambush_funcs[arg0->unk6](arg0);
+    move_object(MOVING_OBJECT(arg0));
+    animate_object(ANIMATED_OBJECT(arg0));
+    tile = jet_stingray_check_surface(PLAYER_OBJECT(arg0), 0, 0);
+    if (tile == 0)
+        return;
+    if (tile < 3) {
+        if (arg0->ext.main_56.flags & 1)
+            return;
+        for (i = 0; i < 4; i++) {
+            debris = func_8006FB20(arg0, ((s8*)jet_stingray_splash_x_offsets)[get_random() & 3], 0);
+            if (debris != NULL)
+                debris->y_pos.i.hi = ((s8*)jet_stingray_splash_y_offsets)[get_random() & 3] + 0x13B;
+            else
+                get_random();
+        }
+        arg0->ext.main_56.flags |= 1;
+    } else if (tile == 3) {
+        if (arg0->ext.main_56.flags & 2)
+            return;
+        jet_stingray_spawn_splash(arg0);
+        arg0->ext.main_56.flags |= 2;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_800710D4);
+#endif
 
 void jet_stingray_dash_start(struct MainObj* self)
 {
@@ -835,7 +949,55 @@ void jet_stingray_leap(struct MainObj* self)
 }
 
 // jet_stingray_missiles_fire
+#ifdef MMX4_PC
+void func_80071740(struct MainObj* arg0)
+{
+    struct ShotObj* shot;
+
+    switch (arg0->unk7) {
+    case 0:
+        arg0->unk7 = 1;
+        func_8001540C(2, 0xB2, arg0);
+        arg0->unk7C = 0x32;
+    case 1:
+        if (--arg0->unk7C == 0) {
+            arg0->unk7E = arg0->unk5 == 9 ? 4 : 3;
+            arg0->unk7++;
+            set_animation(arg0, 9);
+        }
+        break;
+    case 2:
+        if (arg0->animation_step.fields.event == 1) {
+            func_8001540C(2, 0xB1, arg0);
+            arg0->animation_step.fields.event = 0;
+            shot = find_free_shot_obj();
+            if (shot != NULL) {
+                shot->active = 0x41;
+                shot->id = 0x22;
+                shot->unk2 = arg0->unk5 == 9 ? 3 : 2;
+                shot->unk40 = arg0->unk40;
+                shot->animation_table = (u32**)arg0->animation_table;
+                shot->unk3C = (void*)arg0->sprite_frames;
+                shot->unk42 = arg0->unk42;
+                shot->bg_offset = arg0->bg_offset;
+                shot->x_pos.val = arg0->x_pos.val;
+                shot->y_pos.val = arg0->y_pos.val;
+                shot->unk7C = (struct WeaponObj*)arg0;
+                shot->unk15 = arg0->unk15;
+            }
+        }
+        if (arg0->animation_step.fields.event == 2) {
+            arg0->animation_step.fields.event = 0;
+            arg0->unk7C = 0x14;
+            arg0->unk6++;
+        }
+        break;
+    }
+    animate_object(ANIMATED_OBJECT(arg0));
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_56_jet_stingray", func_80071740);
+#endif
 
 void jet_stingray_missiles_repeat(struct MainObj* self)
 {

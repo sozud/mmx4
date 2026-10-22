@@ -23,7 +23,34 @@ void world_flip_init(struct EffectObj* self)
 }
 
 // world_flip_trigger
+#ifdef MMX4_PC
+void func_800B96E0(struct EffectObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/effects/effect_18_world_flip.c
+
+void func_800B96E0(struct EffectObj* self)
+{
+    (void)self;
+    if (g_Player.pressed_input & 0x20) {
+        background_objects[0].unk4C = 1;
+        background_objects[1].unk4C = 1;
+        background_objects[2].unk4C = 1;
+        g_Player.y_pos.val = (s32)(0x08000000u - (u32)g_Player.y_pos.val);
+        background_objects[0].y_pos.val = (s32)(0x07000000u - (u32)background_objects[0].y_pos.val);
+        background_objects[0].unk18.val = (s32)(0x07000000u - (u32)background_objects[0].unk18.val);
+        background_objects[1].y_pos.val = background_objects[0].y_pos.val >> 2;
+        background_objects[2].y_pos.val = background_objects[0].y_pos.val >> 2;
+        background_objects[1].unk18.val = background_objects[0].unk18.val >> 2;
+        background_objects[2].unk18.val = background_objects[0].unk18.val >> 2;
+        world_flip_objects();
+        engine_obj.character_state.bytes[0] = (u8)(1 - engine_obj.character_state.bytes[0]);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/effects/effect_18_world_flip", func_800B96E0);
+#endif
 
 void world_flip_despawn(struct EffectObj* self)
 {

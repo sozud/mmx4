@@ -31,7 +31,63 @@ void jet_drone_update(struct MainObj* self)
 }
 
 // jet_drone_init
+#ifdef MMX4_PC
+void func_800567C4(struct MainObj* arg0);
+extern struct Unk_unk68 D_80106E74[];
+extern union AnimationStep* jet_drone_animations[];
+extern struct Unk_unk68 jet_drone_hurt_box[];
+extern struct Unk_unk68 jet_drone_terrain_box[];
+#endif
+
+#ifdef MMX4_PC
+void func_800567C4(struct MainObj* arg0)
+{
+    static const s32 motion[4][3] = {
+        { -0x4000, -0x1C000, 0x14 },
+        { -0x2000, -0xC000, 0x24 },
+        { 0x4000, 0x1C000, 0x14 },
+        { 0x2000, 0xC000, 0x24 },
+    };
+    u8 subtype = arg0->unk2;
+
+    arg0->hp = 2;
+    arg0->contact_damage = 3;
+    arg0->invincibility_timer = 0;
+    arg0->collision_data = (const u16*)D_80106E74;
+    arg0->animation_table = (const u8* const*)jet_drone_animations;
+    arg0->unk16 = 6;
+    arg0->hurt_box = (const u8*)jet_drone_hurt_box;
+    arg0->air_state = 0;
+    arg0->terrain_box = NULL;
+    arg0->attack_box = (const u8*)jet_drone_terrain_box;
+    arg0->bg_offset = g_Player.bg_offset;
+    arg0->unk18.val = arg0->x_pos.val;
+    arg0->unk1C.val = arg0->y_pos.val;
+    if (subtype < 8) {
+        arg0->x_accel = -0x8000;
+        arg0->gravity = motion[subtype & 3][0];
+        arg0->y_speed = motion[subtype & 3][1];
+        arg0->unk7C = motion[subtype & 3][2];
+        if (subtype < 4) {
+            arg0->x_speed = -0x50000;
+            arg0->unk15 = 0;
+            func_8001540C(2, 0x50, arg0);
+            arg0->unk5 = 2;
+        } else {
+            arg0->unk7A = 1;
+            arg0->unk15 = 0x40;
+            arg0->x_speed = 0x50000;
+            arg0->unk5 = 3;
+        }
+    }
+    set_animation(arg0, 0);
+    arg0->ext.main_24.unk80 = 0;
+    arg0->state = 1;
+    arg0->unk6 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_24_jet_drone", func_800567C4);
+#endif
 
 void jet_drone_main(struct MainObj* self)
 {

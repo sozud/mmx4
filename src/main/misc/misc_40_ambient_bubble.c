@@ -20,10 +20,58 @@ void ambient_bubble_main(struct MiscObj*);
 void ambient_bubble_despawn(struct MiscObj*);
 
 // ambient_bubble_init
+#ifdef MMX4_PC
+void func_800CFB70(struct MiscObj* arg0);
+void func_800CFC6C(struct MiscObj* arg0);
+extern union AnimationStep* ambient_bubble_animations[3];
+extern u16 ambient_bubble_positions[8];
+extern s32 ambient_bubble_speeds[4];
+extern s32 ambient_bubble_accels[4];
+extern u16 ambient_bubble_respawn_delays[4];
+extern ret_u8 func_8002938C(s32);
+#endif
+
+#ifdef MMX4_PC
+void func_800CFB70(struct MiscObj* arg0)
+{
+    u8 resource = func_8002938C(0x9F);
+
+    arg0->active |= 0x40;
+    arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    arg0->animation_table = (u32**)ambient_bubble_animations;
+    arg0->unk16 = 0x20;
+    arg0->bg_offset = 1;
+    arg0->unk15 = 0x40;
+    arg0->state++;
+    arg0->unk2 &= 3;
+    arg0->ext.misc_24.timer = ambient_bubble_respawn_delays[arg0->unk2];
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFB70);
+#endif
 
 // ambient_bubble_wait
+#ifdef MMX4_PC
+void func_800CFC6C(struct MiscObj* arg0)
+{
+    if (arg0->ext.misc_24.timer != 0) {
+        arg0->ext.misc_24.timer--;
+        return;
+    }
+    arg0->x_pos.i.hi = background_objects[1].x_pos.i.hi + 0x14A;
+    arg0->y_pos.i.hi = background_objects[1].y_pos.i.hi + ambient_bubble_positions[get_random() & 7];
+    set_animation(arg0, 1);
+    arg0->y_vel.val = 0;
+    arg0->unk28 = 0;
+    arg0->unk5++;
+    arg0->x_vel.val = ambient_bubble_speeds[arg0->unk2];
+    arg0->unk2C = ambient_bubble_accels[arg0->unk2];
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFC6C);
+#endif
 
 void ambient_bubble_float(struct MiscObj* self)
 {

@@ -77,7 +77,53 @@ void frost_tower_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_init
+#ifdef MMX4_PC
+void func_80093D78(struct WeaponObj* arg0);
+void func_80094280(struct WeaponObj* arg0);
+void func_800942E8(struct WeaponObj* arg0);
+void func_800944B8(struct WeaponObj* arg0);
+extern struct Unk_unk68 frost_tower_hit_box[];
+extern u32* D_8011C094[];
+extern u16 frost_tower_charged_part_offsets[];
+void frost_tower_charged_spawn_part(s8 arg0);
+void frost_tower_hide(struct WeaponObj* arg0);
+#endif
+
+#ifdef MMX4_PC
+void func_80093D78(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+
+    arg0->on_screen = 1;
+    arg0->unk64 = 1;
+    arg0->unk50 = frost_tower_hit_box;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[3];
+    arg0->animation_table = D_8011C094;
+    arg0->unk40 = 0x520;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 3;
+    arg0->unk15 = 0;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xB];
+    arg0->x_pos.i.hi = g_Player.x_pos.i.hi + (g_Player.unk15 != 0 ? -5 : 5);
+    arg0->unk67 = 1;
+    arg0->x_vel.val = 0;
+    arg0->unk28.val = 0;
+    arg0->y_vel.val = 0;
+    arg0->unk2C = 0;
+    arg0->unk49 = 0;
+    arg0->y_pos.i.hi = g_Player.y_pos.i.hi - 6;
+    arg0->ext.weapon_2.lifetime = 0x96;
+    arg0->ext.weapon_2.timer = 8;
+    set_animation(arg0, 0);
+    arg0->unk5 = 0;
+    arg0->state++;
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
+    update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80093D78);
+#endif
 
 void frost_tower_main(struct WeaponObj* arg0)
 {
@@ -213,10 +259,65 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_charged_init
+#ifdef MMX4_PC
+void func_80094280(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+
+    arg0->unk40 = 0x520;
+    arg0->previous_animation_index = 0xFF;
+    arg0->state++;
+    arg0->animation_step.fields.frame_index = 9;
+    arg0->ext.raw[2] = 0;
+    arg0->ext.raw[3] = 0;
+    arg0->unk5 = 0;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[3];
+    decompress_player_gfx(GRAPHICS_OBJECT(arg0), 0x140, 0x20);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80094280);
+#endif
 
 // frost_tower_charged_main
+#ifdef MMX4_PC
+void func_800942E8(struct WeaponObj* arg0)
+{
+    s32 strength = 0x20;
+
+    if (arg0->ext.raw[2] != 0) {
+        arg0->ext.raw[2]--;
+        return;
+    }
+    arg0->ext.raw[2] = 0x28;
+    switch (arg0->ext.raw[3]) {
+    case 0:
+        frost_tower_charged_spawn_part(1);
+        break;
+    case 1:
+        frost_tower_charged_spawn_part(2);
+        frost_tower_charged_spawn_part(-0x7E);
+        break;
+    case 2:
+        frost_tower_charged_spawn_part(1);
+        frost_tower_charged_spawn_part(3);
+        frost_tower_charged_spawn_part(-0x7D);
+        break;
+    case 3:
+        frost_tower_charged_spawn_part(4);
+        frost_tower_charged_spawn_part(-0x7C);
+        frost_tower_charged_spawn_part(5);
+        frost_tower_charged_spawn_part(-0x7B);
+        strength = 0x40;
+        break;
+    }
+    func_8001540C(0, 0x1A, 0);
+    start_screen_shake_x(strength, 8, 1);
+    if (++arg0->ext.raw[3] == 4)
+        frost_tower_hide(arg0);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800942E8);
+#endif
 
 void frost_tower_charged_spawn_part(s8 arg0)
 {
@@ -234,7 +335,40 @@ void frost_tower_charged_spawn_part(s8 arg0)
 }
 
 // frost_tower_charged_part_init
+#ifdef MMX4_PC
+void func_800944B8(struct WeaponObj* arg0)
+{
+    s32* player_gfx = SP_PLAYER_GFX;
+    s32* sprite_frames = SP_SPRITE_FRAMES;
+    struct BackgroundObj* background = &background_objects[g_Player.bg_offset];
+    u16 base;
+
+    arg0->on_screen = 1;
+    arg0->unk38 = (u8*)player_gfx + player_gfx[3];
+    arg0->animation_table = D_8011C094;
+    arg0->unk40 = 0x520;
+    arg0->unk42 = 0x7801;
+    arg0->unk16 = 1;
+    arg0->unk15 = 0;
+    arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xB];
+    base = background->x_pos.i.hi + 0xA0;
+    if (arg0->unk2 & 0x80)
+        arg0->x_pos.i.hi = base - frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
+    else
+        arg0->x_pos.i.hi = base + frost_tower_charged_part_offsets[arg0->unk2 & 0x7F];
+    arg0->x_vel.val = 0;
+    arg0->unk28.val = 0;
+    arg0->y_vel.val = -0x80000;
+    arg0->unk2C = 0;
+    arg0->y_pos.i.hi = background->y_pos.i.hi + 0x30;
+    set_animation(arg0, 6);
+    arg0->unk5 = 0;
+    arg0->state++;
+    update_on_screen(BASE_OBJECT(arg0), 0x28, 0x38);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_800944B8);
+#endif
 
 void frost_tower_charged_part_main(struct WeaponObj* arg0)
 {

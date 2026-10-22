@@ -8,6 +8,11 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 
+#ifdef MMX4_PC
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
+#endif
+
 extern struct Unk_unk68 data_hopper_attack_box;
 
 void data_hopper_despawn(struct MainObj*);
@@ -122,7 +127,34 @@ void data_hopper_fall(struct MainObj* self)
 }
 
 // data_hopper_pick_direction
+#ifdef MMX4_PC
+void func_80062778(struct MainObj* self);
+void func_80062BBC(struct MainObj* self);
+void func_80062650(struct MainObj* self);
+void func_80062AEC(struct MainObj*);
+extern void (*data_hopper_step_funcs[8])();
+extern struct Unk_unk68 data_hopper_hurt_box;
+void collide_with_players(struct PlayerObj*);
+#endif
+
+#ifdef MMX4_PC
+void func_80062650(struct MainObj* self)
+{
+    s32 x = self->x_pos.i.hi;
+    s32 y = (s16)((u16)self->y_pos.u.hi + self->terrain_box->unk1 + self->terrain_box->unk3);
+    u8 result = func_8002D724(PLAYER_OBJECT(self), x, y);
+    u8 index = result - 1;
+
+    if (index < 4 || index == 8 || index == 9)
+        self->ext.main_41.unk80 = 2;
+    else if ((index >= 4 && index < 8) || index == 10 || index == 11)
+        self->ext.main_41.unk80 = 1;
+    else
+        self->ext.main_41.unk80 = 0;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062650);
+#endif
 
 void data_hopper_land(struct MainObj* self)
 {
@@ -146,7 +178,54 @@ void data_hopper_land(struct MainObj* self)
 }
 
 // data_hopper_hop
+#ifdef MMX4_PC
+void func_80062778(struct MainObj* self)
+{
+    struct Main41Ext* ext = &self->ext.main_41;
+    u8 flags;
+    u8 direction;
+
+    if (self->unk6 == 0) {
+        self->unk6 = 1;
+        ext->unk84 = 1;
+        ext->unk83 = 0;
+        self->x_speed = 0;
+        self->y_speed = 0;
+        self->gravity = 0;
+        self->x_accel = 0x2000;
+        self->unk15 = (ext->unk80 & 1) ? 0x40 : 0;
+        set_animation(self, 0);
+        data_hopper_spawn_item(self);
+        ext->unk81 = ext->unk80;
+    }
+    func_80062650(self);
+    flags = self->collision_flags;
+    if (!(flags & 8)) {
+        self->unk5 = 3;
+        self->unk6 = 0;
+        return;
+    }
+    direction = self->unk15 ? 1 : 2;
+    if (((flags & 3) && (flags & direction)) || ext->unk80 == (self->unk15 ? 2 : 1)) {
+        self->unk5 = 2;
+        self->unk6 = 0;
+        ext->unk82 = self->animation_step.fields.event;
+        return;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->x_speed > 0x41FFF || self->x_speed < -0x41FFF) {
+        if (ext->unk80 == 1)
+            self->x_speed = 0x42000;
+        else if (ext->unk80 == 2)
+            self->x_speed = -0x42000;
+        self->x_accel = 0;
+    }
+    move_with_gravity(ANIMATED_OBJECT(self));
+    ext->unk81 = ext->unk80;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062778);
+#endif
 
 void data_hopper_blink(struct MainObj* self)
 {
@@ -243,7 +322,50 @@ void func_80062AEC(struct MainObj* self)
 }
 
 // data_hopper_main
+#ifdef MMX4_PC
+void func_80062BBC(struct MainObj* self)
+{
+    struct Main41Ext* ext = &self->ext.main_41;
+    s32 status = 0;
+
+    self->unk1C = self->y_pos;
+    self->unk18 = self->x_pos;
+    self->on_screen = 0;
+    if (self->unk5 != 7)
+        func_80062AEC(self);
+    ((void (*)(struct MainObj*))data_hopper_step_funcs[self->unk5])(self);
+    CollisionRelated(PLAYER_OBJECT(self));
+    if (ext->unk84 != 0) {
+        func_8002D9BC(self);
+        status = func_8002DD04(self);
+    }
+    if (ext->unk83 != 0) {
+        self->unk76 = -1;
+        self->unk75 = 1;
+        collide_with_players(PLAYER_OBJECT(self));
+    } else {
+        self->unk76 = 0;
+        self->unk75 = 0;
+    }
+    if (status < 0) {
+        spawn_explosion(BASE_OBJECT(self));
+        spawn_debris(4, &data_hopper_hurt_box, self);
+        self->state = 2;
+        return;
+    }
+    if (func_8002B160(BASE_OBJECT(self)) == 0) {
+        is_on_screen(BASE_OBJECT(self));
+        self->unk7E = 0xF0;
+    } else if (self->unk2 != 0) {
+        if (self->unk7E == 0)
+            self->state = 2;
+        else
+            self->unk7E--;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_41_data_hopper", func_80062BBC);
+#endif
 
 void data_hopper_idle(struct MainObj* self)
 {

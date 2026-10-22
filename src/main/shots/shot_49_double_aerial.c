@@ -31,7 +31,42 @@ void (*double_aerial_funcs[])(struct ShotObj*) = {
 };
 
 // double_aerial_init
+#ifdef MMX4_PC
+void func_800A9DF4(struct ShotObj* self);
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_49_double_aerial.c
+
+void func_800A9DF4(struct ShotObj* self)
+{
+    self->unk16 = 3;
+    self->unk5C = 3;
+    self->state = 1;
+    self->on_screen = 1;
+    self->unk58.data = (const u8*)D_801060F0;
+    self->unk5 = 0;
+    self->unk6 = 0;
+    self->unk7 = 0;
+    self->unk8A = 0;
+    self->bg_offset = 0;
+    self->unk68 = NULL;
+    self->unk54 = NULL;
+    self->unk50.data = NULL;
+    self->unk60 = 9;
+    self->unk61 = 0;
+    self->y_pos.u.hi -= 0x20;
+    set_animation(self, 0xE);
+    self->timer = 0x14;
+    self->x_vel.val = self->unk15 ? FIXED(2) : FIXED(-2);
+    self->y_vel.val = 0;
+    self->unk28 = 0;
+    self->unk2C = 0;
+    func_8001540C(2, 0xF2, NULL);
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_49_double_aerial", func_800A9DF4);
+#endif
 
 void double_aerial_drop(struct ShotObj* self)
 {

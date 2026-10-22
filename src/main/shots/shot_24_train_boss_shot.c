@@ -68,7 +68,63 @@ void train_boss_bullet_init(struct ShotObj* self)
 }
 
 // train_boss_bullet_fly
+#ifdef MMX4_PC
+void func_8009E188(struct ShotObj* self);
+void func_8009E8E0(struct ShotObj* self);
+extern u8 train_boss_arm_active_bits[4];
+#endif
+
+#ifdef MMX4_PC
+// src/main/shots/shot_24_train_boss_shot.c
+
+void func_8009E188(struct ShotObj* self)
+{
+    struct Main45Ext* owner = (struct Main45Ext*)self->unk7C;
+
+    self->unk42 &= 0x7FFF;
+    animate_object(ANIMATED_OBJECT(self));
+    if ((owner->attack_flags & 7) == 7 || (owner->attack_flags & 8))
+        goto despawn;
+    if (self->unk6 == 0) {
+        self->unk84.shot_24.timer = (u16)self->unk84.shot_24.timer - 1;
+        if (self->unk84.shot_24.timer == 0) {
+            func_8001540C(2, 0x65, self);
+            set_velocity_from_angle(MOVING_OBJECT(self), (u8)angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)));
+            self->x_vel.val = (u32)self->x_vel.val * 3;
+            self->y_vel.val = (u32)self->y_vel.val * 3;
+            self->unk84.shot_24.timer = self->unk84.shot_24.owner_state == 3 ? 0 : 0x27;
+            set_animation(self, 3);
+            self->unk6 = 1;
+        }
+    } else {
+        if (self->unk84.shot_24.timer == 0) {
+            if (self->unk84.shot_24.owner_notified == 0) {
+                self->unk84.shot_24.owner_notified = 1;
+                owner->projectile_command = 0xFF;
+            }
+        } else {
+            self->unk84.shot_24.timer = (u16)self->unk84.shot_24.timer - 1;
+        }
+        move_object(MOVING_OBJECT(self));
+        func_8002D9BC(self);
+        if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)))
+            goto despawn;
+        if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
+            spawn_explosion(BASE_OBJECT(self));
+            goto despawn;
+        }
+    }
+    if (func_8002B1E8(BASE_OBJECT(self), 0x20, 0x20))
+        goto despawn;
+    update_on_screen(BASE_OBJECT(self), 0x10, 0x10);
+    return;
+despawn:
+    self->on_screen = 0;
+    self->state = 2;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E188);
+#endif
 
 void train_boss_bullet_despawn(struct ShotObj* self)
 {
@@ -254,7 +310,31 @@ void train_boss_arm_retract(struct ShotObj* self)
 }
 
 // train_boss_arm_break
+#ifdef MMX4_PC
+void func_8009E8E0(struct ShotObj* self)
+{
+    struct Main45Ext* owner = (struct Main45Ext*)self->unk7C;
+    f32 saved_x = self->x_pos, saved_y = self->y_pos;
+    s32 subtype = self->unk2;
+
+    self->x_pos.i.hi = train_boss_arm_debris_positions[subtype][0];
+    self->y_pos.i.hi = train_boss_arm_debris_positions[subtype][1];
+    spawn_debris(6, train_boss_arm_debris, self);
+    spawn_explosion(BASE_OBJECT(self));
+    self->x_pos = saved_x;
+    self->y_pos = saved_y;
+    owner->attack_flags |= train_boss_arm_active_bits[subtype];
+    self->x_pos.i.hi = (u16)owner->unk8A + train_boss_arm_offsets[subtype][0] - 0x70;
+    self->unk5C = 0x1A;
+    self->unk28 = 0;
+    self->unk42 &= 0x7FFF;
+    self->x_vel.val = FIXED(1);
+    self->unk61 = 1;
+    self->unk5 = 9;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/shots/shot_24_train_boss_shot", func_8009E8E0);
+#endif
 
 void train_boss_arm_return(struct ShotObj* self)
 {
