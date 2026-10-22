@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[65]
 // 8007DC54..800806A0
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_64_cyber_peacock.h"
 #include "main/mains/main_65_magma_dragoon.h"
 #include "main/objects.h"
@@ -10,8 +11,10 @@
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/visuals/visual_03_small_effect.h"
+#include "main/collision_bounds.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #endif
@@ -124,7 +127,7 @@ extern void (*magma_dragoon_state_funcs[])(struct MainObj*);
 
 void magma_dragoon_death(struct MainObj* arg0);
 
-void func_8007DD0C(void);
+s32 func_8007DD0C(struct MainObj* self);
 
 // cyber_peacock_intro_init
 
@@ -248,10 +251,31 @@ void magma_dragoon_spawn_flames(struct AnimatedObj* self, u32 arg1)
 }
 
 // cyber_peacock_is_player_near_random
+#ifdef MMX4_SATURN
+#define DRAGOON_NEAR_X 64
+#define DRAGOON_NEAR_CHANCE 96
+
+s32 func_8007DD0C(struct MainObj* self)
+{
+    s32 dx = g_Player.x_pos.i.hi - self->x_pos.i.hi;
+
+    if (dx < 0)
+        dx = self->x_pos.i.hi - g_Player.x_pos.i.hi;
+    if (dx > DRAGOON_NEAR_X)
+        return 0;
+    return (s32)get_random() <= DRAGOON_NEAR_CHANCE;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/mains/main_65_magma_dragoon", func_8007DD0C);
+#endif
 
 // magma_dragoon_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007DD98(struct MainObj* arg0);
 void func_8007F174(struct MainObj* arg0);
 void func_8007FD24(struct MainObj* arg0);
@@ -295,7 +319,7 @@ static void main_65_throw(struct MainObj* arg0, s16 y_offset)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007DD98(struct MainObj* arg0)
 {
     if (engine_obj.stage == 0xC) {
@@ -313,7 +337,7 @@ void func_8007DD98(struct MainObj* arg0)
     }
 
     arg0->animation_table = (const u8* const*)magma_dragoon_animations;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->attack_box = &magma_dragoon_attack_box;
     arg0->invincibility_timer = 0;
     arg0->ext.main_65.flash_timer = 0;
@@ -322,10 +346,10 @@ void func_8007DD98(struct MainObj* arg0)
     arg0->terrain_box = NULL;
     arg0->collision_data = D_80107D7C;
     arg0->hurt_box = NULL;
-    arg0->unk40 = (u16)((D_801406A8[0] >> 7) + 0x160);
+    arg0->unk40 = (u16)((OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160));
 
     if (engine_obj.stage == 0xC) {
-        arg0->unk42 = 0x7888;
+        arg0->unk42 = OBJECT_CLUT(0x7888);
         arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
         arg0->x_pos.i.hi = 0x2CE;
         arg0->y_pos.i.hi = 0x69F;
@@ -366,7 +390,7 @@ void magma_dragoon_intro_warning(struct MainObj* self)
     }
     self->unk15 = 0;
     self->unk6++;
-    player_start_script_action(0x14, 0x40);
+    player_start_script_action(0x14, PLAYER_FACING_RIGHT);
     if (engine_obj.stage == 0xC) {
         background_objects[0].unk26 = 0x1B0;
         background_objects[0].unk24 = 0x1B0;
@@ -414,7 +438,7 @@ void magma_dragoon_intro_land(struct MainObj* self)
     if (self->collision_flags & 8) {
         set_animation(self, 0x10);
         self->air_state = 0;
-        func_8001540C(2, 2, self);
+        func_8001540C(2, SATURN_SOUND(2, 0x7F), self);
         self->unk6++;
         self->x_speed = 0;
         self->y_speed = 0;
@@ -472,7 +496,7 @@ void magma_dragoon_intro_fill_health(struct MainObj* self)
 {
     if (self->hp < 0x30) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, 0xE, 0);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
             self->unk7E = 3;
         }
         self->hp++;
@@ -503,14 +527,14 @@ void magma_dragoon_intro(struct MainObj* self)
 void magma_dragoon_face_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
 }
 
 // magma_dragoon_think
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007E4C8(struct MainObj* arg0)
 {
     u8 roll;
@@ -565,7 +589,7 @@ void magma_dragoon_dive_kick_jump(struct MainObj* self)
     set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
-    func_8001540C(2, 0, self);
+    func_8001540C(2, SATURN_SOUND(0, 0x7D), self);
     self->unk6 = (u8)self->unk6 + 1;
     self->x_speed = self->unk15 != 0 ? FIXED(0.75) : FIXED(-0.75);
     self->y_speed = FIXED(4);
@@ -579,7 +603,7 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
     if ((self->ext.main_65.jump_start_y - self->y_pos.i.hi) > 0x50) {
         self->unk6++;
         set_animation(self, 4);
-        func_8001540C(2, 1, self);
+        func_8001540C(2, SATURN_SOUND(1, 0x7E), self);
         self->contact_damage = 6;
         self->y_speed = FIXED(-6);
         self->x_accel = 0;
@@ -590,7 +614,7 @@ void magma_dragoon_dive_kick_rise(struct MainObj* self)
 }
 
 // magma_dragoon_dive_kick_dive
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007E6F8(struct MainObj* arg0)
 {
     s16 x;
@@ -602,14 +626,14 @@ void func_8007E6F8(struct MainObj* arg0)
         arg0->attack_box = &magma_dragoon_attack_box;
         arg0->contact_damage = 4;
         arg0->air_state = 0;
-        func_8001540C(2, 2, arg0);
+        func_8001540C(2, SATURN_SOUND(2, 0x7F), arg0);
     }
     if (arg0->animation_step.fields.event == 2) {
         x = arg0->x_pos.i.hi;
         if (x < g_Player.x_pos.i.hi)
-            arg0->unk15 = x < magma_dragoon_arena_right - 0x50 ? 0x40 : 0;
+            arg0->unk15 = x < magma_dragoon_arena_right - 0x50 ? PLAYER_FACING_RIGHT : 0;
         else
-            arg0->unk15 = x < magma_dragoon_arena_left + 0x50 ? 0x40 : 0;
+            arg0->unk15 = x < magma_dragoon_arena_left + 0x50 ? PLAYER_FACING_RIGHT : 0;
         arg0->x_speed = arg0->unk15 != 0 ? 0x80000 : -0x80000;
     }
     if (arg0->animation_step.fields.event == 1)
@@ -657,7 +681,7 @@ void magma_dragoon_flame_burst_start(struct MainObj* self)
 }
 
 // magma_dragoon_flame_burst_fire
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007E95C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -694,7 +718,7 @@ void magma_dragoon_fire_volley_start(struct MainObj* self)
 {
     magma_dragoon_face_player(self);
     set_animation(self, 0xC);
-    func_8001540C(2, 3, self);
+    func_8001540C(2, SATURN_SOUND(3, 0x80), self);
     self->unk6++;
 }
 
@@ -727,9 +751,9 @@ void magma_dragoon_fire_volley_fire(struct MainObj* self)
             }
         }
         if ((u8)self->animation_step.fields.event & 1) {
-            func_8001540C(2, 6, shot);
+            func_8001540C(2, SATURN_SOUND(6, 0x84), shot);
         } else {
-            func_8001540C(2, 7, shot);
+            func_8001540C(2, SATURN_SOUND(7, 0x84), shot);
         }
         self->animation_step.fields.event = 0;
     }
@@ -755,10 +779,10 @@ void magma_dragoon_breath_start(struct MainObj* self)
     if (self->x_pos.i.hi > magma_dragoon_arena_center) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     set_animation(self, 0xA);
-    func_8001540C(2, 3, self);
+    func_8001540C(2, SATURN_SOUND(3, 0x80), self);
     self->unk6++;
 }
 
@@ -804,12 +828,12 @@ void magma_dragoon_leap_center_start(struct MainObj* self)
     if (self->x_pos.i.hi > magma_dragoon_arena_center) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
-    func_8001540C(2, 0, self);
+    func_8001540C(2, SATURN_SOUND(0, 0x7D), self);
     self->x_speed = self->unk15 != 0 ? FIXED(5) : FIXED(-5);
     self->y_speed = FIXED(3);
     self->x_accel = 0;
@@ -850,7 +874,7 @@ void magma_dragoon_leap_center_land(struct MainObj* self)
         set_animation(self, 6);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
         self->air_state = 0;
-        func_8001540C(2, 2, self);
+        func_8001540C(2, SATURN_SOUND(2, 0x7F), self);
     }
 }
 
@@ -881,7 +905,7 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
     set_animation(self, 3);
     magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
     self->air_state = 1;
-    func_8001540C(2, 0, self);
+    func_8001540C(2, SATURN_SOUND(0, 0x7D), self);
     if (self->x_pos.i.hi < magma_dragoon_arena_center) {
         self->ext.main_65.leap_to_right = 1;
     } else {
@@ -891,7 +915,7 @@ void magma_dragoon_leap_wall_start(struct MainObj* self)
 }
 
 // magma_dragoon_leap_wall_air
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007F174(struct MainObj* arg0)
 {
     s32 distance;
@@ -919,7 +943,7 @@ void func_8007F174(struct MainObj* arg0)
         set_animation(arg0, 6);
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(arg0), 2);
         arg0->air_state = 0;
-        func_8001540C(2, 2, arg0);
+        func_8001540C(2, SATURN_SOUND(2, 0x7F), arg0);
         arg0->x_speed = 0;
         arg0->y_speed = 0;
         arg0->gravity = 0;
@@ -975,7 +999,7 @@ void func_8007F404(struct MainObj* self)
             x = self->x_pos.i.hi;
             shot->x_pos.i.hi = self->unk15 ? x + 0x17 : x - 0x17;
             shot->y_pos.i.hi = self->y_pos.i.hi;
-            func_8001540C(2, 4, self);
+            func_8001540C(2, SATURN_SOUND(4, 0x81), self);
         }
         self->animation_step.fields.event = 0;
     }
@@ -1027,7 +1051,7 @@ void func_8007F5B0(struct MainObj* self)
             x = self->x_pos.i.hi;
             shot->x_pos.i.hi = self->unk15 ? x + 0x17 : x - 0x17;
             shot->y_pos.i.hi = self->y_pos.i.hi + 0x28;
-            func_8001540C(2, 4, self);
+            func_8001540C(2, SATURN_SOUND(4, 0x81), self);
         }
         self->animation_step.fields.event = 0;
     }
@@ -1061,13 +1085,13 @@ void magma_dragoon_rising_punch_start(struct MainObj* self)
     self->contact_damage = 8;
     magma_dragoon_face_player(self);
     set_animation(self, 5);
-    func_8001540C(2, 5, self);
+    func_8001540C(2, SATURN_SOUND(5, 0x82), self);
     self->attack_box = (const u8*)&magma_dragoon_leap_attack_box;
     self->unk6++;
 }
 
 // magma_dragoon_rising_punch_charge
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007F780(struct MainObj* arg0)
 {
     s16 distance;
@@ -1080,7 +1104,7 @@ void func_8007F780(struct MainObj* arg0)
     arg0->gravity = 0x1C00;
     arg0->animation_step.fields.event = 0;
     arg0->unk6++;
-    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0 : 0x40;
+    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
     distance = arg0->x_pos.i.hi - g_Player.x_pos.i.hi;
     if (distance < 0)
         distance = -distance;
@@ -1130,7 +1154,7 @@ void magma_dragoon_rising_punch_land(struct MainObj* self)
         self->contact_damage = 4;
         magma_dragoon_spawn_flames(ANIMATED_OBJECT(self), 2);
         self->air_state = 0;
-        func_8001540C(2, 2, self);
+        func_8001540C(2, SATURN_SOUND(2, 0x7F), self);
     }
 }
 
@@ -1156,7 +1180,7 @@ void magma_dragoon_rising_punch(struct MainObj* self)
 }
 
 // magma_dragoon_stagger_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007FAA4(struct MainObj* arg0)
 {
     struct MiscObj* misc;
@@ -1244,7 +1268,7 @@ void magma_dragoon_hold(struct MainObj* self)
 }
 
 // magma_dragoon_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007FD24(struct MainObj* arg0)
 {
     s32 hit = func_8002DD04(arg0);
@@ -1333,7 +1357,7 @@ void func_8007FF00(struct MainObj* arg0)
 }
 
 // magma_dragoon_death_begin_explosion
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007FFFC(struct MainObj* arg0)
 {
     struct BaseObj* effect = (struct BaseObj*)arg0->ext.main_65.object;
@@ -1373,11 +1397,11 @@ void func_8007FFFC(struct MainObj* arg0)
         arg0->unk15 = 0;
         arg0->x_pos.i.hi = magma_dragoon_arena_right - 0x30;
         if (g_Player.ride_state < 0)
-            qux_object.unk15 = 0x40;
-        player_start_script_action(0x14, 0x40);
+            qux_object.unk15 = PLAYER_FACING_RIGHT;
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         scroll = 0x1490;
     } else {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_pos.i.hi = magma_dragoon_arena_left + 0x30;
         if (g_Player.ride_state < 0)
             qux_object.unk15 = 0;
@@ -1528,7 +1552,7 @@ struct Unk_unk68 magma_dragoon_punch_attack_box = { -32, -54, 38, 76 };
 struct Unk_unk68 magma_dragoon_dive_kick_attack_box = { -41, -12, 22, 45 };
 
 union AnimationStep magma_dragoon_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 struct Unk_unk68 magma_dragoon_anim_1[32] = {
@@ -1567,19 +1591,19 @@ struct Unk_unk68 magma_dragoon_anim_1[32] = {
 };
 
 union AnimationStep magma_dragoon_anim_2[] = {
-    { 0x02010002 },
-    { 0x04010002 },
-    { 0x05010006 },
-    { 0x04010002 },
-    { 0x03010002 },
-    { 0x02010002 },
-    { 0x01010003 },
-    { 0x00010002 },
-    { 0x00000001 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 3, 0, 1, 0x01 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_3[] = {
-    { 0x0A000001 },
+    { 1, 0, 0, 0x0A },
 };
 
 struct Unk_unk68 magma_dragoon_anim_4[18] = {
@@ -1626,196 +1650,196 @@ struct Unk_unk68 magma_dragoon_anim_5[19] = {
 };
 
 union AnimationStep magma_dragoon_anim_7[] = {
-    { 0x0B000001 },
+    { 1, 0, 0, 0x0B },
 };
 
 union AnimationStep magma_dragoon_anim_8[] = {
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x12010102 },
-    { 0x13010028 },
-    { 0x12010002 },
-    { 0x01010003 },
-    { 0x00010002 },
-    { 0x00000001 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 2, 1, 1, 0x12 },
+    { 40, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 3, 0, 1, 0x01 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_9[] = {
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x19010102 },
-    { 0x1A010028 },
-    { 0x19010002 },
-    { 0x01010003 },
-    { 0x00010002 },
-    { 0x00000001 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 2, 1, 1, 0x19 },
+    { 40, 0, 1, 0x1A },
+    { 2, 0, 1, 0x19 },
+    { 3, 0, 1, 0x01 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_10[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x1B010002 },
-    { 0x1C010123 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F01021E },
-    { 0x01010002 },
-    { 0x00010001 },
-    { 0x00000001 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x1B },
+    { 35, 1, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 30, 2, 1, 0x1F },
+    { 2, 0, 1, 0x01 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_11[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x20010003 },
-    { 0x21010006 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x21010002 },
-    { 0x22010001 },
-    { 0x2301003C },
-    { 0x24010001 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010106 },
-    { 0x25010001 },
-    { 0x24010206 },
-    { 0x25010001 },
-    { 0x24010114 },
-    { 0x23010003 },
-    { 0x01010003 },
-    { 0x00010002 },
-    { 0x00000001 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x20 },
+    { 6, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 60, 0, 1, 0x23 },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 1, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 6, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 20, 1, 1, 0x24 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x01 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
-u32 magma_dragoon_anim_12[55] = {
-    0x00010003,
-    0x01010003,
-    0x20010003,
-    0x2101000F,
-    0x26010003,
-    0x27010001,
-    0x27010001,
-    0x26010001,
-    0x2B010101,
-    0x28010001,
-    0x2C010001,
-    0x27010001,
-    0x2B010201,
-    0x29010001,
-    0x2C010001,
-    0x27010001,
-    0x27010301,
-    0x26010001,
-    0x2B010001,
-    0x28010001,
-    0x2C010401,
-    0x27010001,
-    0x2B010001,
-    0x29010001,
-    0x2C010501,
-    0x27010001,
-    0x27010001,
-    0x26010001,
-    0x2B010601,
-    0x28010001,
-    0x2C010001,
-    0x27010001,
-    0x2B010701,
-    0x29010001,
-    0x2C010001,
-    0x27010001,
-    0x27010801,
-    0x26010001,
-    0x2B010001,
-    0x28010001,
-    0x2C010101,
-    0x27010001,
-    0x2B010001,
-    0x29010001,
-    0x2C010A01,
-    0x27010001,
-    0x27010001,
-    0x26010001,
-    0x2B010001,
-    0x28010001,
-    0x2C010001,
-    0x27010001,
-    0x2B010001,
-    0x29010001,
-    0x2CF70001,
+union AnimationStep magma_dragoon_anim_12[55] = {
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x20 },
+    { 15, 0, 1, 0x21 },
+    { 3, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 1, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 2, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 3, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 4, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 5, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 6, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 7, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 8, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 1, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 10, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, -9, 0x2C },
 };
 
 union AnimationStep magma_dragoon_anim_13[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 struct Unk_unk68 magma_dragoon_anim_14[12] = {
@@ -1840,84 +1864,84 @@ struct Unk_unk68 magma_dragoon_anim_15[3] = {
 };
 
 union AnimationStep magma_dragoon_anim_16[] = {
-    { 0x54010002 },
-    { 0x55010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x52010002 },
-    { 0x53010002 },
-    { 0x54010002 },
-    { 0x55010002 },
-    { 0x57010002 },
-    { 0x58010002 },
-    { 0x59010002 },
-    { 0x5A010002 },
-    { 0x59010002 },
-    { 0x5A010002 },
-    { 0x59010002 },
-    { 0x5A010002 },
-    { 0x59010002 },
-    { 0x5A010002 },
-    { 0x27010001 },
-    { 0x2A010001 },
-    { 0x26010001 },
-    { 0x2B010001 },
-    { 0x28010001 },
-    { 0x2C010001 },
-    { 0x27010001 },
-    { 0x2B010001 },
-    { 0x29010001 },
-    { 0x2C010001 },
-    { 0x27010001 },
-    { 0x26010001 },
-    { 0x01010001 },
-    { 0x00010001 },
-    { 0x00000001 },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x52 },
+    { 2, 0, 1, 0x53 },
+    { 2, 0, 1, 0x54 },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x57 },
+    { 2, 0, 1, 0x58 },
+    { 2, 0, 1, 0x59 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x59 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x59 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x59 },
+    { 2, 0, 1, 0x5A },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x2A },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x28 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x2B },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x2C },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_17[] = {
-    { 0x5B000001 },
+    { 1, 0, 0, 0x5B },
 };
 
 union AnimationStep magma_dragoon_anim_18[] = {
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010002 },
-    { 0x0E010001 },
-    { 0x0D010027 },
-    { 0x0D000001 },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 39, 0, 1, 0x0D },
+    { 1, 0, 0, 0x0D },
 };
 
 struct Unk_unk68 magma_dragoon_anim_19[3] = {
@@ -1976,31 +2000,31 @@ struct Unk_unk68 magma_dragoon_anim_21[29] = {
 u8 magma_dragoon_anim_22[172] = { 50, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 4, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 2, 0, 1, 97, 2, 0, 1, 92, 1, 0, 1, 97, 1, 0, 255, 92 };
 
 union AnimationStep magma_dragoon_anim_24[] = {
-    { 0x42010001 },
-    { 0x43010001 },
-    { 0x44010001 },
-    { 0x45010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x4D010001 },
-    { 0x4E010001 },
-    { 0x4F010001 },
-    { 0x50010001 },
-    { 0x51000001 },
+    { 1, 0, 1, 0x42 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 1, 0x44 },
+    { 1, 0, 1, 0x45 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x4D },
+    { 1, 0, 1, 0x4E },
+    { 1, 0, 1, 0x4F },
+    { 1, 0, 1, 0x50 },
+    { 1, 0, 0, 0x51 },
 };
 
 union AnimationStep magma_dragoon_anim_23[] = {
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x63010001 },
-    { 0x48010001 },
-    { 0x49010001 },
-    { 0x4A010001 },
-    { 0x4B000001 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x63 },
+    { 1, 0, 1, 0x48 },
+    { 1, 0, 1, 0x49 },
+    { 1, 0, 1, 0x4A },
+    { 1, 0, 0, 0x4B },
 };
 
 struct Unk_unk68 magma_dragoon_anim_25[18] = {
@@ -2025,28 +2049,28 @@ struct Unk_unk68 magma_dragoon_anim_25[18] = {
 };
 
 union AnimationStep magma_dragoon_anim_26[] = {
-    { 0x80010001 },
-    { 0x76010001 },
-    { 0x81010001 },
-    { 0x76010001 },
-    { 0x82010001 },
-    { 0x76010001 },
-    { 0x83010001 },
-    { 0x76000001 },
+    { 1, 0, 1, 0x80 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0x81 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0x82 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0x83 },
+    { 1, 0, 0, 0x76 },
 };
 
 union AnimationStep magma_dragoon_anim_27[] = {
-    { 0x84010002 },
-    { 0x85010002 },
-    { 0x86010002 },
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x89010002 },
-    { 0x8A010002 },
-    { 0x8B010002 },
-    { 0x8C010002 },
-    { 0x8D010001 },
-    { 0x8D000001 },
+    { 2, 0, 1, 0x84 },
+    { 2, 0, 1, 0x85 },
+    { 2, 0, 1, 0x86 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x89 },
+    { 2, 0, 1, 0x8A },
+    { 2, 0, 1, 0x8B },
+    { 2, 0, 1, 0x8C },
+    { 1, 0, 1, 0x8D },
+    { 1, 0, 0, 0x8D },
 };
 
 struct Unk_unk68 magma_dragoon_anim_28[11] = {
@@ -2097,39 +2121,39 @@ struct Unk_unk68 magma_dragoon_anim_31[5] = {
 };
 
 union AnimationStep magma_dragoon_anim_32[] = {
-    { 0xAE010001 },
-    { 0xAF010002 },
-    { 0xB0010002 },
-    { 0xB1010001 },
-    { 0xB2010001 },
-    { 0xB3010001 },
-    { 0xB4010001 },
-    { 0xB5000001 },
+    { 1, 0, 1, 0xAE },
+    { 2, 0, 1, 0xAF },
+    { 2, 0, 1, 0xB0 },
+    { 1, 0, 1, 0xB1 },
+    { 1, 0, 1, 0xB2 },
+    { 1, 0, 1, 0xB3 },
+    { 1, 0, 1, 0xB4 },
+    { 1, 0, 0, 0xB5 },
 };
 
 union AnimationStep magma_dragoon_anim_33[] = {
-    { 0xB6010001 },
-    { 0xB7010001 },
-    { 0xB8010002 },
-    { 0xB9010002 },
-    { 0xBA010003 },
-    { 0xBB010004 },
-    { 0xBC010001 },
-    { 0xBD010002 },
-    { 0xBE010002 },
-    { 0xBF010001 },
-    { 0xC0010001 },
-    { 0xC1010001 },
-    { 0xC2010001 },
-    { 0xC3000001 },
+    { 1, 0, 1, 0xB6 },
+    { 1, 0, 1, 0xB7 },
+    { 2, 0, 1, 0xB8 },
+    { 2, 0, 1, 0xB9 },
+    { 3, 0, 1, 0xBA },
+    { 4, 0, 1, 0xBB },
+    { 1, 0, 1, 0xBC },
+    { 2, 0, 1, 0xBD },
+    { 2, 0, 1, 0xBE },
+    { 1, 0, 1, 0xBF },
+    { 1, 0, 1, 0xC0 },
+    { 1, 0, 1, 0xC1 },
+    { 1, 0, 1, 0xC2 },
+    { 1, 0, 0, 0xC3 },
 };
 
 union AnimationStep magma_dragoon_anim_34[] = {
-    { 0xC6010001 },
-    { 0xC7010001 },
-    { 0xC8010001 },
-    { 0xC9010001 },
-    { 0xCA000001 },
+    { 1, 0, 1, 0xC6 },
+    { 1, 0, 1, 0xC7 },
+    { 1, 0, 1, 0xC8 },
+    { 1, 0, 1, 0xC9 },
+    { 1, 0, 0, 0xCA },
 };
 
 struct Unk_unk68 magma_dragoon_anim_35[31] = {
@@ -2167,50 +2191,50 @@ struct Unk_unk68 magma_dragoon_anim_35[31] = {
 };
 
 union AnimationStep magma_dragoon_anim_6[] = {
-    { 0x03010002 },
-    { 0x07010001 },
-    { 0x04010002 },
-    { 0x08010001 },
-    { 0x04010004 },
-    { 0x03010003 },
-    { 0x02010003 },
-    { 0x01010003 },
-    { 0x00010004 },
-    { 0x00000001 },
+    { 2, 0, 1, 0x03 },
+    { 1, 0, 1, 0x07 },
+    { 2, 0, 1, 0x04 },
+    { 1, 0, 1, 0x08 },
+    { 4, 0, 1, 0x04 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x01 },
+    { 4, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep magma_dragoon_anim_36[] = {
-    { 0xD3010001 },
-    { 0x76010001 },
-    { 0xD4010001 },
-    { 0x76010001 },
-    { 0xD5010001 },
-    { 0x76010001 },
-    { 0xD6010001 },
-    { 0x76010001 },
-    { 0xD7010001 },
-    { 0x76010001 },
-    { 0xD8010001 },
-    { 0x76010001 },
-    { 0xD9010001 },
-    { 0x76010001 },
-    { 0xDA010001 },
-    { 0x76000001 },
+    { 1, 0, 1, 0xD3 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD4 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD5 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD6 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD7 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD8 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xD9 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xDA },
+    { 1, 0, 0, 0x76 },
 };
 
 union AnimationStep magma_dragoon_anim_37[] = {
-    { 0xDB010001 },
-    { 0x76010001 },
-    { 0xDC010001 },
-    { 0x76010001 },
-    { 0xDD010001 },
-    { 0x76010001 },
-    { 0xDE010001 },
-    { 0x76010001 },
-    { 0xDF010001 },
-    { 0x76010001 },
-    { 0xE0010001 },
-    { 0x76000001 },
+    { 1, 0, 1, 0xDB },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xDC },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xDD },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xDE },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xDF },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0xE0 },
+    { 1, 0, 0, 0x76 },
 };
 
 void* magma_dragoon_animations[38] = {

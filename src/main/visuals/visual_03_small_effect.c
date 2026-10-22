@@ -14,6 +14,10 @@ struct Visual03Bounds {
 extern u8 small_effect_animations[];
 
 extern struct Visual03Bounds small_effect_bounds[];
+#include "weapon_resources.h"
+extern u8 D_8013B8E4[4];
+extern u8 D_8013B8E0[];
+extern u8 D_8013B8E4[];
 
 u8 small_effect_animations[] = {
     0x00,
@@ -97,14 +101,15 @@ void spawn_explosion_variant(struct BaseObj* arg0, s8 arg1)
 }
 
 // spawn_random_explosion
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor);
 void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3);
 extern u8 D_8013B8E0[];
 extern u8 D_8013B8E4[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AF878(struct BaseObj* arg0, s32 arg1, s32 arg2, s32 arg3)
 {
     s32 x = arg2 & get_random();
@@ -133,7 +138,7 @@ INCLUDE_ASM("main/nonmatchings/visuals/visual_03_small_effect", func_800AF878);
 #endif
 
 // spawn_explosion_in_box
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AF95C(struct ObjectHeader* arg0, s32 type, s32 x_range, s32 y_range, s32 divisor)
 {
     s16 x;
@@ -182,7 +187,7 @@ struct VisualObj* spawn_explosion_at(s8 arg0, s16 x, s16 y, u8 arg3)
         temp_v0->y_pos.i.lo = 0;
         temp_v0->unk15 = 0;
         temp_v0->bg_offset = 0;
-        temp_v0->unk16 = 1;
+        temp_v0->unk16 = VISUAL_SATURN_LAYER(1);
     }
     return temp_v0;
 }

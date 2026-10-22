@@ -11,6 +11,7 @@ extern void (*melee_hitbox_state_funcs[])(struct ShotObj*);
 void melee_hitbox_init(struct ShotObj*);
 
 void melee_hitbox_despawn(struct ShotObj*);
+#include "weapon_resources.h"
 
 u8 melee_hitbox_box[4] = { 0xDB, 0xF2, 0x1E, 0x37 };
 
@@ -37,7 +38,7 @@ void melee_hitbox_init(struct ShotObj* self)
     self->unk50.data = melee_hitbox_box;
     self->unk54 = NULL;
     self->unk5C = 1;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     self->unk60 = 6;
     self->unk68 = NULL;
     self->unk58.data = NULL;

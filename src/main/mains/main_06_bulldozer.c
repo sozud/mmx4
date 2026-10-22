@@ -1,14 +1,17 @@
 // MainObj, main_object_update_funcs[6]
 // 80046B30..800473C8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_06_bulldozer.h"
 #include "main/1CF60.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/1E1BC.h"
+#include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/visuals/visual_03_small_effect.h"
 #endif
@@ -41,7 +44,11 @@ void bulldozer_update(struct MainObj* self)
 }
 
 // bulldozer_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80046B80(struct MainObj* arg0);
 void func_80046C8C(struct MainObj* arg0);
 extern struct Unk_unk68 D_801065F0[];
@@ -54,7 +61,7 @@ extern u8 bulldozer_debris[16];
 extern void (*bulldozer_step_funcs[])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80046B80(struct MainObj* arg0)
 {
     arg0->hp = 0x7F;
@@ -69,9 +76,9 @@ void func_80046B80(struct MainObj* arg0)
     arg0->x_accel = 0;
     arg0->gravity = 0;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     arg0->animation_table = (const u8* const*)D_800FA4E8;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &bulldozer_terrain_box;
     arg0->hurt_box = (const u8*)bulldozer_hurt_boxes;
     arg0->attack_box = (const u8*)bulldozer_hurt_boxes;
@@ -91,7 +98,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_06_bulldozer", func_80046B80);
 #endif
 
 // bulldozer_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80046C8C(struct MainObj* arg0)
 {
     s32 facing_offset;
@@ -104,11 +111,11 @@ void func_80046C8C(struct MainObj* arg0)
     arg0->hp = 0x7F;
     arg0->ext.main_6.hitbox_toggle ^= 1;
     if (arg0->ext.main_6.hitbox_toggle != 0) {
-        arg0->hurt_box += 4;
-        arg0->attack_box += 4;
+        arg0->hurt_box = (const u8*)arg0->hurt_box + 4;
+        arg0->attack_box = (const u8*)arg0->attack_box + 4;
     } else {
-        arg0->hurt_box -= 4;
-        arg0->attack_box -= 4;
+        arg0->hurt_box = (const u8*)arg0->hurt_box - 4;
+        arg0->attack_box = (const u8*)arg0->attack_box - 4;
     }
     func_8002D9BC(arg0);
     arg0->ext.main_6.saved_step = arg0->unk5;
@@ -190,7 +197,7 @@ void bulldozer_cleanup(struct MainObj* self)
     self->ext.main_6.hitbox_toggle = 0;
     self->ext.main_6.saved_step = 0;
     despawn_object(OBJECT_HEADER(self));
-    stop_sound(2, 2);
+    STOP_SOUND(2, 2, 0x6);
 }
 
 void bulldozer_resume_step(struct MainObj* self)
@@ -236,7 +243,7 @@ void bulldozer_charge(struct MainObj* self)
 
 void bulldozer_charge_start(struct MainObj* self)
 {
-    if (self->unk15 & 0x40) {
+    if (self->unk15 & PLAYER_FACING_RIGHT) {
         if (self->ext.main_6.armor_broken == 0) {
             self->x_speed = FIXED(0.5);
         } else {
@@ -316,94 +323,94 @@ struct Unk_unk68 D_800FA434[2] = {
 };
 
 union AnimationStep D_800FA43C[] = {
-    { 0x00010003 },
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x05010003 },
-    { 0x06010003 },
-    { 0x07F90003 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, -7, 0x07 },
 };
 
 union AnimationStep D_800FA45C[] = {
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0BFD0002 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, -3, 0x0B },
 };
 
 union AnimationStep D_800FA46C[] = {
-    { 0x0C000001 },
+    { 1, 0, 0, 0x0C },
 };
 
 union AnimationStep D_800FA470[] = {
-    { 0x0D000001 },
+    { 1, 0, 0, 0x0D },
 };
 
 union AnimationStep D_800FA474[] = {
-    { 0x0E000001 },
+    { 1, 0, 0, 0x0E },
 };
 
 union AnimationStep D_800FA478[] = {
-    { 0x0F000001 },
+    { 1, 0, 0, 0x0F },
 };
 
 union AnimationStep D_800FA47C[] = {
-    { 0x10010003 },
-    { 0x11010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14010003 },
-    { 0x15010003 },
-    { 0x16010003 },
-    { 0x17010003 },
-    { 0x18010003 },
-    { 0x19010003 },
-    { 0x1A010003 },
-    { 0x1BF50003 },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 1, 0x16 },
+    { 3, 0, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, -11, 0x1B },
 };
 
 union AnimationStep D_800FA4AC[] = {
-    { 0x1C000001 },
+    { 1, 0, 0, 0x1C },
 };
 
 union AnimationStep D_800FA4B0[] = {
-    { 0x1D000001 },
+    { 1, 0, 0, 0x1D },
 };
 
 union AnimationStep D_800FA4B4[] = {
-    { 0x1E000001 },
+    { 1, 0, 0, 0x1E },
 };
 
 union AnimationStep D_800FA4B8[] = {
-    { 0x1F000001 },
+    { 1, 0, 0, 0x1F },
 };
 
 union AnimationStep D_800FA4BC[] = {
-    { 0x20000001 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep D_800FA4C0[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep D_800FA4C4[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep D_800FA4C8[] = {
-    { 0x23010003 },
-    { 0x24010003 },
-    { 0x25010003 },
-    { 0x26FD0003 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, -3, 0x26 },
 };
 
 union AnimationStep D_800FA4D8[] = {
-    { 0x27010003 },
-    { 0x28010003 },
-    { 0x29010003 },
-    { 0x2AFD0003 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, 1, 0x29 },
+    { 3, 0, -3, 0x2A },
 };
 
 union AnimationStep* D_800FA4E8[] = {

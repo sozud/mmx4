@@ -24,10 +24,61 @@ struct Effect09MovementStep {
     u8 pad;
 };
 
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+
+void bg_wind_update(struct EffectObj* self)
+{
+    bg_wind_state_funcs[self->state](self);
+    background_objects[2].unk4C = 1;
+}
+
+static void bg_wind_next_step(struct EffectObj* effect)
+{
+    struct Effect9Ext* ext = &effect->ext.effect_9;
+
+    ext->movement_table = &ext->movement_table[ext->frame * 4];
+    ext->target_x = ext->movement_table[2];
+    ext->timer = ext->movement_table[0];
+    ext->frame = ext->movement_table[1];
+    saturn_frame_dma_pending = 1;
+    saturn_frame_dma_arg_0 = SATURN_BG_WIND_CELL_VRAM;
+    saturn_frame_dma_arg_1 = saturn_stage_work_pointer_3 + ((u32)ext->target_x << 11);
+    saturn_frame_dma_count = SATURN_BG_WIND_CELL_BYTES;
+}
+
+static void bg_wind_advance(struct EffectObj* effect, s32 limit, s32 both_ways)
+{
+    struct Effect9Ext* ext = &effect->ext.effect_9;
+
+    if (--ext->timer == 0) {
+        bg_wind_next_step(effect);
+    }
+    if (!both_ways) {
+        if (ext->velocity < limit) {
+            ext->velocity += FIXED(1.0 / 64);
+        }
+    } else if (ext->direction != 0) {
+        if (ext->velocity > limit) {
+            ext->velocity -= FIXED(1.0 / 64);
+        }
+    } else {
+        if (ext->velocity < limit) {
+            ext->velocity += FIXED(1.0 / 64);
+        }
+    }
+    background_objects[2].x_pos.val = (background_objects[2].x_pos.val + ext->velocity) & 0xFFFFFF;
+    background_objects[2].y_pos.val += FIXED(-2);
+    if (background_objects[2].y_pos.val == FIXED(256)) {
+        background_objects[2].y_pos.val = FIXED(384);
+    }
+}
+#else
 void bg_wind_update(struct EffectObj* self)
 {
     bg_wind_state_funcs[self->state](self);
 }
+#endif
 
 void bg_wind_init(struct EffectObj* self)
 {
@@ -53,12 +104,37 @@ void bg_wind_main(struct EffectObj* self)
 }
 
 // bg_wind_calm
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B76A4(struct EffectObj* arg0);
 extern struct Effect09MovementStep bg_wind_steps_fast[3];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
+void func_800B76A4(struct EffectObj* arg0)
+{
+    struct Effect9Ext* ext = &arg0->ext.effect_9;
+
+    if (ext->direction != 0) {
+        background_objects[2].y_pos.val = 0;
+        ext->transition_timer = 1;
+        saturn_display_mode = SATURN_DISPLAY_MODE_BG_WIND_CALM;
+        arg0->state--;
+        arg0->unk5 = 0;
+        return;
+    }
+    background_objects[2].y_pos.val = 0x1800000;
+    saturn_display_mode = SATURN_DISPLAY_MODE_BG_WIND_GUST;
+    ext->movement_timer = 0x168;
+    ext->movement_table = (u8*)bg_wind_steps_fast;
+    ext->timer = ext->movement_table[0];
+    ext->frame = ext->movement_table[1];
+    ext->target_x = ext->movement_table[2];
+    ext->velocity = 0x10000;
+    arg0->unk5++;
+}
+#else
 void func_800B76A4(struct EffectObj* arg0)
 {
     struct Effect9Ext* ext = &arg0->ext.effect_9;
@@ -82,6 +158,7 @@ void func_800B76A4(struct EffectObj* arg0)
     ext->velocity = 0x10000;
     arg0->unk5++;
 }
+#endif
 #else
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B76A4);
 #endif
@@ -90,7 +167,25 @@ extern struct Effect09MovementStep bg_wind_steps_fast[3];
 extern struct Effect09MovementStep bg_wind_steps_slow[3];
 extern struct Effect09MovementStep bg_wind_steps_medium[4];
 
-#ifdef VERSION_EU
+#if defined(MMX4_SATURN)
+void bg_wind_gust_slow(struct EffectObj* effect)
+{
+    if (--effect->ext.effect_9.movement_timer << 16 == 0) {
+        effect->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
+        effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
+        effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
+        effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
+        effect->ext.effect_9.movement_timer = 0xB4;
+        if (effect->ext.effect_9.direction != 0) {
+            effect->unk5--;
+        } else {
+            effect->unk5++;
+        }
+        return;
+    }
+    bg_wind_advance(effect, FIXED(1.5), 1);
+}
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_slow);
 #else
 void bg_wind_gust_slow(struct EffectObj* effect)
@@ -147,6 +242,27 @@ void bg_wind_gust_slow(struct EffectObj* effect)
 }
 #endif
 
+#ifdef MMX4_SATURN
+void bg_wind_gust_fast(struct EffectObj* self)
+{
+    if (--self->ext.effect_9.movement_timer << 16 == 0) {
+        if (self->ext.effect_9.direction != 0) {
+            self->ext.effect_9.movement_timer = 0x168;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_fast;
+            self->unk5--;
+        } else {
+            self->ext.effect_9.movement_timer = 0x78;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
+            self->unk5++;
+        }
+        self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
+        self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
+        self->ext.effect_9.target_x = self->ext.effect_9.movement_table[2];
+        return;
+    }
+    bg_wind_advance(self, FIXED(2.5), 1);
+}
+#else
 void bg_wind_gust_fast(struct EffectObj* self)
 {
     s32 shifted_target;
@@ -202,7 +318,29 @@ void bg_wind_gust_fast(struct EffectObj* self)
     }
 }
 
-#ifdef VERSION_EU
+#endif
+
+#if defined(MMX4_SATURN)
+void bg_wind_gust_medium(struct EffectObj* self)
+{
+    if (0 == --self->ext.effect_9.movement_timer << 16) {
+        if (self->ext.effect_9.direction != 0) {
+            self->ext.effect_9.movement_timer = 0xB4;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
+            self->unk5--;
+        } else {
+            self->ext.effect_9.movement_timer = 0x96;
+            self->ext.effect_9.movement_table = (u8*)bg_wind_steps_medium;
+            self->unk5++;
+        }
+        self->ext.effect_9.timer = self->ext.effect_9.movement_table[0];
+        self->ext.effect_9.frame = self->ext.effect_9.movement_table[1];
+        self->ext.effect_9.target_x = self->ext.effect_9.movement_table[2];
+        return;
+    }
+    bg_wind_advance(self, FIXED(3.5), 1);
+}
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", bg_wind_gust_medium);
 #else
 void bg_wind_gust_medium(struct EffectObj* self)
@@ -262,7 +400,22 @@ void bg_wind_gust_medium(struct EffectObj* self)
 #endif
 
 // bg_wind_storm
-#ifdef VERSION_EU
+#if defined(MMX4_SATURN)
+void func_800B7CFC(struct EffectObj* effect)
+{
+    if (--effect->ext.effect_9.movement_timer << 16 == 0) {
+        effect->ext.effect_9.direction = 1;
+        effect->ext.effect_9.movement_timer = 0x78;
+        effect->ext.effect_9.movement_table = (u8*)bg_wind_steps_slow;
+        effect->ext.effect_9.timer = effect->ext.effect_9.movement_table[0];
+        effect->ext.effect_9.frame = effect->ext.effect_9.movement_table[1];
+        effect->ext.effect_9.target_x = effect->ext.effect_9.movement_table[2];
+        effect->unk5--;
+        return;
+    }
+    bg_wind_advance(effect, FIXED(4.5), 0);
+}
+#elif defined(VERSION_EU)
 INCLUDE_ASM("main/nonmatchings/effects/effect_09_bg_wind", func_800B7CFC);
 #else
 void func_800B7CFC(struct EffectObj* effect)

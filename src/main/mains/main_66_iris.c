@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[66]
 // 800806A0..80082434
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_66_iris.h"
 #include "main/objects.h"
 #include "main/player_common.h"
@@ -9,8 +10,9 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -83,7 +85,11 @@ void iris_update(struct MainObj* self)
 }
 
 // iris_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80080700(struct MainObj* self);
 void func_80080834(struct MainObj* self);
 void func_80081718(struct MainObj* self);
@@ -100,7 +106,7 @@ void iris_face_player(struct MainObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80080700(struct MainObj* self)
 {
     struct Main66Ext* ext = &self->ext.main_66;
@@ -115,7 +121,7 @@ void func_80080700(struct MainObj* self)
     self->hp = 0;
     self->invincibility_timer = 0;
     index = func_8002938C(0x42);
-    self->unk40 = D_801406A8[index] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(index);
     self->unk1C = self->y_pos;
     self->x_speed = 0;
     self->y_speed = 0;
@@ -126,7 +132,7 @@ void func_80080700(struct MainObj* self)
     self->unk15 = 0;
     self->unk18 = self->x_pos;
     self->animation_table = (const u8* const*)iris_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &D_801035CC;
     self->hurt_box = &D_801035C0;
     self->attack_box = &D_801035BC;
@@ -148,7 +154,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_66_iris", func_80080700);
 #endif
 
 // iris_run
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80080834(struct MainObj* self)
 {
     struct Main66Ext* ext = &self->ext.main_66;
@@ -210,7 +216,7 @@ void func_80080834(struct MainObj* self)
         }
     }
     if (hit < 0) {
-        stop_sound(2, 0xE1);
+        STOP_SOUND(2, 0xE1, 0x6);
         g_Player.spike_immune = 1;
         self->state = 2;
         self->unk5 = 0;
@@ -367,7 +373,7 @@ void iris_death_wait_explosion(struct MainObj* self)
             if (linked->active != 0) {
                 linked->unk5 = 1;
             }
-            self->unk15 = self->ext.main_66.partner->unk15 ^ 0x40;
+            self->unk15 = self->ext.main_66.partner->unk15 ^ PLAYER_FACING_RIGHT;
             self->x_pos.i.hi = self->ext.main_66.partner->x_pos.i.hi;
             self->y_pos.i.hi = 0x1CA;
             self->unk16 = 0;
@@ -380,7 +386,7 @@ void iris_death_wait_explosion(struct MainObj* self)
     if (g_Player.x_pos.i.hi > self->x_pos.i.hi) {
         player_start_script_action(0x14, 0);
     } else {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
     }
     engine_obj.enable_boss = 0;
     engine_obj.boss_ptr = 0;
@@ -415,7 +421,7 @@ void iris_robot_decide(struct MainObj* self)
         self->unk5 = 5;
     } else {
         set_animation(self, 1);
-        func_8001540C(2, 0xE1, self);
+        func_8001540C(2, SATURN_SOUND(0xE1, 0xA2), self);
         self->unk5 = 3;
     }
     self->unk6 = 0;
@@ -549,7 +555,7 @@ void iris_intro_voice(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 2) {
-        func_8001540C(2, 0xDF, self);
+        func_8001540C(2, SATURN_SOUND(0xDF, 0xA0), self);
     }
     if (self->animation_step.fields.event == 1) {
         self->unk6 = 0xB;
@@ -563,13 +569,13 @@ void iris_intro_fill_health(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (update_boss_music_delay() == 0) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, 0xE, 0);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
             self->unk7E = 3;
         }
         if (++self->hp == 0x30) {
             self->ext.main_66.active = 1;
             set_animation(self, 1);
-            func_8001540C(2, 0xE1, self);
+            func_8001540C(2, SATURN_SOUND(0xE1, 0xA2), self);
             self->unk5 = 3;
             self->unk6 = 0;
             player_end_script_action();
@@ -583,7 +589,7 @@ void iris_robot_hover(struct MainObj* self)
 }
 
 // iris_robot_hover_chase
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80081718(struct MainObj* self)
 {
     s32 saved_y = g_Player.y_pos.val;
@@ -636,10 +642,10 @@ void func_800818C4(struct MainObj* self)
             self->unk15 = 0;
             self->x_speed = FIXED(4);
         } else {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             self->x_speed = FIXED(-4);
         }
-        func_8001540C(2, 0xE0, self);
+        func_8001540C(2, SATURN_SOUND(0xE0, 0xA1), self);
         set_animation(self, 4);
         self->unk6 = 2;
     }
@@ -669,7 +675,7 @@ void iris_robot_dash_laser(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
-        func_8001540C(2, 0xE2, self);
+        func_8001540C(2, SATURN_SOUND(0xE2, 0xA3), self);
         set_animation(self, 6);
         self->x_speed = 0;
         self->unk7C = 0xB4;
@@ -710,7 +716,7 @@ void func_80081AD0(struct MainObj* self)
         }
         set_animation(self, 1);
         self->collision_data = D_80107DFC;
-        func_8001540C(2, 0xE1, self);
+        func_8001540C(2, SATURN_SOUND(0xE1, 0xA2), self);
         self->unk5 = 3;
         self->unk6 = 0;
     }
@@ -722,7 +728,7 @@ void iris_robot_release_crystal(struct MainObj* self)
 }
 
 // iris_robot_release_crystal_spawn
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80081BA0(struct MainObj* self)
 {
     struct MainObj* body;
@@ -748,7 +754,7 @@ void func_80081BA0(struct MainObj* self)
         body->animation_table = self->animation_table;
         body->unk40 = self->unk40;
         body->sprite_frames = self->sprite_frames;
-        body->unk16 = 5;
+        body->unk16 = VISUAL_SATURN_LAYER(5);
         body->hp = 0x30;
         body->unk42 = self->unk42 & 0x7FFF;
         body->y_speed = 0x10000;
@@ -801,7 +807,7 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
         self->ext.main_66.partner->ext.main_66.crystal_released = 1;
         set_animation(self->ext.main_66.partner, 1);
         self->ext.main_66.partner->collision_data = D_80107DFC;
-        func_8001540C(2, 0xE1, self);
+        func_8001540C(2, SATURN_SOUND(0xE1, 0xA2), self);
 
         i = 0;
         out_y = D_8013B878;
@@ -821,7 +827,7 @@ void iris_robot_release_crystal_finish(struct MainObj* self)
 }
 
 // iris_crystal_follow
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80081E44(struct MainObj* self)
 {
     struct Main66Ext* ext = &self->ext.main_66;
@@ -830,7 +836,7 @@ void func_80081E44(struct MainObj* self)
     s32 dx;
     s32 dy;
 
-    if (!(main_bss_state.frame_counter & 1)) {
+    if (!(WEAPON_FRAME_COUNTER & 1)) {
         D_8013B858[ext->trail_write] = ext->partner->x_pos.i.hi;
         D_8013B878[ext->trail_write] = ext->partner->y_pos.i.hi - 0x50;
         if (++ext->trail_write == 0x10) {
@@ -882,7 +888,7 @@ void iris_crystal_drop_fall(struct MainObj* self)
 void iris_crystal_drop_chase(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (!(main_bss_state.frame_counter & 1)) {
+    if (!(WEAPON_FRAME_COUNTER & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
             self->x_speed = FIXED(4);
         } else {
@@ -903,7 +909,7 @@ void iris_crystal_drop_chase(struct MainObj* self)
 void iris_crystal_drop_aim(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    if (!(main_bss_state.frame_counter & 1)) {
+    if (!(WEAPON_FRAME_COUNTER & 1)) {
         if (self->x_pos.i.hi < g_Player.x_pos.i.hi) {
             self->x_speed = FIXED(4);
         } else {
@@ -916,7 +922,7 @@ void iris_crystal_drop_aim(struct MainObj* self)
     }
 
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xE2, self);
+        func_8001540C(2, SATURN_SOUND(0xE2, 0xA3), self);
         set_animation(self, 0x11);
         self->unk7C = 0x3C;
         self->unk6 = 3;
@@ -929,7 +935,7 @@ void iris_crystal_drop_fire(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if ((--self->unk7C << 16) == 0) {
-        func_8001540C(2, 0xE3, self);
+        func_8001540C(2, SATURN_SOUND(0xE3, 0xA4), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -983,7 +989,7 @@ void iris_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -998,15 +1004,15 @@ struct Unk_unk68 D_801035C8 = { -12, -11, 22, 20 };
 struct Unk_unk68 D_801035CC = { 0, 0, 28, 20 };
 
 union AnimationStep D_801035D0[] = {
-    { 0x00010014 },
-    { 0x01010008 },
-    { 0x02010004 },
-    { 0x03010204 },
-    { 0x04010003 },
-    { 0x05010014 },
-    { 0x06010012 },
-    { 0x07010002 },
-    { 0x07000101 },
+    { 20, 0, 1, 0x00 },
+    { 8, 0, 1, 0x01 },
+    { 4, 0, 1, 0x02 },
+    { 4, 2, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 20, 0, 1, 0x05 },
+    { 18, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 1, 1, 0, 0x07 },
 };
 
 struct Unk_unk68 D_801035F4[4] = {
@@ -1024,11 +1030,11 @@ struct Unk_unk68 D_80103604[4] = {
 };
 
 union AnimationStep D_80103614[] = {
-    { 0x10010004 },
-    { 0x11010003 },
-    { 0x10010004 },
-    { 0x02010005 },
-    { 0x02000101 },
+    { 4, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 4, 0, 1, 0x10 },
+    { 5, 0, 1, 0x02 },
+    { 1, 1, 0, 0x02 },
 };
 
 struct Unk_unk68 D_80103628[4] = {
@@ -1039,11 +1045,11 @@ struct Unk_unk68 D_80103628[4] = {
 };
 
 union AnimationStep D_80103638[] = {
-    { 0x01010004 },
-    { 0x16010003 },
-    { 0x01010004 },
-    { 0x17010005 },
-    { 0x17000101 },
+    { 4, 0, 1, 0x01 },
+    { 3, 0, 1, 0x16 },
+    { 4, 0, 1, 0x01 },
+    { 5, 0, 1, 0x17 },
+    { 1, 1, 0, 0x17 },
 };
 
 struct Unk_unk68 D_8010364C[4] = {
@@ -1061,7 +1067,7 @@ struct Unk_unk68 D_8010365C[4] = {
 };
 
 union AnimationStep D_8010366C[] = {
-    { 0x1F000101 },
+    { 1, 1, 0, 0x1F },
 };
 
 struct Unk_unk68 D_80103670[4] = {
@@ -1072,11 +1078,11 @@ struct Unk_unk68 D_80103670[4] = {
 };
 
 union AnimationStep D_80103680[] = {
-    { 0x2C000101 },
+    { 1, 1, 0, 0x2C },
 };
 
 union AnimationStep D_80103684[] = {
-    { 0x2D000101 },
+    { 1, 1, 0, 0x2D },
 };
 
 struct Unk_unk68 D_80103688[3] = {
@@ -1093,59 +1099,59 @@ struct Unk_unk68 D_80103694[4] = {
 };
 
 union AnimationStep D_801036A4[] = {
-    { 0x35010002 },
-    { 0x36010002 },
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3C010002 },
-    { 0x3D010002 },
-    { 0x3E010002 },
-    { 0x3D010001 },
-    { 0x3D010001 },
-    { 0x3F010001 },
-    { 0x3F010001 },
-    { 0x40010005 },
-    { 0x40000101 },
+    { 2, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, 1, 0x3C },
+    { 2, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3E },
+    { 1, 0, 1, 0x3D },
+    { 1, 0, 1, 0x3D },
+    { 1, 0, 1, 0x3F },
+    { 1, 0, 1, 0x3F },
+    { 5, 0, 1, 0x40 },
+    { 1, 1, 0, 0x40 },
 };
 
 union AnimationStep D_801036E4[] = {
-    { 0x41010003 },
-    { 0x42010003 },
-    { 0x43010003 },
-    { 0x44010003 },
-    { 0x45010005 },
-    { 0x46010002 },
-    { 0x47000101 },
+    { 3, 0, 1, 0x41 },
+    { 3, 0, 1, 0x42 },
+    { 3, 0, 1, 0x43 },
+    { 3, 0, 1, 0x44 },
+    { 5, 0, 1, 0x45 },
+    { 2, 0, 1, 0x46 },
+    { 1, 1, 0, 0x47 },
 };
 
 union AnimationStep D_80103700[] = {
-    { 0x47010002 },
-    { 0x48010002 },
-    { 0x49010002 },
-    { 0x47010002 },
-    { 0x48010002 },
-    { 0x49010002 },
-    { 0x47010001 },
-    { 0x48010001 },
-    { 0x49000101 },
+    { 2, 0, 1, 0x47 },
+    { 2, 0, 1, 0x48 },
+    { 2, 0, 1, 0x49 },
+    { 2, 0, 1, 0x47 },
+    { 2, 0, 1, 0x48 },
+    { 2, 0, 1, 0x49 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x48 },
+    { 1, 1, 0, 0x49 },
 };
 
 union AnimationStep D_80103724[] = {
-    { 0x4A010003 },
-    { 0x4B010003 },
-    { 0x4C010004 },
-    { 0x4D010003 },
-    { 0x4E010203 },
-    { 0x4F010002 },
-    { 0x50010002 },
-    { 0x51010003 },
-    { 0x52010003 },
-    { 0x53010003 },
-    { 0x54010003 },
-    { 0x54000101 },
+    { 3, 0, 1, 0x4A },
+    { 3, 0, 1, 0x4B },
+    { 4, 0, 1, 0x4C },
+    { 3, 0, 1, 0x4D },
+    { 3, 2, 1, 0x4E },
+    { 2, 0, 1, 0x4F },
+    { 2, 0, 1, 0x50 },
+    { 3, 0, 1, 0x51 },
+    { 3, 0, 1, 0x52 },
+    { 3, 0, 1, 0x53 },
+    { 3, 0, 1, 0x54 },
+    { 1, 1, 0, 0x54 },
 };
 
 struct Unk_unk68 D_80103754[20] = {
@@ -1224,29 +1230,29 @@ struct Unk_unk68 D_8010382C[3] = {
 };
 
 union AnimationStep D_80103838[] = {
-    { 0x8A010001 },
-    { 0x89010001 },
-    { 0x88010001 },
-    { 0x87010001 },
-    { 0x86010001 },
-    { 0x85010001 },
-    { 0x84010001 },
-    { 0x83010001 },
-    { 0x82010001 },
-    { 0x81010001 },
-    { 0x80010001 },
-    { 0x7F010001 },
-    { 0x95010001 },
-    { 0x94010001 },
-    { 0x93010001 },
-    { 0x92010001 },
-    { 0x91010001 },
-    { 0x90010001 },
-    { 0x8F010001 },
-    { 0x8E010001 },
-    { 0x8D010001 },
-    { 0x8C010001 },
-    { 0x8BEA0001 },
+    { 1, 0, 1, 0x8A },
+    { 1, 0, 1, 0x89 },
+    { 1, 0, 1, 0x88 },
+    { 1, 0, 1, 0x87 },
+    { 1, 0, 1, 0x86 },
+    { 1, 0, 1, 0x85 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x83 },
+    { 1, 0, 1, 0x82 },
+    { 1, 0, 1, 0x81 },
+    { 1, 0, 1, 0x80 },
+    { 1, 0, 1, 0x7F },
+    { 1, 0, 1, 0x95 },
+    { 1, 0, 1, 0x94 },
+    { 1, 0, 1, 0x93 },
+    { 1, 0, 1, 0x92 },
+    { 1, 0, 1, 0x91 },
+    { 1, 0, 1, 0x90 },
+    { 1, 0, 1, 0x8F },
+    { 1, 0, 1, 0x8E },
+    { 1, 0, 1, 0x8D },
+    { 1, 0, 1, 0x8C },
+    { 1, 0, -22, 0x8B },
 };
 
 struct Unk_unk68 D_80103894[31] = {
@@ -1284,14 +1290,14 @@ struct Unk_unk68 D_80103894[31] = {
 };
 
 union AnimationStep D_80103910[] = {
-    { 0x9C010002 },
-    { 0x9B010002 },
-    { 0x9A010002 },
-    { 0x99010002 },
-    { 0x98010002 },
-    { 0x97010002 },
-    { 0x96010001 },
-    { 0x96000101 },
+    { 2, 0, 1, 0x9C },
+    { 2, 0, 1, 0x9B },
+    { 2, 0, 1, 0x9A },
+    { 2, 0, 1, 0x99 },
+    { 2, 0, 1, 0x98 },
+    { 2, 0, 1, 0x97 },
+    { 1, 0, 1, 0x96 },
+    { 1, 1, 0, 0x96 },
 };
 
 struct Unk_unk68 D_80103930[31] = {
@@ -1329,14 +1335,14 @@ struct Unk_unk68 D_80103930[31] = {
 };
 
 union AnimationStep D_801039AC[] = {
-    { 0xB2010002 },
-    { 0xB1010002 },
-    { 0xB0010002 },
-    { 0xAF010002 },
-    { 0xAE010002 },
-    { 0xAD010002 },
-    { 0xBB010001 },
-    { 0xBB000101 },
+    { 2, 0, 1, 0xB2 },
+    { 2, 0, 1, 0xB1 },
+    { 2, 0, 1, 0xB0 },
+    { 2, 0, 1, 0xAF },
+    { 2, 0, 1, 0xAE },
+    { 2, 0, 1, 0xAD },
+    { 1, 0, 1, 0xBB },
+    { 1, 1, 0, 0xBB },
 };
 
 struct Unk_unk68 D_801039CC[31] = {
@@ -1374,82 +1380,82 @@ struct Unk_unk68 D_801039CC[31] = {
 };
 
 union AnimationStep D_80103A48[] = {
-    { 0x9C010002 },
-    { 0x9B010002 },
-    { 0x9A010002 },
-    { 0x99010002 },
-    { 0x98010002 },
-    { 0x97010002 },
-    { 0x96010001 },
-    { 0x96000101 },
+    { 2, 0, 1, 0x9C },
+    { 2, 0, 1, 0x9B },
+    { 2, 0, 1, 0x9A },
+    { 2, 0, 1, 0x99 },
+    { 2, 0, 1, 0x98 },
+    { 2, 0, 1, 0x97 },
+    { 1, 0, 1, 0x96 },
+    { 1, 1, 0, 0x96 },
 };
 
 union AnimationStep D_80103A68[] = {
-    { 0xC6010002 },
-    { 0xC7010002 },
-    { 0xC8010002 },
-    { 0xC9010002 },
-    { 0xCA010002 },
-    { 0xCB010002 },
-    { 0xCC010002 },
-    { 0xCD010002 },
-    { 0xCE010002 },
-    { 0xCF010002 },
-    { 0xD0010002 },
-    { 0xD1010002 },
-    { 0xD2010002 },
-    { 0xD3010002 },
-    { 0xD4010002 },
-    { 0xD5010002 },
-    { 0xD6010002 },
-    { 0xD7010002 },
-    { 0xD8010002 },
-    { 0xD9010002 },
-    { 0xDA010002 },
-    { 0xDB010002 },
-    { 0xDC010002 },
-    { 0xDD010002 },
-    { 0xDE010002 },
-    { 0xDF010002 },
-    { 0xE0010002 },
-    { 0xE1010002 },
-    { 0xE2010002 },
-    { 0xE3010002 },
-    { 0xE4010002 },
-    { 0xE5010002 },
-    { 0xE6010002 },
-    { 0xE7010002 },
-    { 0xE8010002 },
-    { 0xE9010002 },
-    { 0xEA010002 },
-    { 0xEB010002 },
-    { 0xEC010008 },
-    { 0xEB010013 },
-    { 0xEB000101 },
+    { 2, 0, 1, 0xC6 },
+    { 2, 0, 1, 0xC7 },
+    { 2, 0, 1, 0xC8 },
+    { 2, 0, 1, 0xC9 },
+    { 2, 0, 1, 0xCA },
+    { 2, 0, 1, 0xCB },
+    { 2, 0, 1, 0xCC },
+    { 2, 0, 1, 0xCD },
+    { 2, 0, 1, 0xCE },
+    { 2, 0, 1, 0xCF },
+    { 2, 0, 1, 0xD0 },
+    { 2, 0, 1, 0xD1 },
+    { 2, 0, 1, 0xD2 },
+    { 2, 0, 1, 0xD3 },
+    { 2, 0, 1, 0xD4 },
+    { 2, 0, 1, 0xD5 },
+    { 2, 0, 1, 0xD6 },
+    { 2, 0, 1, 0xD7 },
+    { 2, 0, 1, 0xD8 },
+    { 2, 0, 1, 0xD9 },
+    { 2, 0, 1, 0xDA },
+    { 2, 0, 1, 0xDB },
+    { 2, 0, 1, 0xDC },
+    { 2, 0, 1, 0xDD },
+    { 2, 0, 1, 0xDE },
+    { 2, 0, 1, 0xDF },
+    { 2, 0, 1, 0xE0 },
+    { 2, 0, 1, 0xE1 },
+    { 2, 0, 1, 0xE2 },
+    { 2, 0, 1, 0xE3 },
+    { 2, 0, 1, 0xE4 },
+    { 2, 0, 1, 0xE5 },
+    { 2, 0, 1, 0xE6 },
+    { 2, 0, 1, 0xE7 },
+    { 2, 0, 1, 0xE8 },
+    { 2, 0, 1, 0xE9 },
+    { 2, 0, 1, 0xEA },
+    { 2, 0, 1, 0xEB },
+    { 8, 0, 1, 0xEC },
+    { 19, 0, 1, 0xEB },
+    { 1, 1, 0, 0xEB },
 };
 
 union AnimationStep D_80103B0C[] = {
-    { 0xEC010007 },
-    { 0xEC000101 },
+    { 7, 0, 1, 0xEC },
+    { 1, 1, 0, 0xEC },
 };
 
 union AnimationStep D_80103B14[] = {
-    { 0x20010002 },
-    { 0x21010002 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x20010001 },
-    { 0x21010001 },
-    { 0x22010001 },
-    { 0x23010001 },
-    { 0x24010001 },
-    { 0x25000101 },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 1, 0, 1, 0x23 },
+    { 1, 0, 1, 0x24 },
+    { 1, 1, 0, 0x25 },
 };
 
 union AnimationStep D_80103B44[] = {
-    { 0x26000101 },
+    { 1, 1, 0, 0x26 },
 };
 
 void* iris_animations[37] = {

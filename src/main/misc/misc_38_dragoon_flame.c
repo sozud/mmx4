@@ -12,14 +12,16 @@ void dragoon_flame_burn(struct MiscObj*);
 void dragoon_flame_despawn(struct MiscObj*);
 
 void dragoon_flame_attached(struct MiscObj*);
+#include "weapon_resources.h"
 
 // dragoon_flame_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF4B8(struct MiscObj* arg0);
 void func_800CF660(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF4B8(struct MiscObj* arg0)
 {
     struct MainObj* source = arg0->ext.misc_7.position;
@@ -35,27 +37,27 @@ void func_800CF4B8(struct MiscObj* arg0)
     switch ((u8)arg0->unk2) {
     case 2:
         set_animation(arg0, 0x18);
-        arg0->unk16 = 7;
+        arg0->unk16 = VISUAL_SATURN_LAYER(7);
         arg0->state = 1;
         break;
     case 3:
         set_animation(arg0, 0x17);
-        arg0->unk16 = 4;
+        arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state = 1;
         break;
     case 4:
         set_animation(arg0, 0xE);
-        arg0->unk16 = 4;
+        arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state = 4;
         break;
     case 5:
         set_animation(arg0, 0x15);
-        arg0->unk16 = 4;
+        arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state = 4;
         break;
     default:
         set_animation(arg0, 0x19);
-        arg0->unk16 = 4;
+        arg0->unk16 = VISUAL_SATURN_LAYER(4);
         arg0->state = 3;
         break;
     }
@@ -80,7 +82,7 @@ void dragoon_flame_despawn(struct MiscObj* self)
 }
 
 // dragoon_flame_attach_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CF660(struct MiscObj* arg0)
 {
     struct MainObj* source = arg0->ext.misc_7.position;

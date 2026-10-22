@@ -19,6 +19,7 @@ void fortress_collapse_despawn(struct EffectObj*);
 
 void fortress_collapse_flash_red(struct EffectObj*);
 void fortress_collapse_flash_white(struct EffectObj*);
+#include "weapon_resources.h"
 
 void fortress_collapse_update(struct EffectObj* self)
 {
@@ -30,9 +31,13 @@ void func_800BBC50(struct EffectObj* self)
 {
     u8 i;
 
+#ifdef MMX4_SATURN
+    D_8013E188[0] = 0x4F;
+#else
     for (i = 0; i < 4; i++) {
         D_8013E188[i] = -1;
     }
+#endif
     g_FilterModeR = 0;
     g_FilterModeG = 0;
     g_FilterModeB = 0;
@@ -60,11 +65,12 @@ void fortress_collapse_shake(struct EffectObj* self)
 }
 
 // fortress_collapse_explode
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BBD88(struct EffectObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BBD88(struct EffectObj* arg0)
 {
     if (arg0->ext.effect_28.finished) {
@@ -157,7 +163,7 @@ void fortress_collapse_spawn_random_explosion(struct EffectObj* self)
     x += get_random_nonzero() % 0xA0;
     y += get_random_nonzero() % 0x78;
     spawn_explosion_at(0, x, y, 0xFF);
-    if ((main_bss_state.frame_counter & 3) == 0) {
+    if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         func_8001540C(0, fortress_collapse_explosion_sounds[get_random() & 3], NULL);
     }
 }

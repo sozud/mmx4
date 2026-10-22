@@ -5,15 +5,16 @@
 #include "main/quads/quad_07_ready_line.h"
 #include "main/object_motion.h"
 
-extern void (*ready_line_state_funcs[])();
+extern void (*ready_line_state_funcs[])(struct QuadObj*);
 
-extern void (*ready_line_type_funcs[])();
+extern void (*ready_line_type_funcs[])(struct QuadObj*);
 
 // ready_line_state_funcs
 extern void (*ready_line_state_funcs[])(struct QuadObj*);
 
 // ready_line_type_funcs
 extern void (*ready_line_type_funcs[])(struct QuadObj*);
+#include "weapon_resources.h"
 
 void ready_line_move(struct QuadObj* arg0);
 
@@ -248,7 +249,7 @@ void ready_line_update(struct QuadObj* arg0)
 // ready_line_state_funcs state 0
 void ready_line_init(struct QuadObj* arg0)
 {
-    arg0->active |= 0x92;
+    arg0->active |= SATURN_ALT(0x92, 0x82);
     if (arg0->unk2 == 0) {
         arg0->unk36 = 0x10;
     } else {
@@ -275,7 +276,7 @@ void ready_line_init(struct QuadObj* arg0)
 void ready_line_main(struct QuadObj* arg0)
 {
     ready_line_type_funcs[arg0->unk2](arg0);
-    arg0->on_screen = 1;
+    QUAD_SET_ON_SCREEN(arg0);
     func_8002B458(arg0);
 }
 

@@ -21,6 +21,7 @@ extern void (*crusher_wall_speed_funcs[])(struct ItemObj*);
 void crusher_wall_accelerate(struct ItemObj*);
 void crusher_wall_hold(struct ItemObj*);
 void crusher_wall_idle(struct ItemObj*);
+#include "weapon_resources.h"
 
 void crusher_wall_update(struct ItemObj* arg0)
 {
@@ -38,7 +39,7 @@ void crusher_wall_update(struct ItemObj* arg0)
 
 void crusher_wall_init(struct ItemObj* self)
 {
-    self->active = 1;
+    self->active = SATURN_ALT(1, 0x41);
     self->x_pos.i.hi = crusher_wall_x_positions[self->unk2];
     self->y_pos.i.hi = 0x1A8;
     self->unk18.val = self->x_pos.val;
@@ -46,11 +47,11 @@ void crusher_wall_init(struct ItemObj* self)
     self->bg_offset = g_Player.bg_offset;
     self->unk68 = (struct Unk_unk68*)crusher_wall_terrain_box;
     self->animation_step.fields.frame_index = 0;
-    self->unk16 = 6;
-    self->unk40 = 0x1500;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
     self->unk15 = 0;
     self->sprite_frames = (u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
-    self->unk42 = 0x7901;
+    self->unk42 = OBJECT_CLUT(0x7901);
     self->unk76 = 1;
     self->unk67 = 0;
     self->unk75 = 1;
@@ -64,7 +65,7 @@ void crusher_wall_rumble(struct ItemObj* arg0)
 
     crusher_wall_speed_funcs[arg0->unk5](arg0);
     if (--arg0->unk7C.timer16 != 0) {
-        if (!(main_bss_state.frame_counter & 7)) {
+        if (!(WEAPON_FRAME_COUNTER & 7)) {
             arg0->y_pos.u.hi += 0x10;
             func_800AF878(BASE_OBJECT(arg0), 1, 0x30, 0x20);
             func_800AF878(BASE_OBJECT(arg0), 1, 0x18, 0x10);

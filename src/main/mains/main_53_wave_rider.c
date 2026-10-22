@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[53]
 // 8006AF70..8006BB00
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_53_wave_rider.h"
 #include "main/misc/misc_00_static_sprite.h"
 #include "main/1CF60.h"
@@ -9,8 +10,9 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/visuals/visual_08_ice_shard.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/visuals/visual_08_ice_shard.h"
 #endif
 
@@ -37,7 +39,8 @@ void wave_rider_main(struct MainObj*);
 void wave_rider_despawn(struct MainObj* arg0);
 
 // wave_rider_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006AF70(struct MainObj* arg0);
 void func_8006B2A4(struct MainObj* arg0);
 void func_8006B398(struct MainObj* arg0);
@@ -51,7 +54,7 @@ void wave_rider_move(struct MainObj*);
 s32 wave_rider_check_camera(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006AF70(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -76,7 +79,7 @@ void func_8006AF70(struct MainObj* arg0)
         arg0->state++;
         break;
     }
-    arg0->unk15 = arg0->unk2 == 4 ? 0 : 0x40;
+    arg0->unk15 = arg0->unk2 == 4 ? 0 : PLAYER_FACING_RIGHT;
     arg0->ext.main_53.unk80 = func_8002D724(PLAYER_OBJECT(arg0), arg0->x_pos.i.hi,
         (s16)(arg0->y_pos.i.hi + 0x20));
     arg0->animation_table = (const u8* const*)wave_rider_animations;
@@ -84,7 +87,7 @@ void func_8006AF70(struct MainObj* arg0)
     arg0->attack_box = &wave_rider_attack_box;
     arg0->unk7C = 0x3C;
     arg0->collision_data = D_80107878;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->invincibility_timer = 0;
     arg0->unk62 = 0;
     arg0->y_speed = 0;
@@ -163,7 +166,7 @@ scan:
 }
 
 // wave_rider_float
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006B2A4(struct MainObj* arg0)
 {
     struct Main53Ext* ext = &arg0->ext.main_53;
@@ -205,7 +208,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B2A4);
 #endif
 
 // wave_rider_bob
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006B398(struct MainObj* arg0)
 {
     struct Main53Ext* ext = &arg0->ext.main_53;
@@ -276,7 +279,7 @@ s32 wave_rider_check_camera(struct MainObj* self)
 }
 
 // wave_rider_ride
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006B5F8(struct MainObj* arg0)
 {
     if (wave_rider_check_camera(arg0) != 0) {
@@ -305,7 +308,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_53_wave_rider", func_8006B5F8);
 #endif
 
 // wave_rider_ride_back
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006B6B0(struct MainObj* arg0)
 {
     u8 tile;
@@ -447,169 +450,169 @@ struct Unk_unk68 wave_rider_rider_hurt_box[2] = {
 struct Unk_unk68 wave_rider_attack_box = { -30, -10, 49, 30 };
 
 union AnimationStep wave_rider_anim_0[] = {
-    { 0x00010002 },
-    { 0x04010002 },
-    { 0x05010006 },
-    { 0x04010001 },
-    { 0x00010001 },
-    { 0x06010003 },
-    { 0x00000101 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x00 },
+    { 3, 0, 1, 0x06 },
+    { 1, 1, 0, 0x00 },
 };
 
 union AnimationStep wave_rider_anim_1[] = {
-    { 0x01010002 },
-    { 0x07010002 },
-    { 0x08010006 },
-    { 0x07010001 },
-    { 0x01010001 },
-    { 0x09010003 },
-    { 0x01000001 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x07 },
+    { 6, 0, 1, 0x08 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x01 },
+    { 3, 0, 1, 0x09 },
+    { 1, 0, 0, 0x01 },
 };
 
 union AnimationStep wave_rider_anim_2[] = {
-    { 0x02010002 },
-    { 0x0A010002 },
-    { 0x0B010006 },
-    { 0x0A010001 },
-    { 0x02010001 },
-    { 0x0C010003 },
-    { 0x02000101 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x0A },
+    { 6, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x02 },
+    { 3, 0, 1, 0x0C },
+    { 1, 1, 0, 0x02 },
 };
 
 union AnimationStep wave_rider_anim_3[] = {
-    { 0x00010002 },
-    { 0x02010002 },
-    { 0x03000008 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x02 },
+    { 8, 0, 0, 0x03 },
 };
 
 union AnimationStep wave_rider_anim_4[] = {
-    { 0x01010002 },
-    { 0x00010002 },
-    { 0x02010002 },
-    { 0x03000008 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x02 },
+    { 8, 0, 0, 0x03 },
 };
 
 union AnimationStep wave_rider_anim_5[] = {
-    { 0x02010002 },
-    { 0x03000008 },
+    { 2, 0, 1, 0x02 },
+    { 8, 0, 0, 0x03 },
 };
 
 union AnimationStep wave_rider_anim_11[] = {
-    { 0x0D010001 },
-    { 0x0E010001 },
-    { 0x0FFE0001 },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, -2, 0x0F },
 };
 
 union AnimationStep wave_rider_anim_6[] = {
-    { 0x10010002 },
-    { 0x11010001 },
-    { 0x12010001 },
-    { 0x13010001 },
-    { 0x14010002 },
-    { 0x15010001 },
-    { 0x15FA0001 },
+    { 2, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, -6, 0x15 },
 };
 
 union AnimationStep wave_rider_anim_7[] = {
-    { 0x16010002 },
-    { 0x17010001 },
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1A010002 },
-    { 0x1B010001 },
-    { 0x1BFA0001 },
+    { 2, 0, 1, 0x16 },
+    { 1, 0, 1, 0x17 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, -6, 0x1B },
 };
 
 union AnimationStep wave_rider_anim_8[] = {
-    { 0x1C010002 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1F010001 },
-    { 0x20010002 },
-    { 0x21010001 },
-    { 0x21FA0001 },
+    { 2, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, -6, 0x21 },
 };
 
 union AnimationStep wave_rider_anim_9[] = {
-    { 0x22010002 },
-    { 0x23010001 },
-    { 0x24010001 },
-    { 0x25010001 },
-    { 0x26010002 },
-    { 0x27010001 },
-    { 0x27FA0001 },
+    { 2, 0, 1, 0x22 },
+    { 1, 0, 1, 0x23 },
+    { 1, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 0, -6, 0x27 },
 };
 
 union AnimationStep wave_rider_anim_10[] = {
-    { 0x28010003 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x2B010003 },
-    { 0x2C010003 },
-    { 0x2D010002 },
-    { 0x2E010002 },
-    { 0x2F010002 },
-    { 0x2FF80001 },
+    { 3, 0, 1, 0x28 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 3, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 2, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2E },
+    { 2, 0, 1, 0x2F },
+    { 1, 0, -8, 0x2F },
 };
 
 union AnimationStep wave_rider_anim_12[] = {
-    { 0x30000001 },
+    { 1, 0, 0, 0x30 },
 };
 
 union AnimationStep wave_rider_anim_13[] = {
-    { 0x31000001 },
+    { 1, 0, 0, 0x31 },
 };
 
 union AnimationStep wave_rider_anim_14[] = {
-    { 0x32000001 },
+    { 1, 0, 0, 0x32 },
 };
 
 union AnimationStep wave_rider_anim_15[] = {
-    { 0x33000001 },
+    { 1, 0, 0, 0x33 },
 };
 
 union AnimationStep wave_rider_anim_16[] = {
-    { 0x34000001 },
+    { 1, 0, 0, 0x34 },
 };
 
 union AnimationStep wave_rider_anim_17[] = {
-    { 0x35000001 },
+    { 1, 0, 0, 0x35 },
 };
 
 union AnimationStep wave_rider_anim_18[] = {
-    { 0x36000001 },
+    { 1, 0, 0, 0x36 },
 };
 
 union AnimationStep wave_rider_anim_19[] = {
-    { 0x37000001 },
+    { 1, 0, 0, 0x37 },
 };
 
 union AnimationStep wave_rider_anim_20[] = {
-    { 0x38000001 },
+    { 1, 0, 0, 0x38 },
 };
 
 union AnimationStep wave_rider_anim_21[] = {
-    { 0x39000001 },
+    { 1, 0, 0, 0x39 },
 };
 
 union AnimationStep wave_rider_anim_22[] = {
-    { 0x3A000001 },
+    { 1, 0, 0, 0x3A },
 };
 
 union AnimationStep wave_rider_anim_23[] = {
-    { 0x3B000001 },
+    { 1, 0, 0, 0x3B },
 };
 
 union AnimationStep wave_rider_anim_24[] = {
-    { 0x3C000001 },
+    { 1, 0, 0, 0x3C },
 };
 
 union AnimationStep wave_rider_anim_25[] = {
-    { 0x3D000001 },
+    { 1, 0, 0, 0x3D },
 };
 
 union AnimationStep wave_rider_anim_26[] = {
-    { 0x3E000001 },
+    { 1, 0, 0, 0x3E },
 };
 
 union AnimationStep* wave_rider_animations[27] = {

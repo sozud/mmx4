@@ -10,6 +10,7 @@ extern void (*flame_jet_fx_state_funcs[])(struct VisualObj*);
 void func_800B3D3C(struct VisualObj*);
 void flame_jet_fx_main(struct VisualObj*);
 void flame_jet_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 // flame_jet_fx_init
 void func_800B3D3C(struct VisualObj* self)
@@ -23,9 +24,9 @@ void func_800B3D3C(struct VisualObj* self)
     self->unk15 = owner->unk15;
     self->bg_offset = owner->bg_offset;
     if (self->unk2 != 0) {
-        self->unk16 = 1;
+        self->unk16 = VISUAL_SATURN_LAYER(1);
     } else {
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
     }
     set_animation(self, self->unk2);
     self->state++;

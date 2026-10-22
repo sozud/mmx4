@@ -31,7 +31,7 @@ extern u8 D_800F2C58[];
 extern u8 D_800F2D18[];
 extern u32 D_800F2F08[12];
 extern u32 D_800F2F38[2];
-extern u32 D_800F2F60[];
+extern union AnimationStep D_800F2F60[];
 extern union AnimationStep D_800F3000[10];
 extern union AnimationStep D_800F3028[11];
 extern union AnimationStep D_800F3054[10];
@@ -167,7 +167,7 @@ void func_80023C0C(struct MiscObj* arg0);
 
 void func_80023CA4(struct MiscObj* arg0);
 
-void func_80023CE0();
+void func_80023CE0(void);
 
 void func_80023D30(void);
 
@@ -218,43 +218,43 @@ void (*D_800F2FE0[8])(struct EngineObj*) = {
 };
 
 union AnimationStep D_800F3000[10] = {
-    { 0x00010004 },
-    { 0x01010004 },
-    { 0x02010002 },
-    { 0x03010004 },
-    { 0x04010004 },
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07010004 },
-    { 0x08010003 },
-    { 0x09000003 },
+    { 4, 0, 1, 0x00 },
+    { 4, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 4, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 0, 0x09 },
 };
 
 union AnimationStep D_800F3028[11] = {
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010003 },
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F010003 },
-    { 0x10000003 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 0, 0x10 },
 };
 
 union AnimationStep D_800F3054[10] = {
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010003 },
-    { 0x14010003 },
-    { 0x15010003 },
-    { 0x16000003 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 0, 0x16 },
 };
 
 union AnimationStep* D_800F307C[3] = { D_800F3028, D_800F3054, D_800F3000 };
@@ -269,6 +269,7 @@ void (*D_800F30C8[])(struct MiscObj*) = {
     func_80023C0C,
 };
 
+#ifndef MMX4_SATURN
 void func_80025DA0(s32 texture_depth, s32 blend_mode)
 {
     u32 buffer, i, j;
@@ -565,3 +566,4 @@ void func_8002728C(void)
 INCLUDE_ASM("main/nonmatchings/165A0", func_80027344);
 
 INCLUDE_ASM("main/nonmatchings/165A0", func_800275DC);
+#endif

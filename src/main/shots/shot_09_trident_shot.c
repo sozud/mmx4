@@ -6,10 +6,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // trident_shot_state_funcs
 extern void (*trident_shot_state_funcs[])(struct ShotObj*);
@@ -19,6 +16,11 @@ void trident_shot_flash_despawn(struct ShotObj*);
 
 void trident_shot_fly(struct ShotObj*);
 void trident_shot_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 u8 trident_shot_flash_box[4] = { 0xCB, 0xD0, 0x2C, 0x3A };
 u8 trident_shot_hit_box[4] = { 0xFB, 0xFC, 0x0D, 0x06 };
@@ -37,16 +39,17 @@ void trident_shot_update(struct ShotObj* self)
 }
 
 // trident_shot_flash_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B0B8(struct ShotObj* arg0);
 void func_8009B1E8(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B0B8(struct ShotObj* arg0)
 {
     arg0->unk58.collision_bounds = D_801060F0;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->unk54 = trident_shot_flash_box;
     arg0->unk50.data = trident_shot_flash_box;
     arg0->state = 1;
@@ -88,7 +91,7 @@ void trident_shot_flash_despawn(struct ShotObj* self)
 }
 
 // trident_shot_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B1E8(struct ShotObj* arg0)
 {
     s32 index = arg0->unk2;

@@ -2,9 +2,11 @@
 // 800CB884..800CB8F8
 #include "common.h"
 #include "main/misc/misc_21_center_sprite.h"
+#include "weapon_resources.h"
 
 void center_sprite_update(struct MiscObj* self)
 {
+#ifndef MMX4_SATURN
     if (self->state == 0) {
         self->on_screen = 1;
         self->bg_offset = -1;
@@ -13,11 +15,12 @@ void center_sprite_update(struct MiscObj* self)
         self->unk3C = SP_SPRITE_FRAMES;
         self->animation_table = 0;
         self->unk40 = 0x600;
-        self->unk42 = 0x7804;
+        self->unk42 = OBJECT_CLUT(0x7804);
         self->unk15 = 0;
         self->unk16 = 0;
         self->x_pos.i.hi = 0xA0;
         self->y_pos.i.hi = 0x78;
         self->state++;
     }
+#endif
 }

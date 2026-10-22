@@ -4,7 +4,7 @@
 #include "main/effects/effect_07_search_light_maker.h"
 #include "main/objects.h"
 
-extern void (*search_light_maker_state_funcs[])();
+extern void (*search_light_maker_state_funcs[])(struct EffectObj*);
 
 void search_light_maker_spawn_edges(s32, s8, s8);
 
@@ -44,11 +44,11 @@ void search_light_maker_init(struct EffectObj* self)
     }
 
     background_object = background_objects;
-    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), (s32)self);
     background_object++;
-    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), (s32)self);
     background_object++;
-    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), self);
+    search_light_maker_spawn_in_rect((background_object->x_pos.i.hi - 48), (background_object->x_pos.i.hi + 368), (background_object->y_pos.i.hi - 48), (background_object->y_pos.i.hi + 288), (s32)self);
 }
 
 // search_light_maker_state_funcs state 1
@@ -64,9 +64,9 @@ void search_light_maker_idle(struct EffectObj* self)
 
 void search_light_maker_spawn_scrolled(struct EffectObj* self)
 {
-    search_light_maker_spawn_edges(self, 0, search_light_maker_scroll_dirs(self, 0));
-    search_light_maker_spawn_edges(self, 1, search_light_maker_scroll_dirs(self, 1));
-    search_light_maker_spawn_edges(self, 2, search_light_maker_scroll_dirs(self, 2));
+    search_light_maker_spawn_edges((s32)self, 0, search_light_maker_scroll_dirs((s32)self, 0));
+    search_light_maker_spawn_edges((s32)self, 1, search_light_maker_scroll_dirs((s32)self, 1));
+    search_light_maker_spawn_edges((s32)self, 2, search_light_maker_scroll_dirs((s32)self, 2));
 }
 
 void search_light_maker_spawn_edges(s32 arg0, s8 arg1, s8 arg2)

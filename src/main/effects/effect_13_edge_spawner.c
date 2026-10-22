@@ -5,10 +5,7 @@
 #include "main/objects.h"
 #include "main/effects/edge_spawner_data.h"
 #include "main/object_motion.h"
-
-#ifdef MMX4_PC
 #include "main/1CF60.h"
-#endif
 
 // edge_spawner_state_funcs
 extern void (*edge_spawner_state_funcs[])(struct EffectObj*);
@@ -16,6 +13,11 @@ void edge_spawner_init(struct EffectObj*);
 void edge_spawner_main(struct EffectObj*);
 
 void edge_spawner_despawn(struct EffectObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/1CF60.h"
+#endif
 
 void edge_spawner_update(struct EffectObj* self)
 {
@@ -65,17 +67,18 @@ void func_800B8630(struct EffectObj* self)
     main->unk2 = get_random_nonzero() % 4;
     main->x_pos.val = self->x_pos.val;
     main->y_pos.val = self->y_pos.val;
-    main->unk40 = D_801406A8[(u8)func_8002938C(0x15)] >> 7;
-    main->unk42 = SOME_COORDINATE_CONVERSION((u8)func_8002938C(0x15));
+    main->unk40 = OBJECT_STAGE_TEXTURE((u8)func_8002938C(0x15));
+    main->unk42 = VISUAL_STAGE_PALETTE((u8)func_8002938C(0x15));
     main->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(u8)func_8002938C(0x15)];
 }
 
 // edge_spawner_try_spawn
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B875C(struct EffectObj* arg0, s16 unused);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B875C(struct EffectObj* arg0, s16 unused)
 {
     s16 x;

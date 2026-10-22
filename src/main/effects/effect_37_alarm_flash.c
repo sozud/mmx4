@@ -26,9 +26,13 @@ void func_800BD3C0(struct EffectObj* self)
 {
     u8 i;
 
+#ifdef MMX4_SATURN
+    D_8013E188[0] = 0x4F;
+#else
     for (i = 0; i < 4; i++) {
         D_8013E188[i] = -1;
     }
+#endif
     g_FilterModeR = 0;
     g_FilterModeG = 0;
     g_FilterModeB = 0;

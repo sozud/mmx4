@@ -24,6 +24,7 @@ void intro_messenger_take_off(struct MiscObj*);
 void intro_messenger_fly_up(struct MiscObj*);
 
 void intro_messenger_finish(struct MiscObj*);
+#include "weapon_resources.h"
 
 #ifdef VERSION_JP
 INCLUDE_ASM("main/nonmatchings/misc/misc_43_intro_messenger", func_800D03A8_jp);
@@ -41,11 +42,11 @@ void intro_messenger_init(struct MiscObj* self)
     self->y_vel.val = FIXED(10);
     self->unk28 = 0;
     self->unk2C = FIXED(0.125);
-    self->unk40 = D_801406A8[func_8002938C(0x45)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x45);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x45));
+    self->unk42 = OBJECT_STAGE_CLUT(0x45);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x45)];
     self->animation_table = (u32**)intro_messenger_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = 0;
     self->state = 1;
     self->unk5 = 0;
@@ -139,23 +140,23 @@ void intro_messenger_finish(struct MiscObj* self)
     }
 }
 
-union AnimationStep intro_messenger_anim_0[1] = { { 0x00000101 } };
+union AnimationStep intro_messenger_anim_0[1] = { { 1, 1, 0, 0x00 } };
 
 union AnimationStep intro_messenger_anim_1[4] = {
-    { 0x00010002 },
-    { 0x02010002 },
-    { 0x01010001 },
-    { 0x01000101 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x02 },
+    { 1, 0, 1, 0x01 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep intro_messenger_anim_2[7] = {
-    { 0x02010002 },
-    { 0x0001000A },
-    { 0x02010002 },
-    { 0x03010006 },
-    { 0x00010002 },
-    { 0x04010001 },
-    { 0x04000101 },
+    { 2, 0, 1, 0x02 },
+    { 10, 0, 1, 0x00 },
+    { 2, 0, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 2, 0, 1, 0x00 },
+    { 1, 0, 1, 0x04 },
+    { 1, 1, 0, 0x04 },
 };
 
 union AnimationStep* intro_messenger_animations[3] = {

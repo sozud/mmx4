@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[17]
 // 8004FF90..80050708
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_17_snowman_bomb.h"
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
@@ -63,7 +64,7 @@ void snowman_bomb_init(struct MainObj* self)
     self->x_accel = 0;
     self->gravity = 0;
     self->air_state = 0;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->attack_box = &snowman_bomb_attack_box;
     snowman_bomb_face_player(ANIMATED_OBJECT(self));
     set_animation(self, 0);
@@ -122,11 +123,12 @@ void snowman_bomb_resume_step(struct MainObj* self)
 }
 
 // snowman_bomb_hop
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80050278(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80050278(struct MainObj* arg0)
 {
     struct Main17Ext* ext = &arg0->ext.main_17;
@@ -134,7 +136,7 @@ void func_80050278(struct MainObj* arg0)
 
     if (--ext->unk80 != 0) {
         if (arg0->collision_flags & 3)
-            arg0->unk15 ^= 0x40;
+            arg0->unk15 ^= PLAYER_FACING_RIGHT;
         arg0->x_speed = arg0->unk15 != 0 ? 0x10000 : -0x10000;
         arg0->y_speed = 0x80000;
         ext->saved_unk5 = arg0->y_pos.val;
@@ -269,7 +271,7 @@ void snowman_bomb_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -286,55 +288,55 @@ struct Unk_unk68 snowman_bomb_blast_attack_box = { -10, 1, 21, 10 };
 struct Unk_unk68 snowman_bomb_blast_terrain_box = { 0, 5, 13, 8 };
 
 union AnimationStep snowman_bomb_anim_0[] = {
-    { 0x00010008 },
-    { 0x03010003 },
-    { 0x04010004 },
-    { 0x05010006 },
-    { 0x04010004 },
-    { 0x03010002 },
-    { 0x03000101 },
+    { 8, 0, 1, 0x00 },
+    { 3, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 4, 0, 1, 0x04 },
+    { 2, 0, 1, 0x03 },
+    { 1, 1, 0, 0x03 },
 };
 
 union AnimationStep snowman_bomb_anim_1[] = {
-    { 0x0001000C },
-    { 0x01010006 },
-    { 0x0201000C },
-    { 0x01010006 },
-    { 0x0001000C },
-    { 0x01010006 },
-    { 0x0201000C },
-    { 0x01010006 },
-    { 0x0001000B },
-    { 0x0000010C },
+    { 12, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 12, 0, 1, 0x02 },
+    { 6, 0, 1, 0x01 },
+    { 12, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 12, 0, 1, 0x02 },
+    { 6, 0, 1, 0x01 },
+    { 11, 0, 1, 0x00 },
+    { 12, 1, 0, 0x00 },
 };
 
 union AnimationStep snowman_bomb_anim_2[] = {
-    { 0x06010005 },
-    { 0x07010004 },
-    { 0x08010004 },
-    { 0x07010204 },
-    { 0x0901003C },
-    { 0x0A010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0901001D },
-    { 0x09000101 },
+    { 5, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x08 },
+    { 4, 2, 1, 0x07 },
+    { 60, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 29, 0, 1, 0x09 },
+    { 1, 1, 0, 0x09 },
 };
 
 union AnimationStep snowman_bomb_anim_3[] = {
-    { 0x0B000101 },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep snowman_bomb_anim_4[] = {
-    { 0x0C000101 },
+    { 1, 1, 0, 0x0C },
 };
 
 union AnimationStep snowman_bomb_anim_5[] = {
-    { 0x0D000101 },
+    { 1, 1, 0, 0x0D },
 };
 
 union AnimationStep snowman_bomb_anim_6[] = {
-    { 0x0E000101 },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep* snowman_bomb_animations[7] = {

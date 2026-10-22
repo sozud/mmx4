@@ -7,6 +7,7 @@
 
 void owner_fx_init(struct MiscObj*);
 void owner_fx_animate(struct MiscObj*);
+#include "weapon_resources.h"
 
 void owner_fx_update(struct MiscObj* self)
 {
@@ -24,7 +25,7 @@ void owner_fx_init(struct MiscObj* self)
     self->animation_table = (u32**)self->ext.misc_9.owner->animation_table;
     self->unk40 = self->ext.misc_9.owner->unk40;
     self->unk42 = self->ext.misc_9.owner->unk42 & 0x7FFF;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->bg_offset = (s8)(u8)self->ext.misc_9.owner->bg_offset;
     set_animation(self, self->unk2);
     self->state = (u8)self->state + 1;

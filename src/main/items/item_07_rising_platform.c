@@ -10,6 +10,7 @@
 #include "main/collision.h"
 #include "main/misc/misc_02_rubble.h"
 #include "main/object_motion.h"
+#include "weapon_resources.h"
 
 struct Item06AnimationStep {
     u8 duration;
@@ -18,7 +19,7 @@ struct Item06AnimationStep {
     u8 command;
 };
 
-u16 rising_platform_start_y[2] = { 0x1028, 0x1028 };
+u8 rising_platform_start_y[4] = { 0x28, 0x10, 0x28, 0x10 };
 
 extern struct Item06AnimationStep rising_platform_anim_steps[5];
 
@@ -37,9 +38,9 @@ void func_800C16F0(struct ItemObj* self)
     self->bg_offset = g_Player.bg_offset;
     resource = func_8002938C(0x87);
     self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    self->unk40 = D_801406A8[func_8002938C(0x87)] >> 7;
-    self->unk42 = CLUT_FROM_ID(0x87);
-    self->unk16 = 6;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x87));
+    self->unk42 = OBJECT_STAGE_CLUT(0x87);
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = 0;
     self->unk68 = (struct Unk_unk68*)rising_platform_start_y;
     set_animation(ANIMATED_OBJECT(self), 0);
@@ -59,7 +60,7 @@ void rising_platform_rise(struct ItemObj* self)
     CollisionRelated(PLAYER_OBJECT(self));
     if (self->unk70 & 4) {
         if (self->on_screen != 0) {
-            func_8001540C(5, 2, self);
+            func_8001540C(5, SATURN_SOUND(2, 0x24), self);
             spawn_debris_offset(8, rising_platform_debris[0], MISC_OBJECT(self), FIXED(40), FIXED(8));
         }
         self->state++;

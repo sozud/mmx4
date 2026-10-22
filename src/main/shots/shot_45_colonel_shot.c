@@ -6,10 +6,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // colonel_shot_state_funcs
 extern void (*colonel_shot_state_funcs[])(struct ShotObj*);
@@ -54,6 +51,11 @@ void colonel_slash_wait(struct ShotObj*);
 extern void (*colonel_shockwave_funcs[])(struct ShotObj*);
 
 void colonel_shockwave_spread(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 s16 colonel_wave_offsets[2][2] = {
     { 0x45, -0x12 },
@@ -138,13 +140,14 @@ void colonel_wave(struct ShotObj* self)
 }
 
 // colonel_wave_start
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A7CE8(struct ShotObj* arg0);
 void func_800A83C4(struct ShotObj* arg0);
 void func_800A858C(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A7CE8(struct ShotObj* arg0)
 {
     s32 speed;
@@ -198,7 +201,7 @@ void colonel_streak_start(struct ShotObj* arg)
     self->unk60 = 6;
     if (self->unk2 != 0) {
         self->x_vel.val = FIXED(6);
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->x_vel.val = FIXED(-6);
         self->unk15 = 0;
@@ -314,7 +317,7 @@ void colonel_bolt_start(struct ShotObj* self)
     self->unk54 = NULL;
     self->unk50.data = (const u8*)colonel_shot_boxes[10];
     if (self->unk2 == 0) {
-        func_8001540C(2, 0xD7, self);
+        func_8001540C(2, SATURN_SOUND(0xD7, 0x99), self);
     }
     self->unk6++;
 }
@@ -363,7 +366,7 @@ void colonel_shockwave(struct ShotObj* self)
 }
 
 // colonel_shockwave_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A83C4(struct ShotObj* arg0)
 {
     u8 kind;
@@ -422,7 +425,7 @@ void colonel_shockwave_spread(struct ShotObj* self)
 }
 
 // colonel_shockwave_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A858C(struct ShotObj* arg0)
 {
     static const u8 bounds[6] = { 2, 3, 4, 6, 7, 8 };

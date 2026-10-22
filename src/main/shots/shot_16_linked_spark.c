@@ -4,13 +4,18 @@
 #include "main/shots/shot_16_linked_spark.h"
 #include "main/55C4.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/1E1BC.h"
-#endif
 
 // linked_spark_state_funcs
 extern void (*linked_spark_state_funcs[])(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/1E1BC.h"
+#endif
+
+extern u8* turret_laser_beam_boxes[12];
+extern u8 turret_laser_full_beam_box[4];
 
 void linked_spark_update(struct ShotObj* self)
 {
@@ -27,7 +32,7 @@ void linked_spark_init(struct ShotObj* rawArg0)
     arg0->on_screen = value;
     arg0->unk5C = value;
     value = arg0->unk2;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk68 = 0;
     arg0->unk54 = 0;
     arg0->unk50.data = 0;
@@ -40,7 +45,7 @@ void linked_spark_init(struct ShotObj* rawArg0)
         break;
     case 1:
         arg0->unk84.value = 6;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         break;
     case 2:
         arg0->unk84.value = 9;
@@ -54,15 +59,14 @@ void linked_spark_init(struct ShotObj* rawArg0)
 }
 
 // linked_spark_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C45C(struct ShotObj* self);
 extern u8 turret_laser_full_beam_box[4];
 extern u8* turret_laser_beam_boxes[12];
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_16_linked_spark.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009C45C(struct ShotObj* self)
 {
     struct WeaponObj* owner = self->unk7C;

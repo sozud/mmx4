@@ -1,14 +1,16 @@
 // MainObj, main_object_update_funcs[21]
 // 80054C50..80054FE8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_21_falling_icicle.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -46,7 +48,7 @@ void falling_icicle_init(struct MainObj* arg0)
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (const u8* const*)falling_icicle_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->hurt_box = &falling_icicle_body_box;
     self->attack_box = &falling_icicle_body_box;
     self->terrain_box = &falling_icicle_terrain_box;
@@ -69,13 +71,19 @@ void falling_icicle_init(struct MainObj* arg0)
 #endif
 
 // falling_icicle_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+ret_s8 func_8002DD04(struct MainObj* object);
+s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80054D8C(struct MainObj* arg0);
 extern void (*falling_icicle_step_funcs[])(struct MainObj*);
 extern u8 falling_icicle_debris[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80054D8C(struct MainObj* arg0)
 {
     s32 collision;
@@ -89,7 +97,7 @@ void func_80054D8C(struct MainObj* arg0)
     if (collision < 0 || func_8002BB80(arg0, MAIN_OBJECT(&g_Player)) != 0 || (arg0->collision_flags & 8)) {
         set_animation(arg0, 4);
         spawn_debris(3, falling_icicle_debris, arg0);
-        func_8001540C(5, 1, NULL);
+        func_8001540C(5, SATURN_SOUND(1, 0x23), NULL);
         arg0->state = 2;
         return;
     }
@@ -148,28 +156,28 @@ void falling_icicle_resume_step(struct MainObj* self)
 }
 
 union AnimationStep falling_icicle_anim_0[] = {
-    { 0x01010003 },
-    { 0x02010005 },
-    { 0x03010003 },
-    { 0x00000150 },
+    { 3, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 80, 1, 0, 0x00 },
 };
 
 union AnimationStep falling_icicle_anim_1[] = {
-    { 0x04000001 },
+    { 1, 0, 0, 0x04 },
 };
 
 union AnimationStep falling_icicle_anim_2[] = {
-    { 0x05000001 },
+    { 1, 0, 0, 0x05 },
 };
 
 union AnimationStep falling_icicle_anim_3[] = {
-    { 0x06000001 },
+    { 1, 0, 0, 0x06 },
 };
 
 union AnimationStep falling_icicle_anim_4[] = {
-    { 0x07010006 },
-    { 0x08010006 },
-    { 0x09000106 },
+    { 6, 0, 1, 0x07 },
+    { 6, 0, 1, 0x08 },
+    { 6, 1, 0, 0x09 },
 };
 
 union AnimationStep* falling_icicle_animations[5] = {

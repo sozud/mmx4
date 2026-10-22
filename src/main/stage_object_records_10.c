@@ -1,10 +1,11 @@
 #include "common.h"
+#include "main/effects/effect_03_palette_animator.h"
 
-s8 D_800F81A4[16] = { 0, 6, 1, 3, 2, 3, 3, 6, 4, 6, 5, 32, 0, -6, 0, 0 };
+s8 D_800F81A4[] = { 0, 6, 1, 3, 2, 3, 3, 6, 4, 6, 5, 32, 0, -6 };
 
-s8 D_800F81B4[12] = { 6, 10, 8, 10, 10, 10, 12, 127, 0, -4, 0, 0 };
+s8 D_800F81B4[] = { 6, 10, 8, 10, 10, 10, 12, 127, 0, -4 };
 
-s8 D_800F81C0[12] = { 14, 127, 16, 10, 18, 10, 20, 10, 0, -4, 0, 0 };
+s8 D_800F81C0[] = { 14, 127, 16, 10, 18, 10, 20, 10, 0, -4 };
 
 s8* palette_animator_scripts_s10_0[3] = {
     D_800F81A4,
@@ -12,9 +13,13 @@ s8* palette_animator_scripts_s10_0[3] = {
     D_800F81C0,
 };
 
-u16 palette_animator_timings_s10_0[4] = { 0x153, 0x246, 0x26A, 0x0 };
+struct PaletteAnimatorTarget palette_animator_timings_s10_0[3] = {
+    { 0x53, 0x01 },
+    { 0x46, 0x02 },
+    { 0x6A, 0x02 },
+};
 
-u8 D_800F81E0[12] = {
+u8 D_800F81E0[] = {
     0x80,
     0x02,
     0x1B,
@@ -26,7 +31,6 @@ u8 D_800F81E0[12] = {
     0x91,
     0x92,
     0xFF,
-    0x00,
 };
 
 struct StageObjectRecord stage_object_records_10_0[62] = {

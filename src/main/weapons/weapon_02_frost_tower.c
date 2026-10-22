@@ -48,6 +48,12 @@ void frost_tower_charged_part_main(struct WeaponObj*);
 void frost_tower_despawn(struct WeaponObj*);
 void frost_tower_despawn(struct WeaponObj*);
 
+extern struct Unk_unk68 frost_tower_hit_box[];
+extern u16 frost_tower_charged_part_offsets[];
+void frost_tower_charged_spawn_part(s8 arg0);
+
+#include "weapon_resources.h"
+
 void frost_tower_update(struct WeaponObj* arg0)
 {
     s32 should_change_state;
@@ -77,19 +83,19 @@ void frost_tower_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80093D78(struct WeaponObj* arg0);
 void func_80094280(struct WeaponObj* arg0);
 void func_800942E8(struct WeaponObj* arg0);
 void func_800944B8(struct WeaponObj* arg0);
 extern struct Unk_unk68 frost_tower_hit_box[];
-extern u32* D_8011C094[];
 extern u16 frost_tower_charged_part_offsets[];
 void frost_tower_charged_spawn_part(s8 arg0);
 void frost_tower_hide(struct WeaponObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80093D78(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -100,8 +106,8 @@ void func_80093D78(struct WeaponObj* arg0)
     arg0->unk50 = frost_tower_hit_box;
     arg0->unk38 = (u8*)player_gfx + player_gfx[3];
     arg0->animation_table = D_8011C094;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 3;
     arg0->unk15 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xB];
@@ -132,7 +138,7 @@ void frost_tower_main(struct WeaponObj* arg0)
 
     if (func_8002B1E8(BASE_OBJECT(arg0), 0x28, 0x38) == 0) {
         if (ext->lifetime == 0) {
-            func_8001540C(0, 0x1A, arg0);
+            func_8001540C(0, WEAPON_SOUND_FROST, arg0);
             for (i = 0; i < 8U; i++) {
                 frost_tower_spawn_shard(arg0);
             }
@@ -159,7 +165,7 @@ void frost_tower_form(struct WeaponObj* arg0)
 {
     if (arg0->animation_step.fields.event & 0x40) {
         arg0->animation_step.fields.event = 0;
-        func_8001540C(0, 0x1A, arg0);
+        func_8001540C(0, WEAPON_SOUND_FROST, arg0);
     }
     if (arg0->animation_step.fields.event & 0x80) {
         arg0->animation_step.fields.event = 0;
@@ -186,7 +192,7 @@ void frost_tower_fall(struct WeaponObj* arg0)
     u32 i;
 
     if (arg0->unk70 & 8) {
-        func_8001540C(0, 0x1A, arg0);
+        func_8001540C(0, WEAPON_SOUND_FROST, arg0);
         arg0->unk67 = 0;
         i = 0;
         do {
@@ -259,12 +265,12 @@ void frost_tower_charged_update(struct WeaponObj* arg0)
 }
 
 // frost_tower_charged_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80094280(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
 
-    arg0->unk40 = 0x520;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
     arg0->previous_animation_index = 0xFF;
     arg0->state++;
     arg0->animation_step.fields.frame_index = 9;
@@ -279,7 +285,7 @@ INCLUDE_ASM("main/nonmatchings/weapons/weapon_02_frost_tower", func_80094280);
 #endif
 
 // frost_tower_charged_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800942E8(struct WeaponObj* arg0)
 {
     s32 strength = 0x20;
@@ -310,7 +316,7 @@ void func_800942E8(struct WeaponObj* arg0)
         strength = 0x40;
         break;
     }
-    func_8001540C(0, 0x1A, 0);
+    func_8001540C(0, WEAPON_SOUND_FROST, 0);
     start_screen_shake_x(strength, 8, 1);
     if (++arg0->ext.raw[3] == 4)
         frost_tower_hide(arg0);
@@ -335,7 +341,7 @@ void frost_tower_charged_spawn_part(s8 arg0)
 }
 
 // frost_tower_charged_part_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800944B8(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -346,8 +352,8 @@ void func_800944B8(struct WeaponObj* arg0)
     arg0->on_screen = 1;
     arg0->unk38 = (u8*)player_gfx + player_gfx[3];
     arg0->animation_table = D_8011C094;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
     arg0->unk15 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xB];
@@ -432,8 +438,8 @@ void frost_shard_init(struct MiscObj* arg0)
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk3C = (u8*)sprite_frames + (sprite_frames[0x2C / 4]);
     arg0->animation_table = D_8011C094;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0;
     set_animation(arg0, (get_random() & 3) + 2);
 }
@@ -455,8 +461,8 @@ void frost_sparkle_init(struct MiscObj* arg0)
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[6];
     arg0->animation_table = D_8011C018;
-    arg0->unk40 = 0;
-    arg0->unk42 = 0x7802;
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
+    arg0->unk42 = WEAPON_PALETTE_2;
     arg0->unk16 = 0;
     set_animation(arg0, frost_sparkle_animations[get_random() & 7]);
 }
@@ -480,7 +486,7 @@ void frost_particle_launch(struct MiscObj* self)
     if (get_random() & 1) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 
     self->x_vel.val = frost_particle_x_vels[get_random() & 7];

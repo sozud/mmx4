@@ -8,10 +8,7 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/stage_objects.h"
-
-#ifdef MMX4_PC
 #include "main/55C4.h"
-#endif
 
 // trooper_bomb_state_funcs
 extern void (*trooper_bomb_state_funcs[])(struct ShotObj*);
@@ -19,6 +16,11 @@ extern void (*trooper_bomb_state_funcs[])(struct ShotObj*);
 void trooper_bomb_fall(struct ShotObj*);
 void trooper_bomb_explode(struct ShotObj*);
 void trooper_bomb_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/55C4.h"
+#endif
 
 u8 trooper_bomb_terrain_box[4] = { 0, 0, 4, 4 };
 u8 trooper_bomb_debris[8] = { 3, 5, 4, 6, 4, 6, 3, 5 };
@@ -31,11 +33,12 @@ void trooper_bomb_update(struct ShotObj* self)
 }
 
 // trooper_bomb_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009CCB4(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009CCB4(struct ShotObj* arg0)
 {
     arg0->unk68 = (struct Unk_unk68*)trooper_bomb_terrain_box;
@@ -79,7 +82,7 @@ void trooper_bomb_explode(struct ShotObj* self)
         if (self->unk84.value == 0x20) {
             self->unk7C->unk1C.bytes[0] = 1;
         }
-        if (!(main_bss_state.frame_counter & 7)) {
+        if (!(WEAPON_FRAME_COUNTER & 7)) {
             if (self->unk84.value >= 0x34) {
                 func_800C842C(8, trooper_bomb_debris, self, 0x28, train_crate_animations);
                 self->x_pos.i.hi += 0x20;

@@ -1,14 +1,16 @@
 // MainObj, main_object_update_funcs[0]
 // 80040608..80042120
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_00_background_dragon.h"
 #include "main/objects.h"
 #include "main/55C4.h"
 #include "main/CB184.h"
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
+#include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/visuals/visual_03_small_effect.h"
 #endif
@@ -44,7 +46,12 @@ void background_dragon_update(struct MainObj* self)
 }
 
 // background_dragon_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040644(struct MainObj* arg0);
 void func_80040838(struct MainObj* arg0);
 void func_800419B8(struct MainObj* arg0);
@@ -61,7 +68,7 @@ extern u8 background_dragon_attack_map[128];
 extern u16 D_800F99BC[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040644(struct MainObj* arg0)
 {
     u8* ext = (u8*)&arg0->ext;
@@ -138,7 +145,7 @@ void background_dragon_reset(struct MainObj* self)
 }
 
 // background_dragon_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040838(struct MainObj* arg0)
 {
     u8* ext = (u8*)&arg0->ext;
@@ -193,7 +200,7 @@ void func_80040838(struct MainObj* arg0)
 
     blocked = get_random_nonzero() & 1;
     if (!blocked && ext[5] == 2) {
-        spawn = ((u8)main_bss_state.frame_counter ^ 1) & 1;
+        spawn = ((u8)WEAPON_FRAME_COUNTER ^ 1) & 1;
         x = arg0->x_pos.i.hi;
         offset_index = (get_random() & 0x1F) % (COUNT(D_800F98EC) / 2);
         if (arg0->unk15 != 0) {
@@ -234,7 +241,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040838);
 #endif
 
 // background_dragon_pick_step
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_80040ABC(struct MainObj* arg0)
 {
     u8* ext = (u8*)&arg0->ext;
@@ -320,7 +327,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_00_background_dragon", func_80040ABC);
 #endif
 
 // background_dragon_hover
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80040CCC(struct MainObj* arg0)
 {
     s32 distance;
@@ -344,7 +351,7 @@ void func_80040CCC(struct MainObj* arg0)
     move_object(MOVING_OBJECT(arg0));
     update_on_screen(BASE_OBJECT(arg0), 0x90, 0x90);
 
-    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? 0x40 : 0;
+    arg0->unk15 = g_Player.x_pos.i.hi < arg0->x_pos.i.hi ? PLAYER_FACING_RIGHT : 0;
     if (arg0->animation_step.fields.relative_step < 0) {
         arg0->unk5 = func_80040ABC(arg0);
     }
@@ -374,7 +381,7 @@ void background_dragon_fireball_begin(struct MainObj* self)
         update_on_screen((struct BaseObj*)self, 0x90, 0x90);
     } else {
         if (x_pos_hi > 0xC40) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         self->unk6++;
         self->y_pos.val = FIXED(368);
@@ -448,7 +455,7 @@ void background_dragon_fireball(struct MainObj* self)
 }
 
 // background_dragon_projectile_attack_begin
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80041060(struct MainObj* arg0)
 {
     s32 velocity;
@@ -636,7 +643,7 @@ void background_dragon_sequence_begin(struct MainObj* self)
 }
 
 // background_dragon_swoop
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800415B0(struct MainObj* arg0)
 {
     s32 offset = engine_obj.cur_character == 0 ? 0x480000 : 0x4A0000;
@@ -756,7 +763,7 @@ void background_dragon_sequence(struct MainObj* self)
 }
 
 // background_dragon_chase
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800419B8(struct MainObj* arg0)
 {
     s32 distance;
@@ -899,7 +906,7 @@ void background_dragon_fly_offscreen(struct MainObj* self)
         set_animation(self, 6);
 
         if ((self->unk2 == 2 || self->unk2 == 3)) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk15 = 0;
         }
@@ -928,7 +935,7 @@ void background_dragon_fly_to_staging_position(struct MainObj* self)
         self->unk16 = 0x22;
         self->unk5 = 0xA;
         if ((self->unk2 == 2 || self->unk2 == 3)) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk15 = 0;
         }
@@ -960,91 +967,91 @@ void background_dragon_cleanup(struct MainObj* self)
 }
 
 union AnimationStep D_800F96F4[] = {
-    { 0x0001FF10 },
-    { 0x01010108 },
-    { 0x02010110 },
-    { 0x01FDFF08 },
+    { 16, -1, 1, 0x00 },
+    { 8, 1, 1, 0x01 },
+    { 16, 1, 1, 0x02 },
+    { 8, -1, -3, 0x01 },
 };
 
 union AnimationStep D_800F9704[] = {
-    { 0x00010008 },
-    { 0x03010003 },
-    { 0x04010003 },
-    { 0x0501000A },
-    { 0x06010019 },
-    { 0x0601030F },
-    { 0x07010102 },
-    { 0x08010213 },
-    { 0x08F80001 },
+    { 8, 0, 1, 0x00 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 10, 0, 1, 0x05 },
+    { 25, 0, 1, 0x06 },
+    { 15, 3, 1, 0x06 },
+    { 2, 1, 1, 0x07 },
+    { 19, 2, 1, 0x08 },
+    { 1, 0, -8, 0x08 },
 };
 
 union AnimationStep D_800F9728[] = {
-    { 0x09010105 },
-    { 0x0A010010 },
-    { 0x0AFE0001 },
+    { 5, 1, 1, 0x09 },
+    { 16, 0, 1, 0x0A },
+    { 1, 0, -2, 0x0A },
 };
 
 union AnimationStep D_800F9734[] = {
-    { 0x00010008 },
-    { 0x0B01000A },
-    { 0x0C010003 },
-    { 0x0D010004 },
-    { 0x0E010019 },
-    { 0x0F010102 },
-    { 0x10010028 },
-    { 0x10F90001 },
+    { 8, 0, 1, 0x00 },
+    { 10, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 4, 0, 1, 0x0D },
+    { 25, 0, 1, 0x0E },
+    { 2, 1, 1, 0x0F },
+    { 40, 0, 1, 0x10 },
+    { 1, 0, -7, 0x10 },
 };
 
 union AnimationStep D_800F9754[] = {
-    { 0x11010105 },
-    { 0x12010025 },
-    { 0x12FE0001 },
+    { 5, 1, 1, 0x11 },
+    { 37, 0, 1, 0x12 },
+    { 1, 0, -2, 0x12 },
 };
 
 union AnimationStep D_800F9760[] = {
-    { 0x13010008 },
-    { 0x14010008 },
-    { 0x15010008 },
-    { 0x16010008 },
-    { 0x17010008 },
-    { 0x18FB0108 },
+    { 8, 0, 1, 0x13 },
+    { 8, 0, 1, 0x14 },
+    { 8, 0, 1, 0x15 },
+    { 8, 0, 1, 0x16 },
+    { 8, 0, 1, 0x17 },
+    { 8, 1, -5, 0x18 },
 };
 
 union AnimationStep D_800F9778[] = {
-    { 0x19010008 },
-    { 0x1A010008 },
-    { 0x1B010008 },
-    { 0x1CFD0008 },
+    { 8, 0, 1, 0x19 },
+    { 8, 0, 1, 0x1A },
+    { 8, 0, 1, 0x1B },
+    { 8, 0, -3, 0x1C },
 };
 
 union AnimationStep D_800F9788[] = {
-    { 0x1B010003 },
-    { 0x1D010003 },
-    { 0x1E010003 },
-    { 0x1F010136 },
-    { 0x1F010003 },
-    { 0x1E010203 },
-    { 0x1F010014 },
-    { 0x1F010003 },
-    { 0x1E010303 },
-    { 0x1F010013 },
-    { 0x1FF30001 },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, 1, 0x1E },
+    { 54, 1, 1, 0x1F },
+    { 3, 0, 1, 0x1F },
+    { 3, 2, 1, 0x1E },
+    { 20, 0, 1, 0x1F },
+    { 3, 0, 1, 0x1F },
+    { 3, 3, 1, 0x1E },
+    { 19, 0, 1, 0x1F },
+    { 1, 0, -13, 0x1F },
 };
 
 union AnimationStep D_800F97B4[] = {
-    { 0x20010003 },
-    { 0x21010003 },
-    { 0x22010003 },
-    { 0x23010003 },
-    { 0x24010003 },
-    { 0x25010003 },
-    { 0x20010003 },
-    { 0x21010003 },
-    { 0x22010003 },
-    { 0x23010003 },
-    { 0x24010003 },
-    { 0x25010002 },
-    { 0x25EE0001 },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 1, 0, -18, 0x25 },
 };
 
 #if defined(MMX4_PC) && !defined(MMX4_WIN32)
@@ -1054,38 +1061,38 @@ static struct {
     union AnimationStep D_800F97B4[13];
 } background_dragon_anim_run = {
     {
-        { 0x19010008 },
-        { 0x1A010008 },
-        { 0x1B010008 },
-        { 0x1CFD0008 },
+        { 8, 0, 1, 0x19 },
+        { 8, 0, 1, 0x1A },
+        { 8, 0, 1, 0x1B },
+        { 8, 0, -3, 0x1C },
     },
     {
-        { 0x1B010003 },
-        { 0x1D010003 },
-        { 0x1E010003 },
-        { 0x1F010136 },
-        { 0x1F010003 },
-        { 0x1E010203 },
-        { 0x1F010014 },
-        { 0x1F010003 },
-        { 0x1E010303 },
-        { 0x1F010013 },
-        { 0x1FF30001 },
+        { 3, 0, 1, 0x1B },
+        { 3, 0, 1, 0x1D },
+        { 3, 0, 1, 0x1E },
+        { 54, 1, 1, 0x1F },
+        { 3, 0, 1, 0x1F },
+        { 3, 2, 1, 0x1E },
+        { 20, 0, 1, 0x1F },
+        { 3, 0, 1, 0x1F },
+        { 3, 3, 1, 0x1E },
+        { 19, 0, 1, 0x1F },
+        { 1, 0, -13, 0x1F },
     },
     {
-        { 0x20010003 },
-        { 0x21010003 },
-        { 0x22010003 },
-        { 0x23010003 },
-        { 0x24010003 },
-        { 0x25010003 },
-        { 0x20010003 },
-        { 0x21010003 },
-        { 0x22010003 },
-        { 0x23010003 },
-        { 0x24010003 },
-        { 0x25010002 },
-        { 0x25EE0001 },
+        { 3, 0, 1, 0x20 },
+        { 3, 0, 1, 0x21 },
+        { 3, 0, 1, 0x22 },
+        { 3, 0, 1, 0x23 },
+        { 3, 0, 1, 0x24 },
+        { 3, 0, 1, 0x25 },
+        { 3, 0, 1, 0x20 },
+        { 3, 0, 1, 0x21 },
+        { 3, 0, 1, 0x22 },
+        { 3, 0, 1, 0x23 },
+        { 3, 0, 1, 0x24 },
+        { 2, 0, 1, 0x25 },
+        { 1, 0, -18, 0x25 },
     },
 };
 #define D_800F9778 background_dragon_anim_run.D_800F9778
@@ -1094,57 +1101,57 @@ static struct {
 #endif
 
 union AnimationStep D_800F97E8[] = {
-    { 0x1F010003 },
-    { 0x1E010003 },
-    { 0x1FFE0014 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x1E },
+    { 20, 0, -2, 0x1F },
 };
 
 union AnimationStep D_800F97F4[] = {
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x28010002 },
-    { 0x29FD0002 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, -3, 0x29 },
 };
 
 union AnimationStep D_800F9804[] = {
-    { 0x2A010001 },
-    { 0x2B010003 },
-    { 0x2C010003 },
-    { 0x2D010003 },
-    { 0x2E010003 },
-    { 0x2FFB0003 },
+    { 1, 0, 1, 0x2A },
+    { 3, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 3, 0, 1, 0x2D },
+    { 3, 0, 1, 0x2E },
+    { 3, 0, -5, 0x2F },
 };
 
 union AnimationStep D_800F981C[] = {
-    { 0x31010003 },
-    { 0x3201003C },
-    { 0x31010002 },
-    { 0x31FD0001 },
+    { 3, 0, 1, 0x31 },
+    { 60, 0, 1, 0x32 },
+    { 2, 0, 1, 0x31 },
+    { 1, 0, -3, 0x31 },
 };
 
 union AnimationStep D_800F982C[] = {
-    { 0x30010103 },
-    { 0x30010103 },
-    { 0x3001003C },
-    { 0x30010203 },
-    { 0x30010202 },
-    { 0x30FF0201 },
+    { 3, 1, 1, 0x30 },
+    { 3, 1, 1, 0x30 },
+    { 60, 0, 1, 0x30 },
+    { 3, 2, 1, 0x30 },
+    { 2, 2, 1, 0x30 },
+    { 1, 2, -1, 0x30 },
 };
 
 union AnimationStep D_800F9844[] = {
-    { 0x31010003 },
-    { 0x32010003 },
-    { 0x3301003C },
-    { 0x32010003 },
-    { 0x31010002 },
-    { 0x31FB0001 },
+    { 3, 0, 1, 0x31 },
+    { 3, 0, 1, 0x32 },
+    { 60, 0, 1, 0x33 },
+    { 3, 0, 1, 0x32 },
+    { 2, 0, 1, 0x31 },
+    { 1, 0, -5, 0x31 },
 };
 
 union AnimationStep D_800F985C[] = {
-    { 0x30010103 },
-    { 0x3001003C },
-    { 0x30010202 },
-    { 0x30FF0201 },
+    { 3, 1, 1, 0x30 },
+    { 60, 0, 1, 0x30 },
+    { 2, 2, 1, 0x30 },
+    { 1, 2, -1, 0x30 },
 };
 
 u8 background_dragon_attack_map[128] = {

@@ -6,16 +6,16 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 
-extern void (*select_char_portrait_funcs[4])();
-extern void (*g_SelectACharacterUpdateFuncs[3])();
+extern void (*select_char_portrait_funcs[4])(struct MiscObj*);
+extern void (*g_SelectACharacterUpdateFuncs[3])(struct MiscObj*);
 
 extern u8 select_char_palettes[16];
 
-extern void (*select_char_subtype_funcs[16])();
-extern void (*select_char_scroll_text_funcs[])();
-extern void (*select_char_selector_funcs[])();
+extern void (*select_char_subtype_funcs[16])(struct MiscObj*);
+extern void (*select_char_scroll_text_funcs[])(struct MiscObj*);
+extern void (*select_char_selector_funcs[])(struct MiscObj*);
 
-extern void (*select_char_character_funcs[])();
+extern void (*select_char_character_funcs[])(struct MiscObj*);
 
 // select_char_portrait_funcs
 void select_char_portrait_slide_in(struct MiscObj* arg0);
@@ -48,6 +48,7 @@ void select_char_character_exit(struct MiscObj* arg0);
 
 void select_char_main(struct MiscObj* arg0);
 void select_char_despawn(struct MiscObj* arg0);
+#include "weapon_resources.h"
 
 enum SubTypes {
     X_PORTRAIT,
@@ -56,7 +57,7 @@ enum SubTypes {
     PLAYER_SELECT_LOWER,
     SELECTOR = 6,
     X_CHARACTER,
-    ZERO_CHARACTER,
+    ZERO_CHARACTER
 };
 
 // SelectACharacterUpdate state 0
@@ -73,24 +74,24 @@ void select_char_init(struct MiscObj* self)
     case 0:
     case 2:
     case 3:
-        self->unk40 = D_801406A8[2] >> 7;
+        self->unk40 = OBJECT_STAGE_TEXTURE(2);
         self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[2];
-        self->unk42 = 0x7840;
+        self->unk42 = OBJECT_CLUT(0x7840);
         self->animation_table = select_char_x_animations;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         break;
     case 1:
     case 4:
-        self->unk40 = D_801406A8[0] >> 7;
+        self->unk40 = OBJECT_STAGE_TEXTURE(0);
         self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0];
-        self->unk42 = 0x7800;
+        self->unk42 = OBJECT_CLUT(0x7800);
         self->animation_table = select_char_zero_animations;
         self->unk15 = 0;
         break;
     default:
-        self->unk40 = D_801406A8[1] >> 7;
+        self->unk40 = OBJECT_STAGE_TEXTURE(1);
         self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[1];
-        self->unk42 = (((select_char_palettes[self->unk2] * 4) + 4) % 16) | ((((select_char_palettes[self->unk2] + 1) / 4) + 0x1E0) << 6);
+        self->unk42 = OBJECT_CLUT((((select_char_palettes[self->unk2] * 4) + 4) % 16) | ((((select_char_palettes[self->unk2] + 1) / 4) + 0x1E0) << 6));
         self->animation_table = select_char_menu_animations;
         break;
     }
@@ -104,7 +105,7 @@ void select_char_init(struct MiscObj* self)
         self->x_pos.val = FIXED(select_char_text_positions[temp].x);
         self->y_pos.val = FIXED(select_char_text_positions[(self->unk2 - 0xC)].y);
     }
-    self->unk16 = select_char_priorities[self->unk2];
+    self->unk16 = VISUAL_SATURN_LAYER(select_char_priorities[self->unk2]);
     set_animation(self, select_char_initial_animations[self->unk2]);
     self->bg_offset = -1;
     self->x_vel.val = 0;
@@ -297,7 +298,7 @@ void select_char_selector_animate(struct MiscObj* self)
     animate_object(self);
     if (engine_obj.cur_character != self->ext.sel_char.cur_character_selected) {
         self->unk6 = 0;
-        func_8001540C(5, 0, NULL);
+        func_8001540C(SATURN_ALT(5, 0), SATURN_SOUND(0, 0x1B), NULL);
     }
     self->ext.sel_char.cur_character_selected = engine_obj.cur_character;
 }
@@ -490,161 +491,161 @@ void SelectACharacterUpdate(struct MiscObj* self)
     g_SelectACharacterUpdateFuncs[self->state](self);
 }
 
-u32 D_8010E968[1] = {
-    0x00000008,
+union AnimationStep D_8010E968[1] = {
+    { 8, 0, 0, 0x00 },
 };
 
-u32 D_8010E96C[8] = {
-    0x01010001,
-    0x02010001,
-    0x03010002,
-    0x04010002,
-    0x0501000c,
-    0x06010005,
-    0x07010004,
-    0x08000003,
+union AnimationStep D_8010E96C[8] = {
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 12, 0, 1, 0x05 },
+    { 5, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 3, 0, 0, 0x08 },
 };
 
-u32 D_8010E98C[7] = {
-    0x09010002,
-    0x0a010002,
-    0x0b010002,
-    0x0c010001,
-    0x0c010101,
-    0x0d010002,
-    0x0e000002,
+union AnimationStep D_8010E98C[7] = {
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0C },
+    { 1, 1, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 0, 0x0E },
 };
 
-u32 D_8010E9A8[3] = {
-    0x0f010103,
-    0x10010103,
-    0x11fe0103,
+union AnimationStep D_8010E9A8[3] = {
+    { 3, 1, 1, 0x0F },
+    { 3, 1, 1, 0x10 },
+    { 3, 1, -2, 0x11 },
 };
 
-u32 D_8010E9B4[2] = {
-    0x1201010a,
-    0x12000101,
+union AnimationStep D_8010E9B4[2] = {
+    { 10, 1, 1, 0x12 },
+    { 1, 1, 0, 0x12 },
 };
 
-u32 D_8010E9BC[5] = {
-    0x13010103,
-    0x14010103,
-    0x15010103,
-    0x16010103,
-    0x17000103,
+union AnimationStep D_8010E9BC[5] = {
+    { 3, 1, 1, 0x13 },
+    { 3, 1, 1, 0x14 },
+    { 3, 1, 1, 0x15 },
+    { 3, 1, 1, 0x16 },
+    { 3, 1, 0, 0x17 },
 };
 
-u32 D_8010E9D0[1] = {
-    0x18000103,
+union AnimationStep D_8010E9D0[1] = {
+    { 3, 1, 0, 0x18 },
 };
 
-u32 D_8010E9D4[1] = {
-    0x00000001,
+union AnimationStep D_8010E9D4[1] = {
+    { 1, 0, 0, 0x00 },
 };
 
-u32 D_8010E9D8[18] = {
-    0x01010004,
-    0x02010002,
-    0x03010101,
-    0x05010001,
-    0x07010002,
-    0x09010002,
-    0x0b010002,
-    0x0d010002,
-    0x0f010003,
-    0x11010003,
-    0x13010004,
-    0x15010002,
-    0x16010002,
-    0x17010002,
-    0x18010004,
-    0x19010006,
-    0x1a010004,
-    0x00000006,
+union AnimationStep D_8010E9D8[18] = {
+    { 4, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 1, 1, 1, 0x03 },
+    { 1, 0, 1, 0x05 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 1, 0x11 },
+    { 4, 0, 1, 0x13 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 4, 0, 1, 0x18 },
+    { 6, 0, 1, 0x19 },
+    { 4, 0, 1, 0x1A },
+    { 6, 0, 0, 0x00 },
 };
 
-u32 D_8010EA20[9] = {
-    0x04010001,
-    0x06010001,
-    0x08010002,
-    0x0a010002,
-    0x0c010002,
-    0x0e010002,
-    0x10010003,
-    0x12010003,
-    0x14000004,
+union AnimationStep D_8010EA20[9] = {
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x06 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0E },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x12 },
+    { 4, 0, 0, 0x14 },
 };
 
-u32 D_8010EA44[9] = {
-    0x00010001,
-    0x1b010001,
-    0x1c010001,
-    0x1d010001,
-    0x1e010001,
-    0x1f010003,
-    0x20010006,
-    0x21010011,
-    0x21000001,
+union AnimationStep D_8010EA44[9] = {
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1C },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 6, 0, 1, 0x20 },
+    { 17, 0, 1, 0x21 },
+    { 1, 0, 0, 0x21 },
 };
 
-u32 D_8010EA68[6] = {
-    0x1e010004,
-    0x22010003,
-    0x23010002,
-    0x24010002,
-    0x25010002,
-    0x26000002,
+union AnimationStep D_8010EA68[6] = {
+    { 4, 0, 1, 0x1E },
+    { 3, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 0, 0x26 },
 };
 
-u32 D_8010EA80[2] = {
-    0x27010002,
-    0x28ff0002,
+union AnimationStep D_8010EA80[2] = {
+    { 2, 0, 1, 0x27 },
+    { 2, 0, -1, 0x28 },
 };
 
-u32 D_8010EA88[1] = {
-    0x00000001,
+union AnimationStep D_8010EA88[1] = {
+    { 1, 0, 0, 0x00 },
 };
 
-u32 D_8010EA8C[1] = {
-    0x01000001,
+union AnimationStep D_8010EA8C[1] = {
+    { 1, 0, 0, 0x01 },
 };
 
-u32 D_8010EA90[1] = {
-    0x02000001,
+union AnimationStep D_8010EA90[1] = {
+    { 1, 0, 0, 0x02 },
 };
 
-u32 D_8010EA94[1] = {
-    0x03000001,
+union AnimationStep D_8010EA94[1] = {
+    { 1, 0, 0, 0x03 },
 };
 
-u32 D_8010EA98[1] = {
-    0x04000001,
+union AnimationStep D_8010EA98[1] = {
+    { 1, 0, 0, 0x04 },
 };
 
-u32 D_8010EA9C[1] = {
-    0x05000001,
+union AnimationStep D_8010EA9C[1] = {
+    { 1, 0, 0, 0x05 },
 };
 
-u32 D_8010EAA0[1] = {
-    0x06000001,
+union AnimationStep D_8010EAA0[1] = {
+    { 1, 0, 0, 0x06 },
 };
 
-u32 D_8010EAA4[1] = {
-    0x07000001,
+union AnimationStep D_8010EAA4[1] = {
+    { 1, 0, 0, 0x07 },
 };
 
-u32 D_8010EAA8[4] = {
-    0x08010003,
-    0x09010003,
-    0x08010003,
-    0x0afd0003,
+union AnimationStep D_8010EAA8[4] = {
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, -3, 0x0A },
 };
 
-u32 D_8010EAB8[4] = {
-    0x0b010003,
-    0x0c010003,
-    0x0b010003,
-    0x0dfd0003,
+union AnimationStep D_8010EAB8[4] = {
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, -3, 0x0D },
 };
 
 u32* select_char_x_animations[7] = {

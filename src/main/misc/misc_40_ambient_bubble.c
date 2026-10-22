@@ -18,9 +18,11 @@ extern void (*ambient_bubble_state_funcs[])(struct MiscObj*);
 
 void ambient_bubble_main(struct MiscObj*);
 void ambient_bubble_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 // ambient_bubble_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CFB70(struct MiscObj* arg0);
 void func_800CFC6C(struct MiscObj* arg0);
 extern union AnimationStep* ambient_bubble_animations[3];
@@ -31,19 +33,19 @@ extern u16 ambient_bubble_respawn_delays[4];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CFB70(struct MiscObj* arg0)
 {
     u8 resource = func_8002938C(0x9F);
 
     arg0->active |= 0x40;
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk40 = D_801406A8[resource] >> 7;
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(resource);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk42 = VISUAL_STAGE_PALETTE(resource);
     arg0->animation_table = (u32**)ambient_bubble_animations;
     arg0->unk16 = 0x20;
     arg0->bg_offset = 1;
-    arg0->unk15 = 0x40;
+    arg0->unk15 = PLAYER_FACING_RIGHT;
     arg0->state++;
     arg0->unk2 &= 3;
     arg0->ext.misc_24.timer = ambient_bubble_respawn_delays[arg0->unk2];
@@ -53,7 +55,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_40_ambient_bubble", func_800CFB70);
 #endif
 
 // ambient_bubble_wait
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CFC6C(struct MiscObj* arg0)
 {
     if (arg0->ext.misc_24.timer != 0) {
@@ -108,22 +110,22 @@ void ambient_bubble_update(struct MiscObj* self)
 }
 
 union AnimationStep ambient_bubble_anim_0[4] = {
-    { 0x0001000E },
-    { 0x0101000E },
-    { 0x0201000E },
-    { 0x01FD000E },
+    { 14, 0, 1, 0x00 },
+    { 14, 0, 1, 0x01 },
+    { 14, 0, 1, 0x02 },
+    { 14, 0, -3, 0x01 },
 };
 
 union AnimationStep ambient_bubble_anim_1[3] = {
-    { 0x0001000E },
-    { 0x0101000E },
-    { 0x0200000E },
+    { 14, 0, 1, 0x00 },
+    { 14, 0, 1, 0x01 },
+    { 14, 0, 0, 0x02 },
 };
 
 union AnimationStep ambient_bubble_anim_2[3] = {
-    { 0x0201000E },
-    { 0x0101000E },
-    { 0x0000000E },
+    { 14, 0, 1, 0x02 },
+    { 14, 0, 1, 0x01 },
+    { 14, 0, 0, 0x00 },
 };
 
 union AnimationStep* ambient_bubble_animations[3] = {

@@ -10,6 +10,39 @@
 #include "main/game_info.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#define BRIEFING_PAD_PRESSED saturn_pad_pressed
+#define BRIEFING_PAD_HELD saturn_pad_held
+#define BRIEFING_PAD_UP SATURN_PAD_UP
+#define BRIEFING_PAD_DOWN SATURN_PAD_DOWN
+#define BRIEFING_PAD_LEFT SATURN_PAD_LEFT
+#define BRIEFING_PAD_RIGHT SATURN_PAD_RIGHT
+#define BRIEFING_PAD_CONFIRM (SATURN_PAD_START | SATURN_PAD_CONFIRM)
+#define BRIEFING_CURSOR_SOUND() func_8001540C(0, 0x18, 0)
+#define BRIEFING_SELECT_SOUND() func_8001540C(0, 0x19, 0)
+#else
+#define BRIEFING_PAD_PRESSED controller_input.pressed
+#define BRIEFING_PAD_HELD controller_input.held
+#define BRIEFING_PAD_UP PADLup
+#define BRIEFING_PAD_DOWN PADLdown
+#define BRIEFING_PAD_LEFT PADLleft
+#define BRIEFING_PAD_RIGHT PADLright
+#define BRIEFING_PAD_CONFIRM (PADstart | PAD_CONFIRM)
+#define BRIEFING_CURSOR_SOUND() func_8001540C(5, 0, 0)
+#define BRIEFING_SELECT_SOUND() func_8001540C(5, 1, 0)
+#endif
+#ifdef MMX4_SATURN
+extern u8 mission_stage_order[];
+char* saturn_route_movies[5] = {
+    "X1.CPK",
+    "Z1.CPK",
+    "X2.CPK",
+    "X3.CPK",
+    "Z2.CPK",
+};
+extern u16 saturn_stage_select_word;
+#endif
 
 extern u8 mission_palette_order[8];
 extern u8 mission_route_b[8];
@@ -36,6 +69,9 @@ void func_8002E420(struct EngineObj* arg0)
     s32 completed;
     u32 i;
 
+#ifdef MMX4_SATURN
+    saturn_vram_clear(0xF);
+#endif
     i = 0;
     arg0->stage = 0xD;
     arg0->substage = 0;
@@ -50,12 +86,19 @@ void func_8002E420(struct EngineObj* arg0)
     arg0->enable_boss = 0;
     arg0->unk8 = 0;
     arg0->unkA = 0;
+#ifdef MMX4_SATURN
+    saturn_frame_dma_copy(0x06002000, (u32)SP_PALETTE, 0xC0);
+    while (saturn_frame_dma_result() == 2) {
+    }
+#endif
     func_80013014();
     reset_objects();
     func_8002AB20();
     func_80028BF0();
     func_8002771C();
+#ifndef MMX4_SATURN
     func_80023CE0();
+#endif
     D_8013B810 = 0;
     D_8013B814 = 0;
     arg0->unkE = 0;
@@ -138,6 +181,18 @@ void func_8002E698(struct EngineObj* arg0)
     struct MiscObj* temp_v0;
     struct MiscObj* temp_v0_2;
 
+#ifdef MMX4_SATURN
+    if (saturn_archive_queue_busy != 0) {
+        return;
+    }
+    saturn_stage_sound_finalize();
+    func_800127C8(1);
+    saturn_music_start((u8)arg0->unk5F >= 5 ? 28 : 13, 0);
+    func_800129A4(8);
+    need_palette_load = 1;
+    func_800160AC();
+    func_80023CE0();
+#else
     func_800129A4(8);
     var_a0 = MUSIC_BRIEFING;
     if ((u8)arg0->unk5F >= 5) {
@@ -148,6 +203,7 @@ void func_8002E698(struct EngineObj* arg0)
         var_a1 = 0x72;
         func_8001663C(var_a0, var_a1);
     }
+#endif
     func_8002E5E0();
     temp_v0 = find_free_misc_obj();
     if (temp_v0 != 0) {
@@ -193,7 +249,7 @@ void func_8002E7BC(struct EngineObj* arg0)
     struct QuadObj* quad;
     u8 i;
 
-    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
+    if (BRIEFING_PAD_PRESSED & BRIEFING_PAD_CONFIRM) {
         background_objects[0].y_pos.i.hi = 0x110;
         background_objects[0].unk4C = 1;
     }
@@ -258,9 +314,9 @@ void func_8002E994(struct EngineObj* arg0)
     u8 var_a0;
     u8 var_v1;
 
-    switch (controller_input.held & 0xF000) {
-    case PADLup:
-        if (!((controller_input.held ^ controller_input.pressed) & PADLup)) {
+    switch (BRIEFING_PAD_HELD & 0xF000) {
+    case BRIEFING_PAD_UP:
+        if (!((BRIEFING_PAD_HELD ^ BRIEFING_PAD_PRESSED) & BRIEFING_PAD_UP)) {
             break;
         }
 
@@ -273,23 +329,23 @@ void func_8002E994(struct EngineObj* arg0)
             if (arg0->unk5F >= 5) {
                 if (arg0->unk3 == 8) {
                     arg0->unk3 = 0;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 } else if (arg0->unk3 >= 4) {
                     arg0->unk3 = 8;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 }
             } else {
                 if (arg0->unk3 >= 4) {
                     arg0->unk3 -= 4;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 }
             }
         } else {
             arg0->unk8--;
         }
         break;
-    case PADLdown:
-        if (!((controller_input.held ^ controller_input.pressed) & PADLdown)) {
+    case BRIEFING_PAD_DOWN:
+        if (!((BRIEFING_PAD_HELD ^ BRIEFING_PAD_PRESSED) & BRIEFING_PAD_DOWN)) {
             break;
         }
 
@@ -302,23 +358,23 @@ void func_8002E994(struct EngineObj* arg0)
             if (arg0->unk5F >= 5) {
                 if (arg0->unk3 == 8) {
                     arg0->unk3 = 4;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 } else if (arg0->unk3 < 4) {
                     arg0->unk3 = 8;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 }
             } else {
                 if (arg0->unk3 < 4) {
                     arg0->unk3 += 4;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 }
             }
         } else {
             arg0->unk8--;
         }
         break;
-    case PADLright:
-        if (!((controller_input.held ^ controller_input.pressed) & PADLright)) {
+    case BRIEFING_PAD_RIGHT:
+        if (!((BRIEFING_PAD_HELD ^ BRIEFING_PAD_PRESSED) & BRIEFING_PAD_RIGHT)) {
             break;
         }
 
@@ -331,15 +387,15 @@ void func_8002E994(struct EngineObj* arg0)
             if (arg0->unk3 != 8) {
                 if ((arg0->unk3 & 3) != 3) {
                     arg0->unk3++;
-                    func_8001540C(5, 0, 0);
+                    BRIEFING_CURSOR_SOUND();
                 }
             }
         } else {
             arg0->unk8--;
         }
         break;
-    case PADLleft:
-        if (!((controller_input.held ^ controller_input.pressed) & PADLleft)) {
+    case BRIEFING_PAD_LEFT:
+        if (!((BRIEFING_PAD_HELD ^ BRIEFING_PAD_PRESSED) & BRIEFING_PAD_LEFT)) {
             break;
         }
 
@@ -356,7 +412,7 @@ void func_8002E994(struct EngineObj* arg0)
         if (arg0->unk3 != 8) {
             if (arg0->unk3 & 3) {
                 arg0->unk3--;
-                func_8001540C(5, 0, 0);
+                BRIEFING_CURSOR_SOUND();
             }
         }
         break;
@@ -366,7 +422,7 @@ void func_8002E994(struct EngineObj* arg0)
         break;
     }
 
-    if (controller_input.pressed & (PADstart | PAD_CONFIRM)) {
+    if (BRIEFING_PAD_PRESSED & BRIEFING_PAD_CONFIRM) {
         if (arg0->unk3 == 8) {
             var_a0 = 0x11;
             if (arg0->unk5F < 7U) {
@@ -393,7 +449,7 @@ void func_8002E994(struct EngineObj* arg0)
             arg0->stage = mission_stage_order[arg0->unk3];
             arg0->substage = D_8013B814;
         }
-        func_8001540C(5, 1, 0);
+        BRIEFING_SELECT_SOUND();
         arg0->unk2 = 0;
         arg0->unk1++;
     }
@@ -427,7 +483,13 @@ void func_8002EDD4(struct EngineObj* arg0)
     }
 #endif
     if (main_bss_state.transition.active == 0) {
+#ifdef MMX4_SATURN
+        saturn_vram_clear_alternate(0xF);
+        saturn_stage_commit_video();
+        saturn_sound_stop_all();
+#else
         func_8001D134();
+#endif
         reset_objects();
         if (arg0->cur_character == 0) {
             if ((arg0->stage == 0xB) && (arg0->unk5F == 8)) {
@@ -462,6 +524,11 @@ void func_8002EDD4(struct EngineObj* arg0)
     block_17:
         arg0->unk2 = 0;
         arg0->unk3 = 0;
+#ifdef MMX4_SATURN
+        saturn_frame_dma_copy((u32)SP_PALETTE, 0x06002000, 0xC0);
+        while (saturn_frame_dma_result() == 2) {
+        }
+#endif
     }
 }
 
@@ -471,6 +538,64 @@ extern RECT D_800F4768;
 extern RECT D_800F4770;
 #endif
 
+#ifdef MMX4_SATURN
+void func_8002EF14(struct EngineObj* arg0)
+{
+    s32 i;
+    s8 next;
+
+    saturn_archive_queue_cancel();
+    for (i = 0; i < 6; i++) {
+        saturn_warm_buffer[0x8A + i] = 0;
+    }
+    saturn_video_start();
+    saturn_movie_play(saturn_route_movies[arg0->unkE], 1);
+    saturn_video_start();
+    saturn_archive_load_blocking("ASCII.ARC");
+    if (arg0->cur_character != 0) {
+        saturn_archive_load_blocking("PL01.ARC");
+    } else if (arg0->unk37 != 0) {
+        saturn_archive_load_blocking("PL02.ARC");
+    } else {
+        saturn_archive_load_blocking("PL00.ARC");
+    }
+    switch (arg0->unkE) {
+    case 0:
+    case 1:
+        saturn_frame_dma_copy(0x06002000, (u32)SP_PALETTE, 0xC0);
+        while (saturn_frame_dma_result() == 2) {
+        }
+        next = arg0->unkE != 0 ? 5 : 10;
+        goto load_archive;
+    case 2:
+        next = 1;
+        if (arg0->cur_character != 0) {
+            next = 6;
+        }
+    load_archive:
+        arg0->unkE = next;
+        arg0->unk1 = 1;
+        func_80013014();
+        break;
+    case 3:
+        arg0->unk5F = 9;
+        arg0->unkE = 0;
+        arg0->unk1 = 7;
+        arg0->stage = 0xB;
+        arg0->substage = 0;
+        saturn_stage_select_word = 0;
+        func_800129F0(8);
+        break;
+    case 4:
+        arg0->unkE = 0;
+        arg0->stage = 9;
+        arg0->unk1 = 7;
+        arg0->unk5F = 4;
+        break;
+    }
+    arg0->unk2 = 0;
+}
+#else
 void func_8002EF14(struct EngineObj* arg0)
 {
     s8 next;
@@ -524,6 +649,7 @@ void func_8002EF14(struct EngineObj* arg0)
         return;
     }
 }
+#endif
 
 void func_8002F048(void)
 {
@@ -574,7 +700,7 @@ void func_8002F048(void)
 void func_8002F1B4(struct EngineObj* arg0)
 {
     // if the player presses a button, skip to the bottom
-    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
+    if (BRIEFING_PAD_PRESSED & BRIEFING_PAD_CONFIRM) {
         background_objects[0].y_pos.i.hi = 272;
         background_objects[0].unk4C = 1;
     }

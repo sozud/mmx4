@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[30]
 // 8005B3FC..8005B894
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_30_regen_turret.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -28,7 +29,8 @@ void regen_turret_update(struct MainObj* self)
 }
 
 // regen_turret_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B438(struct MainObj* arg0);
 extern union AnimationStep* regen_turret_animations[];
 extern struct Unk_unk68 regen_turret_hurt_box[];
@@ -36,18 +38,18 @@ extern struct Unk_unk68 regen_turret_terrain_box[];
 extern struct Unk_unk68 D_80107174[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005B438(struct MainObj* arg0)
 {
     arg0->unk5 = 2;
     arg0->state++;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk15 = arg0->unk2 != 0 ? 0x40 : 0;
+    arg0->unk15 = arg0->unk2 != 0 ? PLAYER_FACING_RIGHT : 0;
     arg0->animation_table = (const u8* const*)regen_turret_animations;
     arg0->collision_data = (const u16*)D_80107174;
     arg0->hurt_box = (const u8*)regen_turret_terrain_box;
     arg0->attack_box = (const u8*)regen_turret_hurt_box;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = NULL;
     arg0->invincibility_timer = 0;
     arg0->hp = 6;
@@ -177,91 +179,91 @@ struct Unk_unk68 regen_turret_terrain_box[] = {
 };
 
 union AnimationStep regen_turret_anim_0[] = {
-    { 0x00010008 },
-    { 0x01010008 },
-    { 0x02010008 },
-    { 0x03010008 },
-    { 0x04010008 },
-    { 0x05010006 },
-    { 0x0601000F },
-    { 0x07010006 },
-    { 0x08010008 },
-    { 0x07010006 },
-    { 0x06010077 },
-    { 0x06FF0001 },
+    { 8, 0, 1, 0x00 },
+    { 8, 0, 1, 0x01 },
+    { 8, 0, 1, 0x02 },
+    { 8, 0, 1, 0x03 },
+    { 8, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 15, 0, 1, 0x06 },
+    { 6, 0, 1, 0x07 },
+    { 8, 0, 1, 0x08 },
+    { 6, 0, 1, 0x07 },
+    { 119, 0, 1, 0x06 },
+    { 1, 0, -1, 0x06 },
 };
 
 union AnimationStep regen_turret_anim_1[] = {
-    { 0x06010005 },
-    { 0x09010006 },
-    { 0x0A010008 },
-    { 0x09010006 },
-    { 0x06010004 },
-    { 0x06FB0001 },
+    { 5, 0, 1, 0x06 },
+    { 6, 0, 1, 0x09 },
+    { 8, 0, 1, 0x0A },
+    { 6, 0, 1, 0x09 },
+    { 4, 0, 1, 0x06 },
+    { 1, 0, -5, 0x06 },
 };
 
 union AnimationStep regen_turret_anim_2[] = {
-    { 0x0B010077 },
-    { 0x0BFF0001 },
+    { 119, 0, 1, 0x0B },
+    { 1, 0, -1, 0x0B },
 };
 
 union AnimationStep regen_turret_anim_3[] = {
-    { 0x0B010004 },
-    { 0x0C010005 },
-    { 0x0D010007 },
-    { 0x0C010005 },
-    { 0x0B010015 },
-    { 0x0E010006 },
-    { 0x0F010005 },
-    { 0x10010004 },
-    { 0x11010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14010001 },
-    { 0x00010001 },
-    { 0x14010001 },
-    { 0x00010001 },
-    { 0x14010001 },
-    { 0x00010001 },
-    { 0x14010001 },
-    { 0x00010001 },
-    { 0x14010001 },
-    { 0x00EC0001 },
+    { 4, 0, 1, 0x0B },
+    { 5, 0, 1, 0x0C },
+    { 7, 0, 1, 0x0D },
+    { 5, 0, 1, 0x0C },
+    { 21, 0, 1, 0x0B },
+    { 6, 0, 1, 0x0E },
+    { 5, 0, 1, 0x0F },
+    { 4, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x00 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, -20, 0x00 },
 };
 
 union AnimationStep regen_turret_anim_4[] = {
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010002 },
-    { 0x1A010001 },
-    { 0x1AFA0001 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, -6, 0x1A },
 };
 
 union AnimationStep regen_turret_anim_10[] = {
-    { 0x06010077 },
-    { 0x06FF0001 },
+    { 119, 0, 1, 0x06 },
+    { 1, 0, -1, 0x06 },
 };
 
 union AnimationStep regen_turret_anim_5[] = {
-    { 0x1B000001 },
+    { 1, 0, 0, 0x1B },
 };
 
 union AnimationStep regen_turret_anim_6[] = {
-    { 0x1C000001 },
+    { 1, 0, 0, 0x1C },
 };
 
 union AnimationStep regen_turret_anim_7[] = {
-    { 0x1D000001 },
+    { 1, 0, 0, 0x1D },
 };
 
 union AnimationStep regen_turret_anim_8[] = {
-    { 0x1E000001 },
+    { 1, 0, 0, 0x1E },
 };
 
 union AnimationStep regen_turret_anim_9[] = {
-    { 0x1F000001 },
+    { 1, 0, 0, 0x1F },
 };
 
 union AnimationStep* regen_turret_animations[] = {

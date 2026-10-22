@@ -3,15 +3,17 @@
 #include "common.h"
 #include "main/items/item_09_moving_block.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/object_motion.h"
-#endif
 
 // moving_block_state_funcs
 extern void (*moving_block_state_funcs[])(struct ItemObj*);
 
 void moving_block_despawn(struct ItemObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/object_motion.h"
+#endif
 
 extern u8 moving_block_terrain_box[4];
 
@@ -28,10 +30,10 @@ void func_800C20F4(struct ItemObj* self)
     self->active = 0x41;
     self->state++;
     self->bg_offset = g_Player.bg_offset;
-    self->unk40 = D_801406A8[func_8002938C(0xA1)] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0xA1));
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0xA1));
-    self->unk42 = CLUT_FROM_ID(0xA1);
-    self->unk16 = 6;
+    self->unk42 = OBJECT_STAGE_CLUT(0xA1);
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->animation_step.fields.frame_index = 0;
     self->unk5C = 0;
     self->unk61 = 0;
@@ -51,12 +53,13 @@ void func_800C20F4(struct ItemObj* self)
 }
 
 // moving_block_move
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C229C(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C229C(struct ItemObj* self)
 {
     u8* wait_timer = (u8*)&self->ext;

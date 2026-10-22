@@ -87,6 +87,12 @@ void walrus_ice_chunk_break(struct ShotObj*);
 extern void (*walrus_ice_lob_funcs[])(struct ShotObj*);
 void walrus_ice_lob_init(struct ShotObj*);
 void walrus_ice_lob_fall(struct ShotObj*);
+#include "weapon_resources.h"
+
+void walrus_ice_choose_drop_pattern(struct ShotObj* self);
+
+extern struct Unk_unk68 walrus_ice_ball_terrain_box;
+extern s16 walrus_ice_icicle_offsets[2][2];
 
 void walrus_ice_update(struct ShotObj* self)
 {
@@ -130,7 +136,8 @@ void walrus_ice_icicle(struct ShotObj* self)
 }
 
 // walrus_ice_icicle_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A241C(struct ShotObj* arg0);
 void func_800A25EC(struct ShotObj* arg0);
 void walrus_ice_choose_drop_pattern(struct ShotObj*);
@@ -138,7 +145,7 @@ extern s16 walrus_ice_icicle_offsets[2][2];
 extern struct Unk_unk68 walrus_ice_ball_terrain_box;
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A241C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -151,7 +158,7 @@ void func_800A241C(struct ShotObj* arg0)
     arg0->unk68 = &walrus_ice_ball_terrain_box;
     arg0->unk5C = 5;
     arg0->unk60 = 6;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     arg0->unk54 = NULL;
     arg0->unk50.data = NULL;
     arg0->y_pos.val = owner->y_pos.val;
@@ -179,7 +186,7 @@ void walrus_ice_icicle_main(struct ShotObj* self)
         collision = func_8002DD04(MAIN_OBJECT(self));
         owner = self->unk7C;
         if (collision < 0 || owner->state == 2) {
-            func_8001540C(2, 0x98, self);
+            func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
             spawn_debris(4, walrus_ice_debris, self);
             self->state = 6;
             self->unk5 = 0;
@@ -195,7 +202,7 @@ void walrus_ice_icicle_main(struct ShotObj* self)
 }
 
 // walrus_ice_icicle_form
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A25EC(struct ShotObj* arg0)
 {
     struct WeaponObj* owner = arg0->unk7C;
@@ -222,7 +229,7 @@ void func_800A25EC(struct ShotObj* arg0)
     if ((u8)arg0->unk2 & 1) {
         return;
     }
-    func_8001540C(2, 0x95, arg0);
+    func_8001540C(2, SATURN_SOUND(0x95, 0x65), arg0);
     for (i = 0; i < 2; i++) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
@@ -296,7 +303,7 @@ void walrus_ice_icicle_fall(struct ShotObj* self)
     if (self->unk70 & 8) {
         set_animation(ANIMATED_OBJECT(self), 0xB);
         spawn_debris(4, walrus_ice_debris, self);
-        func_8001540C(2, 0x9A, self);
+        func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
         start_screen_shake_y(0x10, 3, 1);
         self->timer = 0x100;
         self->unk6++;
@@ -310,7 +317,7 @@ void walrus_ice_icicle_stuck(struct ShotObj* self)
     animate_object(ANIMATED_OBJECT(self));
     is_on_screen(BASE_OBJECT(self));
     if (func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(self->unk7C)) != 0) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -327,7 +334,7 @@ void walrus_ice_icicle_blink(struct ShotObj* self)
 {
 
     if (--self->timer == 0) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -390,7 +397,7 @@ void walrus_ice_ball_main(struct ShotObj* self)
     collision_result = func_8002DD04(MAIN_OBJECT(self));
     weapon = self->unk7C;
     if ((collision_result < 0) || (weapon->unk5 != 8)) {
-        func_8001540C(2, 0x97, self);
+        func_8001540C(2, SATURN_SOUND(0x97, 0x67), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -406,7 +413,7 @@ void walrus_ice_ball_main(struct ShotObj* self)
 void walrus_ice_ball_blink(struct ShotObj* self)
 {
     if (--self->timer == 0) {
-        func_8001540C(2, 0x96, self);
+        func_8001540C(2, SATURN_SOUND(0x96, 0x66), self);
         self->unk6++;
         return;
     }
@@ -456,7 +463,7 @@ void walrus_ice_ball_burst(struct ShotObj* self)
             }
             i++;
         } while ((u8)i < 9);
-        func_8001540C(2, 0x97, self);
+        func_8001540C(2, SATURN_SOUND(0x97, 0x67), self);
         self->unk8C.word = 0;
         self->state = 6;
         self->unk5 = 0;
@@ -479,7 +486,7 @@ void walrus_ice_shard_init(struct ShotObj* self)
     self->unk50.data = (const u8*)&walrus_ice_shard_attack_box;
     self->unk5C = 3;
     self->unk60 = 6;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     set_animation(self, 0x20);
     self->unk5++;
 }
@@ -496,7 +503,7 @@ void walrus_ice_shard_main(struct ShotObj* self)
     collision = func_8002DD04(MAIN_OBJECT(self));
     owner = self->unk7C;
     if (collision < 0 || owner->state == 2) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -513,7 +520,7 @@ void walrus_ice_shard_launch(struct ShotObj* self)
 {
     set_velocity_from_angle(MOVING_OBJECT(self), self->unk2 + 0xC);
     self->x_vel.val *= 4;
-    if (self->unk15 == 0x40) {
+    if (self->unk15 == PLAYER_FACING_RIGHT) {
         self->x_vel.val = -self->x_vel.val;
     }
     self->y_vel.val *= 4;
@@ -534,14 +541,14 @@ void walrus_ice_shard_fly(struct ShotObj* self)
     } else {
         flags = self->unk70;
         if (flags & 2) {
-            func_8001540C(2, 0x9A, self);
+            func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x22);
         } else if (flags & 1) {
-            func_8001540C(2, 0x9A, self);
+            func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x22);
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else if (flags & 8) {
-            func_8001540C(2, 0x9A, self);
+            func_8001540C(2, SATURN_SOUND(0x9A, 0x6A), self);
             set_animation(self, 0x21);
         } else {
             is_on_screen(BASE_OBJECT(self));
@@ -568,7 +575,7 @@ void walrus_ice_shard_blink(struct ShotObj* self)
 {
 
     if (--self->timer == 0) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -608,7 +615,7 @@ void func_800A32B8(struct ShotObj* shot)
     shot->unk58.data = (u8*)D_801060F0;
     shot->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
     shot->timer = 0x60;
-    shot->unk16 = 4;
+    shot->unk16 = VISUAL_SATURN_LAYER(4);
     shot->unk5C = 0x20;
     shot->unk60 = 9;
     set_animation(shot, 0x1E);
@@ -633,7 +640,7 @@ void walrus_ice_chunk_main(struct ShotObj* self)
     collision = func_8002DD04(MAIN_OBJECT(self));
     owner = SHOT_OBJECT(self->unk7C);
     if (collision < 0 || owner->state == 2) {
-        func_8001540C(2, 0x97, self);
+        func_8001540C(2, SATURN_SOUND(0x97, 0x67), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -653,7 +660,7 @@ void func_800A348C(struct ShotObj* self)
     if (--self->timer == 0) {
         self->unk54 = (const u8*)&walrus_ice_ball_hurt_box;
         self->unk50.data = (const u8*)&walrus_ice_ball_attack_box;
-        func_8001540C(2, 0x96, self);
+        func_8001540C(2, SATURN_SOUND(0x96, 0x66), self);
         self->unk6++;
     } else {
         self->on_screen ^= 1;
@@ -672,7 +679,7 @@ void walrus_ice_chunk_fall(struct ShotObj* obj)
     move_with_gravity(ANIMATED_OBJECT(obj));
     is_on_screen(BASE_OBJECT(obj));
     if (obj->unk70 & 8) {
-        func_8001540C(2, 0x97, obj);
+        func_8001540C(2, SATURN_SOUND(0x97, 0x67), obj);
         spawn_debris(0xA, walrus_ice_chunk_debris, obj);
         i = 0;
         do {
@@ -716,7 +723,7 @@ void walrus_ice_lob(struct ShotObj* self)
     collision = func_8002DD04(MAIN_OBJECT(self));
     target = BASE_OBJECT(self->unk7C);
     if (collision < 0 || target->state == 2) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(4, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;
@@ -762,7 +769,7 @@ void walrus_ice_lob_fall(struct ShotObj* self)
     move_with_gravity(ANIMATED_OBJECT(self));
     CollisionRelated(PLAYER_OBJECT(self));
     if (self->unk70 & 8) {
-        func_8001540C(2, 0x98, self);
+        func_8001540C(2, SATURN_SOUND(0x98, 0x68), self);
         spawn_debris(5, walrus_ice_debris, self);
         self->state = 6;
         self->unk5 = 0;

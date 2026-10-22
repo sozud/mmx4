@@ -12,6 +12,7 @@ struct VisualAttachmentInit {
 };
 
 extern struct VisualAttachmentInit charge_muzzle_flash_types[4];
+#include "weapon_resources.h"
 
 void charge_muzzle_flash_fade(struct VisualObj* arg0);
 void charge_muzzle_flash_follow(struct VisualObj* arg0);
@@ -46,9 +47,9 @@ void charge_muzzle_flash_init(struct VisualObj* arg0)
     temp_s0 = var_a1;
     arg0->unk3C = (u8*)SP_SPRITE_FRAMES + ((u32*)SP_SPRITE_FRAMES)[charge_muzzle_flash_types[temp_s0].archive_slot];
     arg0->animation_table = &D_8011BF40;
-    arg0->unk40 = 0;
-    arg0->unk42 = 0x7802;
-    arg0->unk16 = 0;
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
+    arg0->unk42 = WEAPON_PALETTE_2;
+    arg0->unk16 = VISUAL_SATURN_LAYER(0);
     arg0->unk15 = g_Player.unk15;
     arg0->unk5C.value = 0;
     charge_muzzle_flash_follow(arg0);

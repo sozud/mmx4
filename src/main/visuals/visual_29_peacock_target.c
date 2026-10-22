@@ -18,6 +18,7 @@ extern void (*peacock_target_step_funcs[])(struct VisualObj*);
 void peacock_target_lock(struct VisualObj*);
 
 void peacock_target_hold(struct VisualObj*);
+#include "weapon_resources.h"
 
 void peacock_target_update(struct VisualObj* arg0)
 {
@@ -29,7 +30,7 @@ void peacock_target_init(struct VisualObj* arg0)
     arg0->state = 1;
     arg0->unk5 = 0;
     arg0->on_screen = 1;
-    arg0->unk16 = 2;
+    arg0->unk16 = VISUAL_SATURN_LAYER(2);
     arg0->unk54 = 0x3C;
     arg0->unk56 = 4;
     arg0->unk2C = 0;

@@ -3,8 +3,16 @@
 #include "common.h"
 #include "main/effects/effect_03_palette_animator.h"
 #include "main/effects/effect_02_color_filter.h"
+#include "main/objects.h"
+#ifdef MMX4_SATURN
+#include "weapon_resources.h"
+#include "saturn/game_low.h"
+#define PALETTE_ANIMATION_SOURCE SATURN_PALETTE_ANIMATION_SOURCE
+#else
+#define PALETTE_ANIMATION_SOURCE SP_ARC_30
+#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/objects.h"
 #endif
 
@@ -25,20 +33,45 @@ void palette_animator_update(struct EffectObj* self)
 }
 
 // palette_animator_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B5D04(struct EffectObj* arg0);
-extern u16* palette_animator_stage_timings[27];
+extern struct PaletteAnimatorTarget* palette_animator_stage_timings[27];
 extern s8** palette_animator_stage_scripts[27];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
+void func_800B5D04(struct EffectObj* arg0)
+{
+    u32 stage_index;
+    const s8* animation;
+    struct PaletteAnimatorTarget* target;
+
+    arg0->active = 1;
+    stage_index = engine_obj.stage * 2 + engine_obj.substage;
+    animation = palette_animator_stage_scripts[stage_index][(u8)arg0->unk2];
+    arg0->ext.palette_animation.cursor = (s8*)animation;
+    if (animation == NULL) {
+        despawn_object_permanently(OBJECT_HEADER(arg0));
+        return;
+    }
+    target = &palette_animator_stage_timings[stage_index][(u8)arg0->unk2];
+    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + target->palette * 8;
+    arg0->ext.palette_animation.source = PALETTE_ANIMATION_SOURCE + (u8)animation[0] * 8;
+    arg0->ext.palette_animation.timer = animation[1];
+    arg0->ext.palette_animation.palette_count = target->count;
+    copy_animated_palette(arg0);
+    arg0->state++;
+}
+#else
 void func_800B5D04(struct EffectObj* arg0)
 {
     u32 stage_index;
     s8** animations;
-    u16* destinations;
+    struct PaletteAnimatorTarget* destinations;
     const s8* animation;
-    u16 destination;
+    struct PaletteAnimatorTarget* target;
 
     arg0->active = 1;
     stage_index = (u8)engine_obj.stage * 2 + (u8)engine_obj.substage;
@@ -54,14 +87,15 @@ void func_800B5D04(struct EffectObj* arg0)
         despawn_object_permanently(OBJECT_HEADER(arg0));
         return;
     }
-    destination = destinations[(u8)arg0->unk2];
-    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + (destination & 0xFF) * 8;
+    target = &destinations[(u8)arg0->unk2];
+    arg0->ext.palette_animation.destination = (s32*)SP_PALETTE + target->palette * 8;
     arg0->ext.palette_animation.source = SP_ARC_30 + (u8)animation[0] * 8;
     arg0->ext.palette_animation.timer = animation[1];
-    arg0->ext.palette_animation.palette_count = destination >> 8;
+    arg0->ext.palette_animation.palette_count = target->count;
     copy_animated_palette(arg0);
     arg0->state++;
 }
+#endif
 #else
 INCLUDE_ASM("main/nonmatchings/effects/effect_03_palette_animator", func_800B5D04);
 #endif
@@ -74,7 +108,7 @@ void palette_animator_step(struct EffectObj* self)
             self->ext.palette_animation.cursor += self->ext.palette_animation.cursor[1] * 2;
         }
         self->ext.palette_animation.timer = self->ext.palette_animation.cursor[1];
-        self->ext.palette_animation.source = SP_ARC_30 + ((u8)self->ext.palette_animation.cursor[0] << 3);
+        self->ext.palette_animation.source = PALETTE_ANIMATION_SOURCE + ((u8)self->ext.palette_animation.cursor[0] << 3);
         copy_animated_palette(self);
     }
 }
@@ -102,31 +136,31 @@ extern s8* palette_animator_scripts_s11_1[4];
 extern s8* palette_animator_scripts_s12_0[3];
 extern s8* palette_animator_scripts_s12_1[3];
 extern s8* palette_animator_scripts_s13_0[1];
-extern u16 palette_animator_timings_s00_0[10];
-extern u16 palette_animator_timings_s00_1[4];
-extern u16 palette_animator_timings_s01_0[6];
-extern u16 palette_animator_timings_s01_1[6];
-extern u16 palette_animator_timings_s02_0[4];
-extern u16 palette_animator_timings_s02_1[10];
-extern u16 palette_animator_timings_s03_0[2];
-extern u16 palette_animator_timings_s03_1[4];
-extern u16 palette_animator_timings_s04_0[6];
-extern u16 palette_animator_timings_s04_1[8];
-extern u16 palette_animator_timings_s05_0[4];
-extern u16 palette_animator_timings_s05_1[6];
-extern u16 palette_animator_timings_s06_0[2];
-extern u16 palette_animator_timings_s06_1[4];
-extern u16 palette_animator_timings_s07_1[4];
-extern u16 palette_animator_timings_s08_1[2];
-extern u16 palette_animator_timings_s09_0[2];
-extern u16 palette_animator_timings_s10_0[4];
-extern u16 palette_animator_timings_s11_0[4];
-extern u16 palette_animator_timings_s11_1[4];
-extern u16 palette_animator_timings_s12_0[4];
-extern u16 palette_animator_timings_s12_1[4];
-extern u16 palette_animator_timings_s13_0[2];
+extern struct PaletteAnimatorTarget palette_animator_timings_s00_0[10];
+extern struct PaletteAnimatorTarget palette_animator_timings_s00_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s01_0[6];
+extern struct PaletteAnimatorTarget palette_animator_timings_s01_1[6];
+extern struct PaletteAnimatorTarget palette_animator_timings_s02_0[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s02_1[10];
+extern struct PaletteAnimatorTarget palette_animator_timings_s03_0[2];
+extern struct PaletteAnimatorTarget palette_animator_timings_s03_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s04_0[6];
+extern struct PaletteAnimatorTarget palette_animator_timings_s04_1[8];
+extern struct PaletteAnimatorTarget palette_animator_timings_s05_0[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s05_1[6];
+extern struct PaletteAnimatorTarget palette_animator_timings_s06_0[2];
+extern struct PaletteAnimatorTarget palette_animator_timings_s06_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s07_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s08_1[2];
+extern struct PaletteAnimatorTarget palette_animator_timings_s09_0[2];
+extern struct PaletteAnimatorTarget palette_animator_timings_s10_0[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s11_0[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s11_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s12_0[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s12_1[4];
+extern struct PaletteAnimatorTarget palette_animator_timings_s13_0[2];
 
-u16* palette_animator_stage_timings[27] = {
+struct PaletteAnimatorTarget* palette_animator_stage_timings[27] = {
     palette_animator_timings_s00_0,
     palette_animator_timings_s00_1,
     palette_animator_timings_s01_0,

@@ -357,7 +357,7 @@ static void orb_tick(u32 direction)
         memset(&expected, 0, 8);
         return;
     }
-    frame = expected.animation_cursor - D_8011C018[direction + 10];
+    frame = expected.animation_cursor - (u32*)D_8011C018[direction + 10];
     frame = frame == 5 ? 2 : frame + 1;
     expected.animation_cursor = D_8011C018[direction + 10] + frame;
     expected.animation_step.packed = orb_frame(direction, frame);
@@ -403,7 +403,7 @@ static u32 test_orb_timeline(u32 row)
     if (count == 60)
         assert(obj.active == 0 && obj.on_screen == 0);
     for (frame = 0; frame < 6; frame++)
-        assert(D_8011C018[direction + 10][frame] == orb_frame(direction, frame));
+        assert(D_8011C018[direction + 10][frame].packed == orb_frame(direction, frame));
     return 1;
 }
 

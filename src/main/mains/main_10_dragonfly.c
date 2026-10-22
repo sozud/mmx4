@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[10]
 // 800498C8..8004A718
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_10_dragonfly.h"
 #include "main/object_motion.h"
 #include "main/1CF60.h"
@@ -13,7 +14,7 @@
 
 extern u8 dragonfly_debris[8];
 
-extern void (*dragonfly_step_funcs[])();
+extern void (*dragonfly_step_funcs[])(struct MainObj*);
 
 // dragonfly_state_funcs
 extern void (*dragonfly_state_funcs[])(struct MainObj*);
@@ -59,7 +60,7 @@ void dragonfly_init(struct MainObj* self)
     self->invincibility_timer = 0;
     self->collision_data = D_80106770;
     self->bg_offset = g_Player.bg_offset;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->animation_table = dragonfly_animations;
     self->terrain_box = &dragonfly_terrain_box;
     self->x_speed = 0;
@@ -79,14 +80,14 @@ void dragonfly_init(struct MainObj* self)
         if (self->x_pos.val > g_Player.x_pos.val) {
             self->unk15 = 0;
         } else {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         self->ext.main_10.hold_state = 1;
         self->ext.main_10.can_grab = 1;
         break;
     case 1:
         self->unk7A = 1;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->ext.main_10.hold_state = 0;
         self->ext.main_10.can_grab = 1;
         break;
@@ -154,7 +155,7 @@ void dragonfly_run(struct MainObj* self)
         } else if (func_8002B1E8(self, 0x40, 0x40) == 0) {
             update_on_screen(self, 0x20, 0x20);
             if (--self->unk7C == 0) {
-                func_8001540C(2, 0xD, self);
+                func_8001540C(2, SATURN_SOUND(0xD, 0x00), self);
                 self->unk7C = 0x3C;
             }
         } else {
@@ -167,7 +168,7 @@ void dragonfly_finish(struct MainObj* self)
 {
     self->unk7A = 0;
     self->unk62 = 0;
-    stop_sound(2, 0xD);
+    STOP_SOUND(2, 0xD, 0x6);
     if (self->ext.main_10.hold_state == 3) {
         g_Player.stun_timer = 0;
     }
@@ -224,7 +225,7 @@ void dragonfly_wait(struct MainObj* self)
         if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0xC0) {
             self->unk7A = 0;
             self->ext.main_10.hold_state = 1;
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             if (!(self->unk2 & 1)) {
                 self->x_speed = FIXED(8);
             } else {
@@ -274,12 +275,13 @@ void dragonfly_hunt_start(struct MainObj* self)
     }
 }
 // dragonfly_hunt_fly
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80049E68(struct MainObj* arg0);
 void func_8004A178(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80049E68(struct MainObj* arg0)
 {
     u32 timer;
@@ -384,7 +386,7 @@ void dragonfly_carry_grab(struct MainObj* self)
 }
 
 // dragonfly_carry_hold
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004A178(struct MainObj* arg0)
 {
     s32 saved_x;
@@ -494,14 +496,14 @@ void dragonfly_carry_squeeze(struct MainObj* self)
     u32 squeeze;
 
     if (--self->unk7E == 0) {
-        func_8001540C(2, 0xE, self);
+        func_8001540C(2, SATURN_SOUND(0xE, 0x01), self);
         self->unk7E = 0x14;
     }
 
     dragonfly_hold_player(self);
     self->ext.main_10.struggle += func_8002BAA4();
     if (self->ext.main_10.struggle >= 0x15) {
-        stop_sound(2, 0xE);
+        STOP_SOUND(2, 0xE, 0x6);
         g_Player.stun_timer = 0;
         self->attack_box = NULL;
         self->unk62 = 0;
@@ -518,7 +520,7 @@ void dragonfly_carry_squeeze(struct MainObj* self)
             player_damage(2);
         }
         if (self->ext.main_10.timer == 0) {
-            stop_sound(2, 0xE);
+            STOP_SOUND(2, 0xE, 0x6);
             g_Player.stun_timer = 0;
             self->unk62 = 0;
             set_animation(self, 5);
@@ -547,7 +549,7 @@ void dragonfly_face_player(struct MainObj* self)
             self->ext.main_10.turn_delay = 0x10;
         }
     } else if (self->x_pos.val < g_Player.x_pos.val) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->ext.main_10.turn_delay = 0x10;
     }
 }

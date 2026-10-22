@@ -600,7 +600,7 @@ void func_8001A860(struct EngineObj* arg0)
     arg0->unk3 = 0;
     main_bss_state.transition.selection = 0;
     if (arg0->unk4 == 8) {
-        arg0->unk8 = func_8001E850(D_800F2338.scripts[0], 1);
+        arg0->unk8 = func_8001E850(D_800F2338, 1);
         arg0->state = 8;
     } else {
 #ifdef VERSION_JP

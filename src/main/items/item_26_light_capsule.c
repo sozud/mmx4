@@ -8,11 +8,8 @@
 #include "main/128C4.h"
 #include "main/1E1BC.h"
 #include "main/xa_sequence_data.h"
-
-#ifdef MMX4_PC
-#include "main/collision.h"
 #include "main/sprite_animations.h"
-#endif
+#include "main/collision.h"
 
 extern struct Unk_unk68 light_capsule_platform_box;
 
@@ -33,6 +30,15 @@ void light_capsule_grant_part(struct ItemObj*);
 void light_capsule_wait_done(struct ItemObj*);
 void light_capsule_idle(struct ItemObj*);
 extern u8 light_capsule_dialogue_ids[8];
+#include "weapon_resources.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision.h"
+#include "main/sprite_animations.h"
+#endif
 
 void func_800164D8(void);
 
@@ -66,7 +72,8 @@ void light_capsule_update(struct ItemObj* self)
 }
 
 // light_capsule_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C63BC(struct ItemObj* arg0);
 void func_800C6EDC(struct VisualObj* arg0);
 extern u8 light_capsule_terrain_box[4];
@@ -78,7 +85,7 @@ void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C63BC(struct ItemObj* arg0)
 {
     struct ItemObj* child;
@@ -111,11 +118,15 @@ void func_800C63BC(struct ItemObj* arg0)
     resource = func_8002938C(0xA2) & 0xFF;
     arg0->animation_table = (const u8* const*)light_capsule_animations;
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
-    arg0->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(resource));
     column = resource * 4 + 0x18;
+#ifdef MMX4_SATURN
+    arg0->unk42 = (u16)column;
+#else
     row = resource + 6;
     arg0->unk42 = (u16)((column - (column & 0x7F0)) | (((row >> 2) + 0x1E0) << 6));
-    arg0->unk16 = 4;
+#endif
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     arg0->unk15 = 0;
     arg0->unk75 = 1;
     g_Player.item_step = 0;
@@ -196,13 +207,17 @@ void light_capsule_wait_player(struct ItemObj* arg0)
             set_animation(ANIMATED_OBJECT(arg0), 0xA);
             if (player->x_pos.val - arg0->x_pos.val > 0) {
                 player_start_script_action(0x14, 0);
-                arg0->unk15 = 0x40;
+                arg0->unk15 = PLAYER_FACING_RIGHT;
             } else {
-                player_start_script_action(0x14, 0x40);
+                player_start_script_action(0x14, PLAYER_FACING_RIGHT);
                 arg0->unk15 = 0;
             }
+#ifdef MMX4_SATURN
+            saturn_music_play(SATURN_MUSIC_LIGHT_CAPSULE, 0);
+#else
             func_80016F0C();
             func_8001663C(MUSIC_LIGHT_CAPSULE, 0x7F);
+#endif
             arg0->unk5++;
         }
     }
@@ -241,8 +256,12 @@ void light_capsule_end_dialogue(struct ItemObj* arg0)
 {
     if (ANIMATED_OBJECT(arg0)->animation_step.fields.event != 0) {
         player_end_script_action();
+#ifdef MMX4_SATURN
+        saturn_music_play(engine_obj.stage, 0);
+#else
         func_80016F0C();
         func_800164D8();
+#endif
         arg0->unk5 = (u8)arg0->unk5 + 1;
     }
 }
@@ -330,10 +349,14 @@ void capsule_scan_update(struct VisualObj* arg0)
     if (arg0->state == 0) {
         capsule_visual_init(arg0, temp_a1);
         arg0->unk54 = 0x78;
-        func_8001540C(2, 0x23, 0);
+        func_8001540C(2, SATURN_SOUND(0x23, 0x5C), 0);
     } else if (arg0->unk54 == 0) {
         g_Player.item_step = 2;
+#ifdef MMX4_SATURN
+        func_8001540C(6, 0, NULL);
+#else
         stop_sound(2, 0x23);
+#endif
         ZeroObjectState(OBJECT_HEADER(arg0));
         return;
     } else {
@@ -354,11 +377,11 @@ void capsule_beam_update(struct VisualObj* self)
             self->x_pos.i.hi = (u16)self->x_pos.i.hi - 0x58;
         }
         if (self->unk2 == 2) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             self->x_pos.i.hi = (u16)self->x_pos.i.hi + 0x58;
         }
         self->y_pos.i.hi = (u16)self->y_pos.i.hi - 0x6A;
-        func_8001540C(2, 0x24, NULL);
+        func_8001540C(2, SATURN_SOUND(0x24, 0x5D), NULL);
     } else if (self->animation_step.fields.relative_step == 0) {
         ZeroObjectState(OBJECT_HEADER(self));
         return;
@@ -404,7 +427,7 @@ void capsule_visual_init(struct VisualObj* arg0, struct PlayerObj* arg1)
 }
 
 // capsule_part_update
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C6EDC(struct VisualObj* arg0)
 {
     s32 resource;
@@ -420,8 +443,13 @@ void func_800C6EDC(struct VisualObj* arg0)
         arg0->unk38 = SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, index + 10);
         arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, index + 18);
         arg0->animation_table = D_8011BF40;
+#ifdef MMX4_SATURN
+        arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+        arg0->unk42 = column;
+#else
         arg0->unk40 = 0x520;
         arg0->unk42 = (column - (column & 0x7F0)) | ((((resource + 6) >> 2) + 0x1E0) << 6);
+#endif
         arg0->unk16 = 0;
         arg0->unk15 = g_Player.unk15;
         arg0->x_pos.val = g_Player.x_pos.val;

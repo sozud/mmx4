@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[68]
 // 80083218..80085F08
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_67_gunship.h"
 #include "main/mains/main_68_sigma.h"
 #include "main/objects.h"
@@ -12,8 +13,9 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
+#include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/visuals/visual_03_small_effect.h"
 #endif
 
@@ -145,7 +147,7 @@ void sigma_intro_wait_player(struct MainObj* self)
     if (g_Player.capsule_state == 0) {
         self->on_screen = 0;
         background_objects[0].unk24 -= 0x10;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk5++;
         effect = find_free_effect_obj();
         if (effect != NULL) {
@@ -157,7 +159,8 @@ void sigma_intro_wait_player(struct MainObj* self)
 }
 
 // sigma_intro_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008329C(struct MainObj* self);
 void func_80084EE4(struct MainObj* self);
 void func_80083710(struct MainObj* self);
@@ -181,7 +184,7 @@ extern struct Unk_unk68 D_80103F0C;
 extern s16 D_8010442C[16];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008329C(struct MainObj* self)
 {
     struct ShotObj* shot;
@@ -194,7 +197,7 @@ void func_8008329C(struct MainObj* self)
     self->attack_box = NULL;
     self->terrain_box = NULL;
     self->collision_data = D_80107F84;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->animation_table = (const u8* const*)sigma_animations;
     self->unk63 = 2;
     self->x_pos.val = 0x5200000;
@@ -219,7 +222,7 @@ void func_8008329C(struct MainObj* self)
     engine_obj.unk25 = 0;
     engine_obj.boss_ptr = self;
     set_animation(self, 0);
-    func_8001540C(2, 3, self);
+    func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
     self->unk5++;
     play_boss_voice(0xC);
     colonel_spawn_afterimages(self);
@@ -236,7 +239,7 @@ void sigma_intro_fill_health(struct MainObj* self)
         if (self->hp < 0x30) {
             if (update_boss_music_delay() == 0) {
                 if (--self->unk7C == 0) {
-                    func_8001540C(0, 0xE, 0);
+                    func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                     self->unk7C = 2;
                 }
                 self->hp++;
@@ -249,7 +252,7 @@ void sigma_intro_fill_health(struct MainObj* self)
         self->unk7E--;
     }
     self->on_screen = 0;
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -258,7 +261,7 @@ void sigma_intro_wait(struct MainObj* self)
 {
 
     if (--self->unk7C == 0) {
-        func_8001540C(2, 3, self);
+        func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
         self->unk7C = 0x3C;
         self->unk5 += 1;
         self->on_screen = 0;
@@ -266,7 +269,7 @@ void sigma_intro_wait(struct MainObj* self)
         return;
     }
     self->on_screen = 0;
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -306,11 +309,11 @@ void sigma_cloak_teleport_appear(struct MainObj* self)
     if (self->x_pos.i.hi > 0x4D0) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     set_animation(self, 0);
     set_animation(self->ext.main_68.scythe, 5);
-    func_8001540C(2, 3, self);
+    func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
 }
 
 void sigma_cloak_teleport_fade_in(struct MainObj* self)
@@ -330,7 +333,7 @@ void sigma_cloak_teleport_fade_in(struct MainObj* self)
 }
 
 // sigma_cloak_teleport_windup
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80083710(struct MainObj* self)
 {
     struct Main68Ext* ext = &self->ext.main_68;
@@ -361,7 +364,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_68_sigma", func_80083710);
 #endif
 
 // sigma_cloak_teleport_fire
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800837FC(struct MainObj* self)
 {
     struct Main68Ext* ext = &self->ext.main_68;
@@ -369,7 +372,7 @@ void func_800837FC(struct MainObj* self)
 
     if (self->unk7 == 0) {
         if (--self->unk7C == 0) {
-            func_8001540C(2, 0xD, self);
+            func_8001540C(2, SATURN_SOUND(0xD, 0xCC), self);
             for (i = 0; i < 2; i++) {
                 struct ShotObj* shot = find_free_shot_obj();
                 if (shot != NULL) {
@@ -404,7 +407,7 @@ void sigma_cloak_teleport_wait_shots(struct MainObj* self)
     if (self->ext.main_68.active_shots == 0) {
         self->unk6++;
         self->unk7C = 0xA;
-        func_8001540C(2, 3, self);
+        func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
     }
     is_on_screen(BASE_OBJECT(self));
 }
@@ -437,7 +440,7 @@ void sigma_cloak_teleport(struct MainObj* self)
 {
     sigma_cloak_teleport_funcs[self->unk6](self);
     animate_object(ANIMATED_OBJECT(self));
-    if (main_bss_state.frame_counter % 10 == 0) {
+    if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
             self->unk7E = 4;
@@ -450,7 +453,7 @@ void sigma_cloak_dash_appear(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi > 0x4D0) {
         self->x_pos.i.hi = 0x460;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->x_pos.i.hi = 0x540;
         self->unk15 = 0;
@@ -460,7 +463,7 @@ void sigma_cloak_dash_appear(struct MainObj* self)
     self->unk6++;
     set_animation(self, 0);
     set_animation(self->ext.main_68.scythe, 5);
-    func_8001540C(2, 3, self);
+    func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
 }
 
 void sigma_cloak_dash_fade_in(struct MainObj* self)
@@ -477,7 +480,7 @@ void sigma_cloak_dash_fade_in(struct MainObj* self)
 }
 
 // sigma_cloak_dash_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80083C2C(struct MainObj* self)
 {
     if (self->unk7 == 0) {
@@ -486,10 +489,10 @@ void func_80083C2C(struct MainObj* self)
         if (--self->unk7C == 0) {
             self->hurt_box = &D_80103EF8;
             self->unk7++;
-            self->unk15 ^= 0x40;
+            self->unk15 ^= PLAYER_FACING_RIGHT;
             set_animation(self, 1);
             set_animation(self->ext.main_68.scythe, 6);
-            func_8001540C(2, 2, self);
+            func_8001540C(2, SATURN_SOUND(2, 0xC1), self);
         }
     } else if (self->animation_step.fields.event != 0) {
         self->unk7 = 0;
@@ -515,7 +518,7 @@ void sigma_cloak_dash_run(struct MainObj* self)
         self->unk6++;
         self->unk7C = 0xA;
         self->terrain_box = NULL;
-        func_8001540C(2, 3, self);
+        func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
         self->unk4B = -1;
         self->ext.main_68.scythe->attack_box = NULL;
     }
@@ -559,7 +562,7 @@ void sigma_scythe_spin_jump(struct MainObj* self)
 
     if (state == 0) {
         self->unk7 = state + 1;
-        self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+        self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         set_animation(self, 0x16);
         return;
     }
@@ -571,7 +574,7 @@ void sigma_scythe_spin_jump(struct MainObj* self)
         self->attack_box = &D_80103F08;
         self->hurt_box = &D_80103F0C;
         set_animation(self, 0x17);
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
 
@@ -627,8 +630,8 @@ void sigma_scythe_spin_wait(struct MainObj* self)
         self->y_speed = 0;
         self->gravity = FIXED(0.2578125);
         set_animation(self, 0x18);
-        stop_sound(2, 5);
-        func_8001540C(2, 8, self);
+        STOP_SOUND(2, 5, 0x6);
+        func_8001540C(2, SATURN_SOUND(8, 0xC7), self);
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -642,7 +645,7 @@ void sigma_scythe_spin_land(struct MainObj* self)
         self->attack_box = (const u8*)&D_80103F00;
         self->hurt_box = (const u8*)&D_80103F04;
         set_animation(self, 0x19);
-        func_8001540C(2, 1, self);
+        func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
     }
 }
 
@@ -665,7 +668,7 @@ void sigma_scythe_plant_jump(struct MainObj* self)
 {
     if (self->unk7 == 0) {
         self->ext.main_68.next_attack = 0;
-        self->unk15 = self->x_pos.val <= g_Player.x_pos.val ? 0x40 : 0;
+        self->unk15 = self->x_pos.val <= g_Player.x_pos.val ? PLAYER_FACING_RIGHT : 0;
         self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
         set_animation(self, 0x16);
         return;
@@ -682,7 +685,7 @@ void sigma_scythe_plant_jump(struct MainObj* self)
         self->attack_box = &D_80103F08;
         self->hurt_box = &D_80103F0C;
         set_animation(self, 0x17);
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
 
@@ -731,7 +734,7 @@ void sigma_scythe_plant_land(struct MainObj* self)
         self->attack_box = (const u8*)&D_80103F00;
         self->hurt_box = (const u8*)&D_80103F04;
         set_animation(self, 0x14);
-        func_8001540C(2, 1, self);
+        func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
     }
 }
 
@@ -780,7 +783,7 @@ void sigma_cloak_pick_attack(struct MainObj* self)
 void sigma_darts_start(struct MainObj* self)
 {
     self->unk6++;
-    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->ext.main_68.count = 0;
     set_animation(self, 0x1B);
 }
@@ -804,7 +807,7 @@ void sigma_darts_spawn(struct MainObj* self)
                 temp_v0->timer = var_s1;
                 temp_v0->unk7C = WEAPON_OBJECT(self);
                 self->ext.main_68.count += 1;
-                func_8001540C(2, 0xA, self);
+                func_8001540C(2, SATURN_SOUND(0xA, 0xC9), self);
             }
             var_s1 += 1;
         } while (var_s1 < 4);
@@ -840,7 +843,7 @@ void sigma_scythe_retrieve_jump(struct MainObj* self)
 {
     if (self->unk7 == 0) {
 
-        self->unk15 = self->ext.main_68.scythe->x_pos.val > self->x_pos.val ? 0x40 : 0;
+        self->unk15 = self->ext.main_68.scythe->x_pos.val > self->x_pos.val ? PLAYER_FACING_RIGHT : 0;
 
         self->unk7 = (u8)(*(volatile u8*)&self->unk7 + 1);
         set_animation(self, 0x11);
@@ -854,7 +857,7 @@ void sigma_scythe_retrieve_jump(struct MainObj* self)
         self->attack_box = &D_80103F08;
         self->hurt_box = &D_80103F0C;
         set_animation(self, 0x12);
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
     }
 }
 
@@ -885,8 +888,8 @@ void sigma_scythe_retrieve_wait(struct MainObj* self)
         self->y_speed = 0;
         self->gravity = FIXED(0.2578125);
         set_animation(self, 0x18);
-        stop_sound(2, 5);
-        func_8001540C(2, 8, self);
+        STOP_SOUND(2, 5, 0x6);
+        func_8001540C(2, SATURN_SOUND(8, 0xC7), self);
     }
 }
 
@@ -936,14 +939,14 @@ void sigma_land_pause(struct MainObj* self)
 }
 
 // sigma_eye_laser_jump
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80084B14(struct MainObj* self)
 {
     switch (self->unk7) {
     case 0:
         self->unk7++;
         set_animation(self, 0x11);
-        func_8001540C(2, 0, self);
+        func_8001540C(2, SATURN_SOUND(0, 0xBF), self);
         /* fallthrough */
     case 1:
         animate_object(ANIMATED_OBJECT(self));
@@ -976,7 +979,7 @@ void func_80084B14(struct MainObj* self)
         self->hurt_box = &D_80103F04;
         self->unk7++;
         set_animation(self, 0x14);
-        func_8001540C(2, 1, self);
+        func_8001540C(2, SATURN_SOUND(1, 0xC0), self);
         break;
     case 4:
         animate_object(ANIMATED_OBJECT(self));
@@ -1000,7 +1003,7 @@ void sigma_eye_laser_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        func_8001540C(2, 9, self);
+        func_8001540C(2, SATURN_SOUND(9, 0xC8), self);
 
         quad = find_free_quad_obj();
         if (quad != 0) {
@@ -1035,7 +1038,7 @@ void sigma_eye_laser_wait(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (*(s8*)self->ext.main_68.effect == 0) {
-        stop_sound(2, 9);
+        STOP_SOUND(2, 9, 0x6);
         self->unk5 = 5;
         self->unk6 = 0;
         self->unk7 = 0;
@@ -1072,7 +1075,7 @@ void sigma_pose(struct MainObj* self)
 }
 
 // sigma_cloak_fight
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80084EE4(struct MainObj* self)
 {
     struct Main68Ext* ext = &self->ext.main_68;
@@ -1205,8 +1208,8 @@ void sigma_fight(struct BarObj* self)
 
 void sigma_death_start(struct MainObj* self)
 {
-    stop_sound(2, 5);
-    stop_sound(2, 9);
+    STOP_SOUND(2, 5, 0x6);
+    STOP_SOUND(2, 9, 0x7);
     player_start_script_action(0x15, 0);
     engine_obj.gameplay_locked = 1;
     self->unk5++;
@@ -1259,7 +1262,7 @@ void sigma_death_wait_explosion(struct MainObj* self)
             is_on_screen(BASE_OBJECT(self));
         }
     } else {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk7C = 0x78;
         self->unk5++;
         background_objects[0].unk28 += 0x100;
@@ -1267,7 +1270,7 @@ void sigma_death_wait_explosion(struct MainObj* self)
 }
 
 // sigma_death_explode
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80085460(struct MainObj* self)
 {
     u8 kind;
@@ -1282,7 +1285,7 @@ void func_80085460(struct MainObj* self)
         return;
     }
     if ((u8)get_random() % 7 == 0) {
-        kind = ((u8)main_bss_state.frame_counter ^ 1) & 1;
+        kind = ((u8)WEAPON_FRAME_COUNTER ^ 1) & 1;
         x = D_8010442C[(get_random() & 7) * 2] + 0x470;
         y = D_8010442C[(get_random() & 7) * 2 + 1] + 0x1E0;
         spawn_explosion_at(0, x, y, kind);
@@ -1320,7 +1323,7 @@ void sigma_cloak_stagger_start(struct MainObj* self)
     self->hurt_box = NULL;
     set_animation(self, 8);
     set_animation(self->ext.main_68.scythe, 9);
-    func_8001540C(2, 4, self);
+    func_8001540C(2, SATURN_SOUND(4, 0xC3), self);
     is_on_screen(BASE_OBJECT(self));
 }
 
@@ -1328,7 +1331,7 @@ void sigma_cloak_stagger_trail(struct MainObj* self)
 {
     struct VisualObj* visual;
 
-    if (!(main_bss_state.frame_counter % 8)) {
+    if (!(WEAPON_FRAME_COUNTER % 8)) {
         visual = find_free_visual_obj();
         if (visual != 0) {
             visual->active = 0x41;
@@ -1341,7 +1344,7 @@ void sigma_cloak_stagger_trail(struct MainObj* self)
     if (--self->unk7C == 0) {
         self->unk5++;
         self->unk7C = 10;
-        func_8001540C(2, 3, self);
+        func_8001540C(2, SATURN_SOUND(3, 0xC2), self);
     }
 
     is_on_screen(BASE_OBJECT(self));
@@ -1375,7 +1378,7 @@ void sigma_cloak_stagger(struct MainObj* self)
 {
     sigma_cloak_stagger_funcs[self->unk5](self);
     animate_object(ANIMATED_OBJECT(self));
-    if (main_bss_state.frame_counter % 10 == 0) {
+    if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.main_68.bob_step;
         if (--self->unk7E == 0) {
             self->unk7E = 4;
@@ -1397,9 +1400,9 @@ void sigma_reveal_start(struct MainObj* self)
     state++;
     self->unk42 &= 0x7FFF;
     self->unk5 = state;
-    self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : 0x40;
+    self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
     set_animation(self, 8);
-    func_8001540C(2, 0xE, self);
+    func_8001540C(2, SATURN_SOUND(0xE, 0xBE), self);
     set_animation(self->ext.main_68.scythe, 9);
     is_on_screen(BASE_OBJECT(self));
 }
@@ -1408,7 +1411,7 @@ void sigma_reveal_fall(struct MainObj* self)
 {
     struct VisualObj* temp_v0;
 
-    if ((main_bss_state.frame_counter % 5) == 0) {
+    if ((WEAPON_FRAME_COUNTER % 5) == 0) {
         temp_v0 = find_free_visual_obj();
         if (temp_v0 != 0) {
             temp_v0->active = 0x41;
@@ -1427,7 +1430,7 @@ void sigma_reveal_fall(struct MainObj* self)
 }
 
 // sigma_reveal_burn_cloak
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80085A44(struct MainObj* self)
 {
     struct Main68Ext* ext = &self->ext.main_68;
@@ -1435,7 +1438,7 @@ void func_80085A44(struct MainObj* self)
     struct ShotObj* shot;
     u8 i;
 
-    if (main_bss_state.frame_counter == (main_bss_state.frame_counter / 3) * 3) {
+    if (WEAPON_FRAME_COUNTER == (WEAPON_FRAME_COUNTER / 3) * 3) {
         visual = find_free_visual_obj();
         if (visual != NULL) {
             visual->active = 0x41;
@@ -1459,7 +1462,7 @@ void func_80085A44(struct MainObj* self)
             ext->count++;
         }
         set_animation(self, 0xE);
-        self->unk15 = (self->x_pos.i.hi < g_Player.x_pos.i.hi) << 6;
+        self->unk15 = (self->x_pos.i.hi < g_Player.x_pos.i.hi) << PLAYER_FACING_SHIFT;
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -1492,8 +1495,8 @@ void sigma_reveal_dialogue(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk6 == 0) {
         if (self->animation_step.fields.relative_step == 0) {
-            self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : 0x40;
-            player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << 6);
+            self->unk15 = g_Player.x_pos.i.hi < self->x_pos.i.hi ? 0 : PLAYER_FACING_RIGHT;
+            player_start_script_action(0x14, (self->x_pos.i.hi >= g_Player.x_pos.i.hi) << PLAYER_FACING_SHIFT);
             self->unk6 = (u8)self->unk6 + 1;
             if (engine_obj.cur_character == CHARACTER_X) {
                 func_8002217C(
@@ -1519,7 +1522,7 @@ void sigma_reveal_fill_health(struct MainObj* self)
     if (self->hp < 0x30) {
         temp_v0 = --self->unk7C;
         if (temp_v0 == 0) {
-            func_8001540C(0, 0xE, 0);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
             self->unk7C = 2;
         }
         self->hp = (s8)((u8)self->hp + 1);
@@ -1601,55 +1604,55 @@ struct Unk_unk68 D_80103F20[3] = {
 };
 
 union AnimationStep D_80103F2C[] = {
-    { 0x04010005 },
-    { 0x05010004 },
-    { 0x09010003 },
-    { 0x0D010015 },
-    { 0x09010003 },
-    { 0x05010003 },
-    { 0x04010003 },
-    { 0x11000121 },
+    { 5, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 3, 0, 1, 0x09 },
+    { 21, 0, 1, 0x0D },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x04 },
+    { 33, 1, 0, 0x11 },
 };
 
-u32 D_80103F4C[38] = {
-    0x21010005,
-    0x06010001,
-    0x07010001,
-    0x08010001,
-    0x06010001,
-    0x07010001,
-    0x0A010001,
-    0x0B010001,
-    0x0C010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0F010001,
-    0x10010001,
-    0x0E010001,
-    0x0A010001,
-    0x0B010001,
-    0x0C010001,
-    0x06010001,
-    0x07010001,
-    0x08010001,
-    0x21010103,
-    0x12010101,
-    0x13010101,
-    0x14FE0101,
+union AnimationStep D_80103F4C[38] = {
+    { 5, 0, 1, 0x21 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 3, 1, 1, 0x21 },
+    { 1, 1, 1, 0x12 },
+    { 1, 1, 1, 0x13 },
+    { 1, 1, -2, 0x14 },
 };
 
 struct Unk_unk68 D_80103FE4[3] = {
@@ -1665,7 +1668,7 @@ struct Unk_unk68 D_80103FF0[3] = {
 };
 
 union AnimationStep D_80103FFC[] = {
-    { 0x17000021 },
+    { 33, 0, 0, 0x17 },
 };
 
 struct Unk_unk68 D_80104000[3] = {
@@ -1709,25 +1712,25 @@ struct Unk_unk68 D_80104058[4] = {
 u8 D_80104068[8] = { 1, 0, 1, 54, 3, 0, 255, 55 };
 
 union AnimationStep D_80104070[] = {
-    { 0x39010003 },
-    { 0x38010003 },
-    { 0x39010003 },
-    { 0x38010003 },
-    { 0x39010003 },
-    { 0x38010003 },
-    { 0x39010003 },
-    { 0x38010003 },
-    { 0x39000021 },
+    { 3, 0, 1, 0x39 },
+    { 3, 0, 1, 0x38 },
+    { 3, 0, 1, 0x39 },
+    { 3, 0, 1, 0x38 },
+    { 3, 0, 1, 0x39 },
+    { 3, 0, 1, 0x38 },
+    { 3, 0, 1, 0x39 },
+    { 3, 0, 1, 0x38 },
+    { 33, 0, 0, 0x39 },
 };
 
 union AnimationStep D_80104094[] = {
-    { 0x3C010005 },
-    { 0x3A010005 },
-    { 0x3B01000C },
-    { 0x3A010003 },
-    { 0x3C010003 },
-    { 0x3D010003 },
-    { 0x3C000021 },
+    { 5, 0, 1, 0x3C },
+    { 5, 0, 1, 0x3A },
+    { 12, 0, 1, 0x3B },
+    { 3, 0, 1, 0x3A },
+    { 3, 0, 1, 0x3C },
+    { 3, 0, 1, 0x3D },
+    { 33, 0, 0, 0x3C },
 };
 
 struct Unk_unk68 D_801040B0[4] = {
@@ -1738,10 +1741,10 @@ struct Unk_unk68 D_801040B0[4] = {
 };
 
 union AnimationStep D_801040C0[] = {
-    { 0x41010008 },
-    { 0x42010003 },
-    { 0x41010004 },
-    { 0x41000001 },
+    { 8, 0, 1, 0x41 },
+    { 3, 0, 1, 0x42 },
+    { 4, 0, 1, 0x41 },
+    { 1, 0, 0, 0x41 },
 };
 
 u8 D_801040D0[8] = { 5, 0, 1, 67, 5, 0, 255, 68 };
@@ -1749,11 +1752,11 @@ u8 D_801040D0[8] = { 5, 0, 1, 67, 5, 0, 255, 68 };
 u8 D_801040D8[8] = { 5, 0, 1, 69, 5, 0, 255, 70 };
 
 union AnimationStep D_801040E0[] = {
-    { 0x41010003 },
-    { 0x4201000C },
-    { 0x41010005 },
-    { 0x3F010005 },
-    { 0x3E000008 },
+    { 3, 0, 1, 0x41 },
+    { 12, 0, 1, 0x42 },
+    { 5, 0, 1, 0x41 },
+    { 5, 0, 1, 0x3F },
+    { 8, 0, 0, 0x3E },
 };
 
 struct Unk_unk68 D_801040F4[4] = {
@@ -1764,10 +1767,10 @@ struct Unk_unk68 D_801040F4[4] = {
 };
 
 union AnimationStep D_80104104[] = {
-    { 0x4A010008 },
-    { 0x4B010003 },
-    { 0x4A010004 },
-    { 0x4A000001 },
+    { 8, 0, 1, 0x4A },
+    { 3, 0, 1, 0x4B },
+    { 4, 0, 1, 0x4A },
+    { 1, 0, 0, 0x4A },
 };
 
 u8 D_80104114[8] = { 5, 0, 1, 76, 5, 0, 255, 77 };
@@ -1775,40 +1778,40 @@ u8 D_80104114[8] = { 5, 0, 1, 76, 5, 0, 255, 77 };
 u8 D_8010411C[8] = { 5, 0, 1, 78, 5, 0, 255, 79 };
 
 union AnimationStep D_80104124[] = {
-    { 0x4A010003 },
-    { 0x4B01000C },
-    { 0x4A010005 },
-    { 0x48010005 },
-    { 0x47000008 },
+    { 3, 0, 1, 0x4A },
+    { 12, 0, 1, 0x4B },
+    { 5, 0, 1, 0x4A },
+    { 5, 0, 1, 0x48 },
+    { 8, 0, 0, 0x47 },
 };
 
 union AnimationStep D_80104138[] = {
-    { 0x50010005 },
-    { 0x5101000C },
-    { 0x50010005 },
-    { 0x52010003 },
-    { 0x5301010C },
-    { 0x43010004 },
-    { 0x43000001 },
+    { 5, 0, 1, 0x50 },
+    { 12, 0, 1, 0x51 },
+    { 5, 0, 1, 0x50 },
+    { 3, 0, 1, 0x52 },
+    { 12, 1, 1, 0x53 },
+    { 4, 0, 1, 0x43 },
+    { 1, 0, 0, 0x43 },
 };
 
 union AnimationStep D_80104154[] = {
-    { 0x3C010019 },
-    { 0x3A010005 },
-    { 0x3B01000F },
-    { 0x3A010005 },
-    { 0x90010105 },
-    { 0x91010002 },
-    { 0x90010028 },
-    { 0x90000001 },
+    { 25, 0, 1, 0x3C },
+    { 5, 0, 1, 0x3A },
+    { 15, 0, 1, 0x3B },
+    { 5, 0, 1, 0x3A },
+    { 5, 1, 1, 0x90 },
+    { 2, 0, 1, 0x91 },
+    { 40, 0, 1, 0x90 },
+    { 1, 0, 0, 0x90 },
 };
 
 union AnimationStep D_80104174[] = {
-    { 0x54010005 },
-    { 0x55010019 },
-    { 0x55010003 },
-    { 0x39010105 },
-    { 0x38000003 },
+    { 5, 0, 1, 0x54 },
+    { 25, 0, 1, 0x55 },
+    { 3, 0, 1, 0x55 },
+    { 5, 1, 1, 0x39 },
+    { 3, 0, 0, 0x38 },
 };
 
 u8 D_80104188[8] = { 3, 0, 1, 57, 3, 0, 255, 56 };
@@ -1848,13 +1851,13 @@ struct Unk_unk68 D_801041B8[12] = {
 };
 
 union AnimationStep D_801041E8[] = {
-    { 0x6C010002 },
-    { 0x6D010002 },
-    { 0x6E010002 },
-    { 0x6F010002 },
-    { 0x70010102 },
-    { 0x71010002 },
-    { 0x72000002 },
+    { 2, 0, 1, 0x6C },
+    { 2, 0, 1, 0x6D },
+    { 2, 0, 1, 0x6E },
+    { 2, 0, 1, 0x6F },
+    { 2, 1, 1, 0x70 },
+    { 2, 0, 1, 0x71 },
+    { 2, 0, 0, 0x72 },
 };
 
 struct Unk_unk68 D_80104204[4] = {
@@ -1865,41 +1868,41 @@ struct Unk_unk68 D_80104204[4] = {
 };
 
 union AnimationStep D_80104214[] = {
-    { 0x77010002 },
-    { 0x78010002 },
-    { 0x79010002 },
-    { 0x7A010002 },
-    { 0x7B010102 },
-    { 0x7C010002 },
-    { 0x7D000002 },
+    { 2, 0, 1, 0x77 },
+    { 2, 0, 1, 0x78 },
+    { 2, 0, 1, 0x79 },
+    { 2, 0, 1, 0x7A },
+    { 2, 1, 1, 0x7B },
+    { 2, 0, 1, 0x7C },
+    { 2, 0, 0, 0x7D },
 };
 
 union AnimationStep D_80104230[] = {
-    { 0x7E010002 },
-    { 0x7F010002 },
-    { 0x80010002 },
-    { 0x81FD0002 },
+    { 2, 0, 1, 0x7E },
+    { 2, 0, 1, 0x7F },
+    { 2, 0, 1, 0x80 },
+    { 2, 0, -3, 0x81 },
 };
 
 union AnimationStep D_80104240[] = {
-    { 0x82010001 },
-    { 0x83010001 },
-    { 0x84010001 },
-    { 0x85010001 },
-    { 0x86010001 },
-    { 0x87000001 },
+    { 1, 0, 1, 0x82 },
+    { 1, 0, 1, 0x83 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x85 },
+    { 1, 0, 1, 0x86 },
+    { 1, 0, 0, 0x87 },
 };
 
 union AnimationStep D_80104258[] = {
-    { 0x88000001 },
+    { 1, 0, 0, 0x88 },
 };
 
 union AnimationStep D_8010425C[] = {
-    { 0x89000001 },
+    { 1, 0, 0, 0x89 },
 };
 
 union AnimationStep D_80104260[] = {
-    { 0x8A000001 },
+    { 1, 0, 0, 0x8A },
 };
 
 struct Unk_unk68 D_80104264[4] = {
@@ -1910,13 +1913,13 @@ struct Unk_unk68 D_80104264[4] = {
 };
 
 union AnimationStep D_80104274[] = {
-    { 0x3A010005 },
-    { 0x3B01000C },
-    { 0x3A010003 },
-    { 0x3C010003 },
-    { 0x8F010003 },
-    { 0x3C010020 },
-    { 0x3C000001 },
+    { 5, 0, 1, 0x3A },
+    { 12, 0, 1, 0x3B },
+    { 3, 0, 1, 0x3A },
+    { 3, 0, 1, 0x3C },
+    { 3, 0, 1, 0x8F },
+    { 32, 0, 1, 0x3C },
+    { 1, 0, 0, 0x3C },
 };
 
 void* sigma_animations[44] = {

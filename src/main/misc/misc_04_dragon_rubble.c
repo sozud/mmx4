@@ -14,6 +14,7 @@ void dragon_rubble_init(struct MiscObj* arg0);
 void dragon_rubble_wait(struct MiscObj* arg0);
 void func_800C899C(struct MiscObj* arg0);
 void dragon_rubble_b_wait(struct MiscObj* arg0);
+#include "weapon_resources.h"
 
 void dragon_rubble_update(struct MiscObj* self)
 {
@@ -47,21 +48,21 @@ void dragon_rubble_init(struct MiscObj* self)
     if (adjusted_y < 0) {
         adjusted_y = random_y + 9;
     }
-    self->unk42 = clut_x | (((adjusted_y >> 2) + 0x1E0) << 6);
+    self->unk42 = OBJECT_CLUT(clut_x | (((adjusted_y >> 2) + 0x1E0) << 6));
     resource_index = func_8002938C(0x85);
-    self->unk40 = D_801406A8[resource_index] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(resource_index);
 
     resource_index = func_8002938C(0x85);
     menu_frame_offsets = SP_MENU_FRAMES;
     resource_index = menu_frame_offsets[resource_index];
     self->bg_offset = 0;
     self->unk3C = (u8*)menu_frame_offsets + resource_index;
-    self->unk15 = get_random() & 0x40;
-    self->unk16 = 7;
+    self->unk15 = get_random() & PLAYER_FACING_RIGHT;
+    self->unk16 = VISUAL_SATURN_LAYER(7);
     self->x_vel.val = 0;
     spawn_debris(8, dragon_rubble_debris, self);
     spawn_explosion_variant(self, 2);
-    func_8001540C(5, 1, self);
+    func_8001540C(SATURN_ALT(5, 4), SATURN_SOUND(1, 0x02), self);
     start_screen_shake_y(0x14, 4, 2);
 
     self->animation_step.fields.frame_index = self->unk2;
@@ -99,8 +100,8 @@ void func_800C899C(struct MiscObj* self)
     self->animation_table = (const u8* const*)dragon_rubble_animations;
     self->state++;
 
-    self->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x85));
-    self->unk40 = D_801406A8[func_8002938C(0x85)] >> 7;
+    self->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x85));
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x85));
 
     self->unk3C = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x85));
 
@@ -118,10 +119,10 @@ void func_800C899C(struct MiscObj* self)
         self->unk16 = 1;
         self->animation_step.fields.frame_index = 2;
         start_screen_shake_y(0xA, 4, 2);
-        func_8001540C(5, 1, self);
+        func_8001540C(SATURN_ALT(5, 4), SATURN_SOUND(1, 0x02), self);
         self->bg_offset = 0;
     } else {
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         self->animation_step.fields.frame_index = 1;
         self->bg_offset = 0;
     }
@@ -157,7 +158,7 @@ struct Misc04SpawnPosition {
     u16 y;
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8BDC(struct MiscObj* arg0);
 void func_800C8E90(struct MiscObj* arg0);
 extern u32* dragon_rubble_animations[14];
@@ -168,7 +169,7 @@ extern struct Misc04SpawnPosition dragon_rubble_c_positions[3];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8BDC(struct MiscObj* arg0)
 {
     struct MainObj* owner = arg0->ext.misc_4.owner;
@@ -181,6 +182,9 @@ void func_800C8BDC(struct MiscObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     arg0->animation_table = (u32**)dragon_rubble_animations;
 
+#ifdef MMX4_SATURN
+    arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x85));
+#else
     index = func_8002938C(0x85);
     row = func_8002938C(0x85);
     column = index * 4 + 0x18;
@@ -188,15 +192,16 @@ void func_800C8BDC(struct MiscObj* arg0)
     row = row + 6 < 0 ? row + 9 : row + 6;
     arg0->unk42 = (u16)((column - ((wrapped >> 4) << 4))
         | (((row >> 2) + 0x1E0) << 6));
-    arg0->unk40 = (u16)((u32)D_801406A8[func_8002938C(0x85)] >> 7);
+#endif
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x85)));
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x85));
 
     arg0->x_pos.i.hi = dragon_rubble_c_positions[arg0->unk2].x;
     arg0->y_pos.i.hi = dragon_rubble_c_positions[arg0->unk2].y;
     arg0->x_vel.val = owner->unk15 != 0 ? -0x60000 : 0x60000;
 
-    func_8001540C(5, 1, arg0);
-    func_8001540C(5, 0, arg0);
+    func_8001540C(SATURN_ALT(5, 4), SATURN_SOUND(1, 0x02), arg0);
+    func_8001540C(SATURN_ALT(5, 4), SATURN_SOUND(0, 0x08), arg0);
     spawn_debris(8, dragon_rubble_c_debris_1, arg0);
     spawn_debris(8, dragon_rubble_c_debris_2, arg0);
     spawn_debris(8, dragon_rubble_c_debris_0, arg0);
@@ -214,7 +219,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_04_dragon_rubble", func_800C8BDC);
 #endif
 
 // dragon_rubble_c_explode
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8E90(struct MiscObj* arg0)
 {
     s8 timer = arg0->unk5;

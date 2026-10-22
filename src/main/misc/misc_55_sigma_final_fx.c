@@ -15,11 +15,12 @@ void sigma_final_fx_gust(struct MiscObj* arg0);
 void sigma_final_fx_follow(struct MiscObj*);
 
 // sigma_final_fx_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D3084(struct MiscObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D3084(struct MiscObj* self)
 {
     struct MainObj* owner = (struct MainObj*)self->ext.misc_55.owner;

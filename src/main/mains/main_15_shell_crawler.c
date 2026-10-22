@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[15]
 // 8004D930..8004E890
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_15_shell_crawler.h"
 #include "main/objects.h"
 #include "main/1CF60.h"
@@ -47,7 +48,8 @@ void shell_crawler_buried(struct MainObj* self)
 }
 
 // shell_crawler_check_hop
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004D9CC(struct MainObj* arg0);
 void func_8004DCB0(struct MainObj* arg0);
 static void main_15_spawn_spark(struct MainObj* arg0, u8 index);
@@ -64,7 +66,7 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
         return;
     shot->active = 0x41;
     shot->id = 0xA;
-    shot->unk42 = 0x7885;
+    shot->unk42 = OBJECT_CLUT(0x7885);
     shot->bg_offset = arg0->bg_offset;
     shot->x_pos.val = arg0->x_pos.val;
     shot->unk2 = index * 2;
@@ -74,7 +76,7 @@ static void main_15_spawn_spark(struct MainObj* arg0, u8 index)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004D9CC(struct MainObj* arg0)
 {
     struct Main0Ext* ext = &arg0->ext.main_0;
@@ -149,7 +151,7 @@ void func_8004DB10(struct MainObj* self)
     }
 
     if (self->unk2 == 1) {
-        self->unk15 = self->unk15 == 0 ? 0x40 : 0;
+        self->unk15 = self->unk15 == 0 ? PLAYER_FACING_RIGHT : 0;
         self->x_speed = -self->x_speed;
         return;
     }
@@ -167,7 +169,7 @@ void func_8004DB10(struct MainObj* self)
 }
 
 // shell_crawler_check_shoot
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004DCB0(struct MainObj* arg0)
 {
     struct Main0Ext* ext = &arg0->ext.main_0;
@@ -345,13 +347,13 @@ void shell_crawler_walk(struct MainObj* self)
             self->x_speed = -self->x_speed;
         }
     } else if (self->collision_flags & 2) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_speed = -self->x_speed;
     }
 }
 
 // shell_crawler_frozen
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E300(struct MainObj* arg0)
 {
     u8 i;
@@ -392,7 +394,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E300);
 #endif
 
 // shell_crawler_thaw
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E490(struct MainObj* arg0)
 {
     u8 i;
@@ -408,7 +410,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_15_shell_crawler", func_8004E490);
 #endif
 
 // shell_crawler_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E55C(struct MainObj* arg0)
 {
     struct Main0Ext* ext = &arg0->ext.main_0;
@@ -419,7 +421,7 @@ void func_8004E55C(struct MainObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)shell_crawler_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &shell_crawler_terrain_box;
     arg0->hurt_box = &shell_crawler_body_box;
     arg0->attack_box = &shell_crawler_body_box;
@@ -436,7 +438,7 @@ void func_8004E55C(struct MainObj* arg0)
     ext->flags[0] = 0;
     ext->index = 0;
     ext->flags[1] = 0;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     if ((u8)(arg0->unk2 - 2) < 2) {
         arg0->state = 5;
         arg0->hurt_box = NULL;
@@ -456,7 +458,11 @@ void shell_crawler_main(struct MainObj* self)
 {
     s32 hit;
 
+#ifdef MMX4_SATURN
+    if (*(u16*)&engine_obj.stage == 0x201 && engine_obj.character_state.bytes[0] != 0) {
+#else
     if (*(u16*)&engine_obj.stage == 0x102 && engine_obj.character_state.bytes[0] != 0) {
+#endif
         if ((self->x_pos.i.hi >= 0xC0F && self->x_pos.i.hi <= 0xDF0) || (u16)(self->x_pos.i.hi - 0x100F) < 0x1E2
             || (u16)(self->x_pos.i.hi - 0x1315) < 0x1DC || (self->x_pos.i.hi >= 0x1613 && self->x_pos.i.hi <= 0x17D1)) {
             self->state = 3;
@@ -506,106 +512,106 @@ struct Unk_unk68 shell_crawler_body_box = { -11, -16, 21, 29 };
 struct Unk_unk68 shell_crawler_shell_box = { -12, -4, 21, 18 };
 
 union AnimationStep shell_crawler_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep shell_crawler_anim_1[] = {
-    { 0x01010008 },
-    { 0x02010008 },
-    { 0x03010008 },
-    { 0x04010003 },
-    { 0x05010005 },
-    { 0x06010008 },
-    { 0x07010008 },
-    { 0x08010008 },
-    { 0x09010003 },
-    { 0x0AF70005 },
+    { 8, 0, 1, 0x01 },
+    { 8, 0, 1, 0x02 },
+    { 8, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 5, 0, 1, 0x05 },
+    { 8, 0, 1, 0x06 },
+    { 8, 0, 1, 0x07 },
+    { 8, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 5, 0, -9, 0x0A },
 };
 
 union AnimationStep shell_crawler_anim_2[] = {
-    { 0x00010006 },
-    { 0x0B01000A },
-    { 0x0C010102 },
-    { 0x0D010002 },
-    { 0x0E010003 },
-    { 0x0E000001 },
+    { 6, 0, 1, 0x00 },
+    { 10, 0, 1, 0x0B },
+    { 2, 1, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 1, 0, 0, 0x0E },
 };
 
 union AnimationStep shell_crawler_anim_3[] = {
-    { 0x0F010002 },
-    { 0x10FF0002 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, -1, 0x10 },
 };
 
 union AnimationStep shell_crawler_anim_4[] = {
-    { 0x11010003 },
-    { 0x0B01000A },
-    { 0x12010002 },
-    { 0x00010003 },
-    { 0x12010002 },
-    { 0x12000001 },
+    { 3, 0, 1, 0x11 },
+    { 10, 0, 1, 0x0B },
+    { 2, 0, 1, 0x12 },
+    { 3, 0, 1, 0x00 },
+    { 2, 0, 1, 0x12 },
+    { 1, 0, 0, 0x12 },
 };
 
 union AnimationStep shell_crawler_anim_5[] = {
-    { 0x00010006 },
-    { 0x12010001 },
-    { 0x13010002 },
-    { 0x14010102 },
-    { 0x15010001 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x17010002 },
-    { 0x18000001 },
+    { 6, 0, 1, 0x00 },
+    { 1, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 1, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x17 },
+    { 1, 0, 0, 0x18 },
 };
 
 union AnimationStep shell_crawler_anim_6[] = {
-    { 0x18010006 },
-    { 0x17010001 },
-    { 0x16010002 },
-    { 0x15010002 },
-    { 0x14010001 },
-    { 0x13010002 },
-    { 0x12010002 },
-    { 0x00010002 },
-    { 0x12010002 },
-    { 0x00000001 },
+    { 6, 0, 1, 0x18 },
+    { 1, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x15 },
+    { 1, 0, 1, 0x14 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x12 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep shell_crawler_anim_7[] = {
-    { 0x00010006 },
-    { 0x19010006 },
-    { 0x1A010008 },
-    { 0x1B010102 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x0001000A },
-    { 0x00000001 },
+    { 6, 0, 1, 0x00 },
+    { 6, 0, 1, 0x19 },
+    { 8, 0, 1, 0x1A },
+    { 2, 1, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 10, 0, 1, 0x00 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep shell_crawler_anim_8[] = {
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20FE0002 },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, -2, 0x20 },
 };
 
 union AnimationStep shell_crawler_anim_9[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep shell_crawler_anim_10[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep shell_crawler_anim_11[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep shell_crawler_anim_12[] = {
-    { 0x24000001 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep shell_crawler_anim_13[] = {
-    { 0x25000001 },
+    { 1, 0, 0, 0x25 },
 };
 
 union AnimationStep* shell_crawler_animations[14] = {

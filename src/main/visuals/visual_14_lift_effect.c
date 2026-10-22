@@ -10,6 +10,7 @@ extern void (*lift_effect_state_funcs[])(struct VisualObj*);
 void lift_effect_init(struct VisualObj*);
 void lift_effect_main(struct VisualObj*);
 void lift_effect_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void lift_effect_update(struct VisualObj* arg0)
 {

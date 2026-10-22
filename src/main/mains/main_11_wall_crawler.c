@@ -1,13 +1,16 @@
 // MainObj, main_object_update_funcs[11]
 // 8004A718..8004B8C0
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_11_wall_crawler.h"
 #include "main/objects.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
+#include "main/1CF60.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
 #endif
@@ -45,7 +48,12 @@ void wall_crawler_update(struct MainObj* self)
 }
 
 // wall_crawler_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B418(struct MainObj* self);
 void func_8004B0A0(struct MainObj* self);
 void func_8004A78C(struct MainObj* self);
@@ -62,7 +70,7 @@ extern u8 wall_crawler_debris[];
 extern void (*wall_crawler_step_funcs[])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004A78C(struct MainObj* self)
 {
     u16 x;
@@ -71,7 +79,7 @@ void func_8004A78C(struct MainObj* self)
     self->invincibility_timer = 0;
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (const u8* const*)wall_crawler_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->collision_data = D_801067F0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
@@ -100,7 +108,7 @@ void func_8004A78C(struct MainObj* self)
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 1;
         self->x_speed = -0x18000;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 2;
         self->x_speed = 0x18000;
     }
@@ -132,7 +140,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A78C);
 #endif
 
 // wall_crawler_attach
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004A9F4(struct MainObj* self)
 {
     u16* timer = (u16*)((u8*)&SP_CUR_MAIN_OBJ->ext + 2);
@@ -177,7 +185,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_11_wall_crawler", func_8004A9F4);
 #endif
 
 // wall_crawler_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004AB6C(struct MainObj* self)
 {
     s32 collision;
@@ -190,9 +198,10 @@ void func_8004AB6C(struct MainObj* self)
     if (func_8002BB80(self, MAIN_OBJECT(&g_Player)) != 0)
         collision = -1;
     if (collision < 0) {
+        s32 i;
         spawn_explosion(BASE_OBJECT(self));
         SP_CUR_MAIN_OBJ->ext.main_11.unk86 = 0x10;
-        for (s32 i = 0; i < 0x10; i++) {
+        for (i = 0; i < 0x10; i++) {
             struct ShotObj* shot = find_free_shot_obj();
             if (shot == NULL)
                 continue;
@@ -234,7 +243,7 @@ void wall_crawler_despawn(struct MainObj* self)
 }
 
 // wall_crawler_step_7
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004AD18(struct MainObj* self)
 {
     if (func_8002D724(PLAYER_OBJECT(self), self->x_pos.i.hi, self->y_pos.i.hi) != 0)
@@ -245,7 +254,7 @@ void func_8004AD18(struct MainObj* self)
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 1;
         self->x_speed = -0x18000;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         SP_CUR_MAIN_OBJ->ext.main_11.unk80 = 2;
         self->x_speed = 0x18000;
     }
@@ -292,7 +301,7 @@ void func_8004AE20(struct MainObj* self)
         case 2:
             self->x_speed = 0x18000;
             self->y_speed = 0;
-            if (self->unk15 != 0x40) {
+            if (self->unk15 != PLAYER_FACING_RIGHT) {
                 self->unk5 = 3;
                 set_animation(self, 2);
             } else {
@@ -354,7 +363,7 @@ void func_8004AE20(struct MainObj* self)
 void wall_crawler_turn(struct MainObj* self)
 {
     if (self->animation_step.fields.event == 1) {
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         set_animation(self, 0);
         if (self->unk2 == 0) {
             self->unk5 = 2;
@@ -365,7 +374,7 @@ void wall_crawler_turn(struct MainObj* self)
 }
 
 // wall_crawler_step_4
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B0A0(struct MainObj* self)
 {
     u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
@@ -416,7 +425,7 @@ void func_8004B2BC(struct MainObj* self)
     case 2:
     case 4:
     case 6:
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     case 10:
     case 12:
     case 14:
@@ -436,7 +445,7 @@ void func_8004B2BC(struct MainObj* self)
     case 28:
     case 30:
         if (SP_CUR_MAIN_OBJ->ext.main_11.angle >= 0x1A) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         set_animation(self, 9);
         break;
@@ -444,7 +453,7 @@ void func_8004B2BC(struct MainObj* self)
         set_animation(self, 5);
         break;
     case 0:
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         break;
     case 16:
         self->unk15 = 0;
@@ -456,7 +465,7 @@ void func_8004B2BC(struct MainObj* self)
 }
 
 // wall_crawler_corner_1
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B418(struct MainObj* self)
 {
     u8* context = (u8*)&SP_CUR_MAIN_OBJ->ext;
@@ -532,7 +541,7 @@ void func_8004B514(struct MainObj* self)
 }
 
 // wall_crawler_corner_3
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B668(struct MainObj* self)
 {
     struct Main11Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_11;
@@ -583,7 +592,7 @@ void wall_crawler_corner_end(struct MainObj* self)
         flags = SP_CUR_MAIN_OBJ->ext.main_11.unk80;
         if (flags & 3) {
             if (flags & 2) {
-                self->unk15 = 0x40;
+                self->unk15 = PLAYER_FACING_RIGHT;
             } else {
                 self->unk15 = 0;
             }
@@ -646,297 +655,297 @@ void wall_crawler_update_surface(struct MainObj* self)
 }
 
 union AnimationStep wall_crawler_anim_0[] = {
-    { 0x00010001 },
-    { 0x01010002 },
-    { 0x2F010003 },
-    { 0x01010002 },
-    { 0x00010001 },
-    { 0x30010002 },
-    { 0x31010003 },
-    { 0x30010002 },
-    { 0x00F80001 },
+    { 1, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 3, 0, 1, 0x2F },
+    { 2, 0, 1, 0x01 },
+    { 1, 0, 1, 0x00 },
+    { 2, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 2, 0, 1, 0x30 },
+    { 1, 0, -8, 0x00 },
 };
 
 union AnimationStep wall_crawler_anim_1[] = {
-    { 0x02010001 },
-    { 0x03FF0001 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, -1, 0x03 },
 };
 
 union AnimationStep wall_crawler_anim_2[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x06010001 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x08010001 },
-    { 0x09010101 },
-    { 0x02000001 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x08 },
+    { 1, 1, 1, 0x09 },
+    { 1, 0, 0, 0x02 },
 };
 
 union AnimationStep wall_crawler_anim_3[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x0A010101 },
-    { 0x0BFF0101 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 1, 1, 0x0A },
+    { 1, 1, -1, 0x0B },
 };
 
 union AnimationStep wall_crawler_anim_4[] = {
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x03010101 },
-    { 0x02FF0101 },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 1, 1, 0x03 },
+    { 1, 1, -1, 0x02 },
 };
 
 union AnimationStep wall_crawler_anim_5[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0E010101 },
-    { 0x0FFF0101 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 1, 1, 0x0E },
+    { 1, 1, -1, 0x0F },
 };
 
 union AnimationStep wall_crawler_anim_6[] = {
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x03010101 },
-    { 0x02FF0101 },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 1, 1, 0x03 },
+    { 1, 1, -1, 0x02 },
 };
 
 union AnimationStep wall_crawler_anim_7[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x04010101 },
-    { 0x05FF0101 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 1, 1, 0x04 },
+    { 1, 1, -1, 0x05 },
 };
 
 union AnimationStep wall_crawler_anim_8[] = {
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x03010101 },
-    { 0x02FF0101 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 1, 1, 0x03 },
+    { 1, 1, -1, 0x02 },
 };
 
 union AnimationStep wall_crawler_anim_9[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x0C010101 },
-    { 0x0DFF0101 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 1, 1, 0x0C },
+    { 1, 1, -1, 0x0D },
 };
 
 union AnimationStep wall_crawler_anim_10[] = {
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x03010101 },
-    { 0x02FF0101 },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 1, 1, 0x03 },
+    { 1, 1, -1, 0x02 },
 };
 
 union AnimationStep wall_crawler_anim_11[] = {
-    { 0x10010001 },
-    { 0x11010001 },
-    { 0x12010001 },
-    { 0x13FD0001 },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, -3, 0x13 },
 };
 
 union AnimationStep wall_crawler_anim_12[] = {
-    { 0x1F000001 },
+    { 1, 0, 0, 0x1F },
 };
 
 union AnimationStep wall_crawler_anim_13[] = {
-    { 0x20000001 },
+    { 1, 0, 0, 0x20 },
 };
 
 union AnimationStep wall_crawler_anim_14[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep wall_crawler_anim_15[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep wall_crawler_anim_16[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep wall_crawler_anim_17[] = {
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x03010001 },
-    { 0x24010201 },
-    { 0x25010001 },
-    { 0x02010101 },
-    { 0x03FF0101 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x03 },
+    { 1, 2, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 1, 1, 1, 0x02 },
+    { 1, 1, -1, 0x03 },
 };
 
 union AnimationStep wall_crawler_anim_18[] = {
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x26010201 },
-    { 0x27010001 },
-    { 0x04010101 },
-    { 0x05FF0101 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 2, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 1, 1, 0x04 },
+    { 1, 1, -1, 0x05 },
 };
 
 union AnimationStep wall_crawler_anim_19[] = {
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x28010201 },
-    { 0x29010001 },
-    { 0x0A010101 },
-    { 0x0BFF0101 },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 2, 1, 0x28 },
+    { 1, 0, 1, 0x29 },
+    { 1, 1, 1, 0x0A },
+    { 1, 1, -1, 0x0B },
 };
 
 union AnimationStep wall_crawler_anim_20[] = {
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x0C010001 },
-    { 0x0D010001 },
-    { 0x2A010201 },
-    { 0x2B010001 },
-    { 0x0C010101 },
-    { 0x0DFF0101 },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 0, 1, 0x0C },
+    { 1, 0, 1, 0x0D },
+    { 1, 2, 1, 0x2A },
+    { 1, 0, 1, 0x2B },
+    { 1, 1, 1, 0x0C },
+    { 1, 1, -1, 0x0D },
 };
 
 union AnimationStep wall_crawler_anim_21[] = {
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x2C010201 },
-    { 0x2D010001 },
-    { 0x0E010101 },
-    { 0x0FFF0101 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 2, 1, 0x2C },
+    { 1, 0, 1, 0x2D },
+    { 1, 1, 1, 0x0E },
+    { 1, 1, -1, 0x0F },
 };
 
 union AnimationStep wall_crawler_anim_22[] = {
-    { 0x2E000001 },
+    { 1, 0, 0, 0x2E },
 };
 
 union AnimationStep wall_crawler_anim_23[] = {
-    { 0x34000001 },
+    { 1, 0, 0, 0x34 },
 };
 
 union AnimationStep wall_crawler_anim_24[] = {
-    { 0x32010001 },
-    { 0x33000001 },
+    { 1, 0, 1, 0x32 },
+    { 1, 0, 0, 0x33 },
 };
 
 union AnimationStep* wall_crawler_animations[] = {

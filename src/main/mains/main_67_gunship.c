@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[67]
 // 80082434..80083218
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_67_gunship.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -72,7 +73,7 @@ void func_80082470(struct MainObj* obj)
     obj->bg_offset = g_Player.bg_offset;
     obj->collision_data = D_80107F04;
     obj->animation_table = (const u8* const*)gunship_animations;
-    obj->unk16 = 6;
+    obj->unk16 = VISUAL_SATURN_LAYER(6);
     obj->terrain_box = &gunship_terrain_box;
     obj->hurt_box = &gunship_hurt_box;
     obj->x_speed = 0;
@@ -102,7 +103,11 @@ void func_80082470(struct MainObj* obj)
 }
 
 // gunship_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80082574(struct MainObj* arg0);
 void func_800828B4(struct MainObj* arg0);
 extern void (*gunship_step_funcs[7])();
@@ -110,7 +115,7 @@ void gunship_bob(struct MainObj*);
 void collide_with_players(struct PlayerObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80082574(struct MainObj* arg0)
 {
     s32 collision;
@@ -205,7 +210,7 @@ void gunship_choose(struct MainObj* self)
 }
 
 // gunship_choose_attack
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800828B4(struct MainObj* arg0)
 {
     s32 dx;
@@ -251,7 +256,7 @@ void gunship_gun_fire(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     self->ext.main_67.unk89 = 1;
-    func_8001540C(2, 0xA1, self);
+    func_8001540C(2, SATURN_SOUND(0xA1, 0x71), self);
     gunship_spawn_bullet(self);
     self->ext.main_67.unk8A++;
     self->unk7C = engine_obj.cur_character == 0 ? 0x14 : 0xA;
@@ -299,7 +304,7 @@ void gunship_missiles_launch(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xA2, self);
+        func_8001540C(2, SATURN_SOUND(0xA2, 0x72), self);
         gunship_spawn_missiles(VISUAL_OBJECT(self));
         self->unk7C = 0x3C;
         self->unk6++;
@@ -380,7 +385,7 @@ void gunship_spawn_bullet(struct MainObj* self)
         shot->unk40 = self->unk40;
         shot->unk15 = self->unk15;
         shot->bg_offset = self->bg_offset;
-        shot->unk16 = 4;
+        shot->unk16 = VISUAL_SATURN_LAYER(4);
     }
 }
 
@@ -402,9 +407,9 @@ void gunship_spawn_missiles(struct VisualObj* self)
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
             if (i < 2) {
-                shot->unk16 = 4;
+                shot->unk16 = VISUAL_SATURN_LAYER(4);
             } else {
-                shot->unk16 = 7;
+                shot->unk16 = VISUAL_SATURN_LAYER(7);
             }
         }
     }
@@ -459,7 +464,7 @@ void gunship_spawn_exhaust(struct MainObj* self)
             temp_v0->unk3C = self->sprite_frames;
             temp_v0->unk40 = self->unk40;
             temp_v0->bg_offset = self->bg_offset;
-            temp_v0->unk16 = 5;
+            temp_v0->unk16 = VISUAL_SATURN_LAYER(5);
             temp_v0->unk15 = self->unk15;
         }
         var_s1 += 1;
@@ -482,13 +487,13 @@ struct Unk_unk68 gunship_hurt_box = { -77, -41, -105, 68 };
 struct Unk_unk68 gunship_terrain_box = { -1, -3, 78, 29 };
 
 union AnimationStep gunship_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep gunship_anim_1[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02000002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 0, 0x02 },
 };
 
 struct Unk_unk68 gunship_anim_2[5] = {
@@ -596,18 +601,18 @@ struct Unk_unk68 gunship_anim_18[3] = {
 };
 
 union AnimationStep gunship_anim_19[] = {
-    { 0x00010019 },
-    { 0x38010019 },
-    { 0x39010019 },
-    { 0x3A000019 },
+    { 25, 0, 1, 0x00 },
+    { 25, 0, 1, 0x38 },
+    { 25, 0, 1, 0x39 },
+    { 25, 0, 0, 0x3A },
 };
 
 union AnimationStep gunship_anim_20[] = {
-    { 0x02010001 },
-    { 0x51010001 },
-    { 0x3B010001 },
-    { 0x51010001 },
-    { 0x00000001 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x51 },
+    { 1, 0, 1, 0x3B },
+    { 1, 0, 1, 0x51 },
+    { 1, 0, 0, 0x00 },
 };
 
 struct Unk_unk68 gunship_anim_21[12] = {
@@ -640,27 +645,27 @@ struct Unk_unk68 gunship_anim_22[11] = {
 };
 
 union AnimationStep gunship_anim_23[] = {
-    { 0x52000001 },
+    { 1, 0, 0, 0x52 },
 };
 
 union AnimationStep gunship_anim_24[] = {
-    { 0x53000001 },
+    { 1, 0, 0, 0x53 },
 };
 
 union AnimationStep gunship_anim_25[] = {
-    { 0x54000001 },
+    { 1, 0, 0, 0x54 },
 };
 
 union AnimationStep gunship_anim_26[] = {
-    { 0x55000001 },
+    { 1, 0, 0, 0x55 },
 };
 
 union AnimationStep gunship_anim_27[] = {
-    { 0x56000001 },
+    { 1, 0, 0, 0x56 },
 };
 
 union AnimationStep gunship_anim_28[] = {
-    { 0x57000001 },
+    { 1, 0, 0, 0x57 },
 };
 
 void* gunship_animations[29] = {

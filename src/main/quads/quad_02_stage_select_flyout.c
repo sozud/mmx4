@@ -59,12 +59,13 @@ void stage_select_flyout_init(struct QuadObj* self)
 }
 
 // stage_select_flyout_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_speed);
 void func_800D4B30(struct QuadObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D4B30(struct QuadObj* arg0)
 {
     u8 old_direction;

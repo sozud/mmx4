@@ -15,6 +15,7 @@ extern void (*lemon_state_funcs[])(struct WeaponObj*);
 void lemon_init(struct WeaponObj*);
 void lemon_main(struct WeaponObj*);
 void lemon_deflected(struct WeaponObj*);
+#include "weapon_resources.h"
 
 struct Unk_unk68 lemon_hit_box[] = {
     { -10, -6, 0x12, 0xB },
@@ -59,8 +60,8 @@ void lemon_init(struct WeaponObj* arg0)
     arg0->unk50 = (const u8*)lemon_hit_box;
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);
     arg0->animation_table = D_8011BF40;
-    arg0->unk40 = 0;
-    arg0->unk42 = 0x7802;
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
+    arg0->unk42 = WEAPON_PALETTE_2;
     arg0->unk16 = 0;
     owner = arg0->owner;
     arg0->unk15 = owner->unk15;
@@ -123,7 +124,7 @@ void lemon_deflect(struct WeaponObj* arg0)
         arg0->y_vel.val = -(FIXED(4.05) - 1);
     }
 
-    arg0->unk15 ^= 0x40;
+    arg0->unk15 ^= PLAYER_FACING_RIGHT;
     arg0->state = 2;
     arg0->unk5 = 0;
     update_on_screen(BASE_OBJECT(arg0), 0xC, 8);

@@ -506,7 +506,7 @@ static void beast_check(void)
     beast_same_words(D_801005C8, beast_tiles[1], 28);
     assert(D_801001F8[0].packed == 0x2225F1EF && D_801001FC[0].packed == 0x313AEBE5);
     assert(*(u32*)&D_80100218 == 0x1B21EDD6 && *(u32*)&D_8010021C == 0x061AF6BE && *(u32*)&D_8010023C == 0x3031B7D0);
-    assert(D_801194F0[1] == 0x2613EFF6 && D_8011A230[1] == 0x2715EFF6);
+    assert(((u32*)D_801194F0)[1] == 0x2613EFF6 && ((u32*)D_8011A230)[1] == 0x2715EFF6);
     for (i = 0; i < 6; i++) {
         assert(D_8013E198[i] == -1);
         beast_same_words(beast_weapons[i].box, &beast_weapons[i].x, 4);

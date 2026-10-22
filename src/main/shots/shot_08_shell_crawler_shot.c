@@ -13,6 +13,7 @@ extern void (*shell_crawler_shot_state_funcs[])(struct ShotObj*);
 void shell_crawler_shot_init(struct ShotObj*);
 void shell_crawler_shot_fly(struct ShotObj*);
 void shell_crawler_shot_despawn(struct ShotObj*);
+#include "weapon_resources.h"
 
 u8 shell_crawler_shot_hit_box[4] = { 0xFB, 0xFC, 0x09, 0x07 };
 
@@ -36,7 +37,7 @@ void shell_crawler_shot_init(struct ShotObj* self)
         var_v0 = temp_v1 - 0x10;
     }
     self->x_pos.i.hi = var_v0;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk54 = shell_crawler_shot_hit_box;
     self->unk50.data = shell_crawler_shot_hit_box;
     self->unk58.data = (u8*)D_80106070;

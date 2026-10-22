@@ -16,6 +16,11 @@ extern void (*grenade_state_funcs[])(struct ShotObj*);
 
 void grenade_despawn(struct ShotObj* arg0);
 void grenade_idle(struct ShotObj* arg0);
+#include "weapon_resources.h"
+
+extern u8 grenade_hit_box[4];
+extern s8 grenade_spawn_offsets[8];
+extern u8 grenade_terrain_box[4];
 
 void grenade_update(struct ShotObj* self)
 {
@@ -23,14 +28,15 @@ void grenade_update(struct ShotObj* self)
 }
 
 // grenade_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009EBA8(struct ShotObj* self);
 extern u8 grenade_hit_box[4];
 extern u8 grenade_terrain_box[4];
 extern s8 grenade_spawn_offsets[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009EBA8(struct ShotObj* self)
 {
     s32 velocity;
@@ -76,7 +82,7 @@ void func_8009EBA8(struct ShotObj* self)
     }
     self->x_pos.i.hi = x;
 
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk68 = (struct Unk_unk68*)grenade_terrain_box;
     self->unk54 = grenade_hit_box;
     self->unk50.data = grenade_hit_box;

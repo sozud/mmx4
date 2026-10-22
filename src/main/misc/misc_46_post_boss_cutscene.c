@@ -26,6 +26,11 @@ void post_boss_cutscene_shake(struct UnkObj*);
 void post_boss_cutscene_second_line(struct UnkObj*);
 void post_boss_cutscene_wait_second(struct UnkObj*);
 void post_boss_cutscene_finish(struct UnkObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+void post_boss_cutscene_spawn_afterimages(struct UnkObj* self);
+#endif
 
 void post_boss_cutscene_update(struct MiscObj* self)
 {
@@ -43,11 +48,11 @@ void post_boss_cutscene_init(struct MiscObj* self)
     self->y_vel.val = 0;
     self->unk28 = FIXED(-0.1875);
     self->unk2C = 0;
-    self->unk40 = (D_801406A8[2] >> 7) + 0xB0;
-    self->unk42 = CLUT_FROM_ID(0x45);
+    self->unk40 = (OBJECT_STAGE_TEXTURE(2)) + OBJECT_TEXTURE_OFFSET(0xB0);
+    self->unk42 = OBJECT_STAGE_CLUT(0x45);
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x45));
     self->animation_table = (u32**)D_8010F19C;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->unk15 = 0;
     self->state = 1;
     self->unk5 = 0;
@@ -83,7 +88,7 @@ void post_boss_cutscene_wait_scroll(struct UnkObj* self)
 void post_boss_cutscene_arrive(struct UnkObj* self)
 {
     if (--self->ext.timer == 0) {
-        func_8001540C(2, 0x2A, self);
+        func_8001540C(2, SATURN_SOUND(0x2A, 0x10), self);
         self->unk4B = 1;
         self->unk5 = 2;
     }
@@ -132,7 +137,7 @@ void post_boss_cutscene_wait_first(struct UnkObj* self)
 void post_boss_cutscene_shake_start(struct UnkObj* self)
 {
     if (--self->ext.timer == 0) {
-        func_8001540C(2, 0x2A, self);
+        func_8001540C(2, SATURN_SOUND(0x2A, 0x10), self);
         self->x_vel.val = 0;
         self->unk28 = FIXED(1);
         set_animation(self, 1);
@@ -205,7 +210,7 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj* self)
             temp_v0->unk3C = self->unk3C;
             temp_v0->animation_table = self->animation_table;
             temp_v0->unk42 = (u16)self->unk42;
-            temp_v0->unk16 = 6;
+            temp_v0->unk16 = VISUAL_SATURN_LAYER(6);
             temp_v0->unk5C.owner = PLAYER_OBJECT(self);
             if (var_s1 & 0xFF) {
                 temp_v0->unk50 = PLAYER_OBJECT(var_s2);
@@ -219,11 +224,11 @@ void post_boss_cutscene_spawn_afterimages(struct UnkObj* self)
 }
 
 union AnimationStep D_8010F194[1] = {
-    { 0x00000101 },
+    { 1, 1, 0, 0x00 },
 };
 
 union AnimationStep D_8010F198[1] = {
-    { 0x01000101 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep* D_8010F19C[2] = {

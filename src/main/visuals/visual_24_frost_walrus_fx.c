@@ -43,6 +43,8 @@ void frost_walrus_fx_sparkle_start(struct VisualObj*);
 extern void (*frost_walrus_fx_stagger_funcs[])(struct VisualObj*);
 void frost_walrus_fx_stagger_start(struct VisualObj*);
 void frost_walrus_fx_stagger_follow(struct VisualObj*);
+#include "weapon_resources.h"
+extern s16 frost_walrus_fx_sparkle_offsets[];
 
 s32 frost_walrus_fx_blizzard_x_vels[4] = { 0x1C000, 0x2C000, 0x3C000, 0x34000 };
 s32 frost_walrus_fx_blizzard_y_vels[4] = { 0x18000, 0x28000, 0x8000, 0x30000 };
@@ -67,10 +69,14 @@ void frost_walrus_fx_init(struct VisualObj* self)
     } else {
         self->unk42 = self->unk50->unk42 & 0x7FFF;
     }
-    self->unk16 = 3;
+    self->unk16 = VISUAL_SATURN_LAYER(3);
     self->bg_offset = (s8)(u8)g_Player.bg_offset;
     self->state++;
+#ifdef MMX4_SHC
+    state = (s8)self->unk2 >> 4;
+#else
     state = (s32)((u8)self->unk2 << 24) >> 28;
+#endif
     self->x_vel.val = 0;
     self->y_vel.val = 0;
     self->unk28 = 0;
@@ -196,11 +202,12 @@ void frost_walrus_fx_sparkle_start(struct VisualObj* arg0)
 }
 
 // frost_walrus_fx_sparkle_move
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B3B94(struct VisualObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B3B94(struct VisualObj* arg0)
 {
     struct PlayerObj* source = arg0->unk50;

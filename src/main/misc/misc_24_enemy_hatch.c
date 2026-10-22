@@ -31,6 +31,7 @@ void enemy_hatch_release_wait(struct MiscObj*);
 extern void (*enemy_hatch_close_funcs[])(struct MiscObj*);
 void enemy_hatch_close_start(struct MiscObj*);
 void enemy_hatch_close_finish(struct MiscObj*);
+#include "weapon_resources.h"
 
 extern union AnimationStep* enemy_hatch_animations[4];
 
@@ -48,18 +49,18 @@ void func_800CBF14(struct MiscObj* self)
     u8 state;
 
     if (self->x_pos.i.hi - g_Player.x_pos.i.hi <= 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
-    self->unk40 = D_801406A8[func_8002938C(0x8F)] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x8F));
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x8F));
-    self->unk42 = CLUT_FROM_ID(0x8F);
+    self->unk42 = OBJECT_STAGE_CLUT(0x8F);
     bg_offset = g_Player.bg_offset;
     state = self->state;
     self->animation_table = (u32**)enemy_hatch_animations;
     self->unk5 = 0;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->unk6 = 0;
     self->bg_offset = bg_offset;
     self->ext.misc_24.child_active = 0;
@@ -150,7 +151,7 @@ void enemy_hatch_release_spawn(struct MiscObj* self)
         self->ext.misc_5.owner = main;
         self->ext.misc_24.timer = 0x20;
         self->unk6++;
-        func_8001540C(2, 0xE7, self);
+        func_8001540C(2, SATURN_SOUND(0xE7, 0xA8), self);
     }
 }
 
@@ -196,63 +197,63 @@ void enemy_hatch_despawn(struct MiscObj* self)
 }
 
 union AnimationStep enemy_hatch_anim_0[16] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03010002 },
-    { 0x04010001 },
-    { 0x05010005 },
-    { 0x04010001 },
-    { 0x06010005 },
-    { 0x04010001 },
-    { 0x07010004 },
-    { 0x04010001 },
-    { 0x08010004 },
-    { 0x09010006 },
-    { 0x0A010004 },
-    { 0x0B010004 },
-    { 0x0C000003 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 5, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 5, 0, 1, 0x06 },
+    { 1, 0, 1, 0x04 },
+    { 4, 0, 1, 0x07 },
+    { 1, 0, 1, 0x04 },
+    { 4, 0, 1, 0x08 },
+    { 6, 0, 1, 0x09 },
+    { 4, 0, 1, 0x0A },
+    { 4, 0, 1, 0x0B },
+    { 3, 0, 0, 0x0C },
 };
 
 union AnimationStep enemy_hatch_anim_1[8] = {
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F010003 },
-    { 0x10010003 },
-    { 0x11010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14F90003 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, -7, 0x14 },
 };
 
 union AnimationStep enemy_hatch_anim_2[8] = {
-    { 0x15010003 },
-    { 0x16010003 },
-    { 0x17010003 },
-    { 0x18010003 },
-    { 0x19010003 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1CF90003 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 1, 0x16 },
+    { 3, 0, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, -7, 0x1C },
 };
 
 union AnimationStep enemy_hatch_anim_3[16] = {
-    { 0x0C010003 },
-    { 0x0B010004 },
-    { 0x0A010004 },
-    { 0x09010006 },
-    { 0x08010004 },
-    { 0x04010001 },
-    { 0x07010004 },
-    { 0x04010001 },
-    { 0x06010005 },
-    { 0x04010001 },
-    { 0x05010005 },
-    { 0x04010001 },
-    { 0x03010002 },
-    { 0x02010002 },
-    { 0x01010001 },
-    { 0x00000001 },
+    { 3, 0, 1, 0x0C },
+    { 4, 0, 1, 0x0B },
+    { 4, 0, 1, 0x0A },
+    { 6, 0, 1, 0x09 },
+    { 4, 0, 1, 0x08 },
+    { 1, 0, 1, 0x04 },
+    { 4, 0, 1, 0x07 },
+    { 1, 0, 1, 0x04 },
+    { 5, 0, 1, 0x06 },
+    { 1, 0, 1, 0x04 },
+    { 5, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep* enemy_hatch_animations[4] = {

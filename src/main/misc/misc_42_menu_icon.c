@@ -2,15 +2,19 @@
 // 800CFE98..800D0374
 #include "common.h"
 #include "main/misc/misc_42_menu_icon.h"
+#include "main/objects.h"
+#include "main/55C4.h"
+#include "main/misc/misc_31_option_toggle.h"
 
-#ifdef MMX4_PC
+// menu_icon_state_funcs
+extern void (*menu_icon_state_funcs[])(struct MiscObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/55C4.h"
 #include "main/misc/misc_31_option_toggle.h"
 #include "main/objects.h"
 #endif
-
-// menu_icon_state_funcs
-extern void (*menu_icon_state_funcs[])(struct MiscObj*);
 
 void menu_icon_update(struct MiscObj* self)
 {
@@ -20,14 +24,13 @@ void menu_icon_update(struct MiscObj* self)
 }
 
 // menu_icon_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CFEE0(struct MiscObj* self);
 void func_800D0118(struct MiscObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/misc/misc_42_menu_icon.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CFEE0(struct MiscObj* self)
 {
     u8* archive = WINDOW_ARCHIVE_DATA;
@@ -48,13 +51,13 @@ void func_800CFEE0(struct MiscObj* self)
         }
         break;
     case 1:
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         self->unk40 = 0x1E00;
         self->unk42 = 0x7807;
         self->unk3C = archive + ((s32*)archive)[2];
         break;
     case 2:
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->unk40 = 0x1E00;
         self->unk3C = archive + ((s32*)archive)[2];
         break;
@@ -103,7 +106,7 @@ INCLUDE_ASM("main/nonmatchings/misc/misc_42_menu_icon", func_800CFEE0);
 #endif
 
 // menu_icon_animate
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D0118(struct MiscObj* self)
 {
     is_on_screen(BASE_OBJECT(self));

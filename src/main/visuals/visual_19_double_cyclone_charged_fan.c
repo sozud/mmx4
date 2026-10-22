@@ -4,20 +4,24 @@
 #include "main/visuals/visual_19_double_cyclone_charged_fan.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
+#include "main/mains/main_23_slope_skier.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/mains/main_23_slope_skier.h"
 #endif
+extern union AnimationStep* D_8011C0F0[5];
+extern struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2];
 
 // double_cyclone_charged_fan_update
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B2698(struct VisualObj* arg0);
-extern u32* D_8011C0F0[5];
 extern struct VisualSpawnOffset double_cyclone_charged_fan_offsets[2];
 void double_cyclone_charged_fan_draw(struct VisualObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B2698(struct VisualObj* arg0)
 {
     s32* player_gfx;
@@ -43,17 +47,22 @@ void func_800B2698(struct VisualObj* arg0)
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk38 = (u8*)player_gfx + player_gfx[8];
     arg0->animation_table = D_8011C0F0;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
-    arg0->unk16 = 0;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
+    arg0->unk16 = VISUAL_SATURN_LAYER(0);
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0x10];
+#ifdef MMX4_SHC
+    offset.x = double_cyclone_charged_fan_offsets[arg0->unk2].x;
+    offset.y = double_cyclone_charged_fan_offsets[arg0->unk2].y;
+#else
     offset = double_cyclone_charged_fan_offsets[arg0->unk2];
-    arg0->unk15 = arg0->unk2 != 0 ? 0x40 : 0;
+#endif
+    arg0->unk15 = arg0->unk2 != 0 ? PLAYER_FACING_RIGHT : 0;
     if (g_Player.unk15 == 0) {
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi + offset.x;
     } else {
         arg0->x_pos.i.hi = g_Player.x_pos.i.hi - offset.x;
-        arg0->unk15 ^= 0x40;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
     }
     arg0->unk5C.value = 0x10;
     arg0->unk49 = 0;

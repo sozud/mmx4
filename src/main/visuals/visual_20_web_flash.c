@@ -8,6 +8,7 @@
 // web_flash_state_funcs
 extern void (*web_flash_state_funcs[])(struct VisualObj*);
 void web_flash_init(struct VisualObj*);
+#include "weapon_resources.h"
 
 void web_flash_update(struct VisualObj* arg0)
 {
@@ -18,7 +19,7 @@ void web_flash_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     if (arg0->unk2 == 0) {
         set_animation(arg0, 0x11);
     } else {

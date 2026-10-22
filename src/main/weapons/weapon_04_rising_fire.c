@@ -22,6 +22,12 @@ void rising_fire_charged_main(struct WeaponObj*);
 void rising_fire_despawn(struct WeaponObj*);
 void rising_fire_despawn(struct WeaponObj*);
 
+extern u8 rising_fire_charged_offsets[4];
+extern struct Unk_unk68 rising_fire_hit_box[];
+extern union AnimationStep* D_8011C0B0[];
+
+#include "weapon_resources.h"
+
 void rising_fire_draw(struct WeaponObj* arg0);
 
 void rising_fire_update(struct WeaponObj* arg0)
@@ -48,29 +54,29 @@ void rising_fire_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80095254(struct WeaponObj* arg0);
 void func_80095538(struct WeaponObj* arg0);
 extern struct Unk_unk68 rising_fire_hit_box[];
-extern u32* D_8011C0B0[];
 extern u8 rising_fire_charged_offsets[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80095254(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
     s32* sprite_frames = SP_SPRITE_FRAMES;
-    s8 dx = ((s8*)rising_fire_charged_offsets)[arg0->unk2 * 2];
-    s8 dy = ((s8*)rising_fire_charged_offsets)[arg0->unk2 * 2 + 1];
+    s8 dx = rising_fire_charged_offsets[arg0->unk2 * 2];
+    s8 dy = rising_fire_charged_offsets[arg0->unk2 * 2 + 1];
 
     arg0->on_screen = 1;
     arg0->unk64 = 1;
     arg0->unk50 = rising_fire_hit_box;
     arg0->unk38 = (u8*)player_gfx + player_gfx[5];
     arg0->animation_table = D_8011C0B0;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
     arg0->unk15 = 0;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xD];
@@ -86,7 +92,7 @@ void func_80095254(struct WeaponObj* arg0)
     arg0->unk49 = 0;
     arg0->y_pos.i.hi = g_Player.y_pos.i.hi + dy;
     set_animation(arg0, 1);
-    func_8001540C(0, 0x1B, arg0);
+    func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
     arg0->unk5 = 0;
     arg0->state++;
     rising_fire_draw(arg0);
@@ -144,7 +150,7 @@ void rising_fire_charged_update(struct WeaponObj* arg0)
 }
 
 // rising_fire_charged_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80095538(struct WeaponObj* arg0)
 {
     s32* player_gfx = SP_PLAYER_GFX;
@@ -154,8 +160,8 @@ void func_80095538(struct WeaponObj* arg0)
     arg0->unk64 = 1;
     arg0->unk38 = (u8*)player_gfx + player_gfx[5];
     arg0->animation_table = D_8011C0B0;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
     arg0->unk3C = (u8*)sprite_frames + sprite_frames[0xD];
     arg0->unk15 = g_Player.unk15;
@@ -169,7 +175,7 @@ void func_80095538(struct WeaponObj* arg0)
     arg0->ext.weapon_13.timer = 4;
     arg0->y_pos.val = g_Player.y_pos.val;
     set_animation(arg0, arg0->unk2 == 0 ? 3 : 5);
-    func_8001540C(0, 0x1B, arg0);
+    func_8001540C(0, WEAPON_SOUND_FIRE, arg0);
     arg0->unk5 = 0;
     arg0->state++;
     rising_fire_charged_draw(arg0);

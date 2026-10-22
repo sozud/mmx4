@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[60]
 // 8007501C..8007872C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_60_storm_owl.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
@@ -10,8 +11,9 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/stage_objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -164,7 +166,7 @@ void storm_owl_start_wait_player(struct MainObj* self)
         if (g_Player.y_pos.i.hi < 0x6B0) {
             return;
         }
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
     }
     self->unk5++;
 }
@@ -197,16 +199,16 @@ void func_800751AC(struct MainObj* self)
     self->contact_damage = 6;
     self->invincibility_timer = 0;
     if (engine_obj.stage != 0xC) {
-        self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     } else {
-        self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+        self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
         self->sprite_frames = (const u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[0x10 / 4];
-        self->unk42 = 0x7888;
+        self->unk42 = OBJECT_CLUT(0x7888);
     }
     self->bg_offset = g_Player.bg_offset;
     self->collision_data = D_80107B78;
     self->animation_table = (const u8* const*)storm_owl_animations;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->terrain_box = &storm_owl_slam_terrain_box;
     self->hurt_box = &storm_owl_hurt_box;
     self->unk18.val = self->x_pos.val;
@@ -218,7 +220,7 @@ void func_800751AC(struct MainObj* self)
     self->attack_box = &storm_owl_attack_box;
     self->unk1C.val = self->y_pos.val;
     x = self->x_pos.val;
-    self->unk15 = (g_Player.x_pos.val >= x) << 6;
+    self->unk15 = (g_Player.x_pos.val >= x) << PLAYER_FACING_SHIFT;
     set_animation(self, 1);
     self->state = 1;
     self->unk5 = 2;
@@ -233,7 +235,12 @@ void func_800751AC(struct MainObj* self)
 }
 
 // storm_owl_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void main_60_flash(struct MainObj* arg0);
 static void main_60_stagger(struct MainObj* arg0);
 void func_80075320(struct MainObj* arg0);
@@ -258,7 +265,7 @@ static void main_60_flash(struct MainObj* arg0)
 static void main_60_stagger(struct MainObj* arg0)
 {
     if (arg0->unk5 != 0xB)
-        func_8001540C(2, 0xBD, arg0);
+        func_8001540C(2, SATURN_SOUND(0xBD, 0xBA), arg0);
     arg0->unk5 = 0xB;
     arg0->unk6 = 0;
 }
@@ -269,7 +276,7 @@ static void main_60_release(struct MainObj* arg0)
     arg0->terrain_box = &storm_owl_slam_terrain_box;
     arg0->attack_box = &storm_owl_attack_box;
     arg0->unk62 = 0;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
 }
 static void main_60_shot_setup(struct ShotObj* shot, struct MainObj* arg0, s8 id, s8 subtype, s8 layer)
 {
@@ -287,7 +294,7 @@ static void main_60_shot_setup(struct ShotObj* shot, struct MainObj* arg0, s8 id
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80075320(struct MainObj* arg0)
 {
     s32 hit = func_8002DD04(arg0);
@@ -315,7 +322,7 @@ void func_80075320(struct MainObj* arg0)
         if (engine_obj.cur_character == CHARACTER_X) {
             if (hit == 7 || hit == 0x10) {
                 if (arg0->unk5 != 0xB)
-                    func_8001540C(2, 0xBD, arg0);
+                    func_8001540C(2, SATURN_SOUND(0xBD, 0xBA), arg0);
                 if (hit == 0x10) {
                     arg0->collision_data = D_80106070;
                     arg0->unk42 &= 0x7FFF;
@@ -355,7 +362,7 @@ void func_80075320(struct MainObj* arg0)
             arg0->ext.main_60.flash_mode = 0;
     }
     if (arg0->unk17 < 2 && --arg0->unk7 == 0) {
-        func_8001540C(2, (get_random() & 1) ? 0xB7 : 0xB8, arg0);
+        func_8001540C(2, (get_random() & 1) ? SATURN_SOUND(0xB7, 0xB4) : SATURN_SOUND(0xB8, 0xB5), arg0);
         arg0->unk7 = 0x28;
     }
     storm_owl_step_funcs[arg0->unk5](arg0);
@@ -373,7 +380,7 @@ void storm_owl_death(struct MainObj* self)
 
 void storm_owl_death_start(struct MainObj* self)
 {
-    stop_sound(2, 0xBC);
+    STOP_SOUND(2, 0xBC, 0x6);
     g_Player.stun_timer = 0;
     player_start_script_action(0x14, g_Player.unk15);
     self->unk5++;
@@ -461,7 +468,7 @@ void func_80075944(struct MainObj* self)
 
     if (engine_obj.stage == 7) {
         self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x20;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->x_pos.i.hi = background_objects[0].x_pos.u.hi + 0x120;
         self->unk15 = 0;
@@ -471,7 +478,7 @@ void func_80075944(struct MainObj* self)
     self->y_speed = FIXED(-2);
 
     storm_owl_spawn_intro_wind(self);
-    func_8001540C(2, 0xB4, self);
+    func_8001540C(2, SATURN_SOUND(0xB4, 0xB1), self);
     self->unk6++;
 }
 
@@ -492,7 +499,7 @@ void storm_owl_intro_roar(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xBB, self);
+        func_8001540C(2, SATURN_SOUND(0xBB, 0xB8), self);
         start_screen_shake_y(0x18, 8, 1);
         storm_owl_spawn_roar(ANIMATED_OBJECT(self));
         self->unk7C = 0x2F;
@@ -531,7 +538,7 @@ void storm_owl_intro_fill_health(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (update_boss_music_delay() == 0) {
         if (--self->unk7C == 0) {
-            func_8001540C(0, 0xE, 0);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
             self->unk7C = 3;
         }
         if ((s8)++self->hp == 0x30) {
@@ -543,11 +550,11 @@ void storm_owl_intro_fill_health(struct MainObj* self)
 }
 
 // storm_owl_intro_takeoff
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80075C6C(struct MainObj* arg0)
 {
-    const Main60Waypoint* waypoint;
     u8 index;
+    const Main60Waypoint* waypoint;
 
     animate_object(ANIMATED_OBJECT(arg0));
     set_animation(arg0, 1);
@@ -588,20 +595,22 @@ void storm_owl_patrol_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
-    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->unk6++;
 }
 
 // storm_owl_patrol_fly
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80075E78(struct MainObj* arg0)
 {
-    const Main60Waypoint* waypoint = &storm_owl_waypoints[arg0->ext.main_60.corner];
-    s32 target_x = (waypoint->x + background_objects[0].x_pos.i.hi) << 16;
-    s32 target_y = (waypoint->y + background_objects[0].y_pos.i.hi) << 16;
+    s32 target_x;
+    s32 target_y;
     s32 dx;
     s32 dy;
     u8 next;
+    const Main60Waypoint* waypoint = &storm_owl_waypoints[arg0->ext.main_60.corner];
+    target_x = (waypoint->x + background_objects[0].x_pos.i.hi) << 16;
+    target_y = (waypoint->y + background_objects[0].y_pos.i.hi) << 16;
 
     set_velocity_from_angle(MOVING_OBJECT(arg0), angle_to_point(OBJECT_HEADER(arg0), target_x, target_y) & 0xFF);
     arg0->x_speed <<= 1;
@@ -637,7 +646,7 @@ void storm_owl_patrol_wait(struct MainObj* self)
         self->x_speed = storm_owl_waypoints[self->ext.main_60.corner].vx;
         self->y_speed = storm_owl_waypoints[self->ext.main_60.corner].vy;
         self->x_accel = FIXED(0.015625);
-        self->unk15 = ((~self->x_speed >> 31) & 0x40);
+        self->unk15 = ((~self->x_speed >> 31) & PLAYER_FACING_RIGHT);
         self->unk6++;
     } else {
         self->ext.main_60.patrol_delay--;
@@ -645,7 +654,7 @@ void storm_owl_patrol_wait(struct MainObj* self)
 }
 
 // storm_owl_patrol_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800760C4(struct MainObj* arg0)
 {
     s16 distance;
@@ -715,7 +724,7 @@ void storm_owl_grab_dive(struct MainObj* self)
 }
 
 // storm_owl_grab_swoop
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80076364(struct MainObj* arg0)
 {
     s16 distance;
@@ -731,7 +740,7 @@ void func_80076364(struct MainObj* arg0)
         return;
     }
     if (g_Player.stun_timer != 0) {
-        func_8001540C(2, 0xBA, arg0);
+        func_8001540C(2, SATURN_SOUND(0xBA, 0xB7), arg0);
         distance = g_Player.x_pos.i.hi - arg0->x_pos.i.hi;
         if ((distance < 0 ? -distance : distance) < 8)
             arg0->x_speed = 0;
@@ -753,7 +762,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_60_storm_owl", func_80076364);
 #endif
 
 // storm_owl_grab_rise
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007651C(struct MainObj* arg0)
 {
     s16 x;
@@ -819,7 +828,7 @@ void storm_owl_grab_slam(struct MainObj* self)
     g_Player.y_pos.i.hi = self->y_pos.i.hi + 0x1C;
     CollisionRelated(PLAYER_OBJECT(self));
     if (self->collision_flags & 8) {
-        func_8001540C(2, 0xBB, self);
+        func_8001540C(2, SATURN_SOUND(0xBB, 0xB8), self);
         start_screen_shake_y(8, 4, 1);
         player_damage(9);
         set_animation(self, 1);
@@ -850,7 +859,7 @@ void storm_owl_grab_leave(struct MainObj* self)
         self->contact_damage = 6;
         self->terrain_box = &storm_owl_slam_terrain_box;
         self->attack_box = (const u8*)&storm_owl_attack_box;
-        self->unk16 = 5;
+        self->unk16 = VISUAL_SATURN_LAYER(5);
         storm_owl_choose_corner(self);
         self->unk5 = 5;
         self->unk6 = 0;
@@ -886,7 +895,7 @@ void storm_owl_reenter_warp(struct MainObj* self)
         self->y_pos.i.hi = background_y + 0xC8;
         break;
     }
-    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->unk7C = 0x3C;
     self->active = 0x41;
     self->unk6++;
@@ -916,7 +925,7 @@ void storm_owl_feather_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 3);
-    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : 0x40;
+    self->unk15 = self->x_pos.val > g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     self->unk7C = 0x1F;
     self->unk6++;
 }
@@ -927,7 +936,7 @@ void storm_owl_feather_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         storm_owl_spawn_feather(self);
-        func_8001540C(2, 0xB6, self);
+        func_8001540C(2, SATURN_SOUND(0xB6, 0xB3), self);
         self->unk7C = 0x1C;
         self->unk6++;
     }
@@ -942,7 +951,7 @@ void storm_owl_feather_takeoff(struct MainObj* self)
         storm_owl_choose_corner(self);
         if (self->ext.main_60.corner >> 1) {
             self->x_speed = FIXED(2);
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->x_speed = FIXED(-2);
             self->unk15 = 0;
@@ -971,7 +980,7 @@ void storm_owl_feather_volley_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 3);
-    self->unk15 = self->ext.main_60.corner >= 2 ? 0 : 0x40;
+    self->unk15 = self->ext.main_60.corner >= 2 ? 0 : PLAYER_FACING_RIGHT;
     self->unk7C = 0x1C;
     self->collision_data = (const u16*)D_80107B78;
     self->ext.main_60.shot_count = 0;
@@ -990,7 +999,7 @@ void func_80076D14(struct MainObj* self)
             self->unk7C = 0x3D;
         }
         ((void (*)())storm_owl_spawn_volley_feather)(self, self->ext.main_60.shot_count);
-        func_8001540C(2, 0xB5, self);
+        func_8001540C(2, SATURN_SOUND(0xB5, 0xB2), self);
     }
 }
 
@@ -1010,7 +1019,7 @@ void storm_owl_feather_volley_release(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xB6, self);
+        func_8001540C(2, SATURN_SOUND(0xB6, 0xB3), self);
         self->ext.main_60.feathers_holding = 1;
         self->unk7C = 0x78;
         self->unk6++;
@@ -1023,7 +1032,7 @@ void storm_owl_feather_volley_wait(struct MainObj* self)
     if (self->ext.main_60.feather_mask == 0) {
         self->ext.main_60.feathers_holding = 0;
         set_animation(self, 1);
-        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : 0x40;
+        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         if (self->unk15 == 0) {
             self->x_speed = FIXED(-2);
         } else {
@@ -1059,7 +1068,7 @@ void storm_owl_cyclone_start(struct MainObj* self)
         set_animation(self, 5);
     }
     self->unk7C = 0x63;
-    self->unk15 = (self->ext.main_60.corner >> 1) == 0 ? 0x40 : 0;
+    self->unk15 = (self->ext.main_60.corner >> 1) == 0 ? PLAYER_FACING_RIGHT : 0;
     self->unk6++;
 }
 
@@ -1070,7 +1079,7 @@ void storm_owl_cyclone_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     timer = --self->unk7C;
     if (timer == 0) {
-        func_8001540C(2, 0xB9, self);
+        func_8001540C(2, SATURN_SOUND(0xB9, 0xB6), self);
         storm_owl_spawn_cyclones(self);
         self->unk7C = 0x1E;
         self->unk6++;
@@ -1078,7 +1087,7 @@ void storm_owl_cyclone_fire(struct MainObj* self)
     }
     if ((timer <= 0x28) && (((timer - 0x3B) % 20) == 0)) {
         storm_owl_spawn_cyclones(self);
-        func_8001540C(2, 0xB9, self);
+        func_8001540C(2, SATURN_SOUND(0xB9, 0xB6), self);
     }
 }
 
@@ -1092,7 +1101,7 @@ void storm_owl_cyclone_finish(struct MainObj* self)
             return;
         }
         set_animation(self, 1);
-        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : 0x40;
+        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         if (self->unk15 == 0) {
             self->x_speed = FIXED(-2);
         } else {
@@ -1146,7 +1155,7 @@ void storm_owl_storm_start(struct MainObj* self)
     } else {
         set_animation(self, 0);
     }
-    self->unk15 = threshold >= self->x_pos.val ? 0x40 : 0;
+    self->unk15 = threshold >= self->x_pos.val ? PLAYER_FACING_RIGHT : 0;
     self->unk6++;
 }
 
@@ -1175,7 +1184,7 @@ void storm_owl_storm_fly_to_center(struct MainObj* self)
 void storm_owl_storm_charge(struct MainObj* self)
 {
     storm_owl_spawn_storm_charge(ANIMATED_OBJECT(self));
-    func_8001540C(2, 0xBE, self);
+    func_8001540C(2, SATURN_SOUND(0xBE, 0xBB), self);
     self->unk7C = 0x3C;
     self->unk6++;
 }
@@ -1185,7 +1194,7 @@ void storm_owl_storm_begin(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0xBC, self);
+        func_8001540C(2, SATURN_SOUND(0xBC, 0xB9), self);
         self->ext.main_60.storm_active = 1;
         self->ext.main_60.storm_timer = 0x10;
         self->unk7C = 0x5A;
@@ -1214,7 +1223,7 @@ void func_80077580(struct MainObj* self)
     if (--self->unk7C == 0) {
         if ((get_random() & 7) < 3) {
             self->unk6++;
-            func_8001540C(2, 0xBC, self);
+            func_8001540C(2, SATURN_SOUND(0xBC, 0xB9), self);
         } else {
             self->unk6 += 2;
         }
@@ -1241,10 +1250,10 @@ void storm_owl_storm_end(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        stop_sound(2, 0xBC);
+        STOP_SOUND(2, 0xBC, 0x6);
         set_animation(self, 1);
         self->ext.main_60.storm_active = 0;
-        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : 0x40;
+        self->unk15 = self->x_pos.val < g_Player.x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         if (self->unk15 == 0) {
             self->x_speed = FIXED(-2);
         } else {
@@ -1302,7 +1311,7 @@ void storm_owl_stagger_start(struct MainObj* self)
     self->contact_damage = 6;
     self->terrain_box = &storm_owl_slam_terrain_box;
     self->attack_box = (const u8*)&storm_owl_attack_box;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     if (self->collision_data == (const u16*)D_80107B78) {
         self->unk7C = 0x28;
     } else {
@@ -1311,7 +1320,7 @@ void storm_owl_stagger_start(struct MainObj* self)
     self->ext.main_60.feathers_holding = 0;
     self->ext.main_60.feather_mask = 0;
     storm_owl_clear_shots();
-    stop_sound(2, 0xBC);
+    STOP_SOUND(2, 0xBC, 0x6);
     self->unk6++;
 }
 
@@ -1355,7 +1364,7 @@ void storm_owl_ground_cyclone_start(struct MainObj* self)
         self->unk6 += 2;
     }
     if (self->ext.main_60.corner <= 1) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -1388,7 +1397,7 @@ void storm_owl_ground_cyclone_fire(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
         self->unk7C = 0xA;
-        func_8001540C(2, 0xB4, self);
+        func_8001540C(2, SATURN_SOUND(0xB4, 0xB1), self);
         func_80078314(self);
         self->unk6++;
     }
@@ -1437,7 +1446,7 @@ void storm_owl_spawn_roar(struct AnimatedObj* self)
         obj->unk3C = self->unk3C;
         obj->unk40 = self->unk40;
         obj->bg_offset = self->bg_offset;
-        obj->unk16 = 4;
+        obj->unk16 = VISUAL_SATURN_LAYER(4);
         obj->unk15 = self->unk15;
         obj->x_pos.val = self->x_pos.val;
         obj->y_pos.val = self->y_pos.val;
@@ -1482,7 +1491,7 @@ void storm_owl_spawn_feather(struct MainObj* self)
         shot->unk3C = (void*)self->sprite_frames;
         shot->unk40 = self->unk40;
         shot->bg_offset = self->bg_offset;
-        shot->unk16 = 5;
+        shot->unk16 = VISUAL_SATURN_LAYER(5);
         shot->unk15 = self->unk15;
     }
 }
@@ -1500,7 +1509,7 @@ void storm_owl_spawn_volley_feather(struct MainObj* self, s8 arg1)
         shot->unk3C = (void*)self->sprite_frames;
         shot->unk40 = self->unk40;
         shot->bg_offset = self->bg_offset;
-        shot->unk16 = 5;
+        shot->unk16 = VISUAL_SATURN_LAYER(5);
         shot->unk15 = self->unk15;
     }
 }
@@ -1530,7 +1539,7 @@ void storm_owl_spawn_cyclones(struct MainObj* arg0)
             shot->unk3C = self->sprite_frames;
             shot->unk40 = self->unk40;
             shot->bg_offset = (s8)(u8)self->bg_offset;
-            shot->unk16 = 4;
+            shot->unk16 = VISUAL_SATURN_LAYER(4);
             shot->unk15 = self->unk15;
         }
         i += 1;
@@ -1581,7 +1590,7 @@ void func_80078180(struct MainObj* self)
                 shot->unk3C = self->sprite_frames;
                 shot->unk40 = self->unk40;
                 shot->bg_offset = self->bg_offset;
-                shot->unk16 = 5;
+                shot->unk16 = VISUAL_SATURN_LAYER(5);
                 shot->unk15 = self->unk15;
             }
         }
@@ -1610,14 +1619,14 @@ void storm_owl_spawn_hit_flash(struct PlayerObj* self)
 }
 
 // storm_owl_spawn_ground_cyclone
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80078314(struct MainObj* arg0)
 {
-    static const s16 x_offsets[3] = { 0, -0x30, 0x30 };
-    static const s16 shot_timers[3] = { 0x20, 0x28, 0x28 };
     struct VisualObj* visual;
     struct ShotObj* shot;
     u32 i;
+    static const s16 x_offsets[3] = { 0, -0x30, 0x30 };
+    static const s16 shot_timers[3] = { 0x20, 0x28, 0x28 };
 
     for (i = 0; i < 3; i++) {
         visual = find_free_visual_obj();
@@ -1767,31 +1776,31 @@ struct Unk_unk68 storm_owl_anim_3[6] = {
 };
 
 union AnimationStep storm_owl_anim_4[] = {
-    { 0x19010006 },
-    { 0x1A010003 },
-    { 0x1B01000A },
-    { 0x1C010003 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x1D000021 },
+    { 6, 0, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 10, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1C },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 33, 0, 0, 0x1D },
 };
 
 union AnimationStep storm_owl_anim_5[] = {
-    { 0x1E010006 },
-    { 0x1F010003 },
-    { 0x2001000A },
-    { 0x21010003 },
-    { 0x22010002 },
-    { 0x23010002 },
-    { 0x24000021 },
+    { 6, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 10, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 2, 0, 1, 0x22 },
+    { 2, 0, 1, 0x23 },
+    { 33, 0, 0, 0x24 },
 };
 
 union AnimationStep storm_owl_anim_6[] = {
-    { 0x26010006 },
-    { 0x25010008 },
-    { 0x27010002 },
-    { 0x29010002 },
-    { 0x28000021 },
+    { 6, 0, 1, 0x26 },
+    { 8, 0, 1, 0x25 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x29 },
+    { 33, 0, 0, 0x28 },
 };
 
 u8 storm_owl_anim_7[8] = { 2, 0, 1, 12, 2, 0, 255, 13 };
@@ -1799,27 +1808,27 @@ u8 storm_owl_anim_7[8] = { 2, 0, 1, 12, 2, 0, 255, 13 };
 u8 storm_owl_anim_8[8] = { 2, 0, 1, 14, 2, 0, 255, 15 };
 
 union AnimationStep storm_owl_anim_9[] = {
-    { 0x06010006 },
-    { 0x5A010002 },
-    { 0x5B010002 },
-    { 0x5A010018 },
-    { 0x5C010008 },
-    { 0x5D010008 },
-    { 0x5E010008 },
-    { 0x5F01000B },
-    { 0x60010002 },
-    { 0x61010002 },
-    { 0x60010002 },
-    { 0x6100002F },
+    { 6, 0, 1, 0x06 },
+    { 2, 0, 1, 0x5A },
+    { 2, 0, 1, 0x5B },
+    { 24, 0, 1, 0x5A },
+    { 8, 0, 1, 0x5C },
+    { 8, 0, 1, 0x5D },
+    { 8, 0, 1, 0x5E },
+    { 11, 0, 1, 0x5F },
+    { 2, 0, 1, 0x60 },
+    { 2, 0, 1, 0x61 },
+    { 2, 0, 1, 0x60 },
+    { 47, 0, 0, 0x61 },
 };
 
 union AnimationStep storm_owl_anim_10[] = {
-    { 0x62010002 },
-    { 0x63010002 },
-    { 0x64010002 },
-    { 0x65010001 },
-    { 0x66010001 },
-    { 0x67000001 },
+    { 2, 0, 1, 0x62 },
+    { 2, 0, 1, 0x63 },
+    { 2, 0, 1, 0x64 },
+    { 1, 0, 1, 0x65 },
+    { 1, 0, 1, 0x66 },
+    { 1, 0, 0, 0x67 },
 };
 
 u8 storm_owl_anim_11[8] = { 2, 0, 1, 104, 2, 0, 255, 105 };
@@ -1874,58 +1883,58 @@ struct Unk_unk68 storm_owl_anim_14[19] = {
 };
 
 union AnimationStep storm_owl_anim_15[] = {
-    { 0x2E000001 },
+    { 1, 0, 0, 0x2E },
 };
 
 union AnimationStep storm_owl_anim_16[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 union AnimationStep storm_owl_anim_17[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep storm_owl_anim_18[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 union AnimationStep storm_owl_anim_19[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep storm_owl_anim_20[] = {
-    { 0x6E010008 },
-    { 0x6F010008 },
-    { 0x70010008 },
-    { 0x71000008 },
+    { 8, 0, 1, 0x6E },
+    { 8, 0, 1, 0x6F },
+    { 8, 0, 1, 0x70 },
+    { 8, 0, 0, 0x71 },
 };
 
 union AnimationStep storm_owl_anim_21[] = {
-    { 0x56010008 },
-    { 0x57010008 },
-    { 0x58010008 },
-    { 0x59000008 },
+    { 8, 0, 1, 0x56 },
+    { 8, 0, 1, 0x57 },
+    { 8, 0, 1, 0x58 },
+    { 8, 0, 0, 0x59 },
 };
 
 union AnimationStep storm_owl_anim_22[] = {
-    { 0x4A010008 },
-    { 0x4B010008 },
-    { 0x4C010008 },
-    { 0x4D000008 },
+    { 8, 0, 1, 0x4A },
+    { 8, 0, 1, 0x4B },
+    { 8, 0, 1, 0x4C },
+    { 8, 0, 0, 0x4D },
 };
 
 union AnimationStep storm_owl_anim_23[] = {
-    { 0x4E010008 },
-    { 0x4F010008 },
-    { 0x50010008 },
-    { 0x51000008 },
+    { 8, 0, 1, 0x4E },
+    { 8, 0, 1, 0x4F },
+    { 8, 0, 1, 0x50 },
+    { 8, 0, 0, 0x51 },
 };
 
 union AnimationStep storm_owl_anim_24[] = {
-    { 0x52010008 },
-    { 0x53010008 },
-    { 0x54010008 },
-    { 0x55000008 },
+    { 8, 0, 1, 0x52 },
+    { 8, 0, 1, 0x53 },
+    { 8, 0, 1, 0x54 },
+    { 8, 0, 0, 0x55 },
 };
 
 struct Unk_unk68 storm_owl_anim_25[9] = {
@@ -1952,99 +1961,99 @@ struct Unk_unk68 storm_owl_anim_26[8] = {
 };
 
 union AnimationStep storm_owl_anim_27[] = {
-    { 0x90010002 },
-    { 0x91010002 },
-    { 0x92010002 },
-    { 0x93010002 },
-    { 0x94010002 },
-    { 0x95010002 },
-    { 0x96010002 },
-    { 0x97010002 },
-    { 0x98010002 },
-    { 0x99010002 },
-    { 0x9A010002 },
-    { 0x9B000002 },
+    { 2, 0, 1, 0x90 },
+    { 2, 0, 1, 0x91 },
+    { 2, 0, 1, 0x92 },
+    { 2, 0, 1, 0x93 },
+    { 2, 0, 1, 0x94 },
+    { 2, 0, 1, 0x95 },
+    { 2, 0, 1, 0x96 },
+    { 2, 0, 1, 0x97 },
+    { 2, 0, 1, 0x98 },
+    { 2, 0, 1, 0x99 },
+    { 2, 0, 1, 0x9A },
+    { 2, 0, 0, 0x9B },
 };
 
 union AnimationStep storm_owl_anim_28[] = {
-    { 0xA7010001 },
-    { 0xA6010001 },
-    { 0xA5010001 },
-    { 0xA4010001 },
-    { 0xA3010001 },
-    { 0xA2010001 },
-    { 0xA1010001 },
-    { 0xA0010001 },
-    { 0x9F010001 },
-    { 0x9E010001 },
-    { 0x9D010001 },
-    { 0x9C000001 },
+    { 1, 0, 1, 0xA7 },
+    { 1, 0, 1, 0xA6 },
+    { 1, 0, 1, 0xA5 },
+    { 1, 0, 1, 0xA4 },
+    { 1, 0, 1, 0xA3 },
+    { 1, 0, 1, 0xA2 },
+    { 1, 0, 1, 0xA1 },
+    { 1, 0, 1, 0xA0 },
+    { 1, 0, 1, 0x9F },
+    { 1, 0, 1, 0x9E },
+    { 1, 0, 1, 0x9D },
+    { 1, 0, 0, 0x9C },
 };
 
 union AnimationStep storm_owl_anim_29[] = {
-    { 0x78010001 },
-    { 0x79010001 },
-    { 0x7A010001 },
-    { 0x7B010001 },
-    { 0x7C010001 },
-    { 0x78010001 },
-    { 0x7D010001 },
-    { 0x72010001 },
-    { 0x73010001 },
-    { 0x74010001 },
-    { 0x75010001 },
-    { 0x76010001 },
-    { 0x72010001 },
-    { 0x77010001 },
-    { 0x7E010001 },
-    { 0x7F010001 },
-    { 0x80010001 },
-    { 0x81010001 },
-    { 0x82010001 },
-    { 0x7E010001 },
-    { 0x83010001 },
-    { 0x7E010001 },
-    { 0x7F010001 },
-    { 0x80010001 },
-    { 0x81010001 },
-    { 0x82010001 },
-    { 0x7E010001 },
-    { 0x83010001 },
-    { 0x84010001 },
-    { 0x85010001 },
-    { 0x86010001 },
-    { 0x87010001 },
-    { 0x88010001 },
-    { 0x84010001 },
-    { 0x89010001 },
-    { 0x84010001 },
-    { 0x85010001 },
-    { 0x86010001 },
-    { 0x87010001 },
-    { 0x88010001 },
-    { 0x84010001 },
-    { 0x89010001 },
-    { 0x84010001 },
-    { 0x85010001 },
-    { 0x86010001 },
-    { 0x87010001 },
-    { 0x88010001 },
-    { 0x84010001 },
-    { 0x89010001 },
-    { 0x8A010001 },
-    { 0x8B010001 },
-    { 0x8C010001 },
-    { 0x8D010001 },
-    { 0x8E010001 },
-    { 0x8A010001 },
-    { 0x8F010001 },
-    { 0x8A010001 },
-    { 0x8B010001 },
-    { 0x8C010001 },
-    { 0x8D010001 },
-    { 0x8E010001 },
-    { 0x8A010001 },
-    { 0x8F000001 },
+    { 1, 0, 1, 0x78 },
+    { 1, 0, 1, 0x79 },
+    { 1, 0, 1, 0x7A },
+    { 1, 0, 1, 0x7B },
+    { 1, 0, 1, 0x7C },
+    { 1, 0, 1, 0x78 },
+    { 1, 0, 1, 0x7D },
+    { 1, 0, 1, 0x72 },
+    { 1, 0, 1, 0x73 },
+    { 1, 0, 1, 0x74 },
+    { 1, 0, 1, 0x75 },
+    { 1, 0, 1, 0x76 },
+    { 1, 0, 1, 0x72 },
+    { 1, 0, 1, 0x77 },
+    { 1, 0, 1, 0x7E },
+    { 1, 0, 1, 0x7F },
+    { 1, 0, 1, 0x80 },
+    { 1, 0, 1, 0x81 },
+    { 1, 0, 1, 0x82 },
+    { 1, 0, 1, 0x7E },
+    { 1, 0, 1, 0x83 },
+    { 1, 0, 1, 0x7E },
+    { 1, 0, 1, 0x7F },
+    { 1, 0, 1, 0x80 },
+    { 1, 0, 1, 0x81 },
+    { 1, 0, 1, 0x82 },
+    { 1, 0, 1, 0x7E },
+    { 1, 0, 1, 0x83 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x85 },
+    { 1, 0, 1, 0x86 },
+    { 1, 0, 1, 0x87 },
+    { 1, 0, 1, 0x88 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x89 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x85 },
+    { 1, 0, 1, 0x86 },
+    { 1, 0, 1, 0x87 },
+    { 1, 0, 1, 0x88 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x89 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x85 },
+    { 1, 0, 1, 0x86 },
+    { 1, 0, 1, 0x87 },
+    { 1, 0, 1, 0x88 },
+    { 1, 0, 1, 0x84 },
+    { 1, 0, 1, 0x89 },
+    { 1, 0, 1, 0x8A },
+    { 1, 0, 1, 0x8B },
+    { 1, 0, 1, 0x8C },
+    { 1, 0, 1, 0x8D },
+    { 1, 0, 1, 0x8E },
+    { 1, 0, 1, 0x8A },
+    { 1, 0, 1, 0x8F },
+    { 1, 0, 1, 0x8A },
+    { 1, 0, 1, 0x8B },
+    { 1, 0, 1, 0x8C },
+    { 1, 0, 1, 0x8D },
+    { 1, 0, 1, 0x8E },
+    { 1, 0, 1, 0x8A },
+    { 1, 0, 0, 0x8F },
 };
 
 void* storm_owl_animations[30] = {

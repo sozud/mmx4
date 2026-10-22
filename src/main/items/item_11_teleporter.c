@@ -27,6 +27,7 @@ void teleporter_spawn_beam(struct ItemObj*);
 void teleporter_spawn_glow(struct ItemObj*);
 void teleporter_wait_flash(struct ItemObj*);
 void teleporter_delay(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item11AnimationStep {
     u8 duration;
@@ -144,11 +145,11 @@ void teleporter_update(struct ItemObj* arg0)
 void func_800C2C3C(struct ItemObj* arg0)
 {
     arg0->active = 0x41;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk15 = 0;
-    arg0->unk40 = D_801406A8[func_8002938C(0x88)] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x88));
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x88)];
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x88));
+    arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x88));
     arg0->animation_table = (const u8* const*)teleporter_animations;
     arg0->unk67 = 0;
     arg0->unk75 = 0;
@@ -203,7 +204,7 @@ void teleporter_activate(struct ItemObj* arg0)
         background_objects[0].unk24 = background_objects[0].x_pos.u.hi;
         set_animation(arg0, 1);
         arg0->unk5 = 2;
-        func_8001540C(5, 0, NULL);
+        func_8001540C(5, SATURN_SOUND(0, 0x29), NULL);
     }
 }
 

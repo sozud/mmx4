@@ -1,13 +1,15 @@
 // MainObj, main_object_update_funcs[26]
 // 80058158..800586F0
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_26_ice_wall.h"
 #include "main/1CF60.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/CB184.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/CB184.h"
 #endif
 
@@ -33,7 +35,8 @@ void ice_wall_update(struct MainObj* self)
 }
 
 // ice_wall_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058194(struct MainObj* arg0);
 void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base);
 extern union AnimationStep* ice_wall_animations[];
@@ -42,7 +45,7 @@ extern struct Unk_unk68 ice_wall_hurt_box[];
 extern union AnimationStep* ice_wall_animations[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80058194(struct MainObj* arg0)
 {
     arg0->state++;
@@ -50,7 +53,7 @@ void func_80058194(struct MainObj* arg0)
     arg0->unk2 = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->animation_table = (const u8* const*)ice_wall_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->collision_data = (const u16*)D_80106F74;
     arg0->hurt_box = (const u8*)ice_wall_hurt_box;
     arg0->contact_damage = 3;
@@ -103,7 +106,7 @@ void ice_wall_main(struct MainObj* self)
         self->state++;
         self->unk5 = 0;
         self->unk42 &= 0x7FFF;
-        func_8001540C(5, 1, NULL);
+        func_8001540C(5, SATURN_SOUND(1, 0x23), NULL);
         return;
     }
     ice_wall_step_funcs[self->unk5](self);
@@ -114,9 +117,7 @@ void ice_wall_main(struct MainObj* self)
 }
 
 // spawn_ice_chunks
-#ifdef MMX4_PC
-// src/main/mains/main_26_ice_wall.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800583B0(struct MainObj* arg0, s16 x, s16 y, s32 base)
 {
     u8 above;
@@ -208,27 +209,27 @@ struct Unk_unk68 ice_wall_hurt_box[] = {
 };
 
 union AnimationStep ice_wall_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep ice_wall_anim_1[] = {
-    { 0x01000001 },
+    { 1, 0, 0, 0x01 },
 };
 
 union AnimationStep ice_wall_anim_2[] = {
-    { 0x02000001 },
+    { 1, 0, 0, 0x02 },
 };
 
 union AnimationStep ice_wall_anim_3[] = {
-    { 0x03000001 },
+    { 1, 0, 0, 0x03 },
 };
 
 union AnimationStep ice_wall_anim_4[] = {
-    { 0x04000001 },
+    { 1, 0, 0, 0x04 },
 };
 
 union AnimationStep ice_wall_anim_5[] = {
-    { 0x05000001 },
+    { 1, 0, 0, 0x05 },
 };
 
 union AnimationStep* ice_wall_animations[] = {

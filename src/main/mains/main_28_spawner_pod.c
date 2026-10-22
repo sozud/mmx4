@@ -1,13 +1,15 @@
 // MainObj, main_object_update_funcs[28]
 // 80059C48..8005A4CC
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_28_spawner_pod.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #include "main/objects.h"
+#include "main/object_motion.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #endif
 
@@ -55,7 +57,7 @@ void spawner_pod_init(struct MainObj* arg0)
     self->contact_damage = 3;
     self->animation_table = (const u8* const*)spawner_pod_animations;
     self->collision_data = D_80107074;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     valueE = self->y_pos.i.hi;
     self->unk6 = 0;
     self->unk7C = 0;
@@ -75,7 +77,11 @@ void spawner_pod_init(struct MainObj* arg0)
     self->ext.main_28.unk86 = high8;
     self->ext.main_28.unk88 = valueE;
     self->ext.main_28.unk84 = ((u8*)spawner_pod_init_data)[tableIndex];
+#ifdef MMX4_SATURN
+    self->unk15 = (((u8*)spawner_pod_init_data)[tableIndex + 1] & 0x40) ? PLAYER_FACING_RIGHT : 0;
+#else
     self->unk15 = ((u8*)spawner_pod_init_data)[tableIndex + 1];
+#endif
     set_animation(arg0, arg0->ext.main_28.unk84);
 }
 #endif
@@ -110,7 +116,8 @@ void spawner_pod_idle(struct MainObj* self)
 }
 
 // spawner_pod_step_2
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80059E40(struct MainObj* self);
 void func_80059F60(struct MainObj* self);
 extern u8 D_800FD5C8[32];
@@ -122,7 +129,7 @@ extern struct Unk_unk68* D_800FD5B8[2];
 extern struct Unk_unk68* D_800FD5C0[2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80059E40(struct MainObj* self)
 {
     struct Main28Ext* ext = &self->ext.main_28;
@@ -153,7 +160,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_28_spawner_pod", func_80059E40);
 #endif
 
 // spawner_pod_step_3
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80059F60(struct MainObj* self)
 {
     struct Main28Ext* ext = &self->ext.main_28;
@@ -196,7 +203,7 @@ void func_80059F60(struct MainObj* self)
             self->unk6 = 2;
             break;
         }
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         if (self->unk2 >= 2) {
             ext->unk84 ^= 8;
             set_animation(self, ext->unk84 + 1);
@@ -233,7 +240,7 @@ void func_80059F60(struct MainObj* self)
             self->unk7C--;
             break;
         }
-        self->unk15 ^= 0x40;
+        self->unk15 ^= PLAYER_FACING_RIGHT;
         if (self->unk2 >= 2)
             ext->unk84 ^= 8;
         self->x_accel = -self->x_accel;
@@ -291,139 +298,139 @@ void spawner_pod_remove(struct MainObj* self)
 }
 
 union AnimationStep spawner_pod_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep spawner_pod_anim_1[] = {
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x00010003 },
-    { 0x03010003 },
-    { 0x00000003 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, 1, 0x03 },
+    { 3, 0, 0, 0x00 },
 };
 
 union AnimationStep spawner_pod_anim_2[] = {
-    { 0x04010003 },
-    { 0x05010003 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08FC0003 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, -4, 0x08 },
 };
 
 union AnimationStep spawner_pod_anim_3[] = {
-    { 0x00010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x09010002 },
-    { 0x00010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x09000002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 0, 0x09 },
 };
 
 union AnimationStep spawner_pod_anim_8[] = {
-    { 0x1F000001 },
+    { 1, 0, 0, 0x1F },
 };
 
 union AnimationStep spawner_pod_anim_9[] = {
-    { 0x20010003 },
-    { 0x21010003 },
-    { 0x1F010003 },
-    { 0x22010003 },
-    { 0x1F000003 },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, 0, 0x1F },
 };
 
 union AnimationStep spawner_pod_anim_10[] = {
-    { 0x23010003 },
-    { 0x24010003 },
-    { 0x25010003 },
-    { 0x26010003 },
-    { 0x27FC0003 },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, -4, 0x27 },
 };
 
 union AnimationStep spawner_pod_anim_11[] = {
-    { 0x1F010002 },
-    { 0x28010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29010002 },
-    { 0x28010002 },
-    { 0x1F010002 },
-    { 0x28010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29010002 },
-    { 0x28000002 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 0, 0x28 },
 };
 
 union AnimationStep spawner_pod_anim_4[] = {
-    { 0x0C000001 },
+    { 1, 0, 0, 0x0C },
 };
 
 union AnimationStep spawner_pod_anim_5[] = {
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0C010003 },
-    { 0x0F010003 },
-    { 0x0C000003 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 0, 0x0C },
 };
 
 union AnimationStep spawner_pod_anim_6[] = {
-    { 0x10010003 },
-    { 0x11010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14FC0003 },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, -4, 0x14 },
 };
 
 union AnimationStep spawner_pod_anim_7[] = {
-    { 0x0C010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x15010002 },
-    { 0x0C010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x15000002 },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 0, 0x15 },
 };
 
 union AnimationStep spawner_pod_anim_12[] = {
-    { 0x18010001 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1BFD0001 },
+    { 1, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, -3, 0x1B },
 };
 
 union AnimationStep spawner_pod_anim_13[] = {
-    { 0x1C000001 },
+    { 1, 0, 0, 0x1C },
 };
 
 union AnimationStep spawner_pod_anim_14[] = {
-    { 0x1D000001 },
+    { 1, 0, 0, 0x1D },
 };
 
 union AnimationStep spawner_pod_anim_15[] = {
-    { 0x1E000001 },
+    { 1, 0, 0, 0x1E },
 };
 
 union AnimationStep* spawner_pod_animations[] = {

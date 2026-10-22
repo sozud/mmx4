@@ -35,11 +35,89 @@ extern void (*npc_cutscene_state_funcs[])(struct MiscObj*);
 void func_800D2190(struct MiscObj*);
 void npc_cutscene_main(struct MiscObj*);
 void npc_cutscene_finish(struct MiscObj*);
+#include "weapon_resources.h"
 
 extern void (*npc_cutscene_type_funcs[])(struct MiscObj*);
 
 // npc_cutscene_init
+#ifdef MMX4_SATURN
+#define NPC_RESOURCE 0xA5
+#define NPC_LAYER 0x42
+#define NPC_LISTENER 2
+#define NPC_LISTENER_ID 0x34
+#define NPC_SEEN 8
+#define NPC_TALKED 9
+#define NPC_BOB_PERIOD 7
+#define NPC_TALK_DELAY 30
+
+extern union AnimationStep* npc_cutscene_animations[];
+#define NPC_SCRIPT_ACTION 20
+#define NPC_SCRIPT_ARG 16
+
+void func_800D2190(struct MiscObj* self)
+{
+    struct MiscObj* listener;
+    u8 resource;
+
+    if (self->unk2 != NPC_LISTENER) {
+        if (engine_obj.substage == 0) {
+            engine_obj.character_state.bytes[NPC_SEEN] = 0;
+            engine_obj.character_state.bytes[NPC_TALKED] = 0;
+        } else if (engine_obj.substage == 1) {
+            if (engine_obj.character_state.bytes[NPC_SEEN] != 0) {
+                ZeroObjectState(OBJECT_HEADER(self));
+                return;
+            }
+            engine_obj.character_state.bytes[NPC_SEEN] = 1;
+        }
+    }
+    self->state++;
+    self->bg_offset = g_Player.bg_offset;
+    self->unk16 = NPC_LAYER;
+    self->animation_table = (u32**)npc_cutscene_animations;
+    self->unk15 = 0;
+    resource = func_8002938C(NPC_RESOURCE);
+    self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(NPC_RESOURCE));
+    self->unk42 = OBJECT_STAGE_CLUT(NPC_RESOURCE);
+    self->ext.misc_52.unk56 = NPC_BOB_PERIOD;
+    self->ext.misc_52.unk57 = 1;
+    switch (self->unk2) {
+    case 0:
+        self->x_pos.i.hi = 0x9A0;
+        self->y_pos.i.hi = 0x998;
+        set_animation(self, 0);
+        break;
+    case 1:
+        player_start_script_action(NPC_SCRIPT_ACTION, NPC_SCRIPT_ARG);
+        self->x_pos.i.hi = 0x2A0;
+        self->y_pos.i.hi = 0x198;
+        set_animation(self, 0);
+        self->ext.misc_52.timer = NPC_TALK_DELAY;
+        break;
+    case NPC_LISTENER:
+        set_animation(self, 1);
+        break;
+    }
+    if (self->unk2 == NPC_LISTENER) {
+        return;
+    }
+    listener = find_free_misc_obj();
+    if (listener != NULL) {
+        listener->active = 0x41;
+        listener->id = NPC_LISTENER_ID;
+        listener->unk2 = NPC_LISTENER;
+        listener->ext.misc_52.parent = self;
+        listener->unk40 = self->unk40;
+        listener->unk3C = self->unk3C;
+        listener->unk42 = self->unk42;
+        listener->x_pos.i.hi = self->x_pos.i.hi;
+        listener->y_pos.i.hi = self->y_pos.i.hi;
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D2190);
+#endif
 
 void npc_cutscene_talk_wait_player(struct MiscObj* self)
 {
@@ -47,7 +125,7 @@ void npc_cutscene_talk_wait_player(struct MiscObj* self)
         if (g_Player.x_pos.i.hi > 0x910) {
             self->unk6++;
             background_objects[0].unk26 = 0x8C0;
-            player_start_script_action(0x14, 0x40);
+            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         }
     } else if (background_objects[0].x_pos.i.hi == background_objects[0].unk26) {
         self->unk6 = 0;
@@ -72,7 +150,7 @@ void npc_cutscene_talk_line(struct MiscObj* self)
     }
 
     self->on_screen = 0;
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -132,12 +210,32 @@ void npc_cutscene_reply(struct MiscObj* obj)
 }
 
 // npc_cutscene_listen
+#ifdef MMX4_SATURN
+void func_800D26F4(struct MiscObj* self)
+{
+    struct MiscObj* parent = self->ext.misc_52.parent;
+
+    if (self->unk5 != 0) {
+        ZeroObjectState(OBJECT_HEADER(self));
+        return;
+    }
+    animate_object(ANIMATED_OBJECT(self));
+    self->x_pos.i.hi = parent->x_pos.i.hi;
+    self->y_pos.i.hi = parent->y_pos.i.hi;
+    self->on_screen = 0;
+    if (parent->on_screen != 0)
+        is_on_screen(BASE_OBJECT(self));
+    if (parent->active == 0)
+        self->unk5++;
+}
+#else
 INCLUDE_ASM("main/nonmatchings/misc/misc_52_npc_cutscene", func_800D26F4);
+#endif
 
 void npc_cutscene_main(struct MiscObj* self)
 {
     npc_cutscene_type_funcs[self->unk2](self);
-    if (main_bss_state.frame_counter % 10 == 0) {
+    if (WEAPON_FRAME_COUNTER % 10 == 0) {
         self->y_pos.i.hi += self->ext.misc_52.unk57;
         if (--self->ext.misc_52.unk56 == 0) {
             self->ext.misc_52.unk56 = 7;
@@ -158,7 +256,7 @@ void npc_cutscene_blink(struct MiscObj* self)
         self->ext.misc_52.timer = timer - 1;
     }
     self->on_screen = 0;
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) {
         is_on_screen(BASE_OBJECT(self));
     }
 }
@@ -209,17 +307,17 @@ void npc_cutscene_update(struct MiscObj* self)
 }
 
 union AnimationStep npc_cutscene_anim_0[5] = {
-    { 0x0001003A },
-    { 0x04010008 },
-    { 0x05010021 },
-    { 0x04010008 },
-    { 0x00FC003A },
+    { 58, 0, 1, 0x00 },
+    { 8, 0, 1, 0x04 },
+    { 33, 0, 1, 0x05 },
+    { 8, 0, 1, 0x04 },
+    { 58, 0, -4, 0x00 },
 };
 
 union AnimationStep npc_cutscene_anim_1[3] = {
-    { 0x01010001 },
-    { 0x02010001 },
-    { 0x03FE0001 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, -2, 0x03 },
 };
 
 union AnimationStep* npc_cutscene_animations[2] = { npc_cutscene_anim_0, npc_cutscene_anim_1 };

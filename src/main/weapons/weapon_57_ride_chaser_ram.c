@@ -12,6 +12,7 @@ extern void (*ride_chaser_ram_state_funcs[])(struct WeaponObj*);
 void ride_chaser_ram_init(struct WeaponObj*);
 void ride_chaser_ram_main(struct WeaponObj*);
 void ride_chaser_ram_despawn(struct WeaponObj*);
+#include "weapon_resources.h"
 
 void ride_chaser_ram_update(struct WeaponObj* arg0)
 {

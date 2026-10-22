@@ -21,37 +21,37 @@ u16 sigma_beam_hitbox_offsets[6][2] = {
     { 0x49D, 0x259 },
 };
 
-s16 sigma_beam_hitbox_box_data[30][2] = {
-    { -7040, 16672 },
-    { -5984, 14112 },
-    { -4672, 11296 },
-    { -3104, 8224 },
-    { -768, 5408 },
-    { -1504, 3104 },
-    { -704, 1568 },
-    { 7040, 14368 },
-    { 6048, 11808 },
-    { 5312, 8736 },
-    { 4320, 6176 },
-    { 3072, 3872 },
-    { 1824, 3088 },
-    { 1328, 1808 },
-    { 576, 1056 },
-    { 13440, 14368 },
-    { 11936, 10528 },
-    { 10432, 7712 },
-    { 8160, 5152 },
-    { 5888, 3360 },
-    { 3616, 1056 },
-    { 576, 1056 },
-    { 16604, 4172 },
-    { 12533, 4157 },
-    { 8217, 4132 },
-    { 4156, 4108 },
-    { 592, 4104 },
-    { 23442, 12512 },
-    { 23392, 12477 },
-    { -22144, -5832 },
+u8 sigma_beam_hitbox_box_data[30][4] = {
+    { 0x80, 0xE4, 0x20, 0x41 },
+    { 0xA0, 0xE8, 0x20, 0x37 },
+    { 0xC0, 0xED, 0x20, 0x2C },
+    { 0xE0, 0xF3, 0x20, 0x20 },
+    { 0x00, 0xFD, 0x20, 0x15 },
+    { 0x20, 0xFA, 0x20, 0x0C },
+    { 0x40, 0xFD, 0x20, 0x06 },
+    { 0x80, 0x1B, 0x20, 0x38 },
+    { 0xA0, 0x17, 0x20, 0x2E },
+    { 0xC0, 0x14, 0x20, 0x22 },
+    { 0xE0, 0x10, 0x20, 0x18 },
+    { 0x00, 0x0C, 0x20, 0x0F },
+    { 0x20, 0x07, 0x10, 0x0C },
+    { 0x30, 0x05, 0x10, 0x07 },
+    { 0x40, 0x02, 0x20, 0x04 },
+    { 0x80, 0x34, 0x20, 0x38 },
+    { 0xA0, 0x2E, 0x20, 0x29 },
+    { 0xC0, 0x28, 0x20, 0x1E },
+    { 0xE0, 0x1F, 0x20, 0x14 },
+    { 0x00, 0x17, 0x20, 0x0D },
+    { 0x20, 0x0E, 0x20, 0x04 },
+    { 0x40, 0x02, 0x20, 0x04 },
+    { 0xDC, 0x40, 0x4C, 0x10 },
+    { 0xF5, 0x30, 0x3D, 0x10 },
+    { 0x19, 0x20, 0x24, 0x10 },
+    { 0x3C, 0x10, 0x0C, 0x10 },
+    { 0x50, 0x02, 0x08, 0x10 },
+    { 0x92, 0x5B, 0xE0, 0x30 },
+    { 0x60, 0x5B, 0xBD, 0x30 },
+    { 0x80, 0xA9, 0x38, 0xE9 },
 };
 
 u8 sigma_beam_hitbox_ranges[6][2] = {
@@ -63,7 +63,7 @@ u8 sigma_beam_hitbox_ranges[6][2] = {
     { 27, 2 },
 };
 
-s16* sigma_beam_hitbox_boxes[30] = {
+u8* sigma_beam_hitbox_boxes[30] = {
     sigma_beam_hitbox_box_data[0],
     sigma_beam_hitbox_box_data[1],
     sigma_beam_hitbox_box_data[2],
@@ -97,13 +97,12 @@ s16* sigma_beam_hitbox_boxes[30] = {
 };
 
 // sigma_beam_hitbox_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AE450(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_57_sigma_beam_hitbox.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AE450(struct ShotObj* self)
 {
     self->unk15 = 0;
@@ -130,7 +129,7 @@ void sigma_beam_hitbox_pulse(struct ShotObj* self)
     if (self->unk7C->unk95 != 0) {
         start = self->unk8C.bytes[0];
         for (i = 0; i < self->unk8C.bytes[1] + 1; i++) {
-            self->unk50.frames = sigma_beam_hitbox_boxes[start++];
+            self->unk50.data = sigma_beam_hitbox_boxes[start++];
             func_8002D9BC(self);
         }
         self->state = 2;
@@ -145,7 +144,7 @@ void sigma_beam_hitbox_active(struct ShotObj* self)
     if (self->unk7C->unk95 != 0) {
         start = self->unk8C.bytes[0];
         for (i = 0; i < self->unk8C.bytes[1] + 1; i++) {
-            self->unk50.frames = sigma_beam_hitbox_boxes[start++];
+            self->unk50.data = sigma_beam_hitbox_boxes[start++];
             func_8002D9BC(self);
         }
         return;

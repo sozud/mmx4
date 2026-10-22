@@ -17,6 +17,7 @@ extern void (*sentry_flash_state_funcs[])(struct MiscObj*);
 void func_800CC4E0(struct MiscObj*);
 void sentry_flash_animate(struct MiscObj*);
 void sentry_flash_despawn(struct MiscObj*);
+#include "weapon_resources.h"
 
 void sentry_flash_update(struct MiscObj* self)
 {
@@ -86,7 +87,7 @@ void func_800CC4E0(struct MiscObj* misc)
         misc->y_pos.i.hi += sentry_flash_offsets[5].y;
         break;
     default:
-        if (misc->unk15 & 0x40) {
+        if (misc->unk15 & PLAYER_FACING_RIGHT) {
             misc->x_pos.i.hi += sentry_flash_offsets[1].x;
             misc->y_pos.i.hi += sentry_flash_offsets[1].y;
         } else {

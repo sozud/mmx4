@@ -33,14 +33,13 @@ void (*double_mine_step_funcs[])(struct ShotObj*) = {
 };
 
 // double_mine_wait
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AA5E0(struct ShotObj* self);
 void func_800AA68C(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_51_double_mine.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AA5E0(struct ShotObj* self)
 {
     if (self->animation_step.fields.relative_step == 0) {
@@ -64,7 +63,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_51_double_mine", func_800AA5E0);
 #endif
 
 // double_mine_arm
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AA68C(struct ShotObj* self)
 {
     s32 target = self->unk8C.halves[1] * 0x10000;

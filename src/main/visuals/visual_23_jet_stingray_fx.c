@@ -16,6 +16,7 @@ extern void (*jet_stingray_fx_state_funcs[])(struct VisualObj*);
 
 void jet_stingray_fx_main(struct VisualObj*);
 void jet_stingray_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void jet_stingray_fx_init(struct VisualObj* arg0)
 {
@@ -32,7 +33,7 @@ void jet_stingray_fx_init(struct VisualObj* arg0)
         break;
     case 2:
         // see water_wake_init & func_8003D4C8 for a similar pattern
-        arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x84));
+        arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x84));
         set_animation(arg0, 0x2B);
         break;
     }

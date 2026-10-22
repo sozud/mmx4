@@ -19,7 +19,66 @@ void destructible_core_main(struct ItemObj*);
 void destructible_core_destroyed(struct ItemObj*);
 void destructible_core_finish(struct ItemObj*);
 void destructible_core_flash_palette(struct ItemObj*);
+#include "weapon_resources.h"
 
+#ifdef MMX4_SATURN
+struct Item04Data destructible_core_data = {
+    0x0CC0,
+    { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
+    {
+        0x00,
+        0x00,
+        0x06,
+        0xC8,
+        0x01,
+        0x98,
+        0x0C,
+        0xB0,
+        0x0C,
+        0xC0,
+        0x0C,
+        0xB0,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x08,
+        0xC8,
+        0x01,
+        0x98,
+        0x0C,
+        0xB0,
+        0x0C,
+        0xC0,
+        0x0C,
+        0xB0,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x02,
+        0x00,
+        0x0A,
+        0xC8,
+        0x01,
+        0x98,
+        0x0C,
+        0xB0,
+        0x0C,
+        0xC0,
+        0x0C,
+        0xB0,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x03,
+        0x00,
+    },
+};
+#else
 struct Item04Data destructible_core_data = {
     0x0CC0,
     { 0x0168, 0x0CB0, 0x0CC0, 0x0CB0, 0, 0 },
@@ -76,6 +135,7 @@ struct Item04Data destructible_core_data = {
         0,
     },
 };
+#endif
 
 u8 destructible_core_boxes[4][4] = {
     { 0xE8, 0xA8, 0x18, 0xA0 },
@@ -94,13 +154,14 @@ void destructible_core_update(struct ItemObj* arg0)
 }
 
 // destructible_core_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C0864(struct ItemObj* arg0);
 extern u32* dragon_rubble_animations[14];
 extern struct Unk_unk68 D_80108504[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C0864(struct ItemObj* arg0)
 {
     const u16* layout = (const u16*)&destructible_core_data;
@@ -118,8 +179,8 @@ void func_800C0864(struct ItemObj* arg0)
     arg0->state = (u8)arg0->state + 1;
     arg0->animation_table = (const u8* const*)dragon_rubble_animations;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk42 = 0x78C0;
-    arg0->unk40 = (u16)((u32)D_801406A8[6] >> 7);
+    arg0->unk42 = OBJECT_CLUT(0x78C0);
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(6));
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 6);
     arg0->x_pos.i.hi = layout[slot * 8];
     arg0->unk58 = (const u8*)D_80108504;
@@ -214,7 +275,7 @@ void destructible_core_destroyed(struct ItemObj* arg0)
     temp_v0 = arg0->unk7C.timer - 1;
     arg0->unk7C.timer = temp_v0;
     if (temp_v0 != 0) {
-        if ((main_bss_state.frame_counter & 3) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 3) == 0) {
             if (arg0->unk2 != 0) {
                 func_800AF878(arg0, 1, 0x20, 0x30);
             } else {
@@ -222,14 +283,14 @@ void destructible_core_destroyed(struct ItemObj* arg0)
             }
         }
         if (arg0->unk2 != 0) {
-            var_v0 = main_bss_state.frame_counter & 3;
+            var_v0 = WEAPON_FRAME_COUNTER & 3;
         } else {
-            var_v0 = main_bss_state.frame_counter & 7;
+            var_v0 = WEAPON_FRAME_COUNTER & 7;
         }
         if (var_v0 == 0) {
             spawn_debris(4, destructible_core_debris, arg0);
         }
-        if ((main_bss_state.frame_counter & 0xF) == 0) {
+        if ((WEAPON_FRAME_COUNTER & 0xF) == 0) {
             func_8001540C(
                 0, destructible_core_explosion_sounds[get_random() & 3], (struct Unk6*)arg0);
         }
@@ -256,12 +317,21 @@ void destructible_core_flash_palette(struct ItemObj* arg0)
     s32* source;
     u32 i;
 
+#ifdef MMX4_SATURN
+    destination = (s32*)SP_PALETTE + 0x3B8;
+    if (arg0->tail_ext.unk1.unk88 != 0) {
+        source = (s32*)0x060A59E0;
+    } else {
+        source = (s32*)0x060A5AC0;
+    }
+#else
     destination = SP_PALETTE_WORDS + 0x3B8;
     if (arg0->tail_ext.unk1.unk88 != 0) {
         source = SP_ARC_30 + 0x268;
     } else {
         source = SP_ARC_30 + 0x2A0;
     }
+#endif
     i = 0;
     do {
         *destination++ = *source++;

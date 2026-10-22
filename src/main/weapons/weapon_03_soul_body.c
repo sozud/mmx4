@@ -22,6 +22,7 @@ void soul_body_extend(struct WeaponObj*);
 void soul_body_hold(struct WeaponObj*);
 void soul_body_retract(struct WeaponObj*);
 void soul_body_load_palette(s32);
+#include "weapon_resources.h"
 
 void soul_body_update(struct WeaponObj* arg0)
 {
@@ -60,8 +61,8 @@ void soul_body_init(struct WeaponObj* arg0)
     arg0->unk38 = g_Player.unk38;
     arg0->unk3C = g_Player.unk3C;
     animation_table = g_Player.animation_table;
-    arg0->unk40 = 0x500;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_PLAYER;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 1;
     arg0->animation_table = animation_table;
     arg0->unk15 = g_Player.unk15;
@@ -89,7 +90,7 @@ void soul_body_main(struct WeaponObj* self)
     self->unk15 = g_Player.unk15;
     soul_body_step_funcs[self->unk5](self);
 
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 1) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1) {
         soul_body_load_palette(soul_body_palettes[ext->unk90]);
         ext->unk90 += 1;
         if (ext->unk90 == 6) {

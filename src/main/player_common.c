@@ -34,16 +34,28 @@ extern void (*player_entry_funcs[])(struct PlayerObj*);
 // player_death_funcs
 extern void (*player_death_funcs[])(struct PlayerObj*);
 
+#ifdef MMX4_SATURN
+#include "saturn/player_resources.h"
+#else
+#define PLAYER_TEXTURE_BASE 0x500
+#define PLAYER_CLONE_TEXTURE_BASE 0x540
+#define PLAYER_EFFECT_TEXTURE_BASE 0
+#define PLAYER_PALETTE_BASE 0x7800
+#define PLAYER_AFTERIMAGE_DRAW_FLAGS 4
+#define PLAYER_STAGE_TEXTURE(index) (D_801406A8[index] >> 7)
+#define PLAYER_STAGE_PALETTE() CLUT_FROM_XY((u8)func_8002938C(0x84), (u8)func_8002938C(0x84))
+#define PLAYER_PAD_HELD controller_input.held
+#define PLAYER_PAD_PREVIOUS controller_input.previous
+#define PLAYER_PAD_PRESSED controller_input.pressed
+#endif
+
+void func_80035C20(struct PlayerObj* self);
+void player_spawn_death_orb(s8 direction);
+void player_spawn_death_orbs(s8 pattern);
+
 void player_init_clone(void);
 u16 player_map_buttons(s32 pad);
 void reset_entity(struct PlayerObj* arg0);
-
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
 
 void player_update(void);
 
@@ -257,7 +269,11 @@ void player_start_stage_clear(struct PlayerObj* self);
 
 void player_enter_beam_out(struct PlayerObj* self);
 
+#ifdef MMX4_SATURN
+s16 player_afterimage_cluts[4] = { 0xD, 0xE, 0xF, 0 };
+#else
 s16 player_afterimage_cluts[4] = { 0x780D, 0x780E, 0x780F, 0 };
+#endif
 
 void (*player_entry_funcs[])(struct PlayerObj*) = {
     player_entry_beam_in,
@@ -317,7 +333,6 @@ u8 player_death_orb_directions[4][8] = {
 };
 
 struct Unk_unk68 player_x_collision_bounds = { 0, 2, 0x0B, 0x13 };
-
 struct Unk_unk68 player_zero_collision_bounds = { 0, 3, 0x0A, 0x13 };
 
 struct PlayerDashEffectOffset player_dash_spark_offsets[2] = {
@@ -326,10 +341,21 @@ struct PlayerDashEffectOffset player_dash_spark_offsets[2] = {
 };
 u16 player_dash_splash_offsets[2] = { 0x10, 0x1A };
 
+#ifdef MMX4_SATURN
+struct PlayerDashEffectOffset player_wall_kick_spark_offsets[2] = {
+    { 0xFFF5, 0x000C },
+    { 0xFFF6, 0x0009 },
+};
+#define PLAYER_WALL_KICK_X(index) player_wall_kick_spark_offsets[index].x
+#define PLAYER_WALL_KICK_Y(index) player_wall_kick_spark_offsets[index].y
+#else
 f32 player_wall_kick_spark_offsets[2] = {
     { 0x000CFFF5 },
     { 0x0009FFF6 },
 };
+#define PLAYER_WALL_KICK_X(index) player_wall_kick_spark_offsets[index].u.lo
+#define PLAYER_WALL_KICK_Y(index) player_wall_kick_spark_offsets[index].u.hi
+#endif
 
 s32 player_set_animation(struct PlayerObj* self, s32 animation)
 {
@@ -438,9 +464,9 @@ void player_spawn(void)
 
     player->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
     player->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[0];
-    player->unk40 = 0x500;
+    player->unk40 = PLAYER_TEXTURE_BASE;
     player->unk16 = 2;
-    player->unk42 = 0x7800;
+    player->unk42 = PLAYER_PALETTE_BASE;
     player->unk49 = 3;
     player_reset_palette(player);
     player_init_clone();
@@ -456,7 +482,7 @@ void player_spawn(void)
         object->unk3C = player->unk3C;
         object->unk40 = player->unk40;
         object->unk42 = player_afterimage_cluts[object->unk2];
-        object->unk16 = 4;
+        object->unk16 = PLAYER_AFTERIMAGE_DRAW_FLAGS;
         if (i != 0) {
             object->link.previous = previous;
         } else {
@@ -479,8 +505,8 @@ void player_spawn(void)
         frame_offset = sprite_frames[1];
         baz->unk3C = (u8*)sprite_frames + frame_offset;
         baz->animation_table = D_8011BF40;
-        baz->unk40 = 0;
-        baz->unk42 = 0x7800;
+        baz->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
+        baz->unk42 = PLAYER_PALETTE_BASE;
         baz->unk16 = 2;
         baz->unk15 = 0;
         baz++;
@@ -530,9 +556,9 @@ void player_init_clone(void)
     entity->spawn_hp = engine_obj.max_hp;
     entity->unk38 = (s32*)((u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0]);
     entity->unk3C = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[0];
-    entity->unk40 = 0x540;
+    entity->unk40 = PLAYER_CLONE_TEXTURE_BASE;
     entity->unk16 = 2;
-    entity->unk42 = 0x7800;
+    entity->unk42 = PLAYER_PALETTE_BASE;
     entity->unk49 = 1;
 }
 #endif
@@ -592,7 +618,11 @@ void player_update_init(struct PlayerObj* self)
 void player_entry_beam_in(struct PlayerObj* self)
 {
     player_set_animation(self, 1);
+#ifdef MMX4_SATURN
+    func_8001540C(1, 0xB, self);
+#else
     func_8001540C(1, 0xD, self);
+#endif
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = FIXED(-8);
@@ -659,8 +689,12 @@ void player_update_death(struct PlayerObj* self)
 
 void player_death_start(struct PlayerObj* self)
 {
+#ifdef MMX4_SATURN
+    func_8001540C(6, 0, NULL);
+#else
     stop_sound(1, 5);
     stop_sound(1, 7);
+#endif
     if (self->ride_state != 0) {
         self->on_screen = 0;
         self->death_timer = 1;
@@ -702,11 +736,12 @@ void player_death_wait(struct PlayerObj* self)
 }
 
 // player_death_explode
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80035C20(struct PlayerObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80035C20(struct PlayerObj* arg0)
 {
     s32 i;
@@ -821,17 +856,17 @@ INCLUDE_ASM("main/nonmatchings/player_common", player_read_input);
 void player_read_input(void)
 {
     if (g_Player.controlling_clone == 0) {
-        g_Player.input.buttons.held = player_map_buttons(controller_input.held);
-        g_Player.input.buttons.previous = player_map_buttons(controller_input.previous);
-        g_Player.pressed_input = player_map_buttons(controller_input.pressed);
+        g_Player.input.buttons.held = player_map_buttons(PLAYER_PAD_HELD);
+        g_Player.input.buttons.previous = player_map_buttons(PLAYER_PAD_PREVIOUS);
+        g_Player.pressed_input = player_map_buttons(PLAYER_PAD_PRESSED);
         return;
     }
     g_Player.input.buttons.held = 0;
     g_Player.input.buttons.previous = 0;
     g_Player.pressed_input = 0;
-    g_Entity.input.buttons.held = player_map_buttons(controller_input.held);
-    g_Entity.input.buttons.previous = player_map_buttons(controller_input.previous);
-    g_Entity.pressed_input = player_map_buttons(controller_input.pressed);
+    g_Entity.input.buttons.held = player_map_buttons(PLAYER_PAD_HELD);
+    g_Entity.input.buttons.previous = player_map_buttons(PLAYER_PAD_PREVIOUS);
+    g_Entity.pressed_input = player_map_buttons(PLAYER_PAD_PRESSED);
 }
 #endif
 
@@ -1029,17 +1064,23 @@ void player_damage(s8 damage)
             } else {
                 amount = (damage / 3) * 2;
             }
+#ifdef MMX4_WIN32
             if (EASY_MODE) {
                 easy_hp -= (s8)amount;
                 player->hp = (easy_hp + 1) / 2;
-            } else {
+            } else
+#endif
+            {
                 player->hp = (u8)(player->hp - amount);
             }
         } else {
+#ifdef MMX4_WIN32
             if (EASY_MODE) {
                 easy_hp -= damage;
                 g_Player.hp = (easy_hp + 1) / 2;
-            } else {
+            } else
+#endif
+            {
                 g_Player.hp = (u8)(g_Player.hp - damage);
             }
         }
@@ -1070,7 +1111,7 @@ void player_air_steer(struct PlayerObj* self)
 {
     if (!self->input_locked && (self->input.buttons.held & (PLAYER_INPUT_RIGHT | PLAYER_INPUT_LEFT))) {
         if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             if (!(self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT)) {
                 if (self->dash_momentum != 0) {
                     self->x_vel.val = FIXED(4.125);
@@ -1141,8 +1182,8 @@ void player_spawn_dash_spark(struct PlayerObj* self)
     visual_obj->unk38 = 0;
     visual_obj->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[1];
     visual_obj->animation_table = D_8011BF40;
-    visual_obj->unk40 = 0;
-    visual_obj->unk42 = 0x7804;
+    visual_obj->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
+    visual_obj->unk42 = PLAYER_PALETTE_BASE + 4;
     visual_obj->unk16 = 1;
     facing = self->unk15;
     visual_obj->unk15 = facing;
@@ -1172,8 +1213,8 @@ void player_spawn_dash_splash(struct PlayerObj* self)
             visual_obj->animation_table = D_8011BF40;
             visual_obj->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[(func_8002938C(0x84) & 0xFF)];
             index = func_8002938C(0x84) & 0xFF;
-            visual_obj->unk40 = D_801406A8[index] >> 7;
-            visual_obj->unk42 = CLUT_FROM_XY((u8)func_8002938C(0x84), (u8)func_8002938C(0x84));
+            visual_obj->unk40 = PLAYER_STAGE_TEXTURE(index);
+            visual_obj->unk42 = PLAYER_STAGE_PALETTE();
             facing = self->unk15;
             visual_obj->unk15 = facing;
             if (facing == 0) {
@@ -1186,8 +1227,6 @@ void player_spawn_dash_splash(struct PlayerObj* self)
         }
     }
 }
-
-extern f32 player_wall_kick_spark_offsets[];
 
 void player_spawn_wall_kick_spark(struct PlayerObj* self)
 {
@@ -1208,17 +1247,17 @@ void player_spawn_wall_kick_spark(struct PlayerObj* self)
         sprite_frames = SP_SPRITE_FRAMES;
         visual_obj->unk3C = (u8*)sprite_frames + sprite_frames[1];
         visual_obj->animation_table = D_8011BF40;
-        visual_obj->unk40 = 0;
-        visual_obj->unk42 = 0x7802;
+        visual_obj->unk40 = PLAYER_EFFECT_TEXTURE_BASE;
+        visual_obj->unk42 = PLAYER_PALETTE_BASE + 2;
         visual_obj->unk16 = 0;
         facing = self->unk15;
         visual_obj->unk15 = facing;
         if (facing == 0) {
-            visual_obj->x_pos.i.hi = self->x_pos.u.hi + player_wall_kick_spark_offsets[self->unk2].u.lo;
+            visual_obj->x_pos.i.hi = self->x_pos.u.hi + PLAYER_WALL_KICK_X(self->unk2);
         } else {
-            visual_obj->x_pos.i.hi = self->x_pos.u.hi - player_wall_kick_spark_offsets[self->unk2].u.lo;
+            visual_obj->x_pos.i.hi = self->x_pos.u.hi - PLAYER_WALL_KICK_X(self->unk2);
         }
-        visual_obj->y_pos.i.hi = self->y_pos.u.hi + player_wall_kick_spark_offsets[self->unk2].u.hi;
+        visual_obj->y_pos.i.hi = self->y_pos.u.hi + PLAYER_WALL_KICK_Y(self->unk2);
     }
 }
 
@@ -1301,17 +1340,25 @@ void func_80036BF4(struct PlayerObj* self, s16 ground_y)
         resource = func_8002938C(0x84) & 0xFF;
         visual->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
         resource = func_8002938C(0x84) & 0xFF;
-        visual->unk40 = D_801406A8[resource] >> 7;
-        visual->unk42 = CLUT_FROM_XY((u8)func_8002938C(0x84), (u8)func_8002938C(0x84));
+        visual->unk40 = PLAYER_STAGE_TEXTURE(resource);
+        visual->unk42 = PLAYER_STAGE_PALETTE();
         visual->unk15 = self->unk15;
         visual->x_pos.i.hi = self->x_pos.i.hi;
         visual->y_pos.i.hi = ground_y - 8;
     }
 
     if (engine_obj.stage == 1) {
+#ifdef MMX4_SATURN
+        func_8001540C(5, (get_random() & 1) + 0x13, self);
+#else
         func_8001540C(5, (get_random() & 1) + 3, self);
+#endif
     } else {
+#ifdef MMX4_SATURN
+        func_8001540C(2, 0x19, self);
+#else
         func_8001540C(2, 0xAE, self);
+#endif
     }
 }
 #endif

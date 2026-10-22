@@ -10,6 +10,7 @@ extern void (*crumble_trigger_state_funcs[])(struct ItemObj*);
 void crumble_trigger_init(struct ItemObj*);
 void crumble_trigger_wait_player(struct ItemObj*);
 void crumble_trigger_despawn(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item17SpawnPosition {
     s16 x;
@@ -73,7 +74,7 @@ void crumble_trigger_init(struct ItemObj* arg0)
     arg0->animation_table = 0;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->sprite_frames = 0;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->unk15 = 0;
     arg0->on_screen = 0;
     arg0->x_pos.val = crumble_trigger_positions[arg0->unk2].x << 16;

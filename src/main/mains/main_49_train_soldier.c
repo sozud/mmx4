@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[49]
 // 800684F8..8006970C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_49_train_soldier.h"
 #include "main/objects.h"
 #include "main/1CF60.h"
@@ -56,7 +57,8 @@ void train_soldier_update(struct MainObj* self)
 }
 
 // train_soldier_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068548(struct MainObj* arg0);
 void func_80068B80(struct MainObj* arg0);
 extern union AnimationStep* highway_trooper_animations[27];
@@ -67,7 +69,7 @@ extern u32 D_801076F8[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068548(struct MainObj* arg0)
 {
     u8* shared = (u8*)&SP_CUR_MAIN_OBJ->ext;
@@ -105,13 +107,17 @@ void func_80068548(struct MainObj* arg0)
     }
 
     row = row + 6 < 0 ? row + 9 : row + 6;
+#ifdef MMX4_SATURN
+    arg0->unk42 = column;
+#else
     arg0->unk42 = (u16)((column - ((wrapped >> 4) << 4))
         | (((row >> 2) + 0x1E0) << 6));
+#endif
     if (spawned_late) {
         shared[5] = (u8)arg0->unk2;
     }
 
-    arg0->unk40 = (u16)((u32)D_801406A8[func_8002938C(0x22)] >> 7);
+    arg0->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(func_8002938C(0x22)));
     arg0->sprite_frames
         = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x22));
     arg0->x_speed = 0;
@@ -129,14 +135,14 @@ void func_80068548(struct MainObj* arg0)
     arg0->hurt_box = train_soldier_guard_hurt_box;
     arg0->collision_data = (const u16*)D_801076F8;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hp = 6;
     arg0->contact_damage = 3;
     set_animation(arg0, 1);
     arg0->state = 1;
     arg0->unk5 = shared[5] == 2 ? 7 : 2;
     if (shared[6] != 0) {
-        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         if (arg0->unk2 != 9) {
             arg0->state = 3;
             arg0->unk5 = 0;
@@ -229,7 +235,7 @@ void train_soldier_wait_for_player(struct MainObj* self)
                 self->unk15 = 0;
                 return;
             }
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             return;
         }
         temp_v1[0x81] = temp_v0 - 1;
@@ -246,7 +252,7 @@ void train_soldier_walk(struct MainObj* self)
 }
 
 // train_soldier_walk_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068B80(struct MainObj* arg0)
 {
     s32 velocity;
@@ -281,7 +287,7 @@ void train_soldier_walk_move(struct MainObj* self)
             self->x_speed = -self->x_speed;
         }
     } else if (self->collision_flags & 2) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_speed = -self->x_speed;
     }
 }
@@ -350,7 +356,7 @@ void func_80068D6C(struct MainObj* self)
     }
 
     if (self->unk2 == 0) {
-        self->unk15 = self->unk15 == 0 ? 0x40 : 0;
+        self->unk15 = self->unk15 == 0 ? PLAYER_FACING_RIGHT : 0;
         self->x_speed = -self->x_speed;
         return;
     }
@@ -412,7 +418,7 @@ void train_soldier_check_shoot(struct MainObj* arg0)
                 if (arg0->x_pos.i.hi > g_Player.x_pos.i.hi) {
                     arg0->unk15 = 0;
                 } else {
-                    arg0->unk15 = 0x40;
+                    arg0->unk15 = PLAYER_FACING_RIGHT;
                 }
 
                 current = SP_CUR_MAIN_OBJ;
@@ -552,7 +558,7 @@ void train_soldier_shoot_fire(struct MainObj* self)
     event = self->animation_step.fields.event;
     if (event != 0) {
         if (event == 3) {
-            func_8001540C(2, 0x66, self);
+            func_8001540C(2, SATURN_SOUND(0x66, 0x4F), self);
         }
         self->unk6++;
         shot = find_free_shot_obj();

@@ -5,12 +5,14 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/sprite_animations.h"
-#endif
 
 void death_orb_fly(struct MiscObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/sprite_animations.h"
+#endif
 
 void death_orb_update(struct MiscObj* self)
 {
@@ -22,12 +24,13 @@ void death_orb_update(struct MiscObj* self)
 }
 
 // death_orb_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CAE38(struct MiscObj* arg0);
 extern s8 death_orb_frames[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CAE38(struct MiscObj* arg0)
 {
     u8 variant = (u8)arg0->unk2;
@@ -37,8 +40,8 @@ void func_800CAE38(struct MiscObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk38 = NULL;
     arg0->animation_table = D_8011BF40;
-    arg0->unk42 = 0x7802;
-    arg0->unk40 = 0;
+    arg0->unk42 = OBJECT_CLUT(0x7802);
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
     arg0->unk16 = 0x10;
     arg0->unk15 = 0;
     arg0->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 1);

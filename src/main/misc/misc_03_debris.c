@@ -19,12 +19,13 @@ void debris_update(struct MiscObj* self)
 }
 
 // debris_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern s32 debris_x_speeds[8];
 extern s32 debris_y_speeds[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C8610(struct MiscObj* arg0)
 {
     struct MainObj* owner = arg0->ext.misc_2.owner;

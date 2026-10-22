@@ -7,8 +7,9 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -28,11 +29,12 @@ void dropped_bomb_update(struct ShotObj* self)
 }
 
 // dropped_bomb_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009AD6C(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009AD6C(struct ShotObj* arg0)
 {
     arg0->y_vel.val = -0x10000;

@@ -3,8 +3,9 @@
 #include "common.h"
 #include "main/quads/quad_06_light_ray.h"
 #include "main/objects.h"
+#include "main/object_motion.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #endif
 
@@ -15,7 +16,8 @@ void light_ray_main(struct QuadObj*);
 void light_ray_despawn(struct QuadObj*);
 
 // light_ray_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D5934(struct QuadObj* arg0);
 extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
@@ -34,7 +36,7 @@ extern s32 D_800F459C[];
 extern s32 D_800F45C0[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D5934(struct QuadObj* arg0)
 {
     u8 angle;

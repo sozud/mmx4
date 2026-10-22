@@ -9,7 +9,11 @@ extern void func_800349F4 (struct PlayerObj *arg0);
 extern void player_enter_ladder_down (struct PlayerObj *arg0);
 #endif
 
+#ifdef MMX4_SATURN
+s32 func_80034E2C(struct PlayerObj*);
+#else
 s32 func_80034E2C();
+#endif
 void player_start_stage_clear(struct PlayerObj*);
 
 void player_enter_beam_out(struct PlayerObj*);

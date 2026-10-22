@@ -14,6 +14,7 @@ extern void (*ride_dust_state_funcs[])(struct VisualObj*);
 void ride_dust_init(struct VisualObj*);
 void ride_dust_main(struct VisualObj*);
 void ride_dust_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void ride_dust_update(struct VisualObj* arg0)
 {
@@ -24,7 +25,7 @@ void ride_dust_init(struct VisualObj* arg0)
 {
     arg0->state = 1;
     arg0->on_screen = 1;
-    arg0->unk16 = ride_dust_layers[arg0->unk2];
+    arg0->unk16 = VISUAL_SATURN_LAYER(ride_dust_layers[arg0->unk2]);
     set_animation(arg0, ride_dust_animations[arg0->unk2]);
 }
 

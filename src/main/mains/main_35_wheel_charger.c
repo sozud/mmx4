@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[35]
 // 8005EC58..8005F510
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_35_wheel_charger.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -42,7 +43,8 @@ void wheel_charger_update(struct MainObj* self)
 }
 
 // wheel_charger_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005ECA8(struct MainObj* arg0);
 void func_8005EFB0(struct MainObj* arg0);
 extern struct Unk_unk68 D_80107374[];
@@ -52,7 +54,7 @@ extern struct Unk_unk68 D_800FE1B4;
 extern struct Unk_unk68 D_800FE1B8;
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005ECA8(struct MainObj* arg0)
 {
     arg0->contact_damage = 3;
@@ -60,7 +62,7 @@ void func_8005ECA8(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80107374;
     arg0->animation_table = (const u8* const*)wheel_charger_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &D_800FE1B8;
     arg0->hurt_box = &D_800FE1B0;
     arg0->unk18.val = arg0->x_pos.val;
@@ -81,7 +83,7 @@ void func_8005ECA8(struct MainObj* arg0)
         break;
     case 1:
         arg0->unk7A = 1;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_35.unk80 = 0;
         arg0->x_speed = 0x28000;
         arg0->unk5 = 4;
@@ -94,7 +96,7 @@ void func_8005ECA8(struct MainObj* arg0)
         break;
     case 3:
         arg0->unk7A = 1;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_35.unk80 = 1;
         arg0->x_speed = 0x28000;
         arg0->unk5 = 4;
@@ -158,14 +160,14 @@ void wheel_charger_drop(struct MainObj* self)
 }
 
 // wheel_charger_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005EFB0(struct MainObj* arg0)
 {
     u32 mode;
 
     animate_object(ANIMATED_OBJECT(arg0));
     if (arg0->collision_flags & 8) {
-        func_8001540C(2, 0x57, arg0);
+        func_8001540C(2, SATURN_SOUND(0x57, 0x47), arg0);
         mode = arg0->ext.main_35.unk80;
         arg0->y_speed = 0;
         arg0->gravity = 0;
@@ -190,7 +192,7 @@ void func_8005EFB0(struct MainObj* arg0)
         return;
     if (arg0->unk15 == 0) {
         if (arg0->collision_flags & 2) {
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
             arg0->x_speed = 0x28000;
         }
     } else if (arg0->collision_flags & 1) {
@@ -241,7 +243,7 @@ void wheel_charger_charge_open(struct MainObj* self)
 void wheel_charger_charge_spin(struct MainObj* self)
 {
     if (--self->ext.main_35.sound_timer == 0) {
-        func_8001540C(2, 0x58, self);
+        func_8001540C(2, SATURN_SOUND(0x58, 0x48), self);
         self->ext.main_35.sound_timer = 0x14;
     }
     animate_object(ANIMATED_OBJECT(self));
@@ -266,7 +268,7 @@ void wheel_charger_charge_roll(struct MainObj* self)
     u8 mask;
 
     if (--self->ext.main_35.sound_timer == 0) {
-        func_8001540C(2, 0x58, self);
+        func_8001540C(2, SATURN_SOUND(0x58, 0x48), self);
         self->ext.main_35.sound_timer = 0x14;
     }
 
@@ -326,7 +328,7 @@ void wheel_charger_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -341,74 +343,74 @@ struct Unk_unk68 wheel_charger_open_hurt_box = { -16, -2, 29, 15 };
 struct Unk_unk68 wheel_charger_open_attack_box = { -13, 0, 23, 11 };
 
 union AnimationStep wheel_charger_anim_0[] = {
-    { 0x05010001 },
-    { 0x04010001 },
-    { 0x03010001 },
-    { 0x02010001 },
-    { 0x01010001 },
-    { 0x00FB0001 },
+    { 1, 0, 1, 0x05 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x02 },
+    { 1, 0, 1, 0x01 },
+    { 1, 0, -5, 0x00 },
 };
 
 union AnimationStep wheel_charger_anim_1[] = {
-    { 0x00010006 },
-    { 0x06010005 },
-    { 0x07010004 },
-    { 0x08010203 },
-    { 0x09010003 },
-    { 0x0A010003 },
-    { 0x0B010003 },
-    { 0x0C010003 },
-    { 0x0E010003 },
-    { 0x0D010004 },
-    { 0x0C010005 },
-    { 0x0E000101 },
+    { 6, 0, 1, 0x00 },
+    { 5, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 3, 2, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x0C },
+    { 3, 0, 1, 0x0E },
+    { 4, 0, 1, 0x0D },
+    { 5, 0, 1, 0x0C },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep wheel_charger_anim_2[] = {
-    { 0x0E010001 },
-    { 0x14010002 },
-    { 0x15010003 },
-    { 0x1B010004 },
-    { 0x15010003 },
-    { 0x14010002 },
-    { 0x0E01000E },
-    { 0x0F010003 },
-    { 0x10010003 },
-    { 0x11010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010102 },
-    { 0x0E010001 },
-    { 0x0F010001 },
-    { 0x10010001 },
-    { 0x11010001 },
-    { 0x12010001 },
-    { 0x13FB0001 },
+    { 1, 0, 1, 0x0E },
+    { 2, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 4, 0, 1, 0x1B },
+    { 3, 0, 1, 0x15 },
+    { 2, 0, 1, 0x14 },
+    { 14, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 1, 1, 0x13 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x0F },
+    { 1, 0, 1, 0x10 },
+    { 1, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, -5, 0x13 },
 };
 
 union AnimationStep wheel_charger_anim_4[] = {
-    { 0x16000101 },
+    { 1, 1, 0, 0x16 },
 };
 
 union AnimationStep wheel_charger_anim_5[] = {
-    { 0x17000101 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep wheel_charger_anim_6[] = {
-    { 0x18000101 },
+    { 1, 1, 0, 0x18 },
 };
 
 union AnimationStep wheel_charger_anim_7[] = {
-    { 0x19000101 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep wheel_charger_anim_8[] = {
-    { 0x1A000101 },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep* wheel_charger_animations[9] = {

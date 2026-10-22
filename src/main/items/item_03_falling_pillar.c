@@ -11,6 +11,7 @@
 
 // falling_pillar_state_funcs
 extern void (*falling_pillar_state_funcs[])(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item03StageEntry falling_pillar_entries[22] = {
     { 0x0DE0, 0x0218, 0x03B0, 0x0E50, 0x0DF8, 0x000B, 0x0050, 0x0018 },
@@ -47,11 +48,12 @@ void falling_pillar_update(struct ItemObj* arg0)
 }
 
 // falling_pillar_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C044C(struct ItemObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C044C(struct ItemObj* arg0)
 {
     u8 index = (u8)arg0->unk2;
@@ -65,9 +67,9 @@ void func_800C044C(struct ItemObj* arg0)
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->animation_step.fields.frame_index = entry->object_id;
     arg0->x_vel.val = index < 10 || index == 20 ? 0x4000 : -0x4000;
-    arg0->unk40 = 0x1500;
-    arg0->unk42 = 0x79C1;
-    arg0->unk16 = 6;
+    arg0->unk40 = SATURN_ALT(0x1500, OBJECT_STAGE_TEXTURE(8));
+    arg0->unk42 = OBJECT_CLUT(0x79C1);
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 8);
     arg0->unk61 = 0;
     arg0->unk68 = index == 4 || index == 14
@@ -87,7 +89,7 @@ void falling_pillar_wait_player(struct ItemObj* arg0)
     index = arg0->unk2;
     if (g_Player.y_pos.i.hi >= falling_pillar_entries[index].velocity) {
         if (index == 0) {
-            func_8001540C(5, 2, NULL);
+            func_8001540C(5, SATURN_SOUND(2, 0x0B), NULL);
         }
         arg0->unk7C.timer = 10;
         arg0->state++;
@@ -138,7 +140,7 @@ void func_800C05FC(struct ItemObj* pillar)
 void falling_pillar_finish(struct ItemObj* arg0)
 {
     if (arg0->unk2 == 0) {
-        func_8001540C(5, 0, NULL);
+        func_8001540C(5, SATURN_SOUND(0, 0x09), NULL);
         start_screen_shake_y(0x20, 2, 1);
     }
     arg0->unk7C.timer = 0;

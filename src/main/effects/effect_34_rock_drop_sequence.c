@@ -5,8 +5,12 @@
 #include "main/objects.h"
 #include "main/effects/effect_35_palette_pulse.h"
 #include "main/stage_objects.h"
+#include "main/object_motion.h"
+#ifdef MMX4_SATURN
+#include "saturn/player_resources.h"
+#endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #endif
 
@@ -89,11 +93,12 @@ void palette_pulse_init(struct EffectObj* self)
 }
 
 // palette_pulse_step
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BD080(struct EffectObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BD080(struct EffectObj* arg0)
 {
     struct MainObj* main;

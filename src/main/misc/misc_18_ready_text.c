@@ -6,7 +6,7 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
-extern void (*ReadyTextUpdateFuncs[3])();
+extern void (*ReadyTextUpdateFuncs[3])(struct MiscObj*);
 
 // D_8010E6F0 - g_MegamanRelatedUpdateFuncs
 extern void (*g_MegamanRelatedUpdateFuncs[])(struct MiscObj*);
@@ -26,8 +26,18 @@ void ready_text_show(struct MiscObj*);
 void ready_text_appear(struct MiscObj* arg0);
 void ready_text_bounce(struct MiscObj* arg0);
 void ready_text_leave(struct MiscObj* arg0);
+#include "weapon_resources.h"
 
 void ready_text_load_palette(s32 arg0, s32 arg1);
+
+#ifdef MMX4_SATURN
+#define READY_TEXT_TEXTURE 0xE000
+#define READY_TEXT_SHADOW_PALETTE 0x10
+#define READY_TEXT_LEAVE_PALETTE 0x01
+#else
+#define READY_TEXT_SHADOW_PALETTE 0x7840
+#define READY_TEXT_LEAVE_PALETTE 0x7801
+#endif
 
 extern const u32* ready_text_animations[];
 
@@ -50,6 +60,19 @@ void ready_text_init(struct MiscObj* self)
     u16* color;
     u32 pal_pos;
 
+#ifdef MMX4_SATURN
+    if (engine_obj.cur_character == CHARACTER_X) {
+        self->unk3C = (s8*)SP_SPRITE_FRAMES + ((struct Scratchpad1C*)SP_SPRITE_FRAMES)->unk24;
+    } else {
+        self->unk3C = (s8*)SP_SPRITE_FRAMES + ((struct Scratchpad1C*)SP_SPRITE_FRAMES)->unk10;
+    }
+
+    self->unk40 = READY_TEXT_TEXTURE;
+    self->animation_table = (u32**)ready_text_animations;
+    self->state = 1;
+    self->bg_offset = -1;
+    self->unk42 = OBJECT_PALETTE_FROM_COLOR(ready_text_palettes[self->unk2]);
+#else
     if (engine_obj.cur_character == CHARACTER_X) {
         self->unk3C = (s8*)SP_SPRITE_FRAMES_HDR + SP_SPRITE_FRAMES_HDR->unk24;
     } else {
@@ -61,6 +84,7 @@ void ready_text_init(struct MiscObj* self)
     self->state = 1;
     self->bg_offset = -1;
     self->unk42 = (ready_text_palettes[self->unk2] % 16) | (((ready_text_palettes[self->unk2] >> 4) + 0x1E0) << 6); // see water_wake_init & func_8003D4C8 for a similar pattern
+#endif
     self->x_pos.i.hi = ready_text_x_positions[self->unk2];
     self->y_pos.i.hi = ready_text_y_positions[self->unk2];
     self->unk16 = ready_text_priorities[self->unk2];
@@ -82,11 +106,15 @@ void ready_text_init(struct MiscObj* self)
             color = SP_PALETTE + 0x100;
             do {
                 *pal_dst++ = *color;
+#ifdef MMX4_SATURN
+                *color = 0;
+#else
                 if (pal_pos != 0) {
                     *color = 0x8000;
                 } else {
                     *color = 0;
                 }
+#endif
                 pal_pos += 1;
                 color += 1;
             } while (pal_pos < 16);
@@ -120,18 +148,18 @@ extern u8 ready_text_palette_cycle[];
 void ready_text_appear(struct MiscObj* self)
 {
     if (self->ext.ready_text.owner->ext.unk_effect.unk16 != 0) {
-        ready_text_load_palette(self, NULL);
+        ready_text_load_palette((s32)self, (s32)NULL);
         self->unk5 = 1;
         self->ext.ready_text.unk54 = 8;
         if (self->unk2 != 0) {
-            self->unk42 = 0x7840;
+            self->unk42 = READY_TEXT_SHADOW_PALETTE;
             self->x_vel.val = FIXED(.25);
             self->y_vel.val = FIXED(-.5); // set y velocity of shadow behind "READY"
             return;
         }
         self->x_vel.val = FIXED(-.25);
         self->y_vel.val = FIXED(.5); // set y velocity of blue "READY"
-        func_8001540C(0, 0xA, 0);
+        func_8001540C(0, SATURN_SOUND(0xA, 0x0B), 0);
         return;
     }
     if ((self->unk2 == 0) && (self->ext.ready_text.palette_cycle_done == 0)) {
@@ -140,7 +168,7 @@ void ready_text_appear(struct MiscObj* self)
             return;
         }
         // cycle palette when "READY" first appears
-        ready_text_load_palette(self, ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
+        ready_text_load_palette((s32)self, (s32)ready_text_palette_cycle[self->ext.ready_text.palette_pos]);
         self->ext.ready_text.palette_pos++;
         if (self->ext.ready_text.palette_pos > 13) {
             self->ext.ready_text.palette_pos = 0;
@@ -177,7 +205,7 @@ void ready_text_bounce(struct MiscObj* self)
         }
         self->unk5 = 2;
         self->unk6 = 0;
-        self->unk42 = 0x7801;
+        self->unk42 = READY_TEXT_LEAVE_PALETTE;
         if (self->unk2 != 0) {
             pal_src = D_8013B940;
             pal_pos = 0;
@@ -220,7 +248,7 @@ void ready_text_leave(struct MiscObj* self)
 void ready_text_blink(struct MiscObj* self)
 {
     self->on_screen = 0;
-    if (BLINK_CLOCK(main_bss_state.frame_counter) & 0x10) {
+    if (BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 0x10) {
         is_on_screen(self);
     }
 }
@@ -257,13 +285,21 @@ void ready_text_despawn(struct MiscObj* self)
     ZeroObjectState(self);
 }
 
-u32 ready_text_anim_0[] = { 0x00000001 };
+union AnimationStep ready_text_anim_0[] = {
+    { 1, 0, 0, 0x00 },
+};
 
-u32 ready_text_anim_1[] = { 0x03000001 };
+union AnimationStep ready_text_anim_1[] = {
+    { 1, 0, 0, 0x03 },
+};
 
-u32 ready_text_anim_2[] = { 0x01000001 };
+union AnimationStep ready_text_anim_2[] = {
+    { 1, 0, 0, 0x01 },
+};
 
-u32 ready_text_anim_3[] = { 0x02000001 };
+union AnimationStep ready_text_anim_3[] = {
+    { 1, 0, 0, 0x02 },
+};
 
 const u32* ready_text_animations[] = { ready_text_anim_0, ready_text_anim_1, ready_text_anim_2, ready_text_anim_3 };
 

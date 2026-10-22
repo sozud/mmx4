@@ -48,7 +48,7 @@ enum PlayerAction {
     PLAYER_ZERO_SPIN_FALL_SLASH,
     PLAYER_ZERO_RYUENJIN,
     PLAYER_ZERO_RAKUHOUHA,
-    PLAYER_ZERO_SHIPPUUGA,
+    PLAYER_ZERO_SHIPPUUGA
 };
 
 void player_ladder_shoot(struct PlayerObj*);

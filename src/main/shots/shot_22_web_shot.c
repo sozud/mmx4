@@ -7,10 +7,7 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/player_common.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // web_shot_state_funcs
 extern void (*web_shot_state_funcs[])(struct ShotObj*);
@@ -22,6 +19,11 @@ void web_shot_home(struct ShotObj*);
 void web_shot_catch(struct ShotObj*);
 void web_shot_hold(struct ShotObj*);
 void web_shot_fade(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 u8 web_shot_hit_box[4] = { 0xF7, 0xF8, 0x11, 0x10 };
 
@@ -31,11 +33,12 @@ void web_shot_update(struct ShotObj* self)
 }
 
 // web_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D788(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D788(struct ShotObj* arg0)
 {
     s32 direction;
@@ -95,7 +98,7 @@ void web_shot_home(struct ShotObj* self)
         return;
     }
     if (self->timer != 0) {
-        if (!(main_bss_state.frame_counter & 3)) {
+        if (!(WEAPON_FRAME_COUNTER & 3)) {
             target = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
             direction = self->unk84.value;
             if ((direction - (target & 0xFF)) & 0x1F) {
@@ -165,7 +168,7 @@ void web_shot_fade(struct ShotObj* self)
         self->unk6 = 0;
         return;
     }
-    if (!(BLINK_CLOCK(main_bss_state.frame_counter) & 3)) {
+    if (!(BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 3)) {
         self->on_screen = 0;
         self->unk8A = 1;
     } else {

@@ -7,8 +7,12 @@ struct BackgroundLayoutConfig {
 };
 
 struct BackgroundLayoutConfigData {
+#ifdef MMX4_SATURN
+    struct BackgroundLayoutConfig records[32];
+#else
     struct BackgroundLayoutConfig records[33];
     u8 alignment_padding[2];
+#endif
 };
 
 void func_80027BE4(struct BackgroundObj*);

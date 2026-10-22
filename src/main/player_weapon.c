@@ -24,6 +24,21 @@ extern s8 player_shot_counts_as_special[];
 // player_fire_funcs
 extern void (*player_fire_funcs[])(struct PlayerObj*);
 
+void func_80036F50(struct PlayerObj* self);
+void func_80037484(struct PlayerObj* self, s32 airborne);
+void func_80037C28(struct PlayerObj* self);
+void player_enter_frost_tower_pose(struct PlayerObj* self);
+void player_enter_soul_body(struct PlayerObj* self);
+void player_enter_rising_fire(struct PlayerObj* self, s32 airborne);
+void player_enter_rising_fire_charged(struct PlayerObj* self, s32 airborne);
+void player_enter_double_cyclone_pose(struct PlayerObj* self);
+
+#ifdef MMX4_SATURN
+#define PLAYER_WEAPON_SELECT_SOUND 0xD
+#else
+#define PLAYER_WEAPON_SELECT_SOUND 0xC
+#endif
+
 s32 player_charge_released(struct PlayerObj* self);
 void player_charge_shoot_button(struct PlayerObj* self);
 void player_charge_special_button(struct PlayerObj* self);
@@ -36,13 +51,6 @@ s32 player_set_charge_flash(struct PlayerObj* self, s8 button);
 void player_update_charged_shot_type(struct PlayerObj* self, s32 button);
 void player_update_shooting(struct PlayerObj* self);
 void player_use_weapon_energy(struct PlayerObj* self, s8 shot_type);
-
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
 
 void player_update(void);
 
@@ -351,11 +359,38 @@ struct WeaponObj* player_spawn_weapon(s8 active, s8 id, s8 type, struct PlayerOb
 struct VisualObj* player_spawn_visual(s8 active, s8 id, s8 variant, void* owner);
 
 union PlayerChargeData player_weapon_energy = {
+#ifdef MMX4_SHC
+    0,
+    4,
+    3,
+    6,
+    3,
+    1,
+    1,
+    1,
+    1,
+    0,
+    12,
+    12,
+    12,
+    12,
+    6,
+    12,
+    12,
+    6,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+#else
     {
         { 0, 4, 3, 6, 3, 1 },
         { 1, 1, 1 },
         { 0, 12, 12, 12, 12, 6, 12, 12, 6, 0, 0, 0, 0, 0, 0 },
     },
+#endif
 };
 
 s8 player_shot_has_pose[24] = { 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1 };
@@ -449,7 +484,8 @@ void player_update_weapon(struct PlayerObj* self)
 }
 
 // player_select_weapon
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80036F50(struct PlayerObj* player);
 void func_80037484(struct PlayerObj* arg0, s32 arg1);
 void func_80037C28(struct PlayerObj* arg0);
@@ -460,7 +496,7 @@ void player_enter_rising_fire_charged(struct PlayerObj* arg0, s32 arg1);
 void player_enter_double_cyclone_pose(struct PlayerObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80036F50(struct PlayerObj* player)
 {
     static const u8 weapon_masks[] = { 0, 1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80 };
@@ -474,7 +510,7 @@ void func_80036F50(struct PlayerObj* player)
         if (player->weapon != 0) {
             player->weapon = 0;
             player_reset_charge(player);
-            func_8001540C(0, 0xC, 0);
+            func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
         }
         return;
     }
@@ -499,7 +535,7 @@ void func_80036F50(struct PlayerObj* player)
     if (player->weapon != weapon) {
         player->weapon = weapon;
         player_reset_charge(player);
-        func_8001540C(0, 0xC, 0);
+        func_8001540C(0, PLAYER_WEAPON_SELECT_SOUND, 0);
         player->stock_charge = 0;
     }
 }
@@ -642,7 +678,7 @@ s32 player_check_shoot_ladder(struct PlayerObj* self)
 }
 
 // player_enter_weapon_pose
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80037484(struct PlayerObj* arg0, s32 arg1)
 {
     switch ((s8)(arg0->shot_type - 2)) {
@@ -880,7 +916,7 @@ void player_fire_charged_buster(struct PlayerObj* self)
 }
 
 // player_fire_twin_slasher
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80037C28(struct PlayerObj* arg0)
 {
     s32 count;
@@ -1179,7 +1215,11 @@ void player_reset_charge_and_weapon(struct PlayerObj* self)
 
 void player_reset_charge(struct PlayerObj* self)
 {
+#ifdef MMX4_SATURN
+    func_8001540C(6, 0, NULL);
+#else
     stop_sound(1, 7);
+#endif
     player_clear_flash(self);
     self->charge_state[0] = PLAYER_CHARGE_NONE;
     self->charge_state[1] = PLAYER_CHARGE_NONE;

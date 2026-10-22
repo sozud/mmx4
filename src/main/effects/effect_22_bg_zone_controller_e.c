@@ -103,8 +103,14 @@ void bg_zone_controller_e_zone_0_scroll(struct EffectObj* self)
             }
         }
         t = self->ext.effect_22.unk16;
+#ifdef MMX4_SATURN
+        background_objects[1].x_pos.val = t == 1 ? 0x2000000 : 0;
+        background_objects[1].y_pos.val = t == 2 ? 0x3000000 : 0x2000000;
+        background_objects[1].unk4C = 1;
+#else
         background_objects[1].unk4C = 1;
         background_objects[1].x_pos.i.hi = t << 9;
+#endif
         self->ext.effect_22.unk17 = 0;
     }
 }

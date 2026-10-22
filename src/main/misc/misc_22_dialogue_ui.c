@@ -4,6 +4,9 @@
 #include "main/misc/misc_22_dialogue_ui.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 
 // misc obj update #22
 void dialogue_ui_update(struct MiscObj* self)
@@ -15,7 +18,11 @@ void dialogue_ui_update(struct MiscObj* self)
         is_on_screen(self);
         return;
     case 1:
+#ifdef MMX4_SATURN
+        if ((saturn_pad_pressed & SATURN_PAD_DIALOGUE_SKIP) == 0) {
+#else
         if ((u8)controller_input.pressed == 0) {
+#endif
             if (--self->ext.unk.unk56.sht == 0) {
                 self->ext.unk.unk56.sht = 0x20;
                 self->ext.unk.unk54 ^= 1;
@@ -89,6 +96,69 @@ void dialogue_ui_update(struct MiscObj* self)
         }
         is_on_screen(self);
         return;
+#ifdef MMX4_SATURN
+    case 6:
+        if (self->unk6 == 0) {
+            self->unk6 = 1;
+            self->unk40 = SATURN_OPTION_WINDOW_TEXTURE;
+            self->unk3C = SATURN_OPTION_WINDOW_FRAMES;
+            self->bg_offset = -1;
+            self->unk15 = 0;
+            if (self->y_pos.i.hi == SATURN_OPTION_TITLE_Y) {
+                self->unk42 = SATURN_OPTION_TITLE_PALETTE;
+            } else if (self->unk7 == 0) {
+                self->unk42 = SATURN_OPTION_SELECTED_PALETTE;
+            } else if ((u8)self->unk7 == SATURN_OPTION_BACK_ROW) {
+                self->unk42 = SATURN_OPTION_LOCKED_PALETTE;
+            } else {
+                self->unk42 = SATURN_OPTION_PALETTE;
+            }
+            self->x_pos.i.hi = 0xA0;
+            self->unk16 = 0x10;
+        }
+        if (main_bss_state.transition.selection == (u8)self->unk7) {
+            self->unk42 = SATURN_OPTION_SELECTED_PALETTE;
+        } else if (self->y_pos.i.hi != SATURN_OPTION_TITLE_Y) {
+            if ((u8)self->unk7 == SATURN_OPTION_BACK_ROW) {
+                self->unk42 = SATURN_OPTION_LOCKED_PALETTE;
+            } else {
+                self->unk42 = SATURN_OPTION_PALETTE;
+            }
+        }
+        if ((u8)self->unk7 == SATURN_OPTION_EMPTY_ROW) {
+            if (saturn_save_slots[(s8)(main_bss_state.transition.selection * SATURN_SAVE_SLOT_BYTES)] == SATURN_SAVE_SLOT_HIDDEN) {
+                is_on_screen(self);
+            }
+            return;
+        }
+        is_on_screen(self);
+        return;
+    case 7:
+        if (self->unk6 == 0) {
+            self->unk6 = 1;
+            self->unk40 = SATURN_OPTION_CURSOR_TEXTURE;
+            self->unk42 = 7;
+            self->unk3C = (s8*)SATURN_OPTION_CURSOR_FRAMES + *(s32*)SATURN_OPTION_CURSOR_FRAMES;
+            self->unk16 = 0x13;
+            self->bg_offset = -1;
+            self->unk15 = 0;
+            self->animation_step.fields.frame_index = 42;
+        }
+        if (self->unk6 == 1) {
+            if (main_bss_state.transition.selection != SATURN_OPTION_CURSOR_BACK) {
+                is_on_screen(self);
+            }
+            return;
+        }
+        if (main_bss_state.transition.selection == SATURN_OPTION_CURSOR_BACK) {
+            return;
+        }
+        if (saturn_save_slots[(s8)(main_bss_state.transition.selection * SATURN_SAVE_SLOT_BYTES)] == SATURN_SAVE_SLOT_HIDDEN) {
+            return;
+        }
+        is_on_screen(self);
+        return;
+#endif
     case 8:
         if (self->unk5 == 0) {
             animate_object(self);

@@ -57,13 +57,6 @@ s32 player_zero_check_fall_slash(struct PlayerObj* self);
 s32 player_zero_check_jump_slash(struct PlayerObj* self);
 s32 player_zero_check_wall_slash(struct PlayerObj* self);
 
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
-
 void player_update(void)
 {
     engine_obj.controlled_player = &g_Player;
@@ -336,7 +329,7 @@ void player_wall_cling(struct PlayerObj* self)
         if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             self->unk15 = 0;
         } else {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         self->animation_step.fields.event &= 0x3F;
     }
@@ -783,7 +776,7 @@ void player_ladder_up(struct PlayerObj* self)
             self->unk15 = 0;
         }
         if (self->pressed_input & PLAYER_INPUT_RIGHT) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         buttons = self->input.buttons.held;
         if (buttons & PLAYER_INPUT_UP) {
@@ -810,7 +803,7 @@ void player_ladder_down(struct PlayerObj* self)
             self->unk15 = 0;
         }
         if (self->pressed_input & PLAYER_INPUT_RIGHT) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
 
         buttons = self->input.buttons.held;
@@ -909,7 +902,7 @@ void player_hurt_stun(struct PlayerObj* self)
         self->unk15 = 0;
     }
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 
     stun = self->stun_timer;
@@ -1002,11 +995,12 @@ void player_capsule(struct PlayerObj* self)
 }
 
 // player_capsule_enter
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80032FA4(struct PlayerObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80032FA4(struct PlayerObj* arg0)
 {
     if (arg0->capsule_state == 0) {
@@ -1057,7 +1051,26 @@ void player_script_wait(struct PlayerObj* self)
 }
 
 // player_script_walk
+#ifdef MMX4_SATURN
+void func_80033108(struct PlayerObj* self)
+{
+    if (engine_obj.unkF != 0) {
+        player_start_stage_clear(self);
+        return;
+    }
+    self->x_vel.val = self->animation_step.fields.event != 0 ? 0x20000 : 0x8000;
+    if (self->unk15 == 0) {
+        self->x_vel.val = -self->x_vel.val;
+    }
+    move_object(MOVING_OBJECT(self));
+    animate_object(ANIMATED_OBJECT(self));
+    if (self->script_facing == 0) {
+        player_script_walk_to_mark(self);
+    }
+}
+#else
 INCLUDE_ASM("main/nonmatchings/player", func_80033108);
+#endif
 
 void player_script_vanish(struct PlayerObj* self)
 {
@@ -1104,7 +1117,11 @@ void player_script_victory(struct PlayerObj* self)
     } else {
         if (self->animation_step.fields.event & 0x80) {
             self->animation_step.fields.event = 0;
+#ifdef MMX4_SATURN
+            func_8001540C(0, 0xC, 0);
+#else
             func_8001540C(0, 0x21, 0);
+#endif
         }
 
         if (self->animation_step.fields.relative_step == 0) {
@@ -1125,7 +1142,11 @@ void player_stage_clear(struct PlayerObj* self)
     } else {
         if (self->animation_step.fields.event & 0x80) {
             self->animation_step.fields.event = 0;
+#ifdef MMX4_SATURN
+            func_8001540C(0, 0xC, 0);
+#else
             func_8001540C(0, 0x21, 0);
+#endif
         }
         if (self->animation_step.fields.relative_step == 0) {
             player_set_animation(self, 0x28);
@@ -1164,6 +1185,7 @@ u8 func_8002D94C(struct PlayerObj* arg0);
 
 // player_zero_check_combo
 
+#ifndef MMX4_SATURN_NATIVE_PLAYER_TABLES
 void (*player_state_funcs[])(struct PlayerObj*) = {
     player_update_init,
     player_update_normal,
@@ -1265,3 +1287,4 @@ void (*player_hurt_funcs[])(struct PlayerObj*) = {
     player_hurt_stun,
     player_hurt_knockback,
 };
+#endif

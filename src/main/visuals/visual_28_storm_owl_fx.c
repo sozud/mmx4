@@ -9,6 +9,7 @@
 extern void (*storm_owl_fx_state_funcs[])(struct VisualObj*);
 
 void storm_owl_fx_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void storm_owl_fx_update(struct VisualObj* arg0)
 {

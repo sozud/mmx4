@@ -3,13 +3,17 @@
 #include "common.h"
 #include "main/misc/misc_19_title.h"
 #include "main/objects.h"
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 
-extern void (*g_TitleUpdateFuncs[])();
+extern void (*g_TitleUpdateFuncs[])(struct MiscObj*);
 
 // D_8010E824
 void title_init(struct MiscObj* arg0);
 
 void title_despawn(struct MiscObj* arg0);
+#include "weapon_resources.h"
 
 extern struct TitleObjectInit title_object_inits[];
 extern u32* title_animations[];
@@ -26,10 +30,17 @@ void title_init(struct MiscObj* self)
     self->unk16 = 3;
     self->state++;
 
+#ifdef MMX4_SATURN
+    self->unk40 = SATURN_TITLE_TEXTURE;
+    self->unk3C = SATURN_TITLE_FRAMES;
+    temp_v1 = title_object_inits[temp_a1].flags;
+    self->unk42 = OBJECT_PALETTE_FROM_COLOR(temp_v1);
+#else
     self->unk40 = 0x600;
     self->unk3C = SP_TITLE_FRAMES;
     temp_v1 = title_object_inits[temp_a1].flags;
     self->unk42 = ((temp_v1 % 16) | (((temp_v1 >> 4) + 0x1E0) << 6));
+#endif
     // for unk2 == 0, setting position of "MEGAMAN" text
     // for unk2 == 1, didn't notice a difference
     // for unk2 == 2, setting position of greyed out "GAME START" text
@@ -66,7 +77,7 @@ void title_draw(struct MiscObj* self)
     temp_v1 = self->unk2;
     if (((temp_v1 >= 4) && (temp_v1 <= 5)) || ((s8)temp_v1 == 6)) {
         self->on_screen = 0;
-        if ((BLINK_CLOCK(main_bss_state.frame_counter) & 0x10) == 0) {
+        if ((BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 0x10) == 0) {
             return;
         }
     } else {
@@ -144,41 +155,41 @@ struct TitleObjectInit title_object_inits[] = {
 #endif
 };
 
-u32 title_anim_0[] = {
-    0x0A010002,
-    0x0B010002,
-    0x0C010002,
-    0x0D010002,
-    0x0E010002,
-    0x0F010002,
-    0x10010002,
-    0x11010002,
-    0x11010102,
-    0x11010202,
-    0x11010302,
-    0x11010402,
-    0x11010502,
-    0x11010602,
-    0x11010702,
-    0x11010802,
-    0x11010902,
-    0x11010A02,
-    0x11010B02,
-    0x11010C02,
-    0x11010D02,
-    0x11010E02,
-    0x11000F02,
+union AnimationStep title_anim_0[] = {
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 1, 1, 0x11 },
+    { 2, 2, 1, 0x11 },
+    { 2, 3, 1, 0x11 },
+    { 2, 4, 1, 0x11 },
+    { 2, 5, 1, 0x11 },
+    { 2, 6, 1, 0x11 },
+    { 2, 7, 1, 0x11 },
+    { 2, 8, 1, 0x11 },
+    { 2, 9, 1, 0x11 },
+    { 2, 10, 1, 0x11 },
+    { 2, 11, 1, 0x11 },
+    { 2, 12, 1, 0x11 },
+    { 2, 13, 1, 0x11 },
+    { 2, 14, 1, 0x11 },
+    { 2, 15, 0, 0x11 },
 };
 
-u32 title_anim_1[] = {
-    0x12010001,
-    0x13010002,
-    0x14010001,
-    0x15010001,
-    0x16010001,
-    0x17010001,
-    0x18010002,
-    0x19000003,
+union AnimationStep title_anim_1[] = {
+    { 1, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 1, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 3, 0, 0, 0x19 },
 };
 
 u32* title_animations[] = { title_anim_0, title_anim_1 };

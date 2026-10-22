@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[57]
 // 80072194..800743FC
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_57_frost_walrus.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
@@ -10,8 +11,9 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/stage_objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -135,7 +137,7 @@ void frost_walrus_update(struct MainObj* self)
     frost_walrus_state_funcs[self->state](self);
     CollisionRelated(PLAYER_OBJECT(self));
     if (!HP_VALUE(g_Player.hp)) {
-        frost_walrus_set_floor_tiles(0x38);
+        frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x38));
     }
 }
 
@@ -152,13 +154,17 @@ void frost_walrus_start_warning(struct MainObj* self)
         effect->active = 1;
         effect->id = 0x18;
         self->ext.main_57.effect = effect;
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk5++;
     }
 }
 
 // frost_walrus_start_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800722A0(struct MainObj* arg0);
 void func_80072418(struct MainObj* arg0);
 void func_80073E80(struct MainObj* arg0);
@@ -167,12 +173,12 @@ extern void* frost_walrus_animations[39];
 extern void (*frost_walrus_step_funcs[12])();
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800722A0(struct MainObj* arg0)
 {
     if (((struct BaseObj*)arg0->ext.main_57.effect)->active != 0)
         return;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->contact_damage = 6;
     arg0->terrain_box = &frost_walrus_terrain_box;
     arg0->hurt_box = &frost_walrus_hurt_box;
@@ -191,10 +197,10 @@ void func_800722A0(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     if (engine_obj.stage != 0xC) {
-        arg0->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+        arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
     } else {
-        arg0->unk40 = (D_801406A8[0] >> 7) + 0x160;
-        arg0->unk42 = 0x7888;
+        arg0->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
+        arg0->unk42 = OBJECT_CLUT(0x7888);
         arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
     }
     engine_obj.unk25 = 1;
@@ -213,7 +219,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_57_frost_walrus", func_800722A0);
 #endif
 
 // frost_walrus_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80072418(struct MainObj* arg0)
 {
     s32 hit;
@@ -292,7 +298,7 @@ void func_80072628(struct MainObj* self)
     self->unk7E = 0x19;
     self->invincibility_timer = 0x19;
 
-    frost_walrus_set_floor_tiles(0x38);
+    frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x38));
     update_on_screen(BASE_OBJECT(self), 0x60, 0x60);
 }
 
@@ -382,7 +388,7 @@ void frost_walrus_intro_approach(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
         start_screen_shake_y(0x18, 2, 1);
-        func_8001540C(2, 0x91, self);
+        func_8001540C(2, SATURN_SOUND(0x91, 0x61), self);
     }
 
     if (ABS(self->x_pos.i.hi, g_Player.x_pos.i.hi) <= 0xC0) {
@@ -396,7 +402,7 @@ void frost_walrus_intro_roar(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, self);
+        func_8001540C(2, SATURN_SOUND(0x92, 0x62), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 0x4);
@@ -423,7 +429,7 @@ void frost_walrus_intro_burst(struct MainObj* self)
                 visual->unk50 = PLAYER_OBJECT(self);
             }
         }
-        func_8001540C(2, 0x94, self);
+        func_8001540C(2, SATURN_SOUND(0x94, 0x64), self);
     }
     if (--self->unk7C == 0) {
         set_animation(self, 0x1A);
@@ -452,7 +458,7 @@ void frost_walrus_intro_fill_health(struct MainObj* self)
         return;
     }
     if (--self->unk7E == 0) {
-        func_8001540C(0, 0xE, NULL);
+        func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
         self->unk7E = 3;
     }
     if (++self->hp == 0x30) {
@@ -515,7 +521,7 @@ void frost_walrus_charge_start(struct MainObj* self)
         self->x_speed = self->unk15 != 0 ? 0x18000 : -0x18000;
         self->hurt_box = (u8*)&frost_walrus_charge_hurt_box;
         self->attack_box = (u8*)&frost_walrus_charge_attack_box;
-        func_8001540C(2, 0x93, self);
+        func_8001540C(2, SATURN_SOUND(0x93, 0x63), self);
         self->unk6 = 3;
         return;
     }
@@ -528,7 +534,7 @@ void frost_walrus_charge_windup(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, self);
+        func_8001540C(2, SATURN_SOUND(0x92, 0x62), self);
     }
     if (self->animation_step.fields.event == 2) {
         set_animation(self, 2);
@@ -543,7 +549,7 @@ void frost_walrus_charge_run(struct MainObj* self)
         self->x_speed = self->unk15 != 0 ? FIXED(3) : FIXED(-3);
         self->hurt_box = (const u8*)&frost_walrus_charge_hurt_box;
         self->attack_box = (const u8*)&frost_walrus_charge_attack_box;
-        func_8001540C(2, 0x93, self);
+        func_8001540C(2, SATURN_SOUND(0x93, 0x63), self);
         self->unk6++;
     }
 }
@@ -555,9 +561,9 @@ void frost_walrus_charge_slide(struct MainObj* self)
     move_object(MOVING_OBJECT(self));
     mask = self->unk15 != 0 ? 1 : 2;
     if (self->collision_flags & mask) {
-        frost_walrus_set_floor_tiles(0x39);
+        frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x39));
         start_screen_shake_x(0x1E, 4, 1);
-        func_8001540C(2, 0x90, self);
+        func_8001540C(2, SATURN_SOUND(0x90, 0x60), self);
         self->unk7C = 0x28;
         self->unk6++;
     }
@@ -569,7 +575,7 @@ void frost_walrus_charge_recover(struct MainObj* self)
     if (--self->unk7C <= 0) {
         self->hurt_box = (const u8*)&frost_walrus_hurt_box;
         self->attack_box = (const u8*)&frost_walrus_attack_box;
-        frost_walrus_set_floor_tiles(0x38);
+        frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x38));
         set_animation(self, 3);
         self->unk6++;
     }
@@ -615,7 +621,7 @@ void frost_walrus_leap_windup(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, self);
+        func_8001540C(2, SATURN_SOUND(0x92, 0x62), self);
     }
     if (self->animation_step.fields.relative_step == 0) {
         set_animation(self, 2);
@@ -650,8 +656,8 @@ void frost_walrus_leap_air(struct MainObj* self)
     }
     if (self->air_state == -1) {
         if (self->collision_flags & 8) {
-            func_8001540C(2, 0x90, self);
-            func_8001540C(2, 0x93, self);
+            func_8001540C(2, SATURN_SOUND(0x90, 0x60), self);
+            func_8001540C(2, SATURN_SOUND(0x93, 0x63), self);
             start_screen_shake_y(0x18, 3, 1);
             self->air_state = 0;
         }
@@ -659,8 +665,8 @@ void frost_walrus_leap_air(struct MainObj* self)
     if (self->air_state == 0) {
         side_mask = self->unk15 != 0 ? 1 : 2;
         if (self->collision_flags & side_mask) {
-            frost_walrus_set_floor_tiles(0x39);
-            func_8001540C(2, 0x90, self);
+            frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x39));
+            func_8001540C(2, SATURN_SOUND(0x90, 0x60), self);
             start_screen_shake_x(0x1E, 4, 1);
             self->unk7C = 0x28;
             self->unk6++;
@@ -674,7 +680,7 @@ void frost_walrus_leap_recover(struct MainObj* self)
     if (--self->unk7C <= 0) {
         self->hurt_box = (const u8*)&frost_walrus_hurt_box;
         self->attack_box = (const u8*)&frost_walrus_attack_box;
-        frost_walrus_set_floor_tiles(0x38);
+        frost_walrus_set_floor_tiles(TILE_ATTR_VALUE(0x38));
         set_animation(self, 3);
         self->unk6++;
     }
@@ -715,7 +721,7 @@ void frost_walrus_walk_stomp(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 1) {
-        func_8001540C(2, 0x92, self);
+        func_8001540C(2, SATURN_SOUND(0x92, 0x62), self);
         start_screen_shake_y(0x18, 3, 1);
     }
     if (self->animation_step.fields.event != 2) {
@@ -798,7 +804,7 @@ void frost_walrus_shards_finish(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->animation_step.fields.event == 3) {
-        func_8001540C(2, 0x92, self);
+        func_8001540C(2, SATURN_SOUND(0x92, 0x62), self);
     }
     if (self->animation_step.fields.event == 2) {
         set_animation(self, 0x1A);
@@ -839,7 +845,7 @@ void frost_walrus_breath_blow(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 
     if (--self->unk7E == 0) {
-        func_8001540C(2, 0x94, self);
+        func_8001540C(2, SATURN_SOUND(0x94, 0x64), self);
         self->unk7E = 0x18;
     }
 
@@ -926,7 +932,7 @@ void frost_walrus_blizzard_blow(struct MainObj* self)
     animate_object(ANIMATED_OBJECT(self));
 
     if (--self->unk7E == 0) {
-        func_8001540C(2, 0x94, self);
+        func_8001540C(2, SATURN_SOUND(0x94, 0x64), self);
         self->unk7E = 0x18;
     }
 
@@ -987,7 +993,7 @@ void frost_walrus_stagger(struct MainObj* self)
 }
 
 // frost_walrus_stagger_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80073E80(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -1005,7 +1011,7 @@ void func_80073E80(struct MainObj* arg0)
         visual->unk15 = arg0->unk15;
     }
     set_animation(arg0, 0x12);
-    func_8001540C(2, 0x99, arg0);
+    func_8001540C(2, SATURN_SOUND(0x99, 0x69), arg0);
     arg0->x_speed = arg0->x_pos.i.hi < g_Player.x_pos.i.hi ? -0x20000 : 0x20000;
     arg0->y_speed = 0x38000;
     arg0->gravity = 0x4200;
@@ -1117,7 +1123,7 @@ void frost_walrus_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -1148,8 +1154,12 @@ void frost_walrus_set_floor_tiles(s32 self)
 
     list = engine_obj.stage == 0xC ? frost_walrus_floor_tiles_rush : frost_walrus_floor_tiles;
     while (*list != 0) {
+#ifdef MMX4_SATURN
+        SATURN_TILE_ATTRS[*list] = (SATURN_TILE_ATTRS[*list] & 0xFFFFFF) | self;
+#else
         SP_BG_TILE_ATTRS[*list] &= ~0xFF;
         SP_BG_TILE_ATTRS[*list] |= self;
+#endif
         list++;
     }
 }
@@ -1208,44 +1218,44 @@ u8 frost_walrus_script_weights[3][4] = {
 };
 
 union AnimationStep frost_walrus_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep frost_walrus_anim_1[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x15010002 },
-    { 0x1601000A },
-    { 0x15010002 },
-    { 0x00010001 },
-    { 0x00010101 },
-    { 0x17010301 },
-    { 0x17010001 },
-    { 0x18010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x17010008 },
-    { 0x00010001 },
-    { 0x00010201 },
-    { 0x01010002 },
-    { 0x15010002 },
-    { 0x1601000A },
-    { 0x15010002 },
-    { 0x00010002 },
-    { 0x17010301 },
-    { 0x17010001 },
-    { 0x18010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x17000008 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x15 },
+    { 10, 0, 1, 0x16 },
+    { 2, 0, 1, 0x15 },
+    { 1, 0, 1, 0x00 },
+    { 1, 1, 1, 0x00 },
+    { 1, 3, 1, 0x17 },
+    { 1, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 8, 0, 1, 0x17 },
+    { 1, 0, 1, 0x00 },
+    { 1, 2, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x15 },
+    { 10, 0, 1, 0x16 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x00 },
+    { 1, 3, 1, 0x17 },
+    { 1, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 8, 0, 0, 0x17 },
 };
 
 u8 frost_walrus_anim_2[44] = { 2, 0, 1, 0, 2, 0, 1, 1, 2, 0, 1, 21, 16, 0, 1, 22, 2, 0, 1, 21, 1, 1, 1, 4, 3, 0, 1, 4, 4, 0, 1, 5, 1, 2, 1, 6, 7, 0, 1, 6, 2, 0, 255, 7 };
 
 union AnimationStep frost_walrus_anim_3[] = {
-    { 0x05010002 },
-    { 0x04010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 0, 0x00 },
 };
 
 struct Unk_unk68 frost_walrus_anim_4[9] = {
@@ -1261,10 +1271,10 @@ struct Unk_unk68 frost_walrus_anim_4[9] = {
 };
 
 union AnimationStep frost_walrus_anim_5[] = {
-    { 0x04010002 },
-    { 0x05010006 },
-    { 0x04010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 0, 0x00 },
 };
 
 struct Unk_unk68 frost_walrus_anim_6[28] = {
@@ -1299,82 +1309,82 @@ struct Unk_unk68 frost_walrus_anim_6[28] = {
 };
 
 union AnimationStep frost_walrus_anim_7[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x34000002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 0, 0x34 },
 };
 
 union AnimationStep frost_walrus_anim_8[] = {
-    { 0x2F010002 },
-    { 0x2E010002 },
-    { 0x2D01000C },
-    { 0x2C000002 },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x2E },
+    { 12, 0, 1, 0x2D },
+    { 2, 0, 0, 0x2C },
 };
 
 union AnimationStep frost_walrus_anim_9[] = {
-    { 0x33010002 },
-    { 0x32010002 },
-    { 0x31010002 },
-    { 0x2F010002 },
-    { 0x2E010002 },
-    { 0x2D01000C },
-    { 0x2C000002 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x2E },
+    { 12, 0, 1, 0x2D },
+    { 2, 0, 0, 0x2C },
 };
 
 union AnimationStep frost_walrus_anim_10[] = {
-    { 0x35000001 },
+    { 1, 0, 0, 0x35 },
 };
 
 union AnimationStep frost_walrus_anim_11[] = {
-    { 0x36010001 },
-    { 0x37010001 },
-    { 0x36010001 },
-    { 0x37010001 },
-    { 0x36010001 },
-    { 0x37010001 },
-    { 0x36000001 },
+    { 1, 0, 1, 0x36 },
+    { 1, 0, 1, 0x37 },
+    { 1, 0, 1, 0x36 },
+    { 1, 0, 1, 0x37 },
+    { 1, 0, 1, 0x36 },
+    { 1, 0, 1, 0x37 },
+    { 1, 0, 0, 0x36 },
 };
 
 union AnimationStep frost_walrus_anim_12[] = {
-    { 0x38000001 },
+    { 1, 0, 0, 0x38 },
 };
 
 union AnimationStep frost_walrus_anim_13[] = {
-    { 0x39000001 },
+    { 1, 0, 0, 0x39 },
 };
 
 union AnimationStep frost_walrus_anim_14[] = {
-    { 0x3A000001 },
+    { 1, 0, 0, 0x3A },
 };
 
 union AnimationStep frost_walrus_anim_15[] = {
-    { 0x3B000001 },
+    { 1, 0, 0, 0x3B },
 };
 
 union AnimationStep frost_walrus_anim_16[] = {
-    { 0x20010002 },
-    { 0x1F010002 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x3301001E },
-    { 0x6A010002 },
-    { 0x6A010002 },
-    { 0x6A000002 },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 30, 0, 1, 0x33 },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 0, 0x6A },
 };
 
 union AnimationStep frost_walrus_anim_17[] = {
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x0301001E },
-    { 0x02010002 },
-    { 0x01010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 30, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 0, 0x00 },
 };
 
 union AnimationStep frost_walrus_anim_18[] = {
-    { 0x08000001 },
+    { 1, 0, 0, 0x08 },
 };
 
 struct Unk_unk68 frost_walrus_anim_19[7] = {
@@ -1390,15 +1400,15 @@ struct Unk_unk68 frost_walrus_anim_19[7] = {
 u8 frost_walrus_anim_20[8] = { 2, 0, 1, 33, 2, 0, 255, 34 };
 
 union AnimationStep frost_walrus_anim_21[] = {
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x28010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x2B000002 },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 0, 0x2B },
 };
 
 struct Unk_unk68 frost_walrus_anim_22[8] = {
@@ -1415,29 +1425,29 @@ struct Unk_unk68 frost_walrus_anim_22[8] = {
 u8 frost_walrus_anim_23[12] = { 2, 0, 1, 20, 2, 0, 1, 10, 2, 0, 255, 11 };
 
 union AnimationStep frost_walrus_anim_24[] = {
-    { 0x6A010002 },
-    { 0x6A010002 },
-    { 0x20010002 },
-    { 0x1F010002 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x6A01001E },
-    { 0x6A010002 },
-    { 0x6A010002 },
-    { 0x6A000002 },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 30, 0, 1, 0x6A },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 1, 0x6A },
+    { 2, 0, 0, 0x6A },
 };
 
 union AnimationStep frost_walrus_anim_25[] = {
-    { 0x14010002 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x1C010002 },
-    { 0x0301001E },
-    { 0x02010002 },
-    { 0x01010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1C },
+    { 30, 0, 1, 0x03 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 0, 0x00 },
 };
 
 struct Unk_unk68 frost_walrus_anim_26[6] = {
@@ -1450,72 +1460,72 @@ struct Unk_unk68 frost_walrus_anim_26[6] = {
 };
 
 union AnimationStep frost_walrus_anim_27[] = {
-    { 0x09000001 },
+    { 1, 0, 0, 0x09 },
 };
 
 union AnimationStep frost_walrus_anim_28[] = {
-    { 0x0C000001 },
+    { 1, 0, 0, 0x0C },
 };
 
 union AnimationStep frost_walrus_anim_29[] = {
-    { 0x50010003 },
-    { 0x51010003 },
-    { 0x52010003 },
-    { 0x53010006 },
-    { 0x54010006 },
-    { 0x55010006 },
-    { 0x56010006 },
-    { 0x57010006 },
-    { 0x58010006 },
-    { 0x59000006 },
+    { 3, 0, 1, 0x50 },
+    { 3, 0, 1, 0x51 },
+    { 3, 0, 1, 0x52 },
+    { 6, 0, 1, 0x53 },
+    { 6, 0, 1, 0x54 },
+    { 6, 0, 1, 0x55 },
+    { 6, 0, 1, 0x56 },
+    { 6, 0, 1, 0x57 },
+    { 6, 0, 1, 0x58 },
+    { 6, 0, 0, 0x59 },
 };
 
 union AnimationStep frost_walrus_anim_30[] = {
-    { 0x61010002 },
-    { 0x62010002 },
-    { 0x63010002 },
-    { 0x64010002 },
-    { 0x65000102 },
+    { 2, 0, 1, 0x61 },
+    { 2, 0, 1, 0x62 },
+    { 2, 0, 1, 0x63 },
+    { 2, 0, 1, 0x64 },
+    { 2, 1, 0, 0x65 },
 };
 
 union AnimationStep frost_walrus_anim_31[] = {
-    { 0x61010002 },
-    { 0x62010002 },
-    { 0x66010002 },
-    { 0x67010002 },
-    { 0x68000102 },
+    { 2, 0, 1, 0x61 },
+    { 2, 0, 1, 0x62 },
+    { 2, 0, 1, 0x66 },
+    { 2, 0, 1, 0x67 },
+    { 2, 1, 0, 0x68 },
 };
 
 union AnimationStep frost_walrus_anim_32[] = {
-    { 0x5A000001 },
+    { 1, 0, 0, 0x5A },
 };
 
 union AnimationStep frost_walrus_anim_33[] = {
-    { 0x5B010001 },
-    { 0x5C010001 },
-    { 0x5B010001 },
-    { 0x5C010001 },
-    { 0x5B010001 },
-    { 0x5C010001 },
-    { 0x5B000001 },
+    { 1, 0, 1, 0x5B },
+    { 1, 0, 1, 0x5C },
+    { 1, 0, 1, 0x5B },
+    { 1, 0, 1, 0x5C },
+    { 1, 0, 1, 0x5B },
+    { 1, 0, 1, 0x5C },
+    { 1, 0, 0, 0x5B },
 };
 
 union AnimationStep frost_walrus_anim_34[] = {
-    { 0x5D010001 },
-    { 0x5E010001 },
-    { 0x5D010001 },
-    { 0x5E010001 },
-    { 0x5D010001 },
-    { 0x5E010001 },
-    { 0x5D000001 },
+    { 1, 0, 1, 0x5D },
+    { 1, 0, 1, 0x5E },
+    { 1, 0, 1, 0x5D },
+    { 1, 0, 1, 0x5E },
+    { 1, 0, 1, 0x5D },
+    { 1, 0, 1, 0x5E },
+    { 1, 0, 0, 0x5D },
 };
 
 union AnimationStep frost_walrus_anim_35[] = {
-    { 0x5F000001 },
+    { 1, 0, 0, 0x5F },
 };
 
 union AnimationStep frost_walrus_anim_36[] = {
-    { 0x60000001 },
+    { 1, 0, 0, 0x60 },
 };
 
 u8 frost_walrus_anim_37[8] = { 1, 0, 0, 105, 1, 0, 255, 106 };

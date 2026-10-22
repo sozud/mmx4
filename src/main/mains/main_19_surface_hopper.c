@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[19]
 // 8005284C..8005458C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_19_surface_hopper.h"
 #include "main/object_motion.h"
 #include "main/1CF60.h"
@@ -9,8 +10,9 @@
 #include "main/collision.h"
 #include "main/items/item_01_stage_block.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -60,7 +62,8 @@ void surface_hopper_update(struct MainObj* self)
 }
 
 // surface_hopper_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800528BC(struct MainObj* arg0);
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical);
 void func_80052CB8(struct MainObj* arg0);
@@ -88,7 +91,7 @@ extern u8 D_800FC80C[8];
 extern void (*surface_hopper_launched_step_funcs[6])(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800528BC(struct MainObj* arg0)
 {
     s32 index;
@@ -114,7 +117,7 @@ void func_800528BC(struct MainObj* arg0)
     switch (arg0->unk2) {
     case 0:
         arg0->x_speed = FIXED(8);
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         break;
     case 1:
         arg0->x_speed = FIXED(-8);
@@ -124,11 +127,13 @@ void func_800528BC(struct MainObj* arg0)
         arg0->y_speed = FIXED(8);
         break;
     }
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
 
     arg0->ext.main_19.unk80 = get_random() & 1;
+#ifdef MMX4_PC
     if (arg0->ext.main_19.unk8A > 0x17)
         arg0->ext.main_19.unk8A = 1;
+#endif
     arg0->ext.main_19.animation_index = (u8)arg0->unk2;
     index = arg0->unk2 >> 1;
     arg0->hurt_box = D_800FC744[index];
@@ -217,7 +222,7 @@ void surface_hopper_fly(struct MainObj* self)
 }
 
 // surface_hopper_crawl_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80052CB8(struct MainObj* arg0)
 {
     u8 animation;
@@ -225,7 +230,7 @@ void func_80052CB8(struct MainObj* arg0)
 
     if (arg0->ext.main_19.animation_index < 2) {
         if (arg0->ext.main_19.animation_index == 0) {
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
             arg0->ext.main_19.unk82 = 1;
         } else {
             arg0->unk15 = 0;
@@ -258,7 +263,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80052CB8);
 #endif
 
 // surface_hopper_crawl_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80052E94(struct MainObj* arg0)
 {
     s32 distance;
@@ -315,7 +320,7 @@ void func_80052E94(struct MainObj* arg0)
             if (flags & 2) {
                 arg0->unk6 = 4;
                 if (arg0->x_speed >= 0) {
-                    arg0->unk15 = 0x40;
+                    arg0->unk15 = PLAYER_FACING_RIGHT;
                     arg0->ext.main_19.unk80 = 1;
                 } else {
                     arg0->unk15 = 0;
@@ -395,7 +400,7 @@ void surface_hopper_crawl_attach(struct MainObj* self)
 }
 
 // surface_hopper_crawl_wall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80053338(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
@@ -448,7 +453,7 @@ void func_80053338(struct MainObj* arg0)
     } else {
         set_animation(ANIMATED_OBJECT(arg0), 0xA);
         arg0->unk6 = 6;
-        arg0->unk15 ^= 0x40;
+        arg0->unk15 ^= PLAYER_FACING_RIGHT;
         arg0->ext.main_19.unk80 ^= 1;
         direction = arg0->ext.main_19.unk80;
         if ((arg0->collision_flags >> direction) & 1)
@@ -482,7 +487,7 @@ void surface_hopper_leap_start(struct MainObj* self)
 }
 
 // surface_hopper_leap_fly
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005368C(struct MainObj* arg0)
 {
     struct ShotObj* shot;
@@ -523,7 +528,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_8005368C);
 #endif
 
 // surface_hopper_pick_surface
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u16 func_800537E0(struct MainObj* arg0, u8 direction, u8 vertical)
 {
     struct Unk_unk68* bounds = arg0->terrain_box;
@@ -629,7 +634,7 @@ u8 surface_hopper_probe_tile(struct PlayerObj* self, s16 arg1, s16 arg2)
 }
 
 // surface_hopper_check_surface
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_80053B54(struct MainObj* arg0)
 {
     s32 dx = (s16)(g_Player.x_pos.i.hi - arg0->x_pos.i.hi);
@@ -671,7 +676,7 @@ void surface_hopper_despawn(struct MainObj* self)
 }
 
 // surface_hopper_launched_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80053D24(struct MainObj* self)
 {
     struct Main19Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_19;
@@ -681,7 +686,7 @@ void func_80053D24(struct MainObj* self)
     self->hp = 31;
     self->contact_damage = 3;
     self->animation_table = (const u8* const*)surface_hopper_animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->state = 1;
     self->unk6 = 0;
     self->unk7C = 0;
@@ -725,18 +730,22 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053D24);
 #endif
 
 // surface_hopper_launched_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80053EB8(struct MainObj* self)
 {
+    s32 hit;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     surface_hopper_launched_step_funcs[self->unk5](self);
     func_8002D9BC(BASE_OBJECT(self));
-    s32 hit = func_8002DD04(self);
+    hit = func_8002DD04(self);
     if (hit < 0) {
+        u16 x;
+        u16 y;
         spawn_explosion(BASE_OBJECT(self));
         spawn_debris(8, surface_hopper_debris, self);
-        u16 x = self->x_pos.u.hi, y = self->y_pos.u.hi;
+        x = self->x_pos.u.hi;
+        y = self->y_pos.u.hi;
         switch (SP_CUR_MAIN_OBJ->ext.main_19.unk80) {
         case 0:
             y += 16;
@@ -773,17 +782,22 @@ INCLUDE_ASM("main/nonmatchings/mains/main_19_surface_hopper", func_80053EB8);
 #endif
 
 // surface_hopper_launched_crawl
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005402C(struct MainObj* self)
 {
     struct Main19Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_19;
+    u16 x;
+    u16 y;
+    u8 orientation;
+    u8 mask;
     if (self->unk6 == 0) {
         surface_hopper_set_launch(self);
         self->unk6 = 1;
         return;
     }
-    u16 x = self->x_pos.u.hi, y = self->y_pos.u.hi;
-    u8 orientation = ext->unk80;
+    x = self->x_pos.u.hi;
+    y = self->y_pos.u.hi;
+    orientation = ext->unk80;
     if (ext->animation_index == 0) {
         if (orientation == 2)
             y -= 2;
@@ -806,7 +820,7 @@ void func_8005402C(struct MainObj* self)
         }
     }
     ext->unk82 = func_8002D724(PLAYER_OBJECT(self), (s16)x, (s16)y);
-    u8 mask = D_800FC80C[ext->animation_index * 4 + ext->unk80];
+    mask = D_800FC80C[ext->animation_index * 4 + ext->unk80];
     if (ext->unk82 < 0x38) {
         self->x_pos.u.hi = ext->unk86;
         self->y_pos.u.hi = ext->unk88;
@@ -884,248 +898,248 @@ void surface_hopper_launch(struct MainObj* self)
 }
 
 union AnimationStep surface_hopper_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep surface_hopper_anim_1[] = {
-    { 0x01000001 },
+    { 1, 0, 0, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_2[] = {
-    { 0x0001000A },
-    { 0x02010008 },
-    { 0x03010008 },
-    { 0x04010008 },
-    { 0x05010009 },
-    { 0x05010101 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x00010002 },
-    { 0x08010002 },
-    { 0x00010002 },
-    { 0x09010002 },
-    { 0x00010002 },
-    { 0x08010002 },
-    { 0x00F30002 },
+    { 10, 0, 1, 0x00 },
+    { 8, 0, 1, 0x02 },
+    { 8, 0, 1, 0x03 },
+    { 8, 0, 1, 0x04 },
+    { 9, 0, 1, 0x05 },
+    { 1, 1, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, -13, 0x00 },
 };
 
 union AnimationStep surface_hopper_anim_3[] = {
-    { 0x0101000A },
-    { 0x0A010008 },
-    { 0x0B010008 },
-    { 0x0C010008 },
-    { 0x0D010009 },
-    { 0x0D010101 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x11010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01F30002 },
+    { 10, 0, 1, 0x01 },
+    { 8, 0, 1, 0x0A },
+    { 8, 0, 1, 0x0B },
+    { 8, 0, 1, 0x0C },
+    { 9, 0, 1, 0x0D },
+    { 1, 1, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, -13, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_4[] = {
-    { 0x0101000A },
-    { 0x40010008 },
-    { 0x41010008 },
-    { 0x42010008 },
-    { 0x43010009 },
-    { 0x43010101 },
-    { 0x44010002 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x0F010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x0F010002 },
-    { 0x01F30002 },
+    { 10, 0, 1, 0x01 },
+    { 8, 0, 1, 0x40 },
+    { 8, 0, 1, 0x41 },
+    { 8, 0, 1, 0x42 },
+    { 9, 0, 1, 0x43 },
+    { 1, 1, 1, 0x43 },
+    { 2, 0, 1, 0x44 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, -13, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_5[] = {
-    { 0x00010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x17010002 },
-    { 0x18F70002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, -9, 0x18 },
 };
 
 union AnimationStep surface_hopper_anim_6[] = {
-    { 0x01010002 },
-    { 0x19010002 },
-    { 0x1A010002 },
-    { 0x1B010002 },
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x1E010002 },
-    { 0x1FF70002 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, -9, 0x1F },
 };
 
 union AnimationStep surface_hopper_anim_7[] = {
-    { 0x18010003 },
-    { 0x21010003 },
-    { 0x20FE0003 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, -2, 0x20 },
 };
 
 union AnimationStep surface_hopper_anim_8[] = {
-    { 0x1F010003 },
-    { 0x22010003 },
-    { 0x23FE0003 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, -2, 0x23 },
 };
 
 union AnimationStep surface_hopper_anim_9[] = {
-    { 0x1F010003 },
-    { 0x23010003 },
-    { 0x22FE0003 },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x23 },
+    { 3, 0, -2, 0x22 },
 };
 
 union AnimationStep surface_hopper_anim_10[] = {
-    { 0x1801000A },
-    { 0x15010002 },
-    { 0x14010002 },
-    { 0x13010002 },
-    { 0x00010002 },
-    { 0x13010002 },
-    { 0x00FA000A },
+    { 10, 0, 1, 0x18 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x13 },
+    { 10, 0, -6, 0x00 },
 };
 
 union AnimationStep surface_hopper_anim_11[] = {
-    { 0x1F01000A },
-    { 0x1C010002 },
-    { 0x1B010002 },
-    { 0x1A010002 },
-    { 0x01010002 },
-    { 0x1A010002 },
-    { 0x01FA000A },
+    { 10, 0, 1, 0x1F },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1A },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x1A },
+    { 10, 0, -6, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_12[] = {
-    { 0x24010006 },
-    { 0x25010006 },
-    { 0x26010006 },
-    { 0x27010003 },
-    { 0x28010012 },
-    { 0x29010003 },
-    { 0x2A010003 },
-    { 0x2B010002 },
-    { 0x29010003 },
-    { 0x2A010103 },
-    { 0x2B010002 },
-    { 0x2801000F },
-    { 0x27010003 },
-    { 0x26010006 },
-    { 0x25010006 },
-    { 0x24F10006 },
+    { 6, 0, 1, 0x24 },
+    { 6, 0, 1, 0x25 },
+    { 6, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 18, 0, 1, 0x28 },
+    { 3, 0, 1, 0x29 },
+    { 3, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 3, 0, 1, 0x29 },
+    { 3, 1, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 15, 0, 1, 0x28 },
+    { 3, 0, 1, 0x27 },
+    { 6, 0, 1, 0x26 },
+    { 6, 0, 1, 0x25 },
+    { 6, 0, -15, 0x24 },
 };
 
 union AnimationStep surface_hopper_anim_13[] = {
-    { 0x2C010006 },
-    { 0x2D010006 },
-    { 0x2E010006 },
-    { 0x2F010003 },
-    { 0x30010012 },
-    { 0x31010003 },
-    { 0x32010003 },
-    { 0x33010002 },
-    { 0x31010003 },
-    { 0x32010103 },
-    { 0x33010002 },
-    { 0x3001000F },
-    { 0x2F010003 },
-    { 0x2E010006 },
-    { 0x2D010006 },
-    { 0x2CF10006 },
+    { 6, 0, 1, 0x2C },
+    { 6, 0, 1, 0x2D },
+    { 6, 0, 1, 0x2E },
+    { 3, 0, 1, 0x2F },
+    { 18, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 3, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 3, 0, 1, 0x31 },
+    { 3, 1, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 15, 0, 1, 0x30 },
+    { 3, 0, 1, 0x2F },
+    { 6, 0, 1, 0x2E },
+    { 6, 0, 1, 0x2D },
+    { 6, 0, -15, 0x2C },
 };
 
 union AnimationStep surface_hopper_anim_14[] = {
-    { 0x06010102 },
-    { 0x07010002 },
-    { 0x00010002 },
-    { 0x08010002 },
-    { 0x00010002 },
-    { 0x09010002 },
-    { 0x00010002 },
-    { 0x08010002 },
-    { 0x00F80002 },
+    { 2, 1, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, -8, 0x00 },
 };
 
 union AnimationStep surface_hopper_anim_15[] = {
-    { 0x0E010102 },
-    { 0x0F010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x11010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01F80002 },
+    { 2, 1, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, -8, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_16[] = {
-    { 0x44010102 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x0F010002 },
-    { 0x01010002 },
-    { 0x10010002 },
-    { 0x01010002 },
-    { 0x0F010002 },
-    { 0x01F80002 },
+    { 2, 1, 1, 0x44 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, -8, 0x01 },
 };
 
 union AnimationStep surface_hopper_anim_17[] = {
-    { 0x34010002 },
-    { 0x35010001 },
-    { 0x36010002 },
-    { 0x37FD0001 },
+    { 2, 0, 1, 0x34 },
+    { 1, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 1, 0, -3, 0x37 },
 };
 
 union AnimationStep surface_hopper_anim_18[] = {
-    { 0x38000001 },
+    { 1, 0, 0, 0x38 },
 };
 
 union AnimationStep surface_hopper_anim_19[] = {
-    { 0x39000001 },
+    { 1, 0, 0, 0x39 },
 };
 
 union AnimationStep surface_hopper_anim_20[] = {
-    { 0x3A000001 },
+    { 1, 0, 0, 0x3A },
 };
 
 union AnimationStep surface_hopper_anim_21[] = {
-    { 0x3B000001 },
+    { 1, 0, 0, 0x3B },
 };
 
 union AnimationStep surface_hopper_anim_22[] = {
-    { 0x3C000001 },
+    { 1, 0, 0, 0x3C },
 };
 
 union AnimationStep surface_hopper_anim_23[] = {
-    { 0x3D000001 },
+    { 1, 0, 0, 0x3D },
 };
 
 union AnimationStep surface_hopper_anim_24[] = {
-    { 0x3E000001 },
+    { 1, 0, 0, 0x3E },
 };
 
 union AnimationStep surface_hopper_anim_25[] = {
-    { 0x3F000001 },
+    { 1, 0, 0, 0x3F },
 };
 
 union AnimationStep surface_hopper_anim_26[] = {
-    { 0x45010003 },
-    { 0x46010003 },
-    { 0x47FE0003 },
+    { 3, 0, 1, 0x45 },
+    { 3, 0, 1, 0x46 },
+    { 3, 0, -2, 0x47 },
 };
 
 union AnimationStep* surface_hopper_animations[27] = {
@@ -1253,7 +1267,7 @@ void (*surface_hopper_crawl_funcs[7])() = {
 
 u8 D_800FC7D4[4] = { 0x03, 0x04, 0x00, 0x00 };
 
-u8 D_800FC7D8[4] = { 0x00, 0x40, 0x00, 0x00 };
+u8 D_800FC7D8[4] = { 0x00, PLAYER_FACING_RIGHT, 0x00, 0x00 };
 
 void (*surface_hopper_leap_funcs[2])() = {
     surface_hopper_leap_start,
@@ -1304,6 +1318,6 @@ s16 surface_hopper_launch_y_speeds[8] = {
     (s16)0xFFFE,
 };
 
-u8 surface_hopper_launch_facings[8] = { 0x00, 0x40, 0x40, 0x00, 0x40, 0x40, 0x00, 0x00 };
+u8 surface_hopper_launch_facings[8] = { 0x00, PLAYER_FACING_RIGHT, PLAYER_FACING_RIGHT, 0x00, PLAYER_FACING_RIGHT, PLAYER_FACING_RIGHT, 0x00, 0x00 };
 
 u8 surface_hopper_launch_animations[8] = { 0x1A, 0x09, 0x07, 0x08, 0x1A, 0x08, 0x07, 0x09 };

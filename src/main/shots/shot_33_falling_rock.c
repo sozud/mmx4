@@ -11,10 +11,7 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 #include "main/stage_objects.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // falling_rock_state_funcs
 extern void (*falling_rock_state_funcs[])(struct ShotObj*);
@@ -26,6 +23,24 @@ void falling_rock_b_despawn(struct ShotObj*);
 
 void func_800A12EC(struct ShotObj*);
 void falling_rock_c_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+extern union AnimationStep* falling_rock_a_animations[];
+extern union AnimationStep* falling_rock_b_animations[];
+extern struct Unk_unk68 falling_rock_box_0[];
+extern struct Unk_unk68 falling_rock_box_1[];
+extern struct Unk_unk68 falling_rock_box_2[];
+extern struct Unk_unk68 falling_rock_box_3[];
+extern struct Unk_unk68 falling_rock_box_4[];
+extern struct Unk_unk68 falling_rock_box_5[];
+extern union AnimationStep* falling_rock_c_animations[];
+extern u8 falling_rock_debris_2[];
+extern u8 falling_rock_debris_3[];
+#include "compiler.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 extern u8 falling_rock_debris_0[], falling_rock_debris_1[];
 extern u8 falling_rock_debris_4[], falling_rock_debris_5[], falling_rock_debris_6[];
@@ -37,7 +52,8 @@ void falling_rock_update(struct ShotObj* self)
 }
 
 // falling_rock_a_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void shot_33_load_graphics(struct ShotObj* arg0, s32 id);
 static void shot_33_spawn_shadow(struct ShotObj* arg0, s8 shadow_kind, s8 unk6, s32 animation);
 static void shot_33_quake(void);
@@ -66,10 +82,10 @@ static void shot_33_load_graphics(struct ShotObj* arg0, s32 id)
 
     arg0->bg_offset = g_Player.bg_offset;
     resource = func_8002938C(id);
-    arg0->unk40 = D_801406A8[resource] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
     resource = func_8002938C(id);
     arg0->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    arg0->unk42 = CLUT_FROM_ID(id);
+    arg0->unk42 = OBJECT_STAGE_CLUT(id);
 }
 static void shot_33_spawn_shadow(struct ShotObj* arg0, s8 shadow_kind, s8 unk6,
     s32 animation)
@@ -123,7 +139,7 @@ static void shot_33_burst(struct ShotObj* arg0, u8* effect)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A03F4(struct ShotObj* arg0)
 {
     s32 random;
@@ -159,7 +175,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A03F4);
 #endif
 
 // falling_rock_a_fall
-static __inline s32 falling_rock_tile_attribute(struct PlayerObj* object, s16 x, s16 y)
+static MMX4_INLINE s32 falling_rock_tile_attribute(struct PlayerObj* object, s16 x, s16 y)
 {
 #if defined(MMX4_PC) || defined(MMX4_WIN32)
     return func_8002D724(object, x, y);
@@ -226,7 +242,7 @@ void func_800A068C(struct ShotObj* self)
         if (self->animation_step.fields.event != 0) {
             spawn_debris(5, falling_rock_debris_0, self);
             if (self->on_screen != 0) {
-                func_8001540C(2, 0xA0, self);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
             self->state = 2;
         }
@@ -254,7 +270,7 @@ void falling_rock_a_despawn(struct ShotObj* self)
 }
 
 // falling_rock_b_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A0A38(struct ShotObj* arg0)
 {
     arg0->on_screen = 1;
@@ -282,7 +298,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_33_falling_rock", func_800A0A38);
 #endif
 
 // falling_rock_b_fall
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A0C4C(struct ShotObj* arg0)
 {
     s32 collision;
@@ -342,7 +358,7 @@ void falling_rock_b_despawn(struct ShotObj* self)
 }
 
 // falling_rock_c_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A0FE8(struct ShotObj* arg0)
 {
     if (engine_obj.character_state.bytes[0] != 0) {
@@ -401,7 +417,7 @@ void func_800A12EC(struct ShotObj* self)
                 if (self->unk6 != 0) {
                     self->y_pos.i.hi -= 0x28;
                     if (self->on_screen != 0) {
-                        func_8001540C(2, 0xA0, self);
+                        func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
                     }
                     func_800C842C(7, falling_rock_debris_6, self, 0x9A, falling_rock_d_animations);
                     self->y_pos.i.hi += 0x28;
@@ -412,7 +428,7 @@ void func_800A12EC(struct ShotObj* self)
                 start_screen_shake_x(0x10, 6, 2);
             }
             if (self->on_screen != 0) {
-                func_8001540C(2, 0xA0, self);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
             spawn_debris(5, falling_rock_debris_4, self);
             self->state = 8;
@@ -423,7 +439,7 @@ void func_800A12EC(struct ShotObj* self)
                 start_screen_shake_x(0x10, 6, 2);
             }
             if (self->on_screen != 0) {
-                func_8001540C(2, 0xA0, self);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
             spawn_debris(5, falling_rock_debris_4, self);
             self->state = 8;
@@ -441,7 +457,7 @@ void func_800A12EC(struct ShotObj* self)
         func_8002D9BC(self);
         if (func_8002BB80((struct MainObj*)self, (struct MainObj*)(&g_Player)) != 0) {
             if (self->on_screen != 0) {
-                func_8001540C(2, 0xA0, self);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
             spawn_debris(5, falling_rock_debris_4, self);
             self->state = 8;
@@ -449,7 +465,7 @@ void func_800A12EC(struct ShotObj* self)
         tile = func_8002DD04((struct MainObj*)self);
         if ((tile < 0) || (engine_obj.character_state.fields.active != 0)) {
             if (self->on_screen != 0) {
-                func_8001540C(2, 0xA0, self);
+                func_8001540C(2, SATURN_SOUND(0xA0, 0x70), self);
             }
             self->unk84.effect->ext.effect_33.timer = 0xB4;
             spawn_debris(5, falling_rock_debris_4, self);
@@ -584,71 +600,71 @@ u8 falling_rock_debris_6[] = {
 };
 
 union AnimationStep D_801092B8[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03FD0102 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 1, -3, 0x03 },
 };
 
 union AnimationStep D_801092C8[] = {
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0AFA0102 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 1, -6, 0x0A },
 };
 
 union AnimationStep D_801092E4[] = {
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0D000101 },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 1, 1, 0, 0x0D },
 };
 
 union AnimationStep D_801092F4[] = {
-    { 0x0E000101 },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep D_801092F8[] = {
-    { 0x0F000101 },
+    { 1, 1, 0, 0x0F },
 };
 
 union AnimationStep D_801092FC[] = {
-    { 0x10000101 },
+    { 1, 1, 0, 0x10 },
 };
 
 union AnimationStep D_80109300[] = {
-    { 0x11000101 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep D_80109304[] = {
-    { 0x12000101 },
+    { 1, 1, 0, 0x12 },
 };
 
 union AnimationStep D_80109308[] = {
-    { 0x13000101 },
+    { 1, 1, 0, 0x13 },
 };
 
 union AnimationStep D_8010930C[] = {
-    { 0x14000101 },
+    { 1, 1, 0, 0x14 },
 };
 
 union AnimationStep D_80109310[] = {
-    { 0x15000101 },
+    { 1, 1, 0, 0x15 },
 };
 
 union AnimationStep D_80109314[] = {
-    { 0x16000101 },
+    { 1, 1, 0, 0x16 },
 };
 
 union AnimationStep D_80109318[] = {
-    { 0x17000101 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep D_8010931C[] = {
-    { 0x18000101 },
+    { 1, 1, 0, 0x18 },
 };
 
 union AnimationStep* falling_rock_a_animations[] = {
@@ -669,66 +685,66 @@ union AnimationStep* falling_rock_a_animations[] = {
 };
 
 union AnimationStep D_80109358[] = {
-    { 0x00010005 },
-    { 0x01010005 },
-    { 0x02010005 },
-    { 0x03010005 },
-    { 0x04FC0105 },
+    { 5, 0, 1, 0x00 },
+    { 5, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 5, 0, 1, 0x03 },
+    { 5, 1, -4, 0x04 },
 };
 
 union AnimationStep D_8010936C[] = {
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07010004 },
-    { 0x08010004 },
-    { 0x09010004 },
-    { 0x0A010004 },
-    { 0x0B010004 },
-    { 0x0CF90104 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 4, 0, 1, 0x0A },
+    { 4, 0, 1, 0x0B },
+    { 4, 1, -7, 0x0C },
 };
 
 union AnimationStep D_8010938C[] = {
-    { 0x0D000101 },
+    { 1, 1, 0, 0x0D },
 };
 
 union AnimationStep D_80109390[] = {
-    { 0x0E000101 },
+    { 1, 1, 0, 0x0E },
 };
 
 union AnimationStep D_80109394[] = {
-    { 0x0F000101 },
+    { 1, 1, 0, 0x0F },
 };
 
 union AnimationStep D_80109398[] = {
-    { 0x10000101 },
+    { 1, 1, 0, 0x10 },
 };
 
 union AnimationStep D_8010939C[] = {
-    { 0x11000101 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep D_801093A0[] = {
-    { 0x12000101 },
+    { 1, 1, 0, 0x12 },
 };
 
 union AnimationStep D_801093A4[] = {
-    { 0x13000101 },
+    { 1, 1, 0, 0x13 },
 };
 
 union AnimationStep D_801093A8[] = {
-    { 0x14000101 },
+    { 1, 1, 0, 0x14 },
 };
 
 union AnimationStep D_801093AC[] = {
-    { 0x15000101 },
+    { 1, 1, 0, 0x15 },
 };
 
 union AnimationStep D_801093B0[] = {
-    { 0x16000101 },
+    { 1, 1, 0, 0x16 },
 };
 
 union AnimationStep D_801093B4[] = {
-    { 0x17000101 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep* falling_rock_b_animations[] = {
@@ -748,83 +764,83 @@ union AnimationStep* falling_rock_b_animations[] = {
 };
 
 union AnimationStep D_801093EC[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03FD0102 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 1, -3, 0x03 },
 };
 
 union AnimationStep D_801093FC[] = {
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0BF90102 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 1, -7, 0x0B },
 };
 
 union AnimationStep D_8010941C[] = {
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0FFD0102 },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 1, -3, 0x0F },
 };
 
 union AnimationStep D_8010942C[] = {
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17F90102 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 1, -7, 0x17 },
 };
 
 union AnimationStep D_8010944C[] = {
-    { 0x18000101 },
+    { 1, 1, 0, 0x18 },
 };
 
 union AnimationStep D_80109450[] = {
-    { 0x19000101 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep D_80109454[] = {
-    { 0x1A000101 },
+    { 1, 1, 0, 0x1A },
 };
 
 union AnimationStep D_80109458[] = {
-    { 0x1B000101 },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep D_8010945C[] = {
-    { 0x1C000101 },
+    { 1, 1, 0, 0x1C },
 };
 
 union AnimationStep D_80109460[] = {
-    { 0x1D000101 },
+    { 1, 1, 0, 0x1D },
 };
 
 union AnimationStep D_80109464[] = {
-    { 0x1E000101 },
+    { 1, 1, 0, 0x1E },
 };
 
 union AnimationStep D_80109468[] = {
-    { 0x1F000101 },
+    { 1, 1, 0, 0x1F },
 };
 
 union AnimationStep D_8010946C[] = {
-    { 0x20000101 },
+    { 1, 1, 0, 0x20 },
 };
 
 union AnimationStep D_80109470[] = {
-    { 0x21000101 },
+    { 1, 1, 0, 0x21 },
 };
 
 union AnimationStep D_80109474[] = {
-    { 0x22000101 },
+    { 1, 1, 0, 0x22 },
 };
 
 union AnimationStep* falling_rock_c_animations[] = {
@@ -846,31 +862,31 @@ union AnimationStep* falling_rock_c_animations[] = {
 };
 
 union AnimationStep D_801094B4[] = {
-    { 0x00000101 },
+    { 1, 1, 0, 0x00 },
 };
 
 union AnimationStep D_801094B8[] = {
-    { 0x01000101 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep D_801094BC[] = {
-    { 0x02000101 },
+    { 1, 1, 0, 0x02 },
 };
 
 union AnimationStep D_801094C0[] = {
-    { 0x03000101 },
+    { 1, 1, 0, 0x03 },
 };
 
 union AnimationStep D_801094C4[] = {
-    { 0x04000101 },
+    { 1, 1, 0, 0x04 },
 };
 
 union AnimationStep D_801094C8[] = {
-    { 0x05000101 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep D_801094CC[] = {
-    { 0x06000101 },
+    { 1, 1, 0, 0x06 },
 };
 
 union AnimationStep* falling_rock_d_animations[] = {

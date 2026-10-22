@@ -26,7 +26,11 @@ void stage_dialogue_trigger_wait(struct EffectObj* self)
     }
 
     if (engine_obj.gameplay_locked == 0) {
+#ifdef MMX4_SATURN
+        player_start_script_action(0x14, 0x10);
+#else
         player_start_script_action(0x14, 0x40);
+#endif
         self->ext.unk_effect.unk14 = 0x30;
         self->state = 1;
     }

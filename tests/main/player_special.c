@@ -1644,7 +1644,7 @@ static void check_slash_tables(void)
     u32 kind, frame;
     for (kind = 0; kind < 2; kind++)
         for (frame = 0; frame < (kind ? 11 : 10); frame++)
-            assert(D_8011AFF0[kind ? 0x64 : 0x5B][frame] == slash_words[kind][frame]);
+            assert(D_8011AFF0[kind ? 0x64 : 0x5B][frame].packed == slash_words[kind][frame]);
     assert(D_8011AF60[0x5B] == 0 && D_8011AF60[0x64] == 1);
 }
 

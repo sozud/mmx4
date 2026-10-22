@@ -6,8 +6,10 @@
 #include "main/1E1BC.h"
 #include "main/collision.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
+#include "main/55C4.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
 #endif
@@ -55,13 +57,12 @@ void (*sigma_spit_step_funcs[])(struct ShotObj*) = {
 };
 
 // sigma_spit_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ADF30(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/shots/shot_56_sigma_spit.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800ADF30(struct ShotObj* self)
 {
     struct WeaponObj* owner = self->unk7C;

@@ -2,15 +2,17 @@
 // 800D41B0..800D4948
 #include "common.h"
 #include "main/quads/quad_01_stage_select_panel.h"
-
-#ifdef MMX4_PC
 #include "main/objects.h"
-#endif
 
 // stage_select_panel_state_funcs
 extern void (*stage_select_panel_state_funcs[])(struct QuadObj*);
 
 void stage_select_panel_idle(struct QuadObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/objects.h"
+#endif
 
 void stage_select_panel_update(struct QuadObj* arg0)
 {
@@ -18,7 +20,8 @@ void stage_select_panel_update(struct QuadObj* arg0)
 }
 
 // quad_move_toward
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y, s32 x_speed, s32 y_speed);
 void func_800D4334(struct QuadObj* self);
 void func_800D43F4(struct QuadObj* self);
@@ -30,7 +33,7 @@ extern s32 D_800F45C0[];
 extern s16 stage_select_panel_shapes[8][8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 u8 func_800D41EC(s32* x, s32* y, s32 target_x, s32 target_y,
     s32 x_speed, s32 y_speed)
 {
@@ -65,7 +68,7 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D41EC)
 #endif
 
 // stage_select_panel_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D4334(struct QuadObj* self)
 {
     self->unk36 = 0x13;
@@ -102,7 +105,7 @@ INCLUDE_ASM("main/nonmatchings/quads/quad_01_stage_select_panel", func_800D4334)
 #endif
 
 // stage_select_panel_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D43F4(struct QuadObj* self)
 {
     f32* vertex_x;
@@ -197,7 +200,7 @@ void quad_is_on_screen(struct QuadObj* arg0)
         h = (arg0->vertices[0].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
         return;
     }
 
@@ -209,7 +212,7 @@ void quad_is_on_screen(struct QuadObj* arg0)
         h = (arg0->vertices[1].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
         return;
     }
 
@@ -221,7 +224,7 @@ void quad_is_on_screen(struct QuadObj* arg0)
         h = (arg0->vertices[2].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
         return;
     }
 
@@ -233,7 +236,7 @@ void quad_is_on_screen(struct QuadObj* arg0)
         h = (arg0->vertices[3].y.i.hi + arg0->y_pos.i.hi) - background_objects[arg0->bg_offset].y_pos.i.hi;
     }
     if (w < 320 && h < 240) {
-        arg0->on_screen = 1;
+        QUAD_SET_ON_SCREEN(arg0);
         return;
     }
 }

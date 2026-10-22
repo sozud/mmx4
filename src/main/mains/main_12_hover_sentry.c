@@ -1,14 +1,17 @@
 // MainObj, main_object_update_funcs[12]
 // 8004B8C0..8004C734
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_12_hover_sentry.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/1CF60.h"
+#include "main/misc/misc_00_static_sprite.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #include "main/misc/misc_00_static_sprite.h"
 #endif
@@ -28,7 +31,7 @@ void hover_sentry_alert(struct MainObj* arg0);
 
 extern void (*hover_sentry_state_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern struct Unk_unk68 D_800FB684, D_800FB688, D_800FB68C;
 extern struct Unk_unk68 D_800FB694, D_800FB698;
 void hover_sentry_face_player(struct MainObj* self);
@@ -40,7 +43,11 @@ void hover_sentry_update(struct MainObj* self)
 }
 
 // hover_sentry_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B8FC(struct MainObj* arg0);
 void func_8004BCFC(struct MainObj* arg0);
 void func_8004BF5C(struct MainObj* arg0);
@@ -55,7 +62,7 @@ extern struct Unk_unk68 D_800FB6A4;
 extern struct Unk_unk68 D_80106870[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004B8FC(struct MainObj* arg0)
 {
     arg0->state = 1;
@@ -66,7 +73,7 @@ void func_8004B8FC(struct MainObj* arg0)
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
     arg0->animation_table = (const u8* const*)hover_sentry_animations;
-    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+    arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
     arg0->ext.main_12.unk88 = 0;
     arg0->air_state = 0;
     arg0->ext.main_12.unk81 = 0;
@@ -79,7 +86,7 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->unk5 = 2;
         arg0->y_speed = -0x8000;
         arg0->gravity = -0x800;
-        arg0->unk16 = 6;
+        arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = &D_800FB684;
         arg0->hurt_box = &D_800FB68C;
         arg0->attack_box = &D_800FB688;
@@ -96,7 +103,7 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->x_speed = 0;
         arg0->x_accel = 0;
         arg0->gravity = 0;
-        arg0->unk16 = 6;
+        arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = &D_800FB690;
         arg0->hurt_box = NULL;
         arg0->attack_box = NULL;
@@ -110,7 +117,7 @@ void func_8004B8FC(struct MainObj* arg0)
         arg0->unk5 = 4;
         arg0->unk6 = 0;
         arg0->ext.main_12.unk86 = arg0->y_pos.u.hi;
-        arg0->unk16 = 6;
+        arg0->unk16 = VISUAL_SATURN_LAYER(6);
         arg0->terrain_box = NULL;
         arg0->hurt_box = NULL;
         arg0->attack_box = NULL;
@@ -185,7 +192,7 @@ void hover_sentry_alert(struct MainObj* self)
 }
 
 // hover_sentry_attack_0
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004BCFC(struct MainObj* arg0)
 {
     s32 transition = 0;
@@ -234,7 +241,7 @@ void func_8004BCFC(struct MainObj* arg0)
         } else if (arg0->unk7 == 0) {
             spawn_common_effect(arg0, 1);
             arg0->unk7 = 1;
-            func_8001540C(2, 0x25, arg0);
+            func_8001540C(2, SATURN_SOUND(0x25, 0x1F), arg0);
         }
         transition = (u8)arg0->collision_flags & 4;
         break;
@@ -260,7 +267,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BCFC);
 #endif
 
 // hover_sentry_attack_1
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004BF5C(struct MainObj* arg0)
 {
     switch (arg0->unk6) {
@@ -300,7 +307,7 @@ void func_8004BF5C(struct MainObj* arg0)
                 if (direction >= 0x15)
                     direction = 0x14;
             } else {
-                arg0->unk15 = 0x40;
+                arg0->unk15 = PLAYER_FACING_RIGHT;
                 if ((u8)(direction - 0x18) < 4)
                     direction = 0x1C;
                 else if ((u8)(direction - 5) < 3)
@@ -327,7 +334,7 @@ void func_8004BF5C(struct MainObj* arg0)
             s16 tile = x / 16;
             if ((u16)tile != arg0->ext.main_12.unk8C) {
                 spawn_common_effect(arg0, 1);
-                func_8001540C(2, 0x25, arg0);
+                func_8001540C(2, SATURN_SOUND(0x25, 0x1F), arg0);
                 arg0->ext.main_12.unk8C = tile;
             }
         }
@@ -341,9 +348,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004BF5C);
 #endif
 
 // hover_sentry_attack_2
-#ifdef MMX4_PC
-// src/main/mains/main_12_hover_sentry.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004C210(struct MainObj* self)
 {
     switch (self->unk6) {
@@ -390,12 +395,12 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C210);
 #endif
 
 // hover_sentry_attack_3
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004C394(struct MainObj* self)
 {
     if (self->unk6 == 0) {
         self->unk6 = 1;
-        self->x_speed = (self->unk15 & 0x40) ? FIXED(4) : FIXED(-4);
+        self->x_speed = (self->unk15 & PLAYER_FACING_RIGHT) ? FIXED(4) : FIXED(-4);
         self->x_accel = -0x2000;
         self->unk7C = 0x90;
         self->terrain_box = &D_800FB684;
@@ -405,12 +410,12 @@ void func_8004C394(struct MainObj* self)
         self->gravity = 0;
         set_animation(self, 1);
     } else {
-        if ((self->unk15 & 0x40) ? self->x_speed < 0 : self->x_speed >= 0) {
+        if ((self->unk15 & PLAYER_FACING_RIGHT) ? self->x_speed < 0 : self->x_speed >= 0) {
             s32 distance = self->y_pos.i.hi - g_Player.y_pos.i.hi;
             if (distance < 0) {
                 distance = -distance;
             }
-            self->unk15 = (self->x_pos.val < g_Player.x_pos.val && (s16)distance < 32) ? 0x40 : 0;
+            self->unk15 = (self->x_pos.val < g_Player.x_pos.val && (s16)distance < 32) ? PLAYER_FACING_RIGHT : 0;
             self->unk6 = 0;
             if ((get_random() & 3) == 0) {
                 self->unk5 = 4;
@@ -422,8 +427,8 @@ void func_8004C394(struct MainObj* self)
                 }
             }
         }
-        if (self->collision_flags & ((self->unk15 & 0x40) ? 1 : 2)) {
-            self->unk15 ^= 0x40;
+        if (self->collision_flags & ((self->unk15 & PLAYER_FACING_RIGHT) ? 1 : 2)) {
+            self->unk15 ^= PLAYER_FACING_RIGHT;
         }
     }
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -434,7 +439,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_12_hover_sentry", func_8004C394);
 #endif
 
 // hover_sentry_attack_4
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004C56C(struct MainObj* self)
 {
     if (self->unk6 == 0) {
@@ -449,7 +454,7 @@ void func_8004C56C(struct MainObj* self)
         if (self->unk7 == 0 && func_8002D724(PLAYER_OBJECT(self), x, y) == 0x24) {
             spawn_common_effect(self, 1);
             self->unk7 = 1;
-            func_8001540C(2, 0x25, self);
+            func_8001540C(2, SATURN_SOUND(0x25, 0x1F), self);
         }
         if (self->collision_flags != 0) {
             self->unk5 = 7;
@@ -475,7 +480,7 @@ void hover_sentry_despawn(struct MainObj* self)
 void hover_sentry_face_player(struct MainObj* self)
 {
     if (self->x_pos.val < g_Player.x_pos.val) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -497,102 +502,102 @@ void hover_sentry_check_player_near(struct MainObj* self)
 }
 
 union AnimationStep hover_sentry_anim_0[] = {
-    { 0x0001000A },
-    { 0x0101001C },
-    { 0x02FE000F },
+    { 10, 0, 1, 0x00 },
+    { 28, 0, 1, 0x01 },
+    { 15, 0, -2, 0x02 },
 };
 
 union AnimationStep hover_sentry_anim_1[] = {
-    { 0x03010004 },
-    { 0x04010004 },
-    { 0x05010004 },
-    { 0x06FD0004 },
+    { 4, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, -3, 0x06 },
 };
 
 union AnimationStep hover_sentry_anim_2[] = {
-    { 0x07010001 },
-    { 0x07FF0003 },
+    { 1, 0, 1, 0x07 },
+    { 3, 0, -1, 0x07 },
 };
 
 union AnimationStep hover_sentry_anim_3[] = {
-    { 0x08010006 },
-    { 0x09010006 },
-    { 0x0AFE0006 },
+    { 6, 0, 1, 0x08 },
+    { 6, 0, 1, 0x09 },
+    { 6, 0, -2, 0x0A },
 };
 
 union AnimationStep hover_sentry_anim_4[] = {
-    { 0x0B010005 },
-    { 0x0C010006 },
-    { 0x0DFE0106 },
+    { 5, 0, 1, 0x0B },
+    { 6, 0, 1, 0x0C },
+    { 6, 1, -2, 0x0D },
 };
 
 union AnimationStep hover_sentry_anim_5[] = {
-    { 0x0E010006 },
-    { 0x0F010006 },
-    { 0x10010105 },
-    { 0x11010104 },
-    { 0x12010106 },
-    { 0x0B018106 },
-    { 0x0C018106 },
-    { 0x13010106 },
-    { 0x14010006 },
-    { 0x15010005 },
-    { 0x16F60004 },
+    { 6, 0, 1, 0x0E },
+    { 6, 0, 1, 0x0F },
+    { 5, 1, 1, 0x10 },
+    { 4, 1, 1, 0x11 },
+    { 6, 1, 1, 0x12 },
+    { 6, -127, 1, 0x0B },
+    { 6, -127, 1, 0x0C },
+    { 6, 1, 1, 0x13 },
+    { 6, 0, 1, 0x14 },
+    { 5, 0, 1, 0x15 },
+    { 4, 0, -10, 0x16 },
 };
 
 union AnimationStep hover_sentry_anim_6[] = {
-    { 0x17010008 },
-    { 0x18FF010C },
+    { 8, 0, 1, 0x17 },
+    { 12, 1, -1, 0x18 },
 };
 
 union AnimationStep hover_sentry_anim_7[] = {
-    { 0x19010002 },
-    { 0x1A010002 },
-    { 0x1B010008 },
-    { 0x1BFF0101 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 8, 0, 1, 0x1B },
+    { 1, 1, -1, 0x1B },
 };
 
 union AnimationStep hover_sentry_anim_8[] = {
-    { 0x1C010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x1B010002 },
-    { 0x20FE0002 },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, -2, 0x20 },
 };
 
 union AnimationStep hover_sentry_anim_9[] = {
-    { 0x0B010002 },
-    { 0x0CFF0002 },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, -1, 0x0C },
 };
 
 union AnimationStep hover_sentry_anim_10[] = {
-    { 0x0D010006 },
-    { 0x0DFF0101 },
+    { 6, 0, 1, 0x0D },
+    { 1, 1, -1, 0x0D },
 };
 
 union AnimationStep hover_sentry_anim_11[] = {
-    { 0x21000001 },
+    { 1, 0, 0, 0x21 },
 };
 
 union AnimationStep hover_sentry_anim_12[] = {
-    { 0x22000001 },
+    { 1, 0, 0, 0x22 },
 };
 
 union AnimationStep hover_sentry_anim_13[] = {
-    { 0x23000001 },
+    { 1, 0, 0, 0x23 },
 };
 
 union AnimationStep hover_sentry_anim_14[] = {
-    { 0x24000001 },
+    { 1, 0, 0, 0x24 },
 };
 
 union AnimationStep hover_sentry_anim_15[] = {
-    { 0x25010001 },
-    { 0x26010001 },
-    { 0x25010001 },
-    { 0x27FD0001 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, -3, 0x27 },
 };
 
 union AnimationStep* hover_sentry_animations[] = {

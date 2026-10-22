@@ -22,6 +22,7 @@ void boss_door_open(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
 
 void boss_door_walk_through(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
 void boss_door_close(struct ItemObj*, struct EngineObj*, struct PlayerObj*);
+#include "weapon_resources.h"
 
 struct Item08AnimationStep {
     u8 duration;
@@ -114,10 +115,10 @@ void boss_door_update(struct ItemObj* arg0)
 void boss_door_init(struct ItemObj* arg0)
 {
     arg0->active = 0x49;
-    arg0->unk16 = 6;
-    arg0->unk40 = D_801406A8[func_8002938C(0x80)] >> 7;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x80));
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x80)];
-    arg0->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x80));
+    arg0->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x80));
     arg0->animation_table = (const u8* const*)boss_door_animations;
     arg0->bg_offset = g_Player.bg_offset;
     arg0->unk15 = 0;
@@ -166,19 +167,20 @@ void boss_door_open(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerO
     if (arg2->capsule_state < 0) {
         arg1->unk10 = 1;
         arg1->unk12 = 1;
-        func_8001540C(0, 0x10, arg0);
+        func_8001540C(0, SATURN_SOUND(0x10, 0x12), arg0);
         arg2->unk68 = NULL;
         arg0->unk5 = 2;
     }
 }
 
 // boss_door_opening
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s8 func_800C1E7C(struct ItemObj* arg0);
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1, struct PlayerObj* arg2);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     struct PlayerObj* arg2)
 {
@@ -188,7 +190,7 @@ void func_800C1C88(struct ItemObj* arg0, struct EngineObj* arg1,
     if (arg0->animation_step.fields.event < 2) {
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.event == 1) {
-            func_8001540C(0, 0x11, arg0);
+            func_8001540C(0, SATURN_SOUND(0x11, 0x13), arg0);
             arg0->animation_step.fields.event = 0;
         }
         return;
@@ -214,7 +216,7 @@ void boss_door_walk_through(struct ItemObj* arg0, struct EngineObj* arg1,
         player_set_collision_bounds(arg2);
         arg0->unk5 = 4;
         set_animation(arg0, 1);
-        func_8001540C(0, 0x11, arg0);
+        func_8001540C(0, SATURN_SOUND(0x11, 0x13), arg0);
     }
 }
 
@@ -224,7 +226,7 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
     if (arg0->animation_step.fields.event < 2) {
         animate_object(ANIMATED_OBJECT(arg0));
         if (arg0->animation_step.fields.event == 1) {
-            func_8001540C(0, 0x10, arg0);
+            func_8001540C(0, SATURN_SOUND(0x10, 0x12), arg0);
             arg0->animation_step.fields.event = 0;
         }
     } else {
@@ -234,7 +236,7 @@ void boss_door_close(struct ItemObj* arg0, struct EngineObj* arg1,
 }
 
 // boss_door_player_touching
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s8 func_800C1E7C(struct ItemObj* arg0)
 {
     struct Unk_unk68* item_bounds;

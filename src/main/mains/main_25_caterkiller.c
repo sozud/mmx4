@@ -1,14 +1,16 @@
 // MainObj, main_object_update_funcs[25]
 // 80057100..80058158
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_25_caterkiller.h"
 #include "main/1CF60.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -28,7 +30,7 @@ extern void (*caterkiller_lunge_funcs[])(struct MainObj*);
 extern void (*caterkiller_fall_funcs[])(struct MainObj*);
 extern void (*caterkiller_climb_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void caterkiller_check_fall(struct MainObj*);
 extern void (*caterkiller_step_funcs[])(struct MainObj*);
 extern union AnimationStep* caterkiller_animations[10];
@@ -53,7 +55,11 @@ void caterkiller_update(struct MainObj* self)
 }
 
 // caterkiller_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80057160(struct MainObj* self);
 void func_80057308(struct MainObj* self);
 void func_8005754C(struct MainObj* self);
@@ -61,9 +67,7 @@ void func_80057874(struct MainObj* self);
 void func_80057C00(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_25_caterkiller.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80057160(struct MainObj* self)
 {
     self->hp = 3;
@@ -71,7 +75,7 @@ void func_80057160(struct MainObj* self)
     self->collision_data = D_80106EF4;
     self->animation_table = (const u8* const*)caterkiller_animations;
     self->invincibility_timer = 0;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = D_800FD014;
     self->bg_offset = g_Player.bg_offset;
     self->unk18 = self->x_pos;
@@ -114,7 +118,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_25_caterkiller", func_80057160);
 #endif
 
 // caterkiller_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80057308(struct MainObj* self)
 {
     unsigned index;
@@ -192,7 +196,7 @@ void caterkiller_crawl_start(struct MainObj* self)
 }
 
 // caterkiller_crawl_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8005754C(struct MainObj* self)
 {
     s32 dy;
@@ -260,7 +264,7 @@ void caterkiller_crawl_end(struct MainObj* self)
         return;
     }
     if (self->unk15 == 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->x_speed = FIXED(1);
     } else {
         self->unk15 = 0;
@@ -287,7 +291,7 @@ void caterkiller_lunge_start(struct MainObj* self)
 }
 
 // caterkiller_lunge_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80057874(struct MainObj* self)
 {
     s32 dy;
@@ -386,7 +390,7 @@ void caterkiller_fall_drop(struct MainObj* self)
 }
 
 // caterkiller_fall_land
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80057C00(struct MainObj* self)
 {
     s32 dy;
@@ -512,7 +516,7 @@ void caterkiller_face_player(struct MainObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -640,72 +644,72 @@ struct Unk_unk68* D_800FD04C[] = {
 };
 
 union AnimationStep caterkiller_anim_0[] = {
-    { 0x0001000C },
-    { 0x0101020C },
-    { 0x0201000C },
-    { 0x0301000C },
-    { 0x04FC010C },
+    { 12, 0, 1, 0x00 },
+    { 12, 2, 1, 0x01 },
+    { 12, 0, 1, 0x02 },
+    { 12, 0, 1, 0x03 },
+    { 12, 1, -4, 0x04 },
 };
 
 union AnimationStep caterkiller_anim_1[] = {
-    { 0x00010006 },
-    { 0x01010206 },
-    { 0x02010006 },
-    { 0x03010006 },
-    { 0x04FC0106 },
+    { 6, 0, 1, 0x00 },
+    { 6, 2, 1, 0x01 },
+    { 6, 0, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 6, 1, -4, 0x04 },
 };
 
 union AnimationStep caterkiller_anim_2[] = {
-    { 0x05010003 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08010002 },
-    { 0x07010003 },
-    { 0x06010003 },
-    { 0x05010009 },
-    { 0x05000101 },
+    { 3, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x06 },
+    { 9, 0, 1, 0x05 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep caterkiller_anim_3[] = {
-    { 0x05010002 },
-    { 0x09010201 },
-    { 0x09010005 },
-    { 0x0A010003 },
-    { 0x0A000101 },
+    { 2, 0, 1, 0x05 },
+    { 1, 2, 1, 0x09 },
+    { 5, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 1, 1, 0, 0x0A },
 };
 
 union AnimationStep caterkiller_anim_4[] = {
-    { 0x0B010006 },
-    { 0x0CFF0106 },
+    { 6, 0, 1, 0x0B },
+    { 6, 1, -1, 0x0C },
 };
 
 union AnimationStep caterkiller_anim_5[] = {
-    { 0x0D010201 },
-    { 0x0D010003 },
-    { 0x0E010301 },
-    { 0x0E010004 },
-    { 0x0F010401 },
-    { 0x0F010504 },
-    { 0x10010601 },
-    { 0x10010004 },
-    { 0x11010007 },
-    { 0x11000101 },
+    { 1, 2, 1, 0x0D },
+    { 3, 0, 1, 0x0D },
+    { 1, 3, 1, 0x0E },
+    { 4, 0, 1, 0x0E },
+    { 1, 4, 1, 0x0F },
+    { 4, 5, 1, 0x0F },
+    { 1, 6, 1, 0x10 },
+    { 4, 0, 1, 0x10 },
+    { 7, 0, 1, 0x11 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep caterkiller_anim_6[] = {
-    { 0x12000101 },
+    { 1, 1, 0, 0x12 },
 };
 
 union AnimationStep caterkiller_anim_7[] = {
-    { 0x13000101 },
+    { 1, 1, 0, 0x13 },
 };
 
 union AnimationStep caterkiller_anim_8[] = {
-    { 0x14000101 },
+    { 1, 1, 0, 0x14 },
 };
 
 union AnimationStep caterkiller_anim_9[] = {
-    { 0x15000101 },
+    { 1, 1, 0, 0x15 },
 };
 
 union AnimationStep* caterkiller_animations[] = {

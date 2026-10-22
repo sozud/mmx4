@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[7]
 // 800473C8..80047C88
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_07_ambush_gunner.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -8,8 +9,9 @@
 #include "main/items/item_01_stage_block.h"
 #include "main/misc/misc_02_rubble.h"
 #include "main/object_motion.h"
+#include "main/collision_bounds.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/collision_bounds.h"
 #endif
 
@@ -42,14 +44,15 @@ void ambush_gunner_update(struct MainObj* self)
 }
 
 // ambush_gunner_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047404(struct MainObj* arg0);
 void func_80047818(struct MainObj* arg0);
 extern struct Unk_unk68 ambush_gunner_terrain_box;
 extern union AnimationStep* ambush_gunner_animations[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047404(struct MainObj* arg0)
 {
     u8 kind = (u8)arg0->unk2;
@@ -59,7 +62,7 @@ void func_80047404(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106670;
     arg0->bg_offset = g_Player.bg_offset;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->animation_table = (const u8* const*)ambush_gunner_animations;
     arg0->x_speed = 0;
     arg0->y_speed = 0;
@@ -75,14 +78,14 @@ void func_80047404(struct MainObj* arg0)
     if (kind == 1) {
         set_animation(arg0, 1);
         arg0->unk5 = 3;
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->ext.main_7.unk90 = 1;
     } else if (kind >= 2 && kind <= 7) {
         set_animation(arg0, 0);
         arg0->unk5 = 2;
         arg0->unk7A = 1;
         arg0->invincibility_timer = 1;
-        arg0->unk15 = (kind & 1) ? 0x40 : 0;
+        arg0->unk15 = (kind & 1) ? PLAYER_FACING_RIGHT : 0;
         arg0->ext.main_7.unk80 = kind >= 6;
         arg0->ext.main_7.unk84 = kind >= 6 ? 0x28
             : kind >= 4                    ? 0x8C
@@ -157,7 +160,7 @@ void ambush_gunner_emerge(struct MainObj* self)
 }
 
 // ambush_gunner_emerge_wait
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80047818(struct MainObj* arg0)
 {
     s32 distance;
@@ -186,7 +189,7 @@ void ambush_gunner_emerge_burst(struct MainObj* self)
     self->ext.main_7.unk90 = 1;
     spawn_rubble(8, ambush_gunner_emerge_particles, self,
         self->unk15 == 0 ? FIXED(-3) : FIXED(3));
-    func_8001540C(2, 0x15, self);
+    func_8001540C(2, SATURN_SOUND(0x15, 0x14), self);
     animate_object(ANIMATED_OBJECT(self));
     self->unk6 = 2;
 }
@@ -194,7 +197,7 @@ void ambush_gunner_emerge_burst(struct MainObj* self)
 void ambush_gunner_emerge_finish(struct MainObj* self)
 {
     if (self->animation_step.fields.event == 2) {
-        func_8001540C(2, 0x16, self);
+        func_8001540C(2, SATURN_SOUND(0x16, 0x15), self);
     }
     if (self->animation_step.fields.event == 1) {
         set_animation(self, 1);
@@ -247,7 +250,7 @@ void ambush_gunner_fire(struct MainObj* self)
     if (self->animation_step.fields.event == 2) {
         struct ShotObj* shot;
 
-        func_8001540C(2, 0x17, self);
+        func_8001540C(2, SATURN_SOUND(0x17, 0x16), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -285,114 +288,114 @@ void ambush_gunner_fire(struct MainObj* self)
 struct Unk_unk68 ambush_gunner_terrain_box = { -13, -12, 25, 24 };
 
 union AnimationStep ambush_gunner_anim_0[] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03010006 },
-    { 0x04010006 },
-    { 0x05010004 },
-    { 0x06010005 },
-    { 0x07010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010201 },
-    { 0x0E010005 },
-    { 0x0F010003 },
-    { 0x10010003 },
-    { 0x11010003 },
-    { 0x0E010006 },
-    { 0x12010001 },
-    { 0x13010001 },
-    { 0x14010001 },
-    { 0x15010006 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010006 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010006 },
-    { 0x1C010005 },
-    { 0x1D010008 },
-    { 0x1C010005 },
-    { 0x1B010004 },
-    { 0x1B000101 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 6, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 5, 0, 1, 0x06 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 1, 2, 1, 0x0E },
+    { 5, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0F },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 1, 0x11 },
+    { 6, 0, 1, 0x0E },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 6, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 6, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 6, 0, 1, 0x1B },
+    { 5, 0, 1, 0x1C },
+    { 8, 0, 1, 0x1D },
+    { 5, 0, 1, 0x1C },
+    { 4, 0, 1, 0x1B },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep ambush_gunner_anim_1[] = {
-    { 0x1B000101 },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep ambush_gunner_anim_2[] = {
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010001 },
-    { 0x21010001 },
-    { 0x22010001 },
-    { 0x1B010002 },
-    { 0x1E010002 },
-    { 0x1F010002 },
-    { 0x20010001 },
-    { 0x21010001 },
-    { 0x22010001 },
-    { 0x1B010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010001 },
-    { 0x26010001 },
-    { 0x27010001 },
-    { 0x1C010002 },
-    { 0x23010002 },
-    { 0x24010002 },
-    { 0x25010001 },
-    { 0x26010001 },
-    { 0x27010001 },
-    { 0x28010201 },
-    { 0x29010001 },
-    { 0x2A010001 },
-    { 0x2B010002 },
-    { 0x2C010003 },
-    { 0x2D010004 },
-    { 0x2E010004 },
-    { 0x2E000101 },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, 1, 0x21 },
+    { 1, 0, 1, 0x22 },
+    { 2, 0, 1, 0x1B },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 2, 0, 1, 0x1C },
+    { 2, 0, 1, 0x23 },
+    { 2, 0, 1, 0x24 },
+    { 1, 0, 1, 0x25 },
+    { 1, 0, 1, 0x26 },
+    { 1, 0, 1, 0x27 },
+    { 1, 2, 1, 0x28 },
+    { 1, 0, 1, 0x29 },
+    { 1, 0, 1, 0x2A },
+    { 2, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 4, 0, 1, 0x2D },
+    { 4, 0, 1, 0x2E },
+    { 1, 1, 0, 0x2E },
 };
 
 union AnimationStep ambush_gunner_anim_3[] = {
-    { 0x34000101 },
+    { 1, 1, 0, 0x34 },
 };
 
 union AnimationStep ambush_gunner_anim_4[] = {
-    { 0x35000101 },
+    { 1, 1, 0, 0x35 },
 };
 
 union AnimationStep ambush_gunner_anim_5[] = {
-    { 0x36000101 },
+    { 1, 1, 0, 0x36 },
 };
 
 union AnimationStep ambush_gunner_anim_6[] = {
-    { 0x37010002 },
-    { 0x38010003 },
-    { 0x39010003 },
-    { 0x3A010003 },
-    { 0x3B010002 },
-    { 0x3C010001 },
-    { 0x3D010001 },
-    { 0x3E000101 },
+    { 2, 0, 1, 0x37 },
+    { 3, 0, 1, 0x38 },
+    { 3, 0, 1, 0x39 },
+    { 3, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 1, 0, 1, 0x3C },
+    { 1, 0, 1, 0x3D },
+    { 1, 1, 0, 0x3E },
 };
 
 union AnimationStep ambush_gunner_anim_7[] = {
-    { 0x3F000101 },
+    { 1, 1, 0, 0x3F },
 };
 
 union AnimationStep ambush_gunner_anim_8[] = {
-    { 0x2F010001 },
-    { 0x30010001 },
-    { 0x31010001 },
-    { 0x32010001 },
-    { 0x33FC0101 },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x30 },
+    { 1, 0, 1, 0x31 },
+    { 1, 0, 1, 0x32 },
+    { 1, 1, -4, 0x33 },
 };
 
 union AnimationStep* ambush_gunner_animations[] = {

@@ -10,6 +10,7 @@ extern void (*enemy_charge_glow_state_funcs[])(struct VisualObj*);
 void enemy_charge_glow_init(struct VisualObj*);
 
 void enemy_charge_glow_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void enemy_charge_glow_update(struct VisualObj* arg0)
 {
@@ -38,11 +39,12 @@ void enemy_charge_glow_init(struct VisualObj* arg0)
 }
 
 // enemy_charge_glow_main
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B1F78(struct VisualObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B1F78(struct VisualObj* arg0)
 {
     struct MainObj* owner;

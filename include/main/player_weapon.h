@@ -22,7 +22,7 @@ union PlayerChargeData {
 enum {
     PLAYER_CHARGE_NONE,
     PLAYER_CHARGE_PARTIAL,
-    PLAYER_CHARGE_FULL,
+    PLAYER_CHARGE_FULL
 };
 
 void player_fire_weapon(struct PlayerObj*);

@@ -14,6 +14,7 @@ void func_8009B424(struct ShotObj*);
 
 void dragon_spread_shot_despawn(struct ShotObj*);
 void dragon_spread_shot_idle(struct ShotObj*);
+#include "weapon_resources.h"
 
 extern u8 dragon_spread_shot_hit_box[4];
 extern u8 dragon_spread_shot_large_hit_box[4];
@@ -40,10 +41,10 @@ void func_8009B424(struct ShotObj* self)
     self->unk58.animation_steps = D_80105FF0;
     self->state++;
     self->unk42 &= 0x7FFF;
-    self->unk40 = D_801406A8[9] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(9);
     self->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 9);
     self->animation_table = (u32**)dragon_spread_shot_animations;
-    self->unk42 = CLUT_FROM_ID(0xB);
+    self->unk42 = OBJECT_STAGE_CLUT(0xB);
     self->unk60 = 2;
     self->unk5C = 1;
     self->unk54 = dragon_spread_shot_large_hit_box;

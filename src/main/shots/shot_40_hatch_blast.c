@@ -27,6 +27,7 @@ void hatch_blast_despawn(struct ShotObj*);
 void hatch_blast_open(struct ShotObj*);
 void hatch_blast_fire(struct ShotObj*);
 void hatch_blast_close(struct ShotObj*);
+#include "weapon_resources.h"
 
 void hatch_blast_update(struct ShotObj* self)
 {
@@ -109,7 +110,7 @@ void hatch_blast_main(struct ShotObj* self)
         func_8002D9BC(self);
         func_8002C808(PLAYER_OBJECT(self));
         if (self->unk8A != 0) {
-            if (!(main_bss_state.frame_counter & 3)) {
+            if (!(WEAPON_FRAME_COUNTER & 3)) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x60, 0x60);
                 func_800AF878(BASE_OBJECT(self), 1, 0x30, 0x30);
                 x_offset = get_random() & 0x30;

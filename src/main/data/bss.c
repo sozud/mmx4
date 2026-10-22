@@ -585,9 +585,14 @@ struct MemcardFileList memcard_files;
 s8 D_80173C6C[4];
 struct GameInfo game_info;
 u8* D_80173C80;
+#ifdef MMX4_SATURN
+u16 D_80173C84;
+u8 pad_80173C86[2];
+#else
 u8 D_80173C84;
 #ifndef MMX4_PC
 u8 pad_80173C85[3];
+#endif
 #endif
 u8 D_80173C88[0x4];
 u8 D_80173C8C[0x4];

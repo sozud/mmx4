@@ -2,8 +2,9 @@
 // 800B60BC..800B6A0C
 #include "common.h"
 #include "main/effects/effect_05_tile_scanner.h"
+#include "main/1CF60.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #endif
 
@@ -17,7 +18,8 @@ void (*tile_scanner_state_funcs[2])(struct EffectObj*) = {
 void (*tile_scanner_fill_funcs[1])(struct EffectObj*) = { func_800B6660 };
 
 // tile_scanner_update
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static u8 effect_05_probe(s16 x, s32 y_offset);
 static void effect_05_dispatch(struct EffectObj* arg0);
 void func_800B60BC(struct EffectObj* arg0);
@@ -47,7 +49,7 @@ static int effect_05_tile_slides(u8 tile)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B60BC(struct EffectObj* arg0)
 {
     struct Effect5Ext* ext = &arg0->ext.effect_5;
@@ -140,7 +142,7 @@ void tile_scanner_init(struct EffectObj* self)
 }
 
 // tile_scanner_scan
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B64BC(struct EffectObj* arg0)
 {
     struct Effect5Ext* ext = &arg0->ext.effect_5;
@@ -205,7 +207,7 @@ INCLUDE_ASM("main/nonmatchings/effects/effect_05_tile_scanner", func_800B64BC);
 #endif
 
 // tile_scanner_flood_fill
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800B6660(struct EffectObj* arg0)
 {
     struct Effect5Ext* ext = &arg0->ext.effect_5;

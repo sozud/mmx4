@@ -4,10 +4,7 @@
 #include "main/items/item_19_data_capsule.h"
 #include "main/55C4.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/mains/main_41_data_hopper.h"
-#endif
 
 // data_capsule_state_funcs
 extern void (*data_capsule_state_funcs[])(struct ItemObj*);
@@ -19,6 +16,11 @@ extern void (*data_capsule_attached_funcs[])(struct ItemObj*);
 void data_capsule_attached_init(struct ItemObj*);
 void data_capsule_attached_follow(struct ItemObj*);
 void data_capsule_idle(struct ItemObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/mains/main_41_data_hopper.h"
+#endif
 
 struct Item19SpawnPosition {
     u16 x;
@@ -58,14 +60,18 @@ void data_capsule_update(struct ItemObj* arg0)
 }
 
 // data_capsule_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+s32 func_8001540C(s32 arg0, s32 arg1, void* arg2);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4778(struct ItemObj* self);
 void func_800C49BC(struct ItemObj* self);
 void collide_with_players(struct PlayerObj*);
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4778(struct ItemObj* self)
 {
     if (self->unk2 < 4) {
@@ -81,15 +87,15 @@ void func_800C4778(struct ItemObj* self)
         index = (u8)func_8002938C(0x29);
         self->animation_table = (const u8* const*)data_hopper_animations;
         self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-        self->unk40 = D_801406A8[index] >> 7;
-        self->unk42 = ((index * 4 + 0x18) & 0xF) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF);
+        self->unk40 = OBJECT_STAGE_TEXTURE(index);
+        self->unk42 = OBJECT_CLUT(((index * 4 + 0x18) & 0xF) | ((((index + 6) / 4 + 0x1E0) << 6) & 0xFFFF));
         self->unk54 = NULL;
         self->unk50 = NULL;
         self->unk68 = (struct Unk_unk68*)(self->unk2 == 0 ? data_capsule_box_0 : self->unk2 == 1 ? data_capsule_box_1
                                                                                                  : data_capsule_box_2);
         self->unk76 = -1;
         self->unk75 = 1;
-        self->unk16 = 6;
+        self->unk16 = VISUAL_SATURN_LAYER(6);
         self->unk67 = 0;
         self->x_vel.val = 0;
         self->y_vel.val = 0;
@@ -100,12 +106,13 @@ void func_800C4778(struct ItemObj* self)
         self->unk7 = engine_obj.character_state.fields.active;
         set_animation(self, self->unk2 + 0xF);
     } else {
+        s32 i;
         self->state = 2;
         self->unk5 = 0;
         self->unk6 = 0;
         self->unk7 = 0;
         self->on_screen = 0;
-        for (s32 i = 0; i < 2; i++) {
+        for (i = 0; i < 2; i++) {
             struct ItemObj* child = find_free_item_obj();
             if (child != NULL) {
                 struct Item19SpawnPosition* pos = &data_capsule_positions[(self->unk2 - 4) * 2 + i];
@@ -124,7 +131,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_19_data_capsule", func_800C4778);
 #endif
 
 // data_capsule_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C49BC(struct ItemObj* self)
 {
     u16* second_timer = (u16*)&self->unk7C;
@@ -153,8 +160,8 @@ void func_800C49BC(struct ItemObj* self)
                     spawned->unk2 = 1;
                     index = (u8)func_8002938C(0x29);
                     spawned->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-                    spawned->unk40 = D_801406A8[index] >> 7;
-                    spawned->unk42 = ((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6);
+                    spawned->unk40 = OBJECT_STAGE_TEXTURE(index);
+                    spawned->unk42 = OBJECT_CLUT(((index * 4 + 0x18) & 0xF) | (((index + 6) / 4 + 0x1E0) << 6));
                     spawned->x_pos = self->x_pos;
                     spawned->y_pos.val = self->y_pos.val + 0x280000;
                     spawned->unk15 = 0;
@@ -203,7 +210,7 @@ void data_capsule_attached_init(struct ItemObj* arg0)
     arg0->y_vel.val = 0;
     arg0->unk28 = 0;
     arg0->unk2C = 0;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     set_animation(arg0, 1);
 }
 

@@ -26,7 +26,7 @@ extern void func_8002044C (struct EngineObj *arg0);
 
 extern void (*engine_update_funcs[])(struct EngineObj*);
 
-void func_8001FB50();
+void func_8001FB50(void);
 
 extern u8 pad_port1_packet[0x22];
 

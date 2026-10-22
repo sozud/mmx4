@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[76]
 // 800919C4..800922D8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_76_spike_crawler.h"
 #include "main/object_motion.h"
 #include "main/1E1BC.h"
@@ -9,8 +10,9 @@
 #include "main/collision_bounds.h"
 #include "main/enemy_reaction_data.h"
 #include "main/objects.h"
+#include "main/1CF60.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #endif
 
@@ -60,7 +62,7 @@ void spike_crawler_init(struct MainObj* arg0)
     self->x_accel = 0;
     self->gravity = 0;
     self->ext.main_76.saved_x_velocity = self->x_speed;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     set_animation(self, 0);
 }
 
@@ -81,12 +83,13 @@ void spike_crawler_fall(struct MainObj* self)
 }
 
 // spike_crawler_crawl
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80091B1C(struct MainObj* arg0);
 void func_80091EC4(struct MainObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80091B1C(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
@@ -219,9 +222,7 @@ void spike_crawler_hit_flash(struct MainObj* self)
 }
 
 // spike_crawler_hit_bounce
-#ifdef MMX4_PC
-// src/main/mains/main_76_spike_crawler.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80091EC4(struct MainObj* self)
 {
     s8 step;
@@ -321,31 +322,31 @@ void enemy_hit_reaction(struct MainObj* arg0)
 }
 
 union AnimationStep spike_crawler_anim_0[16] = {
-    { 0x00010002 },
-    { 0x01010002 },
-    { 0x02010002 },
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x05010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0C010002 },
-    { 0x0D010002 },
-    { 0x0E010002 },
-    { 0x0FF10002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x02 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, -15, 0x0F },
 };
 
-union AnimationStep spike_crawler_anim_1[1] = { { 0x10000002 } };
+union AnimationStep spike_crawler_anim_1[1] = { { 2, 0, 0, 0x10 } };
 
-union AnimationStep spike_crawler_anim_2[1] = { { 0x11000002 } };
+union AnimationStep spike_crawler_anim_2[1] = { { 2, 0, 0, 0x11 } };
 
-union AnimationStep spike_crawler_anim_3[1] = { { 0x12000002 } };
+union AnimationStep spike_crawler_anim_3[1] = { { 2, 0, 0, 0x12 } };
 
-union AnimationStep spike_crawler_anim_4[1] = { { 0x13000002 } };
+union AnimationStep spike_crawler_anim_4[1] = { { 2, 0, 0, 0x13 } };
 
 union AnimationStep* spike_crawler_animations[5] = {
     spike_crawler_anim_0,
@@ -363,6 +364,20 @@ s8 spike_crawler_attack_box[4] = { -9, -6, 16, 15 };
 
 s8 spike_crawler_hurt_box[4] = { -11, -8, 20, 18 };
 
+#ifdef MMX4_SATURN
+void play_boss_voice(s32 arg0)
+{
+    u8 object_id = arg0 & 0xFF;
+
+    if (object_id >= 8) {
+        u8 track = object_id * 3 + (get_random() & 0xFF) % 3U + 0x21;
+        saturn_music_play(track, 0);
+        engine_obj.unk36.value = 1;
+    } else {
+        engine_obj.unk36.value = 0x3C;
+    }
+}
+#else
 void play_boss_voice(s32 arg0)
 {
     s16 object_id;
@@ -384,6 +399,7 @@ void play_boss_voice(s32 arg0)
     }
 #endif
 }
+#endif
 
 s32 update_boss_music_delay(void)
 {

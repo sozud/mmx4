@@ -10,7 +10,7 @@ extern void func_800257BC (struct PlayerObj *arg0);
 extern u8* const* D_800F2DD8[];
 extern const u8* D_800F2DD0[];
 extern u16 D_800F2F40[16];
-extern const u32* const* D_800F2EE8[];
+extern const union AnimationStep* const* D_800F2EE8[];
 
 void func_80025188(s32, u8);
 void func_800253F0(struct MainObj*, s32);

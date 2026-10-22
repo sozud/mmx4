@@ -22,6 +22,7 @@ extern void (*sigma_collapse_state_funcs[])(struct EffectObj*);
 
 void sigma_collapse_debris(struct EffectObj*);
 void sigma_collapse_rumble(struct EffectObj*);
+#include "weapon_resources.h"
 
 void sigma_collapse_init(struct EffectObj* self)
 {
@@ -35,7 +36,7 @@ void sigma_collapse_init(struct EffectObj* self)
 void sigma_collapse_debris_start(struct EffectObj* self)
 {
     self->ext.effect_9.transition_timer = 1;
-    self->ext.effect_9.direction = (D_801406A8[func_8002938C(0xA4)] >> 7);
+    self->ext.effect_9.direction = (OBJECT_STAGE_TEXTURE(func_8002938C(0xA4)));
     self->unk5++;
 }
 
@@ -53,7 +54,7 @@ void sigma_collapse_debris_drop(struct EffectObj* self)
                 misc->unk2 = ((u32)get_random() & 0xFF) % 6;
                 misc->unk40 = self->ext.effect_16.saved_background_2A;
             }
-            func_8001540C(5, 0, NULL);
+            func_8001540C(5, SATURN_SOUND(0, 0x64), NULL);
             start_screen_shake_y(5, 2, 1);
             self->ext.effect_9.transition_timer = 5;
         }
@@ -77,13 +78,13 @@ void sigma_collapse_rumble_start(struct EffectObj* self)
 void sigma_collapse_rumble_shake(struct EffectObj* self)
 {
     if (--(&self->ext.effect_43)->unk14 == 0) {
-        func_8001540C(5, 0, NULL);
+        func_8001540C(5, SATURN_SOUND(0, 0x64), NULL);
         start_screen_shake_x(0xA, 2, 1);
         self->ext.effect_43.unk14 = 0xA;
     }
 
     if (--(&self->ext.effect_43)->unk16 == 0) {
-        func_8001540C(0, 0x13, NULL);
+        func_8001540C(0, SATURN_SOUND(0x13, 0x15), NULL);
         self->ext.effect_43.unk16 = 0x28;
     }
 }

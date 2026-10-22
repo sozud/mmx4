@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[44]
 // 80065930..80065B8C
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_44_anchored_mine.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
@@ -46,7 +47,7 @@ void anchored_mine_init(struct MainObj* obj)
     obj->gravity = 0;
     obj->air_state = 0;
     obj->animation_table = (const u8* const*)anchored_mine_animations;
-    obj->unk16 = 6;
+    obj->unk16 = VISUAL_SATURN_LAYER(6);
     obj->terrain_box = NULL;
     obj->hurt_box = &anchored_mine_hurt_box;
     obj->attack_box = &anchored_mine_attack_box;
@@ -110,30 +111,30 @@ struct Unk_unk68 anchored_mine_hurt_box = { -11, -10, 21, 23 };
 struct Unk_unk68 anchored_mine_attack_box = { -11, -10, 20, 42 };
 
 union AnimationStep anchored_mine_anim_0[] = {
-    { 0x05010007 },
-    { 0x0601000C },
-    { 0x07010004 },
-    { 0x08010004 },
-    { 0x00010005 },
-    { 0x01010008 },
-    { 0x0D010007 },
-    { 0x0E01000C },
-    { 0x0D010007 },
-    { 0x00010005 },
-    { 0x01010008 },
-    { 0x0F010007 },
-    { 0x1001000E },
-    { 0x0F010007 },
-    { 0x00010006 },
-    { 0x02010003 },
-    { 0x03010003 },
-    { 0x04010002 },
-    { 0x0B010004 },
-    { 0x0C010002 },
-    { 0x0A01000C },
-    { 0x09010006 },
-    { 0x00010005 },
-    { 0x01E9000C },
+    { 7, 0, 1, 0x05 },
+    { 12, 0, 1, 0x06 },
+    { 4, 0, 1, 0x07 },
+    { 4, 0, 1, 0x08 },
+    { 5, 0, 1, 0x00 },
+    { 8, 0, 1, 0x01 },
+    { 7, 0, 1, 0x0D },
+    { 12, 0, 1, 0x0E },
+    { 7, 0, 1, 0x0D },
+    { 5, 0, 1, 0x00 },
+    { 8, 0, 1, 0x01 },
+    { 7, 0, 1, 0x0F },
+    { 14, 0, 1, 0x10 },
+    { 7, 0, 1, 0x0F },
+    { 6, 0, 1, 0x00 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 4, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0C },
+    { 12, 0, 1, 0x0A },
+    { 6, 0, 1, 0x09 },
+    { 5, 0, 1, 0x00 },
+    { 12, 0, -23, 0x01 },
 };
 
 union AnimationStep* anchored_mine_animations[2] = { anchored_mine_anim_0, NULL };

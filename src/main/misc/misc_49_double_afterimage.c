@@ -13,12 +13,13 @@ void func_800D1A48(struct MiscObj*);
 void double_afterimage_despawn(struct MiscObj*);
 
 // double_afterimage_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D1990(struct MiscObj* arg0);
 extern u8 double_afterimage_angles[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D1990(struct MiscObj* arg0)
 {
     arg0->state = 1;

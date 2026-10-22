@@ -6,10 +6,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 extern u8 iris_laser_box[4];
 extern u8 iris_pillar_box[4];
@@ -42,6 +39,14 @@ void iris_laser_end(struct ShotObj*);
 extern void (*iris_pillar_funcs[])(struct ShotObj*);
 void iris_pillar_fire(struct ShotObj*);
 void iris_pillar_end(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
+
+extern u8 iris_drone_attack_box[4];
+extern u8 iris_drone_hurt_box[4];
 
 void iris_drone_move(struct ShotObj* self);
 
@@ -51,7 +56,8 @@ void iris_shot_update(struct ShotObj* self)
 }
 
 // iris_drone_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A7008(struct ShotObj* self);
 void func_800A766C(struct ShotObj* self);
 void func_800A73C4(struct ShotObj* self);
@@ -59,14 +65,18 @@ extern u8 iris_drone_attack_box[4];
 extern u8 iris_drone_hurt_box[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A7008(struct ShotObj* self)
 {
     self->on_screen = 1;
     self->unk58.data = (u8*)D_80105FF0;
     self->unk61 = 1;
     self->unk42 &= 0x7FFF;
+#ifdef MMX4_SATURN
+    set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.bytes[3]);
+#else
     set_velocity_from_angle(MOVING_OBJECT(self), self->unk84.bytes[0]);
+#endif
     self->unk16 = 2;
     self->unk54 = iris_drone_hurt_box;
     self->unk50.data = iris_drone_attack_box;
@@ -176,7 +186,7 @@ void iris_laser_despawn(struct ShotObj* self)
 }
 
 // iris_pillar_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A73C4(struct ShotObj* self)
 {
     self->timer = 0x78;
@@ -266,7 +276,7 @@ void iris_drone_hover(struct ShotObj* self)
 }
 
 // iris_drone_chase
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A766C(struct ShotObj* self)
 {
     s32 dx;
@@ -286,7 +296,7 @@ void func_800A766C(struct ShotObj* self)
             self->unk2 = 0;
         }
     }
-    if (!(main_bss_state.frame_counter & 3)) {
+    if (!(WEAPON_FRAME_COUNTER & 3)) {
         set_velocity_from_angle(MOVING_OBJECT(self),
             angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player)) & 0xFF);
         if (self->unk2 == 0) {
@@ -331,7 +341,7 @@ void iris_laser_charge(struct ShotObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (--self->timer == 0) {
-        func_8001540C(2, 0xE3, self);
+        func_8001540C(2, SATURN_SOUND(0xE3, 0xA4), self);
         set_animation(self, self->unk2 * 4 + 0x19);
         if (self->unk2 != 0) {
             if (self->unk15 == 0) {

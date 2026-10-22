@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[38]
 // 80060A88..80061590
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_38_train_cannon.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -63,7 +64,7 @@ void train_cannon_init(struct MainObj* obj)
     obj->bg_offset = g_Player.bg_offset;
     obj->collision_data = &D_801074F4;
     obj->animation_table = (const u8* const*)train_cannon_animations;
-    obj->unk16 = 5;
+    obj->unk16 = VISUAL_SATURN_LAYER(5);
     obj->terrain_box = &train_cannon_terrain_box;
     obj->hurt_box = &train_cannon_hurt_box;
     obj->unk15 = 0;
@@ -203,7 +204,7 @@ void train_cannon_charge_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     set_animation(self, 1);
-    func_8001540C(2, 0x60, self);
+    func_8001540C(2, SATURN_SOUND(0x60, 0x49), self);
     train_cannon_spawn_charge_glow(VISUAL_OBJECT(self));
     self->unk7C = 0x50;
     self->unk6++;
@@ -227,7 +228,7 @@ void train_cannon_blast(struct MainObj* self)
 void train_cannon_blast_fire(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    func_8001540C(2, 0x61, self);
+    func_8001540C(2, SATURN_SOUND(0x61, 0x4A), self);
     set_animation(self, 2);
     self->ext.main_38.unk88 = 2;
     train_cannon_fire_blast(self);
@@ -254,7 +255,7 @@ void train_cannon_volley(struct MainObj* self)
 void train_cannon_volley_start(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
-    func_8001540C(2, 0x62, self);
+    func_8001540C(2, SATURN_SOUND(0x62, 0x4B), self);
     set_animation(self, 5);
     self->unk7C = 0xA;
     self->unk6++;
@@ -347,7 +348,7 @@ void train_cannon_fire_volley(struct MainObj* self)
             shot->unk15 = self->unk15;
             shot->bg_offset = self->bg_offset;
             is_zero = (i == 0);
-            shot->unk16 = is_zero ? 4 : 6;
+            shot->unk16 = is_zero ? VISUAL_SATURN_LAYER(4) : VISUAL_SATURN_LAYER(6);
         }
     }
 }
@@ -365,7 +366,7 @@ void train_cannon_spawn_charge_glow(struct VisualObj* self)
         obj->unk3C = self->unk3C;
         obj->unk40 = self->unk40;
         obj->bg_offset = self->bg_offset;
-        obj->unk16 = 4;
+        obj->unk16 = VISUAL_SATURN_LAYER(4);
         obj->unk15 = self->unk15;
         obj->x_pos.val = self->x_pos.val;
         obj->y_pos.val = self->y_pos.val;
@@ -379,150 +380,150 @@ struct Unk_unk68 train_cannon_attack_box = { -52, -11, 86, 25 };
 struct Unk_unk68 train_cannon_terrain_box = { -10, 8, 45, 11 };
 
 union AnimationStep train_cannon_anim_0[] = {
-    { 0x00000001 },
+    { 1, 0, 0, 0x00 },
 };
 
 union AnimationStep train_cannon_anim_1[] = {
-    { 0x00010001 },
-    { 0x01010006 },
-    { 0x02010005 },
-    { 0x03010004 },
-    { 0x04010004 },
-    { 0x05010004 },
-    { 0x06010004 },
-    { 0x07FD0004 },
+    { 1, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 5, 0, 1, 0x02 },
+    { 4, 0, 1, 0x03 },
+    { 4, 0, 1, 0x04 },
+    { 4, 0, 1, 0x05 },
+    { 4, 0, 1, 0x06 },
+    { 4, 0, -3, 0x07 },
 };
 
 union AnimationStep train_cannon_anim_2[] = {
-    { 0x0C010002 },
-    { 0x0DFF0002 },
+    { 2, 0, 1, 0x0C },
+    { 2, 0, -1, 0x0D },
 };
 
 union AnimationStep train_cannon_anim_3[] = {
-    { 0x0F01000A },
-    { 0x10010008 },
-    { 0x11010004 },
-    { 0x12010001 },
-    { 0x13010001 },
-    { 0x14010001 },
-    { 0x15FD0001 },
+    { 10, 0, 1, 0x0F },
+    { 8, 0, 1, 0x10 },
+    { 4, 0, 1, 0x11 },
+    { 1, 0, 1, 0x12 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, -3, 0x15 },
 };
 
 union AnimationStep train_cannon_anim_4[] = {
-    { 0x1601000A },
-    { 0x17010008 },
-    { 0x18010004 },
-    { 0x19010001 },
-    { 0x1A010001 },
-    { 0x1B010001 },
-    { 0x1CFD0001 },
+    { 10, 0, 1, 0x16 },
+    { 8, 0, 1, 0x17 },
+    { 4, 0, 1, 0x18 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, -3, 0x1C },
 };
 
 union AnimationStep train_cannon_anim_5[] = {
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1D010001 },
-    { 0x1E010001 },
-    { 0x1F010002 },
-    { 0x20010003 },
-    { 0x21010004 },
-    { 0x22000005 },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 4, 0, 1, 0x21 },
+    { 5, 0, 0, 0x22 },
 };
 
 union AnimationStep train_cannon_anim_6[] = {
-    { 0x22010005 },
-    { 0x23010005 },
-    { 0x2401000A },
-    { 0x25010005 },
-    { 0x2601000A },
-    { 0x27000005 },
+    { 5, 0, 1, 0x22 },
+    { 5, 0, 1, 0x23 },
+    { 10, 0, 1, 0x24 },
+    { 5, 0, 1, 0x25 },
+    { 10, 0, 1, 0x26 },
+    { 5, 0, 0, 0x27 },
 };
 
 union AnimationStep train_cannon_anim_7[] = {
-    { 0x28000001 },
+    { 1, 0, 0, 0x28 },
 };
 
 union AnimationStep train_cannon_anim_8[] = {
-    { 0x29000001 },
+    { 1, 0, 0, 0x29 },
 };
 
 union AnimationStep train_cannon_anim_9[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep train_cannon_anim_10[] = {
-    { 0x2B000001 },
+    { 1, 0, 0, 0x2B },
 };
 
 union AnimationStep train_cannon_anim_11[] = {
-    { 0x14010001 },
-    { 0x13010001 },
-    { 0x12010001 },
-    { 0x11010004 },
-    { 0x10010008 },
-    { 0x0F00000A },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x13 },
+    { 1, 0, 1, 0x12 },
+    { 4, 0, 1, 0x11 },
+    { 8, 0, 1, 0x10 },
+    { 10, 0, 0, 0x0F },
 };
 
 union AnimationStep train_cannon_anim_12[] = {
-    { 0x1B010001 },
-    { 0x1A010001 },
-    { 0x19010001 },
-    { 0x18010004 },
-    { 0x17010008 },
-    { 0x1600000A },
+    { 1, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1A },
+    { 1, 0, 1, 0x19 },
+    { 4, 0, 1, 0x18 },
+    { 8, 0, 1, 0x17 },
+    { 10, 0, 0, 0x16 },
 };
 
 union AnimationStep train_cannon_anim_13[] = {
-    { 0x2C000001 },
+    { 1, 0, 0, 0x2C },
 };
 
 union AnimationStep train_cannon_anim_14[] = {
-    { 0x2D000001 },
+    { 1, 0, 0, 0x2D },
 };
 
 union AnimationStep train_cannon_anim_15[] = {
-    { 0x2E000001 },
+    { 1, 0, 0, 0x2E },
 };
 
 union AnimationStep train_cannon_anim_16[] = {
-    { 0x2F000001 },
+    { 1, 0, 0, 0x2F },
 };
 
 union AnimationStep train_cannon_anim_17[] = {
-    { 0x30000001 },
+    { 1, 0, 0, 0x30 },
 };
 
 union AnimationStep train_cannon_anim_18[] = {
-    { 0x31000001 },
+    { 1, 0, 0, 0x31 },
 };
 
 union AnimationStep train_cannon_anim_19[] = {
-    { 0x08010003 },
-    { 0x09010004 },
-    { 0x0A010005 },
-    { 0x09010004 },
-    { 0x08FC0003 },
+    { 3, 0, 1, 0x08 },
+    { 4, 0, 1, 0x09 },
+    { 5, 0, 1, 0x0A },
+    { 4, 0, 1, 0x09 },
+    { 3, 0, -4, 0x08 },
 };
 
 union AnimationStep train_cannon_anim_20[] = {
-    { 0x37010003 },
-    { 0x0B010003 },
-    { 0x37010003 },
-    { 0x32010003 },
-    { 0x37010003 },
-    { 0x33010003 },
-    { 0x37010003 },
-    { 0x34010003 },
-    { 0x37010003 },
-    { 0x35010003 },
-    { 0x37010003 },
-    { 0x36F60003 },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, 1, 0x32 },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, 1, 0x33 },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, 1, 0x34 },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, 1, 0x35 },
+    { 3, 0, 1, 0x37 },
+    { 3, 0, -10, 0x36 },
 };
 
 union AnimationStep* train_cannon_animations[21] = {

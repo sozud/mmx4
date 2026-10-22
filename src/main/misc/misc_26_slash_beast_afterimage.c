@@ -15,11 +15,12 @@ void slash_beast_afterimage_update(struct MiscObj* self)
 }
 
 // slash_beast_afterimage_fade
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CC7F8(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CC7F8(struct MiscObj* arg0)
 {
     struct MainObj* owner = arg0->ext.misc_26.owner;

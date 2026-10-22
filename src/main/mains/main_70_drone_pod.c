@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[70]
 // 80088BA0..80089AA4
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_70_drone_pod.h"
 #include "main/object_motion.h"
 #include "main/player_common.h"
@@ -11,7 +12,7 @@
 #include "main/objects.h"
 #include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -101,7 +102,7 @@ void func_80088C40(struct MainObj* self)
     bg_offset = g_Player.bg_offset;
     self->collision_data = D_80108104;
     self->animation_table = (const u8* const*)D_80104974;
-    self->unk16 = 5;
+    self->unk16 = VISUAL_SATURN_LAYER(5);
     self->x_speed = 0;
     self->y_speed = 0;
     self->x_accel = 0;
@@ -127,7 +128,7 @@ void func_80088C40(struct MainObj* self)
 void drone_pod_intro_wait_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi >= 0x8E9) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         set_animation(self, 2);
         self->unk5++;
     }
@@ -153,7 +154,7 @@ void drone_pod_intro_fill_health(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (--self->unk7C == 0) {
-        func_8001540C(0, 0xE, NULL);
+        func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
         self->unk7C = 3;
     }
     count = ++self->hp;
@@ -167,7 +168,11 @@ void drone_pod_intro_fill_health(struct MainObj* self)
 }
 
 // drone_pod_run
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80088EA4(struct MainObj* self);
 void func_80089588(struct MainObj* self);
 extern void (*drone_pod_step_funcs[4])(struct MainObj*);
@@ -176,7 +181,7 @@ extern s16 D_801049CC[12];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80088EA4(struct MainObj* self)
 {
     s8 old_unk5C = self->hp;
@@ -213,9 +218,13 @@ void drone_pod_death_start(struct MainObj* self)
 {
     u8 i;
 
+#ifdef MMX4_SATURN
+    D_8013E188[0] = 0x4F;
+#else
     for (i = 0; i < 4U; i++) {
         D_8013E188[i] = -1;
     }
+#endif
     g_FilterModeR = 0;
     g_FilterModeG = 0;
     g_FilterModeB = 0;
@@ -252,7 +261,7 @@ void drone_pod_death_alarm(struct MainObj* self)
     s16 countdown;
     u16 timer;
 
-    if ((main_bss_state.frame_counter & 3) == 0) {
+    if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         drone_pod_random_explosion(self);
     }
 
@@ -291,7 +300,7 @@ void drone_pod_death_debris(struct MainObj* self)
         self->unk5++;
         return;
     }
-    if ((main_bss_state.frame_counter & 7) == 0) {
+    if ((WEAPON_FRAME_COUNTER & 7) == 0) {
         self->y_pos.i.hi = (get_random() & 0x7F) + 0x360;
         spawn_debris(5, &D_801049B0, self);
     }
@@ -373,12 +382,13 @@ void drone_pod_launch_close(struct MainObj* self)
 }
 
 // drone_pod_spawn_drones
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80089588(struct MainObj* self)
 {
     u8 start = self->ext.main_70.unk84;
+    u8 i;
 
-    for (u8 i = 0; i < 2; i++) {
+    for (i = 0; i < 2; i++) {
         struct MainObj* child = find_free_main_obj();
         u8 part = D_801049B8[(u8)(start + i)];
         s32 index;
@@ -395,16 +405,20 @@ void func_80089588(struct MainObj* self)
             child->unk2 = 1;
         child->unk42 = self->unk42;
         index = func_8002938C(0x3A);
-        child->unk40 = D_801406A8[index] >> 7;
+        child->unk40 = OBJECT_STAGE_TEXTURE(index);
         index = func_8002938C(0x3A);
         column = index * 4 + 0x18;
         index = func_8002938C(0x3A);
         row = index + 6;
+#ifdef MMX4_SATURN
+        child->unk42 = column;
+#else
         child->unk42 = (column - (column / 16) * 16) | (((row / 4 + 0x1E0) << 6) & 0xFFFF);
+#endif
         index = func_8002938C(0x3A);
         child->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, index);
-        child->unk15 = part < 3 ? 0x40 : 0;
-        child->unk16 = 5;
+        child->unk15 = part < 3 ? PLAYER_FACING_RIGHT : 0;
+        child->unk16 = VISUAL_SATURN_LAYER(5);
         child->bg_offset = self->bg_offset;
         child->x_pos.u.hi = (u16)D_801049CC[part * 2];
         child->y_pos.u.hi = (u16)D_801049CC[part * 2 + 1];
@@ -438,7 +452,7 @@ void drone_pod_random_explosion(struct MainObj* self)
     x += get_random_nonzero() % 0xA0;
     y += get_random_nonzero() % 0x78;
     spawn_explosion_at(0, x, y, 0xFF);
-    if ((main_bss_state.frame_counter & 3) == 0) {
+    if ((WEAPON_FRAME_COUNTER & 3) == 0) {
         func_8001540C(0, D_80104A3C[(get_random() & 3) * 4], NULL);
     }
 }
@@ -495,68 +509,68 @@ void drone_pod_alarm_white(struct MainObj* self)
 struct Unk_unk68 D_80104914 = { -12, -13, 25, 26 };
 
 union AnimationStep D_80104918[] = {
-    { 0x00000008 },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep D_8010491C[] = {
-    { 0x05010008 },
-    { 0x06010008 },
-    { 0x00000008 },
+    { 8, 0, 1, 0x05 },
+    { 8, 0, 1, 0x06 },
+    { 8, 0, 0, 0x00 },
 };
 
 union AnimationStep D_80104928[] = {
-    { 0x00010008 },
-    { 0x01010007 },
-    { 0x02010006 },
-    { 0x03010005 },
-    { 0x02010006 },
-    { 0x01000007 },
+    { 8, 0, 1, 0x00 },
+    { 7, 0, 1, 0x01 },
+    { 6, 0, 1, 0x02 },
+    { 5, 0, 1, 0x03 },
+    { 6, 0, 1, 0x02 },
+    { 7, 0, 0, 0x01 },
 };
 
 union AnimationStep D_80104940[] = {
-    { 0x04000008 },
+    { 8, 0, 0, 0x04 },
 };
 
 union AnimationStep D_80104944[] = {
-    { 0x07000008 },
+    { 8, 0, 0, 0x07 },
 };
 
 union AnimationStep D_80104948[] = {
-    { 0x08000008 },
+    { 8, 0, 0, 0x08 },
 };
 
 union AnimationStep D_8010494C[] = {
-    { 0x09000008 },
+    { 8, 0, 0, 0x09 },
 };
 
 union AnimationStep D_80104950[] = {
-    { 0x0A000008 },
+    { 8, 0, 0, 0x0A },
 };
 
 union AnimationStep D_80104954[] = {
-    { 0x0B000008 },
+    { 8, 0, 0, 0x0B },
 };
 
 union AnimationStep D_80104958[] = {
-    { 0x0C000008 },
+    { 8, 0, 0, 0x0C },
 };
 
 union AnimationStep D_8010495C[] = {
-    { 0x0D000008 },
+    { 8, 0, 0, 0x0D },
 };
 
 union AnimationStep D_80104960[] = {
-    { 0x0E000008 },
+    { 8, 0, 0, 0x0E },
 };
 
 union AnimationStep D_80104964[] = {
-    { 0x0F000008 },
+    { 8, 0, 0, 0x0F },
 };
 
 union AnimationStep D_80104968[] = {
-    { 0x00010008 },
-    { 0x06010008 },
-    { 0x05000008 },
+    { 8, 0, 1, 0x00 },
+    { 8, 0, 1, 0x06 },
+    { 8, 0, 0, 0x05 },
 };
 
 union AnimationStep* D_80104974[14] = {

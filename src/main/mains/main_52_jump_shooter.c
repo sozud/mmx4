@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[52]
 // 8006A50C..8006AF70
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_52_jump_shooter.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
@@ -8,8 +9,9 @@
 #include "main/collision.h"
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
+#include "main/1CF60.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #endif
 
@@ -67,7 +69,7 @@ void func_8006A55C(struct MainObj* self)
     self->unk1C.val = self->y_pos.val;
     self->x_speed = 0;
     self->animation_table = animations;
-    self->unk16 = 6;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
     self->terrain_box = &jump_shooter_terrain_box;
     self->hurt_box = &jump_shooter_hurt_box;
     self->y_speed = 0;
@@ -222,12 +224,13 @@ void jump_shooter_walk_start(struct MainObj* self)
 }
 
 // jump_shooter_walk_move
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006AAB4(struct MainObj* arg0);
 void func_8006AE80(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006AAB4(struct MainObj* arg0)
 {
     struct Unk_unk68* bounds;
@@ -249,7 +252,7 @@ void func_8006AAB4(struct MainObj* arg0)
     }
     if (arg0->unk15 == 0) {
         if (g_Player.x_pos.i.hi - arg0->x_pos.i.hi > 0x40) {
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
             arg0->x_speed = 0x1CCCC;
             goto countdown;
         }
@@ -361,12 +364,12 @@ void jump_shooter_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
 // jump_shooter_aim_at_player
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006AE80(struct MainObj* arg0)
 {
     u8 angle;
@@ -424,171 +427,171 @@ struct Unk_unk68 jump_shooter_attack_box = { -10, -18, 16, 30 };
 struct Unk_unk68 jump_shooter_terrain_box = { 0, 0, 6, 15 };
 
 union AnimationStep jump_shooter_anim_0[] = {
-    { 0x0F010008 },
-    { 0x10010008 },
-    { 0x11010007 },
-    { 0x12010008 },
-    { 0x13010008 },
-    { 0x14FB0107 },
+    { 8, 0, 1, 0x0F },
+    { 8, 0, 1, 0x10 },
+    { 7, 0, 1, 0x11 },
+    { 8, 0, 1, 0x12 },
+    { 8, 0, 1, 0x13 },
+    { 7, 1, -5, 0x14 },
 };
 
 union AnimationStep jump_shooter_anim_1[] = {
-    { 0x00010008 },
-    { 0x01010006 },
-    { 0x02010003 },
-    { 0x02010201 },
-    { 0x03010006 },
-    { 0x04000106 },
+    { 8, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 1, 2, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 6, 1, 0, 0x04 },
 };
 
 union AnimationStep jump_shooter_anim_2[] = {
-    { 0x16010001 },
-    { 0x15010006 },
-    { 0x15000101 },
+    { 1, 0, 1, 0x16 },
+    { 6, 0, 1, 0x15 },
+    { 1, 1, 0, 0x15 },
 };
 
 union AnimationStep jump_shooter_anim_3[] = {
-    { 0x18010001 },
-    { 0x17010006 },
-    { 0x17000101 },
+    { 1, 0, 1, 0x18 },
+    { 6, 0, 1, 0x17 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep jump_shooter_anim_4[] = {
-    { 0x1A010001 },
-    { 0x19010006 },
-    { 0x19000101 },
+    { 1, 0, 1, 0x1A },
+    { 6, 0, 1, 0x19 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep jump_shooter_anim_5[] = {
-    { 0x1C010001 },
-    { 0x1B010006 },
-    { 0x1B000101 },
+    { 1, 0, 1, 0x1C },
+    { 6, 0, 1, 0x1B },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep jump_shooter_anim_6[] = {
-    { 0x1E010001 },
-    { 0x1D010006 },
-    { 0x1D000101 },
+    { 1, 0, 1, 0x1E },
+    { 6, 0, 1, 0x1D },
+    { 1, 1, 0, 0x1D },
 };
 
 union AnimationStep jump_shooter_anim_7[] = {
-    { 0x06010001 },
-    { 0x05010006 },
-    { 0x05000101 },
+    { 1, 0, 1, 0x06 },
+    { 6, 0, 1, 0x05 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep jump_shooter_anim_8[] = {
-    { 0x08010001 },
-    { 0x07010006 },
-    { 0x07000101 },
+    { 1, 0, 1, 0x08 },
+    { 6, 0, 1, 0x07 },
+    { 1, 1, 0, 0x07 },
 };
 
 union AnimationStep jump_shooter_anim_9[] = {
-    { 0x0A010001 },
-    { 0x09010006 },
-    { 0x09000101 },
+    { 1, 0, 1, 0x0A },
+    { 6, 0, 1, 0x09 },
+    { 1, 1, 0, 0x09 },
 };
 
 union AnimationStep jump_shooter_anim_10[] = {
-    { 0x0C010001 },
-    { 0x0B010006 },
-    { 0x0B000101 },
+    { 1, 0, 1, 0x0C },
+    { 6, 0, 1, 0x0B },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep jump_shooter_anim_11[] = {
-    { 0x0E010001 },
-    { 0x0D010006 },
-    { 0x0D000101 },
+    { 1, 0, 1, 0x0E },
+    { 6, 0, 1, 0x0D },
+    { 1, 1, 0, 0x0D },
 };
 
 union AnimationStep jump_shooter_anim_12[] = {
-    { 0x1F010001 },
-    { 0x20010001 },
-    { 0x21FE0001 },
+    { 1, 0, 1, 0x1F },
+    { 1, 0, 1, 0x20 },
+    { 1, 0, -2, 0x21 },
 };
 
 union AnimationStep jump_shooter_anim_13[] = {
-    { 0x22000101 },
+    { 1, 1, 0, 0x22 },
 };
 
 union AnimationStep jump_shooter_anim_14[] = {
-    { 0x23000101 },
+    { 1, 1, 0, 0x23 },
 };
 
 union AnimationStep jump_shooter_anim_15[] = {
-    { 0x24000101 },
+    { 1, 1, 0, 0x24 },
 };
 
 union AnimationStep jump_shooter_anim_16[] = {
-    { 0x25000101 },
+    { 1, 1, 0, 0x25 },
 };
 
 union AnimationStep jump_shooter_anim_17[] = {
-    { 0x03010006 },
-    { 0x01010005 },
-    { 0x01000101 },
+    { 6, 0, 1, 0x03 },
+    { 5, 0, 1, 0x01 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep jump_shooter_anim_18[] = {
-    { 0x17010002 },
-    { 0x15010001 },
-    { 0x15000101 },
+    { 2, 0, 1, 0x17 },
+    { 1, 0, 1, 0x15 },
+    { 1, 1, 0, 0x15 },
 };
 
 union AnimationStep jump_shooter_anim_19[] = {
-    { 0x17000101 },
+    { 1, 1, 0, 0x17 },
 };
 
 union AnimationStep jump_shooter_anim_20[] = {
-    { 0x17010002 },
-    { 0x19010001 },
-    { 0x19000101 },
+    { 2, 0, 1, 0x17 },
+    { 1, 0, 1, 0x19 },
+    { 1, 1, 0, 0x19 },
 };
 
 union AnimationStep jump_shooter_anim_21[] = {
-    { 0x17010002 },
-    { 0x19010002 },
-    { 0x1B010001 },
-    { 0x1B000101 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1B },
+    { 1, 1, 0, 0x1B },
 };
 
 union AnimationStep jump_shooter_anim_22[] = {
-    { 0x17010002 },
-    { 0x19010002 },
-    { 0x1B010002 },
-    { 0x1D010001 },
-    { 0x1D000101 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1B },
+    { 1, 0, 1, 0x1D },
+    { 1, 1, 0, 0x1D },
 };
 
 union AnimationStep jump_shooter_anim_23[] = {
-    { 0x07010002 },
-    { 0x05010001 },
-    { 0x05000101 },
+    { 2, 0, 1, 0x07 },
+    { 1, 0, 1, 0x05 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep jump_shooter_anim_24[] = {
-    { 0x07000101 },
+    { 1, 1, 0, 0x07 },
 };
 
 union AnimationStep jump_shooter_anim_25[] = {
-    { 0x07010002 },
-    { 0x09010001 },
-    { 0x09000101 },
+    { 2, 0, 1, 0x07 },
+    { 1, 0, 1, 0x09 },
+    { 1, 1, 0, 0x09 },
 };
 
 union AnimationStep jump_shooter_anim_26[] = {
-    { 0x07010002 },
-    { 0x09010002 },
-    { 0x0B010001 },
-    { 0x0B000101 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x09 },
+    { 1, 0, 1, 0x0B },
+    { 1, 1, 0, 0x0B },
 };
 
 union AnimationStep jump_shooter_anim_27[] = {
-    { 0x07010002 },
-    { 0x09010002 },
-    { 0x0B010002 },
-    { 0x0D010001 },
-    { 0x0D000101 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0D },
+    { 1, 1, 0, 0x0D },
 };
 
 union AnimationStep* jump_shooter_animations[28] = {

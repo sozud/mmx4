@@ -19,13 +19,19 @@ extern void (*enemy_ride_armor_shot_state_funcs[])(struct WeaponObj*);
 void enemy_ride_armor_shot_main(struct WeaponObj*);
 void ride_armor_shot_despawn(struct WeaponObj*);
 
+extern u8 ride_armor_shot_hit_box[4];
+extern s16 ride_armor_shot_offsets[2][2];
+
+#include "weapon_resources.h"
+
 void ride_armor_shot_update(struct WeaponObj* arg0)
 {
     ride_armor_shot_state_funcs[arg0->state](arg0);
 }
 
 // ride_armor_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098AF8(struct WeaponObj* arg0);
 static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1);
 void func_80098DA0(struct WeaponObj* arg0);
@@ -44,7 +50,7 @@ static s32 weapon_59_distance(s32 x0, s32 y0, s32 x1, s32 y1)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098AF8(struct WeaponObj* arg0)
 {
     s32 dx;
@@ -126,7 +132,7 @@ void enemy_ride_armor_shot_update(struct ShotObj* arg0)
 }
 
 // ride_armor_missile_find_target
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098DA0(struct WeaponObj* arg0)
 {
     struct MainObj* main;

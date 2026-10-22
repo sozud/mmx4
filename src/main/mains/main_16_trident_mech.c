@@ -1,14 +1,16 @@
 // MainObj, main_object_update_funcs[16]
 // 8004E890..8004FF90
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_16_trident_mech.h"
 #include "main/objects.h"
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/object_motion.h"
+#include "main/1CF60.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1CF60.h"
 #endif
 
@@ -68,7 +70,8 @@ void trident_mech_update(struct MainObj* self)
 }
 
 // trident_mech_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E8E0(struct MainObj* arg0);
 void func_8004FD38(struct MainObj* arg0, s32 animation);
 void func_8004ED60(struct MainObj* arg0);
@@ -80,7 +83,7 @@ extern struct Unk_unk68 D_80106A74[];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004E8E0(struct MainObj* arg0)
 {
     arg0->hp = 0x10;
@@ -88,7 +91,7 @@ void func_8004E8E0(struct MainObj* arg0)
     arg0->invincibility_timer = 0;
     arg0->collision_data = D_80106A74;
     arg0->animation_table = (const u8* const*)trident_mech_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = &D_800FBBC8;
     arg0->hurt_box = &trident_mech_stunned_hurt_box;
     arg0->attack_box = &trident_mech_attack_box;
@@ -244,7 +247,7 @@ void trident_mech_idle_start(struct MainObj* self)
 }
 
 // trident_mech_idle_think
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004ED60(struct MainObj* arg0)
 {
     s32 random;
@@ -436,7 +439,7 @@ void trident_mech_charge_wind_up(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk7C % 10 == 0) {
-        func_8001540C(2, 0x27, self);
+        func_8001540C(2, SATURN_SOUND(0x27, 0x20), self);
     }
     if (--self->unk7C == 0) {
         set_animation(self, 0xD);
@@ -459,7 +462,7 @@ void trident_mech_charge_attack(struct MainObj* self)
     }
     if (self->animation_step.fields.event == 2) {
         self->ext.main_16.unk88 = 1;
-        func_8001540C(2, 0x28, self);
+        func_8001540C(2, SATURN_SOUND(0x28, 0x21), self);
     }
     if (self->animation_step.fields.event == 1) {
         self->contact_damage = 3;
@@ -501,10 +504,10 @@ void trident_mech_fan_shot_fire(struct MainObj* self)
 
     animate_object(ANIMATED_OBJECT(self));
     if (self->unk7C == 8) {
-        func_8001540C(2, 0x27, self);
+        func_8001540C(2, SATURN_SOUND(0x27, 0x20), self);
     }
     if (--self->unk7C == 0) {
-        func_8001540C(2, 0x29, self);
+        func_8001540C(2, SATURN_SOUND(0x29, 0x22), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -564,7 +567,7 @@ void trident_mech_double_shot_first(struct MainObj* self)
     }
 
     set_animation(self, 0x12);
-    func_8001540C(2, 0x29, self);
+    func_8001540C(2, SATURN_SOUND(0x29, 0x22), self);
     shot = find_free_shot_obj();
     if (shot != NULL) {
         shot->active = 0x41;
@@ -601,7 +604,7 @@ void trident_mech_double_shot_second(struct MainObj* self)
     }
 
     set_animation(self, 0x13);
-    func_8001540C(2, 0x29, self);
+    func_8001540C(2, SATURN_SOUND(0x29, 0x22), self);
     shot = find_free_shot_obj();
     if (shot != NULL) {
         shot->active = 0x41;
@@ -693,9 +696,7 @@ void trident_mech_wait_behind(struct MainObj* self)
 }
 
 // trident_mech_stunned
-#ifdef MMX4_PC
-// src/main/mains/main_16_trident_mech.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004FAE4(struct MainObj* self)
 {
     animate_object(ANIMATED_OBJECT(self));
@@ -754,7 +755,7 @@ void trident_mech_face_player(struct AnimatedObj* self)
     if (self->x_pos.val > g_Player.x_pos.val) {
         self->unk15 = 0;
     } else {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
 }
 
@@ -784,7 +785,7 @@ void trident_mech_fire_tracked_shot(struct MainObj* obj)
 }
 
 // trident_mech_set_part
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8004FD38(struct MainObj* arg0, s32 animation)
 {
     struct MiscObj* misc;
@@ -807,8 +808,8 @@ void func_8004FD38(struct MainObj* arg0, s32 animation)
         misc->active = 0x41;
         misc->id = 5;
         misc->animation_table = (u32**)common_effect_animations;
-        misc->unk42 = 0x7888;
-        misc->unk40 = (u16)((u32)D_801406A8[4] >> 7);
+        misc->unk42 = OBJECT_CLUT(0x7888);
+        misc->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(4));
         misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, 4);
         misc->bg_offset = arg0->bg_offset;
         misc->y_pos.val = arg0->y_pos.val + FIXED(6);
@@ -836,10 +837,10 @@ void func_8004FD38(struct MainObj* arg0, s32 animation)
     misc->unk2 = 1;
     misc->animation_table = (u32**)common_effect_animations;
     resource = func_8002938C(0x84);
-    misc->unk40 = (u16)((u32)D_801406A8[resource] >> 7);
+    misc->unk40 = (u16)((u32)OBJECT_STAGE_TEXTURE(resource));
     resource = func_8002938C(0x84);
     misc->unk3C = SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, resource);
-    misc->unk42 = 0x7888;
+    misc->unk42 = OBJECT_CLUT(0x7888);
     misc->bg_offset = arg0->bg_offset;
     misc->y_pos.val = arg0->y_pos.val + FIXED(6);
     misc->unk15 = arg0->unk15;
@@ -863,170 +864,170 @@ struct Unk_unk68 trident_mech_charge_attack_box = { -89, -1, 69, 13 };
 struct Unk_unk68 D_800FBBC8 = { 2, 2, 18, 26 };
 
 union AnimationStep trident_mech_anim_0[] = {
-    { 0x00010007 },
-    { 0x00000101 },
+    { 7, 0, 1, 0x00 },
+    { 1, 1, 0, 0x00 },
 };
 
 union AnimationStep trident_mech_anim_1[] = {
-    { 0x01010007 },
-    { 0x01000101 },
+    { 7, 0, 1, 0x01 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep trident_mech_anim_2[] = {
-    { 0x0A010003 },
-    { 0x0BFF0103 },
+    { 3, 0, 1, 0x0A },
+    { 3, 1, -1, 0x0B },
 };
 
 union AnimationStep trident_mech_anim_16[] = {
-    { 0x0C010001 },
-    { 0x0D010002 },
-    { 0x0C000101 },
+    { 1, 0, 1, 0x0C },
+    { 2, 0, 1, 0x0D },
+    { 1, 1, 0, 0x0C },
 };
 
 union AnimationStep trident_mech_anim_3[] = {
-    { 0x0C010008 },
-    { 0x0D010008 },
-    { 0x0C01001B },
-    { 0x0C000101 },
+    { 8, 0, 1, 0x0C },
+    { 8, 0, 1, 0x0D },
+    { 27, 0, 1, 0x0C },
+    { 1, 1, 0, 0x0C },
 };
 
 union AnimationStep trident_mech_anim_4[] = {
-    { 0x02010003 },
-    { 0x03000101 },
+    { 3, 0, 1, 0x02 },
+    { 1, 1, 0, 0x03 },
 };
 
 union AnimationStep trident_mech_anim_5[] = {
-    { 0x04010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x07010001 },
-    { 0x05010001 },
-    { 0x06FB0101 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 0, 1, 0x07 },
+    { 1, 0, 1, 0x05 },
+    { 1, 1, -5, 0x06 },
 };
 
 union AnimationStep trident_mech_anim_6[] = {
-    { 0x11010002 },
-    { 0x11000101 },
+    { 2, 0, 1, 0x11 },
+    { 1, 1, 0, 0x11 },
 };
 
 union AnimationStep trident_mech_anim_7[] = {
-    { 0x0E010001 },
-    { 0x10010001 },
-    { 0x0FFE0101 },
+    { 1, 0, 1, 0x0E },
+    { 1, 0, 1, 0x10 },
+    { 1, 1, -2, 0x0F },
 };
 
 union AnimationStep trident_mech_anim_10[] = {
-    { 0x12010001 },
-    { 0x13FF0101 },
+    { 1, 0, 1, 0x12 },
+    { 1, 1, -1, 0x13 },
 };
 
 union AnimationStep trident_mech_anim_9[] = {
-    { 0x14010001 },
-    { 0x15FF0101 },
+    { 1, 0, 1, 0x14 },
+    { 1, 1, -1, 0x15 },
 };
 
 union AnimationStep trident_mech_anim_8[] = {
-    { 0x16010001 },
-    { 0x17FF0101 },
+    { 1, 0, 1, 0x16 },
+    { 1, 1, -1, 0x17 },
 };
 
 union AnimationStep trident_mech_anim_13[] = {
-    { 0x18010014 },
-    { 0x1A010002 },
-    { 0x19010201 },
-    { 0x19010001 },
-    { 0x1B010001 },
-    { 0x1C010013 },
-    { 0x1C000101 },
+    { 20, 0, 1, 0x18 },
+    { 2, 0, 1, 0x1A },
+    { 1, 2, 1, 0x19 },
+    { 1, 0, 1, 0x19 },
+    { 1, 0, 1, 0x1B },
+    { 19, 0, 1, 0x1C },
+    { 1, 1, 0, 0x1C },
 };
 
 union AnimationStep trident_mech_anim_14[] = {
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x1E010002 },
-    { 0x1D010002 },
-    { 0x1E010001 },
-    { 0x1E000101 },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 2, 0, 1, 0x1E },
+    { 2, 0, 1, 0x1D },
+    { 1, 0, 1, 0x1E },
+    { 1, 1, 0, 0x1E },
 };
 
 union AnimationStep trident_mech_anim_15[] = {
-    { 0x1F010002 },
-    { 0x20010002 },
-    { 0x21FE0002 },
+    { 2, 0, 1, 0x1F },
+    { 2, 0, 1, 0x20 },
+    { 2, 0, -2, 0x21 },
 };
 
 union AnimationStep trident_mech_anim_17[] = {
-    { 0x00010008 },
-    { 0x23010002 },
-    { 0x22010022 },
-    { 0x22000101 },
+    { 8, 0, 1, 0x00 },
+    { 2, 0, 1, 0x23 },
+    { 34, 0, 1, 0x22 },
+    { 1, 1, 0, 0x22 },
 };
 
 union AnimationStep trident_mech_anim_18[] = {
-    { 0x24010002 },
-    { 0x2501000E },
-    { 0x25000101 },
+    { 2, 0, 1, 0x24 },
+    { 14, 0, 1, 0x25 },
+    { 1, 1, 0, 0x25 },
 };
 
 union AnimationStep trident_mech_anim_19[] = {
-    { 0x26010002 },
-    { 0x2701000E },
-    { 0x27000101 },
+    { 2, 0, 1, 0x26 },
+    { 14, 0, 1, 0x27 },
+    { 1, 1, 0, 0x27 },
 };
 
 union AnimationStep trident_mech_anim_11[] = {
-    { 0x28010002 },
-    { 0x29FF0102 },
+    { 2, 0, 1, 0x28 },
+    { 2, 1, -1, 0x29 },
 };
 
 union AnimationStep trident_mech_anim_12[] = {
-    { 0x2A010002 },
-    { 0x2BFF0002 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, -1, 0x2B },
 };
 
 union AnimationStep trident_mech_anim_20[] = {
-    { 0x2C010003 },
-    { 0x2D010003 },
-    { 0x2E010003 },
-    { 0x2F010003 },
-    { 0x30010003 },
-    { 0x31010003 },
-    { 0x32010003 },
-    { 0x33010002 },
-    { 0x33000101 },
+    { 3, 0, 1, 0x2C },
+    { 3, 0, 1, 0x2D },
+    { 3, 0, 1, 0x2E },
+    { 3, 0, 1, 0x2F },
+    { 3, 0, 1, 0x30 },
+    { 3, 0, 1, 0x31 },
+    { 3, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 1, 1, 0, 0x33 },
 };
 
 union AnimationStep trident_mech_anim_21[] = {
-    { 0x34000101 },
+    { 1, 1, 0, 0x34 },
 };
 
 union AnimationStep trident_mech_anim_22[] = {
-    { 0x35000101 },
+    { 1, 1, 0, 0x35 },
 };
 
 union AnimationStep trident_mech_anim_23[] = {
-    { 0x36000101 },
+    { 1, 1, 0, 0x36 },
 };
 
 union AnimationStep trident_mech_anim_24[] = {
-    { 0x37000101 },
+    { 1, 1, 0, 0x37 },
 };
 
 union AnimationStep trident_mech_anim_25[] = {
-    { 0x38000101 },
+    { 1, 1, 0, 0x38 },
 };
 
 union AnimationStep trident_mech_anim_26[] = {
-    { 0x39000101 },
+    { 1, 1, 0, 0x39 },
 };
 
 union AnimationStep trident_mech_anim_27[] = {
-    { 0x3A000101 },
+    { 1, 1, 0, 0x3A },
 };
 
 union AnimationStep trident_mech_anim_28[] = {
-    { 0x3B000101 },
+    { 1, 1, 0, 0x3B },
 };
 
 union AnimationStep* trident_mech_animations[29] = {

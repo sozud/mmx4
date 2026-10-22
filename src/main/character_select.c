@@ -11,6 +11,22 @@
 #include "main/object_update.h"
 #include "main/stage_objects.h"
 #include "main/xa_sequence_data.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#define SELECT_PAD_PRESSED saturn_pad_pressed
+#define SELECT_PAD_HELD saturn_pad_held
+#define SELECT_PAD_X (SATURN_PAD_DOWN | SATURN_PAD_LEFT)
+#define SELECT_PAD_ZERO (SATURN_PAD_UP | SATURN_PAD_RIGHT)
+#define SELECT_PAD_CONFIRM (SATURN_PAD_START | SATURN_PAD_CONFIRM)
+#define SELECT_PAD_SHOULDER SATURN_PAD_R
+#else
+#define SELECT_PAD_PRESSED controller_input.pressed
+#define SELECT_PAD_HELD controller_input.held
+#define SELECT_PAD_X (PADLdown | PADLleft)
+#define SELECT_PAD_ZERO (PADLup | PADLright)
+#define SELECT_PAD_CONFIRM (PAD_CONFIRM | PADstart)
+#define SELECT_PAD_SHOULDER PADR1
+#endif
 
 // D_800F4498
 extern void (*character_select_state_2_update_funcs[])(struct EngineObj*);
@@ -45,12 +61,19 @@ void character_select_state_0(struct EngineObj* arg0)
     func_80028BF0();
     func_8002771C();
     func_80023CE0();
+#ifdef MMX4_SATURN
+    need_palette_load |= 1;
+    saturn_display_mode = 4;
+    func_800127C8(1);
+    saturn_music_start(arg0->stage, 0);
+#else
     palette_load = need_palette_load;
     background_objects[0].unk3 = 0;
     background_objects[1].unk3 = 0;
     background_objects[2].unk3 = 1;
     need_palette_load = palette_load | 1;
     func_8001663C(MUSIC_CHARACTER_SELECT, 0x70);
+#endif
     arg0->unk37 = 0;
     func_800129A4(8);
     arg0->cur_character = CHARACTER_X;
@@ -83,10 +106,14 @@ void character_select_state_1(struct EngineObj* arg0)
         if (arg0->character_state.bytes[2] != 0) {
             arg0->unk2 = 0;
             arg0->unk1 = (u8)(arg0->unk1 + 1);
+#ifdef MMX4_SATURN
+            D_8013E188[0] = 0x4F;
+#else
             D_8013E188[0] = -1;
             D_8013E188[1] = -1;
             D_8013E188[2] = -1;
             D_8013E188[3] = -1;
+#endif
             arg0->unk4 = 2;
         }
     }
@@ -104,11 +131,15 @@ void character_select_state_2_substate_0(struct EngineObj* arg0)
         g_FilterAmountR = 0;
         g_FilterAmountG = 0;
         g_FilterAmountB = 0;
+#ifdef MMX4_SATURN
+        D_8013E188[0] = 0;
+#else
         D_8013E188[0] = 0;
         D_8013E188[1] = 0;
         D_8013E188[2] = 0;
         D_8013E188[3] = 0;
         need_palette_load |= 1;
+#endif
     }
 }
 
@@ -165,11 +196,11 @@ void character_select_state_3(struct EngineObj* arg0)
     s8 temp_v1;
 
     // select X
-    if (controller_input.pressed & (PADLdown | PADLleft)) {
+    if (SELECT_PAD_PRESSED & SELECT_PAD_X) {
         arg0->cur_character = CHARACTER_X;
     }
     // select Zero
-    if (controller_input.pressed & (PADLup | PADLright)) {
+    if (SELECT_PAD_PRESSED & SELECT_PAD_ZERO) {
         arg0->cur_character = CHARACTER_ZERO;
     }
     temp_v1 = arg0->character_state.bytes[3];
@@ -179,10 +210,14 @@ void character_select_state_3(struct EngineObj* arg0)
         engine_obj.character_state.fields.secret_code_phase = 0;
         arg0->unk37 = 0;
     }
-    if (controller_input.pressed & (PAD_CONFIRM | PADstart)) {
+    if (SELECT_PAD_PRESSED & SELECT_PAD_CONFIRM) {
         arg0->character_state.bytes[0] = 1;
         arg0->unk1++;
+#ifdef MMX4_SATURN
+        func_8001540C(0, 0x1C, 0);
+#else
         func_8001540C(5, 1, 0);
+#endif
     }
     arg0->character_state.bytes[3] = arg0->cur_character;
 }
@@ -214,12 +249,20 @@ void character_select_state_5(struct EngineObj* arg0)
 void character_select_state_6(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
+#ifdef MMX4_SATURN
+        saturn_vram_clear_alternate(8);
+        saturn_sound_stop_all();
+        saturn_display_mode = 0;
+        saturn_stage_commit_video();
+        reset_objects();
+#else
         func_8001D134();
         background_objects[0].unk3 = 0;
         background_objects[1].unk3 = 0;
         background_objects[2].unk3 = 0;
         reset_objects();
         func_80012EB8();
+#endif
         arg0->state = 3;
         arg0->unk1 = 0;
         arg0->stage = 0;
@@ -230,7 +273,11 @@ void character_select_state_6(struct EngineObj* arg0)
 void engine_state_1(struct EngineObj* arg0)
 {
     D_800F44A8[arg0->unk1](arg0);
+#ifdef MMX4_SATURN
+    saturn_sprite_reset_queues();
+#else
     func_8002B460();
+#endif
     update_misc_objects();
     func_8002A484();
     func_80023D68();
@@ -244,8 +291,8 @@ INCLUDE_ASM("main/nonmatchings/character_select", func_80029BD8);
 void func_80029A48(void)
 {
     s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
-    u16 input = controller_input.pressed;
-    u16 held = controller_input.held;
+    u16 input = SELECT_PAD_PRESSED;
+    u16 held = SELECT_PAD_HELD;
 
     switch (engine_obj.character_state.fields.secret_code_phase) {
     case 0:
@@ -272,7 +319,7 @@ void func_80029A48(void)
         if (input == 0) {
             break;
         }
-        if (input & (PADstart | PAD_CONFIRM)) {
+        if (input & SELECT_PAD_CONFIRM) {
             u16 expected = D_800F44C4[engine_obj.character_state.fields.secret_code_index];
 
             if ((held & expected) == expected) {
@@ -290,14 +337,14 @@ void func_80029A48(void)
 void func_80029BD8(void)
 {
     s8* const phase = &engine_obj.character_state.fields.secret_code_phase;
-    u16 input = controller_input.pressed;
-    u16 held = controller_input.held;
+    u16 input = SELECT_PAD_PRESSED;
+    u16 held = SELECT_PAD_HELD;
 
     switch (engine_obj.character_state.fields.secret_code_phase) {
     case 0:
         engine_obj.character_state.fields.secret_code_index = 0;
         if (input != 0 && input == D_800F44D8[0]) {
-            if (held != (D_800F44D8[0] | PADR1)) {
+            if (held != (D_800F44D8[0] | SELECT_PAD_SHOULDER)) {
                 *phase = 0;
             } else {
                 engine_obj.character_state.fields.secret_code_index = 1;
@@ -309,7 +356,7 @@ void func_80029BD8(void)
         if (input == 0) {
             break;
         }
-        if (input != D_800F44D8[engine_obj.character_state.fields.secret_code_index] || held != (D_800F44D8[engine_obj.character_state.fields.secret_code_index] | PADR1)) {
+        if (input != D_800F44D8[engine_obj.character_state.fields.secret_code_index] || held != (D_800F44D8[engine_obj.character_state.fields.secret_code_index] | SELECT_PAD_SHOULDER)) {
             *phase = 0;
             break;
         }
@@ -321,7 +368,7 @@ void func_80029BD8(void)
     case 2:
         if (held == 0) {
             (*phase)++;
-        } else if (!(held & (D_800F44D8[engine_obj.character_state.fields.secret_code_index - 1] | PADR1)) || input != 0) {
+        } else if (!(held & (D_800F44D8[engine_obj.character_state.fields.secret_code_index - 1] | SELECT_PAD_SHOULDER)) || input != 0) {
             *phase = 0;
         }
         break;
@@ -329,7 +376,7 @@ void func_80029BD8(void)
         if (input == 0) {
             break;
         }
-        if (input & (PADstart | PAD_CONFIRM)) {
+        if (input & SELECT_PAD_CONFIRM) {
             u16 expected = D_800F44D8[engine_obj.character_state.fields.secret_code_index];
 
             if ((held & expected) == expected) {
@@ -379,7 +426,29 @@ void (*D_800F44A8[])(struct EngineObj*) = {
     character_select_state_6,
 };
 
-#ifdef MMX4_WIN32
+#ifdef MMX4_SATURN
+u16 D_800F44C4[9] = {
+    SATURN_PAD_B,
+    SATURN_PAD_B,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_LEFT,
+    SATURN_PAD_R | SATURN_PAD_L,
+};
+
+u16 D_800F44D8[7] = {
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_RIGHT,
+    SATURN_PAD_B,
+};
+#elif defined(MMX4_WIN32)
 u32 D_800F44D8 = 0x4000;
 u32 D_800F44C4 = 0x1000;
 #else

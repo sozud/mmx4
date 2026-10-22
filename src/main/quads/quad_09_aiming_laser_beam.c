@@ -3,8 +3,10 @@
 #include "common.h"
 #include "main/quads/quad_09_aiming_laser_beam.h"
 #include "main/objects.h"
+#include "weapon_resources.h"
+#include "main/sprite_animations.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/sprite_animations.h"
 #endif
 
@@ -54,7 +56,7 @@ void aiming_laser_beam_init(struct QuadObj* arg0, struct PlayerObj* arg1, struct
 {
     struct QuadUnkExt3* ext = &arg0->ext.unk_ext3;
     arg0->active = -0x7D;
-    arg0->on_screen = 1;
+    QUAD_SET_ON_SCREEN(arg0);
     arg0->bg_offset = arg1->bg_offset;
     arg0->unk34 = arg0->unk2 + 0xD;
     arg0->unk36 = 1;
@@ -78,7 +80,7 @@ void aiming_laser_beam_main(struct QuadObj* arg0, struct PlayerObj* arg1, struct
 }
 
 // aiming_laser_beam_place
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D69A8(struct QuadObj* arg0, struct PlayerObj* player, struct PlayerObj* target)
 {
     const s8* offsets = (const s8*)&D_8011B230 + player->animation_step.fields.frame_index * 2;

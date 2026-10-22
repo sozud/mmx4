@@ -21,6 +21,7 @@ void gate_core_destroyed(struct ItemObj*);
 
 void gate_core_exit(struct ItemObj*);
 void gate_core_wait_exit(struct ItemObj*);
+#include "weapon_resources.h"
 
 void gate_core_update(struct ItemObj* arg0)
 {
@@ -38,7 +39,7 @@ void gate_core_init(struct ItemObj* arg0)
     arg0->active = 0x41;
     arg0->unk75 = 1;
     bg_offset = g_Player.bg_offset;
-    arg0->unk16 = 5;
+    arg0->unk16 = VISUAL_SATURN_LAYER(5);
     arg0->unk5C = 0x20;
     arg0->unk15 = 0;
     arg0->unk61 = 0;
@@ -52,12 +53,12 @@ void gate_core_init(struct ItemObj* arg0)
     arg0->unk2C = 0;
     arg0->animation_step.fields.frame_index = 0;
     frame_index = func_8002938C(0x98) & 0xFF;
-    arg0->unk40 = D_801406A8[frame_index] >> 7;
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(frame_index);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[frame_index];
     if (arg0->unk2 == 0) {
-        arg0->unk42 = 0x79CE;
+        arg0->unk42 = OBJECT_CLUT(0x79CE);
     } else {
-        arg0->unk42 = 0x7946;
+        arg0->unk42 = OBJECT_CLUT(0x7946);
     }
     arg0->animation_table = (const u8* const*)gate_core_animations;
     arg0->state = (u8)arg0->state + 1;
@@ -92,10 +93,10 @@ void gate_core_destroyed(struct ItemObj* self)
     timer = self->unk7C.timer - 1;
     self->unk7C.timer = timer;
     if (timer != 0) {
-        if (!(main_bss_state.frame_counter & 7)) {
+        if (!(WEAPON_FRAME_COUNTER & 7)) {
             func_800AF878(BASE_OBJECT(self), 1, 0x1F, 0x3F);
         }
-        if (!(main_bss_state.frame_counter & 0xF)) {
+        if (!(WEAPON_FRAME_COUNTER & 0xF)) {
             func_8001540C(0, gate_core_explosion_sounds[get_random() & 3][0], self);
         }
     } else {
@@ -107,7 +108,7 @@ void gate_core_destroyed(struct ItemObj* self)
 
 void gate_core_exit(struct ItemObj* arg0)
 {
-    player_start_script_action(0x15, 0x40);
+    player_start_script_action(0x15, PLAYER_FACING_RIGHT);
     arg0->state++;
 }
 
@@ -147,7 +148,7 @@ extern u8 gate_core_debris[3][4];
 
 extern u8 gate_core_explosion_sounds[4][4];
 extern s16 gate_core_exit_x[2];
-extern u16 rising_platform_start_y[2];
+extern u8 rising_platform_start_y[4];
 
 extern struct Item06AnimationStep rising_platform_anim_steps[5];
 

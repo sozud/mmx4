@@ -15,11 +15,16 @@ void gravity_switch_despawn(struct ItemObj*);
 extern void (*gravity_switch_step_funcs[])(struct ItemObj*);
 void gravity_switch_wait_touch(struct ItemObj*);
 void gravity_switch_activate(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item20BackgroundConfig {
     u16 first;
     u16 second;
 };
+
+#ifdef MMX4_SATURN
+#include "saturn/game_low.h"
+#endif
 
 u8 gravity_switch_terrain_box[4] = { 0, 0, 8, 8 };
 u8 gravity_switch_hit_box[4] = { 0xF8, 0xF8, 0x10, 0x10 };
@@ -44,16 +49,16 @@ void gravity_switch_update(struct ItemObj* arg0)
 void func_800C4D20(struct ItemObj* self)
 {
     self->active = 0x41;
-    self->unk16 = 6;
-    self->unk40 = D_801406A8[func_8002938C(0x9C)] >> 7;
+    self->unk16 = VISUAL_SATURN_LAYER(6);
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x9C));
 
     self->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_MENU_FRAMES, func_8002938C(0x9C));
 
-    self->unk42 = SOME_COORDINATE_CONVERSION(func_8002938C(0x9C));
+    self->unk42 = VISUAL_STAGE_PALETTE(func_8002938C(0x9C));
 
     self->animation_step.fields.frame_index = self->unk2 & 7;
     if (self->unk2 & 8) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -87,32 +92,39 @@ void gravity_switch_wait_touch(struct ItemObj* arg0)
 
 void gravity_switch_activate(struct ItemObj* arg0)
 {
-    func_8001540C(2, 0xEC, arg0);
+    func_8001540C(2, SATURN_SOUND(0xEC, 0xAD), arg0);
     arg0->unk5 = 2;
 }
 
 // gravity_switch_flip
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4F40(struct ItemObj* self);
 void func_800C5210(struct ItemObj* self);
 void gravity_switch_flip_objects(void);
 void func_800C5210(struct ItemObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C4F40(struct ItemObj* self)
 {
-    for (u32 i = 0; i < 3; i++)
+    u32 i;
+#ifndef MMX4_SATURN
+    for (i = 0; i < 3; i++)
         background_objects[i].unk4C = 1;
+#endif
 
     g_Player.y_pos.val = 0x8000000 - g_Player.y_pos.val;
     g_Player.unk1C.val = 0x8000000 - g_Player.unk1C.val;
     background_objects[0].y_pos.val = 0x7000000 - background_objects[0].y_pos.val;
     background_objects[0].unk18.val = 0x7000000 - background_objects[0].unk18.val;
-    for (u32 i = 1; i < 3; i++) {
+    for (i = 1; i < 3; i++) {
         background_objects[i].y_pos.val = 0x9000000 - background_objects[i].y_pos.val;
         background_objects[i].unk18.val = 0x9000000 - background_objects[i].unk18.val;
     }
+#ifdef MMX4_SATURN
+    saturn_background_refresh();
+#endif
     gravity_switch_flip_objects();
     engine_obj.character_state.bytes[0] = 1 - (u8)engine_obj.character_state.bytes[0];
     func_800C5210(self);
@@ -174,16 +186,16 @@ void gravity_switch_flip_objects(void)
 }
 
 // gravity_switch_flip_camera
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C5210(struct ItemObj* self)
 {
     u32 index = (u8)self->unk2 >> 4;
     s32 offset = engine_obj.character_state.bytes[0] ? 1 : -1;
 
-    background_objects[0].unk22 = ((u16*)gravity_switch_camera_bounds)[index * 2];
-    background_objects[0].unk2A = ((u16*)gravity_switch_camera_bounds)[index * 2];
-    background_objects[0].unk20 = ((u16*)gravity_switch_camera_bounds)[index * 2 + 1];
-    background_objects[0].unk28 = ((u16*)gravity_switch_camera_bounds)[index * 2 + 1];
+    background_objects[0].unk22 = gravity_switch_camera_bounds[index].first;
+    background_objects[0].unk2A = gravity_switch_camera_bounds[index].first;
+    background_objects[0].unk20 = gravity_switch_camera_bounds[index].second;
+    background_objects[0].unk28 = gravity_switch_camera_bounds[index].second;
     background_objects[1].unk42 += 0x80 * offset;
     background_objects[2].unk42 += 0xC0 * offset;
 }

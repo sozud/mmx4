@@ -1,6 +1,14 @@
 // WeaponObj, weapon_object_update_funcs[6]
 // 800961B0..80096E10
 #include "common.h"
+#include "main/player_weapon.h"
+#include "main/player_check.h"
+
+extern struct Unk_unk68 aiming_laser_reticle_box[];
+extern struct Unk_unk68 aiming_laser_charged_box[];
+void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player);
+
+#include "weapon_resources.h"
 #include "scratchpad.h"
 #include "main/objects.h"
 #include "main/weapons/weapon_06_aiming_laser_charged.h"
@@ -9,7 +17,7 @@
 #include "main/player_common.h"
 #include "main/sprite_animations.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/player_check.h"
 #include "main/player_weapon.h"
 #endif
@@ -26,7 +34,8 @@ void aiming_laser_charged_despawn(struct WeaponObj*);
 void aiming_laser_charged_despawn(struct WeaponObj*);
 
 // aiming_laser_update
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player);
 void func_800961B0(struct WeaponObj* arg0);
 void func_80096B54(struct WeaponObj* self);
@@ -38,7 +47,7 @@ void aiming_laser_reticle_place(struct WeaponObj* arg0, struct PlayerObj* arg1);
 extern struct Unk_unk68 aiming_laser_charged_box[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800961B0(struct WeaponObj* arg0)
 {
     struct PlayerObj* player = &g_Player;
@@ -100,8 +109,8 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
     arg0->unk38 = (u8*)player_gfx + gfx_offset;
     frames_offset = sprite_frames[0x3C / 4];
     arg0->animation_table = D_8011C0E4;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0x12;
     arg0->ext.weapon_6.direction = 8;
     arg0->unk3C = (u8*)sprite_frames + frames_offset;
@@ -111,7 +120,7 @@ void aiming_laser_reticle_init(struct WeaponObj* arg0, struct PlayerObj* arg1)
 }
 
 // aiming_laser_reticle_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800963E8(struct WeaponObj* arg0, struct PlayerObj* player)
 {
     s32 hidden = player->weapon_energy[6] == 0;
@@ -210,7 +219,7 @@ s32 aiming_laser_try_lock_on(struct WeaponObj* arg0, struct PlayerObj* player, s
         if (player_spawn_weapon(1, 6, slot, PLAYER_OBJECT(lock_target)) != NULL) {
             player->weapon_06_slots[slot] = lock_target;
             player->special_shot_count++;
-            func_8001540C(0, 0x1C, arg0);
+            func_8001540C(0, WEAPON_SOUND_LASER_LOCK, arg0);
         }
         arg0->unk50 = NULL;
         update_on_screen(BASE_OBJECT(arg0), 0x18, 0x18);
@@ -230,8 +239,8 @@ void aiming_laser_marker_init(struct WeaponObj* arg0)
     sprite_frames = SP_SPRITE_FRAMES;
     arg0->unk3C = (u8*)sprite_frames + (sprite_frames[0x3C / 4]);
     arg0->animation_table = D_8011C0E4;
-    arg0->unk40 = 0x520;
-    arg0->unk42 = 0x7801;
+    arg0->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    arg0->unk42 = WEAPON_PALETTE_1;
     arg0->unk16 = 0x12;
     arg0->unk15 = 0;
     set_animation(arg0, 2);
@@ -347,13 +356,13 @@ void aiming_laser_charged_init(struct WeaponObj* arg0)
     } while (i < 4);
 
     aiming_laser_charged_aim(arg0, &g_Player);
-    func_8001540C(0, 0x1D, arg0);
+    func_8001540C(0, WEAPON_SOUND_LASER_CHARGE, arg0);
     arg0->unk5 = 0;
     arg0->state = (u8)arg0->state + 1;
 }
 
 // aiming_laser_charged_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80096B54(struct WeaponObj* self)
 {
     struct Weapon6Ext* ext = &self->ext.weapon_6;
@@ -415,7 +424,11 @@ void aiming_laser_charged_aim(struct WeaponObj* self, struct PlayerObj* player)
 void aiming_laser_charged_despawn(struct WeaponObj* arg0)
 {
     arg0->unk50 = 0;
+#ifdef MMX4_SATURN
+    func_8001540C(6, 1, NULL);
+#else
     stop_sound(0, 0x1D);
+#endif
     g_Player.special_shot_count--;
     ZeroObjectState(OBJECT_HEADER(arg0));
 }

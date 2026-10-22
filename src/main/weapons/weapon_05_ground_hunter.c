@@ -8,10 +8,7 @@
 #include "main/objects.h"
 #include "main/sprite_animations.h"
 #include "main/weapons/weapon_22_nova_strike_hitbox.h"
-
-#ifdef MMX4_PC
 #include "main/player_common.h"
-#endif
 
 extern struct Unk_unk68 ground_hunter_crawl_box[];
 extern struct Unk_unk68 ground_hunter_rise_box[];
@@ -42,6 +39,15 @@ void ground_hunter_despawn(struct WeaponObj*);
 // ground_hunter_charged_step_funcs
 extern void (*ground_hunter_charged_step_funcs[])(struct WeaponObj*);
 void ground_hunter_charged_wait_fire(struct WeaponObj*);
+
+extern struct Unk_unk68 ground_hunter_charged_hit_box[];
+extern struct Unk_unk68 ground_hunter_charged_shot_box[];
+
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/player_common.h"
+#endif
 
 s32 ground_hunter_check_wall(struct WeaponObj* arg0);
 void ground_hunter_start_rise(struct WeaponObj* arg0);
@@ -83,8 +89,8 @@ void func_80095854(struct WeaponObj* self)
     self->unk38 = (u8*)SP_ARCHIVE_ENTRY(SP_PLAYER_GFX, 6);
     self->unk3C = (u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 14);
     self->animation_table = D_8011C0C8;
-    self->unk40 = 0x520;
-    self->unk42 = 0x7801;
+    self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    self->unk42 = WEAPON_PALETTE_1;
     self->unk16 = 0;
     self->unk15 = player->unk15;
 
@@ -276,25 +282,25 @@ void ground_hunter_charged_update(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80095E3C(struct WeaponObj* self);
 void func_80096060(struct WeaponObj* self);
-extern u32* D_8011C0C8[];
 // src/main/weapons/weapon_05_ground_hunter.c
 
 extern struct Unk_unk68 ground_hunter_charged_hit_box[];
 extern struct Unk_unk68 ground_hunter_charged_shot_box[];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80095E3C(struct WeaponObj* self)
 {
     self->on_screen = 1;
     self->unk38 = (u8*)SP_PLAYER_GFX + SP_PLAYER_GFX[6];
     self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[14];
     self->animation_table = D_8011C0C8;
-    self->unk40 = 0x520;
-    self->unk42 = 0x7801;
+    self->unk40 = WEAPON_TEXTURE_SPECIAL_0;
+    self->unk42 = WEAPON_PALETTE_1;
     self->x_vel.val = self->unk28.val = self->y_vel.val = self->unk2C = 0;
     self->unk15 = g_Player.unk15;
     set_animation(self, self->unk2 + 3);
@@ -344,7 +350,7 @@ void ground_hunter_charged_wait_fire(struct WeaponObj* arg0)
 }
 
 // ground_hunter_charged_fire
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80096060(struct WeaponObj* self)
 {
     struct Weapon14Ext* ext = &self->ext.weapon_14;

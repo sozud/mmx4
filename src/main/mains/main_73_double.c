@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[73]
 // 8008BA38..8008D3B8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_73_double.h"
 #include "main/objects.h"
 #include "main/player_common.h"
@@ -9,8 +10,10 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/stage_objects.h"
+#include "main/collision_bounds.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/collision_bounds.h"
 #endif
@@ -45,7 +48,11 @@ extern void (*double_death_funcs[7])(struct MainObj*);
 extern void (*double_state_funcs[])(struct MainObj*);
 
 // double_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008CD80(struct MainObj* self);
 void func_8008C10C(struct MainObj* self);
 void func_8008BA38(struct MainObj* self);
@@ -63,7 +70,7 @@ extern void* double_script_table_1[2];
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008BA38(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
@@ -92,14 +99,14 @@ void func_8008BA38(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     ext->blink_delay = 0;
     ext->unk8A = 0;
     self->unk18 = self->x_pos;
     self->unk1C = self->y_pos;
     self->bg_offset = g_Player.bg_offset;
     index = func_8002938C(0x49);
-    self->unk40 = D_801406A8[index] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(index);
     set_animation(self, 0);
 }
 #else
@@ -107,7 +114,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_73_double", func_8008BA38);
 #endif
 
 // double_intro_warning
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008BB6C(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
@@ -122,7 +129,7 @@ void func_8008BB6C(struct MainObj* self)
                 effect->id = 0x18;
                 ext->unk80.effect = effect;
             }
-            player_start_script_action(0x14, 0x40);
+            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
             self->unk6 = 1;
             self->unk7 = 0;
             break;
@@ -170,7 +177,7 @@ void double_intro_wait_dialogue(struct MainObj* self)
     if (abc_object.unkC == 0) {
         self->unk6++;
         engine_obj.enable_boss = 1;
-        func_8001540C(2, 0xF8, NULL);
+        func_8001540C(2, SATURN_SOUND(0xF8, 0xD5), NULL);
     }
 }
 
@@ -190,7 +197,7 @@ void double_intro_fill_health(struct MainObj* self)
         if (self->animation_step.fields.relative_step == 0) {
             if (self->hp < 0x30) {
                 if (--self->unk7C == 0) {
-                    func_8001540C(0, 0xE, 0);
+                    func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                     self->unk7C = 2;
                 }
                 self->hp++;
@@ -226,10 +233,10 @@ void double_face_player(struct MainObj* self)
         if (self->collision_flags & 1) {
             self->unk15 = 0;
         } else {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
     } else if ((self->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -289,7 +296,7 @@ void double_wait_start(struct MainObj* self)
 }
 
 // double_pick_attack
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008C10C(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
@@ -326,7 +333,7 @@ void double_energy_ball_windup(struct MainObj* self)
 {
     self->unk6++;
     set_animation(self, 3);
-    func_8001540C(2, 0xF4, NULL);
+    func_8001540C(2, SATURN_SOUND(0xF4, 0xD1), NULL);
 }
 
 void double_spawn_shot(struct MainObj*, s32, s32);
@@ -343,7 +350,7 @@ void double_energy_ball_throw(struct MainObj* self)
     if (self->animation_step.fields.event != 0) {
         double_face_player(self);
         double_spawn_shot(self, 0, 0);
-        func_8001540C(2, 0xF5, 0);
+        func_8001540C(2, SATURN_SOUND(0xF5, 0xD2), 0);
     }
 
     animate_object(ANIMATED_OBJECT(self));
@@ -378,7 +385,7 @@ void double_dive_leap(struct MainObj* self)
     self->gravity = 0;
     self->contact_damage = 9;
     set_animation(self, 4);
-    func_8001540C(2, 0xF6, NULL);
+    func_8001540C(2, SATURN_SOUND(0xF6, 0xD3), NULL);
 }
 
 void double_dive_rise(struct MainObj* self)
@@ -395,7 +402,7 @@ void double_dive_climb(struct MainObj* self)
     if (self->collision_flags & 4) {
         self->unk6 += 1;
         set_animation(self, 5);
-        func_8001540C(2, 0xF7, NULL);
+        func_8001540C(2, SATURN_SOUND(0xF7, 0xD4), NULL);
     } else {
         move_with_gravity(ANIMATED_OBJECT(self));
         animate_object(ANIMATED_OBJECT(self));
@@ -426,7 +433,7 @@ void double_dive_aim(struct MainObj* self)
         self->x_speed *= 8;
         self->y_speed *= 8;
         if ((self->x_pos.i.hi - g_Player.x_pos.i.hi) < 0) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk15 = 0;
         }
@@ -450,7 +457,7 @@ void double_dive_fall(struct MainObj* self)
         set_animation(self, 6);
         self->hurt_box = &double_hurt_box;
         self->attack_box = &double_attack_box;
-        func_8001540C(2, 0xF1, 0);
+        func_8001540C(2, SATURN_SOUND(0xF1, 0xCE), 0);
         return;
     }
 
@@ -469,7 +476,7 @@ void double_dive_fall(struct MainObj* self)
 #endif
 
 // double_dive_slide
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008C664(struct MainObj* self)
 {
     s32 direction;
@@ -484,7 +491,7 @@ void func_8008C664(struct MainObj* self)
         facing = (self->collision_flags >> 1) & 1;
     else
         facing = self->x_pos.i.hi < g_Player.x_pos.i.hi;
-    self->unk15 = facing ? 0x40 : 0;
+    self->unk15 = facing ? PLAYER_FACING_RIGHT : 0;
     direction = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     if (facing) {
         if ((u8)(direction - 2) < 14)
@@ -520,7 +527,7 @@ void double_dive_hit_wall(struct MainObj* self)
         set_animation(self, 8);
         self->hurt_box = (const u8*)&double_hurt_box;
         self->attack_box = (const u8*)&double_attack_box;
-        func_8001540C(2, 0xF7, 0);
+        func_8001540C(2, SATURN_SOUND(0xF7, 0xD4), 0);
     } else {
         move_with_gravity(ANIMATED_OBJECT(self));
         animate_object(ANIMATED_OBJECT(self));
@@ -551,7 +558,7 @@ void double_dive_land(struct MainObj* self)
         self->unk7C = 0;
         self->contact_damage = 6;
         double_face_player(self);
-        func_8001540C(2, 0xF1, NULL);
+        func_8001540C(2, SATURN_SOUND(0xF1, 0xCE), NULL);
         return;
     }
     move_with_gravity(ANIMATED_OBJECT(self));
@@ -692,7 +699,7 @@ void double_aerial_shot(struct MainObj* self)
 }
 
 // double_run
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8008CD80(struct MainObj* self)
 {
     struct Main73Ext* ext = &self->ext.main_73;
@@ -723,9 +730,10 @@ void func_8008CD80(struct MainObj* self)
         ext->blink_delay = 0x40;
         if (collision < 0x13 || collision > 0x17) {
             s32 kind = (get_random() & 1) ? 2 : 3;
+            s8 i;
             double_spawn_shot(self, kind, 0);
             double_spawn_shot(self, kind, 1);
-            for (s8 i = 0; i < 4; i++)
+            for (i = 0; i < 4; i++)
                 double_spawn_afterimage(self, i);
         }
     }
@@ -756,9 +764,9 @@ void double_death_start(struct MainObj* self)
 
     if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
         var_a1 = 0;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
-        var_a1 = 0x40;
+        var_a1 = PLAYER_FACING_RIGHT;
         self->unk15 = 0;
     }
     player_start_script_action(0x14, var_a1);
@@ -880,38 +888,38 @@ void double_update(struct MainObj* self)
 }
 
 union AnimationStep double_anim_0[] = {
-    { 0x00010008 },
-    { 0x01010003 },
-    { 0x02010006 },
-    { 0x03010006 },
-    { 0x04010003 },
-    { 0x03010002 },
-    { 0x04010002 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010002 },
-    { 0x06010003 },
-    { 0x07010003 },
-    { 0x08010006 },
-    { 0x09010008 },
-    { 0x0A010004 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010002 },
-    { 0x0A010002 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010001 },
-    { 0x0B010001 },
-    { 0x0A010024 },
-    { 0x0A000001 },
+    { 8, 0, 1, 0x00 },
+    { 3, 0, 1, 0x01 },
+    { 6, 0, 1, 0x02 },
+    { 6, 0, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 2, 0, 1, 0x03 },
+    { 2, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 2, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 6, 0, 1, 0x08 },
+    { 8, 0, 1, 0x09 },
+    { 4, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x0B },
+    { 2, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 1, 0, 1, 0x0A },
+    { 1, 0, 1, 0x0B },
+    { 36, 0, 1, 0x0A },
+    { 1, 0, 0, 0x0A },
 };
 
 struct Unk_unk68 double_anim_1[4] = {
@@ -931,15 +939,15 @@ struct Unk_unk68 double_anim_2[6] = {
 };
 
 union AnimationStep double_anim_3[] = {
-    { 0x0F010003 },
-    { 0x10010005 },
-    { 0x16010004 },
-    { 0x1701000C },
-    { 0x18010002 },
-    { 0x19010101 },
-    { 0x19010001 },
-    { 0x1A010002 },
-    { 0x1B00000C },
+    { 3, 0, 1, 0x0F },
+    { 5, 0, 1, 0x10 },
+    { 4, 0, 1, 0x16 },
+    { 12, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 1, 1, 1, 0x19 },
+    { 1, 0, 1, 0x19 },
+    { 2, 0, 1, 0x1A },
+    { 12, 0, 0, 0x1B },
 };
 
 u8 double_anim_4[16] = { 3, 0, 1, 15, 6, 0, 1, 16, 2, 1, 1, 17, 2, 0, 255, 18 };
@@ -955,8 +963,8 @@ struct Unk_unk68 double_anim_5[7] = {
 };
 
 union AnimationStep double_anim_6[] = {
-    { 0x23010004 },
-    { 0x2400000C },
+    { 4, 0, 1, 0x23 },
+    { 12, 0, 0, 0x24 },
 };
 
 struct Unk_unk68 double_anim_7[5] = {
@@ -968,35 +976,35 @@ struct Unk_unk68 double_anim_7[5] = {
 };
 
 union AnimationStep double_anim_8[] = {
-    { 0x2A010002 },
-    { 0x13000003 },
+    { 2, 0, 1, 0x2A },
+    { 3, 0, 0, 0x13 },
 };
 
 u8 double_anim_9[8] = { 2, 0, 1, 43, 2, 0, 255, 44 };
 
 union AnimationStep double_anim_10[] = {
-    { 0x2D010002 },
-    { 0x2E010002 },
-    { 0x2D010002 },
-    { 0x2E010002 },
-    { 0x2D010001 },
-    { 0x2E010001 },
-    { 0x2D010001 },
-    { 0x2E010001 },
-    { 0x2D010001 },
-    { 0x2E010001 },
-    { 0x2D000012 },
+    { 2, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2E },
+    { 2, 0, 1, 0x2D },
+    { 2, 0, 1, 0x2E },
+    { 1, 0, 1, 0x2D },
+    { 1, 0, 1, 0x2E },
+    { 1, 0, 1, 0x2D },
+    { 1, 0, 1, 0x2E },
+    { 1, 0, 1, 0x2D },
+    { 1, 0, 1, 0x2E },
+    { 18, 0, 0, 0x2D },
 };
 
 union AnimationStep double_anim_11[] = {
-    { 0x32010004 },
-    { 0x31010003 },
-    { 0x30010002 },
-    { 0x2F010002 },
-    { 0x30010001 },
-    { 0x2F010001 },
-    { 0x30010001 },
-    { 0x2F000008 },
+    { 4, 0, 1, 0x32 },
+    { 3, 0, 1, 0x31 },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x2F },
+    { 1, 0, 1, 0x30 },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x30 },
+    { 8, 0, 0, 0x2F },
 };
 
 struct Unk_unk68 double_anim_12[4] = {
@@ -1007,10 +1015,10 @@ struct Unk_unk68 double_anim_12[4] = {
 };
 
 union AnimationStep double_anim_13[] = {
-    { 0x37010001 },
-    { 0x38010002 },
-    { 0x39010003 },
-    { 0x3A000004 },
+    { 1, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 3, 0, 1, 0x39 },
+    { 4, 0, 0, 0x3A },
 };
 
 u8 double_anim_14[8] = { 2, 0, 1, 59, 2, 0, 255, 60 };
@@ -1026,21 +1034,21 @@ struct Unk_unk68 double_anim_16[5] = {
 };
 
 union AnimationStep double_anim_17[] = {
-    { 0x44010002 },
-    { 0x45010003 },
-    { 0x46010003 },
-    { 0x47010003 },
-    { 0x48010003 },
-    { 0x46010002 },
-    { 0x47010002 },
-    { 0x48010002 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x48010001 },
-    { 0x46010001 },
-    { 0x47010001 },
-    { 0x48010001 },
-    { 0x46000018 },
+    { 2, 0, 1, 0x44 },
+    { 3, 0, 1, 0x45 },
+    { 3, 0, 1, 0x46 },
+    { 3, 0, 1, 0x47 },
+    { 3, 0, 1, 0x48 },
+    { 2, 0, 1, 0x46 },
+    { 2, 0, 1, 0x47 },
+    { 2, 0, 1, 0x48 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x48 },
+    { 1, 0, 1, 0x46 },
+    { 1, 0, 1, 0x47 },
+    { 1, 0, 1, 0x48 },
+    { 24, 0, 0, 0x46 },
 };
 
 u8 double_anim_18[8] = { 3, 0, 1, 73, 3, 0, 255, 74 };
@@ -1061,40 +1069,40 @@ struct Unk_unk68 double_anim_20[8] = {
 #ifdef MMX4_PC
 
 union AnimationStep double_mine_animation_steps[] = {
-    { 0x51010006 },
-    { 0x52010004 },
-    { 0x53010003 },
-    { 0x54010002 },
-    { 0x58000012 },
-    { 0x58010002 },
-    { 0x59010001 },
-    { 0x5A010001 },
-    { 0x5B010001 },
-    { 0x5C010101 },
-    { 0x5D010002 },
-    { 0x5E010002 },
-    { 0x5F000002 },
+    { 6, 0, 1, 0x51 },
+    { 4, 0, 1, 0x52 },
+    { 3, 0, 1, 0x53 },
+    { 2, 0, 1, 0x54 },
+    { 18, 0, 0, 0x58 },
+    { 2, 0, 1, 0x58 },
+    { 1, 0, 1, 0x59 },
+    { 1, 0, 1, 0x5A },
+    { 1, 0, 1, 0x5B },
+    { 1, 1, 1, 0x5C },
+    { 2, 0, 1, 0x5D },
+    { 2, 0, 1, 0x5E },
+    { 2, 0, 0, 0x5F },
 };
 #define double_anim_21 (double_mine_animation_steps)
 #define double_anim_22 (double_mine_animation_steps + 5)
 #else
 union AnimationStep double_anim_21[] = {
-    { 0x51010006 },
-    { 0x52010004 },
-    { 0x53010003 },
-    { 0x54010002 },
-    { 0x58000012 },
+    { 6, 0, 1, 0x51 },
+    { 4, 0, 1, 0x52 },
+    { 3, 0, 1, 0x53 },
+    { 2, 0, 1, 0x54 },
+    { 18, 0, 0, 0x58 },
 };
 
 union AnimationStep double_anim_22[] = {
-    { 0x58010002 },
-    { 0x59010001 },
-    { 0x5A010001 },
-    { 0x5B010001 },
-    { 0x5C010101 },
-    { 0x5D010002 },
-    { 0x5E010002 },
-    { 0x5F000002 },
+    { 2, 0, 1, 0x58 },
+    { 1, 0, 1, 0x59 },
+    { 1, 0, 1, 0x5A },
+    { 1, 0, 1, 0x5B },
+    { 1, 1, 1, 0x5C },
+    { 2, 0, 1, 0x5D },
+    { 2, 0, 1, 0x5E },
+    { 2, 0, 0, 0x5F },
 };
 #endif
 
@@ -1105,10 +1113,10 @@ struct Unk_unk68 double_anim_23[3] = {
 };
 
 union AnimationStep double_anim_24[] = {
-    { 0x55010005 },
-    { 0x56010004 },
-    { 0x57010003 },
-    { 0x6300000C },
+    { 5, 0, 1, 0x55 },
+    { 4, 0, 1, 0x56 },
+    { 3, 0, 1, 0x57 },
+    { 12, 0, 0, 0x63 },
 };
 
 struct Unk_unk68 double_anim_25[3] = {
@@ -1118,23 +1126,23 @@ struct Unk_unk68 double_anim_25[3] = {
 };
 
 union AnimationStep double_anim_26[] = {
-    { 0x66000002 },
+    { 2, 0, 0, 0x66 },
 };
 
 union AnimationStep double_anim_27[] = {
-    { 0x67000002 },
+    { 2, 0, 0, 0x67 },
 };
 
 union AnimationStep double_anim_28[] = {
-    { 0x68000002 },
+    { 2, 0, 0, 0x68 },
 };
 
 union AnimationStep double_anim_29[] = {
-    { 0x69000002 },
+    { 2, 0, 0, 0x69 },
 };
 
 union AnimationStep double_anim_30[] = {
-    { 0x6A000002 },
+    { 2, 0, 0, 0x6A },
 };
 
 void* double_animations[31] = {
@@ -1192,8 +1200,8 @@ u8 double_script_0_1[8] = { 2, 4, 2, 4, 255, 0, 0, 0 };
 u8 double_script_1_0[8] = { 2, 3, 3, 2, 4, 255, 0, 0 };
 
 union AnimationStep double_script_1_1[] = {
-    { 0x04020402 },
-    { 0x0000FF05 },
+    { 2, 4, 2, 0x04 },
+    { 5, -1, 0, 0x00 },
 };
 
 u8* double_script_table_0[2] = {

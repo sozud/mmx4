@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[40]
 // 80061DC0..800623C4
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_40_breakable_terrain.h"
 #include "main/visuals/visual_08_ice_shard.h"
 #include "main/object_motion.h"
@@ -8,8 +9,9 @@
 #include "main/CB184.h"
 #include "main/misc/misc_02_rubble.h"
 #include "main/objects.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -26,7 +28,11 @@ void breakable_terrain_update(struct MainObj* self)
 }
 
 // breakable_terrain_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061DFC(struct MainObj* arg0);
 void func_80061F2C(struct MainObj* arg0);
 extern struct Unk_unk68 D_80108504[];
@@ -37,7 +43,7 @@ extern u8 D_800FEA1C[8];
 u8 func_80062338(struct MainObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061DFC(struct MainObj* arg0)
 {
     struct Main40Ext* ext = &arg0->ext.main_40;
@@ -47,7 +53,7 @@ void func_80061DFC(struct MainObj* arg0)
     ext->unk80 = arg0->unk2 >> 4;
     arg0->unk18.val = arg0->x_pos.val;
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->x_speed = 0;
     arg0->y_speed = 0;
     arg0->x_accel = 0;
@@ -76,7 +82,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_40_breakable_terrain", func_80061DFC);
 #endif
 
 // breakable_terrain_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80061F2C(struct MainObj* arg0)
 {
     struct Main40Ext* ext = &arg0->ext.main_40;
@@ -132,7 +138,7 @@ void breakable_terrain_crumble(struct MainObj* self)
 
     self->ext.main_40.timer--;
     if (self->ext.main_40.timer != 0) {
-        if (!(main_bss_state.frame_counter & 7)) {
+        if (!(WEAPON_FRAME_COUNTER & 7)) {
             if (self->ext.main_40.unk80 < 2U) {
                 func_800AF878(BASE_OBJECT(self), 1, 0x10, 0x30);
             }
@@ -242,17 +248,17 @@ s8 D_800FE9DC[4] = { -40, -48, 80, 96 };
 
 s8 D_800FE9E0[4] = { -32, -24, 64, 48 };
 
-union AnimationStep breakable_terrain_anim_0[] = { { 0x00000001 } };
+union AnimationStep breakable_terrain_anim_0[] = { { 1, 0, 0, 0x00 } };
 
-union AnimationStep breakable_terrain_anim_1[] = { { 0x01000001 } };
+union AnimationStep breakable_terrain_anim_1[] = { { 1, 0, 0, 0x01 } };
 
-union AnimationStep breakable_terrain_anim_2[] = { { 0x02000001 } };
+union AnimationStep breakable_terrain_anim_2[] = { { 1, 0, 0, 0x02 } };
 
-union AnimationStep breakable_terrain_anim_3[] = { { 0x03000001 } };
+union AnimationStep breakable_terrain_anim_3[] = { { 1, 0, 0, 0x03 } };
 
-union AnimationStep breakable_terrain_anim_4[] = { { 0x04000001 } };
+union AnimationStep breakable_terrain_anim_4[] = { { 1, 0, 0, 0x04 } };
 
-union AnimationStep breakable_terrain_anim_5[] = { { 0x05000001 } };
+union AnimationStep breakable_terrain_anim_5[] = { { 1, 0, 0, 0x05 } };
 
 union AnimationStep* breakable_terrain_animations[6] = {
     breakable_terrain_anim_0,

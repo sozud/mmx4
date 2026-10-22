@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[48]
 // 80067350..800684F8
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_48_sentry_drone.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
@@ -69,11 +70,11 @@ void func_8006738C(struct MainObj* self)
     self->y_speed = 0;
     self->x_accel = 0;
     self->gravity = 0;
-    self->unk40 = D_801406A8[func_8002938C(0x30)] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(func_8002938C(0x30));
     self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[func_8002938C(0x30)];
-    self->unk42 = CLUT_FROM_ID(0x30);
+    self->unk42 = OBJECT_STAGE_CLUT(0x30);
     self->animation_table = (const u8* const*)sentry_drone_animations;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     self->terrain_box = (struct Unk_unk68*)D_800FFAD0;
     self->attack_box = D_800FFAD4;
     self->hurt_box = D_800FFACC;
@@ -220,14 +221,14 @@ void func_800678F8(struct MainObj* self)
 {
     if (--SP_CUR_MAIN_OBJ->ext.main_48.unk80 == 0) {
         if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0) {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         }
         SP_CUR_MAIN_OBJ->ext.main_48.collision_result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
         switch ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result & 0xFE) {
         case 2:
         case 4:
         case 6:
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         case 10:
         case 12:
         case 14:
@@ -247,7 +248,7 @@ void func_800678F8(struct MainObj* self)
         case 28:
         case 30:
             if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0x1A) {
-                self->unk15 = 0x40;
+                self->unk15 = PLAYER_FACING_RIGHT;
             }
             set_animation(self, 5);
             break;
@@ -255,7 +256,7 @@ void func_800678F8(struct MainObj* self)
             set_animation(self, 3);
             break;
         case 0:
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             break;
         case 16:
             self->unk15 = 0;
@@ -352,7 +353,7 @@ void sentry_drone_spread_start(struct MainObj* self)
     SP_CUR_MAIN_OBJ->ext.main_48.unk80 = 0x14;
     SP_CUR_MAIN_OBJ->ext.main_48.unk82 = 0;
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi > 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     SP_CUR_MAIN_OBJ->ext.main_48.collision_result = angle_to_object(OBJECT_HEADER(self), OBJECT_HEADER(&g_Player));
     func_800681C4(self);
@@ -366,7 +367,7 @@ void func_80067DAC(struct MainObj* self)
         case 2:
         case 4:
         case 6:
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         case 10:
         case 12:
         case 14:
@@ -386,7 +387,7 @@ void func_80067DAC(struct MainObj* self)
         case 28:
         case 30:
             if ((s8)SP_CUR_MAIN_OBJ->ext.main_48.collision_result >= 0x1A) {
-                self->unk15 = 0x40;
+                self->unk15 = PLAYER_FACING_RIGHT;
             }
             set_animation(self, 5);
             break;
@@ -394,7 +395,7 @@ void func_80067DAC(struct MainObj* self)
             set_animation(self, 3);
             break;
         case 0:
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             set_animation(self, 1);
             break;
         case 16:
@@ -497,12 +498,13 @@ void sentry_drone_check_player_near(struct MainObj* self)
 }
 
 // sentry_drone_aim
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800681C4(struct MainObj* arg0);
 void func_80068340(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800681C4(struct MainObj* arg0)
 {
     struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
@@ -556,7 +558,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_48_sentry_drone", func_800681C4);
 #endif
 
 // sentry_drone_rotate_aim
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80068340(struct MainObj* arg0)
 {
     struct Main48Ext* ext = &SP_CUR_MAIN_OBJ->ext.main_48;
@@ -604,50 +606,50 @@ void sentry_drone_despawn(struct MainObj* self)
 void sentry_drone_wait_for_player(struct MainObj* self)
 {
     if (g_Player.x_pos.i.hi - self->x_pos.i.hi >= 0xB0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->state = 1;
         self->unk5 = 3;
     }
 }
 
-union AnimationStep sentry_drone_anim_0[] = { { 0x00010001 }, { 0x01FF0001 } };
+union AnimationStep sentry_drone_anim_0[] = { { 1, 0, 1, 0x00 }, { 1, 0, -1, 0x01 } };
 
-union AnimationStep sentry_drone_anim_1[] = { { 0x02010001 }, { 0x03FF0101 } };
+union AnimationStep sentry_drone_anim_1[] = { { 1, 0, 1, 0x02 }, { 1, 1, -1, 0x03 } };
 
-union AnimationStep sentry_drone_anim_2[] = { { 0x0A010001 }, { 0x0BFF0101 } };
+union AnimationStep sentry_drone_anim_2[] = { { 1, 0, 1, 0x0A }, { 1, 1, -1, 0x0B } };
 
-union AnimationStep sentry_drone_anim_3[] = { { 0x0E010001 }, { 0x0FFF0101 } };
+union AnimationStep sentry_drone_anim_3[] = { { 1, 0, 1, 0x0E }, { 1, 1, -1, 0x0F } };
 
-union AnimationStep sentry_drone_anim_4[] = { { 0x04010001 }, { 0x05FF0101 } };
+union AnimationStep sentry_drone_anim_4[] = { { 1, 0, 1, 0x04 }, { 1, 1, -1, 0x05 } };
 
-union AnimationStep sentry_drone_anim_5[] = { { 0x0C010001 }, { 0x0DFF0101 } };
+union AnimationStep sentry_drone_anim_5[] = { { 1, 0, 1, 0x0C }, { 1, 1, -1, 0x0D } };
 
 union AnimationStep sentry_drone_anim_6[] = {
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13FD0002 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, -3, 0x13 },
 };
 
 union AnimationStep sentry_drone_anim_7[] = {
-    { 0x14010001 },
-    { 0x15010001 },
-    { 0x16010001 },
-    { 0x17010002 },
-    { 0x18010003 },
-    { 0x19010004 },
-    { 0x1A000005 },
+    { 1, 0, 1, 0x14 },
+    { 1, 0, 1, 0x15 },
+    { 1, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 3, 0, 1, 0x18 },
+    { 4, 0, 1, 0x19 },
+    { 5, 0, 0, 0x1A },
 };
 
-union AnimationStep sentry_drone_anim_8[] = { { 0x1B000001 } };
+union AnimationStep sentry_drone_anim_8[] = { { 1, 0, 0, 0x1B } };
 
-union AnimationStep sentry_drone_anim_9[] = { { 0x1C000001 } };
+union AnimationStep sentry_drone_anim_9[] = { { 1, 0, 0, 0x1C } };
 
-union AnimationStep sentry_drone_anim_10[] = { { 0x1D000001 } };
+union AnimationStep sentry_drone_anim_10[] = { { 1, 0, 0, 0x1D } };
 
-union AnimationStep sentry_drone_anim_11[] = { { 0x1E000001 } };
+union AnimationStep sentry_drone_anim_11[] = { { 1, 0, 0, 0x1E } };
 
-union AnimationStep sentry_drone_anim_12[] = { { 0x1F000001 } };
+union AnimationStep sentry_drone_anim_12[] = { { 1, 0, 0, 0x1F } };
 
 union AnimationStep* sentry_drone_animations[13] = {
     sentry_drone_anim_0,

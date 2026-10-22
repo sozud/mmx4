@@ -7,7 +7,7 @@
 #include "main/collision_bounds.h"
 #include "main/objects.h"
 
-extern s16 drone_beam_boxes[4][2];
+extern u8 drone_beam_boxes[4][4];
 
 // drone_beam_state_funcs
 extern void (*drone_beam_state_funcs[])(struct ShotObj*);
@@ -15,12 +15,13 @@ void drone_beam_init(struct ShotObj*);
 
 void drone_beam_despawn(struct ShotObj*);
 void drone_beam_idle(struct ShotObj*);
+#include "compiler.h"
 
-s16 drone_beam_boxes[4][2] = {
-    { -0x1280, 0x2AFF },
-    { -0x1280, 0x2AFF },
-    { -0xA80, 0x19FF },
-    { -0xA80, 0x19FF },
+u8 drone_beam_boxes[4][4] = {
+    { 0x80, 0xED, 0xFF, 0x2A },
+    { 0x80, 0xED, 0xFF, 0x2A },
+    { 0x80, 0xF5, 0xFF, 0x19 },
+    { 0x80, 0xF5, 0xFF, 0x19 },
 };
 
 void drone_beam_update(struct ShotObj* self)
@@ -47,12 +48,12 @@ void drone_beam_init(struct ShotObj* self)
 
     if (self->unk2 != 0) {
         set_animation(self, 4);
-        self->unk50.frames = drone_beam_boxes[3];
+        self->unk50.data = drone_beam_boxes[3];
         owner_x = owner->x_pos.i.hi;
         x_pos = self->unk15 != 0 ? owner_x + 0x190 : owner_x - 0x190;
     } else {
         set_animation(self, 3);
-        self->unk50.frames = drone_beam_boxes[2];
+        self->unk50.data = drone_beam_boxes[2];
         owner_x = owner->x_pos.i.hi;
         x_pos = self->unk15 != 0 ? owner_x + 0x90 : owner_x - 0x90;
     }
@@ -61,7 +62,7 @@ void drone_beam_init(struct ShotObj* self)
     self->y_pos.i.hi = owner->y_pos.i.hi - 3;
 }
 
-static __inline void beam_update_visibility(struct ShotObj* self, s16 camera_x, s16 owner_x, s32 offset)
+static MMX4_INLINE void beam_update_visibility(struct ShotObj* self, s16 camera_x, s16 owner_x, s32 offset)
 {
     u16 distance = ABS(camera_x, owner_x - offset);
     update_on_screen(BASE_OBJECT(self), distance, 0x20);
@@ -83,9 +84,9 @@ void func_800A3A4C(struct ShotObj* self)
 
     if (self->unk84.value == 0x46) {
         if (self->unk2 != 0) {
-            self->unk50.frames = drone_beam_boxes[1];
+            self->unk50.data = drone_beam_boxes[1];
         } else {
-            self->unk50.frames = drone_beam_boxes[0];
+            self->unk50.data = drone_beam_boxes[0];
         }
     }
 

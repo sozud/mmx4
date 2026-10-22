@@ -3,8 +3,11 @@
 #include "common.h"
 #include "main/objects.h"
 #include "main/shots/shot_30_cannon_shot.h"
+#include "main/55C4.h"
+#include "main/1E1BC.h"
+#include "main/object_motion.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/object_motion.h"
@@ -16,13 +19,18 @@ extern void (*cannon_shot_state_funcs[])(struct ShotObj*);
 void cannon_shot_despawn(struct ShotObj*);
 void cannon_shot_idle(struct ShotObj*);
 
+extern struct Unk_unk68 D_80106170[32];
+extern u8 cannon_shot_boxes[4][4];
+extern s32 cannon_shot_speeds[4];
+
 void cannon_shot_update(struct ShotObj* self)
 {
     cannon_shot_state_funcs[self->state](self);
 }
 
 // cannon_shot_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009FB9C(struct ShotObj* arg0);
 void func_8009FD00(struct ShotObj* arg0);
 extern struct Unk_unk68 D_80106170[32];
@@ -30,7 +38,7 @@ extern u8 cannon_shot_boxes[4][4];
 extern s32 cannon_shot_speeds[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009FB9C(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -72,7 +80,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_30_cannon_shot", func_8009FB9C);
 #endif
 
 // cannon_shot_fly
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009FD00(struct ShotObj* arg0)
 {
     s32 speed;
@@ -90,8 +98,8 @@ void func_8009FD00(struct ShotObj* arg0)
         func_8002D9BC(arg0);
         if (--arg0->unk84.value == 0 && arg0->unk17 != 4) {
             arg0->unk28 = 0x600;
-            arg0->x_vel.val = cannon_shot_speeds[(arg0->unk15 & 0x40) ? 1 : 0];
-            if (arg0->unk15 & 0x40)
+            arg0->x_vel.val = cannon_shot_speeds[(arg0->unk15 & PLAYER_FACING_RIGHT) ? 1 : 0];
+            if (arg0->unk15 & PLAYER_FACING_RIGHT)
                 arg0->x_pos.i.hi += 0x10;
             else
                 arg0->x_pos.i.hi -= 0x10;

@@ -7,10 +7,7 @@
 #include "main/55C4.h"
 #include "main/object_motion.h"
 #include "main/visuals/visual_03_small_effect.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // sigma_head_move_funcs
 extern void (*sigma_head_move_funcs[])(struct ShotObj*);
@@ -64,6 +61,11 @@ extern void (*sigma_head_state_funcs[])(struct ShotObj*);
 
 void sigma_head_run(struct ShotObj*);
 void sigma_head_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 s8 sigma_head_boxes[3][4] = {
     { -34, -40, 67, 79 },
@@ -155,13 +157,14 @@ void (*sigma_head_step_funcs[])(struct ShotObj*) = {
 };
 
 // sigma_head_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AAC98(struct ShotObj* self);
 void func_800AB050(struct ShotObj* self);
 void func_800AB170(struct ShotObj* self);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AAC98(struct ShotObj* self)
 {
     struct MainObj* parent = (struct MainObj*)self->unk7C;
@@ -231,11 +234,11 @@ void sigma_head_move(struct ShotObj* self)
         if (sigma_head_formation_next[self->unk8C.bytes[2]][variant] != 0) {
             self->unk5 = 9;
             if (sigma_head_formation_next[self->unk8C.bytes[2]][self->unk2] == 2) {
-                self->unk15 = 0x40;
+                self->unk15 = PLAYER_FACING_RIGHT;
             }
         } else if (self->unk8C.bytes[2] == 5 && variant != 0) {
             self->unk5 = 8;
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
         } else {
             self->unk5 = 3;
         }
@@ -249,7 +252,7 @@ void sigma_head_move_to_formation(struct ShotObj* self)
 }
 
 // sigma_head_wait
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AB050(struct ShotObj* self)
 {
     struct Main74Ext* owner = &((struct MainObj*)self->unk7C)->ext.main_74;
@@ -294,7 +297,7 @@ void sigma_head_fire_wall_start(struct ShotObj* self)
 }
 
 // sigma_head_fire_wall_track
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800AB170(struct ShotObj* self)
 {
     s16 y;
@@ -331,7 +334,7 @@ void sigma_head_fire_wall_shoot(struct ShotObj* self)
     if (self->timer == 0) {
         i = 0;
         do {
-            func_8001540C(2, 3, self);
+            func_8001540C(2, SATURN_SOUND(3, 0xE7), self);
             shot = find_free_shot_obj();
             if (shot != NULL) {
                 shot->active = 0x41;
@@ -380,7 +383,7 @@ void sigma_head_lightning_shoot(struct ShotObj* self)
     owner = self->unk7C;
     timer = --self->timer;
     if (timer == 0) {
-        func_8001540C(2, 8, self);
+        func_8001540C(2, SATURN_SOUND(8, 0xEC), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -439,7 +442,7 @@ void sigma_head_freeze_drop(struct ShotObj* self)
 
     owner = self->unk7C;
     if (--self->timer == 0) {
-        func_8001540C(2, 7, self);
+        func_8001540C(2, SATURN_SOUND(7, 0xEB), self);
         shot = find_free_shot_obj();
         if (shot != NULL) {
             shot->active = 0x41;
@@ -468,7 +471,7 @@ void sigma_head_freeze(struct ShotObj* self)
 void sigma_head_chomp_start(struct ShotObj* self)
 {
     set_animation(self, 0xB);
-    func_8001540C(2, 4, self);
+    func_8001540C(2, SATURN_SOUND(4, 0xE8), self);
     self->unk6++;
 }
 

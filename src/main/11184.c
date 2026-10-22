@@ -18,6 +18,10 @@
 #include "main/menu.h"
 #include "main/object_update.h"
 #include "main/objects.h"
+#ifdef MMX4_SATURN
+#include "saturn/menu.h"
+#include "saturn/player_resources.h"
+#endif
 
 extern u8 D_800F2468[];
 
@@ -124,6 +128,7 @@ extern void (*D_800F2438[7])(struct EngineObj*);
 
 extern void (*D_800F2454[5])(struct EngineObj*);
 
+#ifndef MMX4_SATURN
 u8 D_800F2468[20] = {
     0x59,
     0x10,
@@ -177,7 +182,21 @@ void (*D_800F2498[])(struct EngineObj*) = {
     func_80020F24,
     func_800210B8,
 };
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020984(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
+#else
 void func_80020984(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -189,7 +208,41 @@ void func_80020984(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020A08(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_display_mode = 15;
+        func_8001E980(1);
+        if (main_bss_state.transition.selection == 0) {
+            if (D_80171EA8 != 0) {
+                func_800127C8(1);
+                func_80013014();
+                D_80171EA8 = 0;
+            }
+            if (engine_obj.collected_upgrades & 0x8000) {
+                arg0->player_lives = 4;
+            } else {
+                arg0->player_lives = 2;
+            }
+            arg0->checkpoint = 0;
+            arg0->unk1E = 0;
+            arg0->state = 5;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        } else {
+            saturn_soft_reset_mode = 0;
+            saturn_controller_refresh = 1;
+            func_80012740(0, &func_8001DAF8);
+            func_8001DC30();
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_80020A08(struct EngineObj* arg0)
 {
     s8 var_v0;
@@ -219,7 +272,17 @@ void func_80020A08(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020AC8(struct EngineObj* arg0)
+{
+    saturn_sprite_reset_queues();
+    D_800F2438[arg0->unk1](arg0);
+    update_misc_objects();
+    saturn_sprite_draw_passes();
+}
+#else
 void func_80020AC8(struct EngineObj* arg0)
 {
     D_800F2438[arg0->unk1](arg0);
@@ -227,7 +290,28 @@ void func_80020AC8(struct EngineObj* arg0)
     func_80016124();
     init_objects();
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020B1C(struct EngineObj* arg0)
+{
+    func_8001D134();
+    main_bss_state.transition.selection = 0;
+    arg0->unk1F = 0;
+    arg0->enable_boss = 0;
+    func_8001E980(0);
+    func_8001C3E8();
+    saturn_title_upload_window();
+    func_800129A4(8);
+    if ((saturn_backup_status & SATURN_BACKUP_UNAVAILABLE) == SATURN_BACKUP_UNAVAILABLE) {
+        arg0->unk8 = func_8001E850(D_800F2310, 1);
+        arg0->unk1 += 3;
+    } else {
+        arg0->unk8 = func_8001E850(D_800F2300, 1);
+        arg0->unk1++;
+    }
+}
+#else
 void func_80020B1C(struct EngineObj* arg0)
 {
     func_8001D134();
@@ -240,7 +324,23 @@ void func_80020B1C(struct EngineObj* arg0)
     arg0->unk8 = func_8001E850(&D_800F2300, 1);
     arg0->unk1++;
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020B8C(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            if (main_bss_state.transition.selection != 0) {
+                func_800129F0(8);
+            }
+            arg0->unk1++;
+        }
+    }
+}
+#else
 void func_80020B8C(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -254,7 +354,40 @@ void func_80020B8C(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020C24(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        switch (main_bss_state.transition.selection) {
+        case 0:
+            arg0->unk4 = arg0->state;
+            arg0->state = 0xC;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 1:
+            saturn_display_mode = 15;
+            func_8001E980(1);
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+            break;
+        case 2:
+        default:
+            saturn_soft_reset_mode = 0;
+            saturn_controller_refresh = 1;
+            saturn_display_mode = 15;
+            func_8001E980(1);
+            func_80012740(0, &func_8001DAF8);
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_80020C24(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -280,7 +413,21 @@ void func_80020C24(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020CB8(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        func_800204CC((s8*)&main_bss_state.transition.selection, arg0->unk8);
+        if (saturn_pad_pressed & SATURN_PAD_CONFIRM) {
+            func_8001540C(0, SATURN_SE_CONFIRM, 0);
+            func_800129F0(8);
+            arg0->unk1++;
+        }
+    }
+}
+#else
 void func_80020CB8(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -292,7 +439,28 @@ void func_80020CB8(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020D3C(struct EngineObj* arg0)
+{
+    if (main_bss_state.transition.active == 0) {
+        saturn_display_mode = 15;
+        func_8001E980(1);
+        if (main_bss_state.transition.selection == 0) {
+            arg0->state = 3;
+            arg0->unk1 = 0;
+            arg0->unk2 = 0;
+            arg0->unk3 = 0;
+        } else {
+            saturn_soft_reset_mode = 0;
+            saturn_controller_refresh = 1;
+            func_80012740(0, &func_8001DAF8);
+            func_800127FC();
+        }
+    }
+}
+#else
 void func_80020D3C(struct EngineObj* arg0)
 {
     if (main_bss_state.transition.active == 0) {
@@ -307,7 +475,17 @@ void func_80020D3C(struct EngineObj* arg0)
         }
     }
 }
+#endif
 
+#ifdef MMX4_SATURN
+void func_80020D98(struct EngineObj* arg0)
+{
+    saturn_sprite_reset_queues();
+    D_800F2454[arg0->unk1](arg0);
+    update_misc_objects();
+    saturn_sprite_draw_passes();
+}
+#else
 void func_80020D98(struct EngineObj* arg0)
 {
     D_800F2454[arg0->unk1](arg0);
@@ -315,7 +493,9 @@ void func_80020D98(struct EngineObj* arg0)
     func_80016124();
     init_objects();
 }
+#endif
 
+#ifndef MMX4_SATURN
 void func_80020DEC(u8* arg0, s16 arg1)
 {
     struct UnkObj* obj;
@@ -424,3 +604,4 @@ void func_80021104(struct EngineObj* arg0)
     func_80016124();
     func_80025CDC();
 }
+#endif

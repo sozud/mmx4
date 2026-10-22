@@ -9,6 +9,7 @@ extern void (*ice_block_hitbox_state_funcs[])(struct WeaponObj*);
 
 void ice_block_hitbox_main(struct WeaponObj*);
 void ice_block_hitbox_despawn(struct WeaponObj*);
+#include "weapon_resources.h"
 
 void ice_block_hitbox_update(struct WeaponObj* arg0)
 {

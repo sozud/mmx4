@@ -13,6 +13,10 @@ void stage_exit_fade_wait_filter(struct EffectObj*);
 void stage_exit_fade_whiteout(struct EffectObj*);
 void stage_exit_fade_finish(struct EffectObj*);
 
+#ifdef MMX4_SATURN
+struct QuadObj* find_free_quad_obj(void);
+#endif
+
 void stage_exit_fade_init(struct EffectObj* self)
 {
     struct EffectObj* spawned;
@@ -32,8 +36,19 @@ void stage_exit_fade_wait_filter(struct EffectObj* self)
 {
     struct EffectObj* spawned = self->ext.effect_36.spawned_effect;
     if ((spawned->active == 0) || (spawned->id != 2)) {
+#ifdef MMX4_SATURN
+        struct QuadObj* quad;
+#endif
         self->state = 2;
         g_Player.invincibility_timer = 0x78;
+#ifdef MMX4_SATURN
+        quad = find_free_quad_obj();
+        if (quad != NULL) {
+            quad->active = 0x81;
+            quad->id = 0x0D;
+            quad->unk2 = 0;
+        }
+#endif
     }
 }
 
@@ -44,9 +59,13 @@ void stage_exit_fade_whiteout(struct EffectObj* self)
     g_Player.invincibility_timer = 0x78;
     if (--self->ext.effect_36.timer == 0) {
         self->state = 3;
+#ifdef MMX4_SATURN
+        D_8013E188[0] = 0x4F;
+#else
         for (i = 0; i < 4; i++) {
             D_8013E188[i] = -1;
         }
+#endif
         g_FilterModeR = 1;
         g_FilterModeG = 2;
         g_FilterModeB = 4;

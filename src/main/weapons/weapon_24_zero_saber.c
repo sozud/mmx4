@@ -4,14 +4,24 @@
 #include "main/weapons/weapon_24_zero_saber.h"
 #include "main/55C4.h"
 #include "main/objects.h"
+#include "main/sprite_animations.h"
+#include "main/object_motion.h"
+#include "main/player_common.h"
 
-#ifdef MMX4_PC
+void zero_saber_follow(struct WeaponObj*, struct PlayerObj*);
+
+extern u8 zero_saber_animations[24];
+extern struct Unk_unk68 rakuhouha_orb_box[];
+extern u16 ryuenjin_flame_offsets[8];
+extern u8 ryuenjin_flame_animations[];
+
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/object_motion.h"
 #include "main/player_common.h"
 #include "main/sprite_animations.h"
 #endif
-
-void zero_saber_follow(struct WeaponObj*, struct PlayerObj*);
 
 void zero_saber_update(struct WeaponObj* arg0)
 {
@@ -50,7 +60,8 @@ void zero_saber_update(struct WeaponObj* arg0)
 }
 
 // zero_saber_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player);
 void func_800981CC(struct WeaponObj* self);
 void func_80098474(struct MiscObj* self);
@@ -62,7 +73,7 @@ extern u8 ryuenjin_flame_animations[];
 extern u16 ryuenjin_flame_offsets[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
 {
     u8 animation;
@@ -72,13 +83,13 @@ void func_80097FC4(struct WeaponObj* weapon, struct PlayerObj* player)
     weapon->on_screen = 1;
     if (weapon->id == 0x21) {
         weapon->active = 0x21;
-        weapon->unk40 = 0;
+        weapon->unk40 = WEAPON_TEXTURE_BASE;
         weapon->unk3C = SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 6);
     } else {
         weapon->unk40 = player->unk40;
         weapon->unk3C = player->unk3C;
     }
-    weapon->unk42 = 0x7801;
+    weapon->unk42 = WEAPON_PALETTE_1;
     weapon->unk16 = 2;
     weapon->animation_table = player->animation_table;
     index = (weapon->id - 0x18) * 2;
@@ -134,16 +145,16 @@ void zero_saber_follow(struct WeaponObj* arg0, struct PlayerObj* arg1)
 // WeaponObj, weapon_object_update_funcs[36]
 
 // rakuhouha_orb_update
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800981CC(struct WeaponObj* self)
 {
     if (self->state == 0) {
         self->on_screen = 1;
         self->unk50 = rakuhouha_orb_box;
         self->animation_table = D_8011C018;
-        self->unk42 = 0x7803;
+        self->unk42 = WEAPON_PALETTE_3;
         self->unk16 = 1;
-        self->unk40 = 0;
+        self->unk40 = WEAPON_TEXTURE_BASE;
         self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
         self->x_pos.u.hi = g_Player.x_pos.u.hi;
         self->y_pos.u.hi = g_Player.y_pos.u.hi + 0x15;
@@ -200,7 +211,7 @@ void func_80098338(struct VisualObj* self)
         self->unk3C = player->unk3C;
         self->animation_table = player->animation_table;
         self->unk40 = player->unk40;
-        self->unk42 = 0x7801;
+        self->unk42 = WEAPON_PALETTE_1;
         self->unk16 = 2;
         set_animation(self, 0x7C);
         self->state++;
@@ -212,7 +223,7 @@ void func_80098338(struct VisualObj* self)
 }
 
 // ryuenjin_flame_update
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80098474(struct MiscObj* self)
 {
     if (self->state == 0) {
@@ -220,8 +231,8 @@ void func_80098474(struct MiscObj* self)
         self->on_screen = 1;
         self->unk3C = (u8*)SP_SPRITE_FRAMES + SP_SPRITE_FRAMES[6];
         self->animation_table = D_8011C018;
-        self->unk40 = 0;
-        self->unk42 = 0x7804;
+        self->unk40 = WEAPON_TEXTURE_BASE;
+        self->unk42 = WEAPON_PALETTE_4;
         self->unk16 = 1;
         offset = ryuenjin_flame_offsets[(get_random() & 3) * 2];
         self->x_pos.u.hi = g_Player.x_pos.u.hi + (g_Player.unk15 ? -offset : offset);

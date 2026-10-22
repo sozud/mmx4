@@ -35,6 +35,7 @@ void mushroom_shot_sprout_wait(struct ShotObj*);
 void mushroom_shot_sprout_jump(struct ShotObj*);
 
 void mushroom_shot_sprout_fall(struct ShotObj*);
+#include "weapon_resources.h"
 
 extern u8 mushroom_shot_sprout_hit_box[4];
 extern u8 mushroom_shot_spray_offsets[12];
@@ -155,7 +156,7 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
     }
     if (self->unk6 != 0) {
         func_8002D9BC(self);
-        if (main_bss_state.frame_counter & 1) {
+        if (WEAPON_FRAME_COUNTER & 1) {
             if (++self->unk7 == 4) {
                 self->unk7 = 0;
             }
@@ -164,7 +165,7 @@ void mushroom_shot_sprout_main(struct ShotObj* self)
             } else {
                 color = mushroom_shot_sprout_alt_palettes[self->unk7];
             }
-            self->unk42 = (color & 0xF) | (((color >> 4) + 0x1E0) << 6);
+            self->unk42 = OBJECT_PALETTE_FROM_COLOR(color);
         }
     }
     hit = func_8002DD04(MAIN_OBJECT(self));
@@ -273,7 +274,11 @@ void mushroom_shot_sprout_grow(struct ShotObj* arg0)
             var_v1 = mushroom_shot_sprout_alt_palettes[self->unk7];
             var_v0 = var_v1 >> 4;
         }
+#ifdef MMX4_SATURN
+        self->unk42 = OBJECT_PALETTE_FROM_COLOR(var_v1);
+#else
         self->unk42 = (var_v1 % 16) | ((var_v0 + 0x1E0) << 6);
+#endif
     }
 }
 
@@ -328,11 +333,12 @@ void mushroom_shot_sprout_jump(struct ShotObj* self)
 }
 
 // mushroom_shot_sprout_chase
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A5194(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A5194(struct ShotObj* arg0)
 {
     s32 dx;

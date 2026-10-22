@@ -26,12 +26,13 @@ void boss_death_shard_init(struct QuadObj* arg0)
 }
 
 // boss_death_shard_launch
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D52F4(struct QuadObj* arg0);
 extern s16 boss_death_shard_shapes[64][2];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D52F4(struct QuadObj* arg0)
 {
     u8 angle = arg0->ext.quad_4.unk38;

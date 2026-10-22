@@ -13,13 +13,6 @@
 
 extern u8 player_jump_voices[][4];
 
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
-
 void player_update(void);
 
 void player_update_normal(struct PlayerObj* self);
@@ -318,7 +311,9 @@ void player_enter_dash(struct PlayerObj* self)
 void player_enter_dash_end(struct PlayerObj* self)
 {
     player_set_animation_shooting(self, 0x11);
+#ifndef MMX4_SATURN
     stop_sound(1, 5);
+#endif
     if (self->unk15 != 0) {
         self->x_vel.val = FIXED(4.125);
     } else {
@@ -385,7 +380,7 @@ void player_enter_wall_cling(struct PlayerObj* self)
     self->afterimage = -1;
     self->unk8A.bytes.low = 8;
     if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -394,12 +389,12 @@ void player_enter_wall_cling(struct PlayerObj* self)
 }
 
 // player_enter_wall_jump
-#ifdef MMX4_PC
-s32 func_80034E2C(void);
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800349F4(struct PlayerObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800349F4(struct PlayerObj* arg0)
 {
     player_set_animation_shooting(arg0, 0xE);
@@ -414,7 +409,7 @@ void func_800349F4(struct PlayerObj* arg0)
         player_clear_dash(arg0);
     }
     if (arg0->unk88.bytes.collision_flags & 1) {
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         arg0->x_vel.val = arg0->dash_momentum != 0 ? FIXED(-4.125) : FIXED(-2);
     } else {
         arg0->unk15 = 0;
@@ -543,10 +538,15 @@ void player_enter_ladder_down(struct PlayerObj* self)
 }
 
 // player_start_script
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#ifdef MMX4_SATURN
+s32 func_80034E2C(struct PlayerObj* player)
+{
+#else
 s32 func_80034E2C(void)
 {
     struct PlayerObj* player = &g_Player;
+#endif
 
     player->unk6 = 0;
     player->unk5 = player->script_action;
@@ -567,7 +567,7 @@ s32 func_80034E2C(void)
             player_script_walk_to_mark(player);
             break;
         }
-        player->unk15 = 0x40;
+        player->unk15 = PLAYER_FACING_RIGHT;
         break;
     case 2:
         player_set_animation(player, 3);
@@ -610,9 +610,17 @@ void player_start_stage_clear(struct PlayerObj* self)
         player_reset_weapon(self);
 
         if (self->unk2 == 0) {
+#ifdef MMX4_SATURN
+            func_8001663C(0x14, 0);
+#else
             func_8001663C(MUSIC_STAGE_CLEAR_X, 0x75);
+#endif
         } else {
+#ifdef MMX4_SATURN
+            func_8001663C(0x15, 0);
+#else
             func_8001663C(MUSIC_STAGE_CLEAR_ZERO, 0x72);
+#endif
         }
 
         self->unk5 = PLAYER_STAGE_CLEAR;
@@ -634,7 +642,11 @@ void player_start_stage_clear(struct PlayerObj* self)
 
 void player_enter_beam_out(struct PlayerObj* self)
 {
+#ifdef MMX4_SATURN
+    func_8001540C(1, 0xD, self);
+#else
     func_8001540C(1, 0xB, self);
+#endif
     self->x_vel.val = 0;
     self->unk28 = 0;
     self->y_vel.val = FIXED(8);

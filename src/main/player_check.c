@@ -9,24 +9,25 @@
 #include "main/object_motion.h"
 #include "main/player_special.h"
 #include "main/player_weapon.h"
+#include "main/55C4.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/55C4.h"
 #endif
 
 extern u8 player_leap_fall_animations[];
 
+#ifdef MMX4_SATURN
+#define SCRIPT_BACKGROUND(obj) ((struct BackgroundObj*)((u8*)background_objects + (u8)(84 * (u8)(obj)->bg_offset)))
+#else
+#define SCRIPT_BACKGROUND(obj) (&background_objects[(obj)->bg_offset])
+#endif
+
 s32 player_check_hover(struct PlayerObj* self);
+void func_80033D54(struct PlayerObj* self);
 void player_clear_flash(struct PlayerObj* self);
 void player_reset_actions(struct PlayerObj* self);
 s32 player_zero_check_double_jump(struct PlayerObj* self);
-
-struct PlayerHurtVelocity {
-    s32 x_vel;
-    s32 x_accel;
-    s32 y_vel;
-    s32 gravity;
-};
 
 void player_update(void);
 
@@ -132,7 +133,7 @@ void player_script_victory(struct PlayerObj* self);
 
 void player_stage_clear(struct PlayerObj* self);
 
-u8 player_hurt_animations[8] = { 0, 0x21, 0x22, 0x24, 0x23, 0, 0, 0 };
+u8 player_hurt_animations[5] = { 0, 0x21, 0x22, 0x24, 0x23 };
 
 struct PlayerHurtVelocity player_hurt_velocities[5] = {
     { 0, 0, 0, 0 },
@@ -142,7 +143,7 @@ struct PlayerHurtVelocity player_hurt_velocities[5] = {
     { 0x28000, 0x3000, 0, 0 },
 };
 
-u8 player_hurt_invincibility[8] = { 0, 0x4B, 0x64, 0, 0x4B, 0, 0, 0 };
+u8 player_hurt_invincibility[5] = { 0, 0x4B, 0x64, 0, 0x4B };
 
 u8 player_leap_fall_animations[2] = { 0x67, 0x66 };
 
@@ -189,7 +190,7 @@ s32 player_check_walk_start(struct PlayerObj* self)
     }
 
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             return 0;
         }
@@ -219,7 +220,7 @@ s32 player_check_walk(struct PlayerObj* self)
     }
 
     if (buttons & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         if (self->unk88.bytes.collision_flags & PLAYER_COLLIDE_RIGHT) {
             return 0;
         }
@@ -255,7 +256,7 @@ s32 player_check_dash_input(struct PlayerObj* self)
     }
 
     if (self->input.buttons.held & PLAYER_INPUT_RIGHT) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     }
     if (self->input.buttons.held & PLAYER_INPUT_LEFT) {
         self->unk15 = 0;
@@ -359,7 +360,7 @@ void player_check_capsule(struct PlayerObj* self)
             player_set_animation(self, 0x26);
         }
 
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->capsule_state = -1;
         self->afterimage = 0;
         self->unk5 = PLAYER_CAPSULE;
@@ -516,14 +517,15 @@ void player_reset_actions(struct PlayerObj* self)
 }
 
 // player_take_hit
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_80033FF0(struct PlayerObj* arg0);
 void func_80033D54(struct PlayerObj* arg0);
 void player_enter_ladder_climb_off_top(struct PlayerObj* arg0);
 void player_enter_ladder_step_off_bottom(struct PlayerObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80033D54(struct PlayerObj* arg0)
 {
     const struct PlayerHurtVelocity* state;
@@ -600,8 +602,11 @@ s32 player_check_ladder_air(struct PlayerObj* self)
     return 0;
 }
 
+void player_enter_ladder_step_off_bottom(struct PlayerObj* self);
+void player_enter_ladder_climb_off_top(struct PlayerObj* self);
+
 // player_check_ladder_end
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_80033FF0(struct PlayerObj* arg0)
 {
     u8 attribute = func_8002D994(arg0);
@@ -642,7 +647,11 @@ s32 player_check_script(struct PlayerObj* self)
     }
 
     if (self->script_state > 0) {
+#ifdef MMX4_SATURN
+        func_80034E2C(self);
+#else
         func_80034E2C();
+#endif
         return 1;
     }
     return 0;
@@ -653,14 +662,14 @@ void player_script_walk_to_mark(struct PlayerObj* self)
     s16 distance;
     s32 arrived;
 
-    distance = (self->x_pos.u.hi - 0x40) - background_objects[self->bg_offset].x_pos.u.hi;
+    distance = (self->x_pos.u.hi - 0x40) - SCRIPT_BACKGROUND(self)->x_pos.u.hi;
     arrived = 0;
     if (distance != 0) {
         if (distance > 0) {
             self->unk15 = 0;
             arrived = distance <= 2;
         } else {
-            self->unk15 = 0x40;
+            self->unk15 = PLAYER_FACING_RIGHT;
             if (distance >= -2) {
                 arrived = 1;
             }
@@ -670,9 +679,9 @@ void player_script_walk_to_mark(struct PlayerObj* self)
     }
     if (arrived != 0) {
         player_set_idle_animation(self);
-        self->x_pos.i.hi = background_objects[self->bg_offset].x_pos.u.hi + 0x40;
+        self->x_pos.i.hi = SCRIPT_BACKGROUND(self)->x_pos.u.hi + 0x40;
         self->script_state = -1;
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
         self->unk5 = PLAYER_SCRIPT_WAIT;
     }
 }

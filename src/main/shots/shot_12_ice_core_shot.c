@@ -7,10 +7,7 @@
 #include "main/collision.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // ice_core_shot_state_funcs
 extern void (*ice_core_shot_state_funcs[])(struct ShotObj*);
@@ -23,6 +20,15 @@ void ice_core_shard_hold(struct ShotObj*);
 void ice_core_shard_fall(struct ShotObj*);
 
 void ice_core_shard_despawn(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
+
+extern u8 ice_core_shard_hit_box[4];
+extern u8 ice_core_shard_terrain_box[4];
+extern u8 ice_core_spray_hit_box[4];
 
 void ice_core_shot_update(struct ShotObj* self)
 {
@@ -33,7 +39,8 @@ void ice_core_shot_update(struct ShotObj* self)
 }
 
 // ice_core_spray_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B85C(struct ShotObj* arg0);
 void func_8009BA6C(struct ShotObj* arg0);
 extern u8 ice_core_spray_hit_box[4];
@@ -41,7 +48,7 @@ extern u8 ice_core_shard_hit_box[4];
 extern u8 ice_core_shard_terrain_box[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009B85C(struct ShotObj* arg0)
 {
     const u8* offsets = (const u8*)&ice_core_shard_data + 0x14 + arg0->unk2 * 2;
@@ -95,7 +102,7 @@ void ice_core_spray_despawn(struct ShotObj* self)
 }
 
 // ice_core_shard_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009BA6C(struct ShotObj* arg0)
 {
     arg0->state = 4;
@@ -126,7 +133,7 @@ void ice_core_shard_hold(struct ShotObj* self)
     if (func_8002DD04(MAIN_OBJECT(self)) < 0 || func_8002BB80(MAIN_OBJECT(self), MAIN_OBJECT(&g_Player)) != 0) {
         flags = (u16*)self->unk7C;
         *flags ^= ice_core_shard_data.masks[self->unk2];
-        func_8001540C(5, 2, NULL);
+        func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
         spawn_debris(4, ice_core_shard_debris, self);
         self->state = 6;
         return;
@@ -151,17 +158,17 @@ void ice_core_shard_fall(struct ShotObj* self)
     func_8002D9BC(self);
 
     if (self->unk70 & 8) {
-        func_8001540C(5, 2, NULL);
+        func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
         spawn_debris(4, ice_core_shard_debris, self);
         self->state = 6;
     }
     if (func_8002DD04(MAIN_OBJECT(self)) < 0) {
-        func_8001540C(5, 2, NULL);
+        func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
         spawn_debris(4, ice_core_shard_debris, self);
         self->state = 6;
     }
     if (func_8002BB80(self, &g_Player) != 0) {
-        func_8001540C(5, 2, NULL);
+        func_8001540C(5, SATURN_SOUND(2, 0x24), NULL);
         spawn_debris(4, ice_core_shard_debris, self);
         self->state = 6;
     }

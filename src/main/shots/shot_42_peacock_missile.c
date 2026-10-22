@@ -6,10 +6,7 @@
 #include "main/55C4.h"
 #include "main/collision.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
 #include "main/object_motion.h"
-#endif
 
 extern u8 peacock_missile_explosion_box[4];
 
@@ -24,6 +21,17 @@ extern void (*peacock_missile_step_funcs[])(struct ShotObj*);
 
 void peacock_missile_explode_start(struct ShotObj*);
 void peacock_missile_explode(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/object_motion.h"
+#endif
+
+extern u8 peacock_missile_hit_box[4];
+extern s16 peacock_missile_launch_offsets[8][2];
+extern u8 peacock_missile_terrain_box[4];
+extern u8 peacock_missile_turn_steps_ccw[8];
+extern u8 peacock_missile_turn_steps_cw[8];
 
 void peacock_missile_update(struct ShotObj* self)
 {
@@ -31,7 +39,8 @@ void peacock_missile_update(struct ShotObj* self)
 }
 
 // peacock_missile_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A63B0(struct ShotObj* arg0);
 void func_800A6510(struct ShotObj* arg0);
 void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range);
@@ -42,7 +51,7 @@ extern u8 peacock_missile_turn_steps_ccw[8];
 extern u8 peacock_missile_turn_steps_cw[8];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A63B0(struct ShotObj* arg0)
 {
     struct MainObj* boss = arg0->backref;
@@ -50,7 +59,7 @@ void func_800A63B0(struct ShotObj* arg0)
     arg0->state = 1;
     arg0->on_screen = 1;
     arg0->timer = 0xA;
-    arg0->unk16 = 4;
+    arg0->unk16 = VISUAL_SATURN_LAYER(4);
     arg0->unk68 = (struct Unk_unk68*)peacock_missile_terrain_box;
     arg0->unk50.data = peacock_missile_hit_box;
     arg0->unk5C = 3;
@@ -85,7 +94,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_42_peacock_missile", func_800A63B0);
 #endif
 
 // peacock_missile_home
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A6510(struct ShotObj* arg0)
 {
     s32 target;
@@ -93,7 +102,7 @@ void func_800A6510(struct ShotObj* arg0)
 
     if (arg0->timer != 0) {
         arg0->timer--;
-    } else if ((main_bss_state.frame_counter & 1) == 0) {
+    } else if ((WEAPON_FRAME_COUNTER & 1) == 0) {
         target = angle_to_object(OBJECT_HEADER(arg0), OBJECT_HEADER(arg0->unk7C));
         direction = arg0->unk84.value;
         if (((direction - (target & 0xFF)) & 0x1F) >= 2) {
@@ -127,7 +136,7 @@ void peacock_missile_explode_start(struct ShotObj* self)
 }
 
 // peacock_missile_spawn_explosion
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A666C(struct ShotObj* arg0, s32 x_range, s32 y_range)
 {
     struct MiscObj* misc = find_free_misc_obj();

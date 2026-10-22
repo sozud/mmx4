@@ -81,9 +81,15 @@ extern u8* scratchpad_base;
 #define SP(offset) (0x1F800000 + (offset))
 #endif
 #define SP_DRAW_BUFFER (*(s32*)SP(0x000))
+#ifdef MMX4_SATURN
+#define SP_BG_TILEMAP (*(u8**)0x0600D024)
+#define SP_BG_TILE_PIXELS (*(u16**)0x0600D028)
+#define SP_BG_TILE_ATTRS (*(u32**)0x0600D02C)
+#else
 #define SP_BG_TILEMAP (*(u8**)SP(0x004))
 #define SP_BG_TILE_PIXELS (*(u16**)SP(0x008))
 #define SP_BG_TILE_ATTRS (*(u32**)SP(0x00C))
+#endif
 #define SP_PLAYER_GFX (*(s32**)SP(0x014))
 #define SP_SPRITE_FRAMES (*(s32**)SP(0x01C))
 #define SP_SPRITE_FRAMES_HDR (*(struct Scratchpad1C**)SP(0x01C))
@@ -100,6 +106,18 @@ extern u8* scratchpad_base;
 #define SP_ARC_40 (*(void**)SP(0x040))
 #define SP_ARC_44 (*(void**)SP(0x044))
 #define SP_ARC_48 (*(void**)SP(0x048))
+#ifdef MMX4_SATURN
+#define SP_CUR_MAIN_OBJ (*(struct MainObj**)0x0600D000)
+#define SP_CUR_WEAPON_OBJ (*(struct WeaponObj**)0x0600D004)
+#define SP_CUR_SHOT_OBJ (*(struct ShotObj**)0x0600D004)
+#define SP_CUR_VISUAL_OBJ (*(struct VisualObj**)0x0600D008)
+#define SP_CUR_EFFECT_OBJ (*(struct EffectObj**)0x0600D010)
+#define SP_CUR_ITEM_OBJ (*(struct ItemObj**)0x0600D018)
+#define SP_CUR_MISC_OBJ (*(struct MiscObj**)0x0600D01C)
+#define SP_CUR_UNK_OBJ (*(struct UnkObj**)0x0600D01C)
+#define SP_CUR_QUAD_OBJ (*(struct QuadObj**)0x0600D020)
+#define SP_CUR_LAYER_OBJ (*(struct LayerObj**)0x0600D014)
+#else
 #define SP_CUR_MAIN_OBJ (*(struct MainObj**)SP(0x04C))
 #define SP_CUR_WEAPON_OBJ (*(struct WeaponObj**)SP(0x050))
 #define SP_CUR_SHOT_OBJ (*(struct ShotObj**)SP(0x050))
@@ -110,6 +128,7 @@ extern u8* scratchpad_base;
 #define SP_CUR_UNK_OBJ (*(struct UnkObj**)SP(0x064))
 #define SP_CUR_QUAD_OBJ (*(struct QuadObj**)SP(0x068))
 #define SP_CUR_LAYER_OBJ (*(struct LayerObj**)SP(0x06C))
+#endif
 #define SP_PRIM_CURSOR (*(void**)SP(0x100))
 #define SP_DRAW_MODE_CURSOR (*(void**)SP(0x104))
 #define SP_BG_PRIM_CURSOR (*(void**)SP(0x108))

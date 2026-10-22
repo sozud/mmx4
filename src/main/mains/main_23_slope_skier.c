@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[23]
 // 80055C54..80056788
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_22_bee_hive.h"
 #include "main/mains/main_23_slope_skier.h"
 #include "main/objects.h"
@@ -37,7 +38,7 @@ extern void (*slope_skier_jump_funcs[])(struct MainObj*);
 extern void (*slope_skier_slide_funcs[])(struct MainObj*);
 extern void (*slope_skier_step_funcs[])(struct MainObj*);
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern union AnimationStep* slope_skier_animations[31];
 extern struct Unk_unk68 slope_skier_hurt_box[];
 extern struct Unk_unk68 slope_skier_terrain_box;
@@ -46,23 +47,7 @@ extern struct Unk_unk68 D_800FCE9C[];
 extern union AnimationStep jet_drone_anim_3[];
 extern struct Unk_unk68 D_80106DF4[];
 
-static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing)
-{
-    struct VisualObj* visual = find_free_visual_obj();
-
-    if (visual == NULL)
-        return NULL;
-    visual->active = 0x41;
-    visual->id = 3;
-    visual->unk2 = 5;
-    visual->bg_offset = arg0->bg_offset;
-    visual->unk15 = facing;
-    visual->unk40 = arg0->unk40;
-    visual->unk3C = (void*)arg0->sprite_frames;
-    visual->animation_table = (u32**)arg0->animation_table;
-    visual->unk42 = arg0->unk42;
-    return visual;
-}
+static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing);
 #endif
 
 void bee_hive_update(struct MainObj* self);
@@ -182,7 +167,7 @@ void slope_skier_land(struct MainObj* self)
         background_relative = self->ext.main_23.unk80;
         background_offset = background_relative & 0x7F;
         if (background_relative & 0x80) {
-            self->unk15 ^= 0x40;
+            self->unk15 ^= PLAYER_FACING_RIGHT;
         }
         set_animation(self, background_offset + 0x12);
         return;
@@ -214,16 +199,15 @@ void slope_skier_fall(struct MainObj* self)
 }
 
 // slope_skier_jump_start
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80055F1C(struct MainObj* arg0);
 void func_80056054(struct MainObj* arg0);
 void func_800562AC(struct MainObj* arg0);
 void func_800564B4(struct MainObj* arg0);
 #endif
 
-#ifdef MMX4_PC
-// src/main/mains/main_23_slope_skier.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80055F1C(struct MainObj* arg0)
 {
     animate_object(ANIMATED_OBJECT(arg0));
@@ -262,7 +246,7 @@ void slope_skier_jump(struct MainObj* self)
 }
 
 // slope_skier_step_5
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80056054(struct MainObj* arg0)
 {
     struct VisualObj* visual;
@@ -282,7 +266,7 @@ void func_80056054(struct MainObj* arg0)
             arg0->unk5 = 1;
             arg0->unk6 = 0;
             arg0->ext.main_23.unk82 &= 0xFE;
-            arg0->unk15 ^= 0x40;
+            arg0->unk15 ^= PLAYER_FACING_RIGHT;
         }
         return;
     }
@@ -311,11 +295,11 @@ void slope_skier_slide_start(struct MainObj* self)
     slope_skier_read_slope(self);
     self->x_speed = self->unk15 != 0 ? FIXED(4.5) : FIXED(-4.5);
     set_animation(self, (self->ext.main_23.unk80 & 0x7F) + 4);
-    func_8001540C(2, 0x3A, self);
+    func_8001540C(2, SATURN_SOUND(0x3A, 0x3C), self);
 }
 
 // slope_skier_slide_move
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800562AC(struct MainObj* arg0)
 {
     struct Main23Ext* ext = &arg0->ext.main_23;
@@ -364,7 +348,7 @@ void slope_skier_slide(struct MainObj* self)
 }
 
 // slope_skier_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800564B4(struct MainObj* arg0)
 {
     arg0->unk5 = 1;
@@ -374,17 +358,17 @@ void func_800564B4(struct MainObj* arg0)
     arg0->bg_offset = g_Player.bg_offset;
     switch (arg0->unk2) {
     case 0:
-        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : 0x40;
+        arg0->unk15 = g_Player.x_pos.val < arg0->x_pos.val ? 0 : PLAYER_FACING_RIGHT;
         break;
     case 1:
         arg0->unk15 = 0;
         break;
     case 2:
-        arg0->unk15 = 0x40;
+        arg0->unk15 = PLAYER_FACING_RIGHT;
         break;
     }
     arg0->animation_table = (const u8* const*)slope_skier_animations;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->terrain_box = slope_skier_hurt_box;
     arg0->hurt_box = &slope_skier_terrain_box;
     arg0->attack_box = &slope_skier_terrain_box;
@@ -456,268 +440,268 @@ struct Unk_unk68 slope_skier_terrain_box = { -11, -16, 21, 29 };
 struct Unk_unk68 D_800FCB50 = { 3, 3, 3, 0 };
 
 union AnimationStep slope_skier_anim_0[] = {
-    { 0x06000001 },
+    { 1, 0, 0, 0x06 },
 };
 
 union AnimationStep slope_skier_anim_1[] = {
-    { 0x07010003 },
-    { 0x08010003 },
-    { 0x09010003 },
-    { 0x0A010009 },
-    { 0x09010003 },
-    { 0x08010003 },
-    { 0x01000003 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 9, 0, 1, 0x0A },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 0, 0x01 },
 };
 
 union AnimationStep slope_skier_anim_2[] = {
-    { 0x07010003 },
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F010009 },
-    { 0x0E010003 },
-    { 0x0D010003 },
-    { 0x03000003 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 9, 0, 1, 0x0F },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 0, 0x03 },
 };
 
 union AnimationStep slope_skier_anim_3[] = {
-    { 0x07010003 },
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14010009 },
-    { 0x13010003 },
-    { 0x12010003 },
-    { 0x05000003 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 9, 0, 1, 0x14 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 0, 0x05 },
 };
 
 union AnimationStep slope_skier_anim_4[] = {
-    { 0x00010003 },
-    { 0x01FF0003 },
+    { 3, 0, 1, 0x00 },
+    { 3, 0, -1, 0x01 },
 };
 
 union AnimationStep slope_skier_anim_5[] = {
-    { 0x02010003 },
-    { 0x03FF0003 },
+    { 3, 0, 1, 0x02 },
+    { 3, 0, -1, 0x03 },
 };
 
 union AnimationStep slope_skier_anim_6[] = {
-    { 0x04010003 },
-    { 0x05FF0003 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, -1, 0x05 },
 };
 
 union AnimationStep slope_skier_anim_7[] = {
-    { 0x08010003 },
-    { 0x09010003 },
-    { 0x0A01000F },
-    { 0x09010003 },
-    { 0x08010003 },
-    { 0x0B010003 },
-    { 0x0C000003 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 15, 0, 1, 0x0A },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x0B },
+    { 3, 0, 0, 0x0C },
 };
 
 union AnimationStep slope_skier_anim_8[] = {
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F01000F },
-    { 0x0E010003 },
-    { 0x0D010003 },
-    { 0x10010003 },
-    { 0x11000003 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 15, 0, 1, 0x0F },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x10 },
+    { 3, 0, 0, 0x11 },
 };
 
 union AnimationStep slope_skier_anim_9[] = {
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x1401000F },
-    { 0x13010003 },
-    { 0x12010003 },
-    { 0x15010003 },
-    { 0x16000003 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 15, 0, 1, 0x14 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 0, 0x16 },
 };
 
 union AnimationStep slope_skier_anim_13[] = {
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x0A010002 },
-    { 0x09010002 },
-    { 0x08000001 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0A },
+    { 2, 0, 1, 0x09 },
+    { 1, 0, 0, 0x08 },
 };
 
 union AnimationStep slope_skier_anim_14[] = {
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F01000C },
-    { 0x0E010003 },
-    { 0x08000003 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 12, 0, 1, 0x0F },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 0, 0x08 },
 };
 
 union AnimationStep slope_skier_anim_15[] = {
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x1401000C },
-    { 0x13010003 },
-    { 0x0D000003 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 12, 0, 1, 0x14 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 0, 0x0D },
 };
 
 union AnimationStep slope_skier_anim_16[] = {
-    { 0x24010003 },
-    { 0x25010009 },
-    { 0x24010003 },
-    { 0x2B010003 },
-    { 0x2C010003 },
-    { 0x2D010015 },
-    { 0x2C010003 },
-    { 0x2B010003 },
-    { 0x24010003 },
-    { 0x25000003 },
+    { 3, 0, 1, 0x24 },
+    { 9, 0, 1, 0x25 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x2B },
+    { 3, 0, 1, 0x2C },
+    { 21, 0, 1, 0x2D },
+    { 3, 0, 1, 0x2C },
+    { 3, 0, 1, 0x2B },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 0, 0x25 },
 };
 
 union AnimationStep slope_skier_anim_17[] = {
-    { 0x24010003 },
-    { 0x25010009 },
-    { 0x24010003 },
-    { 0x26010003 },
-    { 0x27010003 },
-    { 0x28010015 },
-    { 0x27010003 },
-    { 0x26010003 },
-    { 0x24010003 },
-    { 0x25000003 },
+    { 3, 0, 1, 0x24 },
+    { 9, 0, 1, 0x25 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 21, 0, 1, 0x28 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 0, 0x25 },
 };
 
 union AnimationStep slope_skier_anim_18[] = {
-    { 0x1E010003 },
-    { 0x1F01000F },
-    { 0x1E010003 },
-    { 0x01010002 },
-    { 0x01000101 },
+    { 3, 0, 1, 0x1E },
+    { 15, 0, 1, 0x1F },
+    { 3, 0, 1, 0x1E },
+    { 2, 0, 1, 0x01 },
+    { 1, 1, 0, 0x01 },
 };
 
 union AnimationStep slope_skier_anim_19[] = {
-    { 0x20010003 },
-    { 0x2101000F },
-    { 0x22010003 },
-    { 0x05010002 },
-    { 0x05000101 },
+    { 3, 0, 1, 0x20 },
+    { 15, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 2, 0, 1, 0x05 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep slope_skier_anim_20[] = {
-    { 0x22010003 },
-    { 0x2301000F },
-    { 0x22010003 },
-    { 0x05010002 },
-    { 0x05000101 },
+    { 3, 0, 1, 0x22 },
+    { 15, 0, 1, 0x23 },
+    { 3, 0, 1, 0x22 },
+    { 2, 0, 1, 0x05 },
+    { 1, 1, 0, 0x05 },
 };
 
 union AnimationStep slope_skier_anim_10[] = {
-    { 0x08010003 },
-    { 0x17010003 },
-    { 0x18010203 },
-    { 0x19010003 },
-    { 0x18010003 },
-    { 0x1901000F },
-    { 0x18010003 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C01000F },
-    { 0x1B010003 },
-    { 0x1A010003 },
-    { 0x1D000103 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x17 },
+    { 3, 2, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 15, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 15, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1A },
+    { 3, 1, 0, 0x1D },
 };
 
 union AnimationStep slope_skier_anim_11[] = {
-    { 0x0D010003 },
-    { 0x0E010003 },
-    { 0x0F010009 },
-    { 0x0E010003 },
-    { 0x17010003 },
-    { 0x18010203 },
-    { 0x19010003 },
-    { 0x18010003 },
-    { 0x1901000F },
-    { 0x18010003 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C01000F },
-    { 0x1B010003 },
-    { 0x1A010003 },
-    { 0x1D000103 },
+    { 3, 0, 1, 0x0D },
+    { 3, 0, 1, 0x0E },
+    { 9, 0, 1, 0x0F },
+    { 3, 0, 1, 0x0E },
+    { 3, 0, 1, 0x17 },
+    { 3, 2, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 15, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 15, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1A },
+    { 3, 1, 0, 0x1D },
 };
 
 union AnimationStep slope_skier_anim_12[] = {
-    { 0x12010003 },
-    { 0x13010003 },
-    { 0x14010009 },
-    { 0x13010003 },
-    { 0x17010003 },
-    { 0x18010203 },
-    { 0x19010003 },
-    { 0x18010003 },
-    { 0x1901000F },
-    { 0x18010003 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C01000F },
-    { 0x1B010003 },
-    { 0x1A010003 },
-    { 0x1D000103 },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 9, 0, 1, 0x14 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x17 },
+    { 3, 2, 1, 0x18 },
+    { 3, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 15, 0, 1, 0x19 },
+    { 3, 0, 1, 0x18 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 15, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1A },
+    { 3, 1, 0, 0x1D },
 };
 
 union AnimationStep slope_skier_anim_21[] = {
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29010002 },
-    { 0x2A010002 },
-    { 0x29FC0012 },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 2, 0, 1, 0x29 },
+    { 2, 0, 1, 0x2A },
+    { 18, 0, -4, 0x29 },
 };
 
 union AnimationStep slope_skier_anim_22[] = {
-    { 0x2A000001 },
+    { 1, 0, 0, 0x2A },
 };
 
 union AnimationStep slope_skier_anim_23[] = {
-    { 0x2E010002 },
-    { 0x2F010002 },
-    { 0x30010002 },
-    { 0x31010002 },
-    { 0x32010002 },
-    { 0x33010002 },
-    { 0x34010002 },
-    { 0x35010002 },
-    { 0x36010002 },
-    { 0x37010002 },
-    { 0x38010002 },
-    { 0x39010002 },
-    { 0x3A010002 },
-    { 0x3B010002 },
-    { 0x3CFF0002 },
+    { 2, 0, 1, 0x2E },
+    { 2, 0, 1, 0x2F },
+    { 2, 0, 1, 0x30 },
+    { 2, 0, 1, 0x31 },
+    { 2, 0, 1, 0x32 },
+    { 2, 0, 1, 0x33 },
+    { 2, 0, 1, 0x34 },
+    { 2, 0, 1, 0x35 },
+    { 2, 0, 1, 0x36 },
+    { 2, 0, 1, 0x37 },
+    { 2, 0, 1, 0x38 },
+    { 2, 0, 1, 0x39 },
+    { 2, 0, 1, 0x3A },
+    { 2, 0, 1, 0x3B },
+    { 2, 0, -1, 0x3C },
 };
 
 union AnimationStep slope_skier_anim_24[] = {
-    { 0x3D000001 },
+    { 1, 0, 0, 0x3D },
 };
 
 union AnimationStep slope_skier_anim_25[] = {
-    { 0x3E000001 },
+    { 1, 0, 0, 0x3E },
 };
 
 union AnimationStep slope_skier_anim_26[] = {
-    { 0x3F000001 },
+    { 1, 0, 0, 0x3F },
 };
 
 union AnimationStep slope_skier_anim_27[] = {
-    { 0x40000001 },
+    { 1, 0, 0, 0x40 },
 };
 
 union AnimationStep slope_skier_anim_28[] = {
-    { 0x41000001 },
+    { 1, 0, 0, 0x41 },
 };
 
 union AnimationStep slope_skier_anim_29[] = {
-    { 0x42000001 },
+    { 1, 0, 0, 0x42 },
 };
 
 union AnimationStep slope_skier_anim_30[] = {
-    { 0x43000001 },
+    { 1, 0, 0, 0x43 },
 };
 
 union AnimationStep* slope_skier_animations[] = {
@@ -803,3 +787,23 @@ void (*slope_skier_state_funcs[])() = {
     slope_skier_main,
     slope_skier_despawn,
 };
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+static struct VisualObj* main_23_spawn_visual(struct MainObj* arg0, u8 facing)
+{
+    struct VisualObj* visual = find_free_visual_obj();
+
+    if (visual == NULL)
+        return NULL;
+    visual->active = 0x41;
+    visual->id = 3;
+    visual->unk2 = 5;
+    visual->bg_offset = arg0->bg_offset;
+    visual->unk15 = facing;
+    visual->unk40 = arg0->unk40;
+    visual->unk3C = (void*)arg0->sprite_frames;
+    visual->animation_table = (u32**)arg0->animation_table;
+    visual->unk42 = arg0->unk42;
+    return visual;
+}
+#endif

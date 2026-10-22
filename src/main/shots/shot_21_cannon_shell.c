@@ -7,10 +7,7 @@
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision.h"
-
-#ifdef MMX4_PC
 #include "main/collision_bounds.h"
-#endif
 
 // cannon_shell_state_funcs
 extern void (*cannon_shell_state_funcs[])(struct ShotObj*);
@@ -19,6 +16,11 @@ void cannon_shell_fly(struct ShotObj*);
 
 void cannon_shell_despawn(struct ShotObj*);
 void cannon_shell_idle(struct ShotObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/collision_bounds.h"
+#endif
 
 u8 cannon_shell_hit_box[4] = { 0xF7, 0xF8, 0x11, 0x11 };
 u8 cannon_shell_flat_hit_box[4] = { 0xF3, 0xFC, 0x18, 0x0B };
@@ -33,7 +35,8 @@ void cannon_shell_update(struct ShotObj* self)
 }
 
 // cannon_shell_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D23C(struct ShotObj* arg0);
 static s32 shot_21_abs(s32 value);
 void func_8009D588(struct ShotObj* arg0);
@@ -43,7 +46,7 @@ static s32 shot_21_abs(s32 value)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D23C(struct ShotObj* arg0)
 {
     struct WeaponObj* owner;
@@ -126,14 +129,14 @@ void cannon_shell_fly(struct ShotObj* self)
             misc->active = 0x21;
             misc->id = 0x17;
             misc->unk2 = 0;
-            misc->unk15 = get_random() & 0x40;
+            misc->unk15 = get_random() & PLAYER_FACING_RIGHT;
             misc->ext.unk.unk54 = 0;
             misc->x_pos.i.hi = self->x_pos.i.hi;
             misc->y_pos.i.hi = self->y_pos.i.hi;
             misc->x_vel.val = 0;
             misc->y_vel.val = 0;
             misc->unk7 = 1;
-            misc->unk16 = 7;
+            misc->unk16 = VISUAL_SATURN_LAYER(7);
         }
         self->unk7 = 1;
     } else {
@@ -156,7 +159,7 @@ void cannon_shell_idle(struct ShotObj* self)
 }
 
 // cannon_shell_update_facing
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8009D588(struct ShotObj* arg0)
 {
     switch (arg0->unk84.value) {

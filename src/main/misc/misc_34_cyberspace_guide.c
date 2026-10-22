@@ -26,6 +26,7 @@ extern void (*cyberspace_guide_leave_funcs[])(struct MiscObj*);
 void cyberspace_guide_leave_start(struct MiscObj*);
 void cyberspace_guide_leave_drift(struct MiscObj*);
 void cyberspace_guide_leave_finish(struct MiscObj*);
+#include "weapon_resources.h"
 
 extern union AnimationStep* cyberspace_guide_animations[5];
 
@@ -47,10 +48,10 @@ void func_800CE8DC(struct MiscObj* self)
     self->bg_offset = g_Player.bg_offset;
     self->animation_table = (u32**)cyberspace_guide_animations;
     resource = func_8002938C(0x90);
-    self->unk40 = D_801406A8[resource] >> 7;
+    self->unk40 = OBJECT_STAGE_TEXTURE(resource);
     resource = func_8002938C(0x90);
     self->unk3C = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
-    self->unk42 = CLUT_FROM_ID(0x90);
+    self->unk42 = OBJECT_STAGE_CLUT(0x90);
     self->x_pos.u.hi = g_Player.x_pos.u.hi;
     y_pos = g_Player.y_pos.u.hi;
     self->state = 1;
@@ -82,7 +83,7 @@ void func_800CE8DC(struct MiscObj* self)
 #endif
     self->y_pos.u.hi = y_pos;
     set_animation(self, 0);
-    func_8001540C(2, 0xE9, self);
+    func_8001540C(2, SATURN_SOUND(0xE9, 0xAA), self);
 }
 
 void cyberspace_guide_main(struct MiscObj* self)
@@ -127,7 +128,8 @@ void cyberspace_guide_start_timer(struct MiscObj* self)
 }
 
 // cyberspace_guide_follow
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void misc_34_track_axis(f32* position, s32 target, s16 target_hi);
 void func_800CEBC0(struct MiscObj* arg0);
 void func_800CEFC0(struct MiscObj* arg0);
@@ -144,7 +146,7 @@ static void misc_34_track_axis(f32* position, s32 target, s16 target_hi)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CEBC0(struct MiscObj* arg0)
 {
     struct EffectObj* related = arg0->ext.misc_34.related;
@@ -230,7 +232,7 @@ void cyberspace_guide_leave_finish(struct MiscObj* self)
 }
 
 // cyberspace_guide_update_position
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800CEFC0(struct MiscObj* arg0)
 {
     struct Misc34Ext* ext = &arg0->ext.misc_34;
@@ -274,72 +276,67 @@ void cyberspace_guide_update_blink(struct MiscObj* self)
     }
 }
 
-#define STEP(value) \
-    {               \
-        (value)     \
-    }
-
 union AnimationStep cyberspace_guide_anim_0[6] = {
-    STEP(0x1B010006),
-    STEP(0x1C010006),
-    STEP(0x1D010006),
-    STEP(0x00010006),
-    STEP(0x01010006),
-    STEP(0x02000006),
+    { 6, 0, 1, 0x1B },
+    { 6, 0, 1, 0x1C },
+    { 6, 0, 1, 0x1D },
+    { 6, 0, 1, 0x00 },
+    { 6, 0, 1, 0x01 },
+    { 6, 0, 0, 0x02 },
 };
 
 union AnimationStep cyberspace_guide_anim_1[24] = {
-    STEP(0x03010006),
-    STEP(0x04010006),
-    STEP(0x05010006),
-    STEP(0x06010003),
-    STEP(0x07010003),
-    STEP(0x08010003),
-    STEP(0x09010003),
-    STEP(0x0A010003),
-    STEP(0x0B010003),
-    STEP(0x0C010006),
-    STEP(0x0D010006),
-    STEP(0x0E010006),
-    STEP(0x0F010006),
-    STEP(0x10010006),
-    STEP(0x11010006),
-    STEP(0x18010006),
-    STEP(0x19010006),
-    STEP(0x1A010006),
-    STEP(0x12010003),
-    STEP(0x13010003),
-    STEP(0x14010003),
-    STEP(0x15010003),
-    STEP(0x16010003),
-    STEP(0x17E90003),
+    { 6, 0, 1, 0x03 },
+    { 6, 0, 1, 0x04 },
+    { 6, 0, 1, 0x05 },
+    { 3, 0, 1, 0x06 },
+    { 3, 0, 1, 0x07 },
+    { 3, 0, 1, 0x08 },
+    { 3, 0, 1, 0x09 },
+    { 3, 0, 1, 0x0A },
+    { 3, 0, 1, 0x0B },
+    { 6, 0, 1, 0x0C },
+    { 6, 0, 1, 0x0D },
+    { 6, 0, 1, 0x0E },
+    { 6, 0, 1, 0x0F },
+    { 6, 0, 1, 0x10 },
+    { 6, 0, 1, 0x11 },
+    { 6, 0, 1, 0x18 },
+    { 6, 0, 1, 0x19 },
+    { 6, 0, 1, 0x1A },
+    { 3, 0, 1, 0x12 },
+    { 3, 0, 1, 0x13 },
+    { 3, 0, 1, 0x14 },
+    { 3, 0, 1, 0x15 },
+    { 3, 0, 1, 0x16 },
+    { 3, 0, -23, 0x17 },
 };
 
 union AnimationStep cyberspace_guide_anim_2[6] = {
-    STEP(0x1E010003),
-    STEP(0x1F010003),
-    STEP(0x20010003),
-    STEP(0x21010003),
-    STEP(0x22010003),
-    STEP(0x23FB0003),
+    { 3, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 3, 0, -5, 0x23 },
 };
 
 union AnimationStep cyberspace_guide_anim_3[6] = {
-    STEP(0x24010003),
-    STEP(0x25010003),
-    STEP(0x26010003),
-    STEP(0x27010003),
-    STEP(0x28010003),
-    STEP(0x29FB0003),
+    { 3, 0, 1, 0x24 },
+    { 3, 0, 1, 0x25 },
+    { 3, 0, 1, 0x26 },
+    { 3, 0, 1, 0x27 },
+    { 3, 0, 1, 0x28 },
+    { 3, 0, -5, 0x29 },
 };
 
 union AnimationStep cyberspace_guide_anim_4[6] = {
-    STEP(0x02010006),
-    STEP(0x01010006),
-    STEP(0x00010006),
-    STEP(0x1D010006),
-    STEP(0x1C010006),
-    STEP(0x1B000006),
+    { 6, 0, 1, 0x02 },
+    { 6, 0, 1, 0x01 },
+    { 6, 0, 1, 0x00 },
+    { 6, 0, 1, 0x1D },
+    { 6, 0, 1, 0x1C },
+    { 6, 0, 0, 0x1B },
 };
 
 union AnimationStep* cyberspace_guide_animations[5] = {

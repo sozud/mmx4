@@ -234,7 +234,7 @@ static u32 clone_dust(u32 row)
     visuals[slot].y_pos.i.hi = g_Entity.y_pos.i.hi + (row ? 17 : 12);
     visuals[slot].unk17 = row ? 3 : 2;
     visuals[slot].animation_cursor = D_8011BF40[row ? 3 : 2];
-    visuals[slot].animation_step.packed = D_8011BF40[row ? 3 : 2][0];
+    visuals[slot].animation_step.packed = D_8011BF40[row ? 3 : 2][0].packed;
     visuals[slot].previous_animation_index = 0xFF;
     visuals[slot].state = 1;
     if (row)

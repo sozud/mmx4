@@ -1,6 +1,7 @@
 // MainObj, main_object_update_funcs[45]
 // 80065B8C..80066A48
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_45_train_boss.h"
 #include "main/player_common.h"
 #include "main/1E1BC.h"
@@ -8,8 +9,9 @@
 #include "main/collision_bounds.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/visuals/visual_03_small_effect.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/visuals/visual_03_small_effect.h"
 #endif
 
@@ -77,7 +79,7 @@ void train_boss_init(struct MainObj* self)
     self->ext.main_45.unk82 = 0;
     self->ext.main_45.unk83 = 0;
     self->animation_table = (const u8* const*)train_boss_animations;
-    self->unk16 = 4;
+    self->unk16 = VISUAL_SATURN_LAYER(4);
     self->terrain_box = (struct Unk_unk68*)train_boss_terrain_box;
     self->ext.main_45.unk84 = 0x320;
     self->ext.main_45.projectile_command = 0x80;
@@ -107,7 +109,7 @@ void train_boss_main(struct MainObj* self)
         self->unk7E = 1;
         self->state = 2;
         if (g_Player.unk5 == 2) {
-            player_start_script_action(0x14, 0x40);
+            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
             self->unk6 = 1;
         } else {
             self->unk6 = 0;
@@ -132,7 +134,7 @@ void train_boss_defeated(struct MainObj* self)
     }
     if (self->unk6 == 0) {
         if ((g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69) || (g_Player.x_pos.i.hi >= 0x1B36)) {
-            player_start_script_action(0x14, 0x40);
+            player_start_script_action(0x14, PLAYER_FACING_RIGHT);
             self->unk6 = 1;
         }
     }
@@ -141,7 +143,8 @@ void train_boss_defeated(struct MainObj* self)
 }
 
 // train_boss_leave
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 static void train_boss_move_player_past_exit(struct MainObj* self);
 static void train_boss_exit_player_script(struct MainObj* self);
 void func_80065EA4(struct MainObj* self);
@@ -152,8 +155,6 @@ void func_800665BC(struct MainObj* self);
 void func_80066970(struct MainObj* self);
 void collide_with_players(struct PlayerObj*);
 extern u8 D_800FF8B0[8];
-// src/main/mains/main_45_train_boss.c
-
 static void train_boss_move_player_past_exit(struct MainObj* self)
 {
     if (self->x_pos.i.hi + 0x69 < g_Player.x_pos.i.hi && (u8)(get_layout_screen(1, 0xA0, 0x80) - 0x23) < 2) {
@@ -166,7 +167,7 @@ static void train_boss_move_player_past_exit(struct MainObj* self)
 static void train_boss_exit_player_script(struct MainObj* self)
 {
     if (self->unk6 == 0 && (g_Player.x_pos.i.hi <= self->x_pos.i.hi + 0x69 || g_Player.x_pos.i.hi >= 0x1B36)) {
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk6 = 1;
     }
     collide_with_players(PLAYER_OBJECT(self));
@@ -174,7 +175,7 @@ static void train_boss_exit_player_script(struct MainObj* self)
 }
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80065EA4(struct MainObj* self)
 {
     train_boss_move_player_past_exit(self);
@@ -228,7 +229,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_80065EA4);
 #endif
 
 // train_boss_despawn
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800661AC(struct MainObj* self)
 {
     if ((u8)g_Player.hp != 0x80)
@@ -248,7 +249,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_800661AC);
 #endif
 
 // train_boss_update_parts
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8006630C(struct MainObj* self)
 {
     struct Main45Ext* parts = &self->ext.main_45;
@@ -287,7 +288,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_45_train_boss", func_8006630C);
 #endif
 
 // train_boss_update_projectiles
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066478(struct MainObj* self)
 {
     struct Main45Ext* parts = &self->ext.main_45;
@@ -329,7 +330,7 @@ void train_boss_arrive(struct MainObj* self)
 }
 
 // train_boss_arrive_start
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800665BC(struct MainObj* self)
 {
     struct LayerObj* layer = find_free_layer_obj();
@@ -442,7 +443,7 @@ void train_boss_arrive_fill_hp(struct MainObj* self)
 {
     if (self->hp < 0x30) {
         if (--self->unk7E == 0) {
-            func_8001540C(0, 0xE, NULL);
+            func_8001540C(0, SATURN_SOUND(0xE, 0x14), NULL);
             self->unk7E = 3;
         }
         self->hp = (u8)self->hp + 1;
@@ -471,7 +472,7 @@ void train_boss_fight_idle(void)
 }
 
 // train_boss_spawn_smoke
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80066970(struct MainObj* self)
 {
     u16 x = self->x_pos.u.hi;
@@ -525,51 +526,51 @@ u8 train_boss_attack_timers[20] = {
 
 u8 D_800FF8B0[8] = { 0x11, 0x22, 0x44, 0x08, 0, 0, 0, 0 };
 
-union AnimationStep train_boss_anim_0[] = { { 0x00000101 } };
+union AnimationStep train_boss_anim_0[] = { { 1, 1, 0, 0x00 } };
 
-union AnimationStep train_boss_anim_1[] = { { 0x01000101 } };
+union AnimationStep train_boss_anim_1[] = { { 1, 1, 0, 0x01 } };
 
-union AnimationStep train_boss_anim_2[] = { { 0x02000101 } };
+union AnimationStep train_boss_anim_2[] = { { 1, 1, 0, 0x02 } };
 
 union AnimationStep train_boss_anim_3[] = {
-    { 0x03010001 },
-    { 0x04010001 },
-    { 0x05010001 },
-    { 0x06FD0101 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x04 },
+    { 1, 0, 1, 0x05 },
+    { 1, 1, -3, 0x06 },
 };
 
 union AnimationStep train_boss_anim_4[] = {
-    { 0x03010001 },
-    { 0x08010001 },
-    { 0x09010001 },
-    { 0x06FD0101 },
+    { 1, 0, 1, 0x03 },
+    { 1, 0, 1, 0x08 },
+    { 1, 0, 1, 0x09 },
+    { 1, 1, -3, 0x06 },
 };
 
-union AnimationStep train_boss_anim_5[] = { { 0x07000101 } };
+union AnimationStep train_boss_anim_5[] = { { 1, 1, 0, 0x07 } };
 
-union AnimationStep train_boss_anim_6[] = { { 0x0A000101 } };
+union AnimationStep train_boss_anim_6[] = { { 1, 1, 0, 0x0A } };
 
-union AnimationStep train_boss_anim_7[] = { { 0x0B000101 } };
+union AnimationStep train_boss_anim_7[] = { { 1, 1, 0, 0x0B } };
 
-union AnimationStep train_boss_anim_8[] = { { 0x0C000101 } };
+union AnimationStep train_boss_anim_8[] = { { 1, 1, 0, 0x0C } };
 
-union AnimationStep train_boss_anim_9[] = { { 0x0D000101 } };
+union AnimationStep train_boss_anim_9[] = { { 1, 1, 0, 0x0D } };
 
-union AnimationStep train_boss_anim_10[] = { { 0x0E000101 } };
+union AnimationStep train_boss_anim_10[] = { { 1, 1, 0, 0x0E } };
 
-union AnimationStep train_boss_anim_11[] = { { 0x0F000101 } };
+union AnimationStep train_boss_anim_11[] = { { 1, 1, 0, 0x0F } };
 
-union AnimationStep train_boss_anim_12[] = { { 0x10000101 } };
+union AnimationStep train_boss_anim_12[] = { { 1, 1, 0, 0x10 } };
 
-union AnimationStep train_boss_anim_13[] = { { 0x11000101 } };
+union AnimationStep train_boss_anim_13[] = { { 1, 1, 0, 0x11 } };
 
-union AnimationStep train_boss_anim_14[] = { { 0x12000101 } };
+union AnimationStep train_boss_anim_14[] = { { 1, 1, 0, 0x12 } };
 
-union AnimationStep train_boss_anim_15[] = { { 0x13000101 } };
+union AnimationStep train_boss_anim_15[] = { { 1, 1, 0, 0x13 } };
 
-union AnimationStep train_boss_anim_16[] = { { 0x14000101 } };
+union AnimationStep train_boss_anim_16[] = { { 1, 1, 0, 0x14 } };
 
-union AnimationStep train_boss_anim_17[] = { { 0x15000101 } };
+union AnimationStep train_boss_anim_17[] = { { 1, 1, 0, 0x15 } };
 
 union AnimationStep* train_boss_animations[] = {
     train_boss_anim_0,

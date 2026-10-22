@@ -17,7 +17,8 @@ extern void (*boss_warning_quad_state_funcs[])(struct QuadObj*);
 void func_800D5144(struct QuadObj*);
 void boss_warning_quad_despawn(struct QuadObj*);
 
-#ifdef MMX4_PC
+#include "weapon_resources.h"
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 extern u8 boss_warning_quad_blink_levels[16];
 #endif
 extern s16 stage_select_flyout_targets[8][2];
@@ -58,13 +59,11 @@ struct QuadMotionData boss_warning_quad_motions[22] = {
     { { 0xA4, 0x64, 0xA4, 0x68 }, { -9, 0, 9, 0 } },
 };
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D4C50(struct QuadObj* arg0);
 #endif
 
-#ifdef MMX4_PC
-// src/main/quads/quad_03_boss_warning_quad.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D4C50(struct QuadObj* arg0)
 {
     u8 index = (u8)arg0->unk2;
@@ -157,7 +156,8 @@ void boss_warning_quad_close(struct QuadObj* arg0)
 void func_800D5144(struct QuadObj* self)
 {
     boss_warning_quad_step_funcs[self->unk5](self);
-    if (self->unk5 == 0 || D_8013B960 == 0 || main_bss_state.frame_counter % 3 != 0) {
+    if (self->unk5 == 0 || D_8013B960 == 0 || WEAPON_FRAME_COUNTER % 3 != 0) {
+        QUAD_QUEUE(self);
         return;
     }
     self->unk34 = boss_warning_quad_blink_levels[self->ext.quad_2.x_scale.bytes.fraction];
@@ -165,6 +165,7 @@ void func_800D5144(struct QuadObj* self)
     if (self->ext.quad_2.x_scale.bytes.fraction == 0xE) {
         self->ext.quad_2.x_scale.bytes.fraction = 0;
     }
+    QUAD_QUEUE(self);
 }
 
 void boss_warning_quad_despawn(struct QuadObj* arg0)

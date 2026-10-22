@@ -16,6 +16,7 @@ extern void (*water_wake_step_funcs[])(struct VisualObj*, struct PlayerObj*);
 void water_wake_hidden(struct VisualObj*, struct PlayerObj*);
 void water_wake_idle(struct VisualObj*, struct PlayerObj*);
 void water_wake_moving(struct VisualObj*, struct PlayerObj*);
+#include "weapon_resources.h"
 
 void water_wake_init(struct VisualObj* arg0, struct VisualObj* arg1);
 void water_wake_main(struct VisualObj* arg0, struct PlayerObj* arg1);
@@ -35,11 +36,15 @@ void water_wake_update(struct VisualObj* arg0)
 void water_wake_init(struct VisualObj* arg0, struct VisualObj* arg1)
 {
     arg0->bg_offset = arg1->bg_offset;
-    arg0->unk16 = 1;
+    arg0->unk16 = VISUAL_SATURN_LAYER(1);
     arg0->animation_table = &D_8011BF40;
     arg0->unk3C = *((u8)func_8002938C(0x84) + SP_MENU_FRAMES) + (s8*)SP_MENU_FRAMES;
+#ifdef MMX4_SATURN
+    arg0->unk40 = PLAYER_STAGE_TEXTURE((u8)func_8002938C(0x84));
+#else
     arg0->unk40 = D_801406A8[(u8)func_8002938C(0x84)] >> 7;
-    arg0->unk42 = SOME_COORDINATE_CONVERSION((u8)func_8002938C(0x84));
+#endif
+    arg0->unk42 = VISUAL_STAGE_PALETTE((u8)func_8002938C(0x84));
     arg0->state++;
 }
 

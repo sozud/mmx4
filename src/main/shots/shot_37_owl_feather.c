@@ -3,8 +3,12 @@
 #include "common.h"
 #include "main/shots/shot_37_owl_feather.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
+#include "main/object_motion.h"
+#include "main/55C4.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/55C4.h"
 #include "main/collision_bounds.h"
@@ -39,12 +43,13 @@ void owl_feather_update(struct ShotObj* self)
 }
 
 // owl_feather_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A3CB4(struct ShotObj* arg0);
 void func_800A3FEC(struct ShotObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A3CB4(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;
@@ -118,7 +123,7 @@ INCLUDE_ASM("main/nonmatchings/shots/shot_37_owl_feather", func_800A3CB4);
 #endif
 
 // owl_feather_fly
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800A3FEC(struct ShotObj* arg0)
 {
     struct MainObj* owner = (struct MainObj*)arg0->unk7C;

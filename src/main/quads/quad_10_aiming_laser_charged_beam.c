@@ -3,11 +3,8 @@
 #include "common.h"
 #include "main/quads/quad_10_aiming_laser_charged_beam.h"
 #include "main/objects.h"
-
-#ifdef MMX4_PC
-#include "main/object_motion.h"
 #include "main/sprite_animations.h"
-#endif
+#include "main/object_motion.h"
 
 struct PlayerUnk8CFields {
     s8 unk8C;
@@ -18,6 +15,12 @@ struct PlayerUnk8CFields {
 extern void (*aiming_laser_charged_beam_state_funcs[])(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
 
 void aiming_laser_charged_beam_extend(struct QuadObj*, struct PlayerObj*, struct PlayerObj*);
+#include "weapon_resources.h"
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+#include "main/object_motion.h"
+#include "main/sprite_animations.h"
+#endif
 
 void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 {
@@ -47,7 +50,8 @@ void aiming_laser_charged_beam_update(struct QuadObj* arg0)
 }
 
 // aiming_laser_charged_beam_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner);
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner);
 // src/main/quads/quad_10_aiming_laser_charged_beam.c
@@ -55,7 +59,7 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
 extern u8 aiming_laser_charged_beam_delays[4];
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D6B9C(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
     struct Quad10Ext* ext = &self->ext.quad_10;
@@ -151,7 +155,7 @@ void aiming_laser_charged_beam_retract(struct QuadObj* arg0, struct PlayerObj* a
 }
 
 // aiming_laser_charged_beam_place
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct PlayerObj* owner)
 {
     struct Quad10Ext* ext = &self->ext.quad_10;
@@ -171,6 +175,11 @@ void func_800D6DC4(struct QuadObj* self, struct PlayerObj* player, struct Player
     func_8002B9F0(&ext->x_step, &ext->y_step, (direction + 1) & 0x1F);
     self->vertices[3].x.val = ext->x_step * ext->progress;
     self->vertices[3].y.val = ext->y_step * ext->progress;
+#ifdef MMX4_SATURN
+    if (self->on_screen != 0) {
+        saturn_queue_frozen_quad(self);
+    }
+#endif
 }
 #else
 INCLUDE_ASM("main/nonmatchings/quads/quad_10_aiming_laser_charged_beam", func_800D6DC4);

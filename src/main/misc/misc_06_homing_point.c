@@ -4,8 +4,9 @@
 #include "main/misc/misc_06_homing_point.h"
 #include "main/object_motion.h"
 #include "main/objects.h"
+#include "main/55C4.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/55C4.h"
 #endif
 
@@ -22,11 +23,12 @@ void homing_point_update(struct MiscObj* self)
 }
 
 // homing_point_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C91EC(struct MiscObj* arg0);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C91EC(struct MiscObj* arg0)
 {
     set_animation(arg0, arg0->unk2 + 0x11);

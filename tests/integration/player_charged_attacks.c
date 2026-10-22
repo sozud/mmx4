@@ -127,7 +127,7 @@ static void expect_animation(u32 animation, u32 frame)
     player_expected.unk17 = animation;
     player_expected.previous_animation_index = 0xFF;
     player_expected.animation_cursor = (u32*)D_80119DF0[animation] + frame;
-    player_expected.animation_step.packed = D_80119DF0[animation][frame];
+    player_expected.animation_step.packed = D_80119DF0[animation][frame].packed;
     player_expected.unk3C = (u8*)frames + 0x20;
 }
 
@@ -286,7 +286,7 @@ static u32 test_soul_body_cast(u32 row)
     }
     check();
     for (i = 0; i < COUNT(cast_frames); i++)
-        assert(D_80119DF0[0x60][i] == cast_frames[i]);
+        assert(D_80119DF0[0x60][i].packed == cast_frames[i]);
     return 1;
 }
 

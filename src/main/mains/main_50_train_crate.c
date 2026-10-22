@@ -1,10 +1,13 @@
 // MainObj, main_object_update_funcs[50]
 // 8006970C..80069A94
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_50_train_crate.h"
 #include "main/objects.h"
+#include "main/collision_bounds.h"
+#include "main/CB184.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #include "main/CB184.h"
 #include "main/collision_bounds.h"
@@ -24,7 +27,11 @@ void train_crate_update(struct MainObj* self)
 }
 
 // train_crate_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80069748(struct MainObj* arg0);
 void func_800698D8(struct MainObj* arg0);
 extern struct Unk_unk68 D_80108504[];
@@ -35,7 +42,7 @@ extern void (*train_crate_step_funcs[2])();
 extern ret_u8 func_8002938C(s32);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_80069748(struct MainObj* arg0)
 {
     s32 resource;
@@ -44,12 +51,12 @@ void func_80069748(struct MainObj* arg0)
     arg0->contact_damage = 0;
     arg0->invincibility_timer = 0;
     resource = func_8002938C(0x28);
-    arg0->unk40 = D_801406A8[resource] >> 7;
-    arg0->unk42 = CLUT_FROM_ID(0x28);
+    arg0->unk40 = OBJECT_STAGE_TEXTURE(resource);
+    arg0->unk42 = OBJECT_STAGE_CLUT(0x28);
     resource = func_8002938C(0x28);
     arg0->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[resource];
     arg0->unk1C.val = arg0->y_pos.val;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     arg0->hurt_box = train_crate_hurt_box;
     arg0->animation_table = (const u8* const*)train_crate_animations;
     arg0->unk18.val = arg0->x_pos.val;
@@ -74,7 +81,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_80069748);
 #endif
 
 // train_crate_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800698D8(struct MainObj* arg0)
 {
     arg0->unk18.val = arg0->x_pos.val;
@@ -105,7 +112,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_50_train_crate", func_800698D8);
 void train_crate_explode(struct MainObj* self)
 {
     if (++self->ext.main_50.timer != 0x30) {
-        if (!(main_bss_state.frame_counter & 7)) {
+        if (!(WEAPON_FRAME_COUNTER & 7)) {
             func_800AF878(BASE_OBJECT(self), 1, 0x18, 0x18);
         }
     } else {
@@ -128,25 +135,25 @@ u8 D_800FFBDC[6] = { 0, 1, 2, 1, 0, 2 };
 
 u8 train_crate_debris[6] = { 7, 8, 9, 7, 9, 8 };
 
-union AnimationStep train_crate_anim_0[1] = { { 0x00000101 } };
+union AnimationStep train_crate_anim_0[1] = { { 1, 1, 0, 0x00 } };
 
-union AnimationStep train_crate_anim_1[1] = { { 0x01000001 } };
+union AnimationStep train_crate_anim_1[1] = { { 1, 0, 0, 0x01 } };
 
-union AnimationStep train_crate_anim_2[1] = { { 0x02000001 } };
+union AnimationStep train_crate_anim_2[1] = { { 1, 0, 0, 0x02 } };
 
-union AnimationStep train_crate_anim_3[1] = { { 0x03000001 } };
+union AnimationStep train_crate_anim_3[1] = { { 1, 0, 0, 0x03 } };
 
-union AnimationStep train_crate_anim_4[1] = { { 0x04000001 } };
+union AnimationStep train_crate_anim_4[1] = { { 1, 0, 0, 0x04 } };
 
-union AnimationStep train_crate_anim_5[1] = { { 0x05000001 } };
+union AnimationStep train_crate_anim_5[1] = { { 1, 0, 0, 0x05 } };
 
-union AnimationStep train_crate_anim_6[1] = { { 0x06000001 } };
+union AnimationStep train_crate_anim_6[1] = { { 1, 0, 0, 0x06 } };
 
-union AnimationStep train_crate_anim_7[1] = { { 0x07000001 } };
+union AnimationStep train_crate_anim_7[1] = { { 1, 0, 0, 0x07 } };
 
-union AnimationStep train_crate_anim_8[1] = { { 0x08000001 } };
+union AnimationStep train_crate_anim_8[1] = { { 1, 0, 0, 0x08 } };
 
-union AnimationStep train_crate_anim_9[1] = { { 0x09000001 } };
+union AnimationStep train_crate_anim_9[1] = { { 1, 0, 0, 0x09 } };
 
 union AnimationStep* train_crate_animations[10] = {
     train_crate_anim_0,

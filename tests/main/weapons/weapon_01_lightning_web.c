@@ -250,7 +250,7 @@ static u32 charged_web_step(u32 row)
     memcpy(backgrounds_before, background_objects, sizeof(backgrounds_before));
     for (i = 0; i < 4; i++)
         for (j = 0; j < web_lengths[i]; j++)
-            assert(D_8011C070[web_animations[i]][j] == web_words[i][j]);
+            assert(D_8011C070[web_animations[i]][j].packed == web_words[i][j]);
     memset(&obj, 0, sizeof(obj));
     obj.active = 0x41;
     obj.id = 10;

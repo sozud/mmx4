@@ -18,7 +18,7 @@ enum XaArchive {
     XA_ARCHIVE_VOICE2,
     XA_ARCHIVE_VOICE3,
     XA_ARCHIVE_VOICE4,
-    XA_ARCHIVE_VOICE5,
+    XA_ARCHIVE_VOICE5
 };
 
 union MainPaletteData {
@@ -27,7 +27,11 @@ union MainPaletteData {
         u8 preceding_palettes[0xA0];
         u16 dialogue_palette[0x20];
         u8 trailing_palettes[0x120];
-    };
+    }
+#ifdef MMX4_SHC
+    dialogue
+#endif
+    ;
 };
 
 enum SelectedPlayer {

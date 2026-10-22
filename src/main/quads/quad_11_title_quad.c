@@ -5,12 +5,13 @@
 #include "main/object_motion.h"
 #include "main/objects.h"
 
-extern void (*g_TitleUpdate2Funcs[])();
+extern void (*g_TitleUpdate2Funcs[])(struct QuadObj*);
 
 void title_quad_init(struct QuadObj* arg0);
 
 void title_quad_despawn(struct QuadObj* arg0);
 void title_quad_delay(struct QuadObj* arg0);
+#include "weapon_resources.h"
 
 // white quad that turns into "MEGAMAN" on title screen
 
@@ -91,7 +92,7 @@ void title_quad_init(struct QuadObj* arg0)
     }
     }
 #else
-    entity->unk34 = title_quad_palette[0];
+    entity->unk34 = SATURN_ALT(title_quad_palette[0], 0x170);
     entity->unk36 = 0x10;
     entity->state = 3;
     entity->ext.title_quad.unk38 = 0x14;
@@ -283,6 +284,11 @@ void title_quad_morph(struct QuadObj* arg0)
         pos++;
     } while (pos < 4);
 
+#ifdef MMX4_SATURN
+    if ((arg0->ext.title_quad.unk38 % 3) == 0) {
+        arg0->unk34++;
+    }
+#else
     if ((arg0->ext.title_quad.unk38 % 3) == 0) {
         palette = title_quad_palette;
         temp_v1 = arg0->ext.title_quad.unk43;
@@ -297,6 +303,7 @@ void title_quad_morph(struct QuadObj* arg0)
         }
         arg0->unk34 = *var_v0;
     }
+#endif
 
     arg0->ext.title_quad.unk38--;
     if (arg0->ext.title_quad.unk38 == 0) {
@@ -436,6 +443,19 @@ u16 title_quad_palette[2][15] = {
 };
 #else
 s16 title_quad_shapes[11][8] = {
+#ifdef MMX4_SATURN
+    { 0, 0, 319, 0, 319, 120, 0, 120 },
+    { 80, 192, 319, 121, 319, 239, 80, 239 },
+    { 330, 120, 80, 191, 81, 192, 331, 121 },
+    { 80, 191, 0, 120, 1, 121, 81, 192 },
+    { 0, 120, 330, 120, 331, 121, 1, 121 },
+    { 0, 120, 330, 120, 80, 191, 80, 191 },
+    { 6, 122, 316, 122, 81, 188, 81, 188 },
+    { 80, 104, 19, 59, 230, 59, 230, 59 },
+    { 80, 102, 24, 61, 217, 61, 217, 61 },
+    { 80, 191, 0, 121, 0, 239, 80, 239 },
+    { 319, 0, 319, 239, 0, 239, 0, 0 },
+#else
     { 0, 0, 319, 0, 319, 120, 0, 120 },
     { 80, 192, 319, 121, 319, 240, 80, 240 },
     { 330, 120, 80, 191, 81, 192, 331, 121 },
@@ -447,6 +467,7 @@ s16 title_quad_shapes[11][8] = {
     { 80, 102, 24, 61, 217, 61, 217, 61 },
     { 80, 191, 0, 119, 0, 240, 80, 240 },
     { 319, 0, 319, 239, 0, 239, 0, 0 },
+#endif
 };
 
 s16 title_quad_morph_targets[6][2] = {

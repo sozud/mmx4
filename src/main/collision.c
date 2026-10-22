@@ -25,16 +25,15 @@ struct EffectSpawnData {
 };
 
 // hitboxes_overlap
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot);
 s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1);
 s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x, s16* out_y);
 s32 func_8002BD58(struct MainObj*, struct MainObj*, s16*, s16*);
 #endif
 
-#ifdef MMX4_PC
-// src/main/collision.c
-
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
 {
     const struct Unk_unk68* box0;
@@ -61,8 +60,8 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
         return 0;
     }
 
-    flip0 = (u8)obj0->unk15 & 0x40;
-    flip1 = (u8)obj1->unk15 & 0x40;
+    flip0 = (u8)obj0->unk15 & PLAYER_FACING_RIGHT;
+    flip1 = (u8)obj1->unk15 & PLAYER_FACING_RIGHT;
     t1 = box0->unk2;
     t2 = box1->unk2;
     sum = t1 + t2;
@@ -108,7 +107,7 @@ s32 func_8002BB80(struct MainObj* obj0, struct MainObj* obj1)
 INCLUDE_ASM("main/nonmatchings/collision", func_8002BB80);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x,
     s16* out_y)
 {
@@ -137,8 +136,8 @@ s32 func_8002BD58(struct MainObj* obj0, struct MainObj* obj1, s16* out_x,
         return 0;
     }
 
-    flip0 = (u8)obj0->unk15 & 0x40;
-    flip1 = (u8)obj1->unk15 & 0x40;
+    flip0 = (u8)obj0->unk15 & PLAYER_FACING_RIGHT;
+    flip1 = (u8)obj1->unk15 & PLAYER_FACING_RIGHT;
     t1 = box0->unk2;
     t2 = box1->unk2;
     sum = t1 + t2;
@@ -328,11 +327,15 @@ void func_8002C2EC(struct CollisionObj* arg0, struct CollisionObj* arg1)
     arg1->unk6E = center0 - center1;
 }
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
 {
     struct Unk_unk68* bounds0 = arg0->unk68;
     struct Unk_unk68* bounds1 = arg1->unk68;
+    s16 x0, y0, x1, y1, dx, dy;
+    u8 flags;
+
+#ifndef MMX4_SATURN
     if (bounds0 == NULL || bounds1 == NULL) {
         if (slot == 0) {
             arg0->unk72 = 0;
@@ -346,13 +349,14 @@ void func_8002C36C(struct PlayerObj* arg0, struct PlayerObj* arg1, s32 slot)
         }
         return;
     }
-    s16 x0 = arg0->x_pos.i.hi + bounds0->unk0;
-    s16 y0 = arg0->y_pos.i.hi + bounds0->unk1;
-    s16 x1 = arg1->x_pos.i.hi + bounds1->unk0;
-    s16 y1 = arg1->y_pos.i.hi + bounds1->unk1;
-    s16 dx = x0 >= x1 ? x0 - x1 : x1 - x0;
-    s16 dy = y0 >= y1 ? y0 - y1 : y1 - y0;
-    u8 flags = 0;
+#endif
+    x0 = arg0->x_pos.i.hi + bounds0->unk0;
+    y0 = arg0->y_pos.i.hi + bounds0->unk1;
+    x1 = arg1->x_pos.i.hi + bounds1->unk0;
+    y1 = arg1->y_pos.i.hi + bounds1->unk1;
+    dx = x0 >= x1 ? x0 - x1 : x1 - x0;
+    dy = y0 >= y1 ? y0 - y1 : y1 - y0;
+    flags = 0;
 
     if (dy == bounds0->unk3 + bounds1->unk3 && dx < bounds0->unk2 + bounds1->unk2) {
         flags |= y0 < y1 ? 4 : 8;

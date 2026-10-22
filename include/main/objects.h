@@ -23,11 +23,11 @@ void update_on_screen(struct BaseObj*, s32, s32);
 
 void reset_game_engine(void);
 
-void reset_objects();
+void reset_objects(void);
 
 void ZeroObjectState(struct ObjectHeader* arg0);
 
-void func_8002AB20();
+void func_8002AB20(void);
 
 s32 func_8002B160(struct BaseObj*);
 s32 func_8002B1E8(struct BaseObj*, s32, s32);
@@ -39,13 +39,13 @@ void despawn_object_permanently(struct ObjectHeader* arg0);
 void func_8002B560(s8, s8);
 
 struct MiscObj* func_8002AE90(struct MiscObj* arg0, s32 arg1);
-struct UnkObj* find_free_unk_obj();
+struct UnkObj* find_free_unk_obj(void);
 struct VisualObj* func_8002AF4C(struct VisualObj* arg0, s32 arg1);
 
 void func_8002B3C0(struct BaseObj* arg0);
 void func_8002B458(struct QuadObj* arg0);
 void func_8002B460(void);
 
-void reset_main_and_shots();
+void reset_main_and_shots(void);
 
 #endif

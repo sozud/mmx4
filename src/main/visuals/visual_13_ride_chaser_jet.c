@@ -11,6 +11,7 @@ void ride_chaser_jet_init(struct VisualObj*);
 void ride_chaser_jet_main(struct VisualObj*);
 
 void ride_chaser_jet_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 u8 ride_chaser_jet_animations[16] = {
     0x15,
@@ -42,7 +43,7 @@ void ride_chaser_jet_init(struct VisualObj* arg0)
     arg0->on_screen = 1;
     arg0->unk54 = 0xFF;
     arg0->unk56 = 0xFF;
-    arg0->unk16 = 6;
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
     set_animation(arg0, 0x15);
 }
 

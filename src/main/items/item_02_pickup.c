@@ -13,6 +13,7 @@ extern void (*pickup_state_funcs[])(struct ItemObj*);
 void pickup_main(struct ItemObj*);
 void pickup_collected(struct ItemObj*);
 void pickup_despawn(struct ItemObj*);
+#include "weapon_resources.h"
 
 struct Item02AnimationStep {
     u8 duration;
@@ -318,7 +319,8 @@ void pickup_update(struct ItemObj* arg0)
 }
 
 // pickup_init
-#ifdef MMX4_PC
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C00BC(struct ItemObj* arg0);
 void func_800BF76C(struct ItemObj* arg0);
 void func_800BFCC0(struct ItemObj* arg0, u8 arg1);
@@ -326,7 +328,7 @@ void func_800BFBD0(struct ItemObj* arg0);
 s32 func_8002C160(struct CollisionObj*, struct CollisionObj*);
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BF76C(struct ItemObj* arg0)
 {
     u16 flags;
@@ -338,15 +340,15 @@ void func_800BF76C(struct ItemObj* arg0)
     arg0->unk5 = 0;
     arg0->unk15 = 0;
     arg0->animation_table = (const u8* const*)pickup_animations;
-    arg0->unk42 = 0x7807;
-    arg0->unk16 = 6;
-    arg0->unk40 = 0;
+    arg0->unk42 = OBJECT_CLUT(0x7807);
+    arg0->unk16 = VISUAL_SATURN_LAYER(6);
+    arg0->unk40 = WEAPON_TEXTURE_BASE;
     arg0->bg_offset = 0;
     arg0->unk2 = (u8)arg0->unk2 & 0x7F;
     arg0->active |= 0x20;
     arg0->sprite_frames = (const u8*)SP_ARCHIVE_ENTRY(SP_SPRITE_FRAMES, 3);
     if (arg0->unk2 == 4) {
-        arg0->unk42 = 0x780B;
+        arg0->unk42 = OBJECT_CLUT(0x780B);
     }
 
     kind = (u8)arg0->unk2;
@@ -358,7 +360,7 @@ void func_800BF76C(struct ItemObj* arg0)
         arg0->unk7C.value = 9;
     } else if ((s8)kind == 0x12) {
         arg0->unk7C.value = 0xA;
-        arg0->unk42 = 0x780B;
+        arg0->unk42 = OBJECT_CLUT(0x780B);
     } else {
         arg0->unk7C.value = kind;
     }
@@ -468,7 +470,7 @@ void pickup_main(struct ItemObj* arg0)
         }
     } else {
         arg0->on_screen = 0;
-        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(BLINK_CLOCK(main_bss_state.frame_counter) & 1)) {
+        if ((arg0->ext.item_2.unk82 >= 0x3C) || !(BLINK_CLOCK(WEAPON_FRAME_COUNTER) & 1)) {
             is_on_screen((struct BaseObj*)arg0);
         }
     }
@@ -488,7 +490,7 @@ void pickup_despawn(struct ItemObj* arg0)
 }
 
 // pickup_refill
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BFBD0(struct ItemObj* arg0)
 {
     u8 health;
@@ -509,7 +511,7 @@ void func_800BFBD0(struct ItemObj* arg0)
         } else {
             g_Player.hp = (health + 1) | status;
         }
-        func_8001540C(0, 0xD, NULL);
+        func_8001540C(0, SATURN_SOUND(0xD, 0x10), NULL);
 
         arg0->ext.item_2.unk80--;
         if (arg0->ext.item_2.unk80 == 0) {
@@ -527,7 +529,7 @@ INCLUDE_ASM("main/nonmatchings/items/item_02_pickup", func_800BFBD0);
 #endif
 
 // pickup_collect_weapon_energy
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800BFCC0(struct ItemObj* arg0, u8 arg1)
 {
     struct PlayerObj* player = &g_Player;
@@ -662,7 +664,7 @@ void pickup_collect_health(struct ItemObj* arg0, s8 arg1, s32 arg2)
 }
 #endif
 // pickup_check_collect
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_800C00BC(struct ItemObj* arg0)
 {
     struct CollisionObj* player;
@@ -703,7 +705,7 @@ void func_800C00BC(struct ItemObj* arg0)
         if (engine_obj.player_lives >= 10) {
             engine_obj.player_lives = 9;
         } else {
-            func_8001540C(0, 0x15, 0);
+            func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         }
         arg0->state = 3;
         break;
@@ -723,7 +725,7 @@ void func_800C00BC(struct ItemObj* arg0)
         }
         engine_obj.collected_upgrades = flag | (1 << shift);
         engine_obj.max_hp += 2;
-        func_8001540C(0, 0x15, 0);
+        func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         arg0->state = 3;
         break;
     case 8:
@@ -738,7 +740,7 @@ void func_800C00BC(struct ItemObj* arg0)
         engine_obj.collected_upgrades = flag | (0x1000 << shift);
         arg0->state = 3;
         engine_obj.sub_tanks[arg0->unk2 == 15 ? 0 : 1] = -0x80;
-        func_8001540C(0, 0x15, 0);
+        func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         break;
     case 9:
         flag = engine_obj.collected_upgrades;
@@ -747,7 +749,7 @@ void func_800C00BC(struct ItemObj* arg0)
         }
         engine_obj.collected_upgrades = flag | (0x4000 << (arg0->unk2 - 17));
         arg0->state = 3;
-        func_8001540C(0, 0x15, 0);
+        func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         engine_obj.sub_tanks[2] = 0;
         break;
     case 10:
@@ -757,7 +759,7 @@ void func_800C00BC(struct ItemObj* arg0)
         }
         engine_obj.collected_upgrades = flag | (0x8000 << (arg0->unk2 - 18));
         arg0->state = 3;
-        func_8001540C(0, 0x15, 0);
+        func_8001540C(0, SATURN_SOUND(0x15, 0x1E), 0);
         break;
     default:
         arg0->state = 3;

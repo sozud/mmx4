@@ -1,14 +1,16 @@
 // MainObj, main_object_update_funcs[64]
 // 8007C30C..8007DC54
 #include "common.h"
+#include "weapon_resources.h"
 #include "main/mains/main_64_cyber_peacock.h"
 #include "main/objects.h"
 #include "main/object_motion.h"
 #include "main/player_common.h"
 #include "main/128C4.h"
 #include "main/55C4.h"
+#include "main/1E1BC.h"
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 #include "main/1E1BC.h"
 #endif
 
@@ -50,7 +52,11 @@ extern void (*cyber_peacock_death_funcs[])(struct BarObj*);
 extern void (*cyber_peacock_state_funcs[])(struct MainObj*);
 
 // cyber_peacock_intro_init
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
+ret_s8 func_8002DD04(struct MainObj* object);
+#endif
+
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C30C(struct MainObj* arg0);
 void func_8007CA68(struct MainObj* arg0);
 void func_8007D5D0(struct MainObj* arg0);
@@ -66,7 +72,7 @@ void cyber_peacock_start_teleport(struct MainObj* arg0);
 extern void (*cyber_peacock_step_funcs[6])();
 #endif
 
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007C30C(struct MainObj* arg0)
 {
     arg0->unk7C = 0x80;
@@ -128,7 +134,7 @@ void cyber_peacock_intro_wait_player(struct MainObj* self)
             effect->id = 0x18;
             self->ext.main_64.object = effect;
         }
-        player_start_script_action(0x14, 0x40);
+        player_start_script_action(0x14, PLAYER_FACING_RIGHT);
         self->unk6 = 1;
         self->unk7 = 0;
         break;
@@ -140,14 +146,14 @@ void cyber_peacock_intro_wait_player(struct MainObj* self)
         self->unk6 = 2;
         self->bg_offset = g_Player.bg_offset;
         if (engine_obj.stage != 0xC) {
-            self->unk40 = (D_801406A8[0] >> 7) + 0xB0;
+            self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0xB0);
         } else {
-            self->unk40 = (D_801406A8[0] >> 7) + 0x160;
+            self->unk40 = (OBJECT_STAGE_TEXTURE(0)) + OBJECT_TEXTURE_OFFSET(0x160);
             self->sprite_frames = (u8*)SP_MENU_FRAMES + SP_MENU_FRAMES[4];
-            self->unk42 = 0x7888;
+            self->unk42 = OBJECT_CLUT(0x7888);
         }
         self->animation_table = (const u8* const*)cyber_peacock_animations;
-        self->unk16 = 4;
+        self->unk16 = VISUAL_SATURN_LAYER(4);
         self->hp = 0;
         self->contact_damage = 5;
         self->invincibility_timer = -0x80;
@@ -188,7 +194,7 @@ void cyber_peacock_intro_pose(struct MainObj* self)
     } else {
         if (self->animation_step.fields.event != 0) {
             self->animation_step.fields.event = 0;
-            func_8001540C(2, 0xC1, self);
+            func_8001540C(2, SATURN_SOUND(0xC1, 0x88), self);
         }
         animate_object(ANIMATED_OBJECT(self));
     }
@@ -215,7 +221,7 @@ void cyber_peacock_intro_fill_health(struct MainObj* self)
         health = self->hp;
         if (health < 0x30) {
             if (--self->unk7C == 0) {
-                func_8001540C(0, 0xE, 0);
+                func_8001540C(0, SATURN_SOUND(0xE, 0x14), 0);
                 self->unk7C = 2;
             }
             self->hp++;
@@ -232,7 +238,7 @@ void cyber_peacock_intro_fill_health(struct MainObj* self)
     }
     if (self->animation_step.fields.event != 0) {
         self->animation_step.fields.event = 0;
-        func_8001540C(2, 0xC2, self);
+        func_8001540C(2, SATURN_SOUND(0xC2, 0x89), self);
     }
     animate_object(ANIMATED_OBJECT(self));
 }
@@ -251,7 +257,7 @@ void cyber_peacock_intro(struct MainObj* self)
 void cyber_peacock_face_player(struct MainObj* self)
 {
     if ((self->x_pos.val - g_Player.x_pos.val) < 0) {
-        self->unk15 = 0x40;
+        self->unk15 = PLAYER_FACING_RIGHT;
     } else {
         self->unk15 = 0;
     }
@@ -281,7 +287,7 @@ void cyber_peacock_start_teleport(struct MainObj* self)
     self->gravity = 0;
     self->hurt_box = NULL;
     self->attack_box = NULL;
-    func_8001540C(2, 0xC6, self);
+    func_8001540C(2, SATURN_SOUND(0xC6, 0x8D), self);
 }
 
 void cyber_peacock_teleport_start(struct MainObj* self)
@@ -305,7 +311,7 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
     }
     self->x_speed += self->x_accel;
     if (SHAKE_ENABLED) {
-        if (BLINK_CLOCK(BLINK_CLOCK(main_bss_state.frame_counter)) & 1) {
+        if (BLINK_CLOCK(BLINK_CLOCK(WEAPON_FRAME_COUNTER)) & 1) {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
         } else {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
@@ -315,7 +321,7 @@ void cyber_peacock_teleport_vanish(struct MainObj* self)
 }
 
 // cyber_peacock_teleport_choose
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007CA68(struct MainObj* arg0)
 {
     s16 timer = --arg0->unk7C;
@@ -340,7 +346,7 @@ void func_8007CA68(struct MainObj* arg0)
     set_animation(arg0, cyber_peacock_attack_animations[attack]);
     arg0->unk2 = attack;
     if (attack == 0) {
-        func_8001540C(2, 0xC7, arg0);
+        func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
         return;
     }
     base = arg0->ext.main_64.arena_x;
@@ -348,12 +354,12 @@ void func_8007CA68(struct MainObj* arg0)
     case 1:
         arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0xB3;
         arg0->ext.main_64.target_y = arg0->y_pos.i.hi;
-        func_8001540C(2, 0xC7, arg0);
+        func_8001540C(2, SATURN_SOUND(0xC7, 0x8E), arg0);
         break;
     case 2:
         if (g_Player.x_pos.i.hi - base < 0xA0) {
             arg0->x_pos.i.hi = base + 0x90;
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
         } else {
             arg0->x_pos.i.hi = base + 0xE0;
             arg0->unk15 = 0;
@@ -368,7 +374,7 @@ void func_8007CA68(struct MainObj* arg0)
             arg0->unk15 = 0;
         } else {
             arg0->x_pos.i.hi = base + 0x50;
-            arg0->unk15 = 0x40;
+            arg0->unk15 = PLAYER_FACING_RIGHT;
         }
         arg0->ext.main_64.target_x = arg0->x_pos.i.hi;
         arg0->y_pos.i.hi = arg0->ext.main_64.arena_y + 0x70;
@@ -390,13 +396,13 @@ void cyber_peacock_teleport_appear(struct MainObj* self)
         self->hurt_box = (const u8*)&cyber_peacock_hit_box;
         self->attack_box = (const u8*)&cyber_peacock_hit_box;
         self->contact_damage = 5;
-        func_8001540C(2, 0xC6, self);
+        func_8001540C(2, SATURN_SOUND(0xC6, 0x8D), self);
         return;
     }
 
     self->x_speed -= self->x_accel;
     if (SHAKE_ENABLED) {
-        if (BLINK_CLOCK(BLINK_CLOCK(main_bss_state.frame_counter)) & 1) {
+        if (BLINK_CLOCK(BLINK_CLOCK(WEAPON_FRAME_COUNTER)) & 1) {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) + self->x_speed;
         } else {
             self->x_pos.val = ((s16)self->ext.main_64.target_x << 0x10) - self->x_speed;
@@ -482,7 +488,7 @@ void cyber_peacock_slash_start(struct MainObj* self)
     self->unk7C = 0;
     self->unk6++;
     set_animation(self, 6);
-    func_8001540C(2, 0xC9, self);
+    func_8001540C(2, SATURN_SOUND(0xC9, 0x90), self);
     self->hurt_box = (const u8*)&cyber_peacock_slash_hurt_box;
     self->attack_box = (const u8*)&cyber_peacock_slash_attack_box;
     self->contact_damage = 9;
@@ -548,7 +554,7 @@ void cyber_peacock_spawn_laser_target(struct MainObj* self)
         item->unk15 = self->unk15;
         item->backref = (void*)self;
         self->ext.main_64.object = item;
-        func_8001540C(2, 0xC4, self);
+        func_8001540C(2, SATURN_SOUND(0xC4, 0x8B), self);
     }
 }
 
@@ -571,7 +577,7 @@ void cyber_peacock_spawn_missile(struct MainObj* self)
         shot->unk15 = 0;
         shot->unk7C = self->ext.main_64.object;
         shot->backref = self;
-        func_8001540C(2, 0xC3, self);
+        func_8001540C(2, SATURN_SOUND(0xC3, 0x8A), self);
     }
 }
 
@@ -664,7 +670,7 @@ void cyber_peacock_attack(struct MainObj* self)
 }
 
 // cyber_peacock_hit_vanish
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007D5D0(struct MainObj* arg0)
 {
     switch (arg0->unk6) {
@@ -682,7 +688,7 @@ void func_8007D5D0(struct MainObj* arg0)
             break;
         }
         arg0->x_speed += arg0->x_accel;
-        if (main_bss_state.frame_counter & 1)
+        if (WEAPON_FRAME_COUNTER & 1)
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) + arg0->x_speed;
         else
             arg0->x_pos.val = ((s16)arg0->ext.main_64.target_x << 16) - arg0->x_speed;
@@ -703,7 +709,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D5D0);
 #endif
 
 // cyber_peacock_guard_vanish
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007D710(struct MainObj* arg0)
 {
     s16 count;
@@ -715,7 +721,7 @@ void func_8007D710(struct MainObj* arg0)
         arg0->unk7 = 0;
         arg0->unk6++;
         set_animation(arg0, 0x21);
-        func_8001540C(2, 0xC8, arg0);
+        func_8001540C(2, SATURN_SOUND(0xC8, 0x8F), arg0);
         arg0->attack_box = NULL;
         arg0->hurt_box = NULL;
         break;
@@ -746,7 +752,7 @@ INCLUDE_ASM("main/nonmatchings/mains/main_64_cyber_peacock", func_8007D710);
 #endif
 
 // cyber_peacock_main
-#ifdef MMX4_PC
+#if defined(MMX4_PC) || defined(MMX4_SATURN)
 void func_8007D838(struct MainObj* arg0)
 {
     s32 hit;
@@ -870,116 +876,116 @@ void cyber_peacock_update(struct MainObj* self)
 // cyber_peacock_is_player_near_random
 
 union AnimationStep cyber_peacock_anim_0[] = {
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x06010002 },
-    { 0x07010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x08010002 },
-    { 0x09010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x0E010002 },
-    { 0x0F010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x10010002 },
-    { 0x11010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x12010002 },
-    { 0x13010002 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x14010002 },
-    { 0x15010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x16010002 },
-    { 0x17010002 },
-    { 0x18010002 },
-    { 0x19010103 },
-    { 0x1A010003 },
-    { 0x1B010003 },
-    { 0x1C010003 },
-    { 0x1D010003 },
-    { 0x1E010003 },
-    { 0x1F010003 },
-    { 0x20010003 },
-    { 0x21010003 },
-    { 0x22010003 },
-    { 0x23010004 },
-    { 0x24010005 },
-    { 0x01010002 },
-    { 0x18010002 },
-    { 0x01010002 },
-    { 0x18010002 },
-    { 0x01010002 },
-    { 0x18010002 },
-    { 0x0101000F },
-    { 0x01000001 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x06 },
+    { 2, 0, 1, 0x07 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x08 },
+    { 2, 0, 1, 0x09 },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x0E },
+    { 2, 0, 1, 0x0F },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x10 },
+    { 2, 0, 1, 0x11 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x12 },
+    { 2, 0, 1, 0x13 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x14 },
+    { 2, 0, 1, 0x15 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x16 },
+    { 2, 0, 1, 0x17 },
+    { 2, 0, 1, 0x18 },
+    { 3, 1, 1, 0x19 },
+    { 3, 0, 1, 0x1A },
+    { 3, 0, 1, 0x1B },
+    { 3, 0, 1, 0x1C },
+    { 3, 0, 1, 0x1D },
+    { 3, 0, 1, 0x1E },
+    { 3, 0, 1, 0x1F },
+    { 3, 0, 1, 0x20 },
+    { 3, 0, 1, 0x21 },
+    { 3, 0, 1, 0x22 },
+    { 4, 0, 1, 0x23 },
+    { 5, 0, 1, 0x24 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x18 },
+    { 2, 0, 1, 0x01 },
+    { 2, 0, 1, 0x18 },
+    { 15, 0, 1, 0x01 },
+    { 1, 0, 0, 0x01 },
 };
 
 union AnimationStep cyber_peacock_anim_1[] = {
-    { 0x01010003 },
-    { 0x02010003 },
-    { 0x0301000A },
-    { 0x03010101 },
-    { 0x04010003 },
-    { 0x2C010003 },
-    { 0x2D010012 },
-    { 0x05010014 },
-    { 0x2E010003 },
-    { 0x2E000003 },
+    { 3, 0, 1, 0x01 },
+    { 3, 0, 1, 0x02 },
+    { 10, 0, 1, 0x03 },
+    { 1, 1, 1, 0x03 },
+    { 3, 0, 1, 0x04 },
+    { 3, 0, 1, 0x2C },
+    { 18, 0, 1, 0x2D },
+    { 20, 0, 1, 0x05 },
+    { 3, 0, 1, 0x2E },
+    { 3, 0, 0, 0x2E },
 };
 
 union AnimationStep cyber_peacock_anim_2[] = {
-    { 0x00010002 },
-    { 0x25010002 },
-    { 0x00010002 },
-    { 0x25010002 },
-    { 0x00010002 },
-    { 0x25010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x26000002 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 0, 0x26 },
 };
 
 union AnimationStep cyber_peacock_anim_3[] = {
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x25010002 },
-    { 0x00010002 },
-    { 0x25010002 },
-    { 0x00010002 },
-    { 0x25010002 },
-    { 0x00000002 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x00 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 0, 0x00 },
 };
 
 union AnimationStep cyber_peacock_anim_35[] = {
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x25010002 },
-    { 0x28010002 },
-    { 0x25010002 },
-    { 0x28010002 },
-    { 0x25010002 },
-    { 0x28000006 },
-    { 0x29010005 },
-    { 0x2A010005 },
-    { 0x2B000006 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x28 },
+    { 2, 0, 1, 0x25 },
+    { 6, 0, 0, 0x28 },
+    { 5, 0, 1, 0x29 },
+    { 5, 0, 1, 0x2A },
+    { 6, 0, 0, 0x2B },
 };
 
 struct Unk_unk68 cyber_peacock_anim_4[8] = {
@@ -994,15 +1000,15 @@ struct Unk_unk68 cyber_peacock_anim_4[8] = {
 };
 
 union AnimationStep cyber_peacock_anim_5[] = {
-    { 0x2F010001 },
-    { 0x33010001 },
-    { 0x34010001 },
-    { 0x2F010001 },
-    { 0x33010001 },
-    { 0x34010001 },
-    { 0x2F010001 },
-    { 0x33010001 },
-    { 0x34000001 },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x33 },
+    { 1, 0, 1, 0x34 },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x33 },
+    { 1, 0, 1, 0x34 },
+    { 1, 0, 1, 0x2F },
+    { 1, 0, 1, 0x33 },
+    { 1, 0, 0, 0x34 },
 };
 
 struct Unk_unk68 cyber_peacock_anim_6[18] = {
@@ -1027,68 +1033,68 @@ struct Unk_unk68 cyber_peacock_anim_6[18] = {
 };
 
 union AnimationStep cyber_peacock_anim_7[] = {
-    { 0x3D010001 },
-    { 0x3F010002 },
-    { 0x40010003 },
-    { 0x41010004 },
-    { 0x42010005 },
-    { 0x39010006 },
-    { 0x43010001 },
-    { 0x39010001 },
-    { 0x43010001 },
-    { 0x39010001 },
-    { 0x43010001 },
-    { 0x39010001 },
-    { 0x43010001 },
-    { 0x39010001 },
-    { 0x43010001 },
-    { 0x39000001 },
+    { 1, 0, 1, 0x3D },
+    { 2, 0, 1, 0x3F },
+    { 3, 0, 1, 0x40 },
+    { 4, 0, 1, 0x41 },
+    { 5, 0, 1, 0x42 },
+    { 6, 0, 1, 0x39 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 1, 0x39 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 1, 0x39 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 1, 0x39 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 1, 0x39 },
+    { 1, 0, 1, 0x43 },
+    { 1, 0, 0, 0x39 },
 };
 
 union AnimationStep cyber_peacock_anim_8[] = {
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x27010002 },
-    { 0x26010002 },
-    { 0x25010002 },
-    { 0x44010002 },
-    { 0x25010002 },
-    { 0x44010002 },
-    { 0x25010002 },
-    { 0x44000002 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x27 },
+    { 2, 0, 1, 0x26 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x44 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 1, 0x44 },
+    { 2, 0, 1, 0x25 },
+    { 2, 0, 0, 0x44 },
 };
 
 union AnimationStep cyber_peacock_anim_37[] = {
-    { 0x45010003 },
-    { 0x46010012 },
-    { 0x00000014 },
+    { 3, 0, 1, 0x45 },
+    { 18, 0, 1, 0x46 },
+    { 20, 0, 0, 0x00 },
 };
 
 union AnimationStep cyber_peacock_anim_9[] = {
-    { 0x00010008 },
-    { 0x47010008 },
-    { 0x48010008 },
-    { 0x49010012 },
-    { 0x4A010002 },
-    { 0x4B010002 },
-    { 0x4C010002 },
-    { 0x4A010002 },
-    { 0x4B010002 },
-    { 0x4C010002 },
-    { 0x4D010003 },
-    { 0x4E010003 },
-    { 0x4F010003 },
-    { 0x5001000A },
-    { 0x51010003 },
-    { 0x52010003 },
-    { 0x53010003 },
-    { 0x54010001 },
-    { 0x53010001 },
-    { 0x54010001 },
-    { 0x53010001 },
-    { 0x54000014 },
+    { 8, 0, 1, 0x00 },
+    { 8, 0, 1, 0x47 },
+    { 8, 0, 1, 0x48 },
+    { 18, 0, 1, 0x49 },
+    { 2, 0, 1, 0x4A },
+    { 2, 0, 1, 0x4B },
+    { 2, 0, 1, 0x4C },
+    { 2, 0, 1, 0x4A },
+    { 2, 0, 1, 0x4B },
+    { 2, 0, 1, 0x4C },
+    { 3, 0, 1, 0x4D },
+    { 3, 0, 1, 0x4E },
+    { 3, 0, 1, 0x4F },
+    { 10, 0, 1, 0x50 },
+    { 3, 0, 1, 0x51 },
+    { 3, 0, 1, 0x52 },
+    { 3, 0, 1, 0x53 },
+    { 1, 0, 1, 0x54 },
+    { 1, 0, 1, 0x53 },
+    { 1, 0, 1, 0x54 },
+    { 1, 0, 1, 0x53 },
+    { 20, 0, 0, 0x54 },
 };
 
 u8 cyber_peacock_anim_10[8] = { 1, 0, 1, 88, 1, 0, 255, 89 };
@@ -1101,16 +1107,16 @@ struct Unk_unk68 cyber_peacock_anim_11[4] = {
 };
 
 union AnimationStep cyber_peacock_anim_12[] = {
-    { 0x55010008 },
-    { 0x56010002 },
-    { 0x57010001 },
-    { 0x55010002 },
-    { 0x91010002 },
-    { 0x9200001E },
+    { 8, 0, 1, 0x55 },
+    { 2, 0, 1, 0x56 },
+    { 1, 0, 1, 0x57 },
+    { 2, 0, 1, 0x55 },
+    { 2, 0, 1, 0x91 },
+    { 30, 0, 0, 0x92 },
 };
 
 union AnimationStep cyber_peacock_anim_36[] = {
-    { 0x55000001 },
+    { 1, 0, 0, 0x55 },
 };
 
 u8 cyber_peacock_anim_13[8] = { 2, 0, 1, 109, 2, 0, 255, 110 };
@@ -1146,11 +1152,11 @@ u8 cyber_peacock_anim_27[8] = { 2, 0, 1, 105, 2, 0, 255, 106 };
 u8 cyber_peacock_anim_28[8] = { 2, 0, 1, 107, 2, 0, 255, 108 };
 
 union AnimationStep cyber_peacock_anim_29[] = {
-    { 0x7D010001 },
-    { 0x7E010002 },
-    { 0x7F010003 },
-    { 0x80010003 },
-    { 0x81000004 },
+    { 1, 0, 1, 0x7D },
+    { 2, 0, 1, 0x7E },
+    { 3, 0, 1, 0x7F },
+    { 3, 0, 1, 0x80 },
+    { 4, 0, 0, 0x81 },
 };
 
 struct Unk_unk68 cyber_peacock_anim_30[3] = {
@@ -1166,18 +1172,18 @@ struct Unk_unk68 cyber_peacock_anim_31[3] = {
 };
 
 union AnimationStep cyber_peacock_anim_32[] = {
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x87010002 },
-    { 0x88010002 },
-    { 0x87010002 },
-    { 0x88000002 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 1, 0x88 },
+    { 2, 0, 1, 0x87 },
+    { 2, 0, 0, 0x88 },
 };
 
 struct Unk_unk68 cyber_peacock_anim_33[10] = {
@@ -1194,7 +1200,7 @@ struct Unk_unk68 cyber_peacock_anim_33[10] = {
 };
 
 union AnimationStep cyber_peacock_anim_34[] = {
-    { 0x34000004 },
+    { 4, 0, 0, 0x34 },
 };
 
 void* cyber_peacock_animations[38] = {

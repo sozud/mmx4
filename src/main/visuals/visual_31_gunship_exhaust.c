@@ -12,6 +12,7 @@ void gunship_exhaust_init(struct VisualObj*);
 void gunship_exhaust_delay(struct VisualObj*);
 
 void gunship_exhaust_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void gunship_exhaust_update(struct VisualObj* arg0)
 {

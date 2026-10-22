@@ -10,6 +10,7 @@ extern void (*missile_smoke_state_funcs[])(struct VisualObj*);
 void missile_smoke_init(struct VisualObj*);
 void missile_smoke_main(struct VisualObj*);
 void missile_smoke_despawn(struct VisualObj*);
+#include "weapon_resources.h"
 
 void missile_smoke_update(struct VisualObj* arg0)
 {
@@ -24,7 +25,7 @@ void missile_smoke_init(struct VisualObj* arg0)
         arg0->unk15 = 0;
         missile_smoke_main(arg0);
     } else {
-        arg0->unk16 = 2;
+        arg0->unk16 = VISUAL_SATURN_LAYER(2);
         set_animation(arg0, 0x25);
     }
 }
